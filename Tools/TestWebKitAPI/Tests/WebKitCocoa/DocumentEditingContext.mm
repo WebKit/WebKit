@@ -149,7 +149,7 @@ static NSString *applyAhemStyle(NSString *htmlString)
     return [NSString stringWithFormat:@"<style>@font-face { font-family: Ahem; src: url(Ahem.ttf); } body { margin: 0; } * { font: %upx/1 Ahem; -webkit-text-size-adjust: 100%%; }</style><meta name='viewport' content='width=980, initial-scale=1.0'>%@", glyphWidth, htmlString];
 }
 
-TEST(WebKit, DocumentEditingContext)
+TEST(DocumentEditingContext, Simple)
 {
     RetainPtr<TestWKWebView> webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
 
@@ -272,7 +272,7 @@ TEST(WebKit, DocumentEditingContext)
     EXPECT_NSSTRING_EQ(" world", context.contextAfter);
 }
 
-TEST(WebKit, DocumentEditingContextWithMarkedText)
+TEST(DocumentEditingContext, RequestMarkedText)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
     auto *contentView = [webView textInputContentView];
@@ -370,7 +370,7 @@ TEST(WebKit, DocumentEditingContextWithMarkedText)
     }
 }
 
-TEST(WebKit, DocumentEditingContextSpatialRequestInTextField)
+TEST(DocumentEditingContext, SpatialRequestInTextField)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
 
@@ -397,7 +397,7 @@ TEST(WebKit, DocumentEditingContextSpatialRequestInTextField)
 
 // MARK: Tests using word granularity
 
-TEST(WebKit, DocumentEditingContextRequestFirstTwoWords)
+TEST(DocumentEditingContext, RequestFirstTwoWords)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
     [webView synchronouslyLoadHTMLString:applyAhemStyle(@"<p id='text' contenteditable>The quick brown fox jumps over the lazy dog.</p>")];
@@ -422,7 +422,7 @@ TEST(WebKit, DocumentEditingContextRequestFirstTwoWords)
     EXPECT_EQ(CGRectMake(200, 0, 25, 25), textRects[8].CGRectValue); // k
 }
 
-TEST(WebKit, DocumentEditingContextRequestFirstTwoWordWithLeadingNonBreakableSpace)
+TEST(DocumentEditingContext, RequestFirstTwoWordWithLeadingNonBreakableSpace)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
     [webView synchronouslyLoadHTMLString:applyAhemStyle(@"<p id='text' contenteditable>&nbsp;The quick brown fox jumps over the lazy dog.</p>")];
@@ -442,7 +442,7 @@ TEST(WebKit, DocumentEditingContextRequestFirstTwoWordWithLeadingNonBreakableSpa
     EXPECT_EQ(CGRectMake(75, 0, 25, 25), textRects[3].CGRectValue); // e
 }
 
-TEST(WebKit, DocumentEditingContextRequestLastWord)
+TEST(DocumentEditingContext, RequestLastWord)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
     [webView synchronouslyLoadHTMLString:applyAhemStyle(@"<p id='text' contenteditable>The quick brown fox jumps over the lazy dog.</p>")];
@@ -462,7 +462,7 @@ TEST(WebKit, DocumentEditingContextRequestLastWord)
     EXPECT_EQ(CGRectMake(75, 25, 25, 25), textRects[3].CGRectValue); // .
 }
 
-TEST(WebKit, DocumentEditingContextRequestLastWordWithTrailingNonBreakableSpace)
+TEST(DocumentEditingContext, RequestLastWordWithTrailingNonBreakableSpace)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
     [webView synchronouslyLoadHTMLString:applyAhemStyle(@"<p id='text' contenteditable>The quick brown fox jumps over the lazy dog.&nbsp;</p>")];
@@ -483,7 +483,7 @@ TEST(WebKit, DocumentEditingContextRequestLastWordWithTrailingNonBreakableSpace)
     EXPECT_EQ(CGRectMake(100, 25, 25, 25), textRects[4].CGRectValue); //
 }
 
-TEST(WebKit, DocumentEditingContextRequestTwoWordsAroundSelection)
+TEST(DocumentEditingContext, RequestTwoWordsAroundSelection)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
     [webView synchronouslyLoadHTMLString:applyStyle(@"<span id='the'>The</span> quick brown fox <span id='jumps'>jumps</span> over the lazy <span id='dog'>dog.</span>")];
@@ -496,7 +496,7 @@ TEST(WebKit, DocumentEditingContextRequestTwoWordsAroundSelection)
     EXPECT_NSSTRING_EQ(" over the", context.contextAfter);
 }
 
-TEST(WebKit, DocumentEditingContextRequestThreeWordsAroundSelection)
+TEST(DocumentEditingContext, RequestThreeWordsAroundSelection)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
     [webView synchronouslyLoadHTMLString:applyStyle(@"<span id='the'>The</span> quick brown fox <span id='jumps'>jumps</span> over the lazy <span id='dog'>dog.</span>")];
@@ -513,7 +513,7 @@ TEST(WebKit, DocumentEditingContextRequestThreeWordsAroundSelection)
 
 constexpr NSString * const threeSentencesExample = @"<p id='text' contenteditable>The first sentence. The second sentence. The third sentence.</p>";
 
-TEST(WebKit, DocumentEditingContextRequestFirstTwoSentences)
+TEST(DocumentEditingContext, RequestFirstTwoSentences)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
     [webView synchronouslyLoadHTMLString:applyStyle(threeSentencesExample)];
@@ -526,7 +526,7 @@ TEST(WebKit, DocumentEditingContextRequestFirstTwoSentences)
     EXPECT_NSSTRING_EQ("The first sentence. The second sentence. ", context.contextAfter);
 }
 
-TEST(WebKit, DocumentEditingContextRequestFirstTwoSentencesNoSpaces)
+TEST(DocumentEditingContext, RequestFirstTwoSentencesNoSpaces)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
     [webView synchronouslyLoadHTMLString:applyStyle(@"<p id='text' contenteditable>The first sentence.The second sentence.The third sentence.</p>")];
@@ -539,7 +539,7 @@ TEST(WebKit, DocumentEditingContextRequestFirstTwoSentencesNoSpaces)
     EXPECT_NSSTRING_EQ("The first sentence.The second sentence.The third sentence.", context.contextAfter);
 }
 
-TEST(WebKit, DocumentEditingContextRequestLastSentence)
+TEST(DocumentEditingContext, RequestLastSentence)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
     [webView synchronouslyLoadHTMLString:applyStyle(threeSentencesExample)];
@@ -552,7 +552,7 @@ TEST(WebKit, DocumentEditingContextRequestLastSentence)
     EXPECT_NULL(context.contextAfter);
 }
 
-TEST(WebKit, DocumentEditingContextRequestLastTwoSentences)
+TEST(DocumentEditingContext, RequestLastTwoSentences)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
     [webView synchronouslyLoadHTMLString:applyStyle(threeSentencesExample)];
@@ -569,7 +569,7 @@ TEST(WebKit, DocumentEditingContextRequestLastTwoSentences)
 
 constexpr NSString * const threeParagraphsExample = @"<pre id='text' style='width: 32em' contenteditable>The first sentence in the first paragraph. The second sentence in the first paragraph. The third sentence in the first paragraph.\nThe first sentence in the second paragraph. The second sentence in the second paragraph. The third sentence in the second paragraph.\nThe first sentence in the third paragraph. The second sentence in the third paragraph. The third sentence in the third paragraph.</pre>";
 
-TEST(WebKit, DocumentEditingContextRequestFirstParagraph)
+TEST(DocumentEditingContext, RequestFirstParagraph)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
     [webView synchronouslyLoadHTMLString:applyStyle(threeParagraphsExample)];
@@ -582,7 +582,7 @@ TEST(WebKit, DocumentEditingContextRequestFirstParagraph)
     EXPECT_NSSTRING_EQ("The first sentence in the first paragraph. The second sentence in the first paragraph. The third sentence in the first paragraph.", context.contextAfter);
 }
 
-TEST(WebKit, DocumentEditingContextRequestFirstTwoParagraphs)
+TEST(DocumentEditingContext, RequestFirstTwoParagraphs)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
     [webView synchronouslyLoadHTMLString:applyStyle(threeParagraphsExample)];
@@ -595,7 +595,7 @@ TEST(WebKit, DocumentEditingContextRequestFirstTwoParagraphs)
     EXPECT_NSSTRING_EQ("The first sentence in the first paragraph. The second sentence in the first paragraph. The third sentence in the first paragraph.\nThe first sentence in the second paragraph. The second sentence in the second paragraph. The third sentence in the second paragraph.", context.contextAfter);
 }
 
-TEST(WebKit, DocumentEditingContextRequestLastParagraph)
+TEST(DocumentEditingContext, RequestLastParagraph)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
     [webView synchronouslyLoadHTMLString:applyStyle(threeParagraphsExample)];
@@ -608,7 +608,7 @@ TEST(WebKit, DocumentEditingContextRequestLastParagraph)
     EXPECT_NULL(context.contextAfter);
 }
 
-TEST(WebKit, DocumentEditingContextRequestLastTwoParagraphs)
+TEST(DocumentEditingContext, RequestLastTwoParagraphs)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
     [webView synchronouslyLoadHTMLString:applyStyle(threeParagraphsExample)];
@@ -621,7 +621,7 @@ TEST(WebKit, DocumentEditingContextRequestLastTwoParagraphs)
     EXPECT_NULL(context.contextAfter);
 }
 
-TEST(WebKit, DocumentEditingContextRequestLastTwoParagraphsWithSelectiontWithinParagraph)
+TEST(DocumentEditingContext, RequestLastTwoParagraphsWithSelectiontWithinParagraph)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
     [webView synchronouslyLoadHTMLString:applyAhemStyle(@"<span id='the'>The</span> quick brown fox <span id='jumps'>jumps</span> over the lazy <span id='dog'>dog.</span>")];
@@ -637,7 +637,7 @@ TEST(WebKit, DocumentEditingContextRequestLastTwoParagraphsWithSelectiontWithinP
 // MARK: Tests using character granularity
 // Note that we always return results with respect to the nearest word boundary in the direction of the selection.
 
-TEST(WebKit, DocumentEditingContextRequestFirstCharacter)
+TEST(DocumentEditingContext, RequestFirstCharacter)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
     [webView synchronouslyLoadHTMLString:applyStyle(threeParagraphsExample)];
@@ -650,7 +650,7 @@ TEST(WebKit, DocumentEditingContextRequestFirstCharacter)
     EXPECT_NSSTRING_EQ("The", context.contextAfter);
 }
 
-TEST(WebKit, DocumentEditingContextRequestFirstWordUsingCharacterGranularity)
+TEST(DocumentEditingContext, RequestFirstWordUsingCharacterGranularity)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
     [webView synchronouslyLoadHTMLString:applyStyle(threeParagraphsExample)];
@@ -663,7 +663,7 @@ TEST(WebKit, DocumentEditingContextRequestFirstWordUsingCharacterGranularity)
     EXPECT_NSSTRING_EQ("The", context.contextAfter);
 }
 
-TEST(WebKit, DocumentEditingContextRequestFirstWordPlusTrailingSpaceUsingCharacterGranularity)
+TEST(DocumentEditingContext, RequestFirstWordPlusTrailingSpaceUsingCharacterGranularity)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
     [webView synchronouslyLoadHTMLString:applyStyle(threeParagraphsExample)];
@@ -678,7 +678,7 @@ TEST(WebKit, DocumentEditingContextRequestFirstWordPlusTrailingSpaceUsingCharact
 
 // MARK: Tests using line granularity
 
-TEST(WebKit, DocumentEditingContextRequestFirstLine)
+TEST(DocumentEditingContext, RequestFirstLine)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
     [webView synchronouslyLoadHTMLString:applyAhemStyle(threeParagraphsExample)];
@@ -691,7 +691,7 @@ TEST(WebKit, DocumentEditingContextRequestFirstLine)
     EXPECT_NSSTRING_EQ("The first sentence in the first paragraph", context.contextAfter);
 }
 
-TEST(WebKit, DocumentEditingContextRequestFirstTwoLines)
+TEST(DocumentEditingContext, RequestFirstTwoLines)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
     [webView synchronouslyLoadHTMLString:applyAhemStyle(threeParagraphsExample)];
@@ -704,7 +704,7 @@ TEST(WebKit, DocumentEditingContextRequestFirstTwoLines)
     EXPECT_NSSTRING_EQ("The first sentence in the first paragraph. The second sentence in", context.contextAfter);
 }
 
-TEST(WebKit, DocumentEditingContextRequestLastLine)
+TEST(DocumentEditingContext, RequestLastLine)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
     [webView synchronouslyLoadHTMLString:applyAhemStyle(threeParagraphsExample)];
@@ -717,7 +717,7 @@ TEST(WebKit, DocumentEditingContextRequestLastLine)
     EXPECT_NULL(context.contextAfter);
 }
 
-TEST(WebKit, DocumentEditingContextRequestLastTwoLines)
+TEST(DocumentEditingContext, RequestLastTwoLines)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
     [webView synchronouslyLoadHTMLString:applyAhemStyle(threeParagraphsExample)];

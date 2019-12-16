@@ -1,5 +1,26 @@
 2019-12-16  Daniel Bates  <dabates@apple.com>
 
+        Organize DocumentEditingContext.mm under a more descriptive suite
+        https://bugs.webkit.org/show_bug.cgi?id=205284
+
+        Reviewed by Tim Horton.
+
+        Register with the runtime all of the DocumentEditingContext.mm tests under the suite
+        DocumentEditingContext as opposed to the suite WebKit (as they are now). This makes
+        it easy to run all of these tests using:
+
+                run-api-tests DocumentEditingContext
+
+        This is more useful than letting them stay categorized under the WebKit suite. If it
+        turns out this change interferes with the workflow of others then we can revert this
+        change and look to expose Google Test's regex filtering in run-api-tests to achieve
+        a similiar result given that these tests have the same prefix.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/DocumentEditingContext.mm:
+        (TEST):
+
+2019-12-16  Daniel Bates  <dabates@apple.com>
+
         Use Ahem font to ensure consistent test results
         https://bugs.webkit.org/show_bug.cgi?id=205283
 
