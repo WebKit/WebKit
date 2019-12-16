@@ -158,11 +158,11 @@ void LineBuilder::Run::setComputedHorizontalExpansion(InlineLayoutUnit logicalEx
     m_textContext->setExpansion({ m_textContext->expansion()->behavior, logicalExpansion });
 }
 
-LineBuilder::LineBuilder(const InlineFormattingContext& inlineFormattingContext, Optional<TextAlignMode> horizontalAlignment, SkipAlignment skipAlignment)
+LineBuilder::LineBuilder(const InlineFormattingContext& inlineFormattingContext, Optional<TextAlignMode> horizontalAlignment, IntrinsicSizing intrinsicSizing)
     : m_inlineFormattingContext(inlineFormattingContext)
     , m_collapsibleContent(m_inlineItemRuns)
     , m_horizontalAlignment(horizontalAlignment)
-    , m_skipAlignment(skipAlignment == SkipAlignment::Yes)
+    , m_isIntrinsicSizing(intrinsicSizing == IntrinsicSizing::Yes)
 {
 }
 
@@ -172,7 +172,7 @@ LineBuilder::~LineBuilder()
 
 void LineBuilder::initialize(const Constraints& constraints)
 {
-    ASSERT(m_skipAlignment || constraints.heightAndBaseline);
+    ASSERT(m_isIntrinsicSizing || constraints.heightAndBaseline);
 
     InlineLayoutUnit initialLineHeight = 0;
     InlineLayoutUnit initialBaselineOffset = 0;
@@ -222,7 +222,7 @@ LineBuilder::RunList LineBuilder::close(IsLastLineWithInlineContent isLastLineWi
         runList.append(continousContent.close());
     }
 
-    if (!m_skipAlignment) {
+    if (!m_isIntrinsicSizing) {
         for (auto& run : runList) {
             adjustBaselineAndLineHeight(run);
             run.setLogicalHeight(runContentHeight(run));
@@ -244,7 +244,7 @@ LineBuilder::RunList LineBuilder::close(IsLastLineWithInlineContent isLastLineWi
 
 void LineBuilder::alignContentVertically(RunList& runList)
 {
-    ASSERT(!m_skipAlignment);
+    ASSERT(!m_isIntrinsicSizing);
     for (auto& run : runList) {
         InlineLayoutUnit logicalTop = 0;
         auto& layoutBox = run.layoutBox();
@@ -331,7 +331,7 @@ void LineBuilder::justifyRuns(RunList& runList) const
 
 void LineBuilder::alignContentHorizontally(RunList& runList, IsLastLineWithInlineContent lastLine) const
 {
-    ASSERT(!m_skipAlignment);
+    ASSERT(!m_isIntrinsicSizing);
     auto availableWidth = this->availableWidth() + m_hangingContent.width();
     if (runList.isEmpty() || availableWidth <= 0)
         return;
@@ -658,7 +658,7 @@ void LineBuilder::adjustBaselineAndLineHeight(const Run& run)
 
 InlineLayoutUnit LineBuilder::runContentHeight(const Run& run) const
 {
-    ASSERT(!m_skipAlignment);
+    ASSERT(!m_isIntrinsicSizing);
     auto& fontMetrics = run.style().fontMetrics();
     if (run.isText() || run.isLineBreak())
         return fontMetrics.height();
@@ -700,7 +700,7 @@ bool LineBuilder::isVisuallyNonEmpty(const InlineItemRun& run) const
         ASSERT(run.layoutBox().isInlineBlockBox());
         if (!run.logicalWidth())
             return false;
-        if (m_skipAlignment || formattingContext().geometryForBox(run.layoutBox()).height())
+        if (m_isIntrinsicSizing || formattingContext().geometryForBox(run.layoutBox()).height())
             return true;
         return false;
     }

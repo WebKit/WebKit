@@ -95,7 +95,7 @@ void InlineFormattingContext::lineLayout(const UsedHorizontalValues& usedHorizon
     auto lineLogicalTop = geometryForBox(root()).contentBoxTop();
     unsigned leadingInlineItemIndex = 0;
     Optional<unsigned> partialLeadingContentLength;
-    auto lineBuilder = LineBuilder { *this, root().style().textAlign(), LineBuilder::SkipAlignment::No };
+    auto lineBuilder = LineBuilder { *this, root().style().textAlign(), LineBuilder::IntrinsicSizing::No };
     auto lineLayoutContext = LineLayoutContext { *this, root(), inlineItems };
 
     while (leadingInlineItemIndex < inlineItems.size()) {
@@ -233,7 +233,7 @@ InlineLayoutUnit InlineFormattingContext::computedIntrinsicWidthForConstraint(co
     auto& inlineItems = formattingState().inlineItems();
     InlineLayoutUnit maximumLineWidth = 0;
     unsigned leadingInlineItemIndex = 0;
-    auto lineBuilder = LineBuilder { *this, root().style().textAlign(), LineBuilder::SkipAlignment::Yes };
+    auto lineBuilder = LineBuilder { *this, root().style().textAlign(), LineBuilder::IntrinsicSizing::Yes };
     auto lineLayoutContext = LineLayoutContext { *this, root(), inlineItems };
     while (leadingInlineItemIndex < inlineItems.size()) {
         // Only the horiztonal available width is constrained when computing intrinsic width.

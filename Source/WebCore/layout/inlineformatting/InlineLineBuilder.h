@@ -54,8 +54,8 @@ public:
         Optional<HeightAndBaseline> heightAndBaseline;
     };
 
-    enum class SkipAlignment { No, Yes };
-    LineBuilder(const InlineFormattingContext&, Optional<TextAlignMode>, SkipAlignment);
+    enum class IntrinsicSizing { No, Yes };
+    LineBuilder(const InlineFormattingContext&, Optional<TextAlignMode>, IntrinsicSizing);
     ~LineBuilder();
 
     void initialize(const Constraints&);
@@ -245,7 +245,7 @@ private:
     Optional<Display::LineBox::Baseline> m_initialStrut;
     InlineLayoutUnit m_lineLogicalWidth { 0 };
     Optional<TextAlignMode> m_horizontalAlignment;
-    bool m_skipAlignment { false };
+    bool m_isIntrinsicSizing { false };
     bool m_hasIntrusiveFloat { false };
     Display::LineBox m_lineBox;
     Optional<bool> m_lineIsVisuallyEmptyBeforeCollapsibleContent;
