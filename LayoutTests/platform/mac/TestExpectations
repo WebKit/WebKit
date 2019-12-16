@@ -1962,3 +1962,5 @@ webkit.org/b/204820 [ Catalina+ ] fast/text/emoji-gender-9.html [ ImageOnlyFailu
 webkit.org/b/204246 [ Catalina ] editing/mac/selection/context-menu-select-editability.html [ Failure ]
 
 webkit.org/b/204247 [ Catalina ] webaudio/silence-after-playback.html [ Failure ]
+
+webkit.org/b/205216 imported/w3c/web-platform-tests/content-security-policy/reporting/report-same-origin-with-cookies.html [ Pass Failure ]

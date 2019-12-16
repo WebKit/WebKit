@@ -1,5 +1,14 @@
 2019-12-16  Truitt Savell  <tsavell@apple.com>
 
+        REGRESSION (r253312): imported/w3c/web-platform-tests/content-security-policy/reporting/report-same-origin-with-cookies.html is super flaky
+        https://bugs.webkit.org/show_bug.cgi?id=205216
+
+        Unreviewed test gardening.
+
+        * platform/mac/TestExpectations:
+
+2019-12-16  Truitt Savell  <tsavell@apple.com>
+
         [ Catalina ] imported/w3c/web-platform-tests/css/css-images/multiple-position-color-stop-conic.html is failing
         https://bugs.webkit.org/show_bug.cgi?id=204250
 
