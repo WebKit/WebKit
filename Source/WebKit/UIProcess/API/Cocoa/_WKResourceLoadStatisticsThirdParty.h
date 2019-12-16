@@ -29,6 +29,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface _WKResourceLoadStatisticsThirdParty : NSObject
 
++ (instancetype)new NS_UNAVAILABLE;
+- (instancetype)init NS_UNAVAILABLE;
+
 @property (nonatomic, readonly) NSString *thirdPartyDomain;
 @property (nonatomic, readonly) NSArray<_WKResourceLoadStatisticsFirstParty *> *underFirstParties;
 

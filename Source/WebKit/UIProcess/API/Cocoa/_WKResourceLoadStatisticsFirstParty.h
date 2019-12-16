@@ -27,6 +27,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface _WKResourceLoadStatisticsFirstParty : NSObject
 
++ (instancetype)new NS_UNAVAILABLE;
+- (instancetype)init NS_UNAVAILABLE;
+
 @property (nonatomic, readonly) NSString *firstPartyDomain;
 @property (nonatomic, readonly) BOOL thirdPartyStorageAccessGranted;
 
