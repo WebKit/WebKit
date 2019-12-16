@@ -56,6 +56,10 @@ static inline bool isContentSplitAllowed(const LineBreaker::Content::Run& run)
 
 static inline bool isTextSplitAtArbitraryPositionAllowed(const RenderStyle& style, bool lineIsEmpty)
 {
+    // Disregard any prohibition against line breaks mandated by the word-break property.
+    // The different wrapping opportunities must not be prioritized. Hyphenation is not applied.
+    if (style.lineBreak() == LineBreak::Anywhere)
+        return true;
     if (style.wordBreak() == WordBreak::BreakAll)
         return true;
     // For compatibility with legacy content, the word-break property also supports a deprecated break-word keyword.
@@ -277,6 +281,11 @@ bool LineBreaker::Content::isAtSoftWrapOpportunity(const InlineItem& inlineItem,
     }
     auto* lastUncomittedContent = &priorContent.runs().last().inlineItem;
     if (inlineItem.isText()) {
+        if (inlineItem.style().lineBreak() == LineBreak::Anywhere) {
+            // There is a soft wrap opportunity around every typographic character unit, including around any punctuation character
+            // or preserved white spaces, or in the middle of words.
+            return true;
+        }
         if (downcast<InlineTextItem>(inlineItem).isWhitespace()) {
             // [prior content][ ] (<span>some_content</span> )
             // white-space: break-spaces: line breaking opportunity exists after every preserved white space character, but not before.
