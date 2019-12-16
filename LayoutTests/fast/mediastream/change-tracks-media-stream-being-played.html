@@ -5,6 +5,8 @@
 </head>
 <body>
 <script type="application/javascript">
+window.onunhandledrejection = () => false;
+
 function waitFor(duration)
 {
     return new Promise((resolve) => setTimeout(resolve, duration));

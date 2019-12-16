@@ -1,3 +1,13 @@
+2019-12-16  youenn fablet  <youenn@apple.com>
+
+        fast/mediastream/change-tracks-media-stream-being-played.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=205277
+
+        Reviewed by Eric Carlson.
+
+        * fast/mediastream/change-tracks-media-stream-being-played.html:
+        Make sure unhandled promise rejection messages do not make the test flaky.
+
 2019-12-16  Chris Dumez  <cdumez@apple.com>
 
         Layout Test imported/w3c/web-platform-tests/service-workers/service-worker/ready.https.html is a flaky failure (test harness timeout)
