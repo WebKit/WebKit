@@ -3562,20 +3562,19 @@ void AccessibilityRenderObject::ariaListboxVisibleChildren(AccessibilityChildren
 void AccessibilityRenderObject::visibleChildren(AccessibilityChildrenVector& result)
 {
     ASSERT(result.isEmpty());
-        
-    // only listboxes are asked for their visible children. 
-    if (ariaRoleAttribute() != AccessibilityRole::ListBox) {
-        // native list boxes would be AccessibilityListBoxes, so only check for aria list boxes
-        ASSERT_NOT_REACHED();
+
+    // Only listboxes are asked for their visible children.
+    // Native list boxes would be AccessibilityListBoxes, so only check for aria list boxes.
+    if (ariaRoleAttribute() != AccessibilityRole::ListBox)
         return;
-    }
     return ariaListboxVisibleChildren(result);
 }
  
 void AccessibilityRenderObject::tabChildren(AccessibilityChildrenVector& result)
 {
-    ASSERT(roleValue() == AccessibilityRole::TabList);
-    
+    if (roleValue() != AccessibilityRole::TabList)
+        return;
+
     for (const auto& child : children()) {
         if (child->isTabItem())
             result.append(child);

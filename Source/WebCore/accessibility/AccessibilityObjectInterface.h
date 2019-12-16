@@ -1129,6 +1129,28 @@ T* findAncestor(const T& object, bool includeSelf, const F& matches)
     return nullptr;
 }
 
+template<typename U> inline void performFunctionOnMainThread(U&& lambda)
+{
+    if (isMainThread())
+        return lambda();
+
+    callOnMainThread([&lambda] {
+        lambda();
+    });
+}
+
+template<typename T, typename U> inline T retrieveValueFromMainThread(U&& lambda)
+{
+    if (isMainThread())
+        return lambda();
+
+    T value;
+    callOnMainThreadAndWait([&value, &lambda] {
+        value = lambda();
+    });
+    return value;
+}
+
 } // namespace Accessibility
 
 } // namespace WebCore

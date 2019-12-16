@@ -76,22 +76,12 @@ bool AccessibilityController::enhancedAccessibilityEnabled()
 Ref<AccessibilityUIElement> AccessibilityController::rootElement()
 {
     WKBundlePageRef page = InjectedBundle::singleton().page()->page();
-    PlatformUIElement root = nullptr;
+    PlatformUIElement root = static_cast<PlatformUIElement>(WKAccessibilityRootObject(page));
 
-    if (m_useAXThread) {
-        AXThread::dispatch([&root, page, this] {
-            root = static_cast<PlatformUIElement>(WKAccessibilityRootObject(page));
-            m_semaphore.signal();
-        });
-
-        m_semaphore.wait();
-    } else {
-        root = static_cast<PlatformUIElement>(WKAccessibilityRootObject(page));
-
-        // Set m_useAXThread to true for next request.
-        if (WKAccessibilityCanUseSecondaryAXThread(page))
-            m_useAXThread = true;
-    }
+    // Now that we have a root and the isolated tree is generated, set
+    // m_useAXThread to true for next request to be handled in the secondary thread.
+    if (WKAccessibilityCanUseSecondaryAXThread(InjectedBundle::singleton().page()->page()))
+        m_useAXThread = true;
 
     return AccessibilityUIElement::create(root);
 }
@@ -103,7 +93,7 @@ Ref<AccessibilityUIElement> AccessibilityController::focusedElement()
     return AccessibilityUIElement::create(focusedElement);
 }
 
-void AccessibilityController::execute(Function<void()>&& function)
+void AccessibilityController::executeOnAXThreadIfPossible(Function<void()>&& function)
 {
     if (m_useAXThread) {
         AXThread::dispatch([&function, this] {
@@ -111,6 +101,11 @@ void AccessibilityController::execute(Function<void()>&& function)
             m_semaphore.signal();
         });
 
+        // Spin the main loop so that any required DOM processing can be
+        // executed in the main thread. That is the case of most parameterized
+        // attributes, where the attribute value has to be calculated
+        // back in the main thread.
+        CFRunLoopRunInMode(kCFRunLoopDefaultMode, .25, false);
         m_semaphore.wait();
     } else
         function();

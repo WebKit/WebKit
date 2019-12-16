@@ -693,6 +693,20 @@ void AXIsolatedObject::updateBackingStore()
     }
 }
 
+Vector<RefPtr<Range>> AXIsolatedObject::findTextRanges(AccessibilitySearchTextCriteria const& criteria) const
+{
+    return Accessibility::retrieveValueFromMainThread<Vector<RefPtr<Range>>>([&criteria, axID = objectID(), this] () -> Vector<RefPtr<Range>> {
+        return axObjectCache()->objectFromAXID(axID)->findTextRanges(criteria);
+    });
+}
+
+Vector<String> AXIsolatedObject::performTextOperation(AccessibilityTextOperation const& textOperation)
+{
+    return Accessibility::retrieveValueFromMainThread<Vector<String>>([&textOperation, axID = objectID(), this] () -> Vector<String> {
+        return axObjectCache()->objectFromAXID(axID)->performTextOperation(textOperation);
+    });
+}
+
 bool AXIsolatedObject::replaceTextInRange(const String&, const PlainTextRange&)
 {
     ASSERT_NOT_REACHED();
@@ -1331,8 +1345,7 @@ void AXIsolatedObject::elementsFromAttribute(Vector<Element*>&, const QualifiedN
 
 AXObjectCache* AXIsolatedObject::axObjectCache() const
 {
-    ASSERT_NOT_REACHED();
-    return nullptr;
+    return tree()->axObjectCache();
 }
 
 Element* AXIsolatedObject::anchorElement() const

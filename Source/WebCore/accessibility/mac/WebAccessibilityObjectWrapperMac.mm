@@ -555,33 +555,11 @@ extern "C" AXUIElementRef NSAccessibilityCreateAXUIElementRef(id element);
     [super detach];
 }
 
-template<typename U> inline void performAccessibilityFunctionOnMainThread(U&& lambda)
-{
-    if (isMainThread())
-        return lambda();
-
-    callOnMainThread([&lambda] {
-        lambda();
-    });
-}
-
-template<typename T, typename U> inline T retrieveAccessibilityValueFromMainThread(U&& lambda)
-{
-    if (isMainThread())
-        return lambda();
-    
-    T value;
-    callOnMainThreadAndWait([&value, &lambda] {
-        value = lambda();
-    });
-    return value;
-}
-
 - (id)attachmentView
 {
     ASSERT(m_object->isAttachment());
 
-    return retrieveAccessibilityValueFromMainThread<id>([protectedSelf = RetainPtr<WebAccessibilityObjectWrapper>(self)] () -> id {
+    return Accessibility::retrieveValueFromMainThread<id>([protectedSelf = RetainPtr<WebAccessibilityObjectWrapper>(self)] () -> id {
         auto* widget = protectedSelf->m_object->widgetForAttachmentView();
         if (!widget)
             return nil;
@@ -1920,7 +1898,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 
 - (NSArray*)renderWidgetChildren
 {
-    return retrieveAccessibilityValueFromMainThread<NSArray *>([protectedSelf = RetainPtr<WebAccessibilityObjectWrapper>(self)] () -> NSArray * {
+    return Accessibility::retrieveValueFromMainThread<NSArray *>([protectedSelf = RetainPtr<WebAccessibilityObjectWrapper>(self)] () -> NSArray * {
         Widget* widget = protectedSelf->m_object->widget();
         if (!widget)
             return nil;
@@ -1973,7 +1951,7 @@ static NSMutableArray *convertStringsToNSArray(const Vector<String>& vector)
 
 - (id)associatedPluginParent
 {
-    return retrieveAccessibilityValueFromMainThread<id>([protectedSelf = RetainPtr<WebAccessibilityObjectWrapper>(self)] () -> id {
+    return Accessibility::retrieveValueFromMainThread<id>([protectedSelf = RetainPtr<WebAccessibilityObjectWrapper>(self)] () -> id {
         if (!protectedSelf->m_object || !protectedSelf->m_object->hasApplePDFAnnotationAttribute())
             return nil;
     
@@ -2326,7 +2304,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (id)scrollViewParent
 {
-    return retrieveAccessibilityValueFromMainThread<id>([protectedSelf = RetainPtr<WebAccessibilityObjectWrapper>(self)] () -> id {
+    return Accessibility::retrieveValueFromMainThread<id>([protectedSelf = RetainPtr<WebAccessibilityObjectWrapper>(self)] () -> id {
         if (!is<AccessibilityScrollView>(protectedSelf->m_object))
             return nil;
 
@@ -2371,7 +2349,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (id)windowElement:(NSString*)attributeName
 {
-    return retrieveAccessibilityValueFromMainThread<id>([attributeName, protectedSelf = RetainPtr<WebAccessibilityObjectWrapper>(self)] () -> id {
+    return Accessibility::retrieveValueFromMainThread<id>([attributeName, protectedSelf = RetainPtr<WebAccessibilityObjectWrapper>(self)] () -> id {
         id remoteParent = [protectedSelf remoteAccessibilityParentObject];
         if (remoteParent) {
             ALLOW_DEPRECATED_DECLARATIONS_BEGIN
@@ -3497,7 +3475,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (void)accessibilityShowContextMenu
 {
-    performAccessibilityFunctionOnMainThread([protectedSelf = RetainPtr<WebAccessibilityObjectWrapper>(self)] {
+    Accessibility::performFunctionOnMainThread([protectedSelf = RetainPtr<WebAccessibilityObjectWrapper>(self)] {
         [protectedSelf _accessibilityShowContextMenu];
     });
 }
@@ -3925,10 +3903,12 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     // dispatch
     if ([attribute isEqualToString:NSAccessibilitySelectTextWithCriteriaParameterizedAttribute]) {
         // To be deprecated.
-        auto criteria = accessibilityTextCriteriaForParameterizedAttribute(dictionary);
-        criteria.second.textRanges = m_object->findTextRanges(criteria.first);
-        ASSERT(criteria.second.textRanges.size() <= 1);
-        Vector<String> result = m_object->performTextOperation(criteria.second);
+        auto result = Accessibility::retrieveValueFromMainThread<Vector<String>>([dictionary, self] () -> Vector<String> {
+            auto criteria = accessibilityTextCriteriaForParameterizedAttribute(dictionary);
+            criteria.second.textRanges = m_object->findTextRanges(criteria.first);
+            ASSERT(criteria.second.textRanges.size() <= 1);
+            return m_object->performTextOperation(criteria.second);
+        });
         ASSERT(result.size() <= 1);
         if (result.size() > 0)
             return result[0];
@@ -3937,20 +3917,24 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 
     if ([attribute isEqualToString:NSAccessibilitySearchTextWithCriteriaParameterizedAttribute]) {
         auto criteria = accessibilitySearchTextCriteriaForParameterizedAttribute(dictionary);
-        auto ranges = m_object->findTextRanges(criteria);
-        if (ranges.isEmpty())
-            return nil;
-        NSMutableArray *markers = [NSMutableArray arrayWithCapacity:ranges.size()];
-        for (auto range : ranges) {
-            if (id marker = [self textMarkerRangeFromRange:range])
-                [markers addObject:marker];
-        }
-        return markers;
+        return Accessibility::retrieveValueFromMainThread<NSArray *>([&criteria, self] () -> NSArray * {
+            auto ranges = m_object->findTextRanges(criteria);
+            if (ranges.isEmpty())
+                return nil;
+            NSMutableArray *markers = [NSMutableArray arrayWithCapacity:ranges.size()];
+            for (auto range : ranges) {
+                if (id marker = [self textMarkerRangeFromRange:range])
+                    [markers addObject:marker];
+            }
+            return markers;
+        });
     }
 
     if ([attribute isEqualToString:NSAccessibilityTextOperationParameterizedAttribute]) {
-        auto textOperation = accessibilityTextOperationForParameterizedAttribute(self, dictionary);
-        auto operationResult = m_object->performTextOperation(textOperation);
+        auto operationResult = Accessibility::retrieveValueFromMainThread<Vector<String>>([dictionary, self] () -> Vector<String> {
+            auto textOperation = accessibilityTextOperationForParameterizedAttribute(self, dictionary);
+            return m_object->performTextOperation(textOperation);
+        });
         if (operationResult.isEmpty())
             return nil;
         NSMutableArray *result = [NSMutableArray arrayWithCapacity:operationResult.size()];

@@ -1,3 +1,19 @@
+2019-12-16  Andres Gonzalez  <andresg_22@apple.com>
+
+        Isolated object implementation of parameterized attribute SelectTextWithCriteria.
+        https://bugs.webkit.org/show_bug.cgi?id=205210
+
+        Reviewed by Chris Fleizach.
+
+        * WebKitTestRunner/InjectedBundle/AccessibilityController.cpp:
+        (WTR::AccessibilityController::rootElement): Always run in my thread.
+        (WTR::AccessibilityController::execute): Dispatches to the secondary thread. Spins the main loop to allow parameterized attributes methods to execute in main thread.
+        * WebKitTestRunner/InjectedBundle/mac/AccessibilityControllerMac.mm:
+        (WTR::findAccessibleObjectById):
+        (WTR::AccessibilityController::accessibleElementById):
+        * WebKitTestRunner/InjectedBundle/mac/AccessibilityUIElementMac.mm:
+        (WTR::AccessibilityUIElement::selectTextWithCriteria):
+
 2019-12-16  Per Arne Vollan  <pvollan@apple.com>
 
         Unreviewed build fix for tvOS after r253440.

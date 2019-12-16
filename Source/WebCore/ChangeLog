@@ -1,3 +1,44 @@
+2019-12-16  Andres Gonzalez  <andresg_22@apple.com>
+
+        Isolated object implementation of parameterized attribute SelectTextWithCriteria.
+        https://bugs.webkit.org/show_bug.cgi?id=205210
+
+        Reviewed by Chris Fleizach.
+
+        LayoutTests/accessibility/mac/find-and-replace-match-capitalization.html exercise this functionality.
+
+        Requests for parameterized attributes that require computations in
+        the WebCore DOM need to be dispatched to the main thread. This
+        change is the blueprint for all other attributes to follow.
+
+        * accessibility/AXObjectCache.cpp:
+        (WebCore::AXObjectCache::isolatedTreeRootObject): The isolated tree root object is always retrieved in the main thread.
+        (WebCore::AXObjectCache::generateIsolatedTree): Sets the AXObjectCache for the generated IsolatedTree.
+        * accessibility/AccessibilityObjectInterface.h: Added the template functions to dispatch to the main thread.
+        (WebCore::Accessibility::performFunctionOnMainThread):
+        (WebCore::Accessibility::retrieveValueFromMainThread):
+        * accessibility/AccessibilityRenderObject.cpp: Removed obsolete asserts.
+        (WebCore::AccessibilityRenderObject::visibleChildren):
+        (WebCore::AccessibilityRenderObject::tabChildren):
+        * accessibility/isolatedtree/AXIsolatedTree.h: It now holds a reference to the AXObjectCache.
+        (WebCore::AXIsolatedTree::axObjectCache const):
+        (WebCore::AXIsolatedTree::setAXObjectCache):
+        * accessibility/isolatedtree/AXIsolatedTreeNode.cpp:
+        (WebCore::AXIsolatedObject::findTextRanges const):
+        (WebCore::AXIsolatedObject::performTextOperation):
+        (WebCore::AXIsolatedObject::axObjectCache const):
+        * accessibility/isolatedtree/AXIsolatedTreeNode.h:
+        * accessibility/mac/WebAccessibilityObjectWrapperMac.mm: Moved template functions to dispatch to the main thread into the Accessibility namespace to use them in the isolated object implementation.
+        (-[WebAccessibilityObjectWrapper attachmentView]):
+        (-[WebAccessibilityObjectWrapper renderWidgetChildren]):
+        (-[WebAccessibilityObjectWrapper associatedPluginParent]):
+        (-[WebAccessibilityObjectWrapper scrollViewParent]):
+        (-[WebAccessibilityObjectWrapper windowElement:]):
+        (-[WebAccessibilityObjectWrapper accessibilityShowContextMenu]):
+        (-[WebAccessibilityObjectWrapper accessibilityAttributeValue:forParameter:]):
+        (performAccessibilityFunctionOnMainThread): Moved.
+        (retrieveAccessibilityValueFromMainThread): Moved.
+
 2019-12-16  youenn fablet  <youenn@apple.com>
 
         Consider top-level context whose origin is unique as insecure

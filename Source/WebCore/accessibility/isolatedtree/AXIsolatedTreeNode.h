@@ -521,6 +521,10 @@ private:
     bool isBusy() const override { return boolAttributeValue(AXPropertyName::IsBusy); }
     bool isInlineText() const override { return boolAttributeValue(AXPropertyName::IsInlineText); }
 
+    // Parameterized attribute retrieval.
+    Vector<RefPtr<Range>> findTextRanges(AccessibilitySearchTextCriteria const&) const override;
+    Vector<String> performTextOperation(AccessibilityTextOperation const&) override;
+
     // Attributes retrieved from the root node only so that the data isn't duplicated on each node.
     uint64_t sessionID() const override;
     String documentURI() const override;
@@ -598,8 +602,6 @@ private:
     String textUnderElement(AccessibilityTextUnderElementMode = AccessibilityTextUnderElementMode()) const override { return String(); }
     RefPtr<Range> getMisspellingRange(RefPtr<Range> const&, AccessibilitySearchDirection) const override { return nullptr; }
     void findMatchingObjects(AccessibilitySearchCriteria*, AccessibilityChildrenVector&) override { }
-    Vector<RefPtr<Range>> findTextRanges(AccessibilitySearchTextCriteria const&) const override { return Vector<RefPtr<Range>>(); }
-    Vector<String> performTextOperation(AccessibilityTextOperation const&) override { return Vector<String>(); }
     FloatRect convertFrameToSpace(const FloatRect&, AccessibilityConversionSpace) const override { return FloatRect(); }
     void increment() override { }
     void decrement() override { }

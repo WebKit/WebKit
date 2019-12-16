@@ -81,6 +81,7 @@ static id findAccessibleObjectById(id obj, NSString *idAttribute)
         return obj;
     END_AX_OBJC_EXCEPTIONS
 
+    BEGIN_AX_OBJC_EXCEPTIONS
     NSArray *children = [obj accessibilityAttributeValue:NSAccessibilityChildrenAttribute];
     NSUInteger childrenCount = [children count];
     for (NSUInteger i = 0; i < childrenCount; ++i) {
@@ -88,6 +89,7 @@ static id findAccessibleObjectById(id obj, NSString *idAttribute)
         if (result)
             return result;
     }
+    END_AX_OBJC_EXCEPTIONS
 
     return nullptr;
 }
@@ -95,12 +97,24 @@ static id findAccessibleObjectById(id obj, NSString *idAttribute)
 RefPtr<AccessibilityUIElement> AccessibilityController::accessibleElementById(JSStringRef idAttribute)
 {
     WKBundlePageRef page = InjectedBundle::singleton().page()->page();
-    id root = (__bridge id)WKAccessibilityRootObject(page);
+    PlatformUIElement root = nullptr;
 
-    id result = findAccessibleObjectById(root, [NSString stringWithJSStringRef:idAttribute]);
+    executeOnAXThreadIfPossible([&page, &root] {
+        root = static_cast<PlatformUIElement>(WKAccessibilityRootObject(page));
+    });
+
+    // Now that we have a root and the isolated tree is generated, set
+    // m_useAXThread to true for next request to be handled in the secondary thread.
+    if (WKAccessibilityCanUseSecondaryAXThread(InjectedBundle::singleton().page()->page()))
+        m_useAXThread = true;
+
+    id result;
+    executeOnAXThreadIfPossible([&root, &idAttribute, &result] {
+        result = findAccessibleObjectById(root, [NSString stringWithJSStringRef:idAttribute]);
+    });
+
     if (result)
         return AccessibilityUIElement::create(result);
-
     return nullptr;
 }
 

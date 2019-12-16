@@ -735,25 +735,23 @@ AXCoreObject* AXObjectCache::rootObject()
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
 AXCoreObject* AXObjectCache::isolatedTreeRootObject()
 {
+    ASSERT(isMainThread());
     auto pageID = m_document.pageID();
     if (!pageID)
         return nullptr;
 
     auto tree = AXIsolatedTree::treeForPageID(*pageID);
-    if (!tree && isMainThread()) {
+    if (!tree) {
         tree = generateIsolatedTree(*pageID, m_document);
         // Now that we have created our tree, initialize the secondary thread,
         // so future requests come in on the other thread.
         _AXUIElementUseSecondaryAXThread(true);
-        return tree->rootNode().get();
     }
 
-    if (tree && !isMainThread()) {
-        tree->applyPendingChanges();
+    if (tree)
         return tree->rootNode().get();
-    }
 
-    // Should not get here, couldn't create or update the IsolatedTree.
+    // Should not get here, couldn't create the IsolatedTree.
     ASSERT_NOT_REACHED();
     return nullptr;
 }
@@ -3094,6 +3092,7 @@ Ref<AXIsolatedTree> AXObjectCache::generateIsolatedTree(PageIdentifier pageID, D
     auto* axObjectCache = document.axObjectCache();
     if (!axObjectCache)
         return makeRef(*tree);
+    tree->setAXObjectCache(axObjectCache);
 
     auto* axRoot = axObjectCache->getOrCreate(document.view());
     if (axRoot) {
