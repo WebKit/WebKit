@@ -1,3 +1,16 @@
+2019-12-16  Doug Kelly  <dougk@apple.com>
+
+        Ensure consistent sorting of identical track names
+        https://bugs.webkit.org/show_bug.cgi?id=204825
+
+        Reviewed by Eric Carlson.
+
+        When sorting TextTracks, if the menu text is the same, fall back to the order in which the tracks were added to ensure a consistent sort.
+
+        * page/CaptionUserPreferencesMediaAF.cpp:
+        (WebCore::textTrackCompare):
+        (WebCore::CaptionUserPreferencesMediaAF::sortedTrackListForMenu):
+
 2019-12-16  Antti Koivisto  <antti@apple.com>
 
         Remove display:contents feature flag
