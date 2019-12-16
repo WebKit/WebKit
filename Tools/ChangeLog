@@ -1,5 +1,11 @@
 2019-12-16  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        Unreviewed GTK gardening. Mark /webkit/WebKitWebView/pointer-lock-permission-request as timeout
+
+        * TestWebKitAPI/glib/TestExpectations.json:
+
+2019-12-16  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         Unreviewed. Fix GLib test /webkit/WebKitWebView/geolocation-permission-requests after r249207
 
         PERMISSION_DENIED is returned for non-secure contexts instead of POSITION_UNAVAILABLE since r249207.

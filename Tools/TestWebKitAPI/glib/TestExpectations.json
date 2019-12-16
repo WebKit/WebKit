@@ -12,6 +12,9 @@
             },
             "/webkit/WebKitWebView/audio-usermedia-permission-request": {
                 "expected": {"gtk": {"status": ["TIMEOUT"], "bug": "webkit.org/b/158257"}}
+            },
+            "/webkit/WebKitWebView/pointer-lock-permission-request": {
+                "expected": {"gtk": {"status": ["TIMEOUT"], "bug": "webkit.org/b/205266"}}
             }
         }
     },
