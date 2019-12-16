@@ -1,3 +1,13 @@
+2019-12-16  Keith Miller  <keith_miller@apple.com>
+
+        Fix btjs on current lldb
+        https://bugs.webkit.org/show_bug.cgi?id=205293
+
+        Reviewed by Mark Lam.
+
+        * lldb/lldb_webkit.py:
+        (btjs):
+
 2019-12-16  Andres Gonzalez  <andresg_22@apple.com>
 
         Isolated object implementation of parameterized attribute SelectTextWithCriteria.

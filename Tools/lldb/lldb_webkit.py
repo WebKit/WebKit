@@ -269,13 +269,13 @@ def btjs(debugger, command, result, internal_dict):
     process = target.GetProcess()
     thread = process.GetSelectedThread()
 
-    if target.FindFunctions("JSC::ExecState::describeFrame").GetSize() or target.FindFunctions("_ZN3JSC9ExecState13describeFrameEv").GetSize():
+    if target.FindFunctions("JSC::CallFrame::describeFrame").GetSize() or target.FindFunctions("_ZN3JSC9CallFrame13describeFrameEv").GetSize():
         annotateJSFrames = True
     else:
         annotateJSFrames = False
 
     if not annotateJSFrames:
-        print("Warning: Can't find JSC::ExecState::describeFrame() in executable to annotate JavaScript frames")
+        print("Warning: Can't find JSC::CallFrame::describeFrame() in executable to annotate JavaScript frames")
 
     backtraceDepth = thread.GetNumFrames()
 
@@ -286,7 +286,8 @@ def btjs(debugger, command, result, internal_dict):
             return
 
     threadFormat = '* thread #{num}: tid = {tid:#x}, {pcAddr:' + addressFormat + '}, queue = \'{queueName}, stop reason = {stopReason}'
-    print(threadFormat.format(num=thread.GetIndexID(), tid=thread.GetThreadID(), pcAddr=thread.GetFrameAtIndex(0).GetPC(), queueName=thread.GetQueueName(), stopReason=thread.GetStopDescription(30)))
+    # FIXME: GetStopDescription needs to be pass a stupidly large length because lldb has weird utf-8 encoding errors if it's too small. See: rdar://problem/57980599
+    print(threadFormat.format(num=thread.GetIndexID(), tid=thread.GetThreadID(), pcAddr=thread.GetFrameAtIndex(0).GetPC(), queueName=thread.GetQueueName(), stopReason=thread.GetStopDescription(300)))
 
     for frame in thread:
         if backtraceDepth < 1:
@@ -298,13 +299,11 @@ def btjs(debugger, command, result, internal_dict):
 
         if annotateJSFrames and not frame or not frame.GetSymbol() or frame.GetSymbol().GetName() == "llint_entry":
             callFrame = frame.GetSP()
-            JSFrameDescription = frame.EvaluateExpression("((JSC::ExecState*)0x%x)->describeFrame()" % frame.GetFP()).GetSummary()
+            JSFrameDescription = frame.EvaluateExpression("((JSC::CallFrame*)0x%x)->describeFrame()" % frame.GetFP()).GetSummary()
             if not JSFrameDescription:
-                JSFrameDescription = frame.EvaluateExpression("((JSC::CallFrame*)0x%x)->describeFrame()" % frame.GetFP()).GetSummary()
-            if not JSFrameDescription:
-                JSFrameDescription = frame.EvaluateExpression("(char*)_ZN3JSC9ExecState13describeFrameEv(0x%x)" % frame.GetFP()).GetSummary()
+                JSFrameDescription = frame.EvaluateExpression("(char*)_ZN3JSC9CallFrame13describeFrameEv(0x%x)" % frame.GetFP()).GetSummary()
             if JSFrameDescription:
-                JSFrameDescription = string.strip(JSFrameDescription, '"')
+                JSFrameDescription = JSFrameDescription.strip('"')
                 frameFormat = '    frame #{num}: {addr:' + addressFormat + '} {desc}'
                 print(frameFormat.format(num=frame.GetFrameID(), addr=frame.GetPC(), desc=JSFrameDescription))
                 continue
