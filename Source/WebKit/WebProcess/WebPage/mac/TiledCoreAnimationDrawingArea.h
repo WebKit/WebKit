@@ -75,11 +75,11 @@ private:
     void setViewExposedRect(Optional<WebCore::FloatRect>) override;
     Optional<WebCore::FloatRect> viewExposedRect() const override { return m_scrolledViewExposedRect; }
 
-    bool supportsAsyncScrolling() override { return true; }
+    bool supportsAsyncScrolling() const override { return true; }
 
     void dispatchAfterEnsuringUpdatedScrollPosition(WTF::Function<void ()>&&) override;
 
-    bool shouldUseTiledBackingForFrameView(const WebCore::FrameView&) override;
+    bool shouldUseTiledBackingForFrameView(const WebCore::FrameView&) const override;
 
     void activityStateDidChange(OptionSet<WebCore::ActivityState::Flag> changed, ActivityStateChangeID, const Vector<CallbackID>&) override;
     void didUpdateActivityStateTimerFired();

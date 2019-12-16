@@ -74,11 +74,12 @@ private:
     RefPtr<WebCore::DisplayRefreshMonitor> createDisplayRefreshMonitor(WebCore::PlatformDisplayID) override;
     void willDestroyDisplayRefreshMonitor(WebCore::DisplayRefreshMonitor*);
 
-    bool shouldUseTiledBackingForFrameView(const WebCore::FrameView&) override;
+    bool shouldUseTiledBackingForFrameView(const WebCore::FrameView&) const override;
 
     void updatePreferences(const WebPreferencesStore&) override;
 
-    bool supportsAsyncScrolling() override { return true; }
+    bool supportsAsyncScrolling() const override { return true; }
+    bool usesDelegatedScrolling() const override { return true; }
 
     void setLayerTreeStateIsFrozen(bool) override;
     bool layerTreeStateIsFrozen() const override { return m_isFlushingSuspended; }

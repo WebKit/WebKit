@@ -291,7 +291,7 @@ void DrawingAreaCoordinatedGraphics::didChangeViewportAttributes(ViewportAttribu
 }
 #endif
 
-bool DrawingAreaCoordinatedGraphics::supportsAsyncScrolling()
+bool DrawingAreaCoordinatedGraphics::supportsAsyncScrolling() const
 {
     return m_supportsAsyncScrolling;
 }

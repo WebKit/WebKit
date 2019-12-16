@@ -65,7 +65,7 @@ private:
     void didChangeViewportAttributes(WebCore::ViewportAttributes&&) override;
 #endif
 
-    bool supportsAsyncScrolling() override;
+    bool supportsAsyncScrolling() const override;
 
     WebCore::GraphicsLayerFactory* graphicsLayerFactory() override;
     void setRootCompositingLayer(WebCore::GraphicsLayer*) override;

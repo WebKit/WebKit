@@ -1,3 +1,33 @@
+2019-12-16  Simon Fraser  <simon.fraser@apple.com>
+
+        Let the DrawingArea decide whether scrolling is delegated
+        https://bugs.webkit.org/show_bug.cgi?id=205258
+
+        Reviewed by Anders Carlsson.
+        
+        Delegated scrolling was hardcoded on for iOS WK2 (as it is for iOS WK1) and off for macOS,
+        but if macOS is using RemoteLayerTreeDrawingArea that should also use delegated scrolling.
+        
+        Also make some DrawingArea functions const, and put m_frame->coreFrame()->view() into
+        a local RefPtr in WebFrameLoaderClient::transitionToCommittedForNewPage().
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::transitionToCommittedForNewPage):
+        * WebProcess/WebPage/DrawingArea.h:
+        (WebKit::DrawingArea::supportsAsyncScrolling const):
+        (WebKit::DrawingArea::usesDelegatedScrolling const):
+        (WebKit::DrawingArea::shouldUseTiledBackingForFrameView const):
+        (WebKit::DrawingArea::supportsAsyncScrolling): Deleted.
+        (WebKit::DrawingArea::shouldUseTiledBackingForFrameView): Deleted.
+        * WebProcess/WebPage/RemoteLayerTree/RemoteLayerTreeDrawingArea.h:
+        * WebProcess/WebPage/RemoteLayerTree/RemoteLayerTreeDrawingArea.mm:
+        (WebKit::RemoteLayerTreeDrawingArea::shouldUseTiledBackingForFrameView const):
+        (WebKit::RemoteLayerTreeDrawingArea::shouldUseTiledBackingForFrameView): Deleted.
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.h:
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm:
+        (WebKit::TiledCoreAnimationDrawingArea::shouldUseTiledBackingForFrameView const):
+        (WebKit::TiledCoreAnimationDrawingArea::shouldUseTiledBackingForFrameView): Deleted.
+
 2019-12-16  Eric Carlson  <eric.carlson@apple.com>
 
         Log when unimplemented remote MediaPlayer methods are called

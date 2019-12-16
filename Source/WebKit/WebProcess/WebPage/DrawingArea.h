@@ -105,9 +105,10 @@ public:
 #endif
     virtual void mainFrameScrollabilityChanged(bool) { }
 
-    virtual bool supportsAsyncScrolling() { return false; }
+    virtual bool supportsAsyncScrolling() const { return false; }
+    virtual bool usesDelegatedScrolling() const { return false; }
 
-    virtual bool shouldUseTiledBackingForFrameView(const WebCore::FrameView&) { return false; }
+    virtual bool shouldUseTiledBackingForFrameView(const WebCore::FrameView&) const { return false; }
 
     virtual WebCore::GraphicsLayerFactory* graphicsLayerFactory() { return nullptr; }
     virtual void setRootCompositingLayer(WebCore::GraphicsLayer*) = 0;

@@ -1,3 +1,14 @@
+2019-12-16  Simon Fraser  <simon.fraser@apple.com>
+
+        Let the DrawingArea decide whether scrolling is delegated
+        https://bugs.webkit.org/show_bug.cgi?id=205258
+
+        Reviewed by Anders Carlsson.
+        
+        Let Xcode have its way with the workspace file, after the libANGLE rename.
+
+        * WebKit.xcworkspace/xcshareddata/xcschemes/All Source.xcscheme:
+
 2019-12-12  Don Olmstead  <don.olmstead@sony.com>
 
         [CMake] Add LibPSL::LibPSL target

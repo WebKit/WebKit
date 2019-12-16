@@ -727,7 +727,7 @@ void TiledCoreAnimationDrawingArea::updateDebugInfoLayer(bool showLayer)
     }
 }
 
-bool TiledCoreAnimationDrawingArea::shouldUseTiledBackingForFrameView(const FrameView& frameView)
+bool TiledCoreAnimationDrawingArea::shouldUseTiledBackingForFrameView(const FrameView& frameView) const
 {
     return frameView.frame().isMainFrame() || m_webPage.corePage()->settings().asyncFrameScrollingEnabled();
 }
