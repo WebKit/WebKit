@@ -1,3 +1,21 @@
+2019-12-16  youenn fablet  <youenn@apple.com>
+
+        Consider top-level context whose origin is unique as insecure
+        https://bugs.webkit.org/show_bug.cgi?id=205111
+
+        Reviewed by Brent Fulgham.
+
+        Tests: http/tests/security/top-level-unique-origin.https.html
+               http/tests/security/top-level-unique-origin2.https.html
+
+        * dom/Document.cpp:
+        (WebCore::Document::isSecureContext const):
+        There is no guarantee that top level unique origin contexts like data URL are SecureContext.
+        This patch makes them no longer SecureContext.
+        This helps getting closer to https://w3c.github.io/webappsec-secure-contexts/#is-url-trustworthy
+        which identifies all unique origins as "Not Trustworthy".
+        Child unique origin contexts will stay SecureContext if their parents are.
+
 2019-12-16  Daniel Bates  <dabates@apple.com>
 
         -requestDocumentContext always returns 1 text unit more granularity than requested
