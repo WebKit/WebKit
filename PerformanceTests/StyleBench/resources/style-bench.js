@@ -19,6 +19,8 @@ class Random
 
     chance(chance)
     {
+        if (!chance)
+            return false;
         return this.underOne() < chance;
     }
 
@@ -72,9 +74,12 @@ class StyleBench
             repeatingSequenceChance: 0.2,
             repeatingSequenceMaximumLength: 3,
             leafMutationChance: 0.1,
+            mediaQueryChance: 0,
+            mediaQueryCloseChance: 0,
             styleSeed: 1,
             domSeed: 2,
             stepCount: 5,
+            isResizeTest: false,
             mutationsPerStep: 100,
         };
     }
@@ -132,6 +137,18 @@ class StyleBench
         });
     }
 
+    static mediaQueryConfiguration()
+    {
+        return Object.assign(this.defaultConfiguration(), {
+            name: 'Dynamic media queries',
+            isResizeTest : true,
+            mediaQueryChance: 0.01,
+            mediaQueryCloseChance: 0.3,
+            starChance: 0,
+            elementCount: 5000,
+        });
+    }
+
     static predefinedConfigurations()
     {
         return [
@@ -140,6 +157,7 @@ class StyleBench
             this.structuralPseudoClassConfiguration(),
             this.nthPseudoClassConfiguration(),
             this.beforeAndAfterConfiguration(),
+            this.mediaQueryConfiguration(),
         ];
     }
 
@@ -310,11 +328,33 @@ class StyleBench
         return selector + " { " + this.makeDeclaration(selector) + " }";
     }
 
+    makeMediaQuery()
+    {
+        let width = this.random.number(500);
+        width = 300 + width - (width % 100);
+        if (this.random.chance(0.5))
+            return `@media (min-width: ${width}px) {`;
+        return `@media (max-width: ${width}px) {`;
+    }
+
     makeStylesheet(size)
     {
         let cssText = "";
-        for (let i = 0; i < size; ++i)
+
+        let inMediaQuery = false;
+        for (let i = 0; i < size; ++i) {
+            if (!inMediaQuery && this.random.chance(this.configuration.mediaQueryChance)) {
+                cssText += this.makeMediaQuery() + "\n";;
+                inMediaQuery = true;
+            }
+
             cssText += this.makeRule() + "\n";
+
+            if (inMediaQuery && this.random.chance(this.configuration.mediaQueryCloseChance)) {
+                 cssText += "}\n";
+                 inMediaQuery = false;
+             }
+        }
         return cssText;
     }
 
@@ -494,6 +534,11 @@ class StyleBench
             }
             ++i;
         }
+    }
+
+    resizeViewToWidth(width)
+    {
+        window.frameElement.style.width = width + "px";
     }
 
     async runForever()

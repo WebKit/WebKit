@@ -1,7 +1,15 @@
 function makeSteps(configuration)
 {
     const steps = [];
-    for (i = 0; i < configuration.stepCount; ++i) {
+    for (let i = 0; i < configuration.stepCount; ++i) {
+        if (configuration.isResizeTest) {
+            for (let width = 300; width <= 800; width += 50) {
+                steps.push(new BenchmarkTestStep(`Resizing to ${width}px - ${i}`, (bench, contentWindow, contentDocument) => {
+                    bench.resizeViewToWidth(width);
+                }));
+            }
+            continue;
+        }
         steps.push(new BenchmarkTestStep(`Adding classes - ${i}`, (bench, contentWindow, contentDocument) => {
             bench.addClasses(configuration.mutationsPerStep);
         }));
