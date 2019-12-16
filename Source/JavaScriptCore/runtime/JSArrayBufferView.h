@@ -98,10 +98,9 @@ public:
     using Base = JSNonFinalObject;
 
     template<typename, SubspaceAccess>
-    static IsoSubspace* subspaceFor(VM&)
+    static void subspaceFor(VM&)
     {
         RELEASE_ASSERT_NOT_REACHED();
-        return nullptr;
     }
 
     static constexpr unsigned fastSizeLimit = 1000;

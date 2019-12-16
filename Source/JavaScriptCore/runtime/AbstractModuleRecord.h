@@ -45,10 +45,9 @@ public:
     static constexpr bool needsDestruction = true;
 
     template<typename CellType, SubspaceAccess>
-    static IsoSubspace* subspaceFor(VM&)
+    static void subspaceFor(VM&)
     {
         RELEASE_ASSERT_NOT_REACHED();
-        return nullptr;
     }
 
     // https://tc39.github.io/ecma262/#sec-source-text-module-records

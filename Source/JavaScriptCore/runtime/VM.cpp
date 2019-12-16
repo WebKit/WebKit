@@ -43,6 +43,7 @@
 #include "DFGWorklist.h"
 #include "DOMAttributeGetterSetter.h"
 #include "DateInstance.h"
+#include "DebuggerScope.h"
 #include "DirectEvalExecutable.h"
 #include "Disassembler.h"
 #include "DoublePredictionFuzzerAgent.h"
@@ -1395,6 +1396,7 @@ DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(callbackFunctionSpace, cellHeapCellType.
 DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(callbackObjectSpace, callbackObjectHeapCellType.get(), JSCallbackObject<JSNonFinalObject>)
 DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(customGetterSetterFunctionSpace, cellHeapCellType.get(), JSCustomGetterSetterFunction) // Hash:0x18091000
 DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(dataViewSpace, cellHeapCellType.get(), JSDataView)
+DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(debuggerScopeSpace, cellHeapCellType.get(), DebuggerScope)
 DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(errorInstanceSpace, errorInstanceHeapCellType.get(), ErrorInstance) // Hash:0x3f40d4a
 DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(float32ArraySpace, cellHeapCellType.get(), JSFloat32Array)
 DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(float64ArraySpace, cellHeapCellType.get(), JSFloat64Array)

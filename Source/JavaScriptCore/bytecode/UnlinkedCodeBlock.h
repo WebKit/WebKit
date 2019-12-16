@@ -113,10 +113,9 @@ public:
     static constexpr bool needsDestruction = true;
 
     template<typename, SubspaceAccess>
-    static IsoSubspace* subspaceFor(VM&)
+    static void subspaceFor(VM&)
     {
-        ASSERT_NOT_REACHED();
-        return nullptr;
+        RELEASE_ASSERT_NOT_REACHED();
     }
 
     enum { CallFunction, ApplyFunction };

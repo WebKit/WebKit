@@ -38,6 +38,12 @@ public:
     using Base = JSNonFinalObject;
     static constexpr unsigned numberOfInternalFields = passedNumberOfInternalFields;
 
+    template<typename CellType, SubspaceAccess>
+    static void subspaceFor(VM&)
+    {
+        RELEASE_ASSERT_NOT_REACHED();
+    }
+
     static size_t allocationSize(Checked<size_t> inlineCapacity)
     {
         ASSERT_UNUSED(inlineCapacity, !inlineCapacity);
