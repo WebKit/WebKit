@@ -812,12 +812,12 @@ static void testWebViewGeolocationPermissionRequests(UIClientTest* test, gconstp
         "</html>";
 
     // Geolocation is not allowed from insecure connections like HTTP,
-    // POSITION_UNAVAILABLE ('2') is returned in that case without even
+    // PERMISSION_DENIED ('1') is returned in that case without even
     // asking the API layer.
     test->m_allowPermissionRequests = false;
     test->loadHtml(geolocationRequestHTML, "http://foo.com/bar");
     const gchar* result = test->waitUntilPermissionResultMessageReceived();
-    g_assert_cmpstr(result, ==, "2");
+    g_assert_cmpstr(result, ==, "1");
 
     // Test denying a permission request. PERMISSION_DENIED ('1') is
     // returned in this case.

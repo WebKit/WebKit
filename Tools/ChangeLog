@@ -1,5 +1,14 @@
 2019-12-16  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        Unreviewed. Fix GLib test /webkit/WebKitWebView/geolocation-permission-requests after r249207
+
+        PERMISSION_DENIED is returned for non-secure contexts instead of POSITION_UNAVAILABLE since r249207.
+
+        * TestWebKitAPI/Tests/WebKitGLib/TestUIClient.cpp:
+        (testWebViewGeolocationPermissionRequests):
+
+2019-12-16  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         Unreviewed. Fix GLib test /jsc/options after r253244.
 
         The default value of smallHeapRAMFraction option changed in r253244. The test just wants to check a float jsc
