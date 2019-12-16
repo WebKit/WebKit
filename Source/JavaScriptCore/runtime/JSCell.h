@@ -86,11 +86,6 @@ public:
 
     static constexpr bool needsDestruction = false;
 
-    // Don't call this directly. Call JSC::subspaceFor<Type>(vm) instead.
-    // FIXME: Refer to Subspace by reference.
-    // https://bugs.webkit.org/show_bug.cgi?id=166988
-    template<typename CellType, SubspaceAccess>
-    static CompleteSubspace* subspaceFor(VM&);
     static constexpr uint8_t numberOfLowerTierCells = 8;
 
     static JSCell* seenMultipleCalleeObjects() { return bitwise_cast<JSCell*>(static_cast<uintptr_t>(1)); }

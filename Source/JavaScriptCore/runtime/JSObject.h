@@ -103,7 +103,13 @@ class JSObject : public JSCell {
     };
 
 public:
-    typedef JSCell Base;
+    using Base = JSCell;
+
+    // Don't call this directly. Call JSC::subspaceFor<Type>(vm) instead.
+    // FIXME: Refer to Subspace by reference.
+    // https://bugs.webkit.org/show_bug.cgi?id=166988
+    template<typename CellType, SubspaceAccess>
+    static CompleteSubspace* subspaceFor(VM&);
 
     // This is a super dangerous method for JITs. Sometimes the JITs will want to create either a
     // JSFinalObject or a JSArray. This is the method that will do that.

@@ -146,14 +146,6 @@ ALWAYS_INLINE VM& CallFrame::deprecatedVM() const
     return callee->vm();
 }
 
-template<typename CellType, SubspaceAccess>
-CompleteSubspace* JSCell::subspaceFor(VM& vm)
-{
-    if (CellType::needsDestruction)
-        return &vm.destructibleCellSpace;
-    return &vm.cellSpace;
-}
-
 template<typename Type>
 inline Allocator allocatorForNonVirtualConcurrently(VM& vm, size_t allocationSize, AllocatorForMode mode)
 {

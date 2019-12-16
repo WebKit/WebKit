@@ -34,6 +34,13 @@
 
 namespace JSC {
 
+template<typename CellType, SubspaceAccess>
+CompleteSubspace* JSObject::subspaceFor(VM& vm)
+{
+    static_assert(!CellType::needsDestruction);
+    return &vm.cellSpace;
+}
+
 // Section 7.3.17 of the spec.
 template <typename AddFunction> // Add function should have a type like: (JSValue, RuntimeType) -> bool
 void createListFromArrayLike(JSGlobalObject* globalObject, JSValue arrayLikeValue, RuntimeTypeMask legalTypesFilter, const String& notAnObjectErroMessage, const String& illegalTypeErrorMessage, AddFunction addFunction)

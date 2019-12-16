@@ -348,7 +348,6 @@ VM::VM(VMType vmType, HeapType heapType)
     , immutableButterflyJSValueGigacageAuxiliarySpace("ImmutableButterfly Gigacage JSCellWithInteriorPointers", heap, immutableButterflyHeapCellType.get(), jsValueGigacageAllocator.get()) // Hash:0x7a945300
     , cellSpace("JSCell", heap, cellHeapCellType.get(), fastMallocAllocator.get()) // Hash:0xadfb5a79
     , variableSizedCellSpace("Variable Sized JSCell", heap, cellHeapCellType.get(), fastMallocAllocator.get()) // Hash:0xbcd769cc
-    , destructibleCellSpace("Destructible JSCell", heap, destructibleCellHeapCellType.get(), fastMallocAllocator.get()) // Hash:0xbfff3d73
     , destructibleObjectSpace("JSDestructibleObject", heap, destructibleObjectHeapCellType.get(), fastMallocAllocator.get()) // Hash:0x4f5ed7a9
     , bigIntSpace ISO_SUBSPACE_INIT(heap, destructibleCellHeapCellType.get(), JSBigInt)
     , calleeSpace ISO_SUBSPACE_INIT(heap, cellHeapCellType.get(), JSCallee)
