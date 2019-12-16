@@ -1959,3 +1959,4 @@ webkit.org/b/204820 [ Catalina+ ] fast/text/emoji-gender-6.html [ ImageOnlyFailu
 webkit.org/b/204820 [ Catalina+ ] fast/text/emoji-gender-8.html [ ImageOnlyFailure ]
 webkit.org/b/204820 [ Catalina+ ] fast/text/emoji-gender-9.html [ ImageOnlyFailure ]
 
+webkit.org/b/204246 [ Catalina ] editing/mac/selection/context-menu-select-editability.html [ Failure ]
