@@ -40,7 +40,7 @@ PASS The URL interface object should be exposed.
 PASS The URLSearchParams interface object should be exposed. 
 PASS The File interface object should be exposed. 
 PASS The Blob interface object should be exposed. 
-FAIL The FileList interface object should be exposed. assert_own_property: expected property "FileList" missing
+PASS The FileList interface object should be exposed. 
 PASS The FileReader interface object should be exposed. 
 PASS The FileReaderSync interface object should be exposed. 
 PASS The EventTarget interface object should be exposed. 

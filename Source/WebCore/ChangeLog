@@ -1,3 +1,14 @@
+2019-12-17  youenn fablet  <youenn@apple.com>
+
+        FileList should be exposed to workers
+        https://bugs.webkit.org/show_bug.cgi?id=204074
+
+        Reviewed by Chris Dumez.
+
+        Covered by rebased test.
+
+        * fileapi/FileList.idl:
+
 2019-12-16  Joonghun Park  <jh718.park@samsung.com>
 
         Unreviewed. Remove the build warnings below since r253488.
