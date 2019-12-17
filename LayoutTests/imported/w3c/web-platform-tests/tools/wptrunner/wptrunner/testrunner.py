@@ -561,22 +561,29 @@ class TestRunnerManager(threading.Thread):
             self.logger.info("Run %d/%d" % (self.run_count, self.rerun))
             self.send_message("reset")
         self.run_count += 1
-        # Factor of 3 on the extra timeout here is based on allowing the executor
-        # at least test.timeout + 2 * extra_timeout to complete,
-        # which in turn is based on having several layers of timeout inside the executor
-        wait_timeout = (self.state.test.timeout * self.executor_kwargs['timeout_multiplier'] +
-                        3 * self.executor_cls.extra_timeout)
-        self.timer = threading.Timer(wait_timeout, self._timeout)
+        if self.debug_info is None:
+            # Factor of 3 on the extra timeout here is based on allowing the executor
+            # at least test.timeout + 2 * extra_timeout to complete,
+            # which in turn is based on having several layers of timeout inside the executor
+            wait_timeout = (self.state.test.timeout * self.executor_kwargs['timeout_multiplier'] +
+                            3 * self.executor_cls.extra_timeout)
+            self.timer = threading.Timer(wait_timeout, self._timeout)
+
         self.send_message("run_test", self.state.test)
-        self.timer.start()
+        if self.timer:
+            self.timer.start()
 
     def _timeout(self):
+        # This is executed in a different thread (threading.Timer).
         self.logger.info("Got timeout in harness")
         test = self.state.test
-        self.test_ended(test,
-                        (test.result_cls("EXTERNAL-TIMEOUT",
-                                         "TestRunner hit external timeout "
-                                         "(this may indicate a hang)"), []))
+        self.inject_message(
+            "test_ended",
+            test,
+            (test.result_cls("EXTERNAL-TIMEOUT",
+                             "TestRunner hit external timeout "
+                             "(this may indicate a hang)"), []),
+        )
 
     def test_ended(self, test, results):
         """Handle the end of a test.
@@ -584,9 +591,15 @@ class TestRunnerManager(threading.Thread):
         Output the result of each subtest, and the result of the overall
         harness to the logs.
         """
-        assert isinstance(self.state, RunnerManagerState.running)
-        assert test == self.state.test
-        self.timer.cancel()
+        if ((not isinstance(self.state, RunnerManagerState.running)) or
+            (test != self.state.test)):
+            # Due to inherent race conditions in EXTERNAL-TIMEOUT, we might
+            # receive multiple test_ended for a test (e.g. from both Executor
+            # and TestRunner), in which case we ignore the duplicate message.
+            self.logger.error("Received unexpected test_ended for %s" % test)
+            return
+        if self.timer is not None:
+            self.timer.cancel()
         # Write the result of each subtest
         file_result, test_results = results
         subtest_unexpected = False
@@ -757,7 +770,12 @@ class TestRunnerManager(threading.Thread):
         return RunnerManagerState.stop()
 
     def send_message(self, command, *args):
+        """Send a message to the remote queue (to Executor)."""
         self.remote_queue.put((command, args))
+
+    def inject_message(self, command, *args):
+        """Inject a message to the command queue (from Executor)."""
+        self.command_queue.put((command, args))
 
     def cleanup(self):
         self.logger.debug("TestRunnerManager cleanup")

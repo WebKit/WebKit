@@ -15,10 +15,6 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/html5lib/html5lib/_trie/__init__.py
-/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/html5lib/html5lib/_trie/__init__.pyc
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/html5lib/html5lib/_trie/_base.py
-/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/html5lib/html5lib/_trie/_base.pyc
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/html5lib/html5lib/_trie/datrie.py
-/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/html5lib/html5lib/_trie/datrie.pyc
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/html5lib/html5lib/_trie/py.py
-/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/html5lib/html5lib/_trie/py.pyc

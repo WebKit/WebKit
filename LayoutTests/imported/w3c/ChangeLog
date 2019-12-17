@@ -1,5 +1,16 @@
 2019-12-17  Chris Dumez  <cdumez@apple.com>
 
+        Re-sync web-platform-tests/tools from upstream
+        https://bugs.webkit.org/show_bug.cgi?id=205340
+
+        Reviewed by Frédéric Wang.
+
+        Re-sync web-platform-tests/tools from upstream 33de70caf7f076ebe3aa.
+
+        * web-platform-tests/tools/*: Updated.
+
+2019-12-17  Chris Dumez  <cdumez@apple.com>
+
         Re-sync web-platform-tests/interfaces from upstream
         https://bugs.webkit.org/show_bug.cgi?id=205344
 

@@ -64,7 +64,7 @@ def test_verify_payload():
         with open(data_path(filename), encoding="utf8") as f:
             event = json.load(f)
 
-        with mock.patch("tools.ci.tc.decision.get_fetch_rev", return_value=(event["after"], None)):
+        with mock.patch("tools.ci.tc.decision.get_fetch_rev", return_value=(None, event["after"], None)):
             with mock.patch("tools.ci.tc.decision.get_run_jobs", return_value=set(jobs)):
                 task_id_map = decide(event)
         for name, (task_id, task_data) in task_id_map.items():
@@ -123,6 +123,8 @@ def test_verify_payload():
       'wpt-chrome-dev-reftest-5',
       'wpt-firefox-nightly-wdspec-1',
       'wpt-chrome-dev-wdspec-1',
+      'wpt-firefox-nightly-crashtest-1',
+      'wpt-chrome-dev-crashtest-1',
       'lint'}),
     ("pr_event.json", True, {".taskcluster.yml",".travis.yml","tools/ci/start.sh"},
      {'lint',
@@ -166,6 +168,7 @@ def test_verify_payload():
       'wpt-chrome-stable-testharness-8',
       'wpt-chrome-stable-testharness-9',
       'wpt-chrome-stable-wdspec-1',
+      'wpt-chrome-stable-crashtest-1',
       'wpt-firefox-stable-reftest-1',
       'wpt-firefox-stable-reftest-2',
       'wpt-firefox-stable-reftest-3',
@@ -188,6 +191,7 @@ def test_verify_payload():
       'wpt-firefox-stable-testharness-8',
       'wpt-firefox-stable-testharness-9',
       'wpt-firefox-stable-wdspec-1',
+      'wpt-firefox-stable-crashtest-1',
       'wpt-webkitgtk_minibrowser-nightly-reftest-1',
       'wpt-webkitgtk_minibrowser-nightly-reftest-2',
       'wpt-webkitgtk_minibrowser-nightly-reftest-3',
@@ -209,10 +213,34 @@ def test_verify_payload():
       'wpt-webkitgtk_minibrowser-nightly-testharness-7',
       'wpt-webkitgtk_minibrowser-nightly-testharness-8',
       'wpt-webkitgtk_minibrowser-nightly-testharness-9',
-      'wpt-webkitgtk_minibrowser-nightly-wdspec-1'})
+      'wpt-webkitgtk_minibrowser-nightly-wdspec-1',
+      'wpt-webkitgtk_minibrowser-nightly-crashtest-1',
+      'wpt-servo-nightly-reftest-1',
+      'wpt-servo-nightly-reftest-2',
+      'wpt-servo-nightly-reftest-3',
+      'wpt-servo-nightly-reftest-4',
+      'wpt-servo-nightly-reftest-5',
+      'wpt-servo-nightly-testharness-1',
+      'wpt-servo-nightly-testharness-10',
+      'wpt-servo-nightly-testharness-11',
+      'wpt-servo-nightly-testharness-12',
+      'wpt-servo-nightly-testharness-13',
+      'wpt-servo-nightly-testharness-14',
+      'wpt-servo-nightly-testharness-15',
+      'wpt-servo-nightly-testharness-16',
+      'wpt-servo-nightly-testharness-2',
+      'wpt-servo-nightly-testharness-3',
+      'wpt-servo-nightly-testharness-4',
+      'wpt-servo-nightly-testharness-5',
+      'wpt-servo-nightly-testharness-6',
+      'wpt-servo-nightly-testharness-7',
+      'wpt-servo-nightly-testharness-8',
+      'wpt-servo-nightly-testharness-9',
+      'wpt-servo-nightly-wdspec-1',
+      'wpt-servo-nightly-crashtest-1',})
 ])
 def test_schedule_tasks(event_path, is_pr, files_changed, expected):
-    with mock.patch("tools.ci.tc.decision.get_fetch_rev", return_value=(is_pr, None)):
+    with mock.patch("tools.ci.tc.decision.get_fetch_rev", return_value=(None, None, None)):
         with mock.patch("tools.wpt.testfiles.repo_files_changed",
                         return_value=files_changed):
             with open(data_path(event_path), encoding="utf8") as event_file:

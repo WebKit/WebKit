@@ -15,20 +15,11 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/hpack/hpack/__init__.py
-/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/hpack/hpack/__init__.pyc
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/hpack/hpack/compat.py
-/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/hpack/hpack/compat.pyc
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/hpack/hpack/exceptions.py
-/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/hpack/hpack/exceptions.pyc
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/hpack/hpack/hpack.py
-/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/hpack/hpack/hpack.pyc
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/hpack/hpack/huffman.py
-/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/hpack/hpack/huffman.pyc
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/hpack/hpack/huffman_constants.py
-/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/hpack/hpack/huffman_constants.pyc
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/hpack/hpack/huffman_table.py
-/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/hpack/hpack/huffman_table.pyc
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/hpack/hpack/struct.py
-/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/hpack/hpack/struct.pyc
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/hpack/hpack/table.py
-/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/hpack/hpack/table.pyc

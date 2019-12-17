@@ -15,9 +15,7 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/webencodings/webencodings/__init__.py
-/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/webencodings/webencodings/__init__.pyc
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/webencodings/webencodings/labels.py
-/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/webencodings/webencodings/labels.pyc
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/webencodings/webencodings/mklabels.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/webencodings/webencodings/tests.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/webencodings/webencodings/x_user_defined.py

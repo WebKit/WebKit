@@ -15,24 +15,13 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/h2/h2/__init__.py
-/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/h2/h2/__init__.pyc
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/h2/h2/config.py
-/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/h2/h2/config.pyc
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/h2/h2/connection.py
-/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/h2/h2/connection.pyc
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/h2/h2/errors.py
-/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/h2/h2/errors.pyc
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/h2/h2/events.py
-/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/h2/h2/events.pyc
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/h2/h2/exceptions.py
-/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/h2/h2/exceptions.pyc
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/h2/h2/frame_buffer.py
-/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/h2/h2/frame_buffer.pyc
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/h2/h2/settings.py
-/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/h2/h2/settings.pyc
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/h2/h2/stream.py
-/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/h2/h2/stream.pyc
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/h2/h2/utilities.py
-/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/h2/h2/utilities.pyc
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/h2/h2/windows.py
-/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/h2/h2/windows.pyc

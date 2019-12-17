@@ -15,7 +15,6 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/tools/wpt/__init__.py
-/LayoutTests/imported/w3c/web-platform-tests/tools/wpt/__init__.pyc
 /LayoutTests/imported/w3c/web-platform-tests/tools/wpt/android.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/wpt/browser.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/wpt/commands.json
@@ -28,12 +27,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/tools/wpt/revlist.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/wpt/run.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/wpt/testfiles.py
-/LayoutTests/imported/w3c/web-platform-tests/tools/wpt/testfiles.pyc
 /LayoutTests/imported/w3c/web-platform-tests/tools/wpt/tox.ini
 /LayoutTests/imported/w3c/web-platform-tests/tools/wpt/update.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/wpt/utils.py
-/LayoutTests/imported/w3c/web-platform-tests/tools/wpt/utils.pyc
 /LayoutTests/imported/w3c/web-platform-tests/tools/wpt/virtualenv.py
-/LayoutTests/imported/w3c/web-platform-tests/tools/wpt/virtualenv.pyc
 /LayoutTests/imported/w3c/web-platform-tests/tools/wpt/wpt.py
-/LayoutTests/imported/w3c/web-platform-tests/tools/wpt/wpt.pyc

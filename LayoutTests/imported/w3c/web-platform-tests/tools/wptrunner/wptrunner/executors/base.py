@@ -121,6 +121,9 @@ def pytest_result_converter(self, test, data):
     return (harness_result, subtest_results)
 
 
+def crashtest_result_converter(self, test, result):
+    return test.result_cls(**result), []
+
 class ExecutorException(Exception):
     def __init__(self, status, message):
         self.status = status
@@ -130,6 +133,7 @@ class ExecutorException(Exception):
 class TimedRunner(object):
     def __init__(self, logger, func, protocol, url, timeout, extra_timeout):
         self.func = func
+        self.logger = logger
         self.result = None
         self.protocol = protocol
         self.url = url
@@ -147,9 +151,10 @@ class TimedRunner(object):
         executor = threading.Thread(target=self.run_func)
         executor.start()
 
-        # Add twice the timeout multiplier since the called function is expected to
+        # Add twice the extra timeout since the called function is expected to
         # wait at least self.timeout + self.extra_timeout and this gives some leeway
-        finished = self.result_flag.wait(self.timeout + 2 * self.extra_timeout)
+        timeout = self.timeout + 2 * self.extra_timeout if self.timeout else None
+        finished = self.result_flag.wait(timeout)
         if self.result is None:
             if finished:
                 # flag is True unless we timeout; this *shouldn't* happen, but
@@ -314,6 +319,10 @@ class RefTestExecutor(TestExecutor):
         self.screenshot_cache = screenshot_cache
 
 
+class CrashtestExecutor(TestExecutor):
+    convert_result = crashtest_result_converter
+
+
 class RefTestImplementation(object):
     def __init__(self, executor):
         self.timeout_multiplier = executor.timeout_multiplier
@@ -358,17 +367,17 @@ class RefTestImplementation(object):
     def reset(self):
         self.screenshot_cache.clear()
 
-    def is_pass(self, hashes, screenshots, relation, fuzzy):
+    def is_pass(self, hashes, screenshots, urls, relation, fuzzy):
         assert relation in ("==", "!=")
         if not fuzzy or fuzzy == ((0,0), (0,0)):
             equal = hashes[0] == hashes[1]
             # sometimes images can have different hashes, but pixels can be identical.
             if not equal:
                 self.logger.info("Image hashes didn't match, checking pixel differences")
-                max_per_channel, pixels_different = self.get_differences(screenshots)
+                max_per_channel, pixels_different = self.get_differences(screenshots, urls)
                 equal = pixels_different == 0 and max_per_channel == 0
         else:
-            max_per_channel, pixels_different = self.get_differences(screenshots)
+            max_per_channel, pixels_different = self.get_differences(screenshots, urls)
             allowed_per_channel, allowed_different = fuzzy
             self.logger.info("Allowed %s pixels different, maximum difference per channel %s" %
                              ("-".join(str(item) for item in allowed_different),
@@ -379,11 +388,13 @@ class RefTestImplementation(object):
                       allowed_different[0] <= pixels_different <= allowed_different[1]))
         return equal if relation == "==" else not equal
 
-    def get_differences(self, screenshots):
+    def get_differences(self, screenshots, urls):
         from PIL import Image, ImageChops, ImageStat
 
         lhs = Image.open(io.BytesIO(base64.b64decode(screenshots[0]))).convert("RGB")
         rhs = Image.open(io.BytesIO(base64.b64decode(screenshots[1]))).convert("RGB")
+        self.check_if_solid_color(lhs, urls[0])
+        self.check_if_solid_color(rhs, urls[1])
         diff = ImageChops.difference(lhs, rhs)
         minimal_diff = diff.crop(diff.getbbox())
         mask = minimal_diff.convert("L", dither=None)
@@ -393,6 +404,12 @@ class RefTestImplementation(object):
         self.logger.info("Found %s pixels different, maximum difference per channel %s" %
                          (count, per_channel))
         return per_channel, count
+
+    def check_if_solid_color(self, image, url):
+        extrema = image.getextrema()
+        if all(min == max for min, max in extrema):
+            color = ''.join('%02X' % value for value, _ in extrema)
+            self.message.append("Screenshot is solid color 0x%s for %s\n" % (color, url))
 
     def run_test(self, test):
         viewport_size = test.viewport_size
@@ -406,6 +423,7 @@ class RefTestImplementation(object):
         while stack:
             hashes = [None, None]
             screenshots = [None, None]
+            urls = [None, None]
 
             nodes, relation = stack.pop()
             fuzzy = self.get_fuzzy(test, nodes, relation)
@@ -416,8 +434,9 @@ class RefTestImplementation(object):
                     return {"status": data[0], "message": data[1]}
 
                 hashes[i], screenshots[i] = data
+                urls[i] = node.url
 
-            if self.is_pass(hashes, screenshots, relation, fuzzy):
+            if self.is_pass(hashes, screenshots, urls, relation, fuzzy):
                 fuzzy = self.get_fuzzy(test, nodes, relation)
                 if nodes[1].references:
                     stack.extend(list(((nodes[1], item[0]), item[1]) for item in reversed(nodes[1].references)))
@@ -561,6 +580,9 @@ class WdspecRun(object):
 
 
 class ConnectionlessBaseProtocolPart(BaseProtocolPart):
+    def load(self, url):
+        pass
+
     def execute_script(self, script, asynchronous=False):
         pass
 
@@ -642,6 +664,8 @@ class CallbackHandler(object):
     WebDriver. Things that are more different to WebDriver may need to create a
     fully custom implementation."""
 
+    unimplemented_exc = (NotImplementedError,)
+
     def __init__(self, logger, protocol, test_window):
         self.protocol = protocol
         self.test_window = test_window
@@ -656,6 +680,7 @@ class CallbackHandler(object):
             "send_keys": SendKeysAction(self.logger, self.protocol),
             "action_sequence": ActionSequenceAction(self.logger, self.protocol),
             "generate_test_report": GenerateTestReportAction(self.logger, self.protocol),
+            "set_permission": SetPermissionAction(self.logger, self.protocol),
             "add_virtual_authenticator": AddVirtualAuthenticatorAction(self.logger, self.protocol),
             "remove_virtual_authenticator": RemoveVirtualAuthenticatorAction(self.logger, self.protocol),
             "add_credential": AddCredentialAction(self.logger, self.protocol),
@@ -687,6 +712,9 @@ class CallbackHandler(object):
             raise ValueError("Unknown action %s" % action)
         try:
             result = action_handler(payload)
+        except self.unimplemented_exc:
+            self.logger.warning("Action %s not implemented" % action)
+            self._send_message("complete", "error", "Action %s not implemented" % action)
         except Exception:
             self.logger.warning("Action %s failed" % action)
             self.logger.warning(traceback.format_exc())
@@ -757,6 +785,20 @@ class GenerateTestReportAction(object):
         message = payload["message"]
         self.logger.debug("Generating test report: %s" % message)
         self.protocol.generate_test_report.generate_test_report(message)
+
+class SetPermissionAction(object):
+    def __init__(self, logger, protocol):
+        self.logger = logger
+        self.protocol = protocol
+
+    def __call__(self, payload):
+        permission_params = payload["permission_params"]
+        descriptor = permission_params["descriptor"]
+        name = descriptor["name"]
+        state = permission_params["state"]
+        one_realm = permission_params.get("oneRealm", False)
+        self.logger.debug("Setting permission %s to %s, oneRealm=%s" % (name, state, one_realm))
+        self.protocol.set_permission.set_permission(descriptor, state, one_realm)
 
 class AddVirtualAuthenticatorAction(object):
     def __init__(self, logger, protocol):

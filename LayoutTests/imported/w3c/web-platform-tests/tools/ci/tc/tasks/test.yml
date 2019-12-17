@@ -4,7 +4,7 @@ components:
     workerType: ci
     schedulerId: taskcluster-github
     deadline: "24 hours"
-    image: harjgam/web-platform-tests:0.33
+    image: harjgam/web-platform-tests:0.34
     maxRunTime: 7200
     artifacts:
       public/results:
@@ -25,6 +25,11 @@ components:
     chunks: 1
     vars:
       test-type: wdspec
+
+  wpt-crashtest:
+    chunks: 1
+    vars:
+      test-type: crashtest
 
   run-options:
     options:
@@ -82,6 +87,8 @@ components:
 
   browser-chrome: {}
 
+  browser-servo: {}
+
   tox-python2:
     env:
       TOXENV: py27
@@ -113,6 +120,8 @@ tasks:
             suite: reftest
         - vars:
             suite: wdspec
+        - vars:
+            suite: crashtest
       do:
         $map:
           for:
@@ -164,7 +173,12 @@ tasks:
               use:
                 - trigger-weekly
                 - trigger-push
-
+            - vars:
+                browser: servo
+                channel: nightly
+              use:
+                - trigger-daily
+                - trigger-push
           do:
             - ${vars.browser}-${vars.channel}-${vars.suite}:
                 use:

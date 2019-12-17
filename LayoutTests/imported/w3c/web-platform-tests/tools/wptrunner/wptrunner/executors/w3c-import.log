@@ -30,8 +30,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/wptrunner/executors/executorwebkit.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/wptrunner/executors/process.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/wptrunner/executors/protocol.py
-/LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/wptrunner/executors/reftest-wait_webdriver.js
 /LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/wptrunner/executors/reftest.js
 /LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/wptrunner/executors/runner.js
+/LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/wptrunner/executors/test-wait.js
 /LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/wptrunner/executors/testharness_servodriver.js
 /LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/wptrunner/executors/testharness_webdriver_resume.js

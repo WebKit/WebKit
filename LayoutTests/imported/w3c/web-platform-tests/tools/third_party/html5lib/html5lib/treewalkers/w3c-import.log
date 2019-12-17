@@ -15,7 +15,6 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/html5lib/html5lib/treewalkers/__init__.py
-/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/html5lib/html5lib/treewalkers/__init__.pyc
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/html5lib/html5lib/treewalkers/base.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/html5lib/html5lib/treewalkers/dom.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/html5lib/html5lib/treewalkers/etree.py

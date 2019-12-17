@@ -15,10 +15,6 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/hyperframe/hyperframe/__init__.py
-/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/hyperframe/hyperframe/__init__.pyc
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/hyperframe/hyperframe/exceptions.py
-/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/hyperframe/hyperframe/exceptions.pyc
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/hyperframe/hyperframe/flags.py
-/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/hyperframe/hyperframe/flags.pyc
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/hyperframe/hyperframe/frame.py
-/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/hyperframe/hyperframe/frame.pyc

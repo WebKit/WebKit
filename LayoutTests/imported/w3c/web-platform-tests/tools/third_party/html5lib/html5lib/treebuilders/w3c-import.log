@@ -15,10 +15,7 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/html5lib/html5lib/treebuilders/__init__.py
-/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/html5lib/html5lib/treebuilders/__init__.pyc
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/html5lib/html5lib/treebuilders/base.py
-/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/html5lib/html5lib/treebuilders/base.pyc
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/html5lib/html5lib/treebuilders/dom.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/html5lib/html5lib/treebuilders/etree.py
-/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/html5lib/html5lib/treebuilders/etree.pyc
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/html5lib/html5lib/treebuilders/etree_lxml.py

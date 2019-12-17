@@ -15,18 +15,10 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/html5lib/html5lib/__init__.py
-/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/html5lib/html5lib/__init__.pyc
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/html5lib/html5lib/_ihatexml.py
-/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/html5lib/html5lib/_ihatexml.pyc
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/html5lib/html5lib/_inputstream.py
-/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/html5lib/html5lib/_inputstream.pyc
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/html5lib/html5lib/_tokenizer.py
-/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/html5lib/html5lib/_tokenizer.pyc
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/html5lib/html5lib/_utils.py
-/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/html5lib/html5lib/_utils.pyc
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/html5lib/html5lib/constants.py
-/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/html5lib/html5lib/constants.pyc
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/html5lib/html5lib/html5parser.py
-/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/html5lib/html5lib/html5parser.pyc
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/html5lib/html5lib/serializer.py
-/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/html5lib/html5lib/serializer.pyc

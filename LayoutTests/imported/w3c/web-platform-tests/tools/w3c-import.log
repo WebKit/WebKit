@@ -16,10 +16,8 @@ None
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/tools/META.yml
 /LayoutTests/imported/w3c/web-platform-tests/tools/__init__.py
-/LayoutTests/imported/w3c/web-platform-tests/tools/__init__.pyc
 /LayoutTests/imported/w3c/web-platform-tests/tools/conftest.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/localpaths.py
-/LayoutTests/imported/w3c/web-platform-tests/tools/localpaths.pyc
 /LayoutTests/imported/w3c/web-platform-tests/tools/mypy.ini
 /LayoutTests/imported/w3c/web-platform-tests/tools/py27-flake8.ini
 /LayoutTests/imported/w3c/web-platform-tests/tools/py36-flake8.ini

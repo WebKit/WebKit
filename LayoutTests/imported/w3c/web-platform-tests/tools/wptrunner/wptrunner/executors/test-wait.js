@@ -32,7 +32,7 @@ function wait_paints() {
 }
 
 function screenshot_if_ready() {
-  if (root.classList.contains("reftest-wait") &&
+  if (root.classList.contains("%(classname)s") &&
       observer === null) {
     observer = new MutationObserver(wait_paints);
     observer.observe(root, {attributes: true});

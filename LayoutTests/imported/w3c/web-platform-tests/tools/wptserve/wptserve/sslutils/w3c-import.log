@@ -15,10 +15,6 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/tools/wptserve/wptserve/sslutils/__init__.py
-/LayoutTests/imported/w3c/web-platform-tests/tools/wptserve/wptserve/sslutils/__init__.pyc
 /LayoutTests/imported/w3c/web-platform-tests/tools/wptserve/wptserve/sslutils/base.py
-/LayoutTests/imported/w3c/web-platform-tests/tools/wptserve/wptserve/sslutils/base.pyc
 /LayoutTests/imported/w3c/web-platform-tests/tools/wptserve/wptserve/sslutils/openssl.py
-/LayoutTests/imported/w3c/web-platform-tests/tools/wptserve/wptserve/sslutils/openssl.pyc
 /LayoutTests/imported/w3c/web-platform-tests/tools/wptserve/wptserve/sslutils/pregenerated.py
-/LayoutTests/imported/w3c/web-platform-tests/tools/wptserve/wptserve/sslutils/pregenerated.pyc

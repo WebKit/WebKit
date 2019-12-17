@@ -19,7 +19,7 @@
             result = JSON.parse(data.message).result
             pending_resolve(result);
         } else {
-            pending_reject();
+            pending_reject(`${data.status}: ${data.message}`);
         }
     });
 
@@ -123,6 +123,15 @@
             pending_reject = reject;
         });
         window.__wptrunner_message_queue.push({"type": "action", "action": "generate_test_report", "message": message});
+        return pending_promise;
+    };
+
+    window.test_driver_internal.set_permission = function(permission_params) {
+        const pending_promise = new Promise(function(resolve, reject) {
+            pending_resolve = resolve;
+            pending_reject = reject;
+        });
+        window.__wptrunner_message_queue.push({"type": "action", "action": "set_permission", permission_params});
         return pending_promise;
     };
 
