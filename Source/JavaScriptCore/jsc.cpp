@@ -70,6 +70,7 @@
 #include "SuperSampler.h"
 #include "TestRunnerUtils.h"
 #include "TypedArrayInlines.h"
+#include "VMInspector.h"
 #include "WasmCapabilities.h"
 #include "WasmContext.h"
 #include "WasmFaultSignalHandler.h"
@@ -84,6 +85,7 @@
 #include <thread>
 #include <type_traits>
 #include <wtf/Box.h>
+#include <wtf/CPUTime.h>
 #include <wtf/CommaPrinter.h>
 #include <wtf/FileSystem.h>
 #include <wtf/MainThread.h>
@@ -2427,22 +2429,56 @@ int jscmain(int argc, char** argv);
 
 static double s_desiredTimeout;
 static double s_timeoutMultiplier = 1.0;
+static Seconds s_timeoutDuration;
+static Seconds s_maxAllowedCPUTime;
+static VM* s_vm;
 
-static void startTimeoutThreadIfNeeded()
+static void startTimeoutTimer(Seconds duration)
+{
+    Thread::create("jsc Timeout Thread", [=] () {
+        sleep(duration);
+        VMInspector::forEachVM([&] (VM& vm) -> VMInspector::FunctorStatus {
+            if (&vm != s_vm)
+                return VMInspector::FunctorStatus::Continue;
+            vm.notifyNeedShellTimeoutCheck();
+            return VMInspector::FunctorStatus::Done;
+        });
+    });
+}
+
+static void timeoutCheckCallback(VM& vm)
+{
+    RELEASE_ASSERT(&vm == s_vm);
+    auto cpuTime = CPUTime::forCurrentThread();
+    if (cpuTime >= s_maxAllowedCPUTime) {
+        dataLog("Timed out after ", s_timeoutDuration, " seconds!\n");
+        CRASH();
+    }
+    auto remainingTime = s_maxAllowedCPUTime - cpuTime;
+    startTimeoutTimer(remainingTime);
+}
+
+static void initializeTimeoutIfNeeded()
 {
     if (char* timeoutString = getenv("JSCTEST_timeout")) {
         if (sscanf(timeoutString, "%lf", &s_desiredTimeout) != 1) {
             dataLog("WARNING: timeout string is malformed, got ", timeoutString,
                 " but expected a number. Not using a timeout.\n");
-        } else {
-            Thread::create("jsc Timeout Thread", [] () {
-                Seconds timeoutDuration(s_desiredTimeout * s_timeoutMultiplier);
-                sleep(timeoutDuration);
-                dataLog("Timed out after ", timeoutDuration, " seconds!\n");
-                CRASH();
-            });
-        }
+        } else
+            g_jscConfig.shellTimeoutCheckCallback = timeoutCheckCallback;
     }
+}
+
+static void startTimeoutThreadIfNeeded(VM& vm)
+{
+    if (!g_jscConfig.shellTimeoutCheckCallback)
+        return;
+
+    s_vm = &vm;
+    s_timeoutDuration = Seconds(s_desiredTimeout * s_timeoutMultiplier);
+    s_maxAllowedCPUTime = CPUTime::forCurrentThread() + s_timeoutDuration;
+    Seconds timeoutDuration(s_desiredTimeout * s_timeoutMultiplier);
+    startTimeoutTimer(timeoutDuration);
 }
 
 int main(int argc, char** argv)
@@ -2999,6 +3035,7 @@ int runJSC(const CommandLine& options, bool isWorker, const Func& func)
     {
         JSLockHolder locker(vm);
 
+        startTimeoutThreadIfNeeded(vm);
         if (options.m_profile && !vm.m_perBytecodeProfiler)
             vm.m_perBytecodeProfiler = makeUnique<Profiler::Database>(vm);
 
@@ -3099,7 +3136,7 @@ int jscmain(int argc, char** argv)
 
     // Initialize JSC before getting VM.
     JSC::initializeThreading();
-    startTimeoutThreadIfNeeded();
+    initializeTimeoutIfNeeded();
 #if ENABLE(WEBASSEMBLY)
     JSC::Wasm::enableFastMemory();
 #endif

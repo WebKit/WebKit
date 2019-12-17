@@ -1,5 +1,63 @@
 2019-12-16  Mark Lam  <mark.lam@apple.com>
 
+        Relanding r253581: Changed jsc shell timeout mechanism to leverage the VMTraps and use CPUTime.
+        https://bugs.webkit.org/show_bug.cgi?id=205279
+        <rdar://problem/57971874>
+
+        Reviewed by Saam Barati.
+
+        This fixes all the timeouts that occur due to CPU time starvation when
+        running JSC tests on a debug build.
+
+        What this means is that the timeout mechanism may trigger asynchronous
+        OSR exits.  If a test requires no OSR exits, that test should
+        requireOption("--usePollingTraps=true") so that the VMTraps will use its
+        polling implementation instead.
+
+        I've tested this with a full run of the JSC stress tests with a debug
+        build and saw 0 timeouts.  I've also tested it with a contrived tests that
+        loops forever, and saw the expected timeout crash.
+
+        Will look into re-tuning needed timeout value (and other JSC tests timeout
+        cleanup) in https://bugs.webkit.org/show_bug.cgi?id=205298.
+
+        Update: in the previously landed patch, I did a last minute sort of the cases
+        Int the switch statement in VMTraps::handleTraps() before posting my patch.
+        This is incorrect to do since one of the cases need to fall through to another
+        case.  This patch undoes the sorting to the order I originally had the cases
+        in during development and testing.
+
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::executeProgram):
+        (JSC::Interpreter::executeCall):
+        (JSC::Interpreter::executeConstruct):
+        (JSC::Interpreter::execute):
+        (JSC::Interpreter::executeModuleProgram):
+        * interpreter/InterpreterInlines.h:
+        (JSC::Interpreter::execute):
+        * jsc.cpp:
+        (startTimeoutTimer):
+        (timeoutCheckCallback):
+        (initializeTimeoutIfNeeded):
+        (startTimeoutThreadIfNeeded):
+        (runJSC):
+        (jscmain):
+        * runtime/JSCConfig.h:
+        * runtime/VM.h:
+        (JSC::VM::notifyNeedShellTimeoutCheck):
+        * runtime/VMTraps.cpp:
+        (JSC::VMTraps::handleTraps):
+        * runtime/VMTraps.h:
+        (JSC::VMTraps::Mask::Mask):
+        (JSC::VMTraps::Mask::allEventTypes):
+        (JSC::VMTraps::Mask::init):
+        (JSC::VMTraps::interruptingTraps):
+        * tools/VMInspector.cpp:
+        (JSC::VMInspector::forEachVM):
+        * tools/VMInspector.h:
+
+2019-12-16  Mark Lam  <mark.lam@apple.com>
+
         Rolling out: r253581 is failing tests on a release build.
         https://bugs.webkit.org/show_bug.cgi?id=205279
         <rdar://problem/57971874>
