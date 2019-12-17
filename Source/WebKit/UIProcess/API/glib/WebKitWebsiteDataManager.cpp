@@ -392,6 +392,8 @@ WebKit::WebsiteDataStore& webkitWebsiteDataManagerGetDataStore(WebKitWebsiteData
             WebKit::WebsiteDataStore::defaultNetworkCacheDirectory() : FileSystem::pathByAppendingComponent(FileSystem::stringFromFileSystemRepresentation(priv->diskCacheDirectory.get()), networkCacheSubdirectory));
         configuration->setApplicationCacheDirectory(!priv->applicationCacheDirectory ?
             WebKit::WebsiteDataStore::defaultApplicationCacheDirectory() : FileSystem::stringFromFileSystemRepresentation(priv->applicationCacheDirectory.get()));
+        configuration->setIndexedDBDatabaseDirectory(!priv->indexedDBDirectory ?
+            WebKit::WebsiteDataStore::defaultIndexedDBDatabaseDirectory() : FileSystem::stringFromFileSystemRepresentation(priv->indexedDBDirectory.get()));
         configuration->setWebSQLDatabaseDirectory(!priv->webSQLDirectory ?
             WebKit::WebsiteDataStore::defaultWebSQLDatabaseDirectory() : FileSystem::stringFromFileSystemRepresentation(priv->webSQLDirectory.get()));
         configuration->setHSTSStorageDirectory(!priv->hstsCacheDirectory ?
