@@ -83,3 +83,4 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/2dcontext/shadows/canvas_shadows_001.htm
 /LayoutTests/imported/w3c/web-platform-tests/2dcontext/shadows/canvas_shadows_002-expected.htm
 /LayoutTests/imported/w3c/web-platform-tests/2dcontext/shadows/canvas_shadows_002.htm
+/LayoutTests/imported/w3c/web-platform-tests/2dcontext/shadows/shadowBlur_gaussian_tolerance.1.html

@@ -2,5 +2,5 @@
 Testing fontBoundingBox
 Actual output:
 
-PASS Testing fontBoundingBox 
+FAIL Testing fontBoundingBox The string did not match the expected pattern.
 

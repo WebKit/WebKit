@@ -1,5 +1,6 @@
 2d.text.measure.width.basic
+The width of character is same as font used
 Actual output:
 
-PASS Canvas test: 2d.text.measure.width.basic 
+FAIL The width of character is same as font used The string did not match the expected pattern.
 

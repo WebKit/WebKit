@@ -17,10 +17,15 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/2dcontext/imagebitmap/canvas-createImageBitmap-resize.html
 /LayoutTests/imported/w3c/web-platform-tests/2dcontext/imagebitmap/canvas-createImageBitmap-video-resize.html
 /LayoutTests/imported/w3c/web-platform-tests/2dcontext/imagebitmap/common.sub.js
+/LayoutTests/imported/w3c/web-platform-tests/2dcontext/imagebitmap/createImageBitmap-blob-invalidtype.html
 /LayoutTests/imported/w3c/web-platform-tests/2dcontext/imagebitmap/createImageBitmap-bounds.html
+/LayoutTests/imported/w3c/web-platform-tests/2dcontext/imagebitmap/createImageBitmap-drawImage-closed.html
 /LayoutTests/imported/w3c/web-platform-tests/2dcontext/imagebitmap/createImageBitmap-drawImage.html
+/LayoutTests/imported/w3c/web-platform-tests/2dcontext/imagebitmap/createImageBitmap-flipY.html
 /LayoutTests/imported/w3c/web-platform-tests/2dcontext/imagebitmap/createImageBitmap-invalid-args.html
 /LayoutTests/imported/w3c/web-platform-tests/2dcontext/imagebitmap/createImageBitmap-origin.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/2dcontext/imagebitmap/createImageBitmap-serializable.html
 /LayoutTests/imported/w3c/web-platform-tests/2dcontext/imagebitmap/createImageBitmap-sizeOverflow.html
 /LayoutTests/imported/w3c/web-platform-tests/2dcontext/imagebitmap/createImageBitmap-transfer.html
+/LayoutTests/imported/w3c/web-platform-tests/2dcontext/imagebitmap/no-coop-coep.https.window.js
 /LayoutTests/imported/w3c/web-platform-tests/2dcontext/imagebitmap/transfer-worker.js

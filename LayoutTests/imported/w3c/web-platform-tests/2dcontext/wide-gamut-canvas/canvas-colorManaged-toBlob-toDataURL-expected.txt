@@ -1,0 +1,27 @@
+
+PASS Overall test 
+PASS Test if toBlob() respects legacy behavior in         color managed canvas: ImageFormat: image/jpeg, source color space: srgb, pixel format: uint8, alpha: 0.5 
+PASS Test if toBlob() respects legacy behavior in         color managed canvas: ImageFormat: image/jpeg, source color space: srgb, pixel format: uint8, alpha: 1 
+PASS Test if toBlob() respects legacy behavior in         color managed canvas: ImageFormat: image/jpeg, source color space: srgb, pixel format: float16, alpha: 0.5 
+PASS Test if toBlob() respects legacy behavior in         color managed canvas: ImageFormat: image/jpeg, source color space: srgb, pixel format: float16, alpha: 1 
+PASS Test if toBlob() respects legacy behavior in         color managed canvas: ImageFormat: image/png, source color space: srgb, pixel format: uint8, alpha: 0.5 
+PASS Test if toBlob() respects legacy behavior in         color managed canvas: ImageFormat: image/png, source color space: srgb, pixel format: uint8, alpha: 1 
+PASS Test if toBlob() respects legacy behavior in         color managed canvas: ImageFormat: image/png, source color space: srgb, pixel format: float16, alpha: 0.5 
+PASS Test if toBlob() respects legacy behavior in         color managed canvas: ImageFormat: image/png, source color space: srgb, pixel format: float16, alpha: 1 
+PASS Test if toBlob() respects legacy behavior in         color managed canvas: ImageFormat: image/webp, source color space: srgb, pixel format: uint8, alpha: 0.5 
+PASS Test if toBlob() respects legacy behavior in         color managed canvas: ImageFormat: image/webp, source color space: srgb, pixel format: uint8, alpha: 1 
+PASS Test if toBlob() respects legacy behavior in         color managed canvas: ImageFormat: image/webp, source color space: srgb, pixel format: float16, alpha: 0.5 
+PASS Test if toBlob() respects legacy behavior in         color managed canvas: ImageFormat: image/webp, source color space: srgb, pixel format: float16, alpha: 1 
+PASS Test if toDataURL() respects legacy behavior         in color managed canvas: ImageFormat: image/jpeg, source color space: srgb, pixel format: uint8, alpha: 0.5 
+PASS Test if toDataURL() respects legacy behavior         in color managed canvas: ImageFormat: image/jpeg, source color space: srgb, pixel format: uint8, alpha: 1 
+PASS Test if toDataURL() respects legacy behavior         in color managed canvas: ImageFormat: image/jpeg, source color space: srgb, pixel format: float16, alpha: 0.5 
+PASS Test if toDataURL() respects legacy behavior         in color managed canvas: ImageFormat: image/jpeg, source color space: srgb, pixel format: float16, alpha: 1 
+PASS Test if toDataURL() respects legacy behavior         in color managed canvas: ImageFormat: image/png, source color space: srgb, pixel format: uint8, alpha: 0.5 
+PASS Test if toDataURL() respects legacy behavior         in color managed canvas: ImageFormat: image/png, source color space: srgb, pixel format: uint8, alpha: 1 
+PASS Test if toDataURL() respects legacy behavior         in color managed canvas: ImageFormat: image/png, source color space: srgb, pixel format: float16, alpha: 0.5 
+PASS Test if toDataURL() respects legacy behavior         in color managed canvas: ImageFormat: image/png, source color space: srgb, pixel format: float16, alpha: 1 
+PASS Test if toDataURL() respects legacy behavior         in color managed canvas: ImageFormat: image/webp, source color space: srgb, pixel format: uint8, alpha: 0.5 
+PASS Test if toDataURL() respects legacy behavior         in color managed canvas: ImageFormat: image/webp, source color space: srgb, pixel format: uint8, alpha: 1 
+PASS Test if toDataURL() respects legacy behavior         in color managed canvas: ImageFormat: image/webp, source color space: srgb, pixel format: float16, alpha: 0.5 
+PASS Test if toDataURL() respects legacy behavior         in color managed canvas: ImageFormat: image/webp, source color space: srgb, pixel format: float16, alpha: 1 
+

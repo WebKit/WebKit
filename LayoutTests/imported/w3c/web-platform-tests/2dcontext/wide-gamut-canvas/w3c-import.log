@@ -1,0 +1,30 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/2dcontext/wide-gamut-canvas/ImageData-fidelity.html
+/LayoutTests/imported/w3c/web-platform-tests/2dcontext/wide-gamut-canvas/canvas-colorManaged-convertToBlob-roundtrip.html
+/LayoutTests/imported/w3c/web-platform-tests/2dcontext/wide-gamut-canvas/canvas-colorManaged-toBlob-toDataURL.html
+/LayoutTests/imported/w3c/web-platform-tests/2dcontext/wide-gamut-canvas/canvas-colorspace-arguments.html
+/LayoutTests/imported/w3c/web-platform-tests/2dcontext/wide-gamut-canvas/canvas-createImageBitmap-e_srgb.html
+/LayoutTests/imported/w3c/web-platform-tests/2dcontext/wide-gamut-canvas/canvas-createPutGetImageData-colorManaged.html
+/LayoutTests/imported/w3c/web-platform-tests/2dcontext/wide-gamut-canvas/canvas-draw-high-bit-depth-images.html
+/LayoutTests/imported/w3c/web-platform-tests/2dcontext/wide-gamut-canvas/canvas-drawImage-e_srgb.html
+/LayoutTests/imported/w3c/web-platform-tests/2dcontext/wide-gamut-canvas/canvas-drawImage-offscreenCanvas.html
+/LayoutTests/imported/w3c/web-platform-tests/2dcontext/wide-gamut-canvas/canvas-getImageData-e_srgb.html
+/LayoutTests/imported/w3c/web-platform-tests/2dcontext/wide-gamut-canvas/imageData-colorManagedBehavior.html
+/LayoutTests/imported/w3c/web-platform-tests/2dcontext/wide-gamut-canvas/imageData-colorSpace.html
+/LayoutTests/imported/w3c/web-platform-tests/2dcontext/wide-gamut-canvas/imagedata-no-color-settings-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/2dcontext/wide-gamut-canvas/transferFromImageBitmap.html

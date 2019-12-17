@@ -1,0 +1,6 @@
+
+PASS Verify that drawImage->getImageData round trip preserves color values when image metadata has no color space and canvas uses the default color space. 
+PASS Verify that drawImage->getImageData round trip preserves color values when image metadata has srgb color space and canvas uses the srgb color space. 
+PASS Verify that drawImage->getImageData round trip preserves color values when image metadata has no color space and canvas uses the srgb color space. 
+PASS Verify that drawImage->getImageData round trip preserves color values when image metadata has srgb color space and canvas uses the default color space. 
+

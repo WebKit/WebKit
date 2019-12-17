@@ -2,5 +2,5 @@
 Testing baselines
 Actual output:
 
-FAIL Testing baselines ctx.measureText('A').getBaselines is not a function. (In 'ctx.measureText('A').getBaselines()', 'ctx.measureText('A').getBaselines' is undefined)
+FAIL Testing baselines The string did not match the expected pattern.
 

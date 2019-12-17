@@ -2,5 +2,5 @@
 Testing width advances
 Actual output:
 
-FAIL Testing width advances undefined is not an object (evaluating 'ctx.measureText('Hello').advances[0]')
+FAIL Testing width advances The string did not match the expected pattern.
 

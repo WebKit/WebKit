@@ -54,5 +54,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/2dcontext/drawing-images-to-the-canvas/drawimage_canvas_self-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/2dcontext/drawing-images-to-the-canvas/drawimage_canvas_self.html
 /LayoutTests/imported/w3c/web-platform-tests/2dcontext/drawing-images-to-the-canvas/drawimage_canvas_self_ref.html
+/LayoutTests/imported/w3c/web-platform-tests/2dcontext/drawing-images-to-the-canvas/drawimage_crossorigin.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/2dcontext/drawing-images-to-the-canvas/drawimage_html_image.html
 /LayoutTests/imported/w3c/web-platform-tests/2dcontext/drawing-images-to-the-canvas/drawimage_svg_image_1.html
+/LayoutTests/imported/w3c/web-platform-tests/2dcontext/drawing-images-to-the-canvas/drawimage_svg_image_with_foreign_object_does_not_taint.html

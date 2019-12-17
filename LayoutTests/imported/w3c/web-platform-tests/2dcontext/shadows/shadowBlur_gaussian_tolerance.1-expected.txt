@@ -1,0 +1,7 @@
+Test of canvas shadowBlur Gaussian blur pixel values
+
+
+PASS shadowBlur Gaussian pixel values for no blur 
+PASS shadowBlur Gaussian pixel values for small blur 
+PASS shadowBlur Gaussian pixel values for large blur 
+
