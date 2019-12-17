@@ -1,3 +1,13 @@
+2019-12-17  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed GTK gardening. Fix test /webkit/WebKitPrintOperation/close-after-print
+
+        Use webkit_web_view_new_with_related_view() instead of webkit_web_view_new_with_context() since it's expected
+        that web views created in WebKitWebView::create signal callback are related. Also use g_object_unref() instead
+        of gtk_widget_destroy() to release the created web view since it's never added to a window.
+
+        * TestWebKitAPI/Tests/WebKitGtk/TestPrinting.cpp:
+
 2019-12-17  youenn fablet  <youenn@apple.com>
 
         WebKitTestRunner should report service worker process crashes

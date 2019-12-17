@@ -210,7 +210,7 @@ public:
 
     static void webViewClosed(WebKitWebView* webView, CloseAfterPrintTest* test)
     {
-        gtk_widget_destroy(GTK_WIDGET(webView));
+        g_object_unref(webView);
         test->m_webViewClosed = true;
         if (test->m_printFinished)
             g_main_loop_quit(test->m_mainLoop);
@@ -226,7 +226,7 @@ public:
 
     GtkWidget* createWebView()
     {
-        GtkWidget* newWebView = webkit_web_view_new_with_context(m_webContext.get());
+        GtkWidget* newWebView = webkit_web_view_new_with_related_view(m_webView);
         g_object_ref_sink(newWebView);
 
         assertObjectIsDeletedWhenTestFinishes(G_OBJECT(newWebView));
