@@ -822,8 +822,6 @@ void WebChromeClient::loadIconForFiles(const Vector<String>& filenames, FileIcon
     loader.iconLoaded(createIconForFiles(filenames));
 }
 
-#if !PLATFORM(IOS_FAMILY)
-
 void WebChromeClient::setCursor(const Cursor& cursor)
 {
     m_page.send(Messages::WebPageProxy::SetCursor(cursor));
@@ -833,6 +831,8 @@ void WebChromeClient::setCursorHiddenUntilMouseMoves(bool hiddenUntilMouseMoves)
 {
     m_page.send(Messages::WebPageProxy::SetCursorHiddenUntilMouseMoves(hiddenUntilMouseMoves));
 }
+
+#if !PLATFORM(IOS_FAMILY)
 
 RefPtr<Icon> WebChromeClient::createIconForFiles(const Vector<String>& filenames)
 {

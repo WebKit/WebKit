@@ -1,3 +1,59 @@
+2019-12-17  Tim Horton  <timothy_horton@apple.com>
+
+        macCatalyst: Cursor should update on mouse movement and style change
+        https://bugs.webkit.org/show_bug.cgi?id=205317
+        <rdar://problem/46793696>
+
+        Reviewed by Anders Carlsson.
+
+        * Configurations/WebCore.xcconfig:
+        Link AppKit for NSCursor.
+
+        * SourcesCocoa.txt:
+        Remove CursorIOS.cpp.
+        De-unify CursorMac; because it imports AppKit headers, we have to
+        take care to make sure it doesn't also get WAK (which it does if you
+        leave it unified).
+
+        * WebCore.xcodeproj/project.pbxproj:
+        Remove CursorIOS.cpp and de-unify CursorMac (by adding it to the target)
+
+        * loader/EmptyClients.h:
+        * page/Chrome.cpp:
+        (WebCore::Chrome::setCursor):
+        (WebCore::Chrome::setCursorHiddenUntilMouseMoves):
+        Unifdef many things.
+
+        * page/ChromeClient.h:
+        (WebCore::ChromeClient::supportsSettingCursor):
+        Add a ChromeClient bit, supportsSettingCursor, which can be used
+        to guard work that shouldn't happen if a platform doesn't support
+        pushing cursor updates out from WebCore. This will be true everywhere
+        except iOS, and does the work of the old platform ifdefs.
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::EventHandler):
+        (WebCore::EventHandler::clear):
+        (WebCore::EventHandler::updateCursor):
+        (WebCore::EventHandler::selectCursor):
+        (WebCore::EventHandler::handleMouseMoveEvent):
+        (WebCore::EventHandler::scheduleCursorUpdate):
+        * page/EventHandler.h:
+        * platform/Cursor.cpp:
+        * platform/Cursor.h:
+        Unifdef, and use supportsSettingCursor to avoid some unnecessary work.
+
+        * platform/ios/CursorIOS.cpp: Removed.
+        * platform/ios/WidgetIOS.mm:
+        (WebCore::Widget::setCursor):
+        Propagate cursor changes upwards.
+
+        * platform/mac/CursorMac.mm:
+        (WebCore::cursor):
+        (WebCore::Cursor::ensurePlatformCursor const):
+        CursorMac is now built in macCatalyst. However, parts that depend
+        on HIServices or NSImage are #ifdeffed out, and fall back to an arrow.
+
 2019-12-17  Antti Koivisto  <antti@apple.com>
 
         REGRESSION: ASSERTION FAILED: FontCache::singleton().generation() == m_generation

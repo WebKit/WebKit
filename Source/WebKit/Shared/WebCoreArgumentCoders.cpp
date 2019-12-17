@@ -1125,7 +1125,6 @@ bool ArgumentCoder<NativeImageHandle>::decode(Decoder& decoder, NativeImageHandl
     return decodeOptionalNativeImage(decoder, imageHandle.image);
 }
 
-#if !PLATFORM(IOS_FAMILY)
 void ArgumentCoder<Cursor>::encode(Encoder& encoder, const Cursor& cursor)
 {
     encoder.encodeEnum(cursor.type());
@@ -1196,7 +1195,6 @@ bool ArgumentCoder<Cursor>::decode(Decoder& decoder, Cursor& cursor)
 #endif
     return true;
 }
-#endif
 
 void ArgumentCoder<ResourceRequest>::encode(Encoder& encoder, const ResourceRequest& resourceRequest)
 {

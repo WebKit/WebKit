@@ -175,9 +175,7 @@ public:
 #endif
 
     void scheduleHoverStateUpdate();
-#if ENABLE(CURSOR_SUPPORT)
     void scheduleCursorUpdate();
-#endif
 
     void setResizingFrameSet(HTMLFrameSetElement*);
 
@@ -377,10 +375,7 @@ private:
     void updateCursor(FrameView&, const HitTestResult&, bool shiftKey);
 
     void hoverTimerFired();
-
-#if ENABLE(CURSOR_SUPPORT)
     void cursorUpdateTimerFired();
-#endif
 
     bool logicalScrollOverflow(ScrollLogicalDirection, ScrollGranularity, Node* startingNode = nullptr);
     
@@ -523,10 +518,7 @@ private:
 #endif
 
     Timer m_hoverTimer;
-
-#if ENABLE(CURSOR_SUPPORT)
     Timer m_cursorUpdateTimer;
-#endif
 
 #if PLATFORM(MAC)
     Timer m_pendingMomentumWheelEventsTimer;

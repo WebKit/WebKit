@@ -486,20 +486,12 @@ void Chrome::dispatchViewportPropertiesDidChange(const ViewportArguments& argume
 
 void Chrome::setCursor(const Cursor& cursor)
 {
-#if ENABLE(CURSOR_SUPPORT)
     m_client.setCursor(cursor);
-#else
-    UNUSED_PARAM(cursor);
-#endif
 }
 
 void Chrome::setCursorHiddenUntilMouseMoves(bool hiddenUntilMouseMoves)
 {
-#if ENABLE(CURSOR_SUPPORT)
     m_client.setCursorHiddenUntilMouseMoves(hiddenUntilMouseMoves);
-#else
-    UNUSED_PARAM(hiddenUntilMouseMoves);
-#endif
 }
 
 PlatformDisplayID Chrome::displayID() const

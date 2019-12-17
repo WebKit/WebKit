@@ -83,8 +83,8 @@
 #endif
 #endif
 
-#if !defined(ENABLE_CURSOR_SUPPORT)
-#define ENABLE_CURSOR_SUPPORT 0
+#if !defined(ENABLE_CUSTOM_CURSOR_SUPPORT)
+#define ENABLE_CUSTOM_CURSOR_SUPPORT 0
 #endif
 
 #if !defined(ENABLE_DRAG_SUPPORT)
@@ -455,8 +455,8 @@ the public iOS SDK. See <https://webkit.org/b/179167>. */
 #define ENABLE_CSS_CONIC_GRADIENTS 0
 #endif
 
-#if !defined(ENABLE_CURSOR_SUPPORT)
-#define ENABLE_CURSOR_SUPPORT 1
+#if !defined(ENABLE_CUSTOM_CURSOR_SUPPORT)
+#define ENABLE_CUSTOM_CURSOR_SUPPORT 1
 #endif
 
 #if !defined(ENABLE_CUSTOM_SCHEME_HANDLER)

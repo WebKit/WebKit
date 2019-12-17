@@ -191,9 +191,10 @@ private:
     void showShareSheet(WebCore::ShareDataWithParsedURL&, WTF::CompletionHandler<void(bool)>&&) final;
     void loadIconForFiles(const Vector<String>&, WebCore::FileIconLoader&) final;
 
-#if !PLATFORM(IOS_FAMILY)
     void setCursor(const WebCore::Cursor&) final;
     void setCursorHiddenUntilMouseMoves(bool) final;
+#if !HAVE(NSCURSOR)
+    bool supportsSettingCursor() final { return false; }
 #endif
 
 #if ENABLE(POINTER_LOCK)

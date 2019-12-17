@@ -142,10 +142,8 @@ class EmptyChromeClient : public ChromeClient {
     void elementDidFocus(Element&) final { }
     void elementDidBlur(Element&) final { }
 
-#if !PLATFORM(IOS_FAMILY)
     void setCursor(const Cursor&) final { }
     void setCursorHiddenUntilMouseMoves(bool) final { }
-#endif
 
     void scrollRectIntoView(const IntRect&) const final { }
 

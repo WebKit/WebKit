@@ -384,7 +384,6 @@ platform/graphics/opengl/TemporaryOpenGLSetting.cpp
 platform/graphics/opentype/OpenTypeCG.cpp
 
 platform/ios/ColorIOS.mm
-platform/ios/CursorIOS.cpp
 platform/ios/Device.cpp
 platform/ios/DeviceMotionClientIOS.mm
 platform/ios/DeviceOrientationClientIOS.mm
@@ -436,7 +435,7 @@ platform/ios/wak/WKGraphics.mm
 platform/ios/wak/WKView.mm
 
 platform/mac/BlacklistUpdater.mm
-platform/mac/CursorMac.mm
+platform/mac/CursorMac.mm @no-unify
 platform/mac/DragDataMac.mm
 platform/mac/DragImageMac.mm
 platform/mac/KeyEventMac.mm @no-unify

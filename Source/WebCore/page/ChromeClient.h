@@ -189,10 +189,9 @@ public:
 
     virtual PlatformPageClient platformPageClient() const = 0;
 
-#if ENABLE(CURSOR_SUPPORT)
     virtual void setCursor(const Cursor&) = 0;
     virtual void setCursorHiddenUntilMouseMoves(bool) = 0;
-#endif
+    virtual bool supportsSettingCursor() { return true; }
 
     virtual FloatSize screenSize() const { return const_cast<ChromeClient&>(*this).windowRect().size(); }
     virtual FloatSize availableScreenSize() const { return const_cast<ChromeClient&>(*this).windowRect().size(); }

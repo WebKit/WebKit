@@ -176,13 +176,11 @@ const Seconds fakeMouseMoveShortInterval = { 100_ms };
 const Seconds fakeMouseMoveLongInterval = { 250_ms };
 #endif
 
-#if ENABLE(CURSOR_SUPPORT)
 // The amount of time to wait for a cursor update on style and layout changes
 // Set to 50Hz, no need to be faster than common screen refresh rate
 static const Seconds cursorUpdateInterval { 20_ms };
 
 const int maximumCursorSize = 128;
-#endif
 
 #if ENABLE(MOUSE_CURSOR_SCALE)
 // It's pretty unlikely that a scale of less than one would ever be used. But all we really
@@ -376,9 +374,7 @@ inline bool EventHandler::eventLoopHandleMouseDragged(const MouseEventWithHitTes
 EventHandler::EventHandler(Frame& frame)
     : m_frame(frame)
     , m_hoverTimer(*this, &EventHandler::hoverTimerFired)
-#if ENABLE(CURSOR_SUPPORT)
     , m_cursorUpdateTimer(*this, &EventHandler::cursorUpdateTimerFired)
-#endif
 #if PLATFORM(MAC)
     , m_pendingMomentumWheelEventsTimer(*this, &EventHandler::clearLatchedState)
 #endif
@@ -415,9 +411,7 @@ DragState& EventHandler::dragState()
 void EventHandler::clear()
 {
     m_hoverTimer.stop();
-#if ENABLE(CURSOR_SUPPORT)
     m_cursorUpdateTimer.stop();
-#endif
 #if !ENABLE(IOS_TOUCH_EVENTS)
     m_fakeMouseMoveEventTimer.stop();
 #endif
@@ -1340,7 +1334,6 @@ Frame* EventHandler::subframeForTargetNode(Node* node)
     return &downcast<FrameView>(*widget).frame();
 }
 
-#if ENABLE(CURSOR_SUPPORT)
 static bool isSubmitImage(Node* node)
 {
     return is<HTMLInputElement>(node) && downcast<HTMLInputElement>(*node).isImageButton();
@@ -1396,6 +1389,11 @@ void EventHandler::updateCursor()
 {
     if (m_mousePositionIsUnknown)
         return;
+
+    if (Page* page = m_frame.page()) {
+        if (!page->chrome().client().supportsSettingCursor())
+            return;
+    }
 
     FrameView* view = m_frame.view();
     if (!view)
@@ -1617,7 +1615,6 @@ Optional<Cursor> EventHandler::selectCursor(const HitTestResult& result, bool sh
     }
     return pointerCursor();
 }
-#endif // ENABLE(CURSOR_SUPPORT)
 
 #if ENABLE(CURSOR_VISIBILITY)
 void EventHandler::startAutoHideCursorTimer()
@@ -1943,9 +1940,7 @@ bool EventHandler::handleMouseMoveEvent(const PlatformMouseEvent& platformMouseE
     if (m_hoverTimer.isActive())
         m_hoverTimer.stop();
 
-#if ENABLE(CURSOR_SUPPORT)
     m_cursorUpdateTimer.stop();
-#endif
 
 #if !ENABLE(IOS_TOUCH_EVENTS)
     cancelFakeMouseMoveEvent();
@@ -2024,10 +2019,8 @@ bool EventHandler::handleMouseMoveEvent(const PlatformMouseEvent& platformMouseE
     }
 
     if (!newSubframe || mouseEvent.scrollbar()) {
-#if ENABLE(CURSOR_SUPPORT)
         if (auto* view = m_frame.view())
             updateCursor(*view, mouseEvent.hitTestResult(), platformMouseEvent.shiftKey());
-#endif
     }
     
     m_lastMouseMoveEventSubframe = newSubframe;
@@ -3059,13 +3052,16 @@ void EventHandler::scheduleHoverStateUpdate()
         m_hoverTimer.startOneShot(0_s);
 }
 
-#if ENABLE(CURSOR_SUPPORT)
 void EventHandler::scheduleCursorUpdate()
 {
+    if (Page* page = m_frame.page()) {
+        if (!page->chrome().client().supportsSettingCursor())
+            return;
+    }
+
     if (!m_cursorUpdateTimer.isActive())
         m_cursorUpdateTimer.startOneShot(cursorUpdateInterval);
 }
-#endif
 
 void EventHandler::dispatchFakeMouseMoveEventSoon()
 {

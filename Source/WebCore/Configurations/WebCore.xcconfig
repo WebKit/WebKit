@@ -73,6 +73,7 @@ UNEXPORTED_SYMBOLS_FILE = Configurations/WebCore.unexp;
 
 WK_APPKIT_LDFLAGS = $(WK_APPKIT_LDFLAGS_$(WK_PLATFORM_NAME));
 WK_APPKIT_LDFLAGS_macosx = -framework AppKit;
+WK_APPKIT_LDFLAGS_maccatalyst = -framework AppKit;
 
 WK_APPSUPPORT_LDFLAGS = $(WK_APPSUPPORT_LDFLAGS_$(WK_COCOA_TOUCH));
 WK_APPSUPPORT_LDFLAGS_cocoatouch = -framework AppSupport;

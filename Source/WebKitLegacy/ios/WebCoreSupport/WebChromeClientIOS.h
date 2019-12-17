@@ -50,6 +50,9 @@ private:
     void runOpenPanel(WebCore::Frame&, WebCore::FileChooser&) final;
     void showShareSheet(WebCore::ShareDataWithParsedURL&, CompletionHandler<void(bool)>&&) final;
 
+    void setCursor(const WebCore::Cursor&) final { }
+    void setCursorHiddenUntilMouseMoves(bool) final { }
+
 #if ENABLE(TOUCH_EVENTS)
     void didPreventDefaultForEvent() final;
 #endif

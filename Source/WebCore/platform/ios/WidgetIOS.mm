@@ -32,7 +32,9 @@
 #import "Document.h"
 #import "FontCascade.h"
 #import "Frame.h"
+#import "FrameView.h"
 #import "GraphicsContext.h"
+#import "HostWindow.h"
 #import "PlatformMouseEvent.h"
 #import "ScrollView.h"
 #import "WAKScrollView.h"
@@ -72,8 +74,12 @@ void Widget::setFocus(bool focused)
     UNUSED_PARAM(focused);
 }
 
-void Widget::setCursor(const Cursor&)
+void Widget::setCursor(const Cursor& cursor)
 {
+    FrameView* view = root();
+    if (!view)
+        return;
+    view->hostWindow()->setCursor(cursor);
 }
 
 void Widget::show()

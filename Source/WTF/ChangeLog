@@ -1,3 +1,23 @@
+2019-12-17  Tim Horton  <timothy_horton@apple.com>
+
+        macCatalyst: Cursor should update on mouse movement and style change
+        https://bugs.webkit.org/show_bug.cgi?id=205317
+        <rdar://problem/46793696>
+
+        Reviewed by Anders Carlsson.
+
+        * wtf/FeatureDefines.h:
+        Make ENABLE_CURSOR_SUPPORT true on iOS, for macCatalyst. This results
+        in it being true everywhere, so remove it.
+
+        Add a new ENABLE_CUSTOM_CURSOR_SUPPORT, indicating whether we support
+        custom bitmap cursors. It covers the subset of ENABLE_CURSOR_SUPPORT
+        code that we still don't support in macCatalyst.
+
+        * wtf/Platform.h:
+        Add HAVE_HISERVICES (true on macOS but not macCatalyst) and
+        HAVE_NSCURSOR (true on macOS and macCatalyst but not e.g. iOS).
+
 2019-12-16  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Remove ArrayBufferNeuteringWatchpointSet

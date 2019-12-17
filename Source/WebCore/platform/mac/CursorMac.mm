@@ -26,12 +26,16 @@
 #import "config.h"
 #import "Cursor.h"
 
-#if PLATFORM(MAC)
+#if HAVE(NSCURSOR)
 
+#import <AppKit/NSCursor.h>
 #import <objc/runtime.h>
-#import <pal/spi/mac/HIServicesSPI.h>
 #import <wtf/BlockObjCExceptions.h>
 #import <wtf/StdLibExtras.h>
+
+#if HAVE(HISERVICES)
+#import <pal/spi/mac/HIServicesSPI.h>
+#endif
 
 @interface WebCoreCursorBundle : NSObject { }
 @end
@@ -40,7 +44,9 @@
 @end
 
 namespace WebCore {
-    
+
+#if HAVE(HISERVICES)
+
 static NSCursor *busyButClickableNSCursor;
 static NSCursor *makeAliasNSCursor;
 static NSCursor *moveNSCursor;
@@ -174,9 +180,19 @@ static NSCursor *cursor(const char *name)
     return *slot;
 }
 
+#else
+
+static NSCursor *cursor(const char *)
+{
+    return [NSCursor arrowCursor];
+}
+
+#endif // HAVE(HISERVICES)
+
 // Simple NSCursor calls shouldn't need protection,
 // but creating a cursor with a bad image might throw.
 
+#if ENABLE(CUSTOM_CURSOR_SUPPORT)
 #if ENABLE(MOUSE_CURSOR_SCALE)
 static RetainPtr<NSCursor> createCustomCursor(Image* image, const IntPoint& hotSpot, float scale)
 #else
@@ -215,6 +231,7 @@ static RetainPtr<NSCursor> createCustomCursor(Image* image, const IntPoint& hotS
     END_BLOCK_OBJC_EXCEPTIONS;
     return nullptr;
 }
+#endif // ENABLE(CUSTOM_CURSOR_SUPPORT)
 
 void Cursor::ensurePlatformCursor() const
 {
@@ -344,7 +361,11 @@ void Cursor::ensurePlatformCursor() const
         break;
 
     case Cursor::None:
+#if ENABLE(CUSTOM_CURSOR_SUPPORT)
         m_platformCursor = adoptNS([[NSCursor alloc] initWithImage:adoptNS([[NSImage alloc] initWithSize:NSMakeSize(1, 1)]).get() hotSpot:NSZeroPoint]);
+#else
+        m_platformCursor = [NSCursor arrowCursor];
+#endif
         break;
 
     case Cursor::NotAllowed:
@@ -368,11 +389,13 @@ void Cursor::ensurePlatformCursor() const
         break;
 
     case Cursor::Custom:
+#if ENABLE(CUSTOM_CURSOR_SUPPORT)
 #if ENABLE(MOUSE_CURSOR_SCALE)
         m_platformCursor = createCustomCursor(m_image.get(), m_hotSpot, m_imageScaleFactor);
 #else
         m_platformCursor = createCustomCursor(m_image.get(), m_hotSpot);
-#endif
+#endif // ENABLE(MOUSE_CURSOR_SCALE)
+#endif // ENABLE(CUSTOM_CURSOR_SUPPORT)
         break;
     }
 }
@@ -383,6 +406,14 @@ NSCursor *Cursor::platformCursor() const
     return m_platformCursor.get();
 }
 
+void Cursor::setAsPlatformCursor() const
+{
+    NSCursor *cursor = platformCursor();
+    if ([NSCursor currentCursor] == cursor)
+        return;
+    [cursor set];
+}
+
 } // namespace WebCore
 
-#endif // PLATFORM(MAC)
+#endif // HAVE(NSCURSOR)
