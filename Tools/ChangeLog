@@ -1,3 +1,21 @@
+2019-12-16  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        -[UIWKDocumentContext markedTextRange] is wrong when the caret is not at the start of marked text
+        https://bugs.webkit.org/show_bug.cgi?id=205302
+
+        Reviewed by Tim Horton.
+
+        Add an API test to exercise the case where the options `UIWKDocumentRequestMarkedTextRects` and
+        `UIWKDocumentRequestText` are used to grab marked text rects.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/DocumentEditingContext.mm:
+        (-[UIWKDocumentContext contextBeforeLength]):
+        (-[UIWKDocumentContext markedTextLength]):
+        (-[UIWKDocumentContext markedTextRange]):
+
+        Work around a bug that should be fixed by <rdar://problem/57338528>, so that the new API test can pass on
+        shipping builds of iOS.
+
 2019-12-16  Keith Rollin  <krollin@apple.com>
 
         Unreviewed follow-up fix.

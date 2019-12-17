@@ -81,6 +81,30 @@ static UIWKDocumentRequest *makeRequest(UIWKDocumentRequestFlags flags, UITextGr
     return rects;
 }
 
+// FIXME: These workarounds can be removed once <rdar://problem/57338528> is fixed.
+- (NSUInteger)contextBeforeLength
+{
+    if ([self.contextBefore isKindOfClass:NSString.class])
+        return [(NSString *)self.contextBefore length];
+    if ([self.contextBefore isKindOfClass:NSAttributedString.class])
+        return [(NSAttributedString *)self.contextBefore length];
+    return 0;
+}
+
+- (NSUInteger)markedTextLength
+{
+    if ([self.markedText isKindOfClass:NSString.class])
+        return [(NSString *)self.markedText length];
+    if ([self.markedText isKindOfClass:NSAttributedString.class])
+        return [(NSAttributedString *)self.markedText length];
+    return 0;
+}
+
+- (NSRange)markedTextRange
+{
+    return NSMakeRange(self.contextBeforeLength - self.selectedRangeInMarkedText.location, self.markedTextLength);
+}
+
 - (NSArray<NSValue *> *)textRects
 {
     Vector<std::pair<NSRange, CGRect>> rangesAndRects;
@@ -368,6 +392,30 @@ TEST(DocumentEditingContext, RequestMarkedText)
             EXPECT_EQ(CGRectMake(44, 8, 6, 19), [rectValues[2] CGRectValue]);
         }
     }
+}
+
+TEST(DocumentEditingContext, RequestMarkedTextRectsAndTextOnly)
+{
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
+    [webView synchronouslyLoadHTMLString:applyAhemStyle(@"<input />")];
+    [webView stringByEvaluatingJavaScript:@"document.querySelector('input').focus()"];
+    [webView _synchronouslyExecuteEditCommand:@"InsertText" argument:@"Hello world"];
+
+    auto *contentView = [webView textInputContentView];
+    [contentView selectWordBackward];
+    [contentView setMarkedText:@"world" selectedRange:NSMakeRange(0, 5)];
+    [webView collapseToEnd];
+
+    auto request = adoptNS([[UIWKDocumentRequest alloc] init]);
+    [request setFlags:UIWKDocumentRequestMarkedTextRects | UIWKDocumentRequestText];
+
+    auto context = retainPtr([webView synchronouslyRequestDocumentContext:request.get()]);
+    auto *rectValues = [context markedTextRects];
+    EXPECT_EQ(CGRectMake(165, 8, 26, 25), [rectValues[0] CGRectValue]);
+    EXPECT_EQ(CGRectMake(190, 8, 26, 25), [rectValues[1] CGRectValue]);
+    EXPECT_EQ(CGRectMake(215, 8, 26, 25), [rectValues[2] CGRectValue]);
+    EXPECT_EQ(CGRectMake(240, 8, 26, 25), [rectValues[3] CGRectValue]);
+    EXPECT_EQ(CGRectMake(265, 8, 26, 25), [rectValues[4] CGRectValue]);
 }
 
 TEST(DocumentEditingContext, SpatialRequestInTextField)

@@ -1,3 +1,31 @@
+2019-12-16  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        -[UIWKDocumentContext markedTextRange] is wrong when the caret is not at the start of marked text
+        https://bugs.webkit.org/show_bug.cgi?id=205302
+
+        Reviewed by Tim Horton.
+
+        Makes a few minor adjustments around marked text handling in document editing context request code.
+
+        1. In the case where markedTextRects are requested, automatically expand the context range (i.e. contextBefore
+        and contextAfter) to encompass the marked text. This fixes UIWKDocumentContext's logic that computes the
+        marked text range by subtracting `contextBefore` string's length from `selectedRangeInMarkedText`'s location.
+
+        (Note that this still requires an adjustment in UIKit to actually respect `selectedRangeInMarkedText` when
+        computing `markedTextRange`. This is tracked in <rdar://problem/57338528>).
+
+        2. Stop clamping compositionStart and compositionEnd to the range of interest (in this case, the selection
+        range, which is a collapsed caret selection). This makes the composition range seem as if it were empty, which
+        prevents us from computing the marked text string (and importantly, its length).
+
+        3. Flip the arguments to `distanceBetweenPositions`, such that we end up with a positive value for
+        `selectedRangeInMarkedText` in the case where `compositionStart` is before `startOfRangeOfInterestInSelection`.
+
+        Test: DocumentEditingContext.RequestMarkedTextRectsAndTextOnly
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::requestDocumentEditingContext):
+
 2019-12-16  Per Arne Vollan  <pvollan@apple.com>
 
         [iOS] Issue mach lookup extension to diagnostics daemon
