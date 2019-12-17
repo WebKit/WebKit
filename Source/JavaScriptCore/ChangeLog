@@ -1,3 +1,41 @@
+2019-12-16  Mark Lam  <mark.lam@apple.com>
+
+        Rolling out: r253581 is failing tests on a release build.
+        https://bugs.webkit.org/show_bug.cgi?id=205279
+        <rdar://problem/57971874>
+
+        Not reviewed.
+
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::executeProgram):
+        (JSC::Interpreter::executeCall):
+        (JSC::Interpreter::executeConstruct):
+        (JSC::Interpreter::execute):
+        (JSC::Interpreter::executeModuleProgram):
+        * interpreter/InterpreterInlines.h:
+        (JSC::Interpreter::execute):
+        * jsc.cpp:
+        (startTimeoutThreadIfNeeded):
+        (runJSC):
+        (jscmain):
+        (startTimeoutTimer): Deleted.
+        (timeoutCheckCallback): Deleted.
+        (initializeTimeoutIfNeeded): Deleted.
+        * runtime/JSCConfig.h:
+        * runtime/VM.h:
+        (JSC::VM::notifyNeedDebuggerBreak):
+        (JSC::VM::notifyNeedShellTimeoutCheck): Deleted.
+        * runtime/VMTraps.cpp:
+        (JSC::VMTraps::handleTraps):
+        * runtime/VMTraps.h:
+        (JSC::VMTraps::Mask::Mask):
+        (JSC::VMTraps::Mask::allEventTypes):
+        (JSC::VMTraps::Mask::init):
+        (JSC::VMTraps::interruptingTraps): Deleted.
+        * tools/VMInspector.cpp:
+        (JSC::VMInspector::forEachVM): Deleted.
+        * tools/VMInspector.h:
+
 2019-12-16  Yusuke Suzuki  <ysuzuki@apple.com>
 
         ASSERTION FAILED: length <= maximumLength in js-fixed-array-out-of-memory.js

@@ -32,7 +32,6 @@ namespace JSC {
 
 class ExecutableAllocator;
 class FixedVMPoolExecutableAllocator;
-class VM;
 
 #if CPU(ARM64) || PLATFORM(WATCHOS)
 constexpr size_t PageSize = 16 * KB;
@@ -83,8 +82,6 @@ struct Config {
 #endif
 
             OptionsStorage options;
-
-            void (*shellTimeoutCheckCallback)(VM&);
         };
         char ensureSize[ConfigSizeToProtect];
     };

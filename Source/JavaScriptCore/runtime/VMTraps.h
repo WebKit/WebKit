@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -52,7 +52,6 @@ public:
     enum EventType {
         // Sorted in servicing priority order from highest to lowest.
         NeedDebuggerBreak,
-        NeedShellTimeoutCheck,
         NeedTermination,
         NeedWatchdogCheck,
         NumberOfEventTypes, // This entry must be last in this list.
@@ -62,16 +61,13 @@ public:
     class Mask {
     public:
         enum AllEventTypes { AllEventTypesTag };
-        constexpr Mask(AllEventTypes)
+        Mask(AllEventTypes)
             : m_mask(std::numeric_limits<BitField>::max())
         { }
-        static constexpr Mask allEventTypes() { return Mask(AllEventTypesTag); }
-
-        constexpr Mask(const Mask&) = default;
-        constexpr Mask(Mask&&) = default;
+        static Mask allEventTypes() { return Mask(AllEventTypesTag); }
 
         template<typename... Arguments>
-        constexpr Mask(Arguments... args)
+        Mask(Arguments... args)
             : m_mask(0)
         {
             init(args...);
@@ -81,19 +77,17 @@ public:
 
     private:
         template<typename... Arguments>
-        constexpr void init(EventType eventType, Arguments... args)
+        void init(EventType eventType, Arguments... args)
         {
             ASSERT(eventType < NumberOfEventTypes);
             m_mask |= (1 << eventType);
             init(args...);
         }
 
-        constexpr void init() { }
+        void init() { }
 
         BitField m_mask;
     };
-
-    static constexpr Mask interruptingTraps() { return Mask(NeedShellTimeoutCheck, NeedTermination, NeedWatchdogCheck); }
 
     ~VMTraps();
     VMTraps();

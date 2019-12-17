@@ -60,8 +60,6 @@ public:
     template <typename Functor>
     void iterate(const Locker&, const Functor& functor) { iterate(functor); }
 
-    JS_EXPORT_PRIVATE static void forEachVM(Function<FunctorStatus(VM&)>&&);
-
     Expected<Locker, Error> lock(Seconds timeout = Seconds::infinity());
 
     Expected<bool, Error> isValidExecutableMemory(const Locker&, void*);
