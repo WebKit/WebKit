@@ -120,28 +120,37 @@
     "TestWTF": {
         "subtests": {
             "ThreadMessage.MultipleSenders": {
-                "expected": {"all": {"slow": true}}
+                "expected": {"all": {"slow": true, "status": ["TIMEOUT", "PASS"]}}
+            },
+            "WTF_Condition.TenProducersTenConsumersHundredSlotsNotifyOne": {
+                "expected": {"all": {"slow": true, "status": ["TIMEOUT", "PASS"]}}
+            },
+            "WTF_Condition.TenProducersTenConsumersHundredSlotsNotifyAll": {
+                "expected": {"all": {"slow": true, "status": ["TIMEOUT", "PASS"]}}
             },
             "WTF_Condition.TenProducersTenConsumersOneSlot": {
-                "expected": {"all": {"slow": true}}
+                "expected": {"all": {"slow": true, "status": ["TIMEOUT", "PASS"]}}
             },
             "WTF_Condition.TenProducersOneConsumerOneSlot": {
-                "expected": {"all": {"slow": true}}
+                "expected": {"all": {"slow": true, "status": ["TIMEOUT", "PASS"]}}
+            },
+            "WTF_Condition.OneProducerOneConsumerHundredSlots": {
+                "expected": {"all": {"slow": true, "status": ["TIMEOUT", "PASS"]}}
             },
             "WTF_Condition.OneProducerOneConsumerOneSlot": {
-                "expected": {"all": {"slow": true}}
+                "expected": {"all": {"slow": true, "status": ["TIMEOUT", "PASS"]}}
             },
             "WTF_Condition.OneProducerOneConsumerOneSlotTimeout": {
-                "expected": {"all": {"slow": true}}
+                "expected": {"all": {"slow": true, "status": ["TIMEOUT", "PASS"]}}
             },
             "WTF_DateMath.calculateLocalTimeOffset": {
                 "expected": {"wpe": {"status": ["FAIL"]}}
             },
             "WTF_Lock.ContendedShortSection": {
-                "expected": {"all": {"slow": true}}
+                "expected": {"all": {"slow": true, "status": ["TIMEOUT", "PASS"]}}
             },
             "WTF_Lock.ContendedLongSection": {
-                "expected": {"all": {"slow": true}}
+                "expected": {"all": {"slow": true, "status": ["TIMEOUT", "PASS"]}}
             },
             "WTF_Lock.ManyContendedLongSections": {
                 "expected": {"all": {"slow": true, "status": ["TIMEOUT", "PASS"]}}
@@ -149,17 +158,29 @@
             "WTF_Lock.ManyContendedShortSections": {
                 "expected": {"all": {"slow": true, "status": ["TIMEOUT", "PASS"]}}
             },
+            "WTF_ParkingLot.HundredUnparkAllOneFast": {
+                "expected": {"all": {"slow": true, "status": ["TIMEOUT", "PASS"]}}
+            },
             "WTF_ParkingLot.UnparkAllHundred": {
-                "expected": {"all": {"slow": true}}
+                "expected": {"all": {"slow": true, "status": ["TIMEOUT", "PASS"]}}
+            },
+            "WTF_ParkingLot.UnparkAllHundredFast": {
+                "expected": {"all": {"slow": true, "status": ["TIMEOUT", "PASS"]}}
+            },
+            "WTF_ParkingLot.UnparkOneFiftyThenFiftyAllFast": {
+                "expected": {"all": {"slow": true, "status": ["TIMEOUT", "PASS"]}}
+            },
+            "WTF_ParkingLot.UnparkOneHundredFast": {
+                "expected": {"all": {"slow": true, "status": ["TIMEOUT", "PASS"]}}
             },
             "WTF_WordLock.ContendedShortSection": {
-                "expected": {"all": {"slow": true}}
+                "expected": {"all": {"slow": true, "status": ["TIMEOUT", "PASS"]}}
             },
             "WTF_WordLock.ContendedLongSection": {
-                "expected": {"all": {"slow": true}}
+                "expected": {"all": {"slow": true, "status": ["TIMEOUT", "PASS"]}}
             },
             "WTF_WordLock.ManyContendedShortSections": {
-                "expected": {"all": {"slow": true}}
+                "expected": {"all": {"slow": true, "status": ["TIMEOUT", "PASS"]}}
             }
         }
     },

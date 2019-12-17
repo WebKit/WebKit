@@ -1,5 +1,14 @@
 2019-12-17  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        Unreviewed GTK gardening. Mark several tests that usually time out in the bots as slow
+
+        It seems it depends on the load of the bots. Some of them still time out sometimes even after being marked as
+        slow, so also mark them all as flaky.
+
+        * TestWebKitAPI/glib/TestExpectations.json:
+
+2019-12-17  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         Unreviewed GTK gardening. Mark /webkit/WebKitWebExtension/form-submission-steps as timeout
 
         * TestWebKitAPI/glib/TestExpectations.json:
