@@ -1,3 +1,17 @@
+2019-12-17  James Darpinian  <jdarpinian@chromium.org>
+
+        Fix WebGL conformance test build_177_to_178.html with USE_ANGLE
+        https://bugs.webkit.org/show_bug.cgi?id=204927
+
+        Disable ANGLE_texture_rectangle when compiling user shaders.
+        This mirrors a change I made to Chromium here:
+        https://chromium-review.googlesource.com/c/chromium/src/+/1842223
+
+        Reviewed by Dean Jackson.
+
+        * platform/graphics/angle/GraphicsContext3DANGLE.cpp:
+        (WebCore::GraphicsContext3D::compileShader):
+
 2019-12-17  Tim Horton  <timothy_horton@apple.com>
 
         macCatalyst: Cursor should update on mouse movement and style change

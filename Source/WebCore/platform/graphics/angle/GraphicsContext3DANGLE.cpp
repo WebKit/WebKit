@@ -814,12 +814,19 @@ void GraphicsContext3D::compileShader(Platform3DObject shader)
 {
     ASSERT(shader);
     makeContextCurrent();
+    // We need this extension to support IOSurface backbuffers, but we
+    // don't want it exposed to WebGL user shaders. Temporarily disable
+    // it during shader compilation.
+    gl::DisableExtensionANGLE("GL_ANGLE_texture_rectangle");
     gl::CompileShader(shader);
+    gl::RequestExtensionANGLE("GL_ANGLE_texture_rectangle");
 }
 
 void GraphicsContext3D::compileShaderDirect(Platform3DObject shader)
 {
-    compileShader(shader);
+    ASSERT(shader);
+    makeContextCurrent();
+    gl::CompileShader(shader);
 }
 
 void GraphicsContext3D::copyTexImage2D(GC3Denum target, GC3Dint level, GC3Denum internalformat, GC3Dint x, GC3Dint y, GC3Dsizei width, GC3Dsizei height, GC3Dint border)
