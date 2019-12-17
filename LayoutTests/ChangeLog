@@ -1,3 +1,13 @@
+2019-12-17  Simon Fraser  <simon.fraser@apple.com>
+
+        REGRSSION: [ High Sierra Catalina ] (r253310) compositing/video/video-border-radius-clipping.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=205226
+
+        Unreviewed test gardening. Mark the test as an image failure on WK1.
+        The test fails with a few different pixels in the video frames.
+
+        * platform/mac-wk1/TestExpectations:
+
 2019-12-17  Chris Dumez  <cdumez@apple.com>
 
         Re-sync web-platform-tests/interfaces from upstream
