@@ -894,8 +894,8 @@ JSCValue* jsc_context_evaluate_in_object(JSCContext* context, const char* code, 
         instance ? jscClassCreateContextWithJSWrapper(objectClass, context, instance) : JSGlobalContextCreateInGroup(jscVirtualMachineGetContextGroup(context->priv->vm.get()), nullptr));
     JSC::JSGlobalObject* globalObject = toJS(objectContext.get());
     JSC::VM& vm = globalObject->vm();
-    auto* jsObject = globalObject;
-    jsObject->setGlobalScopeExtension(JSC::JSWithScope::create(vm, jsObject, jsObject->globalScope(), toJS(JSContextGetGlobalObject(context->priv->jsContext.get()))));
+    JSC::JSLockHolder locker(globalObject);
+    globalObject->setGlobalScopeExtension(JSC::JSWithScope::create(vm, globalObject, globalObject->globalScope(), toJS(JSContextGetGlobalObject(context->priv->jsContext.get()))));
     JSValueRef exception = nullptr;
     JSValueRef result = evaluateScriptInContext(objectContext.get(), String::fromUTF8(code, length < 0 ? strlen(code) : length), uri, lineNumber, &exception);
     if (jscContextHandleExceptionIfNeeded(context, exception))

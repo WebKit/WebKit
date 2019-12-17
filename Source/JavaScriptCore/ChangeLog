@@ -1,3 +1,15 @@
+2019-12-17  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GLIB] jsc_context_evaluate_in_object should take the API lock before calling setGlobalScopeExtension
+        https://bugs.webkit.org/show_bug.cgi?id=205331
+
+        Reviewed by Žan Doberšek.
+
+        We are now getting a crash due to an assert because the api lock is not held.
+
+        * API/glib/JSCContext.cpp:
+        (jsc_context_evaluate_in_object):
+
 2019-12-16  Mark Lam  <mark.lam@apple.com>
 
         Relanding r253581: Changed jsc shell timeout mechanism to leverage the VMTraps and use CPUTime.
