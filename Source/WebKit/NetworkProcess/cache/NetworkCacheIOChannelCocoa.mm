@@ -37,14 +37,28 @@
 namespace WebKit {
 namespace NetworkCache {
 
-IOChannel::IOChannel(const String& filePath, Type type)
+static long dispatchQueueIdentifier(WorkQueue::QOS qos)
+{
+    switch (qos) {
+    case WorkQueue::QOS::UserInteractive:
+    case WorkQueue::QOS::UserInitiated:
+    case WorkQueue::QOS::Default:
+        return DISPATCH_QUEUE_PRIORITY_DEFAULT;
+    case WorkQueue::QOS::Utility:
+        return DISPATCH_QUEUE_PRIORITY_LOW;
+    case WorkQueue::QOS::Background:
+        return DISPATCH_QUEUE_PRIORITY_BACKGROUND;
+    }
+}
+
+IOChannel::IOChannel(const String& filePath, Type type, Optional<WorkQueue::QOS> qos)
     : m_path(filePath)
     , m_type(type)
 {
     auto path = FileSystem::fileSystemRepresentation(filePath);
     int oflag;
     mode_t mode;
-    bool useLowIOPriority = false;
+    WorkQueue::QOS dispatchQOS;
 
     switch (m_type) {
     case Type::Create:
@@ -52,22 +66,23 @@ IOChannel::IOChannel(const String& filePath, Type type)
         unlink(path.data());
         oflag = O_RDWR | O_CREAT | O_NONBLOCK;
         mode = S_IRUSR | S_IWUSR;
-        useLowIOPriority = true;
+        dispatchQOS = qos.valueOr(WorkQueue::QOS::Background);
         break;
     case Type::Write:
         oflag = O_WRONLY | O_NONBLOCK;
         mode = S_IRUSR | S_IWUSR;
-        useLowIOPriority = true;
+        dispatchQOS = qos.valueOr(WorkQueue::QOS::Background);
         break;
     case Type::Read:
         oflag = O_RDONLY | O_NONBLOCK;
         mode = 0;
+        dispatchQOS = qos.valueOr(WorkQueue::QOS::Default);
     }
 
     int fd = ::open(path.data(), oflag, mode);
     m_fileDescriptor = fd;
 
-    m_dispatchIO = adoptOSObject(dispatch_io_create(DISPATCH_IO_RANDOM, fd, dispatch_get_global_queue(useLowIOPriority ? DISPATCH_QUEUE_PRIORITY_BACKGROUND : DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), [fd](int) {
+    m_dispatchIO = adoptOSObject(dispatch_io_create(DISPATCH_IO_RANDOM, fd, dispatch_get_global_queue(dispatchQueueIdentifier(dispatchQOS), 0), [fd](int) {
         close(fd);
     }));
     ASSERT(m_dispatchIO.get());
@@ -79,11 +94,6 @@ IOChannel::IOChannel(const String& filePath, Type type)
 IOChannel::~IOChannel()
 {
     RELEASE_ASSERT(!m_wasDeleted.exchange(true));
-}
-
-Ref<IOChannel> IOChannel::open(const String& filePath, IOChannel::Type type)
-{
-    return adoptRef(*new IOChannel(filePath, type));
 }
 
 void IOChannel::read(size_t offset, size_t size, WorkQueue* queue, Function<void (Data&, int error)>&& completionHandler)

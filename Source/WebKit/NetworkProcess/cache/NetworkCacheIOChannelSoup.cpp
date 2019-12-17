@@ -37,7 +37,7 @@ namespace NetworkCache {
 
 static const size_t gDefaultReadBufferSize = 4096;
 
-IOChannel::IOChannel(const String& filePath, Type type)
+IOChannel::IOChannel(const String& filePath, Type type, Optional<WorkQueue::QOS>)
     : m_path(filePath)
     , m_type(type)
 {
@@ -66,11 +66,6 @@ IOChannel::IOChannel(const String& filePath, Type type)
 IOChannel::~IOChannel()
 {
     RELEASE_ASSERT(!m_wasDeleted.exchange(true));
-}
-
-Ref<IOChannel> IOChannel::open(const String& filePath, IOChannel::Type type)
-{
-    return adoptRef(*new IOChannel(filePath, type));
 }
 
 static inline void runTaskInQueue(Function<void ()>&& task, WorkQueue* queue)

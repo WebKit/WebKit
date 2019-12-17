@@ -1,3 +1,13 @@
+2019-12-17  youenn fablet  <youenn@apple.com>
+
+        Bump the priority of CacheStorageEngine write operations
+        https://bugs.webkit.org/show_bug.cgi?id=205329
+
+        Reviewed by Antti Koivisto.
+
+        * http/tests/cache-storage/page-cache-domcachestorage-pending-promise.html:
+        Increase timer.
+
 2019-12-17  Thibault Saunier  <tsaunier@igalia.com>
 
         [GStreamer][WPE] Fix regressions related to our 'Fix GStreamer capturer mock' patch

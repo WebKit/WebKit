@@ -31,7 +31,7 @@
 namespace WebKit {
 namespace NetworkCache {
 
-IOChannel::IOChannel(const String& filePath, Type type)
+IOChannel::IOChannel(const String& filePath, Type type, Optional<WorkQueue::QOS>)
     : m_path(filePath)
     , m_type(type)
 {
@@ -53,11 +53,6 @@ IOChannel::IOChannel(const String& filePath, Type type)
 IOChannel::~IOChannel()
 {
     FileSystem::closeFile(m_fileDescriptor);
-}
-
-Ref<IOChannel> IOChannel::open(const String& filePath, IOChannel::Type type)
-{
-    return adoptRef(*new IOChannel(filePath, type));
 }
 
 static inline void runTaskInQueue(Function<void()>&& task, WorkQueue* queue)

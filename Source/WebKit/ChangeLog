@@ -1,5 +1,31 @@
 2019-12-17  youenn fablet  <youenn@apple.com>
 
+        Bump the priority of CacheStorageEngine write operations
+        https://bugs.webkit.org/show_bug.cgi?id=205329
+
+        Reviewed by Antti Koivisto.
+
+        Introduce an IOChannel extra optional parameter to set the QOS.
+        Use this parameter for IOChannels created by CacheStorageEngine when writing files to increase the priority to default.
+        Increase the priority of the CacheStorageEngine background queue to default.
+        No observable change of behavior except potential speed increase.
+
+        * NetworkProcess/cache/CacheStorageEngine.cpp:
+        (WebKit::CacheStorage::Engine::Engine):
+        (WebKit::CacheStorage::Engine::writeFile):
+        * NetworkProcess/cache/NetworkCacheIOChannel.h:
+        (WebKit::NetworkCache::IOChannel::open):
+        * NetworkProcess/cache/NetworkCacheIOChannelCocoa.mm:
+        (WebKit::NetworkCache::dispatchQueueFromPriority):
+        (WebKit::NetworkCache::IOChannel::IOChannel):
+        (WebKit::NetworkCache::IOChannel::open):
+        * NetworkProcess/cache/NetworkCacheIOChannelCurl.cpp:
+        (WebKit::NetworkCache::IOChannel::open):
+        * NetworkProcess/cache/NetworkCacheIOChannelSoup.cpp:
+        (WebKit::NetworkCache::IOChannel::open):
+
+2019-12-17  youenn fablet  <youenn@apple.com>
+
         WebKitTestRunner should report service worker process crashes
         https://bugs.webkit.org/show_bug.cgi?id=205267
 

@@ -30,7 +30,7 @@ window.addEventListener("pagehide", function(event) {
         if (window.internals)
             console.log(await internals.cacheStorageEngineRepresentation());
         finishJSTest();
-    }, 10000);
+    }, 20000);
 
     caches.open('test').then(() => {
        clearTimeout(handle1);

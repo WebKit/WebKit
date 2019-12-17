@@ -42,7 +42,7 @@ namespace NetworkCache {
 class IOChannel : public ThreadSafeRefCounted<IOChannel> {
 public:
     enum class Type { Read, Write, Create };
-    static Ref<IOChannel> open(const String& file, Type);
+    static Ref<IOChannel> open(const String& file, Type type, Optional<WorkQueue::QOS> qos = { }) { return adoptRef(*new IOChannel(file, type, qos)); }
 
     // Using nullptr as queue submits the result to the main queue.
     // FIXME: We should add WorkQueue::main() instead.
@@ -61,7 +61,7 @@ public:
     ~IOChannel();
 
 private:
-    IOChannel(const String& filePath, IOChannel::Type);
+    IOChannel(const String& filePath, IOChannel::Type, Optional<WorkQueue::QOS>);
 
 #if USE(SOUP)
     void readSyncInThread(size_t offset, size_t, WorkQueue*, Function<void (Data&, int error)>&&);
