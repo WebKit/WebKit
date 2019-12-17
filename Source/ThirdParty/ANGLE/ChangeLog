@@ -1,3 +1,28 @@
+2019-12-17  James Darpinian  <jdarpinian@chromium.org>
+
+        Improve update-angle.sh and add gni-to-cmake.py
+        https://bugs.webkit.org/show_bug.cgi?id=204914
+
+        update-angle.sh now performs a git rebase. This automatically merges
+        upstream changes with WebKit's local changes where possible and
+        highlights any conflicts for manual resolution.
+
+        Also, it runs a new script gni-to-cmake.py to automatically update the
+        CMake files with upstream changes to the gni files. Along with the
+        changes to include/CMakeLists.txt, this should prevent build breaks
+        like the recently fixed WinCairo one. Additionally, diffing the CMake
+        files provides a concise list of build changes that can be referenced
+        when manually updating the XCode project file.
+
+        Reviewed by Dean Jackson.
+
+        * CMakeLists.txt:
+        * Compiler.cmake:
+        * GLESv2.cmake:
+        * gni-to-cmake.py: Added.
+        * include/CMakeLists.txt:
+        * update-angle.sh:
+
 2019-12-17  ChangSeok Oh  <changseok@webkit.org>
 
         Unreviewed build fix for USE_ANGLE_WEBGL after r252994

@@ -1,3 +1,13 @@
+if (UNIX AND NOT APPLE)
+    set(is_linux TRUE)
+endif()
+if (WIN32)
+    set(is_win TRUE)
+endif()
+if (APPLE)
+    set(is_mac TRUE)
+endif()
+
 include(Compiler.cmake)
 include(GLESv2.cmake)
 
@@ -57,21 +67,9 @@ set(ANGLE_SOURCES
     ${angle_translator_essl_sources}
     ${angle_translator_glsl_sources}
     ${angle_translator_sources}
-    ${libangle_capture_sources}
+    ${angle_system_utils_sources}
+    "src/libANGLE/FrameCapture_mock.cpp"
 )
-
-if (UNIX)
-    list(APPEND ANGLE_SOURCES ${angle_system_utils_sources_posix})
-    if (APPLE)
-        list(APPEND ANGLE_SOURCES ${angle_system_utils_sources_mac})
-    else()
-        list(APPEND ANGLE_SOURCES ${angle_system_utils_sources_linux})
-    endif()
-endif()
-
-if (WIN32)
-    list(APPEND ANGLE_SOURCES ${angle_system_utils_sources_win})
-endif()
 
 set(ANGLEGLESv2_LIBRARIES
     ANGLE

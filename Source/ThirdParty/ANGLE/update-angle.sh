@@ -5,6 +5,38 @@ cd "$(dirname ${BASH_SOURCE[0]})"
 
 ANGLE_DIR="$PWD"
 
+function print_rebase_message_and_exit {
+    echo
+    echo "*** When you are ready, Instead of running git rebase --continue, run"
+    echo "*** update-angle.sh again."
+    exit 1
+}
+
+function cleanup_after_successful_rebase_and_exit {
+    cd "$ANGLE_DIR"
+    rm -rf .git
+    git add -A .
+    echo
+    git diff --cached --no-pager Compiler.cmake GLESv2.cmake
+    echo
+    echo "Success! Rebase complete."
+    echo "Above are the changes to Compiler.cmake and GLESv2.cmake."
+    echo "Now you'll need to apply the equivalent changes to the ANGLE XCode"
+    echo "project. Once that's done you should be ready to upload your patch."
+    exit 0
+}
+
+if test -d .git && (test -d "$(git rev-parse --git-path rebase-merge)" || test -d "$(git rev-parse --git-path rebase-apply)"); then
+    if ! git rebase --continue; then
+        print_rebase_message_and_exit
+    fi
+    cleanup_after_successful_rebase_and_exit
+fi
+
+echo "This script will check out the latest ANGLE and start a git rebase"
+echo "to apply WebKit's local ANGLE changes on top of the latest ANGLE master"
+echo "branch."
+echo
 echo "This will clobber any changes you have made in:"
 echo "$ANGLE_DIR"
 read -p "Are you sure? [y/N] " -n 1 -r
@@ -16,85 +48,48 @@ fi
 
 PREVIOUS_COMMIT_HASH=`grep -m 1 -o -E "[a-z0-9]{40}" ANGLE.plist`
 
-# First, preserve WebKit's additional files
-TEMPDIR=`mktemp -d`
-function cleanup {
-	echo "Copying WebKit-added files into the updated ANGLE:"
-	pushd "$TEMPDIR" &> /dev/null
-	popd &> /dev/null
-    cp -a "$TEMPDIR/." "$ANGLE_DIR"
-    rm -rf "$TEMPDIR"
-	git ls-files --others --exclude-standard | sed 's/^/     /'
-}
-trap cleanup EXIT
-mv \
-    ANGLE.plist \
-    ANGLE.xcodeproj \
-    CMakeLists.txt \
-    ChangeLog \
-    *.cmake \
-    Configurations \
-    Makefile \
-    adjust-angle-include-* \
-    update-angle.sh \
-    changes.diff \
-    "$TEMPDIR"
-mkdir "$TEMPDIR/include"
-mv include/CMakeLists.txt "$TEMPDIR/include"
-
+echo "Downloading latest ANGLE via git clone."
 # Remove all files including hidden ones, but not . or ..
 rm -rf ..?* .[!.]* *
-echo "Downloading latest ANGLE via git clone."
 git clone https://chromium.googlesource.com/angle/angle .
 echo "Successfully downloaded latest ANGLE."
 echo -n "Commit hash: "
 COMMIT_HASH=`git rev-parse HEAD`
 echo "$COMMIT_HASH"
 echo ""
-echo "Summary of added and removed files since last update:"
-echo "________________________________________________________________________"
-echo ""
-git diff --summary "$PREVIOUS_COMMIT_HASH"
-echo "________________________________________________________________________"
-echo ""
 
-trap - EXIT
-cleanup
+echo "Applying WebKit's local ANGLE changes to the old ANGLE version."
+git checkout -B downstream-changes "$PREVIOUS_COMMIT_HASH"
+pushd .. &> /dev/null
+git checkout HEAD -- ANGLE
+popd &> /dev/null
 
 echo "Copying src/commit.h to src/id/commit.h"
 mkdir -p src/id
-cp src/commit.h src/id/
+git show origin/master:src/commit.h > src/id/commit.h
+
 echo "Updating ANGLE.plist commit hashes."
 sed -i.bak -e "s/\([^a-z0-9]\)[a-z0-9]\{40\}\([^a-z0-9]\)/\1$COMMIT_HASH\2/g" ANGLE.plist
 echo "Updating ANGLE.plist date."
 sed -i.bak -e "s/<string>[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]<\/string>/<string>`date +%Y-%m-%d`<\/string>/g" ANGLE.plist
 rm ANGLE.plist.bak
 
-echo "Applying patch from changes.diff."
-if ! git am changes.diff; then
-    echo "ERROR: Patch failed."
-    echo "You must resolve merge conflicts manually."
-    FAILED_PATCH=true
-fi
+echo "Translating gni build files to cmake."
+git checkout origin/master -- src/compiler.gni src/libGLESv2.gni
+./gni-to-cmake.py src/compiler.gni Compiler.cmake
+./gni-to-cmake.py src/libGLESv2.gni GLESv2.cmake
+git checkout src/compiler.gni src/libGLESv2.gni
 
-echo "________________________________________________________________________"
-echo ""
-echo "There is now a git repository for the latest ANGLE in the directory:"
-echo "$ANGLE_DIR"
-echo ""
-echo "Required manual steps:"
-if [ "$FAILED_PATCH" = true ]; then
-    echo "    - Resolve the merge conflicts created while applying changes.diff."
+echo "Rebasing WebKit's local changes on latest ANGLE master."
+git add -A
+git commit -m "WebKit changes since last ANGLE update."
+git checkout -B upstream-rebased-on-webkit origin/master
+if ! git rebase downstream-changes; then
+    echo
+    echo "There is now a git repo in Source/ThirdParty/ANGLE with a rebase in progress."
+    echo "You must resolve the merge conflict and continue the rebase. Make sure to do"
+    echo "this in the Source/ThirdParty/ANGLE repo, not the main WebKit repo."
+    echo
+    print_rebase_message_and_exit
 fi
-echo "    - Update the XCode project with any new or deleted ANGLE source files."
-echo "    - Update the CMake files with any new or deleted ANGLE source files."
-echo "    - Fix any build/test failures and commit any modified ANGLE files to the"
-echo "      ANGLE git repository."
-echo "        - Be sure not to commit the WebKit-added files listed above, such as"
-echo "          this script or ANGLE.xcodeproj."
-echo "    - Once you have committed any changes you made to upstream ANGLE files,"
-echo "      regenerate changes.diff using this command:"
-echo "          $ git format-patch origin/master --stdout > changes.diff"
-echo "    - Once changes.diff is updated, remove the ANGLE git repository by"
-echo "      deleting the .git directory:"
-echo "          $ rm -rf \"$ANGLE_DIR/.git\""
+cleanup_after_successful_rebase_and_exit

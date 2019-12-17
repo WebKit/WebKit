@@ -1,44 +1,25 @@
-set(egl_headers
-    EGL/egl.h
-    EGL/eglext.h
-    EGL/eglext_angle.h
-    EGL/eglplatform.h
-)
+string(REGEX REPLACE "(^|;)include/" "\\1" includes "$libangle_includes")
 
-set(gles_headers
-    GLES/egl.h
-    GLES/gl.h
-    GLES/glext.h
-    GLES/glext_explicit_context_autogen.inc
-    GLES/glext_angle.h
-    GLES/glplatform.h
-)
+set(egl_headers ${includes})
+list(FILTER egl_headers INCLUDE REGEX "EGL/.*")
 
-set(gles2_headers
-    GLES2/gl2.h
-    GLES2/gl2ext.h
-    GLES2/gl2ext_explicit_context_autogen.inc
-    GLES2/gl2ext_angle.h
-    GLES2/gl2platform.h
-)
+set(gles_headers ${includes})
+list(FILTER gles_headers INCLUDE REGEX "GLES/.*")
 
-set(gles3_headers
-    GLES3/gl3.h
-    GLES3/gl3ext_explicit_context_autogen.inc
-    GLES3/gl31.h
-    GLES3/gl31ext_explicit_context_autogen.inc
-    GLES3/gl32.h
-    GLES3/gl32ext_explicit_context_autogen.inc
-    GLES3/gl3platform.h
-)
+set(gles2_headers ${includes})
+list(FILTER gles2_headers INCLUDE REGEX "GLES2/.*")
+
+set(gles3_headers ${includes})
+list(FILTER gles3_headers INCLUDE REGEX "GLES3/.*")
+
+set(khr_headers ${includes})
+list(FILTER khr_headers INCLUDE REGEX "KHR/.*")
 
 set(glslang_headers
     export.h
     GLSLANG/ShaderLang.h
     GLSLANG/ShaderVars.h
 )
-
-set(khr_headers KHR/khrplatform.h)
 
 set(ANGLE_PUBLIC_HEADERS ${khr_headers})
 
