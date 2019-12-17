@@ -594,28 +594,8 @@ class RunAPITests(TestWithFailureCount):
 
 
 class RunPythonTests(TestWithFailureCount):
-    name = "webkitpy-test"
-    description = ["python-tests running"]
-    descriptionDone = ["python-tests"]
-    command = [
-        "python",
-        "./Tools/Scripts/test-webkitpy",
-        "--verbose",
-        "--buildbot-master", BUILD_WEBKIT_URL,
-        "--builder-name", WithProperties("%(buildername)s"),
-        "--build-number", WithProperties("%(buildnumber)s"),
-        "--buildbot-worker", WithProperties("%(slavename)s"),
-        "--report", RESULTS_WEBKIT_URL,
-    ]
-    failedTestsFormatString = "%d python test%s failed"
-
-    def __init__(self, *args, **kwargs):
-        kwargs['logEnviron'] = False
-        TestWithFailureCount.__init__(self, *args, **kwargs)
 
     def start(self):
-        self.slaveEnvironment[RESULTS_SERVER_API_KEY] = os.getenv(RESULTS_SERVER_API_KEY)
-
         platform = self.getProperty('platform')
         # Python tests are flaky on the GTK builders, running them serially
         # helps and does not significantly prolong the cycle time.
@@ -637,6 +617,45 @@ class RunPythonTests(TestWithFailureCount):
                 continue
             return sum(int(component.split('=')[1]) for component in match.group('counts').split(', '))
         return 0
+
+
+class RunWebKitPyTests(RunPythonTests):
+    name = "webkitpy-test"
+    description = ["python-tests running"]
+    descriptionDone = ["python-tests"]
+    command = [
+        "python",
+        "./Tools/Scripts/test-webkitpy",
+        "--verbose",
+        "--buildbot-master", BUILD_WEBKIT_URL,
+        "--builder-name", WithProperties("%(buildername)s"),
+        "--build-number", WithProperties("%(buildnumber)s"),
+        "--buildbot-worker", WithProperties("%(slavename)s"),
+        "--report", RESULTS_WEBKIT_URL,
+    ]
+    failedTestsFormatString = "%d python test%s failed"
+
+    def __init__(self, *args, **kwargs):
+        kwargs['logEnviron'] = False
+        RunPythonTests.__init__(self, *args, **kwargs)
+
+    def start(self):
+        self.slaveEnvironment[RESULTS_SERVER_API_KEY] = os.getenv(RESULTS_SERVER_API_KEY)
+
+        return RunWebKitPyTests.start(self)
+
+
+class RunLLDBWebKitTests(RunPythonTests):
+    name = "lldb-webkit-test"
+    description = ["lldb-webkit-tests running"]
+    descriptionDone = ["lldb-webkit-tests"]
+    command = [
+        "python",
+        "./Tools/Scripts/test-lldb-webkit",
+        "--verbose",
+        "--no-build",
+    ]
+    failedTestsFormatString = "%d lldb test%s failed"
 
 
 class RunPerlTests(TestWithFailureCount):

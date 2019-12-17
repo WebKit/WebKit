@@ -1,3 +1,22 @@
+2019-12-16  Jonathan Bedard  <jbedard@apple.com>
+
+        test-lldb-webkit: Run in CI
+        https://bugs.webkit.org/show_bug.cgi?id=205315
+
+        Reviewed by Alexey Proskuryakov.
+
+        * BuildSlaveSupport/build.webkit.org-config/factories.py:
+        (TestFactory.__init__): Add RunLLDBWebKitTests to Mac test runs.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/BuildbotIteration.js:
+        * BuildSlaveSupport/build.webkit.org-config/steps.py:
+        (RunPythonTests): Generalized step for all Python tests.
+        (RunPythonTests.start):
+        (RunWebKitPyTests): Step for running test-webkitpy.
+        (RunWebKitPyTests.__init__):
+        (RunWebKitPyTests.start):
+        (RunLLDBWebKitTests): Step for running test-lldb-webkit.
+        * BuildSlaveSupport/build.webkit.org-config/steps_unittest.py:
+
 2019-12-16  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         -[UIWKDocumentContext markedTextRange] is wrong when the caret is not at the start of marked text

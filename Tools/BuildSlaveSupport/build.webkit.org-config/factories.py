@@ -91,7 +91,11 @@ class TestFactory(Factory):
 
         if platform.startswith('win') or platform.startswith('mac') or platform.startswith('ios-simulator'):
             self.addStep(RunAPITests())
-        self.addStep(RunPythonTests())
+
+        if platform.startswith('mac'):
+            self.addStep(RunLLDBWebKitTests())
+
+        self.addStep(RunWebKitPyTests())
         self.addStep(RunPerlTests())
         self.addStep(RunBindingsTests())
         self.addStep(RunBuiltinsTests())
