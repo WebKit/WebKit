@@ -114,6 +114,9 @@
             },
             "WebKit.HitTestResultNodeHandle": {
                 "expected": {"wpe": {"status": ["TIMEOUT"]}}
+            },
+            "WebKit.FocusedFrameAfterCrash": {
+                "expected": {"gtk": {"status": ["TIMEOUT"], "bug": "webkit.org/b/205336"}}
             }
         }
     },
