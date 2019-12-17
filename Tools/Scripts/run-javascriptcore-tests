@@ -899,10 +899,10 @@ sub uploadResults
     );
     if (defined $buildbotMaster and defined $builderName and defined $buildNumber and defined $buildbotWorker) {
         $upload{test_results}{details} = {
-            buildbot_master => $buildbotMaster,
-            builder_name => $builderName,
-            build_number => $buildNumber,
-            buildbot_worker => $buildbotWorker,
+            'buildbot-master' => $buildbotMaster,
+            'builder-name' => $builderName,
+            'build-number' => $buildNumber,
+            'buildbot-worker' => $buildbotWorker,
         };
     } else {
         print "    No buildbot details provided, test run will not be linked to CI system\n";
