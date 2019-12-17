@@ -1,3 +1,17 @@
+2019-12-17  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        check-webkit-style: allow underscores for public symbols in JSC GLIB API
+        https://bugs.webkit.org/show_bug.cgi?id=205265
+
+        Reviewed by Jonathan Bedard.
+
+        Add an exception for symbols starting with jsc_ in glib directories.
+
+        * Scripts/webkitpy/style/checkers/cpp.py:
+        (check_identifier_name_in_declaration):
+        * Scripts/webkitpy/style/checkers/cpp_unittest.py:
+        (WebKitStyleTest.test_names):
+
 2019-12-16  Jonathan Bedard  <jbedard@apple.com>
 
         test-lldb-webkit: Run in CI
