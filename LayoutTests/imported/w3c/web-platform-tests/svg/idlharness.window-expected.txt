@@ -1,6 +1,46 @@
 
 PASS idl_test setup 
+PASS idl_test validation 
 PASS Partial interface Document: original interface defined 
+PASS Partial interface Document: member names are unique 
+PASS Partial interface Document[2]: member names are unique 
+PASS Partial interface Document[3]: member names are unique 
+PASS Partial interface Document[4]: member names are unique 
+PASS SVGElement includes GlobalEventHandlers: member names are unique 
+PASS SVGElement includes DocumentAndElementEventHandlers: member names are unique 
+PASS SVGElement includes SVGElementInstance: member names are unique 
+PASS SVGElement includes HTMLOrSVGElement: member names are unique 
+PASS SVGElement includes ElementCSSInlineStyle: member names are unique 
+PASS SVGGraphicsElement includes SVGTests: member names are unique 
+PASS SVGSVGElement includes SVGFitToViewBox: member names are unique 
+PASS SVGSVGElement includes WindowEventHandlers: member names are unique 
+PASS SVGSymbolElement includes SVGFitToViewBox: member names are unique 
+PASS SVGUseElement includes SVGURIReference: member names are unique 
+PASS SVGStyleElement includes LinkStyle: member names are unique 
+PASS SVGPolylineElement includes SVGAnimatedPoints: member names are unique 
+PASS SVGPolygonElement includes SVGAnimatedPoints: member names are unique 
+PASS SVGTextPathElement includes SVGURIReference: member names are unique 
+PASS SVGImageElement includes SVGURIReference: member names are unique 
+PASS SVGMarkerElement includes SVGFitToViewBox: member names are unique 
+PASS SVGGradientElement includes SVGURIReference: member names are unique 
+PASS SVGPatternElement includes SVGFitToViewBox: member names are unique 
+PASS SVGPatternElement includes SVGURIReference: member names are unique 
+PASS SVGScriptElement includes SVGURIReference: member names are unique 
+PASS SVGAElement includes SVGURIReference: member names are unique 
+FAIL SVGAElement includes HTMLHyperlinkElementUtils: member names are unique assert_true: member href is unique expected true got false
+PASS SVGViewElement includes SVGFitToViewBox: member names are unique 
+PASS Element includes Animatable: member names are unique 
+PASS Element includes ParentNode: member names are unique 
+PASS Element includes NonDocumentTypeChildNode: member names are unique 
+PASS Element includes ChildNode: member names are unique 
+PASS Element includes Slotable: member names are unique 
+PASS Document includes GlobalEventHandlers: member names are unique 
+PASS Document includes DocumentAndElementEventHandlers: member names are unique 
+PASS Document includes NonElementParentNode: member names are unique 
+PASS Document includes ParentNode: member names are unique 
+PASS Document includes XPathEvaluatorBase: member names are unique 
+PASS DocumentFragment includes NonElementParentNode: member names are unique 
+PASS DocumentFragment includes ParentNode: member names are unique 
 PASS SVGElement interface: existence and properties of interface object 
 PASS SVGElement interface object length 
 PASS SVGElement interface object name 

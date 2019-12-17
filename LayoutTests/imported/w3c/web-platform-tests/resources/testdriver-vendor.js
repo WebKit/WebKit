@@ -37,6 +37,9 @@ function dispatchMouseActions(actions)
                     logDebug(() => `eventSender.mouseUp()`);
                     eventSender.mouseUp(action.button);
                     break;
+                case "pause":
+                    // FIXME: What should we do here?
+                    break;
                 default:
                     return Promise.reject(new Error(`Unknown action type "${action.type}".`));
                 }

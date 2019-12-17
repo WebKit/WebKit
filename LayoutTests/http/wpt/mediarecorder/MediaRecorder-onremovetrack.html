@@ -11,6 +11,7 @@
 <canvas id="canvas" width="200" height="200">
 </canvas>
 <script>
+setup({ single_test: true });
 const ac = new webkitAudioContext();
 const osc = ac.createOscillator();
 const dest = ac.createMediaStreamDestination();

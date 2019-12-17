@@ -2,9 +2,135 @@ CSSOM IDL tests
 
 
 PASS Test driver 
+PASS Partial interface Document: member names are unique 
+PASS Partial interface mixin DocumentOrShadowRoot: member names are unique 
+PASS Partial interface mixin NavigatorID: member names are unique 
+PASS Partial interface HTMLAnchorElement: member names are unique 
+PASS Partial interface HTMLAreaElement: member names are unique 
+PASS Partial interface HTMLBodyElement: member names are unique 
+PASS Partial interface HTMLBRElement: member names are unique 
+PASS Partial interface HTMLTableCaptionElement: member names are unique 
+PASS Partial interface HTMLTableColElement: member names are unique 
+PASS Partial interface HTMLDivElement: member names are unique 
+PASS Partial interface HTMLDListElement: member names are unique 
+PASS Partial interface HTMLEmbedElement: member names are unique 
+PASS Partial interface HTMLHeadingElement: member names are unique 
+PASS Partial interface HTMLHRElement: member names are unique 
+PASS Partial interface HTMLHtmlElement: member names are unique 
+PASS Partial interface HTMLIFrameElement: member names are unique 
+PASS Partial interface HTMLImageElement: member names are unique 
+PASS Partial interface HTMLInputElement: member names are unique 
+PASS Partial interface HTMLLegendElement: member names are unique 
+PASS Partial interface HTMLLIElement: member names are unique 
+PASS Partial interface HTMLLinkElement: member names are unique 
+PASS Partial interface HTMLMenuElement: member names are unique 
+PASS Partial interface HTMLMetaElement: member names are unique 
+PASS Partial interface HTMLObjectElement: member names are unique 
+PASS Partial interface HTMLOListElement: member names are unique 
+PASS Partial interface HTMLParagraphElement: member names are unique 
+PASS Partial interface HTMLParamElement: member names are unique 
+PASS Partial interface HTMLPreElement: member names are unique 
+PASS Partial interface HTMLStyleElement: member names are unique 
+PASS Partial interface HTMLScriptElement: member names are unique 
+PASS Partial interface HTMLTableElement: member names are unique 
+PASS Partial interface HTMLTableSectionElement: member names are unique 
+PASS Partial interface HTMLTableCellElement: member names are unique 
+PASS Partial interface HTMLTableRowElement: member names are unique 
+PASS Partial interface HTMLUListElement: member names are unique 
+PASS Partial interface Document[2]: member names are unique 
+PASS Partial interface Window: member names are unique 
+PASS Partial interface Window[2]: member names are unique 
+PASS Partial interface UIEvent: member names are unique 
 PASS Partial interface CSSStyleSheet: original interface defined 
-PASS Partial interface mixin DocumentOrShadowRoot: original interface mixin defined 
-PASS Partial interface Window: original interface defined 
+PASS Partial interface CSSStyleSheet: member names are unique 
+PASS Partial interface mixin DocumentOrShadowRoot[2]: original interface mixin defined 
+PASS Partial interface mixin DocumentOrShadowRoot[2]: member names are unique 
+PASS Partial interface Window[3]: original interface defined 
+PASS Partial interface Window[3]: member names are unique 
+PASS Document includes GlobalEventHandlers: member names are unique 
+PASS Document includes DocumentAndElementEventHandlers: member names are unique 
+PASS Document includes NonElementParentNode: member names are unique 
+PASS Document includes DocumentOrShadowRoot: member names are unique 
+PASS Document includes ParentNode: member names are unique 
+PASS Document includes XPathEvaluatorBase: member names are unique 
+PASS HTMLElement includes GlobalEventHandlers: member names are unique 
+PASS HTMLElement includes DocumentAndElementEventHandlers: member names are unique 
+PASS HTMLElement includes ElementContentEditable: member names are unique 
+PASS HTMLElement includes HTMLOrSVGElement: member names are unique 
+PASS HTMLElement includes ElementCSSInlineStyle: member names are unique 
+PASS HTMLLinkElement includes LinkStyle: member names are unique 
+PASS HTMLStyleElement includes LinkStyle: member names are unique 
+PASS HTMLBodyElement includes WindowEventHandlers: member names are unique 
+PASS HTMLAnchorElement includes HTMLHyperlinkElementUtils: member names are unique 
+PASS HTMLAreaElement includes HTMLHyperlinkElementUtils: member names are unique 
+PASS CanvasRenderingContext2D includes CanvasState: member names are unique 
+PASS CanvasRenderingContext2D includes CanvasTransform: member names are unique 
+PASS CanvasRenderingContext2D includes CanvasCompositing: member names are unique 
+PASS CanvasRenderingContext2D includes CanvasImageSmoothing: member names are unique 
+PASS CanvasRenderingContext2D includes CanvasFillStrokeStyles: member names are unique 
+PASS CanvasRenderingContext2D includes CanvasShadowStyles: member names are unique 
+PASS CanvasRenderingContext2D includes CanvasFilters: member names are unique 
+PASS CanvasRenderingContext2D includes CanvasRect: member names are unique 
+PASS CanvasRenderingContext2D includes CanvasDrawPath: member names are unique 
+PASS CanvasRenderingContext2D includes CanvasUserInterface: member names are unique 
+PASS CanvasRenderingContext2D includes CanvasText: member names are unique 
+PASS CanvasRenderingContext2D includes CanvasDrawImage: member names are unique 
+PASS CanvasRenderingContext2D includes CanvasImageData: member names are unique 
+PASS CanvasRenderingContext2D includes CanvasPathDrawingStyles: member names are unique 
+PASS CanvasRenderingContext2D includes CanvasTextDrawingStyles: member names are unique 
+PASS CanvasRenderingContext2D includes CanvasPath: member names are unique 
+PASS Path2D includes CanvasPath: member names are unique 
+PASS OffscreenCanvasRenderingContext2D includes CanvasState: member names are unique 
+PASS OffscreenCanvasRenderingContext2D includes CanvasTransform: member names are unique 
+PASS OffscreenCanvasRenderingContext2D includes CanvasCompositing: member names are unique 
+PASS OffscreenCanvasRenderingContext2D includes CanvasImageSmoothing: member names are unique 
+PASS OffscreenCanvasRenderingContext2D includes CanvasFillStrokeStyles: member names are unique 
+PASS OffscreenCanvasRenderingContext2D includes CanvasShadowStyles: member names are unique 
+PASS OffscreenCanvasRenderingContext2D includes CanvasFilters: member names are unique 
+PASS OffscreenCanvasRenderingContext2D includes CanvasRect: member names are unique 
+PASS OffscreenCanvasRenderingContext2D includes CanvasDrawPath: member names are unique 
+PASS OffscreenCanvasRenderingContext2D includes CanvasText: member names are unique 
+PASS OffscreenCanvasRenderingContext2D includes CanvasDrawImage: member names are unique 
+PASS OffscreenCanvasRenderingContext2D includes CanvasImageData: member names are unique 
+PASS OffscreenCanvasRenderingContext2D includes CanvasPathDrawingStyles: member names are unique 
+PASS OffscreenCanvasRenderingContext2D includes CanvasTextDrawingStyles: member names are unique 
+PASS OffscreenCanvasRenderingContext2D includes CanvasPath: member names are unique 
+PASS Window includes GlobalEventHandlers: member names are unique 
+PASS Window includes WindowEventHandlers: member names are unique 
+PASS Window includes WindowOrWorkerGlobalScope: member names are unique 
+PASS Window includes AnimationFrameProvider: member names are unique 
+PASS Window includes WindowSessionStorage: member names are unique 
+PASS Window includes WindowLocalStorage: member names are unique 
+PASS WorkerGlobalScope includes WindowOrWorkerGlobalScope: member names are unique 
+PASS Navigator includes NavigatorID: member names are unique 
+PASS Navigator includes NavigatorLanguage: member names are unique 
+PASS Navigator includes NavigatorOnLine: member names are unique 
+PASS Navigator includes NavigatorContentUtils: member names are unique 
+PASS Navigator includes NavigatorCookies: member names are unique 
+PASS Navigator includes NavigatorPlugins: member names are unique 
+PASS Navigator includes NavigatorConcurrentHardware: member names are unique 
+PASS DedicatedWorkerGlobalScope includes AnimationFrameProvider: member names are unique 
+PASS Worker includes AbstractWorker: member names are unique 
+PASS SharedWorker includes AbstractWorker: member names are unique 
+PASS WorkerNavigator includes NavigatorID: member names are unique 
+PASS WorkerNavigator includes NavigatorLanguage: member names are unique 
+PASS WorkerNavigator includes NavigatorOnLine: member names are unique 
+PASS WorkerNavigator includes NavigatorConcurrentHardware: member names are unique 
+PASS HTMLFrameSetElement includes WindowEventHandlers: member names are unique 
+PASS DocumentFragment includes NonElementParentNode: member names are unique 
+PASS DocumentFragment includes ParentNode: member names are unique 
+PASS ShadowRoot includes DocumentOrShadowRoot: member names are unique 
+PASS Element includes ParentNode: member names are unique 
+PASS Element includes NonDocumentTypeChildNode: member names are unique 
+PASS Element includes ChildNode: member names are unique 
+PASS Element includes Slotable: member names are unique 
+PASS CharacterData includes NonDocumentTypeChildNode: member names are unique 
+PASS CharacterData includes ChildNode: member names are unique 
+PASS DocumentType includes ChildNode: member names are unique 
+PASS Text includes Slotable: member names are unique 
+PASS XPathEvaluator includes XPathEvaluatorBase: member names are unique 
+PASS ProcessingInstruction includes LinkStyle: member names are unique 
+PASS SVGElement includes ElementCSSInlineStyle: member names are unique 
 PASS HTMLElement interface: attribute style 
 PASS HTMLElement interface: style_element must inherit property "style" with the proper type 
 PASS HTMLElement interface: document.createElement('unknownelement') must inherit property "style" with the proper type 

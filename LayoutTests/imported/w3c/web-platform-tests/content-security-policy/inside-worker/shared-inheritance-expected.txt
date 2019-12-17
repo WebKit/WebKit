@@ -1,3 +1,4 @@
 
-FAIL shared-inheritance ReferenceError: Can't find variable: SharedWorker
+Harness Error (FAIL), message = ReferenceError: Can't find variable: SharedWorker
+
 

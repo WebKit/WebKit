@@ -1,3 +1,4 @@
 
-FAIL XMLHttpRequest: redirected classic shared worker scripts, origin and referrer ReferenceError: Can't find variable: SharedWorker
+Harness Error (FAIL), message = ReferenceError: Can't find variable: SharedWorker
+
 

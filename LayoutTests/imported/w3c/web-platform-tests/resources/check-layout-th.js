@@ -161,16 +161,16 @@ function checkExpectedValues(t, node, prefix)
     return output.checked;
 }
 
-window.checkLayout = function(selectorList, outputContainer)
+var testNumber = 0;
+
+window.checkLayout = function(selectorList, callDone = true)
 {
     if (!selectorList) {
         console.error("You must provide a CSS selector of nodes to check.");
         return;
     }
     var nodes = document.querySelectorAll(selectorList);
-    var testNumber = 0;
     nodes = Array.prototype.slice.call(nodes);
-    nodes.reverse();
     var checkedLayout = false;
     Array.prototype.forEach.call(nodes, function(node) {
         test(function(t) {
@@ -189,7 +189,8 @@ window.checkLayout = function(selectorList, outputContainer)
     if (!checkedLayout) {
         console.error("No valid data-* attributes found in selector list : " + selectorList);
     }
-    done();
+    if (callDone)
+        done();
 };
 
 })();

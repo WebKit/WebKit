@@ -4,6 +4,8 @@ PASS test setup (cache creation)
 PASS Event constructors 
 PASS xhr is not exposed 
 FAIL URL.createObjectURL is not exposed assert_false: expected false got true
+PASS ServiceWorker includes AbstractWorker: member names are unique 
+PASS WorkerGlobalScope includes WindowOrWorkerGlobalScope: member names are unique 
 PASS ServiceWorker interface: existence and properties of interface object 
 PASS ServiceWorker interface object length 
 PASS ServiceWorker interface object name 

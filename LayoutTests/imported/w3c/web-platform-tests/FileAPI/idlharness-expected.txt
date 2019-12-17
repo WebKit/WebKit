@@ -2,8 +2,10 @@ File API automated IDL tests
 
 
 PASS idl_test setup 
+PASS idl_test validation 
 PASS Partial interface URL: original interface defined 
 PASS Partial interface URL: valid exposure set 
+PASS Partial interface URL: member names are unique 
 PASS Blob interface: existence and properties of interface object 
 PASS Blob interface object length 
 PASS Blob interface object name 

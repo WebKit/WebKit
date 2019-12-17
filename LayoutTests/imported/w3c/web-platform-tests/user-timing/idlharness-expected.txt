@@ -2,6 +2,7 @@ User Timing IDL tests
 
 
 PASS Partial interface Performance: original interface defined 
+PASS Partial interface Performance: member names are unique 
 PASS Performance interface: operation mark(DOMString) 
 PASS Performance interface: operation clearMarks(DOMString) 
 PASS Performance interface: operation measure(DOMString, DOMString, DOMString) 

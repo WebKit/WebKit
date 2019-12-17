@@ -1,6 +1,15 @@
 
 PASS idl_test setup 
+PASS idl_test validation 
 PASS Partial interface Window: original interface defined 
+PASS Partial interface Window: member names are unique 
+PASS Partial interface Window[2]: member names are unique 
+PASS Window includes GlobalEventHandlers: member names are unique 
+PASS Window includes WindowEventHandlers: member names are unique 
+PASS Window includes WindowOrWorkerGlobalScope: member names are unique 
+PASS Window includes AnimationFrameProvider: member names are unique 
+PASS Window includes WindowSessionStorage: member names are unique 
+PASS Window includes WindowLocalStorage: member names are unique 
 PASS IdleDeadline interface: existence and properties of interface object 
 PASS IdleDeadline interface object length 
 PASS IdleDeadline interface object name 

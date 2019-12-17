@@ -1,3 +1,25 @@
+2019-12-17  Chris Dumez  <cdumez@apple.com>
+
+        Re-sync web-platform-tests/resources from upstream
+        https://bugs.webkit.org/show_bug.cgi?id=205307
+
+        Reviewed by Youenn Fablet.
+
+        * http/wpt/entries-api/interfaces-expected.txt:
+        * http/wpt/fetch/csp-reports-bypass-csp-checks.html:
+        * http/wpt/mediarecorder/MediaRecorder-onremovetrack.html:
+        * http/wpt/webauthn/idl.https-expected.txt:
+        * http/wpt/workers/promise-unhandled-rejection.any-expected.txt:
+        * http/wpt/workers/promise-unhandled-rejection.any.worker-expected.txt:
+        * platform/mac-wk1/imported/w3c/web-platform-tests/clipboard-apis/async-interfaces.https-expected.txt:
+        * platform/mac-wk1/imported/w3c/web-platform-tests/html/browsers/the-window-object/apis-for-creating-and-navigating-browsing-contexts-by-name/no_window_open_when_term_nesting_level_nonzero.window-expected.txt:
+        * platform/mac-wk1/imported/w3c/web-platform-tests/html/dom/idlharness.https-expected.txt:
+        * platform/mac-wk1/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe_sandbox_anchor_download_allow_downloads_without_user_activation.sub.tentative-expected.txt:
+        * platform/mac-wk2/imported/w3c/web-platform-tests/html/dom/idlharness.https-expected.txt:
+        * platform/mac-wk2/imported/w3c/web-platform-tests/html/semantics/interfaces-expected.txt:
+        * platform/mac-wk2/imported/w3c/web-platform-tests/web-share/idlharness.https-expected.txt:
+        * tests-options.json:
+
 2019-12-17  youenn fablet  <youenn@apple.com>
 
         Bump the priority of CacheStorageEngine write operations

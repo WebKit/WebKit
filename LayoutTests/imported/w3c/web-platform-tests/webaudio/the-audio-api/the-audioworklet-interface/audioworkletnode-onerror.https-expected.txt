@@ -1,6 +1,5 @@
 CONSOLE MESSAGE: line 50: TypeError: undefined is not an object (evaluating 'context.audioWorklet.addModule')
 
-FAIL 
-      Test onprocessorerror handler in AudioWorkletNode
-     TypeError: undefined is not an object (evaluating 'context.audioWorklet.addModule')
+Harness Error (FAIL), message = TypeError: undefined is not an object (evaluating 'context.audioWorklet.addModule')
+
 

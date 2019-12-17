@@ -1,3 +1,4 @@
 
-PASS parsing a hash-name reference for img and object 
+Harness Error (FAIL), message = done() was called without first defining any tests
+
   

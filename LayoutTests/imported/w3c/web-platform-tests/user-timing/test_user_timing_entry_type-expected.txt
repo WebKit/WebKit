@@ -4,5 +4,6 @@ Description
 This test validates the user timing entry type, PerformanceMark and PerformanceMeasure.
 
 
-FAIL user timing entry type ReferenceError: Can't find variable: test_equals
+Harness Error (FAIL), message = ReferenceError: Can't find variable: test_equals
+
 

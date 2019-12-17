@@ -2,8 +2,11 @@ Entries API IDL tests
 
 
 PASS Partial interface File: original interface defined 
+PASS Partial interface File: member names are unique 
 PASS Partial interface HTMLInputElement: original interface defined 
+PASS Partial interface HTMLInputElement: member names are unique 
 PASS Partial interface DataTransferItem: original interface defined 
+PASS Partial interface DataTransferItem: member names are unique 
 PASS ErrorCallback interface: existence and properties of interface object 
 PASS ErrorCallback interface: existence and properties of interface prototype object 
 PASS ErrorCallback interface: existence and properties of interface prototype object's "constructor" property 

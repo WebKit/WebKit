@@ -1,6 +1,5 @@
 CONSOLE MESSAGE: line 37: TypeError: undefined is not an object (evaluating 'context.audioWorklet.addModule')
 
-FAIL 
-      Test sampleRate in AudioWorkletGlobalScope
-     TypeError: undefined is not an object (evaluating 'context.audioWorklet.addModule')
+Harness Error (FAIL), message = TypeError: undefined is not an object (evaluating 'context.audioWorklet.addModule')
+
 

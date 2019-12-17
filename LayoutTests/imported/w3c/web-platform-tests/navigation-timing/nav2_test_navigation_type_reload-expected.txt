@@ -10,5 +10,6 @@ The window.performance.getEntriesByType("navigation").unloadEventStart > 0 after
 The window.performance.getEntriesByType("navigation").unloadEventEnd > 0 after reload
 
 
-FAIL Navigation Timing 2 WPT TypeError: undefined is not an object (evaluating 'newNavTiming.type')
+Harness Error (FAIL), message = TypeError: undefined is not an object (evaluating 'newNavTiming.type')
+
 

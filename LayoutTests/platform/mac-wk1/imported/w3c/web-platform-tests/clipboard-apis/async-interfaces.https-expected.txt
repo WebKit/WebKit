@@ -1,6 +1,7 @@
 
 PASS Test driver 
 PASS Partial interface Navigator: original interface defined 
+PASS Partial interface Navigator: member names are unique 
 FAIL Navigator interface: attribute clipboard assert_true: The prototype object must have a property "clipboard" expected true got false
 FAIL Navigator interface: navigator must inherit property "clipboard" with the proper type assert_inherits: property "clipboard" not found in prototype chain
 PASS ClipboardEvent interface: existence and properties of interface object 

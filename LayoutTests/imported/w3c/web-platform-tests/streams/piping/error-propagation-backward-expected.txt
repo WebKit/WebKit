@@ -1,7 +1,7 @@
 CONSOLE MESSAGE: line 12: Unhandled Promise Rejection: error2: error2!
 CONSOLE MESSAGE: Unhandled Promise Rejection: error1: error1!
 
-Harness Error (FAIL), message = error1!
+Harness Error (FAIL), message = Unhandled rejection: error1!
 
 PASS Errors must be propagated backward: starts errored; preventCancel omitted; fulfilled cancel promise 
 FAIL Errors must be propagated backward: becomes errored before piping due to write; preventCancel omitted; fulfilled cancel promise ws.getWriter is not a function. (In 'ws.getWriter()', 'ws.getWriter' is undefined)

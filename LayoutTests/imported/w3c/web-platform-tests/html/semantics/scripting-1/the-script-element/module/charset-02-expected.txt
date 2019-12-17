@@ -1,7 +1,8 @@
 CONSOLE MESSAGE: line 2: ReferenceError: Can't find variable: executed_utf8_bom
 CONSOLE MESSAGE: line 2: ReferenceError: Can't find variable: executed_utf16be_bom
 CONSOLE MESSAGE: line 2: ReferenceError: Can't find variable: executed_utf16le_bom
-CONSOLE MESSAGE: line 1515: Error: Tried to create a test with file_is_test
 
-PASS Module scripts should ignore BOMs and always use UTF-8 
+FAIL UTF-8 module script with UTF-8 BOM assert_equals: Should be decoded as UTF-8 expected (string) "三村かな子" but got (undefined) undefined
+PASS UTF-16 module script with UTF-16BE BOM 
+PASS UTF-16 module script with UTF-16LE BOM 
 

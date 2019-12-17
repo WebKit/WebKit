@@ -4,5 +4,6 @@ Description
 This test validates that all of the methods used to interact with the User Timing API are defined.
 
 
-FAIL window.performance User Timing exists ReferenceError: Can't find variable: wp_test
+Harness Error (FAIL), message = ReferenceError: Can't find variable: wp_test
+
 

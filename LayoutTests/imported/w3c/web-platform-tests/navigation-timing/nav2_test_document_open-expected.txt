@@ -9,5 +9,6 @@ The test passes if all of the checks to performance.getEntriesByType("navigation
 
 
 
-FAIL Navigation Timing 2 WPT TypeError: undefined is not an object (evaluating 'timing[navTiming2Attributes[i]]')
+Harness Error (FAIL), message = TypeError: undefined is not an object (evaluating 'timing[navTiming2Attributes[i]]')
+
 

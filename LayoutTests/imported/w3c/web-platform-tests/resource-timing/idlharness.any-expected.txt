@@ -1,6 +1,9 @@
 
 PASS idl_test setup 
+PASS idl_test validation 
 PASS Partial interface Performance: original interface defined 
+PASS Partial interface Performance: member names are unique 
+PASS Partial interface Performance[2]: member names are unique 
 PASS PerformanceResourceTiming interface: existence and properties of interface object 
 PASS PerformanceResourceTiming interface object length 
 PASS PerformanceResourceTiming interface object name 

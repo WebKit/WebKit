@@ -1865,6 +1865,21 @@
     "imported/w3c/web-platform-tests/resource-timing/single-entry-per-resource.html": [
         "slow"
     ],
+    "imported/w3c/web-platform-tests/resources/test/tests/unit/exceptional-cases-timeouts.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/resources/test/tests/unit/exceptional-cases.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/resources/test/tests/unit/promise_setup-timeout.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/resources/test/tests/unit/single_test.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/resources/test/tests/unit/throwing-assertions.html": [
+        "slow"
+    ],
     "imported/w3c/web-platform-tests/service-workers/cache-storage/common.https.html": [
         "slow"
     ],

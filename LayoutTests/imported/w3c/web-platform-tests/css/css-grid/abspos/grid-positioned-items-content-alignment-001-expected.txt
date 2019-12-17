@@ -13,18 +13,8 @@ PASS .grid 11
 PASS .grid 12 
 PASS .grid 13 
 PASS .grid 14 
-FAIL .grid 15 assert_equals: 
-<div class="grid contentSpaceAround">
-  <div class="offsets" style="grid-column: 2 / auto; grid-row: 2 / auto;" data-offset-x="288" data-offset-y="145" data-expected-width="112" data-expected-height="55">
-  </div>
-</div>
-width expected 112 but got 113
-FAIL .grid 16 assert_equals: 
-<div class="grid contentSpaceAround">
-  <div style="grid-column: 2 / auto; grid-row: 2 / auto;" data-offset-x="288" data-offset-y="145" data-expected-width="112" data-expected-height="55">
-  </div>
-</div>
-width expected 112 but got 113
+PASS .grid 15 
+PASS .grid 16 
 PASS .grid 17 
 PASS .grid 18 
 PASS .grid 19 
@@ -53,8 +43,18 @@ PASS .grid 41
 PASS .grid 42 
 PASS .grid 43 
 PASS .grid 44 
-PASS .grid 45 
-PASS .grid 46 
+FAIL .grid 45 assert_equals: 
+<div class="grid contentSpaceAround">
+  <div style="grid-column: 2 / auto; grid-row: 2 / auto;" data-offset-x="288" data-offset-y="145" data-expected-width="112" data-expected-height="55">
+  </div>
+</div>
+width expected 112 but got 113
+FAIL .grid 46 assert_equals: 
+<div class="grid contentSpaceAround">
+  <div class="offsets" style="grid-column: 2 / auto; grid-row: 2 / auto;" data-offset-x="288" data-offset-y="145" data-expected-width="112" data-expected-height="55">
+  </div>
+</div>
+width expected 112 but got 113
 PASS .grid 47 
 PASS .grid 48 
 PASS .grid 49 

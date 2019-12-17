@@ -1,6 +1,7 @@
 
 PASS Test driver 
 PASS Partial interface Navigator: original interface defined 
+PASS Partial interface Navigator: member names are unique 
 PASS Navigator interface: attribute clipboard 
 PASS Navigator interface: navigator must inherit property "clipboard" with the proper type 
 PASS ClipboardEvent interface: existence and properties of interface object 

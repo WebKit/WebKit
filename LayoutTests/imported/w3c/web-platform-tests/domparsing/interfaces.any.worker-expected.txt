@@ -1,7 +1,18 @@
 
 PASS idl_test setup 
+PASS idl_test validation 
 PASS Partial interface Element: original interface defined 
+PASS Partial interface Element: member names are unique 
 PASS Partial interface Range: original interface defined 
+PASS Partial interface Range: member names are unique 
+PASS Element includes InnerHTML: member names are unique 
+PASS Element includes ParentNode: member names are unique 
+PASS Element includes NonDocumentTypeChildNode: member names are unique 
+PASS Element includes ChildNode: member names are unique 
+PASS Element includes Slotable: member names are unique 
+PASS ShadowRoot includes InnerHTML: member names are unique 
+PASS DocumentFragment includes NonElementParentNode: member names are unique 
+PASS DocumentFragment includes ParentNode: member names are unique 
 PASS DOMParser interface: existence and properties of interface object 
 FAIL DOMParser must be primary interface of new DOMParser() assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMParser"
 FAIL Stringification of new DOMParser() assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMParser"

@@ -1,17 +1,12 @@
 CONSOLE MESSAGE: line 16: Unhandled Promise Rejection: TypeError: The WritableStream.ready getter can only be used on instances of WritableStream
-CONSOLE MESSAGE: line 3374: TypeError: undefined is not an object (evaluating 'e.error')
 CONSOLE MESSAGE: Unhandled Promise Rejection: undefined
-CONSOLE MESSAGE: line 3374: TypeError: undefined is not an object (evaluating 'e.error')
 CONSOLE MESSAGE: Unhandled Promise Rejection: undefined
 CONSOLE MESSAGE: Unhandled Promise Rejection: TypeError: cancel() called on a reader owned by no readable stream
-CONSOLE MESSAGE: line 3374: TypeError: undefined is not an object (evaluating 'e.error')
 CONSOLE MESSAGE: Unhandled Promise Rejection: undefined
-CONSOLE MESSAGE: line 3374: TypeError: undefined is not an object (evaluating 'e.error')
 CONSOLE MESSAGE: Unhandled Promise Rejection: undefined
-CONSOLE MESSAGE: line 3374: TypeError: undefined is not an object (evaluating 'e.error')
 CONSOLE MESSAGE: Unhandled Promise Rejection: undefined
 
-Harness Error (FAIL), message = The WritableStream.ready getter can only be used on instances of WritableStream
+Harness Error (FAIL), message = Unhandled rejection: The WritableStream.ready getter can only be used on instances of WritableStream
 
 FAIL Piping must lock both the ReadableStream and WritableStream assert_false: sanity check: the WritableStream must not start locked expected false got undefined
 FAIL Piping finishing must unlock both the ReadableStream and WritableStream assert_false: the WritableStream must become unlocked expected false got undefined

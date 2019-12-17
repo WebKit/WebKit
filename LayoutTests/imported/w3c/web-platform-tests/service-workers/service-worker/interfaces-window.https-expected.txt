@@ -2,6 +2,8 @@
 
 PASS test setup (worker registration) 
 FAIL navigator.serviceWorker is not available in a data: iframe assert_false: navigator.serviceWorker should not be defined in iframe expected false got true
+PASS ServiceWorker includes AbstractWorker: member names are unique 
+PASS WorkerGlobalScope includes WindowOrWorkerGlobalScope: member names are unique 
 PASS ServiceWorker interface: existence and properties of interface object 
 PASS ServiceWorker interface object length 
 PASS ServiceWorker interface object name 

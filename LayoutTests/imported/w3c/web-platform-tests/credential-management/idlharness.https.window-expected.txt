@@ -1,10 +1,34 @@
 
 PASS idl_test setup 
+PASS idl_test validation 
 PASS Partial interface Navigator: original interface defined 
+PASS Partial interface Navigator: member names are unique 
 PASS Partial dictionary CredentialRequestOptions: original dictionary defined 
+PASS Partial dictionary CredentialRequestOptions: member names are unique 
 PASS Partial dictionary CredentialCreationOptions: original dictionary defined 
+PASS Partial dictionary CredentialCreationOptions: member names are unique 
 PASS Partial dictionary CredentialRequestOptions[2]: original dictionary defined 
+PASS Partial dictionary CredentialRequestOptions[2]: member names are unique 
 PASS Partial dictionary CredentialCreationOptions[2]: original dictionary defined 
+PASS Partial dictionary CredentialCreationOptions[2]: member names are unique 
+PASS Partial interface mixin NavigatorID: member names are unique 
+PASS PasswordCredential includes CredentialUserData: member names are unique 
+PASS FederatedCredential includes CredentialUserData: member names are unique 
+PASS HTMLElement includes GlobalEventHandlers: member names are unique 
+PASS HTMLElement includes DocumentAndElementEventHandlers: member names are unique 
+PASS HTMLElement includes ElementContentEditable: member names are unique 
+PASS HTMLElement includes HTMLOrSVGElement: member names are unique 
+PASS Navigator includes NavigatorID: member names are unique 
+PASS Navigator includes NavigatorLanguage: member names are unique 
+PASS Navigator includes NavigatorOnLine: member names are unique 
+PASS Navigator includes NavigatorContentUtils: member names are unique 
+PASS Navigator includes NavigatorCookies: member names are unique 
+PASS Navigator includes NavigatorPlugins: member names are unique 
+PASS Navigator includes NavigatorConcurrentHardware: member names are unique 
+PASS Element includes ParentNode: member names are unique 
+PASS Element includes NonDocumentTypeChildNode: member names are unique 
+PASS Element includes ChildNode: member names are unique 
+PASS Element includes Slotable: member names are unique 
 PASS Credential interface: existence and properties of interface object 
 PASS Credential interface object length 
 PASS Credential interface object name 

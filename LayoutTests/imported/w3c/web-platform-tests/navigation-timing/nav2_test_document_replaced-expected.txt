@@ -8,5 +8,6 @@ This test validates that a PerformanceNavigatingTiming corresponding to a detach
 
 
 
-FAIL Navigation Timing 2 WPT TypeError: undefined is not an object (evaluating 'pnt1.type')
+Harness Error (FAIL), message = TypeError: undefined is not an object (evaluating 'pnt1.type')
+
 

@@ -7,8 +7,8 @@ PASS Interfaces for acronym
 PASS Interfaces for ACRONYM 
 PASS Interfaces for address 
 PASS Interfaces for ADDRESS 
-FAIL Interfaces for applet assert_equals: Element applet should have HTMLUnknownElement as its primary interface. expected "[object HTMLUnknownElement]" but got "[object HTMLAppletElement]"
-FAIL Interfaces for APPLET assert_equals: Element APPLET should have HTMLUnknownElement as its primary interface. expected "[object HTMLUnknownElement]" but got "[object HTMLAppletElement]"
+FAIL Interfaces for applet assert_class_string: Element applet should have HTMLUnknownElement as its primary interface. expected "[object HTMLUnknownElement]" but got "[object HTMLAppletElement]"
+FAIL Interfaces for APPLET assert_class_string: Element APPLET should have HTMLUnknownElement as its primary interface. expected "[object HTMLUnknownElement]" but got "[object HTMLAppletElement]"
 PASS Interfaces for area 
 PASS Interfaces for AREA 
 PASS Interfaces for article 
@@ -59,8 +59,8 @@ PASS Interfaces for command
 PASS Interfaces for COMMAND 
 PASS Interfaces for data 
 PASS Interfaces for DATA 
-FAIL Interfaces for datalist assert_equals: Element datalist should have HTMLDataListElement as its primary interface. expected "[object HTMLDataListElement]" but got "[object HTMLUnknownElement]"
-FAIL Interfaces for DATALIST assert_equals: Element DATALIST should have HTMLDataListElement as its primary interface. expected "[object HTMLDataListElement]" but got "[object HTMLUnknownElement]"
+FAIL Interfaces for datalist assert_class_string: Element datalist should have HTMLDataListElement as its primary interface. expected "[object HTMLDataListElement]" but got "[object HTMLUnknownElement]"
+FAIL Interfaces for DATALIST assert_class_string: Element DATALIST should have HTMLDataListElement as its primary interface. expected "[object HTMLDataListElement]" but got "[object HTMLUnknownElement]"
 PASS Interfaces for dd 
 PASS Interfaces for DD 
 PASS Interfaces for del 

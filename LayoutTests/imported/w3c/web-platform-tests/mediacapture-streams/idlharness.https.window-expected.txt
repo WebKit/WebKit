@@ -1,8 +1,20 @@
 
 PASS idl_test setup 
+PASS idl_test validation 
 PASS Partial interface Navigator: original interface defined 
+PASS Partial interface Navigator: member names are unique 
 PASS Partial interface Navigator[2]: original interface defined 
+PASS Partial interface Navigator[2]: member names are unique 
 PASS Partial interface MediaDevices: original interface defined 
+PASS Partial interface MediaDevices: member names are unique 
+PASS Partial interface mixin NavigatorID: member names are unique 
+PASS Navigator includes NavigatorID: member names are unique 
+PASS Navigator includes NavigatorLanguage: member names are unique 
+PASS Navigator includes NavigatorOnLine: member names are unique 
+PASS Navigator includes NavigatorContentUtils: member names are unique 
+PASS Navigator includes NavigatorCookies: member names are unique 
+PASS Navigator includes NavigatorPlugins: member names are unique 
+PASS Navigator includes NavigatorConcurrentHardware: member names are unique 
 PASS MediaStream interface: existence and properties of interface object 
 PASS MediaStream interface object length 
 PASS MediaStream interface object name 
@@ -137,7 +149,7 @@ FAIL InputDeviceInfo interface: existence and properties of interface prototype 
 FAIL InputDeviceInfo interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "InputDeviceInfo" expected property "InputDeviceInfo" missing
 FAIL InputDeviceInfo interface: operation getCapabilities() assert_own_property: self does not have own property "InputDeviceInfo" expected property "InputDeviceInfo" missing
 FAIL InputDeviceInfo must be primary interface of audioinput assert_own_property: self does not have own property "InputDeviceInfo" expected property "InputDeviceInfo" missing
-FAIL Stringification of audioinput assert_equals: class string of audioinput expected "[object InputDeviceInfo]" but got "[object MediaDeviceInfo]"
+FAIL Stringification of audioinput assert_class_string: class string of audioinput expected "[object InputDeviceInfo]" but got "[object MediaDeviceInfo]"
 FAIL InputDeviceInfo interface: audioinput must inherit property "getCapabilities()" with the proper type assert_inherits: property "getCapabilities" not found in prototype chain
 PASS MediaDeviceInfo interface: audioinput must inherit property "deviceId" with the proper type 
 PASS MediaDeviceInfo interface: audioinput must inherit property "kind" with the proper type 
@@ -146,7 +158,7 @@ PASS MediaDeviceInfo interface: audioinput must inherit property "groupId" with 
 PASS MediaDeviceInfo interface: audioinput must inherit property "toJSON()" with the proper type 
 PASS MediaDeviceInfo interface: default toJSON operation on audioinput 
 FAIL InputDeviceInfo must be primary interface of videoinput assert_own_property: self does not have own property "InputDeviceInfo" expected property "InputDeviceInfo" missing
-FAIL Stringification of videoinput assert_equals: class string of videoinput expected "[object InputDeviceInfo]" but got "[object MediaDeviceInfo]"
+FAIL Stringification of videoinput assert_class_string: class string of videoinput expected "[object InputDeviceInfo]" but got "[object MediaDeviceInfo]"
 FAIL InputDeviceInfo interface: videoinput must inherit property "getCapabilities()" with the proper type assert_inherits: property "getCapabilities" not found in prototype chain
 PASS MediaDeviceInfo interface: videoinput must inherit property "deviceId" with the proper type 
 PASS MediaDeviceInfo interface: videoinput must inherit property "kind" with the proper type 

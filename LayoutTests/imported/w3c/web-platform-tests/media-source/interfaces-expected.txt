@@ -1,9 +1,13 @@
 
 PASS Partial interface URL: original interface defined 
 PASS Partial interface URL: valid exposure set 
+PASS Partial interface URL: member names are unique 
 PASS Partial interface AudioTrack: original interface defined 
+PASS Partial interface AudioTrack: member names are unique 
 PASS Partial interface VideoTrack: original interface defined 
+PASS Partial interface VideoTrack: member names are unique 
 PASS Partial interface TextTrack: original interface defined 
+PASS Partial interface TextTrack: member names are unique 
 PASS URL interface: operation createObjectURL(MediaSource) 
 PASS AudioTrack interface: attribute sourceBuffer 
 PASS VideoTrack interface: attribute sourceBuffer 

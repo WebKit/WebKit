@@ -1,5 +1,6 @@
 
 PASS idl_test setup 
+PASS idl_test validation 
 PASS MediaRecorder interface: existence and properties of interface object 
 PASS MediaRecorder interface object length 
 PASS MediaRecorder interface object name 

@@ -1,5 +1,5 @@
 
-Harness Error (FAIL), message = undefined
+Harness Error (FAIL), message = Unhandled rejection
 
 PASS Service worker test setup 
 PASS ReadableStream teeing: rs.tee() returns an array of two ReadableStreams 

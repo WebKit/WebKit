@@ -2,43 +2,173 @@ HTML IDL tests
 
 
 PASS idl_test setup 
+PASS idl_test validation 
 PASS Partial interface Document: original interface defined 
+PASS Partial interface Document: member names are unique 
 PASS Partial interface mixin DocumentOrShadowRoot: original interface mixin defined 
+PASS Partial interface mixin DocumentOrShadowRoot: member names are unique 
 PASS Partial interface mixin NavigatorID: original interface mixin defined 
+PASS Partial interface mixin NavigatorID: member names are unique 
 PASS Partial interface HTMLAnchorElement: original interface defined 
+PASS Partial interface HTMLAnchorElement: member names are unique 
 PASS Partial interface HTMLAreaElement: original interface defined 
+PASS Partial interface HTMLAreaElement: member names are unique 
 PASS Partial interface HTMLBodyElement: original interface defined 
+PASS Partial interface HTMLBodyElement: member names are unique 
 PASS Partial interface HTMLBRElement: original interface defined 
+PASS Partial interface HTMLBRElement: member names are unique 
 PASS Partial interface HTMLTableCaptionElement: original interface defined 
+PASS Partial interface HTMLTableCaptionElement: member names are unique 
 PASS Partial interface HTMLTableColElement: original interface defined 
+PASS Partial interface HTMLTableColElement: member names are unique 
 PASS Partial interface HTMLDivElement: original interface defined 
+PASS Partial interface HTMLDivElement: member names are unique 
 PASS Partial interface HTMLDListElement: original interface defined 
+PASS Partial interface HTMLDListElement: member names are unique 
 PASS Partial interface HTMLEmbedElement: original interface defined 
+PASS Partial interface HTMLEmbedElement: member names are unique 
 PASS Partial interface HTMLHeadingElement: original interface defined 
+PASS Partial interface HTMLHeadingElement: member names are unique 
 PASS Partial interface HTMLHRElement: original interface defined 
+PASS Partial interface HTMLHRElement: member names are unique 
 PASS Partial interface HTMLHtmlElement: original interface defined 
+PASS Partial interface HTMLHtmlElement: member names are unique 
 PASS Partial interface HTMLIFrameElement: original interface defined 
+PASS Partial interface HTMLIFrameElement: member names are unique 
 PASS Partial interface HTMLImageElement: original interface defined 
+PASS Partial interface HTMLImageElement: member names are unique 
 PASS Partial interface HTMLInputElement: original interface defined 
+PASS Partial interface HTMLInputElement: member names are unique 
 PASS Partial interface HTMLLegendElement: original interface defined 
+PASS Partial interface HTMLLegendElement: member names are unique 
 PASS Partial interface HTMLLIElement: original interface defined 
+PASS Partial interface HTMLLIElement: member names are unique 
 PASS Partial interface HTMLLinkElement: original interface defined 
+PASS Partial interface HTMLLinkElement: member names are unique 
 PASS Partial interface HTMLMenuElement: original interface defined 
+PASS Partial interface HTMLMenuElement: member names are unique 
 PASS Partial interface HTMLMetaElement: original interface defined 
+PASS Partial interface HTMLMetaElement: member names are unique 
 PASS Partial interface HTMLObjectElement: original interface defined 
+PASS Partial interface HTMLObjectElement: member names are unique 
 PASS Partial interface HTMLOListElement: original interface defined 
+PASS Partial interface HTMLOListElement: member names are unique 
 PASS Partial interface HTMLParagraphElement: original interface defined 
+PASS Partial interface HTMLParagraphElement: member names are unique 
 PASS Partial interface HTMLParamElement: original interface defined 
+PASS Partial interface HTMLParamElement: member names are unique 
 PASS Partial interface HTMLPreElement: original interface defined 
+PASS Partial interface HTMLPreElement: member names are unique 
 PASS Partial interface HTMLStyleElement: original interface defined 
+PASS Partial interface HTMLStyleElement: member names are unique 
 PASS Partial interface HTMLScriptElement: original interface defined 
+PASS Partial interface HTMLScriptElement: member names are unique 
 PASS Partial interface HTMLTableElement: original interface defined 
+PASS Partial interface HTMLTableElement: member names are unique 
 PASS Partial interface HTMLTableSectionElement: original interface defined 
+PASS Partial interface HTMLTableSectionElement: member names are unique 
 PASS Partial interface HTMLTableCellElement: original interface defined 
+PASS Partial interface HTMLTableCellElement: member names are unique 
 PASS Partial interface HTMLTableRowElement: original interface defined 
+PASS Partial interface HTMLTableRowElement: member names are unique 
 PASS Partial interface HTMLUListElement: original interface defined 
+PASS Partial interface HTMLUListElement: member names are unique 
 PASS Partial interface Document[2]: original interface defined 
+PASS Partial interface Document[2]: member names are unique 
 PASS Partial interface Window: original interface defined 
+PASS Partial interface Window: member names are unique 
+PASS Partial interface Document[3]: member names are unique 
+PASS Partial interface mixin DocumentOrShadowRoot[2]: member names are unique 
+PASS Partial interface UIEvent: member names are unique 
+PASS Document includes GlobalEventHandlers: member names are unique 
+PASS Document includes DocumentAndElementEventHandlers: member names are unique 
+PASS Document includes NonElementParentNode: member names are unique 
+PASS Document includes DocumentOrShadowRoot: member names are unique 
+PASS Document includes ParentNode: member names are unique 
+PASS Document includes XPathEvaluatorBase: member names are unique 
+PASS HTMLElement includes GlobalEventHandlers: member names are unique 
+PASS HTMLElement includes DocumentAndElementEventHandlers: member names are unique 
+PASS HTMLElement includes ElementContentEditable: member names are unique 
+PASS HTMLElement includes HTMLOrSVGElement: member names are unique 
+PASS HTMLElement includes ElementCSSInlineStyle: member names are unique 
+PASS HTMLLinkElement includes LinkStyle: member names are unique 
+PASS HTMLStyleElement includes LinkStyle: member names are unique 
+PASS HTMLBodyElement includes WindowEventHandlers: member names are unique 
+PASS HTMLAnchorElement includes HTMLHyperlinkElementUtils: member names are unique 
+PASS HTMLAreaElement includes HTMLHyperlinkElementUtils: member names are unique 
+PASS CanvasRenderingContext2D includes CanvasState: member names are unique 
+PASS CanvasRenderingContext2D includes CanvasTransform: member names are unique 
+PASS CanvasRenderingContext2D includes CanvasCompositing: member names are unique 
+PASS CanvasRenderingContext2D includes CanvasImageSmoothing: member names are unique 
+PASS CanvasRenderingContext2D includes CanvasFillStrokeStyles: member names are unique 
+PASS CanvasRenderingContext2D includes CanvasShadowStyles: member names are unique 
+PASS CanvasRenderingContext2D includes CanvasFilters: member names are unique 
+PASS CanvasRenderingContext2D includes CanvasRect: member names are unique 
+PASS CanvasRenderingContext2D includes CanvasDrawPath: member names are unique 
+PASS CanvasRenderingContext2D includes CanvasUserInterface: member names are unique 
+PASS CanvasRenderingContext2D includes CanvasText: member names are unique 
+PASS CanvasRenderingContext2D includes CanvasDrawImage: member names are unique 
+PASS CanvasRenderingContext2D includes CanvasImageData: member names are unique 
+PASS CanvasRenderingContext2D includes CanvasPathDrawingStyles: member names are unique 
+PASS CanvasRenderingContext2D includes CanvasTextDrawingStyles: member names are unique 
+PASS CanvasRenderingContext2D includes CanvasPath: member names are unique 
+PASS Path2D includes CanvasPath: member names are unique 
+PASS OffscreenCanvasRenderingContext2D includes CanvasState: member names are unique 
+PASS OffscreenCanvasRenderingContext2D includes CanvasTransform: member names are unique 
+PASS OffscreenCanvasRenderingContext2D includes CanvasCompositing: member names are unique 
+PASS OffscreenCanvasRenderingContext2D includes CanvasImageSmoothing: member names are unique 
+PASS OffscreenCanvasRenderingContext2D includes CanvasFillStrokeStyles: member names are unique 
+PASS OffscreenCanvasRenderingContext2D includes CanvasShadowStyles: member names are unique 
+PASS OffscreenCanvasRenderingContext2D includes CanvasFilters: member names are unique 
+PASS OffscreenCanvasRenderingContext2D includes CanvasRect: member names are unique 
+PASS OffscreenCanvasRenderingContext2D includes CanvasDrawPath: member names are unique 
+PASS OffscreenCanvasRenderingContext2D includes CanvasText: member names are unique 
+PASS OffscreenCanvasRenderingContext2D includes CanvasDrawImage: member names are unique 
+PASS OffscreenCanvasRenderingContext2D includes CanvasImageData: member names are unique 
+PASS OffscreenCanvasRenderingContext2D includes CanvasPathDrawingStyles: member names are unique 
+PASS OffscreenCanvasRenderingContext2D includes CanvasTextDrawingStyles: member names are unique 
+PASS OffscreenCanvasRenderingContext2D includes CanvasPath: member names are unique 
+PASS Window includes GlobalEventHandlers: member names are unique 
+PASS Window includes WindowEventHandlers: member names are unique 
+PASS Window includes WindowOrWorkerGlobalScope: member names are unique 
+PASS Window includes AnimationFrameProvider: member names are unique 
+PASS Window includes WindowSessionStorage: member names are unique 
+PASS Window includes WindowLocalStorage: member names are unique 
+PASS WorkerGlobalScope includes WindowOrWorkerGlobalScope: member names are unique 
+PASS Navigator includes NavigatorID: member names are unique 
+PASS Navigator includes NavigatorLanguage: member names are unique 
+PASS Navigator includes NavigatorOnLine: member names are unique 
+PASS Navigator includes NavigatorContentUtils: member names are unique 
+PASS Navigator includes NavigatorCookies: member names are unique 
+PASS Navigator includes NavigatorPlugins: member names are unique 
+PASS Navigator includes NavigatorConcurrentHardware: member names are unique 
+PASS DedicatedWorkerGlobalScope includes AnimationFrameProvider: member names are unique 
+PASS Worker includes AbstractWorker: member names are unique 
+PASS SharedWorker includes AbstractWorker: member names are unique 
+PASS WorkerNavigator includes NavigatorID: member names are unique 
+PASS WorkerNavigator includes NavigatorLanguage: member names are unique 
+PASS WorkerNavigator includes NavigatorOnLine: member names are unique 
+PASS WorkerNavigator includes NavigatorConcurrentHardware: member names are unique 
+PASS HTMLFrameSetElement includes WindowEventHandlers: member names are unique 
+PASS SVGElement includes GlobalEventHandlers: member names are unique 
+PASS SVGElement includes DocumentAndElementEventHandlers: member names are unique 
+PASS SVGElement includes SVGElementInstance: member names are unique 
+PASS SVGElement includes HTMLOrSVGElement: member names are unique 
+PASS SVGElement includes ElementCSSInlineStyle: member names are unique 
+PASS SVGGraphicsElement includes SVGTests: member names are unique 
+PASS SVGSVGElement includes SVGFitToViewBox: member names are unique 
+PASS SVGSVGElement includes WindowEventHandlers: member names are unique 
+PASS SVGImageElement includes SVGURIReference: member names are unique 
+PASS SVGScriptElement includes SVGURIReference: member names are unique 
+PASS SVGAElement includes SVGURIReference: member names are unique 
+FAIL SVGAElement includes HTMLHyperlinkElementUtils: member names are unique assert_true: member href is unique expected true got false
+PASS DocumentFragment includes NonElementParentNode: member names are unique 
+PASS DocumentFragment includes ParentNode: member names are unique 
+PASS ShadowRoot includes DocumentOrShadowRoot: member names are unique 
+PASS Element includes ParentNode: member names are unique 
+PASS Element includes NonDocumentTypeChildNode: member names are unique 
+PASS Element includes ChildNode: member names are unique 
+PASS Element includes Slotable: member names are unique 
 PASS HTMLAllCollection interface: existence and properties of interface object 
 PASS HTMLAllCollection interface object length 
 PASS HTMLAllCollection interface object name 
@@ -3337,7 +3467,7 @@ FAIL HTMLDataListElement interface: existence and properties of interface protot
 FAIL HTMLDataListElement interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "HTMLDataListElement" expected property "HTMLDataListElement" missing
 FAIL HTMLDataListElement interface: attribute options assert_own_property: self does not have own property "HTMLDataListElement" expected property "HTMLDataListElement" missing
 FAIL HTMLDataListElement must be primary interface of document.createElement("datalist") assert_own_property: self does not have own property "HTMLDataListElement" expected property "HTMLDataListElement" missing
-FAIL Stringification of document.createElement("datalist") assert_equals: class string of document.createElement("datalist") expected "[object HTMLDataListElement]" but got "[object HTMLUnknownElement]"
+FAIL Stringification of document.createElement("datalist") assert_class_string: class string of document.createElement("datalist") expected "[object HTMLDataListElement]" but got "[object HTMLUnknownElement]"
 FAIL HTMLDataListElement interface: document.createElement("datalist") must inherit property "options" with the proper type assert_inherits: property "options" not found in prototype chain
 PASS HTMLOptGroupElement interface: existence and properties of interface object 
 PASS HTMLOptGroupElement interface object length 
@@ -5117,18 +5247,6 @@ FAIL SVGSVGElement interface: attribute onrejectionhandled assert_own_property: 
 FAIL SVGSVGElement interface: attribute onstorage assert_true: The prototype object must have a property "onstorage" expected true got false
 FAIL SVGSVGElement interface: attribute onunhandledrejection assert_own_property: expected property "onunhandledrejection" missing
 FAIL SVGSVGElement interface: attribute onunload assert_true: The prototype object must have a property "onunload" expected true got false
-FAIL SVGAElement interface: attribute href assert_equals: setter must be function for PutForwards, Replaceable, or non-readonly attributes expected "function" but got "undefined"
-FAIL SVGAElement interface: stringifier assert_own_property: interface prototype object missing non-static operation expected property "toString" missing
-FAIL SVGAElement interface: attribute origin assert_true: The prototype object must have a property "origin" expected true got false
-FAIL SVGAElement interface: attribute protocol assert_true: The prototype object must have a property "protocol" expected true got false
-FAIL SVGAElement interface: attribute username assert_true: The prototype object must have a property "username" expected true got false
-FAIL SVGAElement interface: attribute password assert_true: The prototype object must have a property "password" expected true got false
-FAIL SVGAElement interface: attribute host assert_true: The prototype object must have a property "host" expected true got false
-FAIL SVGAElement interface: attribute hostname assert_true: The prototype object must have a property "hostname" expected true got false
-FAIL SVGAElement interface: attribute port assert_true: The prototype object must have a property "port" expected true got false
-FAIL SVGAElement interface: attribute pathname assert_true: The prototype object must have a property "pathname" expected true got false
-FAIL SVGAElement interface: attribute search assert_true: The prototype object must have a property "search" expected true got false
-FAIL SVGAElement interface: attribute hash assert_true: The prototype object must have a property "hash" expected true got false
 PASS Document interface: attribute domain 
 PASS Document interface: attribute referrer 
 PASS Document interface: attribute cookie 

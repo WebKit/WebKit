@@ -2,11 +2,11 @@
 PASS .block 1 
 PASS .block 2 
 PASS .block 3 
-PASS .override 1 
-PASS .override 2 
-PASS .tablecell 1 
-PASS .tablecell 2 
-PASS .tablecell 3 
+PASS .override 4 
+PASS .override 5 
+PASS .tablecell 6 
+PASS .tablecell 7 
+PASS .tablecell 8 
 Maximum and minimim inline sizes in blocks with vertical-lr
 
 inline-size < min-inline-size

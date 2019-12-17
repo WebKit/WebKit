@@ -4,6 +4,7 @@
 <title>CSP violation reports should not be CSP checked</title>
 <body>
 <script>
+setup({ single_test: true });
 document.addEventListener("securitypolicyviolation", async () => {
     let counter = 0;
     let text;

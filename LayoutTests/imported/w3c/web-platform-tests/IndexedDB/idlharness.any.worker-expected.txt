@@ -1,6 +1,16 @@
 
 PASS idl_test setup 
+PASS idl_test validation 
 PASS Partial interface mixin WindowOrWorkerGlobalScope: original interface mixin defined 
+PASS Partial interface mixin WindowOrWorkerGlobalScope: member names are unique 
+PASS Partial interface Window: member names are unique 
+PASS Window includes GlobalEventHandlers: member names are unique 
+PASS Window includes WindowEventHandlers: member names are unique 
+PASS Window includes WindowOrWorkerGlobalScope: member names are unique 
+PASS Window includes AnimationFrameProvider: member names are unique 
+PASS Window includes WindowSessionStorage: member names are unique 
+PASS Window includes WindowLocalStorage: member names are unique 
+PASS WorkerGlobalScope includes WindowOrWorkerGlobalScope: member names are unique 
 PASS IDBRequest interface: existence and properties of interface object 
 PASS IDBRequest interface object length 
 PASS IDBRequest interface object name 

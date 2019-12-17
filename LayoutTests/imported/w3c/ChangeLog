@@ -1,3 +1,1281 @@
+2019-12-17  Chris Dumez  <cdumez@apple.com>
+
+        Re-sync web-platform-tests/resources from upstream
+        https://bugs.webkit.org/show_bug.cgi?id=205307
+
+        Reviewed by Youenn Fablet.
+
+        Re-sync web-platform-tests/resources from upstream e9d489f3377139a1d54b436f.
+        A lot of tests had to be rebased. Some tests also had to be re-sync'd from
+        upstream to keep them running.
+
+        * web-platform-tests/FileAPI/idlharness-expected.txt:
+        * web-platform-tests/FileAPI/idlharness.worker-expected.txt:
+        * web-platform-tests/FileAPI/url/multi-global-origin-serialization.sub-expected.txt:
+        * web-platform-tests/IndexedDB/bigint_value-expected.txt:
+        * web-platform-tests/IndexedDB/idlharness.any-expected.txt:
+        * web-platform-tests/IndexedDB/idlharness.any.worker-expected.txt:
+        * web-platform-tests/IndexedDB/structured-clone.any-expected.txt:
+        * web-platform-tests/IndexedDB/structured-clone.any.worker-expected.txt:
+        * web-platform-tests/WebCryptoAPI/derive_bits_keys/ecdh_bits.https.any.js: Added.
+        * web-platform-tests/WebCryptoAPI/derive_bits_keys/ecdh_bits.https.any.worker-expected.txt: Added.
+        * web-platform-tests/WebCryptoAPI/derive_bits_keys/ecdh_bits.https.any.worker.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/ecdh_bits.https.worker.html.
+        * web-platform-tests/WebCryptoAPI/derive_bits_keys/ecdh_bits.https.worker-expected.txt: Removed.
+        * web-platform-tests/WebCryptoAPI/derive_bits_keys/ecdh_bits.https.worker.js: Removed.
+        * web-platform-tests/WebCryptoAPI/derive_bits_keys/ecdh_bits.js:
+        (define_tests.):
+        * web-platform-tests/WebCryptoAPI/derive_bits_keys/ecdh_keys.https.any.js: Added.
+        * web-platform-tests/WebCryptoAPI/derive_bits_keys/ecdh_keys.https.any.worker-expected.txt: Added.
+        * web-platform-tests/WebCryptoAPI/derive_bits_keys/ecdh_keys.https.any.worker.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/ecdh_keys.https.worker.html.
+        * web-platform-tests/WebCryptoAPI/derive_bits_keys/ecdh_keys.https.worker-expected.txt: Removed.
+        * web-platform-tests/WebCryptoAPI/derive_bits_keys/ecdh_keys.https.worker.js: Removed.
+        * web-platform-tests/WebCryptoAPI/derive_bits_keys/ecdh_keys.js:
+        (define_tests.):
+        * web-platform-tests/WebCryptoAPI/derive_bits_keys/test_ecdh_bits.https-expected.txt: Removed.
+        * web-platform-tests/WebCryptoAPI/derive_bits_keys/test_ecdh_bits.https.html: Removed.
+        * web-platform-tests/WebCryptoAPI/derive_bits_keys/test_ecdh_keys-expected.txt: Removed.
+        * web-platform-tests/WebCryptoAPI/derive_bits_keys/test_ecdh_keys.https-expected.txt: Removed.
+        * web-platform-tests/WebCryptoAPI/derive_bits_keys/test_ecdh_keys.https.html: Removed.
+        * web-platform-tests/clipboard-apis/async-interfaces.https-expected.txt:
+        * web-platform-tests/content-security-policy/inside-worker/shared-inheritance-expected.txt:
+        * web-platform-tests/content-security-policy/inside-worker/shared-script-expected.txt:
+        * web-platform-tests/content-security-policy/nonce-hiding/svgscript-nonces-hidden-meta.tentative.sub-expected.txt:
+        * web-platform-tests/content-security-policy/nonce-hiding/svgscript-nonces-hidden.tentative-expected.txt:
+        * web-platform-tests/content-security-policy/script-src/scripthash-default-src.sub.html:
+        * web-platform-tests/content-security-policy/securitypolicyviolation/idlharness.window-expected.txt:
+        * web-platform-tests/content-security-policy/style-src/stylehash-default-src.sub.html:
+        * web-platform-tests/credential-management/idlharness.https.window-expected.txt:
+        * web-platform-tests/css/css-animations/idlharness-expected.txt:
+        * web-platform-tests/css/css-grid/abspos/grid-positioned-items-content-alignment-001-expected.txt:
+        * web-platform-tests/css/css-grid/abspos/grid-positioned-items-content-alignment-rtl-001-expected.txt:
+        * web-platform-tests/css/css-grid/abspos/orthogonal-positioned-grid-descendants-001-expected.txt:
+        * web-platform-tests/css/css-grid/abspos/orthogonal-positioned-grid-descendants-002-expected.txt:
+        * web-platform-tests/css/css-grid/abspos/orthogonal-positioned-grid-descendants-003-expected.txt:
+        * web-platform-tests/css/css-grid/abspos/orthogonal-positioned-grid-descendants-004-expected.txt:
+        * web-platform-tests/css/css-grid/abspos/orthogonal-positioned-grid-descendants-005-expected.txt:
+        * web-platform-tests/css/css-grid/abspos/orthogonal-positioned-grid-descendants-007-expected.txt:
+        * web-platform-tests/css/css-grid/abspos/orthogonal-positioned-grid-descendants-016-expected.txt:
+        * web-platform-tests/css/css-grid/abspos/positioned-grid-descendants-007-expected.txt:
+        * web-platform-tests/css/css-grid/abspos/positioned-grid-descendants-012-expected.txt:
+        * web-platform-tests/css/css-grid/abspos/positioned-grid-descendants-014-expected.txt:
+        * web-platform-tests/css/css-grid/abspos/positioned-grid-descendants-016-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-alignment-implies-size-change-001-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-alignment-implies-size-change-002-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-alignment-implies-size-change-003-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-alignment-implies-size-change-004-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-alignment-implies-size-change-005-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-alignment-implies-size-change-006-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-alignment-implies-size-change-007-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-alignment-implies-size-change-008-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-alignment-implies-size-change-009-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-alignment-implies-size-change-010-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-alignment-implies-size-change-011-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-alignment-implies-size-change-012-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-alignment-implies-size-change-013-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-alignment-implies-size-change-014-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-alignment-implies-size-change-015-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-alignment-implies-size-change-016-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-alignment-implies-size-change-017-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-alignment-implies-size-change-018-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-alignment-implies-size-change-019-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-alignment-implies-size-change-020-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-alignment-implies-size-change-021-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-alignment-implies-size-change-022-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-alignment-implies-size-change-023-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-alignment-implies-size-change-024-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-alignment-implies-size-change-025-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-alignment-implies-size-change-026-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-alignment-implies-size-change-027-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-alignment-implies-size-change-028-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-alignment-implies-size-change-029-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-alignment-implies-size-change-030-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-alignment-implies-size-change-031-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-alignment-implies-size-change-032-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-alignment-implies-size-change-033-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-alignment-implies-size-change-034-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-alignment-implies-size-change-035-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-alignment-implies-size-change-036-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-alignment-style-changes-001-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-alignment-style-changes-002-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-alignment-style-changes-003-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-alignment-style-changes-004-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-alignment-style-changes-005-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-alignment-style-changes-006-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-alignment-style-changes-007-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-alignment-style-changes-008-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-container-baseline-001-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-self-alignment-non-static-positioned-items-009-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-self-alignment-non-static-positioned-items-010-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-self-alignment-non-static-positioned-items-011-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-self-alignment-non-static-positioned-items-012-expected.txt:
+        * web-platform-tests/css/css-grid/grid-definition/grid-change-auto-repeat-tracks-expected.txt:
+        * web-platform-tests/css/css-grid/grid-definition/grid-change-fit-content-argument-001-expected.txt:
+        * web-platform-tests/css/css-grid/grid-items/grid-items-percentage-paddings-002-expected.txt:
+        * web-platform-tests/css/css-grid/grid-items/grid-items-percentage-paddings-vertical-lr-002-expected.txt:
+        * web-platform-tests/css/css-grid/grid-items/grid-items-percentage-paddings-vertical-rl-002-expected.txt:
+        * web-platform-tests/css/css-grid/grid-model/grid-box-sizing-001-expected.txt:
+        * web-platform-tests/css/css-images/idlharness-expected.txt:
+        * web-platform-tests/css/css-logical/logicalprops-block-size-expected.txt:
+        * web-platform-tests/css/css-logical/logicalprops-block-size-vlr-expected.txt:
+        * web-platform-tests/css/css-logical/logicalprops-inline-size-expected.txt:
+        * web-platform-tests/css/css-logical/logicalprops-inline-size-vlr-expected.txt:
+        * web-platform-tests/css/css-properties-values-api/idlharness-expected.txt:
+        * web-platform-tests/css/css-properties-values-api/unit-cycles-expected.txt:
+        * web-platform-tests/css/css-properties-values-api/url-resolution-expected.txt:
+        * web-platform-tests/css/css-shapes/shape-outside/shape-image/gradients/shape-outside-radial-gradient-001.html:
+        * web-platform-tests/css/css-shapes/shape-outside/shape-image/gradients/shape-outside-radial-gradient-002.html:
+        * web-platform-tests/css/css-shapes/shape-outside/shape-image/gradients/shape-outside-radial-gradient-003.html:
+        * web-platform-tests/css/css-shapes/shape-outside/shape-image/gradients/shape-outside-radial-gradient-004.html:
+        * web-platform-tests/css/css-shapes/shape-outside/supported-shapes/support/test-utils.js:
+        (verifyTextPoints):
+        * web-platform-tests/css/css-shapes/spec-examples/shape-outside-010.html:
+        * web-platform-tests/css/css-shapes/spec-examples/shape-outside-011.html:
+        * web-platform-tests/css/css-shapes/spec-examples/shape-outside-012.html:
+        * web-platform-tests/css/css-shapes/spec-examples/shape-outside-013.html:
+        * web-platform-tests/css/css-shapes/spec-examples/shape-outside-014.html:
+        * web-platform-tests/css/css-shapes/spec-examples/shape-outside-015.html:
+        * web-platform-tests/css/css-shapes/spec-examples/shape-outside-016.html:
+        * web-platform-tests/css/css-shapes/spec-examples/shape-outside-017.html:
+        * web-platform-tests/css/css-shapes/spec-examples/shape-outside-018-expected.txt:
+        * web-platform-tests/css/css-shapes/spec-examples/shape-outside-018.html:
+        * web-platform-tests/css/css-shapes/spec-examples/shape-outside-019.html:
+        * web-platform-tests/css/css-transitions/CSSPseudoElement-getAnimations.tentative-expected.txt:
+        * web-platform-tests/css/css-transitions/idlharness-expected.txt:
+        * web-platform-tests/css/cssom-view/interfaces-expected.txt:
+        * web-platform-tests/css/cssom/interfaces-expected.txt:
+        * web-platform-tests/custom-elements/parser/parser-fallsback-to-unknown-element-expected.txt:
+        * web-platform-tests/dom/idlharness.any.worker-expected.txt:
+        * web-platform-tests/dom/idlharness.window-expected.txt:
+        * web-platform-tests/dom/lists/DOMTokenList-coverage-for-attributes-expected.txt:
+        * web-platform-tests/dom/nodes/Element-getElementsByTagName-change-document-HTMLNess.html:
+        * web-platform-tests/domparsing/interfaces.any-expected.txt:
+        * web-platform-tests/domparsing/interfaces.any.worker-expected.txt:
+        * web-platform-tests/encoding/idlharness-expected.txt:
+        * web-platform-tests/fetch/api/idl.any-expected.txt:
+        * web-platform-tests/fetch/api/idl.any.worker-expected.txt:
+        * web-platform-tests/fetch/api/response/response-stream-with-broken-then.any-expected.txt:
+        * web-platform-tests/fetch/content-length/content-length.html:
+        * web-platform-tests/fetch/content-length/content-length.html.headers:
+        * web-platform-tests/fetch/cors-rfc1918/idlharness.tentative.any-expected.txt:
+        * web-platform-tests/fetch/cors-rfc1918/idlharness.tentative.any.worker-expected.txt:
+        * web-platform-tests/fetch/images/canvas-remote-read-remote-image-redirect.html:
+        * web-platform-tests/hr-time/idlharness-expected.txt:
+        * web-platform-tests/html/browsers/browsing-the-web/navigating-across-documents/source/navigate-child-function-parent.html:
+        * web-platform-tests/html/browsers/browsing-the-web/navigating-across-documents/source/navigate-child-src-about-blank.html:
+        * web-platform-tests/html/browsers/origin/origin-of-data-document-expected.txt:
+        * web-platform-tests/html/browsers/origin/relaxing-the-same-origin-restriction/document_domain_setter-expected.txt:
+        * web-platform-tests/html/browsers/the-window-object/window-open-noopener-expected.txt:
+        * web-platform-tests/html/dom/idlharness.worker-expected.txt:
+        * web-platform-tests/html/dom/reflection-embedded-expected.txt:
+        * web-platform-tests/html/infrastructure/safe-passing-of-structured-data/structured_clone_bigint-expected.txt:
+        * web-platform-tests/html/interaction/focus/the-autofocus-attribute/not-on-first-task.html:
+        * web-platform-tests/html/rendering/non-replaced-elements/flow-content-0/dialog-display-expected.txt:
+        * web-platform-tests/html/rendering/non-replaced-elements/margin-collapsing-quirks/compare-computed-style.js:
+        (test):
+        * web-platform-tests/html/rendering/non-replaced-elements/tables/table-vspace-hspace-expected.txt:
+        * web-platform-tests/html/rendering/non-replaced-elements/tables/table-vspace-hspace-s-expected.txt:
+        * web-platform-tests/html/rendering/non-replaced-elements/the-page/iframe-marginwidth-marginheight-expected.txt:
+        * web-platform-tests/html/semantics/document-metadata/the-meta-element/pragma-directives/attr-meta-http-equiv-refresh/dynamic-append.html:
+        * web-platform-tests/html/semantics/document-metadata/the-meta-element/pragma-directives/attr-meta-http-equiv-refresh/not-in-shadow-tree-expected.txt:
+        * web-platform-tests/html/semantics/document-metadata/the-meta-element/pragma-directives/attr-meta-http-equiv-refresh/remove-from-document-expected.txt:
+        * web-platform-tests/html/semantics/embedded-content/image-maps/image-map-processing-model/hash-name-reference-expected.txt:
+        * web-platform-tests/html/semantics/embedded-content/media-elements/interfaces/HTMLElement/HTMLTrackElement/srclang-expected.txt:
+        * web-platform-tests/html/semantics/embedded-content/media-elements/interfaces/TextTrack/language-expected.txt:
+        * web-platform-tests/html/semantics/embedded-content/media-elements/ready-states/autoplay-with-slow-text-tracks-expected.txt:
+        * web-platform-tests/html/semantics/embedded-content/media-elements/video_loop_base-expected.txt:
+        * web-platform-tests/html/semantics/embedded-content/the-frame-element/document-getters-return-null-for-cross-origin-expected.txt:
+        * web-platform-tests/html/semantics/embedded-content/the-iframe-element/document-getters-return-null-for-cross-origin-expected.txt:
+        * web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe_sandbox_anchor_download_allow_downloads_without_user_activation.sub.tentative-expected.txt:
+        * web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe_sandbox_navigation_download_allow_downloads_without_user_activation.sub.tentative-expected.txt:
+        * web-platform-tests/html/semantics/embedded-content/the-iframe-element/move_iframe_in_dom_01.html:
+        * web-platform-tests/html/semantics/embedded-content/the-iframe-element/move_iframe_in_dom_02.html:
+        * web-platform-tests/html/semantics/embedded-content/the-iframe-element/move_iframe_in_dom_03.html:
+        * web-platform-tests/html/semantics/embedded-content/the-iframe-element/move_iframe_in_dom_04.html:
+        * web-platform-tests/html/semantics/embedded-content/the-iframe-element/sandbox_030-expected.txt:
+        * web-platform-tests/html/semantics/embedded-content/the-img-element/data-url.html:
+        * web-platform-tests/html/semantics/embedded-content/the-img-element/srcset/avoid-reload-on-resize.html:
+        * web-platform-tests/html/semantics/embedded-content/the-img-element/update-src-complete.html:
+        * web-platform-tests/html/semantics/embedded-content/the-object-element/document-getters-return-null-for-cross-origin-expected.txt:
+        * web-platform-tests/html/semantics/forms/autofocus/not-on-first-task.html:
+        * web-platform-tests/html/semantics/interfaces-expected.txt:
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/execution-timing/084-expected.txt:
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/charset-02-expected.txt:
+        * web-platform-tests/html/semantics/scripting-1/the-template-element/definitions/template-contents-owner-document-type-expected.txt:
+        * web-platform-tests/html/webappapis/scripting/processing-model-2/unhandled-promise-rejections/promise-rejection-events.sharedworker-expected.txt:
+        * web-platform-tests/html/webappapis/scripting/processing-model-2/window-onerror-parse-error-expected.txt:
+        * web-platform-tests/html/webappapis/scripting/processing-model-2/window-onerror-runtime-error-expected.txt:
+        * web-platform-tests/html/webappapis/scripting/processing-model-2/window-onerror-runtime-error-throw-expected.txt:
+        * web-platform-tests/html/webappapis/timers/negative-setinterval.html:
+        * web-platform-tests/html/webappapis/timers/type-long-setinterval.html:
+        * web-platform-tests/html/webappapis/timers/type-long-settimeout.html:
+        * web-platform-tests/intersection-observer/idlharness.window-expected.txt:
+        * web-platform-tests/media-source/interfaces-expected.txt:
+        * web-platform-tests/mediacapture-record/idlharness.window-expected.txt:
+        * web-platform-tests/mediacapture-streams/idlharness.https.window-expected.txt:
+        * web-platform-tests/mst-content-hint/idlharness.window-expected.txt:
+        * web-platform-tests/navigation-timing/nav2_test_document_open-expected.txt:
+        * web-platform-tests/navigation-timing/nav2_test_document_replaced-expected.txt:
+        * web-platform-tests/navigation-timing/nav2_test_navigate_within_document-expected.txt:
+        * web-platform-tests/navigation-timing/nav2_test_navigation_type_backforward-expected.txt:
+        * web-platform-tests/navigation-timing/nav2_test_navigation_type_reload-expected.txt:
+        * web-platform-tests/navigation-timing/nav2_test_redirect_chain_xserver_partial_opt_in-expected.txt:
+        * web-platform-tests/navigation-timing/nav2_test_redirect_server-expected.txt:
+        * web-platform-tests/navigation-timing/nav2_test_redirect_xserver-expected.txt:
+        * web-platform-tests/payment-request/idlharness.https.window-expected.txt:
+        * web-platform-tests/preload/link-header-preload-imagesrcset.html:
+        * web-platform-tests/preload/link-header-preload-nonce-expected.txt:
+        * web-platform-tests/preload/link-header-preload.html:
+        * web-platform-tests/preload/onload-event.html:
+        * web-platform-tests/preload/preload-csp.sub.html:
+        * web-platform-tests/preload/preload-default-csp.sub.html:
+        * web-platform-tests/preload/preload-with-type.html:
+        * web-platform-tests/preload/single-download-late-used-preload.html:
+        * web-platform-tests/remote-playback/idlharness.window-expected.txt:
+        * web-platform-tests/requestidlecallback/idlharness.window-expected.txt:
+        * web-platform-tests/resize-observer/idlharness.window-expected.txt:
+        * web-platform-tests/resource-timing/idlharness.any-expected.txt:
+        * web-platform-tests/resource-timing/idlharness.any.worker-expected.txt:
+        * web-platform-tests/resource-timing/resource_TAO_match_origin-expected.txt:
+        * web-platform-tests/resource-timing/resource_TAO_match_wildcard-expected.txt:
+        * web-platform-tests/resource-timing/resource_TAO_multi-expected.txt:
+        * web-platform-tests/resource-timing/resource_TAO_multi_wildcard-expected.txt:
+        * web-platform-tests/resource-timing/resource_TAO_null-expected.txt:
+        * web-platform-tests/resource-timing/resource_TAO_origin_uppercase-expected.txt:
+        * web-platform-tests/resource-timing/resource_TAO_space-expected.txt:
+        * web-platform-tests/resource-timing/resource_TAO_wildcard-expected.txt:
+        * web-platform-tests/resources/META.yml: Added.
+        * web-platform-tests/resources/OWNERS: Removed.
+        * web-platform-tests/resources/check-layout-th.js:
+        (window.checkLayout):
+        * web-platform-tests/resources/chromium/big_buffer.mojom.js: Added.
+        (mojo.internal.isMojomLoaded):
+        (BigBufferSharedMemoryRegion):
+        (BigBufferSharedMemoryRegion.prototype.initDefaults_):
+        (BigBufferSharedMemoryRegion.prototype.initFields_):
+        (BigBufferSharedMemoryRegion.validate):
+        (BigBufferSharedMemoryRegion.decode):
+        (BigBufferSharedMemoryRegion.encode):
+        (BigBuffer):
+        (BigBuffer.prototype.initDefault_):
+        (BigBuffer.prototype.initValue_):
+        (get if):
+        (BigBuffer.encode):
+        (BigBuffer.decode):
+        (BigBuffer.validate):
+        * web-platform-tests/resources/chromium/big_buffer.mojom.js.headers: Added.
+        * web-platform-tests/resources/chromium/chooser_service.mojom.js: Removed.
+        * web-platform-tests/resources/chromium/contacts_manager_mock.js: Added.
+        (const.WebContactsTest):
+        (const.WebContactsTest.prototype.formatAddress_):
+        (const.WebContactsTest.async if):
+        (const.WebContactsTest.prototype.async select):
+        (const.WebContactsTest.prototype.setSelectedContacts):
+        (const.WebContactsTest.prototype.reset):
+        (const.WebContactsTest.ContactsTestChromium):
+        (const.WebContactsTest.ContactsTestChromium.prototype.setSelectedContacts):
+        * web-platform-tests/resources/chromium/device.mojom.js:
+        (UsbSynchronizationType.isKnownEnumValue):
+        (UsbSynchronizationType.validate):
+        (UsbUsageType.isKnownEnumValue):
+        (UsbUsageType.validate):
+        (UsbEndpointInfo.prototype.initDefaults_):
+        (UsbEndpointInfo.validate):
+        (UsbEndpointInfo.decode):
+        (UsbEndpointInfo.encode):
+        (UsbAlternateInterfaceInfo.prototype.initDefaults_):
+        (UsbAlternateInterfaceInfo.validate):
+        (UsbAlternateInterfaceInfo.decode):
+        (UsbAlternateInterfaceInfo.encode):
+        (UsbInterfaceInfo.validate):
+        (UsbConfigurationInfo.prototype.initDefaults_):
+        (UsbConfigurationInfo.validate):
+        (UsbConfigurationInfo.decode):
+        (UsbConfigurationInfo.encode):
+        (UsbDeviceInfo.prototype.initDefaults_):
+        (UsbDeviceInfo.validate):
+        (UsbDeviceInfo.decode):
+        (UsbDeviceInfo.encode):
+        (UsbControlTransferParams.validate):
+        (UsbIsochronousPacket.validate):
+        (UsbDevice_Open_ResponseParams.validate):
+        (UsbDevice_ControlTransferIn_Params.validate):
+        (UsbDevice_ControlTransferIn_ResponseParams.validate):
+        (UsbDevice_ControlTransferOut_Params.validate):
+        (UsbDevice_ControlTransferOut_ResponseParams.validate):
+        (UsbDevice_GenericTransferIn_ResponseParams.validate):
+        (UsbDevice_GenericTransferOut_Params.validate):
+        (UsbDevice_GenericTransferOut_ResponseParams.validate):
+        (UsbDevice_IsochronousTransferIn_Params.validate):
+        (UsbDevice_IsochronousTransferIn_ResponseParams.validate):
+        (UsbDevice_IsochronousTransferOut_Params.validate):
+        (UsbDevice_IsochronousTransferOut_ResponseParams.validate):
+        (UsbDeviceClient_OnDeviceOpened_Params):
+        (UsbDeviceClient_OnDeviceOpened_Params.prototype.initDefaults_):
+        (UsbDeviceClient_OnDeviceOpened_Params.prototype.initFields_):
+        (UsbDeviceClient_OnDeviceOpened_Params.validate):
+        (UsbDeviceClient_OnDeviceOpened_Params.decode):
+        (UsbDeviceClient_OnDeviceOpened_Params.encode):
+        (UsbDeviceClient_OnDeviceClosed_Params):
+        (UsbDeviceClient_OnDeviceClosed_Params.prototype.initDefaults_):
+        (UsbDeviceClient_OnDeviceClosed_Params.prototype.initFields_):
+        (UsbDeviceClient_OnDeviceClosed_Params.validate):
+        (UsbDeviceClient_OnDeviceClosed_Params.decode):
+        (UsbDeviceClient_OnDeviceClosed_Params.encode):
+        (UsbDeviceProxy.prototype.open):
+        (UsbDeviceProxy.prototype.close):
+        (UsbDeviceProxy.prototype.setConfiguration):
+        (UsbDeviceProxy.prototype.claimInterface):
+        (UsbDeviceProxy.prototype.releaseInterface):
+        (UsbDeviceProxy.prototype.setInterfaceAlternateSetting):
+        (UsbDeviceProxy.prototype.reset):
+        (UsbDeviceProxy.prototype.clearHalt):
+        (UsbDeviceProxy.prototype.controlTransferIn):
+        (UsbDeviceProxy.prototype.controlTransferOut):
+        (UsbDeviceProxy.prototype.genericTransferIn):
+        (UsbDeviceProxy.prototype.genericTransferOut):
+        (UsbDeviceProxy.prototype.isochronousTransferIn):
+        (UsbDeviceProxy.prototype.isochronousTransferOut):
+        (UsbDeviceClientPtr):
+        (UsbDeviceClientAssociatedPtr):
+        (UsbDeviceClientProxy):
+        (UsbDeviceClientPtr.prototype.onDeviceOpened):
+        (UsbDeviceClientProxy.prototype.onDeviceOpened):
+        (UsbDeviceClientPtr.prototype.onDeviceClosed):
+        (UsbDeviceClientProxy.prototype.onDeviceClosed):
+        (UsbDeviceClientStub):
+        (UsbDeviceClientStub.prototype.onDeviceOpened):
+        (UsbDeviceClientStub.prototype.onDeviceClosed):
+        (UsbDeviceClientStub.prototype.accept):
+        (UsbDeviceClientStub.prototype.acceptWithResponder):
+        (validateUsbDeviceClientRequest):
+        (validateUsbDeviceClientResponse):
+        * web-platform-tests/resources/chromium/device_enumeration_options.mojom.js: Added.
+        (mojo.internal.isMojomLoaded):
+        (UsbDeviceFilter):
+        (UsbDeviceFilter.prototype.initDefaults_):
+        (UsbDeviceFilter.prototype.initFields_):
+        (UsbDeviceFilter.validate):
+        (UsbDeviceFilter.decode):
+        (UsbDeviceFilter.encode):
+        (UsbEnumerationOptions):
+        (UsbEnumerationOptions.prototype.initDefaults_):
+        (UsbEnumerationOptions.prototype.initFields_):
+        (UsbEnumerationOptions.validate):
+        (UsbEnumerationOptions.decode):
+        (UsbEnumerationOptions.encode):
+        * web-platform-tests/resources/chromium/device_enumeration_options.mojom.js.headers: Added.
+        * web-platform-tests/resources/chromium/device_manager.mojom.js: Removed.
+        * web-platform-tests/resources/chromium/device_manager_client.mojom.js: Added.
+        (mojo.internal.isMojomLoaded):
+        (UsbDeviceManagerClient_OnDeviceAdded_Params):
+        (UsbDeviceManagerClient_OnDeviceAdded_Params.prototype.initDefaults_):
+        (UsbDeviceManagerClient_OnDeviceAdded_Params.prototype.initFields_):
+        (UsbDeviceManagerClient_OnDeviceAdded_Params.validate):
+        (UsbDeviceManagerClient_OnDeviceAdded_Params.decode):
+        (UsbDeviceManagerClient_OnDeviceAdded_Params.encode):
+        (UsbDeviceManagerClient_OnDeviceRemoved_Params):
+        (UsbDeviceManagerClient_OnDeviceRemoved_Params.prototype.initDefaults_):
+        (UsbDeviceManagerClient_OnDeviceRemoved_Params.prototype.initFields_):
+        (UsbDeviceManagerClient_OnDeviceRemoved_Params.validate):
+        (UsbDeviceManagerClient_OnDeviceRemoved_Params.decode):
+        (UsbDeviceManagerClient_OnDeviceRemoved_Params.encode):
+        (UsbDeviceManagerClientPtr):
+        (UsbDeviceManagerClientAssociatedPtr):
+        (UsbDeviceManagerClientProxy):
+        (UsbDeviceManagerClientPtr.prototype.onDeviceAdded):
+        (UsbDeviceManagerClientProxy.prototype.onDeviceAdded):
+        (UsbDeviceManagerClientPtr.prototype.onDeviceRemoved):
+        (UsbDeviceManagerClientProxy.prototype.onDeviceRemoved):
+        (UsbDeviceManagerClientStub):
+        (UsbDeviceManagerClientStub.prototype.onDeviceAdded):
+        (UsbDeviceManagerClientStub.prototype.onDeviceRemoved):
+        (UsbDeviceManagerClientStub.prototype.accept):
+        (UsbDeviceManagerClientStub.prototype.acceptWithResponder):
+        (validateUsbDeviceManagerClientRequest):
+        (validateUsbDeviceManagerClientResponse):
+        * web-platform-tests/resources/chromium/device_manager_client.mojom.js.headers: Added.
+        * web-platform-tests/resources/chromium/generic_sensor_mocks.js: Added.
+        (GenericSensorTest.MockSensor):
+        (GenericSensorTest.MockSensor.prototype.async getDefaultConfiguration):
+        (GenericSensorTest.MockSensor.prototype.async addConfiguration):
+        (GenericSensorTest.MockSensor.prototype.removeConfiguration):
+        (GenericSensorTest.MockSensor.prototype.reset):
+        (GenericSensorTest.MockSensor.prototype.async setSensorReading):
+        (GenericSensorTest.MockSensor.prototype.setStartShouldFail):
+        (GenericSensorTest.MockSensor.prototype.startReading):
+        (GenericSensorTest.MockSensor.prototype.stopReading):
+        (GenericSensorTest.MockSensor.prototype.getSamplingFrequency):
+        (GenericSensorTest.MockSensorProvider):
+        (GenericSensorTest.MockSensorProvider.prototype.async getSensor):
+        (GenericSensorTest.MockSensorProvider.prototype.bindToPipe):
+        (GenericSensorTest.MockSensorProvider.prototype.reset):
+        (GenericSensorTest.MockSensorProvider.prototype.setGetSensorShouldFail):
+        (GenericSensorTest.MockSensorProvider.prototype.setPermissionsDenied):
+        (GenericSensorTest.MockSensorProvider.prototype.getCreatedSensor):
+        (GenericSensorTest.MockSensorProvider.prototype.setMaximumSupportedFrequency):
+        (GenericSensorTest.MockSensorProvider.prototype.setMinimumSupportedFrequency):
+        (GenericSensorTest.GenericSensorTestChromium):
+        (GenericSensorTest.GenericSensorTestChromium.prototype.initialize):
+        (GenericSensorTest.GenericSensorTestChromium.prototype.async reset):
+        (GenericSensorTest.GenericSensorTestChromium.prototype.getSensorProvider):
+        (GenericSensorTest):
+        * web-platform-tests/resources/chromium/generic_sensor_mocks.js.headers: Copied from LayoutTests/imported/w3c/web-platform-tests/resources/chromium/chooser_service.mojom.js.headers.
+        * web-platform-tests/resources/chromium/image_capture-mojom.js.headers: Added.
+        * web-platform-tests/resources/chromium/image_capture.mojom.js: Added.
+        (mojo.internal.isMojomLoaded):
+        (MeteringMode.isKnownEnumValue):
+        (MeteringMode.validate):
+        (RedEyeReduction.isKnownEnumValue):
+        (RedEyeReduction.validate):
+        (FillLightMode.isKnownEnumValue):
+        (FillLightMode.validate):
+        (Range):
+        (Range.prototype.initDefaults_):
+        (Range.prototype.initFields_):
+        (Range.validate):
+        (Range.decode):
+        (Range.encode):
+        (PhotoState):
+        (PhotoState.prototype.initDefaults_):
+        (PhotoState.prototype.initFields_):
+        (PhotoState.validate):
+        (PhotoState.decode):
+        (PhotoState.encode):
+        (Point2D):
+        (Point2D.prototype.initDefaults_):
+        (Point2D.prototype.initFields_):
+        (Point2D.validate):
+        (Point2D.decode):
+        (Point2D.encode):
+        (PhotoSettings):
+        (PhotoSettings.prototype.initDefaults_):
+        (PhotoSettings.prototype.initFields_):
+        (PhotoSettings.validate):
+        (PhotoSettings.decode):
+        (PhotoSettings.encode):
+        (Blob):
+        (Blob.prototype.initDefaults_):
+        (Blob.prototype.initFields_):
+        (Blob.validate):
+        (Blob.decode):
+        (Blob.encode):
+        (ImageCapture_GetPhotoState_Params):
+        (ImageCapture_GetPhotoState_Params.prototype.initDefaults_):
+        (ImageCapture_GetPhotoState_Params.prototype.initFields_):
+        (ImageCapture_GetPhotoState_Params.validate):
+        (ImageCapture_GetPhotoState_Params.decode):
+        (ImageCapture_GetPhotoState_Params.encode):
+        (ImageCapture_GetPhotoState_ResponseParams):
+        (ImageCapture_GetPhotoState_ResponseParams.prototype.initDefaults_):
+        (ImageCapture_GetPhotoState_ResponseParams.prototype.initFields_):
+        (ImageCapture_GetPhotoState_ResponseParams.validate):
+        (ImageCapture_GetPhotoState_ResponseParams.decode):
+        (ImageCapture_GetPhotoState_ResponseParams.encode):
+        (ImageCapture_SetOptions_Params):
+        (ImageCapture_SetOptions_Params.prototype.initDefaults_):
+        (ImageCapture_SetOptions_Params.prototype.initFields_):
+        (ImageCapture_SetOptions_Params.validate):
+        (ImageCapture_SetOptions_Params.decode):
+        (ImageCapture_SetOptions_Params.encode):
+        (ImageCapture_SetOptions_ResponseParams):
+        (ImageCapture_SetOptions_ResponseParams.prototype.initDefaults_):
+        (ImageCapture_SetOptions_ResponseParams.prototype.initFields_):
+        (ImageCapture_SetOptions_ResponseParams.validate):
+        (ImageCapture_SetOptions_ResponseParams.decode):
+        (ImageCapture_SetOptions_ResponseParams.encode):
+        (ImageCapture_TakePhoto_Params):
+        (ImageCapture_TakePhoto_Params.prototype.initDefaults_):
+        (ImageCapture_TakePhoto_Params.prototype.initFields_):
+        (ImageCapture_TakePhoto_Params.validate):
+        (ImageCapture_TakePhoto_Params.decode):
+        (ImageCapture_TakePhoto_Params.encode):
+        (ImageCapture_TakePhoto_ResponseParams):
+        (ImageCapture_TakePhoto_ResponseParams.prototype.initDefaults_):
+        (ImageCapture_TakePhoto_ResponseParams.prototype.initFields_):
+        (ImageCapture_TakePhoto_ResponseParams.validate):
+        (ImageCapture_TakePhoto_ResponseParams.decode):
+        (ImageCapture_TakePhoto_ResponseParams.encode):
+        (ImageCapturePtr):
+        (ImageCaptureAssociatedPtr):
+        (ImageCaptureProxy):
+        (ImageCapturePtr.prototype.getPhotoState):
+        (ImageCaptureProxy.prototype.getPhotoState):
+        (ImageCapturePtr.prototype.setOptions):
+        (ImageCaptureProxy.prototype.setOptions):
+        (ImageCapturePtr.prototype.takePhoto):
+        (ImageCaptureProxy.prototype.takePhoto):
+        (ImageCaptureStub.prototype.getPhotoState):
+        (ImageCaptureStub.prototype.setOptions):
+        (ImageCaptureStub.prototype.takePhoto):
+        (ImageCaptureStub.prototype.accept):
+        (ImageCaptureStub.prototype.acceptWithResponder):
+        (validateImageCaptureRequest):
+        (validateImageCaptureResponse):
+        * web-platform-tests/resources/chromium/mock-barcodedetection.js: Added.
+        (BarcodeDetectionTest):
+        (BarcodeDetectionTest.prototype.createBarcodeDetection):
+        (BarcodeDetectionTest.prototype.enumerateSupportedFormats):
+        (BarcodeDetectionTest.prototype.getFrameData):
+        (BarcodeDetectionTest.prototype.getFormats):
+        (BarcodeDetectionTest.prototype.reset):
+        (BarcodeDetectionTest.MockBarcodeDetection):
+        (BarcodeDetectionTest.MockBarcodeDetection.prototype.detect):
+        (BarcodeDetectionTest.BarcodeDetectionTestChromium):
+        (BarcodeDetectionTest.BarcodeDetectionTestChromium.prototype.initialize):
+        (BarcodeDetectionTest.BarcodeDetectionTestChromium.prototype.async reset):
+        (BarcodeDetectionTest.BarcodeDetectionTestChromium.prototype.MockBarcodeDetectionProvider):
+        * web-platform-tests/resources/chromium/mock-barcodedetection.js.headers: Added.
+        * web-platform-tests/resources/chromium/mock-facedetection.js: Added.
+        (FaceDetectionTest):
+        (FaceDetectionTest.prototype.createFaceDetection):
+        (FaceDetectionTest.prototype.getFrameData):
+        (FaceDetectionTest.prototype.getMaxDetectedFaces):
+        (FaceDetectionTest.prototype.getFastMode):
+        (FaceDetectionTest.prototype.reset):
+        (FaceDetectionTest.MockFaceDetection):
+        (FaceDetectionTest.MockFaceDetection.prototype.detect):
+        (FaceDetectionTest.FaceDetectionTestChromium):
+        (FaceDetectionTest.FaceDetectionTestChromium.prototype.initialize):
+        (FaceDetectionTest.FaceDetectionTestChromium.prototype.async reset):
+        (FaceDetectionTest.FaceDetectionTestChromium.prototype.MockFaceDetectionProvider):
+        * web-platform-tests/resources/chromium/mock-facedetection.js.headers: Added.
+        * web-platform-tests/resources/chromium/mock-imagecapture.js: Added.
+        (ImageCaptureTest):
+        (ImageCaptureTest.prototype.reset):
+        (ImageCaptureTest.prototype.getPhotoState):
+        (ImageCaptureTest.prototype.setOptions):
+        (ImageCaptureTest.prototype.takePhoto):
+        (ImageCaptureTest.prototype.state):
+        (ImageCaptureTest.prototype.options):
+        (ImageCaptureTest.ImageCaptureTestChromium):
+        (ImageCaptureTest.ImageCaptureTestChromium.prototype.initialize):
+        (ImageCaptureTest.ImageCaptureTestChromium.prototype.async reset):
+        (ImageCaptureTest.ImageCaptureTestChromium.prototype.mockImageCapture):
+        * web-platform-tests/resources/chromium/mojo_bindings.js:
+        (exposeNamespace):
+        (loadMojomIfNecessary):
+        (InterfacePtrInfo):
+        (InterfacePtrInfo.prototype.isValid):
+        (InterfacePtrInfo.prototype.close):
+        (AssociatedInterfacePtrInfo):
+        (AssociatedInterfacePtrInfo.prototype.isValid):
+        (InterfaceRequest):
+        (InterfaceRequest.prototype.isValid):
+        (InterfaceRequest.prototype.close):
+        (AssociatedInterfaceRequest):
+        (AssociatedInterfaceRequest.prototype.isValid):
+        (AssociatedInterfaceRequest.prototype.resetWithReason):
+        (isMasterInterfaceId):
+        (isValidInterfaceId):
+        (hasInterfaceIdNamespaceBitSet):
+        (Connector.prototype.readMore_):
+        (validateControlRequestWithResponse):
+        (validateControlRequestWithoutResponse):
+        (runOrClosePipe):
+        (run):
+        (isInterfaceControlMessage):
+        (constructRunOrClosePipeMessage):
+        (validateControlResponse):
+        (acceptRunResponse):
+        (sendRunMessage):
+        (ControlMessageProxy.prototype.queryVersion):
+        (ControlMessageProxy.prototype.requireVersion):
+        (PipeControlMessageProxy.prototype.constructPeerEndpointClosedMessage):
+        (Router.prototype.createLocalEndpointHandle):
+        (Router.prototype.onPeerAssociatedEndpointClosed):
+        (decodeUtf8String):
+        (encodeUtf8String):
+        (utf8Length):
+        (RunInput.prototype.initValue_):
+        (RunInput.encode):
+        (RunInput.decode):
+        (RunInput.validate):
+        (RunOutput.prototype.initValue_):
+        (RunOutput.encode):
+        (RunOutput.decode):
+        (RunOutput.validate):
+        (RunOrClosePipeInput.prototype.initValue_):
+        (RunOrClosePipeInput.encode):
+        (RunOrClosePipeInput.decode):
+        (RunOrClosePipeInput.validate):
+        (DisconnectReason.validate):
+        (PeerAssociatedEndpointClosedEvent.validate):
+        * web-platform-tests/resources/chromium/mojo_web_test_helper_test.mojom.js: Added.
+        (mojo.internal.isMojomLoaded):
+        (MojoWebTestHelper_Reverse_Params):
+        (MojoWebTestHelper_Reverse_Params.prototype.initDefaults_):
+        (MojoWebTestHelper_Reverse_Params.prototype.initFields_):
+        (MojoWebTestHelper_Reverse_Params.validate):
+        (MojoWebTestHelper_Reverse_Params.decode):
+        (MojoWebTestHelper_Reverse_Params.encode):
+        (MojoWebTestHelper_Reverse_ResponseParams):
+        (MojoWebTestHelper_Reverse_ResponseParams.prototype.initDefaults_):
+        (MojoWebTestHelper_Reverse_ResponseParams.prototype.initFields_):
+        (MojoWebTestHelper_Reverse_ResponseParams.validate):
+        (MojoWebTestHelper_Reverse_ResponseParams.decode):
+        (MojoWebTestHelper_Reverse_ResponseParams.encode):
+        (MojoWebTestHelperPtr):
+        (MojoWebTestHelperAssociatedPtr):
+        (MojoWebTestHelperProxy):
+        (MojoWebTestHelperPtr.prototype.reverse):
+        (MojoWebTestHelperProxy.prototype.reverse):
+        (MojoWebTestHelperStub.prototype.reverse):
+        (MojoWebTestHelperStub.prototype.accept):
+        (MojoWebTestHelperStub.prototype.acceptWithResponder):
+        (validateMojoWebTestHelperRequest):
+        (validateMojoWebTestHelperResponse):
+        * web-platform-tests/resources/chromium/mojo_web_test_helper_test.mojom.js.headers: Renamed from LayoutTests/imported/w3c/web-platform-tests/resources/chromium/device_manager.mojom.js.headers.
+        * web-platform-tests/resources/chromium/nfc-mock.js: Added.
+        (toMojoNDEFPushTarget):
+        (toMojoNDEFMessage):
+        (toMojoNDEFRecord):
+        (toByteArray):
+        (compareNDEFRecords):
+        (assertNDEFPushOptionsEqual):
+        (assertNDEFReaderOptionsEqual):
+        (matchesWatchOptions):
+        (createNDEFError):
+        (WebNFCTest):
+        (WebNFCTest.prototype.async push):
+        (WebNFCTest.prototype.async cancelPush):
+        (WebNFCTest.prototype.setClient):
+        (WebNFCTest.prototype.async watch):
+        (WebNFCTest.prototype.async cancelWatch):
+        (WebNFCTest.prototype.async cancelAllWatches):
+        (WebNFCTest.prototype.getHWError):
+        (WebNFCTest.prototype.setHWStatus):
+        (WebNFCTest.prototype.pushedMessage):
+        (WebNFCTest.prototype.pushOptions):
+        (WebNFCTest.prototype.watchOptions):
+        (WebNFCTest.prototype.setPendingPushCompleted):
+        (WebNFCTest.prototype.reset):
+        (WebNFCTest.prototype.cancelPendingPushOperation):
+        (WebNFCTest.prototype.setReadingMessage):
+        (WebNFCTest.prototype.suspendNFCOperations):
+        (WebNFCTest.prototype.resumeNFCOperations):
+        (WebNFCTest.prototype.setIsNDEFTech):
+        (WebNFCTest.prototype.setIsFormattedTag):
+        (WebNFCTest.NFCTestChromium):
+        (WebNFCTest.NFCTestChromium.prototype.initialize):
+        (WebNFCTest.NFCTestChromium.prototype.async reset):
+        (WebNFCTest.NFCTestChromium.prototype.getMockNFC):
+        * web-platform-tests/resources/chromium/sensor.mojom.js: Added.
+        (mojo.internal.isMojomLoaded):
+        (SensorType.isKnownEnumValue):
+        (SensorType.validate):
+        (ReportingMode.isKnownEnumValue):
+        (ReportingMode.validate):
+        (SensorConfiguration):
+        (SensorConfiguration.prototype.initDefaults_):
+        (SensorConfiguration.prototype.initFields_):
+        (SensorConfiguration.validate):
+        (SensorConfiguration.decode):
+        (SensorConfiguration.encode):
+        (Sensor_GetDefaultConfiguration_Params):
+        (Sensor_GetDefaultConfiguration_Params.prototype.initDefaults_):
+        (Sensor_GetDefaultConfiguration_Params.prototype.initFields_):
+        (Sensor_GetDefaultConfiguration_Params.validate):
+        (Sensor_GetDefaultConfiguration_Params.decode):
+        (Sensor_GetDefaultConfiguration_Params.encode):
+        (Sensor_GetDefaultConfiguration_ResponseParams):
+        (Sensor_GetDefaultConfiguration_ResponseParams.prototype.initDefaults_):
+        (Sensor_GetDefaultConfiguration_ResponseParams.prototype.initFields_):
+        (Sensor_GetDefaultConfiguration_ResponseParams.validate):
+        (Sensor_GetDefaultConfiguration_ResponseParams.decode):
+        (Sensor_GetDefaultConfiguration_ResponseParams.encode):
+        (Sensor_AddConfiguration_Params):
+        (Sensor_AddConfiguration_Params.prototype.initDefaults_):
+        (Sensor_AddConfiguration_Params.prototype.initFields_):
+        (Sensor_AddConfiguration_Params.validate):
+        (Sensor_AddConfiguration_Params.decode):
+        (Sensor_AddConfiguration_Params.encode):
+        (Sensor_AddConfiguration_ResponseParams):
+        (Sensor_AddConfiguration_ResponseParams.prototype.initDefaults_):
+        (Sensor_AddConfiguration_ResponseParams.prototype.initFields_):
+        (Sensor_AddConfiguration_ResponseParams.validate):
+        (Sensor_AddConfiguration_ResponseParams.decode):
+        (Sensor_AddConfiguration_ResponseParams.encode):
+        (Sensor_RemoveConfiguration_Params):
+        (Sensor_RemoveConfiguration_Params.prototype.initDefaults_):
+        (Sensor_RemoveConfiguration_Params.prototype.initFields_):
+        (Sensor_RemoveConfiguration_Params.validate):
+        (Sensor_RemoveConfiguration_Params.decode):
+        (Sensor_RemoveConfiguration_Params.encode):
+        (Sensor_Suspend_Params):
+        (Sensor_Suspend_Params.prototype.initDefaults_):
+        (Sensor_Suspend_Params.prototype.initFields_):
+        (Sensor_Suspend_Params.validate):
+        (Sensor_Suspend_Params.decode):
+        (Sensor_Suspend_Params.encode):
+        (Sensor_Resume_Params):
+        (Sensor_Resume_Params.prototype.initDefaults_):
+        (Sensor_Resume_Params.prototype.initFields_):
+        (Sensor_Resume_Params.validate):
+        (Sensor_Resume_Params.decode):
+        (Sensor_Resume_Params.encode):
+        (Sensor_ConfigureReadingChangeNotifications_Params):
+        (Sensor_ConfigureReadingChangeNotifications_Params.prototype.initDefaults_):
+        (Sensor_ConfigureReadingChangeNotifications_Params.prototype.initFields_):
+        (Sensor_ConfigureReadingChangeNotifications_Params.validate):
+        (Sensor_ConfigureReadingChangeNotifications_Params.decode):
+        (Sensor_ConfigureReadingChangeNotifications_Params.encode):
+        (SensorClient_RaiseError_Params):
+        (SensorClient_RaiseError_Params.prototype.initDefaults_):
+        (SensorClient_RaiseError_Params.prototype.initFields_):
+        (SensorClient_RaiseError_Params.validate):
+        (SensorClient_RaiseError_Params.decode):
+        (SensorClient_RaiseError_Params.encode):
+        (SensorClient_SensorReadingChanged_Params):
+        (SensorClient_SensorReadingChanged_Params.prototype.initDefaults_):
+        (SensorClient_SensorReadingChanged_Params.prototype.initFields_):
+        (SensorClient_SensorReadingChanged_Params.validate):
+        (SensorClient_SensorReadingChanged_Params.decode):
+        (SensorClient_SensorReadingChanged_Params.encode):
+        (SensorPtr):
+        (SensorAssociatedPtr):
+        (SensorProxy):
+        (SensorPtr.prototype.getDefaultConfiguration):
+        (SensorProxy.prototype.getDefaultConfiguration):
+        (SensorPtr.prototype.addConfiguration):
+        (SensorProxy.prototype.addConfiguration):
+        (SensorPtr.prototype.removeConfiguration):
+        (SensorProxy.prototype.removeConfiguration):
+        (SensorPtr.prototype.suspend):
+        (SensorProxy.prototype.suspend):
+        (SensorPtr.prototype.resume):
+        (SensorProxy.prototype.resume):
+        (SensorPtr.prototype.configureReadingChangeNotifications):
+        (SensorProxy.prototype.configureReadingChangeNotifications):
+        (SensorStub):
+        (SensorStub.prototype.getDefaultConfiguration):
+        (SensorStub.prototype.addConfiguration):
+        (SensorStub.prototype.removeConfiguration):
+        (SensorStub.prototype.suspend):
+        (SensorStub.prototype.resume):
+        (SensorStub.prototype.configureReadingChangeNotifications):
+        (SensorStub.prototype.accept):
+        (SensorStub.prototype.acceptWithResponder):
+        (validateSensorRequest):
+        (validateSensorResponse):
+        (SensorClientPtr):
+        (SensorClientAssociatedPtr):
+        (SensorClientProxy):
+        (SensorClientPtr.prototype.raiseError):
+        (SensorClientProxy.prototype.raiseError):
+        (SensorClientPtr.prototype.sensorReadingChanged):
+        (SensorClientProxy.prototype.sensorReadingChanged):
+        (SensorClientStub):
+        (SensorClientStub.prototype.raiseError):
+        (SensorClientStub.prototype.sensorReadingChanged):
+        (SensorClientStub.prototype.accept):
+        (SensorClientStub.prototype.acceptWithResponder):
+        (validateSensorClientRequest):
+        (validateSensorClientResponse):
+        * web-platform-tests/resources/chromium/sensor_provider.mojom.js: Added.
+        (mojo.internal.isMojomLoaded):
+        (SensorCreationResult.isKnownEnumValue):
+        (SensorCreationResult.validate):
+        (SensorInitParams):
+        (SensorInitParams.prototype.initDefaults_):
+        (SensorInitParams.prototype.initFields_):
+        (SensorInitParams.validate):
+        (SensorInitParams.decode):
+        (SensorInitParams.encode):
+        (SensorProvider_GetSensor_Params):
+        (SensorProvider_GetSensor_Params.prototype.initDefaults_):
+        (SensorProvider_GetSensor_Params.prototype.initFields_):
+        (SensorProvider_GetSensor_Params.validate):
+        (SensorProvider_GetSensor_Params.decode):
+        (SensorProvider_GetSensor_Params.encode):
+        (SensorProvider_GetSensor_ResponseParams):
+        (SensorProvider_GetSensor_ResponseParams.prototype.initDefaults_):
+        (SensorProvider_GetSensor_ResponseParams.prototype.initFields_):
+        (SensorProvider_GetSensor_ResponseParams.validate):
+        (SensorProvider_GetSensor_ResponseParams.decode):
+        (SensorProvider_GetSensor_ResponseParams.encode):
+        (SensorProviderPtr):
+        (SensorProviderAssociatedPtr):
+        (SensorProviderProxy):
+        (SensorProviderPtr.prototype.getSensor):
+        (SensorProviderProxy.prototype.getSensor):
+        (SensorProviderStub.prototype.getSensor):
+        (SensorProviderStub.prototype.accept):
+        (SensorProviderStub.prototype.acceptWithResponder):
+        (validateSensorProviderRequest):
+        (validateSensorProviderResponse):
+        * web-platform-tests/resources/chromium/sms_mock.js: Added.
+        (const.SmsProvider):
+        (const.SmsProvider.prototype.async receive):
+        (const.SmsProvider.prototype.async abort):
+        (const.SmsProvider.prototype.pushReturnValuesForTesting):
+        (const.SmsProvider.SmsProviderChromium):
+        (const.SmsProvider.SmsProviderChromium.prototype.pushReturnValuesForTesting):
+        * web-platform-tests/resources/chromium/string16.mojom.js:
+        (String16.validate):
+        (BigString16):
+        (BigString16.prototype.initDefaults_):
+        (BigString16.prototype.initFields_):
+        (BigString16.validate):
+        (BigString16.decode):
+        (BigString16.encode):
+        * web-platform-tests/resources/chromium/url.mojom.js: Added.
+        (mojo.internal.isMojomLoaded):
+        (Url):
+        (Url.prototype.initDefaults_):
+        (Url.prototype.initFields_):
+        (Url.validate):
+        (Url.decode):
+        (Url.encode):
+        * web-platform-tests/resources/chromium/w3c-import.log:
+        * web-platform-tests/resources/chromium/web-bluetooth-test.js: Added.
+        (toMojoCentralState):
+        (canonicalizeAndConvertToMojoUUID):
+        (convertToMojoMap):
+        (const.MOJO_CHOOSER_EVENT_TYPE_MAP):
+        (ArrayToMojoCharacteristicProperties):
+        (FakeBluetooth):
+        (FakeBluetooth.prototype.async setLESupported):
+        (FakeBluetooth.prototype.async simulateCentral):
+        (FakeBluetooth.prototype.async allResponsesConsumed):
+        (FakeBluetooth.prototype.async getManualChooser):
+        (FakeCentral):
+        (FakeCentral.prototype.async simulatePreconnectedPeripheral):
+        (FakeCentral.prototype.async simulateAdvertisementReceived):
+        (FakeCentral.prototype.async setState):
+        (FakeCentral.prototype.fetchOrCreatePeripheral_):
+        (FakePeripheral):
+        (FakePeripheral.prototype.async addFakeService):
+        (FakePeripheral.prototype.async setNextGATTConnectionResponse):
+        (FakePeripheral.prototype.async setNextGATTDiscoveryResponse):
+        (FakePeripheral.prototype.async simulateGATTDisconnection):
+        (FakePeripheral.prototype.async simulateGATTServicesChanged):
+        (FakeRemoteGATTService):
+        (FakeRemoteGATTService.prototype.async addFakeCharacteristic):
+        (FakeRemoteGATTService.prototype.async remove):
+        (FakeRemoteGATTCharacteristic):
+        (FakeRemoteGATTCharacteristic.prototype.async addFakeDescriptor):
+        (FakeRemoteGATTCharacteristic.prototype.async setNextReadResponse):
+        (FakeRemoteGATTCharacteristic.prototype.async setNextWriteResponse):
+        (FakeRemoteGATTCharacteristic.prototype.async setNextSubscribeToNotificationsResponse):
+        (FakeRemoteGATTCharacteristic.prototype.async setNextUnsubscribeFromNotificationsResponse):
+        (FakeRemoteGATTCharacteristic.prototype.async isNotifying):
+        (FakeRemoteGATTCharacteristic.prototype.async getLastWrittenValue):
+        (FakeRemoteGATTCharacteristic.prototype.async remove):
+        (FakeRemoteGATTDescriptor):
+        (FakeRemoteGATTDescriptor.prototype.async setNextReadResponse):
+        (FakeRemoteGATTDescriptor.prototype.async setNextWriteResponse):
+        (FakeRemoteGATTDescriptor.prototype.async getLastWrittenValue):
+        (FakeRemoteGATTDescriptor.prototype.async remove):
+        (FakeChooser):
+        (FakeChooser.prototype.async waitForEvents):
+        (FakeChooser.prototype.async selectPeripheral):
+        (FakeChooser.prototype.async cancel):
+        (FakeChooser.prototype.async rescan):
+        (FakeChooser.prototype.onEvent):
+        * web-platform-tests/resources/chromium/web-bluetooth-test.js.headers: Copied from LayoutTests/imported/w3c/web-platform-tests/resources/chromium/chooser_service.mojom.js.headers.
+        * web-platform-tests/resources/chromium/web_usb_service.mojom.js: Added.
+        (mojo.internal.isMojomLoaded):
+        (WebUsbService_GetDevices_Params):
+        (WebUsbService_GetDevices_Params.prototype.initDefaults_):
+        (WebUsbService_GetDevices_Params.prototype.initFields_):
+        (WebUsbService_GetDevices_Params.validate):
+        (WebUsbService_GetDevices_Params.decode):
+        (WebUsbService_GetDevices_Params.encode):
+        (WebUsbService_GetDevices_ResponseParams):
+        (WebUsbService_GetDevices_ResponseParams.prototype.initDefaults_):
+        (WebUsbService_GetDevices_ResponseParams.prototype.initFields_):
+        (WebUsbService_GetDevices_ResponseParams.validate):
+        (WebUsbService_GetDevices_ResponseParams.decode):
+        (WebUsbService_GetDevices_ResponseParams.encode):
+        (WebUsbService_GetDevice_Params):
+        (WebUsbService_GetDevice_Params.prototype.initDefaults_):
+        (WebUsbService_GetDevice_Params.prototype.initFields_):
+        (WebUsbService_GetDevice_Params.validate):
+        (WebUsbService_GetDevice_Params.decode):
+        (WebUsbService_GetDevice_Params.encode):
+        (WebUsbService_GetPermission_Params):
+        (WebUsbService_GetPermission_Params.prototype.initDefaults_):
+        (WebUsbService_GetPermission_Params.prototype.initFields_):
+        (WebUsbService_GetPermission_Params.validate):
+        (WebUsbService_GetPermission_Params.decode):
+        (WebUsbService_GetPermission_Params.encode):
+        (WebUsbService_GetPermission_ResponseParams):
+        (WebUsbService_GetPermission_ResponseParams.prototype.initDefaults_):
+        (WebUsbService_GetPermission_ResponseParams.prototype.initFields_):
+        (WebUsbService_GetPermission_ResponseParams.validate):
+        (WebUsbService_GetPermission_ResponseParams.decode):
+        (WebUsbService_GetPermission_ResponseParams.encode):
+        (WebUsbService_SetClient_Params):
+        (WebUsbService_SetClient_Params.prototype.initDefaults_):
+        (WebUsbService_SetClient_Params.prototype.initFields_):
+        (WebUsbService_SetClient_Params.validate):
+        (WebUsbService_SetClient_Params.decode):
+        (WebUsbService_SetClient_Params.encode):
+        (WebUsbServicePtr):
+        (WebUsbServiceAssociatedPtr):
+        (WebUsbServiceProxy):
+        (WebUsbServicePtr.prototype.getDevices):
+        (WebUsbServiceProxy.prototype.getDevices):
+        (WebUsbServicePtr.prototype.getDevice):
+        (WebUsbServiceProxy.prototype.getDevice):
+        (WebUsbServicePtr.prototype.getPermission):
+        (WebUsbServiceProxy.prototype.getPermission):
+        (WebUsbServicePtr.prototype.setClient):
+        (WebUsbServiceProxy.prototype.setClient):
+        (WebUsbServiceStub):
+        (WebUsbServiceStub.prototype.getDevices):
+        (WebUsbServiceStub.prototype.getDevice):
+        (WebUsbServiceStub.prototype.getPermission):
+        (WebUsbServiceStub.prototype.setClient):
+        (WebUsbServiceStub.prototype.accept):
+        (WebUsbServiceStub.prototype.acceptWithResponder):
+        (validateWebUsbServiceRequest):
+        (validateWebUsbServiceResponse):
+        * web-platform-tests/resources/chromium/web_usb_service.mojom.js.headers: Copied from LayoutTests/imported/w3c/web-platform-tests/resources/chromium/chooser_service.mojom.js.headers.
+        * web-platform-tests/resources/chromium/webusb-child-test.js: Added.
+        (this.name.string_appeared_here.this.window.top.messageChannel.port1.onmessage.async if):
+        * web-platform-tests/resources/chromium/webusb-child-test.js.headers: Copied from LayoutTests/imported/w3c/web-platform-tests/resources/chromium/chooser_service.mojom.js.headers.
+        * web-platform-tests/resources/chromium/webusb-test.js:
+        (getMessagePort):
+        (fakeDeviceInitToDeviceInfo):
+        (FakeDevice.prototype.async controlTransferIn):
+        (FakeDevice.prototype.async controlTransferOut):
+        (prototype.getDevices):
+        (prototype.getDevice):
+        (prototype.getPermission):
+        (prototype.setClient):
+        (USBDeviceRequestEvent.prototype.respondWith):
+        (USBDeviceRequestEvent):
+        (prototype.disconnect):
+        (prototype.async initialize):
+        (prototype.attachToContext):
+        (prototype.addFakeDevice):
+        (prototype.reset):
+        * web-platform-tests/resources/chromium/webxr-test.js: Added.
+        (getMatrixFromTransform):
+        (composeGFXTransform):
+        (ChromeXRTest):
+        (ChromeXRTest.prototype.simulateDeviceConnection):
+        (ChromeXRTest.prototype.disconnectAllDevices):
+        (ChromeXRTest.prototype.simulateUserActivation):
+        (MockVRService):
+        (MockVRService.prototype.addRuntime):
+        (MockVRService.prototype.removeAllRuntimes):
+        (MockVRService.prototype.removeRuntime):
+        (MockVRService.prototype.setClient):
+        (MockVRService.prototype.requestSession):
+        (MockVRService.prototype.exitPresent):
+        (MockVRService.prototype.supportsSession):
+        (prototype.disconnect):
+        (prototype.setViews):
+        (prototype.setViewerOrigin):
+        (prototype.clearViewerOrigin):
+        (prototype.simulateVisibilityChange):
+        (prototype.setBoundsGeometry):
+        (prototype.setFloorOrigin):
+        (prototype.clearFloorOrigin):
+        (prototype.simulateResetPose):
+        (prototype.simulateInputSourceConnection):
+        (prototype.getNonImmersiveDisplayInfo):
+        (prototype.getImmersiveDisplayInfo):
+        (prototype.getEye.else.toDegrees):
+        (prototype.getEye):
+        (prototype.setFeatures.convertFeatureToMojom):
+        (prototype.setFeatures):
+        (prototype.addInputSource):
+        (prototype.removeInputSource):
+        (prototype.getFrameData):
+        (prototype.getEnvironmentIntegrationProvider):
+        (prototype.closeEnvironmentIntegrationProvider):
+        (prototype.closeDataProvider):
+        (prototype.updateSessionGeometry):
+        (prototype.requestRuntimeSession):
+        (prototype.runtimeSupportsSession):
+        (prototype.reportFeatureUsed):
+        (MockXRInputSource):
+        (MockXRInputSource.prototype.setHandedness):
+        (MockXRInputSource.prototype.setTargetRayMode):
+        (MockXRInputSource.prototype.setProfiles):
+        (MockXRInputSource.prototype.setGripOrigin):
+        (MockXRInputSource.prototype.clearGripOrigin):
+        (MockXRInputSource.prototype.setPointerOrigin):
+        (MockXRInputSource.prototype.disconnect):
+        (MockXRInputSource.prototype.reconnect):
+        (MockXRInputSource.prototype.startSelection):
+        (MockXRInputSource.prototype.endSelection):
+        (MockXRInputSource.prototype.simulateSelect):
+        (MockXRInputSource.prototype.setSupportedButtons):
+        (MockXRInputSource.prototype.updateButtonState):
+        (MockXRInputSource.prototype.getInputSourceState):
+        (MockXRInputSource.prototype.getEmptyGamepad):
+        (MockXRInputSource.prototype.addGamepadButton):
+        (MockXRInputSource.prototype.getButtonIndex):
+        (MockXRInputSource.prototype.getAxesStartIndex):
+        (MockXRPresentationProvider):
+        (MockXRPresentationProvider.prototype.bindProvider):
+        (MockXRPresentationProvider.prototype.getClientReceiver):
+        (MockXRPresentationProvider.prototype.submitFrameMissing):
+        (MockXRPresentationProvider.prototype.submitFrame):
+        (MockXRPresentationProvider.prototype.Close):
+        * web-platform-tests/resources/chromium/webxr-test.js.headers: Copied from LayoutTests/imported/w3c/web-platform-tests/resources/chromium/chooser_service.mojom.js.headers.
+        * web-platform-tests/resources/idlharness.js:
+        (IdlArray.prototype.add_dependency_idls):
+        (IdlArray.prototype.test):
+        (IdlArray.prototype.are_duplicate_members):
+        (idl_test):
+        (fetch_spec):
+        * web-platform-tests/resources/readme.md:
+        * web-platform-tests/resources/sriharness.js:
+        (set_extra_attributes):
+        (buildElementFromDestination):
+        (const.SRIPreloadTest):
+        (SRIStyleTest.prototype.execute):
+        * web-platform-tests/resources/test/README.md:
+        * web-platform-tests/resources/test/config.test.json: Removed.
+        * web-platform-tests/resources/test/conftest.py:
+        (pytest_addoption):
+        (pytest_collect_file):
+        (pytest_configure):
+        (resolve_uri):
+        (HTMLItem.__init__):
+        (HTMLItem.reportinfo):
+        (HTMLItem.runtest):
+        (HTMLItem):
+        (HTMLItem._run_unit_test):
+        (HTMLItem._run_functional_test):
+        (HTMLItem._run_functional_test_variant):
+        (HTMLItem._summarize):
+        (HTMLItem._assert_sequence):
+        (HTMLItem._scrub_stack):
+        * web-platform-tests/resources/test/idl-helper.js: Added.
+        (interfaceFrom):
+        (memberFrom):
+        (typeFrom):
+        * web-platform-tests/resources/test/nested-testharness.js: Added.
+        (makeTest.return.new.Promise):
+        (makeTest):
+        * web-platform-tests/resources/test/tests/functional/add_cleanup.html: Added.
+        * web-platform-tests/resources/test/tests/functional/add_cleanup_async.html: Added.
+        * web-platform-tests/resources/test/tests/functional/add_cleanup_async_bad_return.html: Added.
+        * web-platform-tests/resources/test/tests/functional/add_cleanup_async_rejection.html: Added.
+        * web-platform-tests/resources/test/tests/functional/add_cleanup_async_rejection_after_load.html: Added.
+        * web-platform-tests/resources/test/tests/functional/add_cleanup_async_timeout.html: Added.
+        * web-platform-tests/resources/test/tests/functional/add_cleanup_bad_return.html: Added.
+        * web-platform-tests/resources/test/tests/functional/add_cleanup_count.html: Added.
+        * web-platform-tests/resources/test/tests/functional/add_cleanup_err.html: Added.
+        * web-platform-tests/resources/test/tests/functional/add_cleanup_err_multi.html: Added.
+        * web-platform-tests/resources/test/tests/functional/add_cleanup_sync_queue.html: Added.
+        * web-platform-tests/resources/test/tests/functional/api-tests-1.html: Added.
+        * web-platform-tests/resources/test/tests/functional/api-tests-2.html: Added.
+        * web-platform-tests/resources/test/tests/functional/api-tests-3.html: Added.
+        * web-platform-tests/resources/test/tests/functional/force_timeout.html: Added.
+        * web-platform-tests/resources/test/tests/functional/generate-callback.html: Added.
+        * web-platform-tests/resources/test/tests/functional/idlharness/IdlDictionary/test_partial_interface_of.html: Added.
+        * web-platform-tests/resources/test/tests/functional/idlharness/IdlDictionary/w3c-import.log: Copied from LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/lib/w3c-import.log.
+        * web-platform-tests/resources/test/tests/functional/idlharness/IdlInterface/test_immutable_prototype.html: Added.
+        * web-platform-tests/resources/test/tests/functional/idlharness/IdlInterface/test_interface_mixin.html: Added.
+        * web-platform-tests/resources/test/tests/functional/idlharness/IdlInterface/test_partial_interface_of.html: Added.
+        * web-platform-tests/resources/test/tests/functional/idlharness/IdlInterface/test_primary_interface_of.html: Added.
+        * web-platform-tests/resources/test/tests/functional/idlharness/IdlInterface/test_to_json_operation.html: Added.
+        * web-platform-tests/resources/test/tests/functional/idlharness/IdlInterface/w3c-import.log: Added.
+        * web-platform-tests/resources/test/tests/functional/idlharness/IdlNamespace/test_attribute.html: Added.
+        * web-platform-tests/resources/test/tests/functional/idlharness/IdlNamespace/test_operation.html: Added.
+        * web-platform-tests/resources/test/tests/functional/idlharness/IdlNamespace/test_partial_namespace.html: Added.
+        * web-platform-tests/resources/test/tests/functional/idlharness/IdlNamespace/w3c-import.log: Copied from LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/lib/w3c-import.log.
+        * web-platform-tests/resources/test/tests/functional/iframe-callback.html: Added.
+        * web-platform-tests/resources/test/tests/functional/iframe-consolidate-errors.html: Added.
+        * web-platform-tests/resources/test/tests/functional/iframe-consolidate-tests.html: Added.
+        * web-platform-tests/resources/test/tests/functional/iframe-msg.html: Added.
+        * web-platform-tests/resources/test/tests/functional/log-insertion.html: Added.
+        * web-platform-tests/resources/test/tests/functional/order.html: Added.
+        * web-platform-tests/resources/test/tests/functional/promise-async.html: Added.
+        * web-platform-tests/resources/test/tests/functional/promise-with-sync.html: Added.
+        * web-platform-tests/resources/test/tests/functional/promise.html: Added.
+        * web-platform-tests/resources/test/tests/functional/queue.html: Added.
+        * web-platform-tests/resources/test/tests/functional/single-page-test-fail.html: Added.
+        * web-platform-tests/resources/test/tests/functional/single-page-test-no-assertions.html: Added.
+        * web-platform-tests/resources/test/tests/functional/single-page-test-no-body.html: Added.
+        * web-platform-tests/resources/test/tests/functional/single-page-test-pass.html: Added.
+        * web-platform-tests/resources/test/tests/functional/task-scheduling-promise-test.html: Added.
+        * web-platform-tests/resources/test/tests/functional/task-scheduling-test.html: Added.
+        * web-platform-tests/resources/test/tests/functional/uncaught-exception-handle.html: Added.
+        * web-platform-tests/resources/test/tests/functional/uncaught-exception-ignore.html: Added.
+        * web-platform-tests/resources/test/tests/functional/w3c-import.log: Added.
+        * web-platform-tests/resources/test/tests/functional/worker-dedicated-uncaught-allow.html: Added.
+        * web-platform-tests/resources/test/tests/functional/worker-dedicated-uncaught-single.html: Added.
+        * web-platform-tests/resources/test/tests/functional/worker-dedicated.sub.html: Added.
+        * web-platform-tests/resources/test/tests/functional/worker-error.js: Added.
+        (test):
+        * web-platform-tests/resources/test/tests/functional/worker-service.html: Added.
+        * web-platform-tests/resources/test/tests/functional/worker-shared.html: Added.
+        * web-platform-tests/resources/test/tests/functional/worker-uncaught-allow.js: Added.
+        (async_test.onerror):
+        (async_test):
+        * web-platform-tests/resources/test/tests/functional/worker-uncaught-single.js: Added.
+        * web-platform-tests/resources/test/tests/functional/worker.js: Added.
+        (test):
+        (async_test):
+        * web-platform-tests/resources/test/tests/unit/IdlArray/is_json_type.html: Added.
+        * web-platform-tests/resources/test/tests/unit/IdlArray/w3c-import.log: Copied from LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/lib/w3c-import.log.
+        * web-platform-tests/resources/test/tests/unit/IdlDictionary/get_inheritance_stack.html: Added.
+        * web-platform-tests/resources/test/tests/unit/IdlDictionary/test_partial_dictionary.html: Added.
+        * web-platform-tests/resources/test/tests/unit/IdlDictionary/w3c-import.log: Copied from LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/lib/w3c-import.log.
+        * web-platform-tests/resources/test/tests/unit/IdlInterface/constructors.html: Added.
+        * web-platform-tests/resources/test/tests/unit/IdlInterface/default_to_json_operation.html: Added.
+        * web-platform-tests/resources/test/tests/unit/IdlInterface/do_member_unscopable_asserts.html: Added.
+        * web-platform-tests/resources/test/tests/unit/IdlInterface/get_inheritance_stack.html: Added.
+        * web-platform-tests/resources/test/tests/unit/IdlInterface/get_interface_object.html: Added.
+        * web-platform-tests/resources/test/tests/unit/IdlInterface/get_interface_object_owner.html: Added.
+        * web-platform-tests/resources/test/tests/unit/IdlInterface/get_legacy_namespace.html: Added.
+        * web-platform-tests/resources/test/tests/unit/IdlInterface/get_qualified_name.html: Added.
+        * web-platform-tests/resources/test/tests/unit/IdlInterface/has_default_to_json_regular_operation.html: Added.
+        * web-platform-tests/resources/test/tests/unit/IdlInterface/has_to_json_regular_operation.html: Added.
+        * web-platform-tests/resources/test/tests/unit/IdlInterface/test_primary_interface_of_undefined.html: Added.
+        * web-platform-tests/resources/test/tests/unit/IdlInterface/traverse_inherited_and_consequential_interfaces.html: Added.
+        * web-platform-tests/resources/test/tests/unit/IdlInterface/w3c-import.log: Added.
+        * web-platform-tests/resources/test/tests/unit/IdlInterfaceMember/is_to_json_regular_operation.html: Added.
+        * web-platform-tests/resources/test/tests/unit/IdlInterfaceMember/w3c-import.log: Copied from LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/lib/w3c-import.log.
+        * web-platform-tests/resources/test/tests/unit/assert_object_equals.html: Added.
+        * web-platform-tests/resources/test/tests/unit/basic.html: Added.
+        * web-platform-tests/resources/test/tests/unit/exceptional-cases-timeouts.html: Added.
+        * web-platform-tests/resources/test/tests/unit/exceptional-cases.html: Added.
+        * web-platform-tests/resources/test/tests/unit/format-value.html: Added.
+        * web-platform-tests/resources/test/tests/unit/late-test.html: Added.
+        * web-platform-tests/resources/test/tests/unit/promise_setup-timeout.html: Added.
+        * web-platform-tests/resources/test/tests/unit/promise_setup.html: Added.
+        * web-platform-tests/resources/test/tests/unit/single_test.html: Added.
+        * web-platform-tests/resources/test/tests/unit/test-return-restrictions.html: Added.
+        * web-platform-tests/resources/test/tests/unit/throwing-assertions.html: Added.
+        * web-platform-tests/resources/test/tests/unit/unpaired-surrogates.html: Added.
+        * web-platform-tests/resources/test/tests/unit/w3c-import.log: Added.
+        * web-platform-tests/resources/test/tox.ini:
+        * web-platform-tests/resources/test/variants.js: Added.
+        (variants.string_appeared_here.apply):
+        (Object.hasOwnProperty.call):
+        (typeof.test.string_appeared_here.test):
+        (onReady):
+        * web-platform-tests/resources/test/w3c-import.log:
+        * web-platform-tests/resources/test/wptserver.py:
+        (WPTServer):
+        (WPTServer.__init__):
+        (WPTServer.start):
+        (WPTServer.stop):
+        (WPTServer.url):
+        * web-platform-tests/resources/testdriver-actions.js:
+        (Actions):
+        (Actions.prototype.serialize):
+        (Actions.prototype.pause):
+        (GeneralSource.prototype.serialize):
+        (KeySource.prototype.addPause):
+        (PointerSource.prototype.addPause):
+        * web-platform-tests/resources/testdriver-vendor.js:
+        (dispatchMouseActions):
+        * web-platform-tests/resources/testdriver-vendor.js.headers: Copied from LayoutTests/imported/w3c/web-platform-tests/resources/testharnessreport.js.headers.
+        * web-platform-tests/resources/testdriver.js:
+        (window.test_driver.generate_test_report):
+        (window.test_driver.set_permission):
+        (window.test_driver.add_virtual_authenticator):
+        (window.test_driver.remove_virtual_authenticator):
+        (window.test_driver.add_credential):
+        (window.test_driver.get_credentials):
+        (window.test_driver.remove_credential):
+        (window.test_driver.remove_all_credentials):
+        (window.test_driver.set_user_verified):
+        (window.test_driver_internal.generate_test_report):
+        (window.test_driver_internal.set_permission):
+        (window.test_driver_internal.add_virtual_authenticator):
+        (window.test_driver_internal.remove_virtual_authenticator):
+        (window.test_driver_internal.add_credential):
+        (window.test_driver_internal.get_credentials):
+        (window.test_driver_internal.remove_credential):
+        (window.test_driver_internal.remove_all_credentials):
+        (window.test_driver_internal.set_user_verified):
+        * web-platform-tests/resources/testdriver.js.headers: Renamed from LayoutTests/imported/w3c/web-platform-tests/resources/chromium/chooser_service.mojom.js.headers.
+        * web-platform-tests/resources/testharness.css.headers: Removed.
+        * web-platform-tests/resources/testharness.js:
+        (test):
+        (async_test):
+        (promise_test):
+        (promise_rejects_js):
+        (promise_rejects_dom):
+        (promise_rejects_exactly):
+        (promise_setup):
+        (done):
+        * web-platform-tests/resources/testharnessreport.js.headers:
+        * web-platform-tests/resources/w3c-import.log:
+        * web-platform-tests/resources/webidl2/lib/README.md: Added.
+        * web-platform-tests/resources/webidl2/lib/w3c-import.log:
+        * web-platform-tests/resources/webidl2/lib/webidl2.js:
+        * web-platform-tests/resources/webidl2/lib/writer.js: Removed.
+        * web-platform-tests/server-timing/resource_timing_idl.html:
+        * web-platform-tests/server-timing/resource_timing_idl.https.html:
+        * web-platform-tests/service-workers/service-worker/interfaces-sw.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/interfaces-window.https-expected.txt:
+        * web-platform-tests/streams/byte-length-queuing-strategy.sharedworker-expected.txt:
+        * web-platform-tests/streams/count-queuing-strategy.sharedworker-expected.txt:
+        * web-platform-tests/streams/piping/close-propagation-backward.sharedworker-expected.txt:
+        * web-platform-tests/streams/piping/close-propagation-forward-expected.txt:
+        * web-platform-tests/streams/piping/close-propagation-forward.sharedworker-expected.txt:
+        * web-platform-tests/streams/piping/error-propagation-backward-expected.txt:
+        * web-platform-tests/streams/piping/error-propagation-backward.sharedworker-expected.txt:
+        * web-platform-tests/streams/piping/error-propagation-forward.sharedworker-expected.txt:
+        * web-platform-tests/streams/piping/flow-control.sharedworker-expected.txt:
+        * web-platform-tests/streams/piping/general-expected.txt:
+        * web-platform-tests/streams/piping/general.sharedworker-expected.txt:
+        * web-platform-tests/streams/piping/multiple-propagation.sharedworker-expected.txt:
+        * web-platform-tests/streams/piping/pipe-through.sharedworker-expected.txt:
+        * web-platform-tests/streams/piping/transform-streams.sharedworker-expected.txt:
+        * web-platform-tests/streams/readable-byte-streams/brand-checks.sharedworker-expected.txt:
+        * web-platform-tests/streams/readable-byte-streams/detached-buffers.sharedworker-expected.txt:
+        * web-platform-tests/streams/readable-byte-streams/general.sharedworker-expected.txt:
+        * web-platform-tests/streams/readable-byte-streams/properties.sharedworker-expected.txt:
+        * web-platform-tests/streams/readable-streams/bad-strategies.sharedworker-expected.txt:
+        * web-platform-tests/streams/readable-streams/bad-underlying-sources.sharedworker-expected.txt:
+        * web-platform-tests/streams/readable-streams/brand-checks.sharedworker-expected.txt:
+        * web-platform-tests/streams/readable-streams/cancel.sharedworker-expected.txt:
+        * web-platform-tests/streams/readable-streams/count-queuing-strategy-integration.sharedworker-expected.txt:
+        * web-platform-tests/streams/readable-streams/default-reader.sharedworker-expected.txt:
+        * web-platform-tests/streams/readable-streams/floating-point-total-queue-size.sharedworker-expected.txt:
+        * web-platform-tests/streams/readable-streams/garbage-collection.sharedworker-expected.txt:
+        * web-platform-tests/streams/readable-streams/general.sharedworker-expected.txt:
+        * web-platform-tests/streams/readable-streams/readable-stream-reader.sharedworker-expected.txt:
+        * web-platform-tests/streams/readable-streams/tee.serviceworker.https-expected.txt:
+        * web-platform-tests/streams/readable-streams/tee.sharedworker-expected.txt:
+        * web-platform-tests/streams/readable-streams/templated.sharedworker-expected.txt:
+        * web-platform-tests/svg/animations/scripted/onhover-syncbases-expected.txt:
+        * web-platform-tests/svg/idlharness.window-expected.txt:
+        * web-platform-tests/user-timing/idlharness-expected.txt:
+        * web-platform-tests/user-timing/test_user_timing_clear_marks-expected.txt:
+        * web-platform-tests/user-timing/test_user_timing_clear_measures-expected.txt:
+        * web-platform-tests/user-timing/test_user_timing_entry_type-expected.txt:
+        * web-platform-tests/user-timing/test_user_timing_exists-expected.txt:
+        * web-platform-tests/user-timing/test_user_timing_mark-expected.txt:
+        * web-platform-tests/user-timing/test_user_timing_mark_and_measure_exception_when_invoke_with_timing_attributes-expected.txt:
+        * web-platform-tests/user-timing/test_user_timing_mark_and_measure_exception_when_invoke_without_parameter-expected.txt:
+        * web-platform-tests/user-timing/test_user_timing_mark_exceptions-expected.txt:
+        * web-platform-tests/user-timing/test_user_timing_mark_with_name_of_navigation_timing_optional_attribute-expected.txt:
+        * web-platform-tests/user-timing/test_user_timing_measure-expected.txt:
+        * web-platform-tests/user-timing/test_user_timing_measure_exceptions-expected.txt:
+        * web-platform-tests/user-timing/test_user_timing_measure_navigation_timing-expected.txt:
+        * web-platform-tests/web-share/idlharness.https-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-analysernode-interface/test-analyser-minimum-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-analysernode-interface/test-analyser-output-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-analysernode-interface/test-analyser-scale.html:
+        * web-platform-tests/webaudio/the-audio-api/the-audioworklet-interface/audioworklet-addmodule-resolution.https-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-audioworklet-interface/audioworklet-messageport.https-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-audioworklet-interface/audioworkletglobalscope-sample-rate.https-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-audioworklet-interface/audioworkletglobalscope-timing-info.https-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-audioworklet-interface/audioworkletnode-onerror.https-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-constantsourcenode-interface/constant-source-onended-expected.txt:
+        * web-platform-tests/webrtc/idlharness.https.window-expected.txt:
+        * web-platform-tests/workers/baseurl/alpha/importScripts-in-sharedworker-expected.txt:
+        * web-platform-tests/workers/baseurl/alpha/xhr-in-sharedworker-expected.txt:
+        * web-platform-tests/workers/interfaces/WorkerGlobalScope/location/redirect-sharedworker-expected.txt:
+        * web-platform-tests/workers/semantics/structured-clone/shared-expected.txt:
+        * web-platform-tests/xhr/idlharness.any-expected.txt:
+        * web-platform-tests/xhr/idlharness.any.worker-expected.txt:
+        * web-platform-tests/xhr/open-url-redirected-sharedworker-origin-expected.txt:
+
 2019-12-17  Rossana Monteriso  <rmonteriso@igalia.com>
 
         Remove redundant grid.css files and reference all relevant tests to support/grid.css

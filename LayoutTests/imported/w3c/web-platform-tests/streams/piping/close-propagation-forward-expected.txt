@@ -3,7 +3,7 @@ CONSOLE MESSAGE: Unhandled Promise Rejection: TypeError: cancel() called on a re
 CONSOLE MESSAGE: Unhandled Promise Rejection: TypeError: cancel() called on a reader owned by no readable stream
 CONSOLE MESSAGE: Unhandled Promise Rejection: TypeError: cancel() called on a reader owned by no readable stream
 
-Harness Error (FAIL), message = cancel() called on a reader owned by no readable stream
+Harness Error (FAIL), message = Unhandled rejection: cancel() called on a reader owned by no readable stream
 
 FAIL Closing must be propagated forward: starts closed; preventClose omitted; fulfilled close promise promise_test: Unhandled rejection with value: object "TypeError: ws.getWriter is not a function. (In 'ws.getWriter()', 'ws.getWriter' is undefined)"
 FAIL Closing must be propagated forward: starts closed; preventClose omitted; rejected close promise promise_test: Unhandled rejection with value: object "TypeError: ws.getWriter is not a function. (In 'ws.getWriter()', 'ws.getWriter' is undefined)"
