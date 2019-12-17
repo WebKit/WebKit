@@ -691,6 +691,18 @@ void Scope::didChangeStyleSheetEnvironment()
     scheduleUpdate(UpdateType::ContentsOrInterpretation);
 }
 
+void Scope::invalidateMatchedDeclarationsCache()
+{
+    if (!m_shadowRoot) {
+        for (auto* descendantShadowRoot : m_document.inDocumentShadowRoots())
+            descendantShadowRoot->styleScope().invalidateMatchedDeclarationsCache();
+    }
+
+    if (auto* resolver = resolverIfExists())
+        resolver->invalidateMatchedDeclarationsCache();
+}
+
+
 void Scope::pendingUpdateTimerFired()
 {
     flushPendingUpdate();

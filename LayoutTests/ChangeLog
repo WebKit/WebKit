@@ -1,3 +1,14 @@
+2019-12-17  Antti Koivisto  <antti@apple.com>
+
+        REGRESSION: ASSERTION FAILED: FontCache::singleton().generation() == m_generation
+        https://bugs.webkit.org/show_bug.cgi?id=204933
+        <rdar://problem/57458432>
+
+        Reviewed by Zalan Bujtas.
+
+        * fast/shadow-dom/font-cache-invalidation-expected.txt: Added.
+        * fast/shadow-dom/font-cache-invalidation.html: Added.
+
 2019-12-17  Chris Dumez  <cdumez@apple.com>
 
         Re-sync web-platform-tests/resources from upstream
