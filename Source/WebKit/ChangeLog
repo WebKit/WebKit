@@ -1,3 +1,40 @@
+2019-12-17  Chris Dumez  <cdumez@apple.com>
+
+        Improve release logging in NetworkResourceLoader
+        https://bugs.webkit.org/show_bug.cgi?id=205295
+
+        Reviewed by Youenn Fablet.
+
+        Improve release logging in NetworkResourceLoader to facilitate debugging of loading-related issues.
+
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::start):
+        (WebKit::NetworkResourceLoader::retrieveCacheEntry):
+        (WebKit::NetworkResourceLoader::retrieveCacheEntryInternal):
+        (WebKit::NetworkResourceLoader::startNetworkLoad):
+        (WebKit::NetworkResourceLoader::cleanup):
+        (WebKit::NetworkResourceLoader::convertToDownload):
+        (WebKit::NetworkResourceLoader::abort):
+        (WebKit::NetworkResourceLoader::didReceiveResponse):
+        (WebKit::NetworkResourceLoader::didReceiveBuffer):
+        (WebKit::NetworkResourceLoader::didFinishLoading):
+        (WebKit::NetworkResourceLoader::didFailLoading):
+        (WebKit::NetworkResourceLoader::didBlockAuthenticationChallenge):
+        (WebKit::NetworkResourceLoader::willSendRedirectedRequest):
+        (WebKit::NetworkResourceLoader::continueWillSendRedirectedRequest):
+        (WebKit::NetworkResourceLoader::didFinishWithRedirectResponse):
+        (WebKit::NetworkResourceLoader::restartNetworkLoad):
+        (WebKit::NetworkResourceLoader::continueWillSendRequest):
+        (WebKit::NetworkResourceLoader::continueDidReceiveResponse):
+        (WebKit::NetworkResourceLoader::tryStoreAsCacheEntry):
+        (WebKit::NetworkResourceLoader::didReceiveMainResourceResponse):
+        (WebKit::NetworkResourceLoader::didRetrieveCacheEntry):
+        (WebKit::NetworkResourceLoader::sendResultForCacheEntry):
+        (WebKit::NetworkResourceLoader::validateCacheEntry):
+        (WebKit::NetworkResourceLoader::dispatchWillSendRequestForCacheEntry):
+        (WebKit::NetworkResourceLoader::startWithServiceWorker):
+        (WebKit::NetworkResourceLoader::serviceWorkerDidNotHandle):
+
 2019-12-16  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         -[UIWKDocumentContext markedTextRange] is wrong when the caret is not at the start of marked text
