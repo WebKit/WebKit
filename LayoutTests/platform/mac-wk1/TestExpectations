@@ -833,3 +833,5 @@ webkit.org/b/203517 imported/w3c/web-platform-tests/css/css-sizing/dynamic-avail
 imported/w3c/web-platform-tests/fetch/stale-while-revalidate [ Skip ]
 
 webkit.org/b/205168 imported/w3c/web-platform-tests/mathml/presentation-markup/scripts/underover-parameters-3.html [ Pass Failure ]
+
+webkit.org/b/205314 [ Catalina ] editing/mac/input/firstrectforcharacterrange-styled.html [ Failure ]
