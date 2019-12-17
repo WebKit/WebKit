@@ -1,5 +1,37 @@
 2019-12-16  Alan Coon  <alancoon@apple.com>
 
+        Apply patch. rdar://problem/57990824
+
+    2019-12-16  Dean Jackson  <dino@apple.com>
+
+            Revert: Build libANGLE as a dynamic library.
+            <rdar://problem/57925932>
+
+            Revert libANGLE.a -> libANGLE.dylib on this branch.
+
+            * ANGLE.xcodeproj/project.pbxproj:
+            * Configurations/ANGLE.xcconfig:
+            * Configurations/Base.xcconfig:
+            * Configurations/DebugRelease.xcconfig:
+            * Configurations/WebKitTargetConditionals.xcconfig: Removed.
+            * include/CMakeLists.txt:
+            * include/GLSLANG/ShaderLang.h:
+            * include/GLSLANG/ShaderVars.h:
+            * src/libANGLE/renderer/gl/cgl/DisplayCGL.mm:
+            (rx::DisplayCGL::isValidNativeWindow const):
+            * src/libANGLE/renderer/gl/cgl/WindowSurfaceCGL.mm:
+            (rx::WindowSurfaceCGL::WindowSurfaceCGL):
+            (rx::WindowSurfaceCGL::~WindowSurfaceCGL):
+            * src/libANGLE/renderer/gl/eagl/DisplayEAGL.mm:
+            (rx::DisplayEAGL::terminate):
+            (rx::DisplayEAGL::isValidNativeWindow const):
+            (rx::WorkerContextEAGL::~WorkerContextEAGL):
+            * src/libANGLE/renderer/gl/eagl/WindowSurfaceEAGL.mm:
+            (rx::WindowSurfaceEAGL::WindowSurfaceEAGL):
+            (rx::WindowSurfaceEAGL::~WindowSurfaceEAGL):
+
+2019-12-16  Alan Coon  <alancoon@apple.com>
+
         Revert r253333. rdar://problem/57990824
 
 2019-12-16  Alan Coon  <alancoon@apple.com>

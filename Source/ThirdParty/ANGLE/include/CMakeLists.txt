@@ -33,7 +33,6 @@ set(gles3_headers
 )
 
 set(glslang_headers
-    export.h
     GLSLANG/ShaderLang.h
     GLSLANG/ShaderVars.h
 )
