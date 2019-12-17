@@ -1,3 +1,111 @@
+2019-12-17  Rossana Monteriso  <rmonteriso@igalia.com>
+
+        Remove redundant grid.css files and reference all relevant tests to support/grid.css
+        https://bugs.webkit.org/show_bug.cgi?id=205067
+
+        Reviewed by Manuel Rego Casasnovas.
+
+        Reference all grid tests to a single grid.css file inside css/support/; remove redundant grid.css files inside css/css-grid/ subfolders.
+
+        * web-platform-tests/css/css-grid/abspos/absolute-positioning-grid-container-containing-block-001.html:
+        * web-platform-tests/css/css-grid/abspos/absolute-positioning-grid-container-parent-001.html:
+        * web-platform-tests/css/css-grid/abspos/grid-paint-positioned-children-001.html:
+        * web-platform-tests/css/css-grid/abspos/grid-positioned-children-writing-modes-001-expected.html:
+        * web-platform-tests/css/css-grid/abspos/grid-positioned-children-writing-modes-001.html:
+        * web-platform-tests/css/css-grid/abspos/grid-positioned-items-and-autofit-tracks-001.html:
+        * web-platform-tests/css/css-grid/abspos/grid-positioned-items-and-autofit-tracks-002.html:
+        * web-platform-tests/css/css-grid/abspos/grid-positioned-items-and-autofit-tracks-003.html:
+        * web-platform-tests/css/css-grid/abspos/grid-positioned-items-and-autofit-tracks-004.html:
+        * web-platform-tests/css/css-grid/abspos/grid-positioned-items-and-autofit-tracks-005.html:
+        * web-platform-tests/css/css-grid/abspos/grid-positioned-items-and-autofit-tracks-006.html:
+        * web-platform-tests/css/css-grid/abspos/grid-positioned-items-and-autofit-tracks-007.html:
+        * web-platform-tests/css/css-grid/abspos/grid-positioned-items-background-001.html:
+        * web-platform-tests/css/css-grid/abspos/grid-positioned-items-background-rtl-001.html:
+        * web-platform-tests/css/css-grid/abspos/grid-positioned-items-content-alignment-001.html:
+        * web-platform-tests/css/css-grid/abspos/grid-positioned-items-content-alignment-rtl-001.html:
+        * web-platform-tests/css/css-grid/abspos/grid-positioned-items-gaps-001.html:
+        * web-platform-tests/css/css-grid/abspos/grid-positioned-items-gaps-002-rtl.html:
+        * web-platform-tests/css/css-grid/abspos/grid-positioned-items-gaps-002.html:
+        * web-platform-tests/css/css-grid/abspos/grid-positioned-items-gaps-rtl-001.html:
+        * web-platform-tests/css/css-grid/abspos/grid-positioned-items-implicit-grid-001.html:
+        * web-platform-tests/css/css-grid/abspos/grid-positioned-items-implicit-grid-line-001.html:
+        * web-platform-tests/css/css-grid/abspos/grid-positioned-items-padding-001.html:
+        * web-platform-tests/css/css-grid/abspos/grid-positioned-items-unknown-named-grid-line-001.html:
+        * web-platform-tests/css/css-grid/abspos/grid-positioned-items-within-grid-implicit-track-001.html:
+        * web-platform-tests/css/css-grid/abspos/grid-sizing-positioned-items-001.html:
+        * web-platform-tests/css/css-grid/abspos/positioned-grid-items-should-not-create-implicit-tracks-001.html:
+        * web-platform-tests/css/css-grid/abspos/positioned-grid-items-should-not-take-up-space-001.html:
+        * web-platform-tests/css/css-grid/abspos/positioned-grid-items-sizing-001-expected.html:
+        * web-platform-tests/css/css-grid/abspos/positioned-grid-items-sizing-001.html:
+        * web-platform-tests/css/css-grid/abspos/support/grid.css: Removed.
+        * web-platform-tests/css/css-grid/alignment/grid-column-axis-self-baseline-synthesized-001.html:
+        * web-platform-tests/css/css-grid/alignment/grid-column-axis-self-baseline-synthesized-002.html:
+        * web-platform-tests/css/css-grid/alignment/grid-column-axis-self-baseline-synthesized-003.html:
+        * web-platform-tests/css/css-grid/alignment/grid-column-axis-self-baseline-synthesized-004.html:
+        * web-platform-tests/css/css-grid/alignment/grid-content-alignment-second-pass-001.html:
+        * web-platform-tests/css/css-grid/alignment/grid-content-alignment-second-pass-002.html:
+        * web-platform-tests/css/css-grid/alignment/grid-row-axis-self-baseline-synthesized-001.html:
+        * web-platform-tests/css/css-grid/alignment/grid-row-axis-self-baseline-synthesized-002.html:
+        * web-platform-tests/css/css-grid/alignment/grid-row-axis-self-baseline-synthesized-003.html:
+        * web-platform-tests/css/css-grid/alignment/grid-row-axis-self-baseline-synthesized-004.html:
+        * web-platform-tests/css/css-grid/alignment/grid-self-baseline-not-applied-if-sizing-cyclic-dependency-001.html:
+        * web-platform-tests/css/css-grid/alignment/grid-self-baseline-not-applied-if-sizing-cyclic-dependency-002.html:
+        * web-platform-tests/css/css-grid/alignment/grid-self-baseline-not-applied-if-sizing-cyclic-dependency-003.html:
+        * web-platform-tests/css/css-grid/grid-definition/grid-auto-repeat-max-size-001.html:
+        * web-platform-tests/css/css-grid/grid-definition/grid-auto-repeat-max-size-002.html:
+        * web-platform-tests/css/css-grid/grid-definition/grid-auto-repeat-min-max-size-001.html:
+        * web-platform-tests/css/css-grid/grid-definition/grid-auto-repeat-min-size-001.html:
+        * web-platform-tests/css/css-grid/grid-definition/grid-auto-repeat-min-size-002.html:
+        * web-platform-tests/css/css-grid/grid-definition/grid-change-auto-repeat-tracks.html:
+        * web-platform-tests/css/css-grid/grid-definition/grid-change-fit-content-argument-001.html:
+        * web-platform-tests/css/css-grid/grid-definition/grid-inline-auto-repeat-001.html:
+        * web-platform-tests/css/css-grid/grid-definition/grid-percentage-rows-indefinite-height-001.html:
+        * web-platform-tests/css/css-grid/grid-definition/grid-template-columns-fit-content-001-expected.html:
+        * web-platform-tests/css/css-grid/grid-definition/grid-template-columns-fit-content-001.html:
+        * web-platform-tests/css/css-grid/grid-definition/grid-template-rows-fit-content-001-expected.html:
+        * web-platform-tests/css/css-grid/grid-definition/grid-template-rows-fit-content-001.html:
+        * web-platform-tests/css/css-grid/grid-definition/support/grid.css: Removed.
+        * web-platform-tests/css/css-grid/grid-items/grid-items-minimum-width-001.html:
+        * web-platform-tests/css/css-grid/grid-items/grid-items-minimum-width-002.html:
+        * web-platform-tests/css/css-grid/grid-items/grid-items-minimum-width-orthogonal-001.html:
+        * web-platform-tests/css/css-grid/grid-items/grid-items-minimum-width-orthogonal-002.html:
+        * web-platform-tests/css/css-grid/grid-items/grid-items-minimum-width-vertical-lr-001.html:
+        * web-platform-tests/css/css-grid/grid-items/grid-items-minimum-width-vertical-lr-002.html:
+        * web-platform-tests/css/css-grid/grid-items/grid-items-minimum-width-vertical-rl-001.html:
+        * web-platform-tests/css/css-grid/grid-items/grid-items-minimum-width-vertical-rl-002.html:
+        * web-platform-tests/css/css-grid/grid-items/grid-items-percentage-margins-001.html:
+        * web-platform-tests/css/css-grid/grid-items/grid-items-percentage-margins-002.html:
+        * web-platform-tests/css/css-grid/grid-items/grid-items-percentage-margins-vertical-lr-001.html:
+        * web-platform-tests/css/css-grid/grid-items/grid-items-percentage-margins-vertical-lr-002.html:
+        * web-platform-tests/css/css-grid/grid-items/grid-items-percentage-margins-vertical-rl-001.html:
+        * web-platform-tests/css/css-grid/grid-items/grid-items-percentage-margins-vertical-rl-002.html:
+        * web-platform-tests/css/css-grid/grid-items/grid-items-percentage-paddings-001.html:
+        * web-platform-tests/css/css-grid/grid-items/grid-items-percentage-paddings-002.html:
+        * web-platform-tests/css/css-grid/grid-items/grid-items-percentage-paddings-vertical-lr-001.html:
+        * web-platform-tests/css/css-grid/grid-items/grid-items-percentage-paddings-vertical-lr-002.html:
+        * web-platform-tests/css/css-grid/grid-items/grid-items-percentage-paddings-vertical-rl-001.html:
+        * web-platform-tests/css/css-grid/grid-items/grid-items-percentage-paddings-vertical-rl-002.html:
+        * web-platform-tests/css/css-grid/grid-items/grid-items-relative-offsets-001.html:
+        * web-platform-tests/css/css-grid/grid-items/grid-items-relative-offsets-002.html:
+        * web-platform-tests/css/css-grid/grid-items/grid-minimum-size-grid-items-022.html:
+        * web-platform-tests/css/css-grid/grid-items/grid-minimum-size-grid-items-023.html:
+        * web-platform-tests/css/css-grid/grid-items/grid-minimum-size-grid-items-024.html:
+        * web-platform-tests/css/css-grid/grid-items/grid-minimum-size-grid-items-025.html:
+        * web-platform-tests/css/css-grid/grid-items/support/grid.css: Removed.
+        * web-platform-tests/css/css-grid/grid-model/grid-container-ignores-first-letter-001.html:
+        * web-platform-tests/css/css-grid/grid-model/grid-container-ignores-first-line-001.html:
+        * web-platform-tests/css/css-grid/grid-model/grid-container-scrollbar-001.html:
+        * web-platform-tests/css/css-grid/grid-model/grid-container-scrollbar-vertical-lr-001.html:
+        * web-platform-tests/css/css-grid/grid-model/grid-container-scrollbar-vertical-rl-001.html:
+        * web-platform-tests/css/css-grid/grid-model/grid-item-accepts-first-letter-001.html:
+        * web-platform-tests/css/css-grid/grid-model/grid-item-accepts-first-line-001.html:
+        * web-platform-tests/css/css-grid/grid-model/support/grid.css: Removed.
+        * web-platform-tests/css/support/grid.css:
+        (.firstRowThirdColumn):
+        (.firstRowFourthColumn):
+        (.thirdRowSecondColumn):
+        (.thirdRowThirdColumn):
+
 2019-12-17  youenn fablet  <youenn@apple.com>
 
         FileList should be exposed to workers
