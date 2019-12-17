@@ -33,6 +33,12 @@ class StrictEvalActivation final : public JSScope {
 public:
     using Base = JSScope;
 
+    template<typename CellType, SubspaceAccess mode>
+    static IsoSubspace* subspaceFor(VM& vm)
+    {
+        return vm.strictEvalActivationSpace<mode>();
+    }
+
     static StrictEvalActivation* create(VM& vm, Structure* structure, JSScope* currentScope)
     {
         StrictEvalActivation* scope = new (NotNull, allocateCell<StrictEvalActivation>(vm.heap)) StrictEvalActivation(vm, structure, currentScope);

@@ -38,9 +38,9 @@ namespace JSC {
 
 class JSSymbolTableObject : public JSScope {
 public:
-    typedef JSScope Base;
+    using Base = JSScope;
     static constexpr unsigned StructureFlags = Base::StructureFlags | OverridesGetPropertyNames;
-    
+
     SymbolTable* symbolTable() const { return m_symbolTable.get(); }
     
     JS_EXPORT_PRIVATE static bool deleteProperty(JSCell*, JSGlobalObject*, PropertyName);

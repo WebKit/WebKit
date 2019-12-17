@@ -33,6 +33,12 @@ class JSWithScope final : public JSScope {
 public:
     using Base = JSScope;
 
+    template<typename CellType, SubspaceAccess mode>
+    static IsoSubspace* subspaceFor(VM& vm)
+    {
+        return vm.withScopeSpace<mode>();
+    }
+
     JS_EXPORT_PRIVATE static JSWithScope* create(VM&, JSGlobalObject*, JSScope* next, JSObject*);
 
     JSObject* object() { return m_object.get(); }

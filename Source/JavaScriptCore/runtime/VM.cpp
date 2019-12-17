@@ -1420,6 +1420,7 @@ DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(scriptFetcherSpace, destructibleCellHeap
 DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(setBucketSpace, cellHeapCellType.get(), JSSet::BucketType)
 DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(setIteratorSpace, cellHeapCellType.get(), JSSetIterator)
 DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(setSpace, cellHeapCellType.get(), JSSet)
+DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(strictEvalActivationSpace, cellHeapCellType.get(), StrictEvalActivation)
 DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(sourceCodeSpace, destructibleCellHeapCellType.get(), JSSourceCode)
 DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(symbolSpace, destructibleCellHeapCellType.get(), Symbol)
 DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(symbolObjectSpace, cellHeapCellType.get(), SymbolObject)
@@ -1435,6 +1436,7 @@ DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(unlinkedProgramCodeBlockSpace, destructi
 DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(weakMapSpace, weakMapHeapCellType.get(), JSWeakMap) // Hash:0x662b12a3
 DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(weakSetSpace, weakSetHeapCellType.get(), JSWeakSet) // Hash:0x4c781b30
 DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(weakObjectRefSpace, cellHeapCellType.get(), JSWeakObjectRef) // Hash:0x8ec68f1f
+DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(withScopeSpace, cellHeapCellType.get(), JSWithScope)
 #if JSC_OBJC_API_ENABLED
 DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(apiWrapperObjectSpace, apiWrapperObjectHeapCellType.get(), JSCallbackObject<JSAPIWrapperObject>)
 DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(objCCallbackFunctionSpace, objCCallbackFunctionHeapCellType.get(), ObjCCallbackFunction) // Hash:0x10f610b8
