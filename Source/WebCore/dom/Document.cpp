@@ -4290,6 +4290,11 @@ bool Document::setFocusedElement(Element* element, FocusDirection direction, Foc
     }
 
     if (newFocusedElement && newFocusedElement->isFocusable()) {
+        if (&newFocusedElement->document() != this) {
+            // Bluring oldFocusedElement may have moved newFocusedElement across documents.
+            focusChangeBlocked = true;
+            goto SetFocusedNodeDone;
+        }
         if (newFocusedElement->isRootEditableElement() && !acceptsEditingFocus(*newFocusedElement)) {
             // delegate blocks focus change
             focusChangeBlocked = true;
