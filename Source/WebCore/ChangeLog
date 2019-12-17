@@ -1,3 +1,16 @@
+2019-12-17  Kate Cheney  <katherine_cheney@apple.com>
+
+        Add run-time flag for in-app browser privacy
+        https://bugs.webkit.org/show_bug.cgi?id=205288
+        <rdar://problem/57569206>
+
+        Reviewed by John Wilander.
+
+        * page/RuntimeEnabledFeatures.h:
+        (WebCore::RuntimeEnabledFeatures::setInAppBrowserPrivacyEnabled):
+        (WebCore::RuntimeEnabledFeatures::isInAppBrowserPrivacyEnabled const):
+        * page/Settings.yaml:
+
 2019-12-17  Ryosuke Niwa  <rniwa@webkit.org>
 
         executeIfJavaScriptURL should check requester's security origin

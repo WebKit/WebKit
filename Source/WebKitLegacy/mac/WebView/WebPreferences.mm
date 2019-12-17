@@ -706,6 +706,7 @@ public:
         @NO, WebKitAsyncClipboardAPIEnabledPreferenceKey,
         @NO, WebKitLinkPreloadResponsiveImagesEnabledPreferenceKey,
         @YES, WebKitCSSShadowPartsEnabledPreferenceKey,
+        @NO, WebKitInAppBrowserPrivacyEnabledPreferenceKey,
         nil];
 
 #if !PLATFORM(IOS_FAMILY)
@@ -3601,6 +3602,17 @@ static NSString *classIBCreatorID = nil;
 {
     [self _setBoolValue:remotePlaybackEnabled forKey:WebKitRemotePlaybackEnabledPreferenceKey];
 }
+
+- (BOOL)isInAppBrowserPrivacyEnabled
+{
+    return [self _boolValueForKey:WebKitInAppBrowserPrivacyEnabledPreferenceKey];
+}
+
+- (void)setInAppBrowserPrivacyEnabled:(BOOL)flag
+{
+    [self _setBoolValue:flag forKey:WebKitInAppBrowserPrivacyEnabledPreferenceKey];
+}
+
 @end
 
 @implementation WebPreferences (WebInternal)

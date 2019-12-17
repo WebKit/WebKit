@@ -906,6 +906,9 @@ legacyGetUserMediaEnabled:
   initial: false
   conditional: MEDIA_STREAM
 
+isInAppBrowserPrivacyEnabled:
+  initial: false
+
 # Deprecated
 
 iceCandidateFilteringEnabled:

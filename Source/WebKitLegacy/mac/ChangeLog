@@ -1,3 +1,20 @@
+2019-12-17  Kate Cheney  <katherine_cheney@apple.com>
+
+        Add run-time flag for in-app browser privacy
+        https://bugs.webkit.org/show_bug.cgi?id=205288
+        <rdar://problem/57569206>
+
+        Reviewed by John Wilander.
+
+        * WebView/WebPreferenceKeysPrivate.h:
+        * WebView/WebPreferences.mm:
+        (+[WebPreferences initialize]):
+        (-[WebPreferences isInAppBrowserPrivacyEnabled]):
+        (-[WebPreferences setInAppBrowserPrivacyEnabled:]):
+        * WebView/WebPreferencesPrivate.h:
+        * WebView/WebView.mm:
+        (-[WebView _preferencesChanged:]):
+
 2019-12-16  Simon Fraser  <simon.fraser@apple.com>
 
         Change 'delegatesPageScaling' from a Setting to a flag on ScrollView

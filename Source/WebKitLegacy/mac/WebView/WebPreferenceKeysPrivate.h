@@ -280,4 +280,5 @@
 #define WebKitRequestIdleCallbackEnabledPreferenceKey @"WebKitRequestIdleCallbackEnabled"
 #define WebKitAsyncClipboardAPIEnabledPreferenceKey @"WebKitAsyncClipboardAPIEnabled"
 #define WebKitLinkPreloadResponsiveImagesEnabledPreferenceKey @"WebKitLinkPreloadResponsiveImagesEnabled"
+#define WebKitInAppBrowserPrivacyEnabledPreferenceKey @"WebKitInAppBrowserPrivacyEnabled"
 

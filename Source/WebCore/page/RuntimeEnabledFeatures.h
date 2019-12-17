@@ -389,6 +389,9 @@ public:
     bool secureContextChecksEnabled() const { return m_secureContextChecksEnabled; }
     void setSecureContextChecksEnabled(bool isEnabled) { m_secureContextChecksEnabled = isEnabled; }
 
+    void setIsInAppBrowserPrivacyEnabled(bool isEnabled) { m_isInAppBrowserPrivacyEnabled = isEnabled; }
+    bool isInAppBrowserPrivacyEnabled() const { return m_isInAppBrowserPrivacyEnabled; }
+
 private:
     // Never instantiate.
     RuntimeEnabledFeatures();
@@ -583,6 +586,8 @@ private:
     bool m_lazyImageLoadingEnabled { false };
     bool m_secureContextChecksEnabled { true };
     bool m_isCSSShadowPartsEnabled { true };
+
+    bool m_isInAppBrowserPrivacyEnabled { false };
 
     friend class WTF::NeverDestroyed<RuntimeEnabledFeatures>;
 };
