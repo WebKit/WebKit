@@ -126,6 +126,9 @@ webkit.org/b/169811 fast/mediastream/captureStream/canvas3d.html [ Crash Timeout
 
 webkit.org/b/190576 fast/mediastream/get-user-media-device-id.html [ Failure ]
 
+# No support for GPUProcess yet
+fast/mediastream/captureAudioInGPUProcess.html [ Skip ]
+
 # MediaRecorder is not currently implemented
 http/wpt/mediarecorder [ Skip ]
 imported/w3c/web-platform-tests/mediacapture-record [ Skip ]

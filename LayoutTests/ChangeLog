@@ -1,3 +1,16 @@
+2019-12-17  Thibault Saunier  <tsaunier@igalia.com>
+
+        [GStreamer][WPE] Fix regressions related to our 'Fix GStreamer capturer mock' patch
+        https://bugs.webkit.org/show_bug.cgi?id=205270
+
+        Skip GPUProcess related tests
+
+        Reviewed by Philippe Normand.
+
+        * platform/gtk/TestExpectations:
+        * platform/wpe/TestExpectations:
+        * webrtc/peer-connection-audio-mute.html:
+
 2019-12-17  Antti Koivisto  <antti@apple.com>
 
         Resolve dynamic media queries without reconstructing RuleSets
