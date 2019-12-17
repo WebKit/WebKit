@@ -513,7 +513,7 @@ $runlist = []
 
 def frameworkFromJSCPath(jscPath)
     parentDirectory = jscPath.dirname
-    if parentDirectory.basename.to_s == "Resources" and parentDirectory.dirname.basename.to_s == "JavaScriptCore.framework"
+    if (parentDirectory.basename.to_s == "Resources" or parentDirectory.basename.to_s == "Helpers") and parentDirectory.dirname.basename.to_s == "JavaScriptCore.framework"
         parentDirectory.dirname
     elsif $hostOS == "playstation"
         jscPath.dirname

@@ -1,3 +1,16 @@
+2019-12-16  Keith Rollin  <krollin@apple.com>
+
+        Unreviewed follow-up fix.
+        <rdar://problem/57989146> jsc-ta-payload fails consistently on YukonE Device Builds
+
+        Bug caused by <rdar://problem/57453545> [safari-root] CrashTracer: [USER] jsc at jsc: jscmain
+
+        run-jsc-stress-tests still looked for jsc in
+        JavaScriptCore.framework/Resources. Change this to also look in
+        JavaScriptCore.framework/Helpers.
+
+        * Scripts/run-jsc-stress-tests:
+
 2019-12-16  Jonathan Bedard  <jbedard@apple.com>
 
         results.webkit.org: Make default limit 1000
