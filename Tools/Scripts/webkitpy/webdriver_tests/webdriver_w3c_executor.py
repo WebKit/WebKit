@@ -136,7 +136,8 @@ class WebDriverW3CExecutor(WdspecExecutor):
         server_config = {'browser_host': server.host(),
                          'domains': {'': {'': server.host()},
                                      'alt':{ '': '127.0.0.1'}},
-                         'ports': {'http': [str(server.port())]}}
+                         'ports': {'http': [str(server.port())]},
+                         'doc_root': server.document_root()}
         WdspecExecutor.__init__(self, driver.browser_name(), server_config, driver.binary_path(), None, capabilities=driver.capabilities())
 
         self._timeout = timeout
