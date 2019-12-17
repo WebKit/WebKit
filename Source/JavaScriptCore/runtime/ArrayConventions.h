@@ -54,7 +54,7 @@ namespace JSC {
 
 // Define the maximum storage vector length to be 2^32 / sizeof(JSValue) / 2 to ensure that
 // there is no risk of overflow.
-#define MAX_STORAGE_VECTOR_LENGTH (static_cast<unsigned>(IndexingHeader::maximumLength))
+#define MAX_STORAGE_VECTOR_LENGTH IndexingHeader::maximumLength
 
 // These values have to be macros to be used in max() and min() without introducing
 // a PIC branch in Mach-O binaries, see <rdar://problem/5971391>.

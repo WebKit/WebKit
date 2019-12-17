@@ -6691,6 +6691,8 @@ private:
             LBasicBlock slowAllocation = m_out.newBlock();
             LBasicBlock continuation = m_out.newBlock();
 
+            ASSERT(immutableButterfly->length() <= MAX_STORAGE_VECTOR_LENGTH);
+
             LValue fastImmutableButterflyValue = allocateVariableSizedCell<JSImmutableButterfly>(
                 m_out.constIntPtr(JSImmutableButterfly::allocationSize(immutableButterfly->length()).unsafeGet()),
                 m_graph.m_vm.immutableButterflyStructures[arrayIndexFromIndexingType(CopyOnWriteArrayWithContiguous) - NumberOfIndexingShapes].get(), slowAllocation);
@@ -6729,11 +6731,11 @@ private:
 
             ASSERT(m_graph.isWatchingHavingABadTimeWatchpoint(m_node->child1().node()));
 
+            LBasicBlock fastAllocation = m_out.newBlock();
             LBasicBlock loopHeader = m_out.newBlock();
             LBasicBlock loopBody = m_out.newBlock();
             LBasicBlock slowAllocation = m_out.newBlock();
             LBasicBlock continuation = m_out.newBlock();
-            LBasicBlock lastNext = m_out.insertNewBlocksBefore(loopHeader);
 
             InlineCallFrame* inlineCallFrame = m_node->child1()->origin.semantic.inlineCallFrame();
             unsigned numberOfArgumentsToSkip = m_node->child1()->numberOfArgumentsToSkip();
@@ -6743,7 +6745,9 @@ private:
             LValue size = m_out.add(
                 m_out.shl(m_out.zeroExtPtr(length), m_out.constInt32(3)),
                 m_out.constIntPtr(JSImmutableButterfly::offsetOfData()));
+            m_out.branch(m_out.above(length, m_out.constInt32(MAX_STORAGE_VECTOR_LENGTH)), rarely(slowAllocation), usually(fastAllocation));
 
+            LBasicBlock lastNext = m_out.appendTo(fastAllocation, slowAllocation);
             LValue fastArrayValue = allocateVariableSizedCell<JSImmutableButterfly>(size, m_graph.m_vm.immutableButterflyStructures[arrayIndexFromIndexingType(CopyOnWriteArrayWithContiguous) - NumberOfIndexingShapes].get(), slowAllocation);
             LValue fastArrayStorage = toButterfly(fastArrayValue);
             m_out.store32(length, fastArrayStorage, m_heaps.Butterfly_vectorLength);
@@ -6790,6 +6794,7 @@ private:
             LBasicBlock loopSelection = m_out.newBlock();
             LBasicBlock contiguousLoopStart = m_out.newBlock();
             LBasicBlock doubleLoopStart = m_out.newBlock();
+            LBasicBlock fastPath = m_out.newBlock();
             LBasicBlock slowPath = m_out.newBlock();
             LBasicBlock continuation = m_out.newBlock();
 
@@ -6808,13 +6813,15 @@ private:
             ValueFromBlock sharedResult = m_out.anchor(m_out.add(butterfly, m_out.constIntPtr(-JSImmutableButterfly::offsetOfData())));
             m_out.jump(continuation);
 
-            m_out.appendTo(preLoop, loopSelection);
+            m_out.appendTo(preLoop, fastPath);
             LValue length = m_out.load32NonNegative(butterfly, m_heaps.Butterfly_publicLength);
             static_assert(sizeof(JSValue) == 8 && 1 << 3 == 8, "Assumed in the code below.");
             LValue size = m_out.add(
                 m_out.shl(m_out.zeroExtPtr(length), m_out.constInt32(3)),
                 m_out.constIntPtr(JSImmutableButterfly::offsetOfData()));
+            m_out.branch(m_out.above(length, m_out.constInt32(MAX_STORAGE_VECTOR_LENGTH)), rarely(slowPath), usually(fastPath));
 
+            m_out.appendTo(fastPath, loopSelection);
             LValue fastAllocation = allocateVariableSizedCell<JSImmutableButterfly>(size, m_graph.m_vm.immutableButterflyStructures[arrayIndexFromIndexingType(CopyOnWriteArrayWithContiguous) - NumberOfIndexingShapes].get(), slowPath);
             LValue fastStorage = toButterfly(fastAllocation);
             m_out.store32(length, fastStorage, m_heaps.Butterfly_vectorLength);

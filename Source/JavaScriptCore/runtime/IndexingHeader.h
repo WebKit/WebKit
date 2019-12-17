@@ -39,7 +39,7 @@ class IndexingHeader {
 public:
     // Define the maximum storage vector length to be 2^32 / sizeof(JSValue) / 2 to ensure that
     // there is no risk of overflow.
-    enum { maximumLength = 0x10000000 };
+    static constexpr unsigned maximumLength = 0x10000000;
     
     static ptrdiff_t offsetOfIndexingHeader() { return -static_cast<ptrdiff_t>(sizeof(IndexingHeader)); }
     

@@ -1,5 +1,27 @@
 2019-12-16  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        ASSERTION FAILED: length <= maximumLength in js-fixed-array-out-of-memory.js
+        https://bugs.webkit.org/show_bug.cgi?id=205259
+        <rdar://problem/57978411>
+
+        Reviewed by Mark Lam.
+
+        JSImmutableButterfly has moderate size limit on its length, while JSFixedArray does not.
+        We should check this maximumLength when creating it in Spread. And if it exceeds, we should
+        throw OOM error.
+
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileSpread):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileSpread):
+        * runtime/ArrayConventions.h:
+        * runtime/IndexingHeader.h:
+        * runtime/JSImmutableButterfly.h:
+        (JSC::JSImmutableButterfly::tryCreate):
+        (JSC::JSImmutableButterfly::allocationSize):
+
+2019-12-16  Yusuke Suzuki  <ysuzuki@apple.com>
+
         [JSC] Put non-dynamic scope cells in IsoSubspace
         https://bugs.webkit.org/show_bug.cgi?id=205311
 
