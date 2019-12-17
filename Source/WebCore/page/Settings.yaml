@@ -379,9 +379,6 @@ windowFocusRestricted:
 diagnosticLoggingEnabled:
   initial: false
 
-delegatesPageScaling:
-  initial: false
-
 plugInSnapshottingEnabled:
   initial: false
 

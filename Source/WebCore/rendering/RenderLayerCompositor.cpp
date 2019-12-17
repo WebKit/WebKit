@@ -1907,8 +1907,9 @@ void RenderLayerCompositor::addToOverlapMap(LayerOverlapMap& overlapMap, const R
 
     auto clippedBounds = extent.bounds;
     if (!clipRect.isInfinite()) {
-        // On iOS, pageScaleFactor() is not applied by RenderView, so we should not scale here.
-        if (!m_renderView.settings().delegatesPageScaling())
+        // With delegated page scaling, pageScaleFactor() is not applied by RenderView, so we should not scale here.
+        auto& frameView = m_renderView.frameView();
+        if (!frameView.delegatesPageScaling())
             clipRect.scale(pageScaleFactor());
 
         clippedBounds.intersect(clipRect);

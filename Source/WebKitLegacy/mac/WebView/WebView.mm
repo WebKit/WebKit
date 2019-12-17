@@ -3044,7 +3044,6 @@ static bool needsSelfRetainWhileLoadingQuirk()
     settings.setPasswordEchoDurationInSeconds([preferences _passwordEchoDuration]);
 
     ASSERT_WITH_MESSAGE(settings.backForwardCacheSupportsPlugins(), "BackForwardCacheSupportsPlugins should be enabled on iOS.");
-    settings.setDelegatesPageScaling(true);
 
 #if ENABLE(TEXT_AUTOSIZING)
     settings.setMinimumZoomFontSize([preferences _minimumZoomFontSize]);

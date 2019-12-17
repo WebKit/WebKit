@@ -3709,7 +3709,8 @@ void FrameView::invalidateScrollbarRect(Scrollbar& scrollbar, const IntRect& rec
 
 float FrameView::visibleContentScaleFactor() const
 {
-    if (!frame().isMainFrame() || !frame().settings().delegatesPageScaling())
+    // FIXME: This !delegatesPageScaling() is confusing. This function should probably be renamed to delegatedPageScaleFactor().
+    if (!frame().isMainFrame() || !delegatesPageScaling())
         return 1;
 
     Page* page = frame().page();

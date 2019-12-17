@@ -1,3 +1,23 @@
+2019-12-16  Simon Fraser  <simon.fraser@apple.com>
+
+        Change 'delegatesPageScaling' from a Setting to a flag on ScrollView
+        https://bugs.webkit.org/show_bug.cgi?id=205319
+
+        Reviewed by Tim Horton.
+
+        delegatesPageScaling() is never toggled at runtime (even by tests), and it should
+        be a flag on FrameView just like delegatesScrolling (maybe in future the flags can merge).
+
+        So remove the Setting, and have DrawingArea control whether page scaling is delegated.
+        
+        In WebKit1, WebFrameLoaderClient::transitionToCommittedForNewPage() turns on delegated
+        page scaling for iOS.
+
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::transitionToCommittedForNewPage):
+        * WebView/WebView.mm:
+        (-[WebView _preferencesChanged:]):
+
 2019-12-16  Antti Koivisto  <antti@apple.com>
 
         Remove display:contents feature flag

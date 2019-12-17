@@ -1031,11 +1031,11 @@ void Page::setPageScaleFactor(float scale, const IntPoint& origin, bool inStable
     LOG(Viewports, "Page::setPageScaleFactor %.2f - inStableState %d", scale, inStableState);
 
     Document* document = mainFrame().document();
-    FrameView* view = document->view();
+    RefPtr<FrameView> view = document->view();
 
     if (scale == m_pageScaleFactor) {
         if (view && view->scrollPosition() != origin) {
-            if (!m_settings->delegatesPageScaling())
+            if (!view->delegatesPageScaling())
                 document->updateLayoutIgnorePendingStylesheets();
 
             if (!view->delegatesScrolling())
@@ -1059,7 +1059,7 @@ void Page::setPageScaleFactor(float scale, const IntPoint& origin, bool inStable
 
     m_pageScaleFactor = scale;
 
-    if (!m_settings->delegatesPageScaling()) {
+    if (!view->delegatesPageScaling()) {
         view->setNeedsLayoutAfterViewConfigurationChange();
         view->setNeedsCompositingGeometryUpdate();
 
@@ -1075,7 +1075,7 @@ void Page::setPageScaleFactor(float scale, const IntPoint& origin, bool inStable
         view->setViewportConstrainedObjectsNeedLayout();
 
     if (view && view->scrollPosition() != origin) {
-        if (!m_settings->delegatesPageScaling() && document->renderView() && document->renderView()->needsLayout() && view->didFirstLayout())
+        if (!view->delegatesPageScaling() && document->renderView() && document->renderView()->needsLayout() && view->didFirstLayout())
             view->layoutContext().layout();
 
         if (!view->delegatesScrolling())

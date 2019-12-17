@@ -107,6 +107,7 @@ public:
 
     virtual bool supportsAsyncScrolling() const { return false; }
     virtual bool usesDelegatedScrolling() const { return false; }
+    virtual bool usesDelegatedPageScaling() const { return false; }
 
     virtual bool shouldUseTiledBackingForFrameView(const WebCore::FrameView&) const { return false; }
 

@@ -101,6 +101,31 @@
         (WebKit::NetworkResourceLoader::startWithServiceWorker):
         (WebKit::NetworkResourceLoader::serviceWorkerDidNotHandle):
 
+2019-12-16  Simon Fraser  <simon.fraser@apple.com>
+
+        Change 'delegatesPageScaling' from a Setting to a flag on ScrollView
+        https://bugs.webkit.org/show_bug.cgi?id=205319
+
+        Reviewed by Tim Horton.
+
+        delegatesPageScaling() is never toggled at runtime (even by tests), and it should
+        be a flag on FrameView just like delegatesScrolling (maybe in future the flags can merge).
+
+        So remove the Setting, and have DrawingArea control whether page scaling is delegated.
+        
+        In WebKit1, WebFrameLoaderClient::transitionToCommittedForNewPage() turns on delegated
+        page scaling for iOS.
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::transitionToCommittedForNewPage):
+        * WebProcess/WebPage/DrawingArea.h:
+        (WebKit::DrawingArea::usesDelegatedPageScaling const):
+        * WebProcess/WebPage/RemoteLayerTree/RemoteLayerTreeDrawingArea.h:
+        * WebProcess/WebPage/RemoteLayerTree/RemoteLayerTreeDrawingArea.mm:
+        (WebKit::RemoteLayerTreeDrawingArea::RemoteLayerTreeDrawingArea):
+        * WebProcess/WebPage/ios/FindControllerIOS.mm:
+        (WebKit::FindIndicatorOverlayClientIOS::drawRect):
+
 2019-12-16  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         -[UIWKDocumentContext markedTextRange] is wrong when the caret is not at the start of marked text

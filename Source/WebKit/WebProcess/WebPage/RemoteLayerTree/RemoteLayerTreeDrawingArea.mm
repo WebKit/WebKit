@@ -63,9 +63,6 @@ RemoteLayerTreeDrawingArea::RemoteLayerTreeDrawingArea(WebPage& webPage, const W
     , m_layerFlushTimer(*this, &RemoteLayerTreeDrawingArea::flushLayers)
 {
     webPage.corePage()->settings().setForceCompositingMode(true);
-#if PLATFORM(IOS_FAMILY)
-    webPage.corePage()->settings().setDelegatesPageScaling(true);
-#endif
     m_rootLayer->setName("drawing area root");
 
     m_commitQueue = dispatch_queue_create("com.apple.WebKit.WebContent.RemoteLayerTreeDrawingArea.CommitQueue", nullptr);

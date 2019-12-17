@@ -1473,6 +1473,7 @@ void WebFrameLoaderClient::transitionToCommittedForNewPage()
     if (isMainFrame) {
 #if PLATFORM(IOS_FAMILY)
         coreView->setDelegatesScrolling(true);
+        coreView->setDelegatesPageScaling(true);
 #endif
         coreView->setParentVisible(true);
     }
