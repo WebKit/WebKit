@@ -16,10 +16,12 @@ PASS DocumentFragment includes ParentNode: member names are unique
 PASS DOMParser interface: existence and properties of interface object 
 FAIL DOMParser must be primary interface of new DOMParser() assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMParser"
 FAIL Stringification of new DOMParser() assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMParser"
+FAIL DOMParser interface: new DOMParser() must not have property "undefined" assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMParser"
 FAIL DOMParser interface: new DOMParser() must not have property "parseFromString" assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMParser"
 PASS XMLSerializer interface: existence and properties of interface object 
 FAIL XMLSerializer must be primary interface of new XMLSerializer() assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: XMLSerializer"
 FAIL Stringification of new XMLSerializer() assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: XMLSerializer"
+FAIL XMLSerializer interface: new XMLSerializer() must not have property "undefined" assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: XMLSerializer"
 FAIL XMLSerializer interface: new XMLSerializer() must not have property "serializeToString" assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: XMLSerializer"
 PASS Node interface: existence and properties of interface object 
 PASS DocumentFragment interface: existence and properties of interface object 

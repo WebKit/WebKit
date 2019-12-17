@@ -28,9 +28,9 @@ interface IDBOpenDBRequest : IDBRequest {
   attribute EventHandler onupgradeneeded;
 };
 
-[Exposed=(Window,Worker),
- Constructor(DOMString type, optional IDBVersionChangeEventInit eventInitDict = {})]
+[Exposed=(Window,Worker)]
 interface IDBVersionChangeEvent : Event {
+  constructor(DOMString type, optional IDBVersionChangeEventInit eventInitDict = {});
   readonly attribute unsigned long long oldVersion;
   readonly attribute unsigned long long? newVersion;
 };
@@ -163,7 +163,7 @@ interface IDBKeyRange {
                                        optional boolean lowerOpen = false,
                                        optional boolean upperOpen = false);
 
-  boolean _includes(any key);
+  boolean includes(any key);
 };
 
 [Exposed=(Window,Worker)]
@@ -199,7 +199,7 @@ interface IDBTransaction : EventTarget {
   readonly attribute DOMStringList objectStoreNames;
   readonly attribute IDBTransactionMode mode;
   [SameObject] readonly attribute IDBDatabase db;
-  readonly attribute DOMException error;
+  readonly attribute DOMException? error;
 
   IDBObjectStore objectStore(DOMString name);
   void commit();

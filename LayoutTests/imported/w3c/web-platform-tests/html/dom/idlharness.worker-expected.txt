@@ -239,6 +239,7 @@ PASS HTMLMeterElement interface: existence and properties of interface object
 PASS HTMLFieldSetElement interface: existence and properties of interface object 
 PASS HTMLLegendElement interface: existence and properties of interface object 
 PASS ValidityState interface: existence and properties of interface object 
+PASS SubmitEvent interface: existence and properties of interface object 
 PASS FormDataEvent interface: existence and properties of interface object 
 PASS HTMLDetailsElement interface: existence and properties of interface object 
 PASS HTMLDialogElement interface: existence and properties of interface object 

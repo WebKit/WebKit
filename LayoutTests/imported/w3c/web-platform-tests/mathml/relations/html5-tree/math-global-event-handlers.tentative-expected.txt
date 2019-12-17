@@ -1,6 +1,4 @@
 
-Harness Error (TIMEOUT), message = null
-
 PASS onabort: must be on the appropriate locations for GlobalEventHandlers 
 PASS onabort: the default value must be null 
 PASS onabort: the content attribute must be compiled into a function as the corresponding property 
@@ -10,7 +8,7 @@ FAIL onauxclick: must be on the appropriate locations for GlobalEventHandlers as
 FAIL onauxclick: the default value must be null assert_equals: The default value of the property is null for a MathMLMathElement instance expected (object) null but got (undefined) undefined
 FAIL onauxclick: the content attribute must be compiled into a function as the corresponding property assert_equals: The onauxclick property must be a function expected "function" but got "undefined"
 FAIL onauxclick: dynamic changes on the attribute assert_equals: The onauxclick property must be null (no attribute) expected (object) null but got (undefined) undefined
-TIMEOUT onauxclick: dispatching an Event at a <math> element must trigger element.onauxclick Test timed out
+FAIL onauxclick: dispatching an Event at a <math> element must trigger element.onauxclick assert_equals: The event must be fired at the <math> element expected (object) Element node <math></math> but got (undefined) undefined
 PASS onblur: must be on the appropriate locations for GlobalEventHandlers 
 PASS onblur: the default value must be null 
 PASS onblur: the content attribute must be compiled into a function as the corresponding property 
@@ -20,7 +18,7 @@ FAIL oncancel: must be on the appropriate locations for GlobalEventHandlers asse
 FAIL oncancel: the default value must be null assert_equals: The default value of the property is null for a MathMLMathElement instance expected (object) null but got (undefined) undefined
 FAIL oncancel: the content attribute must be compiled into a function as the corresponding property assert_equals: The oncancel property must be a function expected "function" but got "undefined"
 FAIL oncancel: dynamic changes on the attribute assert_equals: The oncancel property must be null (no attribute) expected (object) null but got (undefined) undefined
-TIMEOUT oncancel: dispatching an Event at a <math> element must trigger element.oncancel Test timed out
+FAIL oncancel: dispatching an Event at a <math> element must trigger element.oncancel assert_equals: The event must be fired at the <math> element expected (object) Element node <math></math> but got (undefined) undefined
 PASS oncanplay: must be on the appropriate locations for GlobalEventHandlers 
 PASS oncanplay: the default value must be null 
 PASS oncanplay: the content attribute must be compiled into a function as the corresponding property 
@@ -45,7 +43,7 @@ FAIL onclose: must be on the appropriate locations for GlobalEventHandlers asser
 FAIL onclose: the default value must be null assert_equals: The default value of the property is null for a MathMLMathElement instance expected (object) null but got (undefined) undefined
 FAIL onclose: the content attribute must be compiled into a function as the corresponding property assert_equals: The onclose property must be a function expected "function" but got "undefined"
 FAIL onclose: dynamic changes on the attribute assert_equals: The onclose property must be null (no attribute) expected (object) null but got (undefined) undefined
-TIMEOUT onclose: dispatching an Event at a <math> element must trigger element.onclose Test timed out
+FAIL onclose: dispatching an Event at a <math> element must trigger element.onclose assert_equals: The event must be fired at the <math> element expected (object) Element node <math></math> but got (undefined) undefined
 PASS oncontextmenu: must be on the appropriate locations for GlobalEventHandlers 
 PASS oncontextmenu: the default value must be null 
 PASS oncontextmenu: the content attribute must be compiled into a function as the corresponding property 
@@ -80,7 +78,7 @@ FAIL ondragexit: must be on the appropriate locations for GlobalEventHandlers as
 FAIL ondragexit: the default value must be null assert_equals: The default value of the property is null for a MathMLMathElement instance expected (object) null but got (undefined) undefined
 FAIL ondragexit: the content attribute must be compiled into a function as the corresponding property assert_equals: The ondragexit property must be a function expected "function" but got "undefined"
 FAIL ondragexit: dynamic changes on the attribute assert_equals: The ondragexit property must be null (no attribute) expected (object) null but got (undefined) undefined
-TIMEOUT ondragexit: dispatching an Event at a <math> element must trigger element.ondragexit Test timed out
+FAIL ondragexit: dispatching an Event at a <math> element must trigger element.ondragexit assert_equals: The event must be fired at the <math> element expected (object) Element node <math></math> but got (undefined) undefined
 PASS ondragleave: must be on the appropriate locations for GlobalEventHandlers 
 PASS ondragleave: the default value must be null 
 PASS ondragleave: the content attribute must be compiled into a function as the corresponding property 
@@ -125,7 +123,7 @@ FAIL onformdata: must be on the appropriate locations for GlobalEventHandlers as
 FAIL onformdata: the default value must be null assert_equals: The default value of the property is null for a MathMLMathElement instance expected (object) null but got (undefined) undefined
 FAIL onformdata: the content attribute must be compiled into a function as the corresponding property assert_equals: The onformdata property must be a function expected "function" but got "undefined"
 FAIL onformdata: dynamic changes on the attribute assert_equals: The onformdata property must be null (no attribute) expected (object) null but got (undefined) undefined
-TIMEOUT onformdata: dispatching an Event at a <math> element must trigger element.onformdata Test timed out
+FAIL onformdata: dispatching an Event at a <math> element must trigger element.onformdata assert_equals: The event must be fired at the <math> element expected (object) Element node <math></math> but got (undefined) undefined
 PASS oninput: must be on the appropriate locations for GlobalEventHandlers 
 PASS oninput: the default value must be null 
 PASS oninput: the content attribute must be compiled into a function as the corresponding property 
@@ -255,7 +253,7 @@ FAIL onsecuritypolicyviolation: must be on the appropriate locations for GlobalE
 FAIL onsecuritypolicyviolation: the default value must be null assert_equals: The default value of the property is null for a MathMLMathElement instance expected (object) null but got (undefined) undefined
 FAIL onsecuritypolicyviolation: the content attribute must be compiled into a function as the corresponding property assert_equals: The onsecuritypolicyviolation property must be a function expected "function" but got "undefined"
 FAIL onsecuritypolicyviolation: dynamic changes on the attribute assert_equals: The onsecuritypolicyviolation property must be null (no attribute) expected (object) null but got (undefined) undefined
-TIMEOUT onsecuritypolicyviolation: dispatching an Event at a <math> element must trigger element.onsecuritypolicyviolation Test timed out
+FAIL onsecuritypolicyviolation: dispatching an Event at a <math> element must trigger element.onsecuritypolicyviolation assert_equals: The event must be fired at the <math> element expected (object) Element node <math></math> but got (undefined) undefined
 PASS onseeked: must be on the appropriate locations for GlobalEventHandlers 
 PASS onseeked: the default value must be null 
 PASS onseeked: the content attribute must be compiled into a function as the corresponding property 
@@ -271,6 +269,11 @@ PASS onselect: the default value must be null
 PASS onselect: the content attribute must be compiled into a function as the corresponding property 
 PASS onselect: dynamic changes on the attribute 
 PASS onselect: dispatching an Event at a <math> element must trigger element.onselect 
+FAIL onslotchange: must be on the appropriate locations for GlobalEventHandlers assert_true: MathMLElement has an own property named "onslotchange" expected true got false
+FAIL onslotchange: the default value must be null assert_equals: The default value of the property is null for a MathMLMathElement instance expected (object) null but got (undefined) undefined
+FAIL onslotchange: the content attribute must be compiled into a function as the corresponding property assert_equals: The onslotchange property must be a function expected "function" but got "undefined"
+FAIL onslotchange: dynamic changes on the attribute assert_equals: The onslotchange property must be null (no attribute) expected (object) null but got (undefined) undefined
+FAIL onslotchange: dispatching an Event at a <math> element must trigger element.onslotchange assert_equals: The event must be fired at the <math> element expected (object) Element node <math></math> but got (undefined) undefined
 PASS onstalled: must be on the appropriate locations for GlobalEventHandlers 
 PASS onstalled: the default value must be null 
 PASS onstalled: the content attribute must be compiled into a function as the corresponding property 

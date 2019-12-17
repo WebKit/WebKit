@@ -36,11 +36,12 @@ interface MediaSession {
 
   void setActionHandler(MediaSessionAction action, MediaSessionActionHandler? handler);
 
-  void setPositionState(optional MediaPositionState? state);
+  void setPositionState(optional MediaPositionState state = {});
 };
 
-[Constructor(optional MediaMetadataInit init), Exposed=Window]
+[Exposed=Window]
 interface MediaMetadata {
+  constructor(optional MediaMetadataInit init = {});
   attribute DOMString title;
   attribute DOMString artist;
   attribute DOMString album;
@@ -76,5 +77,5 @@ dictionary MediaSessionSeekActionDetails : MediaSessionActionDetails {
 
 dictionary MediaSessionSeekToActionDetails : MediaSessionActionDetails {
   required double seekTime;
-  bool? fastSeek;
+  boolean? fastSeek;
 };

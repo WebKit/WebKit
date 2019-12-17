@@ -311,6 +311,7 @@ FAIL HTMLElement interface: attribute onsecuritypolicyviolation assert_true: The
 PASS HTMLElement interface: attribute onseeked 
 PASS HTMLElement interface: attribute onseeking 
 PASS HTMLElement interface: attribute onselect 
+FAIL HTMLElement interface: attribute onslotchange assert_true: The prototype object must have a property "onslotchange" expected true got false
 PASS HTMLElement interface: attribute onstalled 
 PASS HTMLElement interface: attribute onsubmit 
 PASS HTMLElement interface: attribute onsuspend 
@@ -401,6 +402,7 @@ FAIL HTMLElement interface: document.createElement("noscript") must inherit prop
 PASS HTMLElement interface: document.createElement("noscript") must inherit property "onseeked" with the proper type 
 PASS HTMLElement interface: document.createElement("noscript") must inherit property "onseeking" with the proper type 
 PASS HTMLElement interface: document.createElement("noscript") must inherit property "onselect" with the proper type 
+FAIL HTMLElement interface: document.createElement("noscript") must inherit property "onslotchange" with the proper type assert_inherits: property "onslotchange" not found in prototype chain
 PASS HTMLElement interface: document.createElement("noscript") must inherit property "onstalled" with the proper type 
 PASS HTMLElement interface: document.createElement("noscript") must inherit property "onsubmit" with the proper type 
 PASS HTMLElement interface: document.createElement("noscript") must inherit property "onsuspend" with the proper type 
@@ -3729,6 +3731,13 @@ PASS ValidityState interface: document.createElement("input").validity must inhe
 PASS ValidityState interface: document.createElement("input").validity must inherit property "badInput" with the proper type 
 PASS ValidityState interface: document.createElement("input").validity must inherit property "customError" with the proper type 
 PASS ValidityState interface: document.createElement("input").validity must inherit property "valid" with the proper type 
+FAIL SubmitEvent interface: existence and properties of interface object assert_own_property: self does not have own property "SubmitEvent" expected property "SubmitEvent" missing
+FAIL SubmitEvent interface object length assert_own_property: self does not have own property "SubmitEvent" expected property "SubmitEvent" missing
+FAIL SubmitEvent interface object name assert_own_property: self does not have own property "SubmitEvent" expected property "SubmitEvent" missing
+FAIL SubmitEvent interface: existence and properties of interface prototype object assert_own_property: self does not have own property "SubmitEvent" expected property "SubmitEvent" missing
+FAIL SubmitEvent interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "SubmitEvent" expected property "SubmitEvent" missing
+FAIL SubmitEvent interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "SubmitEvent" expected property "SubmitEvent" missing
+FAIL SubmitEvent interface: attribute submitter assert_own_property: self does not have own property "SubmitEvent" expected property "SubmitEvent" missing
 FAIL FormDataEvent interface: existence and properties of interface object assert_own_property: self does not have own property "FormDataEvent" expected property "FormDataEvent" missing
 FAIL FormDataEvent interface object length assert_own_property: self does not have own property "FormDataEvent" expected property "FormDataEvent" missing
 FAIL FormDataEvent interface object name assert_own_property: self does not have own property "FormDataEvent" expected property "FormDataEvent" missing
@@ -4370,6 +4379,7 @@ FAIL Window interface: attribute onsecuritypolicyviolation assert_own_property: 
 PASS Window interface: attribute onseeked 
 PASS Window interface: attribute onseeking 
 PASS Window interface: attribute onselect 
+FAIL Window interface: attribute onslotchange assert_own_property: The global object must have a property "onslotchange" expected property "onslotchange" missing
 PASS Window interface: attribute onstalled 
 PASS Window interface: attribute onsubmit 
 PASS Window interface: attribute onsuspend 
@@ -4514,6 +4524,7 @@ FAIL Window interface: window must inherit property "onsecuritypolicyviolation" 
 PASS Window interface: window must inherit property "onseeked" with the proper type 
 PASS Window interface: window must inherit property "onseeking" with the proper type 
 PASS Window interface: window must inherit property "onselect" with the proper type 
+FAIL Window interface: window must inherit property "onslotchange" with the proper type assert_own_property: expected property "onslotchange" missing
 PASS Window interface: window must inherit property "onstalled" with the proper type 
 PASS Window interface: window must inherit property "onsubmit" with the proper type 
 PASS Window interface: window must inherit property "onsuspend" with the proper type 
@@ -5215,6 +5226,7 @@ FAIL SVGElement interface: attribute onsecuritypolicyviolation assert_true: The 
 PASS SVGElement interface: attribute onseeked 
 PASS SVGElement interface: attribute onseeking 
 PASS SVGElement interface: attribute onselect 
+FAIL SVGElement interface: attribute onslotchange assert_true: The prototype object must have a property "onslotchange" expected true got false
 PASS SVGElement interface: attribute onstalled 
 PASS SVGElement interface: attribute onsubmit 
 PASS SVGElement interface: attribute onsuspend 
@@ -5347,6 +5359,7 @@ FAIL Document interface: attribute onsecuritypolicyviolation assert_true: The pr
 PASS Document interface: attribute onseeked 
 PASS Document interface: attribute onseeking 
 PASS Document interface: attribute onselect 
+FAIL Document interface: attribute onslotchange assert_true: The prototype object must have a property "onslotchange" expected true got false
 PASS Document interface: attribute onstalled 
 PASS Document interface: attribute onsubmit 
 PASS Document interface: attribute onsuspend 
@@ -5468,6 +5481,7 @@ FAIL Document interface: iframe.contentDocument must inherit property "onsecurit
 PASS Document interface: iframe.contentDocument must inherit property "onseeked" with the proper type 
 PASS Document interface: iframe.contentDocument must inherit property "onseeking" with the proper type 
 PASS Document interface: iframe.contentDocument must inherit property "onselect" with the proper type 
+FAIL Document interface: iframe.contentDocument must inherit property "onslotchange" with the proper type assert_inherits: property "onslotchange" not found in prototype chain
 PASS Document interface: iframe.contentDocument must inherit property "onstalled" with the proper type 
 PASS Document interface: iframe.contentDocument must inherit property "onsubmit" with the proper type 
 PASS Document interface: iframe.contentDocument must inherit property "onsuspend" with the proper type 
@@ -5589,6 +5603,7 @@ FAIL Document interface: new Document() must inherit property "onsecuritypolicyv
 PASS Document interface: new Document() must inherit property "onseeked" with the proper type 
 PASS Document interface: new Document() must inherit property "onseeking" with the proper type 
 PASS Document interface: new Document() must inherit property "onselect" with the proper type 
+FAIL Document interface: new Document() must inherit property "onslotchange" with the proper type assert_inherits: property "onslotchange" not found in prototype chain
 PASS Document interface: new Document() must inherit property "onstalled" with the proper type 
 PASS Document interface: new Document() must inherit property "onsubmit" with the proper type 
 PASS Document interface: new Document() must inherit property "onsuspend" with the proper type 
@@ -5710,6 +5725,7 @@ FAIL Document interface: documentWithHandlers must inherit property "onsecurityp
 PASS Document interface: documentWithHandlers must inherit property "onseeked" with the proper type 
 PASS Document interface: documentWithHandlers must inherit property "onseeking" with the proper type 
 PASS Document interface: documentWithHandlers must inherit property "onselect" with the proper type 
+FAIL Document interface: documentWithHandlers must inherit property "onslotchange" with the proper type assert_inherits: property "onslotchange" found on object expected in prototype chain
 PASS Document interface: documentWithHandlers must inherit property "onstalled" with the proper type 
 PASS Document interface: documentWithHandlers must inherit property "onsubmit" with the proper type 
 PASS Document interface: documentWithHandlers must inherit property "onsuspend" with the proper type 

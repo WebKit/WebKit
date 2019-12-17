@@ -106,7 +106,6 @@ PASS Response interface: attribute status
 PASS Response interface: attribute ok 
 PASS Response interface: attribute statusText 
 PASS Response interface: attribute headers 
-FAIL Response interface: attribute trailer assert_true: The prototype object must have a property "trailer" expected true got false
 PASS Response interface: operation clone() 
 PASS Response interface: attribute body 
 PASS Response interface: attribute bodyUsed 
@@ -127,7 +126,6 @@ PASS Response interface: new Response() must inherit property "status" with the 
 PASS Response interface: new Response() must inherit property "ok" with the proper type 
 PASS Response interface: new Response() must inherit property "statusText" with the proper type 
 PASS Response interface: new Response() must inherit property "headers" with the proper type 
-FAIL Response interface: new Response() must inherit property "trailer" with the proper type assert_inherits: property "trailer" not found in prototype chain
 PASS Response interface: new Response() must inherit property "clone()" with the proper type 
 PASS Response interface: new Response() must inherit property "body" with the proper type 
 PASS Response interface: new Response() must inherit property "bodyUsed" with the proper type 

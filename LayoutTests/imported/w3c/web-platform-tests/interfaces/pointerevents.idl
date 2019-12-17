@@ -14,10 +14,13 @@ dictionary PointerEventInit : MouseEventInit {
     long        twist = 0;
     DOMString   pointerType = "";
     boolean     isPrimary = false;
+    sequence<PointerEvent> coalescedEvents = [];
+    sequence<PointerEvent> predictedEvents = [];
 };
 
-[Constructor(DOMString type, optional PointerEventInit eventInitDict = {}), Exposed=Window]
+[Exposed=Window]
 interface PointerEvent : MouseEvent {
+    constructor(DOMString type, optional PointerEventInit eventInitDict = {});
     readonly        attribute long        pointerId;
     readonly        attribute double      width;
     readonly        attribute double      height;
@@ -28,12 +31,14 @@ interface PointerEvent : MouseEvent {
     readonly        attribute long        twist;
     readonly        attribute DOMString   pointerType;
     readonly        attribute boolean     isPrimary;
+    sequence<PointerEvent> getCoalescedEvents();
+    sequence<PointerEvent> getPredictedEvents();
 };
 
 partial interface Element {
-  void setPointerCapture(long pointerId);
-  void releasePointerCapture(long pointerId);
-  boolean hasPointerCapture(long pointerId);
+  void setPointerCapture (long pointerId);
+  void releasePointerCapture (long pointerId);
+  boolean hasPointerCapture (long pointerId);
 };
 
 partial interface mixin GlobalEventHandlers {
