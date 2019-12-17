@@ -91,6 +91,21 @@ typedef struct WKContextClientV2 {
 
 } WKContextClientV2;
 
+typedef struct WKContextClientV3 {
+    WKContextClientBase                                                 base;
+
+    // Version 0.
+    WKContextPlugInAutoStartOriginHashesChangedCallback                 plugInAutoStartOriginHashesChanged;
+    WKContextNetworkProcessDidCrashCallback                             networkProcessDidCrash;
+    WKContextPlugInInformationBecameAvailableCallback                   plugInInformationBecameAvailable;
+
+    // Version 1.
+    void                                                                (*copyWebCryptoMasterKey_unavailable)(void);
+
+    // Version2.
+    WKContextChildProcessDidCrashCallback                               serviceWorkerProcessDidCrash;
+} WKContextClientV3;
+
 // FIXME: Remove these once support for Mavericks has been dropped.
 enum {
     kWKProcessModelSharedSecondaryProcess = 0,

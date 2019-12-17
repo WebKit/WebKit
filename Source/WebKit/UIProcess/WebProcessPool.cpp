@@ -694,6 +694,13 @@ void WebProcessPool::networkProcessCrashed(NetworkProcessProxy& networkProcessPr
 #endif
 }
 
+void WebProcessPool::serviceWorkerProcessCrashed(WebProcessProxy& proxy)
+{
+#if ENABLE(SERVICE_WORKER)
+    m_client.serviceWorkerProcessDidCrash(this);
+#endif
+}
+
 void WebProcessPool::getNetworkProcessConnection(WebProcessProxy& webProcessProxy, Messages::WebProcessProxy::GetNetworkProcessConnection::DelayedReply&& reply)
 {
     ensureNetworkProcess();

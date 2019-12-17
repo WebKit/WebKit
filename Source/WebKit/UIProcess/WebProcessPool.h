@@ -407,6 +407,7 @@ public:
     bool hasServiceWorkerForegroundActivityForTesting() const;
     bool hasServiceWorkerBackgroundActivityForTesting() const;
 #endif
+    void serviceWorkerProcessCrashed(WebProcessProxy&);
 
 #if PLATFORM(COCOA)
     bool processSuppressionEnabled() const;

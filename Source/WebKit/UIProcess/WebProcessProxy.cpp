@@ -762,6 +762,9 @@ void WebProcessProxy::processDidTerminateOrFailedToLaunch()
         ASSERT(!m_isInProcessCache);
     }
 
+    if (isStandaloneServiceWorkerProcess())
+        processPool().serviceWorkerProcessCrashed(*this);
+
     shutDown();
 
 #if ENABLE(PUBLIC_SUFFIX_LIST)

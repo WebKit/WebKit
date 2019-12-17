@@ -575,12 +575,13 @@ WKRetainPtr<WKPageConfigurationRef> TestController::generatePageConfiguration(co
     };
     WKContextSetInjectedBundleClient(m_context.get(), &injectedBundleClient.base);
 
-    WKContextClientV2 contextClient = {
-        { 2, this },
+    WKContextClientV3 contextClient = {
+        { 3, this },
         0, // plugInAutoStartOriginHashesChanged
         networkProcessDidCrash,
         0, // plugInInformationBecameAvailable
         0, // copyWebCryptoMasterKey
+        serviceWorkerProcessDidCrash
     };
     WKContextSetClient(m_context.get(), &contextClient.base);
 
@@ -1826,6 +1827,11 @@ void TestController::networkProcessDidCrash(WKContextRef context, const void *cl
     static_cast<TestController*>(const_cast<void*>(clientInfo))->networkProcessDidCrash();
 }
 
+void TestController::serviceWorkerProcessDidCrash(WKContextRef context, const void *clientInfo)
+{
+    static_cast<TestController*>(const_cast<void*>(clientInfo))->serviceWorkerProcessDidCrash();
+}
+
 void TestController::didReceiveKeyDownMessageFromInjectedBundle(WKDictionaryRef messageBodyDictionary, bool synchronous)
 {
     WKRetainPtr<WKStringRef> keyKey = adoptWK(WKStringCreateWithUTF8CString("Key"));
@@ -2183,6 +2189,13 @@ void TestController::networkProcessDidCrash()
     pid_t pid = WKContextGetNetworkProcessIdentifier(m_context.get());
     fprintf(stderr, "#CRASHED - %s (pid %ld)\n", networkProcessName(), static_cast<long>(pid));
     exit(1);
+}
+
+void TestController::serviceWorkerProcessDidCrash()
+{
+    fprintf(stderr, "#CRASHED - ServiceWorkerProcess\n");
+    if (m_shouldExitWhenWebProcessCrashes)
+        exit(1);
 }
 
 // WKPageNavigationClient
