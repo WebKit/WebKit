@@ -508,11 +508,6 @@ OSStatus CoreAudioSharedUnit::startInternal()
 
     unduck();
 
-#if PLATFORM(IOS_FAMILY)
-    PlatformMediaSessionManager::sharedManager().sessionCanProduceAudioChanged();
-    ASSERT(AudioSession::sharedSession().category() == AudioSession::PlayAndRecord);
-#endif
-
     err = AudioOutputUnitStart(m_ioUnit);
     if (err) {
         RELEASE_LOG_ERROR(WebRTC, "CoreAudioSharedUnit::start(%p) AudioOutputUnitStart failed with error %d (%.4s)", this, (int)err, (char*)&err);

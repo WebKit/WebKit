@@ -148,9 +148,6 @@ void MockAudioSharedUnit::cleanupAudioUnit()
 
 OSStatus MockAudioSharedUnit::startInternal()
 {
-#if PLATFORM(IOS_FAMILY)
-    ASSERT(AudioSession::sharedSession().category() == AudioSession::PlayAndRecord);
-#endif
     if (!m_hasAudioUnit)
         m_hasAudioUnit = true;
 

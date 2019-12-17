@@ -91,6 +91,8 @@ protected:
     void audioSamplesAvailable(const MediaTime&, const PlatformAudioData&, const AudioStreamDescription&, size_t /*numberOfFrames*/);
 
 private:
+    OSStatus startUnit();
+
     bool m_enableEchoCancellation { true };
     double m_volume { 1 };
     int m_sampleRate;

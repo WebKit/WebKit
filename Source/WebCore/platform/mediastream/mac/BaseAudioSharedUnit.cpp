@@ -30,6 +30,7 @@
 
 #include "CoreAudioCaptureSource.h"
 #include "Logging.h"
+#include "PlatformMediaSessionManager.h"
 
 namespace WebCore {
 
@@ -86,9 +87,21 @@ void BaseAudioSharedUnit::startProducingData()
         cleanupAudioUnit();
         ASSERT(!hasAudioUnit());
     }
+    startUnit();
+}
 
-    if (startInternal())
+OSStatus BaseAudioSharedUnit::startUnit()
+{
+#if PLATFORM(IOS_FAMILY)
+    PlatformMediaSessionManager::sharedManager().sessionCanProduceAudioChanged();
+    ASSERT(AudioSession::sharedSession().category() == AudioSession::PlayAndRecord);
+#endif
+
+    if (auto error = startInternal()) {
         captureFailed();
+        return error;
+    }
+    return 0;
 }
 
 void BaseAudioSharedUnit::prepareForNewCapture()
@@ -159,8 +172,10 @@ OSStatus BaseAudioSharedUnit::resume()
     if (!hasAudioUnit())
         return 0;
 
-    if (m_producingCount)
-        startInternal();
+    if (m_producingCount) {
+        if (auto error = startUnit())
+            return error;
+    }
 
     forEachClient([](auto& client) {
         client.notifyMutedChange(false);

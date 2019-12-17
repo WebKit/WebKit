@@ -1,3 +1,27 @@
+2019-12-17  youenn fablet  <youenn@apple.com>
+
+        Update session category in MockAudioSharedUnit as done in CoreAudioSharedUnit
+        https://bugs.webkit.org/show_bug.cgi?id=205328
+
+        Reviewed by Eric Carlson.
+
+        We were updating the audio session when starting capturing with the CoreAudioSharedUnit
+        but not with the MockAudioSharedUnit.
+        Refactor the code to update the audio session in the base class BaseAudioSharedUnit.
+        Share more code between start and resume case in BaseAudioSharedUnit.
+
+        Covered by platform/ios/mediastream/audio-muted-in-background-tab.html in Debug.
+
+        * platform/mediastream/mac/BaseAudioSharedUnit.cpp:
+        (WebCore::BaseAudioSharedUnit::startProducingData):
+        (WebCore::BaseAudioSharedUnit::startUnit):
+        (WebCore::BaseAudioSharedUnit::resume):
+        * platform/mediastream/mac/BaseAudioSharedUnit.h:
+        * platform/mediastream/mac/CoreAudioCaptureSource.cpp:
+        (WebCore::CoreAudioSharedUnit::startInternal):
+        * platform/mediastream/mac/MockAudioSharedUnit.mm:
+        (WebCore::MockAudioSharedUnit::startInternal):
+
 2019-12-17  Thibault Saunier  <tsaunier@igalia.com>
 
         [GStreamer][WPE] Fix regressions related to our 'Fix GStreamer capturer mock' patch
