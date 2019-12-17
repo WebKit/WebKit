@@ -602,39 +602,14 @@ void Resolver::applyMatchedProperties(State& state, const MatchResult& matchResu
         m_matchedDeclarationsCache.add(style, parentStyle, cacheHash, matchResult);
 }
 
-void Resolver::addMediaQueryDynamicResults(const MediaQueryDynamicResults& results)
+bool Resolver::hasViewportDependentMediaQueries() const
 {
-    m_mediaQueryDynamicResults.append(results);
+    return m_ruleSets.hasViewportDependentMediaQueries();
 }
 
-bool Resolver::hasMediaQueriesAffectedByViewportChange() const
+RuleSet::MediaQueryStyleUpdateType Resolver::evaluateDynamicMediaQueries()
 {
-    LOG(MediaQueries, "Style::Resolver::hasMediaQueriesAffectedByViewportChange evaluating queries");
-    for (auto& result : m_mediaQueryDynamicResults.viewport) {
-        if (m_mediaQueryEvaluator.evaluate(result.expression) != result.result)
-            return true;
-    }
-    return false;
-}
-
-bool Resolver::hasMediaQueriesAffectedByAccessibilitySettingsChange() const
-{
-    LOG(MediaQueries, "Style::Resolver::hasMediaQueriesAffectedByAccessibilitySettingsChange evaluating queries");
-    for (auto& result : m_mediaQueryDynamicResults.accessibilitySettings) {
-        if (m_mediaQueryEvaluator.evaluate(result.expression) != result.result)
-            return true;
-    }
-    return false;
-}
-
-bool Resolver::hasMediaQueriesAffectedByAppearanceChange() const
-{
-    LOG(MediaQueries, "Style::Resolver::hasMediaQueriesAffectedByAppearanceChange evaluating queries");
-    for (auto& result : m_mediaQueryDynamicResults.appearance) {
-        if (m_mediaQueryEvaluator.evaluate(result.expression) != result.result)
-            return true;
-    }
-    return false;
+    return m_ruleSets.evaluteDynamicMediaQueryRules(m_mediaQueryEvaluator);
 }
 
 } // namespace Style

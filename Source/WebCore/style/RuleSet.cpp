@@ -88,10 +88,14 @@ static bool isHostSelectorMatchingInShadowTree(const CSSSelector& startSelector)
     return leftmostSelector->match() == CSSSelector::PseudoClass && leftmostSelector->pseudoClassType() == CSSSelector::PseudoClassHost;
 }
 
-void RuleSet::addRule(StyleRule* rule, unsigned selectorIndex, unsigned selectorListIndex)
+void RuleSet::addRule(StyleRule& rule, unsigned selectorIndex, unsigned selectorListIndex, MediaQueryCollector* mediaQueryCollector)
 {
-    RuleData ruleData(rule, selectorIndex, selectorListIndex, m_ruleCount++);
+    RuleData ruleData(&rule, selectorIndex, selectorListIndex, m_ruleCount++);
+
     m_features.collectFeatures(ruleData);
+
+    if (mediaQueryCollector)
+        mediaQueryCollector->addRulePositionIfNeeded(ruleData.position());
 
     unsigned classBucketSize = 0;
     const CSSSelector* idSelector = nullptr;
@@ -260,63 +264,174 @@ void RuleSet::addRule(StyleRule* rule, unsigned selectorIndex, unsigned selector
     m_universalRules.append(ruleData);
 }
 
-void RuleSet::addPageRule(StyleRulePage* rule)
+void RuleSet::addPageRule(StyleRulePage& rule)
 {
-    m_pageRules.append(rule);
+    m_pageRules.append(&rule);
 }
 
-void RuleSet::addChildRules(const Vector<RefPtr<StyleRuleBase>>& rules, const MediaQueryEvaluator& medium, Resolver* resolver, MediaQueryDynamicResults& mediaQueryDynamicResults)
+void RuleSet::addChildRules(const Vector<RefPtr<StyleRuleBase>>& rules, MediaQueryCollector& mediaQueryCollector, Resolver* resolver, AddRulesMode mode)
 {
     for (auto& rule : rules) {
-        if (is<StyleRule>(*rule))
-            addStyleRule(downcast<StyleRule>(rule.get()));
-        else if (is<StyleRulePage>(*rule))
-            addPageRule(downcast<StyleRulePage>(rule.get()));
-        else if (is<StyleRuleMedia>(*rule)) {
+        if (mode == AddRulesMode::ResolverMutationScan && mediaQueryCollector.didMutateResolverWithinDynamicMediaQuery)
+            break;
+
+        if (is<StyleRule>(*rule)) {
+            if (mode == AddRulesMode::Normal)
+                addStyleRule(downcast<StyleRule>(*rule), mediaQueryCollector);
+            continue;
+        }
+        if (is<StyleRulePage>(*rule)) {
+            if (mode == AddRulesMode::Normal)
+                addPageRule(downcast<StyleRulePage>(*rule));
+            continue;
+        }
+        if (is<StyleRuleMedia>(*rule)) {
             auto& mediaRule = downcast<StyleRuleMedia>(*rule);
-            if ((!mediaRule.mediaQueries() || medium.evaluate(*mediaRule.mediaQueries(), &mediaQueryDynamicResults)))
-                addChildRules(mediaRule.childRules(), medium, resolver, mediaQueryDynamicResults);
-        } else if (is<StyleRuleFontFace>(*rule) && resolver) {
+            if (mediaQueryCollector.pushAndEvaluate(mediaRule.mediaQueries())) {
+                addChildRules(mediaRule.childRules(), mediaQueryCollector, resolver, mode);
+                mediaQueryCollector.pop(mediaRule.mediaQueries());
+            }
+            continue;
+        }
+        if (is<StyleRuleFontFace>(*rule)) {
             // Add this font face to our set.
-            resolver->document().fontSelector().addFontFaceRule(downcast<StyleRuleFontFace>(*rule.get()), false);
-            resolver->invalidateMatchedDeclarationsCache();
-        } else if (is<StyleRuleKeyframes>(*rule) && resolver)
-            resolver->addKeyframeStyle(downcast<StyleRuleKeyframes>(*rule));
-        else if (is<StyleRuleSupports>(*rule) && downcast<StyleRuleSupports>(*rule).conditionIsSupported())
-            addChildRules(downcast<StyleRuleSupports>(*rule).childRules(), medium, resolver, mediaQueryDynamicResults);
+            if (resolver) {
+                resolver->document().fontSelector().addFontFaceRule(downcast<StyleRuleFontFace>(*rule.get()), false);
+                resolver->invalidateMatchedDeclarationsCache();
+            }
+            mediaQueryCollector.didMutateResolver();
+            continue;
+        }
+        if (is<StyleRuleKeyframes>(*rule)) {
+            if (resolver)
+                resolver->addKeyframeStyle(downcast<StyleRuleKeyframes>(*rule));
+            mediaQueryCollector.didMutateResolver();
+            continue;
+        }
+        if (is<StyleRuleSupports>(*rule) && downcast<StyleRuleSupports>(*rule).conditionIsSupported()) {
+            addChildRules(downcast<StyleRuleSupports>(*rule).childRules(), mediaQueryCollector, resolver, mode);
+            continue;
+        }
 #if ENABLE(CSS_DEVICE_ADAPTATION)
-        else if (is<StyleRuleViewport>(*rule) && resolver)
-            resolver->viewportStyleResolver()->addViewportRule(downcast<StyleRuleViewport>(rule.get()));
+        if (is<StyleRuleViewport>(*rule)) {
+            if (resolver)
+                resolver->viewportStyleResolver()->addViewportRule(downcast<StyleRuleViewport>(rule.get()));
+            mediaQueryCollector.didMutateResolver();
+            continue;
+        }
 #endif
     }
 }
 
-void RuleSet::addRulesFromSheet(StyleSheetContents& sheet, const MediaQueryEvaluator& mediaQueryEvaluator, Resolver* resolver)
+void RuleSet::addRulesFromSheet(StyleSheetContents& sheet, const MediaQueryEvaluator& evaluator)
 {
-    MediaQueryDynamicResults mediaQueryDynamicResults;
+    auto mediaQueryCollector = MediaQueryCollector { evaluator };
+    addRulesFromSheet(sheet, mediaQueryCollector, nullptr, AddRulesMode::Normal);
+}
 
+void RuleSet::addRulesFromSheet(StyleSheetContents& sheet, MediaQuerySet* sheetQuery, const MediaQueryEvaluator& evaluator, Style::Resolver& resolver)
+{
+    auto canUseDynamicMediaQueryResolution = [&] {
+        auto mediaQueryCollector = MediaQueryCollector { evaluator, true };
+        if (mediaQueryCollector.pushAndEvaluate(sheetQuery))
+            addRulesFromSheet(sheet, mediaQueryCollector, nullptr, AddRulesMode::ResolverMutationScan);
+        return !mediaQueryCollector.didMutateResolverWithinDynamicMediaQuery;
+    }();
+
+    auto mediaQueryCollector = MediaQueryCollector { evaluator, canUseDynamicMediaQueryResolution };
+
+    if (mediaQueryCollector.pushAndEvaluate(sheetQuery)) {
+        addRulesFromSheet(sheet, mediaQueryCollector, &resolver, AddRulesMode::Normal);
+        mediaQueryCollector.pop(sheetQuery);
+    }
+
+    m_hasViewportDependentMediaQueries = mediaQueryCollector.hasViewportDependentMediaQueries;
+    m_dynamicMediaQueryRules.appendVector(WTFMove(mediaQueryCollector.dynamicMediaQueryRules));
+
+    evaluteDynamicMediaQueryRules(evaluator);
+}
+
+void RuleSet::addRulesFromSheet(StyleSheetContents& sheet, MediaQueryCollector& mediaQueryCollector, Resolver* resolver, AddRulesMode mode)
+{
     for (auto& rule : sheet.importRules()) {
         if (!rule->styleSheet())
             continue;
-        if (rule->mediaQueries() && !mediaQueryEvaluator.evaluate(*rule->mediaQueries(), &mediaQueryDynamicResults))
-            continue;
-        addRulesFromSheet(*rule->styleSheet(), mediaQueryEvaluator, resolver);
+
+        if (mediaQueryCollector.pushAndEvaluate(rule->mediaQueries())) {
+            addRulesFromSheet(*rule->styleSheet(), mediaQueryCollector, resolver, mode);
+            mediaQueryCollector.pop(rule->mediaQueries());
+        }
     }
 
-    addChildRules(sheet.childRules(), mediaQueryEvaluator, resolver, mediaQueryDynamicResults);
+    addChildRules(sheet.childRules(), mediaQueryCollector, resolver, mode);
 
-    if (resolver)
-        resolver->addMediaQueryDynamicResults(mediaQueryDynamicResults);
-
-    if (m_autoShrinkToFitEnabled)
+    if (m_autoShrinkToFitEnabled && mode == AddRulesMode::Normal)
         shrinkToFit();
 }
 
-void RuleSet::addStyleRule(StyleRule* rule)
+void RuleSet::addStyleRule(StyleRule& rule, MediaQueryCollector& mediaQueryCollector)
 {
     unsigned selectorListIndex = 0;
-    for (size_t selectorIndex = 0; selectorIndex != notFound; selectorIndex = rule->selectorList().indexOfNextSelectorAfter(selectorIndex))
-        addRule(rule, selectorIndex, selectorListIndex++);
+    for (size_t selectorIndex = 0; selectorIndex != notFound; selectorIndex = rule.selectorList().indexOfNextSelectorAfter(selectorIndex))
+        addRule(rule, selectorIndex, selectorListIndex++, &mediaQueryCollector);
+}
+
+template<typename Function>
+void RuleSet::traverseRuleDatas(Function&& function)
+{
+    auto traverseVector = [&](auto& vector) {
+        for (auto& ruleData : vector)
+            function(ruleData);
+    };
+
+    auto traverseMap = [&](auto& map) {
+        for (auto& ruleDatas : map.values())
+            traverseVector(*ruleDatas);
+    };
+
+    traverseMap(m_idRules);
+    traverseMap(m_classRules);
+    traverseMap(m_tagLocalNameRules);
+    traverseMap(m_tagLowercaseLocalNameRules);
+    traverseMap(m_shadowPseudoElementRules);
+    traverseVector(m_linkPseudoClassRules);
+#if ENABLE(VIDEO_TRACK)
+    traverseVector(m_cuePseudoRules);
+#endif
+    traverseVector(m_hostPseudoClassRules);
+    traverseVector(m_slottedPseudoElementRules);
+    traverseVector(m_partPseudoElementRules);
+    traverseVector(m_focusPseudoClassRules);
+    traverseVector(m_universalRules);
+}
+
+RuleSet::MediaQueryStyleUpdateType RuleSet::evaluteDynamicMediaQueryRules(const MediaQueryEvaluator& evaluator)
+{
+    bool changes = false;
+    for (auto& dynamicRules : m_dynamicMediaQueryRules) {
+        bool result = true;
+        for (auto& set : dynamicRules.mediaQuerySets) {
+            if (!evaluator.evaluate(set.get())) {
+                result = false;
+                break;
+            }
+        }
+
+        if (result != dynamicRules.result) {
+            dynamicRules.result = result;
+            if (dynamicRules.requiresFullReset)
+                return MediaQueryStyleUpdateType::Reset;
+
+            traverseRuleDatas([&](RuleData& ruleData) {
+                if (!dynamicRules.affectedRulePositions.contains(ruleData.position()))
+                    return;
+                ruleData.setEnabled(result);
+                changes = true;
+            });
+        }
+    }
+
+    return changes ? MediaQueryStyleUpdateType::Resolve : MediaQueryStyleUpdateType::None;
 }
 
 bool RuleSet::hasShadowPseudoElementRules() const
@@ -354,6 +469,68 @@ void RuleSet::shrinkToFit()
     m_pageRules.shrinkToFit();
     m_features.shrinkToFit();
 }
+
+RuleSet::MediaQueryCollector::~MediaQueryCollector() = default;
+
+bool RuleSet::MediaQueryCollector::pushAndEvaluate(MediaQuerySet* set)
+{
+    if (!set)
+        return true;
+
+    // Only evaluate static expressions that require style rebuild.
+    MediaQueryDynamicResults dynamicResults;
+    auto mode = collectDynamic ? MediaQueryEvaluator::Mode::AlwaysMatchDynamic : MediaQueryEvaluator::Mode::Normal;
+
+    bool result = evaluator.evaluate(*set, &dynamicResults, mode);
+
+    if (!dynamicResults.viewport.isEmpty())
+        hasViewportDependentMediaQueries = true;
+
+    if (!result)
+        return false;
+
+    if (!dynamicResults.isEmpty())
+        dynamicContextStack.append({ *set });
+
+    return true;
+}
+
+void RuleSet::MediaQueryCollector::pop(MediaQuerySet* set)
+{
+    if (!set || dynamicContextStack.isEmpty() || set != &dynamicContextStack.last().set.get())
+        return;
+
+    if (!dynamicContextStack.last().affectedRulePositions.isEmpty()) {
+        DynamicMediaQueryRules rules;
+        for (auto& context : dynamicContextStack)
+            rules.mediaQuerySets.append(context.set.get());
+
+        if (collectDynamic) {
+            auto& toAdd = dynamicContextStack.last().affectedRulePositions;
+            rules.affectedRulePositions.add(toAdd.begin(), toAdd.end());
+        } else
+            rules.requiresFullReset = true;
+
+        dynamicMediaQueryRules.append(WTFMove(rules));
+    }
+
+    dynamicContextStack.removeLast();
+}
+
+void RuleSet::MediaQueryCollector::didMutateResolver()
+{
+    if (dynamicContextStack.isEmpty())
+        return;
+    didMutateResolverWithinDynamicMediaQuery = true;
+}
+
+void RuleSet::MediaQueryCollector::addRulePositionIfNeeded(size_t index)
+{
+    if (dynamicContextStack.isEmpty())
+        return;
+    dynamicContextStack.last().affectedRulePositions.append(index);
+}
+
 
 } // namespace Style
 } // namespace WebCore

@@ -83,7 +83,8 @@ public:
     bool evaluate(const MediaQueryExpression&) const;
     bool evaluateForChanges(const MediaQueryDynamicResults&) const;
 
-    WEBCORE_EXPORT bool evaluate(const MediaQuerySet&, MediaQueryDynamicResults* = nullptr) const;
+    enum class Mode { Normal, AlwaysMatchDynamic };
+    WEBCORE_EXPORT bool evaluate(const MediaQuerySet&, MediaQueryDynamicResults* = nullptr, Mode = Mode::Normal) const;
 
     static bool mediaAttributeMatches(Document&, const String& attributeValue);
 

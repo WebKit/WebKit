@@ -70,18 +70,11 @@ void ScopeRuleSets::updateUserAgentMediaQueryStyleIfNeeded() const
         return;
     m_userAgentMediaQueryRuleCountOnUpdate = ruleCount;
 
-#if !ASSERT_DISABLED
-    bool hadViewportDependentMediaQueries = m_styleResolver.hasViewportDependentMediaQueries();
-#endif
-
     // Media queries on user agent sheet need to evaluated in document context. They behave like author sheets in this respect.
     auto& mediaQueryEvaluator = m_styleResolver.mediaQueryEvaluator();
     m_userAgentMediaQueryStyle = makeUnique<RuleSet>();
     
-    m_userAgentMediaQueryStyle->addRulesFromSheet(*UserAgentStyle::mediaQueryStyleSheet, mediaQueryEvaluator, &m_styleResolver);
-
-    // Viewport dependent queries are currently too inefficient to allow on UA sheet.
-    ASSERT(!m_styleResolver.hasViewportDependentMediaQueries() || hadViewportDependentMediaQueries);
+    m_userAgentMediaQueryStyle->addRulesFromSheet(*UserAgentStyle::mediaQueryStyleSheet, nullptr, mediaQueryEvaluator, m_styleResolver);
 }
 
 RuleSet* ScopeRuleSets::userStyle() const
@@ -97,7 +90,7 @@ void ScopeRuleSets::initializeUserStyle()
     auto& mediaQueryEvaluator = m_styleResolver.mediaQueryEvaluator();
     auto tempUserStyle = makeUnique<RuleSet>();
     if (CSSStyleSheet* pageUserSheet = extensionStyleSheets.pageUserSheet())
-        tempUserStyle->addRulesFromSheet(pageUserSheet->contents(), mediaQueryEvaluator, &m_styleResolver);
+        tempUserStyle->addRulesFromSheet(pageUserSheet->contents(), nullptr, mediaQueryEvaluator, m_styleResolver);
     collectRulesFromUserStyleSheets(extensionStyleSheets.injectedUserStyleSheets(), *tempUserStyle, mediaQueryEvaluator);
     collectRulesFromUserStyleSheets(extensionStyleSheets.documentUserStyleSheets(), *tempUserStyle, mediaQueryEvaluator);
     if (tempUserStyle->ruleCount() > 0 || tempUserStyle->pageRules().size() > 0)
@@ -108,7 +101,7 @@ void ScopeRuleSets::collectRulesFromUserStyleSheets(const Vector<RefPtr<CSSStyle
 {
     for (unsigned i = 0; i < userSheets.size(); ++i) {
         ASSERT(userSheets[i]->contents().isUserStyleSheet());
-        userStyle.addRulesFromSheet(userSheets[i]->contents(), medium, &m_styleResolver);
+        userStyle.addRulesFromSheet(userSheets[i]->contents(), nullptr, medium, m_styleResolver);
     }
 }
 
@@ -119,7 +112,7 @@ static std::unique_ptr<RuleSet> makeRuleSet(const Vector<RuleFeature>& rules)
         return nullptr;
     auto ruleSet = makeUnique<RuleSet>();
     for (size_t i = 0; i < size; ++i)
-        ruleSet->addRule(rules[i].rule, rules[i].selectorIndex, rules[i].selectorListIndex);
+        ruleSet->addRule(*rules[i].rule, rules[i].selectorIndex, rules[i].selectorListIndex);
     ruleSet->shrinkToFit();
     return ruleSet;
 }
@@ -136,21 +129,48 @@ void ScopeRuleSets::resetUserAgentMediaQueryStyle()
     m_userAgentMediaQueryStyle = nullptr;
 }
 
+bool ScopeRuleSets::hasViewportDependentMediaQueries() const
+{
+    if (m_authorStyle->hasViewportDependentMediaQueries())
+        return true;
+    if (m_userStyle && m_userStyle->hasViewportDependentMediaQueries())
+        return true;
+    if (m_userAgentMediaQueryStyle && m_userAgentMediaQueryStyle->hasViewportDependentMediaQueries())
+        return true;
+
+    return false;
+}
+
+RuleSet::MediaQueryStyleUpdateType ScopeRuleSets::evaluteDynamicMediaQueryRules(const MediaQueryEvaluator& evaluator)
+{
+    auto updateType = RuleSet::MediaQueryStyleUpdateType::None;
+
+    auto evaluate = [&](auto& ruleSet) {
+        if (!ruleSet)
+            return false;
+        auto newUpdateType = ruleSet->evaluteDynamicMediaQueryRules(evaluator);
+        if (newUpdateType > updateType)
+            updateType = newUpdateType;
+        return updateType == RuleSet::MediaQueryStyleUpdateType::Reset;
+    };
+
+    if (evaluate(m_authorStyle))
+        return updateType;
+
+    if (evaluate(m_userStyle))
+        return updateType;
+
+    evaluate(m_userAgentMediaQueryStyle);
+    return updateType;
+}
+
 void ScopeRuleSets::appendAuthorStyleSheets(const Vector<RefPtr<CSSStyleSheet>>& styleSheets, MediaQueryEvaluator* medium, InspectorCSSOMWrappers& inspectorCSSOMWrappers)
 {
-    // This handles sheets added to the end of the stylesheet list only. In other cases the style resolver
-    // needs to be reconstructed. To handle insertions too the rule order numbers would need to be updated.
-    MediaQueryDynamicResults mediaQueryDynamicResults;
-
     for (auto& cssSheet : styleSheets) {
         ASSERT(!cssSheet->disabled());
-        if (cssSheet->mediaQueries() && !medium->evaluate(*cssSheet->mediaQueries(), &mediaQueryDynamicResults))
-            continue;
-        m_authorStyle->addRulesFromSheet(cssSheet->contents(), *medium, &m_styleResolver);
+        m_authorStyle->addRulesFromSheet(cssSheet->contents(), cssSheet->mediaQueries(), *medium, m_styleResolver);
         inspectorCSSOMWrappers.collectFromStyleSheetIfNeeded(cssSheet.get());
     }
-
-    m_styleResolver.addMediaQueryDynamicResults(mediaQueryDynamicResults);
 
     m_authorStyle->shrinkToFit();
     collectFeatures();
@@ -200,7 +220,7 @@ static Vector<InvalidationRuleSet>* ensureInvalidationRuleSets(const AtomString&
             auto& ruleSet = matchElementArray[arrayIndex];
             if (!ruleSet)
                 ruleSet = makeUnique<RuleSet>();
-            ruleSet->addRule(feature.rule, feature.selectorIndex, feature.selectorListIndex);
+            ruleSet->addRule(*feature.rule, feature.selectorIndex, feature.selectorListIndex);
             if (feature.invalidationSelector)
                 invalidationSelectorArray[arrayIndex].append(feature.invalidationSelector);
         }

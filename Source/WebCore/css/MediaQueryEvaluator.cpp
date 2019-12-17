@@ -145,7 +145,7 @@ static bool applyRestrictor(MediaQuery::Restrictor r, bool value)
     return r == MediaQuery::Not ? !value : value;
 }
 
-bool MediaQueryEvaluator::evaluate(const MediaQuerySet& querySet, MediaQueryDynamicResults* dynamicResults) const
+bool MediaQueryEvaluator::evaluate(const MediaQuerySet& querySet, MediaQueryDynamicResults* dynamicResults, Mode mode) const
 {
     LOG_WITH_STREAM(MediaQueries, stream << "MediaQueryEvaluator::evaluate on " << (m_document ? m_document->url().string() : emptyString()));
 
@@ -166,20 +166,34 @@ bool MediaQueryEvaluator::evaluate(const MediaQuerySet& querySet, MediaQueryDyna
         if (mediaTypeMatch(query.mediaType())) {
             auto& expressions = query.expressions();
             // Iterate through expressions, stop if any of them eval to false (AND semantics).
+            bool isDynamic = false;
             size_t j = 0;
             for (; j < expressions.size(); ++j) {
                 bool expressionResult = evaluate(expressions[j]);
                 if (dynamicResults) {
-                    if (isViewportDependent(expressions[j].mediaFeature()))
+                    if (isViewportDependent(expressions[j].mediaFeature())) {
+                        isDynamic = true;
                         dynamicResults->viewport.append({ expressions[j], expressionResult });
-                    if (isAppearanceDependent(expressions[j].mediaFeature()))
+                    }
+                    if (isAppearanceDependent(expressions[j].mediaFeature())) {
+                        isDynamic = true;
                         dynamicResults->appearance.append({ expressions[j], expressionResult });
-                    if (isAccessibilitySettingsDependent(expressions[j].mediaFeature()))
+                    }
+                    if (isAccessibilitySettingsDependent(expressions[j].mediaFeature())) {
+                        isDynamic = true;
                         dynamicResults->accessibilitySettings.append({ expressions[j], expressionResult });
+                    }
                 }
+                if (mode == Mode::AlwaysMatchDynamic && isDynamic)
+                    continue;
 
                 if (!expressionResult)
                     break;
+            }
+
+            if (mode == Mode::AlwaysMatchDynamic && isDynamic) {
+                result = true;
+                continue;
             }
 
             // Assume true if we are at the end of the list, otherwise assume false.

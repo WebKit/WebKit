@@ -622,21 +622,21 @@ void Scope::scheduleUpdate(UpdateType update)
 void Scope::evaluateMediaQueriesForViewportChange()
 {
     evaluateMediaQueries([] (Resolver& resolver) {
-        return resolver.hasMediaQueriesAffectedByViewportChange();
+        return resolver.evaluateDynamicMediaQueries();
     });
 }
 
 void Scope::evaluateMediaQueriesForAccessibilitySettingsChange()
 {
     evaluateMediaQueries([] (Resolver& resolver) {
-        return resolver.hasMediaQueriesAffectedByAccessibilitySettingsChange();
+        return resolver.evaluateDynamicMediaQueries();
     });
 }
 
 void Scope::evaluateMediaQueriesForAppearanceChange()
 {
     evaluateMediaQueries([] (Resolver& resolver) {
-        return resolver.hasMediaQueriesAffectedByAppearanceChange();
+        return resolver.evaluateDynamicMediaQueries();
     });
 }
 
@@ -650,9 +650,22 @@ void Scope::evaluateMediaQueries(TestFunction&& testFunction)
     auto* resolver = resolverIfExists();
     if (!resolver)
         return;
-    if (!testFunction(*resolver))
+
+    auto updateType = testFunction(*resolver);
+
+    switch (updateType) {
+    case RuleSet::MediaQueryStyleUpdateType::None:
         return;
-    scheduleUpdate(UpdateType::ContentsOrInterpretation);
+    case RuleSet::MediaQueryStyleUpdateType::Resolve:
+        // FIXME: We could have an invalidation ruleset for rules inside dynamic media queries.
+        if (auto* documentElement = m_document.documentElement())
+            documentElement->invalidateStyleForSubtree();
+        break;
+    case RuleSet::MediaQueryStyleUpdateType::Reset:
+        scheduleUpdate(UpdateType::ContentsOrInterpretation);
+        break;
+    }
+
     InspectorInstrumentation::mediaQueryResultChanged(m_document);
 }
 

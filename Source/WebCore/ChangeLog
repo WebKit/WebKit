@@ -1,3 +1,104 @@
+2019-12-17  Antti Koivisto  <antti@apple.com>
+
+        Resolve dynamic media queries without reconstructing RuleSets
+        https://bugs.webkit.org/show_bug.cgi?id=205264
+
+        Reviewed by Zalan Bujtas.
+
+        We currently do a full style resolver reset whenever a media query result changes. This is very inefficient
+        as we need to reconstuct all RuleSets and optimization structures. We also lose related caches and are forced
+        to re-resolve full document style. This may happen frequently, for example when resizing window on a responsive
+        web site.
+
+        With this patch we construct RuleDatas also for non-matching dynamic media queries and simply mark them disabled.
+        We create a data structure that allows enabling and disabling them efficiently as a response to environment changes
+        (like view resize). This allows us to avoid throwing away anything during common scenarios.
+
+        Test: fast/media/media-query-dynamic-with-font-face.html
+
+        * css/MediaQueryEvaluator.cpp:
+        (WebCore::MediaQueryEvaluator::evaluate const):
+
+        Add a mode where dynamic media queries all evaluate to true and only static properties can cause the query to fail.
+
+        * css/MediaQueryEvaluator.h:
+        * style/ElementRuleCollector.cpp:
+        (WebCore::Style::ElementRuleCollector::collectMatchingRulesForList):
+
+        Skip disabled rules during rule collection.
+
+        * style/RuleData.cpp:
+        (WebCore::Style::RuleData::RuleData):
+        * style/RuleData.h:
+        (WebCore::Style::RuleData::isEnabled const):
+        (WebCore::Style::RuleData::setEnabled):
+
+        Add a bit.
+
+        * style/RuleSet.cpp:
+        (WebCore::Style::RuleSet::addRule):
+
+        Collect positions of rules affected by dynamic media queries.
+
+        (WebCore::Style::RuleSet::addPageRule):
+        (WebCore::Style::RuleSet::addChildRules):
+        (WebCore::Style::RuleSet::addRulesFromSheet):
+
+        First check for a special case where we have style resolver mutating rules (like @font-face) inside a media query.
+        In this case we fall back to static resolution.
+
+        Then collect the rules. Static media queries (print etc) are evaluated right away, dynamic ones are collected by MediaQueryCollector.
+
+        (WebCore::Style::RuleSet::addStyleRule):
+        (WebCore::Style::RuleSet::traverseRuleDatas):
+        (WebCore::Style::RuleSet::evaluteDynamicMediaQueryRules):
+
+        Evaluate media queries for changes and flip the enabled state of the rules if needed.
+
+        (WebCore::Style::RuleSet::MediaQueryCollector::pushAndEvaluate):
+        (WebCore::Style::RuleSet::MediaQueryCollector::pop):
+        (WebCore::Style::RuleSet::MediaQueryCollector::didMutateResolver):
+        (WebCore::Style::RuleSet::MediaQueryCollector::addRulePositionIfNeeded):
+        * style/RuleSet.h:
+        (WebCore::Style::RuleSet::hasViewportDependentMediaQueries const):
+        * style/StyleResolver.cpp:
+        (WebCore::Style::Resolver::hasViewportDependentMediaQueries const):
+        (WebCore::Style::Resolver::evaluateDynamicMediaQueries):
+        (WebCore::Style::Resolver::addMediaQueryDynamicResults): Deleted.
+        (WebCore::Style::Resolver::hasMediaQueriesAffectedByViewportChange const): Deleted.
+        (WebCore::Style::Resolver::hasMediaQueriesAffectedByAccessibilitySettingsChange const): Deleted.
+        (WebCore::Style::Resolver::hasMediaQueriesAffectedByAppearanceChange const): Deleted.
+
+        Profiling doesn't show any need to handle the cases separately. Replace with single evaluateDynamicMediaQueries path.
+        We can bring type specific paths back easily if needed.
+
+        * style/StyleResolver.h:
+        (WebCore::Style::Resolver::hasViewportDependentMediaQueries const): Deleted.
+        (WebCore::Style::Resolver::hasAccessibilitySettingsDependentMediaQueries const): Deleted.
+        (WebCore::Style::Resolver::hasAppearanceDependentMediaQueries const): Deleted.
+        * style/StyleScope.cpp:
+        (WebCore::Style::Scope::evaluateMediaQueriesForViewportChange):
+        (WebCore::Style::Scope::evaluateMediaQueriesForAccessibilitySettingsChange):
+        (WebCore::Style::Scope::evaluateMediaQueriesForAppearanceChange):
+
+        Call into general evaluateDynamicMediaQueries.
+
+        (WebCore::Style::Scope::evaluateMediaQueries):
+
+        In normal case we can just invalidate style, not throw everything away.
+        This can be further improved by adding optimization rule sets.
+
+        * style/StyleScopeRuleSets.cpp:
+        (WebCore::Style::ScopeRuleSets::updateUserAgentMediaQueryStyleIfNeeded const):
+        (WebCore::Style::ScopeRuleSets::initializeUserStyle):
+        (WebCore::Style::ScopeRuleSets::collectRulesFromUserStyleSheets):
+        (WebCore::Style::makeRuleSet):
+        (WebCore::Style::ScopeRuleSets::hasViewportDependentMediaQueries const):
+        (WebCore::Style::ScopeRuleSets::evaluteDynamicMediaQueryRules):
+        (WebCore::Style::ScopeRuleSets::appendAuthorStyleSheets):
+        (WebCore::Style::ensureInvalidationRuleSets):
+        * style/StyleScopeRuleSets.h:
+
 2019-12-17  youenn fablet  <youenn@apple.com>
 
         FileList should be exposed to workers

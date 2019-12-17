@@ -524,6 +524,9 @@ void ElementRuleCollector::collectMatchingRulesForList(const RuleSet::RuleDataVe
     for (unsigned i = 0, size = rules->size(); i < size; ++i) {
         const auto& ruleData = rules->data()[i];
 
+        if (UNLIKELY(!ruleData.isEnabled()))
+            continue;
+
         if (!ruleData.canMatchPseudoElement() && m_pseudoElementRequest.pseudoId != PseudoId::None)
             continue;
 

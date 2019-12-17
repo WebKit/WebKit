@@ -131,15 +131,8 @@ public:
     ViewportStyleResolver* viewportStyleResolver() { return m_viewportStyleResolver.get(); }
 #endif
 
-    void addMediaQueryDynamicResults(const MediaQueryDynamicResults&);
-    bool hasViewportDependentMediaQueries() const { return !m_mediaQueryDynamicResults.viewport.isEmpty(); }
-    bool hasMediaQueriesAffectedByViewportChange() const;
-
-    bool hasAccessibilitySettingsDependentMediaQueries() const { return !m_mediaQueryDynamicResults.accessibilitySettings.isEmpty(); }
-    bool hasMediaQueriesAffectedByAccessibilitySettingsChange() const;
-
-    bool hasAppearanceDependentMediaQueries() const { return !m_mediaQueryDynamicResults.appearance.isEmpty(); }
-    bool hasMediaQueriesAffectedByAppearanceChange() const;
+    bool hasViewportDependentMediaQueries() const;
+    RuleSet::MediaQueryStyleUpdateType evaluateDynamicMediaQueries();
 
     void addKeyframeStyle(Ref<StyleRuleKeyframes>&&);
 
@@ -199,8 +192,6 @@ private:
     Document& m_document;
 
     RenderStyle* m_overrideDocumentElementStyle { nullptr };
-
-    MediaQueryDynamicResults m_mediaQueryDynamicResults;
 
 #if ENABLE(CSS_DEVICE_ADAPTATION)
     RefPtr<ViewportStyleResolver> m_viewportStyleResolver;
