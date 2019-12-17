@@ -2070,7 +2070,7 @@ def check_spacing(file_extension, clean_lines, line_number, file_state, error):
     # 'delete []' or 'new char * []'. Objective-C can't follow this rule
     # because of method calls.
     if file_extension != 'mm' and file_extension != 'm':
-        if search(r'\w\s+\[', line) and not search(r'(delete|return)\s+\[', line):
+        if search(r'\w\s+\[', line) and not search(r'(delete|return|auto)\s+\[', line):
             error(line_number, 'whitespace/brackets', 5,
                   'Extra space before [.')
 

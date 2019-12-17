@@ -2125,6 +2125,7 @@ class CppStyleTest(CppStyleTestBase):
 
     def test_spacing_before_brackets(self):
         self.assert_lint('delete [] base;', '')
+        self.assert_lint('auto [foo, bar] = getFooAndBar();', '')
         # See SOFT_LINK_CLASS_FOR_HEADER() macro in SoftLinking.h.
         self.assert_lint('        return [get_##framework##_##className##Class() alloc]; \\', '')
         self.assert_lint('        m_taskFunction = [callee, method, arguments...] {', '')

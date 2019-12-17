@@ -1,3 +1,17 @@
+2019-12-17  Megan Gardner  <megan_gardner@apple.com>
+
+        Update Check webkit style to allow for auto with pairs in c++
+        https://bugs.webkit.org/show_bug.cgi?id=205320
+
+        Reviewed by Jonathan Bedard.
+
+        Allow for spaces between auto and brakets when using auto with pairs.
+
+        * Scripts/webkitpy/style/checkers/cpp.py:
+        (check_spacing):
+        * Scripts/webkitpy/style/checkers/cpp_unittest.py:
+        (CppStyleTest):
+
 2019-12-17  youenn fablet  <youenn@apple.com>
 
         WebKitTestRunner should report GPU process crashes
