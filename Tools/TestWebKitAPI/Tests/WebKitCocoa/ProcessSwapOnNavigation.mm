@@ -58,10 +58,6 @@
 #import <wtf/text/StringHash.h>
 #import <wtf/text/WTFString.h>
 
-@interface WKProcessPool ()
-- (WKContextRef)_contextForTesting;
-@end
-
 static bool done;
 static bool didStartProvisionalLoad;
 static bool failed;
@@ -3559,6 +3555,72 @@ TEST(ProcessSwap, UseWebProcessCacheAfterTermination)
 
     EXPECT_EQ(webkitPID, [webView _webProcessIdentifier]);
     EXPECT_EQ(1U, [processPool _webProcessCountIgnoringPrewarmed]);
+}
+
+TEST(ProcessSwap, UseWebProcessCacheForLoadInEmptyDocument)
+{
+    auto processPoolConfiguration = psonProcessPoolConfiguration();
+    auto processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
+
+    auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [webViewConfiguration setProcessPool:processPool.get()];
+    auto handler = adoptNS([[PSONScheme alloc] init]);
+    [webViewConfiguration setURLSchemeHandler:handler.get() forURLScheme:@"PSON"];
+
+    pid_t pid1 = 0;
+    pid_t pid2 = 0;
+    pid_t pid3 = 0;
+
+    auto delegate = adoptNS([[PSONNavigationDelegate alloc] init]);
+
+    @autoreleasepool {
+        auto webView1 = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
+        [webView1 setNavigationDelegate:delegate.get()];
+
+        NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://www.webkit.org/main1.html"]];
+        [webView1 loadRequest:request];
+
+        TestWebKitAPI::Util::run(&done);
+        done = false;
+
+        pid1 = [webView1 _webProcessIdentifier];
+        EXPECT_NE(pid1, 0);
+
+        request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://www.apple.com/main.html"]];
+        [webView1 loadRequest:request];
+
+        TestWebKitAPI::Util::run(&done);
+        done = false;
+
+        pid2 = [webView1 _webProcessIdentifier];
+        EXPECT_NE(pid2, 0);
+    }
+
+    auto webView2 = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
+    [webView2 setNavigationDelegate:delegate.get()];
+
+    // Force webView2 to eagerly launch a WebProcess that loads the empty document. (Safari
+    // implicitly launches WebProcess to the empty document because it immediately posts a message
+    // to its injected bundle after creating its WKWebView. Here we launch WebProcess explicitly.)
+    [webView2 _ensureRunningProcessForTesting];
+
+    // Wait for webkit.org and apple.com from webView1 to enter cached process pool.
+    while ([processPool _processCacheSize] != 2)
+        TestWebKitAPI::Util::sleep(0.1);
+
+    NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://www.webkit.org/main2.html"]];
+    [webView2 loadRequest:request];
+
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    pid3 = [webView2 _webProcessIdentifier];
+    EXPECT_NE(pid3, 0);
+
+    EXPECT_EQ(3u, seenPIDs.size());
+    EXPECT_NE(pid1, pid2);
+    EXPECT_NE(pid2, pid3);
+    EXPECT_EQ(pid1, pid3);
 }
 
 TEST(ProcessSwap, UseWebProcessCacheForLoadInNewView)

@@ -2183,11 +2183,6 @@ void WebProcessPool::processForNavigationInternal(WebPageProxy& page, const API:
     if (m_automationSession)
         return completionHandler(WTFMove(sourceProcess), nullptr, "An automation session is active"_s);
 
-    if (!sourceProcess->hasCommittedAnyProvisionalLoads()) {
-        tryPrewarmWithDomainInformation(sourceProcess, targetRegistrableDomain);
-        return completionHandler(WTFMove(sourceProcess), nullptr, "Process has not yet committed any provisional loads"_s);
-    }
-
     // FIXME: We should support process swap when a window has been opened via window.open() without 'noopener'.
     // The issue is that the opener has a handle to the WindowProxy.
     if (navigation.openedByDOMWithOpener() && !m_configuration->processSwapsOnWindowOpenWithOpener())
@@ -2222,6 +2217,16 @@ void WebProcessPool::processForNavigationInternal(WebPageProxy& page, const API:
 
     if (navigation.treatAsSameOriginNavigation())
         return completionHandler(WTFMove(sourceProcess), nullptr, "The treatAsSameOriginNavigation flag is set"_s);
+
+    if (!sourceProcess->hasCommittedAnyProvisionalLoads()) {
+        if (auto process = webProcessCache().takeProcess(targetRegistrableDomain, dataStore)) {
+            RELEASE_LOG(ProcessSwapping, "(ProcessSwapping) Reusing a previously cached process with pid %i in place of pid %i that hasn't committed any provisional loads", process->processIdentifier(), sourceProcess->processIdentifier());
+            return completionHandler(process.releaseNonNull(), nullptr, "Reusing cached process in place of process that hasn't committed any loads"_s);
+        }
+
+        tryPrewarmWithDomainInformation(sourceProcess, targetRegistrableDomain);
+        return completionHandler(WTFMove(sourceProcess), nullptr, "Process has not yet committed any provisional loads"_s);
+    }
 
     URL sourceURL;
     if (page.isPageOpenedByDOMShowingInitialEmptyDocument() && !navigation.requesterOrigin().isEmpty())

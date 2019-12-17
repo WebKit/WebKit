@@ -1,3 +1,22 @@
+2019-12-17  Ben Nham  <nham@apple.com>
+
+        Navigation from empty page doesn't use cached web process
+        https://bugs.webkit.org/show_bug.cgi?id=205015
+        <rdar://problem/57703742>
+
+        Reviewed by Chris Dumez.
+
+        When navigating from an empty page to another domain foo.com, we always use the source
+        WebProcess (which is basically uninitialized) rather than using an already-initialized
+        cached WebProcess that has navigated to foo.com. The cached WebProcess should probably be
+        preferred since it has more relevant cached resources available to it (e.g. memory cache, JS
+        bytecode cache, prewarmed fonts, ...).
+
+        * TestWebKitAPI/Tests/WebKitCocoa/ProcessSwapOnNavigation.mm:
+        Verify that a load from an empty document uses the process cache. To actually force the
+        WebProcess to launch with an empty document loaded, we use the private API
+        _ensureRunningProcessForTesting.
+
 2019-12-17  Megan Gardner  <megan_gardner@apple.com>
 
         Update Check webkit style to allow for auto with pairs in c++
