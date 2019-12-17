@@ -5374,6 +5374,8 @@ bool Internals::hasSandboxMachLookupAccessToXPCServiceName(const String& process
 
     return !sandbox_check(pid, "mach-lookup", static_cast<enum sandbox_filter_type>(SANDBOX_FILTER_XPC_SERVICE_NAME | SANDBOX_CHECK_NO_REPORT), service.utf8().data());
 #else
+    UNUSED_PARAM(process);
+    UNUSED_PARAM(service);
     return false;
 #endif
 }

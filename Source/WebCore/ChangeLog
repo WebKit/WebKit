@@ -1,3 +1,13 @@
+2019-12-16  Joonghun Park  <jh718.park@samsung.com>
+
+        Unreviewed. Remove the build warnings below since r253488.
+        warning: unused parameter ‘foo’ [-Wunused-parameter]
+
+        No new tests, no behavioral changes.
+
+        * testing/Internals.cpp:
+        (WebCore::Internals::hasSandboxMachLookupAccessToXPCServiceName):
+
 2019-12-16  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         WebGLRenderingContext.texImage2D() should respect EXIF orientation
