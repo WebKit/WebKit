@@ -1,3 +1,34 @@
+2019-12-16  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        WebGLRenderingContext.texImage2D() should respect EXIF orientation
+        https://bugs.webkit.org/show_bug.cgi?id=205141
+
+        Reviewed by Simon Fraser.
+
+        The test page uses images with different EXIF orientation. The expected
+        page uses a single image with no EXIF orientation then it transforms the
+        <canvas> elements such that it matches the image in the test page.
+
+        WebGLRenderingContext uses a trick when drawing an SVG image or images 
+        with EXIF orientation to a WebGL texture. It draws the Image to an Image-
+        Buffer, creates another Image out of the ImageBuffer and then draws the
+        other Image to the WebGL texture.
+
+        But there can be small glitches between drawing an Image directly versus
+        doing the ImageBuffer trick. So the expected page will use an SVG image 
+        to ensure the same code path is used for both the test and the expected
+        pages.
+
+        This SVG image includes the jpeg image with no EXIF orientation but as a
+        data uri. Also the script has to wait after loading the SVG image till
+        the bitmap image is loaded from the data uri encoded data.
+
+        * fast/images/exif-orientation-webgl-texture-expected.html: Added.
+        * fast/images/exif-orientation-webgl-texture.html: Added.
+        * fast/images/resources/webgl-draw-image.js: Added.
+        * platform/win/TestExpectations:
+        All webgl tests are skipped on Windows.
+
 2019-12-16  Truitt Savell  <tsavell@apple.com>
 
         REGRESSION: [ Catalina wk1 ] editing/mac/input/firstrectforcharacterrange-styled.html is failing

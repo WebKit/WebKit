@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<head>
+<style>
+    div.container {
+        display: inline-block;
+        margin-right: 20px;
+        margin-bottom: 10px;
+        width: 100px;
+        vertical-align: top;
+    }
+    div.horizontal {
+        width: 102;
+        height: 52px;
+    }
+    div.vertical {
+        width: 52px;
+        height: 102px;
+    }
+    canvas {
+        border: 1px solid black;
+    }
+    canvas.horizontal {
+        width: 100px;
+        height: 50px;
+    }
+    canvas.vertical {
+        width: 50px;
+        height: 100px;
+    }
+</style>
+</head>
+<script id="vertexShaderSource" type="text/glsl">
+    attribute vec4 a_position;
+    varying vec2 v_texturePosition;
+
+    void main() {
+        v_texturePosition = vec2((a_position.x + 1.0) / 2.0, (a_position.y + 1.0) / 2.0);
+        gl_Position = a_position;
+    }
+</script>
+<script id="fragmentShaderSource" type="text/glsl">
+    precision mediump float;
+
+    varying vec2 v_texturePosition;
+
+    uniform sampler2D texture;
+
+    void main() {
+        gl_FragColor = texture2D(texture, v_texturePosition);
+    }
+</script>
+<script src="resources/webgl-draw-image.js"></script>
+<body>
+    <b>WebGLRenderingContext.texImage2D() should rotate the images respecting their EXIF orientation.</b>
+    <br>
+    <br>
+    <div class ="container">
+        <div class ="horizontal">
+            <canvas class="horizontal" id="canvas2"></canvas>
+        </div>
+        <br>Flipped horizontally
+    </div>
+    <div class ="container">
+        <div class ="horizontal">
+            <canvas class="horizontal" id="canvas3"></canvas>
+        </div>
+        <br>Rotated 180&deg;
+    </div>
+    <div class ="container">
+        <div class ="horizontal">
+            <canvas class="horizontal" id="canvas4"></canvas>
+        </div>
+        <br>Flipped vertically
+    </div>
+    <br>
+    <div class ="container">
+        <div class ="vertical">
+            <canvas class="vertical" id="canvas5"></canvas>
+        </div>
+        <br>Rotated 90&deg; CCW and flipped vertically
+    </div>
+    <div class ="container">
+        <div class ="vertical">
+            <canvas class="vertical" id="canvas6"></canvas>
+        </div>
+        <br>Rotated 90&deg; CCW
+    </div>
+    <div class ="container">
+        <div class ="vertical">
+            <canvas class="vertical" id="canvas7"></canvas>
+        </div>
+        <br>Rotated 90&deg; CW and flipped vertically
+    </div>
+    <div class ="container">
+        <div class ="vertical">
+            <canvas class="vertical" id="canvas8"></canvas>
+        </div>
+        <br>Rotated 90&deg; CW
+    </div>
+    <br>
+    <script>
+        if (window.testRunner)
+            window.testRunner.waitUntilDone();
+
+        window.onload = function() {
+            var names = [
+                { resource: "resources/exif-orientation-2-ur.jpg",  id : "canvas2" },
+                { resource: "resources/exif-orientation-3-lr.jpg",  id : "canvas3" },
+                { resource: "resources/exif-orientation-4-lol.jpg", id : "canvas4" },
+                { resource: "resources/exif-orientation-5-lu.jpg",  id : "canvas5" },
+                { resource: "resources/exif-orientation-6-ru.jpg",  id : "canvas6" },
+                { resource: "resources/exif-orientation-7-rl.jpg",  id : "canvas7" },
+                { resource: "resources/exif-orientation-8-llo.jpg", id : "canvas8" },
+            ];
+
+            var drawCount = 0;
+
+            names.forEach(function(name) {
+                var image = new Image;
+                image.src = name.resource;
+                image.decode().then(() => {
+                    let canvas = document.getElementById(name.id);
+                    canvas.width = image.width * window.devicePixelRatio;
+                    canvas.height = image.height * window.devicePixelRatio;
+                    webglDrawImage(canvas, image);
+                    if (++drawCount == names.length) {
+                        if (window.testRunner)
+                            window.testRunner.notifyDone();
+                    }
+                });
+            });
+        }
+    </script>
+</body>

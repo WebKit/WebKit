@@ -116,6 +116,7 @@ public:
     float width() const { return size().width(); }
     float height() const { return size().height(); }
     virtual Optional<IntPoint> hotSpot() const { return WTF::nullopt; }
+    virtual ImageOrientation orientation() const { return ImageOrientation::FromImage; }
 
     WEBCORE_EXPORT EncodedDataStatus setData(RefPtr<SharedBuffer>&& data, bool allDataReceived);
     virtual EncodedDataStatus dataChanged(bool /*allDataReceived*/) { return EncodedDataStatus::Unknown; }

@@ -4014,7 +4014,7 @@ ExceptionOr<void> WebGLRenderingContextBase::texSubImage2D(GC3Denum target, GC3D
         if (!imageForRender)
             return { };
 
-        if (imageForRender->isSVGImage())
+        if (imageForRender->isSVGImage() || imageForRender->orientation() != ImageOrientation::None)
             imageForRender = drawImageIntoBuffer(*imageForRender, image->width(), image->height(), 1);
 
         auto texture = validateTextureBinding("texSubImage2D", target, true);
@@ -4569,7 +4569,7 @@ ExceptionOr<void> WebGLRenderingContextBase::texImage2D(GC3Denum target, GC3Dint
         if (!imageForRender)
             return { };
 
-        if (imageForRender->isSVGImage())
+        if (imageForRender->isSVGImage() || imageForRender->orientation() != ImageOrientation::None)
             imageForRender = drawImageIntoBuffer(*imageForRender, image->width(), image->height(), 1);
 
         if (!imageForRender || !validateTexFunc("texImage2D", TexImage, SourceHTMLImageElement, target, level, internalformat, imageForRender->width(), imageForRender->height(), 0, format, type, 0, 0))
