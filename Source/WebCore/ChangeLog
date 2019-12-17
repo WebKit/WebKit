@@ -1,3 +1,22 @@
+2019-12-17  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][Painting] Add basic support for z-index based painting
+        https://bugs.webkit.org/show_bug.cgi?id=205345
+        <rdar://problem/58010942>
+
+        Reviewed by Antti Koivisto.
+
+        This is just a very simple z-index based painting to be able to run WPT where
+        z-index is heavily used to hide/reveal red/green boxes.
+
+        * layout/displaytree/DisplayPainter.cpp:
+        (WebCore::Display::absoluteDisplayBox):
+        (WebCore::Display::isPaintRootCandidate):
+        (WebCore::Display::paintSubtree):
+        (WebCore::Display::collectPaintRootsAndContentRect):
+        (WebCore::Display::Painter::paint):
+        (WebCore::Display::paintBoxDecorationAndChildren): Deleted.
+
 2019-12-17  youenn fablet  <youenn@apple.com>
 
         Update session category in MockAudioSharedUnit as done in CoreAudioSharedUnit

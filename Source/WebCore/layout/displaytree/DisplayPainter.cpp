@@ -146,6 +146,8 @@ static Box absoluteDisplayBox(const Layout::LayoutState& layoutState, const Layo
     // Should never really happen but table code is way too incomplete.
     if (!layoutState.hasDisplayBox(layoutBox))
         return { };
+    if (layoutBox.isInitialContainingBlock())
+        return layoutState.displayBoxForLayoutBox(layoutBox);
 
     auto absoluteBox = Box { layoutState.displayBoxForLayoutBox(layoutBox) };
     for (auto* container = layoutBox.containingBlock(); container != &layoutBox.initialContainingBlock(); container = container->containingBlock())
@@ -153,50 +155,132 @@ static Box absoluteDisplayBox(const Layout::LayoutState& layoutState, const Layo
     return absoluteBox;
 }
 
-static void paintBoxDecorationAndChildren(GraphicsContext& context, const Layout::LayoutState& layoutState, const Layout::Box& layoutBox, const IntRect& dirtyRect)
+static bool isPaintRootCandidate(const Layout::Box& layoutBox)
 {
-    if (!layoutBox.isAnonymous()) {
+    return layoutBox.isPositioned();
+}
+
+using LayoutBoxList = Vector<const Layout::Box*>;
+
+enum PaintPhase { Decoration, Content };
+static void paintSubtree(GraphicsContext& context, const Layout::LayoutState& layoutState, const Layout::Box& paintRootBox, const IntRect& dirtyRect, PaintPhase paintPhase)
+{
+    auto paint = [&] (auto& layoutBox) {
+        if (layoutBox.style().visibility() != Visibility::Visible)
+            return;
         auto absoluteDisplayBox = Display::absoluteDisplayBox(layoutState, layoutBox);
-        if (dirtyRect.intersects(snappedIntRect(absoluteDisplayBox.rect())))
+        if (!dirtyRect.intersects(snappedIntRect(absoluteDisplayBox.rect())))
+            return;
+
+        if (paintPhase == PaintPhase::Decoration) {
+            if (layoutBox.isAnonymous())
+                return;
             paintBoxDecoration(context, absoluteDisplayBox, layoutBox.style(), layoutBox.isBodyBox());
+            return;
+        }
+        // Only inline content for now.
+        if (layoutBox.establishesInlineFormattingContext()) {
+            auto& container = downcast<Layout::Container>(layoutBox);
+            paintInlineContent(context, absoluteDisplayBox.topLeft(), downcast<Layout::InlineFormattingState>(layoutState.establishedFormattingState(container)));
+        }
+    };
+
+    paint(paintRootBox);
+    if (!is<Layout::Container>(paintRootBox) || !downcast<Layout::Container>(paintRootBox).hasChild())
+        return;
+
+    LayoutBoxList layoutBoxList;
+    layoutBoxList.append(downcast<Layout::Container>(paintRootBox).firstChild());
+    while (!layoutBoxList.isEmpty()) {
+        while (true) {
+            auto& layoutBox = *layoutBoxList.last();
+            if (isPaintRootCandidate(layoutBox))
+                break;
+            paint(layoutBox);
+            if (!is<Layout::Container>(layoutBox) || !downcast<Layout::Container>(layoutBox).hasChild())
+                break;
+            layoutBoxList.append(downcast<Layout::Container>(layoutBox).firstChild());
+        }
+        while (!layoutBoxList.isEmpty()) {
+            auto& layoutBox = *layoutBoxList.takeLast();
+            // Stay within.
+            if (&layoutBox == &paintRootBox)
+                return;
+            if (auto* nextSibling = layoutBox.nextSibling()) {
+                layoutBoxList.append(nextSibling);
+                break;
+            }
+        }
+    }
+}
+
+static LayoutRect collectPaintRootsAndContentRect(const Layout::LayoutState& layoutState, const Layout::Box& rootLayoutBox, LayoutBoxList& positiveZOrderList, LayoutBoxList& negativeZOrderList)
+{
+    auto appendPaintRoot = [&] (const auto& layoutBox) {
+        if (layoutBox.style().usedZIndex() < 0) {
+            negativeZOrderList.append(&layoutBox);
+            return;
+        }
+        positiveZOrderList.append(&layoutBox);
+    };
+
+    auto contentRect = LayoutRect { layoutState.displayBoxForLayoutBox(rootLayoutBox).rect() };
+
+    // Initial BFC is always a paint root.
+    appendPaintRoot(rootLayoutBox);
+    LayoutBoxList layoutBoxList;
+    layoutBoxList.append(&rootLayoutBox);
+    while (!layoutBoxList.isEmpty()) {
+        while (true) {
+            auto& layoutBox = *layoutBoxList.last();
+            if (layoutBox.style().visibility() != Visibility::Visible)
+                break;
+            if (isPaintRootCandidate(layoutBox))
+                appendPaintRoot(layoutBox);
+            contentRect.uniteIfNonZero(Display::absoluteDisplayBox(layoutState, layoutBox).rect());
+            if (!is<Layout::Container>(layoutBox) || !downcast<Layout::Container>(layoutBox).hasChild())
+                break;
+            layoutBoxList.append(downcast<Layout::Container>(layoutBox).firstChild());
+        }
+        while (!layoutBoxList.isEmpty()) {
+            auto& layoutBox = *layoutBoxList.takeLast();
+            if (auto* nextSibling = layoutBox.nextSibling()) {
+                layoutBoxList.append(nextSibling);
+                break;
+            }
+        }
     }
 
-    if (!is<Layout::Container>(layoutBox))
-        return;
-    for (auto& childLayoutBox : Layout::childrenOfType<Layout::Box>(downcast<Layout::Container>(layoutBox))) {
-        if (childLayoutBox.style().visibility() != Visibility::Visible)
-            continue;
-        paintBoxDecorationAndChildren(context, layoutState, childLayoutBox, dirtyRect);
-    }
+    auto compareZIndex = [] (const Layout::Box* a, const Layout::Box* b) {
+        return a->style().usedZIndex() < b->style().usedZIndex();
+    };
+
+    std::stable_sort(positiveZOrderList.begin(), positiveZOrderList.end(), compareZIndex);
+    std::stable_sort(negativeZOrderList.begin(), negativeZOrderList.end(), compareZIndex);
+    return contentRect;
 }
 
 void Painter::paint(const Layout::LayoutState& layoutState, GraphicsContext& context, const IntRect& dirtyRect)
 {
-    auto& layoutRoot = layoutState.root();
-    if (!layoutRoot.firstChild())
+    auto& rootLayoutBox = layoutState.root();
+    if (!rootLayoutBox.firstChild())
         return;
+
+    Vector<const Layout::Box*> negativeZOrderList;
+    Vector<const Layout::Box*> positiveZOrderList;
+    auto contentRect = collectPaintRootsAndContentRect(layoutState, rootLayoutBox, positiveZOrderList, negativeZOrderList);
+
     // Fill the entire content area.
-    auto rootRect = LayoutRect { layoutState.displayBoxForLayoutBox(layoutRoot).rect() };
-    for (auto& layoutBox : Layout::descendantsOfType<Layout::Box>(layoutRoot))
-        rootRect.uniteIfNonZero(Display::absoluteDisplayBox(layoutState, layoutBox).rect());
-    context.fillRect(rootRect, Color::white);
+    context.fillRect(contentRect, Color::white);
 
-    // 1. Paint box decoration (both block and inline).
-    paintBoxDecorationAndChildren(context, layoutState, *layoutRoot.firstChild(), dirtyRect);
+    for (auto& paintRootBox : negativeZOrderList) {
+        paintSubtree(context, layoutState, *paintRootBox, dirtyRect, PaintPhase::Decoration);
+        paintSubtree(context, layoutState, *paintRootBox, dirtyRect, PaintPhase::Content);
+    }
 
-    // 2. Paint content
-    for (auto& layoutBox : Layout::descendantsOfType<Layout::Box>(layoutRoot)) {
-        auto absoluteDisplayBox = Display::absoluteDisplayBox(layoutState, layoutBox);
-        // FIXME: This is the best we can do with no layout overflow support.
-        if (!dirtyRect.intersects(snappedIntRect(absoluteDisplayBox.rect())))
-            continue;
-        if (layoutBox.style().visibility() != Visibility::Visible)
-            continue;
-        if (layoutBox.establishesInlineFormattingContext()) {
-            auto& container = downcast<Layout::Container>(layoutBox);
-            paintInlineContent(context, absoluteDisplayBox.topLeft(), downcast<Layout::InlineFormattingState>(layoutState.establishedFormattingState(container)));
-            continue;
-        }
+    for (auto& paintRootBox : positiveZOrderList) {
+        paintSubtree(context, layoutState, *paintRootBox, dirtyRect, PaintPhase::Decoration);
+        paintSubtree(context, layoutState, *paintRootBox, dirtyRect, PaintPhase::Content);
     }
 }
 
