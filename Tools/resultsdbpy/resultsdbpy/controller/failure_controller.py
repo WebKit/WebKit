@@ -29,7 +29,7 @@ from resultsdbpy.flask_support.util import AssertRequest, query_as_kwargs, limit
 
 
 class FailureController(HasCommitContext):
-    DEFAULT_LIMIT = 5000
+    DEFAULT_LIMIT = 1000
 
     def __init__(self, failure_context):
         super(FailureController, self).__init__(failure_context.commit_context)

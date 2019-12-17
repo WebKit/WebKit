@@ -1,5 +1,24 @@
 2019-12-16  Jonathan Bedard  <jbedard@apple.com>
 
+        results.webkit.org: Make default limit 1000
+        https://bugs.webkit.org/show_bug.cgi?id=205305
+
+        Reviewed by Stephanie Lewis.
+
+        We have ~200 commits a week in WebKit, since we don't quite report
+        results for every commit, a limit of 1000 translates to about a 1.5 months
+        of data. Any more than this and the network request for results becomes
+        noticeably slow.
+
+        * resultsdbpy/resultsdbpy/controller/failure_controller.py:
+        (FailureController): Change default limit from 5000 to 1000.
+        * resultsdbpy/resultsdbpy/controller/suite_controller.py:
+        (SuiteController): Change default limit from 5000 to 1000.
+        * resultsdbpy/resultsdbpy/controller/test_controller.py:
+        (TestController): Change default limit from 5000 to 1000.
+
+2019-12-16  Jonathan Bedard  <jbedard@apple.com>
+
         python3: wpt exporter should parse a patch as bytes
         https://bugs.webkit.org/show_bug.cgi?id=205243
 
