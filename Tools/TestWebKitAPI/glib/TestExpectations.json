@@ -43,6 +43,9 @@
         "subtests": {
             "/webkit/WebKitWebView/install-missing-plugins-permission-request": {
                 "expected": {"gtk": {"status": ["TIMEOUT"], "bug": "webkit.org/b/147822"}}
+            },
+            "/webkit/WebKitWebExtension/form-submission-steps": {
+                "expected": {"gtk": {"status": ["TIMEOUT"], "bug": "webkit.org/b/205333"}}
             }
         }
     },

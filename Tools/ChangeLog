@@ -1,5 +1,11 @@
 2019-12-17  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        Unreviewed GTK gardening. Mark /webkit/WebKitWebExtension/form-submission-steps as timeout
+
+        * TestWebKitAPI/glib/TestExpectations.json:
+
+2019-12-17  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         Unreviewed GTK gardening. Fix test /webkit/WebKitPrintOperation/close-after-print
 
         Use webkit_web_view_new_with_related_view() instead of webkit_web_view_new_with_context() since it's expected
