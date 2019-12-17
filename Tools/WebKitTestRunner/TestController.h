@@ -409,6 +409,8 @@ private:
     void networkProcessDidCrash();
     static void serviceWorkerProcessDidCrash(WKContextRef, const void*);
     void serviceWorkerProcessDidCrash();
+    static void gpuProcessDidCrash(WKContextRef, const void*);
+    void gpuProcessDidCrash();
 
     // WKPageNavigationClient
     static void didCommitNavigation(WKPageRef, WKNavigationRef, WKTypeRef userData, const void*);

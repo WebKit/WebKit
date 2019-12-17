@@ -46,6 +46,7 @@ public:
     void plugInAutoStartOriginHashesChanged(WebProcessPool*);
     void networkProcessDidCrash(WebProcessPool*);
     void serviceWorkerProcessDidCrash(WebProcessPool*);
+    void gpuProcessDidCrash(WebProcessPool*);
 };
 
 } // namespace WebKit

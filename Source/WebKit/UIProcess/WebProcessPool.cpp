@@ -712,6 +712,12 @@ void WebProcessPool::getNetworkProcessConnection(WebProcessProxy& webProcessProx
 }
 
 #if ENABLE(GPU_PROCESS)
+void WebProcessPool::gpuProcessCrashed()
+{
+    m_client.gpuProcessDidCrash(this);
+    terminateAllWebContentProcesses();
+}
+
 void WebProcessPool::getGPUProcessConnection(WebProcessProxy& webProcessProxy, Messages::WebProcessProxy::GetGPUProcessConnection::DelayedReply&& reply)
 {
     GPUProcessProxy::singleton().getGPUProcessConnection(webProcessProxy, WTFMove(reply));

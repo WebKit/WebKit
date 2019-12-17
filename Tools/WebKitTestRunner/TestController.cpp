@@ -581,7 +581,8 @@ WKRetainPtr<WKPageConfigurationRef> TestController::generatePageConfiguration(co
         networkProcessDidCrash,
         0, // plugInInformationBecameAvailable
         0, // copyWebCryptoMasterKey
-        serviceWorkerProcessDidCrash
+        serviceWorkerProcessDidCrash,
+        gpuProcessDidCrash
     };
     WKContextSetClient(m_context.get(), &contextClient.base);
 
@@ -1832,6 +1833,11 @@ void TestController::serviceWorkerProcessDidCrash(WKContextRef context, const vo
     static_cast<TestController*>(const_cast<void*>(clientInfo))->serviceWorkerProcessDidCrash();
 }
 
+void TestController::gpuProcessDidCrash(WKContextRef context, const void *clientInfo)
+{
+    static_cast<TestController*>(const_cast<void*>(clientInfo))->gpuProcessDidCrash();
+}
+
 void TestController::didReceiveKeyDownMessageFromInjectedBundle(WKDictionaryRef messageBodyDictionary, bool synchronous)
 {
     WKRetainPtr<WKStringRef> keyKey = adoptWK(WKStringCreateWithUTF8CString("Key"));
@@ -2194,6 +2200,13 @@ void TestController::networkProcessDidCrash()
 void TestController::serviceWorkerProcessDidCrash()
 {
     fprintf(stderr, "#CRASHED - ServiceWorkerProcess\n");
+    if (m_shouldExitWhenWebProcessCrashes)
+        exit(1);
+}
+
+void TestController::gpuProcessDidCrash()
+{
+    fprintf(stderr, "#CRASHED - GPUProcess\n");
     if (m_shouldExitWhenWebProcessCrashes)
         exit(1);
 }

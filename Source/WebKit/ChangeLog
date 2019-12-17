@@ -1,3 +1,23 @@
+2019-12-17  youenn fablet  <youenn@apple.com>
+
+        WebKitTestRunner should report GPU process crashes
+        https://bugs.webkit.org/show_bug.cgi?id=205338
+
+        Reviewed by Tim Horton.
+
+        Expose a callback to notify of GPU process crash.
+        No change of behavior.
+
+        * UIProcess/API/C/WKContext.h:
+        * UIProcess/GPU/GPUProcessProxy.cpp:
+        (WebKit::GPUProcessProxy::gpuProcessCrashed):
+        * UIProcess/WebContextClient.cpp:
+        (WebKit::WebContextClient::gpuProcessDidCrash):
+        * UIProcess/WebContextClient.h:
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::gpuProcessCrashed):
+        * UIProcess/WebProcessPool.h:
+
 2019-12-17  Tim Horton  <timothy_horton@apple.com>
 
         macCatalyst: Cursor should update on mouse movement and style change

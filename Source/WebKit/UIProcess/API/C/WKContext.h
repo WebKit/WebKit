@@ -104,6 +104,7 @@ typedef struct WKContextClientV3 {
 
     // Version2.
     WKContextChildProcessDidCrashCallback                               serviceWorkerProcessDidCrash;
+    WKContextChildProcessDidCrashCallback                               gpuProcessDidCrash;
 } WKContextClientV3;
 
 // FIXME: Remove these once support for Mavericks has been dropped.

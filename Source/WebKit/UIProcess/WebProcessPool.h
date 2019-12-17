@@ -384,7 +384,7 @@ public:
     void setPlugInAutoStartOriginsFilteringOutEntriesAddedAfterTime(API::Dictionary&, WallTime);
 
 #if ENABLE(GPU_PROCESS)
-    GPUProcessProxy& ensureGPUProcess();
+    void gpuProcessCrashed();
     void getGPUProcessConnection(WebProcessProxy&, Messages::WebProcessProxy::GetGPUProcessConnectionDelayedReply&&);
 #endif
 
