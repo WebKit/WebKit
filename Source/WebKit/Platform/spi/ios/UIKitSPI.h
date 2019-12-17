@@ -1106,6 +1106,10 @@ typedef NS_OPTIONS(NSInteger, UIWKDocumentRequestFlags) {
 @property (nonatomic, readonly) NSInteger _gsModifierFlags;
 @end
 
+@interface UIWebGeolocationPolicyDecider (Staging_25963823)
+- (void)decidePolicyForGeolocationRequestFromOrigin:(id)securityOrigin requestingURL:(NSURL *)requestingURL view:(UIView *)view listener:(id)listener;
+@end
+
 @interface UIColor (IPI)
 + (UIColor *)insertionPointColor;
 @end
