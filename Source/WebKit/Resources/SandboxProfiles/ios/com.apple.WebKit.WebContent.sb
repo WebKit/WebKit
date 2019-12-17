@@ -968,7 +968,7 @@
 (allow mach-lookup
     (require-all
         (extension "com.apple.webkit.extension.mach")
-        (global-name "com.apple.iphone.axserver-systemwide" "com.apple.tccd" "com.apple.nehelper" "com.apple.nesessionmanager.content-filter" "com.apple.uikit.viewservice.com.apple.WebContentFilter.remoteUI")))
+        (global-name "com.apple.iphone.axserver-systemwide" "com.apple.tccd" "com.apple.nehelper" "com.apple.nesessionmanager.content-filter" "com.apple.uikit.viewservice.com.apple.WebContentFilter.remoteUI" "com.apple.diagnosticd")))
 
 (allow mach-lookup
     (require-all

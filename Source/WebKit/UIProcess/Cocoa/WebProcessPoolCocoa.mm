@@ -70,6 +70,7 @@
 
 #if PLATFORM(IOS)
 #import <pal/spi/cocoa/WebFilterEvaluatorSPI.h>
+#import <pal/spi/ios/MobileGestaltSPI.h>
 #import <sys/utsname.h>
 
 SOFT_LINK_PRIVATE_FRAMEWORK(WebContentAnalysis);
@@ -199,6 +200,12 @@ static bool deviceHasAGXCompilerService()
         });
     return deviceHasAGXCompilerService;
 }
+
+static bool isInternalInstall()
+{
+    static bool isInternal = MGGetBoolAnswer(kMGQAppleInternalInstallCapability);
+    return isInternal;
+}
 #endif
 
 void WebProcessPool::platformInitializeWebProcess(const WebProcessProxy& process, WebProcessCreationParameters& parameters)
@@ -304,6 +311,12 @@ void WebProcessPool::platformInitializeWebProcess(const WebProcessProxy& process
         SandboxExtension::Handle compilerServiceExtensionHandle;
         SandboxExtension::createHandleForMachLookup("com.apple.AGXCompilerService", WTF::nullopt, compilerServiceExtensionHandle);
         parameters.compilerServiceExtensionHandle = WTFMove(compilerServiceExtensionHandle);
+    }
+    
+    if (isInternalInstall()) {
+        SandboxExtension::Handle diagnosticsExtensionHandle;
+        SandboxExtension::createHandleForMachLookup("com.apple.diagnosticd", WTF::nullopt, diagnosticsExtensionHandle);
+        parameters.diagnosticsExtensionHandle = WTFMove(diagnosticsExtensionHandle);
     }
 #endif
     

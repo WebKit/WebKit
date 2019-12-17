@@ -1,3 +1,23 @@
+2019-12-16  Per Arne Vollan  <pvollan@apple.com>
+
+        [iOS] Issue mach lookup extension to diagnostics daemon
+        https://bugs.webkit.org/show_bug.cgi?id=205292
+
+        Reviewed by Brent Fulgham.
+
+        For internal installs, issue a mach lookup extension to the diagnostics daemon.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+        * Shared/WebProcessCreationParameters.cpp:
+        (WebKit::WebProcessCreationParameters::encode const):
+        (WebKit::WebProcessCreationParameters::decode):
+        * Shared/WebProcessCreationParameters.h:
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::isInternalInstall):
+        (WebKit::WebProcessPool::platformInitializeWebProcess):
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::platformInitializeWebProcess):
+
 2019-12-16  Daniel Bates  <dabates@apple.com>
 
         Reproducible case of backwards nextParagraph returning a position ahead of the input position

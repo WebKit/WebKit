@@ -231,6 +231,9 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
     if (parameters.compilerServiceExtensionHandle)
         SandboxExtension::consumePermanently(*parameters.compilerServiceExtensionHandle);
 
+    if (parameters.diagnosticsExtensionHandle)
+        SandboxExtension::consumePermanently(*parameters.diagnosticsExtensionHandle);
+
     if (parameters.contentFilterExtensionHandle)
         SandboxExtension::consumePermanently(*parameters.contentFilterExtensionHandle);
     ParentalControlsContentFilter::setHasConsumedSandboxExtension(parameters.contentFilterExtensionHandle.hasValue());
