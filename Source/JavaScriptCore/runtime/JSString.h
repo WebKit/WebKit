@@ -591,13 +591,11 @@ private:
     template<typename Function> const String& resolveRopeWithFunction(JSGlobalObject* nullOrGlobalObjectForOOM, Function&&) const;
     JS_EXPORT_PRIVATE AtomString resolveRopeToAtomString(JSGlobalObject*) const;
     JS_EXPORT_PRIVATE RefPtr<AtomStringImpl> resolveRopeToExistingAtomString(JSGlobalObject*) const;
-    void resolveRopeSlowCase8(LChar*) const;
-    void resolveRopeSlowCase(UChar*) const;
+    template<typename CharacterType> NEVER_INLINE void resolveRopeSlowCase(CharacterType*) const;
+    template<typename CharacterType> void resolveRopeInternalNoSubstring(CharacterType*) const;
     void outOfMemory(JSGlobalObject* nullOrGlobalObjectForOOM) const;
     void resolveRopeInternal8(LChar*) const;
-    void resolveRopeInternal8NoSubstring(LChar*) const;
     void resolveRopeInternal16(UChar*) const;
-    void resolveRopeInternal16NoSubstring(UChar*) const;
     StringView unsafeView(JSGlobalObject*) const;
     StringViewWithUnderlyingString viewWithUnderlyingString(JSGlobalObject*) const;
 

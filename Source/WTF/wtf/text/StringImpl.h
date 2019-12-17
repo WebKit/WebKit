@@ -370,8 +370,7 @@ public:
     ALWAYS_INLINE static StringImpl* empty() { return reinterpret_cast<StringImpl*>(&s_emptyAtomString); }
 
     // FIXME: Does this really belong in StringImpl?
-    template<typename CharacterType> static void copyCharacters(CharacterType* destination, const CharacterType* source, unsigned numCharacters);
-    static void copyCharacters(UChar* destination, const LChar* source, unsigned numCharacters);
+    template<typename SourceCharacterType, typename DestinationCharacterType> static void copyCharacters(DestinationCharacterType* destination, const SourceCharacterType* source, unsigned numCharacters);
 
     // Some string features, like reference counting and the atomicity flag, are not
     // thread-safe. We achieve thread safety by isolation, giving each thread
@@ -1074,19 +1073,23 @@ inline void StringImpl::deref()
     m_refCount = tempRefCount;
 }
 
-template<typename CharacterType> inline void StringImpl::copyCharacters(CharacterType* destination, const CharacterType* source, unsigned numCharacters)
+template<typename SourceCharacterType, typename DestinationCharacterType>
+inline void StringImpl::copyCharacters(DestinationCharacterType* destination, const SourceCharacterType* source, unsigned numCharacters)
 {
-    if (numCharacters == 1) {
-        *destination = *source;
-        return;
+    static_assert(std::is_same<SourceCharacterType, LChar>::value || std::is_same<SourceCharacterType, UChar>::value);
+    static_assert(std::is_same<DestinationCharacterType, LChar>::value || std::is_same<DestinationCharacterType, UChar>::value);
+    if constexpr (std::is_same<SourceCharacterType, DestinationCharacterType>::value) {
+        if (numCharacters == 1) {
+            *destination = *source;
+            return;
+        }
+        memcpy(destination, source, numCharacters * sizeof(DestinationCharacterType));
+    } else {
+        // FIXME: We should ensure that UChar -> LChar copying happens when UChar only contains Latin-1.
+        // https://bugs.webkit.org/show_bug.cgi?id=205355
+        for (unsigned i = 0; i < numCharacters; ++i)
+            destination[i] = source[i];
     }
-    memcpy(destination, source, numCharacters * sizeof(CharacterType));
-}
-
-ALWAYS_INLINE void StringImpl::copyCharacters(UChar* destination, const LChar* source, unsigned numCharacters)
-{
-    for (unsigned i = 0; i < numCharacters; ++i)
-        destination[i] = source[i];
 }
 
 inline UChar StringImpl::at(unsigned i) const

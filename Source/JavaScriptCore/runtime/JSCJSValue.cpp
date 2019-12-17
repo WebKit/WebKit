@@ -274,6 +274,11 @@ void JSValue::dumpInContextAssumingStructure(
                     out.print(" (symbol)");
             } else
                 out.print(" (unresolved)");
+            if (string->is8Bit())
+                out.print(",8Bit:(1)");
+            else
+                out.print(",8Bit:(0)");
+            out.print(",length:(", string->length(), ")");
             out.print(": ", impl);
         } else if (structure->classInfo()->isSubClassOf(RegExp::info()))
             out.print("RegExp: ", *jsCast<RegExp*>(asCell()));

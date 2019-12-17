@@ -153,26 +153,7 @@ void JSRopeString::resolveRopeInternal8(LChar* buffer) const
         return;
     }
     
-    resolveRopeInternal8NoSubstring(buffer);
-}
-
-void JSRopeString::resolveRopeInternal8NoSubstring(LChar* buffer) const
-{
-    for (size_t i = 0; i < s_maxInternalRopeLength && fiber(i); ++i) {
-        if (fiber(i)->isRope()) {
-            resolveRopeSlowCase8(buffer);
-            return;
-        }
-    }
-
-    LChar* position = buffer;
-    for (size_t i = 0; i < s_maxInternalRopeLength && fiber(i); ++i) {
-        const StringImpl& fiberString = *fiber(i)->valueInternal().impl();
-        unsigned length = fiberString.length();
-        StringImpl::copyCharacters(position, fiberString.characters8(), length);
-        position += length;
-    }
-    ASSERT((buffer + length()) == position);
+    resolveRopeInternalNoSubstring(buffer);
 }
 
 void JSRopeString::resolveRopeInternal16(UChar* buffer) const
@@ -183,10 +164,11 @@ void JSRopeString::resolveRopeInternal16(UChar* buffer) const
         return;
     }
     
-    resolveRopeInternal16NoSubstring(buffer);
+    resolveRopeInternalNoSubstring(buffer);
 }
 
-void JSRopeString::resolveRopeInternal16NoSubstring(UChar* buffer) const
+template<typename CharacterType>
+void JSRopeString::resolveRopeInternalNoSubstring(CharacterType* buffer) const
 {
     for (size_t i = 0; i < s_maxInternalRopeLength && fiber(i); ++i) {
         if (fiber(i)->isRope()) {
@@ -195,7 +177,7 @@ void JSRopeString::resolveRopeInternal16NoSubstring(UChar* buffer) const
         }
     }
 
-    UChar* position = buffer;
+    CharacterType* position = buffer;
     for (size_t i = 0; i < s_maxInternalRopeLength && fiber(i); ++i) {
         const StringImpl& fiberString = *fiber(i)->valueInternal().impl();
         unsigned length = fiberString.length();
@@ -306,7 +288,7 @@ const String& JSRopeString::resolveRopeWithFunction(JSGlobalObject* nullOrGlobal
         }
         vm.heap.reportExtraMemoryAllocated(newImpl->cost());
 
-        resolveRopeInternal8NoSubstring(buffer);
+        resolveRopeInternalNoSubstring(buffer);
         convertToNonRope(function(newImpl.releaseNonNull()));
         return valueInternal();
     }
@@ -319,7 +301,7 @@ const String& JSRopeString::resolveRopeWithFunction(JSGlobalObject* nullOrGlobal
     }
     vm.heap.reportExtraMemoryAllocated(newImpl->cost());
     
-    resolveRopeInternal16NoSubstring(buffer);
+    resolveRopeInternalNoSubstring(buffer);
     convertToNonRope(function(newImpl.releaseNonNull()));
     return valueInternal();
 }
@@ -341,45 +323,10 @@ const String& JSRopeString::resolveRope(JSGlobalObject* nullOrGlobalObjectForOOM
 // Vector before performing any concatenation, but by working backwards we likely
 // only fill the queue with the number of substrings at any given level in a
 // rope-of-ropes.)
-void JSRopeString::resolveRopeSlowCase8(LChar* buffer) const
+template<typename CharacterType>
+void JSRopeString::resolveRopeSlowCase(CharacterType* buffer) const
 {
-    LChar* position = buffer + length(); // We will be working backwards over the rope.
-    Vector<JSString*, 32, UnsafeVectorOverflow> workQueue; // Putting strings into a Vector is only OK because there are no GC points in this method.
-    
-    for (size_t i = 0; i < s_maxInternalRopeLength && fiber(i); ++i)
-        workQueue.append(fiber(i));
-
-    while (!workQueue.isEmpty()) {
-        JSString* currentFiber = workQueue.last();
-        workQueue.removeLast();
-
-        const LChar* characters;
-        
-        if (currentFiber->isRope()) {
-            JSRopeString* currentFiberAsRope = static_cast<JSRopeString*>(currentFiber);
-            if (!currentFiberAsRope->isSubstring()) {
-                for (size_t i = 0; i < s_maxInternalRopeLength && currentFiberAsRope->fiber(i); ++i)
-                    workQueue.append(currentFiberAsRope->fiber(i));
-                continue;
-            }
-            ASSERT(!currentFiberAsRope->substringBase()->isRope());
-            characters =
-                currentFiberAsRope->substringBase()->valueInternal().characters8() +
-                currentFiberAsRope->substringOffset();
-        } else
-            characters = currentFiber->valueInternal().characters8();
-        
-        unsigned length = currentFiber->length();
-        position -= length;
-        StringImpl::copyCharacters(position, characters, length);
-    }
-
-    ASSERT(buffer == position);
-}
-
-void JSRopeString::resolveRopeSlowCase(UChar* buffer) const
-{
-    UChar* position = buffer + length(); // We will be working backwards over the rope.
+    CharacterType* position = buffer + length(); // We will be working backwards over the rope.
     Vector<JSString*, 32, UnsafeVectorOverflow> workQueue; // These strings are kept alive by the parent rope, so using a Vector is OK.
 
     for (size_t i = 0; i < s_maxInternalRopeLength && fiber(i); ++i)
