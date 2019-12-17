@@ -1,3 +1,9 @@
+2019-12-17  ChangSeok Oh  <changseok@webkit.org>
+
+        Unreviewed build fix for USE_ANGLE_WEBGL after r252994
+
+        * CMakeLists.txt: Add a missing directory separator.
+
 2019-12-13  Dean Jackson  <dino@apple.com>
 
         MacCatalyst build of libANGLE is installed in the incorrect location
