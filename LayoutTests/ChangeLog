@@ -1,5 +1,14 @@
 2019-12-16  Truitt Savell  <tsavell@apple.com>
 
+        REGRESSION: [iOS] accessibility/smart-invert-reference.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=205308
+
+        Unreviewed test gardening.
+
+        * platform/ios/TestExpectations:
+
+2019-12-16  Truitt Savell  <tsavell@apple.com>
+
         REGRESSION (r253312): imported/w3c/web-platform-tests/content-security-policy/reporting/report-same-origin-with-cookies.html is super flaky
         https://bugs.webkit.org/show_bug.cgi?id=205216
 
