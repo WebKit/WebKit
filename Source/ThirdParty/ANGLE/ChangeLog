@@ -1,3 +1,7 @@
+2019-12-16  Alan Coon  <alancoon@apple.com>
+
+        Revert r253499. rdar://problem/57990824
+
 2019-12-13  Dean Jackson  <dino@apple.com>
 
         MacCatalyst build of libANGLE is installed in the incorrect location

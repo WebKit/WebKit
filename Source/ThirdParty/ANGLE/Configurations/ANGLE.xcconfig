@@ -1,7 +1,7 @@
 #include "Version.xcconfig"
 #include "WebKitTargetConditionals.xcconfig"
 
-PRODUCT_NAME = ANGLE-shared;
+PRODUCT_NAME = ANGLE;
 
 EXECUTABLE_PREFIX = lib;
 
