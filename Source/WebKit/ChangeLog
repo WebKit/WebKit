@@ -1,3 +1,13 @@
+2019-12-17  David Kilzer  <ddkilzer@apple.com>
+
+        Remove SafeBrowsingResult
+        <https://webkit.org/b/205296>
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/Cocoa/SafeBrowsingResultCocoa.mm: Remove.
+        * UIProcess/SafeBrowsingResult.h: Remove.
+
 2019-12-17  youenn fablet  <youenn@apple.com>
 
         WebKitTestRunner should report GPU process crashes
