@@ -1,5 +1,24 @@
 2019-12-18  Antoine Quint  <graouts@apple.com>
 
+        REGRESSION: animations/leak-document-with-css-animation.html is very flaky
+        https://bugs.webkit.org/show_bug.cgi?id=205299
+
+        While this test has proven to be solid running in isolation, it appears that the difference of live documents
+        before and after the iframe has been destroyed may be more than one. In fact, in reported failures, there always
+        seems to be 2 live documents fewer after than before, instead of the expected single document.
+
+        Since internals.numberOfLiveDocuments() returns the number of live documents throughout the life of the
+        Web process, we now force garbage collection every time we query internals.numberOfLiveDocuments(). This
+        should ensure that documents pending destruction due to garbage collection to be destroyed before we take
+        a snapshort of the number of live documents.
+
+        Reviewed by Antti Koivisto.
+
+        * TestExpectations:
+        * animations/leak-document-with-css-animation.html:
+
+2019-12-18  Antoine Quint  <graouts@apple.com>
+
         [macOS/iOS Debug] Layout Test webanimations/animation-opacity-animation-crash.html is a flaky failure
         https://bugs.webkit.org/show_bug.cgi?id=181612
 

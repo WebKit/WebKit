@@ -22,18 +22,21 @@ function runTest() {
         if (frame.src === 'about:blank')
             return true;
 
-        numberOfLiveDocumentsAfterIframeLoaded = internals.numberOfLiveDocuments();
-        debug("The iframe has finished loading.");
-
-        frame.remove();
-        frame = null;
-
         gc();
         setTimeout(function () {
-            debug("The iframe has been destroyed.");
-            shouldBe("internals.numberOfLiveDocuments()", "numberOfLiveDocumentsAfterIframeLoaded - 1");
-            debug("");
-            finishJSTest();
+            numberOfLiveDocumentsAfterIframeLoaded = internals.numberOfLiveDocuments();
+            debug("The iframe has finished loading.");
+
+            frame.remove();
+            frame = null;
+
+            gc();
+            setTimeout(function () {
+                debug("The iframe has been destroyed.");
+                shouldBe("internals.numberOfLiveDocuments()", "numberOfLiveDocumentsAfterIframeLoaded - 1");
+                debug("");
+                finishJSTest();
+            });
         });
     }
 
