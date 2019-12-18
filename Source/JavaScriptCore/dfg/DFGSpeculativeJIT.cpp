@@ -7918,6 +7918,7 @@ void SpeculativeJIT::compileSpread(Node* node)
 
         m_jit.loadPtr(MacroAssembler::Address(argument, JSObject::butterflyOffset()), lengthGPR);
         m_jit.load32(MacroAssembler::Address(lengthGPR, Butterfly::offsetOfPublicLength()), lengthGPR);
+        slowPath.append(m_jit.branch32(MacroAssembler::Above, lengthGPR, TrustedImm32(MAX_STORAGE_VECTOR_LENGTH)));
         static_assert(sizeof(JSValue) == 8 && 1 << 3 == 8, "This is strongly assumed in the code below.");
         m_jit.move(lengthGPR, scratch1GPR);
         m_jit.lshift32(TrustedImm32(3), scratch1GPR);
@@ -7963,12 +7964,10 @@ void SpeculativeJIT::compileSpread(Node* node)
             done.append(m_jit.jump());
         }
         
-        m_jit.mutatorFence(vm());
-
-        slowPath.link(&m_jit);
-        addSlowPathGenerator(slowPathCall(m_jit.jump(), this, operationSpreadFastArray, resultGPR, TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(node->origin.semantic)), argument));
+        addSlowPathGenerator(slowPathCall(slowPath, this, operationSpreadFastArray, resultGPR, TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(node->origin.semantic)), argument));
 
         done.link(&m_jit);
+        m_jit.mutatorFence(vm());
         cellResult(resultGPR, node);
 #else
         flushRegisters();

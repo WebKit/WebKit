@@ -47,16 +47,16 @@ public:
         return Structure::create(vm, globalObject, prototype, TypeInfo(JSImmutableButterflyType, StructureFlags), info(), indexingType);
     }
 
-    ALWAYS_INLINE static JSImmutableButterfly* tryCreate(VM& vm, Structure* structure, unsigned size)
+    ALWAYS_INLINE static JSImmutableButterfly* tryCreate(VM& vm, Structure* structure, unsigned length)
     {
-        Checked<size_t, RecordOverflow> checkedAllocationSize = allocationSize(size);
-        if (UNLIKELY(checkedAllocationSize.hasOverflowed()))
+        if (UNLIKELY(length > IndexingHeader::maximumLength))
             return nullptr;
 
-        void* buffer = tryAllocateCell<JSImmutableButterfly>(vm.heap, checkedAllocationSize.unsafeGet());
+        // Because of the above maximumLength requirement, allocationSize can never overflow.
+        void* buffer = tryAllocateCell<JSImmutableButterfly>(vm.heap, allocationSize(length).unsafeGet());
         if (UNLIKELY(!buffer))
             return nullptr;
-        JSImmutableButterfly* result = new (NotNull, buffer) JSImmutableButterfly(vm, structure, size);
+        JSImmutableButterfly* result = new (NotNull, buffer) JSImmutableButterfly(vm, structure, length);
         result->finishCreation(vm);
         return result;
     }
@@ -180,7 +180,7 @@ public:
         return OBJECT_OFFSETOF(JSImmutableButterfly, m_header) + IndexingHeader::offsetOfVectorLength();
     }
 
-    static Checked<size_t, RecordOverflow> allocationSize(Checked<size_t, RecordOverflow> numItems)
+    static Checked<size_t> allocationSize(Checked<size_t> numItems)
     {
         return offsetOfData() + numItems * sizeof(WriteBarrier<Unknown>);
     }

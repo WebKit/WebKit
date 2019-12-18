@@ -1,3 +1,51 @@
+2019-12-18  Kocsen Chung  <kocsen_chung@apple.com>
+
+        Cherry-pick r253608. rdar://problem/57978411
+
+    ASSERTION FAILED: length <= maximumLength in js-fixed-array-out-of-memory.js
+    https://bugs.webkit.org/show_bug.cgi?id=205259
+    <rdar://problem/57978411>
+    
+    Reviewed by Mark Lam.
+    
+    JSImmutableButterfly has moderate size limit on its length, while JSFixedArray does not.
+    We should check this maximumLength when creating it in Spread. And if it exceeds, we should
+    throw OOM error.
+    
+    * dfg/DFGSpeculativeJIT.cpp:
+    (JSC::DFG::SpeculativeJIT::compileSpread):
+    * ftl/FTLLowerDFGToB3.cpp:
+    (JSC::FTL::DFG::LowerDFGToB3::compileSpread):
+    * runtime/ArrayConventions.h:
+    * runtime/IndexingHeader.h:
+    * runtime/JSImmutableButterfly.h:
+    (JSC::JSImmutableButterfly::tryCreate):
+    (JSC::JSImmutableButterfly::allocationSize):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@253608 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-12-16  Yusuke Suzuki  <ysuzuki@apple.com>
+
+            ASSERTION FAILED: length <= maximumLength in js-fixed-array-out-of-memory.js
+            https://bugs.webkit.org/show_bug.cgi?id=205259
+            <rdar://problem/57978411>
+
+            Reviewed by Mark Lam.
+
+            JSImmutableButterfly has moderate size limit on its length, while JSFixedArray does not.
+            We should check this maximumLength when creating it in Spread. And if it exceeds, we should
+            throw OOM error.
+
+            * dfg/DFGSpeculativeJIT.cpp:
+            (JSC::DFG::SpeculativeJIT::compileSpread):
+            * ftl/FTLLowerDFGToB3.cpp:
+            (JSC::FTL::DFG::LowerDFGToB3::compileSpread):
+            * runtime/ArrayConventions.h:
+            * runtime/IndexingHeader.h:
+            * runtime/JSImmutableButterfly.h:
+            (JSC::JSImmutableButterfly::tryCreate):
+            (JSC::JSImmutableButterfly::allocationSize):
+
 2019-12-13  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Remove JSFixedArray, and use JSImmutableButterfly instead
