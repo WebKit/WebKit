@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2006, 2007, 2008 Apple Inc.  All rights reserved.
  * Copyright (C) 2007 Alp Toker <alp@atoker.com>
+ * Copyright (C) 2019 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -40,6 +41,166 @@ void Gradient::platformDestroy()
 {
 }
 
+static void addColorStopRGBA(cairo_pattern_t *gradient, Gradient::ColorStop stop, float globalAlpha)
+{
+    if (stop.color.isExtended()) {
+        cairo_pattern_add_color_stop_rgba(gradient, stop.offset, stop.color.asExtended().red(), stop.color.asExtended().green(),
+            stop.color.asExtended().blue(), stop.color.asExtended().alpha() * globalAlpha);
+    } else {
+        float r, g, b, a;
+        stop.color.getRGBA(r, g, b, a);
+        cairo_pattern_add_color_stop_rgba(gradient, stop.offset, r, g, b, a * globalAlpha);
+    }
+}
+
+#if PLATFORM(GTK) || PLATFORM(WPE)
+
+typedef struct point_t {
+    double x, y;
+} point_t;
+
+static void setCornerColorRGBA(cairo_pattern_t* gradient, int id, Gradient::ColorStop stop, float globalAlpha)
+{
+    if (stop.color.isExtended()) {
+        cairo_mesh_pattern_set_corner_color_rgba(gradient, id, stop.color.asExtended().red(), stop.color.asExtended().green(),
+            stop.color.asExtended().blue(), stop.color.asExtended().alpha() * globalAlpha);
+    } else {
+        float r, g, b, a;
+        stop.color.getRGBA(r, g, b, a);
+        cairo_mesh_pattern_set_corner_color_rgba(gradient, id, r, g, b, a * globalAlpha);
+    }
+}
+
+static void addConicSector(cairo_pattern_t *gradient, float cx, float cy, float r, float angleRadians,
+    Gradient::ColorStop from, Gradient::ColorStop to, float globalAlpha)
+{
+    const double angOffset = 0.25; // 90 degrees.
+
+    // Substract 90 degrees so angles start from top left.
+    // Convert to radians and add angleRadians offset.
+    double angleStart = ((from.offset - angOffset) * 2 * M_PI) + angleRadians;
+    double angleEnd = ((to.offset - angOffset) * 2 * M_PI) + angleRadians;
+
+    // Calculate center offset depending on quadrant.
+    double cxOffset, cyOffset;
+    if (from.offset >= 0 && from.offset < 0.25) {
+        cxOffset = 0;
+        cyOffset = -1;
+    } else if (from.offset >= 0.25 && from.offset < 0.50) {
+        cxOffset = 0;
+        cyOffset = 0;
+    } else if (from.offset >= 0.50 && from.offset < 0.75) {
+        cxOffset = -1;
+        cyOffset = 0;
+    } else if (from.offset >= 0.75 && from.offset < 1) {
+        cxOffset = -1;
+        cyOffset = -1;
+    } else {
+        cxOffset = 0;
+        cyOffset = -1;
+    }
+    cx = cx + cxOffset;
+    cy = cy + cyOffset;
+
+    // Calculate starting point, ending point and control points of Bezier curve.
+    double f = 4 * tan((angleEnd - angleStart) / 4) / 3;
+    point_t p0 = {
+        x: cx + (r * cos(angleStart)),
+        y: cy + (r * sin(angleStart))
+    };
+    point_t p1 = {
+        x: cx + (r * cos(angleStart)) - f * (r * sin(angleStart)),
+        y: cy + (r * sin(angleStart)) + f * (r * cos(angleStart))
+    };
+    point_t p2 = {
+        x: cx + (r * cos(angleEnd)) + f * (r * sin(angleEnd)),
+        y: cy + (r * sin(angleEnd)) - f * (r * cos(angleEnd))
+    };
+    point_t p3 = {
+        x: cx + (r * cos(angleEnd)),
+        y: cy + (r * sin(angleEnd))
+    };
+
+    // Add patch with shape of the sector and gradient colors.
+    cairo_mesh_pattern_begin_patch(gradient);
+    cairo_mesh_pattern_move_to(gradient, cx, cy);
+    cairo_mesh_pattern_line_to(gradient, p0.x, p0.y);
+    cairo_mesh_pattern_curve_to(gradient, p1.x, p1.y, p2.x, p2.y, p3.x, p3.y);
+    setCornerColorRGBA(gradient, 0, from, globalAlpha);
+    setCornerColorRGBA(gradient, 1, from, globalAlpha);
+    setCornerColorRGBA(gradient, 2, to, globalAlpha);
+    setCornerColorRGBA(gradient, 3, to, globalAlpha);
+    cairo_mesh_pattern_end_patch(gradient);
+}
+
+static Gradient::ColorStop interpolateColorStop(Gradient::ColorStop from, Gradient::ColorStop to)
+{
+    float r1, g1, b1, a1;
+    float r2, g2, b2, a2;
+
+    if (from.color.isExtended()) {
+        r1 = from.color.asExtended().red();
+        g1 = from.color.asExtended().green();
+        b1 = from.color.asExtended().blue();
+        a1 = from.color.asExtended().alpha();
+    } else
+        from.color.getRGBA(r1, g1, b1, a1);
+
+    if (to.color.isExtended()) {
+        r2 = to.color.asExtended().red();
+        g2 = to.color.asExtended().green();
+        b2 = to.color.asExtended().blue();
+        a2 = to.color.asExtended().alpha();
+    } else
+        to.color.getRGBA(r2, g2, b2, a2);
+
+    float offset = from.offset + (to.offset - from.offset) * 0.5f;
+    float r = r1 + (r2 - r1) * 0.5f;
+    float g = g1 + (g2 - g1) * 0.5f;
+    float b = b1 + (b2 - b1) * 0.5f;
+    float a = a1 + (a2 - a1) * 0.5f;
+
+    return Gradient::ColorStop(offset, Color(r, g, b, a));
+}
+
+static cairo_pattern_t* createConic(float xo, float yo, float r, float angleRadians,
+    Gradient::ColorStopVector stops, float globalAlpha)
+{
+    cairo_pattern_t* gradient = cairo_pattern_create_mesh();
+    Gradient::ColorStop from, to;
+
+    /* It's not possible to paint an entire circle with a single Bezier curve.
+     * To have a good approximation to a circle it's necessary to use at least
+     * four Bezier curves. So three additional stops with interpolated colors
+     * are added to force painting of four Bezier curves. */
+    if (stops.size() == 2) {
+        Gradient::ColorStop first = stops.at(0);
+        Gradient::ColorStop last = stops.at(1);
+        Gradient::ColorStop third = interpolateColorStop(first, last);
+        Gradient::ColorStop second = interpolateColorStop(first, third);
+        Gradient::ColorStop fourth = interpolateColorStop(third, last);
+        stops.insert(1, fourth);
+        stops.insert(1, third);
+        stops.insert(1, second);
+    }
+
+    // Add extra color stop at the beginning if first element offset is not zero.
+    if (stops.at(0).offset > 0)
+        stops.insert(0, Gradient::ColorStop(0, stops.at(0).color));
+    // Add extra color stop at the end if last element offset is not zero.
+    if (stops.at(stops.size() - 1).offset < 1)
+        stops.append(Gradient::ColorStop(1, stops.at(stops.size() - 1).color));
+
+    for (size_t i = 0; i < stops.size() - 1; i++) {
+        from = stops.at(i), to = stops.at(i + 1);
+        addConicSector(gradient, xo, yo, r, angleRadians, from, to, globalAlpha);
+    }
+
+    return gradient;
+}
+
+#endif
+
 cairo_pattern_t* Gradient::createPlatformGradient(float globalAlpha)
 {
     cairo_pattern_t* gradient = WTF::switchOn(m_data,
@@ -49,20 +210,25 @@ cairo_pattern_t* Gradient::createPlatformGradient(float globalAlpha)
         [&] (const RadialData& data) -> cairo_pattern_t* {
             return cairo_pattern_create_radial(data.point0.x(), data.point0.y(), data.startRadius, data.point1.x(), data.point1.y(), data.endRadius);
         },
+#if PLATFORM(GTK) || PLATFORM(WPE)
+        [&] (const ConicData& data)  -> cairo_pattern_t* {
+            // FIXME: data passed for a Conic gradient doesn't contain a radius. That's apparently correct because the W3C spec
+            // (https://www.w3.org/TR/css-images-4/#conic-gradients) states a conic gradient is only defined by its position and angle.
+            // Thus, here I give the radius an extremely large value. The resulting gradient will be later clipped by fillRect.
+            // An alternative solution could be to change the API and pass a rect's width and height to optimize the computation of the radius.
+            const float radius = 4096;
+            return createConic(data.point0.x(), data.point0.y(), radius, data.angleRadians, stops(), globalAlpha);
+#else
         [&] (const ConicData&)  -> cairo_pattern_t* {
             // FIXME: implement conic gradient rendering.
             return nullptr;
+#endif
         }
     );
 
-    for (const auto& stop : m_stops) {
-        if (stop.color.isExtended()) {
-            cairo_pattern_add_color_stop_rgba(gradient, stop.offset, stop.color.asExtended().red(), stop.color.asExtended().green(), stop.color.asExtended().blue(),
-                stop.color.asExtended().alpha() * globalAlpha);
-        } else {
-            float r, g, b, a;
-            stop.color.getRGBA(r, g, b, a);
-            cairo_pattern_add_color_stop_rgba(gradient, stop.offset, r, g, b, a * globalAlpha);
+    if (type() != Type::Conic) {
+        for (const auto& stop : stops()) {
+            addColorStopRGBA(gradient, stop, globalAlpha);
         }
     }
 
