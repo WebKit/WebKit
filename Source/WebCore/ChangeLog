@@ -1,3 +1,23 @@
+2019-12-18  Chris Lord  <clord@igalia.com>
+
+        [GTK][WPE] OffscreenCanvas worker tests that call drawImage crash in debug builds
+        https://bugs.webkit.org/show_bug.cgi?id=205339
+
+        Reviewed by Carlos Garcia Campos.
+
+        Don't unnecessarily create an Image object in the Cairo graphics
+        backend when using drawImage/drawPattern. Doing so calls code that
+        isn't safe to use off-main-thread and causes OffscreenCanvas worker
+        tests to crash in debug builds.
+
+        No new tests, no behavioral changes.
+
+        * platform/graphics/cairo/ImageBufferCairo.cpp:
+        (WebCore::cairoSurfaceCopy):
+        (WebCore::cairoSurfaceCoerceToImage):
+        (WebCore::ImageBuffer::draw):
+        (WebCore::ImageBuffer::drawPattern):
+
 2019-12-17  Simon Fraser  <simon.fraser@apple.com>
 
         Remove iOS #ifdefs around unobscuredContentSize
