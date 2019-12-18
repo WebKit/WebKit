@@ -926,3 +926,5 @@ webkit.org/b/199089 [ Mojave+ Debug ] plugins/window-open.html [ Skip ]
 webkit.org/b/203256 [ Debug ] imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-iceConnectionState.https.html [ Pass Failure ]
 
 webkit.org/b/205301 [ Mojave+ ] inspector/canvas/requestShaderSource-webgpu.html [ Pass Failure ]
+
+webkit.org/b/205364 tiled-drawing/scrolling/fast-scroll-div-latched-mainframe-with-handler.html [ Pass Failure ]

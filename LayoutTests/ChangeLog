@@ -1,5 +1,14 @@
 2019-12-17  Truitt Savell  <tsavell@apple.com>
 
+        REGRESSION: [ Mac wk2 ] tiled-drawing/scrolling/fast-scroll-div-latched-mainframe-with-handler.html is a flakey failure
+        https://bugs.webkit.org/show_bug.cgi?id=205364
+
+        Unreviewed test gardening
+
+        * platform/mac-wk2/TestExpectations:
+
+2019-12-17  Truitt Savell  <tsavell@apple.com>
+
         REGRESSION: [ Mac wk2 ] tiled-drawing/scrolling/fast-scroll-select-latched-mainframe.html is a flakey failure
         https://bugs.webkit.org/show_bug.cgi?id=205363
 
