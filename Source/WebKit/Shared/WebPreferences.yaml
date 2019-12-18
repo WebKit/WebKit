@@ -861,7 +861,7 @@ CustomPasteboardDataEnabled:
 
 AsyncClipboardAPIEnabled:
   type: bool
-  defaultValue: false
+  defaultValue: DEFAULT_ASYNC_CLIPBOARD_API_ENABLED
   humanReadableName: "Async clipboard API"
   humanReadableDescription: "Enable the async clipboard API"
   category: experimental
