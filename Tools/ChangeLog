@@ -1,3 +1,11 @@
+2019-12-18  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed GTK gardening. Update expectations of unit tests
+
+        Add two flaky failures and mark /jsc/vm as slow alos in release builds.
+
+        * TestWebKitAPI/glib/TestExpectations.json:
+
 2019-12-17  Jonathan Bedard  <jbedard@apple.com>
 
         run-javascriptcore-tests: Fix upload details

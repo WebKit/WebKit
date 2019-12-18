@@ -46,6 +46,9 @@
             },
             "/webkit/WebKitWebExtension/form-submission-steps": {
                 "expected": {"gtk": {"status": ["TIMEOUT"], "bug": "webkit.org/b/205333"}}
+            },
+            "/webkit/WebKitWebExtension/form-controls-associated-signal": {
+                "expected": {"gtk": {"status": ["FAIL", "PASS"], "bug": "webkit.org/b/205380"}}
             }
         }
     },
@@ -80,6 +83,13 @@
         "subtests": {
             "/webkit/WebKitWebInspectorServer/test-page-list": {
                 "expected": {"all": {"status": ["FAIL", "PASS"], "bug": "webkit.org/b/188115"}}
+            }
+        }
+    },
+    "TestWebKitFaviconDatabase": {
+        "subtests": {
+            "/webkit/WebKitFaviconDatabase/get-favicon": {
+                "expected": {"gtk": {"status": ["FAIL", "PASS"], "bug": "webkit.org/b/205381"}}
             }
         }
     },
@@ -170,6 +180,9 @@
             "WTF_ParkingLot.UnparkAllHundredFast": {
                 "expected": {"all": {"slow": true, "status": ["TIMEOUT", "PASS"]}}
             },
+            "WTF_ParkingLot.UnparkAllOneFast": {
+                "expected": {"all": {"slow": true, "status": ["TIMEOUT", "PASS"]}}
+            },
             "WTF_ParkingLot.UnparkOneFiftyThenFiftyAllFast": {
                 "expected": {"all": {"slow": true, "status": ["TIMEOUT", "PASS"]}}
             },
@@ -197,7 +210,7 @@
     "TestJSC": {
         "subtests": {
             "/jsc/vm": {
-                "expected": {"all@Debug": {"slow": true}}
+                "expected": {"all": {"slow": true}}
             }
         }
     }
