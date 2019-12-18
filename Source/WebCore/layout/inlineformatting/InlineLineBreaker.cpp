@@ -261,6 +261,9 @@ static bool endsWithSoftWrapOpportunity(const InlineTextItem& previousTextItem, 
     // they are split at a soft breaking opportunity. See InlineTextItem::moveToNextBreakablePosition.
     if (&previousTextItem.layoutBox() == &nextInlineTextItem.layoutBox())
         return true;
+    // We are at the position after a whitespace.
+    if (previousTextItem.isWhitespace())
+        return true;
     // Now we need to collect at least 3 adjacent characters to be able to make a descision whether the previous text item ends with breaking opportunity.
     // [ex-][ample] <- second to last[x] last[-] current[a]
     // We need at least 1 character in the current inline text item and 2 more from previous inline items.
@@ -289,6 +292,17 @@ bool LineBreaker::Content::isAtSoftWrapOpportunity(const InlineItem& inlineItem,
         // Can't decide it yet.
         return false;
     }
+
+    auto lastInlineItemWithContent = [&] () -> const InlineItem* {
+        for (auto& previousRun : WTF::makeReversedRange(priorContent.runs())) {
+            auto& previousInlineItem = previousRun.inlineItem;
+            if (previousInlineItem.isText() || previousInlineItem.isBox())
+                return &previousInlineItem;
+            ASSERT(previousInlineItem.isContainerStart() || previousInlineItem.isContainerEnd());
+        }
+        return nullptr;
+    };
+
     auto* lastUncomittedContent = &priorContent.runs().last().inlineItem;
     if (inlineItem.isText()) {
         if (inlineItem.style().lineBreak() == LineBreak::Anywhere) {
@@ -315,31 +329,17 @@ bool LineBreaker::Content::isAtSoftWrapOpportunity(const InlineItem& inlineItem,
             // e.g.
             // [text][container end][text] (text</span>text) : there's no soft wrap opportunity here.
             // [inline box][container end][text] (<img></span>text) : after [container end] position is a soft wrap opportunity.
-            auto& runs = priorContent.runs();
-            auto didFindContent = false;
-            for (auto i = priorContent.size(); i--;) {
-                auto& previousInlineItem = runs[i].inlineItem;
-                if (previousInlineItem.isContainerStart() || previousInlineItem.isContainerEnd())
-                    continue;
-                if (previousInlineItem.isText() || previousInlineItem.isBox()) {
-                    lastUncomittedContent = &previousInlineItem;
-                    didFindContent = true;
-                    break;
-                }
-                ASSERT_NOT_REACHED();
-            }
-            // Did not find any content at all (e.g. [container start][container end][text] (<span></span>text)).
-            if (!didFindContent)
+            lastUncomittedContent = lastInlineItemWithContent();
+            if (!lastUncomittedContent) {
+                // Did not find any content at all (e.g. [container start][container end][text] (<span></span>text)).
                 return false;
+            }
         }
         if (lastUncomittedContent->isText()) {
             // [text][text] : is a continuous content.
             // [text-][text] : after [hyphen] position is a soft wrap opportunity.
             // [ ][text] : after [whitespace] position is a soft wrap opportunity.
-            auto& lastInlineTextItem = downcast<InlineTextItem>(*lastUncomittedContent);
-            if (lastInlineTextItem.isWhitespace())
-                return true;
-            return endsWithSoftWrapOpportunity(lastInlineTextItem, downcast<InlineTextItem>(inlineItem));
+            return endsWithSoftWrapOpportunity(downcast<InlineTextItem>(*lastUncomittedContent), downcast<InlineTextItem>(inlineItem));
         }
         if (lastUncomittedContent->isBox()) {
             // [inline box][text] (<img>text) : after [inline box] position is a soft wrap opportunity.

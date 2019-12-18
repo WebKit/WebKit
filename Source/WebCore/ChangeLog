@@ -1,3 +1,17 @@
+2019-12-18  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] Add lastInlineItemWithContent to LineBreaker::Content::isAtSoftWrapOpportunity
+        https://bugs.webkit.org/show_bug.cgi?id=205362
+        <rdar://problem/58025349>
+
+        Reviewed by Antti Koivisto.
+
+        This is in preparation for being able to return a previous run index as the soft wrapping opportunity.
+
+        * layout/inlineformatting/InlineLineBreaker.cpp:
+        (WebCore::Layout::endsWithSoftWrapOpportunity):
+        (WebCore::Layout::LineBreaker::Content::isAtSoftWrapOpportunity):
+
 2019-12-18  Dean Jackson  <dino@apple.com>
 
         Reverting libANGLE.a -> libANGLE-shared.dylib.
