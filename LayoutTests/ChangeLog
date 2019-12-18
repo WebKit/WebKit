@@ -1,3 +1,9 @@
+2019-12-17  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, revert r253493 because it broke an Apple internal site
+
+        * platform/mac/TestExpectations:
+
 2019-12-17  Fujii Hironori  <fujii.hironori@gmail.com>
 
         [cairo] text-align:justify wrongly expands CJK ideograph characters

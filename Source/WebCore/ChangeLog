@@ -1,3 +1,15 @@
+2019-12-17  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, revert r253493 because it broke an Apple internal site
+
+        * html/HTMLFormElement.cpp:
+        (WebCore::HTMLFormElement::submit):
+        * html/HTMLFormElement.h:
+        * loader/FormSubmission.h:
+        (WebCore::FormSubmission::cancel): Deleted.
+        (WebCore::FormSubmission::wasCancelled const): Deleted.
+        * loader/NavigationScheduler.cpp:
+
 2019-12-17  Fujii Hironori  <fujii.hironori@gmail.com>
 
         [cairo] text-align:justify wrongly expands CJK ideograph characters
