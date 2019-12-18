@@ -93,26 +93,38 @@ Invalidator::Invalidator(const Vector<StyleSheetContents*>& sheets, const MediaQ
     m_ownedRuleSet->disableAutoShrinkToFit();
     for (auto& sheet : sheets)
         m_ownedRuleSet->addRulesFromSheet(*sheet, mediaQueryEvaluator);
+
+    m_ruleInformation = collectRuleInformation();
 }
 
 Invalidator::Invalidator(const Vector<const RuleSet*, 1>& ruleSets)
     : m_ruleSets(ruleSets)
+    , m_ruleInformation(collectRuleInformation())
 {
     ASSERT(m_ruleSets.size());
+}
+
+Invalidator::RuleInformation Invalidator::collectRuleInformation()
+{
+    RuleInformation information;
+    for (auto* ruleSet : m_ruleSets) {
+        if (!ruleSet->slottedPseudoElementRules().isEmpty())
+            information.hasSlottedPseudoElementRules = true;
+        if (!ruleSet->hostPseudoClassRules().isEmpty())
+            information.hasHostPseudoClassRules = true;
+        if (ruleSet->hasShadowPseudoElementRules())
+            information.hasShadowPseudoElementRules = true;
+        if (!ruleSet->partPseudoElementRules().isEmpty())
+            information.hasPartPseudoElementRules = true;
+    }
+    return information;
 }
 
 Invalidator::CheckDescendants Invalidator::invalidateIfNeeded(Element& element, const SelectorFilter* filter)
 {
     invalidateInShadowTreeIfNeeded(element);
 
-    bool shouldCheckForSlots = [&] {
-        for (auto* ruleSet : m_ruleSets) {
-            if (!ruleSet->slottedPseudoElementRules().isEmpty() && !m_didInvalidateHostChildren)
-                return true;
-        }
-        return false;
-    }();
-
+    bool shouldCheckForSlots = m_ruleInformation.hasSlottedPseudoElementRules && !m_didInvalidateHostChildren;
     if (shouldCheckForSlots && is<HTMLSlotElement>(element)) {
         auto* containingShadowRoot = element.containingShadowRoot();
         if (containingShadowRoot && containingShadowRoot->host()) {
@@ -129,8 +141,10 @@ Invalidator::CheckDescendants Invalidator::invalidateIfNeeded(Element& element, 
             ElementRuleCollector ruleCollector(element, *ruleSet, filter);
             ruleCollector.setMode(SelectorChecker::Mode::CollectingRulesIgnoringVirtualPseudoElements);
 
-            if (ruleCollector.matchesAnyAuthorRules())
+            if (ruleCollector.matchesAnyAuthorRules()) {
                 element.invalidateStyleInternal();
+                break;
+            }
         }
 
         return CheckDescendants::Yes;
@@ -200,10 +214,8 @@ void Invalidator::invalidateStyle(ShadowRoot& shadowRoot)
 {
     ASSERT(!m_dirtiesAllStyle);
 
-    for (auto* ruleSet : m_ruleSets) {
-        if (!ruleSet->hostPseudoClassRules().isEmpty() && shadowRoot.host())
-            shadowRoot.host()->invalidateStyleInternal();
-    }
+    if (m_ruleInformation.hasHostPseudoClassRules && shadowRoot.host())
+        shadowRoot.host()->invalidateStyleInternal();
 
     for (auto& child : childrenOfType<Element>(shadowRoot)) {
         SelectorFilter filter;
@@ -297,17 +309,13 @@ void Invalidator::invalidateInShadowTreeIfNeeded(Element& element)
     if (!shadowRoot)
         return;
 
+    // FIXME: This could do actual rule matching too.
+    if (m_ruleInformation.hasShadowPseudoElementRules)
+        element.invalidateStyleForSubtreeInternal();
 
-    for (auto* ruleSet : m_ruleSets) {
-        if (ruleSet->hasShadowPseudoElementRules()) {
-            // FIXME: This could do actual rule matching too.
-            element.invalidateStyleForSubtreeInternal();
-        }
-
-        // FIXME: More fine-grained invalidation for ::part()
-        if (!ruleSet->partPseudoElementRules().isEmpty())
-            invalidateShadowParts(*shadowRoot);
-    }
+    // FIXME: More fine-grained invalidation for ::part()
+    if (m_ruleInformation.hasPartPseudoElementRules)
+        invalidateShadowParts(*shadowRoot);
 }
 
 void Invalidator::addToMatchElementRuleSets(Invalidator::MatchElementRuleSets& matchElementRuleSets, const InvalidationRuleSet& invalidationRuleSet)

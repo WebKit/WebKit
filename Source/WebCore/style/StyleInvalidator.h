@@ -67,8 +67,19 @@ private:
     void invalidateInShadowTreeIfNeeded(Element&);
     void invalidateStyleWithMatchElement(Element&, MatchElement);
 
+    struct RuleInformation {
+        bool hasSlottedPseudoElementRules { false };
+        bool hasHostPseudoClassRules { false };
+        bool hasShadowPseudoElementRules { false };
+        bool hasPartPseudoElementRules { false };
+    };
+    RuleInformation collectRuleInformation();
+
     std::unique_ptr<RuleSet> m_ownedRuleSet;
-    Vector<const RuleSet*, 1> m_ruleSets;
+    const Vector<const RuleSet*, 1> m_ruleSets;
+
+    RuleInformation m_ruleInformation;
+
     bool m_dirtiesAllStyle { false };
     bool m_didInvalidateHostChildren { false };
 };

@@ -1,3 +1,25 @@
+2019-12-18  Antti Koivisto  <antti@apple.com>
+
+        Optimize Style::Invalidator for multiple RuleSet case
+        https://bugs.webkit.org/show_bug.cgi?id=205406
+
+        Reviewed by Zalan Bujtas.
+
+        * style/StyleInvalidator.cpp:
+        (WebCore::Style::m_dirtiesAllStyle):
+        (WebCore::Style::Invalidator::Invalidator):
+        (WebCore::Style::Invalidator::collectRuleInformation):
+
+        Collect bunch of bits so we don't need to traverse again.
+
+        (WebCore::Style::Invalidator::invalidateIfNeeded):
+
+        Bail out when we find a reson to invalidate.
+
+        (WebCore::Style::Invalidator::invalidateStyle):
+        (WebCore::Style::Invalidator::invalidateInShadowTreeIfNeeded):
+        * style/StyleInvalidator.h:
+
 2019-12-18  Andres Gonzalez  <andresg_22@apple.com>
 
         AXIsolatedObject support for spin button increment/decrementButton.
