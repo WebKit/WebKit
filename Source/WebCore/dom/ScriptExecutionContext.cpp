@@ -598,27 +598,6 @@ ServiceWorkerContainer* ScriptExecutionContext::ensureServiceWorkerContainer()
     return navigator ? &navigator->serviceWorker() : nullptr;
 }
 
-bool ScriptExecutionContext::postTaskTo(const DocumentOrWorkerIdentifier& contextIdentifier, WTF::Function<void(ScriptExecutionContext&)>&& task)
-{
-    ASSERT(isMainThread());
-
-    bool wasPosted = false;
-    switchOn(contextIdentifier, [&] (DocumentIdentifier identifier) {
-        auto* document = Document::allDocumentsMap().get(identifier);
-        if (!document)
-            return;
-        document->postTask([task = WTFMove(task)](auto& scope) {
-            task(scope);
-        });
-        wasPosted= true;
-    }, [&](ServiceWorkerIdentifier identifier) {
-        wasPosted = SWContextManager::singleton().postTaskToServiceWorker(identifier, [task = WTFMove(task)](auto& scope) {
-            task(scope);
-        });
-    });
-    return wasPosted;
-}
-
 #endif
 
 bool ScriptExecutionContext::postTaskTo(ScriptExecutionContextIdentifier identifier, Task&& task)

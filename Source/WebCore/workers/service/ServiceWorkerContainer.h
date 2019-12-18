@@ -68,8 +68,9 @@ public:
 
     void getRegistration(const String& clientURL, Ref<DeferredPromise>&&);
     void updateRegistrationState(ServiceWorkerRegistrationIdentifier, ServiceWorkerRegistrationState, const Optional<ServiceWorkerData>&);
-    void fireUpdateFoundEvent(ServiceWorkerRegistrationIdentifier);
-    void fireControllerChangeEvent();
+    void updateWorkerState(ServiceWorkerIdentifier, ServiceWorkerState);
+    void queueTaskToFireUpdateFoundEvent(ServiceWorkerRegistrationIdentifier);
+    void queueTaskToDispatchControllerChangeEvent();
 
     void postMessage(MessageWithMessagePorts&&, ServiceWorkerData&& sourceData, String&& sourceOrigin);
 

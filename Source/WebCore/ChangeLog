@@ -1,5 +1,58 @@
 2019-12-17  Chris Dumez  <cdumez@apple.com>
 
+        Port service worker code to the HTML5 event loop
+        https://bugs.webkit.org/show_bug.cgi?id=205359
+
+        Reviewed by Ryosuke Niwa.
+
+        Port service worker code to the HTML5 event loop. We were mixing using the HTML5 event loop and ScriptExecutionContext::postTask().
+        This would cause test flakiness because tasks posted via thsse 2 mechanisms could get processed out of order, even though the
+        service worker specification guarantees a specific ordering.
+
+        The new pattern is that we only use WorkerRunLoop::postTask() to hop to the worker thread from the main thread, and not for any work
+        specified in the service workers specification. Whenever the service workers specifications to "queue a task", we now queue a task
+        on the ScriptExecutionContext's event loop, with the specified TaskSource.
+
+        No new tests, updated existing test.
+
+        * dom/ScriptExecutionContext.cpp:
+        * dom/ScriptExecutionContext.h:
+        * workers/service/SWClientConnection.cpp:
+        (WebCore::dispatchToContextThreadIfNecessary):
+        (WebCore::SWClientConnection::postTaskForJob):
+        (WebCore::SWClientConnection::updateRegistrationState):
+        (WebCore::SWClientConnection::updateWorkerState):
+        (WebCore::SWClientConnection::fireUpdateFoundEvent):
+        (WebCore::SWClientConnection::notifyClientsOfControllerChange):
+        (WebCore::SWClientConnection::clearPendingJobs):
+        * workers/service/ServiceWorker.cpp:
+        (WebCore::ServiceWorker::updateState):
+        * workers/service/ServiceWorker.h:
+        * workers/service/ServiceWorkerContainer.cpp:
+        (WebCore::ServiceWorkerContainer::updateRegistrationState):
+        (WebCore::ServiceWorkerContainer::updateWorkerState):
+        (WebCore::ServiceWorkerContainer::queueTaskToFireUpdateFoundEvent):
+        (WebCore::ServiceWorkerContainer::queueTaskToDispatchControllerChangeEvent):
+        * workers/service/ServiceWorkerContainer.h:
+        * workers/service/ServiceWorkerRegistration.cpp:
+        (WebCore::ServiceWorkerRegistration::queueTaskToFireUpdateFoundEvent):
+        * workers/service/ServiceWorkerRegistration.h:
+        * workers/service/context/SWContextManager.cpp:
+        (WebCore::SWContextManager::postMessageToServiceWorker):
+        (WebCore::SWContextManager::fireInstallEvent):
+        (WebCore::SWContextManager::fireActivateEvent):
+        * workers/service/context/ServiceWorkerThread.cpp:
+        (WebCore::ServiceWorkerThread::queueTaskToFireFetchEvent):
+        (WebCore::ServiceWorkerThread::queueTaskToPostMessage):
+        (WebCore::ServiceWorkerThread::queueTaskToFireInstallEvent):
+        (WebCore::ServiceWorkerThread::queueTaskToFireActivateEvent):
+        * workers/service/context/ServiceWorkerThread.h:
+        * workers/service/context/ServiceWorkerThreadProxy.cpp:
+        (WebCore::ServiceWorkerThreadProxy::notifyNetworkStateChange):
+        (WebCore::ServiceWorkerThreadProxy::startFetch):
+
+2019-12-17  Chris Dumez  <cdumez@apple.com>
+
         Unreviewed, revert r253493 because it broke an Apple internal site
 
         * html/HTMLFormElement.cpp:

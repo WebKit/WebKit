@@ -193,3 +193,29 @@ promise_test(async t => {
   );
 }, 'access ready after it has been resolved');
 
+promise_test(async t => {
+  const url1 = 'resources/empty-worker.js';
+  const url2 = url1 + '?2';
+  const matchedScope = 'resources/blank.html?ready-after-unregister';
+  const reg1 = await service_worker_unregister_and_register(t, url1, matchedScope);
+  t.add_cleanup(() => reg1.unregister());
+
+  await wait_for_state(t, reg1.installing, 'activating');
+
+  const frame = await with_iframe(matchedScope);
+  t.add_cleanup(() => frame.remove());
+
+  await reg1.unregister();
+
+  // Ready promise should be pending, waiting for a new registration to arrive
+  const readyPromise = frame.contentWindow.navigator.serviceWorker.ready;
+
+  const reg2 = await navigator.serviceWorker.register(url2, { scope: matchedScope });
+  t.add_cleanup(() => reg2.unregister());
+
+  const readyReg = await readyPromise;
+
+  assert_not_equals(reg1, reg2, 'Registrations should be different');
+  assert_equals(readyReg.active.scriptURL, reg2.active.scriptURL, 'Resolves with the second registration');
+}, 'resolve ready after unregistering');
+

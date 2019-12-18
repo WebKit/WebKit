@@ -30,6 +30,7 @@
 
 #include "CacheStorageProvider.h"
 #include "ContentSecurityPolicyResponseHeaders.h"
+#include "EventLoop.h"
 #include "EventNames.h"
 #include "ExtendableMessageEvent.h"
 #include "JSDOMPromise.h"
@@ -93,13 +94,12 @@ void ServiceWorkerThread::runEventLoop()
     WorkerThread::runEventLoop();
 }
 
-void ServiceWorkerThread::postFetchTask(Ref<ServiceWorkerFetch::Client>&& client, Optional<ServiceWorkerClientIdentifier>&& clientId, ResourceRequest&& request, String&& referrer, FetchOptions&& options)
+void ServiceWorkerThread::queueTaskToFireFetchEvent(Ref<ServiceWorkerFetch::Client>&& client, Optional<ServiceWorkerClientIdentifier>&& clientId, ResourceRequest&& request, String&& referrer, FetchOptions&& options)
 {
-    // FIXME: instead of directly using runLoop(), we should be using something like WorkerGlobalScopeProxy.
-    // FIXME: request and options come straigth from IPC so are already isolated. We should be able to take benefit of that.
-    runLoop().postTaskForMode([client = WTFMove(client), clientId, request = request.isolatedCopy(), referrer = referrer.isolatedCopy(), options = options.isolatedCopy()] (ScriptExecutionContext& context) mutable {
-        ServiceWorkerFetch::dispatchFetchEvent(WTFMove(client), downcast<ServiceWorkerGlobalScope>(context), clientId, WTFMove(request), WTFMove(referrer), WTFMove(options));
-    }, WorkerRunLoop::defaultMode());
+    auto serviceWorkerGlobalScope = makeRef(downcast<ServiceWorkerGlobalScope>(*workerGlobalScope()));
+    serviceWorkerGlobalScope->eventLoop().queueTask(TaskSource::DOMManipulation, [serviceWorkerGlobalScope = serviceWorkerGlobalScope.copyRef(), client = WTFMove(client), clientId, request = WTFMove(request), referrer = WTFMove(referrer), options = WTFMove(options)]() mutable {
+        ServiceWorkerFetch::dispatchFetchEvent(WTFMove(client), serviceWorkerGlobalScope, clientId, WTFMove(request), WTFMove(referrer), WTFMove(options));
+    });
 }
 
 static void fireMessageEvent(ServiceWorkerGlobalScope& scope, MessageWithMessagePorts&& message, ExtendableMessageEventSource&& source, const URL& sourceURL)
@@ -111,23 +111,23 @@ static void fireMessageEvent(ServiceWorkerGlobalScope& scope, MessageWithMessage
     scope.updateExtendedEventsSet(messageEvent.ptr());
 }
 
-void ServiceWorkerThread::postMessageToServiceWorker(MessageWithMessagePorts&& message, ServiceWorkerOrClientData&& sourceData)
+void ServiceWorkerThread::queueTaskToPostMessage(MessageWithMessagePorts&& message, ServiceWorkerOrClientData&& sourceData)
 {
-    runLoop().postTask([message = WTFMove(message), sourceData = WTFMove(sourceData)] (auto& context) mutable {
-        auto& serviceWorkerGlobalScope = downcast<ServiceWorkerGlobalScope>(context);
+    auto serviceWorkerGlobalScope = makeRef(downcast<ServiceWorkerGlobalScope>(*workerGlobalScope()));
+    serviceWorkerGlobalScope->eventLoop().queueTask(TaskSource::DOMManipulation, [serviceWorkerGlobalScope = serviceWorkerGlobalScope.copyRef(), message = WTFMove(message), sourceData = WTFMove(sourceData)]() mutable {
         URL sourceURL;
         ExtendableMessageEventSource source;
         if (WTF::holds_alternative<ServiceWorkerClientData>(sourceData)) {
             RefPtr<ServiceWorkerClient> sourceClient = ServiceWorkerClient::getOrCreate(serviceWorkerGlobalScope, WTFMove(WTF::get<ServiceWorkerClientData>(sourceData)));
 
-            RELEASE_ASSERT(!sourceClient->url().protocolIsInHTTPFamily() || !serviceWorkerGlobalScope.url().protocolIsInHTTPFamily() || protocolHostAndPortAreEqual(serviceWorkerGlobalScope.url(), sourceClient->url()));
+            RELEASE_ASSERT(!sourceClient->url().protocolIsInHTTPFamily() || !serviceWorkerGlobalScope->url().protocolIsInHTTPFamily() || protocolHostAndPortAreEqual(serviceWorkerGlobalScope->url(), sourceClient->url()));
 
             sourceURL = sourceClient->url();
             source = WTFMove(sourceClient);
         } else {
             RefPtr<ServiceWorker> sourceWorker = ServiceWorker::getOrCreate(serviceWorkerGlobalScope, WTFMove(WTF::get<ServiceWorkerData>(sourceData)));
 
-            RELEASE_ASSERT(!sourceWorker->scriptURL().protocolIsInHTTPFamily() || !serviceWorkerGlobalScope.url().protocolIsInHTTPFamily() || protocolHostAndPortAreEqual(serviceWorkerGlobalScope.url(), sourceWorker->scriptURL()));
+            RELEASE_ASSERT(!sourceWorker->scriptURL().protocolIsInHTTPFamily() || !serviceWorkerGlobalScope->url().protocolIsInHTTPFamily() || protocolHostAndPortAreEqual(serviceWorkerGlobalScope->url(), sourceWorker->scriptURL()));
 
             sourceURL = sourceWorker->scriptURL();
             source = WTFMove(sourceWorker);
@@ -136,12 +136,12 @@ void ServiceWorkerThread::postMessageToServiceWorker(MessageWithMessagePorts&& m
     });
 }
 
-void ServiceWorkerThread::fireInstallEvent()
+void ServiceWorkerThread::queueTaskToFireInstallEvent()
 {
-    runLoop().postTask([jobDataIdentifier = m_data.jobDataIdentifier, serviceWorkerIdentifier = this->identifier()] (ScriptExecutionContext& context) mutable {
-        auto& serviceWorkerGlobalScope = downcast<ServiceWorkerGlobalScope>(context);
+    auto serviceWorkerGlobalScope = makeRef(downcast<ServiceWorkerGlobalScope>(*workerGlobalScope()));
+    serviceWorkerGlobalScope->eventLoop().queueTask(TaskSource::DOMManipulation, [serviceWorkerGlobalScope = serviceWorkerGlobalScope.copyRef(), jobDataIdentifier = m_data.jobDataIdentifier, serviceWorkerIdentifier = this->identifier()] {
         auto installEvent = ExtendableEvent::create(eventNames().installEvent, { }, ExtendableEvent::IsTrusted::Yes);
-        serviceWorkerGlobalScope.dispatchEvent(installEvent);
+        serviceWorkerGlobalScope->dispatchEvent(installEvent);
 
         installEvent->whenAllExtendLifetimePromisesAreSettled([jobDataIdentifier, serviceWorkerIdentifier](HashSet<Ref<DOMPromise>>&& extendLifetimePromises) {
             bool hasRejectedAnyPromise = false;
@@ -159,12 +159,12 @@ void ServiceWorkerThread::fireInstallEvent()
     });
 }
 
-void ServiceWorkerThread::fireActivateEvent()
+void ServiceWorkerThread::queueTaskToFireActivateEvent()
 {
-    runLoop().postTask([serviceWorkerIdentifier = this->identifier()] (ScriptExecutionContext& context) mutable {
-        auto& serviceWorkerGlobalScope = downcast<ServiceWorkerGlobalScope>(context);
+    auto serviceWorkerGlobalScope = makeRef(downcast<ServiceWorkerGlobalScope>(*workerGlobalScope()));
+    serviceWorkerGlobalScope->eventLoop().queueTask(TaskSource::DOMManipulation, [serviceWorkerGlobalScope = serviceWorkerGlobalScope.copyRef(), serviceWorkerIdentifier = this->identifier()]() mutable {
         auto activateEvent = ExtendableEvent::create(eventNames().activateEvent, { }, ExtendableEvent::IsTrusted::Yes);
-        serviceWorkerGlobalScope.dispatchEvent(activateEvent);
+        serviceWorkerGlobalScope->dispatchEvent(activateEvent);
 
         activateEvent->whenAllExtendLifetimePromisesAreSettled([serviceWorkerIdentifier](HashSet<Ref<DOMPromise>>&&) {
             callOnMainThread([serviceWorkerIdentifier] () mutable {

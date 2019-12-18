@@ -1,5 +1,20 @@
 2019-12-17  Chris Dumez  <cdumez@apple.com>
 
+        Port service worker code to the HTML5 event loop
+        https://bugs.webkit.org/show_bug.cgi?id=205359
+
+        Reviewed by Ryosuke Niwa.
+
+        * http/wpt/service-workers/online-worker.js:
+        Drop process name check as it causes flakiness depending on whether or not the service worker runs in process.
+
+        * http/wpt/service-workers/ready.https.window-expected.txt:
+        * http/wpt/service-workers/ready.https.window.js:
+        Include all subtests from https://github.com/web-platform-tests/wpt/pull/20655 now that they are no longer
+        flaky.
+
+2019-12-17  Chris Dumez  <cdumez@apple.com>
+
         Unreviewed, revert r253493 because it broke an Apple internal site
 
         * platform/mac/TestExpectations:

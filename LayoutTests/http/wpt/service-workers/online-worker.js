@@ -27,11 +27,6 @@ async function doTest(event)
             return;
         }
 
-        if (self.internals.processName !== "none" && self.internals.processName !== "WebKitTestRunner Service Worker (localhost)") {
-            event.source.postMessage("FAIL: wrong service worker process name: " + self.internals.processName + "'");
-            return;
-        }
-
         internals.setOnline(true);
         var eventName = await waitForOnlineEvent();
         if (!navigator.onLine)

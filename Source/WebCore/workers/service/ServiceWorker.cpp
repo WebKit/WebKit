@@ -81,11 +81,6 @@ ServiceWorker::~ServiceWorker()
 
 void ServiceWorker::updateState(State state)
 {
-    if (m_isSuspended) {
-        m_pendingStateChanges.append(state);
-        return;
-    }
-
     WORKER_RELEASE_LOG_IF_ALLOWED("updateState: Updating service worker %llu state from %hhu to %hhu. Registration ID: %llu", identifier().toUInt64(), m_data.state, state, registrationIdentifier().toUInt64());
     m_data.state = state;
     if (state != State::Installing && !m_isStopped) {
@@ -148,22 +143,6 @@ ScriptExecutionContext* ServiceWorker::scriptExecutionContext() const
 const char* ServiceWorker::activeDOMObjectName() const
 {
     return "ServiceWorker";
-}
-
-void ServiceWorker::suspend(ReasonForSuspension)
-{
-    m_isSuspended = true;
-}
-
-void ServiceWorker::resume()
-{
-    m_isSuspended = false;
-    if (!m_pendingStateChanges.isEmpty()) {
-        scriptExecutionContext()->postTask([this, protectedThis = makeRef(*this)](auto&) {
-            for (auto pendingStateChange : std::exchange(m_pendingStateChanges, { }))
-                updateState(pendingStateChange);
-        });
-    }
 }
 
 void ServiceWorker::stop()

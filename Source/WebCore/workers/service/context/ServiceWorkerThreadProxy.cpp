@@ -186,7 +186,9 @@ void ServiceWorkerThreadProxy::notifyNetworkStateChange(bool isOnline)
     postTaskForModeToWorkerGlobalScope([isOnline] (ScriptExecutionContext& context) {
         auto& globalScope = downcast<WorkerGlobalScope>(context);
         globalScope.setIsOnline(isOnline);
-        globalScope.dispatchEvent(Event::create(isOnline ? eventNames().onlineEvent : eventNames().offlineEvent, Event::CanBubble::No, Event::IsCancelable::No));
+        globalScope.eventLoop().queueTask(TaskSource::DOMManipulation, [globalScope = makeRef(globalScope), isOnline] {
+            globalScope->dispatchEvent(Event::create(isOnline ? eventNames().onlineEvent : eventNames().offlineEvent, Event::CanBubble::No, Event::IsCancelable::No));
+        });
     }, WorkerRunLoop::defaultMode());
 }
 
@@ -196,7 +198,9 @@ void ServiceWorkerThreadProxy::startFetch(SWServerConnectionIdentifier connectio
 
     ASSERT(!m_ongoingFetchTasks.contains(key));
     m_ongoingFetchTasks.add(key, client.copyRef());
-    thread().postFetchTask(WTFMove(client), WTFMove(clientId), WTFMove(request), WTFMove(referrer), WTFMove(options));
+    postTaskForModeToWorkerGlobalScope([this, protectedThis = makeRef(*this), client = WTFMove(client), clientId, request = request.isolatedCopy(), referrer = referrer.isolatedCopy(), options = options.isolatedCopy()](auto&) mutable {
+        thread().queueTaskToFireFetchEvent(WTFMove(client), WTFMove(clientId), WTFMove(request), WTFMove(referrer), WTFMove(options));
+    }, WorkerRunLoop::defaultMode());
 }
 
 void ServiceWorkerThreadProxy::cancelFetch(SWServerConnectionIdentifier connectionIdentifier, FetchIdentifier fetchIdentifier)

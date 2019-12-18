@@ -56,11 +56,11 @@ public:
     WorkerObjectProxy& workerObjectProxy() const { return m_workerObjectProxy; }
 
     void start(Function<void(const String&, bool)>&&);
-    WEBCORE_EXPORT void postFetchTask(Ref<ServiceWorkerFetch::Client>&&, Optional<ServiceWorkerClientIdentifier>&&, ResourceRequest&&, String&& referrer, FetchOptions&&);
-    WEBCORE_EXPORT void postMessageToServiceWorker(MessageWithMessagePorts&&, ServiceWorkerOrClientData&& sourceData);
+    WEBCORE_EXPORT void queueTaskToFireFetchEvent(Ref<ServiceWorkerFetch::Client>&&, Optional<ServiceWorkerClientIdentifier>&&, ResourceRequest&&, String&& referrer, FetchOptions&&);
+    WEBCORE_EXPORT void queueTaskToPostMessage(MessageWithMessagePorts&&, ServiceWorkerOrClientData&& sourceData);
 
-    void fireInstallEvent();
-    void fireActivateEvent();
+    void queueTaskToFireInstallEvent();
+    void queueTaskToFireActivateEvent();
 
     const ServiceWorkerContextData& contextData() const { return m_data; }
 

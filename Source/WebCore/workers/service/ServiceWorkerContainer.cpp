@@ -285,12 +285,25 @@ void ServiceWorkerContainer::updateRegistrationState(ServiceWorkerRegistrationId
     if (m_isStopped)
         return;
 
-    RefPtr<ServiceWorker> serviceWorker;
-    if (serviceWorkerData)
-        serviceWorker = ServiceWorker::getOrCreate(*scriptExecutionContext(), ServiceWorkerData { *serviceWorkerData });
+    queueTaskKeepingObjectAlive(*this, TaskSource::DOMManipulation, [this, identifier, state, serviceWorkerData = Optional<ServiceWorkerData> { serviceWorkerData }]() mutable {
+        RefPtr<ServiceWorker> serviceWorker;
+        if (serviceWorkerData)
+            serviceWorker = ServiceWorker::getOrCreate(*scriptExecutionContext(), WTFMove(*serviceWorkerData));
 
-    if (auto* registration = m_registrations.get(identifier))
-        registration->updateStateFromServer(state, WTFMove(serviceWorker));
+        if (auto* registration = m_registrations.get(identifier))
+            registration->updateStateFromServer(state, WTFMove(serviceWorker));
+    });
+}
+
+void ServiceWorkerContainer::updateWorkerState(ServiceWorkerIdentifier identifier, ServiceWorkerState state)
+{
+    if (m_isStopped)
+        return;
+
+    queueTaskKeepingObjectAlive(*this, TaskSource::DOMManipulation, [this, identifier, state] {
+        if (auto* serviceWorker = scriptExecutionContext()->serviceWorker(identifier))
+            serviceWorker->updateState(state);
+    });
 }
 
 void ServiceWorkerContainer::getRegistrations(Ref<DeferredPromise>&& promise)
@@ -342,14 +355,14 @@ void ServiceWorkerContainer::jobFailedWithException(ServiceWorkerJob& job, const
     });
 }
 
-void ServiceWorkerContainer::fireUpdateFoundEvent(ServiceWorkerRegistrationIdentifier identifier)
+void ServiceWorkerContainer::queueTaskToFireUpdateFoundEvent(ServiceWorkerRegistrationIdentifier identifier)
 {
 #ifndef NDEBUG
     ASSERT(m_creationThread.ptr() == &Thread::current());
 #endif
 
     if (auto* registration = m_registrations.get(identifier))
-        registration->fireUpdateFoundEvent();
+        registration->queueTaskToFireUpdateFoundEvent();
 }
 
 void ServiceWorkerContainer::jobResolvedWithRegistration(ServiceWorkerJob& job, ServiceWorkerRegistrationData&& data, ShouldNotifyWhenResolved shouldNotifyWhenResolved)
@@ -550,7 +563,7 @@ void ServiceWorkerContainer::removeRegistration(ServiceWorkerRegistration& regis
     m_registrations.remove(registration.identifier());
 }
 
-void ServiceWorkerContainer::fireControllerChangeEvent()
+void ServiceWorkerContainer::queueTaskToDispatchControllerChangeEvent()
 {
 #ifndef NDEBUG
     ASSERT(m_creationThread.ptr() == &Thread::current());
