@@ -1,5 +1,5 @@
 /**
- * @fileoverview Utilities for mixed-content in Web Platform Tests.
+ * @fileoverview Utilities for mixed-content in web-platform-tests.
  * @author burnik@google.com (Kristijan Burnik)
  * Disclaimer: Some methods of other authors are annotated in the corresponding
  *     method's JSDoc.
@@ -286,9 +286,17 @@ function bindEvents2(resolveObject, resolveEventName, rejectObject, rejectEventN
 function createElement(tagName, attrs, parentNode, doBindEvents) {
   var element = document.createElement(tagName);
 
-  if (doBindEvents)
+  if (doBindEvents) {
     bindEvents(element);
-
+    if (element.tagName == "IFRAME" && !('srcdoc' in attrs || 'src' in attrs)) {
+      // If we're loading a frame, ensure we spin the event loop after load to
+      // paper over the different event timing in Gecko vs Blink/WebKit
+      // see https://github.com/whatwg/html/issues/4965
+      element.eventPromise = element.eventPromise.then(() => {
+        return new Promise(resolve => setTimeout(resolve, 0))
+      });
+    }
+  }
   // We set the attributes after binding to events to catch any
   // event-triggering attribute changes. E.g. form submission.
   //
@@ -312,19 +320,6 @@ function createElement(tagName, attrs, parentNode, doBindEvents) {
 
 function createRequestViaElement(tagName, attrs, parentNode) {
   return createElement(tagName, attrs, parentNode, true).eventPromise;
-}
-
-/**
- * Creates a new empty iframe and appends it to {@code document.body} .
- * @param {string} name The name and ID of the new iframe.
- * @param {boolean} doBindEvents Whether to bind load and error events.
- * @return {DOMElement} The newly created iframe.
- */
-function createHelperIframe(name, doBindEvents) {
-  return createElement("iframe",
-                       {"name": name, "id": name},
-                       document.body,
-                       doBindEvents);
 }
 
 function wrapResult(server_data) {
@@ -394,7 +389,7 @@ function wrapResult(server_data) {
   requestViaAudio                  3        -        Y       -
   requestViaDedicatedWorker        2        Y        Y       Y
   requestViaFetch                  2        Y        Y       -
-  requestViaForm                   3        -        Y       -
+  requestViaForm                   2        -        Y       -
   requestViaIframe                 1        Y        Y       -
   requestViaImage                  2        Y        Y       -
   requestViaLinkPrefetch           3        -        Y       -
@@ -583,18 +578,29 @@ function requestViaWorklet(type, url) {
 }
 
 /**
- * Sets the href attribute on a navigable DOM element and performs a navigation
- *     by clicking it. To avoid navigating away from the current execution
- *     context, a target attribute is set to point to a new helper iframe.
- * @param {DOMElement} navigableElement The navigable DOMElement
- * @param {string} url The href for the navigable element.
+ * Creates a navigable element with the name `navigableElementName`
+ * (<a>, <area>, or <form>) under `parentNode`, and
+ * performs a navigation by `trigger()` (e.g. clicking <a>).
+ * To avoid navigating away from the current execution context,
+ * a target attribute is set to point to a new helper iframe.
+ * @param {string} navigableElementName
+ * @param {object} additionalAttributes The attributes of the navigable element.
+ * @param {DOMElement} parentNode
+ * @param {function(DOMElement} trigger A callback called after the navigable
+ * element is inserted and should trigger navigation using the element.
  * @return {Promise} The promise for success/error events.
  */
-function requestViaNavigable(navigableElement, url) {
-  var iframe = createHelperIframe(guid(), false);
-  setAttributes(navigableElement,
-                {"href": url,
-                 "target": iframe.name});
+function requestViaNavigable(navigableElementName, additionalAttributes,
+                             parentNode, trigger) {
+  const name = guid();
+
+  const iframe =
+    createElement("iframe", {"name": name, "id": name}, parentNode, false);
+
+  const navigable = createElement(
+      navigableElementName,
+      Object.assign({"target": name}, additionalAttributes),
+      parentNode, false);
 
   const promise =
     bindEvents2(window, "message", iframe, "error", window, "error")
@@ -603,7 +609,7 @@ function requestViaNavigable(navigableElement, url) {
             return Promise.reject(new Error('Unexpected event.source'));
           return event.data;
         });
-  navigableElement.click();
+  trigger(navigable);
   return promise;
 }
 
@@ -614,12 +620,11 @@ function requestViaNavigable(navigableElement, url) {
  * @return {Promise} The promise for success/error events.
  */
 function requestViaAnchor(url, additionalAttributes) {
-  var a = createElement(
+  return requestViaNavigable(
       "a",
-      Object.assign({"innerHTML": "Link to resource"}, additionalAttributes),
-      document.body);
-
-  return requestViaNavigable(a, url);
+      Object.assign({"href": url, "innerHTML": "Link to resource"},
+                    additionalAttributes),
+      document.body, a => a.click());
 }
 
 /**
@@ -629,13 +634,11 @@ function requestViaAnchor(url, additionalAttributes) {
  * @return {Promise} The promise for success/error events.
  */
 function requestViaArea(url, additionalAttributes) {
-  var area = createElement(
-      "area",
-      Object.assign({}, additionalAttributes),
-      document.body);
-
   // TODO(kristijanburnik): Append to map and add image.
-  return requestViaNavigable(area, url);
+  return requestViaNavigable(
+      "area",
+      Object.assign({"href": url}, additionalAttributes),
+      document.body, area => area.click());
 }
 
 /**
@@ -661,17 +664,11 @@ function requestViaScript(url, additionalAttributes) {
  * @param {string} url The URL to submit to.
  * @return {Promise} The promise for success/error events.
  */
-function requestViaForm(url) {
-  var iframe = createHelperIframe(guid());
-  var form = createElement("form",
-                           {"action": url,
-                            "method": "POST",
-                            "target": iframe.name},
-                           document.body);
-  bindEvents(iframe);
-  form.submit();
-
-  return iframe.eventPromise;
+function requestViaForm(url, additionalAttributes) {
+  return requestViaNavigable(
+      "form",
+      Object.assign({"action": url, "method": "POST"}, additionalAttributes),
+      document.body, form => form.submit());
 }
 
 /**
@@ -866,7 +863,7 @@ const subresourceMap = {
     invoker: requestViaFetch,
   },
   "form-tag": {
-    path: "/common/security-features/subresource/empty.py",
+    path: "/common/security-features/subresource/document.py",
     invoker: requestViaForm,
   },
   "iframe-tag": {
@@ -968,9 +965,11 @@ function getSubresourceOrigin(originType) {
 
   // These values can evaluate to either empty strings or a ":port" string.
   const httpPort = getNormalizedPort(parseInt("{{ports[http][0]}}", 10));
-  const httpsPort = getNormalizedPort(parseInt("{{ports[https][0]}}", 10));
+  const httpsRawPort = parseInt("{{ports[https][0]}}", 10);
+  const httpsPort = getNormalizedPort(httpsRawPort);
   const wsPort = getNormalizedPort(parseInt("{{ports[ws][0]}}", 10));
-  const wssPort = getNormalizedPort(parseInt("{{ports[wss][0]}}", 10));
+  const wssRawPort = parseInt("{{ports[wss][0]}}", 10);
+  const wssPort = getNormalizedPort(wssRawPort);
 
   /**
     @typedef OriginType
@@ -992,6 +991,22 @@ function getSubresourceOrigin(originType) {
     "same-ws": wsProtocol + "://" + sameOriginHost + wsPort,
     "cross-wss": wssProtocol + "://" + crossOriginHost + wssPort,
     "cross-ws": wsProtocol + "://" + crossOriginHost + wsPort,
+
+    // The following origin types are used for upgrade-insecure-requests tests:
+    // These rely on some unintuitive cleverness due to WPT's test setup:
+    // 'Upgrade-Insecure-Requests' does not upgrade the port number,
+    // so we use URLs in the form `http://[domain]:[https-port]`,
+    // which will be upgraded to `https://[domain]:[https-port]`.
+    // If the upgrade fails, the load will fail, as we don't serve HTTP over
+    // the secure port.
+    "same-http-downgrade":
+        httpProtocol + "://" + sameOriginHost + ":" + httpsRawPort,
+    "cross-http-downgrade":
+        httpProtocol + "://" + crossOriginHost + ":" + httpsRawPort,
+    "same-ws-downgrade":
+        wsProtocol + "://" + sameOriginHost + ":" + wssRawPort,
+    "cross-ws-downgrade":
+        wsProtocol + "://" + crossOriginHost + ":" + wssRawPort,
   };
 
   return originMap[originType];
@@ -1100,6 +1115,9 @@ function invokeRequest(subresource, sourceContextList) {
     "iframe": { // <iframe src="same-origin-URL"></iframe>
       invoker: invokeFromIframe,
     },
+    "iframe-blank": { // <iframe></iframe>
+      invoker: invokeFromIframe,
+    },
     "worker-classic": {
       // Classic dedicated worker loaded from same-origin.
       invoker: invokeFromWorker.bind(undefined, false, {}),
@@ -1186,35 +1204,53 @@ function invokeFromIframe(subresource, sourceContextList) {
     encodeURIComponent(JSON.stringify(
         currentSourceContext.policyDeliveries || []));
 
+  let iframe;
   let promise;
   if (currentSourceContext.sourceContextType === 'srcdoc') {
     promise = fetch(frameUrl)
       .then(r => r.text())
       .then(srcdoc => {
-          return createElement("iframe", {srcdoc: srcdoc}, document.body, true);
+          iframe = createElement(
+              "iframe", {srcdoc: srcdoc}, document.body, true);
+          return iframe.eventPromise;
         });
   } else if (currentSourceContext.sourceContextType === 'iframe') {
-    promise = Promise.resolve(
-        createElement("iframe", {src: frameUrl}, document.body, true));
+    iframe = createElement("iframe", {src: frameUrl}, document.body, true);
+    promise = iframe.eventPromise;
+  } else if (currentSourceContext.sourceContextType === 'iframe-blank') {
+    let frameContent;
+    promise = fetch(frameUrl)
+      .then(r => r.text())
+      .then(t => {
+          frameContent = t;
+          iframe = createElement("iframe", {}, document.body, true);
+          return iframe.eventPromise;
+        })
+      .then(() => {
+          // Reinitialize `iframe.eventPromise` with a new promise
+          // that catches the load event for the document.write() below.
+          bindEvents(iframe);
+
+          iframe.contentDocument.write(frameContent);
+          iframe.contentDocument.close();
+          return iframe.eventPromise;
+        });
   }
 
   return promise
-    .then(iframe => {
-        return iframe.eventPromise
-          .then(() => {
-              const promise = bindEvents2(
-                  window, "message", iframe, "error", window, "error");
-              iframe.contentWindow.postMessage(
-                  {subresource: subresource,
-                   sourceContextList: sourceContextList.slice(1)},
-                  "*");
-              return promise;
-            })
-          .then(event => {
-              if (event.data.error)
-                return Promise.reject(event.data.error);
-              return event.data;
-            });
+    .then(() => {
+        const promise = bindEvents2(
+            window, "message", iframe, "error", window, "error");
+        iframe.contentWindow.postMessage(
+            {subresource: subresource,
+             sourceContextList: sourceContextList.slice(1)},
+            "*");
+        return promise;
+      })
+    .then(event => {
+        if (event.data.error)
+          return Promise.reject(event.data.error);
+        return event.data;
       });
 }
 

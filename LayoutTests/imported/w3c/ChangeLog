@@ -1,3 +1,14 @@
+2019-12-18  Chris Dumez  <cdumez@apple.com>
+
+        Re-sync web-platform-tests/common from upstream
+        https://bugs.webkit.org/show_bug.cgi?id=205342
+
+        Reviewed by Frédéric Wang.
+
+        Re-sync web-platform-tests/common from upstream e9d489f3377139a1d54b.
+
+        * web-platform-tests/common/*: Updated.
+
 2019-12-17  Chris Dumez  <cdumez@apple.com>
 
         Re-sync html/the-xhtml-syntax/parsing-xhtml-documents WPT tests from upstream

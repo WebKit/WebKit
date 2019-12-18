@@ -14,5 +14,7 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/common/security-features/tools/format_spec_src_json.py
 /LayoutTests/imported/w3c/web-platform-tests/common/security-features/tools/generate.py
+/LayoutTests/imported/w3c/web-platform-tests/common/security-features/tools/spec_validator.py
 /LayoutTests/imported/w3c/web-platform-tests/common/security-features/tools/util.py

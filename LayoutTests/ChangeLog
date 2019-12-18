@@ -1,3 +1,25 @@
+2019-12-18  Chris Dumez  <cdumez@apple.com>
+
+        Re-sync web-platform-tests/common from upstream
+        https://bugs.webkit.org/show_bug.cgi?id=205342
+
+        Reviewed by Frédéric Wang.
+
+        Re-sync web-platform-tests/common from upstream e9d489f3377139a1d54b.
+
+        * canvas/philip/tests/2d.drawImage.incomplete.emptysrc-expected.txt:
+        * canvas/philip/tests/2d.drawImage.incomplete.emptysrc.html:
+        * canvas/philip/tests/2d.drawImage.incomplete.nosrc-expected.txt:
+        * canvas/philip/tests/2d.drawImage.incomplete.nosrc.html:
+        * canvas/philip/tests/2d.drawImage.incomplete.removedsrc-expected.txt:
+        * canvas/philip/tests/2d.drawImage.incomplete.removedsrc.html:
+        * canvas/philip/tests/2d.pattern.image.incomplete.emptysrc-expected.txt:
+        * canvas/philip/tests/2d.pattern.image.incomplete.emptysrc.html:
+        * canvas/philip/tests/2d.pattern.image.incomplete.removedsrc-expected.txt:
+        * canvas/philip/tests/2d.pattern.image.incomplete.removedsrc.html:
+        * http/wpt/2dcontext/imagebitmap/createImageBitmap-sizing.html:
+        * http/wpt/2dcontext/imagebitmap/drawImage-ImageBitmap.html:
+
 2019-12-18  Antoine Quint  <graouts@apple.com>
 
         REGRESSION: animations/leak-document-with-css-animation.html is very flaky
