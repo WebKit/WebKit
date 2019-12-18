@@ -27,6 +27,7 @@
 
 #include "RuleFeature.h"
 #include <wtf/Forward.h>
+#include <wtf/HashMap.h>
 
 namespace WebCore {
 
@@ -40,19 +41,23 @@ class StyleSheetContents;
 namespace Style {
 
 class RuleSet;
+struct InvalidationRuleSet;
 
 class Invalidator {
 public:
     Invalidator(const Vector<StyleSheetContents*>&, const MediaQueryEvaluator&);
-    Invalidator(const RuleSet&);
+    Invalidator(const Vector<const RuleSet*, 1>&);
 
     bool dirtiesAllStyle() const { return m_dirtiesAllStyle; }
     void invalidateStyle(Document&);
     void invalidateStyle(ShadowRoot&);
     void invalidateStyle(Element&);
-    void invalidateStyleWithMatchElement(Element&, MatchElement);
 
     static void invalidateShadowParts(ShadowRoot&);
+
+    using MatchElementRuleSets = HashMap<MatchElement, Vector<const RuleSet*, 1>, WTF::IntHash<MatchElement>, WTF::StrongEnumHashTraits<MatchElement>>;
+    static void addToMatchElementRuleSets(Invalidator::MatchElementRuleSets&, const InvalidationRuleSet&);
+    static void invalidateWithMatchElementRuleSets(Element&, const MatchElementRuleSets&);
 
 private:
     enum class CheckDescendants { Yes, No };
@@ -60,9 +65,10 @@ private:
     void invalidateStyleForTree(Element&, SelectorFilter*);
     void invalidateStyleForDescendants(Element&, SelectorFilter*);
     void invalidateInShadowTreeIfNeeded(Element&);
+    void invalidateStyleWithMatchElement(Element&, MatchElement);
 
     std::unique_ptr<RuleSet> m_ownedRuleSet;
-    const RuleSet& m_ruleSet;
+    Vector<const RuleSet*, 1> m_ruleSets;
     bool m_dirtiesAllStyle { false };
     bool m_didInvalidateHostChildren { false };
 };

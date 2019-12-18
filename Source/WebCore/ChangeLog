@@ -1,3 +1,46 @@
+2019-12-18  Antti Koivisto  <antti@apple.com>
+
+        Style::Invalidator should be able to invalidate using multiple RuleSets in one pass
+        https://bugs.webkit.org/show_bug.cgi?id=205391
+
+        Reviewed by Zalan Bujtas.
+
+        It is inefficient to do multiple passes over DOM if there are multiple RuleSets to invalidate with.
+
+        * style/AttributeChangeInvalidation.cpp:
+        (WebCore::Style::AttributeChangeInvalidation::invalidateStyle):
+
+        Collect to a HashMap per MatchElement.
+
+        (WebCore::Style::AttributeChangeInvalidation::invalidateStyleWithRuleSets):
+
+        Call to common invalidation function in Style::Invalidator.
+
+        * style/AttributeChangeInvalidation.h:
+        * style/ClassChangeInvalidation.cpp:
+        (WebCore::Style::ClassChangeInvalidation::computeInvalidation):
+        (WebCore::Style::ClassChangeInvalidation::invalidateStyleWithRuleSets):
+
+        Same for classes.
+
+        * style/ClassChangeInvalidation.h:
+        * style/StyleInvalidator.cpp:
+        (WebCore::Style::Invalidator::Invalidator):
+
+        Take a Vector of RuleSets.
+
+        (WebCore::Style::Invalidator::invalidateIfNeeded):
+
+        Loop as needed.
+
+        (WebCore::Style::Invalidator::invalidateStyle):
+        (WebCore::Style::Invalidator::invalidateInShadowTreeIfNeeded):
+        (WebCore::Style::Invalidator::invalidateWithMatchElementRuleSets):
+
+        Factor the invalidation loop and HashMap to Invalidator.
+
+        * style/StyleInvalidator.h:
+
 2019-12-18  Simon Fraser  <simon.fraser@apple.com>
 
         Move m_exposedContentRect into the DelegatedScrollingGeometry optional

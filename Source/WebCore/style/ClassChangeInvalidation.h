@@ -26,16 +26,14 @@
 #pragma once
 
 #include "Element.h"
+#include "StyleInvalidator.h"
 #include <wtf/Vector.h>
 
 namespace WebCore {
 
-class RuleSet;
 class SpaceSplitString;
 
 namespace Style {
-
-struct InvalidationRuleSet;
 
 class ClassChangeInvalidation {
 public:
@@ -49,7 +47,7 @@ private:
     const bool m_isEnabled;
     Element& m_element;
 
-    Vector<const InvalidationRuleSet*, 4> m_invalidationRuleSets;
+    Invalidator::MatchElementRuleSets m_matchElementRuleSets;
 };
 
 inline ClassChangeInvalidation::ClassChangeInvalidation(Element& element, const SpaceSplitString& oldClasses, const SpaceSplitString& newClasses)

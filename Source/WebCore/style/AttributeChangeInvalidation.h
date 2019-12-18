@@ -26,11 +26,10 @@
 #pragma once
 
 #include "Element.h"
+#include "StyleInvalidator.h"
 
 namespace WebCore {
 namespace Style {
-
-struct InvalidationRuleSet;
 
 class AttributeChangeInvalidation {
 public:
@@ -44,7 +43,7 @@ private:
     const bool m_isEnabled;
     Element& m_element;
 
-    Vector<const InvalidationRuleSet*, 4> m_invalidationRuleSets;
+    Invalidator::MatchElementRuleSets m_matchElementRuleSets;
 };
 
 inline AttributeChangeInvalidation::AttributeChangeInvalidation(Element& element, const QualifiedName& attributeName, const AtomString& oldValue, const AtomString& newValue)

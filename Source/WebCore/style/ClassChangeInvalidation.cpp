@@ -29,9 +29,7 @@
 #include "ElementChildIterator.h"
 #include "SpaceSplitString.h"
 #include "StyleInvalidationFunctions.h"
-#include "StyleInvalidator.h"
 #include <wtf/BitVector.h>
-#include <wtf/SetForScope.h>
 
 namespace WebCore {
 namespace Style {
@@ -113,19 +111,14 @@ void ClassChangeInvalidation::computeInvalidation(const SpaceSplitString& oldCla
     for (auto* changedClass : changedClasses) {
         if (auto* invalidationRuleSets = ruleSets.classInvalidationRuleSets(changedClass)) {
             for (auto& invalidationRuleSet : *invalidationRuleSets)
-                m_invalidationRuleSets.append(&invalidationRuleSet);
+                Invalidator::addToMatchElementRuleSets(m_matchElementRuleSets, invalidationRuleSet);
         }
     }
 }
 
 void ClassChangeInvalidation::invalidateStyleWithRuleSets()
 {
-    SetForScope<bool> isInvalidating(m_element.styleResolver().ruleSets().isInvalidatingStyleWithRuleSets(), true);
-
-    for (auto* invalidationRuleSet : m_invalidationRuleSets) {
-        Invalidator invalidator(*invalidationRuleSet->ruleSet);
-        invalidator.invalidateStyleWithMatchElement(m_element, invalidationRuleSet->matchElement);
-    }
+    Invalidator::invalidateWithMatchElementRuleSets(m_element, m_matchElementRuleSets);
 }
 
 }

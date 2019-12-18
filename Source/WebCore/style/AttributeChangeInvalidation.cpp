@@ -28,8 +28,6 @@
 
 #include "ElementIterator.h"
 #include "StyleInvalidationFunctions.h"
-#include "StyleInvalidator.h"
-#include <wtf/SetForScope.h>
 
 namespace WebCore {
 namespace Style {
@@ -80,7 +78,7 @@ void AttributeChangeInvalidation::invalidateStyle(const QualifiedName& attribute
             bool oldMatches = !oldValue.isNull() && SelectorChecker::attributeSelectorMatches(m_element, attributeName, oldValue, *selector);
             bool newMatches = !newValue.isNull() && SelectorChecker::attributeSelectorMatches(m_element, attributeName, newValue, *selector);
             if (oldMatches != newMatches) {
-                m_invalidationRuleSets.append(&invalidationRuleSet);
+                Invalidator::addToMatchElementRuleSets(m_matchElementRuleSets, invalidationRuleSet);
                 break;
             }
         }
@@ -89,12 +87,7 @@ void AttributeChangeInvalidation::invalidateStyle(const QualifiedName& attribute
 
 void AttributeChangeInvalidation::invalidateStyleWithRuleSets()
 {
-    SetForScope<bool> isInvalidating(m_element.styleResolver().ruleSets().isInvalidatingStyleWithRuleSets(), true);
-
-    for (auto* invalidationRuleSet : m_invalidationRuleSets) {
-        Invalidator invalidator(*invalidationRuleSet->ruleSet);
-        invalidator.invalidateStyleWithMatchElement(m_element, invalidationRuleSet->matchElement);
-    }
+    Invalidator::invalidateWithMatchElementRuleSets(m_element, m_matchElementRuleSets);
 }
 
 

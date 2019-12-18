@@ -35,8 +35,11 @@
 #include "RuntimeEnabledFeatures.h"
 #include "SelectorFilter.h"
 #include "ShadowRoot.h"
+#include "StyleResolver.h"
 #include "StyleRuleImport.h"
+#include "StyleScopeRuleSets.h"
 #include "StyleSheetContents.h"
+#include <wtf/SetForScope.h>
 
 namespace WebCore {
 namespace Style {
@@ -81,7 +84,7 @@ static bool shouldDirtyAllStyle(const Vector<StyleSheetContents*>& sheets)
 
 Invalidator::Invalidator(const Vector<StyleSheetContents*>& sheets, const MediaQueryEvaluator& mediaQueryEvaluator)
     : m_ownedRuleSet(makeUnique<RuleSet>())
-    , m_ruleSet(*m_ownedRuleSet)
+    , m_ruleSets({ m_ownedRuleSet.get() })
     , m_dirtiesAllStyle(shouldDirtyAllStyle(sheets))
 {
     if (m_dirtiesAllStyle)
@@ -92,16 +95,24 @@ Invalidator::Invalidator(const Vector<StyleSheetContents*>& sheets, const MediaQ
         m_ownedRuleSet->addRulesFromSheet(*sheet, mediaQueryEvaluator);
 }
 
-Invalidator::Invalidator(const RuleSet& ruleSet)
-    : m_ruleSet(ruleSet)
+Invalidator::Invalidator(const Vector<const RuleSet*, 1>& ruleSets)
+    : m_ruleSets(ruleSets)
 {
+    ASSERT(m_ruleSets.size());
 }
 
 Invalidator::CheckDescendants Invalidator::invalidateIfNeeded(Element& element, const SelectorFilter* filter)
 {
     invalidateInShadowTreeIfNeeded(element);
 
-    bool shouldCheckForSlots = !m_ruleSet.slottedPseudoElementRules().isEmpty() && !m_didInvalidateHostChildren;
+    bool shouldCheckForSlots = [&] {
+        for (auto* ruleSet : m_ruleSets) {
+            if (!ruleSet->slottedPseudoElementRules().isEmpty() && !m_didInvalidateHostChildren)
+                return true;
+        }
+        return false;
+    }();
+
     if (shouldCheckForSlots && is<HTMLSlotElement>(element)) {
         auto* containingShadowRoot = element.containingShadowRoot();
         if (containingShadowRoot && containingShadowRoot->host()) {
@@ -114,11 +125,13 @@ Invalidator::CheckDescendants Invalidator::invalidateIfNeeded(Element& element, 
 
     switch (element.styleValidity()) {
     case Style::Validity::Valid: {
-        ElementRuleCollector ruleCollector(element, m_ruleSet, filter);
-        ruleCollector.setMode(SelectorChecker::Mode::CollectingRulesIgnoringVirtualPseudoElements);
+        for (auto* ruleSet : m_ruleSets) {
+            ElementRuleCollector ruleCollector(element, *ruleSet, filter);
+            ruleCollector.setMode(SelectorChecker::Mode::CollectingRulesIgnoringVirtualPseudoElements);
 
-        if (ruleCollector.matchesAnyAuthorRules())
-            element.invalidateStyleInternal();
+            if (ruleCollector.matchesAnyAuthorRules())
+                element.invalidateStyleInternal();
+        }
 
         return CheckDescendants::Yes;
     }
@@ -187,8 +200,10 @@ void Invalidator::invalidateStyle(ShadowRoot& shadowRoot)
 {
     ASSERT(!m_dirtiesAllStyle);
 
-    if (!m_ruleSet.hostPseudoClassRules().isEmpty() && shadowRoot.host())
-        shadowRoot.host()->invalidateStyleInternal();
+    for (auto* ruleSet : m_ruleSets) {
+        if (!ruleSet->hostPseudoClassRules().isEmpty() && shadowRoot.host())
+            shadowRoot.host()->invalidateStyleInternal();
+    }
 
     for (auto& child : childrenOfType<Element>(shadowRoot)) {
         SelectorFilter filter;
@@ -282,16 +297,35 @@ void Invalidator::invalidateInShadowTreeIfNeeded(Element& element)
     if (!shadowRoot)
         return;
 
-    if (m_ruleSet.hasShadowPseudoElementRules()) {
-        // FIXME: This could do actual rule matching too.
-        element.invalidateStyleForSubtreeInternal();
-    }
 
-    // FIXME: More fine-grained invalidation for ::part()
-    if (!m_ruleSet.partPseudoElementRules().isEmpty())
-        invalidateShadowParts(*shadowRoot);
+    for (auto* ruleSet : m_ruleSets) {
+        if (ruleSet->hasShadowPseudoElementRules()) {
+            // FIXME: This could do actual rule matching too.
+            element.invalidateStyleForSubtreeInternal();
+        }
+
+        // FIXME: More fine-grained invalidation for ::part()
+        if (!ruleSet->partPseudoElementRules().isEmpty())
+            invalidateShadowParts(*shadowRoot);
+    }
 }
 
+void Invalidator::addToMatchElementRuleSets(Invalidator::MatchElementRuleSets& matchElementRuleSets, const InvalidationRuleSet& invalidationRuleSet)
+{
+    matchElementRuleSets.ensure(invalidationRuleSet.matchElement, [] {
+        return Vector<const RuleSet*, 1> { };
+    }).iterator->value.append(invalidationRuleSet.ruleSet.get());
+}
+
+void Invalidator::invalidateWithMatchElementRuleSets(Element& element, const MatchElementRuleSets& matchElementRuleSets)
+{
+    SetForScope<bool> isInvalidating(element.styleResolver().ruleSets().isInvalidatingStyleWithRuleSets(), true);
+
+    for (auto& matchElementAndRuleSet : matchElementRuleSets) {
+        Invalidator invalidator(matchElementAndRuleSet.value);
+        invalidator.invalidateStyleWithMatchElement(element, matchElementAndRuleSet.key);
+    }
+}
 
 }
 }
