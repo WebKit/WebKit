@@ -1,3 +1,4 @@
 
-PASS Test skipWaiting when a installed worker is waiting 
+
+FAIL Test skipWaiting when a installed worker is waiting assert_equals: skipWaiting promise should be resolved with undefined expected "PASS" but got "FAIL: Promise should be resolved before ServiceWorker#state is set to activated"
 

@@ -1,3 +1,9 @@
+2019-12-18  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, rebaseline all service workers tests and unskip 2 that no longer time out.
+
+        * TestExpectations:
+
 2019-12-18  Truitt Savell  <tsavell@apple.com>
 
         REGRESSION: [ Mac ] accessibility/presentation-role-iframe.html is a flaky failure

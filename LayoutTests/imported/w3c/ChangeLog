@@ -1,5 +1,24 @@
 2019-12-18  Chris Dumez  <cdumez@apple.com>
 
+        Unreviewed, rebaseline all service workers tests and unskip 2 that no longer time out.
+
+        * web-platform-tests/service-workers/service-worker/client-navigate.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/clients-matchall-include-uncontrolled.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/dedicated-worker-service-worker-interception.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/fetch-canvas-tainting-video-cache.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/fetch-canvas-tainting-video.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/multipart-image.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/performance-timeline.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/sandboxed-iframe-fetch-event.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/skip-waiting-installed.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/skip-waiting-using-registration.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/update-not-allowed.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/update.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/worker-client-id.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/worker-in-sandboxed-iframe-by-csp-fetch-event.https-expected.txt:
+
+2019-12-18  Chris Dumez  <cdumez@apple.com>
+
         Re-sync web-platform-tests/common from upstream
         https://bugs.webkit.org/show_bug.cgi?id=205342
 

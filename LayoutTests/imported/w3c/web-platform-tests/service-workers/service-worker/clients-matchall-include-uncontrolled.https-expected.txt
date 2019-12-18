@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: line 2659: Error: assert_array_equals: property 1, expected false but got true
 
 
 Harness Error (FAIL), message = Error: assert_array_equals: property 1, expected false but got true

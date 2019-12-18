@@ -1,7 +1,3 @@
-CONSOLE MESSAGE: line 27: [blocked] The page at https://localhost:9443/service-workers/service-worker/worker-in-sandboxed-iframe-by-csp-fetch-event.https.html was not allowed to display insecure content from blob:null/f42c8e19-ae8e-4449-9c47-3b2c01a6d778.
-
-CONSOLE MESSAGE: line 27: Not allowed to request resource
-CONSOLE MESSAGE: line 27: Cannot load blob:null/f42c8e19-ae8e-4449-9c47-3b2c01a6d778 due to access control checks.
 
 Harness Error (TIMEOUT), message = null
 

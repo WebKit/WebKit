@@ -1,5 +1,3 @@
-CONSOLE MESSAGE: The operation couldn’t be completed. ( error 0.)
-CONSOLE MESSAGE: Cannot load .
 
 
 Harness Error (TIMEOUT), message = null
