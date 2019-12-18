@@ -1,5 +1,36 @@
 2019-12-18  Dan Robson  <dan_robson@apple.com>
 
+        Cherry-pick r253653. rdar://problem/58049166
+
+    Document::setFocusedElement should not set m_focusedElement to an element in another document
+    https://bugs.webkit.org/show_bug.cgi?id=205325
+    
+    Reviewed by Wenson Hsieh.
+    
+    Added an early exit for when the newly focused element had moved
+    while blurring the previously focused element.
+    
+    * dom/Document.cpp:
+    (WebCore::Document::setFocusedElement):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@253653 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-12-16  Ryosuke Niwa  <rniwa@webkit.org>
+
+            Document::setFocusedElement should not set m_focusedElement to an element in another document
+            https://bugs.webkit.org/show_bug.cgi?id=205325
+
+            Reviewed by Wenson Hsieh.
+
+            Added an early exit for when the newly focused element had moved
+            while blurring the previously focused element.
+
+            * dom/Document.cpp:
+            (WebCore::Document::setFocusedElement):
+
+2019-12-18  Dan Robson  <dan_robson@apple.com>
+
         Cherry-pick r253563. rdar://problem/58049160
 
     Consider top-level context whose origin is unique as insecure
