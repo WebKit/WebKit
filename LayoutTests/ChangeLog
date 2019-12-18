@@ -1,3 +1,14 @@
+2019-12-18  youenn fablet  <youenn@apple.com>
+
+        Layout Test imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/ready-states/autoplay-with-slow-text-tracks.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=176929
+
+        Unreviewed.
+
+        * TestExpectations:
+        * platform/mac/TestExpectations:
+        Mark it as flaky in all platforms.
+
 2019-12-18  Chris Dumez  <cdumez@apple.com>
 
         Re-sync web-platform-tests/common from upstream

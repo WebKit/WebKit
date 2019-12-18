@@ -258,6 +258,8 @@ imported/w3c/web-platform-tests/html/webappapis/dynamic-markup-insertion/opening
 imported/w3c/web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/tasks.window.html [ Skip ]
 imported/w3c/web-platform-tests/html/webappapis/scripting/event-loops/fully_active_document.window.html [ Skip ]
 
+webkit.org/b/176929 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/ready-states/autoplay-with-slow-text-tracks.html [ Pass Failure ]
+
 # Requires BroadcastChannel.
 imported/w3c/web-platform-tests/html/browsers/the-window-object/noopener-noreferrer-BarProp.window.html [ Skip ]
 imported/w3c/web-platform-tests/html/browsers/the-window-object/noopener-noreferrer-sizing.window.html [ Skip ]
