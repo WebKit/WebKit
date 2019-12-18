@@ -397,8 +397,10 @@ void FrameLoader::urlSelected(FrameLoadRequest&& frameRequest, Event* triggering
 
     Ref<Frame> protect(m_frame);
 
-    if (m_frame.script().executeIfJavaScriptURL(frameRequest.resourceRequest().url(), frameRequest.shouldReplaceDocumentIfJavaScriptURL()))
+    if (m_frame.script().executeIfJavaScriptURL(frameRequest.resourceRequest().url(), &frameRequest.requester().securityOrigin(), frameRequest.shouldReplaceDocumentIfJavaScriptURL())) {
+        m_quickRedirectComing = false;
         return;
+    }
 
     if (frameRequest.frameName().isEmpty())
         frameRequest.setFrameName(m_frame.document()->baseTarget());
@@ -433,7 +435,7 @@ void FrameLoader::submitForm(Ref<FormSubmission>&& submission)
             return;
         m_isExecutingJavaScriptFormAction = true;
         Ref<Frame> protect(m_frame);
-        m_frame.script().executeIfJavaScriptURL(submission->action(), DoNotReplaceDocumentIfJavaScriptURL);
+        m_frame.script().executeIfJavaScriptURL(submission->action(), nullptr, DoNotReplaceDocumentIfJavaScriptURL);
         m_isExecutingJavaScriptFormAction = false;
         return;
     }

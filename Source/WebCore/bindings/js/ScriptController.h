@@ -27,6 +27,7 @@
 #include <JavaScriptCore/JSBase.h>
 #include <JavaScriptCore/Strong.h>
 #include <wtf/Forward.h>
+#include <wtf/Optional.h>
 #include <wtf/RefPtr.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/text/TextPosition.h>
@@ -96,7 +97,7 @@ public:
     bool shouldAllowUserAgentScripts(Document&) const;
 
     // Returns true if argument is a JavaScript URL.
-    bool executeIfJavaScriptURL(const URL&, ShouldReplaceDocumentIfJavaScriptURL shouldReplaceDocumentIfJavaScriptURL = ReplaceDocumentIfJavaScriptURL);
+    bool executeIfJavaScriptURL(const URL&, RefPtr<SecurityOrigin> = nullptr, ShouldReplaceDocumentIfJavaScriptURL = ReplaceDocumentIfJavaScriptURL);
 
     // This function must be called from the main thread. It is safe to call it repeatedly.
     // Darwin is an exception to this rule: it is OK to call this function from any thread, even reentrantly.
