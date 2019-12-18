@@ -1,5 +1,18 @@
 2019-12-17  Chris Dumez  <cdumez@apple.com>
 
+        Re-sync html/the-xhtml-syntax/parsing-xhtml-documents WPT tests from upstream
+        https://bugs.webkit.org/show_bug.cgi?id=205354
+
+        Reviewed by Ryosuke Niwa.
+
+        Re-sync html/the-xhtml-syntax/parsing-xhtml-documents WPT tests from upstream 33de70caf7f076ebe3aaec.
+
+        * web-platform-tests/html/the-xhtml-syntax/parsing-xhtml-documents/support/entities.json: Added.
+        * web-platform-tests/html/the-xhtml-syntax/parsing-xhtml-documents/support/w3c-import.log:
+        * web-platform-tests/html/the-xhtml-syntax/parsing-xhtml-documents/support/xhtml-mathml-dtd-entity.htm:
+
+2019-12-17  Chris Dumez  <cdumez@apple.com>
+
         Unreviewed, revert r253493 because it broke an Apple internal site
 
         * web-platform-tests/html/semantics/forms/form-submission-0/form-double-submit-3-expected.txt:
