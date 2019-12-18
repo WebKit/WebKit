@@ -220,6 +220,33 @@ void ScrollView::setContentsScrollPosition(const IntPoint& position)
     setScrollPosition(position);
 }
 
+FloatRect ScrollView::exposedContentRect() const
+{
+#if PLATFORM(IOS_FAMILY)
+    if (platformWidget())
+        return platformExposedContentRect();
+#endif
+    
+    const ScrollView* parent = this->parent();
+    if (!parent)
+        return m_delegatedScrollingGeometry ? m_delegatedScrollingGeometry->exposedContentRect : FloatRect();
+
+    IntRect parentViewExtentContentRect = enclosingIntRect(parent->exposedContentRect());
+    IntRect selfExtentContentRect = rootViewToContents(parentViewExtentContentRect);
+    selfExtentContentRect.intersect(boundsRect());
+    return selfExtentContentRect;
+}
+
+void ScrollView::setExposedContentRect(const FloatRect& rect)
+{
+    ASSERT(!platformWidget());
+
+    if (!m_delegatedScrollingGeometry)
+        m_delegatedScrollingGeometry = DelegatedScrollingGeometry();
+
+    m_delegatedScrollingGeometry->exposedContentRect = rect;
+}
+
 FloatSize ScrollView::unobscuredContentSize() const
 {
     ASSERT(m_delegatedScrollingGeometry);
@@ -1586,6 +1613,11 @@ IntSize ScrollView::platformVisibleContentSizeIncludingObscuredArea(bool) const
 }
 
 IntRect ScrollView::platformUnobscuredContentRect(VisibleContentRectIncludesScrollbars) const
+{
+    return { };
+}
+
+FloatRect ScrollView::platformExposedContentRect() const
 {
     return { };
 }

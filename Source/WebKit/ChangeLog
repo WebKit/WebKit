@@ -1,3 +1,28 @@
+2019-12-18  Simon Fraser  <simon.fraser@apple.com>
+
+        Move m_exposedContentRect into the DelegatedScrollingGeometry optional
+        https://bugs.webkit.org/show_bug.cgi?id=205377
+
+        Reviewed by Tim Horton.
+        
+        ScrollView's m_exposedContentRect is only set for delegated scrolling, so move it into
+        DelegatedScrollingGeometry and remove the iOS #ifdefs around it. Move the WAK/NSView-related
+        code into platformExposedContentRect() for iOS WK1. Stub out exposedContentRect() functions
+        on TiledCoreAnimationDrawingArea.        
+
+        * WebProcess/WebPage/DrawingArea.h:
+        * WebProcess/WebPage/RemoteLayerTree/RemoteLayerTreeDrawingArea.h:
+        * WebProcess/WebPage/RemoteLayerTree/RemoteLayerTreeDrawingArea.mm:
+        (WebKit::RemoteLayerTreeDrawingArea::setExposedContentRect):
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.h:
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm:
+        (WebKit::TiledCoreAnimationDrawingArea::TiledCoreAnimationDrawingArea):
+        (WebKit::TiledCoreAnimationDrawingArea::activityStateDidChange):
+        (WebKit::TiledCoreAnimationDrawingArea::setViewExposedRect):
+        (WebKit::TiledCoreAnimationDrawingArea::exposedContentRect const):
+        (WebKit::TiledCoreAnimationDrawingArea::setExposedContentRect):
+        (WebKit::TiledCoreAnimationDrawingArea::adjustLayerFlushThrottling):
+
 2019-12-18  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Enable the async clipboard API by default on macOS and iOS

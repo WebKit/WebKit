@@ -75,6 +75,9 @@ private:
     void setViewExposedRect(Optional<WebCore::FloatRect>) override;
     Optional<WebCore::FloatRect> viewExposedRect() const override { return m_scrolledViewExposedRect; }
 
+    WebCore::FloatRect exposedContentRect() const override;
+    void setExposedContentRect(const WebCore::FloatRect&) override;
+
     bool supportsAsyncScrolling() const override { return true; }
 
     void dispatchAfterEnsuringUpdatedScrollPosition(WTF::Function<void ()>&&) override;

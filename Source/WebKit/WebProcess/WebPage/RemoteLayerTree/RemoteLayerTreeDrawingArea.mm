@@ -228,7 +228,6 @@ void RemoteLayerTreeDrawingArea::setViewExposedRect(Optional<WebCore::FloatRect>
     updateScrolledExposedRect();
 }
 
-#if PLATFORM(IOS_FAMILY)
 WebCore::FloatRect RemoteLayerTreeDrawingArea::exposedContentRect() const
 {
     FrameView* frameView = m_webPage.mainFrameView();
@@ -249,7 +248,6 @@ void RemoteLayerTreeDrawingArea::setExposedContentRect(const FloatRect& exposedC
     frameView->setExposedContentRect(exposedContentRect);
     scheduleCompositingLayerFlush();
 }
-#endif
 
 void RemoteLayerTreeDrawingArea::updateScrolledExposedRect()
 {

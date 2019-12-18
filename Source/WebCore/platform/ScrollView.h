@@ -475,6 +475,7 @@ private:
     IntSize platformVisibleContentSizeIncludingObscuredArea(bool includeScrollbars) const;
 
     IntRect platformUnobscuredContentRect(VisibleContentRectIncludesScrollbars) const;
+    FloatRect platformExposedContentRect() const;
 
     void platformSetContentsSize();
 
@@ -499,11 +500,11 @@ private:
     ScrollbarMode m_horizontalScrollbarMode { ScrollbarAuto };
     ScrollbarMode m_verticalScrollbarMode { ScrollbarAuto };
 
-    FloatRect m_exposedContentRect;
 
     // FIXME: More things will move into here.
     struct DelegatedScrollingGeometry {
         FloatSize unobscuredContentSize;
+        FloatRect exposedContentRect;
     };
     Optional<DelegatedScrollingGeometry> m_delegatedScrollingGeometry;
 

@@ -98,11 +98,11 @@ public:
     virtual void acceleratedAnimationDidStart(uint64_t /*layerID*/, const String& /*key*/, MonotonicTime /*startTime*/) { }
     virtual void acceleratedAnimationDidEnd(uint64_t /*layerID*/, const String& /*key*/) { }
     virtual void addFence(const WTF::MachSendRight&) { }
-#endif
-#if PLATFORM(IOS_FAMILY)
+
     virtual WebCore::FloatRect exposedContentRect() const = 0;
     virtual void setExposedContentRect(const WebCore::FloatRect&) = 0;
 #endif
+
     virtual void mainFrameScrollabilityChanged(bool) { }
 
     virtual bool supportsAsyncScrolling() const { return false; }

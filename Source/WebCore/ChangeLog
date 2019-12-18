@@ -1,3 +1,25 @@
+2019-12-18  Simon Fraser  <simon.fraser@apple.com>
+
+        Move m_exposedContentRect into the DelegatedScrollingGeometry optional
+        https://bugs.webkit.org/show_bug.cgi?id=205377
+
+        Reviewed by Tim Horton.
+
+        ScrollView's m_exposedContentRect is only set for delegated scrolling, so move it into
+        DelegatedScrollingGeometry and remove the iOS #ifdefs around it. Move the WAK/NSView-related
+        code into platformExposedContentRect() for iOS WK1. Stub out exposedContentRect() functions
+        on TiledCoreAnimationDrawingArea.        
+
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::exposedContentRect const):
+        (WebCore::ScrollView::setExposedContentRect):
+        (WebCore::ScrollView::platformExposedContentRect const):
+        * platform/ScrollView.h:
+        * platform/ios/ScrollViewIOS.mm:
+        (WebCore::ScrollView::platformExposedContentRect const):
+        (WebCore::ScrollView::exposedContentRect const): Deleted.
+        (WebCore::ScrollView::setExposedContentRect): Deleted.
+
 2019-12-18  Chris Dumez  <cdumez@apple.com>
 
         REGRESSION: 32 Tests Crashing on Mac Debug wk2 with ASSERTION FAILED: m_pendingActivityForEventDispatch

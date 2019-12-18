@@ -87,7 +87,7 @@ TiledCoreAnimationDrawingArea::TiledCoreAnimationDrawingArea(WebPage& webPage, c
     [m_hostingLayer setOpaque:YES];
     [m_hostingLayer setGeometryFlipped:YES];
 
-    m_layerFlushRunLoopObserver = makeUnique<WebCore::RunLoopObserver>(static_cast<CFIndex>(RunLoopObserver::WellKnownRunLoopOrders::LayerFlush), [this]() {
+    m_layerFlushRunLoopObserver = makeUnique<RunLoopObserver>(static_cast<CFIndex>(RunLoopObserver::WellKnownRunLoopOrders::LayerFlush), [this]() {
         this->layerFlushRunLoopCallback();
     });
 
@@ -514,7 +514,7 @@ void TiledCoreAnimationDrawingArea::flushLayers(FlushType flushType)
     }
 }
 
-void TiledCoreAnimationDrawingArea::activityStateDidChange(OptionSet<WebCore::ActivityState::Flag> changed, ActivityStateChangeID activityStateChangeID, const Vector<CallbackID>& nextActivityStateChangeCallbackIDs)
+void TiledCoreAnimationDrawingArea::activityStateDidChange(OptionSet<ActivityState::Flag> changed, ActivityStateChangeID activityStateChangeID, const Vector<CallbackID>& nextActivityStateChangeCallbackIDs)
 {
     m_nextActivityStateChangeCallbackIDs.appendVector(nextActivityStateChangeCallbackIDs);
     m_activityStateChangeID = std::max(m_activityStateChangeID, activityStateChangeID);
@@ -566,10 +566,21 @@ void TiledCoreAnimationDrawingArea::resumePainting()
     [[NSNotificationCenter defaultCenter] postNotificationName:@"NSCAViewRenderDidResumeNotification" object:nil userInfo:[NSDictionary dictionaryWithObject:m_hostingLayer.get() forKey:@"layer"]];
 }
 
-void TiledCoreAnimationDrawingArea::setViewExposedRect(Optional<WebCore::FloatRect> viewExposedRect)
+void TiledCoreAnimationDrawingArea::setViewExposedRect(Optional<FloatRect> viewExposedRect)
 {
     m_viewExposedRect = viewExposedRect;
     updateScrolledExposedRect();
+}
+
+FloatRect TiledCoreAnimationDrawingArea::exposedContentRect() const
+{
+    ASSERT_NOT_REACHED();
+    return { };
+}
+
+void TiledCoreAnimationDrawingArea::setExposedContentRect(const FloatRect&)
+{
+    ASSERT_NOT_REACHED();
 }
 
 void TiledCoreAnimationDrawingArea::updateScrolledExposedRect()
@@ -941,11 +952,11 @@ void TiledCoreAnimationDrawingArea::scheduleLayerFlushRunLoopObserver()
     m_layerFlushRunLoopObserver->schedule(CFRunLoopGetCurrent());
 }
 
-bool TiledCoreAnimationDrawingArea::adjustLayerFlushThrottling(WebCore::LayerFlushThrottleState::Flags flags)
+bool TiledCoreAnimationDrawingArea::adjustLayerFlushThrottling(LayerFlushThrottleState::Flags flags)
 {
     bool wasThrottlingLayerFlushes = m_isThrottlingLayerFlushes;
-    m_isThrottlingLayerFlushes = flags & WebCore::LayerFlushThrottleState::Enabled;
-    m_isLayerFlushThrottlingTemporarilyDisabledForInteraction = flags & WebCore::LayerFlushThrottleState::UserIsInteracting;
+    m_isThrottlingLayerFlushes = flags & LayerFlushThrottleState::Enabled;
+    m_isLayerFlushThrottlingTemporarilyDisabledForInteraction = flags & LayerFlushThrottleState::UserIsInteracting;
 
     if (wasThrottlingLayerFlushes == m_isThrottlingLayerFlushes)
         return true;
