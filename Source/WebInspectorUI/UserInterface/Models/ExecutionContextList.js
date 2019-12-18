@@ -45,7 +45,8 @@ WI.ExecutionContextList = class ExecutionContextList
 
     add(context)
     {
-        // FIXME: The backend sends duplicate page context execution contexts with the same id. Why?
+        // COMPATIBILITY (iOS 13.0): Older iOS releases will send duplicates.
+        // Newer releases will not and this check should be removed eventually.
         if (context.isPageContext && this._pageExecutionContext) {
             console.assert(context.id === this._pageExecutionContext.id);
             return false;

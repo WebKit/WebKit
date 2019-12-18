@@ -1,3 +1,21 @@
+2019-12-18  Yury Semikhatsky  <yurys@chromium.org>
+
+        Web Inspector: Runtime.enable reports duplicates (non existent) contexts
+        https://bugs.webkit.org/show_bug.cgi?id=204859
+
+        Reviewed by Devin Rousso.
+
+        Test that only existing contexts are reported.
+
+        * http/tests/inspector/resources/stable-id-map.js: Added.
+        (TestPage.registerInitializer.window.StableIdMap):
+        (TestPage.registerInitializer.window.StableIdMap.prototype.get size):
+        (TestPage.registerInitializer.window.StableIdMap.prototype.get let):
+        (TestPage.registerInitializer):
+        * http/tests/inspector/target/provisional-load-cancels-previous-load.html:
+        * inspector/runtime/executionContextCreated-onEnable-expected.txt: Added.
+        * inspector/runtime/executionContextCreated-onEnable.html: Added.
+
 2019-12-18  youenn fablet  <youenn@apple.com>
 
         Add support for Audio Capture in GPUProcess

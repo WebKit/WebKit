@@ -1,3 +1,18 @@
+2019-12-18  Yury Semikhatsky  <yurys@chromium.org>
+
+        Web Inspector: Runtime.enable reports duplicates (non existent) contexts
+        https://bugs.webkit.org/show_bug.cgi?id=204859
+
+        Reviewed by Devin Rousso.
+
+        Do not report main world context as non-main world one when Runtime.enable is called.
+
+        Test: inspector/runtime/executionContextCreated-onEnable.html
+
+        * inspector/agents/page/PageRuntimeAgent.cpp:
+        (WebCore::PageRuntimeAgent::enable):
+        (WebCore::PageRuntimeAgent::reportExecutionContextCreation):
+
 2019-12-18  Antti Koivisto  <antti@apple.com>
 
         Optimize Style::Invalidator for multiple RuleSet case

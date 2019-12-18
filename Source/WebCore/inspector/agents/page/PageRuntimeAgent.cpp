@@ -70,14 +70,18 @@ PageRuntimeAgent::~PageRuntimeAgent() = default;
 
 void PageRuntimeAgent::enable(ErrorString& errorString)
 {
-    bool enabled = m_instrumentingAgents.pageRuntimeAgent() == this;
+    if (m_instrumentingAgents.pageRuntimeAgent() == this)
+        return;
 
     InspectorRuntimeAgent::enable(errorString);
+    if (!errorString.isEmpty())
+        return;
+
+    // Report initial contexts before enabling instrumentation as the reporting
+    // can force creation of script state which could result in duplicate notifications.
+    reportExecutionContextCreation();
 
     m_instrumentingAgents.setPageRuntimeAgent(this);
-
-    if (!enabled)
-        reportExecutionContextCreation();
 }
 
 void PageRuntimeAgent::disable(ErrorString& errorString)
@@ -148,8 +152,10 @@ void PageRuntimeAgent::reportExecutionContextCreation()
         frame->script().collectIsolatedContexts(isolatedContexts);
         if (isolatedContexts.isEmpty())
             continue;
-        for (auto& context : isolatedContexts)
-            notifyContextCreated(frameId, context.first, context.second, false);
+        for (auto& [globalObject, securityOrigin] : isolatedContexts) {
+            if (globalObject != scriptState)
+                notifyContextCreated(frameId, globalObject, securityOrigin, false);
+        }
         isolatedContexts.clear();
     }
 }
