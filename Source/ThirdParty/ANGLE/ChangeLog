@@ -1,3 +1,31 @@
+2019-12-18  Dean Jackson  <dino@apple.com>
+
+        Reverting libANGLE.a -> libANGLE-shared.dylib.
+
+        The internal Apple build systems are still unhappy with
+        this change, so I'm reverting it until I can be sure
+        they'll accept it.
+
+        * ANGLE.xcodeproj/project.pbxproj:
+        * Configurations/ANGLE.xcconfig:
+        * Configurations/Base.xcconfig:
+        * Configurations/DebugRelease.xcconfig:
+        * include/CMakeLists.txt:
+        * include/GLSLANG/ShaderLang.h:
+        * include/GLSLANG/ShaderVars.h:
+        * src/libANGLE/renderer/gl/cgl/DisplayCGL.mm:
+        (rx::DisplayCGL::isValidNativeWindow const):
+        * src/libANGLE/renderer/gl/cgl/WindowSurfaceCGL.mm:
+        (rx::WindowSurfaceCGL::WindowSurfaceCGL):
+        (rx::WindowSurfaceCGL::~WindowSurfaceCGL):
+        * src/libANGLE/renderer/gl/eagl/DisplayEAGL.mm:
+        (rx::DisplayEAGL::terminate):
+        (rx::DisplayEAGL::isValidNativeWindow const):
+        (rx::WorkerContextEAGL::~WorkerContextEAGL):
+        * src/libANGLE/renderer/gl/eagl/WindowSurfaceEAGL.mm:
+        (rx::WindowSurfaceEAGL::WindowSurfaceEAGL):
+        (rx::WindowSurfaceEAGL::~WindowSurfaceEAGL):
+
 2019-12-17  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         Unreviewed build fix for WinCairo port

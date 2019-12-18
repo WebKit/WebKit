@@ -1,3 +1,22 @@
+2019-12-18  Dean Jackson  <dino@apple.com>
+
+        Reverting libANGLE.a -> libANGLE-shared.dylib.
+
+        The internal Apple build systems are still unhappy with
+        this change, so I'm reverting it until I can be sure
+        they'll accept it.
+
+        * Configurations/WebCore.xcconfig:
+        * Configurations/WebCoreTestSupport.xcconfig:
+        * platform/graphics/ANGLEWebKitBridge.cpp:
+        (WebCore::ANGLEWebKitBridge::ANGLEWebKitBridge):
+        (WebCore::ANGLEWebKitBridge::cleanupCompilers):
+        (WebCore::ANGLEWebKitBridge::compileShaderSource):
+        (WebCore::ANGLEWebKitBridge::angleAvailable): Deleted.
+        * platform/graphics/ANGLEWebKitBridge.h:
+        * platform/graphics/cocoa/GraphicsContext3DCocoa.mm:
+        (WebCore::GraphicsContext3D::GraphicsContext3D):
+
 2019-12-18  Chris Lord  <clord@igalia.com>
 
         Missing headers in worker files cause random build failures when adding new files
