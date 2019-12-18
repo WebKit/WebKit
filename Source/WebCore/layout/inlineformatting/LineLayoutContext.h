@@ -62,7 +62,21 @@ private:
     const InlineFormattingContext& m_inlineFormattingContext;
     const Container& m_formattingContextRoot;
     const InlineItems& m_inlineItems;
-    LineBreaker::Content m_uncommittedContent;
+
+    struct UncommittedContent {
+        void append(const InlineItem&, InlineLayoutUnit logicalWidth);
+        InlineLayoutUnit width() const { return m_width; }
+        size_t size() { return runs().size(); }
+        bool isEmpty() { return runs().isEmpty(); }
+        void reset();
+        void shrink(size_t newSize);
+        const LineBreaker::RunList& runs() const { return m_uncommittedList; }
+
+    private:
+        LineBreaker::RunList m_uncommittedList;
+        InlineLayoutUnit m_width;
+    };
+    UncommittedContent m_uncommittedContent;
     unsigned m_committedInlineItemCount { 0 };
     Vector<WeakPtr<InlineItem>> m_floats;
     std::unique_ptr<InlineTextItem> m_partialLeadingTextItem;

@@ -1,3 +1,55 @@
+2019-12-18  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] LineLayoutContext::m_uncommittedList is not always a continuous list of runs
+        https://bugs.webkit.org/show_bug.cgi?id=205404
+        <rdar://problem/58049699>
+
+        Reviewed by Antti Koivisto.
+
+        Since LineLayoutContext's m_uncommittedList is not necessarily continuous set of runs (continuous in the content of not having a soft wrap opportunity)
+        we can't use LineBreaker's Content struct anymore to store the uncommitted content.
+        Let's use a dedicated UncommittedContent struct instead. It also enables us to pass in a const RunList& to the ContinousContent. ContinousContent should never mutate this list.
+
+        * layout/inlineformatting/InlineLineBreaker.cpp:
+        (WebCore::Layout::shouldKeepEndOfLineWhitespace):
+        (WebCore::Layout::LineBreaker::breakingContextForInlineContent):
+        (WebCore::Layout::LineBreaker::ContinousContent::ContinousContent):
+        (WebCore::Layout::LineBreaker::ContinousContent::hasTextContentOnly const):
+        (WebCore::Layout::LineBreaker::ContinousContent::isVisuallyEmptyWhitespaceContentOnly const):
+        (WebCore::Layout::LineBreaker::ContinousContent::firstTextRunIndex const):
+        (WebCore::Layout::LineBreaker::ContinousContent::hasNonContentRunsOnly const):
+        (WebCore::Layout::LineBreaker::ContinousContent::TrailingCollapsibleContent::reset):
+        (WebCore::Layout::LineBreaker::Content::append): Deleted.
+        (WebCore::Layout::LineBreaker::Content::reset): Deleted.
+        (WebCore::Layout::LineBreaker::Content::shrink): Deleted.
+        (WebCore::Layout::LineBreaker::Content::hasTextContentOnly const): Deleted.
+        (WebCore::Layout::LineBreaker::Content::isVisuallyEmptyWhitespaceContentOnly const): Deleted.
+        (WebCore::Layout::LineBreaker::Content::firstTextRunIndex const): Deleted.
+        (WebCore::Layout::LineBreaker::Content::hasNonContentRunsOnly const): Deleted.
+        (WebCore::Layout::LineBreaker::Content::TrailingCollapsibleContent::reset): Deleted.
+        * layout/inlineformatting/InlineLineBreaker.h:
+        (WebCore::Layout::LineBreaker::ContinousContent::runs const):
+        (WebCore::Layout::LineBreaker::ContinousContent::isEmpty const):
+        (WebCore::Layout::LineBreaker::ContinousContent::size const):
+        (WebCore::Layout::LineBreaker::Content::runs): Deleted.
+        (WebCore::Layout::LineBreaker::Content::runs const): Deleted.
+        (WebCore::Layout::LineBreaker::Content::isEmpty const): Deleted.
+        (WebCore::Layout::LineBreaker::Content::size const): Deleted.
+        (WebCore::Layout::LineBreaker::Content::width const): Deleted.
+        (WebCore::Layout::LineBreaker::Content::nonCollapsibleWidth const): Deleted.
+        (WebCore::Layout::LineBreaker::Content::hasTrailingCollapsibleContent const): Deleted.
+        (WebCore::Layout::LineBreaker::Content::isTrailingContentFullyCollapsible const): Deleted.
+        * layout/inlineformatting/LineLayoutContext.cpp:
+        (WebCore::Layout::LineLayoutContext::processUncommittedContent):
+        (WebCore::Layout::LineLayoutContext::UncommittedContent::append):
+        (WebCore::Layout::LineLayoutContext::UncommittedContent::reset):
+        (WebCore::Layout::LineLayoutContext::UncommittedContent::shrink):
+        * layout/inlineformatting/LineLayoutContext.h:
+        (WebCore::Layout::LineLayoutContext::UncommittedContent::width const):
+        (WebCore::Layout::LineLayoutContext::UncommittedContent::size):
+        (WebCore::Layout::LineLayoutContext::UncommittedContent::isEmpty):
+        (WebCore::Layout::LineLayoutContext::UncommittedContent::runs const):
+
 2019-12-18  youenn fablet  <youenn@apple.com>
 
         Protect ServiceWorker::postMessage from a null execState

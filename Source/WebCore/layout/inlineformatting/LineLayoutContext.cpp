@@ -208,7 +208,7 @@ LineLayoutContext::IsEndOfLine LineLayoutContext::processUncommittedContent(Line
     if (shouldDisableHyphenation())
         lineBreaker.setHyphenationDisabled();
     auto lineStatus = LineBreaker::LineStatus { line.availableWidth(), line.trailingCollapsibleWidth(), line.isTrailingRunFullyCollapsible(), lineIsConsideredEmpty };
-    auto breakingContext = lineBreaker.breakingContextForInlineContent(m_uncommittedContent, lineStatus);
+    auto breakingContext = lineBreaker.breakingContextForInlineContent(LineBreaker::ContinousContent { m_uncommittedContent.runs() }, lineStatus);
     // The uncommitted content can fully, partially fit the current line (commit/partial commit) or not at all (reset).
     if (breakingContext.contentWrappingRule == LineBreaker::BreakingContext::ContentWrappingRule::Keep)
         commitPendingContent(line);
@@ -246,6 +246,29 @@ LineLayoutContext::IsEndOfLine LineLayoutContext::processUncommittedContent(Line
     } else
         ASSERT_NOT_REACHED();
     return breakingContext.contentWrappingRule == LineBreaker::BreakingContext::ContentWrappingRule::Keep ? IsEndOfLine::No : IsEndOfLine::Yes;
+}
+
+void LineLayoutContext::UncommittedContent::append(const InlineItem& inlineItem, InlineLayoutUnit logicalWidth)
+{
+    ASSERT(!inlineItem.isFloat());
+    m_uncommittedList.append({ inlineItem, logicalWidth });
+    m_width += logicalWidth;
+}
+
+void LineLayoutContext::UncommittedContent::reset()
+{
+    m_uncommittedList.clear();
+    m_width = 0_lu;
+}
+
+void LineLayoutContext::UncommittedContent::shrink(size_t newSize)
+{
+    ASSERT(newSize);
+    ASSERT(m_uncommittedList.size());
+    ASSERT(newSize < m_uncommittedList.size());
+    for (size_t i = m_uncommittedList.size() - 1; i >= newSize ; --i)
+        m_width -= m_uncommittedList[i].logicalWidth;
+    m_uncommittedList.shrink(newSize);
 }
 
 }
