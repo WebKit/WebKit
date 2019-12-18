@@ -1,0 +1,115 @@
+<!--
+ Copyright (C) 2019 Apple Inc. All rights reserved.
+
+ Redistribution and use in source and binary forms, with or without
+ modification, are permitted provided that the following conditions
+ are met:
+ 1. Redistributions of source code must retain the above copyright
+    notice, this list of conditions and the following disclaimer.
+ 2. Redistributions in binary form must reproduce the above copyright
+    notice, this list of conditions and the following disclaimer in the
+    documentation and/or other materials provided with the distribution.
+
+ THIS SOFTWARE IS PROVIDED BY APPLE INC. "AS IS" AND ANY
+ EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+ CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+ OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+-->
+
+{% extends "base.html" %}
+{% block head %}
+<link rel="stylesheet" type="text/css" href="assets/css/commit.css">
+
+<script type="module">
+import {REF, DOM} from '/library/js/Ref.js';
+
+function collapsableListForPaths(root, directory, paths)
+{
+    let isExpanded = false;
+    let list = null;
+    const expander = REF.createRef({
+        onElementMount: (element) => {
+            element.onclick = () => {
+                isExpanded = !isExpanded;
+                element.innerHTML = isExpanded ? '-' : '+';
+                if (list)
+                    list.style.display = isExpanded ? 'block' : 'none';
+            }
+        }
+    });
+    const listRef = REF.createRef({
+        onElementMount: (element) => {
+            list = element;
+        },
+    });
+
+    const params = document.URL.split('?')[1];
+    return `<div class="item">
+            <a style="cursor: pointer;" class="text medium" ref="${expander}">+</a> | 
+            <a href="/archive/{{ path }}${directory}${params ? '?' + params : ''}">${directory.slice(root.length)}</a>
+            <div class="list" ref="${listRef}" style="display: none;">
+                ${listContentForPaths(directory, paths)}
+            </div>
+        </div>`;
+}
+
+function listContentForPaths(root, paths) {
+    let directory = null;
+    let filesInDirectory = [];
+    let result = paths.map((path) => {
+        if (directory && path.startsWith(directory)) {
+            filesInDirectory.push(path);
+            return;
+        }
+        let previous = '';
+        if (directory)
+            previous = collapsableListForPaths(root, directory, filesInDirectory);
+
+        directory = null;
+        filesInDirectory = [];
+        if (path[path.length - 1] == '/') {
+            directory = path;
+            return previous;
+        }
+        const params = document.URL.split('?')[1];
+        return `${previous}
+            <div class="item">
+                <a href="/archive/{{ path }}${path}${params ? '?' + params : ''}">${path.slice(root.length)}</a>
+            </div>`;
+    }).join('');
+
+    if (directory)
+        return result + collapsableListForPaths(root, directory, filesInDirectory);
+    return result;
+}
+
+const paths = [{% for val in values %}'{{ val }}', {% endfor %}];
+paths.forEach(pth => {
+    console.log(pth);
+})
+DOM.inject(document.getElementById('paths'), listContentForPaths('', paths));
+
+</script>
+
+{% endblock %}
+{% block content %}
+<div class="content">
+    <div class="title">
+        {% if path != '' and path.split('/')[:-2]%}
+             <a href="/archive/{{ '/'.join(path.split('/')[:-2]) }}/{{ query }}">&lt</a> 
+        {% elif path != '' %}
+            <a href="/archive{{ query }}">&lt</a>
+        {% endif %}
+        /{{ path }}
+    </div>
+    <div class="list" id="paths">
+    </div>
+</div>
+{% endblock %}

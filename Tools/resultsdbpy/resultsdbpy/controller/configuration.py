@@ -184,6 +184,23 @@ class Configuration(object):
     def to_json(self, pretty_print=False):
         return json.dumps(self, cls=self.Encoder, sort_keys=pretty_print, indent=4 if pretty_print else None)
 
+    def to_query(self):
+        query = ''
+        for member in self.REQUIRED_MEMBERS + self.OPTIONAL_MEMBERS + self.FILTERING_MEMBERS:
+            value = getattr(self, member)
+            if value is None:
+                continue
+
+            if member == 'version':
+                query += f'{member}={self.integer_to_version(value)}&'
+            elif member == 'is_simulator':
+                query += f"{member}={'True' if value else 'False'}&"
+            else:
+                query += f'{member}={value}&'
+        if query:
+            return query[:-1]
+        return ''
+
     class Encoder(FlaskJSONEncoder):
 
         def default(self, obj):

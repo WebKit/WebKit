@@ -221,15 +221,35 @@ class ArchiveContext(object):
     def _files_for_archive(cls, archive):
         master = None
         files = set()
+
+        archive_list = []
+        is_mastered = True
         for item in archive.namelist():
             if item.startswith('__'):
                 continue
 
             if not master:
                 master = item
-                continue
+            else:
+                if is_mastered and not item.startswith(master):
+                    is_mastered = False
+                    archive_list.append(master)
+                archive_list.append(item)
 
-            files.add(item[len(master):])
+        if not is_mastered:
+            master = None
+        for item in archive_list:
+            if master:
+                item_to_add = item[len(master):]
+            else:
+                item_to_add = item
+
+            files.add(item_to_add)
+            built = ''
+            for partial in item_to_add.split('/')[:-1]:
+                built = f'{built}{partial}/'
+                files.add(built)
+
         return master, sorted([*files])
 
     def ls(self, *args, **kwargs):
@@ -264,7 +284,28 @@ class ArchiveContext(object):
                     elif path[-1] == '/':
                         file = [f[len(path):] for f in files if f.startswith(path)]
                     elif path in files:
-                        file = unpacked.open(master + path).read()
+                        file = unpacked.open('{}{}'.format(master or '', path)).read()
+                        query = f'?{config.to_query()}'
+                        if len(query) > 1:
+                            query += '&'
+                        if archive['uuid']:
+                            query += f"uuid={archive['uuid']}&"
+                        if archive['start_time']:
+                            query += f"after_time={archive['start_time']}&before_time={archive['start_time']}&"
+
+                        query = query[:-1]
+
+                        # If we find references to other files in the archive, we need to replace those references
+                        # with references that include the query
+                        parent_path = '/'.join(path.split('/')[:-1])
+                        for f in files:
+                            if f[-1] == '/' or f == path or not query:
+                                continue
+                            if f.startswith(parent_path):
+                                file = file.replace(f[len(parent_path):].encode('utf-8'), f'{f[len(parent_path):]}{query}'.encode('utf-8'))
+                            else:
+                                file = file.replace(f.encode('utf-8'), f'{f}{query}'.encode('utf-8'))
+
 
                 if file:
                     result[config].append(dict(

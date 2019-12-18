@@ -75,6 +75,14 @@ def query_as_kwargs():
     return decorator
 
 
+def query_as_string():
+    query = '?'
+    for key, values in request.args.to_dict(flat=False).items():
+        for value in values:
+            query += f'{key}={value}&'
+    return query[:-1]
+
+
 def boolean_query(*args):
 
     def func(string):

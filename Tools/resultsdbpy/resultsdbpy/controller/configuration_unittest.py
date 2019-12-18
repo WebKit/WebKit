@@ -78,3 +78,21 @@ class ConfigurationUnittest(unittest.TestCase):
         for config in configs:
             converted_config = Configuration.from_json(config.to_json())
             self.assertEqual(config, converted_config)
+
+    def test_to_query(self):
+        self.assertEqual(
+            Configuration(platform='Mac', version='10.14', is_simulator=False, architecture='x86_64', style='Debug', flavor='wk2').to_query(),
+            'platform=Mac&is_simulator=False&version=10.14.0&architecture=x86_64&style=Debug&flavor=wk2',
+        )
+        self.assertEqual(
+            Configuration(platform='Mac', version='10.14', style='Production', flavor='wk2').to_query(),
+            'platform=Mac&version=10.14.0&style=Production&flavor=wk2',
+        )
+        self.assertEqual(
+            Configuration(platform='iOS', version='11', is_simulator=True, architecture='x86_64', style='Debug').to_query(),
+            'platform=iOS&is_simulator=True&version=11.0.0&architecture=x86_64&style=Debug',
+        )
+        self.assertEqual(
+            Configuration(platform='iOS', version='12', is_simulator=False, architecture='arm64', style='Release').to_query(),
+            'platform=iOS&is_simulator=False&version=12.0.0&architecture=arm64&style=Release',
+        )

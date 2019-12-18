@@ -1,3 +1,37 @@
+2019-12-18  Jonathan Bedard  <jbedard@apple.com>
+
+        results.webkit.org: Serve files in uploaded archive
+        https://bugs.webkit.org/show_bug.cgi?id=201654
+
+        Reviewed by Stephanie Lewis.
+
+        * resultsdbpy/resultsdbpy/controller/configuration.py:
+        (Configuration.to_query): Conver a configuration object to a query string.
+        * resultsdbpy/resultsdbpy/controller/configuration_unittest.py:
+        (ConfigurationUnittest):
+        (ConfigurationUnittest.test_to_query):
+        * resultsdbpy/resultsdbpy/flask_support/util.py:
+        (query_as_string): Convert the current query to a string.
+        * resultsdbpy/resultsdbpy/model/archive_context.py:
+        (ArchiveContext._files_for_archive): Python's shutil creates archives which
+        don't have have a root directory.
+        (ArchiveContext.file): We need to add query parameters to relative links
+        In the returned file.
+        * resultsdbpy/resultsdbpy/view/archive_view.py: Added.
+        (ArchiveView):
+        (ArchiveView.__init__):
+        (ArchiveView.list): Return html which lists and links to the provided paths.
+        (ArchiveView.extract): Endpoint which extracts a file from an archive matching
+        the provided arguments.
+        * resultsdbpy/resultsdbpy/view/archive_view_unittest.py: Added.
+        (ArchiveViewUnittest):
+        (ArchiveViewUnittest.register_archive):
+        (ArchiveViewUnittest.test_directory):
+        (ArchiveViewUnittest.test_file):
+        * resultsdbpy/resultsdbpy/view/templates/archive_list.html: Added.
+        * resultsdbpy/resultsdbpy/view/view_routes.py:
+        (ViewRoutes.__init__): Add archive endpoints.
+
 2019-12-18  Matt Lewis  <jlewis3@apple.com>
 
         Update WebGL bot hostname
