@@ -1,5 +1,16 @@
 2019-12-17  Chris Dumez  <cdumez@apple.com>
 
+        Re-sync html/semantics/embedded-content/the-canvas-element from upstream
+        https://bugs.webkit.org/show_bug.cgi?id=205352
+
+        Reviewed by Ryosuke Niwa.
+
+        Re-sync html/semantics/embedded-content/the-canvas-element from upstream 33de70caf7f076ebe3aaec.
+
+        * web-platform-tests/html/semantics/embedded-content/the-canvas-element/*: Updated.
+
+2019-12-17  Chris Dumez  <cdumez@apple.com>
+
         Re-sync web-platform-tests/2dcontext from upstream
         https://bugs.webkit.org/show_bug.cgi?id=205343
 
