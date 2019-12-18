@@ -1,3 +1,13 @@
+2019-12-18  Matt Lewis  <jlewis3@apple.com>
+
+        Update WebGL bot hostname
+        https://bugs.webkit.org/show_bug.cgi?id=205349
+
+        Reviewed by Jonathan Bedard.
+
+        * BuildSlaveSupport/build.webkit.org-config/config.json: Changed hostname 
+        to bring it in line with non standard testers.
+
 2019-12-18  Jonathan Bedard  <jbedard@apple.com>
 
         GPU-Process: Bring up automated tester 

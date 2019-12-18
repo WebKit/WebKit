@@ -14,7 +14,7 @@
                     { "name": "bot247", "platform": "mac-catalina" },
                     { "name": "bot248", "platform": "mac-catalina" },
                     { "name": "bot121", "platform": "mac-catalina" },
-                    { "name": "bot659", "platform": "mac-catalina" },
+                    { "name": "bot302", "platform": "mac-catalina" },
                     { "name": "bot301", "platform": "mac-catalina" },
 
                     { "name": "bot132", "platform": "mac-mojave" },
@@ -119,7 +119,7 @@
                     { "name": "Apple-Catalina-Debug-WK2-WebGL-Tests", "type": "TestAllButJSC", "builddir": "catalina-debug-tests-wk2-webgl",
                       "platform": "mac-catalina", "configuration": "debug", "architectures": ["x86_64"],
                       "additionalArguments": ["--no-retry-failures", "--webgl-test-suite"],
-                      "slavenames": ["bot659"]
+                      "slavenames": ["bot302"]
                     },
                     { "name": "Apple-Catalina-Debug-WK2-GPUProcess-Tests", "type": "TestAllButJSC", "builddir": "catalina-debug-tests-wk2-gpuprocess",
                       "platform": "mac-catalina", "configuration": "debug", "architectures": ["x86_64"],
