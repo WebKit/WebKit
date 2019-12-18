@@ -1,3 +1,17 @@
+2019-12-18  youenn fablet  <youenn@apple.com>
+
+        Protect ServiceWorker::postMessage from a null execState
+        https://bugs.webkit.org/show_bug.cgi?id=205394
+        <rdar://problem/57392221>
+
+        Reviewed by Chris Dumez.
+
+        Crash logs indicate null pointer crashes.
+        We should return early in that case.
+
+        * workers/service/ServiceWorker.cpp:
+        (WebCore::ServiceWorker::postMessage):
+
 2019-12-18  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] LineBreaker::lastSoftWrapOpportunity should take a list of runs
