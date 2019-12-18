@@ -43,7 +43,7 @@ static inline bool isTextContentWrappingAllowed(const RenderStyle& style)
     return style.whiteSpace() != WhiteSpace::Pre && style.whiteSpace() != WhiteSpace::NoWrap;
 }
 
-static inline bool isContentSplitAllowed(const LineBreaker::Content::Run& run)
+static inline bool isContentSplitAllowed(const LineBreaker::Run& run)
 {
     ASSERT(run.inlineItem.isText() || run.inlineItem.isContainerStart() || run.inlineItem.isContainerEnd());
     if (!run.inlineItem.isText()) {
@@ -124,7 +124,7 @@ bool LineBreaker::shouldWrapFloatBox(InlineLayoutUnit floatLogicalWidth, InlineL
     return !lineIsEmpty && floatLogicalWidth > availableWidth;
 }
 
-Optional<LineBreaker::WrappedTextContent> LineBreaker::wrapTextContent(const Content::RunList& runs, const LineStatus& lineStatus) const
+Optional<LineBreaker::WrappedTextContent> LineBreaker::wrapTextContent(const RunList& runs, const LineStatus& lineStatus) const
 {
     // Check where the overflow occurs and use the corresponding style to figure out the breaking behaviour.
     // <span style="word-break: normal">first</span><span style="word-break: break-all">second</span><span style="word-break: normal">third</span>
@@ -196,7 +196,7 @@ LineBreaker::WordBreakRule LineBreaker::wordBreakBehavior(const RenderStyle& sty
     return WordBreakRule::NoBreak;
 }
 
-Optional<LineBreaker::PartialRun> LineBreaker::tryBreakingTextRun(const Content::Run& overflowRun, InlineLayoutUnit availableWidth, bool lineIsEmpty) const
+Optional<LineBreaker::PartialRun> LineBreaker::tryBreakingTextRun(const Run& overflowRun, InlineLayoutUnit availableWidth, bool lineIsEmpty) const
 {
     ASSERT(overflowRun.inlineItem.isText());
     auto& inlineTextItem = downcast<InlineTextItem>(overflowRun.inlineItem);
@@ -280,7 +280,7 @@ static bool endsWithSoftWrapOpportunity(const InlineTextItem& previousTextItem, 
     return !TextUtil::findNextBreakablePosition(lineBreakIterator, 0, nextInlineTextItem.style());
 }
 
-Optional<unsigned> LineBreaker::Content::lastSoftWrapOpportunity(const InlineItem& inlineItem, const Content& priorContent)
+Optional<size_t> LineBreaker::lastSoftWrapOpportunity(const InlineItem& inlineItem, const RunList& priorContent)
 {
     // https://drafts.csswg.org/css-text-3/#line-break-details
     // Figure out if the new incoming content puts the uncommitted content on a soft wrap opportunity.
@@ -294,7 +294,7 @@ Optional<unsigned> LineBreaker::Content::lastSoftWrapOpportunity(const InlineIte
     }
 
     auto lastInlineItemWithContent = [&] () -> const InlineItem* {
-        for (auto& previousRun : WTF::makeReversedRange(priorContent.runs())) {
+        for (auto& previousRun : WTF::makeReversedRange(priorContent)) {
             auto& previousInlineItem = previousRun.inlineItem;
             if (previousInlineItem.isText() || previousInlineItem.isBox())
                 return &previousInlineItem;
@@ -303,7 +303,7 @@ Optional<unsigned> LineBreaker::Content::lastSoftWrapOpportunity(const InlineIte
         return nullptr;
     };
 
-    auto* lastUncomittedContent = &priorContent.runs().last().inlineItem;
+    auto* lastUncomittedContent = &priorContent.last().inlineItem;
     if (inlineItem.isText()) {
         if (inlineItem.style().lineBreak() == LineBreak::Anywhere) {
             // There is a soft wrap opportunity around every typographic character unit, including around any punctuation character

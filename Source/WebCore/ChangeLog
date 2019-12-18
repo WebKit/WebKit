@@ -1,3 +1,24 @@
+2019-12-18  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] LineBreaker::lastSoftWrapOpportunity should take a list of runs
+        https://bugs.webkit.org/show_bug.cgi?id=205402
+        <rdar://problem/58048310>
+
+        Reviewed by Antti Koivisto.
+
+        LineBreaker::Content is supposed to hold a continuous set of runs and the input to lastSoftWrapOpportunity is not
+        necessarily continuous (most of the time it is though). 
+
+        * layout/inlineformatting/InlineLineBreaker.cpp:
+        (WebCore::Layout::isContentSplitAllowed):
+        (WebCore::Layout::LineBreaker::wrapTextContent const):
+        (WebCore::Layout::LineBreaker::tryBreakingTextRun const):
+        (WebCore::Layout::LineBreaker::lastSoftWrapOpportunity):
+        (WebCore::Layout::LineBreaker::Content::lastSoftWrapOpportunity): Deleted.
+        * layout/inlineformatting/InlineLineBreaker.h:
+        * layout/inlineformatting/LineLayoutContext.cpp:
+        (WebCore::Layout::LineLayoutContext::placeInlineItem):
+
 2019-12-18  youenn fablet  <youenn@apple.com>
 
         AppCache should request certificate info when loading resources

@@ -56,6 +56,13 @@ public:
         Optional<PartialTrailingContent> partialTrailingContent;
     };
 
+    struct Run {
+        const InlineItem& inlineItem;
+        InlineLayoutUnit logicalWidth { 0 };
+    };
+    using RunList = Vector<Run, 30>;
+    static Optional<size_t> lastSoftWrapOpportunity(const InlineItem&, const RunList& priorContent);
+
     // This struct represents the amount of content committed to line breaking at a time e.g.
     // text content <span>span1</span>between<span>span2</span>
     // [text][ ][content][ ][container start][span1][container end][between][container start][span2][container end]
@@ -69,14 +76,6 @@ public:
         void append(const InlineItem&, InlineLayoutUnit logicalWidth);
         void reset();
         void shrink(unsigned newSize);
-
-        static Optional<unsigned> lastSoftWrapOpportunity(const InlineItem&, const Content& priorContent);
-
-        struct Run {
-            const InlineItem& inlineItem;
-            InlineLayoutUnit logicalWidth { 0 };
-        };
-        using RunList = Vector<Run, 30>;
 
         RunList& runs() { return m_continousRuns; }
         const RunList& runs() const { return m_continousRuns; }
@@ -122,8 +121,8 @@ private:
         bool contentOverflows { false };
         Optional<PartialRun> partialTrailingRun;
     };
-    Optional<WrappedTextContent> wrapTextContent(const Content::RunList&, const LineStatus&) const;
-    Optional<PartialRun> tryBreakingTextRun(const Content::Run& overflowRun, InlineLayoutUnit availableWidth, bool lineIsEmpty) const;
+    Optional<WrappedTextContent> wrapTextContent(const RunList&, const LineStatus&) const;
+    Optional<PartialRun> tryBreakingTextRun(const Run& overflowRun, InlineLayoutUnit availableWidth, bool lineIsEmpty) const;
 
     enum class WordBreakRule {
         NoBreak,
