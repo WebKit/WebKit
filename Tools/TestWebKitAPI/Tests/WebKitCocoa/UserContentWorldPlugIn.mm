@@ -62,6 +62,11 @@
 
 - (void)webProcessPlugInBrowserContextController:(WKWebProcessPlugInBrowserContextController*)controller globalObjectIsAvailableForFrame:(WKWebProcessPlugInFrame *)frame inScriptWorld:(WKWebProcessPlugInScriptWorld *)scriptWorld
 {
+    if (frame.isMainFrame)
+        [_remoteObject didObserveMainFrame];
+    else
+        [_remoteObject didObserveSubframe];
+
     if (scriptWorld == [WKWebProcessPlugInScriptWorld normalWorld]) {
         [_remoteObject didObserveNormalWorld];
         return;

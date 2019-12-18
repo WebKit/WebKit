@@ -41,6 +41,7 @@ WK_CLASS_AVAILABLE(macos(10.10), ios(8.0))
 @property (nonatomic, readonly) NSURL *URL;
 @property (nonatomic, readonly) NSArray *childFrames;
 @property (nonatomic, readonly) BOOL containsAnyFormElements;
+@property (nonatomic, readonly) BOOL isMainFrame;
 
 @property (nonatomic, readonly) _WKFrameHandle *handle;
 

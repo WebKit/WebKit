@@ -1,3 +1,18 @@
+2019-12-18  Alex Christensen  <achristensen@webkit.org>
+
+        Add ObjC version of WKBundleFrameIsMainFrame
+        https://bugs.webkit.org/show_bug.cgi?id=205415
+
+        Reviewed by Brian Weinstein.
+
+        I need this for rdar://problem/57132290
+        Covered by API tests.
+
+        * WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInFrame.h:
+        * WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInFrame.mm:
+        (-[WKWebProcessPlugInFrame isMainFrame]):
+        * WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInLoadDelegate.h:
+
 2019-12-18  Eric Carlson  <eric.carlson@apple.com>
 
         Remove more unused MediaPlayer methods

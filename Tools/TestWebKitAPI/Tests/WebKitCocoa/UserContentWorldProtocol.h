@@ -29,5 +29,7 @@
 
 - (void)didObserveNormalWorld;
 - (void)didObserveWorldWithName:(NSString *)name;
+- (void)didObserveMainFrame;
+- (void)didObserveSubframe;
 
 @end

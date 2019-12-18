@@ -27,7 +27,7 @@
 #import <WebKit/_WKRenderingProgressEvents.h>
 #import <WebKit/_WKSameDocumentNavigationType.h>
 
-@class WKWebProcessPlugInBrowsingContextController;
+@class WKWebProcessPlugInBrowserContextController;
 @class WKWebProcessPlugInFrame;
 @class WKWebProcessPlugInScriptWorld;
 

@@ -29,6 +29,7 @@
 #import "PlatformUtilities.h"
 #import "Test.h"
 #import "TestNavigationDelegate.h"
+#import "TestURLSchemeHandler.h"
 #import "UserContentWorldProtocol.h"
 #import "WKWebViewConfigurationExtras.h"
 #import <WebKit/WKProcessPoolPrivate.h>
@@ -112,6 +113,8 @@ TEST(UserContentWorld, IsolatedWorldUserScript)
 
 static bool didObserveNormalWorld;
 static bool didObserveWorldWithName;
+static bool didObserveMainFrame;
+static bool didObserveSubframe;
 
 @interface UserContentWorldRemoteObject : NSObject <UserContentWorldProtocol>
 @end
@@ -121,6 +124,16 @@ static bool didObserveWorldWithName;
 - (void)didObserveNormalWorld
 {
     didObserveNormalWorld = true;
+}
+
+- (void)didObserveMainFrame
+{
+    didObserveMainFrame = true;
+}
+
+- (void)didObserveSubframe
+{
+    didObserveSubframe = true;
 }
 
 - (void)didObserveWorldWithName:(NSString *)name
@@ -140,6 +153,8 @@ TEST(UserContentWorld, IsolatedWorldPlugIn)
     RetainPtr<_WKUserContentWorld> isolatedWorld = [_WKUserContentWorld worldWithName:@"TestWorld"];
     RetainPtr<WKUserScript> userScript = adoptNS([[WKUserScript alloc] _initWithSource:@"window.setFromUserScript = true;" injectionTime:WKUserScriptInjectionTimeAtDocumentStart forMainFrameOnly:YES legacyWhitelist:@[] legacyBlacklist:@[] userContentWorld:isolatedWorld.get()]);
     [[configuration userContentController] addUserScript:userScript.get()];
+    RetainPtr<TestURLSchemeHandler> schemeHandler = adoptNS([[TestURLSchemeHandler alloc] init]);
+    [configuration setURLSchemeHandler:schemeHandler.get() forURLScheme:@"testscheme"];
 
     RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
 
@@ -147,8 +162,23 @@ TEST(UserContentWorld, IsolatedWorldPlugIn)
     _WKRemoteObjectInterface *interface = [_WKRemoteObjectInterface remoteObjectInterfaceWithProtocol:@protocol(UserContentWorldProtocol)];
     [[webView _remoteObjectRegistry] registerExportedObject:object.get() interface:interface];
 
-    [webView loadHTMLString:@"<body style='background-color: red;'></body>" baseURL:nil];
+    schemeHandler.get().startURLSchemeTaskHandler = ^(WKWebView *, id <WKURLSchemeTask> task) {
+        NSString *body;
+        if ([task.request.URL.path isEqualToString:@"/mainresource"])
+            body = @"<body style='background-color: red;'><iframe src='/iframesrc'></iframe></body>";
+        else {
+            EXPECT_WK_STREQ(task.request.URL.path, "/iframesrc");
+            body = @"iframe content";
+        }
+        [task didReceiveResponse:[[[NSURLResponse alloc] initWithURL:task.request.URL MIMEType:@"text/html" expectedContentLength:body.length textEncodingName:nil] autorelease]];
+        [task didReceiveData:[body dataUsingEncoding:NSUTF8StringEncoding]];
+        [task didFinish];
+    };
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"testscheme:///mainresource"]]];
 
     TestWebKitAPI::Util::run(&didObserveNormalWorld);
     TestWebKitAPI::Util::run(&didObserveWorldWithName);
+    TestWebKitAPI::Util::run(&didObserveMainFrame);
+    TestWebKitAPI::Util::run(&didObserveSubframe);
 }

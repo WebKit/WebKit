@@ -99,6 +99,11 @@
     return !!_frame->containsAnyFormElements();
 }
 
+- (BOOL)isMainFrame
+{
+    return !!_frame->isMainFrame();
+}
+
 - (_WKFrameHandle *)handle
 {
     return wrapper(API::FrameHandle::create(_frame->frameID()));

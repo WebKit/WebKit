@@ -1,3 +1,18 @@
+2019-12-18  Alex Christensen  <achristensen@webkit.org>
+
+        Add ObjC version of WKBundleFrameIsMainFrame
+        https://bugs.webkit.org/show_bug.cgi?id=205415
+
+        Reviewed by Brian Weinstein.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/UserContentWorld.mm:
+        (-[UserContentWorldRemoteObject didObserveMainFrame]):
+        (-[UserContentWorldRemoteObject didObserveSubframe]):
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/UserContentWorldPlugIn.mm:
+        (-[UserContentWorldPlugIn webProcessPlugInBrowserContextController:globalObjectIsAvailableForFrame:inScriptWorld:]):
+        * TestWebKitAPI/Tests/WebKitCocoa/UserContentWorldProtocol.h:
+
 2019-12-18  Jonathan Bedard  <jbedard@apple.com>
 
         results.webkit.org: Serve files in uploaded archive
