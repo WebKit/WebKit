@@ -1,4 +1,4 @@
-string(REGEX REPLACE "(^|;)include/" "\\1" includes "$libangle_includes")
+string(REGEX REPLACE "(^|;)include/" "\\1" includes "${libangle_includes}")
 
 set(egl_headers ${includes})
 list(FILTER egl_headers INCLUDE REGEX "EGL/.*")

@@ -1,3 +1,11 @@
+2019-12-17  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        Unreviewed build fix for WinCairo port
+        https://bugs.webkit.org/show_bug.cgi?id=204914
+        <rdar://problem/58023118>
+
+        * include/CMakeLists.txt: Replaced '$libangle_includes' with '${libangle_includes}".
+
 2019-12-17  James Darpinian  <jdarpinian@chromium.org>
 
         Improve update-angle.sh and add gni-to-cmake.py
