@@ -1,5 +1,17 @@
 2019-12-18  Eric Carlson  <eric.carlson@apple.com>
 
+        Enable generic cue API
+        https://bugs.webkit.org/show_bug.cgi?id=205398
+        <rdar://problem/58044492>
+
+        Reviewed by Jon Lee.
+
+        No new tests, covered by existing tests.
+
+        * Shared/WebPreferences.yaml:
+
+2019-12-18  Eric Carlson  <eric.carlson@apple.com>
+
         Remove unused MediaPlayer methods
         https://bugs.webkit.org/show_bug.cgi?id=205341
         <rdar://problem/58006776>

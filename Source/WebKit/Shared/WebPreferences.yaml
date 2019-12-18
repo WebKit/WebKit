@@ -1484,7 +1484,7 @@ CSSShadowPartsEnabled:
 
 GenericCueAPIEnabled:
   type: bool
-  defaultValue: false
+  defaultValue: true
   condition: ENABLE(VIDEO_TRACK)
   humanReadableName: "Generic Text Track Cue API"
   humanReadableDescription: "Enable Generic Text Track Cue API"
