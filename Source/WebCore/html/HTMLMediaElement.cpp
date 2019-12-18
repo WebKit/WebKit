@@ -7152,11 +7152,6 @@ bool HTMLMediaElement::mediaPlayerGetRawCookies(const URL& url, Vector<Cookie>& 
 }
 #endif
 
-bool HTMLMediaElement::mediaPlayerIsInMediaDocument() const
-{
-    return document().isMediaDocument();
-}
-
 void HTMLMediaElement::mediaPlayerEngineFailedToLoad() const
 {
     if (!m_player)

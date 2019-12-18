@@ -251,11 +251,8 @@ public:
     virtual bool mediaPlayerGetRawCookies(const URL&, Vector<Cookie>&) const { return false; }
 #endif
 
-    virtual void mediaPlayerHandlePlaybackCommand(PlatformMediaSession::RemoteControlCommandType) { }
-
     virtual String mediaPlayerSourceApplicationIdentifier() const { return emptyString(); }
 
-    virtual bool mediaPlayerIsInMediaDocument() const { return false; }
     virtual void mediaPlayerEngineFailedToLoad() const { }
 
     virtual double mediaPlayerRequestedPlaybackRate() const { return 0; }
@@ -326,8 +323,6 @@ public:
     FloatSize naturalSize();
     bool hasVideo() const;
     bool hasAudio() const;
-
-    bool inMediaDocument() const;
 
     IntSize size() const { return m_size; }
     void setSize(const IntSize& size);
@@ -578,7 +573,6 @@ public:
 
     Optional<VideoPlaybackQualityMetrics> videoPlaybackQualityMetrics();
 
-    void handlePlaybackCommand(PlatformMediaSession::RemoteControlCommandType);
     String sourceApplicationIdentifier() const;
     Vector<String> preferredAudioCharacteristics() const;
 

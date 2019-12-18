@@ -397,21 +397,10 @@ bool RemoteMediaPlayerProxy::mediaPlayerGetRawCookies(const URL&, Vector<Cookie>
 
 #endif
 
-void RemoteMediaPlayerProxy::mediaPlayerHandlePlaybackCommand(PlatformMediaSession::RemoteControlCommandType)
-{
-    notImplemented();
-}
-
 String RemoteMediaPlayerProxy::mediaPlayerSourceApplicationIdentifier() const
 {
     notImplemented();
     return emptyString();
-}
-
-bool RemoteMediaPlayerProxy::mediaPlayerIsInMediaDocument() const
-{
-    notImplemented();
-    return false;
 }
 
 double RemoteMediaPlayerProxy::mediaPlayerRequestedPlaybackRate() const

@@ -733,7 +733,6 @@ private:
 
     void mediaPlayerActiveSourceBuffersChanged() override;
 
-    void mediaPlayerHandlePlaybackCommand(PlatformMediaSession::RemoteControlCommandType command) override { didReceiveRemoteControlCommand(command, nullptr); }
     String sourceApplicationIdentifier() const override;
     String mediaPlayerSourceApplicationIdentifier() const override { return sourceApplicationIdentifier(); }
     Vector<String> mediaPlayerPreferredAudioCharacteristics() const override;
@@ -743,7 +742,6 @@ private:
     bool mediaPlayerGetRawCookies(const URL&, Vector<Cookie>&) const override;
 #endif
 
-    bool mediaPlayerIsInMediaDocument() const final;
     void mediaPlayerEngineFailedToLoad() const final;
 
     double mediaPlayerRequestedPlaybackRate() const final;

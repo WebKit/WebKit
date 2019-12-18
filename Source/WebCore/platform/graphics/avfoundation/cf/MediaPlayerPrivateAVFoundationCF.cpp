@@ -585,7 +585,7 @@ void MediaPlayerPrivateAVFoundationCF::platformPlay()
         return;
 
     setDelayCallbacks(true);
-    AVCFPlayerSetRate(avPlayer(m_avfWrapper), requestedRate());
+    AVCFPlayerSetRate(avPlayer(m_avfWrapper), player()->requestedRate());
     setDelayCallbacks(false);
 }
 

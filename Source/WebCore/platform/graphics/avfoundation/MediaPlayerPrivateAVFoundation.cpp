@@ -408,11 +408,6 @@ MediaTime MediaPlayerPrivateAVFoundation::minMediaTimeSeekable() const
     return m_cachedMinTimeSeekable;
 }
 
-double MediaPlayerPrivateAVFoundation::requestedRate() const
-{
-    return m_player->requestedRate();
-}
-
 MediaTime MediaPlayerPrivateAVFoundation::maxTimeLoaded() const
 {
     if (!metaDataAvailable())

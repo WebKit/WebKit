@@ -1,3 +1,30 @@
+2019-12-18  Eric Carlson  <eric.carlson@apple.com>
+
+        Remove more unused MediaPlayer methods
+        https://bugs.webkit.org/show_bug.cgi?id=205405
+        <rdar://problem/58049744>
+
+        Reviewed by Jer Noble.
+
+        No new tests, this just removes unused code.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::mediaPlayerIsInMediaDocument const): Deleted.
+        * html/HTMLMediaElement.h:
+        * platform/graphics/MediaPlayer.cpp:
+        (WebCore::MediaPlayer::inMediaDocument const): Deleted.
+        (WebCore::MediaPlayer::handlePlaybackCommand): Deleted.
+        * platform/graphics/MediaPlayer.h:
+        (WebCore::MediaPlayerClient::mediaPlayerPlatformVolumeConfigurationRequired const):
+        (WebCore::MediaPlayerClient::mediaPlayerHandlePlaybackCommand): Deleted.
+        (WebCore::MediaPlayerClient::mediaPlayerIsInMediaDocument const): Deleted.
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.cpp:
+        (WebCore::MediaPlayerPrivateAVFoundation::requestedRate const): Deleted.
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.h:
+        (WebCore::MediaPlayerPrivateAVFoundation::metaDataAvailable const):
+        * platform/graphics/avfoundation/cf/MediaPlayerPrivateAVFoundationCF.cpp:
+        (WebCore::MediaPlayerPrivateAVFoundationCF::platformPlay):
+
 2019-12-18  Yury Semikhatsky  <yurys@chromium.org>
 
         Web Inspector: Runtime.enable reports duplicates (non existent) contexts

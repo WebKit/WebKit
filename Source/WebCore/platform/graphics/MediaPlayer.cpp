@@ -735,11 +735,6 @@ bool MediaPlayer::hasAudio() const
     return m_private->hasAudio();
 }
 
-bool MediaPlayer::inMediaDocument() const
-{
-    return m_visible && client().mediaPlayerIsInMediaDocument();
-}
-
 PlatformLayer* MediaPlayer::platformLayer() const
 {
     return m_private->platformLayer();
@@ -1514,11 +1509,6 @@ Optional<VideoPlaybackQualityMetrics> MediaPlayer::videoPlaybackQualityMetrics()
         return WTF::nullopt;
 
     return m_private->videoPlaybackQualityMetrics();
-}
-
-void MediaPlayer::handlePlaybackCommand(PlatformMediaSession::RemoteControlCommandType command)
-{
-    client().mediaPlayerHandlePlaybackCommand(command);
 }
 
 String MediaPlayer::sourceApplicationIdentifier() const

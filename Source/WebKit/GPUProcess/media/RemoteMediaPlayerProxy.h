@@ -142,11 +142,8 @@ private:
     bool mediaPlayerGetRawCookies(const URL&, Vector<Cookie>&) const final;
 #endif
 
-    void mediaPlayerHandlePlaybackCommand(PlatformMediaSession::RemoteControlCommandType) final;
-
     String mediaPlayerSourceApplicationIdentifier() const final;
 
-    bool mediaPlayerIsInMediaDocument() const final;
     void mediaPlayerEngineFailedToLoad() const final;
 
     double mediaPlayerRequestedPlaybackRate() const final;
