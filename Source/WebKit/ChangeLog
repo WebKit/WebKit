@@ -1,3 +1,38 @@
+2019-12-17  Eric Carlson  <eric.carlson@apple.com>
+
+        Add remote media player methods for prepareToPlay, preload, private browsing mode, preserves pitch, and failed to load
+        https://bugs.webkit.org/show_bug.cgi?id=205351
+        <rdar://problem/58018451>
+
+        Reviewed by Jer Noble.
+
+        * GPUProcess/media/RemoteMediaPlayerManagerProxy.cpp:
+        (WebKit::RemoteMediaPlayerManagerProxy::prepareToPlay):
+        (WebKit::RemoteMediaPlayerManagerProxy::setPreload):
+        (WebKit::RemoteMediaPlayerManagerProxy::setPrivateBrowsingMode):
+        (WebKit::RemoteMediaPlayerManagerProxy::setPreservesPitch):
+        * GPUProcess/media/RemoteMediaPlayerManagerProxy.h:
+        * GPUProcess/media/RemoteMediaPlayerManagerProxy.messages.in:
+        * GPUProcess/media/RemoteMediaPlayerProxy.cpp:
+        (WebKit::RemoteMediaPlayerProxy::prepareToPlay):
+        (WebKit::RemoteMediaPlayerProxy::setPreload):
+        (WebKit::RemoteMediaPlayerProxy::setPrivateBrowsingMode):
+        (WebKit::RemoteMediaPlayerProxy::setPreservesPitch):
+        * GPUProcess/media/RemoteMediaPlayerProxy.h:
+        * WebProcess/GPU/media/MediaPlayerPrivateRemote.cpp:
+        (WebKit::MediaPlayerPrivateRemote::prepareToPlay):
+        (WebKit::MediaPlayerPrivateRemote::setPreservesPitch):
+        (WebKit::MediaPlayerPrivateRemote::setPreload):
+        (WebKit::MediaPlayerPrivateRemote::setPrivateBrowsingMode):
+        (WebKit::MediaPlayerPrivateRemote::engineFailedToLoad):
+        (WebKit::MediaPlayerPrivateRemote::platformErrorCode const): Deleted.
+        (WebKit::MediaPlayerPrivateRemote::requiresImmediateCompositing const): Deleted.
+        * WebProcess/GPU/media/MediaPlayerPrivateRemote.h:
+        * WebProcess/GPU/media/RemoteMediaPlayerManager.cpp:
+        (WebKit::RemoteMediaPlayerManager::engineFailedToLoad):
+        * WebProcess/GPU/media/RemoteMediaPlayerManager.h:
+        * WebProcess/GPU/media/RemoteMediaPlayerManager.messages.in:
+
 2019-12-17  Kate Cheney  <katherine_cheney@apple.com>
 
         Add run-time flag for in-app browser privacy

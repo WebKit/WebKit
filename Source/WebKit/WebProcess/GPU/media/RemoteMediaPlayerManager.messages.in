@@ -33,6 +33,7 @@ messages -> RemoteMediaPlayerManager NotRefCounted {
     DurationChanged(WebKit::MediaPlayerPrivateRemoteIdentifier id, MediaTime time)
     RateChanged(WebKit::MediaPlayerPrivateRemoteIdentifier id, double rate)
     PlaybackStateChanged(WebKit::MediaPlayerPrivateRemoteIdentifier id, bool paused)
+    EngineFailedToLoad(WebKit::MediaPlayerPrivateRemoteIdentifier id, int platformErrorCode)
 }
 
 #endif

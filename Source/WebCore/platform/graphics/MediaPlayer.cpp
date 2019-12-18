@@ -1616,6 +1616,11 @@ bool MediaPlayer::shouldIgnoreIntrinsicSize()
     return m_private->shouldIgnoreIntrinsicSize();
 }
 
+void MediaPlayer::remoteEngineFailedToLoad()
+{
+    client().mediaPlayerEngineFailedToLoad();
+}
+
 #if !RELEASE_LOG_DISABLED
 const Logger& MediaPlayer::mediaPlayerLogger()
 {

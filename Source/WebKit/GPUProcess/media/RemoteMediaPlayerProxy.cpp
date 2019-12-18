@@ -72,6 +72,11 @@ void RemoteMediaPlayerProxy::cancelLoad()
     m_player->cancelLoad();
 }
 
+void RemoteMediaPlayerProxy::prepareToPlay()
+{
+    m_player->prepareToPlay();
+}
+
 void RemoteMediaPlayerProxy::play()
 {
     m_player->play();
@@ -90,6 +95,21 @@ void RemoteMediaPlayerProxy::setVolume(double volume)
 void RemoteMediaPlayerProxy::setMuted(bool muted)
 {
     m_player->setMuted(muted);
+}
+
+void RemoteMediaPlayerProxy::setPreload(WebCore::MediaPlayerEnums::Preload preload)
+{
+    m_player->setPreload(preload);
+}
+
+void RemoteMediaPlayerProxy::setPrivateBrowsingMode(bool privateMode)
+{
+    m_player->setPrivateBrowsingMode(privateMode);
+}
+
+void RemoteMediaPlayerProxy::setPreservesPitch(bool preservesPitch)
+{
+    m_player->setPreservesPitch(preservesPitch);
 }
 
 // MediaPlayerClient
@@ -126,6 +146,11 @@ void RemoteMediaPlayerProxy::mediaPlayerDurationChanged()
 void RemoteMediaPlayerProxy::mediaPlayerRateChanged()
 {
     m_webProcessConnection->send(Messages::RemoteMediaPlayerManager::RateChanged(m_id, m_player->rate()), 0);
+}
+
+void RemoteMediaPlayerProxy::mediaPlayerEngineFailedToLoad() const
+{
+    m_webProcessConnection->send(Messages::RemoteMediaPlayerManager::EngineFailedToLoad(m_id, m_player->platformErrorCode()), 0);
 }
 
 // FIXME: Unimplemented
@@ -420,11 +445,6 @@ bool RemoteMediaPlayerProxy::mediaPlayerIsInMediaDocument() const
 {
     notImplemented();
     return false;
-}
-
-void RemoteMediaPlayerProxy::mediaPlayerEngineFailedToLoad() const
-{
-    notImplemented();
 }
 
 double RemoteMediaPlayerProxy::mediaPlayerRequestedPlaybackRate() const

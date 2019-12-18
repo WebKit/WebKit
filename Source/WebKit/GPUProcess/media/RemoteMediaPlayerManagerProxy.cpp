@@ -184,6 +184,12 @@ void RemoteMediaPlayerManagerProxy::cancelLoad(MediaPlayerPrivateRemoteIdentifie
         player->cancelLoad();
 }
 
+void RemoteMediaPlayerManagerProxy::prepareToPlay(MediaPlayerPrivateRemoteIdentifier id)
+{
+    if (auto player = m_proxies.get(id))
+        player->prepareToPlay();
+}
+
 void RemoteMediaPlayerManagerProxy::play(MediaPlayerPrivateRemoteIdentifier id)
 {
     if (auto player = m_proxies.get(id))
@@ -206,6 +212,24 @@ void RemoteMediaPlayerManagerProxy::setMuted(MediaPlayerPrivateRemoteIdentifier 
 {
     if (auto player = m_proxies.get(id))
         player->setMuted(muted);
+}
+
+void RemoteMediaPlayerManagerProxy::setPreload(MediaPlayerPrivateRemoteIdentifier id, WebCore::MediaPlayerEnums::Preload preload)
+{
+    if (auto player = m_proxies.get(id))
+        player->setPreload(preload);
+}
+
+void RemoteMediaPlayerManagerProxy::setPrivateBrowsingMode(MediaPlayerPrivateRemoteIdentifier id, bool privateMode)
+{
+    if (auto player = m_proxies.get(id))
+        player->setPrivateBrowsingMode(privateMode);
+}
+
+void RemoteMediaPlayerManagerProxy::setPreservesPitch(MediaPlayerPrivateRemoteIdentifier id, bool preservesPitch)
+{
+    if (auto player = m_proxies.get(id))
+        player->setPreservesPitch(preservesPitch);
 }
 
 #if !RELEASE_LOG_DISABLED

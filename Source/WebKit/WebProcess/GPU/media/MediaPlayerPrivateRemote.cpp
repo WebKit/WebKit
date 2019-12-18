@@ -106,7 +106,7 @@ void MediaPlayerPrivateRemote::cancelLoad()
 
 void MediaPlayerPrivateRemote::prepareToPlay()
 {
-    notImplemented();
+    m_manager.gpuProcessConnection().send(Messages::RemoteMediaPlayerManagerProxy::PrepareToPlay(m_id), 0);
 }
 
 PlatformLayer* MediaPlayerPrivateRemote::platformLayer() const
@@ -166,12 +166,6 @@ String MediaPlayerPrivateRemote::errorLog() const
 }
 #endif
 
-long MediaPlayerPrivateRemote::platformErrorCode() const
-{
-    notImplemented();
-    return 0;
-}
-
 void MediaPlayerPrivateRemote::play()
 {
     m_manager.gpuProcessConnection().send(Messages::RemoteMediaPlayerManagerProxy::Play(m_id), 0);
@@ -200,12 +194,6 @@ bool MediaPlayerPrivateRemote::supportsFullscreen() const
 }
 
 bool MediaPlayerPrivateRemote::supportsScanning() const
-{
-    notImplemented();
-    return false;
-}
-
-bool MediaPlayerPrivateRemote::requiresImmediateCompositing() const
 {
     notImplemented();
     return false;
@@ -279,9 +267,9 @@ void MediaPlayerPrivateRemote::setRateDouble(double)
     notImplemented();
 }
 
-void MediaPlayerPrivateRemote::setPreservesPitch(bool)
+void MediaPlayerPrivateRemote::setPreservesPitch(bool preservesPitch)
 {
-    notImplemented();
+    m_manager.gpuProcessConnection().send(Messages::RemoteMediaPlayerManagerProxy::SetPreservesPitch(m_id, preservesPitch), 0);
 }
 
 void MediaPlayerPrivateRemote::setVolumeDouble(double volume)
@@ -292,6 +280,16 @@ void MediaPlayerPrivateRemote::setVolumeDouble(double volume)
 void MediaPlayerPrivateRemote::setMuted(bool muted)
 {
     m_manager.gpuProcessConnection().send(Messages::RemoteMediaPlayerManagerProxy::SetMuted(m_id, muted), 0);
+}
+
+void MediaPlayerPrivateRemote::setPreload(MediaPlayer::Preload preload)
+{
+    m_manager.gpuProcessConnection().send(Messages::RemoteMediaPlayerManagerProxy::SetPreload(m_id, preload), 0);
+}
+
+void MediaPlayerPrivateRemote::setPrivateBrowsingMode(bool privateMode)
+{
+    m_manager.gpuProcessConnection().send(Messages::RemoteMediaPlayerManagerProxy::SetPrivateBrowsingMode(m_id, privateMode), 0);
 }
 
 bool MediaPlayerPrivateRemote::hasClosedCaptions() const
@@ -390,11 +388,6 @@ NativeImagePtr MediaPlayerPrivateRemote::nativeImageForCurrentTime()
 {
     notImplemented();
     return nullptr;
-}
-
-void MediaPlayerPrivateRemote::setPreload(MediaPlayer::Preload)
-{
-    notImplemented();
 }
 
 bool MediaPlayerPrivateRemote::hasAvailableVideoFrame() const
@@ -566,11 +559,6 @@ unsigned MediaPlayerPrivateRemote::videoDecodedByteCount() const
 {
     notImplemented();
     return 0;
-}
-
-void MediaPlayerPrivateRemote::setPrivateBrowsingMode(bool)
-{
-    notImplemented();
 }
 
 String MediaPlayerPrivateRemote::engineDescription() const
@@ -783,6 +771,12 @@ void MediaPlayerPrivateRemote::playbackStateChanged(bool paused)
 {
     m_paused = paused;
     m_player->playbackStateChanged();
+}
+
+void MediaPlayerPrivateRemote::engineFailedToLoad(long platformErrorCode)
+{
+    m_platformErrorCode = platformErrorCode;
+    m_player->remoteEngineFailedToLoad();
 }
 
 #if !RELEASE_LOG_DISABLED

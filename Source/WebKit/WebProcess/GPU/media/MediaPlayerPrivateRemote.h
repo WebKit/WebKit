@@ -63,6 +63,7 @@ public:
     void durationChanged(MediaTime);
     void rateChanged(double);
     void playbackStateChanged(bool);
+    void engineFailedToLoad(long);
 
 #if !RELEASE_LOG_DISABLED
     const Logger& logger() const final { return *m_logger; }
@@ -83,7 +84,19 @@ private:
 #endif
     void cancelLoad() final;
 
+    void play() final;
+    void pause() final;
+
     void prepareToPlay() final;
+    long platformErrorCode() const final { return m_platformErrorCode; }
+
+    double rate() const final { return m_rate; }
+    void setVolumeDouble(double) final;
+    void setMuted(bool) final;
+    void setPrivateBrowsingMode(bool) final;
+    void setPreservesPitch(bool) final;
+
+    // Unimplemented
     PlatformLayer* platformLayer() const final;
 
 #if PLATFORM(IOS_FAMILY) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
@@ -100,16 +113,12 @@ private:
     String accessLog() const final;
     String errorLog() const final;
 #endif
-    long platformErrorCode() const final;
 
-    void play() final;
-    void pause() final;
     void setBufferingPolicy(MediaPlayer::BufferingPolicy) final;
 
     bool supportsPictureInPicture() const final;
     bool supportsFullscreen() const final;
     bool supportsScanning() const final;
-    bool requiresImmediateCompositing() const final;
 
     bool canSaveMediaData() const final;
 
@@ -133,19 +142,12 @@ private:
     MediaTime startTime() const final;
 
     void setRateDouble(double) final;
-    double rate() const final { return m_rate; }
-
-    void setPreservesPitch(bool) final;
 
     bool paused() const final { return m_paused; }
-
-    void setVolumeDouble(double) final;
 
 #if PLATFORM(IOS_FAMILY) || USE(GSTREAMER)
     float volume() const final { return 1; }
 #endif
-
-    void setMuted(bool) final;
 
     bool hasClosedCaptions() const final;
     void setClosedCaptionsVisible(bool) final;
@@ -228,7 +230,6 @@ private:
     unsigned audioDecodedByteCount() const final;
     unsigned videoDecodedByteCount() const final;
 
-    void setPrivateBrowsingMode(bool) final;
     String engineDescription() const final;
 
 #if ENABLE(WEB_AUDIO)
@@ -302,6 +303,7 @@ private:
     bool m_muted { false };
     MediaTime m_duration;
     double m_rate { 1 };
+    long m_platformErrorCode { 0 };
     bool m_paused { false };
 
 #if !RELEASE_LOG_DISABLED

@@ -39,11 +39,17 @@ messages -> RemoteMediaPlayerManagerProxy NotRefCounted {
     Load(WebKit::MediaPlayerPrivateRemoteIdentifier id, URL url, WebCore::ContentType contentType, String keySystem)
     CancelLoad(WebKit::MediaPlayerPrivateRemoteIdentifier id)
 
+    PrepareToPlay(WebKit::MediaPlayerPrivateRemoteIdentifier id)
+
     Play(WebKit::MediaPlayerPrivateRemoteIdentifier id)
     Pause(WebKit::MediaPlayerPrivateRemoteIdentifier id)
 
     SetVolume(WebKit::MediaPlayerPrivateRemoteIdentifier id, double volume)
     SetMuted(WebKit::MediaPlayerPrivateRemoteIdentifier id, bool muted)
+
+    SetPreload(WebKit::MediaPlayerPrivateRemoteIdentifier id, enum:uint8_t WebCore::MediaPlayerEnums::Preload preload)
+    SetPrivateBrowsingMode(WebKit::MediaPlayerPrivateRemoteIdentifier id, bool privateMode)
+    SetPreservesPitch(WebKit::MediaPlayerPrivateRemoteIdentifier id, bool preservesPitch)
 }
 
 #endif

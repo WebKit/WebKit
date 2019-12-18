@@ -632,6 +632,8 @@ public:
     void mediaEngineUpdated() { client().mediaPlayerEngineUpdated(); }
     bool isLooping() const { return client().mediaPlayerIsLooping(); }
 
+    void remoteEngineFailedToLoad();
+
 #if USE(GSTREAMER)
     void requestInstallMissingPlugins(const String& details, const String& description, MediaPlayerRequestInstallMissingPluginsCallback& callback) { client().requestInstallMissingPlugins(details, description, callback); }
 #endif

@@ -78,6 +78,7 @@ private:
     void durationChanged(WebKit::MediaPlayerPrivateRemoteIdentifier, MediaTime&&);
     void rateChanged(WebKit::MediaPlayerPrivateRemoteIdentifier, double);
     void playbackStateChanged(WebKit::MediaPlayerPrivateRemoteIdentifier, bool);
+    void engineFailedToLoad(WebKit::MediaPlayerPrivateRemoteIdentifier, long);
 
     friend class MediaPlayerRemoteFactory;
     void getSupportedTypes(WebCore::MediaPlayerEnums::MediaEngineIdentifier, HashSet<String, ASCIICaseInsensitiveHash>&);

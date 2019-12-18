@@ -79,15 +79,19 @@ private:
     void supportsKeySystem(WebCore::MediaPlayerEnums::MediaEngineIdentifier, const String&&, const String&&, CompletionHandler<void(bool)>&&);
 
     void load(MediaPlayerPrivateRemoteIdentifier, URL&&, WebCore::ContentType&&, String&&);
-    void cancelLoad(MediaPlayerPrivateRemoteIdentifier);
-
     void prepareForPlayback(MediaPlayerPrivateRemoteIdentifier, bool privateMode, WebCore::MediaPlayerEnums::Preload, bool preservesPitch, bool prepareForRendering);
+    void cancelLoad(MediaPlayerPrivateRemoteIdentifier);
+    void prepareToPlay(MediaPlayerPrivateRemoteIdentifier);
 
     void play(MediaPlayerPrivateRemoteIdentifier);
     void pause(MediaPlayerPrivateRemoteIdentifier);
 
     void setVolume(MediaPlayerPrivateRemoteIdentifier, double);
     void setMuted(MediaPlayerPrivateRemoteIdentifier, bool);
+
+    void setPreload(MediaPlayerPrivateRemoteIdentifier, WebCore::MediaPlayerEnums::Preload);
+    void setPrivateBrowsingMode(MediaPlayerPrivateRemoteIdentifier, bool);
+    void setPreservesPitch(MediaPlayerPrivateRemoteIdentifier, bool);
 
     HashMap<MediaPlayerPrivateRemoteIdentifier, std::unique_ptr<RemoteMediaPlayerProxy>> m_proxies;
     GPUConnectionToWebProcess& m_gpuConnectionToWebProcess;

@@ -237,6 +237,12 @@ void RemoteMediaPlayerManager::playbackStateChanged(WebKit::MediaPlayerPrivateRe
         player->playbackStateChanged(paused);
 }
 
+void RemoteMediaPlayerManager::engineFailedToLoad(WebKit::MediaPlayerPrivateRemoteIdentifier id, long platformErrorCode)
+{
+    if (auto player = m_players.get(id))
+        player->engineFailedToLoad(platformErrorCode);
+}
+
 void RemoteMediaPlayerManager::updatePreferences(const Settings& settings)
 {
     auto registerEngine = [this](MediaEngineRegistrar registrar, MediaPlayerEnums::MediaEngineIdentifier remoteEngineIdentifier) {

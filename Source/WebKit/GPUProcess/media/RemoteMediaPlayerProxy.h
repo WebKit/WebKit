@@ -60,11 +60,17 @@ public:
     void load(const URL&, const ContentType&, const String&);
     void cancelLoad();
 
+    void prepareToPlay();
+
     void play();
     void pause();
 
     void setVolume(double);
     void setMuted(bool);
+
+    void setPreload(WebCore::MediaPlayerEnums::Preload);
+    void setPrivateBrowsingMode(bool);
+    void setPreservesPitch(bool);
 
 private:
     // MediaPlayerClient
