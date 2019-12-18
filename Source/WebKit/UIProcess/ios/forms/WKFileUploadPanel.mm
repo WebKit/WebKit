@@ -33,6 +33,7 @@
 #import "APIOpenPanelParameters.h"
 #import "APIString.h"
 #import "UIKitSPI.h"
+#import "UserInterfaceIdiom.h"
 #import "WKContentViewInteraction.h"
 #import "WKData.h"
 #import "WKStringCF.h"

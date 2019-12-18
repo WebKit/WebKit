@@ -1,5 +1,11 @@
 2019-12-17  Per Arne Vollan  <pvollan@apple.com>
 
+        Unreviewed build fix after r253661.
+
+        * UIProcess/ios/forms/WKFileUploadPanel.mm:
+
+2019-12-17  Per Arne Vollan  <pvollan@apple.com>
+
         [iOS] The WebContent process should not use API to get the user interface idiom
         https://bugs.webkit.org/show_bug.cgi?id=205236
 
