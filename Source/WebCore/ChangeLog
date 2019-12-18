@@ -1,5 +1,68 @@
 2019-12-18  Dan Robson  <dan_robson@apple.com>
 
+        Cherry-pick r253563. rdar://problem/58049160
+
+    Consider top-level context whose origin is unique as insecure
+    https://bugs.webkit.org/show_bug.cgi?id=205111
+    Source/WebCore:
+    
+    Reviewed by Brent Fulgham.
+    
+    Tests: http/tests/security/top-level-unique-origin.https.html
+           http/tests/security/top-level-unique-origin2.https.html
+    
+    * dom/Document.cpp:
+    (WebCore::Document::isSecureContext const):
+    There is no guarantee that top level unique origin contexts like data URL are SecureContext.
+    This patch makes them no longer SecureContext.
+    This helps getting closer to https://w3c.github.io/webappsec-secure-contexts/#is-url-trustworthy
+    which identifies all unique origins as "Not Trustworthy".
+    Child unique origin contexts will stay SecureContext if their parents are.
+    
+    Tools:
+    
+    <rdar://problem/57834967>
+    
+    Reviewed by Brent Fulgham.
+    
+    * TestWebKitAPI/Tests/WebKitCocoa/DeviceOrientation.mm:
+    (TEST):
+    Disable secure context checks so that loading directly about:blank from the API test
+    can call DeviceOrientationEvent.requestPermission() successfully.
+    
+    LayoutTests:
+    
+    Reviewed by Brent Fulgham.
+    
+    * http/tests/security/top-level-unique-origin.https-expected.txt: Added.
+    * http/tests/security/top-level-unique-origin.https.html: Added.
+    * http/tests/security/top-level-unique-origin2.https-expected.txt: Added.
+    * http/tests/security/top-level-unique-origin2.https.html: Added.
+    * platform/win/TestExpectations: Skipping second test as timing out in windows.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@253563 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-12-16  youenn fablet  <youenn@apple.com>
+
+            Consider top-level context whose origin is unique as insecure
+            https://bugs.webkit.org/show_bug.cgi?id=205111
+
+            Reviewed by Brent Fulgham.
+
+            Tests: http/tests/security/top-level-unique-origin.https.html
+                   http/tests/security/top-level-unique-origin2.https.html
+
+            * dom/Document.cpp:
+            (WebCore::Document::isSecureContext const):
+            There is no guarantee that top level unique origin contexts like data URL are SecureContext.
+            This patch makes them no longer SecureContext.
+            This helps getting closer to https://w3c.github.io/webappsec-secure-contexts/#is-url-trustworthy
+            which identifies all unique origins as "Not Trustworthy".
+            Child unique origin contexts will stay SecureContext if their parents are.
+
+2019-12-18  Dan Robson  <dan_robson@apple.com>
+
         Cherry-pick r253544. rdar://problem/58049164
 
     SecurityOrigin should be unique for null blob URLs that have been unregistered
