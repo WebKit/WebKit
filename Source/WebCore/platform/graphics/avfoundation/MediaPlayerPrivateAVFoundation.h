@@ -53,7 +53,6 @@ class MediaPlayerPrivateAVFoundation : public CanMakeWeakPtr<MediaPlayerPrivateA
 #endif
 {
 public:
-    virtual void repaint();
     virtual void metadataLoaded();
     virtual void playabilityKnown();
     virtual void rateChanged();
@@ -187,14 +186,12 @@ protected:
     bool paused() const override;
     void setVolume(float) override = 0;
     bool hasClosedCaptions() const override { return m_cachedHasCaptions; }
-    void setClosedCaptionsVisible(bool) override = 0;
     MediaPlayer::NetworkState networkState() const override { return m_networkState; }
     MediaPlayer::ReadyState readyState() const override { return m_readyState; }
     MediaTime maxMediaTimeSeekable() const override;
     MediaTime minMediaTimeSeekable() const override;
     std::unique_ptr<PlatformTimeRanges> buffered() const override;
     bool didLoadingProgress() const override;
-    void setSize(const IntSize&) override;
     void paint(GraphicsContext&, const FloatRect&) override = 0;
     void paintCurrentFrameInContext(GraphicsContext&, const FloatRect&) override = 0;
     void setPreload(MediaPlayer::Preload) override;

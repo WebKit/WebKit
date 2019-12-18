@@ -218,8 +218,6 @@ private:
 
     bool didLoadingProgress() const override;
 
-    void setSize(const IntSize&) override;
-
     NativeImagePtr nativeImageForCurrentTime() override;
     bool updateLastPixelBuffer();
     bool updateLastImage();

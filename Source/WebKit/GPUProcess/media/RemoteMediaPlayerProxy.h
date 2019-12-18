@@ -84,16 +84,13 @@ private:
 
     // Not implemented
     void mediaPlayerPlaybackStateChanged() final;
-    void mediaPlayerSawUnsupportedTracks() final;
     void mediaPlayerResourceNotSupported() final;
-    void mediaPlayerRepaint() final;
     void mediaPlayerSizeChanged() final;
     void mediaPlayerEngineUpdated() final;
     void mediaPlayerFirstVideoFrameAvailable() final;
     void mediaPlayerCharacteristicChanged() final;
     bool mediaPlayerRenderingCanBeAccelerated() final;
     void mediaPlayerRenderingModeChanged() final;
-    bool mediaPlayerAcceleratedCompositingEnabled() final;
     void mediaPlayerActiveSourceBuffersChanged() final;
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
@@ -118,12 +115,9 @@ private:
     bool mediaPlayerIsVideo() const final;
     LayoutRect mediaPlayerContentBoxRect() const final;
     float mediaPlayerContentsScale() const final;
-    void mediaPlayerSetSize(const IntSize&) final;
     void mediaPlayerPause() final;
     void mediaPlayerPlay() final;
     bool mediaPlayerPlatformVolumeConfigurationRequired() const final;
-    bool mediaPlayerIsPaused() const final;
-    bool mediaPlayerIsLooping() const final;
     CachedResourceLoader* mediaPlayerCachedResourceLoader() final;
     RefPtr<PlatformMediaResourceLoader> mediaPlayerCreateResourceLoader() final;
     bool doesHaveAttribute(const AtomString&, AtomString* = nullptr) const final;

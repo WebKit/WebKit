@@ -159,17 +159,7 @@ void RemoteMediaPlayerProxy::mediaPlayerPlaybackStateChanged()
     notImplemented();
 }
 
-void RemoteMediaPlayerProxy::mediaPlayerSawUnsupportedTracks()
-{
-    notImplemented();
-}
-
 void RemoteMediaPlayerProxy::mediaPlayerResourceNotSupported()
-{
-    notImplemented();
-}
-
-void RemoteMediaPlayerProxy::mediaPlayerRepaint()
 {
     notImplemented();
 }
@@ -204,12 +194,6 @@ bool RemoteMediaPlayerProxy::mediaPlayerRenderingCanBeAccelerated()
 void RemoteMediaPlayerProxy::mediaPlayerRenderingModeChanged()
 {
     notImplemented();
-}
-
-bool RemoteMediaPlayerProxy::mediaPlayerAcceleratedCompositingEnabled()
-{
-    notImplemented();
-    return false;
 }
 
 void RemoteMediaPlayerProxy::mediaPlayerActiveSourceBuffersChanged()
@@ -305,11 +289,6 @@ float RemoteMediaPlayerProxy::mediaPlayerContentsScale() const
     return 1;
 }
 
-void RemoteMediaPlayerProxy::mediaPlayerSetSize(const IntSize&)
-{
-    notImplemented();
-}
-
 void RemoteMediaPlayerProxy::mediaPlayerPause()
 {
     notImplemented();
@@ -321,18 +300,6 @@ void RemoteMediaPlayerProxy::mediaPlayerPlay()
 }
 
 bool RemoteMediaPlayerProxy::mediaPlayerPlatformVolumeConfigurationRequired() const
-{
-    notImplemented();
-    return false;
-}
-
-bool RemoteMediaPlayerProxy::mediaPlayerIsPaused() const
-{
-    notImplemented();
-    return true;
-}
-
-bool RemoteMediaPlayerProxy::mediaPlayerIsLooping() const
 {
     notImplemented();
     return false;

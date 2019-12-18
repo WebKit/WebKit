@@ -572,10 +572,6 @@ void MediaPlayerPrivateAVFoundation::updateStates()
     setReadyState(newReadyState);
 }
 
-void MediaPlayerPrivateAVFoundation::setSize(const IntSize&) 
-{ 
-}
-
 void MediaPlayerPrivateAVFoundation::setVisible(bool visible)
 {
     if (m_visible == visible)
@@ -683,11 +679,6 @@ void MediaPlayerPrivateAVFoundation::invalidateCachedDuration()
         m_reportedDuration = duration;
     }
     
-}
-
-void MediaPlayerPrivateAVFoundation::repaint()
-{
-    m_player->repaint();
 }
 
 MediaPlayer::MovieLoadType MediaPlayerPrivateAVFoundation::movieLoadType() const

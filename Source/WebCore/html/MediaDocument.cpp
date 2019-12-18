@@ -146,7 +146,6 @@ void MediaDocumentParser::appendBytes(DocumentWriter&, const char*, size_t)
     
 MediaDocument::MediaDocument(Frame* frame, const URL& url)
     : HTMLDocument(frame, url, MediaDocumentClass)
-    , m_replaceMediaElementTimer(*this, &MediaDocument::replaceMediaElementTimerFired)
 {
     setCompatibilityMode(DocumentCompatibilityMode::QuirksMode);
     lockCompatibilityMode();
@@ -156,7 +155,6 @@ MediaDocument::MediaDocument(Frame* frame, const URL& url)
 
 MediaDocument::~MediaDocument()
 {
-    ASSERT(!m_replaceMediaElementTimer.isActive());
 }
 
 Ref<DocumentParser> MediaDocument::createParser()
@@ -226,16 +224,6 @@ void MediaDocument::defaultEventHandler(Event& event)
             keyboardEvent.setDefaultHandled();
         }
     }
-}
-
-void MediaDocument::mediaElementSawUnsupportedTracks()
-{
-    // The HTMLMediaElement was told it has something that the underlying 
-    // MediaPlayer cannot handle so we should switch from <video> to <embed> 
-    // and let the plugin handle this. Don't do it immediately as this 
-    // function may be called directly from a media engine callback, and 
-    // replaceChild will destroy the element, media player, and media engine.
-    m_replaceMediaElementTimer.startOneShot(0_s);
 }
 
 void MediaDocument::replaceMediaElementTimerFired()

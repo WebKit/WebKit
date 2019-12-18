@@ -152,7 +152,7 @@ public:
     virtual unsigned long long totalBytes() const { return 0; }
     virtual bool didLoadingProgress() const = 0;
 
-    virtual void setSize(const IntSize&) = 0;
+    virtual void setSize(const IntSize&) { }
 
     virtual void paint(GraphicsContext&, const FloatRect&) = 0;
 
@@ -163,9 +163,6 @@ public:
     virtual void setPreload(MediaPlayer::Preload) { }
 
     virtual bool hasAvailableVideoFrame() const { return readyState() >= MediaPlayer::ReadyState::HaveCurrentData; }
-
-    virtual bool canLoadPoster() const { return false; }
-    virtual void setPoster(const String&) { }
 
 #if USE(NATIVE_FULLSCREEN_VIDEO)
     virtual void enterFullscreen() { }

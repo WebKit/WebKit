@@ -162,11 +162,6 @@ public:
     // the play/pause status changed
     virtual void mediaPlayerPlaybackStateChanged() { }
 
-    // The MediaPlayer has found potentially problematic media content.
-    // This is used internally to trigger swapping from a <video>
-    // element to an <embed> in standalone documents
-    virtual void mediaPlayerSawUnsupportedTracks() { }
-
     // The MediaPlayer could not discover an engine which supports the requested resource.
     virtual void mediaPlayerResourceNotSupported() { }
 
@@ -226,11 +221,9 @@ public:
     virtual bool mediaPlayerIsVideo() const { return false; }
     virtual LayoutRect mediaPlayerContentBoxRect() const { return LayoutRect(); }
     virtual float mediaPlayerContentsScale() const { return 1; }
-    virtual void mediaPlayerSetSize(const IntSize&) { }
     virtual void mediaPlayerPause() { }
     virtual void mediaPlayerPlay() { }
     virtual bool mediaPlayerPlatformVolumeConfigurationRequired() const { return false; }
-    virtual bool mediaPlayerIsPaused() const { return true; }
     virtual bool mediaPlayerIsLooping() const { return false; }
     virtual CachedResourceLoader* mediaPlayerCachedResourceLoader() { return nullptr; }
     virtual RefPtr<PlatformMediaResourceLoader> mediaPlayerCreateResourceLoader() { return nullptr; }
@@ -460,9 +453,6 @@ public:
 
     bool hasAvailableVideoFrame() const;
     void prepareForRendering();
-
-    bool canLoadPoster() const;
-    void setPoster(const String&);
 
 #if USE(NATIVE_FULLSCREEN_VIDEO)
     void enterFullscreen();

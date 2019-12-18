@@ -2238,11 +2238,6 @@ void HTMLMediaElement::mediaLoadingFailedFatally(MediaPlayer::NetworkState error
 
     // 6 - Abort the overall resource selection algorithm.
     m_currentSourceNode = nullptr;
-
-#if PLATFORM(COCOA)
-    if (is<MediaDocument>(document()))
-        downcast<MediaDocument>(document()).mediaElementSawUnsupportedTracks();
-#endif
 }
 
 void HTMLMediaElement::cancelPendingEventsAndCallbacks()
@@ -5040,17 +5035,6 @@ void HTMLMediaElement::mediaPlayerPlaybackStateChanged()
     endProcessingMediaPlayerCallback();
 }
 
-void HTMLMediaElement::mediaPlayerSawUnsupportedTracks()
-{
-    INFO_LOG(LOGIDENTIFIER);
-
-    // The MediaPlayer came across content it cannot completely handle.
-    // This is normally acceptable except when we are in a standalone
-    // MediaDocument. If so, tell the document what has happened.
-    if (is<MediaDocument>(document()))
-        downcast<MediaDocument>(document()).mediaElementSawUnsupportedTracks();
-}
-
 void HTMLMediaElement::mediaPlayerResourceNotSupported()
 {
     INFO_LOG(LOGIDENTIFIER);
@@ -7086,12 +7070,6 @@ float HTMLMediaElement::mediaPlayerContentsScale() const
     return 1;
 }
 
-void HTMLMediaElement::mediaPlayerSetSize(const IntSize& size)
-{
-    setIntegralAttribute(widthAttr, size.width());
-    setIntegralAttribute(heightAttr, size.height());
-}
-
 void HTMLMediaElement::mediaPlayerPause()
 {
     pause();
@@ -7105,11 +7083,6 @@ void HTMLMediaElement::mediaPlayerPlay()
 bool HTMLMediaElement::mediaPlayerPlatformVolumeConfigurationRequired() const
 {
     return !m_volumeInitialized;
-}
-
-bool HTMLMediaElement::mediaPlayerIsPaused() const
-{
-    return paused();
 }
 
 bool HTMLMediaElement::mediaPlayerIsLooping() const

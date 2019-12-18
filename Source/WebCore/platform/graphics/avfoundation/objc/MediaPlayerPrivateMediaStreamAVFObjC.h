@@ -142,8 +142,6 @@ private:
 
     bool didLoadingProgress() const override { return m_playing; }
 
-    void setSize(const IntSize&) override { /* No-op */ }
-
     void flushRenderers();
 
     using PendingSampleQueue = Deque<Ref<MediaSample>>;

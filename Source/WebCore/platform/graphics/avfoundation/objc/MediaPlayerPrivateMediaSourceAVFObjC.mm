@@ -588,11 +588,6 @@ bool MediaPlayerPrivateMediaSourceAVFObjC::didLoadingProgress() const
     return loadingProgressed;
 }
 
-void MediaPlayerPrivateMediaSourceAVFObjC::setSize(const IntSize&)
-{
-    // No-op.
-}
-
 NativeImagePtr MediaPlayerPrivateMediaSourceAVFObjC::nativeImageForCurrentTime()
 {
     updateLastImage();

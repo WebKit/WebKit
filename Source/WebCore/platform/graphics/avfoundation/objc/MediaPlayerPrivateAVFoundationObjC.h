@@ -177,7 +177,6 @@ private:
     bool platformPaused() const override;
     void setVolume(float) override;
     void setMuted(bool) override;
-    void setClosedCaptionsVisible(bool) override;
     void paint(GraphicsContext&, const FloatRect&) override;
     void paintCurrentFrameInContext(GraphicsContext&, const FloatRect&) override;
     PlatformLayer* platformLayer() const override;

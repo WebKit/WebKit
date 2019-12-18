@@ -152,9 +152,6 @@ public:
 
     void paint(GraphicsContext&, const FloatRect&) final { }
 
-    bool canLoadPoster() const final { return false; }
-    void setPoster(const String&) final { }
-
     bool hasSingleSecurityOrigin() const final { return true; }
 };
 
@@ -592,16 +589,6 @@ void MediaPlayer::prepareForRendering()
     m_shouldPrepareToRender = true;
     m_private->prepareForRendering();
 }
-
-bool MediaPlayer::canLoadPoster() const
-{
-    return m_private->canLoadPoster();
-}
-
-void MediaPlayer::setPoster(const String& url)
-{
-    m_private->setPoster(url);
-}    
 
 void MediaPlayer::cancelLoad()
 {

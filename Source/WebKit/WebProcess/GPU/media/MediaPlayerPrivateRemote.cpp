@@ -396,17 +396,6 @@ bool MediaPlayerPrivateRemote::hasAvailableVideoFrame() const
     return false;
 }
 
-bool MediaPlayerPrivateRemote::canLoadPoster() const
-{
-    notImplemented();
-    return false;
-}
-
-void MediaPlayerPrivateRemote::setPoster(const String&)
-{
-    notImplemented();
-}
-
 #if USE(NATIVE_FULLSCREEN_VIDEO)
 void MediaPlayerPrivateRemote::enterFullscreen()
 {

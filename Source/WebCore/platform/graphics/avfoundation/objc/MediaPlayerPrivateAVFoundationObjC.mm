@@ -1339,16 +1339,6 @@ void MediaPlayerPrivateAVFoundationObjC::setMuted(bool muted)
     [m_avPlayer.get() setMuted:m_muted];
 }
 
-void MediaPlayerPrivateAVFoundationObjC::setClosedCaptionsVisible(bool closedCaptionsVisible)
-{
-    UNUSED_PARAM(closedCaptionsVisible);
-
-    if (!metaDataAvailable())
-        return;
-
-    ALWAYS_LOG(LOGIDENTIFIER, closedCaptionsVisible);
-}
-
 void MediaPlayerPrivateAVFoundationObjC::setRateDouble(double rate)
 {
     m_requestedRate = rate;

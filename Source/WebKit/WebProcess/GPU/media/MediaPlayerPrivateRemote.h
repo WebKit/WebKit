@@ -181,9 +181,6 @@ private:
 
     bool hasAvailableVideoFrame() const final;
 
-    bool canLoadPoster() const final;
-    void setPoster(const String&) final;
-
 #if USE(NATIVE_FULLSCREEN_VIDEO)
     void enterFullscreen() final;
     void exitFullscreen() final;

@@ -74,7 +74,7 @@ private:
     virtual void platformPause();
     MediaTime currentMediaTime() const override;
     virtual void setVolume(float);
-    virtual void setClosedCaptionsVisible(bool);
+    void setClosedCaptionsVisible(bool) override;
     virtual void paint(GraphicsContext&, const FloatRect&);
     virtual void paintCurrentFrameInContext(GraphicsContext&, const FloatRect&);
     virtual PlatformLayer* platformLayer() const;
