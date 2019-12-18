@@ -294,7 +294,7 @@ void WebIDBServer::addConnection(IPC::Connection& connection, WebCore::ProcessId
         return makeUnique<WebIDBConnectionToClient>(connection, processIdentifier);
     });
     
-    ASSERT(isNewEntry);
+    ASSERT_UNUSED(isNewEntry, isNewEntry);
 
     m_server->registerConnection(iter->value->connectionToClient());
 }
