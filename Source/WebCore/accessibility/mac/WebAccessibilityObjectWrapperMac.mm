@@ -2528,14 +2528,16 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         return (NSURL*)url;
     }
 
-    // Only native spin buttons have increment and decrement buttons.
-    if (is<AccessibilitySpinButton>(*m_object)) {
-        if ([attributeName isEqualToString:NSAccessibilityIncrementButtonAttribute])
-            return downcast<AccessibilitySpinButton>(*m_object).incrementButton()->wrapper();
-        if ([attributeName isEqualToString:NSAccessibilityDecrementButtonAttribute])
-            return downcast<AccessibilitySpinButton>(*m_object).decrementButton()->wrapper();
+    if ([attributeName isEqualToString:NSAccessibilityIncrementButtonAttribute]) {
+        auto incrementButton = m_object->incrementButton();
+        return incrementButton ? incrementButton->wrapper() : nil;
     }
-    
+
+    if ([attributeName isEqualToString:NSAccessibilityDecrementButtonAttribute]) {
+        auto decrementButton = m_object->decrementButton();
+        return decrementButton ? decrementButton->wrapper() : nil;
+    }
+
     if ([attributeName isEqualToString: @"AXVisited"])
         return [NSNumber numberWithBool: m_object->isVisited()];
     

@@ -270,6 +270,9 @@ void AXIsolatedObject::initializeAttributeData(AXCoreObject& object, bool isRoot
     }
     setProperty(AXPropertyName::AccessibilityText, isolatedTexts);
 
+    setObjectProperty(AXPropertyName::DecrementButton, object.decrementButton());
+    setObjectProperty(AXPropertyName::IncrementButton, object.incrementButton());
+
     Vector<String> classList;
     object.classList(classList);
     String combinedClassList;
@@ -425,8 +428,7 @@ const AXCoreObject::AccessibilityChildrenVector& AXIsolatedObject::children(bool
 
 bool AXIsolatedObject::isDetachedFromParent()
 {
-    ASSERT_NOT_REACHED();
-    return false;
+    return parent() == InvalidAXID && tree()->rootNode()->objectID() != m_id;
 }
 
 void AXIsolatedObject::accessibilityText(Vector<AccessibilityText>& texts) const
@@ -757,7 +759,9 @@ bool AXIsolatedObject::isAccessibilityScrollbar() const
 
 bool AXIsolatedObject::isAccessibilityScrollView() const
 {
-    ASSERT_NOT_REACHED();
+    // FIXME: this should be ASSERT_NOT_REACHED, but it is called by
+    // AXObjectCache::rootWebArea, that in turn is called by
+    // AXObjectCache::postTextStateChangePlatformNotification.
     return false;
 }
 

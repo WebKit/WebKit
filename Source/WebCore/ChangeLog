@@ -1,3 +1,31 @@
+2019-12-18  Andres Gonzalez  <andresg_22@apple.com>
+
+        AXIsolatedObject support for spin button increment/decrementButton.
+        https://bugs.webkit.org/show_bug.cgi?id=205356
+
+        Reviewed by Chris Fleizach.
+
+        Several LayoutTests exercise this functionality.
+
+        - Exposed increment/decrementButton in AXCoreObject in order to
+        properly support it in AXIsolatedObject.
+        - Used AXCoreObject::increment/decrementButton in the wrapper instead
+        of downcasting to an implementation class, which does not work for an
+        isolated object.
+        - Implemented AXIsolatedObject::isDetachedFromParent.
+        - Fixed initialization of AXIsolatedObject::m_parent and m_id.
+
+        * accessibility/AccessibilityObject.h:
+        * accessibility/AccessibilityObjectInterface.h:
+        * accessibility/AccessibilitySpinButton.h:
+        * accessibility/isolatedtree/AXIsolatedTreeNode.cpp:
+        (WebCore::AXIsolatedObject::initializeAttributeData):
+        (WebCore::AXIsolatedObject::isDetachedFromParent):
+        (WebCore::AXIsolatedObject::isAccessibilityScrollView const):
+        * accessibility/isolatedtree/AXIsolatedTreeNode.h:
+        * accessibility/mac/WebAccessibilityObjectWrapperMac.mm:
+        (-[WebAccessibilityObjectWrapper accessibilityAttributeValue:]):
+
 2019-12-18  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] LineLayoutContext::m_uncommittedList is not always a continuous list of runs

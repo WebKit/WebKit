@@ -535,9 +535,14 @@ public:
     virtual bool isMenuList() const = 0;
     virtual bool isMenuListPopup() const = 0;
     virtual bool isMenuListOption() const = 0;
+
+    // Native spin buttons.
     bool isSpinButton() const { return roleValue() == AccessibilityRole::SpinButton; }
     virtual bool isNativeSpinButton() const = 0;
+    virtual AXCoreObject* incrementButton() = 0;
+    virtual AXCoreObject* decrementButton() = 0;
     virtual bool isSpinButtonPart() const = 0;
+
     virtual bool isMockObject() const = 0;
     virtual bool isMediaObject() const = 0;
     bool isSwitch() const { return roleValue() == AccessibilityRole::Switch; }

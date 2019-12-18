@@ -164,6 +164,8 @@ public:
     bool isMenuListPopup() const override { return false; }
     bool isMenuListOption() const override { return false; }
     bool isNativeSpinButton() const override { return false; }
+    AXCoreObject* incrementButton() override { return nullptr; }
+    AXCoreObject* decrementButton() override { return nullptr; }
     bool isSpinButtonPart() const override { return false; }
     bool isMockObject() const override { return false; }
     virtual bool isMediaControlLabel() const { return false; }

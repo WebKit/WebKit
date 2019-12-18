@@ -37,8 +37,8 @@ public:
     
     void setSpinButtonElement(SpinButtonElement* spinButton) { m_spinButtonElement = spinButton; }
     
-    AXCoreObject* incrementButton();
-    AXCoreObject* decrementButton();
+    AXCoreObject* incrementButton() override;
+    AXCoreObject* decrementButton() override;
 
     void step(int amount);
     

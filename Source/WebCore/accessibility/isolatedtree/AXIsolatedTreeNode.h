@@ -112,6 +112,7 @@ private:
         CurrentState,
         CurrentValue,
         DatetimeAttributeValue,
+        DecrementButton,
         Description,
         DocumentEncoding,
         DocumentURI,
@@ -131,6 +132,7 @@ private:
         HorizontalScrollBar,
         IdentifierAttribute,
         InvalidStatus,
+        IncrementButton,
         IsAccessibilityIgnored,
         IsActiveDescendantOfFocusedContainer,
         IsAnonymousMathOperator,
@@ -520,6 +522,8 @@ private:
     bool liveRegionAtomic() const override { return boolAttributeValue(AXPropertyName::LiveRegionAtomic); }
     bool isBusy() const override { return boolAttributeValue(AXPropertyName::IsBusy); }
     bool isInlineText() const override { return boolAttributeValue(AXPropertyName::IsInlineText); }
+    AXCoreObject* incrementButton() override { return objectAttributeValue(AXPropertyName::IncrementButton); }
+    AXCoreObject* decrementButton() override { return objectAttributeValue(AXPropertyName::DecrementButton); }
 
     // Parameterized attribute retrieval.
     Vector<RefPtr<Range>> findTextRanges(AccessibilitySearchTextCriteria const&) const override;
@@ -794,8 +798,8 @@ private:
     void updateBackingStore() override;
     void setWrapper(AccessibilityObjectWrapper* wrapper) override { m_wrapper = wrapper; }
     
-    AXID m_parent;
-    AXID m_id;
+    AXID m_parent { InvalidAXID };
+    AXID m_id { InvalidAXID };
     bool m_initialized { false };
     AXIsolatedTreeID m_treeIdentifier;
     RefPtr<AXIsolatedTree> m_cachedTree;
