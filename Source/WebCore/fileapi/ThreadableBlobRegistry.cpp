@@ -105,10 +105,16 @@ void ThreadableBlobRegistry::registerBlobURL(const URL& url, Vector<BlobPart>&& 
     }
 }
 
+static inline bool isBlobURLContainsNullOrigin(const URL& url)
+{
+    ASSERT(url.protocolIsBlob());
+    return BlobURL::getOrigin(url) == "null";
+}
+
 void ThreadableBlobRegistry::registerBlobURL(SecurityOrigin* origin, const URL& url, const URL& srcURL)
 {
     // If the blob URL contains null origin, as in the context with unique security origin or file URL, save the mapping between url and origin so that the origin can be retrived when doing security origin check.
-    if (origin && BlobURL::getOrigin(url) == "null")
+    if (origin && isBlobURLContainsNullOrigin(url))
         originMap()->add(url.string(), origin);
 
     if (isMainThread())
@@ -157,7 +163,7 @@ unsigned long long ThreadableBlobRegistry::blobSize(const URL& url)
 
 void ThreadableBlobRegistry::unregisterBlobURL(const URL& url)
 {
-    if (BlobURL::getOrigin(url) == "null")
+    if (isBlobURLContainsNullOrigin(url))
         originMap()->remove(url.string());
 
     if (isMainThread())
@@ -171,7 +177,14 @@ void ThreadableBlobRegistry::unregisterBlobURL(const URL& url)
 
 RefPtr<SecurityOrigin> ThreadableBlobRegistry::getCachedOrigin(const URL& url)
 {
-    return originMap()->get(url.string());
+    if (auto cachedOrigin = originMap()->get(url.string()))
+        return cachedOrigin;
+
+    if (!url.protocolIsBlob() || !isBlobURLContainsNullOrigin(url))
+        return nullptr;
+
+    // If we do not have a cached origin for null blob URLs, we use a unique origin.
+    return SecurityOrigin::createUnique();
 }
 
 } // namespace WebCore

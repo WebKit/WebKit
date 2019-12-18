@@ -1,3 +1,43 @@
+2019-12-18  Dan Robson  <dan_robson@apple.com>
+
+        Cherry-pick r253544. rdar://problem/58049164
+
+    SecurityOrigin should be unique for null blob URLs that have been unregistered
+    https://bugs.webkit.org/show_bug.cgi?id=205169
+    
+    Reviewed by Darin Adler.
+    
+    Source/WebCore:
+    
+    In case we cannot retrieve a cached origin for a null origin, just create a unique one.
+    This is better than having an origin with an empty host and empty scheme.
+    
+    Test: http/tests/security/blob-null-url-location-origin.html
+    
+    * fileapi/ThreadableBlobRegistry.cpp:
+    (WebCore::ThreadableBlobRegistry::unregisterBlobURL):
+    (WebCore::ThreadableBlobRegistry::getCachedOrigin):
+    
+    LayoutTests:
+    
+    * http/tests/security/blob-null-url-location-origin-expected.txt: Added.
+    * http/tests/security/blob-null-url-location-origin.html: Added.
+    * platform/win/TestExpectations: Skipping test as timing out in windows.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@253544 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-12-16  youenn fablet  <youenn@apple.com>
+
+            SecurityOrigin should be unique for null blob URLs that have been unregistered
+            https://bugs.webkit.org/show_bug.cgi?id=205169
+
+            Reviewed by Darin Adler.
+
+            * http/tests/security/blob-null-url-location-origin-expected.txt: Added.
+            * http/tests/security/blob-null-url-location-origin.html: Added.
+            * platform/win/TestExpectations: Skipping test as timing out in windows.
+
 2019-11-18  Alan Coon  <alancoon@apple.com>
 
         Apply patch. rdar://problem/57283569
