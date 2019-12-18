@@ -1,3 +1,16 @@
+2019-12-17  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [iOS] Arabic text on Wikipedia is shown as boxes
+        https://bugs.webkit.org/show_bug.cgi?id=155129
+        <rdar://problem/24919902>
+
+        Unreviewed typo correction.
+
+        * platform/gtk/TestExpectations:
+        * platform/win/TestExpectations:
+        * platform/wincairo/TestExpectations:
+        Renamed arabic-blacklisted-expected.html to arabic-blacklisted.html.
+
 2019-12-17  Chris Dumez  <cdumez@apple.com>
 
         Port service worker code to the HTML5 event loop

@@ -1711,7 +1711,7 @@ webkit.org/b/158918 fast/css3-text/css3-text-decoration/text-decoration-dotted-d
 webkit.org/b/158918 fast/css3-text/css3-text-decoration/text-decoration-dotted.html [ ImageOnlyFailure Pass ]
 
 # This test relies on iOS-specific font fallback.
-fast/text/arabic-blacklisted-expected.html [ Pass ImageOnlyFailure ]
+fast/text/arabic-blacklisted.html [ Pass ImageOnlyFailure ]
 
 # These are expected mismatches, so they should fail, and the bug is they sometimes pass.
 webkit.org/b/153941 fast/text/control-characters/visible-control-characters-1.html [ ImageOnlyFailure Pass ]
