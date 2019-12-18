@@ -815,7 +815,7 @@ Vector<WebResourceLoadStatisticsStore::ThirdPartyData> ResourceLoadStatisticsDat
     Vector<WebResourceLoadStatisticsStore::ThirdPartyData> thirdPartyDataList;
     SQLiteStatement sortedStatistics(m_database, makeString("SELECT ", joinSubStatisticsForSorting()));
     if (sortedStatistics.prepare() != SQLITE_OK
-        || sortedStatistics.bindText(1, "%")
+        || sortedStatistics.bindText(1, "1")
         || sortedStatistics.bindText(2, "%") != SQLITE_OK) {
         RELEASE_LOG_ERROR(Network, "ResourceLoadStatisticsDatabaseStore::aggregatedThirdPartyData, error message: %{public}s", m_database.lastErrorMsg());
         ASSERT_NOT_REACHED();

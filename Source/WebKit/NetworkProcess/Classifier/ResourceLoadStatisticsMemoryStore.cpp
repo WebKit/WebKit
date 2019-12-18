@@ -136,7 +136,7 @@ Vector<WebResourceLoadStatisticsStore::ThirdPartyData> ResourceLoadStatisticsMem
 
     Vector<WebResourceLoadStatisticsStore::ThirdPartyData> thirdPartyDataList;
     for (auto& statistic : m_resourceStatisticsMap.values()) {
-        if (hasBeenThirdParty(statistic))
+        if (hasBeenThirdParty(statistic) && statistic.isPrevalentResource)
             thirdPartyDataList.append(WebResourceLoadStatisticsStore::ThirdPartyData { statistic.registrableDomain, getThirdPartyDataForSpecificFirstPartyDomains(statistic) });
     }
     std::sort(thirdPartyDataList.rbegin(), thirdPartyDataList.rend());

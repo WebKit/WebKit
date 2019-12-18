@@ -1,3 +1,17 @@
+2019-12-18  Kate Cheney  <katherine_cheney@apple.com>
+
+        Only report prevalent domains in the ResourceLoadStatistics data summary API
+        https://bugs.webkit.org/show_bug.cgi?id=205281
+        <rdar://problem/57975017>
+
+        Reviewed by Brent Fulgham.
+
+        ResourceLoadStatisticsStore::aggregatedThirdPartyData() should only
+        return prevalent third party domains.
+
+        * NetworkProcess/Classifier/ResourceLoadStatisticsDatabaseStore.cpp:
+        * NetworkProcess/Classifier/ResourceLoadStatisticsMemoryStore.cpp:
+
 2019-12-18  Brent Fulgham  <bfulgham@apple.com>
 
         Add syscall to GPU Process sandbox

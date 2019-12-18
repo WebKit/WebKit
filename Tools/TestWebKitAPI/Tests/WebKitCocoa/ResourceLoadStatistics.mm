@@ -697,6 +697,19 @@ TEST(ResourceLoadStatistics, GetResourceLoadStatisticsDataSummary)
 
     TestWebKitAPI::Util::run(&doneFlag);
 
+    // set third parties to be prevalent
+    [dataStore _setPrevalentDomain:[NSURL URLWithString:@"http://evil1.com"] completionHandler: ^(void) {
+        doneFlag = true;
+    }];
+    doneFlag = false;
+    [dataStore _setPrevalentDomain:[NSURL URLWithString:@"http://evil2.com"] completionHandler: ^(void) {
+        doneFlag = true;
+    }];
+    doneFlag = false;
+    [dataStore _setPrevalentDomain:[NSURL URLWithString:@"http://evil3.com"] completionHandler: ^(void) {
+        doneFlag = true;
+    }];
+
     // Seed test data in the web process' observer.
 
     // evil1

@@ -14,8 +14,10 @@
         function receiveMessage(event) {
             if (event.origin === "http://localhost:8000") {
                 if (event.data.indexOf("PASS ") !== -1) {
-                    testRunner.dumpResourceLoadStatistics();
-                    testPassed(event.data.replace("PASS ", ""));
+                    testRunner.setStatisticsPrevalentResource(thirdPartyUrl, true, function () {
+                        testRunner.dumpResourceLoadStatistics();
+                        testPassed(event.data.replace("PASS ", ""));
+                    });
                 } else
                     testFailed(event.data.replace("FAIL ", ""));
             } else

@@ -13,7 +13,7 @@ Registrable domain: subframe1
         topframe1
     SubresourceUniqueRedirectsTo:
         topframe2
-    isPrevalentResource: No
+    isPrevalentResource: Yes
     isVeryPrevalentResource: No
     dataRecordsRemoved: 0
 Registrable domain: subframe2
@@ -23,7 +23,7 @@ Registrable domain: subframe2
     IsScheduledForAllButCookieDataRemoval: No
     SubframeUnderTopFrameDomains:
         topframe1
-    isPrevalentResource: No
+    isPrevalentResource: Yes
     isVeryPrevalentResource: No
     dataRecordsRemoved: 0
 Registrable domain: subframe3
@@ -38,7 +38,7 @@ Registrable domain: subframe3
         topframe3
     SubresourceUniqueRedirectsTo:
         topframe2
-    isPrevalentResource: No
+    isPrevalentResource: Yes
     isVeryPrevalentResource: No
     dataRecordsRemoved: 0
 Registrable domain: topframe1

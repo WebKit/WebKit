@@ -1,3 +1,17 @@
+2019-12-18  Kate Cheney  <katherine_cheney@apple.com>
+
+        Only report prevalent domains in the ResourceLoadStatistics data summary API
+        https://bugs.webkit.org/show_bug.cgi?id=205281
+        <rdar://problem/57975017>
+
+        Reviewed by Brent Fulgham.
+
+        Update the GetResourceLoadStatisticsDataSummary to set third parties
+        as prevalent to maintain test functionality.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/ResourceLoadStatistics.mm:
+        (TEST):
+
 2019-12-18  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed GTK gardening. Update expectations of unit tests

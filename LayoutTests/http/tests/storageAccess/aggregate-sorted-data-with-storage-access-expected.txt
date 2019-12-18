@@ -19,7 +19,7 @@ Registrable domain: localhost
     gotLinkDecorationFromPrevalentResource: No
     subframeUnderTopFrameDomains:
         127.0.0.1
-    isPrevalentResource: No
+    isPrevalentResource: Yes
     isVeryPrevalentResource: No
     dataRecordsRemoved: 0
 Registrable domain: 127.0.0.1
