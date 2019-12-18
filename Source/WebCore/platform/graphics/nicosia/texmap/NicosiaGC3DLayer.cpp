@@ -112,7 +112,7 @@ void GC3DLayer::swapBuffersIfNeeded()
         std::unique_ptr<TextureMapperPlatformLayerBuffer> layerBuffer;
         layerBuffer = proxy.getAvailableBuffer(textureSize, m_context.m_internalColorFormat);
         if (!layerBuffer) {
-            auto texture = BitmapTextureGL::create(TextureMapperContextAttributes::get(), m_context.m_internalColorFormat);
+            auto texture = BitmapTextureGL::create(TextureMapperContextAttributes::get(), flags, m_context.m_internalColorFormat);
             static_cast<BitmapTextureGL&>(texture.get()).setPendingContents(WTFMove(image));
             layerBuffer = makeUnique<TextureMapperPlatformLayerBuffer>(WTFMove(texture), flags);
         } else
