@@ -78,8 +78,6 @@ WI.DOMNode = class DOMNode extends WI.Object
 
         this._childNodeCount = payload.childNodeCount;
         this._children = null;
-        this._filteredChildren = null;
-        this._filteredChildrenNeedsUpdating = true;
 
         this._nextSibling = null;
         this._previousSibling = null;
@@ -192,6 +190,9 @@ WI.DOMNode = class DOMNode extends WI.Object
 
     get destroyed() { return this._destroyed; }
     get frame() { return this._frame; }
+    get nextSibling() { return this._nextSibling; }
+    get previousSibling() { return this._previousSibling; }
+    get children() { return this._children; }
     get domEvents() { return this._domEvents; }
     get powerEfficientPlaybackRanges() { return this._powerEfficientPlaybackRanges; }
 
@@ -205,24 +206,6 @@ WI.DOMNode = class DOMNode extends WI.Object
                 return true;
         }
         return false;
-    }
-
-    get children()
-    {
-        if (!this._children)
-            return null;
-
-        if (WI.settings.showShadowDOM.value)
-            return this._children;
-
-        if (this._filteredChildrenNeedsUpdating) {
-            this._filteredChildrenNeedsUpdating = false;
-            this._filteredChildren = this._children.filter(function(node) {
-                return !node._isInShadowTree;
-            });
-        }
-
-        return this._filteredChildren;
     }
 
     get firstChild()
@@ -245,44 +228,13 @@ WI.DOMNode = class DOMNode extends WI.Object
         return null;
     }
 
-    get nextSibling()
-    {
-        if (WI.settings.showShadowDOM.value)
-            return this._nextSibling;
-
-        var node = this._nextSibling;
-        while (node) {
-            if (!node._isInShadowTree)
-                return node;
-            node = node._nextSibling;
-        }
-        return null;
-    }
-
-    get previousSibling()
-    {
-        if (WI.settings.showShadowDOM.value)
-            return this._previousSibling;
-
-        var node = this._previousSibling;
-        while (node) {
-            if (!node._isInShadowTree)
-                return node;
-            node = node._previousSibling;
-        }
-        return null;
-    }
-
     get childNodeCount()
     {
         var children = this.children;
         if (children)
             return children.length;
 
-        if (WI.settings.showShadowDOM.value)
-            return this._childNodeCount + this._shadowRoots.length;
-
-        return this._childNodeCount;
+        return this._childNodeCount + this._shadowRoots.length;
     }
 
     set childNodeCount(count)
@@ -1018,8 +970,6 @@ WI.DOMNode = class DOMNode extends WI.Object
 
     _renumber()
     {
-        this._filteredChildrenNeedsUpdating = true;
-
         var childNodeCount = this._children.length;
         if (childNodeCount === 0)
             return;

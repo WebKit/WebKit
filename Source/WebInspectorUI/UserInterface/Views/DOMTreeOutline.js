@@ -60,8 +60,6 @@ WI.DOMTreeOutline = class DOMTreeOutline extends WI.TreeOutline
         this._hideElementsKeyboardShortcut = new WI.KeyboardShortcut(null, "H", this._hideElements.bind(this), this.element);
         this._hideElementsKeyboardShortcut.implicitlyPreventsDefault = false;
 
-        WI.settings.showShadowDOM.addEventListener(WI.Setting.Event.Changed, this._showShadowDOMSettingChanged, this);
-
         if (showInspectedNode)
             WI.domManager.addEventListener(WI.DOMManager.Event.InspectedNodeChanged, this._handleInspectedNodeChanged, this);
     }
@@ -75,8 +73,6 @@ WI.DOMTreeOutline = class DOMTreeOutline extends WI.TreeOutline
 
     close()
     {
-        WI.settings.showShadowDOM.removeEventListener(null, null, this);
-
         if (this._elementsTreeUpdater) {
             this._elementsTreeUpdater.close();
             this._elementsTreeUpdater = null;
@@ -427,13 +423,6 @@ WI.DOMTreeOutline = class DOMTreeOutline extends WI.TreeOutline
         if (!node || this._suppressRevealAndSelect)
             return;
 
-        if (!WI.settings.showShadowDOM.value) {
-            while (node && node.isInShadowTree())
-                node = node.parentNode;
-            if (!node)
-                return;
-        }
-
         var treeElement = this.createTreeElementFor(node);
         if (!treeElement)
             return;
@@ -649,23 +638,6 @@ WI.DOMTreeOutline = class DOMTreeOutline extends WI.TreeOutline
     {
         if (this._elementsTreeUpdater)
             this._elementsTreeUpdater._updateModifiedNodes();
-    }
-
-    _showShadowDOMSettingChanged(event)
-    {
-        var nodeToSelect = this.selectedTreeElement ? this.selectedTreeElement.representedObject : null;
-        while (nodeToSelect) {
-            if (!nodeToSelect.isInShadowTree())
-                break;
-            nodeToSelect = nodeToSelect.parentNode;
-        }
-
-        this.children.forEach(function(child) {
-            child.updateChildren(true);
-        });
-
-        if (nodeToSelect)
-            this.selectDOMNode(nodeToSelect);
     }
 
     _handleInspectedNodeChanged(event)

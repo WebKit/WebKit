@@ -63,12 +63,6 @@ WI.DOMTreeContentView = class DOMTreeContentView extends WI.ContentView
         this._paintFlashingButtonNavigationItem.activated = this._paintFlashingButtonNavigationItem.enabled && WI.settings.showPaintRects.value;
         this._paintFlashingButtonNavigationItem.visibilityPriority = WI.NavigationItem.VisibilityPriority.Low;
 
-        WI.settings.showShadowDOM.addEventListener(WI.Setting.Event.Changed, this._showShadowDOMSettingChanged, this);
-        this._showsShadowDOMButtonNavigationItem = new WI.ActivateButtonNavigationItem("shows-shadow-DOM", WI.UIString("Show shadow DOM nodes"), WI.UIString("Hide shadow DOM nodes"), "Images/ShadowDOM.svg", 13, 13);
-        this._showsShadowDOMButtonNavigationItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, this._toggleShowsShadowDOMSetting, this);
-        this._showsShadowDOMButtonNavigationItem.visibilityPriority = WI.NavigationItem.VisibilityPriority.Low;
-        this._showShadowDOMSettingChanged();
-
         this.element.classList.add("dom-tree");
         this.element.addEventListener("click", this._mouseWasClicked.bind(this), false);
 
@@ -121,7 +115,6 @@ WI.DOMTreeContentView = class DOMTreeContentView extends WI.ContentView
             this._forceAppearanceButtonNavigationItem,
             this._compositingBordersButtonNavigationItem,
             this._paintFlashingButtonNavigationItem,
-            this._showsShadowDOMButtonNavigationItem,
         ];
     }
 
@@ -175,7 +168,6 @@ WI.DOMTreeContentView = class DOMTreeContentView extends WI.ContentView
         super.closed();
 
         WI.settings.showPaintRects.removeEventListener(null, null, this);
-        WI.settings.showShadowDOM.removeEventListener(null, null, this);
         WI.settings.showRulers.removeEventListener(null, null, this);
         WI.debuggerManager.removeEventListener(null, null, this);
         WI.domManager.removeEventListener(null, null, this);
@@ -632,16 +624,6 @@ WI.DOMTreeContentView = class DOMTreeContentView extends WI.ContentView
             if (target.hasCommand("Page.setShowPaintRects"))
                 target.PageAgent.setShowPaintRects(activated);
         }
-    }
-
-    _showShadowDOMSettingChanged(event)
-    {
-        this._showsShadowDOMButtonNavigationItem.activated = WI.settings.showShadowDOM.value;
-    }
-
-    _toggleShowsShadowDOMSetting(event)
-    {
-        WI.settings.showShadowDOM.value = !WI.settings.showShadowDOM.value;
     }
 
     _showPrintStylesChanged()

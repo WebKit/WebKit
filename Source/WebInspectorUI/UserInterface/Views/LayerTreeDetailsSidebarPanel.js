@@ -65,8 +65,6 @@ WI.LayerTreeDetailsSidebarPanel = class LayerTreeDetailsSidebarPanel extends WI.
     {
         super.initialLayout();
 
-        WI.settings.showShadowDOM.addEventListener(WI.Setting.Event.Changed, this._showShadowDOMSettingChanged, this);
-
         this._buildLayerInfoSection();
         this._buildDataGridSection();
         this._buildBottomBar();
@@ -100,12 +98,6 @@ WI.LayerTreeDetailsSidebarPanel = class LayerTreeDetailsSidebarPanel extends WI.
     _layerTreeDidChange(event)
     {
         this.needsLayout();
-    }
-
-    _showShadowDOMSettingChanged(event)
-    {
-        if (this.selected)
-            this._updateDisplayWithLayers(this._layerForNode, this._unfilteredChildLayers);
     }
 
     _buildLayerInfoSection()
@@ -243,12 +235,6 @@ WI.LayerTreeDetailsSidebarPanel = class LayerTreeDetailsSidebarPanel extends WI.
 
     _updateDisplayWithLayers(layerForNode, childLayers)
     {
-        if (!WI.settings.showShadowDOM.value) {
-            childLayers = childLayers.filter(function(layer) {
-                return !layer.isInShadowTree;
-            });
-        }
-
         this._updateLayerInfoSection(layerForNode);
         this._updateDataGrid(layerForNode, childLayers);
         this._updateMetrics(layerForNode, childLayers);
