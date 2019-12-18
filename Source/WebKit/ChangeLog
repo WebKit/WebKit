@@ -1,3 +1,17 @@
+2019-12-18  Brent Fulgham  <bfulgham@apple.com>
+
+        Add syscall to GPU Process sandbox
+        https://bugs.webkit.org/show_bug.cgi?id=205400
+        <rdar://problem/58046272>
+
+        Reviewed by Simon Fraser.
+
+        This patch temporarily adds a syscall to the sandbox to work around a bug in the
+        system Sandbox framework. We will remove this in Bug 205400 once that issue is
+        resolved.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.GPU.sb:
+
 2019-12-18  Eric Carlson  <eric.carlson@apple.com>
 
         Enable generic cue API
