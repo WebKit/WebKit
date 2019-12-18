@@ -41,6 +41,7 @@
 #import <WebCore/RegistrableDomain.h>
 #import <WebCore/ResourceRequest.h>
 #import <pal/spi/cf/CFNetworkSPI.h>
+#import <pal/spi/cocoa/OSVariantSPI.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/FileSystem.h>
 #import <wtf/MainThread.h>
@@ -56,6 +57,61 @@
 #else
 #define NETWORK_DATA_TASK_COCOA_ADDITIONS_1
 #define NETWORK_DATA_TASK_COCOA_ADDITIONS_2
+#endif
+
+#if HAVE(OS_SIGNPOST)
+
+#import <os/signpost.h>
+
+static os_log_t signpostLogHandle()
+{
+    static dispatch_once_t once;
+    static os_log_t handle;
+
+    dispatch_once(&once, ^{
+        handle = os_log_create(LOG_CHANNEL_WEBKIT_SUBSYSTEM, "DataTask");
+    });
+
+    return handle;
+}
+
+static bool signpostsEnabled()
+{
+    static dispatch_once_t once;
+    static bool enabled;
+
+    dispatch_once(&once, ^{
+        if (os_variant_allows_internal_security_policies("com.apple.WebKit"))
+            enabled = !strcmp(getenv("WEBKIT_DATA_TASK_SIGNPOSTS") ?: "0", "1");
+    });
+
+    return enabled;
+}
+
+#define EMIT_SIGNPOST_WITH_FUNCTION(emitFunc, task, ...) \
+    do { \
+        if (signpostsEnabled()) { \
+            os_log_t handle = signpostLogHandle(); \
+            os_signpost_id_t signpostID = os_signpost_id_make_with_pointer(signpostLogHandle(), (task).get()); \
+            emitFunc(handle, signpostID, "DataTask", ##__VA_ARGS__); \
+        } \
+    } while (0)
+
+#define BEGIN_SIGNPOST(task, ...) \
+    EMIT_SIGNPOST_WITH_FUNCTION(os_signpost_interval_begin, (task), ##__VA_ARGS__)
+
+#define END_SIGNPOST(task, ...) \
+    EMIT_SIGNPOST_WITH_FUNCTION(os_signpost_interval_end, (task), ##__VA_ARGS__)
+
+#define EMIT_SIGNPOST(task, ...) \
+    EMIT_SIGNPOST_WITH_FUNCTION(os_signpost_event_emit, (task), ##__VA_ARGS__)
+
+#else
+
+#define BEGIN_SIGNPOST(task, ...) do { } while (0)
+#define END_SIGNPOST(task, ...) do { } while (0)
+#define EMIT_SIGNPOST(task, ...) do { } while (0)
+
 #endif
 
 namespace WebKit {
@@ -232,6 +288,8 @@ NetworkDataTaskCocoa::NetworkDataTaskCocoa(NetworkSession& session, NetworkDataT
     
     NETWORK_DATA_TASK_COCOA_ADDITIONS_1;
 
+    BEGIN_SIGNPOST(m_task, "%{public}s pri: %f preconnect: %d", url.string().ascii().data(), toNSURLSessionTaskPriority(request.priority()), shouldPreconnectOnly == PreconnectOnly::Yes);
+
     RELEASE_ASSERT(!m_sessionWrapper.dataTaskMap.contains([m_task taskIdentifier]));
     m_sessionWrapper.dataTaskMap.add([m_task taskIdentifier], this);
     LOG(NetworkSession, "%llu Creating NetworkDataTask with URL %s", [m_task taskIdentifier], nsRequest.URL.absoluteString.UTF8String);
@@ -284,12 +342,16 @@ void NetworkDataTaskCocoa::restrictRequestReferrerToOriginIfNeeded(WebCore::Reso
 
 void NetworkDataTaskCocoa::didSendData(uint64_t totalBytesSent, uint64_t totalBytesExpectedToSend)
 {
+    EMIT_SIGNPOST(m_task, "sent %llu bytes (expected %llu bytes)", totalBytesSent, totalBytesExpectedToSend);
+
     if (m_client)
         m_client->didSendData(totalBytesSent, totalBytesExpectedToSend);
 }
 
 void NetworkDataTaskCocoa::didReceiveChallenge(WebCore::AuthenticationChallenge&& challenge, ChallengeCompletionHandler&& completionHandler)
 {
+    EMIT_SIGNPOST(m_task, "received challenge");
+
     if (tryPasswordBasedAuthentication(challenge, completionHandler))
         return;
 
@@ -303,18 +365,33 @@ void NetworkDataTaskCocoa::didReceiveChallenge(WebCore::AuthenticationChallenge&
 
 void NetworkDataTaskCocoa::didCompleteWithError(const WebCore::ResourceError& error, const WebCore::NetworkLoadMetrics& networkLoadMetrics)
 {
+    if (error.isNull())
+        END_SIGNPOST(m_task, "completed");
+    else
+        END_SIGNPOST(m_task, "failed");
+
     if (m_client)
         m_client->didCompleteWithError(error, networkLoadMetrics);
 }
 
 void NetworkDataTaskCocoa::didReceiveData(Ref<WebCore::SharedBuffer>&& data)
 {
+    EMIT_SIGNPOST(m_task, "received %zd bytes", data->size());
+
     if (m_client)
         m_client->didReceiveData(WTFMove(data));
 }
 
+void NetworkDataTaskCocoa::didReceiveResponse(WebCore::ResourceResponse&& response, WebKit::ResponseCompletionHandler&& completionHandler)
+{
+    EMIT_SIGNPOST(m_task, "received response headers");
+    NetworkDataTask::didReceiveResponse(WTFMove(response), WTFMove(completionHandler));
+}
+
 void NetworkDataTaskCocoa::willPerformHTTPRedirection(WebCore::ResourceResponse&& redirectResponse, WebCore::ResourceRequest&& request, RedirectCompletionHandler&& completionHandler)
 {
+    EMIT_SIGNPOST(m_task, "redirect");
+
     if (redirectResponse.httpStatusCode() == 307 || redirectResponse.httpStatusCode() == 308) {
         ASSERT(m_lastHTTPMethod == request.httpMethod());
         WebCore::FormData* body = m_firstRequest.httpBody();
@@ -470,11 +547,14 @@ String NetworkDataTaskCocoa::suggestedFilename() const
 
 void NetworkDataTaskCocoa::cancel()
 {
+    EMIT_SIGNPOST(m_task, "cancel");
     [m_task cancel];
 }
 
 void NetworkDataTaskCocoa::resume()
 {
+    EMIT_SIGNPOST(m_task, "resume");
+
     if (m_scheduledFailureType != NoFailure)
         m_failureTimer.startOneShot(0_s);
 

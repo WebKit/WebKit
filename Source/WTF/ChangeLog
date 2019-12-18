@@ -1,3 +1,18 @@
+2019-12-18  Ben Nham  <nham@apple.com>
+
+        Add network loading signposts
+        https://bugs.webkit.org/show_bug.cgi?id=204822
+        <rdar://problem/57608824>
+
+        Reviewed by Alex Christensen.
+
+        This adds os_signposts related to network loads to aid in debugging networking performance
+        issues. Since URLs are logged in the signposts, this capability is only enabled on Apple
+        internal builds when an environment variable is set.
+
+        * wtf/Platform.h:
+        Add HAVE_OS_SIGNPOST.
+
 2019-12-17  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [iOS] Update to use CTFontCreateForCharactersWithLanguageAndOption()

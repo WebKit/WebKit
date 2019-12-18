@@ -168,6 +168,7 @@
 		CE5673872151A7B9002F92D7 /* IOKitSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = CE5673862151A7B9002F92D7 /* IOKitSPI.h */; };
 		E5D45D122106A07400D2B738 /* NSColorWellSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = E5D45D112106A07400D2B738 /* NSColorWellSPI.h */; };
 		E5D45D142106A18700D2B738 /* NSPopoverColorWellSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = E5D45D132106A18700D2B738 /* NSPopoverColorWellSPI.h */; };
+		EB707FA5239737F80059053A /* OSVariantSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = EB707FA4239737F80059053A /* OSVariantSPI.h */; };
 		F442915E1FA52473002CC93E /* NSFileSizeFormatterSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = F442915D1FA52473002CC93E /* NSFileSizeFormatterSPI.h */; };
 		F44291601FA5261E002CC93E /* FileSizeFormatter.h in Headers */ = {isa = PBXBuildFile; fileRef = F442915F1FA5261E002CC93E /* FileSizeFormatter.h */; };
 		F44291641FA52670002CC93E /* FileSizeFormatter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F44291621FA52670002CC93E /* FileSizeFormatter.cpp */; };
@@ -342,6 +343,7 @@
 		CE5673862151A7B9002F92D7 /* IOKitSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IOKitSPI.h; sourceTree = "<group>"; };
 		E5D45D112106A07400D2B738 /* NSColorWellSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSColorWellSPI.h; sourceTree = "<group>"; };
 		E5D45D132106A18700D2B738 /* NSPopoverColorWellSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSPopoverColorWellSPI.h; sourceTree = "<group>"; };
+		EB707FA4239737F80059053A /* OSVariantSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OSVariantSPI.h; sourceTree = "<group>"; };
 		F442915D1FA52473002CC93E /* NSFileSizeFormatterSPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NSFileSizeFormatterSPI.h; sourceTree = "<group>"; };
 		F442915F1FA5261E002CC93E /* FileSizeFormatter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FileSizeFormatter.h; sourceTree = "<group>"; };
 		F44291621FA52670002CC93E /* FileSizeFormatter.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = FileSizeFormatter.cpp; sourceTree = "<group>"; };
@@ -438,6 +440,7 @@
 				0C2DA1371F3BEB4900DBC317 /* NSURLDownloadSPI.h */,
 				0C2DA1381F3BEB4900DBC317 /* NSURLFileTypeMappingsSPI.h */,
 				570AB8F820AF6E3D00B8BE87 /* NSXPCConnectionSPI.h */,
+				EB707FA4239737F80059053A /* OSVariantSPI.h */,
 				0C2DA1391F3BEB4900DBC317 /* PassKitSPI.h */,
 				0C2DA13A1F3BEB4900DBC317 /* pthreadSPI.h */,
 				0C2DA13B1F3BEB4900DBC317 /* QuartzCoreSPI.h */,
@@ -797,6 +800,7 @@
 				0C77859D1F45130F00F4EBB6 /* NSWindowSPI.h in Headers */,
 				570AB8F920AF6E3D00B8BE87 /* NSXPCConnectionSPI.h in Headers */,
 				0C5AF91F1F43A4C7002EAC02 /* OpenGLESSPI.h in Headers */,
+				EB707FA5239737F80059053A /* OSVariantSPI.h in Headers */,
 				A1F63C9F21A4DBF7006FB43B /* PassKitSoftLink.h in Headers */,
 				0C2DA1551F3BEB4900DBC317 /* PassKitSPI.h in Headers */,
 				0C77859E1F45130F00F4EBB6 /* PIPSPI.h in Headers */,

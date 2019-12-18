@@ -52,6 +52,7 @@ list(APPEND PAL_PUBLIC_HEADERS
     spi/cocoa/NSURLDownloadSPI.h
     spi/cocoa/NSURLFileTypeMappingsSPI.h
     spi/cocoa/NSXPCConnectionSPI.h
+    spi/cocoa/OSVariantSPI.h
     spi/cocoa/PassKitSPI.h
     spi/cocoa/QuartzCoreSPI.h
     spi/cocoa/SecKeyProxySPI.h
