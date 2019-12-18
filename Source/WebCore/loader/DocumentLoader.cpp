@@ -760,6 +760,7 @@ void DocumentLoader::responseReceived(CachedResource& resource, const ResourceRe
 
 void DocumentLoader::responseReceived(const ResourceResponse& response, CompletionHandler<void()>&& completionHandler)
 {
+    ASSERT(response.certificateInfo());
     CompletionHandlerCallingScope completionHandlerCaller(WTFMove(completionHandler));
 
 #if ENABLE(CONTENT_FILTERING)

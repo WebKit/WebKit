@@ -64,6 +64,8 @@ void provideUserMediaTo(Page* page, UserMediaClient* client)
 static inline bool isSecure(DocumentLoader& documentLoader)
 {
     auto& response = documentLoader.response();
+    ASSERT(response.certificateInfo());
+
     if (SecurityOrigin::isLocalHostOrLoopbackIPAddress(documentLoader.response().url().host()))
         return true;
     return LegacySchemeRegistry::shouldTreatURLSchemeAsSecure(response.url().protocol().toStringWithoutCopying())

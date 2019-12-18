@@ -36,6 +36,7 @@ RefPtr<ApplicationCacheResourceLoader> ApplicationCacheResourceLoader::create(un
     options.storedCredentialsPolicy = StoredCredentialsPolicy::Use;
     options.credentials = FetchOptions::Credentials::Include;
     options.applicationCacheMode = ApplicationCacheMode::Bypass;
+    options.certificateInfoPolicy = CertificateInfoPolicy::IncludeCertificateInfo;
     CachedResourceRequest cachedResourceRequest { WTFMove(request), options };
     auto resource = loader.requestRawResource(WTFMove(cachedResourceRequest));
     if (!resource.has_value()) {
