@@ -1,3 +1,17 @@
+2019-12-18  Philippe Normand  <pnormand@igalia.com>
+
+        [GTK][WebInspector] Support for saving remote data
+        https://bugs.webkit.org/show_bug.cgi?id=204618
+
+        Reviewed by Carlos Garcia Campos.
+
+        Similarly to what landed already in r251069, the Remote
+        WebInspector GTK client can now save data coming from the
+        inspector server.
+
+        * UIProcess/gtk/RemoteWebInspectorProxyGtk.cpp:
+        (WebKit::RemoteWebInspectorProxy::platformSave):
+
 2019-12-17  Joonghun Park  <jh718.park@samsung.com>
 
         Unreviewed. Remove the build warning below since r253452.

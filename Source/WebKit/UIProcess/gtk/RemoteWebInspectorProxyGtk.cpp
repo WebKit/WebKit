@@ -28,11 +28,13 @@
 
 #if ENABLE(REMOTE_INSPECTOR)
 
+#include "RemoteWebInspectorUIMessages.h"
 #include "WebInspectorProxy.h"
 #include "WebKitInspectorWindow.h"
 #include "WebKitWebViewBasePrivate.h"
 #include "WebPageGroup.h"
 #include <WebCore/CertificateInfo.h>
+#include <wtf/text/Base64.h>
 
 namespace WebKit {
 using namespace WebCore;
@@ -99,8 +101,52 @@ void RemoteWebInspectorProxy::platformBringToFront()
         gtk_window_present(GTK_WINDOW(m_window));
 }
 
-void RemoteWebInspectorProxy::platformSave(const String&, const String&, bool, bool)
+static void remoteFileReplaceContentsCallback(GObject* sourceObject, GAsyncResult* result, gpointer userData)
 {
+    GFile* file = G_FILE(sourceObject);
+    if (!g_file_replace_contents_finish(file, result, nullptr, nullptr))
+        return;
+
+    auto* page = static_cast<WebPageProxy*>(userData);
+    GUniquePtr<char> path(g_file_get_path(file));
+    page->process().send(Messages::RemoteWebInspectorUI::DidSave(path.get()), page->webPageID());
+}
+
+void RemoteWebInspectorProxy::platformSave(const String& suggestedURL, const String& content, bool base64Encoded, bool forceSaveDialog)
+{
+    UNUSED_PARAM(forceSaveDialog);
+
+    GRefPtr<GtkFileChooserNative> dialog = adoptGRef(gtk_file_chooser_native_new("Save File",
+        GTK_WINDOW(m_window), GTK_FILE_CHOOSER_ACTION_SAVE, "Save", "Cancel"));
+
+    GtkFileChooser* chooser = GTK_FILE_CHOOSER(dialog.get());
+    gtk_file_chooser_set_do_overwrite_confirmation(chooser, TRUE);
+
+    // Some inspector views (Audits for instance) use a custom URI scheme, such
+    // as web-inspector. So we can't rely on the URL being a valid file:/// URL
+    // unfortunately.
+    URL url(URL(), suggestedURL);
+    // Strip leading / character.
+    gtk_file_chooser_set_current_name(chooser, url.path().substring(1).utf8().data());
+
+    if (gtk_native_dialog_run(GTK_NATIVE_DIALOG(dialog.get())) != GTK_RESPONSE_ACCEPT)
+        return;
+
+    Vector<char> dataVector;
+    CString dataString;
+    if (base64Encoded) {
+        if (!base64Decode(content, dataVector, Base64ValidatePadding))
+            return;
+        dataVector.shrinkToFit();
+    } else
+        dataString = content.utf8();
+
+    const char* data = !dataString.isNull() ? dataString.data() : dataVector.data();
+    size_t dataLength = !dataString.isNull() ? dataString.length() : dataVector.size();
+    GRefPtr<GFile> file = adoptGRef(gtk_file_chooser_get_file(chooser));
+    GUniquePtr<char> path(g_file_get_path(file.get()));
+    g_file_replace_contents_async(file.get(), data, dataLength, nullptr, false,
+        G_FILE_CREATE_REPLACE_DESTINATION, nullptr, remoteFileReplaceContentsCallback, m_inspectorPage);
 }
 
 void RemoteWebInspectorProxy::platformAppend(const String&, const String&)
