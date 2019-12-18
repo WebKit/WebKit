@@ -1,3 +1,15 @@
+2019-12-18  Antoine Quint  <graouts@apple.com>
+
+        [macOS/iOS Debug] Layout Test webanimations/animation-opacity-animation-crash.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=181612
+
+        This test is no longer flaky, removing any specific expectations.
+
+        Reviewed by Dean Jackson.
+
+        * platform/ios/TestExpectations:
+        * platform/mac/TestExpectations:
+
 2019-12-17  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [iOS] Arabic text on Wikipedia is shown as boxes
