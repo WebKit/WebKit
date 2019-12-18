@@ -53,7 +53,7 @@ public:
     ServiceWorker* waiting();
     ServiceWorker* active();
 
-    ServiceWorker* getNewestWorker();
+    ServiceWorker* getNewestWorker() const;
 
     const String& scope() const;
 
@@ -76,9 +76,11 @@ public:
     void updateStateFromServer(ServiceWorkerRegistrationState, RefPtr<ServiceWorker>&&);
     void queueTaskToFireUpdateFoundEvent();
 
+    // ActiveDOMObject.
+    bool hasPendingActivity() const final;
+
 private:
     ServiceWorkerRegistration(ScriptExecutionContext&, Ref<ServiceWorkerContainer>&&, ServiceWorkerRegistrationData&&);
-    void updatePendingActivityForEventDispatch();
 
     EventTargetInterface eventTargetInterface() const final;
     ScriptExecutionContext* scriptExecutionContext() const final;
@@ -97,7 +99,6 @@ private:
     RefPtr<ServiceWorker> m_activeWorker;
 
     bool m_isStopped { false };
-    RefPtr<PendingActivity<ServiceWorkerRegistration>> m_pendingActivityForEventDispatch;
 };
 
 } // namespace WebCore

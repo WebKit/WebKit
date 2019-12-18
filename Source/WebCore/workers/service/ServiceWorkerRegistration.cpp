@@ -76,7 +76,6 @@ ServiceWorkerRegistration::ServiceWorkerRegistration(ScriptExecutionContext& con
     m_container->addRegistration(*this);
 
     relaxAdoptionRequirement();
-    updatePendingActivityForEventDispatch();
 }
 
 ServiceWorkerRegistration::~ServiceWorkerRegistration()
@@ -101,7 +100,7 @@ ServiceWorker* ServiceWorkerRegistration::active()
     return m_activeWorker.get();
 }
 
-ServiceWorker* ServiceWorkerRegistration::getNewestWorker()
+ServiceWorker* ServiceWorkerRegistration::getNewestWorker() const
 {
     if (m_installingWorker)
         return m_installingWorker.get();
@@ -179,7 +178,6 @@ void ServiceWorkerRegistration::updateStateFromServer(ServiceWorkerRegistrationS
         m_activeWorker = WTFMove(serviceWorker);
         break;
     }
-    updatePendingActivityForEventDispatch();
 }
 
 void ServiceWorkerRegistration::queueTaskToFireUpdateFoundEvent()
@@ -189,7 +187,6 @@ void ServiceWorkerRegistration::queueTaskToFireUpdateFoundEvent()
 
     REGISTRATION_RELEASE_LOG_IF_ALLOWED("fireUpdateFoundEvent: Firing updatefound event for registration %llu", identifier().toUInt64());
 
-    ASSERT(m_pendingActivityForEventDispatch);
     queueTaskToDispatchEvent(*this, TaskSource::DOMManipulation, Event::create(eventNames().updatefoundEvent, Event::CanBubble::No, Event::IsCancelable::No));
 }
 
@@ -212,19 +209,14 @@ void ServiceWorkerRegistration::stop()
 {
     m_isStopped = true;
     removeAllEventListeners();
-    updatePendingActivityForEventDispatch();
 }
 
-void ServiceWorkerRegistration::updatePendingActivityForEventDispatch()
+bool ServiceWorkerRegistration::hasPendingActivity() const
 {
-    // If a registration has no ServiceWorker, then it has been cleared on server-side.
-    if (m_isStopped || !getNewestWorker()) {
-        m_pendingActivityForEventDispatch = nullptr;
-        return;
-    }
-    if (m_pendingActivityForEventDispatch)
-        return;
-    m_pendingActivityForEventDispatch = makePendingActivity(*this);
+    if (!m_isStopped && getNewestWorker() && hasEventListeners())
+        return true;
+
+    return ActiveDOMObject::hasPendingActivity();
 }
 
 } // namespace WebCore
