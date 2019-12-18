@@ -2974,7 +2974,6 @@
 				312BDB0B15FECAB00097EBC7 /* CopyFiles */,
 				312BDB0D15FECACE0097EBC7 /* CopyFiles */,
 				6E28B8742294DD8000717E69 /* ShellScript */,
-				313DE867239FFF91008FC47B /* Attempt to fool Apple Test Platform */,
 			);
 			buildRules = (
 				53E934DB230609D800DE060C /* PBXBuildRule */,
@@ -3015,24 +3014,6 @@
 /* End PBXProject section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		313DE867239FFF91008FC47B /* Attempt to fool Apple Test Platform */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-			);
-			name = "Attempt to fool Apple Test Platform";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "if [ \"$DEPLOYMENT_LOCATION\" == \"YES\" ] ; then\n    # Apple-internal build.\n    output_dir=${DSTROOT}${WK_ALTERNATE_FRAMEWORKS_DIR}/usr/local/lib\nelse\n    # External build.\n    output_dir=${BUILT_PRODUCTS_DIR}/usr/local/lib\nfi\n\nmkdir -p $output_dir\necho \"Fake file to fool Apple's test system\" > $output_dir/libANGLE.a\n";
-		};
 		6E28B8742294DD8000717E69 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;

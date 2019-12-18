@@ -2,6 +2,15 @@
 
         Reverting libANGLE.a -> libANGLE-shared.dylib.
 
+        Follow-up to remove the build phase that was trying
+        to fool Apple's build system.
+
+        * ANGLE.xcodeproj/project.pbxproj:
+
+2019-12-18  Dean Jackson  <dino@apple.com>
+
+        Reverting libANGLE.a -> libANGLE-shared.dylib.
+
         The internal Apple build systems are still unhappy with
         this change, so I'm reverting it until I can be sure
         they'll accept it.
