@@ -1,5 +1,24 @@
 2019-12-18  Zalan Bujtas  <zalan@apple.com>
 
+        [LFC][IFC] LineBreaker::isAtSoftWrapOpportunity should return the wrap position
+        https://bugs.webkit.org/show_bug.cgi?id=205371
+        <rdar://problem/58029811>
+
+        Reviewed by Antti Koivisto.
+
+        Rename isAtSoftWrapOpportunity to lastSoftWrapOpportunity to reflect that it returns the last soft wrap
+        opportunity index.
+
+        * layout/inlineformatting/InlineLineBreaker.cpp:
+        (WebCore::Layout::LineBreaker::Content::lastSoftWrapOpportunity):
+        (WebCore::Layout::LineBreaker::Content::append):
+        (WebCore::Layout::LineBreaker::Content::isAtSoftWrapOpportunity): Deleted.
+        * layout/inlineformatting/InlineLineBreaker.h:
+        * layout/inlineformatting/LineLayoutContext.cpp:
+        (WebCore::Layout::LineLayoutContext::placeInlineItem):
+
+2019-12-18  Zalan Bujtas  <zalan@apple.com>
+
         [LFC][IFC] Add lastInlineItemWithContent to LineBreaker::Content::isAtSoftWrapOpportunity
         https://bugs.webkit.org/show_bug.cgi?id=205362
         <rdar://problem/58025349>

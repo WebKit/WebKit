@@ -280,7 +280,7 @@ static bool endsWithSoftWrapOpportunity(const InlineTextItem& previousTextItem, 
     return !TextUtil::findNextBreakablePosition(lineBreakIterator, 0, nextInlineTextItem.style());
 }
 
-bool LineBreaker::Content::isAtSoftWrapOpportunity(const InlineItem& inlineItem, const Content& priorContent)
+Optional<unsigned> LineBreaker::Content::lastSoftWrapOpportunity(const InlineItem& inlineItem, const Content& priorContent)
 {
     // https://drafts.csswg.org/css-text-3/#line-break-details
     // Figure out if the new incoming content puts the uncommitted content on a soft wrap opportunity.
@@ -290,7 +290,7 @@ bool LineBreaker::Content::isAtSoftWrapOpportunity(const InlineItem& inlineItem,
     ASSERT(!inlineItem.isFloat() && !inlineItem.isLineBreak());
     if (priorContent.isEmpty()) {
         // Can't decide it yet.
-        return false;
+        return { };
     }
 
     auto lastInlineItemWithContent = [&] () -> const InlineItem* {
@@ -308,7 +308,7 @@ bool LineBreaker::Content::isAtSoftWrapOpportunity(const InlineItem& inlineItem,
         if (inlineItem.style().lineBreak() == LineBreak::Anywhere) {
             // There is a soft wrap opportunity around every typographic character unit, including around any punctuation character
             // or preserved white spaces, or in the middle of words.
-            return true;
+            return priorContent.size();
         }
         if (downcast<InlineTextItem>(inlineItem).isWhitespace()) {
             // [prior content][ ] (<span>some_content</span> )
@@ -317,11 +317,11 @@ bool LineBreaker::Content::isAtSoftWrapOpportunity(const InlineItem& inlineItem,
             // [ ][ ] : adjacent whitespace content has soft wrap opportunity.
             if (lastUncomittedContent->isText() && downcast<InlineTextItem>(*lastUncomittedContent).isWhitespace())
                 isAtSoftWrapOpportunityBeforeWhitespace = true;
-            return isAtSoftWrapOpportunityBeforeWhitespace;
+            return isAtSoftWrapOpportunityBeforeWhitespace ? makeOptional(priorContent.size()) : WTF::nullopt;
         }
         if (lastUncomittedContent->isContainerStart()) {
             // [container start][text] (<span>text) : the [container start] and the [text] content form a continuous content.
-            return false;
+            return { };
         }
         if (lastUncomittedContent->isContainerEnd()) {
             // [container end][text] (</span>text)
@@ -332,33 +332,34 @@ bool LineBreaker::Content::isAtSoftWrapOpportunity(const InlineItem& inlineItem,
             lastUncomittedContent = lastInlineItemWithContent();
             if (!lastUncomittedContent) {
                 // Did not find any content at all (e.g. [container start][container end][text] (<span></span>text)).
-                return false;
+                return { };
             }
         }
         if (lastUncomittedContent->isText()) {
             // [text][text] : is a continuous content.
             // [text-][text] : after [hyphen] position is a soft wrap opportunity.
             // [ ][text] : after [whitespace] position is a soft wrap opportunity.
-            return endsWithSoftWrapOpportunity(downcast<InlineTextItem>(*lastUncomittedContent), downcast<InlineTextItem>(inlineItem));
+            auto lastUncomittedEndsWithSoftWrapOpportunity = endsWithSoftWrapOpportunity(downcast<InlineTextItem>(*lastUncomittedContent), downcast<InlineTextItem>(inlineItem));
+            return lastUncomittedEndsWithSoftWrapOpportunity ? makeOptional(priorContent.size()) : WTF::nullopt;
         }
         if (lastUncomittedContent->isBox()) {
             // [inline box][text] (<img>text) : after [inline box] position is a soft wrap opportunity.
-            return true;
+            return priorContent.size();
         }
         ASSERT_NOT_REACHED();
     }
     if (inlineItem.isBox()) {
         if (lastUncomittedContent->isContainerStart()) {
             // [container start][inline box] (<spam><img>) : the [container start] and the [inline box] form a continuous content.
-            return false;
+            return { };
         }
         if (lastUncomittedContent->isContainerEnd()) {
             // [container end][inline box] (</span><img>) : after [container end] position is a soft wrap opportunity.
-            return true;
+            return priorContent.size();
         }
         if (lastUncomittedContent->isText() || lastUncomittedContent->isBox()) {
             // [inline box][text] (<img>text) and [inline box][inline box] (<img><img>) : after first [inline box] position is a soft wrap opportunity.
-            return true;
+            return priorContent.size();
         }
         ASSERT_NOT_REACHED();
     }
@@ -367,17 +368,17 @@ bool LineBreaker::Content::isAtSoftWrapOpportunity(const InlineItem& inlineItem,
         if (lastUncomittedContent->isContainerStart() || lastUncomittedContent->isContainerEnd()) {
             // [container start][container end] (<span><span>) or
             // [container end][container start] (</span><span>) : need more content to decide.
-            return false;
+            return { };
         }
         if (lastUncomittedContent->isText()) {
             // [ ][container start] ( <span>) : after [whitespace] position is a soft wrap opportunity.
             // [text][container start] (text<span>) : Need more content to decide (e.g. text<span>text vs. text<span><img>).
-            return downcast<InlineTextItem>(*lastUncomittedContent).isWhitespace();
+            return downcast<InlineTextItem>(*lastUncomittedContent).isWhitespace() ? makeOptional(priorContent.size()) : WTF::nullopt;
         }
         if (lastUncomittedContent->isBox()) {
             // [inline box][container start] (<img><span>) : after [inline box] position is a soft wrap opportunity.
             // [inline box][container end] (<img></span>) : the [inline box] and the [container end] form a continuous content.
-            return inlineItem.isContainerStart();
+            return inlineItem.isContainerStart() ? makeOptional(priorContent.size()) : WTF::nullopt;
         }
         ASSERT_NOT_REACHED();
     }
@@ -388,7 +389,6 @@ bool LineBreaker::Content::isAtSoftWrapOpportunity(const InlineItem& inlineItem,
 void LineBreaker::Content::append(const InlineItem& inlineItem, InlineLayoutUnit logicalWidth)
 {
     ASSERT(!inlineItem.isFloat());
-    ASSERT(inlineItem.isLineBreak() || !isAtSoftWrapOpportunity(inlineItem, *this));
     m_continousRuns.append({ inlineItem, logicalWidth });
     m_width += logicalWidth;
     // Figure out the trailing collapsible state.

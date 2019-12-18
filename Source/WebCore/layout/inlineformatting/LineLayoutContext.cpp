@@ -186,7 +186,7 @@ LineLayoutContext::IsEndOfLine LineLayoutContext::placeInlineItem(LineBuilder& l
     }
     auto isEndOfLine = IsEndOfLine::No;
     // Can we commit the pending content already?
-    if (LineBreaker::Content::isAtSoftWrapOpportunity(inlineItem, m_uncommittedContent))
+    if (LineBreaker::Content::lastSoftWrapOpportunity(inlineItem, m_uncommittedContent))
         isEndOfLine = processUncommittedContent(line);
     // The current item might fit as well.
     if (isEndOfLine == IsEndOfLine::No)

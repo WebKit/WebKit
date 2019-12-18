@@ -70,7 +70,7 @@ public:
         void reset();
         void shrink(unsigned newSize);
 
-        static bool isAtSoftWrapOpportunity(const InlineItem&, const Content& priorContent);
+        static Optional<unsigned> lastSoftWrapOpportunity(const InlineItem&, const Content& priorContent);
 
         struct Run {
             const InlineItem& inlineItem;
