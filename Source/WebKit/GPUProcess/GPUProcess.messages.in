@@ -31,6 +31,10 @@ messages -> GPUProcess {
 
     ProcessDidTransitionToForeground()
     ProcessDidTransitionToBackground()
+
+#if ENABLE(MEDIA_STREAM)
+    SetMockCaptureDevicesEnabled(bool isEnabled)
+#endif
 }
 
 #endif // ENABLE(GPU_PROCESS)

@@ -53,6 +53,8 @@ public:
 
     static const char* supplementName();
 
+    void didReceiveMessageFromGPUProcess(IPC::Connection& connection, IPC::Decoder& decoder) { didReceiveMessage(connection, decoder); }
+
 private:
     // WebProcessSupplement
     void initialize(const WebProcessCreationParameters&) final;
@@ -96,7 +98,7 @@ private:
         UserMediaCaptureManager& m_manager;
     };
 
-    WebCore::CaptureSourceOrError createCaptureSource(const WebCore::CaptureDevice&, String&&, const WebCore::MediaConstraints*);
+    WebCore::CaptureSourceOrError createCaptureSource(const WebCore::CaptureDevice&, String&&, const WebCore::MediaConstraints*, bool shouldCaptureInGPUProcess = false);
 
     class NoOpCaptureDeviceManager : public WebCore::CaptureDeviceManager {
     public:
@@ -128,7 +130,6 @@ private:
     void startProducingData(uint64_t);
     void stopProducingData(uint64_t);
     WebCore::RealtimeMediaSourceCapabilities capabilities(uint64_t);
-    void setMuted(uint64_t, bool);
     void applyConstraints(uint64_t, const WebCore::MediaConstraints&);
     void applyConstraintsSucceeded(uint64_t, const WebCore::RealtimeMediaSourceSettings&);
     void applyConstraintsFailed(uint64_t, String&&, String&&);

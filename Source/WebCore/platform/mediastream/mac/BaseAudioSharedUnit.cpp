@@ -93,8 +93,10 @@ void BaseAudioSharedUnit::startProducingData()
 OSStatus BaseAudioSharedUnit::startUnit()
 {
 #if PLATFORM(IOS_FAMILY)
-    PlatformMediaSessionManager::sharedManager().sessionCanProduceAudioChanged();
-    ASSERT(AudioSession::sharedSession().category() == AudioSession::PlayAndRecord);
+    if (!m_disableAudioSessionCheck) {
+        PlatformMediaSessionManager::sharedManager().sessionCanProduceAudioChanged();
+        ASSERT(AudioSession::sharedSession().category() == AudioSession::PlayAndRecord);
+    }
 #endif
 
     if (auto error = startInternal()) {

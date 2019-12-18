@@ -1,5 +1,4 @@
-CONSOLE MESSAGE: Failed to create MediaStream audio source: Audio capture in GPUProcess is not implemented
 
 
-FAIL Play audio captured in GPU process promise_test: Unhandled rejection with value: object "NotReadableError: The I/O read operation failed."
+PASS Play audio captured in GPU process 
 

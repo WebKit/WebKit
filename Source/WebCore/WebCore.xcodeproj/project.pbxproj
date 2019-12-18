@@ -1051,6 +1051,8 @@
 		4129C9AB1F59C573009D7403 /* ReadableStreamSource.h in Headers */ = {isa = PBXBuildFile; fileRef = 418C395B1C8F0A610051C8A3 /* ReadableStreamSource.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		4129C9AF1F59CF5B009D7403 /* ReadableStreamSink.h in Headers */ = {isa = PBXBuildFile; fileRef = 4129C9801F5861C7009D7403 /* ReadableStreamSink.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		412DE4B8219285C00075F3A7 /* RTCRtpCapabilities.h in Headers */ = {isa = PBXBuildFile; fileRef = 412DE4B6219285BF0075F3A7 /* RTCRtpCapabilities.h */; };
+		412DEF1D23A9186600D840F6 /* MockAudioSharedUnit.h in Headers */ = {isa = PBXBuildFile; fileRef = 0744ECEB1E0C4AE5000D0944 /* MockAudioSharedUnit.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		412DEF1F23A918A300D840F6 /* BaseAudioSharedUnit.h in Headers */ = {isa = PBXBuildFile; fileRef = 4177F51E2382545E00C04486 /* BaseAudioSharedUnit.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		4133CB8B20F80E9900E89B11 /* MediaStreamAudioSourceCocoa.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4133CB8920F80E8600E89B11 /* MediaStreamAudioSourceCocoa.cpp */; };
 		4136C57A2398E5BE002497D3 /* InternalsMapLike.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4136C5782398E5B5002497D3 /* InternalsMapLike.cpp */; };
 		4136C57C2398ECCF002497D3 /* JSInternalsMapLike.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D6F3E921C1F85550061DBD6 /* JSInternalsMapLike.cpp */; };
@@ -29112,6 +29114,7 @@
 				51A1B87D2087C4C000979A75 /* BackForwardItemIdentifier.h in Headers */,
 				BC124EE80C2641CD009E2349 /* BarProp.h in Headers */,
 				460BB6161D0A1BF000221812 /* Base64Utilities.h in Headers */,
+				412DEF1F23A918A300D840F6 /* BaseAudioSharedUnit.h in Headers */,
 				379E61CA126CA5C400B63E8D /* BaseButtonInputType.h in Headers */,
 				379E61CC126CA5C400B63E8D /* BaseCheckableInputType.h in Headers */,
 				F5E0C65C1643C42C00D6CB69 /* BaseChooserOnlyDateAndTimeInputType.h in Headers */,
@@ -31491,6 +31494,7 @@
 				53B895AF19DC7ED9009CAA93 /* Microtasks.h in Headers */,
 				BC772C4F0C4EB3040083285F /* MIMETypeRegistry.h in Headers */,
 				52F10866162B6DA8009AC81E /* MixedContentChecker.h in Headers */,
+				412DEF1D23A9186600D840F6 /* MockAudioSharedUnit.h in Headers */,
 				CDF2B0111820540600F2B424 /* MockBox.h in Headers */,
 				CDF4B7241E03BF8100E235A2 /* MockCDMFactory.h in Headers */,
 				CDF4B7201E03BF6F00E235A2 /* MockCDMFactory.idl in Headers */,

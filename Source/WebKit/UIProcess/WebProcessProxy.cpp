@@ -150,6 +150,20 @@ Ref<WebProcessProxy> WebProcessProxy::createForServiceWorkers(WebProcessPool& pr
 }
 #endif
 
+#if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
+class UIProxyForCapture final : public UserMediaCaptureManagerProxy::ConnectionProxy {
+    WTF_MAKE_FAST_ALLOCATED;
+public:
+    explicit UIProxyForCapture(WebProcessProxy& process) : m_process(process) { }
+private:
+    void addMessageReceiver(IPC::StringReference messageReceiverName, IPC::MessageReceiver& receiver) final { m_process.addMessageReceiver(messageReceiverName, receiver); }
+    void removeMessageReceiver(IPC::StringReference messageReceiverName) final { m_process.removeMessageReceiver(messageReceiverName); }
+    IPC::Connection& connection() final { return *m_process.connection(); }
+
+    WebProcessProxy& m_process;
+};
+#endif
+
 WebProcessProxy::WebProcessProxy(WebProcessPool& processPool, WebsiteDataStore* websiteDataStore, IsPrewarmed isPrewarmed)
     : AuxiliaryProcessProxy(processPool.alwaysRunsAtBackgroundPriority())
     , m_responsivenessTimer(*this)
@@ -162,7 +176,7 @@ WebProcessProxy::WebProcessProxy(WebProcessPool& processPool, WebsiteDataStore* 
     , m_visiblePageCounter([this](RefCounterEvent) { updateBackgroundResponsivenessTimer(); })
     , m_websiteDataStore(websiteDataStore)
 #if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
-    , m_userMediaCaptureManagerProxy(makeUnique<UserMediaCaptureManagerProxy>(*this))
+    , m_userMediaCaptureManagerProxy(makeUnique<UserMediaCaptureManagerProxy>(makeUniqueRef<UIProxyForCapture>(*this)))
 #endif
     , m_isPrewarmed(isPrewarmed == IsPrewarmed::Yes)
 {

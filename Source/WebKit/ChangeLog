@@ -1,3 +1,59 @@
+2019-12-18  youenn fablet  <youenn@apple.com>
+
+        Add support for Audio Capture in GPUProcess
+        https://bugs.webkit.org/show_bug.cgi?id=205056
+
+        Reviewed by Eric Carlson.
+
+        Make UserMediaCaptureManager and Proxy able to work with GPU process.
+        Add support for capturing audio in the GPU process, this is limited to mock audio sources for now
+        as we do not support AudioSession in the GPU process.
+        Covered by rebased test.
+
+        * GPUProcess/GPUConnectionToWebProcess.cpp:
+        (WebKit::GPUConnectionToWebProcess::GPUConnectionToWebProcess):
+        (WebKit::GPUConnectionToWebProcess::didReceiveMessage):
+        (WebKit::GPUConnectionToWebProcess::didReceiveSyncMessage):
+        * GPUProcess/GPUConnectionToWebProcess.h:
+        * GPUProcess/GPUProcess.cpp:
+        (WebKit::GPUProcess::setMockCaptureDevicesEnabled):
+        * GPUProcess/GPUProcess.h:
+        * GPUProcess/GPUProcess.messages.in:
+        * UIProcess/Cocoa/UserMediaCaptureManagerProxy.cpp:
+        (WebKit::UserMediaCaptureManagerProxy::UserMediaCaptureManagerProxy):
+        (WebKit::UserMediaCaptureManagerProxy::~UserMediaCaptureManagerProxy):
+        (WebKit::UserMediaCaptureManagerProxy::createMediaSourceForCaptureDeviceWithConstraints):
+        (WebKit::UserMediaCaptureManagerProxy::applyConstraints):
+        (WebKit::UserMediaCaptureManagerProxy::clone):
+        * UIProcess/Cocoa/UserMediaCaptureManagerProxy.h:
+        (WebKit::UserMediaCaptureManagerProxy::didReceiveMessageFromGPUProcess):
+        (WebKit::UserMediaCaptureManagerProxy::didReceiveSyncMessageFromGPUProcess):
+        * UIProcess/UserMediaPermissionRequestManagerProxy.cpp:
+        (WebKit::UserMediaPermissionRequestManagerProxy::syncWithWebCorePrefs const):
+        * UIProcess/WebProcessPool.h:
+        * UIProcess/WebProcessProxy.cpp:
+        * WebProcess/GPU/GPUProcessConnection.cpp:
+        (WebKit::GPUProcessConnection::didReceiveMessage):
+        * WebProcess/GPU/GPUProcessConnection.h:
+        * WebProcess/cocoa/UserMediaCaptureManager.cpp:
+        (WebKit::UserMediaCaptureManager::Source::setShouldCaptureInGPUProcess):
+        (WebKit::UserMediaCaptureManager::Source::shouldCaptureInGPUProcess const):
+        (WebKit::UserMediaCaptureManager::Source::requestToEnd):
+        (WebKit::UserMediaCaptureManager::createCaptureSource):
+        (WebKit::UserMediaCaptureManager::sourceStopped):
+        (WebKit::UserMediaCaptureManager::captureFailed):
+        (WebKit::UserMediaCaptureManager::Source::connection):
+        (WebKit::UserMediaCaptureManager::Source::startProducingData):
+        (WebKit::UserMediaCaptureManager::Source::stopProducingData):
+        (WebKit::UserMediaCaptureManager::Source::capabilities):
+        (WebKit::UserMediaCaptureManager::Source::applyConstraints):
+        (WebKit::UserMediaCaptureManager::sourceEnded):
+        (WebKit::UserMediaCaptureManager::Source::hasEnded):
+        (WebKit::UserMediaCaptureManager::Source::stopBeingObserved):
+        (WebKit::UserMediaCaptureManager::AudioFactory::createAudioCaptureSource):
+        * WebProcess/cocoa/UserMediaCaptureManager.h:
+        (WebKit::UserMediaCaptureManager::didReceiveMessageFromGPUProcess):
+
 2019-12-18  Ben Nham  <nham@apple.com>
 
         Add network loading signposts

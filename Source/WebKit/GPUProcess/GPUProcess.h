@@ -41,7 +41,7 @@ struct GPUProcessCreationParameters;
 class GPUProcess : public AuxiliaryProcess, public ThreadSafeRefCounted<GPUProcess>, public CanMakeWeakPtr<GPUProcess> {
     WTF_MAKE_NONCOPYABLE(GPUProcess);
 public:
-    GPUProcess(AuxiliaryProcessInitializationParameters&&);
+    explicit GPUProcess(AuxiliaryProcessInitializationParameters&&);
     ~GPUProcess();
     static constexpr ProcessType processType = ProcessType::GPU;
 
@@ -74,7 +74,9 @@ private:
 
     void processDidTransitionToForeground();
     void processDidTransitionToBackground();
-
+#if ENABLE(MEDIA_STREAM)
+    void setMockCaptureDevicesEnabled(bool);
+#endif
     // Connections to WebProcesses.
     HashMap<WebCore::ProcessIdentifier, Ref<GPUConnectionToWebProcess>> m_webProcessConnections;
 };

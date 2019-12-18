@@ -28,6 +28,7 @@
 
 #if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
 
+#include  "GPUProcessConnection.h"
 #include "SharedRingBufferStorage.h"
 #include "UserMediaCaptureManagerMessages.h"
 #include "UserMediaCaptureManagerProxyMessages.h"
@@ -125,12 +126,7 @@ public:
         return m_settings;
     }
 
-    const RealtimeMediaSourceCapabilities& capabilities() final
-    {
-        if (!m_capabilities)
-            m_capabilities = m_manager.capabilities(m_id);
-        return m_capabilities.value();
-    }
+    const RealtimeMediaSourceCapabilities& capabilities() final;
 
     const RealtimeMediaSourceSettings& settings() final { return m_settings; }
     void setSettings(RealtimeMediaSourceSettings&& settings)
@@ -216,31 +212,26 @@ public:
 
     CaptureDevice::DeviceType deviceType() const final { return m_deviceType; }
 
+    void setShouldCaptureInGPUProcess(bool value) { m_shouldCaptureInGPUProcess = value; }
+    bool shouldCaptureInGPUProcess() const { return m_shouldCaptureInGPUProcess; }
+
+    IPC::Connection* connection();
+
+    void hasEnded() final;
+
 private:
-    void startProducingData() final { m_manager.startProducingData(m_id); }
-    void stopProducingData() final { m_manager.stopProducingData(m_id); }
+    void startProducingData() final;
+    void stopProducingData() final;
     bool isCaptureSource() const final { return true; }
 
     // RealtimeMediaSource
     void beginConfiguration() final { }
     void commitConfiguration() final { }
-    void hasEnded() final { m_manager.sourceEnded(m_id); }
 
-    void applyConstraints(const WebCore::MediaConstraints& constraints, ApplyConstraintsHandler&& completionHandler) final
-    {
-        m_manager.applyConstraints(m_id, constraints);
-        m_pendingApplyConstraintsCallbacks.append(WTFMove(completionHandler));
-    }
+    void applyConstraints(const WebCore::MediaConstraints&, ApplyConstraintsHandler&&) final;
 
-    void requestToEnd(RealtimeMediaSource::Observer&)
-    {
-        m_manager.requestToEnd(m_id);
-    }
-
-    void stopBeingObserved()
-    {
-        m_manager.requestToEnd(m_id);
-    }
+    void requestToEnd(RealtimeMediaSource::Observer&) { stopBeingObserved(); }
+    void stopBeingObserved();
 
     uint64_t m_id;
     UserMediaCaptureManager& m_manager;
@@ -254,6 +245,7 @@ private:
     CaptureDevice::DeviceType m_deviceType { CaptureDevice::DeviceType::Unknown };
 
     Deque<ApplyConstraintsHandler> m_pendingApplyConstraintsCallbacks;
+    bool m_shouldCaptureInGPUProcess { false };
 };
 
 UserMediaCaptureManager::UserMediaCaptureManager(WebProcess& process)
@@ -293,7 +285,7 @@ void UserMediaCaptureManager::initialize(const WebProcessCreationParameters& par
         RealtimeMediaSourceCenter::singleton().setDisplayCaptureFactory(m_displayFactory);
 }
 
-WebCore::CaptureSourceOrError UserMediaCaptureManager::createCaptureSource(const CaptureDevice& device, String&& hashSalt, const WebCore::MediaConstraints* constraints)
+WebCore::CaptureSourceOrError UserMediaCaptureManager::createCaptureSource(const CaptureDevice& device, String&& hashSalt, const WebCore::MediaConstraints* constraints, bool shouldCaptureInGPUProcess)
 {
     if (!constraints)
         return { };
@@ -302,11 +294,22 @@ WebCore::CaptureSourceOrError UserMediaCaptureManager::createCaptureSource(const
     RealtimeMediaSourceSettings settings;
     String errorMessage;
     bool succeeded;
-    if (!m_process.sendSync(Messages::UserMediaCaptureManagerProxy::CreateMediaSourceForCaptureDeviceWithConstraints(id, device, hashSalt, *constraints), Messages::UserMediaCaptureManagerProxy::CreateMediaSourceForCaptureDeviceWithConstraints::Reply(succeeded, errorMessage, settings), 0))
+#if ENABLE(GPU_PROCESS)
+    auto* connection = shouldCaptureInGPUProcess ? &m_process.ensureGPUProcessConnection().connection() : m_process.parentProcessConnection();
+#else
+    ASSERT(!shouldCaptureInGPUProcess);
+    auto* connection = m_process.parentProcessConnection();
+#endif
+    if (!connection->sendSync(Messages::UserMediaCaptureManagerProxy::CreateMediaSourceForCaptureDeviceWithConstraints(id, device, hashSalt, *constraints), Messages::UserMediaCaptureManagerProxy::CreateMediaSourceForCaptureDeviceWithConstraints::Reply(succeeded, errorMessage, settings), 0))
+        return WTFMove(errorMessage);
+
+    if (!succeeded)
         return WTFMove(errorMessage);
 
     auto type = device.type() == CaptureDevice::DeviceType::Microphone ? WebCore::RealtimeMediaSource::Type::Audio : WebCore::RealtimeMediaSource::Type::Video;
     auto source = adoptRef(*new Source(String::number(id), type, device.type(), String { settings.label().string() }, WTFMove(hashSalt), id, *this));
+    if (shouldCaptureInGPUProcess)
+        source->setShouldCaptureInGPUProcess(shouldCaptureInGPUProcess);
     source->setSettings(WTFMove(settings));
     m_sources.add(id, source.copyRef());
     return WebCore::CaptureSourceOrError(WTFMove(source));
@@ -316,7 +319,7 @@ void UserMediaCaptureManager::sourceStopped(uint64_t id)
 {
     if (auto source = m_sources.get(id)) {
         source->stop();
-        sourceEnded(id);
+        source->hasEnded();
     }
 }
 
@@ -324,7 +327,7 @@ void UserMediaCaptureManager::captureFailed(uint64_t id)
 {
     if (auto source = m_sources.get(id)) {
         source->captureFailed();
-        sourceEnded(id);
+        source->hasEnded();
     }
 }
 
@@ -373,37 +376,51 @@ NO_RETURN_DUE_TO_ASSERT void UserMediaCaptureManager::remoteVideoSampleAvailable
 }
 #endif
 
-void UserMediaCaptureManager::startProducingData(uint64_t id)
+IPC::Connection* UserMediaCaptureManager::Source::connection()
 {
-    m_process.send(Messages::UserMediaCaptureManagerProxy::StartProducingData(id), 0);
+#if ENABLE(GPU_PROCESS)
+    return m_shouldCaptureInGPUProcess ? &WebProcess::singleton().ensureGPUProcessConnection().connection() : WebProcess::singleton().parentProcessConnection();
+#else
+    return m_process.parentProcessConnection();
+#endif
 }
 
-void UserMediaCaptureManager::stopProducingData(uint64_t id)
+void UserMediaCaptureManager::Source::startProducingData()
 {
-    m_process.send(Messages::UserMediaCaptureManagerProxy::StopProducingData(id), 0);
+    connection()->send(Messages::UserMediaCaptureManagerProxy::StartProducingData(m_id), 0);
 }
 
-WebCore::RealtimeMediaSourceCapabilities UserMediaCaptureManager::capabilities(uint64_t id)
+void UserMediaCaptureManager::Source::stopProducingData()
 {
-    WebCore::RealtimeMediaSourceCapabilities capabilities;
-    m_process.sendSync(Messages::UserMediaCaptureManagerProxy::Capabilities(id), Messages::UserMediaCaptureManagerProxy::Capabilities::Reply(capabilities), 0);
-    return capabilities;
+    connection()->send(Messages::UserMediaCaptureManagerProxy::StopProducingData(m_id), 0);
 }
 
-void UserMediaCaptureManager::setMuted(uint64_t id, bool muted)
+const WebCore::RealtimeMediaSourceCapabilities& UserMediaCaptureManager::Source::capabilities()
 {
-    m_process.send(Messages::UserMediaCaptureManagerProxy::SetMuted(id, muted), 0);
+    if (!m_capabilities) {
+        RealtimeMediaSourceCapabilities capabilities;
+        connection()->sendSync(Messages::UserMediaCaptureManagerProxy::Capabilities { m_id }, Messages::UserMediaCaptureManagerProxy::Capabilities::Reply(capabilities), 0);
+        m_capabilities = WTFMove(capabilities);
+    }
+
+    return m_capabilities.value();
 }
 
-void UserMediaCaptureManager::applyConstraints(uint64_t id, const WebCore::MediaConstraints& constraints)
+void UserMediaCaptureManager::Source::applyConstraints(const WebCore::MediaConstraints& constraints, ApplyConstraintsHandler&& completionHandler)
 {
-    m_process.send(Messages::UserMediaCaptureManagerProxy::ApplyConstraints(id, constraints), 0);
+    m_pendingApplyConstraintsCallbacks.append(WTFMove(completionHandler));
+    connection()->send(Messages::UserMediaCaptureManagerProxy::ApplyConstraints(m_id, constraints), 0);
 }
 
 void UserMediaCaptureManager::sourceEnded(uint64_t id)
 {
-    m_process.send(Messages::UserMediaCaptureManagerProxy::End(id), 0);
     m_sources.remove(id);
+}
+
+void UserMediaCaptureManager::Source::hasEnded()
+{
+    connection()->send(Messages::UserMediaCaptureManagerProxy::End { m_id }, 0);
+    m_manager.sourceEnded(m_id);
 }
 
 void UserMediaCaptureManager::applyConstraintsSucceeded(uint64_t id, const WebCore::RealtimeMediaSourceSettings& settings)
@@ -444,15 +461,20 @@ Ref<RealtimeMediaSource> UserMediaCaptureManager::cloneVideoSource(Source& sourc
     return cloneSource;
 }
 
-void UserMediaCaptureManager::requestToEnd(uint64_t sourceID)
+void UserMediaCaptureManager::Source::stopBeingObserved()
 {
-    m_process.send(Messages::UserMediaCaptureManagerProxy::RequestToEnd { sourceID }, 0);
+    connection()->send(Messages::UserMediaCaptureManagerProxy::RequestToEnd { m_id }, 0);
 }
 
 CaptureSourceOrError UserMediaCaptureManager::AudioFactory::createAudioCaptureSource(const CaptureDevice& device, String&& hashSalt, const MediaConstraints* constraints)
 {
-    if (m_shouldCaptureInGPUProcess)
+    if (m_shouldCaptureInGPUProcess) {
+#if ENABLE(GPU_PROCESS)
+        return m_manager.createCaptureSource(device, WTFMove(hashSalt), constraints, m_shouldCaptureInGPUProcess);
+#else
         return CaptureSourceOrError { "Audio capture in GPUProcess is not implemented"_s };
+#endif
+    }
     return m_manager.createCaptureSource(device, WTFMove(hashSalt), constraints);
 }
 

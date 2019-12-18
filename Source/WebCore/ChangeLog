@@ -1,3 +1,21 @@
+2019-12-18  youenn fablet  <youenn@apple.com>
+
+        Add support for Audio Capture in GPUProcess
+        https://bugs.webkit.org/show_bug.cgi?id=205056
+
+        Reviewed by Eric Carlson.
+
+        Export some WebCore headers.
+        Allow disabling the audio session debug assert in the GPU process.
+        No change of behavior.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/mediastream/mac/BaseAudioSharedUnit.cpp:
+        (WebCore::BaseAudioSharedUnit::startUnit):
+        * platform/mediastream/mac/BaseAudioSharedUnit.h:
+        (WebCore::BaseAudioSharedUnit::setDisableAudioSessionCheck):
+        * platform/mediastream/mac/MockAudioSharedUnit.h:
+
 2019-12-18  Eric Carlson  <eric.carlson@apple.com>
 
         Remove unused MediaPlayer methods

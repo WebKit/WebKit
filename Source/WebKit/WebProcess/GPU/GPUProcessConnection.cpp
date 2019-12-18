@@ -32,6 +32,8 @@
 #include "GPUConnectionToWebProcessMessages.h"
 #include "RemoteMediaPlayerManager.h"
 #include "RemoteMediaPlayerManagerMessages.h"
+#include "UserMediaCaptureManager.h"
+#include "UserMediaCaptureManagerMessages.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebPage.h"
 #include "WebPageMessages.h"
@@ -66,6 +68,13 @@ void GPUProcessConnection::didReceiveMessage(IPC::Connection& connection, IPC::D
         WebProcess::singleton().supplement<RemoteMediaPlayerManager>()->didReceiveMessageFromWebProcess(connection, decoder);
         return;
     }
+#if ENABLE(MEDIA_STREAM)
+    if (decoder.messageReceiverName() == Messages::UserMediaCaptureManager::messageReceiverName()) {
+        if (auto* captureManager = WebProcess::singleton().supplement<UserMediaCaptureManager>())
+            captureManager->didReceiveMessageFromGPUProcess(connection, decoder);
+        return;
+    }
+#endif
 }
 
 } // namespace WebKit

@@ -38,12 +38,34 @@
 #include "RemoteMediaPlayerManagerProxy.h"
 #include "RemoteMediaPlayerManagerProxyMessages.h"
 #include "RemoteScrollingCoordinatorTransaction.h"
+#include "UserMediaCaptureManagerProxy.h"
+#include "UserMediaCaptureManagerProxyMessages.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebErrors.h"
 #include "WebProcessMessages.h"
 
+#include <WebCore/MockRealtimeMediaSourceCenter.h>
+
 namespace WebKit {
 using namespace WebCore;
+
+#if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
+class GPUProxyForCapture final : public UserMediaCaptureManagerProxy::ConnectionProxy {
+    WTF_MAKE_FAST_ALLOCATED;
+public:
+    explicit GPUProxyForCapture(GPUConnectionToWebProcess& process)
+        : m_process(process)
+    {
+    }
+
+private:
+    void addMessageReceiver(IPC::StringReference messageReceiverName, IPC::MessageReceiver& receiver) final { }
+    void removeMessageReceiver(IPC::StringReference messageReceiverName) final { }
+    IPC::Connection& connection() final { return m_process.connection(); }
+
+    GPUConnectionToWebProcess& m_process;
+};
+#endif
 
 Ref<GPUConnectionToWebProcess> GPUConnectionToWebProcess::create(GPUProcess& gpuProcess, WebCore::ProcessIdentifier webProcessIdentifier, IPC::Connection::Identifier connectionIdentifier)
 {
@@ -84,12 +106,28 @@ RemoteMediaPlayerManagerProxy& GPUConnectionToWebProcess::remoteMediaPlayerManag
     return *m_remoteMediaPlayerManagerProxy;
 }
 
+#if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
+UserMediaCaptureManagerProxy& GPUConnectionToWebProcess::userMediaCaptureManagerProxy()
+{
+    if (!m_userMediaCaptureManagerProxy)
+        m_userMediaCaptureManagerProxy = makeUnique<UserMediaCaptureManagerProxy>(makeUniqueRef<GPUProxyForCapture>(*this));
+
+    return *m_userMediaCaptureManagerProxy;
+}
+#endif
+
 void GPUConnectionToWebProcess::didReceiveMessage(IPC::Connection& connection, IPC::Decoder& decoder)
 {
     if (decoder.messageReceiverName() == Messages::RemoteMediaPlayerManagerProxy::messageReceiverName()) {
         remoteMediaPlayerManagerProxy().didReceiveMessageFromWebProcess(connection, decoder);
         return;
     }
+#if ENABLE(MEDIA_STREAM)
+    if (decoder.messageReceiverName() == Messages::UserMediaCaptureManagerProxy::messageReceiverName()) {
+        userMediaCaptureManagerProxy().didReceiveMessageFromGPUProcess(connection, decoder);
+        return;
+    }
+#endif
 }
 
 void GPUConnectionToWebProcess::didReceiveSyncMessage(IPC::Connection& connection, IPC::Decoder& decoder, std::unique_ptr<IPC::Encoder>& replyEncoder)
@@ -98,6 +136,13 @@ void GPUConnectionToWebProcess::didReceiveSyncMessage(IPC::Connection& connectio
         remoteMediaPlayerManagerProxy().didReceiveSyncMessageFromWebProcess(connection, decoder, replyEncoder);
         return;
     }
+
+#if ENABLE(MEDIA_STREAM)
+    if (decoder.messageReceiverName() == Messages::UserMediaCaptureManagerProxy::messageReceiverName()) {
+        userMediaCaptureManagerProxy().didReceiveSyncMessageFromGPUProcess(connection, decoder, replyEncoder);
+        return;
+    }
+#endif
 
     ASSERT_NOT_REACHED();
 }

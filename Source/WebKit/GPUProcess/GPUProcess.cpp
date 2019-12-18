@@ -38,6 +38,7 @@
 #include "WebPageProxyMessages.h"
 #include "WebProcessPoolMessages.h"
 #include <WebCore/LogInitialization.h>
+#include <WebCore/MockAudioSharedUnit.h>
 #include <wtf/Algorithms.h>
 #include <wtf/CallbackAggregator.h>
 #include <wtf/OptionSet.h>
@@ -135,6 +136,15 @@ GPUConnectionToWebProcess* GPUProcess::webProcessConnection(ProcessIdentifier id
 {
     return m_webProcessConnections.get(identifier);
 }
+
+#if ENABLE(MEDIA_STREAM)
+void GPUProcess::setMockCaptureDevicesEnabled(bool isEnabled)
+{
+    // FIXME: Enable the audio session check by implementing an AudioSession for the GPUProcess.
+    MockAudioSharedUnit::singleton().setDisableAudioSessionCheck(isEnabled);
+    MockRealtimeMediaSourceCenter::setMockRealtimeMediaSourceCenterEnabled(isEnabled);
+}
+#endif
 
 } // namespace WebKit
 

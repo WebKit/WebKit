@@ -40,6 +40,11 @@
 #include <WebCore/UserMediaRequest.h>
 #include <wtf/Scope.h>
 
+#if ENABLE(GPU_PROCESS)
+#include "GPUProcessMessages.h"
+#include "GPUProcessProxy.h"
+#endif
+
 namespace WebKit {
 using namespace WebCore;
 
@@ -699,7 +704,13 @@ void UserMediaPermissionRequestManagerProxy::syncWithWebCorePrefs() const
     // Enable/disable the mock capture devices for the UI process as per the WebCore preferences. Note that
     // this is a noop if the preference hasn't changed since the last time this was called.
     bool mockDevicesEnabled = m_mockDevicesEnabledOverride ? *m_mockDevicesEnabledOverride : m_page.preferences().mockCaptureDevicesEnabled();
+    if (MockRealtimeMediaSourceCenter::mockRealtimeMediaSourceCenterEnabled() == mockDevicesEnabled)
+        return;
     MockRealtimeMediaSourceCenter::setMockRealtimeMediaSourceCenterEnabled(mockDevicesEnabled);
+#if ENABLE(GPU_PROCESS)
+    if (m_page.preferences().captureAudioInGPUProcessEnabled())
+        GPUProcessProxy::singleton().send(Messages::GPUProcess::SetMockCaptureDevicesEnabled { mockDevicesEnabled }, 0);
+#endif
 #endif
 }
 

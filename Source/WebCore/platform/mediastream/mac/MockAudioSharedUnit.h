@@ -44,7 +44,7 @@ class WebAudioSourceProviderAVFObjC;
 
 class MockAudioSharedUnit final : public BaseAudioSharedUnit {
 public:
-    static MockAudioSharedUnit& singleton();
+    WEBCORE_EXPORT static MockAudioSharedUnit& singleton();
     MockAudioSharedUnit();
 
 private:

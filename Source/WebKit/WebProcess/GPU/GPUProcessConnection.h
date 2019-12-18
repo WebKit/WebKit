@@ -52,7 +52,7 @@ private:
 
     // IPC::Connection::Client
     void didClose(IPC::Connection&) override;
-    void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
+    void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
     void didReceiveInvalidMessage(IPC::Connection&, IPC::StringReference messageReceiverName, IPC::StringReference messageName) override;
 
     // The connection from a web process to this GPU process.

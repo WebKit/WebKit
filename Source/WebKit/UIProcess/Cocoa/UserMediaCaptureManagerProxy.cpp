@@ -40,7 +40,7 @@
 #include <WebCore/WebAudioBufferList.h>
 #include <wtf/UniqueRef.h>
 
-#define MESSAGE_CHECK_CONTEXTID(identifier) MESSAGE_CHECK_BASE(m_proxies.isValidKey(identifier), m_process.connection())
+#define MESSAGE_CHECK_CONTEXTID(identifier) MESSAGE_CHECK_BASE(m_proxies.isValidKey(identifier), &m_connectionProxy->connection())
 
 namespace WebKit {
 using namespace WebCore;
@@ -155,15 +155,15 @@ private:
     bool m_isEnded { false };
 };
 
-UserMediaCaptureManagerProxy::UserMediaCaptureManagerProxy(WebProcessProxy& process)
-    : m_process(process)
+UserMediaCaptureManagerProxy::UserMediaCaptureManagerProxy(UniqueRef<ConnectionProxy>&& connectionProxy)
+    : m_connectionProxy(WTFMove(connectionProxy))
 {
-    m_process.addMessageReceiver(Messages::UserMediaCaptureManagerProxy::messageReceiverName(), *this);
+    m_connectionProxy->addMessageReceiver(Messages::UserMediaCaptureManagerProxy::messageReceiverName(), *this);
 }
 
 UserMediaCaptureManagerProxy::~UserMediaCaptureManagerProxy()
 {
-    m_process.removeMessageReceiver(Messages::UserMediaCaptureManagerProxy::messageReceiverName());
+    m_connectionProxy->removeMessageReceiver(Messages::UserMediaCaptureManagerProxy::messageReceiverName());
 }
 
 void UserMediaCaptureManagerProxy::createMediaSourceForCaptureDeviceWithConstraints(uint64_t id, const CaptureDevice& device, String&& hashSalt, const MediaConstraints& constraints, CompletionHandler<void(bool succeeded, String invalidConstraints, WebCore::RealtimeMediaSourceSettings&&)>&& completionHandler)
@@ -196,7 +196,7 @@ void UserMediaCaptureManagerProxy::createMediaSourceForCaptureDeviceWithConstrai
         auto source = sourceOrError.source();
         settings = source->settings();
         ASSERT(!m_proxies.contains(id));
-        m_proxies.add(id, makeUnique<SourceProxy>(id, *m_process.connection(), WTFMove(source)));
+        m_proxies.add(id, makeUnique<SourceProxy>(id, m_connectionProxy->connection(), WTFMove(source)));
     } else
         invalidConstraints = WTFMove(sourceOrError.errorMessage);
     completionHandler(succeeded, invalidConstraints, WTFMove(settings));
@@ -248,9 +248,9 @@ void UserMediaCaptureManagerProxy::applyConstraints(uint64_t id, const WebCore::
     auto& source = proxy->source();
     auto result = source.applyConstraints(constraints);
     if (!result)
-        m_process.send(Messages::UserMediaCaptureManager::ApplyConstraintsSucceeded(id, source.settings()), 0);
+        m_connectionProxy->connection().send(Messages::UserMediaCaptureManager::ApplyConstraintsSucceeded(id, source.settings()), 0);
     else
-        m_process.send(Messages::UserMediaCaptureManager::ApplyConstraintsFailed(id, result->badConstraint, result->message), 0);
+        m_connectionProxy->connection().send(Messages::UserMediaCaptureManager::ApplyConstraintsFailed(id, result->badConstraint, result->message), 0);
 }
 
 void UserMediaCaptureManagerProxy::clone(uint64_t clonedID, uint64_t newSourceID)
@@ -258,7 +258,7 @@ void UserMediaCaptureManagerProxy::clone(uint64_t clonedID, uint64_t newSourceID
     ASSERT(m_proxies.contains(clonedID));
     ASSERT(!m_proxies.contains(newSourceID));
     if (auto* proxy = m_proxies.get(clonedID))
-        m_proxies.add(newSourceID, makeUnique<SourceProxy>(newSourceID, *m_process.connection(), proxy->source().clone()));
+        m_proxies.add(newSourceID, makeUnique<SourceProxy>(newSourceID, m_connectionProxy->connection(), proxy->source().clone()));
 }
 
 void UserMediaCaptureManagerProxy::requestToEnd(uint64_t sourceID)
