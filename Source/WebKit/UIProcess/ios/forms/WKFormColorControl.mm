@@ -29,6 +29,7 @@
 #if ENABLE(INPUT_TYPE_COLOR) && PLATFORM(IOS_FAMILY)
 
 #import "UIKitSPI.h"
+#import "UserInterfaceIdiom.h"
 #import "WKContentView.h"
 #import "WKFormColorPicker.h"
 #import "WKFormPopover.h"
@@ -98,7 +99,7 @@ static const CGFloat colorPopoverCornerRadius = 9;
 - (instancetype)initWithView:(WKContentView *)view
 {
     RetainPtr<NSObject <WKFormControl>> control;
-    if (currentUserInterfaceIdiomIsPad())
+    if (WebKit::currentUserInterfaceIdiomIsPad())
         control = adoptNS([[WKColorPopover alloc] initWithView:view]);
     else
         control = adoptNS([[WKColorPicker alloc] initWithView:view]);

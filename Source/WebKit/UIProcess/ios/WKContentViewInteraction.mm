@@ -42,7 +42,7 @@
 #import "SmartMagnificationController.h"
 #import "TextChecker.h"
 #import "TextInputSPI.h"
-#import "UIKitSPI.h"
+#import "UserInterfaceIdiom.h"
 #import "VersionChecks.h"
 #import "WKActionSheetAssistant.h"
 #import "WKContextMenuElementInfoInternal.h"
@@ -376,7 +376,7 @@ constexpr double fasterTapSignificantZoomThreshold = 0.8;
         [[_contentView formAccessoryView] showAutoFillButtonWithTitle:title];
     else
         [[_contentView formAccessoryView] hideAutoFillButton];
-    if (currentUserInterfaceIdiomIsPad())
+    if (WebKit::currentUserInterfaceIdiomIsPad())
         [_contentView reloadInputViews];
 }
 
@@ -1358,7 +1358,7 @@ typedef NS_ENUM(NSInteger, EndEditingReason) {
     if (!_webView._retainingActiveFocusedState) {
         // We need to complete the editing operation before we blur the element.
         [self _endEditing];
-        if ((reason == EndEditingReasonAccessoryDone && !currentUserInterfaceIdiomIsPad()) || _keyboardDidRequestDismissal || self._shouldUseLegacySelectPopoverDismissalBehavior) {
+        if ((reason == EndEditingReasonAccessoryDone && !WebKit::currentUserInterfaceIdiomIsPad()) || _keyboardDidRequestDismissal || self._shouldUseLegacySelectPopoverDismissalBehavior) {
             _page->blurFocusedElement();
             // Don't wait for WebPageProxy::blurFocusedElement() to round-trip back to us to hide the keyboard
             // because we know that the user explicitly requested us to do so.
@@ -1886,7 +1886,7 @@ static NSValue *nsSizeForTapHighlightBorderRadius(WebCore::IntSize borderRadius,
     case WebKit::InputType::Month:
     case WebKit::InputType::DateTimeLocal:
     case WebKit::InputType::Time:
-        return !currentUserInterfaceIdiomIsPad();
+        return !WebKit::currentUserInterfaceIdiomIsPad();
     default:
         return !_focusedElementInformation.isReadOnly;
     }
@@ -1930,7 +1930,7 @@ static NSValue *nsSizeForTapHighlightBorderRadius(WebCore::IntSize borderRadius,
         fontSize:_focusedElementInformation.nodeFontSize
         minimumScale:_focusedElementInformation.minimumScaleFactor
         maximumScale:_focusedElementInformation.maximumScaleFactorIgnoringAlwaysScalable
-        allowScaling:_focusedElementInformation.allowsUserScalingIgnoringAlwaysScalable && !currentUserInterfaceIdiomIsPad()
+        allowScaling:_focusedElementInformation.allowsUserScalingIgnoringAlwaysScalable && !WebKit::currentUserInterfaceIdiomIsPad()
         forceScroll:[self requiresAccessoryView]];
 }
 
@@ -2926,7 +2926,7 @@ static void cancelPotentialTapIfNecessary(WKContentView* contentView)
 #if ENABLE(INPUT_TYPE_COLOR)
     case WebKit::InputType::Color:
 #endif
-        return !currentUserInterfaceIdiomIsPad();
+        return !WebKit::currentUserInterfaceIdiomIsPad();
     }
 }
 
@@ -4354,7 +4354,7 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
     [accessoryView setNextEnabled:_focusedElementInformation.hasNextNode];
     [accessoryView setPreviousEnabled:_focusedElementInformation.hasPreviousNode];
 
-    if (currentUserInterfaceIdiomIsPad()) {
+    if (WebKit::currentUserInterfaceIdiomIsPad()) {
         [accessoryView setClearVisible:NO];
         return;
     }
@@ -5504,7 +5504,7 @@ static bool shouldShowKeyboardForElement(const WebKit::FocusedElementInformation
     if (mayContainSelectableText(information.elementType))
         return true;
 
-    return !currentUserInterfaceIdiomIsPad();
+    return !WebKit::currentUserInterfaceIdiomIsPad();
 }
 
 static WebCore::FloatRect rectToRevealWhenZoomingToFocusedElement(const WebKit::FocusedElementInformation& elementInfo, const WebKit::EditorState& editorState)
@@ -6723,7 +6723,7 @@ static BOOL allPasteboardItemOriginsMatchOrigin(UIPasteboard *pasteboard, const 
 
 - (BOOL)_shouldUseLegacySelectPopoverDismissalBehavior
 {
-    if (!currentUserInterfaceIdiomIsPad())
+    if (!WebKit::currentUserInterfaceIdiomIsPad())
         return NO;
 
     if (_focusedElementInformation.elementType != WebKit::InputType::Select)

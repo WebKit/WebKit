@@ -28,6 +28,7 @@
 
 #if ENABLE(DATALIST_ELEMENT) && PLATFORM(IOS_FAMILY)
 
+#import "UserInterfaceIdiom.h"
 #import "WKContentView.h"
 #import "WKContentViewInteraction.h"
 #import "WKFormPeripheral.h"

@@ -1,3 +1,52 @@
+2019-12-17  Per Arne Vollan  <pvollan@apple.com>
+
+        [iOS] The WebContent process should not use API to get the user interface idiom
+        https://bugs.webkit.org/show_bug.cgi?id=205236
+
+        Reviewed by Brent Fulgham.
+
+        This should be done in the UI process, since using the API in the WebContent process will connect to daemons
+        we intend to block access to. Add a flag to the process creation parameters which indicates whether the user
+        interface idiom is iPad or not. This flag will be set on the UI process side, and on the WebContent process
+        side, this flag will be read and cached for later use.
+
+        No new tests, covered by existing tests.
+
+        * Platform/spi/ios/UIKitSPI.h:
+        (currentUserInterfaceIdiomIsPad): Deleted.
+        * Shared/UserInterfaceIdiom.h: Added.
+        * Shared/UserInterfaceIdiom.mm: Added.
+        (WebKit::userInterfaceIdiomIsPad):
+        (WebKit::currentUserInterfaceIdiomIsPad):
+        (WebKit::setCurrentUserInterfaceIdiomIsPad):
+        * Shared/WebProcessCreationParameters.cpp:
+        (WebKit::WebProcessCreationParameters::encode const):
+        (WebKit::WebProcessCreationParameters::decode):
+        * Shared/WebProcessCreationParameters.h:
+        * Shared/ios/WebPreferencesDefaultValuesIOS.mm:
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::WebProcessPool::platformInitializeWebProcess):
+        * UIProcess/ios/SmartMagnificationController.mm:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKFormInputSession setAccessoryViewCustomButtonTitle:]):
+        (-[WKContentView endEditingAndUpdateFocusAppearanceWithReason:]):
+        (-[WKContentView _shouldShowAutomaticKeyboardUIIgnoringInputMode]):
+        (-[WKContentView _zoomToRevealFocusedElement]):
+        (-[WKContentView requiresAccessoryView]):
+        (-[WKContentView _updateAccessory]):
+        (shouldShowKeyboardForElement):
+        (-[WKContentView _shouldUseLegacySelectPopoverDismissalBehavior]):
+        * UIProcess/ios/WebDataListSuggestionsDropdownIOS.mm:
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        * UIProcess/ios/forms/WKFormColorControl.mm:
+        (-[WKFormColorControl initWithView:]):
+        * UIProcess/ios/forms/WKFormColorPicker.mm:
+        * UIProcess/ios/forms/WKFormInputControl.mm:
+        * UIProcess/ios/forms/WKFormSelectControl.mm:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::platformInitializeWebProcess):
+
 2019-12-17  Eric Carlson  <eric.carlson@apple.com>
 
         Add remote media player methods for prepareToPlay, preload, private browsing mode, preserves pitch, and failed to load

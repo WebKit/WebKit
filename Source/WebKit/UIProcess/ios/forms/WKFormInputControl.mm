@@ -28,7 +28,7 @@
 
 #if PLATFORM(IOS_FAMILY)
 
-#import "UIKitSPI.h"
+#import "UserInterfaceIdiom.h"
 #import "WKContentView.h"
 #import "WKContentViewInteraction.h"
 #import "WKFormPopover.h"

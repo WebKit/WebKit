@@ -29,7 +29,7 @@
 #if ENABLE(INPUT_TYPE_COLOR) && PLATFORM(IOS_FAMILY)
 
 #import "FocusedElementInformation.h"
-#import "UIKitSPI.h"
+#import "UserInterfaceIdiom.h"
 #import "WKContentViewInteraction.h"
 #import "WKFormPopover.h"
 #import "WebPageProxy.h"

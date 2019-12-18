@@ -1255,18 +1255,6 @@ typedef NS_OPTIONS(NSInteger, UIWKDocumentRequestFlags) {
 @property (nonatomic, setter=_setBacklightLevel:) float _backlightLevel;
 @end
 
-static inline bool currentUserInterfaceIdiomIsPad()
-{
-    // This inline function exists to thwart unreachable code
-    // detection on platforms where UICurrentUserInterfaceIdiomIsPad
-    // is defined directly to false.
-#if USE(APPLE_INTERNAL_SDK)
-    return UICurrentUserInterfaceIdiomIsPad();
-#else
-    return [[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad;
-#endif
-}
-
 WTF_EXTERN_C_BEGIN
 
 BOOL UIKeyboardEnabledInputModesAllowOneToManyShortcuts(void);

@@ -216,6 +216,10 @@ struct WebProcessCreationParameters {
 #if PLATFORM(IOS)
     HashMap<WebCore::CSSValueKey, WebCore::Color> cssValueToSystemColorMap;
 #endif
+
+#if PLATFORM(IOS_FAMILY)
+    bool currentUserInterfaceIdiomIsPad { false };
+#endif
 };
 
 } // namespace WebKit

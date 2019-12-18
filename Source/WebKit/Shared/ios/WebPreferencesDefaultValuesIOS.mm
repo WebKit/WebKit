@@ -28,7 +28,7 @@
 
 #if PLATFORM(IOS_FAMILY)
 
-#import "UIKitSPI.h"
+#import "UserInterfaceIdiom.h"
 
 namespace WebKit {
 

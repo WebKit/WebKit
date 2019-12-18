@@ -29,6 +29,7 @@
 #if PLATFORM(IOS_FAMILY)
 
 #import "SmartMagnificationControllerMessages.h"
+#import "UserInterfaceIdiom.h"
 #import "ViewGestureGeometryCollectorMessages.h"
 #import "WKContentView.h"
 #import "WKScrollView.h"
@@ -36,12 +37,6 @@
 #import "WebPageMessages.h"
 #import "WebPageProxy.h"
 #import "WebProcessProxy.h"
-
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-
-#import "UIKitSPI.h"
-
-ALLOW_DEPRECATED_DECLARATIONS_END
 
 static const float smartMagnificationPanScrollThresholdZoomedOut = 60;
 static const float smartMagnificationPanScrollThresholdIPhone = 100;

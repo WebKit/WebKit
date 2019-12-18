@@ -91,6 +91,7 @@
 #if PLATFORM(IOS_FAMILY)
 #import "AccessibilitySupportSPI.h"
 #import "AssertionServicesSPI.h"
+#import "UserInterfaceIdiom.h"
 #import "WKAccessibilityWebPageObjectIOS.h"
 #import <UIKit/UIAccessibility.h>
 #import <pal/spi/ios/GraphicsServicesSPI.h>
@@ -186,6 +187,10 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
     MemoryPressureHandler::ReliefLogger::setLoggingEnabled(parameters.shouldEnableMemoryPressureReliefLogging);
 
     setEnhancedAccessibility(parameters.accessibilityEnhancedUserInterfaceEnabled);
+
+#if PLATFORM(IOS_FAMILY)
+    setCurrentUserInterfaceIdiomIsPad(parameters.currentUserInterfaceIdiomIsPad);
+#endif
 
 #if USE(APPKIT)
     [[NSUserDefaults standardUserDefaults] registerDefaults:@{ @"NSApplicationCrashOnExceptions" : @YES }];

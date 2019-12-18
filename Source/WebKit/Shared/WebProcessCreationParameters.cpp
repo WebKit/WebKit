@@ -174,6 +174,10 @@ void WebProcessCreationParameters::encode(IPC::Encoder& encoder) const
 #if PLATFORM(IOS)
     encoder << cssValueToSystemColorMap;
 #endif
+
+#if PLATFORM(IOS_FAMILY)
+    encoder << currentUserInterfaceIdiomIsPad;
+#endif
 }
 
 bool WebProcessCreationParameters::decode(IPC::Decoder& decoder, WebProcessCreationParameters& parameters)
@@ -446,6 +450,11 @@ bool WebProcessCreationParameters::decode(IPC::Decoder& decoder, WebProcessCreat
     if (!cssValueToSystemColorMap)
         return false;
     parameters.cssValueToSystemColorMap = WTFMove(*cssValueToSystemColorMap);
+#endif
+
+#if PLATFORM(IOS_FAMILY)
+    if (!decoder.decode(parameters.currentUserInterfaceIdiomIsPad))
+        return false;
 #endif
 
     return true;

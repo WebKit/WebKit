@@ -35,6 +35,7 @@
 #import "PluginProcessManager.h"
 #import "SandboxUtilities.h"
 #import "TextChecker.h"
+#import "UserInterfaceIdiom.h"
 #import "VersionChecks.h"
 #import "WKBrowsingContextControllerInternal.h"
 #import "WebBackForwardCache.h"
@@ -340,6 +341,10 @@ void WebProcessPool::platformInitializeWebProcess(const WebProcessProxy& process
     
 #if PLATFORM(IOS)
     parameters.cssValueToSystemColorMap = RenderThemeIOS::getOrCreateCSSValueToSystemColorMap();
+#endif
+    
+#if PLATFORM(IOS_FAMILY)
+    parameters.currentUserInterfaceIdiomIsPad = currentUserInterfaceIdiomIsPad();
 #endif
 }
 
