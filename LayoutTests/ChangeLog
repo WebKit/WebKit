@@ -1,3 +1,12 @@
+2019-12-18  Truitt Savell  <tsavell@apple.com>
+
+        REGRESSION: [ Mac ] accessibility/presentation-role-iframe.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=205403
+
+        Unreviewed test gardening.
+
+        * platform/mac/TestExpectations:
+
 2019-12-18  Kate Cheney  <katherine_cheney@apple.com>
 
         Only report prevalent domains in the ResourceLoadStatistics data summary API

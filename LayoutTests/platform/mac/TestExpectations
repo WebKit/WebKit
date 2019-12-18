@@ -1964,3 +1964,5 @@ webkit.org/b/205216 imported/w3c/web-platform-tests/content-security-policy/repo
 webkit.org/b/205361 [ Release ] crypto/workers/subtle/aes-indexeddb.html [ Pass Timeout ]
 
 webkit.org/b/205164 imported/w3c/web-platform-tests/html/semantics/forms/form-submission-0/form-double-submit-3.html [ Pass Failure ]
+
+webkit.org/b/205403 accessibility/presentation-role-iframe.html [ Pass Failure ]
