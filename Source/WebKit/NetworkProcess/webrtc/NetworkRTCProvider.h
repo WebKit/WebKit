@@ -94,6 +94,8 @@ public:
     void closeListeningSockets(Function<void()>&&);
     void authorizeListeningSockets() { m_isListeningSocketAuthorized = true; }
 
+    bool canLog() const { return m_canLog; }
+
 private:
     explicit NetworkRTCProvider(NetworkConnectionToWebProcess&);
 
@@ -125,6 +127,7 @@ private:
 
     HashMap<WebCore::LibWebRTCSocketIdentifier, std::unique_ptr<rtc::AsyncPacketSocket>> m_pendingIncomingSockets;
     bool m_isListeningSocketAuthorized { true };
+    bool m_canLog { false };
 };
 
 } // namespace WebKit

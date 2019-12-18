@@ -49,6 +49,12 @@
 namespace WebKit {
 using namespace WebCore;
 
+#undef RELEASE_LOG_IF_ALLOWED
+#undef RELEASE_LOG_ERROR_IF_ALLOWED
+
+#define RELEASE_LOG_IF_ALLOWED(fmt, ...) RELEASE_LOG_IF(canLog(), Network, "%p - NetworkRTCProvider::" fmt, this, ##__VA_ARGS__)
+#define RELEASE_LOG_ERROR_IF_ALLOWED(fmt, ...) RELEASE_LOG_ERROR_IF(canLog(), Network, "%p - NetworkRTCProvider::" fmt, this, ##__VA_ARGS__)
+
 static inline std::unique_ptr<rtc::Thread> createThread()
 {
     auto thread = rtc::Thread::CreateWithSocketServer();
@@ -73,6 +79,7 @@ NetworkRTCProvider::NetworkRTCProvider(NetworkConnectionToWebProcess& connection
     , m_rtcMonitor(*this)
     , m_rtcNetworkThread(createThread())
     , m_packetSocketFactory(makeUniqueRefWithoutFastMallocCheck<rtc::BasicPacketSocketFactory>(m_rtcNetworkThread.get()))
+    , m_canLog(connection.sessionID().isAlwaysOnLoggingAllowed())
 {
 #if !RELEASE_LOG_DISABLED
     rtc::LogMessage::SetLogOutput(WebKit2LogWebRTC.state == WTFLogChannelState::On ? rtc::LS_INFO : rtc::LS_WARNING, doReleaseLogging);
@@ -88,6 +95,8 @@ NetworkRTCProvider::~NetworkRTCProvider()
 
 void NetworkRTCProvider::close()
 {
+    RELEASE_LOG_IF_ALLOWED("close");
+
     // Cancel all pending DNS resolutions.
     while (!m_resolvers.isEmpty())
         stopResolver(*m_resolvers.keys().begin());
@@ -107,8 +116,8 @@ void NetworkRTCProvider::close()
 void NetworkRTCProvider::createSocket(LibWebRTCSocketIdentifier identifier, std::unique_ptr<rtc::AsyncPacketSocket>&& socket, Socket::Type type)
 {
     if (!socket) {
-        sendFromMainThread([identifier, size = m_sockets.size()](IPC::Connection& connection) {
-            RELEASE_LOG_ERROR(WebRTC, "NetworkRTCProvider with %u sockets is unable to create a new socket", size);
+        sendFromMainThread([this, identifier, size = m_sockets.size()](IPC::Connection& connection) {
+            RELEASE_LOG_ERROR_IF_ALLOWED("createSocket with %u sockets is unable to create a new socket", size);
             connection.send(Messages::WebRTCSocket::SignalClose(1), identifier);
         });
         return;

@@ -1,3 +1,29 @@
+2019-12-18  youenn fablet  <youenn@apple.com>
+
+        Refine RTCMonitor logging
+        https://bugs.webkit.org/show_bug.cgi?id=205384
+
+        Reviewed by Eric Carlson.
+
+        Catch the case where the rtc thread is blocked in WebProcess and NetworkProcess.
+        Add logging of 'this' so as to disambiguate the case of several pages doing RTC in parallel.
+        No change of behavior.
+
+        * NetworkProcess/webrtc/NetworkRTCMonitor.cpp:
+        (WebKit::NetworkRTCMonitor::startUpdatingIfNeeded):
+        (WebKit::NetworkRTCMonitor::stopUpdating):
+        (WebKit::NetworkRTCMonitor::onNetworksChanged):
+        * NetworkProcess/webrtc/NetworkRTCProvider.cpp:
+        (WebKit::NetworkRTCProvider::NetworkRTCProvider):
+        (WebKit::NetworkRTCProvider::close):
+        (WebKit::NetworkRTCProvider::createSocket):
+        * NetworkProcess/webrtc/NetworkRTCProvider.h:
+        (WebKit::NetworkRTCProvider::canLog const):
+        * WebProcess/Network/webrtc/WebRTCMonitor.cpp:
+        (WebKit::WebRTCMonitor::StartUpdating):
+        (WebKit::WebRTCMonitor::StopUpdating):
+        (WebKit::WebRTCMonitor::networksChanged):
+
 2019-12-18  Kate Cheney  <katherine_cheney@apple.com>
 
         Only report prevalent domains in the ResourceLoadStatistics data summary API

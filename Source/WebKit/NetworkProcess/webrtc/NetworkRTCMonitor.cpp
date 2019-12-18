@@ -36,6 +36,10 @@
 
 namespace WebKit {
 
+#undef RELEASE_LOG_IF_ALLOWED
+
+#define RELEASE_LOG_IF_ALLOWED(fmt, ...) RELEASE_LOG_IF(m_rtcProvider.canLog(), Network, "%p - NetworkRTCMonitor::" fmt, this, ##__VA_ARGS__)
+
 NetworkRTCMonitor::~NetworkRTCMonitor()
 {
     ASSERT(!m_manager);
@@ -43,12 +47,14 @@ NetworkRTCMonitor::~NetworkRTCMonitor()
 
 void NetworkRTCMonitor::startUpdatingIfNeeded()
 {
-    RELEASE_LOG(WebRTC, "NetworkRTCMonitor::startUpdatingIfNeeded %d", m_isStarted);
+    RELEASE_LOG_IF_ALLOWED("startUpdatingIfNeeded %d", m_isStarted);
     if (m_isStarted)
         return;
 
     m_isStarted = true;
     m_rtcProvider.callOnRTCNetworkThread([this]() {
+        RELEASE_LOG_IF_ALLOWED("startUpdating from network thread");
+
         m_manager = makeUniqueWithoutFastMallocCheck<rtc::BasicNetworkManager>();
         m_manager->SignalNetworksChanged.connect(this, &NetworkRTCMonitor::onNetworksChanged);
         m_manager->StartUpdating();
@@ -57,9 +63,11 @@ void NetworkRTCMonitor::startUpdatingIfNeeded()
 
 void NetworkRTCMonitor::stopUpdating()
 {
-    RELEASE_LOG(WebRTC, "NetworkRTCMonitor::stopUpdating");
+    RELEASE_LOG_IF_ALLOWED("stopUpdating");
     m_isStarted = false;
     m_rtcProvider.callOnRTCNetworkThread([this]() {
+        RELEASE_LOG_IF_ALLOWED("stopUpdating from network thread %p", m_manager.get());
+
         if (!m_manager)
             return;
         m_manager->StopUpdating();
@@ -69,6 +77,8 @@ void NetworkRTCMonitor::stopUpdating()
 
 void NetworkRTCMonitor::onNetworksChanged()
 {
+    RELEASE_LOG_IF_ALLOWED("onNetworksChanged");
+
     rtc::BasicNetworkManager::NetworkList networks;
     m_manager->GetNetworks(&networks);
 
@@ -84,8 +94,8 @@ void NetworkRTCMonitor::onNetworksChanged()
         networkList.uncheckedAppend(RTCNetwork { *network });
     }
 
-    m_rtcProvider.sendFromMainThread([networkList = WTFMove(networkList), ipv4 = WTFMove(ipv4), ipv6 = WTFMove(ipv6)](IPC::Connection& connection) {
-        RELEASE_LOG(WebRTC, "NetworkRTCMonitor::onNetworksChanged");
+    m_rtcProvider.sendFromMainThread([this, networkList = WTFMove(networkList), ipv4 = WTFMove(ipv4), ipv6 = WTFMove(ipv6)](IPC::Connection& connection) {
+        RELEASE_LOG_IF_ALLOWED("onNetworksChanged sent");
         connection.send(Messages::WebRTCMonitor::NetworksChanged(networkList, ipv4, ipv6), 0);
     });
 }
