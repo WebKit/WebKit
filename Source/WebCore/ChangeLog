@@ -1,3 +1,7 @@
+2019-12-18  Alan Coon  <alancoon@apple.com>
+
+        Revert r253493. rdar://problem/58028534
+
 2019-12-16  Alan Coon  <alancoon@apple.com>
 
         Revert r253499. rdar://problem/57990824
@@ -1959,98 +1963,13 @@
         Implementation of the <br> quirk includes zeroing its height. This has no layout or rendering effects,
         it exists purely to maintain render tree dump output for tests.
 
-        This patch removes this behavior but maintains the render tree dump output on the RenderTreeAsText
-        level (thus avoiding giant test rebasing), and makes it easier to get the same output from all paths.
-
-        * rendering/InlineBox.cpp:
-        (WebCore::InlineBox::logicalHeight const):
-        (WebCore::InlineBox::baselinePosition const):
-        (WebCore::InlineBox::lineHeight const):
-
-        Remove the hack from line boxes.
-
-        * rendering/RenderLineBreak.cpp:
-        (WebCore::RenderLineBreak::boundingBoxForRenderTreeDump const):
-
-        Add special bounding box code for this case.
-        This can be removed in future with a test rebase.
-
-        * rendering/RenderLineBreak.h:
-        * rendering/RenderTreeAsText.cpp:
-        (WebCore::RenderTreeAsText::writeRenderObject):
-        * rendering/SimpleLineLayoutResolver.cpp:
-        (WebCore::SimpleLineLayout::RunResolver::Run::rect const):
-
-        Remove the hack from simple lines.
-
-        (WebCore::SimpleLineLayout::RunResolver::RunResolver):
-        * rendering/SimpleLineLayoutResolver.h:
-        (WebCore::SimpleLineLayout::RunResolver::Run::baselineOffset const):
-        (WebCore::SimpleLineLayout::RunResolver::Iterator::atBegin const):
-        * rendering/line/LineLayoutTraversal.h:
-        (WebCore::LineLayoutTraversal::Box::baselineOffset const):
-        (WebCore::LineLayoutTraversal::Box::isHorizontal const):
-        (WebCore::LineLayoutTraversal::Box::useLineBreakBoxRenderTreeDumpQuirk const):
-        * rendering/line/LineLayoutTraversalComplexPath.h:
-        (WebCore::LineLayoutTraversal::ComplexPath::isHorizontal const):
-        (WebCore::LineLayoutTraversal::ComplexPath::baselineOffset const):
-        (WebCore::LineLayoutTraversal::ComplexPath::useLineBreakBoxRenderTreeDumpQuirk const):
-        * rendering/line/LineLayoutTraversalDisplayRunPath.h:
-        (WebCore::LineLayoutTraversal::DisplayRunPath::baselineOffset const):
-        (WebCore::LineLayoutTraversal::DisplayRunPath::isHorizontal const):
-        (WebCore::LineLayoutTraversal::DisplayRunPath::useLineBreakBoxRenderTreeDumpQuirk const):
-        (WebCore::LineLayoutTraversal::DisplayRunPath::isLastOnLine const):
-        (WebCore::LineLayoutTraversal::DisplayRunPath::lineBox const):
-        * rendering/line/LineLayoutTraversalSimplePath.h:
-        (WebCore::LineLayoutTraversal::SimplePath::baselineOffset const):
-        (WebCore::LineLayoutTraversal::SimplePath::isHorizontal const):
-        (WebCore::LineLayoutTraversal::SimplePath::useLineBreakBoxRenderTreeDumpQuirk const):
-
-2019-12-10  Antti Koivisto  <antti@apple.com>
-
-        [LFC][Integration] Output hyphen strings
-        https://bugs.webkit.org/show_bug.cgi?id=205058
-
-        Reviewed by Zalan Bujtas.
-
-        * rendering/line/LineLayoutTraversalDisplayRunPath.h:
-        (WebCore::LineLayoutTraversal::DisplayRunPath::hasHyphen const):
-
-2019-12-10  Zalan Bujtas  <zalan@apple.com>
-
-        [LFC][IFC] Fix fast/text/simple-line-layout-hyphenation-constrains.html
-        https://bugs.webkit.org/show_bug.cgi?id=205048
-        <rdar://problem/57780425>
-
-        Reviewed by Antti Koivisto.
-
-        Remove this hack for now and come up with a more sensible fix later if it breaks some tests.
-
-        * layout/inlineformatting/InlineLineBreaker.cpp:
-        (WebCore::Layout::LineBreaker::tryBreakingTextRun const):
-
-2019-12-10  Zalan Bujtas  <zalan@apple.com>
-
-        [LFC][IFC] Fix fast/text/basic/005.html
-        https://bugs.webkit.org/show_bug.cgi?id=205047
-        <rdar://problem/57780017>
-
-        Reviewed by Antti Koivisto.
-
-        Remove the code that triggers the assert on negative word-spacing.
-        Trimming is safe with negative values (and any negative trimmed width special handing should be in LineBreaker).
-
-        * layout/inlineformatting/InlineLineBuilder.cpp:
-        (WebCore::Layout::LineBuilder::TrimmableContent::append):
-
-2019-12-10  Yusuke Suzuki  <ysuzuki@apple.com>
-
-        [JSC] Put JSArray in IsoSubspace
-        https://bugs.webkit.org/show_bug.cgi?id=205049
-
-        Reviewed by Mark Lam.
-
-        RuntimeArray is inheriting JSArray. We should have separate IsoSubspace for this.
+        This patch removes this behavior bu           €?ø       ‚   ÓäK¿     à“-   ¸ù  -   ¹ù  -   ºù    @        ¨×B-   ğk  ¹ù  Í¿   õk  ºù   œNR_   ök  ¸ù                        ,               ƒÒè5 ‚™    À   `    ôSõ?€ EU?áYÕO„ò—Úü      €  €                 €?ø       ‚  €»ıÙq     hÃ Ü$   -   »ù  -   ¼ù  -   ½ù  “  D        œNR_   ök  »ù   u
+Ş)   ük  ¼ù   çŒïÎ   fl  ½ù                                     .   ƒÒè5 ‚™    À   `    ğ[õ0?€ÀÄU?‘ÇÕO„ú—Tş      €  €                 €?ø       ‚   }?O8     8Ç ä$   -   ¾ù  -   ¿ù  -   Àù  “  D        œNR_   ök  ¾ù   u
+Ş)   ük  ¿ù   çŒïÎ   fl  Àù                                     .   ƒÒè5 ‚™    À   `    üvõ4?€€uW?ÁóÕOú—î}       €  €                 €?ø       ‚   }?O8     8Ç ä$   -   Áù  -   Âù  -   Ãù    @        ¨×B-   ğk  Âù  Í¿   õk  Ãù   œNR_   ök  Áù                        ,               ƒÒè5 ‚™    À   `    h’õ8?€@,Y?±SÖOß—Ş[      €  €                 €?ø       ‚  €»ıÙq     8Å Ü$(   -   Äù  -   Åù  -   Æù  -   Çù  -   Èù  -   Éù  -   Êù  -   Ëù  =           Ã“   l  Æù  ‚_Å÷   l  Êù   sÜ3?   l  Ëù   ”ûŞ•   l  Éù   u
+Ş)   ük  Åù   ¨×B-   ğk  Çù   œNR_   ök  Äù   ïŸÆa   l  Èù                     ,   ?   R           e               x           ‹   ƒÒè5 ‚™    À   `    pšõ<?€À¬Y?×ÖOÔ—è         ‚  €       €        şà        ‚  üÕMA=     àdp$(   -   Ìù  -   Íù  -   Îù  -   Ïù  -   Ğù  -   Ñù  -   Òù  -   Óù  =           ‚_Å÷   l  Òù   sÜ3?   l  Óù   ”ûŞ•   l  Ñù   u
+Ş)   ük  Íù   ¨×B-   ğk  Ïù   |Í¸   l  Îù  œNR_   ök  Ìù   ïŸÆa   l  Ğù                        .   A           T               g           ‹   ƒÒè5 ‚™    À   `    d»õP?€ ¼[?a[×O„ô—Æß       €  €                 €?ø       ‚  €™Üûö     8YÜ‰  -   Ôù  -   Õù  -   Öù  “  D        œNR_   ök  Ôù   u
+Ş)   ük  Õù   FL*I   gl  Öù                                 .       ƒÒè5 ‚™    À   `    `ÜõT?€ÀÇ]?É×O„{—b      €  €                 €?ø       ‚  €OÖ     Ç ä$   -   ×ù  -   Øù  -   Ùù    @        ¨×B-   ğk  Øù  Í¿   õk  Ùù   œNR_   ök  ×ù                        ,               ƒÒè5 ‚™    À   `    À÷õX?€À}_?é×O|—~œ      €  €                 €?ø       ‚  €»ıÙq     8Å Ü$   -   Úù  -   Ûù  -   Üù    @        œNR_   ök  Úù   u
+Ş)   ük  Ûù  m±€   Hl  Üù                                       ƒÒè5 ‚™    À   `    hÿõ\?€@ü_?qUØO¿—B¸      €  €                 €?ø       ‚  €”ù³     8Å Ü$   -   İù  -   Şù  -   ßù    @        ¨×B-   ğk  Şù  Í¿   õk  ßù   œNR_   ök  İù                        ,               ƒÒè5 ‚™    À   `    Àöp?€À­a?uØO„¿—ä‘       €  €                 €?ø       ‚  €»ıÙq     8Å Ü$   -   àù  -   áù  -   âù    @        ¨×B-   ğk  áù  Í¿   õk  âù   œNR_   ök  àù                        ,               ƒÒè5 ‚™    À   `    l2öt?€€,c?ÁÓØO„Ø—à;      €  €                 €?ø       ‚  €»ıÙq     8Å Ü$   -   ãù  -   äù  -   åù  -   æù  -   çù  -   èù  4  x        Vúñ.   0l  çù   ¨×B-   ğk  äù  Í¿   õk  åù   )ÊP   2l  æù   œNR_   ök  ãù   =|(‘   Il  èù                                          ?           R   e           ƒÒè5 ‚™    À   `    P:öx?€À¦c?AÿØOØ—Îx      €  €                 €?ø       ‚  €Í÷»     8ı Œ‰  -   éù  -   êù  -   ëù    @        ¨×B-   ğk  êù  Í¿   õk  ëù   œNR_   ök  éù                        ,               ƒÒè5 ‚™    À   `    ğTö|?€ÀTe?Ñ]ÙOİ—È›       €  €                 €?ø       ‚  €»ıÙq     Å Ü$   -   ìù  -   íù  -   îù    @        ¨×B-   ğk  íù  Í¿   õk  îù   œNR_   ök  ìù                        ,               ƒÒè5 ‚™    À   `    Ä\ö?€ Îe?!}ÙOÙ—Âv       €  €                 €?ø       ‚  €»ıÙq     8Å Ü$   -   ïù  -   ğù  -   ñù    @        ¨×B-   ğk  ğù  Í¿   õk  ñù   œNR_   ök  ïù                        ,               ƒÒè5 ‚™    À   `    Xtö”?€@Gg?qÛÙO„İ—ave separate IsoSubspace for this.
 
         * bindings/js/WebCoreJSClientData.cpp:
         (WebCore::JSVMClientData::JSVMClientData):
