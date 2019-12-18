@@ -1,3 +1,13 @@
+2019-12-18  Jonathan Bedard  <jbedard@apple.com>
+
+        GPU-Process: Bring up automated tester 
+        https://bugs.webkit.org/show_bug.cgi?id=205229
+
+        Reviewed by Stephanie Lewis.
+
+        * BuildSlaveSupport/build.webkit.org-config/config.json: Add GPU Process tester,
+        derived from debug testing queue.
+
 2019-12-18  Kate Cheney  <katherine_cheney@apple.com>
 
         Only report prevalent domains in the ResourceLoadStatistics data summary API

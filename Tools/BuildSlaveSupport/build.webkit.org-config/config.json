@@ -15,6 +15,7 @@
                     { "name": "bot248", "platform": "mac-catalina" },
                     { "name": "bot121", "platform": "mac-catalina" },
                     { "name": "bot659", "platform": "mac-catalina" },
+                    { "name": "bot301", "platform": "mac-catalina" },
 
                     { "name": "bot132", "platform": "mac-mojave" },
                     { "name": "bot178", "platform": "mac-mojave" },
@@ -102,7 +103,7 @@
     "builders":   [ 
                     { "name": "Apple-Catalina-Debug-Build", "type": "Build", "builddir": "catalina-debug",
                       "platform": "mac-catalina", "configuration": "debug", "architectures": ["x86_64"],
-                      "triggers": ["catalina-debug-tests-wk1", "catalina-debug-tests-wk2", "catalina-debug-tests-wk2-webgl"],
+                      "triggers": ["catalina-debug-tests-wk1", "catalina-debug-tests-wk2", "catalina-debug-tests-wk2-webgl", "catalina-debug-tests-wk2-gpuprocess"],
                       "slavenames": ["bot687", "bot688"]
                     },
                     { "name": "Apple-Catalina-Debug-WK1-Tests", "type": "TestWebKit1AllButJSC", "builddir": "catalina-debug-tests-wk1",
@@ -119,6 +120,11 @@
                       "platform": "mac-catalina", "configuration": "debug", "architectures": ["x86_64"],
                       "additionalArguments": ["--no-retry-failures", "--webgl-test-suite"],
                       "slavenames": ["bot659"]
+                    },
+                    { "name": "Apple-Catalina-Debug-WK2-GPUProcess-Tests", "type": "TestAllButJSC", "builddir": "catalina-debug-tests-wk2-gpuprocess",
+                      "platform": "mac-catalina", "configuration": "debug", "architectures": ["x86_64"],
+                      "additionalArguments": ["--no-retry-failures", "--use-gpu-process"],
+                      "slavenames": ["bot301"]
                     },
                     { "name": "Apple-Catalina-Release-Build", "type": "Build", "builddir": "catalina-release",
                       "platform": "mac-catalina", "configuration": "release", "architectures": ["x86_64"],
@@ -446,6 +452,9 @@
                     },
                     { "type": "Triggerable", "name": "catalina-debug-tests-wk2-webgl",
                       "builderNames": ["Apple-Catalina-Debug-WK2-WebGL-Tests"]
+                    },
+                    { "type": "Triggerable", "name": "catalina-debug-tests-wk2-gpuprocess",
+                      "builderNames": ["Apple-Catalina-Debug-WK2-GPUProcess-Tests"]
                     },
                     { "type": "Triggerable", "name": "catalina-leaks",
                       "builderNames": ["Apple-Catalina-Leaks"]
