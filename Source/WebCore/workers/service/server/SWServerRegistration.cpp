@@ -28,6 +28,7 @@
 
 #if ENABLE(SERVICE_WORKER)
 
+#include "Logging.h"
 #include "SWServer.h"
 #include "SWServerToContextConnection.h"
 #include "SWServerWorker.h"

@@ -1,5 +1,17 @@
 2019-12-18  Chris Lord  <clord@igalia.com>
 
+        Missing headers in worker files cause random build failures when adding new files
+        https://bugs.webkit.org/show_bug.cgi?id=205385
+
+        Reviewed by Youenn Fablet.
+
+        No new tests, no behavioral changes.
+
+        * workers/service/context/ServiceWorkerThreadProxy.cpp:
+        * workers/service/server/SWServerRegistration.cpp:
+
+2019-12-18  Chris Lord  <clord@igalia.com>
+
         [GTK][WPE] OffscreenCanvas worker tests that call drawImage crash in debug builds
         https://bugs.webkit.org/show_bug.cgi?id=205339
 

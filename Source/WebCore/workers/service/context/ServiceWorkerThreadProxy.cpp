@@ -29,6 +29,7 @@
 #if ENABLE(SERVICE_WORKER)
 
 #include "CacheStorageProvider.h"
+#include "EventLoop.h"
 #include "EventNames.h"
 #include "FetchLoader.h"
 #include "Frame.h"
