@@ -1,3 +1,18 @@
+2019-12-17  Fujii Hironori  <fujii.hironori@gmail.com>
+
+        [cairo] text-align:justify wrongly expands CJK ideograph characters
+        https://bugs.webkit.org/show_bug.cgi?id=205321
+
+        Reviewed by Carlos Garcia Campos.
+
+        * platform/gtk/TestExpectations:
+        * platform/gtk/fast/text/justify-ideograph-complex-expected.png:
+        * platform/gtk/fast/text/justify-ideograph-complex-expected.txt: Added.
+        * platform/gtk/fast/text/justify-ideograph-leading-expansion-expected.png:
+        * platform/gtk/fast/text/justify-ideograph-simple-expected.png:
+        * platform/gtk/fast/text/justify-ideograph-simple-expected.txt: Added.
+        * platform/gtk/fast/text/justify-ideograph-vertical-expected.png:
+
 2019-12-17  Truitt Savell  <tsavell@apple.com>
 
         REGRESSION: [ Mojave+ Debug ] fast/mediastream/captureStream/canvas2d-heavy-drawing.html is a flakey failure

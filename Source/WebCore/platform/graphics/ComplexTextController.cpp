@@ -785,7 +785,8 @@ void ComplexTextController::adjustGlyphsAndAdvances()
                 if (runForbidsTrailingExpansion)
                     forbidTrailingExpansion = m_run.ltr() ? isLastCharacter : isFirstCharacter;
                 // Handle justification and word-spacing.
-                bool ideograph = FontCascade::isCJKIdeographOrSymbol(ch);
+                static bool expandAroundIdeographs = FontCascade::canExpandAroundIdeographsInComplexText();
+                bool ideograph = expandAroundIdeographs && FontCascade::isCJKIdeographOrSymbol(ch);
                 if (treatAsSpace || ideograph || forceLeadingExpansion || forceTrailingExpansion) {
                     // Distribute the run's total expansion evenly over all expansion opportunities in the run.
                     if (m_expansion) {

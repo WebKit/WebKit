@@ -229,6 +229,7 @@ private:
     static std::pair<unsigned, bool> expansionOpportunityCountInternal(const UChar*, unsigned length, TextDirection, ExpansionBehavior);
 
     friend struct WidthIterator;
+    friend class ComplexTextController;
 
 public:
 #if ENABLE(TEXT_AUTOSIZING)
