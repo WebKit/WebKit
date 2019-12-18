@@ -177,6 +177,11 @@ IntSize ScrollView::platformVisibleContentSizeIncludingObscuredArea(bool include
     return platformVisibleContentRectIncludingObscuredArea(includeScrollbars).size();
 }
 
+IntRect ScrollView::platformUnobscuredContentRect(VisibleContentRectIncludesScrollbars scrollbarInclusion) const
+{
+    return unobscuredContentRectInternal(scrollbarInclusion);
+}
+
 void ScrollView::platformSetContentsSize()
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;

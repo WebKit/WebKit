@@ -1,3 +1,42 @@
+2019-12-17  Simon Fraser  <simon.fraser@apple.com>
+
+        Remove iOS #ifdefs around unobscuredContentSize
+        https://bugs.webkit.org/show_bug.cgi?id=205372
+
+        Reviewed by Tim Horton.
+
+        Long-term, all of the ScrollView geometry data related to delegated scrolling
+        will move to Optional<DelegatedScrollingGeometry> m_delegatedScrollingGeometry
+        and not be wrapped in platform #ifdefs.
+
+        Take the first step of moving unobscuredContentSize into that struct.
+
+        I added platformUnobscuredContentRect() to handle the iOS WK1 case, called 
+        when there is a platform widget.
+        
+        m_fixedVisibleContentRect is only used by coördinated graphics.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::unobscuredContentSizeChanged):
+        * page/FrameView.h:
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::unobscuredContentSize const):
+        (WebCore::ScrollView::setUnobscuredContentSize):
+        (WebCore::ScrollView::unobscuredContentRect const):
+        (WebCore::ScrollView::platformVisibleContentRect const):
+        (WebCore::ScrollView::platformVisibleContentSize const):
+        (WebCore::ScrollView::platformVisibleContentRectIncludingObscuredArea const):
+        (WebCore::ScrollView::platformVisibleContentSizeIncludingObscuredArea const):
+        (WebCore::ScrollView::platformUnobscuredContentRect const):
+        * platform/ScrollView.h:
+        (WebCore::ScrollView::unobscuredContentSize const): Deleted.
+        * platform/ios/ScrollViewIOS.mm:
+        (WebCore::ScrollView::platformUnobscuredContentRect const):
+        (WebCore::ScrollView::unobscuredContentRect const): Deleted.
+        (WebCore::ScrollView::setUnobscuredContentSize): Deleted.
+        * platform/mac/ScrollViewMac.mm:
+        (WebCore::ScrollView::platformUnobscuredContentRect const):
+
 2019-12-17  Chris Dumez  <cdumez@apple.com>
 
         Port service worker code to the HTML5 event loop

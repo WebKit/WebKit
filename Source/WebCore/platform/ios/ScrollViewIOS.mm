@@ -102,30 +102,15 @@ bool ScrollView::platformCanBlitOnScroll() const
     ALLOW_DEPRECATED_DECLARATIONS_END
 }
 
-IntRect ScrollView::unobscuredContentRect(VisibleContentRectIncludesScrollbars) const
+IntRect ScrollView::platformUnobscuredContentRect(VisibleContentRectIncludesScrollbars) const
 {
-    if (WAKScrollView *view = static_cast<WAKScrollView *>(platformWidget())) {
-        CGRect r = CGRectZero;
-        BEGIN_BLOCK_OBJC_EXCEPTIONS;
-        r = [view unobscuredContentRect];
-        END_BLOCK_OBJC_EXCEPTIONS;
-        return enclosingIntRect(r);
-    }
-
-    if (!m_unobscuredContentSize.isEmpty())
-        return IntRect(m_scrollPosition, roundedIntSize(m_unobscuredContentSize));
-
-    return unobscuredContentRectInternal();
-}
-
-void ScrollView::setUnobscuredContentSize(const FloatSize& size)
-{
-    ASSERT(!platformWidget());
-    if (size == m_unobscuredContentSize)
-        return;
-
-    m_unobscuredContentSize = size;
-    unobscuredContentSizeChanged();
+    ASSERT(platformWidget());
+    WAKScrollView *view = static_cast<WAKScrollView *>(platformWidget());
+    CGRect r = CGRectZero;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    r = [view unobscuredContentRect];
+    END_BLOCK_OBJC_EXCEPTIONS;
+    return enclosingIntRect(r);
 }
 
 FloatRect ScrollView::exposedContentRect() const
