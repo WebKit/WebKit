@@ -709,7 +709,7 @@ public:
     ~GraphicsContextStateStackChecker()
     {
         if (m_context.stackSize() != m_stackSize)
-            WTFLogAlways("GraphicsContext %p stack changed by %d", this, (int)m_context.stackSize() - (int)m_stackSize);
+            WTFLogAlways("GraphicsContext %p stack changed by %d", &m_context, (int)m_context.stackSize() - (int)m_stackSize);
     }
 
 private:

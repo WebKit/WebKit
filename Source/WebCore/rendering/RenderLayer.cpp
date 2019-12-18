@@ -4532,8 +4532,16 @@ void RenderLayer::paintLayerContents(GraphicsContext& context, const LayerPainti
         || (!isPaintingScrollingContent && isPaintingCompositedForeground));
     bool shouldPaintContent = m_hasVisibleContent && isSelfPaintingLayer && !isPaintingOverlayScrollbars && !isCollectingEventRegion;
 
-    if (localPaintFlags & PaintLayerPaintingRootBackgroundOnly && !renderer().isRenderView() && !renderer().isDocumentElementRenderer())
+    if (localPaintFlags & PaintLayerPaintingRootBackgroundOnly && !renderer().isRenderView() && !renderer().isDocumentElementRenderer()) {
+        // If beginTransparencyLayers was called prior to this, ensure the transparency state is cleaned up before returning.
+        if (haveTransparency && m_usedTransparency && !m_paintingInsideReflection) {
+            context.endTransparencyLayer();
+            context.restore();
+            m_usedTransparency = false;
+        }
+
         return;
+    }
 
     updateLayerListsIfNeeded();
 
