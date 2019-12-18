@@ -1,3 +1,13 @@
+2019-12-17  Truitt Savell  <tsavell@apple.com>
+
+        REGRESSION: [ Mac Release ] crypto/workers/subtle/aes-indexeddb.html is a flakey timeout
+        https://bugs.webkit.org/show_bug.cgi?id=205361
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+        * platform/mac/TestExpectations:
+
 2019-12-17  Simon Fraser  <simon.fraser@apple.com>
 
         REGRSSION: [ High Sierra Catalina ] (r253310) compositing/video/video-border-radius-clipping.html is failing
