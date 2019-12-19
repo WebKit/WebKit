@@ -1,5 +1,39 @@
 2019-12-19  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r253761. rdar://problem/58080834
+
+    Remove syscall filtering from GPU Process sandbox
+    https://bugs.webkit.org/show_bug.cgi?id=205456
+    <rdar://problem/58080834>
+    
+    Reviewed by Tim Horton.
+    
+    We don't have a fully built-out GPU Process yet. Let's not lock down the syscall filter set until
+    we know which are actually needed by the process. The current set is just copied over from the
+    WebContent process, and are not likely to be the correct set.
+    
+    * GPUProcess/mac/com.apple.WebKit.GPUProcess.sb.in:
+    * Resources/SandboxProfiles/ios/com.apple.WebKit.GPU.sb:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@253761 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-12-19  Brent Fulgham  <bfulgham@apple.com>
+
+            Remove syscall filtering from GPU Process sandbox
+            https://bugs.webkit.org/show_bug.cgi?id=205456
+            <rdar://problem/58080834>
+
+            Reviewed by Tim Horton.
+
+            We don't have a fully built-out GPU Process yet. Let's not lock down the syscall filter set until
+            we know which are actually needed by the process. The current set is just copied over from the
+            WebContent process, and are not likely to be the correct set.
+
+            * GPUProcess/mac/com.apple.WebKit.GPUProcess.sb.in:
+            * Resources/SandboxProfiles/ios/com.apple.WebKit.GPU.sb:
+
+2019-12-19  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r253696. rdar://problem/58046272
 
     Add syscall to GPU Process sandbox
