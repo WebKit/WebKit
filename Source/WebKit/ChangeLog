@@ -1,3 +1,15 @@
+2019-12-19  Alex Christensen  <achristensen@webkit.org>
+
+        Deprecate _WKRemoteObjectInterface methods without ofReply:
+        https://bugs.webkit.org/show_bug.cgi?id=205073
+
+        Reviewed by Timothy Hatcher.
+
+        Using them makes it hard to figure out how to add classes allowed for the reply,
+        and there's a comment saying to deprecate them, so let's do it.
+
+        * Shared/API/Cocoa/_WKRemoteObjectInterface.h:
+
 2019-12-19  Brent Fulgham  <bfulgham@apple.com>
 
         WebContent process does not need access to 'com.apple.system.logger'
