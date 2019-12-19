@@ -241,6 +241,10 @@ WI.AuditTestCaseContentView = class AuditTestCaseContentView extends WI.AuditTes
                             }
                         }
                     }
+
+                    setTimeout(() => {
+                        codeMirror.refresh();
+                    });
                 }
             });
         }
