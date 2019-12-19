@@ -77,8 +77,6 @@ WI.AuditNavigationSidebarPanel = class AuditNavigationSidebarPanel extends WI.Na
     {
         super.initialLayout();
 
-        this.contentTreeOutline.allowsRepeatSelection = false;
-
         let controlsNavigationBar = new WI.NavigationBar;
 
         this._startStopButtonNavigationItem = new WI.ToggleButtonNavigationItem("audit-start-stop", WI.UIString("Start"), WI.UIString("Stop"), "Images/AuditStart.svg", "Images/AuditStop.svg", 13, 13);

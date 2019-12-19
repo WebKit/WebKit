@@ -1,5 +1,17 @@
 2019-12-19  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: Audit: exiting edit mode with the same selection as before entering edit mode doesn't reselect
+        https://bugs.webkit.org/show_bug.cgi?id=205435
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Views/AuditNavigationSidebarPanel.js:
+        (WI.AuditNavigationSidebarPanel.prototype.initialLayout):
+        Set `allowsRepeatSelection` so that selecting the previously selected tree element after
+        leaving edit mode will actually work.
+
+2019-12-19  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: Elements: Styles: bezier keywords don't show a swatch
         https://bugs.webkit.org/show_bug.cgi?id=205436
 
