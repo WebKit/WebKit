@@ -2070,7 +2070,12 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(FORWARD_ACTION_TO_WKCONTENTVIEW)
 
 - (void)_updateWebsitePolicies:(_WKWebsitePolicies *)websitePolicies
 {
-    auto data = websitePolicies.webpagePreferences->_websitePolicies->data();
+    [self _updateWebpagePreferences:websitePolicies.webpagePreferences];
+}
+
+- (void)_updateWebpagePreferences:(WKWebpagePreferences *)webpagePreferences
+{
+    auto data = webpagePreferences->_websitePolicies->data();
     if (data.websiteDataStoreParameters)
         [NSException raise:NSInvalidArgumentException format:@"Updating WKWebsiteDataStore is only supported during decidePolicyForNavigationAction."];
     _page->updateWebsitePolicies(WTFMove(data));

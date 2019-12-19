@@ -1,3 +1,13 @@
+2019-12-18  Alex Christensen  <achristensen@webkit.org>
+
+        Add SPI WKWebView._updateWebpagePreferences to replace _updateWebsitePolicies
+        https://bugs.webkit.org/show_bug.cgi?id=205427
+
+        Reviewed by Wenson Hsieh.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/WebsitePolicies.mm:
+        (TEST):
+
 2019-12-18  Jonathan Bedard  <jbedard@apple.com>
 
         test-lldb-webkit: Run in CI (Follow-up fix)

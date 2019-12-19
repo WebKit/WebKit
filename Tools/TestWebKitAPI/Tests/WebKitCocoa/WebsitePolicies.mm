@@ -742,9 +742,9 @@ TEST(WebKit, WebsitePoliciesUpdates)
 
     [webView stringByEvaluatingJavaScript:@"pauseVideo()"];
 
-    policies = [[[_WKWebsitePolicies alloc] init] autorelease];
-    policies.autoplayPolicy = _WKWebsiteAutoplayPolicyDeny;
-    [webView _updateWebsitePolicies:policies];
+    WKWebpagePreferences *preferences = [[[WKWebpagePreferences alloc] init] autorelease];
+    preferences._autoplayPolicy = _WKWebsiteAutoplayPolicyDeny;
+    [webView _updateWebpagePreferences:preferences];
 
     // A script should no longer be able to autoplay media.
     receivedAutoplayEvent = WTF::nullopt;
