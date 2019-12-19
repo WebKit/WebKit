@@ -629,7 +629,6 @@
 (allow mach-lookup (with report) (with telemetry)
     (global-name "com.apple.aggregated")
     (global-name "com.apple.distributed_notifications@1v3")
-    (global-name "com.apple.pluginkit.pkd")
     (global-name "com.apple.tccd"))
 
 (allow ipc-posix-shm-read*
