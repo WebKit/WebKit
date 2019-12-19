@@ -1,3 +1,17 @@
+2019-12-19  Jer Noble  <jer.noble@apple.com>
+
+        Safely iterate observers in languageDidChange()
+        https://bugs.webkit.org/show_bug.cgi?id=205452
+        <rdar://problem/57937765>
+
+        Reviewed by Eric Carlson.
+
+        Use the "copyToVector() then verify each item is still in the original
+        map" pattern to safely iterate over the observerMap().
+
+        * wtf/Language.cpp:
+        (WTF::languageDidChange):
+
 2019-12-18  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Unreviewed, build fix after r253730
