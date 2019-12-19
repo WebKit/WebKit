@@ -1,3 +1,7 @@
+2019-12-19  Alan Coon  <alancoon@apple.com>
+
+        Revert r253530. rdar://problem/58070303
+
 2019-12-14  Per Arne Vollan  <pvollan@apple.com>
 
         Map CSS value ID to system color in the UI process

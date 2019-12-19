@@ -31,7 +31,6 @@
 #import "BitmapImage.h"
 #import "CSSPrimitiveValue.h"
 #import "CSSToLengthConversionData.h"
-#import "CSSValueKey.h"
 #import "CSSValueKeywords.h"
 #import "ColorIOS.h"
 #import "DateComponents.h"
@@ -1431,113 +1430,6 @@ String RenderThemeIOS::mediaControlsBase64StringForIconNameAndType(const String&
 
 #endif // ENABLE(VIDEO)
 
-struct CSSValueIDAndSelector {
-    CSSValueID cssValueID;
-    SEL selector;
-};
-
-static const Vector<CSSValueIDAndSelector>& cssValueIDSelectorList()
-{
-    static NeverDestroyed<Vector<CSSValueIDAndSelector>> cssValueIDSelectorList;
-
-    static std::once_flag initializeOnce;
-    std::call_once(
-        initializeOnce,
-        [] {
-        cssValueIDSelectorList.get() = Vector(std::initializer_list<CSSValueIDAndSelector> {
-#if HAVE(OS_DARK_MODE_SUPPORT)
-            { CSSValueText, @selector(labelColor) },
-            { CSSValueAppleSystemLabel, @selector(labelColor) },
-            { CSSValueAppleSystemHeaderText, @selector(labelColor) },
-            { CSSValueAppleSystemSecondaryLabel, @selector(secondaryLabelColor) },
-            { CSSValueAppleSystemTertiaryLabel, @selector(tertiaryLabelColor) },
-            { CSSValueAppleSystemQuaternaryLabel, @selector(quaternaryLabelColor) },
-            { CSSValueAppleSystemPlaceholderText, @selector(placeholderTextColor) },
-            { CSSValueWebkitControlBackground, @selector(systemBackgroundColor) },
-            { CSSValueAppleSystemControlBackground, @selector(systemBackgroundColor) },
-            { CSSValueAppleSystemTextBackground, @selector(systemBackgroundColor) },
-            { CSSValueAppleSystemBackground, @selector(systemBackgroundColor) },
-            { CSSValueAppleSystemSecondaryBackground, @selector(secondarySystemBackgroundColor) },
-            { CSSValueAppleSystemTertiaryBackground, @selector(tertiarySystemBackgroundColor) },
-            { CSSValueAppleSystemGroupedBackground, @selector(systemGroupedBackgroundColor) },
-            { CSSValueAppleSystemSecondaryGroupedBackground, @selector(secondarySystemGroupedBackgroundColor) },
-            { CSSValueAppleSystemTertiaryGroupedBackground, @selector(tertiarySystemGroupedBackgroundColor) },
-            { CSSValueAppleSystemGrid, @selector(separatorColor) },
-            { CSSValueAppleSystemSeparator, @selector(separatorColor) },
-            { CSSValueAppleSystemContainerBorder, @selector(separatorColor) },
-            { CSSValueAppleSystemSelectedContentBackground, @selector(tableCellDefaultSelectionTintColor) },
-            { CSSValueAppleSystemUnemphasizedSelectedContentBackground, @selector(tableCellDefaultSelectionTintColor) },
-            { CSSValueAppleSystemBrown, @selector(systemBrownColor) },
-            { CSSValueAppleSystemIndigo, @selector(systemIndigoColor) },
-#endif
-            { CSSValueAppleSystemTeal, @selector(systemTealColor) },
-            { CSSValueAppleWirelessPlaybackTargetActive, @selector(systemBlueColor) },
-            { CSSValueAppleSystemBlue, @selector(systemBlueColor) },
-            { CSSValueAppleSystemGray, @selector(systemGrayColor) },
-            { CSSValueAppleSystemGreen, @selector(systemGreenColor) },
-            { CSSValueAppleSystemOrange, @selector(systemOrangeColor) },
-            { CSSValueAppleSystemPink, @selector(systemPinkColor) },
-            { CSSValueAppleSystemPurple, @selector(systemPurpleColor) },
-            { CSSValueAppleSystemRed, @selector(systemRedColor) },
-            { CSSValueAppleSystemYellow, @selector(systemYellowColor) }
-        });
-    });
-
-    return cssValueIDSelectorList;
-}
-
-static Optional<Color> systemColorFromCSSValueID(CSSValueID cssValueID, bool useDarkAppearance, bool useElevatedUserInterfaceLevel)
-{
-    LocalCurrentTraitCollection localTraitCollection(useDarkAppearance, useElevatedUserInterfaceLevel);
-
-    auto cssColorToSelector = [cssValueID] () -> SEL {
-        for (auto& cssValueIDSelector : cssValueIDSelectorList()) {
-            if (cssValueIDSelector.cssValueID == cssValueID)
-                return cssValueIDSelector.selector;
-        }
-        return nullptr;
-    };
-
-    if (auto selector = cssColorToSelector()) {
-        if (auto color = wtfObjCMsgSend<UIColor *>(PAL::getUIColorClass(), selector))
-            return Color(color.CGColor, Color::Semantic);
-    }
-    return WTF::nullopt;
-}
-
-
-static HashMap<CSSValueKey, Color>& globalCSSValueToSystemColorMap()
-{
-    static NeverDestroyed<HashMap<CSSValueKey, Color>> colorMap;
-    return colorMap;
-}
-
-const HashMap<CSSValueKey, Color>& RenderThemeIOS::getOrCreateCSSValueToSystemColorMap()
-{
-    static NeverDestroyed<HashMap<CSSValueKey, Color>> map;
-
-    static std::once_flag onceFlag;
-    std::call_once(
-        onceFlag,
-        [] {
-        for (auto& cssValueIDSelector : cssValueIDSelectorList()) {
-            for (bool useDarkAppearance : { false, true }) {
-                for (bool useElevatedUserInterfaceLevel : { false, true }) {
-                    if (auto color = systemColorFromCSSValueID(cssValueIDSelector.cssValueID, useDarkAppearance, useElevatedUserInterfaceLevel))
-                        map.get().add(CSSValueKey { cssValueIDSelector.cssValueID, useDarkAppearance, useElevatedUserInterfaceLevel }, *color);
-                }
-            }
-        }
-    });
-
-    return map;
-}
-
-void RenderThemeIOS::setCSSValueToSystemColorMap(HashMap<CSSValueKey, Color>&& colorMap)
-{
-    globalCSSValueToSystemColorMap() = WTFMove(colorMap);
-}
-
 Color RenderThemeIOS::systemColor(CSSValueID cssValueID, OptionSet<StyleColor::Options> options) const
 {
     const bool forVisitedLink = options.contains(StyleColor::Options::ForVisitedLink);
@@ -1554,15 +1446,79 @@ Color RenderThemeIOS::systemColor(CSSValueID cssValueID, OptionSet<StyleColor::O
     return cache.systemStyleColors.ensure(cssValueID, [this, cssValueID, options] () -> Color {
         const bool useDarkAppearance = options.contains(StyleColor::Options::UseDarkAppearance);
         const bool useElevatedUserInterfaceLevel = options.contains(StyleColor::Options::UseElevatedUserInterfaceLevel);
-        if (!globalCSSValueToSystemColorMap().isEmpty()) {
-            auto it = globalCSSValueToSystemColorMap().find(CSSValueKey { cssValueID, useDarkAppearance, useElevatedUserInterfaceLevel });
-            if (it == globalCSSValueToSystemColorMap().end())
-                return RenderTheme::systemColor(cssValueID, options);
-            return it->value;
+        LocalCurrentTraitCollection localTraitCollection(useDarkAppearance, useElevatedUserInterfaceLevel);
+
+        auto cssColorToSelector = [cssValueID] () -> SEL {
+            switch (cssValueID) {
+#if HAVE(OS_DARK_MODE_SUPPORT)
+            case CSSValueText:
+            case CSSValueAppleSystemLabel:
+            case CSSValueAppleSystemHeaderText:
+                return @selector(labelColor);
+            case CSSValueAppleSystemSecondaryLabel:
+                return @selector(secondaryLabelColor);
+            case CSSValueAppleSystemTertiaryLabel:
+                return @selector(tertiaryLabelColor);
+            case CSSValueAppleSystemQuaternaryLabel:
+                return @selector(quaternaryLabelColor);
+            case CSSValueAppleSystemPlaceholderText:
+                return @selector(placeholderTextColor);
+            case CSSValueWebkitControlBackground:
+            case CSSValueAppleSystemControlBackground:
+            case CSSValueAppleSystemTextBackground:
+            case CSSValueAppleSystemBackground:
+                return @selector(systemBackgroundColor);
+            case CSSValueAppleSystemSecondaryBackground:
+                return @selector(secondarySystemBackgroundColor);
+            case CSSValueAppleSystemTertiaryBackground:
+                return @selector(tertiarySystemBackgroundColor);
+            case CSSValueAppleSystemGroupedBackground:
+                return @selector(systemGroupedBackgroundColor);
+            case CSSValueAppleSystemSecondaryGroupedBackground:
+                return @selector(secondarySystemGroupedBackgroundColor);
+            case CSSValueAppleSystemTertiaryGroupedBackground:
+                return @selector(tertiarySystemGroupedBackgroundColor);
+            case CSSValueAppleSystemGrid:
+            case CSSValueAppleSystemSeparator:
+            case CSSValueAppleSystemContainerBorder:
+                return @selector(separatorColor);
+            case CSSValueAppleSystemSelectedContentBackground:
+            case CSSValueAppleSystemUnemphasizedSelectedContentBackground:
+                return @selector(tableCellDefaultSelectionTintColor);
+            case CSSValueAppleSystemBrown:
+                return @selector(systemBrownColor);
+            case CSSValueAppleSystemIndigo:
+                return @selector(systemIndigoColor);
+#endif
+            case CSSValueAppleSystemTeal:
+                return @selector(systemTealColor);
+            case CSSValueAppleWirelessPlaybackTargetActive:
+            case CSSValueAppleSystemBlue:
+                return @selector(systemBlueColor);
+            case CSSValueAppleSystemGray:
+                return @selector(systemGrayColor);
+            case CSSValueAppleSystemGreen:
+                return @selector(systemGreenColor);
+            case CSSValueAppleSystemOrange:
+                return @selector(systemOrangeColor);
+            case CSSValueAppleSystemPink:
+                return @selector(systemPinkColor);
+            case CSSValueAppleSystemPurple:
+                return @selector(systemPurpleColor);
+            case CSSValueAppleSystemRed:
+                return @selector(systemRedColor);
+            case CSSValueAppleSystemYellow:
+                return @selector(systemYellowColor);
+            default:
+                return nullptr;
+            }
+        };
+
+        if (auto selector = cssColorToSelector()) {
+            if (auto color = wtfObjCMsgSend<UIColor *>(PAL::getUIColorClass(), selector))
+                return Color(color.CGColor, Color::Semantic);
         }
-        auto color = systemColorFromCSSValueID(cssValueID, useDarkAppearance, useElevatedUserInterfaceLevel);
-        if (color)
-            return *color;
+
         return RenderTheme::systemColor(cssValueID, options);
     }).iterator->value;
 }
