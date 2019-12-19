@@ -60,6 +60,8 @@ public:
 #endif
 
     struct wpe_view_backend* backend() const;
+    void addActivityState(uint32_t);
+    void removeActivityState(uint32_t);
 
 protected:
     ViewBackend(uint32_t width, uint32_t height);
@@ -69,9 +71,6 @@ protected:
 
     void initializeAccessibility();
     void updateAccessibilityState(uint32_t);
-
-    void addActivityState(uint32_t);
-    void removeActivityState(uint32_t);
 
     void dispatchInputPointerEvent(struct wpe_input_pointer_event*);
     void dispatchInputAxisEvent(struct wpe_input_axis_event*);

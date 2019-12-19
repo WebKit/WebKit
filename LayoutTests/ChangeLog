@@ -1,3 +1,14 @@
+2019-12-19  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [WPE] Missing UIScriptController implementation
+        https://bugs.webkit.org/show_bug.cgi?id=200295
+
+        Reviewed by Žan Doberšek.
+
+        Remove expectation of a test that is now passing.
+
+        * platform/wpe/TestExpectations:
+
 2019-12-19  youenn fablet  <youenn@apple.com>
 
         Safari resumes autoplay audio elements after getUserMedia
