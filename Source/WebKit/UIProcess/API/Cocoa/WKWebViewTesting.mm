@@ -202,9 +202,4 @@
 #endif
 }
 
-- (void)_ensureRunningProcessForTesting
-{
-    _page->ensureRunningProcess();
-}
-
 @end
