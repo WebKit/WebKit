@@ -144,9 +144,11 @@ acceleratedCompositedAnimationsEnabled:
 showDebugBorders:
   initial: false
   onChange: setNeedsRecalcStyleInAllFrames
+  inspectorOverride: true
 showRepaintCounter:
   initial: false
   onChange: setNeedsRecalcStyleInAllFrames
+  inspectorOverride: true
 visibleDebugOverlayRegions:
   type: DebugOverlayRegions
   initial: 0

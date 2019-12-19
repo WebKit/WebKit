@@ -1,3 +1,21 @@
+2019-12-18  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Elements: restrict showing paint flashing and compositing borders to the Web Inspector session
+        https://bugs.webkit.org/show_bug.cgi?id=205201
+
+        Reviewed by Timothy Hatcher.
+
+        We often get bugs from users who turn on paint flashing or compositing borders, close Web
+        Inspector, reopen Web Inspector, and are then surprised when the page flashes red or these
+        borders exist all over the page.
+
+        Given that the dark mode and print styles toggles are limited to the Web Inspector session,
+        we should make these have the same behavior.
+
+        * inspector/protocol/Page.json:
+        Allow Web Inspector to override the `showDebugBorders` and `showRepaintCounter` settings via
+        the `inspectorOverride` key, rather than setting them manually via a special `Page` command.
+
 2019-12-17  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] 8Bit JSRopeString can contain 16Bit string in its rope

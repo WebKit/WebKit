@@ -16,6 +16,8 @@
                 "MockCaptureDevicesEnabled",
                 "NeedsSiteSpecificQuirks",
                 "ScriptEnabled",
+                "ShowDebugBorders",
+                "ShowRepaintCounter",
                 "WebRTCEncryptionEnabled",
                 "WebSecurityEnabled"
             ]
@@ -242,20 +244,6 @@
             "description": "Forces the given appearance for the page.",
             "parameters": [
                 { "name": "appearance", "$ref": "Appearance", "description": "Appearance name to force. Empty string disables the override." }
-            ]
-        },
-        {
-            "name": "getCompositingBordersVisible",
-            "description": "Indicates the visibility of compositing borders.",
-            "returns": [
-                { "name": "result", "type": "boolean", "description": "If true, compositing borders are visible." }
-            ]
-        },
-        {
-            "name": "setCompositingBordersVisible",
-            "description": "Controls the visibility of compositing borders.",
-            "parameters": [
-                { "name": "visible", "type": "boolean", "description": "True for showing compositing borders." }
             ]
         },
         {

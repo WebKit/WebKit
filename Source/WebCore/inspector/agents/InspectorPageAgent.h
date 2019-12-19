@@ -110,8 +110,6 @@ public:
     void setShowPaintRects(ErrorString&, bool show) override;
     void setEmulatedMedia(ErrorString&, const String&) override;
     void setForcedAppearance(ErrorString&, const String&) override;
-    void getCompositingBordersVisible(ErrorString&, bool* out_param) override;
-    void setCompositingBordersVisible(ErrorString&, bool) override;
     void snapshotNode(ErrorString&, int nodeId, String* outDataURL) override;
     void snapshotRect(ErrorString&, int x, int y, int width, int height, const String& coordinateSystem, String* outDataURL) override;
     void archive(ErrorString&, String* data) override;

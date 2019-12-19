@@ -1,3 +1,64 @@
+2019-12-18  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Elements: restrict showing paint flashing and compositing borders to the Web Inspector session
+        https://bugs.webkit.org/show_bug.cgi?id=205201
+
+        Reviewed by Timothy Hatcher.
+
+        We often get bugs from users who turn on paint flashing or compositing borders, close Web
+        Inspector, reopen Web Inspector, and are then surprised when the page flashes red or these
+        borders exist all over the page.
+
+        Given that the dark mode and print styles toggles are limited to the Web Inspector session,
+        we should make these have the same behavior.
+
+        * UserInterface/Base/Main.js:
+        (WI.initializeTarget):
+        * UserInterface/Base/Setting.js:
+        * UserInterface/Controllers/LayerTreeManager.js:
+        (WI.LayerTreeManager): Added.
+        (WI.LayerTreeManager.prototype.initializeTarget):
+        (WI.LayerTreeManager.supportsShowingPaintRects): Added.
+        (WI.LayerTreeManager.supportsVisibleCompositingBorders): Added.
+        (WI.LayerTreeManager.prototype.get showPaintRects): Added.
+        (WI.LayerTreeManager.prototype.set showPaintRects): Added.
+        (WI.LayerTreeManager.prototype.get compositingBordersVisible): Added.
+        (WI.LayerTreeManager.prototype.set compositingBordersVisible): Added.
+        (WI.LayerTreeManager.prototype.updateCompositingBordersVisibleFromPageIfNeeded): Added.
+        Use `WI.LayerTreeManager` to control the state of paint flashing and compositing borders, as
+        they're both related to the concept of layers.
+
+        * UserInterface/Views/DOMTreeContentView.js:
+        (WI.DOMTreeContentView):
+        (WI.DOMTreeContentView.prototype.shown):
+        (WI.DOMTreeContentView.prototype.closed):
+        (WI.DOMTreeContentView.prototype.attached): Added.
+        (WI.DOMTreeContentView.prototype.detached): Added.
+        (WI.DOMTreeContentView.prototype._handleCompositingBordersVisibleChanged): Added.
+        (WI.DOMTreeContentView.prototype._handleCompositingBordersButtonClicked): Added.
+        (WI.DOMTreeContentView.prototype._handleShowPaintRectsChanged): Added.
+        (WI.DOMTreeContentView.prototype._handlePaingFlashingButtonClicked): Added.
+        (WI.DOMTreeContentView.prototype._toggleCompositingBorders): Deleted.
+        (WI.DOMTreeContentView.prototype._togglePaintFlashing): Deleted.
+        (WI.DOMTreeContentView.prototype._updateCompositingBordersButtonToMatchPageSettings): Deleted.
+        (WI.DOMTreeContentView.prototype._showPaintRectsSettingChanged): Deleted.
+
+        * UserInterface/Views/Layers3DContentView.js:
+        (WI.Layers3DContentView):
+        (WI.Layers3DContentView.prototype.shown):
+        (WI.Layers3DContentView.prototype.hidden):
+        (WI.Layers3DContentView.prototype.attached): Added.
+        (WI.Layers3DContentView.prototype.detached): Added.
+        (WI.Layers3DContentView.prototype._handleCompositingBordersVisibleChanged): Added.
+        (WI.Layers3DContentView.prototype._handleCompositingBordersButtonClicked): Added.
+        (WI.Layers3DContentView.prototype._handleShowPaintRectsChanged): Added.
+        (WI.Layers3DContentView.prototype._handlePaingFlashingButtonClicked): Added.
+        (WI.Layers3DContentView.prototype.closed): Deleted.
+        (WI.Layers3DContentView.prototype._showPaintRectsSettingChanged): Deleted.
+        (WI.Layers3DContentView.prototype._togglePaintFlashing): Deleted.
+        (WI.Layers3DContentView.prototype._updateCompositingBordersButtonState): Deleted.
+        (WI.Layers3DContentView.prototype._toggleCompositingBorders): Deleted.
+
 2019-12-18  Yury Semikhatsky  <yurys@chromium.org>
 
         Web Inspector: Runtime.enable reports duplicates (non existent) contexts
