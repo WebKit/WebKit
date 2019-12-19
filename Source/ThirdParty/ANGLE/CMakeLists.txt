@@ -137,6 +137,13 @@ else ()
 endif ()
 
 if (USE_ANGLE_WEBGL)
+    set(libglesv2_entry_points_headers
+        src/libGLESv2/entry_points_egl.h
+        src/libGLESv2/entry_points_gles_2_0_autogen.h
+        src/libGLESv2/entry_points_gles_3_0_autogen.h
+        src/libGLESv2/entry_points_gles_ext_autogen.h
+    )
+
     WEBKIT_COPY_FILES(LibGLESv2EntryPointsHeaders
         DESTINATION ${ANGLE_FRAMEWORK_HEADERS_DIR}/ANGLE
         FILES ${libglesv2_entry_points_headers}

@@ -1,3 +1,17 @@
+2019-12-19  ChangSeok Oh  <changseok@webkit.org>
+
+        [GTK] Build fix for ANGLE_WEBGL after r253650
+        https://bugs.webkit.org/show_bug.cgi?id=205426
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        libglesv2_entry_points_headers was removed in r253650 that updated CMake for ANGLE.
+        GLESv2.cmake seems to be susceptible to ANGLE changes, so it might not be
+        a good place where any platform specific configuration is located.
+        Let's move the entry points header set to CMakeLists.txt.
+
+        * CMakeLists.txt:
+
 2019-12-18  Dean Jackson  <dino@apple.com>
 
         Reverting libANGLE.a -> libANGLE-shared.dylib.
