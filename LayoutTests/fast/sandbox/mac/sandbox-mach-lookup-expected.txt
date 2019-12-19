@@ -1,0 +1,7 @@
+Regression tests for mach lookup sandbox changes on macOS
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS internals.hasSandboxMachLookupAccessToGlobalName("com.apple.WebKit.WebContent", "com.apple.system.logger") is false
+

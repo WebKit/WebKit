@@ -664,9 +664,6 @@
     (allow sysctl-read sysctl-write
            (sysctl-name "vm.footprint_suspend")))
 
-(allow mach-lookup (with report) (with telemetry)
-       (global-name "com.apple.system.logger"))
-
 (allow file-read-metadata network-outbound
        (literal "/private/var/run/syslog"))
 

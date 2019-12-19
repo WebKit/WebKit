@@ -1,5 +1,20 @@
 2019-12-19  Brent Fulgham  <bfulgham@apple.com>
 
+        WebContent process does not need access to 'com.apple.system.logger'
+        https://bugs.webkit.org/show_bug.cgi?id=205411
+        <rdar://problem/56966080>
+
+        Reviewed by Per Arne Vollan.
+
+        * TestExpectations:
+        * fast/sandbox/ios/sandbox-mach-lookup-expected.txt:
+        * fast/sandbox/ios/sandbox-mach-lookup.html:
+        * fast/sandbox/mac/sandbox-mach-lookup-expected.txt: Added.
+        * fast/sandbox/mac/sandbox-mach-lookup.html: Added.
+        * platform/mac-wk2/TestExpectations:
+
+2019-12-19  Brent Fulgham  <bfulgham@apple.com>
+
         Deny mach lookup access to "com.apple.TextInput" in the WebContent process
         https://bugs.webkit.org/show_bug.cgi?id=205423
         <rdar://problem/56990842>

@@ -1,5 +1,21 @@
 2019-12-19  Brent Fulgham  <bfulgham@apple.com>
 
+        WebContent process does not need access to 'com.apple.system.logger'
+        https://bugs.webkit.org/show_bug.cgi?id=205411
+        <rdar://problem/56966080>
+
+        Reviewed by Per Arne Vollan.
+
+        Telemetry and thorough testing has confirmed that we do not need access to this
+        mach service, and so should remove it.
+
+        Tested by fast/sandbox.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+        * WebProcess/com.apple.WebProcess.sb.in:
+
+2019-12-19  Brent Fulgham  <bfulgham@apple.com>
+
         Deny mach lookup access to "com.apple.TextInput" in the WebContent process
         https://bugs.webkit.org/show_bug.cgi?id=205423
         <rdar://problem/56990842>

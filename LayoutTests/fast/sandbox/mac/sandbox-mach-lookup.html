@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../resources/js-test-pre.js"></script>
+<script>
+description('Regression tests for mach lookup sandbox changes on macOS');
+
+if (window.internals) {
+    shouldBeFalse("internals.hasSandboxMachLookupAccessToGlobalName(\"com.apple.WebKit.WebContent\", \"com.apple.system.logger\")");
+}
+</script>
+</head>
+<body>
+</body>
