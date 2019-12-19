@@ -12,6 +12,8 @@ PASS createEvent
 PASS createRange 
 PASS createNodeIterator 
 PASS createTreeWalker 
+PASS Request 
+PASS Response 
 PASS getElementsByTagName 
 PASS getElementsByTagNameNS 
 PASS getElementsByClassName 

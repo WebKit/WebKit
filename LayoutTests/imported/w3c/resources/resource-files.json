@@ -51,6 +51,7 @@
         "web-platform-tests/FileAPI/support/document-domain-setter.sub.html",
         "web-platform-tests/FileAPI/support/incumbent.sub.html",
         "web-platform-tests/FileAPI/support/url-origin.html",
+        "web-platform-tests/WebIDL/ecmascript-binding/support/constructors-support.html",
         "web-platform-tests/XMLHttpRequest/xmlhttprequest-sync-block-defer-scripts-subframe.html",
         "web-platform-tests/XMLHttpRequest/xmlhttprequest-sync-not-hang-scriptloader-subframe.html",
         "web-platform-tests/acid/acid2/404.html",

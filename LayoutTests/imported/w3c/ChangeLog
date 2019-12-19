@@ -1,5 +1,16 @@
 2019-12-19  Chris Dumez  <cdumez@apple.com>
 
+        Resync web-platform-tests/WebIDL tests from upstream
+        https://bugs.webkit.org/show_bug.cgi?id=205418
+
+        Reviewed by Frédéric Wang.
+
+        Resync web-platform-tests/WebIDL tests from upstream 33de70caf7f076e.
+
+        * web-platform-tests/WebIDL/*: Updated.
+
+2019-12-19  Chris Dumez  <cdumez@apple.com>
+
         Unreviewed, address imported/w3c/web-platform-tests/css/css-properties-values-api/url-resolution.html flakiness
 
         * web-platform-tests/css/css-properties-values-api/url-resolution-expected.txt:

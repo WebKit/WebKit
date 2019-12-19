@@ -1,0 +1,71 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/WebIDL/valid/idl/allowany.widl
+/LayoutTests/imported/w3c/web-platform-tests/WebIDL/valid/idl/array.widl
+/LayoutTests/imported/w3c/web-platform-tests/WebIDL/valid/idl/attributes.widl
+/LayoutTests/imported/w3c/web-platform-tests/WebIDL/valid/idl/callback.widl
+/LayoutTests/imported/w3c/web-platform-tests/WebIDL/valid/idl/caller.widl
+/LayoutTests/imported/w3c/web-platform-tests/WebIDL/valid/idl/constants.widl
+/LayoutTests/imported/w3c/web-platform-tests/WebIDL/valid/idl/constructor.widl
+/LayoutTests/imported/w3c/web-platform-tests/WebIDL/valid/idl/dictionary-inherits.widl
+/LayoutTests/imported/w3c/web-platform-tests/WebIDL/valid/idl/dictionary.widl
+/LayoutTests/imported/w3c/web-platform-tests/WebIDL/valid/idl/documentation-dos.widl
+/LayoutTests/imported/w3c/web-platform-tests/WebIDL/valid/idl/documentation.widl
+/LayoutTests/imported/w3c/web-platform-tests/WebIDL/valid/idl/enum.widl
+/LayoutTests/imported/w3c/web-platform-tests/WebIDL/valid/idl/equivalent-decl.widl
+/LayoutTests/imported/w3c/web-platform-tests/WebIDL/valid/idl/getter-setter.widl
+/LayoutTests/imported/w3c/web-platform-tests/WebIDL/valid/idl/identifier-qualified-names.widl
+/LayoutTests/imported/w3c/web-platform-tests/WebIDL/valid/idl/implements.widl
+/LayoutTests/imported/w3c/web-platform-tests/WebIDL/valid/idl/indexed-properties.widl
+/LayoutTests/imported/w3c/web-platform-tests/WebIDL/valid/idl/inherits-getter.widl
+/LayoutTests/imported/w3c/web-platform-tests/WebIDL/valid/idl/interface-inherits.widl
+/LayoutTests/imported/w3c/web-platform-tests/WebIDL/valid/idl/iterator.widl
+/LayoutTests/imported/w3c/web-platform-tests/WebIDL/valid/idl/namedconstructor.widl
+/LayoutTests/imported/w3c/web-platform-tests/WebIDL/valid/idl/nointerfaceobject.widl
+/LayoutTests/imported/w3c/web-platform-tests/WebIDL/valid/idl/nullable.widl
+/LayoutTests/imported/w3c/web-platform-tests/WebIDL/valid/idl/nullableobjects.widl
+/LayoutTests/imported/w3c/web-platform-tests/WebIDL/valid/idl/operation-optional-arg.widl
+/LayoutTests/imported/w3c/web-platform-tests/WebIDL/valid/idl/overloading.widl
+/LayoutTests/imported/w3c/web-platform-tests/WebIDL/valid/idl/overridebuiltins.widl
+/LayoutTests/imported/w3c/web-platform-tests/WebIDL/valid/idl/partial-interface.widl
+/LayoutTests/imported/w3c/web-platform-tests/WebIDL/valid/idl/primitives.widl
+/LayoutTests/imported/w3c/web-platform-tests/WebIDL/valid/idl/prototyperoot.widl
+/LayoutTests/imported/w3c/web-platform-tests/WebIDL/valid/idl/putforwards.widl
+/LayoutTests/imported/w3c/web-platform-tests/WebIDL/valid/idl/reg-operations.widl
+/LayoutTests/imported/w3c/web-platform-tests/WebIDL/valid/idl/replaceable.widl
+/LayoutTests/imported/w3c/web-platform-tests/WebIDL/valid/idl/sequence.widl
+/LayoutTests/imported/w3c/web-platform-tests/WebIDL/valid/idl/serializer.widl
+/LayoutTests/imported/w3c/web-platform-tests/WebIDL/valid/idl/setlike-add.widl
+/LayoutTests/imported/w3c/web-platform-tests/WebIDL/valid/idl/setlike-clear.widl
+/LayoutTests/imported/w3c/web-platform-tests/WebIDL/valid/idl/setlike-delete.widl
+/LayoutTests/imported/w3c/web-platform-tests/WebIDL/valid/idl/setlike-entries.widl
+/LayoutTests/imported/w3c/web-platform-tests/WebIDL/valid/idl/setlike-forEach.widl
+/LayoutTests/imported/w3c/web-platform-tests/WebIDL/valid/idl/setlike-has.widl
+/LayoutTests/imported/w3c/web-platform-tests/WebIDL/valid/idl/setlike-keys.widl
+/LayoutTests/imported/w3c/web-platform-tests/WebIDL/valid/idl/setlike-size.widl
+/LayoutTests/imported/w3c/web-platform-tests/WebIDL/valid/idl/setlike-values.widl
+/LayoutTests/imported/w3c/web-platform-tests/WebIDL/valid/idl/setlike.widl
+/LayoutTests/imported/w3c/web-platform-tests/WebIDL/valid/idl/static.widl
+/LayoutTests/imported/w3c/web-platform-tests/WebIDL/valid/idl/stringifier-attribute.widl
+/LayoutTests/imported/w3c/web-platform-tests/WebIDL/valid/idl/stringifier-custom.widl
+/LayoutTests/imported/w3c/web-platform-tests/WebIDL/valid/idl/stringifier.widl
+/LayoutTests/imported/w3c/web-platform-tests/WebIDL/valid/idl/treatasnull.widl
+/LayoutTests/imported/w3c/web-platform-tests/WebIDL/valid/idl/treatasundefined.widl
+/LayoutTests/imported/w3c/web-platform-tests/WebIDL/valid/idl/typedef.widl
+/LayoutTests/imported/w3c/web-platform-tests/WebIDL/valid/idl/typesuffixes.widl
+/LayoutTests/imported/w3c/web-platform-tests/WebIDL/valid/idl/uniontype.widl
+/LayoutTests/imported/w3c/web-platform-tests/WebIDL/valid/idl/variadic-operations.widl
