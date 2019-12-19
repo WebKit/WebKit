@@ -96,6 +96,8 @@ public:
     RefPtr<WebCore::DisplayRefreshMonitor> createDisplayRefreshMonitor(WebCore::PlatformDisplayID);
 #endif
 
+    WebCore::PlatformDisplayID displayID() const { return m_displayID; }
+
 private:
 #if USE(COORDINATED_GRAPHICS)
     void layerFlushTimerFired();
@@ -201,6 +203,7 @@ private:
     Ref<Nicosia::SceneIntegration> m_sceneIntegration;
     CompositingCoordinator m_coordinator;
 #endif // USE(COORDINATED_GRAPHICS)
+    WebCore::PlatformDisplayID m_displayID;
 };
 
 #if !USE(COORDINATED_GRAPHICS)

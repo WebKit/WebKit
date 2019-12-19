@@ -562,13 +562,16 @@ void DrawingAreaCoordinatedGraphics::enterAcceleratedCompositingMode(GraphicsLay
     m_exitCompositingTimer.stop();
     m_wantsToExitAcceleratedCompositingMode = false;
 
-    // In order to ensure that we get a unique DisplayRefreshMonitor per-DrawingArea (necessary because ThreadedDisplayRefreshMonitor
-    // is driven by the ThreadedCompositor of the drawing area), give each page a unique DisplayID derived from WebPage's unique ID.
-    m_webPage.windowScreenDidChange(std::numeric_limits<uint32_t>::max() - m_webPage.identifier().toUInt64());
+    auto changeWindowScreen = [&] {
+        // In order to ensure that we get a unique DisplayRefreshMonitor per-DrawingArea (necessary because ThreadedDisplayRefreshMonitor
+        // is driven by the ThreadedCompositor of the drawing area), give each page a unique DisplayID derived from WebPage's unique ID.
+        m_webPage.windowScreenDidChange(m_layerTreeHost->displayID());
+    };
 
     ASSERT(!m_layerTreeHost);
     if (m_previousLayerTreeHost) {
         m_layerTreeHost = WTFMove(m_previousLayerTreeHost);
+        changeWindowScreen();
         m_layerTreeHost->setIsDiscardable(false);
         m_layerTreeHost->resumeRendering();
         if (!m_layerTreeStateIsFrozen)
@@ -576,6 +579,7 @@ void DrawingAreaCoordinatedGraphics::enterAcceleratedCompositingMode(GraphicsLay
     } else {
 #if USE(COORDINATED_GRAPHICS)
         m_layerTreeHost = makeUnique<LayerTreeHost>(m_webPage);
+        changeWindowScreen();
 #else
         m_layerTreeHost = nullptr;
         return;

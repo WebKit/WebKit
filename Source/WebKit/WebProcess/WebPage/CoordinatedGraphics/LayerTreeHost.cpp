@@ -54,6 +54,7 @@ LayerTreeHost::LayerTreeHost(WebPage& webPage)
     , m_layerFlushTimer(RunLoop::main(), this, &LayerTreeHost::layerFlushTimerFired)
     , m_sceneIntegration(Nicosia::SceneIntegration::create(*this))
     , m_coordinator(webPage, *this)
+    , m_displayID(std::numeric_limits<uint32_t>::max() - m_webPage.identifier().toUInt64())
 {
 #if USE(GLIB_EVENT_LOOP)
     m_layerFlushTimer.setPriority(RunLoopSourcePriority::LayerFlushTimer);
@@ -75,7 +76,7 @@ LayerTreeHost::LayerTreeHost(WebPage& webPage)
     if (m_surface->shouldPaintMirrored())
         paintFlags |= TextureMapper::PaintingMirrored;
 
-    m_compositor = ThreadedCompositor::create(m_compositorClient, m_compositorClient, m_webPage.corePage()->chrome().displayID(), scaledSize, scaleFactor, paintFlags);
+    m_compositor = ThreadedCompositor::create(m_compositorClient, m_compositorClient, m_displayID, scaledSize, scaleFactor, paintFlags);
     m_layerTreeContext.contextID = m_surface->surfaceID();
 
     didChangeViewport();
