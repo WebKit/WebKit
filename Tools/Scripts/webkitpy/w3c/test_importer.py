@@ -446,7 +446,7 @@ class TestImporter(object):
 
         # We currently need to rewrite css web-platform-tests because they use a separate "reference" folder for
         # their ref-tests' results.
-        folders_needing_file_rewriting = ['web-platform-tests/css', ]
+        folders_needing_file_rewriting = ['web-platform-tests/']
 
         for dir_to_copy in self.import_list:
             total_imported_tests += dir_to_copy['total_tests']
@@ -510,7 +510,7 @@ class TestImporter(object):
                 # FIXME: Eventually, so should js when support is added for this type of conversion
                 mimetype = mimetypes.guess_type(orig_filepath)
                 if should_rewrite_files and ('text/' in str(mimetype[0]) or 'application/' in str(mimetype[0])) \
-                                        and ('html' in str(mimetype[0]) or 'xml' in str(mimetype[0])  or 'css' in str(mimetype[0])):
+                                        and ('html' in str(mimetype[0]) or 'xml' in str(mimetype[0])  or 'css' in str(mimetype[0]) or 'javascript' in str(mimetype[0])):
                     _log.info("Rewriting: %s" % new_filepath)
                     try:
                         converted_file = convert_for_webkit(new_path, filename=orig_filepath, reference_support_info=reference_support_info, host=self.host, convert_test_harness_links=self.should_convert_test_harness_links(subpath), webkit_test_runner_options=self._webkit_test_runner_options(new_filepath))
