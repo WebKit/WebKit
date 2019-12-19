@@ -26,7 +26,6 @@ editing/undo-manager [ Pass ]
 
 accessibility/set-selected-text-range-after-newline.html [ Pass ]
 accessibility/smart-invert.html [ Pass ]
-accessibility/smart-invert-reference.html [ Pass ]
 fast/forms/enterkeyhint-attribute-values.html [ Pass ]
 fast/media/mq-inverted-colors-live-update.html [ Pass ]
 fast/media/mq-inverted-colors-live-update-in-subframes.html [ Pass ]
@@ -1353,3 +1352,5 @@ webkit.org/b/203572 media/remoteplayback-target-availability.html [ Skip ]
 
 # <rdar://problem/56761171> [ iOS ] Layout Test fast/css-custom-paint/simple-hidpi.html is a Flaky Failure (203637)
 webkit.org/b/203637 fast/css-custom-paint/simple-hidpi.html [ Pass ImageOnlyFailure ]
+
+webkit.org/b/205308 accessibility/smart-invert-reference.html [ ImageOnlyFailure ]

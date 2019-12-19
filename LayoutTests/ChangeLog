@@ -1,5 +1,15 @@
 2019-12-19  Truitt Savell  <tsavell@apple.com>
 
+        Folloup test expectations cleanup for r253594
+        https://bugs.webkit.org/show_bug.cgi?id=205308
+
+        Unreviewed test gardening.
+
+        * platform/ios-wk2/TestExpectations:
+        * platform/ios/TestExpectations:
+
+2019-12-19  Truitt Savell  <tsavell@apple.com>
+
         REGRESSION: [ Mac Debug wk1 ] accessibility/mac/expanded-notification.html is a flaky failure
         https://bugs.webkit.org/show_bug.cgi?id=205410
 
