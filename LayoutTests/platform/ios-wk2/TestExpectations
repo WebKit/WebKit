@@ -535,7 +535,6 @@ fast/shapes/shape-outside-floats/shape-outside-shape-image-threshold-animation.h
 legacy-animation-engine/fast/shapes/shape-outside-floats/shape-outside-shape-image-threshold-animation.html
 fast/shapes/shape-outside-floats/shape-outside-shape-margin-animation.html
 legacy-animation-engine/fast/shapes/shape-outside-floats/shape-outside-shape-margin-animation.html
-fast/workers/worker-cloneport.html
 fast/borders/bidi-009a.html
 fast/box-shadow/box-shadow-currentcolor.html
 fast/box-sizing/css-table-collapse.html

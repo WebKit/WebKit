@@ -1,5 +1,13 @@
 2019-12-19  Chris Dumez  <cdumez@apple.com>
 
+        Unreviewed, unskip fast/workers/worker-cloneport.html on iOS.
+
+        This test appears to run fine on iOS now.
+
+        * platform/ios-wk2/TestExpectations:
+
+2019-12-19  Chris Dumez  <cdumez@apple.com>
+
         Unreviewed, rebaseline imported/w3c/web-platform-tests/dom/events/Event-dispatch-on-disabled-elements.html on iOS.
 
         * platform/ios/imported/w3c/web-platform-tests/dom/events/Event-dispatch-on-disabled-elements-expected.txt:
