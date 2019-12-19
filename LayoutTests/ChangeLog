@@ -1,3 +1,16 @@
+2019-12-18  Ryosuke Niwa  <rniwa@webkit.org>
+
+        REGRESSION: [ Mac wk2 ] tiled-drawing/scrolling/fast-scroll-select-latched-mainframe.html is a flakey failure
+        https://bugs.webkit.org/show_bug.cgi?id=205363
+        <rdar://problem/58025488>
+
+        Reviewed by Wenson Hsieh.
+
+        Fix the test by waiting for rAF and avoid running checkForScroll more than once.
+
+        * platform/mac-wk2/TestExpectations:
+        * tiled-drawing/scrolling/fast-scroll-select-latched-mainframe.html:
+
 2019-12-18  Antoine Quint  <graouts@apple.com>
 
         Animations stop if new tab opened (and closed)
