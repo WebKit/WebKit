@@ -1,5 +1,37 @@
 2019-12-19  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r253696. rdar://problem/58046272
+
+    Add syscall to GPU Process sandbox
+    https://bugs.webkit.org/show_bug.cgi?id=205400
+    <rdar://problem/58046272>
+    
+    Reviewed by Simon Fraser.
+    
+    This patch temporarily adds a syscall to the sandbox to work around a bug in the
+    system Sandbox framework. We will remove this in Bug 205400 once that issue is
+    resolved.
+    
+    * Resources/SandboxProfiles/ios/com.apple.WebKit.GPU.sb:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@253696 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-12-18  Brent Fulgham  <bfulgham@apple.com>
+
+            Add syscall to GPU Process sandbox
+            https://bugs.webkit.org/show_bug.cgi?id=205400
+            <rdar://problem/58046272>
+
+            Reviewed by Simon Fraser.
+
+            This patch temporarily adds a syscall to the sandbox to work around a bug in the
+            system Sandbox framework. We will remove this in Bug 205400 once that issue is
+            resolved.
+
+            * Resources/SandboxProfiles/ios/com.apple.WebKit.GPU.sb:
+
+2019-12-19  Alan Coon  <alancoon@apple.com>
+
         Revert r253530. rdar://problem/58070303
 
 2019-12-14  Per Arne Vollan  <pvollan@apple.com>
