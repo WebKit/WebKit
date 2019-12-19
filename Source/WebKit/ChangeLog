@@ -1,3 +1,18 @@
+2019-12-19  Chris Dumez  <cdumez@apple.com>
+
+        Use a WeakHashSet for WKProcessAssertionBackgroundTaskManager._assertionsNeedingBackgroundTask
+        https://bugs.webkit.org/show_bug.cgi?id=205471
+
+        Reviewed by Ryosuke Niwa.
+
+        Use a WeakHashSet for WKProcessAssertionBackgroundTaskManager._assertionsNeedingBackgroundTask, instead
+        of a HashSet of raw pointers, for extra safety.
+
+        * UIProcess/ios/ProcessAssertionIOS.mm:
+        (-[WKProcessAssertionBackgroundTaskManager removeAssertionNeedingBackgroundTask:]):
+        (-[WKProcessAssertionBackgroundTaskManager _notifyAssertionsOfImminentSuspension]):
+        (-[WKProcessAssertionBackgroundTaskManager _updateBackgroundTask]):
+
 2019-12-19  Brent Fulgham  <bfulgham@apple.com>
 
         Unblock iokit-get-property needed for frame buffer initialization
