@@ -1,3 +1,9 @@
+2019-12-19  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, rebaseline imported/w3c/web-platform-tests/dom/events/Event-dispatch-on-disabled-elements.html on iOS.
+
+        * platform/ios/imported/w3c/web-platform-tests/dom/events/Event-dispatch-on-disabled-elements-expected.txt:
+
 2019-12-19  Brent Fulgham  <bfulgham@apple.com>
 
         WebContent process does not need access to 'com.apple.system.logger'
