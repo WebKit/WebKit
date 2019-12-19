@@ -15,7 +15,7 @@
                     { "name": "bot248", "platform": "mac-catalina" },
                     { "name": "bot121", "platform": "mac-catalina" },
                     { "name": "bot302", "platform": "mac-catalina" },
-                    { "name": "bot301", "platform": "mac-catalina" },
+                    { "name": "bot260", "platform": "mac-catalina" },
 
                     { "name": "bot132", "platform": "mac-mojave" },
                     { "name": "bot178", "platform": "mac-mojave" },
@@ -124,7 +124,7 @@
                     { "name": "Apple-Catalina-Debug-WK2-GPUProcess-Tests", "type": "TestAllButJSC", "builddir": "catalina-debug-tests-wk2-gpuprocess",
                       "platform": "mac-catalina", "configuration": "debug", "architectures": ["x86_64"],
                       "additionalArguments": ["--no-retry-failures", "--use-gpu-process"],
-                      "slavenames": ["bot301"]
+                      "slavenames": ["bot260"]
                     },
                     { "name": "Apple-Catalina-Release-Build", "type": "Build", "builddir": "catalina-release",
                       "platform": "mac-catalina", "configuration": "release", "architectures": ["x86_64"],
