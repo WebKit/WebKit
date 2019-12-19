@@ -572,7 +572,7 @@ private:
     Optional<bool> m_touchEventsEnabled;
 #endif
 
-    bool m_isITPDatabaseEnabled { false };
+    bool m_isITPDatabaseEnabled { true };
 
     bool m_referrerPolicyAttributeEnabled { false };
     bool m_interruptAudioOnPageVisibilityChangeEnabled { false };

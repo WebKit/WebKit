@@ -1,3 +1,15 @@
+2019-12-19  Kate Cheney  <katherine_cheney@apple.com>
+
+        Activate the SQLite database as an on-by-default feature
+        https://bugs.webkit.org/show_bug.cgi?id=204774
+        <rdar://problem/57592141>
+
+        Reviewed by Brent Fulgham.
+
+        The ITP SQLite database should be on by default.
+
+        * page/RuntimeEnabledFeatures.h:
+
 2019-12-19  Per Arne Vollan  <pvollan@apple.com>
 
         REGRESSION (r253530): Incorrect colors in Dark Mode
