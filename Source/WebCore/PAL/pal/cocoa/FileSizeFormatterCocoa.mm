@@ -28,7 +28,11 @@
 
 #import "NSFileSizeFormatterSPI.h"
 
+namespace PAL {
+
 String fileSizeDescription(uint64_t size)
 {
     return NSLocalizedFileSizeDescription(size, 0, 0);
 }
+
+} // namespace PAL

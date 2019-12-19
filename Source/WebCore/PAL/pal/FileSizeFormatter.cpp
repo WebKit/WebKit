@@ -28,6 +28,8 @@
 
 #include <wtf/text/StringConcatenateNumbers.h>
 
+namespace PAL {
+
 #if !PLATFORM(COCOA)
 
 String fileSizeDescription(uint64_t size)
@@ -44,3 +46,5 @@ String fileSizeDescription(uint64_t size)
 }
 
 #endif
+
+} // namespace PAL

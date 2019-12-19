@@ -1,3 +1,18 @@
+2019-12-19  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        pal/FileSizeFormatter.h declares fileSizeDescription in the top-level namespace
+        https://bugs.webkit.org/show_bug.cgi?id=205453
+
+        Reviewed by Tim Horton.
+
+        Move fileSizeDescription to the PAL namespace.
+
+        * pal/FileSizeFormatter.cpp:
+        (fileSizeDescription): Deleted.
+        * pal/FileSizeFormatter.h:
+        * pal/cocoa/FileSizeFormatterCocoa.mm:
+        (fileSizeDescription): Deleted.
+
 2019-12-18  Ben Nham  <nham@apple.com>
 
         Add network loading signposts

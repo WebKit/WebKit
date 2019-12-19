@@ -116,7 +116,7 @@ void HTMLAttachmentElement::setFile(RefPtr<File>&& file, UpdateDisplayAttributes
     if (updateAttributes == UpdateDisplayAttributes::Yes) {
         if (m_file) {
             setAttributeWithoutSynchronization(HTMLNames::titleAttr, m_file->name());
-            setAttributeWithoutSynchronization(HTMLNames::subtitleAttr, fileSizeDescription(m_file->size()));
+            setAttributeWithoutSynchronization(HTMLNames::subtitleAttr, PAL::fileSizeDescription(m_file->size()));
             setAttributeWithoutSynchronization(HTMLNames::typeAttr, m_file->type());
         } else {
             removeAttribute(HTMLNames::titleAttr);
@@ -218,7 +218,7 @@ void HTMLAttachmentElement::updateAttributes(Optional<uint64_t>&& newFileSize, c
         removeAttribute(HTMLNames::typeAttr);
 
     if (newFileSize)
-        setAttributeWithoutSynchronization(HTMLNames::subtitleAttr, fileSizeDescription(*newFileSize));
+        setAttributeWithoutSynchronization(HTMLNames::subtitleAttr, PAL::fileSizeDescription(*newFileSize));
     else
         removeAttribute(HTMLNames::subtitleAttr);
 
