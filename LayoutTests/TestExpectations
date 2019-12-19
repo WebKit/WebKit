@@ -1785,7 +1785,6 @@ imported/w3c/web-platform-tests/webrtc/RTCDataChannel-bufferedAmount.html [ Skip
 imported/w3c/web-platform-tests/webrtc/RTCTrackEvent-fire.html [ Skip ]
 imported/w3c/web-platform-tests/webrtc/rtcpeerconnection/iceGatheringState.html [ Skip ]
 imported/w3c/web-platform-tests/webrtc/RTCIceConnectionState-candidate-pair.https.html [ Skip ]
-imported/w3c/web-platform-tests/dom/nodes/remove-and-adopt-crash.html [ Skip ]
 
 # Uses legacy WebRTC API.
 imported/w3c/web-platform-tests/webrtc/rtcpeerconnection/setRemoteDescription.html [ Skip ]

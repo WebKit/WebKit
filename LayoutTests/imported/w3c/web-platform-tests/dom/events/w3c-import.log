@@ -33,6 +33,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/Event-dispatch-multiple-stopPropagation.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/Event-dispatch-omitted-capture.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/Event-dispatch-on-disabled-elements.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/events/Event-dispatch-order-at-target.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/Event-dispatch-order.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/Event-dispatch-other-document.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/Event-dispatch-propagation-stopped.html

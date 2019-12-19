@@ -126,6 +126,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/MutationObserver-disconnect.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/MutationObserver-document.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/MutationObserver-inner-outer.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/nodes/MutationObserver-sanity.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/MutationObserver-takeRecords.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Node-appendChild.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Node-baseURI.html
@@ -169,7 +170,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/ProcessingInstruction-literal-2.xhtml
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Text-constructor.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Text-splitText.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/nodes/adoption.window.js
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/append-on-Document.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/nodes/aria-attribute-reflection.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/aria-element-reflection.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/attributes.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/attributes.js
@@ -216,7 +219,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/productions.js
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/query-target-in-load-event.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/query-target-in-load-event.part.html
-/LayoutTests/imported/w3c/web-platform-tests/dom/nodes/remove-and-adopt-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/nodes/remove-and-adopt-thcrash.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/remove-unscopable.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/rootNode.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/selectors.js
