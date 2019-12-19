@@ -1080,9 +1080,9 @@ void KeyframeEffect::apply(RenderStyle& targetStyle)
 
     updateBlendingKeyframes(targetStyle);
 
-    updateAcceleratedAnimationState();
-
     auto computedTiming = getComputedTiming();
+
+    updateAcceleratedAnimationState(computedTiming);
 
     InspectorInstrumentation::willApplyKeyframeEffect(*m_target, *this, computedTiming);
 
@@ -1307,7 +1307,7 @@ TimingFunction* KeyframeEffect::timingFunctionForKeyframeAtIndex(size_t index)
     return nullptr;
 }
 
-void KeyframeEffect::updateAcceleratedAnimationState()
+void KeyframeEffect::updateAcceleratedAnimationState(ComputedEffectTiming computedTiming)
 {
     if (!m_shouldRunAccelerated)
         return;
@@ -1343,7 +1343,7 @@ void KeyframeEffect::updateAcceleratedAnimationState()
         return;
     }
 
-    if (playState == WebAnimation::PlayState::Running && localTime >= 0_s) {
+    if (playState == WebAnimation::PlayState::Running && computedTiming.phase == AnimationEffectPhase::Active) {
         if (m_lastRecordedAcceleratedAction != AcceleratedAction::Play)
             addPendingAcceleratedAction(AcceleratedAction::Play);
         return;
@@ -1393,17 +1393,20 @@ void KeyframeEffect::applyPendingAcceleratedActions()
     if (m_pendingAcceleratedActions.isEmpty())
         return;
 
-    auto* renderer = this->renderer();
-    if (!renderer || !renderer->isComposited()) {
-        // The renderer may no longer be composited because the accelerated animation ended before we had a chance to update it,
-        // in which case if we asked for the animation to stop, we can discard the current set of accelerated actions.
-        if (m_lastRecordedAcceleratedAction == AcceleratedAction::Stop)
-            m_pendingAcceleratedActions.clear();
-        return;
-    }
-
+    // In the case where we have a composited renderer, we'll be applying all pending accelerated actions.
+    // In case we don't have a composited renderer, then we won't be able to apply the pending accelerated
+    // actions. In both cases, we can clear the pending accelerated actions.
     auto pendingAcceleratedActions = m_pendingAcceleratedActions;
     m_pendingAcceleratedActions.clear();
+
+    auto* renderer = this->renderer();
+    if (!renderer || !renderer->isComposited()) {
+        // If we don't have a composited renderer when we were supposed to be applying an accelerated action other
+        // than to stop a running animation, then we won't manage to apply accelerations in the future either, so
+        // we should reset the flag to run accelerated.
+        m_lastRecordedAcceleratedAction = AcceleratedAction::Stop;
+        return;
+    }
 
     auto* compositedRenderer = downcast<RenderBoxModelObject>(renderer);
 

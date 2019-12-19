@@ -1,3 +1,29 @@
+2019-12-18  Antoine Quint  <graouts@apple.com>
+
+        Animations stop if new tab opened (and closed)
+        https://bugs.webkit.org/show_bug.cgi?id=202360
+        <rdar://problem/55923261>
+
+        Reviewed by Dean Jackson.
+
+        In the case where we would have a fill-forwards software animation when an animation that could be
+        accelerated started, we would fail to start an accelerated animation because we had no composited
+        renderer. However, we would still advertise a state of "running accelerated" and the DocumentTimeline
+        would not schedule ticks to run the animation in software.
+
+        We now only schedule accelerated animations once their delay phase is over and the animation is in its
+        "active" phase, which helps to only schedule accelerated animations once they actually have an effect
+        that is worth accelerating, and reset pending accelerated actions in case we try to start an accelerated
+        animation but fail to because we don't have a composited renderer.
+
+        Test: webanimations/animation-of-accelerated-property-after-non-accelerated-property.html
+
+        * animation/KeyframeEffect.cpp:
+        (WebCore::KeyframeEffect::apply):
+        (WebCore::KeyframeEffect::updateAcceleratedAnimationState):
+        (WebCore::KeyframeEffect::applyPendingAcceleratedActions):
+        * animation/KeyframeEffect.h:
+
 2019-12-18  Eric Carlson  <eric.carlson@apple.com>
 
         Remove more unused MediaPlayer methods

@@ -1,3 +1,21 @@
+2019-12-18  Antoine Quint  <graouts@apple.com>
+
+        Animations stop if new tab opened (and closed)
+        https://bugs.webkit.org/show_bug.cgi?id=202360
+        <rdar://problem/55923261>
+
+        Reviewed by Dean Jackson.
+
+        Add a ref test that checks that an element with a software animation followed by an animation of a property
+        that can be accelerated yields animations in both cases. 
+
+        Also, somehow, the WPT test dom/events/Event-dispatch-on-disabled-elements.html seems to now pass an extra
+        test that would fail on iOS and now behaves like macOS, so we remove that platform-specific expectation.
+
+        * platform/ios/imported/w3c/web-platform-tests/dom/events/Event-dispatch-on-disabled-elements-expected.txt
+        * webanimations/animation-of-accelerated-property-after-non-accelerated-property-expected.html: Added.
+        * webanimations/animation-of-accelerated-property-after-non-accelerated-property.html: Added.
+
 2019-12-18  Yury Semikhatsky  <yurys@chromium.org>
 
         Web Inspector: Runtime.enable reports duplicates (non existent) contexts
