@@ -161,7 +161,7 @@ ExceptionOr<void> MessagePort::postMessage(JSC::JSGlobalObject& state, JSC::JSVa
 
     LOG(MessagePorts, "Actually posting message to port %s (to be received by port %s)", m_identifier.logString().utf8().data(), m_remoteIdentifier.logString().utf8().data());
 
-    MessagePortChannelProvider::fromContext(*m_scriptExecutionContext).postMessageToRemote(message, m_remoteIdentifier);
+    MessagePortChannelProvider::fromContext(*m_scriptExecutionContext).postMessageToRemote(WTFMove(message), m_remoteIdentifier);
     return { };
 }
 

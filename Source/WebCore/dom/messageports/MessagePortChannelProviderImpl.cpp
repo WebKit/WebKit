@@ -86,9 +86,9 @@ void MessagePortChannelProviderImpl::messagePortClosed(const MessagePortIdentifi
     });
 }
 
-void MessagePortChannelProviderImpl::postMessageToRemote(const MessageWithMessagePorts& message, const MessagePortIdentifier& remoteTarget)
+void MessagePortChannelProviderImpl::postMessageToRemote(MessageWithMessagePorts&& message, const MessagePortIdentifier& remoteTarget)
 {
-    performActionOnMainThread([registry = &m_registry, message = MessageWithMessagePorts { message }, remoteTarget]() mutable {
+    performActionOnMainThread([registry = &m_registry, message = WTFMove(message), remoteTarget]() mutable {
         if (registry->didPostMessageToRemote(WTFMove(message), remoteTarget))
             MessagePort::notifyMessageAvailable(remoteTarget);
     });

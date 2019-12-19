@@ -51,7 +51,7 @@ public:
     
     virtual void takeAllMessagesForPort(const MessagePortIdentifier&, CompletionHandler<void(Vector<MessageWithMessagePorts>&&, Function<void()>&&)>&&) = 0;
 
-    virtual void postMessageToRemote(const MessageWithMessagePorts&, const MessagePortIdentifier& remoteTarget) = 0;
+    virtual void postMessageToRemote(MessageWithMessagePorts&&, const MessagePortIdentifier& remoteTarget) = 0;
 
     enum class HasActivity {
         Yes,

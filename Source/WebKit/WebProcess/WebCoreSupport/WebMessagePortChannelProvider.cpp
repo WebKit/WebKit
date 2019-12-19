@@ -85,7 +85,7 @@ void WebMessagePortChannelProvider::takeAllMessagesForPort(const MessagePortIden
     }, 0);
 }
 
-void WebMessagePortChannelProvider::postMessageToRemote(const MessageWithMessagePorts& message, const MessagePortIdentifier& remoteTarget)
+void WebMessagePortChannelProvider::postMessageToRemote(MessageWithMessagePorts&& message, const MessagePortIdentifier& remoteTarget)
 {
     networkProcessConnection().send(Messages::NetworkConnectionToWebProcess::PostMessageToRemote { message, remoteTarget }, 0);
 }
