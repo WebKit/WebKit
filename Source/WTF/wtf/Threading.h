@@ -281,14 +281,13 @@ protected:
     // One time initialization for this class as a whole.
     // This method must be called before initializeTLS() and it is not thread-safe.
     static void initializeTLSKey();
-
+#endif
     // This thread-specific destructor is called 2 times when thread terminates:
     // - first, when all the other thread-specific destructors are called, it simply remembers it was 'destroyed once'
     // and (1) re-sets itself into the thread-specific slot or (2) constructs thread local value to call it again later.
     // - second, after all thread-specific destructors were invoked, it gets called again - this time, we deref the
     // Thread in the TLS, completing the cleanup.
     static void destructTLS(void* data);
-#endif
 
     // Creates and puts an instance of Thread into thread-specific storage.
     static Thread& initializeTLS(Ref<Thread>&&);
