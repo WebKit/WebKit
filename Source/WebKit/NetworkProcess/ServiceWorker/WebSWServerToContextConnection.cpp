@@ -125,11 +125,6 @@ void WebSWServerToContextConnection::claimCompleted(uint64_t requestIdentifier)
     send(Messages::WebSWContextManagerConnection::ClaimCompleted { requestIdentifier });
 }
 
-void WebSWServerToContextConnection::didFinishSkipWaiting(uint64_t callbackID)
-{
-    send(Messages::WebSWContextManagerConnection::DidFinishSkipWaiting { callbackID });
-}
-
 void WebSWServerToContextConnection::connectionIsNoLongerNeeded()
 {
     m_connection.serverToContextConnectionNoLongerNeeded();

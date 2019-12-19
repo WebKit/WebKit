@@ -1,5 +1,22 @@
 2019-12-19  Chris Dumez  <cdumez@apple.com>
 
+        imported/w3c/web-platform-tests/service-workers/service-worker/skip-waiting-installed.https.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=205408
+
+        Reviewed by Youenn Fablet.
+
+        * NetworkProcess/ServiceWorker/WebSWServerToContextConnection.cpp:
+        (WebKit::WebSWServerToContextConnection::didFinishSkipWaiting): Deleted.
+        * NetworkProcess/ServiceWorker/WebSWServerToContextConnection.h:
+        * NetworkProcess/ServiceWorker/WebSWServerToContextConnection.messages.in:
+        * WebProcess/Storage/WebSWContextManagerConnection.cpp:
+        (WebKit::WebSWContextManagerConnection::skipWaiting):
+        (WebKit::WebSWContextManagerConnection::didFinishSkipWaiting): Deleted.
+        * WebProcess/Storage/WebSWContextManagerConnection.h:
+        * WebProcess/Storage/WebSWContextManagerConnection.messages.in:
+
+2019-12-19  Chris Dumez  <cdumez@apple.com>
+
         Stop blocking the worker thread in WorkerMessagePortChannelProvider::postMessageToRemote()
         https://bugs.webkit.org/show_bug.cgi?id=205414
 

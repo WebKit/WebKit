@@ -286,11 +286,9 @@ void WebSWContextManagerConnection::setServiceWorkerHasPendingEvents(ServiceWork
     m_connectionToNetworkProcess->send(Messages::WebSWServerToContextConnection::SetServiceWorkerHasPendingEvents(serviceWorkerIdentifier, hasPendingEvents), 0);
 }
 
-void WebSWContextManagerConnection::skipWaiting(ServiceWorkerIdentifier serviceWorkerIdentifier, WTF::Function<void()>&& callback)
+void WebSWContextManagerConnection::skipWaiting(ServiceWorkerIdentifier serviceWorkerIdentifier, CompletionHandler<void()>&& callback)
 {
-    auto callbackID = ++m_previousRequestIdentifier;
-    m_skipWaitingRequests.add(callbackID, WTFMove(callback));
-    m_connectionToNetworkProcess->send(Messages::WebSWServerToContextConnection::SkipWaiting(serviceWorkerIdentifier, callbackID), 0);
+    m_connectionToNetworkProcess->sendWithAsyncReply(Messages::WebSWServerToContextConnection::SkipWaiting(serviceWorkerIdentifier), WTFMove(callback));
 }
 
 void WebSWContextManagerConnection::setScriptResource(ServiceWorkerIdentifier serviceWorkerIdentifier, const URL& url, const ServiceWorkerContextData::ImportedScript& script)
@@ -344,12 +342,6 @@ void WebSWContextManagerConnection::claim(WebCore::ServiceWorkerIdentifier servi
 void WebSWContextManagerConnection::claimCompleted(uint64_t claimRequestIdentifier)
 {
     if (auto callback = m_claimRequests.take(claimRequestIdentifier))
-        callback();
-}
-
-void WebSWContextManagerConnection::didFinishSkipWaiting(uint64_t callbackID)
-{
-    if (auto callback = m_skipWaitingRequests.take(callbackID))
         callback();
 }
 
