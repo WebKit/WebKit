@@ -1,3 +1,21 @@
+2019-12-19  youenn fablet  <youenn@apple.com>
+
+        Safari resumes autoplay audio elements after getUserMedia
+        https://bugs.webkit.org/show_bug.cgi?id=197688
+        <rdar://problem/57674395>
+
+        Reviewed by Eric Carlson.
+
+        Covered by updated test.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::mediaStreamCaptureStarted):
+        Previously, we were piggybacking on resuming autoplay, which happens after interuption.
+        This is incorrect as it tries to play paused elements.
+        Instead we just try to play a media element if it can autoplay without changing the m_autoplaying value.
+        * html/HTMLMediaElement.h:
+        (WebCore::HTMLMediaElement::mediaStreamCaptureStarted): Deleted.
+
 2019-12-18  Sihui Liu  <sihui_liu@apple.com>
 
         IndexedDB: perform IDBServer work only on background thread

@@ -1,3 +1,14 @@
+2019-12-19  youenn fablet  <youenn@apple.com>
+
+        Safari resumes autoplay audio elements after getUserMedia
+        https://bugs.webkit.org/show_bug.cgi?id=197688
+        <rdar://problem/57674395>
+
+        Reviewed by Eric Carlson.
+
+        * webrtc/video-autoplay-expected.txt:
+        * webrtc/video-autoplay.html:
+
 2019-12-18  Ryosuke Niwa  <rniwa@webkit.org>
 
         REGRESSION: [ Mac wk2 ] tiled-drawing/scrolling/fast-scroll-div-latched-mainframe-with-handler.html is a flakey failure

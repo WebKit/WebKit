@@ -8164,6 +8164,14 @@ bool HTMLMediaElement::hasMediaStreamSource() const
 #endif
 }
 
+#if ENABLE(MEDIA_STREAM)
+void HTMLMediaElement::mediaStreamCaptureStarted()
+{
+    if (canTransitionFromAutoplayToPlay())
+        play();
+}
+#endif
+
 void HTMLMediaElement::enqueueTaskForDispatcher(Function<void()>&& function)
 {
     if (!isMainThread()) {

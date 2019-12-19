@@ -559,7 +559,7 @@ public:
     WEBCORE_EXPORT const MediaResourceLoader* lastMediaResourceLoaderForTesting() const;
 
 #if ENABLE(MEDIA_STREAM)
-    void mediaStreamCaptureStarted() { resumeAutoplaying(); }
+    void mediaStreamCaptureStarted();
     bool hasMediaStreamSrcObject() const { return m_mediaProvider && WTF::holds_alternative<RefPtr<MediaStream>>(*m_mediaProvider); }
 #endif
 
