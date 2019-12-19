@@ -165,7 +165,7 @@ bool GraphicsContext3D::reshapeFBOs(const IntSize& size)
         GLint sampleCount = std::min(4, maxSampleCount);
         gl::BindFramebuffer(GL_FRAMEBUFFER, m_multisampleFBO);
         gl::BindRenderbuffer(GL_RENDERBUFFER, m_multisampleColorBuffer);
-        getExtensions().renderbufferStorageMultisample(GL_RENDERBUFFER, sampleCount, GL_RGBA8, width, height);
+        getExtensions().renderbufferStorageMultisample(GL_RENDERBUFFER, sampleCount, m_internalColorFormat, width, height);
         gl::FramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, m_multisampleColorBuffer);
         if (m_attrs.stencil || m_attrs.depth) {
             gl::BindRenderbuffer(GL_RENDERBUFFER, m_multisampleDepthStencilBuffer);

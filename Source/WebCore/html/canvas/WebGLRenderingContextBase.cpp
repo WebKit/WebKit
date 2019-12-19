@@ -3648,11 +3648,15 @@ void WebGLRenderingContextBase::shaderSource(WebGLShader* shader, const String& 
 {
     if (isContextLostOrPending() || !validateWebGLObject("shaderSource", shader))
         return;
+#if USE(ANGLE)
+    m_context->shaderSource(objectOrZero(shader), string);
+#else
     String stringWithoutComments = StripComments(string).result();
     if (!validateString("shaderSource", stringWithoutComments))
         return;
-    shader->setSource(string);
     m_context->shaderSource(objectOrZero(shader), stringWithoutComments);
+#endif
+    shader->setSource(string);
 }
 
 void WebGLRenderingContextBase::stencilFunc(GC3Denum func, GC3Dint ref, GC3Duint mask)

@@ -1,3 +1,19 @@
+2019-12-19  James Darpinian  <jdarpinian@chromium.org>
+
+        ANGLE: Fix last WebGL conformance regressions
+        https://bugs.webkit.org/show_bug.cgi?id=205306
+
+        Fixes the last few WebGL conformance regressions when enabling ANGLE on AMD GPUs on Mac.
+        The combination of alpha:false and antialias:true was broken, and validation of
+        non-ascii characters in comments was broken by a recent change to the test.
+
+        Reviewed by Dean Jackson.
+
+        * html/canvas/WebGLRenderingContextBase.cpp:
+        (WebCore::WebGLRenderingContextBase::shaderSource):
+        * platform/graphics/angle/GraphicsContext3DANGLE.cpp:
+        (WebCore::GraphicsContext3D::reshapeFBOs):
+
 2019-12-19  Alan Bujtas  <zalan@apple.com>
 
         Unreviewed, rolling out r253711.
