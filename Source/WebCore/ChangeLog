@@ -1,3 +1,51 @@
+2019-12-19  Charlie Turner  <cturner@igalia.com>
+
+        [GStreamer][EME] Notify all elements waiting for CDM attachment
+        https://bugs.webkit.org/show_bug.cgi?id=205382
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        When multiple demuxers are in flight asking for a CDM instance,
+        only one of them was getting woken up when a CDM was attached,
+        leaving the other(s) blocking their respective streaming threads
+        and locking the pipeline. Switch back to a condition variable from
+        a semaphore to fix this issue.
+
+        Covered by existing tests.
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivateGStreamer::MediaPlayerPrivateGStreamer):
+        Initialize the new isPlayerShuttingDown predicate to false.
+        (WebCore::MediaPlayerPrivateGStreamer::~MediaPlayerPrivateGStreamer):
+        Set the new predicate for player shutdown at the start of
+        destruction, so that background threads can known when the should
+        abort their operations as a result of being unblocked by the
+        destructor.
+        (WebCore::MediaPlayerPrivateGStreamer::handleSyncMessage): Go back
+        to using condition variables, so we can unblock more than one
+        waiter.
+        (WebCore::MediaPlayerPrivateGStreamer::cdmInstanceAttached):
+        Helper predicate to make clear that the presence of a valid
+        CDMInstance pointer is a sign that it has been attached.
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.h: Add
+        an isPlayerShuttingDown method using an Atomic<bool>. We need this
+        to avoid racing set_context() on a decryptor element with the
+        pipeline being set to NULL. Before we were using the notifier as a
+        proxy for player shutdown, since it is invalidated during player
+        destruction. This is not a maintainable solution, since other
+        programmers would feel free to reorder the position at which the
+        notifier is invalidated, and then introduce a very hard to find
+        bug. By introducing this flag at the start of destruction, we will
+        always have a known way to check, after a streaming thread has
+        woken up again, whether we should call any player methods, or
+        return early due to shutdown in progress.
+        (WebCore::MediaPlayerPrivateGStreamer::isPlayerShuttingDown
+        const): Predicate for player in the process of shutdown. This
+        should be used by background threads, which upon wakeup, may need
+        to be aware of whether they will be in a race with the pipeline
+        going to NULL.
+        (WebCore::MediaPlayerPrivateGStreamer::isCDMAttached const):
+
 2019-12-19  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [CoordinatedGraphics] ThreadedDisplayRefreshMonitor is never released

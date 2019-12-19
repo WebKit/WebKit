@@ -34,11 +34,11 @@
 #include <glib.h>
 #include <gst/gst.h>
 #include <gst/pbutils/install-plugins.h>
+#include <wtf/Atomics.h>
 #include <wtf/Condition.h>
 #include <wtf/Forward.h>
 #include <wtf/RunLoop.h>
 #include <wtf/WeakPtr.h>
-#include <wtf/threads/BinarySemaphore.h>
 
 #if ENABLE(VIDEO_TRACK)
 #include "TrackPrivateBaseGStreamer.h"
@@ -369,7 +369,8 @@ protected:
     ImageOrientation m_videoSourceOrientation;
 
 #if ENABLE(ENCRYPTED_MEDIA)
-    BinarySemaphore m_cdmAttachmentSemaphore;
+    Lock m_cdmAttachmentMutex;
+    Condition m_cdmAttachmentCondition;
     RefPtr<const CDMInstance> m_cdmInstance;
 
     Lock m_protectionMutex; // Guards access to m_handledProtectionEvents.
@@ -381,6 +382,7 @@ protected:
     Optional<GstVideoDecoderPlatform> m_videoDecoderPlatform;
 
 private:
+    bool isPlayerShuttingDown() const { return m_isPlayerShuttingDown.load(); }
     MediaTime maxTimeLoaded() const;
     GstElement* pipeline() const { return m_pipeline.get(); }
     void setVideoSourceOrientation(ImageOrientation);
@@ -445,11 +447,13 @@ private:
     void clearTracks();
 
 #if ENABLE(ENCRYPTED_MEDIA)
+    bool isCDMAttached() const { return m_cdmInstance; }
     void attemptToDecryptWithLocalInstance();
     void initializationDataEncountered(InitData&&);
     void setWaitingForKey(bool);
 #endif
 
+    Atomic<bool> m_isPlayerShuttingDown;
 #if ENABLE(VIDEO_TRACK)
     GRefPtr<GstElement> m_textAppSink;
     GRefPtr<GstPad> m_textAppSinkPad;

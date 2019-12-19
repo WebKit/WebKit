@@ -369,11 +369,13 @@ MediaPlayerPrivateGStreamer::MediaPlayerPrivateGStreamer(MediaPlayer* player)
 #if USE(GLIB)
     m_readyTimerHandler.setPriority(G_PRIORITY_DEFAULT_IDLE);
 #endif
+    m_isPlayerShuttingDown.store(false);
 }
 
 MediaPlayerPrivateGStreamer::~MediaPlayerPrivateGStreamer()
 {
     GST_DEBUG_OBJECT(pipeline(), "Disposing player");
+    m_isPlayerShuttingDown.store(true);
 
 #if ENABLE(VIDEO_TRACK)
     for (auto& track : m_audioTracks.values())
@@ -443,7 +445,10 @@ MediaPlayerPrivateGStreamer::~MediaPlayerPrivateGStreamer()
     cancelRepaint(true);
 
 #if ENABLE(ENCRYPTED_MEDIA)
-    m_cdmAttachmentSemaphore.signal();
+    {
+        LockHolder lock(m_cdmAttachmentMutex);
+        m_cdmAttachmentCondition.notifyAll();
+    }
 #endif
 
     // The change to GST_STATE_NULL state is always synchronous. So after this gets executed we don't need to worry
@@ -1781,9 +1786,16 @@ bool MediaPlayerPrivateGStreamer::handleSyncMessage(GstMessage* message)
         initializationDataEncountered(WTFMove(initData));
 
         GST_INFO_OBJECT(pipeline(), "waiting for a CDM instance");
-        if (m_cdmAttachmentSemaphore.waitFor(4_s)
-            && m_notifier->isValid() // Check the player is not being destroyed.
-            && !m_cdmInstance->keySystem().isEmpty()) {
+
+        bool didCDMAttach = false;
+        {
+            auto cdmAttachmentLocker = holdLock(m_cdmAttachmentMutex);
+            didCDMAttach = m_cdmAttachmentCondition.waitFor(m_cdmAttachmentMutex, 4_s, [this]() {
+                return isCDMAttached();
+            });
+        }
+
+        if (didCDMAttach && !isPlayerShuttingDown() && !m_cdmInstance->keySystem().isEmpty()) {
             const char* preferredKeySystemUuid = GStreamerEMEUtilities::keySystemToUuid(m_cdmInstance->keySystem());
             GST_INFO_OBJECT(pipeline(), "working with key system %s, continuing with key system %s on %s", m_cdmInstance->keySystem().utf8().data(), preferredKeySystemUuid, GST_MESSAGE_SRC_NAME(message));
 
@@ -3611,7 +3623,9 @@ void MediaPlayerPrivateGStreamer::cdmInstanceAttached(CDMInstance& instance)
 
     GST_DEBUG_OBJECT(m_pipeline.get(), "CDM proxy instance %p dispatched as context", m_cdmInstance->proxyCDM().get());
 
-    m_cdmAttachmentSemaphore.signal();
+    LockHolder lock(m_cdmAttachmentMutex);
+    // We must notify all waiters, since several demuxers can be simultaneously waiting for a CDM.
+    m_cdmAttachmentCondition.notifyAll();
 }
 
 void MediaPlayerPrivateGStreamer::cdmInstanceDetached(CDMInstance& instance)
