@@ -1961,4 +1961,3 @@ webkit.org/b/204820 [ Catalina+ ] fast/text/emoji-gender-6.html [ ImageOnlyFailu
 webkit.org/b/204820 [ Catalina+ ] fast/text/emoji-gender-8.html [ ImageOnlyFailure ]
 webkit.org/b/204820 [ Catalina+ ] fast/text/emoji-gender-9.html [ ImageOnlyFailure ]
 
-webkit.org/b/205164 imported/w3c/web-platform-tests/html/semantics/forms/form-submission-0/form-double-submit-3.html [ Pass Failure ]
