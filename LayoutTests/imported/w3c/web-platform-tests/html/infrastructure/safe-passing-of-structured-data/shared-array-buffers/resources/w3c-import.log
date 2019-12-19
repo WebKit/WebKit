@@ -1,0 +1,57 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/html/infrastructure/safe-passing-of-structured-data/shared-array-buffers/resources/blank.html
+/LayoutTests/imported/w3c/web-platform-tests/html/infrastructure/safe-passing-of-structured-data/shared-array-buffers/resources/broadcastchannel-iframe.html
+/LayoutTests/imported/w3c/web-platform-tests/html/infrastructure/safe-passing-of-structured-data/shared-array-buffers/resources/broadcastchannel-iframe.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/html/infrastructure/safe-passing-of-structured-data/shared-array-buffers/resources/broadcastchannel-sharedworker.js
+/LayoutTests/imported/w3c/web-platform-tests/html/infrastructure/safe-passing-of-structured-data/shared-array-buffers/resources/broadcastchannel-sharedworker.js.headers
+/LayoutTests/imported/w3c/web-platform-tests/html/infrastructure/safe-passing-of-structured-data/shared-array-buffers/resources/broadcastchannel-worker.js
+/LayoutTests/imported/w3c/web-platform-tests/html/infrastructure/safe-passing-of-structured-data/shared-array-buffers/resources/broadcastchannel-worker.js.headers
+/LayoutTests/imported/w3c/web-platform-tests/html/infrastructure/safe-passing-of-structured-data/shared-array-buffers/resources/iframe-failure.html
+/LayoutTests/imported/w3c/web-platform-tests/html/infrastructure/safe-passing-of-structured-data/shared-array-buffers/resources/iframe-failure.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/html/infrastructure/safe-passing-of-structured-data/shared-array-buffers/resources/iframe-messagechannel-complex.html
+/LayoutTests/imported/w3c/web-platform-tests/html/infrastructure/safe-passing-of-structured-data/shared-array-buffers/resources/iframe-messagechannel-complex.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/html/infrastructure/safe-passing-of-structured-data/shared-array-buffers/resources/iframe-messagechannel-failure.html
+/LayoutTests/imported/w3c/web-platform-tests/html/infrastructure/safe-passing-of-structured-data/shared-array-buffers/resources/iframe-messagechannel-failure.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/html/infrastructure/safe-passing-of-structured-data/shared-array-buffers/resources/incrementer-iframe-domain.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/html/infrastructure/safe-passing-of-structured-data/shared-array-buffers/resources/incrementer-iframe-domain.sub.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/html/infrastructure/safe-passing-of-structured-data/shared-array-buffers/resources/incrementer-iframe-messagechannel.html
+/LayoutTests/imported/w3c/web-platform-tests/html/infrastructure/safe-passing-of-structured-data/shared-array-buffers/resources/incrementer-iframe-messagechannel.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/html/infrastructure/safe-passing-of-structured-data/shared-array-buffers/resources/incrementer-iframe.html
+/LayoutTests/imported/w3c/web-platform-tests/html/infrastructure/safe-passing-of-structured-data/shared-array-buffers/resources/incrementer-iframe.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/html/infrastructure/safe-passing-of-structured-data/shared-array-buffers/resources/incrementer-popup.html
+/LayoutTests/imported/w3c/web-platform-tests/html/infrastructure/safe-passing-of-structured-data/shared-array-buffers/resources/incrementer-popup.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/html/infrastructure/safe-passing-of-structured-data/shared-array-buffers/resources/incrementer-worker-with-channel.js
+/LayoutTests/imported/w3c/web-platform-tests/html/infrastructure/safe-passing-of-structured-data/shared-array-buffers/resources/incrementer-worker-with-channel.js.headers
+/LayoutTests/imported/w3c/web-platform-tests/html/infrastructure/safe-passing-of-structured-data/shared-array-buffers/resources/incrementer-worker.js
+/LayoutTests/imported/w3c/web-platform-tests/html/infrastructure/safe-passing-of-structured-data/shared-array-buffers/resources/incrementer-worker.js.headers
+/LayoutTests/imported/w3c/web-platform-tests/html/infrastructure/safe-passing-of-structured-data/shared-array-buffers/resources/nested-iframe-1.html
+/LayoutTests/imported/w3c/web-platform-tests/html/infrastructure/safe-passing-of-structured-data/shared-array-buffers/resources/nested-iframe-1.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/html/infrastructure/safe-passing-of-structured-data/shared-array-buffers/resources/nested-iframe-2.html
+/LayoutTests/imported/w3c/web-platform-tests/html/infrastructure/safe-passing-of-structured-data/shared-array-buffers/resources/nested-iframe-2.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/html/infrastructure/safe-passing-of-structured-data/shared-array-buffers/resources/nested-iframe-3.html
+/LayoutTests/imported/w3c/web-platform-tests/html/infrastructure/safe-passing-of-structured-data/shared-array-buffers/resources/nested-iframe-3.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/html/infrastructure/safe-passing-of-structured-data/shared-array-buffers/resources/nested-iframe-4-incrementer.html
+/LayoutTests/imported/w3c/web-platform-tests/html/infrastructure/safe-passing-of-structured-data/shared-array-buffers/resources/nested-iframe-4-incrementer.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/html/infrastructure/safe-passing-of-structured-data/shared-array-buffers/resources/nested-worker-success.js
+/LayoutTests/imported/w3c/web-platform-tests/html/infrastructure/safe-passing-of-structured-data/shared-array-buffers/resources/nested-worker-success.js.headers
+/LayoutTests/imported/w3c/web-platform-tests/html/infrastructure/safe-passing-of-structured-data/shared-array-buffers/resources/serviceworker-failure.js
+/LayoutTests/imported/w3c/web-platform-tests/html/infrastructure/safe-passing-of-structured-data/shared-array-buffers/resources/serviceworker-failure.js.headers
+/LayoutTests/imported/w3c/web-platform-tests/html/infrastructure/safe-passing-of-structured-data/shared-array-buffers/resources/sharedworker-failure.js
+/LayoutTests/imported/w3c/web-platform-tests/html/infrastructure/safe-passing-of-structured-data/shared-array-buffers/resources/sharedworker-failure.js.headers
+/LayoutTests/imported/w3c/web-platform-tests/html/infrastructure/safe-passing-of-structured-data/shared-array-buffers/resources/test-incrementer.js
+/LayoutTests/imported/w3c/web-platform-tests/html/infrastructure/safe-passing-of-structured-data/shared-array-buffers/resources/test-sab.js

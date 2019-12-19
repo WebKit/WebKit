@@ -26,6 +26,10 @@ PASS value = 1e
 PASS value = +1 
 PASS value = '+' 
 PASS value = '-' 
-PASS value with a leading whitespace 
+PASS value with a leading tab 
+PASS value with a leading newline 
+PASS value with a leading form feed 
+PASS value with a leading carriage return 
+PASS value with a leading space 
 PASS value = 1trailing junk 
 

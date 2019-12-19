@@ -1,0 +1,7 @@
+Blocked access to external URL https://www.localhost:9443/html/semantics/embedded-content/the-iframe-element/support/iframe-tried-to-be-navigated-by-its-child.html
+
+
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT A => B => B: B should be able to navigate B. Test timed out
+

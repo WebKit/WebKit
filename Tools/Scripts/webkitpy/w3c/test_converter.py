@@ -264,7 +264,7 @@ class _W3CTestConverter(HTMLParser):
         self.converted_data.extend(['&#', name, ';'])
 
     def handle_comment(self, data):
-        self.converted_data.extend(['<!-- ', data, ' -->'])
+        self.converted_data.extend(['<!--', data, '-->'])
         self.add_webkit_test_runner_options_if_needed()
 
     def handle_decl(self, decl):

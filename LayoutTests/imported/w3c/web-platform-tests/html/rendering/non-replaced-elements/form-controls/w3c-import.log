@@ -16,5 +16,7 @@ None
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/form-controls/button-style.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/form-controls/resets.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/form-controls/select-sizing-001-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/form-controls/select-sizing-001.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/form-controls/text-transform-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/form-controls/text-transform.html

@@ -3725,9 +3725,6 @@ webkit.org/b/195670 imported/w3c/web-platform-tests/html/semantics/embedded-cont
 webkit.org/b/195670 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/loading-the-media-resource/resource-selection-pointer-remove-source.html [ Failure ]
 webkit.org/b/195670 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/loading-the-media-resource/resource-selection-pointer-remove-text.html [ Failure ]
 
-webkit.org/b/195671 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe_sandbox_navigation_download_allow_downloads_without_user_activation.sub.tentative.html [ Failure ]
-webkit.org/b/195671 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe_sandbox_navigation_download_block_downloads_without_user_activation.sub.tentative.html [ Failure ]
-
 webkit.org/b/195712 inspector/canvas/recording-html-2d.html [ Failure ]
 
 webkit.org/b/196061 editing/pasteboard/smart-paste-paragraph-001.html [ Failure ]

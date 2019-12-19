@@ -1,0 +1,8 @@
+CONSOLE MESSAGE: line 21: Blocked script execution in 'about:srcdoc' because the document's frame is sandboxed and the 'allow-scripts' permission is not set.
+CONSOLE MESSAGE: line 2: TypeError: null is not an object (evaluating 'window.opener.top')
+
+
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT Sandboxed => unsandboxed popup Test timed out
+

@@ -685,9 +685,13 @@ ReflectionTests.reflects = function(data, idlName, idlObj, domName, domObj) {
                 domTests.push(data.keywords[i].toUpperCase());
                 idlTests.push(data.keywords[i].toUpperCase());
             }
-            if (data.keywords[i] != data.keywords[i].replace(/k/g, "\u212A")) {
+            if (data.keywords[i].indexOf("k") != -1) {
                 domTests.push(data.keywords[i].replace(/k/g, "\u212A"));
                 idlTests.push(data.keywords[i].replace(/k/g, "\u212A"));
+            }
+            if (data.keywords[i].indexOf("s") != -1) {
+                domTests.push(data.keywords[i].replace(/s/g, "\u017F"));
+                idlTests.push(data.keywords[i].replace(/s/g, "\u017F"));
             }
         }
 
@@ -900,6 +904,7 @@ for (var element in elements) {
     ReflectionTests.reflects({type: "enum", keywords: ["ltr", "rtl", "auto"]}, "dir", element);
     ReflectionTests.reflects("string", "className", element, "class");
     ReflectionTests.reflects("tokenlist", "classList", element, "class");
+    ReflectionTests.reflects("boolean", "autofocus", element);
     ReflectionTests.reflects("boolean", "hidden", element);
     ReflectionTests.reflects("string", "accessKey", element);
     // Don't try to test the defaultVal -- it should be either 0 or -1, but the

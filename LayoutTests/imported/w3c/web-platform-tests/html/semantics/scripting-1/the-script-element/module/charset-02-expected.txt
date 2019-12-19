@@ -1,8 +1,5 @@
-CONSOLE MESSAGE: line 2: ReferenceError: Can't find variable: executed_utf8_bom
-CONSOLE MESSAGE: line 2: ReferenceError: Can't find variable: executed_utf16be_bom
-CONSOLE MESSAGE: line 2: ReferenceError: Can't find variable: executed_utf16le_bom
 
-FAIL UTF-8 module script with UTF-8 BOM assert_equals: Should be decoded as UTF-8 expected (string) "三村かな子" but got (undefined) undefined
-PASS UTF-16 module script with UTF-16BE BOM 
-PASS UTF-16 module script with UTF-16LE BOM 
+PASS UTF-8 module script with UTF-8 BOM 
+FAIL UTF-16 module script with UTF-16BE BOM assert_equals: Should result in compile error because of UTF-16BE BOM expected (undefined) undefined but got (string) "三村かな子"
+FAIL UTF-16 module script with UTF-16LE BOM assert_equals: Should result in compile error because of UTF-16LE BOM expected (undefined) undefined but got (string) "三村かな子"
 

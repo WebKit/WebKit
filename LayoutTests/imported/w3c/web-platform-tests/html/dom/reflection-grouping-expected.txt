@@ -183,6 +183,45 @@ PASS p.className (<p class>): IDL set to "\0"
 PASS p.className (<p class>): IDL set to null 
 PASS p.className (<p class>): IDL set to object "test-toString" 
 PASS p.className (<p class>): IDL set to object "test-valueOf" 
+FAIL p.autofocus: typeof IDL attribute assert_equals: expected "boolean" but got "undefined"
+FAIL p.autofocus: IDL get with DOM attribute unset assert_equals: expected (boolean) false but got (undefined) undefined
+FAIL p.autofocus: setAttribute() to "" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL p.autofocus: setAttribute() to " foo " assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL p.autofocus: setAttribute() to undefined assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL p.autofocus: setAttribute() to null assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL p.autofocus: setAttribute() to 7 assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL p.autofocus: setAttribute() to 1.5 assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL p.autofocus: setAttribute() to "5%" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL p.autofocus: setAttribute() to "+100" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL p.autofocus: setAttribute() to ".5" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL p.autofocus: setAttribute() to true assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL p.autofocus: setAttribute() to false assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL p.autofocus: setAttribute() to object "[object Object]" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL p.autofocus: setAttribute() to NaN assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL p.autofocus: setAttribute() to Infinity assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL p.autofocus: setAttribute() to -Infinity assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL p.autofocus: setAttribute() to "\0" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL p.autofocus: setAttribute() to object "test-toString" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL p.autofocus: setAttribute() to object "test-valueOf" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL p.autofocus: setAttribute() to "autofocus" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL p.autofocus: IDL set to "" assert_equals: hasAttribute() expected false but got true
+FAIL p.autofocus: IDL set to " foo " assert_equals: IDL get expected (boolean) true but got (string) " foo "
+FAIL p.autofocus: IDL set to undefined assert_equals: hasAttribute() expected false but got true
+FAIL p.autofocus: IDL set to null assert_equals: hasAttribute() expected false but got true
+FAIL p.autofocus: IDL set to 7 assert_equals: IDL get expected (boolean) true but got (number) 7
+FAIL p.autofocus: IDL set to 1.5 assert_equals: IDL get expected (boolean) true but got (number) 1.5
+FAIL p.autofocus: IDL set to "5%" assert_equals: IDL get expected (boolean) true but got (string) "5%"
+FAIL p.autofocus: IDL set to "+100" assert_equals: IDL get expected (boolean) true but got (string) "+100"
+FAIL p.autofocus: IDL set to ".5" assert_equals: IDL get expected (boolean) true but got (string) ".5"
+PASS p.autofocus: IDL set to true 
+FAIL p.autofocus: IDL set to false assert_equals: hasAttribute() expected false but got true
+FAIL p.autofocus: IDL set to object "[object Object]" assert_equals: IDL get expected (boolean) true but got (object) object "[object Object]"
+FAIL p.autofocus: IDL set to NaN assert_equals: hasAttribute() expected false but got true
+FAIL p.autofocus: IDL set to Infinity assert_equals: IDL get expected (boolean) true but got (number) Infinity
+FAIL p.autofocus: IDL set to -Infinity assert_equals: IDL get expected (boolean) true but got (number) -Infinity
+FAIL p.autofocus: IDL set to "\0" assert_equals: IDL get expected (boolean) true but got (string) "\0"
+FAIL p.autofocus: IDL set to object "test-toString" assert_equals: IDL get expected (boolean) true but got (object) object "test-toString"
+FAIL p.autofocus: IDL set to object "test-valueOf" assert_equals: IDL get expected (boolean) true but got (object) object "test-valueOf"
 PASS p.hidden: typeof IDL attribute 
 PASS p.hidden: IDL get with DOM attribute unset 
 PASS p.hidden: setAttribute() to "" 
@@ -506,6 +545,45 @@ PASS hr.className (<hr class>): IDL set to "\0"
 PASS hr.className (<hr class>): IDL set to null 
 PASS hr.className (<hr class>): IDL set to object "test-toString" 
 PASS hr.className (<hr class>): IDL set to object "test-valueOf" 
+FAIL hr.autofocus: typeof IDL attribute assert_equals: expected "boolean" but got "undefined"
+FAIL hr.autofocus: IDL get with DOM attribute unset assert_equals: expected (boolean) false but got (undefined) undefined
+FAIL hr.autofocus: setAttribute() to "" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL hr.autofocus: setAttribute() to " foo " assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL hr.autofocus: setAttribute() to undefined assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL hr.autofocus: setAttribute() to null assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL hr.autofocus: setAttribute() to 7 assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL hr.autofocus: setAttribute() to 1.5 assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL hr.autofocus: setAttribute() to "5%" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL hr.autofocus: setAttribute() to "+100" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL hr.autofocus: setAttribute() to ".5" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL hr.autofocus: setAttribute() to true assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL hr.autofocus: setAttribute() to false assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL hr.autofocus: setAttribute() to object "[object Object]" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL hr.autofocus: setAttribute() to NaN assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL hr.autofocus: setAttribute() to Infinity assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL hr.autofocus: setAttribute() to -Infinity assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL hr.autofocus: setAttribute() to "\0" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL hr.autofocus: setAttribute() to object "test-toString" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL hr.autofocus: setAttribute() to object "test-valueOf" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL hr.autofocus: setAttribute() to "autofocus" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL hr.autofocus: IDL set to "" assert_equals: hasAttribute() expected false but got true
+FAIL hr.autofocus: IDL set to " foo " assert_equals: IDL get expected (boolean) true but got (string) " foo "
+FAIL hr.autofocus: IDL set to undefined assert_equals: hasAttribute() expected false but got true
+FAIL hr.autofocus: IDL set to null assert_equals: hasAttribute() expected false but got true
+FAIL hr.autofocus: IDL set to 7 assert_equals: IDL get expected (boolean) true but got (number) 7
+FAIL hr.autofocus: IDL set to 1.5 assert_equals: IDL get expected (boolean) true but got (number) 1.5
+FAIL hr.autofocus: IDL set to "5%" assert_equals: IDL get expected (boolean) true but got (string) "5%"
+FAIL hr.autofocus: IDL set to "+100" assert_equals: IDL get expected (boolean) true but got (string) "+100"
+FAIL hr.autofocus: IDL set to ".5" assert_equals: IDL get expected (boolean) true but got (string) ".5"
+PASS hr.autofocus: IDL set to true 
+FAIL hr.autofocus: IDL set to false assert_equals: hasAttribute() expected false but got true
+FAIL hr.autofocus: IDL set to object "[object Object]" assert_equals: IDL get expected (boolean) true but got (object) object "[object Object]"
+FAIL hr.autofocus: IDL set to NaN assert_equals: hasAttribute() expected false but got true
+FAIL hr.autofocus: IDL set to Infinity assert_equals: IDL get expected (boolean) true but got (number) Infinity
+FAIL hr.autofocus: IDL set to -Infinity assert_equals: IDL get expected (boolean) true but got (number) -Infinity
+FAIL hr.autofocus: IDL set to "\0" assert_equals: IDL get expected (boolean) true but got (string) "\0"
+FAIL hr.autofocus: IDL set to object "test-toString" assert_equals: IDL get expected (boolean) true but got (object) object "test-toString"
+FAIL hr.autofocus: IDL set to object "test-valueOf" assert_equals: IDL get expected (boolean) true but got (object) object "test-valueOf"
 PASS hr.hidden: typeof IDL attribute 
 PASS hr.hidden: IDL get with DOM attribute unset 
 PASS hr.hidden: setAttribute() to "" 
@@ -982,6 +1060,45 @@ PASS pre.className (<pre class>): IDL set to "\0"
 PASS pre.className (<pre class>): IDL set to null 
 PASS pre.className (<pre class>): IDL set to object "test-toString" 
 PASS pre.className (<pre class>): IDL set to object "test-valueOf" 
+FAIL pre.autofocus: typeof IDL attribute assert_equals: expected "boolean" but got "undefined"
+FAIL pre.autofocus: IDL get with DOM attribute unset assert_equals: expected (boolean) false but got (undefined) undefined
+FAIL pre.autofocus: setAttribute() to "" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL pre.autofocus: setAttribute() to " foo " assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL pre.autofocus: setAttribute() to undefined assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL pre.autofocus: setAttribute() to null assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL pre.autofocus: setAttribute() to 7 assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL pre.autofocus: setAttribute() to 1.5 assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL pre.autofocus: setAttribute() to "5%" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL pre.autofocus: setAttribute() to "+100" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL pre.autofocus: setAttribute() to ".5" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL pre.autofocus: setAttribute() to true assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL pre.autofocus: setAttribute() to false assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL pre.autofocus: setAttribute() to object "[object Object]" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL pre.autofocus: setAttribute() to NaN assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL pre.autofocus: setAttribute() to Infinity assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL pre.autofocus: setAttribute() to -Infinity assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL pre.autofocus: setAttribute() to "\0" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL pre.autofocus: setAttribute() to object "test-toString" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL pre.autofocus: setAttribute() to object "test-valueOf" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL pre.autofocus: setAttribute() to "autofocus" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL pre.autofocus: IDL set to "" assert_equals: hasAttribute() expected false but got true
+FAIL pre.autofocus: IDL set to " foo " assert_equals: IDL get expected (boolean) true but got (string) " foo "
+FAIL pre.autofocus: IDL set to undefined assert_equals: hasAttribute() expected false but got true
+FAIL pre.autofocus: IDL set to null assert_equals: hasAttribute() expected false but got true
+FAIL pre.autofocus: IDL set to 7 assert_equals: IDL get expected (boolean) true but got (number) 7
+FAIL pre.autofocus: IDL set to 1.5 assert_equals: IDL get expected (boolean) true but got (number) 1.5
+FAIL pre.autofocus: IDL set to "5%" assert_equals: IDL get expected (boolean) true but got (string) "5%"
+FAIL pre.autofocus: IDL set to "+100" assert_equals: IDL get expected (boolean) true but got (string) "+100"
+FAIL pre.autofocus: IDL set to ".5" assert_equals: IDL get expected (boolean) true but got (string) ".5"
+PASS pre.autofocus: IDL set to true 
+FAIL pre.autofocus: IDL set to false assert_equals: hasAttribute() expected false but got true
+FAIL pre.autofocus: IDL set to object "[object Object]" assert_equals: IDL get expected (boolean) true but got (object) object "[object Object]"
+FAIL pre.autofocus: IDL set to NaN assert_equals: hasAttribute() expected false but got true
+FAIL pre.autofocus: IDL set to Infinity assert_equals: IDL get expected (boolean) true but got (number) Infinity
+FAIL pre.autofocus: IDL set to -Infinity assert_equals: IDL get expected (boolean) true but got (number) -Infinity
+FAIL pre.autofocus: IDL set to "\0" assert_equals: IDL get expected (boolean) true but got (string) "\0"
+FAIL pre.autofocus: IDL set to object "test-toString" assert_equals: IDL get expected (boolean) true but got (object) object "test-toString"
+FAIL pre.autofocus: IDL set to object "test-valueOf" assert_equals: IDL get expected (boolean) true but got (object) object "test-valueOf"
 PASS pre.hidden: typeof IDL attribute 
 PASS pre.hidden: IDL get with DOM attribute unset 
 PASS pre.hidden: setAttribute() to "" 
@@ -1330,6 +1447,45 @@ PASS blockquote.className (<blockquote class>): IDL set to "\0"
 PASS blockquote.className (<blockquote class>): IDL set to null 
 PASS blockquote.className (<blockquote class>): IDL set to object "test-toString" 
 PASS blockquote.className (<blockquote class>): IDL set to object "test-valueOf" 
+FAIL blockquote.autofocus: typeof IDL attribute assert_equals: expected "boolean" but got "undefined"
+FAIL blockquote.autofocus: IDL get with DOM attribute unset assert_equals: expected (boolean) false but got (undefined) undefined
+FAIL blockquote.autofocus: setAttribute() to "" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL blockquote.autofocus: setAttribute() to " foo " assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL blockquote.autofocus: setAttribute() to undefined assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL blockquote.autofocus: setAttribute() to null assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL blockquote.autofocus: setAttribute() to 7 assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL blockquote.autofocus: setAttribute() to 1.5 assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL blockquote.autofocus: setAttribute() to "5%" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL blockquote.autofocus: setAttribute() to "+100" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL blockquote.autofocus: setAttribute() to ".5" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL blockquote.autofocus: setAttribute() to true assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL blockquote.autofocus: setAttribute() to false assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL blockquote.autofocus: setAttribute() to object "[object Object]" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL blockquote.autofocus: setAttribute() to NaN assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL blockquote.autofocus: setAttribute() to Infinity assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL blockquote.autofocus: setAttribute() to -Infinity assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL blockquote.autofocus: setAttribute() to "\0" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL blockquote.autofocus: setAttribute() to object "test-toString" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL blockquote.autofocus: setAttribute() to object "test-valueOf" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL blockquote.autofocus: setAttribute() to "autofocus" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL blockquote.autofocus: IDL set to "" assert_equals: hasAttribute() expected false but got true
+FAIL blockquote.autofocus: IDL set to " foo " assert_equals: IDL get expected (boolean) true but got (string) " foo "
+FAIL blockquote.autofocus: IDL set to undefined assert_equals: hasAttribute() expected false but got true
+FAIL blockquote.autofocus: IDL set to null assert_equals: hasAttribute() expected false but got true
+FAIL blockquote.autofocus: IDL set to 7 assert_equals: IDL get expected (boolean) true but got (number) 7
+FAIL blockquote.autofocus: IDL set to 1.5 assert_equals: IDL get expected (boolean) true but got (number) 1.5
+FAIL blockquote.autofocus: IDL set to "5%" assert_equals: IDL get expected (boolean) true but got (string) "5%"
+FAIL blockquote.autofocus: IDL set to "+100" assert_equals: IDL get expected (boolean) true but got (string) "+100"
+FAIL blockquote.autofocus: IDL set to ".5" assert_equals: IDL get expected (boolean) true but got (string) ".5"
+PASS blockquote.autofocus: IDL set to true 
+FAIL blockquote.autofocus: IDL set to false assert_equals: hasAttribute() expected false but got true
+FAIL blockquote.autofocus: IDL set to object "[object Object]" assert_equals: IDL get expected (boolean) true but got (object) object "[object Object]"
+FAIL blockquote.autofocus: IDL set to NaN assert_equals: hasAttribute() expected false but got true
+FAIL blockquote.autofocus: IDL set to Infinity assert_equals: IDL get expected (boolean) true but got (number) Infinity
+FAIL blockquote.autofocus: IDL set to -Infinity assert_equals: IDL get expected (boolean) true but got (number) -Infinity
+FAIL blockquote.autofocus: IDL set to "\0" assert_equals: IDL get expected (boolean) true but got (string) "\0"
+FAIL blockquote.autofocus: IDL set to object "test-toString" assert_equals: IDL get expected (boolean) true but got (object) object "test-toString"
+FAIL blockquote.autofocus: IDL set to object "test-valueOf" assert_equals: IDL get expected (boolean) true but got (object) object "test-valueOf"
 PASS blockquote.hidden: typeof IDL attribute 
 PASS blockquote.hidden: IDL get with DOM attribute unset 
 PASS blockquote.hidden: setAttribute() to "" 
@@ -1659,6 +1815,45 @@ PASS ol.className (<ol class>): IDL set to "\0"
 PASS ol.className (<ol class>): IDL set to null 
 PASS ol.className (<ol class>): IDL set to object "test-toString" 
 PASS ol.className (<ol class>): IDL set to object "test-valueOf" 
+FAIL ol.autofocus: typeof IDL attribute assert_equals: expected "boolean" but got "undefined"
+FAIL ol.autofocus: IDL get with DOM attribute unset assert_equals: expected (boolean) false but got (undefined) undefined
+FAIL ol.autofocus: setAttribute() to "" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL ol.autofocus: setAttribute() to " foo " assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL ol.autofocus: setAttribute() to undefined assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL ol.autofocus: setAttribute() to null assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL ol.autofocus: setAttribute() to 7 assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL ol.autofocus: setAttribute() to 1.5 assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL ol.autofocus: setAttribute() to "5%" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL ol.autofocus: setAttribute() to "+100" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL ol.autofocus: setAttribute() to ".5" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL ol.autofocus: setAttribute() to true assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL ol.autofocus: setAttribute() to false assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL ol.autofocus: setAttribute() to object "[object Object]" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL ol.autofocus: setAttribute() to NaN assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL ol.autofocus: setAttribute() to Infinity assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL ol.autofocus: setAttribute() to -Infinity assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL ol.autofocus: setAttribute() to "\0" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL ol.autofocus: setAttribute() to object "test-toString" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL ol.autofocus: setAttribute() to object "test-valueOf" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL ol.autofocus: setAttribute() to "autofocus" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL ol.autofocus: IDL set to "" assert_equals: hasAttribute() expected false but got true
+FAIL ol.autofocus: IDL set to " foo " assert_equals: IDL get expected (boolean) true but got (string) " foo "
+FAIL ol.autofocus: IDL set to undefined assert_equals: hasAttribute() expected false but got true
+FAIL ol.autofocus: IDL set to null assert_equals: hasAttribute() expected false but got true
+FAIL ol.autofocus: IDL set to 7 assert_equals: IDL get expected (boolean) true but got (number) 7
+FAIL ol.autofocus: IDL set to 1.5 assert_equals: IDL get expected (boolean) true but got (number) 1.5
+FAIL ol.autofocus: IDL set to "5%" assert_equals: IDL get expected (boolean) true but got (string) "5%"
+FAIL ol.autofocus: IDL set to "+100" assert_equals: IDL get expected (boolean) true but got (string) "+100"
+FAIL ol.autofocus: IDL set to ".5" assert_equals: IDL get expected (boolean) true but got (string) ".5"
+PASS ol.autofocus: IDL set to true 
+FAIL ol.autofocus: IDL set to false assert_equals: hasAttribute() expected false but got true
+FAIL ol.autofocus: IDL set to object "[object Object]" assert_equals: IDL get expected (boolean) true but got (object) object "[object Object]"
+FAIL ol.autofocus: IDL set to NaN assert_equals: hasAttribute() expected false but got true
+FAIL ol.autofocus: IDL set to Infinity assert_equals: IDL get expected (boolean) true but got (number) Infinity
+FAIL ol.autofocus: IDL set to -Infinity assert_equals: IDL get expected (boolean) true but got (number) -Infinity
+FAIL ol.autofocus: IDL set to "\0" assert_equals: IDL get expected (boolean) true but got (string) "\0"
+FAIL ol.autofocus: IDL set to object "test-toString" assert_equals: IDL get expected (boolean) true but got (object) object "test-toString"
+FAIL ol.autofocus: IDL set to object "test-valueOf" assert_equals: IDL get expected (boolean) true but got (object) object "test-valueOf"
 PASS ol.hidden: typeof IDL attribute 
 PASS ol.hidden: IDL get with DOM attribute unset 
 PASS ol.hidden: setAttribute() to "" 
@@ -2123,6 +2318,45 @@ PASS ul.className (<ul class>): IDL set to "\0"
 PASS ul.className (<ul class>): IDL set to null 
 PASS ul.className (<ul class>): IDL set to object "test-toString" 
 PASS ul.className (<ul class>): IDL set to object "test-valueOf" 
+FAIL ul.autofocus: typeof IDL attribute assert_equals: expected "boolean" but got "undefined"
+FAIL ul.autofocus: IDL get with DOM attribute unset assert_equals: expected (boolean) false but got (undefined) undefined
+FAIL ul.autofocus: setAttribute() to "" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL ul.autofocus: setAttribute() to " foo " assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL ul.autofocus: setAttribute() to undefined assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL ul.autofocus: setAttribute() to null assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL ul.autofocus: setAttribute() to 7 assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL ul.autofocus: setAttribute() to 1.5 assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL ul.autofocus: setAttribute() to "5%" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL ul.autofocus: setAttribute() to "+100" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL ul.autofocus: setAttribute() to ".5" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL ul.autofocus: setAttribute() to true assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL ul.autofocus: setAttribute() to false assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL ul.autofocus: setAttribute() to object "[object Object]" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL ul.autofocus: setAttribute() to NaN assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL ul.autofocus: setAttribute() to Infinity assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL ul.autofocus: setAttribute() to -Infinity assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL ul.autofocus: setAttribute() to "\0" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL ul.autofocus: setAttribute() to object "test-toString" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL ul.autofocus: setAttribute() to object "test-valueOf" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL ul.autofocus: setAttribute() to "autofocus" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL ul.autofocus: IDL set to "" assert_equals: hasAttribute() expected false but got true
+FAIL ul.autofocus: IDL set to " foo " assert_equals: IDL get expected (boolean) true but got (string) " foo "
+FAIL ul.autofocus: IDL set to undefined assert_equals: hasAttribute() expected false but got true
+FAIL ul.autofocus: IDL set to null assert_equals: hasAttribute() expected false but got true
+FAIL ul.autofocus: IDL set to 7 assert_equals: IDL get expected (boolean) true but got (number) 7
+FAIL ul.autofocus: IDL set to 1.5 assert_equals: IDL get expected (boolean) true but got (number) 1.5
+FAIL ul.autofocus: IDL set to "5%" assert_equals: IDL get expected (boolean) true but got (string) "5%"
+FAIL ul.autofocus: IDL set to "+100" assert_equals: IDL get expected (boolean) true but got (string) "+100"
+FAIL ul.autofocus: IDL set to ".5" assert_equals: IDL get expected (boolean) true but got (string) ".5"
+PASS ul.autofocus: IDL set to true 
+FAIL ul.autofocus: IDL set to false assert_equals: hasAttribute() expected false but got true
+FAIL ul.autofocus: IDL set to object "[object Object]" assert_equals: IDL get expected (boolean) true but got (object) object "[object Object]"
+FAIL ul.autofocus: IDL set to NaN assert_equals: hasAttribute() expected false but got true
+FAIL ul.autofocus: IDL set to Infinity assert_equals: IDL get expected (boolean) true but got (number) Infinity
+FAIL ul.autofocus: IDL set to -Infinity assert_equals: IDL get expected (boolean) true but got (number) -Infinity
+FAIL ul.autofocus: IDL set to "\0" assert_equals: IDL get expected (boolean) true but got (string) "\0"
+FAIL ul.autofocus: IDL set to object "test-toString" assert_equals: IDL get expected (boolean) true but got (object) object "test-toString"
+FAIL ul.autofocus: IDL set to object "test-valueOf" assert_equals: IDL get expected (boolean) true but got (object) object "test-valueOf"
 PASS ul.hidden: typeof IDL attribute 
 PASS ul.hidden: IDL get with DOM attribute unset 
 PASS ul.hidden: setAttribute() to "" 
@@ -2485,6 +2719,45 @@ PASS li.className (<li class>): IDL set to "\0"
 PASS li.className (<li class>): IDL set to null 
 PASS li.className (<li class>): IDL set to object "test-toString" 
 PASS li.className (<li class>): IDL set to object "test-valueOf" 
+FAIL li.autofocus: typeof IDL attribute assert_equals: expected "boolean" but got "undefined"
+FAIL li.autofocus: IDL get with DOM attribute unset assert_equals: expected (boolean) false but got (undefined) undefined
+FAIL li.autofocus: setAttribute() to "" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL li.autofocus: setAttribute() to " foo " assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL li.autofocus: setAttribute() to undefined assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL li.autofocus: setAttribute() to null assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL li.autofocus: setAttribute() to 7 assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL li.autofocus: setAttribute() to 1.5 assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL li.autofocus: setAttribute() to "5%" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL li.autofocus: setAttribute() to "+100" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL li.autofocus: setAttribute() to ".5" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL li.autofocus: setAttribute() to true assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL li.autofocus: setAttribute() to false assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL li.autofocus: setAttribute() to object "[object Object]" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL li.autofocus: setAttribute() to NaN assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL li.autofocus: setAttribute() to Infinity assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL li.autofocus: setAttribute() to -Infinity assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL li.autofocus: setAttribute() to "\0" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL li.autofocus: setAttribute() to object "test-toString" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL li.autofocus: setAttribute() to object "test-valueOf" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL li.autofocus: setAttribute() to "autofocus" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL li.autofocus: IDL set to "" assert_equals: hasAttribute() expected false but got true
+FAIL li.autofocus: IDL set to " foo " assert_equals: IDL get expected (boolean) true but got (string) " foo "
+FAIL li.autofocus: IDL set to undefined assert_equals: hasAttribute() expected false but got true
+FAIL li.autofocus: IDL set to null assert_equals: hasAttribute() expected false but got true
+FAIL li.autofocus: IDL set to 7 assert_equals: IDL get expected (boolean) true but got (number) 7
+FAIL li.autofocus: IDL set to 1.5 assert_equals: IDL get expected (boolean) true but got (number) 1.5
+FAIL li.autofocus: IDL set to "5%" assert_equals: IDL get expected (boolean) true but got (string) "5%"
+FAIL li.autofocus: IDL set to "+100" assert_equals: IDL get expected (boolean) true but got (string) "+100"
+FAIL li.autofocus: IDL set to ".5" assert_equals: IDL get expected (boolean) true but got (string) ".5"
+PASS li.autofocus: IDL set to true 
+FAIL li.autofocus: IDL set to false assert_equals: hasAttribute() expected false but got true
+FAIL li.autofocus: IDL set to object "[object Object]" assert_equals: IDL get expected (boolean) true but got (object) object "[object Object]"
+FAIL li.autofocus: IDL set to NaN assert_equals: hasAttribute() expected false but got true
+FAIL li.autofocus: IDL set to Infinity assert_equals: IDL get expected (boolean) true but got (number) Infinity
+FAIL li.autofocus: IDL set to -Infinity assert_equals: IDL get expected (boolean) true but got (number) -Infinity
+FAIL li.autofocus: IDL set to "\0" assert_equals: IDL get expected (boolean) true but got (string) "\0"
+FAIL li.autofocus: IDL set to object "test-toString" assert_equals: IDL get expected (boolean) true but got (object) object "test-toString"
+FAIL li.autofocus: IDL set to object "test-valueOf" assert_equals: IDL get expected (boolean) true but got (object) object "test-valueOf"
 PASS li.hidden: typeof IDL attribute 
 PASS li.hidden: IDL get with DOM attribute unset 
 PASS li.hidden: setAttribute() to "" 
@@ -2871,6 +3144,45 @@ PASS dl.className (<dl class>): IDL set to "\0"
 PASS dl.className (<dl class>): IDL set to null 
 PASS dl.className (<dl class>): IDL set to object "test-toString" 
 PASS dl.className (<dl class>): IDL set to object "test-valueOf" 
+FAIL dl.autofocus: typeof IDL attribute assert_equals: expected "boolean" but got "undefined"
+FAIL dl.autofocus: IDL get with DOM attribute unset assert_equals: expected (boolean) false but got (undefined) undefined
+FAIL dl.autofocus: setAttribute() to "" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL dl.autofocus: setAttribute() to " foo " assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL dl.autofocus: setAttribute() to undefined assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL dl.autofocus: setAttribute() to null assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL dl.autofocus: setAttribute() to 7 assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL dl.autofocus: setAttribute() to 1.5 assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL dl.autofocus: setAttribute() to "5%" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL dl.autofocus: setAttribute() to "+100" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL dl.autofocus: setAttribute() to ".5" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL dl.autofocus: setAttribute() to true assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL dl.autofocus: setAttribute() to false assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL dl.autofocus: setAttribute() to object "[object Object]" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL dl.autofocus: setAttribute() to NaN assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL dl.autofocus: setAttribute() to Infinity assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL dl.autofocus: setAttribute() to -Infinity assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL dl.autofocus: setAttribute() to "\0" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL dl.autofocus: setAttribute() to object "test-toString" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL dl.autofocus: setAttribute() to object "test-valueOf" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL dl.autofocus: setAttribute() to "autofocus" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL dl.autofocus: IDL set to "" assert_equals: hasAttribute() expected false but got true
+FAIL dl.autofocus: IDL set to " foo " assert_equals: IDL get expected (boolean) true but got (string) " foo "
+FAIL dl.autofocus: IDL set to undefined assert_equals: hasAttribute() expected false but got true
+FAIL dl.autofocus: IDL set to null assert_equals: hasAttribute() expected false but got true
+FAIL dl.autofocus: IDL set to 7 assert_equals: IDL get expected (boolean) true but got (number) 7
+FAIL dl.autofocus: IDL set to 1.5 assert_equals: IDL get expected (boolean) true but got (number) 1.5
+FAIL dl.autofocus: IDL set to "5%" assert_equals: IDL get expected (boolean) true but got (string) "5%"
+FAIL dl.autofocus: IDL set to "+100" assert_equals: IDL get expected (boolean) true but got (string) "+100"
+FAIL dl.autofocus: IDL set to ".5" assert_equals: IDL get expected (boolean) true but got (string) ".5"
+PASS dl.autofocus: IDL set to true 
+FAIL dl.autofocus: IDL set to false assert_equals: hasAttribute() expected false but got true
+FAIL dl.autofocus: IDL set to object "[object Object]" assert_equals: IDL get expected (boolean) true but got (object) object "[object Object]"
+FAIL dl.autofocus: IDL set to NaN assert_equals: hasAttribute() expected false but got true
+FAIL dl.autofocus: IDL set to Infinity assert_equals: IDL get expected (boolean) true but got (number) Infinity
+FAIL dl.autofocus: IDL set to -Infinity assert_equals: IDL get expected (boolean) true but got (number) -Infinity
+FAIL dl.autofocus: IDL set to "\0" assert_equals: IDL get expected (boolean) true but got (string) "\0"
+FAIL dl.autofocus: IDL set to object "test-toString" assert_equals: IDL get expected (boolean) true but got (object) object "test-toString"
+FAIL dl.autofocus: IDL set to object "test-valueOf" assert_equals: IDL get expected (boolean) true but got (object) object "test-valueOf"
 PASS dl.hidden: typeof IDL attribute 
 PASS dl.hidden: IDL get with DOM attribute unset 
 PASS dl.hidden: setAttribute() to "" 
@@ -3195,6 +3507,45 @@ PASS dt.className (<dt class>): IDL set to "\0"
 PASS dt.className (<dt class>): IDL set to null 
 PASS dt.className (<dt class>): IDL set to object "test-toString" 
 PASS dt.className (<dt class>): IDL set to object "test-valueOf" 
+FAIL dt.autofocus: typeof IDL attribute assert_equals: expected "boolean" but got "undefined"
+FAIL dt.autofocus: IDL get with DOM attribute unset assert_equals: expected (boolean) false but got (undefined) undefined
+FAIL dt.autofocus: setAttribute() to "" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL dt.autofocus: setAttribute() to " foo " assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL dt.autofocus: setAttribute() to undefined assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL dt.autofocus: setAttribute() to null assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL dt.autofocus: setAttribute() to 7 assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL dt.autofocus: setAttribute() to 1.5 assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL dt.autofocus: setAttribute() to "5%" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL dt.autofocus: setAttribute() to "+100" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL dt.autofocus: setAttribute() to ".5" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL dt.autofocus: setAttribute() to true assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL dt.autofocus: setAttribute() to false assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL dt.autofocus: setAttribute() to object "[object Object]" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL dt.autofocus: setAttribute() to NaN assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL dt.autofocus: setAttribute() to Infinity assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL dt.autofocus: setAttribute() to -Infinity assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL dt.autofocus: setAttribute() to "\0" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL dt.autofocus: setAttribute() to object "test-toString" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL dt.autofocus: setAttribute() to object "test-valueOf" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL dt.autofocus: setAttribute() to "autofocus" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL dt.autofocus: IDL set to "" assert_equals: hasAttribute() expected false but got true
+FAIL dt.autofocus: IDL set to " foo " assert_equals: IDL get expected (boolean) true but got (string) " foo "
+FAIL dt.autofocus: IDL set to undefined assert_equals: hasAttribute() expected false but got true
+FAIL dt.autofocus: IDL set to null assert_equals: hasAttribute() expected false but got true
+FAIL dt.autofocus: IDL set to 7 assert_equals: IDL get expected (boolean) true but got (number) 7
+FAIL dt.autofocus: IDL set to 1.5 assert_equals: IDL get expected (boolean) true but got (number) 1.5
+FAIL dt.autofocus: IDL set to "5%" assert_equals: IDL get expected (boolean) true but got (string) "5%"
+FAIL dt.autofocus: IDL set to "+100" assert_equals: IDL get expected (boolean) true but got (string) "+100"
+FAIL dt.autofocus: IDL set to ".5" assert_equals: IDL get expected (boolean) true but got (string) ".5"
+PASS dt.autofocus: IDL set to true 
+FAIL dt.autofocus: IDL set to false assert_equals: hasAttribute() expected false but got true
+FAIL dt.autofocus: IDL set to object "[object Object]" assert_equals: IDL get expected (boolean) true but got (object) object "[object Object]"
+FAIL dt.autofocus: IDL set to NaN assert_equals: hasAttribute() expected false but got true
+FAIL dt.autofocus: IDL set to Infinity assert_equals: IDL get expected (boolean) true but got (number) Infinity
+FAIL dt.autofocus: IDL set to -Infinity assert_equals: IDL get expected (boolean) true but got (number) -Infinity
+FAIL dt.autofocus: IDL set to "\0" assert_equals: IDL get expected (boolean) true but got (string) "\0"
+FAIL dt.autofocus: IDL set to object "test-toString" assert_equals: IDL get expected (boolean) true but got (object) object "test-toString"
+FAIL dt.autofocus: IDL set to object "test-valueOf" assert_equals: IDL get expected (boolean) true but got (object) object "test-valueOf"
 PASS dt.hidden: typeof IDL attribute 
 PASS dt.hidden: IDL get with DOM attribute unset 
 PASS dt.hidden: setAttribute() to "" 
@@ -3480,6 +3831,45 @@ PASS dd.className (<dd class>): IDL set to "\0"
 PASS dd.className (<dd class>): IDL set to null 
 PASS dd.className (<dd class>): IDL set to object "test-toString" 
 PASS dd.className (<dd class>): IDL set to object "test-valueOf" 
+FAIL dd.autofocus: typeof IDL attribute assert_equals: expected "boolean" but got "undefined"
+FAIL dd.autofocus: IDL get with DOM attribute unset assert_equals: expected (boolean) false but got (undefined) undefined
+FAIL dd.autofocus: setAttribute() to "" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL dd.autofocus: setAttribute() to " foo " assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL dd.autofocus: setAttribute() to undefined assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL dd.autofocus: setAttribute() to null assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL dd.autofocus: setAttribute() to 7 assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL dd.autofocus: setAttribute() to 1.5 assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL dd.autofocus: setAttribute() to "5%" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL dd.autofocus: setAttribute() to "+100" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL dd.autofocus: setAttribute() to ".5" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL dd.autofocus: setAttribute() to true assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL dd.autofocus: setAttribute() to false assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL dd.autofocus: setAttribute() to object "[object Object]" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL dd.autofocus: setAttribute() to NaN assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL dd.autofocus: setAttribute() to Infinity assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL dd.autofocus: setAttribute() to -Infinity assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL dd.autofocus: setAttribute() to "\0" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL dd.autofocus: setAttribute() to object "test-toString" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL dd.autofocus: setAttribute() to object "test-valueOf" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL dd.autofocus: setAttribute() to "autofocus" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL dd.autofocus: IDL set to "" assert_equals: hasAttribute() expected false but got true
+FAIL dd.autofocus: IDL set to " foo " assert_equals: IDL get expected (boolean) true but got (string) " foo "
+FAIL dd.autofocus: IDL set to undefined assert_equals: hasAttribute() expected false but got true
+FAIL dd.autofocus: IDL set to null assert_equals: hasAttribute() expected false but got true
+FAIL dd.autofocus: IDL set to 7 assert_equals: IDL get expected (boolean) true but got (number) 7
+FAIL dd.autofocus: IDL set to 1.5 assert_equals: IDL get expected (boolean) true but got (number) 1.5
+FAIL dd.autofocus: IDL set to "5%" assert_equals: IDL get expected (boolean) true but got (string) "5%"
+FAIL dd.autofocus: IDL set to "+100" assert_equals: IDL get expected (boolean) true but got (string) "+100"
+FAIL dd.autofocus: IDL set to ".5" assert_equals: IDL get expected (boolean) true but got (string) ".5"
+PASS dd.autofocus: IDL set to true 
+FAIL dd.autofocus: IDL set to false assert_equals: hasAttribute() expected false but got true
+FAIL dd.autofocus: IDL set to object "[object Object]" assert_equals: IDL get expected (boolean) true but got (object) object "[object Object]"
+FAIL dd.autofocus: IDL set to NaN assert_equals: hasAttribute() expected false but got true
+FAIL dd.autofocus: IDL set to Infinity assert_equals: IDL get expected (boolean) true but got (number) Infinity
+FAIL dd.autofocus: IDL set to -Infinity assert_equals: IDL get expected (boolean) true but got (number) -Infinity
+FAIL dd.autofocus: IDL set to "\0" assert_equals: IDL get expected (boolean) true but got (string) "\0"
+FAIL dd.autofocus: IDL set to object "test-toString" assert_equals: IDL get expected (boolean) true but got (object) object "test-toString"
+FAIL dd.autofocus: IDL set to object "test-valueOf" assert_equals: IDL get expected (boolean) true but got (object) object "test-valueOf"
 PASS dd.hidden: typeof IDL attribute 
 PASS dd.hidden: IDL get with DOM attribute unset 
 PASS dd.hidden: setAttribute() to "" 
@@ -3765,6 +4155,45 @@ PASS figure.className (<figure class>): IDL set to "\0"
 PASS figure.className (<figure class>): IDL set to null 
 PASS figure.className (<figure class>): IDL set to object "test-toString" 
 PASS figure.className (<figure class>): IDL set to object "test-valueOf" 
+FAIL figure.autofocus: typeof IDL attribute assert_equals: expected "boolean" but got "undefined"
+FAIL figure.autofocus: IDL get with DOM attribute unset assert_equals: expected (boolean) false but got (undefined) undefined
+FAIL figure.autofocus: setAttribute() to "" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL figure.autofocus: setAttribute() to " foo " assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL figure.autofocus: setAttribute() to undefined assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL figure.autofocus: setAttribute() to null assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL figure.autofocus: setAttribute() to 7 assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL figure.autofocus: setAttribute() to 1.5 assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL figure.autofocus: setAttribute() to "5%" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL figure.autofocus: setAttribute() to "+100" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL figure.autofocus: setAttribute() to ".5" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL figure.autofocus: setAttribute() to true assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL figure.autofocus: setAttribute() to false assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL figure.autofocus: setAttribute() to object "[object Object]" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL figure.autofocus: setAttribute() to NaN assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL figure.autofocus: setAttribute() to Infinity assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL figure.autofocus: setAttribute() to -Infinity assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL figure.autofocus: setAttribute() to "\0" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL figure.autofocus: setAttribute() to object "test-toString" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL figure.autofocus: setAttribute() to object "test-valueOf" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL figure.autofocus: setAttribute() to "autofocus" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL figure.autofocus: IDL set to "" assert_equals: hasAttribute() expected false but got true
+FAIL figure.autofocus: IDL set to " foo " assert_equals: IDL get expected (boolean) true but got (string) " foo "
+FAIL figure.autofocus: IDL set to undefined assert_equals: hasAttribute() expected false but got true
+FAIL figure.autofocus: IDL set to null assert_equals: hasAttribute() expected false but got true
+FAIL figure.autofocus: IDL set to 7 assert_equals: IDL get expected (boolean) true but got (number) 7
+FAIL figure.autofocus: IDL set to 1.5 assert_equals: IDL get expected (boolean) true but got (number) 1.5
+FAIL figure.autofocus: IDL set to "5%" assert_equals: IDL get expected (boolean) true but got (string) "5%"
+FAIL figure.autofocus: IDL set to "+100" assert_equals: IDL get expected (boolean) true but got (string) "+100"
+FAIL figure.autofocus: IDL set to ".5" assert_equals: IDL get expected (boolean) true but got (string) ".5"
+PASS figure.autofocus: IDL set to true 
+FAIL figure.autofocus: IDL set to false assert_equals: hasAttribute() expected false but got true
+FAIL figure.autofocus: IDL set to object "[object Object]" assert_equals: IDL get expected (boolean) true but got (object) object "[object Object]"
+FAIL figure.autofocus: IDL set to NaN assert_equals: hasAttribute() expected false but got true
+FAIL figure.autofocus: IDL set to Infinity assert_equals: IDL get expected (boolean) true but got (number) Infinity
+FAIL figure.autofocus: IDL set to -Infinity assert_equals: IDL get expected (boolean) true but got (number) -Infinity
+FAIL figure.autofocus: IDL set to "\0" assert_equals: IDL get expected (boolean) true but got (string) "\0"
+FAIL figure.autofocus: IDL set to object "test-toString" assert_equals: IDL get expected (boolean) true but got (object) object "test-toString"
+FAIL figure.autofocus: IDL set to object "test-valueOf" assert_equals: IDL get expected (boolean) true but got (object) object "test-valueOf"
 PASS figure.hidden: typeof IDL attribute 
 PASS figure.hidden: IDL get with DOM attribute unset 
 PASS figure.hidden: setAttribute() to "" 
@@ -4050,6 +4479,45 @@ PASS figcaption.className (<figcaption class>): IDL set to "\0"
 PASS figcaption.className (<figcaption class>): IDL set to null 
 PASS figcaption.className (<figcaption class>): IDL set to object "test-toString" 
 PASS figcaption.className (<figcaption class>): IDL set to object "test-valueOf" 
+FAIL figcaption.autofocus: typeof IDL attribute assert_equals: expected "boolean" but got "undefined"
+FAIL figcaption.autofocus: IDL get with DOM attribute unset assert_equals: expected (boolean) false but got (undefined) undefined
+FAIL figcaption.autofocus: setAttribute() to "" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL figcaption.autofocus: setAttribute() to " foo " assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL figcaption.autofocus: setAttribute() to undefined assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL figcaption.autofocus: setAttribute() to null assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL figcaption.autofocus: setAttribute() to 7 assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL figcaption.autofocus: setAttribute() to 1.5 assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL figcaption.autofocus: setAttribute() to "5%" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL figcaption.autofocus: setAttribute() to "+100" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL figcaption.autofocus: setAttribute() to ".5" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL figcaption.autofocus: setAttribute() to true assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL figcaption.autofocus: setAttribute() to false assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL figcaption.autofocus: setAttribute() to object "[object Object]" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL figcaption.autofocus: setAttribute() to NaN assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL figcaption.autofocus: setAttribute() to Infinity assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL figcaption.autofocus: setAttribute() to -Infinity assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL figcaption.autofocus: setAttribute() to "\0" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL figcaption.autofocus: setAttribute() to object "test-toString" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL figcaption.autofocus: setAttribute() to object "test-valueOf" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL figcaption.autofocus: setAttribute() to "autofocus" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL figcaption.autofocus: IDL set to "" assert_equals: hasAttribute() expected false but got true
+FAIL figcaption.autofocus: IDL set to " foo " assert_equals: IDL get expected (boolean) true but got (string) " foo "
+FAIL figcaption.autofocus: IDL set to undefined assert_equals: hasAttribute() expected false but got true
+FAIL figcaption.autofocus: IDL set to null assert_equals: hasAttribute() expected false but got true
+FAIL figcaption.autofocus: IDL set to 7 assert_equals: IDL get expected (boolean) true but got (number) 7
+FAIL figcaption.autofocus: IDL set to 1.5 assert_equals: IDL get expected (boolean) true but got (number) 1.5
+FAIL figcaption.autofocus: IDL set to "5%" assert_equals: IDL get expected (boolean) true but got (string) "5%"
+FAIL figcaption.autofocus: IDL set to "+100" assert_equals: IDL get expected (boolean) true but got (string) "+100"
+FAIL figcaption.autofocus: IDL set to ".5" assert_equals: IDL get expected (boolean) true but got (string) ".5"
+PASS figcaption.autofocus: IDL set to true 
+FAIL figcaption.autofocus: IDL set to false assert_equals: hasAttribute() expected false but got true
+FAIL figcaption.autofocus: IDL set to object "[object Object]" assert_equals: IDL get expected (boolean) true but got (object) object "[object Object]"
+FAIL figcaption.autofocus: IDL set to NaN assert_equals: hasAttribute() expected false but got true
+FAIL figcaption.autofocus: IDL set to Infinity assert_equals: IDL get expected (boolean) true but got (number) Infinity
+FAIL figcaption.autofocus: IDL set to -Infinity assert_equals: IDL get expected (boolean) true but got (number) -Infinity
+FAIL figcaption.autofocus: IDL set to "\0" assert_equals: IDL get expected (boolean) true but got (string) "\0"
+FAIL figcaption.autofocus: IDL set to object "test-toString" assert_equals: IDL get expected (boolean) true but got (object) object "test-toString"
+FAIL figcaption.autofocus: IDL set to object "test-valueOf" assert_equals: IDL get expected (boolean) true but got (object) object "test-valueOf"
 PASS figcaption.hidden: typeof IDL attribute 
 PASS figcaption.hidden: IDL get with DOM attribute unset 
 PASS figcaption.hidden: setAttribute() to "" 
@@ -4335,6 +4803,45 @@ PASS main.className (<main class>): IDL set to "\0"
 PASS main.className (<main class>): IDL set to null 
 PASS main.className (<main class>): IDL set to object "test-toString" 
 PASS main.className (<main class>): IDL set to object "test-valueOf" 
+FAIL main.autofocus: typeof IDL attribute assert_equals: expected "boolean" but got "undefined"
+FAIL main.autofocus: IDL get with DOM attribute unset assert_equals: expected (boolean) false but got (undefined) undefined
+FAIL main.autofocus: setAttribute() to "" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL main.autofocus: setAttribute() to " foo " assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL main.autofocus: setAttribute() to undefined assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL main.autofocus: setAttribute() to null assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL main.autofocus: setAttribute() to 7 assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL main.autofocus: setAttribute() to 1.5 assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL main.autofocus: setAttribute() to "5%" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL main.autofocus: setAttribute() to "+100" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL main.autofocus: setAttribute() to ".5" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL main.autofocus: setAttribute() to true assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL main.autofocus: setAttribute() to false assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL main.autofocus: setAttribute() to object "[object Object]" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL main.autofocus: setAttribute() to NaN assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL main.autofocus: setAttribute() to Infinity assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL main.autofocus: setAttribute() to -Infinity assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL main.autofocus: setAttribute() to "\0" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL main.autofocus: setAttribute() to object "test-toString" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL main.autofocus: setAttribute() to object "test-valueOf" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL main.autofocus: setAttribute() to "autofocus" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL main.autofocus: IDL set to "" assert_equals: hasAttribute() expected false but got true
+FAIL main.autofocus: IDL set to " foo " assert_equals: IDL get expected (boolean) true but got (string) " foo "
+FAIL main.autofocus: IDL set to undefined assert_equals: hasAttribute() expected false but got true
+FAIL main.autofocus: IDL set to null assert_equals: hasAttribute() expected false but got true
+FAIL main.autofocus: IDL set to 7 assert_equals: IDL get expected (boolean) true but got (number) 7
+FAIL main.autofocus: IDL set to 1.5 assert_equals: IDL get expected (boolean) true but got (number) 1.5
+FAIL main.autofocus: IDL set to "5%" assert_equals: IDL get expected (boolean) true but got (string) "5%"
+FAIL main.autofocus: IDL set to "+100" assert_equals: IDL get expected (boolean) true but got (string) "+100"
+FAIL main.autofocus: IDL set to ".5" assert_equals: IDL get expected (boolean) true but got (string) ".5"
+PASS main.autofocus: IDL set to true 
+FAIL main.autofocus: IDL set to false assert_equals: hasAttribute() expected false but got true
+FAIL main.autofocus: IDL set to object "[object Object]" assert_equals: IDL get expected (boolean) true but got (object) object "[object Object]"
+FAIL main.autofocus: IDL set to NaN assert_equals: hasAttribute() expected false but got true
+FAIL main.autofocus: IDL set to Infinity assert_equals: IDL get expected (boolean) true but got (number) Infinity
+FAIL main.autofocus: IDL set to -Infinity assert_equals: IDL get expected (boolean) true but got (number) -Infinity
+FAIL main.autofocus: IDL set to "\0" assert_equals: IDL get expected (boolean) true but got (string) "\0"
+FAIL main.autofocus: IDL set to object "test-toString" assert_equals: IDL get expected (boolean) true but got (object) object "test-toString"
+FAIL main.autofocus: IDL set to object "test-valueOf" assert_equals: IDL get expected (boolean) true but got (object) object "test-valueOf"
 PASS main.hidden: typeof IDL attribute 
 PASS main.hidden: IDL get with DOM attribute unset 
 PASS main.hidden: setAttribute() to "" 
@@ -4620,6 +5127,45 @@ PASS div.className (<div class>): IDL set to "\0"
 PASS div.className (<div class>): IDL set to null 
 PASS div.className (<div class>): IDL set to object "test-toString" 
 PASS div.className (<div class>): IDL set to object "test-valueOf" 
+FAIL div.autofocus: typeof IDL attribute assert_equals: expected "boolean" but got "undefined"
+FAIL div.autofocus: IDL get with DOM attribute unset assert_equals: expected (boolean) false but got (undefined) undefined
+FAIL div.autofocus: setAttribute() to "" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL div.autofocus: setAttribute() to " foo " assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL div.autofocus: setAttribute() to undefined assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL div.autofocus: setAttribute() to null assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL div.autofocus: setAttribute() to 7 assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL div.autofocus: setAttribute() to 1.5 assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL div.autofocus: setAttribute() to "5%" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL div.autofocus: setAttribute() to "+100" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL div.autofocus: setAttribute() to ".5" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL div.autofocus: setAttribute() to true assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL div.autofocus: setAttribute() to false assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL div.autofocus: setAttribute() to object "[object Object]" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL div.autofocus: setAttribute() to NaN assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL div.autofocus: setAttribute() to Infinity assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL div.autofocus: setAttribute() to -Infinity assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL div.autofocus: setAttribute() to "\0" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL div.autofocus: setAttribute() to object "test-toString" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL div.autofocus: setAttribute() to object "test-valueOf" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL div.autofocus: setAttribute() to "autofocus" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL div.autofocus: IDL set to "" assert_equals: hasAttribute() expected false but got true
+FAIL div.autofocus: IDL set to " foo " assert_equals: IDL get expected (boolean) true but got (string) " foo "
+FAIL div.autofocus: IDL set to undefined assert_equals: hasAttribute() expected false but got true
+FAIL div.autofocus: IDL set to null assert_equals: hasAttribute() expected false but got true
+FAIL div.autofocus: IDL set to 7 assert_equals: IDL get expected (boolean) true but got (number) 7
+FAIL div.autofocus: IDL set to 1.5 assert_equals: IDL get expected (boolean) true but got (number) 1.5
+FAIL div.autofocus: IDL set to "5%" assert_equals: IDL get expected (boolean) true but got (string) "5%"
+FAIL div.autofocus: IDL set to "+100" assert_equals: IDL get expected (boolean) true but got (string) "+100"
+FAIL div.autofocus: IDL set to ".5" assert_equals: IDL get expected (boolean) true but got (string) ".5"
+PASS div.autofocus: IDL set to true 
+FAIL div.autofocus: IDL set to false assert_equals: hasAttribute() expected false but got true
+FAIL div.autofocus: IDL set to object "[object Object]" assert_equals: IDL get expected (boolean) true but got (object) object "[object Object]"
+FAIL div.autofocus: IDL set to NaN assert_equals: hasAttribute() expected false but got true
+FAIL div.autofocus: IDL set to Infinity assert_equals: IDL get expected (boolean) true but got (number) Infinity
+FAIL div.autofocus: IDL set to -Infinity assert_equals: IDL get expected (boolean) true but got (number) -Infinity
+FAIL div.autofocus: IDL set to "\0" assert_equals: IDL get expected (boolean) true but got (string) "\0"
+FAIL div.autofocus: IDL set to object "test-toString" assert_equals: IDL get expected (boolean) true but got (object) object "test-toString"
+FAIL div.autofocus: IDL set to object "test-valueOf" assert_equals: IDL get expected (boolean) true but got (object) object "test-valueOf"
 PASS div.hidden: typeof IDL attribute 
 PASS div.hidden: IDL get with DOM attribute unset 
 PASS div.hidden: setAttribute() to "" 

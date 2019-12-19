@@ -33,8 +33,8 @@
 
             base.setAttribute("href", "");
             assert_equals(ele[item.get], url.substr(0, url.lastIndexOf("/")) +"/test.txt", "The '" + item.get + "' attribute is incorrect.");
-            base.setAttribute("href", "http://{{domains[www]}}:{{ports[http][0]}}");
-            assert_equals(ele[item.get], "http://{{domains[www]}}:{{ports[http][0]}}/test.txt", "The '" + item.get + "' attribute is incorrect.");
+            base.setAttribute("href", "http://{{hosts[alt][]}}:{{ports[http][0]}}");
+            assert_equals(ele[item.get], "http://{{hosts[alt][]}}:{{ports[http][0]}}/test.txt", "The '" + item.get + "' attribute is incorrect.");
           }, "The '" + item.set + "' attribute of the '" + item.elements[j] + "' element");
         }
       }

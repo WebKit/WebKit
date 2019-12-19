@@ -6,22 +6,22 @@ Blocked access to external URL http://site.example/
 Blocked access to external URL http://site.example/path???@#l
 Blocked access to external URL http://site.example/
 Blocked access to external URL http://site.example/path???@#l
-CONSOLE MESSAGE: line 820: The language contains a null character and is not a valid BCP 47 language tag.
-CONSOLE MESSAGE: line 820: The language 'undefined' is not a valid BCP 47 language tag.
-CONSOLE MESSAGE: line 820: The language '7' is not a valid BCP 47 language tag.
-CONSOLE MESSAGE: line 820: The language '1.5' is not a valid BCP 47 language tag.
-CONSOLE MESSAGE: line 820: The language '5%' is not a valid BCP 47 language tag.
-CONSOLE MESSAGE: line 820: The language '+100' is not a valid BCP 47 language tag.
-CONSOLE MESSAGE: line 820: The language '.5' is not a valid BCP 47 language tag.
-CONSOLE MESSAGE: line 820: The language 'true' is not a valid BCP 47 language tag.
-CONSOLE MESSAGE: line 820: The language 'false' is not a valid BCP 47 language tag.
-CONSOLE MESSAGE: line 820: The language '[object Object]' is not a valid BCP 47 language tag.
-CONSOLE MESSAGE: line 820: The language 'Infinity' is not a valid BCP 47 language tag.
-CONSOLE MESSAGE: line 820: The language '-Infinity' is not a valid BCP 47 language tag.
-CONSOLE MESSAGE: line 820: The language contains a null character and is not a valid BCP 47 language tag.
-CONSOLE MESSAGE: line 820: The language 'null' is not a valid BCP 47 language tag.
-CONSOLE MESSAGE: line 820: The language 'test-toString' is not a valid BCP 47 language tag.
-CONSOLE MESSAGE: line 820: The language 'test-valueOf' is not a valid BCP 47 language tag.
+CONSOLE MESSAGE: line 824: The language contains a null character and is not a valid BCP 47 language tag.
+CONSOLE MESSAGE: line 824: The language 'undefined' is not a valid BCP 47 language tag.
+CONSOLE MESSAGE: line 824: The language '7' is not a valid BCP 47 language tag.
+CONSOLE MESSAGE: line 824: The language '1.5' is not a valid BCP 47 language tag.
+CONSOLE MESSAGE: line 824: The language '5%' is not a valid BCP 47 language tag.
+CONSOLE MESSAGE: line 824: The language '+100' is not a valid BCP 47 language tag.
+CONSOLE MESSAGE: line 824: The language '.5' is not a valid BCP 47 language tag.
+CONSOLE MESSAGE: line 824: The language 'true' is not a valid BCP 47 language tag.
+CONSOLE MESSAGE: line 824: The language 'false' is not a valid BCP 47 language tag.
+CONSOLE MESSAGE: line 824: The language '[object Object]' is not a valid BCP 47 language tag.
+CONSOLE MESSAGE: line 824: The language 'Infinity' is not a valid BCP 47 language tag.
+CONSOLE MESSAGE: line 824: The language '-Infinity' is not a valid BCP 47 language tag.
+CONSOLE MESSAGE: line 824: The language contains a null character and is not a valid BCP 47 language tag.
+CONSOLE MESSAGE: line 824: The language 'null' is not a valid BCP 47 language tag.
+CONSOLE MESSAGE: line 824: The language 'test-toString' is not a valid BCP 47 language tag.
+CONSOLE MESSAGE: line 824: The language 'test-valueOf' is not a valid BCP 47 language tag.
 CONSOLE MESSAGE: line 1984: The language contains a null character and is not a valid BCP 47 language tag.
 CONSOLE MESSAGE: line 1984: The language 'undefined' is not a valid BCP 47 language tag.
 CONSOLE MESSAGE: line 1984: The language '7' is not a valid BCP 47 language tag.
@@ -223,6 +223,45 @@ PASS picture.className (<picture class>): IDL set to "\0"
 PASS picture.className (<picture class>): IDL set to null 
 PASS picture.className (<picture class>): IDL set to object "test-toString" 
 PASS picture.className (<picture class>): IDL set to object "test-valueOf" 
+FAIL picture.autofocus: typeof IDL attribute assert_equals: expected "boolean" but got "undefined"
+FAIL picture.autofocus: IDL get with DOM attribute unset assert_equals: expected (boolean) false but got (undefined) undefined
+FAIL picture.autofocus: setAttribute() to "" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL picture.autofocus: setAttribute() to " foo " assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL picture.autofocus: setAttribute() to undefined assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL picture.autofocus: setAttribute() to null assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL picture.autofocus: setAttribute() to 7 assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL picture.autofocus: setAttribute() to 1.5 assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL picture.autofocus: setAttribute() to "5%" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL picture.autofocus: setAttribute() to "+100" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL picture.autofocus: setAttribute() to ".5" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL picture.autofocus: setAttribute() to true assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL picture.autofocus: setAttribute() to false assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL picture.autofocus: setAttribute() to object "[object Object]" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL picture.autofocus: setAttribute() to NaN assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL picture.autofocus: setAttribute() to Infinity assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL picture.autofocus: setAttribute() to -Infinity assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL picture.autofocus: setAttribute() to "\0" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL picture.autofocus: setAttribute() to object "test-toString" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL picture.autofocus: setAttribute() to object "test-valueOf" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL picture.autofocus: setAttribute() to "autofocus" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL picture.autofocus: IDL set to "" assert_equals: hasAttribute() expected false but got true
+FAIL picture.autofocus: IDL set to " foo " assert_equals: IDL get expected (boolean) true but got (string) " foo "
+FAIL picture.autofocus: IDL set to undefined assert_equals: hasAttribute() expected false but got true
+FAIL picture.autofocus: IDL set to null assert_equals: hasAttribute() expected false but got true
+FAIL picture.autofocus: IDL set to 7 assert_equals: IDL get expected (boolean) true but got (number) 7
+FAIL picture.autofocus: IDL set to 1.5 assert_equals: IDL get expected (boolean) true but got (number) 1.5
+FAIL picture.autofocus: IDL set to "5%" assert_equals: IDL get expected (boolean) true but got (string) "5%"
+FAIL picture.autofocus: IDL set to "+100" assert_equals: IDL get expected (boolean) true but got (string) "+100"
+FAIL picture.autofocus: IDL set to ".5" assert_equals: IDL get expected (boolean) true but got (string) ".5"
+PASS picture.autofocus: IDL set to true 
+FAIL picture.autofocus: IDL set to false assert_equals: hasAttribute() expected false but got true
+FAIL picture.autofocus: IDL set to object "[object Object]" assert_equals: IDL get expected (boolean) true but got (object) object "[object Object]"
+FAIL picture.autofocus: IDL set to NaN assert_equals: hasAttribute() expected false but got true
+FAIL picture.autofocus: IDL set to Infinity assert_equals: IDL get expected (boolean) true but got (number) Infinity
+FAIL picture.autofocus: IDL set to -Infinity assert_equals: IDL get expected (boolean) true but got (number) -Infinity
+FAIL picture.autofocus: IDL set to "\0" assert_equals: IDL get expected (boolean) true but got (string) "\0"
+FAIL picture.autofocus: IDL set to object "test-toString" assert_equals: IDL get expected (boolean) true but got (object) object "test-toString"
+FAIL picture.autofocus: IDL set to object "test-valueOf" assert_equals: IDL get expected (boolean) true but got (object) object "test-valueOf"
 PASS picture.hidden: typeof IDL attribute 
 PASS picture.hidden: IDL get with DOM attribute unset 
 PASS picture.hidden: setAttribute() to "" 
@@ -508,6 +547,45 @@ PASS img.className (<img class>): IDL set to "\0"
 PASS img.className (<img class>): IDL set to null 
 PASS img.className (<img class>): IDL set to object "test-toString" 
 PASS img.className (<img class>): IDL set to object "test-valueOf" 
+FAIL img.autofocus: typeof IDL attribute assert_equals: expected "boolean" but got "undefined"
+FAIL img.autofocus: IDL get with DOM attribute unset assert_equals: expected (boolean) false but got (undefined) undefined
+FAIL img.autofocus: setAttribute() to "" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL img.autofocus: setAttribute() to " foo " assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL img.autofocus: setAttribute() to undefined assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL img.autofocus: setAttribute() to null assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL img.autofocus: setAttribute() to 7 assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL img.autofocus: setAttribute() to 1.5 assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL img.autofocus: setAttribute() to "5%" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL img.autofocus: setAttribute() to "+100" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL img.autofocus: setAttribute() to ".5" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL img.autofocus: setAttribute() to true assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL img.autofocus: setAttribute() to false assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL img.autofocus: setAttribute() to object "[object Object]" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL img.autofocus: setAttribute() to NaN assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL img.autofocus: setAttribute() to Infinity assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL img.autofocus: setAttribute() to -Infinity assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL img.autofocus: setAttribute() to "\0" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL img.autofocus: setAttribute() to object "test-toString" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL img.autofocus: setAttribute() to object "test-valueOf" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL img.autofocus: setAttribute() to "autofocus" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL img.autofocus: IDL set to "" assert_equals: hasAttribute() expected false but got true
+FAIL img.autofocus: IDL set to " foo " assert_equals: IDL get expected (boolean) true but got (string) " foo "
+FAIL img.autofocus: IDL set to undefined assert_equals: hasAttribute() expected false but got true
+FAIL img.autofocus: IDL set to null assert_equals: hasAttribute() expected false but got true
+FAIL img.autofocus: IDL set to 7 assert_equals: IDL get expected (boolean) true but got (number) 7
+FAIL img.autofocus: IDL set to 1.5 assert_equals: IDL get expected (boolean) true but got (number) 1.5
+FAIL img.autofocus: IDL set to "5%" assert_equals: IDL get expected (boolean) true but got (string) "5%"
+FAIL img.autofocus: IDL set to "+100" assert_equals: IDL get expected (boolean) true but got (string) "+100"
+FAIL img.autofocus: IDL set to ".5" assert_equals: IDL get expected (boolean) true but got (string) ".5"
+PASS img.autofocus: IDL set to true 
+FAIL img.autofocus: IDL set to false assert_equals: hasAttribute() expected false but got true
+FAIL img.autofocus: IDL set to object "[object Object]" assert_equals: IDL get expected (boolean) true but got (object) object "[object Object]"
+FAIL img.autofocus: IDL set to NaN assert_equals: hasAttribute() expected false but got true
+FAIL img.autofocus: IDL set to Infinity assert_equals: IDL get expected (boolean) true but got (number) Infinity
+FAIL img.autofocus: IDL set to -Infinity assert_equals: IDL get expected (boolean) true but got (number) -Infinity
+FAIL img.autofocus: IDL set to "\0" assert_equals: IDL get expected (boolean) true but got (string) "\0"
+FAIL img.autofocus: IDL set to object "test-toString" assert_equals: IDL get expected (boolean) true but got (object) object "test-toString"
+FAIL img.autofocus: IDL set to object "test-valueOf" assert_equals: IDL get expected (boolean) true but got (object) object "test-valueOf"
 PASS img.hidden: typeof IDL attribute 
 PASS img.hidden: IDL get with DOM attribute unset 
 PASS img.hidden: setAttribute() to "" 
@@ -756,11 +834,13 @@ PASS img.crossOrigin: setAttribute() to "xanonymous"
 PASS img.crossOrigin: setAttribute() to "anonymous\0" 
 PASS img.crossOrigin: setAttribute() to "nonymous" 
 PASS img.crossOrigin: setAttribute() to "ANONYMOUS" 
+PASS img.crossOrigin: setAttribute() to "anonymouſ" 
 PASS img.crossOrigin: setAttribute() to "use-credentials" 
 PASS img.crossOrigin: setAttribute() to "xuse-credentials" 
 PASS img.crossOrigin: setAttribute() to "use-credentials\0" 
 PASS img.crossOrigin: setAttribute() to "se-credentials" 
 PASS img.crossOrigin: setAttribute() to "USE-CREDENTIALS" 
+PASS img.crossOrigin: setAttribute() to "uſe-credentialſ" 
 PASS img.crossOrigin: IDL set to "" 
 PASS img.crossOrigin: IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " 
 PASS img.crossOrigin: IDL set to undefined 
@@ -784,11 +864,13 @@ PASS img.crossOrigin: IDL set to "xanonymous"
 PASS img.crossOrigin: IDL set to "anonymous\0" 
 PASS img.crossOrigin: IDL set to "nonymous" 
 PASS img.crossOrigin: IDL set to "ANONYMOUS" 
+PASS img.crossOrigin: IDL set to "anonymouſ" 
 PASS img.crossOrigin: IDL set to "use-credentials" 
 PASS img.crossOrigin: IDL set to "xuse-credentials" 
 PASS img.crossOrigin: IDL set to "use-credentials\0" 
 PASS img.crossOrigin: IDL set to "se-credentials" 
 PASS img.crossOrigin: IDL set to "USE-CREDENTIALS" 
+PASS img.crossOrigin: IDL set to "uſe-credentialſ" 
 PASS img.useMap: typeof IDL attribute 
 PASS img.useMap: IDL get with DOM attribute unset 
 PASS img.useMap: setAttribute() to "" 
@@ -917,6 +999,7 @@ FAIL img.referrerPolicy: setAttribute() to "xsame-origin" assert_equals: IDL get
 FAIL img.referrerPolicy: setAttribute() to "same-origin\0" assert_equals: IDL get expected (string) "" but got (undefined) undefined
 FAIL img.referrerPolicy: setAttribute() to "ame-origin" assert_equals: IDL get expected (string) "" but got (undefined) undefined
 FAIL img.referrerPolicy: setAttribute() to "SAME-ORIGIN" assert_equals: IDL get expected (string) "same-origin" but got (undefined) undefined
+FAIL img.referrerPolicy: setAttribute() to "ſame-origin" assert_equals: IDL get expected (string) "" but got (undefined) undefined
 FAIL img.referrerPolicy: setAttribute() to "origin" assert_equals: IDL get expected (string) "origin" but got (undefined) undefined
 FAIL img.referrerPolicy: setAttribute() to "xorigin" assert_equals: IDL get expected (string) "" but got (undefined) undefined
 FAIL img.referrerPolicy: setAttribute() to "origin\0" assert_equals: IDL get expected (string) "" but got (undefined) undefined
@@ -927,79 +1010,88 @@ FAIL img.referrerPolicy: setAttribute() to "xstrict-origin" assert_equals: IDL g
 FAIL img.referrerPolicy: setAttribute() to "strict-origin\0" assert_equals: IDL get expected (string) "" but got (undefined) undefined
 FAIL img.referrerPolicy: setAttribute() to "trict-origin" assert_equals: IDL get expected (string) "" but got (undefined) undefined
 FAIL img.referrerPolicy: setAttribute() to "STRICT-ORIGIN" assert_equals: IDL get expected (string) "strict-origin" but got (undefined) undefined
+FAIL img.referrerPolicy: setAttribute() to "ſtrict-origin" assert_equals: IDL get expected (string) "" but got (undefined) undefined
 FAIL img.referrerPolicy: setAttribute() to "origin-when-cross-origin" assert_equals: IDL get expected (string) "origin-when-cross-origin" but got (undefined) undefined
 FAIL img.referrerPolicy: setAttribute() to "xorigin-when-cross-origin" assert_equals: IDL get expected (string) "" but got (undefined) undefined
 FAIL img.referrerPolicy: setAttribute() to "origin-when-cross-origin\0" assert_equals: IDL get expected (string) "" but got (undefined) undefined
 FAIL img.referrerPolicy: setAttribute() to "rigin-when-cross-origin" assert_equals: IDL get expected (string) "" but got (undefined) undefined
 FAIL img.referrerPolicy: setAttribute() to "ORIGIN-WHEN-CROSS-ORIGIN" assert_equals: IDL get expected (string) "origin-when-cross-origin" but got (undefined) undefined
+FAIL img.referrerPolicy: setAttribute() to "origin-when-croſſ-origin" assert_equals: IDL get expected (string) "" but got (undefined) undefined
 FAIL img.referrerPolicy: setAttribute() to "strict-origin-when-cross-origin" assert_equals: IDL get expected (string) "strict-origin-when-cross-origin" but got (undefined) undefined
 FAIL img.referrerPolicy: setAttribute() to "xstrict-origin-when-cross-origin" assert_equals: IDL get expected (string) "" but got (undefined) undefined
 FAIL img.referrerPolicy: setAttribute() to "strict-origin-when-cross-origin\0" assert_equals: IDL get expected (string) "" but got (undefined) undefined
 FAIL img.referrerPolicy: setAttribute() to "trict-origin-when-cross-origin" assert_equals: IDL get expected (string) "" but got (undefined) undefined
 FAIL img.referrerPolicy: setAttribute() to "STRICT-ORIGIN-WHEN-CROSS-ORIGIN" assert_equals: IDL get expected (string) "strict-origin-when-cross-origin" but got (undefined) undefined
+FAIL img.referrerPolicy: setAttribute() to "ſtrict-origin-when-croſſ-origin" assert_equals: IDL get expected (string) "" but got (undefined) undefined
 FAIL img.referrerPolicy: setAttribute() to "unsafe-url" assert_equals: IDL get expected (string) "unsafe-url" but got (undefined) undefined
 FAIL img.referrerPolicy: setAttribute() to "xunsafe-url" assert_equals: IDL get expected (string) "" but got (undefined) undefined
 FAIL img.referrerPolicy: setAttribute() to "unsafe-url\0" assert_equals: IDL get expected (string) "" but got (undefined) undefined
 FAIL img.referrerPolicy: setAttribute() to "nsafe-url" assert_equals: IDL get expected (string) "" but got (undefined) undefined
 FAIL img.referrerPolicy: setAttribute() to "UNSAFE-URL" assert_equals: IDL get expected (string) "unsafe-url" but got (undefined) undefined
-FAIL img.referrerPolicy: IDL set to "" assert_equals: getAttribute() expected "" but got "UNSAFE-URL"
-FAIL img.referrerPolicy: IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " assert_equals: getAttribute() expected " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " but got "UNSAFE-URL"
-FAIL img.referrerPolicy: IDL set to undefined assert_equals: getAttribute() expected "undefined" but got "UNSAFE-URL"
-FAIL img.referrerPolicy: IDL set to 7 assert_equals: getAttribute() expected "7" but got "UNSAFE-URL"
-FAIL img.referrerPolicy: IDL set to 1.5 assert_equals: getAttribute() expected "1.5" but got "UNSAFE-URL"
-FAIL img.referrerPolicy: IDL set to "5%" assert_equals: getAttribute() expected "5%" but got "UNSAFE-URL"
-FAIL img.referrerPolicy: IDL set to "+100" assert_equals: getAttribute() expected "+100" but got "UNSAFE-URL"
-FAIL img.referrerPolicy: IDL set to ".5" assert_equals: getAttribute() expected ".5" but got "UNSAFE-URL"
-FAIL img.referrerPolicy: IDL set to true assert_equals: getAttribute() expected "true" but got "UNSAFE-URL"
-FAIL img.referrerPolicy: IDL set to false assert_equals: getAttribute() expected "false" but got "UNSAFE-URL"
-FAIL img.referrerPolicy: IDL set to object "[object Object]" assert_equals: getAttribute() expected "[object Object]" but got "UNSAFE-URL"
-FAIL img.referrerPolicy: IDL set to NaN assert_equals: getAttribute() expected "NaN" but got "UNSAFE-URL"
-FAIL img.referrerPolicy: IDL set to Infinity assert_equals: getAttribute() expected "Infinity" but got "UNSAFE-URL"
-FAIL img.referrerPolicy: IDL set to -Infinity assert_equals: getAttribute() expected "-Infinity" but got "UNSAFE-URL"
-FAIL img.referrerPolicy: IDL set to "\0" assert_equals: getAttribute() expected "\0" but got "UNSAFE-URL"
+FAIL img.referrerPolicy: setAttribute() to "unſafe-url" assert_equals: IDL get expected (string) "" but got (undefined) undefined
+FAIL img.referrerPolicy: IDL set to "" assert_equals: getAttribute() expected "" but got "unſafe-url"
+FAIL img.referrerPolicy: IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " assert_equals: getAttribute() expected " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " but got "unſafe-url"
+FAIL img.referrerPolicy: IDL set to undefined assert_equals: getAttribute() expected "undefined" but got "unſafe-url"
+FAIL img.referrerPolicy: IDL set to 7 assert_equals: getAttribute() expected "7" but got "unſafe-url"
+FAIL img.referrerPolicy: IDL set to 1.5 assert_equals: getAttribute() expected "1.5" but got "unſafe-url"
+FAIL img.referrerPolicy: IDL set to "5%" assert_equals: getAttribute() expected "5%" but got "unſafe-url"
+FAIL img.referrerPolicy: IDL set to "+100" assert_equals: getAttribute() expected "+100" but got "unſafe-url"
+FAIL img.referrerPolicy: IDL set to ".5" assert_equals: getAttribute() expected ".5" but got "unſafe-url"
+FAIL img.referrerPolicy: IDL set to true assert_equals: getAttribute() expected "true" but got "unſafe-url"
+FAIL img.referrerPolicy: IDL set to false assert_equals: getAttribute() expected "false" but got "unſafe-url"
+FAIL img.referrerPolicy: IDL set to object "[object Object]" assert_equals: getAttribute() expected "[object Object]" but got "unſafe-url"
+FAIL img.referrerPolicy: IDL set to NaN assert_equals: getAttribute() expected "NaN" but got "unſafe-url"
+FAIL img.referrerPolicy: IDL set to Infinity assert_equals: getAttribute() expected "Infinity" but got "unſafe-url"
+FAIL img.referrerPolicy: IDL set to -Infinity assert_equals: getAttribute() expected "-Infinity" but got "unſafe-url"
+FAIL img.referrerPolicy: IDL set to "\0" assert_equals: getAttribute() expected "\0" but got "unſafe-url"
 FAIL img.referrerPolicy: IDL set to null assert_equals: IDL get expected (string) "" but got (object) null
-FAIL img.referrerPolicy: IDL set to object "test-toString" assert_equals: getAttribute() expected "test-toString" but got "UNSAFE-URL"
-FAIL img.referrerPolicy: IDL set to object "test-valueOf" assert_equals: getAttribute() expected "test-valueOf" but got "UNSAFE-URL"
-FAIL img.referrerPolicy: IDL set to "no-referrer" assert_equals: getAttribute() expected "no-referrer" but got "UNSAFE-URL"
-FAIL img.referrerPolicy: IDL set to "xno-referrer" assert_equals: getAttribute() expected "xno-referrer" but got "UNSAFE-URL"
-FAIL img.referrerPolicy: IDL set to "no-referrer\0" assert_equals: getAttribute() expected "no-referrer\0" but got "UNSAFE-URL"
-FAIL img.referrerPolicy: IDL set to "o-referrer" assert_equals: getAttribute() expected "o-referrer" but got "UNSAFE-URL"
-FAIL img.referrerPolicy: IDL set to "NO-REFERRER" assert_equals: getAttribute() expected "NO-REFERRER" but got "UNSAFE-URL"
-FAIL img.referrerPolicy: IDL set to "no-referrer-when-downgrade" assert_equals: getAttribute() expected "no-referrer-when-downgrade" but got "UNSAFE-URL"
-FAIL img.referrerPolicy: IDL set to "xno-referrer-when-downgrade" assert_equals: getAttribute() expected "xno-referrer-when-downgrade" but got "UNSAFE-URL"
-FAIL img.referrerPolicy: IDL set to "no-referrer-when-downgrade\0" assert_equals: getAttribute() expected "no-referrer-when-downgrade\0" but got "UNSAFE-URL"
-FAIL img.referrerPolicy: IDL set to "o-referrer-when-downgrade" assert_equals: getAttribute() expected "o-referrer-when-downgrade" but got "UNSAFE-URL"
-FAIL img.referrerPolicy: IDL set to "NO-REFERRER-WHEN-DOWNGRADE" assert_equals: getAttribute() expected "NO-REFERRER-WHEN-DOWNGRADE" but got "UNSAFE-URL"
-FAIL img.referrerPolicy: IDL set to "same-origin" assert_equals: getAttribute() expected "same-origin" but got "UNSAFE-URL"
-FAIL img.referrerPolicy: IDL set to "xsame-origin" assert_equals: getAttribute() expected "xsame-origin" but got "UNSAFE-URL"
-FAIL img.referrerPolicy: IDL set to "same-origin\0" assert_equals: getAttribute() expected "same-origin\0" but got "UNSAFE-URL"
-FAIL img.referrerPolicy: IDL set to "ame-origin" assert_equals: getAttribute() expected "ame-origin" but got "UNSAFE-URL"
-FAIL img.referrerPolicy: IDL set to "SAME-ORIGIN" assert_equals: getAttribute() expected "SAME-ORIGIN" but got "UNSAFE-URL"
-FAIL img.referrerPolicy: IDL set to "origin" assert_equals: getAttribute() expected "origin" but got "UNSAFE-URL"
-FAIL img.referrerPolicy: IDL set to "xorigin" assert_equals: getAttribute() expected "xorigin" but got "UNSAFE-URL"
-FAIL img.referrerPolicy: IDL set to "origin\0" assert_equals: getAttribute() expected "origin\0" but got "UNSAFE-URL"
-FAIL img.referrerPolicy: IDL set to "rigin" assert_equals: getAttribute() expected "rigin" but got "UNSAFE-URL"
-FAIL img.referrerPolicy: IDL set to "ORIGIN" assert_equals: getAttribute() expected "ORIGIN" but got "UNSAFE-URL"
-FAIL img.referrerPolicy: IDL set to "strict-origin" assert_equals: getAttribute() expected "strict-origin" but got "UNSAFE-URL"
-FAIL img.referrerPolicy: IDL set to "xstrict-origin" assert_equals: getAttribute() expected "xstrict-origin" but got "UNSAFE-URL"
-FAIL img.referrerPolicy: IDL set to "strict-origin\0" assert_equals: getAttribute() expected "strict-origin\0" but got "UNSAFE-URL"
-FAIL img.referrerPolicy: IDL set to "trict-origin" assert_equals: getAttribute() expected "trict-origin" but got "UNSAFE-URL"
-FAIL img.referrerPolicy: IDL set to "STRICT-ORIGIN" assert_equals: getAttribute() expected "STRICT-ORIGIN" but got "UNSAFE-URL"
-FAIL img.referrerPolicy: IDL set to "origin-when-cross-origin" assert_equals: getAttribute() expected "origin-when-cross-origin" but got "UNSAFE-URL"
-FAIL img.referrerPolicy: IDL set to "xorigin-when-cross-origin" assert_equals: getAttribute() expected "xorigin-when-cross-origin" but got "UNSAFE-URL"
-FAIL img.referrerPolicy: IDL set to "origin-when-cross-origin\0" assert_equals: getAttribute() expected "origin-when-cross-origin\0" but got "UNSAFE-URL"
-FAIL img.referrerPolicy: IDL set to "rigin-when-cross-origin" assert_equals: getAttribute() expected "rigin-when-cross-origin" but got "UNSAFE-URL"
-FAIL img.referrerPolicy: IDL set to "ORIGIN-WHEN-CROSS-ORIGIN" assert_equals: getAttribute() expected "ORIGIN-WHEN-CROSS-ORIGIN" but got "UNSAFE-URL"
-FAIL img.referrerPolicy: IDL set to "strict-origin-when-cross-origin" assert_equals: getAttribute() expected "strict-origin-when-cross-origin" but got "UNSAFE-URL"
-FAIL img.referrerPolicy: IDL set to "xstrict-origin-when-cross-origin" assert_equals: getAttribute() expected "xstrict-origin-when-cross-origin" but got "UNSAFE-URL"
-FAIL img.referrerPolicy: IDL set to "strict-origin-when-cross-origin\0" assert_equals: getAttribute() expected "strict-origin-when-cross-origin\0" but got "UNSAFE-URL"
-FAIL img.referrerPolicy: IDL set to "trict-origin-when-cross-origin" assert_equals: getAttribute() expected "trict-origin-when-cross-origin" but got "UNSAFE-URL"
-FAIL img.referrerPolicy: IDL set to "STRICT-ORIGIN-WHEN-CROSS-ORIGIN" assert_equals: getAttribute() expected "STRICT-ORIGIN-WHEN-CROSS-ORIGIN" but got "UNSAFE-URL"
-FAIL img.referrerPolicy: IDL set to "unsafe-url" assert_equals: getAttribute() expected "unsafe-url" but got "UNSAFE-URL"
-FAIL img.referrerPolicy: IDL set to "xunsafe-url" assert_equals: getAttribute() expected "xunsafe-url" but got "UNSAFE-URL"
-FAIL img.referrerPolicy: IDL set to "unsafe-url\0" assert_equals: getAttribute() expected "unsafe-url\0" but got "UNSAFE-URL"
-FAIL img.referrerPolicy: IDL set to "nsafe-url" assert_equals: getAttribute() expected "nsafe-url" but got "UNSAFE-URL"
-FAIL img.referrerPolicy: IDL set to "UNSAFE-URL" assert_equals: IDL get expected "unsafe-url" but got "UNSAFE-URL"
+FAIL img.referrerPolicy: IDL set to object "test-toString" assert_equals: getAttribute() expected "test-toString" but got "unſafe-url"
+FAIL img.referrerPolicy: IDL set to object "test-valueOf" assert_equals: getAttribute() expected "test-valueOf" but got "unſafe-url"
+FAIL img.referrerPolicy: IDL set to "no-referrer" assert_equals: getAttribute() expected "no-referrer" but got "unſafe-url"
+FAIL img.referrerPolicy: IDL set to "xno-referrer" assert_equals: getAttribute() expected "xno-referrer" but got "unſafe-url"
+FAIL img.referrerPolicy: IDL set to "no-referrer\0" assert_equals: getAttribute() expected "no-referrer\0" but got "unſafe-url"
+FAIL img.referrerPolicy: IDL set to "o-referrer" assert_equals: getAttribute() expected "o-referrer" but got "unſafe-url"
+FAIL img.referrerPolicy: IDL set to "NO-REFERRER" assert_equals: getAttribute() expected "NO-REFERRER" but got "unſafe-url"
+FAIL img.referrerPolicy: IDL set to "no-referrer-when-downgrade" assert_equals: getAttribute() expected "no-referrer-when-downgrade" but got "unſafe-url"
+FAIL img.referrerPolicy: IDL set to "xno-referrer-when-downgrade" assert_equals: getAttribute() expected "xno-referrer-when-downgrade" but got "unſafe-url"
+FAIL img.referrerPolicy: IDL set to "no-referrer-when-downgrade\0" assert_equals: getAttribute() expected "no-referrer-when-downgrade\0" but got "unſafe-url"
+FAIL img.referrerPolicy: IDL set to "o-referrer-when-downgrade" assert_equals: getAttribute() expected "o-referrer-when-downgrade" but got "unſafe-url"
+FAIL img.referrerPolicy: IDL set to "NO-REFERRER-WHEN-DOWNGRADE" assert_equals: getAttribute() expected "NO-REFERRER-WHEN-DOWNGRADE" but got "unſafe-url"
+FAIL img.referrerPolicy: IDL set to "same-origin" assert_equals: getAttribute() expected "same-origin" but got "unſafe-url"
+FAIL img.referrerPolicy: IDL set to "xsame-origin" assert_equals: getAttribute() expected "xsame-origin" but got "unſafe-url"
+FAIL img.referrerPolicy: IDL set to "same-origin\0" assert_equals: getAttribute() expected "same-origin\0" but got "unſafe-url"
+FAIL img.referrerPolicy: IDL set to "ame-origin" assert_equals: getAttribute() expected "ame-origin" but got "unſafe-url"
+FAIL img.referrerPolicy: IDL set to "SAME-ORIGIN" assert_equals: getAttribute() expected "SAME-ORIGIN" but got "unſafe-url"
+FAIL img.referrerPolicy: IDL set to "ſame-origin" assert_equals: getAttribute() expected "ſame-origin" but got "unſafe-url"
+FAIL img.referrerPolicy: IDL set to "origin" assert_equals: getAttribute() expected "origin" but got "unſafe-url"
+FAIL img.referrerPolicy: IDL set to "xorigin" assert_equals: getAttribute() expected "xorigin" but got "unſafe-url"
+FAIL img.referrerPolicy: IDL set to "origin\0" assert_equals: getAttribute() expected "origin\0" but got "unſafe-url"
+FAIL img.referrerPolicy: IDL set to "rigin" assert_equals: getAttribute() expected "rigin" but got "unſafe-url"
+FAIL img.referrerPolicy: IDL set to "ORIGIN" assert_equals: getAttribute() expected "ORIGIN" but got "unſafe-url"
+FAIL img.referrerPolicy: IDL set to "strict-origin" assert_equals: getAttribute() expected "strict-origin" but got "unſafe-url"
+FAIL img.referrerPolicy: IDL set to "xstrict-origin" assert_equals: getAttribute() expected "xstrict-origin" but got "unſafe-url"
+FAIL img.referrerPolicy: IDL set to "strict-origin\0" assert_equals: getAttribute() expected "strict-origin\0" but got "unſafe-url"
+FAIL img.referrerPolicy: IDL set to "trict-origin" assert_equals: getAttribute() expected "trict-origin" but got "unſafe-url"
+FAIL img.referrerPolicy: IDL set to "STRICT-ORIGIN" assert_equals: getAttribute() expected "STRICT-ORIGIN" but got "unſafe-url"
+FAIL img.referrerPolicy: IDL set to "ſtrict-origin" assert_equals: getAttribute() expected "ſtrict-origin" but got "unſafe-url"
+FAIL img.referrerPolicy: IDL set to "origin-when-cross-origin" assert_equals: getAttribute() expected "origin-when-cross-origin" but got "unſafe-url"
+FAIL img.referrerPolicy: IDL set to "xorigin-when-cross-origin" assert_equals: getAttribute() expected "xorigin-when-cross-origin" but got "unſafe-url"
+FAIL img.referrerPolicy: IDL set to "origin-when-cross-origin\0" assert_equals: getAttribute() expected "origin-when-cross-origin\0" but got "unſafe-url"
+FAIL img.referrerPolicy: IDL set to "rigin-when-cross-origin" assert_equals: getAttribute() expected "rigin-when-cross-origin" but got "unſafe-url"
+FAIL img.referrerPolicy: IDL set to "ORIGIN-WHEN-CROSS-ORIGIN" assert_equals: getAttribute() expected "ORIGIN-WHEN-CROSS-ORIGIN" but got "unſafe-url"
+FAIL img.referrerPolicy: IDL set to "origin-when-croſſ-origin" assert_equals: getAttribute() expected "origin-when-croſſ-origin" but got "unſafe-url"
+FAIL img.referrerPolicy: IDL set to "strict-origin-when-cross-origin" assert_equals: getAttribute() expected "strict-origin-when-cross-origin" but got "unſafe-url"
+FAIL img.referrerPolicy: IDL set to "xstrict-origin-when-cross-origin" assert_equals: getAttribute() expected "xstrict-origin-when-cross-origin" but got "unſafe-url"
+FAIL img.referrerPolicy: IDL set to "strict-origin-when-cross-origin\0" assert_equals: getAttribute() expected "strict-origin-when-cross-origin\0" but got "unſafe-url"
+FAIL img.referrerPolicy: IDL set to "trict-origin-when-cross-origin" assert_equals: getAttribute() expected "trict-origin-when-cross-origin" but got "unſafe-url"
+FAIL img.referrerPolicy: IDL set to "STRICT-ORIGIN-WHEN-CROSS-ORIGIN" assert_equals: getAttribute() expected "STRICT-ORIGIN-WHEN-CROSS-ORIGIN" but got "unſafe-url"
+FAIL img.referrerPolicy: IDL set to "ſtrict-origin-when-croſſ-origin" assert_equals: getAttribute() expected "ſtrict-origin-when-croſſ-origin" but got "unſafe-url"
+FAIL img.referrerPolicy: IDL set to "unsafe-url" assert_equals: getAttribute() expected "unsafe-url" but got "unſafe-url"
+FAIL img.referrerPolicy: IDL set to "xunsafe-url" assert_equals: getAttribute() expected "xunsafe-url" but got "unſafe-url"
+FAIL img.referrerPolicy: IDL set to "unsafe-url\0" assert_equals: getAttribute() expected "unsafe-url\0" but got "unſafe-url"
+FAIL img.referrerPolicy: IDL set to "nsafe-url" assert_equals: getAttribute() expected "nsafe-url" but got "unſafe-url"
+FAIL img.referrerPolicy: IDL set to "UNSAFE-URL" assert_equals: getAttribute() expected "UNSAFE-URL" but got "unſafe-url"
+FAIL img.referrerPolicy: IDL set to "unſafe-url" assert_equals: IDL get expected "" but got "unſafe-url"
 PASS img.decoding: typeof IDL attribute 
 FAIL img.decoding: IDL get with DOM attribute unset assert_equals: expected "auto" but got ""
 FAIL img.decoding: setAttribute() to "" assert_equals: IDL get expected "auto" but got ""
@@ -1024,11 +1116,13 @@ PASS img.decoding: setAttribute() to "async"
 FAIL img.decoding: setAttribute() to "xasync" assert_equals: IDL get expected "auto" but got "xasync"
 FAIL img.decoding: setAttribute() to "async\0" assert_equals: IDL get expected "auto" but got "async\0"
 FAIL img.decoding: setAttribute() to "ASYNC" assert_equals: IDL get expected "async" but got "ASYNC"
+FAIL img.decoding: setAttribute() to "aſync" assert_equals: IDL get expected "auto" but got "aſync"
 PASS img.decoding: setAttribute() to "sync" 
 FAIL img.decoding: setAttribute() to "xsync" assert_equals: IDL get expected "auto" but got "xsync"
 FAIL img.decoding: setAttribute() to "sync\0" assert_equals: IDL get expected "auto" but got "sync\0"
 FAIL img.decoding: setAttribute() to "ync" assert_equals: IDL get expected "auto" but got "ync"
 FAIL img.decoding: setAttribute() to "SYNC" assert_equals: IDL get expected "sync" but got "SYNC"
+FAIL img.decoding: setAttribute() to "ſync" assert_equals: IDL get expected "auto" but got "ſync"
 PASS img.decoding: setAttribute() to "auto" 
 FAIL img.decoding: setAttribute() to "xauto" assert_equals: IDL get expected "auto" but got "xauto"
 FAIL img.decoding: setAttribute() to "auto\0" assert_equals: IDL get expected "auto" but got "auto\0"
@@ -1056,11 +1150,13 @@ PASS img.decoding: IDL set to "async"
 FAIL img.decoding: IDL set to "xasync" assert_equals: IDL get expected "auto" but got "xasync"
 FAIL img.decoding: IDL set to "async\0" assert_equals: IDL get expected "auto" but got "async\0"
 FAIL img.decoding: IDL set to "ASYNC" assert_equals: IDL get expected "async" but got "ASYNC"
+FAIL img.decoding: IDL set to "aſync" assert_equals: IDL get expected "auto" but got "aſync"
 PASS img.decoding: IDL set to "sync" 
 FAIL img.decoding: IDL set to "xsync" assert_equals: IDL get expected "auto" but got "xsync"
 FAIL img.decoding: IDL set to "sync\0" assert_equals: IDL get expected "auto" but got "sync\0"
 FAIL img.decoding: IDL set to "ync" assert_equals: IDL get expected "auto" but got "ync"
 FAIL img.decoding: IDL set to "SYNC" assert_equals: IDL get expected "sync" but got "SYNC"
+FAIL img.decoding: IDL set to "ſync" assert_equals: IDL get expected "auto" but got "ſync"
 PASS img.decoding: IDL set to "auto" 
 FAIL img.decoding: IDL set to "xauto" assert_equals: IDL get expected "auto" but got "xauto"
 FAIL img.decoding: IDL set to "auto\0" assert_equals: IDL get expected "auto" but got "auto\0"
@@ -1580,6 +1676,45 @@ PASS iframe.className (<iframe class>): IDL set to "\0"
 PASS iframe.className (<iframe class>): IDL set to null 
 PASS iframe.className (<iframe class>): IDL set to object "test-toString" 
 PASS iframe.className (<iframe class>): IDL set to object "test-valueOf" 
+FAIL iframe.autofocus: typeof IDL attribute assert_equals: expected "boolean" but got "undefined"
+FAIL iframe.autofocus: IDL get with DOM attribute unset assert_equals: expected (boolean) false but got (undefined) undefined
+FAIL iframe.autofocus: setAttribute() to "" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL iframe.autofocus: setAttribute() to " foo " assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL iframe.autofocus: setAttribute() to undefined assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL iframe.autofocus: setAttribute() to null assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL iframe.autofocus: setAttribute() to 7 assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL iframe.autofocus: setAttribute() to 1.5 assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL iframe.autofocus: setAttribute() to "5%" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL iframe.autofocus: setAttribute() to "+100" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL iframe.autofocus: setAttribute() to ".5" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL iframe.autofocus: setAttribute() to true assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL iframe.autofocus: setAttribute() to false assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL iframe.autofocus: setAttribute() to object "[object Object]" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL iframe.autofocus: setAttribute() to NaN assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL iframe.autofocus: setAttribute() to Infinity assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL iframe.autofocus: setAttribute() to -Infinity assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL iframe.autofocus: setAttribute() to "\0" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL iframe.autofocus: setAttribute() to object "test-toString" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL iframe.autofocus: setAttribute() to object "test-valueOf" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL iframe.autofocus: setAttribute() to "autofocus" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL iframe.autofocus: IDL set to "" assert_equals: hasAttribute() expected false but got true
+FAIL iframe.autofocus: IDL set to " foo " assert_equals: IDL get expected (boolean) true but got (string) " foo "
+FAIL iframe.autofocus: IDL set to undefined assert_equals: hasAttribute() expected false but got true
+FAIL iframe.autofocus: IDL set to null assert_equals: hasAttribute() expected false but got true
+FAIL iframe.autofocus: IDL set to 7 assert_equals: IDL get expected (boolean) true but got (number) 7
+FAIL iframe.autofocus: IDL set to 1.5 assert_equals: IDL get expected (boolean) true but got (number) 1.5
+FAIL iframe.autofocus: IDL set to "5%" assert_equals: IDL get expected (boolean) true but got (string) "5%"
+FAIL iframe.autofocus: IDL set to "+100" assert_equals: IDL get expected (boolean) true but got (string) "+100"
+FAIL iframe.autofocus: IDL set to ".5" assert_equals: IDL get expected (boolean) true but got (string) ".5"
+PASS iframe.autofocus: IDL set to true 
+FAIL iframe.autofocus: IDL set to false assert_equals: hasAttribute() expected false but got true
+FAIL iframe.autofocus: IDL set to object "[object Object]" assert_equals: IDL get expected (boolean) true but got (object) object "[object Object]"
+FAIL iframe.autofocus: IDL set to NaN assert_equals: hasAttribute() expected false but got true
+FAIL iframe.autofocus: IDL set to Infinity assert_equals: IDL get expected (boolean) true but got (number) Infinity
+FAIL iframe.autofocus: IDL set to -Infinity assert_equals: IDL get expected (boolean) true but got (number) -Infinity
+FAIL iframe.autofocus: IDL set to "\0" assert_equals: IDL get expected (boolean) true but got (string) "\0"
+FAIL iframe.autofocus: IDL set to object "test-toString" assert_equals: IDL get expected (boolean) true but got (object) object "test-toString"
+FAIL iframe.autofocus: IDL set to object "test-valueOf" assert_equals: IDL get expected (boolean) true but got (object) object "test-valueOf"
 PASS iframe.hidden: typeof IDL attribute 
 PASS iframe.hidden: IDL get with DOM attribute unset 
 PASS iframe.hidden: setAttribute() to "" 
@@ -2031,6 +2166,7 @@ PASS iframe.referrerPolicy: setAttribute() to "xsame-origin"
 PASS iframe.referrerPolicy: setAttribute() to "same-origin\0" 
 PASS iframe.referrerPolicy: setAttribute() to "ame-origin" 
 PASS iframe.referrerPolicy: setAttribute() to "SAME-ORIGIN" 
+PASS iframe.referrerPolicy: setAttribute() to "ſame-origin" 
 PASS iframe.referrerPolicy: setAttribute() to "origin" 
 PASS iframe.referrerPolicy: setAttribute() to "xorigin" 
 PASS iframe.referrerPolicy: setAttribute() to "origin\0" 
@@ -2041,21 +2177,25 @@ PASS iframe.referrerPolicy: setAttribute() to "xstrict-origin"
 PASS iframe.referrerPolicy: setAttribute() to "strict-origin\0" 
 PASS iframe.referrerPolicy: setAttribute() to "trict-origin" 
 PASS iframe.referrerPolicy: setAttribute() to "STRICT-ORIGIN" 
+PASS iframe.referrerPolicy: setAttribute() to "ſtrict-origin" 
 PASS iframe.referrerPolicy: setAttribute() to "origin-when-cross-origin" 
 PASS iframe.referrerPolicy: setAttribute() to "xorigin-when-cross-origin" 
 PASS iframe.referrerPolicy: setAttribute() to "origin-when-cross-origin\0" 
 PASS iframe.referrerPolicy: setAttribute() to "rigin-when-cross-origin" 
 PASS iframe.referrerPolicy: setAttribute() to "ORIGIN-WHEN-CROSS-ORIGIN" 
+PASS iframe.referrerPolicy: setAttribute() to "origin-when-croſſ-origin" 
 PASS iframe.referrerPolicy: setAttribute() to "strict-origin-when-cross-origin" 
 PASS iframe.referrerPolicy: setAttribute() to "xstrict-origin-when-cross-origin" 
 PASS iframe.referrerPolicy: setAttribute() to "strict-origin-when-cross-origin\0" 
 PASS iframe.referrerPolicy: setAttribute() to "trict-origin-when-cross-origin" 
 PASS iframe.referrerPolicy: setAttribute() to "STRICT-ORIGIN-WHEN-CROSS-ORIGIN" 
+PASS iframe.referrerPolicy: setAttribute() to "ſtrict-origin-when-croſſ-origin" 
 PASS iframe.referrerPolicy: setAttribute() to "unsafe-url" 
 PASS iframe.referrerPolicy: setAttribute() to "xunsafe-url" 
 PASS iframe.referrerPolicy: setAttribute() to "unsafe-url\0" 
 PASS iframe.referrerPolicy: setAttribute() to "nsafe-url" 
 PASS iframe.referrerPolicy: setAttribute() to "UNSAFE-URL" 
+PASS iframe.referrerPolicy: setAttribute() to "unſafe-url" 
 PASS iframe.referrerPolicy: IDL set to "" 
 PASS iframe.referrerPolicy: IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " 
 PASS iframe.referrerPolicy: IDL set to undefined 
@@ -2089,6 +2229,7 @@ PASS iframe.referrerPolicy: IDL set to "xsame-origin"
 PASS iframe.referrerPolicy: IDL set to "same-origin\0" 
 PASS iframe.referrerPolicy: IDL set to "ame-origin" 
 PASS iframe.referrerPolicy: IDL set to "SAME-ORIGIN" 
+PASS iframe.referrerPolicy: IDL set to "ſame-origin" 
 PASS iframe.referrerPolicy: IDL set to "origin" 
 PASS iframe.referrerPolicy: IDL set to "xorigin" 
 PASS iframe.referrerPolicy: IDL set to "origin\0" 
@@ -2099,21 +2240,25 @@ PASS iframe.referrerPolicy: IDL set to "xstrict-origin"
 PASS iframe.referrerPolicy: IDL set to "strict-origin\0" 
 PASS iframe.referrerPolicy: IDL set to "trict-origin" 
 PASS iframe.referrerPolicy: IDL set to "STRICT-ORIGIN" 
+PASS iframe.referrerPolicy: IDL set to "ſtrict-origin" 
 PASS iframe.referrerPolicy: IDL set to "origin-when-cross-origin" 
 PASS iframe.referrerPolicy: IDL set to "xorigin-when-cross-origin" 
 PASS iframe.referrerPolicy: IDL set to "origin-when-cross-origin\0" 
 PASS iframe.referrerPolicy: IDL set to "rigin-when-cross-origin" 
 PASS iframe.referrerPolicy: IDL set to "ORIGIN-WHEN-CROSS-ORIGIN" 
+PASS iframe.referrerPolicy: IDL set to "origin-when-croſſ-origin" 
 PASS iframe.referrerPolicy: IDL set to "strict-origin-when-cross-origin" 
 PASS iframe.referrerPolicy: IDL set to "xstrict-origin-when-cross-origin" 
 PASS iframe.referrerPolicy: IDL set to "strict-origin-when-cross-origin\0" 
 PASS iframe.referrerPolicy: IDL set to "trict-origin-when-cross-origin" 
 PASS iframe.referrerPolicy: IDL set to "STRICT-ORIGIN-WHEN-CROSS-ORIGIN" 
+PASS iframe.referrerPolicy: IDL set to "ſtrict-origin-when-croſſ-origin" 
 PASS iframe.referrerPolicy: IDL set to "unsafe-url" 
 PASS iframe.referrerPolicy: IDL set to "xunsafe-url" 
 PASS iframe.referrerPolicy: IDL set to "unsafe-url\0" 
 PASS iframe.referrerPolicy: IDL set to "nsafe-url" 
 PASS iframe.referrerPolicy: IDL set to "UNSAFE-URL" 
+PASS iframe.referrerPolicy: IDL set to "unſafe-url" 
 FAIL iframe.delegateStickyUserActivation: typeof IDL attribute assert_equals: expected "string" but got "undefined"
 FAIL iframe.delegateStickyUserActivation: setAttribute() to "vibration" assert_equals: IDL get expected (string) "vibration" but got (undefined) undefined
 FAIL iframe.delegateStickyUserActivation: setAttribute() to "VIBRATION" assert_equals: IDL get expected (string) "vibration" but got (undefined) undefined
@@ -2563,6 +2708,45 @@ PASS embed.className (<embed class>): IDL set to "\0"
 PASS embed.className (<embed class>): IDL set to null 
 PASS embed.className (<embed class>): IDL set to object "test-toString" 
 PASS embed.className (<embed class>): IDL set to object "test-valueOf" 
+FAIL embed.autofocus: typeof IDL attribute assert_equals: expected "boolean" but got "undefined"
+FAIL embed.autofocus: IDL get with DOM attribute unset assert_equals: expected (boolean) false but got (undefined) undefined
+FAIL embed.autofocus: setAttribute() to "" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL embed.autofocus: setAttribute() to " foo " assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL embed.autofocus: setAttribute() to undefined assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL embed.autofocus: setAttribute() to null assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL embed.autofocus: setAttribute() to 7 assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL embed.autofocus: setAttribute() to 1.5 assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL embed.autofocus: setAttribute() to "5%" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL embed.autofocus: setAttribute() to "+100" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL embed.autofocus: setAttribute() to ".5" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL embed.autofocus: setAttribute() to true assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL embed.autofocus: setAttribute() to false assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL embed.autofocus: setAttribute() to object "[object Object]" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL embed.autofocus: setAttribute() to NaN assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL embed.autofocus: setAttribute() to Infinity assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL embed.autofocus: setAttribute() to -Infinity assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL embed.autofocus: setAttribute() to "\0" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL embed.autofocus: setAttribute() to object "test-toString" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL embed.autofocus: setAttribute() to object "test-valueOf" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL embed.autofocus: setAttribute() to "autofocus" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL embed.autofocus: IDL set to "" assert_equals: hasAttribute() expected false but got true
+FAIL embed.autofocus: IDL set to " foo " assert_equals: IDL get expected (boolean) true but got (string) " foo "
+FAIL embed.autofocus: IDL set to undefined assert_equals: hasAttribute() expected false but got true
+FAIL embed.autofocus: IDL set to null assert_equals: hasAttribute() expected false but got true
+FAIL embed.autofocus: IDL set to 7 assert_equals: IDL get expected (boolean) true but got (number) 7
+FAIL embed.autofocus: IDL set to 1.5 assert_equals: IDL get expected (boolean) true but got (number) 1.5
+FAIL embed.autofocus: IDL set to "5%" assert_equals: IDL get expected (boolean) true but got (string) "5%"
+FAIL embed.autofocus: IDL set to "+100" assert_equals: IDL get expected (boolean) true but got (string) "+100"
+FAIL embed.autofocus: IDL set to ".5" assert_equals: IDL get expected (boolean) true but got (string) ".5"
+PASS embed.autofocus: IDL set to true 
+FAIL embed.autofocus: IDL set to false assert_equals: hasAttribute() expected false but got true
+FAIL embed.autofocus: IDL set to object "[object Object]" assert_equals: IDL get expected (boolean) true but got (object) object "[object Object]"
+FAIL embed.autofocus: IDL set to NaN assert_equals: hasAttribute() expected false but got true
+FAIL embed.autofocus: IDL set to Infinity assert_equals: IDL get expected (boolean) true but got (number) Infinity
+FAIL embed.autofocus: IDL set to -Infinity assert_equals: IDL get expected (boolean) true but got (number) -Infinity
+FAIL embed.autofocus: IDL set to "\0" assert_equals: IDL get expected (boolean) true but got (string) "\0"
+FAIL embed.autofocus: IDL set to object "test-toString" assert_equals: IDL get expected (boolean) true but got (object) object "test-toString"
+FAIL embed.autofocus: IDL set to object "test-valueOf" assert_equals: IDL get expected (boolean) true but got (object) object "test-valueOf"
 PASS embed.hidden: typeof IDL attribute 
 PASS embed.hidden: IDL get with DOM attribute unset 
 PASS embed.hidden: setAttribute() to "" 
@@ -3082,6 +3266,45 @@ PASS object.className (<object class>): IDL set to "\0"
 PASS object.className (<object class>): IDL set to null 
 PASS object.className (<object class>): IDL set to object "test-toString" 
 PASS object.className (<object class>): IDL set to object "test-valueOf" 
+FAIL object.autofocus: typeof IDL attribute assert_equals: expected "boolean" but got "undefined"
+FAIL object.autofocus: IDL get with DOM attribute unset assert_equals: expected (boolean) false but got (undefined) undefined
+FAIL object.autofocus: setAttribute() to "" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL object.autofocus: setAttribute() to " foo " assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL object.autofocus: setAttribute() to undefined assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL object.autofocus: setAttribute() to null assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL object.autofocus: setAttribute() to 7 assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL object.autofocus: setAttribute() to 1.5 assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL object.autofocus: setAttribute() to "5%" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL object.autofocus: setAttribute() to "+100" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL object.autofocus: setAttribute() to ".5" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL object.autofocus: setAttribute() to true assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL object.autofocus: setAttribute() to false assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL object.autofocus: setAttribute() to object "[object Object]" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL object.autofocus: setAttribute() to NaN assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL object.autofocus: setAttribute() to Infinity assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL object.autofocus: setAttribute() to -Infinity assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL object.autofocus: setAttribute() to "\0" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL object.autofocus: setAttribute() to object "test-toString" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL object.autofocus: setAttribute() to object "test-valueOf" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL object.autofocus: setAttribute() to "autofocus" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL object.autofocus: IDL set to "" assert_equals: hasAttribute() expected false but got true
+FAIL object.autofocus: IDL set to " foo " assert_equals: IDL get expected (boolean) true but got (string) " foo "
+FAIL object.autofocus: IDL set to undefined assert_equals: hasAttribute() expected false but got true
+FAIL object.autofocus: IDL set to null assert_equals: hasAttribute() expected false but got true
+FAIL object.autofocus: IDL set to 7 assert_equals: IDL get expected (boolean) true but got (number) 7
+FAIL object.autofocus: IDL set to 1.5 assert_equals: IDL get expected (boolean) true but got (number) 1.5
+FAIL object.autofocus: IDL set to "5%" assert_equals: IDL get expected (boolean) true but got (string) "5%"
+FAIL object.autofocus: IDL set to "+100" assert_equals: IDL get expected (boolean) true but got (string) "+100"
+FAIL object.autofocus: IDL set to ".5" assert_equals: IDL get expected (boolean) true but got (string) ".5"
+PASS object.autofocus: IDL set to true 
+FAIL object.autofocus: IDL set to false assert_equals: hasAttribute() expected false but got true
+FAIL object.autofocus: IDL set to object "[object Object]" assert_equals: IDL get expected (boolean) true but got (object) object "[object Object]"
+FAIL object.autofocus: IDL set to NaN assert_equals: hasAttribute() expected false but got true
+FAIL object.autofocus: IDL set to Infinity assert_equals: IDL get expected (boolean) true but got (number) Infinity
+FAIL object.autofocus: IDL set to -Infinity assert_equals: IDL get expected (boolean) true but got (number) -Infinity
+FAIL object.autofocus: IDL set to "\0" assert_equals: IDL get expected (boolean) true but got (string) "\0"
+FAIL object.autofocus: IDL set to object "test-toString" assert_equals: IDL get expected (boolean) true but got (object) object "test-toString"
+FAIL object.autofocus: IDL set to object "test-valueOf" assert_equals: IDL get expected (boolean) true but got (object) object "test-valueOf"
 PASS object.hidden: typeof IDL attribute 
 PASS object.hidden: IDL get with DOM attribute unset 
 PASS object.hidden: setAttribute() to "" 
@@ -4042,6 +4265,45 @@ PASS param.className (<param class>): IDL set to "\0"
 PASS param.className (<param class>): IDL set to null 
 PASS param.className (<param class>): IDL set to object "test-toString" 
 PASS param.className (<param class>): IDL set to object "test-valueOf" 
+FAIL param.autofocus: typeof IDL attribute assert_equals: expected "boolean" but got "undefined"
+FAIL param.autofocus: IDL get with DOM attribute unset assert_equals: expected (boolean) false but got (undefined) undefined
+FAIL param.autofocus: setAttribute() to "" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL param.autofocus: setAttribute() to " foo " assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL param.autofocus: setAttribute() to undefined assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL param.autofocus: setAttribute() to null assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL param.autofocus: setAttribute() to 7 assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL param.autofocus: setAttribute() to 1.5 assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL param.autofocus: setAttribute() to "5%" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL param.autofocus: setAttribute() to "+100" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL param.autofocus: setAttribute() to ".5" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL param.autofocus: setAttribute() to true assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL param.autofocus: setAttribute() to false assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL param.autofocus: setAttribute() to object "[object Object]" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL param.autofocus: setAttribute() to NaN assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL param.autofocus: setAttribute() to Infinity assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL param.autofocus: setAttribute() to -Infinity assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL param.autofocus: setAttribute() to "\0" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL param.autofocus: setAttribute() to object "test-toString" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL param.autofocus: setAttribute() to object "test-valueOf" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL param.autofocus: setAttribute() to "autofocus" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL param.autofocus: IDL set to "" assert_equals: hasAttribute() expected false but got true
+FAIL param.autofocus: IDL set to " foo " assert_equals: IDL get expected (boolean) true but got (string) " foo "
+FAIL param.autofocus: IDL set to undefined assert_equals: hasAttribute() expected false but got true
+FAIL param.autofocus: IDL set to null assert_equals: hasAttribute() expected false but got true
+FAIL param.autofocus: IDL set to 7 assert_equals: IDL get expected (boolean) true but got (number) 7
+FAIL param.autofocus: IDL set to 1.5 assert_equals: IDL get expected (boolean) true but got (number) 1.5
+FAIL param.autofocus: IDL set to "5%" assert_equals: IDL get expected (boolean) true but got (string) "5%"
+FAIL param.autofocus: IDL set to "+100" assert_equals: IDL get expected (boolean) true but got (string) "+100"
+FAIL param.autofocus: IDL set to ".5" assert_equals: IDL get expected (boolean) true but got (string) ".5"
+PASS param.autofocus: IDL set to true 
+FAIL param.autofocus: IDL set to false assert_equals: hasAttribute() expected false but got true
+FAIL param.autofocus: IDL set to object "[object Object]" assert_equals: IDL get expected (boolean) true but got (object) object "[object Object]"
+FAIL param.autofocus: IDL set to NaN assert_equals: hasAttribute() expected false but got true
+FAIL param.autofocus: IDL set to Infinity assert_equals: IDL get expected (boolean) true but got (number) Infinity
+FAIL param.autofocus: IDL set to -Infinity assert_equals: IDL get expected (boolean) true but got (number) -Infinity
+FAIL param.autofocus: IDL set to "\0" assert_equals: IDL get expected (boolean) true but got (string) "\0"
+FAIL param.autofocus: IDL set to object "test-toString" assert_equals: IDL get expected (boolean) true but got (object) object "test-toString"
+FAIL param.autofocus: IDL set to object "test-valueOf" assert_equals: IDL get expected (boolean) true but got (object) object "test-valueOf"
 PASS param.hidden: typeof IDL attribute 
 PASS param.hidden: IDL get with DOM attribute unset 
 PASS param.hidden: setAttribute() to "" 
@@ -4479,6 +4741,45 @@ PASS video.className (<video class>): IDL set to "\0"
 PASS video.className (<video class>): IDL set to null 
 PASS video.className (<video class>): IDL set to object "test-toString" 
 PASS video.className (<video class>): IDL set to object "test-valueOf" 
+FAIL video.autofocus: typeof IDL attribute assert_equals: expected "boolean" but got "undefined"
+FAIL video.autofocus: IDL get with DOM attribute unset assert_equals: expected (boolean) false but got (undefined) undefined
+FAIL video.autofocus: setAttribute() to "" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL video.autofocus: setAttribute() to " foo " assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL video.autofocus: setAttribute() to undefined assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL video.autofocus: setAttribute() to null assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL video.autofocus: setAttribute() to 7 assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL video.autofocus: setAttribute() to 1.5 assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL video.autofocus: setAttribute() to "5%" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL video.autofocus: setAttribute() to "+100" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL video.autofocus: setAttribute() to ".5" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL video.autofocus: setAttribute() to true assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL video.autofocus: setAttribute() to false assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL video.autofocus: setAttribute() to object "[object Object]" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL video.autofocus: setAttribute() to NaN assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL video.autofocus: setAttribute() to Infinity assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL video.autofocus: setAttribute() to -Infinity assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL video.autofocus: setAttribute() to "\0" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL video.autofocus: setAttribute() to object "test-toString" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL video.autofocus: setAttribute() to object "test-valueOf" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL video.autofocus: setAttribute() to "autofocus" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL video.autofocus: IDL set to "" assert_equals: hasAttribute() expected false but got true
+FAIL video.autofocus: IDL set to " foo " assert_equals: IDL get expected (boolean) true but got (string) " foo "
+FAIL video.autofocus: IDL set to undefined assert_equals: hasAttribute() expected false but got true
+FAIL video.autofocus: IDL set to null assert_equals: hasAttribute() expected false but got true
+FAIL video.autofocus: IDL set to 7 assert_equals: IDL get expected (boolean) true but got (number) 7
+FAIL video.autofocus: IDL set to 1.5 assert_equals: IDL get expected (boolean) true but got (number) 1.5
+FAIL video.autofocus: IDL set to "5%" assert_equals: IDL get expected (boolean) true but got (string) "5%"
+FAIL video.autofocus: IDL set to "+100" assert_equals: IDL get expected (boolean) true but got (string) "+100"
+FAIL video.autofocus: IDL set to ".5" assert_equals: IDL get expected (boolean) true but got (string) ".5"
+PASS video.autofocus: IDL set to true 
+FAIL video.autofocus: IDL set to false assert_equals: hasAttribute() expected false but got true
+FAIL video.autofocus: IDL set to object "[object Object]" assert_equals: IDL get expected (boolean) true but got (object) object "[object Object]"
+FAIL video.autofocus: IDL set to NaN assert_equals: hasAttribute() expected false but got true
+FAIL video.autofocus: IDL set to Infinity assert_equals: IDL get expected (boolean) true but got (number) Infinity
+FAIL video.autofocus: IDL set to -Infinity assert_equals: IDL get expected (boolean) true but got (number) -Infinity
+FAIL video.autofocus: IDL set to "\0" assert_equals: IDL get expected (boolean) true but got (string) "\0"
+FAIL video.autofocus: IDL set to object "test-toString" assert_equals: IDL get expected (boolean) true but got (object) object "test-toString"
+FAIL video.autofocus: IDL set to object "test-valueOf" assert_equals: IDL get expected (boolean) true but got (object) object "test-valueOf"
 PASS video.hidden: typeof IDL attribute 
 PASS video.hidden: IDL get with DOM attribute unset 
 PASS video.hidden: setAttribute() to "" 
@@ -4651,11 +4952,13 @@ PASS video.crossOrigin: setAttribute() to "xanonymous"
 PASS video.crossOrigin: setAttribute() to "anonymous\0" 
 PASS video.crossOrigin: setAttribute() to "nonymous" 
 PASS video.crossOrigin: setAttribute() to "ANONYMOUS" 
+PASS video.crossOrigin: setAttribute() to "anonymouſ" 
 PASS video.crossOrigin: setAttribute() to "use-credentials" 
 PASS video.crossOrigin: setAttribute() to "xuse-credentials" 
 PASS video.crossOrigin: setAttribute() to "use-credentials\0" 
 PASS video.crossOrigin: setAttribute() to "se-credentials" 
 PASS video.crossOrigin: setAttribute() to "USE-CREDENTIALS" 
+PASS video.crossOrigin: setAttribute() to "uſe-credentialſ" 
 PASS video.crossOrigin: IDL set to "" 
 PASS video.crossOrigin: IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " 
 PASS video.crossOrigin: IDL set to undefined 
@@ -4679,11 +4982,13 @@ PASS video.crossOrigin: IDL set to "xanonymous"
 PASS video.crossOrigin: IDL set to "anonymous\0" 
 PASS video.crossOrigin: IDL set to "nonymous" 
 PASS video.crossOrigin: IDL set to "ANONYMOUS" 
+PASS video.crossOrigin: IDL set to "anonymouſ" 
 PASS video.crossOrigin: IDL set to "use-credentials" 
 PASS video.crossOrigin: IDL set to "xuse-credentials" 
 PASS video.crossOrigin: IDL set to "use-credentials\0" 
 PASS video.crossOrigin: IDL set to "se-credentials" 
 PASS video.crossOrigin: IDL set to "USE-CREDENTIALS" 
+PASS video.crossOrigin: IDL set to "uſe-credentialſ" 
 PASS video.preload: typeof IDL attribute 
 PASS video.preload: setAttribute() to "none" 
 PASS video.preload: setAttribute() to "NONE" 
@@ -5275,6 +5580,45 @@ PASS audio.className (<audio class>): IDL set to "\0"
 PASS audio.className (<audio class>): IDL set to null 
 PASS audio.className (<audio class>): IDL set to object "test-toString" 
 PASS audio.className (<audio class>): IDL set to object "test-valueOf" 
+FAIL audio.autofocus: typeof IDL attribute assert_equals: expected "boolean" but got "undefined"
+FAIL audio.autofocus: IDL get with DOM attribute unset assert_equals: expected (boolean) false but got (undefined) undefined
+FAIL audio.autofocus: setAttribute() to "" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL audio.autofocus: setAttribute() to " foo " assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL audio.autofocus: setAttribute() to undefined assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL audio.autofocus: setAttribute() to null assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL audio.autofocus: setAttribute() to 7 assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL audio.autofocus: setAttribute() to 1.5 assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL audio.autofocus: setAttribute() to "5%" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL audio.autofocus: setAttribute() to "+100" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL audio.autofocus: setAttribute() to ".5" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL audio.autofocus: setAttribute() to true assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL audio.autofocus: setAttribute() to false assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL audio.autofocus: setAttribute() to object "[object Object]" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL audio.autofocus: setAttribute() to NaN assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL audio.autofocus: setAttribute() to Infinity assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL audio.autofocus: setAttribute() to -Infinity assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL audio.autofocus: setAttribute() to "\0" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL audio.autofocus: setAttribute() to object "test-toString" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL audio.autofocus: setAttribute() to object "test-valueOf" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL audio.autofocus: setAttribute() to "autofocus" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL audio.autofocus: IDL set to "" assert_equals: hasAttribute() expected false but got true
+FAIL audio.autofocus: IDL set to " foo " assert_equals: IDL get expected (boolean) true but got (string) " foo "
+FAIL audio.autofocus: IDL set to undefined assert_equals: hasAttribute() expected false but got true
+FAIL audio.autofocus: IDL set to null assert_equals: hasAttribute() expected false but got true
+FAIL audio.autofocus: IDL set to 7 assert_equals: IDL get expected (boolean) true but got (number) 7
+FAIL audio.autofocus: IDL set to 1.5 assert_equals: IDL get expected (boolean) true but got (number) 1.5
+FAIL audio.autofocus: IDL set to "5%" assert_equals: IDL get expected (boolean) true but got (string) "5%"
+FAIL audio.autofocus: IDL set to "+100" assert_equals: IDL get expected (boolean) true but got (string) "+100"
+FAIL audio.autofocus: IDL set to ".5" assert_equals: IDL get expected (boolean) true but got (string) ".5"
+PASS audio.autofocus: IDL set to true 
+FAIL audio.autofocus: IDL set to false assert_equals: hasAttribute() expected false but got true
+FAIL audio.autofocus: IDL set to object "[object Object]" assert_equals: IDL get expected (boolean) true but got (object) object "[object Object]"
+FAIL audio.autofocus: IDL set to NaN assert_equals: hasAttribute() expected false but got true
+FAIL audio.autofocus: IDL set to Infinity assert_equals: IDL get expected (boolean) true but got (number) Infinity
+FAIL audio.autofocus: IDL set to -Infinity assert_equals: IDL get expected (boolean) true but got (number) -Infinity
+FAIL audio.autofocus: IDL set to "\0" assert_equals: IDL get expected (boolean) true but got (string) "\0"
+FAIL audio.autofocus: IDL set to object "test-toString" assert_equals: IDL get expected (boolean) true but got (object) object "test-toString"
+FAIL audio.autofocus: IDL set to object "test-valueOf" assert_equals: IDL get expected (boolean) true but got (object) object "test-valueOf"
 PASS audio.hidden: typeof IDL attribute 
 PASS audio.hidden: IDL get with DOM attribute unset 
 PASS audio.hidden: setAttribute() to "" 
@@ -5447,11 +5791,13 @@ PASS audio.crossOrigin: setAttribute() to "xanonymous"
 PASS audio.crossOrigin: setAttribute() to "anonymous\0" 
 PASS audio.crossOrigin: setAttribute() to "nonymous" 
 PASS audio.crossOrigin: setAttribute() to "ANONYMOUS" 
+PASS audio.crossOrigin: setAttribute() to "anonymouſ" 
 PASS audio.crossOrigin: setAttribute() to "use-credentials" 
 PASS audio.crossOrigin: setAttribute() to "xuse-credentials" 
 PASS audio.crossOrigin: setAttribute() to "use-credentials\0" 
 PASS audio.crossOrigin: setAttribute() to "se-credentials" 
 PASS audio.crossOrigin: setAttribute() to "USE-CREDENTIALS" 
+PASS audio.crossOrigin: setAttribute() to "uſe-credentialſ" 
 PASS audio.crossOrigin: IDL set to "" 
 PASS audio.crossOrigin: IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " 
 PASS audio.crossOrigin: IDL set to undefined 
@@ -5475,11 +5821,13 @@ PASS audio.crossOrigin: IDL set to "xanonymous"
 PASS audio.crossOrigin: IDL set to "anonymous\0" 
 PASS audio.crossOrigin: IDL set to "nonymous" 
 PASS audio.crossOrigin: IDL set to "ANONYMOUS" 
+PASS audio.crossOrigin: IDL set to "anonymouſ" 
 PASS audio.crossOrigin: IDL set to "use-credentials" 
 PASS audio.crossOrigin: IDL set to "xuse-credentials" 
 PASS audio.crossOrigin: IDL set to "use-credentials\0" 
 PASS audio.crossOrigin: IDL set to "se-credentials" 
 PASS audio.crossOrigin: IDL set to "USE-CREDENTIALS" 
+PASS audio.crossOrigin: IDL set to "uſe-credentialſ" 
 PASS audio.preload: typeof IDL attribute 
 PASS audio.preload: setAttribute() to "none" 
 PASS audio.preload: setAttribute() to "NONE" 
@@ -5858,6 +6206,45 @@ PASS source.className (<source class>): IDL set to "\0"
 PASS source.className (<source class>): IDL set to null 
 PASS source.className (<source class>): IDL set to object "test-toString" 
 PASS source.className (<source class>): IDL set to object "test-valueOf" 
+FAIL source.autofocus: typeof IDL attribute assert_equals: expected "boolean" but got "undefined"
+FAIL source.autofocus: IDL get with DOM attribute unset assert_equals: expected (boolean) false but got (undefined) undefined
+FAIL source.autofocus: setAttribute() to "" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL source.autofocus: setAttribute() to " foo " assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL source.autofocus: setAttribute() to undefined assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL source.autofocus: setAttribute() to null assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL source.autofocus: setAttribute() to 7 assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL source.autofocus: setAttribute() to 1.5 assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL source.autofocus: setAttribute() to "5%" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL source.autofocus: setAttribute() to "+100" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL source.autofocus: setAttribute() to ".5" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL source.autofocus: setAttribute() to true assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL source.autofocus: setAttribute() to false assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL source.autofocus: setAttribute() to object "[object Object]" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL source.autofocus: setAttribute() to NaN assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL source.autofocus: setAttribute() to Infinity assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL source.autofocus: setAttribute() to -Infinity assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL source.autofocus: setAttribute() to "\0" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL source.autofocus: setAttribute() to object "test-toString" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL source.autofocus: setAttribute() to object "test-valueOf" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL source.autofocus: setAttribute() to "autofocus" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL source.autofocus: IDL set to "" assert_equals: hasAttribute() expected false but got true
+FAIL source.autofocus: IDL set to " foo " assert_equals: IDL get expected (boolean) true but got (string) " foo "
+FAIL source.autofocus: IDL set to undefined assert_equals: hasAttribute() expected false but got true
+FAIL source.autofocus: IDL set to null assert_equals: hasAttribute() expected false but got true
+FAIL source.autofocus: IDL set to 7 assert_equals: IDL get expected (boolean) true but got (number) 7
+FAIL source.autofocus: IDL set to 1.5 assert_equals: IDL get expected (boolean) true but got (number) 1.5
+FAIL source.autofocus: IDL set to "5%" assert_equals: IDL get expected (boolean) true but got (string) "5%"
+FAIL source.autofocus: IDL set to "+100" assert_equals: IDL get expected (boolean) true but got (string) "+100"
+FAIL source.autofocus: IDL set to ".5" assert_equals: IDL get expected (boolean) true but got (string) ".5"
+PASS source.autofocus: IDL set to true 
+FAIL source.autofocus: IDL set to false assert_equals: hasAttribute() expected false but got true
+FAIL source.autofocus: IDL set to object "[object Object]" assert_equals: IDL get expected (boolean) true but got (object) object "[object Object]"
+FAIL source.autofocus: IDL set to NaN assert_equals: hasAttribute() expected false but got true
+FAIL source.autofocus: IDL set to Infinity assert_equals: IDL get expected (boolean) true but got (number) Infinity
+FAIL source.autofocus: IDL set to -Infinity assert_equals: IDL get expected (boolean) true but got (number) -Infinity
+FAIL source.autofocus: IDL set to "\0" assert_equals: IDL get expected (boolean) true but got (string) "\0"
+FAIL source.autofocus: IDL set to object "test-toString" assert_equals: IDL get expected (boolean) true but got (object) object "test-toString"
+FAIL source.autofocus: IDL set to object "test-valueOf" assert_equals: IDL get expected (boolean) true but got (object) object "test-valueOf"
 PASS source.hidden: typeof IDL attribute 
 PASS source.hidden: IDL get with DOM attribute unset 
 PASS source.hidden: setAttribute() to "" 
@@ -6339,6 +6726,45 @@ PASS track.className (<track class>): IDL set to "\0"
 PASS track.className (<track class>): IDL set to null 
 PASS track.className (<track class>): IDL set to object "test-toString" 
 PASS track.className (<track class>): IDL set to object "test-valueOf" 
+FAIL track.autofocus: typeof IDL attribute assert_equals: expected "boolean" but got "undefined"
+FAIL track.autofocus: IDL get with DOM attribute unset assert_equals: expected (boolean) false but got (undefined) undefined
+FAIL track.autofocus: setAttribute() to "" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL track.autofocus: setAttribute() to " foo " assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL track.autofocus: setAttribute() to undefined assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL track.autofocus: setAttribute() to null assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL track.autofocus: setAttribute() to 7 assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL track.autofocus: setAttribute() to 1.5 assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL track.autofocus: setAttribute() to "5%" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL track.autofocus: setAttribute() to "+100" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL track.autofocus: setAttribute() to ".5" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL track.autofocus: setAttribute() to true assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL track.autofocus: setAttribute() to false assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL track.autofocus: setAttribute() to object "[object Object]" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL track.autofocus: setAttribute() to NaN assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL track.autofocus: setAttribute() to Infinity assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL track.autofocus: setAttribute() to -Infinity assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL track.autofocus: setAttribute() to "\0" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL track.autofocus: setAttribute() to object "test-toString" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL track.autofocus: setAttribute() to object "test-valueOf" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL track.autofocus: setAttribute() to "autofocus" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL track.autofocus: IDL set to "" assert_equals: hasAttribute() expected false but got true
+FAIL track.autofocus: IDL set to " foo " assert_equals: IDL get expected (boolean) true but got (string) " foo "
+FAIL track.autofocus: IDL set to undefined assert_equals: hasAttribute() expected false but got true
+FAIL track.autofocus: IDL set to null assert_equals: hasAttribute() expected false but got true
+FAIL track.autofocus: IDL set to 7 assert_equals: IDL get expected (boolean) true but got (number) 7
+FAIL track.autofocus: IDL set to 1.5 assert_equals: IDL get expected (boolean) true but got (number) 1.5
+FAIL track.autofocus: IDL set to "5%" assert_equals: IDL get expected (boolean) true but got (string) "5%"
+FAIL track.autofocus: IDL set to "+100" assert_equals: IDL get expected (boolean) true but got (string) "+100"
+FAIL track.autofocus: IDL set to ".5" assert_equals: IDL get expected (boolean) true but got (string) ".5"
+PASS track.autofocus: IDL set to true 
+FAIL track.autofocus: IDL set to false assert_equals: hasAttribute() expected false but got true
+FAIL track.autofocus: IDL set to object "[object Object]" assert_equals: IDL get expected (boolean) true but got (object) object "[object Object]"
+FAIL track.autofocus: IDL set to NaN assert_equals: hasAttribute() expected false but got true
+FAIL track.autofocus: IDL set to Infinity assert_equals: IDL get expected (boolean) true but got (number) Infinity
+FAIL track.autofocus: IDL set to -Infinity assert_equals: IDL get expected (boolean) true but got (number) -Infinity
+FAIL track.autofocus: IDL set to "\0" assert_equals: IDL get expected (boolean) true but got (string) "\0"
+FAIL track.autofocus: IDL set to object "test-toString" assert_equals: IDL get expected (boolean) true but got (object) object "test-toString"
+FAIL track.autofocus: IDL set to object "test-valueOf" assert_equals: IDL get expected (boolean) true but got (object) object "test-valueOf"
 PASS track.hidden: typeof IDL attribute 
 PASS track.hidden: IDL get with DOM attribute unset 
 PASS track.hidden: setAttribute() to "" 
@@ -6467,21 +6893,25 @@ PASS track.kind: setAttribute() to "xsubtitles"
 PASS track.kind: setAttribute() to "subtitles\0" 
 PASS track.kind: setAttribute() to "ubtitles" 
 PASS track.kind: setAttribute() to "SUBTITLES" 
+PASS track.kind: setAttribute() to "ſubtitleſ" 
 PASS track.kind: setAttribute() to "captions" 
 PASS track.kind: setAttribute() to "xcaptions" 
 PASS track.kind: setAttribute() to "captions\0" 
 PASS track.kind: setAttribute() to "aptions" 
 PASS track.kind: setAttribute() to "CAPTIONS" 
+PASS track.kind: setAttribute() to "captionſ" 
 PASS track.kind: setAttribute() to "descriptions" 
 PASS track.kind: setAttribute() to "xdescriptions" 
 PASS track.kind: setAttribute() to "descriptions\0" 
 PASS track.kind: setAttribute() to "escriptions" 
 PASS track.kind: setAttribute() to "DESCRIPTIONS" 
+PASS track.kind: setAttribute() to "deſcriptionſ" 
 PASS track.kind: setAttribute() to "chapters" 
 PASS track.kind: setAttribute() to "xchapters" 
 PASS track.kind: setAttribute() to "chapters\0" 
 PASS track.kind: setAttribute() to "hapters" 
 PASS track.kind: setAttribute() to "CHAPTERS" 
+PASS track.kind: setAttribute() to "chapterſ" 
 PASS track.kind: setAttribute() to "metadata" 
 PASS track.kind: setAttribute() to "xmetadata" 
 PASS track.kind: setAttribute() to "metadata\0" 
@@ -6510,21 +6940,25 @@ PASS track.kind: IDL set to "xsubtitles"
 PASS track.kind: IDL set to "subtitles\0" 
 PASS track.kind: IDL set to "ubtitles" 
 PASS track.kind: IDL set to "SUBTITLES" 
+PASS track.kind: IDL set to "ſubtitleſ" 
 PASS track.kind: IDL set to "captions" 
 PASS track.kind: IDL set to "xcaptions" 
 PASS track.kind: IDL set to "captions\0" 
 PASS track.kind: IDL set to "aptions" 
 PASS track.kind: IDL set to "CAPTIONS" 
+PASS track.kind: IDL set to "captionſ" 
 PASS track.kind: IDL set to "descriptions" 
 PASS track.kind: IDL set to "xdescriptions" 
 PASS track.kind: IDL set to "descriptions\0" 
 PASS track.kind: IDL set to "escriptions" 
 PASS track.kind: IDL set to "DESCRIPTIONS" 
+PASS track.kind: IDL set to "deſcriptionſ" 
 PASS track.kind: IDL set to "chapters" 
 PASS track.kind: IDL set to "xchapters" 
 PASS track.kind: IDL set to "chapters\0" 
 PASS track.kind: IDL set to "hapters" 
 PASS track.kind: IDL set to "CHAPTERS" 
+PASS track.kind: IDL set to "chapterſ" 
 PASS track.kind: IDL set to "metadata" 
 PASS track.kind: IDL set to "xmetadata" 
 PASS track.kind: IDL set to "metadata\0" 
@@ -6871,6 +7305,45 @@ PASS canvas.className (<canvas class>): IDL set to "\0"
 PASS canvas.className (<canvas class>): IDL set to null 
 PASS canvas.className (<canvas class>): IDL set to object "test-toString" 
 PASS canvas.className (<canvas class>): IDL set to object "test-valueOf" 
+FAIL canvas.autofocus: typeof IDL attribute assert_equals: expected "boolean" but got "undefined"
+FAIL canvas.autofocus: IDL get with DOM attribute unset assert_equals: expected (boolean) false but got (undefined) undefined
+FAIL canvas.autofocus: setAttribute() to "" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL canvas.autofocus: setAttribute() to " foo " assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL canvas.autofocus: setAttribute() to undefined assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL canvas.autofocus: setAttribute() to null assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL canvas.autofocus: setAttribute() to 7 assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL canvas.autofocus: setAttribute() to 1.5 assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL canvas.autofocus: setAttribute() to "5%" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL canvas.autofocus: setAttribute() to "+100" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL canvas.autofocus: setAttribute() to ".5" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL canvas.autofocus: setAttribute() to true assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL canvas.autofocus: setAttribute() to false assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL canvas.autofocus: setAttribute() to object "[object Object]" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL canvas.autofocus: setAttribute() to NaN assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL canvas.autofocus: setAttribute() to Infinity assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL canvas.autofocus: setAttribute() to -Infinity assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL canvas.autofocus: setAttribute() to "\0" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL canvas.autofocus: setAttribute() to object "test-toString" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL canvas.autofocus: setAttribute() to object "test-valueOf" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL canvas.autofocus: setAttribute() to "autofocus" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL canvas.autofocus: IDL set to "" assert_equals: hasAttribute() expected false but got true
+FAIL canvas.autofocus: IDL set to " foo " assert_equals: IDL get expected (boolean) true but got (string) " foo "
+FAIL canvas.autofocus: IDL set to undefined assert_equals: hasAttribute() expected false but got true
+FAIL canvas.autofocus: IDL set to null assert_equals: hasAttribute() expected false but got true
+FAIL canvas.autofocus: IDL set to 7 assert_equals: IDL get expected (boolean) true but got (number) 7
+FAIL canvas.autofocus: IDL set to 1.5 assert_equals: IDL get expected (boolean) true but got (number) 1.5
+FAIL canvas.autofocus: IDL set to "5%" assert_equals: IDL get expected (boolean) true but got (string) "5%"
+FAIL canvas.autofocus: IDL set to "+100" assert_equals: IDL get expected (boolean) true but got (string) "+100"
+FAIL canvas.autofocus: IDL set to ".5" assert_equals: IDL get expected (boolean) true but got (string) ".5"
+PASS canvas.autofocus: IDL set to true 
+FAIL canvas.autofocus: IDL set to false assert_equals: hasAttribute() expected false but got true
+FAIL canvas.autofocus: IDL set to object "[object Object]" assert_equals: IDL get expected (boolean) true but got (object) object "[object Object]"
+FAIL canvas.autofocus: IDL set to NaN assert_equals: hasAttribute() expected false but got true
+FAIL canvas.autofocus: IDL set to Infinity assert_equals: IDL get expected (boolean) true but got (number) Infinity
+FAIL canvas.autofocus: IDL set to -Infinity assert_equals: IDL get expected (boolean) true but got (number) -Infinity
+FAIL canvas.autofocus: IDL set to "\0" assert_equals: IDL get expected (boolean) true but got (string) "\0"
+FAIL canvas.autofocus: IDL set to object "test-toString" assert_equals: IDL get expected (boolean) true but got (object) object "test-toString"
+FAIL canvas.autofocus: IDL set to object "test-valueOf" assert_equals: IDL get expected (boolean) true but got (object) object "test-valueOf"
 PASS canvas.hidden: typeof IDL attribute 
 PASS canvas.hidden: IDL get with DOM attribute unset 
 PASS canvas.hidden: setAttribute() to "" 
@@ -7282,6 +7755,45 @@ PASS map.className (<map class>): IDL set to "\0"
 PASS map.className (<map class>): IDL set to null 
 PASS map.className (<map class>): IDL set to object "test-toString" 
 PASS map.className (<map class>): IDL set to object "test-valueOf" 
+FAIL map.autofocus: typeof IDL attribute assert_equals: expected "boolean" but got "undefined"
+FAIL map.autofocus: IDL get with DOM attribute unset assert_equals: expected (boolean) false but got (undefined) undefined
+FAIL map.autofocus: setAttribute() to "" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL map.autofocus: setAttribute() to " foo " assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL map.autofocus: setAttribute() to undefined assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL map.autofocus: setAttribute() to null assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL map.autofocus: setAttribute() to 7 assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL map.autofocus: setAttribute() to 1.5 assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL map.autofocus: setAttribute() to "5%" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL map.autofocus: setAttribute() to "+100" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL map.autofocus: setAttribute() to ".5" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL map.autofocus: setAttribute() to true assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL map.autofocus: setAttribute() to false assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL map.autofocus: setAttribute() to object "[object Object]" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL map.autofocus: setAttribute() to NaN assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL map.autofocus: setAttribute() to Infinity assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL map.autofocus: setAttribute() to -Infinity assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL map.autofocus: setAttribute() to "\0" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL map.autofocus: setAttribute() to object "test-toString" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL map.autofocus: setAttribute() to object "test-valueOf" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL map.autofocus: setAttribute() to "autofocus" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL map.autofocus: IDL set to "" assert_equals: hasAttribute() expected false but got true
+FAIL map.autofocus: IDL set to " foo " assert_equals: IDL get expected (boolean) true but got (string) " foo "
+FAIL map.autofocus: IDL set to undefined assert_equals: hasAttribute() expected false but got true
+FAIL map.autofocus: IDL set to null assert_equals: hasAttribute() expected false but got true
+FAIL map.autofocus: IDL set to 7 assert_equals: IDL get expected (boolean) true but got (number) 7
+FAIL map.autofocus: IDL set to 1.5 assert_equals: IDL get expected (boolean) true but got (number) 1.5
+FAIL map.autofocus: IDL set to "5%" assert_equals: IDL get expected (boolean) true but got (string) "5%"
+FAIL map.autofocus: IDL set to "+100" assert_equals: IDL get expected (boolean) true but got (string) "+100"
+FAIL map.autofocus: IDL set to ".5" assert_equals: IDL get expected (boolean) true but got (string) ".5"
+PASS map.autofocus: IDL set to true 
+FAIL map.autofocus: IDL set to false assert_equals: hasAttribute() expected false but got true
+FAIL map.autofocus: IDL set to object "[object Object]" assert_equals: IDL get expected (boolean) true but got (object) object "[object Object]"
+FAIL map.autofocus: IDL set to NaN assert_equals: hasAttribute() expected false but got true
+FAIL map.autofocus: IDL set to Infinity assert_equals: IDL get expected (boolean) true but got (number) Infinity
+FAIL map.autofocus: IDL set to -Infinity assert_equals: IDL get expected (boolean) true but got (number) -Infinity
+FAIL map.autofocus: IDL set to "\0" assert_equals: IDL get expected (boolean) true but got (string) "\0"
+FAIL map.autofocus: IDL set to object "test-toString" assert_equals: IDL get expected (boolean) true but got (object) object "test-toString"
+FAIL map.autofocus: IDL set to object "test-valueOf" assert_equals: IDL get expected (boolean) true but got (object) object "test-valueOf"
 PASS map.hidden: typeof IDL attribute 
 PASS map.hidden: IDL get with DOM attribute unset 
 PASS map.hidden: setAttribute() to "" 
@@ -7605,6 +8117,45 @@ PASS area.className (<area class>): IDL set to "\0"
 PASS area.className (<area class>): IDL set to null 
 PASS area.className (<area class>): IDL set to object "test-toString" 
 PASS area.className (<area class>): IDL set to object "test-valueOf" 
+FAIL area.autofocus: typeof IDL attribute assert_equals: expected "boolean" but got "undefined"
+FAIL area.autofocus: IDL get with DOM attribute unset assert_equals: expected (boolean) false but got (undefined) undefined
+FAIL area.autofocus: setAttribute() to "" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL area.autofocus: setAttribute() to " foo " assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL area.autofocus: setAttribute() to undefined assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL area.autofocus: setAttribute() to null assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL area.autofocus: setAttribute() to 7 assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL area.autofocus: setAttribute() to 1.5 assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL area.autofocus: setAttribute() to "5%" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL area.autofocus: setAttribute() to "+100" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL area.autofocus: setAttribute() to ".5" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL area.autofocus: setAttribute() to true assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL area.autofocus: setAttribute() to false assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL area.autofocus: setAttribute() to object "[object Object]" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL area.autofocus: setAttribute() to NaN assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL area.autofocus: setAttribute() to Infinity assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL area.autofocus: setAttribute() to -Infinity assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL area.autofocus: setAttribute() to "\0" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL area.autofocus: setAttribute() to object "test-toString" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL area.autofocus: setAttribute() to object "test-valueOf" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL area.autofocus: setAttribute() to "autofocus" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
+FAIL area.autofocus: IDL set to "" assert_equals: hasAttribute() expected false but got true
+FAIL area.autofocus: IDL set to " foo " assert_equals: IDL get expected (boolean) true but got (string) " foo "
+FAIL area.autofocus: IDL set to undefined assert_equals: hasAttribute() expected false but got true
+FAIL area.autofocus: IDL set to null assert_equals: hasAttribute() expected false but got true
+FAIL area.autofocus: IDL set to 7 assert_equals: IDL get expected (boolean) true but got (number) 7
+FAIL area.autofocus: IDL set to 1.5 assert_equals: IDL get expected (boolean) true but got (number) 1.5
+FAIL area.autofocus: IDL set to "5%" assert_equals: IDL get expected (boolean) true but got (string) "5%"
+FAIL area.autofocus: IDL set to "+100" assert_equals: IDL get expected (boolean) true but got (string) "+100"
+FAIL area.autofocus: IDL set to ".5" assert_equals: IDL get expected (boolean) true but got (string) ".5"
+PASS area.autofocus: IDL set to true 
+FAIL area.autofocus: IDL set to false assert_equals: hasAttribute() expected false but got true
+FAIL area.autofocus: IDL set to object "[object Object]" assert_equals: IDL get expected (boolean) true but got (object) object "[object Object]"
+FAIL area.autofocus: IDL set to NaN assert_equals: hasAttribute() expected false but got true
+FAIL area.autofocus: IDL set to Infinity assert_equals: IDL get expected (boolean) true but got (number) Infinity
+FAIL area.autofocus: IDL set to -Infinity assert_equals: IDL get expected (boolean) true but got (number) -Infinity
+FAIL area.autofocus: IDL set to "\0" assert_equals: IDL get expected (boolean) true but got (string) "\0"
+FAIL area.autofocus: IDL set to object "test-toString" assert_equals: IDL get expected (boolean) true but got (object) object "test-toString"
+FAIL area.autofocus: IDL set to object "test-valueOf" assert_equals: IDL get expected (boolean) true but got (object) object "test-valueOf"
 PASS area.hidden: typeof IDL attribute 
 PASS area.hidden: IDL get with DOM attribute unset 
 PASS area.hidden: setAttribute() to "" 
@@ -8009,6 +8560,7 @@ FAIL area.referrerPolicy: setAttribute() to "xsame-origin" assert_equals: IDL ge
 FAIL area.referrerPolicy: setAttribute() to "same-origin\0" assert_equals: IDL get expected (string) "" but got (undefined) undefined
 FAIL area.referrerPolicy: setAttribute() to "ame-origin" assert_equals: IDL get expected (string) "" but got (undefined) undefined
 FAIL area.referrerPolicy: setAttribute() to "SAME-ORIGIN" assert_equals: IDL get expected (string) "same-origin" but got (undefined) undefined
+FAIL area.referrerPolicy: setAttribute() to "ſame-origin" assert_equals: IDL get expected (string) "" but got (undefined) undefined
 FAIL area.referrerPolicy: setAttribute() to "origin" assert_equals: IDL get expected (string) "origin" but got (undefined) undefined
 FAIL area.referrerPolicy: setAttribute() to "xorigin" assert_equals: IDL get expected (string) "" but got (undefined) undefined
 FAIL area.referrerPolicy: setAttribute() to "origin\0" assert_equals: IDL get expected (string) "" but got (undefined) undefined
@@ -8019,79 +8571,88 @@ FAIL area.referrerPolicy: setAttribute() to "xstrict-origin" assert_equals: IDL 
 FAIL area.referrerPolicy: setAttribute() to "strict-origin\0" assert_equals: IDL get expected (string) "" but got (undefined) undefined
 FAIL area.referrerPolicy: setAttribute() to "trict-origin" assert_equals: IDL get expected (string) "" but got (undefined) undefined
 FAIL area.referrerPolicy: setAttribute() to "STRICT-ORIGIN" assert_equals: IDL get expected (string) "strict-origin" but got (undefined) undefined
+FAIL area.referrerPolicy: setAttribute() to "ſtrict-origin" assert_equals: IDL get expected (string) "" but got (undefined) undefined
 FAIL area.referrerPolicy: setAttribute() to "origin-when-cross-origin" assert_equals: IDL get expected (string) "origin-when-cross-origin" but got (undefined) undefined
 FAIL area.referrerPolicy: setAttribute() to "xorigin-when-cross-origin" assert_equals: IDL get expected (string) "" but got (undefined) undefined
 FAIL area.referrerPolicy: setAttribute() to "origin-when-cross-origin\0" assert_equals: IDL get expected (string) "" but got (undefined) undefined
 FAIL area.referrerPolicy: setAttribute() to "rigin-when-cross-origin" assert_equals: IDL get expected (string) "" but got (undefined) undefined
 FAIL area.referrerPolicy: setAttribute() to "ORIGIN-WHEN-CROSS-ORIGIN" assert_equals: IDL get expected (string) "origin-when-cross-origin" but got (undefined) undefined
+FAIL area.referrerPolicy: setAttribute() to "origin-when-croſſ-origin" assert_equals: IDL get expected (string) "" but got (undefined) undefined
 FAIL area.referrerPolicy: setAttribute() to "strict-origin-when-cross-origin" assert_equals: IDL get expected (string) "strict-origin-when-cross-origin" but got (undefined) undefined
 FAIL area.referrerPolicy: setAttribute() to "xstrict-origin-when-cross-origin" assert_equals: IDL get expected (string) "" but got (undefined) undefined
 FAIL area.referrerPolicy: setAttribute() to "strict-origin-when-cross-origin\0" assert_equals: IDL get expected (string) "" but got (undefined) undefined
 FAIL area.referrerPolicy: setAttribute() to "trict-origin-when-cross-origin" assert_equals: IDL get expected (string) "" but got (undefined) undefined
 FAIL area.referrerPolicy: setAttribute() to "STRICT-ORIGIN-WHEN-CROSS-ORIGIN" assert_equals: IDL get expected (string) "strict-origin-when-cross-origin" but got (undefined) undefined
+FAIL area.referrerPolicy: setAttribute() to "ſtrict-origin-when-croſſ-origin" assert_equals: IDL get expected (string) "" but got (undefined) undefined
 FAIL area.referrerPolicy: setAttribute() to "unsafe-url" assert_equals: IDL get expected (string) "unsafe-url" but got (undefined) undefined
 FAIL area.referrerPolicy: setAttribute() to "xunsafe-url" assert_equals: IDL get expected (string) "" but got (undefined) undefined
 FAIL area.referrerPolicy: setAttribute() to "unsafe-url\0" assert_equals: IDL get expected (string) "" but got (undefined) undefined
 FAIL area.referrerPolicy: setAttribute() to "nsafe-url" assert_equals: IDL get expected (string) "" but got (undefined) undefined
 FAIL area.referrerPolicy: setAttribute() to "UNSAFE-URL" assert_equals: IDL get expected (string) "unsafe-url" but got (undefined) undefined
-FAIL area.referrerPolicy: IDL set to "" assert_equals: getAttribute() expected "" but got "UNSAFE-URL"
-FAIL area.referrerPolicy: IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " assert_equals: getAttribute() expected " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " but got "UNSAFE-URL"
-FAIL area.referrerPolicy: IDL set to undefined assert_equals: getAttribute() expected "undefined" but got "UNSAFE-URL"
-FAIL area.referrerPolicy: IDL set to 7 assert_equals: getAttribute() expected "7" but got "UNSAFE-URL"
-FAIL area.referrerPolicy: IDL set to 1.5 assert_equals: getAttribute() expected "1.5" but got "UNSAFE-URL"
-FAIL area.referrerPolicy: IDL set to "5%" assert_equals: getAttribute() expected "5%" but got "UNSAFE-URL"
-FAIL area.referrerPolicy: IDL set to "+100" assert_equals: getAttribute() expected "+100" but got "UNSAFE-URL"
-FAIL area.referrerPolicy: IDL set to ".5" assert_equals: getAttribute() expected ".5" but got "UNSAFE-URL"
-FAIL area.referrerPolicy: IDL set to true assert_equals: getAttribute() expected "true" but got "UNSAFE-URL"
-FAIL area.referrerPolicy: IDL set to false assert_equals: getAttribute() expected "false" but got "UNSAFE-URL"
-FAIL area.referrerPolicy: IDL set to object "[object Object]" assert_equals: getAttribute() expected "[object Object]" but got "UNSAFE-URL"
-FAIL area.referrerPolicy: IDL set to NaN assert_equals: getAttribute() expected "NaN" but got "UNSAFE-URL"
-FAIL area.referrerPolicy: IDL set to Infinity assert_equals: getAttribute() expected "Infinity" but got "UNSAFE-URL"
-FAIL area.referrerPolicy: IDL set to -Infinity assert_equals: getAttribute() expected "-Infinity" but got "UNSAFE-URL"
-FAIL area.referrerPolicy: IDL set to "\0" assert_equals: getAttribute() expected "\0" but got "UNSAFE-URL"
+FAIL area.referrerPolicy: setAttribute() to "unſafe-url" assert_equals: IDL get expected (string) "" but got (undefined) undefined
+FAIL area.referrerPolicy: IDL set to "" assert_equals: getAttribute() expected "" but got "unſafe-url"
+FAIL area.referrerPolicy: IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " assert_equals: getAttribute() expected " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " but got "unſafe-url"
+FAIL area.referrerPolicy: IDL set to undefined assert_equals: getAttribute() expected "undefined" but got "unſafe-url"
+FAIL area.referrerPolicy: IDL set to 7 assert_equals: getAttribute() expected "7" but got "unſafe-url"
+FAIL area.referrerPolicy: IDL set to 1.5 assert_equals: getAttribute() expected "1.5" but got "unſafe-url"
+FAIL area.referrerPolicy: IDL set to "5%" assert_equals: getAttribute() expected "5%" but got "unſafe-url"
+FAIL area.referrerPolicy: IDL set to "+100" assert_equals: getAttribute() expected "+100" but got "unſafe-url"
+FAIL area.referrerPolicy: IDL set to ".5" assert_equals: getAttribute() expected ".5" but got "unſafe-url"
+FAIL area.referrerPolicy: IDL set to true assert_equals: getAttribute() expected "true" but got "unſafe-url"
+FAIL area.referrerPolicy: IDL set to false assert_equals: getAttribute() expected "false" but got "unſafe-url"
+FAIL area.referrerPolicy: IDL set to object "[object Object]" assert_equals: getAttribute() expected "[object Object]" but got "unſafe-url"
+FAIL area.referrerPolicy: IDL set to NaN assert_equals: getAttribute() expected "NaN" but got "unſafe-url"
+FAIL area.referrerPolicy: IDL set to Infinity assert_equals: getAttribute() expected "Infinity" but got "unſafe-url"
+FAIL area.referrerPolicy: IDL set to -Infinity assert_equals: getAttribute() expected "-Infinity" but got "unſafe-url"
+FAIL area.referrerPolicy: IDL set to "\0" assert_equals: getAttribute() expected "\0" but got "unſafe-url"
 FAIL area.referrerPolicy: IDL set to null assert_equals: IDL get expected (string) "" but got (object) null
-FAIL area.referrerPolicy: IDL set to object "test-toString" assert_equals: getAttribute() expected "test-toString" but got "UNSAFE-URL"
-FAIL area.referrerPolicy: IDL set to object "test-valueOf" assert_equals: getAttribute() expected "test-valueOf" but got "UNSAFE-URL"
-FAIL area.referrerPolicy: IDL set to "no-referrer" assert_equals: getAttribute() expected "no-referrer" but got "UNSAFE-URL"
-FAIL area.referrerPolicy: IDL set to "xno-referrer" assert_equals: getAttribute() expected "xno-referrer" but got "UNSAFE-URL"
-FAIL area.referrerPolicy: IDL set to "no-referrer\0" assert_equals: getAttribute() expected "no-referrer\0" but got "UNSAFE-URL"
-FAIL area.referrerPolicy: IDL set to "o-referrer" assert_equals: getAttribute() expected "o-referrer" but got "UNSAFE-URL"
-FAIL area.referrerPolicy: IDL set to "NO-REFERRER" assert_equals: getAttribute() expected "NO-REFERRER" but got "UNSAFE-URL"
-FAIL area.referrerPolicy: IDL set to "no-referrer-when-downgrade" assert_equals: getAttribute() expected "no-referrer-when-downgrade" but got "UNSAFE-URL"
-FAIL area.referrerPolicy: IDL set to "xno-referrer-when-downgrade" assert_equals: getAttribute() expected "xno-referrer-when-downgrade" but got "UNSAFE-URL"
-FAIL area.referrerPolicy: IDL set to "no-referrer-when-downgrade\0" assert_equals: getAttribute() expected "no-referrer-when-downgrade\0" but got "UNSAFE-URL"
-FAIL area.referrerPolicy: IDL set to "o-referrer-when-downgrade" assert_equals: getAttribute() expected "o-referrer-when-downgrade" but got "UNSAFE-URL"
-FAIL area.referrerPolicy: IDL set to "NO-REFERRER-WHEN-DOWNGRADE" assert_equals: getAttribute() expected "NO-REFERRER-WHEN-DOWNGRADE" but got "UNSAFE-URL"
-FAIL area.referrerPolicy: IDL set to "same-origin" assert_equals: getAttribute() expected "same-origin" but got "UNSAFE-URL"
-FAIL area.referrerPolicy: IDL set to "xsame-origin" assert_equals: getAttribute() expected "xsame-origin" but got "UNSAFE-URL"
-FAIL area.referrerPolicy: IDL set to "same-origin\0" assert_equals: getAttribute() expected "same-origin\0" but got "UNSAFE-URL"
-FAIL area.referrerPolicy: IDL set to "ame-origin" assert_equals: getAttribute() expected "ame-origin" but got "UNSAFE-URL"
-FAIL area.referrerPolicy: IDL set to "SAME-ORIGIN" assert_equals: getAttribute() expected "SAME-ORIGIN" but got "UNSAFE-URL"
-FAIL area.referrerPolicy: IDL set to "origin" assert_equals: getAttribute() expected "origin" but got "UNSAFE-URL"
-FAIL area.referrerPolicy: IDL set to "xorigin" assert_equals: getAttribute() expected "xorigin" but got "UNSAFE-URL"
-FAIL area.referrerPolicy: IDL set to "origin\0" assert_equals: getAttribute() expected "origin\0" but got "UNSAFE-URL"
-FAIL area.referrerPolicy: IDL set to "rigin" assert_equals: getAttribute() expected "rigin" but got "UNSAFE-URL"
-FAIL area.referrerPolicy: IDL set to "ORIGIN" assert_equals: getAttribute() expected "ORIGIN" but got "UNSAFE-URL"
-FAIL area.referrerPolicy: IDL set to "strict-origin" assert_equals: getAttribute() expected "strict-origin" but got "UNSAFE-URL"
-FAIL area.referrerPolicy: IDL set to "xstrict-origin" assert_equals: getAttribute() expected "xstrict-origin" but got "UNSAFE-URL"
-FAIL area.referrerPolicy: IDL set to "strict-origin\0" assert_equals: getAttribute() expected "strict-origin\0" but got "UNSAFE-URL"
-FAIL area.referrerPolicy: IDL set to "trict-origin" assert_equals: getAttribute() expected "trict-origin" but got "UNSAFE-URL"
-FAIL area.referrerPolicy: IDL set to "STRICT-ORIGIN" assert_equals: getAttribute() expected "STRICT-ORIGIN" but got "UNSAFE-URL"
-FAIL area.referrerPolicy: IDL set to "origin-when-cross-origin" assert_equals: getAttribute() expected "origin-when-cross-origin" but got "UNSAFE-URL"
-FAIL area.referrerPolicy: IDL set to "xorigin-when-cross-origin" assert_equals: getAttribute() expected "xorigin-when-cross-origin" but got "UNSAFE-URL"
-FAIL area.referrerPolicy: IDL set to "origin-when-cross-origin\0" assert_equals: getAttribute() expected "origin-when-cross-origin\0" but got "UNSAFE-URL"
-FAIL area.referrerPolicy: IDL set to "rigin-when-cross-origin" assert_equals: getAttribute() expected "rigin-when-cross-origin" but got "UNSAFE-URL"
-FAIL area.referrerPolicy: IDL set to "ORIGIN-WHEN-CROSS-ORIGIN" assert_equals: getAttribute() expected "ORIGIN-WHEN-CROSS-ORIGIN" but got "UNSAFE-URL"
-FAIL area.referrerPolicy: IDL set to "strict-origin-when-cross-origin" assert_equals: getAttribute() expected "strict-origin-when-cross-origin" but got "UNSAFE-URL"
-FAIL area.referrerPolicy: IDL set to "xstrict-origin-when-cross-origin" assert_equals: getAttribute() expected "xstrict-origin-when-cross-origin" but got "UNSAFE-URL"
-FAIL area.referrerPolicy: IDL set to "strict-origin-when-cross-origin\0" assert_equals: getAttribute() expected "strict-origin-when-cross-origin\0" but got "UNSAFE-URL"
-FAIL area.referrerPolicy: IDL set to "trict-origin-when-cross-origin" assert_equals: getAttribute() expected "trict-origin-when-cross-origin" but got "UNSAFE-URL"
-FAIL area.referrerPolicy: IDL set to "STRICT-ORIGIN-WHEN-CROSS-ORIGIN" assert_equals: getAttribute() expected "STRICT-ORIGIN-WHEN-CROSS-ORIGIN" but got "UNSAFE-URL"
-FAIL area.referrerPolicy: IDL set to "unsafe-url" assert_equals: getAttribute() expected "unsafe-url" but got "UNSAFE-URL"
-FAIL area.referrerPolicy: IDL set to "xunsafe-url" assert_equals: getAttribute() expected "xunsafe-url" but got "UNSAFE-URL"
-FAIL area.referrerPolicy: IDL set to "unsafe-url\0" assert_equals: getAttribute() expected "unsafe-url\0" but got "UNSAFE-URL"
-FAIL area.referrerPolicy: IDL set to "nsafe-url" assert_equals: getAttribute() expected "nsafe-url" but got "UNSAFE-URL"
-FAIL area.referrerPolicy: IDL set to "UNSAFE-URL" assert_equals: IDL get expected "unsafe-url" but got "UNSAFE-URL"
+FAIL area.referrerPolicy: IDL set to object "test-toString" assert_equals: getAttribute() expected "test-toString" but got "unſafe-url"
+FAIL area.referrerPolicy: IDL set to object "test-valueOf" assert_equals: getAttribute() expected "test-valueOf" but got "unſafe-url"
+FAIL area.referrerPolicy: IDL set to "no-referrer" assert_equals: getAttribute() expected "no-referrer" but got "unſafe-url"
+FAIL area.referrerPolicy: IDL set to "xno-referrer" assert_equals: getAttribute() expected "xno-referrer" but got "unſafe-url"
+FAIL area.referrerPolicy: IDL set to "no-referrer\0" assert_equals: getAttribute() expected "no-referrer\0" but got "unſafe-url"
+FAIL area.referrerPolicy: IDL set to "o-referrer" assert_equals: getAttribute() expected "o-referrer" but got "unſafe-url"
+FAIL area.referrerPolicy: IDL set to "NO-REFERRER" assert_equals: getAttribute() expected "NO-REFERRER" but got "unſafe-url"
+FAIL area.referrerPolicy: IDL set to "no-referrer-when-downgrade" assert_equals: getAttribute() expected "no-referrer-when-downgrade" but got "unſafe-url"
+FAIL area.referrerPolicy: IDL set to "xno-referrer-when-downgrade" assert_equals: getAttribute() expected "xno-referrer-when-downgrade" but got "unſafe-url"
+FAIL area.referrerPolicy: IDL set to "no-referrer-when-downgrade\0" assert_equals: getAttribute() expected "no-referrer-when-downgrade\0" but got "unſafe-url"
+FAIL area.referrerPolicy: IDL set to "o-referrer-when-downgrade" assert_equals: getAttribute() expected "o-referrer-when-downgrade" but got "unſafe-url"
+FAIL area.referrerPolicy: IDL set to "NO-REFERRER-WHEN-DOWNGRADE" assert_equals: getAttribute() expected "NO-REFERRER-WHEN-DOWNGRADE" but got "unſafe-url"
+FAIL area.referrerPolicy: IDL set to "same-origin" assert_equals: getAttribute() expected "same-origin" but got "unſafe-url"
+FAIL area.referrerPolicy: IDL set to "xsame-origin" assert_equals: getAttribute() expected "xsame-origin" but got "unſafe-url"
+FAIL area.referrerPolicy: IDL set to "same-origin\0" assert_equals: getAttribute() expected "same-origin\0" but got "unſafe-url"
+FAIL area.referrerPolicy: IDL set to "ame-origin" assert_equals: getAttribute() expected "ame-origin" but got "unſafe-url"
+FAIL area.referrerPolicy: IDL set to "SAME-ORIGIN" assert_equals: getAttribute() expected "SAME-ORIGIN" but got "unſafe-url"
+FAIL area.referrerPolicy: IDL set to "ſame-origin" assert_equals: getAttribute() expected "ſame-origin" but got "unſafe-url"
+FAIL area.referrerPolicy: IDL set to "origin" assert_equals: getAttribute() expected "origin" but got "unſafe-url"
+FAIL area.referrerPolicy: IDL set to "xorigin" assert_equals: getAttribute() expected "xorigin" but got "unſafe-url"
+FAIL area.referrerPolicy: IDL set to "origin\0" assert_equals: getAttribute() expected "origin\0" but got "unſafe-url"
+FAIL area.referrerPolicy: IDL set to "rigin" assert_equals: getAttribute() expected "rigin" but got "unſafe-url"
+FAIL area.referrerPolicy: IDL set to "ORIGIN" assert_equals: getAttribute() expected "ORIGIN" but got "unſafe-url"
+FAIL area.referrerPolicy: IDL set to "strict-origin" assert_equals: getAttribute() expected "strict-origin" but got "unſafe-url"
+FAIL area.referrerPolicy: IDL set to "xstrict-origin" assert_equals: getAttribute() expected "xstrict-origin" but got "unſafe-url"
+FAIL area.referrerPolicy: IDL set to "strict-origin\0" assert_equals: getAttribute() expected "strict-origin\0" but got "unſafe-url"
+FAIL area.referrerPolicy: IDL set to "trict-origin" assert_equals: getAttribute() expected "trict-origin" but got "unſafe-url"
+FAIL area.referrerPolicy: IDL set to "STRICT-ORIGIN" assert_equals: getAttribute() expected "STRICT-ORIGIN" but got "unſafe-url"
+FAIL area.referrerPolicy: IDL set to "ſtrict-origin" assert_equals: getAttribute() expected "ſtrict-origin" but got "unſafe-url"
+FAIL area.referrerPolicy: IDL set to "origin-when-cross-origin" assert_equals: getAttribute() expected "origin-when-cross-origin" but got "unſafe-url"
+FAIL area.referrerPolicy: IDL set to "xorigin-when-cross-origin" assert_equals: getAttribute() expected "xorigin-when-cross-origin" but got "unſafe-url"
+FAIL area.referrerPolicy: IDL set to "origin-when-cross-origin\0" assert_equals: getAttribute() expected "origin-when-cross-origin\0" but got "unſafe-url"
+FAIL area.referrerPolicy: IDL set to "rigin-when-cross-origin" assert_equals: getAttribute() expected "rigin-when-cross-origin" but got "unſafe-url"
+FAIL area.referrerPolicy: IDL set to "ORIGIN-WHEN-CROSS-ORIGIN" assert_equals: getAttribute() expected "ORIGIN-WHEN-CROSS-ORIGIN" but got "unſafe-url"
+FAIL area.referrerPolicy: IDL set to "origin-when-croſſ-origin" assert_equals: getAttribute() expected "origin-when-croſſ-origin" but got "unſafe-url"
+FAIL area.referrerPolicy: IDL set to "strict-origin-when-cross-origin" assert_equals: getAttribute() expected "strict-origin-when-cross-origin" but got "unſafe-url"
+FAIL area.referrerPolicy: IDL set to "xstrict-origin-when-cross-origin" assert_equals: getAttribute() expected "xstrict-origin-when-cross-origin" but got "unſafe-url"
+FAIL area.referrerPolicy: IDL set to "strict-origin-when-cross-origin\0" assert_equals: getAttribute() expected "strict-origin-when-cross-origin\0" but got "unſafe-url"
+FAIL area.referrerPolicy: IDL set to "trict-origin-when-cross-origin" assert_equals: getAttribute() expected "trict-origin-when-cross-origin" but got "unſafe-url"
+FAIL area.referrerPolicy: IDL set to "STRICT-ORIGIN-WHEN-CROSS-ORIGIN" assert_equals: getAttribute() expected "STRICT-ORIGIN-WHEN-CROSS-ORIGIN" but got "unſafe-url"
+FAIL area.referrerPolicy: IDL set to "ſtrict-origin-when-croſſ-origin" assert_equals: getAttribute() expected "ſtrict-origin-when-croſſ-origin" but got "unſafe-url"
+FAIL area.referrerPolicy: IDL set to "unsafe-url" assert_equals: getAttribute() expected "unsafe-url" but got "unſafe-url"
+FAIL area.referrerPolicy: IDL set to "xunsafe-url" assert_equals: getAttribute() expected "xunsafe-url" but got "unſafe-url"
+FAIL area.referrerPolicy: IDL set to "unsafe-url\0" assert_equals: getAttribute() expected "unsafe-url\0" but got "unſafe-url"
+FAIL area.referrerPolicy: IDL set to "nsafe-url" assert_equals: getAttribute() expected "nsafe-url" but got "unſafe-url"
+FAIL area.referrerPolicy: IDL set to "UNSAFE-URL" assert_equals: getAttribute() expected "UNSAFE-URL" but got "unſafe-url"
+FAIL area.referrerPolicy: IDL set to "unſafe-url" assert_equals: IDL get expected "" but got "unſafe-url"
 PASS area.href: typeof IDL attribute 
 PASS area.href: IDL get with DOM attribute unset 
 PASS area.href: setAttribute() to "" 

@@ -1,6 +1,7 @@
   button button a a         
 summary
 
+
 PASS input.tabIndex should return 0 by default 
 PASS input.tabIndex should return -1 when set to -1 
 PASS input.tabIndex should return 0 when set to 0 
@@ -101,4 +102,24 @@ PASS #hostNonDelegatesFocus.tabIndex should return -1 by default
 PASS #hostNonDelegatesFocus.tabIndex should return -1 when set to -1 
 PASS #hostNonDelegatesFocus.tabIndex should return 0 when set to 0 
 PASS #hostNonDelegatesFocus.tabIndex should return 1 when set to 1 
+PASS div[contenteditable].tabIndex should return -1 by default 
+PASS div[contenteditable].tabIndex should return -1 when set to -1 
+PASS div[contenteditable].tabIndex should return 0 when set to 0 
+PASS div[contenteditable].tabIndex should return 1 when set to 1 
+PASS #scrollable.tabIndex should return -1 by default 
+PASS #scrollable.tabIndex should return -1 when set to -1 
+PASS #scrollable.tabIndex should return 0 when set to 0 
+PASS #scrollable.tabIndex should return 1 when set to 1 
+PASS fieldset.tabIndex should return -1 by default 
+PASS fieldset.tabIndex should return -1 when set to -1 
+PASS fieldset.tabIndex should return 0 when set to 0 
+PASS fieldset.tabIndex should return 1 when set to 1 
+PASS output.tabIndex should return -1 by default 
+PASS output.tabIndex should return -1 when set to -1 
+PASS output.tabIndex should return 0 when set to 0 
+PASS output.tabIndex should return 1 when set to 1 
+PASS slot.tabIndex should return -1 by default 
+PASS slot.tabIndex should return -1 when set to -1 
+PASS slot.tabIndex should return 0 when set to 0 
+PASS slot.tabIndex should return 1 when set to 1 
 

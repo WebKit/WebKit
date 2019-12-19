@@ -33,6 +33,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/tables/table-cell-width-s-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/tables/table-cell-width-s.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/tables/table-cell-width.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/tables/table-column-width-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/tables/table-column-width.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/tables/table-direction-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/tables/table-direction.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/tables/table-layout-expected.html

@@ -14,8 +14,11 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/the-window-object/named-access-on-the-window-object/cross-global-npo.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/the-window-object/named-access-on-the-window-object/cross-global-support.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/the-window-object/named-access-on-the-window-object/named-objects.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/the-window-object/named-access-on-the-window-object/navigated-named-objects.window.js
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/the-window-object/named-access-on-the-window-object/prototype.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/the-window-object/named-access-on-the-window-object/test.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/the-window-object/named-access-on-the-window-object/window-named-properties.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/the-window-object/named-access-on-the-window-object/window-null-names.html

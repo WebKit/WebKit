@@ -37,8 +37,8 @@
 
             html.setAttribute("xml:base", "");
             assert_equals(ele[item.get], url.substr(0, url.lastIndexOf("/")) +"/test.txt", "The '" + item.get + "' attribute is incorrect.");
-            html.setAttribute("xml:base", "http://{{domains[www]}}:{{ports[http][0]}}");
-            assert_not_equals(ele[item.get], "http://{{domains[www]}}:{{ports[http][0]}}/test.txt", "The '" + item.get + "' attribute is incorrect.");
+            html.setAttribute("xml:base", "http://{{hosts[alt][]}}:{{ports[http][0]}}");
+            assert_not_equals(ele[item.get], "http://{{hosts[alt][]}}:{{ports[http][0]}}/test.txt", "The '" + item.get + "' attribute is incorrect.");
           }, "The '" + item.set + "' attribute of the '" + item.elements[j] + "' element");
         }
       }

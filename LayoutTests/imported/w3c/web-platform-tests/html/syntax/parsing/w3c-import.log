@@ -91,6 +91,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/syntax/parsing/html5lib_tricky01.html
 /LayoutTests/imported/w3c/web-platform-tests/html/syntax/parsing/html5lib_webkit01.html
 /LayoutTests/imported/w3c/web-platform-tests/html/syntax/parsing/html5lib_webkit02.html
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/parsing/html_content_in_foreign_context.html
 /LayoutTests/imported/w3c/web-platform-tests/html/syntax/parsing/math-parse01.html
 /LayoutTests/imported/w3c/web-platform-tests/html/syntax/parsing/math-parse03.html
 /LayoutTests/imported/w3c/web-platform-tests/html/syntax/parsing/meta-inhead-insertion-mode.html

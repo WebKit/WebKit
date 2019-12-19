@@ -1,0 +1,6 @@
+CONSOLE MESSAGE: line 2: ReferenceError: Can't find variable: SharedArrayBuffer
+
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT SharedArrayBuffer and a cross-site <iframe> Test timed out
+

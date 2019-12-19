@@ -1,5 +1,3 @@
-CONSOLE MESSAGE: line 3463: Error: assert_equals: expected "block" but got "inline"
 
-Harness Error (FAIL), message = Error: assert_equals: expected "block" but got "inline"
-
+FAIL dialog: display assert_equals: expected "block" but got "inline"
 

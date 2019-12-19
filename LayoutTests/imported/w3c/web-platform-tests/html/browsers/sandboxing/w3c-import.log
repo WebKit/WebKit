@@ -19,5 +19,10 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/sandboxing/sandbox-allow-same-origin.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/sandboxing/sandbox-allow-scripts.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/sandboxing/sandbox-disallow-same-origin.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/sandboxing/sandbox-disallow-scripts-via-unsandboxed-popup.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/sandboxing/sandbox-disallow-scripts.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/sandboxing/sandbox-navigation-timing-iframe.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/sandboxing/sandbox-navigation-timing.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/sandboxing/sandbox-new-execution-context-iframe.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/sandboxing/sandbox-new-execution-context.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/sandboxing/sandbox-parse-noscript.html

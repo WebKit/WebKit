@@ -1,8 +1,6 @@
-CONSOLE MESSAGE: line 3463: Error: assert_equals: marginTop expected "0px" but got "25px"
 x
 x
 x
 
-Harness Error (FAIL), message = Error: assert_equals: marginTop expected "0px" but got "25px"
-
+FAIL table vspace hspace (standards mode) assert_equals: marginTop expected "0px" but got "25px"
 

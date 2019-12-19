@@ -82,7 +82,7 @@
           assert_false(navigator.userActivation.isActive);
           assert_false(navigator.userActivation.hasBeenActive);
       }));
-      child1.src = "http://{{domains[www]}}:{{ports[http][0]}}/html/user-activation/resources/child-four.html";
+      child1.src = "http://{{hosts[alt][]}}:{{ports[http][0]}}/html/user-activation/resources/child-four.html";
       child2.src = "http://{{domains[www1]}}:{{ports[http][0]}}/html/user-activation/resources/child-two.html";
     }, "Cross-origin user activation transfer through postMessages");
   </script>

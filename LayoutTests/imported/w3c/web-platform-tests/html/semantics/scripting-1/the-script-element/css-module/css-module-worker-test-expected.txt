@@ -1,0 +1,7 @@
+CONSOLE MESSAGE: line 1: SyntaxError: Unexpected string literal "./basic.css". import call expects exactly one argument.
+CONSOLE MESSAGE: line 1: SyntaxError: Invalid character: '#'
+
+PASS A static import CSS Module within a web worker should not load. 
+PASS A dynamic import CSS Module within a web worker should not load. 
+PASS A CSS Module within a web worker should not load. 
+

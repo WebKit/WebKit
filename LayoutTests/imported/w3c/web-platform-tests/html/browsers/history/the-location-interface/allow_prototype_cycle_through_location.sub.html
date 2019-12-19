@@ -79,7 +79,7 @@ var triggerCrossOriginTest = (function() {
     });
 
     crossOrigin.src =
-      "//{{domains[www]}}:" + location.port + pathdir + "cross_origin_joined_frame.sub.html";
+      "//{{hosts[alt][]}}:" + location.port + pathdir + "cross_origin_joined_frame.sub.html";
   })
   .catch(t.unreached_func("crossOrigin onload/src setting"));
 })();

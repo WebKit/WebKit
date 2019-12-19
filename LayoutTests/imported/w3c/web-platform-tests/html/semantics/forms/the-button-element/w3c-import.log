@@ -22,6 +22,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-button-element/button-labels.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-button-element/button-menu-historical.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-button-element/button-setcustomvalidity.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-button-element/button-submit-children.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-button-element/button-type.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-button-element/button-validation.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-button-element/button-validationmessage.html

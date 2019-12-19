@@ -58,4 +58,92 @@ PASS html5lib_innerHTML_foreign-fragment.html 822f22f8f09e3a5cc1575f17487f313854
 PASS html5lib_innerHTML_foreign-fragment.html 48e58a3e03d51a1676401ad872c03b96c52d3e2e 
 PASS html5lib_innerHTML_foreign-fragment.html 4e716ca1a2ba1079c8e163f8ba13dfc448abbf0f 
 PASS html5lib_innerHTML_foreign-fragment.html 33b553bb92ae345ef57f85312ad6e04c742f151e 
+4917b7458e1fff6c5cb21d7baf6863cc9550c61e
+
+Input
+
+undefined
+Expected
+
+#document
+| <svg nobr>
+|   "X"
+Actual
+
+|<svg path>
+| <nobr>
+|   "X"
+b6d19b8ccacd2fde354df002b856f649ae91b20e
+
+Input
+
+undefined
+Expected
+
+#document
+| <svg font>
+|   color=""
+| "X"
+Actual
+
+|<svg path>
+| <font>
+|   color=""
+| "X"
+14e07b0c2adecfe362428885346c200e89f08e66
+
+Input
+
+undefined
+Expected
+
+#document
+| <math div>
+Actual
+
+|<math annotation-xml>
+| <div>
+b4c43a4fcdaa1a4c753674c4f92987b70d54d80b
+
+Input
+
+undefined
+Expected
+
+#document
+| <math div>
+Actual
+
+|<math math>
+| <div>
+0c1782eb0f62f616627f0132729d6a194f8b7546
+
+Input
+
+undefined
+Expected
+
+#document
+| <svg div>
+|   <svg h1>
+|     "X"
+Actual
+
+|<svg svg>
+| <div>
+|   <h1>
+|     "X"
+9dc5a819afe33d6babc04edc8f92cb8045f0f006
+
+Input
+
+undefined
+Expected
+
+#document
+| <svg div>
+Actual
+
+|<svg svg>
+| <div>
 

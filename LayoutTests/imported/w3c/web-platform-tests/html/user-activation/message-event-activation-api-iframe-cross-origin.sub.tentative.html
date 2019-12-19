@@ -48,7 +48,7 @@
           t.done();
         }
       }));
-      child.src = "http://{{domains[www]}}:{{ports[http][0]}}/html/user-activation/resources/child-three.html";
+      child.src = "http://{{hosts[alt][]}}:{{ports[http][0]}}/html/user-activation/resources/child-three.html";
     }, "Message propagates values on post");
   </script>
 </body>

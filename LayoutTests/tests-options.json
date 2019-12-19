@@ -1361,6 +1361,9 @@
     "imported/w3c/web-platform-tests/html/cross-origin-opener-policy/no-https.html": [
         "slow"
     ],
+    "imported/w3c/web-platform-tests/html/cross-origin-opener-policy/popup-redirect-cache.https.html": [
+        "slow"
+    ],
     "imported/w3c/web-platform-tests/html/dom/documents/resource-metadata-management/document-lastModified-01.html": [
         "slow"
     ],
@@ -1466,6 +1469,9 @@
     "imported/w3c/web-platform-tests/html/semantics/document-metadata/the-meta-element/pragma-directives/attr-meta-http-equiv-refresh/parsing.html": [
         "slow"
     ],
+    "imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/media_fragment_seek.html": [
+        "slow"
+    ],
     "imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/playing-the-media-resource/pause-remove-from-document-networkState.html": [
         "slow"
     ],
@@ -1482,6 +1488,9 @@
         "slow"
     ],
     "imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-webvtt-markup.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe_sandbox_navigation_download_allow_downloads.sub.tentative.html": [
         "slow"
     ],
     "imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe_sandbox_navigation_download_allow_downloads_without_user_activation.sub.tentative.html": [

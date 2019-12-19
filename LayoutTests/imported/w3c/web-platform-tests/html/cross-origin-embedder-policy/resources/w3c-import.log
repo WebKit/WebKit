@@ -24,4 +24,5 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/resources/nothing-same-origin-corp.txt
 /LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/resources/nothing-same-origin-corp.txt.headers
 /LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/resources/script-factory.js
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/resources/sw-store-to-cache-storage.js
 /LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/resources/sw.js

@@ -1,0 +1,6 @@
+CONSOLE MESSAGE: line 8: ReferenceError: Can't find variable: BroadcastChannel
+CONSOLE MESSAGE: line 8: ReferenceError: Can't find variable: BroadcastChannel
+CONSOLE MESSAGE: line 8: ReferenceError: Can't find variable: BroadcastChannel
+
+FAIL Structured cloning of SharedArrayBuffers: BroadcastChannel within the same agent cluster promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: SharedArrayBuffer"
+

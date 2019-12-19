@@ -55,7 +55,7 @@
           assert_false(navigator.userActivation.isActive);
           assert_false(navigator.userActivation.hasBeenActive);
       }));
-      child.src = "http://{{domains[www]}}:{{ports[http][0]}}/html/user-activation/resources/child-four.html";
+      child.src = "http://{{hosts[alt][]}}:{{ports[http][0]}}/html/user-activation/resources/child-four.html";
     }, "Cross-origin user activation transfer through postMessages");
   </script>
 </body>

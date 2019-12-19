@@ -15,7 +15,8 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/replaced-elements/attributes-for-embedded-content-and-images/align.html
-/LayoutTests/imported/w3c/web-platform-tests/html/rendering/replaced-elements/attributes-for-embedded-content-and-images/img-aspect-ratio.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/replaced-elements/attributes-for-embedded-content-and-images/canvas-aspect-ratio.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/replaced-elements/attributes-for-embedded-content-and-images/img-aspect-ratio.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/replaced-elements/attributes-for-embedded-content-and-images/img-dim-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/replaced-elements/attributes-for-embedded-content-and-images/img-dim.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/replaced-elements/attributes-for-embedded-content-and-images/img-no-alt-replaced.html
@@ -32,3 +33,4 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/replaced-elements/attributes-for-embedded-content-and-images/object_border_perc.xhtml
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/replaced-elements/attributes-for-embedded-content-and-images/object_border_pixel-expected.xhtml
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/replaced-elements/attributes-for-embedded-content-and-images/object_border_pixel.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/replaced-elements/attributes-for-embedded-content-and-images/video-aspect-ratio.html

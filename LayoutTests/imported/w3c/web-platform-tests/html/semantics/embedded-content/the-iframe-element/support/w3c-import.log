@@ -15,6 +15,7 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/support/blank.htm
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/support/document-with-embedded-svg.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/support/download_stash.py
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/support/iframe-that-checks-contentDocument.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/support/iframe-that-opens-modals.html
@@ -59,3 +60,4 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/support/standalone-fail.htm
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/support/standalone-iframe-content.htm
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/support/standalone-pass.htm
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/support/svg.svg

@@ -17,6 +17,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/playing-the-media-resource/loop-from-ended.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/playing-the-media-resource/pause-move-to-other-document.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/playing-the-media-resource/pause-move-within-document.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/playing-the-media-resource/pause-remove-from-document-different-load.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/playing-the-media-resource/pause-remove-from-document-networkState.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/playing-the-media-resource/pause-remove-from-document.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/playing-the-media-resource/play-in-detached-document.html

@@ -10,8 +10,8 @@ PASS [INPUT in NUMBER status] The max is greater than value(integer)
 PASS [INPUT in NUMBER status] The max is greater than value(floating number) 
 PASS [INPUT in NUMBER status] The max equals to value 
 PASS [INPUT in NUMBER status] The value is not a number 
-PASS [INPUT in NUMBER status] The value is greater than max(integer) 
-PASS [INPUT in NUMBER status] The value is greater than max(floating number) 
-PASS [INPUT in NUMBER status] The value is greater than max(special floating number) 
-PASS [INPUT in NUMBER status] The value is greater than max(scientific notation) 
+FAIL [INPUT in NUMBER status] The value is greater than max(integer) assert_true: The validity.rangeOverflow should be true, when control is disabled. expected true got false
+FAIL [INPUT in NUMBER status] The value is greater than max(floating number) assert_true: The validity.rangeOverflow should be true, when control is disabled. expected true got false
+FAIL [INPUT in NUMBER status] The value is greater than max(special floating number) assert_true: The validity.rangeOverflow should be true, when control is disabled. expected true got false
+FAIL [INPUT in NUMBER status] The value is greater than max(scientific notation) assert_true: The validity.rangeOverflow should be true, when control is disabled. expected true got false
 
