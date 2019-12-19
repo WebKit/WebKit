@@ -1,3 +1,19 @@
+2019-12-19  Per Arne Vollan  <pvollan@apple.com>
+
+        REGRESSION (r253530): Incorrect colors in Dark Mode
+        https://bugs.webkit.org/show_bug.cgi?id=205457
+
+        Unreviewed rollout of r253530.
+
+        * Shared/WebProcessCreationParameters.cpp:
+        (WebKit::WebProcessCreationParameters::encode const):
+        (WebKit::WebProcessCreationParameters::decode):
+        * Shared/WebProcessCreationParameters.h:
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::WebProcessPool::platformInitializeWebProcess):
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::platformInitializeWebProcess):
+
 2019-12-19  Alex Christensen  <achristensen@webkit.org>
 
         Deprecate _WKRemoteObjectInterface methods without ofReply:

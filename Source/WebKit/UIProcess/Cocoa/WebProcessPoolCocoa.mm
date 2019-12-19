@@ -339,10 +339,6 @@ void WebProcessPool::platformInitializeWebProcess(const WebProcessProxy& process
     }
 #endif
     
-#if PLATFORM(IOS)
-    parameters.cssValueToSystemColorMap = RenderThemeIOS::getOrCreateCSSValueToSystemColorMap();
-#endif
-    
 #if PLATFORM(IOS_FAMILY)
     parameters.currentUserInterfaceIdiomIsPad = currentUserInterfaceIdiomIsPad();
 #endif

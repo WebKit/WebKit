@@ -1,3 +1,21 @@
+2019-12-19  Per Arne Vollan  <pvollan@apple.com>
+
+        REGRESSION (r253530): Incorrect colors in Dark Mode
+        https://bugs.webkit.org/show_bug.cgi?id=205457
+
+        Unreviewed rollout of r253530.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * rendering/CSSValueKey.h: Removed.
+        * rendering/RenderThemeIOS.h:
+        * rendering/RenderThemeIOS.mm:
+        (WebCore::RenderThemeIOS::systemColor const):
+        (WebCore::cssValueIDSelectorList): Deleted.
+        (WebCore::systemColorFromCSSValueID): Deleted.
+        (WebCore::globalCSSValueToSystemColorMap): Deleted.
+        (WebCore::RenderThemeIOS::getOrCreateCSSValueToSystemColorMap): Deleted.
+        (WebCore::RenderThemeIOS::setCSSValueToSystemColorMap): Deleted.
+
 2019-12-19  James Darpinian  <jdarpinian@chromium.org>
 
         ANGLE: Fix last WebGL conformance regressions

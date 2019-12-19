@@ -4797,7 +4797,6 @@
 		E3B2F0ED1D7F4CA300B0C9D1 /* LoadableScript.h in Headers */ = {isa = PBXBuildFile; fileRef = E3B2F0E71D7F35EC00B0C9D1 /* LoadableScript.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E3B2F0EE1D7F4CA900B0C9D1 /* LoadableScriptClient.h in Headers */ = {isa = PBXBuildFile; fileRef = E3B2F0E81D7F35EC00B0C9D1 /* LoadableScriptClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E3B2F0F01D7F4CB500B0C9D1 /* LoadableClassicScript.h in Headers */ = {isa = PBXBuildFile; fileRef = E3B2F0E41D7F35EC00B0C9D1 /* LoadableClassicScript.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		E3BBC24723835526006EC39F /* CSSValueKey.h in Headers */ = {isa = PBXBuildFile; fileRef = E3BBC2452383551A006EC39F /* CSSValueKey.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E3C99A091DC3D41C00794AD3 /* DOMJITCheckDOM.h in Headers */ = {isa = PBXBuildFile; fileRef = E3C99A081DC3D41700794AD3 /* DOMJITCheckDOM.h */; };
 		E3C9AECB2113149900419B92 /* JSMicrotaskCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = E3C9AEC92113147400419B92 /* JSMicrotaskCallback.h */; };
 		E3E4E2A81E3B17100023BB8A /* ScriptElementCachedScriptFetcher.h in Headers */ = {isa = PBXBuildFile; fileRef = E3E4E2A61E3B16FC0023BB8A /* ScriptElementCachedScriptFetcher.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -15130,7 +15129,6 @@
 		E3B2F0E81D7F35EC00B0C9D1 /* LoadableScriptClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LoadableScriptClient.h; sourceTree = "<group>"; };
 		E3B2F0E91D7F3D3C00B0C9D1 /* LoadableScript.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LoadableScript.cpp; sourceTree = "<group>"; };
 		E3B7C0621DC3415A001FB0B8 /* JSDocumentDOMJIT.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSDocumentDOMJIT.cpp; sourceTree = "<group>"; };
-		E3BBC2452383551A006EC39F /* CSSValueKey.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CSSValueKey.h; sourceTree = "<group>"; };
 		E3BC827322530221005276DE /* NodeList.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = NodeList.cpp; sourceTree = "<group>"; };
 		E3BF19E122AF2F55009C9926 /* XMLHttpRequestProgressEvent.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = XMLHttpRequestProgressEvent.cpp; sourceTree = "<group>"; };
 		E3BF19E322AF2FA5009C9926 /* OverconstrainedErrorEvent.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = OverconstrainedErrorEvent.cpp; sourceTree = "<group>"; };
@@ -27651,7 +27649,6 @@
 				9392F14B0AD1861B00691BD4 /* CounterNode.h */,
 				0F53FB81213B1BB800C40D34 /* CSSFilter.cpp */,
 				0F53FB83213B1BB800C40D34 /* CSSFilter.h */,
-				E3BBC2452383551A006EC39F /* CSSValueKey.h */,
 				A8CFF6CA0A1561CD000A4234 /* EllipsisBox.cpp */,
 				A8CFF6BD0A156118000A4234 /* EllipsisBox.h */,
 				E4A8D21522578DA000A8463C /* EventRegion.cpp */,
@@ -29533,7 +29530,6 @@
 				DD7CDF250A23CF9800069928 /* CSSUnknownRule.h in Headers */,
 				BC7D8FF01BD03B6400FFE540 /* CSSUnsetValue.h in Headers */,
 				A80E6CEE0A1989CA007FB8C5 /* CSSValue.h in Headers */,
-				E3BBC24723835526006EC39F /* CSSValueKey.h in Headers */,
 				6565815109D13043000E61D7 /* CSSValueKeywords.h in Headers */,
 				A80E6CE90A1989CA007FB8C5 /* CSSValueList.h in Headers */,
 				E49BD9FA131FD2ED003C56F0 /* CSSValuePool.h in Headers */,
