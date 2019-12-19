@@ -358,11 +358,7 @@ void HTMLFormElement::submit(Event* event, bool activateSubmitButton, bool proce
     auto protectedThis = makeRef(*this); // Form submission can execute arbitary JavaScript.
 
     auto shouldLockHistory = processingUserGesture ? LockHistory::No : LockHistory::Yes;
-    auto formSubmission = FormSubmission::create(*this, m_attributes, event, shouldLockHistory, formSubmissionTrigger);
-    if (m_plannedFormSubmission)
-        m_plannedFormSubmission->cancel();
-    m_plannedFormSubmission = makeWeakPtr(formSubmission.get());
-    frame->loader().submitForm(WTFMove(formSubmission));
+    frame->loader().submitForm(FormSubmission::create(*this, m_attributes, event, shouldLockHistory, formSubmissionTrigger));
 
     if (needButtonActivation && firstSuccessfulSubmitButton)
         firstSuccessfulSubmitButton->setActivatedSubmit(false);

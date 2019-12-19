@@ -1,3 +1,7 @@
+2019-12-18  Alan Coon  <alancoon@apple.com>
+
+        Revert r253493. rdar://problem/58028534
+
 2019-12-16  Alan Coon  <alancoon@apple.com>
 
         Revert r253499. rdar://problem/57990824
@@ -1961,28 +1965,21 @@
 
         This patch removes this behavior but maintains the render tree dump output on the RenderTreeAsText
         level (thus avoiding giant test rebasing), and makes it easier to get the same output from all paths.
-
         * rendering/InlineBox.cpp:
         (WebCore::InlineBox::logicalHeight const):
         (WebCore::InlineBox::baselinePosition const):
         (WebCore::InlineBox::lineHeight const):
-
         Remove the hack from line boxes.
-
         * rendering/RenderLineBreak.cpp:
         (WebCore::RenderLineBreak::boundingBoxForRenderTreeDump const):
-
         Add special bounding box code for this case.
         This can be removed in future with a test rebase.
-
         * rendering/RenderLineBreak.h:
         * rendering/RenderTreeAsText.cpp:
         (WebCore::RenderTreeAsText::writeRenderObject):
         * rendering/SimpleLineLayoutResolver.cpp:
         (WebCore::SimpleLineLayout::RunResolver::Run::rect const):
-
         Remove the hack from simple lines.
-
         (WebCore::SimpleLineLayout::RunResolver::RunResolver):
         * rendering/SimpleLineLayoutResolver.h:
         (WebCore::SimpleLineLayout::RunResolver::Run::baselineOffset const):
@@ -2004,10 +2001,9 @@
         * rendering/line/LineLayoutTraversalSimplePath.h:
         (WebCore::LineLayoutTraversal::SimplePath::baselineOffset const):
         (WebCore::LineLayoutTraversal::SimplePath::isHorizontal const):
-        (WebCore::LineLayoutTraversal::SimplePath::useLineBreakBoxRenderTreeDumpQuirk const):
-
+        (WebCore::LineLayoutTraversal::SimplePath::useLineBreakBoxRenderTreeDumpQuirk const
+        
 2019-12-10  Antti Koivisto  <antti@apple.com>
-
         [LFC][Integration] Output hyphen strings
         https://bugs.webkit.org/show_bug.cgi?id=205058
 
@@ -2051,7 +2047,7 @@
         Reviewed by Mark Lam.
 
         RuntimeArray is inheriting JSArray. We should have separate IsoSubspace for this.
-
+        
         * bindings/js/WebCoreJSClientData.cpp:
         (WebCore::JSVMClientData::JSVMClientData):
         * bindings/js/WebCoreJSClientData.h:
