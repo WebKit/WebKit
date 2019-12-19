@@ -430,4 +430,14 @@ void PageClientImpl::sendMessageToWebView(UserMessage&& message, CompletionHandl
     m_view.didReceiveUserMessage(WTFMove(message), WTFMove(completionHandler));
 }
 
+void PageClientImpl::setInputMethodState(bool enabled)
+{
+    m_view.setInputMethodState(enabled);
+}
+
+void PageClientImpl::selectionDidChange()
+{
+    m_view.selectionDidChange();
+}
+
 } // namespace WebKit

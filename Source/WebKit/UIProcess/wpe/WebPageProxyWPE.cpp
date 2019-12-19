@@ -26,6 +26,7 @@
 #include "config.h"
 #include "WebPageProxy.h"
 
+#include "EditorState.h"
 #include "PageClientImpl.h"
 #include "WebsiteDataStore.h"
 #include <WebCore/NotImplemented.h>
@@ -77,9 +78,11 @@ void WebsiteDataStore::platformRemoveRecentSearches(WallTime)
     notImplemented();
 }
 
-void WebPageProxy::updateEditorState(const EditorState&)
+void WebPageProxy::updateEditorState(const EditorState& editorState)
 {
-    notImplemented();
+    m_editorState = editorState;
+    if (!editorState.shouldIgnoreSelectionChanges)
+        pageClient().selectionDidChange();
 }
 
 void WebPageProxy::sendMessageToWebViewWithReply(UserMessage&& message, CompletionHandler<void(UserMessage&&)>&& completionHandler)
@@ -90,6 +93,11 @@ void WebPageProxy::sendMessageToWebViewWithReply(UserMessage&& message, Completi
 void WebPageProxy::sendMessageToWebView(UserMessage&& message)
 {
     sendMessageToWebViewWithReply(WTFMove(message), [](UserMessage&&) { });
+}
+
+void WebPageProxy::setInputMethodState(bool enabled)
+{
+    static_cast<PageClientImpl&>(pageClient()).setInputMethodState(enabled);
 }
 
 } // namespace WebKit

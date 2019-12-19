@@ -71,6 +71,7 @@ public:
 #endif
 
 #if PLATFORM(WPE)
+    void showInWindowAndWaitUntilMapped() { showInWindow(); };
     void showInWindow();
 #endif
 

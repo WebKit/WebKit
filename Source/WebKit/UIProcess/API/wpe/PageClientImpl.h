@@ -62,6 +62,7 @@ public:
 #endif
 
     void sendMessageToWebView(UserMessage&&, CompletionHandler<void(UserMessage&&)>&&);
+    void setInputMethodState(bool enabled);
 
 private:
     // PageClient
@@ -164,6 +165,8 @@ private:
     WebCore::UserInterfaceLayoutDirection userInterfaceLayoutDirection() override;
 
     void didChangeWebPageID() const override;
+
+    void selectionDidChange() override;
 
     WKWPE::View& m_view;
 

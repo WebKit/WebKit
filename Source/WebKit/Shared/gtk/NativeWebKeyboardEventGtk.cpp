@@ -33,21 +33,15 @@
 
 namespace WebKit {
 
-NativeWebKeyboardEvent::NativeWebKeyboardEvent(GdkEvent* event, const String& text, HandledByInputMethod handledByInputMethod, FakedForComposition fakedForComposition, Vector<String>&& commands)
+NativeWebKeyboardEvent::NativeWebKeyboardEvent(GdkEvent* event, const String& text, HandledByInputMethod handledByInputMethod, Vector<String>&& commands)
     : WebKeyboardEvent(WebEventFactory::createWebKeyboardEvent(event, text, handledByInputMethod == HandledByInputMethod::Yes, WTFMove(commands)))
     , m_nativeEvent(gdk_event_copy(event))
-    , m_text(text)
-    , m_handledByInputMethod(handledByInputMethod)
-    , m_fakedForComposition(fakedForComposition)
 {
 }
 
 NativeWebKeyboardEvent::NativeWebKeyboardEvent(const NativeWebKeyboardEvent& event)
     : WebKeyboardEvent(WebEventFactory::createWebKeyboardEvent(event.nativeEvent(), event.text(), event.handledByInputMethod(), Vector<String>(event.commands())))
     , m_nativeEvent(gdk_event_copy(event.nativeEvent()))
-    , m_text(event.text())
-    , m_handledByInputMethod(event.handledByInputMethod() ? HandledByInputMethod::Yes : HandledByInputMethod::No)
-    , m_fakedForComposition(event.fakedForComposition() ? FakedForComposition::Yes : FakedForComposition::No)
 {
 }
 

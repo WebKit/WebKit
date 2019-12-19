@@ -108,7 +108,7 @@ bool EditorState::decode(IPC::Decoder& decoder, EditorState& result)
 void EditorState::PostLayoutData::encode(IPC::Encoder& encoder) const
 {
     encoder << typingAttributes;
-#if PLATFORM(IOS_FAMILY) || PLATFORM(GTK)
+#if PLATFORM(IOS_FAMILY) || PLATFORM(GTK) || PLATFORM(WPE)
     encoder << caretRectAtStart;
 #endif
 #if PLATFORM(COCOA)
@@ -152,7 +152,7 @@ bool EditorState::PostLayoutData::decode(IPC::Decoder& decoder, PostLayoutData& 
 {
     if (!decoder.decode(result.typingAttributes))
         return false;
-#if PLATFORM(IOS_FAMILY) || PLATFORM(GTK)
+#if PLATFORM(IOS_FAMILY) || PLATFORM(GTK) || PLATFORM(WPE)
     if (!decoder.decode(result.caretRectAtStart))
         return false;
 #endif
@@ -269,7 +269,7 @@ TextStream& operator<<(TextStream& ts, const EditorState& editorState)
     ts << "postLayoutData";
     if (editorState.postLayoutData().typingAttributes != AttributeNone)
         ts.dumpProperty("typingAttributes", editorState.postLayoutData().typingAttributes);
-#if PLATFORM(IOS_FAMILY) || PLATFORM(GTK)
+#if PLATFORM(IOS_FAMILY) || PLATFORM(GTK) || PLATFORM(WPE)
     if (editorState.postLayoutData().caretRectAtStart != IntRect())
         ts.dumpProperty("caretRectAtStart", editorState.postLayoutData().caretRectAtStart);
 #endif

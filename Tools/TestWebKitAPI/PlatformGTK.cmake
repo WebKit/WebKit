@@ -55,8 +55,6 @@ ADD_WHOLE_ARCHIVE_TO_LIBRARIES(TestWebCore_LIBRARIES)
 list(APPEND TestWebKit_SOURCES
     ${test_main_SOURCES}
 
-    Tests/WebKit/gtk/InputMethodFilter.cpp
-
     glib/UtilitiesGLib.cpp
 
     gtk/PlatformUtilitiesGtk.cpp

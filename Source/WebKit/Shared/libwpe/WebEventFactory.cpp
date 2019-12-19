@@ -62,17 +62,16 @@ WallTime wallTimeForEventTime(uint64_t timestamp)
     return timestamp ? MonotonicTime::fromRawSeconds(timestamp / 1000.).approximateWallTime() : WallTime::now();
 }
 
-WebKeyboardEvent WebEventFactory::createWebKeyboardEvent(struct wpe_input_keyboard_event* event)
+WebKeyboardEvent WebEventFactory::createWebKeyboardEvent(struct wpe_input_keyboard_event* event, const String& text, bool handledByInputMethod)
 {
-    String singleCharacterString = WebCore::PlatformKeyboardEvent::singleCharacterString(event->key_code);
-
     return WebKeyboardEvent(event->pressed ? WebEvent::KeyDown : WebEvent::KeyUp,
-        WebCore::PlatformKeyboardEvent::singleCharacterString(event->key_code),
+        text.isNull() ? WebCore::PlatformKeyboardEvent::singleCharacterString(event->key_code) : text,
         WebCore::PlatformKeyboardEvent::keyValueForWPEKeyCode(event->key_code),
         WebCore::PlatformKeyboardEvent::keyCodeForHardwareKeyCode(event->hardware_key_code),
         WebCore::PlatformKeyboardEvent::keyIdentifierForWPEKeyCode(event->key_code),
         WebCore::PlatformKeyboardEvent::windowsKeyCodeForWPEKeyCode(event->key_code),
         event->key_code,
+        handledByInputMethod,
         isWPEKeyCodeFromKeyPad(event->key_code),
         modifiersForEventModifiers(event->modifiers),
         wallTimeForEventTime(event->time));

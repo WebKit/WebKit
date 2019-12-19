@@ -1,5 +1,174 @@
 2019-12-19  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK][WPE] Add initial API for input method
+        https://bugs.webkit.org/show_bug.cgi?id=204679
+
+        Reviewed by Žan Doberšek.
+
+        In the case of GTK port, it allows to use a custom IM instead of GtkIMContext that it's still used by
+        default. In the case of WPE it brings IM support, but there's no default implementation so applications need to
+        provide their own.
+
+        * PlatformGTK.cmake: Add new public header WebKitInputMethodContext.h.
+        * PlatformWPE.cmake: Ditto.
+        * Shared/EditorState.cpp:
+        (WebKit::EditorState::PostLayoutData::encode const): Encode caretRectAtStart for WPE too.
+        (WebKit::EditorState::PostLayoutData::decode): Decode caretRectAtStart for WPE too.
+        (WebKit::operator<<): Dump caretRectAtStart for WPE too.
+        * Shared/EditorState.h: Define caretRectAtStart for WPE too.
+        * Shared/NativeWebKeyboardEvent.h:
+        (WebKit::NativeWebKeyboardEvent::NativeWebKeyboardEvent): Remove FakedForComposition parameter for GTK and add
+        HandledByInputMethod to WPE.
+        * Shared/WebEvent.h:
+        * Shared/WebKeyboardEvent.cpp:
+        (WebKit::WebKeyboardEvent::WebKeyboardEvent): Add handledByInputMethod parameter for WPE.
+        (WebKit::WebKeyboardEvent::encode const): Encode m_handledByInputMethod in WPE too.
+        (WebKit::WebKeyboardEvent::decode): Decode m_handledByInputMethod in WPE too.
+        * Shared/gtk/NativeWebKeyboardEventGtk.cpp:
+        (WebKit::NativeWebKeyboardEvent::NativeWebKeyboardEvent): Remove FakedForComposition and the redundant members
+        that are already in the bcase class or no longer needed.
+        * Shared/libwpe/NativeWebKeyboardEventLibWPE.cpp:
+        (WebKit::NativeWebKeyboardEvent::NativeWebKeyboardEvent): Add text and handledByInputMethod parameters
+        * Shared/libwpe/WebEventFactory.cpp:
+        (WebKit::WebEventFactory::createWebKeyboardEvent): Use the given text if not null and pass handledByInputMethod,
+        to WebKeyboardEvent.
+        * Shared/libwpe/WebEventFactory.h:
+        * SourcesGTK.txt: Add new files to compilation.
+        * SourcesWPE.txt: Ditto.
+        * UIProcess/API/glib/InputMethodFilter.cpp: Added.
+        (WebKit::InputMethodFilter::~InputMethodFilter):
+        (WebKit::InputMethodFilter::preeditStartedCallback):
+        (WebKit::InputMethodFilter::preeditChangedCallback):
+        (WebKit::InputMethodFilter::preeditFinishedCallback):
+        (WebKit::InputMethodFilter::committedCallback):
+        (WebKit::InputMethodFilter::setContext):
+        (WebKit::InputMethodFilter::setEnabled):
+        (WebKit::InputMethodFilter::filterKeyEvent):
+        (WebKit::InputMethodFilter::isViewFocused const):
+        (WebKit::InputMethodFilter::notifyFocusedIn):
+        (WebKit::InputMethodFilter::notifyFocusedOut):
+        (WebKit::InputMethodFilter::notifyCursorRect):
+        (WebKit::InputMethodFilter::preeditStarted):
+        (WebKit::InputMethodFilter::preeditChanged):
+        (WebKit::InputMethodFilter::preeditFinished):
+        (WebKit::InputMethodFilter::committed):
+        (WebKit::InputMethodFilter::cancelComposition):
+        * UIProcess/API/glib/InputMethodFilter.h: Added.
+        (WebKit::InputMethodFilter::context const):
+        * UIProcess/API/glib/WebKitInputMethodContext.cpp: Added.
+        (webkitInputMethodUnderlineGetCompositionUnderline):
+        (webkit_input_method_underline_new):
+        (webkit_input_method_underline_copy):
+        (webkit_input_method_underline_free):
+        (webkitInputMethodContextSetWebView):
+        (webkitInputMethodContextGetWebView):
+        (webkit_input_method_context_set_enable_preedit):
+        (webkit_input_method_context_get_preedit):
+        (webkit_input_method_context_notify_focus_in):
+        (webkit_input_method_context_notify_focus_out):
+        (webkit_input_method_context_notify_cursor_area):
+        (webkit_input_method_context_reset):
+        * UIProcess/API/glib/WebKitInputMethodContextPrivate.h: Added.
+        (_WebKitInputMethodUnderline::_WebKitInputMethodUnderline):
+        * UIProcess/API/glib/WebKitWebView.cpp:
+        (webkitWebViewConstructed):
+        (webkitWebViewSynthesizeCompositionKeyPress):
+        (webkitWebViewSetComposition):
+        (webkitWebViewConfirmComposition):
+        (webkitWebViewCancelComposition):
+        (webkit_web_view_set_input_method_context):
+        (webkit_web_view_get_input_method_context):
+        * UIProcess/API/glib/WebKitWebViewPrivate.h:
+        * UIProcess/API/gtk/InputMethodFilterGtk.cpp: Added.
+        (WebKit::InputMethodFilter::platformTransformCursorRectToViewCoordinates):
+        (WebKit::InputMethodFilter::platformEventKeyIsKeyPress const):
+        * UIProcess/API/gtk/PageClientImpl.cpp:
+        (WebKit::PageClientImpl::doneWithKeyEvent): Remove the early return in case of fake event, composition events
+        are always handled by the web process.
+        * UIProcess/API/gtk/WebKitInputMethodContext.h: Added.
+        * UIProcess/API/gtk/WebKitInputMethodContextGtk.cpp: Added.
+        (webkit_input_method_underline_set_color):
+        (webkit_input_method_context_filter_key_event):
+        * UIProcess/API/gtk/WebKitInputMethodContextImplGtk.cpp: Added.
+        (contextPreeditStartCallback):
+        (contextPreeditChangedCallback):
+        (contextPreeditEndCallback):
+        (contextCommitCallback):
+        (webkitInputMethodContextImplGtkConstructed):
+        (webkitInputMethodContextImplGtkSetEnablePreedit):
+        (webkitInputMethodContextImplGtkGetPreedit):
+        (webkitInputMethodContextImplGtkFilterKeyEvent):
+        (webkitInputMethodContextImplGtkNotifyFocusIn):
+        (webkitInputMethodContextImplGtkNotifyFocusOut):
+        (webkitInputMethodContextImplGtkNotifyCursorArea):
+        (webkitInputMethodContextImplGtkReset):
+        (webkit_input_method_context_impl_gtk_class_init):
+        (webkitInputMethodContextImplGtkNew):
+        (webkitInputMethodContextImplGtkSetClientWindow):
+        * UIProcess/API/gtk/WebKitInputMethodContextImplGtk.h: Added.
+        * UIProcess/API/gtk/WebKitWebView.h:
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (webkitWebViewBaseRealize): If current IM filter is the default one, call webkitInputMethodContextImplGtkSetClientWindow().
+        (webkitWebViewBaseUnrealize): Ditto.
+        (webkitWebViewBaseDispose): Set a nullptr context on IM filter.
+        (webkitWebViewBaseKeyPressEvent): Use the new IM filter that simplifies the code.
+        (webkitWebViewBaseKeyReleaseEvent): Ditto.
+        (webkitWebViewBaseHandleMouseEvent): Cancel composition in case of click.
+        (webkitWebViewBaseCreateWebPage): The new IM filter doesn't need to know the page.
+        (webkitWebViewBaseUpdateTextInputState): Use new IM filter API.
+        (webkitWebViewBaseSetInputMethodContext): Set the IM filter context.
+        (webkitWebViewBaseGetInputMethodContext): Get the IM filter context.
+        (webkitWebViewBaseSynthesizeCompositionKeyPress): Synthesize a key event for composition.
+        * UIProcess/API/gtk/WebKitWebViewBasePrivate.h:
+        * UIProcess/API/gtk/docs/webkit2gtk-4.0-sections.txt:
+        * UIProcess/API/gtk/docs/webkit2gtk-docs.sgml:
+        * UIProcess/API/gtk/webkit2.h:
+        * UIProcess/API/wpe/InputMethodFilterWPE.cpp: Added.
+        (WebKit::InputMethodFilter::platformTransformCursorRectToViewCoordinates):
+        (WebKit::InputMethodFilter::platformEventKeyIsKeyPress const):
+        * UIProcess/API/wpe/PageClientImpl.cpp:
+        (WebKit::PageClientImpl::setInputMethodState):
+        (WebKit::PageClientImpl::selectionDidChange):
+        * UIProcess/API/wpe/PageClientImpl.h:
+        * UIProcess/API/wpe/WPEView.cpp:
+        (WKWPE::View::setInputMethodContext): Set the IM filter context.
+        (WKWPE::View::inputMethodContext const): Get the IM filter context.
+        (WKWPE::View::setInputMethodState): Enable or disable input methods.
+        (WKWPE::View::selectionDidChange): Notify the IM filter about the cursor position change.
+        (WKWPE::View::setViewState): Notify the IM filter about the focus change.
+        (WKWPE::View::handleKeyboardEvent): Allow the IM filter to handle the key event.
+        (WKWPE::View::synthesizeCompositionKeyPress): Synthesize a key event for composition.
+        * UIProcess/API/wpe/WPEView.h:
+        * UIProcess/API/wpe/WebKitInputMethodContext.h: Added.
+        * UIProcess/API/wpe/WebKitInputMethodContextWPE.cpp: Added.
+        (webkit_input_method_underline_set_color):
+        (webkit_input_method_context_filter_key_event):
+        * UIProcess/API/wpe/WebKitWebView.h:
+        * UIProcess/API/wpe/docs/wpe-1.0-sections.txt:
+        * UIProcess/API/wpe/docs/wpe-docs.sgml:
+        * UIProcess/API/wpe/webkit.h:
+        * UIProcess/PageClient.h:
+        * UIProcess/WebPageProxy.cpp:
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/gtk/InputMethodFilter.cpp: Removed.
+        * UIProcess/gtk/InputMethodFilter.h: Removed.
+        * UIProcess/wpe/WebPageProxyWPE.cpp:
+        (WebKit::WebPageProxy::updateEditorState): Save the editor state and notify about selection change.
+        (WebKit::WebPageProxy::setInputMethodState): Notify the page client about the input method state.
+        * WebProcess/WebCoreSupport/WebEditorClient.cpp:
+        (WebKit::WebEditorClient::setInputMethodState): Implement this for WPE too.
+        * WebProcess/WebCoreSupport/wpe/WebEditorClientWPE.cpp:
+        (WebKit::WebEditorClient::handleInputMethodKeydown): Use handledByInputMethod() now.
+        * WebProcess/WebPage/WebPage.cpp:
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+        * WebProcess/WebPage/wpe/WebPageWPE.cpp:
+        (WebKit::WebPage::platformEditorState const): Save the current caret cursor rectangle in post layout data struct.
+        (WebKit::WebPage::setInputMethodState): Send SetInputMethodState message to the UI process if state changed.
+
+2019-12-19  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [CoordinatedGraphics] ThreadedDisplayRefreshMonitor is never released
         https://bugs.webkit.org/show_bug.cgi?id=205387
 

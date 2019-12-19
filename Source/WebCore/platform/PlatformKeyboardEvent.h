@@ -93,7 +93,7 @@ namespace WebCore {
         int windowsVirtualKeyCode() const { return m_windowsVirtualKeyCode; }
         void setWindowsVirtualKeyCode(int code) { m_windowsVirtualKeyCode = code; }
 
-#if USE(APPKIT) || USE(UIKIT_KEYBOARD_ADDITIONS) || PLATFORM(GTK)
+#if USE(APPKIT) || USE(UIKIT_KEYBOARD_ADDITIONS) || PLATFORM(GTK) || USE(LIBWPE)
         bool handledByInputMethod() const { return m_handledByInputMethod; }
 #endif
 #if USE(APPKIT)
@@ -151,7 +151,7 @@ namespace WebCore {
         String m_code;
         String m_keyIdentifier;
         int m_windowsVirtualKeyCode;
-#if USE(APPKIT) || USE(UIKIT_KEYBOARD_ADDITIONS) || PLATFORM(GTK)
+#if USE(APPKIT) || USE(UIKIT_KEYBOARD_ADDITIONS) || PLATFORM(GTK) || USE(LIBWPE)
         bool m_handledByInputMethod { false };
 #endif
 #if USE(APPKIT)

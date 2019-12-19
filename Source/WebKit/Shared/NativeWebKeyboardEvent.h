@@ -68,13 +68,13 @@ public:
 #elif PLATFORM(GTK)
     NativeWebKeyboardEvent(const NativeWebKeyboardEvent&);
     enum class HandledByInputMethod : bool { No, Yes };
-    enum class FakedForComposition : bool { No, Yes };
-    NativeWebKeyboardEvent(GdkEvent*, const String&, HandledByInputMethod, FakedForComposition, Vector<String>&& commands);
+    NativeWebKeyboardEvent(GdkEvent*, const String&, HandledByInputMethod, Vector<String>&& commands);
 #elif PLATFORM(IOS_FAMILY)
     enum class HandledByInputMethod : bool { No, Yes };
     NativeWebKeyboardEvent(::WebEvent *, HandledByInputMethod);
 #elif USE(LIBWPE)
-    NativeWebKeyboardEvent(struct wpe_input_keyboard_event*);
+    enum class HandledByInputMethod : bool { No, Yes };
+    NativeWebKeyboardEvent(struct wpe_input_keyboard_event*, const String&, HandledByInputMethod);
 #elif PLATFORM(WIN)
     NativeWebKeyboardEvent(HWND, UINT message, WPARAM, LPARAM, Vector<MSG>&& pendingCharEvents);
 #endif
@@ -83,9 +83,6 @@ public:
     NSEvent *nativeEvent() const { return m_nativeEvent.get(); }
 #elif PLATFORM(GTK)
     GdkEvent* nativeEvent() const { return m_nativeEvent.get(); }
-    const String& text() const { return m_text; }
-    bool handledByInputMethod() const { return m_handledByInputMethod == HandledByInputMethod::Yes; }
-    bool fakedForComposition() const { return m_fakedForComposition == FakedForComposition::Yes; }
 #elif PLATFORM(IOS_FAMILY)
     ::WebEvent* nativeEvent() const { return m_nativeEvent.get(); }
 #elif PLATFORM(WIN)
@@ -100,9 +97,6 @@ private:
     RetainPtr<NSEvent> m_nativeEvent;
 #elif PLATFORM(GTK)
     GUniquePtr<GdkEvent> m_nativeEvent;
-    String m_text;
-    HandledByInputMethod m_handledByInputMethod;
-    FakedForComposition m_fakedForComposition;
 #elif PLATFORM(IOS_FAMILY)
     RetainPtr<::WebEvent> m_nativeEvent;
 #elif PLATFORM(WIN)

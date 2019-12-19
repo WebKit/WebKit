@@ -606,7 +606,7 @@ void WebEditorClient::willSetInputMethodState()
 
 void WebEditorClient::setInputMethodState(bool enabled)
 {
-#if PLATFORM(GTK)
+#if PLATFORM(GTK) || PLATFORM(WPE)
     m_page->setInputMethodState(enabled);
 #else
     notImplemented();

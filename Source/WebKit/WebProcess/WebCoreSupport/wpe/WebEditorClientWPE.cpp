@@ -237,8 +237,8 @@ void WebEditorClient::handleKeyboardEvent(WebCore::KeyboardEvent& event)
 void WebEditorClient::handleInputMethodKeydown(WebCore::KeyboardEvent& event)
 {
     auto* platformEvent = event.underlyingPlatformEvent();
-    if (platformEvent && platformEvent->windowsVirtualKeyCode() == VK_PROCESSKEY)
-        event.preventDefault();
+    if (platformEvent && platformEvent->handledByInputMethod())
+        event.setDefaultHandled();
 }
 
 } // namespace WebKit

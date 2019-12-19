@@ -5330,7 +5330,7 @@ void WebPage::confirmCompositionAsync()
 
 #endif // PLATFORM(COCOA)
 
-#if PLATFORM(GTK)
+#if PLATFORM(GTK) || PLATFORM(WPE)
 static Frame* targetFrameForEditing(WebPage& page)
 {
     Frame& targetFrame = page.corePage()->focusController().focusedOrMainFrame();

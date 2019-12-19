@@ -45,6 +45,7 @@
 #include "WebKitFormClient.h"
 #include "WebKitHitTestResultPrivate.h"
 #include "WebKitIconLoadingClient.h"
+#include "WebKitInputMethodContextPrivate.h"
 #include "WebKitInstallMissingMediaPluginsPermissionRequestPrivate.h"
 #include "WebKitJavascriptResultPrivate.h"
 #include "WebKitNavigationClient.h"
@@ -81,6 +82,7 @@
 #include <wtf/text/StringBuilder.h>
 
 #if PLATFORM(GTK)
+#include "WebKitInputMethodContextImplGtk.h"
 #include "WebKitPointerLockPermissionRequest.h"
 #include "WebKitPrintOperationPrivate.h"
 #include "WebKitWebInspectorPrivate.h"
@@ -767,6 +769,10 @@ static void webkitWebViewConstructed(GObject* object)
 
 #if PLATFORM(GTK)
     attachIconLoadingClientToView(webView);
+
+    GRefPtr<WebKitInputMethodContext> imContext = adoptGRef(webkitInputMethodContextImplGtkNew());
+    webkitInputMethodContextSetWebView(imContext.get(), webView);
+    webkitWebViewBaseSetInputMethodContext(WEBKIT_WEB_VIEW_BASE(webView), imContext.get());
 #endif
 
 #if PLATFORM(WPE)
@@ -2685,6 +2691,32 @@ void webkitWebViewDidLosePointerLock(WebKitWebView* webView)
 }
 #endif
 
+static void webkitWebViewSynthesizeCompositionKeyPress(WebKitWebView* webView)
+{
+#if PLATFORM(GTK)
+    webkitWebViewBaseSynthesizeCompositionKeyPress(WEBKIT_WEB_VIEW_BASE(webView));
+#elif PLATFORM(WPE)
+    webView->priv->view->synthesizeCompositionKeyPress();
+#endif
+}
+
+void webkitWebViewSetComposition(WebKitWebView* webView, const String& text, const Vector<CompositionUnderline>& underlines, const EditingRange& selectionRange)
+{
+    webkitWebViewSynthesizeCompositionKeyPress(webView);
+    getPage(webView).setComposition(text, underlines, selectionRange);
+}
+
+void webkitWebViewConfirmComposition(WebKitWebView* webView, const String& text)
+{
+    webkitWebViewSynthesizeCompositionKeyPress(webView);
+    getPage(webView).confirmComposition(text);
+}
+
+void webkitWebViewCancelComposition(WebKitWebView* webView, const String& text)
+{
+    getPage(webView).confirmComposition(text);
+}
+
 #if PLATFORM(WPE)
 /**
  * webkit_web_view_get_backend:
@@ -4413,4 +4445,59 @@ WebKitUserMessage* webkit_web_view_send_message_to_page_finish(WebKitWebView* we
     g_return_val_if_fail(g_task_is_valid(result, webView), nullptr);
 
     return WEBKIT_USER_MESSAGE(g_task_propagate_pointer(G_TASK(result), error));
+}
+
+/**
+ * webkit_web_view_set_input_method_context:
+ * @web_view: a #WebKitWebView
+ * @context: (nullable): the #WebKitInputMethodContext to set, or %NULL
+ *
+ * Set the #WebKitInputMethodContext to be used by @web_view, or %NULL to not use any input method.
+ * Note that the same #WebKitInputMethodContext can't be set on more than one #WebKitWebView at the same time.
+ *
+ * Since: 2.28
+ */
+void webkit_web_view_set_input_method_context(WebKitWebView* webView, WebKitInputMethodContext* context)
+{
+    g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
+    g_return_if_fail(!context || WEBKIT_IS_INPUT_METHOD_CONTEXT(context));
+
+    if (context) {
+        if (auto* currentWebView = webkitInputMethodContextGetWebView(context)) {
+            if (currentWebView != webView) {
+                g_warning("Trying to set a WebKitInputMethodContext to a WebKitWebView, but the WebKitInputMethodContext "
+                    "was already set to a different WebKitWebView. It's not possible to use a WebKitInputMethodContext "
+                    "with more than one WebKitWebView at the same time.");
+            }
+            return;
+        }
+        webkitInputMethodContextSetWebView(context, webView);
+    }
+#if PLATFORM(GTK)
+    webkitWebViewBaseSetInputMethodContext(WEBKIT_WEB_VIEW_BASE(webView), context);
+#elif PLATFORM(WPE)
+    webView->priv->view->setInputMethodContext(context);
+#endif
+}
+
+/**
+ * webkit_web_view_get_input_method_context:
+ * @web_view: a #WebKitWebView
+ *
+ * Get the #WebKitInputMethodContext currently in use by @web_view, or %NULL if no input method is being used.
+ *
+ * Returns: (nullable) (transfer none): a #WebKitInputMethodContext, or %NULL
+ *
+ * Since: 2.28
+ */
+WebKitInputMethodContext* webkit_web_view_get_input_method_context(WebKitWebView* webView)
+{
+    g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), nullptr);
+
+#if PLATFORM(GTK)
+    return webkitWebViewBaseGetInputMethodContext(WEBKIT_WEB_VIEW_BASE(webView));
+#elif PLATFORM(WPE)
+    return webView->priv->view->inputMethodContext();
+#endif
+
 }

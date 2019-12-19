@@ -27,6 +27,7 @@
 #pragma once
 
 #include "APIPageConfiguration.h"
+#include "EditingRange.h"
 #include "InstallMissingMediaPluginsPermissionRequest.h"
 #include "UserMessage.h"
 #include "WebContextMenuItemData.h"
@@ -35,6 +36,7 @@
 #include "WebImage.h"
 #include "WebKitWebView.h"
 #include "WebPageProxy.h"
+#include <WebCore/CompositionUnderline.h>
 #include <WebCore/IntRect.h>
 #include <WebCore/LinkIcon.h>
 #include <wtf/CompletionHandler.h>
@@ -109,3 +111,7 @@ void webkitWebViewRequestPointerLock(WebKitWebView*);
 void webkitWebViewDenyPointerLockRequest(WebKitWebView*);
 void webkitWebViewDidLosePointerLock(WebKitWebView*);
 #endif
+
+void webkitWebViewSetComposition(WebKitWebView*, const String&, const Vector<WebCore::CompositionUnderline>&, const WebKit::EditingRange&);
+void webkitWebViewConfirmComposition(WebKitWebView*, const String&);
+void webkitWebViewCancelComposition(WebKitWebView*, const String&);

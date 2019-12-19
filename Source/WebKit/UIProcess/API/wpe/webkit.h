@@ -50,6 +50,7 @@
 #include <wpe/WebKitGeolocationManager.h>
 #include <wpe/WebKitGeolocationPermissionRequest.h>
 #include <wpe/WebKitHitTestResult.h>
+#include <wpe/WebKitInputMethodContext.h>
 #include <wpe/WebKitInstallMissingMediaPluginsPermissionRequest.h>
 #include <wpe/WebKitJavascriptResult.h>
 #include <wpe/WebKitMimeInfo.h>

@@ -29,6 +29,7 @@
 #include "APIPageConfiguration.h"
 #include "APIViewClient.h"
 #include "DrawingAreaProxy.h"
+#include "EditorState.h"
 #include "NativeWebKeyboardEvent.h"
 #include "NativeWebMouseEvent.h"
 #include "NativeWebTouchEvent.h"
@@ -141,12 +142,15 @@ View::View(struct wpe_view_backend* backend, const API::PageConfiguration& baseC
                 preferences.setResourceUsageOverlayVisible(!preferences.resourceUsageOverlayVisible());
                 return;
             }
-            view.page().handleKeyboardEvent(WebKit::NativeWebKeyboardEvent(event));
+            view.handleKeyboardEvent(event);
         },
         // handle_pointer_event
         [](void* data, struct wpe_input_pointer_event* event)
         {
-            auto& page = reinterpret_cast<View*>(data)->page();
+            auto& view = *reinterpret_cast<View*>(data);
+            if (event->type == wpe_input_pointer_event_type_button && event->state == 1)
+                view.m_inputMethodFilter.cancelComposition();
+            auto& page = view.page();
             page.handleMouseEvent(WebKit::NativeWebMouseEvent(event, page.deviceScaleFactor()));
         },
         // handle_axis_event
@@ -215,6 +219,28 @@ void View::didReceiveUserMessage(UserMessage&& message, CompletionHandler<void(U
     m_client->didReceiveUserMessage(*this, WTFMove(message), WTFMove(completionHandler));
 }
 
+void View::setInputMethodContext(WebKitInputMethodContext* context)
+{
+    m_inputMethodFilter.setContext(context);
+}
+
+WebKitInputMethodContext* View::inputMethodContext() const
+{
+    return m_inputMethodFilter.context();
+}
+
+void View::setInputMethodState(bool enabled)
+{
+    m_inputMethodFilter.setEnabled(enabled);
+}
+
+void View::selectionDidChange()
+{
+    const auto& editorState = m_pageProxy->editorState();
+    if (!editorState.isMissingPostLayoutData)
+        m_inputMethodFilter.notifyCursorRect(editorState.postLayoutData().caretRectAtStart);
+}
+
 void View::setSize(const WebCore::IntSize& size)
 {
     m_size = size;
@@ -227,8 +253,34 @@ void View::setViewState(OptionSet<WebCore::ActivityState::Flag> flags)
     auto changedFlags = m_viewStateFlags ^ flags;
     m_viewStateFlags = flags;
 
+    if (changedFlags.contains(WebCore::ActivityState::IsFocused)) {
+        if (m_viewStateFlags.contains(WebCore::ActivityState::IsFocused))
+            m_inputMethodFilter.notifyFocusedIn();
+        else
+            m_inputMethodFilter.notifyFocusedOut();
+    }
+
     if (changedFlags)
         m_pageProxy->activityStateDidChange(changedFlags);
+}
+
+void View::handleKeyboardEvent(struct wpe_input_keyboard_event* event)
+{
+    auto filterResult = m_inputMethodFilter.filterKeyEvent(event);
+    if (filterResult.handled)
+        return;
+
+    page().handleKeyboardEvent(WebKit::NativeWebKeyboardEvent(event, event->pressed ? filterResult.keyText : String(), NativeWebKeyboardEvent::HandledByInputMethod::No));
+}
+
+void View::synthesizeCompositionKeyPress()
+{
+    // The Windows composition key event code is 299 or VK_PROCESSKEY. We need to
+    // emit this code for web compatibility reasons when key events trigger
+    // composition results. WPE doesn't have an equivalent, so we send VoidSymbol
+    // here to WebCore. PlatformKeyEvent converts this code into VK_PROCESSKEY.
+    static struct wpe_input_keyboard_event event = { 0, WPE_KEY_VoidSymbol, 0, true, 0 };
+    page().handleKeyboardEvent(WebKit::NativeWebKeyboardEvent(&event, { }, NativeWebKeyboardEvent::HandledByInputMethod::Yes));
 }
 
 void View::close()

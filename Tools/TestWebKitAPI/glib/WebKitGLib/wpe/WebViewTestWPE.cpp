@@ -60,10 +60,22 @@ void WebViewTest::mouseMoveTo(int x, int y, unsigned mouseModifiers)
 
 void WebViewTest::clickMouseButton(int x, int y, unsigned button, unsigned mouseModifiers)
 {
-    // FIXME: implement.
+    auto* backend = webkit_web_view_backend_get_wpe_backend(webkit_web_view_get_backend(m_webView));
+    struct wpe_input_pointer_event event { wpe_input_pointer_event_type_button, 0, x, y, button, 1, mouseModifiers };
+    wpe_view_backend_dispatch_pointer_event(backend, &event);
+    event.state = 0;
+    wpe_view_backend_dispatch_pointer_event(backend, &event);
 }
 
 void WebViewTest::keyStroke(unsigned keyVal, unsigned keyModifiers)
 {
-    // FIXME: implement.
+    auto* backend = webkit_web_view_backend_get_wpe_backend(webkit_web_view_get_backend(m_webView));
+    struct wpe_input_xkb_keymap_entry* entries;
+    uint32_t entriesCount;
+    wpe_input_xkb_context_get_entries_for_key_code(wpe_input_xkb_context_get_default(), keyVal, &entries, &entriesCount);
+    struct wpe_input_keyboard_event event { 0, keyVal, entriesCount ? entries[0].hardware_key_code : 0, true, keyModifiers };
+    wpe_view_backend_dispatch_keyboard_event(backend, &event);
+    event.pressed = false;
+    wpe_view_backend_dispatch_keyboard_event(backend, &event);
+    free(entries);
 }

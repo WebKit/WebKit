@@ -37,6 +37,7 @@
 #include <wpe/WebKitFindController.h>
 #include <wpe/WebKitFormSubmissionRequest.h>
 #include <wpe/WebKitHitTestResult.h>
+#include <wpe/WebKitInputMethodContext.h>
 #include <wpe/WebKitJavascriptResult.h>
 #include <wpe/WebKitNavigationAction.h>
 #include <wpe/WebKitNotification.h>
@@ -542,6 +543,13 @@ WEBKIT_API WebKitUserMessage *
 webkit_web_view_send_message_to_page_finish          (WebKitWebView               *web_view,
                                                       GAsyncResult                *result,
                                                       GError                     **error);
+
+WEBKIT_API void
+webkit_web_view_set_input_method_context             (WebKitWebView               *web_view,
+                                                      WebKitInputMethodContext    *context);
+
+WEBKIT_API WebKitInputMethodContext *
+webkit_web_view_get_input_method_context             (WebKitWebView               *web_view);
 
 G_END_DECLS
 

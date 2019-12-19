@@ -218,7 +218,7 @@ messages -> WebPageProxy {
     BindAccessibilityTree(String plugID)
 #endif
 
-#if PLATFORM(GTK)
+#if PLATFORM(GTK) || PLATFORM(WPE)
     SetInputMethodState(bool enabled);
 #endif
 
