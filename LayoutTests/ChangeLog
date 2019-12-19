@@ -1,5 +1,18 @@
 2019-12-18  Ryosuke Niwa  <rniwa@webkit.org>
 
+        REGRESSION: [ Mac wk2 ] tiled-drawing/scrolling/fast-scroll-div-latched-mainframe-with-handler.html is a flakey failure
+        https://bugs.webkit.org/show_bug.cgi?id=205364
+        <rdar://problem/58025862>
+
+        Reviewed by Simon Fraser.
+
+        Fix the test by waiting for rAF and avoid running checkForScroll more than once.
+
+        * platform/mac-wk2/TestExpectations: Removed the flaky expectation.
+        * tiled-drawing/scrolling/fast-scroll-div-latched-mainframe-with-handler.html:
+
+2019-12-18  Ryosuke Niwa  <rniwa@webkit.org>
+
         REGRESSION: [ Mac wk2 ] tiled-drawing/scrolling/fast-scroll-select-latched-mainframe.html is a flakey failure
         https://bugs.webkit.org/show_bug.cgi?id=205363
         <rdar://problem/58025488>
