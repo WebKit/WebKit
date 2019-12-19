@@ -1,5 +1,12 @@
 2019-12-19  Chris Dumez  <cdumez@apple.com>
 
+        Unreviewed, land missing iOS baselines from r253791.
+
+        * platform/ios-wk2/imported/w3c/web-platform-tests/html/browsers/sandboxing/sandbox-parse-noscript-expected.txt: Added.
+        * platform/ios-wk2/imported/w3c/web-platform-tests/html/dom/usvstring-reflection.https-expected.txt: Added.
+
+2019-12-19  Chris Dumez  <cdumez@apple.com>
+
         Unreviewed, land iOS baselines missing from r253791.
 
         * platform/ios-wk2/imported/w3c/web-platform-tests/html/dom/idlharness.https-expected.txt:

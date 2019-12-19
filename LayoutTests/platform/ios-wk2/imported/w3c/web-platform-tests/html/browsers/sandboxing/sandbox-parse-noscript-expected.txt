@@ -1,0 +1,39 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x334
+  RenderBlock {HTML} at (0,0) size 800x334
+    RenderBody {BODY} at (8,8) size 784x318
+      RenderIFrame {IFRAME} at (0,0) size 304x154 [border: (2px inset #000000)]
+        layer at (0,0) size 300x150
+          RenderView at (0,0) size 300x150
+        layer at (0,0) size 300x36
+          RenderBlock {HTML} at (0,0) size 300x36
+            RenderBody {BODY} at (8,8) size 284x20
+              RenderText {#text} at (0,0) size 37x19
+                text run at (0,0) width 37: "PASS"
+      RenderText {#text} at (304,139) size 4x19
+        text run at (304,139) width 4: " "
+      RenderIFrame {IFRAME} at (308,0) size 304x154 [border: (2px inset #000000)]
+        layer at (0,0) size 300x150
+          RenderView at (0,0) size 300x150
+        layer at (0,0) size 300x36
+          RenderBlock {HTML} at (0,0) size 300x36
+            RenderBody {BODY} at (8,8) size 284x20
+              RenderText {#text} at (0,0) size 37x19
+                text run at (0,0) width 37: "PASS"
+      RenderText {#text} at (612,139) size 4x19
+        text run at (612,139) width 4: " "
+      RenderIFrame {IFRAME} at (0,159) size 304x154 [border: (2px inset #000000)]
+        layer at (0,0) size 300x150
+          RenderView at (0,0) size 300x150
+        layer at (0,0) size 300x36
+          RenderBlock {HTML} at (0,0) size 300x36
+            RenderBody {BODY} at (8,8) size 284x20
+              RenderText {#text} at (0,0) size 9x19
+                text run at (0,0) width 9: "P"
+              RenderInline {B} at (0,0) size 22x19
+                RenderText {#text} at (8,0) size 22x19
+                  text run at (8,0) width 22: "AS"
+              RenderText {#text} at (29,0) size 10x19
+                text run at (29,0) width 10: "S"
+      RenderText {#text} at (0,0) size 0x0
