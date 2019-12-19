@@ -4416,7 +4416,7 @@ PASS Window interface: internal [[SetPrototypeOf]] method of global platform obj
 PASS Window must be primary interface of window 
 PASS Stringification of window 
 PASS Window interface: window must have own property "window" 
-FAIL Window interface: window must inherit property "self" with the proper type Unrecognized type WindowProxy
+PASS Window interface: window must inherit property "self" with the proper type 
 PASS Window interface: window must have own property "document" 
 PASS Window interface: window must inherit property "name" with the proper type 
 PASS Window interface: window must have own property "location" 
@@ -4434,11 +4434,11 @@ PASS Window interface: window must inherit property "closed" with the proper typ
 PASS Window interface: window must inherit property "stop()" with the proper type 
 PASS Window interface: window must inherit property "focus()" with the proper type 
 PASS Window interface: window must inherit property "blur()" with the proper type 
-FAIL Window interface: window must inherit property "frames" with the proper type Unrecognized type WindowProxy
+PASS Window interface: window must inherit property "frames" with the proper type 
 PASS Window interface: window must inherit property "length" with the proper type 
 PASS Window interface: window must have own property "top" 
 PASS Window interface: window must inherit property "opener" with the proper type 
-FAIL Window interface: window must inherit property "parent" with the proper type Unrecognized type WindowProxy
+PASS Window interface: window must inherit property "parent" with the proper type 
 PASS Window interface: window must inherit property "frameElement" with the proper type 
 PASS Window interface: window must inherit property "open(USVString, DOMString, DOMString)" with the proper type 
 PASS Window interface: calling open(USVString, DOMString, DOMString) on window with too few arguments must throw TypeError 
@@ -4841,7 +4841,7 @@ PASS Stringification of new MessageEvent("message", { data: 5 })
 PASS MessageEvent interface: new MessageEvent("message", { data: 5 }) must inherit property "data" with the proper type 
 PASS MessageEvent interface: new MessageEvent("message", { data: 5 }) must inherit property "origin" with the proper type 
 PASS MessageEvent interface: new MessageEvent("message", { data: 5 }) must inherit property "lastEventId" with the proper type 
-FAIL MessageEvent interface: new MessageEvent("message", { data: 5 }) must inherit property "source" with the proper type Unrecognized type WindowProxy
+PASS MessageEvent interface: new MessageEvent("message", { data: 5 }) must inherit property "source" with the proper type 
 PASS MessageEvent interface: new MessageEvent("message", { data: 5 }) must inherit property "ports" with the proper type 
 PASS MessageEvent interface: new MessageEvent("message", { data: 5 }) must inherit property "initMessageEvent(DOMString, boolean, boolean, any, USVString, DOMString, MessageEventSource, [object Object])" with the proper type 
 PASS MessageEvent interface: calling initMessageEvent(DOMString, boolean, boolean, any, USVString, DOMString, MessageEventSource, [object Object]) on new MessageEvent("message", { data: 5 }) with too few arguments must throw TypeError 
@@ -5389,7 +5389,7 @@ PASS Document interface: iframe.contentDocument must inherit property "write(DOM
 PASS Document interface: calling write(DOMString) on iframe.contentDocument with too few arguments must throw TypeError 
 PASS Document interface: iframe.contentDocument must inherit property "writeln(DOMString)" with the proper type 
 PASS Document interface: calling writeln(DOMString) on iframe.contentDocument with too few arguments must throw TypeError 
-FAIL Document interface: iframe.contentDocument must inherit property "defaultView" with the proper type Unrecognized type WindowProxy
+PASS Document interface: iframe.contentDocument must inherit property "defaultView" with the proper type 
 PASS Document interface: iframe.contentDocument must inherit property "hasFocus()" with the proper type 
 PASS Document interface: iframe.contentDocument must inherit property "designMode" with the proper type 
 PASS Document interface: iframe.contentDocument must inherit property "execCommand(DOMString, boolean, DOMString)" with the proper type 

@@ -5,11 +5,11 @@ PASS [INPUT in DATETIME-LOCAL status] The max attribute is an invalid local date
 PASS [INPUT in DATETIME-LOCAL status] The max attribute is greater than the value attribute 
 PASS [INPUT in DATETIME-LOCAL status] The value is an invalid local date time string(hour is greater than 23) 
 PASS [INPUT in DATETIME-LOCAL status] The value if an invalid local date time string(year is two digits) 
-PASS [INPUT in DATETIME-LOCAL status] The value is greater than max 
-PASS [INPUT in DATETIME-LOCAL status] The value is greater than max(with millisecond in 1 digit) 
-PASS [INPUT in DATETIME-LOCAL status] The value is greater than max(with millisecond in 2 digits) 
-PASS [INPUT in DATETIME-LOCAL status] The value is greater than max(with millisecond in 3 digits) 
-PASS [INPUT in DATETIME-LOCAL status] The value is greater than max(Year is 10000 should be valid) 
+FAIL [INPUT in DATETIME-LOCAL status] The value is greater than max assert_true: The validity.rangeOverflow should be true, when control is disabled. expected true got false
+FAIL [INPUT in DATETIME-LOCAL status] The value is greater than max(with millisecond in 1 digit) assert_true: The validity.rangeOverflow should be true, when control is disabled. expected true got false
+FAIL [INPUT in DATETIME-LOCAL status] The value is greater than max(with millisecond in 2 digits) assert_true: The validity.rangeOverflow should be true, when control is disabled. expected true got false
+FAIL [INPUT in DATETIME-LOCAL status] The value is greater than max(with millisecond in 3 digits) assert_true: The validity.rangeOverflow should be true, when control is disabled. expected true got false
+FAIL [INPUT in DATETIME-LOCAL status] The value is greater than max(Year is 10000 should be valid) assert_true: The validity.rangeOverflow should be true, when control is disabled. expected true got false
 PASS [INPUT in DATE status] The max attribute is not set 
 PASS [INPUT in DATE status] Value is empty string 
 PASS [INPUT in DATE status] The max attribute is an invalid date 
@@ -18,8 +18,8 @@ PASS [INPUT in DATE status] The value is an invalid date(year is three digits)
 PASS [INPUT in DATE status] The value is an invalid date(month is greater than 12) 
 PASS [INPUT in DATE status] The value is an invalid date(date is greater than 29 for Feb) 
 PASS [INPUT in DATE status] The max attribute is greater than value attribute 
-PASS [INPUT in DATE status] The value attribute is greater than max attribute 
-PASS [INPUT in DATE status] The value attribute is greater than max attribute(Year is 10000 should be valid) 
+FAIL [INPUT in DATE status] The value attribute is greater than max attribute assert_true: The validity.rangeOverflow should be true, when control is disabled. expected true got false
+FAIL [INPUT in DATE status] The value attribute is greater than max attribute(Year is 10000 should be valid) assert_true: The validity.rangeOverflow should be true, when control is disabled. expected true got false
 PASS [INPUT in MONTH status] The max attribute is not set 
 PASS [INPUT in MONTH status] Value is empty string 
 PASS [INPUT in MONTH status] The max attribute is an invalid month string 
@@ -27,8 +27,8 @@ PASS [INPUT in MONTH status] The value attribute is an invalid month string
 PASS [INPUT in MONTH status] The value is an invalid month string(year is three digits) 
 PASS [INPUT in MONTH status] The value is an invalid month string(month is greater than 12) 
 PASS [INPUT in MONTH status] The max attribute is greater than value attribute 
-PASS [INPUT in MONTH status] The value attribute is greater than max attribute 
-PASS [INPUT in MONTH status] The value attribute is greater than max attribute(Year is 10000 should be valid) 
+FAIL [INPUT in MONTH status] The value attribute is greater than max attribute assert_true: The validity.rangeOverflow should be true, when control is disabled. expected true got false
+FAIL [INPUT in MONTH status] The value attribute is greater than max attribute(Year is 10000 should be valid) assert_true: The validity.rangeOverflow should be true, when control is disabled. expected true got false
 PASS [INPUT in WEEK status] The max attribute is not set 
 PASS [INPUT in WEEK status] Value is empty string 
 PASS [INPUT in WEEK status] The max attribute is an invalid week string 
@@ -37,8 +37,8 @@ PASS [INPUT in WEEK status] The value attribute is an invalid week string(w is i
 PASS [INPUT in WEEK status] The value is an invalid week string(year is three digits) 
 PASS [INPUT in WEEK status] The value is an invalid week string(week is too greater) 
 PASS [INPUT in WEEK status] The max attribute is greater than value attribute 
-PASS [INPUT in WEEK status] The value attribute is greater than max attribute 
-PASS [INPUT in WEEK status] The value attribute is greater than max attribute(Year is 10000 should be valid) 
+FAIL [INPUT in WEEK status] The value attribute is greater than max attribute assert_true: The validity.rangeOverflow should be true, when control is disabled. expected true got false
+FAIL [INPUT in WEEK status] The value attribute is greater than max attribute(Year is 10000 should be valid) assert_true: The validity.rangeOverflow should be true, when control is disabled. expected true got false
 PASS [INPUT in TIME status] The max attribute is not set 
 PASS [INPUT in TIME status] Value is empty string 
 PASS [INPUT in TIME status] The max attribute is an invalid time string 
@@ -48,19 +48,19 @@ PASS [INPUT in TIME status] The value attribute is an invalid time string(minute
 PASS [INPUT in TIME status] The value attribute is an invalid time string(second is greater than 59) 
 PASS [INPUT in TIME status] The max attribute is greater than value attribute 
 PASS [INPUT in TIME status] The time missing second and minute parts is invalid 
-PASS [INPUT in TIME status] The value attribute is greater than max attribute 
-PASS [INPUT in TIME status] The value is greater than max(with millisecond in 1 digit) 
-PASS [INPUT in TIME status] The value is greater than max(with millisecond in 2 digit) 
-PASS [INPUT in TIME status] The value is greater than max(with millisecond in 3 digit) 
-PASS [INPUT in TIME status] The time missing second part is valid 
+FAIL [INPUT in TIME status] The value attribute is greater than max attribute assert_true: The validity.rangeOverflow should be true, when control is disabled. expected true got false
+FAIL [INPUT in TIME status] The value is greater than max(with millisecond in 1 digit) assert_true: The validity.rangeOverflow should be true, when control is disabled. expected true got false
+FAIL [INPUT in TIME status] The value is greater than max(with millisecond in 2 digit) assert_true: The validity.rangeOverflow should be true, when control is disabled. expected true got false
+FAIL [INPUT in TIME status] The value is greater than max(with millisecond in 3 digit) assert_true: The validity.rangeOverflow should be true, when control is disabled. expected true got false
+FAIL [INPUT in TIME status] The time missing second part is valid assert_true: The validity.rangeOverflow should be true, when control is disabled. expected true got false
 PASS [INPUT in NUMBER status] The max attribute is not set 
 PASS [INPUT in NUMBER status] Value is empty string 
 PASS [INPUT in NUMBER status] The max is greater than value(integer) 
 PASS [INPUT in NUMBER status] The max is greater than value(floating number) 
 PASS [INPUT in NUMBER status] The max equals to value 
 PASS [INPUT in NUMBER status] The value is not a number 
-PASS [INPUT in NUMBER status] The value is greater than max(integer) 
-PASS [INPUT in NUMBER status] The value is greater than max(floating number) 
-PASS [INPUT in NUMBER status] The value is greater than max(special floating number) 
-PASS [INPUT in NUMBER status] The value is greater than max(scientific notation) 
+FAIL [INPUT in NUMBER status] The value is greater than max(integer) assert_true: The validity.rangeOverflow should be true, when control is disabled. expected true got false
+FAIL [INPUT in NUMBER status] The value is greater than max(floating number) assert_true: The validity.rangeOverflow should be true, when control is disabled. expected true got false
+FAIL [INPUT in NUMBER status] The value is greater than max(special floating number) assert_true: The validity.rangeOverflow should be true, when control is disabled. expected true got false
+FAIL [INPUT in NUMBER status] The value is greater than max(scientific notation) assert_true: The validity.rangeOverflow should be true, when control is disabled. expected true got false
 
