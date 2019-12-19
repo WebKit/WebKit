@@ -89,7 +89,20 @@
 (define-once (framebuffer-access)
     (allow iokit-open
            (iokit-user-client-class "IOMobileFramebufferUserClient"))
-    (mobile-preferences-read "com.apple.iokit.IOMobileGraphicsFamily"))
+
+    ; IOMobileFramebuffer
+    (with-filter (iokit-registry-entry-class "IOMobileFramebuffer")
+        (allow iokit-get-properties
+               (iokit-property "AppleTV"
+                               "DisplayPipePlaneBaseAlignment"
+                               "DisplayPipeStrideRequirements"
+                               "PerformanceStatistics"
+                               "appleTV-VID0"
+                               "appleTV-VID1"
+                               "hdcp-hoover-protocol")))
+
+    (mobile-preferences-read "com.apple.iokit.IOMobileGraphicsFamily")
+)
 
 (define-once (asset-access . options)
     (let ((asset-access-filter
