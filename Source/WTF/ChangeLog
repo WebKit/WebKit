@@ -1,3 +1,26 @@
+2019-12-18  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [Win] Use thread_local to hold Ref<WTF::Thread> in the thread rather than using FLS
+        https://bugs.webkit.org/show_bug.cgi?id=204398
+
+        Reviewed by Yusuke Suzuki.
+
+        Use thread_local which is faster than FLS.
+
+        * wtf/Threading.cpp:
+        (WTF::initializeThreading):
+        * wtf/Threading.h:
+        (WTF::Thread::current):
+        * wtf/ThreadingPrimitives.h: Deleted threadSpecificKeyCreate and
+        related functions which aren't used now in Windows port. Deleted
+        THREAD_SPECIFIC_CALL macro which isn't used now.
+        * wtf/win/ThreadingWin.cpp: Added a thread_local variable s_threadHolder.
+        (WTF::Thread::ThreadHolder::~ThreadHolder): Added.
+        (WTF::Thread::currentMayBeNull):
+        (WTF::Thread::initializeTLS): Store a reference of Thread into s_threadHolder.
+        (WTF::Thread::initializeTLSKey): Deleted.
+        (WTF::Thread::destructTLS): Deleted.
+
 2019-12-18  Ben Nham  <nham@apple.com>
 
         Add network loading signposts

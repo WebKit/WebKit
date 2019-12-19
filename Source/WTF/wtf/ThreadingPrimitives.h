@@ -48,12 +48,6 @@
 #endif
 #endif
 
-#if OS(WINDOWS) && CPU(X86)
-#define THREAD_SPECIFIC_CALL __stdcall
-#else
-#define THREAD_SPECIFIC_CALL
-#endif
-
 namespace WTF {
 
 using ThreadFunction = void (*)(void* argument);
@@ -143,34 +137,6 @@ inline void threadSpecificSet(ThreadSpecificKey key, void* value)
 inline void* threadSpecificGet(ThreadSpecificKey key)
 {
     return pthread_getspecific(key);
-}
-
-#elif OS(WINDOWS)
-
-static constexpr ThreadSpecificKey InvalidThreadSpecificKey = FLS_OUT_OF_INDEXES;
-
-inline void threadSpecificKeyCreate(ThreadSpecificKey* key, void (THREAD_SPECIFIC_CALL *destructor)(void *))
-{
-    DWORD flsKey = FlsAlloc(destructor);
-    if (flsKey == FLS_OUT_OF_INDEXES)
-        CRASH();
-
-    *key = flsKey;
-}
-
-inline void threadSpecificKeyDelete(ThreadSpecificKey key)
-{
-    FlsFree(key);
-}
-
-inline void threadSpecificSet(ThreadSpecificKey key, void* data)
-{
-    FlsSetValue(key, data);
-}
-
-inline void* threadSpecificGet(ThreadSpecificKey key)
-{
-    return FlsGetValue(key);
 }
 
 #endif

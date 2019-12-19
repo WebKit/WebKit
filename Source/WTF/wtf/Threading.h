@@ -127,6 +127,8 @@ public:
     };
 
     SpecificStorage& specificStorage() { return m_specificStorage; };
+
+    class ThreadHolder;
 #endif
 
     WTF_EXPORT_PRIVATE void changePriority(int);
@@ -271,16 +273,21 @@ protected:
     ThreadGroupAddResult addToThreadGroup(const AbstractLocker& threadGroupLocker, ThreadGroup&);
     void removeFromThreadGroup(const AbstractLocker& threadGroupLocker, ThreadGroup&);
 
-    // The Thread instance is ref'ed and held in thread-specific storage. It will be deref'ed by destructTLS at thread destruction time.
-    // For pthread, it employs pthreads-specific 2-pass destruction to reliably remove Thread.
-    // For Windows, we use thread_local to defer thread TLS destruction. It assumes regular ThreadSpecific
-    // types don't use multiple-pass destruction.
+    // For pthread, the Thread instance is ref'ed and held in thread-specific storage. It will be deref'ed by destructTLS at thread destruction time.
+    // It employs pthreads-specific 2-pass destruction to reliably remove Thread.
 
-#if !HAVE(FAST_TLS)
+#if !HAVE(FAST_TLS) && !OS(WINDOWS)
     static WTF_EXPORT_PRIVATE ThreadSpecificKey s_key;
     // One time initialization for this class as a whole.
     // This method must be called before initializeTLS() and it is not thread-safe.
     static void initializeTLSKey();
+
+    // This thread-specific destructor is called 2 times when thread terminates:
+    // - first, when all the other thread-specific destructors are called, it simply remembers it was 'destroyed once'
+    // and (1) re-sets itself into the thread-specific slot or (2) constructs thread local value to call it again later.
+    // - second, after all thread-specific destructors were invoked, it gets called again - this time, we deref the
+    // Thread in the TLS, completing the cleanup.
+    static void destructTLS(void* data);
 #endif
 
     // Creates and puts an instance of Thread into thread-specific storage.
@@ -288,14 +295,11 @@ protected:
     WTF_EXPORT_PRIVATE static Thread& initializeCurrentTLS();
 
     // Returns nullptr if thread-specific storage was not initialized.
+#if OS(WINDOWS)
+    WTF_EXPORT_PRIVATE static Thread* currentMayBeNull();
+#else
     static Thread* currentMayBeNull();
-
-    // This thread-specific destructor is called 2 times when thread terminates:
-    // - first, when all the other thread-specific destructors are called, it simply remembers it was 'destroyed once'
-    // and (1) re-sets itself into the thread-specific slot or (2) constructs thread local value to call it again later.
-    // - second, after all thread-specific destructors were invoked, it gets called again - this time, we deref the
-    // Thread in the TLS, completing the cleanup.
-    static void THREAD_SPECIFIC_CALL destructTLS(void* data);
+#endif
 
     JoinableState m_joinableState { Joinable };
     bool m_isShuttingDown : 1;
@@ -344,6 +348,7 @@ inline Thread::Thread()
 {
 }
 
+#if !OS(WINDOWS)
 inline Thread* Thread::currentMayBeNull()
 {
 #if !HAVE(FAST_TLS)
@@ -353,6 +358,7 @@ inline Thread* Thread::currentMayBeNull()
     return static_cast<Thread*>(_pthread_getspecific_direct(WTF_THREAD_DATA_KEY));
 #endif
 }
+#endif
 
 inline Thread& Thread::current()
 {
@@ -362,7 +368,7 @@ inline Thread& Thread::current()
     // WRT JavaScriptCore:
     //    Thread::initializeTLSKey() is initially called from initializeThreading(), ensuring
     //    this is initially called in a std::call_once locked context.
-#if !HAVE(FAST_TLS)
+#if !HAVE(FAST_TLS) && !OS(WINDOWS)
     if (UNLIKELY(Thread::s_key == InvalidThreadSpecificKey))
         WTF::initializeThreading();
 #endif

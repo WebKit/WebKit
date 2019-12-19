@@ -323,7 +323,7 @@ void Thread::dump(PrintStream& out) const
     out.print("Thread:", RawPointer(this));
 }
 
-#if !HAVE(FAST_TLS)
+#if !HAVE(FAST_TLS) && !OS(WINDOWS)
 ThreadSpecificKey Thread::s_key = InvalidThreadSpecificKey;
 #endif
 
@@ -332,7 +332,7 @@ void initializeThreading()
     static std::once_flag onceKey;
     std::call_once(onceKey, [] {
         initializeRandomNumberGenerator();
-#if !HAVE(FAST_TLS)
+#if !HAVE(FAST_TLS) && !OS(WINDOWS)
         Thread::initializeTLSKey();
 #endif
         initializeDates();

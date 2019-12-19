@@ -263,40 +263,29 @@ void Thread::establishPlatformSpecificHandle(HANDLE handle, ThreadIdentifier thr
     m_id = threadID;
 }
 
-#define InvalidThread reinterpret_cast<Thread*>(static_cast<uintptr_t>(0xbbadbeef))
+struct Thread::ThreadHolder {
+    ~ThreadHolder()
+    {
+        if (thread) {
+            thread->specificStorage().destroySlots();
+            thread->didExit();
+        }
+    }
 
-void Thread::initializeTLSKey()
+    RefPtr<Thread> thread;
+};
+
+thread_local static Thread::ThreadHolder s_threadHolder;
+
+Thread* Thread::currentMayBeNull()
 {
-    threadSpecificKeyCreate(&s_key, destructTLS);
+    return s_threadHolder.thread.get();
 }
 
 Thread& Thread::initializeTLS(Ref<Thread>&& thread)
 {
-    ASSERT(s_key != InvalidThreadSpecificKey);
-    // FIXME: Remove this workaround code once <rdar://problem/31793213> is fixed.
-    auto id = thread->id();
-    // We leak the ref to keep the Thread alive while it is held in TLS. destructTLS will deref it later at thread destruction time.
-    auto& threadInTLS = thread.leakRef();
-    threadSpecificSet(s_key, &threadInTLS);
-    return threadInTLS;
-}
-
-void Thread::destructTLS(void* data)
-{
-    if (data == InvalidThread)
-        return;
-
-    Thread* thread = static_cast<Thread*>(data);
-    ASSERT(thread);
-
-    thread->specificStorage().destroySlots();
-    thread->didExit();
-    thread->deref();
-
-    // Fill the FLS with the non-nullptr value. While FLS destructor won't be called for that,
-    // non-nullptr value tells us that we already destructed Thread. This allows us to
-    // detect incorrect use of Thread::current() after this point because it will crash.
-    threadSpecificSet(s_key, InvalidThread);
+    s_threadHolder.thread = WTFMove(thread);
+    return *s_threadHolder.thread;
 }
 
 Atomic<int> Thread::SpecificStorage::s_numberOfKeys;
