@@ -726,10 +726,6 @@
 
 (url-translation)
 
-;; TextInput framework
-(allow mach-lookup (with report) (with telemetry)
-    (global-name "com.apple.TextInput"))
-
 (mobile-preferences-read "com.apple.da")
 
 (speech-synthesis-and-voiceover)
