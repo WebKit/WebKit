@@ -80,10 +80,12 @@ public:
     void unregisterDatabaseConnection(UniqueIDBDatabaseConnection&);
     void connectionToClientClosed();
     bool isClosed() { return m_isClosed; }
+    void clearDelegate() { m_delegate = nullptr; }
+
 private:
     IDBConnectionToClient(IDBConnectionToClientDelegate&);
     
-    WeakPtr<IDBConnectionToClientDelegate> m_delegate;
+    IDBConnectionToClientDelegate* m_delegate;
     HashSet<UniqueIDBDatabaseConnection*> m_databaseConnections;
     bool m_isClosed { false };
 };

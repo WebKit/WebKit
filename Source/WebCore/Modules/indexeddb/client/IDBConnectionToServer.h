@@ -121,7 +121,6 @@ public:
     WEBCORE_EXPORT void didStartTransaction(const IDBResourceIdentifier& transactionIdentifier, const IDBError&);
 
     WEBCORE_EXPORT void didCloseFromServer(uint64_t databaseConnectionIdentifier, const IDBError&);
-    void confirmDidCloseFromServer(uint64_t databaseConnectionIdentifier);
 
     WEBCORE_EXPORT void connectionToServerLost(const IDBError&);
 

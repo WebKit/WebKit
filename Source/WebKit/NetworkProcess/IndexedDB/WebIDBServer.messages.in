@@ -49,7 +49,6 @@ messages -> WebIDBServer {
     AbortOpenAndUpgradeNeeded(uint64_t databaseConnectionIdentifier, WebCore::IDBResourceIdentifier transactionIdentifier)
     DidFireVersionChangeEvent(uint64_t databaseConnectionIdentifier, WebCore::IDBResourceIdentifier requestIdentifier, WebCore::IndexedDB::ConnectionClosedOnBehalfOfServer connectionClosedOnBehalfOfServer)
     OpenDBRequestCancelled(WebCore::IDBRequestData requestData)
-    ConfirmDidCloseFromServer(uint64_t databaseConnectionIdentifier)
 
     GetAllDatabaseNames(struct WebCore::SecurityOriginData topOrigin, struct WebCore::SecurityOriginData openingOrigin, uint64_t callbackID) WantsConnection
 }

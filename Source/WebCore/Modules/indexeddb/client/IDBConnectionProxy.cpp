@@ -422,19 +422,10 @@ void IDBConnectionProxy::didCloseFromServer(uint64_t databaseConnectionIdentifie
         database = m_databaseConnectionMap.get(databaseConnectionIdentifier);
     }
 
-    // If the IDBDatabase object is gone, message back to the server so it doesn't hang
-    // waiting for a reply that will never come.
-    if (!database) {
-        m_connectionToServer.confirmDidCloseFromServer(databaseConnectionIdentifier);
+    if (!database)
         return;
-    }
 
     database->performCallbackOnOriginThread(*database, &IDBDatabase::didCloseFromServer, error);
-}
-
-void IDBConnectionProxy::confirmDidCloseFromServer(IDBDatabase& database)
-{
-    callConnectionOnMainThread(&IDBConnectionToServer::confirmDidCloseFromServer, database.databaseConnectionIdentifier());
 }
 
 void IDBConnectionProxy::connectionToServerLost(const IDBError& error)

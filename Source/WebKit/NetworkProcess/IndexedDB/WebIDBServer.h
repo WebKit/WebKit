@@ -43,19 +43,18 @@ class IDBServer;
 
 namespace WebKit {
 
-class WebIDBServer : public RefCounted<WebIDBServer> {
+class WebIDBServer final : public CrossThreadTaskHandler, public IPC::Connection::ThreadMessageReceiver {
 public:
     static Ref<WebIDBServer> create(PAL::SessionID, const String& directory, WebCore::IDBServer::IDBServer::StorageQuotaManagerSpaceRequester&&);
-
-    void registerConnection(WebCore::IDBServer::IDBConnectionToClient&);
-    void unregisterConnection(WebCore::IDBServer::IDBConnectionToClient&);
 
     void closeAndDeleteDatabasesModifiedSince(WallTime, CompletionHandler<void()>&& callback);
     void closeAndDeleteDatabasesForOrigins(const Vector<WebCore::SecurityOriginData>&, CompletionHandler<void()>&& callback);
 
-    void suspend(WebCore::IDBServer::ShouldForceStop);
+    enum class ShouldForceStop : bool { No, Yes };
+    void suspend(ShouldForceStop);
     void resume();
 
+    // Message handlers.
     void openDatabase(const WebCore::IDBRequestData&);
     void deleteDatabase(const WebCore::IDBRequestData&);
     void abortTransaction(const WebCore::IDBResourceIdentifier&);
@@ -81,18 +80,20 @@ public:
     void abortOpenAndUpgradeNeeded(uint64_t databaseConnectionIdentifier, const WebCore::IDBResourceIdentifier& transactionIdentifier);
     void didFireVersionChangeEvent(uint64_t databaseConnectionIdentifier, const WebCore::IDBResourceIdentifier& requestIdentifier, const WebCore::IndexedDB::ConnectionClosedOnBehalfOfServer);
     void openDBRequestCancelled(const WebCore::IDBRequestData&);
-    void confirmDidCloseFromServer(uint64_t databaseConnectionIdentifier);
     void getAllDatabaseNames(IPC::Connection&, const WebCore::SecurityOriginData&, const WebCore::SecurityOriginData&, uint64_t callbackID);
 
     void addConnection(IPC::Connection&, WebCore::ProcessIdentifier);
     void removeConnection(IPC::Connection&);
 
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&);
+    void dispatchToThread(WTF::Function<void()>&&);
 
 private:
     WebIDBServer(PAL::SessionID, const String& directory, WebCore::IDBServer::IDBServer::StorageQuotaManagerSpaceRequester&&);
 
-    Ref<WebCore::IDBServer::IDBServer> m_server;
+    void postTask(WTF::Function<void()>&&);
+
+    std::unique_ptr<WebCore::IDBServer::IDBServer> m_server;
     bool m_isSuspended { false };
 
     HashMap<IPC::Connection::UniqueID, std::unique_ptr<WebIDBConnectionToClient>> m_connectionMap;

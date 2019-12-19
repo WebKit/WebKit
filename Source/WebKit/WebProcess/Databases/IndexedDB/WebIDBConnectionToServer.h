@@ -47,9 +47,6 @@ public:
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&);
     void connectionToServerLost();
 
-    void ref() final { RefCounted<WebIDBConnectionToServer>::ref(); }
-    void deref() final { RefCounted<WebIDBConnectionToServer>::deref(); }
-
 private:
     WebIDBConnectionToServer();
 
@@ -82,7 +79,6 @@ private:
     void abortOpenAndUpgradeNeeded(uint64_t databaseConnectionIdentifier, const WebCore::IDBResourceIdentifier& transactionIdentifier) final;
     void didFireVersionChangeEvent(uint64_t databaseConnectionIdentifier, const WebCore::IDBResourceIdentifier& requestIdentifier, const WebCore::IndexedDB::ConnectionClosedOnBehalfOfServer) final;
     void openDBRequestCancelled(const WebCore::IDBRequestData&) final;
-    void confirmDidCloseFromServer(uint64_t databaseConnectionIdentifier) final;
 
     void getAllDatabaseNames(const WebCore::SecurityOriginData& topOrigin, const WebCore::SecurityOriginData& openingOrigin, uint64_t callbackID) final;
 

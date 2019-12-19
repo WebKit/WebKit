@@ -44,7 +44,6 @@ static uint64_t nextClientResourceNumber()
 
 static uint64_t nextServerResourceNumber()
 {
-    ASSERT(isMainThread());
     static uint64_t currentNumber = 0;
     return currentNumber += 2;
 }

@@ -440,15 +440,6 @@ void IDBConnectionToServer::didCloseFromServer(uint64_t databaseConnectionIdenti
     m_proxy->didCloseFromServer(databaseConnectionIdentifier, error);
 }
 
-void IDBConnectionToServer::confirmDidCloseFromServer(uint64_t databaseConnectionIdentifier)
-{
-    LOG(IndexedDB, "IDBConnectionToServer::confirmDidCloseFromServer");
-    ASSERT(isMainThread());
-
-    if (m_serverConnectionIsValid)
-        m_delegate->confirmDidCloseFromServer(databaseConnectionIdentifier);
-}
-
 void IDBConnectionToServer::connectionToServerLost(const IDBError& error)
 {
     LOG(IndexedDB, "IDBConnectionToServer::connectionToServerLost");

@@ -1,3 +1,278 @@
+2019-12-18  Sihui Liu  <sihui_liu@apple.com>
+
+        IndexedDB: perform IDBServer work only on background thread
+        https://bugs.webkit.org/show_bug.cgi?id=203690
+        <rdar://problem/56908496>
+
+        Reviewed by Alex Christensen.
+
+        The basic workflow of IDB server side was:
+        1. IPC thread dispatches IDB messages to main thread
+        2. main thread handles messages and dispatches database tasks to IDB thread
+        3. IDB thread finishes work and dispatches task result to main thread
+        4. main thread sends IPC messages with task results
+
+        For better performance, this patch changes the workflow to:
+        1. IPC thread dispatches IDB messages to IDB thread
+        2. IDB thread handles messages, perform tasks and sends IPC messages with task results
+        In this way, we can avoid the cost of thread hopping to main thread.
+
+        Previously IDBServer and UniqueIDBDatabase were created on the main thread and may be accessed from IDB 
+        thread, and now they are created on the IDB thread only. Therefore, we don't need all those variables
+        used to sync the database status between main thread and background thread, and the logic becomes simpler.
+
+        This patch also removes timer in UniqueIDBDatabase for better performance.
+
+        Covered by existing tests.
+
+        * Modules/indexeddb/IDBDatabase.cpp:
+        (WebCore::IDBDatabase::didCloseFromServer): IDBClient no longer needs to confirm connection close initiated by
+        IDBServer. When IDBServer closes the connection, it would remove the connection from the open connection set 
+        right away.
+        * Modules/indexeddb/client/IDBConnectionProxy.cpp:
+        (WebCore::IDBClient::IDBConnectionProxy::didCloseFromServer): 
+        (WebCore::IDBClient::IDBConnectionProxy::confirmDidCloseFromServer): Deleted.
+        * Modules/indexeddb/client/IDBConnectionProxy.h:
+        * Modules/indexeddb/client/IDBConnectionToServer.cpp:
+        (WebCore::IDBClient::IDBConnectionToServer::confirmDidCloseFromServer): Deleted.
+        * Modules/indexeddb/client/IDBConnectionToServer.h:
+        * Modules/indexeddb/client/IDBConnectionToServerDelegate.h:
+        * Modules/indexeddb/server/IDBConnectionToClient.cpp:
+        (WebCore::IDBServer::IDBConnectionToClient::IDBConnectionToClient):
+        * Modules/indexeddb/server/IDBConnectionToClient.h:
+        (WebCore::IDBServer::IDBConnectionToClient::clearDelegate):
+        * Modules/indexeddb/server/IDBConnectionToClientDelegate.h:
+
+        * Modules/indexeddb/server/IDBServer.cpp: Add threading assertions everywhere for safety. Also, as IDBServer
+        may be accessed on main thread for process suspension, we need to assert lock of IDBServer is held everywhere.
+        (WebCore::IDBServer::IDBServer::IDBServer):
+        (WebCore::IDBServer::IDBServer::~IDBServer):
+        (WebCore::IDBServer::IDBServer::registerConnection):
+        (WebCore::IDBServer::IDBServer::unregisterConnection):
+        (WebCore::IDBServer::IDBServer::registerTransaction):
+        (WebCore::IDBServer::IDBServer::unregisterTransaction):
+        (WebCore::IDBServer::IDBServer::getOrCreateUniqueIDBDatabase):
+        (WebCore::IDBServer::IDBServer::openDatabase):
+        (WebCore::IDBServer::IDBServer::deleteDatabase):
+        (WebCore::IDBServer::IDBServer::abortTransaction):
+        (WebCore::IDBServer::IDBServer::createObjectStore):
+        (WebCore::IDBServer::IDBServer::deleteObjectStore):
+        (WebCore::IDBServer::IDBServer::renameObjectStore):
+        (WebCore::IDBServer::IDBServer::clearObjectStore):
+        (WebCore::IDBServer::IDBServer::createIndex):
+        (WebCore::IDBServer::IDBServer::deleteIndex):
+        (WebCore::IDBServer::IDBServer::renameIndex):
+        (WebCore::IDBServer::IDBServer::putOrAdd):
+        (WebCore::IDBServer::IDBServer::getRecord):
+        (WebCore::IDBServer::IDBServer::getAllRecords):
+        (WebCore::IDBServer::IDBServer::getCount):
+        (WebCore::IDBServer::IDBServer::deleteRecord):
+        (WebCore::IDBServer::IDBServer::openCursor):
+        (WebCore::IDBServer::IDBServer::iterateCursor):
+        (WebCore::IDBServer::IDBServer::establishTransaction):
+        (WebCore::IDBServer::IDBServer::commitTransaction):
+        (WebCore::IDBServer::IDBServer::didFinishHandlingVersionChangeTransaction):
+        (WebCore::IDBServer::IDBServer::databaseConnectionPendingClose):
+        (WebCore::IDBServer::IDBServer::databaseConnectionClosed):
+        (WebCore::IDBServer::IDBServer::abortOpenAndUpgradeNeeded):
+        (WebCore::IDBServer::IDBServer::didFireVersionChangeEvent):
+        (WebCore::IDBServer::IDBServer::openDBRequestCancelled):
+        (WebCore::IDBServer::IDBServer::getAllDatabaseNames):
+        (WebCore::IDBServer::IDBServer::closeAndDeleteDatabasesModifiedSince):
+        (WebCore::IDBServer::IDBServer::closeAndDeleteDatabasesForOrigins):
+        (WebCore::IDBServer::IDBServer::removeDatabasesWithOriginsForVersion):
+        (WebCore::IDBServer::IDBServer::requestSpace):
+        (WebCore::IDBServer::IDBServer::stopDatabaseActivitiesOnMainThread):
+        (WebCore::IDBServer::IDBServer::create): Deleted.
+        (WebCore::IDBServer::IDBServer::confirmDidCloseFromServer): Deleted.
+        (WebCore::IDBServer::IDBServer::performGetAllDatabaseNames): Deleted.
+        (WebCore::IDBServer::IDBServer::didGetAllDatabaseNames): Deleted.
+        (WebCore::IDBServer::IDBServer::postDatabaseTask): Deleted. IDBServer is on the background thread only. This 
+        functionality is moved to its parent (WebIDBServer/InProcessIDBServer).
+        (WebCore::IDBServer::IDBServer::postDatabaseTaskReply): Deleted.
+        (WebCore::IDBServer::generateDeleteCallbackID): Deleted.
+        (WebCore::IDBServer::IDBServer::performCloseAndDeleteDatabasesModifiedSince): Deleted. Merged to 
+        closeAndDeleteDatabasesModifiedSince.
+        (WebCore::IDBServer::IDBServer::performCloseAndDeleteDatabasesForOrigins): Deleted. Merged to 
+        closeAndDeleteDatabasesForOrigins.
+        (WebCore::IDBServer::IDBServer::didPerformCloseAndDeleteDatabases): Deleted.
+        (WebCore::IDBServer::IDBServer::tryStop): Deleted.
+        (WebCore::IDBServer::IDBServer::resume): Deleted.
+        * Modules/indexeddb/server/IDBServer.h:
+        (WebCore::IDBServer::IDBServer::lock):
+
+        * Modules/indexeddb/server/UniqueIDBDatabase.cpp: Biggest changes are:
+        1. merge all perform[Task] and didPerform[Task] functions into [Task] functions.
+        2. remove all database members used to track state between main thread and database thread, because the tasks
+        are executed in order on one background thread.
+        3. m_operationAndTransactionTimer is removed. operationAndTransactionTimerFired is replaced by two functions:
+        handleDatabaseOperations and handleTransactions. And these functions are placed at places where we schedule the 
+        timer.
+        4. lock is moved to IDBServer because UniqueIDBDatabase will never be accessed from different threads.
+        (WebCore::IDBServer::UniqueIDBDatabase::UniqueIDBDatabase):
+        (WebCore::IDBServer::UniqueIDBDatabase::~UniqueIDBDatabase):
+        (WebCore::IDBServer::UniqueIDBDatabase::openDatabaseConnection):
+        (WebCore::IDBServer::UniqueIDBDatabase::performCurrentOpenOperation):
+        (WebCore::IDBServer::UniqueIDBDatabase::performCurrentDeleteOperation):
+        (WebCore::IDBServer::UniqueIDBDatabase::deleteBackingStore):
+        (WebCore::IDBServer::UniqueIDBDatabase::didDeleteBackingStore):
+        (WebCore::IDBServer::UniqueIDBDatabase::handleDatabaseOperations):
+        (WebCore::IDBServer::UniqueIDBDatabase::handleCurrentOperation):
+        (WebCore::IDBServer::UniqueIDBDatabase::handleDelete):
+        (WebCore::IDBServer::UniqueIDBDatabase::startVersionChangeTransaction):
+        (WebCore::IDBServer::UniqueIDBDatabase::maybeNotifyConnectionsOfVersionChange):
+        (WebCore::IDBServer::UniqueIDBDatabase::notifyCurrentRequestConnectionClosedOrFiredVersionChangeEvent):
+        (WebCore::IDBServer::UniqueIDBDatabase::createObjectStore):
+        (WebCore::IDBServer::UniqueIDBDatabase::deleteObjectStore):
+        (WebCore::IDBServer::UniqueIDBDatabase::renameObjectStore):
+        (WebCore::IDBServer::UniqueIDBDatabase::clearObjectStore):
+        (WebCore::IDBServer::UniqueIDBDatabase::createIndex):
+        (WebCore::IDBServer::UniqueIDBDatabase::deleteIndex):
+        (WebCore::IDBServer::UniqueIDBDatabase::renameIndex):
+        (WebCore::IDBServer::UniqueIDBDatabase::putOrAdd):
+        (WebCore::IDBServer::UniqueIDBDatabase::getRecord):
+        (WebCore::IDBServer::UniqueIDBDatabase::getAllRecords):
+        (WebCore::IDBServer::UniqueIDBDatabase::getCount):
+        (WebCore::IDBServer::UniqueIDBDatabase::deleteRecord):
+        (WebCore::IDBServer::UniqueIDBDatabase::openCursor):
+        (WebCore::IDBServer::UniqueIDBDatabase::iterateCursor):
+        (WebCore::IDBServer::UniqueIDBDatabase::prefetchCursor):
+        (WebCore::IDBServer::UniqueIDBDatabase::commitTransaction):
+        (WebCore::IDBServer::UniqueIDBDatabase::abortTransaction):
+        (WebCore::IDBServer::UniqueIDBDatabase::didFinishHandlingVersionChange):
+        (WebCore::IDBServer::UniqueIDBDatabase::connectionClosedFromClient):
+        (WebCore::IDBServer::UniqueIDBDatabase::connectionClosedFromServer):
+        (WebCore::IDBServer::UniqueIDBDatabase::enqueueTransaction):
+        (WebCore::IDBServer::UniqueIDBDatabase::handleTransactions):
+        (WebCore::IDBServer::UniqueIDBDatabase::activateTransactionInBackingStore):
+        (WebCore::IDBServer::UniqueIDBDatabase::takeNextRunnableTransaction):
+        (WebCore::IDBServer::UniqueIDBDatabase::transactionCompleted):
+        (WebCore::IDBServer::UniqueIDBDatabase::immediateCloseForUserDelete):
+        (WebCore::IDBServer::UniqueIDBDatabase::abortActiveTransactions):
+        (WebCore::IDBServer::UniqueIDBDatabase::close):
+        (WebCore::IDBServer::UniqueIDBDatabase::takeNextRunnableRequest):
+        (WebCore::IDBServer::UniqueIDBDatabase::hasAnyPendingCallbacks const): Deleted.
+        (WebCore::IDBServer::UniqueIDBDatabase::isVersionChangeInProgress): Deleted.
+        (WebCore::IDBServer::UniqueIDBDatabase::performUnconditionalDeleteBackingStore): Deleted.
+        (WebCore::IDBServer::UniqueIDBDatabase::scheduleShutdownForClose): Deleted.
+        (WebCore::IDBServer::UniqueIDBDatabase::shutdownForClose): Deleted.
+        (WebCore::IDBServer::UniqueIDBDatabase::didShutdownForClose): Deleted.
+        (WebCore::IDBServer::UniqueIDBDatabase::generateUniqueCallbackIdentifier): Deleted.
+        (WebCore::IDBServer::UniqueIDBDatabase::storeCallbackOrFireError): Deleted.
+        (WebCore::IDBServer::UniqueIDBDatabase::performStartVersionChangeTransaction): Deleted.
+        (WebCore::IDBServer::UniqueIDBDatabase::didPerformStartVersionChangeTransaction): Deleted.
+        (WebCore::IDBServer::UniqueIDBDatabase::openBackingStore): Deleted.
+        (WebCore::IDBServer::UniqueIDBDatabase::didOpenBackingStore): Deleted.
+        (WebCore::IDBServer::UniqueIDBDatabase::performCreateObjectStore): Deleted.
+        (WebCore::IDBServer::UniqueIDBDatabase::didPerformCreateObjectStore): Deleted.
+        (WebCore::IDBServer::UniqueIDBDatabase::performDeleteObjectStore): Deleted.
+        (WebCore::IDBServer::UniqueIDBDatabase::didPerformDeleteObjectStore): Deleted.
+        (WebCore::IDBServer::UniqueIDBDatabase::performRenameObjectStore): Deleted.
+        (WebCore::IDBServer::UniqueIDBDatabase::didPerformRenameObjectStore): Deleted.
+        (WebCore::IDBServer::UniqueIDBDatabase::performClearObjectStore): Deleted.
+        (WebCore::IDBServer::UniqueIDBDatabase::didPerformClearObjectStore): Deleted.
+        (WebCore::IDBServer::UniqueIDBDatabase::performCreateIndex): Deleted.
+        (WebCore::IDBServer::UniqueIDBDatabase::didPerformCreateIndex): Deleted.
+        (WebCore::IDBServer::UniqueIDBDatabase::performDeleteIndex): Deleted.
+        (WebCore::IDBServer::UniqueIDBDatabase::didPerformDeleteIndex): Deleted.
+        (WebCore::IDBServer::UniqueIDBDatabase::performRenameIndex): Deleted.
+        (WebCore::IDBServer::UniqueIDBDatabase::didPerformRenameIndex): Deleted.
+        (WebCore::IDBServer::UniqueIDBDatabase::performPutOrAdd): Deleted.
+        (WebCore::IDBServer::UniqueIDBDatabase::didPerformPutOrAdd): Deleted.
+        (WebCore::IDBServer::UniqueIDBDatabase::performGetRecord): Deleted.
+        (WebCore::IDBServer::UniqueIDBDatabase::performGetIndexRecord): Deleted.
+        (WebCore::IDBServer::UniqueIDBDatabase::didPerformGetRecord): Deleted.
+        (WebCore::IDBServer::UniqueIDBDatabase::performGetAllRecords): Deleted.
+        (WebCore::IDBServer::UniqueIDBDatabase::didPerformGetAllRecords): Deleted.
+        (WebCore::IDBServer::UniqueIDBDatabase::performGetCount): Deleted.
+        (WebCore::IDBServer::UniqueIDBDatabase::didPerformGetCount): Deleted.
+        (WebCore::IDBServer::UniqueIDBDatabase::performDeleteRecord): Deleted.
+        (WebCore::IDBServer::UniqueIDBDatabase::didPerformDeleteRecord): Deleted.
+        (WebCore::IDBServer::UniqueIDBDatabase::performOpenCursor): Deleted.
+        (WebCore::IDBServer::UniqueIDBDatabase::didPerformOpenCursor): Deleted.
+        (WebCore::IDBServer::UniqueIDBDatabase::performIterateCursor): Deleted.
+        (WebCore::IDBServer::UniqueIDBDatabase::performPrefetchCursor): Deleted.
+        (WebCore::IDBServer::UniqueIDBDatabase::didPerformIterateCursor): Deleted.
+        (WebCore::IDBServer::UniqueIDBDatabase::prepareToFinishTransaction): Deleted.
+        (WebCore::IDBServer::UniqueIDBDatabase::performCommitTransaction): Deleted.
+        (WebCore::IDBServer::UniqueIDBDatabase::didPerformCommitTransaction): Deleted.
+        (WebCore::IDBServer::UniqueIDBDatabase::performAbortTransaction): Deleted.
+        (WebCore::IDBServer::UniqueIDBDatabase::didPerformAbortTransaction): Deleted.
+        (WebCore::IDBServer::UniqueIDBDatabase::transactionDestroyed): Deleted.
+        (WebCore::IDBServer::UniqueIDBDatabase::confirmDidCloseFromServer): Deleted.
+        (WebCore::IDBServer::UniqueIDBDatabase::isCurrentlyInUse const): Deleted.
+        (WebCore::IDBServer::UniqueIDBDatabase::hasUnfinishedTransactions const): Deleted.
+        (WebCore::IDBServer::UniqueIDBDatabase::invokeOperationAndTransactionTimer): Deleted.
+        (WebCore::IDBServer::UniqueIDBDatabase::operationAndTransactionTimerFired): Deleted.
+        (WebCore::IDBServer::UniqueIDBDatabase::performActivateTransactionInBackingStore): Deleted.
+        (WebCore::IDBServer::UniqueIDBDatabase::didPerformActivateTransactionInBackingStore): Deleted.
+        (WebCore::IDBServer::UniqueIDBDatabase::postDatabaseTask): Deleted.
+        (WebCore::IDBServer::UniqueIDBDatabase::postDatabaseTaskReply): Deleted.
+        (WebCore::IDBServer::UniqueIDBDatabase::executeNextDatabaseTask): Deleted.
+        (WebCore::IDBServer::UniqueIDBDatabase::executeNextDatabaseTaskReply): Deleted.
+        (WebCore::IDBServer::UniqueIDBDatabase::maybeFinishHardClose): Deleted.
+        (WebCore::IDBServer::UniqueIDBDatabase::isDoneWithHardClose): Deleted.
+        (WebCore::IDBServer::UniqueIDBDatabase::performErrorCallback): Deleted.
+        (WebCore::IDBServer::UniqueIDBDatabase::performKeyDataCallback): Deleted.
+        (WebCore::IDBServer::UniqueIDBDatabase::performGetResultCallback): Deleted.
+        (WebCore::IDBServer::UniqueIDBDatabase::performGetAllResultsCallback): Deleted.
+        (WebCore::IDBServer::UniqueIDBDatabase::performCountCallback): Deleted.
+        (WebCore::IDBServer::UniqueIDBDatabase::forgetErrorCallback): Deleted.
+        (WebCore::IDBServer::UniqueIDBDatabase::abortTransactionOnMainThread): Deleted.
+        (WebCore::IDBServer::UniqueIDBDatabase::commitTransactionOnMainThread): Deleted.
+        (WebCore::IDBServer::UniqueIDBDatabase::suspend): Deleted.
+        (WebCore::IDBServer::UniqueIDBDatabase::resume): Deleted.
+        * Modules/indexeddb/server/UniqueIDBDatabase.h:
+        (WebCore::IDBServer::UniqueIDBDatabase::server):
+        (WebCore::IDBServer::UniqueIDBDatabase::hardClosedForUserDelete const): Deleted.
+        (): Deleted.
+
+        * Modules/indexeddb/server/UniqueIDBDatabaseConnection.cpp: The callbacks will be called right away, so there
+        is no need to keep weak pointers.
+        (WebCore::IDBServer::UniqueIDBDatabaseConnection::UniqueIDBDatabaseConnection):
+        (WebCore::IDBServer::UniqueIDBDatabaseConnection::~UniqueIDBDatabaseConnection):
+        (WebCore::IDBServer::UniqueIDBDatabaseConnection::abortTransactionWithoutCallback):
+        (WebCore::IDBServer::UniqueIDBDatabaseConnection::connectionClosedFromClient):
+        (WebCore::IDBServer::UniqueIDBDatabaseConnection::didFireVersionChangeEvent):
+        (WebCore::IDBServer::UniqueIDBDatabaseConnection::didFinishHandlingVersionChange):
+        (WebCore::IDBServer::UniqueIDBDatabaseConnection::establishTransaction):
+        (WebCore::IDBServer::UniqueIDBDatabaseConnection::didAbortTransaction):
+        (WebCore::IDBServer::UniqueIDBDatabaseConnection::confirmDidCloseFromServer): Deleted.
+        * Modules/indexeddb/server/UniqueIDBDatabaseConnection.h:
+        (WebCore::IDBServer::UniqueIDBDatabaseConnection::database):
+        (WebCore::IDBServer::UniqueIDBDatabaseConnection::server):
+        * Modules/indexeddb/server/UniqueIDBDatabaseTransaction.cpp:
+        (WebCore::IDBServer::UniqueIDBDatabaseTransaction::UniqueIDBDatabaseTransaction):
+        (WebCore::IDBServer::UniqueIDBDatabaseTransaction::~UniqueIDBDatabaseTransaction):
+        (WebCore::IDBServer::UniqueIDBDatabaseTransaction::abort):
+        (WebCore::IDBServer::UniqueIDBDatabaseTransaction::commit):
+        (WebCore::IDBServer::UniqueIDBDatabaseTransaction::createObjectStore):
+        (WebCore::IDBServer::UniqueIDBDatabaseTransaction::deleteObjectStore):
+        (WebCore::IDBServer::UniqueIDBDatabaseTransaction::renameObjectStore):
+        (WebCore::IDBServer::UniqueIDBDatabaseTransaction::clearObjectStore):
+        (WebCore::IDBServer::UniqueIDBDatabaseTransaction::createIndex):
+        (WebCore::IDBServer::UniqueIDBDatabaseTransaction::deleteIndex):
+        (WebCore::IDBServer::UniqueIDBDatabaseTransaction::renameIndex):
+        (WebCore::IDBServer::UniqueIDBDatabaseTransaction::putOrAdd):
+        (WebCore::IDBServer::UniqueIDBDatabaseTransaction::getRecord):
+        (WebCore::IDBServer::UniqueIDBDatabaseTransaction::getAllRecords):
+        (WebCore::IDBServer::UniqueIDBDatabaseTransaction::getCount):
+        (WebCore::IDBServer::UniqueIDBDatabaseTransaction::deleteRecord):
+        (WebCore::IDBServer::UniqueIDBDatabaseTransaction::openCursor):
+        (WebCore::IDBServer::UniqueIDBDatabaseTransaction::iterateCursor):
+        * Modules/indexeddb/server/UniqueIDBDatabaseTransaction.h:
+        (WebCore::IDBServer::UniqueIDBDatabaseTransaction::databaseConnection):
+        (WebCore::IDBServer::UniqueIDBDatabaseTransaction::setMainThreadAbortResult):
+        (WebCore::IDBServer::UniqueIDBDatabaseTransaction::mainThreadAbortResult const):
+        (WebCore::IDBServer::UniqueIDBDatabaseTransaction::setState): Deleted.
+        (WebCore::IDBServer::UniqueIDBDatabaseTransaction::state const): Deleted.
+        (WebCore::IDBServer::UniqueIDBDatabaseTransaction::setResult): Deleted.
+        (WebCore::IDBServer::UniqueIDBDatabaseTransaction::result const): Deleted.
+        (): Deleted.
+        * Modules/indexeddb/shared/IDBResourceIdentifier.cpp:
+        (WebCore::nextServerResourceNumber):
+        * loader/EmptyClients.cpp:
+
 2019-12-18  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Elements: restrict showing paint flashing and compositing borders to the Web Inspector session

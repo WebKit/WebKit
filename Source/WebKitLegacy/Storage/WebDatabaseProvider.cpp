@@ -53,7 +53,7 @@ WebCore::IDBClient::IDBConnectionToServer& WebDatabaseProvider::idbConnectionToS
 void WebDatabaseProvider::deleteAllDatabases()
 {
     for (auto& server : m_idbServerMap.values())
-        server->server().closeAndDeleteDatabasesModifiedSince(-WallTime::infinity(), [] { });
+        server->closeAndDeleteDatabasesModifiedSince(-WallTime::infinity());
 }
 
 #endif

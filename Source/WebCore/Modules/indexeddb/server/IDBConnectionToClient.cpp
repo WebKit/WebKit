@@ -39,7 +39,7 @@ Ref<IDBConnectionToClient> IDBConnectionToClient::create(IDBConnectionToClientDe
 }
 
 IDBConnectionToClient::IDBConnectionToClient(IDBConnectionToClientDelegate& delegate)
-    : m_delegate(makeWeakPtr(delegate))
+    : m_delegate(&delegate)
 {
 }
 

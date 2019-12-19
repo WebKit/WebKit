@@ -254,8 +254,6 @@ void IDBDatabase::didCloseFromServer(const IDBError& error)
     LOG(IndexedDB, "IDBDatabase::didCloseFromServer - %" PRIu64, m_databaseConnectionIdentifier);
 
     connectionToServerLost(error);
-
-    m_connectionProxy->confirmDidCloseFromServer(*this);
 }
 
 void IDBDatabase::connectionToServerLost(const IDBError& error)

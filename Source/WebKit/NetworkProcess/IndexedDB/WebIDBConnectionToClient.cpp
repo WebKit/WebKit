@@ -48,6 +48,7 @@ WebIDBConnectionToClient::WebIDBConnectionToClient(IPC::Connection& connection, 
 
 WebIDBConnectionToClient::~WebIDBConnectionToClient()
 {
+    m_connectionToClient->clearDelegate();
 }
 
 IPC::Connection* WebIDBConnectionToClient::messageSenderConnection() const

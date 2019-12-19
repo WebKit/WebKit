@@ -207,11 +207,6 @@ void WebIDBConnectionToServer::openDBRequestCancelled(const IDBRequestData& requ
     send(Messages::WebIDBServer::OpenDBRequestCancelled(requestData));
 }
 
-void WebIDBConnectionToServer::confirmDidCloseFromServer(uint64_t databaseConnectionIdentifier)
-{
-    send(Messages::WebIDBServer::ConfirmDidCloseFromServer(databaseConnectionIdentifier));
-}
-
 void WebIDBConnectionToServer::getAllDatabaseNames(const WebCore::SecurityOriginData& topOrigin, const WebCore::SecurityOriginData& openingOrigin, uint64_t callbackID)
 {
     send(Messages::WebIDBServer::GetAllDatabaseNames(topOrigin, openingOrigin, callbackID));

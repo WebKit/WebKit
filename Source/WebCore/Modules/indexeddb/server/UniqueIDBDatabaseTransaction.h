@@ -31,7 +31,6 @@
 #include "IDBTransactionInfo.h"
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
-#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
@@ -53,15 +52,13 @@ namespace IDBServer {
 class IDBServer;
 class UniqueIDBDatabaseConnection;
 
-class UniqueIDBDatabaseTransaction : public RefCounted<UniqueIDBDatabaseTransaction>, public CanMakeWeakPtr<UniqueIDBDatabaseTransaction> {
+class UniqueIDBDatabaseTransaction : public RefCounted<UniqueIDBDatabaseTransaction> {
 public:
-    enum class State { Running, Aborting, Committing, Aborted, Committed };
-
     static Ref<UniqueIDBDatabaseTransaction> create(UniqueIDBDatabaseConnection&, const IDBTransactionInfo&);
 
     ~UniqueIDBDatabaseTransaction();
 
-    UniqueIDBDatabaseConnection& databaseConnection() { return m_databaseConnection.get(); }
+    UniqueIDBDatabaseConnection& databaseConnection() { return *m_databaseConnection; }
     const IDBTransactionInfo& info() const { return m_transactionInfo; }
     bool isVersionChange() const;
     bool isReadOnly() const;
@@ -91,23 +88,20 @@ public:
 
     const Vector<uint64_t>& objectStoreIdentifiers();
 
-    void setState(State state) { m_state = state; }
-    State state() const { return m_state; }
-    void setResult(const IDBError& error) { m_result = error; }
-    const IDBError& result() const { return m_result; }
+    void setMainThreadAbortResult(const IDBError& error) { m_mainThreadAbortResult = { error }; }
+    const Optional<IDBError>& mainThreadAbortResult() const { return m_mainThreadAbortResult; }
 
 private:
     UniqueIDBDatabaseTransaction(UniqueIDBDatabaseConnection&, const IDBTransactionInfo&);
 
-    Ref<UniqueIDBDatabaseConnection> m_databaseConnection;
+    UniqueIDBDatabaseConnection* m_databaseConnection;
     IDBTransactionInfo m_transactionInfo;
 
     std::unique_ptr<IDBDatabaseInfo> m_originalDatabaseInfo;
 
     Vector<uint64_t> m_objectStoreIdentifiers;
 
-    State m_state { State::Running };
-    IDBError m_result;
+    Optional<IDBError> m_mainThreadAbortResult;
 };
 
 } // namespace IDBServer

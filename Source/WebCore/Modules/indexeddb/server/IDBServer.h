@@ -37,8 +37,6 @@
 #include <wtf/CrossThreadTaskHandler.h>
 #include <wtf/HashMap.h>
 #include <wtf/Lock.h>
-#include <wtf/Ref.h>
-#include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 #include <wtf/WeakHashSet.h>
 
@@ -53,12 +51,12 @@ struct IDBGetRecordData;
 
 namespace IDBServer {
 
-enum class ShouldForceStop : bool { No, Yes };
-
-class IDBServer : public RefCounted<IDBServer>, public CrossThreadTaskHandler, public CanMakeWeakPtr<IDBServer> {
+class IDBServer {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     using StorageQuotaManagerSpaceRequester = Function<StorageQuotaManager::Decision(const ClientOrigin&, uint64_t spaceRequested)>;
-    WEBCORE_EXPORT static Ref<IDBServer> create(PAL::SessionID, const String& databaseDirectoryPath, StorageQuotaManagerSpaceRequester&&);
+    WEBCORE_EXPORT IDBServer(PAL::SessionID, const String& databaseDirectoryPath, StorageQuotaManagerSpaceRequester&&);
+    WEBCORE_EXPORT ~IDBServer();
 
     WEBCORE_EXPORT void registerConnection(IDBConnectionToClient&);
     WEBCORE_EXPORT void unregisterConnection(IDBConnectionToClient&);
@@ -90,12 +88,8 @@ public:
     WEBCORE_EXPORT void abortOpenAndUpgradeNeeded(uint64_t databaseConnectionIdentifier, const IDBResourceIdentifier& transactionIdentifier);
     WEBCORE_EXPORT void didFireVersionChangeEvent(uint64_t databaseConnectionIdentifier, const IDBResourceIdentifier& requestIdentifier, IndexedDB::ConnectionClosedOnBehalfOfServer);
     WEBCORE_EXPORT void openDBRequestCancelled(const IDBRequestData&);
-    WEBCORE_EXPORT void confirmDidCloseFromServer(uint64_t databaseConnectionIdentifier);
 
     WEBCORE_EXPORT void getAllDatabaseNames(IDBConnectionIdentifier serverConnectionIdentifier, const SecurityOriginData& mainFrameOrigin, const SecurityOriginData& openingOrigin, uint64_t callbackID);
-
-    void postDatabaseTask(CrossThreadTask&&);
-    void postDatabaseTaskReply(CrossThreadTask&&);
 
     void registerDatabaseConnection(UniqueIDBDatabaseConnection&);
     void unregisterDatabaseConnection(UniqueIDBDatabaseConnection&);
@@ -106,31 +100,23 @@ public:
 
     std::unique_ptr<IDBBackingStore> createBackingStore(const IDBDatabaseIdentifier&);
 
-    WEBCORE_EXPORT void closeAndDeleteDatabasesModifiedSince(WallTime, Function<void ()>&& completionHandler);
-    WEBCORE_EXPORT void closeAndDeleteDatabasesForOrigins(const Vector<SecurityOriginData>&, Function<void ()>&& completionHandler);
+    WEBCORE_EXPORT void closeAndDeleteDatabasesModifiedSince(WallTime);
+    WEBCORE_EXPORT void closeAndDeleteDatabasesForOrigins(const Vector<SecurityOriginData>&);
 
     StorageQuotaManager::Decision requestSpace(const ClientOrigin&, uint64_t taskSize);
     WEBCORE_EXPORT static uint64_t diskUsage(const String& rootDirectory, const ClientOrigin&);
 
-    WEBCORE_EXPORT void tryStop(ShouldForceStop);
-    WEBCORE_EXPORT void resume();
+    WEBCORE_EXPORT void stopDatabaseActivitiesOnMainThread();
+
+    Lock& lock() { return m_lock; };
 
     void addDatabase(UniqueIDBDatabase& database) { m_allUniqueIDBDatabases.add(database); }
     void removeDatabase(UniqueIDBDatabase& database) { m_allUniqueIDBDatabases.remove(database); }
 
 private:
-    IDBServer(PAL::SessionID, const String& databaseDirectoryPath, StorageQuotaManagerSpaceRequester&&);
-
     UniqueIDBDatabase& getOrCreateUniqueIDBDatabase(const IDBDatabaseIdentifier&);
     
     String databaseDirectoryPathIsolatedCopy() const { return m_databaseDirectoryPath.isolatedCopy(); }
-
-    void performGetAllDatabaseNames(IDBConnectionIdentifier serverConnectionIdentifier, const SecurityOriginData& mainFrameOrigin, const SecurityOriginData& openingOrigin, uint64_t callbackID);
-    void didGetAllDatabaseNames(IDBConnectionIdentifier serverConnectionIdentifier, uint64_t callbackID, const Vector<String>& databaseNames);
-
-    void performCloseAndDeleteDatabasesModifiedSince(WallTime, uint64_t callbackID);
-    void performCloseAndDeleteDatabasesForOrigins(const Vector<SecurityOriginData>&, uint64_t callbackID);
-    void didPerformCloseAndDeleteDatabases(uint64_t callbackID);
 
     void upgradeFilesIfNecessary();
     void removeDatabasesModifiedSinceForVersion(WallTime, const String&);
@@ -149,6 +135,8 @@ private:
     String m_databaseDirectoryPath;
 
     StorageQuotaManagerSpaceRequester m_spaceRequester;
+
+    Lock m_lock;
 };
 
 } // namespace IDBServer

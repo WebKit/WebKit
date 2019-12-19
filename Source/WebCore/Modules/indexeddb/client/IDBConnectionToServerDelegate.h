@@ -86,12 +86,8 @@ public:
     virtual void abortOpenAndUpgradeNeeded(uint64_t databaseConnectionIdentifier, const IDBResourceIdentifier& transactionIdentifier) = 0;
     virtual void didFireVersionChangeEvent(uint64_t databaseConnectionIdentifier, const IDBResourceIdentifier& requestIdentifier, const IndexedDB::ConnectionClosedOnBehalfOfServer) = 0;
     virtual void openDBRequestCancelled(const IDBRequestData&) = 0;
-    virtual void confirmDidCloseFromServer(uint64_t databaseConnectionIdentifier) = 0;
 
     virtual void getAllDatabaseNames(const SecurityOriginData& mainFrameOrigin, const SecurityOriginData& openingOrigin, uint64_t callbackID) = 0;
-
-    virtual void ref() = 0;
-    virtual void deref() = 0;
 };
 
 } // namespace IDBClient

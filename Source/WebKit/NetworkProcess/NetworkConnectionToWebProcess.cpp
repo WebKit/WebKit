@@ -54,7 +54,6 @@
 #include "ServiceWorkerFetchTaskMessages.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebErrors.h"
-#include "WebIDBServerMessages.h"
 #include "WebProcessMessages.h"
 #include "WebProcessPoolMessages.h"
 #include "WebResourceLoadStatisticsStore.h"
@@ -217,13 +216,6 @@ void NetworkConnectionToWebProcess::didReceiveMessage(IPC::Connection& connectio
         cacheStorageConnection().didReceiveMessage(connection, decoder);
         return;
     }
-
-#if ENABLE(INDEXED_DATABASE)
-    if (decoder.messageReceiverName() == Messages::WebIDBServer::messageReceiverName()) {
-        m_networkProcess->webIDBServer(m_sessionID).didReceiveMessage(connection, decoder);
-        return;
-    }
-#endif
     
 #if ENABLE(SERVICE_WORKER)
     if (decoder.messageReceiverName() == Messages::WebSWServerConnection::messageReceiverName()) {

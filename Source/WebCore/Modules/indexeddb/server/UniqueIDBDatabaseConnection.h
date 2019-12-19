@@ -33,7 +33,6 @@
 #include <wtf/Identified.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
-#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
@@ -54,8 +53,8 @@ public:
     ~UniqueIDBDatabaseConnection();
 
     const IDBResourceIdentifier& openRequestIdentifier() { return m_openRequestIdentifier; }
-    UniqueIDBDatabase* database() { return m_database.get(); }
-    IDBServer* server() { return m_server.get(); }
+    UniqueIDBDatabase* database() { return m_database; }
+    IDBServer* server() { return &m_database->server(); }
     IDBConnectionToClient& connectionToClient() { return m_connectionToClient; }
 
     void connectionPendingCloseFromClient();
@@ -80,7 +79,6 @@ public:
     void didRenameIndex(const IDBResultData&);
     void didFireVersionChangeEvent(const IDBResourceIdentifier& requestIdentifier, IndexedDB::ConnectionClosedOnBehalfOfServer);
     void didFinishHandlingVersionChange(const IDBResourceIdentifier& transactionIdentifier);
-    void confirmDidCloseFromServer();
 
     void abortTransactionWithoutCallback(UniqueIDBDatabaseTransaction&);
 
@@ -91,8 +89,7 @@ public:
 private:
     UniqueIDBDatabaseConnection(UniqueIDBDatabase&, ServerOpenDBRequest&);
 
-    WeakPtr<UniqueIDBDatabase> m_database;
-    WeakPtr<IDBServer> m_server;
+    UniqueIDBDatabase* m_database;
     Ref<IDBConnectionToClient> m_connectionToClient;
     IDBResourceIdentifier m_openRequestIdentifier;
 

@@ -29,7 +29,6 @@
 
 #include "IDBResourceIdentifier.h"
 #include <wtf/Forward.h>
-#include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -41,7 +40,7 @@ namespace IDBServer {
 
 class UniqueIDBDatabaseConnection;
 
-class IDBConnectionToClientDelegate : public CanMakeWeakPtr<IDBConnectionToClientDelegate> {
+class IDBConnectionToClientDelegate {
 public:
     virtual ~IDBConnectionToClientDelegate() = default;
     

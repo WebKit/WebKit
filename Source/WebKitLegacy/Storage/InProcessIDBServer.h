@@ -30,10 +30,9 @@
 #include <WebCore/IDBConnectionToClient.h>
 #include <WebCore/IDBConnectionToServer.h>
 #include <WebCore/IDBServer.h>
-#include <WebCore/StorageQuotaManager.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
-#include <wtf/WeakPtr.h>
+#include <wtf/ThreadSafeRefCounted.h>
 
 namespace PAL {
 class SessionID;
@@ -41,6 +40,8 @@ class SessionID;
 
 namespace WebCore {
 struct ClientOrigin;
+class StorageQuotaManager;
+class StorageThread;
 
 namespace IDBClient {
 class IDBConnectionToServer;
@@ -51,10 +52,8 @@ class IDBServer;
 }
 } // namespace WebCore
 
-class InProcessIDBServer final : public WebCore::IDBClient::IDBConnectionToServerDelegate, public WebCore::IDBServer::IDBConnectionToClientDelegate, public RefCounted<InProcessIDBServer> {
+class InProcessIDBServer final : public WebCore::IDBClient::IDBConnectionToServerDelegate, public WebCore::IDBServer::IDBConnectionToClientDelegate, public ThreadSafeRefCounted<InProcessIDBServer> {
 public:
-    using WebCore::IDBClient::IDBConnectionToServerDelegate::weakPtrFactory;
-    using WeakValueType = WebCore::IDBClient::IDBConnectionToServerDelegate::WeakValueType;
 
     WEBCORE_EXPORT static Ref<InProcessIDBServer> create(PAL::SessionID);
     WEBCORE_EXPORT static Ref<InProcessIDBServer> create(PAL::SessionID, const String& databaseDirectoryPath);
@@ -63,7 +62,7 @@ public:
 
     WebCore::IDBClient::IDBConnectionToServer& connectionToServer() const;
     WebCore::IDBServer::IDBConnectionToClient& connectionToClient() const;
-    WebCore::IDBServer::IDBServer& server() { return m_server.get(); }
+    WebCore::IDBServer::IDBServer& server() { return *m_server; }
 
     // IDBConnectionToServer
     void deleteDatabase(const WebCore::IDBRequestData&) final;
@@ -91,7 +90,6 @@ public:
     void abortOpenAndUpgradeNeeded(uint64_t databaseConnectionIdentifier, const WebCore::IDBResourceIdentifier& transactionIdentifier) final;
     void didFireVersionChangeEvent(uint64_t databaseConnectionIdentifier, const WebCore::IDBResourceIdentifier& requestIdentifier, const WebCore::IndexedDB::ConnectionClosedOnBehalfOfServer) final;
     void openDBRequestCancelled(const WebCore::IDBRequestData&) final;
-    void confirmDidCloseFromServer(uint64_t databaseConnectionIdentifier) final;
     void getAllDatabaseNames(const WebCore::SecurityOriginData& mainFrameOrigin, const WebCore::SecurityOriginData& openingOrigin, uint64_t callbackID) final;
 
     // IDBConnectionToClient
@@ -120,18 +118,20 @@ public:
     void notifyOpenDBRequestBlocked(const WebCore::IDBResourceIdentifier& requestIdentifier, uint64_t oldVersion, uint64_t newVersion) final;
     void didGetAllDatabaseNames(uint64_t callbackID, const Vector<String>& databaseNames) final;
 
-    void ref() override { RefCounted<InProcessIDBServer>::ref(); }
-    void deref() override { RefCounted<InProcessIDBServer>::deref(); }
+    void closeAndDeleteDatabasesModifiedSince(WallTime);
+
+    void dispatchTask(Function<void()>&&);
+    void dispatchTaskReply(Function<void()>&&);
 
     WebCore::StorageQuotaManager* quotaManager(const WebCore::ClientOrigin&);
 
 private:
-    explicit InProcessIDBServer(PAL::SessionID);
-    InProcessIDBServer(PAL::SessionID, const String& databaseDirectoryPath);
+    InProcessIDBServer(PAL::SessionID, const String& databaseDirectoryPath = nullString());
 
-    Ref<WebCore::IDBServer::IDBServer> m_server;
+    std::unique_ptr<WebCore::IDBServer::IDBServer> m_server;
     RefPtr<WebCore::IDBClient::IDBConnectionToServer> m_connectionToServer;
     RefPtr<WebCore::IDBServer::IDBConnectionToClient> m_connectionToClient;
+    std::unique_ptr<WebCore::StorageThread> m_thread;
 
     HashMap<WebCore::ClientOrigin, RefPtr<WebCore::StorageQuotaManager>> m_quotaManagers;
 };

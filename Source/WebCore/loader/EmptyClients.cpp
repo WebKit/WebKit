@@ -152,10 +152,6 @@ class EmptyDatabaseProvider final : public DatabaseProvider {
         void openDBRequestCancelled(const IDBRequestData&) final { }
         void getAllDatabaseNames(const SecurityOriginData&, const SecurityOriginData&, uint64_t) final { }
         ~EmptyIDBConnectionToServerDeletegate() { }
-        
-        void confirmDidCloseFromServer(uint64_t) final { }
-        void ref() { }
-        void deref() { }
     };
 
     IDBClient::IDBConnectionToServer& idbConnectionToServerForSession(const PAL::SessionID&) final

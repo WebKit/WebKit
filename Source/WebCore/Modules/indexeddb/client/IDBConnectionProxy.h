@@ -103,7 +103,6 @@ public:
     void databaseConnectionClosed(IDBDatabase&);
 
     void didCloseFromServer(uint64_t databaseConnectionIdentifier, const IDBError&);
-    void confirmDidCloseFromServer(IDBDatabase&);
 
     void connectionToServerLost(const IDBError&);
 
