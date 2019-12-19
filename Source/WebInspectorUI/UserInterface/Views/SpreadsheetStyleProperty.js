@@ -683,7 +683,9 @@ WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
                     newTokens.pushAll(rawTokens);
 
                 startIndex = NaN;
-            } else if (isNaN(startIndex))
+            } else if (token.value in WI.CubicBezier.keywordValues)
+                newTokens.push(this._createInlineSwatch(WI.InlineSwatch.Type.Bezier, [token], WI.CubicBezier.fromString(token.value)));
+            else if (isNaN(startIndex))
                 newTokens.push(token);
         }
 
