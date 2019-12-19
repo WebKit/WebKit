@@ -1,3 +1,9 @@
+2019-12-19  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, land iOS specific baseline missing from r253738.
+
+        * platform/ios-wk2/imported/w3c/web-platform-tests/dom/events/Event-dispatch-redispatch-expected.txt: Added.
+
 2019-12-19  Truitt Savell  <tsavell@apple.com>
 
         Folloup test expectations cleanup for r253594
