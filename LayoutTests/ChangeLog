@@ -1,3 +1,13 @@
+2019-12-19  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        REGRESSION(r253683): [GTK][WPE] Lots of offscreen-canvas WPT tests failing
+
+        Unreviewed gardening. Skip the tests meanwhile the issue is not fixed.
+        See webkit.org/b/205445
+
+        * platform/gtk/TestExpectations:
+        * platform/wpe/TestExpectations:
+
 2019-12-19  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [WPE] Missing UIScriptController implementation

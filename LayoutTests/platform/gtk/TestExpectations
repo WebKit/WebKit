@@ -26,7 +26,8 @@ swipe [ Pass ]
 # OffscreenCanvas
 webkit.org/b/203146 fast/canvas/offscreen-enabled.html [ Pass ]
 webkit.org/b/203146 http/wpt/offscreen-canvas [ Pass ]
-webkit.org/b/203146 imported/w3c/web-platform-tests/offscreen-canvas [ Pass ]
+# See webkit.org/b/205445 before enabling this back
+# webkit.org/b/203146 imported/w3c/web-platform-tests/offscreen-canvas [ Pass ]
 
 #//////////////////////////////////////////////////////////////////////////////////////////
 # End platform-specific directories.
