@@ -120,187 +120,13 @@ bool AccessibilityObject::isDetached() const
 #endif
 }
 
-bool AccessibilityObject::isAccessibilityObjectSearchMatchAtIndex(AXCoreObject* axObject, AccessibilitySearchCriteria* criteria, size_t index)
+bool AccessibilityObject::containsText(String const& text) const
 {
-    switch (criteria->searchKeys[index]) {
-    // The AccessibilitySearchKey::AnyType matches any non-null AccessibilityObject.
-    case AccessibilitySearchKey::AnyType:
-        return true;
-        
-    case AccessibilitySearchKey::Article:
-        return axObject->roleValue() == AccessibilityRole::DocumentArticle;
-            
-    case AccessibilitySearchKey::BlockquoteSameLevel:
-        return criteria->startObject
-            && axObject->isBlockquote()
-            && axObject->blockquoteLevel() == criteria->startObject->blockquoteLevel();
-        
-    case AccessibilitySearchKey::Blockquote:
-        return axObject->isBlockquote();
-        
-    case AccessibilitySearchKey::BoldFont:
-        return axObject->hasBoldFont();
-        
-    case AccessibilitySearchKey::Button:
-        return axObject->isButton();
-        
-    case AccessibilitySearchKey::CheckBox:
-        return axObject->isCheckbox();
-        
-    case AccessibilitySearchKey::Control:
-        return axObject->isControl();
-        
-    case AccessibilitySearchKey::DifferentType:
-        return criteria->startObject
-            && axObject->roleValue() != criteria->startObject->roleValue();
-        
-    case AccessibilitySearchKey::FontChange:
-        return criteria->startObject
-            && !axObject->hasSameFont(criteria->startObject->renderer());
-        
-    case AccessibilitySearchKey::FontColorChange:
-        return criteria->startObject
-            && !axObject->hasSameFontColor(criteria->startObject->renderer());
-        
-    case AccessibilitySearchKey::Frame:
-        return axObject->isWebArea();
-        
-    case AccessibilitySearchKey::Graphic:
-        return axObject->isImage();
-        
-    case AccessibilitySearchKey::HeadingLevel1:
-        return axObject->headingLevel() == 1;
-        
-    case AccessibilitySearchKey::HeadingLevel2:
-        return axObject->headingLevel() == 2;
-        
-    case AccessibilitySearchKey::HeadingLevel3:
-        return axObject->headingLevel() == 3;
-        
-    case AccessibilitySearchKey::HeadingLevel4:
-        return axObject->headingLevel() == 4;
-        
-    case AccessibilitySearchKey::HeadingLevel5:
-        return axObject->headingLevel() == 5;
-        
-    case AccessibilitySearchKey::HeadingLevel6:
-        return axObject->headingLevel() == 6;
-        
-    case AccessibilitySearchKey::HeadingSameLevel:
-        return criteria->startObject
-            && axObject->isHeading()
-            && axObject->headingLevel() == criteria->startObject->headingLevel();
-        
-    case AccessibilitySearchKey::Heading:
-        return axObject->isHeading();
-    
-    case AccessibilitySearchKey::Highlighted:
-        return axObject->hasHighlighting();
-            
-    case AccessibilitySearchKey::KeyboardFocusable:
-        return axObject->isKeyboardFocusable();
-        
-    case AccessibilitySearchKey::ItalicFont:
-        return axObject->hasItalicFont();
-        
-    case AccessibilitySearchKey::Landmark:
-        return axObject->isLandmark();
-        
-    case AccessibilitySearchKey::Link: {
-        bool isLink = axObject->isLink();
-#if PLATFORM(IOS_FAMILY)
-        if (!isLink)
-            isLink = axObject->isDescendantOfRole(AccessibilityRole::WebCoreLink);
-#endif
-        return isLink;
-    }
-        
-    case AccessibilitySearchKey::List:
-        return axObject->isList();
-        
-    case AccessibilitySearchKey::LiveRegion:
-        return axObject->supportsLiveRegion();
-        
-    case AccessibilitySearchKey::MisspelledWord:
-        return axObject->hasMisspelling();
-        
-    case AccessibilitySearchKey::Outline:
-        return axObject->isTree();
-        
-    case AccessibilitySearchKey::PlainText:
-        return axObject->hasPlainText();
-        
-    case AccessibilitySearchKey::RadioGroup:
-        return axObject->isRadioGroup();
-        
-    case AccessibilitySearchKey::SameType:
-        return criteria->startObject
-            && axObject->roleValue() == criteria->startObject->roleValue();
-        
-    case AccessibilitySearchKey::StaticText:
-        return axObject->isStaticText();
-        
-    case AccessibilitySearchKey::StyleChange:
-        return criteria->startObject
-            && !axObject->hasSameStyle(criteria->startObject->renderer());
-        
-    case AccessibilitySearchKey::TableSameLevel:
-        return criteria->startObject
-            && is<AccessibilityTable>(*axObject) && downcast<AccessibilityTable>(*axObject).isExposableThroughAccessibility()
-            && downcast<AccessibilityTable>(*axObject).tableLevel() == criteria->startObject->tableLevel();
-        
-    case AccessibilitySearchKey::Table:
-        return is<AccessibilityTable>(*axObject) && downcast<AccessibilityTable>(*axObject).isExposableThroughAccessibility();
-        
-    case AccessibilitySearchKey::TextField:
-        return axObject->isTextControl();
-        
-    case AccessibilitySearchKey::Underline:
-        return axObject->hasUnderline();
-        
-    case AccessibilitySearchKey::UnvisitedLink:
-        return axObject->isUnvisited();
-        
-    case AccessibilitySearchKey::VisitedLink:
-        return axObject->isVisited();
-        
-    default:
-        return false;
-    }
-}
-
-bool AccessibilityObject::isAccessibilityObjectSearchMatch(AXCoreObject* axObject, AccessibilitySearchCriteria* criteria)
-{
-    if (!axObject || !criteria)
-        return false;
-    
-    size_t length = criteria->searchKeys.size();
-    for (size_t i = 0; i < length; ++i) {
-        if (isAccessibilityObjectSearchMatchAtIndex(axObject, criteria, i)) {
-            if (criteria->visibleOnly && !axObject->isOnScreen())
-                return false;
-            return true;
-        }
-    }
-    return false;
-}
-
-bool AccessibilityObject::isAccessibilityTextSearchMatch(AXCoreObject* axObject, AccessibilitySearchCriteria* criteria)
-{
-    if (!axObject || !criteria)
-        return false;
-    
-    return axObject->containsText(&criteria->searchText);
-}
-
-bool AccessibilityObject::containsText(String* text) const
-{
-    // If text is null or empty we return true.
-    return !text
-        || text->isEmpty()
-        || findPlainText(title(), *text, CaseInsensitive)
-        || findPlainText(accessibilityDescription(), *text, CaseInsensitive)
-        || findPlainText(stringValue(), *text, CaseInsensitive);
+    // If text is empty we return true.
+    return text.isEmpty()
+        || findPlainText(title(), text, CaseInsensitive)
+        || findPlainText(accessibilityDescription(), text, CaseInsensitive)
+        || findPlainText(stringValue(), text, CaseInsensitive);
 }
 
 // ARIA marks elements as having their accessible name derive from either their contents, or their author provide name.
@@ -735,79 +561,17 @@ static void appendChildrenToArray(AXCoreObject* object, bool isForward, AXCoreOb
     }
 }
 
-// Returns true if the number of results is now >= the number of results desired.
-bool AccessibilityObject::objectMatchesSearchCriteriaWithResultLimit(AXCoreObject* object, AccessibilitySearchCriteria* criteria, AccessibilityChildrenVector& results)
-{
-    if (isAccessibilityObjectSearchMatch(object, criteria) && isAccessibilityTextSearchMatch(object, criteria)) {
-        results.append(object);
-        
-        // Enough results were found to stop searching.
-        if (results.size() >= criteria->resultsLimit)
-            return true;
-    }
-    
-    return false;
-}
-
 void AccessibilityObject::findMatchingObjects(AccessibilitySearchCriteria* criteria, AccessibilityChildrenVector& results)
 {
     ASSERT(criteria);
-    
     if (!criteria)
         return;
 
     if (AXObjectCache* cache = axObjectCache())
         cache->startCachingComputedObjectAttributesUntilTreeMutates();
 
-    // This search mechanism only searches the elements before/after the starting object.
-    // It does this by stepping up the parent chain and at each level doing a DFS.
-    
-    // If there's no start object, it means we want to search everything.
-    AXCoreObject* startObject = criteria->startObject;
-    if (!startObject)
-        startObject = this;
-    
-    bool isForward = criteria->searchDirection == AccessibilitySearchDirection::Next;
-    
-    // The first iteration of the outer loop will examine the children of the start object for matches. However, when
-    // iterating backwards, the start object children should not be considered, so the loop is skipped ahead. We make an
-    // exception when no start object was specified because we want to search everything regardless of search direction.
-    AXCoreObject* previousObject = nullptr;
-    if (!isForward && startObject != this) {
-        previousObject = startObject;
-        startObject = startObject->parentObjectUnignored();
-    }
-    
-    // The outer loop steps up the parent chain each time (unignored is important here because otherwise elements would be searched twice)
-    for (auto* stopSearchElement = parentObjectUnignored(); startObject && startObject != stopSearchElement; startObject = startObject->parentObjectUnignored()) {
-
-        // Only append the children after/before the previous element, so that the search does not check elements that are 
-        // already behind/ahead of start element.
-        AccessibilityChildrenVector searchStack;
-        if (!criteria->immediateDescendantsOnly || startObject == this)
-            appendChildrenToArray(startObject, isForward, previousObject, searchStack);
-
-        // This now does a DFS at the current level of the parent.
-        while (!searchStack.isEmpty()) {
-            AXCoreObject* searchObject = searchStack.last().get();
-            searchStack.removeLast();
-            
-            if (objectMatchesSearchCriteriaWithResultLimit(searchObject, criteria, results))
-                break;
-            
-            if (!criteria->immediateDescendantsOnly)
-                appendChildrenToArray(searchObject, isForward, 0, searchStack);
-        }
-        
-        if (results.size() >= criteria->resultsLimit)
-            break;
-
-        // When moving backwards, the parent object needs to be checked, because technically it's "before" the starting element.
-        if (!isForward && startObject != this && objectMatchesSearchCriteriaWithResultLimit(startObject, criteria, results))
-            break;
-
-        previousObject = startObject;
-    }
+    criteria->anchorObject = this;
+    Accessibility::findMatchingObjects(*criteria, results);
 }
 
 // Returns the range that is fewer positions away from the reference range.
@@ -3884,6 +3648,202 @@ String roleToPlatformString(AccessibilityRole role)
 {
     static NeverDestroyed<PlatformRoleMap> roleMap = createPlatformRoleMap();
     return roleMap->get(static_cast<unsigned>(role));
+}
+
+static bool isAccessibilityObjectSearchMatchAtIndex(AXCoreObject* axObject, AccessibilitySearchCriteria const& criteria, size_t index)
+{
+    switch (criteria.searchKeys[index]) {
+    case AccessibilitySearchKey::AnyType:
+        // The AccessibilitySearchKey::AnyType matches any non-null AccessibilityObject.
+        return true;
+    case AccessibilitySearchKey::Article:
+        return axObject->roleValue() == AccessibilityRole::DocumentArticle;
+    case AccessibilitySearchKey::BlockquoteSameLevel:
+        return criteria.startObject
+            && axObject->isBlockquote()
+            && axObject->blockquoteLevel() == criteria.startObject->blockquoteLevel();
+    case AccessibilitySearchKey::Blockquote:
+        return axObject->isBlockquote();
+    case AccessibilitySearchKey::BoldFont:
+        return axObject->hasBoldFont();
+    case AccessibilitySearchKey::Button:
+        return axObject->isButton();
+    case AccessibilitySearchKey::CheckBox:
+        return axObject->isCheckbox();
+    case AccessibilitySearchKey::Control:
+        return axObject->isControl();
+    case AccessibilitySearchKey::DifferentType:
+        return criteria.startObject
+            && axObject->roleValue() != criteria.startObject->roleValue();
+    case AccessibilitySearchKey::FontChange:
+        return criteria.startObject
+            && !axObject->hasSameFont(criteria.startObject->renderer());
+    case AccessibilitySearchKey::FontColorChange:
+        return criteria.startObject
+            && !axObject->hasSameFontColor(criteria.startObject->renderer());
+    case AccessibilitySearchKey::Frame:
+        return axObject->isWebArea();
+    case AccessibilitySearchKey::Graphic:
+        return axObject->isImage();
+    case AccessibilitySearchKey::HeadingLevel1:
+        return axObject->headingLevel() == 1;
+    case AccessibilitySearchKey::HeadingLevel2:
+        return axObject->headingLevel() == 2;
+    case AccessibilitySearchKey::HeadingLevel3:
+        return axObject->headingLevel() == 3;
+    case AccessibilitySearchKey::HeadingLevel4:
+        return axObject->headingLevel() == 4;
+    case AccessibilitySearchKey::HeadingLevel5:
+        return axObject->headingLevel() == 5;
+    case AccessibilitySearchKey::HeadingLevel6:
+        return axObject->headingLevel() == 6;
+    case AccessibilitySearchKey::HeadingSameLevel:
+        return criteria.startObject
+            && axObject->isHeading()
+            && axObject->headingLevel() == criteria.startObject->headingLevel();
+    case AccessibilitySearchKey::Heading:
+        return axObject->isHeading();
+    case AccessibilitySearchKey::Highlighted:
+        return axObject->hasHighlighting();
+    case AccessibilitySearchKey::KeyboardFocusable:
+        return axObject->isKeyboardFocusable();
+    case AccessibilitySearchKey::ItalicFont:
+        return axObject->hasItalicFont();
+    case AccessibilitySearchKey::Landmark:
+        return axObject->isLandmark();
+    case AccessibilitySearchKey::Link: {
+        bool isLink = axObject->isLink();
+#if PLATFORM(IOS_FAMILY)
+        if (!isLink)
+            isLink = axObject->isDescendantOfRole(AccessibilityRole::WebCoreLink);
+#endif
+        return isLink;
+    }
+    case AccessibilitySearchKey::List:
+        return axObject->isList();
+    case AccessibilitySearchKey::LiveRegion:
+        return axObject->supportsLiveRegion();
+    case AccessibilitySearchKey::MisspelledWord:
+        return axObject->hasMisspelling();
+    case AccessibilitySearchKey::Outline:
+        return axObject->isTree();
+    case AccessibilitySearchKey::PlainText:
+        return axObject->hasPlainText();
+    case AccessibilitySearchKey::RadioGroup:
+        return axObject->isRadioGroup();
+    case AccessibilitySearchKey::SameType:
+        return criteria.startObject
+            && axObject->roleValue() == criteria.startObject->roleValue();
+    case AccessibilitySearchKey::StaticText:
+        return axObject->isStaticText();
+    case AccessibilitySearchKey::StyleChange:
+        return criteria.startObject
+            && !axObject->hasSameStyle(criteria.startObject->renderer());
+    case AccessibilitySearchKey::TableSameLevel:
+        return criteria.startObject
+            && is<AccessibilityTable>(*axObject) && downcast<AccessibilityTable>(*axObject).isExposableThroughAccessibility()
+            && downcast<AccessibilityTable>(*axObject).tableLevel() == criteria.startObject->tableLevel();
+    case AccessibilitySearchKey::Table:
+        return is<AccessibilityTable>(*axObject) && downcast<AccessibilityTable>(*axObject).isExposableThroughAccessibility();
+    case AccessibilitySearchKey::TextField:
+        return axObject->isTextControl();
+    case AccessibilitySearchKey::Underline:
+        return axObject->hasUnderline();
+    case AccessibilitySearchKey::UnvisitedLink:
+        return axObject->isUnvisited();
+    case AccessibilitySearchKey::VisitedLink:
+        return axObject->isVisited();
+    default:
+        return false;
+    }
+}
+
+static bool isAccessibilityObjectSearchMatch(AXCoreObject* axObject, AccessibilitySearchCriteria const& criteria)
+{
+    if (!axObject)
+        return false;
+
+    size_t length = criteria.searchKeys.size();
+    for (size_t i = 0; i < length; ++i) {
+        if (isAccessibilityObjectSearchMatchAtIndex(axObject, criteria, i)) {
+            if (criteria.visibleOnly && !axObject->isOnScreen())
+                return false;
+            return true;
+        }
+    }
+    return false;
+}
+
+static bool isAccessibilityTextSearchMatch(AXCoreObject* axObject, AccessibilitySearchCriteria const& criteria)
+{
+    if (!axObject)
+        return false;
+    return axObject->containsText(criteria.searchText);
+}
+
+static bool objectMatchesSearchCriteriaWithResultLimit(AXCoreObject* object, AccessibilitySearchCriteria const& criteria, AXCoreObject::AccessibilityChildrenVector& results)
+{
+    if (isAccessibilityObjectSearchMatch(object, criteria) && isAccessibilityTextSearchMatch(object, criteria)) {
+        results.append(object);
+
+        // Enough results were found to stop searching.
+        if (results.size() >= criteria.resultsLimit)
+            return true;
+    }
+
+    return false;
+}
+
+void findMatchingObjects(AccessibilitySearchCriteria const& criteria, AXCoreObject::AccessibilityChildrenVector& results)
+{
+    // This search algorithm only searches the elements before/after the starting object.
+    // It does this by stepping up the parent chain and at each level doing a DFS.
+
+    // If there's no start object, it means we want to search everything.
+    AXCoreObject* startObject = criteria.startObject;
+    if (!startObject)
+        startObject = criteria.anchorObject;
+
+    bool isForward = criteria.searchDirection == AccessibilitySearchDirection::Next;
+
+    // The first iteration of the outer loop will examine the children of the start object for matches. However, when
+    // iterating backwards, the start object children should not be considered, so the loop is skipped ahead. We make an
+    // exception when no start object was specified because we want to search everything regardless of search direction.
+    AXCoreObject* previousObject = nullptr;
+    if (!isForward && startObject != criteria.anchorObject) {
+        previousObject = startObject;
+        startObject = startObject->parentObjectUnignored();
+    }
+
+    // The outer loop steps up the parent chain each time (unignored is important here because otherwise elements would be searched twice)
+    for (auto* stopSearchElement = criteria.anchorObject->parentObjectUnignored(); startObject && startObject != stopSearchElement; startObject = startObject->parentObjectUnignored()) {
+        // Only append the children after/before the previous element, so that the search does not check elements that are
+        // already behind/ahead of start element.
+        AXCoreObject::AccessibilityChildrenVector searchStack;
+        if (!criteria.immediateDescendantsOnly || startObject == criteria.anchorObject)
+            appendChildrenToArray(startObject, isForward, previousObject, searchStack);
+
+        // This now does a DFS at the current level of the parent.
+        while (!searchStack.isEmpty()) {
+            AXCoreObject* searchObject = searchStack.last().get();
+            searchStack.removeLast();
+
+            if (objectMatchesSearchCriteriaWithResultLimit(searchObject, criteria, results))
+                break;
+
+            if (!criteria.immediateDescendantsOnly)
+                appendChildrenToArray(searchObject, isForward, 0, searchStack);
+        }
+
+        if (results.size() >= criteria.resultsLimit)
+            break;
+
+        // When moving backwards, the parent object needs to be checked, because technically it's "before" the starting element.
+        if (!isForward && startObject != criteria.anchorObject && objectMatchesSearchCriteriaWithResultLimit(startObject, criteria, results))
+            break;
+
+        previousObject = startObject;
+    }
 }
 
 } // namespace Accessibility

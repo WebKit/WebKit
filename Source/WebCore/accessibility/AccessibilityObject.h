@@ -120,7 +120,7 @@ public:
     bool isAccessibilitySVGRoot() const override { return false; }
     bool isAccessibilitySVGElement() const override { return false; }
 
-    bool containsText(String *) const override;
+    bool containsText(String const&) const override;
 
     bool isAttachmentElement() const override { return false; }
     bool isHeading() const override { return false; }
@@ -764,10 +764,6 @@ protected:
     ScrollableArea* scrollableAreaAncestor() const;
     void scrollAreaAndAncestor(std::pair<ScrollableArea*, AccessibilityObject*>&) const;
 
-    static bool isAccessibilityObjectSearchMatchAtIndex(AXCoreObject*, AccessibilitySearchCriteria*, size_t);
-    static bool isAccessibilityObjectSearchMatch(AXCoreObject*, AccessibilitySearchCriteria*);
-    static bool isAccessibilityTextSearchMatch(AXCoreObject*, AccessibilitySearchCriteria*);
-    static bool objectMatchesSearchCriteriaWithResultLimit(AXCoreObject*, AccessibilitySearchCriteria*, AccessibilityChildrenVector&);
     virtual AccessibilityRole buttonRoleType() const;
     String rolePlatformDescription() const;
     bool isOnScreen() const override;

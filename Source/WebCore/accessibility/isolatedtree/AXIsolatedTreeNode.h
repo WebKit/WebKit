@@ -528,6 +528,7 @@ private:
     // Parameterized attribute retrieval.
     Vector<RefPtr<Range>> findTextRanges(AccessibilitySearchTextCriteria const&) const override;
     Vector<String> performTextOperation(AccessibilityTextOperation const&) override;
+    void findMatchingObjects(AccessibilitySearchCriteria*, AccessibilityChildrenVector&) override;
 
     // Attributes retrieved from the root node only so that the data isn't duplicated on each node.
     uint64_t sessionID() const override;
@@ -605,7 +606,6 @@ private:
     // TODO: Functions
     String textUnderElement(AccessibilityTextUnderElementMode = AccessibilityTextUnderElementMode()) const override { return String(); }
     RefPtr<Range> getMisspellingRange(RefPtr<Range> const&, AccessibilitySearchDirection) const override { return nullptr; }
-    void findMatchingObjects(AccessibilitySearchCriteria*, AccessibilityChildrenVector&) override { }
     FloatRect convertFrameToSpace(const FloatRect&, AccessibilityConversionSpace) const override { return FloatRect(); }
     void increment() override { }
     void decrement() override { }
@@ -626,7 +626,7 @@ private:
     bool isAccessibilityScrollView() const override;
     bool isAccessibilitySVGRoot() const override;
     bool isAccessibilitySVGElement() const override;
-    bool containsText(String*) const override;
+    bool containsText(String const&) const override;
     bool isAttachmentElement() const override;
     bool isNativeImage() const override;
     bool isImageButton() const override;

@@ -709,6 +709,16 @@ Vector<String> AXIsolatedObject::performTextOperation(AccessibilityTextOperation
     });
 }
 
+void AXIsolatedObject::findMatchingObjects(AccessibilitySearchCriteria* criteria, AccessibilityChildrenVector& results)
+{
+    ASSERT(criteria);
+    if (!criteria)
+        return;
+
+    criteria->anchorObject = this;
+    Accessibility::findMatchingObjects(*criteria, results);
+}
+
 bool AXIsolatedObject::replaceTextInRange(const String&, const PlainTextRange&)
 {
     ASSERT_NOT_REACHED();
@@ -777,7 +787,7 @@ bool AXIsolatedObject::isAccessibilitySVGElement() const
     return false;
 }
 
-bool AXIsolatedObject::containsText(String*) const
+bool AXIsolatedObject::containsText(String const&) const
 {
     ASSERT_NOT_REACHED();
     return false;
