@@ -1,3 +1,17 @@
+2019-12-19  Brent Fulgham  <bfulgham@apple.com>
+
+        Add telemetry to macOS WebContent sandbox
+        https://bugs.webkit.org/show_bug.cgi?id=205464
+        <rdar://problem/58087833>
+
+        Reviewed by Per Arne Vollan.
+
+        Add telemetry to various mach lookups, like we did for iOS.
+
+        No new tests. No change in behavior.
+
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2019-12-19  Per Arne Vollan  <pvollan@apple.com>
 
         REGRESSION (r253530): Incorrect colors in Dark Mode
