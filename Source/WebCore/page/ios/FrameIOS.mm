@@ -29,6 +29,7 @@
 
 #import "CSSAnimationController.h"
 #import "CommonVM.h"
+#import "ComposedTreeIterator.h"
 #import "DOMWindow.h"
 #import "Document.h"
 #import "DocumentMarkerController.h"
@@ -383,6 +384,32 @@ Node* Frame::deepestNodeAtLocation(const FloatPoint& viewportLocation)
     return hitTestResult.innerNode();
 }
 
+static bool nodeIsMouseFocusable(Node& node)
+{
+    if (!is<Element>(node))
+        return false;
+
+    auto& element = downcast<Element>(node);
+    if (element.isMouseFocusable())
+        return true;
+
+    if (auto shadowRoot = makeRefPtr(element.shadowRoot())) {
+        if (shadowRoot->delegatesFocus()) {
+            for (auto& node : composedTreeDescendants(element)) {
+                if (is<Element>(node) && downcast<Element>(node).isMouseFocusable())
+                    return true;
+            }
+        }
+    }
+
+    return false;
+}
+
+static bool nodeWillRespondToMouseEvents(Node& node)
+{
+    return node.willRespondToMouseClickEvents() || node.willRespondToMouseMoveEvents() || nodeIsMouseFocusable(node);
+}
+
 Node* Frame::approximateNodeAtViewportLocationLegacy(const FloatPoint& viewportLocation, FloatPoint& adjustedViewportLocation)
 {
     // This function is only used for UIWebView.
@@ -420,7 +447,7 @@ Node* Frame::approximateNodeAtViewportLocationLegacy(const FloatPoint& viewportL
                 pointerCursorStillValid = false;
             }
 
-            if (node->willRespondToMouseClickEvents() || node->willRespondToMouseMoveEvents() || (is<Element>(*node) && downcast<Element>(*node).isMouseFocusable())) {
+            if (nodeWillRespondToMouseEvents(*node)) {
                 // If we're at the body or higher, use the pointer cursor node (which may be null).
                 if (bodyHasBeenReached)
                     node = pointerCursorNode;
@@ -455,7 +482,7 @@ static inline NodeQualifier ancestorRespondingToClickEventsNodeQualifier(Securit
             return nullptr;
 
         for (; node && node != terminationNode; node = node->parentInComposedTree()) {
-            if (node->willRespondToMouseClickEvents() || node->willRespondToMouseMoveEvents() || (is<Element>(*node) && downcast<Element>(*node).isMouseFocusable())) {
+            if (nodeWillRespondToMouseEvents(*node)) {
                 // If we are interested about the frame, use it.
                 if (nodeBounds) {
                     // This is a check to see whether this node is an area element. The only way this can happen is if this is the first check.

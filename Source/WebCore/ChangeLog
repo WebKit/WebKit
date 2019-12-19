@@ -1,3 +1,23 @@
+2019-12-19  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Make ShadowRoot.delegateFocus work in iOS
+        https://bugs.webkit.org/show_bug.cgi?id=202875
+
+        Reviewed by Wenson Hsieh.
+
+        This patch fixes the bug that a shadow tree doesn't recieve focus delegation even if the shadow host
+        had delegateFocus flag set unless the shadow host itself is focusable beacuse Frame's
+        nodeRespondingToClickEvents and friends would return false on the shadow host.
+
+        Test: fast/shadow-dom/delegates-focus-by-activation.html
+
+        * page/ios/FrameIOS.mm:
+        (WebCore::nodeIsMouseFocusable): Added the logic to handle shadow hosts whose shadow root has
+        delegates focus flag set.
+        (WebCore::nodeWillRespondToMouseEvents): Extracted out of approximateNodeAtViewportLocationLegacy.
+        (WebCore::Frame::approximateNodeAtViewportLocationLegacy):
+        (WebCore::ancestorRespondingToClickEventsNodeQualifier):
+
 2019-12-19  Kate Cheney  <katherine_cheney@apple.com>
 
         Activate the SQLite database as an on-by-default feature
