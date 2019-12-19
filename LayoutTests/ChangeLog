@@ -1,3 +1,11 @@
+2019-12-19  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed tests gardening
+
+        Mark imported/w3c/web-platform-tests/html/semantics/forms/form-submission-0/form-double-submit.html as flaky.
+
+        * platform/mac/TestExpectations:
+
 2019-12-19  youenn fablet  <youenn@apple.com>
 
         CacheStorageEngine should not clear caches memory representation for ephemeral sessions
