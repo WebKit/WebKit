@@ -1,0 +1,23 @@
+Verifies that inserting a paragraph before a space does not cause text after the insertion position to be deleted.
+
+Before inserting paragraph:
+| "
+    "
+| <p>
+|   "Hello<#selection-caret> world"
+| "
+
+
+"
+
+After inserting paragraph:
+| "
+    "
+| <p>
+|   "Hello"
+| <p>
+|   "<#selection-caret> world"
+| "
+
+
+"

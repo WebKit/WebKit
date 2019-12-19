@@ -1,3 +1,16 @@
+2019-12-19  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        REGRESSION (r251015): Hitting return before a space deletes text after the insertion position
+        https://bugs.webkit.org/show_bug.cgi?id=205425
+        <rdar://problem/57575960>
+
+        Reviewed by Tim Horton.
+
+        Add a layout test to exercise this bug, by executing "insertParagraph" in a text node before a space.
+
+        * editing/inserting/insert-paragraph-before-space-expected.txt: Added.
+        * editing/inserting/insert-paragraph-before-space.html: Added.
+
 2019-12-19  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         REGRESSION(r253683): [GTK][WPE] Lots of offscreen-canvas WPT tests failing

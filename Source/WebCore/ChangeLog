@@ -1,3 +1,25 @@
+2019-12-19  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        REGRESSION (r251015): Hitting return before a space deletes text after the insertion position
+        https://bugs.webkit.org/show_bug.cgi?id=205425
+        <rdar://problem/57575960>
+
+        Reviewed by Tim Horton.
+
+        After r251015, we (rightfully) no longer call ensureLineBoxes() when computing upstream or downstream positions.
+        However, logic in deleteInsignificantTextDownstream (which is invoked after hitting return before a space in a
+        text node) assumes that line boxes must be generated for the RenderText of the text node containing the
+        downstream position. The lack of inline text boxes then causes deleteInsignificantText to always remove the
+        entire text node.
+
+        To fix this, have deleteInsignificantText ensure that line boxes exist for the text node's renderer, right
+        before asking for the renderer's line boxes.
+
+        Test: editing/inserting/insert-paragraph-before-space.html
+
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::CompositeEditCommand::deleteInsignificantText):
+
 2019-12-19  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK][WPE] Add initial API for input method

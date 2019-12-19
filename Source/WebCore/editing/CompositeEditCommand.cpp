@@ -1002,6 +1002,7 @@ void CompositeEditCommand::deleteInsignificantText(Text& textNode, unsigned star
     Vector<InlineTextBox*> sortedTextBoxes;
     size_t sortedTextBoxesPosition = 0;
    
+    textRenderer->ensureLineBoxes();
     for (InlineTextBox* textBox = textRenderer->firstTextBox(); textBox; textBox = textBox->nextTextBox())
         sortedTextBoxes.append(textBox);
     
