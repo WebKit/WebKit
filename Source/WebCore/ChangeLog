@@ -1,3 +1,14 @@
+2019-12-18  Tim Horton  <timothy_horton@apple.com>
+
+        macCatalyst: Cursor should update when the platform deems it necessary
+        https://bugs.webkit.org/show_bug.cgi?id=205429
+        <rdar://problem/57983076>
+
+        Reviewed by Wenson Hsieh.
+
+        * page/EventHandler.h:
+        Expose selectCursor for WebKit's use.
+
 2019-12-18  Antoine Quint  <graouts@apple.com>
 
         Animations stop if new tab opened (and closed)

@@ -341,6 +341,8 @@ public:
     WEBCORE_EXPORT void cancelSelectionAutoscroll();
 #endif
 
+    WEBCORE_EXPORT Optional<Cursor> selectCursor(const HitTestResult&, bool shiftKey);
+
 private:
 #if ENABLE(DRAG_SUPPORT)
     static DragState& dragState();
@@ -371,7 +373,6 @@ private:
 
     bool internalKeyEvent(const PlatformKeyboardEvent&);
 
-    Optional<Cursor> selectCursor(const HitTestResult&, bool shiftKey);
     void updateCursor(FrameView&, const HitTestResult&, bool shiftKey);
 
     void hoverTimerFired();

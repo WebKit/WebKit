@@ -68,6 +68,8 @@ void InteractionInformationAtPosition::encode(IPC::Encoder& encoder) const
 #endif
     encoder << textBefore;
     encoder << textAfter;
+    encoder << caretHeight;
+    encoder << cursor;
     encoder << linkIndicator;
 
     ShareableBitmap::Handle handle;
@@ -157,6 +159,12 @@ bool InteractionInformationAtPosition::decode(IPC::Decoder& decoder, Interaction
         return false;
     
     if (!decoder.decode(result.textAfter))
+        return false;
+
+    if (!decoder.decode(result.caretHeight))
+        return false;
+
+    if (!decoder.decode(result.cursor))
         return false;
     
     Optional<WebCore::TextIndicatorData> linkIndicator;

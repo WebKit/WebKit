@@ -2759,6 +2759,16 @@ InteractionInformationAtPosition WebPage::positionInformation(const InteractionI
     info.adjustedPointForNodeRespondingToClickEvents = adjustedPoint;
     info.nodeAtPositionHasDoubleClickHandler = m_page->mainFrame().nodeRespondingToDoubleClickEvent(request.point, adjustedPoint);
 
+    auto& eventHandler = m_page->mainFrame().eventHandler();
+    HitTestResult hitTestResult = eventHandler.hitTestResultAtPoint(request.point, HitTestRequest::ReadOnly | HitTestRequest::AllowFrameScrollbars);
+    info.cursor = eventHandler.selectCursor(hitTestResult, false);
+    if (auto* frame = hitTestResult.innerNodeFrame()) {
+        if (auto* frameView = frame->view()) {
+            VisiblePosition position = frame->visiblePositionForPoint(request.point);
+            info.caretHeight = frameView->contentsToRootView(position.absoluteCaretBounds()).height();
+        }
+    }
+
 #if ENABLE(DATA_INTERACTION)
     info.hasSelectionAtPosition = m_page->hasSelectionAtPosition(adjustedPoint);
 #endif

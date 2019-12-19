@@ -1,3 +1,21 @@
+2019-12-18  Tim Horton  <timothy_horton@apple.com>
+
+        macCatalyst: Cursor should update when the platform deems it necessary
+        https://bugs.webkit.org/show_bug.cgi?id=205429
+        <rdar://problem/57983076>
+
+        Reviewed by Wenson Hsieh.
+
+        * Shared/ios/InteractionInformationAtPosition.h:
+        * Shared/ios/InteractionInformationAtPosition.mm:
+        (WebKit::InteractionInformationAtPosition::encode const):
+        (WebKit::InteractionInformationAtPosition::decode):
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::positionInformation):
+        Expose the current cursor and caret size on position information so
+        that macCatalyst UIKit can retrieve it out-of-band (in addition to
+        setting it when we do a hit-test, like in r253636.
+
 2019-12-18  Alex Christensen  <achristensen@webkit.org>
 
         Add ObjC version of WKBundleFrameIsMainFrame
