@@ -641,8 +641,7 @@ class RunWebKitPyTests(RunPythonTests):
 
     def start(self):
         self.slaveEnvironment[RESULTS_SERVER_API_KEY] = os.getenv(RESULTS_SERVER_API_KEY)
-
-        return RunWebKitPyTests.start(self)
+        return RunPythonTests.start(self)
 
 
 class RunLLDBWebKitTests(RunPythonTests):
