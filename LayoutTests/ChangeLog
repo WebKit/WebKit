@@ -1,5 +1,11 @@
 2019-12-19  Chris Dumez  <cdumez@apple.com>
 
+        Unreviewed, address imported/w3c/web-platform-tests/css/css-properties-values-api/url-resolution.html flakiness
+
+        * TestExpectations:
+
+2019-12-19  Chris Dumez  <cdumez@apple.com>
+
         Unreviewed, land iOS specific baseline missing from r253738.
 
         * platform/ios-wk2/imported/w3c/web-platform-tests/dom/events/Event-dispatch-redispatch-expected.txt: Added.
