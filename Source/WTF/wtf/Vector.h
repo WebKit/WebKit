@@ -666,6 +666,11 @@ public:
         return result;
     }
 
+    Vector(WTF::HashTableDeletedValueType)
+        : Base(0, std::numeric_limits<decltype(m_size)>::max())
+    {
+    }
+
     ~Vector()
     {
         if (m_size)
@@ -827,6 +832,8 @@ public:
     void checkConsistency();
 
     template<typename MapFunction, typename R = typename std::result_of<MapFunction(const T&)>::type> Vector<R> map(MapFunction) const;
+
+    bool isHashTableDeletedValue() const { return m_size == std::numeric_limits<decltype(m_size)>::max(); }
 
 private:
     void expandCapacity(size_t newMinCapacity);

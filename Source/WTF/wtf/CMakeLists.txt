@@ -267,6 +267,7 @@ set(WTF_PUBLIC_HEADERS
     ValueCheck.h
     Variant.h
     Vector.h
+    VectorHash.h
     VectorTraits.h
     WTFSemaphore.h
     WallTime.h

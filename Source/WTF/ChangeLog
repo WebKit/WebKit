@@ -1,3 +1,26 @@
+2019-12-19  Antti Koivisto  <antti@apple.com>
+
+        Allow Vectors as hash keys
+        https://bugs.webkit.org/show_bug.cgi?id=205449
+
+        Reviewed by Geoff Garen.
+
+        Add traits to allow Vectors of hashable types to act as hash keys.
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/Vector.h:
+        (WTF::Vector::Vector):
+        (WTF::Vector::~Vector):
+        (WTF::Vector::isHashTableDeletedValue const):
+
+        Use m_size = numeric_limits::max() as the deleted value.
+
+        * wtf/VectorHash.h: Added.
+        (WTF::VectorHash::hash):
+        (WTF::VectorHash::equal):
+
+        Add traits. Empty Vector is the empty value.
+
 2019-12-19  Jer Noble  <jer.noble@apple.com>
 
         Safely iterate observers in languageDidChange()

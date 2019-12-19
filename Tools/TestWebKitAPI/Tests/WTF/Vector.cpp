@@ -30,6 +30,7 @@
 #include <wtf/HashSet.h>
 #include <wtf/ListHashSet.h>
 #include <wtf/Vector.h>
+#include <wtf/VectorHash.h>
 #include <wtf/text/StringHash.h>
 #include <wtf/text/WTFString.h>
 
@@ -911,6 +912,202 @@ TEST(WTF_Vector, StringComparison)
     Vector<String> a = {{ "a" }};
     Vector<String> b = {{ "a" }};
     EXPECT_TRUE(a == b);
+}
+
+TEST(WTF_Vector, HashKey)
+{
+    Vector<int> a = { 1 };
+    Vector<int> b = { 1, 2 };
+
+    HashSet<Vector<int>> hash;
+
+    EXPECT_FALSE(hash.contains(a));
+    EXPECT_FALSE(hash.contains(b));
+
+    hash.add(a);
+
+    EXPECT_TRUE(hash.contains(a));
+    EXPECT_FALSE(hash.contains(b));
+
+    hash.add(a);
+
+    EXPECT_TRUE(hash.contains(a));
+    EXPECT_FALSE(hash.contains(b));
+
+    hash.add(b);
+
+    EXPECT_TRUE(hash.contains(a));
+    EXPECT_TRUE(hash.contains(b));
+
+    hash.remove(a);
+
+    EXPECT_FALSE(hash.contains(a));
+    EXPECT_TRUE(hash.contains(b));
+
+    hash.remove(b);
+
+    EXPECT_FALSE(hash.contains(a));
+    EXPECT_FALSE(hash.contains(b));
+    EXPECT_TRUE(hash.isEmpty());
+
+    for (int i = 0; i < 10; ++i) {
+        for (int j = 0; j < 10; ++j) {
+            hash.add({ i, j });
+            hash.add({ i, j, i });
+        }
+    }
+
+    for (int i = 0; i < 10; ++i) {
+        for (int j = 0; j < 10; ++j) {
+            EXPECT_TRUE(hash.contains({ i, j }));
+            EXPECT_TRUE(hash.contains({ i, j, i }));
+            EXPECT_FALSE(hash.contains({ 10, j }));
+            EXPECT_FALSE(hash.contains({ i, j, 10 }));
+        }
+    }
+
+    for (int i = 0; i < 5; ++i) {
+        for (int j = 0; j < 10; ++j) {
+            hash.remove({ i, j });
+            hash.remove({ i, j, i });
+        }
+    }
+
+    for (int i = 0; i < 10; ++i) {
+        for (int j = 0; j < 10; ++j) {
+            EXPECT_EQ(hash.contains({ i, j }), i > 4);
+            EXPECT_EQ(hash.contains({ i, j, i }), i > 4);
+        }
+    }
+
+    for (int i = 5; i < 10; ++i) {
+        for (int j = 0; j < 10; ++j) {
+            hash.remove({ i, j });
+            hash.remove({ i, j, i });
+        }
+    }
+
+    EXPECT_TRUE(hash.isEmpty());
+}
+
+TEST(WTF_Vector, HashKeyInlineCapacity)
+{
+    Vector<int, 1> a = { 1 };
+    Vector<int, 1> b = { 1, 2 };
+
+    HashSet<Vector<int, 1>> hash;
+
+    EXPECT_FALSE(hash.contains(a));
+    EXPECT_FALSE(hash.contains(b));
+
+    hash.add(a);
+
+    EXPECT_TRUE(hash.contains(a));
+    EXPECT_FALSE(hash.contains(b));
+
+    hash.add(a);
+
+    EXPECT_TRUE(hash.contains(a));
+    EXPECT_FALSE(hash.contains(b));
+
+    hash.add(b);
+
+    EXPECT_TRUE(hash.contains(a));
+    EXPECT_TRUE(hash.contains(b));
+
+    hash.remove(a);
+
+    EXPECT_FALSE(hash.contains(a));
+    EXPECT_TRUE(hash.contains(b));
+
+    hash.remove(b);
+
+    EXPECT_FALSE(hash.contains(a));
+    EXPECT_FALSE(hash.contains(b));
+    EXPECT_TRUE(hash.isEmpty());
+}
+
+TEST(WTF_Vector, HashKeyString)
+{
+    Vector<String> a = { "a" };
+    Vector<String> b = { "a", "b" };
+
+    HashSet<Vector<String>> hash;
+
+    EXPECT_FALSE(hash.contains(a));
+    EXPECT_FALSE(hash.contains(b));
+
+    hash.add(a);
+
+    EXPECT_TRUE(hash.contains(a));
+    EXPECT_FALSE(hash.contains(b));
+
+    hash.add(a);
+
+    EXPECT_TRUE(hash.contains(a));
+    EXPECT_FALSE(hash.contains(b));
+
+    hash.add(b);
+
+    EXPECT_TRUE(hash.contains(a));
+    EXPECT_TRUE(hash.contains(b));
+
+    hash.remove(a);
+
+    EXPECT_FALSE(hash.contains(a));
+    EXPECT_TRUE(hash.contains(b));
+
+    hash.remove(b);
+
+    EXPECT_FALSE(hash.contains(a));
+    EXPECT_FALSE(hash.contains(b));
+
+    for (auto i : { "a", "b", "c", "d", "e" }) {
+        for (auto j : { "a", "b", "c", "d", "e" }) {
+            hash.add({ i, j });
+            hash.add({ i, j, i, j });
+        }
+    }
+
+    for (auto i : { "a", "b", "c", "d", "e" }) {
+        for (auto j : { "a", "b", "c", "d", "e" }) {
+            EXPECT_TRUE(hash.contains({ i, j }));
+            EXPECT_TRUE(hash.contains({ i, j, i, j }));
+            EXPECT_FALSE(hash.contains({ i, j, i }));
+            EXPECT_FALSE(hash.contains({ "x", j }));
+            EXPECT_FALSE(hash.contains({ i, j, "x", j }));
+        }
+    }
+
+    for (auto i : { "d", "e" }) {
+        for (auto j : { "a", "b", "c", "d", "e" }) {
+            hash.remove({ i, j });
+            hash.remove({ i, j, i, j });
+        }
+    }
+
+    for (auto i : { "d", "e" }) {
+        for (auto j : { "a", "b", "c", "d", "e" }) {
+            EXPECT_FALSE(hash.contains({ i, j }));
+            EXPECT_FALSE(hash.contains({ i, j, i, j }));
+        }
+    }
+
+    for (auto i : { "a", "b", "c" }) {
+        for (auto j : { "a", "b", "c", "d", "e" }) {
+            EXPECT_TRUE(hash.contains({ i, j }));
+            EXPECT_TRUE(hash.contains({ i, j, i, j }));
+        }
+    }
+
+    for (auto i : { "a", "b", "c" }) {
+        for (auto j : { "a", "b", "c", "d", "e" }) {
+            hash.remove({ i, j });
+            hash.remove({ i, j, i, j });
+        }
+    }
+
+    EXPECT_TRUE(hash.isEmpty());
 }
     
 } // namespace TestWebKitAPI
