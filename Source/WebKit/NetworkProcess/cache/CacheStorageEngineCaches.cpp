@@ -382,6 +382,11 @@ void Caches::dispose(Cache& cache)
         return;
     }
     ASSERT(m_caches.findMatching([&](const auto& item) { return item.identifier() == cache.identifier(); }) != notFound);
+
+    // We cannot clear the memory representation in ephemeral sessions since we would loose all data.
+    if (!shouldPersist())
+        return;
+
     cache.clearMemoryRepresentation();
 
     if (!hasActiveCache())

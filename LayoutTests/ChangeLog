@@ -1,3 +1,12 @@
+2019-12-19  youenn fablet  <youenn@apple.com>
+
+        CacheStorageEngine should not clear caches memory representation for ephemeral sessions
+        https://bugs.webkit.org/show_bug.cgi?id=205332
+
+        Reviewed by Chris Dumez.
+
+        * TestExpectations:
+
 2019-12-19  Brent Fulgham  <bfulgham@apple.com>
 
         Deny mach lookup access to "com.apple.pluginkit.pkd" in the WebContent process
