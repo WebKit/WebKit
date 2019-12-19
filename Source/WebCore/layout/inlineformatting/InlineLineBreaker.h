@@ -72,15 +72,18 @@ public:
     // [content]
     // [container start][span1][container end][between][container start][span2][container end]
     // see https://drafts.csswg.org/css-text-3/#line-break-details
-    struct ContinousContent {
-        ContinousContent(const RunList&);
+    struct Content {
+        void append(const InlineItem&, InlineLayoutUnit logicalWidth);
+        void reset();
+        void shrink(unsigned newSize);
 
-        const RunList& runs() const { return m_runs; }
-        bool isEmpty() const { return m_runs.isEmpty(); }
+        RunList& runs() { return m_continousRuns; }
+        const RunList& runs() const { return m_continousRuns; }
+        bool isEmpty() const { return m_continousRuns.isEmpty(); }
         bool hasTextContentOnly() const;
         bool isVisuallyEmptyWhitespaceContentOnly() const;
         bool hasNonContentRunsOnly() const;
-        size_t size() const { return m_runs.size(); }
+        unsigned size() const { return m_continousRuns.size(); }
         InlineLayoutUnit width() const { return m_width; }
         InlineLayoutUnit nonCollapsibleWidth() const { return m_width - m_trailingCollapsibleContent.width; }
 
@@ -90,7 +93,7 @@ public:
         Optional<unsigned> firstTextRunIndex() const;
 
     private:
-        RunList m_runs;
+        RunList m_continousRuns;
         struct TrailingCollapsibleContent {
             void reset();
 
@@ -107,7 +110,7 @@ public:
         bool lineHasFullyCollapsibleTrailingRun { false };
         bool lineIsEmpty { true };
     };
-    BreakingContext breakingContextForInlineContent(const ContinousContent& candidateRuns, const LineStatus&);
+    BreakingContext breakingContextForInlineContent(const Content& candidateRuns, const LineStatus&);
     bool shouldWrapFloatBox(InlineLayoutUnit floatLogicalWidth, InlineLayoutUnit availableWidth, bool lineIsEmpty);
 
     void setHyphenationDisabled() { n_hyphenationIsDisabled = true; }

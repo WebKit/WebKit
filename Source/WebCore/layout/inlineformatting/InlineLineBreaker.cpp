@@ -54,7 +54,7 @@ static inline bool isContentSplitAllowed(const LineBreaker::Run& run)
     return isTextContentWrappingAllowed(run.inlineItem.style());
 }
 
-static inline bool shouldKeepEndOfLineWhitespace(const LineBreaker::ContinousContent& candidateRuns)
+static inline bool shouldKeepEndOfLineWhitespace(const LineBreaker::Content& candidateRuns)
 {
     // Grab the style and check for white-space property to decided whether we should let this whitespace content overflow the current line.
     // Note that the "keep" in the context means we let the whitespace content sit on the current line.
@@ -64,7 +64,7 @@ static inline bool shouldKeepEndOfLineWhitespace(const LineBreaker::ContinousCon
     return whitespace == WhiteSpace::Normal || whitespace == WhiteSpace::NoWrap || whitespace == WhiteSpace::PreWrap || whitespace == WhiteSpace::PreLine;
 }
 
-LineBreaker::BreakingContext LineBreaker::breakingContextForInlineContent(const ContinousContent& candidateRuns, const LineStatus& lineStatus)
+LineBreaker::BreakingContext LineBreaker::breakingContextForInlineContent(const Content& candidateRuns, const LineStatus& lineStatus)
 {
     ASSERT(!candidateRuns.isEmpty());
     if (candidateRuns.width() <= lineStatus.availableWidth)
@@ -386,42 +386,49 @@ Optional<size_t> LineBreaker::lastSoftWrapOpportunity(const InlineItem& inlineIt
     return true;
 }
 
-LineBreaker::ContinousContent::ContinousContent(const RunList& runs)
-    : m_runs(runs)
+void LineBreaker::Content::append(const InlineItem& inlineItem, InlineLayoutUnit logicalWidth)
 {
+    ASSERT(!inlineItem.isFloat());
+    m_continousRuns.append({ inlineItem, logicalWidth });
+    m_width += logicalWidth;
     // Figure out the trailing collapsible state.
-    for (auto& run : WTF::makeReversedRange(m_runs)) {
-        auto& inlineItem = run.inlineItem;
-        if (inlineItem.isBox() || inlineItem.isLineBreak()) {
-            // We did reach a non-collapsible content. We have all the trailing whitespace now.
-            break;
-        }
-        if (inlineItem.isText()) {
-            auto& inlineTextItem = downcast<InlineTextItem>(inlineItem);
-            auto isFullyCollapsible = [&] {
-                return inlineTextItem.isWhitespace() && !TextUtil::shouldPreserveTrailingWhitespace(inlineTextItem.style());
-            };
-            if (isFullyCollapsible()) {
-                m_trailingCollapsibleContent.width += run.logicalWidth;
-                m_trailingCollapsibleContent.isFullyCollapsible = true;
-                // Let's see if we've got more trailing whitespace content.
-                continue;
-            }
-            if (auto collapsibleWidth = inlineTextItem.style().letterSpacing()) {
-                m_trailingCollapsibleContent.width += collapsibleWidth;
-                m_trailingCollapsibleContent.isFullyCollapsible = false;
-            }
-            // End of whitspace content.
-            break;
-        }
+    if (inlineItem.isBox() || inlineItem.isLineBreak())
+        m_trailingCollapsibleContent.reset();
+    else if (inlineItem.isText()) {
+        auto& inlineTextItem = downcast<InlineTextItem>(inlineItem);
+        auto isFullyCollapsible = [&] {
+            return inlineTextItem.isWhitespace() && !TextUtil::shouldPreserveTrailingWhitespace(inlineTextItem.style());
+        };
+        if (isFullyCollapsible()) {
+            m_trailingCollapsibleContent.width += logicalWidth;
+            m_trailingCollapsibleContent.isFullyCollapsible = true;
+        } else if (auto collapsibleWidth = inlineTextItem.style().letterSpacing()) {
+            m_trailingCollapsibleContent.width = collapsibleWidth;
+            m_trailingCollapsibleContent.isFullyCollapsible = false;
+        } else
+            m_trailingCollapsibleContent.reset();
     }
 }
 
-bool LineBreaker::ContinousContent::hasTextContentOnly() const
+void LineBreaker::Content::reset()
+{
+    m_continousRuns.clear();
+    m_trailingCollapsibleContent.reset();
+    m_width = 0_lu;
+}
+
+void LineBreaker::Content::shrink(unsigned newSize)
+{
+    for (auto i = m_continousRuns.size(); i--;)
+        m_width -= m_continousRuns[i].logicalWidth;
+    m_continousRuns.shrink(newSize);
+}
+
+bool LineBreaker::Content::hasTextContentOnly() const
 {
     // <span>text</span> is considered a text run even with the [container start][container end] inline items.
     // Due to commit boundary rules, we just need to check the first non-typeless inline item (can't have both [img] and [text])
-    for (auto& run : m_runs) {
+    for (auto& run : m_continousRuns) {
         auto& inlineItem = run.inlineItem;
         if (inlineItem.isContainerStart() || inlineItem.isContainerEnd())
             continue;
@@ -430,12 +437,12 @@ bool LineBreaker::ContinousContent::hasTextContentOnly() const
     return false;
 }
 
-bool LineBreaker::ContinousContent::isVisuallyEmptyWhitespaceContentOnly() const
+bool LineBreaker::Content::isVisuallyEmptyWhitespaceContentOnly() const
 {
     // [<span></span> ] [<span> </span>] [ <span style="padding: 0px;"></span>] are all considered visually empty whitespace content.
     // [<span style="border: 1px solid red"></span> ] while this is whitespace content only, it is not considered visually empty.
     // Due to commit boundary rules, we just need to check the first non-typeless inline item (can't have both [img] and [text])
-    for (auto& run : m_runs) {
+    for (auto& run : m_continousRuns) {
         auto& inlineItem = run.inlineItem;
         // FIXME: check for padding border etc.
         if (inlineItem.isContainerStart() || inlineItem.isContainerEnd())
@@ -445,19 +452,19 @@ bool LineBreaker::ContinousContent::isVisuallyEmptyWhitespaceContentOnly() const
     return false;
 }
 
-Optional<unsigned> LineBreaker::ContinousContent::firstTextRunIndex() const
+Optional<unsigned> LineBreaker::Content::firstTextRunIndex() const
 {
-    for (size_t index = 0; index < m_runs.size(); ++index) {
-        if (m_runs[index].inlineItem.isText())
+    for (size_t index = 0; index < m_continousRuns.size(); ++index) {
+        if (m_continousRuns[index].inlineItem.isText())
             return index;
     }
     return { };
 }
 
-bool LineBreaker::ContinousContent::hasNonContentRunsOnly() const
+bool LineBreaker::Content::hasNonContentRunsOnly() const
 {
     // <span></span> <- non content runs.
-    for (auto& run : m_runs) {
+    for (auto& run : m_continousRuns) {
         auto& inlineItem = run.inlineItem;
         if (inlineItem.isContainerStart() || inlineItem.isContainerEnd())
             continue;
@@ -466,7 +473,7 @@ bool LineBreaker::ContinousContent::hasNonContentRunsOnly() const
     return true;
 }
 
-void LineBreaker::ContinousContent::TrailingCollapsibleContent::reset()
+void LineBreaker::Content::TrailingCollapsibleContent::reset()
 {
     isFullyCollapsible = false;
     width = 0_lu;
