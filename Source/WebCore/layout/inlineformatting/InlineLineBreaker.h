@@ -50,7 +50,7 @@ public:
         };
         ContentWrappingRule contentWrappingRule;
         struct PartialTrailingContent {
-            unsigned triailingRunIndex { 0 };
+            unsigned trailingRunIndex { 0 };
             Optional<PartialRun> partialRun; // nullopt partial run means the trailing run is a complete run.
         };
         Optional<PartialTrailingContent> partialTrailingContent;

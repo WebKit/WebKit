@@ -274,13 +274,13 @@ LineLayoutContext::CommittedContent LineLayoutContext::placeInlineContentOnCurre
         commitContent(line, runs, breakingContext.partialTrailingContent);
         // When splitting multiple runs <span style="word-break: break-all">text</span><span>content</span>, we might end up splitting them at run boundary.
         // It simply means we don't really have a partial run. Partial content yes, but not partial run.
-        auto triailingRunIndex = breakingContext.partialTrailingContent->triailingRunIndex;
-        auto committedInlineItemCount = triailingRunIndex + 1;
+        auto trailingRunIndex = breakingContext.partialTrailingContent->trailingRunIndex;
+        auto committedInlineItemCount = trailingRunIndex + 1;
         if (!breakingContext.partialTrailingContent->partialRun)
             return { IsEndOfLine::Yes, committedInlineItemCount, { } };
 
         auto partialRun = *breakingContext.partialTrailingContent->partialRun;
-        auto& trailingInlineTextItem = downcast<InlineTextItem>(runs[triailingRunIndex].inlineItem);
+        auto& trailingInlineTextItem = downcast<InlineTextItem>(runs[trailingRunIndex].inlineItem);
         auto overflowLength = trailingInlineTextItem.length() - partialRun.length;
         return { IsEndOfLine::Yes, committedInlineItemCount, LineContent::PartialContent { partialRun.needsHyphen, overflowLength } };
     }
@@ -292,11 +292,11 @@ void LineLayoutContext::commitContent(LineBuilder& line, const LineBreaker::RunL
 {
     for (size_t index = 0; index < runs.size(); ++index) {
         auto& run = runs[index];
-        if (partialTrailingContent && partialTrailingContent->triailingRunIndex == index) {
+        if (partialTrailingContent && partialTrailingContent->trailingRunIndex == index) {
             ASSERT(run.inlineItem.isText());
             // Create and commit partial trailing item.
             if (auto partialRun = partialTrailingContent->partialRun) {
-                auto& trailingInlineTextItem = downcast<InlineTextItem>(runs[partialTrailingContent->triailingRunIndex].inlineItem);
+                auto& trailingInlineTextItem = downcast<InlineTextItem>(runs[partialTrailingContent->trailingRunIndex].inlineItem);
                 // FIXME: LineBuilder should not hold on to the InlineItem.
                 ASSERT(!m_partialTrailingTextItem);
                 m_partialTrailingTextItem = trailingInlineTextItem.left(partialRun->length);
