@@ -1,3 +1,24 @@
+2019-12-19  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: TypeError: InjectedScriptHost.isPromiseRejectedWithNativeGetterTypeError first argument must be a Promise
+        https://bugs.webkit.org/show_bug.cgi?id=205439
+
+        Reviewed by Brian Burg.
+
+        Before r244312, we noticed that when Web Inspector would preview native getters that return
+        a `Promise`, Web Inspector would prevent `rejectionhandled` events from being fired since it
+        would always add a `.catch(() => {}` to any `Promise` that it was about to instrument in the
+        Console to avoid errors being added to the Console while expanding/collapsing value previews.
+        In order to prevent this, logic was added so that the `.catch(() => {})` was only added if
+        the `Promise` was returned from a native getter, such as from a `PromiseRejectionEvent`.
+
+        In r244312, we made it such that this logic _required_ the `Promise` to already be rejected,
+        which is unnecessarily restrictive and not always the case nowadays. Instead, just check to
+        see if the result of the `Promise` is a native getter type error.
+
+        * inspector/JSInjectedScriptHost.cpp:
+        (Inspector::JSInjectedScriptHost::isPromiseRejectedWithNativeGetterTypeError):
+
 2019-12-18  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Elements: restrict showing paint flashing and compositing borders to the Web Inspector session
