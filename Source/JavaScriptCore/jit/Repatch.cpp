@@ -280,6 +280,15 @@ static InlineCacheAction tryCacheGetBy(JSGlobalObject* globalObject, CodeBlock* 
 
             PropertyOffset offset = slot.isUnset() ? invalidOffset : slot.cachedOffset();
 
+            if (slot.isCustom() && slot.slotBase() == baseValue) {
+                // To cache self customs, we must disallow dictionaries because we
+                // need to be informed if the custom goes away since we cache the
+                // constant function pointer.
+
+                if (!prepareChainForCaching(globalObject, slot.slotBase(), slot.slotBase()))
+                    return GiveUpOnCache;
+            }
+
             if (slot.isUnset() || slot.slotBase() != baseValue) {
                 if (structure->typeInfo().prohibitsPropertyCaching())
                     return GiveUpOnCache;
@@ -297,7 +306,7 @@ static InlineCacheAction tryCacheGetBy(JSGlobalObject* globalObject, CodeBlock* 
                 // If a kind is GetByKind::Direct, we do not need to investigate prototype chains further.
                 // Cacheability just depends on the head structure.
                 if (kind != GetByKind::Direct) {
-                    auto cacheStatus = preparePrototypeChainForCaching(globalObject, baseCell, slot);
+                    auto cacheStatus = prepareChainForCaching(globalObject, baseCell, slot);
                     if (!cacheStatus)
                         return GiveUpOnCache;
 
@@ -608,7 +617,7 @@ static InlineCacheAction tryCachePutByID(JSGlobalObject* globalObject, CodeBlock
                 std::unique_ptr<PolyProtoAccessChain> prototypeAccessChain;
                 ObjectPropertyConditionSet conditionSet;
                 if (putKind == NotDirect) {
-                    auto cacheStatus = preparePrototypeChainForCaching(globalObject, baseCell, nullptr);
+                    auto cacheStatus = prepareChainForCaching(globalObject, baseCell, nullptr);
                     if (!cacheStatus)
                         return GiveUpOnCache;
 
@@ -632,11 +641,14 @@ static InlineCacheAction tryCachePutByID(JSGlobalObject* globalObject, CodeBlock
                 ObjectPropertyConditionSet conditionSet;
                 std::unique_ptr<PolyProtoAccessChain> prototypeAccessChain;
 
-                if (slot.base() != baseValue) {
-                    auto cacheStatus = preparePrototypeChainForCaching(globalObject, baseCell, slot.base());
-                    if (!cacheStatus)
-                        return GiveUpOnCache;
+                // We need to do this even if we're a self custom, since we must disallow dictionaries
+                // because we need to be informed if the custom goes away since we cache the constant
+                // function pointer.
+                auto cacheStatus = prepareChainForCaching(globalObject, baseCell, slot.base());
+                if (!cacheStatus)
+                    return GiveUpOnCache;
 
+                if (slot.base() != baseValue) {
                     if (cacheStatus->usesPolyProto) {
                         prototypeAccessChain = PolyProtoAccessChain::create(globalObject, baseCell, slot.base());
                         if (!prototypeAccessChain)
@@ -659,7 +671,7 @@ static InlineCacheAction tryCachePutByID(JSGlobalObject* globalObject, CodeBlock
                 PropertyOffset offset = slot.cachedOffset();
 
                 if (slot.base() != baseValue) {
-                    auto cacheStatus = preparePrototypeChainForCaching(globalObject, baseCell, slot.base());
+                    auto cacheStatus = prepareChainForCaching(globalObject, baseCell, slot.base());
                     if (!cacheStatus)
                         return GiveUpOnCache;
                     if (cacheStatus->flattenedDictionary)
@@ -761,7 +773,7 @@ static InlineCacheAction tryCacheInByID(
             }
 
             if (slot.slotBase() != base) {
-                auto cacheStatus = preparePrototypeChainForCaching(globalObject, base, slot);
+                auto cacheStatus = prepareChainForCaching(globalObject, base, slot);
                 if (!cacheStatus)
                     return GiveUpOnCache;
                 if (cacheStatus->flattenedDictionary)
@@ -782,7 +794,7 @@ static InlineCacheAction tryCacheInByID(
                 }
             }
         } else {
-            auto cacheStatus = preparePrototypeChainForCaching(globalObject, base, nullptr);
+            auto cacheStatus = prepareChainForCaching(globalObject, base, nullptr);
             if (!cacheStatus)
                 return GiveUpOnCache;
 
@@ -854,7 +866,7 @@ static InlineCacheAction tryCacheInstanceOf(
             } else if (structure->prototypeQueriesAreCacheable()) {
                 // FIXME: Teach this to do poly proto.
                 // https://bugs.webkit.org/show_bug.cgi?id=185663
-                preparePrototypeChainForCaching(globalObject, value, wasFound ? prototype : nullptr);
+                prepareChainForCaching(globalObject, value, wasFound ? prototype : nullptr);
                 ObjectPropertyConditionSet conditionSet = generateConditionsForInstanceOf(
                     vm, codeBlock, globalObject, structure, prototype, wasFound);
 

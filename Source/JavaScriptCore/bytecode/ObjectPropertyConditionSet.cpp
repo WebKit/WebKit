@@ -509,7 +509,7 @@ ObjectPropertyCondition generateConditionForSelfEquivalence(
 }
 
 // Current might be null. Structure can't be null.
-static Optional<PrototypeChainCachingStatus> preparePrototypeChainForCaching(JSGlobalObject* globalObject, JSCell* current, Structure* structure, JSObject* target)
+static Optional<PrototypeChainCachingStatus> prepareChainForCaching(JSGlobalObject* globalObject, JSCell* current, Structure* structure, JSObject* target)
 {
     ASSERT(structure);
     VM& vm = globalObject->vm();
@@ -571,20 +571,20 @@ static Optional<PrototypeChainCachingStatus> preparePrototypeChainForCaching(JSG
     return result;
 }
 
-Optional<PrototypeChainCachingStatus> preparePrototypeChainForCaching(JSGlobalObject* globalObject, JSCell* base, JSObject* target)
+Optional<PrototypeChainCachingStatus> prepareChainForCaching(JSGlobalObject* globalObject, JSCell* base, JSObject* target)
 {
-    return preparePrototypeChainForCaching(globalObject, base, base->structure(globalObject->vm()), target);
+    return prepareChainForCaching(globalObject, base, base->structure(globalObject->vm()), target);
 }
 
-Optional<PrototypeChainCachingStatus> preparePrototypeChainForCaching(JSGlobalObject* globalObject, JSCell* base, const PropertySlot& slot)
+Optional<PrototypeChainCachingStatus> prepareChainForCaching(JSGlobalObject* globalObject, JSCell* base, const PropertySlot& slot)
 {
     JSObject* target = slot.isUnset() ? nullptr : slot.slotBase();
-    return preparePrototypeChainForCaching(globalObject, base, target);
+    return prepareChainForCaching(globalObject, base, target);
 }
 
-Optional<PrototypeChainCachingStatus> preparePrototypeChainForCaching(JSGlobalObject* globalObject, Structure* baseStructure, JSObject* target)
+Optional<PrototypeChainCachingStatus> prepareChainForCaching(JSGlobalObject* globalObject, Structure* baseStructure, JSObject* target)
 {
-    return preparePrototypeChainForCaching(globalObject, nullptr, baseStructure, target);
+    return prepareChainForCaching(globalObject, nullptr, baseStructure, target);
 }
 
 } // namespace JSC

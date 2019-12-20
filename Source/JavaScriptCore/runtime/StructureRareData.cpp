@@ -107,11 +107,11 @@ void StructureRareData::setObjectToStringValue(JSGlobalObject* globalObject, VM&
 
         // This will not create a condition for the current structure but that is good because we know the Symbol.toStringTag
         // is not on the ownStructure so we will transisition if one is added and this cache will no longer be used.
-        preparePrototypeChainForCaching(globalObject, ownStructure, toStringTagSymbolSlot.slotBase());
+        prepareChainForCaching(globalObject, ownStructure, toStringTagSymbolSlot.slotBase());
         conditionSet = generateConditionsForPrototypePropertyHit(vm, this, globalObject, ownStructure, toStringTagSymbolSlot.slotBase(), vm.propertyNames->toStringTagSymbol.impl());
         ASSERT(!conditionSet.isValid() || conditionSet.hasOneSlotBaseCondition());
     } else if (toStringTagSymbolSlot.isUnset()) {
-        preparePrototypeChainForCaching(globalObject, ownStructure, nullptr);
+        prepareChainForCaching(globalObject, ownStructure, nullptr);
         conditionSet = generateConditionsForPropertyMiss(vm, this, globalObject, ownStructure, vm.propertyNames->toStringTagSymbol.impl());
     } else
         return;

@@ -1,3 +1,35 @@
+2019-12-19  Saam Barati  <sbarati@apple.com>
+
+        Don't cache self customs on dictionaries
+        https://bugs.webkit.org/show_bug.cgi?id=205466
+        <rdar://problem/58075545>
+
+        Reviewed by Mark Lam.
+
+        We had a bug where we would cache a custom value/accessor on a self property
+        of a cacheable dictionary object. This turns out to be wrong because the
+        inline cache won't fail (because we won't transition structures) if that
+        property is replaced with something else. We would do the right thing when
+        the custom was on the prototype chain, but when it was a self property, we
+        didn't. The reason customs are different from values/normal accessors is that
+        we dynamically load values/getters/setters from the object itself. For
+        customs, we cache the actual pointer value of the C function. This patch makes
+        it so we don't cache customs on dictionaries.
+
+        * bytecode/ObjectPropertyConditionSet.cpp:
+        (JSC::prepareChainForCaching):
+        (JSC::preparePrototypeChainForCaching): Deleted.
+        * bytecode/ObjectPropertyConditionSet.h:
+        * jit/Repatch.cpp:
+        (JSC::tryCacheGetBy):
+        (JSC::tryCachePutByID):
+        (JSC::tryCacheInByID):
+        (JSC::tryCacheInstanceOf):
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::setupGetByIdPrototypeCache):
+        * runtime/StructureRareData.cpp:
+        (JSC::StructureRareData::setObjectToStringValue):
+
 2019-12-19  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: TypeError: InjectedScriptHost.isPromiseRejectedWithNativeGetterTypeError first argument must be a Promise

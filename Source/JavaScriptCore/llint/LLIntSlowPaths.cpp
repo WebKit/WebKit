@@ -716,7 +716,7 @@ static void setupGetByIdPrototypeCache(JSGlobalObject* globalObject, VM& vm, Cod
         structure->flattenDictionaryStructure(vm, jsCast<JSObject*>(baseCell));
     }
 
-    preparePrototypeChainForCaching(globalObject, baseCell, slot);
+    prepareChainForCaching(globalObject, baseCell, slot);
 
     ObjectPropertyConditionSet conditions;
     if (slot.isUnset())
