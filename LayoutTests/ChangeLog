@@ -1,3 +1,14 @@
+2019-12-20  youenn fablet  <youenn@apple.com>
+
+        webrtc/video-autoplay.html is flaky on iOS simulator
+        https://bugs.webkit.org/show_bug.cgi?id=205495
+
+        Reviewed by Eric Carlson.
+
+        * webrtc/video-autoplay-expected.txt:
+        * webrtc/video-autoplay.html:
+        Do test one video at a time so that one video does not interrupt the other.
+
 2019-12-20  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, mark imported/w3c/web-platform-tests/2dcontext/wide-gamut-canvas as flaky.

@@ -74,22 +74,31 @@ promise_test((test) => {
 }, "Remote media stream autoplay");
 
 promise_test(async (test) => {
-    if (window.internals) {
+    if (window.internals)
         internals.setMediaElementRestrictions(video1, "");
-        internals.setMediaElementRestrictions(video2, "");
-        internals.setMediaElementRestrictions(video3, "");
-        internals.setMediaElementRestrictions(video4, "");
-    }
 
     video1.src = findMediaFile("video", "../media/content/audio-tracks");
-    video2.src = findMediaFile("video", "../media/content/audio-tracks");
-    video3.src = findMediaFile("video", "../media/content/audio-tracks");
-
     await video1.play();
-    await video2.play();
-    await video3.play();
 
     await video1.pause();
+
+    video4.srcObject = await navigator.mediaDevices.getUserMedia({ video : true });
+
+    while (video4.paused)
+        await new Promise(resolve => setTimeout(resolve, 50));
+
+    assert_true(video1.paused, "paused video");
+
+    video1.remove();
+}, "Granting getUserMedia should not start paused media 1");
+
+promise_test(async (test) => {
+    if (window.internals)
+        internals.setMediaElementRestrictions(video2, "");
+
+    video2.src = findMediaFile("video", "../media/content/audio-tracks");
+    await video2.play();
+
     let removedVideo2 = video2;
     removedVideo2.remove();
 
@@ -98,14 +107,25 @@ promise_test(async (test) => {
     while (video4.paused)
         await new Promise(resolve => setTimeout(resolve, 50));
 
-    assert_true(video1.paused, "paused video");
     assert_true(removedVideo2.paused, "out of DOM video");
+}, "Granting getUserMedia should not start paused media 2");
+
+promise_test(async (test) => {
+    if (window.internals)
+        internals.setMediaElementRestrictions(video3, "");
+
+    video3.src = findMediaFile("video", "../media/content/audio-tracks");
+    await video3.play();
+
+    video4.srcObject = await navigator.mediaDevices.getUserMedia({ video : true });
+
+    while (video4.paused)
+        await new Promise(resolve => setTimeout(resolve, 50));
+
     assert_false(video3.paused, "still playing video");
 
-    video1.remove();
     video3.remove();
-    video4.remove();
-}, "Granting getUserMedia should not start paused media");
+}, "Granting getUserMedia should not start paused media 3");
 
 promise_test(async (test) => {
     if (window.internals) {
