@@ -729,7 +729,7 @@ void CDMInstanceSessionFairPlayStreamingAVFObjC::loadSession(LicenseType license
     UNUSED_PARAM(origin);
     if (licenseType == LicenseType::PersistentUsageRecord) {
         auto* storageURL = m_instance->storageURL();
-        if (!m_instance->persistentStateAllowed() || storageURL) {
+        if (!m_instance->persistentStateAllowed() || !storageURL) {
             callback(WTF::nullopt, WTF::nullopt, WTF::nullopt, Failed, SessionLoadFailure::MismatchedSessionType);
             return;
         }
@@ -872,7 +872,10 @@ void CDMInstanceSessionFairPlayStreamingAVFObjC::didProvideRequest(AVContentKeyR
             if (!weakThis)
                 return;
 
-            sessionIdentifierChanged(m_session.get().contentProtectionSessionIdentifier);
+            if (m_sessionId.isEmpty()) {
+                auto sessionID = m_group ? m_group.get().contentProtectionSessionIdentifier : m_session.get().contentProtectionSessionIdentifier;
+                sessionIdentifierChanged(sessionID);
+            }
 
             if (error && m_requestLicenseCallback)
                 m_requestLicenseCallback(SharedBuffer::create(), m_sessionId, false, Failed);
