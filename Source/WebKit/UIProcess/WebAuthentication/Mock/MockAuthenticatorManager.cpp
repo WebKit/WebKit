@@ -53,9 +53,9 @@ void MockAuthenticatorManager::respondReceivedInternal(Respond&& respond)
 void MockAuthenticatorManager::filterTransports(TransportSet& transports) const
 {
     if (!m_testConfiguration.nfc)
-        transports.remove(AuthenticatorTransport::Nfc);
+        transports.remove(WebCore::AuthenticatorTransport::Nfc);
     if (!m_testConfiguration.local)
-        transports.remove(AuthenticatorTransport::Internal);
+        transports.remove(WebCore::AuthenticatorTransport::Internal);
 }
 
 } // namespace WebKit

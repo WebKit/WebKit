@@ -1,3 +1,13 @@
+2019-12-20  Brian Burg  <bburg@apple.com>
+
+        Unreviewed, try to fix the non-unified sources build.
+
+        * UIProcess/WebAuthentication/Mock/MockAuthenticatorManager.cpp:
+        (WebKit::MockAuthenticatorManager::filterTransports const):
+        The current chunking of unified source files seems to provide a
+        'using namespace WebCore' for these references to AuthenticatorTransport.
+        Add a namespace qualification so that this file compiles by itself.
+
 2019-12-20  James Savage  <james.savage@apple.com>
 
         Include WKPDFConfiguration, WKFindConfiguration, and WKFindResult in umbrella header
