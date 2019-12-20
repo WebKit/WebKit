@@ -116,9 +116,15 @@
         (iokit-registry-entry-class "IOSurfaceSendRight"))
     ;; CoreVideo CVCGDisplayLink
     (allow iokit-open
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101500
+        (with report) (with telemetry)
+#endif
         (iokit-registry-entry-class "IOFramebufferSharedUserClient"))
     ;; H.264 Acceleration
     (allow iokit-open
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101500
+        (with report) (with telemetry)
+#endif
         (iokit-registry-entry-class "AppleIntelMEUserClient")
         (iokit-registry-entry-class "AppleSNBFBUserClient"))
     ;; QuartzCore
@@ -560,6 +566,9 @@
 
 ;; IOKit user clients
 (allow iokit-open
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101500
+    (with report) (with telemetry)
+#endif
     (iokit-user-client-class "AppleMultitouchDeviceUserClient")
     (iokit-user-client-class "AppleUpstreamUserClient")
     (iokit-user-client-class "IOHIDParamUserClient")
@@ -843,6 +852,9 @@
         ;; QuickTimeIIDCDigitizer assistant
         (global-name "com.apple.IIDCAssistant"))
     (allow iokit-open
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101500
+        (with report) (with telemetry)
+#endif
         ;; QuickTimeUSBVDCDigitizer
         (iokit-user-client-class "IOUSBDeviceUserClientV2")
         (iokit-user-client-class "IOUSBInterfaceUserClientV2"))

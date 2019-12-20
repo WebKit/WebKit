@@ -87,7 +87,7 @@
     (allow user-preference-read user-preference-write (apply preference-domain domains)))
 
 (define-once (framebuffer-access)
-    (allow iokit-open
+    (allow iokit-open (with report) (with telemetry)
            (iokit-user-client-class "IOMobileFramebufferUserClient"))
 
     ; IOMobileFramebuffer
@@ -121,7 +121,7 @@
         (mobile-preferences-read "com.apple.MobileAsset")))
 
 (define-once (mobile-keybag-access)
-     (allow iokit-open
+     (allow iokit-open (with report) (with telemetry)
             (iokit-user-client-class "AppleKeyStoreUserClient")))
 
 (define-once (location-services)
@@ -425,7 +425,7 @@
             (iokit-property "gyro-interrupt-calibration")))
     (with-filter
         (iokit-registry-entry-class "IOHIDEventServiceFastPathUserClient")
-        (allow iokit-open)
+        (allow iokit-open (with report) (with telemetry))
         (allow iokit-get-properties iokit-set-properties
             (iokit-property "interval"
                             "mode"
@@ -462,7 +462,8 @@
     (allow iokit-open
         (iokit-user-client-class "AppleJPEGDriverUserClient")
         (iokit-user-client-class "IOSurfaceAcceleratorClient")
-        (iokit-user-client-class "IOSurfaceSendRight")
+        (iokit-user-client-class "IOSurfaceSendRight"))
+    (allow iokit-open (with report) (with telemetry)
         ;; Requires by UIView -> UITextMagnifierRenderer -> UIWindow
         (iokit-user-client-class "IOSurfaceRootUserClient"))
 

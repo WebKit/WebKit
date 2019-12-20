@@ -55,7 +55,7 @@
 ;; enough access to make it possible.
 
 ;; IOKit user clients
-(allow iokit-open
+(allow iokit-open (with report) (with telemetry)
        (iokit-user-client-class "RootDomainUserClient"))
 
 ;; Various services required by CFNetwork and other frameworks

@@ -133,6 +133,9 @@
 
 ;; IOKit user clients
 (allow iokit-open
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101500
+    (with report) (with telemetry)
+#endif
     (iokit-user-client-class "RootDomainUserClient"))
 
 ;; cookied.
