@@ -215,6 +215,7 @@ void RenderTreeBuilder::Ruby::attach(RenderRubyRun& parent, RenderPtr<RenderObje
             RenderElement* ruby = parent.parent();
             ASSERT(isRuby(ruby));
             auto newRun = RenderRubyRun::staticCreateRubyRun(ruby);
+            auto& run = *newRun;
             m_builder.attach(*ruby, WTFMove(newRun), parent.nextSibling());
             // Add the new ruby text and move the old one to the new run
             // Note: Doing it in this order and not using RenderRubyRun's methods,
@@ -223,7 +224,7 @@ void RenderTreeBuilder::Ruby::attach(RenderRubyRun& parent, RenderPtr<RenderObje
             m_builder.blockFlowBuilder().attach(parent, WTFMove(child), beforeChild);
             auto takenBeforeChild = m_builder.blockBuilder().detach(parent, *beforeChild);
 
-            m_builder.attach(*newRun, WTFMove(takenBeforeChild));
+            m_builder.attach(run, WTFMove(takenBeforeChild));
             return;
         }
         if (parent.hasRubyBase()) {

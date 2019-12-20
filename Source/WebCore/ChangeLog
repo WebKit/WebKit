@@ -1,5 +1,17 @@
 2019-12-19  Jack Lee  <shihchieh_lee@apple.com>
 
+        Nullptr crash in WebCore::RenderTreeBuilder::attach
+        https://bugs.webkit.org/show_bug.cgi?id=205476
+
+        Reviewed by Ryosuke Niwa.
+
+        Test: fast/ruby/crash-insert-duplicate-rt-element.html
+
+        * rendering/updating/RenderTreeBuilderRuby.cpp:
+        (WebCore::RenderTreeBuilder::Ruby::attach):
+
+2019-12-19  Jack Lee  <shihchieh_lee@apple.com>
+
         Nullptr crash in WebCore::findPlaceForCounter with display: contents parent
         https://bugs.webkit.org/show_bug.cgi?id=205290
 
