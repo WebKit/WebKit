@@ -1,3 +1,19 @@
+2019-12-20  Rob Buis  <rbuis@igalia.com>
+
+        Fetch: handle emtpy Location value
+        https://bugs.webkit.org/show_bug.cgi?id=205462
+
+        Reviewed by Youenn Fablet.
+
+        Handle empty Location value on redirect as specified here:
+        https://fetch.spec.whatwg.org/#concept-http-redirect-fetch step 3
+
+        Tests: web-platform-tests/fetch/api/redirect/redirect-empty-location.any.html
+               web-platform-tests/fetch/api/redirect/redirect-empty-location.any.worker.html
+
+        * loader/SubresourceLoader.cpp:
+        (WebCore::SubresourceLoader::didReceiveResponse):
+
 2019-12-20  youenn fablet  <youenn@apple.com>
 
         DOMPromise::whenPromiseIsSettled is asserting in service worker

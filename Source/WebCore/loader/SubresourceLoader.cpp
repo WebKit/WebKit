@@ -326,6 +326,12 @@ void SubresourceLoader::didReceivePreviewResponse(const ResourceResponse& respon
 
 #endif
 
+static bool isLocationURLFailure(const ResourceResponse& response)
+{
+    auto locationString = response.httpHeaderField(HTTPHeaderName::Location);
+    return !locationString.isNull() && locationString.isEmpty();
+}
+
 void SubresourceLoader::didReceiveResponse(const ResourceResponse& response, CompletionHandler<void()>&& policyCompletionHandler)
 {
     ASSERT(!response.isNull());
@@ -401,14 +407,21 @@ void SubresourceLoader::didReceiveResponse(const ResourceResponse& response, Com
         return;
     }
 
-    if (options().redirect == FetchOptions::Redirect::Manual && response.isRedirection()) {
-        ResourceResponse opaqueRedirectedResponse = response;
-        opaqueRedirectedResponse.setType(ResourceResponse::Type::Opaqueredirect);
-        opaqueRedirectedResponse.setTainting(ResourceResponse::Tainting::Opaqueredirect);
-        m_resource->responseReceived(opaqueRedirectedResponse);
-        if (!reachedTerminalState())
-            ResourceLoader::didReceiveResponse(opaqueRedirectedResponse, [completionHandlerCaller = WTFMove(completionHandlerCaller)] { });
-        return;
+    if (response.isRedirection()) {
+        if (options().redirect == FetchOptions::Redirect::Follow && isLocationURLFailure(response)) {
+            // Implementing https://fetch.spec.whatwg.org/#concept-http-redirect-fetch step 3
+            cancel();
+            return;
+        }
+        if (options().redirect == FetchOptions::Redirect::Manual) {
+            ResourceResponse opaqueRedirectedResponse = response;
+            opaqueRedirectedResponse.setType(ResourceResponse::Type::Opaqueredirect);
+            opaqueRedirectedResponse.setTainting(ResourceResponse::Tainting::Opaqueredirect);
+            m_resource->responseReceived(opaqueRedirectedResponse);
+            if (!reachedTerminalState())
+                ResourceLoader::didReceiveResponse(opaqueRedirectedResponse, [completionHandlerCaller = WTFMove(completionHandlerCaller)] { });
+            return;
+        }
     }
     m_resource->responseReceived(response);
     if (reachedTerminalState())
