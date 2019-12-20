@@ -33,6 +33,8 @@
 namespace WebCore {
 namespace Layout {
 
+struct ContinousContent;
+
 class LineLayoutContext {
 public:
     LineLayoutContext(const InlineFormattingContext&, const Container& formattingContextRoot, const InlineItems&);
@@ -49,25 +51,30 @@ public:
         const Display::LineBox lineBox;
     };
     LineContent layoutLine(LineBuilder&, unsigned leadingInlineItemIndex, Optional<unsigned> partialLeadingContentLength);
+    using FloatList = Vector<WeakPtr<InlineItem>>;
 
 private:
-    const InlineFormattingContext& formattingContext() const { return m_inlineFormattingContext; }
     enum class IsEndOfLine { No, Yes };
-    IsEndOfLine placeInlineItem(LineBuilder&, const InlineItem&);
-    void commitPendingContent(LineBuilder&);
-    LineContent close(LineBuilder&, unsigned leadingInlineItemIndex);
-    bool shouldProcessUncommittedContent(const InlineItem&) const;
-    IsEndOfLine processUncommittedContent(LineBuilder&);
+    struct CommittedContent {
+        IsEndOfLine isEndOfLine;
+        size_t count { 0 };
+        Optional <LineContent::PartialContent> partialContent;
+    };
+    ContinousContent nextContinousContentForLine(unsigned inlineItemIndex, Optional<unsigned> overflowLength, InlineLayoutUnit currentLogicalRight);
+    CommittedContent addFloatItems(LineBuilder&, const FloatList&);
+    CommittedContent placeInlineContentOnCurrentLine(LineBuilder&, const LineBreaker::RunList&);
+    void commitContent(LineBuilder&, const LineBreaker::RunList&, Optional<LineBreaker::BreakingContext::PartialTrailingContent>);
+    LineContent close(LineBuilder&, unsigned leadingInlineItemIndex, unsigned committedInlineItemCount, Optional<LineContent::PartialContent>);
+
+    const InlineFormattingContext& formattingContext() const { return m_inlineFormattingContext; }
+    const Container& root() const { return m_formattingContextRoot; }
 
     const InlineFormattingContext& m_inlineFormattingContext;
     const Container& m_formattingContextRoot;
     const InlineItems& m_inlineItems;
-    LineBreaker::Content m_uncommittedContent;
-    unsigned m_committedInlineItemCount { 0 };
-    Vector<WeakPtr<InlineItem>> m_floats;
+    FloatList m_floats;
     std::unique_ptr<InlineTextItem> m_partialLeadingTextItem;
     std::unique_ptr<InlineTextItem> m_partialTrailingTextItem;
-    Optional<LineContent::PartialContent> m_partialContent;
     unsigned m_successiveHyphenatedLineCount { 0 };
 };
 

@@ -1,3 +1,62 @@
+2019-12-20  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] Refactor LineLayoutContext class
+        https://bugs.webkit.org/show_bug.cgi?id=205494
+        <rdar://problem/58109493>
+
+        Reviewed by Antti Koivisto.
+
+        This patch is in preparation for being able to pre-scan the inline content for soft wrap opportunities.
+
+        Currently processing the inline content means pushing the inline items to an uncommitted queue until after
+        we find a soft wrap opportunity and then we ask the LineBreaker whether this uncommitted, "continuous content" can be placed
+        on the current line.
+        while (has unprocessed inline item) {
+            get next inline item
+            if (inline item is at a soft wrap opportunity)
+                sumbit uncommitted queue to line breaking
+            else
+                add to uncommitted queue
+        }
+        This patch omits the uncommitted queue by collecting the inline items first. This removes some code complexity and it also
+        helps to be able to pre-scan the content for soft wrap opportunities.
+        while (has unprocessed inline item) {
+            get next continuous content
+            submit content to line breaking
+        }
+
+        * layout/inlineformatting/InlineLineBreaker.cpp:
+        (WebCore::Layout::endsWithSoftWrapOpportunity):
+        (WebCore::Layout::LineBreaker::ContinousContent::ContinousContent):
+        * layout/inlineformatting/InlineLineBreaker.h:
+        (WebCore::Layout::LineBreaker::Run::Run):
+        * layout/inlineformatting/LineLayoutContext.cpp:
+        (WebCore::Layout::ContinousContent::hasIntrusiveFloats const):
+        (WebCore::Layout::ContinousContent::runs const):
+        (WebCore::Layout::ContinousContent::floats const):
+        (WebCore::Layout::ContinousContent::endsWithLineBreak const):
+        (WebCore::Layout::ContinousContent::setEndsWithLineBreak):
+        (WebCore::Layout::ContinousContent::append):
+        (WebCore::Layout::LineLayoutContext::layoutLine):
+        (WebCore::Layout::LineLayoutContext::close):
+        (WebCore::Layout::LineLayoutContext::nextContinousContentForLine):
+        (WebCore::Layout::LineLayoutContext::addFloatItems):
+        (WebCore::Layout::LineLayoutContext::placeInlineContentOnCurrentLine):
+        (WebCore::Layout::LineLayoutContext::commitContent):
+        (WebCore::Layout::LineLayoutContext::commitPendingContent): Deleted.
+        (WebCore::Layout::LineLayoutContext::placeInlineItem): Deleted.
+        (WebCore::Layout::LineLayoutContext::processUncommittedContent): Deleted.
+        (WebCore::Layout::LineLayoutContext::UncommittedContent::append): Deleted.
+        (WebCore::Layout::LineLayoutContext::UncommittedContent::reset): Deleted.
+        (WebCore::Layout::LineLayoutContext::UncommittedContent::shrink): Deleted.
+        * layout/inlineformatting/LineLayoutContext.h:
+        (WebCore::Layout::LineLayoutContext::formattingContext const):
+        (WebCore::Layout::LineLayoutContext::root const):
+        (WebCore::Layout::LineLayoutContext::UncommittedContent::width const): Deleted.
+        (WebCore::Layout::LineLayoutContext::UncommittedContent::size): Deleted.
+        (WebCore::Layout::LineLayoutContext::UncommittedContent::isEmpty): Deleted.
+        (WebCore::Layout::LineLayoutContext::UncommittedContent::runs const): Deleted.
+
 2019-12-20  Rob Buis  <rbuis@igalia.com>
 
         Fetch: handle emtpy Location value

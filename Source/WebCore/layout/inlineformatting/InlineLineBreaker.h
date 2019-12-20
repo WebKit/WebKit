@@ -51,12 +51,16 @@ public:
         ContentWrappingRule contentWrappingRule;
         struct PartialTrailingContent {
             unsigned triailingRunIndex { 0 };
-            Optional<PartialRun> partialRun; // Empty partial run means the trailing run is a complete run.
+            Optional<PartialRun> partialRun; // nullopt partial run means the trailing run is a complete run.
         };
         Optional<PartialTrailingContent> partialTrailingContent;
     };
 
     struct Run {
+        Run(const InlineItem&, InlineLayoutUnit);
+        Run(const Run&);
+        Run& operator=(const Run&);
+
         const InlineItem& inlineItem;
         InlineLayoutUnit logicalWidth { 0 };
     };
@@ -72,18 +76,15 @@ public:
     // [content]
     // [container start][span1][container end][between][container start][span2][container end]
     // see https://drafts.csswg.org/css-text-3/#line-break-details
-    struct Content {
-        void append(const InlineItem&, InlineLayoutUnit logicalWidth);
-        void reset();
-        void shrink(unsigned newSize);
+    struct ContinousContent {
+        ContinousContent(const RunList&);
 
-        RunList& runs() { return m_continousRuns; }
-        const RunList& runs() const { return m_continousRuns; }
-        bool isEmpty() const { return m_continousRuns.isEmpty(); }
+        const RunList& runs() const { return m_runs; }
+        bool isEmpty() const { return m_runs.isEmpty(); }
         bool hasTextContentOnly() const;
         bool isVisuallyEmptyWhitespaceContentOnly() const;
         bool hasNonContentRunsOnly() const;
-        unsigned size() const { return m_continousRuns.size(); }
+        size_t size() const { return m_runs.size(); }
         InlineLayoutUnit width() const { return m_width; }
         InlineLayoutUnit nonCollapsibleWidth() const { return m_width - m_trailingCollapsibleContent.width; }
 
@@ -93,7 +94,7 @@ public:
         Optional<unsigned> firstTextRunIndex() const;
 
     private:
-        RunList m_continousRuns;
+        RunList m_runs;
         struct TrailingCollapsibleContent {
             void reset();
 
@@ -110,7 +111,7 @@ public:
         bool lineHasFullyCollapsibleTrailingRun { false };
         bool lineIsEmpty { true };
     };
-    BreakingContext breakingContextForInlineContent(const Content& candidateRuns, const LineStatus&);
+    BreakingContext breakingContextForInlineContent(const ContinousContent& candidateRuns, const LineStatus&);
     bool shouldWrapFloatBox(InlineLayoutUnit floatLogicalWidth, InlineLayoutUnit availableWidth, bool lineIsEmpty);
 
     void setHyphenationDisabled() { n_hyphenationIsDisabled = true; }
@@ -133,6 +134,18 @@ private:
 
     bool n_hyphenationIsDisabled { false };
 };
+
+inline LineBreaker::Run::Run(const InlineItem& inlineItem, InlineLayoutUnit logicalWidth)
+    : inlineItem(inlineItem)
+    , logicalWidth(logicalWidth)
+{
+}
+
+inline LineBreaker::Run::Run(const Run& other)
+    : inlineItem(other.inlineItem)
+    , logicalWidth(other.logicalWidth)
+{
+}
 
 }
 }
