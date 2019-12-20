@@ -1,5 +1,16 @@
 2019-12-20  Tim Horton  <timothy_horton@apple.com>
 
+        Clean up and generalize some interaction additions
+        https://bugs.webkit.org/show_bug.cgi?id=205430
+
+        Reviewed by Wenson Hsieh.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView setupInteraction]):
+        (-[WKContentView cleanupInteraction]):
+
+2019-12-20  Tim Horton  <timothy_horton@apple.com>
+
         Expose approximate caret extents for the hit line via InteractionInformationAtPosition
         https://bugs.webkit.org/show_bug.cgi?id=205526
         <rdar://problem/57983076>

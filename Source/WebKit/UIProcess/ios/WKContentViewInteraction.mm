@@ -151,8 +151,8 @@
 #import <WebKitAdditions/WKPlatformFileUploadPanel.mm>
 #endif
 
-#if HAVE(PENCILKIT_ADDITIONS)
-#import <WebKitAdditions/WebKitPencilAdditions.h>
+#if USE(APPLE_INTERNAL_SDK)
+#import <WebKitAdditions/WKContentViewInteractionAdditions.mm>
 #endif
 
 #if ENABLE(POINTER_EVENTS)
@@ -818,8 +818,8 @@ static inline bool hasFocusedElement(WebKit::FocusedElementInformation focusedEl
     [self setupDragAndDropInteractions];
 #endif
 
-#if HAVE(PENCILKIT_ADDITIONS)
-    [self setupPencilInteraction];
+#if USE(APPLE_INTERNAL_SDK)
+    [self setupAdditionalInteractions];
 #endif
 
     _twoFingerSingleTapGestureRecognizer = adoptNS([[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(_twoFingerSingleTapGestureRecognized:)]);
@@ -986,8 +986,8 @@ static inline bool hasFocusedElement(WebKit::FocusedElementInformation focusedEl
     [self teardownDragAndDropInteractions];
 #endif
 
-#if HAVE(PENCILKIT_ADDITIONS)
-    [self cleanupPencilInteraction];
+#if USE(APPLE_INTERNAL_SDK)
+    [self cleanupAdditionalInteractions];
 #endif
 
     _inspectorNodeSearchEnabled = NO;
