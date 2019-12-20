@@ -214,6 +214,7 @@ void AXObjectCache::setEnhancedUserInterfaceAccessibility(bool flag)
 
 AXObjectCache::AXObjectCache(Document& document)
     : m_document(document)
+    , m_pageID(document.pageID())
     , m_notificationPostTimer(*this, &AXObjectCache::notificationPostTimerFired)
     , m_passwordNotificationPostTimer(*this, &AXObjectCache::passwordNotificationPostTimerFired)
     , m_liveRegionChangedPostTimer(*this, &AXObjectCache::liveRegionChangedNotificationPostTimerFired)
@@ -401,12 +402,12 @@ AXCoreObject* AXObjectCache::isolatedTreeFocusedObject(Document& document)
 void AXObjectCache::setIsolatedTreeFocusedObject(Node* focusedNode)
 {
     ASSERT(isMainThread());
-    auto* focus = getOrCreate(focusedNode);
-    auto pageID = m_document.pageID();
-    if (!pageID)
+    if (!m_pageID)
         return;
 
-    if (auto tree = AXIsolatedTree::treeForPageID(*pageID))
+    auto* focus = getOrCreate(focusedNode);
+
+    if (auto tree = AXIsolatedTree::treeForPageID(*m_pageID))
         tree->setFocusedNodeID(focus ? focus->objectID() : InvalidAXID);
 }
 #endif
@@ -735,14 +736,12 @@ AXCoreObject* AXObjectCache::rootObject()
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
 AXCoreObject* AXObjectCache::isolatedTreeRootObject()
 {
-    ASSERT(isMainThread());
-    auto pageID = m_document.pageID();
-    if (!pageID)
+    if (!m_pageID)
         return nullptr;
 
-    auto tree = AXIsolatedTree::treeForPageID(*pageID);
-    if (!tree) {
-        tree = generateIsolatedTree(*pageID, m_document);
+    auto tree = AXIsolatedTree::treeForPageID(*m_pageID);
+    if (!tree && isMainThread()) {
+        tree = generateIsolatedTree(*m_pageID, m_document);
         // Now that we have created our tree, initialize the secondary thread,
         // so future requests come in on the other thread.
         _AXUIElementUseSecondaryAXThread(true);
@@ -845,8 +844,8 @@ void AXObjectCache::remove(AXID axID)
 
     m_idsInUse.remove(axID);
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
-    if (auto pageID = m_document.pageID()) {
-        if (auto tree = AXIsolatedTree::treeForPageID(*pageID))
+    if (m_pageID) {
+        if (auto tree = AXIsolatedTree::treeForPageID(*m_pageID))
             tree->removeNode(axID);
     }
 #endif

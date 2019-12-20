@@ -2075,10 +2075,9 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     if (role == AccessibilityRole::Footer)
         return @"AXFooter";
 
-    if (is<AccessibilitySpinButtonPart>(*m_object)) {
-        if (downcast<AccessibilitySpinButtonPart>(*m_object).isIncrementor())
+    if (m_object->roleValue() == AccessibilityRole::SpinButtonPart) {
+        if (m_object->isIncrementor())
             return NSAccessibilityIncrementArrowSubrole;
-        
         return NSAccessibilityDecrementArrowSubrole;
     }
     
@@ -3863,10 +3862,6 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     if (![self updateObjectBackingStore])
         return nil;
     
-    AXObjectCache* cache = m_object->axObjectCache();
-    if (!cache)
-        return nil;
-    
     // common parameter type check/casting.  Nil checks in handlers catch wrong type case.
     // NOTE: This assumes nil is not a valid parameter, because it is indistinguishable from
     // a parameter of the wrong type.
@@ -3960,16 +3955,29 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     }
 
     if ([attribute isEqualToString:NSAccessibilityEndTextMarkerForBoundsParameterizedAttribute]) {
-        IntRect webCoreRect = [self screenToContents:enclosingIntRect(rect)];
-        CharacterOffset characterOffset = cache->characterOffsetForBounds(webCoreRect, false);
-        return [self textMarkerForCharacterOffset:characterOffset];
+        return Accessibility::retrieveValueFromMainThread<id>([&rect, protectedSelf = RetainPtr<WebAccessibilityObjectWrapper>(self)] () -> id {
+            auto* cache = protectedSelf->m_object->axObjectCache();
+            if (!cache)
+                return nil;
+
+            IntRect webCoreRect = [protectedSelf screenToContents:enclosingIntRect(rect)];
+            CharacterOffset characterOffset = cache->characterOffsetForBounds(webCoreRect, false);
+            return [protectedSelf textMarkerForCharacterOffset:characterOffset];
+        });
     }
+
     if ([attribute isEqualToString:NSAccessibilityStartTextMarkerForBoundsParameterizedAttribute]) {
-        IntRect webCoreRect = [self screenToContents:enclosingIntRect(rect)];
-        CharacterOffset characterOffset = cache->characterOffsetForBounds(webCoreRect, true);
-        return [self textMarkerForCharacterOffset:characterOffset];
+        return Accessibility::retrieveValueFromMainThread<id>([&rect, protectedSelf = RetainPtr<WebAccessibilityObjectWrapper>(self)] () -> id {
+            auto* cache = protectedSelf->m_object->axObjectCache();
+            if (!cache)
+                return nil;
+
+            IntRect webCoreRect = [protectedSelf screenToContents:enclosingIntRect(rect)];
+            CharacterOffset characterOffset = cache->characterOffsetForBounds(webCoreRect, true);
+            return [protectedSelf textMarkerForCharacterOffset:characterOffset];
+        });
     }
-    
+
     if ([attribute isEqualToString:NSAccessibilityLineTextMarkerRangeForTextMarkerParameterizedAttribute]) {
         VisiblePosition visiblePosition = [self visiblePositionForTextMarker:textMarker];
         VisiblePositionRange visiblePositionRange = m_object->lineRangeForPosition(visiblePosition);
@@ -4024,45 +4032,66 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         RefPtr<Range> range = [self rangeForTextMarkerRange:textMarkerRange];
         return m_object->stringForRange(range);
     }
-    
+
     if ([attribute isEqualToString:@"AXTextMarkerForPosition"]) {
         IntPoint webCorePoint = IntPoint(point);
         if (!pointSet)
             return nil;
-        CharacterOffset characterOffset = cache->characterOffsetForPoint(webCorePoint, m_object);
-        return [self textMarkerForCharacterOffset:characterOffset];
+
+        return Accessibility::retrieveValueFromMainThread<id>([&webCorePoint, protectedSelf = RetainPtr<WebAccessibilityObjectWrapper>(self)] () -> id {
+            auto* cache = protectedSelf->m_object->axObjectCache();
+            if (!cache)
+                return nil;
+
+            CharacterOffset characterOffset = cache->characterOffsetForPoint(webCorePoint, protectedSelf->m_object);
+            return [protectedSelf textMarkerForCharacterOffset:characterOffset];
+        });
     }
-    
+
     if ([attribute isEqualToString:@"AXBoundsForTextMarkerRange"]) {
         RefPtr<Range> range = [self rangeForTextMarkerRange:textMarkerRange];
         auto bounds = FloatRect(m_object->boundsForRange(range));
         NSRect rect = [self convertRectToSpace:bounds space:AccessibilityConversionSpace::Screen];
         return [NSValue valueWithRect:rect];
     }
-    
+
     if ([attribute isEqualToString:NSAccessibilityBoundsForRangeParameterizedAttribute]) {
-        CharacterOffset start = cache->characterOffsetForIndex(range.location, m_object);
-        CharacterOffset end = cache->characterOffsetForIndex(range.location+range.length, m_object);
-        if (start.isNull() || end.isNull())
-            return nil;
-        RefPtr<Range> range = cache->rangeForUnorderedCharacterOffsets(start, end);
-        auto bounds = FloatRect(m_object->boundsForRange(range));
-        NSRect rect = [self convertRectToSpace:bounds space:AccessibilityConversionSpace::Screen];
+        NSRect rect = Accessibility::retrieveValueFromMainThread<NSRect>([&range, protectedSelf = RetainPtr<WebAccessibilityObjectWrapper>(self)] () -> NSRect {
+            auto* cache = protectedSelf->m_object->axObjectCache();
+            if (!cache)
+                return CGRectZero;
+
+            CharacterOffset start = cache->characterOffsetForIndex(range.location, protectedSelf->m_object);
+            CharacterOffset end = cache->characterOffsetForIndex(range.location+range.length, protectedSelf->m_object);
+            if (start.isNull() || end.isNull())
+                return CGRectZero;
+
+            RefPtr<Range> range = cache->rangeForUnorderedCharacterOffsets(start, end);
+            auto bounds = FloatRect(protectedSelf->m_object->boundsForRange(range));
+            return [protectedSelf convertRectToSpace:bounds space:AccessibilityConversionSpace::Screen];
+        });
         return [NSValue valueWithRect:rect];
     }
-    
+
     if ([attribute isEqualToString:NSAccessibilityStringForRangeParameterizedAttribute]) {
         if (m_object->isTextControl()) {
             PlainTextRange plainTextRange = PlainTextRange(range.location, range.length);
             return m_object->doAXStringForRange(plainTextRange);
         }
-        
-        CharacterOffset start = cache->characterOffsetForIndex(range.location, m_object);
-        CharacterOffset end = cache->characterOffsetForIndex(range.location + range.length, m_object);
-        if (start.isNull() || end.isNull())
-            return nil;
-        RefPtr<Range> range = cache->rangeForUnorderedCharacterOffsets(start, end);
-        return m_object->stringForRange(range);
+
+        return Accessibility::retrieveValueFromMainThread<NSString *>([&range, protectedSelf = RetainPtr<WebAccessibilityObjectWrapper>(self)] () -> NSString * {
+            auto* cache = protectedSelf->m_object->axObjectCache();
+            if (!cache)
+                return nil;
+
+            CharacterOffset start = cache->characterOffsetForIndex(range.location, protectedSelf->m_object);
+            CharacterOffset end = cache->characterOffsetForIndex(range.location + range.length, protectedSelf->m_object);
+            if (start.isNull() || end.isNull())
+                return nil;
+
+            RefPtr<Range> range = cache->rangeForUnorderedCharacterOffsets(start, end);
+            return protectedSelf->m_object->stringForRange(range);
+        });
     }
 
     if ([attribute isEqualToString:@"AXAttributedStringForTextMarkerRange"])
@@ -4088,18 +4117,24 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     if ([attribute isEqualToString:@"AXTextMarkerRangeForUnorderedTextMarkers"]) {
         if ([array count] < 2)
             return nil;
-        
+
         id textMarker1 = [array objectAtIndex:0];
         id textMarker2 = [array objectAtIndex:1];
         if (!AXObjectIsTextMarker(textMarker1) || !AXObjectIsTextMarker(textMarker2))
             return nil;
-        
-        CharacterOffset characterOffset1 = [self characterOffsetForTextMarker:textMarker1];
-        CharacterOffset characterOffset2 = [self characterOffsetForTextMarker:textMarker2];
-        RefPtr<Range> range = cache->rangeForUnorderedCharacterOffsets(characterOffset1, characterOffset2);
-        return [self textMarkerRangeFromRange:range];
+
+        return Accessibility::retrieveValueFromMainThread<id>([textMarker1, textMarker2, protectedSelf = RetainPtr<WebAccessibilityObjectWrapper>(self)] () -> id {
+            auto* cache = protectedSelf->m_object->axObjectCache();
+            if (!cache)
+                return nil;
+
+            CharacterOffset characterOffset1 = [protectedSelf characterOffsetForTextMarker:textMarker1];
+            CharacterOffset characterOffset2 = [protectedSelf characterOffsetForTextMarker:textMarker2];
+            RefPtr<Range> range = cache->rangeForUnorderedCharacterOffsets(characterOffset1, characterOffset2);
+            return [protectedSelf textMarkerRangeFromRange:range];
+        });
     }
-    
+
     if ([attribute isEqualToString:@"AXNextTextMarkerForTextMarker"]) {
         CharacterOffset characterOffset = [self characterOffsetForTextMarker:textMarker];
         return [self nextTextMarkerForCharacterOffset:characterOffset];
@@ -4109,19 +4144,31 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         CharacterOffset characterOffset = [self characterOffsetForTextMarker:textMarker];
         return [self previousTextMarkerForCharacterOffset:characterOffset];
     }
-    
+
     if ([attribute isEqualToString:@"AXLeftWordTextMarkerRangeForTextMarker"]) {
-        CharacterOffset characterOffset = [self characterOffsetForTextMarker:textMarker];
-        RefPtr<Range> range = cache->leftWordRange(characterOffset);
-        return [self textMarkerRangeFromRange:range];
+        return Accessibility::retrieveValueFromMainThread<id>([textMarker, protectedSelf = RetainPtr<WebAccessibilityObjectWrapper>(self)] () -> id {
+            auto* cache = protectedSelf->m_object->axObjectCache();
+            if (!cache)
+                return nil;
+
+            CharacterOffset characterOffset = [protectedSelf characterOffsetForTextMarker:textMarker];
+            RefPtr<Range> range = cache->leftWordRange(characterOffset);
+            return [protectedSelf textMarkerRangeFromRange:range];
+        });
     }
-    
+
     if ([attribute isEqualToString:@"AXRightWordTextMarkerRangeForTextMarker"]) {
-        CharacterOffset characterOffset = [self characterOffsetForTextMarker:textMarker];
-        RefPtr<Range> range = cache->rightWordRange(characterOffset);
-        return [self textMarkerRangeFromRange:range];
+        return Accessibility::retrieveValueFromMainThread<id>([textMarker, protectedSelf = RetainPtr<WebAccessibilityObjectWrapper>(self)] () -> id {
+            auto* cache = protectedSelf->m_object->axObjectCache();
+            if (!cache)
+                return nil;
+
+            CharacterOffset characterOffset = [protectedSelf characterOffsetForTextMarker:textMarker];
+            RefPtr<Range> range = cache->rightWordRange(characterOffset);
+            return [protectedSelf textMarkerRangeFromRange:range];
+        });
     }
-    
+
     if ([attribute isEqualToString:@"AXLeftLineTextMarkerRangeForTextMarker"]) {
         VisiblePosition visiblePos = [self visiblePositionForTextMarker:(textMarker)];
         VisiblePositionRange vpRange = m_object->leftLineVisiblePositionRange(visiblePos);
@@ -4133,31 +4180,55 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         VisiblePositionRange vpRange = m_object->rightLineVisiblePositionRange(visiblePos);
         return [self textMarkerRangeFromVisiblePositions:vpRange.start endPosition:vpRange.end];
     }
-    
+
     if ([attribute isEqualToString:@"AXSentenceTextMarkerRangeForTextMarker"]) {
-        CharacterOffset characterOffset = [self characterOffsetForTextMarker:textMarker];
-        RefPtr<Range> range = cache->sentenceForCharacterOffset(characterOffset);
-        return [self textMarkerRangeFromRange:range];
+        return Accessibility::retrieveValueFromMainThread<id>([textMarker, protectedSelf = RetainPtr<WebAccessibilityObjectWrapper>(self)] () -> id {
+            auto* cache = protectedSelf->m_object->axObjectCache();
+            if (!cache)
+                return nil;
+
+            CharacterOffset characterOffset = [protectedSelf characterOffsetForTextMarker:textMarker];
+            RefPtr<Range> range = cache->sentenceForCharacterOffset(characterOffset);
+            return [protectedSelf textMarkerRangeFromRange:range];
+        });
     }
-    
+
     if ([attribute isEqualToString:@"AXParagraphTextMarkerRangeForTextMarker"]) {
-        CharacterOffset characterOffset = [self characterOffsetForTextMarker:textMarker];
-        RefPtr<Range> range = cache->paragraphForCharacterOffset(characterOffset);
-        return [self textMarkerRangeFromRange:range];
+        return Accessibility::retrieveValueFromMainThread<id>([textMarker, protectedSelf = RetainPtr<WebAccessibilityObjectWrapper>(self)] () -> id {
+            auto* cache = protectedSelf->m_object->axObjectCache();
+            if (!cache)
+                return nil;
+
+            CharacterOffset characterOffset = [protectedSelf characterOffsetForTextMarker:textMarker];
+            RefPtr<Range> range = cache->paragraphForCharacterOffset(characterOffset);
+            return [protectedSelf textMarkerRangeFromRange:range];
+        });
     }
-    
+
     if ([attribute isEqualToString:@"AXNextWordEndTextMarkerForTextMarker"]) {
-        CharacterOffset characterOffset = [self characterOffsetForTextMarker:textMarker];
-        CharacterOffset nextEnd = cache->nextWordEndCharacterOffset(characterOffset);
-        return [self textMarkerForCharacterOffset:nextEnd];
+        return Accessibility::retrieveValueFromMainThread<id>([textMarker, protectedSelf = RetainPtr<WebAccessibilityObjectWrapper>(self)] () -> id {
+            auto* cache = protectedSelf->m_object->axObjectCache();
+            if (!cache)
+                return nil;
+
+            CharacterOffset characterOffset = [protectedSelf characterOffsetForTextMarker:textMarker];
+            CharacterOffset nextEnd = cache->nextWordEndCharacterOffset(characterOffset);
+            return [protectedSelf textMarkerForCharacterOffset:nextEnd];
+        });
     }
-    
+
     if ([attribute isEqualToString:@"AXPreviousWordStartTextMarkerForTextMarker"]) {
-        CharacterOffset characterOffset = [self characterOffsetForTextMarker:textMarker];
-        CharacterOffset previousStart = cache->previousWordStartCharacterOffset(characterOffset);
-        return [self textMarkerForCharacterOffset:previousStart];
+        return Accessibility::retrieveValueFromMainThread<id>([textMarker, protectedSelf = RetainPtr<WebAccessibilityObjectWrapper>(self)] () -> id {
+            auto* cache = protectedSelf->m_object->axObjectCache();
+            if (!cache)
+                return nil;
+
+            CharacterOffset characterOffset = [protectedSelf characterOffsetForTextMarker:textMarker];
+            CharacterOffset previousStart = cache->previousWordStartCharacterOffset(characterOffset);
+            return [protectedSelf textMarkerForCharacterOffset:previousStart];
+        });
     }
-    
+
     if ([attribute isEqualToString:@"AXNextLineEndTextMarkerForTextMarker"]) {
         VisiblePosition visiblePos = [self visiblePositionForTextMarker:(textMarker)];
         return [self textMarkerForVisiblePosition:m_object->nextLineEndPosition(visiblePos)];
@@ -4169,29 +4240,53 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     }
     
     if ([attribute isEqualToString:@"AXNextSentenceEndTextMarkerForTextMarker"]) {
-        CharacterOffset characterOffset = [self characterOffsetForTextMarker:textMarker];
-        CharacterOffset nextEnd = cache->nextSentenceEndCharacterOffset(characterOffset);
-        return [self textMarkerForCharacterOffset:nextEnd];
+        return Accessibility::retrieveValueFromMainThread<id>([textMarker, protectedSelf = RetainPtr<WebAccessibilityObjectWrapper>(self)] () -> id {
+            auto* cache = protectedSelf->m_object->axObjectCache();
+            if (!cache)
+                return nil;
+            
+            CharacterOffset characterOffset = [protectedSelf characterOffsetForTextMarker:textMarker];
+            CharacterOffset nextEnd = cache->nextSentenceEndCharacterOffset(characterOffset);
+            return [protectedSelf textMarkerForCharacterOffset:nextEnd];
+        });
     }
-    
+
     if ([attribute isEqualToString:@"AXPreviousSentenceStartTextMarkerForTextMarker"]) {
-        CharacterOffset characterOffset = [self characterOffsetForTextMarker:textMarker];
-        CharacterOffset previousStart = cache->previousSentenceStartCharacterOffset(characterOffset);
-        return [self textMarkerForCharacterOffset:previousStart];
+        return Accessibility::retrieveValueFromMainThread<id>([textMarker, protectedSelf = RetainPtr<WebAccessibilityObjectWrapper>(self)] () -> id {
+            auto* cache = protectedSelf->m_object->axObjectCache();
+            if (!cache)
+                return nil;
+
+            CharacterOffset characterOffset = [protectedSelf characterOffsetForTextMarker:textMarker];
+            CharacterOffset previousStart = cache->previousSentenceStartCharacterOffset(characterOffset);
+            return [protectedSelf textMarkerForCharacterOffset:previousStart];
+        });
     }
-    
+
     if ([attribute isEqualToString:@"AXNextParagraphEndTextMarkerForTextMarker"]) {
-        CharacterOffset characterOffset = [self characterOffsetForTextMarker:textMarker];
-        CharacterOffset nextEnd = cache->nextParagraphEndCharacterOffset(characterOffset);
-        return [self textMarkerForCharacterOffset:nextEnd];
+        return Accessibility::retrieveValueFromMainThread<id>([textMarker, protectedSelf = RetainPtr<WebAccessibilityObjectWrapper>(self)] () -> id {
+            auto* cache = protectedSelf->m_object->axObjectCache();
+            if (!cache)
+                return nil;
+
+            CharacterOffset characterOffset = [protectedSelf characterOffsetForTextMarker:textMarker];
+            CharacterOffset nextEnd = cache->nextParagraphEndCharacterOffset(characterOffset);
+            return [protectedSelf textMarkerForCharacterOffset:nextEnd];
+        });
     }
-    
+
     if ([attribute isEqualToString:@"AXPreviousParagraphStartTextMarkerForTextMarker"]) {
-        CharacterOffset characterOffset = [self characterOffsetForTextMarker:textMarker];
-        CharacterOffset previousStart = cache->previousParagraphStartCharacterOffset(characterOffset);
-        return [self textMarkerForCharacterOffset:previousStart];
+        return Accessibility::retrieveValueFromMainThread<id>([textMarker, protectedSelf = RetainPtr<WebAccessibilityObjectWrapper>(self)] () -> id {
+            auto* cache = protectedSelf->m_object->axObjectCache();
+            if (!cache)
+                return nil;
+
+            CharacterOffset characterOffset = [protectedSelf characterOffsetForTextMarker:textMarker];
+            CharacterOffset previousStart = cache->previousParagraphStartCharacterOffset(characterOffset);
+            return [protectedSelf textMarkerForCharacterOffset:previousStart];
+        });
     }
-    
+
     if ([attribute isEqualToString:@"AXStyleTextMarkerRangeForTextMarker"]) {
         VisiblePosition visiblePos = [self visiblePositionForTextMarker:(textMarker)];
         VisiblePositionRange vpRange = m_object->styleRangeForPosition(visiblePos);

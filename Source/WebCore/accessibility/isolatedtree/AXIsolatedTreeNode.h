@@ -27,7 +27,7 @@
 
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
 
-#include "AXIsolatedTree.h"
+#include "AXObjectCache.h"
 #include "AccessibilityObjectInterface.h"
 #include "IntPoint.h"
 #include "LayoutRect.h"
@@ -72,7 +72,8 @@ private:
     AXIsolatedObject() = default;
     AXIsolatedObject(AXCoreObject&, bool isRoot);
     void initializeAttributeData(AXCoreObject&, bool isRoot);
-    
+    AXCoreObject* associatedAXObject() const { return axObjectCache()->objectFromAXID(objectID()); }
+
     enum class AXPropertyName : uint8_t {
         None = 0,
         AccessKey,
@@ -152,6 +153,7 @@ private:
         IsGroup,
         IsImage,
         IsImageMapLink,
+        IsIncrementor,
         IsIndeterminate,
         IsInlineText,
         IsInputImage,
@@ -272,9 +274,10 @@ private:
         SupportsExpanded,
         SupportsExpandedTextValue,
         SupportsLiveRegion,
-        SupportsRangeValue,
+        SupportsPath,
         SupportsPosInSet,
         SupportsPressAction,
+        SupportsRangeValue,
         SupportsRequiredAttribute,
         SupportsSetSize,
         TabChildren,
@@ -522,8 +525,10 @@ private:
     bool liveRegionAtomic() const override { return boolAttributeValue(AXPropertyName::LiveRegionAtomic); }
     bool isBusy() const override { return boolAttributeValue(AXPropertyName::IsBusy); }
     bool isInlineText() const override { return boolAttributeValue(AXPropertyName::IsInlineText); }
+    // Spin button support.
     AXCoreObject* incrementButton() override { return objectAttributeValue(AXPropertyName::IncrementButton); }
     AXCoreObject* decrementButton() override { return objectAttributeValue(AXPropertyName::DecrementButton); }
+    bool isIncrementor() const override { return boolAttributeValue(AXPropertyName::IsIncrementor); }
 
     // Parameterized attribute retrieval.
     Vector<RefPtr<Range>> findTextRanges(AccessibilitySearchTextCriteria const&) const override;
@@ -652,7 +657,7 @@ private:
     bool isKeyboardFocusable() const override;
     bool isHovered() const override;
     bool isIndeterminate() const override;
-    bool isLoaded() const override;
+    bool isLoaded() const override { return boolAttributeValue(AXPropertyName::IsLoaded); }
     bool isOnScreen() const override;
     bool isOffScreen() const override;
     bool isPressed() const override;
@@ -727,7 +732,7 @@ private:
     Element* anchorElement() const override;
     Element* actionElement() const override;
     Path elementPath() const override;
-    bool supportsPath() const override;
+    bool supportsPath() const override { return boolAttributeValue(AXPropertyName::SupportsPath); }
     TextIteratorBehavior textIteratorBehaviorForTextRange() const override;
     Widget* widget() const override;
     Widget* widgetForAttachmentView() const override;

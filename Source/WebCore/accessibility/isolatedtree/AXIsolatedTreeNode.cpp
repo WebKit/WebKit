@@ -28,8 +28,6 @@
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
 #include "AXIsolatedTreeNode.h"
 
-#include "AccessibilityObject.h"
-
 namespace WebCore {
 
 AXIsolatedObject::AXIsolatedObject(AXCoreObject& object, bool isRoot)
@@ -37,9 +35,7 @@ AXIsolatedObject::AXIsolatedObject(AXCoreObject& object, bool isRoot)
 {
     ASSERT(isMainThread());
     initializeAttributeData(object, isRoot);
-#if !ASSERT_DISABLED
     m_initialized = true;
-#endif
 }
 
 Ref<AXIsolatedObject> AXIsolatedObject::create(AXCoreObject& object, bool isRoot)
@@ -160,6 +156,7 @@ void AXIsolatedObject::initializeAttributeData(AXCoreObject& object, bool isRoot
     setProperty(AXPropertyName::SupportsCurrent, object.supportsCurrent());
     setProperty(AXPropertyName::KeyShortcutsValue, object.keyShortcutsValue());
     setProperty(AXPropertyName::SupportsSetSize, object.supportsSetSize());
+    setProperty(AXPropertyName::SupportsPath, object.supportsPath());
     setProperty(AXPropertyName::SupportsPosInSet, object.supportsPosInSet());
     setProperty(AXPropertyName::SetSize, object.setSize());
     setProperty(AXPropertyName::PosInSet, object.posInSet());
@@ -270,8 +267,10 @@ void AXIsolatedObject::initializeAttributeData(AXCoreObject& object, bool isRoot
     }
     setProperty(AXPropertyName::AccessibilityText, isolatedTexts);
 
+    // Spin button support.
     setObjectProperty(AXPropertyName::DecrementButton, object.decrementButton());
     setObjectProperty(AXPropertyName::IncrementButton, object.incrementButton());
+    setProperty(AXPropertyName::IsIncrementor, object.isIncrementor());
 
     Vector<String> classList;
     object.classList(classList);
@@ -688,7 +687,9 @@ void AXIsolatedObject::fillChildrenVectorForProperty(AXPropertyName propertyName
 
 void AXIsolatedObject::updateBackingStore()
 {
-    ASSERT(!isMainThread());
+    // This method can be called on either the main or the AX threads.
+    // It can be called in the main thread from [WebAccessibilityObjectWrapper accessibilityFocusedUIElement].
+    // Update the IsolatedTree only if it is called on the AX thread.
     if (!isMainThread()) {
         if (auto tree = this->tree())
             tree->applyPendingChanges();
@@ -697,15 +698,15 @@ void AXIsolatedObject::updateBackingStore()
 
 Vector<RefPtr<Range>> AXIsolatedObject::findTextRanges(AccessibilitySearchTextCriteria const& criteria) const
 {
-    return Accessibility::retrieveValueFromMainThread<Vector<RefPtr<Range>>>([&criteria, axID = objectID(), this] () -> Vector<RefPtr<Range>> {
-        return axObjectCache()->objectFromAXID(axID)->findTextRanges(criteria);
+    return Accessibility::retrieveValueFromMainThread<Vector<RefPtr<Range>>>([&criteria, this] () -> Vector<RefPtr<Range>> {
+        return associatedAXObject()->findTextRanges(criteria);
     });
 }
 
 Vector<String> AXIsolatedObject::performTextOperation(AccessibilityTextOperation const& textOperation)
 {
-    return Accessibility::retrieveValueFromMainThread<Vector<String>>([&textOperation, axID = objectID(), this] () -> Vector<String> {
-        return axObjectCache()->objectFromAXID(axID)->performTextOperation(textOperation);
+    return Accessibility::retrieveValueFromMainThread<Vector<String>>([&textOperation, this] () -> Vector<String> {
+        return associatedAXObject()->performTextOperation(textOperation);
     });
 }
 
@@ -938,12 +939,6 @@ bool AXIsolatedObject::isHovered() const
 }
 
 bool AXIsolatedObject::isIndeterminate() const
-{
-    ASSERT_NOT_REACHED();
-    return false;
-}
-
-bool AXIsolatedObject::isLoaded() const
 {
     ASSERT_NOT_REACHED();
     return false;
@@ -1359,6 +1354,7 @@ void AXIsolatedObject::elementsFromAttribute(Vector<Element*>&, const QualifiedN
 
 AXObjectCache* AXIsolatedObject::axObjectCache() const
 {
+    ASSERT(isMainThread());
     return tree()->axObjectCache();
 }
 
@@ -1380,12 +1376,6 @@ Path AXIsolatedObject::elementPath() const
     return Path();
 }
 
-bool AXIsolatedObject::supportsPath() const
-{
-    ASSERT_NOT_REACHED();
-    return false;
-}
-
 TextIteratorBehavior AXIsolatedObject::textIteratorBehaviorForTextRange() const
 {
     ASSERT_NOT_REACHED();
@@ -1394,8 +1384,7 @@ TextIteratorBehavior AXIsolatedObject::textIteratorBehaviorForTextRange() const
 
 Widget* AXIsolatedObject::widget() const
 {
-    ASSERT_NOT_REACHED();
-    return nullptr;
+    return associatedAXObject()->widget();
 }
 
 Widget* AXIsolatedObject::widgetForAttachmentView() const
@@ -1412,14 +1401,12 @@ Page* AXIsolatedObject::page() const
 
 Document* AXIsolatedObject::document() const
 {
-    ASSERT_NOT_REACHED();
-    return nullptr;
+    return associatedAXObject()->document();
 }
 
 FrameView* AXIsolatedObject::documentFrameView() const
 {
-    ASSERT_NOT_REACHED();
-    return nullptr;
+    return associatedAXObject()->documentFrameView();
 }
 
 Frame* AXIsolatedObject::frame() const

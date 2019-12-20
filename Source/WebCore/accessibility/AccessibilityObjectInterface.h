@@ -543,6 +543,7 @@ public:
     virtual AXCoreObject* incrementButton() = 0;
     virtual AXCoreObject* decrementButton() = 0;
     virtual bool isSpinButtonPart() const = 0;
+    virtual bool isIncrementor() const = 0;
 
     virtual bool isMockObject() const = 0;
     virtual bool isMediaObject() const = 0;

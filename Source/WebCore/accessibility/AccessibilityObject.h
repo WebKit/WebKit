@@ -167,6 +167,7 @@ public:
     AXCoreObject* incrementButton() override { return nullptr; }
     AXCoreObject* decrementButton() override { return nullptr; }
     bool isSpinButtonPart() const override { return false; }
+    bool isIncrementor() const override { return false; }
     bool isMockObject() const override { return false; }
     virtual bool isMediaControlLabel() const { return false; }
     bool isMediaObject() const override { return false; }

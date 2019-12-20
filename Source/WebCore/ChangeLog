@@ -1,3 +1,42 @@
+2019-12-20  Andres Gonzalez  <andresg_22@apple.com>
+
+        IsolatedObject support for multiple parameterized attributes.
+        https://bugs.webkit.org/show_bug.cgi?id=205508
+
+        Reviewed by Chris Fleizach.
+
+        - AXObjectCache now keeps the PageIdentifier so that it is possible to
+        retrieve it on the secondary thread without querying the Document.
+        - isIncrementor is exposed on AXCoreObject for spin button support.
+        - Several parameterized attributes implementation related to
+        TextMarkers are now dispatch to the main thread.
+
+        * accessibility/AXObjectCache.cpp:
+        (WebCore::AXObjectCache::AXObjectCache):
+        (WebCore::AXObjectCache::setIsolatedTreeFocusedObject):
+        (WebCore::AXObjectCache::isolatedTreeRootObject):
+        (WebCore::AXObjectCache::remove):
+        * accessibility/AXObjectCache.h:
+        * accessibility/AccessibilityObject.h:
+        * accessibility/AccessibilityObjectInterface.h:
+        * accessibility/AccessibilitySpinButton.h:
+        * accessibility/isolatedtree/AXIsolatedTreeNode.cpp:
+        (WebCore::AXIsolatedObject::AXIsolatedObject):
+        (WebCore::AXIsolatedObject::initializeAttributeData):
+        (WebCore::AXIsolatedObject::updateBackingStore):
+        (WebCore::AXIsolatedObject::findTextRanges const):
+        (WebCore::AXIsolatedObject::performTextOperation):
+        (WebCore::AXIsolatedObject::axObjectCache const):
+        (WebCore::AXIsolatedObject::widget const):
+        (WebCore::AXIsolatedObject::document const):
+        (WebCore::AXIsolatedObject::documentFrameView const):
+        (WebCore::AXIsolatedObject::isLoaded const): Implemented in header.
+        (WebCore::AXIsolatedObject::supportsPath const): Implemented in header.
+        * accessibility/isolatedtree/AXIsolatedTreeNode.h:
+        * accessibility/mac/WebAccessibilityObjectWrapperMac.mm:
+        (-[WebAccessibilityObjectWrapper subrole]):
+        (-[WebAccessibilityObjectWrapper accessibilityAttributeValue:forParameter:]):
+
 2019-12-20  Daniel Bates  <dabates@apple.com>
 
         Share code for computing the absolute positioned line boxes for a range
