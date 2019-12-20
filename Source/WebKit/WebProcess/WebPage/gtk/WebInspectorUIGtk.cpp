@@ -39,12 +39,12 @@ bool WebInspectorUI::canSave()
     return true;
 }
 
-String WebInspectorUI::localizedStringsURL()
+String WebInspectorUI::localizedStringsURL() const
 {
     return String("resource:///org/webkit/inspector/Localizations/en.lproj/localizedStrings.js");
 }
 
-String RemoteWebInspectorUI::localizedStringsURL()
+String RemoteWebInspectorUI::localizedStringsURL() const
 {
     return String("resource:///org/webkit/inspector/Localizations/en.lproj/localizedStrings.js");
 }

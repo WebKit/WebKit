@@ -47,12 +47,12 @@ static String webInspectorUILocalizedStringsURL()
     return [NSURL fileURLWithPath:path isDirectory:NO].absoluteString;
 }
 
-String WebInspectorUI::localizedStringsURL()
+String WebInspectorUI::localizedStringsURL() const
 {
     return webInspectorUILocalizedStringsURL();
 }
 
-String RemoteWebInspectorUI::localizedStringsURL()
+String RemoteWebInspectorUI::localizedStringsURL() const
 {
     return webInspectorUILocalizedStringsURL();
 }

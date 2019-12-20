@@ -65,7 +65,7 @@ public:
     void moveWindowBy(float x, float y) override;
 
     bool isRemote() const final { return true; }
-    String localizedStringsURL() override;
+    String localizedStringsURL() const override;
     String backendCommandsURL() const final { return m_backendCommandsURL; }
     String debuggableType() const final { return m_debuggableType; }
 

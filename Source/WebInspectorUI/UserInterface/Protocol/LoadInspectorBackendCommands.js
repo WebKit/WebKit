@@ -24,6 +24,6 @@
  */
 
 (function() {
-    let backendCommandsURL = InspectorFrontendHost.backendCommandsURL() || "Protocol/InspectorBackendCommands.js";
+    let backendCommandsURL = InspectorFrontendHost.backendCommandsURL || "Protocol/InspectorBackendCommands.js";
     document.write("<script src=\"" + backendCommandsURL + "\"></script>");
 })();

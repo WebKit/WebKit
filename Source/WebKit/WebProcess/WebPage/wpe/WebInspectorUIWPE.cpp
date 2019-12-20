@@ -35,12 +35,12 @@ bool WebInspectorUI::canSave()
     return false;
 }
 
-String WebInspectorUI::localizedStringsURL()
+String WebInspectorUI::localizedStringsURL() const
 {
     return String();
 }
 
-String RemoteWebInspectorUI::localizedStringsURL()
+String RemoteWebInspectorUI::localizedStringsURL() const
 {
     return String();
 }

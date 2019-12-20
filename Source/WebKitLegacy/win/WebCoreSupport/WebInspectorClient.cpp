@@ -248,7 +248,7 @@ void WebInspectorFrontendClient::frontendLoaded()
     setAttachedWindow(m_attached ? DockSide::Bottom : DockSide::Undocked);
 }
 
-String WebInspectorFrontendClient::localizedStringsURL()
+String WebInspectorFrontendClient::localizedStringsURL() const
 {
     RetainPtr<CFURLRef> url = adoptCF(CFBundleCopyResourceURL(webKitBundle(), CFSTR("localizedStrings"), CFSTR("js"), CFSTR("WebInspectorUI")));
     if (!url)

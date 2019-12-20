@@ -338,8 +338,8 @@ private:
     void closeWindow() final;
     void reopen() final { }
     void bringToFront() final { }
-    String localizedStringsURL() final { return String(); }
     String debuggableType() const final { return "page"_s; };
+    String localizedStringsURL() const final { return String(); }
     void inspectedURLChanged(const String&) final { }
     void showCertificate(const CertificateInfo&) final { }
     void setAttachedWindowHeight(unsigned) final { }

@@ -1,3 +1,26 @@
+2019-12-20  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: convert some InspectorFrontendHost methods to getters
+        https://bugs.webkit.org/show_bug.cgi?id=205475
+
+        Reviewed by Devin Rousso.
+
+        No reason for these to be method calls, so expose as getters / attributes instead.
+
+        * inspector/InspectorFrontendClient.h:
+        * inspector/InspectorFrontendHost.cpp:
+        (WebCore::InspectorFrontendHost::isRemote const):
+        (WebCore::debuggableTypeToString):
+        (WebCore::InspectorFrontendHost::localizedStringsURL): Deleted.
+        (WebCore::InspectorFrontendHost::backendCommandsURL): Deleted.
+        (WebCore::InspectorFrontendHost::debuggableType): Deleted.
+        (WebCore::InspectorFrontendHost::inspectionLevel): Deleted.
+        (WebCore::InspectorFrontendHost::platform): Deleted.
+        (WebCore::InspectorFrontendHost::port): Deleted.
+        * inspector/InspectorFrontendHost.h:
+        * inspector/InspectorFrontendHost.idl:
+        * testing/Internals.cpp:
+
 2019-12-20  Andres Gonzalez  <andresg_22@apple.com>
 
         IsolatedObject support for multiple parameterized attributes.

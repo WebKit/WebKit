@@ -103,7 +103,7 @@ public:
     // InspectorFrontendClient API.
     void frontendLoaded() override;
 
-    WTF::String localizedStringsURL() override;
+    WTF::String localizedStringsURL() const override;
     String debuggableType() const final { return "page"_s; };
 
     void bringToFront() override;

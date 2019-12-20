@@ -123,7 +123,7 @@ WebInspectorFrontendClient::WebInspectorFrontendClient(WebView* inspectedWebView
 
 void WebInspectorFrontendClient::attachAvailabilityChanged(bool) { }
 void WebInspectorFrontendClient::frontendLoaded() { }
-String WebInspectorFrontendClient::localizedStringsURL() { return String(); }
+String WebInspectorFrontendClient::localizedStringsURL() const { return String(); }
 void WebInspectorFrontendClient::bringToFront() { }
 void WebInspectorFrontendClient::closeWindow() { }
 void WebInspectorFrontendClient::reopen() { }

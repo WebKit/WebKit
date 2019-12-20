@@ -117,8 +117,8 @@ public:
 
     void startWindowDrag() override;
 
-    String localizedStringsURL() override;
     String debuggableType() const final { return "page"_s; };
+    String localizedStringsURL() const override;
 
     void bringToFront() override;
     void closeWindow() override;

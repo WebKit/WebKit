@@ -1,3 +1,33 @@
+2019-12-20  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: convert some InspectorFrontendHost methods to getters
+        https://bugs.webkit.org/show_bug.cgi?id=205475
+
+        Reviewed by Devin Rousso.
+
+        No reason for these to be method calls, so expose as getters / attributes instead.
+
+        * WebProcess/WebPage/gtk/WebInspectorUIGtk.cpp:
+        (WebKit::WebInspectorUI::localizedStringsURL const):
+        (WebKit::RemoteWebInspectorUI::localizedStringsURL const):
+        (WebKit::WebInspectorUI::localizedStringsURL): Deleted.
+        (WebKit::RemoteWebInspectorUI::localizedStringsURL): Deleted.
+        * WebProcess/WebPage/mac/WebInspectorUIMac.mm:
+        (WebKit::WebInspectorUI::localizedStringsURL const):
+        (WebKit::RemoteWebInspectorUI::localizedStringsURL const):
+        (WebKit::WebInspectorUI::localizedStringsURL): Deleted.
+        (WebKit::RemoteWebInspectorUI::localizedStringsURL): Deleted.
+        * WebProcess/WebPage/win/WebInspectorUIWin.cpp:
+        (WebKit::WebInspectorUI::localizedStringsURL const):
+        (WebKit::RemoteWebInspectorUI::localizedStringsURL const):
+        (WebKit::WebInspectorUI::localizedStringsURL): Deleted.
+        (WebKit::RemoteWebInspectorUI::localizedStringsURL): Deleted.
+        * WebProcess/WebPage/wpe/WebInspectorUIWPE.cpp:
+        (WebKit::WebInspectorUI::localizedStringsURL const):
+        (WebKit::RemoteWebInspectorUI::localizedStringsURL const):
+        (WebKit::WebInspectorUI::localizedStringsURL): Deleted.
+        (WebKit::RemoteWebInspectorUI::localizedStringsURL): Deleted.
+
 2019-12-20  Alex Christensen  <achristensen@webkit.org>
 
         Allow a managed configuration to re-enable TLS 1.0 and 1.1

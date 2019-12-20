@@ -24,7 +24,7 @@
  */
 
 WI.Platform = {
-    name: InspectorFrontendHost.platform(),
+    name: InspectorFrontendHost.platform,
     isNightlyBuild: false,
     version: {
         base: 0,

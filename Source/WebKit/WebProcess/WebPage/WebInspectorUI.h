@@ -94,9 +94,10 @@ public:
     void moveWindowBy(float x, float y) override;
 
     bool isRemote() const final { return false; }
-    String localizedStringsURL() override;
+    String localizedStringsURL() const override;
     String backendCommandsURL() const final { return String(); }
     String debuggableType() const final { return "web-page"_s; }
+    unsigned inspectionLevel() const override { return m_inspectionLevel; }
 
     void bringToFront() override;
     void closeWindow() override;
@@ -132,7 +133,6 @@ public:
     void pageUnpaused() override;
 
     bool isUnderTest() override { return m_underTest; }
-    unsigned inspectionLevel() const override { return m_inspectionLevel; }
 
 private:
     explicit WebInspectorUI(WebPage&);

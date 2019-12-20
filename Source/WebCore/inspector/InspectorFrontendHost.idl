@@ -61,10 +61,10 @@
     void moveWindowBy(unrestricted float x, unrestricted float y);
 
     readonly attribute boolean isRemote;
-    DOMString localizedStringsURL();
-    DOMString backendCommandsURL();
     DOMString debuggableType();
-    unsigned long inspectionLevel();
+    readonly attribute DOMString localizedStringsURL;
+    readonly attribute DOMString backendCommandsURL;
+    readonly attribute unsigned long inspectionLevel;
 
     void copyText(DOMString text);
     void killText(DOMString text, boolean shouldPrependToKillRing, boolean shouldStartNewSequence);
@@ -74,8 +74,8 @@
     void append(DOMString url, DOMString content);
     void close(DOMString url);
 
-    DOMString platform();
-    DOMString port();
+    readonly attribute DOMString port;
+    readonly attribute DOMString platform;
 
     void showContextMenu(Event event, sequence<ContextMenuItem> items);
     void dispatchEventAsContextMenuEvent(Event event);

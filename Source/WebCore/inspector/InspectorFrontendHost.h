@@ -81,13 +81,13 @@ public:
     void moveWindowBy(float x, float y) const;
 
     bool isRemote() const;
-    String localizedStringsURL();
-    String backendCommandsURL();
     String debuggableType();
-    unsigned inspectionLevel();
+    String localizedStringsURL() const;
+    String backendCommandsURL() const;
+    unsigned inspectionLevel() const;
 
-    String platform();
-    String port();
+    String platform() const;
+    String port() const;
 
     void copyText(const String& text);
     void killText(const String& text, bool shouldPrependToKillRing, bool shouldStartNewSequence);

@@ -2272,7 +2272,7 @@ WI._reloadPage = function(event)
 
     event.preventDefault();
 
-    if (InspectorFrontendHost.inspectionLevel() > 1) {
+    if (InspectorFrontendHost.inspectionLevel > 1) {
         WI._reloadInspectedInspector();
         return;
     }
@@ -2288,7 +2288,7 @@ WI._reloadPageFromOrigin = function(event)
 
     event.preventDefault();
 
-    if (InspectorFrontendHost.inspectionLevel() > 1) {
+    if (InspectorFrontendHost.inspectionLevel > 1) {
         WI._reloadInspectedInspector();
         return;
     }
@@ -2298,7 +2298,7 @@ WI._reloadPageFromOrigin = function(event)
 
 WI._reloadToolbarButtonClicked = function(event)
 {
-    if (InspectorFrontendHost.inspectionLevel() > 1) {
+    if (InspectorFrontendHost.inspectionLevel > 1) {
         WI._reloadInspectedInspector();
         return;
     }

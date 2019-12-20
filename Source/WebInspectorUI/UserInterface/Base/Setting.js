@@ -75,7 +75,7 @@ WI.Setting = class Setting extends WI.Object
 
     static _localStorageKey(name)
     {
-        let inspectionLevel = InspectorFrontendHost ? InspectorFrontendHost.inspectionLevel() : 1;
+        let inspectionLevel = InspectorFrontendHost ? InspectorFrontendHost.inspectionLevel : 1;
         let levelString = inspectionLevel > 1 ? "-" + inspectionLevel : "";
         return `com.apple.WebInspector${levelString}.${name}`;
     }

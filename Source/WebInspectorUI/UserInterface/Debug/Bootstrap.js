@@ -115,7 +115,7 @@ WI.runBootstrapOperations = function() {
     applyDumpMessagesState(dumpMessagesCurrentState());
 
     // Next Level Inspector.
-    let inspectionLevel = InspectorFrontendHost.inspectionLevel();
+    let inspectionLevel = InspectorFrontendHost.inspectionLevel;
     const inspectInspectorToolTip = WI.unlocalizedString("Open Web Inspector [%d]").format(inspectionLevel + 1);
     let inspectInspectorToolbarItem = new WI.ButtonToolbarItem("inspect-inspector", inspectInspectorToolTip);
     WI.toolbar.addToolbarItem(inspectInspectorToolbarItem, WI.Toolbar.Section.CenterRight);

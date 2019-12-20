@@ -1,3 +1,23 @@
+2019-12-20  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: convert some InspectorFrontendHost methods to getters
+        https://bugs.webkit.org/show_bug.cgi?id=205475
+
+        Reviewed by Devin Rousso.
+
+        No reason for these to be method calls, so expose as getters / attributes instead.
+
+        * UserInterface/Base/LoadLocalizedStrings.js:
+        * UserInterface/Base/Main.js:
+        * UserInterface/Base/ObjectStore.js:
+        (WI.ObjectStore.get _databaseName):
+        * UserInterface/Base/Platform.js:
+        * UserInterface/Base/Setting.js:
+        (WI.Setting._localStorageKey):
+        * UserInterface/Debug/Bootstrap.js:
+        (WI.runBootstrapOperations):
+        * UserInterface/Protocol/LoadInspectorBackendCommands.js:
+
 2019-12-19  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Enable p3 color picker by default

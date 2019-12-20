@@ -27,7 +27,7 @@
     if (WI.dontLocalizeUserInterface)
         return;
 
-    let localizedStringsURL = InspectorFrontendHost.localizedStringsURL();
+    let localizedStringsURL = InspectorFrontendHost.localizedStringsURL;
     console.assert(localizedStringsURL);
     if (localizedStringsURL)
         document.write("<script src=\"" + localizedStringsURL + "\"></script>");

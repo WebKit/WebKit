@@ -271,15 +271,15 @@ void InspectorFrontendHost::moveWindowBy(float x, float y) const
 
 bool InspectorFrontendHost::isRemote() const
 {
-    return m_client ? m_client->isRemote() : false;
+    return m_client && m_client->isRemote();
 }
 
-String InspectorFrontendHost::localizedStringsURL()
+String InspectorFrontendHost::localizedStringsURL() const
 {
     return m_client ? m_client->localizedStringsURL() : String();
 }
 
-String InspectorFrontendHost::backendCommandsURL()
+String InspectorFrontendHost::backendCommandsURL() const
 {
     return m_client ? m_client->backendCommandsURL() : String();
 }
@@ -289,12 +289,12 @@ String InspectorFrontendHost::debuggableType()
     return m_client ? m_client->debuggableType() : String();
 }
 
-unsigned InspectorFrontendHost::inspectionLevel()
+unsigned InspectorFrontendHost::inspectionLevel() const
 {
     return m_client ? m_client->inspectionLevel() : 1;
 }
 
-String InspectorFrontendHost::platform()
+String InspectorFrontendHost::platform() const
 {
 #if PLATFORM(COCOA)
     return "mac"_s;
@@ -311,7 +311,7 @@ String InspectorFrontendHost::platform()
 #endif
 }
 
-String InspectorFrontendHost::port()
+String InspectorFrontendHost::port() const
 {
 #if PLATFORM(GTK)
     return "gtk"_s;

@@ -48,7 +48,7 @@ WI.ObjectStore = class ObjectStore
 
     static get _databaseName()
     {
-        let inspectionLevel = InspectorFrontendHost ? InspectorFrontendHost.inspectionLevel() : 1;
+        let inspectionLevel = InspectorFrontendHost ? InspectorFrontendHost.inspectionLevel : 1;
         let levelString = (inspectionLevel > 1) ? "-" + inspectionLevel : "";
         return "com.apple.WebInspector" + levelString;
     }
