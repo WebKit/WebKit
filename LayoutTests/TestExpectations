@@ -462,6 +462,7 @@ imported/w3c/web-platform-tests/html/browsers/offline/application-cache-api/api_
 imported/w3c/web-platform-tests/css/css-properties-values-api/url-resolution.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/json-module/invalid-content-type.tentative.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/css-module/css-module-worker-test.html [ DumpJSConsoleLogInStdErr ]
+imported/w3c/web-platform-tests/subresource-integrity [ DumpJSConsoleLogInStdErr ]
 
 [ Debug ] imported/w3c/web-platform-tests/service-workers/service-worker/clients-matchall-order.https.html [ Slow ]
 [ Debug ] imported/w3c/web-platform-tests/service-workers/service-worker/getregistrations.https.html [ Slow ]

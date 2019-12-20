@@ -1,5 +1,16 @@
 2019-12-20  Chris Dumez  <cdumez@apple.com>
 
+        Import web-platform-tests/subresource-integrity tests from usptream
+        https://bugs.webkit.org/show_bug.cgi?id=205502
+
+        Reviewed by Darin Adler.
+
+        Import web-platform-tests/subresource-integrity tests from usptream 5f8d15ebdcf0495c271c.
+
+        * web-platform-tests/subresource-integrity/*: Added.
+
+2019-12-20  Chris Dumez  <cdumez@apple.com>
+
         Unreviewed, address flakiness of imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/css-module/css-module-worker-test.html
 
         * web-platform-tests/html/semantics/scripting-1/the-script-element/css-module/css-module-worker-test-expected.txt:
