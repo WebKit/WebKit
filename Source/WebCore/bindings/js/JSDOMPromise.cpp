@@ -38,20 +38,6 @@ using namespace JSC;
 
 namespace WebCore {
 
-static inline JSC::JSValue callFunction(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue jsFunction, JSC::JSValue thisValue, const JSC::ArgList& arguments)
-{
-    VM& vm = lexicalGlobalObject.vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
-    JSC::CallData callData;
-    auto callType = JSC::getCallData(vm, jsFunction, callData);
-    ASSERT(callType != JSC::CallType::None);
-    auto result = call(&lexicalGlobalObject, jsFunction, callType, callData, thisValue, arguments);
-
-    EXCEPTION_ASSERT_UNUSED(scope, !scope.exception() || isTerminatedExecutionException(lexicalGlobalObject.vm(), scope.exception()));
-
-    return result;
-}
-
 void DOMPromise::whenSettled(std::function<void()>&& callback)
 {
     whenPromiseIsSettled(globalObject(), promise(), WTFMove(callback));
@@ -67,14 +53,26 @@ void DOMPromise::whenPromiseIsSettled(JSDOMGlobalObject* globalObject, JSC::JSOb
         return JSC::JSValue::encode(JSC::jsUndefined());
     });
 
+    auto scope = DECLARE_THROW_SCOPE(vm);
     const JSC::Identifier& privateName = vm.propertyNames->builtinNames().thenPrivateName();
     auto thenFunction = promise->get(&lexicalGlobalObject, privateName);
+
+    EXCEPTION_ASSERT(!scope.exception() || isTerminatedExecutionException(lexicalGlobalObject.vm(), scope.exception()));
+    if (scope.exception())
+        return;
+
     ASSERT(thenFunction.isFunction(vm));
 
     JSC::MarkedArgumentBuffer arguments;
     arguments.append(handler);
     arguments.append(handler);
-    callFunction(lexicalGlobalObject, thenFunction, promise, arguments);
+
+    JSC::CallData callData;
+    auto callType = JSC::getCallData(vm, thenFunction, callData);
+    ASSERT(callType != JSC::CallType::None);
+    call(&lexicalGlobalObject, thenFunction, callType, callData, promise, arguments);
+
+    EXCEPTION_ASSERT(!scope.exception() || isTerminatedExecutionException(lexicalGlobalObject.vm(), scope.exception()));
 }
 
 JSC::JSValue DOMPromise::result() const

@@ -1,5 +1,19 @@
 2019-12-20  youenn fablet  <youenn@apple.com>
 
+        DOMPromise::whenPromiseIsSettled is asserting in service worker
+        https://bugs.webkit.org/show_bug.cgi?id=205440
+
+        Reviewed by Chris Dumez.
+
+        The promise.get(@then) is sometimes throwing an exception probably due to service worker being stopped.
+        We need to catch the JS exception and exit early if the getter fails.
+        Covered by existing service worker tests in debug mode.
+
+        * bindings/js/JSDOMPromise.cpp:
+        (WebCore::DOMPromise::whenPromiseIsSettled):
+
+2019-12-20  youenn fablet  <youenn@apple.com>
+
         Make ServiceWorker::postMessage use the exec state from the JS binding layer
         https://bugs.webkit.org/show_bug.cgi?id=205395
 
