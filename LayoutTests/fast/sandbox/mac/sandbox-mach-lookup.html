@@ -6,6 +6,7 @@
 description('Regression tests for mach lookup sandbox changes on macOS');
 
 if (window.internals) {
+    shouldBeFalse("internals.hasSandboxMachLookupAccessToGlobalName(\"com.apple.WebKit.WebContent\", \"com.apple.cfprefsd.agent\")");
     shouldBeFalse("internals.hasSandboxMachLookupAccessToGlobalName(\"com.apple.WebKit.WebContent\", \"com.apple.system.logger\")");
 }
 </script>

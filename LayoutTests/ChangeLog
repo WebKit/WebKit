@@ -1,3 +1,14 @@
+2019-12-20  Brent Fulgham  <bfulgham@apple.com>
+
+        Remove access to 'com.apple.cfprefsd.agent' from the macOS sandbox
+        https://bugs.webkit.org/show_bug.cgi?id=205478
+        <rdar://problem/57915066>
+
+        Reviewed by Darin Adler.
+
+        * fast/sandbox/mac/sandbox-mach-lookup-expected.txt:
+        * fast/sandbox/mac/sandbox-mach-lookup.html:
+
 2019-12-20  Alexey Proskuryakov  <ap@apple.com>
 
         Update TestExpectatipons for media/track/track-in-band-cues-added-once.html

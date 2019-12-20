@@ -608,7 +608,6 @@
 #endif
     (global-name "com.apple.audio.AudioComponentRegistrar")
     (global-name "com.apple.awdd")
-    (global-name "com.apple.cfprefsd.agent")
     (global-name "com.apple.cookied")
     (global-name "com.apple.diagnosticd")
     (global-name "com.apple.iconservices")
