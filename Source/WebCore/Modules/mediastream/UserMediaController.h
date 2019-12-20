@@ -53,8 +53,6 @@ public:
 
     enum class GetUserMediaAccess {
         CanCall,
-        InsecureDocument,
-        InsecureParent,
         BlockedByParent,
         BlockedByFeaturePolicy,
     };

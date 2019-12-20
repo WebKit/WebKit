@@ -61,18 +61,6 @@ void provideUserMediaTo(Page* page, UserMediaClient* client)
     UserMediaController::provideTo(page, UserMediaController::supplementName(), makeUnique<UserMediaController>(client));
 }
 
-static inline bool isSecure(DocumentLoader& documentLoader)
-{
-    auto& response = documentLoader.response();
-    ASSERT(response.certificateInfo());
-
-    if (SecurityOrigin::isLocalHostOrLoopbackIPAddress(documentLoader.response().url().host()))
-        return true;
-    return LegacySchemeRegistry::shouldTreatURLSchemeAsSecure(response.url().protocol().toStringWithoutCopying())
-        && response.certificateInfo()
-        && !response.certificateInfo()->containsNonRootSHA1SignedCertificate();
-}
-
 static inline bool isAllowedByFeaturePolicy(const FeaturePolicy& featurePolicy, const SecurityOriginData& origin, OptionSet<UserMediaController::CaptureType> types)
 {
     if ((types & UserMediaController::CaptureType::Camera) && !featurePolicy.allows(FeaturePolicy::Type::Camera, origin))
@@ -112,19 +100,9 @@ UserMediaController::GetUserMediaAccess UserMediaController::canCallGetUserMedia
 {
     ASSERT(!types.isEmpty());
 
-    bool requiresSecureConnection = true;
-    if (auto page = document.page())
-        requiresSecureConnection = page->settings().mediaCaptureRequiresSecureConnection();
-    auto& documentLoader = *document.loader();
-    if (requiresSecureConnection && !isSecure(documentLoader))
-        return GetUserMediaAccess::InsecureDocument;
-
     auto& topDocument = document.topDocument();
     if (&document != &topDocument) {
         for (auto* ancestorDocument = &document; ancestorDocument != &topDocument; ancestorDocument = ancestorDocument->parentDocument()) {
-            if (requiresSecureConnection && !isSecure(*ancestorDocument->loader()))
-                return GetUserMediaAccess::InsecureParent;
-
             auto status = isAllowedToUse(*ancestorDocument, topDocument, types);
             if (status != GetUserMediaAccess::CanCall)
                 return status;
@@ -152,12 +130,6 @@ void UserMediaController::logGetUserMediaDenial(Document& document, GetUserMedia
     }
 
     switch (access) {
-    case UserMediaController::GetUserMediaAccess::InsecureDocument:
-        domWindow.printErrorMessage(makeString("Trying to call ", callerName, " from an insecure document."));
-        break;
-    case UserMediaController::GetUserMediaAccess::InsecureParent:
-        domWindow.printErrorMessage(makeString("Trying to call ", callerName, " from a document with an insecure parent frame."));
-        break;
     case UserMediaController::GetUserMediaAccess::BlockedByParent:
         domWindow.printErrorMessage(makeString("The top-level frame has prevented a document with a different security origin from calling ", callerName, "."));
         break;

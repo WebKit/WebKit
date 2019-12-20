@@ -1,3 +1,21 @@
+2019-12-20  youenn fablet  <youenn@apple.com>
+
+        Remove the certificate info checks related to getUserMedia
+        https://bugs.webkit.org/show_bug.cgi?id=205493
+
+        Reviewed by Eric Carlson.
+
+        Now that navigator.mediaDevices is SecureContext, we do not need to do the same checks in UserMediaController.
+        UserMediaController was also checking the certificate info which is not necessary for MediaDevices.
+        Covered by manual tests.
+
+        * Modules/mediastream/UserMediaController.cpp:
+        (WebCore::isSecure):
+        (WebCore::isAllowedByFeaturePolicy): Deleted.
+        (WebCore::isAllowedToUse): Deleted.
+        (WebCore::UserMediaController::canCallGetUserMedia const): Deleted.
+        (WebCore::UserMediaController::logGetUserMediaDenial): Deleted.
+
 2019-12-19  Dean Jackson  <dino@apple.com>
 
         Build ANGLE as a dynamic library
