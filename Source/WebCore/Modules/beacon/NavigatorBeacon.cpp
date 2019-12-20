@@ -121,7 +121,6 @@ ExceptionOr<bool> NavigatorBeacon::sendBeacon(Document& document, const String& 
 
     ResourceRequest request(parsedUrl);
     request.setHTTPMethod("POST"_s);
-    request.setPriority(ResourceLoadPriority::VeryLow);
 
     ResourceLoaderOptions options;
     options.credentials = FetchOptions::Credentials::Include;

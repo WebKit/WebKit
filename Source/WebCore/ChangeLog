@@ -1,3 +1,24 @@
+2019-12-20  Chris Dumez  <cdumez@apple.com>
+
+        sendBeacon on Safari 13 seeing high failure rates
+        https://bugs.webkit.org/show_bug.cgi?id=204665
+        <rdar://problem/57522622>
+
+        Reviewed by Darin Adler.
+
+        Revert r245344 to try and reduce our failure rate for Beacon. This is the only change
+        to our Beacon implementation that I am aware we made in Safari 13. Using a lower priority
+        for Beacon makes it more likely that the Beacon load is still pending when the network
+        process exits, which would interrupt the Beacon.
+
+        Since we're trying to convince developers to move away from synchronous XHR and to using
+        the Beacon API intead, it is important that our Beacon API be as reliable as possible.
+
+        * Modules/beacon/NavigatorBeacon.cpp:
+        (WebCore::NavigatorBeacon::sendBeacon):
+        * loader/PingLoader.cpp:
+        (WebCore::PingLoader::sendPing):
+
 2019-12-20  Truitt Savell  <tsavell@apple.com>
 
         Unreviewed, rolling out r253820.
