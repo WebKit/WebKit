@@ -69,6 +69,7 @@ void InteractionInformationAtPosition::encode(IPC::Encoder& encoder) const
     encoder << textBefore;
     encoder << textAfter;
     encoder << caretHeight;
+    encoder << lineCaretExtent;
     encoder << cursor;
     encoder << linkIndicator;
 
@@ -162,6 +163,9 @@ bool InteractionInformationAtPosition::decode(IPC::Decoder& decoder, Interaction
         return false;
 
     if (!decoder.decode(result.caretHeight))
+        return false;
+
+    if (!decoder.decode(result.lineCaretExtent))
         return false;
 
     if (!decoder.decode(result.cursor))

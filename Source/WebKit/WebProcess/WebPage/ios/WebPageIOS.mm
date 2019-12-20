@@ -2762,10 +2762,16 @@ InteractionInformationAtPosition WebPage::positionInformation(const InteractionI
     auto& eventHandler = m_page->mainFrame().eventHandler();
     HitTestResult hitTestResult = eventHandler.hitTestResultAtPoint(request.point, HitTestRequest::ReadOnly | HitTestRequest::AllowFrameScrollbars);
     info.cursor = eventHandler.selectCursor(hitTestResult, false);
-    if (auto* frame = hitTestResult.innerNodeFrame()) {
-        if (auto* frameView = frame->view()) {
-            VisiblePosition position = frame->visiblePositionForPoint(request.point);
-            info.caretHeight = frameView->contentsToRootView(position.absoluteCaretBounds()).height();
+    if (request.includeCaretContext) {
+        if (auto* frame = hitTestResult.innerNodeFrame()) {
+            if (auto* frameView = frame->view()) {
+                VisiblePosition position = frame->visiblePositionForPoint(request.point);
+                info.caretHeight = frameView->contentsToRootView(position.absoluteCaretBounds()).height();
+
+                VisiblePosition startPosition = startOfLine(position);
+                VisiblePosition endPosition = endOfLine(position);
+                info.lineCaretExtent = unionRect(frameView->contentsToRootView(startPosition.absoluteCaretBounds()), frameView->contentsToRootView(endPosition.absoluteCaretBounds()));
+            }
         }
     }
 

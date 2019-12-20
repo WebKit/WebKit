@@ -38,6 +38,7 @@ void InteractionInformationRequest::encode(IPC::Encoder& encoder) const
     encoder << point;
     encoder << includeSnapshot;
     encoder << includeLinkIndicator;
+    encoder << includeCaretContext;
     encoder << linkIndicatorShouldHaveLegacyMargins;
 }
 
@@ -52,6 +53,9 @@ bool InteractionInformationRequest::decode(IPC::Decoder& decoder, InteractionInf
     if (!decoder.decode(result.includeLinkIndicator))
         return false;
 
+    if (!decoder.decode(result.includeCaretContext))
+        return false;
+
     if (!decoder.decode(result.linkIndicatorShouldHaveLegacyMargins))
         return false;
 
@@ -64,6 +68,9 @@ bool InteractionInformationRequest::isValidForRequest(const InteractionInformati
         return false;
 
     if (other.includeLinkIndicator && !includeLinkIndicator)
+        return false;
+
+    if (other.includeCaretContext && !includeCaretContext)
         return false;
 
     if (other.linkIndicatorShouldHaveLegacyMargins != linkIndicatorShouldHaveLegacyMargins)

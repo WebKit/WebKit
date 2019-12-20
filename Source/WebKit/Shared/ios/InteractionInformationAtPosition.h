@@ -85,6 +85,7 @@ struct InteractionInformationAtPosition {
     String textAfter;
 
     float caretHeight { 0 };
+    WebCore::FloatRect lineCaretExtent;
 
     Optional<WebCore::Cursor> cursor;
 

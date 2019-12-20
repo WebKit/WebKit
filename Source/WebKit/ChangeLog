@@ -1,3 +1,26 @@
+2019-12-20  Tim Horton  <timothy_horton@apple.com>
+
+        Expose approximate caret extents for the hit line via InteractionInformationAtPosition
+        https://bugs.webkit.org/show_bug.cgi?id=205526
+        <rdar://problem/57983076>
+
+        Reviewed by Dean Jackson.
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::positionInformation):
+        Compute and expose the union of first and last caret rects on the line.
+
+        * Shared/ios/InteractionInformationAtPosition.h:
+        * Shared/ios/InteractionInformationAtPosition.mm:
+        (WebKit::InteractionInformationAtPosition::encode const):
+        (WebKit::InteractionInformationAtPosition::decode):
+        * Shared/ios/InteractionInformationRequest.cpp:
+        (WebKit::InteractionInformationRequest::encode const):
+        (WebKit::InteractionInformationRequest::decode):
+        (WebKit::InteractionInformationRequest::isValidForRequest):
+        * Shared/ios/InteractionInformationRequest.h:
+        Also, add a bit so that we can only fetch this data when needed.
+
 2019-12-20  Brent Fulgham  <bfulgham@apple.com>
 
         Remove access to 'com.apple.cfprefsd.agent' from the macOS sandbox

@@ -41,6 +41,7 @@ struct InteractionInformationRequest {
 
     bool includeSnapshot { false };
     bool includeLinkIndicator { false };
+    bool includeCaretContext { false };
 
     bool linkIndicatorShouldHaveLegacyMargins { false };
 
