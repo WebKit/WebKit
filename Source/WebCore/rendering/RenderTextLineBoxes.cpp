@@ -429,52 +429,6 @@ static FloatRect localQuadForTextBox(const InlineTextBox& box, unsigned start, u
     return boxSelectionRect;
 }
 
-Vector<IntRect> RenderTextLineBoxes::absoluteRectsForRange(const RenderText& renderer, unsigned start, unsigned end, bool useSelectionHeight, bool* wasFixed) const
-{
-    Vector<IntRect> rects;
-    for (auto* box = m_first; box; box = box->nextTextBox()) {
-        if (start <= box->start() && box->end() <= end) {
-            FloatRect boundaries = box->calculateBoundaries();
-            if (useSelectionHeight) {
-                LayoutRect selectionRect = box->localSelectionRect(start, end);
-                if (box->isHorizontal()) {
-                    boundaries.setHeight(selectionRect.height());
-                    boundaries.setY(selectionRect.y());
-                } else {
-                    boundaries.setWidth(selectionRect.width());
-                    boundaries.setX(selectionRect.x());
-                }
-            }
-            rects.append(renderer.localToAbsoluteQuad(boundaries, UseTransforms, wasFixed).enclosingBoundingBox());
-            continue;
-        }
-        FloatRect rect = localQuadForTextBox(*box, start, end, useSelectionHeight);
-        if (!rect.isZero())
-            rects.append(renderer.localToAbsoluteQuad(rect, UseTransforms, wasFixed).enclosingBoundingBox());
-    }
-    return rects;
-}
-
-Vector<FloatQuad> RenderTextLineBoxes::absoluteQuads(const RenderText& renderer, bool* wasFixed, ClippingOption option) const
-{
-    Vector<FloatQuad> quads;
-    for (auto* box = m_first; box; box = box->nextTextBox()) {
-        FloatRect boundaries = box->calculateBoundaries();
-
-        // Shorten the width of this text box if it ends in an ellipsis.
-        // FIXME: ellipsisRectForBox should switch to return FloatRect soon with the subpixellayout branch.
-        IntRect ellipsisRect = (option == ClipToEllipsis) ? ellipsisRectForBox(*box, 0, renderer.text().length()) : IntRect();
-        if (!ellipsisRect.isEmpty()) {
-            if (renderer.style().isHorizontalWritingMode())
-                boundaries.setWidth(ellipsisRect.maxX() - boundaries.x());
-            else
-                boundaries.setHeight(ellipsisRect.maxY() - boundaries.y());
-        }
-        quads.append(renderer.localToAbsoluteQuad(boundaries, UseTransforms, wasFixed));
-    }
-    return quads;
-}
-
 Vector<FloatQuad> RenderTextLineBoxes::absoluteQuadsForRange(const RenderText& renderer, unsigned start, unsigned end, bool useSelectionHeight, bool* wasFixed) const
 {
     Vector<FloatQuad> quads;
@@ -497,6 +451,31 @@ Vector<FloatQuad> RenderTextLineBoxes::absoluteQuadsForRange(const RenderText& r
         FloatRect rect = localQuadForTextBox(*box, start, end, useSelectionHeight);
         if (!rect.isZero())
             quads.append(renderer.localToAbsoluteQuad(rect, UseTransforms, wasFixed));
+    }
+    return quads;
+}
+
+Vector<IntRect> RenderTextLineBoxes::absoluteRectsForRange(const RenderText& renderer, unsigned start, unsigned end, bool useSelectionHeight, bool* wasFixed) const
+{
+    return absoluteQuadsForRange(renderer, start, end, useSelectionHeight, wasFixed).map([](auto& quad) { return quad.enclosingBoundingBox(); });
+}
+
+Vector<FloatQuad> RenderTextLineBoxes::absoluteQuads(const RenderText& renderer, bool* wasFixed, ClippingOption option) const
+{
+    Vector<FloatQuad> quads;
+    for (auto* box = m_first; box; box = box->nextTextBox()) {
+        FloatRect boundaries = box->calculateBoundaries();
+
+        // Shorten the width of this text box if it ends in an ellipsis.
+        // FIXME: ellipsisRectForBox should switch to return FloatRect soon with the subpixellayout branch.
+        IntRect ellipsisRect = (option == ClipToEllipsis) ? ellipsisRectForBox(*box, 0, renderer.text().length()) : IntRect();
+        if (!ellipsisRect.isEmpty()) {
+            if (renderer.style().isHorizontalWritingMode())
+                boundaries.setWidth(ellipsisRect.maxX() - boundaries.x());
+            else
+                boundaries.setHeight(ellipsisRect.maxY() - boundaries.y());
+        }
+        quads.append(renderer.localToAbsoluteQuad(boundaries, UseTransforms, wasFixed));
     }
     return quads;
 }
