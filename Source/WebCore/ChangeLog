@@ -1,3 +1,16 @@
+2019-12-20  youenn fablet  <youenn@apple.com>
+
+        SWServer can be created without any path to store registrations in non ephemeral sessions
+        https://bugs.webkit.org/show_bug.cgi?id=205500
+
+        Reviewed by Simon Fraser.
+
+        No change of behavior in release.
+        Remove debug assert and log the case of a non ephemeral session without a path.
+
+        * workers/service/server/SWServer.cpp:
+        (WebCore::SWServer::SWServer):
+
 2019-12-20  Brian Burg  <bburg@apple.com>
 
         Web Inspector: convert some InspectorFrontendHost methods to getters
