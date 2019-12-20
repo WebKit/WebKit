@@ -26,11 +26,13 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+from webkitpy.common.unicode_compatibility import encode_if_necessary
+
 
 class MockServerProcess(object):
     def __init__(self, port_obj=None, name=None, cmd=None, env=None, universal_newlines=False, lines=None, crashed=False, target_host=None):
         self.timed_out = False
-        self.lines = lines or []
+        self.lines = [encode_if_necessary(line) for line in (lines or [])]
         self.crashed = crashed
         self.writes = []
         self.cmd = cmd
@@ -52,7 +54,7 @@ class MockServerProcess(object):
     def read_stdout_line(self, deadline):
         if self.has_crashed():
             return None
-        return self.lines.pop(0) + "\n"
+        return self.lines.pop(0) + b'\n'
 
     def has_available_stdout(self):
         if self.has_crashed():
@@ -67,8 +69,8 @@ class MockServerProcess(object):
             self.lines.pop(0)
             remaining_size = size - len(first_line) - 1
             if not remaining_size:
-                return first_line + "\n"
-            return first_line + "\n" + self.read_stdout(deadline, remaining_size)
+                return first_line + b'\n'
+            return first_line + b'\n' + self.read_stdout(deadline, remaining_size)
         result = self.lines[0][:size]
         self.lines[0] = self.lines[0][size:]
         return result

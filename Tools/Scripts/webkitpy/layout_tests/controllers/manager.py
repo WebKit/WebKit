@@ -145,9 +145,9 @@ class Manager(object):
 
     def _get_test_inputs(self, tests_to_run, repeat_each, iterations, device_type=None):
         test_inputs = []
-        for _ in xrange(iterations):
+        for _ in range(iterations):
             for test in tests_to_run:
-                for _ in xrange(repeat_each):
+                for _ in range(repeat_each):
                     test_inputs.append(self._test_input_for_file(test, device_type=device_type))
         return test_inputs
 

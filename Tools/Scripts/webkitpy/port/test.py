@@ -32,6 +32,7 @@ from webkitpy.port import Port, Driver, DriverOutput
 from webkitpy.layout_tests.models.test_configuration import TestConfiguration
 from webkitpy.common.system.crashlogs import CrashLogs
 from webkitpy.common.version_name_map import PUBLIC_TABLE, VersionNameMap
+from webkitpy.common.unicode_compatibility import decode_for, encode_if_necessary
 
 
 # This sets basic expectations for a test. Each individual expectation
@@ -111,9 +112,9 @@ UNEXPECTED_FAILURES = 18
 
 
 def unit_test_list():
-    silent_audio = "RIFF2\x00\x00\x00WAVEfmt \x10\x00\x00\x00\x01\x00\x01\x00\x22\x56\x00\x00\x44\xAC\x00\x00\x02\x00\x10\x00data\x0E\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00"
-    silent_audio_with_single_bit_difference = "RIFF2\x00\x00\x00WAVEfmt \x10\x00\x00\x00\x01\x00\x01\x00\x22\x56\x00\x00\x44\xAC\x00\x00\x02\x00\x10\x00data\x0E\x00\x00\x00\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00"
-    audio2 = "RIFF2\x00\x00\x00WAVEfmt \x10\x00\x00\x00\x01\x00\x01\x00\x22\x56\x00\x00\x44\xAC\x00\x00\x02\x00\x10\x00data\x0E\x00\x00\x00\x40\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00"
+    silent_audio = b"RIFF2\x00\x00\x00WAVEfmt \x10\x00\x00\x00\x01\x00\x01\x00\x22\x56\x00\x00\x44\xAC\x00\x00\x02\x00\x10\x00data\x0E\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00"
+    silent_audio_with_single_bit_difference = b"RIFF2\x00\x00\x00WAVEfmt \x10\x00\x00\x00\x01\x00\x01\x00\x22\x56\x00\x00\x44\xAC\x00\x00\x02\x00\x10\x00data\x0E\x00\x00\x00\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00"
+    audio2 = b"RIFF2\x00\x00\x00WAVEfmt \x10\x00\x00\x00\x01\x00\x01\x00\x22\x56\x00\x00\x44\xAC\x00\x00\x02\x00\x10\x00data\x0E\x00\x00\x00\x40\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00"
     tests = TestList()
     tests.add('failures/expected/crash.html', crash=True)
     tests.add('failures/expected/exception.html', exception=True)
@@ -434,15 +435,20 @@ class TestPort(Port):
         return 'Release'
 
     def diff_image(self, expected_contents, actual_contents, tolerance=None):
+        expected_contents = encode_if_necessary(expected_contents)
+        actual_contents = encode_if_necessary(actual_contents)
         diffed = actual_contents != expected_contents
         if not actual_contents and not expected_contents:
             return (None, 0, None)
         if not actual_contents or not expected_contents:
             return (True, 0, None)
-        if 'ref' in expected_contents:
+        if b'ref' in expected_contents:
             assert tolerance == 0
         if diffed:
-            return ("< %s\n---\n> %s\n" % (expected_contents, actual_contents), 1, None)
+            return ("< {}\n---\n> {}\n".format(
+                decode_for(expected_contents, str),
+                decode_for(actual_contents, str),
+            ), 1, None)
         return (None, 0, None)
 
     def layout_tests_dir(self):
@@ -563,7 +569,7 @@ class TestDriver(Driver):
         test_args = test_input.args or []
         test = self._port._tests[test_name]
         if test.keyboard:
-            raise KeyboardInterrupt
+            raise KeyboardInterrupt()
         if test.exception:
             raise ValueError('exception from ' + test_name)
         if test.hang:

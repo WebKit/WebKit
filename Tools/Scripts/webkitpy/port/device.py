@@ -116,3 +116,6 @@ class Device(object):
 
     def __repr__(self):
         return u'{}'.format(self.platform_device)
+
+    def __hash__(self):
+        return hash(self.udid)

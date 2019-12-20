@@ -109,6 +109,7 @@ class MeteredStream(object):
 
         try:
             self._stream.write(timestamp_string + txt)
+            self._stream.flush()
         except UnicodeEncodeError:
             output = ''
             for c in timestamp_string + txt:
@@ -117,6 +118,7 @@ class MeteredStream(object):
                 except UnicodeEncodeError:
                     output += '?'
             self._stream.write(output)
+            self._stream.flush()
 
     def writeln(self, txt, now=None, pid=None):
         self.write(self._ensure_newline(txt), now, pid)
@@ -125,6 +127,7 @@ class MeteredStream(object):
         num_chars = len(self._last_partial_line)
         self._stream.write(self._erasure(self._last_partial_line))
         self._last_partial_line = ''
+        self._stream.flush()
 
     def flush(self):
         if self._last_partial_line:

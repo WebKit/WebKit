@@ -35,6 +35,7 @@ import re
 import time
 
 from webkitpy.port import server_process
+from webkitpy.common.unicode_compatibility import decode_for
 
 
 _log = logging.getLogger(__name__)
@@ -57,9 +58,10 @@ class ImageDiffer(object):
             if not self._process:
                 self._start(tolerance)
             # Note that although we are handed 'old', 'new', ImageDiff wants 'new', 'old'.
-            self._process.write('Content-Length: %d\n%sContent-Length: %d\n%s' % (
-                len(actual_contents), actual_contents,
-                len(expected_contents), expected_contents))
+            self._process.write('Content-Length: {}\n'.format(len(actual_contents)))
+            self._process.write(actual_contents)
+            self._process.write('Content-Length: {}\n'.format(len(expected_contents)))
+            self._process.write(expected_contents)
             return self._read()
         except IOError as exception:
             return (None, 0, "Failed to compute an image diff: %s" % str(exception))
@@ -83,17 +85,17 @@ class ImageDiffer(object):
             if self._process.timed_out or self._process.has_crashed() or not output:
                 break
 
-            if output.startswith('diff'):  # This is the last line ImageDiff prints.
+            if output.startswith(b'diff'):  # This is the last line ImageDiff prints.
                 break
 
-            if output.startswith('Content-Length'):
-                m = re.match('Content-Length: (\d+)', output)
+            if output.startswith(b'Content-Length'):
+                m = re.match(b'Content-Length: (\d+)', output)
                 content_length = int(m.group(1))
                 output_image = self._process.read_stdout(deadline, content_length)
                 output = self._process.read_stdout_line(deadline)
                 break
 
-        stderr = self._process.pop_all_buffered_stderr()
+        stderr = decode_for(self._process.pop_all_buffered_stderr(), str)
         err_str = ''
         if stderr:
             err_str += "ImageDiff produced stderr output:\n" + stderr
@@ -103,9 +105,9 @@ class ImageDiffer(object):
             err_str += "ImageDiff crashed\n"
 
         diff_percent = 0
-        if output and output.startswith('diff'):
-            m = re.match('diff: (.+)% (passed|failed)', output)
-            if m.group(2) == 'passed':
+        if output and output.startswith(b'diff'):
+            m = re.match(b'diff: (.+)% (passed|failed)', output)
+            if m.group(2) == b'passed':
                 return (None, 0, None)
             diff_percent = float(m.group(1))
 

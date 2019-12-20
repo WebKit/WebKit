@@ -1,3 +1,90 @@
+2019-12-19  Jonathan Bedard  <jbedard@apple.com>
+
+        Python 3: Add support to run-webkit-tests
+        https://bugs.webkit.org/show_bug.cgi?id=205291
+
+        Reviewed by Stephanie Lewis.
+
+        * Scripts/test-webkitpy-python3: Add webkitpy.layout_tests.
+        * Scripts/webkitpy/common/message_pool.py:
+        (_MessagePool._loop): Move exception inside of loop.
+        (_Message.__repr__): Use .format strings.
+        (_Worker.__init__): Ditto.
+        * Scripts/webkitpy/common/wavediff.py:
+        (WaveDiff.__init__): Use Python 3 compatible BytesIO and StringIO.
+        * Scripts/webkitpy/layout_tests/controllers/layout_test_finder.py:
+        (LayoutTestFinder._read_test_names_from_file): Use .format string.
+        (LayoutTestFinder.split_into_chunks): Explicitly use integer division.
+        * Scripts/webkitpy/layout_tests/controllers/manager.py:
+        (Manager._get_test_inputs): Use range over xrange.
+        * Scripts/webkitpy/layout_tests/controllers/single_test_runner.py:
+        (SingleTestRunner._handle_error): Use .format strings.
+        * Scripts/webkitpy/layout_tests/layout_package/json_layout_results_generator.py:
+        (JSONLayoutResultsGenerator._insert_failure_summaries): Use Python 3 compatible itervalues.
+        * Scripts/webkitpy/layout_tests/models/test_results.py:
+        (TestResult.__init__): Sort type list.
+        * Scripts/webkitpy/layout_tests/run_webkit_tests_integrationtest.py:
+        (RunTest.setUp): Multiple processes are buggy in test-webkitpy.
+        (RunTest.test_basic): replace buflist with getvalue().
+        (RunTest.test_child_processes_2): Ditto.
+        (RunTest.test_child_processes_min): Ditto.
+        (RunTest.test_keyboard_interrupt): Ditto.
+        (RunTest.test_missing_and_unexpected_results): Compare dictionaries instead of json strings.
+        (RunTest.test_crash_with_stderr): Ditto.
+        (RunTest.test_reftest_should_not_use_naming_convention_if_not_listed_in_reftestlist): Ditto.
+        (EndToEndTest.test_reftest_with_two_notrefs): Ditto.
+        * Scripts/webkitpy/layout_tests/views/metered_stream.py:
+        (MeteredStream.write): Flush stream after writing.
+        (MeteredStream._erase_last_partial_line): Ditto.
+        * Scripts/webkitpy/layout_tests/views/printing.py:
+        (Printer._print_directory_timings): Can't compare string to integer.
+        (Printer._print_statistics_for_test_timings): Use integer division.
+        * Scripts/webkitpy/port/darwin.py:
+        (DarwinPort._merge_crash_logs): Use items over iteritems.
+        * Scripts/webkitpy/port/device.py:
+        (Device.__hash__): Allow hashing of devices.
+        * Scripts/webkitpy/port/device_port.py:
+        (DevicePort._install): Use range over xrange.
+        (DevicePort.setup_test_run): Ditto.
+        (DevicePort.clean_up_test_run): Ditto.
+        * Scripts/webkitpy/port/driver.py:
+        (DriverOutput.__init__): Text should be decoded, audio encoded.
+        (Driver.__init__):
+        (Driver.run_test):
+        (Driver._parse_child_processes_output): Output is byte array.
+        (Driver._check_for_driver_timeout): Ditto.
+        (Driver._check_for_address_sanitizer_violation): Error lines are byte arrays.
+        (Driver._check_for_driver_crash_or_unresponsiveness): Ditto.
+        (Driver._read_optional_image_block): If a block is base64 encoded, we want the decoded
+        content, otherwise, we want the encoded content.
+        (Driver._read_header): Lines are byte arrays, decode them before processing.
+        (Driver._process_stdout_line): Blocks are byte arrays.
+        (Driver._strip_eof): Lines should be byte arrays, not strings.
+        (Driver._read_block): Standardize encoding in blocks.
+        (ContentBlock.__init__): Content should be a byte array.
+        (ContentBlock.decode_content): Attempt to decode content.
+        * Scripts/webkitpy/port/driver_unittest.py:
+        (DriverTest.test_read_binary_block): Content should be encoded.
+        (DriverTest.test_read_base64_block): Ditto.
+        (DriverTest.test_check_for_driver_crash): ServerProcess output should be a byte array.
+        * Scripts/webkitpy/port/image_diff.py:
+        (ImageDiffer.diff_image): ImageDiff output is in byte arrays.
+        (ImageDiffer._read): Ditto.
+        * Scripts/webkitpy/port/server_process.py:
+        (ServerProcess.write): Encode data before writing it.
+        * Scripts/webkitpy/port/server_process_mock.py:
+        (MockServerProcess.__init__): Convert string mock output to bytes.
+        (MockServerProcess.read_stdout_line): Stdout lines are byte arrays.
+        (MockServerProcess.read_stdout): Ditto.
+        * Scripts/webkitpy/port/simulator_process.py:
+        (SimulatorProcess.NonBlockingFileFromSocket.close): Don't double close socket in Python 3.
+        (SimulatorProcess._start): Stdin should be a binary stream.
+        * Scripts/webkitpy/port/test.py:
+        (unit_test_list): Convert audio streams to byte arrays.
+        * Scripts/webkitpy/xcode/simulated_device.py:
+        (SimulatedDevice.is_usable): Decode xcrun output.
+        (SimulatedDevice.install_app): Use xrange over range.
+
 2019-12-19  Matt Lewis  <jlewis3@apple.com>
 
         Fixing Host name of gpu process bot
