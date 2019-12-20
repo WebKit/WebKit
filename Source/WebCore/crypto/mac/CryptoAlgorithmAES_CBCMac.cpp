@@ -64,13 +64,13 @@ static ExceptionOr<Vector<uint8_t>> transformAES_CBC(CCOperation operation, cons
 
 ExceptionOr<Vector<uint8_t>> CryptoAlgorithmAES_CBC::platformEncrypt(const CryptoAlgorithmAesCbcCfbParams& parameters, const CryptoKeyAES& key, const Vector<uint8_t>& plainText)
 {
-    ASSERT(parameters.ivVector().size() == kCCBlockSizeAES128);
+    ASSERT(parameters.ivVector().size() == kCCBlockSizeAES128 || parameters.ivVector().isEmpty());
     return transformAES_CBC(kCCEncrypt, parameters.ivVector(), key.key(), plainText);
 }
 
 ExceptionOr<Vector<uint8_t>> CryptoAlgorithmAES_CBC::platformDecrypt(const CryptoAlgorithmAesCbcCfbParams& parameters, const CryptoKeyAES& key, const Vector<uint8_t>& cipherText)
 {
-    ASSERT(parameters.ivVector().size() == kCCBlockSizeAES128);
+    ASSERT(parameters.ivVector().size() == kCCBlockSizeAES128 || parameters.ivVector().isEmpty());
     return transformAES_CBC(kCCDecrypt, parameters.ivVector(), key.key(), cipherText);
 }
 

@@ -269,7 +269,7 @@ Optional<CBORValue> CBORReader::readCBORMap(uint64_t length, int maxNestingLevel
             return WTF::nullopt;
 
         // Only CBOR maps with integer or string type keys are allowed.
-        if (key.value().type() != CBORValue::Type::String && key.value().type() != CBORValue::Type::Unsigned) {
+        if (!key->isString() && !key->isInteger()) {
             m_errorCode = DecoderError::IncorrectMapKeyType;
             return WTF::nullopt;
         }

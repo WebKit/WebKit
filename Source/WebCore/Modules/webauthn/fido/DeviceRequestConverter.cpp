@@ -87,7 +87,7 @@ static CBORValue convertDescriptorToCBOR(const PublicKeyCredentialDescriptor& de
     return CBORValue(WTFMove(cborDescriptorMap));
 }
 
-Vector<uint8_t> encodeMakeCredenitalRequestAsCBOR(const Vector<uint8_t>& hash, const PublicKeyCredentialCreationOptions& options, UVAvailability uvCapability)
+Vector<uint8_t> encodeMakeCredenitalRequestAsCBOR(const Vector<uint8_t>& hash, const PublicKeyCredentialCreationOptions& options, UVAvailability uvCapability, Optional<PinParameters> pin)
 {
     CBORValue::MapValue cborMap;
     cborMap[CBORValue(1)] = CBORValue(hash);
@@ -124,6 +124,12 @@ Vector<uint8_t> encodeMakeCredenitalRequestAsCBOR(const Vector<uint8_t>& hash, c
     if (!optionMap.empty())
         cborMap[CBORValue(7)] = CBORValue(WTFMove(optionMap));
 
+    if (pin) {
+        ASSERT(pin->protocol >= 0);
+        cborMap[CBORValue(8)] = CBORValue(pin->protocol);
+        cborMap[CBORValue(9)] = CBORValue(WTFMove(pin->auth));
+    }
+
     auto serializedParam = CBORWriter::write(CBORValue(WTFMove(cborMap)));
     ASSERT(serializedParam);
 
@@ -132,7 +138,7 @@ Vector<uint8_t> encodeMakeCredenitalRequestAsCBOR(const Vector<uint8_t>& hash, c
     return cborRequest;
 }
 
-Vector<uint8_t> encodeGetAssertionRequestAsCBOR(const Vector<uint8_t>& hash, const PublicKeyCredentialRequestOptions& options, UVAvailability uvCapability)
+Vector<uint8_t> encodeGetAssertionRequestAsCBOR(const Vector<uint8_t>& hash, const PublicKeyCredentialRequestOptions& options, UVAvailability uvCapability, Optional<PinParameters> pin)
 {
     CBORValue::MapValue cborMap;
     cborMap[CBORValue(1)] = CBORValue(options.rpId);
@@ -163,6 +169,12 @@ Vector<uint8_t> encodeGetAssertionRequestAsCBOR(const Vector<uint8_t>& hash, con
 
     if (!optionMap.empty())
         cborMap[CBORValue(5)] = CBORValue(WTFMove(optionMap));
+
+    if (pin) {
+        ASSERT(pin->protocol >= 0);
+        cborMap[CBORValue(8)] = CBORValue(pin->protocol);
+        cborMap[CBORValue(9)] = CBORValue(WTFMove(pin->auth));
+    }
 
     auto serializedParam = CBORWriter::write(CBORValue(WTFMove(cborMap)));
     ASSERT(serializedParam);

@@ -1,0 +1,317 @@
+// Copyright 2019 The Chromium Authors. All rights reserved.
+// Copyright (C) 2019 Apple Inc. All rights reserved.
+//
+// Redistribution and use in source and binary forms, with or without
+// modification, are permitted provided that the following conditions are
+// met:
+//
+//    * Redistributions of source code must retain the above copyright
+// notice, this list of conditions and the following disclaimer.
+//    * Redistributions in binary form must reproduce the above
+// copyright notice, this list of conditions and the following disclaimer
+// in the documentation and/or other materials provided with the
+// distribution.
+//    * Neither the name of Google Inc. nor the names of its
+// contributors may be used to endorse or promote products derived from
+// this software without specific prior written permission.
+//
+// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+// "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+// LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+// A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+// OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+// SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+// LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+// DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+// THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+// (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+// OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+#include "config.h"
+#include "Pin.h"
+
+#if ENABLE(WEB_AUTHN)
+
+#include "CBORReader.h"
+#include "CBORWriter.h"
+#include "CryptoAlgorithmAES_CBC.h"
+#include "CryptoAlgorithmAesCbcCfbParams.h"
+#include "CryptoAlgorithmECDH.h"
+#include "CryptoAlgorithmHMAC.h"
+#include "CryptoKeyAES.h"
+#include "CryptoKeyEC.h"
+#include "CryptoKeyHMAC.h"
+#include <pal/crypto/CryptoDigest.h>
+
+namespace fido {
+namespace pin {
+using namespace cbor;
+
+// hasAtLeastFourCodepoints returns true if |pin| contains
+// four or more code points. This reflects the "4 Unicode characters"
+// requirement in CTAP2.
+static bool hasAtLeastFourCodepoints(const String& pin)
+{
+    return pin.length() >= 4;
+}
+
+// makePinAuth returns `LEFT(HMAC-SHA-256(secret, data), 16)`.
+static Vector<uint8_t> makePinAuth(const CryptoKeyHMAC& key, const Vector<uint8_t>& data)
+{
+    auto result = CryptoAlgorithmHMAC::platformSign(key, data);
+    ASSERT(!result.hasException());
+    auto pinAuth = result.releaseReturnValue();
+    pinAuth.shrink(16);
+    return pinAuth;
+}
+
+Vector<uint8_t> encodeRawPublicKey(const Vector<uint8_t>& x, const Vector<uint8_t>& y)
+{
+    Vector<uint8_t> rawKey;
+    rawKey.reserveCapacity(1 + x.size() + y.size());
+    rawKey.append(0x04);
+    rawKey.appendVector(x);
+    rawKey.appendVector(y);
+    return rawKey;
+}
+
+Optional<CString> validateAndConvertToUTF8(const String& pin)
+{
+    if (!hasAtLeastFourCodepoints(pin))
+        return WTF::nullopt;
+    auto result = pin.utf8();
+    if (result.length() < kMinBytes || result.length() > kMaxBytes)
+        return WTF::nullopt;
+    return result;
+}
+
+// encodePINCommand returns a CTAP2 PIN command for the operation |subcommand|.
+// Additional elements of the top-level CBOR map can be added with the optional
+// |addAdditional| callback.
+static Vector<uint8_t> encodePinCommand(Subcommand subcommand, Function<void(CBORValue::MapValue*)> addAdditional = nullptr)
+{
+    CBORValue::MapValue map;
+    map.emplace(static_cast<int64_t>(RequestKey::kProtocol), kProtocolVersion);
+    map.emplace(static_cast<int64_t>(RequestKey::kSubcommand), static_cast<int64_t>(subcommand));
+
+    if (addAdditional)
+        addAdditional(&map);
+
+    // FIXME(205375)
+    auto serializedParam = CBORWriter::write(CBORValue(WTFMove(map)));
+    ASSERT(serializedParam);
+
+    Vector<uint8_t> cborRequest({ static_cast<uint8_t>(CtapRequestCommand::kAuthenticatorClientPin) });
+    cborRequest.appendVector(*serializedParam);
+    return cborRequest;
+}
+
+RetriesResponse::RetriesResponse() = default;
+
+Optional<RetriesResponse> RetriesResponse::parse(const Vector<uint8_t>& inBuffer)
+{
+    // FIXME(205375)
+    if (inBuffer.size() <= kResponseCodeLength || getResponseCode(inBuffer) != CtapDeviceResponseCode::kSuccess)
+        return WTF::nullopt;
+
+    Vector<uint8_t> buffer;
+    buffer.append(inBuffer.data() + 1, inBuffer.size() - 1);
+    Optional<CBOR> decodedResponse = cbor::CBORReader::read(buffer);
+    if (!decodedResponse || !decodedResponse->isMap())
+        return WTF::nullopt;
+    const auto& responseMap = decodedResponse->getMap();
+
+    auto it = responseMap.find(CBORValue(static_cast<int64_t>(ResponseKey::kRetries)));
+    if (it == responseMap.end() || !it->second.isUnsigned())
+        return WTF::nullopt;
+
+    RetriesResponse ret;
+    ret.retries = static_cast<int64_t>(it->second.getUnsigned());
+    return ret;
+}
+
+KeyAgreementResponse::KeyAgreementResponse(Ref<CryptoKeyEC>&& peerKey)
+    : peerKey(WTFMove(peerKey))
+{
+}
+
+Optional<KeyAgreementResponse> KeyAgreementResponse::parse(const Vector<uint8_t>& inBuffer)
+{
+    // FIXME(205375)
+    if (inBuffer.size() <= kResponseCodeLength || getResponseCode(inBuffer) != CtapDeviceResponseCode::kSuccess)
+        return WTF::nullopt;
+
+    Vector<uint8_t> buffer;
+    buffer.append(inBuffer.data() + 1, inBuffer.size() - 1);
+    auto decodedResponse = cbor::CBORReader::read(buffer);
+    if (!decodedResponse || !decodedResponse->isMap())
+        return WTF::nullopt;
+    const auto& responseMap = decodedResponse->getMap();
+
+    // The ephemeral key is encoded as a COSE structure.
+    auto it = responseMap.find(CBORValue(static_cast<int64_t>(ResponseKey::kKeyAgreement)));
+    if (it == responseMap.end() || !it->second.isMap())
+        return WTF::nullopt;
+    const auto& coseKey = it->second.getMap();
+
+    return parseFromCOSE(coseKey);
+}
+
+Optional<KeyAgreementResponse> KeyAgreementResponse::parseFromCOSE(const CBORValue::MapValue& coseKey)
+{
+    // The COSE key must be a P-256 point. See
+    // https://tools.ietf.org/html/rfc8152#section-7.1
+    for (const auto& pair : Vector<std::pair<int64_t, int64_t>>({
+        { static_cast<int64_t>(COSE::kty), static_cast<int64_t>(COSE::EC2) },
+        { static_cast<int64_t>(COSE::alg), static_cast<int64_t>(COSE::ECDH256) },
+        { static_cast<int64_t>(COSE::crv), static_cast<int64_t>(COSE::P_256) },
+    })) {
+        auto it = coseKey.find(CBORValue(pair.first));
+        if (it == coseKey.end() || !it->second.isInteger() || it->second.getInteger() != pair.second)
+            return WTF::nullopt;
+    }
+
+    // See https://tools.ietf.org/html/rfc8152#section-13.1.1
+    const auto& xIt = coseKey.find(CBORValue(static_cast<int64_t>(COSE::x)));
+    const auto& yIt = coseKey.find(CBORValue(static_cast<int64_t>(COSE::y)));
+    if (xIt == coseKey.end() || yIt == coseKey.end() || !xIt->second.isByteString() || !yIt->second.isByteString())
+        return WTF::nullopt;
+
+    const auto& x = xIt->second.getByteString();
+    const auto& y = yIt->second.getByteString();
+    auto peerKey = CryptoKeyEC::importRaw(CryptoAlgorithmIdentifier::ECDH, "P-256", encodeRawPublicKey(x, y), true, CryptoKeyUsageDeriveBits);
+    if (!peerKey)
+        return WTF::nullopt;
+
+    return KeyAgreementResponse(peerKey.releaseNonNull());
+}
+
+cbor::CBORValue::MapValue encodeCOSEPublicKey(const Vector<uint8_t>& rawPublicKey)
+{
+    ASSERT(rawPublicKey.size() == 65);
+    Vector<uint8_t> x;
+    x.append(rawPublicKey.data() + 1, ES256FieldElementLength);
+    Vector<uint8_t> y;
+    y.append(rawPublicKey.data() + 1 + ES256FieldElementLength, ES256FieldElementLength);
+
+    cbor::CBORValue::MapValue publicKeyMap;
+    publicKeyMap[cbor::CBORValue(COSE::kty)] = cbor::CBORValue(COSE::EC2);
+    publicKeyMap[cbor::CBORValue(COSE::alg)] = cbor::CBORValue(COSE::ECDH256);
+    publicKeyMap[cbor::CBORValue(COSE::crv)] = cbor::CBORValue(COSE::P_256);
+    publicKeyMap[cbor::CBORValue(COSE::x)] = cbor::CBORValue(WTFMove(x));
+    publicKeyMap[cbor::CBORValue(COSE::y)] = cbor::CBORValue(WTFMove(y));
+
+    return publicKeyMap;
+}
+
+TokenResponse::TokenResponse(Ref<WebCore::CryptoKeyHMAC>&& token)
+    : m_token(WTFMove(token))
+{
+}
+
+Optional<TokenResponse> TokenResponse::parse(const WebCore::CryptoKeyAES& sharedKey, const Vector<uint8_t>& inBuffer)
+{
+    // FIXME(205375)
+    if (inBuffer.size() <= kResponseCodeLength || getResponseCode(inBuffer) != CtapDeviceResponseCode::kSuccess)
+        return WTF::nullopt;
+
+    Vector<uint8_t> buffer;
+    buffer.append(inBuffer.data() + 1, inBuffer.size() - 1);
+    auto decodedResponse = cbor::CBORReader::read(buffer);
+    if (!decodedResponse || !decodedResponse->isMap())
+        return WTF::nullopt;
+    const auto& responseMap = decodedResponse->getMap();
+
+    auto it = responseMap.find(CBORValue(static_cast<int64_t>(ResponseKey::kPinToken)));
+    if (it == responseMap.end() || !it->second.isByteString())
+        return WTF::nullopt;
+    const auto& encryptedToken = it->second.getByteString();
+
+    auto tokenResult = CryptoAlgorithmAES_CBC::platformDecrypt({ }, sharedKey, encryptedToken);
+    if (tokenResult.hasException())
+        return WTF::nullopt;
+    auto token = tokenResult.releaseReturnValue();
+
+    auto tokenKey = CryptoKeyHMAC::importRaw(token.size() * 8, CryptoAlgorithmIdentifier::SHA_256, WTFMove(token), true, CryptoKeyUsageSign);
+    ASSERT(tokenKey);
+
+    return TokenResponse(tokenKey.releaseNonNull());
+}
+
+Vector<uint8_t> TokenResponse::pinAuth(const Vector<uint8_t>& clientDataHash) const
+{
+    return makePinAuth(m_token, clientDataHash);
+}
+
+const Vector<uint8_t>& TokenResponse::token() const
+{
+    return m_token->key();
+}
+
+Vector<uint8_t> encodeAsCBOR(const RetriesRequest&)
+{
+    return encodePinCommand(Subcommand::kGetRetries);
+}
+
+Vector<uint8_t> encodeAsCBOR(const KeyAgreementRequest&)
+{
+    return encodePinCommand(Subcommand::kGetKeyAgreement);
+}
+
+Optional<TokenRequest> TokenRequest::tryCreate(const CString& pin, const CryptoKeyEC& peerKey)
+{
+    // The following implements Section 5.5.4 Getting sharedSecret from Authenticator.
+    // https://fidoalliance.org/specs/fido-v2.0-ps-20190130/fido-client-to-authenticator-protocol-v2.0-ps-20190130.html#gettingSharedSecret
+    // 1. Generate a P256 key pair.
+    auto keyPairResult = CryptoKeyEC::generatePair(CryptoAlgorithmIdentifier::ECDH, "P-256", true, CryptoKeyUsageDeriveBits);
+    ASSERT(!keyPairResult.hasException());
+    auto keyPair = keyPairResult.releaseReturnValue();
+
+    // 2. Use ECDH to compute the shared AES-CBC key.
+    auto sharedKeyResult = CryptoAlgorithmECDH::platformDeriveBits(downcast<CryptoKeyEC>(*keyPair.privateKey), peerKey);
+    if (!sharedKeyResult)
+        return WTF::nullopt;
+    auto sharedKey = CryptoKeyAES::importRaw(CryptoAlgorithmIdentifier::AES_CBC, WTFMove(*sharedKeyResult), true, CryptoKeyUsageEncrypt | CryptoKeyUsageDecrypt);
+    ASSERT(sharedKey);
+
+    // The following encodes the public key of the above key pair into COSE format.
+    auto rawPublicKeyResult = downcast<CryptoKeyEC>(*keyPair.publicKey).exportRaw();
+    ASSERT(!rawPublicKeyResult.hasException());
+    auto coseKey = encodeCOSEPublicKey(rawPublicKeyResult.returnValue());
+
+    // The following calculates a SHA-256 digest of the PIN, and shrink to the left 16 bytes.
+    auto crypto = PAL::CryptoDigest::create(PAL::CryptoDigest::Algorithm::SHA_256);
+    crypto->addBytes(pin.data(), pin.length());
+    auto pinHash = crypto->computeHash();
+    pinHash.shrink(16);
+
+    return TokenRequest(sharedKey.releaseNonNull(), WTFMove(coseKey), WTFMove(pinHash));
+}
+
+TokenRequest::TokenRequest(Ref<WebCore::CryptoKeyAES>&& sharedKey, cbor::CBORValue::MapValue&& coseKey, Vector<uint8_t>&& pinHash)
+    : m_sharedKey(WTFMove(sharedKey))
+    , m_coseKey(WTFMove(coseKey))
+    , m_pinHash(WTFMove(pinHash))
+{
+}
+
+const CryptoKeyAES& TokenRequest::sharedKey() const
+{
+    return m_sharedKey;
+}
+
+Vector<uint8_t> encodeAsCBOR(const TokenRequest& request)
+{
+    auto result = CryptoAlgorithmAES_CBC::platformEncrypt({ }, request.sharedKey(), request.m_pinHash);
+    ASSERT(!result.hasException());
+
+    return encodePinCommand(Subcommand::kGetPinToken, [coseKey = WTFMove(request.m_coseKey), encryptedPin = result.releaseReturnValue()] (CBORValue::MapValue* map) mutable {
+        map->emplace(static_cast<int64_t>(RequestKey::kKeyAgreement), WTFMove(coseKey));
+        map->emplace(static_cast<int64_t>(RequestKey::kPinHashEnc), WTFMove(encryptedPin));
+    });
+}
+
+} // namespace pin
+} // namespace fido
+
+#endif // ENABLE(WEB_AUTHN)

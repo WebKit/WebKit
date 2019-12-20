@@ -1764,9 +1764,10 @@
 		57156114234C7FD6008FC7AB /* JSMockWebAuthenticationConfiguration.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 57156111234C7FBC008FC7AB /* JSMockWebAuthenticationConfiguration.cpp */; };
 		57156115234C7FDC008FC7AB /* JSMockWebAuthenticationConfiguration.h in Headers */ = {isa = PBXBuildFile; fileRef = 57156110234C7FBC008FC7AB /* JSMockWebAuthenticationConfiguration.h */; };
 		571F21891DA57C54005C9EFD /* JSSubtleCrypto.h in Headers */ = {isa = PBXBuildFile; fileRef = 571F21881DA57C54005C9EFD /* JSSubtleCrypto.h */; };
-		572093D31DDCEB9A00310AB0 /* CryptoAlgorithmAesCbcCfbParams.h in Headers */ = {isa = PBXBuildFile; fileRef = 572093D21DDCEB9A00310AB0 /* CryptoAlgorithmAesCbcCfbParams.h */; };
+		572093D31DDCEB9A00310AB0 /* CryptoAlgorithmAesCbcCfbParams.h in Headers */ = {isa = PBXBuildFile; fileRef = 572093D21DDCEB9A00310AB0 /* CryptoAlgorithmAesCbcCfbParams.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5721A9871ECE53B10081295A /* CryptoDigestAlgorithm.h in Headers */ = {isa = PBXBuildFile; fileRef = 5721A9861ECE53B10081295A /* CryptoDigestAlgorithm.h */; };
 		5721A98B1ECE57040081295A /* CryptoAlgorithmRsaPssParams.h in Headers */ = {isa = PBXBuildFile; fileRef = 5721A9881ECE57040081295A /* CryptoAlgorithmRsaPssParams.h */; };
+		572576D623A8872B00909540 /* CryptoKeyFormat.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C9ACAC91F40B96A00F3AA09 /* CryptoKeyFormat.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		572A7F211C6E5719009C6149 /* SimulatedClick.h in Headers */ = {isa = PBXBuildFile; fileRef = 572A7F201C6E5719009C6149 /* SimulatedClick.h */; };
 		572B401F21757A64000AD43E /* DeviceRequestConverter.h in Headers */ = {isa = PBXBuildFile; fileRef = 572B401D21757A64000AD43E /* DeviceRequestConverter.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		572B402C21769020000AD43E /* JSUserVerificationRequirement.h in Headers */ = {isa = PBXBuildFile; fileRef = 572B402A2176901F000AD43E /* JSUserVerificationRequirement.h */; };
@@ -1793,18 +1794,19 @@
 		57303C2C2009B4A800355965 /* AuthenticatorAssertionResponse.h in Headers */ = {isa = PBXBuildFile; fileRef = 57303C272009B2FC00355965 /* AuthenticatorAssertionResponse.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		57303C2F2009B7E100355965 /* JSAuthenticatorAssertionResponse.h in Headers */ = {isa = PBXBuildFile; fileRef = 57303C2D2009B7D900355965 /* JSAuthenticatorAssertionResponse.h */; };
 		57303C4620105D2F00355965 /* AuthenticatorCoordinator.h in Headers */ = {isa = PBXBuildFile; fileRef = 57303C4320105B3D00355965 /* AuthenticatorCoordinator.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		573489391DAC6B6E00DC0667 /* CryptoAlgorithmParameters.h in Headers */ = {isa = PBXBuildFile; fileRef = 573489381DAC6B6D00DC0667 /* CryptoAlgorithmParameters.h */; };
+		573489391DAC6B6E00DC0667 /* CryptoAlgorithmParameters.h in Headers */ = {isa = PBXBuildFile; fileRef = 573489381DAC6B6D00DC0667 /* CryptoAlgorithmParameters.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5739E12F1DAC7F7800E14383 /* JSCryptoAlgorithmParameters.h in Headers */ = {isa = PBXBuildFile; fileRef = 5739E12E1DAC7F7800E14383 /* JSCryptoAlgorithmParameters.h */; };
 		573F5332216806E10045587A /* FidoHidMessage.h in Headers */ = {isa = PBXBuildFile; fileRef = 57BAF28A2167D303008E954E /* FidoHidMessage.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		573F533721680D150045587A /* FidoParsingUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = 573F533521680D140045587A /* FidoParsingUtils.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		574F55E1204F3B23002948C6 /* WebAuthenticationConstants.h in Headers */ = {isa = PBXBuildFile; fileRef = 574F55DC204F3732002948C6 /* WebAuthenticationConstants.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		5750A9751E68D00000705C4A /* CryptoKeyEC.h in Headers */ = {isa = PBXBuildFile; fileRef = 5750A9731E68D00000705C4A /* CryptoKeyEC.h */; };
+		5750A9751E68D00000705C4A /* CryptoKeyEC.h in Headers */ = {isa = PBXBuildFile; fileRef = 5750A9731E68D00000705C4A /* CryptoKeyEC.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5750A97E1E6A13EF00705C4A /* CryptoAlgorithmEcKeyParams.h in Headers */ = {isa = PBXBuildFile; fileRef = 5750A97D1E6A13EF00705C4A /* CryptoAlgorithmEcKeyParams.h */; };
 		5750A9821E6A150800705C4A /* JSEcKeyParams.h in Headers */ = {isa = PBXBuildFile; fileRef = 5750A9801E6A150800705C4A /* JSEcKeyParams.h */; };
-		5750A9871E6A216800705C4A /* CryptoAlgorithmECDH.h in Headers */ = {isa = PBXBuildFile; fileRef = 5750A9851E6A216800705C4A /* CryptoAlgorithmECDH.h */; };
+		5750A9871E6A216800705C4A /* CryptoAlgorithmECDH.h in Headers */ = {isa = PBXBuildFile; fileRef = 5750A9851E6A216800705C4A /* CryptoAlgorithmECDH.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5754719F1ECE628300DD63B2 /* JSRsaPssParams.h in Headers */ = {isa = PBXBuildFile; fileRef = 575471991ECE5D2A00DD63B2 /* JSRsaPssParams.h */; };
 		57585961239F124D00C74572 /* JSAuthenticationExtensionsClientOutputs.h in Headers */ = {isa = PBXBuildFile; fileRef = 5758595E239F117300C74572 /* JSAuthenticationExtensionsClientOutputs.h */; };
 		5758596C239F321C00C74572 /* AuthenticationExtensionsClientOutputs.h in Headers */ = {isa = PBXBuildFile; fileRef = 57585965239F14CC00C74572 /* AuthenticationExtensionsClientOutputs.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		5758597C23A1FCF300C74572 /* Pin.h in Headers */ = {isa = PBXBuildFile; fileRef = 5758597923A1FCF200C74572 /* Pin.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5760827220215A5500116678 /* AuthenticatorCoordinatorClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 576082702021513F00116678 /* AuthenticatorCoordinatorClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5768142A1E6F99C100E77754 /* CryptoAlgorithmEcdhKeyDeriveParams.h in Headers */ = {isa = PBXBuildFile; fileRef = 576814291E6F99C100E77754 /* CryptoAlgorithmEcdhKeyDeriveParams.h */; };
 		576814411E709FA400E77754 /* JSEcdhKeyDeriveParams.h in Headers */ = {isa = PBXBuildFile; fileRef = 5768143E1E709C3600E77754 /* JSEcdhKeyDeriveParams.h */; };
@@ -1840,8 +1842,8 @@
 		57E1E5AD1E8DD09B00EE37C9 /* JSAesCtrParams.h in Headers */ = {isa = PBXBuildFile; fileRef = 57E1E5AB1E8DD09B00EE37C9 /* JSAesCtrParams.h */; };
 		57E2335B1DC7D5E500F28D01 /* JSJsonWebKey.h in Headers */ = {isa = PBXBuildFile; fileRef = 57E2335A1DC7D5E500F28D01 /* JSJsonWebKey.h */; };
 		57E2335D1DC7D60800F28D01 /* JSRsaOtherPrimesInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 57E2335C1DC7D60800F28D01 /* JSRsaOtherPrimesInfo.h */; };
-		57E233631DC7DA2400F28D01 /* RsaOtherPrimesInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 57E233621DC7DA2400F28D01 /* RsaOtherPrimesInfo.h */; };
-		57E233651DC7DB1F00F28D01 /* JsonWebKey.h in Headers */ = {isa = PBXBuildFile; fileRef = 57E233641DC7DB1F00F28D01 /* JsonWebKey.h */; };
+		57E233631DC7DA2400F28D01 /* RsaOtherPrimesInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 57E233621DC7DA2400F28D01 /* RsaOtherPrimesInfo.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		57E233651DC7DB1F00F28D01 /* JsonWebKey.h in Headers */ = {isa = PBXBuildFile; fileRef = 57E233641DC7DB1F00F28D01 /* JsonWebKey.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		57E233671DCAB21C00F28D01 /* JSHmacKeyParams.h in Headers */ = {isa = PBXBuildFile; fileRef = 57E233661DCAB21C00F28D01 /* JSHmacKeyParams.h */; };
 		57E2336E1DCD43FD00F28D01 /* CryptoAlgorithmRsaHashedImportParams.h in Headers */ = {isa = PBXBuildFile; fileRef = 57E2336D1DCD43FD00F28D01 /* CryptoAlgorithmRsaHashedImportParams.h */; };
 		57E233711DCD468F00F28D01 /* JSRsaHashedImportParams.h in Headers */ = {isa = PBXBuildFile; fileRef = 57E233701DCD468F00F28D01 /* JSRsaHashedImportParams.h */; };
@@ -2299,12 +2301,12 @@
 		7C8E34C71E4A33B00054CE23 /* JSDOMConvertXPathNSResolver.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C8E34AC1E4A338E0054CE23 /* JSDOMConvertXPathNSResolver.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7C93F34A1AA6BA5E00A98BAB /* CompiledContentExtension.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C93F3481AA6BA5E00A98BAB /* CompiledContentExtension.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7C93F34E1AA6BF0700A98BAB /* ContentExtensionCompiler.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C93F34C1AA6BF0700A98BAB /* ContentExtensionCompiler.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		7C9ACA921F3CC0AA00F3AA09 /* CryptoKeyAlgorithm.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C9ACA8F1F3CC0AA00F3AA09 /* CryptoKeyAlgorithm.h */; };
-		7C9ACA981F3CCDAD00F3AA09 /* CryptoAesKeyAlgorithm.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C9ACA961F3CCDAD00F3AA09 /* CryptoAesKeyAlgorithm.h */; };
-		7C9ACA9C1F3CCDF200F3AA09 /* CryptoEcKeyAlgorithm.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C9ACA9A1F3CCDF200F3AA09 /* CryptoEcKeyAlgorithm.h */; };
-		7C9ACAA01F3CCE3000F3AA09 /* CryptoHmacKeyAlgorithm.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C9ACA9E1F3CCE3000F3AA09 /* CryptoHmacKeyAlgorithm.h */; };
-		7C9ACAA41F3CCE6900F3AA09 /* CryptoRsaKeyAlgorithm.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C9ACAA21F3CCE6900F3AA09 /* CryptoRsaKeyAlgorithm.h */; };
-		7C9ACAA81F3CCEB400F3AA09 /* CryptoRsaHashedKeyAlgorithm.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C9ACAA61F3CCEB400F3AA09 /* CryptoRsaHashedKeyAlgorithm.h */; };
+		7C9ACA921F3CC0AA00F3AA09 /* CryptoKeyAlgorithm.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C9ACA8F1F3CC0AA00F3AA09 /* CryptoKeyAlgorithm.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		7C9ACA981F3CCDAD00F3AA09 /* CryptoAesKeyAlgorithm.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C9ACA961F3CCDAD00F3AA09 /* CryptoAesKeyAlgorithm.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		7C9ACA9C1F3CCDF200F3AA09 /* CryptoEcKeyAlgorithm.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C9ACA9A1F3CCDF200F3AA09 /* CryptoEcKeyAlgorithm.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		7C9ACAA01F3CCE3000F3AA09 /* CryptoHmacKeyAlgorithm.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C9ACA9E1F3CCE3000F3AA09 /* CryptoHmacKeyAlgorithm.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		7C9ACAA41F3CCE6900F3AA09 /* CryptoRsaKeyAlgorithm.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C9ACAA21F3CCE6900F3AA09 /* CryptoRsaKeyAlgorithm.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		7C9ACAA81F3CCEB400F3AA09 /* CryptoRsaHashedKeyAlgorithm.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C9ACAA61F3CCEB400F3AA09 /* CryptoRsaHashedKeyAlgorithm.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7C9ACAB81F3CF1AE00F3AA09 /* JSCryptoAesKeyAlgorithm.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C9ACAAA1F3CDB6300F3AA09 /* JSCryptoAesKeyAlgorithm.h */; };
 		7C9ACABA1F3CF1AE00F3AA09 /* JSCryptoEcKeyAlgorithm.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C9ACAAC1F3CDB9D00F3AA09 /* JSCryptoEcKeyAlgorithm.h */; };
 		7C9ACABC1F3CF1AE00F3AA09 /* JSCryptoHmacKeyAlgorithm.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C9ACAAF1F3CDB9F00F3AA09 /* JSCryptoHmacKeyAlgorithm.h */; };
@@ -4697,9 +4699,9 @@
 		E124748410AA161D00B79493 /* AuthenticationClient.h in Headers */ = {isa = PBXBuildFile; fileRef = E124748310AA161D00B79493 /* AuthenticationClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E125F82C1822CFEC00D84CD9 /* CryptoAlgorithmSHA1.h in Headers */ = {isa = PBXBuildFile; fileRef = E125F82A1822CFEC00D84CD9 /* CryptoAlgorithmSHA1.h */; };
 		E125F8321822F11B00D84CD9 /* CryptoAlgorithmHMAC.h in Headers */ = {isa = PBXBuildFile; fileRef = E125F8301822F11B00D84CD9 /* CryptoAlgorithmHMAC.h */; };
-		E125F8361822F18A00D84CD9 /* CryptoKeyHMAC.h in Headers */ = {isa = PBXBuildFile; fileRef = E125F8341822F18A00D84CD9 /* CryptoKeyHMAC.h */; };
-		E125F8421824253A00D84CD9 /* CryptoAlgorithmAES_CBC.h in Headers */ = {isa = PBXBuildFile; fileRef = E125F8401824253A00D84CD9 /* CryptoAlgorithmAES_CBC.h */; };
-		E125F84E1824289D00D84CD9 /* CryptoKeyAES.h in Headers */ = {isa = PBXBuildFile; fileRef = E125F84C1824289D00D84CD9 /* CryptoKeyAES.h */; };
+		E125F8361822F18A00D84CD9 /* CryptoKeyHMAC.h in Headers */ = {isa = PBXBuildFile; fileRef = E125F8341822F18A00D84CD9 /* CryptoKeyHMAC.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		E125F8421824253A00D84CD9 /* CryptoAlgorithmAES_CBC.h in Headers */ = {isa = PBXBuildFile; fileRef = E125F8401824253A00D84CD9 /* CryptoAlgorithmAES_CBC.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		E125F84E1824289D00D84CD9 /* CryptoKeyAES.h in Headers */ = {isa = PBXBuildFile; fileRef = E125F84C1824289D00D84CD9 /* CryptoKeyAES.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E12719C70EEEC16800F61213 /* NavigatorBase.h in Headers */ = {isa = PBXBuildFile; fileRef = E12719C60EEEC16800F61213 /* NavigatorBase.h */; };
 		E1271A0B0EEEC77A00F61213 /* WorkerNavigator.h in Headers */ = {isa = PBXBuildFile; fileRef = E1271A0A0EEEC77A00F61213 /* WorkerNavigator.h */; };
 		E1271A580EEECDE400F61213 /* JSWorkerNavigator.h in Headers */ = {isa = PBXBuildFile; fileRef = E1271A560EEECDE400F61213 /* JSWorkerNavigator.h */; };
@@ -4714,7 +4716,7 @@
 		E14F1C4514B5DAC600EA9009 /* HTMLFormControlElementWithState.h in Headers */ = {isa = PBXBuildFile; fileRef = E14F1C4314B5DAC600EA9009 /* HTMLFormControlElementWithState.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E152551516FD2350003D7ADB /* WebCoreResourceHandleAsOperationQueueDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = E152551316FD234F003D7ADB /* WebCoreResourceHandleAsOperationQueueDelegate.h */; };
 		E157A8E11817331C009F821D /* JSCryptoKey.h in Headers */ = {isa = PBXBuildFile; fileRef = E157A8DF1817331C009F821D /* JSCryptoKey.h */; };
-		E157A8E518173A3A009F821D /* CryptoKey.h in Headers */ = {isa = PBXBuildFile; fileRef = E157A8E318173A3A009F821D /* CryptoKey.h */; };
+		E157A8E518173A3A009F821D /* CryptoKey.h in Headers */ = {isa = PBXBuildFile; fileRef = E157A8E318173A3A009F821D /* CryptoKey.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E15A36D71104572000B7B639 /* XMLNSNames.h in Headers */ = {isa = PBXBuildFile; fileRef = E15A36D61104572000B7B639 /* XMLNSNames.h */; };
 		E15A36D91104572700B7B639 /* XMLNSNames.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E15A36D81104572700B7B639 /* XMLNSNames.cpp */; };
 		E15FF7D518C9553800FE4C87 /* KeypressCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = E15FF7D418C9553800FE4C87 /* KeypressCommand.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -4723,8 +4725,8 @@
 		E16982551134629D00894115 /* ObjCRuntimeObject.h in Headers */ = {isa = PBXBuildFile; fileRef = E16982541134629D00894115 /* ObjCRuntimeObject.h */; };
 		E16982601134636A00894115 /* ObjCRuntimeObject.mm in Sources */ = {isa = PBXBuildFile; fileRef = E169825F1134636A00894115 /* ObjCRuntimeObject.mm */; };
 		E16A84FA14C85CCC002977DF /* CSSBorderImage.h in Headers */ = {isa = PBXBuildFile; fileRef = E16A84F814C85CCC002977DF /* CSSBorderImage.h */; };
-		E172AF6E180F24C600FBADB9 /* CryptoAlgorithm.h in Headers */ = {isa = PBXBuildFile; fileRef = E172AF6C180F24C600FBADB9 /* CryptoAlgorithm.h */; };
-		E172AF70180F289500FBADB9 /* CryptoKeyUsage.h in Headers */ = {isa = PBXBuildFile; fileRef = E172AF6F180F289500FBADB9 /* CryptoKeyUsage.h */; };
+		E172AF6E180F24C600FBADB9 /* CryptoAlgorithm.h in Headers */ = {isa = PBXBuildFile; fileRef = E172AF6C180F24C600FBADB9 /* CryptoAlgorithm.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		E172AF70180F289500FBADB9 /* CryptoKeyUsage.h in Headers */ = {isa = PBXBuildFile; fileRef = E172AF6F180F289500FBADB9 /* CryptoKeyUsage.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E172AF901811BC3700FBADB9 /* JSDOMPromiseDeferred.h in Headers */ = {isa = PBXBuildFile; fileRef = E172AF8E1811BC3700FBADB9 /* JSDOMPromiseDeferred.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E179F0DA1B9774FE00ED0A27 /* Internals.mm in Sources */ = {isa = PBXBuildFile; fileRef = E179F0D91B9774FE00ED0A27 /* Internals.mm */; };
 		E17B491616A9B094001C8839 /* TransitionEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = E17B491416A9B093001C8839 /* TransitionEvent.h */; };
@@ -4737,7 +4739,7 @@
 		E18823662031F59400B42DF3 /* VRPlatformManager.h in Headers */ = {isa = PBXBuildFile; fileRef = E18823612031F55B00B42DF3 /* VRPlatformManager.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E18C35441F71970C00FF632D /* WebArchiveResourceWebResourceHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = E18C35411F7196CD00FF632D /* WebArchiveResourceWebResourceHandler.h */; };
 		E18DF33518AAF12C00773E59 /* SerializedCryptoKeyWrap.h in Headers */ = {isa = PBXBuildFile; fileRef = E18DF33418AAF12C00773E59 /* SerializedCryptoKeyWrap.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		E19727161820549E00592D51 /* CryptoKeyType.h in Headers */ = {isa = PBXBuildFile; fileRef = E19727151820549E00592D51 /* CryptoKeyType.h */; };
+		E19727161820549E00592D51 /* CryptoKeyType.h in Headers */ = {isa = PBXBuildFile; fileRef = E19727151820549E00592D51 /* CryptoKeyType.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E19AC3EF1824DC7900349426 /* CryptoAlgorithmSHA224.h in Headers */ = {isa = PBXBuildFile; fileRef = E19AC3E71824DC7900349426 /* CryptoAlgorithmSHA224.h */; };
 		E19AC3F11824DC7900349426 /* CryptoAlgorithmSHA256.h in Headers */ = {isa = PBXBuildFile; fileRef = E19AC3E91824DC7900349426 /* CryptoAlgorithmSHA256.h */; };
 		E19AC3F31824DC7900349426 /* CryptoAlgorithmSHA384.h in Headers */ = {isa = PBXBuildFile; fileRef = E19AC3EB1824DC7900349426 /* CryptoAlgorithmSHA384.h */; };
@@ -4761,7 +4763,7 @@
 		E1C415DA0F655D6F0092D2FB /* CrossOriginPreflightResultCache.h in Headers */ = {isa = PBXBuildFile; fileRef = E1C415D90F655D6F0092D2FB /* CrossOriginPreflightResultCache.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E1C416120F6562FD0092D2FB /* CrossOriginAccessControl.h in Headers */ = {isa = PBXBuildFile; fileRef = E1C416110F6562FD0092D2FB /* CrossOriginAccessControl.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E1C4DE690EA75C1E0023CCD6 /* ActiveDOMObject.h in Headers */ = {isa = PBXBuildFile; fileRef = E1C4DE680EA75C1E0023CCD6 /* ActiveDOMObject.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		E1C657251816E69D00256CDD /* CryptoAlgorithmIdentifier.h in Headers */ = {isa = PBXBuildFile; fileRef = E1C657241816E69D00256CDD /* CryptoAlgorithmIdentifier.h */; };
+		E1C657251816E69D00256CDD /* CryptoAlgorithmIdentifier.h in Headers */ = {isa = PBXBuildFile; fileRef = E1C657241816E69D00256CDD /* CryptoAlgorithmIdentifier.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E1C94AF9191303F000D5A893 /* BlobPart.h in Headers */ = {isa = PBXBuildFile; fileRef = E1C94AF7191303F000D5A893 /* BlobPart.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E1CAA5C60E8BD23600A73ECA /* JSWorker.h in Headers */ = {isa = PBXBuildFile; fileRef = E1CAA5C50E8BD23600A73ECA /* JSWorker.h */; };
 		E1CDE9221501916900862CC5 /* AsyncFileStream.h in Headers */ = {isa = PBXBuildFile; fileRef = E1CDE9211501916900862CC5 /* AsyncFileStream.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -4774,7 +4776,7 @@
 		E1F80B8818317252007885C3 /* CryptoKeyPair.h in Headers */ = {isa = PBXBuildFile; fileRef = E1F80B8618317252007885C3 /* CryptoKeyPair.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E1F80B8E183172B5007885C3 /* JSCryptoKeyPair.h in Headers */ = {isa = PBXBuildFile; fileRef = E1F80B8C183172B5007885C3 /* JSCryptoKeyPair.h */; };
 		E1FE136B183FE1AB00892F13 /* CryptoAlgorithmRSA_OAEP.h in Headers */ = {isa = PBXBuildFile; fileRef = E1FE1369183FE1AB00892F13 /* CryptoAlgorithmRSA_OAEP.h */; };
-		E1FE137518402A6700892F13 /* CommonCryptoUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = E1FE137318402A6700892F13 /* CommonCryptoUtilities.h */; };
+		E1FE137518402A6700892F13 /* CommonCryptoUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = E1FE137318402A6700892F13 /* CommonCryptoUtilities.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E1FE137B184D21BB00892F13 /* CryptoAlgorithmAES_KW.h in Headers */ = {isa = PBXBuildFile; fileRef = E1FE1379184D21BB00892F13 /* CryptoAlgorithmAES_KW.h */; };
 		E1FF57A30F01255B00891EBB /* ThreadGlobalData.h in Headers */ = {isa = PBXBuildFile; fileRef = E1FF57A20F01255B00891EBB /* ThreadGlobalData.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E1FF8F6D180DB5BE00132674 /* CryptoAlgorithmRegistry.h in Headers */ = {isa = PBXBuildFile; fileRef = E1FF8F6B180DB5BE00132674 /* CryptoAlgorithmRegistry.h */; };
@@ -8798,6 +8800,8 @@
 		57585969239F1EC700C74572 /* AuthenticatorResponse.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = AuthenticatorResponse.cpp; sourceTree = "<group>"; };
 		5758596B239F284B00C74572 /* AuthenticatorAttestationResponse.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = AuthenticatorAttestationResponse.cpp; sourceTree = "<group>"; };
 		5758596E239F397900C74572 /* AuthenticatorAssertionResponse.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = AuthenticatorAssertionResponse.cpp; sourceTree = "<group>"; };
+		5758597823A1FCE600C74572 /* Pin.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Pin.cpp; sourceTree = "<group>"; };
+		5758597923A1FCF200C74572 /* Pin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Pin.h; sourceTree = "<group>"; };
 		5760824F20118D8D00116678 /* JSBasicCredentialCustom.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = JSBasicCredentialCustom.cpp; sourceTree = "<group>"; };
 		576082562011BE0200116678 /* JSAuthenticatorResponseCustom.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = JSAuthenticatorResponseCustom.cpp; sourceTree = "<group>"; };
 		576082702021513F00116678 /* AuthenticatorCoordinatorClient.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AuthenticatorCoordinatorClient.h; sourceTree = "<group>"; };
@@ -19993,6 +19997,8 @@
 				578A4C0A2167D29600D08F34 /* FidoHidPacket.h */,
 				573F533621680D150045587A /* FidoParsingUtils.cpp */,
 				573F533521680D140045587A /* FidoParsingUtils.h */,
+				5758597823A1FCE600C74572 /* Pin.cpp */,
+				5758597923A1FCF200C74572 /* Pin.h */,
 				57152B6A21CD995C000C37CA /* U2fCommandConstructor.cpp */,
 				57152B6C21CD995C000C37CA /* U2fCommandConstructor.h */,
 				57152B7B21DD8BA1000C37CA /* U2fResponseConverter.cpp */,
@@ -29417,6 +29423,7 @@
 				E125F84E1824289D00D84CD9 /* CryptoKeyAES.h in Headers */,
 				7C9ACA921F3CC0AA00F3AA09 /* CryptoKeyAlgorithm.h in Headers */,
 				5750A9751E68D00000705C4A /* CryptoKeyEC.h in Headers */,
+				572576D623A8872B00909540 /* CryptoKeyFormat.h in Headers */,
 				E125F8361822F18A00D84CD9 /* CryptoKeyHMAC.h in Headers */,
 				E1F80B8818317252007885C3 /* CryptoKeyPair.h in Headers */,
 				57E657DF1E71373A00F941CA /* CryptoKeyRaw.h in Headers */,
@@ -31721,6 +31728,7 @@
 				1DBC1B562347B3D200B901AF /* PictureInPictureObserver.h in Headers */,
 				1D2C82B7236A3F6A0055D6C5 /* PictureInPictureSupport.h in Headers */,
 				1D2F8E062344752300993B68 /* PictureInPictureWindow.h in Headers */,
+				5758597C23A1FCF300C74572 /* Pin.h in Headers */,
 				D0FF2A5E11F8C45A007E74E0 /* PingLoader.h in Headers */,
 				CD7D33441C7A123F00041293 /* PixelBufferConformerCV.h in Headers */,
 				CDEFA2281E7669E8000AE99C /* PlatformAudioData.h in Headers */,

@@ -1,3 +1,74 @@
+2019-12-20  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [WebAuthn] Implement coders for CTAP ClientPIN requests and responses
+        https://bugs.webkit.org/show_bug.cgi?id=205376
+        <rdar://problem/58034395>
+
+        Reviewed by Brent Fulgham.
+
+        This patch implements coders for authenticatorClientPIN requests and responses
+        following the spec:
+        https://fidoalliance.org/specs/fido-v2.0-ps-20190130/fido-client-to-authenticator-protocol-v2.0-ps-20190130.html#authenticatorClientPIN
+
+        Specifically, it
+        i) implements authenticatorClientPIN subCommand: getRetries, getKeyAgreement and getPINToken;
+        ii) adds pinAuth/pinProtocol to authenticatorMakeCredential/authenticatorGetAssertion.
+
+        The authenticatorClientPIN subCommands are based on a Chromium patch:
+        https://chromium-review.googlesource.com/c/chromium/src/+/1457004 Specifically, it adopts the
+        interfaces from that patch, but rewrites the BoringSSL-based crypto features using WebCore's
+        WebCrypto implementation. This allows us to focus on high level crypto interfaces, and lets
+        WebCrypto handle the underlying crypto library. Also, the original Chromium patch lacks tests.
+        We introduce a large set of API tests to confirm proper function.
+
+        This patch also makes the AES CBC, EDCH, and HMAC platform* implementations public, so that
+        these implementations can be shared by WebAuthentication and test infrastructure.
+
+        Covered by API tests.
+
+        * Modules/webauthn/WebAuthenticationConstants.h:
+        * Modules/webauthn/cbor/CBORReader.cpp:
+        (cbor::CBORReader::readCBORMap):
+        Let CBORReader recognize negative map keys.
+        * Modules/webauthn/fido/DeviceRequestConverter.cpp:
+        (fido::encodeMakeCredenitalRequestAsCBOR):
+        (fido::encodeGetAssertionRequestAsCBOR):
+        * Modules/webauthn/fido/DeviceRequestConverter.h:
+        * Modules/webauthn/fido/Pin.cpp: Added.
+        (fido::pin::hasAtLeastFourCodepoints):
+        (fido::pin::makePinAuth):
+        (fido::pin::encodeRawPublicKey):
+        (fido::pin::validateAndConvertToUTF8):
+        (fido::pin::encodePinCommand):
+        (fido::pin::RetriesResponse::parse):
+        (fido::pin::KeyAgreementResponse::KeyAgreementResponse):
+        (fido::pin::KeyAgreementResponse::parse):
+        (fido::pin::KeyAgreementResponse::parseFromCOSE):
+        (fido::pin::encodeCOSEPublicKey):
+        (fido::pin::TokenResponse::TokenResponse):
+        (fido::pin::TokenResponse::parse):
+        (fido::pin::TokenResponse::pinAuth const):
+        (fido::pin::TokenResponse::token const):
+        (fido::pin::encodeAsCBOR):
+        (fido::pin::TokenRequest::tryCreate):
+        (fido::pin::TokenRequest::TokenRequest):
+        (fido::pin::TokenRequest::sharedKey const):
+        * Modules/webauthn/fido/Pin.h: Added.
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * crypto/CryptoAlgorithm.h:
+        * crypto/algorithms/CryptoAlgorithmAES_CBC.h:
+        * crypto/algorithms/CryptoAlgorithmECDH.h:
+        * crypto/algorithms/CryptoAlgorithmHMAC.h:
+        * crypto/keys/CryptoKeyAES.cpp:
+        * crypto/keys/CryptoKeyAES.h:
+        * crypto/keys/CryptoKeyEC.h:
+        * crypto/mac/CryptoAlgorithmAES_CBCMac.cpp:
+        (WebCore::CryptoAlgorithmAES_CBC::platformEncrypt):
+        (WebCore::CryptoAlgorithmAES_CBC::platformDecrypt):
+        * crypto/mac/CryptoKeyRSAMac.cpp:
+        (WebCore::CryptoKeyRSA::algorithm const):
+
 2019-12-19  Doug Kelly  <dougk@apple.com>
 
         Update TrackBase to store m_mediaElement as a WeakPtr

@@ -28,6 +28,7 @@
 
 #if ENABLE(WEB_CRYPTO)
 
+#include "CryptoAesKeyAlgorithm.h"
 #include "CryptoAlgorithmAesKeyParams.h"
 #include "CryptoAlgorithmRegistry.h"
 #include "ExceptionOr.h"

@@ -42,15 +42,20 @@ struct PublicKeyCredentialRequestOptions;
 
 namespace fido {
 
+struct PinParameters {
+    int protocol;
+    Vector<uint8_t> auth;
+};
+
 // Serializes MakeCredential request parameter into CBOR encoded map with
 // integer keys and CBOR encoded values as defined by the CTAP spec.
 // https://fidoalliance.org/specs/fido-v2.0-ps-20170927/fido-client-to-authenticator-protocol-v2.0-ps-20170927.html#authenticatorMakeCredential
-WEBCORE_EXPORT Vector<uint8_t> encodeMakeCredenitalRequestAsCBOR(const Vector<uint8_t>& hash, const WebCore::PublicKeyCredentialCreationOptions&, AuthenticatorSupportedOptions::UserVerificationAvailability);
+WEBCORE_EXPORT Vector<uint8_t> encodeMakeCredenitalRequestAsCBOR(const Vector<uint8_t>& hash, const WebCore::PublicKeyCredentialCreationOptions&, AuthenticatorSupportedOptions::UserVerificationAvailability, Optional<PinParameters> pin = WTF::nullopt);
 
 // Serializes GetAssertion request parameter into CBOR encoded map with
 // integer keys and CBOR encoded values as defined by the CTAP spec.
 // https://fidoalliance.org/specs/fido-v2.0-ps-20170927/fido-client-to-authenticator-protocol-v2.0-ps-20170927.html#authenticatorGetAssertion
-WEBCORE_EXPORT Vector<uint8_t> encodeGetAssertionRequestAsCBOR(const Vector<uint8_t>& hash, const WebCore::PublicKeyCredentialRequestOptions&, AuthenticatorSupportedOptions::UserVerificationAvailability);
+WEBCORE_EXPORT Vector<uint8_t> encodeGetAssertionRequestAsCBOR(const Vector<uint8_t>& hash, const WebCore::PublicKeyCredentialRequestOptions&, AuthenticatorSupportedOptions::UserVerificationAvailability, Optional<PinParameters> pin = WTF::nullopt);
 
 // Represents CTAP requests with empty parameters, including
 // AuthenticatorGetInfo, AuthenticatorReset and AuthenticatorGetNextAssertion commands.
