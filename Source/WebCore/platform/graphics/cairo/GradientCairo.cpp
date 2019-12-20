@@ -82,6 +82,11 @@ static void addConicSector(cairo_pattern_t *gradient, float cx, float cy, float 
     double angleEnd = ((to.offset - angOffset) * 2 * M_PI) + angleRadians;
 
     // Calculate center offset depending on quadrant.
+    //
+    // All sections belonging to the same quadrant share a common center. As we move
+    // along the circle, sections belonging to a new quadrant will have a different
+    // center. If all sections had the same center, the center will get overridden as
+    // the sections get painted.
     double cxOffset, cyOffset;
     if (from.offset >= 0 && from.offset < 0.25) {
         cxOffset = 0;
@@ -99,8 +104,15 @@ static void addConicSector(cairo_pattern_t *gradient, float cx, float cy, float 
         cxOffset = 0;
         cyOffset = -1;
     }
-    cx = cx + cxOffset;
-    cy = cy + cyOffset;
+    // The center offset for each of the sections is 1 pixel, since in theory nothing
+    // can be smaller than 1 pixel. However, in high-resolution displays 1 pixel is
+    // too wide, and that makes the separation between sections clearly visible by a
+    // straight white line. To fix this issue, I set the size of the offset not to
+    // 1 pixel but 0.10. This has proved to work OK both in low-resolution displays
+    // as well as high-resolution displays.
+    const double offsetWidth = 0.1;
+    cx = cx + cxOffset * offsetWidth;
+    cy = cy + cyOffset * offsetWidth;
 
     // Calculate starting point, ending point and control points of Bezier curve.
     double f = 4 * tan((angleEnd - angleStart) / 4) / 3;
