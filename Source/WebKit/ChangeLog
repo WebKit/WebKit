@@ -1,3 +1,13 @@
+2019-12-20  James Savage  <james.savage@apple.com>
+
+        Include WKPDFConfiguration, WKFindConfiguration, and WKFindResult in umbrella header
+        https://bugs.webkit.org/show_bug.cgi?id=205432
+        <rdar://problem/58067946>
+
+        Reviewed by Wenson Hsieh.
+
+        * Shared/API/Cocoa/WebKit.h: Include new headers.
+
 2019-12-20  Brian Burg  <bburg@apple.com>
 
         Web Inspector: convert some InspectorFrontendHost methods to getters
