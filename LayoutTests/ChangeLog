@@ -1,3 +1,11 @@
+2019-12-20  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, skip http/wpt/html/semantics/text-level-semantics/the-a-element/a-download-click-404.html on macOS wk1
+
+        We do not support the download attribute on this platform.
+
+        * platform/mac-wk1/TestExpectations:
+
 2019-12-19  Saam Barati  <sbarati@apple.com>
 
         Don't cache self customs on dictionaries
