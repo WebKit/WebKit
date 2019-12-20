@@ -1,5 +1,14 @@
 2019-12-20  Truitt Savell  <tsavell@apple.com>
 
+        Flaky crash in AudioSourceProviderAVFObjC::~AudioSourceProviderAVFObjC on webaudio/silent-audio-interrupted-in-background.html
+        https://bugs.webkit.org/show_bug.cgi?id=202064
+
+        Unreviewed test gardening.
+
+        * platform/mac/TestExpectations:
+
+2019-12-20  Truitt Savell  <tsavell@apple.com>
+
         Unreviewed, rolling out r253831.
 
         Inadvertent rollout of r253829
