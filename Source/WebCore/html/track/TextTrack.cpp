@@ -438,9 +438,11 @@ void TextTrack::cueDidChange(TextTrackCue* cue)
 
 int TextTrack::trackIndex()
 {
-    ASSERT(m_mediaElement);
-    if (!m_trackIndex)
+    if (!m_trackIndex) {
+        if (!m_mediaElement)
+            return 0;
         m_trackIndex = m_mediaElement->ensureTextTracks().getTrackIndex(*this);
+    }
     return m_trackIndex.value();
 }
 
@@ -465,9 +467,11 @@ TextTrackCueList& TextTrack::ensureTextTrackCueList()
 
 int TextTrack::trackIndexRelativeToRenderedTracks()
 {
-    ASSERT(m_mediaElement);
-    if (!m_renderedTrackIndex)
+    if (!m_renderedTrackIndex) {
+        if (!m_mediaElement)
+            return 0;
         m_renderedTrackIndex = m_mediaElement->ensureTextTracks().getTrackIndexRelativeToRenderedTracks(*this);
+    }
     return m_renderedTrackIndex.value();
 }
 

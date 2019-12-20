@@ -1,3 +1,16 @@
+2019-12-19  Doug Kelly  <dougk@apple.com>
+
+        Invalid assert with tracks not associated to media element
+        https://bugs.webkit.org/show_bug.cgi?id=205360
+
+        Reviewed by Eric Carlson.
+
+        Remove asserts around TextTrack when not attached to a media element and instead return a zero index.
+
+        * html/track/TextTrack.cpp:
+        (WebCore::TextTrack::trackIndex):
+        (WebCore::TextTrack::trackIndexRelativeToRenderedTracks):
+
 2019-12-19  Sihui Liu  <sihui_liu@apple.com>
 
         IndexedDB: remove timer for pending operations in IDBTransaction
