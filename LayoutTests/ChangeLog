@@ -1,3 +1,12 @@
+2019-12-19  Charlie Turner  <cturner@igalia.com>
+
+        [GTK] http/tests/media/clearkey/collect-webkit-media-session.html is timing out since added in r235429 "WebKitMediaSession should be GC collectable when its document is being stopped"
+        https://bugs.webkit.org/show_bug.cgi?id=189345
+
+        Unreviewed gardening.
+
+        * platform/gtk/TestExpectations: This test is for legacy encrypted media, which we have deprecated, and further uses an EXT-X-KEY URI scheme that will be unsupported by GStreamer (the "clearkey" scheme is not spec'd anywhere I could find).
+
 2019-12-19  Chris Dumez  <cdumez@apple.com>
 
         REGRESSION: (r251677) imported/w3c/web-platform-tests/html/semantics/forms/form-submission-0/form-double-submit-3.html is a flaky failure
