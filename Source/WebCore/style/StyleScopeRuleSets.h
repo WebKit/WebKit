@@ -79,8 +79,7 @@ public:
     void resetUserAgentMediaQueryStyle();
 
     bool hasViewportDependentMediaQueries() const;
-
-    Optional<DynamicMediaQueryEvaluationChanges> evaluteDynamicMediaQueryRules(const MediaQueryEvaluator&);
+    RuleSet::MediaQueryStyleUpdateType evaluteDynamicMediaQueryRules(const MediaQueryEvaluator&);
 
     RuleFeatureSet& mutableFeatures();
 

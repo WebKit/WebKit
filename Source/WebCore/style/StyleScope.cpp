@@ -651,20 +651,17 @@ void Scope::evaluateMediaQueries(TestFunction&& testFunction)
     if (!resolver)
         return;
 
-    auto evaluationChanges = testFunction(*resolver);
-    if (!evaluationChanges)
-        return;
+    auto updateType = testFunction(*resolver);
 
-    switch (evaluationChanges->type) {
-    case DynamicMediaQueryEvaluationChanges::Type::InvalidateStyle: {
-        Invalidator invalidator(evaluationChanges->invalidationRuleSets);
-        if (m_shadowRoot)
-            invalidator.invalidateStyle(*m_shadowRoot);
-        else
-            invalidator.invalidateStyle(m_document);
+    switch (updateType) {
+    case RuleSet::MediaQueryStyleUpdateType::None:
+        return;
+    case RuleSet::MediaQueryStyleUpdateType::Resolve:
+        // FIXME: We could have an invalidation ruleset for rules inside dynamic media queries.
+        if (auto* documentElement = m_document.documentElement())
+            documentElement->invalidateStyleForSubtree();
         break;
-    }
-    case DynamicMediaQueryEvaluationChanges::Type::ResetStyle:
+    case RuleSet::MediaQueryStyleUpdateType::Reset:
         scheduleUpdate(UpdateType::ContentsOrInterpretation);
         break;
     }

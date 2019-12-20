@@ -1,3 +1,16 @@
+2019-12-20  Truitt Savell  <tsavell@apple.com>
+
+        Unreviewed, rolling out r253820.
+
+        Broke Mac testing
+
+        Reverted changeset:
+
+        "Invalidate only affected elements after media query
+        evaluation changes"
+        https://bugs.webkit.org/show_bug.cgi?id=205392
+        https://trac.webkit.org/changeset/253820
+
 2019-12-20  youenn fablet  <youenn@apple.com>
 
         SWServer can be created without any path to store registrations in non ephemeral sessions

@@ -132,7 +132,7 @@ public:
 #endif
 
     bool hasViewportDependentMediaQueries() const;
-    Optional<DynamicMediaQueryEvaluationChanges> evaluateDynamicMediaQueries();
+    RuleSet::MediaQueryStyleUpdateType evaluateDynamicMediaQueries();
 
     void addKeyframeStyle(Ref<StyleRuleKeyframes>&&);
 

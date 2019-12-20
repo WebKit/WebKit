@@ -28,7 +28,6 @@
 #include "HashFunctions.h"
 #include "HashTraits.h"
 #include "Hasher.h"
-#include "Vector.h"
 
 namespace WTF {
 
@@ -46,6 +45,14 @@ struct VectorHash {
         return a == b;
     }
     static constexpr bool safeToCompareToEmptyOrDeleted = true;
+};
+
+template<typename T, size_t inlineCapacity>
+struct HashTraits<Vector<T, inlineCapacity>> : GenericHashTraits<Vector<T, inlineCapacity>> {
+    static constexpr bool emptyValueIsZero = !inlineCapacity;
+
+    static void constructDeletedValue(Vector<T, inlineCapacity>& slot) { new (NotNull, std::addressof(slot)) Vector<T, inlineCapacity>(WTF::HashTableDeletedValue); }
+    static bool isDeletedValue(const Vector<T, inlineCapacity>& value) { return value.isHashTableDeletedValue(); }
 };
 
 template<typename T, size_t inlineCapacity>

@@ -389,14 +389,6 @@ struct CustomHashTraits : public GenericHashTraits<T> {
     }
 };
 
-template<typename T, size_t inlineCapacity>
-struct HashTraits<Vector<T, inlineCapacity>> : GenericHashTraits<Vector<T, inlineCapacity>> {
-    static constexpr bool emptyValueIsZero = !inlineCapacity;
-
-    static void constructDeletedValue(Vector<T, inlineCapacity>& slot) { new (NotNull, std::addressof(slot)) Vector<T, inlineCapacity>(WTF::HashTableDeletedValue); }
-    static bool isDeletedValue(const Vector<T, inlineCapacity>& value) { return value.isHashTableDeletedValue(); }
-};
-
 } // namespace WTF
 
 using WTF::HashTraits;

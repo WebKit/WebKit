@@ -95,7 +95,7 @@ void RuleSet::addRule(StyleRule& rule, unsigned selectorIndex, unsigned selector
     m_features.collectFeatures(ruleData);
 
     if (mediaQueryCollector)
-        mediaQueryCollector->addRuleIfNeeded(ruleData);
+        mediaQueryCollector->addRulePositionIfNeeded(ruleData.position());
 
     unsigned classBucketSize = 0;
     const CSSSelector* idSelector = nullptr;
@@ -405,12 +405,9 @@ void RuleSet::traverseRuleDatas(Function&& function)
     traverseVector(m_universalRules);
 }
 
-Optional<DynamicMediaQueryEvaluationChanges> RuleSet::evaluteDynamicMediaQueryRules(const MediaQueryEvaluator& evaluator)
+RuleSet::MediaQueryStyleUpdateType RuleSet::evaluteDynamicMediaQueryRules(const MediaQueryEvaluator& evaluator)
 {
-    Vector<size_t> changedQueryIndexes;
-    Vector<const Vector<RuleFeature>*> ruleFeatures;
-
-    size_t mediaQueryIndex = 0;
+    bool changes = false;
     for (auto& dynamicRules : m_dynamicMediaQueryRules) {
         bool result = true;
         for (auto& set : dynamicRules.mediaQuerySets) {
@@ -423,34 +420,18 @@ Optional<DynamicMediaQueryEvaluationChanges> RuleSet::evaluteDynamicMediaQueryRu
         if (result != dynamicRules.result) {
             dynamicRules.result = result;
             if (dynamicRules.requiresFullReset)
-                return { { DynamicMediaQueryEvaluationChanges::Type::ResetStyle } };
+                return MediaQueryStyleUpdateType::Reset;
 
             traverseRuleDatas([&](RuleData& ruleData) {
                 if (!dynamicRules.affectedRulePositions.contains(ruleData.position()))
                     return;
                 ruleData.setEnabled(result);
+                changes = true;
             });
-
-            changedQueryIndexes.append(mediaQueryIndex);
-            ruleFeatures.append(&dynamicRules.ruleFeatures);
         }
-
-        ++mediaQueryIndex;
     }
 
-    if (changedQueryIndexes.isEmpty())
-        return { };
-
-    auto& ruleSet = m_mediaQueryInvalidationRuleSetCache.ensure(changedQueryIndexes, [&] {
-        auto ruleSet = makeUnique<RuleSet>();
-        for (auto* featureVector : ruleFeatures) {
-            for (auto& feature : *featureVector)
-                ruleSet->addRule(*feature.rule, feature.selectorIndex, feature.selectorListIndex);
-        }
-        return ruleSet;
-    }).iterator->value;
-
-    return { { DynamicMediaQueryEvaluationChanges::Type::InvalidateStyle, { ruleSet.get() } } };
+    return changes ? MediaQueryStyleUpdateType::Resolve : MediaQueryStyleUpdateType::None;
 }
 
 bool RuleSet::hasShadowPseudoElementRules() const
@@ -491,7 +472,7 @@ void RuleSet::shrinkToFit()
 
 RuleSet::MediaQueryCollector::~MediaQueryCollector() = default;
 
-bool RuleSet::MediaQueryCollector::pushAndEvaluate(const MediaQuerySet* set)
+bool RuleSet::MediaQueryCollector::pushAndEvaluate(MediaQuerySet* set)
 {
     if (!set)
         return true;
@@ -514,7 +495,7 @@ bool RuleSet::MediaQueryCollector::pushAndEvaluate(const MediaQuerySet* set)
     return true;
 }
 
-void RuleSet::MediaQueryCollector::pop(const MediaQuerySet* set)
+void RuleSet::MediaQueryCollector::pop(MediaQuerySet* set)
 {
     if (!set || dynamicContextStack.isEmpty() || set != &dynamicContextStack.last().set.get())
         return;
@@ -527,9 +508,6 @@ void RuleSet::MediaQueryCollector::pop(const MediaQuerySet* set)
         if (collectDynamic) {
             auto& toAdd = dynamicContextStack.last().affectedRulePositions;
             rules.affectedRulePositions.add(toAdd.begin(), toAdd.end());
-
-            rules.ruleFeatures = WTFMove(dynamicContextStack.last().ruleFeatures);
-            rules.ruleFeatures.shrinkToFit();
         } else
             rules.requiresFullReset = true;
 
@@ -546,14 +524,11 @@ void RuleSet::MediaQueryCollector::didMutateResolver()
     didMutateResolverWithinDynamicMediaQuery = true;
 }
 
-void RuleSet::MediaQueryCollector::addRuleIfNeeded(const RuleData& ruleData)
+void RuleSet::MediaQueryCollector::addRulePositionIfNeeded(size_t index)
 {
     if (dynamicContextStack.isEmpty())
         return;
-
-    auto& context = dynamicContextStack.last();
-    context.affectedRulePositions.append(ruleData.position());
-    context.ruleFeatures.append({ ruleData.rule(), ruleData.selectorIndex(), ruleData.selectorListIndex() });
+    dynamicContextStack.last().affectedRulePositions.append(index);
 }
 
 

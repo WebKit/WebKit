@@ -28,7 +28,6 @@
 #include "StyleRule.h"
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
-#include <wtf/VectorHash.h>
 #include <wtf/text/AtomString.h>
 #include <wtf/text/AtomStringHash.h>
 
@@ -41,22 +40,6 @@ class StyleSheetContents;
 namespace Style {
 
 class Resolver;
-class RuleSet;
-
-struct DynamicMediaQueryEvaluationChanges {
-    enum class Type { InvalidateStyle, ResetStyle };
-    Type type;
-    Vector<const RuleSet*, 1> invalidationRuleSets { };
-
-    void append(DynamicMediaQueryEvaluationChanges&& other)
-    {
-        type = std::max(type, other.type);
-        if (type == Type::ResetStyle)
-            invalidationRuleSets.clear();
-        else
-            invalidationRuleSets.appendVector(WTFMove(other.invalidationRuleSets));
-    };
-};
 
 class RuleSet {
     WTF_MAKE_NONCOPYABLE(RuleSet); WTF_MAKE_FAST_ALLOCATED;
@@ -80,9 +63,8 @@ public:
     typedef HashMap<AtomString, std::unique_ptr<RuleDataVector>> AtomRuleMap;
 
     struct DynamicMediaQueryRules {
-        Vector<Ref<const MediaQuerySet>> mediaQuerySets;
+        Vector<Ref<MediaQuerySet>> mediaQuerySets;
         HashSet<size_t, DefaultHash<size_t>::Hash, WTF::UnsignedWithZeroKeyHashTraits<size_t>> affectedRulePositions;
-        Vector<RuleFeature> ruleFeatures;
         bool requiresFullReset { false };
         bool result { true };
     };
@@ -94,9 +76,8 @@ public:
         const bool collectDynamic { false };
 
         struct DynamicContext {
-            Ref<const MediaQuerySet> set;
+            Ref<MediaQuerySet> set;
             Vector<size_t> affectedRulePositions { };
-            Vector<RuleFeature> ruleFeatures { };
         };
         Vector<DynamicContext> dynamicContextStack { };
 
@@ -104,10 +85,10 @@ public:
         bool didMutateResolverWithinDynamicMediaQuery { false };
         bool hasViewportDependentMediaQueries { false };
 
-        bool pushAndEvaluate(const MediaQuerySet*);
-        void pop(const MediaQuerySet*);
+        bool pushAndEvaluate(MediaQuerySet*);
+        void pop(MediaQuerySet*);
         void didMutateResolver();
-        void addRuleIfNeeded(const RuleData&);
+        void addRulePositionIfNeeded(size_t);
     };
 
     void addRulesFromSheet(StyleSheetContents&, const MediaQueryEvaluator&);
@@ -122,7 +103,8 @@ public:
 
     bool hasViewportDependentMediaQueries() const { return m_hasViewportDependentMediaQueries; }
 
-    Optional<DynamicMediaQueryEvaluationChanges> evaluteDynamicMediaQueryRules(const MediaQueryEvaluator&);
+    enum class MediaQueryStyleUpdateType { None, Resolve, Reset };
+    MediaQueryStyleUpdateType evaluteDynamicMediaQueryRules(const MediaQueryEvaluator&);
 
     const RuleFeatureSet& features() const { return m_features; }
 
@@ -175,7 +157,6 @@ private:
     RuleFeatureSet m_features;
     bool m_hasViewportDependentMediaQueries { false };
     Vector<DynamicMediaQueryRules> m_dynamicMediaQueryRules;
-    HashMap<Vector<size_t>, std::unique_ptr<const RuleSet>> m_mediaQueryInvalidationRuleSetCache;
 };
 
 inline const RuleSet::RuleDataVector* RuleSet::tagRules(const AtomString& key, bool isHTMLName) const
