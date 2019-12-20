@@ -1,5 +1,11 @@
 2019-12-20  Chris Dumez  <cdumez@apple.com>
 
+        Unreviewed, address flakiness of imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/css-module/css-module-worker-test.html
+
+        * TestExpectations:
+
+2019-12-20  Chris Dumez  <cdumez@apple.com>
+
         Unreviewed, skip http/wpt/html/semantics/text-level-semantics/the-a-element/a-download-click-404.html on macOS wk1
 
         We do not support the download attribute on this platform.

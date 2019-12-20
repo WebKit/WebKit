@@ -1,3 +1,9 @@
+2019-12-20  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, address flakiness of imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/css-module/css-module-worker-test.html
+
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/css-module/css-module-worker-test-expected.txt:
+
 2019-12-20  Rob Buis  <rbuis@igalia.com>
 
         Fetch: handle emtpy Location value
