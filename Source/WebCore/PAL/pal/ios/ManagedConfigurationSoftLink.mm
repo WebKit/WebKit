@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,39 +23,16 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include "config.h"
+
 #if PLATFORM(IOS_FAMILY) && !PLATFORM(MACCATALYST)
 
-#if USE(APPLE_INTERNAL_SDK)
+#import <pal/spi/ios/UIKitSPI.h>
+#import <wtf/SoftLinking.h>
 
-// FIXME: We conditionally enclose the ManagedConfiguration headers in an extern "C" linkage
-// block to make them suitable for C++ use.
-WTF_EXTERN_C_BEGIN
+SOFT_LINK_PRIVATE_FRAMEWORK_FOR_SOURCE(PAL, ManagedConfiguration)
 
-#import <ManagedConfiguration/MCFeatures.h>
-#import <ManagedConfiguration/MCProfileConnection.h>
-
-WTF_EXTERN_C_END
-
-#else
-
-WTF_EXTERN_C_BEGIN
-
-extern NSString * const MCFeatureDefinitionLookupAllowed;
-
-WTF_EXTERN_C_END
-
-typedef enum MCRestrictedBoolType {
-    MCRestrictedBoolExplicitNo = 1 << 1,
-} MCRestrictedBoolType;
-
-@interface MCProfileConnection : NSObject
-@end
-
-@interface MCProfileConnection ()
-+ (MCProfileConnection *)sharedConnection;
-- (MCRestrictedBoolType)effectiveBoolValueForSetting:(NSString *)feature;
-@end
+SOFT_LINK_CLASS_FOR_SOURCE_WITH_EXPORT(PAL, ManagedConfiguration, MCProfileConnection, PAL_EXPORT);
+SOFT_LINK_CONSTANT_FOR_SOURCE_WITH_EXPORT(PAL, ManagedConfiguration, MCFeatureDefinitionLookupAllowed, NSString *, PAL_EXPORT)
 
 #endif
-
-#endif // PLATFORM(IOS_FAMILY) && !PLATFORM(MACCATALYST)

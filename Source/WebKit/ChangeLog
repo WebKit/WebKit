@@ -1,3 +1,21 @@
+2019-12-20  Alex Christensen  <achristensen@webkit.org>
+
+        Allow a managed configuration to re-enable TLS 1.0 and 1.1
+        https://bugs.webkit.org/show_bug.cgi?id=205479
+        <rdar://problem/54493516>
+
+        Reviewed by Geoffrey Garen.
+
+        * Platform/spi/ios/ManagedConfigurationSPI.h: Removed.
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::WebProcessPool::platformInitializeNetworkProcess):
+        * UIProcess/WebsiteData/Cocoa/WebsiteDataStoreCocoa.mm:
+        (WebKit::WebsiteDataStore::parameters):
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView canPerformActionForWebView:withSender:]):
+        (-[WKContentView _defineForWebView:]):
+        * WebKit.xcodeproj/project.pbxproj:
+
 2019-12-20  youenn fablet  <youenn@apple.com>
 
         Set whether to use mock capture devices at GPUProcess creation time.

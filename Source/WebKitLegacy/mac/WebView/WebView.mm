@@ -305,6 +305,8 @@
 #import <WebCore/WebSQLiteDatabaseTrackerClient.h>
 #import <WebCore/WebVideoFullscreenControllerAVKit.h>
 #import <libkern/OSAtomic.h>
+#import <pal/ios/ManagedConfigurationSoftLink.h>
+#import <pal/spi/ios/ManagedConfigurationSPI.h>
 #import <pal/spi/ios/MobileGestaltSPI.h>
 #import <wtf/FastMalloc.h>
 #endif
@@ -1418,10 +1420,17 @@ static void WebKitInitializeGamepadProviderIfNecessary()
             WebCore::DeprecatedGlobalSettings::setShouldManageAudioSessionCategory(true);
 #endif
 
+        bool enableLegacyTLS = false;
         if (id value = [[NSUserDefaults standardUserDefaults] objectForKey:@"WebKitEnableLegacyTLS"])
-            WebCore::SocketStreamHandleImpl::setLegacyTLSEnabled([value boolValue]);
-        else
-            WebCore::SocketStreamHandleImpl::setLegacyTLSEnabled(false);
+            enableLegacyTLS = [value boolValue];
+        if (!enableLegacyTLS) {
+#if PLATFORM(IOS_FAMILY) && !PLATFORM(MACCATALYST)
+            enableLegacyTLS = [[PAL::getMCProfileConnectionClass() sharedConnection] effectiveBoolValueForSetting:@"allowDeprecatedWebKitTLS"] == MCRestrictedBoolExplicitYes;
+#elif PLATFORM(MAC)
+            enableLegacyTLS = CFPreferencesGetAppBooleanValue(CFSTR("allowDeprecatedWebKitTLS"), CFSTR("com.apple.applicationaccess"), nullptr);
+#endif
+        }
+        WebCore::SocketStreamHandleImpl::setLegacyTLSEnabled(enableLegacyTLS);
 
         didOneTimeInitialization = true;
     }
