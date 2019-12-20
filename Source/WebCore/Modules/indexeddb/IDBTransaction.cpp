@@ -78,7 +78,6 @@ IDBTransaction::IDBTransaction(IDBDatabase& database, const IDBTransactionInfo& 
     : IDBActiveDOMObject(database.scriptExecutionContext())
     , m_database(database)
     , m_info(info)
-    , m_pendingOperationTimer(*this, &IDBTransaction::pendingOperationTimerFired)
     , m_openDBRequest(request)
     , m_currentlyCompletingRequest(request)
 
@@ -283,6 +282,7 @@ void IDBTransaction::abortInProgressOperations(const IDBError& error)
         operation->doComplete(IDBResultData::error(operation->identifier(), error));
     }
 
+    m_currentlyCompletingRequest = nullptr;
     connectionProxy().forgetActiveOperations(inProgressAbortVector);
 }
 
@@ -377,7 +377,7 @@ void IDBTransaction::removeRequest(IDBRequest& request)
     ASSERT(canCurrentThreadAccessThreadLocalData(m_database->originThread()));
     m_openRequests.remove(&request);
 
-    trySchedulePendingOperationTimer();
+    autoCommit();
 }
 
 void IDBTransaction::scheduleOperation(Ref<IDBClient::TransactionOperation>&& operation)
@@ -389,53 +389,7 @@ void IDBTransaction::scheduleOperation(Ref<IDBClient::TransactionOperation>&& op
     m_pendingTransactionOperationQueue.append(operation.copyRef());
     m_transactionOperationMap.set(identifier, WTFMove(operation));
 
-    trySchedulePendingOperationTimer();
-}
-
-void IDBTransaction::trySchedulePendingOperationTimer()
-{
-    ASSERT(canCurrentThreadAccessThreadLocalData(m_database->originThread()));
-
-    if (!m_startedOnServer)
-        return;
-
-    // If the last in-progress operation we've sent to the server is not an IDBRequest operation,
-    // then we have to wait until it completes before sending any more.
-    if (!m_transactionOperationsInProgressQueue.isEmpty() && !m_transactionOperationsInProgressQueue.last()->nextRequestCanGoToServer())
-        return;
-
-    if (m_pendingTransactionOperationQueue.isEmpty() && (!m_transactionOperationMap.isEmpty() || !m_openRequests.isEmpty() || isFinishedOrFinishing()))
-        return;
-
-    if (!m_pendingOperationTimer.isActive())
-        m_pendingOperationTimer.startOneShot(0_s);
-}
-
-void IDBTransaction::pendingOperationTimerFired()
-{
-    LOG(IndexedDB, "IDBTransaction::pendingOperationTimerFired (%p)", this);
-    ASSERT(canCurrentThreadAccessThreadLocalData(m_database->originThread()));
-
-    // We want to batch operations together without spinning the runloop for performance,
-    // but don't want to affect responsiveness of the main thread.
-    // This number is a good compromise in ad-hoc testing.
-    static const size_t operationBatchLimit = 128;
-
-    for (size_t iterations = 0; !m_pendingTransactionOperationQueue.isEmpty() && iterations < operationBatchLimit; ++iterations) {
-        auto operation = m_pendingTransactionOperationQueue.takeFirst();
-        m_transactionOperationsInProgressQueue.append(operation.get());
-        operation->perform();
-
-        if (!operation->nextRequestCanGoToServer())
-            break;
-
-    }
-
-    if (!m_transactionOperationMap.isEmpty() || !m_openRequests.isEmpty())
-        return;
-
-    if (!isFinishedOrFinishing())
-        commit();
+    handlePendingOperations();
 }
 
 void IDBTransaction::operationCompletedOnServer(const IDBResultData& data, IDBClient::TransactionOperation& operation)
@@ -480,7 +434,7 @@ void IDBTransaction::completeCursorRequest(IDBRequest& request, const IDBResultD
 
 void IDBTransaction::finishedDispatchEventForRequest(IDBRequest& request)
 {
-    if (isFinishedOrFinishing())
+    if (isFinished())
         return;
 
     ASSERT_UNUSED(request, !m_currentlyCompletingRequest || m_currentlyCompletingRequest == &request);
@@ -543,7 +497,12 @@ void IDBTransaction::didStart(const IDBError& error)
         return;
     }
 
-    trySchedulePendingOperationTimer();
+    handlePendingOperations();
+
+    // It's possible transaction does not create requests (or creates but finishes them early
+    // because of error) during intialization. In this case, since the transaction will
+    // not be active any more, we can end it.
+    autoCommit();
 }
 
 void IDBTransaction::notifyDidAbort(const IDBError& error)
@@ -1394,7 +1353,10 @@ void IDBTransaction::operationCompletedOnClient(IDBClient::TransactionOperation&
     m_transactionOperationMap.remove(operation.identifier());
     m_transactionOperationsInProgressQueue.removeFirst();
 
-    trySchedulePendingOperationTimer();
+    if (m_transactionOperationsInProgressQueue.isEmpty())
+        handlePendingOperations();
+
+    autoCommit();
 }
 
 void IDBTransaction::establishOnServer()
@@ -1422,7 +1384,7 @@ void IDBTransaction::deactivate()
     if (m_state == IndexedDB::TransactionState::Active)
         m_state = IndexedDB::TransactionState::Inactive;
 
-    trySchedulePendingOperationTimer();
+    autoCommit();
 }
 
 void IDBTransaction::connectionClosedFromServer(const IDBError& error)
@@ -1431,6 +1393,11 @@ void IDBTransaction::connectionClosedFromServer(const IDBError& error)
 
     m_database->willAbortTransaction(*this);
     m_state = IndexedDB::TransactionState::Aborting;
+
+    // Move operations out of m_pendingTransactionOperationQueue, otherwise we may start handling
+    // them after we forcibly complete in-progress transactions.
+    Deque<RefPtr<IDBClient::TransactionOperation>> pendingTransactionOperationQueue;
+    pendingTransactionOperationQueue.swap(m_pendingTransactionOperationQueue);
 
     abortInProgressOperations(error);
 
@@ -1442,11 +1409,11 @@ void IDBTransaction::connectionClosedFromServer(const IDBError& error)
         operation->doComplete(IDBResultData::error(operation->identifier(), error));
     }
     m_currentlyCompletingRequest = nullptr;
+    pendingTransactionOperationQueue.clear();
 
     connectionProxy().forgetActiveOperations(operations);
     connectionProxy().forgetTransaction(*this);
 
-    m_pendingTransactionOperationQueue.clear();
     m_abortQueue.clear();
     m_transactionOperationMap.clear();
 
@@ -1463,6 +1430,46 @@ void IDBTransaction::visitReferencedObjectStores(JSC::SlotVisitor& visitor) cons
         visitor.addOpaqueRoot(objectStore.get());
     for (auto& objectStore : m_deletedObjectStores.values())
         visitor.addOpaqueRoot(objectStore.get());
+}
+
+void IDBTransaction::handlePendingOperations()
+{
+    ASSERT(canCurrentThreadAccessThreadLocalData(m_database->originThread()));
+
+    if (!m_startedOnServer)
+        return;
+
+    if (!m_transactionOperationsInProgressQueue.isEmpty() && !m_transactionOperationsInProgressQueue.last()->nextRequestCanGoToServer())
+        return;
+
+    while (!m_pendingTransactionOperationQueue.isEmpty()) {
+        auto operation = m_pendingTransactionOperationQueue.takeFirst();
+        m_transactionOperationsInProgressQueue.append(operation.get());
+        operation->perform();
+
+        if (!operation->nextRequestCanGoToServer())
+            break;
+    }
+}
+
+void IDBTransaction::autoCommit()
+{
+    // If transaction is not inactive, it's active, finished or finishing.
+    // If it's active, it may create new requests, so we cannot commit it.
+    if (m_state != IndexedDB::TransactionState::Inactive)
+        return;
+
+    if (!m_startedOnServer)
+        return;
+
+    if (!m_transactionOperationMap.isEmpty())
+        return;
+
+    if (!m_openRequests.isEmpty())
+        return;
+    ASSERT(!m_currentlyCompletingRequest);
+
+    commit();
 }
 
 } // namespace WebCore

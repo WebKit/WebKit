@@ -330,10 +330,6 @@ void IDBRequest::dispatchEvent(Event& event)
     if (!m_transaction)
         return;
 
-    // The request should only remain in the transaction's request list if it represents a pending cursor operation, or this is an open request that was blocked.
-    if (!m_pendingCursor && event.type() != eventNames().blockedEvent)
-        m_transaction->removeRequest(*this);
-
     if (m_hasUncaughtException)
         m_transaction->abortDueToFailedRequest(DOMException::create(AbortError, "IDBTransaction will abort due to uncaught exception in an event handler"_s));
     else if (!event.defaultPrevented() && event.type() == eventNames().errorEvent && !m_transaction->isFinishedOrFinishing()) {
@@ -342,6 +338,10 @@ void IDBRequest::dispatchEvent(Event& event)
     }
 
     m_transaction->finishedDispatchEventForRequest(*this);
+
+    // The request should only remain in the transaction's request list if it represents a pending cursor operation, or this is an open request that was blocked.
+    if (!m_pendingCursor && event.type() != eventNames().blockedEvent)
+        m_transaction->removeRequest(*this);
 }
 
 void IDBRequest::uncaughtExceptionInEventHandler()

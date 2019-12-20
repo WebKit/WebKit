@@ -166,8 +166,9 @@ private:
     void abortInProgressOperations(const IDBError&);
 
     void scheduleOperation(Ref<IDBClient::TransactionOperation>&&);
-    void pendingOperationTimerFired();
     void handleOperationsCompletedOnServer();
+    void handlePendingOperations();
+    void autoCommit();
 
     void fireOnComplete();
     void fireOnAbort();
@@ -238,8 +239,6 @@ private:
 
     IDBError m_idbError;
     RefPtr<DOMException> m_domError;
-
-    Timer m_pendingOperationTimer;
 
     RefPtr<IDBOpenDBRequest> m_openDBRequest;
 
