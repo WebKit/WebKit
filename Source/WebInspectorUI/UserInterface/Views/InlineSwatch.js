@@ -196,9 +196,6 @@ WI.InlineSwatch = class InlineSwatch extends WI.Object
         if (this._valueEditor)
             return;
 
-        if (!WI.arePreviewFeaturesEnabled() && value.format === WI.Color.Format.ColorFunction)
-            return;
-
         if (!value)
             value = this._fallbackValue();
 
