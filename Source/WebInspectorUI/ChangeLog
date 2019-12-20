@@ -1,5 +1,22 @@
 2019-12-19  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: Console: the clear console button is hidden at smaller widths
+        https://bugs.webkit.org/show_bug.cgi?id=205438
+
+        Reviewed by Brian Burg.
+
+        Ever since r242604, we no longer "need" to show the text filter bar or message type scope
+        bar since new messages will show a warning banner that there's an active filter. Instead, we
+        should prefer showing the navigation items that control functionality that cannot be reached
+        anywhere else (visually), such as clearing the console or evaluating as a user gesture.
+
+        * UserInterface/Views/LogContentView.js:
+        (WI.LogContentView):
+        Make the text find banner and type scope bar both low priority, the preserve log and
+        evaluate as user gesture toggles normal priority, and the clear log high priority.
+
+2019-12-19  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: Audit: exiting edit mode with the same selection as before entering edit mode doesn't reselect
         https://bugs.webkit.org/show_bug.cgi?id=205435
 

@@ -62,7 +62,7 @@ WI.LogContentView = class LogContentView extends WI.ContentView
 
         const fixed = true;
         this._findBanner = new WI.FindBanner(this, "console-find-banner", fixed);
-        this._findBanner.visibilityPriority = WI.NavigationItem.VisibilityPriority.High;
+        this._findBanner.visibilityPriority = WI.NavigationItem.VisibilityPriority.Low;
         this._findBanner.targetElement = this.element;
 
         this._currentSearchQuery = "";
@@ -71,7 +71,6 @@ WI.LogContentView = class LogContentView extends WI.ContentView
         this._selectedSearchMatchIsValid = false;
 
         this._preserveLogNavigationItem = new WI.CheckboxNavigationItem("preserve-log", WI.UIString("Preserve Log"), !WI.settings.clearLogOnNavigate.value);
-        this._preserveLogNavigationItem.visibilityPriority = WI.NavigationItem.VisibilityPriority.Low;
         this._preserveLogNavigationItem.tooltip = WI.UIString("Do not clear the console on new page loads");
         this._preserveLogNavigationItem.addEventListener(WI.CheckboxNavigationItem.Event.CheckedDidChange, () => {
             WI.settings.clearLogOnNavigate.value = !WI.settings.clearLogOnNavigate.value;
@@ -79,7 +78,6 @@ WI.LogContentView = class LogContentView extends WI.ContentView
         WI.settings.clearLogOnNavigate.addEventListener(WI.Setting.Event.Changed, this._handleClearLogOnNavigateSettingChanged, this);
 
         this._emulateInUserGestureNavigationItem = new WI.CheckboxNavigationItem("emulate-in-user-gesture", WI.UIString("Emulate User Gesture"), WI.settings.emulateInUserGesture.value);
-        this._emulateInUserGestureNavigationItem.visibilityPriority = WI.NavigationItem.VisibilityPriority.Low;
         this._emulateInUserGestureNavigationItem.tooltip = WI.UIString("Run console commands as if inside a user gesture");
         this._emulateInUserGestureNavigationItem.addEventListener(WI.CheckboxNavigationItem.Event.CheckedDidChange, () => {
             WI.settings.emulateInUserGesture.value = !WI.settings.emulateInUserGesture.value;
@@ -98,7 +96,7 @@ WI.LogContentView = class LogContentView extends WI.ContentView
             new WI.ScopeBarItem(WI.LogContentView.Scopes.Debugs, WI.UIString("Debugs"), {className: "debugs", hidden: true}),
         ];
         this._scopeBar = new WI.ScopeBar("log-scope-bar", scopeBarItems, scopeBarItems[0]);
-        this._scopeBar.visibilityPriority = WI.NavigationItem.VisibilityPriority.High;
+        this._scopeBar.visibilityPriority = WI.NavigationItem.VisibilityPriority.Low;
         this._scopeBar.addEventListener(WI.ScopeBar.Event.SelectionChanged, this._scopeBarSelectionDidChange, this);
 
         this._hasNonDefaultLogChannelMessage = false;
@@ -118,6 +116,7 @@ WI.LogContentView = class LogContentView extends WI.ContentView
         this._garbageCollectNavigationItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, this._garbageCollect, this);
 
         this._clearLogNavigationItem = new WI.ButtonNavigationItem("clear-log", WI.UIString("Clear log (%s or %s)").format(WI.clearKeyboardShortcut.displayName, this._logViewController.messagesAlternateClearKeyboardShortcut.displayName), "Images/NavigationItemTrash.svg", 15, 15);
+        this._clearLogNavigationItem.visibilityPriority = WI.NavigationItem.VisibilityPriority.High;
         this._clearLogNavigationItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, this._clearLog, this);
 
         this._showConsoleTabNavigationItem = new WI.ButtonNavigationItem("show-tab", WI.UIString("Show Console tab"), "Images/SplitToggleUp.svg", 16, 16);
