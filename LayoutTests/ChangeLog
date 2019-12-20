@@ -1,5 +1,25 @@
 2019-12-19  Chris Dumez  <cdumez@apple.com>
 
+        REGRESSION: (r251677) imported/w3c/web-platform-tests/html/semantics/forms/form-submission-0/form-double-submit-3.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=205164
+        <rdar://problem/57879042>
+
+        Reviewed by Ryosuke Niwa.
+
+        * fast/forms/form-double-submission-expected.txt: Added.
+        * fast/forms/form-double-submission.html: Added.
+        * fast/forms/resources/form-double-submission-frame.html: Added.
+        Add layout test for the regression that was introduced the first time this patch landed.
+
+        * http/tests/misc/multiple-submit-expected.txt:
+        Rebaseline test due to behavior change. I have verified that our new behavior on this test is
+        aligned with Firefox 71 and Chrome 79.
+
+        * platform/mac/TestExpectations:
+        Unskip tests that are no longer flaky.
+
+2019-12-19  Chris Dumez  <cdumez@apple.com>
+
         Unreviewed, land missing iOS baselines from r253791.
 
         * platform/ios-wk2/imported/w3c/web-platform-tests/html/browsers/sandboxing/sandbox-parse-noscript-expected.txt: Added.

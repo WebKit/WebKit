@@ -1,3 +1,31 @@
+2019-12-19  Chris Dumez  <cdumez@apple.com>
+
+        REGRESSION: (r251677) imported/w3c/web-platform-tests/html/semantics/forms/form-submission-0/form-double-submit-3.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=205164
+        <rdar://problem/57879042>
+
+        Reviewed by Ryosuke Niwa.
+
+        Submitting a form should cancel any pending navigation scheduled by a previous submission of this form:
+        - https://html.spec.whatwg.org/multipage/form-control-infrastructure.html#form-submission-algorithm (step 22.3)
+
+        No new tests, rebaselined existing tests.
+
+        Test: fast/forms/form-double-submission.html
+
+        * html/HTMLFormElement.cpp:
+        (WebCore::HTMLFormElement::submit):
+        * html/HTMLFormElement.h:
+        * loader/FormSubmission.h:
+        (WebCore::FormSubmission::cancel):
+        (WebCore::FormSubmission::wasCancelled const):
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::submitForm):
+        Drop previous non-standard compliant logic to avoid double-form submission.
+
+        * loader/NavigationScheduler.cpp:
+
 2019-12-19  Ryosuke Niwa  <rniwa@webkit.org>
 
         Make ShadowRoot.delegateFocus work in iOS

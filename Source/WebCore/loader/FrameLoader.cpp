@@ -485,23 +485,8 @@ void FrameLoader::submitForm(Ref<FormSubmission>&& submission)
     if (!targetFrame->page())
         return;
 
-    // FIXME: We'd like to remove this altogether and fix the multiple form submission issue another way.
-
-    // We do not want to submit more than one form from the same page, nor do we want to submit a single
-    // form more than once. This flag prevents these from happening; not sure how other browsers prevent this.
-    // The flag is reset in each time we start dispatching a new mouse or key down event, and
-    // also in setView since this part may get reused for a page from the back/forward cache.
-    // The form multi-submit logic here is only needed when we are submitting a form that affects this frame.
-
-    // FIXME: Frame targeting is only one of the ways the submission could end up doing something other
-    // than replacing this frame's content, so this check is flawed. On the other hand, the check is hardly
-    // needed any more now that we reset m_submittedFormURL on each mouse or key down event.
-
-    if (m_frame.tree().isDescendantOf(targetFrame)) {
-        if (m_submittedFormURL == submission->requestURL())
-            return;
+    if (m_frame.tree().isDescendantOf(targetFrame))
         m_submittedFormURL = submission->requestURL();
-    }
 
     submission->setReferrer(outgoingReferrer());
     submission->setOrigin(outgoingOrigin());
