@@ -455,7 +455,6 @@
 		5CB301461DE39F1A00D2C405 /* VertexArrayGL.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CB301131DE39F1A00D2C405 /* VertexArrayGL.h */; };
 		5CB3014F1DE39F4700D2C405 /* DisplayCGL.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CB301491DE39F4700D2C405 /* DisplayCGL.h */; };
 		5CB301511DE39F4700D2C405 /* PbufferSurfaceCGL.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CB3014B1DE39F4700D2C405 /* PbufferSurfaceCGL.h */; };
-		5CB304921DE4156200D2C405 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5CB3048D1DE4144400D2C405 /* OpenGL.framework */; };
 		5CB304931DE4156B00D2C405 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5CB3048F1DE4145500D2C405 /* QuartzCore.framework */; };
 		5CB304941DE4157200D2C405 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5CB3048B1DE4143500D2C405 /* CoreGraphics.framework */; };
 		5CB304961DE4157B00D2C405 /* entry_points_egl_ext.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CB300BC1DE39E7500D2C405 /* entry_points_egl_ext.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -836,6 +835,8 @@
 		313BCE532361133900FC39E5 /* DisplayEAGL.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DisplayEAGL.mm; sourceTree = "<group>"; };
 		3153ACFE239071D900D51DD8 /* WebKitTargetConditionals.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = WebKitTargetConditionals.xcconfig; sourceTree = "<group>"; };
 		3153ACFF239071D900D51DD8 /* Version.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Version.xcconfig; sourceTree = "<group>"; };
+		3153AD002390C2EA00D51DD8 /* IOSurface.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOSurface.framework; path = System/Library/Frameworks/IOSurface.framework; sourceTree = SDKROOT; };
+		3153AD022390C32100D51DD8 /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = System/Library/Frameworks/IOKit.framework; sourceTree = SDKROOT; };
 		315EBD3E1FCE43BD00AC7A89 /* uniform_type_info_autogen.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = uniform_type_info_autogen.cpp; sourceTree = "<group>"; };
 		315EBD401FCE442600AC7A89 /* TranslatorVulkan.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TranslatorVulkan.cpp; sourceTree = "<group>"; };
 		315EBD431FCE442700AC7A89 /* UtilsHLSL.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UtilsHLSL.cpp; sourceTree = "<group>"; };
@@ -1498,7 +1499,7 @@
 		A3694FC423202C5100A83D8F /* BuiltinsWorkaroundGLSL.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BuiltinsWorkaroundGLSL.cpp; sourceTree = "<group>"; };
 		A3694FC523202C5200A83D8F /* BuiltinsWorkaroundGLSL.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BuiltinsWorkaroundGLSL.h; sourceTree = "<group>"; };
 		A3E827A8230CAE2C00E76682 /* commit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = commit.h; sourceTree = "<group>"; };
-		FB39D0D11200F0E300088E69 /* libANGLE.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libANGLE.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		FB39D0D11200F0E300088E69 /* libANGLE-shared.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = "libANGLE-shared.dylib"; sourceTree = BUILT_PRODUCTS_DIR; };
 		FB39D2BF1200F3E600088E69 /* ShaderLang.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 4; path = ShaderLang.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -1508,7 +1509,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				5CB304941DE4157200D2C405 /* CoreGraphics.framework in Frameworks */,
-				5CB304921DE4156200D2C405 /* OpenGL.framework in Frameworks */,
 				5CB304931DE4156B00D2C405 /* QuartzCore.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2199,6 +2199,8 @@
 			isa = PBXGroup;
 			children = (
 				5CB3048B1DE4143500D2C405 /* CoreGraphics.framework */,
+				3153AD022390C32100D51DD8 /* IOKit.framework */,
+				3153AD002390C2EA00D51DD8 /* IOSurface.framework */,
 				5CB3048D1DE4144400D2C405 /* OpenGL.framework */,
 				5CB3048F1DE4145500D2C405 /* QuartzCore.framework */,
 			);
@@ -2502,7 +2504,7 @@
 		FB39D0CC1200EF9B00088E69 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				FB39D0D11200F0E300088E69 /* libANGLE.a */,
+				FB39D0D11200F0E300088E69 /* libANGLE-shared.dylib */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -2974,6 +2976,7 @@
 				312BDB0B15FECAB00097EBC7 /* CopyFiles */,
 				312BDB0D15FECACE0097EBC7 /* CopyFiles */,
 				6E28B8742294DD8000717E69 /* ShellScript */,
+				313DE867239FFF91008FC47B /* Attempt to fool Apple Test Platform */,
 			);
 			buildRules = (
 				53E934DB230609D800DE060C /* PBXBuildRule */,
@@ -2982,8 +2985,8 @@
 			);
 			name = ANGLE;
 			productName = angle;
-			productReference = FB39D0D11200F0E300088E69 /* libANGLE.a */;
-			productType = "com.apple.product-type.library.static";
+			productReference = FB39D0D11200F0E300088E69 /* libANGLE-shared.dylib */;
+			productType = "com.apple.product-type.library.dynamic";
 		};
 /* End PBXNativeTarget section */
 
@@ -3014,6 +3017,24 @@
 /* End PBXProject section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		313DE867239FFF91008FC47B /* Attempt to fool Apple Test Platform */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Attempt to fool Apple Test Platform";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "if [ \"$DEPLOYMENT_LOCATION\" == \"YES\" ] ; then\n    # Apple-internal build.\n    output_dir=${DSTROOT}${WK_ALTERNATE_FRAMEWORKS_DIR}/usr/local/lib\nelse\n    # External build.\n    output_dir=${BUILT_PRODUCTS_DIR}/usr/local/lib\nfi\n\nmkdir -p $output_dir\necho \"Fake file to fool Apple's test system\" > $output_dir/libANGLE.a\n";
+		};
 		6E28B8742294DD8000717E69 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -3373,19 +3394,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 5D7C59C51208C68B001C873E /* ANGLE.xcconfig */;
 			buildSettings = {
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					ANGLE_ENABLE_OPENGL,
-					ANGLE_ENABLE_GLSL,
-					ANGLE_ENABLE_ESSL,
-					GL_SILENCE_DEPRECATION,
-				);
-				HEADER_SEARCH_PATHS = (
-					include,
-					src,
-					third_party/base,
-					src/common/third_party/base,
-				);
-				OTHER_CPLUSPLUSFLAGS = "$(ASAN_OTHER_CPLUSPLUSFLAGS)";
 			};
 			name = Production;
 		};
@@ -3408,19 +3416,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 5D7C59C51208C68B001C873E /* ANGLE.xcconfig */;
 			buildSettings = {
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					ANGLE_ENABLE_OPENGL,
-					ANGLE_ENABLE_GLSL,
-					ANGLE_ENABLE_ESSL,
-					GL_SILENCE_DEPRECATION,
-				);
-				HEADER_SEARCH_PATHS = (
-					include,
-					src,
-					third_party/base,
-					src/common/third_party/base,
-				);
-				OTHER_CPLUSPLUSFLAGS = "$(ASAN_OTHER_CPLUSPLUSFLAGS)";
 			};
 			name = Debug;
 		};
@@ -3428,19 +3423,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 5D7C59C51208C68B001C873E /* ANGLE.xcconfig */;
 			buildSettings = {
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					ANGLE_ENABLE_OPENGL,
-					ANGLE_ENABLE_GLSL,
-					ANGLE_ENABLE_ESSL,
-					GL_SILENCE_DEPRECATION,
-				);
-				HEADER_SEARCH_PATHS = (
-					include,
-					src,
-					third_party/base,
-					src/common/third_party/base,
-				);
-				OTHER_CPLUSPLUSFLAGS = "$(ASAN_OTHER_CPLUSPLUSFLAGS)";
 			};
 			name = Release;
 		};

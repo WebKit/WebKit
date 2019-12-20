@@ -138,7 +138,7 @@ WindowSurfaceEAGL::WindowSurfaceEAGL(const egl::SurfaceState &state,
     : SurfaceGL(state),
       mSwapLayer(nil),
       mCurrentSwapId(0),
-      mLayer(reinterpret_cast<CALayer *>(layer)),
+      mLayer((__bridge CALayer *)layer),
       mContext(context),
       mFunctions(renderer->getFunctions()),
       mStateManager(renderer->getStateManager()),
@@ -160,7 +160,6 @@ WindowSurfaceEAGL::~WindowSurfaceEAGL()
     if (mSwapLayer != nil)
     {
         [mSwapLayer removeFromSuperlayer];
-        [mSwapLayer release];
         mSwapLayer = nil;
     }
 
