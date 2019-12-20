@@ -41,10 +41,13 @@ GPUProcessCreationParameters::GPUProcessCreationParameters() = default;
 
 void GPUProcessCreationParameters::encode(IPC::Encoder& encoder) const
 {
+    encoder << useMockCaptureDevices;
 }
 
 bool GPUProcessCreationParameters::decode(IPC::Decoder& decoder, GPUProcessCreationParameters& result)
 {
+    if (!decoder.decode(result.useMockCaptureDevices))
+        return false;
     return true;
 }
 

@@ -105,6 +105,8 @@ void GPUProcess::initializeGPUProcess(GPUProcessCreationParameters&& parameters)
 {
     WTF::Thread::setCurrentThreadIsUserInitiated();
     AtomString::init();
+
+    setMockCaptureDevicesEnabled(parameters.useMockCaptureDevices);
 }
 
 void GPUProcess::prepareToSuspend(bool isSuspensionImminent, CompletionHandler<void()>&& completionHandler)
@@ -137,14 +139,14 @@ GPUConnectionToWebProcess* GPUProcess::webProcessConnection(ProcessIdentifier id
     return m_webProcessConnections.get(identifier);
 }
 
-#if ENABLE(MEDIA_STREAM)
 void GPUProcess::setMockCaptureDevicesEnabled(bool isEnabled)
 {
+#if ENABLE(MEDIA_STREAM)
     // FIXME: Enable the audio session check by implementing an AudioSession for the GPUProcess.
     MockAudioSharedUnit::singleton().setDisableAudioSessionCheck(isEnabled);
     MockRealtimeMediaSourceCenter::setMockRealtimeMediaSourceCenterEnabled(isEnabled);
-}
 #endif
+}
 
 } // namespace WebKit
 

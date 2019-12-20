@@ -37,6 +37,8 @@ namespace WebKit {
 struct GPUProcessCreationParameters {
     GPUProcessCreationParameters();
 
+    bool useMockCaptureDevices { false };
+
     void encode(IPC::Encoder&) const;
     static bool decode(IPC::Decoder&, GPUProcessCreationParameters&);
 };

@@ -40,6 +40,7 @@
 #include "WebProcessPool.h"
 #include "WebProcessProxy.h"
 #include "WebProcessProxyMessages.h"
+#include <WebCore/MockRealtimeMediaSourceCenter.h>
 #include <wtf/CompletionHandler.h>
 
 #if PLATFORM(IOS_FAMILY)
@@ -62,7 +63,9 @@ GPUProcessProxy& GPUProcessProxy::singleton()
         gpuProcess.construct();
 
         GPUProcessCreationParameters parameters;
-
+#if ENABLE(MEDIA_STREAM)
+        parameters.useMockCaptureDevices = MockRealtimeMediaSourceCenter::mockRealtimeMediaSourceCenterEnabled();
+#endif
         // Initialize the GPU process.
         gpuProcess->send(Messages::GPUProcess::InitializeGPUProcess(parameters), 0);
         gpuProcess->updateProcessAssertion();

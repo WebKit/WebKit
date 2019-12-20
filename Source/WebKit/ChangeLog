@@ -1,3 +1,24 @@
+2019-12-20  youenn fablet  <youenn@apple.com>
+
+        Set whether to use mock capture devices at GPUProcess creation time.
+        https://bugs.webkit.org/show_bug.cgi?id=205492
+
+        Reviewed by Eric Carlson.
+
+        This ensures UIProcess remains always in sync with GPUProcess.
+        Covered by fast/mediastream/captureAudioInGPUProcess.html.
+
+        * GPUProcess/GPUProcess.cpp:
+        (WebKit::GPUProcess::initializeGPUProcess):
+        (WebKit::GPUProcess::setMockCaptureDevicesEnabled):
+        * GPUProcess/GPUProcess.h:
+        * GPUProcess/GPUProcessCreationParameters.cpp:
+        (WebKit::GPUProcessCreationParameters::encode const):
+        (WebKit::GPUProcessCreationParameters::decode):
+        * GPUProcess/GPUProcessCreationParameters.h:
+        * UIProcess/GPU/GPUProcessProxy.cpp:
+        (WebKit::GPUProcessProxy::singleton):
+
 2019-12-19  Brent Fulgham  <bfulgham@apple.com>
 
         Log telemetry for IOUserClient lookups
