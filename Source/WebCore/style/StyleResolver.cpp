@@ -607,7 +607,7 @@ bool Resolver::hasViewportDependentMediaQueries() const
     return m_ruleSets.hasViewportDependentMediaQueries();
 }
 
-RuleSet::MediaQueryStyleUpdateType Resolver::evaluateDynamicMediaQueries()
+Optional<DynamicMediaQueryEvaluationChanges> Resolver::evaluateDynamicMediaQueries()
 {
     return m_ruleSets.evaluteDynamicMediaQueryRules(m_mediaQueryEvaluator);
 }
