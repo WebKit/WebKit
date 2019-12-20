@@ -1436,7 +1436,7 @@ MediaCapabilitiesExtensionsEnabled:
 
 HDRMediaCapabilitiesEnabled:
   type: bool
-  defaultValue: false
+  defaultValue: true
   humanReadableName: "HDR Media Capabilities"
   humanReadableDescription: "HDR Media Capabilities"
   category: experimental

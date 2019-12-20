@@ -1,3 +1,13 @@
+2019-12-20  Jer Noble  <jer.noble@apple.com>
+
+        Enable HDR Media Capabilities by default
+        https://bugs.webkit.org/show_bug.cgi?id=205518
+        <rdar://problem/57674289>
+
+        Reviewed by Eric Carlson.
+
+        * Shared/WebPreferences.yaml:
+
 2019-12-20  Tim Horton  <timothy_horton@apple.com>
 
         Clean up and generalize some interaction additions
