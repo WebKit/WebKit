@@ -39,7 +39,7 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(TrackListBase);
 
-TrackListBase::TrackListBase(HTMLMediaElement* element, ScriptExecutionContext* context)
+TrackListBase::TrackListBase(WeakPtr<HTMLMediaElement> element, ScriptExecutionContext* context)
     : ContextDestructionObserver(context)
     , m_element(element)
     , m_asyncEventQueue(MainThreadGenericEventQueue::create(*this))
@@ -63,7 +63,7 @@ void TrackListBase::clearElement()
 
 Element* TrackListBase::element() const
 {
-    return m_element;
+    return m_element.get();
 }
 
 unsigned TrackListBase::length() const

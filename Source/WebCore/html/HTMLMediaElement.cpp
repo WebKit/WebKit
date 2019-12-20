@@ -1979,7 +1979,7 @@ void HTMLMediaElement::textTrackModeChanged(TextTrack& track)
 
     // If this is the first added track, create the list of text tracks.
     if (!m_textTracks)
-        m_textTracks = TextTrackList::create(this, ActiveDOMObject::scriptExecutionContext());
+        m_textTracks = TextTrackList::create(makeWeakPtr(this), ActiveDOMObject::scriptExecutionContext());
 
     // Mark this track as "configured" so configureTextTracks won't change the mode again.
     track.setHasBeenConfigured(true);
@@ -4047,7 +4047,7 @@ void HTMLMediaElement::mediaPlayerDidAddTextTrack(InbandTextTrackPrivate& track)
     // 4.8.10.12.2 Sourcing in-band text tracks
     // 1. Associate the relevant data with a new text track and its corresponding new TextTrack object.
     auto textTrack = InbandTextTrack::create(*ActiveDOMObject::scriptExecutionContext(), *this, track);
-    textTrack->setMediaElement(this);
+    textTrack->setMediaElement(makeWeakPtr(this));
 
     // 2. Set the new text track's kind, label, and language based on the semantics of the relevant data,
     // as defined by the relevant specification. If there is no label in that data, then the label must
@@ -4204,7 +4204,7 @@ ExceptionOr<TextTrack&> HTMLMediaElement::addTextTrack(const String& kind, const
 AudioTrackList& HTMLMediaElement::ensureAudioTracks()
 {
     if (!m_audioTracks)
-        m_audioTracks = AudioTrackList::create(this, ActiveDOMObject::scriptExecutionContext());
+        m_audioTracks = AudioTrackList::create(makeWeakPtr(this), ActiveDOMObject::scriptExecutionContext());
 
     return *m_audioTracks;
 }
@@ -4212,7 +4212,7 @@ AudioTrackList& HTMLMediaElement::ensureAudioTracks()
 TextTrackList& HTMLMediaElement::ensureTextTracks()
 {
     if (!m_textTracks)
-        m_textTracks = TextTrackList::create(this, ActiveDOMObject::scriptExecutionContext());
+        m_textTracks = TextTrackList::create(makeWeakPtr(this), ActiveDOMObject::scriptExecutionContext());
 
     return *m_textTracks;
 }
@@ -4220,7 +4220,7 @@ TextTrackList& HTMLMediaElement::ensureTextTracks()
 VideoTrackList& HTMLMediaElement::ensureVideoTracks()
 {
     if (!m_videoTracks)
-        m_videoTracks = VideoTrackList::create(this, ActiveDOMObject::scriptExecutionContext());
+        m_videoTracks = VideoTrackList::create(makeWeakPtr(this), ActiveDOMObject::scriptExecutionContext());
 
     return *m_videoTracks;
 }

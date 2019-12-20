@@ -28,6 +28,7 @@
 #if ENABLE(VIDEO_TRACK)
 
 #include <wtf/LoggerHelper.h>
+#include <wtf/WeakPtr.h>
 #include <wtf/text/AtomString.h>
 
 namespace WebCore {
@@ -48,8 +49,8 @@ public:
     enum Type { BaseTrack, TextTrack, AudioTrack, VideoTrack };
     Type type() const { return m_type; }
 
-    virtual void setMediaElement(HTMLMediaElement*);
-    HTMLMediaElement* mediaElement() { return m_mediaElement; }
+    virtual void setMediaElement(WeakPtr<HTMLMediaElement>);
+    WeakPtr<HTMLMediaElement> mediaElement() { return m_mediaElement; }
     virtual Element* element();
 
     virtual AtomString id() const { return m_id; }
@@ -82,7 +83,7 @@ public:
 protected:
     TrackBase(Type, const AtomString& id, const AtomString& label, const AtomString& language);
 
-    HTMLMediaElement* m_mediaElement { nullptr };
+    WeakPtr<HTMLMediaElement> m_mediaElement { nullptr };
 
 #if ENABLE(MEDIA_SOURCE)
     SourceBuffer* m_sourceBuffer { nullptr };

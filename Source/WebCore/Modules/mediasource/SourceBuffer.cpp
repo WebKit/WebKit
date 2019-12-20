@@ -58,6 +58,7 @@
 #include <limits>
 #include <wtf/CheckedArithmetic.h>
 #include <wtf/IsoMallocInlines.h>
+#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
@@ -1037,21 +1038,21 @@ size_t SourceBuffer::maximumBufferSize() const
 VideoTrackList& SourceBuffer::videoTracks()
 {
     if (!m_videoTracks)
-        m_videoTracks = VideoTrackList::create(m_source->mediaElement(), scriptExecutionContext());
+        m_videoTracks = VideoTrackList::create(makeWeakPtr(m_source->mediaElement()), scriptExecutionContext());
     return *m_videoTracks;
 }
 
 AudioTrackList& SourceBuffer::audioTracks()
 {
     if (!m_audioTracks)
-        m_audioTracks = AudioTrackList::create(m_source->mediaElement(), scriptExecutionContext());
+        m_audioTracks = AudioTrackList::create(makeWeakPtr(m_source->mediaElement()), scriptExecutionContext());
     return *m_audioTracks;
 }
 
 TextTrackList& SourceBuffer::textTracks()
 {
     if (!m_textTracks)
-        m_textTracks = TextTrackList::create(m_source->mediaElement(), scriptExecutionContext());
+        m_textTracks = TextTrackList::create(makeWeakPtr(m_source->mediaElement()), scriptExecutionContext());
     return *m_textTracks;
 }
 

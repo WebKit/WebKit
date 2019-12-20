@@ -35,7 +35,7 @@ class VideoTrack;
 
 class VideoTrackList final : public TrackListBase {
 public:
-    static Ref<VideoTrackList> create(HTMLMediaElement* owner, ScriptExecutionContext* context)
+    static Ref<VideoTrackList> create(WeakPtr<HTMLMediaElement> owner, ScriptExecutionContext* context)
     {
         return adoptRef(*new VideoTrackList(owner, context));
     }
@@ -52,7 +52,7 @@ public:
     EventTargetInterface eventTargetInterface() const override;
 
 private:
-    VideoTrackList(HTMLMediaElement*, ScriptExecutionContext*);
+    VideoTrackList(WeakPtr<HTMLMediaElement>, ScriptExecutionContext*);
 };
 static_assert(sizeof(VideoTrackList) == sizeof(TrackListBase), "");
 

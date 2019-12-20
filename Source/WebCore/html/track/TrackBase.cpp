@@ -75,10 +75,10 @@ TrackBase::TrackBase(Type type, const AtomString& id, const AtomString& label, c
 
 Element* TrackBase::element()
 {
-    return m_mediaElement;
+    return m_mediaElement.get();
 }
 
-void TrackBase::setMediaElement(HTMLMediaElement* element)
+void TrackBase::setMediaElement(WeakPtr<HTMLMediaElement> element)
 {
     m_mediaElement = element;
 

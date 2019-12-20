@@ -35,7 +35,7 @@ class AudioTrack;
 
 class AudioTrackList final : public TrackListBase {
 public:
-    static Ref<AudioTrackList> create(HTMLMediaElement* owner, ScriptExecutionContext* context)
+    static Ref<AudioTrackList> create(WeakPtr<HTMLMediaElement> owner, ScriptExecutionContext* context)
     {
         return adoptRef(*new AudioTrackList(owner, context));
     }
@@ -51,7 +51,7 @@ public:
     EventTargetInterface eventTargetInterface() const override;
 
 private:
-    AudioTrackList(HTMLMediaElement*, ScriptExecutionContext*);
+    AudioTrackList(WeakPtr<HTMLMediaElement>, ScriptExecutionContext*);
 };
 static_assert(sizeof(AudioTrackList) == sizeof(TrackListBase), "");
 

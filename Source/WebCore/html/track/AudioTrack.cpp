@@ -160,7 +160,7 @@ void AudioTrack::languageChanged(const AtomString& language)
 
 void AudioTrack::willRemove()
 {
-    auto element = makeRefPtr(mediaElement());
+    auto element = makeRefPtr(mediaElement().get());
     if (!element)
         return;
     element->removeAudioTrack(*this);
@@ -196,7 +196,7 @@ void AudioTrack::updateKindFromPrivate()
     }
 }
 
-void AudioTrack::setMediaElement(HTMLMediaElement* element)
+void AudioTrack::setMediaElement(WeakPtr<HTMLMediaElement> element)
 {
     TrackBase::setMediaElement(element);
 #if !RELEASE_LOG_DISABLED

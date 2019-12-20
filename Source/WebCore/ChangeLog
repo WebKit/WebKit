@@ -1,5 +1,59 @@
 2019-12-19  Doug Kelly  <dougk@apple.com>
 
+        Update TrackBase to store m_mediaElement as a WeakPtr
+        https://bugs.webkit.org/show_bug.cgi?id=205460
+
+        Reviewed by Eric Carlson.
+
+        Store the HTMLMediaElement in TrackBase and related classes as a WeakPtr to give some proper idea of pointer lifetime, since while the
+        HTMLMediaElement is optional, if set, it should be a valid HTMLMediaElement.
+
+        No new tests since no functionality changed.
+
+        * Modules/mediasource/SourceBuffer.cpp:
+        (WebCore::SourceBuffer::videoTracks):
+        (WebCore::SourceBuffer::audioTracks):
+        (WebCore::SourceBuffer::textTracks):
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::textTrackModeChanged):
+        (WebCore::HTMLMediaElement::mediaPlayerDidAddTextTrack):
+        (WebCore::HTMLMediaElement::ensureAudioTracks):
+        (WebCore::HTMLMediaElement::ensureTextTracks):
+        (WebCore::HTMLMediaElement::ensureVideoTracks):
+        * html/track/AudioTrack.cpp:
+        (WebCore::AudioTrack::willRemove):
+        (WebCore::AudioTrack::setMediaElement):
+        * html/track/AudioTrack.h:
+        * html/track/AudioTrackList.cpp:
+        (WebCore::AudioTrackList::AudioTrackList):
+        * html/track/AudioTrackList.h:
+        * html/track/InbandTextTrack.cpp:
+        (WebCore::InbandTextTrack::willRemove):
+        (WebCore::InbandTextTrack::setMediaElement):
+        * html/track/InbandTextTrack.h:
+        * html/track/TextTrackList.cpp:
+        (WebCore::TextTrackList::TextTrackList):
+        * html/track/TextTrackList.h:
+        * html/track/TrackBase.cpp:
+        (WebCore::TrackBase::element):
+        (WebCore::TrackBase::setMediaElement):
+        * html/track/TrackBase.h:
+        (WebCore::TrackBase::mediaElement):
+        * html/track/TrackListBase.cpp:
+        (WebCore::TrackListBase::TrackListBase):
+        (WebCore::TrackListBase::element const):
+        * html/track/TrackListBase.h:
+        (WebCore::TrackListBase::mediaElement const):
+        * html/track/VideoTrack.cpp:
+        (WebCore::VideoTrack::willRemove):
+        (WebCore::VideoTrack::setMediaElement):
+        * html/track/VideoTrack.h:
+        * html/track/VideoTrackList.cpp:
+        (WebCore::VideoTrackList::VideoTrackList):
+        * html/track/VideoTrackList.h:
+
+2019-12-19  Doug Kelly  <dougk@apple.com>
+
         Invalid assert with tracks not associated to media element
         https://bugs.webkit.org/show_bug.cgi?id=205360
 

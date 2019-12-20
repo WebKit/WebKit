@@ -73,7 +73,7 @@ public:
     const MediaDescription& description() const;
 
     void setPrivate(VideoTrackPrivate&);
-    void setMediaElement(HTMLMediaElement*) override;
+    void setMediaElement(WeakPtr<HTMLMediaElement>) override;
 
 private:
     VideoTrack(VideoTrackClient&, VideoTrackPrivate&);

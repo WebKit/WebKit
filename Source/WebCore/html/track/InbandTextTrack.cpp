@@ -159,7 +159,7 @@ void InbandTextTrack::languageChanged(const AtomString& language)
 
 void InbandTextTrack::willRemove()
 {
-    auto element = makeRefPtr(mediaElement());
+    auto element = makeRefPtr(mediaElement().get());
     if (!element)
         return;
     element->removeTextTrack(*this);
@@ -197,7 +197,7 @@ MediaTime InbandTextTrack::startTimeVariance() const
     return m_private->startTimeVariance();
 }
 
-void InbandTextTrack::setMediaElement(HTMLMediaElement* element)
+void InbandTextTrack::setMediaElement(WeakPtr<HTMLMediaElement> element)
 {
     TrackBase::setMediaElement(element);
 #if !RELEASE_LOG_DISABLED

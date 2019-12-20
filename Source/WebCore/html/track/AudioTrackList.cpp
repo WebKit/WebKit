@@ -30,10 +30,11 @@
 #include "AudioTrackList.h"
 
 #include "AudioTrack.h"
+#include "HTMLMediaElement.h"
 
 namespace WebCore {
 
-AudioTrackList::AudioTrackList(HTMLMediaElement* element, ScriptExecutionContext* context)
+AudioTrackList::AudioTrackList(WeakPtr<HTMLMediaElement> element, ScriptExecutionContext* context)
     : TrackListBase(element, context)
 {
 }

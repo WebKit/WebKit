@@ -65,7 +65,7 @@ public:
     size_t inbandTrackIndex() const;
 
     void setPrivate(AudioTrackPrivate&);
-    void setMediaElement(HTMLMediaElement*) override;
+    void setMediaElement(WeakPtr<HTMLMediaElement>) override;
 
 private:
     AudioTrack(AudioTrackClient&, AudioTrackPrivate&);

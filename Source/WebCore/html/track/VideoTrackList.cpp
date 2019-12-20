@@ -29,11 +29,12 @@
 
 #include "VideoTrackList.h"
 
+#include "HTMLMediaElement.h"
 #include "VideoTrack.h"
 
 namespace WebCore {
 
-VideoTrackList::VideoTrackList(HTMLMediaElement* element, ScriptExecutionContext* context)
+VideoTrackList::VideoTrackList(WeakPtr<HTMLMediaElement> element, ScriptExecutionContext* context)
     : TrackListBase(element, context)
 {
 }

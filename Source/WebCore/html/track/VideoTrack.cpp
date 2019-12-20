@@ -163,7 +163,7 @@ void VideoTrack::languageChanged(const AtomString& language)
 
 void VideoTrack::willRemove()
 {
-    auto element = makeRefPtr(mediaElement());
+    auto element = makeRefPtr(mediaElement().get());
     if (!element)
         return;
     element->removeVideoTrack(*this);
@@ -244,7 +244,7 @@ void VideoTrack::updateKindFromPrivate()
     ASSERT_NOT_REACHED();
 }
 
-void VideoTrack::setMediaElement(HTMLMediaElement* element)
+void VideoTrack::setMediaElement(WeakPtr<HTMLMediaElement> element)
 {
     TrackBase::setMediaElement(element);
 #if !RELEASE_LOG_DISABLED
