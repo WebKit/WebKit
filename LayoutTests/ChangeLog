@@ -1,5 +1,13 @@
 2019-12-20  Chris Dumez  <cdumez@apple.com>
 
+        Unreviewed, mark imported/w3c/web-platform-tests/2dcontext/wide-gamut-canvas as flaky.
+
+        Those were recently imported from upstream.
+
+        * TestExpectations:
+
+2019-12-20  Chris Dumez  <cdumez@apple.com>
+
         Unreviewed, skip imported/w3c/web-platform-tests/2dcontext/wide-gamut-canvas/canvas-createImageBitmap-e_srgb.html
 
         This test has been timing out since it was imported and slows down our test runs for no reason.
