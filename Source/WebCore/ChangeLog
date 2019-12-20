@@ -1,3 +1,25 @@
+2019-12-20  youenn fablet  <youenn@apple.com>
+
+        Make ServiceWorker::postMessage use the exec state from the JS binding layer
+        https://bugs.webkit.org/show_bug.cgi?id=205395
+
+        Reviewed by Chris Dumez.
+
+        Instead of using ScriptExecutionContext::execState, we can ask the JS binding layer to pass the exec state and use it.
+        Since ServiceWorker is an ActiveDOMObject, we use its scriptExecutionContext() to compute the ServiceWorker source identifier.
+        We do the same for ServiceWorkerClient which is a context destruction observer and which only lives in Service Worker scope so calling ScriptExecutionContext::execState is suboptimal.
+
+        No change of behavior.
+
+        * workers/service/ServiceWorker.cpp:
+        (WebCore::ServiceWorker::postMessage):
+        * workers/service/ServiceWorker.h:
+        * workers/service/ServiceWorker.idl:
+        * workers/service/ServiceWorkerClient.cpp:
+        (WebCore::ServiceWorkerClient::postMessage):
+        * workers/service/ServiceWorkerClient.h:
+        * workers/service/ServiceWorkerClient.idl:
+
 2019-12-20  Jiewen Tan  <jiewen_tan@apple.com>
 
         [WebAuthn] Implement coders for CTAP ClientPIN requests and responses

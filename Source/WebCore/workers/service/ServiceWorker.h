@@ -37,6 +37,7 @@
 #include <wtf/URL.h>
 
 namespace JSC {
+class JSGlobalObject;
 class JSValue;
 }
 
@@ -59,7 +60,7 @@ public:
     
     void updateState(State);
 
-    ExceptionOr<void> postMessage(ScriptExecutionContext&, JSC::JSValue message, PostMessageOptions&&);
+    ExceptionOr<void> postMessage(JSC::JSGlobalObject&, JSC::JSValue message, PostMessageOptions&&);
 
     ServiceWorkerIdentifier identifier() const { return m_data.identifier; }
     ServiceWorkerRegistrationIdentifier registrationIdentifier() const { return m_data.registrationIdentifier; }

@@ -35,6 +35,7 @@
 #include <wtf/RefCounted.h>
 
 namespace JSC {
+class JSGlobalObject;
 class JSValue;
 }
 
@@ -60,7 +61,7 @@ public:
 
     Identifier identifier() const { return m_data.identifier; }
 
-    ExceptionOr<void> postMessage(ScriptExecutionContext&, JSC::JSValue message, PostMessageOptions&&);
+    ExceptionOr<void> postMessage(JSC::JSGlobalObject&, JSC::JSValue message, PostMessageOptions&&);
 
 protected:
     ServiceWorkerClient(ServiceWorkerGlobalScope&, ServiceWorkerClientData&&);
