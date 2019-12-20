@@ -48,8 +48,20 @@ enum {
     WebKit2NewEditorTag = 4
 };
 
+@implementation NSApplication (MiniBrowserApplicationExtensions)
+
+- (BrowserAppDelegate *)browserAppDelegate
+{
+    return (BrowserAppDelegate *)[self delegate];
+}
+
+@end
+
 @interface NSApplication (TouchBar)
 @property (getter=isAutomaticCustomizeTouchBarMenuItemEnabled) BOOL automaticCustomizeTouchBarMenuItemEnabled;
+
+@property (readonly, nonatomic) WKWebViewConfiguration *defaultConfiguration;
+
 @end
 
 @implementation BrowserAppDelegate
@@ -67,13 +79,12 @@ enum {
 
 - (void)awakeFromNib
 {
-    NSMenuItem *item = [[NSMenuItem alloc] init];
-    [item setSubmenu:[[SettingsController shared] menu]];
+    _settingsController = [[SettingsController alloc] initWithMenu:_settingsMenu];
 
-    if ([[SettingsController shared] usesGameControllerFramework])
+    if ([_settingsController usesGameControllerFramework])
         [WKProcessPool _forceGameControllerFramework];
 
-    [[NSApp mainMenu] insertItem:[item autorelease] atIndex:[[NSApp mainMenu] indexOfItemWithTitle:@"Debug"]];
+//    [[NSApp mainMenu] insertItem:[item autorelease] atIndex:[[NSApp mainMenu] indexOfItemWithTitle:@"Debug"]];
 
     if ([NSApp respondsToSelector:@selector(setAutomaticCustomizeTouchBarMenuItemEnabled:)])
         [NSApp setAutomaticCustomizeTouchBarMenuItemEnabled:YES];
@@ -92,7 +103,7 @@ static WKWebsiteDataStore *persistentDataStore()
     return dataStore;
 }
 
-static WKWebViewConfiguration *defaultConfiguration()
+- (WKWebViewConfiguration *)defaultConfiguration
 {
     static WKWebViewConfiguration *configuration;
 
@@ -105,9 +116,9 @@ static WKWebViewConfiguration *defaultConfiguration()
         configuration.preferences._mockCaptureDevicesEnabled = YES;
 
         _WKProcessPoolConfiguration *processConfiguration = [[[_WKProcessPoolConfiguration alloc] init] autorelease];
-        if ([SettingsController shared].perWindowWebProcessesDisabled)
+        if (_settingsController.perWindowWebProcessesDisabled)
             processConfiguration.usesSingleWebProcess = YES;
-        if ([SettingsController shared].processSwapOnWindowOpenWithOpenerEnabled)
+        if (_settingsController.processSwapOnWindowOpenWithOpenerEnabled)
             processConfiguration.processSwapsOnWindowOpenWithOpener = true;
         
         configuration.processPool = [[[WKProcessPool alloc] _initWithConfiguration:processConfiguration] autorelease];
@@ -133,14 +144,14 @@ static WKWebViewConfiguration *defaultConfiguration()
         }
     }
 
-    configuration.suppressesIncrementalRendering = [SettingsController shared].incrementalRenderingSuppressed;
-    configuration.websiteDataStore._resourceLoadStatisticsEnabled = [SettingsController shared].resourceLoadStatisticsEnabled;
+    configuration.suppressesIncrementalRendering = _settingsController.incrementalRenderingSuppressed;
+    configuration.websiteDataStore._resourceLoadStatisticsEnabled = _settingsController.resourceLoadStatisticsEnabled;
     return configuration;
 }
 
-WKPreferences *defaultPreferences()
+- (WKPreferences *)defaultPreferences
 {
-    return defaultConfiguration().preferences;
+    return self.defaultConfiguration.preferences;
 }
 
 - (BrowserWindowController *)createBrowserWindowController:(id)sender
@@ -150,8 +161,8 @@ WKPreferences *defaultPreferences()
     BOOL makeEditable = NO;
 
     if (![sender respondsToSelector:@selector(tag)]) {
-        useWebKit2 = [SettingsController shared].useWebKit2ByDefault;
-        makeEditable = [SettingsController shared].createEditorByDefault;
+        useWebKit2 = _settingsController.useWebKit2ByDefault;
+        makeEditable = _settingsController.createEditorByDefault;
     } else {
         useWebKit2 = [sender tag] == WebKit2NewWindowTag || [sender tag] == WebKit2NewEditorTag;
         makeEditable = [sender tag] == WebKit1NewEditorTag || [sender tag] == WebKit2NewEditorTag;
@@ -160,7 +171,7 @@ WKPreferences *defaultPreferences()
     if (!useWebKit2)
         controller = [[WK1BrowserWindowController alloc] initWithWindowNibName:@"BrowserWindow"];
     else
-        controller = [[WK2BrowserWindowController alloc] initWithConfiguration:defaultConfiguration()];
+        controller = [[WK2BrowserWindowController alloc] initWithConfiguration:[self defaultConfiguration]];
 
     if (makeEditable)
         controller.editable = YES;
@@ -180,12 +191,12 @@ WKPreferences *defaultPreferences()
         return;
 
     [[controller window] makeKeyAndOrderFront:sender];
-    [controller loadURLString:[SettingsController shared].defaultURL];
+    [controller loadURLString:_settingsController.defaultURL];
 }
 
 - (IBAction)newPrivateWindow:(id)sender
 {
-    WKWebViewConfiguration *privateConfiguraton = [defaultConfiguration() copy];
+    WKWebViewConfiguration *privateConfiguraton = [self.defaultConfiguration copy];
     privateConfiguraton.websiteDataStore = [WKWebsiteDataStore nonPersistentDataStore];
 
     BrowserWindowController *controller = [[WK2BrowserWindowController alloc] initWithConfiguration:privateConfiguraton];
@@ -194,7 +205,7 @@ WKPreferences *defaultPreferences()
     [[controller window] makeKeyAndOrderFront:sender];
     [_browserWindowControllers addObject:controller];
 
-    [controller loadURLString:[SettingsController shared].defaultURL];
+    [controller loadURLString:_settingsController.defaultURL];
 }
 
 - (IBAction)newEditorWindow:(id)sender
@@ -220,7 +231,7 @@ WKPreferences *defaultPreferences()
 
     [self _updateNewWindowKeyEquivalents];
 
-    if ([SettingsController shared].createEditorByDefault)
+    if (_settingsController.createEditorByDefault)
         [self newEditorWindow:self];
     else
         [self newWindow:self];
@@ -293,11 +304,11 @@ WKPreferences *defaultPreferences()
 
 - (void)_updateNewWindowKeyEquivalents
 {
-    NSEventModifierFlags webKit1Flags = [SettingsController shared].useWebKit2ByDefault ? NSEventModifierFlagOption : 0;
-    NSEventModifierFlags webKit2Flags = [SettingsController shared].useWebKit2ByDefault ? 0 : NSEventModifierFlagOption;
+    NSEventModifierFlags webKit1Flags = _settingsController.useWebKit2ByDefault ? NSEventModifierFlagOption : 0;
+    NSEventModifierFlags webKit2Flags = _settingsController.useWebKit2ByDefault ? 0 : NSEventModifierFlagOption;
 
-    NSString *normalWindowEquivalent = [SettingsController shared].createEditorByDefault ? @"N" : @"n";
-    NSString *editorEquivalent = [SettingsController shared].createEditorByDefault ? @"n" : @"N";
+    NSString *normalWindowEquivalent = _settingsController.createEditorByDefault ? @"N" : @"n";
+    NSString *editorEquivalent = _settingsController.createEditorByDefault ? @"n" : @"N";
 
     _newWebKit1WindowItem.keyEquivalentModifierMask = NSEventModifierFlagCommand | webKit1Flags;
     _newWebKit2WindowItem.keyEquivalentModifierMask = NSEventModifierFlagCommand | webKit2Flags;
@@ -317,7 +328,7 @@ WKPreferences *defaultPreferences()
 
 - (WKUserContentController *)userContentContoller
 {
-    return defaultConfiguration().userContentController;
+    return self.defaultConfiguration.userContentController;
 }
 
 - (IBAction)fetchDefaultStoreWebsiteData:(id)sender

@@ -102,9 +102,10 @@ static const int testFooterBannerHeight = 58;
     _webView.navigationDelegate = self;
     _webView.UIDelegate = self;
 
+    SettingsController *settingsController = [[NSApplication sharedApplication] browserAppDelegate].settingsController;
     // This setting installs the new WK2 Icon Loading Delegate and tests that mechanism by
     // telling WebKit to load every icon referenced by the page.
-    if ([[SettingsController shared] loadsAllSiteIcons])
+    if (settingsController.loadsAllSiteIcons)
         _webView._iconLoadingDelegate = self;
     
     _webView._observedRenderingProgressEvents = _WKRenderingProgressEventFirstLayout
@@ -113,7 +114,9 @@ static const int testFooterBannerHeight = 58;
         | _WKRenderingProgressEventFirstLayoutAfterSuppressedIncrementalRendering
         | _WKRenderingProgressEventFirstPaintAfterSuppressedIncrementalRendering;
 
-    _zoomTextOnly = NO;
+
+    if (settingsController.customUserAgent)
+        _webView.customUserAgent = settingsController.customUserAgent;
 
     _webView._usePlatformFindUI = NO;
 
@@ -125,6 +128,8 @@ static const int testFooterBannerHeight = 58;
     _textFinder.hideInterfaceCallback = ^{
         [_webView _hideFindUI];
     };
+
+    _zoomTextOnly = NO;
 }
 
 - (instancetype)initWithConfiguration:(WKWebViewConfiguration *)configuration
@@ -135,11 +140,13 @@ static const int testFooterBannerHeight = 58;
     _configuration = [configuration copy];
     _isPrivateBrowsingWindow = !_configuration.websiteDataStore.isPersistent;
 
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(userAgentDidChange:) name:kUserAgentChangedNotificationName object:nil];
     return self;
 }
 
 - (void)dealloc
 {
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
     [_webView removeObserver:self forKeyPath:@"title"];
     [_webView removeObserver:self forKeyPath:@"URL"];
     
@@ -152,6 +159,13 @@ static const int testFooterBannerHeight = 58;
     [_configuration release];
 
     [super dealloc];
+}
+
+- (void)userAgentDidChange:(NSNotification *)notification
+{
+    SettingsController *settingsController = [[NSApplication sharedApplication] browserAppDelegate].settingsController;
+    _webView.customUserAgent = settingsController.customUserAgent;
+    [_webView reload];
 }
 
 - (IBAction)fetch:(id)sender
@@ -372,7 +386,7 @@ static BOOL areEssentiallyEqual(double a, double b)
 
 - (void)windowWillClose:(NSNotification *)notification
 {
-    [(BrowserAppDelegate *)[[NSApplication sharedApplication] delegate] browserWindowWillClose:self.window];
+    [[[NSApplication sharedApplication] browserAppDelegate] browserWindowWillClose:self.window];
     [self autorelease];
 }
 
@@ -421,7 +435,7 @@ static BOOL areEssentiallyEqual(double a, double b)
 
 - (void)didChangeSettings
 {
-    SettingsController *settings = [SettingsController shared];
+    SettingsController *settings = [[NSApplication sharedApplication] browserAppDelegate].settingsController;
     WKPreferences *preferences = _webView.configuration.preferences;
 
     _webView._useSystemAppearance = settings.useSystemAppearance;

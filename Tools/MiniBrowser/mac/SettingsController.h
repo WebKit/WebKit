@@ -25,13 +25,11 @@
 
 #import <Cocoa/Cocoa.h>
 
-@interface SettingsController : NSObject {
-    NSMenu *_menu;
-}
+extern NSString * const kUserAgentChangedNotificationName;
 
-+ (instancetype)shared;
+@interface SettingsController : NSObject
 
-@property (nonatomic, readonly) NSMenu *menu;
+- (instancetype)initWithMenu:(NSMenu *)menu;
 
 @property (nonatomic, readonly) BOOL useWebKit2ByDefault;
 @property (nonatomic, readonly) BOOL createEditorByDefault;
@@ -64,5 +62,6 @@
 @property (nonatomic, readonly) BOOL processSwapOnWindowOpenWithOpenerEnabled;
 
 @property (nonatomic, readonly) NSString *defaultURL;
+@property (nonatomic, readonly) NSString *customUserAgent;
 
 @end

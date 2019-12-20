@@ -45,7 +45,7 @@
                         return;
                     }
 
-                    BrowserAppDelegate* appDelegate = (BrowserAppDelegate *)[[NSApplication sharedApplication] delegate];
+                    BrowserAppDelegate* appDelegate = [[NSApplication sharedApplication] browserAppDelegate];
                     [appDelegate.userContentContoller _addUserContentFilter:extension];
                 }];
             }
@@ -104,7 +104,7 @@
 
             [arrayController addObject:identifier];
 
-            BrowserAppDelegate* appDelegate = (BrowserAppDelegate *)[[NSApplication sharedApplication] delegate];
+            BrowserAppDelegate* appDelegate = [[NSApplication sharedApplication] browserAppDelegate];
             [appDelegate.userContentContoller _addUserContentFilter:extension];
         }];
     }];
@@ -133,7 +133,7 @@
         [installedContentExtensions release];
 
         [arrayController removeObjectAtArrangedObjectIndex:index];
-        BrowserAppDelegate* appDelegate = (BrowserAppDelegate *)[[NSApplication sharedApplication] delegate];
+        BrowserAppDelegate* appDelegate = [[NSApplication sharedApplication] browserAppDelegate];
         [appDelegate.userContentContoller _removeUserContentFilter:identifierToRemove];
     }];
 }

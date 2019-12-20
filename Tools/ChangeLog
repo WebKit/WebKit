@@ -1,3 +1,67 @@
+2019-12-20  Simon Fraser  <simon.fraser@apple.com>
+
+        Add a Custom User Agent menu to MiniBrowser, and related cleanup
+        https://bugs.webkit.org/show_bug.cgi?id=205507
+
+        Reviewed by Wenson Hsieh.
+        
+        Add a User Agent" submenu to the Settings menu, and construct it with some built-in
+        UA strings. When changed, it sets the customUserAgent on the WKWebView/WebView and
+        triggers a reload.
+        
+        I also rearranged the menus so that "Settings" and "Debug" are no longer to the right
+        of the "Help" menu, which means getting the Settings menu from the xib. It was then
+        easier if SettingsController was no longer a singleton, but owned by AppDelegate.
+        Added a category on NSApplication to make it easier to get to BrowserAppDelegate
+        and thence to the SettingsController.
+
+        * MiniBrowser/mac/AppDelegate.h:
+        * MiniBrowser/mac/AppDelegate.m:
+        (-[NSApplication browserAppDelegate]):
+        (-[BrowserAppDelegate awakeFromNib]):
+        (-[BrowserAppDelegate defaultConfiguration]):
+        (-[BrowserAppDelegate defaultPreferences]):
+        (-[BrowserAppDelegate createBrowserWindowController:]):
+        (-[BrowserAppDelegate newWindow:]):
+        (-[BrowserAppDelegate newPrivateWindow:]):
+        (-[BrowserAppDelegate applicationDidFinishLaunching:]):
+        (-[BrowserAppDelegate _updateNewWindowKeyEquivalents]):
+        (-[BrowserAppDelegate userContentContoller]):
+        (defaultConfiguration): Deleted.
+        (defaultPreferences): Deleted.
+        * MiniBrowser/mac/ExtensionManagerWindowController.m:
+        (-[ExtensionManagerWindowController init]):
+        (-[ExtensionManagerWindowController add:]):
+        (-[ExtensionManagerWindowController remove:]):
+        * MiniBrowser/mac/MainMenu.xib:
+        * MiniBrowser/mac/SettingsController.h:
+        * MiniBrowser/mac/SettingsController.m:
+        (-[SettingsController initWithMenu:]):
+        (-[SettingsController dealloc]):
+        (-[SettingsController _populateMenu]):
+        (+[SettingsController userAgentData]):
+        (-[SettingsController buildUserAgentsMenu:]):
+        (-[SettingsController validateMenuItem:]):
+        (-[SettingsController _toggleBooleanDefault:]):
+        (-[SettingsController toggleExperimentalFeature:]):
+        (-[SettingsController toggleInternalDebugFeature:]):
+        (-[SettingsController customUserAgent]):
+        (-[SettingsController changeCutomUserAgent:]):
+        (+[SettingsController shared]): Deleted.
+        (-[SettingsController init]): Deleted.
+        (-[SettingsController menu]): Deleted.
+        * MiniBrowser/mac/WK1BrowserWindowController.m:
+        (-[WK1BrowserWindowController awakeFromNib]):
+        (-[WK1BrowserWindowController userAgentDidChange:]):
+        (-[WK1BrowserWindowController windowWillClose:]):
+        (-[WK1BrowserWindowController didChangeSettings]):
+        * MiniBrowser/mac/WK2BrowserWindowController.m:
+        (-[WK2BrowserWindowController awakeFromNib]):
+        (-[WK2BrowserWindowController initWithConfiguration:]):
+        (-[WK2BrowserWindowController userAgentDidChange:]):
+        (-[WK2BrowserWindowController windowWillClose:]):
+        (-[WK2BrowserWindowController didChangeSettings]):
+
 2019-12-20  Jiewen Tan  <jiewen_tan@apple.com>
 
         [WebAuthn] Implement coders for CTAP ClientPIN requests and responses

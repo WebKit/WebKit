@@ -60,19 +60,32 @@
 
     [_webView _listenForLayoutMilestones:WebDidFirstLayout | WebDidFirstVisuallyNonEmptyLayout | WebDidHitRelevantRepaintedObjectsAreaThreshold];
 
+    SettingsController *settingsController = [[NSApplication sharedApplication] browserAppDelegate].settingsController;
+    if (settingsController.customUserAgent)
+        _webView.customUserAgent = settingsController.customUserAgent;
+
     [self didChangeSettings];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(userAgentDidChange:) name:kUserAgentChangedNotificationName object:nil];
 
     [containerView addSubview:_webView];
 }
 
 - (void)dealloc
 {
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
     [_webView setFrameLoadDelegate:nil];
     [_webView setUIDelegate:nil];
     [_webView setResourceLoadDelegate:nil];
     [_webView release];
 
     [super dealloc];
+}
+
+- (void)userAgentDidChange:(NSNotification *)notification
+{
+    SettingsController *settingsController = [[NSApplication sharedApplication] browserAppDelegate].settingsController;
+    _webView.customUserAgent = settingsController.customUserAgent;
+    [_webView reload:nil];
 }
 
 - (void)loadURLString:(NSString *)urlString
@@ -195,7 +208,7 @@ static BOOL areEssentiallyEqual(double a, double b)
 
 - (void)windowWillClose:(NSNotification *)notification
 {
-    [(BrowserAppDelegate *)[[NSApplication sharedApplication] delegate] browserWindowWillClose:self.window];
+    [[[NSApplication sharedApplication] browserAppDelegate] browserWindowWillClose:self.window];
     [self autorelease];
 }
 
@@ -304,7 +317,7 @@ static BOOL areEssentiallyEqual(double a, double b)
 
 - (void)didChangeSettings
 {
-    SettingsController *settings = [SettingsController shared];
+    SettingsController *settings = [[NSApplication sharedApplication] browserAppDelegate].settingsController;
 
     [[WebPreferences standardPreferences] setSubpixelCSSOMElementMetricsEnabled:settings.subPixelCSSOMMetricsEnabled];
     [[WebPreferences standardPreferences] setShowDebugBorders:settings.layerBordersVisible];
