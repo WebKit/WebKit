@@ -1,5 +1,14 @@
 2019-12-20  Truitt Savell  <tsavell@apple.com>
 
+        REGRESSION: fast/shadow-dom/link-element-in-shadow-tree.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=171784
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
+2019-12-20  Truitt Savell  <tsavell@apple.com>
+
         Flaky crash in AudioSourceProviderAVFObjC::~AudioSourceProviderAVFObjC on webaudio/silent-audio-interrupted-in-background.html
         https://bugs.webkit.org/show_bug.cgi?id=202064
 
