@@ -1,3 +1,13 @@
+2019-12-20  Chris Dumez  <cdumez@apple.com>
+
+        [iOS Debug] imported/w3c/web-platform-tests/html/dom/usvstring-reflection.https.html is crashing
+        https://bugs.webkit.org/show_bug.cgi?id=205506
+
+        Unreviewed, mark imported/w3c/web-platform-tests/html/dom/usvstring-reflection.https.html as crashing
+        on iOS Debug. The test has been crashing on this platform since it was imported in r253791.
+
+        * platform/ios-wk2/TestExpectations:
+
 2019-12-20  youenn fablet  <youenn@apple.com>
 
         webrtc/video-autoplay.html is flaky on iOS simulator
