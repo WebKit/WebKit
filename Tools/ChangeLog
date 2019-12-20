@@ -1,3 +1,13 @@
+2019-12-20  Jonathan Bedard  <jbedard@apple.com>
+
+        lldbwebkittester: Strip CLANG_DEBUG_INFORMATION_LEVEL option while building
+        https://bugs.webkit.org/show_bug.cgi?id=205513
+
+        Reviewed by Alexey Proskuryakov.
+
+        * Scripts/webkitdirs.pm:
+        (buildXCodeProject): Strip CLANG_DEBUG_INFORMATION_LEVEL from lldbWebKitTester.
+
 2019-12-20  Simon Fraser  <simon.fraser@apple.com>
 
         Add a Custom User Agent menu to MiniBrowser, and related cleanup

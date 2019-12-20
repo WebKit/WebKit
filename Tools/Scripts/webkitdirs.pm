@@ -1906,6 +1906,18 @@ sub buildXCodeProject($$@)
     }
 
     chomp($ENV{DSYMUTIL_NUM_THREADS} = `sysctl -n hw.activecpu`);
+
+    # lldbWebKitTester won't work with the wrong CLANG_DEBUG_INFORMATION_LEVEL, so always use the default for that project
+    if ($project eq "lldbWebKitTester") {
+        my $index = 0;
+        while ($index < scalar(@extraOptions)) {
+            if ($extraOptions[$index] =~ /CLANG_DEBUG_INFORMATION_LEVEL=/) {
+                splice @extraOptions, $index, 1;
+            } else {
+                $index += 1;
+            }
+        }
+    }
     return system "xcodebuild", "-project", "$project.xcodeproj", @extraOptions;
 }
 
