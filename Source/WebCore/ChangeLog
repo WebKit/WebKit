@@ -1,3 +1,15 @@
+2019-12-19  Jack Lee  <shihchieh_lee@apple.com>
+
+        Nullptr crash in WebCore::findPlaceForCounter with display: contents parent
+        https://bugs.webkit.org/show_bug.cgi?id=205290
+
+        Reviewed by Ryosuke Niwa.
+
+        Test: fast/css/counters/findPlaceForCounter-crash.html
+
+        * rendering/RenderCounter.cpp:
+        (WebCore::parentOrPseudoHostElement):
+
 2019-12-19  Chris Dumez  <cdumez@apple.com>
 
         REGRESSION: (r251677) imported/w3c/web-platform-tests/html/semantics/forms/form-submission-0/form-double-submit-3.html is a flaky failure

@@ -1,0 +1,16 @@
+<style>
+data,li,body,html {counter-reset: c;}
+</style>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+onload = function eventhandler1() {
+    li.style.setProperty("counter-increment", "c");
+}
+</script>
+<body>
+<p>This tests an element with CSS counter having a parent with display: contents.</p>
+<p>The test passes if WebKit doesn't crash or hit an assertion.</p>
+</body>
+<data style="display: contents"><li id="li">
