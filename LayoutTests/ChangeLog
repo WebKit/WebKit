@@ -1,5 +1,14 @@
 2019-12-20  Chris Dumez  <cdumez@apple.com>
 
+        Re-skip imported/w3c/web-platform-tests/service-workers/service-worker/client-navigate.https.html
+
+        I had unskipped this test in r253704 because it no longer appeared to time out on my machine. However,
+        it sill appears to time out on the bots (at least flakily).
+
+        * TestExpectations:
+
+2019-12-20  Chris Dumez  <cdumez@apple.com>
+
         Unreviewed, address flakiness of imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/css-module/css-module-worker-test.html
 
         * TestExpectations:

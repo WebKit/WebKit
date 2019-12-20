@@ -226,6 +226,7 @@ webkit.org/b/201665 imported/w3c/web-platform-tests/service-workers/service-work
 imported/w3c/web-platform-tests/service-workers/service-worker/multipart-image.https.html [ Skip ]
 imported/w3c/web-platform-tests/service-workers/service-worker/worker-in-sandboxed-iframe-by-csp-fetch-event.https.html [ Skip ]
 imported/w3c/web-platform-tests/service-workers/service-worker/fetch-event-worker-timing-frame.tentative.https.html [ Skip ]
+imported/w3c/web-platform-tests/service-workers/service-worker/client-navigate.https.html [ Skip ]
 
 # This test is a flaky timeout.
 imported/w3c/web-platform-tests/service-workers/service-worker/fetch-canvas-tainting-video-cache.https.html [ Skip ]
