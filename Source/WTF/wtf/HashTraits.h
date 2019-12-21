@@ -361,6 +361,14 @@ struct NullableHashTraits : public HashTraits<T> {
     static T emptyValue() { return reinterpret_cast<T>(1); }
 };
 
+template<typename T, size_t inlineCapacity>
+struct HashTraits<Vector<T, inlineCapacity>> : GenericHashTraits<Vector<T, inlineCapacity>> {
+    static constexpr bool emptyValueIsZero = !inlineCapacity;
+
+    static void constructDeletedValue(Vector<T, inlineCapacity>& slot) { new (NotNull, std::addressof(slot)) Vector<T, inlineCapacity>(WTF::HashTableDeletedValue); }
+    static bool isDeletedValue(const Vector<T, inlineCapacity>& value) { return value.isHashTableDeletedValue(); }
+};
+
 // Useful for classes that want complete control over what is empty and what is deleted,
 // and how to construct both.
 template<typename T>

@@ -1,3 +1,17 @@
+2019-12-21  Antti Koivisto  <antti@apple.com>
+
+        Move Vector HashTraits to HashTraits.h to fix GCC build
+        https://bugs.webkit.org/show_bug.cgi?id=205540
+
+        Reviewed by Zalan Bujtas.
+
+        * contentextensions/DFAMinimizer.cpp:
+
+        ActionKey HashTrait claims that emptyValueIsZero. Now with Vector HashTrait having emptyValueIsZero too
+        HashMap<ActionKey, Vector<>> started taking the optimized path.
+
+        However ActionKey empty value wasn't actually zero because Empty enum value wasn't 0.
+
 2019-12-21  Kate Cheney  <katherine_cheney@apple.com>
 
         Add timeStamp to ITP database

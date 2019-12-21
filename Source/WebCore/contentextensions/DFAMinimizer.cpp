@@ -409,17 +409,17 @@ struct ActionKey {
     bool isEmptyValue() const { return state == Empty; }
     bool isDeletedValue() const { return state == Deleted; }
 
-    unsigned hash;
+    unsigned hash { 0 };
     
-    const DFA* dfa;
-    uint32_t actionsStart;
-    uint16_t actionsLength;
+    const DFA* dfa { nullptr };
+    uint32_t actionsStart { 0 };
+    uint16_t actionsLength { 0 };
     
     enum {
-        Valid,
         Empty,
+        Valid,
         Deleted
-    } state;
+    } state { Empty };
 };
 
 struct ActionKeyHash {
