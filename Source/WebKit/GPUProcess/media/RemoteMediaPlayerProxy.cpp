@@ -29,6 +29,7 @@
 #if ENABLE(GPU_PROCESS)
 
 #include "RemoteMediaPlayerManagerProxy.h"
+#include "RemoteMediaPlayerState.h"
 #include <WebCore/MediaPlayer.h>
 #include <WebCore/MediaPlayerPrivate.h>
 #include <WebCore/NotImplemented.h>
@@ -42,6 +43,7 @@ RemoteMediaPlayerProxy::RemoteMediaPlayerProxy(RemoteMediaPlayerManagerProxy& ma
     , m_webProcessConnection(WTFMove(connection))
     , m_manager(manager)
     , m_engineIdentifier(engineIdentifier)
+    , m_updateCachedStateMessageTimer(RunLoop::main(), this, &RemoteMediaPlayerProxy::timerFired)
 #if !RELEASE_LOG_DISABLED
     , m_logger(m_manager.logger())
 #endif
@@ -51,6 +53,7 @@ RemoteMediaPlayerProxy::RemoteMediaPlayerProxy(RemoteMediaPlayerManagerProxy& ma
 
 void RemoteMediaPlayerProxy::invalidate()
 {
+    m_updateCachedStateMessageTimer.stop();
     m_player->invalidate();
 }
 
@@ -69,6 +72,7 @@ void RemoteMediaPlayerProxy::prepareForPlayback(bool privateMode, WebCore::Media
 
 void RemoteMediaPlayerProxy::cancelLoad()
 {
+    m_updateCachedStateMessageTimer.stop();
     m_player->cancelLoad();
 }
 
@@ -79,12 +83,27 @@ void RemoteMediaPlayerProxy::prepareToPlay()
 
 void RemoteMediaPlayerProxy::play()
 {
+    if (m_player->movieLoadType() != WebCore::MediaPlayerEnums::MovieLoadType::LiveStream)
+        startUpdateCachedStateMessageTimer();
     m_player->play();
+    sendCachedState();
 }
 
 void RemoteMediaPlayerProxy::pause()
 {
+    m_updateCachedStateMessageTimer.stop();
     m_player->pause();
+    sendCachedState();
+}
+
+void RemoteMediaPlayerProxy::seek(MediaTime&& time)
+{
+    m_player->seek(time);
+}
+
+void RemoteMediaPlayerProxy::seekWithTolerance(MediaTime&& time, MediaTime&& negativeTolerance, MediaTime&& positiveTolerance)
+{
+    m_player->seekWithTolerance(time, negativeTolerance, positiveTolerance);
 }
 
 void RemoteMediaPlayerProxy::setVolume(double volume)
@@ -115,12 +134,14 @@ void RemoteMediaPlayerProxy::setPreservesPitch(bool preservesPitch)
 // MediaPlayerClient
 void RemoteMediaPlayerProxy::mediaPlayerNetworkStateChanged()
 {
-    m_webProcessConnection->send(Messages::RemoteMediaPlayerManager::NetworkStateChanged(m_id, m_player->networkState()), 0);
+    updateCachedState();
+    m_webProcessConnection->send(Messages::RemoteMediaPlayerManager::NetworkStateChanged(m_id, m_cachedState), 0);
 }
 
 void RemoteMediaPlayerProxy::mediaPlayerReadyStateChanged()
 {
-    m_webProcessConnection->send(Messages::RemoteMediaPlayerManager::ReadyStateChanged(m_id, m_player->readyState()), 0);
+    updateCachedState();
+    m_webProcessConnection->send(Messages::RemoteMediaPlayerManager::ReadyStateChanged(m_id, m_cachedState), 0);
 }
 
 void RemoteMediaPlayerProxy::mediaPlayerVolumeChanged()
@@ -135,16 +156,19 @@ void RemoteMediaPlayerProxy::mediaPlayerMuteChanged()
 
 void RemoteMediaPlayerProxy::mediaPlayerTimeChanged()
 {
-    m_webProcessConnection->send(Messages::RemoteMediaPlayerManager::TimeChanged(m_id, m_player->currentTime()), 0);
+    updateCachedState();
+    m_webProcessConnection->send(Messages::RemoteMediaPlayerManager::TimeChanged(m_id, m_cachedState), 0);
 }
 
 void RemoteMediaPlayerProxy::mediaPlayerDurationChanged()
 {
-    m_webProcessConnection->send(Messages::RemoteMediaPlayerManager::DurationChanged(m_id, m_player->duration()), 0);
+    updateCachedState();
+    m_webProcessConnection->send(Messages::RemoteMediaPlayerManager::DurationChanged(m_id, m_cachedState), 0);
 }
 
 void RemoteMediaPlayerProxy::mediaPlayerRateChanged()
 {
+    sendCachedState();
     m_webProcessConnection->send(Messages::RemoteMediaPlayerManager::RateChanged(m_id, m_player->rate()), 0);
 }
 
@@ -153,12 +177,27 @@ void RemoteMediaPlayerProxy::mediaPlayerEngineFailedToLoad() const
     m_webProcessConnection->send(Messages::RemoteMediaPlayerManager::EngineFailedToLoad(m_id, m_player->platformErrorCode()), 0);
 }
 
-// FIXME: Unimplemented
 void RemoteMediaPlayerProxy::mediaPlayerPlaybackStateChanged()
 {
-    notImplemented();
+    m_webProcessConnection->send(Messages::RemoteMediaPlayerManager::PlaybackStateChanged(m_id, m_player->paused()), 0);
 }
 
+void RemoteMediaPlayerProxy::mediaPlayerBufferedTimeRangesChanged()
+{
+    m_bufferedChanged = true;
+}
+
+void RemoteMediaPlayerProxy::mediaPlayerSeekableTimeRangesChanged()
+{
+    m_seekableChanged = true;
+}
+
+void RemoteMediaPlayerProxy::mediaPlayerCharacteristicChanged()
+{
+    m_webProcessConnection->send(Messages::RemoteMediaPlayerManager::CharacteristicChanged(m_id, m_player->hasAudio(), m_player->hasVideo(), m_player->movieLoadType()), 0);
+}
+
+// FIXME: Unimplemented
 void RemoteMediaPlayerProxy::mediaPlayerResourceNotSupported()
 {
     notImplemented();
@@ -178,12 +217,6 @@ void RemoteMediaPlayerProxy::mediaPlayerFirstVideoFrameAvailable()
 {
     notImplemented();
 }
-
-void RemoteMediaPlayerProxy::mediaPlayerCharacteristicChanged()
-{
-    notImplemented();
-}
-
 
 bool RemoteMediaPlayerProxy::mediaPlayerRenderingCanBeAccelerated()
 {
@@ -443,6 +476,49 @@ bool RemoteMediaPlayerProxy::mediaPlayerShouldCheckHardwareSupport() const
 {
     notImplemented();
     return false;
+}
+
+void RemoteMediaPlayerProxy::startUpdateCachedStateMessageTimer()
+{
+    static const Seconds maxTimeupdateEventFrequency { 100_ms };
+
+    if (m_updateCachedStateMessageTimer.isActive())
+        return;
+
+    m_updateCachedStateMessageTimer.startRepeating(maxTimeupdateEventFrequency);
+}
+
+void RemoteMediaPlayerProxy::timerFired()
+{
+    sendCachedState();
+}
+
+void RemoteMediaPlayerProxy::updateCachedState()
+{
+    m_cachedState.currentTime = m_player->currentTime();
+    m_cachedState.duration = m_player->duration();
+    m_cachedState.networkState = m_player->networkState();
+    m_cachedState.readyState = m_player->readyState();
+    m_cachedState.paused = m_player->paused();
+    m_cachedState.loadingProgressed = m_player->didLoadingProgress();
+
+    if (m_seekableChanged) {
+        m_seekableChanged = false;
+        m_cachedState.minTimeSeekable = m_player->minTimeSeekable();
+        m_cachedState.maxTimeSeekable = m_player->maxTimeSeekable();
+    }
+
+    if (m_bufferedChanged) {
+        m_bufferedChanged = false;
+        m_cachedState.bufferedRanges = *m_player->buffered();
+    }
+}
+
+void RemoteMediaPlayerProxy::sendCachedState()
+{
+    updateCachedState();
+    m_webProcessConnection->send(Messages::RemoteMediaPlayerManager::UpdateCachedState(m_id, m_cachedState), 0);
+    m_cachedState.bufferedRanges.clear();
 }
 
 } // namespace WebKit

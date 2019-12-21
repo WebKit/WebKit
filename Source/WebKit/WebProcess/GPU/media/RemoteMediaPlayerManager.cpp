@@ -189,16 +189,16 @@ void RemoteMediaPlayerManager::clearMediaCacheForOrigins(MediaPlayerEnums::Media
     gpuProcessConnection().send(Messages::RemoteMediaPlayerManagerProxy::ClearMediaCacheForOrigins(remoteEngineIdentifier, path, originData), 0);
 }
 
-void RemoteMediaPlayerManager::networkStateChanged(MediaPlayerPrivateRemoteIdentifier id, MediaPlayerEnums::NetworkState state)
+void RemoteMediaPlayerManager::networkStateChanged(MediaPlayerPrivateRemoteIdentifier id, RemoteMediaPlayerState&& state)
 {
     if (auto player = m_players.get(id))
-        player->networkStateChanged(state);
+        player->networkStateChanged(WTFMove(state));
 }
 
-void RemoteMediaPlayerManager::readyStateChanged(MediaPlayerPrivateRemoteIdentifier id, MediaPlayerEnums::ReadyState state)
+void RemoteMediaPlayerManager::readyStateChanged(MediaPlayerPrivateRemoteIdentifier id, RemoteMediaPlayerState&& state)
 {
     if (auto player = m_players.get(id))
-        player->readyStateChanged(state);
+        player->readyStateChanged(WTFMove(state));
 }
 
 void RemoteMediaPlayerManager::volumeChanged(WebKit::MediaPlayerPrivateRemoteIdentifier id, double volume)
@@ -213,16 +213,16 @@ void RemoteMediaPlayerManager::muteChanged(WebKit::MediaPlayerPrivateRemoteIdent
         player->muteChanged(mute);
 }
 
-void RemoteMediaPlayerManager::timeChanged(WebKit::MediaPlayerPrivateRemoteIdentifier id, MediaTime&& time)
+void RemoteMediaPlayerManager::timeChanged(WebKit::MediaPlayerPrivateRemoteIdentifier id, RemoteMediaPlayerState&& state)
 {
     if (auto player = m_players.get(id))
-        player->timeChanged(WTFMove(time));
+        player->timeChanged(WTFMove(state));
 }
 
-void RemoteMediaPlayerManager::durationChanged(WebKit::MediaPlayerPrivateRemoteIdentifier id, MediaTime&& time)
+void RemoteMediaPlayerManager::durationChanged(WebKit::MediaPlayerPrivateRemoteIdentifier id, RemoteMediaPlayerState&& state)
 {
     if (auto player = m_players.get(id))
-        player->durationChanged(WTFMove(time));
+        player->durationChanged(WTFMove(state));
 }
 
 void RemoteMediaPlayerManager::rateChanged(WebKit::MediaPlayerPrivateRemoteIdentifier id, double rate)
@@ -243,6 +243,12 @@ void RemoteMediaPlayerManager::engineFailedToLoad(WebKit::MediaPlayerPrivateRemo
         player->engineFailedToLoad(platformErrorCode);
 }
 
+void RemoteMediaPlayerManager::characteristicChanged(WebKit::MediaPlayerPrivateRemoteIdentifier id, bool hasAudio, bool hasVideo, WebCore::MediaPlayerEnums::MovieLoadType loadType)
+{
+    if (auto player = m_players.get(id))
+        player->characteristicChanged(hasAudio, hasVideo, loadType);
+}
+
 void RemoteMediaPlayerManager::updatePreferences(const Settings& settings)
 {
     auto registerEngine = [this](MediaEngineRegistrar registrar, MediaPlayerEnums::MediaEngineIdentifier remoteEngineIdentifier) {
@@ -250,6 +256,12 @@ void RemoteMediaPlayerManager::updatePreferences(const Settings& settings)
     };
 
     RemoteMediaPlayerSupport::setRegisterRemotePlayerCallback(settings.useGPUProcessForMedia() ? WTFMove(registerEngine) : RemoteMediaPlayerSupport::RegisterRemotePlayerCallback());
+}
+
+void RemoteMediaPlayerManager::updateCachedState(WebKit::MediaPlayerPrivateRemoteIdentifier id, RemoteMediaPlayerState&& state)
+{
+    if (auto player = m_players.get(id))
+        player->updateCachedState(WTFMove(state));
 }
 
 IPC::Connection& RemoteMediaPlayerManager::gpuProcessConnection() const

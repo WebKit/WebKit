@@ -268,6 +268,9 @@ public:
     virtual const Vector<ContentType>& mediaContentTypesRequiringHardwareSupport() const = 0;
     virtual bool mediaPlayerShouldCheckHardwareSupport() const { return false; }
 
+    virtual void mediaPlayerBufferedTimeRangesChanged() { }
+    virtual void mediaPlayerSeekableTimeRangesChanged() { }
+
 #if !RELEASE_LOG_DISABLED
     virtual const void* mediaPlayerLogIdentifier() { return nullptr; }
     virtual const Logger& mediaPlayerLogger() = 0;
@@ -385,6 +388,8 @@ public:
 
     std::unique_ptr<PlatformTimeRanges> buffered();
     std::unique_ptr<PlatformTimeRanges> seekable();
+    void bufferedTimeRangesChanged();
+    void seekableTimeRangesChanged();
     MediaTime minTimeSeekable();
     MediaTime maxTimeSeekable();
 

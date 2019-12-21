@@ -28,8 +28,10 @@
 #if ENABLE(GPU_PROCESS)
 
 #include "MediaPlayerPrivateRemoteIdentifier.h"
+#include "RemoteMediaPlayerState.h"
 #include <wtf/LoggerHelper.h>
 #include <wtf/RefPtr.h>
+#include <wtf/RunLoop.h>
 #include <wtf/Vector.h>
 
 namespace IPC {
@@ -65,6 +67,9 @@ public:
     void play();
     void pause();
 
+    void seek(MediaTime&&);
+    void seekWithTolerance(MediaTime&&, MediaTime&& negativeTolerance, MediaTime&& positiveTolerance);
+
     void setVolume(double);
     void setMuted(bool);
 
@@ -81,9 +86,12 @@ private:
     void mediaPlayerTimeChanged() final;
     void mediaPlayerDurationChanged() final;
     void mediaPlayerRateChanged() final;
+    void mediaPlayerPlaybackStateChanged() final;
+    void mediaPlayerEngineFailedToLoad() const final;
+    void mediaPlayerBufferedTimeRangesChanged() final;
+    void mediaPlayerSeekableTimeRangesChanged() final;
 
     // Not implemented
-    void mediaPlayerPlaybackStateChanged() final;
     void mediaPlayerResourceNotSupported() final;
     void mediaPlayerSizeChanged() final;
     void mediaPlayerEngineUpdated() final;
@@ -144,8 +152,6 @@ private:
 
     String mediaPlayerSourceApplicationIdentifier() const final;
 
-    void mediaPlayerEngineFailedToLoad() const final;
-
     double mediaPlayerRequestedPlaybackRate() const final;
     MediaPlayerEnums::VideoFullscreenMode mediaPlayerFullscreenMode() const final;
     bool mediaPlayerIsVideoFullscreenStandby() const final;
@@ -154,6 +160,11 @@ private:
     bool mediaPlayerShouldDisableSleep() const final;
     const Vector<WebCore::ContentType>& mediaContentTypesRequiringHardwareSupport() const final;
     bool mediaPlayerShouldCheckHardwareSupport() const final;
+
+    void startUpdateCachedStateMessageTimer();
+    void updateCachedState();
+    void sendCachedState();
+    void timerFired();
 
 #if !RELEASE_LOG_DISABLED
     const Logger& mediaPlayerLogger() final { return m_logger; }
@@ -165,6 +176,11 @@ private:
     RemoteMediaPlayerManagerProxy& m_manager;
     MediaPlayerEnums::MediaEngineIdentifier m_engineIdentifier;
     Vector<WebCore::ContentType> m_typesRequiringHardwareSupport;
+    RunLoop::Timer<RemoteMediaPlayerProxy> m_updateCachedStateMessageTimer;
+    RemoteMediaPlayerState m_cachedState;
+
+    bool m_seekableChanged { true };
+    bool m_bufferedChanged { true };
 
 #if !RELEASE_LOG_DISABLED
     const Logger& m_logger;

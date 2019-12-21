@@ -897,6 +897,16 @@ double MediaPlayer::seekableTimeRangesLastModifiedTime()
     return m_private->seekableTimeRangesLastModifiedTime();
 }
 
+void MediaPlayer::bufferedTimeRangesChanged()
+{
+    client().mediaPlayerBufferedTimeRangesChanged();
+}
+
+void MediaPlayer::seekableTimeRangesChanged()
+{
+    client().mediaPlayerSeekableTimeRangesChanged();
+}
+
 double MediaPlayer::liveUpdateInterval()
 {
     return m_private->liveUpdateInterval();

@@ -1803,11 +1803,6 @@ MediaTime MediaPlayerPrivateAVFoundationObjC::mediaTimeForTimeValue(const MediaT
     return timeValue;
 }
 
-double MediaPlayerPrivateAVFoundationObjC::maximumDurationToCacheMediaTime() const
-{
-    return 0;
-}
-
 void MediaPlayerPrivateAVFoundationObjC::updateVideoLayerGravity()
 {
     if (!m_videoLayer)

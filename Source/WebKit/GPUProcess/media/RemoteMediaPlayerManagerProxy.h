@@ -86,6 +86,9 @@ private:
     void play(MediaPlayerPrivateRemoteIdentifier);
     void pause(MediaPlayerPrivateRemoteIdentifier);
 
+    void seek(MediaPlayerPrivateRemoteIdentifier, MediaTime&&);
+    void seekWithTolerance(MediaPlayerPrivateRemoteIdentifier, MediaTime&&, MediaTime&& negativeTolerance, MediaTime&& positiveTolerance);
+
     void setVolume(MediaPlayerPrivateRemoteIdentifier, double);
     void setMuted(MediaPlayerPrivateRemoteIdentifier, bool);
 

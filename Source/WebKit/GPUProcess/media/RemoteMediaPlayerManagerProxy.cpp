@@ -202,6 +202,18 @@ void RemoteMediaPlayerManagerProxy::pause(MediaPlayerPrivateRemoteIdentifier id)
         player->pause();
 }
 
+void RemoteMediaPlayerManagerProxy::seek(MediaPlayerPrivateRemoteIdentifier id, MediaTime&& time)
+{
+    if (auto player = m_proxies.get(id))
+        player->seek(WTFMove(time));
+}
+
+void RemoteMediaPlayerManagerProxy::seekWithTolerance(MediaPlayerPrivateRemoteIdentifier id, MediaTime&& time, MediaTime&& negativeTolerance, MediaTime&& positiveTolerance)
+{
+    if (auto player = m_proxies.get(id))
+        player->seekWithTolerance(WTFMove(time), WTFMove(negativeTolerance), WTFMove(positiveTolerance));
+}
+
 void RemoteMediaPlayerManagerProxy::setVolume(MediaPlayerPrivateRemoteIdentifier id, double volume)
 {
     if (auto player = m_proxies.get(id))

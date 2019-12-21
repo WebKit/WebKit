@@ -1,3 +1,19 @@
+2019-12-20  Eric Carlson  <eric.carlson@apple.com>
+
+        [Media in GPU process] Get audio playing
+        https://bugs.webkit.org/show_bug.cgi?id=205511
+        <rdar://problem/58120354>
+
+        Reviewed by Jer Noble.
+
+        * GPUProcess/media/RemoteMediaPlayerManagerProxy.h:
+        * GPUProcess/media/RemoteMediaPlayerProxy.h:
+        * WebProcess/GPU/media/MediaPlayerPrivateRemote.cpp:
+        (WebKit::MediaPlayerPrivateRemote::updateCachedState):
+        (WebKit::MediaPlayerPrivateRemote::maximumDurationToCacheMediaTime const):
+        * WebProcess/GPU/media/MediaPlayerPrivateRemote.h:
+        * WebProcess/GPU/media/RemoteMediaPlayerManager.h:
+
 2019-12-20  Jer Noble  <jer.noble@apple.com>
 
         Enable HDR Media Capabilities by default

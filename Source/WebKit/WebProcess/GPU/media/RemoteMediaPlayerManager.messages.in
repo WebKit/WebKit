@@ -25,15 +25,17 @@
 
 messages -> RemoteMediaPlayerManager NotRefCounted {
 
-    NetworkStateChanged(WebKit::MediaPlayerPrivateRemoteIdentifier id, enum:uint8_t WebCore::MediaPlayerEnums::NetworkState state)
-    ReadyStateChanged(WebKit::MediaPlayerPrivateRemoteIdentifier id, enum:uint8_t WebCore::MediaPlayerEnums::ReadyState state)
+    NetworkStateChanged(WebKit::MediaPlayerPrivateRemoteIdentifier id, struct WebKit::RemoteMediaPlayerState state)
+    ReadyStateChanged(WebKit::MediaPlayerPrivateRemoteIdentifier id, struct WebKit::RemoteMediaPlayerState state)
     VolumeChanged(WebKit::MediaPlayerPrivateRemoteIdentifier id, double volume)
     MuteChanged(WebKit::MediaPlayerPrivateRemoteIdentifier id, bool mute)
-    TimeChanged(WebKit::MediaPlayerPrivateRemoteIdentifier id, MediaTime time)
-    DurationChanged(WebKit::MediaPlayerPrivateRemoteIdentifier id, MediaTime time)
+    TimeChanged(WebKit::MediaPlayerPrivateRemoteIdentifier id, struct WebKit::RemoteMediaPlayerState state)
+    DurationChanged(WebKit::MediaPlayerPrivateRemoteIdentifier id, struct WebKit::RemoteMediaPlayerState state)
     RateChanged(WebKit::MediaPlayerPrivateRemoteIdentifier id, double rate)
     PlaybackStateChanged(WebKit::MediaPlayerPrivateRemoteIdentifier id, bool paused)
     EngineFailedToLoad(WebKit::MediaPlayerPrivateRemoteIdentifier id, int platformErrorCode)
+    UpdateCachedState(WebKit::MediaPlayerPrivateRemoteIdentifier id, struct WebKit::RemoteMediaPlayerState state)
+    CharacteristicChanged(WebKit::MediaPlayerPrivateRemoteIdentifier id, bool hasAudio, bool hasVideo, enum:uint8_t WebCore::MediaPlayerEnums::MovieLoadType movieLoadType)
 }
 
 #endif

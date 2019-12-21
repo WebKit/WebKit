@@ -47,6 +47,9 @@ messages -> RemoteMediaPlayerManagerProxy NotRefCounted {
     SetVolume(WebKit::MediaPlayerPrivateRemoteIdentifier id, double volume)
     SetMuted(WebKit::MediaPlayerPrivateRemoteIdentifier id, bool muted)
 
+    Seek(WebKit::MediaPlayerPrivateRemoteIdentifier id, MediaTime time)
+    SeekWithTolerance(WebKit::MediaPlayerPrivateRemoteIdentifier id, MediaTime time, MediaTime negativeTolerance, MediaTime positiveTolerance)
+
     SetPreload(WebKit::MediaPlayerPrivateRemoteIdentifier id, enum:uint8_t WebCore::MediaPlayerEnums::Preload preload)
     SetPrivateBrowsingMode(WebKit::MediaPlayerPrivateRemoteIdentifier id, bool privateMode)
     SetPreservesPitch(WebKit::MediaPlayerPrivateRemoteIdentifier id, bool preservesPitch)

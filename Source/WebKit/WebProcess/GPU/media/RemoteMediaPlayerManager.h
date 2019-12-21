@@ -29,6 +29,7 @@
 
 #include "MediaPlayerPrivateRemoteIdentifier.h"
 #include "MessageReceiver.h"
+#include "RemoteMediaPlayerState.h"
 #include "SharedMemory.h"
 #include "WebProcessSupplement.h"
 #include <WebCore/MediaPlayer.h>
@@ -70,15 +71,17 @@ private:
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
 
     // Messages::RemoteMediaPlayerManager
-    void networkStateChanged(MediaPlayerPrivateRemoteIdentifier, WebCore::MediaPlayer::NetworkState);
-    void readyStateChanged(MediaPlayerPrivateRemoteIdentifier, WebCore::MediaPlayer::ReadyState);
+    void networkStateChanged(MediaPlayerPrivateRemoteIdentifier, RemoteMediaPlayerState&&);
+    void readyStateChanged(MediaPlayerPrivateRemoteIdentifier, RemoteMediaPlayerState&&);
     void volumeChanged(WebKit::MediaPlayerPrivateRemoteIdentifier, double);
     void muteChanged(WebKit::MediaPlayerPrivateRemoteIdentifier, bool);
-    void timeChanged(WebKit::MediaPlayerPrivateRemoteIdentifier, MediaTime&&);
-    void durationChanged(WebKit::MediaPlayerPrivateRemoteIdentifier, MediaTime&&);
+    void timeChanged(WebKit::MediaPlayerPrivateRemoteIdentifier, RemoteMediaPlayerState&&);
+    void durationChanged(WebKit::MediaPlayerPrivateRemoteIdentifier, RemoteMediaPlayerState&&);
     void rateChanged(WebKit::MediaPlayerPrivateRemoteIdentifier, double);
     void playbackStateChanged(WebKit::MediaPlayerPrivateRemoteIdentifier, bool);
     void engineFailedToLoad(WebKit::MediaPlayerPrivateRemoteIdentifier, long);
+    void updateCachedState(WebKit::MediaPlayerPrivateRemoteIdentifier, RemoteMediaPlayerState&&);
+    void characteristicChanged(WebKit::MediaPlayerPrivateRemoteIdentifier, bool hasAudio, bool hasVideo, WebCore::MediaPlayerEnums::MovieLoadType);
 
     friend class MediaPlayerRemoteFactory;
     void getSupportedTypes(WebCore::MediaPlayerEnums::MediaEngineIdentifier, HashSet<String, ASCIICaseInsensitiveHash>&);

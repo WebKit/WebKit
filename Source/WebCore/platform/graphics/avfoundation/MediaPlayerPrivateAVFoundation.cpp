@@ -611,12 +611,14 @@ void MediaPlayerPrivateAVFoundation::loadedTimeRangesChanged()
     m_cachedLoadedTimeRanges = nullptr;
     m_cachedMaxTimeLoaded = MediaTime::zeroTime();
     invalidateCachedDuration();
+    m_player->bufferedTimeRangesChanged();
 }
 
 void MediaPlayerPrivateAVFoundation::seekableTimeRangesChanged()
 {
     m_cachedMaxTimeSeekable = MediaTime::zeroTime();
     m_cachedMinTimeSeekable = MediaTime::zeroTime();
+    m_player->seekableTimeRangesChanged();
 }
 
 void MediaPlayerPrivateAVFoundation::timeChanged(const MediaTime& time)

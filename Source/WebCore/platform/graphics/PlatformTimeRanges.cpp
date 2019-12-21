@@ -36,6 +36,11 @@ PlatformTimeRanges::PlatformTimeRanges(const MediaTime& start, const MediaTime& 
     add(start, end);
 }
 
+PlatformTimeRanges::PlatformTimeRanges(Vector<Range>&& ranges)
+    : m_ranges { WTFMove(ranges) }
+{
+}
+
 void PlatformTimeRanges::invert()
 {
     PlatformTimeRanges inverted;
@@ -176,6 +181,11 @@ void PlatformTimeRanges::add(const MediaTime& start, const MediaTime& end)
 
     // Now that we are sure we don't overlap with any range, just add it.
     m_ranges.insert(overlappingArcIndex, addedRange);
+}
+
+void PlatformTimeRanges::clear()
+{
+    m_ranges.clear();
 }
 
 bool PlatformTimeRanges::contain(const MediaTime& time) const

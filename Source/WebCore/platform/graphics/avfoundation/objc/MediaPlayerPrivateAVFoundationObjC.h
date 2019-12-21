@@ -196,7 +196,6 @@ private:
 
     bool supportsAcceleratedRendering() const override { return true; }
     MediaTime mediaTimeForTimeValue(const MediaTime&) const override;
-    double maximumDurationToCacheMediaTime() const override;
 
     void createAVPlayer() override;
     void createAVPlayerItem() override;
