@@ -34,7 +34,7 @@
 }
 
 .gradient-editor.editing-color {
-    padding-bottom: 30px;
+    padding-bottom: 24px;
 }
 
 .gradient-editor.radial-gradient.editing-color {
@@ -60,17 +60,8 @@
     padding: 0;
 }
 
-.gradient-editor > .color-picker > .slider {
-    top: 2px;
-    width: 186px;
-}
-
-.gradient-editor > .color-picker > .brightness {
-    left: 202px;
-}
-
-.gradient-editor > .color-picker > .opacity {
-    left: 228px;
+.gradient-editor > .color-picker .slider {
+    height: 195px;
 }
 
 .gradient-editor > .gradient-angle {

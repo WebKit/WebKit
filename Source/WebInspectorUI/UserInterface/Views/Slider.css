@@ -24,18 +24,27 @@
  */
 
 .slider {
-    position: absolute;
-    height: var(--slider-height);
+    position: relative;
+    width: var(--slider-width);
     border: 1px solid hsl(0, 0%, 75%);
 }
 
 .slider > img {
     position: absolute;
-    left: -5px;
     top: -5px;
     width: 14px;
     height: 17px;
     content: image-set(url(../Images/SliderThumb.png) 1x, url(../Images/SliderThumb@2x.png) 2x);
+}
+
+body[dir=ltr] .slider > img {
+    left: 2px;
+    transform: translateY(var(--translate-y, 0px)) rotate(270deg);
+}
+
+body[dir=rtl] .slider > img {
+    left: -6px;
+    transform: translateY(var(--translate-y, 0px)) rotate(90deg);
 }
 
 .slider > img.dragging {

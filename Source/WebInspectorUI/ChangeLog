@@ -1,3 +1,51 @@
+2019-12-20  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Gradient editor: opacity slider is too close to the right edge of the popover
+        https://bugs.webkit.org/show_bug.cgi?id=203643
+        <rdar://problem/56762879>
+
+        Reviewed by Devin Rousso.
+
+        Replace absolute positioning in the color picker with static layout.
+
+        * UserInterface/Views/ColorPicker.css:
+        (.color-picker .wrapper):
+        (.color-picker :matches(.color-square, .slider)):
+        (.color-picker .slider):
+        (.color-picker .hue):
+        (@media (color-gamut: p3) .color-picker.gamut-p3 > .hue):
+        (.color-picker > .color-inputs):
+        (.color-picker > .color-inputs > div):
+        (.color-picker > .color-inputs > div:not([hidden]) + div):
+        The 1st visible div should have no left margin even if it's preceded by a hidden div.
+
+        * UserInterface/Views/ColorPicker.js:
+        (WI.ColorPicker):
+        (WI.ColorPicker.prototype._updateOpacitySlider):
+        * UserInterface/Views/GradientEditor.css:
+        (.gradient-editor.editing-color):
+        (.gradient-editor > .color-picker .slider):
+        * UserInterface/Views/GradientEditor.js:
+        (WI.GradientEditor):
+        * UserInterface/Views/Slider.css:
+        (.slider):
+        (.slider > img):
+        (body[dir=ltr] .slider > img):
+        (body[dir=rtl] .slider > img):
+        * UserInterface/Views/Slider.js:
+        (WI.Slider):
+        (WI.Slider.prototype.set value):
+        (WI.Slider.prototype.set knobY):
+        (WI.Slider.prototype.get maxY):
+        (WI.Slider.prototype.recalculateKnobY):
+        (WI.Slider.prototype._handleMousedown):
+        (WI.Slider.prototype._handleMousemove):
+        * UserInterface/Views/Variables.css:
+        (:root):
+        Convert WI.Slider to be vertical by default. WI.Slider used to define a hozirontal slider.
+        It is only used by the color picker, where it's vertical. The slider was rotated with CSS
+        transformation. This made it problematic to use in the static layout.
+
 2019-12-20  Brian Burg  <bburg@apple.com>
 
         Web Inspector: convert some InspectorFrontendHost methods to getters

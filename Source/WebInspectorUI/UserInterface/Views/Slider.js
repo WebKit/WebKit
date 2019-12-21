@@ -35,8 +35,8 @@ WI.Slider = class Slider extends WI.Object
         this._knob = this._element.appendChild(document.createElement("img"));
 
         this._value = 0;
-        this._knobX = 0;
-        this._maxX = 0;
+        this._knobY = 0;
+        this._maxY = 0;
 
         this._element.addEventListener("mousedown", this);
     }
@@ -60,31 +60,31 @@ WI.Slider = class Slider extends WI.Object
         if (value === this._value)
             return;
 
-        this.knobX = value;
+        this.knobY = value;
 
         if (this.delegate && typeof this.delegate.sliderValueDidChange === "function")
             this.delegate.sliderValueDidChange(this, value);
     }
 
-    set knobX(value)
+    set knobY(value)
     {
         this._value = value;
-        this._knobX = Math.round(value * this.maxX);
-        this._knob.style.webkitTransform = "translate3d(" + this._knobX + "px, 0, 0)";
+        this._knobY = Math.round((1 - value) * this.maxY);
+        this._knob.style.setProperty("--translate-y", `${this._knobY}px`);
     }
 
-    get maxX()
+    get maxY()
     {
-        if (this._maxX <= 0 && document.body.contains(this._element))
-            this._maxX = Math.max(this._element.offsetWidth - Math.ceil(WI.Slider.KnobWidth / 2), 0);
+        if (this._maxY <= 0 && document.body.contains(this._element))
+            this._maxY = Math.max(this._element.offsetHeight - Math.ceil(WI.Slider.KnobWidth / 2), 0);
 
-        return this._maxX;
+        return this._maxY;
     }
 
-    recalculateKnobX()
+    recalculateKnobY()
     {
-        this._maxX = 0;
-        this.knobX = this._value;
+        this._maxY = 0;
+        this.knobY = this._value;
     }
 
     // Protected
@@ -109,10 +109,10 @@ WI.Slider = class Slider extends WI.Object
     _handleMousedown(event)
     {
         if (event.target !== this._knob)
-            this.value = (this._localPointForEvent(event).x - 3) / this.maxX;
+            this.value = 1 - ((this._localPointForEvent(event).y - 3) / this.maxY);
 
-        this._startKnobX = this._knobX;
-        this._startMouseX = this._localPointForEvent(event).x;
+        this._startKnobY = this._knobY;
+        this._startMouseY = this._localPointForEvent(event).y;
 
         this._element.classList.add("dragging");
 
@@ -122,10 +122,10 @@ WI.Slider = class Slider extends WI.Object
 
     _handleMousemove(event)
     {
-        var dx = this._localPointForEvent(event).x - this._startMouseX;
-        var x = Math.max(Math.min(this._startKnobX + dx, this.maxX), 0);
+        let dy = this._localPointForEvent(event).y - this._startMouseY;
+        let y = Math.max(Math.min(this._startKnobY + dy, this.maxY), 0);
 
-        this.value = x / this.maxX;
+        this.value = 1 - (y / this.maxY);
     }
 
     _handleMouseup(event)

@@ -74,10 +74,12 @@ WI.ColorPicker = class ColorPicker extends WI.Object
         this._element = document.createElement("div");
         this._element.classList.add("color-picker");
 
-        this._element.append(this._colorSquare.element);
-        this._element.append(this._hueSlider.element);
+        let wrapper = this._element.appendChild(document.createElement("div"));
+        wrapper.className = "wrapper";
+        wrapper.appendChild(this._colorSquare.element);
+        wrapper.appendChild(this._hueSlider.element);
+        wrapper.appendChild(this._opacitySlider.element);
 
-        this._element.appendChild(this._opacitySlider.element);
         this._element.appendChild(colorInputsContainerElement);
 
         this._opacity = 0;
@@ -203,7 +205,7 @@ WI.ColorPicker = class ColorPicker extends WI.Object
         let format = gamut === WI.Color.Gamut.DisplayP3 ? WI.Color.Format.ColorFunction : WI.Color.Format.RGBA;
         let opaque = new WI.Color(format, rgb.concat(1), gamut).toString();
         let transparent = new WI.Color(format, rgb.concat(0), gamut).toString();
-        this._opacitySlider.element.style.setProperty("background-image", "linear-gradient(90deg, " + transparent + ", " + opaque + "), " + this._opacityPattern);
+        this._opacitySlider.element.style.setProperty("background-image", "linear-gradient(0deg, " + transparent + ", " + opaque + "), " + this._opacityPattern);
     }
 
     _handleFormatChange()

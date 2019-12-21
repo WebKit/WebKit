@@ -38,24 +38,21 @@
     height: 210px;
 }
 
-.color-picker > * {
-    position: absolute;
+.color-picker .wrapper {
+    white-space: nowrap;
 }
 
-.color-picker > .slider {
-    top: 7px;
-    width: 196px;
-    transform: rotate(-90deg) translateX(-100%);
-    transform-origin: 0 0;
+.color-picker :matches(.color-square, .slider) {
+    display: inline-block;
 }
 
-.color-picker > .slider > img {
-    left: -4px;
-    top: 0;
+.color-picker .slider {
+    height: 200px;
+    -webkit-margin-start: 10px;
 }
 
-.color-picker > .hue {
-    background-image: linear-gradient(to right,
+.color-picker .hue {
+    background-image: linear-gradient(to top,
         red 0%,
         yellow 16.6%,
         lime 33.2%,
@@ -68,7 +65,7 @@
 
 @media (color-gamut: p3) {
     .color-picker.gamut-p3 > .hue {
-        background-image: linear-gradient(to right,
+        background-image: linear-gradient(to top,
             color(display-p3 1 0 0) 0%,
             color(display-p3 1 1 0) 16.6%,
             color(display-p3 0 1 0) 33.2%,
@@ -80,39 +77,24 @@
     }
 }
 
-body[dir=ltr] .color-picker > .hue {
-    left: calc(var(--color-picker-width) - var(--color-picker-hue-offset-start));
-}
-
-body[dir=rtl] .color-picker > .hue {
-    left: calc(var(--color-picker-hue-offset-start) - var(--slider-height));
-}
-
-body[dir=ltr] .color-picker > .opacity {
-    left: calc(var(--color-picker-width) - var(--color-picker-opacity-offset-start));
-}
-
-body[dir=rtl] .color-picker > .opacity {
-    left: calc(var(--color-picker-opacity-offset-start) - var(--slider-height));
-}
-
 .color-picker > .color-inputs {
     display: flex;
     justify-content: space-between;
-    top: 212px;
-    right: 0;
-    left: 0;
+    margin-top: 8px;
 }
 
 .color-picker > .color-inputs > div {
     display: flex;
     align-items: center;
     width: 100%;
-    margin: 0 4px;
 }
 
 .color-picker > .color-inputs > div[hidden] {
     display: none;
+}
+
+.color-picker > .color-inputs > div:not([hidden]) + div {
+    -webkit-margin-start: 4px;
 }
 
 .color-picker > .color-inputs input {

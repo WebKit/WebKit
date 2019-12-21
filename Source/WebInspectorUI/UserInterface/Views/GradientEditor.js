@@ -71,7 +71,7 @@ WI.GradientEditor = class GradientEditor extends WI.Object
         this._element.appendChild(this._gradientSlider.element);
 
         this._colorPicker = new WI.ColorPicker;
-        this._colorPicker.colorSquare.dimension = 190;
+        this._colorPicker.colorSquare.dimension = 195;
         this._colorPicker.enableColorComponentInputs = false;
         this._colorPicker.addEventListener(WI.ColorPicker.Event.ColorChanged, this._colorPickerColorChanged, this);
 
