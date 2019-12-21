@@ -55,6 +55,8 @@ std::ostream& operator<<(std::ostream& os, MarkedText::Type type)
         return os << "SpellingError";
     case MarkedText::TextMatch:
         return os << "TextMatch";
+    case MarkedText::Highlight:
+        return os << "Highlight";
     case MarkedText::Unmarked:
         return os << "Unmarked";
     }

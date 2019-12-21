@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Multiple custom highlight pseudo elements.</title>
+    <link rel="help" href="https://drafts.csswg.org/css-highlight-api-1/#creating-highlights">
+    <link rel="match" href="highlight-text-expected.html">
+    <meta name="assert" content="Multiple highlights should be able to be specified.">
+        <style>
+        ::highlight(example-highlight1) {
+            background-color: yellow;
+            color:green;
+        }
+        ::highlight(example-highlight2) {
+            background-color: blue;
+            color:red;
+        }
+        ::highlight(example-highlight3) {
+            background-color: purple;
+            color:pink;
+        }
+        </style>
+</head>
+<body>
+    <span id="text1">One two three</span>
+
+    <script>
+        let textElement = document.getElementById('text1');
+        let highlightRangeGroup1 = new HighlightRangeGroup(new StaticRange({startContainer: textElement, startOffset: 1, endContainer: textElement, endOffset: 2}));
+
+        let highlightRangeGroup2 = new HighlightRangeGroup(new StaticRange({startContainer: textElement, startOffset: 3, endContainer: textElement, endOffset: 4}));
+        highlightRangeGroup2.add(new StaticRange({startContainer: textElement, startOffset: 5, endContainer: textElement, endOffset: 6}));
+
+        let highlightRangeGroup3 = new HighlightRangeGroup(new StaticRange({startContainer: textElement, startOffset: 7, endContainer: textElement, endOffset: 8}));
+        highlightRangeGroup3.add(new StaticRange({startContainer: textElement, startOffset: 9, endContainer: textElement, endOffset: 10}));
+        highlightRangeGroup3.add(new StaticRange({startContainer: textElement, startOffset: 12, endContainer: textElement, endOffset: 13}));
+        
+
+        CSS.highlights.set("example-highlight1", highlightRangeGroup1);
+        CSS.highlights.set("example-highlight2", highlightRangeGroup2);
+        CSS.highlights.set("example-highlight3", highlightRangeGroup3);
+    </script>
+</body>
+</html>

@@ -1,3 +1,15 @@
+2019-12-20  Megan Gardner  <megan_gardner@apple.com>
+
+        Paint highlights specified in CSS Highlight API
+        https://bugs.webkit.org/show_bug.cgi?id=205318
+
+        Reviewed by Ryosuke Niwa.
+
+        Expand MarkedText to take a style name.
+
+        * TestWebKitAPI/Tests/WebCore/MarkedText.cpp:
+        (WebCore::operator<<):
+
 2019-12-20  Jonathan Bedard  <jbedard@apple.com>
 
         lldbwebkittester: Strip CLANG_DEBUG_INFORMATION_LEVEL option while building

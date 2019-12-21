@@ -154,10 +154,47 @@ SelectionRangeData::SelectionRangeData(RenderView& view)
 {
 }
 
+void SelectionRangeData::setContext(const Context& context)
+{
+    ASSERT(context.start() && context.end());
+    m_selectionContext = context;
+}
+
+RenderObject::SelectionState SelectionRangeData::selectionStateForRenderer(RenderObject& renderer)
+{
+    // FIXME: we shouldln't have to check that a renderer is a descendant of the render node
+    // from the range. This is likely because we aren't using VisiblePositions yet.
+    // Planned fix in a followup: <rdar://problem/58095923>
+    // https://bugs.webkit.org/show_bug.cgi?id=205529
+    
+    if (&renderer == m_selectionContext.start() || renderer.isDescendantOf(m_selectionContext.start())) {
+        if (m_selectionContext.start() && m_selectionContext.end() && m_selectionContext.start() == m_selectionContext.end())
+            return RenderObject::SelectionBoth;
+        if (m_selectionContext.start())
+            return RenderObject::SelectionStart;
+    }
+    if (&renderer == m_selectionContext.end() || renderer.isDescendantOf(m_selectionContext.end()))
+        return RenderObject::SelectionEnd;
+
+    RenderObject* selectionEnd = nullptr;
+    auto* selectionDataEnd = m_selectionContext.end();
+    if (selectionDataEnd)
+        selectionEnd = rendererAfterPosition(*selectionDataEnd, m_selectionContext.endPosition().value());
+    SelectionIterator selectionIterator(m_selectionContext.start());
+    for (auto* currentRenderer = m_selectionContext.start(); currentRenderer && currentRenderer != m_selectionContext.end(); currentRenderer = selectionIterator.next()) {
+        if (currentRenderer == m_selectionContext.start() || currentRenderer == m_selectionContext.end())
+            continue;
+        if (!currentRenderer->canBeSelectionLeaf())
+            continue;
+        if (&renderer == currentRenderer)
+            return RenderObject::SelectionInside;
+    }
+    return RenderObject::SelectionNone;
+    
+}
+
 void SelectionRangeData::set(const Context& selection, RepaintMode blockRepaintMode)
 {
-    // Make sure both our start and end objects are defined.
-    // Check www.msnbc.com and try clicking around to find the case where this happened.
     if ((selection.start() && !selection.end()) || (selection.end() && !selection.start()))
         return;
     // Just return if the selection hasn't changed.

@@ -71,7 +71,9 @@ public:
         Optional<unsigned> m_startPosition;
         Optional<unsigned> m_endPosition;
     };
-
+    
+    void setContext(const Context&);
+    
     enum class RepaintMode { NewXOROld, NewMinusOld, Nothing };
     void set(const Context&, RepaintMode = RepaintMode::NewXOROld);
     const Context& get() const { return m_selectionContext; }
@@ -86,6 +88,8 @@ public:
     IntRect bounds() const { return collectBounds(ClipToVisibleContent::No); }
     IntRect boundsClippedToVisibleContent() const { return collectBounds(ClipToVisibleContent::Yes); }
     void repaint() const;
+    
+    RenderObject::SelectionState selectionStateForRenderer(RenderObject&);
 
 private:
     enum class ClipToVisibleContent { Yes, No };

@@ -779,6 +779,9 @@ void Document::commonTeardown()
         accessSVGExtensions().pauseAnimations();
 
     clearScriptedAnimationController();
+    
+    if (m_highlightMap)
+        m_highlightMap->clear();
 
     m_pendingScrollEventTargetList = nullptr;
 }

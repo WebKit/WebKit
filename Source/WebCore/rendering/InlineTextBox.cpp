@@ -28,10 +28,12 @@
 #include "Document.h"
 #include "DocumentMarkerController.h"
 #include "Editor.h"
+#include "ElementRuleCollector.h"
 #include "EllipsisBox.h"
 #include "EventRegion.h"
 #include "Frame.h"
 #include "GraphicsContext.h"
+#include "HighlightMap.h"
 #include "HitTestResult.h"
 #include "ImageBuffer.h"
 #include "InlineTextBoxStyle.h"
@@ -46,6 +48,8 @@
 #include "RenderTheme.h"
 #include "RenderView.h"
 #include "RenderedDocumentMarker.h"
+#include "RuntimeEnabledFeatures.h"
+#include "SelectionRangeData.h"
 #include "Text.h"
 #include "TextDecorationPainter.h"
 #include "TextPaintStyle.h"
@@ -152,9 +156,33 @@ bool InlineTextBox::isSelected(unsigned startPosition, unsigned endPosition) con
 
 RenderObject::SelectionState InlineTextBox::selectionState()
 {
-    RenderObject::SelectionState state = renderer().selectionState();
+    auto state = verifySelectionState(renderer().selectionState(), renderer().view().selection());
+    
+    // FIXME: this code mutates selection state, but it's used at a simple getter elsewhere
+    // in this file. This code should likely live in SelectionRangeData, or somewhere else.
+    // <rdar://problem/58125978>
+    // https://bugs.webkit.org/show_bug.cgi?id=205528
+    // If there are ellipsis following, make sure their selection is updated.
+    if (m_truncation != cNoTruncation && root().ellipsisBox()) {
+        EllipsisBox* ellipsis = root().ellipsisBox();
+        if (state != RenderObject::SelectionNone) {
+            auto [selectionStart, selectionEnd] = selectionStartEnd();
+            // The ellipsis should be considered to be selected if the end of
+            // the selection is past the beginning of the truncation and the
+            // beginning of the selection is before or at the beginning of the
+            // truncation.
+            ellipsis->setSelectionState(selectionEnd >= m_truncation && selectionStart <= m_truncation ?
+                RenderObject::SelectionInside : RenderObject::SelectionNone);
+        } else
+            ellipsis->setSelectionState(RenderObject::SelectionNone);
+    }
+    
+    return state;
+}
+
+RenderObject::SelectionState InlineTextBox::verifySelectionState(RenderObject::SelectionState state, SelectionRangeData& selection) const
+{
     if (state == RenderObject::SelectionStart || state == RenderObject::SelectionEnd || state == RenderObject::SelectionBoth) {
-        auto& selection = renderer().view().selection();
         auto startPos = selection.startPosition();
         auto endPos = selection.endPosition();
         // The position after a hard line break is considered to be past its end.
@@ -174,21 +202,6 @@ RenderObject::SelectionState InlineTextBox::selectionState()
             state = RenderObject::SelectionInside;
         else if (state == RenderObject::SelectionBoth)
             state = RenderObject::SelectionNone;
-    }
-
-    // If there are ellipsis following, make sure their selection is updated.
-    if (m_truncation != cNoTruncation && root().ellipsisBox()) {
-        EllipsisBox* ellipsis = root().ellipsisBox();
-        if (state != RenderObject::SelectionNone) {
-            auto [selectionStart, selectionEnd] = selectionStartEnd();
-            // The ellipsis should be considered to be selected if the end of
-            // the selection is past the beginning of the truncation and the
-            // beginning of the selection is before or at the beginning of the
-            // truncation.
-            ellipsis->setSelectionState(selectionEnd >= m_truncation && selectionStart <= m_truncation ?
-                RenderObject::SelectionInside : RenderObject::SelectionNone);
-        } else
-            ellipsis->setSelectionState(RenderObject::SelectionNone);
     }
 
     return state;
@@ -524,6 +537,9 @@ void InlineTextBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, 
             paintCompositionBackground(paintInfo, boxOrigin);
 
         Vector<MarkedText> markedTexts = collectMarkedTextsForDocumentMarkers(TextPaintPhase::Background);
+        auto highlightMarkedTexts = collectMarkedTextsForHighlights(TextPaintPhase::Background);
+        if (!highlightMarkedTexts.isEmpty())
+            markedTexts.appendVector(WTFMove(highlightMarkedTexts));
 #if ENABLE(TEXT_SELECTION)
         if (haveSelection && !useCustomUnderlines && !context.paintingDisabled()) {
             auto selectionMarkedText = createMarkedTextFromSelectionInBox(*this);
@@ -557,6 +573,9 @@ void InlineTextBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, 
         markedTexts.append({ clampedOffset(m_start), clampedOffset(end()), MarkedText::Unmarked });
         if (!isPrinting) {
             markedTexts.appendVector(collectMarkedTextsForDocumentMarkers(TextPaintPhase::Foreground));
+            auto highlightMarkedTexts = collectMarkedTextsForHighlights(TextPaintPhase::Foreground);
+            if (!highlightMarkedTexts.isEmpty())
+                markedTexts.appendVector(WTFMove(highlightMarkedTexts));
 
             bool shouldPaintDraggedContent = !(paintInfo.paintBehavior.contains(PaintBehavior::ExcludeSelection));
             if (shouldPaintDraggedContent) {
@@ -652,19 +671,34 @@ unsigned InlineTextBox::clampedOffset(unsigned x) const
     return offset;
 }
 
-std::pair<unsigned, unsigned> InlineTextBox::selectionStartEnd() const
+std::pair<unsigned, unsigned> InlineTextBox::clampedStartEndForState(unsigned start, unsigned end, RenderObject::SelectionState selectionState) const
 {
-    auto selectionState = renderer().selectionState();
     if (selectionState == RenderObject::SelectionInside)
         return { 0, clampedOffset(m_start + m_len) };
     
-    auto start = renderer().view().selection().startPosition();
-    auto end = renderer().view().selection().endPosition();
     if (selectionState == RenderObject::SelectionStart)
         end = renderer().text().length();
     else if (selectionState == RenderObject::SelectionEnd)
         start = 0;
     return { clampedOffset(start), clampedOffset(end) };
+}
+
+std::pair<unsigned, unsigned> InlineTextBox::selectionStartEnd() const
+{
+    auto selectionState = renderer().selectionState();
+    
+    return clampedStartEndForState(renderer().view().selection().startPosition(), renderer().view().selection().endPosition(), selectionState);
+}
+
+std::pair<unsigned, unsigned> InlineTextBox::highlightStartEnd(SelectionRangeData &rangeData) const
+{
+    auto state = rangeData.selectionStateForRenderer(renderer());
+    state = verifySelectionState(state, rangeData);
+    
+    if (state == RenderObject::SelectionNone)
+        return {0, 0};
+    
+    return clampedStartEndForState(rangeData.startPosition(), rangeData.endPosition(), state);
 }
 
 bool InlineTextBox::hasMarkers() const
@@ -769,6 +803,22 @@ auto InlineTextBox::resolveStyleForMarkedText(const MarkedText& markedText, cons
     case MarkedText::GrammarError:
     case MarkedText::SpellingError:
     case MarkedText::Unmarked:
+        break;
+    case MarkedText::Highlight:
+        if (auto renderStyle = parent()->renderer().getUncachedPseudoStyle({ PseudoId::Highlight, markedText.highlightName }, &parent()->renderer().style())) {
+            style.backgroundColor = renderStyle->backgroundColor();
+            style.textStyles.fillColor = renderStyle->computedStrokeColor();
+            style.textStyles.strokeColor = renderStyle->computedStrokeColor();
+            
+            auto color = renderStyle->visitedDependentColorWithColorFilter(CSSPropertyWebkitTextFillColor);
+            auto decorationStyle = renderStyle->textDecorationStyle();
+            auto decorations = renderStyle->textDecorationsInEffect();
+
+            if (decorations.containsAny({ TextDecoration::Underline, TextDecoration::Overline, TextDecoration::LineThrough })) {
+                style.textDecorationStyles.underlineColor = color;
+                style.textDecorationStyles.underlineStyle = decorationStyle;
+            }
+        }
         break;
     case MarkedText::DraggedContent:
         style.alpha = 0.25;
@@ -958,6 +1008,46 @@ Vector<MarkedText> InlineTextBox::collectMarkedTextsForDocumentMarkers(TextPaint
 #endif
         default:
             ASSERT_NOT_REACHED();
+        }
+    }
+    return markedTexts;
+}
+
+
+Vector<MarkedText> InlineTextBox::collectMarkedTextsForHighlights(TextPaintPhase phase) const
+{
+    if (!RuntimeEnabledFeatures::sharedFeatures().highlightAPIEnabled())
+        return { };
+    ASSERT_ARG(phase, phase == TextPaintPhase::Background || phase == TextPaintPhase::Foreground || phase == TextPaintPhase::Decoration);
+    UNUSED_PARAM(phase);
+    if (!renderer().textNode())
+        return { };
+
+    Vector<MarkedText> markedTexts;
+    auto& parentRenderer = parent()->renderer();
+    auto& parentStyle = parentRenderer.style();
+    for (auto& [highlightKey, highlightGroup] : renderer().document().highlightMap().map()) {
+        auto renderStyle = parentRenderer.getUncachedPseudoStyle({ PseudoId::Highlight, highlightKey }, &parentStyle);
+        if (!renderStyle)
+            continue;
+        for (auto& staticRange : highlightGroup->ranges()) {
+            Position startPos = createLegacyEditingPosition(staticRange->startContainer(), staticRange->startOffset());
+            Position endPos = createLegacyEditingPosition(staticRange->endContainer(), staticRange->endOffset());
+
+            if (startPos.isNotNull() && endPos.isNotNull()) {
+                RenderObject* startRenderer = startPos.deprecatedNode()->renderer();
+                int startOffset = startPos.deprecatedEditingOffset();
+                RenderObject* endRenderer = endPos.deprecatedNode()->renderer();
+                int endOffset = endPos.deprecatedEditingOffset();
+                ASSERT(startOffset >= 0 && endOffset >= 0);
+                if (!startRenderer || !endRenderer)
+                    continue;
+                auto highlightData = SelectionRangeData(renderer().view());
+                highlightData.setContext({startRenderer, endRenderer, static_cast<unsigned>(startOffset), static_cast<unsigned>(endOffset)});
+                auto [highlightStart, highlightEnd] = highlightStartEnd(highlightData);
+                if (highlightStart < highlightEnd)
+                    markedTexts.append({ highlightStart, highlightEnd, MarkedText::Highlight, nullptr, highlightKey });
+            }
         }
     }
     return markedTexts;

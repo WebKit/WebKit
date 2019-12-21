@@ -26,6 +26,7 @@
 #pragma once
 
 #include <wtf/Vector.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
@@ -40,6 +41,7 @@ struct MarkedText {
         SpellingError,
         TextMatch,
         DictationAlternatives,
+        Highlight,
 #if PLATFORM(IOS_FAMILY)
         // FIXME: See <rdar://problem/8933352>. Also, remove the PLATFORM(IOS_FAMILY)-guard.
         DictationPhraseWithAlternatives,
@@ -51,12 +53,13 @@ struct MarkedText {
     unsigned endOffset;
     Type type;
     const RenderedDocumentMarker* marker { nullptr };
+    String highlightName { };
 
     bool isEmpty() const { return endOffset <= startOffset; }
     bool operator!=(const MarkedText& other) const { return !(*this == other); }
     bool operator==(const MarkedText& other) const
     {
-        return startOffset == other.startOffset && endOffset == other.endOffset && type == other.type && marker == other.marker;
+        return startOffset == other.startOffset && endOffset == other.endOffset && type == other.type && marker == other.marker && highlightName == other.highlightName;
     }
 };
 

@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<body>
+<iframe id="testFrame" src="resources/highlight-frame.html"></iframe>
+<script src="../resources/js-test-pre.js"></script>
+<script>
+description("Tests that using Highlight does not cause the document to get leaked.");
+window.jsTestIsAsync = true;
+
+function documentShouldDie(documentIdentifier)
+{
+    return new Promise(function(resolve, reject) {
+        handle = setInterval(function() {
+            gc();
+            if (internals && !internals.isDocumentAlive(documentIdentifier)) {
+                clearInterval(handle);
+                resolve();
+            }
+        }, 10);
+    });
+}
+
+var testFrame = document.getElementById("testFrame");
+testFrame.onload = function() {
+    let frameDocumentIdentifier = internals.documentIdentifier(testFrame.contentDocument);
+    testFrame.remove();
+    setTimeout(function() {
+        documentShouldDie(frameDocumentIdentifier).then(function() {
+            testPassed("Document did not leak");
+            finishJSTest();
+        });
+    });
+};
+</script>
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>

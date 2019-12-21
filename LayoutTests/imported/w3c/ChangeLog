@@ -1,3 +1,15 @@
+2019-12-20  Megan Gardner  <megan_gardner@apple.com>
+
+        Paint highlights specified in CSS Highlight API
+        https://bugs.webkit.org/show_bug.cgi?id=205318
+
+        Reviewed by Ryosuke Niwa.
+
+        * web-platform-tests/css/css-highlight-api/highlight-text-across-elements-expected.html: Added.
+        * web-platform-tests/css/css-highlight-api/highlight-text-across-elements.html: Added.
+        * web-platform-tests/css/css-highlight-api/highlight-text-expected.html: Added.
+        * web-platform-tests/css/css-highlight-api/highlight-text.html: Added.
+
 2019-12-20  Chris Dumez  <cdumez@apple.com>
 
         [Bindings] Add @@toStringTag to our iterator prototype object

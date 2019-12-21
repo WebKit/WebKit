@@ -121,6 +121,7 @@ public:
     virtual LayoutRect localSelectionRect(unsigned startPos, unsigned endPos) const;
     bool isSelected(unsigned startPosition, unsigned endPosition) const;
     std::pair<unsigned, unsigned> selectionStartEnd() const;
+    std::pair<unsigned, unsigned> highlightStartEnd(SelectionRangeData&) const;
 
 protected:
     void paint(PaintInfo&, const LayoutPoint&, LayoutUnit lineTop, LayoutUnit lineBottom) override;
@@ -132,6 +133,9 @@ private:
     void deleteLine() final;
     void extractLine() final;
     void attachLine() final;
+    
+    RenderObject::SelectionState verifySelectionState(RenderObject::SelectionState, SelectionRangeData&) const;
+    std::pair<unsigned, unsigned> clampedStartEndForState(unsigned, unsigned, RenderObject::SelectionState) const;
 
 public:
     RenderObject::SelectionState selectionState() final;
@@ -169,6 +173,7 @@ private:
 
     Vector<MarkedText> collectMarkedTextsForDraggedContent();
     Vector<MarkedText> collectMarkedTextsForDocumentMarkers(TextPaintPhase) const;
+    Vector<MarkedText> collectMarkedTextsForHighlights(TextPaintPhase) const;
 
     MarkedTextStyle computeStyleForUnmarkedMarkedText(const PaintInfo&) const;
     StyledMarkedText resolveStyleForMarkedText(const MarkedText&, const MarkedTextStyle& baseStyle, const PaintInfo&);

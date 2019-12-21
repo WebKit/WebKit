@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<head>
+	<style>
+    ::highlight(example) {
+        background-color: yellow;
+        color:green;
+    }
+</style>
+</head>
+<div id="target">
+	<span id="highlight">highlight</span>
+</div>
+
+<script>
+let highlight = document.getElementById('highlight');
+let highlightRangeGroup = new HighlightRangeGroup(new StaticRange({startContainer: highlight, startOffset: 0, endContainer: highlight, endOffset: 4}));
+CSS.highlights.set("example", highlightRangeGroup);
+</script>
