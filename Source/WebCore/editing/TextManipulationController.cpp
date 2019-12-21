@@ -30,7 +30,11 @@
 #include "Editing.h"
 #include "ElementAncestorIterator.h"
 #include "EventLoop.h"
+#include "NodeTraversal.h"
+#include "PseudoElement.h"
+#include "Range.h"
 #include "ScriptDisallowedScope.h"
+#include "Text.h"
 #include "TextIterator.h"
 #include "VisibleUnits.h"
 
@@ -176,7 +180,12 @@ void TextManipulationController::didCreateRendererForElement(Element& element)
 {
     if (m_mutatedElements.computesEmpty())
         scheduleObservartionUpdate();
-    m_mutatedElements.add(element);
+
+    if (is<PseudoElement>(element)) {
+        if (auto* host = downcast<PseudoElement>(element).hostElement())
+            m_mutatedElements.add(*host);
+    } else
+        m_mutatedElements.add(element);
 }
 
 using PositionTuple = std::tuple<RefPtr<Node>, unsigned, unsigned>;
@@ -247,24 +256,40 @@ auto TextManipulationController::completeManipulation(ItemIdentifier itemIdentif
     if (itemIterator == m_items.end())
         return ManipulationResult::InvalidItem;
 
-    auto didReplace = replace(itemIterator->value, replacementTokens);
-
+    ManipulationItem item;
+    std::exchange(item, itemIterator->value);
     m_items.remove(itemIterator);
 
-    return didReplace;
+    return replace(item, replacementTokens);
 }
 
-struct DOMChange {
-    Ref<CharacterData> node;
+struct TokenExchangeData {
+    RefPtr<Node> node;
+    String originalContent;
+    bool isExcluded { false };
+    bool isConsumed { false };
+};
+
+struct ReplacementData {
+    Ref<Node> originalNode;
     String newData;
+};
+
+struct NodeInsertion {
+    RefPtr<Node> parentIfDifferentFromCommonAncestor;
+    Ref<Node> child;
 };
 
 auto TextManipulationController::replace(const ManipulationItem& item, const Vector<ManipulationToken>& replacementTokens) -> ManipulationResult
 {
+    if (item.start.isOrphan() || item.end.isOrphan())
+        return ManipulationResult::ContentChanged;
+
     TextIterator iterator { item.start, item.end };
     size_t currentTokenIndex = 0;
-    HashMap<TokenIdentifier, std::pair<RefPtr<Node>, const ManipulationToken*>> tokenToNodeTokenPair;
+    HashMap<TokenIdentifier, TokenExchangeData> tokenExchangeMap;
 
+    RefPtr<Node> commonAncestor;
     while (!iterator.atEnd()) {
         auto string = iterator.text().toString();
         if (currentTokenIndex >= item.tokens.size())
@@ -272,28 +297,108 @@ auto TextManipulationController::replace(const ManipulationItem& item, const Vec
         auto& currentToken = item.tokens[currentTokenIndex];
         if (iterator.text() != currentToken.content)
             return ManipulationResult::ContentChanged;
-        tokenToNodeTokenPair.set(currentToken.identifier, std::pair<RefPtr<Node>, const ManipulationToken*> { iterator.node(), &currentToken });
+
+        auto currentNode = makeRefPtr(iterator.node());
+        tokenExchangeMap.set(currentToken.identifier, TokenExchangeData { currentNode.copyRef(), currentToken.content, currentToken.isExcluded });
+
+        if (currentNode) {
+            // FIXME: Take care of when currentNode is nullptr.
+            if (!commonAncestor)
+                commonAncestor = currentNode;
+            else if (!currentNode->isDescendantOf(commonAncestor.get())) {
+                commonAncestor = Range::commonAncestorContainer(commonAncestor.get(), currentNode.get());
+                ASSERT(commonAncestor);
+            }
+        }
+
         iterator.advance();
         ++currentTokenIndex;
     }
+    ASSERT(commonAncestor);
 
-    // FIXME: This doesn't preseve the order of the replacement at all.
-    Vector<DOMChange> changes;
-    for (auto& newToken : replacementTokens) {
-        auto it = tokenToNodeTokenPair.find(newToken.identifier);
-        if (it == tokenToNodeTokenPair.end())
-            return ManipulationResult::InvalidToken;
-        auto& oldToken = *it->value.second;
-        if (oldToken.isExcluded)
-            return ManipulationResult::ExclusionViolation;
-        auto* node = it->value.first.get();
-        if (!node || !is<CharacterData>(*node))
-            continue;
-        changes.append({ downcast<CharacterData>(*node), newToken.content });
+    RefPtr<Node> nodeAfterStart = item.start.computeNodeAfterPosition();
+    if (!nodeAfterStart)
+        nodeAfterStart = item.start.containerNode();
+
+    RefPtr<Node> nodeAfterEnd = item.end.computeNodeAfterPosition();
+    if (!nodeAfterEnd)
+        nodeAfterEnd = NodeTraversal::nextSkippingChildren(*item.end.containerNode());
+
+    HashSet<Ref<Node>> nodesToRemove;
+    for (RefPtr<Node> currentNode = nodeAfterStart; currentNode && currentNode != nodeAfterEnd; currentNode = NodeTraversal::next(*currentNode)) {
+        if (commonAncestor == currentNode)
+            commonAncestor = currentNode->parentNode();
+        nodesToRemove.add(*currentNode);
     }
 
-    for (auto& change : changes)
-        change.node->setData(change.newData);
+    Vector<Ref<Node>> currentElementStack;
+    HashSet<Ref<Node>> reusedOriginalNodes;
+    Vector<NodeInsertion> insertions;
+    for (auto& newToken : replacementTokens) {
+        auto it = tokenExchangeMap.find(newToken.identifier);
+        if (it == tokenExchangeMap.end())
+            return ManipulationResult::InvalidToken;
+
+        auto& exchangeData = it->value;
+
+        RefPtr<Node> contentNode;
+        if (exchangeData.isExcluded) {
+            if (exchangeData.isConsumed)
+                return ManipulationResult::ExclusionViolation;
+            exchangeData.isConsumed = true;
+            if (!newToken.content.isNull() && newToken.content != exchangeData.originalContent)
+                return ManipulationResult::ExclusionViolation;
+            contentNode = Text::create(commonAncestor->document(), exchangeData.originalContent);
+        } else
+            contentNode = Text::create(commonAncestor->document(), newToken.content);
+
+        auto& originalNode = exchangeData.node ? *exchangeData.node : *commonAncestor;
+        RefPtr<ContainerNode> currentNode = is<ContainerNode>(originalNode) ? &downcast<ContainerNode>(originalNode) : originalNode.parentNode();
+
+        Vector<Ref<Node>> currentAncestors;
+        for (; currentNode && currentNode != commonAncestor; currentNode = currentNode->parentNode())
+            currentAncestors.append(*currentNode);
+        currentAncestors.reverse();
+
+        size_t i =0;
+        while (i < currentElementStack.size() && i < currentAncestors.size() && currentElementStack[i].ptr() == currentAncestors[i].ptr())
+            ++i;
+
+        if (i == currentElementStack.size() && i == currentAncestors.size())
+            insertions.append(NodeInsertion { currentElementStack.size() ? currentElementStack.last().ptr() : nullptr, contentNode.releaseNonNull() });
+        else {
+            if (i < currentElementStack.size())
+                currentElementStack.shrink(i);
+            for (;i < currentAncestors.size(); ++i) {
+                Ref<Node> currentNode = currentAncestors[i].copyRef();
+                if (!reusedOriginalNodes.add(currentNode.copyRef()).isNewEntry) {
+                    auto clonedNode = currentNode->cloneNodeInternal(currentNode->document(), Node::CloningOperation::OnlySelf);
+                    if (auto* data = currentNode->eventTargetData())
+                        data->eventListenerMap.copyEventListenersNotCreatedFromMarkupToTarget(clonedNode.ptr());
+                    currentNode = WTFMove(clonedNode);
+                }
+
+                insertions.append(NodeInsertion { currentElementStack.size() ? currentElementStack.last().ptr() : nullptr, currentNode.copyRef() });
+                currentElementStack.append(WTFMove(currentNode));
+            }
+            insertions.append(NodeInsertion { currentElementStack.size() ? currentElementStack.last().ptr() : nullptr, contentNode.releaseNonNull() });
+        }
+    }
+
+    Position insertionPoint = item.start;
+    while (insertionPoint.containerNode() != commonAncestor)
+        insertionPoint = positionInParentBeforeNode(insertionPoint.containerNode());
+    ASSERT(!insertionPoint.isNull());
+
+    for (auto& node : nodesToRemove)
+        node->remove();
+
+    for (auto& insertion : insertions) {
+        if (!insertion.parentIfDifferentFromCommonAncestor)
+            insertionPoint.containerNode()->insertBefore(insertion.child, insertionPoint.computeNodeBeforePosition());
+        else
+            insertion.parentIfDifferentFromCommonAncestor->appendChild(insertion.child);
+    }
 
     return ManipulationResult::Success;
 }

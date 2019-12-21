@@ -1,3 +1,22 @@
+2019-12-20  Ryosuke Niwa  <rniwa@webkit.org>
+
+        TextManipulationController should respect new token orders
+        https://bugs.webkit.org/show_bug.cgi?id=205378
+
+        Reviewed by Wenson Hsieh.
+
+        Added a bunch of tests for WKTextManipulation.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/TextManipulation.mm:
+        (TextManipulation.CompleteTextManipulationReplaceSimpleSingleParagraph):
+        (TextManipulation.CompleteTextManipulationDisgardsTokens):
+        (TextManipulation.CompleteTextManipulationReordersContent):
+        (TextManipulation.CompleteTextManipulationCanSplitContent):
+        (TextManipulation.CompleteTextManipulationCanMergeContent):
+        (TextManipulation.CompleteTextManipulationFailWhenContentIsRemoved):
+        (TextManipulation.CompleteTextManipulationFailWhenExcludedContentAppearsMoreThanOnce):
+        (TextManipulation.CompleteTextManipulationPreservesExcludedContent):
+
 2019-12-20  Megan Gardner  <megan_gardner@apple.com>
 
         Paint highlights specified in CSS Highlight API
