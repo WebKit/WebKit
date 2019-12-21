@@ -1,3 +1,53 @@
+2019-12-21  Kate Cheney  <katherine_cheney@apple.com>
+
+        Add timeStamp to ITP database
+        https://bugs.webkit.org/show_bug.cgi?id=205121
+        <rdar://problem/57633021>
+
+        Reviewed by John Wilander.
+
+        This patch adds support for collecting most-recently-updated
+        timestamps for third-party/first-party domain pairs in the ITP database.
+        It updates the timestamp when new statistics are merged into the
+        database. It then exposes the timestamp via the
+        _getResourceLoadStatisticsDataSummary API.
+
+        * NetworkProcess/Classifier/ResourceLoadStatisticsDatabaseStore.cpp:
+        (WebKit::ResourceLoadStatisticsDatabaseStore::ResourceLoadStatisticsDatabaseStore):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::prepareStatements):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::insertDomainRelationshipList):
+        Changed INSERT OR IGNORE queries to be INSERT OR REPLACE so the timestamp
+        will be replaced upon a new attempted insert into one of the
+        third-party/first-party relationship tables.
+        ResourceLoadStatisticsDatabaseStore::insertDomainRelationshipList now
+        checks for the keyword "REPLACE" to know if another bind is needed
+        to update the timestamp.
+
+        (WebKit::ResourceLoadStatisticsDatabaseStore::getMostRecentlyUpdatedTimestamp):
+        Queries the most recent time that the third party has appeared as a
+        subframe or subresource under the first party or redirected to the first party.
+
+        * NetworkProcess/Classifier/ResourceLoadStatisticsDatabaseStore.h:
+        * NetworkProcess/Classifier/ResourceLoadStatisticsMemoryStore.cpp:
+        * NetworkProcess/Classifier/WebResourceLoadStatisticsStore.h:
+        (WebKit::ThirdPartyDataForSpecificFirstParty::toString const):
+        Updated the toString to check if the timestamp occured in the last
+        24 hours for testing purposes. It doesn't print the specific time
+        because it would change for every run and could not be tested.
+
+        * UIProcess/API/Cocoa/WKWebsiteDataStore.mm:
+        (-[WKWebsiteDataStore _setUseITPDatabase:completionHandler:]):
+        Added new function that enables the ITP Database backend so the
+        timestamp parameter can be tested in in TestWebKitAPI.
+
+        * UIProcess/API/APIResourceLoadStatisticsFirstParty.h:
+        * UIProcess/API/Cocoa/WKWebsiteDataStorePrivate.h:
+        * UIProcess/API/Cocoa/_WKResourceLoadStatisticsFirstParty.h:
+        * UIProcess/API/Cocoa/_WKResourceLoadStatisticsFirstParty.mm:
+        (-[_WKResourceLoadStatisticsFirstParty timeLastUpdated]):
+        Added the new timestamp parameter to the _WKResourceLoadStatisticsFirstParty.mm
+        class and its wrapper to be sent via API call.
+
 2019-12-20  Eric Carlson  <eric.carlson@apple.com>
 
         [Media in GPU process] Get audio playing

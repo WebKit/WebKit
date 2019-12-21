@@ -108,16 +108,18 @@ public:
 struct ThirdPartyDataForSpecificFirstParty {
     WebCore::RegistrableDomain firstPartyDomain;
     bool storageAccessGranted;
+    Seconds timeLastUpdated;
 
     String toString() const
     {
-        return makeString("Has been granted storage access under ", firstPartyDomain.string(), ": ", storageAccessGranted ? '1' : '0');
+        return makeString("Has been granted storage access under ", firstPartyDomain.string(), ": ", storageAccessGranted ? '1' : '0', "; Has been seen under ", firstPartyDomain.string(), " in the last 24 hours: ", WallTime::now().secondsSinceEpoch() - timeLastUpdated < 24_h ? '1' : '0');
     }
 
     void encode(IPC::Encoder& encoder) const
     {
         encoder << firstPartyDomain;
         encoder << storageAccessGranted;
+        encoder << timeLastUpdated;
     }
 
     static Optional<ThirdPartyDataForSpecificFirstParty> decode(IPC::Decoder& decoder)
@@ -131,8 +133,13 @@ struct ThirdPartyDataForSpecificFirstParty {
         decoder >> decodedStorageAccess;
         if (!decodedStorageAccess)
             return WTF::nullopt;
-
-        return {{ WTFMove(*decodedDomain), WTFMove(*decodedStorageAccess) }};
+        
+        Optional<Seconds> decodedTimeLastUpdated;
+        decoder >> decodedTimeLastUpdated;
+        if (!decodedTimeLastUpdated)
+            return WTF::nullopt;
+        
+        return {{ WTFMove(*decodedDomain), WTFMove(*decodedStorageAccess), WTFMove(*decodedTimeLastUpdated) }};
     }
 
     bool operator==(ThirdPartyDataForSpecificFirstParty const other) const

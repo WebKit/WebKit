@@ -44,6 +44,11 @@
     return _firstParty->storageAccess();
 }
 
+- (NSTimeInterval)timeLastUpdated
+{
+    return _firstParty->timeLastUpdated();
+}
+
 - (API::Object&)_apiObject
 {
     return *_firstParty;

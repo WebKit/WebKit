@@ -1,3 +1,20 @@
+2019-12-21  Kate Cheney  <katherine_cheney@apple.com>
+
+        Add timeStamp to ITP database
+        https://bugs.webkit.org/show_bug.cgi?id=205121
+        <rdar://problem/57633021>
+
+        Reviewed by John Wilander.
+
+        This patch updates test expectations which call
+        dumpResourceLoadStatistics to reflect the new timestamp parameter that
+        is now printed with the ITP data summary.
+
+        * http/tests/resourceLoadStatistics/aggregate-sorted-data-no-storage-access-database-expected.txt:
+        * http/tests/resourceLoadStatistics/aggregate-sorted-data-no-storage-access-expected.txt:
+        * http/tests/storageAccess/aggregate-sorted-data-with-storage-access-database-expected.txt:
+        * http/tests/storageAccess/aggregate-sorted-data-with-storage-access-expected.txt:
+
 2019-12-20  Chris Dumez  <cdumez@apple.com>
 
         [iOS Debug] imported/w3c/web-platform-tests/html/dom/usvstring-reflection.https.html is crashing
@@ -2915,7 +2932,7 @@
 
 2019-11-20  Kate Cheney  <katherine_cheney@apple.com>
 
-        [ Jazz ] http/tests/resourceLoadStatistics/cookie-deletion.html is timing out
+        [ MacOS ] http/tests/resourceLoadStatistics/cookie-deletion.html is timing out
         https://bugs.webkit.org/show_bug.cgi?id=203813
         <rdar://problem/54316765>
 
@@ -3483,7 +3500,7 @@
 
 2019-11-19  Kate Cheney  <katherine_cheney@apple.com>
 
-        [ Jazz ] http/tests/resourceLoadStatistics/cookie-deletion.html is timing out
+        [ MacOS ] http/tests/resourceLoadStatistics/cookie-deletion.html is timing out
         https://bugs.webkit.org/show_bug.cgi?id=203813
         <rdar://problem/54316765>
 

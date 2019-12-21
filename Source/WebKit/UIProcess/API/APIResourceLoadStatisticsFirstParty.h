@@ -45,6 +45,7 @@ public:
 
     const WTF::String& firstPartyDomain() const { return m_firstPartyData.firstPartyDomain.string(); }
     bool storageAccess() const { return m_firstPartyData.storageAccessGranted; }
+    double timeLastUpdated() const { return m_firstPartyData.timeLastUpdated.value(); }
 
 private:
     const WebKit::WebResourceLoadStatisticsStore::ThirdPartyDataForSpecificFirstParty m_firstPartyData;

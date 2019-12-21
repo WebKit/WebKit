@@ -134,6 +134,7 @@ public:
     void setLastSeen(const RegistrableDomain&, Seconds) override;
     bool isCorrectSubStatisticsCount(const RegistrableDomain&, const TopFrameDomain&);
     void resourceToString(StringBuilder&, const String&) const;
+    Seconds getMostRecentlyUpdatedTimestamp(const RegistrableDomain&, const TopFrameDomain&) const;
 
 private:
     void openITPDatabase();
@@ -253,6 +254,7 @@ private:
     mutable WebCore::SQLiteStatement m_domainStringFromDomainIDStatement;
     mutable WebCore::SQLiteStatement m_getAllSubStatisticsStatement;
     mutable WebCore::SQLiteStatement m_storageAccessExistsStatement;
+    mutable WebCore::SQLiteStatement m_getMostRecentlyUpdatedTimestampStatement;
     PAL::SessionID m_sessionID;
 };
 

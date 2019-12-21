@@ -53,6 +53,8 @@ struct ResourceLoadStatistics {
     ResourceLoadStatistics(ResourceLoadStatistics&&) = default;
     ResourceLoadStatistics& operator=(ResourceLoadStatistics&&) = default;
 
+    static constexpr Seconds NoExistingTimestamp { -1 };
+    
     WEBCORE_EXPORT static WallTime reduceTimeResolution(WallTime);
 
     WEBCORE_EXPORT void encode(KeyedEncoder&) const;

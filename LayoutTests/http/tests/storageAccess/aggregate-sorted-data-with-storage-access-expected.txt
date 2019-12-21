@@ -33,4 +33,4 @@ Registrable domain: 127.0.0.1
 
 ITP Data:
 Third Party Registrable Domain: localhost
-    {{ Has been granted storage access under 127.0.0.1: 1 },}
+    {{ Has been granted storage access under 127.0.0.1: 1; Has been seen under 127.0.0.1 in the last 24 hours: 0 },}

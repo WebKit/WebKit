@@ -73,20 +73,22 @@ constexpr auto countPrevalentResourcesWithUserInteractionQuery = "SELECT COUNT(D
 
 constexpr auto countPrevalentResourcesWithoutUserInteractionQuery = "SELECT COUNT(DISTINCT registrableDomain) FROM ObservedDomains WHERE isPrevalent = 1 AND hadUserInteraction = 0;"_s;
 
-// INSERT Queries
+// INSERT OR IGNORE Queries
 constexpr auto insertObservedDomainQuery = "INSERT INTO ObservedDomains (registrableDomain, lastSeen, hadUserInteraction,"
     "mostRecentUserInteractionTime, grandfathered, isPrevalent, isVeryPrevalent, dataRecordsRemoved, timesAccessedAsFirstPartyDueToUserInteraction,"
     "timesAccessedAsFirstPartyDueToStorageAccessAPI, isScheduledForAllButCookieDataRemoval) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"_s;
 constexpr auto insertTopLevelDomainQuery = "INSERT INTO TopLevelDomains VALUES (?)"_s;
 constexpr auto storageAccessUnderTopFrameDomainsQuery = "INSERT OR IGNORE INTO StorageAccessUnderTopFrameDomains (domainID, topLevelDomainID) SELECT ?, domainID FROM ObservedDomains WHERE registrableDomain in ( "_s;
 constexpr auto topFrameUniqueRedirectsToQuery = "INSERT OR IGNORE into TopFrameUniqueRedirectsTo (sourceDomainID, toDomainID) SELECT ?, domainID FROM ObservedDomains where registrableDomain in ( "_s;
-constexpr auto subframeUnderTopFrameDomainsQuery = "INSERT OR IGNORE into SubframeUnderTopFrameDomains (subFrameDomainID, topFrameDomainID) SELECT ?, domainID FROM ObservedDomains where registrableDomain in ( "_s;
 constexpr auto topFrameUniqueRedirectsFromQuery = "INSERT OR IGNORE INTO TopFrameUniqueRedirectsFrom (targetDomainID, fromDomainID) SELECT ?, domainID FROM ObservedDomains WHERE registrableDomain in ( "_s;
-constexpr auto topFrameLinkDecorationsFromQuery = "INSERT OR IGNORE INTO TopFrameLinkDecorationsFrom (toDomainID, fromDomainID) SELECT ?, domainID FROM ObservedDomains WHERE registrableDomain in ( "_s;
 constexpr auto topFrameLoadedThirdPartyScriptsQuery = "INSERT OR IGNORE into TopFrameLoadedThirdPartyScripts (topFrameDomainID, subresourceDomainID) SELECT ?, domainID FROM ObservedDomains where registrableDomain in ( "_s;
-constexpr auto subresourceUnderTopFrameDomainsQuery = "INSERT OR IGNORE INTO SubresourceUnderTopFrameDomains (subresourceDomainID, topFrameDomainID) SELECT ?, domainID FROM ObservedDomains WHERE registrableDomain in ( "_s;
-constexpr auto subresourceUniqueRedirectsToQuery = "INSERT OR IGNORE INTO SubresourceUniqueRedirectsTo (subresourceDomainID, toDomainID) SELECT ?, domainID FROM ObservedDomains WHERE registrableDomain in ( "_s;
 constexpr auto subresourceUniqueRedirectsFromQuery = "INSERT OR IGNORE INTO SubresourceUniqueRedirectsFrom (subresourceDomainID, fromDomainID) SELECT ?, domainID FROM ObservedDomains WHERE registrableDomain in ( "_s;
+
+// INSERT OR REPLACE Queries
+constexpr auto subframeUnderTopFrameDomainsQuery = "INSERT OR REPLACE into SubframeUnderTopFrameDomains (subFrameDomainID, lastUpdated, topFrameDomainID) SELECT ?, ?, domainID FROM ObservedDomains where registrableDomain in ( "_s;
+constexpr auto topFrameLinkDecorationsFromQuery = "INSERT OR REPLACE INTO TopFrameLinkDecorationsFrom (toDomainID, lastUpdated, fromDomainID) SELECT ?, ?, domainID FROM ObservedDomains WHERE registrableDomain in ( "_s;
+constexpr auto subresourceUnderTopFrameDomainsQuery = "INSERT OR REPLACE INTO SubresourceUnderTopFrameDomains (subresourceDomainID, lastUpdated, topFrameDomainID) SELECT ?, ?, domainID FROM ObservedDomains WHERE registrableDomain in ( "_s;
+constexpr auto subresourceUniqueRedirectsToQuery = "INSERT OR REPLACE INTO SubresourceUniqueRedirectsTo (subresourceDomainID, lastUpdated, toDomainID) SELECT ?, ?, domainID FROM ObservedDomains WHERE registrableDomain in ( "_s;
 
 // EXISTS Queries
 constexpr auto subframeUnderTopFrameDomainExistsQuery = "SELECT EXISTS (SELECT 1 FROM SubframeUnderTopFrameDomains WHERE subFrameDomainID = ? "
@@ -121,6 +123,10 @@ constexpr auto hadUserInteractionQuery = "SELECT hadUserInteraction, mostRecentU
 constexpr auto isGrandfatheredQuery = "SELECT grandfathered FROM ObservedDomains WHERE registrableDomain = ?"_s;
 constexpr auto findExpiredUserInteractionQuery = "SELECT domainID FROM ObservedDomains WHERE hadUserInteraction = 1 AND mostRecentUserInteractionTime < ?"_s;
 constexpr auto getResourceDataByDomainNameQuery = "SELECT * FROM ObservedDomains WHERE registrableDomain = ?";
+constexpr auto getMostRecentlyUpdatedTimestampQuery = "SELECT MAX(lastUpdated) FROM (SELECT lastUpdated FROM SubframeUnderTopFrameDomains WHERE subFrameDomainID = ? and topFrameDomainID = ?"
+    "UNION ALL SELECT lastUpdated FROM TopFrameLinkDecorationsFrom WHERE toDomainID = ? and fromDomainID = ?"
+    "UNION ALL SELECT lastUpdated FROM SubresourceUnderTopFrameDomains WHERE subresourceDomainID = ? and topFrameDomainID = ?"
+    "UNION ALL SELECT lastUpdated FROM SubresourceUniqueRedirectsTo WHERE subresourceDomainID = ? and toDomainID = ?)"_s;
 constexpr auto getAllDomainsQuery = "SELECT registrableDomain FROM ObservedDomains"_s;
 constexpr auto getAllSubStatisticsUnderDomainQuery = "SELECT topFrameDomainID FROM SubframeUnderTopFrameDomains WHERE subFrameDomainID = ?"
     "UNION ALL SELECT topFrameDomainID FROM SubresourceUnderTopFrameDomains WHERE subresourceDomainID = ?"
@@ -183,7 +189,7 @@ constexpr auto createTopFrameUniqueRedirectsFrom = "CREATE TABLE TopFrameUniqueR
     "FOREIGN KEY(fromDomainID) REFERENCES TopLevelDomains(topLevelDomainID) ON DELETE CASCADE);"_s;
 
 constexpr auto createTopFrameLinkDecorationsFrom = "CREATE TABLE TopFrameLinkDecorationsFrom ("
-    "toDomainID INTEGER NOT NULL, fromDomainID INTEGER NOT NULL, "
+    "toDomainID INTEGER NOT NULL, lastUpdated REAL NOT NULL, fromDomainID INTEGER NOT NULL, "
     "FOREIGN KEY(toDomainID) REFERENCES TopLevelDomains(topLevelDomainID) ON DELETE CASCADE, "
     "FOREIGN KEY(fromDomainID) REFERENCES TopLevelDomains(topLevelDomainID) ON DELETE CASCADE);"_s;
 
@@ -193,17 +199,17 @@ constexpr auto createTopFrameLoadedThirdPartyScripts = "CREATE TABLE TopFrameLoa
     "FOREIGN KEY(subresourceDomainID) REFERENCES ObservedDomains(domainID) ON DELETE CASCADE);"_s;
 
 constexpr auto createSubframeUnderTopFrameDomains = "CREATE TABLE SubframeUnderTopFrameDomains ("
-    "subFrameDomainID INTEGER NOT NULL, topFrameDomainID INTEGER NOT NULL, "
+    "subFrameDomainID INTEGER NOT NULL, lastUpdated REAL NOT NULL, topFrameDomainID INTEGER NOT NULL, "
     "FOREIGN KEY(subFrameDomainID) REFERENCES ObservedDomains(domainID) ON DELETE CASCADE, "
     "FOREIGN KEY(topFrameDomainID) REFERENCES TopLevelDomains(topLevelDomainID) ON DELETE CASCADE);"_s;
     
 constexpr auto createSubresourceUnderTopFrameDomains = "CREATE TABLE SubresourceUnderTopFrameDomains ("
-    "subresourceDomainID INTEGER NOT NULL, topFrameDomainID INTEGER NOT NULL, "
+    "subresourceDomainID INTEGER NOT NULL, lastUpdated REAL NOT NULL, topFrameDomainID INTEGER NOT NULL, "
     "FOREIGN KEY(subresourceDomainID) REFERENCES ObservedDomains(domainID) ON DELETE CASCADE, "
     "FOREIGN KEY(topFrameDomainID) REFERENCES TopLevelDomains(topLevelDomainID) ON DELETE CASCADE);"_s;
     
 constexpr auto createSubresourceUniqueRedirectsTo = "CREATE TABLE SubresourceUniqueRedirectsTo ("
-    "subresourceDomainID INTEGER NOT NULL, toDomainID INTEGER NOT NULL, "
+    "subresourceDomainID INTEGER NOT NULL, lastUpdated REAL NOT NULL, toDomainID INTEGER NOT NULL, "
     "FOREIGN KEY(subresourceDomainID) REFERENCES ObservedDomains(domainID) ON DELETE CASCADE, "
     "FOREIGN KEY(toDomainID) REFERENCES ObservedDomains(domainID) ON DELETE CASCADE);"_s;
     
@@ -268,6 +274,7 @@ ResourceLoadStatisticsDatabaseStore::ResourceLoadStatisticsDatabaseStore(WebReso
     , m_domainStringFromDomainIDStatement(m_database, domainStringFromDomainIDQuery)
     , m_getAllSubStatisticsStatement(m_database, getAllSubStatisticsUnderDomainQuery)
     , m_storageAccessExistsStatement(m_database, storageAccessExistsQuery)
+    , m_getMostRecentlyUpdatedTimestampStatement(m_database, getMostRecentlyUpdatedTimestampQuery)
     , m_sessionID(sessionID)
 {
     ASSERT(!RunLoop::isMain());
@@ -511,6 +518,7 @@ bool ResourceLoadStatisticsDatabaseStore::prepareStatements()
         || m_domainStringFromDomainIDStatement.prepare() != SQLITE_OK
         || m_getAllSubStatisticsStatement.prepare() != SQLITE_OK
         || m_storageAccessExistsStatement.prepare() != SQLITE_OK
+        || m_getMostRecentlyUpdatedTimestampStatement.prepare() != SQLITE_OK
         ) {
         RELEASE_LOG_ERROR(Network, "%p - ResourceLoadStatisticsDatabaseStore::prepareStatements failed to prepare, error message: %{public}s", this, m_database.lastErrorMsg());
         ASSERT_NOT_REACHED();
@@ -647,10 +655,23 @@ void ResourceLoadStatisticsDatabaseStore::insertDomainRelationshipList(const Str
     SQLiteStatement insertRelationshipStatement(m_database, makeString(statement, ensureAndMakeDomainList(domainList), " );"));
     
     if (insertRelationshipStatement.prepare() != SQLITE_OK
-        || insertRelationshipStatement.bindInt(1, domainID) != SQLITE_OK
-        || insertRelationshipStatement.step() != SQLITE_DONE) {
+        || insertRelationshipStatement.bindInt(1, domainID) != SQLITE_OK) {
+            RELEASE_LOG_ERROR_IF_ALLOWED(m_sessionID, "%p - ResourceLoadStatisticsDatabaseStore::insertDomainRelationshipList failed, error message: %{private}s", this, m_database.lastErrorMsg());
+            ASSERT_NOT_REACHED();
+    }
+    
+    if (statement.contains("REPLACE")) {
+        if (insertRelationshipStatement.bindDouble(2, WallTime::now().secondsSinceEpoch().value()) != SQLITE_OK) {
+            RELEASE_LOG_ERROR_IF_ALLOWED(m_sessionID, "%p - ResourceLoadStatisticsDatabaseStore::insertDomainRelationshipList failed, error message: %{private}s", this, m_database.lastErrorMsg());
+            ASSERT_NOT_REACHED();
+            return;
+        }
+    }
+
+    if (insertRelationshipStatement.step() != SQLITE_DONE) {
         RELEASE_LOG_ERROR_IF_ALLOWED(m_sessionID, "%p - ResourceLoadStatisticsDatabaseStore::insertDomainRelationshipList failed, error message: %{private}s", this, m_database.lastErrorMsg());
         ASSERT_NOT_REACHED();
+        return;
     }
 }
 
@@ -797,7 +818,7 @@ Vector<WebResourceLoadStatisticsStore::ThirdPartyDataForSpecificFirstParty> Reso
     Vector<WebResourceLoadStatisticsStore::ThirdPartyDataForSpecificFirstParty> thirdPartyDataForSpecificFirstPartyDomains;
     while (m_getAllSubStatisticsStatement.step() == SQLITE_ROW) {
         RegistrableDomain firstPartyDomain = RegistrableDomain::uncheckedCreateFromRegistrableDomainString(getDomainStringFromDomainID(m_getAllSubStatisticsStatement.getColumnInt(0)));
-        thirdPartyDataForSpecificFirstPartyDomains.appendIfNotContains(WebResourceLoadStatisticsStore::ThirdPartyDataForSpecificFirstParty { firstPartyDomain, hasStorageAccess(firstPartyDomain, thirdPartyDomain) });
+        thirdPartyDataForSpecificFirstPartyDomains.appendIfNotContains(WebResourceLoadStatisticsStore::ThirdPartyDataForSpecificFirstParty { firstPartyDomain, hasStorageAccess(firstPartyDomain, thirdPartyDomain), getMostRecentlyUpdatedTimestamp(thirdPartyDomain, firstPartyDomain) });
     }
     resetStatement(m_getAllSubStatisticsStatement);
     return thirdPartyDataForSpecificFirstPartyDomains;
@@ -1807,6 +1828,36 @@ void ResourceLoadStatisticsDatabaseStore::setIsScheduledForAllButCookieDataRemov
     }
 
     resetStatement(m_updateIsScheduledForAllButCookieDataRemovalStatement);
+}
+Seconds ResourceLoadStatisticsDatabaseStore::getMostRecentlyUpdatedTimestamp(const RegistrableDomain& subDomain, const TopFrameDomain& topFrameDomain) const
+{
+    ASSERT(!RunLoop::isMain());
+
+    Optional<unsigned> subFrameDomainID = domainID(subDomain);
+    Optional<unsigned> topFrameDomainID = domainID(topFrameDomain);
+
+    if (!subFrameDomainID || !topFrameDomainID)
+        return Seconds { ResourceLoadStatistics::NoExistingTimestamp };
+
+    if (m_getMostRecentlyUpdatedTimestampStatement.bindInt(1, *subFrameDomainID) != SQLITE_OK
+        || m_getMostRecentlyUpdatedTimestampStatement.bindInt(2, *topFrameDomainID) != SQLITE_OK
+        || m_getMostRecentlyUpdatedTimestampStatement.bindInt(3, *subFrameDomainID) != SQLITE_OK
+        || m_getMostRecentlyUpdatedTimestampStatement.bindInt(4, *topFrameDomainID) != SQLITE_OK
+        || m_getMostRecentlyUpdatedTimestampStatement.bindInt(5, *subFrameDomainID) != SQLITE_OK
+        || m_getMostRecentlyUpdatedTimestampStatement.bindInt(6, *topFrameDomainID) != SQLITE_OK
+        || m_getMostRecentlyUpdatedTimestampStatement.bindInt(7, *subFrameDomainID) != SQLITE_OK
+        || m_getMostRecentlyUpdatedTimestampStatement.bindInt(8, *topFrameDomainID) != SQLITE_OK) {
+        RELEASE_LOG_ERROR_IF_ALLOWED(m_sessionID, "%p - ResourceLoadStatisticsDatabaseStore::getMostRecentlyUpdatedTimestamp failed to bind, error message: %{private}s", this, m_database.lastErrorMsg());
+        ASSERT_NOT_REACHED();
+        return Seconds { ResourceLoadStatistics::NoExistingTimestamp  };
+    }
+    if (m_getMostRecentlyUpdatedTimestampStatement.step() != SQLITE_ROW) {
+        resetStatement(m_getMostRecentlyUpdatedTimestampStatement);
+        return Seconds { ResourceLoadStatistics::NoExistingTimestamp  };
+    }
+    double mostRecentlyUpdatedTimestamp = m_getMostRecentlyUpdatedTimestampStatement.getColumnDouble(0);
+    resetStatement(m_getMostRecentlyUpdatedTimestampStatement);
+    return Seconds { mostRecentlyUpdatedTimestamp };
 }
 
 bool ResourceLoadStatisticsDatabaseStore::isGrandfathered(const RegistrableDomain& domain) const

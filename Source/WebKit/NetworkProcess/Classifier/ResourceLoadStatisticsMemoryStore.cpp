@@ -105,7 +105,7 @@ void ResourceLoadStatisticsMemoryStore::calculateAndSubmitTelemetry() const
 
 static void ensureThirdPartyDataForSpecificFirstPartyDomain(Vector<WebResourceLoadStatisticsStore::ThirdPartyDataForSpecificFirstParty>& thirdPartyDataForSpecificFirstPartyDomain, const RegistrableDomain& firstPartyDomain, bool thirdPartyHasStorageAccess)
 {
-    WebResourceLoadStatisticsStore::ThirdPartyDataForSpecificFirstParty thirdPartyDataForSpecificFirstParty { firstPartyDomain, thirdPartyHasStorageAccess };
+    WebResourceLoadStatisticsStore::ThirdPartyDataForSpecificFirstParty thirdPartyDataForSpecificFirstParty { firstPartyDomain, thirdPartyHasStorageAccess, Seconds { ResourceLoadStatistics::NoExistingTimestamp }};
     thirdPartyDataForSpecificFirstPartyDomain.appendIfNotContains(thirdPartyDataForSpecificFirstParty);
 }
 
