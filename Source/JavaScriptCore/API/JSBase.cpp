@@ -33,10 +33,12 @@
 #include "Completion.h"
 #include "Exception.h"
 #include "GCActivityCallback.h"
+#include "Identifier.h"
 #include "InitializeThreading.h"
 #include "JSGlobalObject.h"
 #include "JSLock.h"
 #include "JSObject.h"
+#include "ObjectConstructor.h"
 #include "OpaqueJSString.h"
 #include "JSCInlines.h"
 #include "SourceCode.h"
@@ -185,6 +187,29 @@ void JSSynchronousEdenCollectForDebugging(JSContextRef ctx)
 void JSDisableGCTimer(void)
 {
     GCActivityCallback::s_shouldCreateGCTimer = false;
+}
+
+JSObjectRef JSGetMemoryUsageStatistics(JSContextRef ctx)
+{
+    if (!ctx) {
+        ASSERT_NOT_REACHED();
+        return 0;
+    }
+
+    JSGlobalObject* globalObject = toJS(ctx);
+    VM& vm = globalObject->vm();
+    JSLockHolder locker(vm);
+
+    JSObject* object = constructEmptyObject(globalObject);
+    object->putDirect(vm, Identifier::fromString(vm, "heapSize"), jsNumber(vm.heap.size()));
+    object->putDirect(vm, Identifier::fromString(vm, "heapCapacity"), jsNumber(vm.heap.capacity()));
+    object->putDirect(vm, Identifier::fromString(vm, "extraMemorySize"), jsNumber(vm.heap.extraMemorySize()));
+    object->putDirect(vm, Identifier::fromString(vm, "objectCount"), jsNumber(vm.heap.objectCount()));
+    object->putDirect(vm, Identifier::fromString(vm, "protectedObjectCount"), jsNumber(vm.heap.protectedObjectCount()));
+    object->putDirect(vm, Identifier::fromString(vm, "globalObjectCount"), jsNumber(vm.heap.globalObjectCount()));
+    object->putDirect(vm, Identifier::fromString(vm, "protectedGlobalObjectCount"), jsNumber(vm.heap.protectedGlobalObjectCount()));
+
+    return toRef(object);
 }
 
 #if PLATFORM(IOS_FAMILY) && TARGET_OS_IOS

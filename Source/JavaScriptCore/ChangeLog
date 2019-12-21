@@ -1,3 +1,15 @@
+2019-12-20  Ross Kirsling  <ross.kirsling@sony.com>
+
+        [JSC] Memory usage statistics should be attainable without WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=205366
+
+        Reviewed by Keith Miller.
+
+        * API/JSBase.cpp:
+        (JSGetMemoryUsageStatistics):
+        * API/JSBasePrivate.h:
+        Add a private JSC API exposing the same Heap stats as WebCore's PerformanceLogging::memoryUsageStatistics.
+
 2019-12-19  Saam Barati  <sbarati@apple.com>
 
         Don't cache self customs on dictionaries
