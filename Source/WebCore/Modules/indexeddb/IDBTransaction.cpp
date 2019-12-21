@@ -312,6 +312,7 @@ void IDBTransaction::abortOnServerAndCancelRequests(IDBClient::TransactionOperat
     }
 
     m_abortQueue.clear();
+    m_openRequests.clear();
     // Since we're aborting, it should be impossible to have queued any further operations.
     ASSERT(m_pendingTransactionOperationQueue.isEmpty());
 }
@@ -1409,6 +1410,7 @@ void IDBTransaction::connectionClosedFromServer(const IDBError& error)
         operation->doComplete(IDBResultData::error(operation->identifier(), error));
     }
     m_currentlyCompletingRequest = nullptr;
+    m_openRequests.clear();
     pendingTransactionOperationQueue.clear();
 
     connectionProxy().forgetActiveOperations(operations);

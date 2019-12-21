@@ -1,3 +1,20 @@
+2019-12-20  Sihui Liu  <sihui_liu@apple.com>
+
+        REGRESSION (r253807): crash in storage/indexeddb/modern/opendatabase-request-private.html
+        https://bugs.webkit.org/show_bug.cgi?id=205515
+
+        Reviewed by Alex Christensen.
+
+        When m_openRequests of IDBTransaction is empty, we expect all requests associated with the transactions should 
+        be completed, but in IDBOpenDBRequest, we removed the request from m_openRequests before 
+        m_currentlyCompletingRequest finished. This is because the order of calling ActiveDOMObject::stop() is random.
+
+        * Modules/indexeddb/IDBOpenDBRequest.cpp:
+        (WebCore::IDBOpenDBRequest::cancelForStop):
+        * Modules/indexeddb/IDBTransaction.cpp:
+        (WebCore::IDBTransaction::abortOnServerAndCancelRequests):
+        (WebCore::IDBTransaction::connectionClosedFromServer):
+
 2019-12-20  Megan Gardner  <megan_gardner@apple.com>
 
         Paint highlights specified in CSS Highlight API

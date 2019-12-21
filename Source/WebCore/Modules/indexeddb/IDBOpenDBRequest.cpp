@@ -118,9 +118,6 @@ void IDBOpenDBRequest::fireErrorAfterVersionChangeCompletion()
 void IDBOpenDBRequest::cancelForStop()
 {
     connectionProxy().openDBRequestCancelled({ connectionProxy(), *this });
-
-    if (m_transaction && m_transaction->isVersionChange())
-        m_transaction->removeRequest(*this);
 }
 
 void IDBOpenDBRequest::dispatchEvent(Event& event)
