@@ -28,6 +28,7 @@
 
 #include "JSDOMConvert.h"
 #include <JavaScriptCore/IteratorPrototype.h>
+#include <JavaScriptCore/PropertySlot.h>
 #include <type_traits>
 
 namespace WebCore {
@@ -264,6 +265,7 @@ void JSDOMIteratorPrototype<JSWrapper, IteratorTraits>::finishCreation(JSC::VM& 
     Base::finishCreation(vm);
     ASSERT(inherits(vm, info()));
 
+    putDirectWithoutTransition(vm, vm.propertyNames->toStringTagSymbol, jsString(vm, info()->className), JSC::PropertyAttribute::DontEnum | JSC::PropertyAttribute::ReadOnly);
     JSC_NATIVE_INTRINSIC_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->next, next, 0, 0, JSC::NoIntrinsic);
 }
 

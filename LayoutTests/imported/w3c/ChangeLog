@@ -1,3 +1,15 @@
+2019-12-20  Chris Dumez  <cdumez@apple.com>
+
+        [Bindings] Add @@toStringTag to our iterator prototype object
+        https://bugs.webkit.org/show_bug.cgi?id=205516
+
+        Reviewed by Darin Adler.
+
+        Rebaseline WPT tests that are now passing.
+
+        * web-platform-tests/WebIDL/ecmascript-binding/default-iterator-object-expected.txt:
+        * web-platform-tests/WebIDL/ecmascript-binding/iterator-prototype-object-expected.txt:
+
 2019-12-20  Truitt Savell  <tsavell@apple.com>
 
         Unreviewed, rolling out r253831.
