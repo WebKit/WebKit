@@ -7240,7 +7240,6 @@ void SpeculativeJIT::compileNewFunctionCommon(GPRReg resultGPR, RegisteredStruct
     m_jit.storePtr(scopeGPR, JITCompiler::Address(resultGPR, JSFunction::offsetOfScopeChain()));
     m_jit.storePtr(TrustedImmPtr::weakPointer(m_jit.graph(), executable), JITCompiler::Address(resultGPR, JSFunction::offsetOfExecutable()));
     m_jit.storePtr(TrustedImmPtr(nullptr), JITCompiler::Address(resultGPR, JSFunction::offsetOfRareData()));
-    m_jit.storePtr(TrustedImmPtr::weakPointer(m_jit.graph(), structure->globalObject()), JITCompiler::Address(resultGPR, JSFunction::offsetOfGlobalObject()));
     m_jit.mutatorFence(vm());
 }
 

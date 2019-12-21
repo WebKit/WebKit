@@ -1,3 +1,32 @@
+2019-12-21  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Remove m_globalObject field from JSFunction
+        https://bugs.webkit.org/show_bug.cgi?id=205533
+
+        Reviewed by Mark Lam.
+
+        JSFunction::m_globalObject is used only when it is using NativeExecutable.
+        And when using NativeExecutable, JSCallee::m_scope is always pointing JSGlobalObject.
+        This patch removes JSFunction::m_globalObject field.
+
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileNewFunctionCommon):
+        * ftl/FTLAbstractHeapRepository.h:
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileNewFunction):
+        * jit/ThunkGenerators.cpp:
+        (JSC::nativeForGenerator):
+        (JSC::boundThisNoArgsFunctionCallGenerator):
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+        * runtime/JSFunction.cpp:
+        (JSC::JSFunction::JSFunction):
+        * runtime/JSFunction.h:
+        (JSC::JSFunction::offsetOfGlobalObject): Deleted.
+        (JSC::JSFunction::globalObject const): Deleted.
+        * runtime/JSFunctionInlines.h:
+        (JSC::JSFunction::JSFunction):
+
 2019-12-20  Ross Kirsling  <ross.kirsling@sony.com>
 
         [JSC] Memory usage statistics should be attainable without WebCore

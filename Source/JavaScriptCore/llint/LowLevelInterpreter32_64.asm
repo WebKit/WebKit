@@ -2055,7 +2055,7 @@ macro nativeCallTrampoline(executableOffsetToFunction)
 
     loadp Callee + PayloadOffset[cfr], a0
     loadp JSFunction::m_executable[a0], a2
-    loadp JSFunction::m_globalObject[a0], a0
+    loadp JSFunction::m_scope[a0], a0
     loadp JSGlobalObject::m_vm[a0], a1
     storep cfr, VM::topCallFrame[a1]
     move cfr, a1
@@ -2068,7 +2068,7 @@ macro nativeCallTrampoline(executableOffsetToFunction)
     end
 
     loadp Callee + PayloadOffset[cfr], t3
-    loadp JSFunction::m_globalObject[t3], t3
+    loadp JSFunction::m_scope[t3], t3
     loadp JSGlobalObject::m_vm[t3], t3
 
     if MIPS

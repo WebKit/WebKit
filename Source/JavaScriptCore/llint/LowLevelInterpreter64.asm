@@ -2170,7 +2170,7 @@ macro nativeCallTrampoline(executableOffsetToFunction)
     storep 0, CodeBlock[cfr]
     loadp Callee[cfr], a0
     loadp JSFunction::m_executable[a0], a2
-    loadp JSFunction::m_globalObject[a0], a0
+    loadp JSFunction::m_scope[a0], a0
     loadp JSGlobalObject::m_vm[a0], a1
     storep cfr, VM::topCallFrame[a1]
     if ARM64 or ARM64E or C_LOOP or C_LOOP_WIN
@@ -2191,7 +2191,7 @@ macro nativeCallTrampoline(executableOffsetToFunction)
     end
 
     loadp Callee[cfr], t3
-    loadp JSFunction::m_globalObject[t3], t3
+    loadp JSFunction::m_scope[t3], t3
     loadp JSGlobalObject::m_vm[t3], t3
 
     btpnz VM::m_exception[t3], .handleException

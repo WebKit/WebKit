@@ -115,9 +115,9 @@ JSFunction* JSFunction::createFunctionThatMasqueradesAsUndefined(VM& vm, JSGloba
 JSFunction::JSFunction(VM& vm, JSGlobalObject* globalObject, Structure* structure)
     : Base(vm, globalObject, structure)
     , m_executable()
-    , m_globalObject(vm, this, structure->globalObject())
 {
     assertTypeInfoFlagInvariants();
+    ASSERT(structure->globalObject() == globalObject);
 }
 
 

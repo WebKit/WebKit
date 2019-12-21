@@ -5770,7 +5770,6 @@ private:
         m_out.storePtr(scope, fastObject, m_heaps.JSFunction_scope);
         m_out.storePtr(weakPointer(executable), fastObject, m_heaps.JSFunction_executable);
         m_out.storePtr(m_out.intPtrZero, fastObject, m_heaps.JSFunction_rareData);
-        m_out.storePtr(weakPointer(structure->globalObject()), fastObject, m_heaps.JSFunction_globalObject);
         mutatorFence();
 
         ValueFromBlock fastResult = m_out.anchor(fastObject);
