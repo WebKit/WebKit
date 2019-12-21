@@ -890,18 +890,6 @@ void FrameLoader::checkCompleted()
     m_requestedHistoryItem = nullptr;
     m_frame.document()->setReadyState(Document::Complete);
 
-#if PLATFORM(IOS_FAMILY)
-    if (m_frame.document()->url().isEmpty()) {
-        // We need to update the document URL of a PDF document to be non-empty so that both back/forward history navigation
-        // between PDF pages and fragment navigation works. See <rdar://problem/9544769> for more details.
-        // FIXME: Is there a better place for this code, say DocumentLoader? Also, we should explicitly only update the URL
-        // of the document when it's a PDFDocument object instead of assuming that a Document object with an empty URL is a PDFDocument.
-        // FIXME: This code is incorrect for a synthesized document (which also has an empty URL). The URL for a synthesized
-        // document should be the URL specified to FrameLoader::initForSynthesizedDocument().
-        m_frame.document()->setURL(activeDocumentLoader()->documentURL());
-    }
-#endif
-
     checkCallImplicitClose(); // if we didn't do it before
 
     m_frame.navigationScheduler().startTimer();

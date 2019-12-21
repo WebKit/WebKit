@@ -1066,8 +1066,6 @@ webkit.org/b/155737 legacy-animation-engine/compositing/repaint/become-overlay-c
 
 webkit.org/b/155947 [ Debug ] fast/loader/scroll-position-restored-on-back.html [ Pass Failure ]
 
-webkit.org/b/205506 [ Debug ] imported/w3c/web-platform-tests/html/dom/usvstring-reflection.https.html [ Crash ]
-
 webkit.org/b/155948 transitions/cancel-transition.html [ Pass Failure ]
 webkit.org/b/155948 legacy-animation-engine/transitions/cancel-transition.html [ Pass Failure ]
 
