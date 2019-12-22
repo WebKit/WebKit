@@ -23,23 +23,29 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "_WKRemoteWebInspectorViewController.h"
+#import <WebKit/WKFoundation.h>
 
-#if !TARGET_OS_IPHONE
+/*! A _WKInspectorDebuggableInfo object contains information about a debuggable target.
+ @discussion An instance of this class is a transient, data-only object;
+ it does not uniquely identify a debuggable across multiple method calls.
+ */
 
 NS_ASSUME_NONNULL_BEGIN
 
-@class _WKInspectorDebuggableInfo;
+typedef NS_ENUM(NSInteger, _WKInspectorDebuggableType) {
+    _WKInspectorDebuggableTypeJavaScript,
+    _WKInspectorDebuggableTypeServiceWorker,
+    _WKInspectorDebuggableTypePage,
+    _WKInspectorDebuggableTypeWebPage,
+} WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 
-@interface _WKRemoteWebInspectorViewController (WKPrivate)
-
-@property (nonatomic, weak, setter=_setDiagnosticLoggingDelegate:) id<_WKDiagnosticLoggingDelegate> _diagnosticLoggingDelegate;
-
-- (void)loadForDebuggable:(_WKInspectorDebuggableInfo *)debuggableInfo backendCommandsURL:(NSURL *)backendCommandsURL;
-
+WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA))
+@interface _WKInspectorDebuggableInfo : NSObject <NSCopying>
+@property (nonatomic) _WKInspectorDebuggableType debuggableType;
+@property (nonatomic, copy) NSString *targetPlatformName;
+@property (nonatomic, copy) NSString *targetBuildVersion;
+@property (nonatomic, copy) NSString *targetProductVersion;
+@property (nonatomic) BOOL targetIsSimulator;
 @end
 
-
 NS_ASSUME_NONNULL_END
-
-#endif // !TARGET_OS_IPHONE

@@ -61,10 +61,10 @@
     void moveWindowBy(unrestricted float x, unrestricted float y);
 
     readonly attribute boolean isRemote;
-    DOMString debuggableType();
     readonly attribute DOMString localizedStringsURL;
     readonly attribute DOMString backendCommandsURL;
     readonly attribute unsigned long inspectionLevel;
+    readonly attribute DebuggableInfo debuggableInfo;
 
     void copyText(DOMString text);
     void killText(DOMString text, boolean shouldPrependToKillRing, boolean shouldStartNewSequence);
@@ -102,4 +102,15 @@ dictionary ContextMenuItem {
     boolean enabled;
     boolean checked;
     sequence<ContextMenuItem> subItems;
+};
+
+[
+    JSGenerateToJSObject,
+]
+dictionary DebuggableInfo {
+    DOMString debuggableType;
+    DOMString targetPlatformName;
+    DOMString targetBuildVersion;
+    DOMString targetProductVersion;
+    boolean targetIsSimulator;
 };

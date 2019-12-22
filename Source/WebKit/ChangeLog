@@ -1,3 +1,103 @@
+2019-12-21  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: add InspectedTargetTypes diagnostic event and related hooks
+        https://bugs.webkit.org/show_bug.cgi?id=205174
+        <rdar://problem/57887953>
+
+        Reviewed by Devin Rousso.
+
+        This change supplies Web Inspector with information about the debuggable that
+        it is connected to. This is used for diagnostics and to customize the UI based
+        on the target type being inspected.
+
+        For remote Web Inspector, WebKit clients can populate an instance of 
+        _WKInspectorDebuggableInfo and use it when calling into
+        -[_WKRemoteWebInspectorViewController loadForDebuggable:backendCommandsURL:].
+
+        For local Web Inspector, WebInspectorProxy fills in information for the local
+        debuggable by consulting SystemVersion.plist (on Mac port).
+
+        The new enum _WKInspectorDebuggableType replaces _WKRemoteWebInspectorDebuggableType.
+        Its WebCore equivalent is Inspector::DebuggableType. The type and other information
+        are carried around in a _WKInspectorDebuggableInfo class. The equivalents for this
+        class are API::DebuggableInfo and DebuggableInfoData (for sending over IPC).
+
+        The DebuggableInfoData is sent as part of the initial message from UIProcess
+        to an Inspector WebProcess, similar to how a debuggableType string was sent before.
+
+        * Sources.txt:
+        * SourcesCocoa.txt:
+        * WebKit.xcodeproj/project.pbxproj:
+        Add new files.
+
+        * Shared/API/APIObject.h:
+        * Shared/Cocoa/APIObject.mm:
+        (API::Object::newObject): Add new object type.
+        * Shared/WebCoreArgumentCoders.h: Add EnumTraits for Inspector::DebuggableType.
+
+        * UIProcess/API/Cocoa/_WKRemoteWebInspectorViewControllerPrivate.h:
+        * UIProcess/API/Cocoa/_WKRemoteWebInspectorViewController.mm:
+        (legacyDebuggableTypeToModernDebuggableType):
+        (-[_WKRemoteWebInspectorViewController loadForDebuggableType:backendCommandsURL:]):
+        (-[_WKRemoteWebInspectorViewController loadForDebuggable:backendCommandsURL:]):
+        (debuggableTypeString): Deleted.
+        Use the new enum in a new method that clients can switch over to. The old method
+        can be removed when it is no longer being used.
+
+        * UIProcess/RemoteWebInspectorProxy.h:
+        * UIProcess/RemoteWebInspectorProxy.cpp:
+        (WebKit::RemoteWebInspectorProxy::RemoteWebInspectorProxy):
+        (WebKit::RemoteWebInspectorProxy::load):
+        (WebKit::RemoteWebInspectorProxy::reopen):
+        Send DebuggableInfoData struct to RemoteWebInspectorUI.
+
+        * UIProcess/WebInspectorProxy.h:
+        * UIProcess/WebInspectorProxy.cpp:
+        (WebKit::WebInspectorProxy::openLocalInspectorFrontend):
+        (WebKit::WebInspectorProxy::infoForLocalDebuggable):
+        Send DebuggableInfoData struct to WebInspectorUI.
+
+        * UIProcess/mac/WebInspectorProxyMac.mm:
+        (WebKit::systemVersionPlist):
+        (WebKit::WebInspectorProxy::infoForLocalDebuggable):
+        Add Mac implementation for local debuggables.
+
+        * UIProcess/gtk/WebInspectorProxyGtk.cpp:
+        (WebKit::WebInspectorProxy::infoForLocalDebuggable):
+        * UIProcess/win/WebInspectorProxyWin.cpp:
+        (WebKit::WebInspectorProxy::infoForLocalDebuggable):
+        * UIProcess/wpe/WebInspectorProxyWPE.cpp:
+        (WebKit::WebInspectorProxy::infoForLocalDebuggable):
+        Add stubs for other platforms.
+
+        * UIProcess/glib/RemoteInspectorClient.cpp:
+        * UIProcess/socket/RemoteInspectorClient.h:
+        * UIProcess/socket/RemoteInspectorClient.cpp:
+        (WebKit::RemoteInspectorClient::inspect):
+        (WebKit::debuggableTypeToString):
+        (WebKit::RemoteInspectorClient::setTargetList):
+        Use Inspector::DebuggableType instead of String for debuggable type.
+
+        * WebProcess/WebPage/RemoteWebInspectorUI.messages.in:
+        * WebProcess/WebPage/RemoteWebInspectorUI.h:
+        * WebProcess/WebPage/RemoteWebInspectorUI.cpp:
+        (WebKit::RemoteWebInspectorUI::initialize):
+        (WebKit::RemoteWebInspectorUI::debuggableType const):
+        (WebKit::RemoteWebInspectorUI::targetPlatformName const):
+        (WebKit::RemoteWebInspectorUI::targetBuildVersion const):
+        (WebKit::RemoteWebInspectorUI::targetProductVersion const):
+        (WebKit::RemoteWebInspectorUI::targetIsSimulator const):
+        Implement new methods needed by InspectorFrontendClient / InspectorFrontendHost.
+
+        * WebProcess/WebPage/WebInspectorUI.messages.in:
+        * WebProcess/WebPage/WebInspectorUI.h:
+        * WebProcess/WebPage/WebInspectorUI.cpp:
+        (WebKit::WebInspectorUI::establishConnection):
+        (WebKit::WebInspectorUI::targetPlatformName const):
+        (WebKit::WebInspectorUI::targetBuildVersion const):
+        (WebKit::WebInspectorUI::targetProductVersion const):
+        Implement new methods needed by InspectorFrontendClient / InspectorFrontendHost. 
+
 2019-12-21  Eric Carlson  <eric.carlson@apple.com>
 
         [Media in GPU process] Add remote media player configuration

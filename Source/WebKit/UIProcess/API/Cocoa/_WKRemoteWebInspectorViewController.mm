@@ -28,7 +28,11 @@
 
 #if PLATFORM(MAC)
 
+#import "APIDebuggableInfo.h"
+#import "DebuggableInfoData.h"
 #import "RemoteWebInspectorProxy.h"
+#import "WKWebViewInternal.h"
+#import "_WKInspectorDebuggableInfoInternal.h"
 
 @interface _WKRemoteWebInspectorViewController ()
 - (void)sendMessageToBackend:(NSString *)message;
@@ -92,28 +96,39 @@ private:
     return m_remoteInspectorProxy->webView();
 }
 
-static String debuggableTypeString(WKRemoteWebInspectorDebuggableType debuggableType)
+static _WKInspectorDebuggableType legacyDebuggableTypeToModernDebuggableType(WKRemoteWebInspectorDebuggableType debuggableType)
 {
     switch (debuggableType) {
     case WKRemoteWebInspectorDebuggableTypeJavaScript:
-        return "javascript"_s;
+        return _WKInspectorDebuggableTypeJavaScript;
     case WKRemoteWebInspectorDebuggableTypePage:
-        return "page"_s;
+        return _WKInspectorDebuggableTypePage;
     case WKRemoteWebInspectorDebuggableTypeServiceWorker:
-        return "service-worker"_s;
+        return _WKInspectorDebuggableTypeServiceWorker;
     case WKRemoteWebInspectorDebuggableTypeWebPage:
-        return "web-page"_s;
-
+        return _WKInspectorDebuggableTypeWebPage;
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     case WKRemoteWebInspectorDebuggableTypeWeb:
-        return "web-page"_s;
+        return _WKInspectorDebuggableTypeWebPage;
 ALLOW_DEPRECATED_DECLARATIONS_END
     }
 }
 
+// FIXME: remove this variant when all callers have moved off of it.
 - (void)loadForDebuggableType:(WKRemoteWebInspectorDebuggableType)debuggableType backendCommandsURL:(NSURL *)backendCommandsURL
 {
-    m_remoteInspectorProxy->load(debuggableTypeString(debuggableType), backendCommandsURL.absoluteString);
+    _WKInspectorDebuggableInfo *debuggableInfo = [_WKInspectorDebuggableInfo new];
+    debuggableInfo.debuggableType = legacyDebuggableTypeToModernDebuggableType(debuggableType);
+    debuggableInfo.targetPlatformName = @"macOS";
+    debuggableInfo.targetBuildVersion = @"Unknown";
+    debuggableInfo.targetProductVersion = @"Unknown";
+    debuggableInfo.targetIsSimulator = false;
+    [self loadForDebuggable:debuggableInfo backendCommandsURL:backendCommandsURL];
+}
+
+- (void)loadForDebuggable:(_WKInspectorDebuggableInfo *)debuggableInfo backendCommandsURL:(NSURL *)backendCommandsURL
+{
+    m_remoteInspectorProxy->load(static_cast<API::DebuggableInfo&>([debuggableInfo _apiObject]), backendCommandsURL.absoluteString);
 }
 
 - (void)close

@@ -1,3 +1,27 @@
+2019-12-21  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: add InspectedTargetTypes diagnostic event and related hooks
+        https://bugs.webkit.org/show_bug.cgi?id=205174
+        <rdar://problem/57887953>
+
+        Reviewed by Devin Rousso.
+
+        Expose debuggable information via InspectorFrontendHost.
+
+        * WebCore.xcodeproj/project.pbxproj: Add new files.
+
+        * inspector/InspectorFrontendClient.h: Add new methods.
+        * testing/Internals.cpp: Implement new methods.
+
+        * inspector/InspectorFrontendHost.idl:
+        * inspector/InspectorFrontendHost.h:
+        * inspector/InspectorFrontendHost.cpp:
+        (WebCore::debuggableTypeToString):
+        (WebCore::InspectorFrontendHost::debuggableInfo const):
+        (WebCore::InspectorFrontendHost::debuggableType): Deleted.
+        Expose a `DebuggableInfo` dictionary via the .debuggableInfo getter.
+
+
 2019-12-21  Antti Koivisto  <antti@apple.com>
 
         Move Vector HashTraits to HashTraits.h to fix GCC build

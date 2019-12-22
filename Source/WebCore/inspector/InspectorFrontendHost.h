@@ -81,13 +81,21 @@ public:
     void moveWindowBy(float x, float y) const;
 
     bool isRemote() const;
-    String debuggableType();
     String localizedStringsURL() const;
     String backendCommandsURL() const;
     unsigned inspectionLevel() const;
 
     String platform() const;
     String port() const;
+
+    struct DebuggableInfo {
+        String debuggableType;
+        String targetPlatformName;
+        String targetBuildVersion;
+        String targetProductVersion;
+        bool targetIsSimulator;
+    };
+    DebuggableInfo debuggableInfo() const;
 
     void copyText(const String& text);
     void killText(const String& text, bool shouldPrependToKillRing, bool shouldStartNewSequence);

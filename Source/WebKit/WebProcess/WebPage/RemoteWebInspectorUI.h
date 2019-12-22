@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "DebuggableInfoData.h"
 #include "MessageReceiver.h"
 #include "WebInspectorFrontendAPIDispatcher.h"
 #include <WebCore/InspectorFrontendClient.h>
@@ -48,7 +49,7 @@ public:
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
 
     // Called by RemoteWebInspectorUI messages
-    void initialize(const String& debuggableType, const String& backendCommandsURL);
+    void initialize(DebuggableInfoData&&, const String& backendCommandsURL);
     void didSave(const String& url);
     void didAppend(const String& url);
     void sendMessageToFrontend(const String&);
@@ -67,7 +68,11 @@ public:
     bool isRemote() const final { return true; }
     String localizedStringsURL() const override;
     String backendCommandsURL() const final { return m_backendCommandsURL; }
-    String debuggableType() const final { return m_debuggableType; }
+    Inspector::DebuggableType debuggableType() const override;
+    String targetPlatformName() const override;
+    String targetBuildVersion() const override;
+    String targetProductVersion() const override;
+    bool targetIsSimulator() const override;
 
     WebCore::UserInterfaceLayoutDirection userInterfaceLayoutDirection() const override;
 
@@ -102,7 +107,7 @@ private:
     WebPage& m_page;
     WebInspectorFrontendAPIDispatcher m_frontendAPIDispatcher;
     RefPtr<WebCore::InspectorFrontendHost> m_frontendHost;
-    String m_debuggableType;
+    DebuggableInfoData m_debuggableInfo;
     String m_backendCommandsURL;
 
 #if ENABLE(INSPECTOR_TELEMETRY)

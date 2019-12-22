@@ -32,6 +32,7 @@
 #include <JavaScriptCore/InspectorFrontendChannel.h>
 #include <WebCore/COMPtr.h>
 #include <WebCore/InspectorClient.h>
+#include <WebCore/InspectorDebuggableType.h>
 #include <WebCore/InspectorFrontendClientLocal.h>
 #include <WebCore/WindowMessageListener.h>
 #include <windows.h>
@@ -104,7 +105,11 @@ public:
     void frontendLoaded() override;
 
     WTF::String localizedStringsURL() const override;
-    String debuggableType() const final { return "page"_s; };
+    Inspector::DebuggableType debuggableType() const final { return Inspector::DebuggableType::Page; };
+    String targetPlatformName() const final { return "Windows"_s; }
+    String targetBuildVersion() const final { return "Unknown"_s; }
+    String targetProductVersion() const final { return "Unknown"_s; }
+    bool targetIsSimulator() const final { return false; }
 
     void bringToFront() override;
     void closeWindow() override;

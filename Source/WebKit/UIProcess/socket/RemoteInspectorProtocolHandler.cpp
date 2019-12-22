@@ -81,10 +81,47 @@ private:
     Function<void()> m_loadedCallback;
 };
 
+static Optional<Inspector::DebuggableType> parseDebuggableTypeFromString(const String& debuggableTypeString)
+{
+    if (debuggableTypeString == "javascript"_s)
+        return Inspector::DebuggableType::JavaScript;
+    if (debuggableTypeString == "page"_s)
+        return Inspector::DebuggableType::Page;
+    if (debuggableTypeString == "service-worker"_s)
+        return Inspector::DebuggableType::ServiceWorker;
+    if (debuggableTypeString == "web-page"_s)
+        return Inspector::DebuggableType::WebPage;
+
+    return WTF::nullopt;
+}
+
+static String debuggableTypeToString(Inspector::DebuggableType debuggableType)
+{
+    switch (debuggableType) {
+    case Inspector::DebuggableType::JavaScript:
+        return "javascript"_s;
+    case Inspector::DebuggableType::Page:
+        return "page"_s;
+    case Inspector::DebuggableType::ServiceWorker:
+        return "service-worker"_s;
+    case Inspector::DebuggableType::WebPage:
+        return "web-page"_s;
+    }
+
+    ASSERT_NOT_REACHED();
+    return String();
+}
+
 void RemoteInspectorProtocolHandler::inspect(const String& hostAndPort, ConnectionID connectionID, TargetID targetID, const String& type)
 {
+    auto debuggableType = parseDebuggableTypeFromString(type);
+    if (!debuggableType) {
+        LOG_ERROR("Unknown debuggable type: \"%s\"", type.utf8().data());
+        return;
+    }
+
     if (m_inspectorClient)
-        m_inspectorClient->inspect(connectionID, targetID, type);
+        m_inspectorClient->inspect(connectionID, targetID, debuggableType.value());
 }
 
 void RemoteInspectorProtocolHandler::runScript(const String& script)
@@ -108,7 +145,7 @@ void RemoteInspectorProtocolHandler::targetListChanged(RemoteInspectorClient& cl
                 html.append(makeString(
                     "<tbody><tr>"
                     "<td class=\"data\"><div class=\"targetname\">", target.name, "</div><div class=\"targeturl\">", target.url, "</div></td>"
-                    "<td class=\"input\"><input type=\"button\" value=\"Inspect\" onclick=\"window.webkit.messageHandlers.inspector.postMessage(\\'", connectionID, ":", target.id, ":", target.type, "\\');\"></td>"
+                    "<td class=\"input\"><input type=\"button\" value=\"Inspect\" onclick=\"window.webkit.messageHandlers.inspector.postMessage(\\'", connectionID, ":", target.id, ":", debuggableTypeToString(target.type), "\\');\"></td>"
                     "</tr></tbody>"
                 ));
             }

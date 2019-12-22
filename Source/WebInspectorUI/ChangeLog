@@ -1,3 +1,32 @@
+2019-12-21  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: add InspectedTargetTypes diagnostic event and related hooks
+        https://bugs.webkit.org/show_bug.cgi?id=205174
+        <rdar://problem/57887953>
+
+        Reviewed by Devin Rousso.
+
+        This change adds a new diagnostic recorder that reports information about
+        inspected targets and their type / version information.
+
+        * UserInterface/Base/DebuggableType.js:
+        (WI.DebuggableType.fromString):
+        Move the static parsing factory method to DebuggableType class.
+
+        * UserInterface/Main.html: Add new files.
+        * UserInterface/Base/Main.js:
+        (WI.contentLoaded): Add new diagnostic recorder.
+
+        * UserInterface/Protocol/InspectorBackend.js:
+        (InspectorBackendClass.prototype.activateDomain):
+        Adapt to InspectorFrontendHost changes.
+
+        * UserInterface/Test/TestAppController.js:
+        (WI.TestAppController):
+        * UserInterface/Controllers/AppController.js:
+        (WI.AppController):
+        Adapt to InspectorFrontendHost changes.
+
 2019-12-20  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Gradient editor: opacity slider is too close to the right edge of the popover

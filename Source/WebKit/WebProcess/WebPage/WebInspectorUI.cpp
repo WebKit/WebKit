@@ -51,6 +51,7 @@ Ref<WebInspectorUI> WebInspectorUI::create(WebPage& page)
 WebInspectorUI::WebInspectorUI(WebPage& page)
     : m_page(page)
     , m_frontendAPIDispatcher(page)
+    , m_debuggableInfo(DebuggableInfoData::empty())
 {
     RuntimeEnabledFeatures::sharedFeatures().setInspectorAdditionsEnabled(true);
     RuntimeEnabledFeatures::sharedFeatures().setImageBitmapEnabled(true);
@@ -59,12 +60,14 @@ WebInspectorUI::WebInspectorUI(WebPage& page)
 #endif
 }
 
-void WebInspectorUI::establishConnection(WebPageProxyIdentifier inspectedPageIdentifier, bool underTest, unsigned inspectionLevel)
+void WebInspectorUI::establishConnection(WebPageProxyIdentifier inspectedPageIdentifier, const DebuggableInfoData& debuggableInfo, bool underTest, unsigned inspectionLevel)
 {
     m_inspectedPageIdentifier = inspectedPageIdentifier;
-    m_frontendAPIDispatcher.reset();
+    m_debuggableInfo = debuggableInfo;
     m_underTest = underTest;
     m_inspectionLevel = inspectionLevel;
+
+    m_frontendAPIDispatcher.reset();
 
     m_frontendController = &m_page.corePage()->inspectorController();
     m_frontendController->setInspectorFrontendClient(this);
@@ -374,6 +377,21 @@ void WebInspectorUI::pageUnpaused()
 void WebInspectorUI::sendMessageToBackend(const String& message)
 {
     WebProcess::singleton().parentProcessConnection()->send(Messages::WebInspectorProxy::SendMessageToBackend(message), m_inspectedPageIdentifier);
+}
+
+String WebInspectorUI::targetPlatformName() const
+{
+    return m_debuggableInfo.targetPlatformName;
+}
+
+String WebInspectorUI::targetBuildVersion() const
+{
+    return m_debuggableInfo.targetBuildVersion;
+}
+
+String WebInspectorUI::targetProductVersion() const
+{
+    return m_debuggableInfo.targetProductVersion;
 }
 
 } // namespace WebKit

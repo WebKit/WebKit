@@ -23,23 +23,29 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "_WKRemoteWebInspectorViewController.h"
+#pragma once
 
-#if !TARGET_OS_IPHONE
+namespace Inspector {
 
-NS_ASSUME_NONNULL_BEGIN
+enum class DebuggableType : uint8_t {
+    JavaScript,    // JSC::JSGlobalObject
+    Page,          // WebCore::Page
+    ServiceWorker, // WebCore::ServiceWorkerThreadProxy
+    WebPage,       // WebKit::WebPageProxy
+};
 
-@class _WKInspectorDebuggableInfo;
+} // namespace Inspector
 
-@interface _WKRemoteWebInspectorViewController (WKPrivate)
+namespace WTF {
 
-@property (nonatomic, weak, setter=_setDiagnosticLoggingDelegate:) id<_WKDiagnosticLoggingDelegate> _diagnosticLoggingDelegate;
+template<> struct EnumTraits<Inspector::DebuggableType> {
+    using values = EnumValues<
+    Inspector::DebuggableType,
+    Inspector::DebuggableType::JavaScript,
+    Inspector::DebuggableType::Page,
+    Inspector::DebuggableType::ServiceWorker,
+    Inspector::DebuggableType::WebPage
+    >;
+};
 
-- (void)loadForDebuggable:(_WKInspectorDebuggableInfo *)debuggableInfo backendCommandsURL:(NSURL *)backendCommandsURL;
-
-@end
-
-
-NS_ASSUME_NONNULL_END
-
-#endif // !TARGET_OS_IPHONE
+} // namespace WTF

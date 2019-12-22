@@ -296,6 +296,12 @@ String WebInspectorProxy::inspectorBaseURL()
 #endif
 }
 
+DebuggableInfoData WebInspectorProxy::infoForLocalDebuggable()
+{
+    // FIXME <https://webkit.org/b/205537>: this should infer more useful data.
+    return DebuggableInfoData::empty();
+}
+
 unsigned WebInspectorProxy::platformInspectedWindowHeight()
 {
     RECT rect;

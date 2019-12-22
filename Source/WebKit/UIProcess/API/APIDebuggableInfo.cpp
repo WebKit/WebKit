@@ -23,23 +23,23 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "_WKRemoteWebInspectorViewController.h"
+#include "config.h"
+#include "APIDebuggableInfo.h"
 
-#if !TARGET_OS_IPHONE
+#include "DebuggableInfoData.h"
 
-NS_ASSUME_NONNULL_BEGIN
+namespace API {
 
-@class _WKInspectorDebuggableInfo;
+Ref<DebuggableInfo> DebuggableInfo::create(const WebKit::DebuggableInfoData& debuggableInfoData)
+{
+    return adoptRef(*new DebuggableInfo(debuggableInfoData));
+}
 
-@interface _WKRemoteWebInspectorViewController (WKPrivate)
+DebuggableInfo::DebuggableInfo(const WebKit::DebuggableInfoData& data)
+    : m_data(data)
+{
+}
 
-@property (nonatomic, weak, setter=_setDiagnosticLoggingDelegate:) id<_WKDiagnosticLoggingDelegate> _diagnosticLoggingDelegate;
+DebuggableInfo::~DebuggableInfo() = default;
 
-- (void)loadForDebuggable:(_WKInspectorDebuggableInfo *)debuggableInfo backendCommandsURL:(NSURL *)backendCommandsURL;
-
-@end
-
-
-NS_ASSUME_NONNULL_END
-
-#endif // !TARGET_OS_IPHONE
+} // namespace API

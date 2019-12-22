@@ -21,7 +21,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 messages -> RemoteWebInspectorUI {
-    Initialize(String debuggableType, String backendCommandsURL)
+    Initialize(struct WebKit::DebuggableInfoData debuggableInfo, String backendCommandsURL)
 
 #if ENABLE(INSPECTOR_TELEMETRY)
     SetDiagnosticLoggingAvailable(bool available)

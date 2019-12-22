@@ -186,7 +186,7 @@ InspectorBackendClass = class InspectorBackendClass
     {
         // FIXME: <https://webkit.org/b/201150> Web Inspector: remove "extra domains" concept now that domains can be added based on the debuggable type
 
-        if (debuggableTypes && !debuggableTypes.includes(InspectorFrontendHost.debuggableType()))
+        if (debuggableTypes && !debuggableTypes.includes(InspectorFrontendHost.debuggableInfo.debuggableType))
             return;
 
         console.assert(domainName in this._registeredDomains);

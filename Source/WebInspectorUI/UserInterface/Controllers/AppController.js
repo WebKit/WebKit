@@ -31,23 +31,7 @@ WI.AppController = class AppController extends WI.AppControllerBase
 
         this._hasExtraDomains = false;
 
-        switch (InspectorFrontendHost.debuggableType()) {
-        case "javascript":
-            this._debuggableType = WI.DebuggableType.JavaScript;
-            break;
-
-        case "page":
-            this._debuggableType = WI.DebuggableType.Page;
-            break;
-
-        case "service-worker":
-            this._debuggableType = WI.DebuggableType.ServiceWorker;
-            break;
-
-        case "web-page":
-            this._debuggableType = WI.DebuggableType.WebPage;
-            break;
-        }
+        this._debuggableType = WI.DebuggableType.fromString(InspectorFrontendHost.debuggableInfo.debuggableType);
         console.assert(this._debuggableType);
         if (!this._debuggableType)
             this._debuggableType = WI.DebuggableType.JavaScript;

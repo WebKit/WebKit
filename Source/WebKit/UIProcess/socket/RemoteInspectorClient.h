@@ -29,6 +29,7 @@
 
 #include <JavaScriptCore/RemoteControllableTarget.h>
 #include <JavaScriptCore/RemoteInspectorConnectionClient.h>
+#include <WebCore/InspectorDebuggableType.h>
 #include <wtf/HashMap.h>
 #include <wtf/URL.h>
 #include <wtf/Vector.h>
@@ -57,7 +58,7 @@ public:
 
     struct Target {
         TargetID id;
-        String type;
+        Inspector::DebuggableType type;
         String name;
         String url;
     };
@@ -65,7 +66,7 @@ public:
     const HashMap<ConnectionID, Vector<Target>>& targets() const { return m_targets; }
     const String& backendCommandsURL() const { return m_backendCommandsURL; }
 
-    void inspect(ConnectionID, TargetID, const String&);
+    void inspect(ConnectionID, TargetID, Inspector::DebuggableType);
     void sendMessageToBackend(ConnectionID, TargetID, const String&);
     void closeFromFrontend(ConnectionID, TargetID);
 

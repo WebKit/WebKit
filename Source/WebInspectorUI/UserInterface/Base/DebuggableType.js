@@ -29,3 +29,19 @@ WI.DebuggableType = {
     ServiceWorker: "service-worker",
     WebPage: "web-page",
 };
+
+WI.DebuggableType.fromString = function(type) {
+    switch (type) {
+    case "javascript":
+        return WI.DebuggableType.JavaScript;
+    case "page":
+        return WI.DebuggableType.Page;
+    case "service-worker":
+        return WI.DebuggableType.ServiceWorker;
+    case "web-page":
+        return WI.DebuggableType.WebPage;
+    }
+
+    console.assert(false, "Unknown debuggable type", type);
+    return null;
+};

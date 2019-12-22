@@ -44,6 +44,7 @@
 #include "Frame.h"
 #include "HitTestResult.h"
 #include "InspectorController.h"
+#include "InspectorDebuggableType.h"
 #include "InspectorFrontendClient.h"
 #include "JSDOMConvertInterface.h"
 #include "JSDOMExceptionHandling.h"
@@ -284,9 +285,35 @@ String InspectorFrontendHost::backendCommandsURL() const
     return m_client ? m_client->backendCommandsURL() : String();
 }
 
-String InspectorFrontendHost::debuggableType()
+static String debuggableTypeToString(DebuggableType debuggableType)
 {
-    return m_client ? m_client->debuggableType() : String();
+    switch (debuggableType) {
+    case DebuggableType::JavaScript:
+        return "javascript"_s;
+    case DebuggableType::Page:
+        return "page"_s;
+    case DebuggableType::ServiceWorker:
+        return "service-worker"_s;
+    case DebuggableType::WebPage:
+        return "web-page"_s;
+    }
+
+    ASSERT_NOT_REACHED();
+    return String();
+}
+
+InspectorFrontendHost::DebuggableInfo InspectorFrontendHost::debuggableInfo() const
+{
+    if (!m_client)
+        return {debuggableTypeToString(DebuggableType::JavaScript), "Unknown"_s, "Unknown"_s, "Unknown"_s, false};
+
+    return {
+        debuggableTypeToString(m_client->debuggableType()),
+        m_client->targetPlatformName(),
+        m_client->targetBuildVersion(),
+        m_client->targetProductVersion(),
+        m_client->targetIsSimulator(),
+    };
 }
 
 unsigned InspectorFrontendHost::inspectionLevel() const

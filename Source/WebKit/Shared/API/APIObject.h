@@ -116,6 +116,7 @@ public:
         CookieManager,
         CustomHeaderFields,
         InternalDebugFeature,
+        DebuggableInfo,
         Download,
         ExperimentalFeature,
         FormSubmissionListener,

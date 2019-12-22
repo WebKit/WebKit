@@ -28,8 +28,10 @@
 
 #if ENABLE(REMOTE_INSPECTOR)
 
+#include "APIDebuggableInfo.h"
 #include "RemoteWebInspectorProxy.h"
 #include <JavaScriptCore/RemoteInspectorUtils.h>
+#include <WebCore/InspectorDebuggableType.h>
 #include <gio/gio.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/glib/GUniquePtr.h>
@@ -57,7 +59,10 @@ public:
 
     void load()
     {
-        m_proxy->load("web-page", m_inspectorClient.backendCommandsURL());
+        // FIXME <https://webkit.org/b/205536>: this should infer more useful data about the debug target.
+        Ref<API::DebuggableInfo> debuggableInfo = API::DebuggableInfo::create(DebuggableInfoData::empty());
+        debuggableInfo->setDebuggableType(Inspector::DebuggableType::WebPage);
+        m_proxy->load(WTFMove(debuggableInfo), m_inspectorClient.backendCommandsURL());
     }
 
     void show()

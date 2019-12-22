@@ -52,9 +52,9 @@ RemoteWebInspectorUI::RemoteWebInspectorUI(WebPage& page)
 {
 }
 
-void RemoteWebInspectorUI::initialize(const String& debuggableType, const String& backendCommandsURL)
+void RemoteWebInspectorUI::initialize(DebuggableInfoData&& debuggableInfo, const String& backendCommandsURL)
 {
-    m_debuggableType = debuggableType;
+    m_debuggableInfo = WTFMove(debuggableInfo);
     m_backendCommandsURL = backendCommandsURL;
 
     m_page.corePage()->inspectorController().setInspectorFrontendClient(this);
@@ -168,6 +168,31 @@ void RemoteWebInspectorUI::inspectedURLChanged(const String& urlString)
 void RemoteWebInspectorUI::showCertificate(const CertificateInfo& certificateInfo)
 {
     WebProcess::singleton().parentProcessConnection()->send(Messages::RemoteWebInspectorProxy::ShowCertificate(certificateInfo), m_page.identifier());
+}
+
+Inspector::DebuggableType RemoteWebInspectorUI::debuggableType() const
+{
+    return m_debuggableInfo.debuggableType;
+}
+
+String RemoteWebInspectorUI::targetPlatformName() const
+{
+    return m_debuggableInfo.targetPlatformName;
+}
+
+String RemoteWebInspectorUI::targetBuildVersion() const
+{
+    return m_debuggableInfo.targetBuildVersion;
+}
+
+String RemoteWebInspectorUI::targetProductVersion() const
+{
+    return m_debuggableInfo.targetProductVersion;
+}
+
+bool RemoteWebInspectorUI::targetIsSimulator() const
+{
+    return m_debuggableInfo.targetIsSimulator;
 }
 
 #if ENABLE(INSPECTOR_TELEMETRY)

@@ -26,8 +26,10 @@
 #pragma once
 
 #include "Connection.h"
+#include "DebuggableInfoData.h"
 #include "WebInspectorFrontendAPIDispatcher.h"
 #include "WebPageProxyIdentifier.h"
+#include <WebCore/InspectorDebuggableType.h>
 #include <WebCore/InspectorFrontendClient.h>
 #include <WebCore/InspectorFrontendHost.h>
 
@@ -53,7 +55,7 @@ public:
     void didReceiveInvalidMessage(IPC::Connection&, IPC::StringReference, IPC::StringReference) override { closeWindow(); }
 
     // Called by WebInspectorUI messages
-    void establishConnection(WebPageProxyIdentifier inspectedPageIdentifier, bool underTest, unsigned inspectionLevel);
+    void establishConnection(WebPageProxyIdentifier inspectedPageIdentifier, const DebuggableInfoData&, bool underTest, unsigned inspectionLevel);
     void updateConnection();
 
     void showConsole();
@@ -96,7 +98,11 @@ public:
     bool isRemote() const final { return false; }
     String localizedStringsURL() const override;
     String backendCommandsURL() const final { return String(); }
-    String debuggableType() const final { return "web-page"_s; }
+    Inspector::DebuggableType debuggableType() const final { return Inspector::DebuggableType::WebPage; }
+    String targetPlatformName() const override;
+    String targetBuildVersion() const override;
+    String targetProductVersion() const override;
+    bool targetIsSimulator() const final { return false; }
     unsigned inspectionLevel() const override { return m_inspectionLevel; }
 
     void bringToFront() override;
@@ -148,6 +154,7 @@ private:
 
     WebPageProxyIdentifier m_inspectedPageIdentifier;
     bool m_underTest { false };
+    DebuggableInfoData m_debuggableInfo;
     bool m_dockingUnavailable { false };
     bool m_isVisible { false };
 #if ENABLE(INSPECTOR_TELEMETRY)

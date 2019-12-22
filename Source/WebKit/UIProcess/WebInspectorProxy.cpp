@@ -412,7 +412,7 @@ void WebInspectorProxy::openLocalInspectorFrontend(bool canAttach, bool underTes
     if (!m_inspectorPage)
         return;
 
-    m_inspectorPage->send(Messages::WebInspectorUI::EstablishConnection(m_inspectedPage->identifier(), m_underTest, inspectionLevel()));
+    m_inspectorPage->send(Messages::WebInspectorUI::EstablishConnection(m_inspectedPage->identifier(), infoForLocalDebuggable(), m_underTest, inspectionLevel()));
 
     ASSERT(!m_isActiveFrontend);
     m_isActiveFrontend = true;
@@ -763,6 +763,12 @@ String WebInspectorProxy::inspectorBaseURL()
 {
     notImplemented();
     return String();
+}
+
+DebuggableInfoData WebInspectorProxy::infoForLocalDebuggable()
+{
+    notImplemented();
+    return DebuggableInfoData::empty();
 }
 
 void WebInspectorProxy::platformSetAttachedWindowWidth(unsigned)

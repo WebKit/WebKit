@@ -23,23 +23,33 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "_WKRemoteWebInspectorViewController.h"
+#pragma once
 
-#if !TARGET_OS_IPHONE
-
-NS_ASSUME_NONNULL_BEGIN
-
-@class _WKInspectorDebuggableInfo;
-
-@interface _WKRemoteWebInspectorViewController (WKPrivate)
-
-@property (nonatomic, weak, setter=_setDiagnosticLoggingDelegate:) id<_WKDiagnosticLoggingDelegate> _diagnosticLoggingDelegate;
-
-- (void)loadForDebuggable:(_WKInspectorDebuggableInfo *)debuggableInfo backendCommandsURL:(NSURL *)backendCommandsURL;
-
-@end
+#include <wtf/text/WTFString.h>
 
 
-NS_ASSUME_NONNULL_END
+namespace IPC {
+class Decoder;
+class Encoder;
+}
 
-#endif // !TARGET_OS_IPHONE
+namespace Inspector {
+enum class DebuggableType : uint8_t;
+}
+
+namespace WebKit {
+
+struct DebuggableInfoData {
+    Inspector::DebuggableType debuggableType;
+    String targetPlatformName;
+    String targetBuildVersion;
+    String targetProductVersion;
+    bool targetIsSimulator { false };
+
+    static DebuggableInfoData empty();
+
+    void encode(IPC::Encoder&) const;
+    static Optional<DebuggableInfoData> decode(IPC::Decoder&);
+};
+
+} // namespace WebKit

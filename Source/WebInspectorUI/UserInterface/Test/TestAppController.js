@@ -29,15 +29,7 @@ WI.TestAppController = class TestAppController extends WI.AppControllerBase
     {
         super();
 
-        switch (InspectorFrontendHost.debuggableType()) {
-        case "page":
-            this._debuggableType = WI.DebuggableType.Page;
-            break;
-
-        case "web-page":
-            this._debuggableType = WI.DebuggableType.WebPage;
-            break;
-        }
+        this._debuggableType = WI.DebuggableType.fromString(InspectorFrontendHost.debuggableInfo.debuggableType);
         console.assert(this._debuggableType);
     }
 

@@ -45,6 +45,10 @@ namespace WebCore {
 class CertificateInfo;
 }
 
+namespace API {
+class DebuggableInfo;
+}
+
 namespace WebKit {
 
 class WebPageProxy;
@@ -74,7 +78,7 @@ public:
 
     void invalidate();
 
-    void load(const String& debuggableType, const String& backendCommandsURL);
+    void load(Ref<API::DebuggableInfo>&&, const String& backendCommandsURL);
     void closeFromBackend();
     void show();
 
@@ -137,7 +141,7 @@ private:
     RemoteWebInspectorProxyClient* m_client { nullptr };
     WebPageProxy* m_inspectorPage { nullptr };
 
-    String m_debuggableType;
+    Ref<API::DebuggableInfo> m_debuggableInfo;
     String m_backendCommandsURL;
 
 #if PLATFORM(MAC)

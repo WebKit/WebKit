@@ -779,6 +779,28 @@ String WebInspectorProxy::inspectorBaseURL()
     return [NSURL fileURLWithPath:path isDirectory:YES].absoluteString;
 }
 
+static NSDictionary *systemVersionPlist()
+{
+    NSString *systemLibraryPath = [NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSSystemDomainMask, YES) objectAtIndex:0];
+    NSString *systemVersionPlistPath = [systemLibraryPath stringByAppendingPathComponent:@"CoreServices/SystemVersion.plist"];
+    NSDictionary *systemVersionInfo = [NSDictionary dictionaryWithContentsOfFile:systemVersionPlistPath];
+    return systemVersionInfo;
+}
+
+DebuggableInfoData WebInspectorProxy::infoForLocalDebuggable()
+{
+    NSDictionary *plist = systemVersionPlist();
+
+    DebuggableInfoData result;
+    result.debuggableType = Inspector::DebuggableType::WebPage;
+    result.targetPlatformName = "macOS"_s;
+    result.targetBuildVersion = plist[@"ProductBuildVersion"];
+    result.targetProductVersion = plist[@"ProductUserVisibleVersion"];
+    result.targetIsSimulator = false;
+
+    return result;
+}
+
 } // namespace WebKit
 
 #endif // PLATFORM(MAC)

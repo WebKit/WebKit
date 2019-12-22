@@ -29,6 +29,7 @@
 #import <JavaScriptCore/InspectorFrontendChannel.h>
 #import <WebCore/FloatRect.h>
 #import <WebCore/InspectorClient.h>
+#import <WebCore/InspectorDebuggableType.h>
 #import <WebCore/InspectorFrontendClientLocal.h>
 #import <wtf/Forward.h>
 #import <wtf/HashMap.h>
@@ -117,8 +118,13 @@ public:
 
     void startWindowDrag() override;
 
-    String debuggableType() const final { return "page"_s; };
     String localizedStringsURL() const override;
+    Inspector::DebuggableType debuggableType() const final { return Inspector::DebuggableType::Page; };
+    String targetPlatformName() const final { return "macOS"_s; };
+    String targetBuildVersion() const final { return "Unknown"_s; };
+    String targetProductVersion() const final { return "Unknown"_s; };
+    bool targetIsSimulator() const final { return false; }
+
 
     void bringToFront() override;
     void closeWindow() override;

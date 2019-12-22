@@ -364,6 +364,12 @@ String WebInspectorProxy::inspectorBaseURL()
     return String("resource:///org/webkit/inspector/UserInterface/");
 }
 
+DebuggableInfoData WebInspectorProxy::infoForLocalDebuggable()
+{
+    // FIXME <https://webkit.org/b/205536>: this should infer more useful data about the debug target.
+    return DebuggableInfoData::empty();
+}
+
 unsigned WebInspectorProxy::platformInspectedWindowHeight()
 {
     return gtk_widget_get_allocated_height(inspectedPage()->viewWidget());

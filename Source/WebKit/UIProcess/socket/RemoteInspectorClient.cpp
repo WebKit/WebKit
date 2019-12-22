@@ -28,6 +28,7 @@
 
 #if ENABLE(REMOTE_INSPECTOR)
 
+#include "APIDebuggableInfo.h"
 #include "RemoteWebInspectorProxy.h"
 #include <wtf/MainThread.h>
 #include <wtf/text/Base64.h>
@@ -37,12 +38,12 @@ namespace WebKit {
 class RemoteInspectorProxy final : public RemoteWebInspectorProxyClient {
     WTF_MAKE_FAST_ALLOCATED();
 public:
-    RemoteInspectorProxy(RemoteInspectorClient& inspectorClient, ConnectionID connectionID, TargetID targetID, const String& type)
+    RemoteInspectorProxy(RemoteInspectorClient& inspectorClient, ConnectionID connectionID, TargetID targetID, Inspector::DebuggableType debuggableType)
         : m_proxy(RemoteWebInspectorProxy::create())
         , m_inspectorClient(inspectorClient)
         , m_connectionID(connectionID)
         , m_targetID(targetID)
-        , m_debuggableType(type)
+        , m_debuggableType(debuggableType)
     {
         m_proxy->setClient(this);
     }
@@ -55,7 +56,10 @@ public:
 
     void load()
     {
-        m_proxy->load(m_debuggableType, m_inspectorClient.backendCommandsURL());
+        // FIXME <https://webkit.org/b/205537>: this should infer more useful data about the debug target.
+        Ref<API::DebuggableInfo> debuggableInfo = API::DebuggableInfo::create(DebuggableInfoData::empty());
+        debuggableInfo->setDebuggableType(m_debuggableType);
+        m_proxy->load(WTFMove(debuggableInfo), m_inspectorClient.backendCommandsURL());
     }
 
     void show()
@@ -83,7 +87,7 @@ private:
     RemoteInspectorClient& m_inspectorClient;
     ConnectionID m_connectionID;
     TargetID m_targetID;
-    String m_debuggableType;
+    Inspector::DebuggableType m_debuggableType;
 };
 
 RemoteInspectorClient::RemoteInspectorClient(URL url, RemoteInspectorObserver& observer)
@@ -148,10 +152,10 @@ void RemoteInspectorClient::didClose(ConnectionID)
     });
 }
 
-void RemoteInspectorClient::inspect(ConnectionID connectionID, TargetID targetID, const String& type)
+void RemoteInspectorClient::inspect(ConnectionID connectionID, TargetID targetID, Inspector::DebuggableType debuggableType)
 {
-    auto addResult = m_inspectorProxyMap.ensure(std::make_pair(connectionID, targetID), [this, connectionID, targetID, &type] {
-        return makeUnique<RemoteInspectorProxy>(*this, connectionID, targetID, type);
+    auto addResult = m_inspectorProxyMap.ensure(std::make_pair(connectionID, targetID), [this, connectionID, targetID, debuggableType] {
+        return makeUnique<RemoteInspectorProxy>(*this, connectionID, targetID, debuggableType);
     });
 
     if (!addResult.isNewEntry) {
@@ -197,6 +201,23 @@ void RemoteInspectorClient::setBackendCommands(const Event& event)
     m_backendCommandsURL = makeString("data:text/javascript;base64,", base64Encode(event.message->utf8()));
 }
 
+static String debuggableTypeToString(Inspector::DebuggableType debuggableType)
+{
+    switch (debuggableType) {
+    case Inspector::DebuggableType::JavaScript:
+        return "javascript"_s;
+    case Inspector::DebuggableType::Page:
+        return "page"_s;
+    case Inspector::DebuggableType::ServiceWorker:
+        return "service-worker"_s;
+    case Inspector::DebuggableType::WebPage:
+        return "web-page"_s;
+    }
+
+    ASSERT_NOT_REACHED();
+    return String();
+}
+
 void RemoteInspectorClient::setTargetList(const Event& event)
 {
     if (!event.connectionID || !event.message)
@@ -220,7 +241,7 @@ void RemoteInspectorClient::setTargetList(const Event& event)
         if (!itemObject->getInteger("targetID"_s, target.id)
             || !itemObject->getString("name"_s, target.name)
             || !itemObject->getString("url"_s, target.url)
-            || !itemObject->getString("type"_s, target.type))
+            || !itemObject->getString("type"_s, debuggableTypeToString(target.type)))
             continue;
 
         targetList.append(WTFMove(target));
