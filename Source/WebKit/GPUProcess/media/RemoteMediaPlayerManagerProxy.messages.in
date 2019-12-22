@@ -24,7 +24,7 @@
 #if ENABLE(VIDEO)
 
 messages -> RemoteMediaPlayerManagerProxy NotRefCounted {
-    CreateMediaPlayer(WebKit::MediaPlayerPrivateRemoteIdentifier id, enum:uint8_t WebCore::MediaPlayerEnums::MediaEngineIdentifier remoteEngineIdentifier) -> (bool success) Synchronous
+    CreateMediaPlayer(WebKit::MediaPlayerPrivateRemoteIdentifier id, enum:uint8_t WebCore::MediaPlayerEnums::MediaEngineIdentifier remoteEngineIdentifier, struct WebKit::RemoteMediaPlayerProxyConfiguration configuration) -> (bool success) Synchronous
     DeleteMediaPlayer(WebKit::MediaPlayerPrivateRemoteIdentifier id)
 
     GetSupportedTypes(enum:uint8_t WebCore::MediaPlayerEnums::MediaEngineIdentifier remoteEngineIdentifier) -> (Vector<String> types) Synchronous

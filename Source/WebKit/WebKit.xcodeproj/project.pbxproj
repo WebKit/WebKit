@@ -2066,6 +2066,7 @@
 		07A5EBB91C7BA43E00B9CA69 /* WKFrameHandleRef.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKFrameHandleRef.cpp; sourceTree = "<group>"; };
 		07A5EBBA1C7BA43E00B9CA69 /* WKFrameHandleRef.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKFrameHandleRef.h; sourceTree = "<group>"; };
 		07B3B46F23AB2CB300BA5B12 /* RemoteMediaPlayerState.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteMediaPlayerState.h; sourceTree = "<group>"; };
+		07B3B47523AD890400BA5B12 /* RemoteMediaPlayerProxyConfiguration.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteMediaPlayerProxyConfiguration.h; sourceTree = "<group>"; };
 		07BAF35623A2CC170044257E /* RemoteMediaPlayerProxy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteMediaPlayerProxy.h; sourceTree = "<group>"; };
 		07BAF35723A2CC190044257E /* RemoteMediaPlayerProxy.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteMediaPlayerProxy.cpp; sourceTree = "<group>"; };
 		0867D6A5FE840307C02AAC07 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
@@ -5111,6 +5112,7 @@
 				0725EFAB239AE38400A538A9 /* RemoteMediaPlayerManagerProxy.messages.in */,
 				07BAF35723A2CC190044257E /* RemoteMediaPlayerProxy.cpp */,
 				07BAF35623A2CC170044257E /* RemoteMediaPlayerProxy.h */,
+				07B3B47523AD890400BA5B12 /* RemoteMediaPlayerProxyConfiguration.h */,
 			);
 			path = media;
 			sourceTree = "<group>";

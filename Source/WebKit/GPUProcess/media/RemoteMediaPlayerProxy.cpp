@@ -38,16 +38,18 @@ namespace WebKit {
 
 using namespace WebCore;
 
-RemoteMediaPlayerProxy::RemoteMediaPlayerProxy(RemoteMediaPlayerManagerProxy& manager, MediaPlayerPrivateRemoteIdentifier id, Ref<IPC::Connection>&& connection, MediaPlayerEnums::MediaEngineIdentifier engineIdentifier)
+RemoteMediaPlayerProxy::RemoteMediaPlayerProxy(RemoteMediaPlayerManagerProxy& manager, MediaPlayerPrivateRemoteIdentifier id, Ref<IPC::Connection>&& connection, MediaPlayerEnums::MediaEngineIdentifier engineIdentifier, RemoteMediaPlayerProxyConfiguration&& configuration)
     : m_id(id)
     , m_webProcessConnection(WTFMove(connection))
     , m_manager(manager)
     , m_engineIdentifier(engineIdentifier)
     , m_updateCachedStateMessageTimer(RunLoop::main(), this, &RemoteMediaPlayerProxy::timerFired)
+    , m_configuration(configuration)
 #if !RELEASE_LOG_DISABLED
     , m_logger(m_manager.logger())
 #endif
 {
+    m_typesRequiringHardwareSupport = m_configuration.mediaContentTypesRequiringHardwareSupport;
     m_player = MediaPlayer::create(*this, m_engineIdentifier);
 }
 
@@ -177,6 +179,61 @@ void RemoteMediaPlayerProxy::mediaPlayerEngineFailedToLoad() const
     m_webProcessConnection->send(Messages::RemoteMediaPlayerManager::EngineFailedToLoad(m_id, m_player->platformErrorCode()), 0);
 }
 
+#if ENABLE(LEGACY_ENCRYPTED_MEDIA)
+String RemoteMediaPlayerProxy::mediaPlayerMediaKeysStorageDirectory() const
+{
+    return m_configuration.mediaKeysStorageDirectory;
+}
+#endif
+
+String RemoteMediaPlayerProxy::mediaPlayerReferrer() const
+{
+    return m_configuration.referrer;
+}
+
+String RemoteMediaPlayerProxy::mediaPlayerUserAgent() const
+{
+    return m_configuration.userAgent;
+}
+
+String RemoteMediaPlayerProxy::mediaPlayerSourceApplicationIdentifier() const
+{
+    return m_configuration.sourceApplicationIdentifier;
+}
+
+#if PLATFORM(IOS_FAMILY)
+String RemoteMediaPlayerProxy::mediaPlayerNetworkInterfaceName() const
+{
+    return m_configuration.networkInterfaceName;
+}
+#endif
+
+const String& RemoteMediaPlayerProxy::mediaPlayerMediaCacheDirectory() const
+{
+    return m_configuration.mediaCacheDirectory;
+}
+
+const Vector<WebCore::ContentType>& RemoteMediaPlayerProxy::mediaContentTypesRequiringHardwareSupport() const
+{
+    return m_typesRequiringHardwareSupport;
+}
+
+Vector<String> RemoteMediaPlayerProxy::mediaPlayerPreferredAudioCharacteristics() const
+{
+    return m_configuration.preferredAudioCharacteristics;
+}
+
+bool RemoteMediaPlayerProxy::mediaPlayerShouldUsePersistentCache() const
+{
+    return m_configuration.shouldUsePersistentCache;
+}
+
+bool RemoteMediaPlayerProxy::mediaPlayerIsVideo() const
+{
+    return m_configuration.isVideo;
+}
+
+// FIXME: Unimplemented
 void RemoteMediaPlayerProxy::mediaPlayerPlaybackStateChanged()
 {
     m_webProcessConnection->send(Messages::RemoteMediaPlayerManager::PlaybackStateChanged(m_id, m_player->paused()), 0);
@@ -246,13 +303,6 @@ bool RemoteMediaPlayerProxy::mediaPlayerKeyNeeded(Uint8Array*)
     notImplemented();
     return false;
 }
-
-String RemoteMediaPlayerProxy::mediaPlayerMediaKeysStorageDirectory() const
-{
-    notImplemented();
-    return emptyString();
-}
-
 #endif
 
 #if ENABLE(ENCRYPTED_MEDIA)
@@ -271,18 +321,6 @@ void RemoteMediaPlayerProxy::mediaPlayerWaitingForKeyChanged()
 void RemoteMediaPlayerProxy::mediaPlayerCurrentPlaybackTargetIsWirelessChanged() { };
 #endif
 
-String RemoteMediaPlayerProxy::mediaPlayerReferrer() const
-{
-    notImplemented();
-    return String();
-}
-
-String RemoteMediaPlayerProxy::mediaPlayerUserAgent() const
-{
-    notImplemented();
-    return String();
-}
-
 void RemoteMediaPlayerProxy::mediaPlayerEnterFullscreen()
 {
     notImplemented();
@@ -299,12 +337,6 @@ bool RemoteMediaPlayerProxy::mediaPlayerIsFullscreen() const
 }
 
 bool RemoteMediaPlayerProxy::mediaPlayerIsFullscreenPermitted() const
-{
-    notImplemented();
-    return false;
-}
-
-bool RemoteMediaPlayerProxy::mediaPlayerIsVideo() const
 {
     notImplemented();
     return false;
@@ -356,18 +388,6 @@ bool RemoteMediaPlayerProxy::doesHaveAttribute(const AtomString&, AtomString*) c
     return false;
 }
 
-bool RemoteMediaPlayerProxy::mediaPlayerShouldUsePersistentCache() const
-{
-    notImplemented();
-    return true;
-}
-
-const String& RemoteMediaPlayerProxy::mediaPlayerMediaCacheDirectory() const
-{
-    notImplemented();
-    return emptyString();
-}
-
 #if ENABLE(VIDEO_TRACK)
 void RemoteMediaPlayerProxy::mediaPlayerDidAddAudioTrack(AudioTrackPrivate&)
 {
@@ -416,25 +436,12 @@ Vector<RefPtr<PlatformTextTrack>> RemoteMediaPlayerProxy::outOfBandTrackSources(
 #endif
 
 #if PLATFORM(IOS_FAMILY)
-String RemoteMediaPlayerProxy::mediaPlayerNetworkInterfaceName() const
-{
-    notImplemented();
-    return String();
-}
-
 bool RemoteMediaPlayerProxy::mediaPlayerGetRawCookies(const URL&, Vector<Cookie>&) const
 {
     notImplemented();
     return false;
 }
-
 #endif
-
-String RemoteMediaPlayerProxy::mediaPlayerSourceApplicationIdentifier() const
-{
-    notImplemented();
-    return emptyString();
-}
 
 double RemoteMediaPlayerProxy::mediaPlayerRequestedPlaybackRate() const
 {
@@ -454,22 +461,10 @@ bool RemoteMediaPlayerProxy::mediaPlayerIsVideoFullscreenStandby() const
     return false;
 }
 
-Vector<String> RemoteMediaPlayerProxy::mediaPlayerPreferredAudioCharacteristics() const
-{
-    notImplemented();
-    return Vector<String>();
-}
-
 bool RemoteMediaPlayerProxy::mediaPlayerShouldDisableSleep() const
 {
     notImplemented();
     return false;
-}
-
-const Vector<WebCore::ContentType>& RemoteMediaPlayerProxy::mediaContentTypesRequiringHardwareSupport() const
-{
-    notImplemented();
-    return m_typesRequiringHardwareSupport;
 }
 
 bool RemoteMediaPlayerProxy::mediaPlayerShouldCheckHardwareSupport() const

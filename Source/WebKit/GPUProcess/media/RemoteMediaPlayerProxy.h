@@ -28,6 +28,7 @@
 #if ENABLE(GPU_PROCESS)
 
 #include "MediaPlayerPrivateRemoteIdentifier.h"
+#include "RemoteMediaPlayerProxyConfiguration.h"
 #include "RemoteMediaPlayerState.h"
 #include <wtf/LoggerHelper.h>
 #include <wtf/RefPtr.h>
@@ -50,7 +51,7 @@ class RemoteMediaPlayerProxy
     : public MediaPlayerClient {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    RemoteMediaPlayerProxy(RemoteMediaPlayerManagerProxy&, MediaPlayerPrivateRemoteIdentifier, Ref<IPC::Connection>&&, MediaPlayerEnums::MediaEngineIdentifier);
+    RemoteMediaPlayerProxy(RemoteMediaPlayerManagerProxy&, MediaPlayerPrivateRemoteIdentifier, Ref<IPC::Connection>&&, MediaPlayerEnums::MediaEngineIdentifier, RemoteMediaPlayerProxyConfiguration&&);
     virtual ~RemoteMediaPlayerProxy()
     {
     }
@@ -168,6 +169,7 @@ private:
 
 #if !RELEASE_LOG_DISABLED
     const Logger& mediaPlayerLogger() final { return m_logger; }
+    const void* mediaPlayerLogIdentifier() { return reinterpret_cast<const void*>(m_configuration.logIdentifier); }
 #endif
 
     MediaPlayerPrivateRemoteIdentifier m_id;
@@ -178,7 +180,7 @@ private:
     Vector<WebCore::ContentType> m_typesRequiringHardwareSupport;
     RunLoop::Timer<RemoteMediaPlayerProxy> m_updateCachedStateMessageTimer;
     RemoteMediaPlayerState m_cachedState;
-
+    RemoteMediaPlayerProxyConfiguration m_configuration;
     bool m_seekableChanged { true };
     bool m_bufferedChanged { true };
 

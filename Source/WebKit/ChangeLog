@@ -1,3 +1,35 @@
+2019-12-21  Eric Carlson  <eric.carlson@apple.com>
+
+        [Media in GPU process] Add remote media player configuration
+        https://bugs.webkit.org/show_bug.cgi?id=205541
+        <rdar://problem/58137418>
+
+        Reviewed by Simon Fraser.
+
+        * GPUProcess/media/RemoteMediaPlayerManagerProxy.cpp:
+        (WebKit::RemoteMediaPlayerManagerProxy::createMediaPlayer):
+        * GPUProcess/media/RemoteMediaPlayerManagerProxy.h:
+        * GPUProcess/media/RemoteMediaPlayerManagerProxy.messages.in:
+        * GPUProcess/media/RemoteMediaPlayerProxy.cpp:
+        (WebKit::RemoteMediaPlayerProxy::RemoteMediaPlayerProxy):
+        (WebKit::RemoteMediaPlayerProxy::mediaPlayerMediaKeysStorageDirectory const):
+        (WebKit::RemoteMediaPlayerProxy::mediaPlayerReferrer const):
+        (WebKit::RemoteMediaPlayerProxy::mediaPlayerUserAgent const):
+        (WebKit::RemoteMediaPlayerProxy::mediaPlayerSourceApplicationIdentifier const):
+        (WebKit::RemoteMediaPlayerProxy::mediaPlayerNetworkInterfaceName const):
+        (WebKit::RemoteMediaPlayerProxy::mediaPlayerMediaCacheDirectory const):
+        (WebKit::RemoteMediaPlayerProxy::mediaContentTypesRequiringHardwareSupport const):
+        (WebKit::RemoteMediaPlayerProxy::mediaPlayerPreferredAudioCharacteristics const):
+        (WebKit::RemoteMediaPlayerProxy::mediaPlayerShouldUsePersistentCache const):
+        (WebKit::RemoteMediaPlayerProxy::mediaPlayerIsVideo const):
+        (WebKit::RemoteMediaPlayerProxy::mediaPlayerKeyNeeded):
+        (WebKit::RemoteMediaPlayerProxy::mediaPlayerGetRawCookies const):
+        * GPUProcess/media/RemoteMediaPlayerProxy.h:
+        (WebKit::RemoteMediaPlayerProxy::mediaPlayerLogIdentifier):
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/GPU/media/RemoteMediaPlayerManager.cpp:
+        (WebKit::RemoteMediaPlayerManager::createRemoteMediaPlayer):
+
 2019-12-21  Kate Cheney  <katherine_cheney@apple.com>
 
         Add timeStamp to ITP database

@@ -30,6 +30,7 @@
 #include "Connection.h"
 #include "MediaPlayerPrivateRemoteIdentifier.h"
 #include "MessageReceiver.h"
+#include "RemoteMediaPlayerProxyConfiguration.h"
 #include <WebCore/MediaPlayer.h>
 #include <wtf/LoggerHelper.h>
 
@@ -67,7 +68,7 @@ private:
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
     void didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, std::unique_ptr<IPC::Encoder>&) final;
 
-    void createMediaPlayer(MediaPlayerPrivateRemoteIdentifier, WebCore::MediaPlayerEnums::MediaEngineIdentifier, CompletionHandler<void(bool)>&&);
+    void createMediaPlayer(MediaPlayerPrivateRemoteIdentifier, WebCore::MediaPlayerEnums::MediaEngineIdentifier, RemoteMediaPlayerProxyConfiguration&&, CompletionHandler<void(bool)>&&);
     void deleteMediaPlayer(MediaPlayerPrivateRemoteIdentifier);
 
     // Media player factory

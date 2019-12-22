@@ -62,12 +62,12 @@ RemoteMediaPlayerManagerProxy::~RemoteMediaPlayerManagerProxy()
 {
 }
 
-void RemoteMediaPlayerManagerProxy::createMediaPlayer(MediaPlayerPrivateRemoteIdentifier id, MediaPlayerEnums::MediaEngineIdentifier engineIdentifier, CompletionHandler<void(bool succeeded)>&& completionHandler)
+void RemoteMediaPlayerManagerProxy::createMediaPlayer(MediaPlayerPrivateRemoteIdentifier id, MediaPlayerEnums::MediaEngineIdentifier engineIdentifier, RemoteMediaPlayerProxyConfiguration&& configuration, CompletionHandler<void(bool succeeded)>&& completionHandler)
 {
     MESSAGE_CHECK_CONTEXTID(id);
 
     ASSERT(!m_proxies.contains(id));
-    m_proxies.add(id, makeUnique<RemoteMediaPlayerProxy>(*this, id, m_gpuConnectionToWebProcess.connection(), engineIdentifier));
+    m_proxies.add(id, makeUnique<RemoteMediaPlayerProxy>(*this, id, m_gpuConnectionToWebProcess.connection(), engineIdentifier, WTFMove(configuration)));
 
     completionHandler(true);
 }

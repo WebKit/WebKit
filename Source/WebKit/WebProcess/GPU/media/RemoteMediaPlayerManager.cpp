@@ -30,6 +30,7 @@
 
 #include "RemoteMediaPlayerManagerMessages.h"
 #include "RemoteMediaPlayerManagerProxyMessages.h"
+#include "RemoteMediaPlayerProxyConfiguration.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebProcess.h"
 #include "WebProcessCreationParameters.h"
@@ -115,8 +116,23 @@ std::unique_ptr<MediaPlayerPrivateInterface> RemoteMediaPlayerManager::createRem
 {
     auto id = MediaPlayerPrivateRemoteIdentifier::generate();
 
+    RemoteMediaPlayerProxyConfiguration configuration;
+    configuration.mediaKeysStorageDirectory = player->mediaKeysStorageDirectory();
+    configuration.referrer = player->referrer();
+    configuration.userAgent = player->userAgent();
+    configuration.sourceApplicationIdentifier = player->sourceApplicationIdentifier();
+#if PLATFORM(IOS_FAMILY)
+    configuration.networkInterfaceName = player->mediaPlayerNetworkInterfaceName();
+#endif
+    configuration.mediaCacheDirectory = player->mediaCacheDirectory();
+    configuration.mediaContentTypesRequiringHardwareSupport = player->mediaContentTypesRequiringHardwareSupport();
+    configuration.preferredAudioCharacteristics = player->preferredAudioCharacteristics();
+    configuration.logIdentifier = reinterpret_cast<uint64_t>(player->mediaPlayerLogIdentifier());
+    configuration.shouldUsePersistentCache = player->shouldUsePersistentCache();
+    configuration.isVideo = player->isVideoPlayer();
+
     bool haveRemoteProxy;
-    bool sendSucceeded = gpuProcessConnection().sendSync(Messages::RemoteMediaPlayerManagerProxy::CreateMediaPlayer(id, remoteEngineIdentifier), Messages::RemoteMediaPlayerManagerProxy::CreateMediaPlayer::Reply(haveRemoteProxy), 0);
+    bool sendSucceeded = gpuProcessConnection().sendSync(Messages::RemoteMediaPlayerManagerProxy::CreateMediaPlayer(id, remoteEngineIdentifier, configuration), Messages::RemoteMediaPlayerManagerProxy::CreateMediaPlayer::Reply(haveRemoteProxy), 0);
     if (!haveRemoteProxy || !sendSucceeded) {
         WTFLogAlways("Failed to create remote media player.");
         return nullptr;
