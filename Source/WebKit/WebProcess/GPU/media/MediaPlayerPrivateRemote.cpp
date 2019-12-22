@@ -53,11 +53,12 @@ using namespace WebCore;
     } \
 } while (0)
 
-MediaPlayerPrivateRemote::MediaPlayerPrivateRemote(MediaPlayer* player, MediaPlayerEnums::MediaEngineIdentifier engineIdentifier, MediaPlayerPrivateRemoteIdentifier playerIdentifier, RemoteMediaPlayerManager& manager)
+MediaPlayerPrivateRemote::MediaPlayerPrivateRemote(MediaPlayer* player, MediaPlayerEnums::MediaEngineIdentifier engineIdentifier, MediaPlayerPrivateRemoteIdentifier playerIdentifier, RemoteMediaPlayerManager& manager, const RemoteMediaPlayerConfiguration& configuration)
     : m_player(player)
     , m_manager(manager)
     , m_remoteEngineIdentifier(engineIdentifier)
     , m_id(playerIdentifier)
+    , m_configuration(configuration)
 #if !RELEASE_LOG_DISABLED
     , m_logger(&player->mediaPlayerLogger())
     , m_logIdentifier(player->mediaPlayerLogIdentifier())
@@ -242,6 +243,36 @@ void MediaPlayerPrivateRemote::characteristicChanged(bool hasAudio, bool hasVide
     m_player->characteristicChanged();
 }
 
+String MediaPlayerPrivateRemote::engineDescription() const
+{
+    return m_configuration.engineDescription;
+}
+
+bool MediaPlayerPrivateRemote::supportsScanning() const
+{
+    return m_configuration.supportsScanning;
+}
+
+bool MediaPlayerPrivateRemote::supportsFullscreen() const
+{
+    return m_configuration.supportsFullscreen;
+}
+
+bool MediaPlayerPrivateRemote::supportsPictureInPicture() const
+{
+    return m_configuration.supportsPictureInPicture;
+}
+
+bool MediaPlayerPrivateRemote::supportsAcceleratedRendering() const
+{
+    return m_configuration.supportsAcceleratedRendering;
+}
+
+bool MediaPlayerPrivateRemote::canPlayToWirelessPlaybackTarget() const
+{
+    return m_configuration.canPlayToWirelessPlaybackTarget;
+}
+
 void MediaPlayerPrivateRemote::updateCachedState(RemoteMediaPlayerState&& state)
 {
     m_cachedState.currentTime = state.currentTime;
@@ -347,24 +378,6 @@ String MediaPlayerPrivateRemote::errorLog() const
 void MediaPlayerPrivateRemote::setBufferingPolicy(MediaPlayer::BufferingPolicy)
 {
     notImplemented();
-}
-
-bool MediaPlayerPrivateRemote::supportsPictureInPicture() const
-{
-    notImplemented();
-    return false;
-}
-
-bool MediaPlayerPrivateRemote::supportsFullscreen() const
-{
-    notImplemented();
-    return false;
-}
-
-bool MediaPlayerPrivateRemote::supportsScanning() const
-{
-    notImplemented();
-    return false;
 }
 
 bool MediaPlayerPrivateRemote::canSaveMediaData() const
@@ -521,12 +534,6 @@ void MediaPlayerPrivateRemote::setWirelessVideoPlaybackDisabled(bool)
     notImplemented();
 }
 
-bool MediaPlayerPrivateRemote::canPlayToWirelessPlaybackTarget() const
-{
-    notImplemented();
-    return false;
-}
-
 bool MediaPlayerPrivateRemote::isCurrentPlaybackTargetWireless() const
 {
     notImplemented();
@@ -551,12 +558,6 @@ bool MediaPlayerPrivateRemote::canEnterFullscreen() const
     return false;
 }
 #endif
-
-bool MediaPlayerPrivateRemote::supportsAcceleratedRendering() const
-{
-    notImplemented();
-    return false;
-}
 
 void MediaPlayerPrivateRemote::acceleratedRenderingStateChanged()
 {
@@ -630,12 +631,6 @@ unsigned MediaPlayerPrivateRemote::videoDecodedByteCount() const
 {
     notImplemented();
     return 0;
-}
-
-String MediaPlayerPrivateRemote::engineDescription() const
-{
-    notImplemented();
-    return emptyString();
 }
 
 #if ENABLE(WEB_AUDIO)

@@ -58,6 +58,8 @@ public:
 
     void invalidate();
 
+    void getConfiguration(RemoteMediaPlayerConfiguration&);
+
     void prepareForPlayback(bool privateMode, WebCore::MediaPlayerEnums::Preload, bool preservesPitch, bool prepareForRendering);
 
     void load(const URL&, const ContentType&, const String&);

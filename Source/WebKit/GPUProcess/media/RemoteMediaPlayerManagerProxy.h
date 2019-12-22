@@ -38,6 +38,7 @@ namespace WebKit {
 
 class GPUConnectionToWebProcess;
 class RemoteMediaPlayerProxy;
+struct RemoteMediaPlayerConfiguration;
 
 class RemoteMediaPlayerManagerProxy
     : private IPC::MessageReceiver
@@ -68,7 +69,7 @@ private:
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
     void didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, std::unique_ptr<IPC::Encoder>&) final;
 
-    void createMediaPlayer(MediaPlayerPrivateRemoteIdentifier, WebCore::MediaPlayerEnums::MediaEngineIdentifier, RemoteMediaPlayerProxyConfiguration&&, CompletionHandler<void(bool)>&&);
+    void createMediaPlayer(MediaPlayerPrivateRemoteIdentifier, WebCore::MediaPlayerEnums::MediaEngineIdentifier, RemoteMediaPlayerProxyConfiguration&&, CompletionHandler<void(RemoteMediaPlayerConfiguration&)>&&);
     void deleteMediaPlayer(MediaPlayerPrivateRemoteIdentifier);
 
     // Media player factory

@@ -1,3 +1,50 @@
+2019-12-22  Eric Carlson  <eric.carlson@apple.com>
+
+        [Media in GPU process] Add remote media player proxy configuration
+        https://bugs.webkit.org/show_bug.cgi?id=205547
+        <rdar://problem/58139762>
+
+        Reviewed by Tim Horton.
+
+        * GPUProcess/media/RemoteMediaPlayerManagerProxy.cpp:
+        (WebKit::RemoteMediaPlayerManagerProxy::createMediaPlayer):
+        * GPUProcess/media/RemoteMediaPlayerManagerProxy.h:
+        * GPUProcess/media/RemoteMediaPlayerManagerProxy.messages.in:
+        * GPUProcess/media/RemoteMediaPlayerProxy.cpp:
+        (WebKit::RemoteMediaPlayerProxy::RemoteMediaPlayerProxy):
+        (WebKit::RemoteMediaPlayerProxy::getConfiguration):
+        (WebKit::RemoteMediaPlayerProxy::mediaPlayerMediaKeysStorageDirectory const):
+        (WebKit::RemoteMediaPlayerProxy::mediaPlayerReferrer const):
+        (WebKit::RemoteMediaPlayerProxy::mediaPlayerUserAgent const):
+        (WebKit::RemoteMediaPlayerProxy::mediaPlayerSourceApplicationIdentifier const):
+        (WebKit::RemoteMediaPlayerProxy::mediaPlayerNetworkInterfaceName const):
+        (WebKit::RemoteMediaPlayerProxy::mediaPlayerMediaCacheDirectory const):
+        (WebKit::RemoteMediaPlayerProxy::mediaContentTypesRequiringHardwareSupport const):
+        (WebKit::RemoteMediaPlayerProxy::mediaPlayerPreferredAudioCharacteristics const):
+        (WebKit::RemoteMediaPlayerProxy::mediaPlayerShouldUsePersistentCache const):
+        (WebKit::RemoteMediaPlayerProxy::mediaPlayerIsVideo const):
+        (WebKit::RemoteMediaPlayerProxy::mediaPlayerKeyNeeded):
+        (WebKit::RemoteMediaPlayerProxy::mediaPlayerGetRawCookies const):
+        * GPUProcess/media/RemoteMediaPlayerProxy.h:
+        (WebKit::RemoteMediaPlayerProxy::mediaPlayerLogIdentifier):
+        * GPUProcess/media/RemoteMediaPlayerProxyConfiguration.h: Added.
+        (WebKit::RemoteMediaPlayerProxyConfiguration::encode const):
+        (WebKit::RemoteMediaPlayerProxyConfiguration::decode):
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/GPU/media/MediaPlayerPrivateRemote.cpp:
+        (WebKit::MediaPlayerPrivateRemote::MediaPlayerPrivateRemote):
+        (WebKit::MediaPlayerPrivateRemote::engineDescription const):
+        (WebKit::MediaPlayerPrivateRemote::supportsScanning const):
+        (WebKit::MediaPlayerPrivateRemote::supportsPictureInPicture const):
+        (WebKit::MediaPlayerPrivateRemote::supportsAcceleratedRendering const):
+        (WebKit::MediaPlayerPrivateRemote::canPlayToWirelessPlaybackTarget const):
+        * WebProcess/GPU/media/MediaPlayerPrivateRemote.h:
+        * WebProcess/GPU/media/RemoteMediaPlayerConfiguration.h: Added.
+        (WebKit::RemoteMediaPlayerConfiguration::encode const):
+        (WebKit::RemoteMediaPlayerConfiguration::decode):
+        * WebProcess/GPU/media/RemoteMediaPlayerManager.cpp:
+        (WebKit::RemoteMediaPlayerManager::createRemoteMediaPlayer):
+
 2019-12-21  Brian Burg  <bburg@apple.com>
 
         Web Inspector: add InspectedTargetTypes diagnostic event and related hooks

@@ -27,6 +27,7 @@
 
 #if ENABLE(GPU_PROCESS)
 
+#include "RemoteMediaPlayerConfiguration.h"
 #include "RemoteMediaPlayerManager.h"
 #include "RemoteMediaPlayerState.h"
 #include <WebCore/MediaPlayerPrivate.h>
@@ -44,12 +45,12 @@ class MediaPlayerPrivateRemote final
 #endif
 {
 public:
-    static std::unique_ptr<MediaPlayerPrivateRemote> create(MediaPlayer* player, MediaPlayerEnums::MediaEngineIdentifier remoteEngineIdentifier, MediaPlayerPrivateRemoteIdentifier identifier, RemoteMediaPlayerManager& manager)
+    static std::unique_ptr<MediaPlayerPrivateRemote> create(MediaPlayer* player, MediaPlayerEnums::MediaEngineIdentifier remoteEngineIdentifier, MediaPlayerPrivateRemoteIdentifier identifier, RemoteMediaPlayerManager& manager, const RemoteMediaPlayerConfiguration& configuration)
     {
-        return makeUnique<MediaPlayerPrivateRemote>(player, remoteEngineIdentifier, identifier, manager);
+        return makeUnique<MediaPlayerPrivateRemote>(player, remoteEngineIdentifier, identifier, manager, configuration);
     }
 
-    explicit MediaPlayerPrivateRemote(MediaPlayer*, MediaPlayerEnums::MediaEngineIdentifier, MediaPlayerPrivateRemoteIdentifier, RemoteMediaPlayerManager&);
+    explicit MediaPlayerPrivateRemote(MediaPlayer*, MediaPlayerEnums::MediaEngineIdentifier, MediaPlayerPrivateRemoteIdentifier, RemoteMediaPlayerManager&, const RemoteMediaPlayerConfiguration&);
     virtual ~MediaPlayerPrivateRemote();
 
     void invalidate() { m_invalid = true; }
@@ -296,6 +297,7 @@ private:
     RemoteMediaPlayerManager m_manager;
     MediaPlayerEnums::MediaEngineIdentifier m_remoteEngineIdentifier;
     MediaPlayerPrivateRemoteIdentifier m_id;
+    RemoteMediaPlayerConfiguration m_configuration;
 
     RemoteMediaPlayerState m_cachedState;
     std::unique_ptr<PlatformTimeRanges> m_cachedBufferedTimeRanges;

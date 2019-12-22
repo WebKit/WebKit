@@ -59,6 +59,16 @@ void RemoteMediaPlayerProxy::invalidate()
     m_player->invalidate();
 }
 
+void RemoteMediaPlayerProxy::getConfiguration(RemoteMediaPlayerConfiguration& configuration)
+{
+    configuration.engineDescription = m_player->engineDescription();
+    configuration.supportsScanning = m_player->supportsScanning();
+    configuration.supportsFullscreen = m_player->supportsFullscreen();
+    configuration.supportsPictureInPicture = m_player->supportsPictureInPicture();
+    configuration.supportsAcceleratedRendering = m_player->supportsAcceleratedRendering();
+    configuration.canPlayToWirelessPlaybackTarget = m_player->canPlayToWirelessPlaybackTarget();
+}
+
 void RemoteMediaPlayerProxy::load(const URL& url, const ContentType& contentType, const String& keySystem)
 {
     m_player->load(url, contentType, keySystem);

@@ -28,6 +28,7 @@
 
 #if ENABLE(GPU_PROCESS)
 
+#include "RemoteMediaPlayerConfiguration.h"
 #include "RemoteMediaPlayerManagerMessages.h"
 #include "RemoteMediaPlayerManagerProxyMessages.h"
 #include "RemoteMediaPlayerProxyConfiguration.h"
@@ -116,29 +117,29 @@ std::unique_ptr<MediaPlayerPrivateInterface> RemoteMediaPlayerManager::createRem
 {
     auto id = MediaPlayerPrivateRemoteIdentifier::generate();
 
-    RemoteMediaPlayerProxyConfiguration configuration;
-    configuration.mediaKeysStorageDirectory = player->mediaKeysStorageDirectory();
-    configuration.referrer = player->referrer();
-    configuration.userAgent = player->userAgent();
-    configuration.sourceApplicationIdentifier = player->sourceApplicationIdentifier();
+    RemoteMediaPlayerProxyConfiguration proxyConfiguration;
+    proxyConfiguration.mediaKeysStorageDirectory = player->mediaKeysStorageDirectory();
+    proxyConfiguration.referrer = player->referrer();
+    proxyConfiguration.userAgent = player->userAgent();
+    proxyConfiguration.sourceApplicationIdentifier = player->sourceApplicationIdentifier();
 #if PLATFORM(IOS_FAMILY)
-    configuration.networkInterfaceName = player->mediaPlayerNetworkInterfaceName();
+    proxyConfiguration.networkInterfaceName = player->mediaPlayerNetworkInterfaceName();
 #endif
-    configuration.mediaCacheDirectory = player->mediaCacheDirectory();
-    configuration.mediaContentTypesRequiringHardwareSupport = player->mediaContentTypesRequiringHardwareSupport();
-    configuration.preferredAudioCharacteristics = player->preferredAudioCharacteristics();
-    configuration.logIdentifier = reinterpret_cast<uint64_t>(player->mediaPlayerLogIdentifier());
-    configuration.shouldUsePersistentCache = player->shouldUsePersistentCache();
-    configuration.isVideo = player->isVideoPlayer();
+    proxyConfiguration.mediaCacheDirectory = player->mediaCacheDirectory();
+    proxyConfiguration.mediaContentTypesRequiringHardwareSupport = player->mediaContentTypesRequiringHardwareSupport();
+    proxyConfiguration.preferredAudioCharacteristics = player->preferredAudioCharacteristics();
+    proxyConfiguration.logIdentifier = reinterpret_cast<uint64_t>(player->mediaPlayerLogIdentifier());
+    proxyConfiguration.shouldUsePersistentCache = player->shouldUsePersistentCache();
+    proxyConfiguration.isVideo = player->isVideoPlayer();
 
-    bool haveRemoteProxy;
-    bool sendSucceeded = gpuProcessConnection().sendSync(Messages::RemoteMediaPlayerManagerProxy::CreateMediaPlayer(id, remoteEngineIdentifier, configuration), Messages::RemoteMediaPlayerManagerProxy::CreateMediaPlayer::Reply(haveRemoteProxy), 0);
-    if (!haveRemoteProxy || !sendSucceeded) {
+    RemoteMediaPlayerConfiguration playerConfiguration;
+    bool sendSucceeded = gpuProcessConnection().sendSync(Messages::RemoteMediaPlayerManagerProxy::CreateMediaPlayer(id, remoteEngineIdentifier, proxyConfiguration), Messages::RemoteMediaPlayerManagerProxy::CreateMediaPlayer::Reply(playerConfiguration), 0);
+    if (!sendSucceeded) {
         WTFLogAlways("Failed to create remote media player.");
         return nullptr;
     }
 
-    auto remotePlayer = MediaPlayerPrivateRemote::create(player, remoteEngineIdentifier, id, *this);
+    auto remotePlayer = MediaPlayerPrivateRemote::create(player, remoteEngineIdentifier, id, *this, playerConfiguration);
     m_players.add(id, makeWeakPtr(*remotePlayer));
     return remotePlayer;
 }
