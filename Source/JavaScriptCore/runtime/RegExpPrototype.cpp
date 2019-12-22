@@ -463,7 +463,7 @@ EncodedJSValue JSC_HOST_CALL regExpProtoGetterSource(JSGlobalObject* globalObjec
     auto* regexp = jsDynamicCast<RegExpObject*>(vm, thisValue);
     if (UNLIKELY(!regexp)) {
         if (thisValue.inherits<RegExpPrototype>(vm))
-            return JSValue::encode(jsString(vm, "(?:)"_s));
+            return JSValue::encode(jsNontrivialString(vm, "(?:)"_s));
         return throwVMTypeError(globalObject, scope, "The RegExp.prototype.source getter can only be called on a RegExp object"_s);
     }
 

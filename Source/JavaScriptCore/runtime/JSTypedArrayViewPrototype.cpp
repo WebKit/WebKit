@@ -256,23 +256,23 @@ static EncodedJSValue JSC_HOST_CALL typedArrayViewProtoGetterFuncToStringTag(JSG
     VM& vm = globalObject->vm();
     switch (thisValue.getObject()->classInfo(vm)->typedArrayStorageType) {
     case TypeUint8Clamped:
-        return JSValue::encode(jsString(vm, "Uint8ClampedArray"));
+        return JSValue::encode(jsNontrivialString(vm, "Uint8ClampedArray"_s));
     case TypeInt32:
-        return JSValue::encode(jsString(vm, "Int32Array"));
+        return JSValue::encode(jsNontrivialString(vm, "Int32Array"_s));
     case TypeUint32:
-        return JSValue::encode(jsString(vm, "Uint32Array"));
+        return JSValue::encode(jsNontrivialString(vm, "Uint32Array"_s));
     case TypeFloat64:
-        return JSValue::encode(jsString(vm, "Float64Array"));
+        return JSValue::encode(jsNontrivialString(vm, "Float64Array"_s));
     case TypeFloat32:
-        return JSValue::encode(jsString(vm, "Float32Array"));
+        return JSValue::encode(jsNontrivialString(vm, "Float32Array"_s));
     case TypeInt8:
-        return JSValue::encode(jsString(vm, "Int8Array"));
+        return JSValue::encode(jsNontrivialString(vm, "Int8Array"_s));
     case TypeUint8:
-        return JSValue::encode(jsString(vm, "Uint8Array"));
+        return JSValue::encode(jsNontrivialString(vm, "Uint8Array"_s));
     case TypeInt16:
-        return JSValue::encode(jsString(vm, "Int16Array"));
+        return JSValue::encode(jsNontrivialString(vm, "Int16Array"_s));
     case TypeUint16:
-        return JSValue::encode(jsString(vm, "Uint16Array"));
+        return JSValue::encode(jsNontrivialString(vm, "Uint16Array"_s));
     case NotTypedArray:
     case TypeDataView:
         return JSValue::encode(jsUndefined());

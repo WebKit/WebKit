@@ -38,7 +38,7 @@ void MapIteratorPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
     Base::finishCreation(vm);
     ASSERT(inherits(vm, info()));
 
-    putDirectWithoutTransition(vm, vm.propertyNames->toStringTagSymbol, jsString(vm, "Map Iterator"), PropertyAttribute::DontEnum | PropertyAttribute::ReadOnly);
+    putDirectWithoutTransition(vm, vm.propertyNames->toStringTagSymbol, jsNontrivialString(vm, "Map Iterator"_s), PropertyAttribute::DontEnum | PropertyAttribute::ReadOnly);
     JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->next, mapIteratorPrototypeNextCodeGenerator, static_cast<unsigned>(PropertyAttribute::DontEnum));
 }
 

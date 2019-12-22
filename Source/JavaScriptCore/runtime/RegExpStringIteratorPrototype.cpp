@@ -44,7 +44,7 @@ void RegExpStringIteratorPrototype::finishCreation(VM& vm, JSGlobalObject* globa
 {
     Base::finishCreation(vm);
     ASSERT(inherits(vm, info()));
-    putDirectWithoutTransition(vm, vm.propertyNames->toStringTagSymbol, jsString(vm, "RegExp String Iterator"), PropertyAttribute::DontEnum | PropertyAttribute::ReadOnly);
+    putDirectWithoutTransition(vm, vm.propertyNames->toStringTagSymbol, jsNontrivialString(vm, "RegExp String Iterator"_s), PropertyAttribute::DontEnum | PropertyAttribute::ReadOnly);
     JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->next, regExpStringIteratorPrototypeNextCodeGenerator, static_cast<unsigned>(PropertyAttribute::DontEnum));
 }
 

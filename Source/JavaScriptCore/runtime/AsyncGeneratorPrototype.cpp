@@ -49,7 +49,7 @@ void AsyncGeneratorPrototype::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
     ASSERT(inherits(vm, info()));
-    putDirectWithoutTransition(vm, vm.propertyNames->toStringTagSymbol, jsString(vm, "AsyncGenerator"), PropertyAttribute::DontEnum | PropertyAttribute::ReadOnly);
+    putDirectWithoutTransition(vm, vm.propertyNames->toStringTagSymbol, jsNontrivialString(vm, "AsyncGenerator"_s), PropertyAttribute::DontEnum | PropertyAttribute::ReadOnly);
 }
 
 } // namespace JSC

@@ -529,7 +529,7 @@ JSValue IntlNumberFormat::formatToParts(JSGlobalObject* globalObject, double val
 
     auto resultString = String(result.data(), resultLength);
     auto typePropertyName = Identifier::fromString(vm, "type");
-    auto literalString = jsString(vm, "literal"_s);
+    auto literalString = jsNontrivialString(vm, "literal"_s);
 
     int32_t currentIndex = 0;
     while (currentIndex < resultLength) {

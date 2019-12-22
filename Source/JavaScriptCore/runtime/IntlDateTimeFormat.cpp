@@ -1013,7 +1013,7 @@ JSValue IntlDateTimeFormat::formatToParts(JSGlobalObject* globalObject, double v
 
     auto resultString = String(result.data(), resultLength);
     auto typePropertyName = Identifier::fromString(vm, "type");
-    auto literalString = jsString(vm, "literal"_s);
+    auto literalString = jsNontrivialString(vm, "literal"_s);
 
     int32_t previousEndIndex = 0;
     int32_t beginIndex = 0;
