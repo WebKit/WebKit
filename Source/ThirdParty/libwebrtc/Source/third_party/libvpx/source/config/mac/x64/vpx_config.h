@@ -21,12 +21,23 @@
 #define HAVE_DSPR2 0
 #define HAVE_MSA 0
 #define HAVE_MIPS64 0
+
+#ifdef WK_DISABLE_HARDWARE_ACCELERATION
+#define HAVE_MMX 0
+#define HAVE_SSE 0
+#define HAVE_SSE2 0
+#define HAVE_SSE3 0
+#define HAVE_SSSE3 0
+#define HAVE_SSE4_1 0
+#else
 #define HAVE_MMX 1
 #define HAVE_SSE 1
 #define HAVE_SSE2 1
 #define HAVE_SSE3 1
 #define HAVE_SSSE3 1
 #define HAVE_SSE4_1 1
+#endif
+
 #define HAVE_AVX 1
 #define HAVE_AVX2 1
 #define HAVE_AVX512 0

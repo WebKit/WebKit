@@ -1,3 +1,21 @@
+2019-12-22  youenn fablet  <youenn@apple.com>
+
+        Compile libwebrtc without hardware acceleration for iOS simulator
+        https://bugs.webkit.org/show_bug.cgi?id=205491
+
+        Reviewed by Alex Christensen.
+
+        Use c routines instead of optimized versions for iOS simulator.
+
+        * Configurations/libvpx.xcconfig:
+        * Source/third_party/libvpx/source/config/mac/x64/vp8_rtcd.h:
+        * Source/third_party/libvpx/source/config/mac/x64/vp8_rtcd_no_acceleration.h: Copied from Source/ThirdParty/libwebrtc/Source/third_party/libvpx/source/config/mac/x64/vp8_rtcd.h.
+        * Source/third_party/libvpx/source/config/mac/x64/vpx_config.h:
+        * Source/third_party/libvpx/source/config/mac/x64/vpx_dsp_rtcd.h:
+        * Source/third_party/libvpx/source/config/mac/x64/vpx_dsp_rtcd_no_acceleration.h: Copied from Source/ThirdParty/libwebrtc/Source/third_party/libvpx/source/config/mac/x64/vpx_dsp_rtcd.h.
+        * Source/third_party/libvpx/source/libvpx/vpx_ports/system_state.h:
+        * libwebrtc.xcodeproj/project.pbxproj:
+
 2019-12-08  youenn fablet  <youenn@apple.com>
 
         Add more logging to physical socket server when a socket file descriptor is invalid
