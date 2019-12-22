@@ -378,6 +378,14 @@ void LineBuilder::removeTrailingCollapsibleContent()
     if (m_collapsibleContent.isEmpty() || m_inlineItemRuns.isEmpty())
         return;
 
+    // Complex line layout quirk: keep the trailing whitespace around when it is followed by a line break, unless the content overflows the line.
+    if (RuntimeEnabledFeatures::sharedFeatures().layoutFormattingContextIntegrationEnabled()) {
+        if (m_inlineItemRuns.last().isLineBreak() && availableWidth() >= 0) {
+            m_collapsibleContent.reset();
+            return;
+        }
+    }
+
     m_lineBox.shrinkHorizontally(m_collapsibleContent.collapse());
     // If we collapsed the first visible run on the line, we need to re-check the visibility status.
     if (!m_lineIsVisuallyEmptyBeforeCollapsibleContent)

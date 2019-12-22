@@ -1,5 +1,19 @@
 2019-12-22  Zalan Bujtas  <zalan@apple.com>
 
+        [LFC][Integration] Do not remove trailing whitespace when it is followed by a line break
+        https://bugs.webkit.org/show_bug.cgi?id=205549
+        <rdar://problem/58139893>
+
+        Reviewed by Antti Koivisto.
+
+        Complex line layout quirk: keep the trailing whitespace aroun
+        when it is followed by a line break, unless the content overflows the line.
+
+        * layout/inlineformatting/InlineLineBuilder.cpp:
+        (WebCore::Layout::LineBuilder::removeTrailingCollapsibleContent):
+
+2019-12-22  Zalan Bujtas  <zalan@apple.com>
+
         [LFC][Integration] Do not collapse trailing letter spacing
         https://bugs.webkit.org/show_bug.cgi?id=205548
         <rdar://problem/58139872>
