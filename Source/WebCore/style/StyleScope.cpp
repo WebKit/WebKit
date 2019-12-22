@@ -643,30 +643,33 @@ void Scope::evaluateMediaQueriesForAppearanceChange()
 template <typename TestFunction>
 void Scope::evaluateMediaQueries(TestFunction&& testFunction)
 {
-    if (!m_shadowRoot) {
-        for (auto* descendantShadowRoot : m_document.inDocumentShadowRoots())
-            descendantShadowRoot->styleScope().evaluateMediaQueries(testFunction);
-    }
     auto* resolver = resolverIfExists();
     if (!resolver)
         return;
 
-    auto updateType = testFunction(*resolver);
+    auto evaluationChanges = testFunction(*resolver);
+    if (evaluationChanges) {
+        switch (evaluationChanges->type) {
+        case DynamicMediaQueryEvaluationChanges::Type::InvalidateStyle: {
+            Invalidator invalidator(evaluationChanges->invalidationRuleSets);
+            if (m_shadowRoot)
+                invalidator.invalidateStyle(*m_shadowRoot);
+            else
+                invalidator.invalidateStyle(m_document);
+            break;
+        }
+        case DynamicMediaQueryEvaluationChanges::Type::ResetStyle:
+            scheduleUpdate(UpdateType::ContentsOrInterpretation);
+            break;
+        }
 
-    switch (updateType) {
-    case RuleSet::MediaQueryStyleUpdateType::None:
-        return;
-    case RuleSet::MediaQueryStyleUpdateType::Resolve:
-        // FIXME: We could have an invalidation ruleset for rules inside dynamic media queries.
-        if (auto* documentElement = m_document.documentElement())
-            documentElement->invalidateStyleForSubtree();
-        break;
-    case RuleSet::MediaQueryStyleUpdateType::Reset:
-        scheduleUpdate(UpdateType::ContentsOrInterpretation);
-        break;
+        InspectorInstrumentation::mediaQueryResultChanged(m_document);
     }
 
-    InspectorInstrumentation::mediaQueryResultChanged(m_document);
+    if (!m_shadowRoot) {
+        for (auto* descendantShadowRoot : m_document.inDocumentShadowRoots())
+            descendantShadowRoot->styleScope().evaluateMediaQueries(testFunction);
+    }
 }
 
 void Scope::didChangeActiveStyleSheetCandidates()

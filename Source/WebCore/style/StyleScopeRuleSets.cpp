@@ -52,10 +52,6 @@ ScopeRuleSets::~ScopeRuleSets()
 
 RuleSet* ScopeRuleSets::userAgentMediaQueryStyle() const
 {
-    // FIXME: We should have a separate types for document rule sets and shadow tree rule sets.
-    if (m_isForShadowScope)
-        return m_styleResolver.document().styleScope().resolver().ruleSets().userAgentMediaQueryStyle();
-
     updateUserAgentMediaQueryStyleIfNeeded();
     return m_userAgentMediaQueryStyle.get();
 }
@@ -141,27 +137,26 @@ bool ScopeRuleSets::hasViewportDependentMediaQueries() const
     return false;
 }
 
-RuleSet::MediaQueryStyleUpdateType ScopeRuleSets::evaluteDynamicMediaQueryRules(const MediaQueryEvaluator& evaluator)
+Optional<DynamicMediaQueryEvaluationChanges> ScopeRuleSets::evaluteDynamicMediaQueryRules(const MediaQueryEvaluator& evaluator)
 {
-    auto updateType = RuleSet::MediaQueryStyleUpdateType::None;
+    Optional<DynamicMediaQueryEvaluationChanges> evaluationChanges;
 
-    auto evaluate = [&](auto& ruleSet) {
+    auto evaluate = [&](auto* ruleSet) {
         if (!ruleSet)
-            return false;
-        auto newUpdateType = ruleSet->evaluteDynamicMediaQueryRules(evaluator);
-        if (newUpdateType > updateType)
-            updateType = newUpdateType;
-        return updateType == RuleSet::MediaQueryStyleUpdateType::Reset;
+            return;
+        if (auto changes = ruleSet->evaluteDynamicMediaQueryRules(evaluator)) {
+            if (evaluationChanges)
+                evaluationChanges->append(WTFMove(*changes));
+            else
+                evaluationChanges = changes;
+        }
     };
 
-    if (evaluate(m_authorStyle))
-        return updateType;
+    evaluate(&authorStyle());
+    evaluate(userStyle());
+    evaluate(userAgentMediaQueryStyle());
 
-    if (evaluate(m_userStyle))
-        return updateType;
-
-    evaluate(m_userAgentMediaQueryStyle);
-    return updateType;
+    return evaluationChanges;
 }
 
 void ScopeRuleSets::appendAuthorStyleSheets(const Vector<RefPtr<CSSStyleSheet>>& styleSheets, MediaQueryEvaluator* medium, InspectorCSSOMWrappers& inspectorCSSOMWrappers)

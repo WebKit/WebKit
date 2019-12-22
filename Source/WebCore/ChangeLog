@@ -1,3 +1,44 @@
+2019-12-22  Antti Koivisto  <antti@apple.com>
+
+        Invalidate only affected elements after media query evaluation changes
+        https://bugs.webkit.org/show_bug.cgi?id=205392
+
+        Reviewed by Zalan Bujtas.
+
+        We currently invalidate style of the whole tree when a media query evaluation changes.
+        We can do better by constructing an invalidation RuleSet and invalidating only those
+        elements that are potentially affected.
+
+        * style/RuleSet.cpp:
+        (WebCore::Style::RuleSet::addRule):
+        (WebCore::Style::RuleSet::evaluteDynamicMediaQueryRules):
+
+        Construct and cache an invalidation RuleSet and associate with a set of media query changes.
+
+        (WebCore::Style::RuleSet::MediaQueryCollector::pushAndEvaluate):
+        (WebCore::Style::RuleSet::MediaQueryCollector::pop):
+        (WebCore::Style::RuleSet::MediaQueryCollector::addRuleIfNeeded):
+
+        Collect RuleFeatures which we later use to build invalidation RuleSet.
+
+        (WebCore::Style::RuleSet::MediaQueryCollector::addRulePositionIfNeeded): Deleted.
+        * style/RuleSet.h:
+        (WebCore::Style::DynamicMediaQueryEvaluationChanges::append):
+        * style/StyleResolver.cpp:
+        (WebCore::Style::Resolver::evaluateDynamicMediaQueries):
+        * style/StyleResolver.h:
+        * style/StyleScope.cpp:
+        (WebCore::Style::Scope::evaluateMediaQueries):
+
+        Use the invalidation RuleSet for accurate style invalidation.
+
+        * style/StyleScopeRuleSets.cpp:
+        (WebCore::Style::ScopeRuleSets::evaluteDynamicMediaQueryRules):
+
+        Collect invalidation RuleSets for author/user/user agent style.
+
+        * style/StyleScopeRuleSets.h:
+
 2019-12-22  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][Integration] Do not remove trailing whitespace when it is followed by a line break

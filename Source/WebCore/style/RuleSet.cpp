@@ -95,7 +95,7 @@ void RuleSet::addRule(StyleRule& rule, unsigned selectorIndex, unsigned selector
     m_features.collectFeatures(ruleData);
 
     if (mediaQueryCollector)
-        mediaQueryCollector->addRulePositionIfNeeded(ruleData.position());
+        mediaQueryCollector->addRuleIfNeeded(ruleData);
 
     unsigned classBucketSize = 0;
     const CSSSelector* idSelector = nullptr;
@@ -346,9 +346,15 @@ void RuleSet::addRulesFromSheet(StyleSheetContents& sheet, MediaQuerySet* sheetQ
     }
 
     m_hasViewportDependentMediaQueries = mediaQueryCollector.hasViewportDependentMediaQueries;
+
+    if (mediaQueryCollector.dynamicMediaQueryRules.isEmpty())
+        return;
+
+    auto firstNewIndex = m_dynamicMediaQueryRules.size();
     m_dynamicMediaQueryRules.appendVector(WTFMove(mediaQueryCollector.dynamicMediaQueryRules));
 
-    evaluteDynamicMediaQueryRules(evaluator);
+    // Set the initial values.
+    evaluteDynamicMediaQueryRules(evaluator, firstNewIndex);
 }
 
 void RuleSet::addRulesFromSheet(StyleSheetContents& sheet, MediaQueryCollector& mediaQueryCollector, Resolver* resolver, AddRulesMode mode)
@@ -405,10 +411,34 @@ void RuleSet::traverseRuleDatas(Function&& function)
     traverseVector(m_universalRules);
 }
 
-RuleSet::MediaQueryStyleUpdateType RuleSet::evaluteDynamicMediaQueryRules(const MediaQueryEvaluator& evaluator)
+Optional<DynamicMediaQueryEvaluationChanges> RuleSet::evaluteDynamicMediaQueryRules(const MediaQueryEvaluator& evaluator)
 {
-    bool changes = false;
-    for (auto& dynamicRules : m_dynamicMediaQueryRules) {
+    auto collectedChanges = evaluteDynamicMediaQueryRules(evaluator, 0);
+
+    if (collectedChanges.requiredFullReset)
+        return { { DynamicMediaQueryEvaluationChanges::Type::ResetStyle } };
+
+    if (collectedChanges.changedQueryIndexes.isEmpty())
+        return { };
+
+    auto& ruleSet = m_mediaQueryInvalidationRuleSetCache.ensure(collectedChanges.changedQueryIndexes, [&] {
+        auto ruleSet = makeUnique<RuleSet>();
+        for (auto* featureVector : collectedChanges.ruleFeatures) {
+            for (auto& feature : *featureVector)
+                ruleSet->addRule(*feature.rule, feature.selectorIndex, feature.selectorListIndex);
+        }
+        return ruleSet;
+    }).iterator->value;
+
+    return { { DynamicMediaQueryEvaluationChanges::Type::InvalidateStyle, { ruleSet.get() } } };
+}
+
+RuleSet::CollectedMediaQueryChanges RuleSet::evaluteDynamicMediaQueryRules(const MediaQueryEvaluator& evaluator, size_t startIndex)
+{
+    CollectedMediaQueryChanges collectedChanges;
+
+    for (size_t i = startIndex; i < m_dynamicMediaQueryRules.size(); ++i) {
+        auto& dynamicRules = m_dynamicMediaQueryRules[i];
         bool result = true;
         for (auto& set : dynamicRules.mediaQuerySets) {
             if (!evaluator.evaluate(set.get())) {
@@ -419,19 +449,24 @@ RuleSet::MediaQueryStyleUpdateType RuleSet::evaluteDynamicMediaQueryRules(const 
 
         if (result != dynamicRules.result) {
             dynamicRules.result = result;
-            if (dynamicRules.requiresFullReset)
-                return MediaQueryStyleUpdateType::Reset;
+
+            if (dynamicRules.requiresFullReset) {
+                collectedChanges.requiredFullReset = true;
+                return collectedChanges;
+            }
 
             traverseRuleDatas([&](RuleData& ruleData) {
                 if (!dynamicRules.affectedRulePositions.contains(ruleData.position()))
                     return;
                 ruleData.setEnabled(result);
-                changes = true;
             });
+
+            collectedChanges.changedQueryIndexes.append(i);
+            collectedChanges.ruleFeatures.append(&dynamicRules.ruleFeatures);
         }
     }
 
-    return changes ? MediaQueryStyleUpdateType::Resolve : MediaQueryStyleUpdateType::None;
+    return collectedChanges;
 }
 
 bool RuleSet::hasShadowPseudoElementRules() const
@@ -472,7 +507,7 @@ void RuleSet::shrinkToFit()
 
 RuleSet::MediaQueryCollector::~MediaQueryCollector() = default;
 
-bool RuleSet::MediaQueryCollector::pushAndEvaluate(MediaQuerySet* set)
+bool RuleSet::MediaQueryCollector::pushAndEvaluate(const MediaQuerySet* set)
 {
     if (!set)
         return true;
@@ -495,7 +530,7 @@ bool RuleSet::MediaQueryCollector::pushAndEvaluate(MediaQuerySet* set)
     return true;
 }
 
-void RuleSet::MediaQueryCollector::pop(MediaQuerySet* set)
+void RuleSet::MediaQueryCollector::pop(const MediaQuerySet* set)
 {
     if (!set || dynamicContextStack.isEmpty() || set != &dynamicContextStack.last().set.get())
         return;
@@ -508,6 +543,9 @@ void RuleSet::MediaQueryCollector::pop(MediaQuerySet* set)
         if (collectDynamic) {
             auto& toAdd = dynamicContextStack.last().affectedRulePositions;
             rules.affectedRulePositions.add(toAdd.begin(), toAdd.end());
+
+            rules.ruleFeatures = WTFMove(dynamicContextStack.last().ruleFeatures);
+            rules.ruleFeatures.shrinkToFit();
         } else
             rules.requiresFullReset = true;
 
@@ -524,11 +562,14 @@ void RuleSet::MediaQueryCollector::didMutateResolver()
     didMutateResolverWithinDynamicMediaQuery = true;
 }
 
-void RuleSet::MediaQueryCollector::addRulePositionIfNeeded(size_t index)
+void RuleSet::MediaQueryCollector::addRuleIfNeeded(const RuleData& ruleData)
 {
     if (dynamicContextStack.isEmpty())
         return;
-    dynamicContextStack.last().affectedRulePositions.append(index);
+
+    auto& context = dynamicContextStack.last();
+    context.affectedRulePositions.append(ruleData.position());
+    context.ruleFeatures.append({ ruleData.rule(), ruleData.selectorIndex(), ruleData.selectorListIndex() });
 }
 
 
