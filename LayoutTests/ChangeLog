@@ -1,3 +1,9 @@
+2019-12-22  Alexey Proskuryakov  <ap@apple.com>
+
+        Add TextExpectations for flaky whlsl tests.
+
+        * platform/mac/TestExpectations:
+
 2019-12-21  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Improve our bound function implementation
