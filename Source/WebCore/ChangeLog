@@ -1,3 +1,16 @@
+2019-12-22  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][Integration] Do not collapse trailing letter spacing
+        https://bugs.webkit.org/show_bug.cgi?id=205548
+        <rdar://problem/58139872>
+
+        Reviewed by Antti Koivisto.
+
+        Turn off trailing letter-spacing trimming for now.
+
+        * layout/inlineformatting/InlineLineBuilder.cpp:
+        (WebCore::Layout::LineBuilder::InlineItemRun::hasTrailingLetterSpacing const):
+
 2019-12-21  Brian Burg  <bburg@apple.com>
 
         Web Inspector: add InspectedTargetTypes diagnostic event and related hooks

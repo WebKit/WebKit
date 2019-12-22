@@ -30,6 +30,7 @@
 
 #include "InlineFormattingContext.h"
 #include "InlineSoftLineBreakItem.h"
+#include "RuntimeEnabledFeatures.h"
 #include "TextUtil.h"
 #include <wtf/IsoMallocInlines.h>
 
@@ -839,6 +840,9 @@ bool LineBuilder::InlineItemRun::isCollapsibleWhitespace() const
 
 bool LineBuilder::InlineItemRun::hasTrailingLetterSpacing() const
 {
+    // Complex line layout does not keep track of trailing letter spacing.
+    if (RuntimeEnabledFeatures::sharedFeatures().layoutFormattingContextIntegrationEnabled())
+        return false;
     return !isWhitespace() && style().letterSpacing() > 0;
 }
 
