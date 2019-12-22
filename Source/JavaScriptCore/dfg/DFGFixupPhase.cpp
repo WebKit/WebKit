@@ -2521,6 +2521,7 @@ private:
         case FilterPutByIdStatus:
         case FilterInByIdStatus:
         case InvalidationPoint:
+        case CreateArgumentsButterfly:
             break;
 #else
         default:

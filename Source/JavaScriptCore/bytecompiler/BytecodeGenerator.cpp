@@ -2726,6 +2726,12 @@ RegisterID* BytecodeGenerator::emitCreateAsyncGenerator(RegisterID* dst, Registe
     return dst;
 }
 
+RegisterID* BytecodeGenerator::emitCreateArgumentsButterfly(RegisterID* dst)
+{
+    OpCreateArgumentsButterfly::emit(this, dst);
+    return dst;
+}
+
 void BytecodeGenerator::emitTDZCheck(RegisterID* target)
 {
     OpCheckTdz::emit(this, target);

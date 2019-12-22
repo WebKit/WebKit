@@ -470,7 +470,7 @@ void JITCompiler::compileFunction()
         arityCheck = label();
         compileEntry();
 
-        load32(AssemblyHelpers::payloadFor((VirtualRegister)CallFrameSlot::argumentCount), GPRInfo::regT1);
+        load32(AssemblyHelpers::payloadFor((VirtualRegister)CallFrameSlot::argumentCountIncludingThis), GPRInfo::regT1);
         branch32(AboveOrEqual, GPRInfo::regT1, TrustedImm32(m_codeBlock->numParameters())).linkTo(fromArityCheck, this);
         emitStoreCodeOrigin(CodeOrigin(BytecodeIndex(0)));
         if (maxFrameExtentForSlowPathCall)

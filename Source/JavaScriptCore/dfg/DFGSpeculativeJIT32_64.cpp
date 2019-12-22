@@ -735,7 +735,7 @@ void SpeculativeJIT::emitCall(Node* node)
             for (unsigned i = numPassedArgs; i < numAllocatedArgs; ++i)
                 shuffleData.args[i] = ValueRecovery::constant(jsUndefined());
         } else {
-            m_jit.store32(MacroAssembler::TrustedImm32(numPassedArgs), m_jit.calleeFramePayloadSlot(CallFrameSlot::argumentCount));
+            m_jit.store32(MacroAssembler::TrustedImm32(numPassedArgs), m_jit.calleeFramePayloadSlot(CallFrameSlot::argumentCountIncludingThis));
         
             for (unsigned i = 0; i < numPassedArgs; i++) {
                 Edge argEdge = m_jit.graph().m_varArgChildren[node->firstChild() + 1 + i];
@@ -3871,6 +3871,11 @@ void SpeculativeJIT::compile(Node* node)
         
     case CreateClonedArguments: {
         compileCreateClonedArguments(node);
+        break;
+    }
+
+    case CreateArgumentsButterfly: {
+        compileCreateArgumentsButterfly(node);
         break;
     }
 

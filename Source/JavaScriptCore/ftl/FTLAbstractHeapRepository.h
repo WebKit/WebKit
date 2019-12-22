@@ -83,8 +83,6 @@ namespace JSC { namespace FTL {
     macro(FunctionRareData_internalFunctionAllocationProfile_structure, FunctionRareData::offsetOfInternalFunctionAllocationProfile() + InternalFunctionAllocationProfile::offsetOfStructure()) \
     macro(FunctionRareData_boundFunctionStructure, FunctionRareData::offsetOfBoundFunctionStructure()) \
     macro(FunctionRareData_allocationProfileClearingWatchpoint, FunctionRareData::offsetOfAllocationProfileClearingWatchpoint()) \
-    macro(FunctionRareData_hasReifiedLength, FunctionRareData::offsetOfHasReifiedLength()) \
-    macro(FunctionRareData_hasReifiedName, FunctionRareData::offsetOfHasReifiedName()) \
     macro(GetterSetter_getter, GetterSetter::offsetOfGetter()) \
     macro(GetterSetter_setter, GetterSetter::offsetOfSetter()) \
     macro(JSArrayBufferView_length, JSArrayBufferView::offsetOfLength()) \

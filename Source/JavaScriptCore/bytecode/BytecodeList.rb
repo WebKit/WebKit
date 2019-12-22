@@ -108,6 +108,11 @@ op :create_cloned_arguments,
         dst: VirtualRegister,
     }
 
+op :create_arguments_butterfly,
+    args: {
+        dst: VirtualRegister,
+    }
+
 op :create_this,
     args: {
         dst: VirtualRegister,

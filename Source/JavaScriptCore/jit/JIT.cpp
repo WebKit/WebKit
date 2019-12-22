@@ -307,6 +307,7 @@ void JIT::privateCompileMainPass()
         DEFINE_SLOW_OP(create_direct_arguments)
         DEFINE_SLOW_OP(create_scoped_arguments)
         DEFINE_SLOW_OP(create_cloned_arguments)
+        DEFINE_SLOW_OP(create_arguments_butterfly)
         DEFINE_SLOW_OP(create_rest)
         DEFINE_SLOW_OP(create_promise)
         DEFINE_SLOW_OP(new_promise)
@@ -755,7 +756,7 @@ void JIT::compileWithoutLinking(JITCompilationEffort effort)
         emitFunctionPrologue();
         emitPutToCallFrameHeader(m_codeBlock, CallFrameSlot::codeBlock);
 
-        load32(payloadFor(CallFrameSlot::argumentCount), regT1);
+        load32(payloadFor(CallFrameSlot::argumentCountIncludingThis), regT1);
         branch32(AboveOrEqual, regT1, TrustedImm32(m_codeBlock->m_numParameters)).linkTo(beginLabel, this);
 
         m_bytecodeIndex = BytecodeIndex(0);

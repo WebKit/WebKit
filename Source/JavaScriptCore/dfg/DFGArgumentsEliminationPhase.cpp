@@ -560,7 +560,7 @@ private:
                         if (inlineCallFrame) {
                             if (inlineCallFrame->isVarargs()) {
                                 isClobberedByBlock |= clobberedByThisBlock.operand(
-                                    inlineCallFrame->stackOffset + CallFrameSlot::argumentCount);
+                                    inlineCallFrame->stackOffset + CallFrameSlot::argumentCountIncludingThis);
                             }
 
                             if (!isClobberedByBlock || inlineCallFrame->isClosureCall) {

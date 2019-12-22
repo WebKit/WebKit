@@ -320,6 +320,7 @@ SLOW_PATH_HIDDEN_DECL(slow_path_construct_arityCheck);
 SLOW_PATH_HIDDEN_DECL(slow_path_create_direct_arguments);
 SLOW_PATH_HIDDEN_DECL(slow_path_create_scoped_arguments);
 SLOW_PATH_HIDDEN_DECL(slow_path_create_cloned_arguments);
+SLOW_PATH_HIDDEN_DECL(slow_path_create_arguments_butterfly);
 SLOW_PATH_HIDDEN_DECL(slow_path_create_this);
 SLOW_PATH_HIDDEN_DECL(slow_path_enter);
 SLOW_PATH_HIDDEN_DECL(slow_path_get_callee);

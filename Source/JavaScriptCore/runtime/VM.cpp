@@ -766,8 +766,8 @@ static ThunkGenerator thunkGeneratorForIntrinsic(Intrinsic intrinsic)
         return imulThunkGenerator;
     case RandomIntrinsic:
         return randomThunkGenerator;
-    case BoundThisNoArgsFunctionCallIntrinsic:
-        return boundThisNoArgsFunctionCallGenerator;
+    case BoundFunctionCallIntrinsic:
+        return boundFunctionCallGenerator;
     default:
         return nullptr;
     }
@@ -813,6 +813,31 @@ NativeExecutable* VM::getHostFunction(NativeFunction function, Intrinsic intrins
     UNUSED_PARAM(intrinsic);
     UNUSED_PARAM(signature);
     return NativeExecutable::create(*this, jitCodeForCallTrampoline(), function, jitCodeForConstructTrampoline(), constructor, name);
+}
+
+NativeExecutable* VM::getBoundFunction(bool isJSFunction, bool canConstruct)
+{
+    bool slowCase = !isJSFunction;
+
+    auto getOrCreate = [&] (Weak<NativeExecutable>& slot) -> NativeExecutable* {
+        if (auto* cached = slot.get())
+            return cached;
+        NativeExecutable* result = getHostFunction(
+            slowCase ? boundFunctionCall : boundThisNoArgsFunctionCall,
+            slowCase ? NoIntrinsic : BoundFunctionCallIntrinsic,
+            canConstruct ? (slowCase ? boundFunctionConstruct : boundThisNoArgsFunctionConstruct) : callHostFunctionAsConstructor, nullptr, String());
+        slot = Weak<NativeExecutable>(result);
+        return result;
+    };
+
+    if (slowCase) {
+        if (canConstruct)
+            return getOrCreate(m_slowCanConstructBoundExecutable);
+        return getOrCreate(m_slowBoundExecutable);
+    }
+    if (canConstruct)
+        return getOrCreate(m_fastCanConstructBoundExecutable);
+    return getOrCreate(m_fastBoundExecutable);
 }
 
 MacroAssemblerCodePtr<JSEntryPtrTag> VM::getCTIInternalFunctionTrampolineFor(CodeSpecializationKind kind)

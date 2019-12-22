@@ -55,7 +55,7 @@ inline JSCell* getJSFunction(JSValue value)
 {
     if (value.isCell() && (value.asCell()->type() == JSFunctionType))
         return value.asCell();
-    return 0;
+    return nullptr;
 }
 
 class Exception;
@@ -1290,20 +1290,6 @@ inline void JSObject::nukeStructureAndSetButterfly(VM& vm, StructureID oldStruct
     }
 
     m_butterfly.set(vm, this, butterfly);
-}
-
-inline CallType getCallData(VM& vm, JSValue value, CallData& callData)
-{
-    CallType result = value.isCell() ? value.asCell()->methodTable(vm)->getCallData(value.asCell(), callData) : CallType::None;
-    ASSERT(result == CallType::None || value.isValidCallee());
-    return result;
-}
-
-inline ConstructType getConstructData(VM& vm, JSValue value, ConstructData& constructData)
-{
-    ConstructType result = value.isCell() ? value.asCell()->methodTable(vm)->getConstructData(value.asCell(), constructData) : ConstructType::None;
-    ASSERT(result == ConstructType::None || value.isValidCallee());
-    return result;
 }
 
 inline JSObject* asObject(JSCell* cell)

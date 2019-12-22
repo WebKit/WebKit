@@ -694,6 +694,11 @@ public:
     Strong<JSCell> m_sentinelSetBucket;
     Strong<JSCell> m_sentinelMapBucket;
 
+    Weak<NativeExecutable> m_fastBoundExecutable;
+    Weak<NativeExecutable> m_fastCanConstructBoundExecutable;
+    Weak<NativeExecutable> m_slowBoundExecutable;
+    Weak<NativeExecutable> m_slowCanConstructBoundExecutable;
+
     Ref<PromiseTimer> promiseTimer;
     
     JSCell* currentlyDestructingCallbackObject;
@@ -830,6 +835,8 @@ public:
 #endif
     NativeExecutable* getHostFunction(NativeFunction, NativeFunction constructor, const String& name);
     NativeExecutable* getHostFunction(NativeFunction, Intrinsic, NativeFunction constructor, const DOMJIT::Signature*, const String& name);
+
+    NativeExecutable* getBoundFunction(bool isJSFunction, bool canConstruct);
 
     MacroAssemblerCodePtr<JSEntryPtrTag> getCTIInternalFunctionTrampolineFor(CodeSpecializationKind);
 

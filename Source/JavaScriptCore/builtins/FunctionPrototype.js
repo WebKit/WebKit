@@ -61,23 +61,21 @@ function bind(thisValue)
 {
     "use strict";
 
-    let target = this;
+    var target = this;
     if (typeof target !== "function")
         @throwTypeError("|this| is not a function inside Function.prototype.bind");
 
-    let argumentCount = arguments.length;
-    let boundArgs = null;
-    let numBoundArgs = 0;
+    var argumentCount = @argumentCount();
+    var boundArgs = null;
+    var numBoundArgs = 0;
     if (argumentCount > 1) {
         numBoundArgs = argumentCount - 1;
-        boundArgs = @newArrayWithSize(numBoundArgs);
-        for (let i = 0; i < numBoundArgs; i++)
-            @putByValDirect(boundArgs, i, arguments[i + 1]);
+        boundArgs = @createArgumentsButterfly();
     }
 
-    let length = 0;
+    var length = 0;
     if (@hasOwnLengthProperty(target)) {
-        let lengthValue = target.length;
+        var lengthValue = target.length;
         if (typeof lengthValue === "number") {
             lengthValue = lengthValue | 0;
             // Note that we only care about positive lengthValues, however, this comparision
@@ -87,9 +85,9 @@ function bind(thisValue)
         }
     }
 
-    let name = target.name;
+    var name = target.name;
     if (typeof name !== "string")
         name = "";
 
-    return @makeBoundFunction(target, arguments[0], boundArgs, length, name);
+    return @makeBoundFunction(target, thisValue, boundArgs, length, name);
 }

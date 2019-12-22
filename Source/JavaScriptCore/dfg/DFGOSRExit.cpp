@@ -295,7 +295,7 @@ static void emitRestoreArguments(Context& context, CodeBlock* codeBlock, DFG::JI
 
         int32_t argumentCount;
         if (!inlineCallFrame || inlineCallFrame->isVarargs())
-            argumentCount = frame.operand<int32_t>(stackOffset + CallFrameSlot::argumentCount, PayloadOffset);
+            argumentCount = frame.operand<int32_t>(stackOffset + CallFrameSlot::argumentCountIncludingThis, PayloadOffset);
         else
             argumentCount = inlineCallFrame->argumentCountIncludingThis;
 
@@ -815,18 +815,18 @@ static void reifyInlinedCallFrames(Context& context, CodeBlock* outermostBaselin
         }
 
         if (!inlineCallFrame->isVarargs())
-            frame.setOperand<uint32_t>(inlineCallFrame->stackOffset + CallFrameSlot::argumentCount, PayloadOffset, inlineCallFrame->argumentCountIncludingThis);
+            frame.setOperand<uint32_t>(inlineCallFrame->stackOffset + CallFrameSlot::argumentCountIncludingThis, PayloadOffset, inlineCallFrame->argumentCountIncludingThis);
         ASSERT(callerFrame);
         frame.set<void*>(inlineCallFrame->callerFrameOffset(), callerFrame);
 #if USE(JSVALUE64)
         uint32_t locationBits = CallSiteIndex(codeOrigin->bytecodeIndex()).bits();
-        frame.setOperand<uint32_t>(inlineCallFrame->stackOffset + CallFrameSlot::argumentCount, TagOffset, locationBits);
+        frame.setOperand<uint32_t>(inlineCallFrame->stackOffset + CallFrameSlot::argumentCountIncludingThis, TagOffset, locationBits);
         if (!inlineCallFrame->isClosureCall)
             frame.setOperand(inlineCallFrame->stackOffset + CallFrameSlot::callee, JSValue(inlineCallFrame->calleeConstant()));
 #else // USE(JSVALUE64) // so this is the 32-bit part
         const Instruction* instruction = baselineCodeBlock->instructions().at(codeOrigin->bytecodeIndex()).ptr();
         uint32_t locationBits = CallSiteIndex(BytecodeIndex(bitwise_cast<uint32_t>(instruction))).bits();
-        frame.setOperand<uint32_t>(inlineCallFrame->stackOffset + CallFrameSlot::argumentCount, TagOffset, locationBits);
+        frame.setOperand<uint32_t>(inlineCallFrame->stackOffset + CallFrameSlot::argumentCountIncludingThis, TagOffset, locationBits);
         frame.setOperand<uint32_t>(inlineCallFrame->stackOffset + CallFrameSlot::callee, TagOffset, static_cast<uint32_t>(JSValue::CellTag));
         if (!inlineCallFrame->isClosureCall)
             frame.setOperand(inlineCallFrame->stackOffset + CallFrameSlot::callee, PayloadOffset, inlineCallFrame->calleeConstant());
@@ -841,7 +841,7 @@ static void reifyInlinedCallFrames(Context& context, CodeBlock* outermostBaselin
         const Instruction* instruction = outermostBaselineCodeBlock->instructions().at(codeOrigin->bytecodeIndex()).ptr();
         uint32_t locationBits = CallSiteIndex(BytecodeIndex(bitwise_cast<uint32_t>(instruction))).bits();
 #endif
-        frame.setOperand<uint32_t>(CallFrameSlot::argumentCount, TagOffset, locationBits);
+        frame.setOperand<uint32_t>(CallFrameSlot::argumentCountIncludingThis, TagOffset, locationBits);
     }
 }
 
@@ -997,7 +997,7 @@ void OSRExit::emitRestoreArguments(CCallHelpers& jit, VM& vm, const Operands<Val
 
         if (!inlineCallFrame || inlineCallFrame->isVarargs()) {
             jit.load32(
-                AssemblyHelpers::payloadFor(stackOffset + CallFrameSlot::argumentCount),
+                AssemblyHelpers::payloadFor(stackOffset + CallFrameSlot::argumentCountIncludingThis),
                 GPRInfo::regT1);
         } else {
             jit.move(

@@ -187,8 +187,8 @@ const char* intrinsicName(Intrinsic intrinsic)
         return "TruncIntrinsic";
     case IsTypedArrayViewIntrinsic:
         return "IsTypedArrayViewIntrinsic";
-    case BoundThisNoArgsFunctionCallIntrinsic:
-        return "BoundThisNoArgsFunctionCallIntrinsic";
+    case BoundFunctionCallIntrinsic:
+        return "BoundFunctionCallIntrinsic";
     case JSMapGetIntrinsic:
         return "JSMapGetIntrinsic";
     case JSMapHasIntrinsic:

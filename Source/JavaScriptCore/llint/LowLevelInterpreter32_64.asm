@@ -93,7 +93,7 @@ end
 
 # After calling, calling bytecode is claiming input registers are not used.
 macro dispatchAfterCall(size, opcodeStruct, dispatch)
-    loadi ArgumentCount + TagOffset[cfr], PC
+    loadi ArgumentCountIncludingThis + TagOffset[cfr], PC
     get(size, opcodeStruct, m_dst, t3)
     storei r1, TagOffset[cfr, t3, 8]
     storei r0, PayloadOffset[cfr, t3, 8]
@@ -433,7 +433,7 @@ end
 
 # Call a slowPath for call opcodes.
 macro callCallSlowPath(slowPath, action)
-    storep PC, ArgumentCount + TagOffset[cfr]
+    storep PC, ArgumentCountIncludingThis + TagOffset[cfr]
     move cfr, a0
     move PC, a1
     cCall2(slowPath)
@@ -441,19 +441,19 @@ macro callCallSlowPath(slowPath, action)
 end
 
 macro callTrapHandler(throwHandler)
-    storei PC, ArgumentCount + TagOffset[cfr]
+    storei PC, ArgumentCountIncludingThis + TagOffset[cfr]
     move cfr, a0
     move PC, a1
     cCall2(_llint_slow_path_handle_traps)
     btpnz r0, throwHandler
-    loadi ArgumentCount + TagOffset[cfr], PC
+    loadi ArgumentCountIncludingThis + TagOffset[cfr], PC
 end
 
 macro checkSwitchToJITForLoop()
     checkSwitchToJIT(
         1,
         macro ()
-            storei PC, ArgumentCount + TagOffset[cfr]
+            storei PC, ArgumentCountIncludingThis + TagOffset[cfr]
             move cfr, a0
             move PC, a1
             cCall2(_llint_loop_osr)
@@ -461,7 +461,7 @@ macro checkSwitchToJITForLoop()
             move r1, sp
             jmp r0
         .recover:
-            loadi ArgumentCount + TagOffset[cfr], PC
+            loadi ArgumentCountIncludingThis + TagOffset[cfr], PC
         end)
 end
 
@@ -637,7 +637,7 @@ end
 
 # Expects that CodeBlock is in t1, which is what prologue() leaves behind.
 macro functionArityCheck(doneLabel, slowPath)
-    loadi PayloadOffset + ArgumentCount[cfr], t0
+    loadi PayloadOffset + ArgumentCountIncludingThis[cfr], t0
     biaeq t0, CodeBlock::m_numParameters[t1], doneLabel
     move cfr, a0
     move PC, a1
@@ -655,7 +655,7 @@ macro functionArityCheck(doneLabel, slowPath)
 .noError:
     move r1, t1 # r1 contains slotsToAdd.
     btiz t1, .continue
-    loadi PayloadOffset + ArgumentCount[cfr], t2
+    loadi PayloadOffset + ArgumentCountIncludingThis[cfr], t2
     addi CallFrameHeaderSlots, t2
 
     // Check if there are some unaligned slots we can use
@@ -733,7 +733,7 @@ _llint_op_enter:
 
 llintOpWithProfile(op_get_argument, OpGetArgument, macro (size, get, dispatch, return)
     get(m_index, t2)
-    loadi PayloadOffset + ArgumentCount[cfr], t0
+    loadi PayloadOffset + ArgumentCountIncludingThis[cfr], t0
     bilteq t0, t2, .opGetArgumentOutOfBounds
     loadi ThisArgumentOffset + TagOffset[cfr, t2, 8], t0
     loadi ThisArgumentOffset + PayloadOffset[cfr, t2, 8], t3
@@ -745,7 +745,7 @@ end)
 
 
 llintOpWithReturn(op_argument_count, OpArgumentCount, macro (size, get, dispatch, return)
-    loadi PayloadOffset + ArgumentCount[cfr], t0
+    loadi PayloadOffset + ArgumentCountIncludingThis[cfr], t0
     subi 1, t0
     return(Int32Tag, t0)
 end)
@@ -1925,8 +1925,8 @@ macro commonCallOp(opcodeName, slowPath, opcodeStruct, prepareCall, prologue)
         addp cfr, t3  # t3 contains the new value of cfr
         storei t2, Callee + PayloadOffset[t3]
         getu(size, opcodeStruct, m_argc, t2)
-        storei PC, ArgumentCount + TagOffset[cfr]
-        storei t2, ArgumentCount + PayloadOffset[t3]
+        storei PC, ArgumentCountIncludingThis + TagOffset[cfr]
+        storei t2, ArgumentCountIncludingThis + PayloadOffset[t3]
         storei CellTag, Callee + TagOffset[t3]
         move t3, sp
         prepareCall(%opcodeStruct%::Metadata::m_callLinkInfo.m_machineCodeTarget[t5], t2, t3, t4, JSEntryPtrTag)
@@ -2534,7 +2534,7 @@ end)
 
 
 llintOpWithReturn(op_get_rest_length, OpGetRestLength, macro (size, get, dispatch, return)
-    loadi PayloadOffset + ArgumentCount[cfr], t0
+    loadi PayloadOffset + ArgumentCountIncludingThis[cfr], t0
     subi 1, t0
     getu(size, OpGetRestLength, m_numParametersToSkip, t1)
     bilteq t0, t1, .storeZero

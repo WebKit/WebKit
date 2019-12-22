@@ -243,7 +243,7 @@ MacroAssemblerCodePtr<JSEntryPtrTag> WebAssemblyFunction::jsCallEntrypointSlow()
     // FIXME: We should handle mismatched arity
     // https://bugs.webkit.org/show_bug.cgi?id=196564
     slowPath.append(jit.branch32(CCallHelpers::Below,
-        CCallHelpers::payloadFor(CallFrameSlot::argumentCount), CCallHelpers::TrustedImm32(signature.argumentCount() + 1)));
+        CCallHelpers::payloadFor(CallFrameSlot::argumentCountIncludingThis), CCallHelpers::TrustedImm32(signature.argumentCount() + 1)));
 
     if (useTagRegisters())
         jit.emitMaterializeTagCheckRegisters();

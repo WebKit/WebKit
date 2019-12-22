@@ -1546,7 +1546,7 @@ void JIT::emit_op_argument_count(const Instruction* currentInstruction)
 {
     auto bytecode = currentInstruction->as<OpArgumentCount>();
     int dst = bytecode.m_dst.offset();
-    load32(payloadFor(CallFrameSlot::argumentCount), regT0);
+    load32(payloadFor(CallFrameSlot::argumentCountIncludingThis), regT0);
     sub32(TrustedImm32(1), regT0);
     JSValueRegs result = JSValueRegs::withTwoAvailableRegs(regT0, regT1);
     boxInt32(regT0, result);
@@ -1558,7 +1558,7 @@ void JIT::emit_op_get_rest_length(const Instruction* currentInstruction)
     auto bytecode = currentInstruction->as<OpGetRestLength>();
     int dst = bytecode.m_dst.offset();
     unsigned numParamsToSkip = bytecode.m_numParametersToSkip;
-    load32(payloadFor(CallFrameSlot::argumentCount), regT0);
+    load32(payloadFor(CallFrameSlot::argumentCountIncludingThis), regT0);
     sub32(TrustedImm32(1), regT0);
     Jump zeroLength = branch32(LessThanOrEqual, regT0, Imm32(numParamsToSkip));
     sub32(Imm32(numParamsToSkip), regT0);
@@ -1594,7 +1594,7 @@ void JIT::emit_op_get_argument(const Instruction* currentInstruction)
     JSValueRegs resultRegs(regT1, regT0);
 #endif
 
-    load32(payloadFor(CallFrameSlot::argumentCount), regT2);
+    load32(payloadFor(CallFrameSlot::argumentCountIncludingThis), regT2);
     Jump argumentOutOfBounds = branch32(LessThanOrEqual, regT2, TrustedImm32(index));
     loadValue(addressFor(CallFrameSlot::thisArgument + index), resultRegs);
     Jump done = jump();

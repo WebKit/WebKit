@@ -865,7 +865,7 @@ public:
                 if (inlineCallFrame->isClosureCall)
                     functor(stackOffset + CallFrameSlot::callee);
                 if (inlineCallFrame->isVarargs())
-                    functor(stackOffset + CallFrameSlot::argumentCount);
+                    functor(stackOffset + CallFrameSlot::argumentCountIncludingThis);
             }
             
             CodeBlock* codeBlock = baselineCodeBlockFor(inlineCallFrame);

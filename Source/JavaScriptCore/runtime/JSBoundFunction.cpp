@@ -39,7 +39,14 @@ EncodedJSValue JSC_HOST_CALL boundThisNoArgsFunctionCall(JSGlobalObject* globalO
 {
     JSBoundFunction* boundFunction = jsCast<JSBoundFunction*>(callFrame->jsCallee());
 
+    JSImmutableButterfly* boundArgs = boundFunction->boundArgs();
+
     MarkedArgumentBuffer args;
+    if (boundArgs) {
+        // Starts with 1 since the first one is |this|.
+        for (unsigned i = 1; i < boundArgs->length(); ++i)
+            args.append(boundArgs->get(i));
+    }
     for (unsigned i = 0; i < callFrame->argumentCount(); ++i)
         args.append(callFrame->uncheckedArgument(i));
     RELEASE_ASSERT(!args.hasOverflowed());
@@ -62,12 +69,13 @@ EncodedJSValue JSC_HOST_CALL boundFunctionCall(JSGlobalObject* globalObject, Cal
     auto scope = DECLARE_THROW_SCOPE(vm);
     JSBoundFunction* boundFunction = jsCast<JSBoundFunction*>(callFrame->jsCallee());
 
-    JSArray* boundArgs = boundFunction->boundArgs();
+    JSImmutableButterfly* boundArgs = boundFunction->boundArgs();
 
     MarkedArgumentBuffer args;
     if (boundArgs) {
-        for (unsigned i = 0; i < boundArgs->length(); ++i)
-            args.append(boundArgs->getIndexQuickly(i));
+        // Starts with 1 since the first one is |this|.
+        for (unsigned i = 1; i < boundArgs->length(); ++i)
+            args.append(boundArgs->get(i));
     }
     for (unsigned i = 0; i < callFrame->argumentCount(); ++i)
         args.append(callFrame->uncheckedArgument(i));
@@ -87,7 +95,14 @@ EncodedJSValue JSC_HOST_CALL boundThisNoArgsFunctionConstruct(JSGlobalObject* gl
 {
     JSBoundFunction* boundFunction = jsCast<JSBoundFunction*>(callFrame->jsCallee());
 
+    JSImmutableButterfly* boundArgs = boundFunction->boundArgs();
+
     MarkedArgumentBuffer args;
+    if (boundArgs) {
+        // Starts with 1 since the first one is |this|.
+        for (unsigned i = 1; i < boundArgs->length(); ++i)
+            args.append(boundArgs->get(i));
+    }
     for (unsigned i = 0; i < callFrame->argumentCount(); ++i)
         args.append(callFrame->uncheckedArgument(i));
     RELEASE_ASSERT(!args.hasOverflowed());
@@ -105,12 +120,13 @@ EncodedJSValue JSC_HOST_CALL boundFunctionConstruct(JSGlobalObject* globalObject
     auto scope = DECLARE_THROW_SCOPE(vm);
     JSBoundFunction* boundFunction = jsCast<JSBoundFunction*>(callFrame->jsCallee());
 
-    JSArray* boundArgs = boundFunction->boundArgs();
+    JSImmutableButterfly* boundArgs = boundFunction->boundArgs();
 
     MarkedArgumentBuffer args;
     if (boundArgs) {
-        for (unsigned i = 0; i < boundArgs->length(); ++i)
-            args.append(boundArgs->getIndexQuickly(i));
+        // Starts with 1 since the first one is |this|.
+        for (unsigned i = 1; i < boundArgs->length(); ++i)
+            args.append(boundArgs->get(i));
     }
     for (unsigned i = 0; i < callFrame->argumentCount(); ++i)
         args.append(callFrame->uncheckedArgument(i));
@@ -171,23 +187,22 @@ inline Structure* getBoundFunctionStructure(VM& vm, JSGlobalObject* globalObject
     return result;
 }
 
-JSBoundFunction* JSBoundFunction::create(VM& vm, JSGlobalObject* globalObject, JSObject* targetFunction, JSValue boundThis, JSArray* boundArgs, int length, const String& name)
+JSBoundFunction* JSBoundFunction::create(VM& vm, JSGlobalObject* globalObject, JSObject* targetFunction, JSValue boundThis, JSImmutableButterfly* boundArgs, int length, JSString* name)
 {
     auto scope = DECLARE_THROW_SCOPE(vm);
+
+    name->value(globalObject); // Resolving rope.
+    RETURN_IF_EXCEPTION(scope, nullptr);
+
+    bool isJSFunction = getJSFunction(targetFunction);
     ConstructData constructData;
     ConstructType constructType = JSC::getConstructData(vm, targetFunction, constructData);
     bool canConstruct = constructType != ConstructType::None;
-    
-    bool slowCase = boundArgs || !getJSFunction(targetFunction);
-    
-    NativeExecutable* executable = vm.getHostFunction(
-        slowCase ? boundFunctionCall : boundThisNoArgsFunctionCall,
-        slowCase ? NoIntrinsic : BoundThisNoArgsFunctionCallIntrinsic,
-        canConstruct ? (slowCase ? boundFunctionConstruct : boundThisNoArgsFunctionConstruct) : callHostFunctionAsConstructor, nullptr,
-        name);
+
+    NativeExecutable* executable = vm.getBoundFunction(isJSFunction, canConstruct);
     Structure* structure = getBoundFunctionStructure(vm, globalObject, targetFunction);
     RETURN_IF_EXCEPTION(scope, nullptr);
-    JSBoundFunction* function = new (NotNull, allocateCell<JSBoundFunction>(vm.heap)) JSBoundFunction(vm, globalObject, structure, targetFunction, boundThis, boundArgs);
+    JSBoundFunction* function = new (NotNull, allocateCell<JSBoundFunction>(vm.heap)) JSBoundFunction(vm, globalObject, structure, targetFunction, boundThis, boundArgs, name, length);
 
     function->finishCreation(vm, executable, length);
     return function;
@@ -198,12 +213,15 @@ bool JSBoundFunction::customHasInstance(JSObject* object, JSGlobalObject* global
     return jsCast<JSBoundFunction*>(object)->m_targetFunction->hasInstance(globalObject, value);
 }
 
-JSBoundFunction::JSBoundFunction(VM& vm, JSGlobalObject* globalObject, Structure* structure, JSObject* targetFunction, JSValue boundThis, JSArray* boundArgs)
+JSBoundFunction::JSBoundFunction(VM& vm, JSGlobalObject* globalObject, Structure* structure, JSObject* targetFunction, JSValue boundThis, JSImmutableButterfly* boundArgs, JSString* name, int length)
     : Base(vm, globalObject, structure)
     , m_targetFunction(vm, this, targetFunction)
     , m_boundThis(vm, this, boundThis)
-    , m_boundArgs(vm, this, boundArgs, WriteBarrier<JSArray>::MayBeNull)
+    , m_boundArgs(vm, this, boundArgs, WriteBarrier<JSImmutableButterfly>::MayBeNull)
+    , m_name(vm, this, name)
+    , m_length(length)
 {
+    ASSERT(!m_name->isRope());
 }
 
 JSArray* JSBoundFunction::boundArgsCopy(JSGlobalObject* globalObject)
@@ -212,9 +230,12 @@ JSArray* JSBoundFunction::boundArgsCopy(JSGlobalObject* globalObject)
     auto scope = DECLARE_THROW_SCOPE(vm);
     JSArray* result = constructEmptyArray(this->globalObject(), nullptr);
     RETURN_IF_EXCEPTION(scope, nullptr);
-    for (unsigned i = 0; i < m_boundArgs->length(); ++i) {
-        result->push(globalObject, m_boundArgs->getIndexQuickly(i));
-        RETURN_IF_EXCEPTION(scope, nullptr);
+    if (m_boundArgs) {
+        // Starts with 1 since the first one is bound |this|.
+        for (unsigned i = 1; i < m_boundArgs->length(); ++i) {
+            result->push(globalObject, m_boundArgs->get(i));
+            RETURN_IF_EXCEPTION(scope, nullptr);
+        }
     }
     return result;
 }
@@ -235,6 +256,7 @@ void JSBoundFunction::visitChildren(JSCell* cell, SlotVisitor& visitor)
     visitor.append(thisObject->m_targetFunction);
     visitor.append(thisObject->m_boundThis);
     visitor.append(thisObject->m_boundArgs);
+    visitor.append(thisObject->m_name);
 }
 
 } // namespace JSC

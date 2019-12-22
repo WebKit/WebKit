@@ -222,6 +222,19 @@ SLOW_PATH_DECL(slow_path_create_cloned_arguments)
     RETURN(ClonedArguments::createWithMachineFrame(globalObject, callFrame, ArgumentsMode::Cloned));
 }
 
+SLOW_PATH_DECL(slow_path_create_arguments_butterfly)
+{
+    BEGIN();
+    auto bytecode = pc->as<OpCreateArgumentsButterfly>();
+    int32_t argumentCount = callFrame->argumentCount();
+    JSImmutableButterfly* butterfly = JSImmutableButterfly::tryCreate(vm, vm.immutableButterflyStructures[arrayIndexFromIndexingType(CopyOnWriteArrayWithContiguous) - NumberOfIndexingShapes].get(), argumentCount);
+    if (!butterfly)
+        THROW(createOutOfMemoryError(globalObject));
+    for (int32_t index = 0; index < argumentCount; ++index)
+        butterfly->setIndex(vm, index, callFrame->uncheckedArgument(index));
+    RETURN(butterfly);
+}
+
 SLOW_PATH_DECL(slow_path_create_this)
 {
     BEGIN();

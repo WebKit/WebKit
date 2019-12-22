@@ -90,12 +90,12 @@ bool CallFrame::callSiteBitsAreCodeOriginIndex() const
 
 unsigned CallFrame::callSiteAsRawBits() const
 {
-    return this[CallFrameSlot::argumentCount].tag();
+    return this[CallFrameSlot::argumentCountIncludingThis].tag();
 }
 
 SUPPRESS_ASAN unsigned CallFrame::unsafeCallSiteAsRawBits() const
 {
-    return this[CallFrameSlot::argumentCount].unsafeTag();
+    return this[CallFrameSlot::argumentCountIncludingThis].unsafeTag();
 }
 
 CallSiteIndex CallFrame::callSiteIndex() const
@@ -117,7 +117,7 @@ const Instruction* CallFrame::currentVPC() const
 void CallFrame::setCurrentVPC(const Instruction* vpc)
 {
     CallSiteIndex callSite(BytecodeIndex(bitwise_cast<uint32_t>(vpc)));
-    this[CallFrameSlot::argumentCount].tag() = callSite.bits();
+    this[CallFrameSlot::argumentCountIncludingThis].tag() = callSite.bits();
 }
 
 unsigned CallFrame::callSiteBitsAsBytecodeOffset() const
@@ -137,7 +137,7 @@ const Instruction* CallFrame::currentVPC() const
 void CallFrame::setCurrentVPC(const Instruction* vpc)
 {
     CallSiteIndex callSite(codeBlock()->bytecodeIndex(vpc));
-    this[CallFrameSlot::argumentCount].tag() = static_cast<int32_t>(callSite.bits());
+    this[CallFrameSlot::argumentCountIncludingThis].tag() = static_cast<int32_t>(callSite.bits());
 }
 
 unsigned CallFrame::callSiteBitsAsBytecodeOffset() const

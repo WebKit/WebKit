@@ -68,6 +68,6 @@ MacroAssemblerCodeRef<JITThunkPtrTag> imulThunkGenerator(VM&);
 MacroAssemblerCodeRef<JITThunkPtrTag> randomThunkGenerator(VM&);
 MacroAssemblerCodeRef<JITThunkPtrTag> truncThunkGenerator(VM&);
 
-MacroAssemblerCodeRef<JITThunkPtrTag> boundThisNoArgsFunctionCallGenerator(VM&);
+MacroAssemblerCodeRef<JITThunkPtrTag> boundFunctionCallGenerator(VM&);
 }
 #endif // ENABLE(JIT)

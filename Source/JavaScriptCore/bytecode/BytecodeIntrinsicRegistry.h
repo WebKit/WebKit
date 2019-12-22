@@ -74,6 +74,7 @@ enum class LinkTimeConstant : int32_t;
     macro(newArrayWithSize) \
     macro(newPromise) \
     macro(createPromise) \
+    macro(createArgumentsButterfly) \
     macro(defineEnumerableWritableConfigurableDataProperty) \
 
 #define JSC_COMMON_BYTECODE_INTRINSIC_CONSTANTS_EACH_NAME(macro) \

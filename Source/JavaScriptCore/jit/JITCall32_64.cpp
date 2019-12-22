@@ -165,7 +165,7 @@ JIT::compileSetupFrame(const Op& bytecode, CallLinkInfo*)
     }
 
     addPtr(TrustedImm32(registerOffset * sizeof(Register) + sizeof(CallerFrameAndPC)), callFrameRegister, stackPointerRegister);
-    store32(TrustedImm32(argCount), Address(stackPointerRegister, CallFrameSlot::argumentCount * static_cast<int>(sizeof(Register)) + PayloadOffset - sizeof(CallerFrameAndPC)));
+    store32(TrustedImm32(argCount), Address(stackPointerRegister, CallFrameSlot::argumentCountIncludingThis * static_cast<int>(sizeof(Register)) + PayloadOffset - sizeof(CallerFrameAndPC)));
 }
 
 template<typename Op>
@@ -201,7 +201,7 @@ JIT::compileSetupFrame(const Op& bytecode, CallLinkInfo* info)
     move(returnValueGPR, regT1);
 
     // Profile the argument count.
-    load32(Address(regT1, CallFrameSlot::argumentCount * static_cast<int>(sizeof(Register)) + PayloadOffset), regT2);
+    load32(Address(regT1, CallFrameSlot::argumentCountIncludingThis * static_cast<int>(sizeof(Register)) + PayloadOffset), regT2);
     load32(info->addressOfMaxArgumentCountIncludingThis(), regT0);
     Jump notBiggest = branch32(Above, regT0, regT2);
     store32(regT2, info->addressOfMaxArgumentCountIncludingThis());
@@ -289,7 +289,7 @@ void JIT::compileOpCall(const Instruction* instruction, unsigned callLinkInfoInd
     // SP holds newCallFrame + sizeof(CallerFrameAndPC), with ArgumentCount initialized.
     
     uint32_t locationBits = CallSiteIndex(BytecodeIndex(bitwise_cast<uint32_t>(instruction))).bits();
-    store32(TrustedImm32(locationBits), tagFor(CallFrameSlot::argumentCount));
+    store32(TrustedImm32(locationBits), tagFor(CallFrameSlot::argumentCountIncludingThis));
     emitLoad(callee, regT1, regT0); // regT1, regT0 holds callee.
 
     store32(regT0, Address(stackPointerRegister, CallFrameSlot::callee * static_cast<int>(sizeof(Register)) + PayloadOffset - sizeof(CallerFrameAndPC)));

@@ -109,7 +109,7 @@ public:
             
             if (inlineCallFrame->isVarargs()) {
                 usedLocals.set(VirtualRegister(
-                    CallFrameSlot::argumentCount + inlineCallFrame->stackOffset).toLocal());
+                    CallFrameSlot::argumentCountIncludingThis + inlineCallFrame->stackOffset).toLocal());
             }
             
             for (unsigned argument = inlineCallFrame->argumentsWithFixup.size(); argument--;) {
@@ -175,7 +175,7 @@ public:
             
             if (inlineCallFrame->isVarargs()) {
                 inlineCallFrame->argumentCountRegister = assign(
-                    allocation, VirtualRegister(inlineCallFrame->stackOffset + CallFrameSlot::argumentCount));
+                    allocation, VirtualRegister(inlineCallFrame->stackOffset + CallFrameSlot::argumentCountIncludingThis));
             }
             
             for (unsigned argument = inlineCallFrame->argumentsWithFixup.size(); argument--;) {

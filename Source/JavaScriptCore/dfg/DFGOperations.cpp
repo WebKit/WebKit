@@ -2134,6 +2134,23 @@ JSCell* JIT_OPERATION operationCreateClonedArguments(JSGlobalObject* globalObjec
         globalObject, structure, argumentStart, length, callee);
 }
 
+JSCell* JIT_OPERATION operationCreateArgumentsButterfly(JSGlobalObject* globalObject, Register* argumentStart, uint32_t argumentCount)
+{
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    JSImmutableButterfly* butterfly = JSImmutableButterfly::tryCreate(vm, vm.immutableButterflyStructures[arrayIndexFromIndexingType(CopyOnWriteArrayWithContiguous) - NumberOfIndexingShapes].get(), argumentCount);
+    if (!butterfly) {
+        throwOutOfMemoryError(globalObject, scope);
+        return nullptr;
+    }
+    for (unsigned index = 0; index < argumentCount; ++index)
+        butterfly->setIndex(vm, index, argumentStart[index].jsValue());
+    return butterfly;
+}
+
 JSCell* JIT_OPERATION operationCreateDirectArgumentsDuringExit(VM* vmPointer, InlineCallFrame* inlineCallFrame, JSFunction* callee, uint32_t argumentCount)
 {
     VM& vm = *vmPointer;

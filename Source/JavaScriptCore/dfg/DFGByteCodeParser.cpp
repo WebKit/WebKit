@@ -552,7 +552,7 @@ private:
             if (inlineCallFrame->isClosureCall)
                 addFlushDirect(inlineCallFrame, remapOperand(inlineCallFrame, VirtualRegister(CallFrameSlot::callee)));
             if (inlineCallFrame->isVarargs())
-                addFlushDirect(inlineCallFrame, remapOperand(inlineCallFrame, VirtualRegister(CallFrameSlot::argumentCount)));
+                addFlushDirect(inlineCallFrame, remapOperand(inlineCallFrame, VirtualRegister(CallFrameSlot::argumentCountIncludingThis)));
         } else
             numArguments = m_graph.baselineCodeBlockFor(inlineCallFrame)->numParameters();
 
@@ -1902,7 +1902,7 @@ bool ByteCodeParser::handleVarargsInlining(Node* callTargetNode, VirtualRegister
         
         LoadVarargsData* data = m_graph.m_loadVarargsData.add();
         data->start = VirtualRegister(remappedArgumentStart + 1);
-        data->count = VirtualRegister(remappedRegisterOffset + CallFrameSlot::argumentCount);
+        data->count = VirtualRegister(remappedRegisterOffset + CallFrameSlot::argumentCountIncludingThis);
         data->offset = argumentsOffset;
         data->limit = maxArgumentCountIncludingThis;
         data->mandatoryMinimum = mandatoryMinimum;
@@ -1922,7 +1922,7 @@ bool ByteCodeParser::handleVarargsInlining(Node* callTargetNode, VirtualRegister
         // SSA. Fortunately, we also have other reasons for not inserting control flow
         // before SSA.
         
-        VariableAccessData* countVariable = newVariableAccessData(VirtualRegister(remappedRegisterOffset + CallFrameSlot::argumentCount));
+        VariableAccessData* countVariable = newVariableAccessData(VirtualRegister(remappedRegisterOffset + CallFrameSlot::argumentCountIncludingThis));
         // This is pretty lame, but it will force the count to be flushed as an int. This doesn't
         // matter very much, since our use of a SetArgumentDefinitely and Flushes for this local slot is
         // mostly just a formality.
@@ -6896,6 +6896,13 @@ void ByteCodeParser::parseBlock(unsigned limit)
             Node* createArguments = addToGraph(CreateClonedArguments);
             set(bytecode.m_dst, createArguments);
             NEXT_OPCODE(op_create_cloned_arguments);
+        }
+
+        case op_create_arguments_butterfly: {
+            auto bytecode = currentInstruction->as<OpCreateArgumentsButterfly>();
+            noticeArgumentsUse();
+            set(bytecode.m_dst, addToGraph(CreateArgumentsButterfly));
+            NEXT_OPCODE(op_create_arguments_butterfly);
         }
             
         case op_get_from_arguments: {

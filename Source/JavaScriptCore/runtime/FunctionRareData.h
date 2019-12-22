@@ -73,8 +73,6 @@ public:
     static inline ptrdiff_t offsetOfInternalFunctionAllocationProfile() { return OBJECT_OFFSETOF(FunctionRareData, m_internalFunctionAllocationProfile); }
     static inline ptrdiff_t offsetOfBoundFunctionStructure() { return OBJECT_OFFSETOF(FunctionRareData, m_boundFunctionStructure); }
     static inline ptrdiff_t offsetOfAllocationProfileClearingWatchpoint() { return OBJECT_OFFSETOF(FunctionRareData, m_allocationProfileClearingWatchpoint); }
-    static inline ptrdiff_t offsetOfHasReifiedLength() { return OBJECT_OFFSETOF(FunctionRareData, m_hasReifiedLength); }
-    static inline ptrdiff_t offsetOfHasReifiedName() { return OBJECT_OFFSETOF(FunctionRareData, m_hasReifiedName); }
 
     ObjectAllocationProfileWithPrototype* objectAllocationProfile()
     {
@@ -121,6 +119,17 @@ public:
     bool hasReifiedName() const { return m_hasReifiedName; }
     void setHasReifiedName() { m_hasReifiedName = true; }
 
+    bool hasModifiedLength() const { return m_hasModifiedLength; }
+    void setHasModifiedLength()
+    {
+        m_hasModifiedLength = true;
+    }
+    bool hasModifiedName() const { return m_hasModifiedName; }
+    void setHasModifiedName()
+    {
+        m_hasModifiedName = true;
+    }
+
     bool hasAllocationProfileClearingWatchpoint() const { return !!m_allocationProfileClearingWatchpoint; }
     Watchpoint* createAllocationProfileClearingWatchpoint();
     class AllocationProfileClearingWatchpoint;
@@ -150,8 +159,10 @@ private:
     InternalFunctionAllocationProfile m_internalFunctionAllocationProfile;
     WriteBarrier<Structure> m_boundFunctionStructure;
     std::unique_ptr<AllocationProfileClearingWatchpoint> m_allocationProfileClearingWatchpoint;
-    bool m_hasReifiedLength { false };
-    bool m_hasReifiedName { false };
+    bool m_hasReifiedLength : 1;
+    bool m_hasReifiedName : 1;
+    bool m_hasModifiedLength : 1;
+    bool m_hasModifiedName : 1;
 };
 
 class FunctionRareData::AllocationProfileClearingWatchpoint final : public Watchpoint {

@@ -2964,6 +2964,10 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         setForNode(node, m_codeBlock->globalObjectFor(node->origin.semantic)->clonedArgumentsStructure());
         break;
 
+    case CreateArgumentsButterfly:
+        setForNode(node, m_vm.immutableButterflyStructures[arrayIndexFromIndexingType(CopyOnWriteArrayWithContiguous) - NumberOfIndexingShapes].get());
+        break;
+
     case NewGeneratorFunction:
         setForNode(node, 
             m_codeBlock->globalObjectFor(node->origin.semantic)->generatorFunctionStructure());

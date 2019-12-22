@@ -113,7 +113,7 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
         if (inlineCallFrame->isClosureCall)
             read(AbstractHeap(Stack, inlineCallFrame->stackOffset + CallFrameSlot::callee));
         if (inlineCallFrame->isVarargs())
-            read(AbstractHeap(Stack, inlineCallFrame->stackOffset + CallFrameSlot::argumentCount));
+            read(AbstractHeap(Stack, inlineCallFrame->stackOffset + CallFrameSlot::argumentCountIncludingThis));
     }
 
     // We don't want to specifically account which nodes can read from the scope
@@ -524,6 +524,7 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
     case CreateDirectArguments:
     case CreateScopedArguments:
     case CreateClonedArguments:
+    case CreateArgumentsButterfly:
         read(Stack);
         read(HeapObjectCount);
         write(HeapObjectCount);
@@ -773,14 +774,14 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
         return;
         
     case GetArgumentCountIncludingThis: {
-        auto heap = AbstractHeap(Stack, remapOperand(node->argumentsInlineCallFrame(), VirtualRegister(CallFrameSlot::argumentCount)));
+        auto heap = AbstractHeap(Stack, remapOperand(node->argumentsInlineCallFrame(), VirtualRegister(CallFrameSlot::argumentCountIncludingThis)));
         read(heap);
         def(HeapLocation(StackPayloadLoc, heap), LazyNode(node));
         return;
     }
 
     case SetArgumentCountIncludingThis:
-        write(AbstractHeap(Stack, CallFrameSlot::argumentCount));
+        write(AbstractHeap(Stack, CallFrameSlot::argumentCountIncludingThis));
         return;
 
     case GetRestLength:

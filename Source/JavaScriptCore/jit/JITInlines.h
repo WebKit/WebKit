@@ -109,7 +109,7 @@ ALWAYS_INLINE void JIT::updateTopCallFrame()
 #else
     uint32_t locationBits = CallSiteIndex(m_bytecodeIndex).bits();
 #endif
-    store32(TrustedImm32(locationBits), tagFor(CallFrameSlot::argumentCount));
+    store32(TrustedImm32(locationBits), tagFor(CallFrameSlot::argumentCountIncludingThis));
     
     // FIXME: It's not clear that this is needed. JITOperations tend to update the top call frame on
     // the C++ side.

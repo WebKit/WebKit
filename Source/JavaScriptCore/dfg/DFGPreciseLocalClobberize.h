@@ -110,14 +110,14 @@ private:
                 // Read the outermost arguments and argument count.
                 for (unsigned i = numberOfArgumentsToSkip; i < static_cast<unsigned>(m_graph.m_codeBlock->numParameters()); i++)
                     m_read(virtualRegisterForArgument(i));
-                m_read(VirtualRegister(CallFrameSlot::argumentCount));
+                m_read(VirtualRegister(CallFrameSlot::argumentCountIncludingThis));
                 return;
             }
             
             for (unsigned i = numberOfArgumentsToSkip; i < inlineCallFrame->argumentsWithFixup.size(); i++)
                 m_read(VirtualRegister(inlineCallFrame->stackOffset + virtualRegisterForArgument(i).offset()));
             if (inlineCallFrame->isVarargs())
-                m_read(VirtualRegister(inlineCallFrame->stackOffset + CallFrameSlot::argumentCount));
+                m_read(VirtualRegister(inlineCallFrame->stackOffset + CallFrameSlot::argumentCountIncludingThis));
         };
 
         auto readSpread = [&] (Node* spread) {
@@ -158,6 +158,7 @@ private:
         case CreateDirectArguments:
         case CreateScopedArguments:
         case CreateClonedArguments:
+        case CreateArgumentsButterfly:
         case PhantomDirectArguments:
         case PhantomClonedArguments:
         case GetRestLength:
@@ -225,14 +226,14 @@ private:
             if (!inlineCallFrame) {
                 if (indexIncludingThis < static_cast<unsigned>(m_graph.m_codeBlock->numParameters()))
                     m_read(virtualRegisterForArgument(indexIncludingThis));
-                m_read(VirtualRegister(CallFrameSlot::argumentCount));
+                m_read(VirtualRegister(CallFrameSlot::argumentCountIncludingThis));
                 break;
             }
 
             ASSERT_WITH_MESSAGE(inlineCallFrame->isVarargs(), "GetArgument is only used for InlineCallFrame if the call frame is varargs.");
             if (indexIncludingThis < inlineCallFrame->argumentsWithFixup.size())
                 m_read(VirtualRegister(inlineCallFrame->stackOffset + virtualRegisterForArgument(indexIncludingThis).offset()));
-            m_read(VirtualRegister(inlineCallFrame->stackOffset + CallFrameSlot::argumentCount));
+            m_read(VirtualRegister(inlineCallFrame->stackOffset + CallFrameSlot::argumentCountIncludingThis));
             break;
         }
             
@@ -256,7 +257,7 @@ private:
                 if (inlineCallFrame->isClosureCall)
                     m_read(VirtualRegister(inlineCallFrame->stackOffset + CallFrameSlot::callee));
                 if (inlineCallFrame->isVarargs())
-                    m_read(VirtualRegister(inlineCallFrame->stackOffset + CallFrameSlot::argumentCount));
+                    m_read(VirtualRegister(inlineCallFrame->stackOffset + CallFrameSlot::argumentCountIncludingThis));
             }
             break;
         } }

@@ -42,7 +42,7 @@ bool argumentsInvolveStackSlot(InlineCallFrame* inlineCallFrame, VirtualRegister
         return true;
     
     if (inlineCallFrame->isVarargs()
-        && reg == VirtualRegister(inlineCallFrame->stackOffset + CallFrameSlot::argumentCount))
+        && reg == VirtualRegister(inlineCallFrame->stackOffset + CallFrameSlot::argumentCountIncludingThis))
         return true;
     
     // We do not include fixups here since it is not related to |arguments|, rest parameters, and varargs.

@@ -1162,7 +1162,7 @@ bool Graph::isLiveInBytecode(VirtualRegister operand, CodeOrigin codeOrigin)
                 }
                 
                 if (inlineCallFrame->isVarargs()
-                    && reg.offset() == CallFrameSlot::argumentCount) {
+                    && reg.offset() == CallFrameSlot::argumentCountIncludingThis) {
                     if (verbose)
                         dataLog("Looks like the argument count.\n");
                     return true;

@@ -106,7 +106,7 @@ enum Intrinsic : uint8_t {
     FRoundIntrinsic,
     TruncIntrinsic,
     IsTypedArrayViewIntrinsic,
-    BoundThisNoArgsFunctionCallIntrinsic,
+    BoundFunctionCallIntrinsic,
     JSMapGetIntrinsic,
     JSMapHasIntrinsic,
     JSMapSetIntrinsic,

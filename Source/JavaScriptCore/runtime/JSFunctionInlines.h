@@ -108,6 +108,17 @@ inline bool JSFunction::hasReifiedName() const
     return m_rareData && m_rareData->hasReifiedName();
 }
 
+inline bool JSFunction::areNameAndLengthOriginal(VM&)
+{
+    if (!m_rareData)
+        return true;
+    if (m_rareData->hasModifiedName())
+        return false;
+    if (m_rareData->hasModifiedLength())
+        return false;
+    return true;
+}
+
 inline bool JSFunction::canUseAllocationProfile()
 {
     if (isHostOrBuiltinFunction()) {

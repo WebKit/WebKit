@@ -26,6 +26,7 @@
 #include "AuxiliaryBarrierInlines.h"
 #include "ButterflyInlines.h"
 #include "Error.h"
+#include "JSFunction.h"
 #include "JSObject.h"
 #include "JSTypedArrays.h"
 #include "Lookup.h"
@@ -508,6 +509,30 @@ inline bool JSObject::putOwnDataPropertyMayBeIndex(JSGlobalObject* globalObject,
         return putDirectIndex(globalObject, index.value(), value, 0, PutDirectIndexLikePutDirect);
 
     return putDirectInternal<PutModePut>(vm, propertyName, value, 0, slot);
+}
+
+inline CallType getCallData(VM& vm, JSValue value, CallData& callData)
+{
+    if (!value.isCell())
+        return CallType::None;
+    JSCell* cell = value.asCell();
+    if (cell->type() == JSFunctionType)
+        return JSFunction::getCallData(cell, callData);
+    CallType result = cell->methodTable(vm)->getCallData(cell, callData);
+    ASSERT(result == CallType::None || value.isValidCallee());
+    return result;
+}
+
+inline ConstructType getConstructData(VM& vm, JSValue value, ConstructData& constructData)
+{
+    if (!value.isCell())
+        return ConstructType::None;
+    JSCell* cell = value.asCell();
+    if (cell->type() == JSFunctionType)
+        return JSFunction::getConstructData(cell, constructData);
+    ConstructType result = cell->methodTable(vm)->getConstructData(cell, constructData);
+    ASSERT(result == ConstructType::None || value.isValidCallee());
+    return result;
 }
 
 } // namespace JSC

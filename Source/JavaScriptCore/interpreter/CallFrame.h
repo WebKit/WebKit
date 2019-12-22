@@ -86,8 +86,8 @@ namespace JSC  {
     struct CallFrameSlot {
         static constexpr int codeBlock = CallerFrameAndPC::sizeInRegisters;
         static constexpr int callee = codeBlock + 1;
-        static constexpr int argumentCount = callee + 1;
-        static constexpr int thisArgument = argumentCount + 1;
+        static constexpr int argumentCountIncludingThis = callee + 1;
+        static constexpr int thisArgument = argumentCountIncludingThis + 1;
         static constexpr int firstArgument = thisArgument + 1;
     };
 
@@ -95,7 +95,7 @@ namespace JSC  {
     // Passed as the first argument to most functions.
     class CallFrame : private Register {
     public:
-        static constexpr int headerSizeInRegisters = CallFrameSlot::argumentCount + 1;
+        static constexpr int headerSizeInRegisters = CallFrameSlot::argumentCountIncludingThis + 1;
 
         // This function should only be called in very specific circumstances
         // when you've guaranteed the callee can't be a Wasm callee, and can
@@ -190,7 +190,7 @@ namespace JSC  {
 
         // Access to arguments as passed. (After capture, arguments may move to a different location.)
         size_t argumentCount() const { return argumentCountIncludingThis() - 1; }
-        size_t argumentCountIncludingThis() const { return this[CallFrameSlot::argumentCount].payload(); }
+        size_t argumentCountIncludingThis() const { return this[CallFrameSlot::argumentCountIncludingThis].payload(); }
         static int argumentOffset(int argument) { return (CallFrameSlot::firstArgument + argument); }
         static int argumentOffsetIncludingThis(int argument) { return (CallFrameSlot::thisArgument + argument); }
 
@@ -251,7 +251,7 @@ namespace JSC  {
         bool isStackOverflowFrame() const;
         bool isWasmFrame() const;
 
-        void setArgumentCountIncludingThis(int count) { static_cast<Register*>(this)[CallFrameSlot::argumentCount].payload() = count; }
+        void setArgumentCountIncludingThis(int count) { static_cast<Register*>(this)[CallFrameSlot::argumentCountIncludingThis].payload() = count; }
         inline void setCallee(JSObject*);
         inline void setCodeBlock(CodeBlock*);
         void setReturnPC(void* value) { callerFrameAndPC().returnPC = reinterpret_cast<const Instruction*>(value); }

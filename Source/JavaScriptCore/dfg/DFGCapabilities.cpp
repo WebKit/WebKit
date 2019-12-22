@@ -234,6 +234,7 @@ CapabilityLevel capabilityLevel(OpcodeID opcodeID, CodeBlock* codeBlock, const I
     case op_create_direct_arguments:
     case op_create_scoped_arguments:
     case op_create_cloned_arguments:
+    case op_create_arguments_butterfly:
     case op_get_from_arguments:
     case op_put_to_arguments:
     case op_get_argument:

@@ -111,8 +111,8 @@ public:
     TaggedNativeFunction nativeFunction();
     TaggedNativeFunction nativeConstructor();
 
-    static ConstructType getConstructData(JSCell*, ConstructData&);
-    static CallType getCallData(JSCell*, CallData&);
+    JS_EXPORT_PRIVATE static ConstructType getConstructData(JSCell*, ConstructData&);
+    JS_EXPORT_PRIVATE static CallType getCallData(JSCell*, CallData&);
 
     static inline ptrdiff_t offsetOfExecutable()
     {
@@ -163,6 +163,8 @@ public:
         Reified,
     };
     PropertyStatus reifyLazyPropertyIfNeeded(VM&, JSGlobalObject*, PropertyName);
+
+    bool areNameAndLengthOriginal(VM&);
 
 protected:
     JS_EXPORT_PRIVATE JSFunction(VM&, JSGlobalObject*, Structure*);

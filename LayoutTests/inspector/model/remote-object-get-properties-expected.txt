@@ -407,8 +407,8 @@ description: function unboundFunction() {
 }
 
 OWN PROPERTIES:
-    name
     length
+    name
     __proto__
     targetFunction
     boundThis

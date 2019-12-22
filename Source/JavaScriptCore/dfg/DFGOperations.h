@@ -197,6 +197,7 @@ JSCell* JIT_OPERATION operationCreateDirectArgumentsDuringExit(VM*, InlineCallFr
 JSCell* JIT_OPERATION operationCreateScopedArguments(JSGlobalObject*, Structure*, Register* argumentStart, uint32_t length, JSFunction* callee, JSLexicalEnvironment*);
 JSCell* JIT_OPERATION operationCreateClonedArgumentsDuringExit(VM*, InlineCallFrame*, JSFunction*, uint32_t argumentCount);
 JSCell* JIT_OPERATION operationCreateClonedArguments(JSGlobalObject*, Structure*, Register* argumentStart, uint32_t length, JSFunction* callee);
+JSCell* JIT_OPERATION operationCreateArgumentsButterfly(JSGlobalObject*, Register* argumentStart, uint32_t argumentCount);
 JSCell* JIT_OPERATION operationCreateRest(JSGlobalObject*, Register* argumentStart, unsigned numberOfArgumentsToSkip, unsigned arraySize);
 JSCell* JIT_OPERATION operationNewArrayBuffer(VM*, Structure*, JSCell*) WTF_INTERNAL;
 JSCell* JIT_OPERATION operationSetAdd(JSGlobalObject*, JSCell*, EncodedJSValue, int32_t) WTF_INTERNAL;

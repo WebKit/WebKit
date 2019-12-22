@@ -1,3 +1,233 @@
+2019-12-21  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Improve our bound function implementation
+        https://bugs.webkit.org/show_bug.cgi?id=205327
+
+        Reviewed by Keith Miller.
+
+        This patch improves Function#bind, and calling bound function with bound arguments.
+
+        1. Rename CallFrameSlot::argumentCount to CallFrameSlot::argumentCountIncludingThis.
+        2. Do not include name in NativeExecutable for JSBoundFunction. Putting name in NativeExecutable is assuming that function + name pair is almost identical.
+           This is true in host functions except for JSBoundFunction. JSBoundFunction should hold its name in JSBoundFunction.
+        3. Cache NativeExecutable for JSBoundFunction in the VM. We use a hash-map in JITThunk for NativeExecutables because we assume that host-function creation cannot be
+           done by the user program: each executable is pre-defined to exactly one object by the environment, and there is no way to create host-functions repeatedly from
+           the user-program. The only exception to this is JSBoundFunction so caching it on the VM avoids the hash-map lookup. This is not true for JSBoundFunction.
+        4. ThunkGenerator should support JSBoundFunction call with bound arguments. It turns out that Speedometer2/React-Redux-TodoMVC is using bound function with
+           bound arguments. Additionally, it is used. This is really bad: when dispatching an event, we first call this function from C++, entering JS world,
+           going back to C++ world again, and entering JS world to call bound function again. By using ThunkGenerator, we can eliminate this back and forth by directly
+           calling the bound JS Executable from the thunk. Previously, bound arguments are stored in JSArray. But it is difficult to access them from thunk since we need to consider
+           have-a-bad-time case. Instead, we use JSImmutableButterfly to save bound arguments so that JIT thunk can quickly access arguments. To capture arguments as
+           JSImmutableButterfly in JS world, we introduce op_create_arguments_butterfly, and handle it in all tiers.
+        5. It turns out that eager materialization of "length" in JSBoundFunction takes long time while it is rarely used. This patch makes length lazily reified for JSBoundFunction.
+        6. To make Function.prototype.bind faster, we track whether "name" and "length" properties of JSFunction is modified or not. This skips has-own-length-property check, which
+           makes Function.prototype.bind 11~% faster.
+
+        Combining things above, creation of JSBoundFunction is 80~% faster. And calling bound function with bound arguments is 3~x faster.
+        This improves Speedometer2/React-TodoMVC by ~3%.
+
+        * builtins/FunctionPrototype.js:
+        (bind):
+        * bytecode/AccessCase.cpp:
+        (JSC::AccessCase::generateImpl):
+        * bytecode/AccessCaseSnippetParams.cpp:
+        (JSC::SlowPathCallGeneratorWithArguments::generateImpl):
+        * bytecode/BytecodeIntrinsicRegistry.h:
+        * bytecode/BytecodeList.rb:
+        * bytecode/BytecodeUseDef.cpp:
+        (JSC::computeUsesForBytecodeIndexImpl):
+        (JSC::computeDefsForBytecodeIndexImpl):
+        * bytecode/VirtualRegister.cpp:
+        (JSC::VirtualRegister::dump const):
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitCreateArgumentsButterfly):
+        * bytecompiler/BytecodeGenerator.h:
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::BytecodeIntrinsicNode::emit_intrinsic_createArgumentsButterfly):
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGArgumentsEliminationPhase.cpp:
+        * dfg/DFGArgumentsUtilities.cpp:
+        (JSC::DFG::argumentsInvolveStackSlot):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::flushImpl):
+        (JSC::DFG::ByteCodeParser::handleVarargsInlining):
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGCapabilities.cpp:
+        (JSC::DFG::capabilityLevel):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGDoesGC.cpp:
+        (JSC::DFG::doesGC):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::isLiveInBytecode):
+        * dfg/DFGGraph.h:
+        (JSC::DFG::Graph::forAllLocalsLiveInBytecode):
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::compileFunction):
+        * dfg/DFGJITCompiler.h:
+        (JSC::DFG::JITCompiler::emitStoreCallSiteIndex):
+        * dfg/DFGNodeType.h:
+        * dfg/DFGOSRAvailabilityAnalysisPhase.cpp:
+        (JSC::DFG::LocalOSRAvailabilityCalculator::executeNode):
+        * dfg/DFGOSRExit.cpp:
+        (JSC::DFG::emitRestoreArguments):
+        (JSC::DFG::reifyInlinedCallFrames):
+        (JSC::DFG::OSRExit::emitRestoreArguments):
+        * dfg/DFGOSRExitCompilerCommon.cpp:
+        (JSC::DFG::reifyInlinedCallFrames):
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGOperations.h:
+        * dfg/DFGPreciseLocalClobberize.h:
+        (JSC::DFG::PreciseLocalClobberizeAdaptor::readTop):
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileCreateArgumentsButterfly):
+        (JSC::DFG::SpeculativeJIT::compileGetArgumentCountIncludingThis):
+        (JSC::DFG::SpeculativeJIT::compileSetArgumentCountIncludingThis):
+        * dfg/DFGSpeculativeJIT.h:
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::emitCall):
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::emitCall):
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGStackLayoutPhase.cpp:
+        (JSC::DFG::StackLayoutPhase::run):
+        * dfg/DFGStoreBarrierInsertionPhase.cpp:
+        * ftl/FTLAbstractHeapRepository.h:
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLink.cpp:
+        (JSC::FTL::link):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::lower):
+        (JSC::FTL::DFG::LowerDFGToB3::compileNode):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCreateArgumentsButterfly):
+        (JSC::FTL::DFG::LowerDFGToB3::compileGetArgumentCountIncludingThis):
+        (JSC::FTL::DFG::LowerDFGToB3::compileSetArgumentCountIncludingThis):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCallOrConstruct):
+        (JSC::FTL::DFG::LowerDFGToB3::compileDirectCallOrConstruct):
+        (JSC::FTL::DFG::LowerDFGToB3::compileTailCall):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCallOrConstructVarargsSpread):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCallOrConstructVarargs):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCallEval):
+        (JSC::FTL::DFG::LowerDFGToB3::getArgumentsLength):
+        (JSC::FTL::DFG::LowerDFGToB3::callPreflight):
+        * ftl/FTLSlowPathCall.h:
+        (JSC::FTL::callOperation):
+        * interpreter/CallFrame.cpp:
+        (JSC::CallFrame::callSiteAsRawBits const):
+        (JSC::CallFrame::unsafeCallSiteAsRawBits const):
+        (JSC::CallFrame::setCurrentVPC):
+        * interpreter/CallFrame.h:
+        (JSC::CallFrame::argumentCountIncludingThis const):
+        (JSC::CallFrame::setArgumentCountIncludingThis):
+        * jit/AssemblyHelpers.cpp:
+        (JSC::AssemblyHelpers::jitAssertArgumentCountSane):
+        * jit/AssemblyHelpers.h:
+        (JSC::AssemblyHelpers::argumentCount):
+        * jit/CCallHelpers.h:
+        (JSC::CCallHelpers::prepareForTailCallSlow):
+        * jit/CallFrameShuffler.cpp:
+        (JSC::CallFrameShuffler::dump const):
+        (JSC::CallFrameShuffler::prepareForTailCall):
+        (JSC::CallFrameShuffler::prepareAny):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+        (JSC::JIT::compileWithoutLinking):
+        * jit/JITCall.cpp:
+        (JSC::JIT::compileSetupFrame):
+        (JSC::JIT::compileOpCall):
+        * jit/JITCall32_64.cpp:
+        (JSC::JIT::compileSetupFrame):
+        (JSC::JIT::compileOpCall):
+        * jit/JITInlines.h:
+        (JSC::JIT::updateTopCallFrame):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_argument_count):
+        (JSC::JIT::emit_op_get_rest_length):
+        (JSC::JIT::emit_op_get_argument):
+        * jit/SetupVarargsFrame.cpp:
+        (JSC::emitSetupVarargsFrameFastCase):
+        * jit/SpecializedThunkJIT.h:
+        (JSC::SpecializedThunkJIT::SpecializedThunkJIT):
+        * jit/ThunkGenerators.cpp:
+        (JSC::arityFixupGenerator):
+        (JSC::boundFunctionCallGenerator):
+        (JSC::boundThisNoArgsFunctionCallGenerator): Deleted.
+        * jit/ThunkGenerators.h:
+        * jsc.cpp:
+        * llint/LLIntData.cpp:
+        (JSC::LLInt::Data::performAssertions):
+        * llint/LowLevelInterpreter.asm:
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+        * llint/WebAssembly.asm:
+        * runtime/CommonSlowPaths.cpp:
+        (JSC::SLOW_PATH_DECL):
+        * runtime/CommonSlowPaths.h:
+        * runtime/ExecutableBase.h:
+        * runtime/FunctionRareData.cpp:
+        (JSC::FunctionRareData::FunctionRareData):
+        * runtime/FunctionRareData.h:
+        * runtime/IntlCollatorPrototype.cpp:
+        (JSC::IntlCollatorPrototypeGetterCompare):
+        * runtime/IntlDateTimeFormatPrototype.cpp:
+        (JSC::IntlDateTimeFormatPrototypeGetterFormat):
+        * runtime/IntlNumberFormatPrototype.cpp:
+        (JSC::IntlNumberFormatPrototypeGetterFormat):
+        * runtime/Intrinsic.cpp:
+        (JSC::intrinsicName):
+        * runtime/Intrinsic.h:
+        * runtime/JSBoundFunction.cpp:
+        (JSC::boundThisNoArgsFunctionCall):
+        (JSC::boundFunctionCall):
+        (JSC::boundThisNoArgsFunctionConstruct):
+        (JSC::boundFunctionConstruct):
+        (JSC::JSBoundFunction::create):
+        (JSC::JSBoundFunction::JSBoundFunction):
+        (JSC::JSBoundFunction::boundArgsCopy):
+        (JSC::JSBoundFunction::visitChildren):
+        * runtime/JSBoundFunction.h:
+        * runtime/JSFunction.cpp:
+        (JSC::JSFunction::finishCreation):
+        (JSC::JSFunction::name):
+        (JSC::JSFunction::getOwnPropertySlot):
+        (JSC::JSFunction::getOwnNonIndexPropertyNames):
+        (JSC::JSFunction::put):
+        (JSC::JSFunction::deleteProperty):
+        (JSC::JSFunction::defineOwnProperty):
+        (JSC::JSFunction::reifyLength):
+        (JSC::JSFunction::reifyLazyPropertyIfNeeded):
+        (JSC::JSFunction::reifyLazyPropertyForHostOrBuiltinIfNeeded):
+        (JSC::JSFunction::reifyLazyBoundNameIfNeeded):
+        * runtime/JSFunction.h:
+        * runtime/JSFunctionInlines.h:
+        (JSC::JSFunction::areNameAndLengthOriginal):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::makeBoundFunction):
+        (JSC::hasOwnLengthProperty):
+        * runtime/JSObject.h:
+        (JSC::getJSFunction):
+        (JSC::getCallData): Deleted.
+        (JSC::getConstructData): Deleted.
+        * runtime/JSObjectInlines.h:
+        (JSC::getCallData):
+        (JSC::getConstructData):
+        * runtime/VM.cpp:
+        (JSC::thunkGeneratorForIntrinsic):
+        (JSC::VM::getBoundFunction):
+        * runtime/VM.h:
+        * wasm/js/WasmToJS.cpp:
+        (JSC::Wasm::wasmToJS):
+        * wasm/js/WebAssemblyFunction.cpp:
+        (JSC::WebAssemblyFunction::jsCallEntrypointSlow):
+
 2019-12-20  Darin Adler  <darin@apple.com>
 
         Make JSString values from literals in a single consistent style

@@ -1527,7 +1527,7 @@ public:
     {
         ASSERT(!inlineCallFrame || inlineCallFrame->isVarargs());
         if (!inlineCallFrame)
-            return VirtualRegister(CallFrameSlot::argumentCount);
+            return VirtualRegister(CallFrameSlot::argumentCountIncludingThis);
         return inlineCallFrame->argumentCountRegister;
     }
 

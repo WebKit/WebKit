@@ -48,14 +48,23 @@ public:
         return vm.boundFunctionSpace<mode>();
     }
 
-    static JSBoundFunction* create(VM&, JSGlobalObject*, JSObject* targetFunction, JSValue boundThis, JSArray* boundArgs, int, const String& name);
+    static JSBoundFunction* create(VM&, JSGlobalObject*, JSObject* targetFunction, JSValue boundThis, JSImmutableButterfly* boundArgs, int, JSString* name);
     
     static bool customHasInstance(JSObject*, JSGlobalObject*, JSValue);
 
     JSObject* targetFunction() { return m_targetFunction.get(); }
     JSValue boundThis() { return m_boundThis.get(); }
-    JSArray* boundArgs() { return m_boundArgs.get(); } // DO NOT allow this array to be mutated!
+    JSImmutableButterfly* boundArgs() { return m_boundArgs.get(); } // DO NOT allow this array to be mutated!
     JSArray* boundArgsCopy(JSGlobalObject*);
+    JSString* name() { return m_name.get(); }
+    const String& nameString()
+    {
+        ASSERT(!m_name->isRope());
+        bool allocationAllowed = false;
+        return m_name->tryGetValue(allocationAllowed);
+    }
+
+    int32_t length(VM&) { return m_length; }
 
     static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
     {
@@ -65,6 +74,7 @@ public:
     
     static ptrdiff_t offsetOfTargetFunction() { return OBJECT_OFFSETOF(JSBoundFunction, m_targetFunction); }
     static ptrdiff_t offsetOfBoundThis() { return OBJECT_OFFSETOF(JSBoundFunction, m_boundThis); }
+    static ptrdiff_t offsetOfBoundArgs() { return OBJECT_OFFSETOF(JSBoundFunction, m_boundArgs); }
 
     DECLARE_INFO;
 
@@ -72,13 +82,20 @@ protected:
     static void visitChildren(JSCell*, SlotVisitor&);
 
 private:
-    JSBoundFunction(VM&, JSGlobalObject*, Structure*, JSObject* targetFunction, JSValue boundThis, JSArray* boundArgs);
+    JSBoundFunction(VM&, JSGlobalObject*, Structure*, JSObject* targetFunction, JSValue boundThis, JSImmutableButterfly* boundArgs, JSString* name, int length);
     
     void finishCreation(VM&, NativeExecutable*, int length);
 
     WriteBarrier<JSObject> m_targetFunction;
     WriteBarrier<Unknown> m_boundThis;
-    WriteBarrier<JSArray> m_boundArgs;
+    WriteBarrier<JSImmutableButterfly> m_boundArgs;
+    WriteBarrier<JSString> m_name;
+    int m_length;
 };
+
+EncodedJSValue JSC_HOST_CALL boundFunctionCall(JSGlobalObject*, CallFrame*);
+EncodedJSValue JSC_HOST_CALL boundFunctionConstruct(JSGlobalObject*, CallFrame*);
+EncodedJSValue JSC_HOST_CALL boundThisNoArgsFunctionCall(JSGlobalObject*, CallFrame*);
+EncodedJSValue JSC_HOST_CALL boundThisNoArgsFunctionConstruct(JSGlobalObject*, CallFrame*);
 
 } // namespace JSC

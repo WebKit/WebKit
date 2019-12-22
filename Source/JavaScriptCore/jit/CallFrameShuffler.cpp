@@ -152,7 +152,7 @@ void CallFrameShuffler::dump(PrintStream& out) const
                     out.printf(" %c%8s <- %18s %c ", d, str.data(),
                         recoveryStr.data(), d);
                 }
-            } else if (newReg == VirtualRegister { CallFrameSlot::argumentCount })
+            } else if (newReg == VirtualRegister { CallFrameSlot::argumentCountIncludingThis })
                 out.printf(" %c%8s <- %18zu %c ", d, str.data(), argCount(), d);
             else
                 out.printf(" %c%30s %c ", d, "", d);
@@ -418,7 +418,7 @@ void CallFrameShuffler::prepareForTailCall()
     // old frame (taking into account an argument count higher than
     // the number of parameters), then substracting to it the aligned
     // new frame size (adjusted).
-    m_jit.load32(MacroAssembler::Address(GPRInfo::callFrameRegister, CallFrameSlot::argumentCount * static_cast<int>(sizeof(Register)) + PayloadOffset), m_newFrameBase);
+    m_jit.load32(MacroAssembler::Address(GPRInfo::callFrameRegister, CallFrameSlot::argumentCountIncludingThis * static_cast<int>(sizeof(Register)) + PayloadOffset), m_newFrameBase);
     MacroAssembler::Jump argumentCountOK =
         m_jit.branch32(MacroAssembler::BelowOrEqual, m_newFrameBase,
             MacroAssembler::TrustedImm32(m_jit.codeBlock()->numParameters()));
@@ -738,12 +738,12 @@ void CallFrameShuffler::prepareAny()
     // We need to handle 4) first because it implies releasing
     // m_newFrameBase, which could be a wanted register.
     if (verbose)
-        dataLog("   * Storing the argument count into ", VirtualRegister { CallFrameSlot::argumentCount }, "\n");
+        dataLog("   * Storing the argument count into ", VirtualRegister { CallFrameSlot::argumentCountIncludingThis }, "\n");
     m_jit.store32(MacroAssembler::TrustedImm32(0),
-        addressForNew(VirtualRegister { CallFrameSlot::argumentCount }).withOffset(TagOffset));
+        addressForNew(VirtualRegister { CallFrameSlot::argumentCountIncludingThis }).withOffset(TagOffset));
     RELEASE_ASSERT(m_numPassedArgs != UINT_MAX);
     m_jit.store32(MacroAssembler::TrustedImm32(m_numPassedArgs),
-        addressForNew(VirtualRegister { CallFrameSlot::argumentCount }).withOffset(PayloadOffset));
+        addressForNew(VirtualRegister { CallFrameSlot::argumentCountIncludingThis }).withOffset(PayloadOffset));
 
     if (!isSlowPath()) {
         ASSERT(m_newFrameBase != MacroAssembler::stackPointerRegister);

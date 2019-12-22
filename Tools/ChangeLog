@@ -1,3 +1,14 @@
+2019-12-21  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Improve our bound function implementation
+        https://bugs.webkit.org/show_bug.cgi?id=205327
+
+        Reviewed by Keith Miller.
+
+        Support running slow-microbenchmarks.
+
+        * Scripts/run-jsc-benchmarks:
+
 2019-12-21  Kate Cheney  <katherine_cheney@apple.com>
 
         Add timeStamp to ITP database
