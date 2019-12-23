@@ -29,6 +29,8 @@
 // FIXME: We should probably move to makeing the WebCore/PlatformFooEvents trivial classes so that
 // we can use them as the event type.
 
+#include "EditingRange.h"
+#include <WebCore/CompositionUnderline.h>
 #include <WebCore/FloatPoint.h>
 #include <WebCore/FloatSize.h>
 #include <WebCore/IntPoint.h>
@@ -257,11 +259,11 @@ public:
 #if USE(APPKIT)
     WebKeyboardEvent(Type, const String& text, const String& unmodifiedText, const String& key, const String& code, const String& keyIdentifier, int windowsVirtualKeyCode, int nativeVirtualKeyCode, int macCharCode, bool handledByInputMethod, const Vector<WebCore::KeypressCommand>&, bool isAutoRepeat, bool isKeypad, bool isSystemKey, OptionSet<Modifier>, WallTime timestamp);
 #elif PLATFORM(GTK)
-    WebKeyboardEvent(Type, const String& text, const String& key, const String& code, const String& keyIdentifier, int windowsVirtualKeyCode, int nativeVirtualKeyCode, bool handledByInputMethod, Vector<String>&& commands, bool isKeypad, OptionSet<Modifier>, WallTime timestamp);
+    WebKeyboardEvent(Type, const String& text, const String& key, const String& code, const String& keyIdentifier, int windowsVirtualKeyCode, int nativeVirtualKeyCode, bool handledByInputMethod, Optional<Vector<WebCore::CompositionUnderline>>&&, Optional<EditingRange>&&, Vector<String>&& commands, bool isKeypad, OptionSet<Modifier>, WallTime timestamp);
 #elif PLATFORM(IOS_FAMILY)
     WebKeyboardEvent(Type, const String& text, const String& unmodifiedText, const String& key, const String& code, const String& keyIdentifier, int windowsVirtualKeyCode, int nativeVirtualKeyCode, int macCharCode, bool handledByInputMethod, bool isAutoRepeat, bool isKeypad, bool isSystemKey, OptionSet<Modifier>, WallTime timestamp);
 #elif USE(LIBWPE)
-    WebKeyboardEvent(Type, const String& text, const String& key, const String& code, const String& keyIdentifier, int windowsVirtualKeyCode, int nativeVirtualKeyCode, bool handledByInputMethod, bool isKeypad, OptionSet<Modifier>, WallTime timestamp);
+    WebKeyboardEvent(Type, const String& text, const String& key, const String& code, const String& keyIdentifier, int windowsVirtualKeyCode, int nativeVirtualKeyCode, bool handledByInputMethod, Optional<Vector<WebCore::CompositionUnderline>>&&, Optional<EditingRange>&&, bool isKeypad, OptionSet<Modifier>, WallTime timestamp);
 #else
     WebKeyboardEvent(Type, const String& text, const String& unmodifiedText, const String& key, const String& code, const String& keyIdentifier, int windowsVirtualKeyCode, int nativeVirtualKeyCode, int macCharCode, bool isAutoRepeat, bool isKeypad, bool isSystemKey, OptionSet<Modifier>, WallTime timestamp);
 #endif
@@ -276,6 +278,10 @@ public:
     int32_t macCharCode() const { return m_macCharCode; }
 #if USE(APPKIT) || USE(UIKIT_KEYBOARD_ADDITIONS) || PLATFORM(GTK) || USE(LIBWPE)
     bool handledByInputMethod() const { return m_handledByInputMethod; }
+#endif
+#if PLATFORM(GTK) || USE(LIBWPE)
+    const Optional<Vector<WebCore::CompositionUnderline>>& preeditUnderlines() const { return m_preeditUnderlines; }
+    const Optional<EditingRange>& preeditSelectionRange() const { return m_preeditSelectionRange; }
 #endif
 #if USE(APPKIT)
     const Vector<WebCore::KeypressCommand>& commands() const { return m_commands; }
@@ -302,6 +308,10 @@ private:
     int32_t m_macCharCode;
 #if USE(APPKIT) || USE(UIKIT_KEYBOARD_ADDITIONS) || PLATFORM(GTK) || USE(LIBWPE)
     bool m_handledByInputMethod;
+#endif
+#if PLATFORM(GTK) || USE(LIBWPE)
+    Optional<Vector<WebCore::CompositionUnderline>> m_preeditUnderlines;
+    Optional<EditingRange> m_preeditSelectionRange;
 #endif
 #if USE(APPKIT)
     Vector<WebCore::KeypressCommand> m_commands;

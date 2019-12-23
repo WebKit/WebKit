@@ -5352,20 +5352,10 @@ static Frame* targetFrameForEditing(WebPage& page)
     return &targetFrame;
 }
 
-void WebPage::confirmComposition(const String& compositionString)
+void WebPage::cancelComposition(const String& compositionString)
 {
     if (auto* targetFrame = targetFrameForEditing(*this))
         targetFrame->editor().confirmComposition(compositionString);
-}
-
-void WebPage::setComposition(const String& text, const Vector<CompositionUnderline>& underlines, const EditingRange& selectionRange)
-{
-    Frame* targetFrame = targetFrameForEditing(*this);
-    if (!targetFrame || !targetFrame->selection().selection().isContentEditable())
-        return;
-
-    Ref<Frame> protector(*targetFrame);
-    targetFrame->editor().setComposition(text, underlines, selectionRange.location, selectionRange.location + selectionRange.length);
 }
 #endif
 

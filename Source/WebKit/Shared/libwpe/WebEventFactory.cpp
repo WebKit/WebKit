@@ -62,7 +62,7 @@ WallTime wallTimeForEventTime(uint64_t timestamp)
     return timestamp ? MonotonicTime::fromRawSeconds(timestamp / 1000.).approximateWallTime() : WallTime::now();
 }
 
-WebKeyboardEvent WebEventFactory::createWebKeyboardEvent(struct wpe_input_keyboard_event* event, const String& text, bool handledByInputMethod)
+WebKeyboardEvent WebEventFactory::createWebKeyboardEvent(struct wpe_input_keyboard_event* event, const String& text, bool handledByInputMethod, Optional<Vector<WebCore::CompositionUnderline>>&& preeditUnderlines, Optional<EditingRange>&& preeditSelectionRange)
 {
     return WebKeyboardEvent(event->pressed ? WebEvent::KeyDown : WebEvent::KeyUp,
         text.isNull() ? WebCore::PlatformKeyboardEvent::singleCharacterString(event->key_code) : text,
@@ -72,6 +72,8 @@ WebKeyboardEvent WebEventFactory::createWebKeyboardEvent(struct wpe_input_keyboa
         WebCore::PlatformKeyboardEvent::windowsKeyCodeForWPEKeyCode(event->key_code),
         event->key_code,
         handledByInputMethod,
+        WTFMove(preeditUnderlines),
+        WTFMove(preeditSelectionRange),
         isWPEKeyCodeFromKeyPad(event->key_code),
         modifiersForEventModifiers(event->modifiers),
         wallTimeForEventTime(event->time));

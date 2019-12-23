@@ -778,8 +778,7 @@ public:
     SandboxExtensionTracker& sandboxExtensionTracker() { return m_sandboxExtensionTracker; }
 
 #if PLATFORM(GTK) || PLATFORM(WPE)
-    void setComposition(const String&, const Vector<WebCore::CompositionUnderline>&, const EditingRange& selectionRange);
-    void confirmComposition(const String& text);
+    void cancelComposition(const String& text);
 #endif
 
 #if PLATFORM(GTK)

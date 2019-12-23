@@ -36,6 +36,7 @@
 OBJC_CLASS NSView;
 
 namespace WebCore {
+struct CompositionUnderline;
 struct KeypressCommand;
 }
 #endif
@@ -59,6 +60,7 @@ struct wpe_input_keyboard_event;
 #endif
 
 namespace WebKit {
+struct EditingRange;
 
 class NativeWebKeyboardEvent : public WebKeyboardEvent {
 public:
@@ -68,13 +70,13 @@ public:
 #elif PLATFORM(GTK)
     NativeWebKeyboardEvent(const NativeWebKeyboardEvent&);
     enum class HandledByInputMethod : bool { No, Yes };
-    NativeWebKeyboardEvent(GdkEvent*, const String&, HandledByInputMethod, Vector<String>&& commands);
+    NativeWebKeyboardEvent(GdkEvent*, const String&, HandledByInputMethod, Optional<Vector<WebCore::CompositionUnderline>>&&, Optional<EditingRange>&&, Vector<String>&& commands);
 #elif PLATFORM(IOS_FAMILY)
     enum class HandledByInputMethod : bool { No, Yes };
     NativeWebKeyboardEvent(::WebEvent *, HandledByInputMethod);
 #elif USE(LIBWPE)
     enum class HandledByInputMethod : bool { No, Yes };
-    NativeWebKeyboardEvent(struct wpe_input_keyboard_event*, const String&, HandledByInputMethod);
+    NativeWebKeyboardEvent(struct wpe_input_keyboard_event*, const String&, HandledByInputMethod, Optional<Vector<WebCore::CompositionUnderline>>&&, Optional<EditingRange>&&);
 #elif PLATFORM(WIN)
     NativeWebKeyboardEvent(HWND, UINT message, WPARAM, LPARAM, Vector<MSG>&& pendingCharEvents);
 #endif

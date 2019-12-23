@@ -217,8 +217,15 @@ public:
         m_code = webEvent.code();
         m_keyIdentifier = webEvent.keyIdentifier();
         m_windowsVirtualKeyCode = webEvent.windowsVirtualKeyCode();
-#if USE(APPKIT) || USE(UIKIT_KEYBOARD_ADDITIONS) || PLATFORM(GTK)
+#if USE(APPKIT) || USE(UIKIT_KEYBOARD_ADDITIONS) || PLATFORM(GTK) || USE(LIBWPE)
         m_handledByInputMethod = webEvent.handledByInputMethod();
+#endif
+#if PLATFORM(GTK) || USE(LIBWPE)
+        m_preeditUnderlines = webEvent.preeditUnderlines();
+        if (auto preeditSelectionRange = webEvent.preeditSelectionRange()) {
+            m_preeditSelectionRangeStart = preeditSelectionRange->location;
+            m_preeditSelectionRangeLength = preeditSelectionRange->length;
+        }
 #endif
 #if USE(APPKIT) || PLATFORM(GTK)
         m_commands = webEvent.commands();

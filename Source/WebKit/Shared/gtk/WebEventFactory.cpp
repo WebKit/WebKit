@@ -252,7 +252,7 @@ WebWheelEvent WebEventFactory::createWebWheelEvent(const GdkEvent* event, WebWhe
         wallTimeForEvent(event));
 }
 
-WebKeyboardEvent WebEventFactory::createWebKeyboardEvent(const GdkEvent* event, const String& text, bool handledByInputMethod, Vector<String>&& commands)
+WebKeyboardEvent WebEventFactory::createWebKeyboardEvent(const GdkEvent* event, const String& text, bool handledByInputMethod, Optional<Vector<CompositionUnderline>>&& preeditUnderlines, Optional<EditingRange>&& preeditSelectionRange, Vector<String>&& commands)
 {
     guint keyval;
     gdk_event_get_keyval(event, &keyval);
@@ -269,6 +269,8 @@ WebKeyboardEvent WebEventFactory::createWebKeyboardEvent(const GdkEvent* event, 
         PlatformKeyboardEvent::windowsKeyCodeForGdkKeyCode(keyval),
         static_cast<int>(keyval),
         handledByInputMethod,
+        WTFMove(preeditUnderlines),
+        WTFMove(preeditSelectionRange),
         WTFMove(commands),
         isGdkKeyCodeFromKeyPad(keyval),
         modifiersForEvent(event),

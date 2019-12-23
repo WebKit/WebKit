@@ -121,6 +121,7 @@ public:
 
     virtual void handleKeyboardEvent(KeyboardEvent&) = 0;
     virtual void handleInputMethodKeydown(KeyboardEvent&) = 0;
+    virtual void didDispatchInputMethodKeydown(KeyboardEvent&) { }
     
     virtual void textFieldDidBeginEditing(Element*) = 0;
     virtual void textFieldDidEndEditing(Element*) = 0;

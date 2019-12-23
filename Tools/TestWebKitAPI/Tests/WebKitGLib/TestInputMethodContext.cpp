@@ -436,7 +436,6 @@ static void testWebKitInputMethodContextSequence(InputMethodTest* test, gconstpo
     g_assert_cmpuint(test->m_events[3].keyCode, ==, 87);
     g_assert_cmpstr(test->m_events[3].key.data(), ==, "w");
     g_assert_true(test->m_events[3].isComposing);
-    test->wait(0.1); // FIXME: this is a workaround for existing bug when key events are queued.
     test->m_events.clear();
     test->keyStrokeAndWaitForEvents(KEY(g), 3);
     g_assert_true(test->m_events[0].type == InputMethodTest::Event::Type::KeyDown);
@@ -449,7 +448,6 @@ static void testWebKitInputMethodContextSequence(InputMethodTest* test, gconstpo
     g_assert_cmpuint(test->m_events[2].keyCode, ==, 71);
     g_assert_cmpstr(test->m_events[2].key.data(), ==, "g");
     g_assert_true(test->m_events[2].isComposing);
-    test->wait(0.1); // FIXME: this is a workaround for existing bug when key events are queued.
     test->m_events.clear();
     test->keyStrokeAndWaitForEvents(KEY(t), 3);
     g_assert_true(test->m_events[0].type == InputMethodTest::Event::Type::KeyDown);
@@ -462,7 +460,6 @@ static void testWebKitInputMethodContextSequence(InputMethodTest* test, gconstpo
     g_assert_cmpuint(test->m_events[2].keyCode, ==, 84);
     g_assert_cmpstr(test->m_events[2].key.data(), ==, "t");
     g_assert_true(test->m_events[2].isComposing);
-    test->wait(0.1); // FIXME: this is a workaround for existing bug when key events are queued.
     test->m_events.clear();
     test->keyStrokeAndWaitForEvents(KEY(k), 3);
     g_assert_true(test->m_events[0].type == InputMethodTest::Event::Type::KeyDown);
@@ -475,7 +472,6 @@ static void testWebKitInputMethodContextSequence(InputMethodTest* test, gconstpo
     g_assert_cmpuint(test->m_events[2].keyCode, ==, 75);
     g_assert_cmpstr(test->m_events[2].key.data(), ==, "k");
     g_assert_true(test->m_events[2].isComposing);
-    test->wait(0.1); // FIXME: this is a workaround for existing bug when key events are queued.
     test->m_events.clear();
     test->keyStrokeAndWaitForEvents(KEY(ISO_Enter), 3);
     g_assert_true(test->m_events[0].type == InputMethodTest::Event::Type::KeyDown);
@@ -508,7 +504,6 @@ static void testWebKitInputMethodContextSequence(InputMethodTest* test, gconstpo
     g_assert_cmpuint(test->m_events[3].keyCode, ==, 87);
     g_assert_cmpstr(test->m_events[3].key.data(), ==, "w");
     g_assert_true(test->m_events[3].isComposing);
-    test->wait(0.1); // FIXME: this is a workaround for existing bug when key events are queued.
     test->m_events.clear();
     test->keyStrokeAndWaitForEvents(KEY(w), 3);
     g_assert_true(test->m_events[0].type == InputMethodTest::Event::Type::KeyDown);
@@ -521,7 +516,6 @@ static void testWebKitInputMethodContextSequence(InputMethodTest* test, gconstpo
     g_assert_cmpuint(test->m_events[2].keyCode, ==, 87);
     g_assert_cmpstr(test->m_events[2].key.data(), ==, "w");
     g_assert_true(test->m_events[2].isComposing);
-    test->wait(0.1); // FIXME: this is a workaround for existing bug when key events are queued.
     test->m_events.clear();
     test->keyStrokeAndWaitForEvents(KEY(p), 3);
     g_assert_true(test->m_events[0].type == InputMethodTest::Event::Type::KeyDown);
@@ -534,7 +528,6 @@ static void testWebKitInputMethodContextSequence(InputMethodTest* test, gconstpo
     g_assert_cmpuint(test->m_events[2].keyCode, ==, 80);
     g_assert_cmpstr(test->m_events[2].key.data(), ==, "p");
     g_assert_true(test->m_events[2].isComposing);
-    test->wait(0.1); // FIXME: this is a workaround for existing bug when key events are queued.
     test->m_events.clear();
     test->keyStrokeAndWaitForEvents(KEY(e), 3);
     g_assert_true(test->m_events[0].type == InputMethodTest::Event::Type::KeyDown);
@@ -547,7 +540,6 @@ static void testWebKitInputMethodContextSequence(InputMethodTest* test, gconstpo
     g_assert_cmpuint(test->m_events[2].keyCode, ==, 69);
     g_assert_cmpstr(test->m_events[2].key.data(), ==, "e");
     g_assert_true(test->m_events[2].isComposing);
-    test->wait(0.1); // FIXME: this is a workaround for existing bug when key events are queued.
     test->m_events.clear();
     test->keyStrokeAndWaitForEvents(KEY(space), 3);
     g_assert_true(test->m_events[0].type == InputMethodTest::Event::Type::KeyDown);
@@ -591,7 +583,6 @@ static void testWebKitInputMethodContextInvalidSequence(InputMethodTest* test, g
     g_assert_cmpuint(test->m_events[3].keyCode, ==, 87);
     g_assert_cmpstr(test->m_events[3].key.data(), ==, "w");
     g_assert_true(test->m_events[3].isComposing);
-    test->wait(0.1); // FIXME: this is a workaround for existing bug when key events are queued.
     test->m_events.clear();
     test->keyStrokeAndWaitForEvents(KEY(w), 3);
     g_assert_true(test->m_events[0].type == InputMethodTest::Event::Type::KeyDown);
@@ -604,7 +595,6 @@ static void testWebKitInputMethodContextInvalidSequence(InputMethodTest* test, g
     g_assert_cmpuint(test->m_events[2].keyCode, ==, 87);
     g_assert_cmpstr(test->m_events[2].key.data(), ==, "w");
     g_assert_true(test->m_events[2].isComposing);
-    test->wait(0.1); // FIXME: this is a workaround for existing bug when key events are queued.
     test->m_events.clear();
     test->keyStrokeAndWaitForEvents(KEY(space), 3);
     g_assert_true(test->m_events[0].type == InputMethodTest::Event::Type::KeyDown);
@@ -648,7 +638,6 @@ static void testWebKitInputMethodContextCancelSequence(InputMethodTest* test, gc
     g_assert_cmpuint(test->m_events[3].keyCode, ==, 87);
     g_assert_cmpstr(test->m_events[3].key.data(), ==, "w");
     g_assert_true(test->m_events[3].isComposing);
-    test->wait(0.1); // FIXME: this is a workaround for existing bug when key events are queued.
     test->m_events.clear();
     test->keyStrokeAndWaitForEvents(KEY(Escape), 3);
     g_assert_true(test->m_events[0].type == InputMethodTest::Event::Type::KeyDown);
@@ -692,7 +681,6 @@ static void testWebKitInputMethodContextReset(InputMethodTest* test, gconstpoint
     g_assert_cmpuint(test->m_events[3].keyCode, ==, 87);
     g_assert_cmpstr(test->m_events[3].key.data(), ==, "w");
     g_assert_true(test->m_events[3].isComposing);
-    test->wait(0.1); // FIXME: this is a workaround for existing bug when key events are queued.
     test->m_events.clear();
     test->clickAndWaitForEvents(1);
     g_assert_true(test->m_events[0].type == InputMethodTest::Event::Type::CompositionEnd);

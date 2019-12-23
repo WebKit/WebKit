@@ -1320,7 +1320,7 @@ void PlatformKeyboardEvent::disambiguateKeyDownEvent(Type type, bool backwardsCo
 {
     ASSERT(m_type == KeyDown);
     m_type = type;
-    if (backwardsCompatibility)
+    if (backwardsCompatibility || m_handledByInputMethod)
         return;
 
     if (type == PlatformEvent::RawKeyDown) {

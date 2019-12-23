@@ -112,6 +112,6 @@ void webkitWebViewDenyPointerLockRequest(WebKitWebView*);
 void webkitWebViewDidLosePointerLock(WebKitWebView*);
 #endif
 
-void webkitWebViewSetComposition(WebKitWebView*, const String&, const Vector<WebCore::CompositionUnderline>&, const WebKit::EditingRange&);
+void webkitWebViewSetComposition(WebKitWebView*, const String&, const Vector<WebCore::CompositionUnderline>&, WebKit::EditingRange&&);
 void webkitWebViewConfirmComposition(WebKitWebView*, const String&);
 void webkitWebViewCancelComposition(WebKitWebView*, const String&);

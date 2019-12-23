@@ -414,8 +414,7 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
     SetCanRunModal(bool canRunModal)
 
 #if PLATFORM(GTK) || PLATFORM(WPE)
-    SetComposition(String text, Vector<WebCore::CompositionUnderline> underlines, struct WebKit::EditingRange selectionRange)
-    ConfirmComposition(String text)
+    CancelComposition(String text)
 #endif
 
 #if PLATFORM(GTK)

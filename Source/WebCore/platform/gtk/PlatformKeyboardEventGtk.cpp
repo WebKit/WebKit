@@ -1327,16 +1327,10 @@ void PlatformKeyboardEvent::disambiguateKeyDownEvent(Type type, bool backwardCom
     ASSERT(m_type == KeyDown);
     m_type = type;
 
-    if (backwardCompatibilityMode)
+    if (backwardCompatibilityMode || m_handledByInputMethod)
         return;
 
     if (type == PlatformEvent::RawKeyDown) {
-        m_text = String();
-        m_unmodifiedText = String();
-    } else if (type == PlatformEvent::Char && m_handledByInputMethod) {
-        // Having empty text, prevents this Char (which is a DOM keypress) event
-        // from going to the DOM. Keys that trigger composition events should not
-        // fire keypress.
         m_text = String();
         m_unmodifiedText = String();
     } else {

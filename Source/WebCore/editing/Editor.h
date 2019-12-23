@@ -151,6 +151,7 @@ public:
 
     void handleKeyboardEvent(KeyboardEvent&);
     void handleInputMethodKeydown(KeyboardEvent&);
+    void didDispatchInputMethodKeydown(KeyboardEvent&);
     bool handleTextEvent(TextEvent&);
 
     WEBCORE_EXPORT bool canEdit() const;

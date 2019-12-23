@@ -26,6 +26,7 @@
 
 #pragma once
 
+#include "CompositionUnderline.h"
 #include "KeypressCommand.h"
 #include "PlatformEvent.h"
 #include <wtf/WindowsExtras.h>
@@ -96,6 +97,11 @@ namespace WebCore {
 #if USE(APPKIT) || USE(UIKIT_KEYBOARD_ADDITIONS) || PLATFORM(GTK) || USE(LIBWPE)
         bool handledByInputMethod() const { return m_handledByInputMethod; }
 #endif
+#if PLATFORM(GTK) || USE(LIBWPE)
+        const Optional<Vector<WebCore::CompositionUnderline>>& preeditUnderlines() const { return m_preeditUnderlines; }
+        const Optional<uint64_t>& preeditSelectionRangeStart() const { return m_preeditSelectionRangeStart; }
+        const Optional<uint64_t>& preeditSelectionRangeLength() const { return m_preeditSelectionRangeLength; }
+#endif
 #if USE(APPKIT)
         const Vector<KeypressCommand>& commands() const { return m_commands; }
 #elif PLATFORM(GTK)
@@ -153,6 +159,11 @@ namespace WebCore {
         int m_windowsVirtualKeyCode;
 #if USE(APPKIT) || USE(UIKIT_KEYBOARD_ADDITIONS) || PLATFORM(GTK) || USE(LIBWPE)
         bool m_handledByInputMethod { false };
+#endif
+#if PLATFORM(GTK) || USE(LIBWPE)
+        Optional<Vector<WebCore::CompositionUnderline>> m_preeditUnderlines;
+        Optional<uint64_t> m_preeditSelectionRangeStart;
+        Optional<uint64_t> m_preeditSelectionRangeLength;
 #endif
 #if USE(APPKIT)
         Vector<KeypressCommand> m_commands;

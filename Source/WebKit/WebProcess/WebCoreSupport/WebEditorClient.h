@@ -174,6 +174,10 @@ private:
     bool shouldShowUnicodeMenu() final;
 #endif
 
+#if PLATFORM(GTK) || PLATFORM(WPE)
+    void didDispatchInputMethodKeydown(WebCore::KeyboardEvent&) final;
+#endif
+
 #if PLATFORM(IOS_FAMILY)
     void startDelayingAndCoalescingContentChangeNotifications() final;
     void stopDelayingAndCoalescingContentChangeNotifications() final;

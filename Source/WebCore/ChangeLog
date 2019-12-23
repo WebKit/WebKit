@@ -1,3 +1,33 @@
+2019-12-23  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK][WPE] Special combination characters doesn't respect the keystroke order when high CPU load
+        https://bugs.webkit.org/show_bug.cgi?id=185248
+
+        Reviewed by Žan Doberšek.
+
+        Notify the editor when a key event handled by input method has been dispatched. This way we can handle the
+        composition results right after the event is dispatched.
+
+        * editing/Editor.cpp:
+        (WebCore::Editor::didDispatchInputMethodKeydown): Notify the client.
+        * editing/Editor.h:
+        * page/EditorClient.h:
+        (WebCore::EditorClient::didDispatchInputMethodKeydown): Added.
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::internalKeyEvent): Call Editor::didDispatchInputMethodKeydown() for events handled by
+        input method right after the event is dispatched.
+        * platform/PlatformKeyboardEvent.h:
+        (WebCore::PlatformKeyboardEvent::preeditUnderlines const):
+        (WebCore::PlatformKeyboardEvent::preeditSelectionRangeStart const):
+        (WebCore::PlatformKeyboardEvent::preeditSelectionRangeLength const):
+        * platform/gtk/PlatformKeyboardEventGtk.cpp:
+        (WebCore::PlatformKeyboardEvent::disambiguateKeyDownEvent): Return early if the event was handled by input
+        method and remove the special case for Char events handled by input method because this is never called with
+        Char type for events handled by input method.
+        * platform/libwpe/PlatformKeyboardEventLibWPE.cpp:
+        (WebCore::PlatformKeyboardEvent::disambiguateKeyDownEvent): Return early if the event was handled by input
+        method.
+
 2019-12-22  Simon Fraser  <simon.fraser@apple.com>
 
         Very basic <dialog> show/close support

@@ -302,6 +302,12 @@ void Editor::handleInputMethodKeydown(KeyboardEvent& event)
         client->handleInputMethodKeydown(event);
 }
 
+void Editor::didDispatchInputMethodKeydown(KeyboardEvent& event)
+{
+    if (auto* client = this->client())
+        client->didDispatchInputMethodKeydown(event);
+}
+
 bool Editor::handleTextEvent(TextEvent& event)
 {
     LOG(Editing, "Editor %p handleTextEvent (data %s)", this, event.data().utf8().data());

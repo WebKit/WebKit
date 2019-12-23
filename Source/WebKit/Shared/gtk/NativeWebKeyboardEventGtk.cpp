@@ -33,14 +33,14 @@
 
 namespace WebKit {
 
-NativeWebKeyboardEvent::NativeWebKeyboardEvent(GdkEvent* event, const String& text, HandledByInputMethod handledByInputMethod, Vector<String>&& commands)
-    : WebKeyboardEvent(WebEventFactory::createWebKeyboardEvent(event, text, handledByInputMethod == HandledByInputMethod::Yes, WTFMove(commands)))
+NativeWebKeyboardEvent::NativeWebKeyboardEvent(GdkEvent* event, const String& text, HandledByInputMethod handledByInputMethod, Optional<Vector<WebCore::CompositionUnderline>>&& preeditUnderlines, Optional<EditingRange>&& preeditSelectionRange, Vector<String>&& commands)
+    : WebKeyboardEvent(WebEventFactory::createWebKeyboardEvent(event, text, handledByInputMethod == HandledByInputMethod::Yes, WTFMove(preeditUnderlines), WTFMove(preeditSelectionRange), WTFMove(commands)))
     , m_nativeEvent(gdk_event_copy(event))
 {
 }
 
 NativeWebKeyboardEvent::NativeWebKeyboardEvent(const NativeWebKeyboardEvent& event)
-    : WebKeyboardEvent(WebEventFactory::createWebKeyboardEvent(event.nativeEvent(), event.text(), event.handledByInputMethod(), Vector<String>(event.commands())))
+    : WebKeyboardEvent(WebEventFactory::createWebKeyboardEvent(event.nativeEvent(), event.text(), event.handledByInputMethod(), Optional<Vector<WebCore::CompositionUnderline>>(event.preeditUnderlines()), Optional<EditingRange>(event.preeditSelectionRange()), Vector<String>(event.commands())))
     , m_nativeEvent(gdk_event_copy(event.nativeEvent()))
 {
 }

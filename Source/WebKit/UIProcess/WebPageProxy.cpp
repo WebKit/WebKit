@@ -8194,21 +8194,20 @@ RefPtr<ViewSnapshot> WebPageProxy::takeViewSnapshot()
 #endif
 
 #if PLATFORM(GTK) || PLATFORM(WPE)
-void WebPageProxy::setComposition(const String& text, const Vector<CompositionUnderline>& underlines, const EditingRange& selectionRange)
-{
-    // FIXME: We need to find out how to proper handle the crashes case.
-    if (!hasRunningProcess())
-        return;
-
-    send(Messages::WebPage::SetComposition(text, underlines, selectionRange));
-}
-
-void WebPageProxy::confirmComposition(const String& compositionString)
+void WebPageProxy::cancelComposition(const String& compositionString)
 {
     if (!hasRunningProcess())
         return;
 
-    send(Messages::WebPage::ConfirmComposition(compositionString));
+    // Remove any pending composition key event.
+    if (m_keyEventQueue.size() > 1) {
+        auto event = m_keyEventQueue.takeFirst();
+        m_keyEventQueue.removeAllMatching([](const auto& event) {
+            return event.handledByInputMethod();
+        });
+        m_keyEventQueue.prepend(WTFMove(event));
+    }
+    send(Messages::WebPage::CancelComposition(compositionString));
 }
 #endif // PLATFORM(GTK)
 

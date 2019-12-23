@@ -799,7 +799,7 @@ static gboolean webkitWebViewBaseKeyPressEvent(GtkWidget* widget, GdkEventKey* k
     auto filterResult = priv->inputMethodFilter.filterKeyEvent(keyEvent);
     if (!filterResult.handled) {
         priv->pageProxy->handleKeyboardEvent(NativeWebKeyboardEvent(reinterpret_cast<GdkEvent*>(keyEvent), filterResult.keyText,
-            NativeWebKeyboardEvent::HandledByInputMethod::No, priv->keyBindingTranslator.commandsForKeyEvent(keyEvent)));
+            NativeWebKeyboardEvent::HandledByInputMethod::No, WTF::nullopt, WTF::nullopt, priv->keyBindingTranslator.commandsForKeyEvent(keyEvent)));
     }
 
     return GDK_EVENT_STOP;
@@ -817,7 +817,7 @@ static gboolean webkitWebViewBaseKeyReleaseEvent(GtkWidget* widget, GdkEventKey*
 
     if (!priv->inputMethodFilter.filterKeyEvent(keyEvent).handled) {
         priv->pageProxy->handleKeyboardEvent(NativeWebKeyboardEvent(reinterpret_cast<GdkEvent*>(keyEvent), { },
-            NativeWebKeyboardEvent::HandledByInputMethod::No, { }));
+            NativeWebKeyboardEvent::HandledByInputMethod::No, WTF::nullopt, WTF::nullopt, { }));
     }
 
     return GDK_EVENT_STOP;
@@ -1909,7 +1909,7 @@ WebKitInputMethodContext* webkitWebViewBaseGetInputMethodContext(WebKitWebViewBa
     return webViewBase->priv->inputMethodFilter.context();
 }
 
-void webkitWebViewBaseSynthesizeCompositionKeyPress(WebKitWebViewBase* webViewBase)
+void webkitWebViewBaseSynthesizeCompositionKeyPress(WebKitWebViewBase* webViewBase, const String& text, Optional<Vector<CompositionUnderline>>&& underlines, Optional<EditingRange>&& selectionRange)
 {
     static GdkEvent* event = nullptr;
     if (!event) {
@@ -1924,5 +1924,5 @@ void webkitWebViewBaseSynthesizeCompositionKeyPress(WebKitWebViewBase* webViewBa
     }
 
     WebKitWebViewBasePrivate* priv = webViewBase->priv;
-    priv->pageProxy->handleKeyboardEvent(NativeWebKeyboardEvent(event, { }, NativeWebKeyboardEvent::HandledByInputMethod::Yes, { }));
+    priv->pageProxy->handleKeyboardEvent(NativeWebKeyboardEvent(event, text, NativeWebKeyboardEvent::HandledByInputMethod::Yes, WTFMove(underlines), WTFMove(selectionRange), { }));
 }

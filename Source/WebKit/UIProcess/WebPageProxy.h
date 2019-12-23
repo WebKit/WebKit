@@ -788,8 +788,7 @@ public:
     bool updateLayoutViewportParameters(const WebKit::RemoteLayerTreeTransaction&);
 
 #if PLATFORM(GTK) || PLATFORM(WPE)
-    void setComposition(const String&, const Vector<WebCore::CompositionUnderline>&, const EditingRange& selectionRange);
-    void confirmComposition(const String& compositionString);
+    void cancelComposition(const String& compositionString);
 
     void setInputMethodState(bool enabled);
 #endif

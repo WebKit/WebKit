@@ -48,10 +48,15 @@ namespace API {
 class ViewClient;
 }
 
+namespace WebCore {
+struct CompositionUnderline;
+}
+
 namespace WebKit {
 class DownloadProxy;
 class WebPageGroup;
 class WebProcessPool;
+struct EditingRange;
 struct UserMessage;
 }
 
@@ -77,7 +82,7 @@ public:
     void setInputMethodContext(WebKitInputMethodContext*);
     WebKitInputMethodContext* inputMethodContext() const;
     void setInputMethodState(bool);
-    void synthesizeCompositionKeyPress();
+    void synthesizeCompositionKeyPress(const String&, Optional<Vector<WebCore::CompositionUnderline>>&&, Optional<WebKit::EditingRange>&&);
 
     void selectionDidChange();
 
