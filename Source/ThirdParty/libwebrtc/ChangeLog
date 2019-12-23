@@ -1,3 +1,17 @@
+2019-12-23  youenn fablet  <youenn@apple.com>
+
+        Do not build yasm for iOS and iOS simulator
+        https://bugs.webkit.org/show_bug.cgi?id=205556
+        <rdar://problem/58159497>
+
+        Reviewed by Eric Carlson.
+
+        Now that we no longer need yasm for iOS simulator, we can stop building it for iOS and iOS simulator.
+        We can also remove the hack to run yasm.
+
+        * Configurations/yasm.xcconfig:
+        * libwebrtc.xcodeproj/project.pbxproj:
+
 2019-12-22  youenn fablet  <youenn@apple.com>
 
         Compile libwebrtc without hardware acceleration for iOS simulator
