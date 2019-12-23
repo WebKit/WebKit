@@ -229,10 +229,12 @@ public:
         : m_context(adoptGRef(static_cast<WebKitInputMethodContextMock*>(g_object_new(webkit_input_method_context_mock_get_type(), nullptr))))
     {
 #if PLATFORM(GTK)
+        WebViewTest::showInWindowAndWaitUntilMapped(GTK_WINDOW_TOPLEVEL);
         auto* defaultContext = webkit_web_view_get_input_method_context(m_webView);
         g_assert_true(WEBKIT_IS_INPUT_METHOD_CONTEXT(defaultContext));
         assertObjectIsDeletedWhenTestFinishes(G_OBJECT(defaultContext));
 #elif PLATFORM(WPE)
+        WebViewTest::showInWindow();
         g_assert_null(webkit_web_view_get_input_method_context(m_webView));
 #endif
         assertObjectIsDeletedWhenTestFinishes(G_OBJECT(m_context.get()));
@@ -316,9 +318,24 @@ public:
             g_main_loop_quit(m_mainLoop);
     }
 
-    void focusEditable()
+    void focusEditableAndWaitUntilInputMethodEnabled()
     {
+        g_assert_false(m_context->enabled);
         runJavaScriptAndWaitUntilFinished("document.getElementById('editable').focus()", nullptr);
+        if (m_context->enabled)
+            return;
+
+        g_idle_add([](gpointer userData) -> gboolean {
+            auto* test = static_cast<InputMethodTest*>(userData);
+            if (test->m_context->enabled) {
+                test->quitMainLoop();
+                return FALSE;
+            }
+
+            return TRUE;
+        }, this);
+        g_main_loop_run(m_mainLoop);
+        g_assert_true(m_context->enabled);
     }
 
     void resetEditable()
@@ -363,14 +380,10 @@ public:
 
 static void testWebKitInputMethodContextSimple(InputMethodTest* test, gconstpointer)
 {
-    webkit_settings_set_enable_developer_extras(webkit_web_view_get_settings(test->m_webView), TRUE);
-    test->showInWindowAndWaitUntilMapped();
     test->loadHtml(testHTML, nullptr);
     test->waitUntilLoadFinished();
 
-    g_assert_false(test->m_context->enabled);
-    test->focusEditable();
-    g_assert_true(test->m_context->enabled);
+    test->focusEditableAndWaitUntilInputMethodEnabled();
 
     // Send a normal character not handled by IM.
     test->keyStrokeAndWaitForEvents(KEY(a), 3);
@@ -413,14 +426,10 @@ static void testWebKitInputMethodContextSimple(InputMethodTest* test, gconstpoin
 
 static void testWebKitInputMethodContextSequence(InputMethodTest* test, gconstpointer)
 {
-    webkit_settings_set_enable_developer_extras(webkit_web_view_get_settings(test->m_webView), TRUE);
-    test->showInWindowAndWaitUntilMapped();
     test->loadHtml(testHTML, nullptr);
     test->waitUntilLoadFinished();
 
-    g_assert_false(test->m_context->enabled);
-    test->focusEditable();
-    g_assert_true(test->m_context->enabled);
+    test->focusEditableAndWaitUntilInputMethodEnabled();
 
     // Compose w + gtk + Enter.
     test->keyStrokeAndWaitForEvents(KEY(w), 4, CONTROL_MASK | SHIFT_MASK);
@@ -561,14 +570,11 @@ static void testWebKitInputMethodContextSequence(InputMethodTest* test, gconstpo
 
 static void testWebKitInputMethodContextInvalidSequence(InputMethodTest* test, gconstpointer)
 {
-    webkit_settings_set_enable_developer_extras(webkit_web_view_get_settings(test->m_webView), TRUE);
-    test->showInWindowAndWaitUntilMapped();
     test->loadHtml(testHTML, nullptr);
     test->waitUntilLoadFinished();
 
-    g_assert_false(test->m_context->enabled);
-    test->focusEditable();
-    g_assert_true(test->m_context->enabled);
+    test->focusEditableAndWaitUntilInputMethodEnabled();
+
     // Compose w + w + Space -> invalid sequence.
     test->keyStrokeAndWaitForEvents(KEY(w), 4, CONTROL_MASK | SHIFT_MASK);
     g_assert_true(test->m_events[0].type == InputMethodTest::Event::Type::KeyDown);
@@ -616,14 +622,11 @@ static void testWebKitInputMethodContextInvalidSequence(InputMethodTest* test, g
 
 static void testWebKitInputMethodContextCancelSequence(InputMethodTest* test, gconstpointer)
 {
-    webkit_settings_set_enable_developer_extras(webkit_web_view_get_settings(test->m_webView), TRUE);
-    test->showInWindowAndWaitUntilMapped();
     test->loadHtml(testHTML, nullptr);
     test->waitUntilLoadFinished();
 
-    g_assert_false(test->m_context->enabled);
-    test->focusEditable();
-    g_assert_true(test->m_context->enabled);
+    test->focusEditableAndWaitUntilInputMethodEnabled();
+
     // Compose w + w + Escape -> cancel sequence.
     test->keyStrokeAndWaitForEvents(KEY(w), 4, CONTROL_MASK | SHIFT_MASK);
     g_assert_true(test->m_events[0].type == InputMethodTest::Event::Type::KeyDown);
@@ -659,14 +662,11 @@ static void testWebKitInputMethodContextCancelSequence(InputMethodTest* test, gc
 
 static void testWebKitInputMethodContextReset(InputMethodTest* test, gconstpointer)
 {
-    webkit_settings_set_enable_developer_extras(webkit_web_view_get_settings(test->m_webView), TRUE);
-    test->showInWindowAndWaitUntilMapped();
     test->loadHtml(testHTML, nullptr);
     test->waitUntilLoadFinished();
 
-    g_assert_false(test->m_context->enabled);
-    test->focusEditable();
-    g_assert_true(test->m_context->enabled);
+    test->focusEditableAndWaitUntilInputMethodEnabled();
+
     // Compose w + w + click -> reset sequence.
     test->keyStrokeAndWaitForEvents(KEY(w), 4, CONTROL_MASK | SHIFT_MASK);
     g_assert_true(test->m_events[0].type == InputMethodTest::Event::Type::KeyDown);

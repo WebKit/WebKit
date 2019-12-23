@@ -1,5 +1,18 @@
 2019-12-23  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK] InputMethod API unit tests don't work under X11
+        https://bugs.webkit.org/show_bug.cgi?id=205497
+
+        Reviewed by Žan Doberšek.
+
+        Assume the web view is always focused when running tests under Xvfb, since there isn't a window manager to focus
+        the toplevel window in that case.
+
+        * UIProcess/API/glib/InputMethodFilter.cpp:
+        (WebKit::InputMethodFilter::isViewFocused const):
+
+2019-12-23  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK][WPE] Special combination characters doesn't respect the keystroke order when high CPU load
         https://bugs.webkit.org/show_bug.cgi?id=185248
 
