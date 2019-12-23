@@ -1,3 +1,26 @@
+2019-12-22  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [macCatalyst] Mouse clicks dispatch duplicate pointerup and pointerdown events
+        https://bugs.webkit.org/show_bug.cgi?id=205551
+        <rdar://problem/58058268>
+
+        Reviewed by Tim Horton.
+
+        * pointerevents/ios/pointer-events-with-click-handler-expected.txt: Added.
+        * pointerevents/ios/pointer-events-with-click-handler.html: Added.
+
+        Add a layout test to verify that the bug does not occur. While this is a macCatalyst fix, this test needs to be
+        in the `ios` directory for now because macCatalyst is still considered "iOS family". This test is also still
+        relevant to both platforms (on iOS, synthesizing a tap behaves as expected, and in macCatalyst, it simulates a
+        click at the same location).
+
+        * pointerevents/utils.js:
+        (EventTracker.prototype.assertMatchesEvents):
+        (EventTracker):
+
+        Drive-by fix: flip the order of arguments to `assert_equals`, so that when tests fail, the failure output
+        correctly shows how many events were expected, and how many were observed.
+
 2019-12-22  Alexey Proskuryakov  <ap@apple.com>
 
         Add TextExpectations for flaky whlsl tests.

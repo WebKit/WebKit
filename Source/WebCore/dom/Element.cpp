@@ -79,6 +79,7 @@
 #include "MutationObserverInterestGroup.h"
 #include "MutationRecord.h"
 #include "NodeRenderStyle.h"
+#include "PlatformMouseEvent.h"
 #include "PlatformWheelEvent.h"
 #include "PointerCaptureController.h"
 #include "PointerEvent.h"
@@ -312,7 +313,8 @@ static bool isCompatibilityMouseEvent(const MouseEvent& mouseEvent)
 }
 #endif
 
-static bool shouldIgnoreMouseEvent(Element& element, const MouseEvent& mouseEvent, const PlatformMouseEvent& platformEvent, bool& didNotSwallowEvent)
+enum class ShouldIgnoreMouseEvent : bool { No, Yes };
+static ShouldIgnoreMouseEvent dispatchPointerEventIfNeeded(Element& element, const MouseEvent& mouseEvent, const PlatformMouseEvent& platformEvent, bool& didNotSwallowEvent)
 {
 #if ENABLE(POINTER_EVENTS)
     if (RuntimeEnabledFeatures::sharedFeatures().pointerEventsEnabled()) {
@@ -320,18 +322,21 @@ static bool shouldIgnoreMouseEvent(Element& element, const MouseEvent& mouseEven
             auto& pointerCaptureController = page->pointerCaptureController();
 #if ENABLE(TOUCH_EVENTS)
             if (platformEvent.pointerId() != mousePointerID && mouseEvent.type() != eventNames().clickEvent && pointerCaptureController.preventsCompatibilityMouseEventsForIdentifier(platformEvent.pointerId()))
-                return true;
+                return ShouldIgnoreMouseEvent::Yes;
 #else
             UNUSED_PARAM(platformEvent);
 #endif
+            if (platformEvent.syntheticClickType() != NoTap)
+                return ShouldIgnoreMouseEvent::No;
+
             if (auto pointerEvent = pointerCaptureController.pointerEventForMouseEvent(mouseEvent)) {
                 pointerCaptureController.dispatchEvent(*pointerEvent, &element);
                 if (isCompatibilityMouseEvent(mouseEvent) && pointerCaptureController.preventsCompatibilityMouseEventsForIdentifier(pointerEvent->pointerId()))
-                    return true;
+                    return ShouldIgnoreMouseEvent::Yes;
                 if (pointerEvent->defaultPrevented() || pointerEvent->defaultHandled()) {
                     didNotSwallowEvent = false;
                     if (pointerEvent->type() == eventNames().pointerdownEvent)
-                        return true;
+                        return ShouldIgnoreMouseEvent::Yes;
                 }
             }
         }
@@ -343,7 +348,7 @@ static bool shouldIgnoreMouseEvent(Element& element, const MouseEvent& mouseEven
     UNUSED_PARAM(didNotSwallowEvent);
 #endif
 
-    return false;
+    return ShouldIgnoreMouseEvent::No;
 }
 
 bool Element::dispatchMouseEvent(const PlatformMouseEvent& platformEvent, const AtomString& eventType, int detail, Element* relatedTarget)
@@ -361,7 +366,7 @@ bool Element::dispatchMouseEvent(const PlatformMouseEvent& platformEvent, const 
 
     bool didNotSwallowEvent = true;
 
-    if (shouldIgnoreMouseEvent(*this, mouseEvent.get(), platformEvent, didNotSwallowEvent))
+    if (dispatchPointerEventIfNeeded(*this, mouseEvent.get(), platformEvent, didNotSwallowEvent) == ShouldIgnoreMouseEvent::Yes)
         return false;
 
     ASSERT(!mouseEvent->target() || mouseEvent->target() != relatedTarget);

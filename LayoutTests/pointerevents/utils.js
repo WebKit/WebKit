@@ -98,12 +98,12 @@ class EventTracker
     assertMatchesEvents(expectedEvents)
     {
         assert_true(!!this.events.length, "Event tracker saw some events.");
-        assert_equals(expectedEvents.length, this.events.length, "Expected events and actual events have the same length.");
+        assert_equals(this.events.length, expectedEvents.length, "Expected events and actual events have the same length.");
         for (let i = 0; i < expectedEvents.length; ++i) {
             const expectedEvent = expectedEvents[i];
             const actualEvent = this.events[i];
             for (let property of Object.getOwnPropertyNames(expectedEvent))
-                assert_equals(expectedEvent[property], actualEvent[property], `Property ${property} matches for event at index ${i}.`);
+                assert_equals(actualEvent[property], expectedEvent[property], `Property ${property} matches for event at index ${i}.`);
         }
     }
 }

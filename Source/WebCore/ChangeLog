@@ -1,3 +1,35 @@
+2019-12-22  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [macCatalyst] Mouse clicks dispatch duplicate pointerup and pointerdown events
+        https://bugs.webkit.org/show_bug.cgi?id=205551
+        <rdar://problem/58058268>
+
+        Reviewed by Tim Horton.
+
+        This began occuring after r251320, wherein some mouse event handling codepaths were enabled in macCatalyst.
+        For compatibility, gesture recognizers still fire in the macCatalyst platform. This includes the synthetic click
+        gesture, which will still synthesize and send mouseup and mousedown events to the page. After the change, this
+        results in pointer events being dispatched under the call to `shouldIgnoreMouseEvent()`. However, at the same
+        time, touch event handling codepaths have already dispatched "pointerup" and "pointerdown", so we end up with
+        redundant events.
+
+        To fix this macCatalyst-specific bug, simply avoid dispatching pointer events in the case where the synthetic
+        click type is some kind of tap gesture; in this case, pointer events have already been dispatched, so we don't
+        need to dispatch them again via mouse event handling code.
+
+        Test: pointerevents/ios/pointer-events-with-click-handler.html
+
+        * dom/Element.cpp:
+        (WebCore::dispatchPointerEventIfNeeded):
+
+        Also rename shouldIgnoreMouseEvent to dispatchPointerEventIfNeeded to better reflect that this function's
+        primary purposee is to dispatch pointer events in response to platform mouse events; then, change the return
+        value to an explicit enum class indicating whether the mouse event should be subsequently ignored (as a result
+        of the page preventing the dispatched pointer event).
+
+        (WebCore::Element::dispatchMouseEvent):
+        (WebCore::shouldIgnoreMouseEvent): Deleted.
+
 2019-12-22  Antti Koivisto  <antti@apple.com>
 
         Invalidate only affected elements after media query evaluation changes
