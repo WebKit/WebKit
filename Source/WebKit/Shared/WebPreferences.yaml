@@ -1207,11 +1207,6 @@ SourceBufferChangeTypeEnabled:
   defaultValue: true
   condition: ENABLE(MEDIA_SOURCE)
 
-DialogElementEnabled:
-  type: bool
-  defaultValue: false
-  webcoreBinding: RuntimeEnabledFeatures
-
 KeygenElementEnabled:
   type: bool
   defaultValue: false
@@ -1884,6 +1879,14 @@ IsInAppBrowserPrivacyEnabled:
     humanReadableDescription: "Enable In-App Browser Privacy"
     webcoreBinding: RuntimeEnabledFeatures
     category: internal
+
+DialogElementEnabled:
+    type: bool
+    defaultValue: false
+    humanReadableName: "Dialog Element"
+    humanReadableDescription: "Enable the Dialog Element"
+    webcoreBinding: RuntimeEnabledFeatures
+    category: experimental
 
 # Deprecated
 

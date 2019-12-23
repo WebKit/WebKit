@@ -1,3 +1,14 @@
+2019-12-21  Simon Fraser  <simon.fraser@apple.com>
+
+        Make support for <dialog> an experimental feature, off by default
+        https://bugs.webkit.org/show_bug.cgi?id=205542
+
+        Reviewed by Dean Jackson.
+
+        Make DialogElementEnabled an experimental feature (off by default).
+
+        * Shared/WebPreferences.yaml:
+
 2019-12-22  Eric Carlson  <eric.carlson@apple.com>
 
         [Media in GPU process] Add remote media player proxy configuration
