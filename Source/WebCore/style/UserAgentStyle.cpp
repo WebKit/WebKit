@@ -36,6 +36,7 @@
 #include "HTMLBRElement.h"
 #include "HTMLBodyElement.h"
 #include "HTMLDataListElement.h"
+#include "HTMLDialogElement.h"
 #include "HTMLDivElement.h"
 #include "HTMLEmbedElement.h"
 #include "HTMLHeadElement.h"
@@ -68,6 +69,7 @@ unsigned UserAgentStyle::defaultStyleVersion;
 StyleSheetContents* UserAgentStyle::simpleDefaultStyleSheet;
 StyleSheetContents* UserAgentStyle::defaultStyleSheet;
 StyleSheetContents* UserAgentStyle::quirksStyleSheet;
+StyleSheetContents* UserAgentStyle::dialogStyleSheet;
 StyleSheetContents* UserAgentStyle::svgStyleSheet;
 StyleSheetContents* UserAgentStyle::mathMLStyleSheet;
 StyleSheetContents* UserAgentStyle::mediaControlsStyleSheet;
@@ -225,6 +227,12 @@ void UserAgentStyle::ensureDefaultStyleSheetsForElement(const Element& element)
                     plugInsRules = String(plugInsUserAgentStyleSheet, sizeof(plugInsUserAgentStyleSheet));
                 plugInsStyleSheet = parseUASheet(plugInsRules);
                 addToDefaultStyle(*plugInsStyleSheet);
+            }
+        }
+        else if (is<HTMLDialogElement>(element) && RuntimeEnabledFeatures::sharedFeatures().dialogElementEnabled()) {
+            if (!dialogStyleSheet) {
+                dialogStyleSheet = parseUASheet(dialogUserAgentStyleSheet, sizeof(dialogUserAgentStyleSheet));
+                addToDefaultStyle(*dialogStyleSheet);
             }
         }
 #if ENABLE(VIDEO)

@@ -34,21 +34,24 @@ class HTMLDialogElement final : public HTMLElement {
 public:
     template<typename... Args> static Ref<HTMLDialogElement> create(Args&&... args) { return adoptRef(*new HTMLDialogElement(std::forward<Args>(args)...)); }
     
-    bool open();
-    void setOpen(bool);
+    bool isOpen() const;
 
     const String& returnValue();
     void setReturnValue(String&&);
 
     void show();
-    void showModal();
+    ExceptionOr<void> showModal();
     void close(const String&);
 
 private:
     HTMLDialogElement(const QualifiedName&, Document&);
-    
-    bool m_open { false };
+
+    void parseAttribute(const QualifiedName&, const AtomString&) final;
+
+    void toggleOpen();
+
     String m_returnValue;
+    bool m_isOpen { false };
 };
 
 } // namespace WebCore

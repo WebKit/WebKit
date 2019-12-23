@@ -4297,38 +4297,38 @@ PASS dialog.tabIndex: IDL set to 2147483647
 PASS dialog.tabIndex: IDL set to -2147483648 
 PASS dialog.open: typeof IDL attribute 
 PASS dialog.open: IDL get with DOM attribute unset 
-FAIL dialog.open: setAttribute() to "" assert_equals: IDL get expected true but got false
-FAIL dialog.open: setAttribute() to " foo " assert_equals: IDL get expected true but got false
-FAIL dialog.open: setAttribute() to undefined assert_equals: IDL get expected true but got false
-FAIL dialog.open: setAttribute() to null assert_equals: IDL get expected true but got false
-FAIL dialog.open: setAttribute() to 7 assert_equals: IDL get expected true but got false
-FAIL dialog.open: setAttribute() to 1.5 assert_equals: IDL get expected true but got false
-FAIL dialog.open: setAttribute() to "5%" assert_equals: IDL get expected true but got false
-FAIL dialog.open: setAttribute() to "+100" assert_equals: IDL get expected true but got false
-FAIL dialog.open: setAttribute() to ".5" assert_equals: IDL get expected true but got false
-FAIL dialog.open: setAttribute() to true assert_equals: IDL get expected true but got false
-FAIL dialog.open: setAttribute() to false assert_equals: IDL get expected true but got false
-FAIL dialog.open: setAttribute() to object "[object Object]" assert_equals: IDL get expected true but got false
-FAIL dialog.open: setAttribute() to NaN assert_equals: IDL get expected true but got false
-FAIL dialog.open: setAttribute() to Infinity assert_equals: IDL get expected true but got false
-FAIL dialog.open: setAttribute() to -Infinity assert_equals: IDL get expected true but got false
-FAIL dialog.open: setAttribute() to "\0" assert_equals: IDL get expected true but got false
-FAIL dialog.open: setAttribute() to object "test-toString" assert_equals: IDL get expected true but got false
-FAIL dialog.open: setAttribute() to object "test-valueOf" assert_equals: IDL get expected true but got false
-FAIL dialog.open: setAttribute() to "open" assert_equals: IDL get expected true but got false
-FAIL dialog.open: IDL set to "" assert_equals: hasAttribute() expected false but got true
+PASS dialog.open: setAttribute() to "" 
+PASS dialog.open: setAttribute() to " foo " 
+PASS dialog.open: setAttribute() to undefined 
+PASS dialog.open: setAttribute() to null 
+PASS dialog.open: setAttribute() to 7 
+PASS dialog.open: setAttribute() to 1.5 
+PASS dialog.open: setAttribute() to "5%" 
+PASS dialog.open: setAttribute() to "+100" 
+PASS dialog.open: setAttribute() to ".5" 
+PASS dialog.open: setAttribute() to true 
+PASS dialog.open: setAttribute() to false 
+PASS dialog.open: setAttribute() to object "[object Object]" 
+PASS dialog.open: setAttribute() to NaN 
+PASS dialog.open: setAttribute() to Infinity 
+PASS dialog.open: setAttribute() to -Infinity 
+PASS dialog.open: setAttribute() to "\0" 
+PASS dialog.open: setAttribute() to object "test-toString" 
+PASS dialog.open: setAttribute() to object "test-valueOf" 
+PASS dialog.open: setAttribute() to "open" 
+PASS dialog.open: IDL set to "" 
 PASS dialog.open: IDL set to " foo " 
-FAIL dialog.open: IDL set to undefined assert_equals: hasAttribute() expected false but got true
-FAIL dialog.open: IDL set to null assert_equals: hasAttribute() expected false but got true
+PASS dialog.open: IDL set to undefined 
+PASS dialog.open: IDL set to null 
 PASS dialog.open: IDL set to 7 
 PASS dialog.open: IDL set to 1.5 
 PASS dialog.open: IDL set to "5%" 
 PASS dialog.open: IDL set to "+100" 
 PASS dialog.open: IDL set to ".5" 
 PASS dialog.open: IDL set to true 
-FAIL dialog.open: IDL set to false assert_equals: hasAttribute() expected false but got true
+PASS dialog.open: IDL set to false 
 PASS dialog.open: IDL set to object "[object Object]" 
-FAIL dialog.open: IDL set to NaN assert_equals: hasAttribute() expected false but got true
+PASS dialog.open: IDL set to NaN 
 PASS dialog.open: IDL set to Infinity 
 PASS dialog.open: IDL set to -Infinity 
 PASS dialog.open: IDL set to "\0" 

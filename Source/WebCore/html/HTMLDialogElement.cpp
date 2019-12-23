@@ -26,6 +26,7 @@
 #include "config.h"
 #include "HTMLDialogElement.h"
 
+#include "HTMLNames.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
@@ -37,14 +38,9 @@ HTMLDialogElement::HTMLDialogElement(const QualifiedName& tagName, Document& doc
 {
 }
 
-bool HTMLDialogElement::open()
+bool HTMLDialogElement::isOpen() const
 {
-    return m_open;
-}
-
-void HTMLDialogElement::setOpen(bool open)
-{
-    m_open = open;
+    return m_isOpen;
 }
 
 const String& HTMLDialogElement::returnValue()
@@ -59,14 +55,51 @@ void HTMLDialogElement::setReturnValue(String&& returnValue)
 
 void HTMLDialogElement::show()
 {
+    // If the element already has an open attribute, then return.
+    if (isOpen())
+        return;
+    
+    toggleOpen();
 }
 
-void HTMLDialogElement::showModal()
+ExceptionOr<void> HTMLDialogElement::showModal()
 {
+    // If subject already has an open attribute, then throw an "InvalidStateError" DOMException.
+    if (isOpen())
+        return Exception { InvalidStateError };
+
+    // If subject is not connected, then throw an "InvalidStateError" DOMException.
+    if (!isConnected())
+        return Exception { InvalidStateError };
+
+    toggleOpen();
+    return { };
 }
 
-void HTMLDialogElement::close(const String&)
+void HTMLDialogElement::close(const String& returnValue)
 {
+    if (!isOpen())
+        return;
+    
+    toggleOpen();
+    if (!returnValue.isNull())
+        m_returnValue = returnValue;
+}
+
+void HTMLDialogElement::parseAttribute(const QualifiedName& name, const AtomString& value)
+{
+    if (name == openAttr) {
+        m_isOpen = !value.isNull();
+        return;
+    }
+    
+    HTMLElement::parseAttribute(name, value);
+}
+
+void HTMLDialogElement::toggleOpen()
+{
+    m_isOpen = !m_isOpen;
+    setAttributeWithoutSynchronization(openAttr, m_isOpen ? emptyAtom() : nullAtom());
 }
 
 }
