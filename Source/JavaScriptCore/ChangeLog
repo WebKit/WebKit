@@ -1,3 +1,16 @@
+2019-12-23  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        WebDriver: fix handling of session timeouts for values higher than MAX_INT
+        https://bugs.webkit.org/show_bug.cgi?id=204114
+
+        Reviewed by Brian Burg.
+
+        Fix generation of code with optional number in stack variable.
+
+        * inspector/scripts/codegen/cpp_generator.py:
+        (CppGenerator.cpp_type_for_stack_in_parameter): Do not use Optional for numbers either.
+        * inspector/scripts/tests/generic/expected/commands-with-optional-call-return-parameters.json-result:
+
 2019-12-22  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Unreviewed, fix incorrect merging

@@ -38,11 +38,11 @@
 namespace WebDriver {
 
 // https://w3c.github.io/webdriver/webdriver-spec.html#dfn-session-script-timeout
-static const Seconds defaultScriptTimeout = 30_s;
+static const double defaultScriptTimeout = 30000;
 // https://w3c.github.io/webdriver/webdriver-spec.html#dfn-session-page-load-timeout
-static const Seconds defaultPageLoadTimeout = 300_s;
+static const double defaultPageLoadTimeout = 300000;
 // https://w3c.github.io/webdriver/webdriver-spec.html#dfn-session-implicit-wait-timeout
-static const Seconds defaultImplicitWaitTimeout = 0_s;
+static const double defaultImplicitWaitTimeout = 0;
 
 const String& Session::webElementIdentifier()
 {
@@ -127,9 +127,12 @@ void Session::close(Function<void (CommandResult&&)>&& completionHandler)
 void Session::getTimeouts(Function<void (CommandResult&&)>&& completionHandler)
 {
     RefPtr<JSON::Object> parameters = JSON::Object::create();
-    parameters->setInteger("script"_s, m_scriptTimeout.millisecondsAs<int>());
-    parameters->setInteger("pageLoad"_s, m_pageLoadTimeout.millisecondsAs<int>());
-    parameters->setInteger("implicit"_s, m_implicitWaitTimeout.millisecondsAs<int>());
+    if (m_scriptTimeout == std::numeric_limits<double>::infinity())
+        parameters->setValue("script"_s, JSON::Value::null());
+    else
+        parameters->setDouble("script"_s, m_scriptTimeout);
+    parameters->setDouble("pageLoad"_s, m_pageLoadTimeout);
+    parameters->setDouble("implicit"_s, m_implicitWaitTimeout);
     completionHandler(CommandResult::success(WTFMove(parameters)));
 }
 
@@ -300,7 +303,7 @@ void Session::go(const String& url, Function<void (CommandResult&&)>&& completio
         RefPtr<JSON::Object> parameters = JSON::Object::create();
         parameters->setString("handle"_s, m_toplevelBrowsingContext.value());
         parameters->setString("url"_s, url);
-        parameters->setInteger("pageLoadTimeout"_s, m_pageLoadTimeout.millisecondsAs<int>());
+        parameters->setDouble("pageLoadTimeout"_s, m_pageLoadTimeout);
         if (auto pageLoadStrategy = pageLoadStrategyString())
             parameters->setString("pageLoadStrategy"_s, pageLoadStrategy.value());
         m_host->sendCommandToBackend("navigateBrowsingContext"_s, WTFMove(parameters), [this, protectedThis = protectedThis.copyRef(), completionHandler = WTFMove(completionHandler)](SessionHost::CommandResponse&& response) {
@@ -363,7 +366,7 @@ void Session::back(Function<void (CommandResult&&)>&& completionHandler)
         }
         RefPtr<JSON::Object> parameters = JSON::Object::create();
         parameters->setString("handle"_s, m_toplevelBrowsingContext.value());
-        parameters->setInteger("pageLoadTimeout"_s, m_pageLoadTimeout.millisecondsAs<int>());
+        parameters->setDouble("pageLoadTimeout"_s, m_pageLoadTimeout);
         if (auto pageLoadStrategy = pageLoadStrategyString())
             parameters->setString("pageLoadStrategy"_s, pageLoadStrategy.value());
         m_host->sendCommandToBackend("goBackInBrowsingContext"_s, WTFMove(parameters), [this, protectedThis = protectedThis.copyRef(), completionHandler = WTFMove(completionHandler)](SessionHost::CommandResponse&& response) {
@@ -391,7 +394,7 @@ void Session::forward(Function<void (CommandResult&&)>&& completionHandler)
         }
         RefPtr<JSON::Object> parameters = JSON::Object::create();
         parameters->setString("handle"_s, m_toplevelBrowsingContext.value());
-        parameters->setInteger("pageLoadTimeout"_s, m_pageLoadTimeout.millisecondsAs<int>());
+        parameters->setDouble("pageLoadTimeout"_s, m_pageLoadTimeout);
         if (auto pageLoadStrategy = pageLoadStrategyString())
             parameters->setString("pageLoadStrategy"_s, pageLoadStrategy.value());
         m_host->sendCommandToBackend("goForwardInBrowsingContext"_s, WTFMove(parameters), [this, protectedThis = protectedThis.copyRef(), completionHandler = WTFMove(completionHandler)](SessionHost::CommandResponse&& response) {
@@ -419,7 +422,7 @@ void Session::refresh(Function<void (CommandResult&&)>&& completionHandler)
         }
         RefPtr<JSON::Object> parameters = JSON::Object::create();
         parameters->setString("handle"_s, m_toplevelBrowsingContext.value());
-        parameters->setInteger("pageLoadTimeout"_s, m_pageLoadTimeout.millisecondsAs<int>());
+        parameters->setDouble("pageLoadTimeout"_s, m_pageLoadTimeout);
         if (auto pageLoadStrategy = pageLoadStrategyString())
             parameters->setString("pageLoadStrategy"_s, pageLoadStrategy.value());
         m_host->sendCommandToBackend("reloadBrowsingContext"_s, WTFMove(parameters), [this, protectedThis = protectedThis.copyRef(), completionHandler = WTFMove(completionHandler)](SessionHost::CommandResponse&& response) {
@@ -1027,7 +1030,7 @@ void Session::findElements(const String& strategy, const String& selector, FindE
             arguments->pushString(createElement(rootElementID)->toJSONString());
         arguments->pushString(JSON::Value::create(selector)->toJSONString());
         arguments->pushString(JSON::Value::create(mode == FindElementsMode::Single)->toJSONString());
-        arguments->pushString(JSON::Value::create(m_implicitWaitTimeout.milliseconds())->toJSONString());
+        arguments->pushString(JSON::Value::create(m_implicitWaitTimeout)->toJSONString());
 
         RefPtr<JSON::Object> parameters = JSON::Object::create();
         parameters->setString("browsingContextHandle"_s, m_toplevelBrowsingContext.value());
@@ -1038,7 +1041,7 @@ void Session::findElements(const String& strategy, const String& selector, FindE
         parameters->setBoolean("expectsImplicitCallbackArgument"_s, true);
         // If there's an implicit wait, use one second more as callback timeout.
         if (m_implicitWaitTimeout)
-            parameters->setInteger("callbackTimeout"_s, Seconds(m_implicitWaitTimeout + 1_s).millisecondsAs<int>());
+            parameters->setDouble("callbackTimeout"_s, m_implicitWaitTimeout + 1000);
 
         m_host->sendCommandToBackend("evaluateJavaScriptFunction"_s, WTFMove(parameters), [this, protectedThis = protectedThis.copyRef(), mode, completionHandler = WTFMove(completionHandler)](SessionHost::CommandResponse&& response) {
             if (response.isError || !response.responseObject) {
@@ -1505,7 +1508,7 @@ void Session::waitForNavigationToComplete(Function<void (CommandResult&&)>&& com
     parameters->setString("browsingContextHandle"_s, m_toplevelBrowsingContext.value());
     if (m_currentBrowsingContext)
         parameters->setString("frameHandle"_s, m_currentBrowsingContext.value());
-    parameters->setInteger("pageLoadTimeout"_s, m_pageLoadTimeout.millisecondsAs<int>());
+    parameters->setDouble("pageLoadTimeout"_s, m_pageLoadTimeout);
     if (auto pageLoadStrategy = pageLoadStrategyString())
         parameters->setString("pageLoadStrategy"_s, pageLoadStrategy.value());
     m_host->sendCommandToBackend("waitForNavigationToComplete"_s, WTFMove(parameters), [this, protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)](SessionHost::CommandResponse&& response) {
@@ -2134,8 +2137,8 @@ void Session::executeScript(const String& script, RefPtr<JSON::Array>&& argument
         parameters->setArray("arguments"_s, WTFMove(arguments));
         if (mode == ExecuteScriptMode::Async) {
             parameters->setBoolean("expectsImplicitCallbackArgument"_s, true);
-            if (m_scriptTimeout)
-                parameters->setInteger("callbackTimeout"_s, m_scriptTimeout.millisecondsAs<int>());
+            if (m_scriptTimeout != std::numeric_limits<double>::infinity())
+                parameters->setDouble("callbackTimeout"_s, m_scriptTimeout);
         }
         m_host->sendCommandToBackend("evaluateJavaScriptFunction"_s, WTFMove(parameters), [this, protectedThis = protectedThis.copyRef(), completionHandler = WTFMove(completionHandler)](SessionHost::CommandResponse&& response) mutable {
             if (response.isError || !response.responseObject) {

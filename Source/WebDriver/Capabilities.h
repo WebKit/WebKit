@@ -27,7 +27,6 @@
 
 #include <utility>
 #include <wtf/Forward.h>
-#include <wtf/Seconds.h>
 #include <wtf/URL.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
@@ -35,9 +34,9 @@
 namespace WebDriver {
 
 struct Timeouts {
-    Optional<Seconds> script;
-    Optional<Seconds> pageLoad;
-    Optional<Seconds> implicit;
+    Optional<double> script;
+    Optional<double> pageLoad;
+    Optional<double> implicit;
 };
 
 enum class PageLoadStrategy {

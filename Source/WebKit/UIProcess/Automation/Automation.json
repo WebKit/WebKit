@@ -388,7 +388,7 @@
                 { "name": "handle", "$ref": "BrowsingContextHandle", "description": "The handle for the browsing context that should be navigated." },
                 { "name": "url", "type": "string", "description": "The URL to load in the browsing context." },
                 { "name": "pageLoadStrategy", "$ref": "PageLoadStrategy", "optional": true, "description": "The page load strategy to use when determining when navigation is complete." },
-                { "name": "pageLoadTimeout", "type": "integer", "optional": true, "description": "The timeout in milliseconds that the navigation is expected to be completed in, otherwise a <code>Timeout</code> error is returned." }
+                { "name": "pageLoadTimeout", "type": "number", "optional": true, "description": "The timeout in milliseconds that the navigation is expected to be completed in, otherwise a <code>Timeout</code> error is returned." }
             ],
             "async": true
         },
@@ -398,7 +398,7 @@
             "parameters": [
                 { "name": "handle", "$ref": "BrowsingContextHandle", "description": "The handle for the browsing context that should be navigated." },
                 { "name": "pageLoadStrategy", "$ref": "PageLoadStrategy", "optional": true, "description": "The page load strategy to use when determining when navigation is complete." },
-                { "name": "pageLoadTimeout", "type": "integer", "optional": true, "description": "The timeout in milliseconds that the navigation is expected to be completed in, otherwise a <code>Timeout</code> error is returned." }
+                { "name": "pageLoadTimeout", "type": "number", "optional": true, "description": "The timeout in milliseconds that the navigation is expected to be completed in, otherwise a <code>Timeout</code> error is returned." }
             ],
             "async": true
         },
@@ -408,7 +408,7 @@
             "parameters": [
                 { "name": "handle", "$ref": "BrowsingContextHandle", "description": "The handle for the browsing context that should be navigated." },
                 { "name": "pageLoadStrategy", "$ref": "PageLoadStrategy", "optional": true, "description": "The page load strategy to use when determining when navigation is complete." },
-                { "name": "pageLoadTimeout", "type": "integer", "optional": true, "description": "The timeout in milliseconds that the navigation is expected to be completed in, otherwise a <code>Timeout</code> error is returned." }
+                { "name": "pageLoadTimeout", "type": "number", "optional": true, "description": "The timeout in milliseconds that the navigation is expected to be completed in, otherwise a <code>Timeout</code> error is returned." }
             ],
             "async": true
         },
@@ -418,7 +418,7 @@
             "parameters": [
                 { "name": "handle", "$ref": "BrowsingContextHandle", "description": "The handle for the browsing context that should be reloaded." },
                 { "name": "pageLoadStrategy", "$ref": "PageLoadStrategy", "optional": true, "description": "The page load strategy to use when determining when navigation is complete." },
-                { "name": "pageLoadTimeout", "type": "integer", "optional": true, "description": "The timeout in milliseconds that the navigation is expected to be completed in, otherwise a <code>Timeout</code> error is returned." }
+                { "name": "pageLoadTimeout", "type": "number", "optional": true, "description": "The timeout in milliseconds that the navigation is expected to be completed in, otherwise a <code>Timeout</code> error is returned." }
             ],
             "async": true
         },
@@ -429,7 +429,7 @@
                 { "name": "browsingContextHandle", "$ref": "BrowsingContextHandle", "description": "The handle for the browsing context in which wait for pending navigation to complete." },
                 { "name": "frameHandle", "$ref": "FrameHandle", "optional": true, "description": "The handle for the frame in which wait for pending navigation to complete. The main frame is used if this parameter empty string or excluded." },
                 { "name": "pageLoadStrategy", "$ref": "PageLoadStrategy", "optional": true, "description": "The page load strategy to use when determining when navigation is complete." },
-                { "name": "pageLoadTimeout", "type": "integer", "optional": true, "description": "The timeout in milliseconds that the navigation is expected to be completed in, otherwise a <code>Timeout</code> error is returned." }
+                { "name": "pageLoadTimeout", "type": "number", "optional": true, "description": "The timeout in milliseconds that the navigation is expected to be completed in, otherwise a <code>Timeout</code> error is returned." }
             ],
             "async": true
         },
@@ -452,7 +452,7 @@
                 { "name": "function", "type": "string", "description": "The script to evaluate in the browsing context. It must be a function result." },
                 { "name": "arguments", "type": "array", "items": { "type": "string" }, "description": "The arguments to pass to the function when called. They will be parsed as JSON before calling the function." },
                 { "name": "expectsImplicitCallbackArgument", "type": "boolean", "optional": true, "description": "The function expects a callback function as the last argument. It is expected to call this callback with a result." },
-                { "name": "callbackTimeout", "type": "integer", "optional": true, "description": "The timeout in milliseconds that the implicit callback is expected to be called in, otherwise a <code>JavaScriptTimeout</code> error is returned." }
+                { "name": "callbackTimeout", "type": "number", "optional": true, "description": "The timeout in milliseconds that the implicit callback is expected to be called in, otherwise a <code>JavaScriptTimeout</code> error is returned." }
             ],
             "returns": [
                 { "name": "result", "type": "string", "description": "The result returned by the called function. It is JSON encoded after the function returns or calls the callback." }

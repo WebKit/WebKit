@@ -235,7 +235,7 @@ void WebAutomationSessionProxy::didClearWindowObjectForFrame(WebFrame& frame)
         WebProcess::singleton().parentProcessConnection()->send(Messages::WebAutomationSession::DidEvaluateJavaScriptFunction(callbackID, errorMessage, errorType), 0);
 }
 
-void WebAutomationSessionProxy::evaluateJavaScriptFunction(WebCore::PageIdentifier pageID, Optional<WebCore::FrameIdentifier> optionalFrameID, const String& function, Vector<String> arguments, bool expectsImplicitCallbackArgument, int callbackTimeout, uint64_t callbackID)
+void WebAutomationSessionProxy::evaluateJavaScriptFunction(WebCore::PageIdentifier pageID, Optional<WebCore::FrameIdentifier> optionalFrameID, const String& function, Vector<String> arguments, bool expectsImplicitCallbackArgument, Optional<double> callbackTimeout, uint64_t callbackID)
 {
     WebPage* page = WebProcess::singleton().webPage(pageID);
     if (!page) {
@@ -269,7 +269,7 @@ void WebAutomationSessionProxy::evaluateJavaScriptFunction(WebCore::PageIdentifi
         JSValueMakeNumber(context, frameID.toUInt64()),
         JSValueMakeNumber(context, callbackID),
         JSObjectMakeFunctionWithCallback(context, nullptr, evaluateJavaScriptCallback),
-        JSValueMakeNumber(context, callbackTimeout)
+        JSValueMakeNumber(context, callbackTimeout.valueOr(-1))
     };
 
     {

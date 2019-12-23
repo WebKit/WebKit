@@ -1,5 +1,32 @@
 2019-12-23  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        WebDriver: fix handling of session timeouts for values higher than MAX_INT
+        https://bugs.webkit.org/show_bug.cgi?id=204114
+
+        Reviewed by Brian Burg.
+
+        Use number instead of integer for all optional timeout parameters. In the case of script timeout, not passing a
+        value means a timeout should not be used, so use Optional<double> also for the IPC message and handle the
+        optional value in the web process to not set any timeout in that case.
+
+        * UIProcess/Automation/Automation.json:
+        * UIProcess/Automation/WebAutomationSession.cpp:
+        (WebKit::WebAutomationSession::waitForNavigationToComplete):
+        (WebKit::WebAutomationSession::navigateBrowsingContext):
+        (WebKit::WebAutomationSession::goBackInBrowsingContext):
+        (WebKit::WebAutomationSession::goForwardInBrowsingContext):
+        (WebKit::WebAutomationSession::reloadBrowsingContext):
+        (WebKit::WebAutomationSession::evaluateJavaScriptFunction):
+        * UIProcess/Automation/WebAutomationSession.h:
+        * WebProcess/Automation/WebAutomationSessionProxy.cpp:
+        (WebKit::WebAutomationSessionProxy::evaluateJavaScriptFunction):
+        * WebProcess/Automation/WebAutomationSessionProxy.h:
+        * WebProcess/Automation/WebAutomationSessionProxy.js:
+        (let.AutomationSessionProxy.prototype.evaluateJavaScriptFunction):
+        * WebProcess/Automation/WebAutomationSessionProxy.messages.in:
+
+2019-12-23  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK] InputMethod API unit tests don't work under X11
         https://bugs.webkit.org/show_bug.cgi?id=205497
 

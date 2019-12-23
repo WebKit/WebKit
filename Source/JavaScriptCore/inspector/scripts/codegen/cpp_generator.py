@@ -275,7 +275,7 @@ class CppGenerator(Generator):
             cpp_name = CppGenerator.cpp_name_for_primitive_type(_type)
             if _type.qualified_name() in ['any', 'object']:
                 return "RefPtr<%s>" % CppGenerator.cpp_name_for_primitive_type(_type)
-            elif parameter.is_optional and _type.qualified_name() not in ['boolean', 'string', 'integer']:
+            elif parameter.is_optional and _type.qualified_name() not in ['boolean', 'string', 'integer', 'number']:
                 return "Optional<%s>" % cpp_name
             else:
                 return cpp_name

@@ -64,7 +64,7 @@ let AutomationSessionProxy = class AutomationSessionProxy
         if (expectsImplicitCallbackArgument) {
             argumentValues.push(reportResult);
             functionValue.apply(null, argumentValues);
-            if (!resultReported)
+            if (!resultReported && callbackTimeout >= 0)
                 timeoutIdentifier = setTimeout(reportTimeoutError, callbackTimeout);
         } else
             reportResult(functionValue.apply(null, argumentValues));

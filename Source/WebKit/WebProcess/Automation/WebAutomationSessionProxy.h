@@ -63,7 +63,7 @@ private:
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
 
     // Called by WebAutomationSessionProxy messages
-    void evaluateJavaScriptFunction(WebCore::PageIdentifier, Optional<WebCore::FrameIdentifier>, const String& function, Vector<String> arguments, bool expectsImplicitCallbackArgument, int callbackTimeout, uint64_t callbackID);
+    void evaluateJavaScriptFunction(WebCore::PageIdentifier, Optional<WebCore::FrameIdentifier>, const String& function, Vector<String> arguments, bool expectsImplicitCallbackArgument, Optional<double> callbackTimeout, uint64_t callbackID);
     void resolveChildFrameWithOrdinal(WebCore::PageIdentifier, Optional<WebCore::FrameIdentifier>, uint32_t ordinal, CompletionHandler<void(Optional<String>, Optional<WebCore::FrameIdentifier>)>&&);
     void resolveChildFrameWithNodeHandle(WebCore::PageIdentifier, Optional<WebCore::FrameIdentifier>, const String& nodeHandle, CompletionHandler<void(Optional<String>, Optional<WebCore::FrameIdentifier>)>&&);
     void resolveChildFrameWithName(WebCore::PageIdentifier, Optional<WebCore::FrameIdentifier>, const String& name, CompletionHandler<void(Optional<String>, Optional<WebCore::FrameIdentifier>)>&&);

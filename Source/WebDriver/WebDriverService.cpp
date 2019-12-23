@@ -320,7 +320,9 @@ static Optional<uint64_t> unsignedValue(JSON::Value& value)
     return intValue;
 }
 
-static Optional<Timeouts> deserializeTimeouts(JSON::Object& timeoutsObject)
+enum class IgnoreUnknownTimeout { No, Yes };
+
+static Optional<Timeouts> deserializeTimeouts(JSON::Object& timeoutsObject, IgnoreUnknownTimeout ignoreUnknownTimeout)
 {
     // §8.5 Set Timeouts.
     // https://w3c.github.io/webdriver/webdriver-spec.html#dfn-deserialize-as-a-timeout
@@ -330,18 +332,23 @@ static Optional<Timeouts> deserializeTimeouts(JSON::Object& timeoutsObject)
         if (it->key == "sessionId")
             continue;
 
+        if (it->key == "script" && it->value->isNull()) {
+            timeouts.script = std::numeric_limits<double>::infinity();
+            continue;
+        }
+
         // If value is not an integer, or it is less than 0 or greater than the maximum safe integer, return error with error code invalid argument.
         auto timeoutMS = unsignedValue(*it->value);
         if (!timeoutMS)
             return WTF::nullopt;
 
         if (it->key == "script")
-            timeouts.script = Seconds::fromMilliseconds(timeoutMS.value());
+            timeouts.script = timeoutMS.value();
         else if (it->key == "pageLoad")
-            timeouts.pageLoad = Seconds::fromMilliseconds(timeoutMS.value());
+            timeouts.pageLoad = timeoutMS.value();
         else if (it->key == "implicit")
-            timeouts.implicit = Seconds::fromMilliseconds(timeoutMS.value());
-        else
+            timeouts.implicit = timeoutMS.value();
+        else if (ignoreUnknownTimeout == IgnoreUnknownTimeout::No)
             return WTF::nullopt;
     }
     return timeouts;
@@ -487,7 +494,7 @@ void WebDriverService::parseCapabilities(const JSON::Object& matchedCapabilities
         capabilities.strictFileInteractability = strictFileInteractability;
     RefPtr<JSON::Object> timeouts;
     if (matchedCapabilities.getObject("timeouts"_s, timeouts))
-        capabilities.timeouts = deserializeTimeouts(*timeouts);
+        capabilities.timeouts = deserializeTimeouts(*timeouts, IgnoreUnknownTimeout::No);
     String pageLoadStrategy;
     if (matchedCapabilities.getString("pageLoadStrategy"_s, pageLoadStrategy))
         capabilities.pageLoadStrategy = deserializePageLoadStrategy(pageLoadStrategy);
@@ -549,7 +556,7 @@ RefPtr<JSON::Object> WebDriverService::validatedCapabilities(const JSON::Object&
             result->setBoolean(it->key, strictFileInteractability);
         } else if (it->key == "timeouts") {
             RefPtr<JSON::Object> timeouts;
-            if (!it->value->asObject(timeouts) || !deserializeTimeouts(*timeouts))
+            if (!it->value->asObject(timeouts) || !deserializeTimeouts(*timeouts, IgnoreUnknownTimeout::No))
                 return nullptr;
             result->setValue(it->key, RefPtr<JSON::Value>(it->value));
         } else if (it->key == "unhandledPromptBehavior") {
@@ -843,9 +850,12 @@ void WebDriverService::createSession(Vector<Capabilities>&& capabilitiesList, st
             if (!capabilities.proxy)
                 capabilitiesObject->setObject("proxy"_s, JSON::Object::create());
             RefPtr<JSON::Object> timeoutsObject = JSON::Object::create();
-            timeoutsObject->setInteger("script"_s, m_session->scriptTimeout().millisecondsAs<int>());
-            timeoutsObject->setInteger("pageLoad"_s, m_session->pageLoadTimeout().millisecondsAs<int>());
-            timeoutsObject->setInteger("implicit"_s, m_session->implicitWaitTimeout().millisecondsAs<int>());
+            if (m_session->scriptTimeout() == std::numeric_limits<double>::infinity())
+                timeoutsObject->setValue("script"_s, JSON::Value::null());
+            else
+                timeoutsObject->setDouble("script"_s, m_session->scriptTimeout());
+            timeoutsObject->setDouble("pageLoad"_s, m_session->pageLoadTimeout());
+            timeoutsObject->setDouble("implicit"_s, m_session->implicitWaitTimeout());
             capabilitiesObject->setObject("timeouts"_s, WTFMove(timeoutsObject));
 
             resultObject->setObject("capabilities"_s, WTFMove(capabilitiesObject));
@@ -906,7 +916,7 @@ void WebDriverService::setTimeouts(RefPtr<JSON::Object>&& parameters, Function<v
     if (!findSessionOrCompleteWithError(*parameters, completionHandler))
         return;
 
-    auto timeouts = deserializeTimeouts(*parameters);
+    auto timeouts = deserializeTimeouts(*parameters, IgnoreUnknownTimeout::Yes);
     if (!timeouts) {
         completionHandler(CommandResult::fail(CommandResult::ErrorCode::InvalidArgument));
         return;

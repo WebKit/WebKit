@@ -50,9 +50,9 @@ public:
     const String& id() const;
     const Capabilities& capabilities() const;
     bool isConnected() const;
-    Seconds scriptTimeout() const  { return m_scriptTimeout; }
-    Seconds pageLoadTimeout() const { return m_pageLoadTimeout; }
-    Seconds implicitWaitTimeout() const { return m_implicitWaitTimeout; }
+    double scriptTimeout() const  { return m_scriptTimeout; }
+    double pageLoadTimeout() const { return m_pageLoadTimeout; }
+    double implicitWaitTimeout() const { return m_implicitWaitTimeout; }
     static const String& webElementIdentifier();
 
     enum class FindElementsMode { Single, Multiple };
@@ -207,9 +207,9 @@ private:
     InputSourceState& inputSourceState(const String& id);
 
     std::unique_ptr<SessionHost> m_host;
-    Seconds m_scriptTimeout;
-    Seconds m_pageLoadTimeout;
-    Seconds m_implicitWaitTimeout;
+    double m_scriptTimeout;
+    double m_pageLoadTimeout;
+    double m_implicitWaitTimeout;
     Optional<String> m_toplevelBrowsingContext;
     Optional<String> m_currentBrowsingContext;
     HashMap<String, InputSource> m_activeInputSources;

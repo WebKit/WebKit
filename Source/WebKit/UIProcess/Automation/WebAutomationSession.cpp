@@ -442,7 +442,7 @@ static Optional<Inspector::Protocol::Automation::PageLoadStrategy> pageLoadStrat
     return parsedPageLoadStrategy;
 }
 
-void WebAutomationSession::waitForNavigationToComplete(const String& browsingContextHandle, const String* optionalFrameHandle, const String* optionalPageLoadStrategyString, const int* optionalPageLoadTimeout, Ref<WaitForNavigationToCompleteCallback>&& callback)
+void WebAutomationSession::waitForNavigationToComplete(const String& browsingContextHandle, const String* optionalFrameHandle, const String* optionalPageLoadStrategyString, const double* optionalPageLoadTimeout, Ref<WaitForNavigationToCompleteCallback>&& callback)
 {
     WebPageProxy* page = webPageProxyForHandle(browsingContextHandle);
     if (!page)
@@ -696,7 +696,7 @@ void WebAutomationSession::didExitFullScreenForPage(const WebPageProxy&)
         m_windowStateTransitionCallback(WindowTransitionedToState::Unfullscreen);
 }
 
-void WebAutomationSession::navigateBrowsingContext(const String& handle, const String& url, const String* optionalPageLoadStrategyString, const int* optionalPageLoadTimeout, Ref<NavigateBrowsingContextCallback>&& callback)
+void WebAutomationSession::navigateBrowsingContext(const String& handle, const String& url, const String* optionalPageLoadStrategyString, const double* optionalPageLoadTimeout, Ref<NavigateBrowsingContextCallback>&& callback)
 {
     WebPageProxy* page = webPageProxyForHandle(handle);
     if (!page)
@@ -711,7 +711,7 @@ void WebAutomationSession::navigateBrowsingContext(const String& handle, const S
     waitForNavigationToCompleteOnPage(*page, pageLoadStrategy.value(), pageLoadTimeout, WTFMove(callback));
 }
 
-void WebAutomationSession::goBackInBrowsingContext(const String& handle, const String* optionalPageLoadStrategyString, const int* optionalPageLoadTimeout, Ref<GoBackInBrowsingContextCallback>&& callback)
+void WebAutomationSession::goBackInBrowsingContext(const String& handle, const String* optionalPageLoadStrategyString, const double* optionalPageLoadTimeout, Ref<GoBackInBrowsingContextCallback>&& callback)
 {
     WebPageProxy* page = webPageProxyForHandle(handle);
     if (!page)
@@ -726,7 +726,7 @@ void WebAutomationSession::goBackInBrowsingContext(const String& handle, const S
     waitForNavigationToCompleteOnPage(*page, pageLoadStrategy.value(), pageLoadTimeout, WTFMove(callback));
 }
 
-void WebAutomationSession::goForwardInBrowsingContext(const String& handle, const String* optionalPageLoadStrategyString, const int* optionalPageLoadTimeout, Ref<GoForwardInBrowsingContextCallback>&& callback)
+void WebAutomationSession::goForwardInBrowsingContext(const String& handle, const String* optionalPageLoadStrategyString, const double* optionalPageLoadTimeout, Ref<GoForwardInBrowsingContextCallback>&& callback)
 {
     WebPageProxy* page = webPageProxyForHandle(handle);
     if (!page)
@@ -741,7 +741,7 @@ void WebAutomationSession::goForwardInBrowsingContext(const String& handle, cons
     waitForNavigationToCompleteOnPage(*page, pageLoadStrategy.value(), pageLoadTimeout, WTFMove(callback));
 }
 
-void WebAutomationSession::reloadBrowsingContext(const String& handle, const String* optionalPageLoadStrategyString, const int* optionalPageLoadTimeout, Ref<ReloadBrowsingContextCallback>&& callback)
+void WebAutomationSession::reloadBrowsingContext(const String& handle, const String* optionalPageLoadStrategyString, const double* optionalPageLoadTimeout, Ref<ReloadBrowsingContextCallback>&& callback)
 {
     WebPageProxy* page = webPageProxyForHandle(handle);
     if (!page)
@@ -922,7 +922,7 @@ void WebAutomationSession::handleRunOpenPanel(const WebPageProxy& page, const We
     m_domainNotifier->fileChooserDismissed(browsingContextHandle, false);
 }
 
-void WebAutomationSession::evaluateJavaScriptFunction(const String& browsingContextHandle, const String* optionalFrameHandle, const String& function, const JSON::Array& arguments, const bool* optionalExpectsImplicitCallbackArgument, const int* optionalCallbackTimeout, Ref<EvaluateJavaScriptFunctionCallback>&& callback)
+void WebAutomationSession::evaluateJavaScriptFunction(const String& browsingContextHandle, const String* optionalFrameHandle, const String& function, const JSON::Array& arguments, const bool* optionalExpectsImplicitCallbackArgument, const double* optionalCallbackTimeout, Ref<EvaluateJavaScriptFunctionCallback>&& callback)
 {
     WebPageProxy* page = webPageProxyForHandle(browsingContextHandle);
     if (!page)
@@ -943,7 +943,9 @@ void WebAutomationSession::evaluateJavaScriptFunction(const String& browsingCont
     }
 
     bool expectsImplicitCallbackArgument = optionalExpectsImplicitCallbackArgument ? *optionalExpectsImplicitCallbackArgument : false;
-    int callbackTimeout = optionalCallbackTimeout ? *optionalCallbackTimeout : 0;
+    Optional<double> callbackTimeout;
+    if (optionalCallbackTimeout)
+        callbackTimeout = *optionalCallbackTimeout;
 
     uint64_t callbackID = m_nextEvaluateJavaScriptCallbackID++;
     m_evaluateJavaScriptFunctionCallbacks.set(callbackID, WTFMove(callback));

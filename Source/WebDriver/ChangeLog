@@ -1,3 +1,34 @@
+2019-12-23  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        WebDriver: fix handling of session timeouts for values higher than MAX_INT
+        https://bugs.webkit.org/show_bug.cgi?id=204114
+
+        Reviewed by Brian Burg.
+
+        Use double instead of Seconds for handling timeouts.
+
+        * Capabilities.h:
+        * Session.cpp:
+        (WebDriver::Session::getTimeouts): Handle the case of script timeout being null.
+        (WebDriver::Session::go):
+        (WebDriver::Session::back):
+        (WebDriver::Session::forward):
+        (WebDriver::Session::refresh):
+        (WebDriver::Session::findElements):
+        (WebDriver::Session::waitForNavigationToComplete):
+        (WebDriver::Session::executeScript): Do not pass a timeout when it's null.
+        * Session.h:
+        (WebDriver::Session::scriptTimeout const):
+        (WebDriver::Session::pageLoadTimeout const):
+        (WebDriver::Session::implicitWaitTimeout const):
+        * WebDriverService.cpp:
+        (WebDriver::deserializeTimeouts): Add IgnoreUnknownTimeout, since we should only fail when processing
+        capabilities, but not when setting new timeouts. Also handle the case of script timeout being null.
+        (WebDriver::WebDriverService::parseCapabilities const): Pass IgnoreUnknownTimeout::No to deserializeTimeouts.
+        (WebDriver::WebDriverService::validatedCapabilities const): Ditto.
+        (WebDriver::WebDriverService::createSession): Handle the case of script timeout being null.
+        (WebDriver::WebDriverService::setTimeouts): Pass IgnoreUnknownTimeout::Yes to deserializeTimeouts.
+
 2019-12-13  Jim Mason  <jmason@ibinx.com>
 
         [GTK] WebKitGTK build hangs on g-ir-scanner

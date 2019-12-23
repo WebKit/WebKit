@@ -261,7 +261,7 @@ void DatabaseBackendDispatcher::executeAllOptionalParameters(long requestId, Ref
     bool opt_in_notes_valueFound = false;
     String opt_in_notes = m_backendDispatcher->getString(parameters.get(), "notes"_s, &opt_in_notes_valueFound);
     bool opt_in_timestamp_valueFound = false;
-    Optional<double> opt_in_timestamp = m_backendDispatcher->getDouble(parameters.get(), "timestamp"_s, &opt_in_timestamp_valueFound);
+    double opt_in_timestamp = m_backendDispatcher->getDouble(parameters.get(), "timestamp"_s, &opt_in_timestamp_valueFound);
     bool opt_in_values_valueFound = false;
     RefPtr<JSON::Object> opt_in_values = m_backendDispatcher->getObject(parameters.get(), "values"_s, &opt_in_values_valueFound);
     bool opt_in_payload_valueFound = false;
