@@ -1,3 +1,12 @@
+2019-12-23  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Unreviewed, fix the macCatalyst build after r253866
+
+        * WebProcess/GPU/media/RemoteMediaPlayerManager.cpp:
+        (WebKit::RemoteMediaPlayerManager::createRemoteMediaPlayer):
+
+        MediaPlayer::mediaKeysStorageDirectory() is guarded by ENABLE(LEGACY_ENCRYPTED_MEDIA).
+
 2019-12-23  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         WebDriver: fix handling of session timeouts for values higher than MAX_INT

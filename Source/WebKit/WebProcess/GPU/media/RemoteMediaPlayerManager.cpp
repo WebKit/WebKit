@@ -118,7 +118,9 @@ std::unique_ptr<MediaPlayerPrivateInterface> RemoteMediaPlayerManager::createRem
     auto id = MediaPlayerPrivateRemoteIdentifier::generate();
 
     RemoteMediaPlayerProxyConfiguration proxyConfiguration;
+#if ENABLE(LEGACY_ENCRYPTED_MEDIA)
     proxyConfiguration.mediaKeysStorageDirectory = player->mediaKeysStorageDirectory();
+#endif
     proxyConfiguration.referrer = player->referrer();
     proxyConfiguration.userAgent = player->userAgent();
     proxyConfiguration.sourceApplicationIdentifier = player->sourceApplicationIdentifier();
