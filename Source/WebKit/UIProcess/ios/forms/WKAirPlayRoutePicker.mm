@@ -34,7 +34,8 @@
 #import <wtf/RetainPtr.h>
 #import <wtf/SoftLinking.h>
 
-#if __IPHONE_OS_VERSION_MIN_REQUIRED < 110000 || PLATFORM(WATCHOS) || PLATFORM(APPLETV)
+#if PLATFORM(WATCHOS) || PLATFORM(APPLETV)
+#import "UserInterfaceIdiom.h"
 #import "WKContentView.h"
 #import "WKContentViewInteraction.h"
 #import "WebPageProxy.h"

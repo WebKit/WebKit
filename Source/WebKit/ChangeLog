@@ -1,3 +1,14 @@
+2019-12-23  Alexey Proskuryakov  <ap@apple.com>
+
+        watchOS build fix attempt
+
+        Not sure what broke the build, seems like UserInterfaceIdiom.h used to be included
+        via unified build, and no longer is. Added the include.
+        
+        While at it, removed an ancient __IPHONE_OS_VERSION_MIN_REQUIRED version check.
+
+        * UIProcess/ios/forms/WKAirPlayRoutePicker.mm:
+
 2019-12-23  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Unreviewed, fix the macCatalyst build after r253866
