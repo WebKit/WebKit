@@ -3354,9 +3354,6 @@ webkit.org/b/201900 webrtc/datachannel/mdns-ice-candidates.html [ Failure ]
 
 webkit.org/b/201901 svg/custom/glyph-selection-arabic-forms.svg [ Failure ]
 
-# rdar://54370645 (REGRESSION (iOS13): Layout Test scrollingcoordinator/ios/fixed-scrolling-with-keyboard.html is a Flaky Failure)
-webkit.org/b/202283 scrollingcoordinator/ios/fixed-scrolling-with-keyboard.html [ Pass Failure ]
-
 webkit.org/b/202328 fast/images/async-image-multiple-clients-repaint.html [ Pass Failure ]
 
 # drawFocusRing without keyboard enabled does nothing
