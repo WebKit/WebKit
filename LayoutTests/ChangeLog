@@ -1,3 +1,10 @@
+2019-12-23  Alexey Proskuryakov  <ap@apple.com>
+
+        Add TestExpectations for http/wpt/mediarecorder/MediaRecorder-AV-audio-video-dataavailable.html
+        https://bugs.webkit.org/show_bug.cgi?id=197673
+
+        * TestExpectations:
+
 2019-12-22  Simon Fraser  <simon.fraser@apple.com>
 
         Very basic <dialog> show/close support
