@@ -40,10 +40,17 @@
 #include <wtf/URL.h>
 #include <wtf/text/CString.h>
 
+#if !RELEASE_LOG_DISABLED
+namespace WebCore {
+extern WTFLogChannel LogMedia;
+}
+#endif
+
 namespace WebKit {
 using namespace PAL;
 using namespace WebCore;
 
+#ifdef ALWAYS_LOG_UNIMPLEMENTED_METHODS
 #undef notImplemented
 #define notImplemented() do { \
     static bool havePrinted = false; \
@@ -52,6 +59,7 @@ using namespace WebCore;
         havePrinted = true; \
     } \
 } while (0)
+#endif
 
 MediaPlayerPrivateRemote::MediaPlayerPrivateRemote(MediaPlayer* player, MediaPlayerEnums::MediaEngineIdentifier engineIdentifier, MediaPlayerPrivateRemoteIdentifier playerIdentifier, RemoteMediaPlayerManager& manager, const RemoteMediaPlayerConfiguration& configuration)
     : m_player(player)
@@ -794,7 +802,7 @@ bool MediaPlayerPrivateRemote::shouldIgnoreIntrinsicSize()
 #if !RELEASE_LOG_DISABLED
 WTFLogChannel& MediaPlayerPrivateRemote::logChannel() const
 {
-    return WebKit2LogWebRTC;
+    return LogMedia;
 }
 #endif
 

@@ -27,7 +27,7 @@ messages -> GPUProcess {
     InitializeGPUProcess(struct WebKit::GPUProcessCreationParameters processCreationParameters)
 
     # Creates a connection for communication with a WebProcess
-    CreateGPUConnectionToWebProcess(WebCore::ProcessIdentifier processIdentifier) -> (Optional<IPC::Attachment> connectionIdentifier) Async
+    CreateGPUConnectionToWebProcess(WebCore::ProcessIdentifier processIdentifier, PAL::SessionID sessionID) -> (Optional<IPC::Attachment> connectionIdentifier) Async
 
     ProcessDidTransitionToForeground()
     ProcessDidTransitionToBackground()

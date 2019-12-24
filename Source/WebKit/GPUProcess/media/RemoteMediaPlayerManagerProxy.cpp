@@ -43,14 +43,6 @@
 namespace WebKit {
 using namespace WebCore;
 
-#if !RELEASE_LOG_DISABLED
-static RefPtr<Logger>& nullLogger()
-{
-    static NeverDestroyed<RefPtr<Logger>> logger;
-    return logger;
-}
-#endif
-
 RemoteMediaPlayerManagerProxy::RemoteMediaPlayerManagerProxy(GPUConnectionToWebProcess& connection)
     : m_gpuConnectionToWebProcess(connection)
 #if !RELEASE_LOG_DISABLED
@@ -253,13 +245,7 @@ void RemoteMediaPlayerManagerProxy::setPreservesPitch(MediaPlayerPrivateRemoteId
 #if !RELEASE_LOG_DISABLED
 const Logger& RemoteMediaPlayerManagerProxy::logger() const
 {
-    // FIXME: use a real logger
-    if (!nullLogger().get()) {
-        nullLogger() = Logger::create(this);
-        nullLogger()->setEnabled(this, false);
-    }
-
-    return *nullLogger().get();
+    return m_gpuConnectionToWebProcess.logger();
 }
 
 WTFLogChannel& RemoteMediaPlayerManagerProxy::logChannel() const

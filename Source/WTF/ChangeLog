@@ -1,3 +1,14 @@
+2019-12-24  Eric Carlson  <eric.carlson@apple.com>
+
+        [Media in GPU process] Enable media player proxy logging
+        https://bugs.webkit.org/show_bug.cgi?id=205557
+        <rdar://problem/58160932>
+
+        Reviewed by Youenn Fablet.
+
+        * wtf/Logger.h:
+        (WTF::Logger::willLog const): Minor optimization: don't check m_enabled unnecessarily.
+
 2019-12-23  Keith Miller  <keith_miller@apple.com>
 
         DFG/FTL should be able to exit to the middle of a bytecode

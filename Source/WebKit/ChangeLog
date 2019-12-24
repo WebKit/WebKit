@@ -1,3 +1,29 @@
+2019-12-24  Eric Carlson  <eric.carlson@apple.com>
+
+        [Media in GPU process] Enable media player proxy logging
+        https://bugs.webkit.org/show_bug.cgi?id=205557
+        <rdar://problem/58160932>
+
+        Reviewed by Youenn Fablet.
+
+        * GPUProcess/GPUConnectionToWebProcess.cpp:
+        (WebKit::GPUConnectionToWebProcess::create):
+        (WebKit::GPUConnectionToWebProcess::GPUConnectionToWebProcess):
+        (WebKit::GPUConnectionToWebProcess::logger):
+        * GPUProcess/GPUConnectionToWebProcess.h:
+        * GPUProcess/GPUProcess.cpp:
+        (WebKit::GPUProcess::createGPUConnectionToWebProcess):
+        * GPUProcess/GPUProcess.h:
+        * GPUProcess/GPUProcess.messages.in:
+        * GPUProcess/media/RemoteMediaPlayerManagerProxy.cpp:
+        (WebKit::RemoteMediaPlayerManagerProxy::logger const):
+        (WebKit::nullLogger): Deleted.
+        * Platform/Logging.h:
+        * UIProcess/GPU/GPUProcessProxy.cpp:
+        (WebKit::GPUProcessProxy::openGPUProcessConnection):
+        * WebProcess/GPU/media/MediaPlayerPrivateRemote.cpp:
+        (WebKit::MediaPlayerPrivateRemote::logChannel const):
+
 2019-12-24  youenn fablet  <youenn@apple.com>
 
         Service Worker doesn't terminate after a period of time when thread blocking

@@ -60,7 +60,7 @@ GPUProcess::~GPUProcess()
 {
 }
 
-void GPUProcess::createGPUConnectionToWebProcess(ProcessIdentifier identifier, CompletionHandler<void(Optional<IPC::Attachment>&&)>&& completionHandler)
+void GPUProcess::createGPUConnectionToWebProcess(ProcessIdentifier identifier, PAL::SessionID sessionID, CompletionHandler<void(Optional<IPC::Attachment>&&)>&& completionHandler)
 {
     auto ipcConnection = createIPCConnectionPair();
     if (!ipcConnection) {
@@ -68,7 +68,7 @@ void GPUProcess::createGPUConnectionToWebProcess(ProcessIdentifier identifier, C
         return;
     }
 
-    auto newConnection = GPUConnectionToWebProcess::create(*this, identifier, ipcConnection->first);
+    auto newConnection = GPUConnectionToWebProcess::create(*this, identifier, ipcConnection->first, sessionID);
 
     ASSERT(!m_webProcessConnections.contains(identifier));
     m_webProcessConnections.add(identifier, WTFMove(newConnection));

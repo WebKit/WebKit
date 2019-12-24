@@ -185,7 +185,7 @@ public:
         if (channel.state == WTFLogChannelState::Off || level > channel.level)
             return false;
 
-        return m_enabled;
+        return true;
     }
 
     bool enabled() const { return m_enabled; }

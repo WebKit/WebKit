@@ -31,6 +31,8 @@
 #include "GPUConnectionToWebProcessMessagesReplies.h"
 #include <WebCore/DisplayListItems.h>
 #include <WebCore/ProcessIdentifier.h>
+#include <pal/SessionID.h>
+#include <wtf/Logger.h>
 #include <wtf/RefCounted.h>
 #include <wtf/UniqueRef.h>
 
@@ -44,7 +46,7 @@ class GPUConnectionToWebProcess
     : public RefCounted<GPUConnectionToWebProcess>
     , IPC::Connection::Client {
 public:
-    static Ref<GPUConnectionToWebProcess> create(GPUProcess&, WebCore::ProcessIdentifier, IPC::Connection::Identifier);
+    static Ref<GPUConnectionToWebProcess> create(GPUProcess&, WebCore::ProcessIdentifier, IPC::Connection::Identifier, PAL::SessionID);
     virtual ~GPUConnectionToWebProcess();
 
     IPC::Connection& connection() { return m_connection.get(); }
@@ -55,8 +57,10 @@ public:
 
     WebCore::ProcessIdentifier webProcessIdentifier() const { return m_webProcessIdentifier; }
 
+    Logger& logger();
+
 private:
-    GPUConnectionToWebProcess(GPUProcess&, WebCore::ProcessIdentifier, IPC::Connection::Identifier);
+    GPUConnectionToWebProcess(GPUProcess&, WebCore::ProcessIdentifier, IPC::Connection::Identifier, PAL::SessionID);
 
     RemoteMediaPlayerManagerProxy& remoteMediaPlayerManagerProxy();
 #if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
@@ -69,10 +73,13 @@ private:
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
     void didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, std::unique_ptr<IPC::Encoder>&) final;
 
+    RefPtr<Logger> m_logger;
+
     Ref<IPC::Connection> m_connection;
     Ref<GPUProcess> m_gpuProcess;
     const WebCore::ProcessIdentifier m_webProcessIdentifier;
     std::unique_ptr<RemoteMediaPlayerManagerProxy> m_remoteMediaPlayerManagerProxy;
+    PAL::SessionID m_sessionID;
 #if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
     std::unique_ptr<UserMediaCaptureManagerProxy> m_userMediaCaptureManagerProxy;
 #endif

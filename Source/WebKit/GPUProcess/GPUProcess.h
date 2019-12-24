@@ -29,6 +29,7 @@
 
 #include "AuxiliaryProcess.h"
 #include "WebPageProxyIdentifier.h"
+#include <pal/SessionID.h>
 #include <wtf/Function.h>
 #include <wtf/MemoryPressureHandler.h>
 #include <wtf/WeakPtr.h>
@@ -70,7 +71,7 @@ private:
 
     // Message Handlers
     void initializeGPUProcess(GPUProcessCreationParameters&&);
-    void createGPUConnectionToWebProcess(WebCore::ProcessIdentifier, CompletionHandler<void(Optional<IPC::Attachment>&&)>&&);
+    void createGPUConnectionToWebProcess(WebCore::ProcessIdentifier, PAL::SessionID, CompletionHandler<void(Optional<IPC::Attachment>&&)>&&);
 
     void processDidTransitionToForeground();
     void processDidTransitionToBackground();
