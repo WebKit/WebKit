@@ -258,6 +258,12 @@ SWServerRegistration* SWServerWorker::registration() const
     return m_registration.get();
 }
 
+void SWServerWorker::didFailHeartBeatCheck()
+{
+    if (m_server && isRunning())
+        m_server->terminateWorker(*this);
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(SERVICE_WORKER)

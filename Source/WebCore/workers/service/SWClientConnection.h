@@ -85,6 +85,7 @@ public:
     virtual void finishFetchingScriptInServer(const ServiceWorkerFetchResult&) = 0;
 
     virtual void storeRegistrationsOnDiskForTesting(CompletionHandler<void()>&& callback) { callback(); }
+    virtual void isServiceWorkerRunning(ServiceWorkerIdentifier, CompletionHandler<void(bool)>&& callback) { callback(false); }
 
 protected:
     WEBCORE_EXPORT SWClientConnection();

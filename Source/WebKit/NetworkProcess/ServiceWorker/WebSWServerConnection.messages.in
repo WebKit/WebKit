@@ -43,6 +43,7 @@ messages -> WebSWServerConnection NotRefCounted {
 
     SetThrottleState(bool isThrottleable)
     StoreRegistrationsOnDisk() -> () Async
+    IsServiceWorkerRunning(WebCore::ServiceWorkerIdentifier workerIdentifier) -> (bool isRunning) Async
 }
 
 #endif // ENABLE(SERVICE_WORKER)

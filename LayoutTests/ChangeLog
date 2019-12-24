@@ -1,3 +1,23 @@
+2019-12-24  youenn fablet  <youenn@apple.com>
+
+        Service Worker doesn't terminate after a period of time when thread blocking
+        https://bugs.webkit.org/show_bug.cgi?id=202992
+        <rdar://problem/56298596>
+
+        Reviewed by Chris Dumez.
+
+        * http/wpt/service-workers/resources/routines.js:
+        (async.waitForServiceWorkerNoLongerRunning):
+        * http/wpt/service-workers/service-worker-spinning-activate.https-expected.txt: Added.
+        * http/wpt/service-workers/service-worker-spinning-activate.https.html: Added.
+        * http/wpt/service-workers/service-worker-spinning-fetch.https-expected.txt: Added.
+        * http/wpt/service-workers/service-worker-spinning-fetch.https.html: Added.
+        * http/wpt/service-workers/service-worker-spinning-install.https-expected.txt: Added.
+        * http/wpt/service-workers/service-worker-spinning-install.https.html: Added.
+        * http/wpt/service-workers/service-worker-spinning-message.https-expected.txt: Added.
+        * http/wpt/service-workers/service-worker-spinning-message.https.html: Added.
+        * http/wpt/service-workers/service-worker-spinning-worker.js: Added.
+
 2019-12-23  Daniel Bates  <dabates@apple.com>
 
         REGRESSION (r212693): getClientRects(), getBoundingClientRect() for range that spans multi-lines differs depending on whether text is selected

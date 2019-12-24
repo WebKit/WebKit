@@ -5070,6 +5070,13 @@ void Internals::terminateServiceWorker(ServiceWorker& worker)
 
     ServiceWorkerProvider::singleton().serviceWorkerConnection().syncTerminateWorker(worker.identifier());
 }
+
+void Internals::isServiceWorkerRunning(ServiceWorker& worker, DOMPromiseDeferred<IDLBoolean>&& promise)
+{
+    return ServiceWorkerProvider::singleton().serviceWorkerConnection().isServiceWorkerRunning(worker.identifier(), [promise = WTFMove(promise)](bool result) mutable {
+        promise.resolve(result);
+    });
+}
 #endif
 
 #if ENABLE(APPLE_PAY)

@@ -932,6 +932,8 @@ void TestController::resetPreferencesToConsistentValues(const TestOptions& optio
     WKPreferencesSetVideoPlaybackRequiresUserGesture(preferences, false);
     WKPreferencesSetAudioPlaybackRequiresUserGesture(preferences, false);
 
+    WKPreferencesSetShouldUseServiceWorkerShortTimeout(preferences, true);
+
     platformResetPreferencesToConsistentValues();
 }
 

@@ -928,3 +928,6 @@ mediaCaptureRequiresSecureConnection:
   initial: true
   conditional: MEDIA_STREAM
   inspectorOverride: true
+
+shouldUseServiceWorkerShortTimeout:
+  initial: false

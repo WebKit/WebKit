@@ -70,6 +70,7 @@ public:
     WEBCORE_EXPORT void matchAll(uint64_t requestIdentifier, ServiceWorkerIdentifier, const ServiceWorkerClientQueryOptions&);
     WEBCORE_EXPORT void claim(uint64_t requestIdentifier, ServiceWorkerIdentifier);
     WEBCORE_EXPORT void setScriptResource(ServiceWorkerIdentifier, URL&& scriptURL, String&& script, URL&& responseURL, String&& mimeType);
+    WEBCORE_EXPORT void didFailHeartBeatCheck(ServiceWorkerIdentifier);
 
     const RegistrableDomain& registrableDomain() const { return m_registrableDomain; }
 

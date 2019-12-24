@@ -242,6 +242,11 @@ void WebSWClientConnection::syncTerminateWorker(ServiceWorkerIdentifier identifi
     sendSync(Messages::WebSWServerConnection::SyncTerminateWorkerFromClient { identifier }, Messages::WebSWServerConnection::SyncTerminateWorkerFromClient::Reply());
 }
 
+void WebSWClientConnection::isServiceWorkerRunning(ServiceWorkerIdentifier identifier, CompletionHandler<void(bool)>&& callback)
+{
+    sendWithAsyncReply(Messages::WebSWServerConnection::IsServiceWorkerRunning { identifier }, WTFMove(callback));
+}
+
 void WebSWClientConnection::updateThrottleState()
 {
     m_isThrottleable = WebProcess::singleton().areAllPagesThrottleable();

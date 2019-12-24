@@ -756,6 +756,7 @@ enum CompositingPolicy {
 
     [Conditional=SERVICE_WORKER] Promise<boolean> hasServiceWorkerRegistration(DOMString scopeURL);
     [Conditional=SERVICE_WORKER] void terminateServiceWorker(ServiceWorker worker);
+    [Conditional=SERVICE_WORKER] Promise<boolean> isServiceWorkerRunning(ServiceWorker worker);
 
     [CallWith=Document, Conditional=APPLE_PAY] readonly attribute MockPaymentCoordinator mockPaymentCoordinator;
 

@@ -2188,3 +2188,13 @@ void WKPreferencesSetRemotePlaybackEnabled(WKPreferencesRef preferencesRef, bool
 {
     WebKit::toImpl(preferencesRef)->setRemotePlaybackEnabled(enabled);
 }
+
+bool WKPreferencesGetShouldUseServiceWorkerShortTimeout(WKPreferencesRef preferencesRef)
+{
+    return WebKit::toImpl(preferencesRef)->shouldUseServiceWorkerShortTimeout();
+}
+
+void WKPreferencesSetShouldUseServiceWorkerShortTimeout(WKPreferencesRef preferencesRef, bool enabled)
+{
+    WebKit::toImpl(preferencesRef)->setShouldUseServiceWorkerShortTimeout(enabled);
+}

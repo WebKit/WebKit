@@ -396,7 +396,7 @@ void WebSWServerConnection::updateThrottleState()
     }
 }
 
-void WebSWServerConnection::contextConnectionCreated(WebCore::SWServerToContextConnection& contextConnection)
+void WebSWServerConnection::contextConnectionCreated(SWServerToContextConnection& contextConnection)
 {
     auto& connection =  static_cast<WebSWServerToContextConnection&>(contextConnection);
     connection.setThrottleState(computeThrottleState(connection.registrableDomain()));
@@ -405,10 +405,16 @@ void WebSWServerConnection::contextConnectionCreated(WebCore::SWServerToContextC
         m_networkProcess->parentProcessConnection()->send(Messages::NetworkProcessProxy::RegisterServiceWorkerClientProcess { identifier(), connection.webProcessIdentifier() }, 0);
 }
 
-void WebSWServerConnection::syncTerminateWorkerFromClient(WebCore::ServiceWorkerIdentifier&& identifier, CompletionHandler<void()>&& completionHandler)
+void WebSWServerConnection::syncTerminateWorkerFromClient(ServiceWorkerIdentifier identifier, CompletionHandler<void()>&& completionHandler)
 {
     syncTerminateWorker(WTFMove(identifier));
     completionHandler();
+}
+
+void WebSWServerConnection::isServiceWorkerRunning(ServiceWorkerIdentifier identifier, CompletionHandler<void(bool)>&& completionHandler)
+{
+    auto* worker = SWServerWorker::existingWorkerForIdentifier(identifier);
+    completionHandler(worker ? worker->isRunning() : false);
 }
 
 PAL::SessionID WebSWServerConnection::sessionID() const

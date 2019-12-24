@@ -75,6 +75,10 @@ public:
     WEBCORE_EXPORT void continueDidReceiveFetchResponse(SWServerConnectionIdentifier, FetchIdentifier);
     WEBCORE_EXPORT void removeFetch(SWServerConnectionIdentifier, FetchIdentifier);
 
+    void postMessageToServiceWorker(MessageWithMessagePorts&&, ServiceWorkerOrClientData&&);
+    void fireInstallEvent();
+    void fireActivateEvent();
+
 private:
     WEBCORE_EXPORT ServiceWorkerThreadProxy(PageConfiguration&&, const ServiceWorkerContextData&, String&& userAgent, CacheStorageProvider&, SecurityOrigin::StorageBlockingPolicy);
 

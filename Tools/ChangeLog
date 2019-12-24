@@ -1,3 +1,15 @@
+2019-12-24  youenn fablet  <youenn@apple.com>
+
+        Service Worker doesn't terminate after a period of time when thread blocking
+        https://bugs.webkit.org/show_bug.cgi?id=202992
+        <rdar://problem/56298596>
+
+        Reviewed by Chris Dumez.
+
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::resetPreferencesToConsistentValues):
+        Enable small timeout values.
+
 2019-12-23  Keith Miller  <keith_miller@apple.com>
 
         DFG/FTL should be able to exit to the middle of a bytecode

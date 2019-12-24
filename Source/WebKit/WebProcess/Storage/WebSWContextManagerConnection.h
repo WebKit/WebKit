@@ -79,6 +79,7 @@ private:
     void skipWaiting(WebCore::ServiceWorkerIdentifier, CompletionHandler<void()>&&) final;
     void setScriptResource(WebCore::ServiceWorkerIdentifier, const URL&, const WebCore::ServiceWorkerContextData::ImportedScript&) final;
     bool isThrottleable() const final;
+    void didFailHeartBeatCheck(WebCore::ServiceWorkerIdentifier) final;
 
     // IPC messages.
     void serviceWorkerStarted(Optional<WebCore::ServiceWorkerJobDataIdentifier>, WebCore::ServiceWorkerIdentifier, bool doesHandleFetch) final;

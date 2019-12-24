@@ -87,9 +87,7 @@ void SWContextManager::postMessageToServiceWorker(ServiceWorkerIdentifier destin
     ASSERT(!serviceWorker->isTerminatingOrTerminated());
 
     // FIXME: We should pass valid MessagePortChannels.
-    serviceWorker->thread().runLoop().postTask([serviceWorker = makeRef(*serviceWorker), message = WTFMove(message), sourceData = WTFMove(sourceData)](auto&) mutable {
-        serviceWorker->thread().queueTaskToPostMessage(WTFMove(message), WTFMove(sourceData));
-    });
+    serviceWorker->postMessageToServiceWorker(WTFMove(message), WTFMove(sourceData));
 }
 
 void SWContextManager::fireInstallEvent(ServiceWorkerIdentifier identifier)
@@ -98,9 +96,7 @@ void SWContextManager::fireInstallEvent(ServiceWorkerIdentifier identifier)
     if (!serviceWorker)
         return;
 
-    serviceWorker->thread().runLoop().postTask([serviceWorker = makeRef(*serviceWorker)](auto&) mutable {
-        serviceWorker->thread().queueTaskToFireInstallEvent();
-    });
+    serviceWorker->fireInstallEvent();
 }
 
 void SWContextManager::fireActivateEvent(ServiceWorkerIdentifier identifier)
@@ -109,9 +105,7 @@ void SWContextManager::fireActivateEvent(ServiceWorkerIdentifier identifier)
     if (!serviceWorker)
         return;
 
-    serviceWorker->thread().runLoop().postTask([serviceWorker = makeRef(*serviceWorker)](auto&) mutable {
-        serviceWorker->thread().queueTaskToFireActivateEvent();
-    });
+    serviceWorker->fireActivateEvent();
 }
 
 void SWContextManager::terminateWorker(ServiceWorkerIdentifier identifier, Seconds timeout, Function<void()>&& completionHandler)

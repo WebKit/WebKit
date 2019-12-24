@@ -1,3 +1,64 @@
+2019-12-24  youenn fablet  <youenn@apple.com>
+
+        Service Worker doesn't terminate after a period of time when thread blocking
+        https://bugs.webkit.org/show_bug.cgi?id=202992
+        <rdar://problem/56298596>
+
+        Reviewed by Chris Dumez.
+
+        Whenever running a service worker task, running script or posting events (install, activate, message and fetch),
+        start a timer to check that the service worker is not spinning.
+        This is done by posting a task to service worker thread and hopping back to the main thread.
+        If this post/hop is done before the heartbeat timer is fired, the service worker is considered live.
+        Otherwise, the check is failed and the task is considered as failing.
+        The service worker will be terminated.
+        Timeout is 60 seconds by default and 1 second for test purposes.
+
+        Add settings to have short heartbeat timeout for testing purposes.
+        Add internals API to check whether a service worker is running.
+
+        Tests: http/wpt/service-workers/service-worker-spinning-activate.https.html
+               http/wpt/service-workers/service-worker-spinning-fetch.https.html
+               http/wpt/service-workers/service-worker-spinning-install.https.html
+               http/wpt/service-workers/service-worker-spinning-message.https.html
+
+        * page/Settings.yaml:
+        * testing/Internals.cpp:
+        (WebCore::Internals::isServiceWorkerRunning):
+        * testing/Internals.h:
+        * testing/Internals.idl:
+        * workers/service/SWClientConnection.h:
+        (WebCore::SWClientConnection::isServiceWorkerRunning):
+        * workers/service/context/SWContextManager.h:
+        (WebCore::SWContextManager::Connection::isTestMode const):
+        (WebCore::SWContextManager::Connection::setIsTestMode):
+        * workers/service/context/ServiceWorkerThread.cpp:
+        (WebCore::ServiceWorkerThread::ServiceWorkerThread):
+        (WebCore::ServiceWorkerThread::postFetchTask):
+        (WebCore::ServiceWorkerThread::postMessageToServiceWorker):
+        (WebCore::ServiceWorkerThread::fireInstallEvent):
+        (WebCore::ServiceWorkerThread::finishedFiringInstallEvent):
+        (WebCore::ServiceWorkerThread::fireActivateEvent):
+        (WebCore::ServiceWorkerThread::finishedFiringActivateEvent):
+        (WebCore::ServiceWorkerThread::finishedEvaluatingScript):
+        (WebCore::ServiceWorkerThread::start):
+        (WebCore::ServiceWorkerThread::finishedStarting):
+        (WebCore::ServiceWorkerThread::startFetchEventMonitoring):
+        (WebCore::ServiceWorkerThread::startHeartBeatTimer):
+        (WebCore::ServiceWorkerThread::heartBeatTimerFired):
+        * workers/service/context/ServiceWorkerThread.h:
+        (WebCore::ServiceWorkerThread::stopFetchEventMonitoring):
+        * workers/service/context/ServiceWorkerThreadProxy.cpp:
+        (WebCore::ServiceWorkerThreadProxy::startFetch):
+        (WebCore::ServiceWorkerThreadProxy::cancelFetch):
+        (WebCore::ServiceWorkerThreadProxy::removeFetch):
+        * workers/service/server/SWServerToContextConnection.cpp:
+        (WebCore::SWServerToContextConnection::didFailHeartBeatCheck):
+        * workers/service/server/SWServerToContextConnection.h:
+        * workers/service/server/SWServerWorker.cpp:
+        (WebCore::SWServerWorker::didFailHeartBeatCheck):
+        * workers/service/server/SWServerWorker.h:
+
 2019-12-23  Simon Fraser  <simon.fraser@apple.com>
 
         REGRESSION (r253634): Reproducible crash going back and forward on goodreads.com in Page::setPageScaleFactor

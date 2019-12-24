@@ -123,6 +123,12 @@ void SWServerToContextConnection::setScriptResource(ServiceWorkerIdentifier serv
         worker->setScriptResource(WTFMove(scriptURL), ServiceWorkerContextData::ImportedScript { WTFMove(script), WTFMove(responseURL), WTFMove(mimeType) });
 }
 
+void SWServerToContextConnection::didFailHeartBeatCheck(ServiceWorkerIdentifier identifier)
+{
+    if (auto* worker = SWServerWorker::existingWorkerForIdentifier(identifier))
+        worker->didFailHeartBeatCheck();
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(SERVICE_WORKER)
