@@ -42,7 +42,7 @@ MethodOfGettingAValueProfile MethodOfGettingAValueProfile::fromLazyOperand(
     result.m_kind = LazyOperand;
     result.u.lazyOperand.codeBlock = codeBlock;
     result.u.lazyOperand.bytecodeOffset = key.bytecodeIndex();
-    result.u.lazyOperand.operand = key.operand().offset();
+    result.u.lazyOperand.operand = key.operand();
     return result;
 }
 
@@ -57,7 +57,7 @@ void MethodOfGettingAValueProfile::emitReportValue(CCallHelpers& jit, JSValueReg
         return;
         
     case LazyOperand: {
-        LazyOperandValueProfileKey key(u.lazyOperand.bytecodeOffset, VirtualRegister(u.lazyOperand.operand));
+        LazyOperandValueProfileKey key(u.lazyOperand.bytecodeOffset, u.lazyOperand.operand);
         
         ConcurrentJSLocker locker(u.lazyOperand.codeBlock->m_lock);
         LazyOperandValueProfile* profile =
@@ -91,7 +91,7 @@ void MethodOfGettingAValueProfile::reportValue(JSValue value)
         return;
 
     case LazyOperand: {
-        LazyOperandValueProfileKey key(u.lazyOperand.bytecodeOffset, VirtualRegister(u.lazyOperand.operand));
+        LazyOperandValueProfileKey key(u.lazyOperand.bytecodeOffset, u.lazyOperand.operand);
 
         ConcurrentJSLocker locker(u.lazyOperand.codeBlock->m_lock);
         LazyOperandValueProfile* profile =

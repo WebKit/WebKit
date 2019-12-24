@@ -51,7 +51,7 @@ void BlockInsertionSet::insert(size_t index, Ref<BasicBlock>&& block)
 
 BasicBlock* BlockInsertionSet::insert(size_t index, float executionCount)
 {
-    Ref<BasicBlock> block = adoptRef(*new BasicBlock(BytecodeIndex(), m_graph.block(0)->variablesAtHead.numberOfArguments(), m_graph.block(0)->variablesAtHead.numberOfLocals(), executionCount));
+    Ref<BasicBlock> block = adoptRef(*new BasicBlock(BytecodeIndex(), m_graph.block(0)->variablesAtHead.numberOfArguments(), m_graph.block(0)->variablesAtHead.numberOfLocals(), m_graph.block(0)->variablesAtHead.numberOfTmps(), executionCount));
     block->isReachable = true;
     auto* result = block.ptr();
     insert(index, WTFMove(block));

@@ -308,8 +308,8 @@ void Graph::dump(PrintStream& out, const char* prefixStr, Node* node, DumpContex
     if (node->hasVariableAccessData(*this)) {
         VariableAccessData* variableAccessData = node->tryGetVariableAccessData();
         if (variableAccessData) {
-            VirtualRegister operand = variableAccessData->local();
-            out.print(comma, variableAccessData->local(), "(", VariableAccessDataDump(*this, variableAccessData), ")");
+            Operand operand = variableAccessData->operand();
+            out.print(comma, variableAccessData->operand(), "(", VariableAccessDataDump(*this, variableAccessData), ")");
             operand = variableAccessData->machineLocal();
             if (operand.isValid())
                 out.print(comma, "machine:", operand);
@@ -317,13 +317,13 @@ void Graph::dump(PrintStream& out, const char* prefixStr, Node* node, DumpContex
     }
     if (node->hasStackAccessData()) {
         StackAccessData* data = node->stackAccessData();
-        out.print(comma, data->local);
+        out.print(comma, data->operand);
         if (data->machineLocal.isValid())
             out.print(comma, "machine:", data->machineLocal);
         out.print(comma, data->format);
     }
-    if (node->hasUnlinkedLocal()) 
-        out.print(comma, node->unlinkedLocal());
+    if (node->hasUnlinkedOperand())
+        out.print(comma, node->unlinkedOperand());
     if (node->hasVectorLengthHint())
         out.print(comma, "vectorLengthHint = ", node->vectorLengthHint());
     if (node->hasLazyJSValue())
@@ -515,9 +515,10 @@ void Graph::dumpBlockHeader(PrintStream& out, const char* prefixStr, BasicBlock*
         out.print(prefix, "  Phi Nodes:");
         for (size_t i = 0; i < block->phis.size(); ++i) {
             Node* phiNode = block->phis[i];
+            ASSERT(phiNode->op() == Phi);
             if (!phiNode->shouldGenerate() && phiNodeDumpMode == DumpLivePhisOnly)
                 continue;
-            out.print(" @", phiNode->index(), "<", phiNode->local(), ",", phiNode->refCount(), ">->(");
+            out.print(" @", phiNode->index(), "<", phiNode->operand(), ",", phiNode->refCount(), ">->(");
             if (phiNode->child1()) {
                 out.print("@", phiNode->child1()->index());
                 if (phiNode->child2()) {
@@ -884,7 +885,7 @@ void Graph::substituteGetLocal(BasicBlock& block, unsigned startIndexInBlock, Va
         bool shouldContinue = true;
         switch (node->op()) {
         case SetLocal: {
-            if (node->local() == variableAccessData->local())
+            if (node->operand() == variableAccessData->operand())
                 shouldContinue = false;
             break;
         }
@@ -893,9 +894,9 @@ void Graph::substituteGetLocal(BasicBlock& block, unsigned startIndexInBlock, Va
             if (node->variableAccessData() != variableAccessData)
                 continue;
             substitute(block, indexInBlock, node, newGetLocal);
-            Node* oldTailNode = block.variablesAtTail.operand(variableAccessData->local());
+            Node* oldTailNode = block.variablesAtTail.operand(variableAccessData->operand());
             if (oldTailNode == node)
-                block.variablesAtTail.operand(variableAccessData->local()) = newGetLocal;
+                block.variablesAtTail.operand(variableAccessData->operand()) = newGetLocal;
             shouldContinue = false;
             break;
         }
@@ -1133,36 +1134,56 @@ BytecodeKills& Graph::killsFor(InlineCallFrame* inlineCallFrame)
     return killsFor(baselineCodeBlockFor(inlineCallFrame));
 }
 
-bool Graph::isLiveInBytecode(VirtualRegister operand, CodeOrigin codeOrigin)
+bool Graph::isLiveInBytecode(Operand operand, CodeOrigin codeOrigin)
 {
     static constexpr bool verbose = false;
     
     if (verbose)
         dataLog("Checking of operand is live: ", operand, "\n");
     bool isCallerOrigin = false;
+
     CodeOrigin* codeOriginPtr = &codeOrigin;
-    for (;;) {
-        VirtualRegister reg = VirtualRegister(
-            operand.offset() - codeOriginPtr->stackOffset());
+    auto* inlineCallFrame = codeOriginPtr->inlineCallFrame();
+    // We need to handle tail callers because we may decide to exit to the
+    // the return bytecode following the tail call.
+    for (; codeOriginPtr; codeOriginPtr = inlineCallFrame ? &inlineCallFrame->directCaller : nullptr) {
+        inlineCallFrame = codeOriginPtr->inlineCallFrame();
+        if (operand.isTmp()) {
+            unsigned tmpOffset = inlineCallFrame ? inlineCallFrame->tmpOffset : 0;
+            unsigned operandIndex = static_cast<unsigned>(operand.value());
+
+            ASSERT(operand.value() >= 0);
+            // This tmp should have belonged to someone we inlined.
+            if (operandIndex > tmpOffset + maxNumCheckpointTmps)
+                return false;
+
+            CodeBlock* codeBlock = baselineCodeBlockFor(inlineCallFrame);
+            if (!codeBlock->numTmps() || operandIndex < tmpOffset)
+                continue;
+
+            auto bitMap = tmpLivenessForCheckpoint(*codeBlock, codeOriginPtr->bytecodeIndex());
+            return bitMap.get(operandIndex - tmpOffset);
+        }
+
+        VirtualRegister reg = operand.virtualRegister() - codeOriginPtr->stackOffset();
         
         if (verbose)
             dataLog("reg = ", reg, "\n");
 
-        auto* inlineCallFrame = codeOriginPtr->inlineCallFrame();
-        if (operand.offset() < codeOriginPtr->stackOffset() + CallFrame::headerSizeInRegisters) {
+        if (operand.virtualRegister().offset() < codeOriginPtr->stackOffset() + CallFrame::headerSizeInRegisters) {
             if (reg.isArgument()) {
                 RELEASE_ASSERT(reg.offset() < CallFrame::headerSizeInRegisters);
 
 
                 if (inlineCallFrame->isClosureCall
-                    && reg.offset() == CallFrameSlot::callee) {
+                    && reg == CallFrameSlot::callee) {
                     if (verbose)
                         dataLog("Looks like a callee.\n");
                     return true;
                 }
                 
                 if (inlineCallFrame->isVarargs()
-                    && reg.offset() == CallFrameSlot::argumentCountIncludingThis) {
+                    && reg == CallFrameSlot::argumentCountIncludingThis) {
                     if (verbose)
                         dataLog("Looks like the argument count.\n");
                     return true;
@@ -1176,42 +1197,39 @@ bool Graph::isLiveInBytecode(VirtualRegister operand, CodeOrigin codeOrigin)
             CodeBlock* codeBlock = baselineCodeBlockFor(inlineCallFrame);
             FullBytecodeLiveness& fullLiveness = livenessFor(codeBlock);
             BytecodeIndex bytecodeIndex = codeOriginPtr->bytecodeIndex();
-            return fullLiveness.operandIsLive(reg.offset(), bytecodeIndex, appropriateLivenessCalculationPoint(*codeOriginPtr, isCallerOrigin));
-        }
-
-        if (!inlineCallFrame) {
-            if (verbose)
-                dataLog("Ran out of stack, returning true.\n");
-            return true;
+            return fullLiveness.virtualRegisterIsLive(reg, bytecodeIndex, appropriateLivenessCalculationPoint(*codeOriginPtr, isCallerOrigin));
         }
 
         // Arguments are always live. This would be redundant if it wasn't for our
         // op_call_varargs inlining.
-        if (reg.isArgument()
+        if (inlineCallFrame && reg.isArgument()
             && static_cast<size_t>(reg.toArgument()) < inlineCallFrame->argumentsWithFixup.size()) {
             if (verbose)
                 dataLog("Argument is live.\n");
             return true;
         }
 
-        // We need to handle tail callers because we may decide to exit to the
-        // the return bytecode following the tail call.
-        codeOriginPtr = &inlineCallFrame->directCaller;
         isCallerOrigin = true;
     }
-    
-    RELEASE_ASSERT_NOT_REACHED();
+
+    if (operand.isTmp())
+        return false;
+
+    if (verbose)
+        dataLog("Ran out of stack, returning true.\n");
+    return true;    
 }
 
-BitVector Graph::localsLiveInBytecode(CodeOrigin codeOrigin)
+BitVector Graph::localsAndTmpsLiveInBytecode(CodeOrigin codeOrigin)
 {
     BitVector result;
-    result.ensureSize(block(0)->variablesAtHead.numberOfLocals());
-    forAllLocalsLiveInBytecode(
+    unsigned numLocals = block(0)->variablesAtHead.numberOfLocals();
+    result.ensureSize(numLocals + block(0)->variablesAtHead.numberOfTmps());
+    forAllLocalsAndTmpsLiveInBytecode(
         codeOrigin,
-        [&] (VirtualRegister reg) {
-            ASSERT(reg.isLocal());
-            result.quickSet(reg.toLocal());
+        [&] (Operand operand) {
+            unsigned offset = operand.isTmp() ? numLocals + operand.value() : operand.toLocal();
+            result.quickSet(offset);
         });
     return result;
 }
@@ -1635,8 +1653,8 @@ MethodOfGettingAValueProfile Graph::methodOfGettingAValueProfileFor(Node* curren
 
     for (Node* node = operandNode; node;) {
         if (node->accessesStack(*this)) {
-            if (m_form != SSA && node->local().isArgument()) {
-                int argument = node->local().toArgument();
+            if (m_form != SSA && node->operand().isArgument()) {
+                int argument = node->operand().toArgument();
                 Node* argumentNode = m_rootToArguments.find(block(0))->value[argument];
                 // FIXME: We should match SetArgumentDefinitely nodes at other entrypoints as well:
                 // https://bugs.webkit.org/show_bug.cgi?id=175841
@@ -1656,7 +1674,7 @@ MethodOfGettingAValueProfile Graph::methodOfGettingAValueProfileFor(Node* curren
                     return MethodOfGettingAValueProfile::fromLazyOperand(
                         profiledBlock,
                         LazyOperandValueProfileKey(
-                            node->origin.semantic.bytecodeIndex(), node->local()));
+                            node->origin.semantic.bytecodeIndex(), node->operand()));
                 }
             }
 

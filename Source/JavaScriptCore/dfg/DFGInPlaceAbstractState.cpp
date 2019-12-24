@@ -45,8 +45,8 @@ static constexpr bool verbose = false;
 InPlaceAbstractState::InPlaceAbstractState(Graph& graph)
     : m_graph(graph)
     , m_abstractValues(*graph.m_abstractValuesCache)
-    , m_variables(m_graph.m_codeBlock->numParameters(), graph.m_localVars)
-    , m_block(0)
+    , m_variables(OperandsLike, graph.block(0)->variablesAtHead)
+    , m_block(nullptr)
 {
 }
 

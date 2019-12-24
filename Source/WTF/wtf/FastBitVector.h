@@ -450,7 +450,7 @@ public:
     {
     }
 
-    explicit operator bool() const
+    operator bool() const
     {
         return !!(*m_word & m_mask);
     }
@@ -463,6 +463,9 @@ public:
             *m_word &= ~m_mask;
         return *this;
     }
+
+    FastBitReference& operator|=(bool value) { return value ? *this = value : *this; }
+    FastBitReference& operator&=(bool value) { return value ? *this : *this = value; }
 
 private:
     uint32_t* m_word { nullptr };
@@ -509,7 +512,11 @@ public:
     {
         m_words.clearAll();
     }
-    
+
+    // For templating as Vector<bool>
+    void fill(bool value) { value ? setAll() : clearAll(); }
+    void grow(size_t newSize) { resize(newSize); }
+
     WTF_EXPORT_PRIVATE void clearRange(size_t begin, size_t end);
 
     // Returns true if the contents of this bitvector changed.
@@ -589,4 +596,5 @@ public:
 
 } // namespace WTF
 
+using WTF::FastBitReference;
 using WTF::FastBitVector;

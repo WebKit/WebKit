@@ -45,18 +45,18 @@ namespace JSC {
         {
         }
 
-        inline Jump emitLoadJSCell(unsigned virtualRegisterIndex, RegisterID payload);
-        inline Jump emitLoadInt32(unsigned virtualRegisterIndex, RegisterID dst);
-        inline Jump emitLoadDouble(unsigned virtualRegisterIndex, FPRegisterID dst, RegisterID scratch);
+        inline Jump emitLoadJSCell(VirtualRegister, RegisterID payload);
+        inline Jump emitLoadInt32(VirtualRegister, RegisterID dst);
+        inline Jump emitLoadDouble(VirtualRegister, FPRegisterID dst, RegisterID scratch);
 
 #if USE(JSVALUE32_64)
-        inline Jump emitJumpIfNotJSCell(unsigned virtualRegisterIndex);
+        inline Jump emitJumpIfNotJSCell(VirtualRegister);
 #endif
 
-        void emitGetFromCallFrameHeaderPtr(int entry, RegisterID to, RegisterID from = callFrameRegister);
-        void emitPutToCallFrameHeader(RegisterID from, int entry);
-        void emitPutToCallFrameHeader(void* value, int entry);
-        void emitPutCellToCallFrameHeader(RegisterID from, int entry);
+        void emitGetFromCallFrameHeaderPtr(VirtualRegister entry, RegisterID to, RegisterID from = callFrameRegister);
+        void emitPutToCallFrameHeader(RegisterID from, VirtualRegister entry);
+        void emitPutToCallFrameHeader(void* value, VirtualRegister entry);
+        void emitPutCellToCallFrameHeader(RegisterID from, VirtualRegister entry);
 
         VM* vm() const { return m_vm; }
 
@@ -64,36 +64,36 @@ namespace JSC {
     };
 
 #if USE(JSVALUE32_64)
-    inline JSInterfaceJIT::Jump JSInterfaceJIT::emitLoadJSCell(unsigned virtualRegisterIndex, RegisterID payload)
+    inline JSInterfaceJIT::Jump JSInterfaceJIT::emitLoadJSCell(VirtualRegister virtualRegister, RegisterID payload)
     {
-        loadPtr(payloadFor(virtualRegisterIndex), payload);
-        return emitJumpIfNotJSCell(virtualRegisterIndex);
+        loadPtr(payloadFor(virtualRegister), payload);
+        return emitJumpIfNotJSCell(virtualRegister);
     }
 
-    inline JSInterfaceJIT::Jump JSInterfaceJIT::emitJumpIfNotJSCell(unsigned virtualRegisterIndex)
+    inline JSInterfaceJIT::Jump JSInterfaceJIT::emitJumpIfNotJSCell(VirtualRegister virtualRegister)
     {
-        ASSERT(static_cast<int>(virtualRegisterIndex) < FirstConstantRegisterIndex);
-        return branch32(NotEqual, tagFor(virtualRegisterIndex), TrustedImm32(JSValue::CellTag));
+        ASSERT(virtualRegister < FirstConstantRegisterIndex);
+        return branch32(NotEqual, tagFor(virtualRegister), TrustedImm32(JSValue::CellTag));
     }
     
-    inline JSInterfaceJIT::Jump JSInterfaceJIT::emitLoadInt32(unsigned virtualRegisterIndex, RegisterID dst)
+    inline JSInterfaceJIT::Jump JSInterfaceJIT::emitLoadInt32(VirtualRegister virtualRegister, RegisterID dst)
     {
-        ASSERT(static_cast<int>(virtualRegisterIndex) < FirstConstantRegisterIndex);
-        loadPtr(payloadFor(virtualRegisterIndex), dst);
-        return branch32(NotEqual, tagFor(static_cast<int>(virtualRegisterIndex)), TrustedImm32(JSValue::Int32Tag));
+        ASSERT(virtualRegister < FirstConstantRegisterIndex);
+        loadPtr(payloadFor(virtualRegister), dst);
+        return branch32(NotEqual, tagFor(virtualRegister), TrustedImm32(JSValue::Int32Tag));
     }
 
-    inline JSInterfaceJIT::Jump JSInterfaceJIT::emitLoadDouble(unsigned virtualRegisterIndex, FPRegisterID dst, RegisterID scratch)
+    inline JSInterfaceJIT::Jump JSInterfaceJIT::emitLoadDouble(VirtualRegister virtualRegister, FPRegisterID dst, RegisterID scratch)
     {
-        ASSERT(static_cast<int>(virtualRegisterIndex) < FirstConstantRegisterIndex);
-        loadPtr(tagFor(virtualRegisterIndex), scratch);
+        ASSERT(virtualRegister < FirstConstantRegisterIndex);
+        loadPtr(tagFor(virtualRegister), scratch);
         Jump isDouble = branch32(Below, scratch, TrustedImm32(JSValue::LowestTag));
         Jump notInt = branch32(NotEqual, scratch, TrustedImm32(JSValue::Int32Tag));
-        loadPtr(payloadFor(virtualRegisterIndex), scratch);
+        loadPtr(payloadFor(virtualRegister), scratch);
         convertInt32ToDouble(scratch, dst);
         Jump done = jump();
         isDouble.link(this);
-        loadDouble(addressFor(virtualRegisterIndex), dst);
+        loadDouble(addressFor(virtualRegister), dst);
         done.link(this);
         return notInt;
     }
@@ -101,23 +101,23 @@ namespace JSC {
 #endif
 
 #if USE(JSVALUE64)
-    inline JSInterfaceJIT::Jump JSInterfaceJIT::emitLoadJSCell(unsigned virtualRegisterIndex, RegisterID dst)
+    inline JSInterfaceJIT::Jump JSInterfaceJIT::emitLoadJSCell(VirtualRegister virtualRegister, RegisterID dst)
     {
-        load64(addressFor(virtualRegisterIndex), dst);
+        load64(addressFor(virtualRegister), dst);
         return branchIfNotCell(dst);
     }
     
-    inline JSInterfaceJIT::Jump JSInterfaceJIT::emitLoadInt32(unsigned virtualRegisterIndex, RegisterID dst)
+    inline JSInterfaceJIT::Jump JSInterfaceJIT::emitLoadInt32(VirtualRegister virtualRegister, RegisterID dst)
     {
-        load64(addressFor(virtualRegisterIndex), dst);
+        load64(addressFor(virtualRegister), dst);
         Jump notInt32 = branchIfNotInt32(dst);
         zeroExtend32ToPtr(dst, dst);
         return notInt32;
     }
 
-    inline JSInterfaceJIT::Jump JSInterfaceJIT::emitLoadDouble(unsigned virtualRegisterIndex, FPRegisterID dst, RegisterID scratch)
+    inline JSInterfaceJIT::Jump JSInterfaceJIT::emitLoadDouble(VirtualRegister virtualRegister, FPRegisterID dst, RegisterID scratch)
     {
-        load64(addressFor(virtualRegisterIndex), scratch);
+        load64(addressFor(virtualRegister), scratch);
         Jump notNumber = branchIfNotNumber(scratch);
         Jump notInt = branchIfNotInt32(scratch);
         convertInt32ToDouble(scratch, dst);
@@ -129,12 +129,12 @@ namespace JSC {
     }
 #endif
 
-    ALWAYS_INLINE void JSInterfaceJIT::emitGetFromCallFrameHeaderPtr(int entry, RegisterID to, RegisterID from)
+    ALWAYS_INLINE void JSInterfaceJIT::emitGetFromCallFrameHeaderPtr(VirtualRegister entry, RegisterID to, RegisterID from)
     {
-        loadPtr(Address(from, entry * sizeof(Register)), to);
+        loadPtr(Address(from, entry.offset() * sizeof(Register)), to);
     }
 
-    ALWAYS_INLINE void JSInterfaceJIT::emitPutToCallFrameHeader(RegisterID from, int entry)
+    ALWAYS_INLINE void JSInterfaceJIT::emitPutToCallFrameHeader(RegisterID from, VirtualRegister entry)
     {
 #if USE(JSVALUE32_64)
         storePtr(from, payloadFor(entry));
@@ -143,12 +143,12 @@ namespace JSC {
 #endif
     }
 
-    ALWAYS_INLINE void JSInterfaceJIT::emitPutToCallFrameHeader(void* value, int entry)
+    ALWAYS_INLINE void JSInterfaceJIT::emitPutToCallFrameHeader(void* value, VirtualRegister entry)
     {
         storePtr(TrustedImmPtr(value), addressFor(entry));
     }
 
-    ALWAYS_INLINE void JSInterfaceJIT::emitPutCellToCallFrameHeader(RegisterID from, int entry)
+    ALWAYS_INLINE void JSInterfaceJIT::emitPutCellToCallFrameHeader(RegisterID from, VirtualRegister entry)
     {
 #if USE(JSVALUE32_64)
         store32(TrustedImm32(JSValue::CellTag), tagFor(entry));

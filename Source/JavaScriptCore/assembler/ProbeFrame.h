@@ -46,14 +46,14 @@ public:
         return get<T>(CallFrame::argumentOffset(argument) * sizeof(Register));
     }
     template<typename T = JSValue>
-    T operand(int operand)
+    T operand(VirtualRegister operand)
     {
-        return get<T>(static_cast<VirtualRegister>(operand).offset() * sizeof(Register));
+        return get<T>(operand.offset() * sizeof(Register));
     }
     template<typename T = JSValue>
-    T operand(int operand, ptrdiff_t offset)
+    T operand(VirtualRegister operand, ptrdiff_t offset)
     {
-        return get<T>(static_cast<VirtualRegister>(operand).offset() * sizeof(Register) + offset);
+        return get<T>(operand.offset() * sizeof(Register) + offset);
     }
 
     template<typename T>
@@ -62,14 +62,14 @@ public:
         return set<T>(CallFrame::argumentOffset(argument) * sizeof(Register), value);
     }
     template<typename T>
-    void setOperand(int operand, T value)
+    void setOperand(VirtualRegister operand, T value)
     {
-        set<T>(static_cast<VirtualRegister>(operand).offset() * sizeof(Register), value);
+        set<T>(operand.offset() * sizeof(Register), value);
     }
     template<typename T>
-    void setOperand(int operand, ptrdiff_t offset, T value)
+    void setOperand(VirtualRegister operand, ptrdiff_t offset, T value)
     {
-        set<T>(static_cast<VirtualRegister>(operand).offset() * sizeof(Register) + offset, value);
+        set<T>(operand.offset() * sizeof(Register) + offset, value);
     }
 
     template<typename T = JSValue>

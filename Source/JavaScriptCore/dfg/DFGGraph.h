@@ -840,13 +840,13 @@ public:
     // Quickly query if a single local is live at the given point. This is faster than calling
     // forAllLiveInBytecode() if you will only query one local. But, if you want to know all of the
     // locals live, then calling this for each local is much slower than forAllLiveInBytecode().
-    bool isLiveInBytecode(VirtualRegister, CodeOrigin);
+    bool isLiveInBytecode(Operand, CodeOrigin);
     
-    // Quickly get all of the non-argument locals live at the given point. This doesn't give you
+    // Quickly get all of the non-argument locals and tmps live at the given point. This doesn't give you
     // any arguments because those are all presumed live. You can call forAllLiveInBytecode() to
     // also get the arguments. This is much faster than calling isLiveInBytecode() for each local.
     template<typename Functor>
-    void forAllLocalsLiveInBytecode(CodeOrigin codeOrigin, const Functor& functor)
+    void forAllLocalsAndTmpsLiveInBytecode(CodeOrigin codeOrigin, const Functor& functor)
     {
         // Support for not redundantly reporting arguments. Necessary because in case of a varargs
         // call, only the callee knows that arguments are live while in the case of a non-varargs
@@ -881,6 +881,14 @@ public:
                 if (livenessAtBytecode[relativeLocal])
                     functor(reg);
             }
+
+            if (codeOriginPtr->bytecodeIndex().checkpoint()) {
+                ASSERT(codeBlock->numTmps());
+                auto liveTmps = tmpLivenessForCheckpoint(*codeBlock, codeOriginPtr->bytecodeIndex());
+                liveTmps.forEachSetBit([&] (size_t tmp) {
+                    functor(remapOperand(inlineCallFrame, Operand::tmp(tmp)));
+                });
+            }
             
             if (!inlineCallFrame)
                 break;
@@ -904,9 +912,9 @@ public:
         }
     }
     
-    // Get a BitVector of all of the non-argument locals live right now. This is mostly useful if
+    // Get a BitVector of all of the locals and tmps live right now. This is mostly useful if
     // you want to compare two sets of live locals from two different CodeOrigins.
-    BitVector localsLiveInBytecode(CodeOrigin);
+    BitVector localsAndTmpsLiveInBytecode(CodeOrigin);
 
     LivenessCalculationPoint appropriateLivenessCalculationPoint(CodeOrigin origin, bool isCallerOrigin)
     {
@@ -938,12 +946,12 @@ public:
         return LivenessCalculationPoint::BeforeUse;
     }
     
-    // Tells you all of the arguments and locals live at the given CodeOrigin. This is a small
-    // extension to forAllLocalsLiveInBytecode(), since all arguments are always presumed live.
+    // Tells you all of the operands live at the given CodeOrigin. This is a small
+    // extension to forAllLocalsOrTmpsLiveInBytecode(), since all arguments are always presumed live.
     template<typename Functor>
     void forAllLiveInBytecode(CodeOrigin codeOrigin, const Functor& functor)
     {
-        forAllLocalsLiveInBytecode(codeOrigin, functor);
+        forAllLocalsAndTmpsLiveInBytecode(codeOrigin, functor);
         
         // Report all arguments as being live.
         for (unsigned argument = block(0)->variablesAtHead.numberOfArguments(); argument--;)
@@ -1114,6 +1122,7 @@ public:
     std::unique_ptr<BackwardsCFG> m_backwardsCFG;
     std::unique_ptr<BackwardsDominators> m_backwardsDominators;
     std::unique_ptr<ControlEquivalenceAnalysis> m_controlEquivalenceAnalysis;
+    unsigned m_tmps;
     unsigned m_localVars;
     unsigned m_nextMachineLocal;
     unsigned m_parameterSlots;

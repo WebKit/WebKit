@@ -137,20 +137,19 @@ void DirectArguments::unmapArgument(VM& vm, unsigned index)
     m_mappedArguments.at(index, internalLength()) = true;
 }
 
-void DirectArguments::copyToArguments(JSGlobalObject* globalObject, CallFrame* callFrame, VirtualRegister firstElementDest, unsigned offset, unsigned length)
+void DirectArguments::copyToArguments(JSGlobalObject* globalObject, JSValue* firstElementDest, unsigned offset, unsigned length)
 {
     if (!m_mappedArguments) {
         unsigned limit = std::min(length + offset, m_length);
         unsigned i;
-        VirtualRegister start = firstElementDest - offset;
         for (i = offset; i < limit; ++i)
-            callFrame->r(start + i) = storage()[i].get();
+            firstElementDest[i - offset] = storage()[i].get();
         for (; i < length; ++i)
-            callFrame->r(start + i) = get(globalObject, i);
+            firstElementDest[i - offset] = get(globalObject, i);
         return;
     }
 
-    GenericArguments::copyToArguments(globalObject, callFrame, firstElementDest, offset, length);
+    GenericArguments::copyToArguments(globalObject, firstElementDest, offset, length);
 }
 
 unsigned DirectArguments::mappedArgumentsSize()

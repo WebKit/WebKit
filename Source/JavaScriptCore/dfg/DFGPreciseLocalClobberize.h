@@ -53,7 +53,7 @@ public:
                 return;
             }
             
-            callIfAppropriate(m_read, VirtualRegister(heap.payload().value32()));
+            callIfAppropriate(m_read, heap.operand());
             return;
         }
         
@@ -68,7 +68,7 @@ public:
         // We expect stack writes to already be precisely characterized by DFG::clobberize().
         if (heap.kind() == Stack) {
             RELEASE_ASSERT(!heap.payload().isTop());
-            callIfAppropriate(m_unconditionalWrite, VirtualRegister(heap.payload().value32()));
+            callIfAppropriate(m_unconditionalWrite, heap.operand());
             return;
         }
         
@@ -87,12 +87,12 @@ public:
         
         RELEASE_ASSERT(location.heap().kind() == Stack);
         
-        m_def(VirtualRegister(location.heap().payload().value32()), node);
+        m_def(location.heap().operand(), node);
     }
     
 private:
     template<typename Functor>
-    void callIfAppropriate(const Functor& functor, VirtualRegister operand)
+    void callIfAppropriate(const Functor& functor, Operand operand)
     {
         if (operand.isLocal() && static_cast<unsigned>(operand.toLocal()) >= m_graph.block(0)->variablesAtHead.numberOfLocals())
             return;

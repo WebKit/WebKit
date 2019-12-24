@@ -46,11 +46,12 @@ typedef Vector<Node*, 8> BlockNodeList;
 
 struct BasicBlock : RefCounted<BasicBlock> {
     BasicBlock(
-        BytecodeIndex bytecodeBegin, unsigned numArguments, unsigned numLocals,
+        BytecodeIndex bytecodeBegin, unsigned numArguments, unsigned numLocals, unsigned numTmps,
         float executionCount);
     ~BasicBlock();
     
     void ensureLocals(unsigned newNumLocals);
+    void ensureTmps(unsigned newNumTmps);
     
     size_t size() const { return m_nodes.size(); }
     bool isEmpty() const { return !size(); }

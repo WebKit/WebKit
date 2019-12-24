@@ -142,7 +142,7 @@ public:
         return GenericArguments<ScopedArguments>::isModifiedArgumentDescriptor(index, m_table->length());
     }
 
-    void copyToArguments(JSGlobalObject*, CallFrame*, VirtualRegister firstElementDest, unsigned offset, unsigned length);
+    void copyToArguments(JSGlobalObject*, JSValue* firstElementDest, unsigned offset, unsigned length);
 
     DECLARE_INFO;
     

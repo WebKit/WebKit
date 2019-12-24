@@ -208,7 +208,7 @@ public:
                         jit.clearStackFrame(GPRInfo::callFrameRegister, CCallHelpers::stackPointerRegister, GPRInfo::regT0, code.frameSize());
 
                     jit.emitSave(code.calleeSaveRegisterAtOffsetList());
-                    jit.emitPutToCallFrameHeader(codeBlock, CallFrameSlot::codeBlock);
+                    jit.emitPutToCallFrameHeader(codeBlock, VirtualRegister(CallFrameSlot::codeBlock));
                 });
 
             for (unsigned catchEntrypointIndex : m_graph.m_entrypointIndexToCatchBytecodeIndex.keys()) {
@@ -274,7 +274,7 @@ public:
         
         // We don't want the CodeBlock to have a weak pointer to itself because
         // that would cause it to always get collected.
-        m_out.storePtr(m_out.constIntPtr(bitwise_cast<intptr_t>(codeBlock())), addressFor(CallFrameSlot::codeBlock));
+        m_out.storePtr(m_out.constIntPtr(bitwise_cast<intptr_t>(codeBlock())), addressFor(VirtualRegister(CallFrameSlot::codeBlock)));
 
         // Stack Overflow Check.
         unsigned exitFrameSize = m_graph.requiredRegisterCountForExit() * sizeof(Register);
@@ -355,7 +355,7 @@ public:
 
             // Check Arguments.
             availabilityMap().clear();
-            availabilityMap().m_locals = Operands<Availability>(codeBlock()->numParameters(), 0);
+            availabilityMap().m_locals = Operands<Availability>(codeBlock()->numParameters(), 0, 0);
             for (unsigned i = codeBlock()->numParameters(); i--;) {
                 availabilityMap().m_locals.argument(i) =
                     Availability(FlushedAt(FlushedJSValue, virtualRegisterForArgument(i)));
@@ -1284,6 +1284,9 @@ private:
         case CallEval:
             compileCallEval();
             break;
+        case VarargsLength:
+            compileVarargsLength();
+            break;
         case LoadVarargs:
             compileLoadVarargs();
             break;
@@ -1956,7 +1959,7 @@ private:
     {
         EncodedJSValue* buffer = static_cast<EncodedJSValue*>(
             m_ftlState.jitCode->ftlForOSREntry()->entryBuffer()->dataBuffer());
-        setJSValue(m_out.load64(m_out.absolute(buffer + m_node->unlinkedLocal().toLocal())));
+        setJSValue(m_out.load64(m_out.absolute(buffer + m_node->unlinkedOperand().virtualRegister().toLocal())));
     }
 
     void compileExtractCatchLocal()
@@ -1975,7 +1978,7 @@ private:
     void compileGetStack()
     {
         StackAccessData* data = m_node->stackAccessData();
-        AbstractValue& value = m_state.operand(data->local);
+        AbstractValue& value = m_state.operand(data->operand);
         
         DFG_ASSERT(m_graph, m_node, isConcrete(data->format), data->format);
         
@@ -7935,13 +7938,13 @@ private:
     
     void compileGetCallee()
     {
-        setJSValue(m_out.loadPtr(addressFor(CallFrameSlot::callee)));
+        setJSValue(m_out.loadPtr(addressFor(VirtualRegister(CallFrameSlot::callee))));
     }
 
     void compileSetCallee()
     {
         auto callee = lowCell(m_node->child1());
-        m_out.storePtr(callee, payloadFor(CallFrameSlot::callee));
+        m_out.storePtr(callee, payloadFor(VirtualRegister(CallFrameSlot::callee)));
     }
     
     void compileGetArgumentCountIncludingThis()
@@ -7956,7 +7959,7 @@ private:
 
     void compileSetArgumentCountIncludingThis()
     {
-        m_out.store32(m_out.constInt32(m_node->argumentCountIncludingThis()), payloadFor(CallFrameSlot::argumentCountIncludingThis));
+        m_out.store32(m_out.constInt32(m_node->argumentCountIncludingThis()), payloadFor(VirtualRegister(CallFrameSlot::argumentCountIncludingThis)));
     }
     
     void compileGetScope()
@@ -9551,51 +9554,51 @@ private:
         setJSValue(patchpoint);
     }
     
+    void compileVarargsLength()
+    {
+        JSGlobalObject* globalObject = m_graph.globalObjectFor(m_node->origin.semantic);
+        LoadVarargsData* data = m_node->loadVarargsData();
+        LValue jsArguments = lowJSValue(m_node->argumentsChild());
+
+        LValue length = vmCall(
+            Int32, operationSizeOfVarargs, weakPointer(globalObject), jsArguments,
+            m_out.constInt32(data->offset));
+
+        LValue lengthIncludingThis = m_out.add(length, m_out.int32One);
+
+        setInt32(lengthIncludingThis);
+    }
+
     void compileLoadVarargs()
     {
         JSGlobalObject* globalObject = m_graph.globalObjectFor(m_node->origin.semantic);
         LoadVarargsData* data = m_node->loadVarargsData();
-        LValue jsArguments = lowJSValue(m_node->child1());
+        LValue jsArguments = lowJSValue(m_node->argumentsChild());
+        LValue lengthIncludingThis = lowInt32(m_node->child1());
         
-        LValue length = vmCall(
-            Int32, operationSizeOfVarargs, weakPointer(globalObject), jsArguments,
-            m_out.constInt32(data->offset));
-        
-        // FIXME: There is a chance that we will call an effectful length property twice. This is safe
-        // from the standpoint of the VM's integrity, but it's subtly wrong from a spec compliance
-        // standpoint. The best solution would be one where we can exit *into* the op_call_varargs right
-        // past the sizing.
-        // https://bugs.webkit.org/show_bug.cgi?id=141448
-        
-        LValue lengthIncludingThis = m_out.add(length, m_out.int32One);
-
         speculate(
             VarargsOverflow, noValue(), nullptr,
-            m_out.above(length, lengthIncludingThis));
+            m_out.bitOr(m_out.isZero32(lengthIncludingThis), m_out.above(lengthIncludingThis, m_out.constInt32(data->limit)))); 
 
-        speculate(
-            VarargsOverflow, noValue(), nullptr,
-            m_out.above(lengthIncludingThis, m_out.constInt32(data->limit)));
-        
         m_out.store32(lengthIncludingThis, payloadFor(data->machineCount));
         
-        // FIXME: This computation is rather silly. If operationLaodVarargs just took a pointer instead
+        // FIXME: This computation is rather silly. If operationLoadVarargs just took a pointer instead
         // of a VirtualRegister, we wouldn't have to do this.
         // https://bugs.webkit.org/show_bug.cgi?id=141660
         LValue machineStart = m_out.lShr(
-            m_out.sub(addressFor(data->machineStart.offset()).value(), m_callFrame),
+            m_out.sub(addressFor(data->machineStart).value(), m_callFrame),
             m_out.constIntPtr(3));
         
         vmCall(
             Void, operationLoadVarargs, weakPointer(globalObject),
             m_out.castToInt32(machineStart), jsArguments, m_out.constInt32(data->offset),
-            length, m_out.constInt32(data->mandatoryMinimum));
+            lengthIncludingThis, m_out.constInt32(data->mandatoryMinimum));
     }
     
     void compileForwardVarargs()
     {
-        if (m_node->child1()) {
-            Node* arguments = m_node->child1().node();
+        if (m_node->argumentsChild()) {
+            Node* arguments = m_node->argumentsChild().node();
             if (arguments->op() == PhantomNewArrayWithSpread || arguments->op() == PhantomNewArrayBuffer || arguments->op() == PhantomSpread) {
                 compileForwardVarargsWithSpread();
                 return;
@@ -9604,50 +9607,21 @@ private:
 
         LoadVarargsData* data = m_node->loadVarargsData();
         InlineCallFrame* inlineCallFrame;
-        if (m_node->child1())
-            inlineCallFrame = m_node->child1()->origin.semantic.inlineCallFrame();
+        if (m_node->argumentsChild())
+            inlineCallFrame = m_node->argumentsChild()->origin.semantic.inlineCallFrame();
         else
             inlineCallFrame = m_node->origin.semantic.inlineCallFrame();
 
-        LValue length = nullptr; 
-        LValue lengthIncludingThis = nullptr;
-        ArgumentsLength argumentsLength = getArgumentsLength(inlineCallFrame);
-        if (argumentsLength.isKnown) {
-            unsigned knownLength = argumentsLength.known;
-            if (knownLength >= data->offset)
-                knownLength = knownLength - data->offset;
-            else
-                knownLength = 0;
-            length = m_out.constInt32(knownLength);
-            lengthIncludingThis = m_out.constInt32(knownLength + 1);
-        } else {
-            // We need to perform the same logical operation as the code above, but through dynamic operations.
-            if (!data->offset)
-                length = argumentsLength.value;
-            else {
-                LBasicBlock isLarger = m_out.newBlock();
-                LBasicBlock continuation = m_out.newBlock();
+        unsigned numberOfArgumentsToSkip = data->offset;
+        LValue lengthIncludingThis = lowInt32(m_node->child1());
 
-                ValueFromBlock smallerOrEqualLengthResult = m_out.anchor(m_out.constInt32(0));
-                m_out.branch(
-                    m_out.above(argumentsLength.value, m_out.constInt32(data->offset)), unsure(isLarger), unsure(continuation));
-                LBasicBlock lastNext = m_out.appendTo(isLarger, continuation);
-                ValueFromBlock largerLengthResult = m_out.anchor(m_out.sub(argumentsLength.value, m_out.constInt32(data->offset)));
-                m_out.jump(continuation);
-
-                m_out.appendTo(continuation, lastNext);
-                length = m_out.phi(Int32, smallerOrEqualLengthResult, largerLengthResult);
-            }
-            lengthIncludingThis = m_out.add(length, m_out.constInt32(1));
-        }
-
+        LValue length = m_out.sub(lengthIncludingThis, m_out.int32One);
         speculate(
             VarargsOverflow, noValue(), nullptr,
             m_out.above(lengthIncludingThis, m_out.constInt32(data->limit)));
         
         m_out.store32(lengthIncludingThis, payloadFor(data->machineCount));
         
-        unsigned numberOfArgumentsToSkip = data->offset;
         LValue sourceStart = getArgumentsStart(inlineCallFrame, numberOfArgumentsToSkip);
         LValue targetStart = addressFor(data->machineStart).value();
 
@@ -9706,65 +9680,20 @@ private:
         // We need to perform the same logical operation as the code above, but through dynamic operations.
         if (!numberOfArgumentsToSkip)
             return argumentsLength.value;
+        
+        RELEASE_ASSERT(numberOfArgumentsToSkip < static_cast<unsigned>(INT32_MIN));
 
-        LBasicBlock isLarger = m_out.newBlock();
-        LBasicBlock continuation = m_out.newBlock();
+        LValue fixedLength = m_out.sub(argumentsLength.value, m_out.constInt32(numberOfArgumentsToSkip));
 
-        ValueFromBlock smallerOrEqualLengthResult = m_out.anchor(m_out.constInt32(0));
-        m_out.branch(
-            m_out.above(argumentsLength.value, m_out.constInt32(numberOfArgumentsToSkip)), unsure(isLarger), unsure(continuation));
-        LBasicBlock lastNext = m_out.appendTo(isLarger, continuation);
-        ValueFromBlock largerLengthResult = m_out.anchor(m_out.sub(argumentsLength.value, m_out.constInt32(numberOfArgumentsToSkip)));
-        m_out.jump(continuation);
-
-        m_out.appendTo(continuation, lastNext);
-        return m_out.phi(Int32, smallerOrEqualLengthResult, largerLengthResult);
+        return m_out.select(m_out.greaterThanOrEqual(fixedLength, m_out.int32Zero), fixedLength, m_out.int32Zero, SelectPredictability::Predictable);
     }
 
     void compileForwardVarargsWithSpread()
     {
-        HashMap<InlineCallFrame*, LValue, WTF::DefaultHash<InlineCallFrame*>::Hash, WTF::NullableHashTraits<InlineCallFrame*>> cachedSpreadLengths;
-
-        Node* arguments = m_node->child1().node();
+        Node* arguments = m_node->argumentsChild().node();
         RELEASE_ASSERT(arguments->op() == PhantomNewArrayWithSpread || arguments->op() == PhantomNewArrayBuffer || arguments->op() == PhantomSpread);
 
-        unsigned numberOfStaticArguments = 0;
-        Vector<LValue, 2> spreadLengths;
-
-        auto collectArgumentCount = recursableLambda([&](auto self, Node* target) -> void {
-            if (target->op() == PhantomSpread) {
-                self(target->child1().node());
-                return;
-            }
-
-            if (target->op() == PhantomNewArrayWithSpread) {
-                BitVector* bitVector = target->bitVector();
-                for (unsigned i = 0; i < target->numChildren(); i++) {
-                    if (bitVector->get(i))
-                        self(m_graph.varArgChild(target, i).node());
-                    else
-                        ++numberOfStaticArguments;
-                }
-                return;
-            }
-
-            if (target->op() == PhantomNewArrayBuffer) {
-                numberOfStaticArguments += target->castOperand<JSImmutableButterfly*>()->length();
-                return;
-            }
-
-            ASSERT(target->op() == PhantomCreateRest);
-            InlineCallFrame* inlineCallFrame = target->origin.semantic.inlineCallFrame();
-            unsigned numberOfArgumentsToSkip = target->numberOfArgumentsToSkip();
-            spreadLengths.append(cachedSpreadLengths.ensure(inlineCallFrame, [&] () {
-                return this->getSpreadLengthFromInlineCallFrame(inlineCallFrame, numberOfArgumentsToSkip);
-            }).iterator->value);
-        });
-
-        collectArgumentCount(arguments);
-        LValue lengthIncludingThis = m_out.constInt32(1 + numberOfStaticArguments);
-        for (LValue length : spreadLengths)
-            lengthIncludingThis = m_out.add(lengthIncludingThis, length);
+        LValue lengthIncludingThis = lowInt32(m_node->child1());
 
         LoadVarargsData* data = m_node->loadVarargsData();
         speculate(
@@ -9775,7 +9704,7 @@ private:
 
         LValue targetStart = addressFor(data->machineStart).value();
 
-        auto forwardSpread = recursableLambda([this, &cachedSpreadLengths, &targetStart](auto self, Node* target, LValue storeIndex) -> LValue {
+        auto forwardSpread = recursableLambda([this, &targetStart](auto self, Node* target, LValue storeIndex) -> LValue {
             if (target->op() == PhantomSpread)
                 return self(target->child1().node(), storeIndex);
 
@@ -9807,8 +9736,9 @@ private:
             RELEASE_ASSERT(target->op() == PhantomCreateRest);
             InlineCallFrame* inlineCallFrame = target->origin.semantic.inlineCallFrame();
 
-            LValue sourceStart = this->getArgumentsStart(inlineCallFrame, target->numberOfArgumentsToSkip());
-            LValue spreadLength = m_out.zeroExtPtr(cachedSpreadLengths.get(inlineCallFrame));
+            auto numberOfArgumentsToSkip = target->numberOfArgumentsToSkip();
+            LValue sourceStart = this->getArgumentsStart(inlineCallFrame, numberOfArgumentsToSkip);
+            LValue spreadLength = m_out.zeroExtPtr(getSpreadLengthFromInlineCallFrame(inlineCallFrame, numberOfArgumentsToSkip));
 
             LBasicBlock loop = m_out.newBlock();
             LBasicBlock continuation = m_out.newBlock();
@@ -12263,8 +12193,8 @@ private:
         LValue scope = lowCell(m_node->child1());
 
         m_out.storePtr(m_callFrame, packet, m_heaps.ShadowChicken_Packet_frame);
-        m_out.storePtr(m_out.loadPtr(addressFor(0)), packet, m_heaps.ShadowChicken_Packet_callerFrame);
-        m_out.storePtr(m_out.loadPtr(payloadFor(CallFrameSlot::callee)), packet, m_heaps.ShadowChicken_Packet_callee);
+        m_out.storePtr(m_out.loadPtr(addressFor(VirtualRegister(0))), packet, m_heaps.ShadowChicken_Packet_callerFrame);
+        m_out.storePtr(m_out.loadPtr(payloadFor(VirtualRegister(CallFrameSlot::callee))), packet, m_heaps.ShadowChicken_Packet_callee);
         m_out.storePtr(scope, packet, m_heaps.ShadowChicken_Packet_scope);
     }
     
@@ -12325,7 +12255,7 @@ private:
         ArgumentsLength length;
 
         if (inlineCallFrame && !inlineCallFrame->isVarargs()) {
-            length.known = inlineCallFrame->argumentCountIncludingThis - 1;
+            length.known = static_cast<unsigned>(inlineCallFrame->argumentCountIncludingThis - 1);
             length.isKnown = true;
             length.value = m_out.constInt32(length.known);
         } else {
@@ -12355,7 +12285,7 @@ private:
                 return m_out.loadPtr(addressFor(frame->calleeRecovery.virtualRegister()));
             return weakPointer(frame->calleeRecovery.constant().asCell());
         }
-        return m_out.loadPtr(addressFor(CallFrameSlot::callee));
+        return m_out.loadPtr(addressFor(VirtualRegister(CallFrameSlot::callee)));
     }
     
     LValue getArgumentsStart(InlineCallFrame* inlineCallFrame, unsigned offset = 0)
@@ -17620,7 +17550,7 @@ private:
         CallSiteIndex callSiteIndex = m_ftlState.jitCode->common.addCodeOrigin(codeOrigin);
         m_out.store32(
             m_out.constInt32(callSiteIndex.bits()),
-            tagFor(CallFrameSlot::argumentCountIncludingThis));
+            tagFor(VirtualRegister(CallFrameSlot::argumentCountIncludingThis)));
 #if !USE(BUILTIN_FRAME_ADDRESS) || !ASSERT_DISABLED
         m_out.storePtr(m_callFrame, m_out.absolute(&vm().topCallFrame));
 #endif
@@ -17728,7 +17658,8 @@ private:
         return &m_ftlState.jitCode->osrExitDescriptors.alloc(
             lowValue.format(), profile,
             availabilityMap().m_locals.numberOfArguments(),
-            availabilityMap().m_locals.numberOfLocals());
+            availabilityMap().m_locals.numberOfLocals(),
+            availabilityMap().m_locals.numberOfTmps());
     }
 
     void appendOSRExit(
@@ -17833,15 +17764,15 @@ private:
             });
         
         for (unsigned i = 0; i < exitDescriptor->m_values.size(); ++i) {
-            int operand = exitDescriptor->m_values.operandForIndex(i);
+            Operand operand = exitDescriptor->m_values.operandForIndex(i);
             
             Availability availability = availabilityMap.m_locals[i];
             
             if (Options::validateFTLOSRExitLiveness()
                 && m_graph.m_plan.mode() != FTLForOSREntryMode) {
 
-                if (availability.isDead() && m_graph.isLiveInBytecode(VirtualRegister(operand), exitOrigin))
-                    DFG_CRASH(m_graph, m_node, toCString("Live bytecode local not available: operand = ", VirtualRegister(operand), ", availability = ", availability, ", origin = ", exitOrigin).data());
+                if (availability.isDead() && m_graph.isLiveInBytecode(operand, exitOrigin))
+                    DFG_CRASH(m_graph, m_node, toCString("Live bytecode local not available: operand = ", operand, ", availability = ", availability, ", origin = ", exitOrigin).data());
             }
             ExitValue exitValue = exitValueForAvailability(arguments, map, availability);
             if (exitValue.hasIndexInStackmapLocations())
@@ -18141,39 +18072,39 @@ private:
         return m_out.alreadyRegisteredWeakPointer(m_graph, structure.get());
     }
     
-    TypedPointer addressFor(LValue base, int operand, ptrdiff_t offset = 0)
+    TypedPointer addressFor(LValue base, Operand operand, ptrdiff_t offset = 0)
     {
-        return m_out.address(base, m_heaps.variables[operand], offset);
+        return m_out.address(base, m_heaps.variables[operand.virtualRegister().offset()], offset);
     }
-    TypedPointer payloadFor(LValue base, int operand)
+    TypedPointer payloadFor(LValue base, Operand operand)
     {
         return addressFor(base, operand, PayloadOffset);
     }
-    TypedPointer tagFor(LValue base, int operand)
+    TypedPointer tagFor(LValue base, Operand operand)
     {
         return addressFor(base, operand, TagOffset);
     }
-    TypedPointer addressFor(int operand, ptrdiff_t offset = 0)
+    TypedPointer addressFor(Operand operand, ptrdiff_t offset = 0)
     {
-        return addressFor(VirtualRegister(operand), offset);
+        return addressFor(operand.virtualRegister(), offset);
     }
     TypedPointer addressFor(VirtualRegister operand, ptrdiff_t offset = 0)
     {
         if (operand.isLocal())
-            return addressFor(m_captured, operand.offset(), offset);
-        return addressFor(m_callFrame, operand.offset(), offset);
+            return addressFor(m_captured, operand, offset);
+        return addressFor(m_callFrame, operand, offset);
     }
-    TypedPointer payloadFor(int operand)
+    TypedPointer payloadFor(Operand operand)
     {
-        return payloadFor(VirtualRegister(operand));
+        return payloadFor(operand.virtualRegister());
     }
     TypedPointer payloadFor(VirtualRegister operand)
     {
         return addressFor(operand, PayloadOffset);
     }
-    TypedPointer tagFor(int operand)
+    TypedPointer tagFor(Operand operand)
     {
-        return tagFor(VirtualRegister(operand));
+        return tagFor(operand.virtualRegister());
     }
     TypedPointer tagFor(VirtualRegister operand)
     {

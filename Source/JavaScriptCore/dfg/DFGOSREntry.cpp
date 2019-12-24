@@ -322,7 +322,7 @@ void* prepareOSREntry(VM& vm, CallFrame* callFrame, CodeBlock* codeBlock, Byteco
     
     // 7) Fix the call frame to have the right code block.
     
-    *bitwise_cast<CodeBlock**>(pivot - 1 - CallFrameSlot::codeBlock) = codeBlock;
+    *bitwise_cast<CodeBlock**>(pivot - (CallFrameSlot::codeBlock + 1)) = codeBlock;
     
     if (Options::verboseOSR())
         dataLogF("    OSR returning data buffer %p.\n", scratch);
@@ -382,10 +382,10 @@ MacroAssemblerCodePtr<ExceptionHandlerPtrTag> prepareCatchOSREntry(VM& vm, CallF
 
     auto instruction = baselineCodeBlock->instructions().at(callFrame->bytecodeIndex());
     ASSERT(instruction->is<OpCatch>());
-    ValueProfileAndOperandBuffer* buffer = instruction->as<OpCatch>().metadata(baselineCodeBlock).m_buffer;
+    ValueProfileAndVirtualRegisterBuffer* buffer = instruction->as<OpCatch>().metadata(baselineCodeBlock).m_buffer;
     JSValue* dataBuffer = reinterpret_cast<JSValue*>(dfgCommon->catchOSREntryBuffer->dataBuffer());
     unsigned index = 0;
-    buffer->forEach([&] (ValueProfileAndOperand& profile) {
+    buffer->forEach([&] (ValueProfileAndVirtualRegister& profile) {
         if (!VirtualRegister(profile.m_operand).isLocal())
             return;
         dataBuffer[index] = callFrame->uncheckedR(profile.m_operand).jsValue();

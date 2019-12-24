@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -655,15 +655,37 @@ LValue Output::notZero64(LValue value)
     return m_block->appendNew<B3::Value>(m_proc, B3::NotEqual, origin(), value, int64Zero);
 }
 
-LValue Output::select(LValue value, LValue taken, LValue notTaken)
+LValue Output::select(LValue value, LValue left, LValue right, SelectPredictability predictability)
 {
     if (value->hasInt32()) {
         if (value->asInt32())
-            return taken;
+            return left;
         else
-            return notTaken;
+            return right;
     }
-    return m_block->appendNew<B3::Value>(m_proc, B3::Select, origin(), value, taken, notTaken);
+
+    if (predictability == SelectPredictability::NotPredictable)
+        return m_block->appendNew<B3::Value>(m_proc, B3::Select, origin(), value, left, right);
+
+    LBasicBlock continuation = newBlock();
+    LBasicBlock leftTakenBlock = newBlock();
+    LBasicBlock rightTakenBlock = newBlock();
+
+    m_block->appendNewControlValue(
+        m_proc, B3::Branch, origin(), value,
+        FrequentedBlock(leftTakenBlock, predictability != SelectPredictability::RightLikely ? FrequencyClass::Normal : FrequencyClass::Rare),
+        FrequentedBlock(rightTakenBlock, predictability != SelectPredictability::LeftLikely ? FrequencyClass::Normal : FrequencyClass::Rare));
+
+    LValue phi = continuation->appendNew<B3::Value>(m_proc, B3::Phi, left->type(), origin());
+
+    leftTakenBlock->appendNew<B3::UpsilonValue>(m_proc, origin(), left, phi);
+    leftTakenBlock->appendNewControlValue(m_proc, B3::Jump, origin(), B3::FrequentedBlock(continuation));
+
+    rightTakenBlock->appendNew<B3::UpsilonValue>(m_proc, origin(), right, phi);
+    rightTakenBlock->appendNewControlValue(m_proc, B3::Jump, origin(), B3::FrequentedBlock(continuation));
+
+    m_block = continuation;
+    return phi;
 }
 
 LValue Output::atomicXchgAdd(LValue operand, TypedPointer pointer, Width width)

@@ -34,7 +34,7 @@ namespace WTF {
 template<typename Type>
 inline Type unalignedLoad(const void* pointer)
 {
-    static_assert(std::is_trivial<Type>::value, "");
+    static_assert(std::is_trivially_copyable<Type>::value, "");
     Type result { };
     memcpy(&result, pointer, sizeof(Type));
     return result;
@@ -43,7 +43,7 @@ inline Type unalignedLoad(const void* pointer)
 template<typename Type>
 inline void unalignedStore(void* pointer, Type value)
 {
-    static_assert(std::is_trivial<Type>::value, "");
+    static_assert(std::is_trivially_copyable<Type>::value, "");
     memcpy(pointer, &value, sizeof(Type));
 }
 

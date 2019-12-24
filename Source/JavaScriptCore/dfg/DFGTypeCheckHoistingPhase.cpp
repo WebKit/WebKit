@@ -146,7 +146,7 @@ public:
                     if (iter->value.m_structure) {
                         auto checkOp = CheckStructure;
                         if (SpecCellCheck & SpecEmpty) {
-                            VirtualRegister local = node->variableAccessData()->local();
+                            VirtualRegister local = node->variableAccessData()->operand().virtualRegister();
                             auto* inlineCallFrame = node->origin.semantic.inlineCallFrame();
                             if ((local - (inlineCallFrame ? inlineCallFrame->stackOffset : 0)) == virtualRegisterForArgument(0)) {
                                 // |this| can be the TDZ value. The call entrypoint won't have |this| as TDZ,
@@ -168,8 +168,8 @@ public:
                     } else
                         RELEASE_ASSERT_NOT_REACHED();
 
-                    if (block->variablesAtTail.operand(variable->local()) == node)
-                        block->variablesAtTail.operand(variable->local()) = getLocal;
+                    if (block->variablesAtTail.operand(variable->operand()) == node)
+                        block->variablesAtTail.operand(variable->operand()) = getLocal;
                     
                     m_graph.substituteGetLocal(*block, indexInBlock, variable, getLocal);
                     
@@ -446,7 +446,7 @@ private:
                 continue;
             const Operands<Optional<JSValue>>& mustHandleValues = m_graph.m_plan.mustHandleValues();
             for (size_t i = 0; i < mustHandleValues.size(); ++i) {
-                int operand = mustHandleValues.operandForIndex(i);
+                Operand operand = mustHandleValues.operandForIndex(i);
                 Node* node = block->variablesAtHead.operand(operand);
                 if (!node)
                     continue;

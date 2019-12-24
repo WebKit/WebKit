@@ -42,9 +42,12 @@ struct UndefinedOperandSpan {
 };
 
 class VariableEventStream : public Vector<VariableEvent> {
+    static constexpr bool verbose = false;
 public:
     void appendAndLog(const VariableEvent& event)
     {
+        if (verbose)
+            logEvent(event);
         append(event);
     }
     

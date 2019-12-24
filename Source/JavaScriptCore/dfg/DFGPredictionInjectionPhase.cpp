@@ -72,7 +72,7 @@ public:
                 continue;
             const Operands<Optional<JSValue>>& mustHandleValues = m_graph.m_plan.mustHandleValues();
             for (size_t i = 0; i < mustHandleValues.size(); ++i) {
-                int operand = mustHandleValues.operandForIndex(i);
+                Operand operand = mustHandleValues.operandForIndex(i);
                 Optional<JSValue> value = mustHandleValues[i];
                 if (!value)
                     continue;

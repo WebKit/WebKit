@@ -160,7 +160,9 @@ public:
     unsigned approximateHash(InlineCallFrame* terminal = nullptr) const;
 
     template <typename Function>
-    void walkUpInlineStack(const Function&);
+    void walkUpInlineStack(const Function&) const;
+
+    inline bool inlineStackContainsActiveCheckpoint() const;
     
     // Get the inline stack. This is slow, and is intended for debugging only.
     Vector<CodeOrigin> inlineStack() const;

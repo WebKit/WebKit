@@ -133,6 +133,17 @@ public:
 
     void overflowCheckNotNeeded() { clearNeedsOverflowCheck(); }
 
+    template<typename Functor>
+    void fill(size_t count, const Functor& func)
+    {
+        ASSERT(!m_size);
+        ensureCapacity(count);
+        if (Base::hasOverflowed())
+            return;
+        m_size = count;
+        func(reinterpret_cast<JSValue*>(&slotFor(0)));
+    }
+
 private:
     void expandCapacity();
     void expandCapacity(int newCapacity);

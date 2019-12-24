@@ -35,7 +35,6 @@ class VM;
 
 namespace DFG {
 
-MacroAssemblerCodeRef<JITThunkPtrTag> osrExitThunkGenerator(VM&);
 MacroAssemblerCodeRef<JITThunkPtrTag> osrExitGenerationThunkGenerator(VM&);
 MacroAssemblerCodeRef<JITThunkPtrTag> osrEntryThunkGenerator(VM&);
 

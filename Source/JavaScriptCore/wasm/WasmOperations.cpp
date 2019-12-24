@@ -743,7 +743,7 @@ void* JIT_OPERATION operationWasmToJSException(CallFrame* callFrame, Wasm::Excep
     // for exceptions first load callFrameForCatch info call frame register before jumping
     // to the exception handler. If we did this, we could remove this terrible hack.
     // https://bugs.webkit.org/show_bug.cgi?id=170440
-    bitwise_cast<uint64_t*>(callFrame)[CallFrameSlot::callee] = bitwise_cast<uint64_t>(instance->module());
+    bitwise_cast<uint64_t*>(callFrame)[static_cast<int>(CallFrameSlot::callee)] = bitwise_cast<uint64_t>(instance->module());
     return vm.targetMachinePCForThrow;
 }
 

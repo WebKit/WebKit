@@ -18,8 +18,8 @@ function checkEqual(a, b) {
         throw "Error: bad value of a: " + a.a + " versus " + b.a;
     if (a.b != b.b)
         throw "Error: bad value of b: " + a.b + " versus " + b.b;
-    if (a.c.length != b.c.length)
-        throw "Error: bad value of c, length mismatch: " + a.c + " versus " + b.c;
+    if (a.c.length !== b.c.length)
+        throw "Error: bad value of c, length mismatch: " + a.c.length + " versus " + b.c.length;
     for (var i = a.c.length; i--;) {
         if (a.c[i] != b.c[i])
             throw "Error: bad value of c, mismatch at i = " + i + ": " + a.c + " versus " + b.c;

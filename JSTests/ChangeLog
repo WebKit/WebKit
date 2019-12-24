@@ -1,3 +1,27 @@
+2019-12-23  Keith Miller  <keith_miller@apple.com>
+
+        DFG/FTL should be able to exit to the middle of a bytecode
+        https://bugs.webkit.org/show_bug.cgi?id=205232
+
+        Reviewed by Saam Barati.
+
+        * stress/apply-osr-exit-should-get-length-once-exceptions-occasionally.js: Added.
+        (expectedArgCount):
+        (callee):
+        (test):
+        (let.array.get length):
+        * stress/apply-osr-exit-should-get-length-once.js: Added.
+        (expectedArgCount):
+        (callee):
+        (test):
+        (let.array.get length):
+        * stress/load-varargs-then-inlined-call-and-exit-strict.js:
+        (checkEqual):
+        * stress/recursive-tail-call-with-different-argument-count.js:
+        * stress/rest-varargs-osr-exit-to-checkpoint.js: Added.
+        (foo):
+        (bar):
+
 2019-12-23  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Wasm OSR entry should capture top-most enclosing-stack

@@ -170,22 +170,22 @@ private:
         bool changed = false;
         const Operands<Optional<JSValue>>& mustHandleValues = m_graph.m_plan.mustHandleValues();
         for (size_t i = mustHandleValues.size(); i--;) {
-            int operand = mustHandleValues.operandForIndex(i);
+            Operand operand = mustHandleValues.operandForIndex(i);
             Optional<JSValue> value = mustHandleValues[i];
             if (!value) {
                 if (m_verbose)
-                    dataLog("   Not live in bytecode: ", VirtualRegister(operand), "\n");
+                    dataLog("   Not live in bytecode: ", operand, "\n");
                 continue;
             }
             Node* node = block->variablesAtHead.operand(operand);
             if (!node) {
                 if (m_verbose)
-                    dataLog("   Not live: ", VirtualRegister(operand), "\n");
+                    dataLog("   Not live: ", operand, "\n");
                 continue;
             }
             
             if (m_verbose)
-                dataLog("   Widening ", VirtualRegister(operand), " with ", value.value(), "\n");
+                dataLog("   Widening ", operand, " with ", value.value(), "\n");
             
             AbstractValue& target = block->valuesAtHead.operand(operand);
             changed |= target.mergeOSREntryValue(m_graph, value.value(), node->variableAccessData(), node);

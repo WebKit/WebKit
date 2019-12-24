@@ -44,7 +44,7 @@ struct OpInfo {
     explicit OpInfo(IntegralType value)
         : m_value(static_cast<uint64_t>(value)) { }
     explicit OpInfo(RegisteredStructure structure) : m_value(static_cast<uint64_t>(bitwise_cast<uintptr_t>(structure))) { }
-
+    explicit OpInfo(Operand op) : m_value(op.asBits()) { }
 
     template <typename T>
     explicit OpInfo(T* ptr)

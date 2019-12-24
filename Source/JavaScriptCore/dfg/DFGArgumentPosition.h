@@ -120,7 +120,7 @@ public:
     {
         for (unsigned i = 0; i < m_variables.size(); ++i) {
             VariableAccessData* variable = m_variables[i]->find();
-            VirtualRegister operand = variable->local();
+            Operand operand = variable->operand();
 
             if (i)
                 out.print(" ");

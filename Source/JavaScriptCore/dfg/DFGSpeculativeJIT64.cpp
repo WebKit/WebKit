@@ -1936,7 +1936,7 @@ void SpeculativeJIT::compile(Node* node)
         break;
 
     case GetLocal: {
-        AbstractValue& value = m_state.operand(node->local());
+        AbstractValue& value = m_state.operand(node->operand());
 
         // If the CFA is tracking this variable and it found that the variable
         // cannot have been assigned, then don't attempt to proceed.
@@ -2007,7 +2007,7 @@ void SpeculativeJIT::compile(Node* node)
     }
         
     case ZombieHint: {
-        recordSetLocal(m_currentNode->unlinkedLocal(), VirtualRegister(), DataFormatDead);
+        recordSetLocal(m_currentNode->unlinkedOperand(), VirtualRegister(), DataFormatDead);
         noResult(node);
         break;
     }
@@ -4463,6 +4463,11 @@ void SpeculativeJIT::compile(Node* node)
     case DirectTailCallInlinedCaller:
         emitCall(node);
         break;
+
+    case VarargsLength: {
+        compileVarargsLength(node);
+        break;
+    }
 
     case LoadVarargs: {
         compileLoadVarargs(node);

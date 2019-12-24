@@ -30,6 +30,7 @@ class Opcode
     attr_reader :args
     attr_reader :metadata
     attr_reader :extras
+    attr_reader :checkpoints
 
     module Size
         Narrow = "OpcodeSize::Narrow"
@@ -45,12 +46,14 @@ class Opcode
         tid
     end
 
-    def initialize(section, name, extras, args, metadata, metadata_initializers)
+    def initialize(section, name, extras, args, metadata, metadata_initializers, tmps, checkpoints)
         @section = section
         @name = name
         @extras = extras || {}
         @metadata = Metadata.new metadata, metadata_initializers
         @args = args.map.with_index { |(arg_name, type), index| Argument.new arg_name, type, index + 1 } unless args.nil?
+        @tmps = tmps
+        @checkpoints = checkpoints.map { |(checkpoint, _)| checkpoint } unless checkpoints.nil?
     end
 
     def create_id!
@@ -118,6 +121,8 @@ class Opcode
         <<-EOF
 struct #{capitalized_name} : public Instruction {
     #{opcodeID}
+    #{temps}
+    #{checkpointValues}
 
 #{emitter}
 #{dumper}
@@ -130,6 +135,18 @@ EOF
 
     def opcodeID
         "static constexpr #{opcodeIDType} opcodeID = #{name};"
+    end
+
+    def checkpointValues
+        return if @checkpoints.nil?
+
+        ["enum Checkpoints : uint8_t {"].concat(checkpoints.map{ |checkpoint| "        #{checkpoint}," }).concat(["        numberOfCheckpoints,", "    };"]).join("\n")
+    end
+
+    def temps
+        return if @tmps.nil?
+
+        ["enum Tmps : uint8_t {"].concat(@tmps.map {|(tmp, type)| "        #{tmp},"}).push("    };").join("\n")
     end
 
     def emitter
@@ -200,6 +217,7 @@ private:
     template<OpcodeSize __size, bool recordOpcode, typename BytecodeGenerator>
     static bool emitImpl(BytecodeGenerator* gen#{typed_args}#{metadata_param})
     {
+        #{!@checkpoints.nil? ? "gen->setUsesCheckpoints();" : ""}
         if (__size == OpcodeSize::Wide16)
             gen->alignWideOpcode16();
         else if (__size == OpcodeSize::Wide32)

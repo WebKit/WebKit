@@ -1,3 +1,27 @@
+2019-12-23  Keith Miller  <keith_miller@apple.com>
+
+        DFG/FTL should be able to exit to the middle of a bytecode
+        https://bugs.webkit.org/show_bug.cgi?id=205232
+
+        Reviewed by Saam Barati.
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/Bitmap.h:
+        (WTF::WordType>::invert):
+        (WTF::WordType>::operator):
+        (WTF::WordType>::operator const const):
+        * wtf/CMakeLists.txt:
+        * wtf/EnumClassOperatorOverloads.h: Added.
+        * wtf/FastBitVector.h:
+        (WTF::FastBitReference::operator bool const):
+        (WTF::FastBitReference::operator|=):
+        (WTF::FastBitReference::operator&=):
+        (WTF::FastBitVector::fill):
+        (WTF::FastBitVector::grow):
+        * wtf/UnalignedAccess.h:
+        (WTF::unalignedLoad):
+        (WTF::unalignedStore):
+
 2019-12-21  Antti Koivisto  <antti@apple.com>
 
         Move Vector HashTraits to HashTraits.h to fix GCC build

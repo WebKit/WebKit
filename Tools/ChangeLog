@@ -1,3 +1,12 @@
+2019-12-23  Keith Miller  <keith_miller@apple.com>
+
+        DFG/FTL should be able to exit to the middle of a bytecode
+        https://bugs.webkit.org/show_bug.cgi?id=205232
+
+        Reviewed by Saam Barati.
+
+        * Scripts/run-jsc-stress-tests:
+
 2019-12-23  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] InputMethod API unit tests don't work under X11

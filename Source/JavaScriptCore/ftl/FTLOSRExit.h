@@ -69,7 +69,7 @@ struct OSRExitHandle;
 struct OSRExitDescriptor {
     OSRExitDescriptor(
         DataFormat profileDataFormat, MethodOfGettingAValueProfile,
-        unsigned numberOfArguments, unsigned numberOfLocals);
+        unsigned numberOfArguments, unsigned numberOfLocals, unsigned numberOfTmps);
 
     // The first argument to the exit call may be a value we wish to profile.
     // If that's the case, the format will be not Invalid and we'll have a

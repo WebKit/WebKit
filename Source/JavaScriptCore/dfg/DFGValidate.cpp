@@ -483,7 +483,7 @@ private:
                 Node* node = block->phis[i];
                 ASSERT(phisInThisBlock.contains(node));
                 VALIDATE((node), node->op() == Phi);
-                VirtualRegister local = node->local();
+                Operand operand = node->operand();
                 for (unsigned j = 0; j < m_graph.numChildren(node); ++j) {
                     // Phi children in LoadStore form are invalid.
                     if (m_graph.m_form == LoadStore && block->isPhiIndex(i))
@@ -519,10 +519,10 @@ private:
                     for (unsigned k = 0; k < block->predecessors.size(); ++k) {
                         BasicBlock* prevBlock = block->predecessors[k];
                         VALIDATE((block->predecessors[k]), prevBlock);
-                        Node* prevNode = prevBlock->variablesAtTail.operand(local);
+                        Node* prevNode = prevBlock->variablesAtTail.operand(operand);
                         // If we have a Phi that is not referring to *this* block then all predecessors
                         // must have that local available.
-                        VALIDATE((local, block, block->predecessors[k]), prevNode);
+                        VALIDATE((operand, block, block->predecessors[k]), prevNode);
                         switch (prevNode->op()) {
                         case GetLocal:
                         case Flush:
@@ -533,11 +533,11 @@ private:
                             break;
                         }
                         if (node->shouldGenerate()) {
-                            VALIDATE((local, block->predecessors[k], prevNode),
+                            VALIDATE((operand, block->predecessors[k], prevNode),
                                      prevNode->shouldGenerate());
                         }
                         VALIDATE(
-                            (local, block->predecessors[k], prevNode),
+                            (operand, block->predecessors[k], prevNode),
                             prevNode->op() == SetLocal
                             || prevNode->op() == SetArgumentDefinitely
                             || prevNode->op() == SetArgumentMaybe
@@ -547,19 +547,15 @@ private:
                             break;
                         }
                         // At this point it cannot refer into this block.
-                        VALIDATE((local, block->predecessors[k], prevNode), !prevBlock->isInBlock(edge.node()));
+                        VALIDATE((operand, block->predecessors[k], prevNode), !prevBlock->isInBlock(edge.node()));
                     }
                     
                     VALIDATE((node, edge), found);
                 }
             }
             
-            Operands<size_t> getLocalPositions(
-                block->variablesAtHead.numberOfArguments(),
-                block->variablesAtHead.numberOfLocals());
-            Operands<size_t> setLocalPositions(
-                block->variablesAtHead.numberOfArguments(),
-                block->variablesAtHead.numberOfLocals());
+            Operands<size_t> getLocalPositions(OperandsLike, block->variablesAtHead);
+            Operands<size_t> setLocalPositions(OperandsLike, block->variablesAtHead);
             
             for (size_t i = 0; i < block->variablesAtHead.numberOfArguments(); ++i) {
                 VALIDATE((virtualRegisterForArgument(i), block), !block->variablesAtHead.argument(i) || block->variablesAtHead.argument(i)->accessesStack(m_graph));
@@ -668,24 +664,24 @@ private:
                     if (!m_myRefCounts.get(node))
                         break;
                     if (m_graph.m_form == ThreadedCPS) {
-                        VALIDATE((node, block), getLocalPositions.operand(node->local()) == notSet);
+                        VALIDATE((node, block), getLocalPositions.operand(node->operand()) == notSet);
                         VALIDATE((node, block), !!node->child1());
                         VALIDATE((node, block), node->child1()->op() == SetArgumentDefinitely || node->child1()->op() == Phi);
                     }
-                    getLocalPositions.operand(node->local()) = i;
+                    getLocalPositions.operand(node->operand()) = i;
                     break;
                 case SetLocal:
                     // Only record the first SetLocal. There may be multiple SetLocals
                     // because of flushing.
-                    if (setLocalPositions.operand(node->local()) != notSet)
+                    if (setLocalPositions.operand(node->operand()) != notSet)
                         break;
-                    setLocalPositions.operand(node->local()) = i;
+                    setLocalPositions.operand(node->operand()) = i;
                     break;
                 case SetArgumentDefinitely:
                     // This acts like a reset. It's ok to have a second GetLocal for a local in the same
                     // block if we had a SetArgumentDefinitely for that local.
-                    getLocalPositions.operand(node->local()) = notSet;
-                    setLocalPositions.operand(node->local()) = notSet;
+                    getLocalPositions.operand(node->operand()) = notSet;
+                    setLocalPositions.operand(node->operand()) = notSet;
                     break;
                 case SetArgumentMaybe:
                     break;
@@ -968,26 +964,26 @@ private:
         dataLog(node, " -> ", edge);
     }
     
-    void reportValidationContext(VirtualRegister local, BasicBlock* block)
+    void reportValidationContext(Operand operand, BasicBlock* block)
     {
         if (!block) {
-            dataLog(local, " in null Block ");
+            dataLog(operand, " in null Block ");
             return;
         }
 
-        dataLog(local, " in Block ", *block);
+        dataLog(operand, " in Block ", *block);
     }
     
     void reportValidationContext(
-        VirtualRegister local, BasicBlock* sourceBlock, BasicBlock* destinationBlock)
+        Operand operand, BasicBlock* sourceBlock, BasicBlock* destinationBlock)
     {
-        dataLog(local, " in Block ", *sourceBlock, " -> ", *destinationBlock);
+        dataLog(operand, " in Block ", *sourceBlock, " -> ", *destinationBlock);
     }
     
     void reportValidationContext(
-        VirtualRegister local, BasicBlock* sourceBlock, Node* prevNode)
+        Operand operand, BasicBlock* sourceBlock, Node* prevNode)
     {
-        dataLog(prevNode, " for ", local, " in Block ", *sourceBlock);
+        dataLog(prevNode, " for ", operand, " in Block ", *sourceBlock);
     }
     
     void reportValidationContext(Node* node, BasicBlock* block)

@@ -31,8 +31,7 @@
 namespace JSC { namespace FTL {
 
 ForOSREntryJITCode::ForOSREntryJITCode()
-    : m_bytecodeIndex(UINT_MAX)
-    , m_entryFailureCount(0)
+    : m_entryFailureCount(0)
 {
 }
 

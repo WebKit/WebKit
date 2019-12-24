@@ -68,6 +68,10 @@ enum VariableEventKind : uint8_t {
 };
 
 union VariableRepresentation {
+    VariableRepresentation() 
+        : operand() 
+    { }
+
     MacroAssembler::RegisterID gpr;
     MacroAssembler::FPRegisterID fpr;
 #if USE(JSVALUE32_64)
@@ -76,7 +80,7 @@ union VariableRepresentation {
         MacroAssembler::RegisterID payloadGPR;
     } pair;
 #endif
-    int32_t virtualReg;
+    Operand operand;
 };
 
 class VariableEvent {
@@ -162,7 +166,7 @@ public:
         WhichType which;
         which.id = id.bits();
         VariableRepresentation representation;
-        representation.virtualReg = virtualRegister.offset();
+        representation.operand = virtualRegister;
         event.m_kind = kind;
         event.m_dataFormat = format;
         event.m_which = WTFMove(which);
@@ -181,13 +185,13 @@ public:
     }
     
     static VariableEvent setLocal(
-        VirtualRegister bytecodeReg, VirtualRegister machineReg, DataFormat format)
+        Operand bytecodeOperand, VirtualRegister machineReg, DataFormat format)
     {
         VariableEvent event;
         WhichType which;
         which.virtualReg = machineReg.offset();
         VariableRepresentation representation;
-        representation.virtualReg = bytecodeReg.offset();
+        representation.operand = bytecodeOperand;
         event.m_kind = SetLocalEvent;
         event.m_dataFormat = format;
         event.m_which = WTFMove(which);
@@ -195,13 +199,13 @@ public:
         return event;
     }
     
-    static VariableEvent movHint(MinifiedID id, VirtualRegister bytecodeReg)
+    static VariableEvent movHint(MinifiedID id, Operand bytecodeReg)
     {
         VariableEvent event;
         WhichType which;
         which.id = id.bits();
         VariableRepresentation representation;
-        representation.virtualReg = bytecodeReg.offset();
+        representation.operand = bytecodeReg;
         event.m_kind = MovHintEvent;
         event.m_which = WTFMove(which);
         event.m_representation = WTFMove(representation);
@@ -265,13 +269,13 @@ public:
     VirtualRegister spillRegister() const
     {
         ASSERT(m_kind == BirthToSpill || m_kind == Spill);
-        return VirtualRegister(m_representation.get().virtualReg);
+        return m_representation.get().operand.virtualRegister();
     }
-    
-    VirtualRegister bytecodeRegister() const
+
+    Operand operand() const
     {
         ASSERT(m_kind == SetLocalEvent || m_kind == MovHintEvent);
-        return VirtualRegister(m_representation.get().virtualReg);
+        return m_representation.get().operand;
     }
     
     VirtualRegister machineRegister() const
