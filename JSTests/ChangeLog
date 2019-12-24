@@ -1,3 +1,12 @@
+2019-12-23  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Wasm OSR entry should capture top-most enclosing-stack
+        https://bugs.webkit.org/show_bug.cgi?id=205571
+
+        Reviewed by Keith Miller.
+
+        * wasm/stress/top-most-enclosing-stack.js: Added.
+
 2019-12-21  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Improve our bound function implementation

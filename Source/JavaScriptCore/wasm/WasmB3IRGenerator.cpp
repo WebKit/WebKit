@@ -282,7 +282,7 @@ private:
     void emitExceptionCheck(CCallHelpers&, ExceptionType);
 
     void emitEntryTierUpCheck();
-    void emitLoopTierUpCheck(uint32_t loopIndex);
+    void emitLoopTierUpCheck(uint32_t loopIndex, const Stack& enclosingStack);
 
     void emitWriteBarrierForJSWrapper();
     ExpressionType emitCheckAndPreparePointer(ExpressionType pointer, uint32_t offset, uint32_t sizeOfOp);
@@ -1274,7 +1274,7 @@ void B3IRGenerator::emitEntryTierUpCheck()
     });
 }
 
-void B3IRGenerator::emitLoopTierUpCheck(uint32_t loopIndex)
+void B3IRGenerator::emitLoopTierUpCheck(uint32_t loopIndex, const Stack& enclosingStack)
 {
     uint32_t outerLoopIndex = this->outerLoopIndex();
     m_outerLoops.append(loopIndex);
@@ -1299,6 +1299,8 @@ void B3IRGenerator::emitLoopTierUpCheck(uint32_t loopIndex)
         for (TypedExpression value : expressionStack)
             stackmap.append(value);
     }
+    for (TypedExpression value : enclosingStack)
+        stackmap.append(value);
 
     PatchpointValue* patch = m_currentBlock->appendNew<PatchpointValue>(m_proc, B3::Void, origin);
     Effects effects = Effects::none();
@@ -1381,10 +1383,7 @@ auto B3IRGenerator::addLoop(BlockSignature signature, Stack& enclosingStack, Con
         for (auto& local : m_locals)
             m_currentBlock->appendNew<VariableValue>(m_proc, Set, Origin(), local, loadFromScratchBuffer(local->type()));
 
-        for (unsigned controlIndex = 0; controlIndex < m_parser->controlStack().size(); ++controlIndex) {
-            const auto& data = m_parser->controlStack()[controlIndex].controlData;
-            auto& expressionStack = m_parser->controlStack()[controlIndex].enclosedExpressionStack;
-
+        auto connectControlEntry = [&](const ControlData& data, Stack& expressionStack) {
             // For each stack entry enclosed by this loop we need to replace the value with a phi so we can fill it on OSR entry.
             BasicBlock* sourceBlock = nullptr;
             unsigned blockIndex = 0;
@@ -1397,7 +1396,8 @@ auto B3IRGenerator::addLoop(BlockSignature signature, Stack& enclosingStack, Con
                 }
 
                 if (value->owner != sourceBlock) {
-                    insertionSet.execute(sourceBlock);
+                    if (sourceBlock)
+                        insertionSet.execute(sourceBlock);
                     ASSERT(insertionSet.isEmpty());
                     dataLogLnIf(WasmB3IRGeneratorInternal::verbose && sourceBlock, "Executed insertion set into: ", *sourceBlock);
                     blockIndex = 0;
@@ -1415,8 +1415,16 @@ auto B3IRGenerator::addLoop(BlockSignature signature, Stack& enclosingStack, Con
                 auto* sourceUpsilon = m_proc.add<UpsilonValue>(value->origin(), value, phi);
                 insertionSet.insertValue(blockIndex, sourceUpsilon);
             }
-            insertionSet.execute(sourceBlock);
+            if (sourceBlock)
+                insertionSet.execute(sourceBlock);
+        };
+
+        for (unsigned controlIndex = 0; controlIndex < m_parser->controlStack().size(); ++controlIndex) {
+            auto& data = m_parser->controlStack()[controlIndex].controlData;
+            auto& expressionStack = m_parser->controlStack()[controlIndex].enclosedExpressionStack;
+            connectControlEntry(data, expressionStack);
         }
+        connectControlEntry(block, enclosingStack);
 
         m_osrEntryScratchBufferSize = indexInBuffer;
         m_currentBlock->appendNewControlValue(m_proc, Jump, origin(), body);
@@ -1424,7 +1432,7 @@ auto B3IRGenerator::addLoop(BlockSignature signature, Stack& enclosingStack, Con
     }
 
     m_currentBlock = body;
-    emitLoopTierUpCheck(loopIndex);
+    emitLoopTierUpCheck(loopIndex, enclosingStack);
     return { };
 }
 

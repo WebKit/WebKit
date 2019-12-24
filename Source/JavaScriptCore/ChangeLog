@@ -1,3 +1,23 @@
+2019-12-23  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Wasm OSR entry should capture top-most enclosing-stack
+        https://bugs.webkit.org/show_bug.cgi?id=205571
+
+        Reviewed by Keith Miller.
+
+        OSR entry should capture the top-most enclosing-stack too.
+        Otherwise the def-node can be unreachable (since it is defined in BB which is unreachable from OSR entry point),
+        and eliminated.
+
+        * wasm/WasmAirIRGenerator.cpp:
+        (JSC::Wasm::AirIRGenerator::emitLoopTierUpCheck):
+        (JSC::Wasm::AirIRGenerator::addLoop):
+        * wasm/WasmB3IRGenerator.cpp:
+        (JSC::Wasm::B3IRGenerator::emitLoopTierUpCheck):
+        (JSC::Wasm::B3IRGenerator::addLoop):
+        * wasm/WasmLLIntGenerator.cpp:
+        (JSC::Wasm::LLIntGenerator::addLoop):
+
 2019-12-23  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         WebDriver: fix handling of session timeouts for values higher than MAX_INT

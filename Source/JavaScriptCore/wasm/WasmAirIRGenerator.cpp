@@ -637,7 +637,7 @@ private:
     void emitThrowException(CCallHelpers&, ExceptionType);
 
     void emitEntryTierUpCheck();
-    void emitLoopTierUpCheck(uint32_t loopIndex);
+    void emitLoopTierUpCheck(uint32_t loopIndex, const Stack& enclosingStack);
 
     void emitWriteBarrierForJSWrapper();
     ExpressionType emitCheckAndPreparePointer(ExpressionType pointer, uint32_t offset, uint32_t sizeOfOp);
@@ -1765,7 +1765,7 @@ void AirIRGenerator::emitEntryTierUpCheck()
     emitPatchpoint(patch, Tmp(), countdownPtr);
 }
 
-void AirIRGenerator::emitLoopTierUpCheck(uint32_t loopIndex)
+void AirIRGenerator::emitLoopTierUpCheck(uint32_t loopIndex, const Stack& enclosingStack)
 {
     uint32_t outerLoopIndex = this->outerLoopIndex();
     m_outerLoops.append(loopIndex);
@@ -1803,6 +1803,8 @@ void AirIRGenerator::emitLoopTierUpCheck(uint32_t loopIndex)
         for (TypedExpression value : expressionStack)
             patchArgs.append(ConstrainedTmp(value.value(), B3::ValueRep::ColdAny));
     }
+    for (TypedExpression value : enclosingStack)
+        patchArgs.append(ConstrainedTmp(value.value(), B3::ValueRep::ColdAny));
 
     TierUpCount::TriggerReason* forceEntryTrigger = &(m_tierUp->osrEntryTriggers().last());
     static_assert(!static_cast<uint8_t>(TierUpCount::TriggerReason::DontTrigger), "the JIT code assumes non-zero means 'enter'");
@@ -1854,7 +1856,7 @@ auto AirIRGenerator::addLoop(BlockSignature signature, Stack& enclosingStack, Co
     m_currentBlock->setSuccessors(body);
 
     m_currentBlock = body;
-    emitLoopTierUpCheck(loopIndex);
+    emitLoopTierUpCheck(loopIndex, enclosingStack);
 
     return { };
 }
