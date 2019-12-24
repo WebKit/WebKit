@@ -2015,7 +2015,7 @@ op(checkpoint_osr_exit_from_inlined_call_trampoline, macro ()
         cCall2(_slow_path_checkpoint_osr_exit_from_inlined_call)
         restoreStateAfterCCall()
         branchIfException(_llint_throw_from_slow_path_trampoline)
-        jmp r1
+        jmp r1, JSEntryPtrTag
     else
         notSupported()
     end
@@ -2032,7 +2032,7 @@ op(checkpoint_osr_exit_trampoline, macro ()
         cCall2(_slow_path_checkpoint_osr_exit)
         restoreStateAfterCCall()
         branchIfException(_llint_throw_from_slow_path_trampoline)
-        jmp r1
+        jmp r1, JSEntryPtrTag
     else
         notSupported()
     end
