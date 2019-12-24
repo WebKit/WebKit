@@ -1,3 +1,18 @@
+2019-12-23  Simon Fraser  <simon.fraser@apple.com>
+
+        REGRESSION (r253634): Reproducible crash going back and forward on goodreads.com in Page::setPageScaleFactor
+        https://bugs.webkit.org/show_bug.cgi?id=205569
+
+        Reviewed by Wenson Hsieh.
+
+        When going quickly back and forward, WebPage::didCommitLoad/WebPage::viewportConfigurationChanged/WebPage::scalePage
+        can be called for a page in the page cache, so the FrameView can be null.
+
+        Null-check the view here like the surrounding code does.
+
+        * page/Page.cpp:
+        (WebCore::Page::setPageScaleFactor):
+
 2019-12-23  Andres Gonzalez  <andresg_22@apple.com>
 
         IsolatedObject implementation of property setters.

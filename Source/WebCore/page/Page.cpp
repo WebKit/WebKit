@@ -1059,7 +1059,7 @@ void Page::setPageScaleFactor(float scale, const IntPoint& origin, bool inStable
 
     m_pageScaleFactor = scale;
 
-    if (!view->delegatesPageScaling()) {
+    if (view && !view->delegatesPageScaling()) {
         view->setNeedsLayoutAfterViewConfigurationChange();
         view->setNeedsCompositingGeometryUpdate();
 
