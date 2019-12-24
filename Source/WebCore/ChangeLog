@@ -1,3 +1,21 @@
+2019-12-24  Youenn Fablet  <youenn@apple.com>
+
+        Deny Notification API access for non secure contexts
+        https://bugs.webkit.org/show_bug.cgi?id=205496
+        <rdar://problem/58074660>
+
+        Reviewed by Chris Dumez.
+
+        If document is not SecureContext, deny permission automatically.
+        This behavior is matching a planned update to the spec, as discussed in
+        https://github.com/whatwg/notifications/issues/93.
+        Chrome landed this restriction in M62. Mozilla is also on board with this restriction.
+
+        Test: http/tests/notifications/notification-in-non-secure-context.html
+
+        * Modules/notifications/Notification.cpp:
+        (WebCore::Notification::requestPermission):
+
 2019-12-24  youenn fablet  <youenn@apple.com>
 
         Service Worker doesn't terminate after a period of time when thread blocking

@@ -1,3 +1,14 @@
+2019-12-24  Youenn Fablet  <youenn@apple.com>
+
+        Deny Notification API access for non secure contexts
+        https://bugs.webkit.org/show_bug.cgi?id=205496
+        <rdar://problem/58074660>
+
+        Reviewed by Chris Dumez.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/UIDelegate.mm:
+        (TEST):
+
 2019-12-24  youenn fablet  <youenn@apple.com>
 
         Service Worker doesn't terminate after a period of time when thread blocking

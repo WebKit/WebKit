@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="/js-test-resources/testharness.js"></script>
+<script src="/js-test-resources/testharnessreport.js"></script>
+<script>
+var test = async_test("Notification permission in insecure context");
+
+// localhost is secure by default.
+if (window.internals)
+    internals.markContextAsInsecure();
+
+Notification.requestPermission(test.step_func((result) => {
+    assert_equals(result, "denied", "result");
+    assert_equals(Notification.permission, "denied", "getter");
+    test.done();
+}));
+</script>
+</body>
+</html>

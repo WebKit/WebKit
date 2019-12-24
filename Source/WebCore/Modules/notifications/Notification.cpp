@@ -191,6 +191,9 @@ auto Notification::permission(Document& document) -> Permission
     if (!page)
         return Permission::Default;
 
+    if (!document.isSecureContext())
+        return Permission::Denied;
+
     return NotificationController::from(document.page())->client().checkPermission(&document);
 }
 
@@ -199,6 +202,13 @@ void Notification::requestPermission(Document& document, RefPtr<NotificationPerm
     auto* page = document.page();
     if (!page)
         return;
+
+    if (!document.isSecureContext()) {
+        document.eventLoop().queueTask(TaskSource::DOMManipulation, [callback = WTFMove(callback)]() mutable {
+            callback->handleEvent(Permission::Denied);
+        });
+        return;
+    }
 
     NotificationController::from(page)->client().requestPermission(&document, WTFMove(callback));
 }
