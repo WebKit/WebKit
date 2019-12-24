@@ -1,3 +1,24 @@
+2019-12-24  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] REGRESSION: Changing the animation-duration of a CSS Animation may not resume it
+        https://bugs.webkit.org/show_bug.cgi?id=205580
+        <rdar://problem/58127956>
+
+        Reviewed by Dean Jackson.
+
+        Test: webanimations/css-animation-dynamic-duration-change.html
+
+        Setting the animation-duration of an animation will transition the animation back into its idle state
+        and the "update animations and send events" procedure would remove that animation from the timeline.
+        It would also remove it from the map that would associate an animation with a given CSS Animation name
+        so that we would know whether an animation exists for a given animation name when one of the animation's
+        properties changed. Since that animation was (mistakenly) removed, we would fail to update its timing
+        and it would never be resumed. We now only update the CSS Animation name to animation map when styles
+        change.
+
+        * animation/AnimationTimeline.cpp:
+        (WebCore::AnimationTimeline::animationWasRemovedFromElement):
+
 2019-12-24  Youenn Fablet  <youenn@apple.com>
 
         Deny Notification API access for non secure contexts

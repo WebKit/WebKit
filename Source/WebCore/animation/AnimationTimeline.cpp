@@ -149,9 +149,11 @@ void AnimationTimeline::animationWasRemovedFromElement(WebAnimation& animation, 
     removeAnimationFromMapForElement(animation, m_elementToCSSAnimationsMap, element);
     removeAnimationFromMapForElement(animation, m_elementToAnimationsMap, element);
 
-    // Now, if we're dealing with a declarative animation, we remove it from either the m_elementToCSSAnimationByName
-    // or the m_elementToRunningCSSTransitionByCSSPropertyID map, whichever is relevant to this type of animation.
-    if (is<DeclarativeAnimation>(animation))
+    // Now, if we're dealing with a CSS Transition, we remove it from the m_elementToRunningCSSTransitionByCSSPropertyID map.
+    // We don't need to do this for CSS Animations because their timing can be set via CSS to end, which would cause this
+    // function to be called, but they should remain associated with their owning element until this is changed via a call
+    // to the JS API or changing the target element's animation-name property.
+    if (is<CSSTransition>(animation))
         removeDeclarativeAnimationFromListsForOwningElement(animation, element);
 }
 
