@@ -1,3 +1,35 @@
+2019-12-23  Andres Gonzalez  <andresg_22@apple.com>
+
+        IsolatedObject implementation of property setters.
+        https://bugs.webkit.org/show_bug.cgi?id=205566
+
+        Reviewed by Chris Fleizach.
+
+        - Implementation of setters that need to be executed in the main
+        thread.
+        - Sanity check of the associatedAXObject() before calling corresponding
+        method on main thread.
+
+        * accessibility/isolatedtree/AXIsolatedTreeNode.cpp:
+        (WebCore::AXIsolatedObject::initializeAttributeData):
+        (WebCore::AXIsolatedObject::performFunctionOnMainThread):
+        (WebCore::AXIsolatedObject::setARIAGrabbed):
+        (WebCore::AXIsolatedObject::setIsExpanded):
+        (WebCore::AXIsolatedObject::setValue):
+        (WebCore::AXIsolatedObject::setSelected):
+        (WebCore::AXIsolatedObject::setSelectedRows):
+        (WebCore::AXIsolatedObject::setFocused):
+        (WebCore::AXIsolatedObject::setSelectedText):
+        (WebCore::AXIsolatedObject::setSelectedTextRange):
+        (WebCore::AXIsolatedObject::setCaretBrowsingEnabled):
+        (WebCore::AXIsolatedObject::setPreventKeyboardDOMEventDispatch):
+        (WebCore::AXIsolatedObject::findTextRanges const):
+        (WebCore::AXIsolatedObject::performTextOperation):
+        (WebCore::AXIsolatedObject::widget const):
+        (WebCore::AXIsolatedObject::document const):
+        (WebCore::AXIsolatedObject::documentFrameView const):
+        * accessibility/isolatedtree/AXIsolatedTreeNode.h:
+
 2019-12-23  Daniel Bates  <dabates@apple.com>
 
         REGRESSION (r212693): getClientRects(), getBoundingClientRect() for range that spans multi-lines differs depending on whether text is selected

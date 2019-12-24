@@ -185,7 +185,9 @@ void AXIsolatedObject::initializeAttributeData(AXCoreObject& object, bool isRoot
     setProperty(AXPropertyName::ReadOnlyValue, object.readOnlyValue());
     setProperty(AXPropertyName::AutoCompleteValue, object.autoCompleteValue());
     setProperty(AXPropertyName::SpeakAs, object.speakAsProperty());
+#if PLATFORM(COCOA) && !PLATFORM(IOS_FAMILY)
     setProperty(AXPropertyName::CaretBrowsingEnabled, object.caretBrowsingEnabled());
+#endif
     setObjectProperty(AXPropertyName::FocusableAncestor, object.focusableAncestor());
     setObjectProperty(AXPropertyName::EditableAncestor, object.editableAncestor());
     setObjectProperty(AXPropertyName::HighestEditableAncestor, object.highestEditableAncestor());
@@ -518,6 +520,92 @@ AXCoreObject* AXIsolatedObject::scrollBar(AccessibilityOrientation orientation)
     return objectAttributeValue(orientation == AccessibilityOrientation::Vertical ? AXPropertyName::VerticalScrollBar : AXPropertyName::HorizontalScrollBar);
 }
 
+template<typename U>
+void AXIsolatedObject::performFunctionOnMainThread(U&& lambda)
+{
+    Accessibility::performFunctionOnMainThread([&lambda, this] () {
+        if (auto object = associatedAXObject())
+            lambda(object);
+    });
+}
+
+void AXIsolatedObject::setARIAGrabbed(bool value)
+{
+    performFunctionOnMainThread([&value](AXCoreObject* object) {
+        object->setARIAGrabbed(value);
+    });
+}
+
+void AXIsolatedObject::setIsExpanded(bool value)
+{
+    performFunctionOnMainThread([&value](AXCoreObject* object) {
+        object->setIsExpanded(value);
+    });
+}
+void AXIsolatedObject::setValue(float value)
+{
+    performFunctionOnMainThread([&value](AXCoreObject* object) {
+        object->setValue(value);
+    });
+}
+
+void AXIsolatedObject::setSelected(bool value)
+{
+    performFunctionOnMainThread([&value](AXCoreObject* object) {
+        object->setSelected(value);
+    });
+}
+void AXIsolatedObject::setSelectedRows(AccessibilityChildrenVector& value)
+{
+    performFunctionOnMainThread([&value](AXCoreObject* object) {
+        object->setSelectedRows(value);
+    });
+}
+
+void AXIsolatedObject::setFocused(bool value)
+{
+    performFunctionOnMainThread([&value](AXCoreObject* object) {
+        object->setFocused(value);
+    });
+}
+
+void AXIsolatedObject::setSelectedText(const String& value)
+{
+    performFunctionOnMainThread([&value](AXCoreObject* object) {
+        object->setSelectedText(value);
+    });
+}
+
+void AXIsolatedObject::setSelectedTextRange(const PlainTextRange& value)
+{
+    performFunctionOnMainThread([&value](AXCoreObject* object) {
+        object->setSelectedTextRange(value);
+    });
+}
+
+void AXIsolatedObject::setValue(const String& value)
+{
+    performFunctionOnMainThread([&value](AXCoreObject* object) {
+        object->setValue(value);
+    });
+}
+
+#if PLATFORM(COCOA) && !PLATFORM(IOS_FAMILY)
+void AXIsolatedObject::setCaretBrowsingEnabled(bool value)
+{
+    performFunctionOnMainThread([&value](AXCoreObject* object) {
+        object->setCaretBrowsingEnabled(value);
+    });
+}
+#endif
+
+void AXIsolatedObject::setPreventKeyboardDOMEventDispatch(bool value)
+{
+    performFunctionOnMainThread([&value](AXCoreObject* object) {
+        object->setPreventKeyboardDOMEventDispatch(value);
+    });
+}
+
 void AXIsolatedObject::colorValue(int& r, int& g, int& b) const
 {
     auto color = colorAttributeValue(AXPropertyName::ColorValue);
@@ -699,14 +787,18 @@ void AXIsolatedObject::updateBackingStore()
 Vector<RefPtr<Range>> AXIsolatedObject::findTextRanges(AccessibilitySearchTextCriteria const& criteria) const
 {
     return Accessibility::retrieveValueFromMainThread<Vector<RefPtr<Range>>>([&criteria, this] () -> Vector<RefPtr<Range>> {
-        return associatedAXObject()->findTextRanges(criteria);
+        if (auto object = associatedAXObject())
+            return object->findTextRanges(criteria);
+        return Vector<RefPtr<Range>>();
     });
 }
 
 Vector<String> AXIsolatedObject::performTextOperation(AccessibilityTextOperation const& textOperation)
 {
     return Accessibility::retrieveValueFromMainThread<Vector<String>>([&textOperation, this] () -> Vector<String> {
-        return associatedAXObject()->performTextOperation(textOperation);
+        if (auto object = associatedAXObject())
+            return object->performTextOperation(textOperation);
+        return Vector<String>();
     });
 }
 
@@ -1384,7 +1476,9 @@ TextIteratorBehavior AXIsolatedObject::textIteratorBehaviorForTextRange() const
 
 Widget* AXIsolatedObject::widget() const
 {
-    return associatedAXObject()->widget();
+    if (auto object = associatedAXObject())
+        return object->widget();
+    return nullptr;
 }
 
 Widget* AXIsolatedObject::widgetForAttachmentView() const
@@ -1401,12 +1495,16 @@ Page* AXIsolatedObject::page() const
 
 Document* AXIsolatedObject::document() const
 {
-    return associatedAXObject()->document();
+    if (auto object = associatedAXObject())
+        return object->document();
+    return nullptr;
 }
 
 FrameView* AXIsolatedObject::documentFrameView() const
 {
-    return associatedAXObject()->documentFrameView();
+    if (auto object = associatedAXObject())
+        return object->documentFrameView();
+    return nullptr;
 }
 
 Frame* AXIsolatedObject::frame() const

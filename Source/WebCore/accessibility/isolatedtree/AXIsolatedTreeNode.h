@@ -104,7 +104,9 @@ private:
         CanSetTextRangeAttributes,
         CanSetValueAttribute,
         CanvasHasFallbackContent,
+#if PLATFORM(COCOA) && !PLATFORM(IOS_FAMILY)
         CaretBrowsingEnabled,
+#endif
         ClassList,
         ClickPoint,
         ColorValue,
@@ -325,7 +327,8 @@ private:
     void fillChildrenVectorForProperty(AXPropertyName, AccessibilityChildrenVector&) const;
     void setMathscripts(AXPropertyName, AXCoreObject&);
     void insertMathPairs(Vector<AccessibilityIsolatedTreeMathMultiscriptPair>&, AccessibilityMathMultiscriptPairs&);
-    
+    template<typename U> void performFunctionOnMainThread(U&&);
+
     // Attribute retrieval overrides.
     bool isHeading() const override { return boolAttributeValue(AXPropertyName::IsHeading); }
     bool isLink() const override { return boolAttributeValue(AXPropertyName::IsLink); }
@@ -502,7 +505,9 @@ private:
     String descriptionAttributeValue() const override { return stringAttributeValue(AXPropertyName::Description); }
     String helpTextAttributeValue() const override { return stringAttributeValue(AXPropertyName::HelpText); }
     String titleAttributeValue() const override { return stringAttributeValue(AXPropertyName::Title); }
+#if PLATFORM(COCOA) && !PLATFORM(IOS_FAMILY)
     bool caretBrowsingEnabled() const override { return boolAttributeValue(AXPropertyName::CaretBrowsingEnabled); }
+#endif
     AXCoreObject* focusableAncestor() override { return objectAttributeValue(AXPropertyName::FocusableAncestor); }
     AXCoreObject* editableAncestor() override { return objectAttributeValue(AXPropertyName::EditableAncestor); }
     AXCoreObject* highestEditableAncestor() override { return objectAttributeValue(AXPropertyName::HighestEditableAncestor); }
@@ -595,18 +600,20 @@ private:
     IntRect doAXBoundsForRangeUsingCharacterOffset(const PlainTextRange&) const override { return IntRect(); }
     unsigned doAXLineForIndex(unsigned) override { return 0; }
 
-    // TODO: Attribute setters.
-    void setARIAGrabbed(bool) override { }
-    void setIsExpanded(bool) override { }
-    void setValue(float) override { }
-    void setSelected(bool) override { }
-    void setSelectedRows(AccessibilityChildrenVector&) override { }
-    void setFocused(bool) override { }
-    void setSelectedText(const String&) override { }
-    void setSelectedTextRange(const PlainTextRange&) override { }
-    void setValue(const String&) override { }
-    void setCaretBrowsingEnabled(bool) override { }
-    void setPreventKeyboardDOMEventDispatch(bool) override { }
+    // Attribute setters.
+    void setARIAGrabbed(bool) override;
+    void setIsExpanded(bool) override;
+    void setValue(float) override;
+    void setSelected(bool) override;
+    void setSelectedRows(AccessibilityChildrenVector&) override;
+    void setFocused(bool) override;
+    void setSelectedText(const String&) override;
+    void setSelectedTextRange(const PlainTextRange&) override;
+    void setValue(const String&) override;
+#if PLATFORM(COCOA) && !PLATFORM(IOS_FAMILY)
+    void setCaretBrowsingEnabled(bool) override;
+#endif
+    void setPreventKeyboardDOMEventDispatch(bool) override;
 
     // TODO: Functions
     String textUnderElement(AccessibilityTextUnderElementMode = AccessibilityTextUnderElementMode()) const override { return String(); }
