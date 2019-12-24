@@ -297,8 +297,10 @@ WTF::IteratorRange<RunResolver::Iterator> RunResolver::rangeForRendererWithOffse
         return { end(), end() };
     auto it = range.begin();
     auto localEnd = (*it).start() + endOffset;
-    // Advance to the first run with the start offset inside. Only the first node in a range can have a startOffset.
-    while (it != range.end() && (*it).end() <= startOffset)
+    // Advance to the first run before the start offset. Only the first node in a range can have a startOffset.
+    // Note that the start offset may coincide with the end of a run. The run is still considered so that we
+    // can return an empty rect, which conforms to the behavior of Element.getClientRects().
+    while (it != range.end() && (*it).end() < startOffset)
         ++it;
     if (it == range.end())
         return { end(), end() };

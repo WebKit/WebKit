@@ -63,6 +63,7 @@ pointerevents/ios [ Skip ]
 editing/pasteboard/dom-paste [ Skip ]
 editing/pasteboard/mac [ Skip ]
 fast/media/ios [ Skip ]
+fast/dom/Range/mac [ Skip ]
 
 # Requires async overflow scrolling
 compositing/shared-backing/overflow-scroll [ Skip ]

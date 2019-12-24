@@ -1,3 +1,21 @@
+2019-12-23  Daniel Bates  <dabates@apple.com>
+
+        REGRESSION (r212693): getClientRects(), getBoundingClientRect() for range that spans multi-lines differs depending on whether text is selected
+        https://bugs.webkit.org/show_bug.cgi?id=205527
+        <rdar://problem/58128278>
+
+        Reviewed by Zalan Bujtas.
+
+        For now, add a Mac-specific test. This test is specific to Mac because it depends on text metrics for the
+        Times font. I specifically did not use Ahem so that this test could also be used as the test for
+        <https://bugs.webkit.org/show_bug.cgi?id=205563>. Currently the test includes expected failure results
+        since that bug is not fixed.
+
+        * TestExpectations: Skip 
+        * fast/dom/Range/mac/getClientRects-and-getBoundingClientRect-before-and-after-selection-expected.txt: Added.
+        * fast/dom/Range/mac/getClientRects-and-getBoundingClientRect-before-and-after-selection.html: Added.
+        * platform/mac/TestExpectations: Unskip the test on Mac.
+
 2019-12-23  Alexey Proskuryakov  <ap@apple.com>
 
         Remove TestExpectations for scrollingcoordinator/ios/fixed-scrolling-with-keyboard.html

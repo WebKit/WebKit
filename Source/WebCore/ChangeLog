@@ -1,3 +1,29 @@
+2019-12-23  Daniel Bates  <dabates@apple.com>
+
+        REGRESSION (r212693): getClientRects(), getBoundingClientRect() for range that spans multi-lines differs depending on whether text is selected
+        https://bugs.webkit.org/show_bug.cgi?id=205527
+        <rdar://problem/58128278>
+
+        Reviewed by Zalan Bujtas.
+
+        Include empty rect when range start position coincides with the end of a simple line layout run.
+        This makes it match the behavior of line box layout, Firefox's behavior, as well as my understanding
+        of Extensions to the Range Interface: <https://drafts.csswg.org/cssom-view/#extensions-to-the-range-interface>
+        (Editor's Draft, 10 October 2019).
+
+        At the time of writing, there are two code paths for laying out lines: simple line layout and
+        line box layout. Simple line layout is not enabled when there is a selection at the time of
+        writing. As a result, we use line box layout to answer getClientRects(), getBoundingClientRect()
+        queries.
+
+        Test: fast/dom/Range/mac/getClientRects-and-getBoundingClientRect-before-and-after-selection.html
+
+        * rendering/SimpleLineLayoutResolver.cpp:
+        (WebCore::SimpleLineLayout::RunResolver::rangeForRendererWithOffsets const): Do not skip over a run
+        if its end position coincides with the range's start offset. This ensures that we emit an empty rect
+        for this part of the box selection, which matches what we do using the analagous line box layout
+        code path.
+
 2019-12-23  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK][WPE] Special combination characters doesn't respect the keystroke order when high CPU load
