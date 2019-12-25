@@ -34,27 +34,34 @@
 namespace WebCore {
 namespace Layout {
 
-struct ContinousContent {
+struct LineCandidateContent {
     void append(const InlineItem&, Optional<InlineLayoutUnit> logicalWidth);
 
     bool hasIntrusiveFloats() const { return !m_floats.isEmpty(); }
     const LineBreaker::RunList& runs() const { return m_runs; }
     const LineLayoutContext::FloatList& floats() const { return m_floats; }
 
-    bool endsWithLineBreak() const { return m_endsWithLineBreak; }
-    void setEndsWithLineBreak() { m_endsWithLineBreak = true; }
+    bool isLineBreak() const { return m_isLineBreak; }
+    void setIsLineBreak();
 
 private:
     LineBreaker::RunList m_runs;
     LineLayoutContext::FloatList m_floats;
-    bool m_endsWithLineBreak { false };
+    bool m_isLineBreak { false };
 };
 
-void ContinousContent::append(const InlineItem& inlineItem, Optional<InlineLayoutUnit> logicalWidth)
+void LineCandidateContent::append(const InlineItem& inlineItem, Optional<InlineLayoutUnit> logicalWidth)
 {
     if (inlineItem.isFloat())
         return m_floats.append(makeWeakPtr(inlineItem));
     m_runs.append({ inlineItem, *logicalWidth });
+}
+
+void LineCandidateContent::setIsLineBreak()
+{
+    ASSERT(!hasIntrusiveFloats());
+    ASSERT(runs().isEmpty());
+    m_isLineBreak = true;
 }
 
 static InlineLayoutUnit inlineItemWidth(const FormattingContext& formattingContext, const InlineItem& inlineItem, InlineLayoutUnit contentLogicalLeft)
@@ -111,7 +118,11 @@ LineLayoutContext::LineContent LineLayoutContext::layoutLine(LineBuilder& line, 
         // 2. Apply floats and shrink the available horizontal space e.g. <span>intru_<div style="float: left"></div>sive_float</span>.
         // 3. Check if the content fits the line and commit the content accordingly (full, partial or not commit at all).
         // 4. Return if we are at the end of the line either by not being able to fit more content or because of an explicit line break.
-        auto candidateContent = nextContinousContentForLine(currentItemIndex, partialLeadingContentLength, line.lineBox().logicalWidth());
+        auto candidateContent = nextContentForLine(currentItemIndex, partialLeadingContentLength, line.lineBox().logicalWidth());
+        if (candidateContent.isLineBreak()) {
+            line.append(*m_inlineItems[currentItemIndex], 0);
+            return close(line, leadingInlineItemIndex, ++committedInlineItemCount, { });
+        }
         if (candidateContent.hasIntrusiveFloats()) {
             // Add floats first because they shrink the available horizontal space for the rest of the content.
             auto floatContent = addFloatItems(line, candidateContent.floats());
@@ -121,7 +132,6 @@ LineLayoutContext::LineContent LineLayoutContext::layoutLine(LineBuilder& line, 
                 return close(line, leadingInlineItemIndex, committedInlineItemCount, { });
             }
         }
-        ASSERT(!candidateContent.runs().isEmpty() || candidateContent.endsWithLineBreak() || candidateContent.hasIntrusiveFloats());
         if (!candidateContent.runs().isEmpty()) {
             // Now check if we can put this content on the current line.
             auto committedContent = placeInlineContentOnCurrentLine(line, candidateContent.runs());
@@ -130,14 +140,6 @@ LineLayoutContext::LineContent LineLayoutContext::layoutLine(LineBuilder& line, 
                 // We can't place any more items on the current line.
                 return close(line, leadingInlineItemIndex, committedInlineItemCount, committedContent.partialContent);
             }
-        }
-        // We could fit more content but sadly this line ends with an explicit line break.
-        if (candidateContent.endsWithLineBreak()) {
-            // Make sure the trailing line break ends up on the line too.
-            auto lineBreakIndex = leadingInlineItemIndex + committedInlineItemCount;
-            ASSERT(m_inlineItems[lineBreakIndex]->isLineBreak());
-            line.append(*m_inlineItems[lineBreakIndex], 0);
-            return close(line, leadingInlineItemIndex, ++committedInlineItemCount, { });
         }
         currentItemIndex = leadingInlineItemIndex + committedInlineItemCount;
         partialLeadingContentLength = { };
@@ -176,12 +178,16 @@ LineLayoutContext::LineContent LineLayoutContext::close(LineBuilder& line, unsig
     return LineContent { trailingInlineItemIndex, partialContent, WTFMove(m_floats), line.close(isLastLineWithInlineContent), line.lineBox() };
 }
 
-ContinousContent LineLayoutContext::nextContinousContentForLine(unsigned inlineItemIndex, Optional<unsigned> partialLeadingContentLength, InlineLayoutUnit currentLogicalRight)
+LineCandidateContent LineLayoutContext::nextContentForLine(unsigned inlineItemIndex, Optional<unsigned> partialLeadingContentLength, InlineLayoutUnit currentLogicalRight)
 {
-    auto candidateContent = ContinousContent { };
     // 1. Simply add any overflow content from the previous line to the candidate content. It's always a text content.
     // 2. Find the next soft wrap position or explicit line break.
     // 3. Collect floats between the inline content.
+    auto softWrapOpportunityIndex = LineBreaker::nextWrapOpportunity(m_inlineItems, inlineItemIndex);
+    // softWrapOpportunityIndex == m_inlineItems.size() means we don't have any wrap opportunity in this content.
+    ASSERT(softWrapOpportunityIndex <= m_inlineItems.size());
+
+    auto candidateContent = LineCandidateContent { };
     if (partialLeadingContentLength) {
         // Handle leading partial content first (split text from the previous line).
         // Construct a partial leading inline item.
@@ -192,28 +198,25 @@ ContinousContent LineLayoutContext::nextContinousContentForLine(unsigned inlineI
         ++inlineItemIndex;
     }
 
-    while (inlineItemIndex < m_inlineItems.size()) {
-        auto& inlineItem = *m_inlineItems[inlineItemIndex];
+    // Are we wrapping at a line break?
+    auto isSingleItem = softWrapOpportunityIndex < m_inlineItems.size() && inlineItemIndex + 1 == softWrapOpportunityIndex;
+    if (isSingleItem && m_inlineItems[inlineItemIndex]->isLineBreak()) {
+        candidateContent.setIsLineBreak();
+        return candidateContent;
+    }
+
+    for (auto index = inlineItemIndex; index < softWrapOpportunityIndex; ++index) {
+        auto& inlineItem = *m_inlineItems[index];
+        ASSERT(!inlineItem.isLineBreak());
         if (inlineItem.isFloat()) {
             // Floats are not part of the line context.
             // FIXME: Check if their width should be added to currentLogicalRight.
             candidateContent.append(inlineItem, { });
             continue;
         }
-        if (inlineItem.isLineBreak()) {
-            // We definitely need to stop at the line break.
-            candidateContent.setEndsWithLineBreak();
-            return candidateContent;
-        }
-        if (LineBreaker::lastSoftWrapOpportunity(inlineItem, candidateContent.runs())) {
-            // Let's wrap up this list, if we arrived to a soft wrap opportunity.
-            return candidateContent;
-        }
-
         auto inlineItenmWidth = inlineItemWidth(formattingContext(), inlineItem, currentLogicalRight);
         candidateContent.append(inlineItem, inlineItenmWidth);
         currentLogicalRight += inlineItenmWidth;
-        ++inlineItemIndex;
     }
     return candidateContent;
 }

@@ -1,5 +1,45 @@
 2019-12-25  Zalan Bujtas  <zalan@apple.com>
 
+        [LFC][IFC] Forward scan for soft wrap opportunities
+        https://bugs.webkit.org/show_bug.cgi?id=205584
+        <rdar://problem/58188386>
+
+        Reviewed by Antti Koivisto.
+
+        This patch implements forward scanning to find wrap opportunities in inline content.
+        e.g <span></span>example<span><span></span> content</span>
+        When we reach "ex-" content, in order to figure out if it is at a wrap opportunity, we scan the content
+        forward until after we reach another inline content, in this case " " right before the "content" and
+        check if we can break the content between these 2 inline items.
+
+        isAtSoftWrapOpportunity: takes 2 (adjacent by skipping non-content inline items) and return true if there's
+        a soft wrap opportunity in between them.
+        LineBreaker::nextWrapOpportunity: returns the next wrap opportunity (either a soft wrap opportunity or a line break or the end of the content)
+
+        * layout/inlineformatting/InlineLineBreaker.cpp:
+        (WebCore::Layout::endsWithSoftWrapOpportunity):
+        (WebCore::Layout::isAtSoftWrapOpportunity):
+        (WebCore::Layout::LineBreaker::nextWrapOpportunity):
+        (WebCore::Layout::LineBreaker::ContinousContent::ContinousContent):
+        (WebCore::Layout::LineBreaker::lastSoftWrapOpportunity): Deleted.
+        * layout/inlineformatting/InlineLineBreaker.h:
+        * layout/inlineformatting/LineLayoutContext.cpp:
+        (WebCore::Layout::LineCandidateContent::isLineBreak const):
+        (WebCore::Layout::LineCandidateContent::append):
+        (WebCore::Layout::LineCandidateContent::setIsLineBreak):
+        (WebCore::Layout::LineLayoutContext::layoutLine):
+        (WebCore::Layout::LineLayoutContext::nextContentForLine):
+        (WebCore::Layout::ContinousContent::hasIntrusiveFloats const): Deleted.
+        (WebCore::Layout::ContinousContent::runs const): Deleted.
+        (WebCore::Layout::ContinousContent::floats const): Deleted.
+        (WebCore::Layout::ContinousContent::endsWithLineBreak const): Deleted.
+        (WebCore::Layout::ContinousContent::setEndsWithLineBreak): Deleted.
+        (WebCore::Layout::ContinousContent::append): Deleted.
+        (WebCore::Layout::LineLayoutContext::nextContinousContentForLine): Deleted.
+        * layout/inlineformatting/LineLayoutContext.h:
+
+2019-12-25  Zalan Bujtas  <zalan@apple.com>
+
         [LFC][IFC] LineBreaker should tell whether the line should receive no more content
         https://bugs.webkit.org/show_bug.cgi?id=205587
         <rdar://problem/58188635>

@@ -67,7 +67,7 @@ public:
         InlineLayoutUnit logicalWidth { 0 };
     };
     using RunList = Vector<Run, 30>;
-    static Optional<size_t> lastSoftWrapOpportunity(const InlineItem&, const RunList& priorContent);
+    static size_t nextWrapOpportunity(const InlineItems&, unsigned startIndex);
 
     // This struct represents the amount of content committed to line breaking at a time e.g.
     // text content <span>span1</span>between<span>span2</span>

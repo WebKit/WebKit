@@ -33,7 +33,7 @@
 namespace WebCore {
 namespace Layout {
 
-struct ContinousContent;
+struct LineCandidateContent;
 
 class LineLayoutContext {
 public:
@@ -59,7 +59,7 @@ private:
         size_t count { 0 };
         Optional <LineContent::PartialContent> partialContent;
     };
-    ContinousContent nextContinousContentForLine(unsigned inlineItemIndex, Optional<unsigned> overflowLength, InlineLayoutUnit currentLogicalRight);
+    LineCandidateContent nextContentForLine(unsigned inlineItemIndex, Optional<unsigned> overflowLength, InlineLayoutUnit currentLogicalRight);
     CommittedContent addFloatItems(LineBuilder&, const FloatList&);
     CommittedContent placeInlineContentOnCurrentLine(LineBuilder&, const LineBreaker::RunList&);
     void commitContent(LineBuilder&, const LineBreaker::RunList&, Optional<LineBreaker::BreakingContext::PartialTrailingContent>);
