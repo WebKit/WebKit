@@ -665,9 +665,6 @@ void UIScriptControllerIOS::applyAutocorrection(JSStringRef newString, JSStringR
                 return;
             m_context->asyncTaskComplete(callbackID);
         }).get());
-        if (!m_context)
-            return;
-        m_context->asyncTaskComplete(callbackID);
     }).get()];
 }
 

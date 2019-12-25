@@ -1,3 +1,19 @@
+2019-12-25  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        REGRESSION (r253282): Tests that use applyAutocorrection assert in UIScriptContext::requestUIScriptCompletion
+        https://bugs.webkit.org/show_bug.cgi?id=205588
+        <rdar://problem/58109942>
+
+        Reviewed by Tim Horton.
+
+        The change made in r253282 intended to defer completing the async task prepared in
+        UIScriptController::applyAutocorrection until after the current runloop; however, it ended up keeping the
+        synchronous call to asyncTaskComplete. Fix this by removing this code, so that we instead wait for the
+        dispatch_async block to invoke asyncTaskComplete.
+
+        * WebKitTestRunner/ios/UIScriptControllerIOS.mm:
+        (WTR::UIScriptControllerIOS::applyAutocorrection):
+
 2019-12-24  Youenn Fablet  <youenn@apple.com>
 
         Deny Notification API access for non secure contexts
