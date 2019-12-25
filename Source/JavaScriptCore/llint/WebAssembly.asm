@@ -100,13 +100,13 @@ macro wasmNextInstruction()
 end
 
 macro wasmNextInstructionWide16()
-    loadh 1[PB, PC, 1], t0
+    loadb OpcodeIDNarrowSize[PB, PC, 1], t0
     leap _g_opcodeMapWide16, t1
     jmp NumberOfJSOpcodeIDs * PtrSize[t1, t0, PtrSize], BytecodePtrTag
 end
 
 macro wasmNextInstructionWide32()
-    loadi 1[PB, PC, 1], t0
+    loadb OpcodeIDNarrowSize[PB, PC, 1], t0
     leap _g_opcodeMapWide32, t1
     jmp NumberOfJSOpcodeIDs * PtrSize[t1, t0, PtrSize], BytecodePtrTag
 end

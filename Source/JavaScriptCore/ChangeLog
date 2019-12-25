@@ -1,3 +1,33 @@
+2019-12-25  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Compact Bytecodes more by emitting 1-byte Opcode
+        https://bugs.webkit.org/show_bug.cgi?id=205553
+
+        Reviewed by Keith Miller.
+
+        When emitting 16bit / 32bit bytecodes, we also emit 16bit / 32bit Opcode.
+        So the layout is the following.
+
+                8bit        16bit        16bit       16bit
+            - [op_wide16][  Opcode     ][ Operand0 ][ Operand1 ]
+
+        But this is unnecessary since Opcode must fit in 8bit. We should emit Opcode in 8bit in all cases.
+
+                8bit       8bit     16bit       16bit
+            - [op_wide16][Opcode][ Operand0 ][ Operand1 ]
+
+        * bytecode/Instruction.h:
+        (JSC::BaseInstruction::size const):
+        * bytecompiler/BytecodeGeneratorBaseInlines.h:
+        (JSC::BytecodeGeneratorBase<Traits>::alignWideOpcode16):
+        (JSC::BytecodeGeneratorBase<Traits>::alignWideOpcode32):
+        * generator/Argument.rb:
+        * generator/Opcode.rb:
+        * llint/LowLevelInterpreter.asm:
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+        * llint/WebAssembly.asm:
+
 2019-12-24  Keith Miller  <keith_miller@apple.com>
 
         Fix ARM64E by adding missing pointer tag.

@@ -214,8 +214,6 @@ if JSVALUE64
     const StructureEntropyBitsShift = constexpr StructureIDTable::s_entropyBitsShiftForStructurePointer
 end
 
-const CallOpCodeSize = constexpr op_call_length
-
 const maxFrameExtentForSlowPathCall = constexpr maxFrameExtentForSlowPathCall
 
 if X86_64 or X86_64_WIN or ARM64 or ARM64E
@@ -306,6 +304,12 @@ if GIGACAGE_ENABLED
     const GigacageJSValueBasePtrOffset = constexpr Gigacage::offsetOfJSValueGigacageBasePtr
 end
 
+# Opcode offsets
+const OpcodeIDNarrowSize = 1 # OpcodeID
+const OpcodeIDWide16Size = 2 # Wide16 Prefix + OpcodeID
+const OpcodeIDWide32Size = 2 # Wide32 Prefix + OpcodeID
+
+
 macro dispatch(advanceReg)
     addp advanceReg, PC
     nextInstruction()
@@ -317,15 +321,15 @@ end
 
 macro genericDispatchOp(dispatch, size, opcodeName)
     macro dispatchNarrow()
-        dispatch(constexpr %opcodeName%_length)
+        dispatch((constexpr %opcodeName%_length - 1) * 1 + OpcodeIDNarrowSize)
     end
 
     macro dispatchWide16()
-        dispatch(constexpr %opcodeName%_length * 2 + 1)
+        dispatch((constexpr %opcodeName%_length - 1) * 2 + OpcodeIDWide16Size)
     end
 
     macro dispatchWide32()
-        dispatch(constexpr %opcodeName%_length * 4 + 1)
+        dispatch((constexpr %opcodeName%_length - 1) * 4 + OpcodeIDWide32Size)
     end
 
     size(dispatchNarrow, dispatchWide16, dispatchWide32, macro (dispatch) dispatch() end)

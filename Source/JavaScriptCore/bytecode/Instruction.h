@@ -66,7 +66,7 @@ private:
         typename Traits::OpcodeID opcodeID() const { return static_cast<typename Traits::OpcodeID>(m_opcode); }
 
     private:
-        typename TypeBySize<Width>::unsignedType m_opcode;
+        typename TypeBySize<OpcodeSize::Narrow>::unsignedType m_opcode;
     };
 
 public:
@@ -118,9 +118,10 @@ public:
     size_t size() const
     {
         auto sizeShiftAmount = this->sizeShiftAmount<Traits>();
-        auto padding = sizeShiftAmount ? 1 : 0;
-        auto size = 1 << sizeShiftAmount;
-        return Traits::opcodeLengths[opcodeID<Traits>()] * size + padding;
+        auto prefixSize = sizeShiftAmount ? 1 : 0;
+        auto operandSize = 1 << sizeShiftAmount;
+        size_t sizeOfBytecode = 1;
+        return sizeOfBytecode + (Traits::opcodeLengths[opcodeID<Traits>()] - 1) * operandSize + prefixSize;
     }
 
     template<class T, typename Traits = JSOpcodeTraits>

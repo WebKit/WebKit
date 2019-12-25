@@ -31,13 +31,13 @@ macro nextInstruction()
 end
 
 macro nextInstructionWide16()
-    loadh 1[PB, PC, 1], t0
+    loadb OpcodeIDNarrowSize[PB, PC, 1], t0
     leap _g_opcodeMapWide16, t1
     jmp [t1, t0, PtrSize], BytecodePtrTag
 end
 
 macro nextInstructionWide32()
-    loadi 1[PB, PC, 1], t0
+    loadb OpcodeIDNarrowSize[PB, PC, 1], t0
     leap _g_opcodeMapWide32, t1
     jmp [t1, t0, PtrSize], BytecodePtrTag
 end
@@ -51,27 +51,27 @@ macro loadPC()
 end
 
 macro getuOperandNarrow(opcodeStruct, fieldName, dst)
-    loadb constexpr %opcodeStruct%_%fieldName%_index[PB, PC, 1], dst
+    loadb constexpr %opcodeStruct%_%fieldName%_index + OpcodeIDNarrowSize[PB, PC, 1], dst
 end
 
 macro getOperandNarrow(opcodeStruct, fieldName, dst)
-    loadbsq constexpr %opcodeStruct%_%fieldName%_index[PB, PC, 1], dst
+    loadbsq constexpr %opcodeStruct%_%fieldName%_index + OpcodeIDNarrowSize[PB, PC, 1], dst
 end
 
 macro getuOperandWide16(opcodeStruct, fieldName, dst)
-    loadh constexpr %opcodeStruct%_%fieldName%_index * 2 + 1[PB, PC, 1], dst
+    loadh constexpr %opcodeStruct%_%fieldName%_index * 2 + OpcodeIDWide16Size[PB, PC, 1], dst
 end
 
 macro getOperandWide16(opcodeStruct, fieldName, dst)
-    loadhsq constexpr %opcodeStruct%_%fieldName%_index * 2 + 1[PB, PC, 1], dst
+    loadhsq constexpr %opcodeStruct%_%fieldName%_index * 2 + OpcodeIDWide16Size[PB, PC, 1], dst
 end
 
 macro getuOperandWide32(opcodeStruct, fieldName, dst)
-    loadi constexpr %opcodeStruct%_%fieldName%_index * 4 + 1[PB, PC, 1], dst
+    loadi constexpr %opcodeStruct%_%fieldName%_index * 4 + OpcodeIDWide32Size[PB, PC, 1], dst
 end
 
 macro getOperandWide32(opcodeStruct, fieldName, dst)
-    loadis constexpr %opcodeStruct%_%fieldName%_index * 4 + 1[PB, PC, 1], dst
+    loadis constexpr %opcodeStruct%_%fieldName%_index * 4 + OpcodeIDWide32Size[PB, PC, 1], dst
 end
 
 macro makeReturn(get, dispatch, fn)
