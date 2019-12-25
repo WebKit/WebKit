@@ -1,3 +1,16 @@
+2019-12-25  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] Fix LayoutTests/imported/w3c/web-platform-tests/css/css-text/letter-spacing/letter-spacing-control-chars-001.html
+        https://bugs.webkit.org/show_bug.cgi?id=205585
+        <rdar://problem/58188420>
+
+        Reviewed by Antti Koivisto.
+
+        TextUtil::fixedPitchWidth works on simple content only (letter-spacing forces slow font measuring path).
+
+        * layout/inlineformatting/text/TextUtil.cpp:
+        (WebCore::Layout::TextUtil::width):
+
 2019-12-24  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] REGRESSION: Changing the animation-duration of a CSS Animation may not resume it

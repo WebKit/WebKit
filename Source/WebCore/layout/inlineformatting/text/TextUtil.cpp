@@ -56,18 +56,17 @@ InlineLayoutUnit TextUtil::width(const Box& inlineBox, unsigned from, unsigned t
     auto& textContext = *inlineBox.textContext();
     auto& text = textContext.content;
     ASSERT(to <= text.length());
-
-    if (font.isFixedPitch())
-        return fixedPitchWidth(text, style, from, to, contentLogicalLeft);
-
     auto hasKerningOrLigatures = font.enableKerning() || font.requiresShaping();
     auto measureWithEndSpace = hasKerningOrLigatures && to < text.length() && text[to] == ' ';
     if (measureWithEndSpace)
         ++to;
     float width = 0;
-    if (textContext.canUseSimplifiedContentMeasuring)
-        width = font.widthForSimpleText(text.substring(from, to - from));
-    else {
+    if (textContext.canUseSimplifiedContentMeasuring) {
+        if (font.isFixedPitch())
+            width = fixedPitchWidth(text, style, from, to, contentLogicalLeft);
+        else
+            width = font.widthForSimpleText(text.substring(from, to - from));
+    } else {
         auto tabWidth = style.collapseWhiteSpace() ? TabSize(0) : style.tabSize();
         WebCore::TextRun run(text.substring(from, to - from), contentLogicalLeft);
         if (tabWidth)
