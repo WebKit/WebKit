@@ -28,9 +28,9 @@
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
-#include "FontCascade.h"
 #include "InlineSoftLineBreakItem.h"
 #include "TextUtil.h"
+#include <wtf/unicode/CharacterNames.h>
 
 namespace WebCore {
 namespace Layout {
@@ -145,6 +145,12 @@ InlineTextItem::InlineTextItem(const Box& inlineBox, unsigned start, unsigned le
 InlineTextItem::InlineTextItem(const Box& inlineBox)
     : InlineItem(inlineBox, Type::Text)
 {
+}
+
+bool InlineTextItem::isEmptyContent() const
+{
+    // FIXME: We should check for more zero width content and not just U+200B.
+    return !m_length || (m_length == 1 && layoutBox().textContext()->content[start()] == zeroWidthSpace); 
 }
 
 std::unique_ptr<InlineTextItem> InlineTextItem::left(unsigned length) const

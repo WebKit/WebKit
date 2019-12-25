@@ -48,6 +48,7 @@ public:
     bool isWhitespace() const { return m_textItemType == TextItemType::Whitespace; }
     bool isCollapsible() const { return isWhitespace() && style().collapseWhiteSpace(); }
     Optional<InlineLayoutUnit> width() const { return m_width; }
+    bool isEmptyContent() const;
 
     std::unique_ptr<InlineTextItem> left(unsigned length) const;
     std::unique_ptr<InlineTextItem> right(unsigned length) const;

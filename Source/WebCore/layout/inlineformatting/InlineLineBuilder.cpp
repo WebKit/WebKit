@@ -495,17 +495,11 @@ void LineBuilder::appendInlineContainerEnd(const InlineItem& inlineItem, InlineL
 void LineBuilder::appendTextContent(const InlineTextItem& inlineItem, InlineLayoutUnit logicalWidth)
 {
     auto willCollapseCompletely = [&] {
-        // Empty run.
-        if (!inlineItem.length()) {
-            ASSERT(!logicalWidth);
-            return true;
-        }
+        if (!inlineItem.isCollapsible())
+            return false;
         // Leading whitespace.
         if (m_inlineItemRuns.isEmpty())
             return !shouldPreserveLeadingContent(inlineItem);
-
-        if (!inlineItem.isCollapsible())
-            return false;
         // Check if the last item is collapsed as well.
         for (auto i = m_inlineItemRuns.size(); i--;) {
             auto& run = m_inlineItemRuns[i];
@@ -687,7 +681,7 @@ InlineLayoutUnit LineBuilder::runContentHeight(const Run& run) const
 bool LineBuilder::isVisuallyNonEmpty(const InlineItemRun& run) const
 {
     if (run.isText())
-        return !run.isCollapsedToZeroAdvanceWidth();
+        return !run.hasEmptyTextContent();
 
     // Note that this does not check whether the inline container has content. It simply checks if the container itself is considered non-empty.
     if (run.isContainerStart() || run.isContainerEnd()) {
@@ -872,6 +866,12 @@ void LineBuilder::InlineItemRun::removeTrailingLetterSpacing()
     ASSERT(hasTrailingLetterSpacing());
     m_logicalWidth -= trailingLetterSpacing();
     ASSERT(m_logicalWidth > 0 || (!m_logicalWidth && style().letterSpacing() >= intMaxForLayoutUnit));
+}
+
+bool LineBuilder::InlineItemRun::hasEmptyTextContent() const
+{
+    ASSERT(isText());
+    return isCollapsedToZeroAdvanceWidth() || downcast<InlineTextItem>(m_inlineItem).isEmptyContent();
 }
 
 }
