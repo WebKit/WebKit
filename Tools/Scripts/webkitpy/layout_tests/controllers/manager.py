@@ -160,7 +160,7 @@ class Manager(object):
         # This must be started before we check the system dependencies,
         # since the helper may do things to make the setup correct.
         self._printer.write_update("Starting helper ...")
-        if not self._port.start_helper(self._options.pixel_tests):
+        if not self._port.start_helper(pixel_tests=self._options.pixel_tests, prefer_integrated_gpu=self._options.prefer_integrated_gpu):
             return False
 
         self._update_worker_count(test_names, device_type=device_type)

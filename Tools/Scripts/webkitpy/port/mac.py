@@ -212,13 +212,15 @@ class MacPort(DarwinPort):
             supportable_instances = default_count
         return min(supportable_instances, default_count)
 
-    def start_helper(self, pixel_tests=False):
+    def start_helper(self, pixel_tests=False, prefer_integrated_gpu=False):
         helper_path = self._path_to_helper()
         if not helper_path:
             _log.error("No path to LayoutTestHelper binary")
             return False
         _log.debug("Starting layout helper %s" % helper_path)
         arguments = [helper_path, '--install-color-profile']
+        if prefer_integrated_gpu:
+            arguments.append('--prefer-integrated-gpu')
         self._helper = self._executive.popen(arguments,
             stdin=self._executive.PIPE, stdout=self._executive.PIPE, stderr=None)
         is_ready = self._helper.stdout.readline()

@@ -57,6 +57,7 @@ CFUUIDRef CGDisplayCreateUUIDFromDisplayID(uint32_t displayID);
 // running layout tests.
 
 static int installColorProfile = false;
+static int preferIntegratedGPU = false;
 static uint32_t assertionIDForDisplaySleep = 0;
 static uint32_t assertionIDForSystemSleep = 0;
 
@@ -261,6 +262,7 @@ int main(int argc, char* argv[])
 {
     struct option options[] = {
         { "install-color-profile", no_argument, &installColorProfile, true },
+        { "prefer-integrated-gpu", no_argument, &preferIntegratedGPU, true },
     };
 
     int option;
@@ -279,7 +281,8 @@ int main(int argc, char* argv[])
     signal(SIGTERM, simpleSignalHandler);
 
     addSleepAssertions();
-    lockDownDiscreteGraphics();
+    if (!preferIntegratedGPU)
+        lockDownDiscreteGraphics();
 
     // Save off the current profile, and then install the layout test profile.
     installLayoutTestColorProfile();

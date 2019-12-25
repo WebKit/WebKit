@@ -327,6 +327,9 @@ def parse_args(args):
         optparse.make_option(
             "--use-gpu-process", action="store_true", default=False,
             help=("Enable all GPU process related features, also set additional expectations and the result report flavor.")),
+        optparse.make_option(
+            "--prefer-integrated-gpu", action="store_true", default=False,
+            help=("Prefer using the lower-power integrated GPU on a dual-GPU system. Note that other running applications and the tests themselves can override this request.")),
     ]))
 
     option_group_definitions.append(("Web Platform Test Server Options", [

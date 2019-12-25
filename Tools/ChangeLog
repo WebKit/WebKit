@@ -1,3 +1,29 @@
+2019-12-25  Dean Jackson  <dino@apple.com>
+
+        WKTR/DRT always trigger the Discrete GPU on dual GPU systems
+        https://bugs.webkit.org/show_bug.cgi?id=205546
+        <rdar://problem/58139610>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Add an option "--prefer-integrated-gpu" to run-webkit-test
+        that causes the LayoutTestHelper to NOT lock the
+        machine to a discrete GPU on a dual-GPU system.
+        The default is false.
+
+        * DumpRenderTree/mac/LayoutTestHelper.m:
+        (main):
+        * Scripts/webkitpy/layout_tests/controllers/manager.py:
+        (Manager._set_up_run):
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+        (parse_args):
+        * Scripts/webkitpy/port/base.py:
+        (Port.start_helper):
+        * Scripts/webkitpy/port/mac.py:
+        (MacPort.start_helper):
+        * Scripts/webkitpy/port/mock_drt.py:
+        (MockDRTPort.start_helper):
+
 2019-12-25  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         REGRESSION (r253282): Tests that use applyAutocorrection assert in UIScriptContext::requestUIScriptCompletion
