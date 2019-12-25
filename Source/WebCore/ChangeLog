@@ -1,5 +1,18 @@
 2019-12-25  Zalan Bujtas  <zalan@apple.com>
 
+        [LFC][Painting] Fix LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/tab-stop-threshold-001.html
+        https://bugs.webkit.org/show_bug.cgi?id=205594
+        <rdar://problem/58194138>
+
+        Reviewed by Antti Koivisto.
+
+        Construct the TextRun with relative coordinates to get tab stops right.
+
+        * layout/displaytree/DisplayPainter.cpp:
+        (WebCore::Display::paintInlineContent):
+
+2019-12-25  Zalan Bujtas  <zalan@apple.com>
+
         [LFC][IFC] Forward scan for soft wrap opportunities
         https://bugs.webkit.org/show_bug.cgi?id=205584
         <rdar://problem/58188386>
