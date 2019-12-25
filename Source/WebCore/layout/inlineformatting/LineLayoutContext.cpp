@@ -116,7 +116,7 @@ LineLayoutContext::LineContent LineLayoutContext::layoutLine(LineBuilder& line, 
             // Add floats first because they shrink the available horizontal space for the rest of the content.
             auto floatContent = addFloatItems(line, candidateContent.floats());
             committedInlineItemCount += floatContent.count;
-            if (floatContent.isEndOfLine == IsEndOfLine::Yes) {
+            if (floatContent.isEndOfLine == LineBreaker::IsEndOfLine::Yes) {
                 // Floats take up all the horizontal space.
                 return close(line, leadingInlineItemIndex, committedInlineItemCount, { });
             }
@@ -126,7 +126,7 @@ LineLayoutContext::LineContent LineLayoutContext::layoutLine(LineBuilder& line, 
             // Now check if we can put this content on the current line.
             auto committedContent = placeInlineContentOnCurrentLine(line, candidateContent.runs());
             committedInlineItemCount += committedContent.count;
-            if (committedContent.isEndOfLine == IsEndOfLine::Yes) {
+            if (committedContent.isEndOfLine == LineBreaker::IsEndOfLine::Yes) {
                 // We can't place any more items on the current line.
                 return close(line, leadingInlineItemIndex, committedInlineItemCount, committedContent.partialContent);
             }
@@ -226,7 +226,7 @@ LineLayoutContext::CommittedContent LineLayoutContext::addFloatItems(LineBuilder
 
         auto lineIsConsideredEmpty = line.isVisuallyEmpty() && !line.hasIntrusiveFloat();
         if (LineBreaker().shouldWrapFloatBox(logicalWidth, line.availableWidth() + line.trailingCollapsibleWidth(), lineIsConsideredEmpty))
-            return { IsEndOfLine::Yes, committedFloatItemCount, { } };
+            return { LineBreaker::IsEndOfLine::Yes, committedFloatItemCount, { } };
         // This float can sit on the current line.
         ++committedFloatItemCount;
         auto& floatBox = floatItem->layoutBox();
@@ -238,7 +238,7 @@ LineLayoutContext::CommittedContent LineLayoutContext::addFloatItems(LineBuilder
             line.moveLogicalRight(logicalWidth);
         m_floats.append(floatItem);
     }
-    return { IsEndOfLine::No, committedFloatItemCount, { } };
+    return { LineBreaker::IsEndOfLine::No, committedFloatItemCount, { } };
 }
 
 LineLayoutContext::CommittedContent LineLayoutContext::placeInlineContentOnCurrentLine(LineBuilder& line, const LineBreaker::RunList& runs)
@@ -260,12 +260,12 @@ LineLayoutContext::CommittedContent LineLayoutContext::placeInlineContentOnCurre
     if (breakingContext.contentWrappingRule == LineBreaker::BreakingContext::ContentWrappingRule::Keep) {
         // This continuous content can be fully placed on the current line.
         commitContent(line, runs, { });
-        return { IsEndOfLine::No, runs.size(), { } };
+        return { breakingContext.isEndOfLine, runs.size(), { } };
     }
 
     if (breakingContext.contentWrappingRule == LineBreaker::BreakingContext::ContentWrappingRule::Push) {
         // This continuous content can't be placed on the current line. Nothing to commit at this time.
-        return { IsEndOfLine::Yes, 0, { } };
+        return { breakingContext.isEndOfLine, 0, { } };
     }
 
     if (breakingContext.contentWrappingRule == LineBreaker::BreakingContext::ContentWrappingRule::Split) {
@@ -277,15 +277,15 @@ LineLayoutContext::CommittedContent LineLayoutContext::placeInlineContentOnCurre
         auto trailingRunIndex = breakingContext.partialTrailingContent->trailingRunIndex;
         auto committedInlineItemCount = trailingRunIndex + 1;
         if (!breakingContext.partialTrailingContent->partialRun)
-            return { IsEndOfLine::Yes, committedInlineItemCount, { } };
+            return { breakingContext.isEndOfLine, committedInlineItemCount, { } };
 
         auto partialRun = *breakingContext.partialTrailingContent->partialRun;
         auto& trailingInlineTextItem = downcast<InlineTextItem>(runs[trailingRunIndex].inlineItem);
         auto overflowLength = trailingInlineTextItem.length() - partialRun.length;
-        return { IsEndOfLine::Yes, committedInlineItemCount, LineContent::PartialContent { partialRun.needsHyphen, overflowLength } };
+        return { breakingContext.isEndOfLine, committedInlineItemCount, LineContent::PartialContent { partialRun.needsHyphen, overflowLength } };
     }
     ASSERT_NOT_REACHED();
-    return { IsEndOfLine::No, 0, { } };
+    return { LineBreaker::IsEndOfLine::No, 0, { } };
 }
 
 void LineLayoutContext::commitContent(LineBuilder& line, const LineBreaker::RunList& runs, Optional<LineBreaker::BreakingContext::PartialTrailingContent> partialTrailingContent)

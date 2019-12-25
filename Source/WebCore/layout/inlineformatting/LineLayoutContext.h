@@ -54,9 +54,8 @@ public:
     using FloatList = Vector<WeakPtr<InlineItem>>;
 
 private:
-    enum class IsEndOfLine { No, Yes };
     struct CommittedContent {
-        IsEndOfLine isEndOfLine;
+        LineBreaker::IsEndOfLine isEndOfLine { LineBreaker::IsEndOfLine::No };
         size_t count { 0 };
         Optional <LineContent::PartialContent> partialContent;
     };

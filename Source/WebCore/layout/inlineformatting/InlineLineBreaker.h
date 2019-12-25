@@ -42,6 +42,7 @@ public:
         InlineLayoutUnit logicalWidth { 0 };
         bool needsHyphen { false };
     };
+    enum class IsEndOfLine { No, Yes };
     struct BreakingContext {
         enum class ContentWrappingRule {
             Keep, // Keep content on the current line.
@@ -49,6 +50,7 @@ public:
             Push // Content is pushed to the next line.
         };
         ContentWrappingRule contentWrappingRule;
+        IsEndOfLine isEndOfLine { IsEndOfLine::No }; 
         struct PartialTrailingContent {
             unsigned trailingRunIndex { 0 };
             Optional<PartialRun> partialRun; // nullopt partial run means the trailing run is a complete run.
@@ -92,6 +94,7 @@ public:
         bool isTrailingContentFullyCollapsible() const { return m_trailingCollapsibleContent.isFullyCollapsible; }
 
         Optional<unsigned> firstTextRunIndex() const;
+        Optional<unsigned> lastContentRunIndex() const;
 
     private:
         RunList m_runs;
