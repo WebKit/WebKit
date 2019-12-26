@@ -238,7 +238,7 @@ LineBuilder::RunList LineBuilder::close(IsLastLineWithInlineContent isLastLineWi
             m_lineBox.resetDescent();
         }
         alignContentVertically(runList);
-        alignContentHorizontally(runList, isLastLineWithInlineContent);
+        alignHorizontally(runList, isLastLineWithInlineContent);
     }
     return runList;
 }
@@ -330,7 +330,7 @@ void LineBuilder::justifyRuns(RunList& runList) const
     }
 }
 
-void LineBuilder::alignContentHorizontally(RunList& runList, IsLastLineWithInlineContent lastLine) const
+void LineBuilder::alignHorizontally(RunList& runList, IsLastLineWithInlineContent lastLine)
 {
     ASSERT(!m_isIntrinsicSizing);
     auto availableWidth = this->availableWidth() + m_hangingContent.width();
@@ -368,7 +368,11 @@ void LineBuilder::alignContentHorizontally(RunList& runList, IsLastLineWithInlin
     auto adjustment = adjustmentForAlignment();
     if (!adjustment)
         return;
-
+    // Horizontal alignment means that we not only adjust the runs but also make sure
+    // that the line box is aligned as well
+    // e.g. <div style="text-align: center; width: 100px;">centered text</div> : the line box will also be centered
+    // as opposed to start at 0px all the way to [centered text] run's right edge.
+    m_lineBox.moveHorizontally(*adjustment);
     for (auto& run : runList)
         run.moveHorizontally(*adjustment);
 }

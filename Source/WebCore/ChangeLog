@@ -1,3 +1,22 @@
+2019-12-26  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] When align the inline content we need to align the line as well
+        https://bugs.webkit.org/show_bug.cgi?id=205596
+        <rdar://problem/58197300>
+
+        Reviewed by Antti Koivisto.
+
+        Horizontal alignment means that we not only adjust the runs but also make sure the line box is aligned as well.
+
+        <div style="text-align: center; width: 100px;">centered text</div>
+        The line box will also be centered as opposed to start at 0px all the way to [centered text] run's right edge.
+
+        * layout/inlineformatting/InlineLineBuilder.cpp:
+        (WebCore::Layout::LineBuilder::close):
+        (WebCore::Layout::LineBuilder::alignHorizontally):
+        (WebCore::Layout::LineBuilder::alignContentHorizontally const): Deleted.
+        * layout/inlineformatting/InlineLineBuilder.h:
+
 2019-12-25  Zalan Bujtas  <zalan@apple.com>
 
         Run with offset from the content box's logical left paint its tab stop at wrong position.

@@ -141,7 +141,7 @@ private:
 
     void removeTrailingCollapsibleContent();
     void collectHangingContent(IsLastLineWithInlineContent);
-    void alignContentHorizontally(RunList&, IsLastLineWithInlineContent) const;
+    void alignHorizontally(RunList&, IsLastLineWithInlineContent);
     void alignContentVertically(RunList&);
 
     void adjustBaselineAndLineHeight(const Run&);
