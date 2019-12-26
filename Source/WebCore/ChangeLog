@@ -1,5 +1,23 @@
 2019-12-25  Zalan Bujtas  <zalan@apple.com>
 
+        Run with offset from the content box's logical left paint its tab stop at wrong position.
+        https://bugs.webkit.org/show_bug.cgi?id=205595
+        <rdar://problem/58194698>
+
+        Reviewed by Antti Koivisto.
+
+        Test: fast/text/tab-stops-with-offset-from-parent.html
+
+        Use the run's left offset from the line as the xPos for the TextRun. Most cases the line has only one run
+        with 0 offset. This patch fixes the case when the additional runs (with offset != 0) paint their tab positions at the wrong place.
+
+        * layout/integration/LayoutIntegrationLineLayout.cpp:
+        (WebCore::LayoutIntegration::LineLayout::paint):
+        * rendering/SimpleLineLayoutFunctions.cpp:
+        (WebCore::SimpleLineLayout::paintFlow):
+
+2019-12-25  Zalan Bujtas  <zalan@apple.com>
+
         [LFC][Painting] Fix LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/tab-stop-threshold-001.html
         https://bugs.webkit.org/show_bug.cgi?id=205594
         <rdar://problem/58194138>

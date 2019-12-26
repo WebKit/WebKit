@@ -131,7 +131,7 @@ static void paintInlineContent(GraphicsContext& context, LayoutPoint absoluteOff
             auto& lineBox = displayInlineContent->lineBoxForRun(run);
             auto baselineOffset = absoluteOffset.y() + lineBox.logicalTop() + lineBox.baselineOffset();
             auto expansionContext = textContext->expansion();
-            auto textRun = TextRun { textContext->content(), run.logicalLeft(),
+            auto textRun = TextRun { textContext->content(), run.logicalLeft() - lineBox.logicalLeft(),
                 expansionContext ? expansionContext->horizontalExpansion : 0,
                 expansionContext ? expansionContext->behavior : DefaultExpansion };
             textRun.setTabSize(!style.collapseWhiteSpace(), style.tabSize());

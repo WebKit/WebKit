@@ -131,8 +131,10 @@ void paintFlow(const RenderBlockFlow& flow, const Layout& layout, PaintInfo& pai
         String textWithHyphen;
         if (run.hasHyphen())
             textWithHyphen = run.textWithHyphen();
-        // x position indicates the line offset from the rootbox. It's always 0 in case of simple line layout.
-        TextRun textRun { run.hasHyphen() ? textWithHyphen : run.text(), 0, run.expansion(), run.expansionBehavior() };
+        // xPos is relative to the line box's logical left.
+        // We don't have any line geometry here in SLL, so let's get the first run's logical left in the current line and use it as the line's logical left.
+        auto lineLogicalLeft = (*resolver.rangeForLine(run.lineIndex()).begin()).logicalLeft();
+        TextRun textRun { run.hasHyphen() ? textWithHyphen : run.text(), run.logicalLeft() - lineLogicalLeft, run.expansion(), run.expansionBehavior() };
         textRun.setTabSize(!style.collapseWhiteSpace(), style.tabSize());
         FloatPoint textOrigin { rect.x() + paintOffset.x(), roundToDevicePixel(run.baselinePosition() + paintOffset.y(), deviceScaleFactor) };
 

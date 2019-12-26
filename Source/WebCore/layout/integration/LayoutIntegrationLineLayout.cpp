@@ -265,8 +265,7 @@ void LineLayout::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
         String textWithHyphen;
         if (textContext.needsHyphen())
             textWithHyphen = makeString(textContext.content(), style.hyphenString());
-        // x position indicates the line offset from the rootbox. It's always 0 in case of integrated line layout setup.
-        TextRun textRun { !textWithHyphen.isEmpty() ? textWithHyphen : textContext.content(), 0, horizontalExpansion, behavior };
+        TextRun textRun { !textWithHyphen.isEmpty() ? textWithHyphen : textContext.content(), run.logicalLeft() - lineBox.logicalLeft(), horizontalExpansion, behavior };
         textRun.setTabSize(!style.collapseWhiteSpace(), style.tabSize());
         FloatPoint textOrigin { rect.x() + paintOffset.x(), roundToDevicePixel(baselineOffset, deviceScaleFactor) };
 

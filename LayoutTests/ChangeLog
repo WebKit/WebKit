@@ -1,3 +1,14 @@
+2019-12-25  Zalan Bujtas  <zalan@apple.com>
+
+        Run with offset from the content box's logical left paint its tab stop at wrong position.
+        https://bugs.webkit.org/show_bug.cgi?id=205595
+        <rdar://problem/58194698>
+
+        Reviewed by Antti Koivisto.
+
+        * fast/text/tab-stops-with-offset-from-parent-expected.html: Added.
+        * fast/text/tab-stops-with-offset-from-parent.html: Added.
+
 2019-12-24  Alexey Proskuryakov  <ap@apple.com>
 
         REGRESSION: [ Catalina wk1 ] imported/w3c/web-platform-tests/fetch/content-type/script.window.html is failing
