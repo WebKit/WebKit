@@ -159,9 +159,9 @@ LineSegment BoxShape::getExcludedInterval(LayoutUnit logicalTop, LayoutUnit logi
 
 void BoxShape::buildDisplayPaths(DisplayPaths& paths) const
 {
-    paths.shape.addRoundedRect(m_bounds, Path::PreferBezierRoundedRect);
+    paths.shape.addRoundedRect(m_bounds, Path::RoundedRectStrategy::PreferBezier);
     if (shapeMargin())
-        paths.marginShape.addRoundedRect(shapeMarginBounds(), Path::PreferBezierRoundedRect);
+        paths.marginShape.addRoundedRect(shapeMarginBounds(), Path::RoundedRectStrategy::PreferBezier);
 }
 
 } // namespace WebCore

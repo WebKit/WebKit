@@ -111,26 +111,26 @@ private:
 
     void updateMarkerDataForPathElement(const PathElement& element)
     {
-        FloatPoint* points = element.points;
+        auto& points = element.points;
 
         switch (element.type) {
-        case PathElementAddQuadCurveToPoint:
-            // FIXME: https://bugs.webkit.org/show_bug.cgi?id=33115 (PathElementAddQuadCurveToPoint not handled for <marker>)
+        case PathElement::Type::AddQuadCurveToPoint:
+            // FIXME: https://bugs.webkit.org/show_bug.cgi?id=33115 (PathElement::Type::AddQuadCurveToPoint not handled for <marker>)
             m_origin = points[1];
             break;
-        case PathElementAddCurveToPoint:
+        case PathElement::Type::AddCurveToPoint:
             m_inslopePoints[0] = points[1];
             m_inslopePoints[1] = points[2];
             m_origin = points[2];
             break;
-        case PathElementMoveToPoint:
+        case PathElement::Type::MoveToPoint:
             m_subpathStart = points[0];
             FALLTHROUGH;
-        case PathElementAddLineToPoint:
+        case PathElement::Type::AddLineToPoint:
             updateInslope(points[0]);
             m_origin = points[0];
             break;
-        case PathElementCloseSubpath:
+        case PathElement::Type::CloseSubpath:
             updateInslope(points[0]);
             m_origin = m_subpathStart;
             m_subpathStart = FloatPoint();

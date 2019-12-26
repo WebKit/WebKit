@@ -1706,23 +1706,23 @@ static void findPathIntersections(GlyphIterationState& state, const PathElement&
     bool doIntersection = false;
     FloatPoint point = FloatPoint();
     switch (element.type) {
-    case PathElementMoveToPoint:
+    case PathElement::Type::MoveToPoint:
         state.startingPoint = element.points[0];
         state.currentPoint = element.points[0];
         break;
-    case PathElementAddLineToPoint:
+    case PathElement::Type::AddLineToPoint:
         doIntersection = true;
         point = element.points[0];
         break;
-    case PathElementAddQuadCurveToPoint:
+    case PathElement::Type::AddQuadCurveToPoint:
         doIntersection = true;
         point = element.points[1];
         break;
-    case PathElementAddCurveToPoint:
+    case PathElement::Type::AddCurveToPoint:
         doIntersection = true;
         point = element.points[2];
         break;
-    case PathElementCloseSubpath:
+    case PathElement::Type::CloseSubpath:
         doIntersection = true;
         point = state.startingPoint;
         break;

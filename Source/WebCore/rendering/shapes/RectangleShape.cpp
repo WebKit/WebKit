@@ -90,9 +90,9 @@ LineSegment RectangleShape::getExcludedInterval(LayoutUnit logicalTop, LayoutUni
 
 void RectangleShape::buildDisplayPaths(DisplayPaths& paths) const
 {
-    paths.shape.addRoundedRect(m_bounds, FloatSize(m_radii.width(), m_radii.height()), Path::PreferBezierRoundedRect);
+    paths.shape.addRoundedRect(m_bounds, FloatSize(m_radii.width(), m_radii.height()), Path::RoundedRectStrategy::PreferBezier);
     if (shapeMargin())
-        paths.marginShape.addRoundedRect(shapeMarginBounds(), FloatSize(m_radii.width() + shapeMargin(), m_radii.height() + shapeMargin()), Path::PreferBezierRoundedRect);
+        paths.marginShape.addRoundedRect(shapeMarginBounds(), FloatSize(m_radii.width() + shapeMargin(), m_radii.height() + shapeMargin()), Path::RoundedRectStrategy::PreferBezier);
 }
 
 } // namespace WebCore

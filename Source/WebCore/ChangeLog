@@ -1,3 +1,68 @@
+2019-12-26  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Minor code cleanup around WebCore::Path
+        https://bugs.webkit.org/show_bug.cgi?id=205574
+
+        Reviewed by Anders Carlsson.
+
+        Carry out some minor refactoring in WebCore::Path:
+        - Change PathElementType into an 8-bit-wide enum class, and move it under PathElement's namespace as simply Type.
+        - Change PathElement's `FloatPoint*` that points to an array of 3 FloatPoints into a `FloatPoint[3]`.
+        - Change Path::strokeContains() to take a `StrokeStyleApplier&` instead of a `StrokeStyleApplier*`, since it
+          assumes that the given `StrokeStyleApplier` is nonnull anyways.
+        - Change Path::RoundedRectStrategy into an 8-bit enum class.
+        - Other miscellaneous style fixes.
+
+        No change in behavior.
+
+        * accessibility/mac/WebAccessibilityObjectWrapperBase.mm:
+        (convertPathToScreenSpaceFunction):
+        * html/canvas/CanvasRenderingContext2DBase.cpp:
+        (WebCore::CanvasRenderingContext2DBase::isPointInStrokeInternal):
+        * inspector/InspectorOverlay.cpp:
+        (WebCore::drawShapeHighlight):
+        * platform/graphics/FontCascade.cpp:
+        (WebCore::findPathIntersections):
+        * platform/graphics/Path.cpp:
+        (WebCore::Path::addRoundedRect):
+        (WebCore::operator<<):
+        * platform/graphics/Path.h:
+        (WebCore::Path::encode const):
+        (WebCore::Path::decode):
+        * platform/graphics/PathTraversalState.cpp:
+        (WebCore::PathTraversalState::appendPathElement):
+        (WebCore::PathTraversalState::processPathElement):
+        * platform/graphics/PathTraversalState.h:
+        * platform/graphics/cairo/PathCairo.cpp:
+        (WebCore::Path::strokeContains const):
+        (WebCore::Path::apply const):
+        * platform/graphics/cg/PathCG.cpp:
+        (WebCore::Path::strokeContains const):
+        (WebCore::CGPathApplierToPathApplier):
+        * platform/graphics/win/PathDirect2D.cpp:
+        (WebCore::Path::strokeContains const):
+        * rendering/shapes/BoxShape.cpp:
+        (WebCore::BoxShape::buildDisplayPaths const):
+        * rendering/shapes/RectangleShape.cpp:
+        (WebCore::RectangleShape::buildDisplayPaths const):
+        * rendering/svg/RenderSVGShape.cpp:
+        (WebCore::RenderSVGShape::shapeDependentStrokeContains):
+        * rendering/svg/SVGMarkerData.h:
+        (WebCore::SVGMarkerData::updateMarkerDataForPathElement):
+        * rendering/svg/SVGPathData.cpp:
+        (WebCore::pathFromRectElement):
+        * rendering/svg/SVGSubpathData.h:
+        (WebCore::SVGSubpathData::updateFromPathElement):
+        * svg/SVGPathTraversalStateBuilder.cpp:
+        (WebCore::SVGPathTraversalStateBuilder::moveTo):
+        (WebCore::SVGPathTraversalStateBuilder::lineTo):
+        (WebCore::SVGPathTraversalStateBuilder::curveToCubic):
+        (WebCore::SVGPathTraversalStateBuilder::closePath):
+        * svg/SVGPathUtilities.cpp:
+        (WebCore::buildStringFromPath):
+        * testing/Internals.cpp:
+        (WebCore::Internals::pathStringWithShrinkWrappedRects):
+
 2019-12-26  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] When align the inline content we need to align the line as well

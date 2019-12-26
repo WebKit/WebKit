@@ -4418,19 +4418,19 @@ ExceptionOr<String> Internals::pathStringWithShrinkWrappedRects(const Vector<dou
     SVGPathStringBuilder builder;
     PathUtilities::pathWithShrinkWrappedRects(rects, radius).apply([&builder](const PathElement& element) {
         switch (element.type) {
-        case PathElementMoveToPoint:
+        case PathElement::Type::MoveToPoint:
             builder.moveTo(element.points[0], false, AbsoluteCoordinates);
             return;
-        case PathElementAddLineToPoint:
+        case PathElement::Type::AddLineToPoint:
             builder.lineTo(element.points[0], AbsoluteCoordinates);
             return;
-        case PathElementAddQuadCurveToPoint:
+        case PathElement::Type::AddQuadCurveToPoint:
             builder.curveToQuadratic(element.points[0], element.points[1], AbsoluteCoordinates);
             return;
-        case PathElementAddCurveToPoint:
+        case PathElement::Type::AddCurveToPoint:
             builder.curveToCubic(element.points[0], element.points[1], element.points[2], AbsoluteCoordinates);
             return;
-        case PathElementCloseSubpath:
+        case PathElement::Type::CloseSubpath:
             builder.closePath();
             return;
         }

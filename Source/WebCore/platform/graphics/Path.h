@@ -91,20 +91,20 @@ class PathTraversalState;
 class RoundedRect;
 class StrokeStyleApplier;
 
-enum PathElementType {
-    PathElementMoveToPoint, // The points member will contain 1 value.
-    PathElementAddLineToPoint, // The points member will contain 1 value.
-    PathElementAddQuadCurveToPoint, // The points member will contain 2 values.
-    PathElementAddCurveToPoint, // The points member will contain 3 values.
-    PathElementCloseSubpath // The points member will contain no values.
-};
-
 // The points in the structure are the same as those that would be used with the
 // add... method. For example, a line returns the endpoint, while a cubic returns
 // two tangent points and the endpoint.
 struct PathElement {
-    PathElementType type;
-    FloatPoint* points;
+    enum class Type : uint8_t {
+        MoveToPoint, // The points member will contain 1 value.
+        AddLineToPoint, // The points member will contain 1 value.
+        AddQuadCurveToPoint, // The points member will contain 2 values.
+        AddCurveToPoint, // The points member will contain 3 values.
+        CloseSubpath // The points member will contain no values.
+    };
+
+    FloatPoint points[3];
+    Type type;
 };
 
 using PathApplierFunction = WTF::Function<void(const PathElement&)>;
@@ -126,7 +126,7 @@ public:
     static Path polygonPathFromPoints(const Vector<FloatPoint>&);
 
     bool contains(const FloatPoint&, WindRule = WindRule::NonZero) const;
-    bool strokeContains(StrokeStyleApplier*, const FloatPoint&) const;
+    bool strokeContains(StrokeStyleApplier&, const FloatPoint&) const;
     // fastBoundingRect() should equal or contain boundingRect(); boundingRect()
     // should perfectly bound the points within the path.
     FloatRect boundingRect() const;
@@ -157,13 +157,13 @@ public:
     void addEllipse(FloatPoint, float radiusX, float radiusY, float rotation, float startAngle, float endAngle, bool anticlockwise);
     void addEllipse(const FloatRect&);
 
-    enum RoundedRectStrategy {
-        PreferNativeRoundedRect,
-        PreferBezierRoundedRect
+    enum class RoundedRectStrategy : uint8_t {
+        PreferNative,
+        PreferBezier
     };
 
-    WEBCORE_EXPORT void addRoundedRect(const FloatRect&, const FloatSize& roundingRadii, RoundedRectStrategy = PreferNativeRoundedRect);
-    WEBCORE_EXPORT void addRoundedRect(const FloatRoundedRect&, RoundedRectStrategy = PreferNativeRoundedRect);
+    WEBCORE_EXPORT void addRoundedRect(const FloatRect&, const FloatSize& roundingRadii, RoundedRectStrategy = RoundedRectStrategy::PreferNative);
+    WEBCORE_EXPORT void addRoundedRect(const FloatRoundedRect&, RoundedRectStrategy = RoundedRectStrategy::PreferNative);
     void addRoundedRect(const RoundedRect&);
 
     void addPath(const Path&, const AffineTransform&);
@@ -239,22 +239,22 @@ template<class Encoder> void Path::encode(Encoder& encoder) const
         encoder.encodeEnum(element.type);
 
         switch (element.type) {
-        case PathElementMoveToPoint:
+        case PathElement::Type::MoveToPoint:
             encoder << element.points[0];
             break;
-        case PathElementAddLineToPoint:
+        case PathElement::Type::AddLineToPoint:
             encoder << element.points[0];
             break;
-        case PathElementAddQuadCurveToPoint:
+        case PathElement::Type::AddQuadCurveToPoint:
             encoder << element.points[0];
             encoder << element.points[1];
             break;
-        case PathElementAddCurveToPoint:
+        case PathElement::Type::AddCurveToPoint:
             encoder << element.points[0];
             encoder << element.points[1];
             encoder << element.points[2];
             break;
-        case PathElementCloseSubpath:
+        case PathElement::Type::CloseSubpath:
             break;
         }
     });
@@ -270,26 +270,26 @@ template<class Decoder> Optional<Path> Path::decode(Decoder& decoder)
     path.clear();
 
     for (uint64_t i = 0; i < numPoints; ++i) {
-        PathElementType elementType;
+        PathElement::Type elementType;
         if (!decoder.decodeEnum(elementType))
             return WTF::nullopt;
 
         switch (elementType) {
-        case PathElementMoveToPoint: {
+        case PathElement::Type::MoveToPoint: {
             FloatPoint point;
             if (!decoder.decode(point))
                 return WTF::nullopt;
             path.moveTo(point);
             break;
         }
-        case PathElementAddLineToPoint: {
+        case PathElement::Type::AddLineToPoint: {
             FloatPoint point;
             if (!decoder.decode(point))
                 return WTF::nullopt;
             path.addLineTo(point);
             break;
         }
-        case PathElementAddQuadCurveToPoint: {
+        case PathElement::Type::AddQuadCurveToPoint: {
             FloatPoint controlPoint;
             if (!decoder.decode(controlPoint))
                 return WTF::nullopt;
@@ -301,7 +301,7 @@ template<class Decoder> Optional<Path> Path::decode(Decoder& decoder)
             path.addQuadCurveTo(controlPoint, endPoint);
             break;
         }
-        case PathElementAddCurveToPoint: {
+        case PathElement::Type::AddCurveToPoint: {
             FloatPoint controlPoint1;
             if (!decoder.decode(controlPoint1))
                 return WTF::nullopt;
@@ -317,7 +317,7 @@ template<class Decoder> Optional<Path> Path::decode(Decoder& decoder)
             path.addBezierCurveTo(controlPoint1, controlPoint2, endPoint);
             break;
         }
-        case PathElementCloseSubpath:
+        case PathElement::Type::CloseSubpath:
             path.closeSubpath();
             break;
         }

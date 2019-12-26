@@ -120,10 +120,10 @@ bool RenderSVGShape::shapeDependentStrokeContains(const FloatPoint& point, Point
         AffineTransform nonScalingTransform = nonScalingStrokeTransform();
         Path* usePath = nonScalingStrokePath(m_path.get(), nonScalingTransform);
 
-        return usePath->strokeContains(&applier, nonScalingTransform.mapPoint(point));
+        return usePath->strokeContains(applier, nonScalingTransform.mapPoint(point));
     }
 
-    return m_path->strokeContains(&applier, point);
+    return m_path->strokeContains(applier, point);
 }
 
 bool RenderSVGShape::shapeDependentFillContains(const FloatPoint& point, const WindRule fillRule) const

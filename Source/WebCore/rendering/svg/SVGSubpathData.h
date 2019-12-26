@@ -34,35 +34,35 @@ public:
     static void updateFromPathElement(SVGSubpathData& subpathFinder, const PathElement& element)
     {
         switch (element.type) {
-        case PathElementMoveToPoint:
+        case PathElement::Type::MoveToPoint:
             if (subpathFinder.m_pathIsZeroLength && !subpathFinder.m_haveSeenMoveOnly)
                 subpathFinder.m_zeroLengthSubpathLocations.append(subpathFinder.m_lastPoint);
             subpathFinder.m_lastPoint = subpathFinder.m_movePoint = element.points[0];
             subpathFinder.m_haveSeenMoveOnly = true;
             subpathFinder.m_pathIsZeroLength = true;
             break;
-        case PathElementAddLineToPoint:
+        case PathElement::Type::AddLineToPoint:
             if (subpathFinder.m_lastPoint != element.points[0]) {
                 subpathFinder.m_pathIsZeroLength = false;
                 subpathFinder.m_lastPoint = element.points[0];
             }
             subpathFinder.m_haveSeenMoveOnly = false;
             break;
-        case PathElementAddQuadCurveToPoint:
+        case PathElement::Type::AddQuadCurveToPoint:
             if (subpathFinder.m_lastPoint != element.points[0] || element.points[0] != element.points[1]) {
                 subpathFinder.m_pathIsZeroLength = false;
                 subpathFinder.m_lastPoint = element.points[1];
             }
             subpathFinder.m_haveSeenMoveOnly = false;
             break;
-        case PathElementAddCurveToPoint:
+        case PathElement::Type::AddCurveToPoint:
             if (subpathFinder.m_lastPoint != element.points[0] || element.points[0] != element.points[1] || element.points[1] != element.points[2]) {
                 subpathFinder.m_pathIsZeroLength = false;
                 subpathFinder.m_lastPoint = element.points[2];
             }
             subpathFinder.m_haveSeenMoveOnly = false;
             break;
-        case PathElementCloseSubpath:
+        case PathElement::Type::CloseSubpath:
             if (subpathFinder.m_pathIsZeroLength)
                 subpathFinder.m_zeroLengthSubpathLocations.append(subpathFinder.m_lastPoint);
             subpathFinder.m_haveSeenMoveOnly = true; // This is an implicit move for the next element

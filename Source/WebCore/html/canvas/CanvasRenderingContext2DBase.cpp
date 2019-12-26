@@ -1216,7 +1216,7 @@ bool CanvasRenderingContext2DBase::isPointInStrokeInternal(const Path& path, flo
         return false;
 
     CanvasStrokeStyleApplier applier(this);
-    return path.strokeContains(&applier, transformedPoint);
+    return path.strokeContains(applier, transformedPoint);
 }
 
 void CanvasRenderingContext2DBase::clearRect(float x, float y, float width, float height)

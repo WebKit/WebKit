@@ -367,21 +367,21 @@ static void convertPathToScreenSpaceFunction(PathConversionInfo& conversion, con
     CGMutablePathRef newPath = conversion.path;
     FloatRect rect;
     switch (element.type) {
-    case PathElementMoveToPoint:
+    case PathElement::Type::MoveToPoint:
     {
         rect = FloatRect(element.points[0], FloatSize());
         CGPoint newPoint = [wrapper convertRectToSpace:rect space:AccessibilityConversionSpace::Screen].origin;
         CGPathMoveToPoint(newPath, nil, newPoint.x, newPoint.y);
         break;
     }
-    case PathElementAddLineToPoint:
+    case PathElement::Type::AddLineToPoint:
     {
         rect = FloatRect(element.points[0], FloatSize());
         CGPoint newPoint = [wrapper convertRectToSpace:rect space:AccessibilityConversionSpace::Screen].origin;
         CGPathAddLineToPoint(newPath, nil, newPoint.x, newPoint.y);
         break;
     }
-    case PathElementAddQuadCurveToPoint:
+    case PathElement::Type::AddQuadCurveToPoint:
     {
         rect = FloatRect(element.points[0], FloatSize());
         CGPoint newPoint1 = [wrapper convertRectToSpace:rect space:AccessibilityConversionSpace::Screen].origin;
@@ -391,7 +391,7 @@ static void convertPathToScreenSpaceFunction(PathConversionInfo& conversion, con
         CGPathAddQuadCurveToPoint(newPath, nil, newPoint1.x, newPoint1.y, newPoint2.x, newPoint2.y);
         break;
     }
-    case PathElementAddCurveToPoint:
+    case PathElement::Type::AddCurveToPoint:
     {
         rect = FloatRect(element.points[0], FloatSize());
         CGPoint newPoint1 = [wrapper convertRectToSpace:rect space:AccessibilityConversionSpace::Screen].origin;
@@ -404,7 +404,7 @@ static void convertPathToScreenSpaceFunction(PathConversionInfo& conversion, con
         CGPathAddCurveToPoint(newPath, nil, newPoint1.x, newPoint1.y, newPoint2.x, newPoint2.y, newPoint3.x, newPoint3.y);
         break;
     }
-    case PathElementCloseSubpath:
+    case PathElement::Type::CloseSubpath:
     {
         CGPathCloseSubpath(newPath);
         break;

@@ -185,12 +185,10 @@ bool Path::contains(const FloatPoint &point, WindRule rule) const
     return ret;
 }
 
-bool Path::strokeContains(StrokeStyleApplier* applier, const FloatPoint& point) const
+bool Path::strokeContains(StrokeStyleApplier& applier, const FloatPoint& point) const
 {
     if (isNull())
         return false;
-
-    ASSERT(applier);
 
     CGContextRef context = scratchContext();
 
@@ -198,8 +196,8 @@ bool Path::strokeContains(StrokeStyleApplier* applier, const FloatPoint& point) 
     CGContextBeginPath(context);
     CGContextAddPath(context, platformPath());
 
-    GraphicsContext gc(context);
-    applier->strokeStyle(&gc);
+    GraphicsContext graphicsContext(context);
+    applier.strokeStyle(&graphicsContext);
 
     bool hitSuccess = CGContextPathContainsPoint(context, point, kCGPathStroke);
     CGContextRestoreGState(context);
@@ -429,29 +427,27 @@ FloatPoint Path::currentPoint() const
 static void CGPathApplierToPathApplier(void* info, const CGPathElement* element)
 {
     const PathApplierFunction& function = *(PathApplierFunction*)info;
-    FloatPoint points[3];
-    PathElement pelement;
-    pelement.type = (PathElementType)element->type;
-    pelement.points = points;
+    PathElement pathElement;
+    pathElement.type = (PathElement::Type)element->type;
     CGPoint* cgPoints = element->points;
     switch (element->type) {
     case kCGPathElementMoveToPoint:
     case kCGPathElementAddLineToPoint:
-        points[0] = cgPoints[0];
+        pathElement.points[0] = cgPoints[0];
         break;
     case kCGPathElementAddQuadCurveToPoint:
-        points[0] = cgPoints[0];
-        points[1] = cgPoints[1];
+        pathElement.points[0] = cgPoints[0];
+        pathElement.points[1] = cgPoints[1];
         break;
     case kCGPathElementAddCurveToPoint:
-        points[0] = cgPoints[0];
-        points[1] = cgPoints[1];
-        points[2] = cgPoints[2];
+        pathElement.points[0] = cgPoints[0];
+        pathElement.points[1] = cgPoints[1];
+        pathElement.points[2] = cgPoints[2];
         break;
     case kCGPathElementCloseSubpath:
         break;
     }
-    function(pelement);
+    function(pathElement);
 }
 
 void Path::apply(const PathApplierFunction& function) const

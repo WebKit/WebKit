@@ -58,19 +58,19 @@ String buildStringFromPath(const Path& path)
     if (!path.isNull() && !path.isEmpty()) {
         path.apply([&builder] (const PathElement& element) {
             switch (element.type) {
-            case PathElementMoveToPoint:
+            case PathElement::Type::MoveToPoint:
                 builder.append('M');
                 builder.appendNumber(element.points[0].x());
                 builder.append(' ');
                 builder.appendNumber(element.points[0].y());
                 break;
-            case PathElementAddLineToPoint:
+            case PathElement::Type::AddLineToPoint:
                 builder.append('L');
                 builder.appendNumber(element.points[0].x());
                 builder.append(' ');
                 builder.appendNumber(element.points[0].y());
                 break;
-            case PathElementAddQuadCurveToPoint:
+            case PathElement::Type::AddQuadCurveToPoint:
                 builder.append('Q');
                 builder.appendNumber(element.points[0].x());
                 builder.append(' ');
@@ -80,7 +80,7 @@ String buildStringFromPath(const Path& path)
                 builder.append(' ');
                 builder.appendNumber(element.points[1].y());
                 break;
-            case PathElementAddCurveToPoint:
+            case PathElement::Type::AddCurveToPoint:
                 builder.append('C');
                 builder.appendNumber(element.points[0].x());
                 builder.append(' ');
@@ -94,7 +94,7 @@ String buildStringFromPath(const Path& path)
                 builder.append(' ');
                 builder.appendNumber(element.points[2].y());
                 break;
-            case PathElementCloseSubpath:
+            case PathElement::Type::CloseSubpath:
                 builder.append('Z');
                 break;
             }

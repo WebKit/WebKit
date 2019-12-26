@@ -394,16 +394,15 @@ bool Path::contains(const FloatPoint& point, WindRule rule) const
     return contains;
 }
 
-bool Path::strokeContains(StrokeStyleApplier* applier, const FloatPoint& point) const
+bool Path::strokeContains(StrokeStyleApplier& applier, const FloatPoint& point) const
 {
     if (isNull())
         return false;
 
-    ASSERT(applier);
     cairo_t* cr = platformPath()->context();
     {
-        GraphicsContext gc(GraphicsContextImplCairo::createFactory(cr));
-        applier->strokeStyle(&gc);
+        GraphicsContext graphicsContext(GraphicsContextImplCairo::createFactory(cr));
+        applier.strokeStyle(&graphicsContext);
     }
 
     return cairo_in_stroke(cr, point.x(), point.y());
@@ -417,33 +416,31 @@ void Path::apply(const PathApplierFunction& function) const
     cairo_t* cr = platformPath()->context();
     auto pathCopy = cairo_copy_path(cr);
     cairo_path_data_t* data;
-    PathElement pelement;
-    FloatPoint points[3];
-    pelement.points = points;
+    PathElement pathElement;
 
     for (int i = 0; i < pathCopy->num_data; i += pathCopy->data[i].header.length) {
         data = &pathCopy->data[i];
         switch (data->header.type) {
         case CAIRO_PATH_MOVE_TO:
-            pelement.type = PathElementMoveToPoint;
-            pelement.points[0] = FloatPoint(data[1].point.x,data[1].point.y);
-            function(pelement);
+            pathElement.type = PathElement::Type::MoveToPoint;
+            pathElement.points[0] = FloatPoint(data[1].point.x, data[1].point.y);
+            function(pathElement);
             break;
         case CAIRO_PATH_LINE_TO:
-            pelement.type = PathElementAddLineToPoint;
-            pelement.points[0] = FloatPoint(data[1].point.x,data[1].point.y);
-            function(pelement);
+            pathElement.type = PathElement::Type::AddLineToPoint;
+            pathElement.points[0] = FloatPoint(data[1].point.x, data[1].point.y);
+            function(pathElement);
             break;
         case CAIRO_PATH_CURVE_TO:
-            pelement.type = PathElementAddCurveToPoint;
-            pelement.points[0] = FloatPoint(data[1].point.x,data[1].point.y);
-            pelement.points[1] = FloatPoint(data[2].point.x,data[2].point.y);
-            pelement.points[2] = FloatPoint(data[3].point.x,data[3].point.y);
-            function(pelement);
+            pathElement.type = PathElement::Type::AddCurveToPoint;
+            pathElement.points[0] = FloatPoint(data[1].point.x, data[1].point.y);
+            pathElement.points[1] = FloatPoint(data[2].point.x, data[2].point.y);
+            pathElement.points[2] = FloatPoint(data[3].point.x, data[3].point.y);
+            function(pathElement);
             break;
         case CAIRO_PATH_CLOSE_PATH:
-            pelement.type = PathElementCloseSubpath;
-            function(pelement);
+            pathElement.type = PathElement::Type::CloseSubpath;
+            function(pathElement);
             break;
         }
     }

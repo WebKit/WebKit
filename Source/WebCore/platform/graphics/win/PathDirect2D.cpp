@@ -225,16 +225,14 @@ bool Path::contains(const FloatPoint& point, WindRule rule) const
     return contains;
 }
 
-bool Path::strokeContains(StrokeStyleApplier* applier, const FloatPoint& point) const
+bool Path::strokeContains(StrokeStyleApplier& applier, const FloatPoint& point) const
 {
     if (isNull())
         return false;
 
-    ASSERT(applier);
-
     PlatformContextDirect2D scratchContextD2D(scratchRenderTarget());
     GraphicsContext scratchContext(&scratchContextD2D, GraphicsContext::BitmapRenderingContextType::GPUMemory);
-    applier->strokeStyle(&scratchContext);
+    applier.strokeStyle(&scratchContext);
 
 #if !ASSERT_DISABLED
     unsigned before = refCount(m_path.get());
