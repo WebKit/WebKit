@@ -1,3 +1,13 @@
+2019-12-26  Antti Koivisto  <antti@apple.com>
+
+        Remove display:compact
+        https://bugs.webkit.org/show_bug.cgi?id=205597
+
+        Reviewed by Anders Carlsson.
+
+        * fast/css/display-compact-ignored-expected.txt: Added.
+        * fast/css/display-compact-ignored.html: Added.
+
 2019-12-26  youenn fablet  <youenn@apple.com>
 
         REGRESSION: [ Mojave+ Debug ] fast/mediastream/captureStream/canvas2d-heavy-drawing.html is a flakey failure

@@ -872,7 +872,6 @@ enum class DisplayType : uint8_t {
     Inline,
     Block,
     ListItem,
-    Compact,
     InlineBlock,
     Table,
     InlineTable,

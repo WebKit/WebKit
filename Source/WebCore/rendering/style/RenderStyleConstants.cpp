@@ -416,7 +416,6 @@ TextStream& operator<<(TextStream& ts, DisplayType display)
     case DisplayType::Inline: ts << "inline"; break;
     case DisplayType::Block: ts << "block"; break;
     case DisplayType::ListItem: ts << "list-item"; break;
-    case DisplayType::Compact: ts << "compact"; break;
     case DisplayType::InlineBlock: ts << "inline-block"; break;
     case DisplayType::Table: ts << "table"; break;
     case DisplayType::InlineTable: ts << "inline-table"; break;

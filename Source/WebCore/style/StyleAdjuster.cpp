@@ -115,7 +115,6 @@ static DisplayType equivalentBlockDisplay(const RenderStyle& style, const Docume
         return DisplayType::Grid;
 
     case DisplayType::Inline:
-    case DisplayType::Compact:
     case DisplayType::InlineBlock:
     case DisplayType::TableRowGroup:
     case DisplayType::TableHeaderGroup:
