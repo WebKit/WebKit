@@ -1,3 +1,16 @@
+2019-12-26  youenn fablet  <youenn@apple.com>
+
+        REGRESSION: [ Mojave+ Debug ] fast/mediastream/captureStream/canvas2d-heavy-drawing.html is a flakey failure
+        https://bugs.webkit.org/show_bug.cgi?id=205365
+        <rdar://problem/58026430>
+
+        Reviewed by Eric Carlson.
+
+        * fast/mediastream/captureStream/canvas2d-heavy-drawing.html:
+        Unflake test by comparing the number of frames with the number of printLine calls.
+        They should never diverge too much one from the other.
+        * platform/mac-wk2/TestExpectations:
+
 2019-12-25  Zalan Bujtas  <zalan@apple.com>
 
         Run with offset from the content box's logical left paint its tab stop at wrong position.
