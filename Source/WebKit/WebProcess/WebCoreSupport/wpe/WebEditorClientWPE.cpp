@@ -234,26 +234,4 @@ void WebEditorClient::handleKeyboardEvent(WebCore::KeyboardEvent& event)
         return handleKeyDown(*frame, event, *platformEvent);
 }
 
-void WebEditorClient::handleInputMethodKeydown(WebCore::KeyboardEvent& event)
-{
-    auto* platformEvent = event.underlyingPlatformEvent();
-    if (platformEvent && platformEvent->handledByInputMethod())
-        event.setDefaultHandled();
-}
-
-void WebEditorClient::didDispatchInputMethodKeydown(KeyboardEvent& event)
-{
-    auto* platformEvent = event.underlyingPlatformEvent();
-    ASSERT(event.target());
-    auto* frame = downcast<Node>(event.target())->document().frame();
-    ASSERT(frame);
-
-    if (const auto& underlines = platformEvent->preeditUnderlines()) {
-        auto rangeStart = platformEvent->preeditSelectionRangeStart().valueOr(0);
-        auto rangeLength = platformEvent->preeditSelectionRangeLength().valueOr(0);
-        frame->editor().setComposition(platformEvent->text(), underlines.value(), rangeStart, rangeStart + rangeLength);
-    } else
-        frame->editor().confirmComposition(platformEvent->text());
-}
-
 } // namespace WebKit

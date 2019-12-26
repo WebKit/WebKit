@@ -174,15 +174,6 @@ void WebPage::getCenterForZoomGesture(const IntPoint& centerInViewCoordinates, C
     completionHandler(WTFMove(result));
 }
 
-void WebPage::setInputMethodState(bool enabled)
-{
-    if (m_inputMethodEnabled == enabled)
-        return;
-
-    m_inputMethodEnabled = enabled;
-    send(Messages::WebPageProxy::SetInputMethodState(enabled));
-}
-
 void WebPage::collapseSelectionInFrame(FrameIdentifier frameID)
 {
     WebFrame* frame = WebProcess::singleton().webFrame(frameID);

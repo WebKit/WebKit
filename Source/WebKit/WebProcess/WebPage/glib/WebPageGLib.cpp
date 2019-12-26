@@ -31,6 +31,7 @@
 #include "WebKitUserMessage.h"
 #include "WebKitWebExtension.h"
 #include "WebKitWebPagePrivate.h"
+#include "WebPageProxyMessages.h"
 
 namespace WebKit {
 
@@ -54,6 +55,15 @@ void WebPage::sendMessageToWebExtensionWithReply(UserMessage&& message, Completi
 void WebPage::sendMessageToWebExtension(UserMessage&& message)
 {
     sendMessageToWebExtensionWithReply(WTFMove(message), [](UserMessage&&) { });
+}
+
+void WebPage::setInputMethodState(bool enabled)
+{
+    if (m_inputMethodEnabled == enabled)
+        return;
+
+    m_inputMethodEnabled = enabled;
+    send(Messages::WebPageProxy::SetInputMethodState(enabled));
 }
 
 } // namespace WebKit

@@ -398,6 +398,8 @@ WebProcess/Plugins/Netscape/unix/PluginProxyUnix.cpp
 
 WebProcess/Plugins/Netscape/x11/NetscapePluginX11.cpp @no-unify
 
+WebProcess/WebCoreSupport/glib/WebEditorClientGLib.cpp
+
 WebProcess/WebCoreSupport/gtk/WebContextMenuClientGtk.cpp
 WebProcess/WebCoreSupport/gtk/WebDragClientGtk.cpp
 WebProcess/WebCoreSupport/gtk/WebEditorClientGtk.cpp

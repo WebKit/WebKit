@@ -92,13 +92,4 @@ String WebPage::platformUserAgent(const URL&) const
     return String();
 }
 
-void WebPage::setInputMethodState(bool enabled)
-{
-    if (m_inputMethodEnabled == enabled)
-        return;
-
-    m_inputMethodEnabled = enabled;
-    send(Messages::WebPageProxy::SetInputMethodState(enabled));
-}
-
 } // namespace WebKit

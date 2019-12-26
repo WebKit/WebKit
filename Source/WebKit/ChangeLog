@@ -1,3 +1,24 @@
+2019-12-26  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK][WPE] Remove duplicated code
+        https://bugs.webkit.org/show_bug.cgi?id=205560
+
+        Reviewed by Sergio Villar Senin.
+
+        Remove duplicated code related to IME between GTK and WPE that can be shared.
+
+        * SourcesGTK.txt:
+        * SourcesWPE.txt:
+        * WebProcess/WebCoreSupport/glib/WebEditorClientGLib.cpp: Added.
+        (WebKit::WebEditorClient::handleInputMethodKeydown):
+        (WebKit::WebEditorClient::didDispatchInputMethodKeydown):
+        * WebProcess/WebCoreSupport/gtk/WebEditorClientGtk.cpp:
+        * WebProcess/WebCoreSupport/wpe/WebEditorClientWPE.cpp:
+        * WebProcess/WebPage/glib/WebPageGLib.cpp:
+        (WebKit::WebPage::setInputMethodState):
+        * WebProcess/WebPage/gtk/WebPageGtk.cpp:
+        * WebProcess/WebPage/wpe/WebPageWPE.cpp:
+
 2019-12-24  Eric Carlson  <eric.carlson@apple.com>
 
         [Media in GPU process] Enable media player proxy logging

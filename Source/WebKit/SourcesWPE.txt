@@ -238,6 +238,8 @@ WebProcess/MediaCache/WebMediaKeyStorageManager.cpp
 
 WebProcess/Plugins/Netscape/NetscapePluginNone.cpp @no-unify
 
+WebProcess/WebCoreSupport/glib/WebEditorClientGLib.cpp
+
 WebProcess/WebCoreSupport/soup/WebFrameNetworkingContext.cpp
 
 WebProcess/WebCoreSupport/wpe/WebContextMenuClientWPE.cpp
