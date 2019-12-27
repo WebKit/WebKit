@@ -1,3 +1,19 @@
+2019-12-27  James Darpinian  <jdarpinian@chromium.org>
+
+        ANGLE: Fix WebGL conformance test framebuffer-object-attachment.html
+        https://bugs.webkit.org/show_bug.cgi?id=205514
+
+        Rely on ANGLE to implement DEPTH_STENCIL_ATTACHMENT instead of emulating it.
+
+        Reviewed by Dean Jackson.
+
+        * html/canvas/WebGLFramebuffer.cpp:
+        (WebCore::WebGLFramebuffer::removeAttachmentFromBoundFramebuffer):
+        * html/canvas/WebGLRenderingContextBase.cpp:
+        (WebCore::WebGLRenderingContextBase::setupFlags):
+        (WebCore::WebGLRenderingContextBase::framebufferRenderbuffer):
+        (WebCore::WebGLRenderingContextBase::readPixels):
+
 2019-12-26  Antti Koivisto  <antti@apple.com>
 
         Remove display:compact

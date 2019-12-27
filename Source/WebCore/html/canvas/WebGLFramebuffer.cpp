@@ -124,10 +124,12 @@ namespace {
 
     void WebGLRenderbufferAttachment::unattach(GraphicsContext3D* context, GC3Denum attachment)
     {
+#if !USE(ANGLE)
         if (attachment == GraphicsContext3D::DEPTH_STENCIL_ATTACHMENT) {
             context->framebufferRenderbuffer(GraphicsContext3D::FRAMEBUFFER, GraphicsContext3D::DEPTH_ATTACHMENT, GraphicsContext3D::RENDERBUFFER, 0);
             context->framebufferRenderbuffer(GraphicsContext3D::FRAMEBUFFER, GraphicsContext3D::STENCIL_ATTACHMENT, GraphicsContext3D::RENDERBUFFER, 0);
         } else
+#endif
             context->framebufferRenderbuffer(GraphicsContext3D::FRAMEBUFFER, attachment, GraphicsContext3D::RENDERBUFFER, 0);
     }
 
@@ -222,10 +224,12 @@ namespace {
 
     void WebGLTextureAttachment::unattach(GraphicsContext3D* context, GC3Denum attachment)
     {
+#if !USE(ANGLE)
         if (attachment == GraphicsContext3D::DEPTH_STENCIL_ATTACHMENT) {
             context->framebufferTexture2D(GraphicsContext3D::FRAMEBUFFER, GraphicsContext3D::DEPTH_ATTACHMENT, m_target, 0, m_level);
             context->framebufferTexture2D(GraphicsContext3D::FRAMEBUFFER, GraphicsContext3D::STENCIL_ATTACHMENT, m_target, 0, m_level);
         } else
+#endif
             context->framebufferTexture2D(GraphicsContext3D::FRAMEBUFFER, attachment, m_target, 0, m_level);
     }
 
@@ -335,6 +339,7 @@ void WebGLFramebuffer::removeAttachmentFromBoundFramebuffer(GC3Denum attachment)
         attachmentObject->onDetached(context()->graphicsContext3D());
         m_attachments.remove(attachment);
         drawBuffersIfNecessary(false);
+#if !USE(ANGLE)
         switch (attachment) {
         case GraphicsContext3D::DEPTH_STENCIL_ATTACHMENT:
             attach(GraphicsContext3D::DEPTH_ATTACHMENT, GraphicsContext3D::DEPTH_ATTACHMENT);
@@ -347,6 +352,7 @@ void WebGLFramebuffer::removeAttachmentFromBoundFramebuffer(GC3Denum attachment)
             attach(GraphicsContext3D::DEPTH_STENCIL_ATTACHMENT, GraphicsContext3D::STENCIL_ATTACHMENT);
             break;
         }
+#endif
     }
 }
 

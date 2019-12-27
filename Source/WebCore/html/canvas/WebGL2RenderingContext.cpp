@@ -881,13 +881,13 @@ void WebGL2RenderingContext::clear(GC3Dbitfield mask)
         synthesizeGLError(GraphicsContext3D::INVALID_VALUE, "clear", "invalid mask");
         return;
     }
-    if (m_framebufferBinding && (mask & GraphicsContext3D::COLOR_BUFFER_BIT) && isIntegerFormat(m_framebufferBinding->getColorBufferFormat())) {
-        synthesizeGLError(GraphicsContext3D::INVALID_OPERATION, "clear", "cannot clear an integer buffer");
-        return;
-    }
     const char* reason = "framebuffer incomplete";
     if (m_framebufferBinding && !m_framebufferBinding->onAccess(graphicsContext3D(), &reason)) {
         synthesizeGLError(GraphicsContext3D::INVALID_FRAMEBUFFER_OPERATION, "clear", reason);
+        return;
+    }
+    if (m_framebufferBinding && (mask & GraphicsContext3D::COLOR_BUFFER_BIT) && isIntegerFormat(m_framebufferBinding->getColorBufferFormat())) {
+        synthesizeGLError(GraphicsContext3D::INVALID_OPERATION, "clear", "cannot clear an integer buffer");
         return;
     }
     if (!clearIfComposited(mask))

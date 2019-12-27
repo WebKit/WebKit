@@ -827,10 +827,10 @@ void WebGLRenderingContextBase::setupFlags()
     m_isGLES2Compliant = m_context->isGLES2Compliant();
     if (m_isGLES2Compliant) {
         m_isGLES2NPOTStrict = !m_context->getExtensions().isEnabled("GL_OES_texture_npot");
-        m_isDepthStencilSupported = m_context->getExtensions().isEnabled("GL_OES_packed_depth_stencil");
+        m_isDepthStencilSupported = m_context->getExtensions().isEnabled("GL_OES_packed_depth_stencil") || m_context->getExtensions().isEnabled("GL_ANGLE_depth_texture");
     } else {
         m_isGLES2NPOTStrict = !m_context->getExtensions().isEnabled("GL_ARB_texture_non_power_of_two");
-        m_isDepthStencilSupported = m_context->getExtensions().isEnabled("GL_EXT_packed_depth_stencil");
+        m_isDepthStencilSupported = m_context->getExtensions().isEnabled("GL_EXT_packed_depth_stencil") || m_context->getExtensions().isEnabled("GL_ANGLE_depth_texture");
     }
     m_isRobustnessEXTSupported = m_context->getExtensions().isEnabled("GL_EXT_robustness");
 }
@@ -2426,6 +2426,10 @@ void WebGLRenderingContextBase::framebufferRenderbuffer(GC3Denum target, GC3Denu
         synthesizeGLError(GraphicsContext3D::INVALID_OPERATION, "framebufferRenderbuffer", "no buffer or buffer not from this context");
         return;
     }
+    if (buffer && !buffer->hasEverBeenBound()) {
+        synthesizeGLError(GraphicsContext3D::INVALID_OPERATION, "framebufferRenderbuffer", "buffer has never been bound");
+        return;
+    }
 
     auto targetFramebuffer = (target == GraphicsContext3D::READ_FRAMEBUFFER) ? m_readFramebufferBinding : m_framebufferBinding;
 
@@ -2437,14 +2441,13 @@ void WebGLRenderingContextBase::framebufferRenderbuffer(GC3Denum target, GC3Denu
         return;
     }
     Platform3DObject bufferObject = objectOrZero(buffer);
-    switch (attachment) {
-    case GraphicsContext3D::DEPTH_STENCIL_ATTACHMENT:
+#if !USE(ANGLE)
+    if (attachment == GraphicsContext3D::DEPTH_STENCIL_ATTACHMENT) {
         m_context->framebufferRenderbuffer(target, GraphicsContext3D::DEPTH_ATTACHMENT, renderbuffertarget, bufferObject);
         m_context->framebufferRenderbuffer(target, GraphicsContext3D::STENCIL_ATTACHMENT, renderbuffertarget, bufferObject);
-        break;
-    default:
+    } else
+#endif
         m_context->framebufferRenderbuffer(target, attachment, renderbuffertarget, bufferObject);
-    }
     targetFramebuffer->setAttachmentForBoundFramebuffer(attachment, buffer);
     applyStencilTest();
 }
@@ -3475,7 +3478,7 @@ void WebGLRenderingContextBase::readPixels(GC3Dint x, GC3Dint y, GC3Dsizei width
     }
 
     if (!internalFormat) {
-        synthesizeGLError(GraphicsContext3D::INVALID_ENUM, "readPixels", "Incorrect internal format");
+        synthesizeGLError(GraphicsContext3D::INVALID_OPERATION, "readPixels", "Missing attachment");
         return;
     }
 
