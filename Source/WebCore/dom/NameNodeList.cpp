@@ -40,7 +40,7 @@ NameNodeList::NameNodeList(ContainerNode& rootNode, const AtomString& name)
 
 NameNodeList::~NameNodeList()
 {
-    ownerNode().nodeLists()->removeCacheWithAtomicName(this, m_name);
+    ownerNode().nodeLists()->removeCacheWithAtomName(*this, m_name);
 } 
 
 } // namespace WebCore

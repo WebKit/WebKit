@@ -32,13 +32,12 @@
 #include "WebImage.h"
 #include <WebCore/BitmapImage.h>
 #include <WebCore/Document.h>
-#include <WebCore/Element.h>
 #include <WebCore/Frame.h>
 #include <WebCore/FrameLoader.h>
 #include <WebCore/FrameView.h>
 #include <WebCore/GraphicsContext.h>
+#include <WebCore/HTMLMediaElement.h>
 #include <wtf/URL.h>
-#include <wtf/text/WTFString.h>
 
 namespace WebKit {
 using namespace WebCore;
@@ -120,14 +119,9 @@ BundleHitTestResultMediaType InjectedBundleHitTestResult::mediaType() const
 #if !ENABLE(VIDEO)
     return BundleHitTestResultMediaTypeNone;
 #else
-    Node* node = m_hitTestResult.innerNonSharedNode();
-    if (!is<Element>(*node))
+    if (!is<HTMLMediaElement>(m_hitTestResult.innerNonSharedNode()))
         return BundleHitTestResultMediaTypeNone;
-    
-    if (!downcast<Element>(*node).isMediaElement())
-        return BundleHitTestResultMediaTypeNone;
-    
-    return m_hitTestResult.mediaIsVideo() ? BundleHitTestResultMediaTypeVideo : BundleHitTestResultMediaTypeAudio;    
+    return m_hitTestResult.mediaIsVideo() ? BundleHitTestResultMediaTypeVideo : BundleHitTestResultMediaTypeAudio;
 #endif
 }
 

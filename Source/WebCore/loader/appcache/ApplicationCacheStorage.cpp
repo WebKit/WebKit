@@ -1059,8 +1059,8 @@ static inline void parseHeader(const CharacterType* header, unsigned headerLengt
     ASSERT(find(header, headerLength, ':') != notFound);
     unsigned colonPosition = find(header, headerLength, ':');
 
-    // Save memory by putting the header names into atomic strings so each is stored only once,
-    // even though the setHTTPHeaderField function does not require an atomic string.
+    // Save memory by putting the header names into atom strings so each is stored only once,
+    // even though the setHTTPHeaderField function does not require an atom string.
     AtomString headerName { header, colonPosition };
     String headerValue { header + colonPosition + 1, headerLength - colonPosition - 1 };
 

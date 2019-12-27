@@ -52,7 +52,7 @@ namespace WebCore {
 unsigned StyleSheetContents::estimatedSizeInBytes() const
 {
     // Note that this does not take into account size of the strings hanging from various objects. 
-    // The assumption is that nearly all of of them are atomic and would exist anyway.
+    // The assumption is that nearly all of of them are atoms that would exist anyway.
     unsigned size = sizeof(*this);
 
     // FIXME: This ignores the children of media and region rules.

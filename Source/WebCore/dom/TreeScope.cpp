@@ -112,8 +112,8 @@ Element* TreeScope::getElementById(const String& elementId) const
     if (!m_elementsById)
         return nullptr;
 
-    if (RefPtr<AtomStringImpl> atomicElementId = AtomStringImpl::lookUp(elementId.impl()))
-        return m_elementsById->getElementById(*atomicElementId, *this);
+    if (auto atomElementId = AtomStringImpl::lookUp(elementId.impl()))
+        return m_elementsById->getElementById(*atomElementId, *this);
 
     return nullptr;
 }
@@ -123,8 +123,8 @@ Element* TreeScope::getElementById(StringView elementId) const
     if (!m_elementsById)
         return nullptr;
 
-    if (auto atomicElementId = elementId.toExistingAtomString())
-        return m_elementsById->getElementById(*atomicElementId, *this);
+    if (auto atomElementId = elementId.toExistingAtomString())
+        return m_elementsById->getElementById(*atomElementId, *this);
 
     return nullptr;
 }

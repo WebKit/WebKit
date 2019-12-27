@@ -274,30 +274,6 @@ String convertEnumerationToString(HTMLMediaElement::AutoplayEventPlaybackState e
     return values[static_cast<size_t>(enumerationValue)];
 }
 
-typedef HashMap<Document*, HashSet<HTMLMediaElement*>> DocumentElementSetMap;
-static DocumentElementSetMap& documentToElementSetMap()
-{
-    static NeverDestroyed<DocumentElementSetMap> map;
-    return map;
-}
-
-static void addElementToDocumentMap(HTMLMediaElement& element, Document& document)
-{
-    DocumentElementSetMap& map = documentToElementSetMap();
-    HashSet<HTMLMediaElement*> set = map.take(&document);
-    set.add(&element);
-    map.add(&document, set);
-}
-
-static void removeElementFromDocumentMap(HTMLMediaElement& element, Document& document)
-{
-    DocumentElementSetMap& map = documentToElementSetMap();
-    HashSet<HTMLMediaElement*> set = map.take(&document);
-    set.remove(&element);
-    if (!set.isEmpty())
-        map.add(&document, set);
-}
-
 #if ENABLE(VIDEO_TRACK)
 
 class TrackDisplayUpdateScope {
@@ -673,15 +649,12 @@ RefPtr<HTMLMediaElement> HTMLMediaElement::bestMediaElementForShowingPlaybackCon
 
 void HTMLMediaElement::registerWithDocument(Document& document)
 {
+    document.registerMediaElement(*this);
+
     m_mediaSession->registerWithDocument(document);
 
     if (m_isWaitingUntilMediaCanStart)
         document.addMediaCanStartListener(*this);
-
-#if !PLATFORM(IOS_FAMILY)
-    document.registerForMediaVolumeCallbacks(*this);
-    document.registerForPrivateBrowsingStateChangedCallbacks(*this);
-#endif
 
     document.registerForVisibilityStateChangedCallbacks(*this);
 
@@ -690,39 +663,21 @@ void HTMLMediaElement::registerWithDocument(Document& document)
         document.registerForCaptionPreferencesChangedCallbacks(*this);
 #endif
 
-#if ENABLE(MEDIA_CONTROLS_SCRIPT)
-    if (m_mediaControlsDependOnPageScaleFactor)
-        document.registerForPageScaleFactorChangedCallbacks(*this);
-    document.registerForUserInterfaceLayoutDirectionChangedCallbacks(*this);
-#endif
-
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
     document.registerForDocumentSuspensionCallbacks(*this);
 #endif
 
-    document.registerForAllowsMediaDocumentInlinePlaybackChangedCallbacks(*this);
-
     document.addAudioProducer(*this);
-    addElementToDocumentMap(*this, document);
-
-#if ENABLE(MEDIA_STREAM)
-    document.registerForMediaStreamStateChangeCallbacks(*this);
-#endif
-
-    document.addApplicationStateChangeListener(*this);
 }
 
 void HTMLMediaElement::unregisterWithDocument(Document& document)
 {
+    document.unregisterMediaElement(*this);
+
     m_mediaSession->unregisterWithDocument(document);
 
     if (m_isWaitingUntilMediaCanStart)
         document.removeMediaCanStartListener(*this);
-
-#if !PLATFORM(IOS_FAMILY)
-    document.unregisterForMediaVolumeCallbacks(*this);
-    document.unregisterForPrivateBrowsingStateChangedCallbacks(*this);
-#endif
 
     document.unregisterForVisibilityStateChangedCallbacks(*this);
 
@@ -731,26 +686,11 @@ void HTMLMediaElement::unregisterWithDocument(Document& document)
         document.unregisterForCaptionPreferencesChangedCallbacks(*this);
 #endif
 
-#if ENABLE(MEDIA_CONTROLS_SCRIPT)
-    if (m_mediaControlsDependOnPageScaleFactor)
-        document.unregisterForPageScaleFactorChangedCallbacks(*this);
-    document.unregisterForUserInterfaceLayoutDirectionChangedCallbacks(*this);
-#endif
-
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
     document.unregisterForDocumentSuspensionCallbacks(*this);
 #endif
 
-    document.unregisterForAllowsMediaDocumentInlinePlaybackChangedCallbacks(*this);
-
     document.removeAudioProducer(*this);
-    removeElementFromDocumentMap(*this, document);
-
-#if ENABLE(MEDIA_STREAM)
-    document.unregisterForMediaStreamStateChangeCallbacks(*this);
-#endif
-
-    document.removeApplicationStateChangeListener(*this);
 }
 
 void HTMLMediaElement::didMoveToNewDocument(Document& oldDocument, Document& newDocument)
@@ -769,6 +709,7 @@ void HTMLMediaElement::didMoveToNewDocument(Document& oldDocument, Document& new
 }
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
+
 void HTMLMediaElement::prepareForDocumentSuspension()
 {
     m_mediaSession->unregisterWithDocument(document());
@@ -779,6 +720,7 @@ void HTMLMediaElement::resumeFromDocumentSuspension()
     m_mediaSession->registerWithDocument(document());
     updateShouldAutoplay();
 }
+
 #endif
 
 bool HTMLMediaElement::supportsFocus() const
@@ -5796,8 +5738,11 @@ bool HTMLMediaElement::hasPendingActivity() const
 
 void HTMLMediaElement::mediaVolumeDidChange()
 {
+    // FIXME: We should try to reconcile this so there's no difference for PLATFORM(IOS_FAMILY).
+#if !PLATFORM(IOS_FAMILY)
     INFO_LOG(LOGIDENTIFIER);
     updateVolume();
+#endif
 }
 
 void HTMLMediaElement::visibilityStateChanged()
@@ -6457,10 +6402,15 @@ void HTMLMediaElement::resetMediaEngines()
 
 void HTMLMediaElement::privateBrowsingStateDidChange(PAL::SessionID sessionID)
 {
+    // FIXME: We should try to reconcile this so there's no difference for PLATFORM(IOS_FAMILY).
+#if PLATFORM(IOS_FAMILY)
+    UNUSED_PARAM(sessionID);
+#else
     if (!m_player)
         return;
 
     m_player->setPrivateBrowsingMode(sessionID.isEphemeral());
+#endif
 }
 
 MediaControls* HTMLMediaElement::mediaControls() const
@@ -6729,6 +6679,7 @@ void HTMLMediaElement::createMediaPlayer()
 }
 
 #if ENABLE(WEB_AUDIO)
+
 void HTMLMediaElement::setAudioSourceNode(MediaElementAudioSourceNode* sourceNode)
 {
     m_audioSourceNode = sourceNode;
@@ -6742,8 +6693,9 @@ AudioSourceProvider* HTMLMediaElement::audioSourceProvider()
     if (m_player)
         return m_player->audioSourceProvider();
 
-    return 0;
+    return nullptr;
 }
+
 #endif
 
 const String& HTMLMediaElement::mediaGroup() const
@@ -6769,22 +6721,19 @@ void HTMLMediaElement::setMediaGroup(const String& group)
 
     // 4. If there is another media element whose Document is the same as m's Document (even if one or both
     // of these elements are not actually in the Document),
-    HashSet<HTMLMediaElement*> elements = documentToElementSetMap().get(&document());
-    for (auto& element : elements) {
-        if (element == this)
-            continue;
-
+    // FIXME: It does not seem OK that this algorithm iterates the media elements in a random order.
+    document().forEachMediaElement([&] (HTMLMediaElement& element) {
         // and which also has a mediagroup attribute, and whose mediagroup attribute has the same value as
         // the new value of m's mediagroup attribute,
-        if (element->mediaGroup() == group) {
+        if (&element != this && !controller() && element.mediaGroup() == group) {
             //  then let controller be that media element's current media controller.
-            setController(element->controller());
-            return;
+            setController(element.controller());
         }
-    }
+    });
 
     // Otherwise, let controller be a newly created MediaController.
-    setController(MediaController::create(document()));
+    if (!controller())
+        setController(MediaController::create(document()));
 }
 
 MediaController* HTMLMediaElement::controller() const
@@ -7139,6 +7088,7 @@ Vector<String> HTMLMediaElement::mediaPlayerPreferredAudioCharacteristics() cons
 }
 
 #if PLATFORM(IOS_FAMILY)
+
 String HTMLMediaElement::mediaPlayerNetworkInterfaceName() const
 {
     return DeprecatedGlobalSettings::networkInterfaceName();
@@ -7150,6 +7100,7 @@ bool HTMLMediaElement::mediaPlayerGetRawCookies(const URL& url, Vector<Cookie>& 
         return page->cookieJar().getRawCookies(document(), url, cookies);
     return false;
 }
+
 #endif
 
 void HTMLMediaElement::mediaPlayerEngineFailedToLoad() const
@@ -7421,15 +7372,7 @@ void HTMLMediaElement::setMediaControlsDependOnPageScaleFactor(bool dependsOnPag
         return;
     }
 
-    if (m_mediaControlsDependOnPageScaleFactor == dependsOnPageScale)
-        return;
-
     m_mediaControlsDependOnPageScaleFactor = dependsOnPageScale;
-
-    if (m_mediaControlsDependOnPageScaleFactor)
-        document().registerForPageScaleFactorChangedCallbacks(*this);
-    else
-        document().unregisterForPageScaleFactorChangedCallbacks(*this);
 }
 
 void HTMLMediaElement::updateMediaControlsAfterPresentationModeChange()
@@ -7472,7 +7415,8 @@ void HTMLMediaElement::updateMediaControlsAfterPresentationModeChange()
 
 void HTMLMediaElement::pageScaleFactorChanged()
 {
-    updatePageScaleFactorJSProperty();
+    if (m_mediaControlsDependOnPageScaleFactor)
+        updatePageScaleFactorJSProperty();
 }
 
 void HTMLMediaElement::userInterfaceLayoutDirectionChanged()
@@ -7940,6 +7884,7 @@ bool HTMLMediaElement::canSaveMediaData() const
 }
 
 #if ENABLE(MEDIA_SESSION)
+
 double HTMLMediaElement::playerVolume() const
 {
     return m_player ? m_player->volume() : 0;

@@ -143,9 +143,9 @@ HRESULT AccessibleBase::get_attribute(_In_ BSTR key, _Out_ VARIANT* value)
     if (!value)
         return E_POINTER;
 
-    AtomString keyAtomic(key, ::SysStringLen(key));
+    AtomString keyAtom(key, ::SysStringLen(key));
 
-    accessibilityAttributeValue(keyAtomic, value);
+    accessibilityAttributeValue(keyAtom, value);
 
     return S_OK;
 }

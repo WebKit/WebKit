@@ -118,40 +118,40 @@ static void addToTextEncodingNameMap(const char* alias, const char* name)
     ASSERT(strlen(alias) <= maxEncodingNameLength);
     if (isUndesiredAlias(alias))
         return;
-    const char* atomicName = textEncodingNameMap->get(name);
-    ASSERT(strcmp(alias, name) == 0 || atomicName);
-    if (!atomicName)
-        atomicName = name;
+    const char* atomName = textEncodingNameMap->get(name);
+    ASSERT(!strcmp(alias, name) || atomName);
+    if (!atomName)
+        atomName = name;
 
-    ASSERT_WITH_MESSAGE(!textEncodingNameMap->get(alias), "Duplicate text encoding name %s for %s (previously registered as %s)", alias, atomicName, textEncodingNameMap->get(alias));
+    ASSERT_WITH_MESSAGE(!textEncodingNameMap->get(alias), "Duplicate text encoding name %s for %s (previously registered as %s)", alias, atomName, textEncodingNameMap->get(alias));
 
-    textEncodingNameMap->add(alias, atomicName);
+    textEncodingNameMap->add(alias, atomName);
 }
 
 static void addToTextCodecMap(const char* name, NewTextCodecFunction&& function)
 {
-    const char* atomicName = textEncodingNameMap->get(name);
-    ASSERT(atomicName);
-    textCodecMap->add(atomicName, WTFMove(function));
+    const char* atomName = textEncodingNameMap->get(name);
+    ASSERT(atomName);
+    textCodecMap->add(atomName, WTFMove(function));
 }
 
 static void pruneBlacklistedCodecs()
 {
     for (auto& nameFromBlacklist : textEncodingNameBlacklist) {
-        auto* atomicName = textEncodingNameMap->get(nameFromBlacklist);
-        if (!atomicName)
+        auto* atomName = textEncodingNameMap->get(nameFromBlacklist);
+        if (!atomName)
             continue;
 
         Vector<const char*> names;
         for (auto& entry : *textEncodingNameMap) {
-            if (entry.value == atomicName)
+            if (entry.value == atomName)
                 names.append(entry.key);
         }
 
         for (auto* name : names)
             textEncodingNameMap->remove(name);
 
-        textCodecMap->remove(atomicName);
+        textCodecMap->remove(atomName);
     }
 }
 
@@ -178,10 +178,10 @@ static void buildBaseTextCodecMaps(const std::lock_guard<Lock>&)
 
 static void addEncodingName(HashSet<const char*>* set, const char* name)
 {
-    // We must not use atomicCanonicalTextEncodingName() because this function is called in it.
-    const char* atomicName = textEncodingNameMap->get(name);
-    if (atomicName)
-        set->add(atomicName);
+    // We must not use atomCanonicalTextEncodingName() because this function is called in it.
+    const char* atomName = textEncodingNameMap->get(name);
+    if (atomName)
+        set->add(atomName);
 }
 
 static void buildQuirksSets()
@@ -251,7 +251,7 @@ std::unique_ptr<TextCodec> newTextCodec(const TextEncoding& encoding)
     return result->value();
 }
 
-const char* atomicCanonicalTextEncodingName(const char* name)
+const char* atomCanonicalTextEncodingName(const char* name)
 {
     if (!name || !name[0])
         return nullptr;
@@ -261,8 +261,8 @@ const char* atomicCanonicalTextEncodingName(const char* name)
     if (!textEncodingNameMap)
         buildBaseTextCodecMaps(lock);
 
-    if (const char* atomicName = textEncodingNameMap->get(name))
-        return atomicName;
+    if (const char* atomName = textEncodingNameMap->get(name))
+        return atomName;
     if (didExtendTextCodecMaps)
         return nullptr;
 
@@ -271,7 +271,7 @@ const char* atomicCanonicalTextEncodingName(const char* name)
     return textEncodingNameMap->get(name);
 }
 
-template<typename CharacterType> static const char* atomicCanonicalTextEncodingName(const CharacterType* characters, size_t length)
+template<typename CharacterType> static const char* atomCanonicalTextEncodingName(const CharacterType* characters, size_t length)
 {
     char buffer[maxEncodingNameLength + 1];
     size_t j = 0;
@@ -281,18 +281,18 @@ template<typename CharacterType> static const char* atomicCanonicalTextEncodingN
         buffer[j++] = characters[i];
     }
     buffer[j] = 0;
-    return atomicCanonicalTextEncodingName(buffer);
+    return atomCanonicalTextEncodingName(buffer);
 }
 
-const char* atomicCanonicalTextEncodingName(const String& alias)
+const char* atomCanonicalTextEncodingName(const String& alias)
 {
     if (alias.isEmpty() || !alias.isAllASCII())
         return nullptr;
 
     if (alias.is8Bit())
-        return atomicCanonicalTextEncodingName(alias.characters8(), alias.length());
+        return atomCanonicalTextEncodingName(alias.characters8(), alias.length());
 
-    return atomicCanonicalTextEncodingName(alias.characters16(), alias.length());
+    return atomCanonicalTextEncodingName(alias.characters16(), alias.length());
 }
 
 bool noExtendedTextEncodingNameUsed()

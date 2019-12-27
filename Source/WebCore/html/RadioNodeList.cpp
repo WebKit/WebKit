@@ -49,7 +49,7 @@ RadioNodeList::RadioNodeList(ContainerNode& rootNode, const AtomString& name)
 
 RadioNodeList::~RadioNodeList()
 {
-    ownerNode().nodeLists()->removeCacheWithAtomicName(this, m_name);
+    ownerNode().nodeLists()->removeCacheWithAtomName(*this, m_name);
 }
 
 static inline RefPtr<HTMLInputElement> toRadioButtonInputElement(HTMLElement& element)

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2019 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
  *
  * This library is free software; you can redistribute it and/or
@@ -83,33 +83,27 @@ namespace IDBClient {
 class IDBConnectionToServer;
 }
 
+class ActivityStateChangeObserver;
 class AlternativeTextClient;
 class ApplicationCacheStorage;
 class AuthenticatorCoordinator;
 class BackForwardController;
-class BackForwardClient;
 class CacheStorageProvider;
 class Chrome;
-class ChromeClient;
 class Color;
-class ContextMenuClient;
 class ContextMenuController;
 class CookieJar;
-class DOMRect;
 class DOMRectList;
 class DatabaseProvider;
 class DiagnosticLoggingClient;
 class DragCaretController;
-class DragClient;
 class DragController;
 class EditorClient;
 class Element;
 class FocusController;
 class Frame;
-class FrameLoaderClient;
-class HistoryItem;
 class HTMLMediaElement;
-class UserInputBridge;
+class HistoryItem;
 class InspectorClient;
 class InspectorController;
 class LibWebRTCProvider;
@@ -132,49 +126,38 @@ class PluginViewBase;
 class PointerCaptureController;
 class PointerLockController;
 class ProgressTracker;
-class ProgressTrackerClient;
 class Range;
 class RenderObject;
-class RenderTheme;
 class ResourceUsageOverlay;
-class VisibleSelection;
 class ScrollLatchingState;
-class ScrollableArea;
 class ScrollingCoordinator;
 class ServicesOverlayController;
 class Settings;
 class SocketProvider;
+class SpeechSynthesisClient;
 class StorageNamespace;
 class StorageNamespaceProvider;
 class UserContentProvider;
+class UserInputBridge;
 class ValidationMessageClient;
-class ActivityStateChangeObserver;
+class VisibleSelection;
 class VisitedLinkStore;
 class WebGLStateTracker;
-class SpeechSynthesisClient;
 class WheelEventDeltaFilter;
 
-typedef uint64_t SharedStringHash;
-
-enum FindDirection {
-    FindDirectionForward,
-    FindDirectionBackward
-};
-
-enum class EventThrottlingBehavior {
-    Responsive,
-    Unresponsive
-};
-
-enum class CompositingPolicy : uint8_t {
-    Normal,
-    Conservative, // Used in low memory situations.
-};
+using SharedStringHash = uint64_t;
 
 enum class CanWrap : bool;
 enum class DidWrap : bool;
 enum class RouteSharingPolicy : uint8_t;
 enum class ShouldTreatAsContinuingLoad : bool;
+
+enum class EventThrottlingBehavior : bool { Responsive, Unresponsive };
+
+enum class CompositingPolicy : bool {
+    Normal,
+    Conservative, // Used in low memory situations.
+};
 
 class Page : public Supplementable<Page>, public CanMakeWeakPtr<Page> {
     WTF_MAKE_NONCOPYABLE(Page);
@@ -309,13 +292,14 @@ public:
     WEBCORE_EXPORT void dispatchBeforePrintEvent();
     WEBCORE_EXPORT void dispatchAfterPrintEvent();
 
-    // find all the Ranges for the matching text.
+    // Find all the Ranges for the matching text.
     // Upon return, indexForSelection will be one of the following:
     // 0 if there is no user selection
     // the index of the first range after the user selection
     // NoMatchAfterUserSelection if there is no matching text after the user selection.
     enum { NoMatchAfterUserSelection = -1 };
     WEBCORE_EXPORT void findStringMatchingRanges(const String&, FindOptions, int maxCount, Vector<RefPtr<Range>>&, int& indexForSelection);
+
 #if PLATFORM(COCOA)
     void platformInitialize();
     WEBCORE_EXPORT void addSchedulePair(Ref<SchedulePair>&&);
@@ -379,10 +363,10 @@ public:
     bool enclosedInScrollableAncestorView() const { return m_enclosedInScrollableAncestorView; }
     void setEnclosedInScrollableAncestorView(bool f) { m_enclosedInScrollableAncestorView = f; }
 #endif
-    
+
     bool useSystemAppearance() const { return m_useSystemAppearance; }
     WEBCORE_EXPORT void setUseSystemAppearance(bool);
-    
+
     WEBCORE_EXPORT bool useDarkAppearance() const;
     bool useElevatedUserInterfaceLevel() const { return m_useElevatedUserInterfaceLevel; }
     WEBCORE_EXPORT void effectiveAppearanceDidChange(bool useDarkAppearance, bool useElevatedUserInterfaceLevel);
@@ -433,11 +417,11 @@ public:
     WheelEventDeltaFilter* wheelEventDeltaFilter() { return m_recentWheelEventDeltaFilter.get(); }
     PageOverlayController& pageOverlayController() { return *m_pageOverlayController; }
 
-#if PLATFORM(MAC)
-#if ENABLE(SERVICE_CONTROLS) || ENABLE(TELEPHONE_NUMBER_DETECTION)
+#if PLATFORM(MAC) && (ENABLE(SERVICE_CONTROLS) || ENABLE(TELEPHONE_NUMBER_DETECTION))
     ServicesOverlayController& servicesOverlayController() { return *m_servicesOverlayController; }
-#endif // ENABLE(SERVICE_CONTROLS) || ENABLE(TELEPHONE_NUMBER_DETECTION)
+#endif
 
+#if PLATFORM(MAC)
     ScrollLatchingState* latchingState();
     void pushNewLatchingState();
     void popLatchingState();
@@ -552,8 +536,6 @@ public:
 
     WEBCORE_EXPORT void suspendActiveDOMObjectsAndAnimations();
     WEBCORE_EXPORT void resumeActiveDOMObjectsAndAnimations();
-    void suspendDeviceMotionAndOrientationUpdates();
-    void resumeDeviceMotionAndOrientationUpdates();
 
 #ifndef NDEBUG
     void setIsPainting(bool painting) { m_isPainting = painting; }
@@ -728,6 +710,9 @@ public:
     DeviceOrientationUpdateProvider* deviceOrientationUpdateProvider() const { return m_deviceOrientationUpdateProvider.get(); }
 #endif
 
+    void forEachDocument(const WTF::Function<void(Document&)>&) const;
+    void forEachMediaElement(const WTF::Function<void(HTMLMediaElement&)>&);
+
 private:
     struct Navigation {
         RegistrableDomain domain;
@@ -741,11 +726,7 @@ private:
     void setIsVisibleInternal(bool);
     void setIsVisuallyIdleInternal(bool);
 
-#if ASSERT_DISABLED
-    void checkSubframeCountConsistency() const { }
-#else
     void checkSubframeCountConsistency() const;
-#endif
 
     enum ShouldHighlightMatches { DoNotHighlightMatches, HighlightMatches };
     enum ShouldMarkMatches { DoNotMarkMatches, MarkMatches };
@@ -761,9 +742,6 @@ private:
     Vector<Ref<PluginViewBase>> pluginViews();
 
     void handleLowModePowerChange(bool);
-
-    void forEachDocument(const WTF::Function<void(Document&)>&);
-    Vector<Ref<Document>> collectDocuments();
 
     enum class TimerThrottlingState { Disabled, Enabled, EnabledIncreasing };
     void hiddenPageDOMTimerThrottlingStateChanged();
@@ -978,9 +956,9 @@ private:
     std::unique_ptr<PerformanceLogging> m_performanceLogging;
 #if PLATFORM(MAC)
     Vector<ScrollLatchingState> m_latchingState;
-#if ENABLE(SERVICE_CONTROLS) || ENABLE(TELEPHONE_NUMBER_DETECTION)
-    std::unique_ptr<ServicesOverlayController> m_servicesOverlayController;
 #endif
+#if PLATFORM(MAC) && (ENABLE(SERVICE_CONTROLS) || ENABLE(TELEPHONE_NUMBER_DETECTION))
+    std::unique_ptr<ServicesOverlayController> m_servicesOverlayController;
 #endif
 
     std::unique_ptr<WheelEventDeltaFilter> m_recentWheelEventDeltaFilter;
@@ -1016,5 +994,13 @@ inline PageGroup& Page::group()
         initGroup();
     return *m_group;
 }
+
+#if ASSERT_DISABLED
+
+inline void Page::checkSubframeCountConsistency() const
+{
+}
+
+#endif
 
 } // namespace WebCore

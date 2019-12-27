@@ -750,7 +750,6 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     page/ActivityStateChangeObserver.h
     page/AdjustViewSizeOrNot.h
     page/AlternativeTextClient.h
-    page/ApplicationStateChangeListener.h
     page/AutoplayEvent.h
     page/Base64Utilities.h
     page/CacheStorageProvider.h

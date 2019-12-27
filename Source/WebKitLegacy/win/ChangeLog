@@ -1,3 +1,13 @@
+2019-12-23  Darin Adler  <darin@apple.com>
+
+        Refactor to simplify broadcasting to all media elements
+        https://bugs.webkit.org/show_bug.cgi?id=205567
+
+        Reviewed by Eric Carlson.
+
+        * AccessibleBase.cpp:
+        (AccessibleBase::get_attribute): Updated for "atomic" -> "atom".
+
 2019-12-21  Brian Burg  <bburg@apple.com>
 
         Web Inspector: add InspectedTargetTypes diagnostic event and related hooks

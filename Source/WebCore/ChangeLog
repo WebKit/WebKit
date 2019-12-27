@@ -1,3 +1,230 @@
+2019-12-23  Darin Adler  <darin@apple.com>
+
+        Refactor to simplify broadcasting to all media elements
+        https://bugs.webkit.org/show_bug.cgi?id=205567
+
+        Reviewed by Eric Carlson.
+
+        Over time, we have accumulated many different sets of all the media elements.
+        With the goal of being a bit abstract and not building too much behavior into
+        the Document object, we ended up with unnecessary complexity, and many sets
+        of all the HTMLMediaElement objects. This is a first cut at reducing that complexity.
+        At the same time, the refactoring makes all the iteration use a safe algorithm that
+        builds a vector of Ref<HTMLMediaElement>, safe even if the work done for each
+        media element calls out to arbitrary DOM operations.
+
+        Separately, this patch also includes some name changes that still say "atomic"
+        instead of "atom" left over from our renaming of AtomicString to AtomString.
+
+        * Headers.cmake: Removed ApplicationStateChangeListener.h.
+        * WebCore.xcodeproj/project.pbxproj: Ditto.
+
+        * css/StyleSheetContents.cpp:
+        (WebCore::StyleSheetContents::estimatedSizeInBytes const): Reworded comment to
+        say "atom".
+
+        * dom/ContainerNode.cpp:
+        (WebCore::ContainerNode::getElementsByName): Updated for "atomic" -> "atom".
+        (WebCore::ContainerNode::radioNodeList): Ditto.
+
+        * dom/Document.cpp:
+        (WebCore::Document::visibilityStateChanged): Moved the code from
+        the notifyMediaCaptureOfVisibilityChanged in here. No need for a separate
+        function for the two lines of code.
+        (WebCore::Document::registerMediaElement): Added. Replaces the multiple registrations
+        that each media element would do.
+        (WebCore::Document::unregisterMediaElement): Ditto.
+        (WebCore::Document::forEachMediaElement): Added. Safely iterates the media elements
+        and calls a function on each of them.
+        (WebCore::Document::registerForAllowsMediaDocumentInlinePlaybackChangedCallbacks): Deleted.
+        (WebCore::Document::unregisterForAllowsMediaDocumentInlinePlaybackChangedCallbacks): Deleted.
+        (WebCore::Document::allowsMediaDocumentInlinePlaybackChanged): Deleted.
+        (WebCore::Document::mediaVolumeDidChange): Deleted.
+        (WebCore::Document::registerForMediaVolumeCallbacks): Deleted.
+        (WebCore::Document::unregisterForMediaVolumeCallbacks): Deleted.
+        (WebCore::Document::privateBrowsingStateDidChange): Use forEachMediaElement to call
+        privateBrowsingStateDidChange on each media element rather than keeping a separate registry.
+        (WebCore::Document::registerForPrivateBrowsingStateChangedCallbacks): Deleted.
+        (WebCore::Document::unregisterForPrivateBrowsingStateChangedCallbacks): Deleted.
+        (WebCore::Document::registerForCaptionPreferencesChangedCallbacks): Updated the type
+        to be HTMLMediaElement rather than just Element.
+        (WebCore::Document::unregisterForCaptionPreferencesChangedCallbacks): Ditto.
+        (WebCore::Document::registerForPageScaleFactorChangedCallbacks): Deleted.
+        (WebCore::Document::unregisterForPageScaleFactorChangedCallbacks): Deleted.
+        (WebCore::Document::pageScaleFactorChangedAndStable): Deleted.
+        (WebCore::Document::registerForUserInterfaceLayoutDirectionChangedCallbacks): Deleted.
+        (WebCore::Document::unregisterForUserInterfaceLayoutDirectionChangedCallbacks): Deleted.
+        (WebCore::Document::userInterfaceLayoutDirectionChanged): Deleted.
+        (WebCore::Document::notifyMediaCaptureOfVisibilityChanged): Deleted.
+        (WebCore::Document::registerForMediaStreamStateChangeCallbacks): Deleted.
+        (WebCore::Document::unregisterForMediaStreamStateChangeCallbacks): Deleted.
+        (WebCore::Document::mediaStreamCaptureStateChanged): Use forEachMediaElement to call
+        mediaStreamCaptureStarted on each media element rather than keeping a separate registry.
+        (WebCore::Document::addApplicationStateChangeListener): Deleted.
+        (WebCore::Document::removeApplicationStateChangeListener): Deleted.
+        (WebCore::Document::forEachApplicationStateChangeListener): Deleted.
+
+        * dom/Document.h: Clean up forward declarations a bit. Updated for above changes,
+        removing many function and data members.
+
+        * dom/Element.cpp:
+        (WebCore::Element::spellcheckAttributeState const): Deleted.
+        (WebCore::Element::isSpellCheckingEnabled const): Refactored to merge in the logic
+        from the spellcheckAttributeState function. The combined function is both a bit easier
+        to understand and smaller than the two functions were.
+
+        * dom/Element.h: Removed some unneeded includes. Removed SpellcheckAttributeState.
+        Made fastAttributeLookupAllowed private. Removed mediaVolumeDidChange,
+        privateBrowsingStateDidChange, captionPreferencesChanged, and spellcheckAttributeState.
+
+        * dom/FullscreenManager.cpp: Removed unneeded includes.
+        (WebCore::FullscreenManager::willEnterFullscreen): Use is<HTMLMediaElement> instead of
+        calling isMediaElement directly.
+
+        * dom/NameNodeList.cpp:
+        (WebCore::NameNodeList::~NameNodeList): Updated for "atomic" -> "atom".
+        * dom/Node.cpp:
+        (WebCore::NodeListsNodeData::invalidateCaches): Ditto.
+        (WebCore::NodeListsNodeData::invalidateCachesForAttribute): Ditto.
+
+        * dom/NodeRareData.h: Removed unneeded includes. Updated for "atomic" -> "atom".
+        Made a few coding style tweaks.
+
+        * dom/TreeScope.cpp:
+        (WebCore::TreeScope::getElementById const): Updated for "atomic" -> "atom".
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::documentToElementSetMap): Deleted.
+        (WebCore::addElementToDocumentMap): Deleted.
+        (WebCore::removeElementFromDocumentMap): Deleted.
+        (WebCore::HTMLMediaElement::registerWithDocument): Added call to registerMediaElement,
+        removed eight now-obsolete registrations.
+        (WebCore::HTMLMediaElement::unregisterWithDocument): Ditto.
+        (WebCore::HTMLMediaElement::mediaVolumeDidChange): Added an #if !PLATFORM(IOS_FAMILY)
+        to preserve the current behavior, since this was not registered for PLATFORM(IOS_FAMILY)
+        before. This should be revisited because it's not clear this platform difference is needed.
+        (WebCore::HTMLMediaElement::privateBrowsingStateDidChange): Ditto.
+        (WebCore::HTMLMediaElement::setMediaGroup): Change to use Document::forEachMediaElement
+        so we don't need to keep our own global set of media elements for each document. Required
+        a little bit of code structure change. Added a FIXME because the decision about which
+        media element is selected depends on hash table order as it always has; seems inappropriate.
+        (WebCore::HTMLMediaElement::setMediaControlsDependOnPageScaleFactor): Removed the code
+        to register/unregister.
+        (WebCore::HTMLMediaElement::pageScaleFactorChanged): Only do the work if it's needed;
+        this replicates the old behavior which was accomplished by registering/unregistering.
+
+        * html/HTMLMediaElement.h: Removed the overrides for various virtual member functions.
+        Instead these are now public functions. Also removed ApplicationStateChangeListener.
+
+        * html/LabelableElement.cpp:
+        (WebCore::LabelableElement::labels): Updated for "atomic" -> "atom".
+        * html/LabelsNodeList.cpp:
+        (WebCore::LabelsNodeList::~LabelsNodeList): Ditto.
+        * html/RadioNodeList.cpp:
+        (WebCore::RadioNodeList::~RadioNodeList): Ditto.
+        * html/parser/HTMLDocumentParser.cpp:
+        (WebCore::HTMLDocumentParser::constructTreeFromHTMLToken): Ditto.
+        * loader/appcache/ApplicationCacheStorage.cpp:
+        (WebCore::parseHeader): Ditto.
+
+        * page/ApplicationStateChangeListener.h: Removed.
+
+        * page/Page.cpp:
+        (WebCore::Page::renderTreeSize const): Use forEachDocument.
+        (WebCore::Page::setNeedsRecalcStyleInAllFrames): Ditto.
+        (WebCore::Page::unmarkAllTextMatches): Ditto.
+        (WebCore::Page::editableElementsInRect const): Ditto.
+        (WebCore::Page::setMediaVolume): Tweaked range check so it will reject
+        NaN values. Use forEachMediaElement to call mediaVolumeDidChange,
+        eliminating the need for Document::mediaVolumeDidChange.
+        (WebCore::Page::setPageScaleFactor): Refactored to eliminate large blocks
+        of repeated code. Use forEachMediaElement to call pageScaleFactorChanged,
+        eliminating the need for Document::pageScaleFactorChangedAndStable.
+        (WebCore::Page::setUserInterfaceLayoutDirection): Use forEachMediaElement
+        to call userInterfaceLayoutDirectionChanged, eliminating the need for
+        Document::userInterfaceLayoutDirectionChanged.
+        (WebCore::Page::updateMediaElementRateChangeRestrictions): Use
+        forEachMediaElement to call updateRateChangeRestrictionas. The old code
+        would call this on all media elements in the current web process, which
+        means the functions would be called many times for the same media element.
+        (WebCore::Page::updateRendering): Use forEachDocument consistently for
+        all the document iteration. Before it was used for half the function and not
+        used for the other half; no obvious reason for the differece.
+        (WebCore::Page::suspendScriptedAnimations): Use forEachDocument.
+        (WebCore::Page::resumeScriptedAnimations): Ditto.
+        (WebCore::updateScriptedAnimationsThrottlingReason): Ditto.
+        (WebCore::Page::userStyleSheetLocationChanged): Ditto.
+        (WebCore::Page::invalidateStylesForAllLinks): Ditto.
+        (WebCore::Page::invalidateStylesForLink): Ditto.
+        (WebCore::Page::invalidateInjectedStyleSheetCacheInAllFrames): Ditto.
+        (WebCore::Page::setTimerThrottlingState): Ditto.
+        (WebCore::Page::dnsPrefetchingStateChanged): Ditto.
+        (WebCore::Page::storageBlockingStateChanged): Ditto.
+        (WebCore::Page::updateIsPlayingMedia): Ditto.
+        (WebCore::Page::setMuted): Ditto.
+        (WebCore::Page::stopMediaCapture): Ditto.
+        (WebCore::Page::stopAllMediaPlayback): Ditto.
+        (WebCore::Page::suspendAllMediaPlayback): Ditto.
+        (WebCore::Page::resumeAllMediaPlayback): Ditto.
+        (WebCore::Page::suspendAllMediaBuffering): Ditto.
+        (WebCore::Page::resumeAllMediaBuffering): Ditto.
+        (WebCore::setSVGAnimationsState): Deleted.
+        (WebCore::Page::setIsVisibleInternal): Use forEachDocument to call
+        suspend/resumeDeviceMotionAndOrientationUpdates, obviating the need for
+        Page::suspend/resumeDeviceMotionAndOrientationUpdates. Use
+        forEachDocument to call pause/unpauseAnimations, obviating the need for
+        WebCore::setSVGAnimationsState. Use forEachDocument to call
+        visibilityStateChanged, removing the need to write out a loop that
+        gathers the documents into a vector.
+        (WebCore::Page::suspendDeviceMotionAndOrientationUpdates): Deleted.
+        (WebCore::Page::resumeDeviceMotionAndOrientationUpdates): Deleted.
+        (WebCore::Page::captionPreferencesChanged): Use forEachDocument.
+        (WebCore::Page::setSessionID): Ditto.
+        (WebCore::Page::setPlaybackTarget): Ditto.
+        (WebCore::Page::playbackTargetAvailabilityDidChange): Ditto.
+        (WebCore::Page::setShouldPlayToPlaybackTarget): Ditto.
+        (WebCore::Page::playbackTargetPickerWasDismissed): Ditto.
+        (WebCore::Page::setAllowsMediaDocumentInlinePlayback): Use
+        forEachMediaElement to call allowsMediaDocumentInlinePlaybackChanged,
+        obviating the need for Document::allowsMediaDocumentInlinePlaybackChanged.
+        (WebCore::Page::setUnobscuredSafeAreaInsets): Use forEachDocument.
+        (WebCore::Page::setUseSystemAppearance): Ditto.
+        (WebCore::Page::setFullscreenInsets): Ditto.
+        (WebCore::Page::setFullscreenAutoHideDuration): Ditto.
+        (WebCore::Page::setFullscreenControlsHidden): Ditto.
+        (WebCore::Page::forEachDocument): Merged the collectDocuments function
+        in since it's only used here.
+        (WebCore::Page::collectDocuments): Deleted.
+        (WebCore::Page::forEachMediaElement): Added.
+        (WebCore::Page::applicationWillResignActive): Use forEachMediaElement,
+        eliminating the need for forEachApplicationStateChangeListener.
+        (WebCore::Page::applicationDidBecomeActive): Ditto.
+        (WebCore::Page::recomputeTextAutoSizingInAllFrames): Use forEachDocument.
+
+        * page/Page.h: Removed unneeded forward declarations. Removed unused
+        FindDirection enum. Tweaked formatting. Use bool instead of uint8_t as
+        underlying type for enum class with only two values. Updated for changes above.
+
+        * platform/text/TextEncoding.cpp:
+        (WebCore::TextEncoding::TextEncoding): Updated for "atomic" -> "atom".
+        (WebCore::TextEncoding::domName const): Ditto.
+        (WebCore::TextEncoding::usesVisualOrdering const): Ditto.
+        * platform/text/TextEncodingRegistry.cpp:
+        (WebCore::addToTextEncodingNameMap): Ditto.
+        (WebCore::addToTextCodecMap): Ditto.
+        (WebCore::pruneBlacklistedCodecs): Ditto.
+        (WebCore::addEncodingName): Ditto.
+        (WebCore::atomCanonicalTextEncodingName): Ditto.
+        * platform/text/TextEncodingRegistry.h: Ditto.
+
+        * xml/XPathFunctions.cpp:
+        (WebCore::XPath::atomicSubstring): Deleted.
+        (WebCore::XPath::toStringView): Added. Later could make a StringBuilder member
+        function instead.
+        (WebCore::XPath::FunId::evaluate const): Use toStringView and StringView::substring
+        instead of "atomicSubstring", since getElementById can be called on a StringView
+        and there's no need to allocate/deallocate an AtomString just to check if it exists.
+
 2019-12-27  Antti Koivisto  <antti@apple.com>
 
         [LFC][Integration] Ensure layout boxes have expected display types

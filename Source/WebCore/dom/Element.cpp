@@ -4,7 +4,7 @@
  *           (C) 2001 Peter Kelly (pmk@post.com)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
  *           (C) 2007 David Smith (catfish.man@gmail.com)
- * Copyright (C) 2004-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2019 Apple Inc. All rights reserved.
  *           (C) 2007 Eric Seidel (eric@webkit.org)
  *
  * This library is free software; you can redistribute it and/or
@@ -75,6 +75,7 @@
 #include "InspectorInstrumentation.h"
 #include "JSLazyEventListener.h"
 #include "KeyboardEvent.h"
+#include "KeyframeAnimationOptions.h"
 #include "KeyframeEffect.h"
 #include "MutationObserverInterestGroup.h"
 #include "MutationRecord.h"
@@ -305,12 +306,14 @@ static bool isForceEvent(const PlatformMouseEvent& platformEvent)
 }
 
 #if ENABLE(POINTER_EVENTS)
+
 static bool isCompatibilityMouseEvent(const MouseEvent& mouseEvent)
 {
     // https://www.w3.org/TR/pointerevents/#compatibility-mapping-with-mouse-events
     const auto& type = mouseEvent.type();
     return type != eventNames().clickEvent && type != eventNames().mouseoverEvent && type != eventNames().mouseoutEvent && type != eventNames().mouseenterEvent && type != eventNames().mouseleaveEvent;
 }
+
 #endif
 
 enum class ShouldIgnoreMouseEvent : bool { No, Yes };
@@ -1887,6 +1890,7 @@ URL Element::absoluteLinkURL() const
 }
 
 #if ENABLE(TOUCH_EVENTS)
+
 bool Element::allowsDoubleTapGesture() const
 {
 #if ENABLE(POINTER_EVENTS)
@@ -1897,6 +1901,7 @@ bool Element::allowsDoubleTapGesture() const
     Element* parent = parentElement();
     return !parent || parent->allowsDoubleTapGesture();
 }
+
 #endif
 
 Style::Resolver& Element::styleResolver()
@@ -2631,6 +2636,7 @@ void Element::finishParsingChildren()
 }
 
 #if ENABLE(TREE_DEBUGGING)
+
 void Element::formatForDebugger(char* buffer, unsigned length) const
 {
     StringBuilder result;
@@ -2656,6 +2662,7 @@ void Element::formatForDebugger(char* buffer, unsigned length) const
 
     strncpy(buffer, result.toString().utf8().data(), length - 1);
 }
+
 #endif
 
 const Vector<RefPtr<Attr>>& Element::attrNodeList()
@@ -2991,12 +2998,12 @@ void Element::focus(bool restorePreviousSelection, FocusDirection direction)
     }
 
     SelectionRevealMode revealMode = SelectionRevealMode::Reveal;
+
 #if PLATFORM(IOS_FAMILY)
     // Focusing a form element triggers animation in UIKit to scroll to the right position.
     // Calling updateFocusAppearance() would generate an unnecessary call to ScrollView::setScrollPosition(),
     // which would jump us around during this animation. See <rdar://problem/6699741>.
-    bool isFormControl = is<HTMLFormControlElement>(newTarget);
-    if (isFormControl)
+    if (is<HTMLFormControlElement>(newTarget))
         revealMode = SelectionRevealMode::RevealUpToMainFrame;
 #endif
 
@@ -3599,6 +3606,7 @@ bool Element::childShouldCreateRenderer(const Node& child) const
 }
 
 #if ENABLE(FULLSCREEN_API)
+
 static Element* parentCrossingFrameBoundaries(const Element* element)
 {
     ASSERT(element);
@@ -3629,9 +3637,11 @@ void Element::setContainsFullScreenElementOnAncestorsCrossingFrameBoundaries(boo
     while ((element = parentCrossingFrameBoundaries(element)))
         element->setContainsFullScreenElement(flag);
 }
+
 #endif
 
 #if ENABLE(POINTER_EVENTS)
+
 ExceptionOr<void> Element::setPointerCapture(int32_t pointerId)
 {
     if (document().page())
@@ -3652,17 +3662,21 @@ bool Element::hasPointerCapture(int32_t pointerId)
         return document().page()->pointerCaptureController().hasPointerCapture(this, pointerId);
     return false;
 }
+
 #endif
 
 #if ENABLE(POINTER_LOCK)
+
 void Element::requestPointerLock()
 {
     if (document().page())
         document().page()->pointerLockController().requestPointerLock(this);
 }
+
 #endif
 
 #if ENABLE(INTERSECTION_OBSERVER)
+
 void Element::disconnectFromIntersectionObservers()
 {
     auto* observerData = intersectionObserverData();
@@ -3690,6 +3704,7 @@ IntersectionObserverData* Element::intersectionObserverData()
 {
     return hasRareData() ? elementRareData()->intersectionObserverData() : nullptr;
 }
+
 #endif
 
 KeyframeEffectStack& Element::ensureKeyframeEffectStack()
@@ -3725,6 +3740,7 @@ bool Element::applyKeyframeEffects(RenderStyle& targetStyle)
 }
 
 #if ENABLE(RESIZE_OBSERVER)
+
 void Element::disconnectFromResizeObservers()
 {
     auto* observerData = resizeObserverData();
@@ -3748,33 +3764,20 @@ ResizeObserverData* Element::resizeObserverData()
 {
     return hasRareData() ? elementRareData()->resizeObserverData() : nullptr;
 }
-#endif
 
-SpellcheckAttributeState Element::spellcheckAttributeState() const
-{
-    const AtomString& value = attributeWithoutSynchronization(HTMLNames::spellcheckAttr);
-    if (value.isNull())
-        return SpellcheckAttributeDefault;
-    if (value.isEmpty() || equalLettersIgnoringASCIICase(value, "true"))
-        return SpellcheckAttributeTrue;
-    if (equalLettersIgnoringASCIICase(value, "false"))
-        return SpellcheckAttributeFalse;
-    return SpellcheckAttributeDefault;
-}
+#endif
 
 bool Element::isSpellCheckingEnabled() const
 {
-    for (const Element* element = this; element; element = element->parentOrShadowHostElement()) {
-        switch (element->spellcheckAttributeState()) {
-        case SpellcheckAttributeTrue:
+    for (auto* ancestor = this; ancestor; ancestor = ancestor->parentOrShadowHostElement()) {
+        auto& value = ancestor->attributeWithoutSynchronization(HTMLNames::spellcheckAttr);
+        if (value.isNull())
+            continue;
+        if (value.isEmpty() || equalLettersIgnoringASCIICase(value, "true"))
             return true;
-        case SpellcheckAttributeFalse:
+        if (equalLettersIgnoringASCIICase(value, "false"))
             return false;
-        case SpellcheckAttributeDefault:
-            break;
-        }
     }
-
     return true;
 }
 
@@ -4401,6 +4404,7 @@ ElementIdentifier Element::createElementIdentifier()
 }
 
 #if ENABLE(CSS_TYPED_OM)
+
 StylePropertyMap* Element::attributeStyleMap()
 {
     if (!hasRareData())
@@ -4412,6 +4416,7 @@ void Element::setAttributeStyleMap(Ref<StylePropertyMap>&& map)
 {
     ensureElementRareData().setAttributeStyleMap(WTFMove(map));
 }
+
 #endif
 
 } // namespace WebCore

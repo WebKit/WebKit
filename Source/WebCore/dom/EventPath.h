@@ -29,6 +29,8 @@
 
 namespace WebCore {
 
+class Touch;
+
 class EventPath {
 public:
     EventPath(Node& origin, Event&);

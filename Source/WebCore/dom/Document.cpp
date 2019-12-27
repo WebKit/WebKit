@@ -29,7 +29,6 @@
 #include "Document.h"
 
 #include "AXObjectCache.h"
-#include "ApplicationStateChangeListener.h"
 #include "Attr.h"
 #include "BeforeUnloadEvent.h"
 #include "CDATASection.h"
@@ -1726,7 +1725,10 @@ void Document::visibilityStateChanged()
     for (auto* client : m_visibilityStateCallbackClients)
         client->visibilityStateChanged();
 
-    notifyMediaCaptureOfVisibilityChanged();
+#if ENABLE(MEDIA_STREAM)
+    if (auto* page = this->page())
+        RealtimeMediaSourceCenter::singleton().setCapturePageState(hidden(), page->isMediaCaptureMuted());
+#endif
 }
 
 VisibilityState Document::visibilityState() const
@@ -1747,20 +1749,23 @@ bool Document::hidden() const
 
 #if ENABLE(VIDEO)
 
-void Document::registerForAllowsMediaDocumentInlinePlaybackChangedCallbacks(HTMLMediaElement& element)
+void Document::registerMediaElement(HTMLMediaElement& element)
 {
-    m_allowsMediaDocumentInlinePlaybackElements.add(&element);
+    m_mediaElements.add(&element);
 }
 
-void Document::unregisterForAllowsMediaDocumentInlinePlaybackChangedCallbacks(HTMLMediaElement& element)
+void Document::unregisterMediaElement(HTMLMediaElement& element)
 {
-    m_allowsMediaDocumentInlinePlaybackElements.remove(&element);
+    m_mediaElements.remove(&element);
 }
 
-void Document::allowsMediaDocumentInlinePlaybackChanged()
+void Document::forEachMediaElement(const Function<void(HTMLMediaElement&)>& function)
 {
-    for (auto* element : m_allowsMediaDocumentInlinePlaybackElements)
-        element->allowsMediaDocumentInlinePlaybackChanged();
+    Vector<Ref<HTMLMediaElement>> elements;
+    for (auto* element : m_mediaElements)
+        elements.append(*element);
+    for (auto& element : elements)
+        function(element);
 }
 
 void Document::stopAllMediaPlayback()
@@ -1792,6 +1797,7 @@ void Document::resumeAllMediaBuffering()
     if (auto* platformMediaSessionManager = PlatformMediaSessionManager::sharedManagerIfExists())
         platformMediaSessionManager->resumeAllMediaBufferingForDocument(*this);
 }
+
 #endif
 
 String Document::nodeName() const
@@ -3706,7 +3712,7 @@ void Document::processColorScheme(const String& colorSchemeString)
     bool allowsTransformations = true;
     bool autoEncountered = false;
 
-    processColorSchemeString(colorSchemeString, [&](StringView key) {
+    processColorSchemeString(colorSchemeString, [&] (StringView key) {
         if (equalLettersIgnoringASCIICase(key, "auto")) {
             colorScheme = { };
             allowsTransformations = true;
@@ -5360,22 +5366,6 @@ void Document::unregisterForDocumentSuspensionCallbacks(Element& element)
     m_documentSuspensionCallbackElements.remove(&element);
 }
 
-void Document::mediaVolumeDidChange() 
-{
-    for (auto* element : m_mediaVolumeCallbackElements)
-        element->mediaVolumeDidChange();
-}
-
-void Document::registerForMediaVolumeCallbacks(Element& element)
-{
-    m_mediaVolumeCallbackElements.add(&element);
-}
-
-void Document::unregisterForMediaVolumeCallbacks(Element& element)
-{
-    m_mediaVolumeCallbackElements.remove(&element);
-}
-
 bool Document::audioPlaybackRequiresUserGesture() const
 {
     if (DocumentLoader* loader = this->loader()) {
@@ -5422,23 +5412,16 @@ void Document::privateBrowsingStateDidChange(PAL::SessionID sessionID)
     if (m_logger)
         m_logger->setEnabled(this, sessionID.isAlwaysOnLoggingAllowed());
 
-    for (auto* element : m_privateBrowsingStateChangedElements)
-        element->privateBrowsingStateDidChange(sessionID);
-}
-
-void Document::registerForPrivateBrowsingStateChangedCallbacks(Element& element)
-{
-    m_privateBrowsingStateChangedElements.add(&element);
-}
-
-void Document::unregisterForPrivateBrowsingStateChangedCallbacks(Element& element)
-{
-    m_privateBrowsingStateChangedElements.remove(&element);
+#if ENABLE(VIDEO)
+    forEachMediaElement([sessionID] (HTMLMediaElement& element) {
+        element.privateBrowsingStateDidChange(sessionID);
+    });
+#endif
 }
 
 #if ENABLE(VIDEO_TRACK)
 
-void Document::registerForCaptionPreferencesChangedCallbacks(Element& element)
+void Document::registerForCaptionPreferencesChangedCallbacks(HTMLMediaElement& element)
 {
     if (page())
         page()->group().captionPreferences().setInterestedInCaptionPreferenceChanges();
@@ -5446,7 +5429,7 @@ void Document::registerForCaptionPreferencesChangedCallbacks(Element& element)
     m_captionPreferencesChangedElements.add(&element);
 }
 
-void Document::unregisterForCaptionPreferencesChangedCallbacks(Element& element)
+void Document::unregisterForCaptionPreferencesChangedCallbacks(HTMLMediaElement& element)
 {
     m_captionPreferencesChangedElements.remove(&element);
 }
@@ -5455,42 +5438,6 @@ void Document::captionPreferencesChanged()
 {
     for (auto* element : m_captionPreferencesChangedElements)
         element->captionPreferencesChanged();
-}
-
-#endif
-
-#if ENABLE(MEDIA_CONTROLS_SCRIPT)
-
-void Document::registerForPageScaleFactorChangedCallbacks(HTMLMediaElement& element)
-{
-    m_pageScaleFactorChangedElements.add(&element);
-}
-
-void Document::unregisterForPageScaleFactorChangedCallbacks(HTMLMediaElement& element)
-{
-    m_pageScaleFactorChangedElements.remove(&element);
-}
-
-void Document::pageScaleFactorChangedAndStable()
-{
-    for (HTMLMediaElement* mediaElement : m_pageScaleFactorChangedElements)
-        mediaElement->pageScaleFactorChanged();
-}
-
-void Document::registerForUserInterfaceLayoutDirectionChangedCallbacks(HTMLMediaElement& element)
-{
-    m_userInterfaceLayoutDirectionChangedElements.add(&element);
-}
-
-void Document::unregisterForUserInterfaceLayoutDirectionChangedCallbacks(HTMLMediaElement& element)
-{
-    m_userInterfaceLayoutDirectionChangedElements.remove(&element);
-}
-
-void Document::userInterfaceLayoutDirectionChanged()
-{
-    for (auto* mediaElement : m_userInterfaceLayoutDirectionChangedElements)
-        mediaElement->userInterfaceLayoutDirectionChanged();
 }
 
 #endif
@@ -7356,6 +7303,7 @@ void Document::playbackTargetPickerWasDismissed(uint64_t clientId)
 
     it->value->playbackTargetPickerWasDismissed();
 }
+
 #endif // ENABLE(WIRELESS_PLAYBACK_TARGET)
 
 #if ENABLE(MEDIA_SESSION)
@@ -7386,6 +7334,7 @@ bool Document::shouldEnforceHTTP09Sandbox() const
 }
 
 #if USE(QUICK_LOOK)
+
 bool Document::shouldEnforceQuickLookSandbox() const
 {
     if (m_isSynthesized || !m_frame)
@@ -7415,6 +7364,7 @@ void Document::applyQuickLookSandbox()
 
     setReferrerPolicy(ReferrerPolicy::NoReferrer);
 }
+
 #endif
 
 bool Document::shouldEnforceContentDispositionAttachmentSandbox() const
@@ -7461,6 +7411,7 @@ void Document::scheduleTimedRenderingUpdate()
 }
 
 #if ENABLE(INTERSECTION_OBSERVER)
+
 void Document::addIntersectionObserver(IntersectionObserver& observer)
 {
     ASSERT(m_intersectionObservers.find(&observer) == notFound);
@@ -7690,9 +7641,11 @@ void Document::scheduleInitialIntersectionObservationUpdate()
     else if (!m_intersectionObserversInitialUpdateTimer.isActive())
         m_intersectionObserversInitialUpdateTimer.startOneShot(intersectionObserversInitialUpdateDelay);
 }
+
 #endif
 
 #if ENABLE(RESIZE_OBSERVER)
+
 void Document::addResizeObserver(ResizeObserver& observer)
 {
     if (!m_resizeObservers.contains(&observer))
@@ -7772,6 +7725,7 @@ void Document::updateResizeObservations(Page& page)
         scheduleTimedRenderingUpdate();
     }
 }
+
 #endif
 
 const AtomString& Document::dir() const
@@ -7814,30 +7768,11 @@ void Document::orientationChanged(int orientation)
     m_orientationNotifier.orientationChanged(orientation);
 }
 
-void Document::notifyMediaCaptureOfVisibilityChanged()
-{
 #if ENABLE(MEDIA_STREAM)
-    if (!page())
-        return;
 
-    RealtimeMediaSourceCenter::singleton().setCapturePageState(hidden(), page()->isMediaCaptureMuted());
-#endif
-}
-
-#if ENABLE(MEDIA_STREAM)
 void Document::stopMediaCapture()
 {
     MediaStreamTrack::endCapture(*this);
-}
-
-void Document::registerForMediaStreamStateChangeCallbacks(HTMLMediaElement& element)
-{
-    m_mediaStreamStateChangeElements.add(&element);
-}
-
-void Document::unregisterForMediaStreamStateChangeCallbacks(HTMLMediaElement& element)
-{
-    m_mediaStreamStateChangeElements.remove(&element);
 }
 
 void Document::mediaStreamCaptureStateChanged()
@@ -7845,8 +7780,9 @@ void Document::mediaStreamCaptureStateChanged()
     if (!MediaProducer::isCapturing(m_mediaState))
         return;
 
-    for (auto* mediaElement : m_mediaStreamStateChangeElements)
-        mediaElement->mediaStreamCaptureStarted();
+    forEachMediaElement([] (HTMLMediaElement& element) {
+        element.mediaStreamCaptureStarted();
+    });
 }
 
 void Document::setDeviceIDHashSalt(const String& salt)
@@ -7856,22 +7792,6 @@ void Document::setDeviceIDHashSalt(const String& salt)
 }
 
 #endif
-
-void Document::addApplicationStateChangeListener(ApplicationStateChangeListener& listener)
-{
-    m_applicationStateChangeListeners.add(&listener);
-}
-
-void Document::removeApplicationStateChangeListener(ApplicationStateChangeListener& listener)
-{
-    m_applicationStateChangeListeners.remove(&listener);
-}
-
-void Document::forEachApplicationStateChangeListener(const Function<void(ApplicationStateChangeListener&)>& functor)
-{
-    for (auto* listener : m_applicationStateChangeListeners)
-        functor(*listener);
-}
 
 const AtomString& Document::bgColor() const
 {

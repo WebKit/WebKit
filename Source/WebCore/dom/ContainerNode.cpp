@@ -891,7 +891,7 @@ Ref<HTMLCollection> ContainerNode::getElementsByTagNameNS(const AtomString& name
 
 Ref<NodeList> ContainerNode::getElementsByName(const String& elementName)
 {
-    return ensureRareData().ensureNodeLists().addCacheWithAtomicName<NameNodeList>(*this, elementName);
+    return ensureRareData().ensureNodeLists().addCacheWithAtomName<NameNodeList>(*this, elementName);
 }
 
 Ref<HTMLCollection> ContainerNode::getElementsByClassName(const AtomString& classNames)
@@ -902,7 +902,7 @@ Ref<HTMLCollection> ContainerNode::getElementsByClassName(const AtomString& clas
 Ref<RadioNodeList> ContainerNode::radioNodeList(const AtomString& name)
 {
     ASSERT(hasTagName(HTMLNames::formTag) || hasTagName(HTMLNames::fieldsetTag));
-    return ensureRareData().ensureNodeLists().addCacheWithAtomicName<RadioNodeList>(*this, name);
+    return ensureRareData().ensureNodeLists().addCacheWithAtomName<RadioNodeList>(*this, name);
 }
 
 Ref<HTMLCollection> ContainerNode::children()

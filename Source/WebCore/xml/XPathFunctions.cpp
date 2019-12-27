@@ -304,13 +304,12 @@ Value FunPosition::evaluate() const
     return Expression::evaluationContext().position;
 }
 
-static AtomString atomicSubstring(StringBuilder& builder, unsigned start, unsigned length)
+// FIXME: Should StringBuilder offer this as a member function?
+static StringView toStringView(StringBuilder& builder)
 {
-    ASSERT(start <= builder.length());
-    ASSERT(length <= builder.length() - start);
     if (builder.is8Bit())
-        return AtomString(builder.characters8() + start, length);
-    return AtomString(builder.characters16() + start, length);
+        return { builder.characters8(), builder.length() };
+    return { builder.characters16(), builder.length() };
 }
 
 Value FunId::evaluate() const
@@ -346,7 +345,7 @@ Value FunId::evaluate() const
 
         // If there are several nodes with the same id, id() should return the first one.
         // In WebKit, getElementById behaves so, too, although its behavior in this case is formally undefined.
-        Node* node = contextScope.getElementById(atomicSubstring(idList, startPos, endPos - startPos));
+        Node* node = contextScope.getElementById(toStringView(idList).substring(startPos, endPos - startPos));
         if (node && resultSet.add(node).isNewEntry)
             result.append(node);
         

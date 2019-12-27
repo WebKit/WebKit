@@ -30,8 +30,6 @@
 
 #include "Chrome.h"
 #include "ChromeClient.h"
-#include "Document.h"
-#include "Element.h"
 #include "EventNames.h"
 #include "Frame.h"
 #include "HTMLFrameOwnerElement.h"
@@ -388,7 +386,7 @@ void FullscreenManager::willEnterFullscreen(Element& element)
     m_fullscreenElement = &element;
 
 #if USE(NATIVE_FULLSCREEN_VIDEO)
-    if (element.isMediaElement())
+    if (is<HTMLMediaElement>(element))
         return;
 #endif
 

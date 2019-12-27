@@ -38,8 +38,8 @@ class TextEncoding;
 WEBCORE_EXPORT std::unique_ptr<TextCodec> newTextCodec(const TextEncoding&);
 
 // Only TextEncoding should use the following functions directly.
-const char* atomicCanonicalTextEncodingName(const char* alias);
-const char* atomicCanonicalTextEncodingName(const String&);
+const char* atomCanonicalTextEncodingName(const char* alias);
+const char* atomCanonicalTextEncodingName(const String&);
 bool noExtendedTextEncodingNameUsed();
 bool isJapaneseEncoding(const char* canonicalEncodingName);
 bool shouldShowBackslashAsCurrencySymbolIn(const char* canonicalEncodingName);

@@ -28,8 +28,6 @@
 #include "Document.h"
 #include "ElementData.h"
 #include "HTMLNames.h"
-#include "KeyframeAnimationOptions.h"
-#include "ScrollToOptions.h"
 #include "ScrollTypes.h"
 #include "ShadowRootMode.h"
 #include "SimulatedClickOptions.h"
@@ -58,7 +56,10 @@ class PseudoElement;
 class RenderTreePosition;
 class StylePropertyMap;
 class WebAnimation;
+
+struct KeyframeAnimationOptions;
 struct ScrollIntoViewOptions;
+struct ScrollToOptions;
 
 #if ENABLE(INTERSECTION_OBSERVER)
 struct IntersectionObserverData;
@@ -71,12 +72,6 @@ struct ResizeObserverData;
 namespace Style {
 struct ElementStyle;
 }
-
-enum SpellcheckAttributeState {
-    SpellcheckAttributeTrue,
-    SpellcheckAttributeFalse,
-    SpellcheckAttributeDefault
-};
 
 class Element : public ContainerNode {
     WTF_MAKE_ISO_ALLOCATED(Element);
@@ -104,14 +99,13 @@ public:
     // attribute or one of the SVG animatable attributes.
     bool hasAttributeWithoutSynchronization(const QualifiedName&) const;
     const AtomString& attributeWithoutSynchronization(const QualifiedName&) const;
-#ifndef NDEBUG
-    WEBCORE_EXPORT bool fastAttributeLookupAllowed(const QualifiedName&) const;
-#endif
 
 #if DUMP_NODE_STATISTICS
     bool hasNamedNodeMap() const;
 #endif
+
     WEBCORE_EXPORT bool hasAttributes() const;
+
     // This variant will not update the potentially invalid attributes. To be used when not interested
     // in style attribute or one of the SVG animation attributes.
     bool hasAttributesWithoutUpdate() const;
@@ -199,6 +193,7 @@ public:
 
     // Returns the absolute bounding box translated into client coordinates.
     WEBCORE_EXPORT IntRect clientRect() const;
+
     // Returns the absolute bounding box translated into screen coordinates.
     WEBCORE_EXPORT IntRect screenRect() const;
 
@@ -222,14 +217,13 @@ public:
     const QualifiedName& tagQName() const { return m_tagName; }
 #if ENABLE(JIT)
     static ptrdiff_t tagQNameMemoryOffset() { return OBJECT_OFFSETOF(Element, m_tagName); }
-#endif // ENABLE(JIT)
+#endif
     String tagName() const { return nodeName(); }
     bool hasTagName(const QualifiedName& tagName) const { return m_tagName.matches(tagName); }
     bool hasTagName(const HTMLQualifiedName& tagName) const { return ContainerNode::hasTagName(tagName); }
     bool hasTagName(const MathMLQualifiedName& tagName) const { return ContainerNode::hasTagName(tagName); }
     bool hasTagName(const SVGQualifiedName& tagName) const { return ContainerNode::hasTagName(tagName); }
 
-    // A fast function for checking the local name against another atomic string.
     bool hasLocalName(const AtomString& other) const { return m_tagName.localName() == other; }
 
     const AtomString& localName() const final { return m_tagName.localName(); }
@@ -256,7 +250,7 @@ public:
         ModifiedByCloning
     };
 
-    // This method is called whenever an attribute is added, changed or removed.
+    // These functions are called whenever an attribute is added, changed or removed.
     virtual void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason = ModifiedDirectly);
     virtual void parseAttribute(const QualifiedName&, const AtomString&) { }
 
@@ -308,7 +302,7 @@ public:
     void enqueueToUpgrade(JSCustomElementInterface&);
     CustomElementReactionQueue* reactionQueue() const;
 
-    // FIXME: this should not be virtual, do not override this.
+    // FIXME: This should not be virtual. Please do not add additional overrides of this function.
     virtual const AtomString& shadowPseudoId() const;
 
     bool isInActiveChain() const { return isUserActionElement() && isUserActionElementInActiveChain(); }
@@ -422,20 +416,10 @@ public:
     virtual void prepareForDocumentSuspension() { }
     virtual void resumeFromDocumentSuspension() { }
 
-    // Use Document::registerForMediaVolumeCallbacks() to subscribe to this
-    virtual void mediaVolumeDidChange() { }
-
-    // Use Document::registerForPrivateBrowsingStateChangedCallbacks() to subscribe to this.
-    virtual void privateBrowsingStateDidChange(PAL::SessionID) { }
-
     virtual void willBecomeFullscreenElement();
     virtual void ancestorWillEnterFullscreen() { }
     virtual void didBecomeFullscreenElement() { }
     virtual void willStopBeingFullscreenElement() { }
-
-#if ENABLE(VIDEO_TRACK)
-    virtual void captionPreferencesChanged() { }
-#endif
 
     bool isFinishedParsingChildren() const { return isParsingChildrenFinished(); }
     void finishParsingChildren() override;
@@ -708,8 +692,6 @@ private:
 
     unsigned rareDataChildIndex() const;
 
-    SpellcheckAttributeState spellcheckAttributeState() const;
-
     void createUniqueElementData();
 
     ElementRareData* elementRareData() const;
@@ -724,6 +706,10 @@ private:
     void ownerDocument() const = delete;
     
     void attachAttributeNodeIfNeeded(Attr&);
+
+#ifndef NDEBUG
+    WEBCORE_EXPORT bool fastAttributeLookupAllowed(const QualifiedName&) const;
+#endif
 
     QualifiedName m_tagName;
     RefPtr<ElementData> m_elementData;
