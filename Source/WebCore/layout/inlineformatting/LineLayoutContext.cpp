@@ -180,6 +180,7 @@ LineLayoutContext::LineContent LineLayoutContext::close(LineBuilder& line, unsig
 
 LineCandidateContent LineLayoutContext::nextContentForLine(unsigned inlineItemIndex, Optional<unsigned> partialLeadingContentLength, InlineLayoutUnit currentLogicalRight)
 {
+    ASSERT(inlineItemIndex < m_inlineItems.size());
     // 1. Simply add any overflow content from the previous line to the candidate content. It's always a text content.
     // 2. Find the next soft wrap position or explicit line break.
     // 3. Collect floats between the inline content.
@@ -199,7 +200,7 @@ LineCandidateContent LineLayoutContext::nextContentForLine(unsigned inlineItemIn
     }
 
     // Are we wrapping at a line break?
-    auto isSingleItem = softWrapOpportunityIndex < m_inlineItems.size() && inlineItemIndex + 1 == softWrapOpportunityIndex;
+    auto isSingleItem = inlineItemIndex + 1 == softWrapOpportunityIndex;
     if (isSingleItem && m_inlineItems[inlineItemIndex]->isLineBreak()) {
         candidateContent.setIsLineBreak();
         return candidateContent;

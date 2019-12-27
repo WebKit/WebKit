@@ -1,3 +1,17 @@
+2019-12-27  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] Fix LayoutTests/fast/backgrounds/size/backgroundSize15.html
+        https://bugs.webkit.org/show_bug.cgi?id=205602
+        <rdar://problem/58212499>
+
+        Reviewed by Antti Koivisto.
+
+        softWrapOpportunityIndex could point after the last inline item in the list (when there's no more wrap opportunity)
+        e.g text<br> : the softWrapOpportunityIndex is 2.
+
+        * layout/inlineformatting/LineLayoutContext.cpp:
+        (WebCore::Layout::LineLayoutContext::nextContentForLine):
+
 2019-12-27  James Darpinian  <jdarpinian@chromium.org>
 
         ANGLE: Fix WebGL conformance tests for EXT_texture_filter_anisotropic
