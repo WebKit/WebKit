@@ -1,3 +1,39 @@
+2019-12-27  Antti Koivisto  <antti@apple.com>
+
+        [LFC][Integration] Ensure layout boxes have expected display types
+        https://bugs.webkit.org/show_bug.cgi?id=205606
+
+        Reviewed by Zalan Bujtas.
+
+        In some cases render tree may have display property values that don't match the renderer type. This is fine since the behavior is driven by the renderer.
+
+        LFC layout is driven by display property so the effective value needs to make sense. This patch fixes assertions seen in
+
+        fast/css/fieldset-display-row.html
+        fast/css-grid-layout/grid-strict-ordering-crash-2.html
+        imported/w3c/web-platform-tests/css/css-display/display-flow-root-001.html
+        imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/the-fieldset-and-legend-elements/fieldset-display.html
+        tables/mozilla/bugs/bug275625.html
+
+        * layout/integration/LayoutIntegrationLineLayout.cpp:
+        (WebCore::LayoutIntegration::LineLayout::LineLayout):
+        * layout/layouttree/LayoutTreeBuilder.cpp:
+        (WebCore::Layout::TreeBuilder::buildLayoutTreeForIntegration):
+
+        Always set display to 'block' for the root RenderBlockFlow.
+        Renamed for clarity.
+
+        (WebCore::Layout::TreeBuilder::createLayoutBox):
+
+        Always set <br> display to inline.
+
+        (WebCore::Layout::TreeBuilder::buildTableStructure):
+        (WebCore::Layout::TreeBuilder::buildSubTree):
+
+        Pass the parent container instead of parent renderer so we can read effective style.
+
+        * layout/layouttree/LayoutTreeBuilder.h:
+
 2019-12-27  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] Fix LayoutTests/fast/backgrounds/size/backgroundSize15.html

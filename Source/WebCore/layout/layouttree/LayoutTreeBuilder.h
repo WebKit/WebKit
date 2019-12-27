@@ -76,15 +76,15 @@ private:
 class TreeBuilder {
 public:
     static std::unique_ptr<Layout::LayoutTreeContent> buildLayoutTree(const RenderView&);
-    static std::unique_ptr<Layout::LayoutTreeContent> buildLayoutTree(const RenderBlockFlow&);
+    static std::unique_ptr<Layout::LayoutTreeContent> buildLayoutTreeForIntegration(const RenderBlockFlow&);
 
 private:
     TreeBuilder(LayoutTreeContent&);
 
     void buildTree();
-    void buildSubTree(const RenderElement& rootRenderer, Container& rootContainer);
+    void buildSubTree(const RenderElement& parentRenderer, Container& parentContainer);
     void buildTableStructure(const RenderTable& tableRenderer, Container& tableWrapperBox);
-    std::unique_ptr<Box> createLayoutBox(const RenderElement& parentRenderer, const RenderObject& childRenderer);
+    std::unique_ptr<Box> createLayoutBox(const Container& parentContainer, const RenderObject& childRenderer);
 
     LayoutTreeContent& m_layoutTreeContent;
 };

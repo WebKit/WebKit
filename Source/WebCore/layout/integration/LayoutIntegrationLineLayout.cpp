@@ -53,7 +53,7 @@ namespace LayoutIntegration {
 LineLayout::LineLayout(const RenderBlockFlow& flow)
     : m_flow(flow)
 {
-    m_treeContent = Layout::TreeBuilder::buildLayoutTree(flow);
+    m_treeContent = Layout::TreeBuilder::buildLayoutTreeForIntegration(flow);
 }
 
 LineLayout::~LineLayout() = default;
