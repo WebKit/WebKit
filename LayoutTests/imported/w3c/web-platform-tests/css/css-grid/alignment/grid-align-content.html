@@ -1,9 +1,15 @@
 <!DOCTYPE html>
-<html>
-<head>
-<link href="resources/grid.css" rel="stylesheet">
-<link href="resources/grid-alignment.css" rel="stylesheet">
-<script src="../../resources/check-layout.js"></script>
+<meta charset="utf-8">
+<title>CSS Grid Layout test: align-content property</title>
+<link rel="author" title="Rossana Monteriso" href="mailto:rmonteriso@igalia.com">
+<link rel="help" href="https://drafts.csswg.org/css-grid-1/#grid-align">
+<link rel="help" href="https://drafts.csswg.org/css-align-3/#content-distribution">
+<meta name="assert" content="This test checks that the align-content property is applied correctly in both directions RTL and LTR.">
+<meta name="flags" content="ahem">
+<link rel="stylesheet" href="/css/support/grid.css">
+<link rel="stylesheet" href="/css/support/alignment.css">
+<link rel="stylesheet" type="text/css" href="/fonts/ahem.css" />
+
 <style>
 body {
     margin: 0;
@@ -26,10 +32,12 @@ body {
     height: 40px;
 }
 </style>
-</head>
-<body onload="checkLayout('.grid')">
 
-<p>This test checks that the align-content property is applied correctly.</p>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="/resources/check-layout-th.js"></script>
+
+<body onload="checkLayout('.grid')">
 
 <div style="position: relative">
     <p>direction: LTR | align-content: 'center'</p>
@@ -101,7 +109,7 @@ body {
     </div>
 </div>
 
-<!-- Default alignment and initial values. -->
+<!--  Default alignment and initial values.  -->
 <div style="position: relative">
     <p>direction: LTR | align-content: 'auto' (resolved to 'start')</p>
     <div class="grid" data-expected-width="200" data-expected-height="300">
@@ -112,7 +120,7 @@ body {
     </div>
 </div>
 
-<!-- RTL direction. -->
+<!--  RTL direction.  -->
 <div style="position: relative">
     <p>direction: RTL | align-content: 'center'</p>
     <div class="grid directionRTL alignContentCenter" data-expected-width="200" data-expected-height="300">
@@ -164,4 +172,3 @@ body {
 </div>
 
 </body>
-</html>

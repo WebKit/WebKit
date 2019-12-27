@@ -1,0 +1,52 @@
+This test checks that stretching alignment works as expected with orthogonal flows.
+
+HORIZONTAL vs VERTICAL-RL
+
+XXX
+XXX
+XXX
+XXX
+XXX
+XXX
+XXX
+XXX
+HORIZONTAL vs VERTICAL-LR
+
+XXX
+XXX
+XXX
+XXX
+XXX
+XXX
+XXX
+XXX
+VERTICAL-RL vs HORIZONTAL
+
+XXX
+XXX
+XXX
+XXX
+XXX
+XXX
+XXX
+XXX
+VERTICAL-LR vs HORIZONTAL
+
+XXX
+XXX
+XXX
+XXX
+XXX
+XXX
+XXX
+XXX
+
+PASS .grid 1 
+PASS .grid 2 
+PASS .grid 3 
+PASS .grid 4 
+PASS .grid 5 
+PASS .grid 6 
+PASS .grid 7 
+PASS .grid 8 
+

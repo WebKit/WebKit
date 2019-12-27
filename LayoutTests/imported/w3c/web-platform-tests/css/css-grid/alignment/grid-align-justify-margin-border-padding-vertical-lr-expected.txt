@@ -16,10 +16,10 @@ border: 5px 10px 15px 20px | padding: 10px 15px 20px 30px | margin: 4px 8px 12px
 direction: LTR | align-items: 'start' | justify-items: 'right'
 
 border: 5px 10px 15px 20px | padding: 10px 15px 20px 30px | margin: 4px 8px 12px 16px
-direction: LTR (ortho) | align-items: 'self-start' | justify-items: 'self-start'
+direction: LTR (ortho) | align-items: 'self-start' (vertical-lr) | justify-items: 'self-start' (direction: rtl)
 
 border: 5px 10px 15px 20px | padding: 10px 15px 20px 30px | margin: 4px 8px 12px 16px
-direction: LTR (ortho) | align-items: 'self-end' | justify-items: 'self-end'
+direction: LTR (ortho) | align-items: 'self-end' (vertical-lr) | justify-items: 'self-end' (direction: rtl)
 
 border: 5px 10px 15px 20px | padding: 10px 15px 20px 30px | margin: 4px 8px 12px 16px
 direction: LTR (parall) | align-items: 'self-start' | justify-items: 'self-start'
@@ -43,10 +43,10 @@ border: 5px 10px 15px 20px | padding: 10px 15px 20px 30px | margin: 4px 8px 12px
 direction: RTL | align-items: 'start' | justify-items: 'right'
 
 border: 5px 10px 15px 20px | padding: 10px 15px 20px 30px | margin: 4px 8px 12px 16px
-direction: RTL (ortho) | align-items: 'self-start' | justify-items: 'self-start'
+direction: RTL (ortho) | align-items: 'self-start' (vertical-lr) | justify-items: 'self-start' (direction: ltr)
 
 border: 5px 10px 15px 20px | padding: 10px 15px 20px 30px | margin: 4px 8px 12px 16px
-direction: RTL (ortho) | align-items: 'self-end' | justify-items: 'self-end'
+direction: RTL (ortho) | align-items: 'self-end' (vertical-lr) | justify-items: 'self-end' (direction: ltr)
 
 border: 5px 10px 15px 20px | padding: 10px 15px 20px 30px | margin: 4px 8px 12px 16px
 direction: RTL (parall) | align-items: 'self-start' | justify-items: 'self-start'

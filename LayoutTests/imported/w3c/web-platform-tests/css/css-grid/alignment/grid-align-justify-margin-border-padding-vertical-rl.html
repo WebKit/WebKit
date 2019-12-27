@@ -1,16 +1,17 @@
 <!DOCTYPE html>
-<html>
-<head>
-<link href="../css-intrinsic-dimensions/resources/width-keyword-classes.css" rel="stylesheet">
-<link href="resources/grid.css" rel="stylesheet">
-<link href="resources/grid-alignment.css" rel="stylesheet">
-<script src="../../resources/testharness.js"></script>
-<script src="../../resources/testharnessreport.js"></script>
-<script src="../../resources/check-layout-th.js"></script>
+<meta charset="utf-8">
+<title>CSS Grid Layout test: box model parts and alignment properties, vertical-RL writing mode</title>
+<link rel="author" title="Rossana Monteriso" href="mailto:rmonteriso@igalia.com">
+<link rel="help" href="https://drafts.csswg.org/css-align-3/">
+<link rel="help" href="https://drafts.csswg.org/css-writing-modes-4/#propdef-writing-mode">
+<meta name="assert" content="This test checks that the 'margin', 'border' and 'padding' properties are applied together correctly for 'align' and 'justify' properties on vertical-RL grids, in both LTR and RTL directions.">
+<meta name="flags" content="ahem">
+<link rel="stylesheet" href="/css/support/grid.css">
+<link rel="stylesheet" href="/css/support/alignment.css">
+<link rel="stylesheet" href="/css/support/width-keyword-classes.css">
+<link rel="stylesheet" type="text/css" href="/fonts/ahem.css" />
+
 <style>
-body {
-    margin: 0;
-}
 
 .grid {
     grid-template-columns: 100px 200px;
@@ -28,7 +29,11 @@ body {
     margin: 4px 8px 12px 16px;
 }
 </style>
-</head>
+
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="/resources/check-layout-th.js"></script>
+
 <body onload="checkLayout('.grid')">
 
 <p>This test checks that the 'margin', 'border' and 'padding' properties are applied together correctly for 'align' and 'justify' properties on vertical-RL grids.</p>
@@ -90,7 +95,7 @@ body {
 
 <div>
     <p>border: 5px 10px 15px 20px | padding: 10px 15px 20px 30px | margin: 4px 8px 12px 16px<br>
-        direction: LTR (ortho) | align-items: 'self-start' | justify-items: 'self-start'</p>
+        direction: LTR (ortho) | align-items: 'self-start' (vertical-rl) | justify-items: 'self-start' (direction: rtl)</p>
     <div class="grid fit-content directionLTR verticalRL itemsSelfStart" data-expected-width="475" data-expected-height="350">
         <div class="directionRTL cell firstRowFirstColumn"     data-offset-x="402" data-offset-y="58" data-expected-width="20"  data-expected-height="40"></div>
         <div class="directionRTL selfStretch firstRowSecondColumn" data-offset-x="230" data-offset-y="110" data-expected-width="200" data-expected-height="200"></div>
@@ -101,7 +106,7 @@ body {
 
 <div>
     <p>border: 5px 10px 15px 20px | padding: 10px 15px 20px 30px | margin: 4px 8px 12px 16px<br>
-        direction: LTR (ortho) | align-items: 'self-end' | justify-items: 'self-end'</p>
+        direction: LTR (ortho) | align-items: 'self-end' (vertical-rl) | justify-items: 'self-end' (direction: rtl)</p>
     <div class="grid fit-content directionLTR verticalRL itemsSelfEnd" data-expected-width="475" data-expected-height="350">
         <div class="directionRTL cell firstRowFirstColumn"     data-offset-x="246" data-offset-y="14"  data-expected-width="20"  data-expected-height="40"></div>
         <div class="directionRTL selfStretch firstRowSecondColumn" data-offset-x="230" data-offset-y="110" data-expected-width="200" data-expected-height="200"></div>
@@ -133,11 +138,11 @@ body {
 </div>
 
 
-<!-- RTL direction. -->
+<!--  RTL direction.  -->
 <div>
     <p>border: 5px 10px 15px 20px | padding: 10px 15px 20px 30px | margin: 4px 8px 12px 16px<br>
         direction: RTL | align-items: 'auto' | justify-items: 'auto'</p>
-    <div class="grid fit-content verticalRL directionRTL" data-expected-width="475" data-expected-height="350">
+    <div class="grid fit-content directionRTL verticalRL" data-expected-width="475" data-expected-height="350">
         <div class="cell firstRowFirstColumn"   data-offset-x="402" data-offset-y="258" data-expected-width="20" data-expected-height="40"></div>
         <div class="cell firstRowSecondColumn"  data-offset-x="402" data-offset-y="158" data-expected-width="20" data-expected-height="40"></div>
         <div class="cell secondRowFirstColumn"  data-offset-x="202" data-offset-y="258" data-expected-width="20" data-expected-height="40"></div>
@@ -148,7 +153,7 @@ body {
 <div>
     <p>border: 5px 10px 15px 20px | padding: 10px 15px 20px 30px | margin: 4px 8px 12px 16px<br>
         direction: RTL | align-items: 'center' | justify-items: 'center'</p>
-    <div class="grid fit-content verticalRL directionRTL itemsCenter" data-expected-width="475" data-expected-height="350">
+    <div class="grid fit-content directionRTL verticalRL itemsCenter" data-expected-width="475" data-expected-height="350">
         <div class="cell firstRowFirstColumn"     data-offset-x="324" data-offset-y="236" data-expected-width="20"  data-expected-height="40"></div>
         <div class="selfStretch firstRowSecondColumn" data-offset-x="230" data-offset-y="10"  data-expected-width="200" data-expected-height="200"></div>
         <div class="selfStretch secondRowFirstColumn" data-offset-x="30"  data-offset-y="210" data-expected-width="200" data-expected-height="100"></div>
@@ -159,7 +164,7 @@ body {
 <div>
     <p>border: 5px 10px 15px 20px | padding: 10px 15px 20px 30px | margin: 4px 8px 12px 16px<br>
         direction: RTL | align-items: 'end' | justify-items: 'end'</p>
-    <div class="grid fit-content verticalRL directionRTL itemsEnd"       data-expected-width="475" data-expected-height="350">
+    <div class="grid fit-content directionRTL verticalRL itemsEnd"       data-expected-width="475" data-expected-height="350">
         <div class="cell firstRowFirstColumn"     data-offset-x="246" data-offset-y="214" data-expected-width="20"  data-expected-height="40"></div>
         <div class="selfStretch firstRowSecondColumn" data-offset-x="230" data-offset-y="10"  data-expected-width="200" data-expected-height="200"></div>
         <div class="selfStretch secondRowFirstColumn" data-offset-x="30"  data-offset-y="210" data-expected-width="200" data-expected-height="100"></div>
@@ -170,7 +175,7 @@ body {
 <div>
     <p>border: 5px 10px 15px 20px | padding: 10px 15px 20px 30px | margin: 4px 8px 12px 16px<br>
         direction: RTL | align-items: 'start' | justify-items: 'left'</p>
-    <div class="grid fit-content verticalRL directionRTL alignItemsStart justifyItemsLeft"      data-expected-width="475" data-expected-height="350">
+    <div class="grid fit-content directionRTL verticalRL alignItemsStart justifyItemsLeft"      data-expected-width="475" data-expected-height="350">
         <div class="cell firstRowFirstColumn"     data-offset-x="402" data-offset-y="214" data-expected-width="20"  data-expected-height="40"></div>
         <div class="selfStretch firstRowSecondColumn" data-offset-x="230" data-offset-y="10"  data-expected-width="200" data-expected-height="200"></div>
         <div class="selfStretch secondRowFirstColumn" data-offset-x="30"  data-offset-y="210" data-expected-width="200" data-expected-height="100"></div>
@@ -181,7 +186,7 @@ body {
 <div>
     <p>border: 5px 10px 15px 20px | padding: 10px 15px 20px 30px | margin: 4px 8px 12px 16px<br>
         direction: RTL | align-items: 'start' | justify-items: 'right'</p>
-    <div class="grid fit-content verticalRL directionRTL alignItemsStart justifyItemsRight"     data-expected-width="475" data-expected-height="350">
+    <div class="grid fit-content directionRTL verticalRL alignItemsStart justifyItemsRight"     data-expected-width="475" data-expected-height="350">
         <div class="cell firstRowFirstColumn"     data-offset-x="402" data-offset-y="258" data-expected-width="20"  data-expected-height="40"></div>
         <div class="selfStretch firstRowSecondColumn" data-offset-x="230" data-offset-y="10"  data-expected-width="200" data-expected-height="200"></div>
         <div class="selfStretch secondRowFirstColumn" data-offset-x="30"  data-offset-y="210" data-expected-width="200" data-expected-height="100"></div>
@@ -191,8 +196,8 @@ body {
 
 <div>
     <p>border: 5px 10px 15px 20px | padding: 10px 15px 20px 30px | margin: 4px 8px 12px 16px<br>
-        direction: RTL (ortho) | align-items: 'self-start' | justify-items: 'self-start'</p>
-    <div class="grid fit-content verticalRL directionRTL itemsSelfStart" data-expected-width="475" data-expected-height="350">
+        direction: RTL (ortho) | align-items: 'self-start' (vertical-rl) | justify-items: 'self-start' (direction: ltr)</p>
+    <div class="grid fit-content directionRTL verticalRL itemsSelfStart" data-expected-width="475" data-expected-height="350">
         <div class="directionLTR cell firstRowFirstColumn"     data-offset-x="402" data-offset-y="214" data-expected-width="20"  data-expected-height="40"></div>
         <div class="directionLTR selfStretch firstRowSecondColumn" data-offset-x="230" data-offset-y="10"  data-expected-width="200" data-expected-height="200"></div>
         <div class="directionLTR selfStretch secondRowFirstColumn" data-offset-x="30"  data-offset-y="210" data-expected-width="200" data-expected-height="100"></div>
@@ -202,8 +207,8 @@ body {
 
 <div>
     <p>border: 5px 10px 15px 20px | padding: 10px 15px 20px 30px | margin: 4px 8px 12px 16px<br>
-        direction: RTL (ortho) | align-items: 'self-end' | justify-items: 'self-end'</p>
-    <div class="grid fit-content verticalRL directionRTL itemsSelfEnd" data-expected-width="475" data-expected-height="350">
+        direction: RTL (ortho) | align-items: 'self-end' (vertical-rl) | justify-items: 'self-end' (direction: ltr)</p>
+    <div class="grid fit-content directionRTL verticalRL itemsSelfEnd" data-expected-width="475" data-expected-height="350">
         <div class="directionLTR cell firstRowFirstColumn"     data-offset-x="246" data-offset-y="258" data-expected-width="20"  data-expected-height="40"></div>
         <div class="directionLTR selfStretch firstRowSecondColumn" data-offset-x="230" data-offset-y="10"  data-expected-width="200" data-expected-height="200"></div>
         <div class="directionLTR selfStretch secondRowFirstColumn" data-offset-x="30"  data-offset-y="210" data-expected-width="200" data-expected-height="100"></div>
@@ -214,7 +219,7 @@ body {
 <div>
     <p>border: 5px 10px 15px 20px | padding: 10px 15px 20px 30px | margin: 4px 8px 12px 16px<br>
         direction: RTL (parall) | align-items: 'self-start' | justify-items: 'self-start'</p>
-    <div class="grid fit-content verticalRL directionRTL itemsSelfStart" data-expected-width="475" data-expected-height="350">
+    <div class="grid fit-content directionRTL verticalRL itemsSelfStart" data-expected-width="475" data-expected-height="350">
         <div class="directionRTL cell firstRowFirstColumn"     data-offset-x="402" data-offset-y="258" data-expected-width="20"  data-expected-height="40"></div>
         <div class="directionRTL selfStretch firstRowSecondColumn" data-offset-x="230" data-offset-y="10"  data-expected-width="200" data-expected-height="200"></div>
         <div class="directionRTL selfStretch secondRowFirstColumn" data-offset-x="30"  data-offset-y="210" data-expected-width="200" data-expected-height="100"></div>
@@ -225,7 +230,7 @@ body {
 <div>
     <p>border: 5px 10px 15px 20px | padding: 10px 15px 20px 30px | margin: 4px 8px 12px 16px<br>
         direction: RTL (parall) | align-items: 'self-end' | justify-items: 'self-end'</p>
-    <div class="grid fit-content verticalRL directionRTL itemsSelfEnd" data-expected-width="475" data-expected-height="350">
+    <div class="grid fit-content directionRTL verticalRL itemsSelfEnd" data-expected-width="475" data-expected-height="350">
         <div class="directionRTL cell firstRowFirstColumn"     data-offset-x="246" data-offset-y="214" data-expected-width="20"  data-expected-height="40"></div>
         <div class="directionRTL selfStretch firstRowSecondColumn" data-offset-x="230" data-offset-y="10"  data-expected-width="200" data-expected-height="200"></div>
         <div class="directionRTL selfStretch secondRowFirstColumn" data-offset-x="30"  data-offset-y="210" data-expected-width="200" data-expected-height="100"></div>
@@ -234,4 +239,3 @@ body {
 </div>
 
 </body>
-</html>
