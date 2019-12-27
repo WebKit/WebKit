@@ -2833,6 +2833,7 @@ WebGLAny WebGLRenderingContextBase::getTexParameter(GC3Denum target, GC3Denum pn
     if (!tex)
         return nullptr;
     GC3Dint value = 0;
+    GC3Dfloat fValue = 0;
     switch (pname) {
     case GraphicsContext3D::TEXTURE_MAG_FILTER:
     case GraphicsContext3D::TEXTURE_MIN_FILTER:
@@ -2842,8 +2843,8 @@ WebGLAny WebGLRenderingContextBase::getTexParameter(GC3Denum target, GC3Denum pn
         return static_cast<unsigned>(value);
     case Extensions3D::TEXTURE_MAX_ANISOTROPY_EXT: // EXT_texture_filter_anisotropic
         if (m_extTextureFilterAnisotropic) {
-            m_context->getTexParameteriv(target, pname, &value);
-            return static_cast<unsigned>(value);
+            m_context->getTexParameterfv(target, pname, &fValue);
+            return static_cast<float>(fValue);
         }
         synthesizeGLError(GraphicsContext3D::INVALID_ENUM, "getTexParameter", "invalid parameter name, EXT_texture_filter_anisotropic not enabled");
         return nullptr;

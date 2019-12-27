@@ -1,5 +1,23 @@
 2019-12-27  James Darpinian  <jdarpinian@chromium.org>
 
+        ANGLE: Fix WebGL conformance tests for EXT_texture_filter_anisotropic
+        https://bugs.webkit.org/show_bug.cgi?id=205520
+
+        Fixes get-extension.html and ext-texture-filter-anisotropic.html.
+
+        Reviewed by Dean Jackson.
+
+        * html/canvas/WebGL2RenderingContext.cpp:
+        (WebCore::WebGL2RenderingContext::getExtension):
+        (WebCore::WebGL2RenderingContext::getSupportedExtensions):
+        (WebCore::WebGL2RenderingContext::getParameter):
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore::WebGLRenderingContext::getExtension):
+        * html/canvas/WebGLRenderingContextBase.cpp:
+        (WebCore::WebGLRenderingContextBase::getTexParameter):
+
+2019-12-27  James Darpinian  <jdarpinian@chromium.org>
+
         ANGLE: Fix WebGL conformance test framebuffer-object-attachment.html
         https://bugs.webkit.org/show_bug.cgi?id=205514
 

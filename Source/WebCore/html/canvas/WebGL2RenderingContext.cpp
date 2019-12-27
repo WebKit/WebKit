@@ -1369,7 +1369,6 @@ WebGLExtension* WebGL2RenderingContext::getExtension(const String& name)
     }
 
     ENABLE_IF_REQUESTED(EXTTextureFilterAnisotropic, m_extTextureFilterAnisotropic, "EXT_texture_filter_anisotropic", enableSupportedExtension("GL_EXT_texture_filter_anisotropic"_s));
-    ENABLE_IF_REQUESTED(EXTTextureFilterAnisotropic, m_extTextureFilterAnisotropic, "WEBKIT_EXT_texture_filter_anisotropic", enableSupportedExtension("GL_OES_texture_float"_s));
     ENABLE_IF_REQUESTED(OESTextureFloat, m_oesTextureFloat, "OES_texture_float", enableSupportedExtension("GL_OES_texture_float"_s));
     ENABLE_IF_REQUESTED(OESTextureFloatLinear, m_oesTextureFloatLinear, "OES_texture_float_linear", enableSupportedExtension("GL_OES_texture_float_linear"_s));
     ENABLE_IF_REQUESTED(OESTextureHalfFloat, m_oesTextureHalfFloat, "OES_texture_half_float", enableSupportedExtension("GL_OES_texture_half_float"_s));
@@ -1407,7 +1406,7 @@ Optional<Vector<String>> WebGL2RenderingContext::getSupportedExtensions()
     if (extensions.supports("GL_OES_texture_half_float_linear"_s))
         result.append("OES_texture_half_float_linear"_s);
     if (extensions.supports("GL_EXT_texture_filter_anisotropic"_s))
-        result.append("WEBKIT_EXT_texture_filter_anisotropic"_s);
+        result.append("EXT_texture_filter_anisotropic"_s);
     if (WebGLCompressedTextureASTC::supported(*this))
         result.append("WEBGL_compressed_texture_astc"_s);
     if (WebGLCompressedTextureATC::supported(*this))
@@ -1971,7 +1970,7 @@ WebGLAny WebGL2RenderingContext::getParameter(GC3Denum pname)
         return nullptr;
     case Extensions3D::MAX_TEXTURE_MAX_ANISOTROPY_EXT: // EXT_texture_filter_anisotropic
         if (m_extTextureFilterAnisotropic)
-            return getUnsignedIntParameter(Extensions3D::MAX_TEXTURE_MAX_ANISOTROPY_EXT);
+            return getFloatParameter(Extensions3D::MAX_TEXTURE_MAX_ANISOTROPY_EXT);
         synthesizeGLError(GraphicsContext3D::INVALID_ENUM, "getParameter", "invalid parameter name, EXT_texture_filter_anisotropic not enabled");
         return nullptr;
     case GraphicsContext3D::FRAGMENT_SHADER_DERIVATIVE_HINT:
