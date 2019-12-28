@@ -364,6 +364,9 @@ GraphicsContext3D::GraphicsContext3D(GraphicsContext3DAttributes attrs, HostWind
 
     EGL_MakeCurrent(m_displayObj, EGL_NO_SURFACE, EGL_NO_SURFACE, m_contextObj);
 
+    if (m_attrs.isWebGL2)
+        gl::Enable(GraphicsContext3D::PRIMITIVE_RESTART_FIXED_INDEX);
+
 #if PLATFORM(MAC)
     Extensions3D& extensions = getExtensions();
 
@@ -426,6 +429,7 @@ GraphicsContext3D::GraphicsContext3D(GraphicsContext3DAttributes attrs, HostWind
     ::glTexParameteri(GL_TEXTURE_RECTANGLE_EXT, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     ::glTexParameteri(GL_TEXTURE_RECTANGLE_EXT, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
     ::glBindTexture(GL_TEXTURE_RECTANGLE_EXT, 0);
+
 #elif USE(ANGLE)
 
 #if PLATFORM(MAC)

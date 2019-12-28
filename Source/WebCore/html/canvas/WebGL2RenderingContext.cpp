@@ -308,8 +308,8 @@ void WebGL2RenderingContext::getBufferSubData(GC3Denum target, long long srcByte
     // FIXME: Coalesce multiple getBufferSubData() calls to use a single map() call
     void* ptr = m_context->mapBufferRange(target, checkedSrcByteOffset.unsafeGet(), static_cast<GC3Dsizeiptr>(checkedCopyLengthPtr.unsafeGet() * checkedElementSize.unsafeGet()), GraphicsContext3D::MAP_READ_BIT);
     memcpy(static_cast<char*>(dstData->baseAddress()) + dstData->byteOffset() + dstOffset * elementSize, ptr, copyLength * elementSize);
-    bool success = m_context->unmapBuffer(target);
-    ASSERT_UNUSED(success, success);
+    if (!m_context->unmapBuffer(target))
+        synthesizeGLError(GraphicsContext3D::INVALID_OPERATION, "getBufferSubData", "Failed while unmapping buffer");
 #endif
     m_context->moveErrorsToSyntheticErrorList();
 }

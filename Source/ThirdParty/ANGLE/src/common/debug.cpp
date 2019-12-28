@@ -21,6 +21,10 @@
 #    include <android/log.h>
 #endif
 
+#if defined(ANGLE_PLATFORM_APPLE)
+#    include <os/log.h>
+#endif
+
 #include "anglebase/no_destructor.h"
 #include "common/Optional.h"
 #include "common/angleutils.h"
@@ -228,6 +232,8 @@ void Trace(LogSeverity severity, const char *message)
         }
         __android_log_print(android_priority, "ANGLE", "%s: %s\n", LogSeverityName(severity),
                             str.c_str());
+#elif defined(ANGLE_PLATFORM_APPLE)
+        os_log(OS_LOG_DEFAULT, "ANGLE: %s: %s\n", LogSeverityName(severity), str.c_str());
 #else
         // Note: we use fprintf because <iostream> includes static initializers.
         fprintf((severity >= LOG_ERR) ? stderr : stdout, "%s: %s\n", LogSeverityName(severity),

@@ -1,3 +1,15 @@
+2019-12-25  Dean Jackson  <dino@apple.com>
+
+        [WebGL] Enable ANGLE by default for Cocoa platforms (except simulator)
+        https://bugs.webkit.org/show_bug.cgi?id=205483
+        rdar://56925821
+
+        Reviewed by Simon Fraser.
+
+        Export entry_points_gles_ext_autogen.h.
+
+        * ANGLE.xcodeproj/project.pbxproj:
+
 2019-12-19  Dean Jackson  <dino@apple.com>
 
         Build ANGLE as a dynamic library

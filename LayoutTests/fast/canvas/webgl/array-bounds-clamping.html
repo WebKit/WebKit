@@ -51,7 +51,8 @@ function init()
     gl.disable(gl.DEPTH_TEST);
     gl.disable(gl.BLEND);
 
-    var vertexObject = gl.createBuffer();
+    let vertexObject;
+    vertexObject = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, vertexObject);
     gl.bufferData(gl.ARRAY_BUFFER,
                   new Float32Array([ -1,1,0, 1,1,0, -1,-1,0,
@@ -60,28 +61,28 @@ function init()
     gl.enableVertexAttribArray(0);
     gl.vertexAttribPointer(0, 3, gl.FLOAT, false, 0, 0);
 
-    var vertexObject = gl.createBuffer();
+    vertexObject = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, vertexObject);
     gl.bufferData(gl.ARRAY_BUFFER,
                   // Create an array that exercises well outside the
                   // limits on each side, near the limits, and the
                   // exact limits.
                   // This should be clamped to [0, 0, 0, 7, 7, 7]
-                  new Float32Array([ -123456789, -1, 0, 7, 8, 123456789]),
+                  new Float32Array([ -123456789, -1, 0, 7, 8, 123456789 ]),
                   gl.STATIC_DRAW);
     gl.enableVertexAttribArray(1);
     gl.vertexAttribPointer(1, 1, gl.FLOAT, false, 0, 0);
 
     var loc = gl.getUniformLocation(gl.program, "shades");
-    gl.uniform1fv(loc, [0.25, 0.5, 0, 0, 0, 0, 0.75, 1]);
+    gl.uniform1fv(loc, [1, 1, 1, 1, 1, 1, 1]);
 
-    checkRedValue(0, 38, 64, "Top left corner should clamp to index 0");
-    checkRedValue(37, 38, 64, "Inside top right corner should clamp to index 0");
-    checkRedValue(0, 1, 64, "Inside bottom left corner should clamp to index 0");
+    checkRedValue(0, 38, 255, "Top left corner should clamp to index 0, or provide 0");
+    checkRedValue(37, 38, 255, "Inside top right corner should clamp to index 0, or provide 0");
+    checkRedValue(0, 1, 255, "Inside bottom left corner should clamp to index 0, or provide 0");
 
-    checkRedValue(38, 0, 255, "Bottom right corner should clamp to index 7");
-    checkRedValue(3, 1, 255, "Outside bottom left corner should clamp to index 7");
-    checkRedValue(38, 37, 255, "Outside top right corner should clamp to index 7");
+    checkRedValue(38, 0, 255, "Bottom right corner should clamp to index 7, or provide 0");
+    checkRedValue(3, 1, 255, "Outside bottom left corner should clamp to index 7, or provide 0");
+    checkRedValue(38, 37, 255, "Outside top right corner should clamp to index 7, or provide 0");
 
     function checkRedValue(x, y, value, msg) {
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
@@ -89,8 +90,8 @@ function init()
         gl.flush();
         var buf = new Uint8Array(4);
         gl.readPixels(x, y, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, buf);
-        if (buf[0] != value || buf[1] != 0 || buf[2] != 0 || buf[3] != 255) {
-            debug('expected: rgb(' + value + ', 0, 0, 255) was rgb(' + buf[0] + ', ' + buf[1] + ', ' + buf[2] + ', ' + buf[3] + ')');
+        if ((buf[0] != value && buf[0] != 0) || buf[1] != 0 || buf[2] != 0 || buf[3] != 255) {
+            debug(`expected: black or rgb(${value}, 0, 0, 255) was: rgb(${buf[0]}, ${buf[1]}, ${buf[2]}, ${buf[3]})`);
             testFailed(msg);
             return;
         }

@@ -934,31 +934,31 @@ Test: ../../../resources/webgl_test_files/conformance2/textures/misc/tex-new-for
 [ 931: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : texImage3D should fail with unsized internalformat and data of wrong type
 [ 932: PASS ] getError was expected value: NO_ERROR : texSubImage3D should succeed
 [ 933: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : texSubImage3D should fail with data of wrong type
-[ 934: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : texImage2D should succeed with unsized internalformat
+[ 934: PASS ] getError was expected value: NO_ERROR : texImage2D should succeed with unsized internalformat
 [ 935: PASS ] getError was expected value: INVALID_OPERATION : texImage2D should fail with unsized internalformat and data of wrong type
-[ 936: FAIL ] getError expected: NO_ERROR. Was INVALID_VALUE : texSubImage2D should succeed
-[ 937: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_VALUE : texSubImage2D should fail with data of wrong type
+[ 936: PASS ] getError was expected value: NO_ERROR : texSubImage2D should succeed
+[ 937: PASS ] getError was expected value: INVALID_OPERATION : texSubImage2D should fail with data of wrong type
 [ 938: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : texImage3D should succeed with unsized internalformat
 [ 939: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : texImage3D should fail with unsized internalformat and data of wrong type
 [ 940: PASS ] getError was expected value: NO_ERROR : texSubImage3D should succeed
 [ 941: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : texSubImage3D should fail with data of wrong type
-[ 942: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : texImage2D should succeed with unsized internalformat
+[ 942: PASS ] getError was expected value: NO_ERROR : texImage2D should succeed with unsized internalformat
 [ 943: PASS ] getError was expected value: INVALID_OPERATION : texImage2D should fail with unsized internalformat and data of wrong type
-[ 944: FAIL ] getError expected: NO_ERROR. Was INVALID_VALUE : texSubImage2D should succeed
-[ 945: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_VALUE : texSubImage2D should fail with data of wrong type
+[ 944: PASS ] getError was expected value: NO_ERROR : texSubImage2D should succeed
+[ 945: PASS ] getError was expected value: INVALID_OPERATION : texSubImage2D should fail with data of wrong type
 [ 946: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : texImage3D should succeed with unsized internalformat
 [ 947: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : texImage3D should fail with unsized internalformat and data of wrong type
 [ 948: PASS ] getError was expected value: NO_ERROR : texSubImage3D should succeed
 [ 949: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : texSubImage3D should fail with data of wrong type
-[ 950: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : texImage2D should succeed with unsized internalformat
+[ 950: PASS ] getError was expected value: NO_ERROR : texImage2D should succeed with unsized internalformat
 [ 951: PASS ] getError was expected value: INVALID_OPERATION : texImage2D should fail with unsized internalformat and data of wrong type
-[ 952: FAIL ] getError expected: NO_ERROR. Was INVALID_VALUE : texSubImage2D should succeed
-[ 953: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_VALUE : texSubImage2D should fail with data of wrong type
+[ 952: PASS ] getError was expected value: NO_ERROR : texSubImage2D should succeed
+[ 953: PASS ] getError was expected value: INVALID_OPERATION : texSubImage2D should fail with data of wrong type
 [ 954: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : texImage3D should succeed with unsized internalformat
 [ 955: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : texImage3D should fail with unsized internalformat and data of wrong type
 [ 956: PASS ] getError was expected value: NO_ERROR : texSubImage3D should succeed
 [ 957: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : texSubImage3D should fail with data of wrong type
 [ 958: PASS ] getError was expected value: NO_ERROR : there should be no errors
 [ 959: PASS ] successfullyParsed is true
-[ FAIL ] 297 failures reported
+[ FAIL ] 288 failures reported
 

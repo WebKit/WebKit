@@ -368,7 +368,7 @@ void GraphicsContext3D::clearDepth(GC3Dclampf depth)
 Extensions3D& GraphicsContext3D::getExtensions()
 {
     if (!m_extensions)
-        m_extensions = makeUnique<Extensions3DANGLE>(this, isGLES2Compliant());
+        m_extensions = makeUnique<Extensions3DANGLE>(this);
     return *m_extensions;
 }
 
@@ -410,7 +410,7 @@ void GraphicsContext3D::validateDepthStencil(const char* packedDepthStencilExten
     }
     if (m_attrs.antialias) {
         // FIXME: must adjust this when upgrading to WebGL 2.0 / OpenGL ES 3.0 support.
-        if (!extensions.supports("GL_ANGLE_framebuffer_multisample") || !extensions.supports("GL_ANGLE_framebuffer_blit") || !extensions.supports("GL_OES_rgb8_rgba8") || isGLES2Compliant())
+        if (!extensions.supports("GL_ANGLE_framebuffer_multisample") || !extensions.supports("GL_ANGLE_framebuffer_blit") || !extensions.supports("GL_OES_rgb8_rgba8"))
             m_attrs.antialias = false;
         else {
             extensions.ensureEnabled("GL_ANGLE_framebuffer_multisample");

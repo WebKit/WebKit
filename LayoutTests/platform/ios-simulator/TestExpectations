@@ -3,6 +3,10 @@
 # See http://trac.webkit.org/wiki/TestExpectations for more information on this file.
 #
 
+# Don't test webgl on iOS simulator while ANGLE can't use IOSurfaces.
+fast/canvas/webgl [ Skip ]
+webgl [ Skip ]
+
 accessibility/insert-newline.html [ Pass ]
 accessibility/misspelling-range.html [ Pass ]
 css3/font-variant-small-caps-synthesis-coverage.html [ ImageOnlyFailure ]

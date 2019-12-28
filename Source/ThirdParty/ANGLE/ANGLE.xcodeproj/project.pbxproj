@@ -698,13 +698,13 @@
 		A30B5803238CB09D0079FDDC /* validationES32.h in Headers */ = {isa = PBXBuildFile; fileRef = A30B57E5238CB09C0079FDDC /* validationES32.h */; };
 		A30B5804238CB09D0079FDDC /* validationES32_autogen.h in Headers */ = {isa = PBXBuildFile; fileRef = A30B57E6238CB09C0079FDDC /* validationES32_autogen.h */; };
 		A30B5806238CB09D0079FDDC /* validationES32.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A30B57E8238CB09C0079FDDC /* validationES32.cpp */; };
-		A30B5819238DF4BB0079FDDC /* entry_points_gles_2_0_autogen.h in Headers */ = {isa = PBXBuildFile; fileRef = A30B5815238DF4BA0079FDDC /* entry_points_gles_2_0_autogen.h */; };
+		A30B5819238DF4BB0079FDDC /* entry_points_gles_2_0_autogen.h in Headers */ = {isa = PBXBuildFile; fileRef = A30B5815238DF4BA0079FDDC /* entry_points_gles_2_0_autogen.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A30B581A238DF4BB0079FDDC /* entry_points_gles_2_0_autogen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A30B5816238DF4BA0079FDDC /* entry_points_gles_2_0_autogen.cpp */; };
 		A30B581B238DF4BB0079FDDC /* entry_points_gles_3_0_autogen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A30B5817238DF4BA0079FDDC /* entry_points_gles_3_0_autogen.cpp */; };
-		A30B581C238DF4BB0079FDDC /* entry_points_gles_3_0_autogen.h in Headers */ = {isa = PBXBuildFile; fileRef = A30B5818238DF4BA0079FDDC /* entry_points_gles_3_0_autogen.h */; };
+		A30B581C238DF4BB0079FDDC /* entry_points_gles_3_0_autogen.h in Headers */ = {isa = PBXBuildFile; fileRef = A30B5818238DF4BA0079FDDC /* entry_points_gles_3_0_autogen.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A30B5822238DF7500079FDDC /* entry_points_gles_1_0_autogen.h in Headers */ = {isa = PBXBuildFile; fileRef = A30B581D238DF74F0079FDDC /* entry_points_gles_1_0_autogen.h */; };
 		A30B5823238DF7500079FDDC /* entry_points_gles_1_0_autogen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A30B581E238DF74F0079FDDC /* entry_points_gles_1_0_autogen.cpp */; };
-		A30B5824238DF7500079FDDC /* entry_points_gles_ext_autogen.h in Headers */ = {isa = PBXBuildFile; fileRef = A30B581F238DF74F0079FDDC /* entry_points_gles_ext_autogen.h */; };
+		A30B5824238DF7500079FDDC /* entry_points_gles_ext_autogen.h in Headers */ = {isa = PBXBuildFile; fileRef = A30B581F238DF74F0079FDDC /* entry_points_gles_ext_autogen.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A30B5825238DF7500079FDDC /* entry_points_gles_ext_autogen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A30B5820238DF74F0079FDDC /* entry_points_gles_ext_autogen.cpp */; };
 		A30B5826238DF7500079FDDC /* entry_points_gles_3_1_autogen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A30B5821238DF74F0079FDDC /* entry_points_gles_3_1_autogen.cpp */; };
 		A30B5828238DF7870079FDDC /* Context_gles_1_0.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A30B5827238DF7870079FDDC /* Context_gles_1_0.cpp */; };

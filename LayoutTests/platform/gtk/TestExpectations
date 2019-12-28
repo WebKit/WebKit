@@ -433,11 +433,9 @@ webkit.org/b/169918 compositing/video/video-background-color.html [ Missing Cras
 
 # WebGL related failures
 webkit.org/b/169917 fast/canvas/webgl/antialiasing-enabled.html [ Failure Pass ]
-webkit.org/b/169917 fast/canvas/webgl/context-attributes-alpha-depth-stencil-antialias.html [ Failure ]
 webkit.org/b/169917 fast/canvas/webgl/copyBufferSubData.html [ Failure ]
 webkit.org/b/169917 fast/canvas/webgl/framebuffer-object-attachment.html [ Failure ]
 webkit.org/b/169917 fast/canvas/webgl/getBufferSubData-webgl1.html [ Failure ]
-webkit.org/b/169917 fast/canvas/webgl/glsl-conformance.html [ Failure ]
 webkit.org/b/169917 fast/canvas/webgl/premultiplyalpha-test.html [ Failure ]
 webkit.org/b/169917 fast/canvas/webgl/read-pixels-test.html [ Failure Pass ]
 webkit.org/b/169917 fast/canvas/webgl/oes-vertex-array-object.html [ Failure Pass ]
@@ -464,7 +462,6 @@ webkit.org/b/169917 webgl/1.0.3/conformance/context/context-hidden-alpha.html [ 
 webkit.org/b/169917 compositing/overlap-blending/children-opacity-huge.html [ ImageOnlyFailure Pass ]
 webkit.org/b/169917 compositing/video/video-border-radius.html [ ImageOnlyFailure Pass ]
 # WebGL timeouts or slow tests.
-webkit.org/b/169917 fast/canvas/webgl/oes-texture-half-float.html [ Slow ]
 webkit.org/b/169917 webgl/1.0.3/conformance/context/context-creation-and-destruction.html [ Pass Timeout ]
 webkit.org/b/169917 webgl/1.0.3/conformance/extensions/oes-texture-float-with-video.html [ Timeout ]
 webkit.org/b/169917 webgl/1.0.3/conformance/glsl/misc/shader-uniform-packing-restrictions.html [ Slow ]

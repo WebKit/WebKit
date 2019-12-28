@@ -36,7 +36,7 @@ class Extensions3DANGLE : public Extensions3D {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     // This class only needs to be instantiated by GraphicsContext3D implementations.
-    Extensions3DANGLE(GraphicsContext3D*, bool useIndexedGetString);
+    Extensions3DANGLE(GraphicsContext3D*, bool useIndexedGetString = false);
     virtual ~Extensions3DANGLE();
 
     // Extensions3D methods.

@@ -11,15 +11,15 @@ Test: ../../../resources/webgl_test_files/conformance2/textures/misc/copy-textur
 [ 8: PASS ] checkFramebufferStatus got FRAMEBUFFER_COMPLETE as expected
 [ 9: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : copyTexImage2D should succeed for good internalformat RGBA
 [ 10: PASS ] checkFramebufferStatus got FRAMEBUFFER_COMPLETE as expected
-[ 11: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : copyTexImage2D should succeed for good internalformat LUMINANCE_ALPHA
+[ 11: PASS ] getError was expected value: NO_ERROR : copyTexImage2D should succeed for good internalformat LUMINANCE_ALPHA
 [ 12: PASS ] checkFramebufferStatus got FRAMEBUFFER_COMPLETE as expected
 [ 13: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : copyTexImage2D should succeed for good internalformat LUMINANCE_ALPHA
 [ 14: PASS ] checkFramebufferStatus got FRAMEBUFFER_COMPLETE as expected
-[ 15: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : copyTexImage2D should succeed for good internalformat LUMINANCE
+[ 15: PASS ] getError was expected value: NO_ERROR : copyTexImage2D should succeed for good internalformat LUMINANCE
 [ 16: PASS ] checkFramebufferStatus got FRAMEBUFFER_COMPLETE as expected
 [ 17: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : copyTexImage2D should succeed for good internalformat LUMINANCE
 [ 18: PASS ] checkFramebufferStatus got FRAMEBUFFER_COMPLETE as expected
-[ 19: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : copyTexImage2D should succeed for good internalformat ALPHA
+[ 19: PASS ] getError was expected value: NO_ERROR : copyTexImage2D should succeed for good internalformat ALPHA
 [ 20: PASS ] checkFramebufferStatus got FRAMEBUFFER_COMPLETE as expected
 [ 21: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : copyTexImage2D should succeed for good internalformat ALPHA
 [ 22: PASS ] checkFramebufferStatus got FRAMEBUFFER_COMPLETE as expected
@@ -117,5 +117,5 @@ Test: ../../../resources/webgl_test_files/conformance2/textures/misc/copy-textur
 [ 114: PASS ] checkFramebufferStatus got FRAMEBUFFER_COMPLETE as expected
 [ 115: PASS ] getError was expected value: INVALID_ENUM : copyTexImage2D should fail for bad internalformat DEPTH24_STENCIL8
 [ 116: PASS ] successfullyParsed is true
-[ FAIL ] 41 failures reported
+[ FAIL ] 38 failures reported
 

@@ -72,7 +72,7 @@ Test: ../../resources/webgl_test_files/conformance2/state/gl-get-calls.html
 [ 69: PASS ] context.getParameter(context.MAX_UNIFORM_BLOCK_SIZE) is an instance of Number
 [ 70: PASS ] context.getParameter(context.MAX_UNIFORM_BUFFER_BINDINGS) is >= 24
 [ 71: PASS ] context.getParameter(context.MAX_UNIFORM_BUFFER_BINDINGS) is an instance of Number
-[ 72: FAIL ] context.getParameter(context.MAX_VARYING_COMPONENTS) should be >= 60. Was 0 (of type number).
+[ 72: PASS ] context.getParameter(context.MAX_VARYING_COMPONENTS) is >= 60
 [ 73: PASS ] context.getParameter(context.MAX_VARYING_COMPONENTS) is an instance of Number
 [ 74: PASS ] context.getParameter(context.MAX_VERTEX_OUTPUT_COMPONENTS) is >= 64
 [ 75: PASS ] context.getParameter(context.MAX_VERTEX_OUTPUT_COMPONENTS) is an instance of Number
@@ -90,5 +90,5 @@ Test: ../../resources/webgl_test_files/conformance2/state/gl-get-calls.html
 [ 87: PASS ] context.getParameter(context.MAX_COMBINED_VERTEX_UNIFORM_COMPONENTS) is an instance of Number
 [ 88: FAIL ] context.getError() should be 0. Was 1280.
 [ 89: PASS ] successfullyParsed is true
-[ FAIL ] 11 failures reported
+[ FAIL ] 10 failures reported
 

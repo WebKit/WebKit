@@ -53,7 +53,7 @@ Test: ../../../resources/webgl_test_files/conformance2/textures/misc/tex-storage
 [ 50: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : compressedTexImage2D should fail on immutable texture
 [ 51: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : copyTexImage2D should fail on immutable texture
 [ 52: FAIL ] texture should sample as uninitialized texture after texStorage2D at (0, 0) expected: 0,0,0,0 was 0,0,0,255
-[ 53: PASS ] getError was expected value: NO_ERROR : texSubImage2D should succeed on immutable texture as long as the format is compatible
+[ 53: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : texSubImage2D should succeed on immutable texture as long as the format is compatible
 [ 54: FAIL ] getError expected: NO_ERROR. Was INVALID_VALUE : texSubImage2D should succeed on immutable texture as long as the format is compatible
 [ 55: FAIL ] getError expected: NO_ERROR. Was INVALID_VALUE : texSubImage2D should succeed on immutable texture as long as the format is compatible
 [ 56: FAIL ] texture should sample as red after uploading red pixels with texSubImage2D at (0, 0) expected: 255,0,0,0 was 0,0,0,255
@@ -146,5 +146,5 @@ Test: ../../../resources/webgl_test_files/conformance2/textures/misc/tex-storage
 [ 143: PASS ] getError was expected value: NO_ERROR : texStorage2D should succeed with size [1, 8].
 [ 144: PASS ] getError was expected value: NO_ERROR : there should be no errors
 [ 145: PASS ] successfullyParsed is true
-[ FAIL ] 68 failures reported
+[ FAIL ] 69 failures reported
 
