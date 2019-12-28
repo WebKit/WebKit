@@ -37,31 +37,20 @@
 namespace WebCore {
 namespace Layout {
 
-static inline bool isTextContentWrappingAllowed(const RenderStyle& style)
+static inline bool isWrappingAllowed(const RenderStyle& style)
 {
     // Do not try to push overflown 'pre' and 'no-wrap' content to next line.
     return style.whiteSpace() != WhiteSpace::Pre && style.whiteSpace() != WhiteSpace::NoWrap;
 }
 
-static inline bool isTextContentWrappingAllowed(const LineBreaker::ContinousContent& candidateRuns)
+bool LineBreaker::isContentWrappingAllowed(const ContinousContent& candidateRuns) const
 {
     // Use the last inline item with content (where we would be wrapping) to decide if content wrapping is allowed.
     auto runIndex = candidateRuns.lastContentRunIndex().valueOr(candidateRuns.size() - 1);
-    return isTextContentWrappingAllowed(candidateRuns.runs()[runIndex].inlineItem.style());
+    return isWrappingAllowed(candidateRuns.runs()[runIndex].inlineItem.style());
 }
 
-static inline bool isContentSplitAllowed(const LineBreaker::Run& run)
-{
-    ASSERT(run.inlineItem.isText() || run.inlineItem.isContainerStart() || run.inlineItem.isContainerEnd());
-    if (!run.inlineItem.isText()) {
-        // Can't split horizontal spacing -> e.g. <span style="padding-right: 100px;">textcontent</span>, if the [container end] is the overflown inline item
-        // we need to check if there's another inline item beyond the [container end] to split.
-        return false;
-    }
-    return isTextContentWrappingAllowed(run.inlineItem.style());
-}
-
-static inline bool shouldKeepEndOfLineWhitespace(const LineBreaker::ContinousContent& candidateRuns)
+bool LineBreaker::shouldKeepEndOfLineWhitespace(const ContinousContent& candidateRuns) const
 {
     // Grab the style and check for white-space property to decided whether we should let this whitespace content overflow the current line.
     // Note that the "keep" in the context means we let the whitespace content sit on the current line.
@@ -71,62 +60,63 @@ static inline bool shouldKeepEndOfLineWhitespace(const LineBreaker::ContinousCon
     return whitespace == WhiteSpace::Normal || whitespace == WhiteSpace::NoWrap || whitespace == WhiteSpace::PreWrap || whitespace == WhiteSpace::PreLine;
 }
 
-LineBreaker::BreakingContext LineBreaker::breakingContextForInlineContent(const ContinousContent& candidateRuns, const LineStatus& lineStatus)
+LineBreaker::Result LineBreaker::shouldWrapInlineContent(const RunList& candidateRuns, const LineStatus& lineStatus)
 {
-    ASSERT(!candidateRuns.isEmpty());
-    if (candidateRuns.width() <= lineStatus.availableWidth)
-        return { BreakingContext::ContentWrappingRule::Keep, IsEndOfLine::No, { } };
-    if (candidateRuns.hasTrailingCollapsibleContent()) {
-        ASSERT(candidateRuns.hasTextContentOnly());
-        auto IsEndOfLine = isTextContentWrappingAllowed(candidateRuns) ? IsEndOfLine::Yes : IsEndOfLine::No;
+    auto candidateContent = ContinousContent { candidateRuns };
+    ASSERT(!candidateContent.isEmpty());
+    if (candidateContent.width() <= lineStatus.availableWidth)
+        return { Result::Action::Keep, IsEndOfLine::No, { } };
+    if (candidateContent.hasTrailingCollapsibleContent()) {
+        ASSERT(candidateContent.hasTextContentOnly());
+        auto IsEndOfLine = isContentWrappingAllowed(candidateContent) ? IsEndOfLine::Yes : IsEndOfLine::No;
         // First check if the content fits without the trailing collapsible part.
-        if (candidateRuns.nonCollapsibleWidth() <= lineStatus.availableWidth)
-            return { BreakingContext::ContentWrappingRule::Keep, IsEndOfLine, { } };
+        if (candidateContent.nonCollapsibleWidth() <= lineStatus.availableWidth)
+            return { Result::Action::Keep, IsEndOfLine, { } };
         // Now check if we can trim the line too.
-        if (lineStatus.lineHasFullyCollapsibleTrailingRun && candidateRuns.isTrailingContentFullyCollapsible()) {
+        if (lineStatus.lineHasFullyCollapsibleTrailingRun && candidateContent.isTrailingContentFullyCollapsible()) {
             // If this new content is fully collapsible, it shoud surely fit.
-            return { BreakingContext::ContentWrappingRule::Keep, IsEndOfLine, { } };
+            return { Result::Action::Keep, IsEndOfLine, { } };
         }
-    } else if (lineStatus.collapsibleWidth && candidateRuns.hasNonContentRunsOnly()) {
+    } else if (lineStatus.collapsibleWidth && candidateContent.hasNonContentRunsOnly()) {
         // Let's see if the non-content runs fit when the line has trailing collapsible content.
         // "text content <span style="padding: 1px"></span>" <- the <span></span> runs could fit after collapsing the trailing whitespace.
-        if (candidateRuns.width() <= lineStatus.availableWidth + lineStatus.collapsibleWidth)
-            return { BreakingContext::ContentWrappingRule::Keep, IsEndOfLine::No, { } };
+        if (candidateContent.width() <= lineStatus.availableWidth + lineStatus.collapsibleWidth)
+            return { Result::Action::Keep, IsEndOfLine::No, { } };
     }
-    if (candidateRuns.isVisuallyEmptyWhitespaceContentOnly() && shouldKeepEndOfLineWhitespace(candidateRuns)) {
+    if (candidateContent.isVisuallyEmptyWhitespaceContentOnly() && shouldKeepEndOfLineWhitespace(candidateContent)) {
         // This overflowing content apparently falls into the remove/hang end-of-line-spaces catergory.
         // see https://www.w3.org/TR/css-text-3/#white-space-property matrix
-        return { BreakingContext::ContentWrappingRule::Keep, IsEndOfLine::No, { } };
+        return { Result::Action::Keep, IsEndOfLine::No, { } };
     }
 
-    if (candidateRuns.hasTextContentOnly()) {
-        auto& runs = candidateRuns.runs();
+    if (candidateContent.hasTextContentOnly()) {
+        auto& runs = candidateContent.runs();
         if (auto wrappedTextContent = wrapTextContent(runs, lineStatus)) {
             if (!wrappedTextContent->trailingRunIndex && wrappedTextContent->contentOverflows) {
                 // We tried to split the content but the available space can't even accommodate the first character.
                 // 1. Push the content over to the next line when we've got content on the line already.
                 // 2. Keep the first character on the empty line (or keep the whole run if it has only one character).
                 if (!lineStatus.lineIsEmpty)
-                    return { BreakingContext::ContentWrappingRule::Push, IsEndOfLine::Yes, { } };
-                auto firstTextRunIndex = *candidateRuns.firstTextRunIndex();
+                    return { Result::Action::Push, IsEndOfLine::Yes, { } };
+                auto firstTextRunIndex = *candidateContent.firstTextRunIndex();
                 auto& inlineTextItem = downcast<InlineTextItem>(runs[firstTextRunIndex].inlineItem);
                 ASSERT(inlineTextItem.length());
                 if (inlineTextItem.length() == 1)
-                    return { BreakingContext::ContentWrappingRule::Keep, IsEndOfLine::Yes, { } };
+                    return { Result::Action::Keep, IsEndOfLine::Yes, { } };
                 auto firstCharacterWidth = TextUtil::width(inlineTextItem, inlineTextItem.start(), inlineTextItem.start() + 1);
                 auto firstCharacterRun = PartialRun { 1, firstCharacterWidth, false };
-                return { BreakingContext::ContentWrappingRule::Split, IsEndOfLine::Yes, BreakingContext::PartialTrailingContent { firstTextRunIndex, firstCharacterRun } };
+                return { Result::Action::Split, IsEndOfLine::Yes, Result::PartialTrailingContent { firstTextRunIndex, firstCharacterRun } };
             }
-            auto splitContent = BreakingContext::PartialTrailingContent { wrappedTextContent->trailingRunIndex, wrappedTextContent->partialTrailingRun };
-            return { BreakingContext::ContentWrappingRule::Split, IsEndOfLine::Yes, splitContent };
+            auto splitContent = Result::PartialTrailingContent { wrappedTextContent->trailingRunIndex, wrappedTextContent->partialTrailingRun };
+            return { Result::Action::Split, IsEndOfLine::Yes, splitContent };
         }
     }
     // If we are not allowed to break this content, we still need to decide whether keep it or push it to the next line.
-    auto isWrappingAllowed = isTextContentWrappingAllowed(candidateRuns);
+    auto isWrappingAllowed = isContentWrappingAllowed(candidateContent);
     auto contentOverflows = lineStatus.lineIsEmpty || !isWrappingAllowed;
     if (!contentOverflows)
-        return { BreakingContext::ContentWrappingRule::Push, IsEndOfLine::Yes, { } };
-    return { BreakingContext::ContentWrappingRule::Keep, isWrappingAllowed ? IsEndOfLine::Yes : IsEndOfLine::No, { } };
+        return { Result::Action::Push, IsEndOfLine::Yes, { } };
+    return { Result::Action::Keep, isWrappingAllowed ? IsEndOfLine::Yes : IsEndOfLine::No, { } };
 }
 
 bool LineBreaker::shouldWrapFloatBox(InlineLayoutUnit floatLogicalWidth, InlineLayoutUnit availableWidth, bool lineIsEmpty)
@@ -136,6 +126,16 @@ bool LineBreaker::shouldWrapFloatBox(InlineLayoutUnit floatLogicalWidth, InlineL
 
 Optional<LineBreaker::WrappedTextContent> LineBreaker::wrapTextContent(const RunList& runs, const LineStatus& lineStatus) const
 {
+    auto isContentSplitAllowed = [] (auto& run) {
+        ASSERT(run.inlineItem.isText() || run.inlineItem.isContainerStart() || run.inlineItem.isContainerEnd());
+        if (!run.inlineItem.isText()) {
+            // Can't split horizontal spacing -> e.g. <span style="padding-right: 100px;">textcontent</span>, if the [container end] is the overflown inline item
+            // we need to check if there's another inline item beyond the [container end] to split.
+            return false;
+        }
+        return isWrappingAllowed(run.inlineItem.style());
+    };
+
     // Check where the overflow occurs and use the corresponding style to figure out the breaking behaviour.
     // <span style="word-break: normal">first</span><span style="word-break: break-all">second</span><span style="word-break: normal">third</span>
     InlineLayoutUnit accumulatedRunWidth = 0;

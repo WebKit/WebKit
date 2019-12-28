@@ -96,6 +96,11 @@ static InlineLayoutUnit inlineItemWidth(const FormattingContext& formattingConte
     return boxGeometry.width();
 }
 
+static inline bool isLineConsideredEmpty(const LineBuilder& line)
+{
+    return line.isVisuallyEmpty() && !line.hasIntrusiveFloat();
+}
+
 LineLayoutContext::LineLayoutContext(const InlineFormattingContext& inlineFormattingContext, const Container& formattingContextRoot, const InlineItems& inlineItems)
     : m_inlineFormattingContext(inlineFormattingContext)
     , m_formattingContextRoot(formattingContextRoot)
@@ -111,6 +116,7 @@ LineLayoutContext::LineContent LineLayoutContext::layoutLine(LineBuilder& line, 
         m_partialLeadingTextItem = { };
     };
     reset();
+    auto lineBreaker = LineBreaker { };
     auto currentItemIndex = leadingInlineItemIndex;
     unsigned committedInlineItemCount = 0;
     while (currentItemIndex < m_inlineItems.size()) {
@@ -134,7 +140,7 @@ LineLayoutContext::LineContent LineLayoutContext::layoutLine(LineBuilder& line, 
         }
         if (!candidateContent.runs().isEmpty()) {
             // Now check if we can put this content on the current line.
-            auto committedContent = placeInlineContentOnCurrentLine(line, candidateContent.runs());
+            auto committedContent = checkForLineWrapAndCommit(lineBreaker, line, candidateContent.runs());
             committedInlineItemCount += committedContent.count;
             if (committedContent.isEndOfLine == LineBreaker::IsEndOfLine::Yes) {
                 // We can't place any more items on the current line.
@@ -245,7 +251,7 @@ LineLayoutContext::CommittedContent LineLayoutContext::addFloatItems(LineBuilder
     return { LineBreaker::IsEndOfLine::No, committedFloatItemCount, { } };
 }
 
-LineLayoutContext::CommittedContent LineLayoutContext::placeInlineContentOnCurrentLine(LineBuilder& line, const LineBreaker::RunList& runs)
+LineLayoutContext::CommittedContent LineLayoutContext::checkForLineWrapAndCommit(LineBreaker& lineBreaker, LineBuilder& line, const LineBreaker::RunList& candidateRuns)
 {
     auto shouldDisableHyphenation = [&] {
         auto& style = root().style();
@@ -253,46 +259,42 @@ LineLayoutContext::CommittedContent LineLayoutContext::placeInlineContentOnCurre
         return m_successiveHyphenatedLineCount >= limitLines;
     };
     // Check if this new content fits.
-    auto lineIsConsideredEmpty = line.isVisuallyEmpty() && !line.hasIntrusiveFloat();
-    auto lineStatus = LineBreaker::LineStatus { line.availableWidth(), line.trailingCollapsibleWidth(), line.isTrailingRunFullyCollapsible(), lineIsConsideredEmpty };
-    auto lineBreaker = LineBreaker { };
+    auto lineStatus = LineBreaker::LineStatus { line.availableWidth(), line.trailingCollapsibleWidth(), line.isTrailingRunFullyCollapsible(), isLineConsideredEmpty(line) };
 
     if (shouldDisableHyphenation())
         lineBreaker.setHyphenationDisabled();
 
-    auto breakingContext = lineBreaker.breakingContextForInlineContent(LineBreaker::ContinousContent { runs }, lineStatus);
-    if (breakingContext.contentWrappingRule == LineBreaker::BreakingContext::ContentWrappingRule::Keep) {
+    auto result = lineBreaker.shouldWrapInlineContent(candidateRuns, lineStatus);
+    if (result.action == LineBreaker::Result::Action::Keep) {
         // This continuous content can be fully placed on the current line.
-        commitContent(line, runs, { });
-        return { breakingContext.isEndOfLine, runs.size(), { } };
+        commitContent(line, candidateRuns, { });
+        return { result.isEndOfLine, candidateRuns.size(), { } };
     }
-
-    if (breakingContext.contentWrappingRule == LineBreaker::BreakingContext::ContentWrappingRule::Push) {
+    if (result.action == LineBreaker::Result::Action::Push) {
         // This continuous content can't be placed on the current line. Nothing to commit at this time.
-        return { breakingContext.isEndOfLine, 0, { } };
+        return { result.isEndOfLine, 0, { } };
     }
-
-    if (breakingContext.contentWrappingRule == LineBreaker::BreakingContext::ContentWrappingRule::Split) {
+    if (result.action == LineBreaker::Result::Action::Split) {
         // Commit the combination of full and partial content on the current line.
-        ASSERT(breakingContext.partialTrailingContent);
-        commitContent(line, runs, breakingContext.partialTrailingContent);
+        ASSERT(result.partialTrailingContent);
+        commitContent(line, candidateRuns, result.partialTrailingContent);
         // When splitting multiple runs <span style="word-break: break-all">text</span><span>content</span>, we might end up splitting them at run boundary.
         // It simply means we don't really have a partial run. Partial content yes, but not partial run.
-        auto trailingRunIndex = breakingContext.partialTrailingContent->trailingRunIndex;
+        auto trailingRunIndex = result.partialTrailingContent->trailingRunIndex;
         auto committedInlineItemCount = trailingRunIndex + 1;
-        if (!breakingContext.partialTrailingContent->partialRun)
-            return { breakingContext.isEndOfLine, committedInlineItemCount, { } };
+        if (!result.partialTrailingContent->partialRun)
+            return { result.isEndOfLine, committedInlineItemCount, { } };
 
-        auto partialRun = *breakingContext.partialTrailingContent->partialRun;
-        auto& trailingInlineTextItem = downcast<InlineTextItem>(runs[trailingRunIndex].inlineItem);
+        auto partialRun = *result.partialTrailingContent->partialRun;
+        auto& trailingInlineTextItem = downcast<InlineTextItem>(candidateRuns[trailingRunIndex].inlineItem);
         auto overflowLength = trailingInlineTextItem.length() - partialRun.length;
-        return { breakingContext.isEndOfLine, committedInlineItemCount, LineContent::PartialContent { partialRun.needsHyphen, overflowLength } };
+        return { result.isEndOfLine, committedInlineItemCount, LineContent::PartialContent { partialRun.needsHyphen, overflowLength } };
     }
     ASSERT_NOT_REACHED();
     return { LineBreaker::IsEndOfLine::No, 0, { } };
 }
 
-void LineLayoutContext::commitContent(LineBuilder& line, const LineBreaker::RunList& runs, Optional<LineBreaker::BreakingContext::PartialTrailingContent> partialTrailingContent)
+void LineLayoutContext::commitContent(LineBuilder& line, const LineBreaker::RunList& runs, Optional<LineBreaker::Result::PartialTrailingContent> partialTrailingContent)
 {
     for (size_t index = 0; index < runs.size(); ++index) {
         auto& run = runs[index];

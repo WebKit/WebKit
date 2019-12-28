@@ -43,14 +43,14 @@ public:
         bool needsHyphen { false };
     };
     enum class IsEndOfLine { No, Yes };
-    struct BreakingContext {
-        enum class ContentWrappingRule {
+    struct Result {
+        enum class Action {
             Keep, // Keep content on the current line.
             Split, // Partial content is on the current line.
             Push // Content is pushed to the next line.
         };
-        ContentWrappingRule contentWrappingRule;
-        IsEndOfLine isEndOfLine { IsEndOfLine::No }; 
+        Action action;
+        IsEndOfLine isEndOfLine { IsEndOfLine::No };
         struct PartialTrailingContent {
             unsigned trailingRunIndex { 0 };
             Optional<PartialRun> partialRun; // nullopt partial run means the trailing run is a complete run.
@@ -69,6 +69,18 @@ public:
     using RunList = Vector<Run, 30>;
     static size_t nextWrapOpportunity(const InlineItems&, unsigned startIndex);
 
+    struct LineStatus {
+        InlineLayoutUnit availableWidth { 0 };
+        InlineLayoutUnit collapsibleWidth { 0 };
+        bool lineHasFullyCollapsibleTrailingRun { false };
+        bool lineIsEmpty { true };
+    };
+    Result shouldWrapInlineContent(const RunList& candidateRuns, const LineStatus&);
+    bool shouldWrapFloatBox(InlineLayoutUnit floatLogicalWidth, InlineLayoutUnit availableWidth, bool lineIsEmpty);
+
+    void setHyphenationDisabled() { n_hyphenationIsDisabled = true; }
+
+private:
     // This struct represents the amount of content committed to line breaking at a time e.g.
     // text content <span>span1</span>between<span>span2</span>
     // [text][ ][content][ ][container start][span1][container end][between][container start][span2][container end]
@@ -108,18 +120,6 @@ public:
         InlineLayoutUnit m_width { 0 };
     };
 
-    struct LineStatus {
-        InlineLayoutUnit availableWidth { 0 };
-        InlineLayoutUnit collapsibleWidth { 0 };
-        bool lineHasFullyCollapsibleTrailingRun { false };
-        bool lineIsEmpty { true };
-    };
-    BreakingContext breakingContextForInlineContent(const ContinousContent& candidateRuns, const LineStatus&);
-    bool shouldWrapFloatBox(InlineLayoutUnit floatLogicalWidth, InlineLayoutUnit availableWidth, bool lineIsEmpty);
-
-    void setHyphenationDisabled() { n_hyphenationIsDisabled = true; }
-
-private:
     struct WrappedTextContent {
         unsigned trailingRunIndex { 0 };
         bool contentOverflows { false };
@@ -134,6 +134,8 @@ private:
         OnlyHyphenationAllowed
     };
     WordBreakRule wordBreakBehavior(const RenderStyle&, bool lineIsEmpty) const;
+    bool shouldKeepEndOfLineWhitespace(const ContinousContent&) const;
+    bool isContentWrappingAllowed(const ContinousContent&) const;
 
     bool n_hyphenationIsDisabled { false };
 };

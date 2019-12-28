@@ -61,8 +61,8 @@ private:
     };
     LineCandidateContent nextContentForLine(unsigned inlineItemIndex, Optional<unsigned> overflowLength, InlineLayoutUnit currentLogicalRight);
     CommittedContent addFloatItems(LineBuilder&, const FloatList&);
-    CommittedContent placeInlineContentOnCurrentLine(LineBuilder&, const LineBreaker::RunList&);
-    void commitContent(LineBuilder&, const LineBreaker::RunList&, Optional<LineBreaker::BreakingContext::PartialTrailingContent>);
+    CommittedContent checkForLineWrapAndCommit(LineBreaker&, LineBuilder&, const LineBreaker::RunList&);
+    void commitContent(LineBuilder&, const LineBreaker::RunList&, Optional<LineBreaker::Result::PartialTrailingContent>);
     LineContent close(LineBuilder&, unsigned leadingInlineItemIndex, unsigned committedInlineItemCount, Optional<LineContent::PartialContent>);
 
     const InlineFormattingContext& formattingContext() const { return m_inlineFormattingContext; }
