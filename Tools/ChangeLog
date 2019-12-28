@@ -1,3 +1,28 @@
+2019-12-28  Antti Koivisto  <antti@apple.com>
+
+        Allow disabling internal and experimental features in run-webkit-tests
+        https://bugs.webkit.org/show_bug.cgi?id=205614
+
+        Reviewed by Tim Horton.
+
+        Add an optional true/false parameter to --internal-feature/--experimental-feature options.
+        This can be useful for isolating problems in features that are enabled by default. Example:
+
+        --internal-feature LayoutFormattingContextIntegrationEnabled=false
+
+        The [=true|false] syntax is the same as used in test headers.
+
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+        (parse_args):
+        * WebKitTestRunner/Options.cpp:
+        (WTR::parseFeature):
+        (WTR::handleOptionExperimentalFeature):
+        (WTR::handleOptionInternalFeature):
+        * WebKitTestRunner/Options.h:
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::testOptionsForTest const):
+        * WebKitTestRunner/TestController.h:
+
 2019-12-25  Dean Jackson  <dino@apple.com>
 
         WKTR/DRT always trigger the Discrete GPU on dual GPU systems

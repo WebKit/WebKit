@@ -105,16 +105,27 @@ static bool handleOptionAllowedHost(Options& options, const char*, const char* h
     return true;
 }
 
+static bool parseFeature(String featureString, HashMap<String, bool>& features)
+{
+    auto strings = featureString.split('=');
+    if (strings.isEmpty() || strings.size() > 2)
+        return false;
+
+    auto featureName = strings[0];
+    bool enabled = strings.size() == 1 || strings[1] == "true";
+
+    features.set(featureName, enabled);
+    return true;
+}
+
 static bool handleOptionExperimentalFeature(Options& options, const char*, const char* feature)
 {
-    options.experimentalFeatures.insert(feature);
-    return true;
+    return parseFeature(feature, options.experimentalFeatures);
 }
 
 static bool handleOptionInternalFeature(Options& options, const char*, const char* feature)
 {
-    options.internalFeatures.insert(feature);
-    return true;
+    return parseFeature(feature, options.internalFeatures);
 }
 
 static bool handleOptionUnmatched(Options& options, const char* option, const char*)

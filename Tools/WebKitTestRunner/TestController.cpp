@@ -1473,9 +1473,9 @@ TestOptions TestController::testOptionsForTest(const TestCommand& command) const
     options.shouldShowWebView = m_shouldShowWebView;
 
     for (auto& feature : m_internalFeatures)
-        options.internalDebugFeatures.add(feature.c_str(), true);
+        options.internalDebugFeatures.add(feature.key, feature.value);
     for (auto& feature : m_experimentalFeatures)
-        options.experimentalFeatures.add(feature.c_str(), true);
+        options.experimentalFeatures.add(feature.key, feature.value);
 
     updatePlatformSpecificTestOptionsForTest(options, command.pathOrURL);
     updateTestOptionsFromTestHeader(options, command.pathOrURL, command.absolutePath);
