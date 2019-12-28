@@ -501,6 +501,9 @@ ThreadedScrollingEnabled:
 SimpleLineLayoutEnabled:
   type: bool
   defaultValue: true
+  humanReadableName: "Simple line layout"
+  humanReadableDescription: "Enable simple line layout path (SLL)"
+  category: internal
 
 ContentChangeObserverEnabled:
   type: bool
