@@ -34,6 +34,8 @@ namespace Layout {
 
 class InlineItem;
 class InlineTextItem;
+struct ContinousContent;
+struct WrappedTextContent;
 
 class LineBreaker {
 public:
@@ -49,10 +51,10 @@ public:
             Split, // Partial content is on the current line.
             Push // Content is pushed to the next line.
         };
-        Action action;
+        Action action { Action::Keep };
         IsEndOfLine isEndOfLine { IsEndOfLine::No };
         struct PartialTrailingContent {
-            unsigned trailingRunIndex { 0 };
+            size_t trailingRunIndex { 0 };
             Optional<PartialRun> partialRun; // nullopt partial run means the trailing run is a complete run.
         };
         Optional<PartialTrailingContent> partialTrailingContent;
@@ -67,7 +69,6 @@ public:
         InlineLayoutUnit logicalWidth { 0 };
     };
     using RunList = Vector<Run, 30>;
-    static size_t nextWrapOpportunity(const InlineItems&, unsigned startIndex);
 
     struct LineStatus {
         InlineLayoutUnit availableWidth { 0 };
@@ -90,42 +91,6 @@ private:
     // [content]
     // [container start][span1][container end][between][container start][span2][container end]
     // see https://drafts.csswg.org/css-text-3/#line-break-details
-    struct ContinousContent {
-        ContinousContent(const RunList&);
-
-        const RunList& runs() const { return m_runs; }
-        bool isEmpty() const { return m_runs.isEmpty(); }
-        bool hasTextContentOnly() const;
-        bool isVisuallyEmptyWhitespaceContentOnly() const;
-        bool hasNonContentRunsOnly() const;
-        size_t size() const { return m_runs.size(); }
-        InlineLayoutUnit width() const { return m_width; }
-        InlineLayoutUnit nonCollapsibleWidth() const { return m_width - m_trailingCollapsibleContent.width; }
-
-        bool hasTrailingCollapsibleContent() const { return !!m_trailingCollapsibleContent.width; }
-        bool isTrailingContentFullyCollapsible() const { return m_trailingCollapsibleContent.isFullyCollapsible; }
-        Optional<size_t> lastWrapOpportunityIndex() const;
-
-        Optional<unsigned> firstTextRunIndex() const;
-        Optional<unsigned> lastContentRunIndex() const;
-
-    private:
-        RunList m_runs;
-        struct TrailingCollapsibleContent {
-            void reset();
-
-            bool isFullyCollapsible { false };
-            InlineLayoutUnit width { 0 };
-        };
-        TrailingCollapsibleContent m_trailingCollapsibleContent;
-        InlineLayoutUnit m_width { 0 };
-    };
-
-    struct WrappedTextContent {
-        unsigned trailingRunIndex { 0 };
-        bool contentOverflows { false };
-        Optional<PartialRun> partialTrailingRun;
-    };
     Optional<WrappedTextContent> wrapTextContent(const RunList&, const LineStatus&) const;
     Result tryWrappingInlineContent(const ContinousContent&, const LineStatus&) const;
     Optional<PartialRun> tryBreakingTextRun(const Run& overflowRun, InlineLayoutUnit availableWidth) const;

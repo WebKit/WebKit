@@ -1,3 +1,55 @@
+2019-12-29  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] Move soft wrap opportunity code out of LineBreaker
+        https://bugs.webkit.org/show_bug.cgi?id=205621
+        <rdar://problem/58227670>
+
+        Reviewed by Antti Koivisto.
+
+        Let's not mix soft and line wrap opportunity logic.
+
+        * layout/inlineformatting/InlineLineBreaker.cpp:
+        (WebCore::Layout::ContinousContent::runs const):
+        (WebCore::Layout::ContinousContent::isEmpty const):
+        (WebCore::Layout::ContinousContent::size const):
+        (WebCore::Layout::ContinousContent::width const):
+        (WebCore::Layout::ContinousContent::nonCollapsibleWidth const):
+        (WebCore::Layout::ContinousContent::hasTrailingCollapsibleContent const):
+        (WebCore::Layout::ContinousContent::isTrailingContentFullyCollapsible const):
+        (WebCore::Layout::LineBreaker::wrapTextContent const):
+        (WebCore::Layout::ContinousContent::ContinousContent):
+        (WebCore::Layout::ContinousContent::hasTextContentOnly const):
+        (WebCore::Layout::ContinousContent::isVisuallyEmptyWhitespaceContentOnly const):
+        (WebCore::Layout::ContinousContent::firstTextRunIndex const):
+        (WebCore::Layout::ContinousContent::lastContentRunIndex const):
+        (WebCore::Layout::ContinousContent::hasNonContentRunsOnly const):
+        (WebCore::Layout::ContinousContent::lastWrapOpportunityIndex const):
+        (WebCore::Layout::ContinousContent::TrailingCollapsibleContent::reset):
+        (WebCore::Layout::endsWithSoftWrapOpportunity): Deleted.
+        (WebCore::Layout::isAtSoftWrapOpportunity): Deleted.
+        (WebCore::Layout::LineBreaker::nextWrapOpportunity): Deleted.
+        (WebCore::Layout::LineBreaker::ContinousContent::ContinousContent): Deleted.
+        (WebCore::Layout::LineBreaker::ContinousContent::hasTextContentOnly const): Deleted.
+        (WebCore::Layout::LineBreaker::ContinousContent::isVisuallyEmptyWhitespaceContentOnly const): Deleted.
+        (WebCore::Layout::LineBreaker::ContinousContent::firstTextRunIndex const): Deleted.
+        (WebCore::Layout::LineBreaker::ContinousContent::lastContentRunIndex const): Deleted.
+        (WebCore::Layout::LineBreaker::ContinousContent::hasNonContentRunsOnly const): Deleted.
+        (WebCore::Layout::LineBreaker::ContinousContent::lastWrapOpportunityIndex const): Deleted.
+        (WebCore::Layout::LineBreaker::ContinousContent::TrailingCollapsibleContent::reset): Deleted.
+        * layout/inlineformatting/InlineLineBreaker.h:
+        (WebCore::Layout::LineBreaker::ContinousContent::runs const): Deleted.
+        (WebCore::Layout::LineBreaker::ContinousContent::isEmpty const): Deleted.
+        (WebCore::Layout::LineBreaker::ContinousContent::size const): Deleted.
+        (WebCore::Layout::LineBreaker::ContinousContent::width const): Deleted.
+        (WebCore::Layout::LineBreaker::ContinousContent::nonCollapsibleWidth const): Deleted.
+        (WebCore::Layout::LineBreaker::ContinousContent::hasTrailingCollapsibleContent const): Deleted.
+        (WebCore::Layout::LineBreaker::ContinousContent::isTrailingContentFullyCollapsible const): Deleted.
+        * layout/inlineformatting/LineLayoutContext.cpp:
+        (WebCore::Layout::endsWithSoftWrapOpportunity):
+        (WebCore::Layout::isAtSoftWrapOpportunity):
+        (WebCore::Layout::nextWrapOpportunity):
+        (WebCore::Layout::LineLayoutContext::nextContentForLine):
+
 2019-12-28  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] Keep track of last line wrap opportunity

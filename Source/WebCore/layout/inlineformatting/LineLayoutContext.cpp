@@ -34,6 +34,144 @@
 namespace WebCore {
 namespace Layout {
 
+static bool endsWithSoftWrapOpportunity(const InlineTextItem& currentTextItem, const InlineTextItem& nextInlineTextItem)
+{
+    ASSERT(!nextInlineTextItem.isWhitespace());
+    // We are at the position after a whitespace.
+    if (currentTextItem.isWhitespace())
+        return true;
+    // When both these non-whitespace runs belong to the same layout box, it's guaranteed that
+    // they are split at a soft breaking opportunity. See InlineTextItem::moveToNextBreakablePosition.
+    if (&currentTextItem.layoutBox() == &nextInlineTextItem.layoutBox())
+        return true;
+    // Now we need to collect at least 3 adjacent characters to be able to make a descision whether the previous text item ends with breaking opportunity.
+    // [ex-][ample] <- second to last[x] last[-] current[a]
+    // We need at least 1 character in the current inline text item and 2 more from previous inline items.
+    auto previousContent = currentTextItem.layoutBox().textContext()->content;
+    auto lineBreakIterator = LazyLineBreakIterator { nextInlineTextItem.layoutBox().textContext()->content };
+    auto previousContentLength = previousContent.length();
+    // FIXME: We should look into the entire uncommitted content for more text context.
+    UChar lastCharacter = previousContentLength ? previousContent[previousContentLength - 1] : 0;
+    UChar secondToLastCharacter = previousContentLength > 1 ? previousContent[previousContentLength - 2] : 0;
+    lineBreakIterator.setPriorContext(lastCharacter, secondToLastCharacter);
+    // Now check if we can break right at the inline item boundary.
+    // With the [ex-ample], findNextBreakablePosition should return the startPosition (0).
+    // FIXME: Check if there's a more correct way of finding breaking opportunities.
+    return !TextUtil::findNextBreakablePosition(lineBreakIterator, 0, nextInlineTextItem.style());
+}
+
+static bool isAtSoftWrapOpportunity(const InlineItem& current, const InlineItem& next)
+{
+    // "is at" simple means that there's a soft wrap opportunity right after the [current].
+    // [text][ ][text][container start]... (<div>text content<span>..</div>)
+    // soft wrap indexes: 0 and 1 definitely, 2 depends on the content after the [container start].
+
+    // https://drafts.csswg.org/css-text-3/#line-break-details
+    // Figure out if the new incoming content puts the uncommitted content on a soft wrap opportunity.
+    // e.g. [container start][prior_continuous_content][container end] (<span>prior_continuous_content</span>)
+    // An incoming <img> box would enable us to commit the "<span>prior_continuous_content</span>" content
+    // but an incoming text content would not necessarily.
+    ASSERT(current.isText() || current.isBox());
+    ASSERT(next.isText() || next.isBox());
+    if (current.isBox() || next.isBox()) {
+        // [text][container start][container end][inline box] (text<span></span><img>) : there's a soft wrap opportunity between the [text] and [img].
+        // The line breaking behavior of a replaced element or other atomic inline is equivalent to an ideographic character.
+        return true;
+    }
+    if (current.style().lineBreak() == LineBreak::Anywhere || next.style().lineBreak() == LineBreak::Anywhere) {
+        // There is a soft wrap opportunity around every typographic character unit, including around any punctuation character
+        // or preserved white spaces, or in the middle of words.
+        return true;
+    }
+    auto& currentInlineTextItem = downcast<InlineTextItem>(current);
+    auto& nextInlineTextItem = downcast<InlineTextItem>(next);
+    if (currentInlineTextItem.isWhitespace()) {
+        // [ ][text] : after [whitespace] position is a soft wrap opportunity.
+        return true;
+    }
+    if (nextInlineTextItem.isWhitespace()) {
+        // [text][ ] (<span>text</span> )
+        // white-space: break-spaces: line breaking opportunity exists after every preserved white space character, but not before.
+        return nextInlineTextItem.style().whiteSpace() != WhiteSpace::BreakSpaces;
+    }
+    // Both current and next items are non-whitespace text.
+    // [text][text] : is a continuous content.
+    // [text-][text] : after [hyphen] position is a soft wrap opportunity.
+    return endsWithSoftWrapOpportunity(currentInlineTextItem, nextInlineTextItem);
+}
+
+static size_t nextWrapOpportunity(const InlineItems& inlineContent, unsigned startIndex)
+{
+    // 1. Find the start candidate by skipping leading non-content items e.g <span><span>start : skip "<span><span>"
+    // 2. Find the end candidate by skipping non-content items inbetween e.g. <span><span>start</span>end: skip "</span>"
+    // 3. Check if there's a soft wrap opportunity between the 2 candidate inline items and repeat.
+    // 4. Any force line break inbetween is considered as a wrap opportunity.
+
+    // [ex-][container start][container end][float][ample] (ex-<span></span><div style="float:left"></div>ample) : wrap index is at [ex-].
+    // [ex][container start][amp-][container start][le] (ex<span>amp-<span>ample) : wrap index is at [amp-].
+    // [ex-][container start][line break][ample] (ex-<span><br>ample) : wrap index is after [br].
+    auto end = inlineContent.size();
+
+    struct WrapContent {
+        WrapContent(size_t index, bool isAtLineBreak)
+            : m_index(index)
+            , m_isAtLineBreak(isAtLineBreak)
+        {
+        }
+        size_t operator*() const { return m_index; }
+        bool isAtLineBreak() const { return m_isAtLineBreak; }
+
+    private:
+        size_t m_index { 0 };
+        bool m_isAtLineBreak { false };
+    };
+    auto nextInlineItemWithContent = [&] (auto index) {
+        // Break at the first text/box/line break inline item.
+        for (; index < end; ++index) {
+            auto& inlineItem = *inlineContent[index];
+            if (inlineItem.isText() || inlineItem.isBox() || inlineItem.isLineBreak())
+                return WrapContent { index, inlineItem.isLineBreak() };
+        }
+        return WrapContent { end, false };
+    };
+
+    // Start at the first inline item with content.
+    // [container start][ex-] : start at [ex-]
+    auto startContent = nextInlineItemWithContent(startIndex);
+    if (startContent.isAtLineBreak()) {
+        // Content starts with a line break. The wrap position is after the line break.
+        return *startContent + 1;
+    }
+
+    while (*startContent != end) {
+        // 1. Find the next inline item with content.
+        // 2. Check if there's a soft wrap opportunity between the start and the next inline item.
+        auto nextContent = nextInlineItemWithContent(*startContent + 1);
+        if (*nextContent == end || nextContent.isAtLineBreak())
+            return *nextContent;
+        if (isAtSoftWrapOpportunity(*inlineContent[*startContent], *inlineContent[*nextContent])) {
+            // There's a soft wrap opportunity between the start and the nextContent.
+            // Now forward-find from the start position to see where we can actually wrap.
+            // [ex-][ample] vs. [ex-][container start][container end][ample]
+            // where [ex-] is startContent and [ample] is the nextContent.
+            auto candidateIndex = *startContent + 1;
+            for (; candidateIndex < *nextContent; ++candidateIndex) {
+                if (inlineContent[candidateIndex]->isContainerStart()) {
+                    // inline content and [container start] and [container end] form unbreakable content.
+                    // ex-<span></span>ample  : wrap opportunity is after "ex-".
+                    // ex-</span></span>ample : wrap opportunity is after "ex-</span></span>".
+                    // ex-</span><span>ample</span> : wrap opportunity is after "ex-</span>".
+                    // ex-<span><span>ample</span></span> : wrap opportunity is after "ex-".
+                    return candidateIndex;
+                }
+            }
+            return candidateIndex;
+        }
+        startContent = nextContent;
+    }
+    return end;
+}
+
 struct LineCandidateContent {
     void append(const InlineItem&, Optional<InlineLayoutUnit> logicalWidth);
 
@@ -190,7 +328,7 @@ LineCandidateContent LineLayoutContext::nextContentForLine(unsigned inlineItemIn
     // 1. Simply add any overflow content from the previous line to the candidate content. It's always a text content.
     // 2. Find the next soft wrap position or explicit line break.
     // 3. Collect floats between the inline content.
-    auto softWrapOpportunityIndex = LineBreaker::nextWrapOpportunity(m_inlineItems, inlineItemIndex);
+    auto softWrapOpportunityIndex = nextWrapOpportunity(m_inlineItems, inlineItemIndex);
     // softWrapOpportunityIndex == m_inlineItems.size() means we don't have any wrap opportunity in this content.
     ASSERT(softWrapOpportunityIndex <= m_inlineItems.size());
 
