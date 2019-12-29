@@ -83,8 +83,8 @@ static bool shouldDirtyAllStyle(const Vector<StyleSheetContents*>& sheets)
 }
 
 Invalidator::Invalidator(const Vector<StyleSheetContents*>& sheets, const MediaQueryEvaluator& mediaQueryEvaluator)
-    : m_ownedRuleSet(makeUnique<RuleSet>())
-    , m_ruleSets({ m_ownedRuleSet.get() })
+    : m_ownedRuleSet(RuleSet::create())
+    , m_ruleSets({ m_ownedRuleSet })
     , m_dirtiesAllStyle(shouldDirtyAllStyle(sheets))
 {
     if (m_dirtiesAllStyle)
@@ -97,17 +97,19 @@ Invalidator::Invalidator(const Vector<StyleSheetContents*>& sheets, const MediaQ
     m_ruleInformation = collectRuleInformation();
 }
 
-Invalidator::Invalidator(const Vector<const RuleSet*, 1>& ruleSets)
+Invalidator::Invalidator(const InvalidationRuleSetVector& ruleSets)
     : m_ruleSets(ruleSets)
     , m_ruleInformation(collectRuleInformation())
 {
     ASSERT(m_ruleSets.size());
 }
 
+Invalidator::~Invalidator() = default;
+
 Invalidator::RuleInformation Invalidator::collectRuleInformation()
 {
     RuleInformation information;
-    for (auto* ruleSet : m_ruleSets) {
+    for (auto& ruleSet : m_ruleSets) {
         if (!ruleSet->slottedPseudoElementRules().isEmpty())
             information.hasSlottedPseudoElementRules = true;
         if (!ruleSet->hostPseudoClassRules().isEmpty())
@@ -137,7 +139,7 @@ Invalidator::CheckDescendants Invalidator::invalidateIfNeeded(Element& element, 
 
     switch (element.styleValidity()) {
     case Style::Validity::Valid: {
-        for (auto* ruleSet : m_ruleSets) {
+        for (auto& ruleSet : m_ruleSets) {
             ElementRuleCollector ruleCollector(element, *ruleSet, filter);
             ruleCollector.setMode(SelectorChecker::Mode::CollectingRulesIgnoringVirtualPseudoElements);
 
@@ -321,8 +323,8 @@ void Invalidator::invalidateInShadowTreeIfNeeded(Element& element)
 void Invalidator::addToMatchElementRuleSets(Invalidator::MatchElementRuleSets& matchElementRuleSets, const InvalidationRuleSet& invalidationRuleSet)
 {
     matchElementRuleSets.ensure(invalidationRuleSet.matchElement, [] {
-        return Vector<const RuleSet*, 1> { };
-    }).iterator->value.append(invalidationRuleSet.ruleSet.get());
+        return InvalidationRuleSetVector { };
+    }).iterator->value.append(invalidationRuleSet.ruleSet.copyRef());
 }
 
 void Invalidator::invalidateWithMatchElementRuleSets(Element& element, const MatchElementRuleSets& matchElementRuleSets)

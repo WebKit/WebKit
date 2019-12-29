@@ -422,7 +422,7 @@ Optional<DynamicMediaQueryEvaluationChanges> RuleSet::evaluteDynamicMediaQueryRu
         return { };
 
     auto& ruleSet = m_mediaQueryInvalidationRuleSetCache.ensure(collectedChanges.changedQueryIndexes, [&] {
-        auto ruleSet = makeUnique<RuleSet>();
+        auto ruleSet = RuleSet::create();
         for (auto* featureVector : collectedChanges.ruleFeatures) {
             for (auto& feature : *featureVector)
                 ruleSet->addRule(*feature.rule, feature.selectorIndex, feature.selectorListIndex);
@@ -430,7 +430,7 @@ Optional<DynamicMediaQueryEvaluationChanges> RuleSet::evaluteDynamicMediaQueryRu
         return ruleSet;
     }).iterator->value;
 
-    return { { DynamicMediaQueryEvaluationChanges::Type::InvalidateStyle, { ruleSet.get() } } };
+    return { { DynamicMediaQueryEvaluationChanges::Type::InvalidateStyle, { ruleSet.copyRef() } } };
 }
 
 RuleSet::CollectedMediaQueryChanges RuleSet::evaluteDynamicMediaQueryRules(const MediaQueryEvaluator& evaluator, size_t startIndex)

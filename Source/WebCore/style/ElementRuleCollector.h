@@ -152,10 +152,10 @@ private:
     const Element& element() const { return m_element.get(); }
 
     const Ref<const Element> m_element;
-    const RuleSet& m_authorStyle;
-    const RuleSet* m_userStyle { nullptr };
-    const RuleSet* m_userAgentMediaQueryStyle { nullptr };
-    const SelectorFilter* m_selectorFilter { nullptr };
+    Ref<const RuleSet> m_authorStyle;
+    RefPtr<const RuleSet> m_userStyle;
+    RefPtr<const RuleSet> m_userAgentMediaQueryStyle;
+    const SelectorFilter* m_selectorFilter;
 
     bool m_shouldIncludeEmptyRules { false };
     bool m_isPrintStyle { false };

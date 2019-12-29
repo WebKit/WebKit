@@ -44,7 +44,7 @@ class Resolver;
 
 struct InvalidationRuleSet {
     MatchElement matchElement;
-    std::unique_ptr<RuleSet> ruleSet;
+    Ref<RuleSet> ruleSet;
     Vector<const CSSSelector*> invalidationSelectors;
 
     WTF_MAKE_FAST_ALLOCATED;
@@ -57,7 +57,7 @@ public:
 
     bool isAuthorStyleDefined() const { return m_isAuthorStyleDefined; }
     RuleSet* userAgentMediaQueryStyle() const;
-    RuleSet& authorStyle() const { return *m_authorStyle.get(); }
+    RuleSet& authorStyle() const { return *m_authorStyle; }
     RuleSet* userStyle() const;
     const RuleFeatureSet& features() const;
     RuleSet* sibling() const { return m_siblingRuleSet.get(); }
@@ -91,14 +91,14 @@ private:
     void collectRulesFromUserStyleSheets(const Vector<RefPtr<CSSStyleSheet>>&, RuleSet& userStyle, const MediaQueryEvaluator&);
     void updateUserAgentMediaQueryStyleIfNeeded() const;
 
-    std::unique_ptr<RuleSet> m_authorStyle;
-    mutable std::unique_ptr<RuleSet> m_userAgentMediaQueryStyle;
-    std::unique_ptr<RuleSet> m_userStyle;
+    RefPtr<RuleSet> m_authorStyle;
+    mutable RefPtr<RuleSet> m_userAgentMediaQueryStyle;
+    RefPtr<RuleSet> m_userStyle;
 
     Resolver& m_styleResolver;
     mutable RuleFeatureSet m_features;
-    mutable std::unique_ptr<RuleSet> m_siblingRuleSet;
-    mutable std::unique_ptr<RuleSet> m_uncommonAttributeRuleSet;
+    mutable RefPtr<RuleSet> m_siblingRuleSet;
+    mutable RefPtr<RuleSet> m_uncommonAttributeRuleSet;
     mutable HashMap<AtomString, std::unique_ptr<Vector<InvalidationRuleSet>>> m_classInvalidationRuleSets;
     mutable HashMap<AtomString, std::unique_ptr<Vector<InvalidationRuleSet>>> m_attributeInvalidationRuleSets;
 

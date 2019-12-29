@@ -1,3 +1,43 @@
+2019-12-29  Antti Koivisto  <antti@apple.com>
+
+        Make RuleSet refcounted
+        https://bugs.webkit.org/show_bug.cgi?id=205628
+
+        Reviewed by Zalan Bujtas.
+
+        For safety, and to support shared ownership.
+
+        Also convert a bunch of places that use raw RuleSet pointers to use Ref/RefPtr instead.
+
+        * style/ElementRuleCollector.cpp:
+        (WebCore::Style::ElementRuleCollector::collectMatchingAuthorRules):
+        (WebCore::Style::ElementRuleCollector::collectSlottedPseudoElementRulesForSlot):
+        (WebCore::Style::ElementRuleCollector::matchUserRules):
+        * style/ElementRuleCollector.h:
+        * style/RuleSet.cpp:
+        (WebCore::Style::RuleSet::evaluteDynamicMediaQueryRules):
+        * style/RuleSet.h:
+        (WebCore::Style::RuleSet::create):
+        (WebCore::Style::RuleSet::RuleSetSelectorPair::RuleSetSelectorPair): Deleted.
+        * style/StyleInvalidator.cpp:
+        (WebCore::Style::Invalidator::Invalidator):
+        (WebCore::Style::Invalidator::collectRuleInformation):
+        (WebCore::Style::Invalidator::invalidateIfNeeded):
+        (WebCore::Style::Invalidator::addToMatchElementRuleSets):
+        * style/StyleInvalidator.h:
+        * style/StyleScopeRuleSets.cpp:
+        (WebCore::Style::ScopeRuleSets::ScopeRuleSets):
+        (WebCore::Style::ScopeRuleSets::updateUserAgentMediaQueryStyleIfNeeded const):
+        (WebCore::Style::ScopeRuleSets::initializeUserStyle):
+        (WebCore::Style::makeRuleSet):
+        (WebCore::Style::ScopeRuleSets::resetAuthorStyle):
+        (WebCore::Style::ensureInvalidationRuleSets):
+        * style/StyleScopeRuleSets.h:
+        (WebCore::Style::ScopeRuleSets::authorStyle const):
+        * style/UserAgentStyle.cpp:
+        (WebCore::Style::UserAgentStyle::loadFullDefaultStyle):
+        (WebCore::Style::UserAgentStyle::loadSimpleDefaultStyle):
+
 2019-12-29  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] Move soft wrap opportunity code out of LineBreaker

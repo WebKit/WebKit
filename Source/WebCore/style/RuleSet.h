@@ -43,10 +43,12 @@ namespace Style {
 class Resolver;
 class RuleSet;
 
+using InvalidationRuleSetVector = Vector<RefPtr<const RuleSet>, 1>;
+
 struct DynamicMediaQueryEvaluationChanges {
     enum class Type { InvalidateStyle, ResetStyle };
     Type type;
-    Vector<const RuleSet*, 1> invalidationRuleSets { };
+    InvalidationRuleSetVector invalidationRuleSets { };
 
     void append(DynamicMediaQueryEvaluationChanges&& other)
     {
@@ -58,22 +60,11 @@ struct DynamicMediaQueryEvaluationChanges {
     };
 };
 
-class RuleSet {
-    WTF_MAKE_NONCOPYABLE(RuleSet); WTF_MAKE_FAST_ALLOCATED;
+class RuleSet : public RefCounted<RuleSet> {
+    WTF_MAKE_NONCOPYABLE(RuleSet);
 public:
-    struct RuleSetSelectorPair {
-        RuleSetSelectorPair(const CSSSelector* selector, std::unique_ptr<RuleSet> ruleSet)
-            : selector(selector), ruleSet(WTFMove(ruleSet))
-        { }
-        RuleSetSelectorPair(const RuleSetSelectorPair& pair)
-            : selector(pair.selector), ruleSet(const_cast<RuleSetSelectorPair*>(&pair)->ruleSet.release())
-        { }
+    static Ref<RuleSet> create() { return adoptRef(*new RuleSet); }
 
-        const CSSSelector* selector;
-        std::unique_ptr<RuleSet> ruleSet;
-    };
-
-    RuleSet();
     ~RuleSet();
 
     typedef Vector<RuleData, 1> RuleDataVector;
@@ -148,6 +139,8 @@ public:
     bool hasHostPseudoClassRulesMatchingInShadowTree() const { return m_hasHostPseudoClassRulesMatchingInShadowTree; }
 
 private:
+    RuleSet();
+
     enum class AddRulesMode { Normal, ResolverMutationScan };
     void addRulesFromSheet(StyleSheetContents&, MediaQueryCollector&, Style::Resolver*, AddRulesMode);
     void addChildRules(const Vector<RefPtr<StyleRuleBase>>&, MediaQueryCollector&, Style::Resolver*, AddRulesMode);
@@ -182,7 +175,7 @@ private:
     RuleFeatureSet m_features;
     bool m_hasViewportDependentMediaQueries { false };
     Vector<DynamicMediaQueryRules> m_dynamicMediaQueryRules;
-    HashMap<Vector<size_t>, std::unique_ptr<const RuleSet>> m_mediaQueryInvalidationRuleSetCache;
+    HashMap<Vector<size_t>, Ref<const RuleSet>> m_mediaQueryInvalidationRuleSetCache;
 };
 
 inline const RuleSet::RuleDataVector* RuleSet::tagRules(const AtomString& key, bool isHTMLName) const
