@@ -68,7 +68,7 @@ protected:
     void finishCreation(VM&, NativeExecutable*, int length, const String& name);
 
 private:
-    JSNativeStdFunction(VM&, JSGlobalObject*, Structure*, NativeStdFunction&&);
+    JSNativeStdFunction(VM&, NativeExecutable*, JSGlobalObject*, Structure*, NativeStdFunction&&);
 
     NativeStdFunction m_function;
 };

@@ -60,7 +60,7 @@ protected:
     static void visitChildren(JSCell*, SlotVisitor&);
 
 private:
-    JSCustomGetterSetterFunction(VM&, JSGlobalObject*, Structure*, Type, const PropertyName&);
+    JSCustomGetterSetterFunction(VM&, NativeExecutable*, JSGlobalObject*, Structure*, Type, const PropertyName&);
     void finishCreation(VM&, NativeExecutable*, CustomGetterSetter*, const String&);
 
     static EncodedJSValue JSC_HOST_CALL customGetterSetterFunctionCall(JSGlobalObject*, CallFrame*);

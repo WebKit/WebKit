@@ -48,7 +48,7 @@ public:
 protected:
     static void visitChildren(JSCell*, SlotVisitor&);
     void finishCreation(VM&, NativeExecutable*, unsigned length, const String& name, JSWebAssemblyInstance*);
-    WebAssemblyFunctionBase(VM&, JSGlobalObject*, Structure*);
+    WebAssemblyFunctionBase(VM&, NativeExecutable*, JSGlobalObject*, Structure*);
 
     WriteBarrier<JSWebAssemblyInstance> m_instance;
 };

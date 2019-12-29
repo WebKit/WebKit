@@ -3468,9 +3468,22 @@ private:
 
     void compileGetExecutable()
     {
+        LBasicBlock continuation = m_out.newBlock();
+        LBasicBlock hasRareData = m_out.newBlock();
         LValue cell = lowCell(m_node->child1());
         speculateFunction(m_node->child1(), cell);
-        setJSValue(m_out.loadPtr(cell, m_heaps.JSFunction_executable));
+
+        LValue rareDataTags = m_out.loadPtr(cell, m_heaps.JSFunction_executableOrRareData);
+        ValueFromBlock fastExecutable = m_out.anchor(rareDataTags);
+        m_out.branch(m_out.testIsZeroPtr(rareDataTags, m_out.constIntPtr(JSFunction::rareDataTag)), unsure(continuation), unsure(hasRareData));
+
+        LBasicBlock lastNext = m_out.appendTo(hasRareData, continuation);
+        LValue rareData = m_out.sub(rareDataTags, m_out.constIntPtr(JSFunction::rareDataTag));
+        ValueFromBlock slowExecutable = m_out.anchor(m_out.loadPtr(rareData, m_heaps.FunctionRareData_executable));
+        m_out.jump(continuation);
+
+        m_out.appendTo(continuation, lastNext);
+        setJSValue(m_out.phi(pointerType(), fastExecutable, slowExecutable));
     }
     
     void compileArrayify()
@@ -5774,8 +5787,7 @@ private:
         // We don't need memory barriers since we just fast-created the function, so it
         // must be young.
         m_out.storePtr(scope, fastObject, m_heaps.JSFunction_scope);
-        m_out.storePtr(weakPointer(executable), fastObject, m_heaps.JSFunction_executable);
-        m_out.storePtr(m_out.intPtrZero, fastObject, m_heaps.JSFunction_rareData);
+        m_out.storePtr(weakPointer(executable), fastObject, m_heaps.JSFunction_executableOrRareData);
         mutatorFence();
 
         ValueFromBlock fastResult = m_out.anchor(fastObject);
@@ -6546,10 +6558,11 @@ private:
         m_out.branch(isFunction(callee, provenType(m_node->child1())), usually(isFunctionBlock), rarely(slowPath));
 
         LBasicBlock lastNext = m_out.appendTo(isFunctionBlock, hasRareData);
-        LValue rareData = m_out.loadPtr(callee, m_heaps.JSFunction_rareData);
-        m_out.branch(m_out.isZero64(rareData), rarely(slowPath), usually(hasRareData));
+        LValue rareDataTags = m_out.loadPtr(callee, m_heaps.JSFunction_executableOrRareData);
+        m_out.branch(m_out.testIsZeroPtr(rareDataTags, m_out.constIntPtr(JSFunction::rareDataTag)), rarely(slowPath), usually(hasRareData));
 
         m_out.appendTo(hasRareData, slowPath);
+        LValue rareData = m_out.sub(rareDataTags, m_out.constIntPtr(JSFunction::rareDataTag));
         LValue allocator = m_out.loadPtr(rareData, m_heaps.FunctionRareData_allocator);
         LValue structure = m_out.loadPtr(rareData, m_heaps.FunctionRareData_structure);
         LValue butterfly = m_out.constIntPtr(0);
@@ -6590,10 +6603,11 @@ private:
         m_out.branch(isFunction(callee, provenType(m_node->child1())), usually(isFunctionBlock), rarely(slowCase));
 
         m_out.appendTo(isFunctionBlock, hasRareData);
-        LValue rareData = m_out.loadPtr(callee, m_heaps.JSFunction_rareData);
-        m_out.branch(m_out.isZero64(rareData), rarely(slowCase), usually(hasRareData));
+        LValue rareDataTags = m_out.loadPtr(callee, m_heaps.JSFunction_executableOrRareData);
+        m_out.branch(m_out.testIsZeroPtr(rareDataTags, m_out.constIntPtr(JSFunction::rareDataTag)), rarely(slowCase), usually(hasRareData));
 
         m_out.appendTo(hasRareData, hasStructure);
+        LValue rareData = m_out.sub(rareDataTags, m_out.constIntPtr(JSFunction::rareDataTag));
         LValue structure = m_out.loadPtr(rareData, m_heaps.FunctionRareData_internalFunctionAllocationProfile_structure);
         m_out.branch(m_out.isZero64(structure), rarely(slowCase), usually(hasStructure));
 
@@ -6644,10 +6658,11 @@ private:
         m_out.branch(isFunction(callee, provenType(m_node->child1())), usually(isFunctionBlock), rarely(slowCase));
 
         LBasicBlock lastNext = m_out.appendTo(isFunctionBlock, hasRareData);
-        LValue rareData = m_out.loadPtr(callee, m_heaps.JSFunction_rareData);
-        m_out.branch(m_out.isZero64(rareData), rarely(slowCase), usually(hasRareData));
+        LValue rareDataTags = m_out.loadPtr(callee, m_heaps.JSFunction_executableOrRareData);
+        m_out.branch(m_out.testIsZeroPtr(rareDataTags, m_out.constIntPtr(JSFunction::rareDataTag)), rarely(slowCase), usually(hasRareData));
 
         m_out.appendTo(hasRareData, hasStructure);
+        LValue rareData = m_out.sub(rareDataTags, m_out.constIntPtr(JSFunction::rareDataTag));
         LValue structure = m_out.loadPtr(rareData, m_heaps.FunctionRareData_internalFunctionAllocationProfile_structure);
         m_out.branch(m_out.isZero64(structure), rarely(slowCase), usually(hasStructure));
 

@@ -96,7 +96,7 @@ JSFunction* JSFunction::create(VM& vm, JSGlobalObject* globalObject, int length,
 {
     NativeExecutable* executable = vm.getHostFunction(nativeFunction, intrinsic, nativeConstructor, signature, name);
     Structure* structure = globalObject->hostFunctionStructure();
-    JSFunction* function = new (NotNull, allocateCell<JSFunction>(vm.heap)) JSFunction(vm, globalObject, structure);
+    JSFunction* function = new (NotNull, allocateCell<JSFunction>(vm.heap)) JSFunction(vm, executable, globalObject, structure);
     // Can't do this during initialization because getHostFunction might do a GC allocation.
     function->finishCreation(vm, executable, length, name);
     return function;
@@ -107,14 +107,14 @@ JSFunction* JSFunction::createFunctionThatMasqueradesAsUndefined(VM& vm, JSGloba
     NativeExecutable* executable = vm.getHostFunction(nativeFunction, intrinsic, nativeConstructor, signature, name);
     Structure* structure = Structure::create(vm, globalObject, globalObject->objectPrototype(), TypeInfo(JSFunctionType, JSFunction::StructureFlags | MasqueradesAsUndefined), JSFunction::info());
     globalObject->masqueradesAsUndefinedWatchpoint()->fireAll(globalObject->vm(), "Allocated masquerading object");
-    JSFunction* function = new (NotNull, allocateCell<JSFunction>(vm.heap)) JSFunction(vm, globalObject, structure);
+    JSFunction* function = new (NotNull, allocateCell<JSFunction>(vm.heap)) JSFunction(vm, executable, globalObject, structure);
     function->finishCreation(vm, executable, length, name);
     return function;
 }
 
-JSFunction::JSFunction(VM& vm, JSGlobalObject* globalObject, Structure* structure)
+JSFunction::JSFunction(VM& vm, NativeExecutable* executable, JSGlobalObject* globalObject, Structure* structure)
     : Base(vm, globalObject, structure)
-    , m_executable()
+    , m_executableOrRareData(bitwise_cast<uintptr_t>(executable))
 {
     assertTypeInfoFlagInvariants();
     ASSERT(structure->globalObject() == globalObject);
@@ -130,14 +130,13 @@ void JSFunction::finishCreation(VM& vm)
     ASSERT(methodTable(vm)->getCallData == &JSFunction::getCallData);
 }
 
-void JSFunction::finishCreation(VM& vm, NativeExecutable* executable, int length, const String& name)
+void JSFunction::finishCreation(VM& vm, NativeExecutable*, int length, const String& name)
 {
     Base::finishCreation(vm);
     ASSERT(inherits(vm, info()));
     ASSERT(type() == JSFunctionType);
     ASSERT(methodTable(vm)->getConstructData == &JSFunction::getConstructData);
     ASSERT(methodTable(vm)->getCallData == &JSFunction::getCallData);
-    m_executable.set(vm, this, executable);
 
     // Some NativeExecutable functions, like JSBoundFunction, decide to lazily allocate their name string / length.
     if (this->inherits<JSBoundFunction>(vm))
@@ -150,15 +149,19 @@ void JSFunction::finishCreation(VM& vm, NativeExecutable* executable, int length
 
 FunctionRareData* JSFunction::allocateRareData(VM& vm)
 {
-    ASSERT(!m_rareData);
-    FunctionRareData* rareData = FunctionRareData::create(vm);
+    uintptr_t executableOrRareData = m_executableOrRareData;
+    ASSERT(!(executableOrRareData & rareDataTag));
+    FunctionRareData* rareData = FunctionRareData::create(vm, bitwise_cast<ExecutableBase*>(executableOrRareData));
+    executableOrRareData = bitwise_cast<uintptr_t>(rareData) | rareDataTag;
 
     // A DFG compilation thread may be trying to read the rare data
     // We want to ensure that it sees it properly allocated
     WTF::storeStoreFence();
 
-    m_rareData.set(vm, this, rareData);
-    return m_rareData.get();
+    m_executableOrRareData = executableOrRareData;
+    vm.heap.writeBarrier(this, rareData);
+
+    return rareData;
 }
 
 JSObject* JSFunction::prototypeForConstruction(VM& vm, JSGlobalObject* globalObject)
@@ -187,29 +190,35 @@ JSObject* JSFunction::prototypeForConstruction(VM& vm, JSGlobalObject* globalObj
 
 FunctionRareData* JSFunction::allocateAndInitializeRareData(JSGlobalObject* globalObject, size_t inlineCapacity)
 {
-    ASSERT(!m_rareData);
+    uintptr_t executableOrRareData = m_executableOrRareData;
+    ASSERT(!(executableOrRareData & rareDataTag));
     ASSERT(canUseAllocationProfile());
     VM& vm = globalObject->vm();
     JSObject* prototype = prototypeForConstruction(vm, globalObject);
-    FunctionRareData* rareData = FunctionRareData::create(vm);
+    FunctionRareData* rareData = FunctionRareData::create(vm, bitwise_cast<ExecutableBase*>(executableOrRareData));
     rareData->initializeObjectAllocationProfile(vm, this->globalObject(), prototype, inlineCapacity, this);
+    executableOrRareData = bitwise_cast<uintptr_t>(rareData) | rareDataTag;
 
     // A DFG compilation thread may be trying to read the rare data
     // We want to ensure that it sees it properly allocated
     WTF::storeStoreFence();
 
-    m_rareData.set(vm, this, rareData);
-    return m_rareData.get();
+    m_executableOrRareData = executableOrRareData;
+    vm.heap.writeBarrier(this, rareData);
+
+    return rareData;
 }
 
 FunctionRareData* JSFunction::initializeRareData(JSGlobalObject* globalObject, size_t inlineCapacity)
 {
-    ASSERT(!!m_rareData);
+    uintptr_t executableOrRareData = m_executableOrRareData;
+    ASSERT(executableOrRareData & rareDataTag);
     ASSERT(canUseAllocationProfile());
     VM& vm = globalObject->vm();
     JSObject* prototype = prototypeForConstruction(vm, globalObject);
-    m_rareData->initializeObjectAllocationProfile(vm, this->globalObject(), prototype, inlineCapacity, this);
-    return m_rareData.get();
+    FunctionRareData* rareData = bitwise_cast<FunctionRareData*>(executableOrRareData & ~rareDataTag);
+    rareData->initializeObjectAllocationProfile(vm, this->globalObject(), prototype, inlineCapacity, this);
+    return rareData;
 }
 
 String JSFunction::name(VM& vm)
@@ -263,8 +272,7 @@ void JSFunction::visitChildren(JSCell* cell, SlotVisitor& visitor)
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     Base::visitChildren(thisObject, visitor);
 
-    visitor.append(thisObject->m_executable);
-    visitor.append(thisObject->m_rareData);
+    visitor.appendUnbarriered(bitwise_cast<JSCell*>(bitwise_cast<uintptr_t>(thisObject->m_executableOrRareData) & ~rareDataTag));
 }
 
 CallType JSFunction::getCallData(JSCell* cell, CallData& callData)
@@ -533,7 +541,7 @@ bool JSFunction::put(JSCell* cell, JSGlobalObject* globalObject, PropertyName pr
     JSFunction* thisObject = jsCast<JSFunction*>(cell);
 
     if (propertyName == vm.propertyNames->length || propertyName == vm.propertyNames->name) {
-        FunctionRareData* rareData = thisObject->rareData(vm);
+        FunctionRareData* rareData = thisObject->ensureRareData(vm);
         if (propertyName == vm.propertyNames->length)
             rareData->setHasModifiedLength();
         else
@@ -559,8 +567,8 @@ bool JSFunction::put(JSCell* cell, JSGlobalObject* globalObject, PropertyName pr
         PropertySlot getSlot(thisObject, PropertySlot::InternalMethodType::VMInquiry);
         thisObject->methodTable(vm)->getOwnPropertySlot(thisObject, globalObject, propertyName, getSlot);
         RETURN_IF_EXCEPTION(scope, false);
-        if (thisObject->m_rareData)
-            thisObject->m_rareData->clear("Store to prototype property of a function");
+        if (FunctionRareData* rareData = thisObject->rareData())
+            rareData->clear("Store to prototype property of a function");
         RELEASE_AND_RETURN(scope, Base::put(thisObject, globalObject, propertyName, value, slot));
     }
 
@@ -584,7 +592,7 @@ bool JSFunction::deleteProperty(JSCell* cell, JSGlobalObject* globalObject, Prop
     JSFunction* thisObject = jsCast<JSFunction*>(cell);
 
     if (propertyName == vm.propertyNames->length || propertyName == vm.propertyNames->name) {
-        FunctionRareData* rareData = thisObject->rareData(vm);
+        FunctionRareData* rareData = thisObject->ensureRareData(vm);
         if (propertyName == vm.propertyNames->length)
             rareData->setHasModifiedLength();
         else
@@ -619,7 +627,7 @@ bool JSFunction::defineOwnProperty(JSObject* object, JSGlobalObject* globalObjec
     JSFunction* thisObject = jsCast<JSFunction*>(object);
 
     if (propertyName == vm.propertyNames->length || propertyName == vm.propertyNames->name) {
-        FunctionRareData* rareData = thisObject->rareData(vm);
+        FunctionRareData* rareData = thisObject->ensureRareData(vm);
         if (propertyName == vm.propertyNames->length)
             rareData->setHasModifiedLength();
         else
@@ -638,8 +646,8 @@ bool JSFunction::defineOwnProperty(JSObject* object, JSGlobalObject* globalObjec
         PropertySlot slot(thisObject, PropertySlot::InternalMethodType::VMInquiry);
         thisObject->methodTable(vm)->getOwnPropertySlot(thisObject, globalObject, propertyName, slot);
         RETURN_IF_EXCEPTION(scope, false);
-        if (thisObject->m_rareData)
-            thisObject->m_rareData->clear("Store to prototype property of a function");
+        if (FunctionRareData* rareData = thisObject->rareData())
+            rareData->clear("Store to prototype property of a function");
         RELEASE_AND_RETURN(scope, Base::defineOwnProperty(object, globalObject, propertyName, descriptor, throwException));
     }
 
@@ -767,7 +775,7 @@ void JSFunction::setFunctionName(JSGlobalObject* globalObject, JSValue value)
 
 void JSFunction::reifyLength(VM& vm)
 {
-    FunctionRareData* rareData = this->rareData(vm);
+    FunctionRareData* rareData = this->ensureRareData(vm);
 
     ASSERT(!hasReifiedLength());
     unsigned length = 0;
@@ -800,7 +808,7 @@ void JSFunction::reifyName(VM& vm, JSGlobalObject* globalObject)
 
 void JSFunction::reifyName(VM& vm, JSGlobalObject* globalObject, String name)
 {
-    FunctionRareData* rareData = this->rareData(vm);
+    FunctionRareData* rareData = this->ensureRareData(vm);
 
     ASSERT(!hasReifiedName());
     ASSERT(!isHostFunction());
@@ -886,7 +894,7 @@ JSFunction::PropertyStatus JSFunction::reifyLazyBoundNameIfNeeded(VM& vm, JSGlob
     if (isBuiltinFunction())
         reifyName(vm, globalObject);
     else if (this->inherits<JSBoundFunction>(vm)) {
-        FunctionRareData* rareData = this->rareData(vm);
+        FunctionRareData* rareData = this->ensureRareData(vm);
         JSString* name = jsCast<JSBoundFunction*>(this)->name();
         JSString* string = nullptr;
         if (name->length() != 0) {

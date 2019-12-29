@@ -61,6 +61,7 @@ class JSFunction : public JSCallee {
     friend class InternalFunction;
 
 public:
+    static constexpr uintptr_t rareDataTag = 0x1;
     
     template<typename CellType, SubspaceAccess>
     static IsoSubspace* subspaceFor(VM& vm)
@@ -91,7 +92,13 @@ public:
     JS_EXPORT_PRIVATE String displayName(VM&);
     JS_EXPORT_PRIVATE const String calculatedDisplayName(VM&);
 
-    ExecutableBase* executable() const { return m_executable.get(); }
+    ExecutableBase* executable() const
+    {
+        uintptr_t executableOrRareData = m_executableOrRareData;
+        if (executableOrRareData & rareDataTag)
+            return bitwise_cast<FunctionRareData*>(executableOrRareData & ~rareDataTag)->executable();
+        return bitwise_cast<ExecutableBase*>(executableOrRareData);
+    }
 
     // To call any of these methods include JSFunctionInlines.h
     bool isHostFunction() const;
@@ -114,34 +121,31 @@ public:
     JS_EXPORT_PRIVATE static ConstructType getConstructData(JSCell*, ConstructData&);
     JS_EXPORT_PRIVATE static CallType getCallData(JSCell*, CallData&);
 
-    static inline ptrdiff_t offsetOfExecutable()
+    static inline ptrdiff_t offsetOfExecutableOrRareData()
     {
-        return OBJECT_OFFSETOF(JSFunction, m_executable);
+        return OBJECT_OFFSETOF(JSFunction, m_executableOrRareData);
     }
 
-    static inline ptrdiff_t offsetOfRareData()
+    FunctionRareData* ensureRareData(VM& vm)
     {
-        return OBJECT_OFFSETOF(JSFunction, m_rareData);
-    }
-
-    FunctionRareData* rareData(VM& vm)
-    {
-        if (UNLIKELY(!m_rareData))
+        uintptr_t executableOrRareData = m_executableOrRareData;
+        if (UNLIKELY(!(executableOrRareData & rareDataTag)))
             return allocateRareData(vm);
-        return m_rareData.get();
+        return bitwise_cast<FunctionRareData*>(executableOrRareData & ~rareDataTag);
     }
 
     FunctionRareData* ensureRareDataAndAllocationProfile(JSGlobalObject*, unsigned inlineCapacity);
 
     FunctionRareData* rareData()
     {
-        FunctionRareData* rareData = m_rareData.get();
-
+        uintptr_t executableOrRareData = m_executableOrRareData;
         // The JS thread may be concurrently creating the rare data
         // If we see it, we want to ensure it has been properly created
         WTF::loadLoadFence();
 
-        return rareData;
+        if (executableOrRareData & rareDataTag)
+            return bitwise_cast<FunctionRareData*>(executableOrRareData & ~rareDataTag);
+        return nullptr;
     }
 
     bool isHostOrBuiltinFunction() const;
@@ -167,7 +171,7 @@ public:
     bool areNameAndLengthOriginal(VM&);
 
 protected:
-    JS_EXPORT_PRIVATE JSFunction(VM&, JSGlobalObject*, Structure*);
+    JS_EXPORT_PRIVATE JSFunction(VM&, NativeExecutable*, JSGlobalObject*, Structure*);
     JSFunction(VM&, FunctionExecutable*, JSScope*, Structure*);
 
     void finishCreation(VM&, NativeExecutable*, int length, const String& name);
@@ -221,8 +225,7 @@ private:
     static EncodedJSValue argumentsGetter(JSGlobalObject*, EncodedJSValue, PropertyName);
     static EncodedJSValue callerGetter(JSGlobalObject*, EncodedJSValue, PropertyName);
 
-    WriteBarrier<ExecutableBase> m_executable;
-    WriteBarrier<FunctionRareData> m_rareData;
+    uintptr_t m_executableOrRareData;
 };
 
 class JSStrictFunction final : public JSFunction {

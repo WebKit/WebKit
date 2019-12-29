@@ -2185,7 +2185,10 @@ macro nativeCallTrampoline(executableOffsetToFunction)
     functionPrologue()
     storep 0, CodeBlock[cfr]
     loadp Callee[cfr], a0
-    loadp JSFunction::m_executable[a0], a2
+    loadp JSFunction::m_executableOrRareData[a0], a2
+    btpz a2, (constexpr JSFunction::rareDataTag), .executable
+    loadp (FunctionRareData::m_executable - (constexpr JSFunction::rareDataTag))[a2], a2
+.executable:
     loadp JSFunction::m_scope[a0], a0
     loadp JSGlobalObject::m_vm[a0], a1
     storep cfr, VM::topCallFrame[a1]

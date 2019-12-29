@@ -60,8 +60,8 @@ EncodedJSValue JSC_HOST_CALL JSCustomGetterSetterFunction::customGetterSetterFun
     return customGetterSetter->getter()(globalObject, JSValue::encode(thisValue), customGetterSetterFunction->propertyName());
 }
 
-JSCustomGetterSetterFunction::JSCustomGetterSetterFunction(VM& vm, JSGlobalObject* globalObject, Structure* structure, const Type type, const PropertyName& propertyName)
-    : Base(vm, globalObject, structure)
+JSCustomGetterSetterFunction::JSCustomGetterSetterFunction(VM& vm, NativeExecutable* executable, JSGlobalObject* globalObject, Structure* structure, const Type type, const PropertyName& propertyName)
+    : Base(vm, executable, globalObject, structure)
     , m_type(type)
     , m_propertyName(propertyName)
 {
@@ -77,7 +77,7 @@ JSCustomGetterSetterFunction* JSCustomGetterSetterFunction::create(VM& vm, JSGlo
     NativeExecutable* executable = vm.getHostFunction(customGetterSetterFunctionCall, callHostFunctionAsConstructor, String(propertyName.publicName()));
 
     Structure* structure = globalObject->customGetterSetterFunctionStructure();
-    JSCustomGetterSetterFunction* function = new (NotNull, allocateCell<JSCustomGetterSetterFunction>(vm.heap)) JSCustomGetterSetterFunction(vm, globalObject, structure, type, propertyName);
+    JSCustomGetterSetterFunction* function = new (NotNull, allocateCell<JSCustomGetterSetterFunction>(vm.heap)) JSCustomGetterSetterFunction(vm, executable, globalObject, structure, type, propertyName);
 
     // Can't do this during initialization because getHostFunction might do a GC allocation.
     function->finishCreation(vm, executable, getterSetter, name);

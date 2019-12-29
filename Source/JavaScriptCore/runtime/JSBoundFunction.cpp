@@ -165,7 +165,7 @@ inline Structure* getBoundFunctionStructure(VM& vm, JSGlobalObject* globalObject
     // We only cache the structure of the bound function if the bindee is a JSFunction since there
     // isn't any good place to put the structure on Internal Functions.
     if (targetJSFunction) {
-        Structure* structure = targetJSFunction->rareData(vm)->getBoundFunctionStructure();
+        Structure* structure = targetJSFunction->ensureRareData(vm)->getBoundFunctionStructure();
         if (structure && structure->storedPrototype() == prototype && structure->globalObject() == globalObject)
             return structure;
     }
@@ -182,7 +182,7 @@ inline Structure* getBoundFunctionStructure(VM& vm, JSGlobalObject* globalObject
         result = Structure::create(vm, globalObject, prototype, result->typeInfo(), result->classInfo());
 
     if (targetJSFunction)
-        targetJSFunction->rareData(vm)->setBoundFunctionStructure(vm, result);
+        targetJSFunction->ensureRareData(vm)->setBoundFunctionStructure(vm, result);
 
     return result;
 }
@@ -202,7 +202,7 @@ JSBoundFunction* JSBoundFunction::create(VM& vm, JSGlobalObject* globalObject, J
     NativeExecutable* executable = vm.getBoundFunction(isJSFunction, canConstruct);
     Structure* structure = getBoundFunctionStructure(vm, globalObject, targetFunction);
     RETURN_IF_EXCEPTION(scope, nullptr);
-    JSBoundFunction* function = new (NotNull, allocateCell<JSBoundFunction>(vm.heap)) JSBoundFunction(vm, globalObject, structure, targetFunction, boundThis, boundArgs, name, length);
+    JSBoundFunction* function = new (NotNull, allocateCell<JSBoundFunction>(vm.heap)) JSBoundFunction(vm, executable, globalObject, structure, targetFunction, boundThis, boundArgs, name, length);
 
     function->finishCreation(vm, executable, length);
     return function;
@@ -213,8 +213,8 @@ bool JSBoundFunction::customHasInstance(JSObject* object, JSGlobalObject* global
     return jsCast<JSBoundFunction*>(object)->m_targetFunction->hasInstance(globalObject, value);
 }
 
-JSBoundFunction::JSBoundFunction(VM& vm, JSGlobalObject* globalObject, Structure* structure, JSObject* targetFunction, JSValue boundThis, JSImmutableButterfly* boundArgs, JSString* name, int length)
-    : Base(vm, globalObject, structure)
+JSBoundFunction::JSBoundFunction(VM& vm, NativeExecutable* executable, JSGlobalObject* globalObject, Structure* structure, JSObject* targetFunction, JSValue boundThis, JSImmutableButterfly* boundArgs, JSString* name, int length)
+    : Base(vm, executable, globalObject, structure)
     , m_targetFunction(vm, this, targetFunction)
     , m_boundThis(vm, this, boundThis)
     , m_boundArgs(vm, this, boundArgs, WriteBarrier<JSImmutableButterfly>::MayBeNull)

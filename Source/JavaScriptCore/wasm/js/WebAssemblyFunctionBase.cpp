@@ -35,8 +35,8 @@ namespace JSC {
 
 const ClassInfo WebAssemblyFunctionBase::s_info = { "WebAssemblyFunctionBase", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(WebAssemblyFunctionBase) };
 
-WebAssemblyFunctionBase::WebAssemblyFunctionBase(VM& vm, JSGlobalObject* globalObject, Structure* structure)
-    : Base(vm, globalObject, structure)
+WebAssemblyFunctionBase::WebAssemblyFunctionBase(VM& vm, NativeExecutable* executable, JSGlobalObject* globalObject, Structure* structure)
+    : Base(vm, executable, globalObject, structure)
 { }
 
 void WebAssemblyFunctionBase::visitChildren(JSCell* cell, SlotVisitor& visitor)

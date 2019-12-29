@@ -62,7 +62,7 @@ protected:
     void finishCreation(VM&, NativeExecutable*, unsigned length, const String& name, JSObject*, JSWebAssemblyInstance*);
 
 private:
-    WebAssemblyWrapperFunction(VM&, JSGlobalObject*, Structure*, WasmToWasmImportableFunction);
+    WebAssemblyWrapperFunction(VM&, NativeExecutable*, JSGlobalObject*, Structure*, WasmToWasmImportableFunction);
 
     WriteBarrier<JSObject> m_function;
     // It's safe to just hold the raw WasmToWasmImportableFunction because we have a reference

@@ -124,7 +124,8 @@ Structure* InternalFunction::createSubclassStructureSlow(JSGlobalObject* globalO
     JSGlobalObject* baseGlobalObject = baseClass->globalObject();
 
     if (LIKELY(targetFunction)) {
-        Structure* structure = targetFunction->rareData(vm)->internalFunctionAllocationStructure();
+        FunctionRareData* rareData = targetFunction->ensureRareData(vm);
+        Structure* structure = rareData->internalFunctionAllocationStructure();
         if (LIKELY(structure && structure->classInfo() == baseClass->classInfo() && structure->globalObject() == baseGlobalObject))
             return structure;
 
@@ -132,7 +133,7 @@ Structure* InternalFunction::createSubclassStructureSlow(JSGlobalObject* globalO
         JSValue prototypeValue = targetFunction->get(globalObject, vm.propertyNames->prototype);
         RETURN_IF_EXCEPTION(scope, nullptr);
         if (JSObject* prototype = jsDynamicCast<JSObject*>(vm, prototypeValue))
-            return targetFunction->rareData(vm)->createInternalFunctionAllocationStructureFromBase(vm, baseGlobalObject, prototype, baseClass);
+            return rareData->createInternalFunctionAllocationStructureFromBase(vm, baseGlobalObject, prototype, baseClass);
     } else {
         JSValue prototypeValue = newTarget.get(globalObject, vm.propertyNames->prototype);
         RETURN_IF_EXCEPTION(scope, nullptr);

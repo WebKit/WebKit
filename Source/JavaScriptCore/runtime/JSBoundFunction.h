@@ -82,7 +82,7 @@ protected:
     static void visitChildren(JSCell*, SlotVisitor&);
 
 private:
-    JSBoundFunction(VM&, JSGlobalObject*, Structure*, JSObject* targetFunction, JSValue boundThis, JSImmutableButterfly* boundArgs, JSString* name, int length);
+    JSBoundFunction(VM&, NativeExecutable*, JSGlobalObject*, Structure*, JSObject* targetFunction, JSValue boundThis, JSImmutableButterfly* boundArgs, JSString* name, int length);
     
     void finishCreation(VM&, NativeExecutable*, int length);
 

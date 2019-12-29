@@ -36,8 +36,8 @@ namespace JSC {
 
 const ClassInfo JSNativeStdFunction::s_info = { "Function", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSNativeStdFunction) };
 
-JSNativeStdFunction::JSNativeStdFunction(VM& vm, JSGlobalObject* globalObject, Structure* structure, NativeStdFunction&& function)
-    : Base(vm, globalObject, structure)
+JSNativeStdFunction::JSNativeStdFunction(VM& vm, NativeExecutable* executable, JSGlobalObject* globalObject, Structure* structure, NativeStdFunction&& function)
+    : Base(vm, executable, globalObject, structure)
     , m_function(WTFMove(function))
 {
 }
@@ -66,7 +66,7 @@ JSNativeStdFunction* JSNativeStdFunction::create(VM& vm, JSGlobalObject* globalO
 {
     NativeExecutable* executable = vm.getHostFunction(runStdFunction, intrinsic, nativeConstructor, nullptr, name);
     Structure* structure = globalObject->nativeStdFunctionStructure();
-    JSNativeStdFunction* function = new (NotNull, allocateCell<JSNativeStdFunction>(vm.heap)) JSNativeStdFunction(vm, globalObject, structure, WTFMove(nativeStdFunction));
+    JSNativeStdFunction* function = new (NotNull, allocateCell<JSNativeStdFunction>(vm.heap)) JSNativeStdFunction(vm, executable, globalObject, structure, WTFMove(nativeStdFunction));
     function->finishCreation(vm, executable, length, name);
     return function;
 }

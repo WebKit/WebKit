@@ -1,5 +1,106 @@
 2019-12-28  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        [JSC] JSFunction's m_executable / m_rareData should be merged
+        https://bugs.webkit.org/show_bug.cgi?id=205554
+
+        Reviewed by Mark Lam.
+
+        This patch merges JSFunction::m_executable and JSFunction::m_rareData fields into one JSFunction::m_executableOrRareData field.
+        JSFunction is one of the most frequently allocated objects (e.g. it is common that anonymous JSFunction expression is used as a scope).
+        If we can save sizeof(JSFunction), we can get great savings in memory usage.
+
+        JSFunction::m_scope field is touched every time we execute this function. (op_get_scope, or obtaining JSGlobalObject for host functions).
+        On the other hand, m_executable field can be skipped if JSFunction call is cached by CallLinkInfo. So compared to JSFunction::m_scope,
+        this field is less frequently touched. So, we merge m_executable and m_rareData fields into one, m_executableOrRareData. When it holds
+        ExecutableBase*, we do nothing. But when we create FunctionRareData, we put ExecutableBase in FunctionRareData and store FunctionRareData
+        to JSFunction::m_executableOrRareData field with `0x1` flag.
+
+        This patch reduces sizeof(JSFunction) from 48 to 32.
+
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileNewFunctionCommon):
+        (JSC::DFG::SpeculativeJIT::compileGetExecutable):
+        (JSC::DFG::SpeculativeJIT::compileCreateThis):
+        (JSC::DFG::SpeculativeJIT::compileCreatePromise):
+        (JSC::DFG::SpeculativeJIT::compileCreateInternalFieldObject):
+        * ftl/FTLAbstractHeapRepository.h:
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileGetExecutable):
+        (JSC::FTL::DFG::LowerDFGToB3::compileNewFunction):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCreateThis):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCreatePromise):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCreateInternalFieldObject):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_create_this):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::emit_op_create_this):
+        * jit/Repatch.cpp:
+        (JSC::linkPolymorphicCall):
+        * jit/ThunkGenerators.cpp:
+        (JSC::virtualThunkFor):
+        (JSC::nativeForGenerator):
+        (JSC::boundFunctionCallGenerator):
+        * llint/LowLevelInterpreter.asm:
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+        * runtime/FunctionRareData.cpp:
+        (JSC::FunctionRareData::create):
+        (JSC::FunctionRareData::visitChildren):
+        (JSC::FunctionRareData::FunctionRareData):
+        * runtime/FunctionRareData.h:
+        * runtime/JSBoundFunction.cpp:
+        (JSC::JSBoundFunction::create):
+        (JSC::JSBoundFunction::JSBoundFunction):
+        * runtime/JSBoundFunction.h:
+        * runtime/JSCustomGetterSetterFunction.cpp:
+        (JSC::JSCustomGetterSetterFunction::JSCustomGetterSetterFunction):
+        (JSC::JSCustomGetterSetterFunction::create):
+        * runtime/JSCustomGetterSetterFunction.h:
+        * runtime/JSFunction.cpp:
+        (JSC::JSFunction::create):
+        (JSC::JSFunction::createFunctionThatMasqueradesAsUndefined):
+        (JSC::JSFunction::JSFunction):
+        (JSC::JSFunction::finishCreation):
+        (JSC::JSFunction::allocateRareData):
+        (JSC::JSFunction::allocateAndInitializeRareData):
+        (JSC::JSFunction::initializeRareData):
+        (JSC::JSFunction::visitChildren):
+        (JSC::JSFunction::put):
+        (JSC::JSFunction::defineOwnProperty):
+        * runtime/JSFunction.h:
+        (JSC::JSFunction::executable const):
+        (JSC::JSFunction::offsetOfExecutableOrRareData):
+        (JSC::JSFunction::rareData):
+        (JSC::JSFunction::offsetOfExecutable): Deleted.
+        (JSC::JSFunction::offsetOfRareData): Deleted.
+        * runtime/JSFunctionInlines.h:
+        (JSC::JSFunction::JSFunction):
+        (JSC::JSFunction::jsExecutable const):
+        (JSC::JSFunction::isHostFunction const):
+        (JSC::JSFunction::nativeFunction):
+        (JSC::JSFunction::nativeConstructor):
+        (JSC::JSFunction::hasReifiedLength const):
+        (JSC::JSFunction::hasReifiedName const):
+        (JSC::JSFunction::areNameAndLengthOriginal):
+        (JSC::JSFunction::ensureRareDataAndAllocationProfile):
+        * runtime/JSNativeStdFunction.cpp:
+        (JSC::JSNativeStdFunction::JSNativeStdFunction):
+        (JSC::JSNativeStdFunction::create):
+        * runtime/JSNativeStdFunction.h:
+        * wasm/js/WebAssemblyFunction.cpp:
+        (JSC::WebAssemblyFunction::create):
+        (JSC::WebAssemblyFunction::WebAssemblyFunction):
+        * wasm/js/WebAssemblyFunction.h:
+        * wasm/js/WebAssemblyFunctionBase.cpp:
+        (JSC::WebAssemblyFunctionBase::WebAssemblyFunctionBase):
+        * wasm/js/WebAssemblyFunctionBase.h:
+        * wasm/js/WebAssemblyWrapperFunction.cpp:
+        (JSC::WebAssemblyWrapperFunction::WebAssemblyWrapperFunction):
+        (JSC::WebAssemblyWrapperFunction::create):
+        * wasm/js/WebAssemblyWrapperFunction.h:
+
+2019-12-28  Yusuke Suzuki  <ysuzuki@apple.com>
+
         [JSC] StructureChain should hold vector of StructureID
         https://bugs.webkit.org/show_bug.cgi?id=205592
 
