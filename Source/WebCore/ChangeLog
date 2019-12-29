@@ -1,3 +1,26 @@
+2019-12-28  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] Keep track of last line wrap opportunity
+        https://bugs.webkit.org/show_bug.cgi?id=205619
+        <rdar://problem/58227112>
+
+        Reviewed by Antti Koivisto.
+
+        This is in preparation for being able to revert back to an earlier position
+        of the current line as the line wrapping opportunity.
+        (actually the m_lastWrapOpportunity is already taken into use at LineBreaker::wordBreakBehavior)
+
+        * layout/inlineformatting/InlineLineBreaker.cpp:
+        (WebCore::Layout::shouldKeepBeginningOfLineWhitespace):
+        (WebCore::Layout::LineBreaker::shouldWrapInlineContent):
+        (WebCore::Layout::LineBreaker::shouldWrapFloatBox):
+        (WebCore::Layout::LineBreaker::tryWrappingInlineContent const):
+        (WebCore::Layout::LineBreaker::wrapTextContent const):
+        (WebCore::Layout::LineBreaker::wordBreakBehavior const):
+        (WebCore::Layout::LineBreaker::tryBreakingTextRun const):
+        (WebCore::Layout::LineBreaker::ContinousContent::lastWrapOpportunityIndex const):
+        * layout/inlineformatting/InlineLineBreaker.h:
+
 2019-12-25  Dean Jackson  <dino@apple.com>
 
         [WebGL] Enable ANGLE by default for Cocoa platforms (except simulator)

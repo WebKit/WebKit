@@ -104,6 +104,7 @@ private:
 
         bool hasTrailingCollapsibleContent() const { return !!m_trailingCollapsibleContent.width; }
         bool isTrailingContentFullyCollapsible() const { return m_trailingCollapsibleContent.isFullyCollapsible; }
+        Optional<size_t> lastWrapOpportunityIndex() const;
 
         Optional<unsigned> firstTextRunIndex() const;
         Optional<unsigned> lastContentRunIndex() const;
@@ -126,18 +127,20 @@ private:
         Optional<PartialRun> partialTrailingRun;
     };
     Optional<WrappedTextContent> wrapTextContent(const RunList&, const LineStatus&) const;
-    Optional<PartialRun> tryBreakingTextRun(const Run& overflowRun, InlineLayoutUnit availableWidth, bool lineIsEmpty) const;
+    Result tryWrappingInlineContent(const ContinousContent&, const LineStatus&) const;
+    Optional<PartialRun> tryBreakingTextRun(const Run& overflowRun, InlineLayoutUnit availableWidth) const;
 
     enum class WordBreakRule {
         NoBreak,
         AtArbitraryPosition,
         OnlyHyphenationAllowed
     };
-    WordBreakRule wordBreakBehavior(const RenderStyle&, bool lineIsEmpty) const;
+    WordBreakRule wordBreakBehavior(const RenderStyle&) const;
     bool shouldKeepEndOfLineWhitespace(const ContinousContent&) const;
     bool isContentWrappingAllowed(const ContinousContent&) const;
 
     bool n_hyphenationIsDisabled { false };
+    const InlineItem* m_lastWrapOpportunity { nullptr };
 };
 
 inline LineBreaker::Run::Run(const InlineItem& inlineItem, InlineLayoutUnit logicalWidth)
