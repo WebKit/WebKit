@@ -2,6 +2,19 @@
 
         Make RuleSet refcounted
         https://bugs.webkit.org/show_bug.cgi?id=205628
+        <rdar://problem/58231798>
+
+        Unreviewed folloup.
+
+        * style/UserAgentStyle.cpp:
+        (WebCore::Style::UserAgentStyle::loadFullDefaultStyle):
+
+        Use deref instead of delete.
+
+2019-12-29  Antti Koivisto  <antti@apple.com>
+
+        Make RuleSet refcounted
+        https://bugs.webkit.org/show_bug.cgi?id=205628
 
         Reviewed by Zalan Bujtas.
 

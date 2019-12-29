@@ -173,7 +173,7 @@ void UserAgentStyle::loadFullDefaultStyle()
     if (simpleDefaultStyleSheet) {
         ASSERT(defaultStyle);
         ASSERT(defaultPrintStyle == defaultStyle);
-        delete defaultStyle;
+        defaultStyle->deref();
         simpleDefaultStyleSheet->deref();
         simpleDefaultStyleSheet = nullptr;
     } else {
