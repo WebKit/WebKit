@@ -22,7 +22,6 @@
 
 
 import os
-import sys
 import time
 
 from webkitpy.common.timeout_context import Timeout
@@ -68,9 +67,7 @@ class SimulatorProcess(ServerProcess):
 
         def close(self):
             result = self._file.close()
-            # Closing the file implicitly closes the socket in Python 3
-            if sys.version_info < (3, 0):
-                self.socket.close()
+            self.socket.close()
             return result
 
     def __init__(self, port_obj, name, cmd, env=None, universal_newlines=False, treat_no_data_as_crash=False, target_host=None):
@@ -106,7 +103,7 @@ class SimulatorProcess(ServerProcess):
             stderr = None
             try:
                 # This order matches the client side connections in Tools/TestRunnerShared/IOSLayoutTestCommunication.cpp setUpIOSLayoutTestCommunication()
-                stdin = SimulatorProcess._accept_connection_create_file(self._target_host.listening_socket, 'wb')
+                stdin = SimulatorProcess._accept_connection_create_file(self._target_host.listening_socket, 'w')
                 stdout = SimulatorProcess._accept_connection_create_file(self._target_host.listening_socket, 'rb')
                 stderr = SimulatorProcess._accept_connection_create_file(self._target_host.listening_socket, 'rb')
             except:

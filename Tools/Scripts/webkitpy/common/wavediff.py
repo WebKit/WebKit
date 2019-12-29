@@ -25,7 +25,7 @@ import sys
 import tempfile
 import wave
 
-from webkitpy.common.unicode_compatibility import BytesIO, StringIO
+from io import BytesIO
 
 
 class WaveDiff(object):
@@ -35,12 +35,12 @@ class WaveDiff(object):
     _tolerance = 1
 
     def __init__(self, in1, in2):
-        if isinstance(in1, str):
-            waveFile1 = wave.open(StringIO(in1), 'r')
+        if isinstance(in1, file):
+            waveFile1 = wave.open(in1, 'rb')
         else:
             waveFile1 = wave.open(BytesIO(in1), 'rb')
-        if isinstance(in2, str):
-            waveFile2 = wave.open(StringIO(in2), 'r')
+        if isinstance(in2, file):
+            waveFile1 = wave.open(in2, 'rb')
         else:
             waveFile2 = wave.open(BytesIO(in2), 'rb')
 
@@ -66,12 +66,12 @@ class WaveDiff(object):
 
         allData1 = self._readSamples(waveFile1, sampleWidth1, frameCount1 * channelCount1)
         allData2 = self._readSamples(waveFile2, sampleWidth2, frameCount2 * channelCount2)
-        results = list(map(self._diffSample, allData1, allData2, range(max(frameCount1 * channelCount1, frameCount2 * channelCount2))))
+        results = map(self._diffSample, allData1, allData2, xrange(max(frameCount1 * channelCount1, frameCount2 * channelCount2)))
 
         cumulativeSampleDiff = sum(results)
-        differingSampleCount = len(list(filter(bool, results)))
+        differingSampleCount = len(filter(bool, results))
         self._filesAreIdentical = not differingSampleCount
-        self._filesAreIdenticalWithinTolerance = not len(list(filter(lambda x: x > self._tolerance, results)))
+        self._filesAreIdenticalWithinTolerance = not len(filter(lambda x: x > self._tolerance, results))
 
         if differingSampleCount:
             self._diff += '\n'

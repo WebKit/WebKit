@@ -185,22 +185,20 @@ class _MessagePool(object):
             return False
 
     def _loop(self, block):
-        while True:
-            if len(self._workers_stopped) == len(self._workers):
-                block = False
-
-            try:
+        try:
+            while True:
+                if len(self._workers_stopped) == len(self._workers):
+                    block = False
                 message = self._messages_to_manager.get(block)
-            except queue.Empty:
-                break
-
-            self._log_messages(message.logs)
-            if message.from_user:
-                self._caller.handle(message.name, message.src, *message.args)
-                continue
-            method = getattr(self, '_handle_' + message.name)
-            assert method, 'bad message %s' % repr(message)
-            method(message.src, *message.args)
+                self._log_messages(message.logs)
+                if message.from_user:
+                    self._caller.handle(message.name, message.src, *message.args)
+                    continue
+                method = getattr(self, '_handle_' + message.name)
+                assert method, 'bad message %s' % repr(message)
+                method(message.src, *message.args)
+        except queue.Empty:
+            pass
 
 
 class WorkerException(BaseException):
@@ -217,13 +215,7 @@ class _Message(object):
         self.logs = logs
 
     def __repr__(self):
-        return '_Message(src={src}, name={name}, args={args}, from_user={from_user}, logs={logs})'.format(
-            src=self.src,
-            name=self.name,
-            args=self.args,
-            from_user=self.from_user,
-            logs=self.logs,
-        )
+        return '_Message(src=%s, name=%s, args=%s, from_user=%s, logs=%s)' % (self.src, self.name, self.args, self.from_user, self.logs)
 
 
 class _Worker(multiprocessing.Process):
@@ -231,7 +223,7 @@ class _Worker(multiprocessing.Process):
         super(_Worker, self).__init__()
         self.host = host
         self.worker_number = worker_number
-        self.name = 'worker/{}'.format(worker_number)
+        self.name = 'worker/%d' % worker_number
         self.log_messages = []
         self.log_level = log_level
         self._running_inline = running_inline

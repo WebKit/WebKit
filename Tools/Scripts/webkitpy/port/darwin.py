@@ -98,7 +98,7 @@ class DarwinPort(ApplePort):
         return self.host.filesystem.join(log_directory, 'CrashReporter')
 
     def _merge_crash_logs(self, logs, new_logs, crashed_processes):
-        for test, crash_log in new_logs.items():
+        for test, crash_log in new_logs.iteritems():
             try:
                 if test.split('-')[0] == 'Sandbox':
                     process_name = test.split('-')[1]

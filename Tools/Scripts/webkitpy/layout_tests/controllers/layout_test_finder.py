@@ -102,7 +102,7 @@ class LayoutTestFinder(object):
             except IOError as e:
                 if e.errno == errno.ENOENT:
                     _log.critical('')
-                    _log.critical('--test-list file "{}" not found'.format(filenames))
+                    _log.critical('--test-list file "%s" not found' % file)
                 raise
         return tests
 
@@ -176,7 +176,7 @@ class LayoutTestFinder(object):
             if rounded_tests % test_size != 0:
                 rounded_tests = (num_tests + test_size - (num_tests % test_size))
 
-            chunk_len = rounded_tests // test_size
+            chunk_len = rounded_tests / test_size
             slice_start = chunk_len * (chunk_num - 1)
             # It does not mind if we go over test_size.
 

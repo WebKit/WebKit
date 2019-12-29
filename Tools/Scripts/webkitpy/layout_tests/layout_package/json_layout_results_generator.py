@@ -31,7 +31,6 @@ import logging
 from webkitpy.layout_tests.layout_package import json_results_generator
 from webkitpy.layout_tests.models import test_expectations
 from webkitpy.layout_tests.models import test_failures
-from webkitpy.common.iteration_compatibility import itervalues
 
 
 class JSONLayoutResultsGenerator(json_results_generator.JSONResultsGenerator):
@@ -133,7 +132,7 @@ class JSONLayoutResultsGenerator(json_results_generator.JSONResultsGenerator):
             self.FIXABLE)
 
         num_fixable = 0
-        for expectation in itervalues(self._expectations):
+        for expectation in self._expectations.itervalues():
             num_fixable += len(expectation.model().get_tests_with_timeline(test_expectations.NOW))
 
         self._insert_item_into_raw_list(results_for_builder, num_fixable, self.ALL_FIXABLE_COUNT)
