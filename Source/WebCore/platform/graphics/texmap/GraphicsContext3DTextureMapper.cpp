@@ -91,10 +91,10 @@ static Deque<GraphicsContext3D*, MaxActiveContexts>& activeContexts()
     return s_activeContexts;
 }
 
-RefPtr<GraphicsContext3D> GraphicsContext3D::create(GraphicsContext3DAttributes attributes, HostWindow* hostWindow, GraphicsContext3D::RenderStyle renderStyle)
+RefPtr<GraphicsContext3D> GraphicsContext3D::create(GraphicsContext3DAttributes attributes, HostWindow* hostWindow, GraphicsContext3D::Destination destination)
 {
     // This implementation doesn't currently support rendering directly to the HostWindow.
-    if (renderStyle == RenderDirectlyToHostWindow)
+    if (destination == Destination::DirectlyToHostWindow)
         return nullptr;
 
     static bool initialized = false;
@@ -118,7 +118,7 @@ RefPtr<GraphicsContext3D> GraphicsContext3D::create(GraphicsContext3DAttributes 
         return nullptr;
 
     // Create the GraphicsContext3D object first in order to establist a current context on this thread.
-    auto context = adoptRef(new GraphicsContext3D(attributes, hostWindow, renderStyle));
+    auto context = adoptRef(new GraphicsContext3D(attributes, hostWindow, destination));
 
 #if USE(LIBEPOXY) && USE(OPENGL_ES)
     // Bail if GLES3 was requested but cannot be provided.
@@ -131,21 +131,21 @@ RefPtr<GraphicsContext3D> GraphicsContext3D::create(GraphicsContext3DAttributes 
 }
 
 #if USE(ANGLE)
-GraphicsContext3D::GraphicsContext3D(GraphicsContext3DAttributes attributes, HostWindow*, GraphicsContext3D::RenderStyle renderStyle, GraphicsContext3D* sharedContext)
-    : m_attrs(attributes)
+GraphicsContext3D::GraphicsContext3D(GraphicsContext3DAttributes attributes, HostWindow*, GraphicsContext3D::Destination destination, GraphicsContext3D* sharedContext)
+    : GraphicsContext3DBase(attributes, destination, sharedContext)
 {
     ASSERT_UNUSED(sharedContext, !sharedContext);
 #if USE(NICOSIA)
-    m_nicosiaLayer = WTF::makeUnique<Nicosia::GC3DANGLELayer>(*this, renderStyle);
+    m_nicosiaLayer = WTF::makeUnique<Nicosia::GC3DANGLELayer>(*this, destination);
 #else
-    m_texmapLayer = WTF::makeUnique<TextureMapperGC3DPlatformLayer>(*this, renderStyle);
+    m_texmapLayer = WTF::makeUnique<TextureMapperGC3DPlatformLayer>(*this, destination);
 #endif
     makeContextCurrent();
 
-
     validateAttributes();
+    attributes = contextAttributes(); // They may have changed during validation.
 
-    if (renderStyle == RenderOffscreen) {
+    if (destination == Destination::Offscreen) {
         // Create a texture to render into.
         gl::GenTextures(1, &m_texture);
         gl::BindTexture(GL_TEXTURE_RECTANGLE_ANGLE, m_texture);
@@ -178,24 +178,24 @@ GraphicsContext3D::GraphicsContext3D(GraphicsContext3DAttributes attributes, Hos
 #endif
 
         // Create a multisample FBO.
-        if (m_attrs.antialias) {
+        if (attributes.antialias) {
             gl::GenFramebuffers(1, &m_multisampleFBO);
             gl::BindFramebuffer(GL_FRAMEBUFFER, m_multisampleFBO);
             m_state.boundFBO = m_multisampleFBO;
             gl::GenRenderbuffers(1, &m_multisampleColorBuffer);
-            if (m_attrs.stencil || m_attrs.depth)
+            if (attributes.stencil || attributes.depth)
                 gl::GenRenderbuffers(1, &m_multisampleDepthStencilBuffer);
         } else {
             // Bind canvas FBO.
             gl::BindFramebuffer(GL_FRAMEBUFFER, m_fbo);
             m_state.boundFBO = m_fbo;
 #if USE(OPENGL_ES)
-            if (m_attrs.depth)
+            if (attributes.depth)
                 gl::GenRenderbuffers(1, &m_depthBuffer);
-            if (m_attrs.stencil)
+            if (attributes.stencil)
                 gl::GenRenderbuffers(1, &m_stencilBuffer);
 #endif
-            if (m_attrs.stencil || m_attrs.depth)
+            if (attributes.stencil || attributes.depth)
                 gl::GenRenderbuffers(1, &m_depthStencilBuffer);
         }
     }
@@ -203,21 +203,22 @@ GraphicsContext3D::GraphicsContext3D(GraphicsContext3DAttributes attributes, Hos
     gl::ClearColor(0, 0, 0, 0);
 }
 #else
-GraphicsContext3D::GraphicsContext3D(GraphicsContext3DAttributes attributes, HostWindow*, GraphicsContext3D::RenderStyle renderStyle, GraphicsContext3D* sharedContext)
-    : m_attrs(attributes)
+GraphicsContext3D::GraphicsContext3D(GraphicsContext3DAttributes attributes, HostWindow*, GraphicsContext3D::Destination destination, GraphicsContext3D* sharedContext)
+    : GraphicsContext3DBase(attributes, destination, sharedContext)
 {
     ASSERT_UNUSED(sharedContext, !sharedContext);
 #if USE(NICOSIA)
-    m_nicosiaLayer = makeUnique<Nicosia::GC3DLayer>(*this, renderStyle);
+    m_nicosiaLayer = makeUnique<Nicosia::GC3DLayer>(*this, destination);
 #else
-    m_texmapLayer = makeUnique<TextureMapperGC3DPlatformLayer>(*this, renderStyle);
+    m_texmapLayer = makeUnique<TextureMapperGC3DPlatformLayer>(*this, destination);
 #endif
 
     makeContextCurrent();
 
     validateAttributes();
+    attributes = contextAttributes(); // They may have changed during validation.
 
-    if (renderStyle == RenderOffscreen) {
+    if (destination == Destination::Offscreen) {
         // Create a texture to render into.
         ::glGenTextures(1, &m_texture);
         ::glBindTexture(GL_TEXTURE_2D, m_texture);
@@ -249,26 +250,25 @@ GraphicsContext3D::GraphicsContext3D(GraphicsContext3DAttributes attributes, Hos
         ::glBindTexture(GL_TEXTURE_2D, 0);
 #endif
 
-
         // Create a multisample FBO.
-        if (m_attrs.antialias) {
+        if (attributes.antialias) {
             ::glGenFramebuffers(1, &m_multisampleFBO);
             ::glBindFramebuffer(GL_FRAMEBUFFER, m_multisampleFBO);
             m_state.boundFBO = m_multisampleFBO;
             ::glGenRenderbuffers(1, &m_multisampleColorBuffer);
-            if (m_attrs.stencil || m_attrs.depth)
+            if (attributes.stencil || attributes.depth)
                 ::glGenRenderbuffers(1, &m_multisampleDepthStencilBuffer);
         } else {
             // Bind canvas FBO.
             glBindFramebuffer(GraphicsContext3D::FRAMEBUFFER, m_fbo);
             m_state.boundFBO = m_fbo;
 #if USE(OPENGL_ES)
-            if (m_attrs.depth)
+            if (attributes.depth)
                 glGenRenderbuffers(1, &m_depthBuffer);
-            if (m_attrs.stencil)
+            if (attributes.stencil)
                 glGenRenderbuffers(1, &m_stencilBuffer);
 #endif
-            if (m_attrs.stencil || m_attrs.depth)
+            if (attributes.stencil || attributes.depth)
                 glGenRenderbuffers(1, &m_depthStencilBuffer);
         }
     }
@@ -301,7 +301,7 @@ GraphicsContext3D::GraphicsContext3D(GraphicsContext3DAttributes attributes, Hos
     }
 #else
     // Adjust the shader specification depending on whether GLES3 (i.e. WebGL2 support) was requested.
-    m_compiler = ANGLEWebKitBridge(SH_ESSL_OUTPUT, m_attrs.isWebGL2 ? SH_WEBGL2_SPEC : SH_WEBGL_SPEC);
+    m_compiler = ANGLEWebKitBridge(SH_ESSL_OUTPUT, attributes.isWebGL2 ? SH_WEBGL2_SPEC : SH_WEBGL_SPEC);
 #endif
 
     // ANGLE initialization.
@@ -340,12 +340,14 @@ GraphicsContext3D::~GraphicsContext3D()
         gl::DeleteTextures(1, &m_compositorTexture);
 #endif
 
-    if (m_attrs.antialias) {
+    auto attributes = contextAttributes();
+
+    if (attributes.antialias) {
         gl::DeleteRenderbuffers(1, &m_multisampleColorBuffer);
-        if (m_attrs.stencil || m_attrs.depth)
+        if (attributes.stencil || attributes.depth)
             gl::DeleteRenderbuffers(1, &m_multisampleDepthStencilBuffer);
         gl::DeleteFramebuffers(1, &m_multisampleFBO);
-    } else if (m_attrs.stencil || m_attrs.depth) {
+    } else if (attributes.stencil || attributes.depth) {
 #if USE(OPENGL_ES)
         if (m_depthBuffer)
             glDeleteRenderbuffers(1, &m_depthBuffer);
@@ -382,12 +384,14 @@ GraphicsContext3D::~GraphicsContext3D()
         ::glDeleteTextures(1, &m_compositorTexture);
 #endif
 
-    if (m_attrs.antialias) {
+    auto attributes = contextAttributes();
+
+    if (attributes.antialias) {
         ::glDeleteRenderbuffers(1, &m_multisampleColorBuffer);
-        if (m_attrs.stencil || m_attrs.depth)
+        if (attributes.stencil || attributes.depth)
             ::glDeleteRenderbuffers(1, &m_multisampleDepthStencilBuffer);
         ::glDeleteFramebuffers(1, &m_multisampleFBO);
-    } else if (m_attrs.stencil || m_attrs.depth) {
+    } else if (attributes.stencil || attributes.depth) {
 #if USE(OPENGL_ES)
         if (m_depthBuffer)
             glDeleteRenderbuffers(1, &m_depthBuffer);
@@ -415,14 +419,6 @@ GraphicsContext3D::~GraphicsContext3D()
 }
 #endif // USE(ANGLE)
 
-void GraphicsContext3D::setContextLostCallback(std::unique_ptr<ContextLostCallback>)
-{
-}
-
-void GraphicsContext3D::setErrorMessageCallback(std::unique_ptr<ErrorMessageCallback>)
-{
-}
-
 bool GraphicsContext3D::makeContextCurrent()
 {
 #if USE(NICOSIA)
@@ -436,7 +432,7 @@ void GraphicsContext3D::checkGPUStatus()
 {
 }
 
-PlatformGraphicsContext3D GraphicsContext3D::platformGraphicsContext3D()
+PlatformGraphicsContext3D GraphicsContext3D::platformGraphicsContext3D() const
 {
 #if USE(NICOSIA)
     return m_nicosiaLayer->platformContext();
@@ -481,6 +477,39 @@ Extensions3D& GraphicsContext3D::getExtensions()
 #endif
     }
     return *m_extensions;
+}
+
+void* GraphicsContext3D::mapBufferRange(GC3Denum, GC3Dintptr, GC3Dsizeiptr, GC3Dbitfield)
+{
+}
+
+GC3Dboolean GraphicsContext3D::unmapBuffer(GC3Denum)
+{
+    return 0;
+}
+
+void GraphicsContext3D::copyBufferSubData(GC3Denum, GC3Denum, GC3Dintptr, GC3Dintptr, GC3Dsizeiptr)
+{
+}
+
+void GraphicsContext3D::getInternalformativ(GC3Denum, GC3Denum, GC3Denum, GC3Dsizei, GC3Dint*)
+{
+}
+
+void GraphicsContext3D::renderbufferStorageMultisample(GC3Denum, GC3Dsizei, GC3Denum, GC3Dsizei, GC3Dsizei)
+{
+}
+
+void GraphicsContext3D::texStorage2D(GC3Denum, GC3Dsizei, GC3Denum, GC3Dsizei, GC3Dsizei)
+{
+}
+
+void GraphicsContext3D::texStorage3D(GC3Denum, GC3Dsizei, GC3Denum, GC3Dsizei, GC3Dsizei, GC3Dsizei)
+{
+}
+
+void GraphicsContext3D::getActiveUniforms(Platform3DObject, const Vector<GC3Duint>&, GC3Denum, Vector<GC3Dint>&)
+{
 }
 #endif
 

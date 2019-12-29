@@ -51,4 +51,8 @@ typedef unsigned long long GC3Duint64;
 
 typedef GC3Duint Platform3DObject;
 
+#if !PLATFORM(COCOA)
+typedef unsigned GLuint;
+#endif
+
 #endif

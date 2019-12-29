@@ -50,10 +50,13 @@ void GraphicsContext3D::releaseShaderCompiler()
 void GraphicsContext3D::readPixels(GC3Dint x, GC3Dint y, GC3Dsizei width, GC3Dsizei height, GC3Denum format, GC3Denum type, void* data)
 {
     makeContextCurrent();
+
+    auto attributes = contextAttributes();
+
     // FIXME: remove the two glFlush calls when the driver bug is fixed, i.e.,
     // all previous rendering calls should be done before reading pixels.
     ::glFlush();
-    if (m_attrs.antialias && m_state.boundFBO == m_multisampleFBO) {
+    if (attributes.antialias && m_state.boundFBO == m_multisampleFBO) {
          resolveMultisamplingIfNecessary(IntRect(x, y, width, height));
         ::glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);
         ::glFlush();
@@ -61,7 +64,7 @@ void GraphicsContext3D::readPixels(GC3Dint x, GC3Dint y, GC3Dsizei width, GC3Dsi
 
     ::glReadPixels(x, y, width, height, format, type, data);
 
-    if (m_attrs.antialias && m_state.boundFBO == m_multisampleFBO)
+    if (attributes.antialias && m_state.boundFBO == m_multisampleFBO)
         ::glBindFramebuffer(GL_FRAMEBUFFER, m_multisampleFBO);
 }
 
@@ -80,7 +83,9 @@ bool GraphicsContext3D::reshapeFBOs(const IntSize& size)
     const int width = size.width();
     const int height = size.height();
     GLuint colorFormat = 0;
-    if (m_attrs.alpha) {
+    auto attributes = contextAttributes();
+
+    if (attributes.alpha) {
         m_internalColorFormat = GL_RGBA;
         colorFormat = GL_RGBA;
     } else {
@@ -90,7 +95,7 @@ bool GraphicsContext3D::reshapeFBOs(const IntSize& size)
 
     // We don't allow the logic where stencil is required and depth is not.
     // See GraphicsContext3D::validateAttributes.
-    bool supportPackedDepthStencilBuffer = (m_attrs.stencil || m_attrs.depth) && getExtensions().supports("GL_OES_packed_depth_stencil");
+    bool supportPackedDepthStencilBuffer = (attributes.stencil || attributes.depth) && getExtensions().supports("GL_OES_packed_depth_stencil");
 
     // Resize regular FBO.
     bool mustRestoreFBO = false;
@@ -117,29 +122,29 @@ bool GraphicsContext3D::reshapeFBOs(const IntSize& size)
 #endif
 
     Extensions3DOpenGLES& extensions = static_cast<Extensions3DOpenGLES&>(getExtensions());
-    if (extensions.isImagination() && m_attrs.antialias) {
+    if (extensions.isImagination() && attributes.antialias) {
         GLint maxSampleCount;
         ::glGetIntegerv(Extensions3D::MAX_SAMPLES_IMG, &maxSampleCount); 
         GLint sampleCount = std::min(8, maxSampleCount);
 
         extensions.framebufferTexture2DMultisampleIMG(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_texture, 0, sampleCount);
 
-        if (m_attrs.stencil || m_attrs.depth) {
+        if (attributes.stencil || attributes.depth) {
             // Use a 24 bit depth buffer where we know we have it.
             if (supportPackedDepthStencilBuffer) {
                 ::glBindRenderbuffer(GL_RENDERBUFFER, m_depthStencilBuffer);
                 extensions.renderbufferStorageMultisample(GL_RENDERBUFFER, sampleCount, GL_DEPTH24_STENCIL8_OES, width, height);
-                if (m_attrs.stencil)
+                if (attributes.stencil)
                     ::glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, GL_RENDERBUFFER, m_depthStencilBuffer);
-                if (m_attrs.depth)
+                if (attributes.depth)
                     ::glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, m_depthStencilBuffer);
             } else {
-                if (m_attrs.stencil) {
+                if (attributes.stencil) {
                     ::glBindRenderbuffer(GL_RENDERBUFFER, m_stencilBuffer);
                     extensions.renderbufferStorageMultisample(GL_RENDERBUFFER, sampleCount, GL_STENCIL_INDEX8, width, height);
                     ::glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, GL_RENDERBUFFER, m_stencilBuffer);
                 }
-                if (m_attrs.depth) {
+                if (attributes.depth) {
                     ::glBindRenderbuffer(GL_RENDERBUFFER, m_depthBuffer);
                     extensions.renderbufferStorageMultisample(GL_RENDERBUFFER, sampleCount, GL_DEPTH_COMPONENT16, width, height);
                     ::glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, m_depthBuffer);
@@ -148,22 +153,22 @@ bool GraphicsContext3D::reshapeFBOs(const IntSize& size)
             ::glBindRenderbuffer(GL_RENDERBUFFER, 0);
         }
     } else {
-        if (m_attrs.stencil || m_attrs.depth) {
+        if (attributes.stencil || attributes.depth) {
             // Use a 24 bit depth buffer where we know we have it.
             if (supportPackedDepthStencilBuffer) {
                 ::glBindRenderbuffer(GL_RENDERBUFFER, m_depthStencilBuffer);
                 ::glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8_OES, width, height);
-                if (m_attrs.stencil)
+                if (attributes.stencil)
                     ::glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, GL_RENDERBUFFER, m_depthStencilBuffer);
-                if (m_attrs.depth)
+                if (attributes.depth)
                     ::glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, m_depthStencilBuffer);
             } else {
-                if (m_attrs.stencil) {
+                if (attributes.stencil) {
                     ::glBindRenderbuffer(GL_RENDERBUFFER, m_stencilBuffer);
                     ::glRenderbufferStorage(GL_RENDERBUFFER, GL_STENCIL_INDEX8, width, height);
                     ::glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, GL_RENDERBUFFER, m_stencilBuffer);
                 }
-                if (m_attrs.depth) {
+                if (attributes.depth) {
                     ::glBindRenderbuffer(GL_RENDERBUFFER, m_depthBuffer);
                     ::glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT16, width, height);
                     ::glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, m_depthBuffer);
@@ -222,8 +227,12 @@ void GraphicsContext3D::validateAttributes()
 {
     validateDepthStencil("GL_OES_packed_depth_stencil");
 
-    if (m_attrs.antialias && !getExtensions().supports("GL_IMG_multisampled_render_to_texture"))
-        m_attrs.antialias = false;
+    auto attributes = contextAttributes();
+
+    if (attributes.antialias && !getExtensions().supports("GL_IMG_multisampled_render_to_texture")) {
+        attributes.antialias = false;
+        setContextAttributes(attributes);
+    }
 }
 
 void GraphicsContext3D::depthRange(GC3Dclampf zNear, GC3Dclampf zFar)
@@ -248,10 +257,10 @@ Extensions3D& GraphicsContext3D::getExtensions()
 #endif
 
 #if PLATFORM(WIN) && USE(CA)
-RefPtr<GraphicsContext3D> GraphicsContext3D::create(GraphicsContext3DAttributes attributes, HostWindow* hostWindow, GraphicsContext3D::RenderStyle renderStyle)
+RefPtr<GraphicsContext3D> GraphicsContext3D::create(GraphicsContext3DAttributes attributes, HostWindow* hostWindow, GraphicsContext3D::Destination destination)
 {
     // This implementation doesn't currently support rendering directly to the HostWindow.
-    if (renderStyle == RenderDirectlyToHostWindow)
+    if (destination == Destination::DirectlyToHostWindow)
         return nullptr;
     
     static bool initialized = false;
@@ -268,17 +277,18 @@ RefPtr<GraphicsContext3D> GraphicsContext3D::create(GraphicsContext3DAttributes 
     return adoptRef(new GraphicsContext3D(attributes, hostWindow, renderStyle));
 }
 
-GraphicsContext3D::GraphicsContext3D(GraphicsContext3DAttributes attributes, HostWindow*, GraphicsContext3D::RenderStyle renderStyle, GraphicsContext3D* sharedContext)
-    : m_attrs(attributes)
+GraphicsContext3D::GraphicsContext3D(GraphicsContext3DAttributes attributes, HostWindow*, GraphicsContext3D::Destination destination, GraphicsContext3D* sharedContext)
+    : GraphicsContext3DBase(attributes, destination, sharedContext)
     , m_compiler(isGLES2Compliant() ? SH_ESSL_OUTPUT : SH_GLSL_COMPATIBILITY_OUTPUT)
-    , m_private(makeUnique<GraphicsContext3DPrivate>(this, renderStyle))
+    , m_private(makeUnique<GraphicsContext3DPrivate>(this, destination))
 {
     ASSERT_UNUSED(sharedContext, !sharedContext);
     makeContextCurrent();
     
     validateAttributes();
+    attributes = contextAttributes(); // They may have changed during validation.
 
-    if (renderStyle == RenderOffscreen) {
+    if (destination == Destination::Offscreen) {
         // Create a texture to render into.
         ::glGenTextures(1, &m_texture);
         ::glBindTexture(GL_TEXTURE_2D, m_texture);
@@ -293,16 +303,16 @@ GraphicsContext3D::GraphicsContext3D(GraphicsContext3DAttributes attributes, Hos
         ::glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);
         
         m_state.boundFBO = m_fbo;
-        if (!m_attrs.antialias && (m_attrs.stencil || m_attrs.depth))
+        if (!attributes.antialias && (attributes.stencil || attributes.depth))
             ::glGenRenderbuffers(1, &m_depthStencilBuffer);
         
         // Create a multisample FBO.
-        if (m_attrs.antialias) {
+        if (attributes.antialias) {
             ::glGenFramebuffers(1, &m_multisampleFBO);
             ::glBindFramebuffer(GL_FRAMEBUFFER, m_multisampleFBO);
             m_state.boundFBO = m_multisampleFBO;
             ::glGenRenderbuffers(1, &m_multisampleColorBuffer);
-            if (m_attrs.stencil || m_attrs.depth)
+            if (attributes.stencil || attributes.depth)
                 ::glGenRenderbuffers(1, &m_multisampleDepthStencilBuffer);
         }
     }
@@ -340,13 +350,16 @@ GraphicsContext3D::~GraphicsContext3D()
 {
     makeContextCurrent();
     ::glDeleteTextures(1, &m_texture);
-    if (m_attrs.antialias) {
+
+    auto attributes = contextAttributes();
+
+    if (attributes.antialias) {
         ::glDeleteRenderbuffers(1, &m_multisampleColorBuffer);
-        if (m_attrs.stencil || m_attrs.depth)
+        if (attributes.stencil || attributes.depth)
             ::glDeleteRenderbuffers(1, &m_multisampleDepthStencilBuffer);
         ::glDeleteFramebuffers(1, &m_multisampleFBO);
     } else {
-        if (m_attrs.stencil || m_attrs.depth)
+        if (attributes.stencil || attributes.depth)
             ::glDeleteRenderbuffers(1, &m_depthStencilBuffer);
     }
     ::glDeleteFramebuffers(1, &m_fbo);

@@ -70,13 +70,14 @@ const GLenum ioSurfaceTextureType = GL_TEXTURE_2D;
 {
     _context = context;
     self = [super init];
-    _devicePixelRatio = context->getContextAttributes().devicePixelRatio;
+    auto attributes = context->contextAttributes();
+    _devicePixelRatio = attributes.devicePixelRatio;
 #if USE(OPENGL) || USE(ANGLE)
-    self.contentsOpaque = !context->getContextAttributes().alpha;
+    self.contentsOpaque = !attributes.alpha;
     self.transform = CATransform3DIdentity;
     self.contentsScale = _devicePixelRatio;
 #else
-    self.opaque = !context->getContextAttributes().alpha;
+    self.opaque = !attributes.alpha;
 #endif
     return self;
 }
@@ -112,7 +113,8 @@ static void freeData(void *, const void *data, size_t /* size */)
         return nullptr;
 
 #if USE(OPENGL)
-    CGLSetCurrentContext(_context->platformGraphicsContext3D());
+    CGLContextObj cglContext = static_cast<CGLContextObj>(_context->platformGraphicsContext3D());
+    CGLSetCurrentContext(cglContext);
 
     RetainPtr<CGColorSpaceRef> imageColorSpace = colorSpace;
     if (!imageColorSpace)
@@ -251,7 +253,8 @@ static void freeData(void *, const void *data, size_t /* size */)
     GC3Denum internalFormat = _usingAlpha ? GL_RGBA : GL_RGB;
 
     // Link the IOSurface to the texture.
-    CGLError error = CGLTexImageIOSurface2D(_context->platformGraphicsContext3D(), GL_TEXTURE_RECTANGLE_ARB, internalFormat, _bufferSize.width(), _bufferSize.height(), GL_BGRA, GL_UNSIGNED_INT_8_8_8_8_REV, ioSurface, 0);
+    CGLContextObj cglContext = static_cast<CGLContextObj>(_context->platformGraphicsContext3D());
+    CGLError error = CGLTexImageIOSurface2D(cglContext, GL_TEXTURE_RECTANGLE_ARB, internalFormat, _bufferSize.width(), _bufferSize.height(), GL_BGRA, GL_UNSIGNED_INT_8_8_8_8_REV, ioSurface, 0);
     ASSERT_UNUSED(error, error == kCGLNoError);
 #elif USE(ANGLE)
     GC3Denum texture = _context->platformTexture();

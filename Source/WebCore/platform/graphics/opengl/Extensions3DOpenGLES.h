@@ -122,8 +122,6 @@ protected:
     PFNGLVERTEXATTRIBDIVISORANGLEPROC m_glVertexAttribDivisorANGLE;
     PFNGLDRAWARRAYSINSTANCEDANGLEPROC m_glDrawArraysInstancedANGLE;
     PFNGLDRAWELEMENTSINSTANCEDANGLEPROC m_glDrawElementsInstancedANGLE;
-
-    std::unique_ptr<GraphicsContext3D::ContextLostCallback> m_contextLostCallback;
 };
 
 } // namespace WebCore

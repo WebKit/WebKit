@@ -82,8 +82,10 @@ static void wipeAlphaChannelFromPixels(int width, int height, unsigned char* pix
 
 void GraphicsContext3D::readPixelsAndConvertToBGRAIfNecessary(int x, int y, int width, int height, unsigned char* pixels)
 {
+    auto attrs = contextAttributes();
+
     // NVIDIA drivers have a bug where calling readPixels in BGRA can return the wrong values for the alpha channel when the alpha is off for the context.
-    if (!m_attrs.alpha && getExtensions().isNVIDIA()) {
+    if (!attrs.alpha && getExtensions().isNVIDIA()) {
         ::glReadPixels(x, y, width, height, GL_RGBA, GL_UNSIGNED_BYTE, pixels);
 #if USE(ACCELERATE)
         vImage_Buffer src;
@@ -110,7 +112,7 @@ void GraphicsContext3D::readPixelsAndConvertToBGRAIfNecessary(int x, int y, int 
         ::glReadPixels(x, y, width, height, GL_BGRA, GL_UNSIGNED_INT_8_8_8_8_REV, pixels);
 
 #if PLATFORM(MAC)
-    if (!m_attrs.alpha)
+    if (!attrs.alpha)
         wipeAlphaChannelFromPixels(width, height, pixels);
 #endif
 }
@@ -122,17 +124,18 @@ void GraphicsContext3D::validateAttributes()
 
 bool GraphicsContext3D::reshapeFBOs(const IntSize& size)
 {
+    auto attrs = contextAttributes();
     const int width = size.width();
     const int height = size.height();
     GLuint colorFormat, internalDepthStencilFormat = 0;
-    if (m_attrs.alpha) {
+    if (attrs.alpha) {
         m_internalColorFormat = GL_RGBA8;
         colorFormat = GL_RGBA;
     } else {
         m_internalColorFormat = GL_RGB8;
         colorFormat = GL_RGB;
     }
-    if (m_attrs.stencil || m_attrs.depth) {
+    if (attrs.stencil || attrs.depth) {
         // We don't allow the logic where stencil is required and depth is not.
         // See GraphicsContext3D::validateAttributes.
 
@@ -149,7 +152,7 @@ bool GraphicsContext3D::reshapeFBOs(const IntSize& size)
     }
 
     // Resize multisample FBO.
-    if (m_attrs.antialias) {
+    if (attrs.antialias) {
         GLint maxSampleCount;
         ::glGetIntegerv(GL_MAX_SAMPLES_EXT, &maxSampleCount);
         // Using more than 4 samples is slow on some hardware and is unlikely to
@@ -163,12 +166,12 @@ bool GraphicsContext3D::reshapeFBOs(const IntSize& size)
         ::glRenderbufferStorageMultisampleEXT(GL_RENDERBUFFER_EXT, sampleCount, m_internalColorFormat, width, height);
 #endif
         ::glFramebufferRenderbufferEXT(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT, GL_RENDERBUFFER_EXT, m_multisampleColorBuffer);
-        if (m_attrs.stencil || m_attrs.depth) {
+        if (attrs.stencil || attrs.depth) {
             ::glBindRenderbufferEXT(GL_RENDERBUFFER_EXT, m_multisampleDepthStencilBuffer);
             ::glRenderbufferStorageMultisampleEXT(GL_RENDERBUFFER_EXT, sampleCount, internalDepthStencilFormat, width, height);
-            if (m_attrs.stencil)
+            if (attrs.stencil)
                 ::glFramebufferRenderbufferEXT(GL_FRAMEBUFFER_EXT, GL_STENCIL_ATTACHMENT_EXT, GL_RENDERBUFFER_EXT, m_multisampleDepthStencilBuffer);
-            if (m_attrs.depth)
+            if (attrs.depth)
                 ::glFramebufferRenderbufferEXT(GL_FRAMEBUFFER_EXT, GL_DEPTH_ATTACHMENT_EXT, GL_RENDERBUFFER_EXT, m_multisampleDepthStencilBuffer);
         }
         ::glBindRenderbufferEXT(GL_RENDERBUFFER_EXT, 0);
@@ -211,7 +214,7 @@ bool GraphicsContext3D::reshapeFBOs(const IntSize& size)
     attachDepthAndStencilBufferIfNeeded(internalDepthStencilFormat, width, height);
 
     bool mustRestoreFBO = true;
-    if (m_attrs.antialias) {
+    if (attrs.antialias) {
         ::glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_multisampleFBO);
         if (m_state.boundFBO == m_multisampleFBO)
             mustRestoreFBO = false;
@@ -225,12 +228,14 @@ bool GraphicsContext3D::reshapeFBOs(const IntSize& size)
 
 void GraphicsContext3D::attachDepthAndStencilBufferIfNeeded(GLuint internalDepthStencilFormat, int width, int height)
 {
-    if (!m_attrs.antialias && (m_attrs.stencil || m_attrs.depth)) {
+    auto attrs = contextAttributes();
+
+    if (!attrs.antialias && (attrs.stencil || attrs.depth)) {
         ::glBindRenderbufferEXT(GL_RENDERBUFFER_EXT, m_depthStencilBuffer);
         ::glRenderbufferStorageEXT(GL_RENDERBUFFER_EXT, internalDepthStencilFormat, width, height);
-        if (m_attrs.stencil)
+        if (attrs.stencil)
             ::glFramebufferRenderbufferEXT(GL_FRAMEBUFFER_EXT, GL_STENCIL_ATTACHMENT_EXT, GL_RENDERBUFFER_EXT, m_depthStencilBuffer);
-        if (m_attrs.depth)
+        if (attrs.depth)
             ::glFramebufferRenderbufferEXT(GL_FRAMEBUFFER_EXT, GL_DEPTH_ATTACHMENT_EXT, GL_RENDERBUFFER_EXT, m_depthStencilBuffer);
         ::glBindRenderbufferEXT(GL_RENDERBUFFER_EXT, 0);
     }
@@ -475,28 +480,34 @@ void GraphicsContext3D::clearDepth(GC3Dclampf depth)
 Extensions3D& GraphicsContext3D::getExtensions()
 {
     if (!m_extensions)
+#if PLATFORM(COCOA) && USE(OPENGL_ES)
+        m_extensions = makeUnique<Extensions3DOpenGL>(this, false);
+#else
         m_extensions = makeUnique<Extensions3DOpenGL>(this, isGLES2Compliant());
+#endif
     return *m_extensions;
 }
 #endif
 
 void GraphicsContext3D::readPixels(GC3Dint x, GC3Dint y, GC3Dsizei width, GC3Dsizei height, GC3Denum format, GC3Denum type, void* data)
 {
+    auto attrs = contextAttributes();
+
     // FIXME: remove the two glFlush calls when the driver bug is fixed, i.e.,
     // all previous rendering calls should be done before reading pixels.
     makeContextCurrent();
     ::glFlush();
-    if (m_attrs.antialias && m_state.boundFBO == m_multisampleFBO) {
+    if (attrs.antialias && m_state.boundFBO == m_multisampleFBO) {
         resolveMultisamplingIfNecessary(IntRect(x, y, width, height));
         ::glBindFramebufferEXT(GraphicsContext3D::FRAMEBUFFER, m_fbo);
         ::glFlush();
     }
     ::glReadPixels(x, y, width, height, format, type, data);
-    if (m_attrs.antialias && m_state.boundFBO == m_multisampleFBO)
+    if (attrs.antialias && m_state.boundFBO == m_multisampleFBO)
         ::glBindFramebufferEXT(GraphicsContext3D::FRAMEBUFFER, m_multisampleFBO);
 
 #if PLATFORM(MAC)
-    if (!m_attrs.alpha && (format == GraphicsContext3D::RGBA || format == GraphicsContext3D::BGRA) && (m_state.boundFBO == m_fbo || (m_attrs.antialias && m_state.boundFBO == m_multisampleFBO)))
+    if (!attrs.alpha && (format == GraphicsContext3D::RGBA || format == GraphicsContext3D::BGRA) && (m_state.boundFBO == m_fbo || (attrs.antialias && m_state.boundFBO == m_multisampleFBO)))
         wipeAlphaChannelFromPixels(width, height, static_cast<unsigned char*>(data));
 #endif
 }

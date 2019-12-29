@@ -53,15 +53,15 @@ GC3DLayer::GC3DLayer(GraphicsContext3D& context)
 {
 }
 
-GC3DLayer::GC3DLayer(GraphicsContext3D& context, GraphicsContext3D::RenderStyle renderStyle)
+GC3DLayer::GC3DLayer(GraphicsContext3D& context, GraphicsContext3D::Destination destination)
     : m_context(context)
     , m_contentLayer(Nicosia::ContentLayer::create(Nicosia::ContentLayerTextureMapperImpl::createFactory(*this)))
 {
-    switch (renderStyle) {
-    case GraphicsContext3D::RenderOffscreen:
+    switch (destination) {
+    case GraphicsContext3D::Destination::Offscreen:
         m_glContext = GLContext::createOffscreenContext(&PlatformDisplay::sharedDisplayForCompositing());
         break;
-    case GraphicsContext3D::RenderDirectlyToHostWindow:
+    case GraphicsContext3D::Destination::DirectlyToHostWindow:
         ASSERT_NOT_REACHED();
         break;
     }
@@ -78,7 +78,7 @@ bool GC3DLayer::makeContextCurrent()
     return m_glContext->makeContextCurrent();
 }
 
-PlatformGraphicsContext3D GC3DLayer::platformContext()
+PlatformGraphicsContext3D GC3DLayer::platformContext() const
 {
     ASSERT(m_glContext);
     return m_glContext->platformContext();
@@ -92,7 +92,7 @@ void GC3DLayer::swapBuffersIfNeeded()
 
     m_context.prepareTexture();
     IntSize textureSize(m_context.m_currentWidth, m_context.m_currentHeight);
-    TextureMapperGL::Flags flags = m_context.m_attrs.alpha ? TextureMapperGL::ShouldBlend : 0;
+    TextureMapperGL::Flags flags = m_context.contextAttributes().alpha ? TextureMapperGL::ShouldBlend : 0;
 #if USE(ANGLE)
     std::unique_ptr<ImageBuffer> imageBuffer = ImageBuffer::create(textureSize, Unaccelerated);
     if (!imageBuffer)

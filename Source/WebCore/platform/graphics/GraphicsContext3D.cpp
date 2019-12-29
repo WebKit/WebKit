@@ -44,66 +44,66 @@ namespace {
 
 GraphicsContext3D::DataFormat getDataFormat(GC3Denum destinationFormat, GC3Denum destinationType)
 {
-    GraphicsContext3D::DataFormat dstFormat = GraphicsContext3D::DataFormatRGBA8;
+    GraphicsContext3D::DataFormat dstFormat = GraphicsContext3D::DataFormat::RGBA8;
     switch (destinationType) {
     case GraphicsContext3D::UNSIGNED_BYTE:
         switch (destinationFormat) {
         case GraphicsContext3D::RGB:
-            dstFormat = GraphicsContext3D::DataFormatRGB8;
+            dstFormat = GraphicsContext3D::DataFormat::RGB8;
             break;
         case GraphicsContext3D::RGBA:
-            dstFormat = GraphicsContext3D::DataFormatRGBA8;
+            dstFormat = GraphicsContext3D::DataFormat::RGBA8;
             break;
         case GraphicsContext3D::ALPHA:
-            dstFormat = GraphicsContext3D::DataFormatA8;
+            dstFormat = GraphicsContext3D::DataFormat::A8;
             break;
         case GraphicsContext3D::LUMINANCE:
-            dstFormat = GraphicsContext3D::DataFormatR8;
+            dstFormat = GraphicsContext3D::DataFormat::R8;
             break;
         case GraphicsContext3D::LUMINANCE_ALPHA:
-            dstFormat = GraphicsContext3D::DataFormatRA8;
+            dstFormat = GraphicsContext3D::DataFormat::RA8;
             break;
         case GraphicsContext3D::SRGB:
-            dstFormat = GraphicsContext3D::DataFormatRGB8;
+            dstFormat = GraphicsContext3D::DataFormat::RGB8;
             break;
         case GraphicsContext3D::SRGB_ALPHA:
-            dstFormat = GraphicsContext3D::DataFormatRGBA8;
+            dstFormat = GraphicsContext3D::DataFormat::RGBA8;
             break;
         default:
             ASSERT_NOT_REACHED();
         }
         break;
     case GraphicsContext3D::UNSIGNED_SHORT_4_4_4_4:
-        dstFormat = GraphicsContext3D::DataFormatRGBA4444;
+        dstFormat = GraphicsContext3D::DataFormat::RGBA4444;
         break;
     case GraphicsContext3D::UNSIGNED_SHORT_5_5_5_1:
-        dstFormat = GraphicsContext3D::DataFormatRGBA5551;
+        dstFormat = GraphicsContext3D::DataFormat::RGBA5551;
         break;
     case GraphicsContext3D::UNSIGNED_SHORT_5_6_5:
-        dstFormat = GraphicsContext3D::DataFormatRGB565;
+        dstFormat = GraphicsContext3D::DataFormat::RGB565;
         break;
     case GraphicsContext3D::HALF_FLOAT_OES: // OES_texture_half_float
         switch (destinationFormat) {
         case GraphicsContext3D::RGB:
-            dstFormat = GraphicsContext3D::DataFormatRGB16F;
+            dstFormat = GraphicsContext3D::DataFormat::RGB16F;
             break;
         case GraphicsContext3D::RGBA:
-            dstFormat = GraphicsContext3D::DataFormatRGBA16F;
+            dstFormat = GraphicsContext3D::DataFormat::RGBA16F;
             break;
         case GraphicsContext3D::ALPHA:
-            dstFormat = GraphicsContext3D::DataFormatA16F;
+            dstFormat = GraphicsContext3D::DataFormat::A16F;
             break;
         case GraphicsContext3D::LUMINANCE:
-            dstFormat = GraphicsContext3D::DataFormatR16F;
+            dstFormat = GraphicsContext3D::DataFormat::R16F;
             break;
         case GraphicsContext3D::LUMINANCE_ALPHA:
-            dstFormat = GraphicsContext3D::DataFormatRA16F;
+            dstFormat = GraphicsContext3D::DataFormat::RA16F;
             break;
         case GraphicsContext3D::SRGB:
-            dstFormat = GraphicsContext3D::DataFormatRGB16F;
+            dstFormat = GraphicsContext3D::DataFormat::RGB16F;
             break;
         case GraphicsContext3D::SRGB_ALPHA:
-            dstFormat = GraphicsContext3D::DataFormatRGBA16F;
+            dstFormat = GraphicsContext3D::DataFormat::RGBA16F;
             break;
         default:
             ASSERT_NOT_REACHED();
@@ -112,25 +112,25 @@ GraphicsContext3D::DataFormat getDataFormat(GC3Denum destinationFormat, GC3Denum
     case GraphicsContext3D::FLOAT: // OES_texture_float
         switch (destinationFormat) {
         case GraphicsContext3D::RGB:
-            dstFormat = GraphicsContext3D::DataFormatRGB32F;
+            dstFormat = GraphicsContext3D::DataFormat::RGB32F;
             break;
         case GraphicsContext3D::RGBA:
-            dstFormat = GraphicsContext3D::DataFormatRGBA32F;
+            dstFormat = GraphicsContext3D::DataFormat::RGBA32F;
             break;
         case GraphicsContext3D::ALPHA:
-            dstFormat = GraphicsContext3D::DataFormatA32F;
+            dstFormat = GraphicsContext3D::DataFormat::A32F;
             break;
         case GraphicsContext3D::LUMINANCE:
-            dstFormat = GraphicsContext3D::DataFormatR32F;
+            dstFormat = GraphicsContext3D::DataFormat::R32F;
             break;
         case GraphicsContext3D::LUMINANCE_ALPHA:
-            dstFormat = GraphicsContext3D::DataFormatRA32F;
+            dstFormat = GraphicsContext3D::DataFormat::RA32F;
             break;
         case GraphicsContext3D::SRGB:
-            dstFormat = GraphicsContext3D::DataFormatRGB32F;
+            dstFormat = GraphicsContext3D::DataFormat::RGB32F;
             break;
         case GraphicsContext3D::SRGB_ALPHA:
-            dstFormat = GraphicsContext3D::DataFormatRGBA32F;
+            dstFormat = GraphicsContext3D::DataFormat::RGBA32F;
             break;
         default:
             ASSERT_NOT_REACHED();
@@ -360,7 +360,7 @@ GC3Denum GraphicsContext3D::computeImageSizeInBytes(GC3Denum format, GC3Denum ty
     return GraphicsContext3D::NO_ERROR;
 }
 
-GraphicsContext3D::ImageExtractor::ImageExtractor(Image* image, ImageHtmlDomSource imageHtmlDomSource, bool premultiplyAlpha, bool ignoreGammaAndColorProfile)
+GraphicsContext3D::ImageExtractor::ImageExtractor(Image* image, DOMSource imageHtmlDomSource, bool premultiplyAlpha, bool ignoreGammaAndColorProfile)
 {
     m_image = image;
     m_imageHtmlDomSource = imageHtmlDomSource;
@@ -398,7 +398,7 @@ bool GraphicsContext3D::extractImageData(ImageData* imageData, GC3Denum format, 
         return false;
     data.resize(packedSize);
 
-    if (!packPixels(imageData->data()->data(), DataFormatRGBA8, width, height, 0, format, type, premultiplyAlpha ? AlphaDoPremultiply : AlphaDoNothing, data.data(), flipY))
+    if (!packPixels(imageData->data()->data(), GraphicsContext3D::DataFormat::RGBA8, width, height, 0, format, type, premultiplyAlpha ? AlphaOp::DoPremultiply : AlphaOp::DoNothing, data.data(), flipY))
         return false;
 
     return true;
@@ -416,7 +416,7 @@ bool GraphicsContext3D::extractTextureData(unsigned int width, unsigned int heig
     unsigned int bytesPerPixel = componentsPerPixel * bytesPerComponent;
     data.resize(width * height * bytesPerPixel);
 
-    if (!packPixels(static_cast<const uint8_t*>(pixels), sourceDataFormat, width, height, unpackAlignment, format, type, (premultiplyAlpha ? AlphaDoPremultiply : AlphaDoNothing), data.data(), flipY))
+    if (!packPixels(static_cast<const uint8_t*>(pixels), sourceDataFormat, width, height, unpackAlignment, format, type, (premultiplyAlpha ? AlphaOp::DoPremultiply : AlphaOp::DoNothing), data.data(), flipY))
         return false;
 
     return true;
@@ -425,36 +425,36 @@ bool GraphicsContext3D::extractTextureData(unsigned int width, unsigned int heig
 ALWAYS_INLINE unsigned TexelBytesForFormat(GraphicsContext3D::DataFormat format)
 {
     switch (format) {
-    case GraphicsContext3D::DataFormatR8:
-    case GraphicsContext3D::DataFormatA8:
+    case GraphicsContext3D::DataFormat::R8:
+    case GraphicsContext3D::DataFormat::A8:
         return 1;
-    case GraphicsContext3D::DataFormatRA8:
-    case GraphicsContext3D::DataFormatAR8:
-    case GraphicsContext3D::DataFormatRGBA5551:
-    case GraphicsContext3D::DataFormatRGBA4444:
-    case GraphicsContext3D::DataFormatRGB565:
-    case GraphicsContext3D::DataFormatA16F:
-    case GraphicsContext3D::DataFormatR16F:
+    case GraphicsContext3D::DataFormat::RA8:
+    case GraphicsContext3D::DataFormat::AR8:
+    case GraphicsContext3D::DataFormat::RGBA5551:
+    case GraphicsContext3D::DataFormat::RGBA4444:
+    case GraphicsContext3D::DataFormat::RGB565:
+    case GraphicsContext3D::DataFormat::A16F:
+    case GraphicsContext3D::DataFormat::R16F:
         return 2;
-    case GraphicsContext3D::DataFormatRGB8:
-    case GraphicsContext3D::DataFormatBGR8:
+    case GraphicsContext3D::DataFormat::RGB8:
+    case GraphicsContext3D::DataFormat::BGR8:
         return 3;
-    case GraphicsContext3D::DataFormatRGBA8:
-    case GraphicsContext3D::DataFormatARGB8:
-    case GraphicsContext3D::DataFormatABGR8:
-    case GraphicsContext3D::DataFormatBGRA8:
-    case GraphicsContext3D::DataFormatR32F:
-    case GraphicsContext3D::DataFormatA32F:
-    case GraphicsContext3D::DataFormatRA16F:
+    case GraphicsContext3D::DataFormat::RGBA8:
+    case GraphicsContext3D::DataFormat::ARGB8:
+    case GraphicsContext3D::DataFormat::ABGR8:
+    case GraphicsContext3D::DataFormat::BGRA8:
+    case GraphicsContext3D::DataFormat::R32F:
+    case GraphicsContext3D::DataFormat::A32F:
+    case GraphicsContext3D::DataFormat::RA16F:
         return 4;
-    case GraphicsContext3D::DataFormatRGB16F:
+    case GraphicsContext3D::DataFormat::RGB16F:
         return 6;
-    case GraphicsContext3D::DataFormatRA32F:
-    case GraphicsContext3D::DataFormatRGBA16F:
+    case GraphicsContext3D::DataFormat::RA32F:
+    case GraphicsContext3D::DataFormat::RGBA16F:
         return 8;
-    case GraphicsContext3D::DataFormatRGB32F:
+    case GraphicsContext3D::DataFormat::RGB32F:
         return 12;
-    case GraphicsContext3D::DataFormatRGBA32F:
+    case GraphicsContext3D::DataFormat::RGBA32F:
         return 16;
     default:
         return 0;
@@ -497,9 +497,9 @@ bool GraphicsContext3D::packPixels(const uint8_t* sourceData, DataFormat sourceD
         dstStride = -dstStride;
     }
     if (!hasAlpha(sourceDataFormat) || !hasColor(sourceDataFormat) || !hasColor(dstDataFormat))
-        alphaOp = AlphaDoNothing;
+        alphaOp = AlphaOp::DoNothing;
 
-    if (sourceDataFormat == dstDataFormat && alphaOp == AlphaDoNothing) {
+    if (sourceDataFormat == dstDataFormat && alphaOp == AlphaOp::DoNothing) {
         const uint8_t* ptr = sourceData;
         const uint8_t* ptrEnd = sourceData + srcStride * height;
         unsigned rowSize = (dstStride > 0) ? dstStride: -dstStride;
@@ -517,143 +517,6 @@ bool GraphicsContext3D::packPixels(const uint8_t* sourceData, DataFormat sourceD
     if (!converter.success())
         return false;
     return true;
-}
-
-unsigned GraphicsContext3D::getClearBitsByAttachmentType(GC3Denum attachment)
-{
-    switch (attachment) {
-    case GraphicsContext3D::COLOR_ATTACHMENT0:
-    case Extensions3D::COLOR_ATTACHMENT1_EXT:
-    case Extensions3D::COLOR_ATTACHMENT2_EXT:
-    case Extensions3D::COLOR_ATTACHMENT3_EXT:
-    case Extensions3D::COLOR_ATTACHMENT4_EXT:
-    case Extensions3D::COLOR_ATTACHMENT5_EXT:
-    case Extensions3D::COLOR_ATTACHMENT6_EXT:
-    case Extensions3D::COLOR_ATTACHMENT7_EXT:
-    case Extensions3D::COLOR_ATTACHMENT8_EXT:
-    case Extensions3D::COLOR_ATTACHMENT9_EXT:
-    case Extensions3D::COLOR_ATTACHMENT10_EXT:
-    case Extensions3D::COLOR_ATTACHMENT11_EXT:
-    case Extensions3D::COLOR_ATTACHMENT12_EXT:
-    case Extensions3D::COLOR_ATTACHMENT13_EXT:
-    case Extensions3D::COLOR_ATTACHMENT14_EXT:
-    case Extensions3D::COLOR_ATTACHMENT15_EXT:
-        return GraphicsContext3D::COLOR_BUFFER_BIT;
-    case GraphicsContext3D::DEPTH_ATTACHMENT:
-        return GraphicsContext3D::DEPTH_BUFFER_BIT;
-    case GraphicsContext3D::STENCIL_ATTACHMENT:
-        return GraphicsContext3D::STENCIL_BUFFER_BIT;
-    case GraphicsContext3D::DEPTH_STENCIL_ATTACHMENT:
-        return GraphicsContext3D::DEPTH_BUFFER_BIT | GraphicsContext3D::STENCIL_BUFFER_BIT;
-    default:
-        return 0;
-    }
-}
-
-unsigned GraphicsContext3D::getClearBitsByFormat(GC3Denum format)
-{
-    switch (format) {
-    case GraphicsContext3D::RGB:
-    case GraphicsContext3D::RGBA:
-    case GraphicsContext3D::LUMINANCE_ALPHA:
-    case GraphicsContext3D::LUMINANCE:
-    case GraphicsContext3D::ALPHA:
-    case GraphicsContext3D::R8:
-    case GraphicsContext3D::R8_SNORM:
-    case GraphicsContext3D::R16F:
-    case GraphicsContext3D::R32F:
-    case GraphicsContext3D::R8UI:
-    case GraphicsContext3D::R8I:
-    case GraphicsContext3D::R16UI:
-    case GraphicsContext3D::R16I:
-    case GraphicsContext3D::R32UI:
-    case GraphicsContext3D::R32I:
-    case GraphicsContext3D::RG8:
-    case GraphicsContext3D::RG8_SNORM:
-    case GraphicsContext3D::RG16F:
-    case GraphicsContext3D::RG32F:
-    case GraphicsContext3D::RG8UI:
-    case GraphicsContext3D::RG8I:
-    case GraphicsContext3D::RG16UI:
-    case GraphicsContext3D::RG16I:
-    case GraphicsContext3D::RG32UI:
-    case GraphicsContext3D::RG32I:
-    case GraphicsContext3D::RGB8:
-    case GraphicsContext3D::SRGB8:
-    case GraphicsContext3D::RGB565:
-    case GraphicsContext3D::RGB8_SNORM:
-    case GraphicsContext3D::R11F_G11F_B10F:
-    case GraphicsContext3D::RGB9_E5:
-    case GraphicsContext3D::RGB16F:
-    case GraphicsContext3D::RGB32F:
-    case GraphicsContext3D::RGB8UI:
-    case GraphicsContext3D::RGB8I:
-    case GraphicsContext3D::RGB16UI:
-    case GraphicsContext3D::RGB16I:
-    case GraphicsContext3D::RGB32UI:
-    case GraphicsContext3D::RGB32I:
-    case GraphicsContext3D::RGBA8:
-    case GraphicsContext3D::SRGB8_ALPHA8:
-    case GraphicsContext3D::RGBA8_SNORM:
-    case GraphicsContext3D::RGB5_A1:
-    case GraphicsContext3D::RGBA4:
-    case GraphicsContext3D::RGB10_A2:
-    case GraphicsContext3D::RGBA16F:
-    case GraphicsContext3D::RGBA32F:
-    case GraphicsContext3D::RGBA8UI:
-    case GraphicsContext3D::RGBA8I:
-    case GraphicsContext3D::RGB10_A2UI:
-    case GraphicsContext3D::RGBA16UI:
-    case GraphicsContext3D::RGBA16I:
-    case GraphicsContext3D::RGBA32I:
-    case GraphicsContext3D::RGBA32UI:
-    case Extensions3D::SRGB_EXT:
-    case Extensions3D::SRGB_ALPHA_EXT:
-        return GraphicsContext3D::COLOR_BUFFER_BIT;
-    case GraphicsContext3D::DEPTH_COMPONENT16:
-    case GraphicsContext3D::DEPTH_COMPONENT24:
-    case GraphicsContext3D::DEPTH_COMPONENT32F:
-    case GraphicsContext3D::DEPTH_COMPONENT:
-        return GraphicsContext3D::DEPTH_BUFFER_BIT;
-    case GraphicsContext3D::STENCIL_INDEX8:
-        return GraphicsContext3D::STENCIL_BUFFER_BIT;
-    case GraphicsContext3D::DEPTH_STENCIL:
-    case GraphicsContext3D::DEPTH24_STENCIL8:
-    case GraphicsContext3D::DEPTH32F_STENCIL8:
-        return GraphicsContext3D::DEPTH_BUFFER_BIT | GraphicsContext3D::STENCIL_BUFFER_BIT;
-    default:
-        return 0;
-    }
-}
-
-unsigned GraphicsContext3D::getChannelBitsByFormat(GC3Denum format)
-{
-    switch (format) {
-    case GraphicsContext3D::ALPHA:
-        return ChannelAlpha;
-    case GraphicsContext3D::LUMINANCE:
-        return ChannelRGB;
-    case GraphicsContext3D::LUMINANCE_ALPHA:
-        return ChannelRGBA;
-    case GraphicsContext3D::RGB:
-    case GraphicsContext3D::RGB565:
-    case Extensions3D::SRGB_EXT:
-        return ChannelRGB;
-    case GraphicsContext3D::RGBA:
-    case GraphicsContext3D::RGBA4:
-    case GraphicsContext3D::RGB5_A1:
-    case Extensions3D::SRGB_ALPHA_EXT:
-        return ChannelRGBA;
-    case GraphicsContext3D::DEPTH_COMPONENT16:
-    case GraphicsContext3D::DEPTH_COMPONENT:
-        return ChannelDepth;
-    case GraphicsContext3D::STENCIL_INDEX8:
-        return ChannelStencil;
-    case GraphicsContext3D::DEPTH_STENCIL:
-        return ChannelDepth | ChannelStencil;
-    default:
-        return 0;
-    }
 }
 
 #if !(PLATFORM(COCOA) && (USE(OPENGL) || USE(ANGLE)))

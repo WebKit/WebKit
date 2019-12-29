@@ -44,13 +44,13 @@ class GC3DLayer : public ContentLayerTextureMapperImpl::Client {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit GC3DLayer(WebCore::GraphicsContext3D&);
-    GC3DLayer(WebCore::GraphicsContext3D&, WebCore::GraphicsContext3D::RenderStyle);
+    GC3DLayer(WebCore::GraphicsContext3D&, WebCore::GraphicsContext3D::Destination);
 
     virtual ~GC3DLayer();
 
     ContentLayer& contentLayer() const { return m_contentLayer; }
     virtual bool makeContextCurrent();
-    virtual PlatformGraphicsContext3D platformContext();
+    virtual PlatformGraphicsContext3D platformContext() const;
 
     void swapBuffersIfNeeded() override;
 

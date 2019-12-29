@@ -1,3 +1,128 @@
+2019-12-27  Dean Jackson  <dino@apple.com>
+
+        [WebGL] Add a pure virtual base class for GraphicsContext3D
+        https://bugs.webkit.org/show_bug.cgi?id=205604
+
+        Reviewed by Sam Weinig.
+
+        This is the first step in a series of patches to allow multiple versions
+        of GraphicsContext3D to exist, each using a different backend rendering
+        system. I've added a GraphicsContext3DBase class (that will eventually
+        be named GraphicsContext3D) holding all the WebGL entry points as well
+        as some common helper functions.
+
+        I also took the chance to move some enums into enum classes, which
+        makes it more obvious where things come from. I also removed some
+        unused interfaces: WebGLRenderingContextErrorMessageCallback and
+        WebGLRenderingContextLostMessageCallback.
+
+        The existing GraphicsContext3D now inherits from the base class,
+        but is otherwise nearly identical. The next step will be to make
+        different instances rather than the mix of #if macros we have now.
+        The virtual functions are marked "override" for now, but will become
+        "final" in the instances.
+
+        There should be no change in functionality.
+
+        * Headers.cmake:
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * html/canvas/WebGLProgram.cpp:
+        (WebCore::WebGLProgram::cacheActiveAttribLocations):
+        * html/canvas/WebGLRenderingContextBase.cpp:
+        (WebCore::WebGLRenderingContextBase::initializeNewContext):
+        (WebCore::WebGLRenderingContextBase::destroyGraphicsContext3D):
+        (WebCore::WebGLRenderingContextBase::getActiveAttrib):
+        (WebCore::WebGLRenderingContextBase::getActiveUniform):
+        (WebCore::WebGLRenderingContextBase::getContextAttributes):
+        (WebCore::WebGLRenderingContextBase::getUniformLocation):
+        (WebCore::WebGLRenderingContextBase::texImage2DImpl):
+        (WebCore::WebGLRenderingContextBase::texSubImage2DImpl):
+        (WebCore::WebGLRenderingContextBase::texSubImage2D):
+        (WebCore::WebGLRenderingContextBase::texImage2D):
+        (WebCore::WebGLRenderingContextBase::isTexInternalFormatColorBufferCombinationValid):
+        (WebCore::WebGLRenderingContextLostCallback::WebGLRenderingContextLostCallback): Deleted.
+        (WebCore::WebGLRenderingContextErrorMessageCallback::WebGLRenderingContextErrorMessageCallback): Deleted.
+        * html/canvas/WebGLRenderingContextBase.h:
+        * platform/graphics/FormatConverter.cpp:
+        (WebCore::uint8_t>):
+        (WebCore::float>):
+        (WebCore::uint16_t>):
+        (WebCore::FormatConverter::convert):
+        * platform/graphics/GraphicsContext3D.cpp:
+        (WebCore::GraphicsContext3D::ImageExtractor::ImageExtractor):
+        (WebCore::GraphicsContext3D::extractImageData):
+        (WebCore::GraphicsContext3D::extractTextureData):
+        (WebCore::TexelBytesForFormat):
+        (WebCore::GraphicsContext3D::packPixels):
+        (WebCore::GraphicsContext3D::getClearBitsByAttachmentType): Deleted.
+        (WebCore::GraphicsContext3D::getClearBitsByFormat): Deleted.
+        (WebCore::GraphicsContext3D::getChannelBitsByFormat): Deleted.
+        * platform/graphics/GraphicsContext3D.h:
+        (WebCore::GraphicsContext3D::ImageExtractor::imageHtmlDomSource):
+        (WebCore::GraphicsContext3D::platformGraphicsContext3D const): Deleted.
+        (WebCore::GraphicsContext3D::platformTexture const): Deleted.
+        (WebCore::GraphicsContext3D::platformLayer const): Deleted.
+        (WebCore::GraphicsContext3D::hasAlpha): Deleted.
+        (WebCore::GraphicsContext3D::hasColor): Deleted.
+        (WebCore::GraphicsContext3D::srcFormatComesFromDOMElementOrImageData): Deleted.
+        * platform/graphics/GraphicsTypes3D.h:
+        * platform/graphics/angle/GraphicsContext3DANGLE.cpp:
+        (WebCore::GraphicsContext3D::readPixelsAndConvertToBGRAIfNecessary):
+        (WebCore::GraphicsContext3D::reshapeFBOs):
+        (WebCore::GraphicsContext3D::attachDepthAndStencilBufferIfNeeded):
+        (WebCore::GraphicsContext3D::readPixels):
+        (WebCore::GraphicsContext3D::validateDepthStencil):
+        (WebCore::GraphicsContext3D::paintRenderingResultsToCanvas):
+        (WebCore::GraphicsContext3D::paintRenderingResultsToImageData):
+        (WebCore::GraphicsContext3D::prepareTexture):
+        (WebCore::GraphicsContext3D::readRenderingResults):
+        (WebCore::GraphicsContext3D::reshape):
+        (WebCore::GraphicsContext3D::bindFramebuffer):
+        (WebCore::GraphicsContext3D::copyTexImage2D):
+        (WebCore::GraphicsContext3D::copyTexSubImage2D):
+        (WebCore::GraphicsContext3D::getContextAttributes): Deleted.
+        * platform/graphics/cg/GraphicsContext3DCG.cpp:
+        (WebCore::getSourceDataFormat):
+        (WebCore::GraphicsContext3D::ImageExtractor::extractImage):
+        * platform/graphics/cocoa/GraphicsContext3DCocoa.mm:
+        (WebCore::GraphicsContext3D::create):
+        (WebCore::GraphicsContext3D::createShared):
+        (WebCore::GraphicsContext3D::GraphicsContext3D):
+        (WebCore::GraphicsContext3D::~GraphicsContext3D):
+        (WebCore::GraphicsContext3D::setRenderbufferStorageFromDrawable):
+        (WebCore::GraphicsContext3D::makeContextCurrent):
+        (WebCore::GraphicsContext3D::checkGPUStatus):
+        (WebCore::GraphicsContext3D::presentRenderbuffer):
+        (WebCore::GraphicsContext3D::texImageIOSurface2D):
+        (WebCore::GraphicsContext3D::allocateIOSurfaceBackingStore):
+        (WebCore::GraphicsContext3D::updateCGLContext):
+        (WebCore::GraphicsContext3D::screenDidChange):
+        (WebCore::GraphicsContext3D::setContextLostCallback): Deleted.
+        (WebCore::GraphicsContext3D::setErrorMessageCallback): Deleted.
+        * platform/graphics/cocoa/WebGLLayer.mm:
+        (-[WebGLLayer initWithGraphicsContext3D:]):
+        (-[WebGLLayer copyImageSnapshotWithColorSpace:]):
+        (-[WebGLLayer bindFramebufferToNextAvailableSurface]):
+        * platform/graphics/cv/TextureCacheCV.mm:
+        (WebCore::TextureCacheCV::create):
+        * platform/graphics/opengl/GraphicsContext3DOpenGL.cpp:
+        (WebCore::GraphicsContext3D::readPixelsAndConvertToBGRAIfNecessary):
+        (WebCore::GraphicsContext3D::reshapeFBOs):
+        (WebCore::GraphicsContext3D::attachDepthAndStencilBufferIfNeeded):
+        (WebCore::GraphicsContext3D::readPixels):
+        * platform/graphics/opengl/GraphicsContext3DOpenGLCommon.cpp:
+        (WebCore::GraphicsContext3D::validateDepthStencil):
+        (WebCore::GraphicsContext3D::paintRenderingResultsToCanvas):
+        (WebCore::GraphicsContext3D::paintRenderingResultsToImageData):
+        (WebCore::GraphicsContext3D::prepareTexture):
+        (WebCore::GraphicsContext3D::readRenderingResults):
+        (WebCore::GraphicsContext3D::reshape):
+        (WebCore::GraphicsContext3D::bindFramebuffer):
+        (WebCore::GraphicsContext3D::copyTexImage2D):
+        (WebCore::GraphicsContext3D::copyTexSubImage2D):
+        (WebCore::GraphicsContext3D::getContextAttributes): Deleted.
+
 2019-12-29  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] Implement LineBuilder::revert

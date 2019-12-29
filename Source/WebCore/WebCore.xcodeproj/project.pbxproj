@@ -912,6 +912,7 @@
 		3135910A1E7DDC7300F30630 /* RTCSdpType.h in Headers */ = {isa = PBXBuildFile; fileRef = 313591041E7DDC6000F30630 /* RTCSdpType.h */; };
 		3135910B1E7DDC7300F30630 /* RTCSignalingState.h in Headers */ = {isa = PBXBuildFile; fileRef = 313591051E7DDC6000F30630 /* RTCSignalingState.h */; };
 		313BCE1C235E3BE500FC39E5 /* ElementContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 313BCE1B235E3BDB00FC39E5 /* ElementContext.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		313DE87023A96973008FC47B /* GraphicsContext3DBase.h in Headers */ = {isa = PBXBuildFile; fileRef = 313DE86F23A96967008FC47B /* GraphicsContext3DBase.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		3140379B124BEA7F00AF40E4 /* WebCoreMotionManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 31403797124BEA7F00AF40E4 /* WebCoreMotionManager.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		3140379D124BEA7F00AF40E4 /* DeviceOrientationClientIOS.h in Headers */ = {isa = PBXBuildFile; fileRef = 31403799124BEA7F00AF40E4 /* DeviceOrientationClientIOS.h */; };
 		3140C5201FDF151A00D2A873 /* OffscreenCanvasRenderingContext2D.h in Headers */ = {isa = PBXBuildFile; fileRef = 3140C51E1FDF151A00D2A873 /* OffscreenCanvasRenderingContext2D.h */; };
@@ -6997,6 +6998,8 @@
 		313591051E7DDC6000F30630 /* RTCSignalingState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RTCSignalingState.h; sourceTree = "<group>"; };
 		3135910C1E7DDCB600F30630 /* RTCBundlePolicy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RTCBundlePolicy.h; sourceTree = "<group>"; };
 		313BCE1B235E3BDB00FC39E5 /* ElementContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ElementContext.h; sourceTree = "<group>"; };
+		313DE86D23A96966008FC47B /* GraphicsContext3DBase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GraphicsContext3DBase.cpp; sourceTree = "<group>"; };
+		313DE86F23A96967008FC47B /* GraphicsContext3DBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GraphicsContext3DBase.h; sourceTree = "<group>"; };
 		31403797124BEA7F00AF40E4 /* WebCoreMotionManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebCoreMotionManager.h; sourceTree = "<group>"; };
 		31403798124BEA7F00AF40E4 /* WebCoreMotionManager.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebCoreMotionManager.mm; sourceTree = "<group>"; };
 		31403799124BEA7F00AF40E4 /* DeviceOrientationClientIOS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DeviceOrientationClientIOS.h; sourceTree = "<group>"; };
@@ -25041,6 +25044,8 @@
 				6E21C6BF1126338500A7BE02 /* GraphicsContext3D.cpp */,
 				49C7B9FB1042D3650009D447 /* GraphicsContext3D.h */,
 				7C330A011DF8FAC600D3395C /* GraphicsContext3DAttributes.h */,
+				313DE86D23A96966008FC47B /* GraphicsContext3DBase.cpp */,
+				313DE86F23A96967008FC47B /* GraphicsContext3DBase.h */,
 				D0843A4C20FEC16500FE860E /* GraphicsContext3DManager.cpp */,
 				D0843A4A20FEBE3D00FE860E /* GraphicsContext3DManager.h */,
 				0F0012401FAD881000531D76 /* GraphicsContextImpl.cpp */,
@@ -30020,6 +30025,7 @@
 				B2A015A90AF6CD53006BCE0E /* GraphicsContext.h in Headers */,
 				49C7B9FC1042D3650009D447 /* GraphicsContext3D.h in Headers */,
 				7C330A021DF8FAC600D3395C /* GraphicsContext3DAttributes.h in Headers */,
+				313DE87023A96973008FC47B /* GraphicsContext3DBase.h in Headers */,
 				31AB5000122878A2001A7DB0 /* GraphicsContext3DIOS.h in Headers */,
 				D0843A4B20FEBE3D00FE860E /* GraphicsContext3DManager.h in Headers */,
 				934907E4125BBBC8007F23A0 /* GraphicsContextCG.h in Headers */,

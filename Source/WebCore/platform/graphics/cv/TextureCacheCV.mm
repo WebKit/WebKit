@@ -38,9 +38,11 @@ std::unique_ptr<TextureCacheCV> TextureCacheCV::create(GraphicsContext3D& contex
 {
     TextureCacheType cache = nullptr;
 #if USE(OPENGL_ES)
-    CVReturn error = CVOpenGLESTextureCacheCreate(kCFAllocatorDefault, nullptr, context.platformGraphicsContext3D(), nullptr, &cache);
+    CVEAGLContext eaglContext = static_cast<CVEAGLContext>(context.platformGraphicsContext3D());
+    CVReturn error = CVOpenGLESTextureCacheCreate(kCFAllocatorDefault, nullptr, eaglContext, nullptr, &cache);
 #elif USE(OPENGL)
-    CVReturn error = CVOpenGLTextureCacheCreate(kCFAllocatorDefault, nullptr, context.platformGraphicsContext3D(), CGLGetPixelFormat(context.platformGraphicsContext3D()), nullptr, &cache);
+    CGLContextObj cglContext = static_cast<CGLContextObj>(context.platformGraphicsContext3D());
+    CVReturn error = CVOpenGLTextureCacheCreate(kCFAllocatorDefault, nullptr, cglContext, CGLGetPixelFormat(cglContext), nullptr, &cache);
 #elif USE(ANGLE)
     // FIXME: figure out how to do this integrating via ANGLE.
     UNUSED_PARAM(context);

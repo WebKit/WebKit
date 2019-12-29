@@ -62,7 +62,7 @@ public:
 
         bool makeContextCurrent();
 #if ENABLE(GRAPHICS_CONTEXT_3D)
-        PlatformGraphicsContext3D platformContext();
+        PlatformGraphicsContext3D platformContext() const;
 #endif
 
     private:
@@ -73,11 +73,11 @@ public:
         EGLSurface m_surface { nullptr };
     };
 
-    GC3DANGLELayer(WebCore::GraphicsContext3D&, WebCore::GraphicsContext3D::RenderStyle);
+    GC3DANGLELayer(WebCore::GraphicsContext3D&, WebCore::GraphicsContext3D::Destination);
     virtual ~GC3DANGLELayer();
 
     bool makeContextCurrent() override;
-    PlatformGraphicsContext3D platformContext() override;
+    PlatformGraphicsContext3D platformContext() const override;
 
 private:
     std::unique_ptr<ANGLEContext> m_angleContext;

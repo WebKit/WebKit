@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2009, 2014-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,19 +28,13 @@
 #if ENABLE(WEBGL)
 
 #include "ANGLEWebKitBridge.h"
-#include "GraphicsContext3DAttributes.h"
-#include "GraphicsTypes3D.h"
-#include "Image.h"
-#include "IntRect.h"
-#include "PlatformLayer.h"
+#include "GraphicsContext3DBase.h"
 #include <memory>
 #include <wtf/HashCountedSet.h>
 #include <wtf/HashMap.h>
 #include <wtf/ListHashSet.h>
-#include <wtf/RefCounted.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/UniqueArray.h>
-#include <wtf/text/WTFString.h>
 
 #if USE(CA)
 #include "PlatformCALayer.h"
@@ -55,29 +49,12 @@
 #endif
 
 #if PLATFORM(COCOA)
-
 #if USE(OPENGL_ES)
 #include <OpenGLES/ES2/gl.h>
 #ifdef __OBJC__
 #import <OpenGLES/EAGL.h>
-typedef EAGLContext* PlatformGraphicsContext3D;
-#else
-typedef void* PlatformGraphicsContext3D;
 #endif // __OBJC__
 #endif // USE(OPENGL_ES)
-
-#if USE(OPENGL)
-typedef struct _CGLContextObject *CGLContextObj;
-typedef CGLContextObj PlatformGraphicsContext3D;
-#endif // USE(OPENGL)
-
-#if USE(ANGLE)
-typedef void* PlatformGraphicsContext3D;
-typedef void* PlatformGraphicsContext3DDisplay;
-typedef void* PlatformGraphicsContext3DSurface;
-typedef void* PlatformGraphicsContext3DConfig;
-#endif // USE(ANGLE)
-
 OBJC_CLASS CALayer;
 OBJC_CLASS WebGLLayer;
 typedef struct __IOSurface* IOSurfaceRef;
@@ -89,16 +66,6 @@ class GC3DLayer;
 }
 #endif
 
-#if !PLATFORM(COCOA)
-typedef unsigned GLuint;
-typedef void* PlatformGraphicsContext3D;
-typedef void* PlatformGraphicsSurface3D;
-#endif // !PLATFORM(COCOA)
-
-// These are currently the same among all implementations.
-const PlatformGraphicsContext3D NullPlatformGraphicsContext3D = 0;
-const Platform3DObject NullPlatform3DObject = 0;
-
 namespace WebCore {
 class Extensions3D;
 #if USE(ANGLE)
@@ -109,27 +76,17 @@ class Extensions3DOpenGLES;
 class Extensions3DOpenGL;
 #endif
 class HostWindow;
-class Image;
 class ImageBuffer;
 class ImageData;
-class IntRect;
-class IntSize;
-class WebGLRenderingContextBase;
 #if USE(TEXTURE_MAPPER)
 class TextureMapperGC3DPlatformLayer;
 #endif
 
 typedef WTF::HashMap<CString, uint64_t> ShaderNameHash;
 
-struct ActiveInfo {
-    String name;
-    GC3Denum type;
-    GC3Dint size;
-};
-
 class GraphicsContext3DPrivate;
 
-class GraphicsContext3D : public RefCounted<GraphicsContext3D> {
+class GraphicsContext3D : public GraphicsContext3DBase {
 public:
     class Client {
     public:
@@ -140,654 +97,25 @@ public:
         virtual void dispatchContextChangedNotification() = 0;
     };
 
-    enum {
-        // WebGL 1 constants
-        DEPTH_BUFFER_BIT = 0x00000100,
-        STENCIL_BUFFER_BIT = 0x00000400,
-        COLOR_BUFFER_BIT = 0x00004000,
-        POINTS = 0x0000,
-        LINES = 0x0001,
-        LINE_LOOP = 0x0002,
-        LINE_STRIP = 0x0003,
-        TRIANGLES = 0x0004,
-        TRIANGLE_STRIP = 0x0005,
-        TRIANGLE_FAN = 0x0006,
-        ZERO = 0,
-        ONE = 1,
-        SRC_COLOR = 0x0300,
-        ONE_MINUS_SRC_COLOR = 0x0301,
-        SRC_ALPHA = 0x0302,
-        ONE_MINUS_SRC_ALPHA = 0x0303,
-        DST_ALPHA = 0x0304,
-        ONE_MINUS_DST_ALPHA = 0x0305,
-        DST_COLOR = 0x0306,
-        ONE_MINUS_DST_COLOR = 0x0307,
-        SRC_ALPHA_SATURATE = 0x0308,
-        FUNC_ADD = 0x8006,
-        BLEND_EQUATION = 0x8009,
-        BLEND_EQUATION_RGB = 0x8009,
-        BLEND_EQUATION_ALPHA = 0x883D,
-        FUNC_SUBTRACT = 0x800A,
-        FUNC_REVERSE_SUBTRACT = 0x800B,
-        BLEND_DST_RGB = 0x80C8,
-        BLEND_SRC_RGB = 0x80C9,
-        BLEND_DST_ALPHA = 0x80CA,
-        BLEND_SRC_ALPHA = 0x80CB,
-        CONSTANT_COLOR = 0x8001,
-        ONE_MINUS_CONSTANT_COLOR = 0x8002,
-        CONSTANT_ALPHA = 0x8003,
-        ONE_MINUS_CONSTANT_ALPHA = 0x8004,
-        BLEND_COLOR = 0x8005,
-        ARRAY_BUFFER = 0x8892,
-        ELEMENT_ARRAY_BUFFER = 0x8893,
-        ARRAY_BUFFER_BINDING = 0x8894,
-        ELEMENT_ARRAY_BUFFER_BINDING = 0x8895,
-        STREAM_DRAW = 0x88E0,
-        STATIC_DRAW = 0x88E4,
-        DYNAMIC_DRAW = 0x88E8,
-        BUFFER_SIZE = 0x8764,
-        BUFFER_USAGE = 0x8765,
-        CURRENT_VERTEX_ATTRIB = 0x8626,
-        FRONT = 0x0404,
-        BACK = 0x0405,
-        FRONT_AND_BACK = 0x0408,
-        TEXTURE_2D = 0x0DE1,
-        CULL_FACE = 0x0B44,
-        BLEND = 0x0BE2,
-        DITHER = 0x0BD0,
-        STENCIL_TEST = 0x0B90,
-        DEPTH_TEST = 0x0B71,
-        SCISSOR_TEST = 0x0C11,
-        POLYGON_OFFSET_FILL = 0x8037,
-        SAMPLE_ALPHA_TO_COVERAGE = 0x809E,
-        SAMPLE_COVERAGE = 0x80A0,
-        NO_ERROR = 0,
-        INVALID_ENUM = 0x0500,
-        INVALID_VALUE = 0x0501,
-        INVALID_OPERATION = 0x0502,
-        OUT_OF_MEMORY = 0x0505,
-        CW = 0x0900,
-        CCW = 0x0901,
-        LINE_WIDTH = 0x0B21,
-        ALIASED_POINT_SIZE_RANGE = 0x846D,
-        ALIASED_LINE_WIDTH_RANGE = 0x846E,
-        CULL_FACE_MODE = 0x0B45,
-        FRONT_FACE = 0x0B46,
-        DEPTH_RANGE = 0x0B70,
-        DEPTH_WRITEMASK = 0x0B72,
-        DEPTH_CLEAR_VALUE = 0x0B73,
-        DEPTH_FUNC = 0x0B74,
-        STENCIL_CLEAR_VALUE = 0x0B91,
-        STENCIL_FUNC = 0x0B92,
-        STENCIL_FAIL = 0x0B94,
-        STENCIL_PASS_DEPTH_FAIL = 0x0B95,
-        STENCIL_PASS_DEPTH_PASS = 0x0B96,
-        STENCIL_REF = 0x0B97,
-        STENCIL_VALUE_MASK = 0x0B93,
-        STENCIL_WRITEMASK = 0x0B98,
-        STENCIL_BACK_FUNC = 0x8800,
-        STENCIL_BACK_FAIL = 0x8801,
-        STENCIL_BACK_PASS_DEPTH_FAIL = 0x8802,
-        STENCIL_BACK_PASS_DEPTH_PASS = 0x8803,
-        STENCIL_BACK_REF = 0x8CA3,
-        STENCIL_BACK_VALUE_MASK = 0x8CA4,
-        STENCIL_BACK_WRITEMASK = 0x8CA5,
-        VIEWPORT = 0x0BA2,
-        SCISSOR_BOX = 0x0C10,
-        COLOR_CLEAR_VALUE = 0x0C22,
-        COLOR_WRITEMASK = 0x0C23,
-        UNPACK_ALIGNMENT = 0x0CF5,
-        PACK_ALIGNMENT = 0x0D05,
-        MAX_TEXTURE_SIZE = 0x0D33,
-        MAX_VIEWPORT_DIMS = 0x0D3A,
-        SUBPIXEL_BITS = 0x0D50,
-        RED_BITS = 0x0D52,
-        GREEN_BITS = 0x0D53,
-        BLUE_BITS = 0x0D54,
-        ALPHA_BITS = 0x0D55,
-        DEPTH_BITS = 0x0D56,
-        STENCIL_BITS = 0x0D57,
-        POLYGON_OFFSET_UNITS = 0x2A00,
-        POLYGON_OFFSET_FACTOR = 0x8038,
-        TEXTURE_BINDING_2D = 0x8069,
-        SAMPLE_BUFFERS = 0x80A8,
-        SAMPLES = 0x80A9,
-        SAMPLE_COVERAGE_VALUE = 0x80AA,
-        SAMPLE_COVERAGE_INVERT = 0x80AB,
-        NUM_COMPRESSED_TEXTURE_FORMATS = 0x86A2,
-        COMPRESSED_TEXTURE_FORMATS = 0x86A3,
-        DONT_CARE = 0x1100,
-        FASTEST = 0x1101,
-        NICEST = 0x1102,
-        GENERATE_MIPMAP_HINT = 0x8192,
-        BYTE = 0x1400,
-        UNSIGNED_BYTE = 0x1401,
-        SHORT = 0x1402,
-        UNSIGNED_SHORT = 0x1403,
-        INT = 0x1404,
-        UNSIGNED_INT = 0x1405,
-        FLOAT = 0x1406,
-        HALF_FLOAT_OES = 0x8D61,
-        FIXED = 0x140C,
-        DEPTH_COMPONENT = 0x1902,
-        ALPHA = 0x1906,
-        RGB = 0x1907,
-        RGBA = 0x1908,
-        BGRA = 0x80E1,
-        LUMINANCE = 0x1909,
-        LUMINANCE_ALPHA = 0x190A,
-        UNSIGNED_SHORT_4_4_4_4 = 0x8033,
-        UNSIGNED_SHORT_5_5_5_1 = 0x8034,
-        UNSIGNED_SHORT_5_6_5 = 0x8363,
-        FRAGMENT_SHADER = 0x8B30,
-        VERTEX_SHADER = 0x8B31,
-        MAX_VERTEX_ATTRIBS = 0x8869,
-        MAX_VERTEX_UNIFORM_VECTORS = 0x8DFB,
-        MAX_VARYING_VECTORS = 0x8DFC,
-        MAX_COMBINED_TEXTURE_IMAGE_UNITS = 0x8B4D,
-        MAX_VERTEX_TEXTURE_IMAGE_UNITS = 0x8B4C,
-        MAX_TEXTURE_IMAGE_UNITS = 0x8872,
-        MAX_FRAGMENT_UNIFORM_VECTORS = 0x8DFD,
-        SHADER_TYPE = 0x8B4F,
-        DELETE_STATUS = 0x8B80,
-        LINK_STATUS = 0x8B82,
-        VALIDATE_STATUS = 0x8B83,
-        ATTACHED_SHADERS = 0x8B85,
-        ACTIVE_UNIFORMS = 0x8B86,
-        ACTIVE_UNIFORM_MAX_LENGTH = 0x8B87,
-        ACTIVE_ATTRIBUTES = 0x8B89,
-        ACTIVE_ATTRIBUTE_MAX_LENGTH = 0x8B8A,
-        SHADING_LANGUAGE_VERSION = 0x8B8C,
-        CURRENT_PROGRAM = 0x8B8D,
-        NEVER = 0x0200,
-        LESS = 0x0201,
-        EQUAL = 0x0202,
-        LEQUAL = 0x0203,
-        GREATER = 0x0204,
-        NOTEQUAL = 0x0205,
-        GEQUAL = 0x0206,
-        ALWAYS = 0x0207,
-        KEEP = 0x1E00,
-        REPLACE = 0x1E01,
-        INCR = 0x1E02,
-        DECR = 0x1E03,
-        INVERT = 0x150A,
-        INCR_WRAP = 0x8507,
-        DECR_WRAP = 0x8508,
-        VENDOR = 0x1F00,
-        RENDERER = 0x1F01,
-        VERSION = 0x1F02,
-        EXTENSIONS = 0x1F03,
-        NEAREST = 0x2600,
-        LINEAR = 0x2601,
-        NEAREST_MIPMAP_NEAREST = 0x2700,
-        LINEAR_MIPMAP_NEAREST = 0x2701,
-        NEAREST_MIPMAP_LINEAR = 0x2702,
-        LINEAR_MIPMAP_LINEAR = 0x2703,
-        TEXTURE_MAG_FILTER = 0x2800,
-        TEXTURE_MIN_FILTER = 0x2801,
-        TEXTURE_WRAP_S = 0x2802,
-        TEXTURE_WRAP_T = 0x2803,
-        TEXTURE = 0x1702,
-        TEXTURE_CUBE_MAP = 0x8513,
-        TEXTURE_BINDING_CUBE_MAP = 0x8514,
-        TEXTURE_CUBE_MAP_POSITIVE_X = 0x8515,
-        TEXTURE_CUBE_MAP_NEGATIVE_X = 0x8516,
-        TEXTURE_CUBE_MAP_POSITIVE_Y = 0x8517,
-        TEXTURE_CUBE_MAP_NEGATIVE_Y = 0x8518,
-        TEXTURE_CUBE_MAP_POSITIVE_Z = 0x8519,
-        TEXTURE_CUBE_MAP_NEGATIVE_Z = 0x851A,
-        MAX_CUBE_MAP_TEXTURE_SIZE = 0x851C,
-        TEXTURE0 = 0x84C0,
-        TEXTURE1 = 0x84C1,
-        TEXTURE2 = 0x84C2,
-        TEXTURE3 = 0x84C3,
-        TEXTURE4 = 0x84C4,
-        TEXTURE5 = 0x84C5,
-        TEXTURE6 = 0x84C6,
-        TEXTURE7 = 0x84C7,
-        TEXTURE8 = 0x84C8,
-        TEXTURE9 = 0x84C9,
-        TEXTURE10 = 0x84CA,
-        TEXTURE11 = 0x84CB,
-        TEXTURE12 = 0x84CC,
-        TEXTURE13 = 0x84CD,
-        TEXTURE14 = 0x84CE,
-        TEXTURE15 = 0x84CF,
-        TEXTURE16 = 0x84D0,
-        TEXTURE17 = 0x84D1,
-        TEXTURE18 = 0x84D2,
-        TEXTURE19 = 0x84D3,
-        TEXTURE20 = 0x84D4,
-        TEXTURE21 = 0x84D5,
-        TEXTURE22 = 0x84D6,
-        TEXTURE23 = 0x84D7,
-        TEXTURE24 = 0x84D8,
-        TEXTURE25 = 0x84D9,
-        TEXTURE26 = 0x84DA,
-        TEXTURE27 = 0x84DB,
-        TEXTURE28 = 0x84DC,
-        TEXTURE29 = 0x84DD,
-        TEXTURE30 = 0x84DE,
-        TEXTURE31 = 0x84DF,
-        ACTIVE_TEXTURE = 0x84E0,
-        REPEAT = 0x2901,
-        CLAMP_TO_EDGE = 0x812F,
-        MIRRORED_REPEAT = 0x8370,
-        FLOAT_VEC2 = 0x8B50,
-        FLOAT_VEC3 = 0x8B51,
-        FLOAT_VEC4 = 0x8B52,
-        INT_VEC2 = 0x8B53,
-        INT_VEC3 = 0x8B54,
-        INT_VEC4 = 0x8B55,
-        BOOL = 0x8B56,
-        BOOL_VEC2 = 0x8B57,
-        BOOL_VEC3 = 0x8B58,
-        BOOL_VEC4 = 0x8B59,
-        FLOAT_MAT2 = 0x8B5A,
-        FLOAT_MAT3 = 0x8B5B,
-        FLOAT_MAT4 = 0x8B5C,
-        SAMPLER_2D = 0x8B5E,
-        SAMPLER_CUBE = 0x8B60,
-        VERTEX_ATTRIB_ARRAY_ENABLED = 0x8622,
-        VERTEX_ATTRIB_ARRAY_SIZE = 0x8623,
-        VERTEX_ATTRIB_ARRAY_STRIDE = 0x8624,
-        VERTEX_ATTRIB_ARRAY_TYPE = 0x8625,
-        VERTEX_ATTRIB_ARRAY_NORMALIZED = 0x886A,
-        VERTEX_ATTRIB_ARRAY_POINTER = 0x8645,
-        VERTEX_ATTRIB_ARRAY_BUFFER_BINDING = 0x889F,
-        IMPLEMENTATION_COLOR_READ_TYPE = 0x8B9A,
-        IMPLEMENTATION_COLOR_READ_FORMAT = 0x8B9B,
-        COMPILE_STATUS = 0x8B81,
-        INFO_LOG_LENGTH = 0x8B84,
-        SHADER_SOURCE_LENGTH = 0x8B88,
-        SHADER_COMPILER = 0x8DFA,
-        SHADER_BINARY_FORMATS = 0x8DF8,
-        NUM_SHADER_BINARY_FORMATS = 0x8DF9,
-        LOW_FLOAT = 0x8DF0,
-        MEDIUM_FLOAT = 0x8DF1,
-        HIGH_FLOAT = 0x8DF2,
-        LOW_INT = 0x8DF3,
-        MEDIUM_INT = 0x8DF4,
-        HIGH_INT = 0x8DF5,
-        FRAMEBUFFER = 0x8D40,
-        RENDERBUFFER = 0x8D41,
-        RGBA4 = 0x8056,
-        RGB5_A1 = 0x8057,
-        RGB565 = 0x8D62,
-        DEPTH_COMPONENT16 = 0x81A5,
-        STENCIL_INDEX = 0x1901,
-        STENCIL_INDEX8 = 0x8D48,
-        RENDERBUFFER_WIDTH = 0x8D42,
-        RENDERBUFFER_HEIGHT = 0x8D43,
-        RENDERBUFFER_INTERNAL_FORMAT = 0x8D44,
-        RENDERBUFFER_RED_SIZE = 0x8D50,
-        RENDERBUFFER_GREEN_SIZE = 0x8D51,
-        RENDERBUFFER_BLUE_SIZE = 0x8D52,
-        RENDERBUFFER_ALPHA_SIZE = 0x8D53,
-        RENDERBUFFER_DEPTH_SIZE = 0x8D54,
-        RENDERBUFFER_STENCIL_SIZE = 0x8D55,
-        FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE = 0x8CD0,
-        FRAMEBUFFER_ATTACHMENT_OBJECT_NAME = 0x8CD1,
-        FRAMEBUFFER_ATTACHMENT_TEXTURE_LEVEL = 0x8CD2,
-        FRAMEBUFFER_ATTACHMENT_TEXTURE_CUBE_MAP_FACE = 0x8CD3,
-        COLOR_ATTACHMENT0 = 0x8CE0,
-        DEPTH_ATTACHMENT = 0x8D00,
-        STENCIL_ATTACHMENT = 0x8D20,
-        NONE = 0,
-        FRAMEBUFFER_COMPLETE = 0x8CD5,
-        FRAMEBUFFER_INCOMPLETE_ATTACHMENT = 0x8CD6,
-        FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT = 0x8CD7,
-        FRAMEBUFFER_INCOMPLETE_DIMENSIONS = 0x8CD9,
-        FRAMEBUFFER_UNSUPPORTED = 0x8CDD,
-        FRAMEBUFFER_BINDING = 0x8CA6,
-        RENDERBUFFER_BINDING = 0x8CA7,
-        MAX_RENDERBUFFER_SIZE = 0x84E8,
-        INVALID_FRAMEBUFFER_OPERATION = 0x0506,
-
-        // WebGL-specific enums
-        UNPACK_FLIP_Y_WEBGL = 0x9240,
-        UNPACK_PREMULTIPLY_ALPHA_WEBGL = 0x9241,
-        CONTEXT_LOST_WEBGL = 0x9242,
-        UNPACK_COLORSPACE_CONVERSION_WEBGL = 0x9243,
-        BROWSER_DEFAULT_WEBGL = 0x9244,
-        VERTEX_ATTRIB_ARRAY_DIVISOR_ANGLE = 0x88FE,
-        
-        // WebGL2 constants
-        READ_BUFFER = 0x0C02,
-        UNPACK_ROW_LENGTH = 0x0CF2,
-        UNPACK_SKIP_ROWS = 0x0CF3,
-        UNPACK_SKIP_PIXELS = 0x0CF4,
-        PACK_ROW_LENGTH = 0x0D02,
-        PACK_SKIP_ROWS = 0x0D03,
-        PACK_SKIP_PIXELS = 0x0D04,
-        COLOR = 0x1800,
-        DEPTH = 0x1801,
-        STENCIL = 0x1802,
-        RED = 0x1903,
-        RGB8 = 0x8051,
-        RGBA8 = 0x8058,
-        RGB10_A2 = 0x8059,
-        TEXTURE_BINDING_3D = 0x806A,
-        UNPACK_SKIP_IMAGES = 0x806D,
-        UNPACK_IMAGE_HEIGHT = 0x806E,
-        TEXTURE_3D = 0x806F,
-        TEXTURE_WRAP_R = 0x8072,
-        MAX_3D_TEXTURE_SIZE = 0x8073,
-        UNSIGNED_INT_2_10_10_10_REV = 0x8368,
-        MAX_ELEMENTS_VERTICES = 0x80E8,
-        MAX_ELEMENTS_INDICES = 0x80E9,
-        TEXTURE_MIN_LOD = 0x813A,
-        TEXTURE_MAX_LOD = 0x813B,
-        TEXTURE_BASE_LEVEL = 0x813C,
-        TEXTURE_MAX_LEVEL = 0x813D,
-        MIN = 0x8007,
-        MAX = 0x8008,
-        DEPTH_COMPONENT24 = 0x81A6,
-        MAX_TEXTURE_LOD_BIAS = 0x84FD,
-        TEXTURE_COMPARE_MODE = 0x884C,
-        TEXTURE_COMPARE_FUNC = 0x884D,
-        CURRENT_QUERY = 0x8865,
-        QUERY_RESULT = 0x8866,
-        QUERY_RESULT_AVAILABLE = 0x8867,
-        STREAM_READ = 0x88E1,
-        STREAM_COPY = 0x88E2,
-        STATIC_READ = 0x88E5,
-        STATIC_COPY = 0x88E6,
-        DYNAMIC_READ = 0x88E9,
-        DYNAMIC_COPY = 0x88EA,
-        MAX_DRAW_BUFFERS = 0x8824,
-        DRAW_BUFFER0 = 0x8825,
-        DRAW_BUFFER1 = 0x8826,
-        DRAW_BUFFER2 = 0x8827,
-        DRAW_BUFFER3 = 0x8828,
-        DRAW_BUFFER4 = 0x8829,
-        DRAW_BUFFER5 = 0x882A,
-        DRAW_BUFFER6 = 0x882B,
-        DRAW_BUFFER7 = 0x882C,
-        DRAW_BUFFER8 = 0x882D,
-        DRAW_BUFFER9 = 0x882E,
-        DRAW_BUFFER10 = 0x882F,
-        DRAW_BUFFER11 = 0x8830,
-        DRAW_BUFFER12 = 0x8831,
-        DRAW_BUFFER13 = 0x8832,
-        DRAW_BUFFER14 = 0x8833,
-        DRAW_BUFFER15 = 0x8834,
-        MAX_FRAGMENT_UNIFORM_COMPONENTS = 0x8B49,
-        MAX_VERTEX_UNIFORM_COMPONENTS = 0x8B4A,
-        SAMPLER_3D = 0x8B5F,
-        SAMPLER_2D_SHADOW = 0x8B62,
-        FRAGMENT_SHADER_DERIVATIVE_HINT = 0x8B8B,
-        PIXEL_PACK_BUFFER = 0x88EB,
-        PIXEL_UNPACK_BUFFER = 0x88EC,
-        PIXEL_PACK_BUFFER_BINDING = 0x88ED,
-        PIXEL_UNPACK_BUFFER_BINDING = 0x88EF,
-        FLOAT_MAT2x3 = 0x8B65,
-        FLOAT_MAT2x4 = 0x8B66,
-        FLOAT_MAT3x2 = 0x8B67,
-        FLOAT_MAT3x4 = 0x8B68,
-        FLOAT_MAT4x2 = 0x8B69,
-        FLOAT_MAT4x3 = 0x8B6A,
-        SRGB = 0x8C40,
-        SRGB8 = 0x8C41,
-        SRGB_ALPHA = 0x8C42,
-        SRGB8_ALPHA8 = 0x8C43,
-        COMPARE_REF_TO_TEXTURE = 0x884E,
-        RGBA32F = 0x8814,
-        RGB32F = 0x8815,
-        RGBA16F = 0x881A,
-        RGB16F = 0x881B,
-        VERTEX_ATTRIB_ARRAY_INTEGER = 0x88FD,
-        MAX_ARRAY_TEXTURE_LAYERS = 0x88FF,
-        MIN_PROGRAM_TEXEL_OFFSET = 0x8904,
-        MAX_PROGRAM_TEXEL_OFFSET = 0x8905,
-        MAX_VARYING_COMPONENTS = 0x8B4B,
-        TEXTURE_2D_ARRAY = 0x8C1A,
-        TEXTURE_BINDING_2D_ARRAY = 0x8C1D,
-        R11F_G11F_B10F = 0x8C3A,
-        UNSIGNED_INT_10F_11F_11F_REV = 0x8C3B,
-        RGB9_E5 = 0x8C3D,
-        UNSIGNED_INT_5_9_9_9_REV = 0x8C3E,
-        TRANSFORM_FEEDBACK_BUFFER_MODE = 0x8C7F,
-        MAX_TRANSFORM_FEEDBACK_SEPARATE_COMPONENTS = 0x8C80,
-        TRANSFORM_FEEDBACK_VARYINGS = 0x8C83,
-        TRANSFORM_FEEDBACK_BUFFER_START = 0x8C84,
-        TRANSFORM_FEEDBACK_BUFFER_SIZE = 0x8C85,
-        TRANSFORM_FEEDBACK_PRIMITIVES_WRITTEN = 0x8C88,
-        RASTERIZER_DISCARD = 0x8C89,
-        MAX_TRANSFORM_FEEDBACK_INTERLEAVED_COMPONENTS = 0x8C8A,
-        MAX_TRANSFORM_FEEDBACK_SEPARATE_ATTRIBS = 0x8C8B,
-        INTERLEAVED_ATTRIBS = 0x8C8C,
-        SEPARATE_ATTRIBS = 0x8C8D,
-        TRANSFORM_FEEDBACK_BUFFER = 0x8C8E,
-        TRANSFORM_FEEDBACK_BUFFER_BINDING = 0x8C8F,
-        RGBA32UI = 0x8D70,
-        RGB32UI = 0x8D71,
-        RGBA16UI = 0x8D76,
-        RGB16UI = 0x8D77,
-        RGBA8UI = 0x8D7C,
-        RGB8UI = 0x8D7D,
-        RGBA32I = 0x8D82,
-        RGB32I = 0x8D83,
-        RGBA16I = 0x8D88,
-        RGB16I = 0x8D89,
-        RGBA8I = 0x8D8E,
-        RGB8I = 0x8D8F,
-        RED_INTEGER = 0x8D94,
-        RGB_INTEGER = 0x8D98,
-        RGBA_INTEGER = 0x8D99,
-        SAMPLER_2D_ARRAY = 0x8DC1,
-        SAMPLER_2D_ARRAY_SHADOW = 0x8DC4,
-        SAMPLER_CUBE_SHADOW = 0x8DC5,
-        UNSIGNED_INT_VEC2 = 0x8DC6,
-        UNSIGNED_INT_VEC3 = 0x8DC7,
-        UNSIGNED_INT_VEC4 = 0x8DC8,
-        INT_SAMPLER_2D = 0x8DCA,
-        INT_SAMPLER_3D = 0x8DCB,
-        INT_SAMPLER_CUBE = 0x8DCC,
-        INT_SAMPLER_2D_ARRAY = 0x8DCF,
-        UNSIGNED_INT_SAMPLER_2D = 0x8DD2,
-        UNSIGNED_INT_SAMPLER_3D = 0x8DD3,
-        UNSIGNED_INT_SAMPLER_CUBE = 0x8DD4,
-        UNSIGNED_INT_SAMPLER_2D_ARRAY = 0x8DD7,
-        DEPTH_COMPONENT32F = 0x8CAC,
-        DEPTH32F_STENCIL8 = 0x8CAD,
-        FLOAT_32_UNSIGNED_INT_24_8_REV = 0x8DAD,
-        FRAMEBUFFER_ATTACHMENT_COLOR_ENCODING = 0x8210,
-        FRAMEBUFFER_ATTACHMENT_COMPONENT_TYPE = 0x8211,
-        FRAMEBUFFER_ATTACHMENT_RED_SIZE = 0x8212,
-        FRAMEBUFFER_ATTACHMENT_GREEN_SIZE = 0x8213,
-        FRAMEBUFFER_ATTACHMENT_BLUE_SIZE = 0x8214,
-        FRAMEBUFFER_ATTACHMENT_ALPHA_SIZE = 0x8215,
-        FRAMEBUFFER_ATTACHMENT_DEPTH_SIZE = 0x8216,
-        FRAMEBUFFER_ATTACHMENT_STENCIL_SIZE = 0x8217,
-        FRAMEBUFFER_DEFAULT = 0x8218,
-        DEPTH_STENCIL_ATTACHMENT = 0x821A,
-        DEPTH_STENCIL = 0x84F9,
-        UNSIGNED_INT_24_8 = 0x84FA,
-        DEPTH24_STENCIL8 = 0x88F0,
-        UNSIGNED_NORMALIZED = 0x8C17,
-        DRAW_FRAMEBUFFER_BINDING = 0x8CA6, /* Same as FRAMEBUFFER_BINDING */
-        READ_FRAMEBUFFER = 0x8CA8,
-        DRAW_FRAMEBUFFER = 0x8CA9,
-        READ_FRAMEBUFFER_BINDING = 0x8CAA,
-        RENDERBUFFER_SAMPLES = 0x8CAB,
-        FRAMEBUFFER_ATTACHMENT_TEXTURE_LAYER = 0x8CD4,
-        MAX_COLOR_ATTACHMENTS = 0x8CDF,
-        COLOR_ATTACHMENT1 = 0x8CE1,
-        COLOR_ATTACHMENT2 = 0x8CE2,
-        COLOR_ATTACHMENT3 = 0x8CE3,
-        COLOR_ATTACHMENT4 = 0x8CE4,
-        COLOR_ATTACHMENT5 = 0x8CE5,
-        COLOR_ATTACHMENT6 = 0x8CE6,
-        COLOR_ATTACHMENT7 = 0x8CE7,
-        COLOR_ATTACHMENT8 = 0x8CE8,
-        COLOR_ATTACHMENT9 = 0x8CE9,
-        COLOR_ATTACHMENT10 = 0x8CEA,
-        COLOR_ATTACHMENT11 = 0x8CEB,
-        COLOR_ATTACHMENT12 = 0x8CEC,
-        COLOR_ATTACHMENT13 = 0x8CED,
-        COLOR_ATTACHMENT14 = 0x8CEE,
-        COLOR_ATTACHMENT15 = 0x8CEF,
-        FRAMEBUFFER_INCOMPLETE_MULTISAMPLE = 0x8D56,
-        MAX_SAMPLES = 0x8D57,
-        HALF_FLOAT = 0x140B,
-        RG = 0x8227,
-        RG_INTEGER = 0x8228,
-        R8 = 0x8229,
-        RG8 = 0x822B,
-        R16F = 0x822D,
-        R32F = 0x822E,
-        RG16F = 0x822F,
-        RG32F = 0x8230,
-        R8I = 0x8231,
-        R8UI = 0x8232,
-        R16I = 0x8233,
-        R16UI = 0x8234,
-        R32I = 0x8235,
-        R32UI = 0x8236,
-        RG8I = 0x8237,
-        RG8UI = 0x8238,
-        RG16I = 0x8239,
-        RG16UI = 0x823A,
-        RG32I = 0x823B,
-        RG32UI = 0x823C,
-        VERTEX_ARRAY_BINDING = 0x85B5,
-        R8_SNORM = 0x8F94,
-        RG8_SNORM = 0x8F95,
-        RGB8_SNORM = 0x8F96,
-        RGBA8_SNORM = 0x8F97,
-        SIGNED_NORMALIZED = 0x8F9C,
-        COPY_READ_BUFFER = 0x8F36,
-        COPY_WRITE_BUFFER = 0x8F37,
-        COPY_READ_BUFFER_BINDING = 0x8F36, /* Same as COPY_READ_BUFFER */
-        COPY_WRITE_BUFFER_BINDING = 0x8F37, /* Same as COPY_WRITE_BUFFER */
-        UNIFORM_BUFFER = 0x8A11,
-        UNIFORM_BUFFER_BINDING = 0x8A28,
-        UNIFORM_BUFFER_START = 0x8A29,
-        UNIFORM_BUFFER_SIZE = 0x8A2A,
-        MAX_VERTEX_UNIFORM_BLOCKS = 0x8A2B,
-        MAX_FRAGMENT_UNIFORM_BLOCKS = 0x8A2D,
-        MAX_COMBINED_UNIFORM_BLOCKS = 0x8A2E,
-        MAX_UNIFORM_BUFFER_BINDINGS = 0x8A2F,
-        MAX_UNIFORM_BLOCK_SIZE = 0x8A30,
-        MAX_COMBINED_VERTEX_UNIFORM_COMPONENTS = 0x8A31,
-        MAX_COMBINED_FRAGMENT_UNIFORM_COMPONENTS = 0x8A33,
-        UNIFORM_BUFFER_OFFSET_ALIGNMENT = 0x8A34,
-        ACTIVE_UNIFORM_BLOCKS = 0x8A36,
-        UNIFORM_TYPE = 0x8A37,
-        UNIFORM_SIZE = 0x8A38,
-        UNIFORM_BLOCK_INDEX = 0x8A3A,
-        UNIFORM_OFFSET = 0x8A3B,
-        UNIFORM_ARRAY_STRIDE = 0x8A3C,
-        UNIFORM_MATRIX_STRIDE = 0x8A3D,
-        UNIFORM_IS_ROW_MAJOR = 0x8A3E,
-        UNIFORM_BLOCK_BINDING = 0x8A3F,
-        UNIFORM_BLOCK_DATA_SIZE = 0x8A40,
-        UNIFORM_BLOCK_ACTIVE_UNIFORMS = 0x8A42,
-        UNIFORM_BLOCK_ACTIVE_UNIFORM_INDICES = 0x8A43,
-        UNIFORM_BLOCK_REFERENCED_BY_VERTEX_SHADER = 0x8A44,
-        UNIFORM_BLOCK_REFERENCED_BY_FRAGMENT_SHADER = 0x8A46,
-        INVALID_INDEX = 0xFFFFFFFF,
-        MAX_VERTEX_OUTPUT_COMPONENTS = 0x9122,
-        MAX_FRAGMENT_INPUT_COMPONENTS = 0x9125,
-        MAX_SERVER_WAIT_TIMEOUT = 0x9111,
-        OBJECT_TYPE = 0x9112,
-        SYNC_CONDITION = 0x9113,
-        SYNC_STATUS = 0x9114,
-        SYNC_FLAGS = 0x9115,
-        SYNC_FENCE = 0x9116,
-        SYNC_GPU_COMMANDS_COMPLETE = 0x9117,
-        UNSIGNALED = 0x9118,
-        SIGNALED = 0x9119,
-        ALREADY_SIGNALED = 0x911A,
-        TIMEOUT_EXPIRED = 0x911B,
-        CONDITION_SATISFIED = 0x911C,
-#if PLATFORM(WIN)
-        WAIT_FAILED_WIN = 0x911D,
-#else
-        WAIT_FAILED = 0x911D,
-#endif
-        SYNC_FLUSH_COMMANDS_BIT = 0x00000001,
-        VERTEX_ATTRIB_ARRAY_DIVISOR = 0x88FE,
-        ANY_SAMPLES_PASSED = 0x8C2F,
-        ANY_SAMPLES_PASSED_CONSERVATIVE = 0x8D6A,
-        SAMPLER_BINDING = 0x8919,
-        RGB10_A2UI = 0x906F,
-        TEXTURE_SWIZZLE_R = 0x8E42,
-        TEXTURE_SWIZZLE_G = 0x8E43,
-        TEXTURE_SWIZZLE_B = 0x8E44,
-        TEXTURE_SWIZZLE_A = 0x8E45,
-        GREEN = 0x1904,
-        BLUE = 0x1905,
-        INT_2_10_10_10_REV = 0x8D9F,
-        TRANSFORM_FEEDBACK = 0x8E22,
-        TRANSFORM_FEEDBACK_PAUSED = 0x8E23,
-        TRANSFORM_FEEDBACK_ACTIVE = 0x8E24,
-        TRANSFORM_FEEDBACK_BINDING = 0x8E25,
-        COMPRESSED_R11_EAC = 0x9270,
-        COMPRESSED_SIGNED_R11_EAC = 0x9271,
-        COMPRESSED_RG11_EAC = 0x9272,
-        COMPRESSED_SIGNED_RG11_EAC = 0x9273,
-        COMPRESSED_RGB8_ETC2 = 0x9274,
-        COMPRESSED_SRGB8_ETC2 = 0x9275,
-        COMPRESSED_RGB8_PUNCHTHROUGH_ALPHA1_ETC2 = 0x9276,
-        COMPRESSED_SRGB8_PUNCHTHROUGH_ALPHA1_ETC2 = 0x9277,
-        COMPRESSED_RGBA8_ETC2_EAC = 0x9278,
-        COMPRESSED_SRGB8_ALPHA8_ETC2_EAC = 0x9279,
-        TEXTURE_IMMUTABLE_FORMAT = 0x912F,
-        MAX_ELEMENT_INDEX = 0x8D6B,
-        NUM_SAMPLE_COUNTS = 0x9380,
-        TEXTURE_IMMUTABLE_LEVELS = 0x82DF,
-        PRIMITIVE_RESTART_FIXED_INDEX = 0x8D69,
-        PRIMITIVE_RESTART = 0x8F9D,
-
-        // OpenGL ES 3 constants.
-        MAP_READ_BIT = 0x0001,
-
-        // Necessary desktop OpenGL constants.
-        TEXTURE_RECTANGLE_ARB = 0x84F5
-    };
-
-    enum RenderStyle {
-        RenderOffscreen,
-        RenderDirectlyToHostWindow,
-    };
-
-    class ContextLostCallback {
-    public:
-        virtual void onContextLost() = 0;
-        virtual ~ContextLostCallback() = default;
-    };
-
-    class ErrorMessageCallback {
-    public:
-        virtual void onErrorMessage(const String& message, GC3Dint id) = 0;
-        virtual ~ErrorMessageCallback() = default;
-    };
-
-    void setContextLostCallback(std::unique_ptr<ContextLostCallback>);
-    void setErrorMessageCallback(std::unique_ptr<ErrorMessageCallback>);
-
-    static RefPtr<GraphicsContext3D> create(GraphicsContext3DAttributes, HostWindow*, RenderStyle = RenderOffscreen);
-    ~GraphicsContext3D();
+    static RefPtr<GraphicsContext3D> create(GraphicsContext3DAttributes, HostWindow*, Destination = Destination::Offscreen);
+    virtual ~GraphicsContext3D();
 
 #if PLATFORM(COCOA)
     static Ref<GraphicsContext3D> createShared(GraphicsContext3D& sharedContext);
 #endif
 
 #if PLATFORM(COCOA)
-    PlatformGraphicsContext3D platformGraphicsContext3D() const { return m_contextObj; }
-    Platform3DObject platformTexture() const { return m_texture; }
-    CALayer* platformLayer() const { return reinterpret_cast<CALayer*>(m_webGLLayer.get()); }
+    PlatformGraphicsContext3D platformGraphicsContext3D() const override { return m_contextObj; }
+    Platform3DObject platformTexture() const override { return m_texture; }
+    CALayer* platformLayer() const override { return reinterpret_cast<CALayer*>(m_webGLLayer.get()); }
 #if USE(ANGLE)
     PlatformGraphicsContext3DDisplay platformDisplay() const { return m_displayObj; }
     PlatformGraphicsContext3DConfig platformConfig() const { return m_configObj; }
 #endif // USE(ANGLE)
 #else
-    PlatformGraphicsContext3D platformGraphicsContext3D();
-    Platform3DObject platformTexture() const;
-    PlatformLayer* platformLayer() const;
+    PlatformGraphicsContext3D platformGraphicsContext3D() const override;
+    Platform3DObject platformTexture() const override;
+    PlatformLayer* platformLayer() const override;
 #endif
 
     bool makeContextCurrent();
@@ -864,314 +192,187 @@ public:
                             const void* pixels,
                             Vector<uint8_t>& data);
 
-
-    // Attempt to enumerate all possible native image formats to
-    // reduce the amount of temporary allocations during texture
-    // uploading. This enum must be public because it is accessed
-    // by non-member functions.
-    enum DataFormat {
-        DataFormatRGBA8 = 0,
-        DataFormatRGBA16Little,
-        DataFormatRGBA16Big,
-        DataFormatRGBA16F,
-        DataFormatRGBA32F,
-        DataFormatRGB8,
-        DataFormatRGB16Little,
-        DataFormatRGB16Big,
-        DataFormatRGB16F,
-        DataFormatRGB32F,
-        DataFormatBGR8,
-        DataFormatBGRA8,
-        DataFormatBGRA16Little,
-        DataFormatBGRA16Big,
-        DataFormatARGB8,
-        DataFormatARGB16Little,
-        DataFormatARGB16Big,
-        DataFormatABGR8,
-        DataFormatRGBA5551,
-        DataFormatRGBA4444,
-        DataFormatRGB565,
-        DataFormatR8,
-        DataFormatR16Little,
-        DataFormatR16Big,
-        DataFormatR16F,
-        DataFormatR32F,
-        DataFormatRA8,
-        DataFormatRA16Little,
-        DataFormatRA16Big,
-        DataFormatRA16F,
-        DataFormatRA32F,
-        DataFormatAR8,
-        DataFormatAR16Little,
-        DataFormatAR16Big,
-        DataFormatA8,
-        DataFormatA16Little,
-        DataFormatA16Big,
-        DataFormatA16F,
-        DataFormatA32F,
-        DataFormatNumFormats
-    };
-
-    ALWAYS_INLINE static bool hasAlpha(DataFormat format)
-    {
-        switch (format) {
-        case GraphicsContext3D::DataFormatA8:
-        case GraphicsContext3D::DataFormatA16F:
-        case GraphicsContext3D::DataFormatA32F:
-        case GraphicsContext3D::DataFormatRA8:
-        case GraphicsContext3D::DataFormatAR8:
-        case GraphicsContext3D::DataFormatRA16F:
-        case GraphicsContext3D::DataFormatRA32F:
-        case GraphicsContext3D::DataFormatRGBA8:
-        case GraphicsContext3D::DataFormatBGRA8:
-        case GraphicsContext3D::DataFormatARGB8:
-        case GraphicsContext3D::DataFormatABGR8:
-        case GraphicsContext3D::DataFormatRGBA16F:
-        case GraphicsContext3D::DataFormatRGBA32F:
-        case GraphicsContext3D::DataFormatRGBA4444:
-        case GraphicsContext3D::DataFormatRGBA5551:
-            return true;
-        default:
-            return false;
-        }
-    }
-
-    ALWAYS_INLINE static bool hasColor(DataFormat format)
-    {
-        switch (format) {
-        case GraphicsContext3D::DataFormatRGBA8:
-        case GraphicsContext3D::DataFormatRGBA16F:
-        case GraphicsContext3D::DataFormatRGBA32F:
-        case GraphicsContext3D::DataFormatRGB8:
-        case GraphicsContext3D::DataFormatRGB16F:
-        case GraphicsContext3D::DataFormatRGB32F:
-        case GraphicsContext3D::DataFormatBGR8:
-        case GraphicsContext3D::DataFormatBGRA8:
-        case GraphicsContext3D::DataFormatARGB8:
-        case GraphicsContext3D::DataFormatABGR8:
-        case GraphicsContext3D::DataFormatRGBA5551:
-        case GraphicsContext3D::DataFormatRGBA4444:
-        case GraphicsContext3D::DataFormatRGB565:
-        case GraphicsContext3D::DataFormatR8:
-        case GraphicsContext3D::DataFormatR16F:
-        case GraphicsContext3D::DataFormatR32F:
-        case GraphicsContext3D::DataFormatRA8:
-        case GraphicsContext3D::DataFormatRA16F:
-        case GraphicsContext3D::DataFormatRA32F:
-        case GraphicsContext3D::DataFormatAR8:
-            return true;
-        default:
-            return false;
-        }
-    }
-
-    // Check if the format is one of the formats from the ImageData or DOM elements.
-    // The formats from ImageData is always RGBA8.
-    // The formats from DOM elements vary with Graphics ports. It can only be RGBA8 or BGRA8 for non-CG port while a little more for CG port.
-    static ALWAYS_INLINE bool srcFormatComesFromDOMElementOrImageData(DataFormat SrcFormat)
-    {
-#if USE(CG)
-#if CPU(BIG_ENDIAN)
-    return SrcFormat == DataFormatRGBA8 || SrcFormat == DataFormatARGB8 || SrcFormat == DataFormatRGB8
-        || SrcFormat == DataFormatRA8 || SrcFormat == DataFormatAR8 || SrcFormat == DataFormatR8 || SrcFormat == DataFormatA8;
-#else
-    // That LITTLE_ENDIAN case has more possible formats than BIG_ENDIAN case is because some decoded image data is actually big endian
-    // even on little endian architectures.
-    return SrcFormat == DataFormatBGRA8 || SrcFormat == DataFormatABGR8 || SrcFormat == DataFormatBGR8
-        || SrcFormat == DataFormatRGBA8 || SrcFormat == DataFormatARGB8 || SrcFormat == DataFormatRGB8
-        || SrcFormat == DataFormatR8 || SrcFormat == DataFormatA8
-        || SrcFormat == DataFormatRA8 || SrcFormat == DataFormatAR8;
-#endif
-#else
-    return SrcFormat == DataFormatBGRA8 || SrcFormat == DataFormatRGBA8;
-#endif
-    }
-
     //----------------------------------------------------------------------
     // Entry points for WebGL.
     //
 
-    void activeTexture(GC3Denum texture);
-    void attachShader(Platform3DObject program, Platform3DObject shader);
-    void bindAttribLocation(Platform3DObject, GC3Duint index, const String& name);
-    void bindBuffer(GC3Denum target, Platform3DObject);
-    void bindFramebuffer(GC3Denum target, Platform3DObject);
-    void bindRenderbuffer(GC3Denum target, Platform3DObject);
-    void bindTexture(GC3Denum target, Platform3DObject);
-    void blendColor(GC3Dclampf red, GC3Dclampf green, GC3Dclampf blue, GC3Dclampf alpha);
-    void blendEquation(GC3Denum mode);
-    void blendEquationSeparate(GC3Denum modeRGB, GC3Denum modeAlpha);
-    void blendFunc(GC3Denum sfactor, GC3Denum dfactor);
-    void blendFuncSeparate(GC3Denum srcRGB, GC3Denum dstRGB, GC3Denum srcAlpha, GC3Denum dstAlpha);
+    void activeTexture(GC3Denum texture) override;
+    void attachShader(Platform3DObject program, Platform3DObject shader) override;
+    void bindAttribLocation(Platform3DObject, GC3Duint index, const String& name) override;
+    void bindBuffer(GC3Denum target, Platform3DObject) override;
+    void bindFramebuffer(GC3Denum target, Platform3DObject) override;
+    void bindRenderbuffer(GC3Denum target, Platform3DObject) override;
+    void bindTexture(GC3Denum target, Platform3DObject) override;
+    void blendColor(GC3Dclampf red, GC3Dclampf green, GC3Dclampf blue, GC3Dclampf alpha) override;
+    void blendEquation(GC3Denum mode) override;
+    void blendEquationSeparate(GC3Denum modeRGB, GC3Denum modeAlpha) override;
+    void blendFunc(GC3Denum sfactor, GC3Denum dfactor) override;
+    void blendFuncSeparate(GC3Denum srcRGB, GC3Denum dstRGB, GC3Denum srcAlpha, GC3Denum dstAlpha) override;
 
-    void bufferData(GC3Denum target, GC3Dsizeiptr size, GC3Denum usage);
-    void bufferData(GC3Denum target, GC3Dsizeiptr size, const void* data, GC3Denum usage);
-    void bufferSubData(GC3Denum target, GC3Dintptr offset, GC3Dsizeiptr size, const void* data);
+    void bufferData(GC3Denum target, GC3Dsizeiptr size, GC3Denum usage) override;
+    void bufferData(GC3Denum target, GC3Dsizeiptr size, const void* data, GC3Denum usage) override;
+    void bufferSubData(GC3Denum target, GC3Dintptr offset, GC3Dsizeiptr size, const void* data) override;
 
-    void* mapBufferRange(GC3Denum target, GC3Dintptr offset, GC3Dsizeiptr length, GC3Dbitfield access);
-    GC3Dboolean unmapBuffer(GC3Denum target);
-    void copyBufferSubData(GC3Denum readTarget, GC3Denum writeTarget, GC3Dintptr readOffset, GC3Dintptr writeOffset, GC3Dsizeiptr);
+    void* mapBufferRange(GC3Denum target, GC3Dintptr offset, GC3Dsizeiptr length, GC3Dbitfield access) override;
+    GC3Dboolean unmapBuffer(GC3Denum target) override;
+    void copyBufferSubData(GC3Denum readTarget, GC3Denum writeTarget, GC3Dintptr readOffset, GC3Dintptr writeOffset, GC3Dsizeiptr) override;
 
-    void getInternalformativ(GC3Denum target, GC3Denum internalformat, GC3Denum pname, GC3Dsizei bufSize, GC3Dint* params);
-    void renderbufferStorageMultisample(GC3Denum target, GC3Dsizei samples, GC3Denum internalformat, GC3Dsizei width, GC3Dsizei height);
+    void getInternalformativ(GC3Denum target, GC3Denum internalformat, GC3Denum pname, GC3Dsizei bufSize, GC3Dint* params) override;
+    void renderbufferStorageMultisample(GC3Denum target, GC3Dsizei samples, GC3Denum internalformat, GC3Dsizei width, GC3Dsizei height) override;
 
-    void texStorage2D(GC3Denum target, GC3Dsizei levels, GC3Denum internalformat, GC3Dsizei width, GC3Dsizei height);
-    void texStorage3D(GC3Denum target, GC3Dsizei levels, GC3Denum internalformat, GC3Dsizei width, GC3Dsizei height, GC3Dsizei depth);
+    void texStorage2D(GC3Denum target, GC3Dsizei levels, GC3Denum internalformat, GC3Dsizei width, GC3Dsizei height) override;
+    void texStorage3D(GC3Denum target, GC3Dsizei levels, GC3Denum internalformat, GC3Dsizei width, GC3Dsizei height, GC3Dsizei depth) override;
 
-    void getActiveUniforms(Platform3DObject program, const Vector<GC3Duint>& uniformIndices, GC3Denum pname, Vector<GC3Dint>& params);
+    void getActiveUniforms(Platform3DObject program, const Vector<GC3Duint>& uniformIndices, GC3Denum pname, Vector<GC3Dint>& params) override;
 
-    GC3Denum checkFramebufferStatus(GC3Denum target);
-    void clear(GC3Dbitfield mask);
-    void clearColor(GC3Dclampf red, GC3Dclampf green, GC3Dclampf blue, GC3Dclampf alpha);
-    void clearDepth(GC3Dclampf depth);
-    void clearStencil(GC3Dint s);
-    void colorMask(GC3Dboolean red, GC3Dboolean green, GC3Dboolean blue, GC3Dboolean alpha);
-    void compileShader(Platform3DObject);
+    GC3Denum checkFramebufferStatus(GC3Denum target) override;
+    void clear(GC3Dbitfield mask) override;
+    void clearColor(GC3Dclampf red, GC3Dclampf green, GC3Dclampf blue, GC3Dclampf alpha) override;
+    void clearDepth(GC3Dclampf depth) override;
+    void clearStencil(GC3Dint s) override;
+    void colorMask(GC3Dboolean red, GC3Dboolean green, GC3Dboolean blue, GC3Dboolean alpha) override;
+    void compileShader(Platform3DObject) override;
 
-    void compressedTexImage2D(GC3Denum target, GC3Dint level, GC3Denum internalformat, GC3Dsizei width, GC3Dsizei height, GC3Dint border, GC3Dsizei imageSize, const void* data);
-    void compressedTexSubImage2D(GC3Denum target, GC3Dint level, GC3Dint xoffset, GC3Dint yoffset, GC3Dsizei width, GC3Dsizei height, GC3Denum format, GC3Dsizei imageSize, const void* data);
-    void copyTexImage2D(GC3Denum target, GC3Dint level, GC3Denum internalformat, GC3Dint x, GC3Dint y, GC3Dsizei width, GC3Dsizei height, GC3Dint border);
-    void copyTexSubImage2D(GC3Denum target, GC3Dint level, GC3Dint xoffset, GC3Dint yoffset, GC3Dint x, GC3Dint y, GC3Dsizei width, GC3Dsizei height);
-    void cullFace(GC3Denum mode);
-    void depthFunc(GC3Denum func);
-    void depthMask(GC3Dboolean flag);
-    void depthRange(GC3Dclampf zNear, GC3Dclampf zFar);
-    void detachShader(Platform3DObject, Platform3DObject);
-    void disable(GC3Denum cap);
-    void disableVertexAttribArray(GC3Duint index);
-    void drawArrays(GC3Denum mode, GC3Dint first, GC3Dsizei count);
-    void drawElements(GC3Denum mode, GC3Dsizei count, GC3Denum type, GC3Dintptr offset);
+    void compressedTexImage2D(GC3Denum target, GC3Dint level, GC3Denum internalformat, GC3Dsizei width, GC3Dsizei height, GC3Dint border, GC3Dsizei imageSize, const void* data) override;
+    void compressedTexSubImage2D(GC3Denum target, GC3Dint level, GC3Dint xoffset, GC3Dint yoffset, GC3Dsizei width, GC3Dsizei height, GC3Denum format, GC3Dsizei imageSize, const void* data) override;
+    void copyTexImage2D(GC3Denum target, GC3Dint level, GC3Denum internalformat, GC3Dint x, GC3Dint y, GC3Dsizei width, GC3Dsizei height, GC3Dint border) override;
+    void copyTexSubImage2D(GC3Denum target, GC3Dint level, GC3Dint xoffset, GC3Dint yoffset, GC3Dint x, GC3Dint y, GC3Dsizei width, GC3Dsizei height) override;
+    void cullFace(GC3Denum mode) override;
+    void depthFunc(GC3Denum func) override;
+    void depthMask(GC3Dboolean flag) override;
+    void depthRange(GC3Dclampf zNear, GC3Dclampf zFar) override;
+    void detachShader(Platform3DObject, Platform3DObject) override;
+    void disable(GC3Denum cap) override;
+    void disableVertexAttribArray(GC3Duint index) override;
+    void drawArrays(GC3Denum mode, GC3Dint first, GC3Dsizei count) override;
+    void drawElements(GC3Denum mode, GC3Dsizei count, GC3Denum type, GC3Dintptr offset) override;
 
-    void enable(GC3Denum cap);
-    void enableVertexAttribArray(GC3Duint index);
-    void finish();
-    void flush();
-    void framebufferRenderbuffer(GC3Denum target, GC3Denum attachment, GC3Denum renderbuffertarget, Platform3DObject);
-    void framebufferTexture2D(GC3Denum target, GC3Denum attachment, GC3Denum textarget, Platform3DObject, GC3Dint level);
-    void frontFace(GC3Denum mode);
-    void generateMipmap(GC3Denum target);
+    void enable(GC3Denum cap) override;
+    void enableVertexAttribArray(GC3Duint index) override;
+    void finish() override;
+    void flush() override;
+    void framebufferRenderbuffer(GC3Denum target, GC3Denum attachment, GC3Denum renderbuffertarget, Platform3DObject) override;
+    void framebufferTexture2D(GC3Denum target, GC3Denum attachment, GC3Denum textarget, Platform3DObject, GC3Dint level) override;
+    void frontFace(GC3Denum mode) override;
+    void generateMipmap(GC3Denum target) override;
 
-    bool getActiveAttrib(Platform3DObject program, GC3Duint index, ActiveInfo&);
+    bool getActiveAttrib(Platform3DObject program, GC3Duint index, ActiveInfo&) override;
     bool getActiveAttribImpl(Platform3DObject program, GC3Duint index, ActiveInfo&);
-    bool getActiveUniform(Platform3DObject program, GC3Duint index, ActiveInfo&);
+    bool getActiveUniform(Platform3DObject program, GC3Duint index, ActiveInfo&) override;
     bool getActiveUniformImpl(Platform3DObject program, GC3Duint index, ActiveInfo&);
-    void getAttachedShaders(Platform3DObject program, GC3Dsizei maxCount, GC3Dsizei* count, Platform3DObject* shaders);
-    GC3Dint getAttribLocation(Platform3DObject, const String& name);
-    void getBooleanv(GC3Denum pname, GC3Dboolean* value);
-    void getBufferParameteriv(GC3Denum target, GC3Denum pname, GC3Dint* value);
-    GraphicsContext3DAttributes getContextAttributes();
-    GC3Denum getError();
-    void getFloatv(GC3Denum pname, GC3Dfloat* value);
-    void getFramebufferAttachmentParameteriv(GC3Denum target, GC3Denum attachment, GC3Denum pname, GC3Dint* value);
-    void getIntegerv(GC3Denum pname, GC3Dint* value);
-    void getInteger64v(GC3Denum pname, GC3Dint64* value);
-    void getProgramiv(Platform3DObject program, GC3Denum pname, GC3Dint* value);
+    void getAttachedShaders(Platform3DObject program, GC3Dsizei maxCount, GC3Dsizei* count, Platform3DObject* shaders) override;
+    GC3Dint getAttribLocation(Platform3DObject, const String& name) override;
+    void getBooleanv(GC3Denum pname, GC3Dboolean* value) override;
+    void getBufferParameteriv(GC3Denum target, GC3Denum pname, GC3Dint* value) override;
+    GC3Denum getError() override;
+    void getFloatv(GC3Denum pname, GC3Dfloat* value) override;
+    void getFramebufferAttachmentParameteriv(GC3Denum target, GC3Denum attachment, GC3Denum pname, GC3Dint* value) override;
+    void getIntegerv(GC3Denum pname, GC3Dint* value) override;
+    void getInteger64v(GC3Denum pname, GC3Dint64* value) override;
+    void getProgramiv(Platform3DObject program, GC3Denum pname, GC3Dint* value) override;
 #if !USE(ANGLE)
     void getNonBuiltInActiveSymbolCount(Platform3DObject program, GC3Denum pname, GC3Dint* value);
 #endif // !USE(ANGLE)
-    String getProgramInfoLog(Platform3DObject);
+    String getProgramInfoLog(Platform3DObject) override;
     String getUnmangledInfoLog(Platform3DObject[2], GC3Dsizei, const String&);
-    void getRenderbufferParameteriv(GC3Denum target, GC3Denum pname, GC3Dint* value);
-    void getShaderiv(Platform3DObject, GC3Denum pname, GC3Dint* value);
-    String getShaderInfoLog(Platform3DObject);
-    void getShaderPrecisionFormat(GC3Denum shaderType, GC3Denum precisionType, GC3Dint* range, GC3Dint* precision);
-#if !USE(ANGLE)
-    String getShaderSource(Platform3DObject);
-#endif // !USE(ANGLE)
-    String getString(GC3Denum name);
-    void getTexParameterfv(GC3Denum target, GC3Denum pname, GC3Dfloat* value);
-    void getTexParameteriv(GC3Denum target, GC3Denum pname, GC3Dint* value);
-    void getUniformfv(Platform3DObject program, GC3Dint location, GC3Dfloat* value);
-    void getUniformiv(Platform3DObject program, GC3Dint location, GC3Dint* value);
-    GC3Dint getUniformLocation(Platform3DObject, const String& name);
-    void getVertexAttribfv(GC3Duint index, GC3Denum pname, GC3Dfloat* value);
-    void getVertexAttribiv(GC3Duint index, GC3Denum pname, GC3Dint* value);
-    GC3Dsizeiptr getVertexAttribOffset(GC3Duint index, GC3Denum pname);
+    void getRenderbufferParameteriv(GC3Denum target, GC3Denum pname, GC3Dint* value) override;
+    void getShaderiv(Platform3DObject, GC3Denum pname, GC3Dint* value) override;
+    String getShaderInfoLog(Platform3DObject) override;
+    void getShaderPrecisionFormat(GC3Denum shaderType, GC3Denum precisionType, GC3Dint* range, GC3Dint* precision) override;
+    String getShaderSource(Platform3DObject) override;
+    String getString(GC3Denum name) override;
+    void getTexParameterfv(GC3Denum target, GC3Denum pname, GC3Dfloat* value) override;
+    void getTexParameteriv(GC3Denum target, GC3Denum pname, GC3Dint* value) override;
+    void getUniformfv(Platform3DObject program, GC3Dint location, GC3Dfloat* value) override;
+    void getUniformiv(Platform3DObject program, GC3Dint location, GC3Dint* value) override;
+    GC3Dint getUniformLocation(Platform3DObject, const String& name) override;
+    void getVertexAttribfv(GC3Duint index, GC3Denum pname, GC3Dfloat* value) override;
+    void getVertexAttribiv(GC3Duint index, GC3Denum pname, GC3Dint* value) override;
+    GC3Dsizeiptr getVertexAttribOffset(GC3Duint index, GC3Denum pname) override;
 
-    void hint(GC3Denum target, GC3Denum mode);
-    GC3Dboolean isBuffer(Platform3DObject);
-    GC3Dboolean isEnabled(GC3Denum cap);
-    GC3Dboolean isFramebuffer(Platform3DObject);
-    GC3Dboolean isProgram(Platform3DObject);
-    GC3Dboolean isRenderbuffer(Platform3DObject);
-    GC3Dboolean isShader(Platform3DObject);
-    GC3Dboolean isTexture(Platform3DObject);
-    void lineWidth(GC3Dfloat);
-    void linkProgram(Platform3DObject);
-    void pixelStorei(GC3Denum pname, GC3Dint param);
-    void polygonOffset(GC3Dfloat factor, GC3Dfloat units);
+    void hint(GC3Denum target, GC3Denum mode) override;
+    GC3Dboolean isBuffer(Platform3DObject) override;
+    GC3Dboolean isEnabled(GC3Denum cap) override;
+    GC3Dboolean isFramebuffer(Platform3DObject) override;
+    GC3Dboolean isProgram(Platform3DObject) override;
+    GC3Dboolean isRenderbuffer(Platform3DObject) override;
+    GC3Dboolean isShader(Platform3DObject) override;
+    GC3Dboolean isTexture(Platform3DObject) override;
+    void lineWidth(GC3Dfloat) override;
+    void linkProgram(Platform3DObject) override;
+    void pixelStorei(GC3Denum pname, GC3Dint param) override;
+    void polygonOffset(GC3Dfloat factor, GC3Dfloat units) override;
 
-    void readPixels(GC3Dint x, GC3Dint y, GC3Dsizei width, GC3Dsizei height, GC3Denum format, GC3Denum type, void* data);
+    void readPixels(GC3Dint x, GC3Dint y, GC3Dsizei width, GC3Dsizei height, GC3Denum format, GC3Denum type, void* data) override;
 
     void releaseShaderCompiler();
 
-    void renderbufferStorage(GC3Denum target, GC3Denum internalformat, GC3Dsizei width, GC3Dsizei height);
-    void sampleCoverage(GC3Dclampf value, GC3Dboolean invert);
-    void scissor(GC3Dint x, GC3Dint y, GC3Dsizei width, GC3Dsizei height);
-    void shaderSource(Platform3DObject, const String& string);
-    void stencilFunc(GC3Denum func, GC3Dint ref, GC3Duint mask);
-    void stencilFuncSeparate(GC3Denum face, GC3Denum func, GC3Dint ref, GC3Duint mask);
-    void stencilMask(GC3Duint mask);
-    void stencilMaskSeparate(GC3Denum face, GC3Duint mask);
-    void stencilOp(GC3Denum fail, GC3Denum zfail, GC3Denum zpass);
-    void stencilOpSeparate(GC3Denum face, GC3Denum fail, GC3Denum zfail, GC3Denum zpass);
+    void renderbufferStorage(GC3Denum target, GC3Denum internalformat, GC3Dsizei width, GC3Dsizei height) override;
+    void sampleCoverage(GC3Dclampf value, GC3Dboolean invert) override;
+    void scissor(GC3Dint x, GC3Dint y, GC3Dsizei width, GC3Dsizei height) override;
+    void shaderSource(Platform3DObject, const String& string) override;
+    void stencilFunc(GC3Denum func, GC3Dint ref, GC3Duint mask) override;
+    void stencilFuncSeparate(GC3Denum face, GC3Denum func, GC3Dint ref, GC3Duint mask) override;
+    void stencilMask(GC3Duint mask) override;
+    void stencilMaskSeparate(GC3Denum face, GC3Duint mask) override;
+    void stencilOp(GC3Denum fail, GC3Denum zfail, GC3Denum zpass) override;
+    void stencilOpSeparate(GC3Denum face, GC3Denum fail, GC3Denum zfail, GC3Denum zpass) override;
 
-    bool texImage2D(GC3Denum target, GC3Dint level, GC3Denum internalformat, GC3Dsizei width, GC3Dsizei height, GC3Dint border, GC3Denum format, GC3Denum type, const void* pixels);
-    void texParameterf(GC3Denum target, GC3Denum pname, GC3Dfloat param);
-    void texParameteri(GC3Denum target, GC3Denum pname, GC3Dint param);
-    void texSubImage2D(GC3Denum target, GC3Dint level, GC3Dint xoffset, GC3Dint yoffset, GC3Dsizei width, GC3Dsizei height, GC3Denum format, GC3Denum type, const void* pixels);
+    bool texImage2D(GC3Denum target, GC3Dint level, GC3Denum internalformat, GC3Dsizei width, GC3Dsizei height, GC3Dint border, GC3Denum format, GC3Denum type, const void* pixels) override;
+    void texParameterf(GC3Denum target, GC3Denum pname, GC3Dfloat param) override;
+    void texParameteri(GC3Denum target, GC3Denum pname, GC3Dint param) override;
+    void texSubImage2D(GC3Denum target, GC3Dint level, GC3Dint xoffset, GC3Dint yoffset, GC3Dsizei width, GC3Dsizei height, GC3Denum format, GC3Denum type, const void* pixels) override;
 
-    void uniform1f(GC3Dint location, GC3Dfloat x);
-    void uniform1fv(GC3Dint location, GC3Dsizei, const GC3Dfloat* v);
-    void uniform1i(GC3Dint location, GC3Dint x);
-    void uniform1iv(GC3Dint location, GC3Dsizei, const GC3Dint* v);
-    void uniform2f(GC3Dint location, GC3Dfloat x, GC3Dfloat y);
-    void uniform2fv(GC3Dint location, GC3Dsizei, const GC3Dfloat* v);
-    void uniform2i(GC3Dint location, GC3Dint x, GC3Dint y);
-    void uniform2iv(GC3Dint location, GC3Dsizei, const GC3Dint* v);
-    void uniform3f(GC3Dint location, GC3Dfloat x, GC3Dfloat y, GC3Dfloat z);
-    void uniform3fv(GC3Dint location, GC3Dsizei, const GC3Dfloat* v);
-    void uniform3i(GC3Dint location, GC3Dint x, GC3Dint y, GC3Dint z);
-    void uniform3iv(GC3Dint location, GC3Dsizei, const GC3Dint* v);
-    void uniform4f(GC3Dint location, GC3Dfloat x, GC3Dfloat y, GC3Dfloat z, GC3Dfloat w);
-    void uniform4fv(GC3Dint location, GC3Dsizei, const GC3Dfloat* v);
-    void uniform4i(GC3Dint location, GC3Dint x, GC3Dint y, GC3Dint z, GC3Dint w);
-    void uniform4iv(GC3Dint location, GC3Dsizei, const GC3Dint* v);
-    void uniformMatrix2fv(GC3Dint location, GC3Dsizei, GC3Dboolean transpose, const GC3Dfloat* value);
-    void uniformMatrix3fv(GC3Dint location, GC3Dsizei, GC3Dboolean transpose, const GC3Dfloat* value);
-    void uniformMatrix4fv(GC3Dint location, GC3Dsizei, GC3Dboolean transpose, const GC3Dfloat* value);
+    void uniform1f(GC3Dint location, GC3Dfloat x) override;
+    void uniform1fv(GC3Dint location, GC3Dsizei, const GC3Dfloat* v) override;
+    void uniform1i(GC3Dint location, GC3Dint x) override;
+    void uniform1iv(GC3Dint location, GC3Dsizei, const GC3Dint* v) override;
+    void uniform2f(GC3Dint location, GC3Dfloat x, GC3Dfloat y) override;
+    void uniform2fv(GC3Dint location, GC3Dsizei, const GC3Dfloat* v) override;
+    void uniform2i(GC3Dint location, GC3Dint x, GC3Dint y) override;
+    void uniform2iv(GC3Dint location, GC3Dsizei, const GC3Dint* v) override;
+    void uniform3f(GC3Dint location, GC3Dfloat x, GC3Dfloat y, GC3Dfloat z) override;
+    void uniform3fv(GC3Dint location, GC3Dsizei, const GC3Dfloat* v) override;
+    void uniform3i(GC3Dint location, GC3Dint x, GC3Dint y, GC3Dint z) override;
+    void uniform3iv(GC3Dint location, GC3Dsizei, const GC3Dint* v) override;
+    void uniform4f(GC3Dint location, GC3Dfloat x, GC3Dfloat y, GC3Dfloat z, GC3Dfloat w) override;
+    void uniform4fv(GC3Dint location, GC3Dsizei, const GC3Dfloat* v) override;
+    void uniform4i(GC3Dint location, GC3Dint x, GC3Dint y, GC3Dint z, GC3Dint w) override;
+    void uniform4iv(GC3Dint location, GC3Dsizei, const GC3Dint* v) override;
+    void uniformMatrix2fv(GC3Dint location, GC3Dsizei, GC3Dboolean transpose, const GC3Dfloat* value) override;
+    void uniformMatrix3fv(GC3Dint location, GC3Dsizei, GC3Dboolean transpose, const GC3Dfloat* value) override;
+    void uniformMatrix4fv(GC3Dint location, GC3Dsizei, GC3Dboolean transpose, const GC3Dfloat* value) override;
 
-    void useProgram(Platform3DObject);
-    void validateProgram(Platform3DObject);
+    void useProgram(Platform3DObject) override;
+    void validateProgram(Platform3DObject) override;
 #if !USE(ANGLE)
     bool checkVaryingsPacking(Platform3DObject vertexShader, Platform3DObject fragmentShader) const;
     bool precisionsMatch(Platform3DObject vertexShader, Platform3DObject fragmentShader) const;
 #endif
 
-    void vertexAttrib1f(GC3Duint index, GC3Dfloat x);
-    void vertexAttrib1fv(GC3Duint index, const GC3Dfloat* values);
-    void vertexAttrib2f(GC3Duint index, GC3Dfloat x, GC3Dfloat y);
-    void vertexAttrib2fv(GC3Duint index, const GC3Dfloat* values);
-    void vertexAttrib3f(GC3Duint index, GC3Dfloat x, GC3Dfloat y, GC3Dfloat z);
-    void vertexAttrib3fv(GC3Duint index, const GC3Dfloat* values);
-    void vertexAttrib4f(GC3Duint index, GC3Dfloat x, GC3Dfloat y, GC3Dfloat z, GC3Dfloat w);
-    void vertexAttrib4fv(GC3Duint index, const GC3Dfloat* values);
-    void vertexAttribPointer(GC3Duint index, GC3Dint size, GC3Denum type, GC3Dboolean normalized,
-                             GC3Dsizei stride, GC3Dintptr offset);
+    void vertexAttrib1f(GC3Duint index, GC3Dfloat x) override;
+    void vertexAttrib1fv(GC3Duint index, const GC3Dfloat* values) override;
+    void vertexAttrib2f(GC3Duint index, GC3Dfloat x, GC3Dfloat y) override;
+    void vertexAttrib2fv(GC3Duint index, const GC3Dfloat* values) override;
+    void vertexAttrib3f(GC3Duint index, GC3Dfloat x, GC3Dfloat y, GC3Dfloat z) override;
+    void vertexAttrib3fv(GC3Duint index, const GC3Dfloat* values) override;
+    void vertexAttrib4f(GC3Duint index, GC3Dfloat x, GC3Dfloat y, GC3Dfloat z, GC3Dfloat w) override;
+    void vertexAttrib4fv(GC3Duint index, const GC3Dfloat* values) override;
+    void vertexAttribPointer(GC3Duint index, GC3Dint size, GC3Denum type, GC3Dboolean normalized, GC3Dsizei stride, GC3Dintptr offset) override;
 
-    void viewport(GC3Dint x, GC3Dint y, GC3Dsizei width, GC3Dsizei height);
+    void viewport(GC3Dint x, GC3Dint y, GC3Dsizei width, GC3Dsizei height) override;
 
     void reshape(int width, int height);
 
-    void drawArraysInstanced(GC3Denum mode, GC3Dint first, GC3Dsizei count, GC3Dsizei primcount);
-    void drawElementsInstanced(GC3Denum mode, GC3Dsizei count, GC3Denum type, GC3Dintptr offset, GC3Dsizei primcount);
-    void vertexAttribDivisor(GC3Duint index, GC3Duint divisor);
+    void drawArraysInstanced(GC3Denum mode, GC3Dint first, GC3Dsizei count, GC3Dsizei primcount) override;
+    void drawElementsInstanced(GC3Denum mode, GC3Dsizei count, GC3Denum type, GC3Dintptr offset, GC3Dsizei primcount) override;
+    void vertexAttribDivisor(GC3Duint index, GC3Duint divisor) override;
 
     // VertexArrayOject calls
-    Platform3DObject createVertexArray();
-    void deleteVertexArray(Platform3DObject);
-    GC3Dboolean isVertexArray(Platform3DObject);
-    void bindVertexArray(Platform3DObject);
+    Platform3DObject createVertexArray() override;
+    void deleteVertexArray(Platform3DObject) override;
+    GC3Dboolean isVertexArray(Platform3DObject) override;
+    void bindVertexArray(Platform3DObject) override;
 
     void paintToCanvas(const unsigned char* imagePixels, const IntSize& imageSize, const IntSize& canvasSize, GraphicsContext&);
 
@@ -1189,7 +390,7 @@ public:
     bool paintCompositedResultsToCanvas(ImageBuffer*);
 
 #if USE(OPENGL) && ENABLE(WEBGL2)
-    void primitiveRestartIndex(GC3Duint);
+    void primitiveRestartIndex(GC3Duint) override;
 #endif
 
 #if PLATFORM(COCOA)
@@ -1213,19 +414,19 @@ public:
     GraphicsContext3DPowerPreference powerPreferenceUsedForCreation() const { return m_powerPreferenceUsedForCreation; }
 
     // Support for buffer creation and deletion
-    Platform3DObject createBuffer();
-    Platform3DObject createFramebuffer();
-    Platform3DObject createProgram();
-    Platform3DObject createRenderbuffer();
-    Platform3DObject createShader(GC3Denum);
-    Platform3DObject createTexture();
+    Platform3DObject createBuffer() override;
+    Platform3DObject createFramebuffer() override;
+    Platform3DObject createProgram() override;
+    Platform3DObject createRenderbuffer() override;
+    Platform3DObject createShader(GC3Denum) override;
+    Platform3DObject createTexture() override;
 
-    void deleteBuffer(Platform3DObject);
-    void deleteFramebuffer(Platform3DObject);
-    void deleteProgram(Platform3DObject);
-    void deleteRenderbuffer(Platform3DObject);
-    void deleteShader(Platform3DObject);
-    void deleteTexture(Platform3DObject);
+    void deleteBuffer(Platform3DObject) override;
+    void deleteFramebuffer(Platform3DObject) override;
+    void deleteProgram(Platform3DObject) override;
+    void deleteRenderbuffer(Platform3DObject) override;
+    void deleteShader(Platform3DObject) override;
+    void deleteTexture(Platform3DObject) override;
 
     // Synthesizes an OpenGL error which will be returned from a
     // later call to getError. This is used to emulate OpenGL ES
@@ -1245,41 +446,9 @@ public:
     // all methods it contains may necessarily be supported on the
     // current hardware. Must call Extensions3D::supports() to
     // determine this.
-    Extensions3D& getExtensions();
+    Extensions3D& getExtensions() override;
 
     IntSize getInternalFramebufferSize() const;
-
-    static unsigned getClearBitsByAttachmentType(GC3Denum);
-    static unsigned getClearBitsByFormat(GC3Denum);
-
-    enum ChannelBits {
-        ChannelRed = 1,
-        ChannelGreen = 2,
-        ChannelBlue = 4,
-        ChannelAlpha = 8,
-        ChannelDepth = 16,
-        ChannelStencil = 32,
-        ChannelRGB = ChannelRed | ChannelGreen | ChannelBlue,
-        ChannelRGBA = ChannelRGB | ChannelAlpha,
-    };
-
-    static unsigned getChannelBitsByFormat(GC3Denum);
-
-    // Possible alpha operations that may need to occur during
-    // pixel packing. FIXME: kAlphaDoUnmultiply is lossy and must
-    // be removed.
-    enum AlphaOp {
-        AlphaDoNothing = 0,
-        AlphaDoPremultiply = 1,
-        AlphaDoUnmultiply = 2
-    };
-
-    enum ImageHtmlDomSource {
-        HtmlDomImage = 0,
-        HtmlDomCanvas = 1,
-        HtmlDomVideo = 2,
-        HtmlDomNone = 3
-    };
 
     // Packs the contents of the given Image which is passed in |pixels| into the passed Vector
     // according to the given format and type, and obeying the flipY and AlphaOp flags.
@@ -1288,7 +457,7 @@ public:
 
     class ImageExtractor {
     public:
-        ImageExtractor(Image*, ImageHtmlDomSource, bool premultiplyAlpha, bool ignoreGammaAndColorProfile);
+        ImageExtractor(Image*, DOMSource, bool premultiplyAlpha, bool ignoreGammaAndColorProfile);
 
         // Each platform must provide an implementation of this method to deallocate or release resources
         // associated with the image if needed.
@@ -1301,7 +470,7 @@ public:
         DataFormat imageSourceFormat() { return m_imageSourceFormat; }
         AlphaOp imageAlphaOp() { return m_alphaOp; }
         unsigned imageSourceUnpackAlignment() { return m_imageSourceUnpackAlignment; }
-        ImageHtmlDomSource imageHtmlDomSource() { return m_imageHtmlDomSource; }
+        DOMSource imageHtmlDomSource() { return m_imageHtmlDomSource; }
     private:
         // Each platform must provide an implementation of this method.
         // Extracts the image and keeps track of its status, such as width, height, Source Alignment, format and AlphaOp etc,
@@ -1317,7 +486,7 @@ public:
         UniqueArray<uint8_t> m_formalizedRGBA8Data;
 #endif
         Image* m_image;
-        ImageHtmlDomSource m_imageHtmlDomSource;
+        DOMSource m_imageHtmlDomSource;
         bool m_extractSucceeded;
         const void* m_imagePixelData;
         unsigned m_imageWidth;
@@ -1340,7 +509,7 @@ public:
 #endif
 
 private:
-    GraphicsContext3D(GraphicsContext3DAttributes, HostWindow*, RenderStyle = RenderOffscreen, GraphicsContext3D* sharedContext = nullptr);
+    GraphicsContext3D(GraphicsContext3DAttributes, HostWindow*, Destination = Destination::Offscreen, GraphicsContext3D* sharedContext = nullptr);
 
     // Helper for packImageData/extractImageData/extractTextureData which implement packing of pixel
     // data into the specified OpenGL destination format and type.
@@ -1474,9 +643,7 @@ private:
     std::unique_ptr<Extensions3DOpenGL> m_extensions;
 #endif
 
-    GraphicsContext3DAttributes m_attrs;
     GraphicsContext3DPowerPreference m_powerPreferenceUsedForCreation { GraphicsContext3DPowerPreference::Default };
-    RenderStyle m_renderStyle;
     Vector<Vector<float>> m_vertexArray;
 
 #if !USE(ANGLE)

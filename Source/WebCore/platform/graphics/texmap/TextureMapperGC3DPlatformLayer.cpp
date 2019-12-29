@@ -30,14 +30,14 @@
 
 namespace WebCore {
 
-TextureMapperGC3DPlatformLayer::TextureMapperGC3DPlatformLayer(GraphicsContext3D& context, GraphicsContext3D::RenderStyle renderStyle)
+TextureMapperGC3DPlatformLayer::TextureMapperGC3DPlatformLayer(GraphicsContext3D& context, GraphicsContext3D::Destination destination)
     : m_context(context)
 {
-    switch (renderStyle) {
-    case GraphicsContext3D::RenderOffscreen:
+    switch (destination) {
+    case GraphicsContext3D::Destination::Offscreen:
         m_glContext = GLContext::createOffscreenContext(&PlatformDisplay::sharedDisplayForCompositing());
         break;
-    case GraphicsContext3D::RenderDirectlyToHostWindow:
+    case GraphicsContext3D::Destination::DirectlyToHostWindow:
         ASSERT_NOT_REACHED();
         break;
     }
@@ -61,7 +61,7 @@ bool TextureMapperGC3DPlatformLayer::makeContextCurrent()
     return m_glContext->makeContextCurrent();
 }
 
-PlatformGraphicsContext3D TextureMapperGC3DPlatformLayer::platformContext()
+PlatformGraphicsContext3D TextureMapperGC3DPlatformLayer::platformContext() const
 {
     ASSERT(m_glContext);
     return m_glContext->platformContext();

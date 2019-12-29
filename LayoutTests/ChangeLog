@@ -1,3 +1,15 @@
+2019-12-27  Dean Jackson  <dino@apple.com>
+
+        [WebGL] Add a pure virtual base class for GraphicsContext3D
+        https://bugs.webkit.org/show_bug.cgi?id=205604
+
+        Reviewed by Sam Weinig.
+
+        Remove a test that has existing coverage in the WebGL test suite.
+
+        * fast/canvas/webgl/framebuffer-object-attachment-expected.txt: Removed.
+        * fast/canvas/webgl/framebuffer-object-attachment.html: Removed.
+
 2019-12-25  Dean Jackson  <dino@apple.com>
 
         [WebGL] Enable ANGLE by default for Cocoa platforms (except simulator)

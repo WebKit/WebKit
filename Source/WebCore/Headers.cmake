@@ -1057,6 +1057,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/Gradient.h
     platform/graphics/GraphicsContext.h
     platform/graphics/GraphicsContext3D.h
+    platform/graphics/GraphicsContext3DBase.h
     platform/graphics/GraphicsContext3DAttributes.h
     platform/graphics/GraphicsContext3DManager.h
     platform/graphics/GraphicsContextImpl.h

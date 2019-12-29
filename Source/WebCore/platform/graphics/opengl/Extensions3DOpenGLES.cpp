@@ -190,12 +190,8 @@ int Extensions3DOpenGLES::getGraphicsResetStatusARB()
     if (m_glGetGraphicsResetStatusEXT) {
         m_context->makeContextCurrent();
         int reasonForReset = m_glGetGraphicsResetStatusEXT();
-        if (reasonForReset != GL_NO_ERROR) {
-            ASSERT(m_contextLostCallback);
-            if (m_contextLostCallback)
-                m_contextLostCallback->onContextLost();
+        if (reasonForReset != GL_NO_ERROR)
             m_contextResetStatus = reasonForReset;
-        }
         return reasonForReset;
     }
 

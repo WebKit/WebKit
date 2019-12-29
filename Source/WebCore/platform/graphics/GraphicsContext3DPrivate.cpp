@@ -38,13 +38,13 @@
 
 namespace WebCore {
 
-GraphicsContext3DPrivate::GraphicsContext3DPrivate(GraphicsContext3D*, GraphicsContext3D::RenderStyle renderStyle)
+GraphicsContext3DPrivate::GraphicsContext3DPrivate(GraphicsContext3D*, GraphicsContext3D::Destination destination)
 {
-    switch (renderStyle) {
-    case GraphicsContext3D::RenderOffscreen:
+    switch (destination) {
+    case GraphicsContext3D::Destination::Offscreen:
         m_glContext = GLContext::createOffscreenContext(&PlatformDisplay::sharedDisplayForCompositing());
         break;
-    case GraphicsContext3D::RenderDirectlyToHostWindow:
+    case GraphicsContext3D::Destination::DirectlyToHostWindow:
         ASSERT_NOT_REACHED();
         break;
     }

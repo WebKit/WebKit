@@ -208,7 +208,7 @@ void WebGLProgram::cacheActiveAttribLocations(GraphicsContext3D* context3d)
     context3d->getProgramiv(object(), GraphicsContext3D::ACTIVE_ATTRIBUTES, &numAttribs);
     m_activeAttribLocations.resize(static_cast<size_t>(numAttribs));
     for (int i = 0; i < numAttribs; ++i) {
-        ActiveInfo info;
+        GraphicsContext3D::ActiveInfo info;
         context3d->getActiveAttribImpl(object(), i, info);
         m_activeAttribLocations[i] = context3d->getAttribLocation(object(), info.name);
     }

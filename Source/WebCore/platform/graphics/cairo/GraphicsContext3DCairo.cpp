@@ -49,7 +49,7 @@ bool GraphicsContext3D::ImageExtractor::extractImage(bool premultiplyAlpha, bool
     AlphaOption alphaOption = premultiplyAlpha ? AlphaOption::Premultiplied : AlphaOption::NotPremultiplied;
     GammaAndColorProfileOption gammaAndColorProfileOption = ignoreGammaAndColorProfile ? GammaAndColorProfileOption::Ignored : GammaAndColorProfileOption::Applied;
     auto source = ImageSource::create(nullptr, alphaOption, gammaAndColorProfileOption);
-    m_alphaOp = AlphaDoNothing;
+    m_alphaOp = AlphaOp::DoNothing;
 
     if (m_image->data()) {
         source->setData(m_image->data(), true);
@@ -62,8 +62,8 @@ bool GraphicsContext3D::ImageExtractor::extractImage(bool premultiplyAlpha, bool
         // which is true at present and may be changed in the future and needs adjustment accordingly.
         // 2. For texImage2D with HTMLCanvasElement input in which Alpha is already Premultiplied in this port, 
         // do AlphaDoUnmultiply if UNPACK_PREMULTIPLY_ALPHA_WEBGL is set to false.
-        if (!premultiplyAlpha && m_imageHtmlDomSource != HtmlDomVideo)
-            m_alphaOp = AlphaDoUnmultiply;
+        if (!premultiplyAlpha && m_imageHtmlDomSource != DOMSource::Video)
+            m_alphaOp = AlphaOp::DoUnmultiply;
 
         // if m_imageSurface is not an image, extract a copy of the surface
         if (m_imageSurface && cairo_surface_get_type(m_imageSurface.get()) != CAIRO_SURFACE_TYPE_IMAGE) {
@@ -99,7 +99,7 @@ bool GraphicsContext3D::ImageExtractor::extractImage(bool premultiplyAlpha, bool
     }
 
     m_imagePixelData = cairo_image_surface_get_data(m_imageSurface.get());
-    m_imageSourceFormat = DataFormatBGRA8;
+    m_imageSourceFormat = DataFormat::BGRA8;
     m_imageSourceUnpackAlignment = srcUnpackAlignment;
     return true;
 }

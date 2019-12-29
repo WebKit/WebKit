@@ -34,11 +34,11 @@ class TextureMapperPlatformLayerProxy;
 class TextureMapperGC3DPlatformLayer : public PlatformLayer {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    TextureMapperGC3DPlatformLayer(GraphicsContext3D&, GraphicsContext3D::RenderStyle);
+    TextureMapperGC3DPlatformLayer(GraphicsContext3D&, GraphicsContext3D::Destination);
     virtual ~TextureMapperGC3DPlatformLayer();
 
     bool makeContextCurrent();
-    PlatformGraphicsContext3D platformContext();
+    PlatformGraphicsContext3D platformContext() const;
 
 #if USE(COORDINATED_GRAPHICS)
     RefPtr<TextureMapperPlatformLayerProxy> proxy() const override;

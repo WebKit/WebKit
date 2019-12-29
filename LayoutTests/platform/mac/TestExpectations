@@ -294,8 +294,6 @@ webkit.org/b/82665 webarchive/test-css-url-resources-inline-styles.html [ Failur
 
 webkit.org/b/82762 fast/animation/request-animation-frame-during-modal.html
 
-webkit.org/b/82805 fast/canvas/webgl/framebuffer-object-attachment.html [ Failure ]
-
 webkit.org/b/82972 plugins/keyboard-events.html [ Pass Failure ]
 webkit.org/b/82972 plugins/layout-in-beforeload-listener-affects-plugin-loading.html [ Pass Failure ]
 webkit.org/b/82972 plugins/mouse-events-fixedpos.html [ Pass Failure ]
