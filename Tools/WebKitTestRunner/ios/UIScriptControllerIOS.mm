@@ -112,10 +112,15 @@ Ref<UIScriptController> UIScriptController::create(UIScriptContext& context)
     return adoptRef(*new UIScriptControllerIOS(context));
 }
 
-void UIScriptControllerIOS::checkForOutstandingCallbacks()
+void UIScriptControllerIOS::waitForOutstandingCallbacks()
 {
-    if (![[HIDEventGenerator sharedHIDEventGenerator] checkForOutstandingCallbacks])
-        [NSException raise:@"WebKitTestRunnerTestProblem" format:@"The test completed before all synthesized events had been handled. Perhaps you're calling notifyDone() too early?"];
+    HIDEventGenerator *eventGenerator = HIDEventGenerator.sharedHIDEventGenerator;
+    NSDate *timeoutDate = [NSDate dateWithTimeIntervalSinceNow:1];
+    while (eventGenerator.hasOutstandingCallbacks) {
+        [NSRunLoop.currentRunLoop runMode:NSDefaultRunLoopMode beforeDate:timeoutDate];
+        if ([timeoutDate compare:NSDate.date] == NSOrderedAscending)
+            [NSException raise:@"WebKitTestRunnerTestProblem" format:@"The previous test completed before all synthesized events had been handled. Perhaps you're calling notifyDone() too early?"];
+    }
 }
 
 void UIScriptControllerIOS::doAfterPresentationUpdate(JSValueRef callback)

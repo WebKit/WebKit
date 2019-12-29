@@ -61,7 +61,7 @@ public:
     void notImplemented() const { RELEASE_ASSERT_NOT_REACHED(); }
 
     void contextDestroyed();
-    virtual void checkForOutstandingCallbacks() { /* notImplemented(); */ }
+    virtual void waitForOutstandingCallbacks() { /* notImplemented(); */ }
 
     void makeWindowObject(JSContextRef, JSObjectRef windowObject, JSValueRef* exception);
 

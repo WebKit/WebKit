@@ -151,15 +151,11 @@ static void delayBetweenMove(int eventIndex, double elapsed)
     }   
 }
 
-@interface HIDEventGenerator ()
-@property (nonatomic, strong) NSMutableDictionary *eventCallbacks;
-@property (nonatomic, strong) NSArray<UIView *> *debugTouchViews;
-@end
-
 @implementation HIDEventGenerator {
     IOHIDEventSystemClientRef _ioSystemClient;
     SyntheticEventDigitizerInfo _activePoints[HIDMaxTouchCount];
     NSUInteger _activePointCount;
+    RetainPtr<NSMutableDictionary> _eventCallbacks;
 }
 
 + (HIDEventGenerator *)sharedHIDEventGenerator
@@ -186,16 +182,9 @@ static void delayBetweenMove(int eventIndex, double elapsed)
     for (NSUInteger i = 0; i < HIDMaxTouchCount; ++i)
         _activePoints[i].identifier = fingerIdentifiers[i];
 
-    _eventCallbacks = [[NSMutableDictionary alloc] init];
+    _eventCallbacks = adoptNS([[NSMutableDictionary alloc] init]);
 
     return self;
-}
-
-- (void)dealloc
-{
-    [_eventCallbacks release];
-    [_debugTouchViews release];
-    [super dealloc];
 }
 
 - (void)_sendIOHIDKeyboardEvent:(uint64_t)timestamp usage:(uint32_t)usage isKeyDown:(bool)isKeyDown
@@ -800,9 +789,9 @@ static InterpolationType interpolationFromString(NSString *string)
     }
 }
 
-- (BOOL)checkForOutstandingCallbacks
+- (BOOL)hasOutstandingCallbacks
 {
-    return !([_eventCallbacks count] > 0);
+    return [_eventCallbacks count];
 }
 
 static inline bool shouldWrapWithShiftKeyEventForCharacter(NSString *key)

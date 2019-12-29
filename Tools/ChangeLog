@@ -1,3 +1,64 @@
+2019-12-28  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Layout tests sometimes throw an exception under checkForOutstandingCallbacks
+        https://bugs.webkit.org/show_bug.cgi?id=205612
+        <rdar://problem/57789693>
+
+        Reviewed by Tim Horton.
+
+        On iOS, layout tests that synthesize HID events but end before WebKitTestRunnerApp finishes dequeueing and
+        handling those events occasionally cause the next test to crash with an Objective-C exception under
+        UIScriptControllerIOS::checkForOutstandingCallbacks. This happens when UIScriptContext is destroyed after a HID
+        marker event is dispatched, but before that HID marker event has been handled. (For clarity, the HID marker
+        event is a special vendor-defined event used by HIDEventGenerator to signify the end of a series of synthesized
+        HID events that were previously dispatched to the application).
+
+        This is typically fixed by ensuring that all iOS layout tests always wait for synthesized HID events to finish
+        before ending the test (i.e. by calling `testRunner.notifyDone()`). However, some tests that fall into this
+        category are imported: e.g. dom/events/document-level-touchmove-event-listener-passive-by-default.html in
+        web-platform-tests/, which does not wait for the swipe gesture to finish before completing. This current causes
+        us to dispatch the end of the gesture while the following test (dom/events/event-disabled-dynamic.html) begins.
+
+        While I wasn't able to trivially reproduce the exception locally, it was consistently reproducible by forcing a
+        50 ms `sleep` in -[HIDEventGenerator sendMarkerHIDEventWithCompletionBlock:], right before queueing the marker
+        event. This suggests that the crash is timing-dependent, and just seems to occasionally reproduce more
+        frequently in internal automation.
+
+        This test seems to be passing reliably in other engines (e.g. Chrome and Edge), so instead of trying to fix the
+        test to always wait for events to finish dispatching, we can address the issue by teaching WebKitTestRunner to
+        simply wait for outgoing marker events to finish dispatching before proceeding with the next test, rather than
+        crashing. This should not only fix the crash, but also address sporadic flakiness that may result from tests
+        that handle synthetic HID events that were dispatched by the previous test.
+
+        * TestRunnerShared/UIScriptContext/UIScriptContext.cpp:
+        (UIScriptContext::~UIScriptContext):
+        * TestRunnerShared/UIScriptContext/UIScriptController.h:
+        (WTR::UIScriptController::waitForOutstandingCallbacks):
+        (WTR::UIScriptController::checkForOutstandingCallbacks): Deleted.
+
+        Rename checkForOutstandingCallbacks to waitForOutstandingCallbacks, and make it wait up to a second for the
+        application to finish handling any outgoing marker HID event. In the event that the timeout is hit, we still
+        throw an Objective-C exception to avoid beginning the next test in an unpredictable state.
+
+        * WebKitTestRunner/ios/HIDEventGenerator.h:
+        * WebKitTestRunner/ios/HIDEventGenerator.mm:
+        (-[HIDEventGenerator init]):
+
+        Perform some minor cleanup here, by removing excess private category properties in HIDEventGenerator (including
+        -debugTouchViews, which was unused); also, change _eventCallbacks into a `RetainPtr`, so that we don't need to
+        worry about manually releasing it.
+
+        (-[HIDEventGenerator dealloc]): Deleted.
+        (-[HIDEventGenerator hasOutstandingCallbacks]):
+        (-[HIDEventGenerator checkForOutstandingCallbacks]): Deleted.
+
+        Rename -checkForOutstandingCallbacks to -hasOutstandingCallbacks, and flip the return result.
+
+        * WebKitTestRunner/ios/UIScriptControllerIOS.h:
+        * WebKitTestRunner/ios/UIScriptControllerIOS.mm:
+        (WTR::UIScriptControllerIOS::waitForOutstandingCallbacks):
+        (WTR::UIScriptControllerIOS::checkForOutstandingCallbacks): Deleted.
+
 2019-12-28  Antti Koivisto  <antti@apple.com>
 
         Allow disabling internal and experimental features in run-webkit-tests

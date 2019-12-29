@@ -48,7 +48,7 @@ public:
     {
     }
 
-    void checkForOutstandingCallbacks() override;
+    void waitForOutstandingCallbacks() override;
     void doAfterPresentationUpdate(JSValueRef) override;
     void doAfterNextStablePresentationUpdate(JSValueRef) override;
     void ensurePositionInformationIsUpToDateAt(long x, long y, JSValueRef) override;

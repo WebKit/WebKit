@@ -104,7 +104,7 @@ RetainPtr<IOHIDEventRef> createHIDKeyEvent(NSString *, uint64_t timestamp, bool 
 - (void)sendEventStream:(NSDictionary *)eventInfo completionBlock:(void (^)(void))completionBlock;
 
 - (void)markerEventReceived:(IOHIDEventRef)event;
-- (BOOL)checkForOutstandingCallbacks;
+- (BOOL)hasOutstandingCallbacks;
 
 // Keyboard
 - (void)keyPress:(NSString *)character completionBlock:(void (^)(void))completionBlock;

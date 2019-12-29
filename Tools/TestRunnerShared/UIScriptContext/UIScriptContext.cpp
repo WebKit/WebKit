@@ -52,7 +52,7 @@ UIScriptContext::UIScriptContext(UIScriptContextDelegate& delegate)
 
 UIScriptContext::~UIScriptContext()
 {
-    m_controller->checkForOutstandingCallbacks();
+    m_controller->waitForOutstandingCallbacks();
     m_controller->contextDestroyed();
 }
 
