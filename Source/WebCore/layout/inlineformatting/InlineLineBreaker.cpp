@@ -129,28 +129,28 @@ LineBreaker::Result LineBreaker::shouldWrapInlineContent(const RunList& candidat
 LineBreaker::Result LineBreaker::tryWrappingInlineContent(const ContinousContent& candidateContent, const LineStatus& lineStatus) const
 {
     if (candidateContent.width() <= lineStatus.availableWidth)
-        return { Result::Action::Keep, IsEndOfLine::No, { } };
+        return { Result::Action::Keep };
     if (candidateContent.hasTrailingCollapsibleContent()) {
         ASSERT(candidateContent.hasTextContentOnly());
         auto IsEndOfLine = isContentWrappingAllowed(candidateContent) ? IsEndOfLine::Yes : IsEndOfLine::No;
         // First check if the content fits without the trailing collapsible part.
         if (candidateContent.nonCollapsibleWidth() <= lineStatus.availableWidth)
-            return { Result::Action::Keep, IsEndOfLine, { } };
+            return { Result::Action::Keep, IsEndOfLine };
         // Now check if we can trim the line too.
         if (lineStatus.lineHasFullyCollapsibleTrailingRun && candidateContent.isTrailingContentFullyCollapsible()) {
             // If this new content is fully collapsible, it shoud surely fit.
-            return { Result::Action::Keep, IsEndOfLine, { } };
+            return { Result::Action::Keep, IsEndOfLine };
         }
     } else if (lineStatus.collapsibleWidth && candidateContent.hasNonContentRunsOnly()) {
         // Let's see if the non-content runs fit when the line has trailing collapsible content.
         // "text content <span style="padding: 1px"></span>" <- the <span></span> runs could fit after collapsing the trailing whitespace.
         if (candidateContent.width() <= lineStatus.availableWidth + lineStatus.collapsibleWidth)
-            return { Result::Action::Keep, IsEndOfLine::No, { } };
+            return { Result::Action::Keep };
     }
     if (candidateContent.isVisuallyEmptyWhitespaceContentOnly() && shouldKeepEndOfLineWhitespace(candidateContent)) {
         // This overflowing content apparently falls into the remove/hang end-of-line-spaces catergory.
         // see https://www.w3.org/TR/css-text-3/#white-space-property matrix
-        return { Result::Action::Keep, IsEndOfLine::No, { } };
+        return { Result::Action::Keep };
     }
 
     if (candidateContent.hasTextContentOnly()) {
@@ -166,7 +166,7 @@ LineBreaker::Result LineBreaker::tryWrappingInlineContent(const ContinousContent
                 auto& inlineTextItem = downcast<InlineTextItem>(runs[firstTextRunIndex].inlineItem);
                 ASSERT(inlineTextItem.length());
                 if (inlineTextItem.length() == 1)
-                    return { Result::Action::Keep, IsEndOfLine::Yes, { } };
+                    return Result { Result::Action::Keep, IsEndOfLine::Yes };
                 auto firstCharacterWidth = TextUtil::width(inlineTextItem, inlineTextItem.start(), inlineTextItem.start() + 1);
                 auto firstCharacterRun = PartialRun { 1, firstCharacterWidth, false };
                 return { Result::Action::Split, IsEndOfLine::Yes, Result::PartialTrailingContent { firstTextRunIndex, firstCharacterRun } };
@@ -176,11 +176,13 @@ LineBreaker::Result LineBreaker::tryWrappingInlineContent(const ContinousContent
         }
     }
     // If we are not allowed to break this content, we still need to decide whether keep it or push it to the next line.
-    auto isWrappingAllowed = isContentWrappingAllowed(candidateContent);
-    auto letContentOverflow = lineStatus.lineIsEmpty || !isWrappingAllowed;
-    if (!letContentOverflow)
-        return { Result::Action::Push, IsEndOfLine::Yes, { } };
-    return { Result::Action::Keep, isWrappingAllowed ? IsEndOfLine::Yes : IsEndOfLine::No, { } };
+    if (lineStatus.lineIsEmpty) {
+        ASSERT(!m_lastWrapOpportunity);
+        return { Result::Action::Keep, IsEndOfLine::Yes };
+    }
+    if (m_lastWrapOpportunity)
+        return { Result::Action::Revert, IsEndOfLine::Yes, { }, m_lastWrapOpportunity };
+    return { Result::Action::Keep, isContentWrappingAllowed(candidateContent) ? IsEndOfLine::Yes : IsEndOfLine::No };
 }
 
 bool LineBreaker::shouldWrapFloatBox(InlineLayoutUnit floatLogicalWidth, InlineLayoutUnit availableWidth, bool lineIsEmpty)

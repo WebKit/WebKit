@@ -1,3 +1,20 @@
+2019-12-29  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] Add LineBreaker::Result::Revert to indicate an earlier line wrap opportunity
+        https://bugs.webkit.org/show_bug.cgi?id=205623
+        <rdar://problem/58228339>
+
+        Reviewed by Antti Koivisto.
+
+        See webkit.org/b/205613 for more info.
+
+        * layout/inlineformatting/InlineLineBreaker.cpp:
+        (WebCore::Layout::LineBreaker::Result::Result):
+        (WebCore::Layout::LineBreaker::tryWrappingInlineContent const):
+        * layout/inlineformatting/InlineLineBreaker.h:
+        * layout/inlineformatting/LineLayoutContext.cpp:
+        (WebCore::Layout::LineLayoutContext::checkForLineWrapAndCommit):
+
 2019-12-29  Antti Koivisto  <antti@apple.com>
 
         Make RuleSet refcounted

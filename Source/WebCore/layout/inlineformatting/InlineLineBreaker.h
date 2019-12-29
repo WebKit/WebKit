@@ -49,15 +49,18 @@ public:
         enum class Action {
             Keep, // Keep content on the current line.
             Split, // Partial content is on the current line.
-            Push // Content is pushed to the next line.
+            Push, // Content is pushed to the next line.
+            Revert // The current content overflows and can't get wrapped. The line needs to be reverted back to the last line wrapping opportunity.
         };
-        Action action { Action::Keep };
-        IsEndOfLine isEndOfLine { IsEndOfLine::No };
         struct PartialTrailingContent {
             size_t trailingRunIndex { 0 };
             Optional<PartialRun> partialRun; // nullopt partial run means the trailing run is a complete run.
         };
-        Optional<PartialTrailingContent> partialTrailingContent;
+
+        Action action { Action::Keep };
+        IsEndOfLine isEndOfLine { IsEndOfLine::No };
+        Optional<PartialTrailingContent> partialTrailingContent { };
+        const InlineItem* revertTo { nullptr };
     };
 
     struct Run {

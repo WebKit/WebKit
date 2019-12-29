@@ -412,6 +412,10 @@ LineLayoutContext::CommittedContent LineLayoutContext::checkForLineWrapAndCommit
         // This continuous content can't be placed on the current line. Nothing to commit at this time.
         return { result.isEndOfLine, 0, { } };
     }
+    if (result.action == LineBreaker::Result::Action::Revert) {
+        ASSERT_NOT_IMPLEMENTED_YET();
+        return { result.isEndOfLine, 0, { } };
+    }
     if (result.action == LineBreaker::Result::Action::Split) {
         // Commit the combination of full and partial content on the current line.
         ASSERT(result.partialTrailingContent);
