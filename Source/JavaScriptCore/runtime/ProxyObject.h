@@ -59,7 +59,7 @@ public:
         Structure* result = Structure::create(vm, globalObject, prototype, TypeInfo(ProxyObjectType, flags), info(), NonArray | MayHaveIndexedAccessors);
         result->setIsQuickPropertyAccessAllowedForEnumeration(false);
         RELEASE_ASSERT(!result->canAccessPropertiesQuicklyForEnumeration());
-        RELEASE_ASSERT(!result->canCachePropertyNameEnumerator());
+        RELEASE_ASSERT(!result->canCachePropertyNameEnumerator(vm));
         return result;
     }
 

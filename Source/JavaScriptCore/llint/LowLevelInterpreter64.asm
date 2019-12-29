@@ -1448,10 +1448,19 @@ llintOpWithMetadata(op_put_by_id, OpPutById, macro (size, get, dispatch, metadat
     loadp OpPutById::Metadata::m_structureChain[t5], t3
     btpz t3, .opPutByIdTransitionDirect
 
-    structureIDToStructureWithScratch(t2, t1, t3)
+    loadp CodeBlock[cfr], t1
+    loadp CodeBlock::m_vm[t1], t1
+    loadp VM::heap + Heap::m_structureIDTable + StructureIDTable::m_table[t1], t1
 
-    # reload the StructureChain since we used t3 as a scratch above
-    loadp OpPutById::Metadata::m_structureChain[t5], t3
+    macro structureIDToStructureWithScratchAndTable(structureIDThenStructure, table, scratch)
+        move structureIDThenStructure, scratch
+        rshifti NumberOfStructureIDEntropyBits, scratch
+        loadp [table, scratch, PtrSize], scratch
+        lshiftp StructureEntropyBitsShift, structureIDThenStructure
+        xorp scratch, structureIDThenStructure
+    end
+
+    structureIDToStructureWithScratchAndTable(t2, t1, t0)
 
     loadp StructureChain::m_vector[t3], t3
     assert(macro (ok) btpnz t3, ok end)
@@ -1459,20 +1468,19 @@ llintOpWithMetadata(op_put_by_id, OpPutById, macro (size, get, dispatch, metadat
     loadq Structure::m_prototype[t2], t2
     bqeq t2, ValueNull, .opPutByIdTransitionChainDone
 .opPutByIdTransitionChainLoop:
-    # At this point, t2 contains a prototye, and [t3] contains the Structure* that we want that
-    # prototype to have. We don't want to have to load the Structure* for t2. Instead, we load
-    # the Structure* from [t3], and then we compare its id to the id in the header of t2.
-    loadp [t3], t1
     loadi JSCell::m_structureID[t2], t2
-    # Now, t1 has the Structure* and t2 has the StructureID that we want that Structure* to have.
-    bineq t2, Structure::m_blob + StructureIDBlob::u.fields.structureID[t1], .opPutByIdSlow
-    addp PtrSize, t3
-    loadq Structure::m_prototype[t1], t2
+    bineq t2, [t3], .opPutByIdSlow
+    addp 4, t3
+    structureIDToStructureWithScratchAndTable(t2, t1, t0)
+    loadq Structure::m_prototype[t2], t2
     bqneq t2, ValueNull, .opPutByIdTransitionChainLoop
 
 .opPutByIdTransitionChainDone:
     # Reload the new structure, since we clobbered it above.
     loadi OpPutById::Metadata::m_newStructureID[t5], t1
+    # Reload base into t0
+    get(m_base, t3)
+    loadConstantOrVariable(size, t3, t0)
 
 .opPutByIdTransitionDirect:
     storei t1, JSCell::m_structureID[t0]

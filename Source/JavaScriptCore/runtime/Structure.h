@@ -476,7 +476,7 @@ public:
 
     void setCachedPropertyNameEnumerator(VM&, JSPropertyNameEnumerator*);
     JSPropertyNameEnumerator* cachedPropertyNameEnumerator() const;
-    bool canCachePropertyNameEnumerator() const;
+    bool canCachePropertyNameEnumerator(VM&) const;
     bool canAccessPropertiesQuicklyForEnumeration() const;
 
     void setCachedOwnKeys(VM&, JSImmutableButterfly*);

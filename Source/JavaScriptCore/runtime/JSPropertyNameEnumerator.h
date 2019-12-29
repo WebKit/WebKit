@@ -142,7 +142,7 @@ inline JSPropertyNameEnumerator* propertyNameEnumerator(JSGlobalObject* globalOb
     enumerator = JSPropertyNameEnumerator::create(vm, structureAfterGettingPropertyNames, indexedLength, numberStructureProperties, WTFMove(propertyNames));
     if (!indexedLength && successfullyNormalizedChain && structureAfterGettingPropertyNames == structure) {
         enumerator->setCachedPrototypeChain(vm, structure->prototypeChain(globalObject, base));
-        if (structure->canCachePropertyNameEnumerator())
+        if (structure->canCachePropertyNameEnumerator(vm))
             structure->setCachedPropertyNameEnumerator(vm, enumerator);
     }
     return enumerator;

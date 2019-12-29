@@ -1207,20 +1207,22 @@ JSPropertyNameEnumerator* Structure::cachedPropertyNameEnumerator() const
     return rareData()->cachedPropertyNameEnumerator();
 }
 
-bool Structure::canCachePropertyNameEnumerator() const
+bool Structure::canCachePropertyNameEnumerator(VM& vm) const
 {
     if (!this->canCacheOwnKeys())
         return false;
 
     StructureChain* structureChain = m_cachedPrototypeChain.get();
     ASSERT(structureChain);
-    WriteBarrier<Structure>* structure = structureChain->head();
+    StructureID* currentStructureID = structureChain->head();
     while (true) {
-        if (!structure->get())
+        StructureID structureID = *currentStructureID;
+        if (!structureID)
             return true;
-        if (!structure->get()->canCacheOwnKeys())
+        Structure* structure = vm.getStructure(structureID);
+        if (!structure->canCacheOwnKeys())
             return false;
-        structure++;
+        currentStructureID++;
     }
 
     ASSERT_NOT_REACHED();

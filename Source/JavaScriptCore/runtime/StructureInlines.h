@@ -313,9 +313,9 @@ inline bool Structure::isValid(JSGlobalObject* globalObject, StructureChain* cac
 
     VM& vm = globalObject->vm();
     JSValue prototype = prototypeForLookup(globalObject, base);
-    WriteBarrier<Structure>* cachedStructure = cachedPrototypeChain->head();
+    StructureID* cachedStructure = cachedPrototypeChain->head();
     while (*cachedStructure && !prototype.isNull()) {
-        if (asObject(prototype)->structure(vm) != cachedStructure->get())
+        if (asObject(prototype)->structureID() != *cachedStructure)
             return false;
         ++cachedStructure;
         prototype = asObject(prototype)->getPrototypeDirect(vm);

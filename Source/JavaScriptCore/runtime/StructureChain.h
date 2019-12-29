@@ -50,7 +50,7 @@ public:
     }
 
     static StructureChain* create(VM&, JSObject*);
-    WriteBarrier<Structure>* head() { return m_vector.get(); }
+    StructureID* head() { return m_vector.get(); }
     static void visitChildren(JSCell*, SlotVisitor&);
 
     static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
@@ -65,8 +65,8 @@ private:
 
     void finishCreation(VM&, JSObject* head);
 
-    StructureChain(VM&, Structure*, WriteBarrier<Structure>*);
-    AuxiliaryBarrier<WriteBarrier<Structure>*> m_vector;
+    StructureChain(VM&, Structure*, StructureID*);
+    AuxiliaryBarrier<StructureID*> m_vector;
 };
 
 } // namespace JSC

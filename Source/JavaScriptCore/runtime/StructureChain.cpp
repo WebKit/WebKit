@@ -34,7 +34,7 @@ namespace JSC {
     
 const ClassInfo StructureChain::s_info = { "StructureChain", nullptr, nullptr, nullptr, CREATE_METHOD_TABLE(StructureChain) };
 
-StructureChain::StructureChain(VM& vm, Structure* structure, WriteBarrier<Structure>* vector)
+StructureChain::StructureChain(VM& vm, Structure* structure, StructureID* vector)
     : Base(vm, structure)
     , m_vector(vm, this, vector)
 {
@@ -49,9 +49,9 @@ StructureChain* StructureChain::create(VM& vm, JSObject* head)
     for (JSObject* current = head; current; current = current->structure(vm)->storedPrototypeObject(current))
         ++size;
     ++size; // Sentinel nullptr.
-    WriteBarrier<Structure>* vector = static_cast<WriteBarrier<Structure>*>(vm.jsValueGigacageAuxiliarySpace.allocateNonVirtual(vm, (Checked<size_t>(size) * sizeof(WriteBarrier<Structure>)).unsafeGet(), nullptr, AllocationFailureMode::Assert));
-    for (size_t i = 0; i < size; ++i)
-        vector[i].clear();
+    size_t bytes = (Checked<size_t>(size) * sizeof(StructureID)).unsafeGet();
+    StructureID* vector = static_cast<StructureID*>(vm.jsValueGigacageAuxiliarySpace.allocateNonVirtual(vm, bytes, nullptr, AllocationFailureMode::Assert));
+    memset(vector, 0, bytes);
     StructureChain* chain = new (NotNull, allocateCell<StructureChain>(vm.heap)) StructureChain(vm, vm.structureChainStructure.get(), vector);
     chain->finishCreation(vm, head);
     return chain;
@@ -61,8 +61,11 @@ void StructureChain::finishCreation(VM& vm, JSObject* head)
 {
     Base::finishCreation(vm);
     size_t i = 0;
-    for (JSObject* current = head; current; current = current->structure(vm)->storedPrototypeObject(current))
-        m_vector.get()[i++].set(vm, this, current->structure(vm));
+    for (JSObject* current = head; current; current = current->structure(vm)->storedPrototypeObject(current)) {
+        Structure* structure = current->structure(vm);
+        m_vector.get()[i++] = structure->id();
+        vm.heap.writeBarrier(this);
+    }
 }
 
 void StructureChain::visitChildren(JSCell* cell, SlotVisitor& visitor)
@@ -71,8 +74,12 @@ void StructureChain::visitChildren(JSCell* cell, SlotVisitor& visitor)
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     Base::visitChildren(thisObject, visitor);
     visitor.markAuxiliary(thisObject->m_vector.get());
-    for (auto* current = thisObject->m_vector.get(); *current; ++current)
-        visitor.append(*current);
+    VM& vm = visitor.vm();
+    for (auto* current = thisObject->m_vector.get(); *current; ++current) {
+        StructureID structureID = *current;
+        Structure* structure = vm.getStructure(structureID);
+        visitor.appendUnbarriered(structure);
+    }
 }
 
 } // namespace JSC
