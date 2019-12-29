@@ -1,3 +1,16 @@
+2019-12-29  Eric Carlson  <eric.carlson@apple.com>
+
+        Cleanup media IPC encoders
+        https://bugs.webkit.org/show_bug.cgi?id=205630
+        <rdar://problem/58232173>
+
+        Reviewed by Anders Carlsson.
+
+        No new tests, no functional change.
+
+        * platform/graphics/MediaPlayer.h:
+        (WebCore::MediaEngineSupportParameters::decode):
+
 2019-12-27  Dean Jackson  <dino@apple.com>
 
         [WebGL] Add a pure virtual base class for GraphicsContext3D

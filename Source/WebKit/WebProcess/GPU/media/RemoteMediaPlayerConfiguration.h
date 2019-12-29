@@ -87,10 +87,10 @@ struct RemoteMediaPlayerConfiguration {
 
         return {{
             WTFMove(*engineDescription),
-            WTFMove(*supportsScanning),
-            WTFMove(*supportsPictureInPicture),
-            WTFMove(*supportsAcceleratedRendering),
-            WTFMove(*canPlayToWirelessPlaybackTarget),
+            *supportsScanning,
+            *supportsPictureInPicture,
+            *supportsAcceleratedRendering,
+            *canPlayToWirelessPlaybackTarget,
         }};
     }
 };

@@ -122,7 +122,7 @@ struct MediaEngineSupportParameters {
         if (!typesRequiringHardware)
             return WTF::nullopt;
 
-        return {{ WTFMove(*type), WTFMove(*url), WTFMove(*isMediaSource), WTFMove(*isMediaStream), WTFMove(*typesRequiringHardware) }};
+        return {{ WTFMove(*type), WTFMove(*url), *isMediaSource, *isMediaStream, *typesRequiringHardware }};
     }
 };
 
