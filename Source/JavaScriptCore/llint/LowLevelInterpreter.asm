@@ -1145,9 +1145,9 @@ macro functionForCallCodeBlockGetter(targetRegister)
         loadp Callee + PayloadOffset[cfr], targetRegister
     end
     loadp JSFunction::m_executableOrRareData[targetRegister], targetRegister
-    btpz targetRegister, (constexpr JSFunction::rareDataTag), .executable
+    btpz targetRegister, (constexpr JSFunction::rareDataTag), .isExecutable
     loadp (FunctionRareData::m_executable - (constexpr JSFunction::rareDataTag))[targetRegister], targetRegister
-.executable:
+.isExecutable:
     loadp FunctionExecutable::m_codeBlockForCall[targetRegister], targetRegister
     loadp ExecutableToCodeBlockEdge::m_codeBlock[targetRegister], targetRegister
 end
@@ -1159,9 +1159,9 @@ macro functionForConstructCodeBlockGetter(targetRegister)
         loadp Callee + PayloadOffset[cfr], targetRegister
     end
     loadp JSFunction::m_executableOrRareData[targetRegister], targetRegister
-    btpz targetRegister, (constexpr JSFunction::rareDataTag), .executable
+    btpz targetRegister, (constexpr JSFunction::rareDataTag), .isExecutable
     loadp (FunctionRareData::m_executable - (constexpr JSFunction::rareDataTag))[targetRegister], targetRegister
-.executable:
+.isExecutable:
     loadp FunctionExecutable::m_codeBlockForConstruct[targetRegister], targetRegister
     loadp ExecutableToCodeBlockEdge::m_codeBlock[targetRegister], targetRegister
 end

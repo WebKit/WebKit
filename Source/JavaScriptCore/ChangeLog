@@ -1,5 +1,14 @@
 2019-12-28  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        Unreviewed, rename `.executable` to `.isExecutable`
+        https://bugs.webkit.org/show_bug.cgi?id=205554
+
+        * llint/LowLevelInterpreter.asm:
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+
+2019-12-28  Yusuke Suzuki  <ysuzuki@apple.com>
+
         [JSC] JSFunction's m_executable / m_rareData should be merged
         https://bugs.webkit.org/show_bug.cgi?id=205554
 
