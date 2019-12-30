@@ -115,7 +115,7 @@ public:
     using RunList = Vector<Run, 50>;
     enum class IsLastLineWithInlineContent { No, Yes };
     RunList close(IsLastLineWithInlineContent = IsLastLineWithInlineContent::No);
-    void revert(const InlineItem& revertTo);
+    size_t revert(const InlineItem& revertTo);
 
     static Display::LineBox::Baseline halfLeadingMetrics(const FontMetrics&, InlineLayoutUnit lineLogicalHeight);
 

@@ -1,3 +1,32 @@
+2019-12-30  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] Fix imported/w3c/web-platform-tests/css/css-text/white-space/white-space-wrap-after-nowrap-001.html
+        https://bugs.webkit.org/show_bug.cgi?id=205633
+        <rdar://problem/58234239>
+
+        Reviewed by Antti Koivisto.
+
+        When the LineBreaker comes back with Action::Revert (meaning that the line
+        needs to be reverted back to an earlier line wrap opportunity), call LineBuilder::revert and
+        close the line.
+
+        * layout/inlineformatting/InlineLineBreaker.cpp:
+        (WebCore::Layout::LineBreaker::tryWrappingInlineContent const): Return push when the current content can be wrapped.
+        (WebCore::Layout::ContinousContent::ContinousContent):
+        (WebCore::Layout::ContinousContent::lastWrapOpportunityIndex const): Fix the last position logic.
+        * layout/inlineformatting/InlineLineBuilder.cpp:
+        (WebCore::Layout::LineBuilder::revert):
+        (WebCore::Layout::LineBuilder::collectHangingContent):
+        * layout/inlineformatting/InlineLineBuilder.h:
+        * layout/inlineformatting/LineLayoutContext.cpp:
+        (WebCore::Layout::endsWithSoftWrapOpportunity):
+        (WebCore::Layout::LineLayoutContext::layoutLine):
+        (WebCore::Layout::LineLayoutContext::tryAddingFloatItems):
+        (WebCore::Layout::LineLayoutContext::tryAddingInlineItems):
+        (WebCore::Layout::LineLayoutContext::addFloatItems): Deleted.
+        (WebCore::Layout::LineLayoutContext::checkForLineWrapAndCommit): Deleted.
+        * layout/inlineformatting/LineLayoutContext.h:
+
 2019-12-30  youenn fablet  <youenn@apple.com>
 
         Ignore URL host for schemes that are not using host information

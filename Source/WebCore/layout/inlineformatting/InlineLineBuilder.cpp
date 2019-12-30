@@ -263,14 +263,19 @@ LineBuilder::RunList LineBuilder::close(IsLastLineWithInlineContent isLastLineWi
     return runList;
 }
 
-void LineBuilder::revert(const InlineItem& revertTo)
+size_t LineBuilder::revert(const InlineItem& revertTo)
 {
+    if (m_inlineItemRuns.last() == revertTo) {
+        // Since the LineBreaker does not know what has been pushed on the current line
+        // in some cases revert() is called with the last item on the line.
+        return { };
+    }
     // 1. Remove and shrink the trailing content.
     // 2. Rebuild collapsible trailing whitespace content.
     ASSERT(!m_inlineItemRuns.isEmpty());
-    ASSERT(m_inlineItemRuns.last() != revertTo);
     auto revertedWidth = InlineLayoutUnit { };
-    int64_t index = static_cast<int64_t>(m_inlineItemRuns.size() - 1);
+    auto originalSize = m_inlineItemRuns.size();
+    int64_t index = static_cast<int64_t>(originalSize - 1);
     while (index >= 0 && m_inlineItemRuns[index] != revertTo)
         revertedWidth += m_inlineItemRuns[index--].logicalWidth();
     m_lineBox.shrinkHorizontally(revertedWidth);
@@ -310,7 +315,8 @@ void LineBuilder::revert(const InlineItem& revertTo)
             m_collapsibleContent.append(index);
         }
     }
-    // Consider alternative solutions if the (edge case)revert gets overly complicated.  
+    // Consider alternative solutions if the (edge case)revert gets overly complicated.
+    return originalSize - m_inlineItemRuns.size();
 }
 
 void LineBuilder::alignContentVertically(RunList& runList)
@@ -482,7 +488,7 @@ void LineBuilder::removeTrailingCollapsibleContent()
 HangingContent LineBuilder::collectHangingContent(IsLastLineWithInlineContent isLastLineWithInlineContent)
 {
     auto hangingContent = HangingContent { };
-    // Can't setup hanging content with removable trailing whitspaces.
+    // Can't setup hanging content with removable trailing whitespace.
     ASSERT(m_collapsibleContent.isEmpty());
     if (isLastLineWithInlineContent == IsLastLineWithInlineContent::Yes)
         hangingContent.setIsConditional();

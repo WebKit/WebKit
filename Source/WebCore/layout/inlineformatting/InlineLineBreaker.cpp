@@ -138,7 +138,7 @@ LineBreaker::Result LineBreaker::tryWrappingInlineContent(const ContinousContent
             return { Result::Action::Keep, IsEndOfLine };
         // Now check if we can trim the line too.
         if (lineStatus.lineHasFullyCollapsibleTrailingRun && candidateContent.isTrailingContentFullyCollapsible()) {
-            // If this new content is fully collapsible, it shoud surely fit.
+            // If this new content is fully collapsible, it should surely fit.
             return { Result::Action::Keep, IsEndOfLine };
         }
     } else if (lineStatus.collapsibleWidth && candidateContent.hasNonContentRunsOnly()) {
@@ -148,7 +148,7 @@ LineBreaker::Result LineBreaker::tryWrappingInlineContent(const ContinousContent
             return { Result::Action::Keep };
     }
     if (candidateContent.isVisuallyEmptyWhitespaceContentOnly() && shouldKeepEndOfLineWhitespace(candidateContent)) {
-        // This overflowing content apparently falls into the remove/hang end-of-line-spaces catergory.
+        // This overflowing content apparently falls into the remove/hang end-of-line-spaces category.
         // see https://www.w3.org/TR/css-text-3/#white-space-property matrix
         return { Result::Action::Keep };
     }
@@ -175,14 +175,17 @@ LineBreaker::Result LineBreaker::tryWrappingInlineContent(const ContinousContent
             return { Result::Action::Split, IsEndOfLine::Yes, splitContent };
         }
     }
-    // If we are not allowed to break this content, we still need to decide whether keep it or push it to the next line.
+    // If we are not allowed to break this overflowing content, we still need to decide whether keep it or push it to the next line.
     if (lineStatus.lineIsEmpty) {
         ASSERT(!m_lastWrapOpportunity);
-        return { Result::Action::Keep, IsEndOfLine::Yes };
+        return { Result::Action::Keep, IsEndOfLine::No };
     }
+    // Now either wrap here or at an earlier position, or not wrap at all.
+    if (isContentWrappingAllowed(candidateContent))
+        return { Result::Action::Push, IsEndOfLine::Yes };
     if (m_lastWrapOpportunity)
         return { Result::Action::Revert, IsEndOfLine::Yes, { }, m_lastWrapOpportunity };
-    return { Result::Action::Keep, isContentWrappingAllowed(candidateContent) ? IsEndOfLine::Yes : IsEndOfLine::No };
+    return { Result::Action::Keep, IsEndOfLine::No };
 }
 
 bool LineBreaker::shouldWrapFloatBox(InlineLayoutUnit floatLogicalWidth, InlineLayoutUnit availableWidth, bool lineIsEmpty)
@@ -354,7 +357,7 @@ ContinousContent::ContinousContent(const LineBreaker::RunList& runs)
                 m_trailingCollapsibleContent.width += collapsibleWidth;
                 m_trailingCollapsibleContent.isFullyCollapsible = false;
             }
-            // End of whitspace content.
+            // End of whitespace content.
             break;
         }
     }
@@ -427,14 +430,13 @@ bool ContinousContent::hasNonContentRunsOnly() const
 
 Optional<size_t> ContinousContent::lastWrapOpportunityIndex() const
 {
-    // <span style="white-space: pre">no_wrap</span><span>yes_wrap</span><span style="white-space: pre">no_wrap</span>.
-    // [container start][no_wrap][container end][container start][yes_wrap][container end][container start][no_wrap][container end]
-    // Return #5 as the index where this content can wrap at last.
-    for (auto index = m_runs.size(); index--;) {
-        if (isWrappingAllowed(m_runs[index].inlineItem.style()))
-            return index;
-    }
-    return { };
+    // <span style="white-space: pre">no_wrap</span><span>yes wrap</span><span style="white-space: pre">no_wrap</span>.
+    // [container start][no_wrap][container end][container start][yes] <- continuous content
+    // [ ] <- continuous content
+    // [wrap][container end][container start][no_wrap][container end] <- continuous content
+    // Return #0 as the index where the second continuous content can wrap at.
+    auto lastItemIndex = m_runs.size() - 1;
+    return isWrappingAllowed(m_runs[lastItemIndex].inlineItem.style()) ? makeOptional(lastItemIndex) : WTF::nullopt;
 }
 
 void ContinousContent::TrailingCollapsibleContent::reset()
