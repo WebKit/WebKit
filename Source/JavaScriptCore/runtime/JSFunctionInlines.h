@@ -99,32 +99,23 @@ inline bool isHostFunction(JSValue value, TaggedNativeFunction nativeFunction)
 
 inline bool JSFunction::hasReifiedLength() const
 {
-    // FIXME: Use JSFunction::rareData() once WTF::loadLoadFence is removed.
-    // https://bugs.webkit.org/show_bug.cgi?id=205625
-    uintptr_t executableOrRareData = m_executableOrRareData;
-    if (executableOrRareData & rareDataTag)
-        return bitwise_cast<FunctionRareData*>(executableOrRareData & ~rareDataTag)->hasReifiedLength();
+    if (FunctionRareData* rareData = this->rareData())
+        return rareData->hasReifiedLength();
     return false;
 }
 
 inline bool JSFunction::hasReifiedName() const
 {
-    // FIXME: Use JSFunction::rareData() once WTF::loadLoadFence is removed.
-    // https://bugs.webkit.org/show_bug.cgi?id=205625
-    uintptr_t executableOrRareData = m_executableOrRareData;
-    if (executableOrRareData & rareDataTag)
-        return bitwise_cast<FunctionRareData*>(executableOrRareData & ~rareDataTag)->hasReifiedName();
+    if (FunctionRareData* rareData = this->rareData())
+        return rareData->hasReifiedName();
     return false;
 }
 
 inline bool JSFunction::areNameAndLengthOriginal(VM&)
 {
-    // FIXME: Use JSFunction::rareData() once WTF::loadLoadFence is removed.
-    // https://bugs.webkit.org/show_bug.cgi?id=205625
-    uintptr_t executableOrRareData = m_executableOrRareData;
-    if (!(executableOrRareData & rareDataTag))
+    FunctionRareData* rareData = this->rareData();
+    if (!rareData)
         return true;
-    FunctionRareData* rareData = bitwise_cast<FunctionRareData*>(executableOrRareData & ~rareDataTag);
     if (rareData->hasModifiedName())
         return false;
     if (rareData->hasModifiedLength())
@@ -154,13 +145,10 @@ inline bool JSFunction::canUseAllocationProfile()
 
 inline FunctionRareData* JSFunction::ensureRareDataAndAllocationProfile(JSGlobalObject* globalObject, unsigned inlineCapacity)
 {
-    // FIXME: Use JSFunction::rareData() once WTF::loadLoadFence is removed.
-    // https://bugs.webkit.org/show_bug.cgi?id=205625
     ASSERT(canUseAllocationProfile());
-    uintptr_t executableOrRareData = m_executableOrRareData;
-    if (!(executableOrRareData & rareDataTag))
+    FunctionRareData* rareData = this->rareData();
+    if (!rareData)
         return allocateAndInitializeRareData(globalObject, inlineCapacity);
-    FunctionRareData* rareData = bitwise_cast<FunctionRareData*>(executableOrRareData & ~rareDataTag);
     if (UNLIKELY(!rareData->isObjectAllocationProfileInitialized()))
         return initializeRareData(globalObject, inlineCapacity);
     return rareData;

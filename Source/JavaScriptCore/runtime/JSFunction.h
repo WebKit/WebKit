@@ -136,13 +136,9 @@ public:
 
     FunctionRareData* ensureRareDataAndAllocationProfile(JSGlobalObject*, unsigned inlineCapacity);
 
-    FunctionRareData* rareData()
+    FunctionRareData* rareData() const
     {
         uintptr_t executableOrRareData = m_executableOrRareData;
-        // The JS thread may be concurrently creating the rare data
-        // If we see it, we want to ensure it has been properly created
-        WTF::loadLoadFence();
-
         if (executableOrRareData & rareDataTag)
             return bitwise_cast<FunctionRareData*>(executableOrRareData & ~rareDataTag);
         return nullptr;
