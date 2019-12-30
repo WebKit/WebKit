@@ -32,4 +32,4 @@ namespace WebKit {
 enum MediaPlayerPrivateRemoteIdentifierType { };
 using MediaPlayerPrivateRemoteIdentifier = ObjectIdentifier<MediaPlayerPrivateRemoteIdentifierType>;
 
-} // namespace WebCore
+} // namespace WebKit

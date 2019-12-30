@@ -191,6 +191,6 @@ private:
 #endif
 };
 
-}
+} // namespace WebKit
 
 #endif

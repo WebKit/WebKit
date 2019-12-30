@@ -250,11 +250,11 @@ const Logger& RemoteMediaPlayerManagerProxy::logger() const
 
 WTFLogChannel& RemoteMediaPlayerManagerProxy::logChannel() const
 {
-    return WebKit2LogWebRTC;
+    return WebKit2LogMedia;
 }
 #endif
 
-}
+} // namespace WebKit
 
 #undef MESSAGE_CHECK_CONTEXTID
 

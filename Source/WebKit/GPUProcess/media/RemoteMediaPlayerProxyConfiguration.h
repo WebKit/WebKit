@@ -135,6 +135,6 @@ struct RemoteMediaPlayerProxyConfiguration {
     }
 };
 
-}
+} // namespace WebKit
 
 #endif

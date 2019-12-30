@@ -47,7 +47,6 @@ extern WTFLogChannel LogMedia;
 #endif
 
 namespace WebKit {
-using namespace PAL;
 using namespace WebCore;
 
 #ifdef ALWAYS_LOG_UNIMPLEMENTED_METHODS
@@ -806,6 +805,6 @@ WTFLogChannel& MediaPlayerPrivateRemote::logChannel() const
 }
 #endif
 
-} // namespace WebCore
+} // namespace WebKit
 
 #endif

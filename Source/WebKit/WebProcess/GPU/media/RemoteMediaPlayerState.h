@@ -109,6 +109,6 @@ struct RemoteMediaPlayerState {
 
 };
 
-}
+} // namespace WebKit
 
 #endif

@@ -288,6 +288,6 @@ IPC::Connection& RemoteMediaPlayerManager::gpuProcessConnection() const
     return WebProcess::singleton().ensureGPUProcessConnection().connection();
 }
 
-}
+} // namespace WebKit
 
 #endif

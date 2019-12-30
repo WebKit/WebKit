@@ -24,7 +24,6 @@
 #if ENABLE(VIDEO)
 
 messages -> RemoteMediaPlayerManager NotRefCounted {
-
     NetworkStateChanged(WebKit::MediaPlayerPrivateRemoteIdentifier id, struct WebKit::RemoteMediaPlayerState state)
     ReadyStateChanged(WebKit::MediaPlayerPrivateRemoteIdentifier id, struct WebKit::RemoteMediaPlayerState state)
     VolumeChanged(WebKit::MediaPlayerPrivateRemoteIdentifier id, double volume)

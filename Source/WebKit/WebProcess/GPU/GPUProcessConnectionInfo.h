@@ -70,6 +70,6 @@ struct GPUProcessConnectionInfo {
     }
 };
 
-};
+} // namespace WebKit
 
 #endif // ENABLE(GPU_PROCESS)

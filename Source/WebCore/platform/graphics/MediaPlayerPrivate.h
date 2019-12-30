@@ -59,7 +59,7 @@ public:
     }
     
     virtual void prepareToPlay() { }
-    virtual PlatformLayer* platformLayer() const { return 0; }
+    virtual PlatformLayer* platformLayer() const { return nullptr; }
 
 #if PLATFORM(IOS_FAMILY) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
     virtual void setVideoFullscreenLayer(PlatformLayer*, WTF::Function<void()>&& completionHandler) { completionHandler(); }
@@ -71,7 +71,7 @@ public:
 #endif
 
 #if PLATFORM(IOS_FAMILY)
-    virtual NSArray *timedMetadata() const { return 0; }
+    virtual NSArray *timedMetadata() const { return nil; }
     virtual String accessLog() const { return emptyString(); }
     virtual String errorLog() const { return emptyString(); }
 #endif

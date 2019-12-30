@@ -95,6 +95,6 @@ struct RemoteMediaPlayerConfiguration {
     }
 };
 
-}
+} // namespace WebKit
 
 #endif
