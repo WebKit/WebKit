@@ -150,6 +150,7 @@ private:
     InlineLayoutUnit runContentHeight(const Run&) const;
 
     bool isTextAlignJustify() const { return m_horizontalAlignment == TextAlignMode::Justify; };
+    bool isTextAlignRight() const { return m_horizontalAlignment == TextAlignMode::Right || m_horizontalAlignment == TextAlignMode::WebKitRight || m_horizontalAlignment == TextAlignMode::End; }
     void justifyRuns(RunList&) const;
 
     bool isVisuallyNonEmpty(const InlineItemRun&) const;

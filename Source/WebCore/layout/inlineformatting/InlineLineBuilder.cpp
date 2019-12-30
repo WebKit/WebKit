@@ -460,7 +460,7 @@ void LineBuilder::removeTrailingCollapsibleContent()
 
     // Complex line layout quirk: keep the trailing whitespace around when it is followed by a line break, unless the content overflows the line.
     if (RuntimeEnabledFeatures::sharedFeatures().layoutFormattingContextIntegrationEnabled()) {
-        if (m_inlineItemRuns.last().isLineBreak() && availableWidth() >= 0) {
+        if (m_inlineItemRuns.last().isLineBreak() && availableWidth() >= 0 && !isTextAlignRight()) {
             m_collapsibleContent.reset();
             return;
         }

@@ -1,3 +1,18 @@
+2019-12-30  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][Integration] Do not apply trailing whitespace quirk when content is right aligned.
+        https://bugs.webkit.org/show_bug.cgi?id=205634
+        <rdar://problem/58234523>
+
+        Reviewed by Antti Koivisto.
+
+        Apparently we don't always need this quirk. See SimpleLineLayout::createLineRuns.
+
+        * layout/inlineformatting/InlineLineBuilder.cpp:
+        (WebCore::Layout::LineBuilder::removeTrailingCollapsibleContent):
+        * layout/inlineformatting/InlineLineBuilder.h:
+        (WebCore::Layout::LineBuilder::isTextAlignRight const):
+
 2019-12-30  Brady Eidson  <beidson@apple.com>
 
         Add WKWebView SPI to evaluate a function with arguments
