@@ -54,45 +54,30 @@ AVStreamDataParserMIMETypeCache& AVStreamDataParserMIMETypeCache::singleton()
     return cache.get();
 }
 
-const HashSet<String, ASCIICaseInsensitiveHash>& AVStreamDataParserMIMETypeCache::types()
+bool AVStreamDataParserMIMETypeCache::canDecodeTypeInternal(const ContentType& type)
 {
-    if (!m_cache)
-        loadMIMETypes();
-
-    return *m_cache;
-}
-
-bool AVStreamDataParserMIMETypeCache::supportsContentType(const ContentType& contentType)
-{
-    if (contentType.isEmpty())
-        return false;
-
-    return types().contains(contentType.containerType());
-}
-
-bool AVStreamDataParserMIMETypeCache::canDecodeType(const String& mimeType)
-{
-    if (mimeType.isEmpty())
-        return false;
-
-    ContentType type { mimeType };
-
-    if (!isAvailable() || !types().contains(type.containerType()))
-        return false;
-
 #if ENABLE(VIDEO) && USE(AVFOUNDATION)
+    ASSERT(isAvailable());
+
+    String outputCodecs = type.parameter(ContentType::codecsParameter());
+    ASSERT(!outputCodecs.isEmpty());
+    if ([PAL::getAVStreamDataParserClass() respondsToSelector:@selector(outputMIMECodecParameterForInputMIMECodecParameter:)])
+        outputCodecs = [PAL::getAVStreamDataParserClass() outputMIMECodecParameterForInputMIMECodecParameter:outputCodecs];
+
+    String extendedType = makeString(type.containerType(), "; codecs=\"", outputCodecs, "\"");
     if ([PAL::getAVStreamDataParserClass() respondsToSelector:@selector(canParseExtendedMIMEType:)])
-        return [PAL::getAVStreamDataParserClass() canParseExtendedMIMEType:mimeType];
+        return [PAL::getAVStreamDataParserClass() canParseExtendedMIMEType:extendedType];
 
     // FIXME(rdar://50502771) AVStreamDataParser does not have an -canParseExtendedMIMEType: method on this system,
     //  so just replace the container type with a valid one from AVAssetMIMETypeCache and ask that cache if it
     //  can decode this type.
     auto& assetCache = AVAssetMIMETypeCache::singleton();
-    if (!assetCache.isAvailable() || assetCache.types().isEmpty())
+    if (!assetCache.isAvailable() || assetCache.supportedTypes().isEmpty())
         return false;
-    String replacementType { mimeType };
-    replacementType.replace(type.containerType(), *assetCache.types().begin());
-    return assetCache.canDecodeType(replacementType);
+
+    String replacementType { type.raw() };
+    replacementType.replace(type.containerType(), *assetCache.supportedTypes().begin());
+    return assetCache.canDecodeType(replacementType) == MediaPlayerEnums::SupportsType::IsSupported;
 #endif
 
     return false;
@@ -117,19 +102,14 @@ bool AVStreamDataParserMIMETypeCache::isAvailable() const
 #endif
 }
 
-void AVStreamDataParserMIMETypeCache::loadMIMETypes()
+void AVStreamDataParserMIMETypeCache::initializeCache(HashSet<String, ASCIICaseInsensitiveHash>& cache)
 {
-    m_cache = HashSet<String, ASCIICaseInsensitiveHash>();
-
 #if ENABLE(VIDEO) && USE(AVFOUNDATION)
-    static std::once_flag onceFlag;
-    std::call_once(onceFlag, [this] {
-        if (!isAvailable())
-            return;
+    if (!isAvailable())
+        return;
 
-        for (NSString* type in [PAL::getAVStreamDataParserClass() audiovisualMIMETypes])
-            m_cache->add(type);
-    });
+    for (NSString* type in [PAL::getAVStreamDataParserClass() audiovisualMIMETypes])
+        cache.add(type);
 #endif
 }
 

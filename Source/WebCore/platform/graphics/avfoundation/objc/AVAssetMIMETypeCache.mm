@@ -45,47 +45,6 @@ AVAssetMIMETypeCache& AVAssetMIMETypeCache::singleton()
     return cache.get();
 }
 
-void AVAssetMIMETypeCache::setSupportedTypes(const Vector<String>& types)
-{
-    if (m_cache)
-        return;
-
-    m_cache = HashSet<String, ASCIICaseInsensitiveHash>();
-    for (auto& type : types)
-        m_cache->add(type);
-}
-
-const HashSet<String, ASCIICaseInsensitiveHash>& AVAssetMIMETypeCache::types()
-{
-    if (!m_cache)
-        loadMIMETypes();
-
-    return *m_cache;
-}
-
-bool AVAssetMIMETypeCache::supportsContentType(const ContentType& contentType)
-{
-    if (contentType.isEmpty())
-        return false;
-
-    return types().contains(contentType.containerType());
-}
-
-bool AVAssetMIMETypeCache::canDecodeType(const String& mimeType)
-{
-    if (mimeType.isEmpty())
-        return false;
-
-    if (!isAvailable() || !types().contains(ContentType { mimeType }.containerType()))
-        return false;
-
-#if ENABLE(VIDEO) && USE(AVFOUNDATION)
-    return [PAL::getAVURLAssetClass() isPlayableExtendedMIMEType:mimeType];
-#endif
-
-    return false;
-}
-
 bool AVAssetMIMETypeCache::isAvailable() const
 {
 #if ENABLE(VIDEO) && USE(AVFOUNDATION)
@@ -101,22 +60,93 @@ bool AVAssetMIMETypeCache::isAvailable() const
 #endif
 }
 
-void AVAssetMIMETypeCache::loadMIMETypes()
+bool AVAssetMIMETypeCache::canDecodeTypeInternal(const ContentType& type)
 {
-    m_cache = HashSet<String, ASCIICaseInsensitiveHash>();
-
 #if ENABLE(VIDEO) && USE(AVFOUNDATION)
-    static std::once_flag onceFlag;
-    std::call_once(onceFlag, [this] {
-        if (!PAL::isAVFoundationFrameworkAvailable())
-            return;
+    ASSERT(isAvailable());
+    return [PAL::getAVURLAssetClass() isPlayableExtendedMIMEType:type.raw()];
+#endif
 
-        for (NSString* type in [PAL::getAVURLAssetClass() audiovisualMIMETypes])
-            m_cache->add(type);
+    return false;
+}
 
-        if (m_cacheTypeCallback)
-            m_cacheTypeCallback(copyToVector(*m_cache));
+bool AVAssetMIMETypeCache::isUnsupportedContainerType(const String& type)
+{
+    if (type.isEmpty())
+        return false;
+
+    String lowerCaseType = type.convertToASCIILowercase();
+
+    // AVFoundation will return non-video MIME types which it claims to support, but which we
+    // do not support in the <video> element. Reject all non video/, audio/, and application/ types.
+    if (!lowerCaseType.startsWith("video/") && !lowerCaseType.startsWith("audio/") && !lowerCaseType.startsWith("application/"))
+        return true;
+
+    // Reject types we know AVFoundation does not support that sites commonly ask about.
+    if (lowerCaseType == "video/webm" || lowerCaseType == "audio/webm" || lowerCaseType == "video/x-webm")
+        return true;
+
+    if (lowerCaseType == "video/x-flv")
+        return true;
+
+    if (lowerCaseType == "audio/ogg" || lowerCaseType == "video/ogg" || lowerCaseType == "application/ogg")
+        return true;
+
+    if (lowerCaseType == "video/h264")
+        return true;
+
+    return false;
+}
+
+const HashSet<String, ASCIICaseInsensitiveHash>& AVAssetMIMETypeCache::staticContainerTypeList()
+{
+    static const auto cache = makeNeverDestroyed(HashSet<String, ASCIICaseInsensitiveHash> {
+        "application/vnd.apple.mpegurl",
+        "application/x-mpegurl",
+        "audio/3gpp",
+        "audio/aac",
+        "audio/aacp",
+        "audio/aiff",
+        "audio/basic",
+        "audio/mp3",
+        "audio/mp4",
+        "audio/mpeg",
+        "audio/mpeg3",
+        "audio/mpegurl",
+        "audio/mpg",
+        "audio/vnd.wave",
+        "audio/wav",
+        "audio/wave",
+        "audio/x-aac",
+        "audio/x-aiff",
+        "audio/x-m4a",
+        "audio/x-mpegurl",
+        "audio/x-wav",
+        "video/3gpp",
+        "video/3gpp2",
+        "video/mp4",
+        "video/mpeg",
+        "video/mpeg2",
+        "video/mpg",
+        "video/quicktime",
+        "video/x-m4v",
+        "video/x-mpeg",
+        "video/x-mpg",
     });
+    return cache;
+}
+
+void AVAssetMIMETypeCache::initializeCache(HashSet<String, ASCIICaseInsensitiveHash>& cache)
+{
+#if ENABLE(VIDEO) && USE(AVFOUNDATION)
+    if (!isAvailable())
+        return;
+
+    for (NSString* type in [PAL::getAVURLAssetClass() audiovisualMIMETypes])
+        cache.add(type);
+
+    if (m_cacheTypeCallback)
+        m_cacheTypeCallback(copyToVector(cache));
 #endif
 }
 

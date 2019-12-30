@@ -630,7 +630,7 @@ TEST(WebKit, MediaCache)
 
         while (!done) {
             auto bytes = TCPServer::read(socket);
-            if (done)
+            if (done || bytes.isEmpty())
                 break;
             StringView request(static_cast<const LChar*>(bytes.data()), bytes.size());
             String rangeBytes = "Range: bytes="_s;

@@ -91,6 +91,7 @@ struct MediaEngineSupportParameters {
         encoder << type;
         encoder << url;
         encoder << isMediaSource;
+        encoder << isMediaStream;
         encoder << contentTypesRequiringHardwareSupport;
     }
 

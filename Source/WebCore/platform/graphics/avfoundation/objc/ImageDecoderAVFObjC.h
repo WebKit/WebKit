@@ -57,7 +57,7 @@ public:
     virtual ~ImageDecoderAVFObjC();
 
     static bool supportsMediaType(MediaType);
-    static bool supportsContentType(const ContentType&);
+    static bool supportsContainerType(const String&);
 
     size_t bytesDecodedToDetermineProperties() const override { return 0; }
     static bool canDecodeType(const String& mimeType);

@@ -27,6 +27,7 @@
 
 #if PLATFORM(COCOA)
 
+#include "MIMETypeCache.h"
 #include <wtf/Forward.h>
 #include <wtf/HashSet.h>
 #include <wtf/text/StringHash.h>
@@ -35,27 +36,24 @@ namespace WebCore {
 
 class ContentType;
 
-class AVAssetMIMETypeCache {
+class AVAssetMIMETypeCache final : public MIMETypeCache {
 public:
     WEBCORE_EXPORT static AVAssetMIMETypeCache& singleton();
 
-    bool supportsContentType(const ContentType&);
-    bool canDecodeType(const String&);
-
-    const HashSet<String, ASCIICaseInsensitiveHash>& types();
     bool isEmpty();
     bool isAvailable() const;
 
     using CacheMIMETypesCallback = std::function<void(const Vector<String>&)>;
     void setCacheMIMETypesCallback(CacheMIMETypesCallback&& callback) { m_cacheTypeCallback = WTFMove(callback); }
 
-    WEBCORE_EXPORT void setSupportedTypes(const Vector<String>&);
-
 private:
     friend NeverDestroyed<AVAssetMIMETypeCache>;
     AVAssetMIMETypeCache() = default;
 
-    void loadMIMETypes();
+    const HashSet<String, ASCIICaseInsensitiveHash>& staticContainerTypeList() final;
+    bool isUnsupportedContainerType(const String&) final;
+    bool canDecodeTypeInternal(const ContentType&) final;
+    void initializeCache(HashSet<String, ASCIICaseInsensitiveHash>&) final;
 
     Optional<HashSet<String, ASCIICaseInsensitiveHash>> m_cache;
     CacheMIMETypesCallback m_cacheTypeCallback;

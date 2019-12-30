@@ -431,7 +431,7 @@ bool MIMETypeRegistry::isSupportedImageVideoOrSVGMIMEType(const String& mimeType
         return true;
 
 #if HAVE(AVASSETREADER)
-    if (ImageDecoderAVFObjC::supportsContentType(ContentType(mimeType)))
+    if (ImageDecoderAVFObjC::supportsContainerType(mimeType))
         return true;
 #endif
 

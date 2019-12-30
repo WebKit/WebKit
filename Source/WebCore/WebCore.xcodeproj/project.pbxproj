@@ -205,6 +205,7 @@
 		07B5A2DC1464320A00A81ECE /* JSTextTrackList.h in Headers */ = {isa = PBXBuildFile; fileRef = 07B5A2DA1464320A00A81ECE /* JSTextTrackList.h */; };
 		07B7116D1D899E63009F0FFB /* CaptureDevice.h in Headers */ = {isa = PBXBuildFile; fileRef = 07B7116A1D899E63009F0FFB /* CaptureDevice.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		07B7116F1D899E63009F0FFB /* CaptureDeviceManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 07B7116C1D899E63009F0FFB /* CaptureDeviceManager.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		07B93FFC23B94EC70036F8EA /* MIMETypeCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 07B93FF923B92AAA0036F8EA /* MIMETypeCache.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		07C046C41E42508B007201E7 /* CAAudioStreamDescription.h in Headers */ = {isa = PBXBuildFile; fileRef = 073B87581E40DCFD0071C0EC /* CAAudioStreamDescription.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		07C046CB1E426413007201E7 /* AudioStreamDescription.h in Headers */ = {isa = PBXBuildFile; fileRef = 073B87561E40DCE50071C0EC /* AudioStreamDescription.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		07C1C0E21BFB600100BD2256 /* MediaTrackSupportedConstraints.h in Headers */ = {isa = PBXBuildFile; fileRef = 07C1C0E01BFB600100BD2256 /* MediaTrackSupportedConstraints.h */; };
@@ -5547,6 +5548,8 @@
 		07B7116A1D899E63009F0FFB /* CaptureDevice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CaptureDevice.h; sourceTree = "<group>"; };
 		07B7116B1D899E63009F0FFB /* CaptureDeviceManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CaptureDeviceManager.cpp; sourceTree = "<group>"; };
 		07B7116C1D899E63009F0FFB /* CaptureDeviceManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CaptureDeviceManager.h; sourceTree = "<group>"; };
+		07B93FF923B92AAA0036F8EA /* MIMETypeCache.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MIMETypeCache.h; sourceTree = "<group>"; };
+		07B93FFB23B92AAB0036F8EA /* MIMETypeCache.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = MIMETypeCache.cpp; sourceTree = "<group>"; };
 		07C046C61E42512F007201E7 /* AudioTrackPrivateMediaStreamCocoa.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AudioTrackPrivateMediaStreamCocoa.h; sourceTree = "<group>"; };
 		07C1C0E01BFB600100BD2256 /* MediaTrackSupportedConstraints.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaTrackSupportedConstraints.h; sourceTree = "<group>"; };
 		07C1C0E11BFB600100BD2256 /* MediaTrackSupportedConstraints.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = MediaTrackSupportedConstraints.idl; sourceTree = "<group>"; };
@@ -25112,6 +25115,8 @@
 				079F5E4B0F3BEBEA005E0782 /* MediaPlayerPrivate.h */,
 				CD641EB11818F5ED00EE4C41 /* MediaSourcePrivate.h */,
 				CDDC1E7918A952F30027A9D4 /* MediaSourcePrivateClient.h */,
+				07B93FFB23B92AAB0036F8EA /* MIMETypeCache.cpp */,
+				07B93FF923B92AAA0036F8EA /* MIMETypeCache.h */,
 				314BE3A41B3103FB00141982 /* NamedImageGeneratedImage.cpp */,
 				314BE3A51B3103FB00141982 /* NamedImageGeneratedImage.h */,
 				6B3480920EEF50D400AC1B41 /* NativeImage.h */,
@@ -31506,6 +31511,7 @@
 				51F645E01FF4594E00B54DED /* MessagePortIdentifier.h in Headers */,
 				51A748E32005D0E80075BA68 /* MessageWithMessagePorts.h in Headers */,
 				53B895AF19DC7ED9009CAA93 /* Microtasks.h in Headers */,
+				07B93FFC23B94EC70036F8EA /* MIMETypeCache.h in Headers */,
 				BC772C4F0C4EB3040083285F /* MIMETypeRegistry.h in Headers */,
 				52F10866162B6DA8009AC81E /* MixedContentChecker.h in Headers */,
 				412DEF1D23A9186600D840F6 /* MockAudioSharedUnit.h in Headers */,

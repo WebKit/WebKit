@@ -349,14 +349,14 @@ bool ImageDecoderAVFObjC::supportsMediaType(MediaType type)
     return type == MediaType::Video && AVAssetMIMETypeCache::singleton().isAvailable();
 }
 
-bool ImageDecoderAVFObjC::supportsContentType(const ContentType& type)
+bool ImageDecoderAVFObjC::supportsContainerType(const String& type)
 {
-    return AVAssetMIMETypeCache::singleton().supportsContentType(type);
+    return AVAssetMIMETypeCache::singleton().supportsContainerType(type);
 }
 
 bool ImageDecoderAVFObjC::canDecodeType(const String& mimeType)
 {
-    return AVAssetMIMETypeCache::singleton().canDecodeType(mimeType);
+    return AVAssetMIMETypeCache::singleton().canDecodeType(mimeType) != MediaPlayerEnums::SupportsType::IsNotSupported;
 }
 
 AVAssetTrack *ImageDecoderAVFObjC::firstEnabledTrack()

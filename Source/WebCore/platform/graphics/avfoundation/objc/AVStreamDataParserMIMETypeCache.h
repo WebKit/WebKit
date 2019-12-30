@@ -27,6 +27,7 @@
 
 #if ENABLE(MEDIA_SOURCE) && USE(AVFOUNDATION)
 
+#include "MIMETypeCache.h"
 #include <wtf/Forward.h>
 #include <wtf/HashSet.h>
 #include <wtf/text/StringHash.h>
@@ -35,24 +36,18 @@ namespace WebCore {
 
 class ContentType;
 
-class AVStreamDataParserMIMETypeCache {
+class AVStreamDataParserMIMETypeCache final : public MIMETypeCache {
 public:
     WEBCORE_EXPORT static AVStreamDataParserMIMETypeCache& singleton();
 
-    bool supportsContentType(const ContentType&);
-    bool canDecodeType(const String&);
-
-    const HashSet<String, ASCIICaseInsensitiveHash>& types();
-    bool isEmpty();
-    bool isAvailable() const;
+    bool isAvailable() const final;
 
 private:
     friend NeverDestroyed<AVStreamDataParserMIMETypeCache>;
     AVStreamDataParserMIMETypeCache() = default;
 
-    void loadMIMETypes();
-
-    Optional<HashSet<String, ASCIICaseInsensitiveHash>> m_cache;
+    bool canDecodeTypeInternal(const ContentType&) final;
+    void initializeCache(HashSet<String, ASCIICaseInsensitiveHash>&) final;
 };
 
 }
