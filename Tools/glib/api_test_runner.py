@@ -19,6 +19,7 @@
 
 import os
 import errno
+import json
 import sys
 import re
 from signal import SIGKILL, SIGSEGV
@@ -322,6 +323,23 @@ class TestRunner(object):
         report(timed_out_tests, "timeouts", self._test_programs_base_dir())
         report(passed_tests, "passes", self._test_programs_base_dir())
 
+        def generate_test_list_for_json_output(base_dir, tests):
+            test_list = []
+            for test in tests:
+                base_name = test.replace(base_dir, '', 1)
+                for test_case in tests[test]:
+                    test_name = "%s:%s" % (base_name, test_case)
+                    # FIXME: get output from failed tests
+                    test_list.append({"name": test_name, "output": None})
+            return test_list
+
+        if self._options.json_output:
+            result_dictionary = {}
+            result_dictionary['Failed'] = generate_test_list_for_json_output(self._test_programs_base_dir(), failed_tests)
+            result_dictionary['Crashed'] = generate_test_list_for_json_output(self._test_programs_base_dir(), crashed_tests)
+            result_dictionary['Timedout'] = generate_test_list_for_json_output(self._test_programs_base_dir(), timed_out_tests)
+            self._port.host.filesystem.write_text_file(self._options.json_output, json.dumps(result_dictionary, indent=4))
+
         return len(failed_tests) + len(timed_out_tests)
 
 
@@ -339,3 +357,5 @@ def add_options(option_parser):
     option_parser.add_option('-t', '--timeout',
                              action='store', type='int', dest='timeout', default=5,
                              help='Time in seconds until a test times out')
+    option_parser.add_option('--json-output', action='store', default=None,
+                             help='Save test results as JSON to file')
