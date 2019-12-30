@@ -1,3 +1,20 @@
+2019-12-30  youenn fablet  <youenn@apple.com>
+
+        Do not build yasm for iOS and iOS simulator
+        https://bugs.webkit.org/show_bug.cgi?id=205556
+        <rdar://problem/58159497>
+
+        Reviewed by Eric Carlson.
+
+        We want to stop compiling yasm for iOS/iOS simulator but we do not have a good way to do so right now.
+        Instead, compile a dummy main_noop.c for iOS/iOS simulator and build the executable with it.
+        This executable wil anyway not be used on these platforms.
+
+        * Configurations/yasm.xcconfig:
+        * Source/third_party/yasm/main_noop.c: Added.
+        (main):
+        * libwebrtc.xcodeproj/project.pbxproj:
+
 2019-12-23  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r253884.

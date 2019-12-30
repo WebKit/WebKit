@@ -1267,6 +1267,7 @@
 		417953F8216984BE0028266B /* RTCCodecSpecificInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 417953F4216984BD0028266B /* RTCCodecSpecificInfo.h */; };
 		417953F9216984BE0028266B /* RTCI420Buffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 417953F5216984BD0028266B /* RTCI420Buffer.h */; };
 		417953FA216984BE0028266B /* RTCEncodedImage.m in Sources */ = {isa = PBXBuildFile; fileRef = 417953F6216984BD0028266B /* RTCEncodedImage.m */; };
+		417C037323B210C400DE5D8B /* main_noop.c in Sources */ = {isa = PBXBuildFile; fileRef = 417C037223B210C400DE5D8B /* main_noop.c */; };
 		41889D75216BB7B9004614DD /* RTCRtpEncodingParameters+Private.h in Headers */ = {isa = PBXBuildFile; fileRef = 41889D74216BB7B6004614DD /* RTCRtpEncodingParameters+Private.h */; };
 		41889D76216BC4EC004614DD /* RTCRtpEncodingParameters.h in Headers */ = {isa = PBXBuildFile; fileRef = 414FB869216BB767001F5492 /* RTCRtpEncodingParameters.h */; };
 		41889D77216BC4EC004614DD /* RTCRtpEncodingParameters.mm in Sources */ = {isa = PBXBuildFile; fileRef = 414FB86A216BB768001F5492 /* RTCRtpEncodingParameters.mm */; };
@@ -3544,7 +3545,7 @@
 			outputFiles = (
 				"${OBJECT_FILE_DIR_normal}/${CURRENT_ARCH}/${INPUT_FILE_BASE}.o",
 			);
-			script = "# This DYLD_ROOT_PATH hack is there to allow the yasm binary to run on macOS if it was built for another platform (e.g. iphonesimulator) - rdar://52020841 and rdar://50479465\nDYLD_ROOT_PATH=/ ${BUILT_PRODUCTS_DIR}/yasm -fmacho64 -I ${SRCROOT}/Source/third_party/libvpx/source/config -I ${SRCROOT}/Source/third_party/libvpx/source/config/mac/x64 -I ${SRCROOT}/Source/third_party/libvpx/source/libvpx -o ${OBJECT_FILE_DIR_normal}/${CURRENT_ARCH}/${INPUT_FILE_BASE}.o ${INPUT_FILE_DIR}/${INPUT_FILE_BASE}.asm\n";
+			script = "${BUILT_PRODUCTS_DIR}/yasm -fmacho64 -I ${SRCROOT}/Source/third_party/libvpx/source/config -I ${SRCROOT}/Source/third_party/libvpx/source/config/mac/x64 -I ${SRCROOT}/Source/third_party/libvpx/source/libvpx -o ${OBJECT_FILE_DIR_normal}/${CURRENT_ARCH}/${INPUT_FILE_BASE}.o ${INPUT_FILE_DIR}/${INPUT_FILE_BASE}.asm\n";
 		};
 /* End PBXBuildRule section */
 
@@ -5168,6 +5169,7 @@
 		41795402216985200028266B /* RTCVideoDecoderVP8.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = RTCVideoDecoderVP8.mm; sourceTree = "<group>"; };
 		41795403216985200028266B /* RTCWrappedNativeVideoDecoder.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = RTCWrappedNativeVideoDecoder.mm; sourceTree = "<group>"; };
 		41795404216985200028266B /* RTCWrappedNativeVideoEncoder.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RTCWrappedNativeVideoEncoder.h; sourceTree = "<group>"; };
+		417C037223B210C400DE5D8B /* main_noop.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = main_noop.c; sourceTree = "<group>"; };
 		41889D74216BB7B6004614DD /* RTCRtpEncodingParameters+Private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "RTCRtpEncodingParameters+Private.h"; sourceTree = "<group>"; };
 		4191009C2152E18D00A6F17B /* vpx_config.asm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.asm.asm; path = vpx_config.asm; sourceTree = "<group>"; };
 		4191009D2152E18D00A6F17B /* vpx_config.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = vpx_config.c; sourceTree = "<group>"; };
@@ -10427,6 +10429,7 @@
 				41FE8667215C53CE00B62C07 /* gas-token.c */,
 				41BE71DF215C470B00A7B196 /* libyasm-stdint.h */,
 				41BE71E0215C470B00A7B196 /* license.c */,
+				417C037223B210C400DE5D8B /* main_noop.c */,
 				419EA1F8215C4A9E0082BFD2 /* module.c */,
 				41FE865C215C538900B62C07 /* nasm-token.c */,
 				41FE866C215C542100B62C07 /* x86cpu.c */,
@@ -16237,6 +16240,7 @@
 				41BE71CA215C464800A7B196 /* hamt.c in Sources */,
 				41BE71CB215C464800A7B196 /* insn.c in Sources */,
 				41BE717B215C459000A7B196 /* intnum.c in Sources */,
+				417C037323B210C400DE5D8B /* main_noop.c in Sources */,
 				41BE717C215C459000A7B196 /* inttree.c in Sources */,
 				41BE71CC215C464800A7B196 /* linemap.c in Sources */,
 				419EA1F3215C48C70082BFD2 /* macho-objfmt.c in Sources */,
