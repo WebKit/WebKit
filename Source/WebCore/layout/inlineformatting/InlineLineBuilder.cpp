@@ -270,7 +270,7 @@ void LineBuilder::revert(const InlineItem& revertTo)
     ASSERT(!m_inlineItemRuns.isEmpty());
     ASSERT(m_inlineItemRuns.last() != revertTo);
     auto revertedWidth = InlineLayoutUnit { };
-    auto index = m_inlineItemRuns.size() - 1;
+    int64_t index = static_cast<int64_t>(m_inlineItemRuns.size() - 1);
     while (index >= 0 && m_inlineItemRuns[index] != revertTo)
         revertedWidth += m_inlineItemRuns[index--].logicalWidth();
     m_lineBox.shrinkHorizontally(revertedWidth);
