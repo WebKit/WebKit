@@ -28,6 +28,7 @@
 
 #if ENABLE(MEDIA_STREAM)
 
+#include "AudioSession.h"
 #include "CoreAudioCaptureSource.h"
 #include "Logging.h"
 #include "PlatformMediaSessionManager.h"
