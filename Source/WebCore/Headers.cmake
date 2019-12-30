@@ -240,6 +240,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     bindings/js/JSValueInWrappedObject.h
     bindings/js/JSWindowProxy.h
     bindings/js/ReadableStreamDefaultController.h
+    bindings/js/RunJavaScriptParameters.h
     bindings/js/ScriptCachedFrameData.h
     bindings/js/ScriptController.h
     bindings/js/ScriptState.h

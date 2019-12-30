@@ -61,6 +61,7 @@ public:
     
 #if PLATFORM(COCOA) && defined(__OBJC__)
     static id deserialize(WebCore::SerializedScriptValue&, JSValueRef* exception);
+    static Optional<Vector<uint8_t>> wireBytesFromNSObject(id);
 #endif
 
     IPC::DataReference dataReference() const { return m_serializedScriptValue->data(); }

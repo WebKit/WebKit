@@ -1,3 +1,49 @@
+2019-12-30  Brady Eidson  <beidson@apple.com>
+
+        Add WKWebView SPI to evaluate a function with arguments
+        https://bugs.webkit.org/show_bug.cgi?id=205239
+
+        Reviewed by Alex Christensen.
+
+        * Shared/API/APISerializedScriptValue.h:
+
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageRunJavaScriptInMainFrame):
+
+        * UIProcess/API/Cocoa/APISerializedScriptValueCocoa.mm:
+        (API::sharedContext):
+        (API::SerializedScriptValue::deserialize):
+        (API::SerializedScriptValue::wireBytesFromNSObject):
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView evaluateJavaScript:completionHandler:]):
+        (validateArgument):
+        (-[WKWebView _evaluateJavaScript:asAsyncFunction:withArguments:forceUserGesture:completionHandler:]):
+        (-[WKWebView _callAsyncFunction:withArguments:completionHandler:]):
+        (-[WKWebView _evaluateJavaScriptWithoutUserGesture:completionHandler:]):
+        (-[WKWebView _evaluateJavaScript:forceUserGesture:completionHandler:]): Deleted.
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+
+        * UIProcess/API/glib/WebKitWebView.cpp:
+        (webkit_web_view_run_javascript):
+        (webkit_web_view_run_javascript_in_world):
+        (resourcesStreamReadCallback):
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::runJavaScriptInMainFrame):
+        (WebKit::WebPageProxy::runJavaScriptInMainFrameScriptWorld):
+        * UIProcess/WebPageProxy.h:
+
+        * UIProcess/socket/RemoteInspectorProtocolHandler.cpp:
+        (WebKit::RemoteInspectorProtocolHandler::runScript):
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::runJavaScript):
+        (WebKit::WebPage::runJavaScriptInMainFrameScriptWorld):
+        (WebKit::WebPage::runJavaScriptInFrame):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
 2019-12-29  Peng Liu  <peng.liu6@apple.com>
 
         Tweak the format and comment in the code to support media in GPU process

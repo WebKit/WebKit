@@ -1,3 +1,36 @@
+2019-12-30  Brady Eidson  <beidson@apple.com>
+
+        Add WKWebView SPI to evaluate a function with arguments
+        https://bugs.webkit.org/show_bug.cgi?id=205239
+
+        Reviewed by Alex Christensen.
+
+        Covered by new API tests.
+
+        * Headers.cmake:
+        * WebCore.xcodeproj/project.pbxproj:
+        
+        * bindings/js/ExceptionDetails.h:
+        
+        * bindings/js/RunJavaScriptParameters.h: Added.
+        (WebCore::RunJavaScriptParameters::RunJavaScriptParameters):
+        (WebCore::RunJavaScriptParameters::encode const):
+        (WebCore::RunJavaScriptParameters::decode):
+        
+        * bindings/js/ScriptController.cpp:
+        (WebCore::ScriptController::executeScriptInWorldIgnoringException):
+        (WebCore::ScriptController::executeScriptInWorld):
+        (WebCore::ScriptController::callInWorld):
+        (WebCore::ScriptController::executeUserAgentScriptInWorld):
+        (WebCore::ScriptController::executeUserAgentScriptInWorldInternal):
+        (WebCore::ScriptController::executeAsynchronousUserAgentScriptInWorld):
+        * bindings/js/ScriptController.h:
+        
+        XPathGrammar changes completely unrelated to the functionality of this patch,
+        but because of our poor #include hygiene these were necessary to keep linuxes building.
+        * xml/XPathGrammar.cpp:
+        * xml/XPathGrammar.y:
+
 2019-12-30  Antti Koivisto  <antti@apple.com>
 
         Style invalidation cleanups

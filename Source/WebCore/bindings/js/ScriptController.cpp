@@ -47,6 +47,7 @@
 #include "PageGroup.h"
 #include "PaymentCoordinator.h"
 #include "PluginViewBase.h"
+#include "RunJavaScriptParameters.h"
 #include "RuntimeApplicationChecks.h"
 #include "ScriptDisallowedScope.h"
 #include "ScriptSourceCode.h"
@@ -565,20 +566,116 @@ JSC::JSValue ScriptController::executeScriptIgnoringException(const String& scri
 
 JSC::JSValue ScriptController::executeScriptInWorldIgnoringException(DOMWrapperWorld& world, const String& script, bool forceUserGesture)
 {
-    auto result = executeScriptInWorld(world, script, forceUserGesture);
+    auto result = executeScriptInWorld(world, RunJavaScriptParameters { script, false, WTF::nullopt, forceUserGesture });
     return result ? result.value() : JSC::JSValue { };
 }
 
-ValueOrException ScriptController::executeScriptInWorld(DOMWrapperWorld& world, const String& script, bool forceUserGesture)
+ValueOrException ScriptController::executeScriptInWorld(DOMWrapperWorld& world, RunJavaScriptParameters&& parameters)
 {
-    UserGestureIndicator gestureIndicator(forceUserGesture ? Optional<ProcessingUserGestureState>(ProcessingUserGesture) : WTF::nullopt);
-    ScriptSourceCode sourceCode(script, URL(m_frame.document()->url()), TextPosition(), JSC::SourceProviderSourceType::Program, CachedScriptFetcher::create(m_frame.document()->charset()));
+    UserGestureIndicator gestureIndicator(parameters.forceUserGesture == ForceUserGesture::Yes ? Optional<ProcessingUserGestureState>(ProcessingUserGesture) : WTF::nullopt);
 
     // FIXME: Instead of returning an empty JSValue, should return an ExceptionDetails.
     if (!canExecuteScripts(AboutToExecuteScript) || isPaused())
         return { };
 
-    return evaluateInWorld(sourceCode, world);
+    switch (parameters.runAsAsyncFunction) {
+    case RunAsAsyncFunction::No: {
+        ScriptSourceCode sourceCode(parameters.source, URL(m_frame.document()->url()), TextPosition(), JSC::SourceProviderSourceType::Program, CachedScriptFetcher::create(m_frame.document()->charset()));
+        return evaluateInWorld(sourceCode, world);
+    }
+    case RunAsAsyncFunction::Yes:
+        return callInWorld(WTFMove(parameters), world);
+    default:
+        RELEASE_ASSERT_NOT_REACHED();
+    }
+}
+
+ValueOrException ScriptController::callInWorld(RunJavaScriptParameters&& parameters, DOMWrapperWorld& world)
+{
+    ASSERT(parameters.runAsAsyncFunction == RunAsAsyncFunction::Yes);
+    ASSERT(parameters.arguments);
+
+    auto& proxy = jsWindowProxy(world);
+    auto& globalObject = *proxy.window();
+    MarkedArgumentBuffer markedArguments;
+    StringBuilder functionStringBuilder;
+    String errorMessage;
+
+    // Build up a new script string that is an async function with arguments, and deserialize those arguments.
+    functionStringBuilder.append("(function(");
+    for (auto argument = parameters.arguments->begin(); argument != parameters.arguments->end();) {
+        functionStringBuilder.append(argument->key);
+        auto serializedArgument = SerializedScriptValue::createFromWireBytes(WTFMove(argument->value));
+
+        auto scope = DECLARE_CATCH_SCOPE(globalObject.vm());
+        auto jsArgument = serializedArgument->deserialize(globalObject, &globalObject);
+        if (UNLIKELY(scope.exception())) {
+            errorMessage = "Unable to deserialize argument to execute asynchronous JavaScript function";
+            break;
+        }
+
+        markedArguments.append(jsArgument);
+
+        ++argument;
+        if (argument != parameters.arguments->end())
+            functionStringBuilder.append(',');
+    }
+
+    if (!errorMessage.isEmpty())
+        return makeUnexpected(ExceptionDetails { errorMessage });
+
+    functionStringBuilder.append("){", parameters.source, "})");
+
+    auto sourceCode = ScriptSourceCode { functionStringBuilder.toString(), URL(m_frame.document()->url()), TextPosition(), JSC::SourceProviderSourceType::Program, CachedScriptFetcher::create(m_frame.document()->charset()) };
+    const auto& jsSourceCode = sourceCode.jsSourceCode();
+
+    String sourceURL = jsSourceCode.provider()->url();
+    const String* savedSourceURL = m_sourceURL;
+    m_sourceURL = &sourceURL;
+
+    Ref<Frame> protector(m_frame);
+
+    InspectorInstrumentation::willEvaluateScript(m_frame, sourceURL, sourceCode.startLine(), sourceCode.startColumn());
+
+    NakedPtr<JSC::Exception> evaluationException;
+    Optional<ExceptionDetails> optionalDetails;
+    JSValue returnValue;
+    do {
+        JSValue functionObject = JSExecState::profiledEvaluate(&globalObject, JSC::ProfilingReason::Other, jsSourceCode, &proxy, evaluationException);
+
+        if (evaluationException)
+            break;
+
+        if (!functionObject || !functionObject.isFunction(world.vm())) {
+            optionalDetails = { { "Unable to create JavaScript async function to call"_s } };
+            break;
+        }
+
+        // FIXME: https://bugs.webkit.org/show_bug.cgi?id=205562
+        // Getting CallData/CallType shouldn't be required to call into JS.
+        CallData callData;
+        CallType callType = getCallData(world.vm(), functionObject, callData);
+        if (callType == CallType::None) {
+            optionalDetails = { { "Unable to prepare JavaScript async function to be called"_s } };
+            break;
+        }
+
+        returnValue = JSExecState::profiledCall(&globalObject, JSC::ProfilingReason::Other, functionObject, callType, callData, &proxy, markedArguments, evaluationException);
+    } while (false);
+
+    InspectorInstrumentation::didEvaluateScript(m_frame);
+
+    if (evaluationException && !optionalDetails) {
+        ExceptionDetails details;
+        reportException(&globalObject, evaluationException, sourceCode.cachedScript(), &details);
+        optionalDetails = WTFMove(details);
+    }
+
+    m_sourceURL = savedSourceURL;
+
+    if (optionalDetails)
+        return makeUnexpected(*optionalDetails);
+    return returnValue;
 }
 
 JSC::JSValue ScriptController::executeUserAgentScriptInWorldIgnoringException(DOMWrapperWorld& world, const String& script, bool forceUserGesture)
@@ -588,12 +685,26 @@ JSC::JSValue ScriptController::executeUserAgentScriptInWorldIgnoringException(DO
 }
 ValueOrException ScriptController::executeUserAgentScriptInWorld(DOMWrapperWorld& world, const String& script, bool forceUserGesture)
 {
+    return executeUserAgentScriptInWorldInternal(world, { script, false, WTF::nullopt, forceUserGesture });
+}
+
+ValueOrException ScriptController::executeUserAgentScriptInWorldInternal(DOMWrapperWorld& world, RunJavaScriptParameters&& parameters)
+{
     auto& document = *m_frame.document();
     if (!shouldAllowUserAgentScripts(document))
-        return makeUnexpected(ExceptionDetails { "Unable to run user agent scripts in this document for security reasons"_s, 0, 0, { } });
+        return makeUnexpected(ExceptionDetails { "Unable to run user agent scripts in this document for security reasons"_s });
 
     document.setHasEvaluatedUserAgentScripts();
-    return executeScriptInWorld(world, script, forceUserGesture);
+    return executeScriptInWorld(world, WTFMove(parameters));
+}
+
+void ScriptController::executeAsynchronousUserAgentScriptInWorld(DOMWrapperWorld& world, RunJavaScriptParameters&& parameters, ResolveFunction&& resolveFunction)
+{
+    auto result = executeUserAgentScriptInWorldInternal(world, WTFMove(parameters));
+
+    // FIXME: If the result is a thenable, install the fulfill/reject handlers instead of resolving now.
+
+    resolveFunction(result);
 }
 
 bool ScriptController::shouldAllowUserAgentScripts(Document& document) const

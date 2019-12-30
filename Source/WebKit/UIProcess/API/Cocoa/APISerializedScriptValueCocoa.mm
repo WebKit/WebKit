@@ -26,7 +26,9 @@
 #include "config.h"
 #include "APISerializedScriptValue.h"
 
+#import <JavaScriptCore/APICast.h>
 #import <JavaScriptCore/JSContext.h>
+#import <JavaScriptCore/JSGlobalObjectInlines.h>
 #import <JavaScriptCore/JSValue.h>
 #import <wtf/NeverDestroyed.h>
 #import <wtf/RunLoop.h>
@@ -59,11 +61,16 @@ private:
     RunLoop::Timer<SharedJSContext> m_timer;
 };
 
+static SharedJSContext& sharedContext()
+{
+    static NeverDestroyed<SharedJSContext> sharedContext;
+    return sharedContext.get();
+}
+
 id SerializedScriptValue::deserialize(WebCore::SerializedScriptValue& serializedScriptValue, JSValueRef* exception)
 {
     ASSERT(RunLoop::isMain());
-    static NeverDestroyed<SharedJSContext> sharedContext;
-    JSContext* context = sharedContext.get().ensureContext();
+    JSContext* context = sharedContext().ensureContext();
 
     JSValueRef valueRef = serializedScriptValue.deserialize([context JSGlobalContextRef], exception);
     if (!valueRef)
@@ -71,6 +78,22 @@ id SerializedScriptValue::deserialize(WebCore::SerializedScriptValue& serialized
 
     JSValue *value = [JSValue valueWithJSValueRef:valueRef inContext:context];
     return value.toObject;
+}
+
+Optional<Vector<uint8_t>> SerializedScriptValue::wireBytesFromNSObject(id object)
+{
+    ASSERT(RunLoop::isMain());
+    JSContext* context = sharedContext().ensureContext();
+    JSValue *value = [JSValue valueWithObject:object inContext:context];
+    if (!value)
+        return WTF::nullopt;
+
+    auto globalObject = toJS([context JSGlobalContextRef]);
+    ASSERT(globalObject);
+    JSC::JSLockHolder lock(globalObject);
+
+    auto coreValue = WebCore::SerializedScriptValue::create(*globalObject, toJS(globalObject, [value JSValueRef]));
+    return coreValue->toWireBytes();
 }
 
 } // API

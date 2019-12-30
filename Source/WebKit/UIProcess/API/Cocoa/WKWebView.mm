@@ -822,14 +822,81 @@ static WKErrorCode callbackErrorCode(WebKit::CallbackBase::Error error)
 
 - (void)evaluateJavaScript:(NSString *)javaScriptString completionHandler:(void (^)(id, NSError *))completionHandler
 {
-    [self _evaluateJavaScript:javaScriptString forceUserGesture:YES completionHandler:completionHandler];
+    [self _evaluateJavaScript:javaScriptString asAsyncFunction:NO withArguments:nil forceUserGesture:YES completionHandler:completionHandler];
 }
 
-- (void)_evaluateJavaScript:(NSString *)javaScriptString forceUserGesture:(BOOL)forceUserGesture completionHandler:(void (^)(id, NSError *))completionHandler
+static bool validateArgument(id argument)
+{
+    if ([argument isKindOfClass:[NSString class]] || [argument isKindOfClass:[NSNumber class]] || [argument isKindOfClass:[NSDate class]] || [argument isKindOfClass:[NSNull class]])
+        return true;
+
+    if ([argument isKindOfClass:[NSArray class]]) {
+        __block BOOL valid = true;
+
+        [argument enumerateObjectsUsingBlock:^(id object, NSUInteger, BOOL *stop) {
+            if (!validateArgument(object)) {
+                valid = false;
+                *stop = YES;
+            }
+        }];
+
+        return valid;
+    }
+
+    if ([argument isKindOfClass:[NSDictionary class]]) {
+        __block bool valid = true;
+
+        [argument enumerateKeysAndObjectsUsingBlock:^(id key, id value, BOOL *stop) {
+            if (!validateArgument(key) || !validateArgument(value)) {
+                valid = false;
+                *stop = YES;
+            }
+        }];
+
+        return valid;
+    }
+
+    return false;
+}
+
+- (void)_evaluateJavaScript:(NSString *)javaScriptString asAsyncFunction:(BOOL)asAsyncFunction withArguments:(NSDictionary<NSString *, id> *)arguments forceUserGesture:(BOOL)forceUserGesture completionHandler:(void (^)(id, NSError *))completionHandler
 {
     auto handler = adoptNS([completionHandler copy]);
 
-    _page->runJavaScriptInMainFrame(javaScriptString, forceUserGesture, [handler](API::SerializedScriptValue* serializedScriptValue, Optional<WebCore::ExceptionDetails> details, WebKit::ScriptValueCallback::Error errorCode) {
+    Optional<WebCore::ArgumentWireBytesMap> argumentsMap;
+    if (asAsyncFunction)
+        argumentsMap = WebCore::ArgumentWireBytesMap { };
+    NSString *errorMessage = nil;
+
+    for (id key in arguments) {
+        id value = [arguments objectForKey:key];
+        if (!validateArgument(value)) {
+            errorMessage = @"Function argument values must be one of the following types, or contain only the following types: NSString, NSNumber, NSDate, NSArray, and NSDictionary";
+            break;
+        }
+    
+        auto wireBytes = API::SerializedScriptValue::wireBytesFromNSObject(value);
+        // Since we've validated the input dictionary above, we should never fail to serialize it into wire bytes.
+        ASSERT(wireBytes);
+        argumentsMap->set(key, *wireBytes);
+    }
+
+    if (errorMessage) {
+        RetainPtr<NSMutableDictionary> userInfo = adoptNS([[NSMutableDictionary alloc] init]);
+
+        [userInfo setObject:localizedDescriptionForErrorCode(WKErrorJavaScriptExceptionOccurred) forKey:NSLocalizedDescriptionKey];
+        [userInfo setObject:errorMessage forKey:_WKJavaScriptExceptionMessageErrorKey];
+
+        auto error = adoptNS([[NSError alloc] initWithDomain:WKErrorDomain code:WKErrorJavaScriptExceptionOccurred userInfo:userInfo.get()]);
+        dispatch_async(dispatch_get_main_queue(), [handler, error] {
+            auto rawHandler = (void (^)(id, NSError *))handler.get();
+            rawHandler(nil, error.get());
+        });
+
+        return;
+    }
+
+    _page->runJavaScriptInMainFrame(WebCore::RunJavaScriptParameters { javaScriptString, !!asAsyncFunction, WTFMove(argumentsMap), !!forceUserGesture }, [handler](API::SerializedScriptValue* serializedScriptValue, Optional<WebCore::ExceptionDetails> details, WebKit::ScriptValueCallback::Error errorCode) {
         if (!handler)
             return;
 
@@ -1923,6 +1990,11 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(FORWARD_ACTION_TO_WKCONTENTVIEW)
     [self createPDFWithConfiguration:pdfConfiguration completionHandler:completionHandler];
 }
 
+- (void)_callAsyncFunction:(NSString *)javaScriptString withArguments:(NSDictionary<NSString *, id> *)arguments completionHandler:(void (^)(id, NSError *error))completionHandler
+{
+    [self _evaluateJavaScript:javaScriptString asAsyncFunction:YES withArguments:arguments forceUserGesture:YES completionHandler:completionHandler];
+}
+
 - (NSData *)_sessionStateData
 {
     // FIXME: This should not use the legacy session state encoder.
@@ -2065,7 +2137,7 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(FORWARD_ACTION_TO_WKCONTENTVIEW)
 
 - (void)_evaluateJavaScriptWithoutUserGesture:(NSString *)javaScriptString completionHandler:(void (^)(id, NSError *))completionHandler
 {
-    [self _evaluateJavaScript:javaScriptString forceUserGesture:NO completionHandler:completionHandler];
+    [self _evaluateJavaScript:javaScriptString asAsyncFunction:NO withArguments:nil forceUserGesture:NO completionHandler:completionHandler];
 }
 
 - (void)_updateWebsitePolicies:(_WKWebsitePolicies *)websitePolicies

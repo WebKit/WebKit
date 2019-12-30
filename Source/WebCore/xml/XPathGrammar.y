@@ -401,14 +401,14 @@ PathExpr:
     FilterExpr '/' RelativeLocationPath
     {
         $3->setAbsolute();
-        $$ = new Path(std::unique_ptr<Expression>($1), std::unique_ptr<LocationPath>($3));
+        $$ = new XPath::Path(std::unique_ptr<Expression>($1), std::unique_ptr<LocationPath>($3));
     }
     |
     FilterExpr DescendantOrSelf RelativeLocationPath
     {
         $3->prependStep(std::unique_ptr<Step>($2));
         $3->setAbsolute();
-        $$ = new Path(std::unique_ptr<Expression>($1), std::unique_ptr<LocationPath>($3));
+        $$ = new XPath::Path(std::unique_ptr<Expression>($1), std::unique_ptr<LocationPath>($3));
     }
     ;
 

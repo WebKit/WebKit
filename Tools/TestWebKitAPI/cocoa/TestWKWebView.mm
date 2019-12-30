@@ -178,6 +178,27 @@ SOFT_LINK_CLASS(UIKit, UIWindow)
     return evalResult.autorelease();
 }
 
+- (id)objectByCallingAsyncFunction:(NSString *)script withArguments:(NSDictionary *)arguments error:(NSError **)errorOut
+{
+    bool isWaitingForJavaScript = false;
+    if (errorOut)
+        *errorOut = nil;
+
+    RetainPtr<id> evalResult;
+    [self _callAsyncFunction:script withArguments:arguments completionHandler:[&] (id result, NSError *error) {
+        evalResult = result;
+        if (errorOut)
+            *errorOut = [error retain];
+        isWaitingForJavaScript = true;
+    }];
+    TestWebKitAPI::Util::run(&isWaitingForJavaScript);
+
+    if (errorOut)
+        [*errorOut autorelease];
+
+    return evalResult.autorelease();
+}
+
 - (NSString *)stringByEvaluatingJavaScript:(NSString *)script
 {
     return [NSString stringWithFormat:@"%@", [self objectByEvaluatingJavaScript:script]];
