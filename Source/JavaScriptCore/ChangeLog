@@ -1,3 +1,14 @@
+2019-12-30  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        REGRESSION(r253896): [GTK][WPE] Broke the build with GCC-7
+        https://bugs.webkit.org/show_bug.cgi?id=205649
+
+        Reviewed by Mark Lam.
+
+        Add WTF_INTERNAL macro to explicitly adjust the symbol visibility.
+
+        * llint/LLIntSlowPaths.h:
+
 2019-12-29  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Remove WTF::loadLoadFence from JSFunction::rareData()
