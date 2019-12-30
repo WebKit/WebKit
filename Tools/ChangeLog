@@ -1,5 +1,24 @@
 2019-12-30  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
+        [GTK][WPE] Report number of total tests run and failed in API test runner like run-api-tests does
+        https://bugs.webkit.org/show_bug.cgi?id=205608
+
+        Reviewed by Carlos Garcia Campos.
+
+        Calculate the total number of tests (including subtests) executed
+        and report it at the end of the step in the same format than run-api-tests does.
+
+        * glib/api_test_runner.py:
+        (TestRunner._run_test_glib): Pass the list of skipped tests instead of calculating it here to avoid calculating it twice.
+        (TestRunner._get_tests_from_google_test_suite): Ditto.
+        (TestRunner._run_google_test_suite): Ditto.
+        (TestRunner._run_test): Ditto.
+        (TestRunner.run_tests):
+        (TestRunner.run_tests.number_of_tests):
+        (TestRunner.run_tests.report):
+
+2019-12-30  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
         [GTK][WPE] support output of results in json format in API test runner.
         https://bugs.webkit.org/show_bug.cgi?id=205579
 

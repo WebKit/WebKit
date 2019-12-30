@@ -159,13 +159,13 @@ class TestRunner(object):
                     return 0
                 raise
 
-    def _run_test_glib(self, test_program):
+    def _run_test_glib(self, test_program, skipped_test_cases):
         timeout = self._options.timeout
 
         def is_slow_test(test, subtest):
             return self._expectations.is_slow(test, subtest)
 
-        return GLibTestRunner(test_program, timeout, is_slow_test, timeout * 10).run(skipped=self._test_cases_to_skip(test_program), env=self._test_env)
+        return GLibTestRunner(test_program, timeout, is_slow_test, timeout * 10).run(skipped=skipped_test_cases, env=self._test_env)
 
     def _run_test_qt(self, test_program):
         env = self._test_env
@@ -194,15 +194,13 @@ class TestRunner(object):
             print("**PASS** %s" % name)
         return {name: result}
 
-    def _get_tests_from_google_test_suite(self, test_program):
+    def _get_tests_from_google_test_suite(self, test_program, skipped_test_cases):
         try:
             output = subprocess.check_output([test_program, '--gtest_list_tests'], env=self._test_env)
         except subprocess.CalledProcessError:
             sys.stderr.write("ERROR: could not list available tests for binary %s.\n" % (test_program))
             sys.stderr.flush()
             return 1
-
-        skipped_test_cases = self._test_cases_to_skip(test_program)
 
         tests = []
         prefix = None
@@ -247,9 +245,9 @@ class TestRunner(object):
 
         return {subtest: "PASS"}
 
-    def _run_google_test_suite(self, test_program):
+    def _run_google_test_suite(self, test_program, skipped_test_cases):
         result = {}
-        for subtest in self._get_tests_from_google_test_suite(test_program):
+        for subtest in self._get_tests_from_google_test_suite(test_program, skipped_test_cases):
             result.update(self._run_google_test(test_program, subtest))
         return result
 
@@ -262,13 +260,14 @@ class TestRunner(object):
     def is_qt_test(self, test_program):
         raise NotImplementedError
 
-    def _run_test(self, test_program):
+    def _run_test(self, test_program, skipped_test_cases):
         if self.is_glib_test(test_program):
-            return self._run_test_glib(test_program)
+            return self._run_test_glib(test_program, skipped_test_cases)
 
         if self.is_google_test(test_program):
-            return self._run_google_test_suite(test_program)
+            return self._run_google_test_suite(test_program, skipped_test_cases)
 
+        # FIXME: support skipping Qt subtests
         if self.is_qt_test(test_program):
             return self._run_test_qt(test_program)
 
@@ -282,9 +281,11 @@ class TestRunner(object):
 
         self._setup_testing_environment()
 
+        number_of_total_tests = len(self._tests)
         # Remove skipped tests now instead of when we find them, because
         # some tests might be skipped while setting up the test environment.
         self._tests = [test for test in self._tests if self._should_run_test_program(test)]
+        number_of_executed_tests = len(self._tests)
 
         crashed_tests = {}
         failed_tests = {}
@@ -292,7 +293,13 @@ class TestRunner(object):
         passed_tests = {}
         try:
             for test in self._tests:
-                results = self._run_test(test)
+                skipped_subtests = self._test_cases_to_skip(test)
+                number_of_total_tests += len(skipped_subtests)
+                results = self._run_test(test, skipped_subtests)
+                number_of_executed_subtests_for_test = len(results)
+                if number_of_executed_subtests_for_test > 1:
+                    number_of_executed_tests += number_of_executed_subtests_for_test
+                    number_of_total_tests += number_of_executed_subtests_for_test
                 for test_case, result in results.iteritems():
                     if result in self._expectations.get_expectation(os.path.basename(test), test_case):
                         continue
@@ -308,10 +315,13 @@ class TestRunner(object):
         finally:
             self._tear_down_testing_environment()
 
+        def number_of_tests(tests):
+            return sum(len(value) for value in tests.itervalues())
+
         def report(tests, title, base_dir):
             if not tests:
                 return
-            sys.stdout.write("\nUnexpected %s (%d)\n" % (title, sum(len(value) for value in tests.itervalues())))
+            sys.stdout.write("\nUnexpected %s (%d)\n" % (title, number_of_tests(tests)))
             for test in tests:
                 sys.stdout.write("    %s\n" % (test.replace(base_dir, '', 1)))
                 for test_case in tests[test]:
@@ -340,7 +350,14 @@ class TestRunner(object):
             result_dictionary['Timedout'] = generate_test_list_for_json_output(self._test_programs_base_dir(), timed_out_tests)
             self._port.host.filesystem.write_text_file(self._options.json_output, json.dumps(result_dictionary, indent=4))
 
-        return len(failed_tests) + len(timed_out_tests)
+        number_of_failed_tests = number_of_tests(failed_tests) + number_of_tests(timed_out_tests) + number_of_tests(crashed_tests)
+        number_of_successful_tests = number_of_executed_tests - number_of_failed_tests
+
+        sys.stdout.write("\nRan %d tests of %d with %d successful\n" % (number_of_executed_tests, number_of_total_tests, number_of_successful_tests))
+        sys.stdout.flush()
+
+        return number_of_failed_tests
+
 
 
 def add_options(option_parser):
