@@ -122,6 +122,7 @@ function installDependenciesWithApt {
         libmount-dev \
         libmpg123-dev \
         libnotify-dev \
+        libopenjp2-7-dev \
         libopus-dev \
         libpango1.0-dev \
         $(aptIfElse libpng-dev libpng12-dev) \
@@ -291,6 +292,7 @@ function installDependenciesWithPacman {
         libsystemd \
         libjpeg-turbo \
         mpg123 \
+        openjpeg2 \
         opus \
         pango \
         perl-file-copy-recursive \
@@ -471,6 +473,7 @@ function installDependenciesWithDnf {
         libwayland-server-devel \
         mesa-libGL-devel \
         ninja-build \
+        openjpeg2-devel \
         openssl-devel \
         opus-devel \
         patch \

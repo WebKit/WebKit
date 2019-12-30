@@ -1,3 +1,12 @@
+2019-12-30  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [GTK][WPE] OpenJPEG missing in install dependencies script
+        https://bugs.webkit.org/show_bug.cgi?id=205647
+
+        Reviewed by Adrian Perez de Castro.
+
+        * gtk/install-dependencies: Add OpenJPEG-2 package to the list.
+
 2019-12-30  Brady Eidson  <beidson@apple.com>
 
         Add WKWebView SPI to evaluate a function with arguments
