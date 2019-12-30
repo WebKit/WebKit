@@ -35,6 +35,7 @@ namespace WebCore {
 class Document;
 class Element;
 class MediaQueryEvaluator;
+class Scope;
 class SelectorFilter;
 class ShadowRoot;
 class StyleSheetContents;
@@ -52,6 +53,7 @@ public:
 
     bool dirtiesAllStyle() const { return m_dirtiesAllStyle; }
     void invalidateStyle(Document&);
+    void invalidateStyle(Scope&);
     void invalidateStyle(ShadowRoot&);
     void invalidateStyle(Element&);
 
@@ -60,6 +62,8 @@ public:
     using MatchElementRuleSets = HashMap<MatchElement, InvalidationRuleSetVector, WTF::IntHash<MatchElement>, WTF::StrongEnumHashTraits<MatchElement>>;
     static void addToMatchElementRuleSets(Invalidator::MatchElementRuleSets&, const InvalidationRuleSet&);
     static void invalidateWithMatchElementRuleSets(Element&, const MatchElementRuleSets&);
+    static void invalidateAllStyle(Scope&);
+    static void invalidateHostAndSlottedStyleIfNeeded(ShadowRoot&);
 
 private:
     enum class CheckDescendants { Yes, No };

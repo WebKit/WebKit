@@ -37,6 +37,7 @@
 #include "ShadowRoot.h"
 #include "StyleResolver.h"
 #include "StyleRuleImport.h"
+#include "StyleScope.h"
 #include "StyleScopeRuleSets.h"
 #include "StyleSheetContents.h"
 #include <wtf/SetForScope.h>
@@ -212,6 +213,21 @@ void Invalidator::invalidateStyle(Document& document)
     invalidateStyleForTree(*documentElement, &filter);
 }
 
+void Invalidator::invalidateStyle(Scope& scope)
+{
+    if (m_dirtiesAllStyle) {
+        invalidateAllStyle(scope);
+        return;
+    }
+
+    if (auto* shadowRoot = scope.shadowRoot()) {
+        invalidateStyle(*shadowRoot);
+        return;
+    }
+
+    invalidateStyle(scope.document());
+}
+
 void Invalidator::invalidateStyle(ShadowRoot& shadowRoot)
 {
     ASSERT(!m_dirtiesAllStyle);
@@ -334,6 +350,35 @@ void Invalidator::invalidateWithMatchElementRuleSets(Element& element, const Mat
     for (auto& matchElementAndRuleSet : matchElementRuleSets) {
         Invalidator invalidator(matchElementAndRuleSet.value);
         invalidator.invalidateStyleWithMatchElement(element, matchElementAndRuleSet.key);
+    }
+}
+
+void Invalidator::invalidateAllStyle(Scope& scope)
+{
+    if (auto* shadowRoot = scope.shadowRoot()) {
+        for (auto& shadowChild : childrenOfType<Element>(*shadowRoot))
+            shadowChild.invalidateStyleForSubtreeInternal();
+        invalidateHostAndSlottedStyleIfNeeded(*shadowRoot);
+        return;
+    }
+
+    scope.document().scheduleFullStyleRebuild();
+}
+
+void Invalidator::invalidateHostAndSlottedStyleIfNeeded(ShadowRoot& shadowRoot)
+{
+    auto& host = *shadowRoot.host();
+    auto* resolver = shadowRoot.styleScope().resolverIfExists();
+    if (!resolver)
+        return;
+    auto& authorStyle = resolver->ruleSets().authorStyle();
+
+    if (!authorStyle.hostPseudoClassRules().isEmpty())
+        host.invalidateStyleInternal();
+
+    if (!authorStyle.slottedPseudoElementRules().isEmpty()) {
+        for (auto& shadowChild : childrenOfType<Element>(host))
+            shadowChild.invalidateStyleInternal();
     }
 }
 

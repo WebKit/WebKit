@@ -381,32 +381,29 @@ void Scope::collectActiveStyleSheets(Vector<RefPtr<StyleSheet>>& sheets)
     }
 }
 
-Scope::ResolverUpdateType Scope::analyzeStyleSheetChange(const Vector<RefPtr<CSSStyleSheet>>& newStylesheets, bool& requiresFullStyleRecalc)
+Scope::StyleSheetChange Scope::analyzeStyleSheetChange(const Vector<RefPtr<CSSStyleSheet>>& newStylesheets)
 {
-    requiresFullStyleRecalc = true;
-    
     unsigned newStylesheetCount = newStylesheets.size();
 
     if (!resolverIfExists())
-        return Reconstruct;
-
-    auto& styleResolver = *resolverIfExists();
+        return { ResolverUpdateType::Reconstruct };
 
     // Find out which stylesheets are new.
     unsigned oldStylesheetCount = m_activeStyleSheets.size();
     if (newStylesheetCount < oldStylesheetCount)
-        return Reconstruct;
+        return { ResolverUpdateType::Reconstruct };
 
     Vector<StyleSheetContents*> addedSheets;
     unsigned newIndex = 0;
     for (unsigned oldIndex = 0; oldIndex < oldStylesheetCount; ++oldIndex) {
         if (newIndex >= newStylesheetCount)
-            return Reconstruct;
+            return { ResolverUpdateType::Reconstruct };
+
         while (m_activeStyleSheets[oldIndex] != newStylesheets[newIndex]) {
             addedSheets.append(&newStylesheets[newIndex]->contents());
             ++newIndex;
             if (newIndex == newStylesheetCount)
-                return Reconstruct;
+                return { ResolverUpdateType::Reconstruct };
         }
         ++newIndex;
     }
@@ -415,26 +412,10 @@ Scope::ResolverUpdateType Scope::analyzeStyleSheetChange(const Vector<RefPtr<CSS
         addedSheets.append(&newStylesheets[newIndex]->contents());
         ++newIndex;
     }
+
     // If all new sheets were added at the end of the list we can just add them to existing Resolver.
     // If there were insertions we need to re-add all the stylesheets so rules are ordered correctly.
-    auto ResolverUpdateType = hasInsertions ? Reset : Additive;
-
-    // If we are already parsing the body and so may have significant amount of elements, put some effort into trying to avoid style recalcs.
-    if (!m_document.bodyOrFrameset() || m_document.hasNodesWithNonFinalStyle() || m_document.hasNodesWithMissingStyle())
-        return ResolverUpdateType;
-
-    Invalidator invalidator(addedSheets, styleResolver.mediaQueryEvaluator());
-    if (invalidator.dirtiesAllStyle())
-        return ResolverUpdateType;
-
-    if (m_shadowRoot)
-        invalidator.invalidateStyle(*m_shadowRoot);
-    else
-        invalidator.invalidateStyle(m_document);
-
-    requiresFullStyleRecalc = false;
-
-    return ResolverUpdateType;
+    return { hasInsertions ? ResolverUpdateType::Reset : ResolverUpdateType::Additive, WTFMove(addedSheets) };
 }
 
 static void filterEnabledNonemptyCSSStyleSheets(Vector<RefPtr<CSSStyleSheet>>& result, const Vector<RefPtr<StyleSheet>>& sheets)
@@ -450,18 +431,6 @@ static void filterEnabledNonemptyCSSStyleSheets(Vector<RefPtr<CSSStyleSheet>>& r
         if (!styleSheet.length())
             continue;
         result.append(&styleSheet);
-    }
-}
-
-static void invalidateHostAndSlottedStyleIfNeeded(ShadowRoot& shadowRoot, Resolver& resolver)
-{
-    auto& host = *shadowRoot.host();
-    if (!resolver.ruleSets().authorStyle().hostPseudoClassRules().isEmpty())
-        host.invalidateStyle();
-
-    if (!resolver.ruleSets().authorStyle().slottedPseudoElementRules().isEmpty()) {
-        for (auto& shadowChild : childrenOfType<Element>(host))
-            shadowChild.invalidateStyle();
     }
 }
 
@@ -489,12 +458,11 @@ void Scope::updateActiveStyleSheets(UpdateType updateType)
     activeCSSStyleSheets.appendVector(m_document.extensionStyleSheets().authorStyleSheetsForTesting());
     filterEnabledNonemptyCSSStyleSheets(activeCSSStyleSheets, activeStyleSheets);
 
-    bool requiresFullStyleRecalc = true;
-    ResolverUpdateType ResolverUpdateType = Reconstruct;
+    auto styleSheetChange = StyleSheetChange { ResolverUpdateType::Reconstruct };
     if (updateType == UpdateType::ActiveSet)
-        ResolverUpdateType = analyzeStyleSheetChange(activeCSSStyleSheets, requiresFullStyleRecalc);
+        styleSheetChange = analyzeStyleSheetChange(activeCSSStyleSheets);
 
-    updateResolver(activeCSSStyleSheets, ResolverUpdateType);
+    updateResolver(activeCSSStyleSheets, styleSheetChange.resolverUpdateType);
 
     m_weakCopyOfActiveStyleSheetListForFastLookup = nullptr;
     m_activeStyleSheets.swap(activeCSSStyleSheets);
@@ -507,31 +475,37 @@ void Scope::updateActiveStyleSheets(UpdateType updateType)
             m_usesStyleBasedEditability = true;
     }
 
-    // FIXME: Move this code somewhere else.
-    if (requiresFullStyleRecalc) {
-        if (m_shadowRoot) {
-            for (auto& shadowChild : childrenOfType<Element>(*m_shadowRoot))
-                shadowChild.invalidateStyleForSubtree();
-            invalidateHostAndSlottedStyleIfNeeded(*m_shadowRoot, resolver());
-        } else
-            m_document.scheduleFullStyleRebuild();
+    invalidateStyleAfterStyleSheetChange(styleSheetChange);
+}
+
+void Scope::invalidateStyleAfterStyleSheetChange(const StyleSheetChange& styleSheetChange)
+{
+    // If we are already parsing the body and so may have significant amount of elements, put some effort into trying to avoid style recalcs.
+    bool invalidateAll = !m_document.bodyOrFrameset() || m_document.hasNodesWithNonFinalStyle() || m_document.hasNodesWithMissingStyle();
+
+    if (styleSheetChange.resolverUpdateType == ResolverUpdateType::Reconstruct || invalidateAll) {
+        Invalidator::invalidateAllStyle(*this);
+        return;
     }
+
+    Invalidator invalidator(styleSheetChange.addedSheets, m_resolver->mediaQueryEvaluator());
+    invalidator.invalidateStyle(*this);
 }
 
 void Scope::updateResolver(Vector<RefPtr<CSSStyleSheet>>& activeStyleSheets, ResolverUpdateType updateType)
 {
-    if (updateType == Reconstruct) {
+    if (updateType == ResolverUpdateType::Reconstruct) {
         clearResolver();
         return;
     }
     auto& styleResolver = resolver();
 
     SetForScope<bool> isUpdatingStyleResolver { m_isUpdatingStyleResolver, true };
-    if (updateType == Reset) {
+    if (updateType == ResolverUpdateType::Reset) {
         styleResolver.ruleSets().resetAuthorStyle();
         styleResolver.appendAuthorStyleSheets(activeStyleSheets);
     } else {
-        ASSERT(updateType == Additive);
+        ASSERT(updateType == ResolverUpdateType::Additive);
         unsigned firstNewIndex = m_activeStyleSheets.size();
         Vector<RefPtr<CSSStyleSheet>> newStyleSheets;
         newStyleSheets.appendRange(activeStyleSheets.begin() + firstNewIndex, activeStyleSheets.end());
@@ -599,8 +573,8 @@ void Scope::scheduleUpdate(UpdateType update)
 {
     if (update == UpdateType::ContentsOrInterpretation) {
         // :host and ::slotted rules might go away.
-        if (m_shadowRoot && m_resolver)
-            invalidateHostAndSlottedStyleIfNeeded(*m_shadowRoot, *m_resolver);
+        if (m_shadowRoot)
+            Invalidator::invalidateHostAndSlottedStyleIfNeeded(*m_shadowRoot);
         // FIXME: Animation code may trigger resource load in middle of style recalc and that can add a rule to a content extension stylesheet.
         //        Fix and remove isResolvingTreeStyle() test below, see https://bugs.webkit.org/show_bug.cgi?id=194335
         // FIXME: The m_isUpdatingStyleResolver test is here because extension stylesheets can get us here from Resolver::appendAuthorStyleSheets.
@@ -652,10 +626,7 @@ void Scope::evaluateMediaQueries(TestFunction&& testFunction)
         switch (evaluationChanges->type) {
         case DynamicMediaQueryEvaluationChanges::Type::InvalidateStyle: {
             Invalidator invalidator(evaluationChanges->invalidationRuleSets);
-            if (m_shadowRoot)
-                invalidator.invalidateStyle(*m_shadowRoot);
-            else
-                invalidator.invalidateStyle(m_document);
+            invalidator.invalidateStyle(*this);
             break;
         }
         case DynamicMediaQueryEvaluationChanges::Type::ResetStyle:

@@ -1,3 +1,36 @@
+2019-12-30  Antti Koivisto  <antti@apple.com>
+
+        Style invalidation cleanups
+        https://bugs.webkit.org/show_bug.cgi?id=205644
+
+        Reviewed by Zalan Bujtas.
+
+        Move more of the invalidation code from Style::Scope to Style::Invalidator.
+
+        * style/StyleInvalidator.cpp:
+        (WebCore::Style::Invalidator::invalidateStyle):
+        (WebCore::Style::Invalidator::invalidateAllStyle):
+        (WebCore::Style::Invalidator::invalidateHostAndSlottedStyleIfNeeded):
+        * style/StyleInvalidator.h:
+        * style/StyleScope.cpp:
+        (WebCore::Style::Scope::analyzeStyleSheetChange):
+
+        Return StyleSheetChange struct.
+
+        (WebCore::Style::Scope::updateActiveStyleSheets):
+        (WebCore::Style::Scope::invalidateStyleAfterStyleSheetChange):
+
+        Use StyleSheetChange to invalidate the style.
+
+        (WebCore::Style::Scope::updateResolver):
+        (WebCore::Style::Scope::scheduleUpdate):
+        (WebCore::Style::Scope::evaluateMediaQueries):
+        (WebCore::Style::invalidateHostAndSlottedStyleIfNeeded): Deleted.
+        * style/StyleScope.h:
+        (WebCore::Style::Scope::document):
+        (WebCore::Style::Scope::shadowRoot const):
+        (WebCore::Style::Scope::shadowRoot):
+
 2019-12-30  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] Fix imported/w3c/web-platform-tests/css/css-text/white-space/white-space-wrap-after-nowrap-001.html

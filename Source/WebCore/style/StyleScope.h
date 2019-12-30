@@ -123,6 +123,9 @@ public:
     void releaseMemory();
 
     const Document& document() const { return m_document; }
+    Document& document() { return m_document; }
+    const ShadowRoot* shadowRoot() const { return m_shadowRoot; }
+    ShadowRoot* shadowRoot() { return m_shadowRoot; }
 
     static Scope& forNode(Node&);
     static Scope* forOrdinal(Element&, ScopeOrdinal);
@@ -143,12 +146,18 @@ private:
 
     void collectActiveStyleSheets(Vector<RefPtr<StyleSheet>>&);
 
-    enum ResolverUpdateType {
+    enum class ResolverUpdateType {
         Reconstruct,
         Reset,
         Additive
     };
-    ResolverUpdateType analyzeStyleSheetChange(const Vector<RefPtr<CSSStyleSheet>>& newStylesheets, bool& requiresFullStyleRecalc);
+    struct StyleSheetChange {
+        ResolverUpdateType resolverUpdateType;
+        Vector<StyleSheetContents*> addedSheets { };
+    };
+    StyleSheetChange analyzeStyleSheetChange(const Vector<RefPtr<CSSStyleSheet>>& newStylesheets);
+    void invalidateStyleAfterStyleSheetChange(const StyleSheetChange&);
+
     void updateResolver(Vector<RefPtr<CSSStyleSheet>>&, ResolverUpdateType);
 
     void pendingUpdateTimerFired();
