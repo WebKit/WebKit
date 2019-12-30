@@ -474,6 +474,15 @@ void URL::setPort(unsigned short i)
     *this = parser.result();
 }
 
+void URL::removeHostAndPort()
+{
+    if (!m_isValid)
+        return;
+    if (!host().isEmpty())
+        setHost({ });
+    removePort();
+}
+
 void URL::setHostAndPort(const String& hostAndPort)
 {
     if (!m_isValid)

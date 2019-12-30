@@ -38,6 +38,7 @@
     CustomPut,
     CustomPutOnPrototype,
     CustomToStringName,
+    ExportMacro=WEBCORE_EXPORT,
     GenerateIsReachable=ReachableFromDOMWindow,
     IsImmutablePrototypeExoticObject,
     ImplementationLacksVTable,

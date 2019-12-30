@@ -116,6 +116,7 @@
 #include "LegacySchemeRegistry.h"
 #include "LibWebRTCProvider.h"
 #include "LoaderStrategy.h"
+#include "Location.h"
 #include "MallocStatistics.h"
 #include "MediaDevices.h"
 #include "MediaEngineConfigurationFactory.h"
@@ -5390,6 +5391,11 @@ bool Internals::hasSandboxMachLookupAccessToXPCServiceName(const String& process
     UNUSED_PARAM(service);
     return false;
 #endif
+}
+
+String Internals::windowLocationHost(DOMWindow& window)
+{
+    return window.location().host();
 }
 
 } // namespace WebCore

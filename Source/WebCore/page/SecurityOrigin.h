@@ -88,6 +88,8 @@ public:
     const String& domain() const { return m_domain; }
     Optional<uint16_t> port() const { return m_data.port; }
 
+    static bool shouldIgnoreHost(const URL&);
+
     // Returns true if a given URL is secure, based either directly on its
     // own protocol, or, when relevant, on the protocol of its "inner URL"
     // Protocols like blob: and filesystem: fall into this latter category.

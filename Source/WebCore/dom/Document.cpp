@@ -3235,6 +3235,9 @@ void Document::setURL(const URL& url)
         return;
 
     m_url = newURL;
+    if (SecurityOrigin::shouldIgnoreHost(m_url))
+        m_url.removeHostAndPort();
+
     m_documentURI = m_url.string();
     updateBaseURL();
 }

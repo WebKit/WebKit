@@ -56,6 +56,11 @@ static bool schemeRequiresHost(const URL& url)
     return url.protocolIsInHTTPFamily() || url.protocolIs("ftp");
 }
 
+bool SecurityOrigin::shouldIgnoreHost(const URL& url)
+{
+    return url.protocolIsData() || url.protocolIsAbout() || protocolIsJavaScript(url) || url.protocolIs("file");
+}
+
 bool SecurityOrigin::shouldUseInnerURL(const URL& url)
 {
     // FIXME: Blob URLs don't have inner URLs. Their form is "blob:<inner-origin>/<UUID>", so treating the part after "blob:" as a URL is incorrect.

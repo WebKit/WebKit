@@ -1,3 +1,19 @@
+2019-12-30  youenn fablet  <youenn@apple.com>
+
+        Ignore URL host for schemes that are not using host information
+        https://bugs.webkit.org/show_bug.cgi?id=205157
+
+        Reviewed by Darin Adler.
+
+        * http/tests/local/file-url-host-expected.txt: Added.
+        * http/tests/local/file-url-host.html: Added.
+        * http/tests/security/about-url-host-expected.txt: Added.
+        * http/tests/security/about-url-host.html: Added.
+        * http/tests/security/data-url-host-expected.txt: Added.
+        * http/tests/security/data-url-host.html: Added.
+        * http/tests/security/javascript-url-host-expected.txt: Added.
+        * http/tests/security/javascript-url-host.html: Added.
+
 2019-12-27  Dean Jackson  <dino@apple.com>
 
         [WebGL] Add a pure virtual base class for GraphicsContext3D

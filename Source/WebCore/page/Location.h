@@ -52,7 +52,7 @@ public:
     ExceptionOr<void> setProtocol(DOMWindow& activeWindow, DOMWindow& firstWindow, const String&);
     String protocol() const;
     ExceptionOr<void> setHost(DOMWindow& activeWindow, DOMWindow& firstWindow, const String&);
-    String host() const;
+    WEBCORE_EXPORT String host() const;
     ExceptionOr<void> setHostname(DOMWindow& activeWindow, DOMWindow& firstWindow, const String&);
     String hostname() const;
     ExceptionOr<void> setPort(DOMWindow& activeWindow, DOMWindow& firstWindow, const String&);
