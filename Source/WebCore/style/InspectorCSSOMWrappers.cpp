@@ -132,7 +132,7 @@ void InspectorCSSOMWrappers::collectScopeWrappers(Scope& styleScope)
     maybeCollectFromStyleSheets(styleScope.activeStyleSheets());
 }
 
-CSSStyleRule* InspectorCSSOMWrappers::getWrapperForRuleInSheets(StyleRule* rule)
+CSSStyleRule* InspectorCSSOMWrappers::getWrapperForRuleInSheets(const StyleRule* rule)
 {
     return m_styleRuleToCSSOMWrapperMap.get(rule);
 }

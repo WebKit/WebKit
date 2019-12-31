@@ -159,8 +159,8 @@ static inline PropertyWhitelistType determinePropertyWhitelistType(const CSSSele
     return PropertyWhitelistNone;
 }
 
-RuleData::RuleData(StyleRule* rule, unsigned selectorIndex, unsigned selectorListIndex, unsigned position)
-    : m_rule(rule)
+RuleData::RuleData(const StyleRule& styleRule, unsigned selectorIndex, unsigned selectorListIndex, unsigned position)
+    : m_styleRule(&styleRule)
     , m_selectorIndex(selectorIndex)
     , m_selectorListIndex(selectorListIndex)
     , m_position(position)

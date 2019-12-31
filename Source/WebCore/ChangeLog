@@ -1,3 +1,60 @@
+2019-12-31  Antti Koivisto  <antti@apple.com>
+
+        StyleRule accessor in RuleData should return a const reference
+        https://bugs.webkit.org/show_bug.cgi?id=205655
+
+        Reviewed by Zalan Bujtas.
+
+        It is currently a non-const pointer.
+
+        This leads to StyleRule being const in many other places too.
+
+        * css/StyleRule.h:
+        (WebCore::StyleRuleBase::deref const):
+        (WebCore::StyleRuleBase::deref): Deleted.
+
+        Make deref const, matching RefCounted and allowing RefPtr<const StyleRule>
+        
+        * editing/EditingStyle.cpp:
+        (WebCore::styleFromMatchedRulesForElement):
+        * inspector/agents/InspectorCSSAgent.cpp:
+        (WebCore::InspectorCSSAgent::buildObjectForRule):
+        (WebCore::InspectorCSSAgent::buildArrayForMatchedRuleList):
+        * inspector/agents/InspectorCSSAgent.h:
+        * style/ElementRuleCollector.cpp:
+        (WebCore::Style::ElementRuleCollector::matchedRuleList const):
+        (WebCore::Style::ElementRuleCollector::transferMatchedRules):
+        (WebCore::Style::ElementRuleCollector::ruleMatches):
+        (WebCore::Style::ElementRuleCollector::collectMatchingRulesForList):
+        * style/ElementRuleCollector.h:
+        * style/InspectorCSSOMWrappers.cpp:
+        (WebCore::Style::InspectorCSSOMWrappers::getWrapperForRuleInSheets):
+        * style/InspectorCSSOMWrappers.h:
+        * style/RuleData.cpp:
+        (WebCore::Style::RuleData::RuleData):
+        * style/RuleData.h:
+        (WebCore::Style::RuleData::styleRule const):
+        (WebCore::Style::RuleData::compiledSelector const):
+        (WebCore::Style::RuleData::rule const): Deleted.
+        * style/RuleFeature.cpp:
+        (WebCore::Style::RuleFeature::RuleFeature):
+        (WebCore::Style::RuleFeatureSet::collectFeatures):
+        * style/RuleFeature.h:
+        (WebCore::Style::RuleFeature::RuleFeature): Deleted.
+        * style/RuleSet.cpp:
+        (WebCore::Style::RuleSet::addRule):
+        (WebCore::Style::RuleSet::addStyleRule):
+        (WebCore::Style::RuleSet::evaluteDynamicMediaQueryRules):
+        (WebCore::Style::RuleSet::MediaQueryCollector::addRuleIfNeeded):
+        * style/RuleSet.h:
+        * style/StyleResolver.cpp:
+        (WebCore::Style::Resolver::styleRulesForElement):
+        (WebCore::Style::Resolver::pseudoStyleRulesForElement):
+        * style/StyleResolver.h:
+        * style/StyleScopeRuleSets.cpp:
+        (WebCore::Style::makeRuleSet):
+        (WebCore::Style::ensureInvalidationRuleSets):
+
 2019-12-31  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][IFC](Regression r253909) Fix fast/text/simple-line-with-br.html

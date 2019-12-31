@@ -43,7 +43,7 @@ class InspectorCSSOMWrappers {
 public:
     // WARNING. This will construct CSSOM wrappers for all style rules and cache them in a map for significant memory cost.
     // It is here to support inspector. Don't use for any regular engine functions.
-    CSSStyleRule* getWrapperForRuleInSheets(StyleRule*);
+    CSSStyleRule* getWrapperForRuleInSheets(const StyleRule*);
     void collectFromStyleSheetIfNeeded(CSSStyleSheet*);
     void collectDocumentWrappers(ExtensionStyleSheets&);
     void collectScopeWrappers(Scope&);
@@ -56,7 +56,7 @@ private:
     void collectFromStyleSheets(const Vector<RefPtr<CSSStyleSheet>>&);
     void maybeCollectFromStyleSheets(const Vector<RefPtr<CSSStyleSheet>>&);
 
-    HashMap<StyleRule*, RefPtr<CSSStyleRule>> m_styleRuleToCSSOMWrapperMap;
+    HashMap<const StyleRule*, RefPtr<CSSStyleRule>> m_styleRuleToCSSOMWrapperMap;
     HashSet<RefPtr<CSSStyleSheet>> m_styleSheetCSSOMWrapperSet;
 };
 

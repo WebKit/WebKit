@@ -88,9 +88,9 @@ static bool isHostSelectorMatchingInShadowTree(const CSSSelector& startSelector)
     return leftmostSelector->match() == CSSSelector::PseudoClass && leftmostSelector->pseudoClassType() == CSSSelector::PseudoClassHost;
 }
 
-void RuleSet::addRule(StyleRule& rule, unsigned selectorIndex, unsigned selectorListIndex, MediaQueryCollector* mediaQueryCollector)
+void RuleSet::addRule(const StyleRule& rule, unsigned selectorIndex, unsigned selectorListIndex, MediaQueryCollector* mediaQueryCollector)
 {
-    RuleData ruleData(&rule, selectorIndex, selectorListIndex, m_ruleCount++);
+    RuleData ruleData(rule, selectorIndex, selectorListIndex, m_ruleCount++);
 
     m_features.collectFeatures(ruleData);
 
@@ -375,7 +375,7 @@ void RuleSet::addRulesFromSheet(StyleSheetContents& sheet, MediaQueryCollector& 
         shrinkToFit();
 }
 
-void RuleSet::addStyleRule(StyleRule& rule, MediaQueryCollector& mediaQueryCollector)
+void RuleSet::addStyleRule(const StyleRule& rule, MediaQueryCollector& mediaQueryCollector)
 {
     unsigned selectorListIndex = 0;
     for (size_t selectorIndex = 0; selectorIndex != notFound; selectorIndex = rule.selectorList().indexOfNextSelectorAfter(selectorIndex))
@@ -425,7 +425,7 @@ Optional<DynamicMediaQueryEvaluationChanges> RuleSet::evaluteDynamicMediaQueryRu
         auto ruleSet = RuleSet::create();
         for (auto* featureVector : collectedChanges.ruleFeatures) {
             for (auto& feature : *featureVector)
-                ruleSet->addRule(*feature.rule, feature.selectorIndex, feature.selectorListIndex);
+                ruleSet->addRule(*feature.styleRule, feature.selectorIndex, feature.selectorListIndex);
         }
         return ruleSet;
     }).iterator->value;
@@ -569,7 +569,7 @@ void RuleSet::MediaQueryCollector::addRuleIfNeeded(const RuleData& ruleData)
 
     auto& context = dynamicContextStack.last();
     context.affectedRulePositions.append(ruleData.position());
-    context.ruleFeatures.append({ ruleData.rule(), ruleData.selectorIndex(), ruleData.selectorListIndex() });
+    context.ruleFeatures.append({ ruleData });
 }
 
 

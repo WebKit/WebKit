@@ -32,32 +32,16 @@
 
 namespace WebCore {
 
-class SelectorCompilationStatus {
-public:
-    enum Status {
-        NotCompiled,
-        CannotCompile,
-        SimpleSelectorChecker,
-        SelectorCheckerWithCheckingContext
-    };
-
-    SelectorCompilationStatus()
-        : m_status(NotCompiled)
-    { }
-
-    SelectorCompilationStatus(Status status)
-        : m_status(status)
-    { }
-
-    operator Status() const { return m_status; }
-
-private:
-    Status m_status;
+enum class SelectorCompilationStatus {
+    NotCompiled,
+    CannotCompile,
+    SimpleSelectorChecker,
+    SelectorCheckerWithCheckingContext
 };
 
 struct CompiledSelector {
     WTF_MAKE_STRUCT_FAST_ALLOCATED;
-    SelectorCompilationStatus status;
+    SelectorCompilationStatus status { SelectorCompilationStatus::NotCompiled };
     JSC::MacroAssemblerCodeRef<CSSSelectorPtrTag> codeRef;
 #if defined(CSS_SELECTOR_JIT_PROFILING) && CSS_SELECTOR_JIT_PROFILING
     unsigned useCount { 0 };

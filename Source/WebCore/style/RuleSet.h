@@ -104,8 +104,8 @@ public:
     void addRulesFromSheet(StyleSheetContents&, const MediaQueryEvaluator&);
     void addRulesFromSheet(StyleSheetContents&, MediaQuerySet* sheetQuery, const MediaQueryEvaluator&, Style::Resolver&);
 
-    void addStyleRule(StyleRule&, MediaQueryCollector&);
-    void addRule(StyleRule&, unsigned selectorIndex, unsigned selectorListIndex, MediaQueryCollector* = nullptr);
+    void addStyleRule(const StyleRule&, MediaQueryCollector&);
+    void addRule(const StyleRule&, unsigned selectorIndex, unsigned selectorListIndex, MediaQueryCollector* = nullptr);
     void addPageRule(StyleRulePage&);
     void addToRuleSet(const AtomString& key, AtomRuleMap&, const RuleData&);
     void shrinkToFit();

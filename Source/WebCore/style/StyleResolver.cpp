@@ -483,12 +483,12 @@ std::unique_ptr<RenderStyle> Resolver::defaultStyleForElement(const Element* ele
     return style;
 }
 
-Vector<RefPtr<StyleRule>> Resolver::styleRulesForElement(const Element* element, unsigned rulesToInclude)
+Vector<RefPtr<const StyleRule>> Resolver::styleRulesForElement(const Element* element, unsigned rulesToInclude)
 {
     return pseudoStyleRulesForElement(element, PseudoId::None, rulesToInclude);
 }
 
-Vector<RefPtr<StyleRule>> Resolver::pseudoStyleRulesForElement(const Element* element, PseudoId pseudoId, unsigned rulesToInclude)
+Vector<RefPtr<const StyleRule>> Resolver::pseudoStyleRulesForElement(const Element* element, PseudoId pseudoId, unsigned rulesToInclude)
 {
     if (!element)
         return { };

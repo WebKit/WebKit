@@ -61,10 +61,10 @@ public:
 
     Ref<StyleRuleBase> copy() const;
 
-    void deref()
+    void deref() const
     {
         if (derefBase())
-            destroy();
+            const_cast<StyleRuleBase&>(*this).destroy();
     }
 
     // FIXME: There shouldn't be any need for the null parent version.
@@ -130,7 +130,7 @@ public:
     Vector<RefPtr<StyleRule>> splitIntoMultipleRulesWithMaximumSelectorComponentCount(unsigned) const;
 
 #if ENABLE(CSS_SELECTOR_JIT)
-    CompiledSelector& compiledSelectorForListIndex(unsigned index)
+    CompiledSelector& compiledSelectorForListIndex(unsigned index) const
     {
         if (!m_compiledSelectors)
             m_compiledSelectors = makeUniqueArray<CompiledSelector>(m_selectorList.listSize());

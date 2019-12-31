@@ -108,7 +108,7 @@ static RefPtr<RuleSet> makeRuleSet(const Vector<RuleFeature>& rules)
         return nullptr;
     auto ruleSet = RuleSet::create();
     for (size_t i = 0; i < size; ++i)
-        ruleSet->addRule(*rules[i].rule, rules[i].selectorIndex, rules[i].selectorListIndex);
+        ruleSet->addRule(*rules[i].styleRule, rules[i].selectorIndex, rules[i].selectorListIndex);
     ruleSet->shrinkToFit();
     return ruleSet;
 }
@@ -215,7 +215,7 @@ static Vector<InvalidationRuleSet>* ensureInvalidationRuleSets(const AtomString&
             auto& ruleSet = matchElementArray[arrayIndex];
             if (!ruleSet)
                 ruleSet = RuleSet::create();
-            ruleSet->addRule(*feature.rule, feature.selectorIndex, feature.selectorListIndex);
+            ruleSet->addRule(*feature.styleRule, feature.selectorIndex, feature.selectorListIndex);
             if (feature.invalidationSelector)
                 invalidationSelectorArray[arrayIndex].append(feature.invalidationSelector);
         }

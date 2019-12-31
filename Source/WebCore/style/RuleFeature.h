@@ -40,19 +40,13 @@ enum class MatchElement { Subject, Parent, Ancestor, DirectSibling, IndirectSibl
 constexpr unsigned matchElementCount = static_cast<unsigned>(MatchElement::Host) + 1;
 
 struct RuleFeature {
-    RuleFeature(StyleRule* rule, unsigned selectorIndex, unsigned selectorListIndex, Optional<MatchElement> matchElement = WTF::nullopt, const CSSSelector* invalidationSelector = nullptr)
-        : rule(rule)
-        , selectorIndex(selectorIndex)
-        , selectorListIndex(selectorListIndex)
-        , matchElement(matchElement)
-        , invalidationSelector(invalidationSelector)
-    {
-    }
-    StyleRule* rule;
+    RuleFeature(const RuleData&, Optional<MatchElement> = WTF::nullopt, const CSSSelector* invalidationSelector = nullptr);
+
+    RefPtr<const StyleRule> styleRule;
     unsigned selectorIndex;
     unsigned selectorListIndex;
-    Optional<MatchElement> matchElement;
-    const CSSSelector* invalidationSelector;
+    Optional<MatchElement> matchElement { };
+    const CSSSelector* invalidationSelector { nullptr };
 };
 
 struct RuleFeatureSet {

@@ -110,7 +110,7 @@ public:
     bool hasAnyMatchingRules(const RuleSet*);
 
     const MatchResult& matchResult() const;
-    const Vector<RefPtr<StyleRule>>& matchedRuleList() const;
+    const Vector<RefPtr<const StyleRule>>& matchedRuleList() const;
 
     void clearMatchedRules();
 
@@ -170,7 +170,7 @@ private:
     size_t m_matchedRuleTransferIndex { 0 };
 
     // Output.
-    Vector<RefPtr<StyleRule>> m_matchedRuleList;
+    Vector<RefPtr<const StyleRule>> m_matchedRuleList;
     bool m_didMatchUncommonAttributeSelector { false };
     MatchResult m_result;
     Relations m_styleRelations;

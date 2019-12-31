@@ -52,23 +52,20 @@ private:
     struct SelectorData {
         SelectorData(const CSSSelector* selector)
             : selector(selector)
-#if ENABLE(CSS_SELECTOR_JIT) && CSS_SELECTOR_JIT_PROFILING
-            , m_compiledSelectorUseCount(0)
-#endif
         {
         }
 
         const CSSSelector* selector;
 #if ENABLE(CSS_SELECTOR_JIT)
         mutable JSC::MacroAssemblerCodeRef<CSSSelectorPtrTag> compiledSelectorCodeRef;
-        mutable SelectorCompilationStatus compilationStatus;
+        mutable SelectorCompilationStatus compilationStatus { SelectorCompilationStatus::NotCompiled };
 #if CSS_SELECTOR_JIT_PROFILING
         ~SelectorData()
         {
             if (compiledSelectorCodeRef.code().executableAddress())
                 dataLogF("SelectorData compiled selector %d \"%s\"\n", m_compiledSelectorUseCount, selector->selectorText().utf8().data());
         }
-        mutable unsigned m_compiledSelectorUseCount;
+        mutable unsigned m_compiledSelectorUseCount { 0 };
         void compiledSelectorUsed() const { m_compiledSelectorUseCount++; }
 #endif
 #endif // ENABLE(CSS_SELECTOR_JIT)

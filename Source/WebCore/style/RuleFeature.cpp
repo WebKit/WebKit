@@ -55,6 +55,15 @@ static bool isSiblingOrSubject(MatchElement matchElement)
     return false;
 }
 
+RuleFeature::RuleFeature(const RuleData& ruleData, Optional<MatchElement> matchElement, const CSSSelector* invalidationSelector)
+    : styleRule(&ruleData.styleRule())
+    , selectorIndex(ruleData.selectorIndex())
+    , selectorListIndex(ruleData.selectorListIndex())
+    , matchElement(matchElement)
+    , invalidationSelector(invalidationSelector)
+{
+}
+
 MatchElement RuleFeatureSet::computeNextMatchElement(MatchElement matchElement, CSSSelector::RelationType relation)
 {
     if (isSiblingOrSubject(matchElement)) {
@@ -169,14 +178,14 @@ void RuleFeatureSet::collectFeatures(const RuleData& ruleData)
     SelectorFeatures selectorFeatures;
     recursivelyCollectFeaturesFromSelector(selectorFeatures, *ruleData.selector());
     if (selectorFeatures.hasSiblingSelector)
-        siblingRules.append(RuleFeature(ruleData.rule(), ruleData.selectorIndex(), ruleData.selectorListIndex()));
+        siblingRules.append({ ruleData });
     if (ruleData.containsUncommonAttributeSelector())
-        uncommonAttributeRules.append(RuleFeature(ruleData.rule(), ruleData.selectorIndex(), ruleData.selectorListIndex()));
+        uncommonAttributeRules.append({ ruleData });
 
     for (auto& nameAndMatch : selectorFeatures.classes) {
         classRules.ensure(nameAndMatch.first, [] {
             return makeUnique<Vector<RuleFeature>>();
-        }).iterator->value->append(RuleFeature(ruleData.rule(), ruleData.selectorIndex(), ruleData.selectorListIndex(), nameAndMatch.second));
+        }).iterator->value->append({ ruleData, nameAndMatch.second });
         if (nameAndMatch.second == MatchElement::Host)
             classesAffectingHost.add(nameAndMatch.first);
     }
@@ -185,7 +194,7 @@ void RuleFeatureSet::collectFeatures(const RuleData& ruleData)
         auto matchElement = selectorAndMatch.second;
         attributeRules.ensure(selector->attribute().localName().convertToASCIILowercase(), [] {
             return makeUnique<Vector<RuleFeature>>();
-        }).iterator->value->append(RuleFeature(ruleData.rule(), ruleData.selectorIndex(), ruleData.selectorListIndex(), matchElement, selector));
+        }).iterator->value->append({ ruleData, matchElement, selector });
         if (matchElement == MatchElement::Host)
             attributesAffectingHost.add(selector->attribute().localName().convertToASCIILowercase());
     }

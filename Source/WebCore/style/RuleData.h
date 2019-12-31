@@ -47,11 +47,17 @@ class RuleData {
 public:
     static const unsigned maximumSelectorComponentCount = 8192;
 
-    RuleData(StyleRule*, unsigned selectorIndex, unsigned selectorListIndex, unsigned position);
+    RuleData(const StyleRule&, unsigned selectorIndex, unsigned selectorListIndex, unsigned position);
 
     unsigned position() const { return m_position; }
-    StyleRule* rule() const { return m_rule.get(); }
-    const CSSSelector* selector() const { return m_rule->selectorList().selectorAt(m_selectorIndex); }
+
+    const StyleRule& styleRule() const { return *m_styleRule; }
+
+    const CSSSelector* selector() const { return m_styleRule->selectorList().selectorAt(m_selectorIndex); }
+#if ENABLE(CSS_SELECTOR_JIT)
+    CompiledSelector& compiledSelector() const { return m_styleRule->compiledSelectorForListIndex(m_selectorListIndex); }
+#endif
+    
     unsigned selectorIndex() const { return m_selectorIndex; }
     unsigned selectorListIndex() const { return m_selectorListIndex; }
 
@@ -68,7 +74,7 @@ public:
     void disableSelectorFiltering() { m_descendantSelectorIdentifierHashes[0] = 0; }
 
 private:
-    RefPtr<StyleRule> m_rule;
+    RefPtr<const StyleRule> m_styleRule;
     unsigned m_selectorIndex : 16;
     unsigned m_selectorListIndex : 16;
     // This number was picked fairly arbitrarily. We can probably lower it if we need to.
