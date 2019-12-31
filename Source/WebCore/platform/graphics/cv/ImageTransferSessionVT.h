@@ -55,6 +55,10 @@ public:
     WEBCORE_EXPORT RefPtr<MediaSample> createMediaSample(IOSurfaceRef, const MediaTime&, const IntSize&, MediaSample::VideoRotation = MediaSample::VideoRotation::None, bool mirrored = false);
 #endif
 
+#if HAVE(IOSURFACE) && !PLATFORM(MACCATALYST)
+    WEBCORE_EXPORT RetainPtr<CVPixelBufferRef> createPixelBuffer(IOSurfaceRef, const IntSize&);
+#endif
+
     uint32_t pixelFormat() const { return m_pixelFormat; }
 
 private:
@@ -63,7 +67,6 @@ private:
 #if HAVE(IOSURFACE) && !PLATFORM(MACCATALYST)
     CFDictionaryRef ioSurfacePixelBufferCreationOptions(IOSurfaceRef);
     RetainPtr<CMSampleBufferRef> createCMSampleBuffer(IOSurfaceRef, const MediaTime&, const IntSize&);
-    RetainPtr<CVPixelBufferRef> createPixelBuffer(IOSurfaceRef, const IntSize&);
 #endif
 
     RetainPtr<CMSampleBufferRef> convertCMSampleBuffer(CMSampleBufferRef, const IntSize&);

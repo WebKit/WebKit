@@ -119,6 +119,7 @@ public:
     void setEnableLogging(bool);
     void setEnableWebRTCEncryption(bool);
     void setUseDTLS10(bool);
+    void setUseGPUProcess(bool);
 
     class SuspendableSocketFactory : public rtc::PacketSocketFactory {
     public:
@@ -146,6 +147,7 @@ protected:
     bool m_supportsVP8 { false };
     bool m_enableLogging { true };
     bool m_useDTLS10 { false };
+    bool m_useGPUProcess { false };
 #endif
 };
 

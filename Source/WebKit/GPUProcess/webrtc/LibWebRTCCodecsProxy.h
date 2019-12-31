@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,31 +25,44 @@
 
 #pragma once
 
-#include "LibWebRTCProvider.h"
+#if USE(LIBWEBRTC) && PLATFORM(COCOA) && ENABLE(GPU_PROCESS)
 
-#if USE(LIBWEBRTC)
+#include "MessageReceiver.h"
+#include "RTCDecoderIdentifier.h"
 
-namespace webrtc {
-class VideoDecoderFactory;
-class VideoEncoderFactory;
+namespace IPC {
+class Connection;
+class Decoder;
+class DataReference;
 }
 
-namespace WebCore {
+namespace webrtc {
+using LocalDecoder = void*;
+}
 
-class WEBCORE_EXPORT LibWebRTCProviderCocoa : public LibWebRTCProvider {
+namespace WebKit {
+
+class GPUConnectionToWebProcess;
+
+class LibWebRTCCodecsProxy : private IPC::MessageReceiver {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
-    LibWebRTCProviderCocoa() = default;
-    ~LibWebRTCProviderCocoa();
+    explicit LibWebRTCCodecsProxy(GPUConnectionToWebProcess&);
+    ~LibWebRTCCodecsProxy();
 
-    std::unique_ptr<webrtc::VideoDecoderFactory> createDecoderFactory() override;
+    void didReceiveMessageFromWebProcess(IPC::Connection& connection, IPC::Decoder& decoder) { didReceiveMessage(connection, decoder); }
 
 private:
-    void setActive(bool) final;
-    std::unique_ptr<webrtc::VideoEncoderFactory> createEncoderFactory() final;
+    // IPC::MessageReceiver
+    void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
+    void createDecoder(RTCDecoderIdentifier);
+    void releaseDecoder(RTCDecoderIdentifier);
+    void decodeFrame(RTCDecoderIdentifier, uint32_t timeStamp, const IPC::DataReference&);
 
-    void setH264HardwareEncoderAllowed(bool allowed) final;
+    GPUConnectionToWebProcess& m_gpuConnectionToWebProcess;
+    HashMap<RTCDecoderIdentifier, webrtc::LocalDecoder> m_decoders;
 };
 
-} // namespace WebCore
+}
 
 #endif

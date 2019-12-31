@@ -168,6 +168,10 @@
 #include "RemoteMediaPlayerManager.h"
 #endif
 
+#if USE(LIBWEBRTC) && PLATFORM(COCOA) && ENABLE(GPU_PROCESS)
+#include "LibWebRTCCodecs.h"
+#endif
+
 // This should be less than plugInAutoStartExpirationTimeThreshold in PlugInAutoStartProvider.
 static const Seconds plugInAutoStartExpirationTimeUpdateThreshold { 29 * 24 * 60 * 60 };
 
@@ -1309,6 +1313,15 @@ void WebProcess::gpuProcessConnectionClosed(GPUProcessConnection* connection)
 
     m_gpuProcessConnection = nullptr;
 }
+
+#if PLATFORM(COCOA) && USE(LIBWEBRTC)
+LibWebRTCCodecs& WebProcess::libWebRTCCodecs()
+{
+    if (!m_libWebRTCCodecs)
+        m_libWebRTCCodecs = makeUnique<LibWebRTCCodecs>();
+    return *m_libWebRTCCodecs;
+}
+#endif
 
 #endif // ENABLE(GPU_PROCESS)
 

@@ -36,6 +36,8 @@
 #include "IOSurface.h"
 #endif
 
+typedef struct __CVBuffer* CVPixelBufferRef;
+
 namespace WebCore {
 
 class RemoteVideoSample {
@@ -47,6 +49,7 @@ public:
 
 #if HAVE(IOSURFACE)
     WEBCORE_EXPORT static std::unique_ptr<RemoteVideoSample> create(MediaSample&&);
+    WEBCORE_EXPORT static std::unique_ptr<RemoteVideoSample> create(CVPixelBufferRef, MediaTime&& presentationTime);
     WEBCORE_EXPORT IOSurfaceRef surface();
 #endif
 

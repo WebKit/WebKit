@@ -1,3 +1,13 @@
+2019-12-31  youenn fablet  <youenn@apple.com>
+
+        Implement RTC VTB decoders in GPUProcess
+        https://bugs.webkit.org/show_bug.cgi?id=205607
+
+        Reviewed by Eric Carlson.
+
+        * webrtc/video-gpuProcess-expected.txt: Added.
+        * webrtc/video-gpuProcess.html: Added.
+
 2019-12-30  youenn fablet  <youenn@apple.com>
 
         Ignore URL host for schemes that are not using host information

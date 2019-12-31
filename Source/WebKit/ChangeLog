@@ -1,3 +1,59 @@
+2019-12-31  youenn fablet  <youenn@apple.com>
+
+        Implement RTC VTB decoders in GPUProcess
+        https://bugs.webkit.org/show_bug.cgi?id=205607
+
+        Reviewed by Eric Carlson.
+
+        Implement decoder factory callbacks.
+        Implement WebProcess codecs by sending IPC for creating/releasing/decoding a frame.
+        WebProcess receives IPC messages from GPU Process whenever a frame is decoded.
+
+        * Configurations/WebKit.xcconfig:
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources-output.xcfilelist:
+        * DerivedSources.make:
+        * GPUProcess/GPUConnectionToWebProcess.cpp:
+        (WebKit::GPUConnectionToWebProcess::libWebRTCCodecsProxy):
+        (WebKit::GPUConnectionToWebProcess::didReceiveMessage):
+        * GPUProcess/GPUConnectionToWebProcess.h:
+        * GPUProcess/webrtc/LibWebRTCCodecsProxy.h: Added.
+        (WebKit::LibWebRTCCodecsProxy::didReceiveMessageFromWebProcess):
+        * GPUProcess/webrtc/LibWebRTCCodecsProxy.messages.in: Added.
+        * GPUProcess/webrtc/LibWebRTCCodecsProxy.mm: Added.
+        (WebKit::LibWebRTCCodecsProxy::LibWebRTCCodecsProxy):
+        (WebKit::LibWebRTCCodecsProxy::~LibWebRTCCodecsProxy):
+        (WebKit::LibWebRTCCodecsProxy::createDecoder):
+        (WebKit::LibWebRTCCodecsProxy::releaseDecoder):
+        (WebKit::LibWebRTCCodecsProxy::decodeFrame):
+        * Scripts/webkit/messages.py:
+        * Sources.txt:
+        * SourcesCocoa.txt:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/GPU/GPUProcessConnection.cpp:
+        (WebKit::GPUProcessConnection::didReceiveMessage):
+        * WebProcess/GPU/webrtc/LibWebRTCCodecs.cpp: Added.
+        (WebKit::createVideoDecoder):
+        (WebKit::releaseVideoDecoder):
+        (WebKit::decodeVideoFrame):
+        (WebKit::registerDecodeCompleteCallback):
+        (WebKit::LibWebRTCCodecs::setVideoDecoderCallbacks):
+        (WebKit::LibWebRTCCodecs::createDecoder):
+        (WebKit::LibWebRTCCodecs::releaseDecoder):
+        (WebKit::LibWebRTCCodecs::decodeFrame):
+        (WebKit::LibWebRTCCodecs::registerDecodeFrameCallback):
+        (WebKit::LibWebRTCCodecs::failedDecoding):
+        (WebKit::LibWebRTCCodecs::completedDecoding):
+        * WebProcess/GPU/webrtc/LibWebRTCCodecs.h: Added.
+        * WebProcess/GPU/webrtc/LibWebRTCCodecs.messages.in: Added.
+        * WebProcess/GPU/webrtc/RTCDecoderIdentifier.h: Added.
+        * WebProcess/Network/webrtc/LibWebRTCProvider.cpp:
+        (WebKit::LibWebRTCProvider::createDecoderFactory):
+        * WebProcess/Network/webrtc/LibWebRTCProvider.h:
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::libWebRTCCodecs):
+        * WebProcess/WebProcess.h:
+
 2019-12-30  Brady Eidson  <beidson@apple.com>
 
         Add WKWebView SPI to evaluate a function with arguments

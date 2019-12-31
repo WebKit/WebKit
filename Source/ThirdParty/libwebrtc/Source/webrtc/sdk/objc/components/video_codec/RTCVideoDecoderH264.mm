@@ -102,6 +102,13 @@ void decompressionOutputCallback(void *decoderRef,
          renderTimeMs:(int64_t)renderTimeMs {
   RTC_DCHECK(inputImage.buffer);
 
+  return [self decodeData: (uint8_t *)inputImage.buffer.bytes size: inputImage.buffer.length timeStamp: inputImage.timeStamp];
+}
+
+- (NSInteger)decodeData:(const uint8_t *)data
+        size:(size_t)size
+        timeStamp:(uint32_t)timeStamp {
+
   if (_error != noErr) {
     RTC_LOG(LS_WARNING) << "Last frame decode failed.";
     _error = noErr;
@@ -109,8 +116,7 @@ void decompressionOutputCallback(void *decoderRef,
   }
 
   rtc::ScopedCFTypeRef<CMVideoFormatDescriptionRef> inputFormat =
-      rtc::ScopedCF(webrtc::CreateVideoFormatDescription((uint8_t *)inputImage.buffer.bytes,
-                                                         inputImage.buffer.length));
+      rtc::ScopedCF(webrtc::CreateVideoFormatDescription(data, size));
   if (inputFormat) {
     // Check if the video format has changed, and reinitialize decoder if
     // needed.
@@ -132,8 +138,7 @@ void decompressionOutputCallback(void *decoderRef,
     return WEBRTC_VIDEO_CODEC_ERROR;
   }
   CMSampleBufferRef sampleBuffer = nullptr;
-  if (!webrtc::H264AnnexBBufferToCMSampleBuffer((uint8_t *)inputImage.buffer.bytes,
-                                                inputImage.buffer.length,
+  if (!webrtc::H264AnnexBBufferToCMSampleBuffer(data, size,
                                                 _videoFormat,
                                                 &sampleBuffer,
                                                 _memoryPool)) {
@@ -142,14 +147,14 @@ void decompressionOutputCallback(void *decoderRef,
   RTC_DCHECK(sampleBuffer);
   VTDecodeFrameFlags decodeFlags = kVTDecodeFrame_EnableAsynchronousDecompression;
   std::unique_ptr<RTCFrameDecodeParams> frameDecodeParams;
-  frameDecodeParams.reset(new RTCFrameDecodeParams(_callback, inputImage.timeStamp));
+  frameDecodeParams.reset(new RTCFrameDecodeParams(_callback, timeStamp));
   OSStatus status = VTDecompressionSessionDecodeFrame(
       _decompressionSession, sampleBuffer, decodeFlags, frameDecodeParams.release(), nullptr);
 #if defined(WEBRTC_IOS)
   // Re-initialize the decoder if we have an invalid session while the app is
   // active and retry the decode request.
   if (status == kVTInvalidSessionErr && [self resetDecompressionSession] == WEBRTC_VIDEO_CODEC_OK) {
-    frameDecodeParams.reset(new RTCFrameDecodeParams(_callback, inputImage.timeStamp));
+    frameDecodeParams.reset(new RTCFrameDecodeParams(_callback, timeStamp));
     status = VTDecompressionSessionDecodeFrame(
         _decompressionSession, sampleBuffer, decodeFlags, frameDecodeParams.release(), nullptr);
   }

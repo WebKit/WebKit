@@ -1,3 +1,40 @@
+2019-12-31  youenn fablet  <youenn@apple.com>
+
+        Implement RTC VTB decoders in GPUProcess
+        https://bugs.webkit.org/show_bug.cgi?id=205607
+
+        Reviewed by Eric Carlson.
+
+        Expose remote decoder abilities with C like functions.
+        This allows WebProcess to implement IPC-based decoders.
+        Expose VTB H264 decoder as C like functions.
+        This allows GPU process to instantiate wasily H2664 decoders.
+
+        * Configurations/libwebrtc.iOS.exp:
+        * Configurations/libwebrtc.iOSsim.exp:
+        * Configurations/libwebrtc.mac.exp:
+        * Source/webrtc/sdk/WebKit/WebKitUtilities.h:
+        * Source/webrtc/sdk/WebKit/WebKitUtilities.mm:
+        (webrtc::videoDecoderCallbacks):
+        (webrtc::setVideoDecoderCallbacks):
+        (webrtc::RemoteVideoDecoder::RemoteVideoDecoder):
+        (webrtc::RemoteVideoDecoder::decodeComplete):
+        (webrtc::RemoteVideoDecoder::InitDecode):
+        (webrtc::RemoteVideoDecoder::Decode):
+        (webrtc::RemoteVideoDecoder::RegisterDecodeCompleteCallback):
+        (webrtc::RemoteVideoDecoder::Release):
+        (webrtc::RemoteVideoDecoderFactory::RemoteVideoDecoderFactory):
+        (webrtc::RemoteVideoDecoderFactory::GetSupportedFormats const):
+        (webrtc::RemoteVideoDecoderFactory::CreateVideoDecoder):
+        (webrtc::createWebKitDecoderFactory):
+        (webrtc::createLocalDecoder):
+        (webrtc::releaseLocalDecoder):
+        (webrtc::decodeFrame):
+        * Source/webrtc/sdk/objc/components/video_codec/RTCVideoDecoderH264.h:
+        * Source/webrtc/sdk/objc/components/video_codec/RTCVideoDecoderH264.mm:
+        (-[RTCVideoDecoderH264 decode:missingFrames:codecSpecificInfo:renderTimeMs:]):
+        (-[RTCVideoDecoderH264 decodeData:size:timeStamp:]):
+
 2019-12-30  youenn fablet  <youenn@apple.com>
 
         Do not build yasm for iOS and iOS simulator

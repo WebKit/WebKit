@@ -33,6 +33,8 @@
 #include "GPUProcess.h"
 #include "GPUProcessMessages.h"
 #include "GPUProcessProxyMessages.h"
+#include "LibWebRTCCodecsProxy.h"
+#include "LibWebRTCCodecsProxyMessages.h"
 #include "Logging.h"
 #include "RemoteLayerTreeDrawingAreaProxyMessages.h"
 #include "RemoteMediaPlayerManagerProxy.h"
@@ -127,6 +129,16 @@ UserMediaCaptureManagerProxy& GPUConnectionToWebProcess::userMediaCaptureManager
 }
 #endif
 
+#if PLATFORM(COCOA) && USE(LIBWEBRTC)
+LibWebRTCCodecsProxy& GPUConnectionToWebProcess::libWebRTCCodecsProxy()
+{
+    if (!m_libWebRTCCodecsProxy)
+        m_libWebRTCCodecsProxy = makeUnique<LibWebRTCCodecsProxy>(*this);
+
+    return *m_libWebRTCCodecsProxy;
+}
+#endif
+
 void GPUConnectionToWebProcess::didReceiveMessage(IPC::Connection& connection, IPC::Decoder& decoder)
 {
     if (decoder.messageReceiverName() == Messages::RemoteMediaPlayerManagerProxy::messageReceiverName()) {
@@ -136,6 +148,12 @@ void GPUConnectionToWebProcess::didReceiveMessage(IPC::Connection& connection, I
 #if ENABLE(MEDIA_STREAM)
     if (decoder.messageReceiverName() == Messages::UserMediaCaptureManagerProxy::messageReceiverName()) {
         userMediaCaptureManagerProxy().didReceiveMessageFromGPUProcess(connection, decoder);
+        return;
+    }
+#endif
+#if PLATFORM(COCOA) && USE(LIBWEBRTC)
+    if (decoder.messageReceiverName() == Messages::LibWebRTCCodecsProxy::messageReceiverName()) {
+        libWebRTCCodecsProxy().didReceiveMessageFromWebProcess(connection, decoder);
         return;
     }
 #endif

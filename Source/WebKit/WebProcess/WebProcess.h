@@ -109,6 +109,7 @@ class EventDispatcher;
 class GamepadData;
 class GPUProcessConnection;
 class InjectedBundle;
+class LibWebRTCCodecs;
 class LibWebRTCNetwork;
 class NetworkProcessConnection;
 class ObjCObjectGraph;
@@ -218,6 +219,11 @@ public:
     GPUProcessConnection& ensureGPUProcessConnection();
     void gpuProcessConnectionClosed(GPUProcessConnection*);
     GPUProcessConnection* existingGPUProcessConnection() { return m_gpuProcessConnection.get(); }
+
+#if PLATFORM(COCOA) && USE(LIBWEBRTC)
+    LibWebRTCCodecs& libWebRTCCodecs();
+#endif
+
 #endif // ENABLE(GPU_PROCESS)
 
     LibWebRTCNetwork& libWebRTCNetwork();
@@ -523,6 +529,9 @@ private:
 
 #if ENABLE(GPU_PROCESS)
     RefPtr<GPUProcessConnection> m_gpuProcessConnection;
+#if PLATFORM(COCOA) && USE(LIBWEBRTC)
+    std::unique_ptr<LibWebRTCCodecs> m_libWebRTCCodecs;
+#endif
 #endif
 
     Ref<WebCacheStorageProvider> m_cacheStorageProvider;

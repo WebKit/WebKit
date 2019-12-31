@@ -25,6 +25,7 @@ VPATH = \
     $(WebKit2)/GPUProcess \
     $(WebKit2)/GPUProcess/mac \
     $(WebKit2)/GPUProcess/media \
+    $(WebKit2)/GPUProcess/webrtc \
     $(WebKit2)/NetworkProcess \
     $(WebKit2)/NetworkProcess/Cookies \
     $(WebKit2)/NetworkProcess/cache \
@@ -51,6 +52,7 @@ VPATH = \
     $(WebKit2)/WebProcess/Geolocation \
     $(WebKit2)/WebProcess/GPU \
     $(WebKit2)/WebProcess/GPU/media \
+    $(WebKit2)/WebProcess/GPU/webrtc \
     $(WebKit2)/WebProcess/IconDatabase \
     $(WebKit2)/WebProcess/MediaCache \
     $(WebKit2)/WebProcess/MediaStream \
@@ -109,12 +111,14 @@ MESSAGE_RECEIVERS = \
     DrawingAreaProxy \
     EditableImageController \
     EventDispatcher \
-    LegacyCustomProtocolManager \
-    LegacyCustomProtocolManagerProxy \
     GPUProcess \
     GPUProcessProxy \
     GPUProcessConnection \
     GPUConnectionToWebProcess \
+    LegacyCustomProtocolManager \
+    LegacyCustomProtocolManagerProxy \
+    LibWebRTCCodecs \
+    LibWebRTCCodecsProxy \
     NPObjectMessageReceiver \
     NetworkConnectionToWebProcess \
     NetworkContentRuleListManager \

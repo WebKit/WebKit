@@ -69,4 +69,47 @@ private:
     const std::unique_ptr<VideoEncoderFactory> m_internalEncoderFactory;
 };
 
+using WebKitVideoDecoder = void*;
+using VideoDecoderCreateCallback = WebKitVideoDecoder(*)(const SdpVideoFormat& format);
+using VideoDecoderReleaseCallback = int32_t(*)(WebKitVideoDecoder);
+using VideoDecoderDecodeCallback = int32_t(*)(WebKitVideoDecoder, uint32_t timeStamp, const uint8_t*, size_t length);
+using VideoDecoderRegisterDecodeCompleteCallback = int32_t(*)(WebKitVideoDecoder, void* decodedImageCallback);
+
+void setVideoDecoderCallbacks(VideoDecoderCreateCallback, VideoDecoderReleaseCallback, VideoDecoderDecodeCallback, VideoDecoderRegisterDecodeCompleteCallback);
+
+class RemoteVideoDecoderFactory final : public VideoDecoderFactory {
+public:
+    explicit RemoteVideoDecoderFactory(std::unique_ptr<VideoDecoderFactory>&&);
+    ~RemoteVideoDecoderFactory() = default;
+
+private:
+    std::vector<SdpVideoFormat> GetSupportedFormats() const final;
+    std::unique_ptr<VideoDecoder> CreateVideoDecoder(const SdpVideoFormat& format) final;
+
+    std::unique_ptr<VideoDecoderFactory> m_internalFactory;
+};
+
+class RemoteVideoDecoder final : public webrtc::VideoDecoder {
+public:
+    explicit RemoteVideoDecoder(WebKitVideoDecoder);
+    ~RemoteVideoDecoder() = default;
+
+    static void decodeComplete(void* callback, uint32_t timeStamp, CVPixelBufferRef, uint32_t timeStampRTP);
+
+private:
+    int32_t InitDecode(const VideoCodec*, int32_t number_of_cores) final;
+    int32_t Decode(const EncodedImage&, bool missing_frames, int64_t render_time_ms) final;
+    int32_t RegisterDecodeCompleteCallback(DecodedImageCallback*) final;
+    int32_t Release() final;
+    const char* ImplementationName() const final { return "RemoteVideoToolBox"; }
+
+    WebKitVideoDecoder m_internalDecoder;
+};
+
+using LocalDecoder = void*;
+using LocalDecoderCallback = void (^)(CVPixelBufferRef, uint32_t timeStamp, uint32_t timeStampNs);
+void* createLocalDecoder(LocalDecoderCallback);
+void releaseLocalDecoder(LocalDecoder);
+int32_t decodeFrame(LocalDecoder, uint32_t timeStamp, const uint8_t*, size_t);
+
 }

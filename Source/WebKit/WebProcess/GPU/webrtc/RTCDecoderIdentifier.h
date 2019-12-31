@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,31 +25,11 @@
 
 #pragma once
 
-#include "LibWebRTCProvider.h"
+#include <wtf/ObjectIdentifier.h>
 
-#if USE(LIBWEBRTC)
+namespace WebKit {
 
-namespace webrtc {
-class VideoDecoderFactory;
-class VideoEncoderFactory;
-}
+enum RTCDecoderIdentifierType { };
+using RTCDecoderIdentifier = ObjectIdentifier<RTCDecoderIdentifierType>;
 
-namespace WebCore {
-
-class WEBCORE_EXPORT LibWebRTCProviderCocoa : public LibWebRTCProvider {
-public:
-    LibWebRTCProviderCocoa() = default;
-    ~LibWebRTCProviderCocoa();
-
-    std::unique_ptr<webrtc::VideoDecoderFactory> createDecoderFactory() override;
-
-private:
-    void setActive(bool) final;
-    std::unique_ptr<webrtc::VideoEncoderFactory> createEncoderFactory() final;
-
-    void setH264HardwareEncoderAllowed(bool allowed) final;
-};
-
-} // namespace WebCore
-
-#endif
+} // namespace WebKit
