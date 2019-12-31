@@ -1,3 +1,18 @@
+2019-12-31  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] Fix imported/w3c/web-platform-tests/css/css-text/white-space/pre-wrap-014.html
+        https://bugs.webkit.org/show_bug.cgi?id=205657
+        <rdar://problem/58254951>
+
+        Reviewed by Antti Koivisto.
+
+        Use the adjusted available width when justifying the runs during line close.
+
+        * layout/inlineformatting/InlineLineBuilder.cpp:
+        (WebCore::Layout::LineBuilder::justifyRuns const):
+        (WebCore::Layout::LineBuilder::alignHorizontally):
+        * layout/inlineformatting/InlineLineBuilder.h:
+
 2019-12-31  Antti Koivisto  <antti@apple.com>
 
         StyleRule accessor in RuleData should return a const reference

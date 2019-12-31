@@ -374,10 +374,10 @@ void LineBuilder::alignContentVertically(RunList& runList)
     }
 }
 
-void LineBuilder::justifyRuns(RunList& runList) const
+void LineBuilder::justifyRuns(RunList& runList, InlineLayoutUnit availableWidth) const
 {
     ASSERT(!runList.isEmpty());
-    ASSERT(availableWidth() > 0);
+    ASSERT(availableWidth > 0);
     // Need to fix up the last run first.
     auto& lastRun = runList.last();
     if (lastRun.hasExpansionOpportunity())
@@ -390,7 +390,7 @@ void LineBuilder::justifyRuns(RunList& runList) const
     if (!expansionOpportunityCount)
         return;
     // Distribute the extra space.
-    auto expansionToDistribute = availableWidth() / expansionOpportunityCount;
+    auto expansionToDistribute = availableWidth / expansionOpportunityCount;
     InlineLayoutUnit accumulatedExpansion = 0;
     for (auto& run : runList) {
         // Expand and moves runs by the accumulated expansion.
@@ -416,7 +416,7 @@ void LineBuilder::alignHorizontally(RunList& runList, const HangingContent& hang
     if (isTextAlignJustify()) {
         // Do not justify align the last line.
         if (lastLine == IsLastLineWithInlineContent::No)
-            justifyRuns(runList);
+            justifyRuns(runList, availableWidth);
         return;
     }
 
