@@ -77,6 +77,7 @@ function installDependenciesWithApt {
         libicu-dev \
         libjpeg-dev \
         libfile-copy-recursive-perl \
+        libopenjp2-7-dev \
         $(aptIfElse libpng-dev libpng12-dev) \
         libseccomp-dev \
         libsqlite3-dev \
@@ -183,6 +184,7 @@ function installDependenciesWithPacman {
         m4 \
         make \
         ninja \
+        openjpeg2 \
         patch \
         perl-file-copy-recursive \
         pkg-config \
@@ -293,6 +295,7 @@ function installDependenciesWithDnf {
         libxml2-devel \
         libxslt-devel \
         ninja-build \
+        openjpeg2-devel \
         patch \
         perl-File-Copy-Recursive \
         perl-JSON-PP \

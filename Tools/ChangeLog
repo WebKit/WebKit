@@ -1,3 +1,14 @@
+2019-12-31  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [WPE] OpenJPEG missing in install dependencies script.
+        https://bugs.webkit.org/show_bug.cgi?id=205647
+
+        Unreviewed follow-up fix.
+
+        Add also the OpenJPEG-2 package to the WPE install list.
+
+        * wpe/install-dependencies:
+
 2019-12-30  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [GTK][WPE] OpenJPEG missing in install dependencies script
