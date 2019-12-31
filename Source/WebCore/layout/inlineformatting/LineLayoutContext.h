@@ -62,7 +62,7 @@ private:
         const InlineItem* revertTo { nullptr };
     };
     Result tryAddingFloatItems(LineBuilder&, const FloatList&);
-    Result tryAddingInlineItems(LineBreaker&, LineBuilder&, const LineBreaker::RunList&);
+    Result tryAddingInlineItems(LineBreaker&, LineBuilder&, const LineCandidateContent&);
     void commitContent(LineBuilder&, const LineBreaker::RunList&, Optional<LineBreaker::Result::PartialTrailingContent>);
     LineContent close(LineBuilder&, unsigned leadingInlineItemIndex, unsigned committedInlineItemCount, Optional<LineContent::PartialContent>);
 

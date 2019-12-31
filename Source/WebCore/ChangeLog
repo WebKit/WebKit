@@ -1,3 +1,30 @@
+2019-12-31  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC](Regression r253909) Fix fast/text/simple-line-with-br.html
+        https://bugs.webkit.org/show_bug.cgi?id=205653
+        <rdar://problem/58248900>
+
+        Reviewed by Antti Koivisto.
+
+        When the inline content is followed by a line break (e.g. text content<br>), the line
+        break should not initiate a new line unless the line is empty (e.g text content<br><br>).
+        Let's include the line break in the LineCandidateContent so that we can close the line by
+        adding the trailing line break (This is a partial revert of r253909). 
+
+        * layout/inlineformatting/LineLayoutContext.cpp:
+        (WebCore::Layout::nextWrapOpportunity):
+        (WebCore::Layout::LineCandidateContent::inlineRuns const):
+        (WebCore::Layout::LineCandidateContent::trailingLineBreak const):
+        (WebCore::Layout::LineCandidateContent::setTrailingLineBreak):
+        (WebCore::Layout::LineCandidateContent::append):
+        (WebCore::Layout::LineLayoutContext::layoutLine):
+        (WebCore::Layout::LineLayoutContext::nextContentForLine):
+        (WebCore::Layout::LineLayoutContext::tryAddingInlineItems):
+        (WebCore::Layout::LineCandidateContent::runs const): Deleted.
+        (WebCore::Layout::LineCandidateContent::isLineBreak const): Deleted.
+        (WebCore::Layout::LineCandidateContent::setIsLineBreak): Deleted.
+        * layout/inlineformatting/LineLayoutContext.h:
+
 2019-12-31  youenn fablet  <youenn@apple.com>
 
         Implement RTC VTB decoders in GPUProcess
