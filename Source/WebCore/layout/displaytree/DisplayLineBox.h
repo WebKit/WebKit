@@ -62,9 +62,9 @@ public:
     LineBox() = default;
 
     const InlineRect& logicalRect() const { return m_rect; }
+    const InlineRect& scrollableOverflowRect() const { return m_scrollableOverflowRect; }
 
     InlineLayoutPoint logicalTopLeft() const { return m_rect.topLeft(); }
-
     InlineLayoutUnit logicalLeft() const { return m_rect.left(); }
     InlineLayoutUnit logicalRight() const { return m_rect.right(); }
     InlineLayoutUnit logicalTop() const { return m_rect.top(); }
@@ -103,6 +103,8 @@ public:
     void setLogicalHeightIfGreater(InlineLayoutUnit);
     void setLogicalWidth(InlineLayoutUnit logicalWidth) { m_rect.setWidth(logicalWidth); }
 
+    void setScrollableOverflowRect(const InlineRect& rect) { m_scrollableOverflowRect = rect; }
+
     void moveHorizontally(InlineLayoutUnit delta) { m_rect.moveHorizontally(delta); }
 
     void expandHorizontally(InlineLayoutUnit delta) { m_rect.expandHorizontally(delta); }
@@ -127,6 +129,7 @@ private:
     bool m_hasValidBaselineOffset { false };
 #endif
     InlineRect m_rect;
+    InlineRect m_scrollableOverflowRect;
     Baseline m_baseline;
     InlineLayoutUnit m_baselineOffset;
     bool m_isConsideredEmpty { true };

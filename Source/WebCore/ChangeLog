@@ -1,5 +1,27 @@
 2019-12-31  Zalan Bujtas  <zalan@apple.com>
 
+        [LFC][IFC] Add scrollable overflow rect to Display::LineBox
+        https://bugs.webkit.org/show_bug.cgi?id=205661
+        <rdar://problem/58256282>
+
+        Reviewed by Antti Koivisto.
+
+        Compute layout overflow rect while closing the line and adjusting the rust vertically.
+
+        * layout/displaytree/DisplayInlineRect.h:
+        (WebCore::Display::InlineRect::setBottom):
+        (WebCore::Display::InlineRect::expandVerticallyToContain):
+        * layout/displaytree/DisplayLineBox.h:
+        (WebCore::Display::LineBox::scrollableOverflowRect const):
+        (WebCore::Display::LineBox::logicalTopLeft const):
+        (WebCore::Display::LineBox::setScrollableOverflowRect):
+        * layout/inlineformatting/InlineLineBuilder.cpp:
+        (WebCore::Layout::LineBuilder::alignContentVertically):
+        * layout/integration/LayoutIntegrationLineLayout.cpp:
+        (WebCore::LayoutIntegration::LineLayout::collectOverflow):
+
+2019-12-31  Zalan Bujtas  <zalan@apple.com>
+
         [LFC][IFC] Fix imported/w3c/web-platform-tests/css/css-text/white-space/pre-wrap-014.html
         https://bugs.webkit.org/show_bug.cgi?id=205657
         <rdar://problem/58254951>

@@ -158,7 +158,7 @@ void LineLayout::collectOverflow(RenderBlockFlow& flow)
     auto viewportSize = m_flow.frame().view()->size();
 
     for (auto& lineBox : displayInlineContent()->lineBoxes) {
-        auto lineRect = Layout::toLayoutRect(lineBox.logicalRect());
+        auto lineRect = Layout::toLayoutRect(lineBox.scrollableOverflowRect());
         auto visualOverflowRect = LayoutRect { computeVisualOverflow(flow.style(), lineRect, viewportSize) };
         flow.addLayoutOverflow(lineRect);
         flow.addVisualOverflow(visualOverflowRect);

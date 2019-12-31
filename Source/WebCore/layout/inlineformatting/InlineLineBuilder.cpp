@@ -322,6 +322,7 @@ size_t LineBuilder::revert(const InlineItem& revertTo)
 void LineBuilder::alignContentVertically(RunList& runList)
 {
     ASSERT(!m_isIntrinsicSizing);
+    auto scrollableOverflowRect = m_lineBox.logicalRect();
     for (auto& run : runList) {
         InlineLayoutUnit logicalTop = 0;
         auto& layoutBox = run.layoutBox();
@@ -368,10 +369,13 @@ void LineBuilder::alignContentVertically(RunList& runList)
             break;
         }
         run.adjustLogicalTop(logicalTop);
+        // Adjust scrollable overflow if the run overflows the line.
+        scrollableOverflowRect.expandVerticallyToContain(run.logicalRect());
         // Convert runs from relative to the line top/left to the formatting root's border box top/left.
         run.moveVertically(this->logicalTop());
         run.moveHorizontally(this->logicalLeft());
     }
+    m_lineBox.setScrollableOverflowRect(scrollableOverflowRect);
 }
 
 void LineBuilder::justifyRuns(RunList& runList, InlineLayoutUnit availableWidth) const

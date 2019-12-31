@@ -50,6 +50,7 @@ public:
     InlineLayoutSize size() const;
 
     void setTop(InlineLayoutUnit);
+    void setBottom(InlineLayoutUnit);
     void setLeft(InlineLayoutUnit);
     void setTopLeft(const InlineLayoutPoint&);
     void setWidth(InlineLayoutUnit);
@@ -61,6 +62,7 @@ public:
     void expand(Optional<InlineLayoutUnit>, Optional<InlineLayoutUnit>);
     void expandHorizontally(InlineLayoutUnit delta) { expand(delta, { }); }
     void expandVertically(InlineLayoutUnit delta) { expand({ }, delta); }
+    void expandVerticallyToContain(const InlineRect&);
 
     operator InlineLayoutRect() const;
 
@@ -187,6 +189,15 @@ inline void InlineRect::setTop(InlineLayoutUnit top)
     m_rect.setY(top);
 }
 
+inline void InlineRect::setBottom(InlineLayoutUnit bottom)
+{
+#if !ASSERT_DISABLED
+    m_hasValidTop = true;
+    m_hasValidHeight = true;
+#endif
+    m_rect.shiftMaxYEdgeTo(bottom);
+}
+
 inline void InlineRect::setLeft(InlineLayoutUnit left)
 {
 #if !ASSERT_DISABLED
@@ -228,6 +239,14 @@ inline void InlineRect::expand(Optional<InlineLayoutUnit> width, Optional<Inline
     ASSERT(!width || m_hasValidWidth);
     ASSERT(!height || m_hasValidHeight);
     m_rect.expand(width.valueOr(0), height.valueOr(0));
+}
+
+inline void InlineRect::expandVerticallyToContain(const InlineRect& other)
+{
+    auto containTop = std::min(top(), other.top());
+    auto containBottom = std::max(bottom(), other.bottom());
+    setTop(containTop);
+    setBottom(containBottom);
 }
 
 inline InlineRect::operator InlineLayoutRect() const
