@@ -42,6 +42,7 @@
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "FrameLoaderClient.h"
+#include "HTTPHeaderValues.h"
 #include "InspectorInstrumentation.h"
 #include "LoaderStrategy.h"
 #include "NetworkLoadMetrics.h"
@@ -97,7 +98,7 @@ void PingLoader::loadImage(Frame& frame, const URL& url)
 
     document.contentSecurityPolicy()->upgradeInsecureRequestIfNeeded(request, ContentSecurityPolicy::InsecureRequestType::Load);
 
-    request.setHTTPHeaderField(HTTPHeaderName::CacheControl, "max-age=0");
+    request.setHTTPHeaderField(HTTPHeaderName::CacheControl, HTTPHeaderValues::maxAge0());
 
     HTTPHeaderMap originalRequestHeader = request.httpHeaderFields();
 
@@ -129,7 +130,7 @@ void PingLoader::sendPing(Frame& frame, const URL& pingURL, const URL& destinati
     request.setHTTPMethod("POST");
     request.setHTTPContentType("text/ping");
     request.setHTTPBody(FormData::create("PING"));
-    request.setHTTPHeaderField(HTTPHeaderName::CacheControl, "max-age=0");
+    request.setHTTPHeaderField(HTTPHeaderName::CacheControl, HTTPHeaderValues::maxAge0());
 
     HTTPHeaderMap originalRequestHeader = request.httpHeaderFields();
 

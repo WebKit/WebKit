@@ -77,6 +77,7 @@
 #include "HTMLObjectElement.h"
 #include "HTMLParserIdioms.h"
 #include "HTTPHeaderNames.h"
+#include "HTTPHeaderValues.h"
 #include "HTTPParsers.h"
 #include "HistoryController.h"
 #include "HistoryItem.h"
@@ -2947,10 +2948,10 @@ void FrameLoader::addExtraFieldsToRequest(ResourceRequest& request, FrameLoadTyp
 
     if (!hasSpecificCachePolicy && request.cachePolicy() == ResourceRequestCachePolicy::ReloadIgnoringCacheData) {
         if (loadType == FrameLoadType::Reload)
-            request.setHTTPHeaderField(HTTPHeaderName::CacheControl, "max-age=0");
+            request.setHTTPHeaderField(HTTPHeaderName::CacheControl, HTTPHeaderValues::maxAge0());
         else if (loadType == FrameLoadType::ReloadFromOrigin) {
-            request.setHTTPHeaderField(HTTPHeaderName::CacheControl, "no-cache");
-            request.setHTTPHeaderField(HTTPHeaderName::Pragma, "no-cache");
+            request.setHTTPHeaderField(HTTPHeaderName::CacheControl, HTTPHeaderValues::noCache());
+            request.setHTTPHeaderField(HTTPHeaderName::Pragma, HTTPHeaderValues::noCache());
         }
     }
 

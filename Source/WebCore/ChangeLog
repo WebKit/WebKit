@@ -1,3 +1,27 @@
+2020-01-01  Rob Buis  <rbuis@igalia.com>
+
+        Make better use of HTTPHeaderValues constants
+        https://bugs.webkit.org/show_bug.cgi?id=205672
+
+        Reviewed by Youenn Fablet.
+
+        Use HTTPHeaderValues constants instead of allocating
+        temporary strings.
+
+        * Modules/websockets/ThreadableWebSocketChannel.cpp:
+        (WebCore::ThreadableWebSocketChannel::webSocketConnectRequest):
+        * Modules/websockets/WebSocketHandshake.cpp:
+        (WebCore::WebSocketHandshake::clientHandshakeRequest const):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::addExtraFieldsToRequest):
+        * loader/PingLoader.cpp:
+        (WebCore::PingLoader::loadImage):
+        (WebCore::PingLoader::sendPing):
+        * loader/appcache/ApplicationCacheGroup.cpp:
+        (WebCore::ApplicationCacheGroup::createRequest):
+        * loader/cache/CachedResource.cpp:
+        (WebCore::CachedResource::load):
+
 2019-12-31  Peng Liu  <peng.liu6@apple.com>
 
         Add remote media resource loader for the GPU process

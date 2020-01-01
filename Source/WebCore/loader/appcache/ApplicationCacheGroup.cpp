@@ -40,6 +40,7 @@
 #include "FrameLoader.h"
 #include "FrameLoaderClient.h"
 #include "HTTPHeaderNames.h"
+#include "HTTPHeaderValues.h"
 #include "InspectorInstrumentation.h"
 #include "ManifestParser.h"
 #include "NavigationScheduler.h"
@@ -463,7 +464,7 @@ ResourceRequest ApplicationCacheGroup::createRequest(URL&& url, ApplicationCache
 {
     ResourceRequest request { WTFMove(url) };
     m_frame->loader().applyUserAgentIfNeeded(request);
-    request.setHTTPHeaderField(HTTPHeaderName::CacheControl, "max-age=0");
+    request.setHTTPHeaderField(HTTPHeaderName::CacheControl, HTTPHeaderValues::maxAge0());
 
     if (resource) {
         const String& lastModified = resource->response().httpHeaderField(HTTPHeaderName::LastModified);

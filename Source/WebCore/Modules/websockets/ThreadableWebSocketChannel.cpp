@@ -33,6 +33,7 @@
 
 #include "ContentRuleListResults.h"
 #include "Document.h"
+#include "HTTPHeaderValues.h"
 #include "Page.h"
 #include "RuntimeEnabledFeatures.h"
 #include "ScriptExecutionContext.h"
@@ -117,8 +118,8 @@ Optional<ResourceRequest> ThreadableWebSocketChannel::webSocketConnectRequest(Do
     // There are some proxies that rewrite "Connection: upgrade"
     // to "Connection: close" in the response if a request doesn't contain
     // these headers.
-    request.addHTTPHeaderField(HTTPHeaderName::Pragma, "no-cache");
-    request.addHTTPHeaderField(HTTPHeaderName::CacheControl, "no-cache");
+    request.addHTTPHeaderField(HTTPHeaderName::Pragma, HTTPHeaderValues::noCache());
+    request.addHTTPHeaderField(HTTPHeaderName::CacheControl, HTTPHeaderValues::noCache());
 
     return request;
 }
