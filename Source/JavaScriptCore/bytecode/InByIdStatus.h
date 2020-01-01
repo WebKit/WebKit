@@ -39,7 +39,7 @@ class AccessCase;
 class CodeBlock;
 class StructureStubInfo;
 
-class InByIdStatus {
+class InByIdStatus final {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     enum State {

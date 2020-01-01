@@ -43,7 +43,7 @@ class JSModuleNamespaceObject;
 class ModuleNamespaceAccessCase;
 class StructureStubInfo;
 
-class GetByStatus {
+class GetByStatus final {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     enum State : uint8_t {

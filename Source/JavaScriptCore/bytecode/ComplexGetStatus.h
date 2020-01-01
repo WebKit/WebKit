@@ -67,7 +67,7 @@ class StructureChain;
 //         break;
 //     }
 
-class ComplexGetStatus {
+class ComplexGetStatus final {
 public:
     enum Kind {
         ShouldSkip,

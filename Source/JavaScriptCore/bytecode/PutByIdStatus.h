@@ -42,7 +42,7 @@ class StructureStubInfo;
 
 typedef HashMap<CodeOrigin, StructureStubInfo*, CodeOriginApproximateHash> StubInfoMap;
 
-class PutByIdStatus {
+class PutByIdStatus final {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     enum State {

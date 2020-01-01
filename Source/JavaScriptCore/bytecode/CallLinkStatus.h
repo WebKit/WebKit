@@ -41,7 +41,7 @@ class JSFunction;
 class Structure;
 class CallLinkInfo;
 
-class CallLinkStatus {
+class CallLinkStatus final {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     CallLinkStatus()
