@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc.
+ * Copyright (C) 2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -22,30 +22,13 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
-
-#if ENABLE(WEB_RTC)
-
-#include "RTCRtpTransceiverDirection.h"
-#include <wtf/Forward.h>
-
-namespace WebCore {
-struct RTCRtpCodecCapability;
-
-class RTCRtpTransceiverBackend {
-public:
-    virtual ~RTCRtpTransceiverBackend() = default;
-
-    virtual RTCRtpTransceiverDirection direction() const = 0;
-    virtual Optional<RTCRtpTransceiverDirection> currentDirection() const = 0;
-    virtual void setDirection(RTCRtpTransceiverDirection) = 0;
-
-    virtual String mid() = 0;
-    virtual void stop() = 0;
-    virtual bool stopped() const = 0;
-    virtual ExceptionOr<void> setCodecPreferences(const Vector<RTCRtpCodecCapability>&) = 0;
+[
+    Conditional=WEB_RTC,
+    EnabledAtRuntime=PeerConnection,
+    JSGenerateToJSObject
+] dictionary RTCRtpCodecCapability {
+    required DOMString mimeType;
+    required unsigned long clockRate;
+    unsigned short channels;
+    DOMString sdpFmtpLine;
 };
-
-} // namespace WebCore
-
-#endif // ENABLE(WEB_RTC)

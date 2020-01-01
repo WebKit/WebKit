@@ -1,3 +1,13 @@
+2020-01-01  youenn fablet  <youenn@apple.com>
+
+        Implement transceiver setCodecPreferences
+        https://bugs.webkit.org/show_bug.cgi?id=190840
+        <rdar://problem/45496326>
+
+        Reviewed by Eric Carlson.
+
+        * web-platform-tests/webrtc/RTCRtpTransceiver-setCodecPreferences-expected.txt:
+
 2019-12-27  Rossana Monteriso  <rmonteriso@igalia.com>
 
         [css-grid] Move some alignment tests to the WPT folder and add width-keyword-classes.css

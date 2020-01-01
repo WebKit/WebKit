@@ -42,16 +42,18 @@ promise_test((test) => {
 
             createConnections((firstConnection) => {
                 firstConnection.addTrack(track, localStream);
+                firstConnection.getTransceivers()[0].setCodecPreferences([{mimeType: "video/VP8", clockRate: 90000}]);
             }, (secondConnection) => {
                 receivingConnection = secondConnection;
                 secondConnection.ontrack = (trackEvent) => {
                     remoteTrack = trackEvent.track;
                     resolve(trackEvent.streams[0]);
                 };
-            }, { observeOffer : (offer) => {
-                offer.sdp = setCodec(offer.sdp, "VP8");
+            }, { observeOffer : test.step_func((offer) => {
+                assert_false(offer.sdp.includes("H264"), "No H264");
+                assert_true(offer.sdp.includes("VP8"), "VP8");
                 return offer;
-            }
+            })
             });
             setTimeout(() => reject("Test timed out"), 5000);
         });

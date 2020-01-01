@@ -45,6 +45,8 @@
 
 namespace WebCore {
 
+struct RTCRtpCodecCapability;
+
 class RTCRtpTransceiver final : public RefCounted<RTCRtpTransceiver>, public ScriptWrappable {
     WTF_MAKE_ISO_ALLOCATED(RTCRtpTransceiver);
 public:
@@ -65,6 +67,7 @@ public:
 
     bool stopped() const;
     void stop();
+    ExceptionOr<void> setCodecPreferences(const Vector<RTCRtpCodecCapability>&);
 
     // FIXME: Temporary solution to keep track of ICE states for this transceiver. Later, each
     // sender and receiver will have up to two DTLS transports, which in turn will have an ICE

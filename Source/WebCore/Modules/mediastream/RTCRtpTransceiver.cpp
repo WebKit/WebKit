@@ -109,6 +109,13 @@ void RTCRtpTransceiver::stop()
         m_backend->stop();
 }
 
+ExceptionOr<void> RTCRtpTransceiver::setCodecPreferences(const Vector<RTCRtpCodecCapability>& codecs)
+{
+    if (!m_backend)
+        return { };
+    return m_backend->setCodecPreferences(codecs);
+}
+
 bool RTCRtpTransceiver::stopped() const
 {
     if (m_backend)

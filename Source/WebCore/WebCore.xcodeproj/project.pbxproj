@@ -7516,6 +7516,8 @@
 		41DEFCB21E56C1B9000D9E5F /* JSDOMBindingInternals.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = JSDOMBindingInternals.js; sourceTree = "<group>"; };
 		41DEFCB31E56C1B9000D9E5F /* JSDOMMapLike.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSDOMMapLike.cpp; sourceTree = "<group>"; };
 		41DEFCB41E56C1B9000D9E5F /* JSDOMMapLike.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDOMMapLike.h; sourceTree = "<group>"; };
+		41E0A7D923BB590100561060 /* RTCRtpCodecCapability.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = RTCRtpCodecCapability.idl; sourceTree = "<group>"; };
+		41E0A7DC23BB63DB00561060 /* RTCRtpCodecCapability.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RTCRtpCodecCapability.h; sourceTree = "<group>"; };
 		41E1B1CA0FF5986900576B3B /* AbstractWorker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AbstractWorker.cpp; sourceTree = "<group>"; };
 		41E1B1CB0FF5986900576B3B /* AbstractWorker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AbstractWorker.h; sourceTree = "<group>"; };
 		41E1B1CC0FF5986900576B3B /* AbstractWorker.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = AbstractWorker.idl; sourceTree = "<group>"; };
@@ -16089,6 +16091,7 @@
 				41FCB75C214866FE0038ADC6 /* RTCPriorityType.h */,
 				41E593FD214865A900D3CB61 /* RTCPriorityType.idl */,
 				41369E55218C76E300792E29 /* RTCRtpCapabilities.idl */,
+				41E0A7D923BB590100561060 /* RTCRtpCodecCapability.idl */,
 				41FCB75F214866FF0038ADC6 /* RTCRtpCodecParameters.h */,
 				41FCB759214865D30038ADC6 /* RTCRtpCodecParameters.idl */,
 				414AD3FF21498D3000521676 /* RTCRtpCodingParameters.h */,
@@ -16203,6 +16206,7 @@
 				41A48A9D1E8312EB00D2AC2D /* RTCPeerConnectionState.h */,
 				412BA5FE218C651800365474 /* RTCPMuxPolicy.h */,
 				412DE4B6219285BF0075F3A7 /* RTCRtpCapabilities.h */,
+				41E0A7DC23BB63DB00561060 /* RTCRtpCodecCapability.h */,
 				31EB54DD1E7DC74400C1623B /* RTCRtpTransceiverDirection.h */,
 				313591041E7DDC6000F30630 /* RTCSdpType.h */,
 				07221BAB17CF0AD400848E51 /* RTCSessionDescriptionDescriptor.cpp */,

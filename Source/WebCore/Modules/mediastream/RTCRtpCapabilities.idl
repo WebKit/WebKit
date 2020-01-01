@@ -26,17 +26,6 @@
     Conditional=WEB_RTC,
     EnabledAtRuntime=PeerConnection,
     JSGenerateToJSObject
-] dictionary RTCRtpCodecCapability {
-    required DOMString mimeType;
-    required unsigned long clockRate;
-    unsigned short channels;
-    DOMString sdpFmtpLine;
-};
-
-[
-    Conditional=WEB_RTC,
-    EnabledAtRuntime=PeerConnection,
-    JSGenerateToJSObject
 ] dictionary RTCRtpHeaderExtensionCapability {
     DOMString uri;
 };

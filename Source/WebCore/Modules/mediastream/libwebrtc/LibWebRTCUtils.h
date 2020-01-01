@@ -26,16 +26,22 @@
 
 #if USE(LIBWEBRTC)
 
+#include "ExceptionCode.h"
 #include <wtf/text/WTFString.h>
 
 namespace webrtc {
 struct RtpParameters;
 struct RtpTransceiverInit;
 
+class RTCError;
+
+enum class RTCErrorType;
 enum class RtpTransceiverDirection;
 }
 
 namespace WebCore {
+
+class Exception;
 
 struct RTCRtpParameters;
 struct RTCRtpSendParameters;
@@ -51,6 +57,9 @@ webrtc::RtpParameters fromRTCRtpSendParameters(const RTCRtpSendParameters&, cons
 RTCRtpTransceiverDirection toRTCRtpTransceiverDirection(webrtc::RtpTransceiverDirection);
 webrtc::RtpTransceiverDirection fromRTCRtpTransceiverDirection(RTCRtpTransceiverDirection);
 webrtc::RtpTransceiverInit fromRtpTransceiverInit(const RTCRtpTransceiverInit&);
+
+ExceptionCode toExceptionCode(webrtc::RTCErrorType);
+Exception toException(const webrtc::RTCError&);
 
 inline String fromStdString(const std::string& value)
 {

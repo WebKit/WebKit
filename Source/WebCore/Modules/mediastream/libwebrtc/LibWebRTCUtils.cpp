@@ -233,6 +233,33 @@ webrtc::RtpTransceiverInit fromRtpTransceiverInit(const RTCRtpTransceiverInit& i
     return rtcInit;
 }
 
+ExceptionCode toExceptionCode(webrtc::RTCErrorType type)
+{
+    switch (type) {
+    case webrtc::RTCErrorType::INVALID_PARAMETER:
+        return InvalidAccessError;
+    case webrtc::RTCErrorType::INVALID_RANGE:
+        return RangeError;
+    case webrtc::RTCErrorType::SYNTAX_ERROR:
+        return SyntaxError;
+    case webrtc::RTCErrorType::INVALID_STATE:
+        return InvalidStateError;
+    case webrtc::RTCErrorType::INVALID_MODIFICATION:
+        return InvalidModificationError;
+    case webrtc::RTCErrorType::NETWORK_ERROR:
+        return NetworkError;
+    default:
+        return OperationError;
+    }
+}
+
+Exception toException(const webrtc::RTCError& error)
+{
+    ASSERT(!error.ok());
+
+    return Exception { toExceptionCode(error.type()), error.message() };
+}
+
 } // namespace WebCore
 
 #endif // USE(LIBWEBRTC)

@@ -396,7 +396,7 @@ static inline RTCRtpCapabilities toRTCRtpCapabilities(const webrtc::RtpCapabilit
 
     capabilities.codecs.reserveInitialCapacity(rtpCapabilities.codecs.size());
     for (auto& codec : rtpCapabilities.codecs)
-        capabilities.codecs.uncheckedAppend(RTCRtpCapabilities::CodecCapability { fromStdString(codec.mime_type()), static_cast<uint32_t>(codec.clock_rate ? *codec.clock_rate : 0), toChannels(codec.num_channels), { } });
+        capabilities.codecs.uncheckedAppend(RTCRtpCodecCapability { fromStdString(codec.mime_type()), static_cast<uint32_t>(codec.clock_rate ? *codec.clock_rate : 0), toChannels(codec.num_channels), { } });
 
     capabilities.headerExtensions.reserveInitialCapacity(rtpCapabilities.header_extensions.size());
     for (auto& header : rtpCapabilities.header_extensions)

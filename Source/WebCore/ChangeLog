@@ -1,3 +1,43 @@
+2020-01-01  youenn fablet  <youenn@apple.com>
+
+        Implement transceiver setCodecPreferences
+        https://bugs.webkit.org/show_bug.cgi?id=190840
+        <rdar://problem/45496326>
+
+        Reviewed by Eric Carlson.
+
+        Add binding code to pipe setCodecPreferences up to webrtc backend,
+        Covered by updated and rebased tests.
+
+        * CMakeLists.txt:
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources-output.xcfilelist:
+        * DerivedSources.make:
+        * Modules/mediastream/RTCRtpCapabilities.idl:
+        * Modules/mediastream/RTCRtpCodecCapability.idl: Added.
+        * Modules/mediastream/RTCRtpTransceiver.cpp:
+        (WebCore::RTCRtpTransceiver::setCodecPreferences):
+        * Modules/mediastream/RTCRtpTransceiver.h:
+        * Modules/mediastream/RTCRtpTransceiver.idl:
+        * Modules/mediastream/RTCRtpTransceiverBackend.h:
+        * Modules/mediastream/libwebrtc/LibWebRTCObservers.h:
+        (WebCore::toExceptionCode): Deleted.
+        * Modules/mediastream/libwebrtc/LibWebRTCRtpTransceiverBackend.cpp:
+        (WebCore::toRtpCodecCapability):
+        (WebCore::LibWebRTCRtpTransceiverBackend::setCodecPreferences):
+        * Modules/mediastream/libwebrtc/LibWebRTCRtpTransceiverBackend.h:
+        * Modules/mediastream/libwebrtc/LibWebRTCUtils.cpp:
+        (WebCore::toExceptionCode):
+        (WebCore::toException):
+        * Modules/mediastream/libwebrtc/LibWebRTCUtils.h:
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/mediastream/RTCRtpCapabilities.h:
+        (): Deleted.
+        * platform/mediastream/RTCRtpCodecCapability.h: Added.
+        * platform/mediastream/libwebrtc/LibWebRTCProvider.cpp:
+        (WebCore::toRTCRtpCapabilities):
+
 2020-01-01  Rob Buis  <rbuis@igalia.com>
 
         Make better use of HTTPHeaderValues constants

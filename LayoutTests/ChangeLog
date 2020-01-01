@@ -1,3 +1,13 @@
+2020-01-01  youenn fablet  <youenn@apple.com>
+
+        Implement transceiver setCodecPreferences
+        https://bugs.webkit.org/show_bug.cgi?id=190840
+        <rdar://problem/45496326>
+
+        Reviewed by Eric Carlson.
+
+        * webrtc/video-mute-vp8.html:
+
 2019-12-31  Peng Liu  <peng.liu6@apple.com>
 
         Add remote media resource loader for the GPU process

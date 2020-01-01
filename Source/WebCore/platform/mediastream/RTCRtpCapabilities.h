@@ -26,23 +26,18 @@
 
 #if ENABLE(WEB_RTC)
 
+#include "RTCRtpCodecCapability.h"
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
 struct RTCRtpCapabilities {
-    struct CodecCapability {
-        String mimeType;
-        uint32_t clockRate { 0 };
-        Optional<uint16_t> channels;
-        String sdpFmtpLine;
-    };
     struct HeaderExtensionCapability {
         String uri;
     };
 
-    Vector<CodecCapability> codecs;
+    Vector<RTCRtpCodecCapability> codecs;
     Vector<HeaderExtensionCapability> headerExtensions;
 };
 
