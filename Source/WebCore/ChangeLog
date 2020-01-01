@@ -1,3 +1,39 @@
+2020-01-01  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] Add support for ink overflow
+        https://bugs.webkit.org/show_bug.cgi?id=205674
+        <rdar://problem/58262376>
+
+        Reviewed by Antti Koivisto.
+
+        Add ink overflow information to Display::Run and to each Display::LineBox while
+        the display boxes are being created.
+        (Eventually we should add both scrollable and ink overflow to Display::Box)
+
+        * layout/displaytree/DisplayInlineRect.h:
+        (WebCore::Display::InlineRect::expandToContain):
+        (WebCore::Display::InlineRect::inflate):
+        * layout/displaytree/DisplayLineBox.h:
+        (WebCore::Display::LineBox::scrollableOverflow const):
+        (WebCore::Display::LineBox::inkOverflow const):
+        (WebCore::Display::LineBox::setScrollableOverflow):
+        (WebCore::Display::LineBox::setInkOverflow):
+        (WebCore::Display::LineBox::scrollableOverflowRect const): Deleted.
+        (WebCore::Display::LineBox::setScrollableOverflowRect): Deleted.
+        * layout/displaytree/DisplayRun.h:
+        (WebCore::Display::Run::inkOverflow const):
+        (WebCore::Display::Run::Run):
+        * layout/inlineformatting/InlineFormattingContext.cpp:
+        (WebCore::Layout::InlineFormattingContext::setDisplayBoxesForLine):
+        * layout/inlineformatting/InlineLineBuilder.cpp:
+        (WebCore::Layout::LineBuilder::alignContentVertically):
+        * layout/integration/LayoutIntegrationLineLayout.cpp:
+        (WebCore::LayoutIntegration::LineLayout::collectOverflow):
+        (WebCore::LayoutIntegration::LineLayout::paint):
+        (WebCore::LayoutIntegration::computeVisualOverflow): Deleted.
+        * platform/graphics/LayoutSize.h:
+        (WebCore::ceiledIntSize):
+
 2019-12-22  Jeff Miller  <jeffm@apple.com>
 
         Update user-visible copyright strings to include 2020

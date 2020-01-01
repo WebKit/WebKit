@@ -452,9 +452,12 @@ void InlineFormattingContext::setDisplayBoxesForLine(const LineLayoutContext::Li
         }
     }
 
+    // FIXME: ICB is not the real ICB when lyoutFormattingContextIntegrationEnabled is on. 
+    auto initialContaingBlockSize = geometryForBox(root().initialContainingBlock()).contentBox().size();
     auto& inlineContent = formattingState.ensureDisplayInlineContent();
     auto lineIndex = inlineContent.lineBoxes.size();
-    inlineContent.lineBoxes.append(Display::LineBox { lineContent.lineBox });
+    inlineContent.lineBoxes.append(lineContent.lineBox);
+    auto lineInkOverflow = lineContent.lineBox.scrollableOverflow();
     Optional<unsigned> lastTextItemIndex;
     // Compute box final geometry.
     auto& lineRuns = lineContent.runList;
@@ -467,8 +470,27 @@ void InlineFormattingContext::setDisplayBoxesForLine(const LineLayoutContext::Li
         // Add final display runs to state first.
         // Inline level containers (<span>) don't generate display runs and neither do completely collapsed runs.
         auto initiatesInlineRun = !lineRun.isContainerStart() && !lineRun.isContainerEnd() && !lineRun.isCollapsedToVisuallyEmpty();
-        if (initiatesInlineRun)
-            inlineContent.runs.append({ lineIndex, lineRun.layoutBox(), lineRun.logicalRect(), lineRun.textContext() });
+        if (initiatesInlineRun) {
+            auto computedInkOverflow = [&] {
+                // FIXME: Add support for non-text ink overflow.
+                if (!lineRun.isText())
+                    return logicalRect;
+                auto& style = lineRun.style();
+                auto inkOverflow = logicalRect;
+                auto strokeOverflow = std::ceil(style.computedStrokeWidth(ceiledIntSize(initialContaingBlockSize)));
+                inkOverflow.inflate(strokeOverflow);
+
+                auto letterSpacing = style.fontCascade().letterSpacing();
+                if (letterSpacing < 0) {
+                    // Last letter's negative spacing shrinks logical rect. Push it to ink overflow.
+                    inkOverflow.expandHorizontally(-letterSpacing);
+                }
+                return inkOverflow;
+            };
+            auto inkOverflow = computedInkOverflow();
+            lineInkOverflow.expandToContain(inkOverflow);
+            inlineContent.runs.append({ lineIndex, lineRun.layoutBox(), logicalRect, inkOverflow, lineRun.textContext() });
+        }
 
         if (lineRun.isLineBreak()) {
             displayBox.setTopLeft(toLayoutPoint(logicalRect.topLeft()));
@@ -526,6 +548,7 @@ void InlineFormattingContext::setDisplayBoxesForLine(const LineLayoutContext::Li
     // Make sure the trailing text run gets a hyphen when it needs one.
     if (lineContent.partialContent && lineContent.partialContent->trailingContentNeedsHyphen)
         inlineContent.runs[*lastTextItemIndex].textContext()->setNeedsHyphen();
+    inlineContent.lineBoxes.last().setInkOverflow(lineInkOverflow);
 }
 
 void InlineFormattingContext::invalidateFormattingState(const InvalidationState&)

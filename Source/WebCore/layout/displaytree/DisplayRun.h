@@ -71,11 +71,12 @@ struct Run {
         Optional<ExpansionContext> m_expansionContext;
     };
 
-    Run(size_t lineIndex, const Layout::Box&, const InlineRect& logicalRect, Optional<TextContext> = WTF::nullopt);
+    Run(size_t lineIndex, const Layout::Box&, const InlineRect& logicalRect, const InlineRect& inkOverflow, Optional<TextContext> = WTF::nullopt);
 
     size_t lineIndex() const { return m_lineIndex; }
 
     const InlineRect& logicalRect() const { return m_logicalRect; }
+    const InlineRect& inkOverflow() const { return m_inkOverflow; }
 
     InlineLayoutPoint logicalTopLeft() const { return m_logicalRect.topLeft(); }
     InlineLayoutUnit logicalLeft() const { return m_logicalRect.left(); }
@@ -112,13 +113,15 @@ private:
     WeakPtr<const Layout::Box> m_layoutBox;
     CachedImage* m_cachedImage { nullptr };
     InlineRect m_logicalRect;
+    InlineRect m_inkOverflow;
     Optional<TextContext> m_textContext;
 };
 
-inline Run::Run(size_t lineIndex, const Layout::Box& layoutBox, const InlineRect& logicalRect, Optional<TextContext> textContext)
+inline Run::Run(size_t lineIndex, const Layout::Box& layoutBox, const InlineRect& logicalRect, const InlineRect& inkOverflow, Optional<TextContext> textContext)
     : m_lineIndex(lineIndex)
     , m_layoutBox(makeWeakPtr(layoutBox))
     , m_logicalRect(logicalRect)
+    , m_inkOverflow(inkOverflow)
     , m_textContext(textContext)
 {
 }

@@ -60,9 +60,11 @@ public:
     void moveVertically(InlineLayoutUnit);
 
     void expand(Optional<InlineLayoutUnit>, Optional<InlineLayoutUnit>);
+    void expandToContain(const InlineRect&);
     void expandHorizontally(InlineLayoutUnit delta) { expand(delta, { }); }
     void expandVertically(InlineLayoutUnit delta) { expand({ }, delta); }
     void expandVerticallyToContain(const InlineRect&);
+    void inflate(InlineLayoutUnit);
 
     operator InlineLayoutRect() const;
 
@@ -241,12 +243,23 @@ inline void InlineRect::expand(Optional<InlineLayoutUnit> width, Optional<Inline
     m_rect.expand(width.valueOr(0), height.valueOr(0));
 }
 
+inline void InlineRect::expandToContain(const InlineRect& other)
+{
+    m_rect = unionRect(other, m_rect);
+}
+
 inline void InlineRect::expandVerticallyToContain(const InlineRect& other)
 {
     auto containTop = std::min(top(), other.top());
     auto containBottom = std::max(bottom(), other.bottom());
     setTop(containTop);
     setBottom(containBottom);
+}
+
+inline void InlineRect::inflate(InlineLayoutUnit inflate)
+{
+    ASSERT(hasValidGeometry());
+    m_rect.inflate(inflate);
 }
 
 inline InlineRect::operator InlineLayoutRect() const

@@ -375,7 +375,7 @@ void LineBuilder::alignContentVertically(RunList& runList)
         run.moveVertically(this->logicalTop());
         run.moveHorizontally(this->logicalLeft());
     }
-    m_lineBox.setScrollableOverflowRect(scrollableOverflowRect);
+    m_lineBox.setScrollableOverflow(scrollableOverflowRect);
 }
 
 void LineBuilder::justifyRuns(RunList& runList, InlineLayoutUnit availableWidth) const

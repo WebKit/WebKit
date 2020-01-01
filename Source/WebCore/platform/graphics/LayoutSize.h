@@ -185,6 +185,11 @@ inline IntSize flooredIntSize(const LayoutSize& s)
     return IntSize(s.width().floor(), s.height().floor());
 }
 
+inline IntSize ceiledIntSize(const LayoutSize& s)
+{
+    return IntSize(s.width().ceil(), s.height().ceil());
+}
+
 inline IntSize roundedIntSize(const LayoutSize& s)
 {
     return IntSize(s.width().round(), s.height().round());

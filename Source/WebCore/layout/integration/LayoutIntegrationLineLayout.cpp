@@ -135,33 +135,14 @@ LayoutUnit LineLayout::lastLineBaseline() const
     return Layout::toLayoutUnit(lastLineBox.logicalTop() + lastLineBox.baselineOffset());
 }
 
-// FIXME: LFC should handle overflow computations.
-static FloatRect computeVisualOverflow(const RenderStyle& style, const FloatRect& boxRect, IntSize& viewportSize)
-{
-    auto overflowRect = boxRect;
-    auto strokeOverflow = std::ceil(style.computedStrokeWidth(viewportSize));
-    overflowRect.inflate(strokeOverflow);
-
-    auto letterSpacing = style.fontCascade().letterSpacing();
-    if (letterSpacing >= 0)
-        return overflowRect;
-    // Last letter's negative spacing shrinks layout rect. Push it to visual overflow.
-    overflowRect.expand(-letterSpacing, 0);
-    return overflowRect;
-}
-
 void LineLayout::collectOverflow(RenderBlockFlow& flow)
 {
     ASSERT(&flow == &m_flow);
     ASSERT(!flow.hasOverflowClip());
 
-    auto viewportSize = m_flow.frame().view()->size();
-
     for (auto& lineBox : displayInlineContent()->lineBoxes) {
-        auto lineRect = Layout::toLayoutRect(lineBox.scrollableOverflowRect());
-        auto visualOverflowRect = LayoutRect { computeVisualOverflow(flow.style(), lineRect, viewportSize) };
-        flow.addLayoutOverflow(lineRect);
-        flow.addVisualOverflow(visualOverflowRect);
+        flow.addLayoutOverflow(Layout::toLayoutRect(lineBox.scrollableOverflow()));
+        flow.addVisualOverflow(Layout::toLayoutRect(lineBox.inkOverflow()));
     }
 }
 
@@ -226,8 +207,6 @@ void LineLayout::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
         return;
 
     auto& inlineContent = *displayInlineContent();
-
-    auto viewportSize = m_flow.frame().view()->size();
     float deviceScaleFactor = m_flow.document().deviceScaleFactor();
 
     auto paintRect = paintInfo.rect;
@@ -246,7 +225,7 @@ void LineLayout::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
             continue;
 
         auto rect = FloatRect { run.logicalRect() };
-        auto visualOverflowRect = computeVisualOverflow(style, rect, viewportSize);
+        auto visualOverflowRect = FloatRect { run.inkOverflow() };
         if (paintRect.y() > visualOverflowRect.maxY() || paintRect.maxY() < visualOverflowRect.y())
             continue;
 
