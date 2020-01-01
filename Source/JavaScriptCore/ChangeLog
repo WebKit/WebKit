@@ -1,3 +1,12 @@
+2019-12-22  Jeff Miller  <jeffm@apple.com>
+
+        Update user-visible copyright strings to include 2020
+        https://bugs.webkit.org/show_bug.cgi?id=205552
+
+        Reviewed by Darin Adler.
+
+        * Info.plist:
+
 2019-12-20  Darin Adler  <darin@apple.com>
 
         Tidy a bit of StringBuilder usage
