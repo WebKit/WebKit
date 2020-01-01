@@ -41,8 +41,6 @@ namespace WebCore {
 struct ServiceWorkerJobData {
     using Identifier = ServiceWorkerJobDataIdentifier;
     ServiceWorkerJobData(SWServerConnectionIdentifier, const DocumentOrWorkerIdentifier& sourceContext);
-    ServiceWorkerJobData(const ServiceWorkerJobData&) = default;
-    ServiceWorkerJobData() = default;
 
     SWServerConnectionIdentifier connectionIdentifier() const { return m_identifier.connectionIdentifier; }
 
@@ -65,7 +63,7 @@ struct ServiceWorkerJobData {
     template<class Decoder> static Optional<ServiceWorkerJobData> decode(Decoder&);
 
 private:
-    WEBCORE_EXPORT explicit ServiceWorkerJobData(const Identifier&);
+    ServiceWorkerJobData() = default;
 
     Identifier m_identifier;
 };
@@ -93,7 +91,8 @@ Optional<ServiceWorkerJobData> ServiceWorkerJobData::decode(Decoder& decoder)
     if (!identifier)
         return WTF::nullopt;
 
-    ServiceWorkerJobData jobData { WTFMove(*identifier) };
+    ServiceWorkerJobData jobData;
+    jobData.m_identifier = *identifier;
 
     if (!decoder.decode(jobData.scriptURL))
         return WTF::nullopt;

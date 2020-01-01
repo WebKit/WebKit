@@ -30,11 +30,6 @@
 
 namespace WebCore {
 
-ServiceWorkerJobData::ServiceWorkerJobData(const Identifier& identifier)
-    : m_identifier(identifier)
-{
-}
-
 ServiceWorkerJobData::ServiceWorkerJobData(SWServerConnectionIdentifier connectionIdentifier, const DocumentOrWorkerIdentifier& localSourceContext)
     : m_identifier { connectionIdentifier, ServiceWorkerJobIdentifier::generateThreadSafe() }
 {
@@ -54,7 +49,8 @@ ServiceWorkerRegistrationKey ServiceWorkerJobData::registrationKey() const
 
 ServiceWorkerJobData ServiceWorkerJobData::isolatedCopy() const
 {
-    ServiceWorkerJobData result { identifier() };
+    ServiceWorkerJobData result;
+    result.m_identifier = identifier();
     result.sourceContext = sourceContext;
     result.type = type;
 

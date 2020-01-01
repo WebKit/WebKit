@@ -1,5 +1,24 @@
 2020-01-01  youenn fablet  <youenn@apple.com>
 
+        ServiceWorkerJobData should have a move constructor
+        https://bugs.webkit.org/show_bug.cgi?id=205555
+        <rdar://problem/57853373>
+
+        Reviewed by Darin Adler.
+
+        Previously, ServiceWorkerJobData did not have a move constructor.
+        Refactor code to enable it.
+        This improves efficiency and ensures that strings and other ref counted fields are
+        properly moved and isolated.
+        Covered by existing tests.
+
+        * workers/service/ServiceWorkerJobData.cpp:
+        (WebCore::ServiceWorkerJobData::isolatedCopy const):
+        * workers/service/ServiceWorkerJobData.h:
+        (WebCore::ServiceWorkerJobData::decode):
+
+2020-01-01  youenn fablet  <youenn@apple.com>
+
         Implement transceiver setCodecPreferences
         https://bugs.webkit.org/show_bug.cgi?id=190840
         <rdar://problem/45496326>
