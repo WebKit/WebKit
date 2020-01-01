@@ -83,7 +83,7 @@ SelectorDataList::SelectorDataList(const CSSSelectorList& selectorList)
 
     m_selectors.reserveInitialCapacity(selectorCount);
     for (const CSSSelector* selector = selectorList.first(); selector; selector = CSSSelectorList::next(selector))
-        m_selectors.uncheckedAppend(SelectorData(selector));
+        m_selectors.uncheckedAppend({ selector });
 
     if (selectorCount == 1) {
         const CSSSelector& selector = *m_selectors.first().selector;
@@ -405,11 +405,8 @@ template <typename SelectorQueryTrait>
 ALWAYS_INLINE void SelectorDataList::executeCompiledSimpleSelectorChecker(const ContainerNode& searchRootNode, SelectorCompiler::QuerySelectorSimpleSelectorChecker selectorChecker, typename SelectorQueryTrait::OutputType& output, const SelectorData& selectorData) const
 {
     for (auto& element : elementDescendants(const_cast<ContainerNode&>(searchRootNode))) {
-#if CSS_SELECTOR_JIT_PROFILING
-        selectorData.compiledSelectorUsed();
-#else
-        UNUSED_PARAM(selectorData);
-#endif
+        selectorData.compiledSelector.wasUsed();
+
         if (selectorChecker(&element)) {
             SelectorQueryTrait::appendOutputForElement(output, &element);
             if (SelectorQueryTrait::shouldOnlyMatchFirstElement)
@@ -425,11 +422,8 @@ ALWAYS_INLINE void SelectorDataList::executeCompiledSelectorCheckerWithCheckingC
     checkingContext.scope = rootNode.isDocumentNode() ? nullptr : &rootNode;
 
     for (auto& element : elementDescendants(const_cast<ContainerNode&>(searchRootNode))) {
-#if CSS_SELECTOR_JIT_PROFILING
-        selectorData.compiledSelectorUsed();
-#else
-        UNUSED_PARAM(selectorData);
-#endif
+        selectorData.compiledSelector.wasUsed();
+
         if (selectorChecker(&element, &checkingContext)) {
             SelectorQueryTrait::appendOutputForElement(output, &element);
             if (SelectorQueryTrait::shouldOnlyMatchFirstElement)
@@ -445,17 +439,15 @@ ALWAYS_INLINE void SelectorDataList::executeCompiledSingleMultiSelectorData(cons
     checkingContext.scope = rootNode.isDocumentNode() ? nullptr : &rootNode;
     for (auto& element : elementDescendants(const_cast<ContainerNode&>(rootNode))) {
         for (auto& selector : m_selectors) {
-#if CSS_SELECTOR_JIT_PROFILING
-            selector.compiledSelectorUsed();
-#endif
+            selector.compiledSelector.wasUsed();
+
             bool matched = false;
-            void* compiledSelectorChecker = selector.compiledSelectorCodeRef.code().executableAddress();
-            if (selector.compilationStatus == SelectorCompilationStatus::SimpleSelectorChecker) {
-                auto selectorChecker = SelectorCompiler::querySelectorSimpleSelectorCheckerFunction(compiledSelectorChecker, selector.compilationStatus);
+            if (selector.compiledSelector.status == SelectorCompilationStatus::SimpleSelectorChecker) {
+                auto selectorChecker = SelectorCompiler::querySelectorSimpleSelectorCheckerFunction(selector.compiledSelector);
                 matched = selectorChecker(&element);
             } else {
-                ASSERT(selector.compilationStatus == SelectorCompilationStatus::SelectorCheckerWithCheckingContext);
-                auto selectorChecker = SelectorCompiler::querySelectorSelectorCheckerFunctionWithCheckingContext(compiledSelectorChecker, selector.compilationStatus);
+                ASSERT(selector.compiledSelector.status == SelectorCompilationStatus::SelectorCheckerWithCheckingContext);
+                auto selectorChecker = SelectorCompiler::querySelectorSelectorCheckerFunctionWithCheckingContext(selector.compiledSelector);
                 matched = selectorChecker(&element, &checkingContext);
             }
             if (matched) {
@@ -468,20 +460,15 @@ ALWAYS_INLINE void SelectorDataList::executeCompiledSingleMultiSelectorData(cons
     }
 }
 
-static bool isCompiledSelector(SelectorCompilationStatus compilationStatus)
-{
-    return compilationStatus == SelectorCompilationStatus::SimpleSelectorChecker || compilationStatus == SelectorCompilationStatus::SelectorCheckerWithCheckingContext;
-}
-
 bool SelectorDataList::compileSelector(const SelectorData& selectorData)
 {
-    if (selectorData.compilationStatus != SelectorCompilationStatus::NotCompiled)
-        return isCompiledSelector(selectorData.compilationStatus);
+    auto& compiledSelector = selectorData.compiledSelector;
+    
+    if (compiledSelector.status == SelectorCompilationStatus::NotCompiled)
+        SelectorCompiler::compileSelector(compiledSelector, selectorData.selector, SelectorCompiler::SelectorContext::QuerySelector);
 
-    selectorData.compilationStatus = SelectorCompiler::compileSelector(selectorData.selector, SelectorCompiler::SelectorContext::QuerySelector, selectorData.compiledSelectorCodeRef);
-    return isCompiledSelector(selectorData.compilationStatus);
+    return compiledSelector.status != SelectorCompilationStatus::CannotCompile;
 }
-
 
 #endif // ENABLE(CSS_SELECTOR_JIT)
 
@@ -510,7 +497,7 @@ ALWAYS_INLINE void SelectorDataList::execute(ContainerNode& rootNode, typename S
         {
 #if ENABLE(CSS_SELECTOR_JIT)
         const SelectorData& selectorData = m_selectors.first();
-        ASSERT(selectorData.compilationStatus == SelectorCompilationStatus::NotCompiled);
+        ASSERT(selectorData.compiledSelector.status == SelectorCompilationStatus::NotCompiled);
         ASSERT(m_matchType == CompilableSingle || m_matchType == CompilableSingleWithRootFilter);
         if (compileSelector(selectorData)) {
             if (m_matchType == CompilableSingle) {
@@ -541,13 +528,12 @@ ALWAYS_INLINE void SelectorDataList::execute(ContainerNode& rootNode, typename S
         {
         CompiledSingleCase:
         const SelectorData& selectorData = m_selectors.first();
-        void* compiledSelectorChecker = selectorData.compiledSelectorCodeRef.code().executableAddress();
-        if (selectorData.compilationStatus == SelectorCompilationStatus::SimpleSelectorChecker) {
-            SelectorCompiler::QuerySelectorSimpleSelectorChecker selectorChecker = SelectorCompiler::querySelectorSimpleSelectorCheckerFunction(compiledSelectorChecker, selectorData.compilationStatus);
+        if (selectorData.compiledSelector.status == SelectorCompilationStatus::SimpleSelectorChecker) {
+            auto selectorChecker = SelectorCompiler::querySelectorSimpleSelectorCheckerFunction(selectorData.compiledSelector);
             executeCompiledSimpleSelectorChecker<SelectorQueryTrait>(*searchRootNode, selectorChecker, output, selectorData);
         } else {
-            ASSERT(selectorData.compilationStatus == SelectorCompilationStatus::SelectorCheckerWithCheckingContext);
-            SelectorCompiler::QuerySelectorSelectorCheckerWithCheckingContext selectorChecker = SelectorCompiler::querySelectorSelectorCheckerFunctionWithCheckingContext(compiledSelectorChecker, selectorData.compilationStatus);
+            ASSERT(selectorData.compiledSelector.status == SelectorCompilationStatus::SelectorCheckerWithCheckingContext);
+            auto selectorChecker = SelectorCompiler::querySelectorSelectorCheckerFunctionWithCheckingContext(selectorData.compiledSelector);
             executeCompiledSelectorCheckerWithCheckingContext<SelectorQueryTrait>(rootNode, *searchRootNode, selectorChecker, output, selectorData);
         }
         break;

@@ -50,25 +50,10 @@ public:
 
 private:
     struct SelectorData {
-        SelectorData(const CSSSelector* selector)
-            : selector(selector)
-        {
-        }
-
         const CSSSelector* selector;
 #if ENABLE(CSS_SELECTOR_JIT)
-        mutable JSC::MacroAssemblerCodeRef<CSSSelectorPtrTag> compiledSelectorCodeRef;
-        mutable SelectorCompilationStatus compilationStatus { SelectorCompilationStatus::NotCompiled };
-#if CSS_SELECTOR_JIT_PROFILING
-        ~SelectorData()
-        {
-            if (compiledSelectorCodeRef.code().executableAddress())
-                dataLogF("SelectorData compiled selector %d \"%s\"\n", m_compiledSelectorUseCount, selector->selectorText().utf8().data());
-        }
-        mutable unsigned m_compiledSelectorUseCount { 0 };
-        void compiledSelectorUsed() const { m_compiledSelectorUseCount++; }
+        mutable CompiledSelector compiledSelector { };
 #endif
-#endif // ENABLE(CSS_SELECTOR_JIT)
     };
 
     bool selectorMatches(const SelectorData&, Element&, const ContainerNode& rootNode) const;

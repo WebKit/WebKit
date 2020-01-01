@@ -1,3 +1,46 @@
+2020-01-01  Antti Koivisto  <antti@apple.com>
+
+        Make SelectorCompiler interface use CompiledSelector type
+        https://bugs.webkit.org/show_bug.cgi?id=205673
+
+        Reviewed by Sam Weinig.
+
+        SelectorCompiler interface is currently rather low-level, taking void* code references.
+        Expand use of CompiledSelector type to simplify clients.
+
+        * cssjit/CompiledSelector.h:
+        (WebCore::CompiledSelector::wasUsed):
+        * cssjit/SelectorCompiler.cpp:
+        (WebCore::SelectorCompiler::compileSelector):
+
+        Generate code directory to a CompiledSelector.
+
+        * cssjit/SelectorCompiler.h:
+        (WebCore::SelectorCompiler::ruleCollectorSimpleSelectorCheckerFunction):
+        (WebCore::SelectorCompiler::querySelectorSimpleSelectorCheckerFunction):
+        (WebCore::SelectorCompiler::ruleCollectorSelectorCheckerFunctionWithCheckingContext):
+        (WebCore::SelectorCompiler::querySelectorSelectorCheckerFunctionWithCheckingContext):
+
+        Take CompiledSelector.
+
+        * dom/SelectorQuery.cpp:
+        (WebCore::SelectorDataList::SelectorDataList):
+        (WebCore::SelectorDataList::executeCompiledSimpleSelectorChecker const):
+        (WebCore::SelectorDataList::executeCompiledSelectorCheckerWithCheckingContext const):
+        (WebCore::SelectorDataList::executeCompiledSingleMultiSelectorData const):
+        (WebCore::SelectorDataList::compileSelector):
+        (WebCore::SelectorDataList::execute const):
+        (WebCore::isCompiledSelector): Deleted.
+        * dom/SelectorQuery.h:
+        (WebCore::SelectorDataList::SelectorData::SelectorData): Deleted.
+        (WebCore::SelectorDataList::SelectorData::~SelectorData): Deleted.
+        (WebCore::SelectorDataList::SelectorData::compiledSelectorUsed const): Deleted.
+
+        Replace SelectorData fields with a CompiledSelector member.
+
+        * style/ElementRuleCollector.cpp:
+        (WebCore::Style::ElementRuleCollector::ruleMatches):
+
 2020-01-01  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] Add support for ink overflow

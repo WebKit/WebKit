@@ -396,12 +396,23 @@ static FunctionType constructFragments(const CSSSelector* rootSelector, Selector
 
 static void computeBacktrackingInformation(SelectorFragmentList& selectorFragments, unsigned level = 0);
 
-SelectorCompilationStatus compileSelector(const CSSSelector* lastSelector, SelectorContext selectorContext, JSC::MacroAssemblerCodeRef<CSSSelectorPtrTag>& codeRef)
+void compileSelector(CompiledSelector& compiledSelector, const CSSSelector* selector, SelectorContext selectorContext)
 {
-    if (!JSC::VM::canUseJIT())
-        return SelectorCompilationStatus::CannotCompile;
-    SelectorCodeGenerator codeGenerator(lastSelector, selectorContext);
-    return codeGenerator.compile(codeRef);
+    ASSERT(compiledSelector.status == SelectorCompilationStatus::NotCompiled);
+
+    if (!JSC::VM::canUseJIT()) {
+        compiledSelector.status = SelectorCompilationStatus::CannotCompile;
+        return;
+    }
+    
+    SelectorCodeGenerator codeGenerator(selector, selectorContext);
+    compiledSelector.status = codeGenerator.compile(compiledSelector.codeRef);
+
+#if defined(CSS_SELECTOR_JIT_PROFILING) && CSS_SELECTOR_JIT_PROFILING
+    compiledSelector.selector = selector;
+#endif
+
+    ASSERT(compiledSelector.status != SelectorCompilationStatus::NotCompiled);
 }
 
 static inline FragmentRelation fragmentRelationForSelectorRelation(CSSSelector::RelationType relation)

@@ -28,11 +28,14 @@
 #if ENABLE(CSS_SELECTOR_JIT)
 
 #include "CSSPtrTag.h"
+#include "CSSSelector.h"
 #include <JavaScriptCore/MacroAssemblerCodeRef.h>
+
+#define CSS_SELECTOR_JIT_PROFILING 0
 
 namespace WebCore {
 
-enum class SelectorCompilationStatus {
+enum class SelectorCompilationStatus : uint8_t {
     NotCompiled,
     CannotCompile,
     SimpleSelectorChecker,
@@ -43,8 +46,19 @@ struct CompiledSelector {
     WTF_MAKE_STRUCT_FAST_ALLOCATED;
     SelectorCompilationStatus status { SelectorCompilationStatus::NotCompiled };
     JSC::MacroAssemblerCodeRef<CSSSelectorPtrTag> codeRef;
+
 #if defined(CSS_SELECTOR_JIT_PROFILING) && CSS_SELECTOR_JIT_PROFILING
     unsigned useCount { 0 };
+    const CSSSelector* selector { nullptr };
+    void wasUsed() { ++useCount; }
+
+    ~CompiledSelector()
+    {
+        if (codeRef.code().executableAddress())
+            dataLogF("CompiledSelector %d \"%s\"\n", useCount, selector->selectorText().utf8().data());
+    }
+#else
+    void wasUsed() { }
 #endif
 };
 
