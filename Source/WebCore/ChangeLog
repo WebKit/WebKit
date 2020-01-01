@@ -1,3 +1,23 @@
+2020-01-01  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][Integration] Provide the viewport size when faking ICB
+        https://bugs.webkit.org/show_bug.cgi?id=205676
+        <rdar://problem/58263799>
+
+        Reviewed by Antti Koivisto.
+
+        Normally we would get the viewport size by checking the ICB, but in integration mode
+        the ICB is not sized to the size of the RenderView.
+
+        * layout/LayoutState.cpp:
+        (WebCore::Layout::LayoutState::setViewportSize):
+        (WebCore::Layout::LayoutState::viewportSize const):
+        * layout/LayoutState.h:
+        * layout/inlineformatting/InlineFormattingContext.cpp:
+        (WebCore::Layout::InlineFormattingContext::setDisplayBoxesForLine):
+        * layout/integration/LayoutIntegrationLineLayout.cpp:
+        (WebCore::LayoutIntegration::LineLayout::prepareRootGeometryForLayout):
+
 2020-01-01  Antti Koivisto  <antti@apple.com>
 
         Make SelectorCompiler interface use CompiledSelector type

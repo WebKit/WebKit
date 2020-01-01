@@ -31,6 +31,7 @@
 #include "DisplayBox.h"
 #include "LayoutBox.h"
 #include "LayoutContainer.h"
+#include "RuntimeEnabledFeatures.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
@@ -127,6 +128,23 @@ FormattingState& LayoutState::createFormattingStateForFormattingRootIfNeeded(con
     }
 
     CRASH();
+}
+
+void LayoutState::setViewportSize(const LayoutSize& viewportSize)
+{
+    if (RuntimeEnabledFeatures::sharedFeatures().layoutFormattingContextIntegrationEnabled()) {
+        m_viewportSize = viewportSize;
+        return;
+    }
+    ASSERT_NOT_REACHED();
+}
+
+LayoutSize LayoutState::viewportSize() const
+{
+    if (RuntimeEnabledFeatures::sharedFeatures().layoutFormattingContextIntegrationEnabled())
+        return m_viewportSize;
+    ASSERT_NOT_REACHED();
+    return { };
 }
 
 }

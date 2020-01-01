@@ -36,6 +36,7 @@
 #include "LayoutContext.h"
 #include "LayoutState.h"
 #include "Logging.h"
+#include "RuntimeEnabledFeatures.h"
 #include "TextUtil.h"
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/text/TextStream.h>
@@ -452,8 +453,12 @@ void InlineFormattingContext::setDisplayBoxesForLine(const LineLayoutContext::Li
         }
     }
 
-    // FIXME: ICB is not the real ICB when lyoutFormattingContextIntegrationEnabled is on. 
-    auto initialContaingBlockSize = geometryForBox(root().initialContainingBlock()).contentBox().size();
+    auto initialContaingBlockSize = LayoutSize { };
+    if (RuntimeEnabledFeatures::sharedFeatures().layoutFormattingContextIntegrationEnabled()) {
+        // ICB is not the real ICB when lyoutFormattingContextIntegrationEnabled is on.
+        initialContaingBlockSize = layoutState().viewportSize();
+    } else
+        initialContaingBlockSize = geometryForBox(root().initialContainingBlock()).contentBox().size();
     auto& inlineContent = formattingState.ensureDisplayInlineContent();
     auto lineIndex = inlineContent.lineBoxes.size();
     inlineContent.lineBoxes.append(lineContent.lineBox);

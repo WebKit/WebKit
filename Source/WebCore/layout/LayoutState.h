@@ -77,6 +77,10 @@ public:
     const RenderBox& rootRenderer() const { return m_layoutTreeContent->rootRenderer(); }
 #endif
 
+    // FIXME: LFC integration only. Full LFC has proper ICB access.
+    void setViewportSize(const LayoutSize&);
+    LayoutSize viewportSize() const;
+
 private:
     void setQuirksMode(QuirksMode quirksMode) { m_quirksMode = quirksMode; }
 
@@ -88,6 +92,7 @@ private:
     QuirksMode m_quirksMode { QuirksMode::No };
 
     WeakPtr<const LayoutTreeContent> m_layoutTreeContent;
+    LayoutSize m_viewportSize;
 };
 
 #ifndef NDEBUG

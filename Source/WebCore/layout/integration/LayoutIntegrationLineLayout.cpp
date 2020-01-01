@@ -98,7 +98,7 @@ void LineLayout::layout()
 void LineLayout::prepareRootGeometryForLayout()
 {
     auto& displayBox = m_layoutState->displayBoxForRootLayoutBox();
-
+    m_layoutState->setViewportSize(m_flow.frame().view()->size());
     // Don't set marging properties or height. These should not be be accessed by inline layout.
     displayBox.setBorder(Layout::Edges { { m_flow.borderStart(), m_flow.borderEnd() }, { m_flow.borderBefore(), m_flow.borderAfter() } });
     displayBox.setPadding(Layout::Edges { { m_flow.paddingStart(), m_flow.paddingEnd() }, { m_flow.paddingBefore(), m_flow.paddingAfter() } });
