@@ -1,3 +1,19 @@
+2019-12-20  Darin Adler  <darin@apple.com>
+
+        Tidy a bit of StringBuilder usage
+        https://bugs.webkit.org/show_bug.cgi?id=205509
+
+        Reviewed by Sam Weinig.
+
+        * dom/Range.cpp:
+        (WebCore::Range::toString const): Remove redundant range checking and let the
+        StringBuilder::appendSubstring take care of it.
+
+        * editing/MarkupAccumulator.cpp:
+        (WebCore::appendCharactersReplacingEntitiesInternal): Use appendSubstring.
+        (WebCore::MarkupAccumulator::appendNamespace): Use single calls to
+        StringBuilder::append with multiple arguments rather than multiple calls.
+
 2019-12-31  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] Add scrollable overflow rect to Display::LineBox

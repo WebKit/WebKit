@@ -1,3 +1,14 @@
+2019-12-20  Darin Adler  <darin@apple.com>
+
+        Tidy a bit of StringBuilder usage
+        https://bugs.webkit.org/show_bug.cgi?id=205509
+
+        Reviewed by Sam Weinig.
+
+        * dfg/DFGStrengthReductionPhase.cpp:
+        (JSC::DFG::StrengthReductionPhase::handleNode): Remove unneeded check that
+        duplicates range checking that StringBuilder::appendSubstring does.
+
 2019-12-30  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Unreviewed, build fix after r253904

@@ -349,7 +349,7 @@ Ref<StringImpl> StringImpl::convertToLowercaseWithoutLocale()
     if (is8Bit()) {
         for (unsigned i = 0; i < m_length; ++i) {
             LChar character = m_data8[i];
-            if (UNLIKELY((character & ~0x7F) || isASCIIUpper(character)))
+            if (UNLIKELY(!isASCII(character) || isASCIIUpper(character)))
                 return convertToLowercaseWithoutLocaleStartingAtFailingIndex8Bit(i);
         }
 
@@ -405,13 +405,14 @@ Ref<StringImpl> StringImpl::convertToLowercaseWithoutLocaleStartingAtFailingInde
     auto newImpl = createUninitializedInternalNonEmpty(m_length, data8);
 
     for (unsigned i = 0; i < failingIndex; ++i) {
-        ASSERT(!(m_data8[i] & ~0x7F) && !isASCIIUpper(m_data8[i]));
+        ASSERT(isASCII(m_data8[i]));
+        ASSERT(!isASCIIUpper(m_data8[i]));
         data8[i] = m_data8[i];
     }
 
     for (unsigned i = failingIndex; i < m_length; ++i) {
         LChar character = m_data8[i];
-        if (!(character & ~0x7F))
+        if (isASCII(character))
             data8[i] = toASCIILower(character);
         else {
             ASSERT(isLatin1(u_tolower(character)));

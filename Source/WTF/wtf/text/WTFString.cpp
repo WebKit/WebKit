@@ -32,6 +32,7 @@
 #include <wtf/dtoa.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/IntegerToStringConversion.h>
+#include <wtf/text/StringBuilder.h>
 #include <wtf/text/StringToIntegerConversion.h>
 #include <wtf/unicode/CharacterNames.h>
 #include <wtf/unicode/UTF8Conversion.h>
@@ -1109,7 +1110,7 @@ Vector<char> asciiDebug(StringImpl* impl)
     if (!impl)
         return asciiDebug(String("[null]"_s).impl());
 
-    Vector<char> buffer;
+    StringBuilder buffer;
     for (unsigned i = 0; i < impl->length(); ++i) {
         UChar ch = (*impl)[i];
         if (isASCIIPrintable(ch)) {
@@ -1122,8 +1123,10 @@ Vector<char> asciiDebug(StringImpl* impl)
             appendUnsignedAsHexFixedSize(ch, buffer, 4);
         }
     }
-    buffer.append('\0');
-    return buffer;
+    CString narrowString = buffer.toString().ascii();
+    Vector<char> result;
+    result.append(reinterpret_cast<const char*>(narrowString.data()), narrowString.length() + 1);
+    return result;
 }
 
 Vector<char> asciiDebug(String& string)

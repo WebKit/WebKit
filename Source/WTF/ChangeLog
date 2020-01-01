@@ -1,3 +1,31 @@
+2019-12-20  Darin Adler  <darin@apple.com>
+
+        Tidy a bit of StringBuilder usage
+        https://bugs.webkit.org/show_bug.cgi?id=205509
+
+        Reviewed by Sam Weinig.
+
+        * wtf/FileSystem.cpp:
+        (WTF::FileSystemImpl::decodeFromFilename): Fix misleading variable name "hexDigit"
+        for result of decoding "%+XXXX"; what's decoded is a character, not a hex digit.
+
+        * wtf/HexNumber.h: Remove unused appendUnsignedAsHexFixedSize function for
+        destinations other than StringBuilder. Don't need it at this time, could add
+        it later if we ever decide we do.
+
+        * wtf/text/StringBuilder.h:
+        (WTF::StringBuilder::appendSubstring): Improved logic in appendSubstring so it
+        will handle even absurd values for offset and length correctly, and added a
+        default length of "infinity" just like in String::substring.
+
+        * wtf/text/StringImpl.cpp:
+        (WTF::StringImpl::convertToLowercaseWithoutLocale): Use isASCII.
+        (WTF::StringImpl::convertToLowercaseWithoutLocaleStartingAtFailingIndex8Bit): Ditto.
+
+        * wtf/text/WTFString.cpp:
+        (asciiDebug): Use StringBuilder to build the string; this was the one place that
+        used appendUnsignedAsHexFixedSize on something else, and there is no need.
+
 2019-12-30  youenn fablet  <youenn@apple.com>
 
         Ignore URL host for schemes that are not using host information

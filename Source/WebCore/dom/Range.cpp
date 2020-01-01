@@ -942,11 +942,9 @@ String Range::toString() const
     for (Node* node = firstNode(); node != pastLast; node = NodeTraversal::next(*node)) {
         auto type = node->nodeType();
         if (type == Node::TEXT_NODE || type == Node::CDATA_SECTION_NODE) {
-            auto& data = downcast<CharacterData>(*node).data();
-            unsigned length = data.length();
-            unsigned start = node == &startContainer() ? std::min(m_start.offset(), length) : 0U;
-            unsigned end = node == &endContainer() ? std::min(std::max(start, m_end.offset()), length) : length;
-            builder.appendSubstring(data, start, end - start);
+            unsigned start = node == &startContainer() ? m_start.offset() : 0U;
+            unsigned end = node == &endContainer() ? std::max(start, m_end.offset()) : std::numeric_limits<unsigned>::max();
+            builder.appendSubstring(downcast<CharacterData>(*node).data(), start, end - start);
         }
     }
 

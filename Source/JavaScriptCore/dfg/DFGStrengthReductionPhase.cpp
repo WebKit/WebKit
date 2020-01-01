@@ -903,9 +903,7 @@ private:
             if (!lastIndex && builder.isEmpty())
                 m_node->convertToIdentityOn(stringNode);
             else {
-                if (lastIndex < string.length())
-                    builder.appendSubstring(string, lastIndex, string.length() - lastIndex);
-                
+                builder.appendSubstring(string, lastIndex);
                 m_node->convertToLazyJSConstant(m_graph, LazyJSValue::newString(m_graph, builder.toString()));
             }
 

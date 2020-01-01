@@ -150,12 +150,12 @@ static inline void appendCharactersReplacingEntitiesInternal(StringBuilder& resu
         CharacterType character = text[i];
         uint8_t substitution = character < WTF_ARRAY_LENGTH(entityMap) ? entityMap[character] : static_cast<uint8_t>(EntitySubstitutionNullIndex);
         if (UNLIKELY(substitution != EntitySubstitutionNullIndex) && entitySubstitutionList[substitution].mask & entityMask) {
-            result.appendCharacters(text + positionAfterLastEntity, i - positionAfterLastEntity);
+            result.appendSubstring(source, offset + positionAfterLastEntity, i - positionAfterLastEntity);
             result.appendCharacters(entitySubstitutionList[substitution].characters, entitySubstitutionList[substitution].length);
             positionAfterLastEntity = i + 1;
         }
     }
-    result.appendCharacters(text + positionAfterLastEntity, length - positionAfterLastEntity);
+    result.appendSubstring(source, offset + positionAfterLastEntity, length - positionAfterLastEntity);
 }
 
 void MarkupAccumulator::appendCharactersReplacingEntities(StringBuilder& result, const String& source, unsigned offset, unsigned length, EntityMask entityMask)
@@ -351,11 +351,8 @@ void MarkupAccumulator::appendNamespace(StringBuilder& result, const AtomString&
     namespaces.checkConsistency();
     if (namespaceURI.isEmpty()) {
         // http://www.whatwg.org/specs/web-apps/current-work/multipage/the-xhtml-syntax.html#xml-fragment-serialization-algorithm
-        if (allowEmptyDefaultNS && namespaces.get(emptyAtom().impl())) {
-            result.append(' ');
-            result.append(xmlnsAtom().string());
-            result.appendLiteral("=\"\"");
-        }
+        if (allowEmptyDefaultNS && namespaces.get(emptyAtom().impl()))
+            result.append(' ', xmlnsAtom(), "=\"\"");
         return;
     }
 
@@ -370,12 +367,9 @@ void MarkupAccumulator::appendNamespace(StringBuilder& result, const AtomString&
         // Make sure xml prefix and namespace are always known to uphold the constraints listed at http://www.w3.org/TR/xml-names11/#xmlReserved.
         if (namespaceURI.impl() == XMLNames::xmlNamespaceURI->impl())
             return;
-        result.append(' ');
-        result.append(xmlnsAtom().string());
-        if (!prefix.isEmpty()) {
-            result.append(':');
-            result.append(prefix);
-        }
+        result.append(' ', xmlnsAtom());
+        if (!prefix.isEmpty())
+            result.append(':', prefix);
 
         result.append('=');
         result.append('"');
