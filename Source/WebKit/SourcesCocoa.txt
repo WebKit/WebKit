@@ -59,8 +59,6 @@ NetworkProcess/webrtc/NetworkRTCSocket.cpp
 
 GPUProcess/ios/GPUProcessIOS.mm
 GPUProcess/mac/GPUProcessMac.mm
-GPUProcess/media/RemoteMediaPlayerProxy.cpp
-GPUProcess/media/RemoteMediaPlayerManagerProxy.cpp
 GPUProcess/webrtc/LibWebRTCCodecsProxy.mm
 GPUProcess/EntryPoint/Cocoa/XPCService/GPUServiceEntryPoint.mm
 

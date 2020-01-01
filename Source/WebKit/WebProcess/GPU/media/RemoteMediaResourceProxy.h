@@ -28,37 +28,35 @@
 #if ENABLE(GPU_PROCESS)
 
 #include "Connection.h"
-#include <wtf/RefCounted.h>
-#include <wtf/text/WTFString.h>
-
-namespace IPC {
-class DataReference;
-}
+#include "RemoteMediaResourceIdentifier.h"
+#include <WebCore/PlatformMediaResourceLoader.h>
+#include <WebCore/PolicyChecker.h>
+#include <WebCore/ResourceResponse.h>
 
 namespace WebKit {
 
-class GPUProcessConnection : public RefCounted<GPUProcessConnection>, IPC::Connection::Client {
+class RemoteMediaResourceProxy final : public WebCore::PlatformMediaResourceClient {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<GPUProcessConnection> create(IPC::Connection::Identifier connectionIdentifier)
-    {
-        return adoptRef(*new GPUProcessConnection(connectionIdentifier));
-    }
-    ~GPUProcessConnection();
-    
-    IPC::Connection& connection() { return m_connection.get(); }
+    RemoteMediaResourceProxy(Ref<IPC::Connection>&&, WebCore::PlatformMediaResource&, RemoteMediaResourceIdentifier);
+    ~RemoteMediaResourceProxy();
 
 private:
-    GPUProcessConnection(IPC::Connection::Identifier);
+    // PlatformMediaResourceClient
+    void responseReceived(WebCore::PlatformMediaResource&, const WebCore::ResourceResponse&, CompletionHandler<void(WebCore::PolicyChecker::ShouldContinue)>&&) final;
+    void redirectReceived(WebCore::PlatformMediaResource&, WebCore::ResourceRequest&&, const WebCore::ResourceResponse&, CompletionHandler<void(WebCore::ResourceRequest&&)>&&) final;
+    bool shouldCacheResponse(WebCore::PlatformMediaResource&, const WebCore::ResourceResponse&) final;
+    void dataSent(WebCore::PlatformMediaResource&, unsigned long long, unsigned long long) final;
+    void dataReceived(WebCore::PlatformMediaResource&, const char*, int) final;
+    void accessControlCheckFailed(WebCore::PlatformMediaResource&, const WebCore::ResourceError&) final;
+    void loadFailed(WebCore::PlatformMediaResource&, const WebCore::ResourceError&) final;
+    void loadFinished(WebCore::PlatformMediaResource&) final;
 
-    // IPC::Connection::Client
-    void didClose(IPC::Connection&) override;
-    void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
-    void didReceiveInvalidMessage(IPC::Connection&, IPC::StringReference messageReceiverName, IPC::StringReference messageName) override;
-
-    // The connection from the web process to the GPU process.
     Ref<IPC::Connection> m_connection;
+    WebCore::PlatformMediaResource& m_platformMediaResource;
+    RemoteMediaResourceIdentifier m_id;
 };
 
 } // namespace WebKit
 
-#endif // ENABLE(GPU_PROCESS)
+#endif

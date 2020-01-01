@@ -179,6 +179,11 @@ legacy-animation-engine/imported/blink/compositing/squashing/remove-from-grouped
 inspector/layers/layers-compositing-reasons.html [ Skip ]
 
 media [ Skip ]
+media/video-src.html [ Pass ]
+media/media-can-play-mpeg-audio.html [ Pass ]
+media/media-can-play-wav-audio.html [ Pass ]
+media/audio-play-with-video-element.html [ Pass ]
+media/audio-play.html [ Pass ]
 accessibility/media-element.html [ Skip ]
 fast/block/float/list-marker-is-float-crash.html [ Skip ]
 fast/css/relative-position-replaced-in-table-display-crash.html [ Skip ]

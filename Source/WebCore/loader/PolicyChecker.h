@@ -52,11 +52,6 @@ class NavigationAction;
 class ResourceError;
 class ResourceResponse;
 
-enum class ShouldContinue {
-    Yes,
-    No
-};
-
 enum class NavigationPolicyDecision : uint8_t {
     ContinueLoad,
     IgnoreLoad,
@@ -65,14 +60,19 @@ enum class NavigationPolicyDecision : uint8_t {
 
 enum class PolicyDecisionMode { Synchronous, Asynchronous };
 
-using NewWindowPolicyDecisionFunction = CompletionHandler<void(const ResourceRequest&, WeakPtr<FormState>&&, const String& frameName, const NavigationAction&, ShouldContinue)>;
-using NavigationPolicyDecisionFunction = CompletionHandler<void(ResourceRequest&&, WeakPtr<FormState>&&, NavigationPolicyDecision)>;
-
 class PolicyChecker {
     WTF_MAKE_NONCOPYABLE(PolicyChecker);
     WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit PolicyChecker(Frame&);
+
+    enum class ShouldContinue {
+        Yes,
+        No
+    };
+
+    using NavigationPolicyDecisionFunction = CompletionHandler<void(ResourceRequest&&, WeakPtr<FormState>&&, NavigationPolicyDecision)>;
+    using NewWindowPolicyDecisionFunction = CompletionHandler<void(const ResourceRequest&, WeakPtr<FormState>&&, const String& frameName, const NavigationAction&, ShouldContinue)>;
 
     void checkNavigationPolicy(ResourceRequest&&, const ResourceResponse& redirectResponse, DocumentLoader*, RefPtr<FormState>&&, NavigationPolicyDecisionFunction&&, PolicyDecisionMode = PolicyDecisionMode::Asynchronous);
     void checkNavigationPolicy(ResourceRequest&&, const ResourceResponse& redirectResponse, NavigationPolicyDecisionFunction&&);
@@ -112,3 +112,16 @@ private:
 };
 
 } // namespace WebCore
+
+// To support encoding WebCore::PolicyChecker::ShouldContinue in XPC messages
+namespace WTF {
+
+template<> struct EnumTraits<WebCore::PolicyChecker::ShouldContinue> {
+    using values = EnumValues<
+        WebCore::PolicyChecker::ShouldContinue,
+        WebCore::PolicyChecker::ShouldContinue::No,
+        WebCore::PolicyChecker::ShouldContinue::Yes
+    >;
+};
+
+}

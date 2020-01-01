@@ -44,7 +44,7 @@ class PlatformMediaResourceClient {
 public:
     virtual ~PlatformMediaResourceClient() = default;
 
-    virtual void responseReceived(PlatformMediaResource&, const ResourceResponse&, CompletionHandler<void(ShouldContinue)>&& completionHandler) { completionHandler(ShouldContinue::Yes); }
+    virtual void responseReceived(PlatformMediaResource&, const ResourceResponse&, CompletionHandler<void(PolicyChecker::ShouldContinue)>&& completionHandler) { completionHandler(PolicyChecker::ShouldContinue::Yes); }
     virtual void redirectReceived(PlatformMediaResource&, ResourceRequest&& request, const ResourceResponse&, CompletionHandler<void(ResourceRequest&&)>&& completionHandler) { completionHandler(WTFMove(request)); }
     virtual bool shouldCacheResponse(PlatformMediaResource&, const ResourceResponse&) { return true; }
     virtual void dataSent(PlatformMediaResource&, unsigned long long, unsigned long long) { }

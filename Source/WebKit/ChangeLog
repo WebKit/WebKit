@@ -1,3 +1,108 @@
+2019-12-31  Peng Liu  <peng.liu6@apple.com>
+
+        Add remote media resource loader for the GPU process
+        https://bugs.webkit.org/show_bug.cgi?id=205379
+
+        Reviewed by Youenn Fablet.
+
+        In the GPU process, the RemoteMediaResourceLoader creates RemoteMediaResource(s),
+        which will notify the media resource clients (WebCoreNSURLSessionDataTaskClient).
+        Then the data will be forwarded to AVFoundation.
+
+        In the Web process, MeidaResourceLoader creates MediaResource(s), which take care of
+        downloading media data through the network process. The received data will be forwarded to
+        RemoteMediaResourceProxy, which will forward the data to the corresponding RemoteMediaResource
+        through XPC messages.
+
+        (WebKit::GPUConnectionToWebProcess::remoteMediaResourceManager):
+        (WebKit::GPUConnectionToWebProcess::didReceiveMessage):
+        * GPUProcess/GPUConnectionToWebProcess.h:
+        * GPUProcess/media/RemoteMediaPlayerManagerProxy.cpp:
+        * GPUProcess/media/RemoteMediaPlayerManagerProxy.h:
+        * GPUProcess/media/RemoteMediaPlayerProxy.cpp:
+        (WebKit::RemoteMediaPlayerProxy::~RemoteMediaPlayerProxy):
+        (WebKit::RemoteMediaPlayerProxy::requestResource):
+        (WebKit::RemoteMediaPlayerProxy::removeResource):
+        (WebKit::RemoteMediaPlayerProxy::mediaPlayerCreateResourceLoader):
+        * GPUProcess/media/RemoteMediaPlayerProxy.h:
+        (WebKit::RemoteMediaPlayerProxy::~RemoteMediaPlayerProxy): Deleted.
+        (WebKit::RemoteMediaPlayerProxy::mediaPlayerLogIdentifier): Deleted.
+        * GPUProcess/media/RemoteMediaResource.cpp: Added.
+        (WebKit::RemoteMediaResource::create):
+        (WebKit::RemoteMediaResource::RemoteMediaResource):
+        (WebKit::RemoteMediaResource::~RemoteMediaResource):
+        (WebKit::RemoteMediaResource::stop):
+        (WebKit::RemoteMediaResource::didPassAccessControlCheck const):
+        (WebKit::RemoteMediaResource::responseReceived):
+        (WebKit::RemoteMediaResource::redirectReceived):
+        (WebKit::RemoteMediaResource::shouldCacheResponse):
+        (WebKit::RemoteMediaResource::dataSent):
+        (WebKit::RemoteMediaResource::dataReceived):
+        (WebKit::RemoteMediaResource::accessControlCheckFailed):
+        (WebKit::RemoteMediaResource::loadFailed):
+        (WebKit::RemoteMediaResource::loadFinished):
+        * GPUProcess/media/RemoteMediaResource.h: Added.
+        (WebKit::RemoteMediaResource::ready const):
+        (WebKit::RemoteMediaResource::setReady):
+        * GPUProcess/media/RemoteMediaResourceIdentifier.h: Added.
+        * GPUProcess/media/RemoteMediaResourceLoader.cpp: Added.
+        (WebKit::RemoteMediaResourceLoader::RemoteMediaResourceLoader):
+        (WebKit::RemoteMediaResourceLoader::~RemoteMediaResourceLoader):
+        (WebKit::RemoteMediaResourceLoader::requestResource):
+        * GPUProcess/media/RemoteMediaResourceLoader.h: Added.
+        * GPUProcess/media/RemoteMediaResourceManager.cpp: Added.
+        (WebKit::RemoteMediaResourceManager::RemoteMediaResourceManager):
+        (WebKit::RemoteMediaResourceManager::~RemoteMediaResourceManager):
+        (WebKit::RemoteMediaResourceManager::addMediaResource):
+        (WebKit::RemoteMediaResourceManager::removeMediaResource):
+        (WebKit::RemoteMediaResourceManager::responseReceived):
+        (WebKit::RemoteMediaResourceManager::redirectReceived):
+        (WebKit::RemoteMediaResourceManager::dataSent):
+        (WebKit::RemoteMediaResourceManager::dataReceived):
+        (WebKit::RemoteMediaResourceManager::accessControlCheckFailed):
+        (WebKit::RemoteMediaResourceManager::loadFailed):
+        (WebKit::RemoteMediaResourceManager::loadFinished):
+        * GPUProcess/media/RemoteMediaResourceManager.h: Added.
+        * GPUProcess/media/RemoteMediaResourceManager.messages.in: Added.
+        * WebProcess/GPU/GPUProcessConnection.h:
+        * WebProcess/GPU/media/MediaPlayerPrivateRemote.cpp:
+        (WebKit::MediaPlayerPrivateRemote::MediaPlayerPrivateRemote):
+        (WebKit::MediaPlayerPrivateRemote::requestResource):
+        (WebKit::MediaPlayerPrivateRemote::removeResource):
+        * WebProcess/GPU/media/MediaPlayerPrivateRemote.h:
+        * WebProcess/GPU/media/MediaPlayerPrivateRemoteIdentifier.h:
+        * WebProcess/GPU/media/RemoteMediaPlayerManager.cpp:
+        (WebKit::RemoteMediaPlayerManager::supportsTypeAndCodecs):
+        (WebKit::RemoteMediaPlayerManager::originsInMediaCache):
+        (WebKit::RemoteMediaPlayerManager::clearMediaCacheForOrigins):
+        (WebKit::RemoteMediaPlayerManager::networkStateChanged):
+        (WebKit::RemoteMediaPlayerManager::readyStateChanged):
+        (WebKit::RemoteMediaPlayerManager::volumeChanged):
+        (WebKit::RemoteMediaPlayerManager::muteChanged):
+        (WebKit::RemoteMediaPlayerManager::timeChanged):
+        (WebKit::RemoteMediaPlayerManager::durationChanged):
+        (WebKit::RemoteMediaPlayerManager::rateChanged):
+        (WebKit::RemoteMediaPlayerManager::playbackStateChanged):
+        (WebKit::RemoteMediaPlayerManager::engineFailedToLoad):
+        (WebKit::RemoteMediaPlayerManager::requestResource):
+        (WebKit::RemoteMediaPlayerManager::removeResource):
+        * WebProcess/GPU/media/RemoteMediaPlayerManager.h:
+        (WebKit::RemoteMediaPlayerManager::didReceiveMessageFromGPUProcess):
+        (WebKit::RemoteMediaPlayerManager::didReceiveMessageFromWebProcess): Deleted.
+        * WebProcess/GPU/media/RemoteMediaPlayerManager.messages.in:
+        * WebProcess/GPU/media/RemoteMediaResourceProxy.cpp: Added.
+        (WebKit::RemoteMediaResourceProxy::RemoteMediaResourceProxy):
+        (WebKit::RemoteMediaResourceProxy::~RemoteMediaResourceProxy):
+        (WebKit::RemoteMediaResourceProxy::responseReceived):
+        (WebKit::RemoteMediaResourceProxy::redirectReceived):
+        (WebKit::RemoteMediaResourceProxy::shouldCacheResponse):
+        (WebKit::RemoteMediaResourceProxy::dataSent):
+        (WebKit::RemoteMediaResourceProxy::dataReceived):
+        (WebKit::RemoteMediaResourceProxy::accessControlCheckFailed):
+        (WebKit::RemoteMediaResourceProxy::loadFailed):
+        (WebKit::RemoteMediaResourceProxy::loadFinished):
+        * WebProcess/GPU/media/RemoteMediaResourceProxy.h: Added.
+
 2019-12-31  youenn fablet  <youenn@apple.com>
 
         Implement RTC VTB decoders in GPUProcess

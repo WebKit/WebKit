@@ -67,7 +67,7 @@ void GPUProcessConnection::didReceiveInvalidMessage(IPC::Connection&, IPC::Strin
 void GPUProcessConnection::didReceiveMessage(IPC::Connection& connection, IPC::Decoder& decoder)
 {
     if (decoder.messageReceiverName() == Messages::RemoteMediaPlayerManager::messageReceiverName()) {
-        WebProcess::singleton().supplement<RemoteMediaPlayerManager>()->didReceiveMessageFromWebProcess(connection, decoder);
+        WebProcess::singleton().supplement<RemoteMediaPlayerManager>()->didReceiveMessageFromGPUProcess(connection, decoder);
         return;
     }
 #if ENABLE(MEDIA_STREAM)

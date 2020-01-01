@@ -143,6 +143,7 @@ MESSAGE_RECEIVERS = \
     RemoteLayerTreeDrawingAreaProxy \
     RemoteMediaPlayerManager \
     RemoteMediaPlayerManagerProxy \
+    RemoteMediaResourceManager \
     RemoteObjectRegistry \
     RemoteScrollingCoordinator \
     RemoteWebInspectorProxy \

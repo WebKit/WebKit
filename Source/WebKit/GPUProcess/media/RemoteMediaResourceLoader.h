@@ -5,7 +5,7 @@
  * modification, are permitted provided that the following conditions
  * are met:
  * 1. Redistributions of source code must retain the above copyright
- *    notice , this list of conditions and the following disclaimer.
+ *    notice, this list of conditions and the following disclaimer.
  * 2. Redistributions in binary form must reproduce the above copyright
  *    notice, this list of conditions and the following disclaimer in the
  *    documentation and/or other materials provided with the distribution.
@@ -27,12 +27,24 @@
 
 #if ENABLE(GPU_PROCESS)
 
-#include <wtf/ObjectIdentifier.h>
+#include <WebCore/PlatformMediaResourceLoader.h>
+#include <WebCore/ResourceRequest.h>
+#include <wtf/WeakPtr.h>
 
 namespace WebKit {
 
-enum MediaPlayerPrivateRemoteIdentifierType { };
-using MediaPlayerPrivateRemoteIdentifier = ObjectIdentifier<MediaPlayerPrivateRemoteIdentifierType>;
+class RemoteMediaPlayerProxy;
+
+class RemoteMediaResourceLoader final
+    : public WebCore::PlatformMediaResourceLoader {
+public:
+    explicit RemoteMediaResourceLoader(RemoteMediaPlayerProxy&);
+    ~RemoteMediaResourceLoader();
+
+private:
+    RefPtr<WebCore::PlatformMediaResource> requestResource(WebCore::ResourceRequest&&, LoadOptions) final;
+    WeakPtr<RemoteMediaPlayerProxy> m_remoteMediaPlayerProxy;
+};
 
 } // namespace WebKit
 

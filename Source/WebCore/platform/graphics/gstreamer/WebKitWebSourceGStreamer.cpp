@@ -28,6 +28,7 @@
 #include "MainThreadNotifier.h"
 #include "MediaPlayer.h"
 #include "PlatformMediaResourceLoader.h"
+#include "PolicyChecker.h"
 #include "ResourceError.h"
 #include "ResourceRequest.h"
 #include "ResourceResponse.h"
@@ -65,7 +66,7 @@ private:
     void checkUpdateBlocksize(unsigned bytesRead);
 
     // PlatformMediaResourceClient virtual methods.
-    void responseReceived(PlatformMediaResource&, const ResourceResponse&, CompletionHandler<void(ShouldContinue)>&&) override;
+    void responseReceived(PlatformMediaResource&, const ResourceResponse&, CompletionHandler<void(PolicyChecker::ShouldContinue)>&&) override;
     void dataReceived(PlatformMediaResource&, const char*, int) override;
     void accessControlCheckFailed(PlatformMediaResource&, const ResourceError&) override;
     void loadFailed(PlatformMediaResource&, const ResourceError&) override;
@@ -944,7 +945,7 @@ void CachedResourceStreamingClient::checkUpdateBlocksize(unsigned bytesRead)
     }
 }
 
-void CachedResourceStreamingClient::responseReceived(PlatformMediaResource&, const ResourceResponse& response, CompletionHandler<void(ShouldContinue)>&& completionHandler)
+void CachedResourceStreamingClient::responseReceived(PlatformMediaResource&, const ResourceResponse& response, CompletionHandler<void(PolicyChecker::ShouldContinue)>&& completionHandler)
 {
     WebKitWebSrc* src = WEBKIT_WEB_SRC(m_src.get());
     WebKitWebSrcPrivate* priv = src->priv;
@@ -998,7 +999,7 @@ void CachedResourceStreamingClient::responseReceived(PlatformMediaResource&, con
         GST_ELEMENT_ERROR(src, RESOURCE, READ, ("Received %d HTTP error code", response.httpStatusCode()), (nullptr));
         priv->doesHaveEOS = true;
         webKitWebSrcStop(GST_BASE_SRC_CAST(src));
-        completionHandler(ShouldContinue::No);
+        completionHandler(PolicyChecker::ShouldContinue::No);
         return;
     }
 
@@ -1012,7 +1013,7 @@ void CachedResourceStreamingClient::responseReceived(PlatformMediaResource&, con
             GST_ELEMENT_ERROR(src, RESOURCE, READ, ("Received unexpected %d HTTP status code", response.httpStatusCode()), (nullptr));
             priv->doesHaveEOS = true;
             webKitWebSrcStop(GST_BASE_SRC_CAST(src));
-            completionHandler(ShouldContinue::No);
+            completionHandler(PolicyChecker::ShouldContinue::No);
             return;
         } else {
             GST_DEBUG_OBJECT(src, "Range request succeeded");
@@ -1058,7 +1059,7 @@ void CachedResourceStreamingClient::responseReceived(PlatformMediaResource&, con
         priv->wereHeadersReceived = true;
         priv->headersCondition.notifyOne();
     }
-    completionHandler(ShouldContinue::Yes);
+    completionHandler(PolicyChecker::ShouldContinue::Yes);
 }
 
 void CachedResourceStreamingClient::dataReceived(PlatformMediaResource&, const char* data, int length)

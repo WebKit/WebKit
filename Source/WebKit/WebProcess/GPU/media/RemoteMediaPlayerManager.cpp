@@ -28,6 +28,8 @@
 
 #if ENABLE(GPU_PROCESS)
 
+#include "GPUProcessConnection.h"
+#include "MediaPlayerPrivateRemote.h"
 #include "RemoteMediaPlayerConfiguration.h"
 #include "RemoteMediaPlayerManagerMessages.h"
 #include "RemoteMediaPlayerManagerProxyMessages.h"
@@ -41,6 +43,7 @@
 #include <wtf/Assertions.h>
 
 namespace WebKit {
+
 using namespace PAL;
 using namespace WebCore;
 
@@ -165,7 +168,7 @@ void RemoteMediaPlayerManager::getSupportedTypes(MediaPlayerEnums::MediaEngineId
         result.add(type);
 }
 
-MediaPlayer::SupportsType RemoteMediaPlayerManager::supportsTypeAndCodecs(MediaPlayerEnums::MediaEngineIdentifier remoteEngineIdentifier, const WebCore::MediaEngineSupportParameters& parameters)
+MediaPlayer::SupportsType RemoteMediaPlayerManager::supportsTypeAndCodecs(MediaPlayerEnums::MediaEngineIdentifier remoteEngineIdentifier, const MediaEngineSupportParameters& parameters)
 {
     // FIXME: supported types don't change, cache them.
 
@@ -181,9 +184,9 @@ bool RemoteMediaPlayerManager::supportsKeySystem(MediaPlayerEnums::MediaEngineId
     return false;
 }
 
-HashSet<RefPtr<WebCore::SecurityOrigin>> RemoteMediaPlayerManager::originsInMediaCache(MediaPlayerEnums::MediaEngineIdentifier remoteEngineIdentifier, const String& path)
+HashSet<RefPtr<SecurityOrigin>> RemoteMediaPlayerManager::originsInMediaCache(MediaPlayerEnums::MediaEngineIdentifier remoteEngineIdentifier, const String& path)
 {
-    Vector<WebCore::SecurityOriginData> originData;
+    Vector<SecurityOriginData> originData;
     if (!gpuProcessConnection().sendSync(Messages::RemoteMediaPlayerManagerProxy::OriginsInMediaCache(remoteEngineIdentifier, path), Messages::RemoteMediaPlayerManagerProxy::OriginsInMediaCache::Reply(originData), 0))
         return { };
 
@@ -199,7 +202,7 @@ void RemoteMediaPlayerManager::clearMediaCache(MediaPlayerEnums::MediaEngineIden
     gpuProcessConnection().send(Messages::RemoteMediaPlayerManagerProxy::ClearMediaCache(remoteEngineIdentifier, path, modifiedSince), 0);
 }
 
-void RemoteMediaPlayerManager::clearMediaCacheForOrigins(MediaPlayerEnums::MediaEngineIdentifier remoteEngineIdentifier, const String& path, const HashSet<RefPtr<WebCore::SecurityOrigin>>& origins)
+void RemoteMediaPlayerManager::clearMediaCacheForOrigins(MediaPlayerEnums::MediaEngineIdentifier remoteEngineIdentifier, const String& path, const HashSet<RefPtr<SecurityOrigin>>& origins)
 {
     auto originData = WTF::map(origins, [] (auto& origin) {
         return origin->data();
@@ -210,55 +213,55 @@ void RemoteMediaPlayerManager::clearMediaCacheForOrigins(MediaPlayerEnums::Media
 
 void RemoteMediaPlayerManager::networkStateChanged(MediaPlayerPrivateRemoteIdentifier id, RemoteMediaPlayerState&& state)
 {
-    if (auto player = m_players.get(id))
+    if (const auto& player = m_players.get(id))
         player->networkStateChanged(WTFMove(state));
 }
 
 void RemoteMediaPlayerManager::readyStateChanged(MediaPlayerPrivateRemoteIdentifier id, RemoteMediaPlayerState&& state)
 {
-    if (auto player = m_players.get(id))
+    if (const auto& player = m_players.get(id))
         player->readyStateChanged(WTFMove(state));
 }
 
-void RemoteMediaPlayerManager::volumeChanged(WebKit::MediaPlayerPrivateRemoteIdentifier id, double volume)
+void RemoteMediaPlayerManager::volumeChanged(MediaPlayerPrivateRemoteIdentifier id, double volume)
 {
-    if (auto player = m_players.get(id))
+    if (const auto& player = m_players.get(id))
         player->volumeChanged(volume);
 }
 
-void RemoteMediaPlayerManager::muteChanged(WebKit::MediaPlayerPrivateRemoteIdentifier id, bool mute)
+void RemoteMediaPlayerManager::muteChanged(MediaPlayerPrivateRemoteIdentifier id, bool mute)
 {
-    if (auto player = m_players.get(id))
+    if (const auto& player = m_players.get(id))
         player->muteChanged(mute);
 }
 
 void RemoteMediaPlayerManager::timeChanged(WebKit::MediaPlayerPrivateRemoteIdentifier id, RemoteMediaPlayerState&& state)
 {
-    if (auto player = m_players.get(id))
+    if (const auto& player = m_players.get(id))
         player->timeChanged(WTFMove(state));
 }
 
 void RemoteMediaPlayerManager::durationChanged(WebKit::MediaPlayerPrivateRemoteIdentifier id, RemoteMediaPlayerState&& state)
 {
-    if (auto player = m_players.get(id))
+    if (const auto& player = m_players.get(id))
         player->durationChanged(WTFMove(state));
 }
 
-void RemoteMediaPlayerManager::rateChanged(WebKit::MediaPlayerPrivateRemoteIdentifier id, double rate)
+void RemoteMediaPlayerManager::rateChanged(MediaPlayerPrivateRemoteIdentifier id, double rate)
 {
-    if (auto player = m_players.get(id))
+    if (const auto& player = m_players.get(id))
         player->rateChanged(rate);
 }
 
-void RemoteMediaPlayerManager::playbackStateChanged(WebKit::MediaPlayerPrivateRemoteIdentifier id, bool paused)
+void RemoteMediaPlayerManager::playbackStateChanged(MediaPlayerPrivateRemoteIdentifier id, bool paused)
 {
-    if (auto player = m_players.get(id))
+    if (const auto& player = m_players.get(id))
         player->playbackStateChanged(paused);
 }
 
 void RemoteMediaPlayerManager::engineFailedToLoad(WebKit::MediaPlayerPrivateRemoteIdentifier id, long platformErrorCode)
 {
-    if (auto player = m_players.get(id))
+    if (const auto& player = m_players.get(id))
         player->engineFailedToLoad(platformErrorCode);
 }
 
@@ -266,6 +269,20 @@ void RemoteMediaPlayerManager::characteristicChanged(WebKit::MediaPlayerPrivateR
 {
     if (auto player = m_players.get(id))
         player->characteristicChanged(hasAudio, hasVideo, loadType);
+}
+    
+void RemoteMediaPlayerManager::requestResource(MediaPlayerPrivateRemoteIdentifier id, RemoteMediaResourceIdentifier remoteMediaResourceIdentifier, ResourceRequest&& request, PlatformMediaResourceLoader::LoadOptions options, CompletionHandler<void()>&& completionHandler)
+{
+    if (const auto& player = m_players.get(id))
+        player->requestResource(remoteMediaResourceIdentifier, WTFMove(request), options);
+
+    completionHandler();
+}
+
+void RemoteMediaPlayerManager::removeResource(MediaPlayerPrivateRemoteIdentifier id, RemoteMediaResourceIdentifier remoteMediaResourceIdentifier)
+{
+    if (const auto& player = m_players.get(id))
+        player->removeResource(remoteMediaResourceIdentifier);
 }
 
 void RemoteMediaPlayerManager::updatePreferences(const Settings& settings)

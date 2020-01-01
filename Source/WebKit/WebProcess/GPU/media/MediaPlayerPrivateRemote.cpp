@@ -62,6 +62,7 @@ using namespace WebCore;
 
 MediaPlayerPrivateRemote::MediaPlayerPrivateRemote(MediaPlayer* player, MediaPlayerEnums::MediaEngineIdentifier engineIdentifier, MediaPlayerPrivateRemoteIdentifier playerIdentifier, RemoteMediaPlayerManager& manager, const RemoteMediaPlayerConfiguration& configuration)
     : m_player(player)
+    , m_mediaResourceLoader(player->createResourceLoader())
     , m_manager(manager)
     , m_remoteEngineIdentifier(engineIdentifier)
     , m_id(playerIdentifier)
@@ -796,6 +797,21 @@ bool MediaPlayerPrivateRemote::shouldIgnoreIntrinsicSize()
 {
     notImplemented();
     return false;
+}
+
+void MediaPlayerPrivateRemote::requestResource(RemoteMediaResourceIdentifier remoteMediaResourceIdentifier, WebCore::ResourceRequest&& request, WebCore::PlatformMediaResourceLoader::LoadOptions options)
+{
+    ASSERT(!m_mediaResources.contains(remoteMediaResourceIdentifier));
+    auto resource = m_mediaResourceLoader->requestResource(WTFMove(request), options);
+    // PlatformMediaResource owns the PlatformMediaResourceClient
+    resource->setClient(makeUnique<RemoteMediaResourceProxy>(m_manager.gpuProcessConnection(), *resource, remoteMediaResourceIdentifier));
+    m_mediaResources.add(remoteMediaResourceIdentifier, WTFMove(resource));
+}
+
+void MediaPlayerPrivateRemote::removeResource(RemoteMediaResourceIdentifier remoteMediaResourceIdentifier)
+{
+    // The client(RemoteMediaResourceProxy) will be destroyed as well
+    m_mediaResources.remove(remoteMediaResourceIdentifier);
 }
 
 #if !RELEASE_LOG_DISABLED

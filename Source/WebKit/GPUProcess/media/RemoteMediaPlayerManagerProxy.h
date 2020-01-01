@@ -30,15 +30,16 @@
 #include "Connection.h"
 #include "MediaPlayerPrivateRemoteIdentifier.h"
 #include "MessageReceiver.h"
-#include "RemoteMediaPlayerProxyConfiguration.h"
 #include <WebCore/MediaPlayer.h>
 #include <wtf/LoggerHelper.h>
 
 namespace WebKit {
 
 class GPUConnectionToWebProcess;
+class RemoteMediaResourceManager;
 class RemoteMediaPlayerProxy;
 struct RemoteMediaPlayerConfiguration;
+struct RemoteMediaPlayerProxyConfiguration;
 
 class RemoteMediaPlayerManagerProxy
     : private IPC::MessageReceiver

@@ -1,3 +1,16 @@
+2019-12-31  Peng Liu  <peng.liu6@apple.com>
+
+        Add remote media resource loader for the GPU process
+        https://bugs.webkit.org/show_bug.cgi?id=205379
+
+        Reviewed by Youenn Fablet.
+
+        * gpu-process/TestExpectations:
+        * media/audio-play-expected.txt: Added.
+        * media/audio-play-with-video-element-expected.txt: Added.
+        * media/audio-play-with-video-element.html: Added.
+        * media/audio-play.html: Added.
+
 2019-12-31  youenn fablet  <youenn@apple.com>
 
         Implement RTC VTB decoders in GPUProcess

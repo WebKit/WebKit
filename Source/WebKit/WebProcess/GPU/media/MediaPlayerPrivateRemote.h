@@ -30,6 +30,8 @@
 #include "RemoteMediaPlayerConfiguration.h"
 #include "RemoteMediaPlayerManager.h"
 #include "RemoteMediaPlayerState.h"
+#include "RemoteMediaResourceIdentifier.h"
+#include "RemoteMediaResourceProxy.h"
 #include <WebCore/MediaPlayerPrivate.h>
 #include <wtf/LoggerHelper.h>
 #include <wtf/MediaTime.h>
@@ -39,22 +41,23 @@ namespace WebKit {
 
 class MediaPlayerPrivateRemote final
     : public CanMakeWeakPtr<MediaPlayerPrivateRemote>
-    , public MediaPlayerPrivateInterface
+    , public WebCore::MediaPlayerPrivateInterface
 #if !RELEASE_LOG_DISABLED
     , private LoggerHelper
 #endif
 {
 public:
-    static std::unique_ptr<MediaPlayerPrivateRemote> create(MediaPlayer* player, MediaPlayerEnums::MediaEngineIdentifier remoteEngineIdentifier, MediaPlayerPrivateRemoteIdentifier identifier, RemoteMediaPlayerManager& manager, const RemoteMediaPlayerConfiguration& configuration)
+    static std::unique_ptr<MediaPlayerPrivateRemote> create(WebCore::MediaPlayer* player, WebCore::MediaPlayerEnums::MediaEngineIdentifier remoteEngineIdentifier, MediaPlayerPrivateRemoteIdentifier identifier, RemoteMediaPlayerManager& manager, const RemoteMediaPlayerConfiguration& configuration)
     {
         return makeUnique<MediaPlayerPrivateRemote>(player, remoteEngineIdentifier, identifier, manager, configuration);
     }
 
-    explicit MediaPlayerPrivateRemote(MediaPlayer*, MediaPlayerEnums::MediaEngineIdentifier, MediaPlayerPrivateRemoteIdentifier, RemoteMediaPlayerManager&, const RemoteMediaPlayerConfiguration&);
-    virtual ~MediaPlayerPrivateRemote();
+    MediaPlayerPrivateRemote(WebCore::MediaPlayer*, WebCore::MediaPlayerEnums::MediaEngineIdentifier, MediaPlayerPrivateRemoteIdentifier, RemoteMediaPlayerManager&, const RemoteMediaPlayerConfiguration&);
+
+    ~MediaPlayerPrivateRemote();
 
     void invalidate() { m_invalid = true; }
-    MediaPlayerEnums::MediaEngineIdentifier remoteEngineIdentifier() const { return m_remoteEngineIdentifier; }
+    WebCore::MediaPlayerEnums::MediaEngineIdentifier remoteEngineIdentifier() const { return m_remoteEngineIdentifier; }
     MediaPlayerPrivateRemoteIdentifier playerItentifier() const { return m_id; }
 
     void networkStateChanged(RemoteMediaPlayerState&&);
@@ -69,6 +72,9 @@ public:
     void updateCachedState(RemoteMediaPlayerState&&);
     void characteristicChanged(bool hasAudio, bool hasVideo, WebCore::MediaPlayerEnums::MovieLoadType);
 
+    void requestResource(RemoteMediaResourceIdentifier, WebCore::ResourceRequest&&, WebCore::PlatformMediaResourceLoader::LoadOptions);
+    void removeResource(RemoteMediaResourceIdentifier);
+
 #if !RELEASE_LOG_DISABLED
     const Logger& logger() const final { return *m_logger; }
     const char* logClassName() const override { return "MediaPlayerPrivateRemote"; }
@@ -77,14 +83,14 @@ public:
 #endif
 
 private:
-    void load(const URL&, const ContentType&, const String&) final;
-    void prepareForPlayback(bool privateMode, MediaPlayer::Preload, bool preservesPitch, bool prepare) final;
+    void load(const URL&, const WebCore::ContentType&, const String&) final;
+    void prepareForPlayback(bool privateMode, WebCore::MediaPlayer::Preload, bool preservesPitch, bool prepare) final;
 
 #if ENABLE(MEDIA_SOURCE)
-    void load(const String&, MediaSourcePrivateClient*) final;
+    void load(const String&, WebCore::MediaSourcePrivateClient*) final;
 #endif
 #if ENABLE(MEDIA_STREAM)
-    void load(MediaStreamPrivate&) final;
+    void load(WebCore::MediaStreamPrivate&) final;
 #endif
     void cancelLoad() final;
 
@@ -106,9 +112,9 @@ private:
 #if PLATFORM(IOS_FAMILY) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
     void setVideoFullscreenLayer(PlatformLayer*, WTF::Function<void()>&& completionHandler) final;
     void updateVideoFullscreenInlineImage() final;
-    void setVideoFullscreenFrame(FloatRect) final;
-    void setVideoFullscreenGravity(MediaPlayer::VideoGravity) final;
-    void setVideoFullscreenMode(MediaPlayer::VideoFullscreenMode) final;
+    void setVideoFullscreenFrame(WebCore::FloatRect) final;
+    void setVideoFullscreenGravity(WebCore::MediaPlayer::VideoGravity) final;
+    void setVideoFullscreenMode(WebCore::MediaPlayer::VideoFullscreenMode) final;
     void videoFullscreenStandbyChanged() final;
 #endif
 
@@ -118,7 +124,7 @@ private:
     String errorLog() const final;
 #endif
 
-    void setBufferingPolicy(MediaPlayer::BufferingPolicy) final;
+    void setBufferingPolicy(WebCore::MediaPlayer::BufferingPolicy) final;
 
     bool supportsPictureInPicture() const final;
     bool supportsFullscreen() const final;
@@ -126,7 +132,7 @@ private:
 
     bool canSaveMediaData() const final;
 
-    FloatSize naturalSize() const final;
+    WebCore::FloatSize naturalSize() const final;
 
     bool hasVideo() const final;
     bool hasAudio() const final;
@@ -159,29 +165,29 @@ private:
     double maxFastForwardRate() const final;
     double minFastReverseRate() const final;
 
-    MediaPlayer::NetworkState networkState() const final { return m_cachedState.networkState; }
-    MediaPlayer::ReadyState readyState() const final { return m_cachedState.readyState; }
+    WebCore::MediaPlayer::NetworkState networkState() const final { return m_cachedState.networkState; }
+    WebCore::MediaPlayer::ReadyState readyState() const final { return m_cachedState.readyState; }
 
-    std::unique_ptr<PlatformTimeRanges> seekable() const final;
+    std::unique_ptr<WebCore::PlatformTimeRanges> seekable() const final;
 
     MediaTime maxMediaTimeSeekable() const final;
     MediaTime minMediaTimeSeekable() const final;
-    std::unique_ptr<PlatformTimeRanges> buffered() const final;
+    std::unique_ptr<WebCore::PlatformTimeRanges> buffered() const final;
     double seekableTimeRangesLastModifiedTime() const final;
     double liveUpdateInterval() const final;
 
     unsigned long long totalBytes() const final;
     bool didLoadingProgress() const final;
 
-    void setSize(const IntSize&) final;
+    void setSize(const WebCore::IntSize&) final;
 
-    void paint(GraphicsContext&, const FloatRect&) final;
+    void paint(WebCore::GraphicsContext&, const WebCore::FloatRect&) final;
 
-    void paintCurrentFrameInContext(GraphicsContext&, const FloatRect&) final;
-    bool copyVideoTextureToPlatformTexture(GraphicsContext3D*, Platform3DObject, GC3Denum, GC3Dint, GC3Denum, GC3Denum, GC3Denum, bool, bool) final;
-    NativeImagePtr nativeImageForCurrentTime() final;
+    void paintCurrentFrameInContext(WebCore::GraphicsContext&, const WebCore::FloatRect&) final;
+    bool copyVideoTextureToPlatformTexture(WebCore::GraphicsContext3D*, Platform3DObject, GC3Denum, GC3Dint, GC3Denum, GC3Denum, GC3Denum, bool, bool) final;
+    WebCore::NativeImagePtr nativeImageForCurrentTime() final;
 
-    void setPreload(MediaPlayer::Preload) final;
+    void setPreload(WebCore::MediaPlayer::Preload) final;
 
     bool hasAvailableVideoFrame() const final;
 
@@ -192,14 +198,14 @@ private:
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
     String wirelessPlaybackTargetName() const final;
-    MediaPlayer::WirelessPlaybackTargetType wirelessPlaybackTargetType() const final;
+    WebCore::MediaPlayer::WirelessPlaybackTargetType wirelessPlaybackTargetType() const final;
 
     bool wirelessVideoPlaybackDisabled() const final;
     void setWirelessVideoPlaybackDisabled(bool) final;
 
     bool canPlayToWirelessPlaybackTarget() const final;
     bool isCurrentPlaybackTargetWireless() const final;
-    void setWirelessPlaybackTarget(Ref<MediaPlaybackTarget>&&) final;
+    void setWirelessPlaybackTarget(Ref<WebCore::MediaPlaybackTarget>&&) final;
 
     void setShouldPlayToPlaybackTarget(bool) final;
 #endif
@@ -216,9 +222,9 @@ private:
 
     bool hasSingleSecurityOrigin() const final;
     bool didPassCORSAccessCheck() const final;
-    Optional<bool> wouldTaintOrigin(const SecurityOrigin&) const final;
+    Optional<bool> wouldTaintOrigin(const WebCore::SecurityOrigin&) const final;
 
-    MediaPlayer::MovieLoadType movieLoadType() const final;
+    WebCore::MediaPlayer::MovieLoadType movieLoadType() const final;
 
     void prepareForRendering() final;
 
@@ -234,25 +240,25 @@ private:
     String engineDescription() const final;
 
 #if ENABLE(WEB_AUDIO)
-    AudioSourceProvider* audioSourceProvider() final;
+    WebCore::AudioSourceProvider* audioSourceProvider() final;
 #endif
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
-    std::unique_ptr<LegacyCDMSession> createSession(const String&, LegacyCDMSessionClient*) final;
-    void setCDMSession(LegacyCDMSession*) final;
+    std::unique_ptr<WebCore::LegacyCDMSession> createSession(const String&, WebCore::LegacyCDMSessionClient*) final;
+    void setCDMSession(WebCore::LegacyCDMSession*) final;
     void keyAdded() final;
 #endif
 
 #if ENABLE(ENCRYPTED_MEDIA)
-    void cdmInstanceAttached(CDMInstance&) final;
-    void cdmInstanceDetached(CDMInstance&) final;
-    void attemptToDecryptWithInstance(CDMInstance&) final;
+    void cdmInstanceAttached(WebCore::CDMInstance&) final;
+    void cdmInstanceDetached(WebCore::CDMInstance&) final;
+    void attemptToDecryptWithInstance(WebCore::CDMInstance&) final;
     bool waitingForKey() const final;
 #endif
 
 #if ENABLE(VIDEO_TRACK)
     bool requiresTextTrackRepresentation() const final;
-    void setTextTrackRepresentation(TextTrackRepresentation*) final;
+    void setTextTrackRepresentation(WebCore::TextTrackRepresentation*) final;
     void syncTextTrackBounds() final;
     void tracksChanged() final;
 #endif
@@ -272,7 +278,7 @@ private:
 
     bool ended() const final;
 
-    Optional<VideoPlaybackQualityMetrics> videoPlaybackQualityMetrics() final;
+    Optional<WebCore::VideoPlaybackQualityMetrics> videoPlaybackQualityMetrics() final;
 
 #if ENABLE(AVF_CAPTIONS)
     void notifyTrackModeChanged() final;
@@ -293,19 +299,22 @@ private:
 
     bool shouldIgnoreIntrinsicSize() final;
 
-    MediaPlayer* m_player { nullptr };
-    RemoteMediaPlayerManager m_manager;
-    MediaPlayerEnums::MediaEngineIdentifier m_remoteEngineIdentifier;
+    WebCore::MediaPlayer* m_player { nullptr };
+    RefPtr<WebCore::PlatformMediaResourceLoader> m_mediaResourceLoader;
+    RemoteMediaPlayerManager& m_manager;
+    WebCore::MediaPlayerEnums::MediaEngineIdentifier m_remoteEngineIdentifier;
     MediaPlayerPrivateRemoteIdentifier m_id;
     RemoteMediaPlayerConfiguration m_configuration;
 
     RemoteMediaPlayerState m_cachedState;
-    std::unique_ptr<PlatformTimeRanges> m_cachedBufferedTimeRanges;
+    std::unique_ptr<WebCore::PlatformTimeRanges> m_cachedBufferedTimeRanges;
+
+    HashMap<RemoteMediaResourceIdentifier, RefPtr<WebCore::PlatformMediaResource>> m_mediaResources;
 
     double m_volume { 1 };
     double m_rate { 1 };
     long m_platformErrorCode { 0 };
-    MediaPlayerEnums::MovieLoadType m_movieLoadType { MediaPlayerEnums::MovieLoadType::Unknown };
+    WebCore::MediaPlayerEnums::MovieLoadType m_movieLoadType { WebCore::MediaPlayerEnums::MovieLoadType::Unknown };
     bool m_hasAudio { false };
     bool m_hasVideo { false };
     bool m_muted { false };

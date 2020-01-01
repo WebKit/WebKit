@@ -39,6 +39,8 @@
 #include "RemoteLayerTreeDrawingAreaProxyMessages.h"
 #include "RemoteMediaPlayerManagerProxy.h"
 #include "RemoteMediaPlayerManagerProxyMessages.h"
+#include "RemoteMediaResourceManager.h"
+#include "RemoteMediaResourceManagerMessages.h"
 #include "RemoteScrollingCoordinatorTransaction.h"
 #include "UserMediaCaptureManagerProxy.h"
 #include "UserMediaCaptureManagerProxyMessages.h"
@@ -111,6 +113,14 @@ void GPUConnectionToWebProcess::didReceiveInvalidMessage(IPC::Connection& connec
     CRASH();
 }
 
+RemoteMediaResourceManager& GPUConnectionToWebProcess::remoteMediaResourceManager()
+{
+    if (!m_remoteMediaResourceManager)
+        m_remoteMediaResourceManager = makeUnique<RemoteMediaResourceManager>();
+
+    return *m_remoteMediaResourceManager;
+}
+
 RemoteMediaPlayerManagerProxy& GPUConnectionToWebProcess::remoteMediaPlayerManagerProxy()
 {
     if (!m_remoteMediaPlayerManagerProxy)
@@ -143,6 +153,9 @@ void GPUConnectionToWebProcess::didReceiveMessage(IPC::Connection& connection, I
 {
     if (decoder.messageReceiverName() == Messages::RemoteMediaPlayerManagerProxy::messageReceiverName()) {
         remoteMediaPlayerManagerProxy().didReceiveMessageFromWebProcess(connection, decoder);
+        return;
+    } else if (decoder.messageReceiverName() == Messages::RemoteMediaResourceManager::messageReceiverName()) {
+        remoteMediaResourceManager().didReceiveMessage(connection, decoder);
         return;
     }
 #if ENABLE(MEDIA_STREAM)
