@@ -1,3 +1,16 @@
+2020-01-02  Sam Weinig  <weinig@apple.com>
+
+        Simplify StringBuilder API/align with makeString by removing appendFixed* functions and using FormatNumber struct instead
+        https://bugs.webkit.org/show_bug.cgi?id=205671
+
+        Reviewed by Alex Christensen.
+
+        * API/tests/ExecutionTimeLimitTest.cpp:
+        (testExecutionTimeLimit):
+        * runtime/Options.cpp:
+        (JSC::OptionReader::Option::dump const):
+        Replace all uses of builder.appendFixedPrecisionNumber(...) with builder.append(FormattedNumber::fixedPrecision(...)).
+
 2020-01-01  Mark Lam  <mark.lam@apple.com>
 
         Declare some classes as final.

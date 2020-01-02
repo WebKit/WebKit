@@ -100,7 +100,7 @@ String GamepadData::loggingString() const
         builder.appendLiteral(" Axis ");
         builder.appendNumber(i);
         builder.appendLiteral(": ");
-        builder.appendFixedPrecisionNumber(m_axisValues[i]);
+        builder.append(FormattedNumber::fixedPrecision(m_axisValues[i]));
     }
 
     builder.append('\n');
@@ -108,7 +108,7 @@ String GamepadData::loggingString() const
         builder.appendLiteral(" Button ");
         builder.appendNumber(i);
         builder.appendLiteral(": ");
-        builder.appendFixedPrecisionNumber(m_buttonValues[i]);
+        builder.append(FormattedNumber::fixedPrecision(m_buttonValues[i]));
     }
 
     return builder.toString();

@@ -57,15 +57,15 @@ static void appendFlag(StringBuilder& stringBuilder, bool flag)
 
 static void appendNumber(StringBuilder& stringBuilder, float number)
 {
-    stringBuilder.appendFixedPrecisionNumber(number);
+    stringBuilder.append(FormattedNumber::fixedPrecision(number));
     stringBuilder.append(' ');
 }
 
 static void appendPoint(StringBuilder& stringBuilder, const FloatPoint& point)
 {
-    stringBuilder.appendFixedPrecisionNumber(point.x());
+    stringBuilder.append(FormattedNumber::fixedPrecision(point.x()));
     stringBuilder.append(' ');
-    stringBuilder.appendFixedPrecisionNumber(point.y());
+    stringBuilder.append(FormattedNumber::fixedPrecision(point.y()));
     stringBuilder.append(' ');
 }
 

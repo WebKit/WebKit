@@ -1,3 +1,28 @@
+2020-01-02  Sam Weinig  <weinig@apple.com>
+
+        Simplify StringBuilder API/align with makeString by removing appendFixed* functions and using FormatNumber struct instead
+        https://bugs.webkit.org/show_bug.cgi?id=205671
+
+        Reviewed by Alex Christensen.
+
+        In an ongoing attempt to simplify the StringBuilder interface and unify it's functionality with makeString,
+        this change removes appendFixedPrecisionNumber() and appendFixedWidthNumber(), replacing their uses
+        with direct calls to append(), using a FormattedNumber object to direct it to the appropriate StringTypeAdapter.
+
+        * wtf/text/StringBuilder.h:
+        * wtf/text/StringBuilder.cpp:
+        (WTF::StringBuilder::appendFixedPrecisionNumber): Deleted.
+        (WTF::StringBuilder::appendFixedWidthNumber): Deleted.
+        Remove StringBuilder::appendFixedPrecisionNumber() and StringBuilder::appendFixedWidthNumber(). The same functionality
+        is available and more flexible by passing FormattedNumbers to the variadic append() function.
+        
+        * wtf/text/TextStream.cpp:
+        (WTF::TextStream::operator<<):
+        * wtf/MediaTime.cpp:
+        (WTF::MediaTime::toString const):
+        Replace all uses of builder.appendFixedPrecisionNumber(...) with builder.append(FormattedNumber::fixedPrecision(...))
+        and builder.appendFixedWidthNumber(...) with with builder.append(FormattedNumber::fixedWidth(...))
+
 2019-12-20  Darin Adler  <darin@apple.com>
 
         Tidy a bit of StringBuilder usage

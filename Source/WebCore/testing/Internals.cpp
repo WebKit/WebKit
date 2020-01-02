@@ -1687,13 +1687,13 @@ ExceptionOr<String> Internals::dumpMarkerRects(const String& markerTypeString)
     rectString.appendLiteral("marker rects: ");
     for (const auto& rect : rects) {
         rectString.append('(');
-        rectString.appendFixedPrecisionNumber(rect.x());
+        rectString.append(FormattedNumber::fixedPrecision(rect.x()));
         rectString.appendLiteral(", ");
-        rectString.appendFixedPrecisionNumber(rect.y());
+        rectString.append(FormattedNumber::fixedPrecision(rect.y()));
         rectString.appendLiteral(", ");
-        rectString.appendFixedPrecisionNumber(rect.width());
+        rectString.append(FormattedNumber::fixedPrecision(rect.width()));
         rectString.appendLiteral(", ");
-        rectString.appendFixedPrecisionNumber(rect.height());
+        rectString.append(FormattedNumber::fixedPrecision(rect.height()));
         rectString.appendLiteral(") ");
     }
     return rectString.toString();
@@ -3447,14 +3447,14 @@ ExceptionOr<String> Internals::getCurrentCursorInfo()
     if (cursor.image()) {
         FloatSize size = cursor.image()->size();
         result.appendLiteral(" image=");
-        result.appendFixedPrecisionNumber(size.width());
+        result.append(FormattedNumber::fixedPrecision(size.width()));
         result.append('x');
-        result.appendFixedPrecisionNumber(size.height());
+        result.append(FormattedNumber::fixedPrecision(size.height()));
     }
 #if ENABLE(MOUSE_CURSOR_SCALE)
     if (cursor.imageScaleFactor() != 1) {
         result.appendLiteral(" scale=");
-        result.appendFixedPrecisionNumber(cursor.imageScaleFactor(), 8);
+        result.append(FormattedNumber::fixedPrecision(cursor.imageScaleFactor(), 8));
     }
 #endif
     return result.toString();

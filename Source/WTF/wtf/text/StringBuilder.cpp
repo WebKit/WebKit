@@ -422,18 +422,6 @@ void StringBuilder::appendNumber(unsigned long long number)
     numberToStringUnsigned<StringBuilder>(number, this);
 }
 
-void StringBuilder::appendFixedPrecisionNumber(float number, unsigned precision, TrailingZerosTruncatingPolicy policy)
-{
-    NumberToStringBuffer buffer;
-    append(numberToFixedPrecisionString(number, precision, buffer, policy == TruncateTrailingZeros));
-}
-
-void StringBuilder::appendFixedPrecisionNumber(double number, unsigned precision, TrailingZerosTruncatingPolicy policy)
-{
-    NumberToStringBuffer buffer;
-    append(numberToFixedPrecisionString(number, precision, buffer, policy == TruncateTrailingZeros));
-}
-
 void StringBuilder::appendNumber(float number)
 {
     NumberToStringBuffer buffer;
@@ -444,18 +432,6 @@ void StringBuilder::appendNumber(double number)
 {
     NumberToStringBuffer buffer;
     append(numberToString(number, buffer));
-}
-
-void StringBuilder::appendFixedWidthNumber(float number, unsigned decimalPlaces)
-{
-    NumberToStringBuffer buffer;
-    append(numberToFixedWidthString(number, decimalPlaces, buffer));
-}
-
-void StringBuilder::appendFixedWidthNumber(double number, unsigned decimalPlaces)
-{
-    NumberToStringBuffer buffer;
-    append(numberToFixedWidthString(number, decimalPlaces, buffer));
 }
 
 bool StringBuilder::canShrink() const

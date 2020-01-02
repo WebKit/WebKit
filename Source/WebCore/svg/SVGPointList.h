@@ -93,9 +93,9 @@ public:
             if (builder.length())
                 builder.append(' ');
 
-            builder.appendFixedPrecisionNumber(point->x());
+            builder.append(FormattedNumber::fixedPrecision(point->x()));
             builder.append(' ');
-            builder.appendFixedPrecisionNumber(point->y());
+            builder.append(FormattedNumber::fixedPrecision(point->y()));
         }
 
         return builder.toString();

@@ -79,7 +79,7 @@ static String snapOffsetsToString(const Vector<LayoutUnit>& snapOffsets)
     StringBuilder builder;
     builder.appendLiteral("[ ");
     for (auto& offset : snapOffsets) {
-        builder.appendFixedWidthNumber(offset.toFloat(), 1);
+        builder.append(FormattedNumber::fixedWidth(offset.toFloat(), 1));
         builder.append(' ');
     }
     builder.append(']');
@@ -92,9 +92,9 @@ static String snapOffsetRangesToString(const Vector<ScrollOffsetRange<LayoutUnit
     builder.appendLiteral("[ ");
     for (auto& range : ranges) {
         builder.append('(');
-        builder.appendFixedWidthNumber(range.start.toFloat(), 1);
+        builder.append(FormattedNumber::fixedWidth(range.start.toFloat(), 1));
         builder.appendLiteral(", ");
-        builder.appendFixedWidthNumber(range.end.toFloat(), 1);
+        builder.append(FormattedNumber::fixedWidth(range.end.toFloat(), 1));
         builder.appendLiteral(") ");
     }
     builder.append(']');

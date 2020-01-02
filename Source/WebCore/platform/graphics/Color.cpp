@@ -354,7 +354,7 @@ String Color::cssText() const
         float rounded = round(alpha * 100 / 255.0f) / 100;
         if (round(rounded * 255) != alpha)
             rounded = round(alpha * 1000 / 255.0f) / 1000;
-        builder.appendFixedPrecisionNumber(rounded);
+        builder.append(FormattedNumber::fixedPrecision(rounded));
     }
         
     builder.append(')');

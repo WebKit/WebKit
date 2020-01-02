@@ -140,9 +140,9 @@ struct SVGPropertyTraits<FloatPoint> {
     static String toString(const FloatPoint& type)
     {
         StringBuilder builder;
-        builder.appendFixedPrecisionNumber(type.x());
+        builder.append(FormattedNumber::fixedPrecision(type.x()));
         builder.append(' ');
-        builder.appendFixedPrecisionNumber(type.y());
+        builder.append(FormattedNumber::fixedPrecision(type.y()));
         return builder.toString();
     }
 };
@@ -167,13 +167,13 @@ struct SVGPropertyTraits<FloatRect> {
     static String toString(const FloatRect& type)
     {
         StringBuilder builder;
-        builder.appendFixedPrecisionNumber(type.x());
+        builder.append(FormattedNumber::fixedPrecision(type.x()));
         builder.append(' ');
-        builder.appendFixedPrecisionNumber(type.y());
+        builder.append(FormattedNumber::fixedPrecision(type.y()));
         builder.append(' ');
-        builder.appendFixedPrecisionNumber(type.width());
+        builder.append(FormattedNumber::fixedPrecision(type.width()));
         builder.append(' ');
-        builder.appendFixedPrecisionNumber(type.height());
+        builder.append(FormattedNumber::fixedPrecision(type.height()));
         return builder.toString();
     }
 };

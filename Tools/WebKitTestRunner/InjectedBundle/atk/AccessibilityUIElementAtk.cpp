@@ -583,15 +583,15 @@ String attributesOfElement(AccessibilityUIElement* element)
     builder.append('\n');
 
     builder.appendLiteral("AXPosition:  { ");
-    builder.appendFixedPrecisionNumber(element->x(), 6, KeepTrailingZeros);
+    builder.append(FormattedNumber::fixedPrecision(element->x(), 6, KeepTrailingZeros));
     builder.appendLiteral(", ");
-    builder.appendFixedPrecisionNumber(element->y(), 6, KeepTrailingZeros);
+    builder.append(FormattedNumber::fixedPrecision(element->y(), 6, KeepTrailingZeros));
     builder.appendLiteral(" }\n");
 
     builder.appendLiteral("AXSize: { ");
-    builder.appendFixedPrecisionNumber(element->width(), 6, KeepTrailingZeros);
+    builder.append(FormattedNumber::fixedPrecision(element->width(), 6, KeepTrailingZeros));
     builder.appendLiteral(", ");
-    builder.appendFixedPrecisionNumber(element->height(), 6, KeepTrailingZeros);
+    builder.append(FormattedNumber::fixedPrecision(element->height(), 6, KeepTrailingZeros));
     builder.appendLiteral(" }\n");
 
     String title = element->title()->string();

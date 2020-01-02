@@ -200,7 +200,7 @@ int testExecutionTimeLimit()
 
             StringBuilder scriptBuilder;
             scriptBuilder.appendLiteral("function foo() { var startTime = currentCPUTime(); while (true) { for (var i = 0; i < 1000; i++); if (currentCPUTime() - startTime > ");
-            scriptBuilder.appendFixedPrecisionNumber(timeAfterWatchdogShouldHaveFired.seconds());
+            scriptBuilder.append(FormattedNumber::fixedPrecision(timeAfterWatchdogShouldHaveFired.seconds()));
             scriptBuilder.appendLiteral(") break; } } foo();");
 
             JSStringRef script = JSStringCreateWithUTF8CString(scriptBuilder.toString().utf8().data());
@@ -241,7 +241,7 @@ int testExecutionTimeLimit()
                                      "'use strict';"
                                      "if (i % 1000 === 0) {"
                                         "if (currentCPUTime() - startTime >");
-            scriptBuilder.appendFixedPrecisionNumber(timeAfterWatchdogShouldHaveFired.seconds());
+            scriptBuilder.append(FormattedNumber::fixedPrecision(timeAfterWatchdogShouldHaveFired.seconds()));
             scriptBuilder.appendLiteral("       ) { return; }");
             scriptBuilder.appendLiteral("    }");
             scriptBuilder.appendLiteral("    return recurse(i + 1); }");
@@ -281,7 +281,7 @@ int testExecutionTimeLimit()
             
             StringBuilder scriptBuilder;
             scriptBuilder.appendLiteral("function foo() { var startTime = currentCPUTime(); try { while (true) { for (var i = 0; i < 1000; i++); if (currentCPUTime() - startTime > ");
-            scriptBuilder.appendFixedPrecisionNumber(timeAfterWatchdogShouldHaveFired.seconds());
+            scriptBuilder.append(FormattedNumber::fixedPrecision(timeAfterWatchdogShouldHaveFired.seconds()));
             scriptBuilder.appendLiteral(") break; } } catch(e) { } } foo();");
 
             JSStringRef script = JSStringCreateWithUTF8CString(scriptBuilder.toString().utf8().data());
@@ -320,7 +320,7 @@ int testExecutionTimeLimit()
             
             StringBuilder scriptBuilder;
             scriptBuilder.appendLiteral("function foo() { var startTime = currentCPUTime(); while (true) { for (var i = 0; i < 1000; i++); if (currentCPUTime() - startTime > ");
-            scriptBuilder.appendFixedPrecisionNumber(timeAfterWatchdogShouldHaveFired.seconds());
+            scriptBuilder.append(FormattedNumber::fixedPrecision(timeAfterWatchdogShouldHaveFired.seconds()));
             scriptBuilder.appendLiteral(") break; } } foo();");
             
             JSStringRef script = JSStringCreateWithUTF8CString(scriptBuilder.toString().utf8().data());
@@ -359,7 +359,7 @@ int testExecutionTimeLimit()
             
             StringBuilder scriptBuilder;
             scriptBuilder.appendLiteral("function foo() { var startTime = currentCPUTime(); while (true) { for (var i = 0; i < 1000; i++); if (currentCPUTime() - startTime > ");
-            scriptBuilder.appendFixedPrecisionNumber(timeAfterWatchdogShouldHaveFired.seconds());
+            scriptBuilder.append(FormattedNumber::fixedPrecision(timeAfterWatchdogShouldHaveFired.seconds()));
             scriptBuilder.appendLiteral(") break; } } foo();");
 
             JSStringRef script = JSStringCreateWithUTF8CString(scriptBuilder.toString().utf8().data());
@@ -398,7 +398,7 @@ int testExecutionTimeLimit()
 
             StringBuilder scriptBuilder;
             scriptBuilder.appendLiteral("function foo() { var startTime = currentCPUTime(); while (true) { for (var i = 0; i < 1000; i++); if (currentCPUTime() - startTime > ");
-            scriptBuilder.appendFixedPrecisionNumber(maxBusyLoopTime.seconds()); // in seconds.
+            scriptBuilder.append(FormattedNumber::fixedPrecision(maxBusyLoopTime.seconds())); // in seconds.
             scriptBuilder.appendLiteral(") break; } } foo();");
 
             JSStringRef script = JSStringCreateWithUTF8CString(scriptBuilder.toString().utf8().data());
@@ -441,7 +441,7 @@ int testExecutionTimeLimit()
 
             StringBuilder scriptBuilder;
             scriptBuilder.appendLiteral("function foo() { var startTime = currentCPUTime(); while (true) { for (var i = 0; i < 1000; i++); if (currentCPUTime() - startTime > ");
-            scriptBuilder.appendFixedPrecisionNumber(timeAfterWatchdogShouldHaveFired.seconds());
+            scriptBuilder.append(FormattedNumber::fixedPrecision(timeAfterWatchdogShouldHaveFired.seconds()));
             scriptBuilder.appendLiteral(") break; } } foo();");
 
             JSStringRef script = JSStringCreateWithUTF8CString(scriptBuilder.toString().utf8().data());

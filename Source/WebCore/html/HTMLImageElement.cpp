@@ -573,7 +573,7 @@ String HTMLImageElement::completeURLsInAttributeValue(const URL& base, const Att
             result.append(URL(base, candidate.string.toString()).string());
             if (candidate.density != UninitializedDescriptor) {
                 result.append(' ');
-                result.appendFixedPrecisionNumber(candidate.density);
+                result.append(FormattedNumber::fixedPrecision(candidate.density));
                 result.append('x');
             }
             if (candidate.resourceWidth != UninitializedDescriptor) {

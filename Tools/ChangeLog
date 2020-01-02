@@ -1,3 +1,13 @@
+2020-01-02  Sam Weinig  <weinig@apple.com>
+
+        Simplify StringBuilder API/align with makeString by removing appendFixed* functions and using FormatNumber struct instead
+        https://bugs.webkit.org/show_bug.cgi?id=205671
+
+        Reviewed by Alex Christensen.
+
+        * WebKitTestRunner/InjectedBundle/atk/AccessibilityUIElementAtk.cpp:
+        Replace all uses of builder.appendFixedPrecisionNumber(...) with builder.append(FormattedNumber::fixedPrecision(...)).
+
 2019-12-31  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [WPE] OpenJPEG missing in install dependencies script.

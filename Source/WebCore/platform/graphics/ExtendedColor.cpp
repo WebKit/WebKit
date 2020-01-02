@@ -56,16 +56,16 @@ String ExtendedColor::cssText() const
         return WTF::emptyString();
     }
 
-    builder.appendFixedPrecisionNumber(red());
+    builder.append(FormattedNumber::fixedPrecision(red()));
     builder.append(' ');
 
-    builder.appendFixedPrecisionNumber(green());
+    builder.append(FormattedNumber::fixedPrecision(green()));
     builder.append(' ');
 
-    builder.appendFixedPrecisionNumber(blue());
+    builder.append(FormattedNumber::fixedPrecision(blue()));
     if (!WTF::areEssentiallyEqual(alpha(), 1.0f)) {
         builder.appendLiteral(" / ");
-        builder.appendFixedPrecisionNumber(alpha());
+        builder.append(FormattedNumber::fixedPrecision(alpha()));
     }
     builder.append(')');
 

@@ -239,7 +239,7 @@ private:
     {
         if (builder.length() && builder[builder.length() - 1] != '(')
             builder.append(' ');
-        builder.appendFixedPrecisionNumber(number);
+        builder.append(FormattedNumber::fixedPrecision(number));
         appendFixedPrecisionNumbers(builder, numbers...);
     }
 

@@ -704,37 +704,37 @@ static void printIndent(StringBuilder& builder, int indent)
 static void printTransform(StringBuilder& builder, const CATransform3D& transform)
 {
     builder.append('[');
-    builder.appendFixedPrecisionNumber(transform.m11);
+    builder.append(FormattedNumber::fixedPrecision(transform.m11));
     builder.append(' ');
-    builder.appendFixedPrecisionNumber(transform.m12);
+    builder.append(FormattedNumber::fixedPrecision(transform.m12));
     builder.append(' ');
-    builder.appendFixedPrecisionNumber(transform.m13);
+    builder.append(FormattedNumber::fixedPrecision(transform.m13));
     builder.append(' ');
-    builder.appendFixedPrecisionNumber(transform.m14);
+    builder.append(FormattedNumber::fixedPrecision(transform.m14));
     builder.append("; ");
-    builder.appendFixedPrecisionNumber(transform.m21);
+    builder.append(FormattedNumber::fixedPrecision(transform.m21));
     builder.append(' ');
-    builder.appendFixedPrecisionNumber(transform.m22);
+    builder.append(FormattedNumber::fixedPrecision(transform.m22));
     builder.append(' ');
-    builder.appendFixedPrecisionNumber(transform.m23);
+    builder.append(FormattedNumber::fixedPrecision(transform.m23));
     builder.append(' ');
-    builder.appendFixedPrecisionNumber(transform.m24);
+    builder.append(FormattedNumber::fixedPrecision(transform.m24));
     builder.append("; ");
-    builder.appendFixedPrecisionNumber(transform.m31);
+    builder.append(FormattedNumber::fixedPrecision(transform.m31));
     builder.append(' ');
-    builder.appendFixedPrecisionNumber(transform.m32);
+    builder.append(FormattedNumber::fixedPrecision(transform.m32));
     builder.append(' ');
-    builder.appendFixedPrecisionNumber(transform.m33);
+    builder.append(FormattedNumber::fixedPrecision(transform.m33));
     builder.append(' ');
-    builder.appendFixedPrecisionNumber(transform.m34);
+    builder.append(FormattedNumber::fixedPrecision(transform.m34));
     builder.append("; ");
-    builder.appendFixedPrecisionNumber(transform.m41);
+    builder.append(FormattedNumber::fixedPrecision(transform.m41));
     builder.append(' ');
-    builder.appendFixedPrecisionNumber(transform.m42);
+    builder.append(FormattedNumber::fixedPrecision(transform.m42));
     builder.append(' ');
-    builder.appendFixedPrecisionNumber(transform.m43);
+    builder.append(FormattedNumber::fixedPrecision(transform.m43));
     builder.append(' ');
-    builder.appendFixedPrecisionNumber(transform.m44);
+    builder.append(FormattedNumber::fixedPrecision(transform.m44));
     builder.append(']');
 }
 
@@ -785,25 +785,25 @@ static void printLayer(StringBuilder& builder, const PlatformCALayer* layer, int
     builder.append("(");
     builder.append(layerTypeName);
     builder.append(" [");
-    builder.appendFixedPrecisionNumber(layerPosition.x());
+    builder.append(FormattedNumber::fixedPrecision(layerPosition.x()));
     builder.append(' ');
-    builder.appendFixedPrecisionNumber(layerPosition.y());
+    builder.append(FormattedNumber::fixedPrecision(layerPosition.y()));
     builder.append(' ');
-    builder.appendFixedPrecisionNumber(layerPosition.z());
+    builder.append(FormattedNumber::fixedPrecision(layerPosition.z()));
     builder.append("] [");
-    builder.appendFixedPrecisionNumber(layerBounds.x());
+    builder.append(FormattedNumber::fixedPrecision(layerBounds.x()));
     builder.append(' ');
-    builder.appendFixedPrecisionNumber(layerBounds.y());
+    builder.append(FormattedNumber::fixedPrecision(layerBounds.y()));
     builder.append(' ');
-    builder.appendFixedPrecisionNumber(layerBounds.width());
+    builder.append(FormattedNumber::fixedPrecision(layerBounds.width()));
     builder.append(' ');
-    builder.appendFixedPrecisionNumber(layerBounds.height());
+    builder.append(FormattedNumber::fixedPrecision(layerBounds.height()));
     builder.append("] [");
-    builder.appendFixedPrecisionNumber(layerAnchorPoint.x());
+    builder.append(FormattedNumber::fixedPrecision(layerAnchorPoint.x()));
     builder.append(' ');
-    builder.appendFixedPrecisionNumber(layerAnchorPoint.y());
+    builder.append(FormattedNumber::fixedPrecision(layerAnchorPoint.y()));
     builder.append(' ');
-    builder.appendFixedPrecisionNumber(layerAnchorPoint.z());
+    builder.append(FormattedNumber::fixedPrecision(layerAnchorPoint.z()));
     builder.append("] superlayer=");
     builder.appendNumber(reinterpret_cast<unsigned long long>(layer->superlayer()));
 
@@ -822,7 +822,7 @@ static void printLayer(StringBuilder& builder, const PlatformCALayer* layer, int
         builder.append('\n');
         printIndent(builder, indent + 1);
         builder.append("(borderWidth ");
-        builder.appendFixedPrecisionNumber(borderWidth);
+        builder.append(FormattedNumber::fixedPrecision(borderWidth));
         builder.append(')');
     }
 
@@ -851,7 +851,7 @@ static void printLayer(StringBuilder& builder, const PlatformCALayer* layer, int
         builder.append('\n');
         printIndent(builder, indent + 1);
         builder.append("(opacity ");
-        builder.appendFixedPrecisionNumber(layerOpacity);
+        builder.append(FormattedNumber::fixedPrecision(layerOpacity));
         builder.append(')');
     }
 
@@ -927,15 +927,15 @@ String PlatformCALayerWin::layerTreeAsString() const
 
     StringBuilder builder;
     builder.append("\n\n** Render tree at time ");
-    builder.appendFixedPrecisionNumber(MonotonicTime::now().secondsSinceEpoch().seconds());
+    builder.append(FormattedNumber::fixedPrecision(MonotonicTime::now().secondsSinceEpoch().seconds()));
     builder.append(" (bounds ");
-    builder.appendFixedPrecisionNumber(rootBounds.origin.x);
+    builder.append(FormattedNumber::fixedPrecision(rootBounds.origin.x));
     builder.append(", ");
-    builder.appendFixedPrecisionNumber(rootBounds.origin.y);
+    builder.append(FormattedNumber::fixedPrecision(rootBounds.origin.y));
     builder.append(' ');
-    builder.appendFixedPrecisionNumber(rootBounds.size.width);
+    builder.append(FormattedNumber::fixedPrecision(rootBounds.size.width));
     builder.append('x');
-    builder.appendFixedPrecisionNumber(rootBounds.size.height);
+    builder.append(FormattedNumber::fixedPrecision(rootBounds.size.height));
     builder.append(") **\n\n");
 
     // Print layer tree from the root

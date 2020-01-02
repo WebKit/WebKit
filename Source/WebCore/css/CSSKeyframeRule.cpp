@@ -63,7 +63,7 @@ String StyleRuleKeyframe::keyText() const
     for (size_t i = 0; i < m_keys.size(); ++i) {
         if (i)
             keyText.append(',');
-        keyText.appendFixedPrecisionNumber(m_keys.at(i) * 100);
+        keyText.append(FormattedNumber::fixedPrecision(m_keys.at(i) * 100));
         keyText.append('%');
     }
 

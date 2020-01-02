@@ -1,3 +1,29 @@
+2020-01-02  Sam Weinig  <weinig@apple.com>
+
+        Simplify StringBuilder API/align with makeString by removing appendFixed* functions and using FormatNumber struct instead
+        https://bugs.webkit.org/show_bug.cgi?id=205671
+
+        Reviewed by Alex Christensen.
+
+        * css/CSSFontVariationValue.cpp:
+        * css/CSSKeyframeRule.cpp:
+        * css/CSSTimingFunctionValue.cpp:
+        * css/parser/CSSParserToken.cpp:
+        * html/HTMLImageElement.cpp:
+        * page/scrolling/AxisScrollSnapOffsets.cpp:
+        * platform/graphics/Color.cpp:
+        * platform/graphics/ExtendedColor.cpp:
+        * platform/graphics/ca/win/PlatformCALayerWin.cpp:
+        * platform/graphics/freetype/FontCacheFreeType.cpp:
+        * svg/SVGNumberList.h:
+        * svg/SVGPathStringBuilder.cpp:
+        * svg/SVGPointList.h:
+        * svg/SVGTransformValue.h:
+        * svg/properties/SVGPropertyTraits.h:
+        * testing/Internals.cpp:
+        Replace all uses of builder.appendFixedPrecisionNumber(...) with builder.append(FormattedNumber::fixedPrecision(...))
+        and builder.appendFixedWidthNumber(...) with with builder.append(FormattedNumber::fixedWidth(...))
+
 2020-01-01  Joonghun Park  <jh718.park@samsung.com>
 
         Unreviewed. Remove the build warning below since r253939.

@@ -594,7 +594,7 @@ String MediaTime::toString() const
         builder.appendNumber(m_timeScale);
         builder.appendLiteral(" = ");
     }
-    builder.appendFixedPrecisionNumber(toDouble());
+    builder.append(FormattedNumber::fixedPrecision(toDouble()));
     if (isInvalid())
         builder.appendLiteral(", invalid");
     builder.append('}');
