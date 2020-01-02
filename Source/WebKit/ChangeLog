@@ -1,3 +1,37 @@
+2020-01-02  Chris Dumez  <cdumez@apple.com>
+
+        [iOS] Replace "unexpectedly resumed" observer with RunningBoard suspendible assertions
+        https://bugs.webkit.org/show_bug.cgi?id=205687
+        <rdar://problem/57890246>
+
+        Reviewed by Tim Horton.
+
+        Adopt new RunningBoard process assertion to indicate that WebContent processes depend on their
+        UIProcess (and therefore, the UIProcess must be running if the WebContent process is). This
+        replaces our "Unexpectedly resumed" assertion which was causing unexpected terminations in some
+        cases.
+
+        * Configurations/WebKit.xcconfig:
+        * Platform/spi/ios/RunningBoardServicesSPI.h: Added.
+        * Scripts/process-entitlements.sh:
+        * Shared/DependencyProcessAssertion.cpp: Added.
+        (WebKit::DependencyProcessAssertion::DependencyProcessAssertion):
+        (WebKit::DependencyProcessAssertion::~DependencyProcessAssertion):
+        * Shared/DependencyProcessAssertion.h: Added.
+        * Shared/ios/DependencyProcessAssertionIOS.mm: Added.
+        (WebKit::DependencyProcessAssertion::DependencyProcessAssertion):
+        (WebKit::DependencyProcessAssertion::~DependencyProcessAssertion):
+        * Sources.txt:
+        * SourcesCocoa.txt:
+        * UIProcess/Cocoa/WebProcessProxyCocoa.mm:
+        * UIProcess/WebProcessProxy.h:
+        * UIProcess/WebProcessProxy.messages.in:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::initializeConnection):
+        * WebProcess/WebProcess.h:
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+
 2020-01-02  Keith Rollin  <krollin@apple.com>
 
         Reformat WebProcessCache logging
