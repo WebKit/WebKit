@@ -138,6 +138,7 @@ class SpeechSynthesisClient;
 class StorageNamespace;
 class StorageNamespaceProvider;
 class UserContentProvider;
+class UserContentURLPattern;
 class UserInputBridge;
 class ValidationMessageClient;
 class VisibleSelection;
@@ -713,6 +714,8 @@ public:
     void forEachDocument(const WTF::Function<void(Document&)>&) const;
     void forEachMediaElement(const WTF::Function<void(HTMLMediaElement&)>&);
 
+    bool shouldDisableCorsForRequestTo(const URL&) const;
+
 private:
     struct Navigation {
         RegistrableDomain domain;
@@ -986,6 +989,7 @@ private:
     bool m_mediaPlaybackIsSuspended { false };
     bool m_mediaBufferingIsSuspended { false };
     bool m_inUpdateRendering { false };
+    Vector<UserContentURLPattern> m_corsDisablingPatterns;
 };
 
 inline PageGroup& Page::group()

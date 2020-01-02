@@ -130,6 +130,7 @@ void WebPageCreationParameters::encode(IPC::Encoder& encoder) const
     encoder << backgroundColor;
     encoder << oldPageID;
     encoder << overriddenMediaType;
+    encoder << corsDisablingPatterns;
 }
 
 Optional<WebPageCreationParameters> WebPageCreationParameters::decode(IPC::Decoder& decoder)
@@ -396,6 +397,12 @@ Optional<WebPageCreationParameters> WebPageCreationParameters::decode(IPC::Decod
 
     if (!decoder.decode(parameters.overriddenMediaType))
         return WTF::nullopt;
+
+    Optional<Vector<String>> corsDisablingPatterns;
+    decoder >> corsDisablingPatterns;
+    if (!corsDisablingPatterns)
+        return WTF::nullopt;
+    parameters.corsDisablingPatterns = WTFMove(*corsDisablingPatterns);
 
     return parameters;
 }

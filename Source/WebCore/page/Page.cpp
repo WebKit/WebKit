@@ -119,6 +119,7 @@
 #include "TextIterator.h"
 #include "TextResourceDecoder.h"
 #include "UserContentProvider.h"
+#include "UserContentURLPattern.h"
 #include "UserInputBridge.h"
 #include "ValidationMessageClient.h"
 #include "VisitedLinkState.h"
@@ -327,6 +328,14 @@ Page::Page(PageConfiguration&& pageConfiguration)
 #if USE(LIBWEBRTC)
     m_libWebRTCProvider->supportsVP8(RuntimeEnabledFeatures::sharedFeatures().webRTCVP8CodecEnabled());
 #endif
+
+    m_corsDisablingPatterns.reserveInitialCapacity(pageConfiguration.corsDisablingPatterns.size());
+    for (auto&& pattern : WTFMove(pageConfiguration.corsDisablingPatterns)) {
+        UserContentURLPattern parsedPattern(WTFMove(pattern));
+        if (parsedPattern.isValid())
+            m_corsDisablingPatterns.uncheckedAppend(WTFMove(parsedPattern));
+    }
+    m_corsDisablingPatterns.shrinkToFit();
 }
 
 Page::~Page()
@@ -2997,5 +3006,12 @@ void Page::recomputeTextAutoSizingInAllFrames()
 }
 
 #endif
+
+bool Page::shouldDisableCorsForRequestTo(const URL& url) const
+{
+    return WTF::anyOf(m_corsDisablingPatterns, [&] (const auto& pattern) {
+        return pattern.matches(url);
+    });
+}
 
 } // namespace WebCore

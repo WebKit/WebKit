@@ -1,3 +1,24 @@
+2020-01-02  Alex Christensen  <achristensen@webkit.org>
+
+        Add SPI to disable CORS on requests to URLs matching a pattern
+        https://bugs.webkit.org/show_bug.cgi?id=205534
+        <rdar://problem/58011337>
+
+        Reviewed by Chris Dumez.
+
+        This should allow us to remove the layering violation in LegacySchemeRegistry::isUserExtensionScheme
+        and fix the bug in the radar.  The SPI is exercised by a new API test.
+
+        * loader/DocumentThreadableLoader.cpp:
+        (WebCore::DocumentThreadableLoader::DocumentThreadableLoader):
+        * page/Page.cpp:
+        (WebCore::m_deviceOrientationUpdateProvider):
+        (WebCore::Page::shouldDisableCorsForRequestTo const):
+        * page/Page.h:
+        * page/PageConfiguration.h:
+        * platform/LegacySchemeRegistry.cpp:
+        (WebCore::LegacySchemeRegistry::isUserExtensionScheme):
+
 2020-01-02  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] Text-indent shrinks the available horizontal space

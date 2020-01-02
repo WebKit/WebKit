@@ -202,6 +202,7 @@ struct WebPageCreationParameters {
     Optional<WebCore::PageIdentifier> oldPageID;
 
     String overriddenMediaType;
+    Vector<String> corsDisablingPatterns;
 };
 
 } // namespace WebKit

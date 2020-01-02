@@ -40,7 +40,6 @@
 #endif
 
 namespace API {
-using namespace WebCore;
 using namespace WebKit;
 
 Ref<PageConfiguration> PageConfiguration::create()
@@ -48,13 +47,8 @@ Ref<PageConfiguration> PageConfiguration::create()
     return adoptRef(*new PageConfiguration);
 }
 
-PageConfiguration::PageConfiguration()
-{
-}
-
-PageConfiguration::~PageConfiguration()
-{
-}
+PageConfiguration::PageConfiguration() = default;
+PageConfiguration::~PageConfiguration() = default;
 
 Ref<PageConfiguration> PageConfiguration::copy() const
 {
@@ -85,6 +79,7 @@ Ref<PageConfiguration> PageConfiguration::copy() const
 #endif
     for (auto& pair : this->m_urlSchemeHandlers)
         copy->m_urlSchemeHandlers.set(pair.key, pair.value.copyRef());
+    copy->m_corsDisablingPatterns = this->m_corsDisablingPatterns;
 
     return copy;
 }
@@ -139,7 +134,6 @@ void PageConfiguration::setRelatedPage(WebPageProxy* relatedPage)
 {
     m_relatedPage = relatedPage;
 }
-
 
 VisitedLinkStore* PageConfiguration::visitedLinkStore()
 {

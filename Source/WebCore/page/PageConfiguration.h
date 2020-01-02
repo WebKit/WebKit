@@ -122,6 +122,7 @@ public:
 #if ENABLE(DEVICE_ORIENTATION) && PLATFORM(IOS_FAMILY)
     RefPtr<DeviceOrientationUpdateProvider> deviceOrientationUpdateProvider;
 #endif
+    Vector<String> corsDisablingPatterns;
 };
 
 }

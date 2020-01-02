@@ -1,3 +1,13 @@
+2020-01-02  Alex Christensen  <achristensen@webkit.org>
+
+        Add SPI to disable CORS on requests to URLs matching a pattern
+        https://bugs.webkit.org/show_bug.cgi?id=205534
+        <rdar://problem/58011337>
+
+        Reviewed by Chris Dumez.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/WKURLSchemeHandler-1.mm:
+
 2020-01-02  Sam Weinig  <weinig@apple.com>
 
         Simplify StringBuilder API/align with makeString by removing appendFixed* functions and using FormatNumber struct instead

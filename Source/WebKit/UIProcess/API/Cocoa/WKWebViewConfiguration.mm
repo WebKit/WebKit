@@ -883,6 +883,24 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     return _websiteDataStore.peek();
 }
 
+- (NSArray<NSString *> *)_corsDisablingPatterns
+{
+    auto& vector = _pageConfiguration->corsDisablingPatterns();
+    NSMutableArray *array = [NSMutableArray arrayWithCapacity:vector.size()];
+    for (auto& pattern : vector)
+        [array addObject:pattern];
+    return array;
+}
+
+- (void)_setCORSDisablingPatterns:(NSArray<NSString *> *)patterns
+{
+    Vector<String> vector;
+    vector.reserveInitialCapacity(patterns.count);
+    for (NSString *pattern in patterns)
+        vector.uncheckedAppend(pattern);
+    _pageConfiguration->setCORSDisablingPatterns(WTFMove(vector));
+}
+
 - (BOOL)_drawsBackground
 {
     return _drawsBackground;

@@ -7546,6 +7546,7 @@ WebPageCreationParameters WebPageProxy::creationParameters(WebProcessProxy& proc
     parameters.backgroundColor = m_backgroundColor;
 
     parameters.overriddenMediaType = m_overriddenMediaType;
+    parameters.corsDisablingPatterns = m_configuration->corsDisablingPatterns();
 
     process.addWebUserContentControllerProxy(m_userContentController, parameters);
 

@@ -533,6 +533,7 @@ bool LegacySchemeRegistry::isServiceWorkerContainerCustomScheme(const String& sc
 
 bool LegacySchemeRegistry::isUserExtensionScheme(const String& scheme)
 {
+    // FIXME: Remove this once Safari has adopted WKWebViewConfiguration._corsDisablingPatterns
 #if PLATFORM(MAC)
     if (scheme == "safari-extension")
         return true;

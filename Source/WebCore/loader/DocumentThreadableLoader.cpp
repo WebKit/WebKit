@@ -153,7 +153,11 @@ DocumentThreadableLoader::DocumentThreadableLoader(Document& document, Threadabl
     if (shouldSetHTTPHeadersToKeep())
         m_options.httpHeadersToKeep = httpHeadersToKeepFromCleaning(request.httpHeaderFields());
 
-    if (document.isRunningUserScripts() && LegacySchemeRegistry::isUserExtensionScheme(request.url().protocol().toStringWithoutCopying())) {
+    bool shouldDisableCORS = document.isRunningUserScripts() && LegacySchemeRegistry::isUserExtensionScheme(request.url().protocol().toStringWithoutCopying());
+    if (auto* page = document.page())
+        shouldDisableCORS |= page->shouldDisableCorsForRequestTo(request.url());
+
+    if (shouldDisableCORS) {
         m_options.mode = FetchOptions::Mode::NoCors;
         m_options.filteringPolicy = ResponseFilteringPolicy::Disable;
     }

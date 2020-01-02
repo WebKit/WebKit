@@ -29,6 +29,7 @@
 #include "WebPreferencesStore.h"
 #include <wtf/Forward.h>
 #include <wtf/GetPtr.h>
+#include <wtf/HashSet.h>
 
 #if PLATFORM(IOS_FAMILY)
 OBJC_PROTOCOL(_UIClickInteractionDriving);
@@ -134,6 +135,9 @@ public:
     void setURLSchemeHandlerForURLScheme(Ref<WebKit::WebURLSchemeHandler>&&, const WTF::String&);
     const HashMap<WTF::String, Ref<WebKit::WebURLSchemeHandler>>& urlSchemeHandlers() { return m_urlSchemeHandlers; }
 
+    const Vector<WTF::String>& corsDisablingPatterns() const { return m_corsDisablingPatterns; }
+    void setCORSDisablingPatterns(Vector<WTF::String>&& patterns) { m_corsDisablingPatterns = WTFMove(patterns); }
+
 private:
 
     RefPtr<WebKit::WebProcessPool> m_processPool;
@@ -170,6 +174,7 @@ private:
 #endif
 
     HashMap<WTF::String, Ref<WebKit::WebURLSchemeHandler>> m_urlSchemeHandlers;
+    Vector<WTF::String> m_corsDisablingPatterns;
 };
 
 } // namespace API

@@ -516,6 +516,8 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
     pageConfiguration.deviceOrientationUpdateProvider = WebDeviceOrientationUpdateProvider::create(*this);
 #endif
 
+    pageConfiguration.corsDisablingPatterns = WTFMove(parameters.corsDisablingPatterns);
+
     m_page = makeUnique<Page>(WTFMove(pageConfiguration));
 
     updatePreferences(parameters.store);
