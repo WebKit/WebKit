@@ -1,3 +1,11 @@
+2020-01-02  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Unreviewed test gardening for iPad
+
+        * platform/ipad/TestExpectations:
+
+        Skip this layout test on iPad, where the zoom scale is not expected to change after focusing a text field.
+
 2020-01-01  youenn fablet  <youenn@apple.com>
 
         Implement transceiver setCodecPreferences
