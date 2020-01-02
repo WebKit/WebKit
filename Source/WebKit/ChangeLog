@@ -1,5 +1,40 @@
 2020-01-02  Keith Rollin  <krollin@apple.com>
 
+        Reformat WebProcessCache logging
+        https://bugs.webkit.org/show_bug.cgi?id=205683
+        <rdar://problem/58269352>
+
+        Reviewed by Alex Christensen.
+
+        Update the format used by WebProcessCache in its RELEASE_LOG logging.
+        Use the format used by WebPageProxy and NetworkResourceLoader, which
+        is generally of the form:
+
+            <object-address> - [<values that help thread together operations>] <class>::<method>: <message and other useful values>
+
+        So, for example:
+
+            0x1145ed208 - WebProcessCache::canCacheProcess(): Not caching process 83671 because it does not have an associated registrable domain
+
+        becomes:
+
+            0x1145ed208 - [PID=83671] WebProcessCache::canCacheProcess: Not caching process because it does not have an associated registrable domain
+
+        No new tests - no added or changed functionality.
+
+        * UIProcess/WebProcessCache.cpp:
+        (WebKit::WebProcessCache::canCacheProcess const):
+        (WebKit::WebProcessCache::addProcessIfPossible):
+        (WebKit::WebProcessCache::addProcess):
+        (WebKit::WebProcessCache::takeProcess):
+        (WebKit::WebProcessCache::updateCapacity):
+        (WebKit::WebProcessCache::clear):
+        (WebKit::WebProcessCache::clearAllProcessesForSession):
+        (WebKit::WebProcessCache::setApplicationIsActive):
+        (WebKit::WebProcessCache::removeProcess):
+
+2020-01-02  Keith Rollin  <krollin@apple.com>
+
         Reformat ProcessThrottler logging
         https://bugs.webkit.org/show_bug.cgi?id=205679
         <rdar://problem/58265958>
