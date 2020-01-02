@@ -1,3 +1,13 @@
+2020-01-02  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        REGRESSION (r253867): Six test262 tests broken
+        https://bugs.webkit.org/show_bug.cgi?id=205583
+
+        Reviewed by Mark Lam.
+
+        * stress/bound-function-empty-name.js: Added.
+        (shouldBe):
+
 2019-12-23  Keith Miller  <keith_miller@apple.com>
 
         DFG/FTL should be able to exit to the middle of a bytecode

@@ -48,7 +48,7 @@ public:
         return vm.boundFunctionSpace<mode>();
     }
 
-    static JSBoundFunction* create(VM&, JSGlobalObject*, JSObject* targetFunction, JSValue boundThis, JSImmutableButterfly* boundArgs, int, JSString* name);
+    static JSBoundFunction* create(VM&, JSGlobalObject*, JSObject* targetFunction, JSValue boundThis, JSImmutableButterfly* boundArgs, int, JSString* nameMayBeNull);
     
     static bool customHasInstance(JSObject*, JSGlobalObject*, JSValue);
 
@@ -56,12 +56,14 @@ public:
     JSValue boundThis() { return m_boundThis.get(); }
     JSImmutableButterfly* boundArgs() { return m_boundArgs.get(); } // DO NOT allow this array to be mutated!
     JSArray* boundArgsCopy(JSGlobalObject*);
-    JSString* name() { return m_name.get(); }
+    JSString* nameMayBeNull() { return m_nameMayBeNull.get(); }
     const String& nameString()
     {
-        ASSERT(!m_name->isRope());
+        if (!m_nameMayBeNull)
+            return emptyString();
+        ASSERT(!m_nameMayBeNull->isRope());
         bool allocationAllowed = false;
-        return m_name->tryGetValue(allocationAllowed);
+        return m_nameMayBeNull->tryGetValue(allocationAllowed);
     }
 
     int32_t length(VM&) { return m_length; }
@@ -82,14 +84,14 @@ protected:
     static void visitChildren(JSCell*, SlotVisitor&);
 
 private:
-    JSBoundFunction(VM&, NativeExecutable*, JSGlobalObject*, Structure*, JSObject* targetFunction, JSValue boundThis, JSImmutableButterfly* boundArgs, JSString* name, int length);
+    JSBoundFunction(VM&, NativeExecutable*, JSGlobalObject*, Structure*, JSObject* targetFunction, JSValue boundThis, JSImmutableButterfly* boundArgs, JSString* nameMayBeNull, int length);
     
     void finishCreation(VM&, NativeExecutable*, int length);
 
     WriteBarrier<JSObject> m_targetFunction;
     WriteBarrier<Unknown> m_boundThis;
     WriteBarrier<JSImmutableButterfly> m_boundArgs;
-    WriteBarrier<JSString> m_name;
+    WriteBarrier<JSString> m_nameMayBeNull;
     int m_length;
 };
 

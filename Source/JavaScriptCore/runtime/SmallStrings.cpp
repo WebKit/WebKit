@@ -61,6 +61,7 @@ void SmallStrings::initializeCommonStrings(VM& vm)
     initialize(&vm, m_objectStringStart, "[object ");
     initialize(&vm, m_nullObjectString, "[object Null]");
     initialize(&vm, m_undefinedObjectString, "[object Undefined]");
+    initialize(&vm, m_boundPrefixString, "bound ");
 
     setIsInitialized(true);
 }
@@ -77,6 +78,7 @@ void SmallStrings::visitStrongReferences(SlotVisitor& visitor)
     visitor.appendUnbarriered(m_objectStringStart);
     visitor.appendUnbarriered(m_nullObjectString);
     visitor.appendUnbarriered(m_undefinedObjectString);
+    visitor.appendUnbarriered(m_boundPrefixString);
 }
 
 SmallStrings::~SmallStrings()

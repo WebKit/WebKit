@@ -1,3 +1,36 @@
+2020-01-02  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        REGRESSION (r253867): Six test262 tests broken
+        https://bugs.webkit.org/show_bug.cgi?id=205583
+
+        Reviewed by Mark Lam.
+
+        If a function has empty name, a bound function should have "bound " name.
+        But Intl prototypes' bound functions are exceptions: these JSBoundFunctions have empty name.
+        In this patch, we pass `nullptr` for the JSBoundFunction::create's nameMayBeNull parameter of Intl prototypes' bound functions,
+        to generate empty string name for these bound functions instead of "bound "[1].
+        This fixes test262 failures.
+
+        [1]: https://tc39.es/ecma402/#sec-collator-compare-functions
+
+        * runtime/IntlCollatorPrototype.cpp:
+        (JSC::IntlCollatorPrototypeGetterCompare):
+        * runtime/IntlDateTimeFormatPrototype.cpp:
+        (JSC::IntlDateTimeFormatPrototypeGetterFormat):
+        * runtime/IntlNumberFormatPrototype.cpp:
+        (JSC::IntlNumberFormatPrototypeGetterFormat):
+        * runtime/JSBoundFunction.cpp:
+        (JSC::JSBoundFunction::create):
+        (JSC::JSBoundFunction::JSBoundFunction):
+        (JSC::JSBoundFunction::visitChildren):
+        * runtime/JSBoundFunction.h:
+        * runtime/JSFunction.cpp:
+        (JSC::JSFunction::reifyLazyBoundNameIfNeeded):
+        * runtime/SmallStrings.cpp:
+        (JSC::SmallStrings::initializeCommonStrings):
+        * runtime/SmallStrings.h:
+        (JSC::SmallStrings::boundPrefixString const):
+
 2020-01-02  Sam Weinig  <weinig@apple.com>
 
         Simplify StringBuilder API/align with makeString by removing appendFixed* functions and using FormatNumber struct instead

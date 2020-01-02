@@ -116,6 +116,7 @@ public:
     JSString* objectStringStart() const { return m_objectStringStart; }
     JSString* nullObjectString() const { return m_nullObjectString; }
     JSString* undefinedObjectString() const { return m_undefinedObjectString; }
+    JSString* boundPrefixString() const { return m_boundPrefixString; }
 
     bool needsToBeVisited(CollectionScope scope) const
     {
@@ -136,6 +137,7 @@ private:
     JSString* m_objectStringStart { nullptr };
     JSString* m_nullObjectString { nullptr };
     JSString* m_undefinedObjectString { nullptr };
+    JSString* m_boundPrefixString { nullptr };
     JSString* m_singleCharacterStrings[singleCharacterStringCount] { nullptr };
     bool m_needsToBeVisited { true };
     bool m_isInitialized { false };

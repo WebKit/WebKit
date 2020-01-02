@@ -895,13 +895,13 @@ JSFunction::PropertyStatus JSFunction::reifyLazyBoundNameIfNeeded(VM& vm, JSGlob
         reifyName(vm, globalObject);
     else if (this->inherits<JSBoundFunction>(vm)) {
         FunctionRareData* rareData = this->ensureRareData(vm);
-        JSString* name = jsCast<JSBoundFunction*>(this)->name();
+        JSString* nameMayBeNull = jsCast<JSBoundFunction*>(this)->nameMayBeNull();
         JSString* string = nullptr;
-        if (name->length() != 0) {
-            string = jsString(globalObject, jsString(vm, "bound "_s), name);
+        if (nameMayBeNull) {
+            string = jsString(globalObject, vm.smallStrings.boundPrefixString(), nameMayBeNull);
             RETURN_IF_EXCEPTION(scope, PropertyStatus::Lazy);
         } else
-            string = jsString(vm, "bound "_s);
+            string = jsEmptyString(vm);
         unsigned initialAttributes = PropertyAttribute::DontEnum | PropertyAttribute::ReadOnly;
         rareData->setHasReifiedName();
         putDirect(vm, nameIdent, string, initialAttributes);
