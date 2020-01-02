@@ -557,6 +557,12 @@ void DrawingAreaCoordinatedGraphics::resumePainting()
 
 void DrawingAreaCoordinatedGraphics::enterAcceleratedCompositingMode(GraphicsLayer* graphicsLayer)
 {
+#if PLATFORM(GTK)
+    if (!m_alwaysUseCompositing) {
+        m_webPage.corePage()->settings().setForceCompositingMode(true);
+        m_alwaysUseCompositing = true;
+    }
+#endif
     m_discardPreviousLayerTreeHostTimer.stop();
 
     m_exitCompositingTimer.stop();

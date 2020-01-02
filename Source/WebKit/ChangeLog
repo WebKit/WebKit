@@ -1,3 +1,19 @@
+2020-01-02  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Make ondemand hardware acceleration policy never leave AC mode
+        https://bugs.webkit.org/show_bug.cgi?id=205558
+
+        Reviewed by Sergio Villar Senin.
+
+        We still enter AC mode on demand but we never leave it for the same drawing area. This avoids scrolling
+        performance problems with some websites that start small accelerated animation while scrolling (like WebKit
+        bugzilla review tool), due to constant enter/leave AC mode.
+
+        * UIProcess/API/glib/WebKitSettings.cpp:
+        (webkit_settings_class_init): Update API documentation.
+        * WebProcess/WebPage/CoordinatedGraphics/DrawingAreaCoordinatedGraphics.cpp:
+        (WebKit::DrawingAreaCoordinatedGraphics::enterAcceleratedCompositingMode): Force AC mode the first time we enter it.
+
 2019-12-22  Jeff Miller  <jeffm@apple.com>
 
         Update user-visible copyright strings to include 2020
