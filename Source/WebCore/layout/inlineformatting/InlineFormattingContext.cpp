@@ -375,7 +375,7 @@ void InlineFormattingContext::collectInlineContentIfNeeded()
 LineBuilder::Constraints InlineFormattingContext::constraintsForLine(const UsedHorizontalValues& usedHorizontalValues, InlineLayoutUnit lineLogicalTop)
 {
     auto lineLogicalLeft = geometryForBox(root()).contentBoxLeft();
-    auto availableWidth = usedHorizontalValues.constraints.width;
+    auto lineLogicalRight = lineLogicalLeft + usedHorizontalValues.constraints.width;
     auto lineIsConstrainedByFloat = false;
 
     auto floatingContext = FloatingContext { root(), *this, formattingState().floatingState() };
@@ -394,15 +394,14 @@ LineBuilder::Constraints InlineFormattingContext::constraintsForLine(const UsedH
 
         if (floatConstraints.left && floatConstraints.right) {
             ASSERT(floatConstraints.left->x <= floatConstraints.right->x);
-            availableWidth = floatConstraints.right->x - floatConstraints.left->x;
+            lineLogicalRight = floatConstraints.right->x;
             lineLogicalLeft = floatConstraints.left->x;
         } else if (floatConstraints.left) {
             ASSERT(floatConstraints.left->x >= lineLogicalLeft);
-            availableWidth -= (floatConstraints.left->x - lineLogicalLeft);
             lineLogicalLeft = floatConstraints.left->x;
         } else if (floatConstraints.right) {
             ASSERT(floatConstraints.right->x >= lineLogicalLeft);
-            availableWidth = floatConstraints.right->x - lineLogicalLeft;
+            lineLogicalRight = floatConstraints.right->x;
         }
     }
 
@@ -431,7 +430,7 @@ LineBuilder::Constraints InlineFormattingContext::constraintsForLine(const UsedH
         return geometry().computedTextIndent(root, usedHorizontalValues.constraints).valueOr(InlineLayoutUnit { });
     };
     lineLogicalLeft += computedTextIndent();
-    return LineBuilder::Constraints { { lineLogicalLeft, lineLogicalTop }, availableWidth, lineIsConstrainedByFloat, quirks().lineHeightConstraints(root()) };
+    return LineBuilder::Constraints { { lineLogicalLeft, lineLogicalTop }, lineLogicalRight - lineLogicalLeft, lineIsConstrainedByFloat, quirks().lineHeightConstraints(root()) };
 }
 
 void InlineFormattingContext::setDisplayBoxesForLine(const LineLayoutContext::LineContent& lineContent, const UsedHorizontalValues& usedHorizontalValues)

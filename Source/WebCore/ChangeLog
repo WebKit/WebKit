@@ -1,3 +1,14 @@
+2020-01-02  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] Text-indent shrinks the available horizontal space
+        https://bugs.webkit.org/show_bug.cgi?id=205688
+        <rdar://problem/58279938>
+
+        Reviewed by Antti Koivisto.
+
+        * layout/inlineformatting/InlineFormattingContext.cpp:
+        (WebCore::Layout::InlineFormattingContext::constraintsForLine):
+
 2020-01-02  Sam Weinig  <weinig@apple.com>
 
         Simplify StringBuilder API/align with makeString by removing appendFixed* functions and using FormatNumber struct instead
