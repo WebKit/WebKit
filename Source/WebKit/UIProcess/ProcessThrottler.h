@@ -35,6 +35,10 @@
 #include <wtf/Variant.h>
 #include <wtf/WeakPtr.h>
 
+#define PROCESSTHROTTLER_RELEASE_LOG(msg, ...) RELEASE_LOG(ProcessSuspension, "%p - [PID=%d] ProcessThrottler::" msg, this, m_processIdentifier, ##__VA_ARGS__)
+#define PROCESSTHROTTLER_RELEASE_LOG_WITH_PID(msg, ...) RELEASE_LOG(ProcessSuspension, "%p - [PID=%d] ProcessThrottler::" msg, this, ##__VA_ARGS__)
+#define PROCESSTHROTTLER_ACTIVITY_RELEASE_LOG(msg, ...) RELEASE_LOG(ProcessSuspension, "%p - [PID=%d, throttler=%p] ProcessThrottler::Activity::" msg, this, m_throttler->m_processIdentifier, m_throttler, ##__VA_ARGS__)
+
 namespace WebKit {
     
 enum UserObservablePageCounterType { };
@@ -61,7 +65,8 @@ public:
             , m_name(name)
         {
             throttler.addActivity(*this);
-            RELEASE_LOG(ProcessSuspension, "[PID: %d] %p - ProcessThrottler Starting %{public}s activity %p / '%{public}s'", m_throttler->m_processIdentifier, m_throttler, type == ActivityType::Foreground ? "foreground" : "background", this, m_name.characters());
+            PROCESSTHROTTLER_ACTIVITY_RELEASE_LOG("Activity: Starting %{public}s activity / '%{public}s'",
+                type == ActivityType::Foreground ? "foreground" : "background", m_name.characters());
         }
 
         ~Activity()
@@ -78,7 +83,8 @@ public:
         void invalidate()
         {
             ASSERT(isValid());
-            RELEASE_LOG(ProcessSuspension, "[PID: %d] %p - ProcessThrottler Ending %{public}s activity %p / '%{public}s'", m_throttler->m_processIdentifier, m_throttler, type == ActivityType::Foreground ? "foreground" : "background", this, m_name.characters());
+            PROCESSTHROTTLER_ACTIVITY_RELEASE_LOG("invalidate: Ending %{public}s activity / '%{public}s'",
+                type == ActivityType::Foreground ? "foreground" : "background", m_name.characters());
             m_throttler->removeActivity(*this);
             m_throttler = nullptr;
         }

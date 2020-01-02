@@ -1,5 +1,42 @@
 2020-01-02  Keith Rollin  <krollin@apple.com>
 
+        Reformat ProcessThrottler logging
+        https://bugs.webkit.org/show_bug.cgi?id=205679
+        <rdar://problem/58265958>
+
+        Reviewed by Alex Christensen.
+
+        Update the format used by ProcessThrottler in its RELEASE_LOG logging.
+        Use the format used by WebPageProxy and NetworkResourceLoader, which
+        is generally of the form:
+
+            <object-address> - [<values that help thread together operations>] <class>::<method>: <message and other useful values>
+
+        So, for example:
+
+            [PID: 0] 0x1145ce5e8 - ProcessThrottler::invalidateAllActivities() BEGIN
+
+        becomes:
+
+            0x1145ce5e8 - [PID: 0] ProcessThrottler::invalidateAllActivities: BEGIN
+
+        No new tests - no added or changed functionality.
+
+        * UIProcess/ProcessThrottler.cpp:
+        (WebKit::ProcessThrottler::invalidateAllActivities):
+        (WebKit::ProcessThrottler::setAssertionState):
+        (WebKit::ProcessThrottler::updateAssertionIfNeeded):
+        (WebKit::ProcessThrottler::didConnectToProcess):
+        (WebKit::ProcessThrottler::prepareToSuspendTimeoutTimerFired):
+        (WebKit::ProcessThrottler::processReadyToSuspend):
+        (WebKit::ProcessThrottler::sendPrepareToSuspendIPC):
+        (WebKit::ProcessThrottler::uiAssertionWillExpireImminently):
+        * UIProcess/ProcessThrottler.h:
+        (WebKit::ProcessThrottler::Activity::Activity):
+        (WebKit::ProcessThrottler::Activity::invalidate):
+
+2020-01-02  Keith Rollin  <krollin@apple.com>
+
         Reformat WebResourceLoader logging
         https://bugs.webkit.org/show_bug.cgi?id=205680
         <rdar://problem/58266105>
