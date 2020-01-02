@@ -481,6 +481,7 @@ Extensions3D& GraphicsContext3D::getExtensions()
 
 void* GraphicsContext3D::mapBufferRange(GC3Denum, GC3Dintptr, GC3Dsizeiptr, GC3Dbitfield)
 {
+    return nullptr;
 }
 
 GC3Dboolean GraphicsContext3D::unmapBuffer(GC3Denum)

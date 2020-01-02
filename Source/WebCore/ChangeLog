@@ -1,3 +1,13 @@
+2020-01-01  Joonghun Park  <jh718.park@samsung.com>
+
+        Unreviewed. Remove the build warning below since r253939.
+        warning: no return statement in function returning non-void [-Wreturn-type]
+
+        No new tests, no behavioral changes.
+
+        * platform/graphics/texmap/GraphicsContext3DTextureMapper.cpp:
+        (WebCore::GraphicsContext3D::mapBufferRange):
+
 2020-01-01  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][Integration] Provide the viewport size when faking ICB
