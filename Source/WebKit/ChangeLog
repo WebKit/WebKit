@@ -1,3 +1,38 @@
+2020-01-02  Keith Rollin  <krollin@apple.com>
+
+        Reformat WebResourceLoader logging
+        https://bugs.webkit.org/show_bug.cgi?id=205680
+        <rdar://problem/58266105>
+
+        Reviewed by Alex Christensen.
+
+        Update the format used by WebResourceLoader in its RELEASE_LOG
+        logging. Use the format used by WebPageProxy and
+        NetworkResourceLoader, which is generally of the form:
+
+            <object-address> - [<values that help thread together operations>] <class>::<method>: <message and other useful values>
+
+        So, for example:
+
+            0x4a1dbcb58 - WebResourceLoader::didFinishResourceLoad: (webPageID=15, frameID=3, resourceID=1, length=212132)
+
+        becomes:
+
+            0x4a1dbcb58 - [webPageID=15, frameID=3, resourceID=1] WebResourceLoader::didFinishResourceLoad: (length=212132)
+
+        No new tests - no added or changed functionality.
+
+        * WebProcess/Network/WebResourceLoader.cpp:
+        (WebKit::WebResourceLoader::willSendRequest):
+        (WebKit::WebResourceLoader::didReceiveResponse):
+        (WebKit::WebResourceLoader::didReceiveData):
+        (WebKit::WebResourceLoader::didFinishResourceLoad):
+        (WebKit::WebResourceLoader::serviceWorkerDidNotHandle):
+        (WebKit::WebResourceLoader::didFailResourceLoad):
+        (WebKit::WebResourceLoader::didBlockAuthenticationChallenge):
+        (WebKit::WebResourceLoader::stopLoadingAfterXFrameOptionsOrContentSecurityPolicyDenied):
+        (WebKit::WebResourceLoader::didReceiveResource):
+
 2020-01-02  Alex Christensen  <achristensen@webkit.org>
 
         Add SPI to disable CORS on requests to URLs matching a pattern
