@@ -18,5 +18,8 @@ promise_test(async function(t) {
   let message = await wait_for_message();
   assert_equals(message.data, '');
   w.close();
+
+  w = window.open(url_from);
+  await new Promise(resolve => setTimeout(resolve, 50));
 }, 'Test navigating to prefetched redirects.');
 </script>

@@ -1,3 +1,17 @@
+2020-01-03  youenn fablet  <youenn@apple.com>
+
+        NetworkResourceLoader::didFinishWithRedirectResponse should not assume the load is coming from network
+        https://bugs.webkit.org/show_bug.cgi?id=205715
+
+        Reviewed by Alex Christensen.
+
+        Covered by updated test.
+
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::didFinishWithRedirectResponse):
+        If redirection is coming from cache, the load is not null.
+        We just need to use the request URL since the redirection mode is manual.
+
 2020-01-03  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, drop new assertion added in r253984 which hits on OpenSource bots
