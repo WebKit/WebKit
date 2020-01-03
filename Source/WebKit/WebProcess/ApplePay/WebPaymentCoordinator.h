@@ -83,6 +83,8 @@ private:
     bool isAlwaysOnLoggingAllowed() const override;
     bool supportsUnrestrictedApplePay() const override;
 
+    String userAgentScriptsBlockedErrorMessage() const final;
+
     // IPC::MessageReceiver.
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
 

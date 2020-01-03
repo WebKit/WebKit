@@ -691,8 +691,9 @@ ValueOrException ScriptController::executeUserAgentScriptInWorld(DOMWrapperWorld
 ValueOrException ScriptController::executeUserAgentScriptInWorldInternal(DOMWrapperWorld& world, RunJavaScriptParameters&& parameters)
 {
     auto& document = *m_frame.document();
-    if (!shouldAllowUserAgentScripts(document))
-        return makeUnexpected(ExceptionDetails { "Unable to run user agent scripts in this document for security reasons"_s });
+    auto allowed = shouldAllowUserAgentScripts(document);
+    if (!allowed)
+        return makeUnexpected(allowed.error());
 
     document.setHasEvaluatedUserAgentScripts();
     return executeScriptInWorld(world, WTFMove(parameters));
@@ -707,7 +708,7 @@ void ScriptController::executeAsynchronousUserAgentScriptInWorld(DOMWrapperWorld
     resolveFunction(result);
 }
 
-bool ScriptController::shouldAllowUserAgentScripts(Document& document) const
+Expected<void, ExceptionDetails> ScriptController::shouldAllowUserAgentScripts(Document& document) const
 {
 #if ENABLE(APPLE_PAY)
     if (auto page = m_frame.page())
@@ -715,7 +716,7 @@ bool ScriptController::shouldAllowUserAgentScripts(Document& document) const
 #else
     UNUSED_PARAM(document);
 #endif
-    return true;
+    return { };
 }
 
 bool ScriptController::canExecuteScripts(ReasonForCallingCanExecuteScripts reason)

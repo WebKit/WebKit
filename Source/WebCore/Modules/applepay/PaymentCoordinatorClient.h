@@ -64,6 +64,8 @@ public:
     virtual void paymentCoordinatorDestroyed() = 0;
     virtual bool supportsUnrestrictedApplePay() const = 0;
 
+    virtual String userAgentScriptsBlockedErrorMessage() const { return { }; }
+
     virtual bool isMockPaymentCoordinator() const { return false; }
     virtual bool isWebPaymentCoordinator() const { return false; }
 

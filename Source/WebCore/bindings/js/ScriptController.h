@@ -106,7 +106,7 @@ public:
     JSC::JSValue evaluateIgnoringException(const ScriptSourceCode&);
     JSC::JSValue evaluateInWorldIgnoringException(const ScriptSourceCode&, DOMWrapperWorld&);
 
-    bool shouldAllowUserAgentScripts(Document&) const;
+    Expected<void, ExceptionDetails> shouldAllowUserAgentScripts(Document&) const;
 
     // Returns true if argument is a JavaScript URL.
     bool executeIfJavaScriptURL(const URL&, RefPtr<SecurityOrigin> = nullptr, ShouldReplaceDocumentIfJavaScriptURL = ReplaceDocumentIfJavaScriptURL);

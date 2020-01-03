@@ -1,3 +1,23 @@
+2020-01-03  Andy Estes  <aestes@apple.com>
+
+        [Apple Pay] Provide a better error message when Apple Pay blocks user agent script evaluation
+        https://bugs.webkit.org/show_bug.cgi?id=205730
+        <rdar://problem/55573484>
+
+        Reviewed by Brady Eidson.
+
+        Covered by existing API tests.
+
+        * Modules/applepay/PaymentCoordinator.cpp:
+        (WebCore::PaymentCoordinator::shouldAllowUserAgentScripts const):
+        * Modules/applepay/PaymentCoordinator.h:
+        * Modules/applepay/PaymentCoordinatorClient.h:
+        (WebCore::PaymentCoordinatorClient::userAgentScriptsBlockedErrorMessage const):
+        * bindings/js/ScriptController.cpp:
+        (WebCore::ScriptController::executeUserAgentScriptInWorldInternal):
+        (WebCore::ScriptController::shouldAllowUserAgentScripts const):
+        * bindings/js/ScriptController.h:
+
 2020-01-03  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Put more WebCore/WebKit JS objects into IsoSubspace
