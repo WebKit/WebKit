@@ -61,7 +61,7 @@ CachedResourceRequest PreloadRequest::resourceRequest(Document& document)
     }
     if (m_resourceType == CachedResource::Type::Script)
         options.referrerPolicy = m_referrerPolicy;
-    auto request = createPotentialAccessControlRequest(completeURL(document), document, crossOriginMode, WTFMove(options));
+    auto request = createPotentialAccessControlRequest(completeURL(document), WTFMove(options), document, crossOriginMode);
     request.setInitiator(m_initiator);
     return request;
 }

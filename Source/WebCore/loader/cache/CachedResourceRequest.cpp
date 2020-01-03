@@ -85,25 +85,6 @@ const AtomString& CachedResourceRequest::initiatorName() const
     return defaultName;
 }
 
-void CachedResourceRequest::deprecatedSetAsPotentiallyCrossOrigin(const String& mode, Document& document)
-{
-    ASSERT(m_options.mode == FetchOptions::Mode::NoCors);
-
-    m_origin = &document.securityOrigin();
-
-    if (mode.isNull())
-        return;
-
-    m_options.mode = FetchOptions::Mode::Cors;
-
-    FetchOptions::Credentials credentials = equalLettersIgnoringASCIICase(mode, "omit")
-        ? FetchOptions::Credentials::Omit : equalLettersIgnoringASCIICase(mode, "use-credentials")
-        ? FetchOptions::Credentials::Include : FetchOptions::Credentials::SameOrigin;
-    m_options.credentials = credentials;
-    m_options.storedCredentialsPolicy = credentials == FetchOptions::Credentials::Include ? StoredCredentialsPolicy::Use : StoredCredentialsPolicy::DoNotUse;
-    updateRequestForAccessControl(m_resourceRequest, document.securityOrigin(), m_options.storedCredentialsPolicy);
-}
-
 void CachedResourceRequest::updateForAccessControl(Document& document)
 {
     ASSERT(m_options.mode == FetchOptions::Mode::Cors);

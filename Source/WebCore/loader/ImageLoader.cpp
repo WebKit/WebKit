@@ -185,7 +185,7 @@ void ImageLoader::updateFromElement()
         ResourceRequest resourceRequest(document.completeURL(sourceURI(attr)));
         resourceRequest.setInspectorInitiatorNodeIdentifier(InspectorInstrumentation::identifierForNode(m_element));
 
-        auto request = createPotentialAccessControlRequest(WTFMove(resourceRequest), document, crossOriginAttribute, WTFMove(options));
+        auto request = createPotentialAccessControlRequest(WTFMove(resourceRequest), WTFMove(options), document, crossOriginAttribute);
         request.setInitiator(element());
 
         if (m_loadManually) {

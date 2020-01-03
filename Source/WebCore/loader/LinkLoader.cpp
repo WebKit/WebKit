@@ -265,7 +265,7 @@ std::unique_ptr<LinkPreloadResourceClient> LinkLoader::preloadIfNeeded(const Lin
         return nullptr;
 
     auto options = CachedResourceLoader::defaultCachedResourceOptions();
-    auto linkRequest = createPotentialAccessControlRequest(url, document, params.crossOrigin, WTFMove(options));
+    auto linkRequest = createPotentialAccessControlRequest(url, WTFMove(options), document, params.crossOrigin);
     linkRequest.setPriority(CachedResource::defaultPriorityForResourceType(type.value()));
     linkRequest.setInitiator("link");
     linkRequest.setIgnoreForRequestCount(true);

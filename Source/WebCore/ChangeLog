@@ -1,3 +1,38 @@
+2020-01-03  Rob Buis  <rbuis@igalia.com>
+
+        Implement "create a potential-CORS request"
+        https://bugs.webkit.org/show_bug.cgi?id=205326
+
+        Reviewed by Youenn Fablet.
+
+        Implement "create a potential-CORS request" [1] and
+        remove deprecatedSetAsPotentiallyCrossOrigin. Add a
+        same-origin fallback flag that can be used by clients
+        of createPotentialAccessControlRequest in the future.
+
+        No new tests, no functional change.
+
+        * bindings/js/CachedScriptFetcher.cpp:
+        (WebCore::CachedScriptFetcher::requestScriptWithCache const):
+        * html/HTMLLinkElement.cpp:
+        (WebCore::HTMLLinkElement::process):
+        * html/parser/HTMLResourcePreloader.cpp:
+        (WebCore::PreloadRequest::resourceRequest):
+        * loader/CrossOriginAccessControl.cpp:
+        (WebCore::createPotentialAccessControlRequest):
+        * loader/CrossOriginAccessControl.h:
+        * loader/ImageLoader.cpp:
+        (WebCore::ImageLoader::updateFromElement):
+        * loader/LinkLoader.cpp:
+        (WebCore::LinkLoader::preloadIfNeeded):
+        * loader/MediaResourceLoader.cpp:
+        (WebCore::MediaResourceLoader::requestResource):
+        * loader/TextTrackLoader.cpp:
+        (WebCore::TextTrackLoader::load):
+        * loader/cache/CachedResourceRequest.cpp:
+        (WebCore::CachedResourceRequest::deprecatedSetAsPotentiallyCrossOrigin): Deleted.
+        * loader/cache/CachedResourceRequest.h:
+
 2020-01-03  Antti Koivisto  <antti@apple.com>
 
         [LFC][Integration] Enable text-transform:capitalize

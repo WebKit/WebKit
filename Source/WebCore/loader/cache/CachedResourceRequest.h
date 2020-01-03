@@ -75,8 +75,6 @@ public:
 
     void setDestinationIfNotSet(FetchOptions::Destination);
 
-    void deprecatedSetAsPotentiallyCrossOrigin(const String&, Document&); // Use WebCore::createPotentialAccessControlRequest() instead.
-
     void updateForAccessControl(Document&);
 
     void updateReferrerPolicy(ReferrerPolicy);

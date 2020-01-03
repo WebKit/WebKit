@@ -118,12 +118,29 @@ ResourceRequest createAccessControlPreflightRequest(const ResourceRequest& reque
     return preflightRequest;
 }
 
-CachedResourceRequest createPotentialAccessControlRequest(ResourceRequest&& request, Document& document, const String& crossOriginAttribute, ResourceLoaderOptions&& options)
+// https://html.spec.whatwg.org/multipage/urls-and-fetching.html#create-a-potential-cors-request
+CachedResourceRequest createPotentialAccessControlRequest(ResourceRequest&& request, ResourceLoaderOptions&& options, Document& document, const String& crossOriginAttribute, SameOriginFlag sameOriginFlag)
 {
-    // FIXME: This does not match the algorithm "create a potential-CORS request":
-    // <https://html.spec.whatwg.org/multipage/urls-and-fetching.html#create-a-potential-cors-request> (31 August 2018).
-    auto cachedRequest = CachedResourceRequest { WTFMove(request), WTFMove(options) };
-    cachedRequest.deprecatedSetAsPotentiallyCrossOrigin(crossOriginAttribute, document);
+    ASSERT(options.mode == FetchOptions::Mode::NoCors);
+    if (!crossOriginAttribute.isNull())
+        options.mode = FetchOptions::Mode::Cors;
+    else if (sameOriginFlag == SameOriginFlag::Yes)
+        options.mode = FetchOptions::Mode::SameOrigin;
+
+    if (crossOriginAttribute.isNull()) {
+        CachedResourceRequest cachedRequest { WTFMove(request), WTFMove(options) };
+        cachedRequest.setOrigin(document.securityOrigin());
+        return cachedRequest;
+    }
+
+    FetchOptions::Credentials credentials = equalLettersIgnoringASCIICase(crossOriginAttribute, "omit")
+        ? FetchOptions::Credentials::Omit : equalLettersIgnoringASCIICase(crossOriginAttribute, "use-credentials")
+        ? FetchOptions::Credentials::Include : FetchOptions::Credentials::SameOrigin;
+    options.credentials = credentials;
+    options.storedCredentialsPolicy = credentials == FetchOptions::Credentials::Include ? StoredCredentialsPolicy::Use : StoredCredentialsPolicy::DoNotUse;
+
+    CachedResourceRequest cachedRequest { WTFMove(request), WTFMove(options) };
+    updateRequestForAccessControl(cachedRequest.resourceRequest(), document.securityOrigin(), options.storedCredentialsPolicy);
     return cachedRequest;
 }
 
