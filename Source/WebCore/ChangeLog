@@ -1,3 +1,21 @@
+2020-01-02  Chris Dumez  <cdumez@apple.com>
+
+        XMLSerializer doesn't correctly encode entities in <style> element
+        https://bugs.webkit.org/show_bug.cgi?id=205635
+
+        Reviewed by Alex Christensen.
+
+        As per [1], when doing an XML serialization of text, we should escape '<', '>' and '&', even
+        if the text is inside a <style> element. The <style> element exception is for HTML serialization [2].
+
+        [1] https://w3c.github.io/DOM-Parsing/#xml-serializing-a-text-node
+        [2] https://html.spec.whatwg.org/#serialising-html-fragments
+
+        Test: fast/dom/xmlserializer-ampersand-in-style.html
+
+        * editing/MarkupAccumulator.cpp:
+        (WebCore::MarkupAccumulator::entityMaskForText const):
+
 2020-01-02  Yusuke Suzuki  <ysuzuki@apple.com> and Simon Fraser  <simon.fraser@apple.com>
 
         Experiment: create lots of different malloc zones for easier accounting of memory use

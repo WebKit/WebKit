@@ -1,0 +1,11 @@
+Tests XML serialization of ampersand in a style element.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Test case: /* & < > "Â  */
+PASS result is "<style xmlns=\"http://www.w3.org/1999/xhtml\">/* &amp; &lt; &gt; \"Â  */</style>"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

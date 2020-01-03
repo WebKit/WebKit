@@ -380,7 +380,7 @@ void MarkupAccumulator::appendNamespace(StringBuilder& result, const AtomString&
 
 EntityMask MarkupAccumulator::entityMaskForText(const Text& text) const
 {
-    if (!text.document().isHTMLDocument())
+    if (!text.document().isHTMLDocument() || inXMLFragmentSerialization())
         return EntityMaskInPCDATA;
 
     const QualifiedName* parentName = nullptr;

@@ -1,3 +1,15 @@
+2020-01-02  Chris Dumez  <cdumez@apple.com>
+
+        XMLSerializer doesn't correctly encode entities in <style> element
+        https://bugs.webkit.org/show_bug.cgi?id=205635
+
+        Reviewed by Alex Christensen.
+
+        Add layout test coverage.
+
+        * fast/dom/xmlserializer-ampersand-in-style-expected.txt: Added.
+        * fast/dom/xmlserializer-ampersand-in-style.html: Added.
+
 2020-01-02  Andy Estes  <aestes@apple.com>
 
         [Payment Request] Perform payment method data IDL conversion in the PaymentRequest constructor
