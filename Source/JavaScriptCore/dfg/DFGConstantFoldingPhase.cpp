@@ -606,18 +606,15 @@ private:
                 AbstractValue baseValue = m_state.forNode(child);
                 AbstractValue valueValue = m_state.forNode(node->child2());
 
-                m_interpreter.execute(indexInBlock); // Push CFA over this node after we get the state before.
-                alreadyHandled = true; // Don't allow the default constant folder to do things to this.
-
                 if (!baseValue.m_structure.isFinite())
                     break;
-                
+
                 PutByIdStatus status = PutByIdStatus::computeFor(
                     m_graph.globalObjectFor(origin.semantic),
                     baseValue.m_structure.toStructureSet(),
                     m_graph.identifiers()[identifierNumber],
                     node->op() == PutByIdDirect);
-                
+
                 if (!status.isSimple())
                     break;
 
@@ -629,9 +626,9 @@ private:
                 changed = true;
 
                 bool allGood = true;
+                RegisteredStructureSet newSet;
+                TransitionVector transitions;
                 for (const PutByIdVariant& variant : status.variants()) {
-                    if (!allGood)
-                        break;
                     for (const ObjectPropertyCondition& condition : variant.conditionSet()) {
                         if (m_graph.watchCondition(condition))
                             continue;
@@ -648,10 +645,32 @@ private:
                             m_insertionSet.insertConstantForUse(
                                 indexInBlock, node->origin, condition.object(), KnownCellUse));
                     }
+
+                    if (!allGood)
+                        break;
+
+                    if (variant.kind() == PutByIdVariant::Transition) {
+                        RegisteredStructure newStructure = m_graph.registerStructure(variant.newStructure());
+                        transitions.append(
+                            Transition(
+                                m_graph.registerStructure(variant.oldStructureForTransition()), newStructure));
+                        newSet.add(newStructure);
+                    } else {
+                        ASSERT(variant.kind() == PutByIdVariant::Replace);
+                        newSet.merge(*m_graph.addStructureSet(variant.oldStructure()));
+                    }
                 }
 
                 if (!allGood)
                     break;
+
+                // Push CFA over this node after we get the state before.
+                m_interpreter.didFoldClobberWorld();
+                m_interpreter.observeTransitions(indexInBlock, transitions);
+                if (m_state.forNode(node->child1()).changeStructure(m_graph, newSet) == Contradiction)
+                    m_state.setIsValid(false);
+
+                alreadyHandled = true; // Don't allow the default constant folder to do things to this.
                 
                 m_insertionSet.insertNode(
                     indexInBlock, SpecNone, FilterPutByIdStatus, node->origin,

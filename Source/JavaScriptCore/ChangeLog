@@ -1,3 +1,30 @@
+2020-01-03  Saam Barati  <sbarati@apple.com>
+
+        AI rule for PutById can only observe transitions when it watches the condition
+        https://bugs.webkit.org/show_bug.cgi?id=205697
+        <rdar://problem/56814254>
+
+        Reviewed by Yusuke Suzuki.
+
+        There was a bug in AI where we were capturing a PutByIdStatus and
+        emitting a structure transition in AI state based on the variants inside this
+        PutByIdStatus. This, in principal, is a valid static analysis to perform.
+        However, we can only do this if we ensure that the snapshot we have in the
+        PutByIdStatus holds at runtime. We can do this by watching the property conditions
+        for the various variants. AI forgot to watch these conditions. This patch fixes that.
+        In practice, this also means we need to be slightly more strict about stating to
+        AI when we transition since some object property conditions aren't watchable, and need
+        to be verified at runtime via structure checks. This is ok in practice, since
+        we'll emit the code to do that inside constant folding (constant folding was
+        already doing this), which will continue to report the precise transition in
+        the abstract state.
+
+        * dfg/DFGAbstractInterpreter.h:
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGConstantFoldingPhase.cpp:
+        (JSC::DFG::ConstantFoldingPhase::foldConstants):
+
 2020-01-02  Yusuke Suzuki  <ysuzuki@apple.com> and Simon Fraser  <simon.fraser@apple.com>
 
         Experiment: create lots of different malloc zones for easier accounting of memory use

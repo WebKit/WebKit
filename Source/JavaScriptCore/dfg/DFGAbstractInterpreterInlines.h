@@ -3768,12 +3768,22 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
                 m_graph.identifiers()[node->identifierNumber()],
                 node->op() == PutByIdDirect);
 
+            bool allGood = true;
             if (status.isSimple()) {
                 RegisteredStructureSet newSet;
                 TransitionVector transitions;
                 
-                for (unsigned i = status.numVariants(); i--;) {
-                    const PutByIdVariant& variant = status[i];
+                for (const PutByIdVariant& variant : status.variants()) {
+                    for (const ObjectPropertyCondition& condition : variant.conditionSet()) {
+                        if (!m_graph.watchCondition(condition)) {
+                            allGood = false;
+                            break;
+                        }
+                    }
+
+                    if (!allGood)
+                        break;
+
                     if (variant.kind() == PutByIdVariant::Transition) {
                         RegisteredStructure newStructure = m_graph.registerStructure(variant.newStructure());
                         transitions.append(
@@ -3789,11 +3799,13 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
                 if (status.numVariants() == 1 || m_graph.m_plan.isFTL())
                     m_state.setShouldTryConstantFolding(true);
                 
-                didFoldClobberWorld();
-                observeTransitions(clobberLimit, transitions);
-                if (forNode(node->child1()).changeStructure(m_graph, newSet) == Contradiction)
-                    m_state.setIsValid(false);
-                break;
+                if (allGood) {
+                    didFoldClobberWorld();
+                    observeTransitions(clobberLimit, transitions);
+                    if (forNode(node->child1()).changeStructure(m_graph, newSet) == Contradiction)
+                        m_state.setIsValid(false);
+                    break;
+                }
             }
         }
         

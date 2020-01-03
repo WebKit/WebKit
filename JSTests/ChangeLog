@@ -1,3 +1,13 @@
+2020-01-03  Saam Barati  <sbarati@apple.com>
+
+        AI rule for PutById can only observe transitions when it watches the condition
+        https://bugs.webkit.org/show_bug.cgi?id=205697
+        <rdar://problem/56814254>
+
+        Reviewed by Yusuke Suzuki.
+
+        * stress/only-transition-structures-for-put-by-id-in-AI-if-watchable.js: Added.
+
 2020-01-02  Yusuke Suzuki  <ysuzuki@apple.com>
 
         REGRESSION (r253867): Six test262 tests broken

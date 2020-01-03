@@ -215,9 +215,9 @@ public:
     
     void filterICStatus(Node*);
     
-private:
     void clobberWorld();
     void didFoldClobberWorld();
+private:
     
     bool handleConstantBinaryBitwiseOp(Node*);
 
@@ -228,7 +228,9 @@ private:
     void didFoldClobberStructures();
     
     void observeTransition(unsigned indexInBlock, RegisteredStructure from, RegisteredStructure to);
+public:
     void observeTransitions(unsigned indexInBlock, const TransitionVector&);
+private:
     
     enum BooleanResult {
         UnknownBooleanResult,
