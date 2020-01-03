@@ -26,6 +26,8 @@
 #include "config.h"
 #include "LibWebRTCCodecsProxy.h"
 
+#if USE(LIBWEBRTC) && PLATFORM(COCOA) && ENABLE(GPU_PROCESS)
+
 #include "DataReference.h"
 #include "GPUConnectionToWebProcess.h"
 #include "LibWebRTCCodecsMessages.h"
@@ -34,8 +36,6 @@
 #include <WebCore/RemoteVideoSample.h>
 #include <webrtc/sdk/WebKit/WebKitUtilities.h>
 #include <wtf/MediaTime.h>
-
-#if USE(LIBWEBRTC) && PLATFORM(COCOA) && ENABLE(GPU_PROCESS)
 
 namespace WebKit {
 
