@@ -61,6 +61,20 @@ ExceptionOr<void> PaymentHandler::canCreateSession(Document& document)
     return { };
 }
 
+ExceptionOr<void> PaymentHandler::validateData(Document& document, JSC::JSValue data, const PaymentRequest::MethodIdentifier& identifier)
+{
+#if ENABLE(APPLE_PAY)
+    if (ApplePayPaymentHandler::handlesIdentifier(identifier))
+        return ApplePayPaymentHandler::validateData(document, data);
+#else
+    UNUSED_PARAM(document);
+    UNUSED_PARAM(data);
+    UNUSED_PARAM(identifier);
+#endif
+
+    return { };
+}
+
 bool PaymentHandler::enabledForContext(ScriptExecutionContext& context)
 {
 #if ENABLE(APPLE_PAY)

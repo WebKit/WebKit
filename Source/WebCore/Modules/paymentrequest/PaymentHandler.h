@@ -46,10 +46,11 @@ class PaymentHandler : public virtual PaymentSessionBase {
 public:
     static RefPtr<PaymentHandler> create(Document&, PaymentRequest&, const PaymentRequest::MethodIdentifier&);
     static ExceptionOr<void> canCreateSession(Document&);
+    static ExceptionOr<void> validateData(Document&, JSC::JSValue, const PaymentRequest::MethodIdentifier&);
     static bool enabledForContext(ScriptExecutionContext&);
     static bool hasActiveSession(Document&);
 
-    virtual ExceptionOr<void> convertData(JSC::JSValue&&) = 0;
+    virtual ExceptionOr<void> convertData(JSC::JSValue) = 0;
     virtual ExceptionOr<void> show(Document&) = 0;
     virtual void hide() = 0;
     virtual void canMakePayment(Document&, WTF::Function<void(bool)>&& completionHandler) = 0;

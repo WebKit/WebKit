@@ -311,6 +311,15 @@ static ExceptionOr<std::tuple<String, Vector<String>>> checkAndCanonicalizeDetai
     return std::make_tuple(WTFMove(selectedShippingOption), WTFMove(serializedModifierData));
 }
 
+static ExceptionOr<JSC::JSValue> parse(ScriptExecutionContext& context, const String& string)
+{
+    auto scope = DECLARE_THROW_SCOPE(context.vm());
+    JSC::JSValue data = JSONParse(context.execState(), string);
+    if (scope.exception())
+        return Exception { ExistingExceptionError };
+    return data;
+}
+
 // Implements the PaymentRequest Constructor
 // https://www.w3.org/TR/payment-request/#constructor
 ExceptionOr<Ref<PaymentRequest>> PaymentRequest::create(Document& document, Vector<PaymentMethodData>&& methodData, PaymentDetailsInit&& details, PaymentOptions&& options)
@@ -338,6 +347,14 @@ ExceptionOr<Ref<PaymentRequest>> PaymentRequest::create(Document& document, Vect
             serializedData = JSONStringify(document.execState(), paymentMethod.data.get(), 0);
             if (scope.exception())
                 return Exception { ExistingExceptionError };
+            
+            auto parsedDataOrException = parse(document, serializedData);
+            if (parsedDataOrException.hasException())
+                return parsedDataOrException.releaseException();
+            
+            auto exception = PaymentHandler::validateData(document, parsedDataOrException.releaseReturnValue(), *identifier);
+            if (exception.hasException())
+                return exception.releaseException();
         }
         serializedMethodData.uncheckedAppend({ WTFMove(*identifier), WTFMove(serializedData) });
     }
@@ -374,15 +391,6 @@ PaymentRequest::~PaymentRequest()
 {
     ASSERT(!hasPendingActivity());
     ASSERT(!m_activePaymentHandler);
-}
-
-static ExceptionOr<JSC::JSValue> parse(ScriptExecutionContext& context, const String& string)
-{
-    auto scope = DECLARE_THROW_SCOPE(context.vm());
-    JSC::JSValue data = JSONParse(context.execState(), string);
-    if (scope.exception())
-        return Exception { ExistingExceptionError };
-    return WTFMove(data);
 }
 
 // https://www.w3.org/TR/payment-request/#show()-method

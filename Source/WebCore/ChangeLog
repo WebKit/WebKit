@@ -1,3 +1,36 @@
+2020-01-02  Andy Estes  <aestes@apple.com>
+
+        [Payment Request] Perform payment method data IDL conversion in the PaymentRequest constructor
+        https://bugs.webkit.org/show_bug.cgi?id=199225
+        <rdar://problem/52217847>
+
+        Reviewed by Darin Adler.
+
+        Implemented support for validating payment method data during Payment Request construction.
+        IDL conversion errors for payment method data will now trigger an exception in the
+        PaymentRequest constructor rather than being deferred to the show() method.
+
+        Payment Request specified this change in <https://github.com/w3c/payment-request/pull/829>.
+
+        Test: imported/w3c/web-platform-tests/payment-request/constructor_convert_method_data.https.html
+
+        * Modules/applepay/paymentrequest/ApplePayPaymentHandler.cpp:
+        (WebCore::convertAndValidate): Moved the logic for converting a JSValue to an
+        ApplePayRequest IDL type from ApplePayPaymentHandler::convertData to here.
+        (WebCore::ApplePayPaymentHandler::validateData): Added. Checks that the specified JSValue is
+        a valid ApplePayRequest, throwing an exception if not.
+        (WebCore::ApplePayPaymentHandler::convertData): Changed to use convertAndValidate to convert
+        from a JSValue to an ApplePayRequest.
+        * Modules/applepay/paymentrequest/ApplePayPaymentHandler.h:
+        * Modules/paymentrequest/PaymentHandler.cpp:
+        (WebCore::PaymentHandler::validateData): Added. Calls ApplePayPaymentHandler::validateData
+        if Apple Pay handles the specified identifier.
+        * Modules/paymentrequest/PaymentHandler.h:
+        * Modules/paymentrequest/PaymentRequest.cpp:
+        (WebCore::parse): Moved up to be callable by PaymentRequest::create.
+        (WebCore::PaymentRequest::create): Validated that serializedData can be converted to a valid
+        ApplePayRequest, throwing an exception if not.
+
 2020-01-02  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][Integration] Fix failing text-indent cases when the IFC root is an anonymous box
