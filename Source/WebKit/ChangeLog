@@ -1,5 +1,12 @@
 2020-01-03  Chris Dumez  <cdumez@apple.com>
 
+        Unreviewed, drop new assertion added in r253984 which hits on OpenSource bots
+
+        * Shared/ios/DependencyProcessAssertionIOS.mm:
+        (WebKit::DependencyProcessAssertion::DependencyProcessAssertion):
+
+2020-01-03  Chris Dumez  <cdumez@apple.com>
+
         Improve release logging in ServiceWorkerFetchTask
         https://bugs.webkit.org/show_bug.cgi?id=205692
 
