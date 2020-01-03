@@ -59,7 +59,7 @@ typedef WKDataRef (*WKContextCopyWebCryptoMasterKeyCallback)(WKContextRef contex
 typedef void (*WKContextChildProcessDidCrashCallback)(WKContextRef context, const void *clientInfo);
 typedef WKContextChildProcessDidCrashCallback WKContextNetworkProcessDidCrashCallback;
 
-using WKContextChildProcessWithPIDDidCrashCallback = void (*)(WKContextRef, WKProcessID, const void *clientInfo);
+typedef void (*WKContextChildProcessWithPIDDidCrashCallback)(WKContextRef context, WKProcessID processID, const void *clientInfo);
 
 typedef struct WKContextClientBase {
     int                                                                 version;
