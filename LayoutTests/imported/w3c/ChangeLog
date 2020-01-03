@@ -1,3 +1,10 @@
+2020-01-03  Alicia Boya García  <aboya@igalia.com>
+
+        Unreviewed, add missing expectation file.
+        https://bugs.webkit.org/show_bug.cgi?id=205728
+
+        * web-platform-tests/media-source/mediasource-h264-play-starved-expected.txt: Added.
+
 2020-01-03  Chris Dumez  <cdumez@apple.com>
 
         Align XPathEvaluator.createNSResolver() / XPathResult.snapshotItem() with the specification
