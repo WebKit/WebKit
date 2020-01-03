@@ -1,3 +1,14 @@
+2020-01-03  Chris Dumez  <cdumez@apple.com>
+
+        dispatchEvent() should not clear the event's isTrusted flag when it returns early
+        https://bugs.webkit.org/show_bug.cgi?id=205731
+
+        Reviewed by Sam Weinig.
+
+        Rebaseline WPT test now that more checks are passing.
+
+        * web-platform-tests/dom/events/Event-dispatch-redispatch-expected.txt:
+
 2020-01-03  Alicia Boya García  <aboya@igalia.com>
 
         Unreviewed, add missing expectation file.

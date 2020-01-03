@@ -1,7 +1,7 @@
 click me!
 
-FAIL Redispatching DOMContentLoaded event after being dispatched assert_true: Received DOMContentLoaded event should be trusted before redispatching expected true got false
-FAIL Redispatching mouseup event whose default action dispatches a click event assert_true: Received mouseup event should be trusted before redispatching from click event listener expected true got false
+PASS Redispatching DOMContentLoaded event after being dispatched 
+PASS Redispatching mouseup event whose default action dispatches a click event 
 PASS Redispatching event which is being dispatched 
 PASS Synthesizing click on button... (button width / height: 62.734375 / 18) 
 

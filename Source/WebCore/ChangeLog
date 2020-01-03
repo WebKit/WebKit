@@ -1,3 +1,18 @@
+2020-01-03  Chris Dumez  <cdumez@apple.com>
+
+        dispatchEvent() should not clear the event's isTrusted flag when it returns early
+        https://bugs.webkit.org/show_bug.cgi?id=205731
+
+        Reviewed by Sam Weinig.
+
+        dispatchEvent() should not clear the event's isTrusted flag when it returns early:
+        - https://dom.spec.whatwg.org/#dom-eventtarget-dispatchevent
+
+        No new tests, rebaselined existing test.
+
+        * dom/EventTarget.cpp:
+        (WebCore::EventTarget::dispatchEventForBindings):
+
 2020-01-03  Andy Estes  <aestes@apple.com>
 
         [Apple Pay] Provide a better error message when Apple Pay blocks user agent script evaluation
