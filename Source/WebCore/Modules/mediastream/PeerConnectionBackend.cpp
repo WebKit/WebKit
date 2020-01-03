@@ -488,7 +488,7 @@ void PeerConnectionBackend::registerMDNSName(const String& ipAddress)
 
         --m_waitingForMDNSRegistration;
         if (!result.has_value()) {
-            m_peerConnection.scriptExecutionContext()->addConsoleMessage(MessageSource::JS, MessageLevel::Warning, makeString("MDNS registration of a host candidate failed with error", (unsigned)result.error()));
+            m_peerConnection.scriptExecutionContext()->addConsoleMessage(MessageSource::JS, MessageLevel::Warning, makeString("MDNS registration of a host candidate failed with error ", (unsigned)result.error()));
             return;
         }
 

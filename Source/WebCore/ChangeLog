@@ -1,3 +1,17 @@
+2020-01-03  youenn fablet  <youenn@apple.com>
+
+        REGRESSION: [iOS 13] webrtc/datachannel/mdns-ice-candidates.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=201900
+        <rdar://problem/55466061>
+
+        Reviewed by Eric Carlson.
+
+        No change of behavior.
+
+        * Modules/mediastream/PeerConnectionBackend.cpp:
+        (WebCore::PeerConnectionBackend::registerMDNSName):
+        Fix message typo (missing space).
+
 2020-01-03  Chris Dumez  <cdumez@apple.com>
 
         Align XPathEvaluator.createNSResolver() / XPathResult.snapshotItem() with the specification
