@@ -57,7 +57,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "FB39D0D01200F0E300088E69"
-               BuildableName = "libANGLE.a"
+               BuildableName = "libANGLE-shared.dylib"
                BlueprintName = "ANGLE"
                ReferencedContainer = "container:Source/ThirdParty/ANGLE/ANGLE.xcodeproj">
             </BuildableReference>
