@@ -88,7 +88,10 @@ void MediaPlayerPrivateRemote::prepareForPlayback(bool privateMode, MediaPlayer:
 
 void MediaPlayerPrivateRemote::MediaPlayerPrivateRemote::load(const URL& url, const ContentType& contentType, const String& keySystem)
 {
-    m_manager.gpuProcessConnection().send(Messages::RemoteMediaPlayerManagerProxy::Load(m_id, url, contentType, keySystem), 0);
+    m_manager.gpuProcessConnection().sendWithAsyncReply(Messages::RemoteMediaPlayerManagerProxy::Load(m_id, url, contentType, keySystem), [weakThis = makeWeakPtr(*this)](auto&& configuration) {
+        if (weakThis)
+            weakThis->m_configuration = configuration;
+    });
 }
 
 void MediaPlayerPrivateRemote::cancelLoad()

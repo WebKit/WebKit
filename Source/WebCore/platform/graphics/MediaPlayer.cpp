@@ -109,7 +109,7 @@ public:
     void play() final { }
     void pause() final { }
 
-    PlatformLayer* platformLayer() const final { return 0; }
+    PlatformLayer* platformLayer() const final { return nullptr; }
 
     FloatSize naturalSize() const final { return FloatSize(); }
 

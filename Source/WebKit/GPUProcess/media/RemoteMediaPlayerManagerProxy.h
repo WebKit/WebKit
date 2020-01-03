@@ -81,7 +81,7 @@ private:
     void clearMediaCacheForOrigins(WebCore::MediaPlayerEnums::MediaEngineIdentifier, const String&&, Vector<WebCore::SecurityOriginData>&&);
     void supportsKeySystem(WebCore::MediaPlayerEnums::MediaEngineIdentifier, const String&&, const String&&, CompletionHandler<void(bool)>&&);
 
-    void load(MediaPlayerPrivateRemoteIdentifier, URL&&, WebCore::ContentType&&, String&&);
+    void load(MediaPlayerPrivateRemoteIdentifier, URL&&, WebCore::ContentType&&, String&&, CompletionHandler<void(RemoteMediaPlayerConfiguration&&)>&&);
     void prepareForPlayback(MediaPlayerPrivateRemoteIdentifier, bool privateMode, WebCore::MediaPlayerEnums::Preload, bool preservesPitch, bool prepareForRendering);
     void cancelLoad(MediaPlayerPrivateRemoteIdentifier);
     void prepareToPlay(MediaPlayerPrivateRemoteIdentifier);

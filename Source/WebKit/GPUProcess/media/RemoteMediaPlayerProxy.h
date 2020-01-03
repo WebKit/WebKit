@@ -60,7 +60,7 @@ public:
 
     void prepareForPlayback(bool privateMode, WebCore::MediaPlayerEnums::Preload, bool preservesPitch, bool prepareForRendering);
 
-    void load(const URL&, const WebCore::ContentType&, const String&);
+    void load(const URL&, const WebCore::ContentType&, const String&, CompletionHandler<void(RemoteMediaPlayerConfiguration&&)>&&);
     void cancelLoad();
 
     void prepareToPlay();

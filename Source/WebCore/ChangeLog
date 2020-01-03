@@ -1,3 +1,14 @@
+2020-01-03  Peng Liu  <peng.liu6@apple.com>
+
+        Update the RemoteMediaPlayerManagerProxy::Load XPC message to provide the updated RemoteMediaPlayerConfiguration to the web process
+        https://bugs.webkit.org/show_bug.cgi?id=205740
+
+        Reviewed by Eric Carlson.
+
+        Covered by existing tests.
+
+        * platform/graphics/MediaPlayer.cpp:
+
 2020-01-03  Chris Dumez  <cdumez@apple.com>
 
         Align Range.intersectsNode() with the DOM specification

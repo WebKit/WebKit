@@ -81,9 +81,13 @@ void RemoteMediaPlayerProxy::getConfiguration(RemoteMediaPlayerConfiguration& co
     configuration.canPlayToWirelessPlaybackTarget = m_player->canPlayToWirelessPlaybackTarget();
 }
 
-void RemoteMediaPlayerProxy::load(const URL& url, const ContentType& contentType, const String& keySystem)
+void RemoteMediaPlayerProxy::load(const URL& url, const ContentType& contentType, const String& keySystem, CompletionHandler<void(RemoteMediaPlayerConfiguration&&)>&& completionHandler)
 {
     m_player->load(url, contentType, keySystem);
+
+    RemoteMediaPlayerConfiguration configuration;
+    getConfiguration(configuration);
+    completionHandler(WTFMove(configuration));
 }
 
 void RemoteMediaPlayerProxy::prepareForPlayback(bool privateMode, WebCore::MediaPlayerEnums::Preload preload, bool preservesPitch, bool prepareForRendering)
