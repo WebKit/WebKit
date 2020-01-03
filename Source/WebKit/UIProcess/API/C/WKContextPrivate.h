@@ -29,13 +29,6 @@
 #include <WebKit/WKBase.h>
 #include <WebKit/WKContext.h>
 
-#if defined(WIN32) || defined(_WIN32)
-typedef int WKProcessID;
-#else
-#include <unistd.h>
-typedef pid_t WKProcessID;
-#endif
-
 #ifdef __cplusplus
 extern "C" {
 #endif

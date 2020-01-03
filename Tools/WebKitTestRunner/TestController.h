@@ -407,10 +407,10 @@ private:
     // WKContextClient
     static void networkProcessDidCrash(WKContextRef, const void*);
     void networkProcessDidCrash();
-    static void serviceWorkerProcessDidCrash(WKContextRef, const void*);
-    void serviceWorkerProcessDidCrash();
-    static void gpuProcessDidCrash(WKContextRef, const void*);
-    void gpuProcessDidCrash();
+    static void serviceWorkerProcessDidCrash(WKContextRef, WKProcessID, const void*);
+    void serviceWorkerProcessDidCrash(WKProcessID);
+    static void gpuProcessDidCrash(WKContextRef, WKProcessID, const void*);
+    void gpuProcessDidCrash(WKProcessID);
 
     // WKPageNavigationClient
     static void didCommitNavigation(WKPageRef, WKNavigationRef, WKTypeRef userData, const void*);

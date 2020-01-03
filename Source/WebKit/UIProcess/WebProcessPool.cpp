@@ -699,7 +699,7 @@ void WebProcessPool::networkProcessCrashed(NetworkProcessProxy& networkProcessPr
 void WebProcessPool::serviceWorkerProcessCrashed(WebProcessProxy& proxy)
 {
 #if ENABLE(SERVICE_WORKER)
-    m_client.serviceWorkerProcessDidCrash(this);
+    m_client.serviceWorkerProcessDidCrash(this, proxy.processIdentifier());
 #endif
 }
 
@@ -712,9 +712,9 @@ void WebProcessPool::getNetworkProcessConnection(WebProcessProxy& webProcessProx
 }
 
 #if ENABLE(GPU_PROCESS)
-void WebProcessPool::gpuProcessCrashed()
+void WebProcessPool::gpuProcessCrashed(ProcessID identifier)
 {
-    m_client.gpuProcessDidCrash(this);
+    m_client.gpuProcessDidCrash(this, identifier);
     terminateAllWebContentProcesses();
 }
 

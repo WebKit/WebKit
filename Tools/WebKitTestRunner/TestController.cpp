@@ -1830,14 +1830,14 @@ void TestController::networkProcessDidCrash(WKContextRef context, const void *cl
     static_cast<TestController*>(const_cast<void*>(clientInfo))->networkProcessDidCrash();
 }
 
-void TestController::serviceWorkerProcessDidCrash(WKContextRef context, const void *clientInfo)
+void TestController::serviceWorkerProcessDidCrash(WKContextRef context, WKProcessID processID, const void *clientInfo)
 {
-    static_cast<TestController*>(const_cast<void*>(clientInfo))->serviceWorkerProcessDidCrash();
+    static_cast<TestController*>(const_cast<void*>(clientInfo))->serviceWorkerProcessDidCrash(processID);
 }
 
-void TestController::gpuProcessDidCrash(WKContextRef context, const void *clientInfo)
+void TestController::gpuProcessDidCrash(WKContextRef context, WKProcessID processID, const void *clientInfo)
 {
-    static_cast<TestController*>(const_cast<void*>(clientInfo))->gpuProcessDidCrash();
+    static_cast<TestController*>(const_cast<void*>(clientInfo))->gpuProcessDidCrash(processID);
 }
 
 void TestController::didReceiveKeyDownMessageFromInjectedBundle(WKDictionaryRef messageBodyDictionary, bool synchronous)
@@ -2199,16 +2199,16 @@ void TestController::networkProcessDidCrash()
     exit(1);
 }
 
-void TestController::serviceWorkerProcessDidCrash()
+void TestController::serviceWorkerProcessDidCrash(WKProcessID processID)
 {
-    fprintf(stderr, "#CRASHED - ServiceWorkerProcess\n");
+    fprintf(stderr, "#CRASHED - ServiceWorkerProcess (pid %ld)\n", static_cast<long>(processID));
     if (m_shouldExitWhenWebProcessCrashes)
         exit(1);
 }
 
-void TestController::gpuProcessDidCrash()
+void TestController::gpuProcessDidCrash(WKProcessID processID)
 {
-    fprintf(stderr, "#CRASHED - GPUProcess\n");
+    fprintf(stderr, "#CRASHED - GPUProcess (pid %ld)\n", static_cast<long>(processID));
     if (m_shouldExitWhenWebProcessCrashes)
         exit(1);
 }

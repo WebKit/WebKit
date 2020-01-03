@@ -46,20 +46,20 @@ void WebContextClient::networkProcessDidCrash(WebProcessPool* processPool)
     m_client.networkProcessDidCrash(toAPI(processPool), m_client.base.clientInfo);
 }
 
-void WebContextClient::serviceWorkerProcessDidCrash(WebProcessPool* processPool)
+void WebContextClient::serviceWorkerProcessDidCrash(WebProcessPool* processPool, ProcessID processID)
 {
     if (!m_client.serviceWorkerProcessDidCrash)
         return;
 
-    m_client.serviceWorkerProcessDidCrash(toAPI(processPool), m_client.base.clientInfo);
+    m_client.serviceWorkerProcessDidCrash(toAPI(processPool), processID, m_client.base.clientInfo);
 }
 
-void WebContextClient::gpuProcessDidCrash(WebProcessPool* processPool)
+void WebContextClient::gpuProcessDidCrash(WebProcessPool* processPool, ProcessID processID)
 {
     if (!m_client.gpuProcessDidCrash)
         return;
 
-    m_client.gpuProcessDidCrash(toAPI(processPool), m_client.base.clientInfo);
+    m_client.gpuProcessDidCrash(toAPI(processPool), processID, m_client.base.clientInfo);
 }
 
 } // namespace WebKit

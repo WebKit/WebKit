@@ -139,7 +139,7 @@ void GPUProcessProxy::openGPUProcessConnection(ConnectionRequestIdentifier conne
 void GPUProcessProxy::gpuProcessCrashed()
 {
     for (auto& processPool : WebProcessPool::allProcessPools())
-        processPool->gpuProcessCrashed();
+        processPool->gpuProcessCrashed(processIdentifier());
 }
 
 void GPUProcessProxy::didClose(IPC::Connection&)

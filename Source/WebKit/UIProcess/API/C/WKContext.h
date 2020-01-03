@@ -33,6 +33,13 @@
 #include <WebKit/WKContextInjectedBundleClient.h>
 #include <WebKit/WKDeprecated.h>
 
+#if defined(WIN32) || defined(_WIN32)
+typedef int WKProcessID;
+#else
+#include <unistd.h>
+typedef pid_t WKProcessID;
+#endif
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -51,6 +58,8 @@ typedef WKDataRef (*WKContextCopyWebCryptoMasterKeyCallback)(WKContextRef contex
 
 typedef void (*WKContextChildProcessDidCrashCallback)(WKContextRef context, const void *clientInfo);
 typedef WKContextChildProcessDidCrashCallback WKContextNetworkProcessDidCrashCallback;
+
+using WKContextChildProcessWithPIDDidCrashCallback = void (*)(WKContextRef, WKProcessID, const void *clientInfo);
 
 typedef struct WKContextClientBase {
     int                                                                 version;
@@ -103,8 +112,8 @@ typedef struct WKContextClientV3 {
     void                                                                (*copyWebCryptoMasterKey_unavailable)(void);
 
     // Version2.
-    WKContextChildProcessDidCrashCallback                               serviceWorkerProcessDidCrash;
-    WKContextChildProcessDidCrashCallback                               gpuProcessDidCrash;
+    WKContextChildProcessWithPIDDidCrashCallback                        serviceWorkerProcessDidCrash;
+    WKContextChildProcessWithPIDDidCrashCallback                        gpuProcessDidCrash;
 } WKContextClientV3;
 
 // FIXME: Remove these once support for Mavericks has been dropped.

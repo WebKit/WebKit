@@ -45,8 +45,8 @@ class WebContextClient : public API::Client<WKContextClientBase> {
 public:
     void plugInAutoStartOriginHashesChanged(WebProcessPool*);
     void networkProcessDidCrash(WebProcessPool*);
-    void serviceWorkerProcessDidCrash(WebProcessPool*);
-    void gpuProcessDidCrash(WebProcessPool*);
+    void serviceWorkerProcessDidCrash(WebProcessPool*, ProcessID);
+    void gpuProcessDidCrash(WebProcessPool*, ProcessID);
 };
 
 } // namespace WebKit
