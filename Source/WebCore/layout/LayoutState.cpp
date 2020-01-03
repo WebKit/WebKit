@@ -147,6 +147,17 @@ LayoutSize LayoutState::viewportSize() const
     return { };
 }
 
+bool LayoutState::isIntegratedRootBoxFirstChild() const
+{
+    if (RuntimeEnabledFeatures::sharedFeatures().layoutFormattingContextIntegrationEnabled()) {
+        auto& rootRenderer = m_layoutTreeContent->rootRenderer();
+        ASSERT(rootRenderer.parent());
+        return rootRenderer.parent()->firstChild() == &rootRenderer;
+    }
+    ASSERT_NOT_REACHED();
+    return false;
+}
+
 }
 }
 

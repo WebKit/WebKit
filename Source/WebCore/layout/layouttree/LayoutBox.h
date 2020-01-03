@@ -97,7 +97,7 @@ public:
     bool isDescendantOf(const Container&) const;
     bool isContainingBlockDescendantOf(const Container&) const;
 
-    bool isAnonymous() const { return !m_elementAttributes; }
+    bool isAnonymous() const { return m_isAnonymous; }
 
     bool isBlockLevelBox() const;
     bool isInlineLevelBox() const;

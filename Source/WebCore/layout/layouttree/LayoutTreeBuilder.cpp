@@ -155,7 +155,11 @@ std::unique_ptr<Layout::LayoutTreeContent> TreeBuilder::buildLayoutTreeForIntegr
     auto clonedStyle = RenderStyle::clone(renderBlockFlow.style());
     clonedStyle.setDisplay(DisplayType::Block);
 
-    auto layoutTreeContent = makeUnique<LayoutTreeContent>(renderBlockFlow, makeUnique<Container>(WTF::nullopt, WTFMove(clonedStyle)));
+    auto rootLayoutContainer = makeUnique<Container>(Box::ElementAttributes { Box::ElementType::GenericElement }, WTFMove(clonedStyle));
+    if (renderBlockFlow.isAnonymous())
+        rootLayoutContainer->setIsAnonymous();
+
+    auto layoutTreeContent = makeUnique<LayoutTreeContent>(renderBlockFlow, WTFMove(rootLayoutContainer));
     TreeBuilder(*layoutTreeContent).buildTree();
     return layoutTreeContent;
 }
@@ -200,6 +204,7 @@ std::unique_ptr<Box> TreeBuilder::createLayoutBox(const Container& parentContain
             childLayoutBox = makeUnique<Box>(WTFMove(textContent), RenderStyle::clone(parentContainer.style()));
         else
             childLayoutBox = makeUnique<Box>(WTFMove(textContent), RenderStyle::createAnonymousStyleWithDisplay(parentContainer.style(), DisplayType::Inline));
+        childLayoutBox->setIsAnonymous();
     } else {
         auto& renderer = downcast<RenderElement>(childRenderer);
         auto displayType = renderer.style().display();

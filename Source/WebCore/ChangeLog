@@ -1,3 +1,31 @@
+2020-01-02  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][Integration] Fix failing text-indent cases when the IFC root is an anonymous box
+        https://bugs.webkit.org/show_bug.cgi?id=205693
+        <rdar://problem/58284277>
+
+        Reviewed by Antti Koivisto.
+
+        During text-indent computation we would normally check if the IFC root is anonymous and if so,
+        whether it's the first child of its parent element.
+        e.g. <div><div>text</div>this text is wrapped inside an anonymous renderer</div>
+        The IFC root of the "this text.." content is an anonymous container and it is not
+        the first child of its parent renderer.
+        However in the LFC integration case, we can't go beyond the IFC root and check for parent-child status. 
+
+        * layout/LayoutState.h:
+        (WebCore::Layout::LayoutState::isIntegratedRootBoxFirstChild const):
+        * layout/inlineformatting/InlineFormattingContext.cpp:
+        (WebCore::Layout::InlineFormattingContext::constraintsForLine):
+        * layout/layouttree/LayoutBox.h:
+        (WebCore::Layout::Box::isAnonymous const):
+        * layout/layouttree/LayoutTreeBuilder.cpp:
+        (WebCore::Layout::TreeBuilder::buildLayoutTreeForIntegration):
+        (WebCore::Layout::LayoutTreeContent::setRootIsFirstChild):
+        (WebCore::Layout::LayoutTreeContent::isRootFirstChild const):
+        (WebCore::Layout::TreeBuilder::createLayoutBox):
+        * layout/layouttree/LayoutTreeBuilder.h:
+
 2020-01-02  Alex Christensen  <achristensen@webkit.org>
 
         Add SPI to disable CORS on requests to URLs matching a pattern
