@@ -437,8 +437,8 @@ public:
         BasicBlock* memcpy = m_blockInsertionSet.insertBefore(loopPostfooter, loopPostfooter->frequency());
         memcpy->setSuccessors(FrequentedBlock(loopPostfooter));
         memcpy->addPredecessor(loopPreheader);
-        for (BasicBlock* pred : loopPostfooter->predecessors())
-            loopPostfooter->removePredecessor(pred);
+        while (loopPostfooter->predecessors().size()) 
+            loopPostfooter->removePredecessor(loopPostfooter->predecessors()[0]);
         loopPostfooter->addPredecessor(memcpy);
         loopPreheader->setSuccessors(memcpy);
 

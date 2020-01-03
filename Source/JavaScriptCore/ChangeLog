@@ -1,5 +1,29 @@
 2020-01-03  Saam Barati  <sbarati@apple.com>
 
+        B3::ReduceLoopStrength should not do range based iteration on a vector it's mutating
+        https://bugs.webkit.org/show_bug.cgi?id=205703
+        <rdar://problem/56459483>
+
+        Reviewed by Mark Lam.
+
+        B3::ReduceLoopStrength had code that did:
+        ```
+        for (BasicBlock* pred : loopPostfooter->predecessors())
+            loopPostfooter->removePredecessor(pred);
+        ```
+        
+        This is wrong, since it's doing a range based iteration over the vector it is
+        mutating. The fix is to just do:
+        ```
+        while (loopPostfooter->predecessors().size()) 
+            loopPostfooter->removePredecessor(loopPostfooter->predecessors()[0]);
+        ```
+
+        * b3/B3ReduceLoopStrength.cpp:
+        (JSC::B3::ReduceLoopStrength::reduceByteCopyLoopsToMemcpy):
+
+2020-01-03  Saam Barati  <sbarati@apple.com>
+
         AI rule for PutById can only observe transitions when it watches the condition
         https://bugs.webkit.org/show_bug.cgi?id=205697
         <rdar://problem/56814254>

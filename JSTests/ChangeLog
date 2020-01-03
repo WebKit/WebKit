@@ -1,5 +1,16 @@
 2020-01-03  Saam Barati  <sbarati@apple.com>
 
+        B3::ReduceLoopStrength should not do range based iteration on a vector it's mutating
+        https://bugs.webkit.org/show_bug.cgi?id=205703
+        <rdar://problem/56459483>
+
+        Reviewed by Mark Lam.
+
+        * stress/dont-range-based-iterate-vector-that-is-mutated.js: Added.
+        (foo):
+
+2020-01-03  Saam Barati  <sbarati@apple.com>
+
         AI rule for PutById can only observe transitions when it watches the condition
         https://bugs.webkit.org/show_bug.cgi?id=205697
         <rdar://problem/56814254>
