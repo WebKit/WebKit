@@ -24,7 +24,7 @@
 namespace WebCore {
 
 // FIMXE: Why can't named constructors be used with workers?
-template<typename JSClass> class JSDOMNamedConstructor : public JSDOMConstructorWithDocument {
+template<typename JSClass> class JSDOMNamedConstructor final : public JSDOMConstructorWithDocument {
 public:
     using Base = JSDOMConstructorWithDocument;
 

@@ -27,6 +27,7 @@
 #include "runtime_object.h"
 
 #include "JSDOMBinding.h"
+#include "WebCoreJSClientData.h"
 #include "runtime_method.h"
 #include <JavaScriptCore/Error.h>
 
@@ -38,7 +39,7 @@ namespace Bindings {
 WEBCORE_EXPORT const ClassInfo RuntimeObject::s_info = { "RuntimeObject", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(RuntimeObject) };
 
 RuntimeObject::RuntimeObject(VM& vm, Structure* structure, RefPtr<Instance>&& instance)
-    : JSDestructibleObject(vm, structure)
+    : Base(vm, structure)
     , m_instance(WTFMove(instance))
 {
 }
@@ -295,6 +296,11 @@ void RuntimeObject::getOwnPropertyNames(JSObject* object, JSGlobalObject* lexica
 Exception* RuntimeObject::throwInvalidAccessError(JSGlobalObject* lexicalGlobalObject, ThrowScope& scope)
 {
     return throwException(lexicalGlobalObject, scope, createReferenceError(lexicalGlobalObject, "Trying to access object from destroyed plug-in."));
+}
+
+JSC::IsoSubspace* RuntimeObject::subspaceForImpl(JSC::VM& vm)
+{
+    return &static_cast<JSVMClientData*>(vm.clientData)->runtimeObjectSpace();
 }
 
 }

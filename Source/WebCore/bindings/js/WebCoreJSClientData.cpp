@@ -28,11 +28,14 @@
 
 #include "DOMGCOutputConstraint.h"
 #include "JSDOMBinding.h"
+#include "JSDOMBuiltinConstructorBase.h"
 #include "JSDOMWindow.h"
+#include "JSDOMWindowProperties.h"
 #include "JSDedicatedWorkerGlobalScope.h"
 #include "JSPaintWorkletGlobalScope.h"
 #include "JSRemoteDOMWindow.h"
 #include "JSServiceWorkerGlobalScope.h"
+#include "JSWindowProxy.h"
 #include "JSWorkerGlobalScope.h"
 #include "JSWorkletGlobalScope.h"
 #include <JavaScriptCore/FastMallocAlignedMemoryAllocator.h>
@@ -42,7 +45,9 @@
 #include <JavaScriptCore/MarkingConstraint.h>
 #include <JavaScriptCore/SubspaceInlines.h>
 #include <JavaScriptCore/VM.h>
+#include "runtime_array.h"
 #include "runtime_method.h"
+#include "runtime_object.h"
 #include <wtf/MainThread.h>
 
 namespace WebCore {
@@ -51,6 +56,9 @@ using namespace JSC;
 JSVMClientData::JSVMClientData(VM& vm)
     : m_builtinFunctions(vm)
     , m_builtinNames(vm)
+    , m_runtimeArrayHeapCellType(JSC::IsoHeapCellType::create<RuntimeArray>())
+    , m_runtimeObjectHeapCellType(JSC::IsoHeapCellType::create<JSC::Bindings::RuntimeObject>())
+    , m_windowProxyHeapCellType(JSC::IsoHeapCellType::create<JSWindowProxy>())
     , m_heapCellTypeForJSDOMWindow(JSC::IsoHeapCellType::create<JSDOMWindow>())
     , m_heapCellTypeForJSDedicatedWorkerGlobalScope(JSC::IsoHeapCellType::create<JSDedicatedWorkerGlobalScope>())
     , m_heapCellTypeForJSRemoteDOMWindow(JSC::IsoHeapCellType::create<JSRemoteDOMWindow>())
@@ -62,7 +70,13 @@ JSVMClientData::JSVMClientData(VM& vm)
     , m_heapCellTypeForJSPaintWorkletGlobalScope(JSC::IsoHeapCellType::create<JSPaintWorkletGlobalScope>())
     , m_heapCellTypeForJSWorkletGlobalScope(JSC::IsoHeapCellType::create<JSWorkletGlobalScope>())
 #endif
+    , m_domBuiltinConstructorSpace ISO_SUBSPACE_INIT(vm.heap, vm.cellHeapCellType.get(), JSDOMBuiltinConstructorBase)
+    , m_domConstructorSpace ISO_SUBSPACE_INIT(vm.heap, vm.cellHeapCellType.get(), JSDOMConstructorBase)
+    , m_domWindowPropertiesSpace ISO_SUBSPACE_INIT(vm.heap, vm.cellHeapCellType.get(), JSDOMWindowProperties)
+    , m_runtimeArraySpace ISO_SUBSPACE_INIT(vm.heap, m_runtimeArrayHeapCellType.get(), RuntimeArray)
     , m_runtimeMethodSpace ISO_SUBSPACE_INIT(vm.heap, vm.cellHeapCellType.get(), RuntimeMethod) // Hash:0xf70c4a85
+    , m_runtimeObjectSpace ISO_SUBSPACE_INIT(vm.heap, m_runtimeObjectHeapCellType.get(), JSC::Bindings::RuntimeObject)
+    , m_windowProxySpace ISO_SUBSPACE_INIT(vm.heap, m_windowProxyHeapCellType.get(), JSWindowProxy)
     , m_subspaceForJSDOMWindow ISO_SUBSPACE_INIT(vm.heap, m_heapCellTypeForJSDOMWindow.get(), JSDOMWindow)
     , m_subspaceForJSDedicatedWorkerGlobalScope ISO_SUBSPACE_INIT(vm.heap, m_heapCellTypeForJSDedicatedWorkerGlobalScope.get(), JSDedicatedWorkerGlobalScope)
     , m_subspaceForJSRemoteDOMWindow ISO_SUBSPACE_INIT(vm.heap, m_heapCellTypeForJSRemoteDOMWindow.get(), JSRemoteDOMWindow)

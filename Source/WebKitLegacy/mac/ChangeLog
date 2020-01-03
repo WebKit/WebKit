@@ -1,3 +1,20 @@
+2020-01-03  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Put more WebCore/WebKit JS objects into IsoSubspace
+        https://bugs.webkit.org/show_bug.cgi?id=205711
+
+        Reviewed by Keith Miller.
+
+        * Plugins/Hosted/ProxyInstance.mm:
+        (WebKit::ProxyInstance::getMethod):
+        (WebKit::ProxyRuntimeMethod::create): Deleted.
+        (WebKit::ProxyRuntimeMethod::createStructure): Deleted.
+        (WebKit::ProxyRuntimeMethod::ProxyRuntimeMethod): Deleted.
+        (WebKit::ProxyRuntimeMethod::finishCreation): Deleted.
+        * Plugins/Hosted/ProxyRuntimeObject.h:
+        (WebKit::ProxyRuntimeObject::create): Deleted.
+        (WebKit::ProxyRuntimeObject::createStructure): Deleted.
+
 2020-01-03  Chris Dumez  <cdumez@apple.com>
 
         Align XPathEvaluator.createNSResolver() / XPathResult.snapshotItem() with the specification

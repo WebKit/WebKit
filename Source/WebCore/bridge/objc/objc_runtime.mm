@@ -34,6 +34,8 @@
 #import "runtime_array.h"
 #import "runtime_object.h"
 #import <JavaScriptCore/Error.h>
+#import <JavaScriptCore/IsoSubspacePerVM.h>
+#import <JavaScriptCore/JSDestructibleObjectHeapCellType.h>
 #import <JavaScriptCore/JSGlobalObject.h>
 #import <JavaScriptCore/JSLock.h>
 #import <wtf/RetainPtr.h>
@@ -308,6 +310,12 @@ bool ObjcFallbackObjectImp::toBoolean(JSGlobalObject*) const
         return true;
     
     return false;
+}
+
+JSC::IsoSubspace* ObjcFallbackObjectImp::subspaceForImpl(JSC::VM& vm)
+{
+    static NeverDestroyed<JSC::IsoSubspacePerVM> perVM([] (JSC::VM& vm) { return ISO_SUBSPACE_PARAMETERS(vm.destructibleObjectHeapCellType.get(), ObjcFallbackObjectImp); });
+    return &perVM.get().forVM(vm);
 }
 
 }

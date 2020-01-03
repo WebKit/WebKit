@@ -45,9 +45,9 @@ WEBCORE_EXPORT const ClassInfo RuntimeMethod::s_info = { "RuntimeMethod", &Inter
 
 static EncodedJSValue JSC_HOST_CALL callRuntimeMethod(JSGlobalObject*, CallFrame*);
 
-RuntimeMethod::RuntimeMethod(JSGlobalObject* globalObject, Structure* structure, Method* method)
+RuntimeMethod::RuntimeMethod(VM& vm, Structure* structure, Method* method)
     // Callers will need to pass in the right global object corresponding to this native object "method".
-    : InternalFunction(globalObject->vm(), structure, callRuntimeMethod, nullptr)
+    : InternalFunction(vm, structure, callRuntimeMethod, nullptr)
     , m_method(method)
 {
 }

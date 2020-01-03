@@ -163,7 +163,7 @@ bool ObjcInstance::supportsInvokeDefaultMethod() const
     return [_instance.get() respondsToSelector:@selector(invokeDefaultMethodWithArguments:)];
 }
 
-class ObjCRuntimeMethod : public RuntimeMethod {
+class ObjCRuntimeMethod final : public RuntimeMethod {
 public:
     static ObjCRuntimeMethod* create(JSGlobalObject* lexicalGlobalObject, JSGlobalObject* globalObject, const String& name, Bindings::Method* method)
     {
@@ -171,7 +171,7 @@ public:
         // FIXME: deprecatedGetDOMStructure uses the prototype off of the wrong global object
         // We need to pass in the right global object for "i".
         Structure* domStructure = WebCore::deprecatedGetDOMStructure<ObjCRuntimeMethod>(lexicalGlobalObject);
-        ObjCRuntimeMethod* runtimeMethod = new (NotNull, allocateCell<ObjCRuntimeMethod>(vm.heap)) ObjCRuntimeMethod(globalObject, domStructure, method);
+        ObjCRuntimeMethod* runtimeMethod = new (NotNull, allocateCell<ObjCRuntimeMethod>(vm.heap)) ObjCRuntimeMethod(vm, domStructure, method);
         runtimeMethod->finishCreation(vm, name);
         return runtimeMethod;
     }
@@ -184,10 +184,10 @@ public:
     DECLARE_INFO;
 
 private:
-    typedef RuntimeMethod Base;
+    using Base = RuntimeMethod;
 
-    ObjCRuntimeMethod(JSGlobalObject* globalObject, Structure* structure, Bindings::Method* method)
-        : RuntimeMethod(globalObject, structure, method)
+    ObjCRuntimeMethod(VM& vm, Structure* structure, Bindings::Method* method)
+        : Base(vm, structure, method)
     {
     }
 

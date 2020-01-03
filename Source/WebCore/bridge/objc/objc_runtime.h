@@ -88,10 +88,17 @@ private:
     RetainPtr<ObjectStructPtr> _array;
 };
 
-class ObjcFallbackObjectImp : public JSDestructibleObject {
+class ObjcFallbackObjectImp final : public JSDestructibleObject {
 public:
-    typedef JSDestructibleObject Base;
+    using Base = JSDestructibleObject;
     static constexpr unsigned StructureFlags = Base::StructureFlags | OverridesGetOwnPropertySlot | OverridesGetCallData;
+    static constexpr bool needsDestruction = true;
+
+    template<typename CellType, JSC::SubspaceAccess>
+    static IsoSubspace* subspaceFor(JSC::VM& vm)
+    {
+        return subspaceForImpl(vm);
+    }
 
     static ObjcFallbackObjectImp* create(JSGlobalObject* exec, JSGlobalObject* globalObject, ObjcInstance* instance, const String& propertyName)
     {
@@ -130,6 +137,8 @@ private:
     static JSValue defaultValue(const JSObject*, JSGlobalObject*, PreferredPrimitiveType);
 
     bool toBoolean(JSGlobalObject*) const; // FIXME: Currently this is broken because none of the superclasses are marked virtual. We need to solve this in the longer term.
+
+    static IsoSubspace* subspaceForImpl(VM&);
 
     RefPtr<ObjcInstance> _instance;
     String m_item;

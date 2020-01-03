@@ -110,9 +110,9 @@ bool CInstance::supportsInvokeDefaultMethod() const
     return _object->_class->invokeDefault;
 }
 
-class CRuntimeMethod : public RuntimeMethod {
+class CRuntimeMethod final : public RuntimeMethod {
 public:
-    typedef RuntimeMethod Base;
+    using Base = RuntimeMethod;
 
     static CRuntimeMethod* create(JSGlobalObject* lexicalGlobalObject, JSGlobalObject* globalObject, const String& name, Bindings::Method* method)
     {
@@ -120,7 +120,7 @@ public:
         // FIXME: deprecatedGetDOMStructure uses the prototype off of the wrong global object
         // We need to pass in the right global object for "i".
         Structure* domStructure = WebCore::deprecatedGetDOMStructure<CRuntimeMethod>(lexicalGlobalObject);
-        CRuntimeMethod* runtimeMethod = new (NotNull, allocateCell<CRuntimeMethod>(vm.heap)) CRuntimeMethod(globalObject, domStructure, method);
+        CRuntimeMethod* runtimeMethod = new (NotNull, allocateCell<CRuntimeMethod>(vm.heap)) CRuntimeMethod(vm, domStructure, method);
         runtimeMethod->finishCreation(vm, name);
         return runtimeMethod;
     }
@@ -133,8 +133,8 @@ public:
     DECLARE_INFO;
 
 private:
-    CRuntimeMethod(JSGlobalObject* globalObject, Structure* structure, Bindings::Method* method)
-        : RuntimeMethod(globalObject, structure, method)
+    CRuntimeMethod(VM& vm, Structure* structure, Bindings::Method* method)
+        : RuntimeMethod(vm, structure, method)
     {
     }
 
@@ -143,7 +143,6 @@ private:
         Base::finishCreation(vm, name);
         ASSERT(inherits(vm, info()));
     }
-
 };
 
 const ClassInfo CRuntimeMethod::s_info = { "CRuntimeMethod", &RuntimeMethod::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(CRuntimeMethod) };

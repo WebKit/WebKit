@@ -39,7 +39,7 @@ namespace WebKit {
 // A JSObject that wraps an NPMethod.
 class JSNPMethod final : public JSC::InternalFunction {
 public:
-    typedef JSC::InternalFunction Base;
+    using Base = JSC::InternalFunction;
 
     template<typename CellType, JSC::SubspaceAccess>
     static JSC::IsoSubspace* subspaceFor(JSC::VM& vm)

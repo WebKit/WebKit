@@ -59,7 +59,13 @@ public:
     WebCoreBuiltinNames& builtinNames() { return m_builtinNames; }
     JSBuiltinFunctions& builtinFunctions() { return m_builtinFunctions; }
     
+    JSC::IsoSubspace& domBuiltinConstructorSpace() { return m_domBuiltinConstructorSpace; }
+    JSC::IsoSubspace& domConstructorSpace() { return m_domConstructorSpace; }
+    JSC::IsoSubspace& domWindowPropertiesSpace() { return m_domWindowPropertiesSpace; }
+    JSC::IsoSubspace& runtimeArraySpace() { return m_runtimeArraySpace; }
     JSC::IsoSubspace& runtimeMethodSpace() { return m_runtimeMethodSpace; }
+    JSC::IsoSubspace& runtimeObjectSpace() { return m_runtimeObjectSpace; }
+    JSC::IsoSubspace& windowProxySpace() { return m_windowProxySpace; }
     
     JSC::CompleteSubspace& outputConstraintSpace() { return m_outputConstraintSpace; }
 
@@ -99,6 +105,10 @@ private:
     JSBuiltinFunctions m_builtinFunctions;
     WebCoreBuiltinNames m_builtinNames;
 
+    std::unique_ptr<JSC::HeapCellType> m_runtimeArrayHeapCellType;
+    std::unique_ptr<JSC::HeapCellType> m_runtimeObjectHeapCellType;
+    std::unique_ptr<JSC::HeapCellType> m_windowProxyHeapCellType;
+
     std::unique_ptr<JSC::HeapCellType> m_heapCellTypeForJSDOMWindow;
     std::unique_ptr<JSC::HeapCellType> m_heapCellTypeForJSDedicatedWorkerGlobalScope;
     std::unique_ptr<JSC::HeapCellType> m_heapCellTypeForJSRemoteDOMWindow;
@@ -111,7 +121,13 @@ private:
     std::unique_ptr<JSC::HeapCellType> m_heapCellTypeForJSWorkletGlobalScope;
 #endif
 
+    JSC::IsoSubspace m_domBuiltinConstructorSpace;
+    JSC::IsoSubspace m_domConstructorSpace;
+    JSC::IsoSubspace m_domWindowPropertiesSpace;
+    JSC::IsoSubspace m_runtimeArraySpace;
     JSC::IsoSubspace m_runtimeMethodSpace;
+    JSC::IsoSubspace m_runtimeObjectSpace;
+    JSC::IsoSubspace m_windowProxySpace;
 
     JSC::IsoSubspace m_subspaceForJSDOMWindow;
     JSC::IsoSubspace m_subspaceForJSDedicatedWorkerGlobalScope;

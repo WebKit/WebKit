@@ -33,9 +33,9 @@ namespace Bindings {
 
 class ObjcInstance;
 
-class ObjCRuntimeObject : public RuntimeObject {
+class ObjCRuntimeObject final : public RuntimeObject {
 public:
-    typedef RuntimeObject Base;
+    using Base = RuntimeObject;
 
     static ObjCRuntimeObject* create(VM& vm, Structure* structure, RefPtr<ObjcInstance>&& inst)
     {

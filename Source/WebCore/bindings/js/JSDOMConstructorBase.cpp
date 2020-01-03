@@ -22,6 +22,7 @@
 #include "config.h"
 #include "JSDOMConstructor.h"
 
+#include "WebCoreJSClientData.h"
 #include <JavaScriptCore/JSCInlines.h>
 
 namespace WebCore {
@@ -54,6 +55,11 @@ String JSDOMConstructorBase::toStringName(const JSObject* object, JSC::JSGlobalO
     const ClassInfo* info = object->classInfo(vm);
     ASSERT(info);
     return info->methodTable.className(object, vm);
+}
+
+JSC::IsoSubspace* JSDOMConstructorBase::subspaceForImpl(JSC::VM& vm)
+{
+    return &static_cast<JSVMClientData*>(vm.clientData)->domConstructorSpace();
 }
 
 } // namespace WebCore

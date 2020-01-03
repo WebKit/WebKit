@@ -176,9 +176,9 @@ JSValue ProxyInstance::invoke(JSC::JSGlobalObject* lexicalGlobalObject, JSC::Cal
     return m_instanceProxy->demarshalValue(lexicalGlobalObject, reinterpret_cast<char*>(const_cast<unsigned char*>(CFDataGetBytePtr(reply->m_result.get()))), CFDataGetLength(reply->m_result.get()));
 }
 
-class ProxyRuntimeMethod : public RuntimeMethod {
+class ProxyRuntimeMethod final : public RuntimeMethod {
 public:
-    typedef RuntimeMethod Base;
+    using Base = RuntimeMethod;
 
     static ProxyRuntimeMethod* create(JSGlobalObject* lexicalGlobalObject, JSGlobalObject* globalObject, const String& name, Bindings::Method* method)
     {
@@ -186,7 +186,7 @@ public:
         // FIXME: deprecatedGetDOMStructure uses the prototype off of the wrong global object
         // lexicalGlobalObject-vm() is also likely wrong.
         Structure* domStructure = deprecatedGetDOMStructure<ProxyRuntimeMethod>(lexicalGlobalObject);
-        ProxyRuntimeMethod* runtimeMethod = new (allocateCell<ProxyRuntimeMethod>(vm.heap)) ProxyRuntimeMethod(globalObject, domStructure, method);
+        ProxyRuntimeMethod* runtimeMethod = new (allocateCell<ProxyRuntimeMethod>(vm.heap)) ProxyRuntimeMethod(vm, domStructure, method);
         runtimeMethod->finishCreation(vm, name);
         return runtimeMethod;
     }
@@ -199,8 +199,8 @@ public:
     DECLARE_INFO;
 
 private:
-    ProxyRuntimeMethod(JSGlobalObject* globalObject, Structure* structure, Bindings::Method* method)
-        : RuntimeMethod(globalObject, structure, method)
+    ProxyRuntimeMethod(VM& vm, Structure* structure, Bindings::Method* method)
+        : RuntimeMethod(vm, structure, method)
     {
     }
 

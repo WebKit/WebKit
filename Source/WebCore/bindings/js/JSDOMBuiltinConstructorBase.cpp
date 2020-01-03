@@ -22,6 +22,7 @@
 #include "config.h"
 #include "JSDOMBuiltinConstructorBase.h"
 
+#include "WebCoreJSClientData.h"
 #include <JavaScriptCore/JSCInlines.h>
 
 namespace WebCore {
@@ -51,6 +52,11 @@ void JSDOMBuiltinConstructorBase::visitChildren(JSC::JSCell* cell, JSC::SlotVisi
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     Base::visitChildren(thisObject, visitor);
     visitor.append(thisObject->m_initializeFunction);
+}
+
+JSC::IsoSubspace* JSDOMBuiltinConstructorBase::subspaceForImpl(JSC::VM& vm)
+{
+    return &static_cast<JSVMClientData*>(vm.clientData)->domBuiltinConstructorSpace();
 }
 
 } // namespace WebCore

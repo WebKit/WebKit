@@ -32,10 +32,17 @@
 
 namespace JSC {
     
-class RuntimeArray : public JSArray {
+class RuntimeArray final : public JSArray {
 public:
-    typedef JSArray Base;
+    using Base = JSArray;
     static constexpr unsigned StructureFlags = Base::StructureFlags | OverridesGetOwnPropertySlot | InterceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero | OverridesGetPropertyNames;
+    static constexpr bool needsDestruction = true;
+
+    template<typename CellType, JSC::SubspaceAccess>
+    static JSC::IsoSubspace* subspaceFor(JSC::VM& vm)
+    {
+        return subspaceForImpl(vm);
+    }
 
     static RuntimeArray* create(JSGlobalObject* lexicalGlobalObject, Bindings::Array* array)
     {
@@ -43,16 +50,14 @@ public:
         // FIXME: deprecatedGetDOMStructure uses the prototype off of the wrong global object
         // We need to pass in the right global object for "array".
         Structure* domStructure = WebCore::deprecatedGetDOMStructure<RuntimeArray>(lexicalGlobalObject);
-        RuntimeArray* runtimeArray = new (NotNull, allocateCell<RuntimeArray>(vm.heap)) RuntimeArray(lexicalGlobalObject, domStructure);
+        RuntimeArray* runtimeArray = new (NotNull, allocateCell<RuntimeArray>(vm.heap)) RuntimeArray(vm, domStructure);
         runtimeArray->finishCreation(vm, array);
-        lexicalGlobalObject->vm().heap.addFinalizer(runtimeArray, destroy);
         return runtimeArray;
     }
 
     typedef Bindings::Array BindingsArray;
     ~RuntimeArray();
     static void destroy(JSCell*);
-    static const bool needsDestruction = false;
 
     static void getOwnPropertyNames(JSObject*, JSGlobalObject*, PropertyNameArray&, EnumerationMode);
     static bool getOwnPropertySlot(JSObject*, JSGlobalObject*, PropertyName, PropertySlot&);
@@ -83,8 +88,9 @@ protected:
     void finishCreation(VM&, Bindings::Array*);
 
 private:
-    RuntimeArray(JSGlobalObject*, Structure*);
+    RuntimeArray(VM&, Structure*);
     static EncodedJSValue lengthGetter(JSGlobalObject*, EncodedJSValue, PropertyName);
+    static JSC::IsoSubspace* subspaceForImpl(JSC::VM&);
 
     BindingsArray* m_array;
 };

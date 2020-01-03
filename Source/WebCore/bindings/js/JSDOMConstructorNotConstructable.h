@@ -23,7 +23,7 @@
 
 namespace WebCore {
 
-template<typename JSClass> class JSDOMConstructorNotConstructable : public JSDOMConstructorBase {
+template<typename JSClass> class JSDOMConstructorNotConstructable final : public JSDOMConstructorBase {
 public:
     using Base = JSDOMConstructorBase;
 

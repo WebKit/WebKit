@@ -35,9 +35,9 @@ namespace WebKit {
 
 class ProxyInstance;
 
-class ProxyRuntimeObject : public JSC::Bindings::RuntimeObject {
+class ProxyRuntimeObject final : public JSC::Bindings::RuntimeObject {
 public:
-    typedef JSC::Bindings::RuntimeObject Base;
+    using Base = JSC::Bindings::RuntimeObject;
 
     static ProxyRuntimeObject* create(JSC::VM& vm, JSC::Structure* structure, Ref<ProxyInstance>&& instance)
     {

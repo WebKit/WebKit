@@ -37,6 +37,7 @@
 #include "JSEventTarget.h"
 #include "JSRemoteDOMWindow.h"
 #include "ScriptController.h"
+#include "WebCoreJSClientData.h"
 #include <JavaScriptCore/Debugger.h>
 #include <JavaScriptCore/JSObject.h>
 #include <JavaScriptCore/StrongInlines.h>
@@ -164,6 +165,11 @@ WindowProxy* JSWindowProxy::toWrapped(VM& vm, JSValue value)
     if (object->inherits<JSWindowProxy>(vm))
         return jsCast<JSWindowProxy*>(object)->windowProxy();
     return nullptr;
+}
+
+JSC::IsoSubspace* JSWindowProxy::subspaceForImpl(JSC::VM& vm)
+{
+    return &static_cast<JSVMClientData*>(vm.clientData)->windowProxySpace();
 }
 
 } // namespace WebCore

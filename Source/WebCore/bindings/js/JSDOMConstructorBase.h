@@ -29,7 +29,19 @@ public:
     using Base = JSDOMObject;
 
     static constexpr unsigned StructureFlags = Base::StructureFlags | JSC::ImplementsHasInstance | JSC::ImplementsDefaultHasInstance | JSC::OverridesGetCallData;
+    static constexpr bool needsDestruction = false;
     static JSC::Structure* createStructure(JSC::VM&, JSC::JSGlobalObject*, JSC::JSValue);
+
+    template<typename CellType, JSC::SubspaceAccess>
+    static JSC::IsoSubspace* subspaceFor(JSC::VM& vm)
+    {
+        static_assert(sizeof(CellType) == sizeof(JSDOMConstructorBase));
+        STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(CellType, JSDOMConstructorBase);
+        static_assert(CellType::destroy == JSC::JSCell::destroy, "JSDOMConstructor<JSClass> is not destructible actually");
+        return subspaceForImpl(vm);
+    }
+
+    static JSC::IsoSubspace* subspaceForImpl(JSC::VM&);
 
 protected:
     JSDOMConstructorBase(JSC::Structure* structure, JSDOMGlobalObject& globalObject)

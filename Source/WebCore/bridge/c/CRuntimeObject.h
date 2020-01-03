@@ -40,9 +40,9 @@ namespace Bindings {
 
 class CInstance;
 
-class CRuntimeObject : public RuntimeObject {
+class CRuntimeObject final : public RuntimeObject {
 public:
-    typedef RuntimeObject Base;
+    using Base = RuntimeObject;
 
     static CRuntimeObject* create(VM& vm, Structure* structure, RefPtr<CInstance>&& instance)
     {

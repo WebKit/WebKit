@@ -25,7 +25,7 @@
 
 namespace WebCore {
 
-template<typename JSClass> class JSDOMBuiltinConstructor : public JSDOMBuiltinConstructorBase {
+template<typename JSClass> class JSDOMBuiltinConstructor final : public JSDOMBuiltinConstructorBase {
 public:
     using Base = JSDOMBuiltinConstructorBase;
 

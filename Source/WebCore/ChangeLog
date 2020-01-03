@@ -1,3 +1,99 @@
+2020-01-03  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Put more WebCore/WebKit JS objects into IsoSubspace
+        https://bugs.webkit.org/show_bug.cgi?id=205711
+
+        Reviewed by Keith Miller.
+
+        This patch puts more JS objects into IsoSubspace, mainly focusing on JS objects defined manually (not using CodeGeneratorJS.pm).
+
+        No behavior change.
+
+        * bindings/js/JSDOMBuiltinConstructor.h:
+        (WebCore::JSDOMBuiltinConstructor::JSDOMBuiltinConstructor): Deleted.
+        (WebCore::JSDOMBuiltinConstructor::initializeProperties): Deleted.
+        * bindings/js/JSDOMBuiltinConstructorBase.cpp:
+        (WebCore::JSDOMBuiltinConstructorBase::subspaceForImpl):
+        * bindings/js/JSDOMBuiltinConstructorBase.h:
+        (WebCore::JSDOMBuiltinConstructorBase::subspaceFor):
+        * bindings/js/JSDOMConstructor.h:
+        (WebCore::JSDOMConstructor::JSDOMConstructor): Deleted.
+        (WebCore::JSDOMConstructor::initializeProperties): Deleted.
+        * bindings/js/JSDOMConstructorBase.cpp:
+        (WebCore::JSDOMConstructorBase::subspaceForImpl):
+        * bindings/js/JSDOMConstructorBase.h:
+        (WebCore::JSDOMConstructorBase::subspaceFor):
+        * bindings/js/JSDOMConstructorNotConstructable.h:
+        (WebCore::JSDOMConstructorNotConstructable::JSDOMConstructorNotConstructable): Deleted.
+        (WebCore::JSDOMConstructorNotConstructable::initializeProperties): Deleted.
+        (WebCore::JSDOMConstructorNotConstructable::callThrowTypeError): Deleted.
+        (WebCore::JSDOMConstructorNotConstructable::getCallData): Deleted.
+        * bindings/js/JSDOMIterator.h:
+        (WebCore::JSDOMIteratorPrototype::create): Deleted.
+        (WebCore::JSDOMIteratorPrototype::createStructure): Deleted.
+        (WebCore::JSDOMIteratorPrototype::JSDOMIteratorPrototype): Deleted.
+        * bindings/js/JSDOMNamedConstructor.h:
+        (WebCore::JSDOMNamedConstructor::JSDOMNamedConstructor): Deleted.
+        (WebCore::JSDOMNamedConstructor::initializeProperties): Deleted.
+        * bindings/js/JSDOMWindowProperties.cpp:
+        (WebCore::JSDOMWindowProperties::subspaceForImpl):
+        * bindings/js/JSDOMWindowProperties.h:
+        (WebCore::JSDOMWindowProperties::create): Deleted.
+        (WebCore::JSDOMWindowProperties::createStructure): Deleted.
+        (WebCore::JSDOMWindowProperties::JSDOMWindowProperties): Deleted.
+        * bindings/js/JSWindowProxy.cpp:
+        (WebCore::JSWindowProxy::subspaceForImpl):
+        * bindings/js/JSWindowProxy.h:
+        * bindings/js/WebCoreJSClientData.cpp:
+        (WebCore::JSVMClientData::JSVMClientData):
+        * bindings/js/WebCoreJSClientData.h:
+        (WebCore::JSVMClientData::domBuiltinConstructorSpace):
+        (WebCore::JSVMClientData::domConstructorSpace):
+        (WebCore::JSVMClientData::domWindowPropertiesSpace):
+        (WebCore::JSVMClientData::runtimeArraySpace):
+        (WebCore::JSVMClientData::runtimeObjectSpace):
+        (WebCore::JSVMClientData::windowProxySpace):
+        * bridge/c/CRuntimeObject.h:
+        (JSC::Bindings::CRuntimeObject::create): Deleted.
+        (JSC::Bindings::CRuntimeObject::createStructure): Deleted.
+        * bridge/c/c_instance.cpp:
+        (JSC::Bindings::CInstance::getMethod):
+        (JSC::Bindings::CRuntimeMethod::create): Deleted.
+        (JSC::Bindings::CRuntimeMethod::createStructure): Deleted.
+        (JSC::Bindings::CRuntimeMethod::CRuntimeMethod): Deleted.
+        (JSC::Bindings::CRuntimeMethod::finishCreation): Deleted.
+        * bridge/objc/ObjCRuntimeObject.h:
+        (JSC::Bindings::ObjCRuntimeObject::create): Deleted.
+        (JSC::Bindings::ObjCRuntimeObject::createStructure): Deleted.
+        * bridge/objc/objc_instance.mm:
+        (ObjCRuntimeMethod::create): Deleted.
+        (ObjCRuntimeMethod::createStructure): Deleted.
+        (ObjCRuntimeMethod::ObjCRuntimeMethod): Deleted.
+        (ObjCRuntimeMethod::finishCreation): Deleted.
+        * bridge/objc/objc_runtime.h:
+        (JSC::Bindings::ObjcFallbackObjectImp::create): Deleted.
+        (JSC::Bindings::ObjcFallbackObjectImp::propertyName const): Deleted.
+        (JSC::Bindings::ObjcFallbackObjectImp::createPrototype): Deleted.
+        (JSC::Bindings::ObjcFallbackObjectImp::createStructure): Deleted.
+        * bridge/objc/objc_runtime.mm:
+        (JSC::Bindings::ObjcFallbackObjectImp::subspaceForImpl):
+        * bridge/runtime_array.cpp:
+        (JSC::RuntimeArray::RuntimeArray):
+        (JSC::RuntimeArray::subspaceForImpl):
+        * bridge/runtime_array.h:
+        (JSC::RuntimeArray::create): Deleted.
+        (JSC::RuntimeArray::getLength const): Deleted.
+        (JSC::RuntimeArray::getConcreteArray const): Deleted.
+        (JSC::RuntimeArray::createPrototype): Deleted.
+        (JSC::RuntimeArray::createStructure): Deleted.
+        * bridge/runtime_method.cpp:
+        (JSC::RuntimeMethod::RuntimeMethod):
+        * bridge/runtime_method.h:
+        * bridge/runtime_object.cpp:
+        (JSC::Bindings::RuntimeObject::RuntimeObject):
+        (JSC::Bindings::RuntimeObject::subspaceForImpl):
+        * bridge/runtime_object.h:
+
 2020-01-03  Simon Fraser  <simon.fraser@apple.com>
 
         Add some shared schemes to the WebKit.xcworkspace

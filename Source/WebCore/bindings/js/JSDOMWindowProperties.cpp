@@ -34,6 +34,7 @@
 #include "JSDOMWindowBase.h"
 #include "JSElement.h"
 #include "JSHTMLCollection.h"
+#include "WebCoreJSClientData.h"
 
 namespace WebCore {
 
@@ -106,6 +107,11 @@ bool JSDOMWindowProperties::getOwnPropertySlotByIndex(JSObject* object, JSGlobal
 {
     VM& vm = lexicalGlobalObject->vm();
     return getOwnPropertySlot(object, lexicalGlobalObject, Identifier::from(vm, index), slot);
+}
+
+JSC::IsoSubspace* JSDOMWindowProperties::subspaceForImpl(JSC::VM& vm)
+{
+    return &static_cast<JSVMClientData*>(vm.clientData)->domWindowPropertiesSpace();
 }
 
 } // namespace WebCore
