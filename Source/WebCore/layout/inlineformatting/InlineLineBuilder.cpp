@@ -382,14 +382,20 @@ void LineBuilder::justifyRuns(RunList& runList, InlineLayoutUnit availableWidth)
 {
     ASSERT(!runList.isEmpty());
     ASSERT(availableWidth > 0);
-    // Need to fix up the last run first.
-    auto& lastRun = runList.last();
-    if (lastRun.hasExpansionOpportunity())
-        lastRun.adjustExpansionBehavior(*lastRun.expansionBehavior() | ForbidTrailingExpansion);
-    // Collect the expansion opportunity numbers.
+    // Collect the expansion opportunity numbers and find the last run with content.
     auto expansionOpportunityCount = 0;
-    for (auto& run : runList)
+    Run* lastRunWithContent = nullptr;
+    for (auto& run : runList) {
         expansionOpportunityCount += run.expansionOpportunityCount();
+        if ((run.isText() && !run.isCollapsedToVisuallyEmpty()) || run.isBox())
+            lastRunWithContent = &run;
+    }
+    // Need to fix up the last run's trailing expansion.
+    if (lastRunWithContent && lastRunWithContent->hasExpansionOpportunity()) {
+        // Turn off the trailing bits first and add the forbid trailing expansion.
+        auto leadingExpansion = *lastRunWithContent->expansionBehavior() & LeadingExpansionMask;
+        lastRunWithContent->adjustExpansionBehavior(leadingExpansion | ForbidTrailingExpansion);
+    }
     // Nothing to distribute?
     if (!expansionOpportunityCount)
         return;

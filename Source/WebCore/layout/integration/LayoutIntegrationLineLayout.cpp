@@ -239,7 +239,7 @@ void LineLayout::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
         auto baselineOffset = paintOffset.y() + lineBox.logicalTop() + lineBox.baselineOffset();
 
         auto behavior = textContext.expansion() ? textContext.expansion()->behavior : DefaultExpansion;
-        auto horizontalExpansion = textContext.expansion() ? Layout::toLayoutUnit(textContext.expansion()->horizontalExpansion) : 0_lu;
+        auto horizontalExpansion = textContext.expansion() ? textContext.expansion()->horizontalExpansion : 0;
 
         String textWithHyphen;
         if (textContext.needsHyphen())

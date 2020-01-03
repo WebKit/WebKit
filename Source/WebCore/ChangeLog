@@ -1,5 +1,21 @@
 2020-01-03  Zalan Bujtas  <zalan@apple.com>
 
+        [LFC][IFC] Fix fast/ruby/ruby-justification.html
+        https://bugs.webkit.org/show_bug.cgi?id=205708
+        <rdar://problem/58290264>
+
+        Reviewed by Antti Koivisto.
+
+        1. Fix last (content) run's trailing expansion behavior.
+        2. Pass in float to TextRun instead of LayoutUnit to avoid losing precision.
+
+        * layout/inlineformatting/InlineLineBuilder.cpp:
+        (WebCore::Layout::LineBuilder::justifyRuns const):
+        * layout/integration/LayoutIntegrationLineLayout.cpp:
+        (WebCore::LayoutIntegration::LineLayout::paint):
+
+2020-01-03  Zalan Bujtas  <zalan@apple.com>
+
         [LFC][IFC] Fix fast/parser/entities-in-html.html
         https://bugs.webkit.org/show_bug.cgi?id=205710
         <rdar://problem/58290731>
