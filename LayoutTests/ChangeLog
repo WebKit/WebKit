@@ -1,3 +1,89 @@
+2020-01-03  Dean Jackson  <dino@apple.com>
+
+        [WebGL] Enable ANGLE by default for Cocoa platforms (except simulator)
+        https://bugs.webkit.org/show_bug.cgi?id=205483
+        <rdar://problem/58097701>
+
+        Reverting this from trunk (was r253926) due to the number of
+        flakey tests and failures.
+
+        * fast/canvas/webgl/array-bounds-clamping-expected.txt:
+        * fast/canvas/webgl/array-bounds-clamping.html:
+        * fast/canvas/webgl/copy-tex-image-and-sub-image-2d-bad-input-expected.txt:
+        * fast/canvas/webgl/draw-elements-out-of-bounds-uint-index-expected.txt:
+        * fast/canvas/webgl/drawElements-empty-vertex-data-expected.txt:
+        * fast/canvas/webgl/oes-texture-half-float-uint16-expected.txt: Removed.
+        * fast/canvas/webgl/oes-texture-half-float-uint16.html: Removed.
+        * fast/canvas/webgl/readPixels-float-expected.txt:
+        * fast/canvas/webgl/simulated-vertexAttrib0-invalid-indicies-expected.txt:
+        * fast/canvas/webgl/simulated-vertexAttrib0-invalid-indicies.html:
+        * fast/canvas/webgl/vertexAttribPointer-with-bad-offset-expected.txt:
+        * fast/canvas/webgl/webgl-drawarrays-crash-2-expected.txt:
+        * fast/canvas/webgl/webgl-drawarrays-crash-expected.txt:
+        * fast/canvas/webgl/webgl2-texture-upload-enums-expected.txt:
+        * platform/gtk/TestExpectations:
+        * platform/ios-simulator/TestExpectations:
+        * platform/ios/TestExpectations:
+        * platform/mac-wk1/TestExpectations:
+        * platform/mac/TestExpectations:
+        * webgl/1.0.3/conformance/context/context-lost-restored-expected.txt:
+        * webgl/1.0.3/conformance/extensions/oes-texture-float-expected.txt:
+        * webgl/1.0.3/conformance/extensions/oes-texture-half-float-expected.txt:
+        * webgl/1.0.3/conformance/glsl/misc/shader-struct-scope-expected.txt:
+        * webgl/1.0.3/conformance/glsl/misc/shader-with-reserved-words-expected.txt:
+        * webgl/1.0.3/conformance/glsl/misc/shaders-with-invariance-expected.txt:
+        * webgl/1.0.3/conformance/glsl/misc/shaders-with-name-conflicts-expected.txt:
+        * webgl/1.0.3/conformance/misc/webgl-specific-expected.txt:
+        * webgl/1.0.3/conformance/rendering/point-no-attributes-expected.txt:
+        * webgl/1.0.3/conformance/textures/texture-copying-feedback-loops-expected.txt:
+        * webgl/2.0.0/conformance/context/context-lost-restored-expected.txt:
+        * webgl/2.0.0/conformance/extensions/ext-sRGB-expected.txt:
+        * webgl/2.0.0/conformance/extensions/oes-texture-float-expected.txt:
+        * webgl/2.0.0/conformance/extensions/oes-texture-half-float-expected.txt:
+        * webgl/2.0.0/conformance/extensions/oes-vertex-array-object-expected.txt:
+        * webgl/2.0.0/conformance/extensions/webgl-depth-texture-expected.txt:
+        * webgl/2.0.0/conformance/extensions/webgl-draw-buffers-framebuffer-unsupported-expected.txt:
+        * webgl/2.0.0/conformance/glsl/misc/shader-struct-scope-expected.txt:
+        * webgl/2.0.0/conformance/glsl/misc/shaders-with-invariance-expected.txt:
+        * webgl/2.0.0/conformance/glsl/misc/shaders-with-name-conflicts-expected.txt:
+        * webgl/2.0.0/conformance/limits/gl-line-width-expected.txt:
+        * webgl/2.0.0/conformance/misc/webgl-specific-expected.txt:
+        * webgl/2.0.0/conformance/ogles/GL/biuDepthRange/biuDepthRange_001_to_002-expected.txt:
+        * webgl/2.0.0/conformance/ogles/GL/gl_FragCoord/gl_FragCoord_001_to_003-expected.txt:
+        * webgl/2.0.0/conformance/reading/read-pixels-test-expected.txt:
+        * webgl/2.0.0/conformance/rendering/point-no-attributes-expected.txt:
+        * webgl/2.0.0/conformance/textures/misc/cube-incomplete-fbo-expected.txt:
+        * webgl/2.0.0/conformance/textures/misc/texture-copying-feedback-loops-expected.txt:
+        * webgl/2.0.0/conformance2/buffers/get-buffer-sub-data-expected.txt:
+        * webgl/2.0.0/conformance2/buffers/one-large-uniform-buffer-expected.txt:
+        * webgl/2.0.0/conformance2/context/context-attributes-depth-stencil-antialias-obeyed-expected.txt:
+        * webgl/2.0.0/conformance2/extensions/ext-color-buffer-float-expected.txt:
+        * webgl/2.0.0/conformance2/extensions/promoted-extensions-expected.txt:
+        * webgl/2.0.0/conformance2/glsl3/no-attribute-vertex-shader-expected.txt:
+        * webgl/2.0.0/conformance2/glsl3/shader-linking-expected.txt:
+        * webgl/2.0.0/conformance2/glsl3/shader-with-invalid-characters-expected.txt:
+        * webgl/2.0.0/conformance2/glsl3/shader-with-mis-matching-uniform-block-expected.txt:
+        * webgl/2.0.0/conformance2/glsl3/valid-invariant-expected.txt:
+        * webgl/2.0.0/conformance2/rendering/attrib-type-match-expected.txt:
+        * webgl/2.0.0/conformance2/rendering/blitframebuffer-stencil-only-expected.txt:
+        * webgl/2.0.0/conformance2/rendering/blitframebuffer-test-expected.txt:
+        * webgl/2.0.0/conformance2/rendering/clear-func-buffer-type-match-expected.txt:
+        * webgl/2.0.0/conformance2/rendering/clear-srgb-color-buffer-expected.txt:
+        * webgl/2.0.0/conformance2/rendering/clipping-wide-points-expected.txt:
+        * webgl/2.0.0/conformance2/rendering/framebuffer-unsupported-expected.txt:
+        * webgl/2.0.0/conformance2/rendering/fs-color-type-mismatch-color-buffer-type-expected.txt:
+        * webgl/2.0.0/conformance2/rendering/instanced-arrays-expected.txt:
+        * webgl/2.0.0/conformance2/rendering/instanced-rendering-bug-expected.txt:
+        * webgl/2.0.0/conformance2/rendering/rendering-sampling-feedback-loop-expected.txt:
+        * webgl/2.0.0/conformance2/state/gl-get-calls-expected.txt:
+        * webgl/2.0.0/conformance2/textures/misc/copy-texture-image-expected.txt:
+        * webgl/2.0.0/conformance2/textures/misc/tex-image-with-bad-args-expected.txt:
+        * webgl/2.0.0/conformance2/textures/misc/tex-mipmap-levels-expected.txt:
+        * webgl/2.0.0/conformance2/textures/misc/tex-new-formats-expected.txt:
+        * webgl/2.0.0/conformance2/textures/misc/tex-storage-2d-expected.txt:
+        * webgl/2.0.0/conformance2/textures/misc/texture-npot-expected.txt:
+        * webgl/2.0.0/conformance2/vertex_arrays/vertex-array-object-expected.txt:
+
 2020-01-03  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         highlight/highlight-world-leak.html frequently times out

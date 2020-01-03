@@ -3,7 +3,7 @@ This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL
 Test: ../../resources/webgl_test_files/conformance2/rendering/clear-func-buffer-type-match.html
 [ 1: PASS ] context exists
 [ 2: PASS ] gl.checkFramebufferStatus(gl.FRAMEBUFFER) is gl.FRAMEBUFFER_COMPLETE
-[ 3: PASS ] getError was expected value: INVALID_OPERATION : clear and INT buffer
+[ 3: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : clear and INT buffer
 [ 4: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : clearBufferfv and INT buffer
 [ 5: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : clearBufferuiv and INT buffer
 [ 6: PASS ] getError was expected value: NO_ERROR : clear and INT buffer is NONE
@@ -23,5 +23,5 @@ Test: ../../resources/webgl_test_files/conformance2/rendering/clear-func-buffer-
 [ 20: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : clearBufferuiv and RGBA8 buffer
 [ 21: PASS ] getError was expected value: NO_ERROR : should be no error
 [ 22: PASS ] successfullyParsed is true
-[ FAIL ] 9 failures reported
+[ FAIL ] 10 failures reported
 

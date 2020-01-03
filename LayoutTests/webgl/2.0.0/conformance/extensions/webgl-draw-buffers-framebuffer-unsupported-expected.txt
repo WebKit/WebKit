@@ -1,5 +1,17 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../resources/webgl_test_files/conformance/extensions/webgl-draw-buffers-framebuffer-unsupported.html
-[ PASS ] All tests passed
+[ 1: PASS ] gl = wtu.create3DContext(undefined, undefined, 1) is non-null.
+[ 2: PASS ] getError was expected value: NO_ERROR : should be able to call drawBuffersWEBGL successfully
+[ 3: PASS ] getError was expected value: NO_ERROR : should be able to call drawBuffersWEBGL successfully
+[ 4: PASS ] Successfully enabled WEBGL_draw_buffers extension
+[ 5: PASS ] getError was expected value: NO_ERROR : Texture creation should succeed.
+[ 6: PASS ] checkFramebufferStatus got FRAMEBUFFER_COMPLETE as expected
+[ 7: PASS ] checkFramebufferStatus got FRAMEBUFFER_COMPLETE as expected
+[ 8: FAIL ] checkFramebufferStatus expects [FRAMEBUFFER_UNSUPPORTED], was FRAMEBUFFER_COMPLETE
+[ 9: PASS ] checkFramebufferStatus got FRAMEBUFFER_COMPLETE as expected
+[ 10: PASS ] checkFramebufferStatus got FRAMEBUFFER_COMPLETE as expected
+[ 11: FAIL ] checkFramebufferStatus expects [FRAMEBUFFER_UNSUPPORTED], was FRAMEBUFFER_COMPLETE
+[ 12: PASS ] successfullyParsed is true
+[ FAIL ] 2 failures reported
 

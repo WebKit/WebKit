@@ -1,5 +1,239 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../resources/webgl_test_files/conformance/extensions/webgl-depth-texture.html
-[ PASS ] All tests passed
+[ 1: PASS ] WebGL context exists
+[ 2: PASS ] getError was one of: INVALID_ENUM or INVALID_VALUE : after evaluating: gl.texImage2D(gl.TEXTURE_2D, 0, gl.DEPTH_COMPONENT, 1, 1, 0, gl.DEPTH_COMPONENT, gl.UNSIGNED_SHORT, null)
+[ 3: PASS ] getError was one of: INVALID_ENUM or INVALID_VALUE : after evaluating: gl.texImage2D(gl.TEXTURE_2D, 0, gl.DEPTH_COMPONENT, 1, 1, 0, gl.DEPTH_COMPONENT, gl.UNSIGNED_INT, null)
+[ 4: PASS ] Successfully enabled WEBGL_depth_texture extension
+[ 5: PASS ] WEBGL_depth_texture listed as supported and getExtension succeeded
+[ 6: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : after evaluating: gl.texImage2D(gl.TEXTURE_CUBE_MAP_POSITIVE_X, 0, gl.DEPTH_COMPONENT, 1, 1, 0, gl.DEPTH_COMPONENT, gl.UNSIGNED_SHORT, null)
+[ 7: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : after evaluating: gl.texImage2D(gl.TEXTURE_CUBE_MAP_POSITIVE_X, 0, gl.DEPTH_COMPONENT, 1, 1, 0, gl.DEPTH_COMPONENT, gl.UNSIGNED_SHORT, null)
+[ 8: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : after evaluating: gl.texImage2D(gl.TEXTURE_CUBE_MAP_POSITIVE_X, 0, gl.DEPTH_COMPONENT, 1, 1, 0, gl.DEPTH_COMPONENT, gl.UNSIGNED_SHORT, null)
+[ 9: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : after evaluating: gl.texImage2D(gl.TEXTURE_CUBE_MAP_POSITIVE_X, 0, gl.DEPTH_COMPONENT, 1, 1, 0, gl.DEPTH_COMPONENT, gl.UNSIGNED_SHORT, null)
+[ 10: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : after evaluating: gl.texImage2D(gl.TEXTURE_CUBE_MAP_POSITIVE_X, 0, gl.DEPTH_COMPONENT, 1, 1, 0, gl.DEPTH_COMPONENT, gl.UNSIGNED_SHORT, null)
+[ 11: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : after evaluating: gl.texImage2D(gl.TEXTURE_CUBE_MAP_POSITIVE_X, 0, gl.DEPTH_COMPONENT, 1, 1, 0, gl.DEPTH_COMPONENT, gl.UNSIGNED_SHORT, null)
+[ 12: PASS ] getError was expected value: INVALID_OPERATION : after evaluating: gl.texImage2D(gl.TEXTURE_2D, 1, gl.DEPTH_COMPONENT, 1, 1, 0, gl.DEPTH_COMPONENT, gl.UNSIGNED_SHORT, null)
+[ 13: PASS ] getError was expected value: INVALID_OPERATION : after evaluating: gl.texImage2D(gl.TEXTURE_2D, 0, gl.DEPTH_COMPONENT, 1, 1, 0, gl.DEPTH_COMPONENT, gl.UNSIGNED_SHORT, new Uint16Array(1))
+[ 14: PASS ] getError was one of: INVALID_VALUE or INVALID_ENUM or INVALID_OPERATION : after evaluating: gl.texImage2D(gl.TEXTURE_2D, 0, gl.DEPTH_COMPONENT, gl.DEPTH_COMPONENT, gl.UNSIGNED_SHORT, canvas2)
+[ 15: PASS ] getError was one of: INVALID_ENUM or INVALID_OPERATION : after evaluating: gl.copyTexImage2D(gl.TEXTURE_2D, 0, gl.DEPTH_COMPONENT, 0, 0, 1, 1, 0)
+[ 16: PASS ] getError was expected value: NO_ERROR : after evaluating: gl.texImage2D(gl.TEXTURE_2D, 0, gl.DEPTH_COMPONENT, 8, 8, 0, gl.DEPTH_COMPONENT, gl.UNSIGNED_SHORT, null)
+[ 17: PASS ] getError was expected value: INVALID_OPERATION : after evaluating: gl.texSubImage2D(gl.TEXTURE_2D, 0, 0, 0, 1, 1, gl.DEPTH_COMPONENT, gl.UNSIGNED_SHORT, new Uint16Array(1))
+[ 18: PASS ] getError was expected value: INVALID_OPERATION : after evaluating: gl.copyTexSubImage2D(gl.TEXTURE_2D, 0, 0, 0, 0, 0, 1, 1)
+[ 19: PASS ] getError was expected value: INVALID_OPERATION : after evaluating: gl.generateMipmap(gl.TEXTURE_2D)
+[ 20: PASS ] gl.getParameter(gl.DEPTH_BITS) is >= 16
+[ 21: PASS ] gl.getParameter(gl.STENCIL_BITS) is 0
+[ 22: PASS ] gl.checkFramebufferStatus(gl.FRAMEBUFFER) is gl.FRAMEBUFFER_COMPLETE
+[ 23: PASS ] depth texture rendered correctly.
+[ 24: PASS ] getError was expected value: NO_ERROR : after evaluating: gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.DEPTH_STENCIL_ATTACHMENT, gl.TEXTURE_2D, tex, 0)
+[ 25: PASS ] gl.checkFramebufferStatus(gl.FRAMEBUFFER) is not gl.FRAMEBUFFER_COMPLETE
+[ 26: PASS ] getError was expected value: INVALID_FRAMEBUFFER_OPERATION : after evaluating: gl.clear(gl.DEPTH_BUFFER_BIT)
+[ 27: PASS ] gl.getError() is gl.NO_ERROR
+[ 28: PASS ] getError was expected value: INVALID_OPERATION : after evaluating: gl.texImage2D(gl.TEXTURE_2D, 1, gl.DEPTH_COMPONENT, 1, 1, 0, gl.DEPTH_COMPONENT, gl.UNSIGNED_SHORT, null)
+[ 29: PASS ] getError was expected value: INVALID_OPERATION : after evaluating: gl.texImage2D(gl.TEXTURE_2D, 0, gl.DEPTH_COMPONENT, 1, 1, 0, gl.DEPTH_COMPONENT, gl.UNSIGNED_SHORT, new Uint16Array(1))
+[ 30: PASS ] getError was one of: INVALID_VALUE or INVALID_ENUM or INVALID_OPERATION : after evaluating: gl.texImage2D(gl.TEXTURE_2D, 0, gl.DEPTH_COMPONENT, gl.DEPTH_COMPONENT, gl.UNSIGNED_SHORT, canvas2)
+[ 31: PASS ] getError was one of: INVALID_ENUM or INVALID_OPERATION : after evaluating: gl.copyTexImage2D(gl.TEXTURE_2D, 0, gl.DEPTH_COMPONENT, 0, 0, 1, 1, 0)
+[ 32: PASS ] getError was expected value: NO_ERROR : after evaluating: gl.texImage2D(gl.TEXTURE_2D, 0, gl.DEPTH_COMPONENT, 8, 8, 0, gl.DEPTH_COMPONENT, gl.UNSIGNED_SHORT, null)
+[ 33: PASS ] getError was expected value: INVALID_OPERATION : after evaluating: gl.texSubImage2D(gl.TEXTURE_2D, 0, 0, 0, 1, 1, gl.DEPTH_COMPONENT, gl.UNSIGNED_SHORT, new Uint16Array(1))
+[ 34: PASS ] getError was expected value: INVALID_OPERATION : after evaluating: gl.copyTexSubImage2D(gl.TEXTURE_2D, 0, 0, 0, 0, 0, 1, 1)
+[ 35: PASS ] getError was expected value: INVALID_OPERATION : after evaluating: gl.generateMipmap(gl.TEXTURE_2D)
+[ 36: PASS ] gl.getParameter(gl.DEPTH_BITS) is >= 16
+[ 37: PASS ] gl.getParameter(gl.STENCIL_BITS) is 0
+[ 38: PASS ] gl.checkFramebufferStatus(gl.FRAMEBUFFER) is gl.FRAMEBUFFER_COMPLETE
+[ 39: PASS ] depth texture rendered correctly.
+[ 40: PASS ] getError was expected value: NO_ERROR : after evaluating: gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.DEPTH_STENCIL_ATTACHMENT, gl.TEXTURE_2D, tex, 0)
+[ 41: PASS ] gl.checkFramebufferStatus(gl.FRAMEBUFFER) is not gl.FRAMEBUFFER_COMPLETE
+[ 42: PASS ] getError was expected value: INVALID_FRAMEBUFFER_OPERATION : after evaluating: gl.clear(gl.DEPTH_BUFFER_BIT)
+[ 43: PASS ] gl.getError() is gl.NO_ERROR
+[ 44: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : after evaluating: gl.texImage2D(gl.TEXTURE_CUBE_MAP_NEGATIVE_X, 0, gl.DEPTH_COMPONENT, 1, 1, 0, gl.DEPTH_COMPONENT, gl.UNSIGNED_INT, null)
+[ 45: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : after evaluating: gl.texImage2D(gl.TEXTURE_CUBE_MAP_NEGATIVE_X, 0, gl.DEPTH_COMPONENT, 1, 1, 0, gl.DEPTH_COMPONENT, gl.UNSIGNED_INT, null)
+[ 46: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : after evaluating: gl.texImage2D(gl.TEXTURE_CUBE_MAP_NEGATIVE_X, 0, gl.DEPTH_COMPONENT, 1, 1, 0, gl.DEPTH_COMPONENT, gl.UNSIGNED_INT, null)
+[ 47: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : after evaluating: gl.texImage2D(gl.TEXTURE_CUBE_MAP_NEGATIVE_X, 0, gl.DEPTH_COMPONENT, 1, 1, 0, gl.DEPTH_COMPONENT, gl.UNSIGNED_INT, null)
+[ 48: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : after evaluating: gl.texImage2D(gl.TEXTURE_CUBE_MAP_NEGATIVE_X, 0, gl.DEPTH_COMPONENT, 1, 1, 0, gl.DEPTH_COMPONENT, gl.UNSIGNED_INT, null)
+[ 49: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : after evaluating: gl.texImage2D(gl.TEXTURE_CUBE_MAP_NEGATIVE_X, 0, gl.DEPTH_COMPONENT, 1, 1, 0, gl.DEPTH_COMPONENT, gl.UNSIGNED_INT, null)
+[ 50: PASS ] getError was expected value: INVALID_OPERATION : after evaluating: gl.texImage2D(gl.TEXTURE_2D, 1, gl.DEPTH_COMPONENT, 1, 1, 0, gl.DEPTH_COMPONENT, gl.UNSIGNED_INT, null)
+[ 51: PASS ] getError was expected value: INVALID_OPERATION : after evaluating: gl.texImage2D(gl.TEXTURE_2D, 0, gl.DEPTH_COMPONENT, 1, 1, 0, gl.DEPTH_COMPONENT, gl.UNSIGNED_INT, new Uint32Array(1))
+[ 52: PASS ] getError was one of: INVALID_VALUE or INVALID_ENUM or INVALID_OPERATION : after evaluating: gl.texImage2D(gl.TEXTURE_2D, 0, gl.DEPTH_COMPONENT, gl.DEPTH_COMPONENT, gl.UNSIGNED_INT, canvas2)
+[ 53: PASS ] getError was one of: INVALID_ENUM or INVALID_OPERATION : after evaluating: gl.copyTexImage2D(gl.TEXTURE_2D, 0, gl.DEPTH_COMPONENT, 0, 0, 1, 1, 0)
+[ 54: PASS ] getError was expected value: NO_ERROR : after evaluating: gl.texImage2D(gl.TEXTURE_2D, 0, gl.DEPTH_COMPONENT, 8, 8, 0, gl.DEPTH_COMPONENT, gl.UNSIGNED_INT, null)
+[ 55: PASS ] getError was expected value: INVALID_OPERATION : after evaluating: gl.texSubImage2D(gl.TEXTURE_2D, 0, 0, 0, 1, 1, gl.DEPTH_COMPONENT, gl.UNSIGNED_INT, new Uint32Array(1))
+[ 56: PASS ] getError was expected value: INVALID_OPERATION : after evaluating: gl.copyTexSubImage2D(gl.TEXTURE_2D, 0, 0, 0, 0, 0, 1, 1)
+[ 57: PASS ] getError was expected value: INVALID_OPERATION : after evaluating: gl.generateMipmap(gl.TEXTURE_2D)
+[ 58: PASS ] gl.getParameter(gl.DEPTH_BITS) is >= 16
+[ 59: PASS ] gl.getParameter(gl.STENCIL_BITS) is 0
+[ 60: PASS ] gl.checkFramebufferStatus(gl.FRAMEBUFFER) is gl.FRAMEBUFFER_COMPLETE
+[ 61: PASS ] depth texture rendered correctly.
+[ 62: PASS ] getError was expected value: NO_ERROR : after evaluating: gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.DEPTH_STENCIL_ATTACHMENT, gl.TEXTURE_2D, tex, 0)
+[ 63: PASS ] gl.checkFramebufferStatus(gl.FRAMEBUFFER) is not gl.FRAMEBUFFER_COMPLETE
+[ 64: PASS ] getError was expected value: INVALID_FRAMEBUFFER_OPERATION : after evaluating: gl.clear(gl.DEPTH_BUFFER_BIT)
+[ 65: PASS ] gl.getError() is gl.NO_ERROR
+[ 66: PASS ] getError was expected value: INVALID_OPERATION : after evaluating: gl.texImage2D(gl.TEXTURE_2D, 1, gl.DEPTH_COMPONENT, 1, 1, 0, gl.DEPTH_COMPONENT, gl.UNSIGNED_INT, null)
+[ 67: PASS ] getError was expected value: INVALID_OPERATION : after evaluating: gl.texImage2D(gl.TEXTURE_2D, 0, gl.DEPTH_COMPONENT, 1, 1, 0, gl.DEPTH_COMPONENT, gl.UNSIGNED_INT, new Uint32Array(1))
+[ 68: PASS ] getError was one of: INVALID_VALUE or INVALID_ENUM or INVALID_OPERATION : after evaluating: gl.texImage2D(gl.TEXTURE_2D, 0, gl.DEPTH_COMPONENT, gl.DEPTH_COMPONENT, gl.UNSIGNED_INT, canvas2)
+[ 69: PASS ] getError was one of: INVALID_ENUM or INVALID_OPERATION : after evaluating: gl.copyTexImage2D(gl.TEXTURE_2D, 0, gl.DEPTH_COMPONENT, 0, 0, 1, 1, 0)
+[ 70: PASS ] getError was expected value: NO_ERROR : after evaluating: gl.texImage2D(gl.TEXTURE_2D, 0, gl.DEPTH_COMPONENT, 8, 8, 0, gl.DEPTH_COMPONENT, gl.UNSIGNED_INT, null)
+[ 71: PASS ] getError was expected value: INVALID_OPERATION : after evaluating: gl.texSubImage2D(gl.TEXTURE_2D, 0, 0, 0, 1, 1, gl.DEPTH_COMPONENT, gl.UNSIGNED_INT, new Uint32Array(1))
+[ 72: PASS ] getError was expected value: INVALID_OPERATION : after evaluating: gl.copyTexSubImage2D(gl.TEXTURE_2D, 0, 0, 0, 0, 0, 1, 1)
+[ 73: PASS ] getError was expected value: INVALID_OPERATION : after evaluating: gl.generateMipmap(gl.TEXTURE_2D)
+[ 74: PASS ] gl.getParameter(gl.DEPTH_BITS) is >= 16
+[ 75: PASS ] gl.getParameter(gl.STENCIL_BITS) is 0
+[ 76: PASS ] gl.checkFramebufferStatus(gl.FRAMEBUFFER) is gl.FRAMEBUFFER_COMPLETE
+[ 77: PASS ] depth texture rendered correctly.
+[ 78: PASS ] getError was expected value: NO_ERROR : after evaluating: gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.DEPTH_STENCIL_ATTACHMENT, gl.TEXTURE_2D, tex, 0)
+[ 79: PASS ] gl.checkFramebufferStatus(gl.FRAMEBUFFER) is not gl.FRAMEBUFFER_COMPLETE
+[ 80: PASS ] getError was expected value: INVALID_FRAMEBUFFER_OPERATION : after evaluating: gl.clear(gl.DEPTH_BUFFER_BIT)
+[ 81: PASS ] gl.getError() is gl.NO_ERROR
+[ 82: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : after evaluating: gl.texImage2D(gl.TEXTURE_CUBE_MAP_POSITIVE_Y, 0, gl.DEPTH_STENCIL, 1, 1, 0, gl.DEPTH_STENCIL, ext.UNSIGNED_INT_24_8_WEBGL, null)
+[ 83: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : after evaluating: gl.texImage2D(gl.TEXTURE_CUBE_MAP_POSITIVE_Y, 0, gl.DEPTH_STENCIL, 1, 1, 0, gl.DEPTH_STENCIL, ext.UNSIGNED_INT_24_8_WEBGL, null)
+[ 84: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : after evaluating: gl.texImage2D(gl.TEXTURE_CUBE_MAP_POSITIVE_Y, 0, gl.DEPTH_STENCIL, 1, 1, 0, gl.DEPTH_STENCIL, ext.UNSIGNED_INT_24_8_WEBGL, null)
+[ 85: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : after evaluating: gl.texImage2D(gl.TEXTURE_CUBE_MAP_POSITIVE_Y, 0, gl.DEPTH_STENCIL, 1, 1, 0, gl.DEPTH_STENCIL, ext.UNSIGNED_INT_24_8_WEBGL, null)
+[ 86: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : after evaluating: gl.texImage2D(gl.TEXTURE_CUBE_MAP_POSITIVE_Y, 0, gl.DEPTH_STENCIL, 1, 1, 0, gl.DEPTH_STENCIL, ext.UNSIGNED_INT_24_8_WEBGL, null)
+[ 87: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : after evaluating: gl.texImage2D(gl.TEXTURE_CUBE_MAP_POSITIVE_Y, 0, gl.DEPTH_STENCIL, 1, 1, 0, gl.DEPTH_STENCIL, ext.UNSIGNED_INT_24_8_WEBGL, null)
+[ 88: PASS ] getError was expected value: INVALID_OPERATION : after evaluating: gl.texImage2D(gl.TEXTURE_2D, 1, gl.DEPTH_STENCIL, 1, 1, 0, gl.DEPTH_STENCIL, ext.UNSIGNED_INT_24_8_WEBGL, null)
+[ 89: PASS ] getError was expected value: INVALID_OPERATION : after evaluating: gl.texImage2D(gl.TEXTURE_2D, 0, gl.DEPTH_STENCIL, 1, 1, 0, gl.DEPTH_STENCIL, ext.UNSIGNED_INT_24_8_WEBGL, new Uint32Array(1))
+[ 90: PASS ] getError was one of: INVALID_VALUE or INVALID_ENUM or INVALID_OPERATION : after evaluating: gl.texImage2D(gl.TEXTURE_2D, 0, gl.DEPTH_STENCIL, gl.DEPTH_STENCIL, ext.UNSIGNED_INT_24_8_WEBGL, canvas2)
+[ 91: PASS ] getError was one of: INVALID_ENUM or INVALID_OPERATION : after evaluating: gl.copyTexImage2D(gl.TEXTURE_2D, 0, gl.DEPTH_STENCIL, 0, 0, 1, 1, 0)
+[ 92: PASS ] getError was expected value: NO_ERROR : after evaluating: gl.texImage2D(gl.TEXTURE_2D, 0, gl.DEPTH_STENCIL, 8, 8, 0, gl.DEPTH_STENCIL, ext.UNSIGNED_INT_24_8_WEBGL, null)
+[ 93: PASS ] getError was expected value: INVALID_OPERATION : after evaluating: gl.texSubImage2D(gl.TEXTURE_2D, 0, 0, 0, 1, 1, gl.DEPTH_STENCIL, ext.UNSIGNED_INT_24_8_WEBGL, new Uint32Array(1))
+[ 94: PASS ] getError was expected value: INVALID_OPERATION : after evaluating: gl.copyTexSubImage2D(gl.TEXTURE_2D, 0, 0, 0, 0, 0, 1, 1)
+[ 95: PASS ] getError was expected value: INVALID_OPERATION : after evaluating: gl.generateMipmap(gl.TEXTURE_2D)
+[ 96: PASS ] gl.getParameter(gl.DEPTH_BITS) is >= 24
+[ 97: PASS ] gl.getParameter(gl.STENCIL_BITS) is >= 8
+[ 98: PASS ] gl.checkFramebufferStatus(gl.FRAMEBUFFER) is gl.FRAMEBUFFER_COMPLETE
+[ 99: PASS ] depth texture rendered correctly.
+[ 100: PASS ] getError was expected value: NO_ERROR : after evaluating: gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.TEXTURE_2D, tex, 0)
+[ 101: PASS ] gl.checkFramebufferStatus(gl.FRAMEBUFFER) is not gl.FRAMEBUFFER_COMPLETE
+[ 102: PASS ] getError was expected value: INVALID_FRAMEBUFFER_OPERATION : after evaluating: gl.clear(gl.DEPTH_BUFFER_BIT)
+[ 103: PASS ] gl.getError() is gl.NO_ERROR
+[ 104: PASS ] getError was expected value: INVALID_OPERATION : after evaluating: gl.texImage2D(gl.TEXTURE_2D, 1, gl.DEPTH_STENCIL, 1, 1, 0, gl.DEPTH_STENCIL, ext.UNSIGNED_INT_24_8_WEBGL, null)
+[ 105: PASS ] getError was expected value: INVALID_OPERATION : after evaluating: gl.texImage2D(gl.TEXTURE_2D, 0, gl.DEPTH_STENCIL, 1, 1, 0, gl.DEPTH_STENCIL, ext.UNSIGNED_INT_24_8_WEBGL, new Uint32Array(1))
+[ 106: PASS ] getError was one of: INVALID_VALUE or INVALID_ENUM or INVALID_OPERATION : after evaluating: gl.texImage2D(gl.TEXTURE_2D, 0, gl.DEPTH_STENCIL, gl.DEPTH_STENCIL, ext.UNSIGNED_INT_24_8_WEBGL, canvas2)
+[ 107: PASS ] getError was one of: INVALID_ENUM or INVALID_OPERATION : after evaluating: gl.copyTexImage2D(gl.TEXTURE_2D, 0, gl.DEPTH_STENCIL, 0, 0, 1, 1, 0)
+[ 108: PASS ] getError was expected value: NO_ERROR : after evaluating: gl.texImage2D(gl.TEXTURE_2D, 0, gl.DEPTH_STENCIL, 8, 8, 0, gl.DEPTH_STENCIL, ext.UNSIGNED_INT_24_8_WEBGL, null)
+[ 109: PASS ] getError was expected value: INVALID_OPERATION : after evaluating: gl.texSubImage2D(gl.TEXTURE_2D, 0, 0, 0, 1, 1, gl.DEPTH_STENCIL, ext.UNSIGNED_INT_24_8_WEBGL, new Uint32Array(1))
+[ 110: PASS ] getError was expected value: INVALID_OPERATION : after evaluating: gl.copyTexSubImage2D(gl.TEXTURE_2D, 0, 0, 0, 0, 0, 1, 1)
+[ 111: PASS ] getError was expected value: INVALID_OPERATION : after evaluating: gl.generateMipmap(gl.TEXTURE_2D)
+[ 112: PASS ] gl.getParameter(gl.DEPTH_BITS) is >= 24
+[ 113: PASS ] gl.getParameter(gl.STENCIL_BITS) is >= 8
+[ 114: PASS ] gl.checkFramebufferStatus(gl.FRAMEBUFFER) is gl.FRAMEBUFFER_COMPLETE
+[ 115: PASS ] depth texture rendered correctly.
+[ 116: PASS ] getError was expected value: NO_ERROR : after evaluating: gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.TEXTURE_2D, tex, 0)
+[ 117: PASS ] gl.checkFramebufferStatus(gl.FRAMEBUFFER) is not gl.FRAMEBUFFER_COMPLETE
+[ 118: PASS ] getError was expected value: INVALID_FRAMEBUFFER_OPERATION : after evaluating: gl.clear(gl.DEPTH_BUFFER_BIT)
+[ 119: PASS ] gl.getError() is gl.NO_ERROR
+[ 120: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : after evaluating: gl.texImage2D(gl.TEXTURE_CUBE_MAP_POSITIVE_X, 0, gl.DEPTH_COMPONENT, 1, 1, 0, gl.DEPTH_COMPONENT, gl.UNSIGNED_SHORT, null)
+[ 121: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : after evaluating: gl.texImage2D(gl.TEXTURE_CUBE_MAP_POSITIVE_X, 0, gl.DEPTH_COMPONENT, 1, 1, 0, gl.DEPTH_COMPONENT, gl.UNSIGNED_SHORT, null)
+[ 122: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : after evaluating: gl.texImage2D(gl.TEXTURE_CUBE_MAP_POSITIVE_X, 0, gl.DEPTH_COMPONENT, 1, 1, 0, gl.DEPTH_COMPONENT, gl.UNSIGNED_SHORT, null)
+[ 123: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : after evaluating: gl.texImage2D(gl.TEXTURE_CUBE_MAP_POSITIVE_X, 0, gl.DEPTH_COMPONENT, 1, 1, 0, gl.DEPTH_COMPONENT, gl.UNSIGNED_SHORT, null)
+[ 124: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : after evaluating: gl.texImage2D(gl.TEXTURE_CUBE_MAP_POSITIVE_X, 0, gl.DEPTH_COMPONENT, 1, 1, 0, gl.DEPTH_COMPONENT, gl.UNSIGNED_SHORT, null)
+[ 125: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : after evaluating: gl.texImage2D(gl.TEXTURE_CUBE_MAP_POSITIVE_X, 0, gl.DEPTH_COMPONENT, 1, 1, 0, gl.DEPTH_COMPONENT, gl.UNSIGNED_SHORT, null)
+[ 126: PASS ] getError was expected value: INVALID_OPERATION : after evaluating: gl.texImage2D(gl.TEXTURE_2D, 1, gl.DEPTH_COMPONENT, 1, 1, 0, gl.DEPTH_COMPONENT, gl.UNSIGNED_SHORT, null)
+[ 127: PASS ] getError was expected value: INVALID_OPERATION : after evaluating: gl.texImage2D(gl.TEXTURE_2D, 0, gl.DEPTH_COMPONENT, 1, 1, 0, gl.DEPTH_COMPONENT, gl.UNSIGNED_SHORT, new Uint16Array(1))
+[ 128: PASS ] getError was one of: INVALID_VALUE or INVALID_ENUM or INVALID_OPERATION : after evaluating: gl.texImage2D(gl.TEXTURE_2D, 0, gl.DEPTH_COMPONENT, gl.DEPTH_COMPONENT, gl.UNSIGNED_SHORT, canvas2)
+[ 129: PASS ] getError was one of: INVALID_ENUM or INVALID_OPERATION : after evaluating: gl.copyTexImage2D(gl.TEXTURE_2D, 0, gl.DEPTH_COMPONENT, 0, 0, 1, 1, 0)
+[ 130: PASS ] getError was expected value: NO_ERROR : after evaluating: gl.texImage2D(gl.TEXTURE_2D, 0, gl.DEPTH_COMPONENT, 8, 8, 0, gl.DEPTH_COMPONENT, gl.UNSIGNED_SHORT, null)
+[ 131: PASS ] getError was expected value: INVALID_OPERATION : after evaluating: gl.texSubImage2D(gl.TEXTURE_2D, 0, 0, 0, 1, 1, gl.DEPTH_COMPONENT, gl.UNSIGNED_SHORT, new Uint16Array(1))
+[ 132: PASS ] getError was expected value: INVALID_OPERATION : after evaluating: gl.copyTexSubImage2D(gl.TEXTURE_2D, 0, 0, 0, 0, 0, 1, 1)
+[ 133: PASS ] getError was expected value: INVALID_OPERATION : after evaluating: gl.generateMipmap(gl.TEXTURE_2D)
+[ 134: PASS ] gl.getParameter(gl.DEPTH_BITS) is >= 16
+[ 135: PASS ] gl.getParameter(gl.STENCIL_BITS) is 0
+[ 136: PASS ] gl.checkFramebufferStatus(gl.FRAMEBUFFER) is gl.FRAMEBUFFER_COMPLETE
+[ 137: PASS ] depth texture rendered correctly.
+[ 138: PASS ] getError was expected value: NO_ERROR : after evaluating: gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.DEPTH_STENCIL_ATTACHMENT, gl.TEXTURE_2D, tex, 0)
+[ 139: PASS ] gl.checkFramebufferStatus(gl.FRAMEBUFFER) is not gl.FRAMEBUFFER_COMPLETE
+[ 140: PASS ] getError was expected value: INVALID_FRAMEBUFFER_OPERATION : after evaluating: gl.clear(gl.DEPTH_BUFFER_BIT)
+[ 141: PASS ] gl.getError() is gl.NO_ERROR
+[ 142: PASS ] getError was expected value: INVALID_OPERATION : after evaluating: gl.texImage2D(gl.TEXTURE_2D, 1, gl.DEPTH_COMPONENT, 1, 1, 0, gl.DEPTH_COMPONENT, gl.UNSIGNED_SHORT, null)
+[ 143: PASS ] getError was expected value: INVALID_OPERATION : after evaluating: gl.texImage2D(gl.TEXTURE_2D, 0, gl.DEPTH_COMPONENT, 1, 1, 0, gl.DEPTH_COMPONENT, gl.UNSIGNED_SHORT, new Uint16Array(1))
+[ 144: PASS ] getError was one of: INVALID_VALUE or INVALID_ENUM or INVALID_OPERATION : after evaluating: gl.texImage2D(gl.TEXTURE_2D, 0, gl.DEPTH_COMPONENT, gl.DEPTH_COMPONENT, gl.UNSIGNED_SHORT, canvas2)
+[ 145: PASS ] getError was one of: INVALID_ENUM or INVALID_OPERATION : after evaluating: gl.copyTexImage2D(gl.TEXTURE_2D, 0, gl.DEPTH_COMPONENT, 0, 0, 1, 1, 0)
+[ 146: PASS ] getError was expected value: NO_ERROR : after evaluating: gl.texImage2D(gl.TEXTURE_2D, 0, gl.DEPTH_COMPONENT, 8, 8, 0, gl.DEPTH_COMPONENT, gl.UNSIGNED_SHORT, null)
+[ 147: PASS ] getError was expected value: INVALID_OPERATION : after evaluating: gl.texSubImage2D(gl.TEXTURE_2D, 0, 0, 0, 1, 1, gl.DEPTH_COMPONENT, gl.UNSIGNED_SHORT, new Uint16Array(1))
+[ 148: PASS ] getError was expected value: INVALID_OPERATION : after evaluating: gl.copyTexSubImage2D(gl.TEXTURE_2D, 0, 0, 0, 0, 0, 1, 1)
+[ 149: PASS ] getError was expected value: INVALID_OPERATION : after evaluating: gl.generateMipmap(gl.TEXTURE_2D)
+[ 150: PASS ] gl.getParameter(gl.DEPTH_BITS) is >= 16
+[ 151: PASS ] gl.getParameter(gl.STENCIL_BITS) is 0
+[ 152: PASS ] gl.checkFramebufferStatus(gl.FRAMEBUFFER) is gl.FRAMEBUFFER_COMPLETE
+[ 153: PASS ] depth texture rendered correctly.
+[ 154: PASS ] getError was expected value: NO_ERROR : after evaluating: gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.DEPTH_STENCIL_ATTACHMENT, gl.TEXTURE_2D, tex, 0)
+[ 155: PASS ] gl.checkFramebufferStatus(gl.FRAMEBUFFER) is not gl.FRAMEBUFFER_COMPLETE
+[ 156: PASS ] getError was expected value: INVALID_FRAMEBUFFER_OPERATION : after evaluating: gl.clear(gl.DEPTH_BUFFER_BIT)
+[ 157: PASS ] gl.getError() is gl.NO_ERROR
+[ 158: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : after evaluating: gl.texImage2D(gl.TEXTURE_CUBE_MAP_NEGATIVE_X, 0, gl.DEPTH_COMPONENT, 1, 1, 0, gl.DEPTH_COMPONENT, gl.UNSIGNED_INT, null)
+[ 159: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : after evaluating: gl.texImage2D(gl.TEXTURE_CUBE_MAP_NEGATIVE_X, 0, gl.DEPTH_COMPONENT, 1, 1, 0, gl.DEPTH_COMPONENT, gl.UNSIGNED_INT, null)
+[ 160: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : after evaluating: gl.texImage2D(gl.TEXTURE_CUBE_MAP_NEGATIVE_X, 0, gl.DEPTH_COMPONENT, 1, 1, 0, gl.DEPTH_COMPONENT, gl.UNSIGNED_INT, null)
+[ 161: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : after evaluating: gl.texImage2D(gl.TEXTURE_CUBE_MAP_NEGATIVE_X, 0, gl.DEPTH_COMPONENT, 1, 1, 0, gl.DEPTH_COMPONENT, gl.UNSIGNED_INT, null)
+[ 162: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : after evaluating: gl.texImage2D(gl.TEXTURE_CUBE_MAP_NEGATIVE_X, 0, gl.DEPTH_COMPONENT, 1, 1, 0, gl.DEPTH_COMPONENT, gl.UNSIGNED_INT, null)
+[ 163: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : after evaluating: gl.texImage2D(gl.TEXTURE_CUBE_MAP_NEGATIVE_X, 0, gl.DEPTH_COMPONENT, 1, 1, 0, gl.DEPTH_COMPONENT, gl.UNSIGNED_INT, null)
+[ 164: PASS ] getError was expected value: INVALID_OPERATION : after evaluating: gl.texImage2D(gl.TEXTURE_2D, 1, gl.DEPTH_COMPONENT, 1, 1, 0, gl.DEPTH_COMPONENT, gl.UNSIGNED_INT, null)
+[ 165: PASS ] getError was expected value: INVALID_OPERATION : after evaluating: gl.texImage2D(gl.TEXTURE_2D, 0, gl.DEPTH_COMPONENT, 1, 1, 0, gl.DEPTH_COMPONENT, gl.UNSIGNED_INT, new Uint32Array(1))
+[ 166: PASS ] getError was one of: INVALID_VALUE or INVALID_ENUM or INVALID_OPERATION : after evaluating: gl.texImage2D(gl.TEXTURE_2D, 0, gl.DEPTH_COMPONENT, gl.DEPTH_COMPONENT, gl.UNSIGNED_INT, canvas2)
+[ 167: PASS ] getError was one of: INVALID_ENUM or INVALID_OPERATION : after evaluating: gl.copyTexImage2D(gl.TEXTURE_2D, 0, gl.DEPTH_COMPONENT, 0, 0, 1, 1, 0)
+[ 168: PASS ] getError was expected value: NO_ERROR : after evaluating: gl.texImage2D(gl.TEXTURE_2D, 0, gl.DEPTH_COMPONENT, 8, 8, 0, gl.DEPTH_COMPONENT, gl.UNSIGNED_INT, null)
+[ 169: PASS ] getError was expected value: INVALID_OPERATION : after evaluating: gl.texSubImage2D(gl.TEXTURE_2D, 0, 0, 0, 1, 1, gl.DEPTH_COMPONENT, gl.UNSIGNED_INT, new Uint32Array(1))
+[ 170: PASS ] getError was expected value: INVALID_OPERATION : after evaluating: gl.copyTexSubImage2D(gl.TEXTURE_2D, 0, 0, 0, 0, 0, 1, 1)
+[ 171: PASS ] getError was expected value: INVALID_OPERATION : after evaluating: gl.generateMipmap(gl.TEXTURE_2D)
+[ 172: PASS ] gl.getParameter(gl.DEPTH_BITS) is >= 16
+[ 173: PASS ] gl.getParameter(gl.STENCIL_BITS) is 0
+[ 174: PASS ] gl.checkFramebufferStatus(gl.FRAMEBUFFER) is gl.FRAMEBUFFER_COMPLETE
+[ 175: PASS ] depth texture rendered correctly.
+[ 176: PASS ] getError was expected value: NO_ERROR : after evaluating: gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.DEPTH_STENCIL_ATTACHMENT, gl.TEXTURE_2D, tex, 0)
+[ 177: PASS ] gl.checkFramebufferStatus(gl.FRAMEBUFFER) is not gl.FRAMEBUFFER_COMPLETE
+[ 178: PASS ] getError was expected value: INVALID_FRAMEBUFFER_OPERATION : after evaluating: gl.clear(gl.DEPTH_BUFFER_BIT)
+[ 179: PASS ] gl.getError() is gl.NO_ERROR
+[ 180: PASS ] getError was expected value: INVALID_OPERATION : after evaluating: gl.texImage2D(gl.TEXTURE_2D, 1, gl.DEPTH_COMPONENT, 1, 1, 0, gl.DEPTH_COMPONENT, gl.UNSIGNED_INT, null)
+[ 181: PASS ] getError was expected value: INVALID_OPERATION : after evaluating: gl.texImage2D(gl.TEXTURE_2D, 0, gl.DEPTH_COMPONENT, 1, 1, 0, gl.DEPTH_COMPONENT, gl.UNSIGNED_INT, new Uint32Array(1))
+[ 182: PASS ] getError was one of: INVALID_VALUE or INVALID_ENUM or INVALID_OPERATION : after evaluating: gl.texImage2D(gl.TEXTURE_2D, 0, gl.DEPTH_COMPONENT, gl.DEPTH_COMPONENT, gl.UNSIGNED_INT, canvas2)
+[ 183: PASS ] getError was one of: INVALID_ENUM or INVALID_OPERATION : after evaluating: gl.copyTexImage2D(gl.TEXTURE_2D, 0, gl.DEPTH_COMPONENT, 0, 0, 1, 1, 0)
+[ 184: PASS ] getError was expected value: NO_ERROR : after evaluating: gl.texImage2D(gl.TEXTURE_2D, 0, gl.DEPTH_COMPONENT, 8, 8, 0, gl.DEPTH_COMPONENT, gl.UNSIGNED_INT, null)
+[ 185: PASS ] getError was expected value: INVALID_OPERATION : after evaluating: gl.texSubImage2D(gl.TEXTURE_2D, 0, 0, 0, 1, 1, gl.DEPTH_COMPONENT, gl.UNSIGNED_INT, new Uint32Array(1))
+[ 186: PASS ] getError was expected value: INVALID_OPERATION : after evaluating: gl.copyTexSubImage2D(gl.TEXTURE_2D, 0, 0, 0, 0, 0, 1, 1)
+[ 187: PASS ] getError was expected value: INVALID_OPERATION : after evaluating: gl.generateMipmap(gl.TEXTURE_2D)
+[ 188: PASS ] gl.getParameter(gl.DEPTH_BITS) is >= 16
+[ 189: PASS ] gl.getParameter(gl.STENCIL_BITS) is 0
+[ 190: PASS ] gl.checkFramebufferStatus(gl.FRAMEBUFFER) is gl.FRAMEBUFFER_COMPLETE
+[ 191: PASS ] depth texture rendered correctly.
+[ 192: PASS ] getError was expected value: NO_ERROR : after evaluating: gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.DEPTH_STENCIL_ATTACHMENT, gl.TEXTURE_2D, tex, 0)
+[ 193: PASS ] gl.checkFramebufferStatus(gl.FRAMEBUFFER) is not gl.FRAMEBUFFER_COMPLETE
+[ 194: PASS ] getError was expected value: INVALID_FRAMEBUFFER_OPERATION : after evaluating: gl.clear(gl.DEPTH_BUFFER_BIT)
+[ 195: PASS ] gl.getError() is gl.NO_ERROR
+[ 196: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : after evaluating: gl.texImage2D(gl.TEXTURE_CUBE_MAP_POSITIVE_Y, 0, gl.DEPTH_STENCIL, 1, 1, 0, gl.DEPTH_STENCIL, ext.UNSIGNED_INT_24_8_WEBGL, null)
+[ 197: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : after evaluating: gl.texImage2D(gl.TEXTURE_CUBE_MAP_POSITIVE_Y, 0, gl.DEPTH_STENCIL, 1, 1, 0, gl.DEPTH_STENCIL, ext.UNSIGNED_INT_24_8_WEBGL, null)
+[ 198: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : after evaluating: gl.texImage2D(gl.TEXTURE_CUBE_MAP_POSITIVE_Y, 0, gl.DEPTH_STENCIL, 1, 1, 0, gl.DEPTH_STENCIL, ext.UNSIGNED_INT_24_8_WEBGL, null)
+[ 199: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : after evaluating: gl.texImage2D(gl.TEXTURE_CUBE_MAP_POSITIVE_Y, 0, gl.DEPTH_STENCIL, 1, 1, 0, gl.DEPTH_STENCIL, ext.UNSIGNED_INT_24_8_WEBGL, null)
+[ 200: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : after evaluating: gl.texImage2D(gl.TEXTURE_CUBE_MAP_POSITIVE_Y, 0, gl.DEPTH_STENCIL, 1, 1, 0, gl.DEPTH_STENCIL, ext.UNSIGNED_INT_24_8_WEBGL, null)
+[ 201: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : after evaluating: gl.texImage2D(gl.TEXTURE_CUBE_MAP_POSITIVE_Y, 0, gl.DEPTH_STENCIL, 1, 1, 0, gl.DEPTH_STENCIL, ext.UNSIGNED_INT_24_8_WEBGL, null)
+[ 202: PASS ] getError was expected value: INVALID_OPERATION : after evaluating: gl.texImage2D(gl.TEXTURE_2D, 1, gl.DEPTH_STENCIL, 1, 1, 0, gl.DEPTH_STENCIL, ext.UNSIGNED_INT_24_8_WEBGL, null)
+[ 203: PASS ] getError was expected value: INVALID_OPERATION : after evaluating: gl.texImage2D(gl.TEXTURE_2D, 0, gl.DEPTH_STENCIL, 1, 1, 0, gl.DEPTH_STENCIL, ext.UNSIGNED_INT_24_8_WEBGL, new Uint32Array(1))
+[ 204: PASS ] getError was one of: INVALID_VALUE or INVALID_ENUM or INVALID_OPERATION : after evaluating: gl.texImage2D(gl.TEXTURE_2D, 0, gl.DEPTH_STENCIL, gl.DEPTH_STENCIL, ext.UNSIGNED_INT_24_8_WEBGL, canvas2)
+[ 205: PASS ] getError was one of: INVALID_ENUM or INVALID_OPERATION : after evaluating: gl.copyTexImage2D(gl.TEXTURE_2D, 0, gl.DEPTH_STENCIL, 0, 0, 1, 1, 0)
+[ 206: PASS ] getError was expected value: NO_ERROR : after evaluating: gl.texImage2D(gl.TEXTURE_2D, 0, gl.DEPTH_STENCIL, 8, 8, 0, gl.DEPTH_STENCIL, ext.UNSIGNED_INT_24_8_WEBGL, null)
+[ 207: PASS ] getError was expected value: INVALID_OPERATION : after evaluating: gl.texSubImage2D(gl.TEXTURE_2D, 0, 0, 0, 1, 1, gl.DEPTH_STENCIL, ext.UNSIGNED_INT_24_8_WEBGL, new Uint32Array(1))
+[ 208: PASS ] getError was expected value: INVALID_OPERATION : after evaluating: gl.copyTexSubImage2D(gl.TEXTURE_2D, 0, 0, 0, 0, 0, 1, 1)
+[ 209: PASS ] getError was expected value: INVALID_OPERATION : after evaluating: gl.generateMipmap(gl.TEXTURE_2D)
+[ 210: PASS ] gl.getParameter(gl.DEPTH_BITS) is >= 24
+[ 211: PASS ] gl.getParameter(gl.STENCIL_BITS) is >= 8
+[ 212: PASS ] gl.checkFramebufferStatus(gl.FRAMEBUFFER) is gl.FRAMEBUFFER_COMPLETE
+[ 213: PASS ] depth texture rendered correctly.
+[ 214: PASS ] getError was expected value: NO_ERROR : after evaluating: gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.TEXTURE_2D, tex, 0)
+[ 215: PASS ] gl.checkFramebufferStatus(gl.FRAMEBUFFER) is not gl.FRAMEBUFFER_COMPLETE
+[ 216: PASS ] getError was expected value: INVALID_FRAMEBUFFER_OPERATION : after evaluating: gl.clear(gl.DEPTH_BUFFER_BIT)
+[ 217: PASS ] gl.getError() is gl.NO_ERROR
+[ 218: PASS ] getError was expected value: INVALID_OPERATION : after evaluating: gl.texImage2D(gl.TEXTURE_2D, 1, gl.DEPTH_STENCIL, 1, 1, 0, gl.DEPTH_STENCIL, ext.UNSIGNED_INT_24_8_WEBGL, null)
+[ 219: PASS ] getError was expected value: INVALID_OPERATION : after evaluating: gl.texImage2D(gl.TEXTURE_2D, 0, gl.DEPTH_STENCIL, 1, 1, 0, gl.DEPTH_STENCIL, ext.UNSIGNED_INT_24_8_WEBGL, new Uint32Array(1))
+[ 220: PASS ] getError was one of: INVALID_VALUE or INVALID_ENUM or INVALID_OPERATION : after evaluating: gl.texImage2D(gl.TEXTURE_2D, 0, gl.DEPTH_STENCIL, gl.DEPTH_STENCIL, ext.UNSIGNED_INT_24_8_WEBGL, canvas2)
+[ 221: PASS ] getError was one of: INVALID_ENUM or INVALID_OPERATION : after evaluating: gl.copyTexImage2D(gl.TEXTURE_2D, 0, gl.DEPTH_STENCIL, 0, 0, 1, 1, 0)
+[ 222: PASS ] getError was expected value: NO_ERROR : after evaluating: gl.texImage2D(gl.TEXTURE_2D, 0, gl.DEPTH_STENCIL, 8, 8, 0, gl.DEPTH_STENCIL, ext.UNSIGNED_INT_24_8_WEBGL, null)
+[ 223: PASS ] getError was expected value: INVALID_OPERATION : after evaluating: gl.texSubImage2D(gl.TEXTURE_2D, 0, 0, 0, 1, 1, gl.DEPTH_STENCIL, ext.UNSIGNED_INT_24_8_WEBGL, new Uint32Array(1))
+[ 224: PASS ] getError was expected value: INVALID_OPERATION : after evaluating: gl.copyTexSubImage2D(gl.TEXTURE_2D, 0, 0, 0, 0, 0, 1, 1)
+[ 225: PASS ] getError was expected value: INVALID_OPERATION : after evaluating: gl.generateMipmap(gl.TEXTURE_2D)
+[ 226: PASS ] gl.getParameter(gl.DEPTH_BITS) is >= 24
+[ 227: PASS ] gl.getParameter(gl.STENCIL_BITS) is >= 8
+[ 228: PASS ] gl.checkFramebufferStatus(gl.FRAMEBUFFER) is gl.FRAMEBUFFER_COMPLETE
+[ 229: PASS ] depth texture rendered correctly.
+[ 230: PASS ] getError was expected value: NO_ERROR : after evaluating: gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.TEXTURE_2D, tex, 0)
+[ 231: PASS ] gl.checkFramebufferStatus(gl.FRAMEBUFFER) is not gl.FRAMEBUFFER_COMPLETE
+[ 232: PASS ] getError was expected value: INVALID_FRAMEBUFFER_OPERATION : after evaluating: gl.clear(gl.DEPTH_BUFFER_BIT)
+[ 233: PASS ] gl.getError() is gl.NO_ERROR
+[ 234: PASS ] successfullyParsed is true
+[ FAIL ] 36 failures reported
 

@@ -1108,22 +1108,14 @@
 #if ENABLE(WEBGL)
 /* USE_ANGLE=1 uses ANGLE for the WebGL backend.
    It replaces USE_OPENGL, USE_OPENGL_ES and USE_EGL. */
-#if PLATFORM(MAC)
-#define USE_OPENGL 0
+#if PLATFORM(MAC) || (PLATFORM(MACCATALYST) && __has_include(<OpenGL/OpenGL.h>))
+#define USE_OPENGL 1
 #define USE_OPENGL_ES 0
-#define USE_ANGLE 1
-#elif PLATFORM(MACCATALYST) && __has_include(<OpenGL/OpenGL.h>)
-#define USE_OPENGL 0
-#define USE_OPENGL_ES 0
-#define USE_ANGLE 1
-#elif PLATFORM(IOS_FAMILY_SIMULATOR) || PLATFORM(WATCHOS) || PLATFORM(APPLETV)
-#define USE_OPENGL 0
-#define USE_OPENGL_ES 1
 #define USE_ANGLE 0
 #else
 #define USE_OPENGL 0
-#define USE_OPENGL_ES 0
-#define USE_ANGLE 1
+#define USE_OPENGL_ES 1
+#define USE_ANGLE 0
 #endif
 #if PLATFORM(COCOA)
 #ifndef GL_SILENCE_DEPRECATION

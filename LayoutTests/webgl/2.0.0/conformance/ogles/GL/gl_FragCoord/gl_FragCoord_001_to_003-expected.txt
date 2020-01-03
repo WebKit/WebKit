@@ -1,5 +1,13 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../../../resources/webgl_test_files/conformance/ogles/GL/gl_FragCoord/gl_FragCoord_001_to_003.html
-[ PASS ] All tests passed
+[ 1: PASS ] images are the same
+[ 2: PASS ] getError was expected value: NO_ERROR : there should be no errors
+[ 3: FAIL ] only found 0 of 2 required built-in uniforms: gl_DepthRange.near,gl_DepthRange.far,gl_DepthRange.diff
+[ 4: PASS ] images are the same
+[ 5: PASS ] getError was expected value: NO_ERROR : there should be no errors
+[ 6: PASS ] images are the same
+[ 7: PASS ] getError was expected value: NO_ERROR : there should be no errors
+[ 8: PASS ] successfullyParsed is true
+[ FAIL ] 1 failures reported
 

@@ -1,5 +1,60 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../resources/webgl_test_files/conformance/reading/read-pixels-test.html
-[ PASS ] All tests passed
+[ 1: PASS ] color pixel at 0, 0 should be about 51,153,102,255, was = 51,153,102,255
+[ 2: PASS ] color pixel at 1, 0 should be about 51,153,102,255, was = 51,153,102,255
+[ 3: PASS ] color pixel at 0, 1 should be about 51,153,102,255, was = 51,153,102,255
+[ 4: PASS ] color pixel at 1, 1 should be about 51,153,102,255, was = 51,153,102,255
+[ 5: PASS ] color pixel at 0, 0 should be about 19,72,0,198, was = 19,72,0,198
+[ 6: PASS ] color pixel at 1, 0 should be about 19,72,0,198, was = 19,72,0,198
+[ 7: PASS ] color pixel at 0, 1 should be about 19,72,0,198, was = 19,72,0,198
+[ 8: PASS ] color pixel at 1, 1 should be about 51,153,102,255, was = 51,153,102,255
+[ 9: PASS ] color pixel at 0, 0 should be about 51,153,102,255, was = 51,153,102,255
+[ 10: PASS ] color pixel at 1, 0 should be about 19,72,0,198, was = 19,72,0,198
+[ 11: PASS ] color pixel at 0, 1 should be about 19,72,0,198, was = 19,72,0,198
+[ 12: PASS ] color pixel at 1, 1 should be about 19,72,0,198, was = 19,72,0,198
+[ 13: PASS ] color pixel at 0, 0 should be about 19,72,0,198, was = 19,72,0,198
+[ 14: PASS ] color pixel at 1, 0 should be about 19,72,0,198, was = 19,72,0,198
+[ 15: PASS ] color pixel at 0, 1 should be about 19,72,0,198, was = 19,72,0,198
+[ 16: PASS ] color pixel at 1, 1 should be about 19,72,0,198, was = 19,72,0,198
+[ 17: PASS ] color pixel at 0, 0 should be about 19,72,0,198, was = 19,72,0,198
+[ 18: PASS ] color pixel at 1, 0 should be about 19,72,0,198, was = 19,72,0,198
+[ 19: PASS ] color pixel at 0, 1 should be about 19,72,0,198, was = 19,72,0,198
+[ 20: PASS ] color pixel at 1, 1 should be about 19,72,0,198, was = 19,72,0,198
+[ 21: PASS ] color pixel at 0, 0 should be about 19,72,0,198, was = 19,72,0,198
+[ 22: PASS ] color pixel at 1, 0 should be about 19,72,0,198, was = 19,72,0,198
+[ 23: PASS ] color pixel at 0, 1 should be about 19,72,0,198, was = 19,72,0,198
+[ 24: PASS ] color pixel at 1, 1 should be about 19,72,0,198, was = 19,72,0,198
+[ 25: PASS ] color pixel at 0, 0 should be about 19,72,0,198, was = 19,72,0,198
+[ 26: PASS ] color pixel at 1, 0 should be about 19,72,0,198, was = 19,72,0,198
+[ 27: PASS ] color pixel at 0, 1 should be about 19,72,0,198, was = 19,72,0,198
+[ 28: PASS ] color pixel at 1, 1 should be about 19,72,0,198, was = 19,72,0,198
+[ 29: PASS ] getError was expected value: NO_ERROR : there should be no GL errors
+[ 30: PASS ] getError was expected value: INVALID_ENUM : Should not be able to read as DEPTH_COMPONENT
+[ 31: PASS ] getError was expected value: INVALID_ENUM : Should not be able to read as DEPTH_STENCIL
+[ 32: PASS ] getError was expected value: INVALID_ENUM : Should not be able to read as 0x8229
+[ 33: PASS ] getError was expected value: INVALID_ENUM : Should not be able to read as RGBA4
+[ 34: PASS ] getError was expected value: INVALID_ENUM : Should not be able to read as LUMINANCE
+[ 35: PASS ] getError was expected value: INVALID_ENUM : Should not be able to read as LUMINANCE_ALPHA
+[ 36: PASS ] getError was expected value: INVALID_ENUM : Should not be able to read as 0x1903
+[ 37: PASS ] getError was expected value: INVALID_ENUM : Should not be able to read as 0x8228
+[ 38: PASS ] getError was expected value: INVALID_ENUM : Should not be able to read as 0x8d99
+[ 39: PASS ] getError was expected value: INVALID_ENUM : Should not be able to read as 0x84fa
+[ 40: PASS ] getError was expected value: INVALID_ENUM : Should not be able to read as UNSIGNED_SHORT
+[ 41: PASS ] getError was expected value: INVALID_ENUM : Should not be able to read as SHORT
+[ 42: PASS ] getError was expected value: INVALID_ENUM : Should not be able to read as BYTE
+[ 43: PASS ] getError was expected value: INVALID_ENUM : Should not be able to read as UNSIGNED_INT
+[ 44: PASS ] getError was expected value: INVALID_ENUM : Should not be able to read as 0x8368
+[ 45: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : Should be able to read as RGBA / UNSIGNED_BYTE
+[ 46: PASS ] getError was expected value: INVALID_OPERATION : Should not be able to read as RGB / UNSIGNED_BYTE
+[ 47: PASS ] getError was expected value: INVALID_OPERATION : Should not be able to read as RGB / UNSIGNED_SHORT_5_6_5
+[ 48: PASS ] getError was expected value: INVALID_OPERATION : Should not be able to read as RGBA / UNSIGNED_SHORT_5_5_5_1
+[ 49: PASS ] getError was expected value: INVALID_OPERATION : Should not be able to read as RGBA / UNSIGNED_SHORT_4_4_4_4
+[ 50: PASS ] getError was expected value: INVALID_OPERATION : Should not be able to read as ALPHA / UNSIGNED_BYTE
+[ 51: PASS ] actual is expected
+[ 52: PASS ] actual is expected
+[ 53: PASS ] actual is expected
+[ 54: PASS ] getError was expected value: NO_ERROR : there should be no GL errors
+[ 55: PASS ] successfullyParsed is true
+[ FAIL ] 1 failures reported
 

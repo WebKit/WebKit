@@ -29,9 +29,9 @@ Test: ../../../resources/webgl_test_files/conformance2/textures/misc/tex-mipmap-
 [ 26: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : texSubImage3D should succeed
 [ 27: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : generateMipmap should succeed
 [ 28: PASS ] getError was expected value: NO_ERROR : texSubImage3D should succeed
-[ 29: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : generateMipmap should succeed for zero-size texture
+[ 29: PASS ] getError was expected value: NO_ERROR : generateMipmap should succeed for zero-size texture
 [ 30: PASS ] getError was expected value: NO_ERROR : generateMipmap should succeed
-[ 31: PASS ] getError was expected value: INVALID_OPERATION : generateMipmap should fail for non-texture-filterable format
+[ 31: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : generateMipmap should fail for non-texture-filterable format
 [ 32: PASS ] getError was expected value: NO_ERROR : texParameter(TEXTURE_MAG_FILTER) should succeed
 [ 33: PASS ] getError was expected value: NO_ERROR : texParameter(TEXTURE_MIN_FILTER) should succeed
 [ 34: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : texParameter(TEXTURE_BASE_LEVEL) should succeed

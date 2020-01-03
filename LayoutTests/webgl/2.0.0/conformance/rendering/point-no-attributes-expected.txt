@@ -1,5 +1,8 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../resources/webgl_test_files/conformance/rendering/point-no-attributes.html
-[ PASS ] All tests passed
+[ 1: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION :
+[ 2: FAIL ] should be 0,255,0,255 at (0, 0) expected: 0,255,0,255 was 0,0,0,0
+[ 3: PASS ] successfullyParsed is true
+[ FAIL ] 2 failures reported
 

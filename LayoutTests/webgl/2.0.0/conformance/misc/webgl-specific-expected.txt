@@ -1,5 +1,36 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../resources/webgl_test_files/conformance/misc/webgl-specific.html
-[ PASS ] All tests passed
+[ 1: PASS ] getError was expected value: NO_ERROR : Setup should succeed
+[ 2: PASS ] getError was expected value: INVALID_OPERATION : after evaluating: gl.blendFunc(gl.CONSTANT_COLOR, gl.CONSTANT_ALPHA)
+[ 3: PASS ] getError was expected value: INVALID_OPERATION : after evaluating: gl.blendFunc(gl.ONE_MINUS_CONSTANT_COLOR, gl.CONSTANT_ALPHA)
+[ 4: PASS ] getError was expected value: INVALID_OPERATION : after evaluating: gl.blendFunc(gl.CONSTANT_COLOR, gl.ONE_MINUS_CONSTANT_ALPHA)
+[ 5: PASS ] getError was expected value: INVALID_OPERATION : after evaluating: gl.blendFunc(gl.ONE_MINUS_CONSTANT_COLOR, gl.ONE_MINUS_CONSTANT_ALPHA)
+[ 6: PASS ] getError was expected value: INVALID_OPERATION : after evaluating: gl.blendFunc(gl.CONSTANT_ALPHA, gl.CONSTANT_COLOR)
+[ 7: PASS ] getError was expected value: INVALID_OPERATION : after evaluating: gl.blendFunc(gl.CONSTANT_ALPHA, gl.ONE_MINUS_CONSTANT_COLOR)
+[ 8: PASS ] getError was expected value: INVALID_OPERATION : after evaluating: gl.blendFunc(gl.ONE_MINUS_CONSTANT_ALPHA, gl.CONSTANT_COLOR)
+[ 9: PASS ] getError was expected value: INVALID_OPERATION : after evaluating: gl.blendFunc(gl.ONE_MINUS_CONSTANT_ALPHA, gl.ONE_MINUS_CONSTANT_COLOR)
+[ 10: PASS ] getError was expected value: INVALID_OPERATION : after evaluating: gl.blendFuncSeparate(gl.CONSTANT_COLOR, gl.CONSTANT_ALPHA, gl.ONE, gl.ZERO)
+[ 11: PASS ] getError was expected value: INVALID_OPERATION : after evaluating: gl.blendFuncSeparate(gl.ONE_MINUS_CONSTANT_COLOR, gl.CONSTANT_ALPHA, gl.ONE, gl.ZERO)
+[ 12: PASS ] getError was expected value: INVALID_OPERATION : after evaluating: gl.blendFuncSeparate(gl.CONSTANT_COLOR, gl.ONE_MINUS_CONSTANT_ALPHA, gl.ONE, gl.ZERO)
+[ 13: PASS ] getError was expected value: INVALID_OPERATION : after evaluating: gl.blendFuncSeparate(gl.ONE_MINUS_CONSTANT_COLOR, gl.ONE_MINUS_CONSTANT_ALPHA, gl.ONE, gl.ZERO)
+[ 14: PASS ] getError was expected value: INVALID_OPERATION : after evaluating: gl.blendFuncSeparate(gl.CONSTANT_ALPHA, gl.CONSTANT_COLOR, gl.ONE, gl.ZERO)
+[ 15: PASS ] getError was expected value: INVALID_OPERATION : after evaluating: gl.blendFuncSeparate(gl.CONSTANT_ALPHA, gl.ONE_MINUS_CONSTANT_COLOR, gl.ONE, gl.ZERO)
+[ 16: PASS ] getError was expected value: INVALID_OPERATION : after evaluating: gl.blendFuncSeparate(gl.ONE_MINUS_CONSTANT_ALPHA, gl.CONSTANT_COLOR, gl.ONE, gl.ZERO)
+[ 17: PASS ] getError was expected value: INVALID_OPERATION : after evaluating: gl.blendFuncSeparate(gl.ONE_MINUS_CONSTANT_ALPHA, gl.ONE_MINUS_CONSTANT_COLOR, gl.ONE, gl.ZERO)
+[ 18: PASS ] getError was expected value: INVALID_OPERATION : after evaluating: gl.depthRange(20, 10)
+[ 19: PASS ] undefined is undefined.
+[ 20: PASS ] undefined is undefined.
+[ 21: PASS ] undefined is undefined.
+[ 22: PASS ] undefined is undefined.
+[ 23: PASS ] undefined is undefined.
+[ 24: PASS ] gl.getParameter(gl.UNPACK_COLORSPACE_CONVERSION_WEBGL) is gl.BROWSER_DEFAULT_WEBGL
+[ 25: PASS ] gl.getParameter(gl.UNPACK_COLORSPACE_CONVERSION_WEBGL) is gl.NONE
+[ 26: PASS ] getError was expected value: NO_ERROR : set/get UNPACK_COLORSPACE_CONVERSION_WEBGL should generate no error
+[ 27: PASS ] gl.drawingBufferWidth >= 0 && gl.drawingBufferHeight >= 0 is true
+[ 28: PASS ] getError was expected value: INVALID_OPERATION : after evaluating: gl.bindAttribLocation(program, 0, 'webgl_a')
+[ 29: PASS ] getError was expected value: INVALID_OPERATION : after evaluating: gl.bindAttribLocation(program, 0, '_webgl_a')
+[ 30: FAIL ] getError expected: INVALID_VALUE. Was NO_ERROR : after evaluating: gl.lineWidth(NaN)
+[ 31: PASS ] successfullyParsed is true
+[ FAIL ] 1 failures reported
 

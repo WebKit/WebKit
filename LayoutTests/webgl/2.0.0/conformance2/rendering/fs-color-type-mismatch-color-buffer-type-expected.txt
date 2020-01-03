@@ -4,17 +4,17 @@ Test: ../../resources/webgl_test_files/conformance2/rendering/fs-color-type-mism
 [ 1: PASS ] WebGL context exists
 [ 2: PASS ] Succeed to set up program
 [ 3: PASS ] getError was expected value: NO_ERROR : If color buffers' type mismatch the type of fragment shader's outputs, geneate INVALID_OPERATION. Otherwise, it should be NO_ERROR
-[ 4: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : If color buffers' type mismatch the type of fragment shader's outputs, geneate INVALID_OPERATION. Otherwise, it should be NO_ERROR
+[ 4: PASS ] getError was expected value: NO_ERROR : If color buffers' type mismatch the type of fragment shader's outputs, geneate INVALID_OPERATION. Otherwise, it should be NO_ERROR
 [ 5: PASS ] getError was expected value: NO_ERROR : If color buffers' type mismatch the type of fragment shader's outputs, geneate INVALID_OPERATION. Otherwise, it should be NO_ERROR
-[ 6: PASS ] getError was expected value: INVALID_OPERATION : If color buffers' type mismatch the type of fragment shader's outputs, geneate INVALID_OPERATION. Otherwise, it should be NO_ERROR
+[ 6: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : If color buffers' type mismatch the type of fragment shader's outputs, geneate INVALID_OPERATION. Otherwise, it should be NO_ERROR
 [ 7: PASS ] getError was expected value: NO_ERROR : If color buffers' type mismatch the type of fragment shader's outputs, geneate INVALID_OPERATION. Otherwise, it should be NO_ERROR
-[ 8: PASS ] getError was expected value: INVALID_OPERATION : If color buffers' type mismatch the type of fragment shader's outputs, geneate INVALID_OPERATION. Otherwise, it should be NO_ERROR
+[ 8: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : If color buffers' type mismatch the type of fragment shader's outputs, geneate INVALID_OPERATION. Otherwise, it should be NO_ERROR
 [ 9: PASS ] getError was expected value: NO_ERROR : If color buffers' type mismatch the type of fragment shader's outputs, geneate INVALID_OPERATION. Otherwise, it should be NO_ERROR
-[ 10: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : If color buffers' type mismatch the type of fragment shader's outputs, geneate INVALID_OPERATION. Otherwise, it should be NO_ERROR
+[ 10: PASS ] getError was expected value: NO_ERROR : If color buffers' type mismatch the type of fragment shader's outputs, geneate INVALID_OPERATION. Otherwise, it should be NO_ERROR
 [ 11: PASS ] getError was expected value: NO_ERROR : If color buffers' type mismatch the type of fragment shader's outputs, geneate INVALID_OPERATION. Otherwise, it should be NO_ERROR
-[ 12: PASS ] getError was expected value: INVALID_OPERATION : If color buffers' type mismatch the type of fragment shader's outputs, geneate INVALID_OPERATION. Otherwise, it should be NO_ERROR
+[ 12: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : If color buffers' type mismatch the type of fragment shader's outputs, geneate INVALID_OPERATION. Otherwise, it should be NO_ERROR
 [ 13: PASS ] getError was expected value: NO_ERROR : If color buffers' type mismatch the type of fragment shader's outputs, geneate INVALID_OPERATION. Otherwise, it should be NO_ERROR
-[ 14: PASS ] getError was expected value: INVALID_OPERATION : If color buffers' type mismatch the type of fragment shader's outputs, geneate INVALID_OPERATION. Otherwise, it should be NO_ERROR
+[ 14: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : If color buffers' type mismatch the type of fragment shader's outputs, geneate INVALID_OPERATION. Otherwise, it should be NO_ERROR
 [ 15: PASS ] successfullyParsed is true
-[ FAIL ] 2 failures reported
+[ FAIL ] 4 failures reported
 

@@ -41,10 +41,10 @@ Test: ../../resources/webgl_test_files/conformance/context/context-lost-restored
 [ 38: PASS ] getError was expected value: NO_ERROR : after evaluating: gl.bindTexture(gl.TEXTURE_2D, texture)
 [ 39: PASS ] getError was expected value: NO_ERROR : after evaluating: gl.useProgram(program)
 [ 40: PASS ] getError was expected value: NO_ERROR : after evaluating: gl.bindBuffer(gl.ARRAY_BUFFER, bufferObjects[0])
-[ 41: PASS ] getError was expected value: INVALID_ENUM : after evaluating: gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.FLOAT, null)
+[ 41: FAIL ] getError expected: INVALID_ENUM. Was NO_ERROR : after evaluating: gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.FLOAT, null)
 [ 42: PASS ] newExtension != null is true
 [ 43: FAIL ] newExtension.webglTestProperty === undefined should be true. Was false.
-[ 44: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : after evaluating: gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.FLOAT, null)
+[ 44: PASS ] getError was expected value: NO_ERROR : after evaluating: gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.FLOAT, null)
 [ 45: FAIL ] OES_vertex_array_object.createVertexArrayOES() should be null. Was [object WebGLVertexArrayObjectOES].
 [ 46: PASS ] newExtension != null is true
 [ 47: FAIL ] newExtension.webglTestProperty === undefined should be true. Was false.

@@ -433,6 +433,9 @@ imported/blink/svg/custom/marker-layout-invalidation.html [ Pass Timeout ]
 imported/blink/fast/css/crash-corner-present.html [ Pass Timeout ]
 imported/blink/compositing/layer-creation/iframe-clip-removed.html [ Pass Timeout ]
 
+# ASAN test only fails on WK1:
+webgl/1.0.3/151055_asan.html [ Failure ]
+
 # Lacking WK1 TestRunner API that evaluates JavaScript through JSC APIs and not WebCore APIs.
 inspector/script-profiler/event-type-API.html [ Skip ]
 
@@ -629,6 +632,9 @@ webkit.org/b/176920 imported/w3c/web-platform-tests/streams/piping/error-propaga
 
 webkit.org/b/175886 svg/animations/smil-leak-element-instances.svg [ Pass Failure ]
 
+# <rdar://problem/29201698> DumpRenderTree crashed in com.apple.CoreGraphics: CGDataProviderCopyData + 377
+[ HighSierra+ ] fast/canvas/webgl/tex-image-and-sub-image-2d-with-potentially-subsampled-image.html [ Crash ]
+
 # <rdar://problem/29031509> REGRESSION? (FontParser-195): svg/W3C-SVG-1.1/fonts-elem-* and svg/W3C-SVG-1.1/text-intro-* tests failing
 [ HighSierra+ ] svg/W3C-SVG-1.1/fonts-elem-04-b.svg [ Failure ]
 
@@ -755,6 +761,8 @@ webkit.org/b/190350 [ Mojave ] storage/indexeddb/database-odd-names.html [ Failu
 
 webkit.org/b/190832 [ Debug ] fast/forms/state-restore-to-non-edited-controls.html [ Pass Failure ]
 
+webkit.org/b/190833 [ Debug ] inspector/codemirror/prettyprinting-css.html [ Slow ]
+
 webkit.org/b/190849 http/tests/security/XFrameOptions/x-frame-options-multiple-headers-sameorigin-deny.html [ Pass Failure ]
 
 webkit.org/b/186406 [ Mojave+ ] compositing/iframes/display-none-subframe.html [ Pass Failure ]
@@ -833,12 +841,3 @@ webkit.org/b/205314 [ Catalina ] editing/mac/input/firstrectforcharacterrange-st
 webkit.org/b/205412 [ Mojave Debug ] webgl/1.0.3/conformance/rendering/many-draw-calls.html [ Timeout ]
 
 webkit.org/b/205410 [ Debug ] accessibility/mac/expanded-notification.html [ Failure ]
-
-# These produce different results in DRT vs EWT vs MiniBrowser.
-fast/canvas/webgl/array-bounds-clamping.html [ Pass Failure ]
-webgl/2.0.0/conformance2/renderbuffers/invalidate-framebuffer.html [ Pass Failure ]
-webgl/2.0.0/conformance2/renderbuffers/multisample-with-full-sample-counts.html [ Pass Failure ]
-webgl/2.0.0/conformance2/renderbuffers/multisampled-renderbuffer-initialization.html [ Pass Failure ]
-webgl/2.0.0/conformance2/rendering/blitframebuffer-test.html [ Pass Failure ]
-webgl/2.0.0/conformance2/rendering/rgb-format-support.html [ Pass Failure ]
-webgl/webgl2-primitive-restart.html [ Skip ]
