@@ -22,6 +22,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/domparsing/META.yml
 /LayoutTests/imported/w3c/web-platform-tests/domparsing/XMLSerializer-serializeToString.html
 /LayoutTests/imported/w3c/web-platform-tests/domparsing/createContextualFragment.html
+/LayoutTests/imported/w3c/web-platform-tests/domparsing/idlharness.window.js
 /LayoutTests/imported/w3c/web-platform-tests/domparsing/innerhtml-01.xhtml
 /LayoutTests/imported/w3c/web-platform-tests/domparsing/innerhtml-03.xhtml
 /LayoutTests/imported/w3c/web-platform-tests/domparsing/innerhtml-04.html
@@ -33,7 +34,6 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/domparsing/insert_adjacent_html-xhtml.xhtml
 /LayoutTests/imported/w3c/web-platform-tests/domparsing/insert_adjacent_html.html
 /LayoutTests/imported/w3c/web-platform-tests/domparsing/insert_adjacent_html.js
-/LayoutTests/imported/w3c/web-platform-tests/domparsing/interfaces.any.js
 /LayoutTests/imported/w3c/web-platform-tests/domparsing/outerhtml-01.html
 /LayoutTests/imported/w3c/web-platform-tests/domparsing/outerhtml-02.html
 /LayoutTests/imported/w3c/web-platform-tests/domparsing/style_attribute_html.html

@@ -1,3 +1,23 @@
+2020-01-02  Chris Dumez  <cdumez@apple.com>
+
+        Re-sync web-platform-tests/domparsing from upstream
+        https://bugs.webkit.org/show_bug.cgi?id=205696
+
+        Reviewed by Alex Christensen.
+
+        Re-sync web-platform-tests/domparsing from upstream cb0d9cacbbf30a4cae79faa2.
+
+        * web-platform-tests/domparsing/DOMParser-parseFromString-html-expected.txt:
+        * web-platform-tests/domparsing/DOMParser-parseFromString-html.html:
+        * web-platform-tests/domparsing/XMLSerializer-serializeToString-expected.txt:
+        * web-platform-tests/domparsing/XMLSerializer-serializeToString.html:
+        * web-platform-tests/domparsing/idlharness.window-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/domparsing/interfaces.any-expected.txt.
+        * web-platform-tests/domparsing/idlharness.window.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/domparsing/interfaces.any.html.
+        * web-platform-tests/domparsing/idlharness.window.js: Renamed from LayoutTests/imported/w3c/web-platform-tests/domparsing/interfaces.any.js.
+        * web-platform-tests/domparsing/interfaces.any.worker-expected.txt: Removed.
+        * web-platform-tests/domparsing/interfaces.any.worker.html: Removed.
+        * web-platform-tests/domparsing/w3c-import.log:
+
 2020-01-02  Andy Estes  <aestes@apple.com>
 
         [Payment Request] Perform payment method data IDL conversion in the PaymentRequest constructor
