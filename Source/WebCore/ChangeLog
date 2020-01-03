@@ -1,5 +1,22 @@
 2020-01-03  Chris Dumez  <cdumez@apple.com>
 
+        Align Range.intersectsNode() with the DOM specification
+        https://bugs.webkit.org/show_bug.cgi?id=205745
+
+        Reviewed by Darin Adler.
+
+        Align Range.intersectsNode() with the DOM specification:
+        - https://dom.spec.whatwg.org/#dom-range-intersectsnode
+
+        This also aligns our behavior with Chrome 79 and Firefox 71.
+
+        No new tests, rebaselined existing test.
+
+        * dom/Range.cpp:
+        (WebCore::Range::intersectsNode const):
+
+2020-01-03  Chris Dumez  <cdumez@apple.com>
+
         dispatchEvent() should not clear the event's isTrusted flag when it returns early
         https://bugs.webkit.org/show_bug.cgi?id=205731
 

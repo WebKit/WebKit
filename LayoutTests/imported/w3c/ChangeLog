@@ -1,5 +1,16 @@
 2020-01-03  Chris Dumez  <cdumez@apple.com>
 
+        Align Range.intersectsNode() with the DOM specification
+        https://bugs.webkit.org/show_bug.cgi?id=205745
+
+        Reviewed by Darin Adler.
+
+        Rebaseline WPT test now that it is passing.
+
+        * web-platform-tests/dom/ranges/Range-intersectsNode-2-expected.txt:
+
+2020-01-03  Chris Dumez  <cdumez@apple.com>
+
         dispatchEvent() should not clear the event's isTrusted flag when it returns early
         https://bugs.webkit.org/show_bug.cgi?id=205731
 

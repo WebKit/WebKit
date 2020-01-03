@@ -476,27 +476,21 @@ ExceptionOr<bool> Range::intersectsNode(Node& refNode) const
     if (!refNode.isConnected() || &refNode.document() != &ownerDocument())
         return false;
 
-    ContainerNode* parentNode = refNode.parentNode();
+    auto* parentNode = refNode.parentNode();
     if (!parentNode)
         return true;
 
     unsigned nodeIndex = refNode.computeNodeIndex();
 
-    // If (parent, offset) is before end and (parent, offset + 1) is after start, return true.
+    // If (parentNode, nodeIndex) is before end and (parentNode, nodeIndex + 1) is after start, return true.
     // Otherwise, return false.
-    auto result = comparePoint(*parentNode, nodeIndex);
-    if (result.hasException())
-        return result.releaseException();
-    auto compareFirst = result.releaseReturnValue();
-    result = comparePoint(*parentNode, nodeIndex + 1);
-    if (result.hasException())
-        return result.releaseException();
-    auto compareSecond = result.releaseReturnValue();
-
-    bool isFirstBeforeEnd = m_start == m_end ? compareFirst < 0 : compareFirst <= 0;
-    bool isSecondAfterStart = m_start == m_end ? compareSecond > 0 : compareSecond >= 0;
-
-    return isFirstBeforeEnd && isSecondAfterStart;
+    auto compareEndResult = compareBoundaryPoints(parentNode, nodeIndex, m_end.container(), m_end.offset());
+    if (compareEndResult.hasException())
+        return compareEndResult.releaseException();
+    auto compareStartResult = compareBoundaryPoints(parentNode, nodeIndex + 1, m_start.container(), m_start.offset());
+    if (compareStartResult.hasException())
+        return compareStartResult.releaseException();
+    return compareEndResult.returnValue() == -1 && compareStartResult.returnValue() == 1;
 }
 
 static inline Node* highestAncestorUnderCommonRoot(Node* node, Node* commonRoot)
