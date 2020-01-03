@@ -1,3 +1,17 @@
+2020-01-03  Alicia Boya García  <aboya@igalia.com>
+
+        [GStreamer][MSE] Player stalling too soon
+        https://bugs.webkit.org/show_bug.cgi?id=205117
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        Added the testcase used to report the bug, cleaned and adapted for
+        WPT.
+
+        * web-platform-tests/media-source/mediasource-h264-play-starved.html: Added.
+        * web-platform-tests/media-source/mp4/h264-starvation-init.mp4: Added.
+        * web-platform-tests/media-source/mp4/h264-starvation-media.mp4: Added.
+
 2020-01-03  Rob Buis  <rbuis@igalia.com>
 
         <link> with non-CSS type should not be retrieved

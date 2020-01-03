@@ -107,7 +107,9 @@
       <dep package="gst-plugins-base"/>
       <dep package="ffmpeg"/>
     </dependencies>
-    <branch hash="sha256:e8a5748ae9a4a7be9696512182ea9ffa6efe0be9b7976916548e9d4381ca61c4" module="gst-libav/gst-libav-${version}.tar.xz" repo="gstreamer" version="1.16.1" />
+    <branch hash="sha256:e8a5748ae9a4a7be9696512182ea9ffa6efe0be9b7976916548e9d4381ca61c4" module="gst-libav/gst-libav-${version}.tar.xz" repo="gstreamer" version="1.16.1">
+      <patch file="libav-0001-gstavviddec-Limit-default-number-of-decoder-threads.patch" strip="1"/> <!-- Merged, should be shipped in 1.16.3 https://gitlab.freedesktop.org/gstreamer/gst-libav/merge_requests/56 -->
+    </branch>
   </meson>
 
   <meson id="gstreamer-vaapi" mesonargs="-Dgtk_doc=disabled -Dexamples=disabled">

@@ -1,3 +1,17 @@
+2020-01-03  Alicia Boya García  <aboya@igalia.com>
+
+        [GStreamer][MSE] Player stalling too soon
+        https://bugs.webkit.org/show_bug.cgi?id=205117
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        Backported patch to jhbuild.
+
+        Small modifications were necessary to make it apply on 1.16.1.
+
+        * gstreamer/jhbuild.modules:
+        * gstreamer/patches/libav-0001-gstavviddec-Limit-default-number-of-decoder-threads.patch: Added.
+
 2020-01-02  Alex Christensen  <achristensen@webkit.org>
 
         Add SPI to disable CORS on requests to URLs matching a pattern
