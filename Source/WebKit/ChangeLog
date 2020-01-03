@@ -1,3 +1,30 @@
+2020-01-03  Chris Dumez  <cdumez@apple.com>
+
+        Improve release logging in ServiceWorkerFetchTask
+        https://bugs.webkit.org/show_bug.cgi?id=205692
+
+        Reviewed by Youenn Fablet.
+
+        Improve release logging in ServiceWorkerFetchTask to facilitate debugging.
+
+        * NetworkProcess/ServiceWorker/ServiceWorkerFetchTask.cpp:
+        (WebKit::ServiceWorkerFetchTask::ServiceWorkerFetchTask):
+        (WebKit::ServiceWorkerFetchTask::~ServiceWorkerFetchTask):
+        (WebKit::ServiceWorkerFetchTask::start):
+        (WebKit::ServiceWorkerFetchTask::contextClosed):
+        (WebKit::ServiceWorkerFetchTask::startFetch):
+        (WebKit::ServiceWorkerFetchTask::didReceiveRedirectResponse):
+        (WebKit::ServiceWorkerFetchTask::didReceiveResponse):
+        (WebKit::ServiceWorkerFetchTask::didFinish):
+        (WebKit::ServiceWorkerFetchTask::didFail):
+        (WebKit::ServiceWorkerFetchTask::didNotHandle):
+        (WebKit::ServiceWorkerFetchTask::cannotHandle):
+        (WebKit::ServiceWorkerFetchTask::cancelFromClient):
+        (WebKit::ServiceWorkerFetchTask::continueDidReceiveFetchResponse):
+        (WebKit::ServiceWorkerFetchTask::continueFetchTaskWith):
+        (WebKit::ServiceWorkerFetchTask::timeoutTimerFired):
+        (WebKit::ServiceWorkerFetchTask::softUpdateIfNeeded):
+
 2020-01-03  youenn fablet  <youenn@apple.com>
 
         Fix non-libwebrtc builds after r253957
