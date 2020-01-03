@@ -35,7 +35,7 @@
 namespace WebCore {
 namespace Layout {
 
-static inline bool isWhitespaceCharacter(char character, bool preserveNewline)
+static inline bool isWhitespaceCharacter(UChar character, bool preserveNewline)
 {
     return character == ' ' || character == '\t' || (character == '\n' && !preserveNewline);
 }
