@@ -1,3 +1,21 @@
+2020-01-03  Antti Koivisto  <antti@apple.com>
+
+        [LFC][Integration] Enable text-transform:capitalize
+        https://bugs.webkit.org/show_bug.cgi?id=205721
+
+        Reviewed by Zalan Bujtas.
+
+        * layout/integration/LayoutIntegrationLineLayout.cpp:
+        (WebCore::LayoutIntegration::LineLayout::canUseFor):
+
+        Enable.
+
+        * layout/layouttree/LayoutTreeBuilder.cpp:
+        (WebCore::Layout::TreeBuilder::createLayoutBox):
+        (WebCore::Layout::applyTextTransform): Deleted.
+
+        No need to do anything, RenderText::text() has already applied text transform.
+
 2020-01-03  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] Fix fast/ruby/ruby-justification.html

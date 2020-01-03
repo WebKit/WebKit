@@ -70,9 +70,6 @@ bool LineLayout::canUseFor(const RenderBlockFlow& flow)
     if (flow.containsFloats())
         return false;
 
-    if (flow.style().textTransform() == TextTransform::Capitalize)
-        return false;
-
     if (flow.fragmentedFlowState() != RenderObject::NotInsideFragmentedFlow)
         return false;
 
