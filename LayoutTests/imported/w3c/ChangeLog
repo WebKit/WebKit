@@ -1,3 +1,48 @@
+2020-01-03  Cathie Chen  <cathiechen@igalia.com>
+
+        Import WPT test cases for apect-ratio generated from attribute width and height
+        https://bugs.webkit.org/show_bug.cgi?id=205678
+
+        Reviewed by Manuel Rego Casasnovas
+
+        Import web-platform-tests/html/rendering/replaced-elements/attributes-for-embedded-content-and-images/ from WPT.
+        Also import web-platform-tests/media/ which is needed by video-aspect-ratio.html.
+        Update video_loop_base-expected.txt, resize-during-playback-expected.txt and wpt-server-http.sub-expected.txt
+        which include resources in web-platform-tests/media/.
+
+        * resources/import-expectations.json:
+        * web-platform-tests/html/rendering/replaced-elements/attributes-for-embedded-content-and-images/align.html:
+        * web-platform-tests/html/rendering/replaced-elements/attributes-for-embedded-content-and-images/canvas-aspect-ratio-expected.txt:
+        * web-platform-tests/html/rendering/replaced-elements/attributes-for-embedded-content-and-images/canvas-aspect-ratio.html:
+        * web-platform-tests/html/rendering/replaced-elements/attributes-for-embedded-content-and-images/content-aspect-ratio-expected.txt: Added.
+        * web-platform-tests/html/rendering/replaced-elements/attributes-for-embedded-content-and-images/content-aspect-ratio.html: Added.
+        * web-platform-tests/html/rendering/replaced-elements/attributes-for-embedded-content-and-images/img-aspect-ratio-expected.txt:
+        * web-platform-tests/html/rendering/replaced-elements/attributes-for-embedded-content-and-images/img-aspect-ratio.html:
+        * web-platform-tests/html/rendering/replaced-elements/attributes-for-embedded-content-and-images/img-no-alt-replaced.html:
+        * web-platform-tests/html/rendering/replaced-elements/attributes-for-embedded-content-and-images/img-replaced-box-while-loading.html:
+        * web-platform-tests/html/rendering/replaced-elements/attributes-for-embedded-content-and-images/video-aspect-ratio-expected.txt:
+        * web-platform-tests/html/rendering/replaced-elements/attributes-for-embedded-content-and-images/video-aspect-ratio.html:
+        * web-platform-tests/html/rendering/replaced-elements/attributes-for-embedded-content-and-images/w3c-import.log:
+        * web-platform-tests/html/semantics/embedded-content/media-elements/video_loop_base-expected.txt:
+        * web-platform-tests/html/semantics/embedded-content/the-video-element/resize-during-playback-expected.txt:
+        * web-platform-tests/infrastructure/server/wpt-server-http.sub-expected.txt:
+        * web-platform-tests/media/1x1-green.png: Added.
+        * web-platform-tests/media/2x2-green.mp4: Added.
+        * web-platform-tests/media/2x2-green.ogv: Added.
+        * web-platform-tests/media/400x300-red-resize-200x150-green.mp4: Added.
+        * web-platform-tests/media/400x300-red-resize-200x150-green.webm: Added.
+        * web-platform-tests/media/META.yml: Added.
+        * web-platform-tests/media/OWNERS: Removed.
+        * web-platform-tests/media/counting.mp4: Added.
+        * web-platform-tests/media/counting.ogv: Added.
+        * web-platform-tests/media/foo-no-cors.vtt: Added.
+        * web-platform-tests/media/sound_0.mp3: Added.
+        * web-platform-tests/media/sound_0.oga: Added.
+        * web-platform-tests/media/test.mp4: Added.
+        * web-platform-tests/media/test.ogv: Added.
+        * web-platform-tests/media/video.ogv: Added.
+        * web-platform-tests/media/w3c-import.log:
+
 2020-01-03  Alicia Boya García  <aboya@igalia.com>
 
         [GStreamer][MSE] Player stalling too soon

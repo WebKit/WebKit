@@ -1,3 +1,3 @@
 
-PASS Canvas width and height attributes are used to infer aspect-ratio 
+PASS Canvas width and height attributes are used as the surface size 
 
