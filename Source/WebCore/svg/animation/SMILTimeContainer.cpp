@@ -38,6 +38,8 @@ namespace WebCore {
 static const Seconds SMILAnimationFrameDelay { 1_s / 60. };
 static const Seconds SMILAnimationFrameThrottledDelay { 1_s / 30. };
 
+DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(SMILTimeContainer);
+
 SMILTimeContainer::SMILTimeContainer(SVGSVGElement& owner)
     : m_timer(*this, &SMILTimeContainer::timerFired)
     , m_ownerSVGElement(owner)

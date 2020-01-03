@@ -47,6 +47,8 @@
 
 namespace WebCore {
 
+DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(CSSFontFace);
+
 template<typename T> void iterateClients(HashSet<CSSFontFace::Client*>& clients, T callback)
 {
     Vector<Ref<CSSFontFace::Client>> clientsCopy;

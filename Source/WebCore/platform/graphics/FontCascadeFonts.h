@@ -42,8 +42,10 @@ class GraphicsContext;
 class IntRect;
 class MixedFontGlyphPage;
 
+DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(FontCascadeFonts);
 class FontCascadeFonts : public RefCounted<FontCascadeFonts> {
     WTF_MAKE_NONCOPYABLE(FontCascadeFonts);
+    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(FontCascadeFonts);
 public:
     static Ref<FontCascadeFonts> create(RefPtr<FontSelector>&& fontSelector) { return adoptRef(*new FontCascadeFonts(WTFMove(fontSelector))); }
     static Ref<FontCascadeFonts> createForPlatformFont(const FontPlatformData& platformData) { return adoptRef(*new FontCascadeFonts(platformData)); }

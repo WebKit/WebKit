@@ -28,8 +28,10 @@ namespace WebCore {
 
 class RenderTable;
 
+DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(TableLayout);
 class TableLayout {
-    WTF_MAKE_NONCOPYABLE(TableLayout); WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_NONCOPYABLE(TableLayout);
+    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(TableLayout);
 public:
     explicit TableLayout(RenderTable* table)
         : m_table(table)

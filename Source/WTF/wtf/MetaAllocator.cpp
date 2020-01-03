@@ -31,9 +31,15 @@
 
 #include <wtf/DataLog.h>
 #include <wtf/FastMalloc.h>
+#include <wtf/NeverDestroyed.h>
 #include <wtf/ProcessID.h>
 
 namespace WTF {
+
+DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(MetaAllocatorHandle);
+
+DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(MetaAllocatorFreeSpace);
+DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(MetaAllocatorFreeSpace);
 
 MetaAllocator::~MetaAllocator()
 {
@@ -472,7 +478,7 @@ MetaAllocator::FreeSpaceNode* MetaAllocator::allocFreeSpaceNode()
 #ifndef NDEBUG
     m_mallocBalance++;
 #endif
-    return new (NotNull, fastMalloc(sizeof(FreeSpaceNode))) FreeSpaceNode();
+    return new (NotNull, MetaAllocatorFreeSpaceMalloc::malloc(sizeof(FreeSpaceNode))) FreeSpaceNode();
 }
 
 void MetaAllocator::freeFreeSpaceNode(FreeSpaceNode* node)
@@ -480,7 +486,7 @@ void MetaAllocator::freeFreeSpaceNode(FreeSpaceNode* node)
 #ifndef NDEBUG
     m_mallocBalance--;
 #endif
-    fastFree(node);
+    MetaAllocatorFreeSpaceMalloc::free(node);
 }
 
 #if ENABLE(META_ALLOCATOR_PROFILE)

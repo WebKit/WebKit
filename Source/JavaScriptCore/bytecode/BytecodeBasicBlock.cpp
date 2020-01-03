@@ -33,6 +33,8 @@
 
 namespace JSC {
 
+DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(BytecodeBasicBlock);
+
 void BytecodeBasicBlock::shrinkToFit()
 {
     m_offsets.shrinkToFit();

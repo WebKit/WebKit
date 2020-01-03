@@ -34,6 +34,7 @@ namespace WebCore {
     };
 
     // this class represents a selector for a StyleRule
+    DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(CSSSelectorRareData);
     class CSSSelector {
         WTF_MAKE_FAST_ALLOCATED;
     public:
@@ -348,6 +349,7 @@ namespace WebCore {
         CSSSelector& operator=(const CSSSelector&);
 
         struct RareData : public RefCounted<RareData> {
+            WTF_MAKE_STRUCT_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(CSSSelectorRareData);
             static Ref<RareData> create(AtomString&& value) { return adoptRef(*new RareData(WTFMove(value))); }
             ~RareData();
 

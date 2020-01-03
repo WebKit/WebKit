@@ -251,6 +251,8 @@ private:
 
 class ConservativeRoots;
 
+DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(VM);
+
 #if COMPILER(MSVC)
 #pragma warning(push)
 #pragma warning(disable: 4200) // Disable "zero-sized array in struct/union" warning
@@ -263,8 +265,7 @@ struct ScratchBuffer {
 
     static ScratchBuffer* create(size_t size)
     {
-        ScratchBuffer* result = new (fastMalloc(ScratchBuffer::allocationSize(size))) ScratchBuffer;
-
+        ScratchBuffer* result = new (VMMalloc::malloc(ScratchBuffer::allocationSize(size))) ScratchBuffer;
         return result;
     }
 
@@ -952,7 +953,7 @@ public:
     {
         ASSERT(Options::useExceptionFuzz());
         if (!m_exceptionFuzzBuffer)
-            m_exceptionFuzzBuffer = MallocPtr<EncodedJSValue>::malloc(size);
+            m_exceptionFuzzBuffer = MallocPtr<EncodedJSValue, VMMalloc>::malloc(size);
         return m_exceptionFuzzBuffer.get();
     }
 
@@ -1220,7 +1221,7 @@ private:
     std::unique_ptr<ControlFlowProfiler> m_controlFlowProfiler;
     unsigned m_controlFlowProfilerEnabledCount;
     Deque<std::unique_ptr<QueuedTask>> m_microtaskQueue;
-    MallocPtr<EncodedJSValue> m_exceptionFuzzBuffer;
+    MallocPtr<EncodedJSValue, VMMalloc> m_exceptionFuzzBuffer;
     VMTraps m_traps;
     RefPtr<Watchdog> m_watchdog;
     std::unique_ptr<HeapProfiler> m_heapProfiler;

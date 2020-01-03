@@ -227,6 +227,8 @@ bool VM::s_canUseJIT = false;
 
 Atomic<unsigned> VM::s_numberOfIDs;
 
+DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(VM);
+
 // Note: Platform.h will enforce that ENABLE(ASSEMBLER) is true if either
 // ENABLE(JIT) or ENABLE(YARR_JIT) or both are enabled. The code below
 // just checks for ENABLE(JIT) or ENABLE(YARR_JIT) with this premise in mind.
@@ -654,7 +656,7 @@ VM::~VM()
 
 #if ENABLE(DFG_JIT)
     for (unsigned i = 0; i < m_scratchBuffers.size(); ++i)
-        fastFree(m_scratchBuffers[i]);
+        VMMalloc::free(m_scratchBuffers[i]);
 #endif
 }
 

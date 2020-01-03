@@ -1,3 +1,21 @@
+2020-01-02  Yusuke Suzuki  <ysuzuki@apple.com> and Simon Fraser  <simon.fraser@apple.com>
+
+        Experiment: create lots of different malloc zones for easier accounting of memory use
+        https://bugs.webkit.org/show_bug.cgi?id=186422
+
+        Reviewed by Saam Barati.
+
+        * bmalloc/BPlatform.h:
+        * bmalloc/Environment.cpp:
+        (bmalloc::Environment::computeIsDebugHeapEnabled):
+        * bmalloc/IsoHeap.h:
+        (bmalloc::api::IsoHeap::IsoHeap):
+        * bmalloc/IsoHeapInlines.h:
+        (bmalloc::api::IsoHeap<Type>::IsoHeap):
+        * bmalloc/IsoTLSInlines.h:
+        (bmalloc::IsoTLS::allocateSlow):
+        (bmalloc::IsoTLS::deallocateSlow):
+
 2019-12-07  Basuke Suzuki  <basuke.suzuki@sony.com>
 
         [bmalloc] Decommit unused region in chunk metadata.

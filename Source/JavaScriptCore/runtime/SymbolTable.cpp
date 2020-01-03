@@ -39,6 +39,8 @@ namespace JSC {
 
 const ClassInfo SymbolTable::s_info = { "SymbolTable", nullptr, nullptr, nullptr, CREATE_METHOD_TABLE(SymbolTable) };
 
+DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(SymbolTableEntryFatEntry);
+
 SymbolTableEntry& SymbolTableEntry::copySlow(const SymbolTableEntry& other)
 {
     ASSERT(other.isFat());

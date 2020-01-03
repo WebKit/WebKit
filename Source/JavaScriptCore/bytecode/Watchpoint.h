@@ -135,11 +135,12 @@ class WatchpointSet;
     type member; \
     static_assert(std::is_trivially_destructible<type>::value, ""); \
 
+DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(Watchpoint);
 
 class Watchpoint : public PackedRawSentinelNode<Watchpoint> {
     WTF_MAKE_NONCOPYABLE(Watchpoint);
     WTF_MAKE_NONMOVABLE(Watchpoint);
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_STRUCT_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(Watchpoint);
 public:
 #define JSC_DEFINE_WATCHPOINT_TYPES(type, _) type,
     enum class Type : uint8_t {
@@ -172,7 +173,10 @@ class InlineWatchpointSet;
 class DeferredWatchpointFire;
 class VM;
 
+DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(WatchpointSet);
+
 class WatchpointSet : public ThreadSafeRefCounted<WatchpointSet> {
+    WTF_MAKE_STRUCT_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(WatchpointSet);
     friend class LLIntOffsetsExtractor;
     friend class DeferredWatchpointFire;
 public:

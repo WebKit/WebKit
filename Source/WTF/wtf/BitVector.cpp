@@ -30,9 +30,14 @@
 #include <string.h>
 #include <wtf/Assertions.h>
 #include <wtf/FastMalloc.h>
+#include <wtf/NeverDestroyed.h>
 #include <wtf/StdLibExtras.h>
 
 namespace WTF {
+
+
+DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(BitVector);
+DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(BitVector);
 
 void BitVector::setSlow(const BitVector& other)
 {
@@ -76,13 +81,13 @@ BitVector::OutOfLineBits* BitVector::OutOfLineBits::create(size_t numBits)
 {
     numBits = (numBits + bitsInPointer() - 1) & ~(static_cast<size_t>(bitsInPointer()) - 1);
     size_t size = sizeof(OutOfLineBits) + sizeof(uintptr_t) * (numBits / bitsInPointer());
-    OutOfLineBits* result = new (NotNull, fastMalloc(size)) OutOfLineBits(numBits);
+    OutOfLineBits* result = new (NotNull, BitVectorMalloc::malloc(size)) OutOfLineBits(numBits);
     return result;
 }
 
 void BitVector::OutOfLineBits::destroy(OutOfLineBits* outOfLineBits)
 {
-    fastFree(outOfLineBits);
+    BitVectorMalloc::free(outOfLineBits);
 }
 
 void BitVector::resizeOutOfLine(size_t numBits)

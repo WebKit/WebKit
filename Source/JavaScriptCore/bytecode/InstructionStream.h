@@ -32,10 +32,12 @@
 
 namespace JSC {
 
+DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(InstructionStream);
+
 class InstructionStream {
     WTF_MAKE_FAST_ALLOCATED;
 
-    using InstructionBuffer = Vector<uint8_t, 0, UnsafeVectorOverflow>;
+    using InstructionBuffer = Vector<uint8_t, 0, UnsafeVectorOverflow, 16, InstructionStreamMalloc>;
 
     friend class InstructionStreamWriter;
     friend class CachedInstructionStream;

@@ -40,8 +40,9 @@ class StyleRuleKeyframe;
 class StyleProperties;
 class StyleRuleKeyframes;
     
+DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(StyleRuleBase);
 class StyleRuleBase : public WTF::RefCountedBase {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_STRUCT_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(StyleRuleBase);
 public:
     StyleRuleType type() const { return static_cast<StyleRuleType>(m_type); }
     
@@ -99,8 +100,9 @@ private:
     unsigned m_hasDocumentSecurityOrigin : 1;
 };
 
+DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(StyleRule);
 class StyleRule final : public StyleRuleBase {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_STRUCT_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(StyleRule);
 public:
     static Ref<StyleRule> create(Ref<StylePropertiesBase>&& properties, bool hasDocumentSecurityOrigin, CSSSelectorList&& selectors)
     {

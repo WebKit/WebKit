@@ -45,9 +45,11 @@ class IsoCellSet;
 class MarkedSpace;
 class LLIntOffsetsExtractor;
 
+DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(BlockDirectory);
+
 class BlockDirectory {
     WTF_MAKE_NONCOPYABLE(BlockDirectory);
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(BlockDirectory);
     
     friend class LLIntOffsetsExtractor;
 

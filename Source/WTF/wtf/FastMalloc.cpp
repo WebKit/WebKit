@@ -45,6 +45,20 @@
 #include <malloc/malloc.h>
 #endif
 
+#if ENABLE(MALLOC_HEAP_BREAKDOWN)
+#include <wtf/Atomics.h>
+#include <wtf/HashMap.h>
+#include <wtf/Lock.h>
+#include <wtf/NeverDestroyed.h>
+#include <wtf/SetForScope.h>
+#include <wtf/StackShot.h>
+
+#if PLATFORM(COCOA)
+#include <notify.h>
+#endif
+
+#endif
+
 namespace WTF {
 
 #if !defined(NDEBUG)
@@ -229,7 +243,7 @@ TryMallocReturnValue tryFastRealloc(void* p, size_t n)
 
 void releaseFastMallocFreeMemory() { }
 void releaseFastMallocFreeMemoryForThisThread() { }
-    
+
 FastMallocStatistics fastMallocStatistics()
 {
     FastMallocStatistics statistics = { 0, 0, 0 };
@@ -260,6 +274,8 @@ void fastDecommitAlignedMemory(void* ptr, size_t size)
 
 void fastEnableMiniMode() { }
 
+void fastMallocDumpMallocStats() { }
+
 } // namespace WTF
 
 #else // defined(USE_SYSTEM_MALLOC) && USE_SYSTEM_MALLOC
@@ -267,6 +283,194 @@ void fastEnableMiniMode() { }
 #include <bmalloc/bmalloc.h>
 
 namespace WTF {
+
+#define TRACK_MALLOC_CALLSTACK 0
+
+#if ENABLE(MALLOC_HEAP_BREAKDOWN) && TRACK_MALLOC_CALLSTACK
+
+static ThreadSpecificKey avoidRecordingCountKey { InvalidThreadSpecificKey };
+class AvoidRecordingScope {
+public:
+    AvoidRecordingScope();
+    ~AvoidRecordingScope();
+
+    static uintptr_t avoidRecordingCount()
+    {
+        return bitwise_cast<uintptr_t>(threadSpecificGet(avoidRecordingCountKey));
+    }
+};
+
+AvoidRecordingScope::AvoidRecordingScope()
+{
+    static std::once_flag onceKey;
+    std::call_once(onceKey, [] {
+        // The value stored in TLS is initially 0.
+        threadSpecificKeyCreate(&avoidRecordingCountKey, [](void*) { });
+    });
+    threadSpecificSet(avoidRecordingCountKey, bitwise_cast<void*>(avoidRecordingCount() + 1));
+}
+
+AvoidRecordingScope::~AvoidRecordingScope()
+{
+    threadSpecificSet(avoidRecordingCountKey, bitwise_cast<void*>(avoidRecordingCount() - 1));
+}
+
+class MallocCallTracker {
+public:
+    MallocCallTracker();
+
+    void recordMalloc(void*, size_t);
+    void recordRealloc(void* oldAddress, void* newAddress, size_t);
+    void recordFree(void*);
+
+    void dumpStats();
+
+    static MallocCallTracker& singleton();
+
+private:
+    struct MallocSiteData {
+        StackShot stack;
+        size_t size;
+
+        MallocSiteData(size_t stackSize, size_t allocationSize)
+            : stack(stackSize)
+            , size(allocationSize)
+        {
+        }
+    };
+
+    HashMap<void*, std::unique_ptr<MallocSiteData>> m_addressMallocSiteData;
+    Lock m_mutex;
+};
+
+MallocCallTracker& MallocCallTracker::singleton()
+{
+    AvoidRecordingScope avoidRecording;
+    static NeverDestroyed<MallocCallTracker> tracker;
+    return tracker;
+}
+
+
+MallocCallTracker::MallocCallTracker()
+{
+    int token;
+    notify_register_dispatch("com.apple.WebKit.dumpUntrackedMallocs", &token, dispatch_get_main_queue(), ^(int) {
+        MallocCallTracker::singleton().dumpStats();
+    });
+}
+
+void MallocCallTracker::recordMalloc(void* address, size_t allocationSize)
+{
+    AvoidRecordingScope avoidRecording;
+
+    // Intentionally using std::make_unique not to use FastMalloc for data structure tracking FastMalloc.
+    const size_t stackSize = 10;
+    auto siteData = std::make_unique<MallocSiteData>(stackSize, allocationSize);
+
+    auto locker = holdLock(m_mutex);
+    auto addResult = m_addressMallocSiteData.add(address, WTFMove(siteData));
+    UNUSED_PARAM(addResult);
+}
+
+void MallocCallTracker::recordRealloc(void* oldAddress, void* newAddress, size_t newSize)
+{
+    AvoidRecordingScope avoidRecording;
+
+    auto locker = holdLock(m_mutex);
+
+    auto it = m_addressMallocSiteData.find(oldAddress);
+    if (it == m_addressMallocSiteData.end()) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+
+    it->value->size = newSize;
+    if (oldAddress != newAddress) {
+        auto value = WTFMove(it->value);
+        m_addressMallocSiteData.remove(it);
+        auto addResult = m_addressMallocSiteData.add(newAddress, WTFMove(value));
+        ASSERT_UNUSED(addResult, addResult.isNewEntry);
+    }
+}
+
+void MallocCallTracker::recordFree(void* address)
+{
+    AvoidRecordingScope avoidRecording;
+
+    auto locker = holdLock(m_mutex);
+    bool removed = m_addressMallocSiteData.remove(address);
+    UNUSED_PARAM(removed);
+}
+
+void MallocCallTracker::dumpStats()
+{
+    AvoidRecordingScope avoidRecording;
+
+    {
+        auto locker = holdLock(m_mutex);
+
+        // Build a hash of stack to address vector
+        struct MallocSiteTotals {
+            Vector<MallocSiteData*> siteData;
+            size_t count { 0 };
+            size_t totalSize { 0 };
+        };
+
+        size_t totalUntrackedSize = 0;
+        size_t totalUntrackedCount = 0;
+
+        HashMap<unsigned, std::unique_ptr<MallocSiteTotals>> callSiteToMallocData;
+        for (const auto& it : m_addressMallocSiteData) {
+            auto result = callSiteToMallocData.ensure(it.value->stack.hash(), [] () {
+                // Intentionally using std::make_unique not to use FastMalloc for data structure tracking FastMalloc.
+                return std::make_unique<MallocSiteTotals>();
+            });
+            auto& siteTotal = result.iterator->value;
+            siteTotal->siteData.append(it.value.get());
+            ++siteTotal->count;
+            siteTotal->totalSize += it.value->size;
+            totalUntrackedSize += it.value->size;
+            ++totalUntrackedCount;
+        }
+
+        Vector<unsigned> stackHashes;
+        auto stackKeys = callSiteToMallocData.keys();
+        for (auto key : stackKeys)
+            stackHashes.append(key);
+
+        // Sort by reverse total size.
+        std::sort(stackHashes.begin(), stackHashes.end(), [&] (unsigned a, unsigned b) {
+            const auto& aSiteTotals = callSiteToMallocData.get(a);
+            const auto& bSiteTotals = callSiteToMallocData.get(b);
+
+            return aSiteTotals->totalSize > bSiteTotals->totalSize;
+        });
+
+        WTFLogAlways("Total untracked bytes: %lu (%lu allocations)\n", totalUntrackedSize, totalUntrackedCount);
+
+        const size_t numStacksToDump = 100;
+        for (size_t i = 0; i < std::min(numStacksToDump, stackHashes.size()); ++i) {
+            const auto& mallocDataForStack = callSiteToMallocData.get(stackHashes[i]);
+
+            WTFLogAlways("Total allocation size: %lu (%lu allocations)\n", mallocDataForStack->totalSize, mallocDataForStack->count);
+            // FIXME: Add a way to remove some entries in StackShot in a programable way.
+            // https://bugs.webkit.org/show_bug.cgi?id=205701
+            const size_t framesToSkip = 6;
+            WTFPrintBacktrace(mallocDataForStack->siteData[0]->stack.array() + framesToSkip, mallocDataForStack->siteData[0]->stack.size() - framesToSkip);
+            WTFLogAlways("\n");
+        }
+    }
+}
+void fastMallocDumpMallocStats()
+{
+    MallocCallTracker::singleton().dumpStats();
+}
+#else
+void fastMallocDumpMallocStats()
+{
+}
+#endif
+
 
 bool isFastMallocEnabled()
 {
@@ -276,7 +480,12 @@ bool isFastMallocEnabled()
 void* fastMalloc(size_t size)
 {
     ASSERT_IS_WITHIN_LIMIT(size);
-    return bmalloc::api::malloc(size);
+    void* result = bmalloc::api::malloc(size);
+#if ENABLE(MALLOC_HEAP_BREAKDOWN) && TRACK_MALLOC_CALLSTACK
+    if (!AvoidRecordingScope::avoidRecordingCount())
+        MallocCallTracker::singleton().recordMalloc(result, size);
+#endif
+    return result;
 }
 
 void* fastCalloc(size_t numElements, size_t elementSize)
@@ -293,12 +502,21 @@ void* fastCalloc(size_t numElements, size_t elementSize)
 void* fastRealloc(void* object, size_t size)
 {
     ASSERT_IS_WITHIN_LIMIT(size);
-    return bmalloc::api::realloc(object, size);
+    void* result = bmalloc::api::realloc(object, size);
+#if ENABLE(MALLOC_HEAP_BREAKDOWN) && TRACK_MALLOC_CALLSTACK
+    if (!AvoidRecordingScope::avoidRecordingCount())
+        MallocCallTracker::singleton().recordRealloc(object, result, size);
+#endif
+    return result;
 }
 
 void fastFree(void* object)
 {
     bmalloc::api::free(object);
+#if ENABLE(MALLOC_HEAP_BREAKDOWN) && TRACK_MALLOC_CALLSTACK
+    if (!AvoidRecordingScope::avoidRecordingCount())
+        MallocCallTracker::singleton().recordFree(object);
+#endif
 }
 
 size_t fastMallocSize(const void*)
@@ -314,19 +532,29 @@ size_t fastMallocGoodSize(size_t size)
     return size;
 }
 
-void* fastAlignedMalloc(size_t alignment, size_t size) 
+void* fastAlignedMalloc(size_t alignment, size_t size)
 {
     ASSERT_IS_WITHIN_LIMIT(size);
-    return bmalloc::api::memalign(alignment, size);
+    void* result = bmalloc::api::memalign(alignment, size);
+#if ENABLE(MALLOC_HEAP_BREAKDOWN) && TRACK_MALLOC_CALLSTACK
+    if (!AvoidRecordingScope::avoidRecordingCount())
+        MallocCallTracker::singleton().recordMalloc(result, size);
+#endif
+    return result;
 }
 
-void* tryFastAlignedMalloc(size_t alignment, size_t size) 
+void* tryFastAlignedMalloc(size_t alignment, size_t size)
 {
     FAIL_IF_EXCEEDS_LIMIT(size);
-    return bmalloc::api::tryMemalign(alignment, size);
+    void* result = bmalloc::api::tryMemalign(alignment, size);
+#if ENABLE(MALLOC_HEAP_BREAKDOWN) && TRACK_MALLOC_CALLSTACK
+    if (!AvoidRecordingScope::avoidRecordingCount())
+        MallocCallTracker::singleton().recordMalloc(result, size);
+#endif
+    return result;
 }
 
-void fastAlignedFree(void* p) 
+void fastAlignedFree(void* p)
 {
     bmalloc::api::free(p);
 }
@@ -336,7 +564,7 @@ TryMallocReturnValue tryFastMalloc(size_t size)
     FAIL_IF_EXCEEDS_LIMIT(size);
     return bmalloc::api::tryMalloc(size);
 }
-    
+
 TryMallocReturnValue tryFastCalloc(size_t numElements, size_t elementSize)
 {
     FAIL_IF_EXCEEDS_LIMIT(numElements * elementSize);
@@ -346,7 +574,7 @@ TryMallocReturnValue tryFastCalloc(size_t numElements, size_t elementSize)
         return nullptr;
     return tryFastZeroedMalloc(checkedSize.unsafeGet());
 }
-    
+
 TryMallocReturnValue tryFastRealloc(void* object, size_t newSize)
 {
     FAIL_IF_EXCEEDS_LIMIT(newSize);

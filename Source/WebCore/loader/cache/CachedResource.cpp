@@ -65,6 +65,8 @@
 
 namespace WebCore {
 
+DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(CachedResource);
+
 ResourceLoadPriority CachedResource::defaultPriorityForResourceType(Type type)
 {
     switch (type) {

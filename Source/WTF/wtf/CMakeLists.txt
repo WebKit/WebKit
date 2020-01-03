@@ -47,6 +47,7 @@ set(WTF_PUBLIC_HEADERS
     DataLog.h
     DataMutex.h
     DateMath.h
+    DebugHeap.h
     DebugUtilities.h
     DeferrableRefCounted.h
     Deque.h
@@ -351,10 +352,12 @@ set(WTF_SOURCES
     ASCIICType.cpp
     Assertions.cpp
     AutomaticThread.cpp
+    Bag.cpp
     BitVector.cpp
     CPUTime.cpp
     ClockType.cpp
     CompilationThread.cpp
+    ConcurrentBuffer.cpp
     ConcurrentPtrHashSet.cpp
     CountingLock.cpp
     CrossThreadCopier.cpp
@@ -364,6 +367,7 @@ set(WTF_SOURCES
     CurrentTime.cpp
     DataLog.cpp
     DateMath.cpp
+    DebugHeap.cpp
     FastBitVector.cpp
     FastMalloc.cpp
     FilePrintStream.cpp
@@ -400,11 +404,14 @@ set(WTF_SOURCES
     RandomNumber.cpp
     ReadWriteLock.cpp
     RefCounted.cpp
+    RefCountedArray.cpp
     RefCountedLeakCounter.cpp
     RunLoop.cpp
     SHA1.cpp
     Seconds.cpp
+    SegmentedVector.cpp
     SixCharacterHash.cpp
+    SmallPtrSet.cpp
     StackBounds.cpp
     StackPointer.cpp
     StackStats.cpp
@@ -419,6 +426,8 @@ set(WTF_SOURCES
     URLHelpers.cpp
     URLParser.cpp
     UUID.cpp
+    UniqueArray.cpp
+    Vector.cpp
     WTFAssertions.cpp
     WallTime.cpp
     WordLock.cpp
@@ -447,6 +456,7 @@ set(WTF_SOURCES
     text/CString.cpp
     text/ExternalStringImpl.cpp
     text/LineEnding.cpp
+    text/StringBuffer.cpp
     text/StringBuilder.cpp
     text/StringBuilderJSON.cpp
     text/StringImpl.cpp

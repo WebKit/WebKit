@@ -2836,6 +2836,8 @@
 		0FA581B7150E952A00B9A2D9 /* DFGNodeFlags.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGNodeFlags.cpp; path = dfg/DFGNodeFlags.cpp; sourceTree = "<group>"; };
 		0FA581B8150E952A00B9A2D9 /* DFGNodeFlags.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGNodeFlags.h; path = dfg/DFGNodeFlags.h; sourceTree = "<group>"; };
 		0FA581B9150E952A00B9A2D9 /* DFGNodeType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGNodeType.h; path = dfg/DFGNodeType.h; sourceTree = "<group>"; };
+		0FA6F38C20CC2C9500A03DCD /* GCSegmentedArray.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GCSegmentedArray.cpp; sourceTree = "<group>"; };
+		0FA6F39620CCB7A600A03DCD /* AssemblerBuffer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AssemblerBuffer.cpp; sourceTree = "<group>"; };
 		0FA762001DB9242300B7A2FD /* CollectionScope.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CollectionScope.cpp; sourceTree = "<group>"; };
 		0FA762011DB9242300B7A2FD /* CollectionScope.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CollectionScope.h; sourceTree = "<group>"; };
 		0FA762021DB9242300B7A2FD /* MutatorState.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MutatorState.cpp; sourceTree = "<group>"; };
@@ -6174,6 +6176,7 @@
 				5272987B235FC8BA005C982C /* GCMemoryOperations.h */,
 				0F97152E1EB28BE900A1645D /* GCRequest.cpp */,
 				0F97152F1EB28BE900A1645D /* GCRequest.h */,
+				0FA6F38C20CC2C9500A03DCD /* GCSegmentedArray.cpp */,
 				2A343F7418A1748B0039B085 /* GCSegmentedArray.h */,
 				2A343F7718A1749D0039B085 /* GCSegmentedArrayInlines.h */,
 				0F86A26E1D6F7B3100CB0C92 /* GCTypeMap.h */,
@@ -8094,6 +8097,7 @@
 				8640923B156EED3B00566CC2 /* ARM64Registers.h */,
 				86ADD1430FDDEA980006EEC2 /* ARMv7Assembler.h */,
 				86ADD1430FDDEA980006FFCC /* ARMv7Registers.h */,
+				0FA6F39620CCB7A600A03DCD /* AssemblerBuffer.cpp */,
 				9688CB130ED12B4E001D649F /* AssemblerBuffer.h */,
 				86D3B2C110156BDE002865E7 /* AssemblerBufferWithConstantPool.h */,
 				43C392AA1C3BEB0000241F53 /* AssemblerCommon.h */,

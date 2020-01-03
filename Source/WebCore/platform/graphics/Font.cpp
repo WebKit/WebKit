@@ -52,6 +52,8 @@ unsigned GlyphPage::s_count = 0;
 const float smallCapsFontSizeMultiplier = 0.7f;
 const float emphasisMarkFontSizeMultiplier = 0.5f;
 
+DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(Font);
+
 Font::Font(const FontPlatformData& platformData, Origin origin, Interstitial interstitial, Visibility visibility, OrientationFallback orientationFallback)
     : m_platformData(platformData)
     , m_origin(origin)

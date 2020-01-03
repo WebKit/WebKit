@@ -124,9 +124,9 @@ using PseudoStyleCache = Vector<std::unique_ptr<RenderStyle>, 4>;
 
 template<typename T, typename U> inline bool compareEqual(const T& t, const U& u) { return t == static_cast<const T&>(u); }
 
+DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(RenderStyle);
 class RenderStyle {
-    WTF_MAKE_FAST_ALLOCATED;
-
+    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(RenderStyle);
 private:
     enum CloneTag { Clone };
     enum CreateDefaultStyleTag { CreateDefaultStyle };

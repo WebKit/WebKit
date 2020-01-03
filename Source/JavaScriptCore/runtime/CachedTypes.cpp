@@ -40,6 +40,7 @@
 #include "UnlinkedModuleProgramCodeBlock.h"
 #include "UnlinkedProgramCodeBlock.h"
 #include <wtf/FastMalloc.h>
+#include <wtf/MallocPtr.h>
 #include <wtf/Optional.h>
 #include <wtf/UUID.h>
 #include <wtf/text/AtomStringImpl.h>
@@ -161,7 +162,7 @@ public:
         }
 
         size_t size = m_baseOffset + m_currentPage->size();
-        MallocPtr<uint8_t> buffer = MallocPtr<uint8_t>::malloc(size);
+        MallocPtr<uint8_t, VMMalloc> buffer = MallocPtr<uint8_t, VMMalloc>::malloc(size);
         unsigned offset = 0;
         for (const auto& page : m_pages) {
             memcpy(buffer.get() + offset, page.buffer(), page.size());
@@ -206,10 +207,9 @@ private:
     class Page {
     public:
         Page(size_t size)
-            : m_offset(0)
+            : m_buffer(MallocPtr<uint8_t, VMMalloc>::malloc(size))
             , m_capacity(size)
         {
-            m_buffer = MallocPtr<uint8_t>::malloc(size);
         }
 
         bool malloc(size_t size, ptrdiff_t& result)
@@ -248,8 +248,8 @@ private:
         }
 
     private:
-        MallocPtr<uint8_t> m_buffer;
-        ptrdiff_t m_offset;
+        MallocPtr<uint8_t, VMMalloc> m_buffer;
+        ptrdiff_t m_offset { 0 };
         size_t m_capacity;
     };
 
@@ -597,10 +597,10 @@ ptrdiff_t CachedWriteBarrierOffsets::ptrOffset()
     return OBJECT_OFFSETOF(CachedWriteBarrier<void>, m_ptr);
 }
 
-template<typename T, size_t InlineCapacity = 0, typename OverflowHandler = CrashOnOverflow>
-class CachedVector : public VariableLengthObject<Vector<SourceType<T>, InlineCapacity, OverflowHandler>> {
+template<typename T, size_t InlineCapacity = 0, typename OverflowHandler = CrashOnOverflow, typename Malloc = WTF::VectorMalloc>
+class CachedVector : public VariableLengthObject<Vector<SourceType<T>, InlineCapacity, OverflowHandler, 16, Malloc>> {
 public:
-    void encode(Encoder& encoder, const Vector<SourceType<T>, InlineCapacity, OverflowHandler>& vector)
+    void encode(Encoder& encoder, const Vector<SourceType<T>, InlineCapacity, OverflowHandler, 16, Malloc>& vector)
     {
         m_size = vector.size();
         if (!m_size)
@@ -611,7 +611,7 @@ public:
     }
 
     template<typename... Args>
-    void decode(Decoder& decoder, Vector<SourceType<T>, InlineCapacity, OverflowHandler>& vector, Args... args) const
+    void decode(Decoder& decoder, Vector<SourceType<T>, InlineCapacity, OverflowHandler, 16, Malloc>& vector, Args... args) const
     {
         if (!m_size)
             return;
@@ -1362,13 +1362,13 @@ public:
 
     InstructionStream* decode(Decoder& decoder) const
     {
-        Vector<uint8_t, 0, UnsafeVectorOverflow> instructionsVector;
+        Vector<uint8_t, 0, UnsafeVectorOverflow, 16, InstructionStreamMalloc> instructionsVector;
         m_instructions.decode(decoder, instructionsVector);
         return new InstructionStream(WTFMove(instructionsVector));
     }
 
 private:
-    CachedVector<uint8_t, 0, UnsafeVectorOverflow> m_instructions;
+    CachedVector<uint8_t, 0, UnsafeVectorOverflow, InstructionStreamMalloc> m_instructions;
 };
 
 class CachedMetadataTable : public CachedObject<UnlinkedMetadataTable> {

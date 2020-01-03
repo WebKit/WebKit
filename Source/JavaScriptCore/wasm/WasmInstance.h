@@ -206,7 +206,7 @@ private:
     RefPtr<CodeBlock> m_codeBlock;
     RefPtr<Memory> m_memory;
 
-    MallocPtr<Global::Value> m_globals;
+    MallocPtr<Global::Value, VMMalloc> m_globals;
     FunctionWrapperMap m_functionWrappers;
     BitVector m_globalsToMark;
     BitVector m_globalsToBinding;

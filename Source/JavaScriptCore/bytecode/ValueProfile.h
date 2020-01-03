@@ -189,7 +189,7 @@ struct ValueProfileAndVirtualRegisterBuffer {
         // FIXME: ValueProfile has more stuff than we need. We could optimize these value profiles
         // to be more space efficient.
         // https://bugs.webkit.org/show_bug.cgi?id=175413
-        m_buffer = MallocPtr<ValueProfileAndVirtualRegister>::malloc(m_size * sizeof(ValueProfileAndVirtualRegister));
+        m_buffer = MallocPtr<ValueProfileAndVirtualRegister, VMMalloc>::malloc(m_size * sizeof(ValueProfileAndVirtualRegister));
         for (unsigned i = 0; i < m_size; ++i)
             new (&m_buffer.get()[i]) ValueProfileAndVirtualRegister();
     }
@@ -208,7 +208,7 @@ struct ValueProfileAndVirtualRegisterBuffer {
     }
 
     unsigned m_size;
-    MallocPtr<ValueProfileAndVirtualRegister> m_buffer;
+    MallocPtr<ValueProfileAndVirtualRegister, VMMalloc> m_buffer;
 };
 
 } // namespace JSC

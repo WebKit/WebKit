@@ -49,6 +49,10 @@
 
 namespace WebCore {
 
+DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(StyleProperties);
+DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(ImmutableStyleProperties);
+DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(MutableStyleProperties);
+
 static size_t sizeForImmutableStylePropertiesWithPropertyCount(unsigned count)
 {
     return sizeof(ImmutableStyleProperties) - sizeof(void*) + sizeof(CSSValue*) * count + sizeof(StylePropertyMetadata) * count;
@@ -61,7 +65,7 @@ static bool isInitialOrInherit(const String& value)
 
 Ref<ImmutableStyleProperties> ImmutableStyleProperties::create(const CSSProperty* properties, unsigned count, CSSParserMode cssParserMode)
 {
-    void* slot = WTF::fastMalloc(sizeForImmutableStylePropertiesWithPropertyCount(count));
+    void* slot = ImmutableStylePropertiesMalloc::malloc(sizeForImmutableStylePropertiesWithPropertyCount(count));
     return adoptRef(*new (NotNull, slot) ImmutableStyleProperties(properties, count, cssParserMode));
 }
 

@@ -1,3 +1,19 @@
+2020-01-02  Yusuke Suzuki  <ysuzuki@apple.com> and Simon Fraser  <simon.fraser@apple.com>
+
+        Experiment: create lots of different malloc zones for easier accounting of memory use
+        https://bugs.webkit.org/show_bug.cgi?id=186422
+
+        Reviewed by Saam Barati.
+
+        * Shared/ShareableBitmap.cpp:
+        (WebKit::ShareableBitmap::create):
+        (WebKit::ShareableBitmap::~ShareableBitmap):
+        * UIProcess/mac/LegacySessionStateCoding.cpp:
+        (WebKit::HistoryEntryDataEncoder::HistoryEntryDataEncoder):
+        (WebKit::HistoryEntryDataEncoder::finishEncoding):
+        (WebKit::encodeSessionHistoryEntryData):
+        (WebKit::encodeLegacySessionState):
+
 2020-01-02  Chris Dumez  <cdumez@apple.com>
 
         [iOS] Replace "unexpectedly resumed" observer with RunningBoard suspendible assertions

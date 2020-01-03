@@ -63,7 +63,9 @@ enum FontVariant { AutoVariant, NormalVariant, SmallCapsVariant, EmphasisMarkVar
 enum Pitch { UnknownPitch, FixedPitch, VariablePitch };
 enum class IsForPlatformFont : uint8_t { No, Yes };
 
+DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(Font);
 class Font : public RefCounted<Font> {
+    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(Font);
 public:
     // Used to create platform fonts.
     enum class Origin : uint8_t {

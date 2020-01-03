@@ -44,6 +44,8 @@ namespace JSC {
 
 class SymbolTable;
 
+DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(SymbolTableEntryFatEntry);
+
 static ALWAYS_INLINE int missingSymbolMarker() { return std::numeric_limits<int>::max(); }
 
 // The bit twiddling in this class assumes that every register index is a
@@ -332,7 +334,7 @@ private:
     static const intptr_t FlagBits = 6;
     
     class FatEntry {
-        WTF_MAKE_FAST_ALLOCATED;
+        WTF_MAKE_STRUCT_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(SymbolTableEntryFatEntry);
     public:
         FatEntry(intptr_t bits)
             : m_bits(bits & ~SlimFlag)

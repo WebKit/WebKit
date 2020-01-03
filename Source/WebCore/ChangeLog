@@ -1,3 +1,87 @@
+2020-01-02  Yusuke Suzuki  <ysuzuki@apple.com> and Simon Fraser  <simon.fraser@apple.com>
+
+        Experiment: create lots of different malloc zones for easier accounting of memory use
+        https://bugs.webkit.org/show_bug.cgi?id=186422
+
+        Reviewed by Saam Barati.
+
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/SerializedScriptValue.cpp:
+        * bindings/js/SerializedScriptValue.h:
+        * css/CSSFontFace.cpp:
+        * css/CSSFontFace.h:
+        * css/CSSSelector.cpp:
+        * css/CSSSelector.h:
+        * css/CSSValue.cpp:
+        * css/CSSValue.h:
+        * css/StyleProperties.cpp:
+        (WebCore::ImmutableStyleProperties::create):
+        * css/StyleProperties.h:
+        * css/StyleRule.cpp:
+        * css/StyleRule.h:
+        * dom/ElementData.cpp:
+        (WebCore::ShareableElementData::createWithAttributes):
+        (WebCore::UniqueElementData::makeShareableCopy const):
+        * dom/ElementData.h:
+        * dom/NodeRareData.cpp:
+        * dom/NodeRareData.h:
+        * dom/QualifiedName.cpp:
+        * dom/QualifiedName.h:
+        * html/parser/HTMLDocumentParser.cpp:
+        * html/parser/HTMLDocumentParser.h:
+        * loader/DocumentLoader.cpp:
+        * loader/DocumentLoader.h:
+        * loader/ResourceLoader.cpp:
+        * loader/ResourceLoader.h:
+        * loader/cache/CachedResource.cpp:
+        * loader/cache/CachedResource.h:
+        * page/PerformanceEntry.cpp:
+        * page/PerformanceEntry.h:
+        * platform/graphics/Font.cpp:
+        * platform/graphics/Font.h:
+        * platform/graphics/FontCascadeFonts.cpp:
+        * platform/graphics/FontCascadeFonts.h:
+        * platform/graphics/Region.cpp:
+        * platform/graphics/Region.h:
+        * platform/graphics/avfoundation/objc/MediaSampleAVFObjC.mm:
+        (WebCore::releaseUint8Vector):
+        * platform/graphics/cg/ImageBufferCG.cpp:
+        (WebCore::ImageBuffer::ImageBuffer):
+        * platform/graphics/nicosia/NicosiaBuffer.cpp:
+        (Nicosia::Buffer::Buffer):
+        * platform/network/ResourceHandle.cpp:
+        * platform/network/ResourceHandleInternal.h:
+        * platform/network/cf/FormDataStreamCFNet.cpp:
+        (WebCore::closeCurrentStream):
+        (WebCore::advanceCurrentStream):
+        * rendering/RenderLayer.cpp:
+        * rendering/RenderLayer.h:
+        * rendering/TableLayout.cpp: Copied from Source/JavaScriptCore/parser/SourceProviderCache.cpp.
+        * rendering/TableLayout.h:
+        * rendering/style/RenderStyle.cpp:
+        * rendering/style/RenderStyle.h:
+        * rendering/style/SVGRenderStyle.cpp:
+        * rendering/style/SVGRenderStyle.h:
+        * rendering/style/SVGRenderStyleDefs.cpp:
+        * rendering/style/SVGRenderStyleDefs.h:
+        * rendering/style/StyleBoxData.cpp:
+        * rendering/style/StyleBoxData.h:
+        * rendering/style/StyleInheritedData.cpp:
+        * rendering/style/StyleInheritedData.h:
+        * rendering/style/StyleRareInheritedData.cpp:
+        * rendering/style/StyleRareInheritedData.h:
+        * rendering/style/StyleRareNonInheritedData.cpp:
+        * rendering/style/StyleRareNonInheritedData.h:
+        * rendering/style/StyleSurroundData.cpp:
+        * rendering/style/StyleSurroundData.h:
+        * rendering/style/StyleTransformData.cpp:
+        * rendering/style/StyleTransformData.h:
+        * style/StyleTreeResolver.cpp:
+        * style/StyleTreeResolver.h:
+        * svg/animation/SMILTimeContainer.cpp:
+        * svg/animation/SMILTimeContainer.h:
+
 2020-01-02  Andy Estes  <aestes@apple.com>
 
         [Payment Request] Perform payment method data IDL conversion in the PaymentRequest constructor

@@ -137,12 +137,13 @@ enum class LegacyOverflowScrollingTouchPolicy : uint8_t {
     Enable,
 };
 
+DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(DocumentLoader);
 class DocumentLoader
     : public RefCounted<DocumentLoader>
     , public FrameDestructionObserver
     , public ContentSecurityPolicyClient
     , private CachedRawResourceClient {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(DocumentLoader);
     friend class ContentFilter;
 public:
     static Ref<DocumentLoader> create(const ResourceRequest& request, const SubstituteData& data)

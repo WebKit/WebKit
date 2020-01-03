@@ -136,6 +136,8 @@ DocumentLoader* DocumentLoader::fromTemporaryDocumentIdentifier(DocumentIdentifi
     return temporaryIdentifierToLoaderMap().get(identifier);
 }
 
+DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(DocumentLoader);
+
 DocumentLoader::DocumentLoader(const ResourceRequest& request, const SubstituteData& substituteData)
     : FrameDestructionObserver(nullptr)
     , m_cachedResourceLoader(CachedResourceLoader::create(this))

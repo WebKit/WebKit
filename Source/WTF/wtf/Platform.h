@@ -1204,6 +1204,14 @@
 #endif
 #endif
 
+/*
+ * Enable this to put each IsoHeap and other allocation categories into their own malloc heaps, so that tools like vmmap can show how big each heap is.
+ * Turn BENABLE_MALLOC_HEAP_BREAKDOWN on in bmalloc together when using this.
+ */
+#if !defined(ENABLE_MALLOC_HEAP_BREAKDOWN)
+#define ENABLE_MALLOC_HEAP_BREAKDOWN 0
+#endif
+
 #if PLATFORM(COCOA)
 #define USE_COREMEDIA 1
 #define USE_VIDEOTOOLBOX 1

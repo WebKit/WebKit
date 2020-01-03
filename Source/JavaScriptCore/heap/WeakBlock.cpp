@@ -35,16 +35,19 @@
 
 namespace JSC {
 
+DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(WeakBlock);
+
 WeakBlock* WeakBlock::create(Heap& heap, CellContainer container)
 {
     heap.didAllocateBlock(WeakBlock::blockSize);
-    return new (NotNull, fastMalloc(blockSize)) WeakBlock(container);
+    return new (NotNull, WeakBlockMalloc::malloc(blockSize)) WeakBlock(container);
+
 }
 
 void WeakBlock::destroy(Heap& heap, WeakBlock* block)
 {
     block->~WeakBlock();
-    fastFree(block);
+    WeakBlockMalloc::free(block);
     heap.didFreeBlock(WeakBlock::blockSize);
 }
 

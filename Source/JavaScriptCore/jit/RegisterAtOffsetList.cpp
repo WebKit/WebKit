@@ -31,7 +31,9 @@
 #include <wtf/ListDump.h>
 
 namespace JSC {
-    
+
+DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(RegisterAtOffsetList);
+
 RegisterAtOffsetList::RegisterAtOffsetList() { }
 
 RegisterAtOffsetList::RegisterAtOffsetList(RegisterSet registerSet, OffsetBaseType offsetBaseType)

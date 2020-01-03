@@ -37,6 +37,8 @@
 
 namespace JSC {
 
+DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(PropertyTable);
+
 #if DUMP_PROPERTYMAP_STATS
 
 struct PropertyMapHashTableStats {
@@ -514,14 +516,15 @@ inline void PropertyTable::rehash(unsigned newCapacity)
     m_indexMask = m_indexSize - 1;
     m_keyCount = 0;
     m_deletedCount = 0;
-    m_index = static_cast<unsigned*>(fastZeroedMalloc(dataSize()));
+
+    m_index = static_cast<unsigned*>(PropertyTableMalloc::zeroedMalloc(dataSize()));
 
     for (; iter != end; ++iter) {
         ASSERT(canInsert());
         reinsert(*iter);
     }
 
-    fastFree(oldEntryIndices);
+    PropertyTableMalloc::free(oldEntryIndices);
 }
 
 inline unsigned PropertyTable::tableCapacity() const { return m_indexSize >> 1; }

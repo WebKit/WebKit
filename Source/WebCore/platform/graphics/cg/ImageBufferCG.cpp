@@ -43,6 +43,7 @@
 #include <pal/spi/cg/CoreGraphicsSPI.h>
 #include <wtf/Assertions.h>
 #include <wtf/CheckedArithmetic.h>
+#include <wtf/DebugHeap.h>
 #include <wtf/MainThread.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/text/Base64.h>
@@ -61,6 +62,9 @@
 #define USE_ARGB32 PLATFORM(IOS_FAMILY)
 
 namespace WebCore {
+
+DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(ImageBuffer);
+DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(ImageBuffer);
 
 static FloatSize scaleSizeToUserSpace(const FloatSize& logicalSize, const IntSize& backingStoreSize, const IntSize& internalSize)
 {
@@ -168,7 +172,8 @@ ImageBuffer::ImageBuffer(const FloatSize& size, float resolutionScale, CGColorSp
     }
 
     if (!accelerateRendering) {
-        if (!tryFastCalloc(m_data.backingStoreSize.height(), m_data.bytesPerRow.unsafeGet()).getValue(m_data.data))
+        m_data.data = ImageBufferMalloc::tryZeroedMalloc(m_data.backingStoreSize.height() * m_data.bytesPerRow.unsafeGet());
+        if (!m_data.data)
             return;
         ASSERT(!(reinterpret_cast<intptr_t>(m_data.data) & 3));
 
@@ -179,7 +184,7 @@ ImageBuffer::ImageBuffer(const FloatSize& size, float resolutionScale, CGColorSp
 #endif
         cgContext = adoptCF(CGBitmapContextCreate(m_data.data, m_data.backingStoreSize.width(), m_data.backingStoreSize.height(), 8, m_data.bytesPerRow.unsafeGet(), m_data.colorSpace, m_data.bitmapInfo));
         const auto releaseImageData = [] (void*, const void* data, size_t) {
-            fastFree(const_cast<void*>(data));
+            ImageBufferMalloc::free(const_cast<void*>(data));
         };
         // Create a live image that wraps the data.
         verifyImageBufferIsBigEnough(m_data.data, numBytes.unsafeGet());

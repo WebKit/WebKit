@@ -68,9 +68,9 @@ enum GeneratedOperandType { GeneratedOperandTypeUnknown, GeneratedOperandInteger
 // a speculative check has failed. This allows the SpeculativeJIT
 // to propagate type information (including information that has
 // only speculatively been asserted) through the dataflow.
+DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(SpeculativeJIT);
 class SpeculativeJIT {
-    WTF_MAKE_FAST_ALLOCATED;
-
+    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(SpeculativeJIT);
     friend struct OSRExit;
 private:
     typedef JITCompiler::TrustedImm32 TrustedImm32;

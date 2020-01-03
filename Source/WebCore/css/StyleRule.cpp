@@ -45,6 +45,9 @@ struct SameSizeAsStyleRuleBase : public WTF::RefCountedBase {
 
 COMPILE_ASSERT(sizeof(StyleRuleBase) == sizeof(SameSizeAsStyleRuleBase), StyleRuleBase_should_stay_small);
 
+DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(StyleRuleBase);
+DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(StyleRule);
+
 Ref<CSSRule> StyleRuleBase::createCSSOMWrapper(CSSStyleSheet* parentSheet) const
 {
     return createCSSOMWrapper(parentSheet, nullptr);

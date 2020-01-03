@@ -38,7 +38,9 @@ class StyleSheetContents;
 
 enum CSSPropertyID : uint16_t;
 
+DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(CSSValue);
 class CSSValue : public RefCounted<CSSValue> {
+    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(CSSValue);
 public:
     enum Type {
         CSS_INHERIT = 0,

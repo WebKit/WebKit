@@ -25,11 +25,14 @@
 
 #pragma once
 
+#include <wtf/DebugHeap.h>
 #include <wtf/DoublyLinkedList.h>
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
 
 namespace JSC {
+
+DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(GCSegmentedArray);
 
 template <typename T>
 class GCArraySegment : public DoublyLinkedListNode<GCArraySegment<T>> {

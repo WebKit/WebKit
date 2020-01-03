@@ -32,6 +32,8 @@
 
 namespace JSC { namespace DFG {
 
+DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(BasicBlock);
+
 BasicBlock::BasicBlock(BytecodeIndex bytecodeBegin, unsigned numArguments, unsigned numLocals, unsigned numTmps, float executionCount)
     : bytecodeBegin(bytecodeBegin)
     , index(NoBlock)

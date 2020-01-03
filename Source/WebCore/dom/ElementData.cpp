@@ -33,6 +33,9 @@
 
 namespace WebCore {
 
+DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(ElementData);
+DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(ShareableElementData);
+
 void ElementData::destroy()
 {
     if (is<UniqueElementData>(*this))
@@ -65,7 +68,7 @@ static size_t sizeForShareableElementDataWithAttributeCount(unsigned count)
 
 Ref<ShareableElementData> ShareableElementData::createWithAttributes(const Vector<Attribute>& attributes)
 {
-    void* slot = WTF::fastMalloc(sizeForShareableElementDataWithAttributeCount(attributes.size()));
+    void* slot = ShareableElementDataMalloc::malloc(sizeForShareableElementDataWithAttributeCount(attributes.size()));
     return adoptRef(*new (NotNull, slot) ShareableElementData(attributes));
 }
 
@@ -157,7 +160,7 @@ Ref<UniqueElementData> ElementData::makeUniqueCopy() const
 
 Ref<ShareableElementData> UniqueElementData::makeShareableCopy() const
 {
-    void* slot = WTF::fastMalloc(sizeForShareableElementDataWithAttributeCount(m_attributeVector.size()));
+    void* slot = ShareableElementDataMalloc::malloc(sizeForShareableElementDataWithAttributeCount(m_attributeVector.size()));
     return adoptRef(*new (NotNull, slot) ShareableElementData(*this));
 }
 

@@ -40,7 +40,7 @@ IsoSubspace::IsoSubspace(CString name, Heap& heap, HeapCellType* heapCellType, s
     : Subspace(name, heap)
     , m_directory(WTF::roundUpToMultipleOf<MarkedBlock::atomSize>(size))
     , m_localAllocator(&m_directory)
-    , m_isoAlignedMemoryAllocator(makeUnique<IsoAlignedMemoryAllocator>())
+    , m_isoAlignedMemoryAllocator(makeUnique<IsoAlignedMemoryAllocator>(name))
 {
     m_remainingLowerTierCellCount = numberOfLowerTierCells;
     ASSERT(WTF::roundUpToMultipleOf<MarkedBlock::atomSize>(size) == cellSize());

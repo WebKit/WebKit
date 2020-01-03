@@ -38,9 +38,10 @@ class RadioNodeList;
 
 template<typename ListType> struct NodeListTypeIdentifier;
 
+DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(NodeListsNodeData);
 class NodeListsNodeData {
     WTF_MAKE_NONCOPYABLE(NodeListsNodeData);
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_STRUCT_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(NodeListsNodeData);
 public:
     NodeListsNodeData() = default;
 
@@ -237,8 +238,10 @@ public:
     NodeMutationObserverData() { }
 };
 
+DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(NodeRareData);
 class NodeRareData {
-    WTF_MAKE_NONCOPYABLE(NodeRareData); WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_NONCOPYABLE(NodeRareData);
+    WTF_MAKE_STRUCT_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(NodeRareData);
 public:
 #if defined(DUMP_NODE_STATISTICS) && DUMP_NODE_STATISTICS
     enum class UseType : uint16_t {

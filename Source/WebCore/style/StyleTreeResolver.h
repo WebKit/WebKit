@@ -45,6 +45,7 @@ namespace Style {
 
 class Resolver;
 
+DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(TreeResolverScope);
 class TreeResolver {
 public:
     TreeResolver(Document&);
@@ -63,6 +64,7 @@ private:
     ElementUpdate resolvePseudoStyle(Element&, const ElementUpdate&, PseudoId);
 
     struct Scope : RefCounted<Scope> {
+        WTF_MAKE_STRUCT_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(TreeResolverScope);
         Resolver& resolver;
         SelectorFilter selectorFilter;
         SharingResolver sharingResolver;

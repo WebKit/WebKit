@@ -56,8 +56,10 @@ class TextResourceDecoder;
 // A resource that is held in the cache. Classes who want to use this object should derive
 // from CachedResourceClient, to get the function calls in case the requested data has arrived.
 // This class also does the actual communication with the loader to obtain the resource from the network.
+DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(CachedResource);
 class CachedResource {
-    WTF_MAKE_NONCOPYABLE(CachedResource); WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_NONCOPYABLE(CachedResource);
+    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(CachedResource);
     friend class MemoryCache;
 
 public:

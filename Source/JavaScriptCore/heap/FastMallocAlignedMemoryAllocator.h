@@ -27,6 +27,10 @@
 
 #include "AlignedMemoryAllocator.h"
 
+#if ENABLE(MALLOC_HEAP_BREAKDOWN)
+#include <wtf/DebugHeap.h>
+#endif
+
 namespace JSC {
 
 class FastMallocAlignedMemoryAllocator : public AlignedMemoryAllocator {
@@ -42,6 +46,11 @@ public:
     void* tryAllocateMemory(size_t) override;
     void freeMemory(void*) override;
     void* tryReallocateMemory(void*, size_t) override;
+
+#if ENABLE(MALLOC_HEAP_BREAKDOWN)
+private:
+    WTF::DebugHeap m_heap;
+#endif
 };
 
 } // namespace JSC

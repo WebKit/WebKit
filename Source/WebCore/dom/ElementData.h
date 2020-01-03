@@ -75,8 +75,9 @@ private:
     unsigned m_size;
 };
 
+DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(ElementData);
 class ElementData : public RefCounted<ElementData> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(ElementData);
 public:
     // Override RefCounted's deref() to ensure operator delete is called on
     // the appropriate subclass type.
@@ -183,7 +184,9 @@ private:
 #pragma warning(disable: 4200) // Disable "zero-sized array in struct/union" warning
 #endif
 
+DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(ShareableElementData);
 class ShareableElementData : public ElementData {
+    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(ShareableElementData);
 public:
     static Ref<ShareableElementData> createWithAttributes(const Vector<Attribute>&);
 

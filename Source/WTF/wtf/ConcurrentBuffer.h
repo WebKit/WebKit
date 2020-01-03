@@ -34,6 +34,8 @@
 
 namespace WTF {
 
+DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(ConcurrentBuffer);
+
 // ConcurrentBuffer is suitable for when you plan to store immutable data and sometimes append to it.
 // It supports storing data that is not copy-constructable but bit-copyable.
 template<typename T>
@@ -53,7 +55,7 @@ public:
                 array->data[i].~T();
         }
         for (Array* array : m_allArrays)
-            fastFree(array);
+            ConcurrentBufferMalloc::free(array);
     }
 
     // Growing is not concurrent. This assumes you are holding some other lock before you do this.
@@ -98,7 +100,7 @@ private:
         Checked<size_t> objectSize = sizeof(T);
         objectSize *= size;
         objectSize += static_cast<size_t>(OBJECT_OFFSETOF(Array, data));
-        Array* result = static_cast<Array*>(fastMalloc(objectSize.unsafeGet()));
+        Array* result = static_cast<Array*>(ConcurrentBufferMalloc::malloc(objectSize.unsafeGet()));
         result->size = size;
         return result;
     }

@@ -36,8 +36,10 @@ class CodeBlock;
 class UnlinkedCodeBlock;
 struct Instruction;
 
+DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(BytecodeBasicBlock);
+
 class BytecodeBasicBlock {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_STRUCT_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(BytecodeBasicBlock);
 public:
     enum SpecialBlockType { EntryBlock, ExitBlock };
     BytecodeBasicBlock(const InstructionStream::Ref&);

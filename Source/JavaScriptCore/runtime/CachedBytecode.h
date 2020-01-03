@@ -51,7 +51,7 @@ public:
         return adoptRef(*new CachedBytecode(CachePayload::makeMappedPayload(WTFMove(data)), WTFMove(leafExecutables)));
     }
 
-    static Ref<CachedBytecode> create(MallocPtr<uint8_t>&& data, size_t size, LeafExecutableMap&& leafExecutables)
+    static Ref<CachedBytecode> create(MallocPtr<uint8_t, VMMalloc>&& data, size_t size, LeafExecutableMap&& leafExecutables)
     {
         return adoptRef(*new CachedBytecode(CachePayload::makeMallocPayload(WTFMove(data), size), WTFMove(leafExecutables)));
     }

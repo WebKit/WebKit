@@ -28,9 +28,12 @@
 #include <wtf/text/CString.h>
 
 #include <string.h>
+#include <wtf/NeverDestroyed.h>
 #include <wtf/text/StringHasher.h>
 
 namespace WTF {
+
+DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(CStringBuffer);
 
 Ref<CStringBuffer> CStringBuffer::createUninitialized(size_t length)
 {
@@ -38,7 +41,7 @@ Ref<CStringBuffer> CStringBuffer::createUninitialized(size_t length)
 
     // The +1 is for the terminating null character.
     size_t size = sizeof(CStringBuffer) + length + 1;
-    CStringBuffer* stringBuffer = static_cast<CStringBuffer*>(fastMalloc(size));
+    CStringBuffer* stringBuffer = static_cast<CStringBuffer*>(CStringBufferMalloc::malloc(size));
     return adoptRef(*new (NotNull, stringBuffer) CStringBuffer(length));
 }
 

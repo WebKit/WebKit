@@ -26,15 +26,19 @@
 #include "config.h"
 #include <wtf/FastBitVector.h>
 
+#include <wtf/NeverDestroyed.h>
+
 namespace WTF {
+
+DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(FastBitVector);
 
 void FastBitVectorWordOwner::setEqualsSlow(const FastBitVectorWordOwner& other)
 {
     uint32_t* newArray = static_cast<uint32_t*>(
-        fastCalloc(other.arrayLength(), sizeof(uint32_t)));
+        FastBitVectorMalloc::zeroedMalloc(other.arrayLength() * sizeof(uint32_t)));
     memcpy(newArray, other.m_words, other.arrayLength() * sizeof(uint32_t));
     if (m_words)
-        fastFree(m_words);
+        FastBitVectorMalloc::free(m_words);
     m_words = newArray;
     m_numBits = other.m_numBits;
 }
@@ -48,10 +52,10 @@ void FastBitVectorWordOwner::resizeSlow(size_t numBits)
     // Use fastCalloc instead of fastRealloc because we expect the common
     // use case for this method to be initializing the size of the bitvector.
     
-    uint32_t* newArray = static_cast<uint32_t*>(fastCalloc(newLength, sizeof(uint32_t)));
+    uint32_t* newArray = static_cast<uint32_t*>(FastBitVectorMalloc::zeroedMalloc(newLength * sizeof(uint32_t)));
     memcpy(newArray, m_words, arrayLength() * sizeof(uint32_t));
     if (m_words)
-        fastFree(m_words);
+        FastBitVectorMalloc::free(m_words);
     m_words = newArray;
 }
 

@@ -30,6 +30,9 @@
 
 namespace JSC {
 
+DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(SourceProviderCache);
+DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(SourceProviderCacheItem);
+
 SourceProviderCache::~SourceProviderCache()
 {
     clear();

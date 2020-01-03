@@ -31,6 +31,10 @@
 
 namespace JSC {
 
+class VM;
+
+DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(MetadataTable);
+
 class MetadataTable;
 
 class UnlinkedMetadataTable : public RefCounted<UnlinkedMetadataTable> {

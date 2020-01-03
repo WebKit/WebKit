@@ -2197,6 +2197,7 @@ rendering/SimpleLineLayoutFunctions.cpp
 rendering/SimpleLineLayoutPagination.cpp
 rendering/SimpleLineLayoutResolver.cpp
 rendering/SimpleLineLayoutTextFragmentIterator.cpp
+rendering/TableLayout.cpp
 rendering/TextDecorationPainter.cpp
 rendering/TextPaintStyle.cpp
 rendering/TextPainter.cpp

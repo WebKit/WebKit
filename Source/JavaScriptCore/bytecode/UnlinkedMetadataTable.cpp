@@ -35,6 +35,8 @@
 
 namespace JSC {
 
+DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(MetadataTable);
+
 #define JSC_ALIGNMENT_CHECK(size) static_assert(size <= UnlinkedMetadataTable::s_maxMetadataAlignment);
 FOR_EACH_BYTECODE_METADATA_ALIGNMENT(JSC_ALIGNMENT_CHECK)
 #undef JSC_ALIGNMENT_CHECK
@@ -44,7 +46,7 @@ void UnlinkedMetadataTable::finalize()
     ASSERT(!m_isFinalized);
     m_isFinalized = true;
     if (!m_hasMetadata) {
-        fastFree(m_rawBuffer);
+        MetadataTableMalloc::free(m_rawBuffer);
         m_rawBuffer = nullptr;
         return;
     }
@@ -69,7 +71,7 @@ void UnlinkedMetadataTable::finalize()
     }
 
     if (m_is32Bit) {
-        m_rawBuffer = reinterpret_cast<uint8_t*>(fastRealloc(m_rawBuffer, s_offset16TableSize + s_offset32TableSize + sizeof(LinkingData)));
+        m_rawBuffer = reinterpret_cast<uint8_t*>(MetadataTableMalloc::realloc(m_rawBuffer, s_offset16TableSize + s_offset32TableSize + sizeof(LinkingData)));
         memmove(m_rawBuffer + sizeof(LinkingData) + s_offset16TableSize, m_rawBuffer + sizeof(LinkingData), s_offset32TableSize);
         memset(m_rawBuffer + sizeof(LinkingData), 0, s_offset16TableSize);
         Offset32* buffer = bitwise_cast<Offset32*>(m_rawBuffer + sizeof(LinkingData) + s_offset16TableSize);
@@ -81,7 +83,7 @@ void UnlinkedMetadataTable::finalize()
         Offset16* buffer = bitwise_cast<Offset16*>(m_rawBuffer + sizeof(LinkingData));
         for (unsigned i = 0; i < s_offsetTableEntries; i++)
             buffer[i] = oldBuffer[i];
-        m_rawBuffer = static_cast<uint8_t*>(fastRealloc(m_rawBuffer, s_offset16TableSize + sizeof(LinkingData)));
+        m_rawBuffer = static_cast<uint8_t*>(MetadataTableMalloc::realloc(m_rawBuffer, s_offset16TableSize + sizeof(LinkingData)));
     }
 }
 

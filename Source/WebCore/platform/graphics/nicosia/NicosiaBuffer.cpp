@@ -43,11 +43,7 @@ Buffer::Buffer(const WebCore::IntSize& size, Flags flags)
     , m_flags(flags)
 {
     auto checkedArea = size.area() * 4;
-    unsigned char* bufferData;
-    if (!tryFastZeroedMalloc(checkedArea.unsafeGet()).getValue(bufferData))
-        return;
-
-    m_data = adoptMallocPtr(bufferData);
+    m_data = MallocPtr<unsigned char>::tryZeroedMalloc(checkedArea.unsafeGet());
 }
 
 Buffer::~Buffer() = default;

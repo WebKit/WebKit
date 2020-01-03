@@ -38,6 +38,8 @@
 
 namespace JSC {
 
+DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(BlockDirectory);
+
 BlockDirectory::BlockDirectory(size_t cellSize)
     : m_cellSize(static_cast<unsigned>(cellSize))
 {

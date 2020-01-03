@@ -1,3 +1,237 @@
+2020-01-02  Yusuke Suzuki  <ysuzuki@apple.com> and Simon Fraser  <simon.fraser@apple.com>
+
+        Experiment: create lots of different malloc zones for easier accounting of memory use
+        https://bugs.webkit.org/show_bug.cgi?id=186422
+
+        Reviewed by Saam Barati.
+
+        This patch introduces ENABLE(MALLOC_HEAP_BREAKDOWN). If this is enabled, we allocate malloc_zone per malloc kind.
+        This offers the way to investigate the usage of memory per kind by using vmmap, like the following.
+
+            VIRTUAL   RESIDENT      DIRTY    SWAPPED ALLOCATION      BYTES DIRTY+SWAP          REGION
+            MALLOC ZONE                                                      SIZE       SIZE       SIZE       SIZE      COUNT  ALLOCATED  FRAG SIZE  % FRAG   COUNT
+            ===========                                                   =======  =========  =========  =========  =========  =========  =========  ======  ======
+            StringImpl_0x116efd000                                         188.0M      69.3M      30.9M         0K     139456      18.0M      12.9M     42%      34
+            DefaultMallocZone_0x10f487000                                  176.0M      53.9M      14.1M         0K     115956      9955K      4497K     32%      22
+            Vector_0x116eff000                                             162.0M      56.3M      55.3M         0K     140715      17.3M      37.9M     69%      36
+            MetadataTable_0x11843b000                                      152.0M      17.5M      17.5M         0K      14200      2353K      15.2M     87%      26
+            WebKit Using System Malloc_0x114cbe000                         150.0M      31.6M      21.8M         0K      87422      16.7M      5278K     24%      23
+            InstructionStream_0x118469000                                  150.0M      5764K      5764K         0K      14470      4688K      1076K     19%      24
+            AssemblerData_0x117ee6000                                      150.0M      1928K      1928K         0K          1         16      1928K    100%      24
+
+        To achieve this goal without making very large change, we put a template type in various containers.
+        For example, Vector will take Malloc parameter (the default one is FastMalloc allocator). If ENABLE(MALLOC_HEAP_BREAKDOWN) is enabled, we change this to
+        specific VectorMalloc allocator, and vmmap can show memory usage of this allocator. This patch also supports malloc_zone per IsoHeap. So we can see memory
+        allocation per IsoHeap in vmmap.
+
+        To use this feature, we need to flip two compile time flags, ENABLE(MALLOC_HEAP_BREAKDOWN) in WTF and BENABLE_MALLOC_HEAP_BREAKDOWN in bmalloc.
+        And use `vmmap $PID` to dump malloc zones. To allocate objects of a class with a specific malloc-zone, use WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(HeapIdentifier) for the class,
+        and define allocator by DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(HeapIdentifier) in a header and DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(HeapIdentifier) in a cpp file.
+
+        This patch also introduce callstack collector for malloc. Vector, HashMap etc. are used to allocate various things, but the above malloc_zone feature only tells thing like "Vector
+        takes XXX MB memory". But what we want to know in this case is what Vector is consuming memory. We collect StackShot for each malloc call, and combine these information to tell
+        which callsite is consuming much memory, which tell us that what Vector is consuming memory.
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/Bag.cpp: Copied from Source/JavaScriptCore/parser/SourceProviderCache.cpp.
+        * wtf/Bag.h:
+        (WTF::Private::BagNode::BagNode): Deleted.
+        * wtf/BitVector.cpp:
+        (WTF::BitVector::OutOfLineBits::create):
+        (WTF::BitVector::OutOfLineBits::destroy):
+        * wtf/CMakeLists.txt:
+        * wtf/ConcurrentBuffer.cpp: Copied from Source/JavaScriptCore/parser/SourceProviderCache.cpp.
+        * wtf/ConcurrentBuffer.h:
+        * wtf/DebugHeap.cpp: Copied from Source/JavaScriptCore/runtime/CachePayload.cpp.
+        (WTF::DebugHeap::DebugHeap):
+        (WTF::DebugHeap::malloc):
+        (WTF::DebugHeap::calloc):
+        (WTF::DebugHeap::memalign):
+        (WTF::DebugHeap::realloc):
+        (WTF::DebugHeap::free):
+        * wtf/DebugHeap.h: Added.
+        * wtf/FastBitVector.cpp:
+        (WTF::FastBitVectorWordOwner::setEqualsSlow):
+        (WTF::FastBitVectorWordOwner::resizeSlow):
+        * wtf/FastBitVector.h:
+        (WTF::FastBitVectorWordOwner::~FastBitVectorWordOwner):
+        * wtf/FastMalloc.cpp:
+        (WTF::fastMallocDumpMallocStats):
+        (WTF::AvoidRecordingScope::AvoidRecordingScope):
+        (WTF::AvoidRecordingScope::~AvoidRecordingScope):
+        (WTF::MallocCallTracker::MallocSiteData::MallocSiteData):
+        (WTF::MallocCallTracker::singleton):
+        (WTF::MallocCallTracker::MallocCallTracker):
+        (WTF::MallocCallTracker::recordMalloc):
+        (WTF::MallocCallTracker::recordRealloc):
+        (WTF::MallocCallTracker::recordFree):
+        (WTF::MallocCallTracker::dumpStats):
+        (WTF::fastMalloc):
+        (WTF::fastRealloc):
+        (WTF::fastFree):
+        (WTF::fastAlignedMalloc):
+        (WTF::tryFastAlignedMalloc):
+        (WTF::fastAlignedFree):
+        * wtf/FastMalloc.h:
+        (WTF::FastMalloc::zeroedMalloc):
+        (WTF::FastMalloc::tryZeroedMalloc):
+        * wtf/Forward.h:
+        * wtf/HashTable.cpp:
+        * wtf/HashTable.h:
+        (WTF::KeyTraits>::allocateTable):
+        (WTF::KeyTraits>::deallocateTable):
+        (WTF::KeyTraits>::rehash):
+        * wtf/MallocPtr.h:
+        (WTF::MallocPtr::MallocPtr):
+        (WTF::MallocPtr::malloc):
+        (WTF::MallocPtr::zeroedMalloc):
+        (WTF::MallocPtr::tryMalloc):
+        (WTF::MallocPtr::tryZeroedMalloc):
+        (WTF::adoptMallocPtr):
+        * wtf/MetaAllocator.cpp:
+        (WTF::MetaAllocator::allocFreeSpaceNode):
+        (WTF::MetaAllocator::freeFreeSpaceNode):
+        * wtf/MetaAllocatorHandle.h:
+        * wtf/Platform.h:
+        * wtf/RefCountedArray.cpp: Copied from Source/JavaScriptCore/bytecode/InstructionStream.cpp.
+        * wtf/RefCountedArray.h:
+        (WTF::RefCountedArray::RefCountedArray):
+        (WTF::RefCountedArray::~RefCountedArray):
+        (WTF::RefCountedArray::assign):
+        * wtf/SegmentedVector.cpp: Copied from Source/JavaScriptCore/bytecode/InstructionStream.cpp.
+        * wtf/SegmentedVector.h:
+        * wtf/SmallPtrSet.cpp: Copied from Source/JavaScriptCore/bytecode/InstructionStream.cpp.
+        * wtf/SmallPtrSet.h:
+        (WTF::SmallPtrSet::~SmallPtrSet):
+        (WTF::SmallPtrSet::grow):
+        * wtf/UniqueArray.cpp: Copied from Source/JavaScriptCore/bytecode/InstructionStream.cpp.
+        * wtf/UniqueArray.h:
+        (WTF::UniqueArrayFree::operator() const):
+        (WTF::UniqueArrayFree<T::operator() const):
+        * wtf/Vector.cpp: Copied from Source/JavaScriptCore/bytecode/InstructionStream.cpp.
+        * wtf/Vector.h:
+        (WTF::VectorBufferBase::allocateBuffer):
+        (WTF::VectorBufferBase::tryAllocateBuffer):
+        (WTF::VectorBufferBase::reallocateBuffer):
+        (WTF::VectorBufferBase::deallocateBuffer):
+        (WTF::VectorBufferBase::releaseBuffer):
+        (WTF::VectorBuffer::releaseBuffer):
+        (WTF::Vector::swap):
+        (WTF::Malloc>::Vector):
+        (WTF::=):
+        (WTF::Malloc>::contains const):
+        (WTF::Malloc>::findMatching const):
+        (WTF::Malloc>::find const):
+        (WTF::Malloc>::reverseFind const):
+        (WTF::Malloc>::appendIfNotContains):
+        (WTF::Malloc>::fill):
+        (WTF::Malloc>::appendRange):
+        (WTF::Malloc>::expandCapacity):
+        (WTF::Malloc>::tryExpandCapacity):
+        (WTF::Malloc>::resize):
+        (WTF::Malloc>::resizeToFit):
+        (WTF::Malloc>::shrink):
+        (WTF::Malloc>::grow):
+        (WTF::Malloc>::asanSetInitialBufferSizeTo):
+        (WTF::Malloc>::asanSetBufferSizeToFullCapacity):
+        (WTF::Malloc>::asanBufferSizeWillChangeTo):
+        (WTF::Malloc>::reserveCapacity):
+        (WTF::Malloc>::tryReserveCapacity):
+        (WTF::Malloc>::reserveInitialCapacity):
+        (WTF::Malloc>::shrinkCapacity):
+        (WTF::Malloc>::append):
+        (WTF::Malloc>::tryAppend):
+        (WTF::Malloc>::constructAndAppend):
+        (WTF::Malloc>::tryConstructAndAppend):
+        (WTF::Malloc>::appendSlowCase):
+        (WTF::Malloc>::constructAndAppendSlowCase):
+        (WTF::Malloc>::tryConstructAndAppendSlowCase):
+        (WTF::Malloc>::uncheckedAppend):
+        (WTF::Malloc>::uncheckedConstructAndAppend):
+        (WTF::Malloc>::appendVector):
+        (WTF::Malloc>::insert):
+        (WTF::Malloc>::insertVector):
+        (WTF::Malloc>::remove):
+        (WTF::Malloc>::removeFirst):
+        (WTF::Malloc>::removeFirstMatching):
+        (WTF::Malloc>::removeAll):
+        (WTF::Malloc>::removeAllMatching):
+        (WTF::Malloc>::reverse):
+        (WTF::Malloc>::map const):
+        (WTF::Malloc>::releaseBuffer):
+        (WTF::Malloc>::checkConsistency):
+        (WTF::swap):
+        (WTF::operator==):
+        (WTF::operator!=):
+        (WTF::Malloc>::isolatedCopy const):
+        (WTF::removeRepeatedElements):
+        (WTF::minCapacity>::Vector): Deleted.
+        (WTF::minCapacity>::contains const): Deleted.
+        (WTF::minCapacity>::findMatching const): Deleted.
+        (WTF::minCapacity>::find const): Deleted.
+        (WTF::minCapacity>::reverseFind const): Deleted.
+        (WTF::minCapacity>::appendIfNotContains): Deleted.
+        (WTF::minCapacity>::fill): Deleted.
+        (WTF::minCapacity>::appendRange): Deleted.
+        (WTF::minCapacity>::expandCapacity): Deleted.
+        (WTF::minCapacity>::tryExpandCapacity): Deleted.
+        (WTF::minCapacity>::resize): Deleted.
+        (WTF::minCapacity>::resizeToFit): Deleted.
+        (WTF::minCapacity>::shrink): Deleted.
+        (WTF::minCapacity>::grow): Deleted.
+        (WTF::minCapacity>::asanSetInitialBufferSizeTo): Deleted.
+        (WTF::minCapacity>::asanSetBufferSizeToFullCapacity): Deleted.
+        (WTF::minCapacity>::asanBufferSizeWillChangeTo): Deleted.
+        (WTF::minCapacity>::reserveCapacity): Deleted.
+        (WTF::minCapacity>::tryReserveCapacity): Deleted.
+        (WTF::minCapacity>::reserveInitialCapacity): Deleted.
+        (WTF::minCapacity>::shrinkCapacity): Deleted.
+        (WTF::minCapacity>::append): Deleted.
+        (WTF::minCapacity>::tryAppend): Deleted.
+        (WTF::minCapacity>::constructAndAppend): Deleted.
+        (WTF::minCapacity>::tryConstructAndAppend): Deleted.
+        (WTF::minCapacity>::appendSlowCase): Deleted.
+        (WTF::minCapacity>::constructAndAppendSlowCase): Deleted.
+        (WTF::minCapacity>::tryConstructAndAppendSlowCase): Deleted.
+        (WTF::minCapacity>::uncheckedAppend): Deleted.
+        (WTF::minCapacity>::uncheckedConstructAndAppend): Deleted.
+        (WTF::minCapacity>::appendVector): Deleted.
+        (WTF::minCapacity>::insert): Deleted.
+        (WTF::minCapacity>::insertVector): Deleted.
+        (WTF::minCapacity>::remove): Deleted.
+        (WTF::minCapacity>::removeFirst): Deleted.
+        (WTF::minCapacity>::removeFirstMatching): Deleted.
+        (WTF::minCapacity>::removeAll): Deleted.
+        (WTF::minCapacity>::removeAllMatching): Deleted.
+        (WTF::minCapacity>::reverse): Deleted.
+        (WTF::minCapacity>::map const): Deleted.
+        (WTF::minCapacity>::releaseBuffer): Deleted.
+        (WTF::minCapacity>::checkConsistency): Deleted.
+        (WTF::minCapacity>::isolatedCopy const): Deleted.
+        * wtf/text/CString.cpp:
+        (WTF::CStringBuffer::createUninitialized):
+        * wtf/text/CString.h:
+        * wtf/text/StringBuffer.cpp: Copied from Source/JavaScriptCore/bytecode/InstructionStream.cpp.
+        * wtf/text/StringBuffer.h:
+        (WTF::StringBuffer::StringBuffer):
+        (WTF::StringBuffer::~StringBuffer):
+        (WTF::StringBuffer::resize):
+        (WTF::StringBuffer::release):
+        * wtf/text/StringImpl.cpp:
+        (WTF::StringImpl::~StringImpl):
+        (WTF::StringImpl::destroy):
+        (WTF::StringImpl::createUninitializedInternalNonEmpty):
+        (WTF::StringImpl::reallocateInternal):
+        * wtf/text/StringImpl.h:
+        (WTF::StringImpl::StringImpl):
+        (WTF::StringImpl::createSubstringSharingImpl):
+        (WTF::StringImpl::tryCreateUninitialized):
+        (WTF::StringImpl::adopt):
+        * wtf/text/cf/StringImplCF.cpp:
+        (WTF::StringWrapperCFAllocator::allocate):
+        (WTF::StringWrapperCFAllocator::reallocate):
+        (WTF::StringWrapperCFAllocator::deallocate):
+
 2020-01-02  Dean Jackson  <dino@apple.com>
 
         REGRESSION(r253926): Crash at libANGLE-shared.dylib: gl::LogMessage::~LogMessage

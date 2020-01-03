@@ -29,10 +29,14 @@
 #include "SharedMemory.h"
 #include "WebCoreArgumentCoders.h"
 #include <WebCore/GraphicsContext.h>
+#include <wtf/DebugHeap.h>
 
 namespace WebKit {
 using namespace WebCore;
-    
+
+DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(ShareableBitmap);
+DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(ShareableBitmap);
+
 ShareableBitmap::Handle::Handle()
 {
 }
@@ -103,9 +107,9 @@ RefPtr<ShareableBitmap> ShareableBitmap::create(const IntSize& size, Configurati
         return nullptr;
 
     void* data = 0;
-    if (!tryFastMalloc(numBytes.unsafeGet()).getValue(data))
+    data = ShareableBitmapMalloc::tryMalloc(numBytes.unsafeGet());
+    if (!data)
         return nullptr;
-
     return adoptRef(new ShareableBitmap(size, configuration, data));
 }
 
@@ -184,7 +188,7 @@ ShareableBitmap::~ShareableBitmap()
     ASSERT(RunLoop::isMain());
 
     if (!isBackedBySharedMemory())
-        fastFree(m_data);
+        ShareableBitmapMalloc::free(m_data);
 #if USE(DIRECT2D)
     disposeSharedResource();
 #endif

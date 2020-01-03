@@ -45,6 +45,8 @@ class StructureStubInfo;
 class WatchpointsOnStructureStubInfo;
 class ScratchRegisterAllocator;
 
+DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(PolymorphicAccess);
+
 class AccessGenerationResult {
 public:
     enum Kind {
@@ -129,7 +131,7 @@ private:
 
 class PolymorphicAccess {
     WTF_MAKE_NONCOPYABLE(PolymorphicAccess);
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_STRUCT_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(PolymorphicAccess);
 public:
     PolymorphicAccess();
     ~PolymorphicAccess();

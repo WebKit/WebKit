@@ -55,6 +55,7 @@
 #include "TypeLocation.h"
 #include "ValueProfile.h"
 #include <type_traits>
+#include <wtf/FastMalloc.h>
 #include <wtf/ListDump.h>
 #include <wtf/LoggingHashSet.h>
 
@@ -278,8 +279,9 @@ enum class BucketOwnerType : uint32_t {
 // === Node ===
 //
 // Node represents a single operation in the data flow graph.
+DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(DFGNode);
 struct Node {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_STRUCT_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(DFGNode);
 public:
     static const char HashSetTemplateInstantiationString[];
     

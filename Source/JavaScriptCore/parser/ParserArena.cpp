@@ -31,6 +31,9 @@
 
 namespace JSC {
 
+DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(IdentifierArena);
+DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(ParserArena);
+
 ParserArena::ParserArena()
     : m_freeableMemory(0)
     , m_freeablePoolEnd(0)
@@ -50,11 +53,11 @@ inline void ParserArena::deallocateObjects()
         m_deletableObjects[i]->~ParserArenaDeletable();
 
     if (m_freeablePoolEnd)
-        fastFree(freeablePool());
+        ParserArenaMalloc::free(freeablePool());
 
     size = m_freeablePools.size();
     for (size_t i = 0; i < size; ++i)
-        fastFree(m_freeablePools[i]);
+        ParserArenaMalloc::free(m_freeablePools[i]);
 }
 
 ParserArena::~ParserArena()
@@ -67,7 +70,7 @@ void ParserArena::allocateFreeablePool()
     if (m_freeablePoolEnd)
         m_freeablePools.append(freeablePool());
 
-    char* pool = static_cast<char*>(fastMalloc(freeablePoolSize));
+    char* pool = static_cast<char*>(ParserArenaMalloc::malloc(freeablePoolSize));
     m_freeableMemory = pool;
     m_freeablePoolEnd = pool + freeablePoolSize;
     ASSERT(freeablePool() == pool);

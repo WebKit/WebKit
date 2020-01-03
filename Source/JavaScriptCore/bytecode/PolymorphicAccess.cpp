@@ -48,6 +48,8 @@ namespace PolymorphicAccessInternal {
 static constexpr bool verbose = false;
 }
 
+DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(PolymorphicAccess);
+
 void AccessGenerationResult::dump(PrintStream& out) const
 {
     out.print(m_kind);
@@ -220,7 +222,6 @@ void AccessGenerationState::emitExplicitExceptionHandler()
         jit->jumpToExceptionHandler(m_vm);
     }
 }
-
 
 PolymorphicAccess::PolymorphicAccess() { }
 PolymorphicAccess::~PolymorphicAccess() { }

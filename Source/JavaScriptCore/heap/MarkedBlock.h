@@ -52,9 +52,11 @@ typedef uint32_t HeapVersion;
 // allocation suffers from internal fragmentation: wasted space whose
 // size is equal to the difference between the cell size and the object
 // size.
-
+DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(MarkedBlock);
+DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(MarkedBlockHandle);
 class MarkedBlock {
     WTF_MAKE_NONCOPYABLE(MarkedBlock);
+    WTF_MAKE_STRUCT_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(MarkedBlock);
     friend class LLIntOffsetsExtractor;
     friend struct VerifyMarked;
 
@@ -105,7 +107,7 @@ public:
         
     class Handle {
         WTF_MAKE_NONCOPYABLE(Handle);
-        WTF_MAKE_FAST_ALLOCATED;
+        WTF_MAKE_STRUCT_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(MarkedBlockHandle);
         friend class LLIntOffsetsExtractor;
         friend class MarkedBlock;
         friend struct VerifyMarked;

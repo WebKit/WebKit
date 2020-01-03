@@ -43,7 +43,7 @@ namespace WebCore {
 
 static inline void releaseUint8Vector(void *array, const void*)
 {
-    adoptMallocPtr(static_cast<uint8_t*>(array));
+    WTF::VectorMalloc::free(array);
 }
 
 RefPtr<MediaSampleAVFObjC> MediaSampleAVFObjC::createImageSample(Vector<uint8_t>&& array, unsigned long width, unsigned long height)

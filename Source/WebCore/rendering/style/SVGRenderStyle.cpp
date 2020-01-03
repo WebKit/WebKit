@@ -43,6 +43,8 @@ static const SVGRenderStyle& defaultSVGStyle()
     return *style.get();
 }
 
+DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(SVGRenderStyle);
+
 Ref<SVGRenderStyle> SVGRenderStyle::createDefaultStyle()
 {
     return adoptRef(*new SVGRenderStyle(CreateDefault));

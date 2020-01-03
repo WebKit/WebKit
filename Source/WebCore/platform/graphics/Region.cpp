@@ -37,6 +37,8 @@
 
 namespace WebCore {
 
+DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(Region);
+
 Region::Region()
 {
 }

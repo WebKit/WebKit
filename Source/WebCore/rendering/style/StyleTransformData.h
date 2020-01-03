@@ -32,7 +32,9 @@
 
 namespace WebCore {
 
+DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(StyleTransformData);
 class StyleTransformData : public RefCounted<StyleTransformData> {
+    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(StyleTransformData);
 public:
     static Ref<StyleTransformData> create() { return adoptRef(*new StyleTransformData); }
     Ref<StyleTransformData> copy() const;

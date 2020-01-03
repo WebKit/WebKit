@@ -26,6 +26,9 @@
 
 namespace WebCore {
 
+DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(QualifiedName);
+DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(QualifiedNameQualifiedNameImpl);
+
 QualifiedName::QualifiedName(const AtomString& p, const AtomString& l, const AtomString& n)
     : m_impl(threadGlobalData().qualifiedNameCache().getOrCreate(QualifiedNameComponents { p.impl(), l.impl(), n.isEmpty() ? nullptr : n.impl() }))
 {

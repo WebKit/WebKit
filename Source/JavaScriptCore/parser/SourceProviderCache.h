@@ -31,8 +31,9 @@
 
 namespace JSC {
 
+DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(SourceProviderCache);
 class SourceProviderCache : public RefCounted<SourceProviderCache> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_STRUCT_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(SourceProviderCache);
 public:
     SourceProviderCache() { }
     JS_EXPORT_PRIVATE ~SourceProviderCache();

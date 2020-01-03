@@ -85,6 +85,8 @@ bool CSSValue::isImplicitInitialValue() const
     return m_classType == InitialClass && downcast<CSSInitialValue>(*this).isImplicit();
 }
 
+DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(CSSValue);
+
 CSSValue::Type CSSValue::cssValueType() const
 {
     if (isInheritedValue())

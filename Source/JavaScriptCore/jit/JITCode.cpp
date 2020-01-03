@@ -32,6 +32,8 @@
 
 namespace JSC {
 
+DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(DirectJITCode);
+
 JITCode::JITCode(JITType jitType, ShareAttribute shareAttribute)
     : m_jitType(jitType)
     , m_shareAttribute(shareAttribute)

@@ -85,6 +85,8 @@ struct SameSizeAsRenderStyle {
 
 static_assert(sizeof(RenderStyle) == sizeof(SameSizeAsRenderStyle), "RenderStyle should stay small");
 
+DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(RenderStyle);
+
 RenderStyle& RenderStyle::defaultStyle()
 {
     static NeverDestroyed<RenderStyle> style { CreateDefaultStyle };

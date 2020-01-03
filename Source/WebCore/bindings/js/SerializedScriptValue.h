@@ -61,7 +61,9 @@ using ArrayBufferContentsArray = Vector<JSC::ArrayBufferContents>;
 using WasmModuleArray = Vector<RefPtr<JSC::Wasm::Module>>;
 #endif
 
+DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(SerializedScriptValue);
 class SerializedScriptValue : public ThreadSafeRefCounted<SerializedScriptValue> {
+    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(SerializedScriptValue);
 public:
     WEBCORE_EXPORT static RefPtr<SerializedScriptValue> create(JSC::JSGlobalObject&, JSC::JSValue, SerializationErrorMode = SerializationErrorMode::Throwing);
 

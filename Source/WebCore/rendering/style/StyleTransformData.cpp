@@ -26,6 +26,8 @@
 
 namespace WebCore {
 
+DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(StyleTransformData);
+
 StyleTransformData::StyleTransformData()
     : operations(RenderStyle::initialTransform())
     , x(RenderStyle::initialTransformOriginX())

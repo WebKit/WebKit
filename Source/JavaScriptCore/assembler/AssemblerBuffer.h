@@ -43,6 +43,8 @@ namespace JSC {
 
     class LinkBuffer;
 
+    DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(AssemblerData);
+
     struct AssemblerLabel {
         AssemblerLabel()
             : m_offset(std::numeric_limits<uint32_t>::max())
@@ -83,7 +85,7 @@ namespace JSC {
                 m_buffer = m_inlineBuffer;
             } else {
                 m_capacity = initialCapacity;
-                m_buffer = static_cast<char*>(fastMalloc(m_capacity));
+                m_buffer = static_cast<char*>(AssemblerDataMalloc::malloc(m_capacity));
             }
         }
 
@@ -104,7 +106,7 @@ namespace JSC {
         AssemblerData& operator=(AssemblerData&& other)
         {
             if (m_buffer && !isInlineBuffer())
-                fastFree(m_buffer);
+                AssemblerDataMalloc::free(m_buffer);
 
             if (other.isInlineBuffer()) {
                 ASSERT(other.m_capacity == InlineCapacity);
@@ -122,7 +124,7 @@ namespace JSC {
         ~AssemblerData()
         {
             if (m_buffer && !isInlineBuffer())
-                fastFree(m_buffer);
+                AssemblerDataMalloc::free(m_buffer);
         }
 
         char* buffer() const { return m_buffer; }
@@ -133,10 +135,10 @@ namespace JSC {
         {
             m_capacity = m_capacity + m_capacity / 2 + extraCapacity;
             if (isInlineBuffer()) {
-                m_buffer = static_cast<char*>(fastMalloc(m_capacity));
+                m_buffer = static_cast<char*>(AssemblerDataMalloc::malloc(m_capacity));
                 memcpy(m_buffer, m_inlineBuffer, InlineCapacity);
             } else
-                m_buffer = static_cast<char*>(fastRealloc(m_buffer, m_capacity));
+                m_buffer = static_cast<char*>(AssemblerDataMalloc::realloc(m_buffer, m_capacity));
         }
 
     private:

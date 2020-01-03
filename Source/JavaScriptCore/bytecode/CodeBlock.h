@@ -96,6 +96,8 @@ class PCToCodeOriginMap;
 class RegisterAtOffsetList;
 class StructureStubInfo;
 
+DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(CodeBlockRareData);
+
 enum class AccessType : int8_t;
 
 struct OpCatch;
@@ -867,7 +869,7 @@ public:
     NO_RETURN_DUE_TO_CRASH void endValidationDidFail();
 
     struct RareData {
-        WTF_MAKE_FAST_ALLOCATED;
+        WTF_MAKE_STRUCT_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(CodeBlockRareData);
     public:
         Vector<HandlerInfo> m_exceptionHandlers;
 

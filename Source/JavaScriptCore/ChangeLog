@@ -1,3 +1,132 @@
+2020-01-02  Yusuke Suzuki  <ysuzuki@apple.com> and Simon Fraser  <simon.fraser@apple.com>
+
+        Experiment: create lots of different malloc zones for easier accounting of memory use
+        https://bugs.webkit.org/show_bug.cgi?id=186422
+
+        Reviewed by Saam Barati.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Sources.txt:
+        * assembler/AssemblerBuffer.cpp: Copied from Source/JavaScriptCore/bytecode/InstructionStream.cpp.
+        * assembler/AssemblerBuffer.h:
+        (JSC::AssemblerData::AssemblerData):
+        (JSC::AssemblerData::operator=):
+        (JSC::AssemblerData::~AssemblerData):
+        (JSC::AssemblerData::grow):
+        * bytecode/AccessCase.cpp:
+        * bytecode/AccessCase.h:
+        * bytecode/BytecodeBasicBlock.cpp:
+        * bytecode/BytecodeBasicBlock.h:
+        * bytecode/CodeBlock.cpp:
+        * bytecode/CodeBlock.h:
+        * bytecode/InstructionStream.cpp:
+        * bytecode/InstructionStream.h:
+        * bytecode/PolymorphicAccess.cpp:
+        * bytecode/PolymorphicAccess.h:
+        * bytecode/UnlinkedMetadataTable.cpp:
+        (JSC::UnlinkedMetadataTable::finalize):
+        * bytecode/UnlinkedMetadataTable.h:
+        * bytecode/UnlinkedMetadataTableInlines.h:
+        (JSC::UnlinkedMetadataTable::UnlinkedMetadataTable):
+        (JSC::UnlinkedMetadataTable::~UnlinkedMetadataTable):
+        (JSC::UnlinkedMetadataTable::link):
+        (JSC::UnlinkedMetadataTable::unlink):
+        * bytecode/ValueProfile.h:
+        (JSC::ValueProfileAndVirtualRegisterBuffer::ValueProfileAndVirtualRegisterBuffer):
+        * bytecode/Watchpoint.cpp:
+        * bytecode/Watchpoint.h:
+        * dfg/DFGBasicBlock.cpp:
+        * dfg/DFGBasicBlock.h:
+        * dfg/DFGNode.cpp:
+        * dfg/DFGNode.h:
+        * dfg/DFGSpeculativeJIT.cpp:
+        * dfg/DFGSpeculativeJIT.h:
+        * heap/BlockDirectory.cpp:
+        * heap/BlockDirectory.h:
+        * heap/FastMallocAlignedMemoryAllocator.cpp:
+        (JSC::FastMallocAlignedMemoryAllocator::FastMallocAlignedMemoryAllocator):
+        (JSC::FastMallocAlignedMemoryAllocator::tryAllocateAlignedMemory):
+        (JSC::FastMallocAlignedMemoryAllocator::freeAlignedMemory):
+        (JSC::FastMallocAlignedMemoryAllocator::tryAllocateMemory):
+        (JSC::FastMallocAlignedMemoryAllocator::freeMemory):
+        (JSC::FastMallocAlignedMemoryAllocator::tryReallocateMemory):
+        * heap/FastMallocAlignedMemoryAllocator.h:
+        * heap/GCSegmentedArray.cpp: Copied from Source/JavaScriptCore/parser/SourceProviderCache.cpp.
+        * heap/GCSegmentedArray.h:
+        * heap/GCSegmentedArrayInlines.h:
+        (JSC::GCArraySegment<T>::create):
+        (JSC::GCArraySegment<T>::destroy):
+        * heap/GigacageAlignedMemoryAllocator.cpp:
+        (JSC::GigacageAlignedMemoryAllocator::GigacageAlignedMemoryAllocator):
+        (JSC::GigacageAlignedMemoryAllocator::tryAllocateAlignedMemory):
+        (JSC::GigacageAlignedMemoryAllocator::freeAlignedMemory):
+        (JSC::GigacageAlignedMemoryAllocator::tryAllocateMemory):
+        (JSC::GigacageAlignedMemoryAllocator::freeMemory):
+        (JSC::GigacageAlignedMemoryAllocator::tryReallocateMemory):
+        * heap/GigacageAlignedMemoryAllocator.h:
+        * heap/IsoAlignedMemoryAllocator.cpp:
+        (JSC::IsoAlignedMemoryAllocator::IsoAlignedMemoryAllocator):
+        (JSC::IsoAlignedMemoryAllocator::~IsoAlignedMemoryAllocator):
+        (JSC::IsoAlignedMemoryAllocator::tryAllocateAlignedMemory):
+        (JSC::IsoAlignedMemoryAllocator::freeAlignedMemory):
+        (JSC::IsoAlignedMemoryAllocator::tryAllocateMemory):
+        (JSC::IsoAlignedMemoryAllocator::freeMemory):
+        * heap/IsoAlignedMemoryAllocator.h:
+        * heap/IsoSubspace.cpp:
+        (JSC::IsoSubspace::IsoSubspace):
+        * heap/MarkedBlock.cpp:
+        * heap/MarkedBlock.h:
+        * heap/WeakBlock.cpp:
+        (JSC::WeakBlock::create):
+        (JSC::WeakBlock::destroy):
+        * heap/WeakBlock.h:
+        * jit/JITCode.cpp:
+        * jit/JITCode.h:
+        * jit/RegisterAtOffsetList.cpp:
+        * jit/RegisterAtOffsetList.h:
+        * parser/Nodes.cpp:
+        * parser/Nodes.h:
+        * parser/ParserArena.cpp:
+        (JSC::ParserArena::deallocateObjects):
+        (JSC::ParserArena::allocateFreeablePool):
+        * parser/ParserArena.h:
+        * parser/SourceProvider.cpp:
+        * parser/SourceProvider.h:
+        * parser/SourceProviderCache.cpp:
+        * parser/SourceProviderCache.h:
+        * parser/SourceProviderCacheItem.h:
+        (JSC::SourceProviderCacheItem::create):
+        * runtime/CachePayload.cpp:
+        (JSC::CachePayload::makeMallocPayload):
+        * runtime/CachePayload.h:
+        * runtime/CachedBytecode.h:
+        (JSC::CachedBytecode::create):
+        * runtime/CachedTypes.cpp:
+        (JSC::Encoder::release):
+        (JSC::Encoder::Page::Page):
+        (JSC::CachedVector::encode):
+        (JSC::CachedVector::decode const):
+        (JSC::CachedInstructionStream::decode const):
+        * runtime/PropertyMapHashTable.h:
+        (JSC::PropertyTable::rehash):
+        * runtime/PropertyTable.cpp:
+        (JSC::PropertyTable::PropertyTable):
+        (JSC::PropertyTable::~PropertyTable):
+        * runtime/SymbolTable.cpp:
+        * runtime/SymbolTable.h:
+        * runtime/VM.cpp:
+        (JSC::VM::~VM):
+        * runtime/VM.h:
+        (JSC::ScratchBuffer::create):
+        (JSC::VM::exceptionFuzzingBuffer):
+        * wasm/WasmInstance.cpp:
+        (JSC::Wasm::Instance::Instance):
+        * wasm/WasmInstance.h:
+        * wasm/WasmTable.cpp:
+        (JSC::Wasm::Table::Table):
+        (JSC::Wasm::FuncRefTable::FuncRefTable):
+        * wasm/WasmTable.h:
+
 2020-01-02  Yusuke Suzuki  <ysuzuki@apple.com>
 
         REGRESSION (r253867): Six test262 tests broken

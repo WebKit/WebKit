@@ -43,6 +43,8 @@
 
 namespace WTF {
 
+DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(RefCountedArray);
+
 template<typename T, typename PtrTraits = DumbPtrTraits<T>>
 class RefCountedArray {
     enum CommonCopyConstructorTag { CommonCopyConstructor };
@@ -67,7 +69,7 @@ public:
             return;
         }
 
-        T* data = (static_cast<Header*>(fastMalloc(Header::size() + sizeof(T) * size)))->payload();
+        T* data = (static_cast<Header*>(RefCountedArrayMalloc::malloc(Header::size() + sizeof(T) * size)))->payload();
         m_data = data;
         Header::fromPayload(data)->refCount = 1;
         Header::fromPayload(data)->length = size;
@@ -94,7 +96,7 @@ public:
             return;
         }
         
-        T* data = (static_cast<Header*>(fastMalloc(Header::size() + sizeof(T) * other.size())))->payload();
+        T* data = (static_cast<Header*>(RefCountedArrayMalloc::malloc(Header::size() + sizeof(T) * other.size())))->payload();
         m_data = data;
         Header::fromPayload(data)->refCount = 1;
         Header::fromPayload(data)->length = other.size();
@@ -121,7 +123,7 @@ public:
         if (--Header::fromPayload(data)->refCount)
             return;
         VectorTypeOperations<T>::destruct(begin(), end());
-        fastFree(Header::fromPayload(data));
+        RefCountedArrayMalloc::free(Header::fromPayload(data));
     }
     
     unsigned refCount() const
@@ -205,7 +207,8 @@ private:
         if (--Header::fromPayload(oldData)->refCount)
             return *this;
         VectorTypeOperations<T>::destruct(oldData, oldData + Header::fromPayload(oldData)->length);
-        fastFree(Header::fromPayload(oldData));
+
+        RefCountedArrayMalloc::free(Header::fromPayload(oldData));
         return *this;
     }
 

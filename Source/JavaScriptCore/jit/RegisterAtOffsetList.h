@@ -32,8 +32,9 @@
 
 namespace JSC {
 
+DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(RegisterAtOffsetList);
 class RegisterAtOffsetList {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_STRUCT_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(RegisterAtOffsetList);
 public:
     enum OffsetBaseType { FramePointerBased, ZeroBased };
 

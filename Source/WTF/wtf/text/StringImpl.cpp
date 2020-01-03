@@ -102,6 +102,8 @@ void StringStats::printStats()
 }
 #endif
 
+DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(StringImpl);
+
 StringImpl::StaticStringImpl StringImpl::s_emptyAtomString("", StringImpl::StringAtom);
 
 StringImpl::~StringImpl()
@@ -130,7 +132,7 @@ StringImpl::~StringImpl()
     if (ownership == BufferOwned) {
         // We use m_data8, but since it is a union with m_data16 this works either way.
         ASSERT(m_data8);
-        fastFree(const_cast<LChar*>(m_data8));
+        StringImplMalloc::free(const_cast<LChar*>(m_data8));
         return;
     }
     if (ownership == BufferExternal) {
@@ -148,7 +150,7 @@ StringImpl::~StringImpl()
 void StringImpl::destroy(StringImpl* stringImpl)
 {
     stringImpl->~StringImpl();
-    fastFree(stringImpl);
+    StringImplMalloc::free(stringImpl);
 }
 
 Ref<StringImpl> StringImpl::createFromLiteral(const char* characters, unsigned length)
@@ -195,8 +197,7 @@ template<typename CharacterType> inline Ref<StringImpl> StringImpl::createUninit
     // heap allocation from this call.
     if (length > maxInternalLength<CharacterType>())
         CRASH();
-    StringImpl* string = static_cast<StringImpl*>(fastMalloc(allocationSize<CharacterType>(length)));
-
+    StringImpl* string = static_cast<StringImpl*>(StringImplMalloc::malloc(allocationSize<CharacterType>(length)));
     data = string->tailPointer<CharacterType>();
     return constructInternal<CharacterType>(*string, length);
 }
@@ -226,8 +227,8 @@ template<typename CharacterType> inline Expected<Ref<StringImpl>, UTF8Conversion
         return makeUnexpected(UTF8ConversionError::OutOfMemory);
 
     originalString->~StringImpl();
-    StringImpl* string;
-    if (!tryFastRealloc(&originalString.leakRef(), allocationSize<CharacterType>(length)).getValue(string))
+    auto* string = static_cast<StringImpl*>(StringImplMalloc::tryRealloc(&originalString.leakRef(), allocationSize<CharacterType>(length)));
+    if (!string)
         return makeUnexpected(UTF8ConversionError::OutOfMemory);
 
     data = string->tailPointer<CharacterType>();

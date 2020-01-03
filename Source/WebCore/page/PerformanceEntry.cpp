@@ -36,6 +36,8 @@
 
 namespace WebCore {
 
+DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(PerformanceEntry);
+
 PerformanceEntry::PerformanceEntry(Type type, const String& name, const String& entryType, double startTime, double finishTime)
     : m_name(name)
     , m_entryType(entryType)

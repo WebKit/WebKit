@@ -96,6 +96,8 @@
 namespace WebCore {
 using namespace JSC;
 
+DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(SerializedScriptValue);
+
 static const unsigned maximumFilterRecursion = 40000;
 
 enum class SerializationReturnCode {

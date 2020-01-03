@@ -31,6 +31,8 @@
 
 namespace JSC {
 
+DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(InstructionStream);
+
 InstructionStream::InstructionStream(InstructionBuffer&& instructions)
     : m_instructions(WTFMove(instructions))
 { }

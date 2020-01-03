@@ -104,14 +104,14 @@ public:
         , m_maxDistance(maxPoolSize)
         , m_lastConstDelta(0)
     {
-        m_pool = static_cast<uint32_t*>(fastMalloc(maxPoolSize));
-        m_mask = static_cast<char*>(fastMalloc(maxPoolSize / sizeof(uint32_t)));
+        m_pool = static_cast<uint32_t*>(AssemblerDataMalloc::malloc(maxPoolSize));
+        m_mask = static_cast<char*>(AssemblerDataMalloc::malloc(maxPoolSize / sizeof(uint32_t)));
     }
 
     ~AssemblerBufferWithConstantPool()
     {
-        fastFree(m_mask);
-        fastFree(m_pool);
+        AssemblerDataMalloc::free(m_mask);
+        AssemblerDataMalloc::free(m_pool);
     }
 
     void ensureSpace(int space)

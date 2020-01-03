@@ -68,6 +68,8 @@
 
 namespace WebCore {
 
+DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(ResourceLoader);
+
 ResourceLoader::ResourceLoader(Frame& frame, ResourceLoaderOptions options)
     : m_frame { &frame }
     , m_documentLoader { frame.loader().activeDocumentLoader() }

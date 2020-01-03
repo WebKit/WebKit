@@ -58,6 +58,8 @@ namespace WebCore {
 
 namespace Style {
 
+DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(TreeResolverScope);
+
 TreeResolver::TreeResolver(Document& document)
     : m_document(document)
 {

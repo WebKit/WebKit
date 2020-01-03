@@ -283,6 +283,8 @@ static TextStream& operator<<(TextStream& ts, const ClipRects& clipRects)
 
 #endif
 
+DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(RenderLayer);
+
 RenderLayer::RenderLayer(RenderLayerModelObject& rendererLayerModelObject)
     : m_isRenderViewLayer(rendererLayerModelObject.isRenderView())
     , m_forcedStackingContext(rendererLayerModelObject.isMedia())

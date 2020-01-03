@@ -24,6 +24,8 @@
 
 namespace WebCore {
 
+DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(StyleSurroundData);
+
 StyleSurroundData::StyleSurroundData()
     : margin(Fixed)
     , padding(Fixed)

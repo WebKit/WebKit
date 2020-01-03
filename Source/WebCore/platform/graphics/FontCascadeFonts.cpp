@@ -96,6 +96,8 @@ void FontCascadeFonts::GlyphPageCacheEntry::setSingleFontPage(RefPtr<GlyphPage>&
     m_singleFont = page;
 }
 
+DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(FontCascadeFonts);
+
 FontCascadeFonts::FontCascadeFonts(RefPtr<FontSelector>&& fontSelector)
     : m_cachedPrimaryFont(nullptr)
     , m_fontSelector(fontSelector)

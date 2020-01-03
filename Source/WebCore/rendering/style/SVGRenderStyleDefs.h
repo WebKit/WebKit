@@ -141,7 +141,9 @@ enum class MaskType : uint8_t {
 };
 
 // Inherited/Non-Inherited Style Datastructures
+DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(StyleFillData);
 class StyleFillData : public RefCounted<StyleFillData> {
+    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(StyleFillData);
 public:
     static Ref<StyleFillData> create() { return adoptRef(*new StyleFillData); }
     Ref<StyleFillData> copy() const;

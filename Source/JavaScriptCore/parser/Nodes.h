@@ -128,8 +128,9 @@ namespace JSC {
     private: \
         typedef int __thisIsHereToForceASemicolonAfterThisMacro
 
+    DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(ParserArenaRoot);
     class ParserArenaRoot {
-        WTF_MAKE_FAST_ALLOCATED;
+        WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(ParserArenaRoot);
     protected:
         ParserArenaRoot(ParserArena&);
 

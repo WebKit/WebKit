@@ -28,6 +28,10 @@
 #include "AlignedMemoryAllocator.h"
 #include <wtf/Gigacage.h>
 
+#if ENABLE(MALLOC_HEAP_BREAKDOWN)
+#include <wtf/DebugHeap.h>
+#endif
+
 namespace JSC {
 
 class GigacageAlignedMemoryAllocator : public AlignedMemoryAllocator {
@@ -46,6 +50,9 @@ public:
 
 private:
     Gigacage::Kind m_kind;
+#if ENABLE(MALLOC_HEAP_BREAKDOWN)
+    WTF::DebugHeap m_heap;
+#endif
 };
 
 } // namespace JSC

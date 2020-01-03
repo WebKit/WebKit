@@ -126,14 +126,14 @@ void GCSegmentedArray<T>::fillVector(Vector<T>& vector)
 template <typename T>
 inline GCArraySegment<T>* GCArraySegment<T>::create()
 {
-    return new (NotNull, fastMalloc(blockSize)) GCArraySegment<T>();
+    return new (NotNull, GCSegmentedArrayMalloc::malloc(blockSize)) GCArraySegment<T>();
 }
 
 template <typename T>
 inline void GCArraySegment<T>::destroy(GCArraySegment* segment)
 {
     segment->~GCArraySegment();
-    fastFree(segment);
+    GCSegmentedArrayMalloc::free(segment);
 }
 
 template <typename T>

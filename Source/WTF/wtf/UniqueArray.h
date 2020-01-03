@@ -31,11 +31,35 @@
 
 namespace WTF {
 
+DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(UniqueArray);
+DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(UniqueArrayElement);
+
 template<bool isTriviallyDestructible, typename T> struct UniqueArrayMaker;
 
 template<typename T>
+struct UniqueArrayFree {
+    static_assert(std::is_trivially_destructible<T>::value, "");
+
+    void operator()(T* pointer) const
+    {
+        UniqueArrayMalloc::free(const_cast<typename std::remove_cv<T>::type*>(pointer));
+    }
+};
+
+template<typename T>
+struct UniqueArrayFree<T[]> {
+    static_assert(std::is_trivially_destructible<T>::value, "");
+
+    void operator()(T* pointer) const
+    {
+        UniqueArrayMalloc::free(const_cast<typename std::remove_cv<T>::type*>(pointer));
+    }
+};
+
+
+template<typename T>
 struct UniqueArrayMaker<true, T> {
-    using ResultType = typename std::unique_ptr<T[], FastFree<T[]>>;
+    using ResultType = typename std::unique_ptr<T[], UniqueArrayFree<T[]>>;
 
     static ResultType make(size_t size)
     {
@@ -49,7 +73,7 @@ struct UniqueArrayMaker<true, T> {
         // Do not use placement new like `new (storage) T[size]()`. `new T[size]()` requires
         // larger storage than the `sizeof(T) * size` storage since it want to store `size`
         // to somewhere.
-        T* storage = static_cast<T*>(fastMalloc((Checked<size_t>(sizeof(T)) * size).unsafeGet()));
+        T* storage = static_cast<T*>(UniqueArrayMalloc::malloc((Checked<size_t>(sizeof(T)) * size).unsafeGet()));
         VectorTypeOperations<T>::initialize(storage, storage + size);
         return ResultType(storage);
     }
@@ -62,7 +86,7 @@ struct UniqueArrayMaker<false, T> {
     // UniqueArrayElement has new [] and delete [] operators for FastMalloc. We allocate UniqueArrayElement[] and cast
     // it to T[]. When deleting, the custom deleter casts T[] to UniqueArrayElement[] and deletes it.
     class UniqueArrayElement {
-        WTF_MAKE_FAST_ALLOCATED;
+        WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(UniqueArrayElement);
     public:
         struct Deleter {
             void operator()(T* pointer)

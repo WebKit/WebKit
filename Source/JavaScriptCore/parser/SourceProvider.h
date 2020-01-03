@@ -100,7 +100,9 @@ class UnlinkedFunctionCodeBlock;
         uintptr_t m_id { 0 };
     };
 
+    DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(StringSourceProvider);
     class StringSourceProvider : public SourceProvider {
+        WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(StringSourceProvider);
     public:
         static Ref<StringSourceProvider> create(const String& source, const SourceOrigin& sourceOrigin, URL&& url, const TextPosition& startPosition = TextPosition(), SourceProviderSourceType sourceType = SourceProviderSourceType::Program)
         {

@@ -22,6 +22,7 @@
 
 #include <new>
 #include <stdlib.h>
+#include <wtf/DebugHeap.h>
 #include <wtf/StdLibExtras.h>
 
 namespace WTF {
@@ -81,6 +82,8 @@ struct FastMallocStatistics {
     size_t freeListBytes;
 };
 WTF_EXPORT_PRIVATE FastMallocStatistics fastMallocStatistics();
+
+WTF_EXPORT_PRIVATE void fastMallocDumpMallocStats();
 
 // This defines a type which holds an unsigned integer and is the same
 // size as the minimally aligned memory allocation.
@@ -199,6 +202,17 @@ struct FastMalloc {
             return realResult;
         return nullptr;
     }
+
+    static void* zeroedMalloc(size_t size) { return fastZeroedMalloc(size); }
+
+    static void* tryZeroedMalloc(size_t size)
+    {
+        auto result = tryFastZeroedMalloc(size);
+        void* realResult;
+        if (result.getValue(realResult))
+            return realResult;
+        return nullptr;
+    }
     
     static void* realloc(void* p, size_t size) { return fastRealloc(p, size); }
 
@@ -299,6 +313,8 @@ using WTF::fastAlignedFree;
     } \
     using webkitFastMalloced = int; \
 
+// FIXME: WTF_MAKE_FAST_ALLOCATED should take class name so that we can create malloc_zone per this macro.
+// https://bugs.webkit.org/show_bug.cgi?id=205702
 #define WTF_MAKE_FAST_ALLOCATED \
 public: \
     WTF_MAKE_FAST_ALLOCATED_IMPL \
@@ -308,3 +324,67 @@ using __thisIsHereToForceASemicolonAfterThisMacro = int
 #define WTF_MAKE_STRUCT_FAST_ALLOCATED \
     WTF_MAKE_FAST_ALLOCATED_IMPL \
 using __thisIsHereToForceASemicolonAfterThisMacro = int
+
+#if ENABLE(MALLOC_HEAP_BREAKDOWN)
+
+#define WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER_IMPL(classname) \
+    void* operator new(size_t, void* p) { return p; } \
+    void* operator new[](size_t, void* p) { return p; } \
+    \
+    void* operator new(size_t size) \
+    { \
+        return classname##Malloc::malloc(size); \
+    } \
+    \
+    void operator delete(void* p) \
+    { \
+        classname##Malloc::free(p); \
+    } \
+    \
+    void* operator new[](size_t size) \
+    { \
+        return classname##Malloc::malloc(size); \
+    } \
+    \
+    void operator delete[](void* p) \
+    { \
+        classname##Malloc::free(p); \
+    } \
+    void* operator new(size_t, NotNullTag, void* location) \
+    { \
+        ASSERT(location); \
+        return location; \
+    } \
+    using webkitFastMalloced = int; \
+
+#define WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(classname) \
+public: \
+    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER_IMPL(classname) \
+private: \
+    WTF_EXPORT_PRIVATE static WTF::DebugHeap& debugHeap(const char*); \
+using __thisIsHereToForceASemicolonAfterThisMacro = int
+
+#define WTF_MAKE_STRUCT_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(className) \
+private: \
+    WTF_EXPORT_PRIVATE static WTF::DebugHeap& debugHeap(const char*); \
+public: \
+    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER_IMPL(className) \
+using __thisIsHereToForceASemicolonAfterThisMacro = int
+
+#else
+
+#define WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER_IMPL(classname) \
+    WTF_MAKE_FAST_ALLOCATED_IMPL
+
+#define WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(classname) \
+public: \
+    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER_IMPL(classname) \
+private: \
+using __thisIsHereToForceASemicolonAfterThisMacro = int
+
+#define WTF_MAKE_STRUCT_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(className) \
+public: \
+    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER_IMPL(className) \
+using __thisIsHereToForceASemicolonAfterThisMacro = int
+
+#endif

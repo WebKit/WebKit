@@ -30,6 +30,8 @@
 
 namespace JSC {
 
+DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(PropertyTable);
+
 const ClassInfo PropertyTable::s_info = { "PropertyTable", nullptr, nullptr, nullptr, CREATE_METHOD_TABLE(PropertyTable) };
 
 PropertyTable* PropertyTable::create(VM& vm, unsigned initialCapacity)
@@ -57,7 +59,7 @@ PropertyTable::PropertyTable(VM& vm, unsigned initialCapacity)
     : JSCell(vm, vm.propertyTableStructure.get())
     , m_indexSize(sizeForCapacity(initialCapacity))
     , m_indexMask(m_indexSize - 1)
-    , m_index(static_cast<unsigned*>(fastZeroedMalloc(dataSize())))
+    , m_index(static_cast<unsigned*>(PropertyTableMalloc::zeroedMalloc(dataSize())))
     , m_keyCount(0)
     , m_deletedCount(0)
 {
@@ -68,7 +70,7 @@ PropertyTable::PropertyTable(VM& vm, const PropertyTable& other)
     : JSCell(vm, vm.propertyTableStructure.get())
     , m_indexSize(other.m_indexSize)
     , m_indexMask(other.m_indexMask)
-    , m_index(static_cast<unsigned*>(fastMalloc(dataSize())))
+    , m_index(static_cast<unsigned*>(PropertyTableMalloc::malloc(dataSize())))
     , m_keyCount(other.m_keyCount)
     , m_deletedCount(other.m_deletedCount)
 {
@@ -90,7 +92,7 @@ PropertyTable::PropertyTable(VM& vm, unsigned initialCapacity, const PropertyTab
     : JSCell(vm, vm.propertyTableStructure.get())
     , m_indexSize(sizeForCapacity(initialCapacity))
     , m_indexMask(m_indexSize - 1)
-    , m_index(static_cast<unsigned*>(fastZeroedMalloc(dataSize())))
+    , m_index(static_cast<unsigned*>(PropertyTableMalloc::zeroedMalloc(dataSize())))
     , m_keyCount(0)
     , m_deletedCount(0)
 {
@@ -121,7 +123,8 @@ PropertyTable::~PropertyTable()
     for (iterator iter = begin(); iter != end; ++iter)
         iter->key->deref();
 
-    fastFree(m_index);
+    PropertyTableMalloc::free(m_index);
+
 }
 
 } // namespace JSC

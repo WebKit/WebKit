@@ -57,8 +57,9 @@ struct SourceProviderCacheItemCreationParameters {
 #pragma warning(disable: 4200) // Disable "zero-sized array in struct/union" warning
 #endif
 
+DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(SourceProviderCacheItem);
 class SourceProviderCacheItem {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_STRUCT_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(SourceProviderCacheItem);
 public:
     static std::unique_ptr<SourceProviderCacheItem> create(const SourceProviderCacheItemCreationParameters&);
     ~SourceProviderCacheItem();
@@ -112,7 +113,7 @@ inline std::unique_ptr<SourceProviderCacheItem> SourceProviderCacheItem::create(
 {
     size_t variableCount = parameters.usedVariables.size();
     size_t objectSize = sizeof(SourceProviderCacheItem) + sizeof(UniquedStringImpl*) * variableCount;
-    void* slot = fastMalloc(objectSize);
+    void* slot = SourceProviderCacheItemMalloc::malloc(objectSize);
     return std::unique_ptr<SourceProviderCacheItem>(new (slot) SourceProviderCacheItem(parameters));
 }
 

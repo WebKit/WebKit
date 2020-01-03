@@ -74,7 +74,9 @@ protected:
     unsigned m_arraySize : 27;
 };
 
+DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(StyleProperties);
 class StyleProperties : public StylePropertiesBase {
+    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(StyleProperties);
     friend class PropertyReference;
 public:
     class PropertyReference {
@@ -177,7 +179,9 @@ private:
     friend class PropertySetCSSStyleDeclaration;
 };
 
+DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(ImmutableStyleProperties);
 class ImmutableStyleProperties final : public StyleProperties {
+    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(ImmutableStyleProperties);
 public:
     WEBCORE_EXPORT ~ImmutableStyleProperties();
     static Ref<ImmutableStyleProperties> create(const CSSProperty* properties, unsigned count, CSSParserMode);
@@ -207,7 +211,9 @@ inline const StylePropertyMetadata* ImmutableStyleProperties::metadataArray() co
     return reinterpret_cast_ptr<const StylePropertyMetadata*>(&reinterpret_cast_ptr<const char*>(&(this->m_storage))[m_arraySize * sizeof(CSSValue*)]);
 }
 
+DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(MutableStyleProperties);
 class MutableStyleProperties final : public StyleProperties {
+    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(MutableStyleProperties);
 public:
     WEBCORE_EXPORT static Ref<MutableStyleProperties> create(CSSParserMode = HTMLQuirksMode);
     static Ref<MutableStyleProperties> create(Vector<CSSProperty>&&);
@@ -350,3 +356,4 @@ SPECIALIZE_TYPE_TRAITS_END()
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::DeferredStyleProperties)
     static bool isType(const WebCore::StylePropertiesBase& set) { return set.type() == WebCore::DeferredPropertiesType; }
 SPECIALIZE_TYPE_TRAITS_END()
+

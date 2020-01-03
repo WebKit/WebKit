@@ -136,8 +136,9 @@ struct ScrollRectToVisibleOptions {
     ShouldAllowCrossOriginScrolling shouldAllowCrossOriginScrolling { ShouldAllowCrossOriginScrolling::No };
 };
 
+DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(RenderLayer);
 class RenderLayer final : public ScrollableArea {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(RenderLayer);
 public:
     friend class RenderReplica;
     friend class RenderLayerFilters;

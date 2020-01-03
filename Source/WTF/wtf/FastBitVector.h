@@ -35,6 +35,8 @@ namespace WTF {
 
 class PrintStream;
 
+DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(FastBitVector);
+
 inline constexpr size_t fastBitVectorArrayLength(size_t numBits) { return (numBits + 31) / 32; }
 
 class FastBitVectorWordView {
@@ -87,7 +89,7 @@ public:
     ~FastBitVectorWordOwner()
     {
         if (m_words)
-            fastFree(m_words);
+            FastBitVectorMalloc::free(m_words);
     }
     
     FastBitVectorWordView view() const { return FastBitVectorWordView(m_words, m_numBits); }

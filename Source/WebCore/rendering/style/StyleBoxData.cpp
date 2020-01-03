@@ -35,6 +35,8 @@ struct SameSizeAsStyleBoxData : public RefCounted<SameSizeAsStyleBoxData> {
 
 COMPILE_ASSERT(sizeof(StyleBoxData) == sizeof(SameSizeAsStyleBoxData), StyleBoxData_should_not_grow);
 
+DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(StyleBoxData);
+
 StyleBoxData::StyleBoxData()
     : m_minWidth(RenderStyle::initialMinSize())
     , m_maxWidth(RenderStyle::initialMaxSize())

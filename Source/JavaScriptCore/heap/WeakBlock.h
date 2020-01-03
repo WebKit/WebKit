@@ -35,6 +35,8 @@ namespace JSC {
 class Heap;
 class SlotVisitor;
 
+DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(WeakBlock);
+
 class WeakBlock : public DoublyLinkedListNode<WeakBlock> {
 public:
     friend class WTF::DoublyLinkedListNode<WeakBlock>;

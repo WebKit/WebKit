@@ -43,6 +43,7 @@ API/JSWeakValue.cpp
 API/OpaqueJSString.cpp
 
 assembler/AbstractMacroAssembler.cpp
+assembler/AssemblerBuffer.cpp
 assembler/CPU.cpp
 assembler/LinkBuffer.cpp
 assembler/MacroAssembler.cpp
@@ -512,6 +513,7 @@ heap/GCActivityCallback.cpp
 heap/GCConductor.cpp
 heap/GCLogging.cpp
 heap/GCRequest.cpp
+heap/GCSegmentedArray.cpp
 heap/GigacageAlignedMemoryAllocator.cpp
 heap/HandleSet.cpp
 heap/Heap.cpp

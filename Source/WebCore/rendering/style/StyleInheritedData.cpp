@@ -26,6 +26,8 @@
 
 namespace WebCore {
 
+DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(StyleInheritedData);
+
 StyleInheritedData::StyleInheritedData()
     : horizontalBorderSpacing(RenderStyle::initialHorizontalBorderSpacing())
     , verticalBorderSpacing(RenderStyle::initialVerticalBorderSpacing())

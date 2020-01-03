@@ -54,7 +54,9 @@ class FrameLoader;
 class LegacyPreviewLoader;
 class NetworkLoadMetrics;
 
+DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(ResourceLoader);
 class ResourceLoader : public CanMakeWeakPtr<ResourceLoader>, public RefCounted<ResourceLoader>, protected ResourceHandleClient {
+    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(ResourceLoader);
 public:
     virtual ~ResourceLoader() = 0;
 

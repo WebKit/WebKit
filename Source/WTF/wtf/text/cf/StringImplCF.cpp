@@ -24,13 +24,18 @@
 #if USE(CF)
 
 #include <CoreFoundation/CoreFoundation.h>
+#include <wtf/DebugHeap.h>
 #include <wtf/MainThread.h>
+#include <wtf/NeverDestroyed.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/Threading.h>
 
 namespace WTF {
 
 namespace StringWrapperCFAllocator {
+
+    DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(StringWrapperCFAllocator);
+    DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(StringWrapperCFAllocator);
 
     static StringImpl* currentString;
 
@@ -60,7 +65,7 @@ namespace StringWrapperCFAllocator {
                 underlyingString->ref(); // Balanced by call to deref in deallocate below.
             }
         }
-        StringImpl** header = static_cast<StringImpl**>(fastMalloc(sizeof(StringImpl*) + size));
+        StringImpl** header = static_cast<StringImpl**>(StringWrapperCFAllocatorMalloc::malloc(sizeof(StringImpl*) + size));
         *header = underlyingString;
         return header + 1;
     }
@@ -70,7 +75,7 @@ namespace StringWrapperCFAllocator {
         size_t newAllocationSize = sizeof(StringImpl*) + newSize;
         StringImpl** header = static_cast<StringImpl**>(pointer) - 1;
         ASSERT(!*header);
-        header = static_cast<StringImpl**>(fastRealloc(header, newAllocationSize));
+        header = static_cast<StringImpl**>(StringWrapperCFAllocatorMalloc::realloc(header, newAllocationSize));
         return header + 1;
     }
 
@@ -79,11 +84,11 @@ namespace StringWrapperCFAllocator {
         StringImpl** header = static_cast<StringImpl**>(pointer) - 1;
         StringImpl* underlyingString = *header;
         if (!underlyingString)
-            fastFree(header);
+            StringWrapperCFAllocatorMalloc::free(header);
         else {
             if (isMainThread()) {
                 underlyingString->deref(); // Balanced by call to ref in allocate above.
-                fastFree(header);
+                StringWrapperCFAllocatorMalloc::free(header);
                 return;
             }
 
@@ -91,7 +96,7 @@ namespace StringWrapperCFAllocator {
                 StringImpl* underlyingString = *header;
                 ASSERT(underlyingString);
                 underlyingString->deref(); // Balanced by call to ref in allocate above.
-                fastFree(header);
+                StringWrapperCFAllocatorMalloc::free(header);
             });
         }
     }

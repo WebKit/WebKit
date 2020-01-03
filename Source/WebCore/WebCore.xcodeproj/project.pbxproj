@@ -15114,6 +15114,7 @@
 		E307DED21D81E4ED00141CAF /* LoadableModuleScript.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LoadableModuleScript.cpp; sourceTree = "<group>"; };
 		E307DED31D81E4ED00141CAF /* LoadableModuleScript.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LoadableModuleScript.h; sourceTree = "<group>"; };
 		E3150EA51DA7218D00194012 /* DOMJITHelpers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMJITHelpers.h; sourceTree = "<group>"; };
+		E31CD750229F749500FBDA19 /* TableLayout.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = TableLayout.cpp; sourceTree = "<group>"; };
 		E323CFF91E5AF6A500F0B4A0 /* JSDOMConvertPromise.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDOMConvertPromise.h; sourceTree = "<group>"; };
 		E329275E22543F5700308A9A /* TypedOMCSSStyleValue.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = TypedOMCSSStyleValue.cpp; sourceTree = "<group>"; };
 		E329276022543F5800308A9A /* TypedOMCSSImageValue.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = TypedOMCSSImageValue.cpp; sourceTree = "<group>"; };
@@ -27928,6 +27929,7 @@
 				E4E9B1181810916F003ACCDF /* SimpleLineLayoutResolver.h */,
 				582CB0541A78A2B200AFFCC4 /* SimpleLineLayoutTextFragmentIterator.cpp */,
 				582CB0521A78A14B00AFFCC4 /* SimpleLineLayoutTextFragmentIterator.h */,
+				E31CD750229F749500FBDA19 /* TableLayout.cpp */,
 				A8CFF04C0A154F09000A4234 /* TableLayout.h */,
 				0F54DCE31881051D003EEDBB /* TextAutoSizing.cpp */,
 				0F54DCE41881051D003EEDBB /* TextAutoSizing.h */,

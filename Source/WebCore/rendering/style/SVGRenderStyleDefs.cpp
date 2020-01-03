@@ -36,6 +36,8 @@
 
 namespace WebCore {
 
+DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(StyleFillData);
+
 StyleFillData::StyleFillData()
     : opacity(SVGRenderStyle::initialFillOpacity())
     , paintColor(SVGRenderStyle::initialFillPaintColor())

@@ -49,6 +49,8 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
+DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(HTMLDocumentParser);
+
 HTMLDocumentParser::HTMLDocumentParser(HTMLDocument& document)
     : ScriptableDocumentParser(document)
     , m_options(document)

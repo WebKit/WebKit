@@ -144,6 +144,9 @@ bool Environment::computeIsDebugHeapEnabled()
     if (!isNanoMallocEnabled() && !shouldProcessUnconditionallyUseBmalloc())
         return true;
 #endif
+#if BENABLE_MALLOC_HEAP_BREAKDOWN
+    return true;
+#endif
     return false;
 }
 

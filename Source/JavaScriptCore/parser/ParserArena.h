@@ -35,8 +35,9 @@ namespace JSC {
 
     class ParserArenaDeletable;
 
+    DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(IdentifierArena);
     class IdentifierArena {
-        WTF_MAKE_FAST_ALLOCATED;
+        WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(IdentifierArena);
     public:
         IdentifierArena()
         {
@@ -135,6 +136,8 @@ namespace JSC {
         m_identifiers.append(Identifier::fromString(vm, String::number(number)));
         return m_identifiers.last();
     }
+
+    DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(ParserArena);
 
     class ParserArena {
         WTF_MAKE_NONCOPYABLE(ParserArena);

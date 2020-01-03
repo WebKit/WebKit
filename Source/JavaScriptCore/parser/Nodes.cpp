@@ -33,6 +33,8 @@
 
 namespace JSC {
 
+DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(ParserArenaRoot);
+
 // ------------------------------ StatementNode --------------------------------
 
 void StatementNode::setLoc(unsigned firstLine, unsigned lastLine, int startOffset, int lineStartOffset)

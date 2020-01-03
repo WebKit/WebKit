@@ -22,8 +22,11 @@
 
 #include <mutex>
 #include <wtf/DataLog.h>
+#include <wtf/NeverDestroyed.h>
 
 namespace WTF {
+
+DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(HashTable);
 
 #if DUMP_HASHTABLE_STATS
 

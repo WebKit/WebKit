@@ -33,6 +33,8 @@
 
 namespace WTF {
 
+    DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(SegmentedVector);
+
     // An iterator for SegmentedVector. It supports only the pre ++ operator
     template <typename T, size_t SegmentSize = 8> class SegmentedVector;
     template <typename T, size_t SegmentSize = 8> class SegmentedVectorIterator {
@@ -227,7 +229,7 @@ namespace WTF {
             for (size_t i = 0; i < m_size; ++i)
                 at(i).~T();
             for (size_t i = 0; i < m_segments.size(); ++i)
-                fastFree(m_segments[i]);
+                SegmentedVectorMalloc::free(m_segments[i]);
         }
 
         bool segmentExistsFor(size_t index)
@@ -263,7 +265,7 @@ namespace WTF {
 
         void allocateSegment()
         {
-            m_segments.append(static_cast<Segment*>(fastMalloc(sizeof(T) * SegmentSize)));
+            m_segments.append(static_cast<Segment*>(SegmentedVectorMalloc::malloc(sizeof(T) * SegmentSize)));
         }
 
         size_t m_size { 0 };

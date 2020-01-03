@@ -54,7 +54,9 @@ class Font;
 class FontFace;
 enum class ExternalResourceDownloadPolicy;
 
+DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(CSSFontFace);
 class CSSFontFace final : public RefCounted<CSSFontFace> {
+    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(CSSFontFace);
 public:
     static Ref<CSSFontFace> create(CSSFontSelector* fontSelector, StyleRuleFontFace* cssConnection = nullptr, FontFace* wrapper = nullptr, bool isLocalFallback = false)
     {

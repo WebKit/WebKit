@@ -37,6 +37,8 @@ namespace JSC { namespace DFG {
 
 const char Node::HashSetTemplateInstantiationString[] = "::JSC::DFG::Node*";
 
+DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(DFGNode);
+
 bool MultiPutByOffsetData::writesStructures() const
 {
     for (unsigned i = variants.size(); i--;) {

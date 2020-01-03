@@ -37,6 +37,8 @@ namespace JSC {
 
 struct AccessGenerationState;
 
+DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(AccessCase);
+
 // An AccessCase describes one of the cases of a PolymorphicAccess. A PolymorphicAccess represents a
 // planned (to generate in future) or generated stub for some inline cache. That stub contains fast
 // path code for some finite number of fast cases, each described by an AccessCase object.
@@ -78,7 +80,7 @@ struct AccessGenerationState;
 // code. This allows us to only regenerate once we've accumulated (hopefully) more than one new
 // AccessCase.
 class AccessCase {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(AccessCase);
 public:
     enum AccessType : uint8_t {
         Load,

@@ -30,6 +30,10 @@
 #include "IsoTLS.h"
 #include "bmalloc.h"
 
+#if BOS(DARWIN)
+#include <malloc/malloc.h>
+#endif
+
 namespace bmalloc {
 
 template<typename Type>
@@ -88,7 +92,11 @@ BNO_INLINE void* IsoTLS::allocateSlow(api::IsoHeap<Type>& handle, bool abortOnFa
             determineMallocFallbackState();
             continue;
         case MallocFallbackState::FallBackToMalloc:
+#if BENABLE_MALLOC_HEAP_BREAKDOWN
+            return malloc_zone_malloc(handle.m_zone, Config::objectSize);
+#else
             return api::tryMalloc(Config::objectSize);
+#endif
         case MallocFallbackState::DoNotFallBack:
             break;
         }
@@ -131,7 +139,11 @@ BNO_INLINE void IsoTLS::deallocateSlow(api::IsoHeap<Type>& handle, void* p)
             determineMallocFallbackState();
             continue;
         case MallocFallbackState::FallBackToMalloc:
+#if BENABLE_MALLOC_HEAP_BREAKDOWN
+            return malloc_zone_free(handle.m_zone, p);
+#else
             return api::free(p);
+#endif
         case MallocFallbackState::DoNotFallBack:
             break;
         }

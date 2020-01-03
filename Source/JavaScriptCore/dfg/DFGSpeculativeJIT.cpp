@@ -71,6 +71,8 @@
 
 namespace JSC { namespace DFG {
 
+DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(SpeculativeJIT);
+
 SpeculativeJIT::SpeculativeJIT(JITCompiler& jit)
     : m_jit(jit)
     , m_graph(m_jit.graph())
