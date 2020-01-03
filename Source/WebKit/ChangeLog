@@ -1,3 +1,51 @@
+2020-01-02  Keith Rollin  <krollin@apple.com>
+
+        Reformat WebProcess logging
+        https://bugs.webkit.org/show_bug.cgi?id=205691
+        <rdar://problem/58283294>
+
+        Reviewed by Chris Dumez.
+
+        Update the format used by WebProcess in its RELEASE_LOG logging. Use
+        the format used by WebPageProxy and NetworkResourceLoader, which is
+        generally of the form:
+
+            <object-address> - [<values that help thread together operations>] <class>::<method>: <message and other useful values>
+
+        So, for example:
+
+            0x6f1df7000 - WebProcess::destroyRenderingResources() took 0.02ms
+
+        becomes:
+
+            0x6f1df7000 - [sessionID=2] WebProcess::destroyRenderingResources: took 0.02ms
+
+        While we're at it, also convert over to the RELEASE_LOG_IF_ALLOWED
+        style of logging macro. We didn't used to be able to do this since the
+        decision on whether or not to allow logging is typically based on
+        SessionID, which didn't used to be an attribute of WebProcess. Now
+        WebProcesses do (or can) have a SessionID, so use that to support the
+        hiding of logging in private sessions.
+
+        No new tests - no added or changed functionality.
+
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::initializeWebProcess):
+        (WebKit::WebProcess::prepareToSuspend):
+        (WebKit::WebProcess::markAllLayersVolatile):
+        (WebKit::WebProcess::freezeAllLayerTrees):
+        (WebKit::WebProcess::unfreezeAllLayerTrees):
+        (WebKit::WebProcess::processDidResume):
+        (WebKit::WebProcess::grantUserMediaDeviceSandboxExtensions):
+        (WebKit::WebProcess::revokeUserMediaDeviceSandboxExtensions):
+        * WebProcess/WebProcess.h:
+        (WebKit::WebProcess::isAlwaysOnLoggingAllowed):
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::updateProcessName):
+        (WebKit::WebProcess::updateCPUMonitorState):
+        (WebKit::WebProcess::destroyRenderingResources):
+        (WebKit::WebProcess::updateFreezerStatus):
+
 2020-01-02  Yusuke Suzuki  <ysuzuki@apple.com> and Simon Fraser  <simon.fraser@apple.com>
 
         Experiment: create lots of different malloc zones for easier accounting of memory use
