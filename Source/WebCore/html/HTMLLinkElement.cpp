@@ -50,6 +50,7 @@
 #include "MediaQueryEvaluator.h"
 #include "MediaQueryParser.h"
 #include "MouseEvent.h"
+#include "ParsedContentType.h"
 #include "RenderStyle.h"
 #include "RuntimeEnabledFeatures.h"
 #include "SecurityOrigin.h"
@@ -275,8 +276,15 @@ void HTMLLinkElement::process()
 
     m_linkLoader.loadLink(params, document());
 
-    bool treatAsStyleSheet = m_relAttribute.isStyleSheet
-        || (document().settings().treatsAnyTextCSSLinkAsStylesheet() && m_type.containsIgnoringASCIICase("text/css"));
+    bool treatAsStyleSheet = false;
+    if (m_relAttribute.isStyleSheet) {
+        if (m_type.isNull())
+            treatAsStyleSheet = true;
+        else if (auto parsedContentType = ParsedContentType::create(m_type))
+            treatAsStyleSheet = equalLettersIgnoringASCIICase(parsedContentType->mimeType(), "text/css");
+    }
+    if (!treatAsStyleSheet)
+        treatAsStyleSheet = document().settings().treatsAnyTextCSSLinkAsStylesheet() && m_type.containsIgnoringASCIICase("text/css");
 
     if (m_disabledState != Disabled && treatAsStyleSheet && document().frame() && url.isValid()) {
         String charset = attributeWithoutSynchronization(charsetAttr);
