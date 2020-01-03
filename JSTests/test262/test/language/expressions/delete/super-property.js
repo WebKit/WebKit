@@ -15,6 +15,7 @@ var caught;
 
 class C extends Object {
   constructor() {
+    super();
     try {
       delete super.x;
     } catch (err) {

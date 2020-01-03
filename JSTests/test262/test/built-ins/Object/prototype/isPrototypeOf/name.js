@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-es6id: 19.1.3.3
+esid: sec-object.prototype.isprototypeof
 description: >
   Object.prototype.isPrototypeOf.name is "isPrototypeOf".
 info: |
@@ -19,8 +19,9 @@ info: |
 includes: [propertyHelper.js]
 ---*/
 
-assert.sameValue(Object.prototype.isPrototypeOf.name, "isPrototypeOf");
-
-verifyNotEnumerable(Object.prototype.isPrototypeOf, "name");
-verifyNotWritable(Object.prototype.isPrototypeOf, "name");
-verifyConfigurable(Object.prototype.isPrototypeOf, "name");
+verifyProperty(Object.prototype.isPrototypeOf, "name", {
+  value: "isPrototypeOf",
+  writable: false,
+  enumerable: false,
+  configurable: true,
+});

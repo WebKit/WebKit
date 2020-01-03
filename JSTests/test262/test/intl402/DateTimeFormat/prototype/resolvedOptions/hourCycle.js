@@ -85,3 +85,15 @@ assert.sameValue(resolvedOptions.hour12, true);
 
 verifyProperty(resolvedOptions, 'hourCycle', dataPropertyDesc);
 verifyProperty(resolvedOptions, 'hour12', dataPropertyDesc);
+
+/* When the hour is not in the pattern, hourCycle and hour12 are not defined. */
+
+resolvedOptions = new Intl.DateTimeFormat("fr", {
+  hourCycle: "h12",
+  hour12: false,
+}).resolvedOptions();
+
+assert.sameValue(resolvedOptions.hour, undefined,
+                 "Precondition: hour should not be included by default");
+assert.sameValue(resolvedOptions.hourCycle, undefined);
+assert.sameValue(resolvedOptions.hour12, undefined);

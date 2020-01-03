@@ -23,7 +23,8 @@ features: [Proxy]
 ---*/
 
 var _handler, _target, _prop;
-var target = {};
+var proto = {prop: 1};
+var target = Object.create(proto);
 var handler = allowProxyTraps({
   has: function(target, prop) {
     _handler = this;

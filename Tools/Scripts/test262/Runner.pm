@@ -334,8 +334,8 @@ sub main {
 
     if (!@cliTestDirs) {
         # If not commandline test path supplied, use the root directory of all tests.
-        push(@cliTestDirs, 'test') if not @cliTestDirs;
-        $runningAllTests = 1;
+        push(@cliTestDirs, 'test');
+        $runningAllTests = 1 if !$latestImport;
     }
 
     if ($latestImport) {

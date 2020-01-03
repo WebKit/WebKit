@@ -1,24 +1,16 @@
 // Copyright (C) 2016 the V8 project authors. All rights reserved.
 // This code is governed by the BSD license found in the LICENSE file.
 /*---
-esid: sec-function-definitions-runtime-semantics-iteratorbindinginitialization
+esid: sec-functiondeclarationinstantiation
 description: >
-    Removal of variable environment for the BindingRestElement formal parameter
+    sloppy direct evals in params introduce vars
 info: |
     [...]
-    2. Let currentContext be the running execution context.
-    3. Let originalEnv be the VariableEnvironment of currentContext.
-    4. Assert: The VariableEnvironment and LexicalEnvironment of currentContext
-       are the same.
-    5. Assert: environment and originalEnv are the same.
-    6. Let paramVarEnv be NewDeclarativeEnvironment(originalEnv).
-    7. Set the VariableEnvironment of currentContext to paramVarEnv.
-    8. Set the LexicalEnvironment of currentContext to paramVarEnv.
-    9. Let result be the result of performing IteratorBindingInitialization for
-       BindingRestElement using iteratorRecord and environment as the
-       arguments.
-    10. Set the VariableEnvironment of currentContext to originalEnv.
-    11. Set the LexicalEnvironment of currentContext to originalEnv.
+    20. Else,
+      a. NOTE: A separate Environment Record is needed to ensure that bindings created by direct eval calls in the formal parameter list are outside the environment where parameters are declared.
+      b. Let calleeEnv be the LexicalEnvironment of calleeContext.
+      c. Let env be NewDeclarativeEnvironment(calleeEnv).
+      d. Let envRec be env's EnvironmentRecord.
     [...]
 flags: [noStrict]
 features: [generators]
@@ -34,4 +26,4 @@ var probeParam, probeBody;
 }().next());
 
 assert.sameValue(probeParam(), 'inside');
-assert.sameValue(probeBody(), 'outside');
+assert.sameValue(probeBody(), 'inside');

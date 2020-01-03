@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-es6id: 19.1.2.8
+esid: sec-object.getownpropertysymbols
 description: >
   Object.getOwnPropertySymbols.length is 1.
 info: |

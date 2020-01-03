@@ -27,24 +27,25 @@ includes: [async-gc.js]
 flags: [async, non-deterministic]
 ---*/
 
-var called = 0;
+var token = {};
 var fg = new FinalizationGroup(function() {});
 
 function emptyCells() {
   var target = {};
-  var token = {};
   fg.register(target, 'target!', token);
 
   var prom = asyncGC(target);
   target = null;
 
-  var res = fg.unregister(token);
-  assert.sameValue(res, true, 'unregister target before iterating over it in cleanup');
-
   return prom;
 }
 
 emptyCells().then(function() {
+  var called = 0;
+
+  var res = fg.unregister(token);
+  assert.sameValue(res, true, 'unregister target before iterating over it in cleanup');
+
   fg.cleanupSome(function cb(iterator) {
     called += 1;
   });

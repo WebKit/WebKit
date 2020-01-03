@@ -1,3 +1,704 @@
+2020-01-03  Keith Miller  <keith_miller@apple.com>
+
+        Update test262 tests to commit 157b18d
+        https://bugs.webkit.org/show_bug.cgi?id=205741
+
+        Reviewed by Yusuke Suzuki.
+
+        * test262/expectations.yaml:
+        * test262/harness/deepEqual.js:
+        (assert.deepEqual):
+        (assert.deepEqual.format):
+        (deepEqual):
+        (compareEquality):
+        (compareIf):
+        (tryCompareStrictEquality):
+        (tryCompareTypeOfEquality):
+        (tryCompareToStringTagEquality):
+        (isOptional):
+        (compareOptionality):
+        (isPrimitiveEquatable):
+        (comparePrimitiveEquality):
+        (isNaNEquatable):
+        (compareNaNEquality):
+        (isObjectEquatable):
+        (compareObjectEquality):
+        (isBoxed):
+        (isValueOfEquatable):
+        (compareValueOfEquality):
+        (isToStringEquatable):
+        (compareToStringEquality):
+        (isArrayLikeEquatable):
+        (isStructurallyEquatable):
+        (isIterableEquatable):
+        (compareIteratorEquality):
+        (compareIterableEquality):
+        (cacheComparison):
+        (fail):
+        (setCache):
+        (getCache):
+        (assert.deepEqual._compare):
+        * test262/latest-changes-summary.txt:
+        * test262/test/built-ins/AggregateError: Added.
+        * test262/test/built-ins/AggregateError/errors-iterabletolist-failures.js: Added.
+        (case1.get Symbol):
+        (case2.get Symbol):
+        (case3.Symbol.iterator):
+        (case4.Symbol.iterator):
+        (case5.Symbol.iterator):
+        (case6.Symbol.iterator.return.get next):
+        (case6.Symbol.iterator):
+        (case7.Symbol.iterator.return.get next):
+        (case7.Symbol.iterator):
+        (case8.Symbol.iterator):
+        (case9.Symbol.iterator):
+        (case10.Symbol.iterator):
+        (case11.Symbol.iterator.return.next.return.get done):
+        (case11.Symbol.iterator):
+        * test262/test/built-ins/AggregateError/errors-iterabletolist.js: Added.
+        (case1.Symbol.iterator.return.next.return.get value):
+        (case1.Symbol.iterator):
+        * test262/test/built-ins/AggregateError/length.js: Added.
+        * test262/test/built-ins/AggregateError/message-method-prop-cast.js: Added.
+        (toString):
+        * test262/test/built-ins/AggregateError/message-method-prop.js: Added.
+        * test262/test/built-ins/AggregateError/message-tostring-abrupt-symbol.js: Added.
+        (case2.Symbol.toPrimitive):
+        (case2.toString):
+        (case2.valueOf):
+        * test262/test/built-ins/AggregateError/message-tostring-abrupt.js: Added.
+        (case1.Symbol.toPrimitive):
+        (case1.toString):
+        (case1.valueOf):
+        (case2.toString):
+        (case2.valueOf):
+        (case3.valueOf):
+        * test262/test/built-ins/AggregateError/message-undefined-no-prop.js: Added.
+        * test262/test/built-ins/AggregateError/name.js: Added.
+        * test262/test/built-ins/AggregateError/newtarget-proto-custom.js: Added.
+        (newt.new.Proxy):
+        (newt.new.Proxy.get if):
+        * test262/test/built-ins/AggregateError/newtarget-proto-fallback.js: Added.
+        (ctor):
+        (const.value.of.values.get t):
+        * test262/test/built-ins/AggregateError/newtarget-proto.js: Added.
+        * test262/test/built-ins/AggregateError/prop-desc.js: Added.
+        * test262/test/built-ins/AggregateError/proto.js: Added.
+        * test262/test/built-ins/AggregateError/prototype: Added.
+        * test262/test/built-ins/AggregateError/prototype/constructor.js: Added.
+        * test262/test/built-ins/AggregateError/prototype/errors: Added.
+        * test262/test/built-ins/AggregateError/prototype/errors/invoked-as-accessor.js: Added.
+        * test262/test/built-ins/AggregateError/prototype/errors/invoked-as-func.js: Added.
+        * test262/test/built-ins/AggregateError/prototype/errors/length.js: Added.
+        * test262/test/built-ins/AggregateError/prototype/errors/name.js: Added.
+        * test262/test/built-ins/AggregateError/prototype/errors/prop-desc.js: Added.
+        * test262/test/built-ins/AggregateError/prototype/errors/return-from-iterable-errors.js: Added.
+        (errors.Symbol.iterator.return.next.return.get value):
+        (errors.Symbol.iterator):
+        * test262/test/built-ins/AggregateError/prototype/errors/return-new-array-from-list.js: Added.
+        * test262/test/built-ins/AggregateError/prototype/errors/this-has-no-typedarrayname-internal.js: Added.
+        * test262/test/built-ins/AggregateError/prototype/errors/this-is-not-object.js: Added.
+        * test262/test/built-ins/AggregateError/prototype/message.js: Added.
+        * test262/test/built-ins/AggregateError/prototype/name.js: Added.
+        * test262/test/built-ins/AggregateError/prototype/prop-desc.js: Added.
+        * test262/test/built-ins/AggregateError/prototype/proto.js: Added.
+        * test262/test/built-ins/Array/prototype/copyWithin/coerced-values-start-change-start.js: Added.
+        (longDenseArray):
+        (shorten):
+        * test262/test/built-ins/Array/prototype/copyWithin/coerced-values-start-change-target.js: Added.
+        (longDenseArray):
+        (shorten):
+        * test262/test/built-ins/Array/prototype/flatMap/this-value-ctor-object-species-bad-throws.js:
+        * test262/test/built-ins/Atomics/add/bigint/nonshared-int-views.js:
+        (testWithBigIntTypedArrayConstructors):
+        * test262/test/built-ins/Atomics/and/bigint/nonshared-int-views.js:
+        (testWithBigIntTypedArrayConstructors):
+        * test262/test/built-ins/Atomics/compareExchange/bigint/nonshared-int-views.js:
+        (testWithBigIntTypedArrayConstructors):
+        * test262/test/built-ins/Atomics/exchange/bigint/nonshared-int-views.js:
+        (testWithBigIntTypedArrayConstructors):
+        * test262/test/built-ins/Atomics/or/bigint/nonshared-int-views.js:
+        (testWithBigIntTypedArrayConstructors):
+        * test262/test/built-ins/Atomics/store/bigint/nonshared-int-views.js:
+        (testWithBigIntTypedArrayConstructors):
+        * test262/test/built-ins/Atomics/sub/bigint/nonshared-int-views.js:
+        (testWithBigIntTypedArrayConstructors):
+        * test262/test/built-ins/Error/prototype/toString/invalid-receiver.js: Added.
+        (Symbol.forEach):
+        * test262/test/built-ins/Error/prototype/toString/undefined-props.js: Added.
+        * test262/test/built-ins/FinalizationGroup/prototype/cleanupSome/cleanup-prevented-with-unregister.js:
+        (emptyCells):
+        (emptyCells.then):
+        * test262/test/built-ins/FinalizationGroup/prototype/cleanupSome/cleanup-throws-in-callback.js: Added.
+        (fg.new.FinalizationGroup):
+        (callback):
+        (emptyCells):
+        (emptyCells.then):
+        * test262/test/built-ins/FinalizationGroup/prototype/register/holdings-same-as-target.js:
+        * test262/test/built-ins/FinalizationGroup/prototype/register/return-undefined-register-itself.js:
+        * test262/test/built-ins/FinalizationGroup/prototype/register/unregisterToken-same-as-holdings-and-target.js:
+        * test262/test/built-ins/FinalizationGroup/prototype/unregister/unregister-cleaned-up-cell.js: Added.
+        (fg.new.FinalizationGroup):
+        (emptyCells):
+        (emptyCells.then):
+        * test262/test/built-ins/FinalizationGroup/target-not-callable-throws.js:
+        * test262/test/built-ins/JSON/parse/reviver-array-get-prop-from-prototype.js: Added.
+        * test262/test/built-ins/JSON/parse/reviver-array-non-configurable-prop-create.js: Added.
+        * test262/test/built-ins/JSON/parse/reviver-array-non-configurable-prop-delete.js: Added.
+        * test262/test/built-ins/JSON/parse/reviver-call-order.js: Added.
+        * test262/test/built-ins/JSON/parse/reviver-object-get-prop-from-prototype.js: Added.
+        * test262/test/built-ins/JSON/parse/reviver-object-non-configurable-prop-create.js: Added.
+        * test262/test/built-ins/JSON/parse/reviver-object-non-configurable-prop-delete.js: Added.
+        * test262/test/built-ins/JSON/parse/reviver-wrapper.js: Added.
+        * test262/test/built-ins/JSON/stringify/property-order.js: Added.
+        * test262/test/built-ins/Object/entries/return-order.js: Added.
+        * test262/test/built-ins/Object/freeze/throws-when-false.js: Added.
+        (preventExtensions):
+        * test262/test/built-ins/Object/getOwnPropertyNames/proxy-invariant-absent-not-configurable-symbol-key.js: Added.
+        (ownKeys):
+        * test262/test/built-ins/Object/getOwnPropertyNames/proxy-invariant-duplicate-symbol-entry.js: Added.
+        (ownKeys):
+        * test262/test/built-ins/Object/getOwnPropertyNames/proxy-invariant-not-extensible-absent-symbol-key.js: Added.
+        (ownKeys):
+        * test262/test/built-ins/Object/getOwnPropertyNames/proxy-invariant-not-extensible-extra-symbol-key.js: Added.
+        (ownKeys):
+        * test262/test/built-ins/Object/getOwnPropertySymbols/length.js:
+        * test262/test/built-ins/Object/getOwnPropertySymbols/name.js:
+        * test262/test/built-ins/Object/getOwnPropertySymbols/object-contains-symbol-property-with-description.js:
+        * test262/test/built-ins/Object/getOwnPropertySymbols/object-contains-symbol-property-without-description.js:
+        * test262/test/built-ins/Object/getOwnPropertySymbols/proxy-invariant-absent-not-configurable-string-key.js: Added.
+        (ownKeys):
+        * test262/test/built-ins/Object/getOwnPropertySymbols/proxy-invariant-duplicate-string-entry.js: Added.
+        (ownKeys):
+        * test262/test/built-ins/Object/getOwnPropertySymbols/proxy-invariant-not-extensible-absent-string-key.js: Added.
+        (ownKeys):
+        * test262/test/built-ins/Object/getOwnPropertySymbols/proxy-invariant-not-extensible-extra-string-key.js: Added.
+        (ownKeys):
+        * test262/test/built-ins/Object/keys/proxy-non-enumerable-prop-invariant-2.js:
+        * test262/test/built-ins/Object/keys/proxy-non-enumerable-prop-invariant-3.js: Added.
+        (ownKeys):
+        * test262/test/built-ins/Object/keys/return-order.js: Added.
+        * test262/test/built-ins/Object/preventExtensions/throws-when-false.js: Added.
+        (preventExtensions):
+        * test262/test/built-ins/Object/prototype/isPrototypeOf/arg-is-proxy.js: Added.
+        (handler.allowProxyTraps.getPrototypeOf):
+        * test262/test/built-ins/Object/prototype/isPrototypeOf/builtin.js: Added.
+        * test262/test/built-ins/Object/prototype/isPrototypeOf/length.js: Added.
+        * test262/test/built-ins/Object/prototype/isPrototypeOf/name.js:
+        * test262/test/built-ins/Object/prototype/isPrototypeOf/null-this-and-object-arg-throws.js: Added.
+        * test262/test/built-ins/Object/prototype/isPrototypeOf/null-this-and-primitive-arg-returns-false.js: Added.
+        * test262/test/built-ins/Object/prototype/isPrototypeOf/this-value-is-in-prototype-chain-of-arg.js: Added.
+        (USER_FACTORY.this.getName):
+        (USER_FACTORY):
+        (this.getGrade):
+        (FORCEDUSER_FACTORY):
+        * test262/test/built-ins/Object/prototype/isPrototypeOf/undefined-this-and-object-arg-throws.js: Added.
+        * test262/test/built-ins/Object/prototype/isPrototypeOf/undefined-this-and-primitive-arg-returns-false.js: Added.
+        * test262/test/built-ins/Object/seal/throws-when-false.js: Added.
+        (preventExtensions):
+        * test262/test/built-ins/Object/values/return-order.js: Added.
+        * test262/test/built-ins/Proxy/has/call-in-prototype-index.js: Added.
+        (handler.allowProxyTraps.has):
+        * test262/test/built-ins/Proxy/has/call-in-prototype.js:
+        * test262/test/built-ins/Proxy/ownKeys/call-parameters-object-keys.js:
+        (handler.ownKeys):
+        * test262/test/built-ins/Proxy/set/call-parameters-prototype-index.js: Added.
+        * test262/test/built-ins/Reflect/preventExtensions/target-is-not-object-throws.js:
+        * test262/test/built-ins/RegExp/match-indices/indices-array-element.js:
+        * test262/test/built-ins/RegExp/match-indices/indices-array-matched.js:
+        * test262/test/built-ins/RegExp/match-indices/indices-array-non-unicode-match.js:
+        * test262/test/built-ins/RegExp/match-indices/indices-array-properties.js:
+        * test262/test/built-ins/RegExp/match-indices/indices-array-unicode-match.js:
+        * test262/test/built-ins/RegExp/match-indices/indices-array-unicode-property-names.js:
+        * test262/test/built-ins/RegExp/match-indices/indices-array-unmatched.js:
+        * test262/test/built-ins/RegExp/match-indices/indices-array.js:
+        * test262/test/built-ins/RegExp/match-indices/indices-groups-object-unmatched.js:
+        * test262/test/built-ins/RegExp/match-indices/indices-groups-object.js:
+        * test262/test/built-ins/RegExp/match-indices/indices-groups-properties.js:
+        * test262/test/built-ins/RegExp/match-indices/indices-property.js:
+        * test262/test/built-ins/String/prototype/replaceAll: Added.
+        * test262/test/built-ins/String/prototype/replaceAll/getSubstitution-0x0024-0x0024.js: Added.
+        * test262/test/built-ins/String/prototype/replaceAll/getSubstitution-0x0024-0x0026.js: Added.
+        * test262/test/built-ins/String/prototype/replaceAll/getSubstitution-0x0024-0x0027.js: Added.
+        * test262/test/built-ins/String/prototype/replaceAll/getSubstitution-0x0024-0x003C.js: Added.
+        * test262/test/built-ins/String/prototype/replaceAll/getSubstitution-0x0024-0x0060.js: Added.
+        * test262/test/built-ins/String/prototype/replaceAll/getSubstitution-0x0024.js: Added.
+        * test262/test/built-ins/String/prototype/replaceAll/getSubstitution-0x0024N.js: Added.
+        * test262/test/built-ins/String/prototype/replaceAll/getSubstitution-0x0024NN.js: Added.
+        * test262/test/built-ins/String/prototype/replaceAll/length.js: Added.
+        * test262/test/built-ins/String/prototype/replaceAll/name.js: Added.
+        * test262/test/built-ins/String/prototype/replaceAll/replaceAll.js: Added.
+        * test262/test/built-ins/String/prototype/replaceAll/replaceValue-call-abrupt.js: Added.
+        (custom):
+        * test262/test/built-ins/String/prototype/replaceAll/replaceValue-call-each-match-position.js: Added.
+        (t):
+        (replaceValue):
+        * test262/test/built-ins/String/prototype/replaceAll/replaceValue-call-matching-empty.js: Added.
+        (t):
+        (replaceValue):
+        * test262/test/built-ins/String/prototype/replaceAll/replaceValue-call-skip-no-match.js: Added.
+        (replaceValue):
+        * test262/test/built-ins/String/prototype/replaceAll/replaceValue-call-tostring-abrupt.js: Added.
+        (custom):
+        (symbol):
+        * test262/test/built-ins/String/prototype/replaceAll/replaceValue-fn-skip-toString.js: Added.
+        (replaceValue):
+        (value):
+        * test262/test/built-ins/String/prototype/replaceAll/replaceValue-tostring-abrupt.js: Added.
+        (thisValue.toString):
+        (searchValue.toString):
+        (replaceValue.toString):
+        * test262/test/built-ins/String/prototype/replaceAll/replaceValue-value-replaces-string.js: Added.
+        * test262/test/built-ins/String/prototype/replaceAll/replaceValue-value-tostring.js: Added.
+        (replaceValue.Symbol.toPrimitive):
+        (replaceValue.toString):
+        (replaceValue.valueOf):
+        * test262/test/built-ins/String/prototype/replaceAll/searchValue-empty-string-this-empty-string.js: Added.
+        * test262/test/built-ins/String/prototype/replaceAll/searchValue-empty-string.js: Added.
+        * test262/test/built-ins/String/prototype/replaceAll/searchValue-flags-no-g-throws.js: Added.
+        (poison.toString):
+        * test262/test/built-ins/String/prototype/replaceAll/searchValue-flags-null-undefined-throws.js: Added.
+        (poison.toString):
+        (searchValue.get flags):
+        * test262/test/built-ins/String/prototype/replaceAll/searchValue-flags-toString-abrupt.js: Added.
+        (poison.toString):
+        (searchValue.toString):
+        (searchValue.flags.toString):
+        * test262/test/built-ins/String/prototype/replaceAll/searchValue-get-flags-abrupt.js: Added.
+        (searchValue.get flags):
+        (poison.toString):
+        * test262/test/built-ins/String/prototype/replaceAll/searchValue-isRegExp-abrupt.js: Added.
+        (searchValue.get Symbol):
+        (searchValue.toString):
+        (poison.toString):
+        * test262/test/built-ins/String/prototype/replaceAll/searchValue-replace-method-abrupt.js: Added.
+        (poison.toString):
+        (searchValue.get Symbol):
+        (searchValue.toString):
+        * test262/test/built-ins/String/prototype/replaceAll/searchValue-replacer-RegExp-call-fn.js: Added.
+        (RE.prototype.Symbol.replace):
+        (RE.prototype.toString):
+        (RE):
+        (const.t):
+        (getFn.return.replaceValueFn):
+        (getFn):
+        * test262/test/built-ins/String/prototype/replaceAll/searchValue-replacer-RegExp-call.js: Added.
+        (RE.prototype.Symbol.replace):
+        (RE.prototype.toString):
+        (RE):
+        * test262/test/built-ins/String/prototype/replaceAll/searchValue-replacer-before-tostring.js: Added.
+        (value):
+        (poison.toString):
+        * test262/test/built-ins/String/prototype/replaceAll/searchValue-replacer-call-abrupt.js: Added.
+        (poison.toString):
+        (searchValue.Symbol.replace):
+        (searchValue.toString):
+        * test262/test/built-ins/String/prototype/replaceAll/searchValue-replacer-call.js: Added.
+        (value):
+        * test262/test/built-ins/String/prototype/replaceAll/searchValue-tostring-abrupt.js: Added.
+        (poison.toString):
+        (thisValue.toString):
+        (searchValue.toString):
+        * test262/test/built-ins/String/prototype/replaceAll/searchValue-tostring-regexp.js: Added.
+        * test262/test/built-ins/String/prototype/replaceAll/this-is-null-throws.js: Added.
+        * test262/test/built-ins/String/prototype/replaceAll/this-is-undefined-throws.js: Added.
+        * test262/test/built-ins/String/prototype/replaceAll/this-tostring-abrupt.js: Added.
+        (poison.toString):
+        (thisValue.toString):
+        (searchValue.toString):
+        * test262/test/built-ins/String/prototype/replaceAll/this-tostring.js: Added.
+        (thisValue.Symbol.toPrimitive):
+        (thisValue.toString):
+        (thisValue.valueOf):
+        * test262/test/built-ins/TypedArray/from/mapfn-is-not-callable.js:
+        * test262/test/built-ins/TypedArray/prototype/slice/BigInt/speciesctor-get-species-custom-ctor-length-throws.js:
+        (testWithBigIntTypedArrayConstructors):
+        * test262/test/built-ins/TypedArray/prototype/slice/BigInt/speciesctor-get-species-custom-ctor-length.js:
+        (testWithBigIntTypedArrayConstructors):
+        * test262/test/built-ins/TypedArray/prototype/slice/speciesctor-get-species-custom-ctor-length-throws.js:
+        (testWithTypedArrayConstructors):
+        * test262/test/built-ins/TypedArray/prototype/slice/speciesctor-get-species-custom-ctor-length.js:
+        (testWithTypedArrayConstructors):
+        * test262/test/built-ins/TypedArrayConstructors/from/nan-conversion.js:
+        * test262/test/built-ins/TypedArrayConstructors/from/new-instance-from-zero.js:
+        * test262/test/built-ins/TypedArrayConstructors/of/BigInt/inherited.js:
+        (testWithBigIntTypedArrayConstructors):
+        * test262/test/built-ins/TypedArrayConstructors/of/inherited.js:
+        (testWithTypedArrayConstructors):
+        * test262/test/built-ins/WeakRef/prototype-from-newtarget-abrupt.js:
+        * test262/test/harness/deepEqual-array.js:
+        * test262/test/harness/deepEqual-circular.js:
+        * test262/test/harness/deepEqual-deep.js:
+        * test262/test/harness/deepEqual-mapset.js:
+        * test262/test/harness/deepEqual-object.js:
+        * test262/test/intl402/DateTimeFormat/prototype/resolvedOptions/hourCycle-dateStyle.js: Added.
+        * test262/test/intl402/DateTimeFormat/prototype/resolvedOptions/hourCycle-default.js: Added.
+        (locales.forEach):
+        * test262/test/intl402/DateTimeFormat/prototype/resolvedOptions/hourCycle-timeStyle.js: Added.
+        * test262/test/intl402/DateTimeFormat/prototype/resolvedOptions/hourCycle.js:
+        * test262/test/intl402/DisplayNames: Added.
+        * test262/test/intl402/DisplayNames/ctor-custom-get-prototype-poison-throws.js: Added.
+        (custom.new.Proxy.new.Function.get if):
+        (custom.new.Proxy.new.Function):
+        * test262/test/intl402/DisplayNames/ctor-custom-prototype.js: Added.
+        * test262/test/intl402/DisplayNames/ctor-default-prototype.js: Added.
+        * test262/test/intl402/DisplayNames/instance-extensible.js: Added.
+        * test262/test/intl402/DisplayNames/length.js: Added.
+        * test262/test/intl402/DisplayNames/locales-invalid-throws.js: Added.
+        * test262/test/intl402/DisplayNames/locales-length-poison-throws.js: Added.
+        * test262/test/intl402/DisplayNames/locales-length-tolength-throws.js: Added.
+        (locales.length.valueOf):
+        (locales.length.Symbol.toPrimitive):
+        (locales.length.toString):
+        * test262/test/intl402/DisplayNames/locales-symbol-length.js: Added.
+        * test262/test/intl402/DisplayNames/name.js: Added.
+        * test262/test/intl402/DisplayNames/options-fallback-abrupt-throws.js: Added.
+        * test262/test/intl402/DisplayNames/options-fallback-invalid-throws.js: Added.
+        * test262/test/intl402/DisplayNames/options-fallback-toString-abrupt-throws.js: Added.
+        (options.fallback.toString):
+        (options.fallback.valueOf):
+        (options.fallback.Symbol.toPrimitive):
+        * test262/test/intl402/DisplayNames/options-fallback-valid.js: Added.
+        * test262/test/intl402/DisplayNames/options-localeMatcher-abrupt-throws.js: Added.
+        * test262/test/intl402/DisplayNames/options-localeMatcher-invalid-throws.js: Added.
+        * test262/test/intl402/DisplayNames/options-localeMatcher-toString-abrupt-throws.js: Added.
+        (options.localeMatcher.toString):
+        (options.localeMatcher.valueOf):
+        (options.localeMatcher.Symbol.toPrimitive):
+        * test262/test/intl402/DisplayNames/options-localeMatcher-valid.js: Added.
+        * test262/test/intl402/DisplayNames/options-null-throws.js: Added.
+        * test262/test/intl402/DisplayNames/options-random-properties-unchecked.js: Added.
+        * test262/test/intl402/DisplayNames/options-style-abrupt-throws.js: Added.
+        * test262/test/intl402/DisplayNames/options-style-invalid-throws.js: Added.
+        * test262/test/intl402/DisplayNames/options-style-toString-abrupt-throws.js: Added.
+        (options.style.toString):
+        (options.style.valueOf):
+        (options.style.Symbol.toPrimitive):
+        * test262/test/intl402/DisplayNames/options-style-valid.js: Added.
+        * test262/test/intl402/DisplayNames/options-type-abrupt-throws.js: Added.
+        * test262/test/intl402/DisplayNames/options-type-invalid-throws.js: Added.
+        * test262/test/intl402/DisplayNames/options-type-toString-abrupt-throws.js: Added.
+        (options.type.toString):
+        (options.type.valueOf):
+        (options.type.Symbol.toPrimitive):
+        * test262/test/intl402/DisplayNames/options-type-valid.js: Added.
+        * test262/test/intl402/DisplayNames/prop-desc.js: Added.
+        * test262/test/intl402/DisplayNames/proto-from-ctor-realm.js: Added.
+        * test262/test/intl402/DisplayNames/proto.js: Added.
+        * test262/test/intl402/DisplayNames/prototype: Added.
+        * test262/test/intl402/DisplayNames/prototype/Symbol.toStringTag.js: Added.
+        * test262/test/intl402/DisplayNames/prototype/prop-desc.js: Added.
+        * test262/test/intl402/DisplayNames/prototype/resolvedOptions: Added.
+        * test262/test/intl402/DisplayNames/prototype/resolvedOptions/default-option-values.js: Added.
+        * test262/test/intl402/DisplayNames/prototype/resolvedOptions/length.js: Added.
+        * test262/test/intl402/DisplayNames/prototype/resolvedOptions/name.js: Added.
+        * test262/test/intl402/DisplayNames/prototype/resolvedOptions/option-fallback.js: Added.
+        * test262/test/intl402/DisplayNames/prototype/resolvedOptions/option-style.js: Added.
+        * test262/test/intl402/DisplayNames/prototype/resolvedOptions/option-type.js: Added.
+        * test262/test/intl402/DisplayNames/prototype/resolvedOptions/prop-desc.js: Added.
+        * test262/test/intl402/DisplayNames/prototype/resolvedOptions/return-object.js: Added.
+        * test262/test/intl402/DisplayNames/prototype/resolvedOptions/this-not-object-throws.js: Added.
+        * test262/test/intl402/DisplayNames/prototype/resolvedOptions/this-object-lacks-internal-throws.js: Added.
+        * test262/test/intl402/DisplayNames/undefined-newtarget-throws.js: Added.
+        * test262/test/language/destructuring/binding/syntax/property-list-single-name-bindings.js:
+        * test262/test/language/expressions/addition/bigint-and-number.js:
+        * test262/test/language/expressions/addition/bigint-arithmetic.js:
+        * test262/test/language/expressions/addition/bigint-errors.js:
+        * test262/test/language/expressions/addition/bigint-toprimitive.js:
+        * test262/test/language/expressions/addition/bigint-wrapped-values.js:
+        * test262/test/language/expressions/arrow-function/eval-var-scope-syntax-err.js: Added.
+        (f.a.eval):
+        * test262/test/language/expressions/arrow-function/scope-param-elem-var-close.js:
+        * test262/test/language/expressions/arrow-function/scope-param-elem-var-open.js:
+        * test262/test/language/expressions/arrow-function/scope-param-rest-elem-var-close.js:
+        * test262/test/language/expressions/arrow-function/scope-param-rest-elem-var-open.js:
+        * test262/test/language/expressions/async-arrow-function/eval-var-scope-syntax-err.js: Added.
+        (f.async a):
+        (SyntaxError.then):
+        * test262/test/language/expressions/async-function/named-eval-var-scope-syntax-err.js: Added.
+        (f.async f):
+        (f):
+        * test262/test/language/expressions/async-function/nameless-eval-var-scope-syntax-err.js: Added.
+        * test262/test/language/expressions/async-generator/eval-var-scope-syntax-err.js: Added.
+        * test262/test/language/expressions/async-generator/named-eval-var-scope-syntax-err.js: Added.
+        (f.async g):
+        (f):
+        * test262/test/language/expressions/bitwise-and/bigint-and-number.js:
+        * test262/test/language/expressions/bitwise-and/bigint-errors.js:
+        * test262/test/language/expressions/bitwise-and/bigint-non-primitive.js:
+        * test262/test/language/expressions/bitwise-and/bigint-toprimitive.js:
+        * test262/test/language/expressions/bitwise-and/bigint-wrapped-values.js:
+        * test262/test/language/expressions/bitwise-not/bigint-non-primitive.js:
+        * test262/test/language/expressions/bitwise-or/bigint-and-number.js:
+        * test262/test/language/expressions/bitwise-or/bigint-errors.js:
+        * test262/test/language/expressions/bitwise-or/bigint-non-primitive.js:
+        * test262/test/language/expressions/bitwise-or/bigint-toprimitive.js:
+        * test262/test/language/expressions/bitwise-or/bigint-wrapped-values.js:
+        * test262/test/language/expressions/bitwise-xor/bigint-and-number.js:
+        * test262/test/language/expressions/bitwise-xor/bigint-errors.js:
+        * test262/test/language/expressions/bitwise-xor/bigint-non-primitive.js:
+        * test262/test/language/expressions/bitwise-xor/bigint-toprimitive.js:
+        * test262/test/language/expressions/bitwise-xor/bigint-wrapped-values.js:
+        * test262/test/language/expressions/class/async-gen-method-static/eval-var-scope-syntax-err.js: Added.
+        (C):
+        * test262/test/language/expressions/class/async-gen-method/eval-var-scope-syntax-err.js: Added.
+        (C):
+        * test262/test/language/expressions/class/async-method-static/eval-var-scope-syntax-err.js: Added.
+        (C):
+        (then):
+        * test262/test/language/expressions/class/async-method/eval-var-scope-syntax-err.js: Added.
+        (C):
+        (SyntaxError.then):
+        * test262/test/language/expressions/class/elements/syntax/early-errors/grammar-private-field-optional-chaining.js: Added.
+        (C.prototype.access):
+        * test262/test/language/expressions/class/gen-method-static/eval-var-scope-syntax-err.js: Added.
+        (C):
+        * test262/test/language/expressions/class/gen-method/eval-var-scope-syntax-err.js: Added.
+        (C):
+        * test262/test/language/expressions/class/method-static/eval-var-scope-syntax-err.js: Added.
+        (C):
+        * test262/test/language/expressions/class/method/eval-var-scope-syntax-err.js: Added.
+        (C):
+        * test262/test/language/expressions/coalesce/cannot-chain-head-with-logical-and.js:
+        * test262/test/language/expressions/coalesce/cannot-chain-head-with-logical-or.js:
+        * test262/test/language/expressions/coalesce/cannot-chain-tail-with-logical-and.js:
+        * test262/test/language/expressions/coalesce/cannot-chain-tail-with-logical-or.js:
+        * test262/test/language/expressions/delete/super-property.js:
+        (C):
+        * test262/test/language/expressions/division/bigint-and-number.js:
+        * test262/test/language/expressions/division/bigint-arithmetic.js:
+        * test262/test/language/expressions/division/bigint-complex-infinity.js:
+        * test262/test/language/expressions/division/bigint-errors.js:
+        * test262/test/language/expressions/division/bigint-toprimitive.js:
+        * test262/test/language/expressions/division/bigint-wrapped-values.js:
+        * test262/test/language/expressions/does-not-equals/bigint-and-bigint.js:
+        * test262/test/language/expressions/does-not-equals/bigint-and-boolean.js:
+        * test262/test/language/expressions/does-not-equals/bigint-and-incomparable-primitive.js:
+        * test262/test/language/expressions/does-not-equals/bigint-and-non-finite.js:
+        * test262/test/language/expressions/does-not-equals/bigint-and-number-extremes.js:
+        * test262/test/language/expressions/does-not-equals/bigint-and-number.js:
+        * test262/test/language/expressions/does-not-equals/bigint-and-object.js:
+        * test262/test/language/expressions/does-not-equals/bigint-and-string.js:
+        * test262/test/language/expressions/equals/bigint-and-bigint.js:
+        * test262/test/language/expressions/equals/bigint-and-boolean.js:
+        * test262/test/language/expressions/equals/bigint-and-incomparable-primitive.js:
+        * test262/test/language/expressions/equals/bigint-and-non-finite.js:
+        * test262/test/language/expressions/equals/bigint-and-number-extremes.js:
+        * test262/test/language/expressions/equals/bigint-and-number.js:
+        * test262/test/language/expressions/equals/bigint-and-object.js:
+        * test262/test/language/expressions/equals/bigint-and-string.js:
+        * test262/test/language/expressions/exponentiation/bigint-and-number.js:
+        * test262/test/language/expressions/exponentiation/bigint-arithmetic.js:
+        * test262/test/language/expressions/exponentiation/bigint-errors.js:
+        * test262/test/language/expressions/exponentiation/bigint-negative-exponent-throws.js:
+        * test262/test/language/expressions/exponentiation/bigint-toprimitive.js:
+        * test262/test/language/expressions/exponentiation/bigint-wrapped-values.js:
+        * test262/test/language/expressions/exponentiation/bigint-zero-base-zero-exponent.js:
+        * test262/test/language/expressions/function/eval-var-scope-syntax-err.js: Added.
+        (f):
+        * test262/test/language/expressions/function/scope-param-elem-var-close.js:
+        * test262/test/language/expressions/function/scope-param-elem-var-open.js:
+        * test262/test/language/expressions/function/scope-param-rest-elem-var-close.js:
+        * test262/test/language/expressions/function/scope-param-rest-elem-var-open.js:
+        * test262/test/language/expressions/generators/eval-var-scope-syntax-err.js: Added.
+        (f):
+        * test262/test/language/expressions/generators/scope-param-elem-var-close.js:
+        * test262/test/language/expressions/generators/scope-param-elem-var-open.js:
+        * test262/test/language/expressions/generators/scope-param-rest-elem-var-close.js:
+        * test262/test/language/expressions/generators/scope-param-rest-elem-var-open.js:
+        * test262/test/language/expressions/greater-than-or-equal/bigint-and-bigint.js:
+        * test262/test/language/expressions/greater-than-or-equal/bigint-and-incomparable-string.js:
+        * test262/test/language/expressions/greater-than-or-equal/bigint-and-non-finite.js:
+        * test262/test/language/expressions/greater-than-or-equal/bigint-and-number-extremes.js:
+        * test262/test/language/expressions/greater-than-or-equal/bigint-and-number.js:
+        * test262/test/language/expressions/greater-than-or-equal/bigint-and-string.js:
+        * test262/test/language/expressions/greater-than/bigint-and-bigint.js:
+        * test262/test/language/expressions/greater-than/bigint-and-boolean.js:
+        * test262/test/language/expressions/greater-than/bigint-and-incomparable-string.js:
+        * test262/test/language/expressions/greater-than/bigint-and-non-finite.js:
+        * test262/test/language/expressions/greater-than/bigint-and-number-extremes.js:
+        * test262/test/language/expressions/greater-than/bigint-and-number.js:
+        * test262/test/language/expressions/greater-than/bigint-and-symbol.js:
+        * test262/test/language/expressions/left-shift/bigint-and-number.js:
+        * test262/test/language/expressions/left-shift/bigint-errors.js:
+        * test262/test/language/expressions/left-shift/bigint-non-primitive.js:
+        * test262/test/language/expressions/left-shift/bigint-toprimitive.js:
+        * test262/test/language/expressions/left-shift/bigint-wrapped-values.js:
+        * test262/test/language/expressions/less-than-or-equal/bigint-and-bigint.js:
+        * test262/test/language/expressions/less-than-or-equal/bigint-and-incomparable-string.js:
+        * test262/test/language/expressions/less-than-or-equal/bigint-and-non-finite.js:
+        * test262/test/language/expressions/less-than-or-equal/bigint-and-number-extremes.js:
+        * test262/test/language/expressions/less-than-or-equal/bigint-and-number.js:
+        * test262/test/language/expressions/less-than-or-equal/bigint-and-string.js:
+        * test262/test/language/expressions/less-than/bigint-and-bigint.js:
+        * test262/test/language/expressions/less-than/bigint-and-boolean.js:
+        * test262/test/language/expressions/less-than/bigint-and-incomparable-string.js:
+        * test262/test/language/expressions/less-than/bigint-and-non-finite.js:
+        * test262/test/language/expressions/less-than/bigint-and-number-extremes.js:
+        * test262/test/language/expressions/less-than/bigint-and-number.js:
+        * test262/test/language/expressions/modulus/bigint-and-number.js:
+        * test262/test/language/expressions/modulus/bigint-arithmetic.js:
+        * test262/test/language/expressions/modulus/bigint-errors.js:
+        * test262/test/language/expressions/modulus/bigint-modulo-zero.js:
+        * test262/test/language/expressions/modulus/bigint-toprimitive.js:
+        * test262/test/language/expressions/modulus/bigint-wrapped-values.js:
+        * test262/test/language/expressions/multiplication/bigint-and-number.js:
+        * test262/test/language/expressions/multiplication/bigint-arithmetic.js:
+        * test262/test/language/expressions/multiplication/bigint-errors.js:
+        * test262/test/language/expressions/multiplication/bigint-toprimitive.js:
+        * test262/test/language/expressions/multiplication/bigint-wrapped-values.js:
+        * test262/test/language/expressions/object/method-definition/async-gen-meth-eval-var-scope-syntax-err.js: Added.
+        (obj.async method):
+        * test262/test/language/expressions/object/method-definition/async-meth-eval-var-scope-syntax-err.js: Added.
+        (obj.async method):
+        (SyntaxError.then):
+        * test262/test/language/expressions/object/method-definition/gen-meth-eval-var-scope-syntax-err.js: Added.
+        (obj.method.a.eval):
+        * test262/test/language/expressions/object/method-definition/meth-eval-var-scope-syntax-err.js: Added.
+        (obj.method.a.eval):
+        * test262/test/language/expressions/object/scope-gen-meth-param-elem-var-close.js:
+        * test262/test/language/expressions/object/scope-gen-meth-param-elem-var-open.js:
+        * test262/test/language/expressions/object/scope-gen-meth-param-rest-elem-var-close.js:
+        * test262/test/language/expressions/object/scope-gen-meth-param-rest-elem-var-open.js:
+        * test262/test/language/expressions/object/scope-meth-param-elem-var-close.js:
+        * test262/test/language/expressions/object/scope-meth-param-elem-var-open.js:
+        * test262/test/language/expressions/object/scope-meth-param-rest-elem-var-close.js:
+        * test262/test/language/expressions/object/scope-meth-param-rest-elem-var-open.js:
+        * test262/test/language/expressions/optional-chaining/iteration-statement-do.js: Added.
+        * test262/test/language/expressions/optional-chaining/iteration-statement-for-await-of.js: Added.
+        (const.obj.iterable.Symbol.asyncIterator):
+        (async checkAssertions):
+        * test262/test/language/expressions/optional-chaining/iteration-statement-for-in.js: Added.
+        * test262/test/language/expressions/optional-chaining/iteration-statement-for-of-type-error.js: Added.
+        * test262/test/language/expressions/optional-chaining/iteration-statement-for.js: Added.
+        (const.obj3.get a):
+        * test262/test/language/expressions/optional-chaining/iteration-statement-while.js: Added.
+        * test262/test/language/expressions/optional-chaining/new-target-optional-call.js: Added.
+        (const.newTargetContext):
+        (Base):
+        (Foo):
+        * test262/test/language/expressions/optional-chaining/optional-call-preserves-this.js: Added.
+        (const.a.b):
+        * test262/test/language/expressions/optional-chaining/super-property-optional-call.js: Added.
+        (Base.prototype.method):
+        (Base):
+        (Foo.prototype.method):
+        (Foo):
+        * test262/test/language/expressions/right-shift/bigint-and-number.js:
+        * test262/test/language/expressions/right-shift/bigint-errors.js:
+        * test262/test/language/expressions/right-shift/bigint-non-primitive.js:
+        * test262/test/language/expressions/right-shift/bigint-toprimitive.js:
+        * test262/test/language/expressions/right-shift/bigint-wrapped-values.js:
+        * test262/test/language/expressions/strict-does-not-equals/bigint-and-bigint.js:
+        * test262/test/language/expressions/strict-does-not-equals/bigint-and-boolean.js:
+        * test262/test/language/expressions/strict-does-not-equals/bigint-and-incomparable-primitive.js:
+        * test262/test/language/expressions/strict-does-not-equals/bigint-and-non-finite.js:
+        * test262/test/language/expressions/strict-does-not-equals/bigint-and-number-extremes.js:
+        * test262/test/language/expressions/strict-does-not-equals/bigint-and-number.js:
+        * test262/test/language/expressions/strict-does-not-equals/bigint-and-object.js:
+        * test262/test/language/expressions/strict-does-not-equals/bigint-and-string.js:
+        * test262/test/language/expressions/strict-equals/bigint-and-bigint.js:
+        * test262/test/language/expressions/strict-equals/bigint-and-boolean.js:
+        * test262/test/language/expressions/strict-equals/bigint-and-incomparable-primitive.js:
+        * test262/test/language/expressions/strict-equals/bigint-and-non-finite.js:
+        * test262/test/language/expressions/strict-equals/bigint-and-number-extremes.js:
+        * test262/test/language/expressions/strict-equals/bigint-and-number.js:
+        * test262/test/language/expressions/strict-equals/bigint-and-object.js:
+        * test262/test/language/expressions/strict-equals/bigint-and-string.js:
+        * test262/test/language/expressions/subtraction/bigint-and-number.js:
+        * test262/test/language/expressions/subtraction/bigint-arithmetic.js:
+        * test262/test/language/expressions/subtraction/bigint-errors.js:
+        * test262/test/language/expressions/subtraction/bigint-toprimitive.js:
+        * test262/test/language/expressions/subtraction/bigint-wrapped-values.js:
+        * test262/test/language/expressions/typeof/proxy.js: Added.
+        (assert.sameValue.typeof.new.Proxy):
+        (const.rp2.Proxy.revocable):
+        * test262/test/language/expressions/unary-minus/bigint-non-primitive.js:
+        * test262/test/language/expressions/unary-plus/bigint-throws.js:
+        * test262/test/language/expressions/unsigned-right-shift/bigint-and-number.js:
+        * test262/test/language/expressions/unsigned-right-shift/bigint-errors.js:
+        * test262/test/language/expressions/unsigned-right-shift/bigint-non-primitive.js:
+        * test262/test/language/expressions/unsigned-right-shift/bigint-toprimitive.js:
+        * test262/test/language/expressions/unsigned-right-shift/bigint-wrapped-values.js:
+        * test262/test/language/function-code/eval-param-env-with-computed-key.js:
+        * test262/test/language/function-code/eval-param-env-with-prop-initializer.js:
+        * test262/test/language/statements/async-function/eval-var-scope-syntax-err.js: Added.
+        (async f):
+        (SyntaxError.then):
+        * test262/test/language/statements/async-generator/eval-var-scope-syntax-err.js: Added.
+        (async f):
+        * test262/test/language/statements/class/async-gen-method-static/eval-var-scope-syntax-err.js: Added.
+        (C.async method):
+        (C):
+        * test262/test/language/statements/class/async-gen-method/eval-var-scope-syntax-err.js: Added.
+        (C.prototype.async method):
+        (C):
+        * test262/test/language/statements/class/async-method-static/eval-var-scope-syntax-err.js: Added.
+        (C.async method):
+        (C):
+        (SyntaxError.then):
+        * test262/test/language/statements/class/async-method/eval-var-scope-syntax-err.js: Added.
+        (C.prototype.async method):
+        (C):
+        (SyntaxError.then):
+        * test262/test/language/statements/class/definition/constructable-but-no-prototype.js:
+        * test262/test/language/statements/class/definition/constructor-strict-by-default.js:
+        * test262/test/language/statements/class/definition/getters-restricted-ids.js:
+        * test262/test/language/statements/class/definition/implicit-constructor.js:
+        * test262/test/language/statements/class/definition/invalid-extends.js:
+        * test262/test/language/statements/class/definition/methods-named-eval-arguments.js:
+        * test262/test/language/statements/class/definition/prototype-getter.js:
+        * test262/test/language/statements/class/definition/prototype-property.js:
+        * test262/test/language/statements/class/definition/setters-restricted-ids.js:
+        * test262/test/language/statements/class/definition/side-effects-in-extends.js:
+        * test262/test/language/statements/class/definition/side-effects-in-property-define.js:
+        * test262/test/language/statements/class/definition/this-access-restriction-2.js:
+        * test262/test/language/statements/class/definition/this-access-restriction.js:
+        * test262/test/language/statements/class/definition/this-check-ordering.js:
+        * test262/test/language/statements/class/elements/syntax/early-errors/grammar-private-field-optional-chaining.js: Added.
+        (C.prototype.access):
+        (C):
+        * test262/test/language/statements/class/gen-method-static/eval-var-scope-syntax-err.js: Added.
+        (C.method):
+        (C):
+        * test262/test/language/statements/class/gen-method/eval-var-scope-syntax-err.js: Added.
+        (C.prototype.method):
+        (C):
+        * test262/test/language/statements/class/method-static/eval-var-scope-syntax-err.js: Added.
+        (C.method):
+        (C):
+        * test262/test/language/statements/class/method/eval-var-scope-syntax-err.js: Added.
+        (C.prototype.method):
+        (C):
+        * test262/test/language/statements/class/name-binding/basic.js:
+        * test262/test/language/statements/class/subclass/binding.js:
+        * test262/test/language/statements/class/subclass/builtin-objects/RegExp/lastIndex.js:
+        * test262/test/language/statements/class/subclass/builtin-objects/String/length.js:
+        * test262/test/language/statements/class/subclass/builtin-objects/WeakMap/regular-subclassing.js:
+        * test262/test/language/statements/class/subclass/builtin-objects/WeakMap/super-must-be-called.js:
+        * test262/test/language/statements/class/subclass/builtin-objects/WeakSet/regular-subclassing.js:
+        * test262/test/language/statements/class/subclass/builtin-objects/WeakSet/super-must-be-called.js:
+        * test262/test/language/statements/class/subclass/builtins.js:
+        * test262/test/language/statements/class/subclass/default-constructor-spread-override.js:
+        * test262/test/language/statements/for-in/identifier-let-allowed-as-lefthandside-expression-not-strict.js:
+        * test262/test/language/statements/for-in/order-enumerable-shadowed.js: Added.
+        * test262/test/language/statements/for-in/order-property-added.js: Added.
+        * test262/test/language/statements/for-in/order-property-on-prototype.js: Added.
+        * test262/test/language/statements/for-in/order-simple-object.js: Added.
+        * test262/test/language/statements/function/eval-var-scope-syntax-err.js: Added.
+        (f):
+        * test262/test/language/statements/function/scope-param-elem-var-close.js:
+        * test262/test/language/statements/function/scope-param-elem-var-open.js:
+        * test262/test/language/statements/function/scope-param-rest-elem-var-close.js:
+        * test262/test/language/statements/function/scope-param-rest-elem-var-open.js:
+        * test262/test/language/statements/generators/eval-var-scope-syntax-err.js: Added.
+        (f):
+        * test262/test/language/statements/generators/scope-param-elem-var-close.js:
+        * test262/test/language/statements/generators/scope-param-elem-var-open.js:
+        * test262/test/language/statements/generators/scope-param-rest-elem-var-close.js:
+        * test262/test/language/statements/generators/scope-param-rest-elem-var-open.js:
+        * test262/test262-Revision.txt:
+
 2020-01-03  Saam Barati  <sbarati@apple.com>
 
         B3::ReduceLoopStrength should not do range based iteration on a vector it's mutating

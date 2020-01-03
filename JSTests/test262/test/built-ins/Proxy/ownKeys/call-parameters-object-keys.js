@@ -5,7 +5,7 @@ esid: sec-proxy-object-internal-methods-and-internal-slots-ownpropertykeys
 description: >
     [[OwnPropertyKeys]] ( )
 
-    8. Let trapResultArray be Call(trap, handler, «target»).
+    7. Let trapResultArray be ? Call(trap, handler, « target »).
 features: [Proxy]
 ---*/
 
@@ -18,12 +18,12 @@ var handler = {
   ownKeys: function(t) {
     _handler = this;
     _target = t;
-    return Object.getOwnPropertyNames(t);
+    return Object.keys(t);
   }
 };
 var p = new Proxy(target, handler);
 
-var keys = Object.getOwnPropertyNames(p);
+var keys = Object.keys(p);
 
 assert.sameValue(keys[0], "foo");
 assert.sameValue(keys[1], "bar");

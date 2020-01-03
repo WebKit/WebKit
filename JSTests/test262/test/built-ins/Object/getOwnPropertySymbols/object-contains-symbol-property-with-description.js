@@ -1,7 +1,7 @@
 // Copyright (C) 2013 the V8 project authors. All rights reserved.
 // This code is governed by the BSD license found in the LICENSE file.
 /*---
-es6id: 19.1.2.8
+esid: sec-object.getownpropertysymbols
 description: >
     Object.getOwnPropertySymbols returns all symbol properties that have descriptions
 features: [Symbol]

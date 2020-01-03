@@ -14,6 +14,7 @@ info: |
   the WeakSet constructor to create and initialize the subclass instance with
   the internal state necessary to support the WeakSet.prototype built-in
   methods.
+features: [WeakSet]
 ---*/
 
 class WS extends WeakSet {}

@@ -11,7 +11,7 @@ info: |
   1. If NewTarget is undefined, throw a TypeError exception.
   2. If IsCallable(cleanupCallback) is false, throw a TypeError exception.
   ...
-features: [FinalizationGroup]
+features: [FinalizationGroup, WeakRef]
 ---*/
 
 assert.sameValue(

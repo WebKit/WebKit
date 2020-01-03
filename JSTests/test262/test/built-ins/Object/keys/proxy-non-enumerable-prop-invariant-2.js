@@ -43,13 +43,14 @@ Object.defineProperty(target, 'prop', {
   enumerable: false,
   configurable: true,
 });
-Object.preventExtensions(target);
 
 var proxy = new Proxy(target, {
   ownKeys: function() {
     return [];
   },
 });
+
+Object.preventExtensions(target);
 
 assert.throws(TypeError, function() {
   Object.keys(proxy);

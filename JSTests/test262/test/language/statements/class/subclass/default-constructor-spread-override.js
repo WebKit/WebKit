@@ -17,9 +17,7 @@ info: |
 
   14.1.19 Runtime Semantics: IteratorBindingInitialization
     `FunctionRestParameter : BindingRestElement`
-    ...
-    9. Let result be the result of performing IteratorBindingInitialization for BindingRestElement using iteratorRecord and environment as the arguments.
-    ...
+    1. Let result be IteratorBindingInitialization of BindingRestElement with arguments iteratorRecord and environment.
 
   13.3.3.6 Runtime Semantics: IteratorBindingInitialization
     `BindingRestElement : ...BindingIdentifier`

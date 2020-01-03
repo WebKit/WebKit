@@ -2,25 +2,23 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-esid: sec-function-definitions-runtime-semantics-iteratorbindinginitialization
-description: If a property initializer contains a direct eval call, a new declarative environment is created.
+esid: sec-functiondeclarationinstantiation
+description: >
+    sloppy direct evals in params introduce vars
 info: |
-  Runtime Semantics: IteratorBindingInitialization
-
-  FormalParameter : BindingElement
-
-  ...
-  2. Let currentContext be the running execution context.
-  3. Let originalEnv be the VariableEnvironment of currentContext.
-  4. Assert: The VariableEnvironment and LexicalEnvironment of currentContext are the same.
-  5. Assert: environment and originalEnv are the same.
-  6. Let paramVarEnv be NewDeclarativeEnvironment(originalEnv).
-  ...
+    [...]
+    20. Else,
+      a. NOTE: A separate Environment Record is needed to ensure that bindings created by direct eval calls in the formal parameter list are outside the environment where parameters are declared.
+      b. Let calleeEnv be the LexicalEnvironment of calleeContext.
+      c. Let env be NewDeclarativeEnvironment(calleeEnv).
+      d. Let envRec be env's EnvironmentRecord.
+    [...]
+flags: [noStrict]
 ---*/
 
 var x = "outer";
 
 function evalInPropertyInitializer({a: ignored = eval("var x = 'inner'")}) {
-  assert.sameValue(x, "outer");
+  assert.sameValue(x, "inner");
 }
 evalInPropertyInitializer({});
