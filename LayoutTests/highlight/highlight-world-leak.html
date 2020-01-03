@@ -21,7 +21,7 @@ function documentShouldDie(documentIdentifier)
 }
 
 var testFrame = document.getElementById("testFrame");
-testFrame.onload = function() {
+onload = function() {
     let frameDocumentIdentifier = internals.documentIdentifier(testFrame.contentDocument);
     testFrame.remove();
     setTimeout(function() {
