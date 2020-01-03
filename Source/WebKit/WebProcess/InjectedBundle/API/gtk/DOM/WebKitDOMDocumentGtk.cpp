@@ -1151,7 +1151,9 @@ WebKitDOMXPathNSResolver* webkit_dom_document_create_ns_resolver(WebKitDOMDocume
     g_return_val_if_fail(WEBKIT_DOM_IS_NODE(nodeResolver), 0);
     WebCore::Document* item = WebKit::core(self);
     WebCore::Node* convertedNodeResolver = WebKit::core(nodeResolver);
-    RefPtr<WebCore::XPathNSResolver> gobjectResult = WTF::getPtr(item->createNSResolver(convertedNodeResolver));
+    if (!convertedNodeResolver)
+        return nullptr;
+    RefPtr<WebCore::XPathNSResolver> gobjectResult = WTF::getPtr(item->createNSResolver(*convertedNodeResolver));
     return WebKit::kit(gobjectResult.get());
 }
 

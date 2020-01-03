@@ -23,7 +23,7 @@
 ] interface XPathEvaluator {
     [MayThrowException] XPathExpression createExpression(DOMString expression, optional XPathNSResolver? resolver);
 
-    XPathNSResolver createNSResolver(optional Node? nodeResolver);
+    XPathNSResolver createNSResolver(Node nodeResolver);
 
     [MayThrowException] XPathResult evaluate(DOMString expression, Node contextNode, optional XPathNSResolver? resolver, optional unsigned short type = 0, optional XPathResult? inResult);
 };

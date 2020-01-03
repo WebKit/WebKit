@@ -596,7 +596,10 @@ static RefPtr<WebCore::XPathNSResolver> wrap(id <DOMXPathNSResolver> resolver)
 - (id <DOMXPathNSResolver>)createNSResolver:(DOMNode *)nodeResolver
 {
     WebCore::JSMainThreadNullState state;
-    return kit(WTF::getPtr(IMPL->createNSResolver(core(nodeResolver))));
+    if (!nodeResolver)
+        return nullptr;
+
+    return kit(WTF::getPtr(IMPL->createNSResolver(*core(nodeResolver))));
 }
 
 - (DOMXPathResult *)evaluate:(NSString *)expression contextNode:(DOMNode *)contextNode resolver:(id <DOMXPathNSResolver>)resolver type:(unsigned short)type inResult:(DOMXPathResult *)inResult

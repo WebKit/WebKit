@@ -34,14 +34,14 @@ class Node;
 
 class NativeXPathNSResolver : public XPathNSResolver {
 public:
-    static Ref<NativeXPathNSResolver> create(RefPtr<Node>&& node) { return adoptRef(*new NativeXPathNSResolver(WTFMove(node))); }
+    static Ref<NativeXPathNSResolver> create(Ref<Node>&& node) { return adoptRef(*new NativeXPathNSResolver(WTFMove(node))); }
     virtual ~NativeXPathNSResolver();
 
     String lookupNamespaceURI(const String& prefix) override;
 
 private:
-    explicit NativeXPathNSResolver(RefPtr<Node>&&);
-    RefPtr<Node> m_node;
+    explicit NativeXPathNSResolver(Ref<Node>&&);
+    Ref<Node> m_node;
 };
 
 } // namespace WebCore

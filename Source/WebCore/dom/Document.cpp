@@ -5848,7 +5848,7 @@ ExceptionOr<Ref<XPathExpression>> Document::createExpression(const String& expre
     return m_xpathEvaluator->createExpression(expression, WTFMove(resolver));
 }
 
-Ref<XPathNSResolver> Document::createNSResolver(Node* nodeResolver)
+Ref<XPathNSResolver> Document::createNSResolver(Node& nodeResolver)
 {
     if (!m_xpathEvaluator)
         m_xpathEvaluator = XPathEvaluator::create();

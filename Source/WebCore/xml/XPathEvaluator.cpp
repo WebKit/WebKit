@@ -41,7 +41,7 @@ ExceptionOr<Ref<XPathExpression>> XPathEvaluator::createExpression(const String&
     return XPathExpression::createExpression(expression, WTFMove(resolver));
 }
 
-Ref<XPathNSResolver> XPathEvaluator::createNSResolver(Node* nodeResolver)
+Ref<XPathNSResolver> XPathEvaluator::createNSResolver(Node& nodeResolver)
 {
     return NativeXPathNSResolver::create(nodeResolver);
 }

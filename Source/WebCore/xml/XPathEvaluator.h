@@ -40,7 +40,7 @@ public:
     static Ref<XPathEvaluator> create() { return adoptRef(*new XPathEvaluator); }
 
     ExceptionOr<Ref<XPathExpression>> createExpression(const String& expression, RefPtr<XPathNSResolver>&&);
-    Ref<XPathNSResolver> createNSResolver(Node* nodeResolver);
+    Ref<XPathNSResolver> createNSResolver(Node& nodeResolver);
     ExceptionOr<Ref<XPathResult>> evaluate(const String& expression, Node& contextNode, RefPtr<XPathNSResolver>&&, unsigned short type, XPathResult*);
 
 private:

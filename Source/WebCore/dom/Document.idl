@@ -137,7 +137,7 @@ typedef (
 
     // XPath extensions (https://www.w3.org/TR/DOM-Level-3-XPath/xpath.html#XPathEvaluator).
     [MayThrowException] XPathExpression createExpression(DOMString expression, optional XPathNSResolver? resolver);
-    XPathNSResolver createNSResolver(Node? nodeResolver);
+    XPathNSResolver createNSResolver(Node nodeResolver);
     [MayThrowException] XPathResult evaluate(DOMString expression, Node contextNode, optional XPathNSResolver? resolver, optional unsigned short type = 0, optional XPathResult? inResult);
 
     // Extensions from Pointer Lock API (https://www.w3.org/TR/pointerlock/#extensions-to-the-document-interface).

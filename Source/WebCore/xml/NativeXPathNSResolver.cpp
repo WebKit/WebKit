@@ -32,7 +32,7 @@
 
 namespace WebCore {
 
-NativeXPathNSResolver::NativeXPathNSResolver(RefPtr<Node>&& node)
+NativeXPathNSResolver::NativeXPathNSResolver(Ref<Node>&& node)
     : m_node(WTFMove(node))
 {
 }
@@ -46,7 +46,7 @@ String NativeXPathNSResolver::lookupNamespaceURI(const String& prefix)
     if (prefix == "xml")
         return XMLNames::xmlNamespaceURI.get();
     
-    return m_node ? m_node->lookupNamespaceURI(prefix).string() : String();
+    return m_node->lookupNamespaceURI(prefix).string();
 }
 
 } // namespace WebCore

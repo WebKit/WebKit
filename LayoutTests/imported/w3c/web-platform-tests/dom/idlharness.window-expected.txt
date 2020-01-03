@@ -1794,7 +1794,7 @@ PASS XPathResult interface: attribute singleNodeValue
 PASS XPathResult interface: attribute invalidIteratorState 
 PASS XPathResult interface: attribute snapshotLength 
 PASS XPathResult interface: operation iterateNext() 
-FAIL XPathResult interface: operation snapshotItem(unsigned long) assert_equals: property has wrong .length expected 1 but got 0
+PASS XPathResult interface: operation snapshotItem(unsigned long) 
 PASS XPathResult must be primary interface of document.evaluate("//*", document.body) 
 PASS Stringification of document.evaluate("//*", document.body) 
 PASS XPathResult interface: document.evaluate("//*", document.body) must inherit property "ANY_TYPE" with the proper type 
@@ -1840,16 +1840,14 @@ PASS XPathEvaluator interface: existence and properties of interface prototype o
 PASS XPathEvaluator interface: existence and properties of interface prototype object's "constructor" property 
 PASS XPathEvaluator interface: existence and properties of interface prototype object's @@unscopables property 
 PASS XPathEvaluator interface: operation createExpression(DOMString, XPathNSResolver) 
-FAIL XPathEvaluator interface: operation createNSResolver(Node) assert_equals: property has wrong .length expected 1 but got 0
+PASS XPathEvaluator interface: operation createNSResolver(Node) 
 PASS XPathEvaluator interface: operation evaluate(DOMString, Node, XPathNSResolver, unsigned short, XPathResult) 
 PASS XPathEvaluator must be primary interface of new XPathEvaluator() 
 PASS Stringification of new XPathEvaluator() 
 PASS XPathEvaluator interface: new XPathEvaluator() must inherit property "createExpression(DOMString, XPathNSResolver)" with the proper type 
 PASS XPathEvaluator interface: calling createExpression(DOMString, XPathNSResolver) on new XPathEvaluator() with too few arguments must throw TypeError 
 PASS XPathEvaluator interface: new XPathEvaluator() must inherit property "createNSResolver(Node)" with the proper type 
-FAIL XPathEvaluator interface: calling createNSResolver(Node) on new XPathEvaluator() with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS XPathEvaluator interface: calling createNSResolver(Node) on new XPathEvaluator() with too few arguments must throw TypeError 
 PASS XPathEvaluator interface: new XPathEvaluator() must inherit property "evaluate(DOMString, Node, XPathNSResolver, unsigned short, XPathResult)" with the proper type 
 PASS XPathEvaluator interface: calling evaluate(DOMString, Node, XPathNSResolver, unsigned short, XPathResult) on new XPathEvaluator() with too few arguments must throw TypeError 
 PASS Window interface: attribute event 
