@@ -187,7 +187,7 @@ typedef NS_OPTIONS(NSUInteger, _WKRectEdge) {
 
 - (void)_close;
 
-- (void)_updateWebsitePolicies:(_WKWebsitePolicies *)websitePolicies WK_API_AVAILABLE(macos(10.13), ios(11.0));
+- (void)_updateWebsitePolicies:(_WKWebsitePolicies *)websitePolicies WK_API_DEPRECATED_WITH_REPLACEMENT("-_updateWebpagePreferences:", macos(10.13, WK_MAC_TBA), ios(11.3, WK_IOS_TBA));
 - (void)_updateWebpagePreferences:(WKWebpagePreferences *)webpagePreferences WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 
 - (void)_evaluateJavaScriptWithoutUserGesture:(NSString *)javaScriptString completionHandler:(void (^)(id, NSError *))completionHandler WK_API_AVAILABLE(macos(10.13), ios(11.0));

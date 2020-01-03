@@ -40,6 +40,7 @@
 #import <WebKit/WKURLSchemeTaskPrivate.h>
 #import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <WebKit/WKWebViewPrivateForTesting.h>
+#import <WebKit/WKWebpagePreferences.h>
 #import <WebKit/WKWebsiteDataStorePrivate.h>
 #import <WebKit/WKWebsiteDataStoreRef.h>
 #import <WebKit/WebKit.h>
@@ -47,7 +48,6 @@
 #import <WebKit/_WKInspector.h>
 #import <WebKit/_WKProcessPoolConfiguration.h>
 #import <WebKit/_WKWebsiteDataStoreConfiguration.h>
-#import <WebKit/_WKWebsitePolicies.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/Deque.h>
 #import <wtf/HashMap.h>

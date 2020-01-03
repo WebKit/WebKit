@@ -1,3 +1,22 @@
+2020-01-03  Alex Christensen  <achristensen@webkit.org>
+
+        Deprecate _WKWebsitePolicies
+        https://bugs.webkit.org/show_bug.cgi?id=205539
+
+        Reviewed by Wenson Hsieh.
+
+        Its last use was removed in rdar://problem/58064847
+        but we need to keep it in WebKit until the next Safari release
+        to keep Safari working with built versions of open source WebKit with run-safari.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _updateWebsitePolicies:]):
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+        * UIProcess/API/Cocoa/_WKWebsitePolicies.h:
+        * UIProcess/API/Cocoa/_WKWebsitePolicies.mm:
+        * UIProcess/Cocoa/NavigationState.mm:
+        (WebKit::NavigationState::NavigationClient::decidePolicyForNavigationAction):
+
 2020-01-03  youenn fablet  <youenn@apple.com>
 
         NetworkResourceLoader::didFinishWithRedirectResponse should not assume the load is coming from network

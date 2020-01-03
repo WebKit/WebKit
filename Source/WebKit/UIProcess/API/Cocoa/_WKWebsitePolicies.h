@@ -28,7 +28,7 @@
 
 @class WKWebsiteDataStore;
 
-WK_CLASS_AVAILABLE(macos(10.12.3), ios(10.3))
+WK_CLASS_DEPRECATED_WITH_REPLACEMENT("WKWebpagePreferences", macos(10.12.3, WK_MAC_TBA), ios(10.3, WK_IOS_TBA))
 @interface _WKWebsitePolicies : NSObject
 
 @property (nonatomic) BOOL contentBlockersEnabled;

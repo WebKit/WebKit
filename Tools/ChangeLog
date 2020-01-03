@@ -1,3 +1,33 @@
+2020-01-03  Alex Christensen  <achristensen@webkit.org>
+
+        Deprecate _WKWebsitePolicies
+        https://bugs.webkit.org/show_bug.cgi?id=205539
+
+        Reviewed by Wenson Hsieh.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/ProcessSwapOnNavigation.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/ServiceWorkerBasic.mm:
+        (-[SWCustomUserAgentDelegate _webView:decidePolicyForNavigationAction:preferences:userInfo:decisionHandler:]):
+        (-[SWCustomUserAgentDelegate _webView:decidePolicyForNavigationAction:userInfo:decisionHandler:]): Deleted.
+        * TestWebKitAPI/Tests/WebKitCocoa/WebsitePolicies.mm:
+        (-[ContentBlockingWebsitePoliciesDelegate webView:decidePolicyForNavigationAction:preferences:decisionHandler:]):
+        (TEST):
+        (-[AutoplayPoliciesDelegate webView:decidePolicyForNavigationAction:preferences:decisionHandler:]):
+        (-[AsyncAutoplayPoliciesDelegate webView:decidePolicyForNavigationAction:preferences:decisionHandler:]):
+        (-[WebsitePoliciesNavigationDelegate _webView:decidePolicyForNavigationAction:preferences:userInfo:decisionHandler:]):
+        (-[CustomUserAgentDelegate _webView:decidePolicyForNavigationAction:userInfo:decisionHandler:]):
+        (-[CustomJavaScriptUserAgentDelegate _webView:decidePolicyForNavigationAction:userInfo:decisionHandler:]):
+        (-[CustomNavigatorPlatformDelegate _webView:decidePolicyForNavigationAction:userInfo:decisionHandler:]):
+        (-[WebsitePoliciesDeviceOrientationDelegate _webView:decidePolicyForNavigationAction:preferences:userInfo:decisionHandler:]):
+        (-[PopUpPoliciesDelegate _webView:decidePolicyForNavigationAction:decisionHandler:]):
+        (-[WebsitePoliciesWebsiteDataStoreDelegate webView:decidePolicyForNavigationAction:preferences:decisionHandler:]):
+        (-[ContentBlockingWebsitePoliciesDelegate _webView:decidePolicyForNavigationAction:decisionHandler:]): Deleted.
+        (-[AutoplayPoliciesDelegate _webView:decidePolicyForNavigationAction:decisionHandler:]): Deleted.
+        (-[AsyncAutoplayPoliciesDelegate _webView:decidePolicyForNavigationAction:decisionHandler:]): Deleted.
+        (-[WebsitePoliciesNavigationDelegate _webView:decidePolicyForNavigationAction:userInfo:decisionHandler:]): Deleted.
+        (-[WebsitePoliciesDeviceOrientationDelegate _webView:decidePolicyForNavigationAction:userInfo:decisionHandler:]): Deleted.
+        (-[WebsitePoliciesWebsiteDataStoreDelegate _webView:decidePolicyForNavigationAction:decisionHandler:]): Deleted.
+
 2020-01-03  Alicia Boya García  <aboya@igalia.com>
 
         [GStreamer][MSE] Player stalling too soon

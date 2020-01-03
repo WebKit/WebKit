@@ -29,7 +29,9 @@
 #import "WKWebsiteDataStoreInternal.h"
 #import "_WKWebsitePoliciesInternal.h"
 
+IGNORE_WARNINGS_BEGIN("deprecated-implementations")
 @implementation _WKWebsitePolicies
+IGNORE_WARNINGS_END
 
 - (instancetype)init
 {

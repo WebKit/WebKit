@@ -2142,7 +2142,6 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(FORWARD_ACTION_TO_WKCONTENTVIEW)
 
 - (void)_updateWebsitePolicies:(_WKWebsitePolicies *)websitePolicies
 {
-    [self _updateWebpagePreferences:websitePolicies.webpagePreferences];
 }
 
 - (void)_updateWebpagePreferences:(WKWebpagePreferences *)webpagePreferences

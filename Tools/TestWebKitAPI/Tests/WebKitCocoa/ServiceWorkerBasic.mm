@@ -37,12 +37,12 @@
 #import <WebKit/WKURLSchemeTaskPrivate.h>
 #import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <WebKit/WKWebViewPrivateForTesting.h>
+#import <WebKit/WKWebpagePreferencesPrivate.h>
 #import <WebKit/WKWebsiteDataStorePrivate.h>
 #import <WebKit/WKWebsiteDataStoreRef.h>
 #import <WebKit/WebKit.h>
 #import <WebKit/_WKExperimentalFeature.h>
 #import <WebKit/_WKWebsiteDataStoreConfiguration.h>
-#import <WebKit/_WKWebsitePolicies.h>
 #import <wtf/Deque.h>
 #import <wtf/HashMap.h>
 #import <wtf/RetainPtr.h>
@@ -476,11 +476,11 @@ TEST(ServiceWorkers, Basic)
     return self;
 }
 
-- (void)_webView:(WKWebView *)webView decidePolicyForNavigationAction:(WKNavigationAction *)navigationAction userInfo:(id <NSSecureCoding>)userInfo decisionHandler:(void (^)(WKNavigationActionPolicy, _WKWebsitePolicies *))decisionHandler
+- (void)_webView:(WKWebView *)webView decidePolicyForNavigationAction:(WKNavigationAction *)navigationAction preferences:(WKWebpagePreferences *)preferences userInfo:(id <NSSecureCoding>)userInfo decisionHandler:(void (^)(WKNavigationActionPolicy, WKWebpagePreferences *))decisionHandler
 {
-    _WKWebsitePolicies *websitePolicies = [[[_WKWebsitePolicies alloc] init] autorelease];
+    WKWebpagePreferences *websitePolicies = [[[WKWebpagePreferences alloc] init] autorelease];
     if (navigationAction.targetFrame.mainFrame)
-        [websitePolicies setCustomUserAgent:_userAgent];
+        [websitePolicies _setCustomUserAgent:_userAgent];
 
     decisionHandler(WKNavigationActionPolicyAllow, websitePolicies);
 }
