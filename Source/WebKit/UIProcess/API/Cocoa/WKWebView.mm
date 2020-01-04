@@ -605,8 +605,6 @@ static void hardwareKeyboardAvailabilityChangedCallback(CFNotificationCenterRef,
 #endif
 
 #if PLATFORM(IOS_FAMILY)
-    _hasEnteredDealloc = YES;
-
     [_contentView _webViewDestroyed];
 
     if (_remoteObjectRegistry)

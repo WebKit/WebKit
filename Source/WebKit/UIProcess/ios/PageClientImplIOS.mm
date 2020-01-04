@@ -114,7 +114,7 @@ IntSize PageClientImpl::viewSize()
     if (UIScrollView *scroller = [m_contentView _scroller])
         return IntSize(scroller.bounds.size);
 
-    return IntSize(m_contentView.bounds.size);
+    return IntSize([m_contentView bounds].size);
 }
 
 bool PageClientImpl::isViewWindowActive()
@@ -486,7 +486,7 @@ void PageClientImpl::updateAcceleratedCompositingMode(const LayerTreeContext&)
 void PageClientImpl::didPerformDictionaryLookup(const DictionaryPopupInfo& dictionaryPopupInfo)
 {
 #if ENABLE(REVEAL)
-    DictionaryLookup::showPopup(dictionaryPopupInfo, m_contentView, nullptr);
+    DictionaryLookup::showPopup(dictionaryPopupInfo, m_contentView.getAutoreleased(), nullptr);
 #else
     UNUSED_PARAM(dictionaryPopupInfo);
 #endif // ENABLE(REVEAL)
@@ -812,7 +812,7 @@ WebCore::UserInterfaceLayoutDirection PageClientImpl::userInterfaceLayoutDirecti
 
 Ref<ValidationBubble> PageClientImpl::createValidationBubble(const String& message, const ValidationBubble::Settings& settings)
 {
-    return ValidationBubble::create(m_contentView, message, settings);
+    return ValidationBubble::create(m_contentView.getAutoreleased(), message, settings);
 }
 
 #if ENABLE(INPUT_TYPE_COLOR)
@@ -825,7 +825,7 @@ RefPtr<WebColorPicker> PageClientImpl::createColorPicker(WebPageProxy*, const We
 #if ENABLE(DATALIST_ELEMENT)
 RefPtr<WebDataListSuggestionsDropdown> PageClientImpl::createDataListSuggestionsDropdown(WebPageProxy& page)
 {
-    return WebDataListSuggestionsDropdownIOS::create(page, m_contentView);
+    return WebDataListSuggestionsDropdownIOS::create(page, m_contentView.getAutoreleased());
 }
 #endif
 
@@ -893,7 +893,7 @@ void PageClientImpl::requestDOMPasteAccess(const WebCore::IntRect& elementRect, 
 #if HAVE(PENCILKIT)
 RetainPtr<WKDrawingView> PageClientImpl::createDrawingView(WebCore::GraphicsLayer::EmbeddedViewID embeddedViewID)
 {
-    return adoptNS([[WKDrawingView alloc] initWithEmbeddedViewID:embeddedViewID contentView:m_contentView]);
+    return adoptNS([[WKDrawingView alloc] initWithEmbeddedViewID:embeddedViewID contentView:m_contentView.getAutoreleased()]);
 }
 #endif
 

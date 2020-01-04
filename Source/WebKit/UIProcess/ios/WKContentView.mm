@@ -169,7 +169,7 @@ static NSArray *keyCommandsPlaceholderHackForEvernote(id self, SEL _cmd)
     _page->setDelegatesScrolling(true);
 
 #if ENABLE(FULLSCREEN_API)
-    _page->setFullscreenClient(makeUnique<WebKit::FullscreenClient>(_webView));
+    _page->setFullscreenClient(makeUnique<WebKit::FullscreenClient>(self.webView));
 #endif
 
     WebKit::WebProcessPool::statistics().wkViewCount++;
@@ -267,6 +267,11 @@ static NSArray *keyCommandsPlaceholderHackForEvernote(id self, SEL _cmd)
 - (WebKit::WebPageProxy*)page
 {
     return _page.get();
+}
+
+- (WKWebView *)webView
+{
+    return _webView.getAutoreleased();
 }
 
 - (void)willMoveToWindow:(UIWindow *)newWindow
@@ -426,7 +431,7 @@ static WebCore::FloatBoxExtent floatBoxExtent(UIEdgeInsets insets)
         isStableState,
         _sizeChangedSinceLastVisibleContentRectUpdate,
         isChangingObscuredInsetsInteractively,
-        _webView._allowsViewportShrinkToFit,
+        self.webView._allowsViewportShrinkToFit,
         enclosedInScrollableAncestorView,
         velocityData,
         downcast<WebKit::RemoteLayerTreeDrawingAreaProxy>(*drawingArea).lastCommittedLayerTreeTransactionID());
@@ -622,14 +627,14 @@ static void storeAccessibilityRemoteConnectionInformation(id element, pid_t pid,
 
     if (_interactionViewsContainerView) {
         WebCore::FloatPoint scaledOrigin = layerTreeTransaction.scrollOrigin();
-        float scale = [[_webView scrollView] zoomScale];
+        float scale = self.webView.scrollView.zoomScale;
         scaledOrigin.scale(scale);
         [_interactionViewsContainerView setFrame:CGRectMake(scaledOrigin.x(), scaledOrigin.y(), 0, 0)];
     }
     
     if (boundsChanged) {
         // FIXME: factor computeLayoutViewportRect() into something that gives us this rect.
-        WebCore::FloatRect fixedPositionRect = _page->computeLayoutViewportRect(_page->unobscuredContentRect(), _page->unobscuredContentRectRespectingInputViewBounds(), _page->layoutViewportRect(), [[_webView scrollView] zoomScale]);
+        WebCore::FloatRect fixedPositionRect = _page->computeLayoutViewportRect(_page->unobscuredContentRect(), _page->unobscuredContentRectRespectingInputViewBounds(), _page->layoutViewportRect(), self.webView.scrollView.zoomScale);
         [self updateFixedClippingView:fixedPositionRect];
 
         // We need to push the new content bounds to the webview to update fixed position rects.

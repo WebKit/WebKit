@@ -1756,11 +1756,6 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
 
 - (void)_addUpdateVisibleContentRectPreCommitHandler
 {
-    if (_hasEnteredDealloc) {
-        RELEASE_LOG_FAULT(ViewState, "-[WKWebView %p _addUpdateVisibleContentRectPreCommitHandler]: Attempted to add pre-commit handler under -dealloc. Bailing.", self);
-        return;
-    }
-
     auto retainedSelf = retainPtr(self);
     [CATransaction addCommitHandler:[retainedSelf] {
         WKWebView *webView = retainedSelf.get();

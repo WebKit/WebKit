@@ -29,6 +29,7 @@
 #import "WKBrowsingContextGroup.h"
 #import "WKProcessGroup.h"
 #import <wtf/RetainPtr.h>
+#import <wtf/WeakObjCPtr.h>
 
 @class WKContentView;
 @class WKWebView;
@@ -54,7 +55,7 @@ class WebProcessPool;
 @interface WKContentView : WKApplicationStateTrackingView {
 @package
     RefPtr<WebKit::WebPageProxy> _page;
-    WKWebView *_webView; // FIXME: This should be made a WeakObjCPtr once everything that refers to it is moved to OpenSource.
+    WeakObjCPtr<WKWebView> _webView;
 }
 
 #pragma clang diagnostic push
@@ -89,6 +90,8 @@ class WebProcessPool;
 - (void)willStartZoomOrScroll;
 
 - (void)_webViewDestroyed;
+
+- (WKWebView *)webView;
 
 - (std::unique_ptr<WebKit::DrawingAreaProxy>)_createDrawingAreaProxy:(WebKit::WebProcessProxy&)process;
 - (void)_processDidExit;

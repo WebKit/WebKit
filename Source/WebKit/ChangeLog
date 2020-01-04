@@ -1,3 +1,98 @@
+2020-01-03  Tim Horton  <timothy_horton@apple.com>
+
+        Crashes under -[WKWebView _addUpdateVisibleContentRectPreCommitHandler]_block_invoke
+        https://bugs.webkit.org/show_bug.cgi?id=205749
+        <rdar://problem/56433624>
+
+        Reviewed by Simon Fraser.
+
+        Implement a speculative fix for a common crash. We believe that this is due to
+        a mechanism UIKit uses to bounce -dealloc (in our case, of WKWebView and/or WKContentView)
+        to the main thread when the last reference is dropped on a background thread.
+        At that point, deallocation has already begun, -retain cannot revive the object,
+        but -dealloc has not yet been called (because of the nature of this mechanism).
+
+        To avoid this, make PageClientImpl -> WKContentView and WKContentView -> WKWebView
+        weak instead of raw references. This way, we won't even get to _addUpdateVisibleContentRectPreCommitHandler
+        with a deallocating WKWebView, nor try (and fail) to retain it for later use in the block.
+
+        * UIProcess/ios/PageClientImplIOS.h:
+        * UIProcess/ios/PageClientImplIOS.mm:
+        (WebKit::PageClientImpl::viewSize):
+        (WebKit::PageClientImpl::didPerformDictionaryLookup):
+        (WebKit::PageClientImpl::createValidationBubble):
+        (WebKit::PageClientImpl::createDataListSuggestionsDropdown):
+        (WebKit::PageClientImpl::createDrawingView):
+        * UIProcess/ios/WKContentView.h:
+        * UIProcess/ios/WKContentView.mm:
+        (-[WKContentView _commonInitializationWithProcessPool:configuration:]):
+        (-[WKContentView webView]):
+        (-[WKContentView didUpdateVisibleRect:unobscuredRect:contentInsets:unobscuredRectInScrollViewCoordinates:obscuredInsets:unobscuredSafeAreaInsets:inputViewBounds:scale:minimumScale:inStableState:isChangingObscuredInsetsInteractively:enclosedInScrollableAncestorView:]):
+        (-[WKContentView _didCommitLayerTree:]):
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView setupInteraction]):
+        (-[WKContentView _updateLongPressAndHighlightLongPressGestures]):
+        (-[WKContentView endEditingAndUpdateFocusAppearanceWithReason:]):
+        (-[WKContentView gestureRecognizerMayPinchToZoomWebView:]):
+        (-[WKContentView _showAttachmentSheet]):
+        (-[WKContentView _actionForLongPressFromPositionInformation:]):
+        (-[WKContentView gestureRecognizerShouldBegin:]):
+        (-[WKContentView hasSelectablePositionAtPoint:]):
+        (-[WKContentView pointIsNearMarkedText:]):
+        (-[WKContentView textInteractionGesture:shouldBeginAtPoint:]):
+        (-[WKContentView _stylusSingleTapRecognized:]):
+        (-[WKContentView _endPotentialTapAndEnableDoubleTapGesturesIfNecessary]):
+        (-[WKContentView _updateInteractionTintColor]):
+        (-[WKContentView canPerformActionForWebView:withSender:]):
+        (-[WKContentView accessibilityRetrieveSpeakSelectionContent]):
+        (-[WKContentView requestRectsToEvadeForSelectionCommandsWithCompletionHandler:]):
+        (-[WKContentView accessoryAutoFill]):
+        (-[WKContentView _updateAccessory]):
+        (-[WKContentView _didChangeWebViewEditability]):
+        (-[WKContentView insertTextSuggestion:]):
+        (-[WKContentView isScrollableForKeyboardScrollViewAnimator:]):
+        (-[WKContentView keyboardScrollViewAnimator:distanceForIncrement:inDirection:]):
+        (-[WKContentView _elementDidFocus:userIsInteracting:blurPreviousNode:activityStateChanges:userObject:]):
+        (-[WKContentView addFocusedFormControlOverlay]):
+        (-[WKContentView presentViewControllerForCurrentFocusedElement]):
+        (-[WKContentView dismissAllInputViewControllers:]):
+        (-[WKContentView _showShareSheet:inRect:completionHandler:]):
+        (-[WKContentView actionSheetAssistant:shareElementWithURL:rect:]):
+        (-[WKContentView actionSheetAssistant:showCustomSheetForElement:]):
+        (-[WKContentView dataDetectionContextForPositionInformation:]):
+        (-[WKContentView actionSheetAssistant:getAlternateURLForImage:completion:]):
+        (-[WKContentView _didChangeDragInteractionPolicy]):
+        (-[WKContentView dragLiftDelay]):
+        (-[WKContentView setupDragAndDropInteractions]):
+        (-[WKContentView _didPerformDragOperation:]):
+        (-[WKContentView _dragDestinationActionForDropSession:]):
+        (-[WKContentView _itemsForBeginningOrAddingToSessionWithRegistrationLists:stagedDragSource:]):
+        (-[WKContentView _handleDropByInsertingImagePlaceholders:session:]):
+        (-[WKContentView _dragInteraction:dataOwnerForSession:]):
+        (-[WKContentView dragInteraction:previewForLiftingItem:session:]):
+        (-[WKContentView dragInteraction:sessionWillBegin:]):
+        (-[WKContentView dragInteraction:session:didEndWithOperation:]):
+        (-[WKContentView dragInteraction:previewForCancellingItem:withDefault:]):
+        (-[WKContentView _dropInteraction:dataOwnerForSession:]):
+        (-[WKContentView dropInteraction:sessionDidUpdate:]):
+        (-[WKContentView dropInteraction:performDrop:]):
+        (-[WKContentView dismissQuickboardViewControllerAndRevealFocusedFormOverlayIfNecessary:]):
+        (-[WKContentView viewController:inputContextViewHeightForSize:]):
+        (-[WKContentView inputContextViewForViewController:]):
+        (-[WKContentView _registerPreview]):
+        (-[WKContentView assignLegacyDataForContextMenuInteraction]):
+        (-[WKContentView _contextMenuInteraction:configurationForMenuAtLocation:completion:]):
+        (-[WKContentView continueContextMenuInteraction:]):
+        (-[WKContentView _createTargetedPreviewIfPossible]):
+        (-[WKContentView contextMenuInteraction:willDisplayMenuForConfiguration:animator:]):
+        (-[WKContentView contextMenuInteraction:willPerformPreviewActionForMenuWithConfiguration:animator:]):
+        (-[WKContentView contextMenuInteraction:willEndForConfiguration:animator:]):
+        (-[WKContentView _interactionShouldBeginFromPreviewItemController:forPosition:]):
+        (-[WKContentView _dataForPreviewItemController:atPosition:type:]):
+        (-[WKContentView _presentedViewControllerForPreviewItemController:]):
+        (-[WKContentView _previewItemController:commitPreview:]):
+        (-[WKContentView _previewItemController:didDismissPreview:committing:]):
+
 2020-01-03  Peng Liu  <peng.liu6@apple.com>
 
         Update the RemoteMediaPlayerManagerProxy::Load XPC message to provide the updated RemoteMediaPlayerConfiguration to the web process

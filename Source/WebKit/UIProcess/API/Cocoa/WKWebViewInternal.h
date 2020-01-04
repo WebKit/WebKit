@@ -229,9 +229,6 @@ class ViewGestureController;
 
     NSUInteger _focusPreservationCount;
     NSUInteger _activeFocusedStateRetainCount;
-
-    BOOL _hasEnteredDealloc;
-
 #endif
 }
 

@@ -30,6 +30,7 @@
 #import "PageClientImplCocoa.h"
 #import "WebFullScreenManagerProxy.h"
 #import <wtf/RetainPtr.h>
+#import <wtf/WeakObjCPtr.h>
 
 OBJC_CLASS WKContentView;
 OBJC_CLASS WKEditorUndoTarget;
@@ -258,7 +259,7 @@ private:
     WTF::Optional<unsigned> activeTouchIdentifierForGestureRecognizer(UIGestureRecognizer*) override;
 #endif
 
-    WKContentView *m_contentView;
+    WeakObjCPtr<WKContentView> m_contentView;
     RetainPtr<WKEditorUndoTarget> m_undoTarget;
 };
 } // namespace WebKit
