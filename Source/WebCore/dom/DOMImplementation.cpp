@@ -187,8 +187,11 @@ Ref<Document> DOMImplementation::createDocument(const String& type, Frame* frame
         return TextDocument::create(frame, url);
     if (equalLettersIgnoringASCIICase(type, "image/svg+xml"))
         return SVGDocument::create(frame, url);
-    if (MIMETypeRegistry::isXMLMIMEType(type))
-        return XMLDocument::create(frame, url);
+    if (MIMETypeRegistry::isXMLMIMEType(type)) {
+        auto document = XMLDocument::create(frame, url);
+        document->overrideMIMEType(type);
+        return document;
+    }
     return HTMLDocument::create(frame, url);
 }
 

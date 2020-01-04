@@ -1,5 +1,16 @@
 2020-01-03  Chris Dumez  <cdumez@apple.com>
 
+        dom/nodes/Document-createElement-namespace.html WPT test is failing
+        https://bugs.webkit.org/show_bug.cgi?id=205748
+
+        Reviewed by Sam Weinig.
+
+        Rebaseline WPT test that is now passing.
+
+        * web-platform-tests/dom/nodes/Document-createElement-namespace-expected.txt:
+
+2020-01-03  Chris Dumez  <cdumez@apple.com>
+
         Document.createAttribute() should take in a localName, not a qualifiedName
         https://bugs.webkit.org/show_bug.cgi?id=205752
 

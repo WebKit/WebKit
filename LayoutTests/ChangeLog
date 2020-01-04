@@ -1,3 +1,14 @@
+2020-01-03  Chris Dumez  <cdumez@apple.com>
+
+        dom/nodes/Document-createElement-namespace.html WPT test is failing
+        https://bugs.webkit.org/show_bug.cgi?id=205748
+
+        Reviewed by Sam Weinig.
+
+        Unskip test as it does not appear to be flaky locally.
+
+        * TestExpectations:
+
 2020-01-03  Truitt Savell  <tsavell@apple.com>
 
         REGRESSION: [ Mac ] webgl/1.0.3/conformance/textures/texture-upload-size.html is a flaky timeout

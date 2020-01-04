@@ -1,5 +1,21 @@
 2020-01-03  Chris Dumez  <cdumez@apple.com>
 
+        dom/nodes/Document-createElement-namespace.html WPT test is failing
+        https://bugs.webkit.org/show_bug.cgi?id=205748
+
+        Reviewed by Sam Weinig.
+
+        dom/nodes/Document-createElement-namespace.html WPT test was failing in WebKit but passing in Blink
+        and Gecko. The issue was that the MIME type passed to DOMParser.parseFromString() would always be
+        resolved to "application/xml", no matter which XML MIME type was provided as input (e.g. "text/xml").
+
+        No new tests, rebaselined existing test.
+
+        * dom/DOMImplementation.cpp:
+        (WebCore::DOMImplementation::createDocument):
+
+2020-01-03  Chris Dumez  <cdumez@apple.com>
+
         Document.createAttribute() should take in a localName, not a qualifiedName
         https://bugs.webkit.org/show_bug.cgi?id=205752
 
