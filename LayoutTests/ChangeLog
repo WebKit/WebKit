@@ -1,3 +1,20 @@
+2020-01-03  Rob Buis  <rbuis@igalia.com>
+
+        Make text track loading set same-origin fallback flag
+        https://bugs.webkit.org/show_bug.cgi?id=205744
+
+        Reviewed by Darin Adler.
+
+        Adjusts test to same-origin fallback behavior for text track
+        loading by using CORS.
+
+        * http/tests/security/contentSecurityPolicy/resources/track.php: Added.
+        * http/tests/security/contentSecurityPolicy/track-redirect-allowed.html:
+        * http/tests/security/contentSecurityPolicy/track-redirect-allowed2.html:
+        * http/tests/security/contentSecurityPolicy/track-redirect-blocked.html:
+        * http/tests/security/text-track-crossorigin-expected.txt:
+        * http/tests/security/text-track-crossorigin.html:
+
 2020-01-03  Chris Dumez  <cdumez@apple.com>
 
         Add support for DragEvent

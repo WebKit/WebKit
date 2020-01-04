@@ -1,3 +1,23 @@
+2020-01-03  Rob Buis  <rbuis@igalia.com>
+
+        Make text track loading set same-origin fallback flag
+        https://bugs.webkit.org/show_bug.cgi?id=205744
+
+        Reviewed by Darin Adler.
+
+        Make text track loading set same-origin fallback flag,
+        which changes text track loading to be same-origin
+        when the crossorigin attribute is not specified.
+
+        The new behavior matches that of Chrome and Firefox.
+
+        [1] https://html.spec.whatwg.org/multipage/media.html#sourcing-out-of-band-text-tracks:create-a-potential-cors-request
+
+        Tests: http/tests/security/text-track-crossorigin.html
+
+        * loader/TextTrackLoader.cpp:
+        (WebCore::TextTrackLoader::load):
+
 2020-01-03  Sihui Liu  <sihui_liu@apple.com>
 
         IndexedDB: delete index records with ID and IndexKey instead of value in SQLiteIDBackingStore
