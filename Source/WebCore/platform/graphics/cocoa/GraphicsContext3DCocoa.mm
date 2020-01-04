@@ -439,19 +439,15 @@ GraphicsContext3D::GraphicsContext3D(GraphicsContext3DAttributes attrs, HostWind
 
 #elif USE(ANGLE)
 
-#if PLATFORM(MAC)
-    GLenum textureType = GL_TEXTURE_RECTANGLE_ANGLE;
-#else
-    GLenum textureType = GL_TEXTURE_2D;
-#endif
+    GLenum textureTarget = GraphicsContext3D::IOSurfaceTextureTarget;
 
     gl::GenTextures(1, &m_texture);
-    gl::BindTexture(textureType, m_texture);
-    gl::TexParameteri(textureType, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    gl::TexParameteri(textureType, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    gl::TexParameteri(textureType, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    gl::TexParameteri(textureType, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-    gl::BindTexture(textureType, 0);
+    gl::BindTexture(textureTarget, m_texture);
+    gl::TexParameteri(textureTarget, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    gl::TexParameteri(textureTarget, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    gl::TexParameteri(textureTarget, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    gl::TexParameteri(textureTarget, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    gl::BindTexture(textureTarget, 0);
 #else
 #error Unsupported configuration
 #endif

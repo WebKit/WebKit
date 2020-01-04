@@ -1,3 +1,35 @@
+2020-01-04  Kenneth Russell  <kbr@chromium.org>
+
+        Add support for iOS Simulator to ANGLE backend for WebGL
+        https://bugs.webkit.org/show_bug.cgi?id=205618
+
+        Extend EGL_ANGLE_iosurface_client_buffer extension to require use
+        of TEXTURE_2D target on iOS, and to provide read/write usage hints
+        for the pbuffer created from the IOSurface.
+
+        Emulate missing [EAGLContext texImageIOSurface:...] via texture
+        upload in eglBindTexImage and readback in eglReleaseTexImage.
+
+        These changes will be upstreamed in
+        https://bugs.chromium.org/p/angleproject/issues/detail?id=4256 .
+
+        Reviewed by Dean Jackson.
+
+        * extensions/EGL_ANGLE_iosurface_client_buffer.txt:
+        * include/EGL/eglext_angle.h:
+        * src/libANGLE/renderer/gl/eagl/DisplayEAGL.mm:
+        (rx::DisplayEAGL::initialize):
+        * src/libANGLE/renderer/gl/eagl/IOSurfaceSurfaceEAGL.h:
+        * src/libANGLE/renderer/gl/eagl/IOSurfaceSurfaceEAGL.mm:
+        (rx::IOSurfaceSurfaceEAGL::IOSurfaceSurfaceEAGL):
+        (rx::IOSurfaceSurfaceEAGL::bindTexImage):
+        (rx::IOSurfaceSurfaceEAGL::releaseTexImage):
+        (rx::IOSurfaceSurfaceEAGL::validateAttributes):
+        (rx::IOSurfaceSurfaceEAGL::createDefaultFramebuffer):
+        (rx::IOSurfaceSurfaceEAGL::getIOSurfaceLockOptions const):
+        * src/libANGLE/validationEGL.cpp:
+        (egl::ValidateCreatePbufferFromClientBuffer):
+
 2019-12-25  Dean Jackson  <dino@apple.com>
 
         [WebGL] Enable ANGLE by default for Cocoa platforms (except simulator)

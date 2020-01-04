@@ -1716,6 +1716,12 @@ Error ValidateCreatePbufferFromClientBuffer(Display *display,
                     return EglBadAttribute() << "<buftype> doesn't support setting GL colorspace";
                 }
                 break;
+            case EGL_IOSURFACE_USAGE_HINT_ANGLE:
+                if (value & ~(EGL_IOSURFACE_READ_HINT_ANGLE | EGL_IOSURFACE_WRITE_HINT_ANGLE))
+                {
+                    return EglBadAttribute() << "IOSurface usage hint must only contain READ or WRITE";
+                }
+                break;
             default:
                 return EglBadAttribute();
         }
@@ -1775,10 +1781,19 @@ Error ValidateCreatePbufferFromClientBuffer(Display *display,
 
     if (buftype == EGL_IOSURFACE_ANGLE)
     {
+#if ANGLE_PLATFORM_MACOS
         if (textureTarget != EGL_TEXTURE_RECTANGLE_ANGLE)
         {
-            return EglBadAttribute() << "EGL_IOSURFACE requires the EGL_TEXTURE_RECTANGLE target";
+            return EglBadAttribute() << "EGL_IOSURFACE requires the EGL_TEXTURE_RECTANGLE target on desktop macOS";
         }
+#elif ANGLE_PLATFORM_IOS
+        if (textureTarget != EGL_TEXTURE_2D)
+        {
+            return EglBadAttribute() << "EGL_IOSURFACE requires the EGL_TEXTURE_2D target on iOS";
+        }
+#else
+        return EglBadAttribute() << "EGL_IOSURFACE supported only on macOS platforms";
+#endif
 
         if (textureFormat != EGL_TEXTURE_RGBA)
         {

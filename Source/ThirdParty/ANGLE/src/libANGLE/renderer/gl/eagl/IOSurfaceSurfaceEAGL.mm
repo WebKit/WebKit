@@ -118,6 +118,17 @@ IOSurfaceSurfaceEAGL::IOSurfaceSurfaceEAGL(const egl::SurfaceState &state,
     ASSERT(mFormatIndex >= 0);
 
     mAlphaInitialized = !hasEmulatedAlphaChannel();
+
+#if defined(ANGLE_PLATFORM_IOS_SIMULATOR)
+    mBoundTextureID = 0;
+    EGLAttrib usageHint = attribs.get(EGL_IOSURFACE_USAGE_HINT_ANGLE, 0);
+    if (usageHint == 0)
+    {
+      usageHint = EGL_IOSURFACE_READ_HINT_ANGLE | EGL_IOSURFACE_WRITE_HINT_ANGLE;
+    }
+    mUploadFromIOSurface = ((usageHint & EGL_IOSURFACE_READ_HINT_ANGLE) != 0);
+    mReadbackToIOSurface = ((usageHint & EGL_IOSURFACE_WRITE_HINT_ANGLE) != 0);
+#endif
 }
 
 IOSurfaceSurfaceEAGL::~IOSurfaceSurfaceEAGL()
@@ -170,7 +181,6 @@ egl::Error IOSurfaceSurfaceEAGL::bindTexImage(const gl::Context *context,
                                              gl::Texture *texture,
                                              EGLint)
 {
-#if !defined(ANGLE_PLATFORM_IOS_SIMULATOR)
     StateManagerGL *stateManager = GetStateManagerGL(context);
 
     const TextureGL *textureGL = GetImplAs<TextureGL>(texture);
@@ -178,6 +188,7 @@ egl::Error IOSurfaceSurfaceEAGL::bindTexImage(const gl::Context *context,
     stateManager->bindTexture(gl::TextureType::_2D, textureID);
     const auto &format = kIOSurfaceFormats[mFormatIndex];
 
+#if !defined(ANGLE_PLATFORM_IOS_SIMULATOR)
     if (![mEAGLContext texImageIOSurface:mIOSurface target:GL_TEXTURE_2D internalFormat:format.nativeInternalFormat width:mWidth height:mHeight format:format.nativeFormat type:format.nativeType plane:mPlane]) {
         return egl::EglContextLost() << "EAGLContext texImageIOSurface2D failed.";
     }
@@ -186,18 +197,55 @@ egl::Error IOSurfaceSurfaceEAGL::bindTexImage(const gl::Context *context,
     {
         return egl::EglContextLost() << "Failed to initialize IOSurface alpha channel.";
     }
+#else // !defined(ANGLE_PLATFORM_IOS_SIMULATOR)
+    const FunctionsGL *functions = GetFunctionsGL(context);
+
+    IOSurfaceLock(mIOSurface, getIOSurfaceLockOptions(), nullptr);
+    void* textureData = nullptr;
+    if (mUploadFromIOSurface)
+    {
+        // TODO(kbr): possibly more state to be set here, including setting any
+        // pixel unpack buffer to 0 when using ES 3.0 contexts.
+        gl::PixelUnpackState defaultUnpackState;
+        stateManager->setPixelUnpackState(defaultUnpackState);
+        textureData = IOSurfaceGetBaseAddress(mIOSurface);
+    }
+
+    // TODO(kbr): consider trying to optimize away texture reallocations by
+    // keeping track of which textures have already been allocated.
+    functions->texImage2D(GL_TEXTURE_2D, 0, format.nativeInternalFormat, mWidth, mHeight, 0, format.nativeFormat, format.nativeType, textureData);
+
+    mBoundTextureID = textureID;
+#endif // !defined(ANGLE_PLATFORM_IOS_SIMULATOR)
 
     return egl::NoError();
-#else
-    return egl::EglContextLost() << "EAGLContext IOSurface not supported in the simulator.";
-#endif
 }
-
 
 egl::Error IOSurfaceSurfaceEAGL::releaseTexImage(const gl::Context *context, EGLint buffer)
 {
     const FunctionsGL *functions = GetFunctionsGL(context);
+#if !defined(ANGLE_PLATFORM_IOS_SIMULATOR)
     functions->flush();
+#else // !defined(ANGLE_PLATFORM_IOS_SIMULATOR)
+    if (mReadbackToIOSurface)
+    {
+        StateManagerGL *stateManager = GetStateManagerGL(context);
+        GLuint tempFBO = 0;
+        functions->genFramebuffers(1, &tempFBO);
+        stateManager->bindFramebuffer(GL_FRAMEBUFFER, tempFBO);
+        functions->framebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, mBoundTextureID, 0);
+        gl::PixelPackState state;
+        state.alignment = 1;
+        stateManager->setPixelPackState(state);
+        // TODO(kbr): possibly more state to be set here, including setting any
+        // pixel pack buffer to 0 when using ES 3.0 contexts.
+        const auto &format = kIOSurfaceFormats[mFormatIndex];
+        functions->readPixels(0, 0, mWidth, mHeight, format.nativeFormat, format.nativeType, IOSurfaceGetBaseAddress(mIOSurface));
+    }
+
+    IOSurfaceUnlock(mIOSurface, getIOSurfaceLockOptions(), nullptr);
+#endif // !defined(ANGLE_PLATFORM_IOS_SIMULATOR)
+
     return egl::NoError();
 }
 
@@ -232,7 +280,6 @@ EGLint IOSurfaceSurfaceEAGL::getSwapBehavior() const
 bool IOSurfaceSurfaceEAGL::validateAttributes(EGLClientBuffer buffer,
                                              const egl::AttributeMap &attribs)
 {
-#if !defined(ANGLE_PLATFORM_IOS_SIMULATOR)
     IOSurfaceRef ioSurface = reinterpret_cast<IOSurfaceRef>(buffer);
 
     // The plane must exist for this IOSurface. IOSurfaceGetPlaneCount can return 0 for non-planar
@@ -273,9 +320,6 @@ bool IOSurfaceSurfaceEAGL::validateAttributes(EGLClientBuffer buffer,
     }
 
     return true;
-#else
-    return false;
-#endif
 }
 
 // Wraps a FramebufferGL to hook the destroy function to delete the texture associated with the
@@ -318,7 +362,7 @@ FramebufferImpl *IOSurfaceSurfaceEAGL::createDefaultFramebuffer(const gl::Contex
         return nullptr;
     }
 #else
-    ERR() << "IOSurfaces not supported on iOS Simulator";
+    ERR() << "IOSurfaces with OpenGL ES not supported on iOS Simulator";
 #endif
 
     if (IsError(initializeAlphaChannel(context, texture)))
@@ -356,6 +400,18 @@ bool IOSurfaceSurfaceEAGL::hasEmulatedAlphaChannel() const
     const auto &format = kIOSurfaceFormats[mFormatIndex];
     return format.internalFormat == GL_RGB;
 }
+
+#if defined(ANGLE_PLATFORM_IOS_SIMULATOR)
+IOSurfaceLockOptions IOSurfaceSurfaceEAGL::getIOSurfaceLockOptions() const
+{
+    IOSurfaceLockOptions options = 0;
+    if (!mReadbackToIOSurface)
+    {
+        options |= kIOSurfaceLockReadOnly;
+    }
+    return options;
+}
+#endif // defined(ANGLE_PLATFORM_IOS_SIMULATOR)
 
 }  // namespace rx
 

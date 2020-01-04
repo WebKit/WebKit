@@ -743,6 +743,10 @@ void* VideoTextureCopierCV::attachIOSurfaceToTexture(GC3Denum target, GC3Denum i
         LOG(WebGL, "Unknown texture target %d.", static_cast<int>(target));
         return nullptr;
     }
+    if (eglTextureTarget != GraphicsContext3D::EGLIOSurfaceTextureTarget) {
+        LOG(WebGL, "Mismatch in EGL texture target %d.", static_cast<int>(target));
+        return nullptr;
+    }
 
     const EGLint surfaceAttributes[] = {
         EGL_WIDTH, width,
@@ -752,6 +756,8 @@ void* VideoTextureCopierCV::attachIOSurfaceToTexture(GC3Denum target, GC3Denum i
         EGL_TEXTURE_INTERNAL_FORMAT_ANGLE, static_cast<EGLint>(internalFormat),
         EGL_TEXTURE_FORMAT, EGL_TEXTURE_RGBA,
         EGL_TEXTURE_TYPE_ANGLE, static_cast<EGLint>(type),
+        // Only has an effect on the iOS Simulator.
+        EGL_IOSURFACE_USAGE_HINT_ANGLE, EGL_IOSURFACE_READ_HINT_ANGLE,
         EGL_NONE, EGL_NONE
     };
     EGLSurface pbuffer = EGL_CreatePbufferFromClientBuffer(display, EGL_IOSURFACE_ANGLE, surface, m_context->platformConfig(), surfaceAttributes);
@@ -851,10 +857,12 @@ bool VideoTextureCopierCV::copyImageToPlatformTexture(CVPixelBufferRef image, si
     auto uvPlaneWidth = IOSurfaceGetWidthOfPlane(surface, 1);
     auto uvPlaneHeight = IOSurfaceGetHeightOfPlane(surface, 1);
 
-#if USE(OPENGL_ES) || (USE(ANGLE) && PLATFORM(IOS_FAMILY))
+#if USE(OPENGL_ES)
     GC3Denum videoTextureTarget = GraphicsContext3D::TEXTURE_2D;
-#elif USE(OPENGL) || (USE(ANGLE) && !PLATFORM(IOS_FAMILY))
+#elif USE(OPENGL)
     GC3Denum videoTextureTarget = GraphicsContext3D::TEXTURE_RECTANGLE_ARB;
+#elif USE(ANGLE)
+    GC3Denum videoTextureTarget = GraphicsContext3D::IOSurfaceTextureTarget;
 #else
 #error Unsupported configuration
 #endif

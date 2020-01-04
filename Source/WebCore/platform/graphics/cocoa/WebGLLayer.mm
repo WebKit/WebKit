@@ -55,11 +55,6 @@
 #define GL_ANGLE_explicit_context
 #include <ANGLE/gl2ext.h>
 #include <ANGLE/gl2ext_angle.h>
-#if PLATFORM(MAC)
-const GLenum ioSurfaceTextureType = GL_TEXTURE_RECTANGLE_ANGLE;
-#else
-const GLenum ioSurfaceTextureType = GL_TEXTURE_2D;
-#endif
 #endif
 
 @implementation WebGLLayer
@@ -168,7 +163,7 @@ static void freeData(void *, const void *data, size_t /* size */)
         if (_latchedPbuffer) {
 
             GC3Denum texture = _context->platformTexture();
-            gl::BindTexture(ioSurfaceTextureType, texture);
+            gl::BindTexture(GraphicsContext3D::IOSurfaceTextureTarget, texture);
             if (!EGL_ReleaseTexImage(_eglDisplay, _latchedPbuffer, EGL_BACK_BUFFER)) {
                 // FIXME: report error.
                 notImplemented();
@@ -227,10 +222,12 @@ static void freeData(void *, const void *data, size_t /* size */)
         EGL_WIDTH, size.width(),
         EGL_HEIGHT, size.height(),
         EGL_IOSURFACE_PLANE_ANGLE, 0,
-        EGL_TEXTURE_TARGET, EGL_TEXTURE_RECTANGLE_ANGLE,
+        EGL_TEXTURE_TARGET, GraphicsContext3D::EGLIOSurfaceTextureTarget,
         EGL_TEXTURE_INTERNAL_FORMAT_ANGLE, usingAlpha ? GL_BGRA_EXT : GL_RGB,
         EGL_TEXTURE_FORMAT, EGL_TEXTURE_RGBA,
         EGL_TEXTURE_TYPE_ANGLE, GL_UNSIGNED_BYTE,
+        // Only has an effect on the iOS Simulator.
+        EGL_IOSURFACE_USAGE_HINT_ANGLE, EGL_IOSURFACE_WRITE_HINT_ANGLE,
         EGL_NONE, EGL_NONE
     };
 
@@ -259,7 +256,7 @@ static void freeData(void *, const void *data, size_t /* size */)
 #elif USE(ANGLE)
     GC3Denum texture = _context->platformTexture();
 
-    gl::BindTexture(ioSurfaceTextureType, texture);
+    gl::BindTexture(GraphicsContext3D::IOSurfaceTextureTarget, texture);
 
     if (_latchedPbuffer) {
         if (!EGL_ReleaseTexImage(_eglDisplay, _latchedPbuffer, EGL_BACK_BUFFER)) {

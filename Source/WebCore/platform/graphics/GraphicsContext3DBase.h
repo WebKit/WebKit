@@ -741,6 +741,21 @@ public:
         None,
     };
 
+#if USE(ANGLE)
+    enum {
+        // These constants are redefined here from ANGLE's OpenGL ES headers to
+        // provide a single place where multiple portions of platform code can
+        // reference them.
+#if PLATFORM(MAC)
+        IOSurfaceTextureTarget = TEXTURE_RECTANGLE_ARB, // also GL_TEXTURE_RECTANGLE_ANGLE
+        EGLIOSurfaceTextureTarget = 0x345B, // EGL_TEXTURE_RECTANGLE_ANGLE
+#else
+        IOSurfaceTextureTarget = TEXTURE_2D,
+        EGLIOSurfaceTextureTarget = 0x305F, // EGL_TEXTURE_2D
+#endif // PLATFORM(MAC)
+    };
+#endif // USE(ANGLE)
+
     virtual PlatformGraphicsContext3D platformGraphicsContext3D() const = 0;
     virtual Platform3DObject platformTexture() const = 0;
     virtual PlatformLayer* platformLayer() const = 0;

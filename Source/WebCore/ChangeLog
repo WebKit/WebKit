@@ -1,3 +1,37 @@
+2020-01-04  Kenneth Russell  <kbr@chromium.org>
+
+        Add support for iOS Simulator to ANGLE backend for WebGL
+        https://bugs.webkit.org/show_bug.cgi?id=205618
+
+        Refactor use of EGL_ANGLE_iosurface_client_buffer extension to
+        uniformly use rectangular textures on macOS, and 2D textures on
+        iOS, including the simulator. This should make the on-device iOS
+        code paths more correct as well.
+
+        Pass usage hints, only affecting the iOS Simulator, when creating
+        all pbuffers from IOSurfaces.
+
+        This patch does not turn on ANGLE for the iOS Simulator yet; that
+        will be done in a follow-on patch after more testing.
+
+        Covered by the preexisting WebGL conformance suite in the layout
+        tests.
+
+        Reviewed by Dean Jackson.
+
+        * platform/graphics/GraphicsContext3DBase.h:
+        * platform/graphics/angle/GraphicsContext3DANGLE.cpp:
+        (WebCore::GraphicsContext3D::reshapeFBOs):
+        * platform/graphics/cocoa/GraphicsContext3DCocoa.mm:
+        (WebCore::GraphicsContext3D::GraphicsContext3D):
+        * platform/graphics/cocoa/WebGLLayer.mm:
+        (-[WebGLLayer display]):
+        (-[WebGLLayer allocateIOSurfaceBackingStoreWithSize:usingAlpha:]):
+        (-[WebGLLayer bindFramebufferToNextAvailableSurface]):
+        * platform/graphics/cv/VideoTextureCopierCV.cpp:
+        (WebCore::VideoTextureCopierCV::attachIOSurfaceToTexture):
+        (WebCore::VideoTextureCopierCV::copyImageToPlatformTexture):
+
 2020-01-04  Luming Yin  <luming_yin@apple.com>
 
         Adopt updated MouseEvent initializer

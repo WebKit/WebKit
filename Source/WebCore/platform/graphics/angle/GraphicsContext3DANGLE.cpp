@@ -196,7 +196,7 @@ bool GraphicsContext3D::reshapeFBOs(const IntSize& size)
 #if PLATFORM(COCOA)
     allocateIOSurfaceBackingStore(IntSize(width, height));
     updateFramebufferTextureBackingStoreFromLayer();
-    gl::FramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_RECTANGLE_ANGLE, m_texture, 0);
+    gl::FramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GraphicsContext3D::IOSurfaceTextureTarget, m_texture, 0);
 #elif PLATFORM(GTK)
     gl::BindTexture(GL_TEXTURE_RECTANGLE_ANGLE, m_texture);
     gl::TexImage2D(GL_TEXTURE_RECTANGLE_ANGLE, 0, m_internalColorFormat, width, height, 0, colorFormat, GL_UNSIGNED_BYTE, 0);

@@ -21,7 +21,7 @@ Status
     Draft
 
 Version
-    Version 3, Aug 13, 2019
+    Version 4, Dec 28, 2019
 
 Number
 
@@ -53,6 +53,7 @@ New Tokens
         EGL_TEXTURE_RECTANGLE_ANGLE    0x345B
         EGL_TEXTURE_TYPE_ANGLE         0x345C
         EGL_TEXTURE_INTERNAL_FORMAT_ANGLE 0x345D
+        EGL_IOSURFACE_USAGE_HINT_ANGLE 0x348A
 
 Additions to Chapter 3 of the EGL 1.4 Specification (EGL Functions and Errors)
 
@@ -80,7 +81,8 @@ Additions to Chapter 3 of the EGL 1.4 Specification (EGL Functions and Errors)
       - EGL_TEXTURE_FORMAT with a value of EGL_TEXTURE_RGBA
       - EGL_WIDTH with a value between 1 and the width of <buffer>.
       - EGL_HEIGHT with a value between 1 and the height of <buffer>.
-      - EGL_TEXTURE_TARGET with a value of EGL_TEXTURE_RECTANGLE_ANGLE
+      - EGL_TEXTURE_TARGET with a value of EGL_TEXTURE_RECTANGLE_ANGLE (macOS)
+        or EGL_TEXTURE_2D (iOS)
       - EGL_IOSURFACE_PLANE_ANGLE with a value between 0 and the number of
     planes of <buffer> (exclusive).
 
@@ -88,7 +90,15 @@ Additions to Chapter 3 of the EGL 1.4 Specification (EGL Functions and Errors)
     EGL_TEXTURE_INTERNAL_FORMAT_ANGLE attributes must be one of the
     combinations listed in table egl.iosurface.formats or an
     EGL_BAD_PARAMETER is generated. The combination must also be a valid
-    combinations for glTexImage2D or EGL_BAD_PARAMETER is generated."
+    combinations for glTexImage2D or EGL_BAD_PARAMETER is generated.
+
+    The attribute EGL_IOSURFACE_USAGE_HINT_ANGLE may optionally be specified as
+    a combination of the bits EGL_IOSURFACE_READ_HINT_ANGLE and
+    EGL_IOSURFACE_WRITE_HINT_ANGLE. On the iOS Simulator platform, where
+    IOSurface support is incomplete, these hints indicate whether the intent is
+    to read from the IOSurface, write to it, or both. Explicitly passing 0 for
+    this attribute is equivalent to setting both the read and write usage
+    bits. This attribute is ignored on other platforms."
 
     ---------------------------------------------------------------------------
     Texture Type               Texture Internal Format
@@ -122,3 +132,5 @@ Revision History
     Version 1, 2017/12/06 - first draft.
     Version 2, 2019/04/01 - Allow MakeCurrent.
     Version 3, 2019/08/13 - Allow RGB internal formats
+    Version 4, 2019/12/28 - Add usage hint; require TEXTURE_RECTANGLE on macOS
+                            and TEXTURE_2D on iOS

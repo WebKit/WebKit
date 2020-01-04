@@ -29,8 +29,7 @@
 #include "libANGLE/renderer/gl/SurfaceGL.h"
 #include "libANGLE/renderer/gl/eagl/DisplayEAGL.h"
 
-struct __IOSurface;
-typedef __IOSurface *IOSurfaceRef;
+#include <IOSurface/IOSurfaceRef.h>
 
 namespace egl
 {
@@ -85,6 +84,10 @@ class IOSurfaceSurfaceEAGL : public SurfaceGL
   private:
     angle::Result initializeAlphaChannel(const gl::Context *context, GLuint texture);
 
+#if defined(ANGLE_PLATFORM_IOS_SIMULATOR)
+    IOSurfaceLockOptions getIOSurfaceLockOptions() const;
+#endif
+
     EAGLContextObj mEAGLContext;
     IOSurfaceRef mIOSurface;
     int mWidth;
@@ -93,6 +96,11 @@ class IOSurfaceSurfaceEAGL : public SurfaceGL
     int mFormatIndex;
 
     bool mAlphaInitialized;
+#if defined(ANGLE_PLATFORM_IOS_SIMULATOR)
+    GLuint mBoundTextureID;
+    bool mUploadFromIOSurface;
+    bool mReadbackToIOSurface;
+#endif
 };
 
 }  // namespace rx

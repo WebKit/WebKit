@@ -48,8 +48,6 @@
 
 #define GLES_SILENCE_DEPRECATION
 
-#if !defined(ANGLE_PLATFORM_IOS_SIMULATOR)
-
 namespace
 {
 
@@ -57,8 +55,6 @@ const char *kOpenGLESDylibName =
     "/System/Library/Frameworks/OpenGLES.framework/OpenGLES";
 
 }
-
-#endif
 
 namespace rx
 {
@@ -91,9 +87,6 @@ egl::Error DisplayEAGL::initialize(egl::Display *display)
 {
     mEGLDisplay = display;
 
-#if defined(ANGLE_PLATFORM_IOS_SIMULATOR)
-    return egl::EglNotInitialized() << "ANGLE with EAGL not supported on iOS Simulator due to lack of IOSurface support.";
-#else
     angle::SystemInfo info;
     if (!angle::GetSystemInfo(&info))
     {
@@ -126,7 +119,6 @@ egl::Error DisplayEAGL::initialize(egl::Display *display)
     }
 
     return DisplayGL::initialize(display);
-#endif
 }
 
 void DisplayEAGL::terminate()

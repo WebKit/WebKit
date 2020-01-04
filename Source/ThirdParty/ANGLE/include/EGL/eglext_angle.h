@@ -194,6 +194,9 @@ EGLAPI EGLint EGLAPIENTRY eglProgramCacheResizeANGLE(EGLDisplay dpy, EGLint limi
 #define EGL_TEXTURE_RECTANGLE_ANGLE 0x345B
 #define EGL_TEXTURE_TYPE_ANGLE 0x345C
 #define EGL_TEXTURE_INTERNAL_FORMAT_ANGLE 0x345D
+#define EGL_IOSURFACE_USAGE_HINT_ANGLE 0x348A
+#define EGL_IOSURFACE_READ_HINT_ANGLE 0x0001
+#define EGL_IOSURFACE_WRITE_HINT_ANGLE 0x0002
 #endif /* EGL_ANGLE_iosurface_client_buffer */
 
 #ifndef EGL_ANGLE_create_context_extensions_enabled
