@@ -64,42 +64,47 @@ void HangingContent::reset()
     m_width =  0;
 }
 
-struct LineBuilder::ContinousContent {
+struct LineBuilder::ContinuousContent {
 public:
-    ContinousContent(const InlineItemRun&, bool textIsAlignJustify);
+    ContinuousContent(const InlineItemRun&, bool textIsAlignJustify);
 
-    bool append(const InlineItemRun&);
+    bool isEligible(const InlineItemRun&) const;
+    void append(const InlineItemRun&);
     LineBuilder::Run close();
 
-private:
-    static bool canBeExpanded(const InlineItemRun& run) { return run.isText() && !run.isCollapsed() && !run.isCollapsedToZeroAdvanceWidth(); }
-    bool canBeMerged(const InlineItemRun& run) const { return run.isText() && !run.isCollapsedToZeroAdvanceWidth() && &m_initialInlineRun.layoutBox() == &run.layoutBox(); }
+    static bool canInlineItemRunBeExpanded(const InlineItemRun& run) { return run.isText() && !run.isCollapsed() && !run.isCollapsedToZeroAdvanceWidth(); }
 
+private:
     const InlineItemRun& m_initialInlineRun;
     const bool m_collectExpansionOpportunities { false };
     unsigned m_expandedLength { 0 };
     InlineLayoutUnit m_expandedWidth { 0 };
-    bool m_trailingRunCanBeExpanded { false };
+    bool m_trailingRunCanBeExpanded { true };
     bool m_hasTrailingExpansionOpportunity { false };
     unsigned m_expansionOpportunityCount { 0 };
 };
 
-LineBuilder::ContinousContent::ContinousContent(const InlineItemRun& initialInlineRun, bool textIsAlignJustify)
+LineBuilder::ContinuousContent::ContinuousContent(const InlineItemRun& initialInlineRun, bool textIsAlignJustify)
     : m_initialInlineRun(initialInlineRun)
     , m_collectExpansionOpportunities(textIsAlignJustify && !isWhitespacePreserved(m_initialInlineRun.style())) // Do not collect expansion data on preserved whitespace content (we should not mutate the spacing between runs in such cases).
-    , m_trailingRunCanBeExpanded(canBeExpanded(initialInlineRun))
 {
+    // We should not create a ContinuousContent object when even the inital run can not be expanded.
+    ASSERT(canInlineItemRunBeExpanded(initialInlineRun));
 }
 
-bool LineBuilder::ContinousContent::append(const InlineItemRun& inlineItemRun)
+bool LineBuilder::ContinuousContent::isEligible(const InlineItemRun& inlineItemRun) const
 {
-    // Merged content needs to be continuous.
     if (!m_trailingRunCanBeExpanded)
         return false;
-    if (!canBeMerged(inlineItemRun))
-        return false;
+    // Only non-collapsed text runs with the same layout box can be added as continuous content.
+    return inlineItemRun.isText() && !inlineItemRun.isCollapsedToZeroAdvanceWidth() && &m_initialInlineRun.layoutBox() == &inlineItemRun.layoutBox();
+}
 
-    m_trailingRunCanBeExpanded = canBeExpanded(inlineItemRun);
+void LineBuilder::ContinuousContent::append(const InlineItemRun& inlineItemRun)
+{
+    // Merged content needs to be continuous.
+    ASSERT(isEligible(inlineItemRun));
+    m_trailingRunCanBeExpanded = canInlineItemRunBeExpanded(inlineItemRun);
 
     ASSERT(inlineItemRun.isText());
     m_expandedLength += inlineItemRun.textContext()->length();
@@ -110,10 +115,9 @@ bool LineBuilder::ContinousContent::append(const InlineItemRun& inlineItemRun)
         if (m_hasTrailingExpansionOpportunity)
             ++m_expansionOpportunityCount;
     }
-    return true;
 }
 
-LineBuilder::Run LineBuilder::ContinousContent::close()
+LineBuilder::Run LineBuilder::ContinuousContent::close()
 {
     if (!m_expandedLength)
         return { m_initialInlineRun };
@@ -231,18 +235,27 @@ LineBuilder::RunList LineBuilder::close(IsLastLineWithInlineContent isLastLineWi
     // 3. Align merged runs both vertically and horizontally.
     removeTrailingCollapsibleContent();
     auto hangingContent = collectHangingContent(isLastLineWithInlineContent);
-    RunList runList;
-    unsigned runIndex = 0;
-    while (runIndex < m_inlineItemRuns.size()) {
-        // Merge eligible runs.
-        auto continousContent = ContinousContent { m_inlineItemRuns[runIndex], isTextAlignJustify() };
-        while (++runIndex < m_inlineItemRuns.size()) {
-            if (!continousContent.append(m_inlineItemRuns[runIndex]))
-                break;
-        }
-        runList.append(continousContent.close());
-    }
 
+    auto mergedInlineItemRuns = [&] {
+        RunList runList;
+        unsigned runIndex = 0;
+        while (runIndex < m_inlineItemRuns.size()) {
+            // Merge eligible runs.
+            auto& inlineItemRun = m_inlineItemRuns[runIndex];
+            if (!ContinuousContent::canInlineItemRunBeExpanded(inlineItemRun)) {
+                runList.append({ inlineItemRun });
+                ++runIndex;
+                continue;
+            }
+            auto mergedRuns = ContinuousContent { inlineItemRun, isTextAlignJustify() };
+            for (runIndex = runIndex + 1; runIndex < m_inlineItemRuns.size() && mergedRuns.isEligible(m_inlineItemRuns[runIndex]); ++runIndex)
+                mergedRuns.append(m_inlineItemRuns[runIndex]);
+            runList.append(mergedRuns.close());
+        }
+        return runList;
+    };
+
+    auto runList = mergedInlineItemRuns();
     if (!m_isIntrinsicSizing) {
         for (auto& run : runList) {
             adjustBaselineAndLineHeight(run);

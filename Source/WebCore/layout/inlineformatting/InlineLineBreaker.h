@@ -34,7 +34,7 @@ namespace Layout {
 
 class InlineItem;
 class InlineTextItem;
-struct ContinousContent;
+struct ContinuousContent;
 struct WrappedTextContent;
 
 class LineBreaker {
@@ -95,7 +95,7 @@ private:
     // [container start][span1][container end][between][container start][span2][container end]
     // see https://drafts.csswg.org/css-text-3/#line-break-details
     Optional<WrappedTextContent> wrapTextContent(const RunList&, const LineStatus&) const;
-    Result tryWrappingInlineContent(const ContinousContent&, const LineStatus&) const;
+    Result tryWrappingInlineContent(const ContinuousContent&, const LineStatus&) const;
     Optional<PartialRun> tryBreakingTextRun(const Run& overflowRun, InlineLayoutUnit availableWidth) const;
 
     enum class WordBreakRule {
@@ -104,8 +104,8 @@ private:
         OnlyHyphenationAllowed
     };
     WordBreakRule wordBreakBehavior(const RenderStyle&) const;
-    bool shouldKeepEndOfLineWhitespace(const ContinousContent&) const;
-    bool isContentWrappingAllowed(const ContinousContent&) const;
+    bool shouldKeepEndOfLineWhitespace(const ContinuousContent&) const;
+    bool isContentWrappingAllowed(const ContinuousContent&) const;
 
     bool n_hyphenationIsDisabled { false };
     const InlineItem* m_lastWrapOpportunity { nullptr };

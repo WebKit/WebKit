@@ -49,8 +49,8 @@ static inline bool shouldKeepBeginningOfLineWhitespace(const RenderStyle& style)
     return whitespace == WhiteSpace::Pre || whitespace == WhiteSpace::PreWrap || whitespace == WhiteSpace::BreakSpaces;
 }
 
-struct ContinousContent {
-    ContinousContent(const LineBreaker::RunList&);
+struct ContinuousContent {
+    ContinuousContent(const LineBreaker::RunList&);
 
     const LineBreaker::RunList& runs() const { return m_runs; }
     bool isEmpty() const { return m_runs.isEmpty(); }
@@ -86,14 +86,14 @@ struct WrappedTextContent {
     Optional<LineBreaker::PartialRun> partialTrailingRun;
 };
 
-bool LineBreaker::isContentWrappingAllowed(const ContinousContent& candidateRuns) const
+bool LineBreaker::isContentWrappingAllowed(const ContinuousContent& candidateRuns) const
 {
     // Use the last inline item with content (where we would be wrapping) to decide if content wrapping is allowed.
     auto runIndex = candidateRuns.lastContentRunIndex().valueOr(candidateRuns.size() - 1);
     return isWrappingAllowed(candidateRuns.runs()[runIndex].inlineItem.style());
 }
 
-bool LineBreaker::shouldKeepEndOfLineWhitespace(const ContinousContent& candidateRuns) const
+bool LineBreaker::shouldKeepEndOfLineWhitespace(const ContinuousContent& candidateRuns) const
 {
     // Grab the style and check for white-space property to decided whether we should let this whitespace content overflow the current line.
     // Note that the "keep" in the context means we let the whitespace content sit on the current line.
@@ -105,7 +105,7 @@ bool LineBreaker::shouldKeepEndOfLineWhitespace(const ContinousContent& candidat
 
 LineBreaker::Result LineBreaker::shouldWrapInlineContent(const RunList& candidateRuns, const LineStatus& lineStatus)
 {
-    auto candidateContent = ContinousContent { candidateRuns };
+    auto candidateContent = ContinuousContent { candidateRuns };
     ASSERT(!candidateContent.isEmpty());
     auto result = tryWrappingInlineContent(candidateContent, lineStatus);
     // If this is not the end of the line, hold on to the last eligible line wrap opportunity so that we could revert back
@@ -126,7 +126,7 @@ LineBreaker::Result LineBreaker::shouldWrapInlineContent(const RunList& candidat
     return result;
 }
 
-LineBreaker::Result LineBreaker::tryWrappingInlineContent(const ContinousContent& candidateContent, const LineStatus& lineStatus) const
+LineBreaker::Result LineBreaker::tryWrappingInlineContent(const ContinuousContent& candidateContent, const LineStatus& lineStatus) const
 {
     if (candidateContent.width() <= lineStatus.availableWidth)
         return { Result::Action::Keep };
@@ -332,7 +332,7 @@ Optional<LineBreaker::PartialRun> LineBreaker::tryBreakingTextRun(const Run& ove
     return { };
 }
 
-ContinousContent::ContinousContent(const LineBreaker::RunList& runs)
+ContinuousContent::ContinuousContent(const LineBreaker::RunList& runs)
     : m_runs(runs)
 {
     // Figure out the trailing collapsible state.
@@ -370,7 +370,7 @@ ContinousContent::ContinousContent(const LineBreaker::RunList& runs)
     }
 }
 
-bool ContinousContent::hasTextContentOnly() const
+bool ContinuousContent::hasTextContentOnly() const
 {
     // <span>text</span> is considered a text run even with the [container start][container end] inline items.
     // Due to commit boundary rules, we just need to check the first non-typeless inline item (can't have both [img] and [text])
@@ -383,7 +383,7 @@ bool ContinousContent::hasTextContentOnly() const
     return false;
 }
 
-bool ContinousContent::isVisuallyEmptyWhitespaceContentOnly() const
+bool ContinuousContent::isVisuallyEmptyWhitespaceContentOnly() const
 {
     // [<span></span> ] [<span> </span>] [ <span style="padding: 0px;"></span>] are all considered visually empty whitespace content.
     // [<span style="border: 1px solid red"></span> ] while this is whitespace content only, it is not considered visually empty.
@@ -398,7 +398,7 @@ bool ContinousContent::isVisuallyEmptyWhitespaceContentOnly() const
     return false;
 }
 
-Optional<size_t> ContinousContent::firstTextRunIndex() const
+Optional<size_t> ContinuousContent::firstTextRunIndex() const
 {
     for (size_t index = 0; index < m_runs.size(); ++index) {
         if (m_runs[index].inlineItem.isText())
@@ -407,7 +407,7 @@ Optional<size_t> ContinousContent::firstTextRunIndex() const
     return { };
 }
 
-Optional<size_t> ContinousContent::lastContentRunIndex() const
+Optional<size_t> ContinuousContent::lastContentRunIndex() const
 {
     for (size_t index = m_runs.size(); index--;) {
         if (m_runs[index].inlineItem.isText() || m_runs[index].inlineItem.isBox())
@@ -416,7 +416,7 @@ Optional<size_t> ContinousContent::lastContentRunIndex() const
     return { };
 }
 
-bool ContinousContent::hasNonContentRunsOnly() const
+bool ContinuousContent::hasNonContentRunsOnly() const
 {
     // <span></span> <- non content runs.
     for (auto& run : m_runs) {
@@ -428,7 +428,7 @@ bool ContinousContent::hasNonContentRunsOnly() const
     return true;
 }
 
-Optional<size_t> ContinousContent::lastWrapOpportunityIndex() const
+Optional<size_t> ContinuousContent::lastWrapOpportunityIndex() const
 {
     // <span style="white-space: pre">no_wrap</span><span>yes wrap</span><span style="white-space: pre">no_wrap</span>.
     // [container start][no_wrap][container end][container start][yes] <- continuous content
@@ -439,7 +439,7 @@ Optional<size_t> ContinousContent::lastWrapOpportunityIndex() const
     return isWrappingAllowed(m_runs[lastItemIndex].inlineItem.style()) ? makeOptional(lastItemIndex) : WTF::nullopt;
 }
 
-void ContinousContent::TrailingCollapsibleContent::reset()
+void ContinuousContent::TrailingCollapsibleContent::reset()
 {
     isFullyCollapsible = false;
     width = 0_lu;

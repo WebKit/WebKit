@@ -40,7 +40,7 @@ class InlineFormattingContext;
 
 class LineBuilder {
     class InlineItemRun;
-    struct ContinousContent;
+    struct ContinuousContent;
 
 public:
     struct Constraints {
