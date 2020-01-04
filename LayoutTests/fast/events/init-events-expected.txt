@@ -86,7 +86,7 @@ PASS testInitEvent('Mouse', '"a", false, false, window, 1001, 1002, 1003, 1004, 
 PASS testInitEvent('Mouse', '"a", false, false, window, 1001, 1002, 1003, 1004, 1005, false, false, false, false, 1006, null').fromElement is null
 PASS testInitEvent('Mouse', '"a", false, false, window, 1001, 1002, 1003, 1004, 1005, false, false, false, false, 1006, document').fromElement is document
 PASS testInitEvent('Mouse', '"a", false, false, window, 1001, 1002, 1003, 1004, 1005, false, false, false, false, 1006, null').toElement is null
-PASS testInitEvent('Mouse', '"a", false, false, window, 1001, 1002, 1003, 1004, 1005, false, false, false, false, 1006, null').dataTransfer is null
+PASS testInitEvent('Mouse', '"a", false, false, window, 1001, 1002, 1003, 1004, 1005, false, false, false, false, 1006, null').dataTransfer is undefined
 PASS 'keyCode' in testInitEvent('Mouse', '"a", false, false, window, 1001, 1002, 1003, 1004, 1005, false, false, false, false, 1006, null') is false
 PASS 'charCode' in testInitEvent('Mouse', '"a", false, false, window, 1001, 1002, 1003, 1004, 1005, false, false, false, false, 1006, null') is false
 PASS testInitEvent('Mouse', '"a", false, false, window, 1001, 1002, 1003, 1004, 1005, false, false, false, false, 1006, null').layerX is 1004

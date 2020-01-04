@@ -17,6 +17,7 @@ PASS new MouseEvent('eventType').altKey is false
 PASS new MouseEvent('eventType').metaKey is false
 PASS new MouseEvent('eventType').button is 0
 PASS new MouseEvent('eventType').relatedTarget is null
+PASS 'dataTransfer' in (new MouseEvent('eventType')) is false
 PASS new MouseEvent('eventType', { bubbles: false }).bubbles is false
 PASS new MouseEvent('eventType', { bubbles: true }).bubbles is true
 PASS new MouseEvent('eventType', { cancelable: false }).cancelable is false

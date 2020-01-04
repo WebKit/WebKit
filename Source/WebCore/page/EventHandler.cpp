@@ -38,6 +38,7 @@
 #include "CursorList.h"
 #include "DocumentMarkerController.h"
 #include "DragController.h"
+#include "DragEvent.h"
 #include "DragState.h"
 #include "Editing.h"
 #include "Editor.h"
@@ -2251,8 +2252,8 @@ bool EventHandler::dispatchDragEvent(const AtomString& eventType, Element& dragT
         return false;
 
     view->disableLayerFlushThrottlingTemporarilyForInteraction();
-    // FIXME: Use MouseEvent::create which takes PlatformMouseEvent.
-    Ref<MouseEvent> me = MouseEvent::create(eventType, Event::CanBubble::Yes, Event::IsCancelable::Yes, Event::IsComposed::Yes,
+
+    auto dragEvent = DragEvent::create(eventType, Event::CanBubble::Yes, Event::IsCancelable::Yes, Event::IsComposed::Yes,
         event.timestamp().approximateMonotonicTime(), &m_frame.windowProxy(), 0,
         event.globalPosition(), event.position(),
 #if ENABLE(POINTER_LOCK)
@@ -2262,8 +2263,8 @@ bool EventHandler::dispatchDragEvent(const AtomString& eventType, Element& dragT
 #endif
         event.modifiers(), 0, 0, nullptr, event.force(), NoTap, &dataTransfer);
 
-    dragTarget.dispatchEvent(me);
-    return me->defaultPrevented();
+    dragTarget.dispatchEvent(dragEvent);
+    return dragEvent->defaultPrevented();
 }
 
 static bool targetIsFrame(Node* target, Frame*& frame)

@@ -1,3 +1,13 @@
+2020-01-03  Chris Dumez  <cdumez@apple.com>
+
+        Add support for DragEvent
+        https://bugs.webkit.org/show_bug.cgi?id=205758
+
+        Reviewed by Darin Adler.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::navigateToPDFLinkWithSimulatedClick):
+
 2020-01-03  Garrett Davidson  <garrett_davidson@apple.com>
 
         IconLoadingClient::getLoadDecisionForIcon() leaks an Objective-C block

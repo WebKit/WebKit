@@ -501,6 +501,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDocumentType.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDocumentType.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDoubleRange.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDoubleRange.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDragEvent.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDragEvent.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDynamicsCompressorNode.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDynamicsCompressorNode.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSEXTBlendMinMax.cpp

@@ -1,3 +1,47 @@
+2020-01-03  Chris Dumez  <cdumez@apple.com>
+
+        Add support for DragEvent
+        https://bugs.webkit.org/show_bug.cgi?id=205758
+
+        Reviewed by Darin Adler.
+
+        Add support for DragEvent:
+        - https://html.spec.whatwg.org/multipage/dnd.html#the-dragevent-interface
+
+        Both Blink and Gecko support it. In WebKit, we had no DragEvent and we had added the
+        dataTransfer attribute to MouseEvent instead.
+
+        No new tests, updated / rebaselined existing tests.
+
+        * CMakeLists.txt:
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources-output.xcfilelist:
+        * DerivedSources.make:
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/Document.cpp:
+        (WebCore::Document::createEvent):
+        * dom/DragEvent.cpp: Added.
+        (WebCore::DragEvent::create):
+        (WebCore::DragEvent::createForBindings):
+        (WebCore::DragEvent::DragEvent):
+        (WebCore::DragEvent::eventInterface const):
+        * dom/DragEvent.h: Added.
+        (WebCore::DragEvent::dataTransfer const):
+        * dom/DragEvent.idl: Added.
+        * dom/EventNames.in:
+        * dom/MouseEvent.cpp:
+        (WebCore::MouseEvent::create):
+        (WebCore::MouseEvent::MouseEvent):
+        (WebCore::MouseEvent::initMouseEvent):
+        * dom/MouseEvent.h:
+        * dom/MouseEvent.idl:
+        * dom/SimulatedClick.cpp:
+        * dom/WheelEvent.cpp:
+        (WebCore::WheelEvent::WheelEvent):
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::dispatchDragEvent):
+
 2020-01-03  Sihui Liu  <sihui_liu@apple.com>
 
         Crash in com.apple.WebKit.Networking at UniqueIDBDatabase::performCurrentOpenOperation

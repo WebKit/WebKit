@@ -615,6 +615,7 @@ JS_BINDING_IDLS = \
     $(WebCore)/dom/DocumentOrShadowRoot.idl \
     $(WebCore)/dom/DocumentStorageAccess.idl \
     $(WebCore)/dom/DocumentType.idl \
+    $(WebCore)/dom/DragEvent.idl \
     $(WebCore)/dom/Element.idl \
     $(WebCore)/dom/ErrorEvent.idl \
     $(WebCore)/dom/Event.idl \

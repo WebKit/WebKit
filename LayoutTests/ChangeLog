@@ -1,5 +1,25 @@
 2020-01-03  Chris Dumez  <cdumez@apple.com>
 
+        Add support for DragEvent
+        https://bugs.webkit.org/show_bug.cgi?id=205758
+
+        Reviewed by Darin Adler.
+
+        Extend test coverage.
+
+        * editing/pasteboard/can-read-in-dragstart-event-expected.txt:
+        * editing/pasteboard/can-read-in-dragstart-event.html:
+        * editing/pasteboard/data-transfer-is-unique-for-dragenter-and-dragleave-expected.txt:
+        * editing/pasteboard/data-transfer-is-unique-for-dragenter-and-dragleave.html:
+        * fast/events/constructors/mouse-event-constructor-expected.txt:
+        * fast/events/constructors/mouse-event-constructor.html:
+        * fast/events/init-events-expected.txt:
+        * fast/events/init-events.html:
+        * platform/mac-wk1/imported/w3c/web-platform-tests/html/dom/idlharness.https-expected.txt:
+        * platform/mac-wk2/imported/w3c/web-platform-tests/html/dom/idlharness.https-expected.txt:
+
+2020-01-03  Chris Dumez  <cdumez@apple.com>
+
         dom/nodes/Document-createElement-namespace.html WPT test is failing
         https://bugs.webkit.org/show_bug.cgi?id=205748
 

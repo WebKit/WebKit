@@ -113,7 +113,7 @@ shouldBe("testInitEvent('Mouse', '\"a\", false, false, window, 1001, 1002, 1003,
 shouldBe("testInitEvent('Mouse', '\"a\", false, false, window, 1001, 1002, 1003, 1004, 1005, false, false, false, false, 1006, null').fromElement", "null");
 shouldBe("testInitEvent('Mouse', '\"a\", false, false, window, 1001, 1002, 1003, 1004, 1005, false, false, false, false, 1006, document').fromElement", "document");
 shouldBe("testInitEvent('Mouse', '\"a\", false, false, window, 1001, 1002, 1003, 1004, 1005, false, false, false, false, 1006, null').toElement", "null");
-shouldBe("testInitEvent('Mouse', '\"a\", false, false, window, 1001, 1002, 1003, 1004, 1005, false, false, false, false, 1006, null').dataTransfer", "null");
+shouldBe("testInitEvent('Mouse', '\"a\", false, false, window, 1001, 1002, 1003, 1004, 1005, false, false, false, false, 1006, null').dataTransfer", "undefined");
 shouldBeFalse("'keyCode' in testInitEvent('Mouse', '\"a\", false, false, window, 1001, 1002, 1003, 1004, 1005, false, false, false, false, 1006, null')");
 shouldBeFalse("'charCode' in testInitEvent('Mouse', '\"a\", false, false, window, 1001, 1002, 1003, 1004, 1005, false, false, false, false, 1006, null')");
 shouldBe("testInitEvent('Mouse', '\"a\", false, false, window, 1001, 1002, 1003, 1004, 1005, false, false, false, false, 1006, null').layerX", "1004");

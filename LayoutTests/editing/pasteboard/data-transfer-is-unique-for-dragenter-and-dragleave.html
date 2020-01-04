@@ -17,6 +17,8 @@
 var jsTestIsAsync = true;
 
 source.addEventListener("dragstart", (event) => {
+    ev = event;
+    shouldBe("ev.__proto__", "DragEvent.prototype");
     event.dataTransfer.effectAllowed = 'copy';
     event.dataTransfer.setData('text', 'hello, world');
     dataTransferMap.clear();
@@ -35,22 +37,34 @@ function testUniquenessAndAdd(dataTransfer, label, eventType) {
 }
 
 passover.addEventListener("dragenter", (event) => {
+    ev = event;
+    shouldBe("ev.__proto__", "DragEvent.prototype");
     testUniquenessAndAdd(event.dataTransfer, 'passover', 'dragenter');
 });
 passover.addEventListener("dragleave", (event) => {
+    ev = event;
+    shouldBe("ev.__proto__", "DragEvent.prototype");
     testUniquenessAndAdd(event.dataTransfer, 'passover', 'dragleave');
 });
 destination.addEventListener("dragenter", (event) => {
+    ev = event;
+    shouldBe("ev.__proto__", "DragEvent.prototype");
     testUniquenessAndAdd(event.dataTransfer, 'destination', 'dragenter');
 });
 destination.addEventListener("dragleave", (event) => {
+    ev = event;
+    shouldBe("ev.__proto__", "DragEvent.prototype");
     testUniquenessAndAdd(event.dataTransfer, 'destination', 'dragleave');
 });
 destination.addEventListener("dragover", (event) => {
+    ev = event;
+    shouldBe("ev.__proto__", "DragEvent.prototype");
     testUniquenessAndAdd(event.dataTransfer, 'destination', 'dragover');
     event.preventDefault();
 });
 destination.addEventListener("drop", (event) => {
+    ev = event;
+    shouldBe("ev.__proto__", "DragEvent.prototype");
     testUniquenessAndAdd(event.dataTransfer, 'destination', 'drop');
     finishJSTest();
 });

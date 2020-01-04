@@ -878,6 +878,7 @@ dom/DocumentSharedObjectPool.cpp
 dom/DocumentStorageAccess.cpp
 dom/DocumentTouch.cpp @no-unify
 dom/DocumentType.cpp
+dom/DragEvent.cpp
 dom/Element.cpp
 dom/ElementData.cpp
 dom/ElementRareData.cpp
@@ -2833,6 +2834,7 @@ JSDocumentOrShadowRoot.cpp
 JSDocumentPictureInPicture.cpp
 JSDocumentType.cpp
 JSDoubleRange.cpp
+JSDragEvent.cpp
 JSDynamicsCompressorNode.cpp
 JSEcKeyParams.cpp
 JSEcdhKeyDeriveParams.cpp

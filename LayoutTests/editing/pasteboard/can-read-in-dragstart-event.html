@@ -9,6 +9,10 @@ function log(text) {
 }
 
 function dragStartTest(e) {
+    if (e.__proto__ == DragEvent.prototype)
+        log('PASS: event is a DragEvent');
+    else
+        log('FAIL: event is not a DragEvent');
     e.dataTransfer.setData('text/plain', 'dragstart test');
     if (event.dataTransfer.types.indexOf('text/plain') < 0 ||
         event.dataTransfer.getData('text/plain') != 'dragstart test')

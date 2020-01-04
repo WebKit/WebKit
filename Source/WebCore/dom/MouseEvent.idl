@@ -57,5 +57,4 @@
     readonly attribute long y;
     readonly attribute Node? fromElement;
     readonly attribute Node? toElement;
-    readonly attribute DataTransfer dataTransfer;
 };

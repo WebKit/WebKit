@@ -27,6 +27,7 @@ shouldBe("new MouseEvent('eventType').altKey", "false");
 shouldBe("new MouseEvent('eventType').metaKey", "false");
 shouldBe("new MouseEvent('eventType').button", "0");
 shouldBe("new MouseEvent('eventType').relatedTarget", "null");
+shouldBeFalse("'dataTransfer' in (new MouseEvent('eventType'))")
 
 // bubbles is passed.
 shouldBe("new MouseEvent('eventType', { bubbles: false }).bubbles", "false");

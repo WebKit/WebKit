@@ -1,5 +1,17 @@
 2020-01-03  Chris Dumez  <cdumez@apple.com>
 
+        Add support for DragEvent
+        https://bugs.webkit.org/show_bug.cgi?id=205758
+
+        Reviewed by Darin Adler.
+
+        Rebaseline WPT tests now that more checks are passing.
+
+        * web-platform-tests/dom/events/EventTarget-dispatchEvent-expected.txt:
+        * web-platform-tests/dom/nodes/Document-createEvent.https-expected.txt:
+
+2020-01-03  Chris Dumez  <cdumez@apple.com>
+
         dom/nodes/Document-createElement-namespace.html WPT test is failing
         https://bugs.webkit.org/show_bug.cgi?id=205748
 

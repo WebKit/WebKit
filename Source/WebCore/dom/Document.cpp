@@ -63,6 +63,7 @@
 #include "DocumentSharedObjectPool.h"
 #include "DocumentTimeline.h"
 #include "DocumentType.h"
+#include "DragEvent.h"
 #include "Editing.h"
 #include "Editor.h"
 #include "ElementIterator.h"
@@ -4793,6 +4794,8 @@ ExceptionOr<Ref<Event>> Document::createEvent(const String& type)
         return Ref<Event> { CompositionEvent::createForBindings() };
     if (equalLettersIgnoringASCIICase(type, "customevent"))
         return Ref<Event> { CustomEvent::create() };
+    if (equalLettersIgnoringASCIICase(type, "dragevent"))
+        return Ref<Event> { DragEvent::createForBindings() };
     if (equalLettersIgnoringASCIICase(type, "event") || equalLettersIgnoringASCIICase(type, "events") || equalLettersIgnoringASCIICase(type, "htmlevents") || equalLettersIgnoringASCIICase(type, "svgevents"))
         return Event::createForBindings();
     if (equalLettersIgnoringASCIICase(type, "focusevent"))

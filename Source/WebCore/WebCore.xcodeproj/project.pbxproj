@@ -1254,6 +1254,7 @@
 		46DBB6501AB8C96F00D9A813 /* PowerObserverMac.h in Headers */ = {isa = PBXBuildFile; fileRef = 46DBB64E1AB8C96F00D9A813 /* PowerObserverMac.h */; };
 		46DFF4981DC2603100B80B48 /* ShadowRootMode.h in Headers */ = {isa = PBXBuildFile; fileRef = 46DFF4961DC2601300B80B48 /* ShadowRootMode.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		46DFF49C1DC2620B00B80B48 /* JSShadowRootMode.h in Headers */ = {isa = PBXBuildFile; fileRef = 46DFF49A1DC261F900B80B48 /* JSShadowRootMode.h */; };
+		46E0C0DE23C006E9005E47AE /* DragEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 46E0C0DA23C006B3005E47AE /* DragEvent.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		46E1666E1FCC86A200C9710B /* DocumentIdentifier.h in Headers */ = {isa = PBXBuildFile; fileRef = 46E1666C1FCC868700C9710B /* DocumentIdentifier.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		46E791491F97E01A00199739 /* JSVisibilityState.h in Headers */ = {isa = PBXBuildFile; fileRef = 46E791461F97E01700199739 /* JSVisibilityState.h */; };
 		46EB37CA1F97CCD200B65523 /* JSServiceWorkerClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 46EB37C31F97CCCB00B65523 /* JSServiceWorkerClient.h */; };
@@ -7775,6 +7776,9 @@
 		46DFF4991DC261F900B80B48 /* JSShadowRootMode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSShadowRootMode.cpp; sourceTree = "<group>"; };
 		46DFF49A1DC261F900B80B48 /* JSShadowRootMode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSShadowRootMode.h; sourceTree = "<group>"; };
 		46E016AD1F72D61E00282B2C /* DOMHighResTimeStamp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMHighResTimeStamp.h; sourceTree = "<group>"; };
+		46E0C0DA23C006B3005E47AE /* DragEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DragEvent.h; sourceTree = "<group>"; };
+		46E0C0DC23C006B4005E47AE /* DragEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DragEvent.cpp; sourceTree = "<group>"; };
+		46E0C0DD23C006B4005E47AE /* DragEvent.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = DragEvent.idl; sourceTree = "<group>"; };
 		46E1666C1FCC868700C9710B /* DocumentIdentifier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DocumentIdentifier.h; sourceTree = "<group>"; };
 		46E791451F97E01700199739 /* JSVisibilityState.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSVisibilityState.cpp; sourceTree = "<group>"; };
 		46E791461F97E01700199739 /* JSVisibilityState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSVisibilityState.h; sourceTree = "<group>"; };
@@ -28126,6 +28130,9 @@
 				BC64640811D7F304006455B0 /* DOMStringMap.h */,
 				BC64647911D800CD006455B0 /* DOMStringMap.idl */,
 				05FD69DF12845D4300B2BEB3 /* DOMTimeStamp.h */,
+				46E0C0DC23C006B4005E47AE /* DragEvent.cpp */,
+				46E0C0DA23C006B3005E47AE /* DragEvent.h */,
+				46E0C0DD23C006B4005E47AE /* DragEvent.idl */,
 				A8C4A7F609D563270003AC8D /* Element.cpp */,
 				A8C4A7F509D563270003AC8D /* Element.h */,
 				93EEC1EA09C2877700C515D1 /* Element.idl */,
@@ -29768,6 +29775,7 @@
 				A7CA59630B27C1F200FA021D /* DragClient.h in Headers */,
 				A7CA595D0B27BD9E00FA021D /* DragController.h in Headers */,
 				A7B6E69F0B291A9600D0529F /* DragData.h in Headers */,
+				46E0C0DE23C006E9005E47AE /* DragEvent.h in Headers */,
 				A7CFB3D20B7ED10A0070C32D /* DragImage.h in Headers */,
 				1AF5E4D91E5677A9004A1F01 /* DragItem.h in Headers */,
 				81F65FF613788FAA00FF6F2D /* DragState.h in Headers */,

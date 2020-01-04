@@ -23,7 +23,6 @@
 #include "config.h"
 #include "MouseEvent.h"
 
-#include "DataTransfer.h"
 #include "EventNames.h"
 #include "Frame.h"
 #include "FrameView.h"
@@ -68,10 +67,10 @@ Ref<MouseEvent> MouseEvent::create(const AtomString& eventType, RefPtr<WindowPro
 
 Ref<MouseEvent> MouseEvent::create(const AtomString& type, CanBubble canBubble, IsCancelable isCancelable, IsComposed isComposed, MonotonicTime timestamp, RefPtr<WindowProxy>&& view, int detail,
     const IntPoint& screenLocation, const IntPoint& windowLocation, const IntPoint& movementDelta, OptionSet<Modifier> modifiers, short button, unsigned short buttons,
-    EventTarget* relatedTarget, double force, unsigned short syntheticClickType, DataTransfer* dataTransfer, IsSimulated isSimulated, IsTrusted isTrusted)
+    EventTarget* relatedTarget, double force, unsigned short syntheticClickType, IsSimulated isSimulated, IsTrusted isTrusted)
 {
     return adoptRef(*new MouseEvent(type, canBubble, isCancelable, isComposed, timestamp, WTFMove(view), detail,
-        screenLocation, windowLocation, movementDelta, modifiers, button, buttons, relatedTarget, force, syntheticClickType, dataTransfer, isSimulated, isTrusted));
+        screenLocation, windowLocation, movementDelta, modifiers, button, buttons, relatedTarget, force, syntheticClickType, isSimulated, isTrusted));
 }
 
 Ref<MouseEvent> MouseEvent::create(const AtomString& eventType, CanBubble canBubble, IsCancelable isCancelable, IsComposed isComposed, RefPtr<WindowProxy>&& view, int detail,
@@ -86,7 +85,7 @@ MouseEvent::MouseEvent() = default;
 MouseEvent::MouseEvent(const AtomString& eventType, CanBubble canBubble, IsCancelable isCancelable, IsComposed isComposed,
     MonotonicTime timestamp, RefPtr<WindowProxy>&& view, int detail,
     const IntPoint& screenLocation, const IntPoint& windowLocation, const IntPoint& movementDelta, OptionSet<Modifier> modifiers, short button, unsigned short buttons,
-    EventTarget* relatedTarget, double force, unsigned short syntheticClickType, DataTransfer* dataTransfer, IsSimulated isSimulated, IsTrusted isTrusted)
+    EventTarget* relatedTarget, double force, unsigned short syntheticClickType, IsSimulated isSimulated, IsTrusted isTrusted)
     : MouseRelatedEvent(eventType, canBubble, isCancelable, isComposed, timestamp, WTFMove(view), detail, screenLocation, windowLocation, movementDelta, modifiers, isSimulated, isTrusted)
     , m_button(button == -2 ? 0 : button)
     , m_buttons(buttons)
@@ -94,7 +93,6 @@ MouseEvent::MouseEvent(const AtomString& eventType, CanBubble canBubble, IsCance
     , m_buttonDown(button != -2)
     , m_relatedTarget(relatedTarget)
     , m_force(force)
-    , m_dataTransfer(dataTransfer)
 {
 }
 
@@ -141,7 +139,6 @@ void MouseEvent::initMouseEvent(const AtomString& type, bool canBubble, bool can
     initCoordinates(IntPoint(clientX, clientY));
 
     setIsSimulated(false);
-    m_dataTransfer = nullptr;
 }
 
 // FIXME: We need this quirk because iAd Producer is calling this function with a relatedTarget that is not an EventTarget (rdar://problem/30640101).
@@ -181,21 +178,6 @@ EventInterface MouseEvent::eventInterface() const
 bool MouseEvent::isMouseEvent() const
 {
     return true;
-}
-
-bool MouseEvent::isDragEvent() const
-{
-    // This function is only used to decide to return nullptr for dataTransfer even when m_dataTransfer is non-null.
-    // FIXME: Is that really valuable? Why will m_dataTransfer be non-null but we need to return null for dataTransfer?
-    // Quite peculiar to decide based on the type string; may have been be provided by call to JavaScript constructor.
-    auto& type = this->type();
-    return type == eventNames().dragEvent
-        || type == eventNames().dragendEvent
-        || type == eventNames().dragenterEvent
-        || type == eventNames().dragleaveEvent
-        || type == eventNames().dragoverEvent
-        || type == eventNames().dragstartEvent
-        || type == eventNames().dropEvent;
 }
 
 bool MouseEvent::canTriggerActivationBehavior(const Event& event)

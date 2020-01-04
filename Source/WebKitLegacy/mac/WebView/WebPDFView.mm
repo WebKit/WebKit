@@ -984,7 +984,7 @@ static BOOL isFrameInRange(WebFrame *frame, DOMRange *range)
         // FIXME: Use createPlatformMouseEvent instead.
         event = WebCore::MouseEvent::create(WebCore::eventNames().clickEvent, WebCore::Event::CanBubble::Yes, WebCore::Event::IsCancelable::Yes, WebCore::Event::IsComposed::Yes,
             MonotonicTime::now(), nullptr, [nsEvent clickCount], { }, { }, { }, WebCore::modifiersForEvent(nsEvent),
-            button, [NSEvent pressedMouseButtons], nullptr, WebCore::ForceAtClick, 0, nullptr, WebCore::MouseEvent::IsSimulated::Yes);
+            button, [NSEvent pressedMouseButtons], nullptr, WebCore::ForceAtClick, 0, WebCore::MouseEvent::IsSimulated::Yes);
     }
 
     // Call to the frame loader because this is where our security checks are made.

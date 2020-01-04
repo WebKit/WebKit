@@ -716,6 +716,7 @@ set(WebCore_NON_SVG_IDL_FILES
     dom/DocumentOrShadowRoot.idl
     dom/DocumentTouch.idl
     dom/DocumentType.idl
+    dom/DragEvent.idl
     dom/Element.idl
     dom/ErrorEvent.idl
     dom/Event.idl

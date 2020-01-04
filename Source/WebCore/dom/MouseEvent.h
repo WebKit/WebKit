@@ -38,7 +38,6 @@ class JSValue;
 
 namespace WebCore {
 
-class DataTransfer;
 class Node;
 class PlatformMouseEvent;
 
@@ -47,7 +46,7 @@ class MouseEvent : public MouseRelatedEvent {
 public:
     WEBCORE_EXPORT static Ref<MouseEvent> create(const AtomString& type, CanBubble, IsCancelable, IsComposed, MonotonicTime timestamp, RefPtr<WindowProxy>&&, int detail,
         const IntPoint& screenLocation, const IntPoint& windowLocation, const IntPoint& movementDelta, OptionSet<Modifier>, short button, unsigned short buttons,
-        EventTarget* relatedTarget, double force, unsigned short syntheticClickType, DataTransfer* = nullptr, IsSimulated = IsSimulated::No, IsTrusted = IsTrusted::Yes);
+        EventTarget* relatedTarget, double force, unsigned short syntheticClickType, IsSimulated = IsSimulated::No, IsTrusted = IsTrusted::Yes);
 
     WEBCORE_EXPORT static Ref<MouseEvent> create(const AtomString& eventType, RefPtr<WindowProxy>&&, const PlatformMouseEvent&, int detail, Node* relatedTarget);
 
@@ -84,8 +83,6 @@ public:
     WEBCORE_EXPORT virtual RefPtr<Node> toElement() const;
     WEBCORE_EXPORT virtual RefPtr<Node> fromElement() const;
 
-    DataTransfer* dataTransfer() const { return isDragEvent() ? m_dataTransfer.get() : nullptr; }
-
     static bool canTriggerActivationBehavior(const Event&);
 
     int which() const final;
@@ -93,7 +90,7 @@ public:
 protected:
     MouseEvent(const AtomString& type, CanBubble, IsCancelable, IsComposed, MonotonicTime timestamp, RefPtr<WindowProxy>&&, int detail,
         const IntPoint& screenLocation, const IntPoint& windowLocation, const IntPoint& movementDelta, OptionSet<Modifier>, short button, unsigned short buttons,
-        EventTarget* relatedTarget, double force, unsigned short syntheticClickType, DataTransfer*, IsSimulated, IsTrusted);
+        EventTarget* relatedTarget, double force, unsigned short syntheticClickType, IsSimulated, IsTrusted);
 
     MouseEvent(const AtomString& type, CanBubble, IsCancelable, IsComposed, RefPtr<WindowProxy>&&, int detail,
         const IntPoint& screenLocation, const IntPoint& clientLocation, OptionSet<Modifier>, short button, unsigned short buttons,
@@ -107,8 +104,6 @@ private:
     bool isMouseEvent() const final;
     EventInterface eventInterface() const override;
 
-    bool isDragEvent() const;
-
     void setRelatedTarget(EventTarget& relatedTarget) final { m_relatedTarget = &relatedTarget; }
 
     short m_button { 0 };
@@ -117,7 +112,6 @@ private:
     bool m_buttonDown { false };
     RefPtr<EventTarget> m_relatedTarget;
     double m_force { 0 };
-    RefPtr<DataTransfer> m_dataTransfer;
 };
 
 } // namespace WebCore

@@ -13,6 +13,7 @@ ClipboardEvent
 CloseEvent
 CompositionEvent
 CustomEvent
+DragEvent
 ExtendableEvent conditional=SERVICE_WORKER
 ExtendableMessageEvent conditional=SERVICE_WORKER
 ErrorEvent
