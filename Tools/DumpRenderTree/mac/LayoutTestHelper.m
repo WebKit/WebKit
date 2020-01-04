@@ -75,7 +75,7 @@ static NSURL *colorProfileURLForDisplay(NSString *displayUUIDString)
     CFDictionaryRef deviceInfo = ColorSyncDeviceCopyDeviceInfo(kColorSyncDisplayDeviceClass, uuid);
     CFRelease(uuid);
     if (!deviceInfo) {
-        NSLog(@"No display attached to system; not setting main display's color profile.");
+        NSLog(@"Could not retrieve device info from ColorSync; not setting main display's color profile.");
         return nil;
     }
 
@@ -109,9 +109,9 @@ static NSArray *displayUUIDStrings()
     CGDirectDisplayID displayIDs[maxDisplayCount] = { 0 };
     uint32_t displayCount = 0;
     
-    CGError err = CGGetActiveDisplayList(maxDisplayCount, displayIDs, &displayCount);
+    CGError err = CGGetOnlineDisplayList(maxDisplayCount, displayIDs, &displayCount);
     if (err != kCGErrorSuccess) {
-        NSLog(@"Error %d getting active display list; not setting display color profile.", err);
+        NSLog(@"Error %d getting online display list; not setting display color profile.", err);
         return nil;
     }
 

@@ -1,3 +1,17 @@
+2020-01-03  Tim Horton  <timothy_horton@apple.com>
+
+        REGRESSION: 150+ flaky failures on some bots (color mismatches)
+        https://bugs.webkit.org/show_bug.cgi?id=205755
+        <rdar://problem/58248136>
+
+        Reviewed by Simon Fraser.
+
+        * DumpRenderTree/mac/LayoutTestHelper.m:
+        (colorProfileURLForDisplay):
+        (displayUUIDStrings):
+        Use CGGetOnlineDisplayList instead of CGGetActiveDisplayList; we want
+        all attached displays, even if they are sleeping.
+
 2020-01-03  Keith Miller  <keith_miller@apple.com>
 
         Update test262 tests to commit 157b18d
