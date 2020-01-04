@@ -5640,9 +5640,11 @@ Document& Document::topDocument() const
     return *document;
 }
 
-ExceptionOr<Ref<Attr>> Document::createAttribute(const String& name)
+ExceptionOr<Ref<Attr>> Document::createAttribute(const String& localName)
 {
-    return createAttributeNS({ }, isHTMLDocument() ? name.convertToASCIILowercase() : name, true);
+    if (!isValidName(localName))
+        return Exception { InvalidCharacterError };
+    return Attr::create(*this, QualifiedName { nullAtom(), isHTMLDocument() ? localName.convertToASCIILowercase() : localName, nullAtom() }, emptyString());
 }
 
 ExceptionOr<Ref<Attr>> Document::createAttributeNS(const AtomString& namespaceURI, const String& qualifiedName, bool shouldIgnoreNamespaceChecks)
