@@ -1,3 +1,13 @@
+2020-01-04  Dean Jackson  <dino@apple.com>
+
+        REGRESSION: [ Mac ] webgl/2.0.0/conformance2/glsl3/no-attribute-vertex-shader.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=205756
+        <rdar://problem/58309241>
+
+        Marking this as Pass Failure.
+
+        * platform/mac/TestExpectations:
+
 2020-01-03  Rob Buis  <rbuis@igalia.com>
 
         Make text track loading set same-origin fallback flag
