@@ -1516,10 +1516,11 @@ IDBError SQLiteIDBBackingStore::deleteRecord(SQLiteIDBTransaction& transaction, 
         return IDBError { UnknownError, "Unable to serialize IDBKeyData to be removed from the database"_s };
     }
 
-    // Get the record ID
+    // Get the record ID and value.
     int64_t recordID;
+    ThreadSafeDataBuffer value;
     {
-        auto* sql = cachedStatement(SQL::GetObjectStoreRecordID, "SELECT recordID FROM Records WHERE objectStoreID = ? AND key = CAST(? AS TEXT);"_s);
+        auto* sql = cachedStatement(SQL::GetObjectStoreRecord, "SELECT recordID, value FROM Records WHERE objectStoreID = ? AND key = CAST(? AS TEXT);"_s);
 
         if (!sql
             || sql->bindInt64(1, objectStoreID) != SQLITE_OK
@@ -1540,6 +1541,10 @@ IDBError SQLiteIDBBackingStore::deleteRecord(SQLiteIDBTransaction& transaction, 
         }
 
         recordID = sql->getColumnInt64(0);
+
+        Vector<uint8_t> valueBuffer;
+        sql->getColumnBlobAsVector(1, valueBuffer);
+        value = ThreadSafeDataBuffer::create(WTFMove(valueBuffer));
     }
 
     if (recordID < 1) {
@@ -1577,16 +1582,56 @@ IDBError SQLiteIDBBackingStore::deleteRecord(SQLiteIDBTransaction& transaction, 
     }
 
     // Delete record from indexes store
-    {
-        auto* sql = cachedStatement(SQL::DeleteObjectStoreIndexRecord, "DELETE FROM IndexRecords WHERE objectStoreID = ? AND value = CAST(? AS TEXT);"_s);
+    JSLockHolder locker(m_serializationContext->vm());
+    auto jsValue = deserializeIDBValueToJSValue(m_serializationContext->execState(), value);
+    if (jsValue.isUndefinedOrNull())
+        return IDBError { };
 
-        if (!sql
-            || sql->bindInt64(1, objectStoreID) != SQLITE_OK
-            || sql->bindBlob(2, keyBuffer->data(), keyBuffer->size()) != SQLITE_OK
-            || sql->step() != SQLITE_DONE) {
-            LOG_ERROR("Could not delete record from indexes for object store %" PRIi64 " (%i) - %s", objectStoreID, m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
-            return IDBError { UnknownError, "Failed to delete index entries for object store record"_s };
+    for (auto& objectStoreInfo : m_databaseInfo->objectStoreMap().values()) {
+        for (auto& indexInfo : objectStoreInfo.indexMap().values()) {
+            IndexKey indexKey;
+            generateIndexKeyForValue(m_serializationContext->execState(), indexInfo, jsValue, indexKey, objectStoreInfo.keyPath(), keyData);
+            if (indexKey.isNull())
+                continue;
+
+            if (!indexInfo.multiEntry()) {
+                auto error = deleteOneIndexRecord(objectStoreID, recordID, indexKey.asOneKey());
+                if (!error.isNull())
+                    return error;
+            } else {
+                auto indexKeys = indexKey.multiEntry();
+                for (auto& key : indexKeys) {
+                    auto error = deleteOneIndexRecord(objectStoreID, recordID, key);
+                    if (!error.isNull())
+                        return error;
+                }
+                
+            }
         }
+    }
+
+    return IDBError { };
+}
+
+IDBError SQLiteIDBBackingStore::deleteOneIndexRecord(int64_t objectStoreID, int64_t objectStoreRecordID, const IDBKeyData& indexKey)
+{
+    if (!indexKey.isValid())
+        return IDBError { };
+
+    RefPtr<SharedBuffer> indexKeyBuffer = serializeIDBKeyData(indexKey);
+    if (!indexKeyBuffer) {
+        LOG_ERROR("Could not delete record from object store %" PRIi64 " (Could not serialize index key)", objectStoreID);
+        return IDBError { UnknownError, "Failed to delete index entries for object store record"_s };
+    }
+
+    auto* sql = cachedStatement(SQL::DeleteObjectStoreIndexRecord, "DELETE FROM IndexRecords WHERE objectStoreID = ? AND objectStoreRecordID = ? AND key = CAST(? AS TEXT);"_s);
+    if (!sql
+        || sql->bindInt64(1, objectStoreID) != SQLITE_OK
+        || sql->bindInt64(2, objectStoreRecordID) != SQLITE_OK
+        || sql->bindBlob(3, indexKeyBuffer->data(), indexKeyBuffer->size()) != SQLITE_OK
+        || sql->step() != SQLITE_DONE) {
+        LOG_ERROR("Could not delete record from indexes for object store %" PRIi64 " (%i) - %s", objectStoreID, m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
+        return IDBError { UnknownError, "Failed to delete index entries for object store record"_s };
     }
 
     return IDBError { };

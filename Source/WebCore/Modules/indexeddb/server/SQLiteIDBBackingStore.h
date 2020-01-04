@@ -116,6 +116,7 @@ private:
     std::unique_ptr<IDBDatabaseInfo> extractExistingDatabaseInfo();
 
     IDBError deleteRecord(SQLiteIDBTransaction&, int64_t objectStoreID, const IDBKeyData&);
+    IDBError deleteOneIndexRecord(int64_t objectStoreID, int64_t objectStoreRecordID, const IDBKeyData&);
     IDBError uncheckedGetKeyGeneratorValue(int64_t objectStoreID, uint64_t& outValue);
     IDBError uncheckedSetKeyGeneratorValue(int64_t objectStoreID, uint64_t value);
 
@@ -156,7 +157,7 @@ private:
         KeyExistsInObjectStore,
         GetUnusedBlobFilenames,
         DeleteUnusedBlobs,
-        GetObjectStoreRecordID,
+        GetObjectStoreRecord,
         DeleteBlobRecord,
         DeleteObjectStoreRecord,
         DeleteObjectStoreIndexRecord,

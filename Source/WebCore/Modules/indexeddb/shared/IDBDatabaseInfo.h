@@ -58,6 +58,7 @@ public:
     void renameObjectStore(uint64_t objectStoreIdentifier, const String& newName);
 
     Vector<String> objectStoreNames() const;
+    const HashMap<uint64_t, IDBObjectStoreInfo>& objectStoreMap() const { return m_objectStoreMap; }
 
     void deleteObjectStore(const String& objectStoreName);
     void deleteObjectStore(uint64_t objectStoreIdentifier);

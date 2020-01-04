@@ -1,3 +1,24 @@
+2020-01-03  Sihui Liu  <sihui_liu@apple.com>
+
+        IndexedDB: delete index records with ID and IndexKey instead of value in SQLiteIDBackingStore
+        https://bugs.webkit.org/show_bug.cgi?id=205413
+
+        Reviewed by Alex Christensen.
+
+        Since we have created an index on key in the IndexRecords table, we should do the deletion by its key, because 
+        looking up a record by index column(s) should be faster than non-index column(s).
+
+        This change makes PerformanceTests/IndexedDB/basic/index-cursor-delete.html about 100% faster.
+
+        No behavior change.
+
+        * Modules/indexeddb/server/SQLiteIDBBackingStore.cpp:
+        (WebCore::IDBServer::SQLiteIDBBackingStore::deleteRecord):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::deleteOneIndexRecord):
+        * Modules/indexeddb/server/SQLiteIDBBackingStore.h:
+        * Modules/indexeddb/shared/IDBDatabaseInfo.h:
+        (WebCore::IDBDatabaseInfo::objectStoreMap const):
+
 2020-01-03  Chris Dumez  <cdumez@apple.com>
 
         Add support for DragEvent
