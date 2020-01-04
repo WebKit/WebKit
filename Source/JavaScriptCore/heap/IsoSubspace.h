@@ -59,8 +59,8 @@ public:
 private:
     friend class IsoCellSet;
     
-    void didResizeBits(size_t newSize) override;
-    void didRemoveBlock(size_t blockIndex) override;
+    void didResizeBits(unsigned newSize) override;
+    void didRemoveBlock(unsigned blockIndex) override;
     void didBeginSweepingToFreeList(MarkedBlock::Handle*) override;
     
     BlockDirectory m_directory;

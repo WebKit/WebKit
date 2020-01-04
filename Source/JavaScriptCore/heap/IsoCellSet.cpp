@@ -81,7 +81,7 @@ Ref<SharedTask<MarkedBlock::Handle*()>> IsoCellSet::parallelNotEmptyMarkedBlockS
     return adoptRef(*new Task(*this));
 }
 
-NEVER_INLINE Bitmap<MarkedBlock::atomsPerBlock>* IsoCellSet::addSlow(size_t blockIndex)
+NEVER_INLINE Bitmap<MarkedBlock::atomsPerBlock>* IsoCellSet::addSlow(unsigned blockIndex)
 {
     auto locker = holdLock(m_subspace.m_directory.m_bitvectorLock);
     auto& bitsPtrRef = m_bits[blockIndex];
@@ -95,13 +95,13 @@ NEVER_INLINE Bitmap<MarkedBlock::atomsPerBlock>* IsoCellSet::addSlow(size_t bloc
     return bits;
 }
 
-void IsoCellSet::didResizeBits(size_t newSize)
+void IsoCellSet::didResizeBits(unsigned newSize)
 {
     m_blocksWithBits.resize(newSize);
     m_bits.grow(newSize);
 }
 
-void IsoCellSet::didRemoveBlock(size_t blockIndex)
+void IsoCellSet::didRemoveBlock(unsigned blockIndex)
 {
     {
         auto locker = holdLock(m_subspace.m_directory.m_bitvectorLock);

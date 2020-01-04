@@ -321,9 +321,9 @@ void MarkedBlock::Handle::removeFromDirectory()
     m_directory->removeBlock(this);
 }
 
-void MarkedBlock::Handle::didAddToDirectory(BlockDirectory* directory, size_t index)
+void MarkedBlock::Handle::didAddToDirectory(BlockDirectory* directory, unsigned index)
 {
-    ASSERT(m_index == std::numeric_limits<size_t>::max());
+    ASSERT(m_index == std::numeric_limits<unsigned>::max());
     ASSERT(!m_directory);
     
     RELEASE_ASSERT(directory->subspace()->alignedMemoryAllocator() == m_alignedMemoryAllocator);
@@ -353,10 +353,10 @@ void MarkedBlock::Handle::didAddToDirectory(BlockDirectory* directory, size_t in
 
 void MarkedBlock::Handle::didRemoveFromDirectory()
 {
-    ASSERT(m_index != std::numeric_limits<size_t>::max());
+    ASSERT(m_index != std::numeric_limits<unsigned>::max());
     ASSERT(m_directory);
     
-    m_index = std::numeric_limits<size_t>::max();
+    m_index = std::numeric_limits<unsigned>::max();
     m_directory = nullptr;
     blockFooter().m_subspace = nullptr;
 }

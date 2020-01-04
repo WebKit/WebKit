@@ -76,7 +76,7 @@ private:
     
     // After you do something to a block based on one of these cursors, you clear the bit in the
     // corresponding bitvector and leave the cursor where it was.
-    size_t m_allocationCursor { 0 }; // Points to the next block that is a candidate for allocation.
+    unsigned m_allocationCursor { 0 }; // Points to the next block that is a candidate for allocation.
 };
 
 inline ptrdiff_t LocalAllocator::offsetOfFreeList()

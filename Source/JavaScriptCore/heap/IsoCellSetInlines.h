@@ -71,12 +71,12 @@ void IsoCellSet::forEachMarkedCell(const Func& func)
 {
     BlockDirectory& directory = m_subspace.m_directory;
     (directory.m_bits.markingNotEmpty() & m_blocksWithBits).forEachSetBit(
-        [&] (size_t blockIndex) {
+        [&] (unsigned blockIndex) {
             MarkedBlock::Handle* block = directory.m_blocks[blockIndex];
 
             auto* bits = m_bits[blockIndex].get();
             block->forEachMarkedCell(
-                [&] (size_t atomNumber, HeapCell* cell, HeapCell::Kind kind) -> IterationStatus {
+                [&] (unsigned atomNumber, HeapCell* cell, HeapCell::Kind kind) -> IterationStatus {
                     if (bits->get(atomNumber))
                         func(cell, kind);
                     return IterationStatus::Continue;
@@ -106,10 +106,10 @@ Ref<SharedTask<void(SlotVisitor&)>> IsoCellSet::forEachMarkedCellInParallel(cons
         void run(SlotVisitor& visitor) override
         {
             while (MarkedBlock::Handle* handle = m_blockSource->run()) {
-                size_t blockIndex = handle->index();
+                unsigned blockIndex = handle->index();
                 auto* bits = m_set.m_bits[blockIndex].get();
                 handle->forEachMarkedCell(
-                    [&] (size_t atomNumber, HeapCell* cell, HeapCell::Kind kind) -> IterationStatus {
+                    [&] (unsigned atomNumber, HeapCell* cell, HeapCell::Kind kind) -> IterationStatus {
                         if (bits->get(atomNumber))
                             m_func(visitor, cell, kind);
                         return IterationStatus::Continue;
@@ -147,12 +147,12 @@ void IsoCellSet::forEachLiveCell(const Func& func)
 {
     BlockDirectory& directory = m_subspace.m_directory;
     m_blocksWithBits.forEachSetBit(
-        [&] (size_t blockIndex) {
+        [&] (unsigned blockIndex) {
             MarkedBlock::Handle* block = directory.m_blocks[blockIndex];
 
             auto* bits = m_bits[blockIndex].get();
             block->forEachCell(
-                [&] (size_t atomNumber, HeapCell* cell, HeapCell::Kind kind) -> IterationStatus {
+                [&] (unsigned atomNumber, HeapCell* cell, HeapCell::Kind kind) -> IterationStatus {
                     if (bits->get(atomNumber) && block->isLive(cell))
                         func(cell, kind);
                     return IterationStatus::Continue;

@@ -133,11 +133,11 @@ void Subspace::sweepBlocks()
         });
 }
 
-void Subspace::didResizeBits(size_t)
+void Subspace::didResizeBits(unsigned)
 {
 }
 
-void Subspace::didRemoveBlock(size_t)
+void Subspace::didRemoveBlock(unsigned)
 {
 }
 

@@ -90,7 +90,7 @@ MarkedBlock::Handle* BlockDirectory::findBlockForAllocation(LocalAllocator& allo
         if (allocator.m_allocationCursor >= m_blocks.size())
             return nullptr;
         
-        size_t blockIndex = allocator.m_allocationCursor++;
+        unsigned blockIndex = allocator.m_allocationCursor++;
         MarkedBlock::Handle* result = m_blocks[blockIndex];
         setIsCanAllocateButNotEmpty(NoLockingNecessary, blockIndex, false);
         return result;
@@ -112,7 +112,7 @@ MarkedBlock::Handle* BlockDirectory::tryAllocateBlock(Heap& heap)
 
 void BlockDirectory::addBlock(MarkedBlock::Handle* block)
 {
-    size_t index;
+    unsigned index;
     if (m_freeBlockIndices.isEmpty()) {
         index = m_blocks.size();
 

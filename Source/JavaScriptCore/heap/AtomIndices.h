@@ -40,8 +40,8 @@ struct AtomIndices {
     }
     
     MarkedBlock* block;
-    size_t blockIndex;
-    size_t atomNumber;
+    unsigned blockIndex;
+    unsigned atomNumber;
 };
 
 } // namespace JSC

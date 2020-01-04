@@ -67,10 +67,10 @@ public:
 private:
     friend class IsoSubspace;
     
-    Bitmap<MarkedBlock::atomsPerBlock>* addSlow(size_t blockIndex);
+    Bitmap<MarkedBlock::atomsPerBlock>* addSlow(unsigned blockIndex);
     
-    void didResizeBits(size_t newSize);
-    void didRemoveBlock(size_t blockIndex);
+    void didResizeBits(unsigned newSize);
+    void didRemoveBlock(unsigned blockIndex);
     void sweepToFreeList(MarkedBlock::Handle*);
     void clearLowerTierCell(unsigned);
     

@@ -1,3 +1,45 @@
+2020-01-02  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] MarkedBlock::Handle and BlockDirectory should be shrunk
+        https://bugs.webkit.org/show_bug.cgi?id=205712
+
+        Reviewed by Mark Lam.
+
+        This patch shrinks MarkedBlock::Handle and BlockDirectory by leveraging the fact that Vector's size and capacity is unsigned.
+        In these data structures, we use `size_t` to hold a index, but this can be converted to unsigned since we guarantee that this
+        never exceeds unsigned since these numbers are derived from Vector's size / capacity, or index inside MarkedBlock (which is up
+        to 64KB in some architectures). MarkedBlock::Handle is allocated per MarkedBlock, and in Gmail, it takes 1MB. We can save
+        some bytes just using `unsigned`. In addition, this patch removes `m_prev` and `m_next` fields in MarkedBlock::Handle since
+        it is never used.
+
+        * heap/AtomIndices.h:
+        * heap/BlockDirectory.cpp:
+        (JSC::BlockDirectory::findBlockForAllocation):
+        (JSC::BlockDirectory::addBlock):
+        * heap/IsoCellSet.cpp:
+        (JSC::IsoCellSet::addSlow):
+        (JSC::IsoCellSet::didResizeBits):
+        (JSC::IsoCellSet::didRemoveBlock):
+        * heap/IsoCellSet.h:
+        * heap/IsoCellSetInlines.h:
+        (JSC::IsoCellSet::forEachMarkedCell):
+        (JSC::IsoCellSet::forEachMarkedCellInParallel):
+        (JSC::IsoCellSet::forEachLiveCell):
+        * heap/IsoSubspace.cpp:
+        (JSC::IsoSubspace::didResizeBits):
+        (JSC::IsoSubspace::didRemoveBlock):
+        * heap/IsoSubspace.h:
+        * heap/LocalAllocator.h:
+        * heap/MarkedBlock.cpp:
+        (JSC::MarkedBlock::Handle::didAddToDirectory):
+        (JSC::MarkedBlock::Handle::didRemoveFromDirectory):
+        * heap/MarkedBlock.h:
+        (JSC::MarkedBlock::Handle::index const):
+        * heap/Subspace.cpp:
+        (JSC::Subspace::didResizeBits):
+        (JSC::Subspace::didRemoveBlock):
+        * heap/Subspace.h:
+
 2020-01-03  Simon Fraser  <simon.fraser@apple.com>
 
         Add some shared schemes to the WebKit.xcworkspace

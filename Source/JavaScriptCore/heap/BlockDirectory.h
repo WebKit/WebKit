@@ -156,9 +156,10 @@ private:
     unsigned m_cellSize;
     
     // After you do something to a block based on one of these cursors, you clear the bit in the
-    // corresponding bitvector and leave the cursor where it was.
-    size_t m_emptyCursor { 0 };
-    size_t m_unsweptCursor { 0 }; // Points to the next block that is a candidate for incremental sweeping.
+    // corresponding bitvector and leave the cursor where it was. We can use unsigned instead of size_t since
+    // this number is bound by capacity of Vector m_blocks, which must be within unsigned.
+    unsigned m_emptyCursor { 0 };
+    unsigned m_unsweptCursor { 0 }; // Points to the next block that is a candidate for incremental sweeping.
     
     // FIXME: All of these should probably be references.
     // https://bugs.webkit.org/show_bug.cgi?id=166988
