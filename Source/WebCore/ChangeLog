@@ -1,3 +1,16 @@
+2020-01-03  Sihui Liu  <sihui_liu@apple.com>
+
+        Crash in com.apple.WebKit.Networking at UniqueIDBDatabase::performCurrentOpenOperation
+        https://bugs.webkit.org/show_bug.cgi?id=205742
+
+        Reviewed by Maciej Stachowiak.
+
+        m_databaseInfo may not be set in performCurrentOpenOperation if there is an error in opening backing store, so 
+        we should make an early return to avoid access to m_databaseInfo in this case.
+
+        * Modules/indexeddb/server/UniqueIDBDatabase.cpp:
+        (WebCore::IDBServer::UniqueIDBDatabase::performCurrentOpenOperation):
+
 2020-01-03  Stephan Szabo  <stephan.szabo@sony.com>
 
         [WinCairo] Fixing build after "Add a pure virtual base class for GraphicsContext3D"

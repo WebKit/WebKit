@@ -181,6 +181,14 @@ void UniqueIDBDatabase::performCurrentOpenOperation()
         }
     }
 
+    if (!backingStoreOpenError.isNull()) {
+        auto result = IDBResultData::error(m_currentOpenDBRequest->requestData().requestIdentifier(), backingStoreOpenError);
+        m_currentOpenDBRequest->connection().didOpenDatabase(result);
+        m_currentOpenDBRequest = nullptr;
+
+        return;
+    }
+
     // If we previously started a version change operation but were blocked by having open connections,
     // we might now be unblocked.
     if (m_versionChangeDatabaseConnection) {
@@ -200,14 +208,6 @@ void UniqueIDBDatabase::performCurrentOpenOperation()
     // If the database version higher than the requested version, abort these steps and return a VersionError.
     if (requestedVersion < m_databaseInfo->version()) {
         auto result = IDBResultData::error(m_currentOpenDBRequest->requestData().requestIdentifier(), IDBError(VersionError));
-        m_currentOpenDBRequest->connection().didOpenDatabase(result);
-        m_currentOpenDBRequest = nullptr;
-
-        return;
-    }
-
-    if (!backingStoreOpenError.isNull()) {
-        auto result = IDBResultData::error(m_currentOpenDBRequest->requestData().requestIdentifier(), backingStoreOpenError);
         m_currentOpenDBRequest->connection().didOpenDatabase(result);
         m_currentOpenDBRequest = nullptr;
 
