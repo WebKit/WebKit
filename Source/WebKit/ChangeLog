@@ -1,3 +1,36 @@
+2020-01-04  Keith Rollin  <krollin@apple.com>
+
+        Reformat WebPage logging
+        https://bugs.webkit.org/show_bug.cgi?id=205705
+        <rdar://problem/58288704>
+
+        Reviewed by Alex Christensen.
+
+        Update the format used by WebPage in its RELEASE_LOG logging. Use the
+        format used by WebPageProxy and NetworkResourceLoader, which is
+        generally of the form:
+
+            <object-address> - [<values that help thread together operations>] <class>::<method>: <message and other useful values>
+
+        So, for example:
+
+            0x7f83ba009208 - WebPage (webPageID=15) - Adding a reason 1 to freeze layer tree (now 1); old reasons were 0
+
+        becomes:
+
+            0x7f83ba009208 - [webPageID=15] WebPage::freezeLayerTree: Adding a reason to freeze layer tree (reason=1, new=1, old=0)
+
+        No new tests - no added or changed functionality.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::m_overriddenMediaType):
+        (WebKit::WebPage::createPlugin):
+        (WebKit::WebPage::freezeLayerTree):
+        (WebKit::WebPage::unfreezeLayerTree):
+        (WebKit::WebPage::markLayersVolatile):
+        (WebKit::WebPage::cancelMarkLayersVolatile):
+        (WebKit::WebPage::touchEventSync):
+
 2020-01-03  Chris Dumez  <cdumez@apple.com>
 
         Add support for DragEvent
