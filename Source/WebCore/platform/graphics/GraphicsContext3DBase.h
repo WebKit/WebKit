@@ -36,6 +36,13 @@
 #include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>
 
+#if OS(WINDOWS)
+// Defined in winerror.h
+#ifdef NO_ERROR
+#undef NO_ERROR
+#endif
+#endif
+
 typedef void* PlatformGraphicsContext3D;
 typedef void* PlatformGraphicsContext3DDisplay;
 typedef void* PlatformGraphicsContext3DSurface;

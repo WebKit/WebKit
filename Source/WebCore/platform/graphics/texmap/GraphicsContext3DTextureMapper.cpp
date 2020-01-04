@@ -478,7 +478,9 @@ Extensions3D& GraphicsContext3D::getExtensions()
     }
     return *m_extensions;
 }
+#endif
 
+#if (PLATFORM(GTK) && !USE(ANGLE)) || PLATFORM(WIN)
 void* GraphicsContext3D::mapBufferRange(GC3Denum, GC3Dintptr, GC3Dsizeiptr, GC3Dbitfield)
 {
     return nullptr;

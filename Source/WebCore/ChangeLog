@@ -1,3 +1,18 @@
+2020-01-03  Stephan Szabo  <stephan.szabo@sony.com>
+
+        [WinCairo] Fixing build after "Add a pure virtual base class for GraphicsContext3D"
+        https://bugs.webkit.org/show_bug.cgi?id=205743
+
+        Reviewed by Don Olmstead.
+
+        No new tests, build fix.
+
+        * platform/graphics/GraphicsContext3DBase.h: Undefine NO_ERROR on win
+        * platform/graphics/texmap/GraphicsContext3DTextureMapper.cpp:
+        Move functions showing up as undefined out of #ifdef block
+        * platform/graphics/texmap/TextureMapperGC3DPlatformLayer.cpp:
+        Fix some accesses to m_attrs to use contextAttributes()
+
 2020-01-03  Chris Dumez  <cdumez@apple.com>
 
         dom/nodes/Document-createElement-namespace.html WPT test is failing
