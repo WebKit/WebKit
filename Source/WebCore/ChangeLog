@@ -1,3 +1,17 @@
+2020-01-04  Luming Yin  <luming_yin@apple.com>
+
+        Adopt updated MouseEvent initializer
+        https://bugs.webkit.org/show_bug.cgi?id=205765
+
+        Reviewed by Wenson Hsieh.
+
+        Adopt updated MouseEvent initializer to fix the iOS build.
+
+        * dom/ios/MouseEventIOS.cpp:
+        (WebCore::MouseEvent::create):
+        * dom/ios/PointerEventIOS.cpp:
+        (WebCore::PointerEvent::PointerEvent):
+
 2020-01-04  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] LineBuilder::ContinuousContent::append should return void
