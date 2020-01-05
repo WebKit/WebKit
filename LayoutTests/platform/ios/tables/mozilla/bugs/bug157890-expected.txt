@@ -71,8 +71,10 @@ layer at (0,0) size 800x454
       RenderBlock {PRE} at (0,13) size 784x420
         RenderText {#text} at (0,0) size 211x14
           text run at (0,0) width 211: "Specified table width: 25px"
+          text run at (210,0) width 1: " "
         RenderText {#text} at (0,14) size 211x14
           text run at (0,14) width 211: "Actual table width:    25px"
+          text run at (210,14) width 1: " "
         RenderText {#text} at (0,28) size 164x14
           text run at (0,28) width 164: "Specified TD widths: "
         RenderText {#text} at (163,28) size 33x14
@@ -109,7 +111,8 @@ layer at (0,0) size 800x454
           text run at (631,28) width 33: "1px "
         RenderText {#text} at (663,28) size 32x14
           text run at (663,28) width 32: "8px "
-        RenderText {#text} at (0,0) size 0x0
+        RenderText {#text} at (694,28) size 1x14
+          text run at (694,28) width 1: " "
         RenderText {#text} at (0,42) size 164x14
           text run at (0,42) width 164: "Actual TD widths:    "
         RenderText {#text} at (163,42) size 79x14
@@ -146,12 +149,15 @@ layer at (0,0) size 800x454
           text run at (1412,42) width 79: "1.03125px "
         RenderText {#text} at (1490,42) size 79x14
           text run at (1490,42) width 79: "8.34375px "
-        RenderText {#text} at (0,56) size 0x14
+        RenderText {#text} at (1568,42) size 1569x28
+          text run at (1568,42) width 1: " "
           text run at (0,56) width 0: " "
         RenderText {#text} at (0,70) size 211x14
           text run at (0,70) width 211: "Specified table width: 12px"
+          text run at (210,70) width 1: " "
         RenderText {#text} at (0,84) size 211x14
           text run at (0,84) width 211: "Actual table width:    12px"
+          text run at (210,84) width 1: " "
         RenderText {#text} at (0,98) size 164x14
           text run at (0,98) width 164: "Specified TD widths: "
         RenderText {#text} at (163,98) size 33x14
@@ -164,7 +170,8 @@ layer at (0,0) size 800x454
           text run at (257,98) width 32: "1px "
         RenderText {#text} at (288,98) size 32x14
           text run at (288,98) width 32: "8px "
-        RenderText {#text} at (0,0) size 0x0
+        RenderText {#text} at (319,98) size 1x14
+          text run at (319,98) width 1: " "
         RenderText {#text} at (0,112) size 164x14
           text run at (0,112) width 164: "Actual TD widths:    "
         RenderText {#text} at (163,112) size 33x14
@@ -177,12 +184,15 @@ layer at (0,0) size 800x454
           text run at (257,112) width 32: "1px "
         RenderText {#text} at (288,112) size 32x14
           text run at (288,112) width 32: "8px "
-        RenderText {#text} at (0,126) size 0x14
+        RenderText {#text} at (319,112) size 320x28
+          text run at (319,112) width 1: " "
           text run at (0,126) width 0: " "
         RenderText {#text} at (0,140) size 211x14
           text run at (0,140) width 211: "Specified table width: 13px"
+          text run at (210,140) width 1: " "
         RenderText {#text} at (0,154) size 211x14
           text run at (0,154) width 211: "Actual table width:    13px"
+          text run at (210,154) width 1: " "
         RenderText {#text} at (0,168) size 164x14
           text run at (0,168) width 164: "Specified TD widths: "
         RenderText {#text} at (163,168) size 33x14
@@ -195,7 +205,8 @@ layer at (0,0) size 800x454
           text run at (257,168) width 32: "1px "
         RenderText {#text} at (288,168) size 32x14
           text run at (288,168) width 32: "8px "
-        RenderText {#text} at (0,0) size 0x0
+        RenderText {#text} at (319,168) size 1x14
+          text run at (319,168) width 1: " "
         RenderText {#text} at (0,182) size 164x14
           text run at (0,182) width 164: "Actual TD widths:    "
         RenderText {#text} at (163,182) size 87x14
@@ -208,12 +219,15 @@ layer at (0,0) size 800x454
           text run at (413,182) width 87: "1.078125px "
         RenderText {#text} at (499,182) size 87x14
           text run at (499,182) width 87: "8.671875px "
-        RenderText {#text} at (0,196) size 0x14
+        RenderText {#text} at (585,182) size 586x28
+          text run at (585,182) width 1: " "
           text run at (0,196) width 0: " "
         RenderText {#text} at (0,210) size 211x14
           text run at (0,210) width 211: "Specified table width: 24px"
+          text run at (210,210) width 1: " "
         RenderText {#text} at (0,224) size 211x14
           text run at (0,224) width 211: "Actual table width:    24px"
+          text run at (210,224) width 1: " "
         RenderText {#text} at (0,238) size 164x14
           text run at (0,238) width 164: "Specified TD widths: "
         RenderText {#text} at (163,238) size 33x14
@@ -226,7 +240,8 @@ layer at (0,0) size 800x454
           text run at (257,238) width 32: "1px "
         RenderText {#text} at (288,238) size 32x14
           text run at (288,238) width 32: "8px "
-        RenderText {#text} at (0,0) size 0x0
+        RenderText {#text} at (319,238) size 1x14
+          text run at (319,238) width 1: " "
         RenderText {#text} at (0,252) size 164x14
           text run at (0,252) width 164: "Actual TD widths:    "
         RenderText {#text} at (163,252) size 33x14
@@ -239,12 +254,15 @@ layer at (0,0) size 800x454
           text run at (257,252) width 32: "2px "
         RenderText {#text} at (288,252) size 40x14
           text run at (288,252) width 40: "16px "
-        RenderText {#text} at (0,266) size 0x14
+        RenderText {#text} at (327,252) size 328x28
+          text run at (327,252) width 1: " "
           text run at (0,266) width 0: " "
         RenderText {#text} at (0,280) size 211x14
           text run at (0,280) width 211: "Specified table width: 25px"
+          text run at (210,280) width 1: " "
         RenderText {#text} at (0,294) size 211x14
           text run at (0,294) width 211: "Actual table width:    25px"
+          text run at (210,294) width 1: " "
         RenderText {#text} at (0,308) size 164x14
           text run at (0,308) width 164: "Specified TD widths: "
         RenderText {#text} at (163,308) size 33x14
@@ -257,7 +275,8 @@ layer at (0,0) size 800x454
           text run at (257,308) width 32: "1px "
         RenderText {#text} at (288,308) size 32x14
           text run at (288,308) width 32: "8px "
-        RenderText {#text} at (0,0) size 0x0
+        RenderText {#text} at (319,308) size 1x14
+          text run at (319,308) width 1: " "
         RenderText {#text} at (0,322) size 164x14
           text run at (0,322) width 164: "Actual TD widths:    "
         RenderText {#text} at (163,322) size 87x14
@@ -270,12 +289,15 @@ layer at (0,0) size 800x454
           text run at (413,322) width 87: "2.078125px "
         RenderText {#text} at (499,322) size 94x14
           text run at (499,322) width 94: "16.671875px "
-        RenderText {#text} at (0,336) size 0x14
+        RenderText {#text} at (592,322) size 593x28
+          text run at (592,322) width 1: " "
           text run at (0,336) width 0: " "
         RenderText {#text} at (0,350) size 211x14
           text run at (0,350) width 211: "Specified table width: 17px"
+          text run at (210,350) width 1: " "
         RenderText {#text} at (0,364) size 211x14
           text run at (0,364) width 211: "Actual table width:    17px"
+          text run at (210,364) width 1: " "
         RenderText {#text} at (0,378) size 164x14
           text run at (0,378) width 164: "Specified TD widths: "
         RenderText {#text} at (163,378) size 33x14
@@ -298,7 +320,8 @@ layer at (0,0) size 800x454
           text run at (413,378) width 32: "10% "
         RenderText {#text} at (444,378) size 32x14
           text run at (444,378) width 32: "10% "
-        RenderText {#text} at (0,0) size 0x0
+        RenderText {#text} at (475,378) size 1x14
+          text run at (475,378) width 1: " "
         RenderText {#text} at (0,392) size 164x14
           text run at (0,392) width 164: "Actual TD widths:    "
         RenderText {#text} at (163,392) size 72x14
@@ -321,5 +344,6 @@ layer at (0,0) size 800x454
           text run at (819,392) width 86: "1.703125px "
         RenderText {#text} at (904,392) size 87x14
           text run at (904,392) width 87: "1.703125px "
-        RenderText {#text} at (0,406) size 0x14
+        RenderText {#text} at (990,392) size 991x28
+          text run at (990,392) width 1: " "
           text run at (0,406) width 0: " "

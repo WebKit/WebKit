@@ -9,6 +9,7 @@ layer at (0,0) size 785x1194
       RenderBlock {PRE} at (0,34) size 769x30
         RenderText {#text} at (0,0) size 851x30
           text run at (0,0) width 851: "BODY {background-image: url(../resources/bg.gif); background-repeat: repeat-x; background-attachment: fixed;}"
+          text run at (850,0) width 1: " "
           text run at (0,15) width 0: " "
       RenderBlock {HR} at (0,77) size 769x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,95) size 769x90
@@ -71,10 +72,15 @@ layer at (0,0) size 785x1194
       RenderBlock {PRE} at (0,465) size 769x76
         RenderText {#text} at (0,0) size 289x75
           text run at (0,0) width 71: "  BODY { "
+          text run at (70,0) width 1: " "
           text run at (0,15) width 289: "    background: red url(pendant.gif);"
+          text run at (288,15) width 1: " "
           text run at (0,30) width 250: "    background-repeat: repeat-y;"
+          text run at (249,30) width 1: " "
           text run at (0,45) width 258: "    background-attachment: fixed;"
+          text run at (257,45) width 1: " "
           text run at (0,60) width 24: "  }"
+          text run at (23,60) width 1: " "
       RenderBlock {P} at (0,556) size 769x55
         RenderInline {EM} at (0,0) size 72x18
           RenderText {#text} at (0,0) size 72x18
@@ -155,10 +161,15 @@ layer at (0,0) size 785x1194
               RenderBlock {PRE} at (4,374) size 747x76
                 RenderText {#text} at (0,0) size 289x75
                   text run at (0,0) width 71: "  BODY { "
+                  text run at (70,0) width 1: " "
                   text run at (0,15) width 289: "    background: red url(pendant.gif);"
+                  text run at (288,15) width 1: " "
                   text run at (0,30) width 250: "    background-repeat: repeat-y;"
+                  text run at (249,30) width 1: " "
                   text run at (0,45) width 258: "    background-attachment: fixed;"
+                  text run at (257,45) width 1: " "
                   text run at (0,60) width 24: "  }"
+                  text run at (23,60) width 1: " "
               RenderBlock {P} at (4,465) size 747x55
                 RenderInline {EM} at (0,0) size 72x18
                   RenderText {#text} at (0,0) size 72x18

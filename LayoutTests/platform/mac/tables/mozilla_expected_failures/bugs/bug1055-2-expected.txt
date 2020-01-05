@@ -42,16 +42,27 @@ layer at (0,0) size 785x896
       RenderBlock {PRE} at (0,245) size 769x181
         RenderText {#text} at (0,0) size 562x180
           text run at (0,0) width 461: ".firsttable { border-width : 10pt ; border-color : yellow ;"
+          text run at (460,0) width 1: " "
           text run at (0,15) width 305: "                border-style : double }"
+          text run at (304,15) width 1: " "
           text run at (0,30) width 406: ".t1 { border-color : black ; border-style : double ;"
+          text run at (405,30) width 1: " "
           text run at (0,45) width 281: "                border-width : 5pt }"
+          text run at (280,45) width 1: " "
           text run at (0,60) width 383: ".t2 { border-color : red ; border-style : solid ;"
+          text run at (382,60) width 1: " "
           text run at (0,75) width 289: "                border-width : 5pt  }"
+          text run at (288,75) width 1: " "
           text run at (0,90) width 398: ".t3 { border-color : lime ; border-style : groove ;"
+          text run at (397,90) width 1: " "
           text run at (0,105) width 289: "                border-width : 5pt  }"
+          text run at (288,105) width 1: " "
           text run at (0,120) width 562: ".t4 { border-color : blue ; border-style : inset ; border-width : 5pt  }"
+          text run at (561,120) width 1: " "
           text run at (0,135) width 469: ".secondtable { border-width : 10pt ; border-color : yellow ;"
+          text run at (468,135) width 1: " "
           text run at (0,150) width 305: "                border-style : double ;"
+          text run at (304,150) width 1: " "
           text run at (0,165) width 344: "                border-collapse : collapse }"
       RenderTable {TABLE} at (96,438) size 577x131 [border: (13px double #FFFF00)]
         RenderTableSection {TBODY} at (13,13) size 551x104

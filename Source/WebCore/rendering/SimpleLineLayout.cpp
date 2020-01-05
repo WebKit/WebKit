@@ -789,7 +789,7 @@ static bool createLineRuns(LineState& line, const LineState& previousLine, Layou
         // Hard and soft linebreaks.
         if (fragment.isLineBreak()) {
             // Add the new line fragment only if there's nothing on the line. (otherwise the extra new line character would show up at the end of the content.)
-            if (line.isEmpty() || fragment.type() == TextFragmentIterator::TextFragment::HardLineBreak || preWrap(style)) {
+            if (line.isEmpty() || fragment.type() == TextFragmentIterator::TextFragment::HardLineBreak || preWrap(style) || style.preserveNewline) {
                 if (style.textAlign == TextAlignMode::Right || style.textAlign == TextAlignMode::WebKitRight)
                     line.removeTrailingWhitespace(runs);
                 line.appendFragmentAndCreateRunIfNeeded(fragment, runs);

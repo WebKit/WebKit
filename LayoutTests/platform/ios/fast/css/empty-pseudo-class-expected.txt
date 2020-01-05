@@ -77,10 +77,14 @@ layer at (0,0) size 800x1620
           RenderBlock {PRE} at (16,73) size 596x97 [bgcolor=#FFFFFF]
             RenderText {#text} at (6,7) size 219x84
               text run at (6,7) width 63: ":empty {"
+              text run at (68,7) width 1: " "
               text run at (6,21) width 9: "}"
+              text run at (14,21) width 1: " "
               text run at (6,35) width 1: " "
               text run at (6,49) width 48: "<div> "
+              text run at (53,49) width 1: " "
               text run at (6,63) width 219: "   How about regular text..."
+              text run at (224,63) width 1: " "
               text run at (6,77) width 48: "</div>"
           RenderBlock {P} at (16,186) size 596x20
             RenderText {#text} at (0,0) size 538x19

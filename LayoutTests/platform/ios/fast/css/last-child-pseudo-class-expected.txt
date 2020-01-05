@@ -100,11 +100,16 @@ layer at (0,0) size 800x2270
           RenderBlock {PRE} at (16,73) size 596x111 [bgcolor=#FFFFFF]
             RenderText {#text} at (6,7) size 219x98
               text run at (6,7) width 134: "div :last-child {"
+              text run at (139,7) width 1: " "
               text run at (6,21) width 9: "}"
+              text run at (14,21) width 1: " "
               text run at (6,35) width 1: " "
               text run at (6,49) width 48: "<div> "
+              text run at (53,49) width 1: " "
               text run at (6,63) width 110: "   <div></div>"
+              text run at (115,63) width 1: " "
               text run at (6,77) width 219: "   How about regular text..."
+              text run at (224,77) width 1: " "
               text run at (6,91) width 48: "</div>"
           RenderBlock {P} at (16,200) size 596x60
             RenderText {#text} at (0,0) size 593x59
