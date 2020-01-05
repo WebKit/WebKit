@@ -147,6 +147,8 @@ public:
     void setAsOpaque() { m_parserContext.isContentOpaque = true; }
     bool isContentOpaque() const { return m_parserContext.isContentOpaque; }
 
+    void setLoadErrorOccured() { m_didLoadErrorOccur = true; }
+
 private:
     WEBCORE_EXPORT StyleSheetContents(StyleRuleImport* ownerRule, const String& originalURL, const CSSParserContext&);
     StyleSheetContents(const StyleSheetContents&);

@@ -156,6 +156,9 @@ void StyleRuleImport::requestStyleSheet()
             m_parentStyleSheet->startLoadingDynamicSheet();
         m_loading = true;
         m_cachedSheet->addClient(m_styleSheetClient);
+    } else if (m_parentStyleSheet) {
+        m_parentStyleSheet->setLoadErrorOccured();
+        m_parentStyleSheet->checkLoaded();
     }
 }
 

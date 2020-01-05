@@ -1,3 +1,26 @@
+2020-01-05  Rob Buis  <rbuis@igalia.com>
+
+        Tighten up stylesheet loading
+        https://bugs.webkit.org/show_bug.cgi?id=189913
+
+        Reviewed by Antti Koivisto.
+
+        When fetching and processing a linked resource [1], step 11.3 states
+        that fetch failure should result in a network error. This patch
+        implements that for stylesheets.
+
+        The behavior matches Chrome and Firefox.
+
+        [1] https://html.spec.whatwg.org/multipage/semantics.html#default-fetch-and-process-the-linked-resource
+
+        Test: imported/w3c/web-platform-tests/html/semantics/document-metadata/the-link-element/link-load-error-events.https.html
+
+        * css/StyleRuleImport.cpp:
+        (WebCore::StyleRuleImport::requestStyleSheet):
+        * css/StyleSheetContents.h:
+        * html/HTMLLinkElement.cpp:
+        (WebCore::HTMLLinkElement::process):
+
 2020-01-05  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][Integration] Fix compositing/masks/compositing-clip-path-change-no-repaint.html

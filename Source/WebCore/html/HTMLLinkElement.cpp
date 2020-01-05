@@ -348,7 +348,7 @@ void HTMLLinkElement::process()
             // The request may have been denied if (for example) the stylesheet is local and the document is remote.
             m_loading = false;
             sheetLoaded();
-            notifyLoadedSheetAndAllCriticalSubresources(false);
+            notifyLoadedSheetAndAllCriticalSubresources(true);
         }
     } else if (m_sheet) {
         // we no longer contain a stylesheet, e.g. perhaps rel or type was changed
