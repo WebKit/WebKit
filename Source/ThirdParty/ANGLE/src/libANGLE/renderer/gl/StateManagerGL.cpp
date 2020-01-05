@@ -585,6 +585,10 @@ void StateManagerGL::setPixelPackBuffer(const gl::Buffer *pixelBuffer)
 
 void StateManagerGL::bindFramebuffer(GLenum type, GLuint framebuffer)
 {
+    bool flushBeforeAndAfter = mFeatures.flushBeforeAndAfterBindFramebuffer.enabled;
+    if (flushBeforeAndAfter)
+        mFunctions->flush();
+
     switch (type)
     {
         case GL_FRAMEBUFFER:
@@ -624,6 +628,9 @@ void StateManagerGL::bindFramebuffer(GLenum type, GLuint framebuffer)
             UNREACHABLE();
             break;
     }
+
+    if (flushBeforeAndAfter)
+        mFunctions->flush();
 }
 
 void StateManagerGL::bindRenderbuffer(GLenum type, GLuint renderbuffer)

@@ -1,3 +1,22 @@
+2020-01-05  Kenneth Russell  <kbr@chromium.org>
+
+        REGRESSION (r253926): Flaky crashes on webgl/1.0.3/conformance/textures/texture-copying-feedback-loops.html and webgl/2.0.0/conformance/textures/misc/texture-copying-feedback-loops.html
+        https://bugs.webkit.org/show_bug.cgi?id=205707
+
+        Work around bugs in Intel's graphics driver where operations can
+        be incorrectly reordered across glBindFramebuffer calls by
+        flushing before/after these calls. Conclusively addresses this
+        crash; may also address other layout test flakiness seen when
+        switching to ANGLE backend for WebGL.
+
+        Reviewed by Dean Jackson.
+
+        * include/platform/FeaturesGL.h:
+        * src/libANGLE/renderer/gl/StateManagerGL.cpp:
+        (rx::StateManagerGL::bindFramebuffer):
+        * src/libANGLE/renderer/gl/renderergl_utils.cpp:
+        (rx::nativegl_gl::InitializeFeatures):
+
 2020-01-04  Kenneth Russell  <kbr@chromium.org>
 
         Add support for iOS Simulator to ANGLE backend for WebGL
