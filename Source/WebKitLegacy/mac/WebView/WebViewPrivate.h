@@ -817,6 +817,7 @@ Could be worth adding to the API.
 
 // SPI for DumpRenderTree
 + (void)_setLoadResourcesSerially:(BOOL)serialize;
+- (void)_forceRepaintForTesting;
 
 /*!
     @method cssAnimationsSuspended

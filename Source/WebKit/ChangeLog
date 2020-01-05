@@ -1,3 +1,14 @@
+2020-01-05  Simon Fraser  <simon.fraser@apple.com>
+
+        DumpRenderTree doesn't always call updateRendering() when a test completes
+        https://bugs.webkit.org/show_bug.cgi?id=205761
+
+        Reviewed by Darin Adler.
+
+        Use the QuartzCore SPI header.
+
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm:
+
 2020-01-04  Keith Rollin  <krollin@apple.com>
 
         Reformat WebPage logging

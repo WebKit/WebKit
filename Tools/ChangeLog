@@ -1,3 +1,27 @@
+2020-01-05  Simon Fraser  <simon.fraser@apple.com>
+
+        DumpRenderTree doesn't always call updateRendering() when a test completes
+        https://bugs.webkit.org/show_bug.cgi?id=205761
+
+        Reviewed by Darin Adler.
+        
+        Some animation tests (and possibly many others) are flakey or broken in WK1 because
+        there was no code to guarantee that Page::updateRendering() was called at notifyDone()
+        time.
+
+        WK2 calls DrawingArea::forceRepaint(), which does updateRendering(), flushes layers,
+        and flushes a CATransaction.
+
+        In WK1, we historically relied in AppKit to call -viewWillDraw on WebView and/or WebHTMLView,
+        and just called [webView display] to make this happen. However, with layer backing, AppKit behavior
+        changes, and WebCore changes that make more things happen with HTML event loop timing, this
+        approach no longer works. The fix is to add WebView SPI, _forceRepaintForTesting, which emulates what
+        WK2 is doing.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (updateDisplay):
+        * DumpRenderTree/mac/PixelDumpSupportMac.mm:
+
 2020-01-03  Tim Horton  <timothy_horton@apple.com>
 
         REGRESSION: 150+ flaky failures on some bots (color mismatches)
