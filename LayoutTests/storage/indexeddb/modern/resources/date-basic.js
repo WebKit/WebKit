@@ -10,9 +10,9 @@ function done()
 
 var database;
 
-var date1 = new Date("1955-11-05T00:00:00");
-var date2 = new Date("1955-11-12T18:00:00");
-var date3 = new Date("2015-10-21T16:00:00");
+var date1 = new Date("1955-11-05T00:00:00Z");
+var date2 = new Date("1955-11-12T18:00:00Z");
+var date3 = new Date("2015-10-21T16:00:00Z");
     
 function prepareDatabase(event)
 {

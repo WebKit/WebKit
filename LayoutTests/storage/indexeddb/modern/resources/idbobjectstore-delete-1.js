@@ -24,14 +24,14 @@ function done()
 var database;
 var objectStore;
 
-var date1 = new Date("1999-12-28T23:00:00");
-var date2 = new Date("1999-12-29T23:00:00");
-var date3 = new Date("1999-12-30T23:00:00");
-var date4 = new Date("1999-12-31T23:00:00");
-var date5 = new Date("2000-01-01T00:00:00");
-var date6 = new Date("2000-01-02T00:00:00");
-var date7 = new Date("2000-01-03T00:00:00");
-var date8 = new Date("2000-01-04T00:00:00");
+var date1 = new Date("1999-12-28T23:00:00Z");
+var date2 = new Date("1999-12-29T23:00:00Z");
+var date3 = new Date("1999-12-30T23:00:00Z");
+var date4 = new Date("1999-12-31T23:00:00Z");
+var date5 = new Date("2000-01-01T00:00:00Z");
+var date6 = new Date("2000-01-02T00:00:00Z");
+var date7 = new Date("2000-01-03T00:00:00Z");
+var date8 = new Date("2000-01-04T00:00:00Z");
 
 function prepareDatabase(event)
 {

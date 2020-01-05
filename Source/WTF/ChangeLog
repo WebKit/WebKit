@@ -1,3 +1,16 @@
+2020-01-05  Ross Kirsling  <ross.kirsling@sony.com>
+
+        JavaScript: Invalid date parse for ISO 8601 strings when no timezone given
+        https://bugs.webkit.org/show_bug.cgi?id=89071
+
+        Reviewed by Darin Adler.
+
+        * wtf/DateMath.cpp:
+        (WTF::parseES5TimePortion):
+        (WTF::parseES5DateFromNullTerminatedCharacters):
+        * wtf/DateMath.h:
+        Add an out param to tell JSC whether we still need to do a local time adjustment.
+
 2020-01-03  Dean Jackson  <dino@apple.com>
 
         [WebGL] Enable ANGLE by default for Cocoa platforms (except simulator)

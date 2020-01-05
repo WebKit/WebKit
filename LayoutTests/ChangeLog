@@ -1,3 +1,19 @@
+2020-01-05  Ross Kirsling  <ross.kirsling@sony.com>
+
+        JavaScript: Invalid date parse for ISO 8601 strings when no timezone given
+        https://bugs.webkit.org/show_bug.cgi?id=89071
+
+        Reviewed by Darin Adler.
+
+        * js/date-parse-test-expected.txt:
+        * js/script-tests/date-parse-test.js:
+        Update test to match new behavior.
+
+        * storage/indexeddb/modern/resources/date-basic.js:
+        * storage/indexeddb/modern/resources/get-keyrange.js:
+        * storage/indexeddb/modern/resources/idbobjectstore-delete-1.js:
+        Fix tests relying on obsolete behavior.
+
 2020-01-04  Dean Jackson  <dino@apple.com>
 
         REGRESSION: [ Mac ] webgl/2.0.0/conformance2/glsl3/no-attribute-vertex-shader.html is failing

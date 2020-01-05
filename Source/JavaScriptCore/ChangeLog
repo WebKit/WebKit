@@ -1,3 +1,23 @@
+2020-01-05  Ross Kirsling  <ross.kirsling@sony.com>
+
+        JavaScript: Invalid date parse for ISO 8601 strings when no timezone given
+        https://bugs.webkit.org/show_bug.cgi?id=89071
+
+        Reviewed by Darin Adler.
+
+        Since ES2016, the specification for Date.parse has included the following statement:
+          When the UTC offset representation is absent, date-only forms are interpreted as a UTC time
+          and date-time forms are interpreted as a local time.
+
+        This patch updates us from the old ES5 behavior, which treated offsetless date-time forms as UTC.
+
+        * runtime/JSDateMath.cpp:
+        (JSC::parseDateFromNullTerminatedCharacters):
+        (JSC::parseES5DateFromNullTerminatedCharacters): Added.
+        (JSC::parseDate):
+        * runtime/JSDateMath.h:
+        Make a local time adjustment if necessary after calling WTF::parseES5DateFromNullTerminatedCharacters.
+
 2020-01-04  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         JSON.parse should initialize wrapper object with [[DefineOwnProperty]]

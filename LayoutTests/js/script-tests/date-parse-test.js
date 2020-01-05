@@ -37,6 +37,7 @@ function testDateParseExact(date, numericResult)
     }
 }
 
+var timeZoneOffset = Date.parse(" Dec 25 1995 1:30 ") - Date.parse(" Dec 25 1995 1:30 GMT ");
 
 // test ECMAScript 5 standard date parsing
 testDateParseExact("1995-12-25T01:30:00Z", "819855000000");
@@ -73,15 +74,15 @@ shouldBe("Number(Date.parse('1970'))", '0');
 shouldBe("Number(Date.parse('1970-01'))", '0');
 shouldBe("Number(Date.parse('1970-01-01'))", '0');
 // Date-time dates
-shouldBe("Number(Date.parse('1970T00:00'))", '0');
-shouldBe("Number(Date.parse('1970-01T00:00'))", '0');
-shouldBe("Number(Date.parse('1970-01-01T00:00'))", '0');
-shouldBe("Number(Date.parse('1970T00:00:00'))", '0');
-shouldBe("Number(Date.parse('1970-01T00:00:00'))", '0');
-shouldBe("Number(Date.parse('1970-01-01T00:00:00'))", '0');
-shouldBe("Number(Date.parse('1970T00:00:00.000'))", '0');
-shouldBe("Number(Date.parse('1970-01T00:00:00.000'))", '0');
-shouldBe("Number(Date.parse('1970-01-01T00:00:00.000'))", '0');
+shouldBe("Number(Date.parse('1970T00:00'))", 'timeZoneOffset');
+shouldBe("Number(Date.parse('1970-01T00:00'))", 'timeZoneOffset');
+shouldBe("Number(Date.parse('1970-01-01T00:00'))", 'timeZoneOffset');
+shouldBe("Number(Date.parse('1970T00:00:00'))", 'timeZoneOffset');
+shouldBe("Number(Date.parse('1970-01T00:00:00'))", 'timeZoneOffset');
+shouldBe("Number(Date.parse('1970-01-01T00:00:00'))", 'timeZoneOffset');
+shouldBe("Number(Date.parse('1970T00:00:00.000'))", 'timeZoneOffset');
+shouldBe("Number(Date.parse('1970-01T00:00:00.000'))", 'timeZoneOffset');
+shouldBe("Number(Date.parse('1970-01-01T00:00:00.000'))", 'timeZoneOffset');
 // Date-time dates with UTC timezone
 shouldBe("Number(Date.parse('1970T00:00Z'))", '0');
 shouldBe("Number(Date.parse('1970-01T00:00Z'))", '0');
@@ -135,8 +136,6 @@ shouldBe("String(Date.parse('1970-01-01T00:00:00.000+00:0'))", '"NaN"');
 shouldBe("String(Date.parse('1970-01-01T00:00:00.000+0:0'))", '"NaN"');
 
 // test old implementation fallback
-
-var timeZoneOffset = Date.parse(" Dec 25 1995 1:30 ") - Date.parse(" Dec 25 1995 1:30 GMT ");
 
 testDateParse("Dec 25 1995 GMT", "819849600000");
 testDateParse("Dec 25 1995", "819849600000 + timeZoneOffset");

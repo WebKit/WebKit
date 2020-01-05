@@ -521,8 +521,10 @@ static char* parseES5DatePortion(const char* currentPosition, int& year, long& m
 // Parses a time with the format HH:mm[:ss[.sss]][Z|(+|-)00:00].
 // Fractional seconds parsing is lenient, allows any number of digits.
 // Returns 0 if a parse error occurs, else returns the end of the parsed portion of the string.
-static char* parseES5TimePortion(char* currentPosition, long& hours, long& minutes, double& seconds, long& timeZoneSeconds)
+static char* parseES5TimePortion(char* currentPosition, long& hours, long& minutes, double& seconds, bool& isLocalTime, long& timeZoneSeconds)
 {
+    isLocalTime = false;
+
     char* postParsePosition;
     if (!isASCIIDigit(*currentPosition))
         return 0;
@@ -580,8 +582,10 @@ static char* parseES5TimePortion(char* currentPosition, long& hours, long& minut
         tzNegative = true;
     else if (*currentPosition == '+')
         tzNegative = false;
-    else
-        return currentPosition; // no timezone
+    else {
+        isLocalTime = true;
+        return currentPosition;
+    }
     ++currentPosition;
     
     long tzHours;
@@ -617,8 +621,10 @@ static char* parseES5TimePortion(char* currentPosition, long& hours, long& minut
     return currentPosition;
 }
 
-double parseES5DateFromNullTerminatedCharacters(const char* dateString)
+double parseES5DateFromNullTerminatedCharacters(const char* dateString, bool& isLocalTime)
 {
+    isLocalTime = false;
+
     // This parses a date of the form defined in ecma262/#sec-date-time-string-format
     // (similar to RFC 3339 / ISO 8601: YYYY-MM-DDTHH:mm:ss[.sss]Z).
     // In most cases it is intentionally strict (e.g. correct field widths, no stray whitespace).
@@ -639,9 +645,10 @@ double parseES5DateFromNullTerminatedCharacters(const char* dateString)
     if (!currentPosition)
         return std::numeric_limits<double>::quiet_NaN();
     // Look for a time portion.
+    // Note: As of ES2016, when a UTC offset is missing, date-time forms are local time while date-only forms are UTC.
     if (*currentPosition == 'T') {
         // Parse the time HH:mm[:ss[.sss]][Z|(+|-)00:00]
-        currentPosition = parseES5TimePortion(currentPosition + 1, hours, minutes, seconds, timeZoneSeconds);
+        currentPosition = parseES5TimePortion(currentPosition + 1, hours, minutes, seconds, isLocalTime, timeZoneSeconds);
         if (!currentPosition)
             return std::numeric_limits<double>::quiet_NaN();
     }
