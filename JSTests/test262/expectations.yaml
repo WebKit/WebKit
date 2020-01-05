@@ -1131,9 +1131,6 @@ test/built-ins/JSON/parse/reviver-object-get-prop-from-prototype.js:
 test/built-ins/JSON/parse/reviver-object-non-configurable-prop-create.js:
   default: 'Test262Error: Expected SameValue(«22», «2») to be true'
   strict mode: 'Test262Error: Expected SameValue(«22», «2») to be true'
-test/built-ins/JSON/parse/reviver-wrapper.js:
-  default: 'Test262Error: [[Set]] should not be called.'
-  strict mode: 'Test262Error: [[Set]] should not be called.'
 test/built-ins/Map/proto-from-ctor-realm.js:
   default: 'Test262Error: Expected SameValue(«[object Map]», «[object Map]») to be true'
   strict mode: 'Test262Error: Expected SameValue(«[object Map]», «[object Map]») to be true'

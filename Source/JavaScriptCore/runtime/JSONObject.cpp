@@ -280,7 +280,6 @@ JSValue Stringifier::stringify(JSValue value)
     JSObject* object = nullptr;
     if (isCallableReplacer()) {
         object = constructEmptyObject(m_globalObject);
-        RETURN_IF_EXCEPTION(scope, jsUndefined());
         object->putDirect(vm, vm.propertyNames->emptyIdentifier, value);
     }
 
@@ -796,9 +795,7 @@ NEVER_INLINE JSValue Walker::walk(JSValue unfiltered)
         stateStack.removeLast();
     }
     JSObject* finalHolder = constructEmptyObject(m_globalObject);
-    PutPropertySlot slot(finalHolder);
-    finalHolder->methodTable(vm)->put(finalHolder, m_globalObject, vm.propertyNames->emptyIdentifier, outValue, slot);
-    RETURN_IF_EXCEPTION(scope, { });
+    finalHolder->putDirect(vm, vm.propertyNames->emptyIdentifier, outValue);
     RELEASE_AND_RETURN(scope, callReviver(finalHolder, jsEmptyString(vm), outValue));
 }
 

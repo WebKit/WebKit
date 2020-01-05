@@ -1,3 +1,19 @@
+2020-01-04  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        JSON.parse should initialize wrapper object with [[DefineOwnProperty]]
+        https://bugs.webkit.org/show_bug.cgi?id=205767
+
+        Reviewed by Darin Adler.
+
+        This patch makes JSON.parse use [[DefineOwnProperty]] instead of [[Set]] to initialize wrapper object,
+        aligning JSC with the spec (step 7.c of https://tc39.es/ecma262/#sec-json.parse) and other engines.
+        Performing [[Set]] was observable by a setter on Object.prototype (with empty String key).
+        Also removes two extra exceptions checks.
+
+        * runtime/JSONObject.cpp:
+        (JSC::Stringifier::stringify):
+        (JSC::Walker::walk):
+
 2020-01-02  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] MarkedBlock::Handle and BlockDirectory should be shrunk
