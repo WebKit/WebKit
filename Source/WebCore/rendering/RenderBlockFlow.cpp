@@ -3705,14 +3705,13 @@ void RenderBlockFlow::layoutLFCLines(bool, LayoutUnit& repaintLogicalTop, Layout
     layoutFormattingContextLineLayout.layout();
 
     auto contentHeight = layoutFormattingContextLineLayout.contentLogicalHeight();
-    auto contentTop = borderAndPaddingBefore();
-    auto contentBottom = contentTop + contentHeight;
-    auto totalHeight = contentBottom + borderAndPaddingAfter();
+    auto contentBoxTop = borderAndPaddingBefore();
+    auto contentBoxBottom = contentBoxTop + contentHeight;
+    auto borderBoxBottom = contentBoxBottom + borderAndPaddingAfter();
 
-    repaintLogicalTop = contentTop;
-    repaintLogicalBottom = contentBottom;
-
-    setLogicalHeight(totalHeight);
+    repaintLogicalTop = contentBoxTop;
+    repaintLogicalBottom = borderBoxBottom;
+    setLogicalHeight(borderBoxBottom);
 }
 #endif
 

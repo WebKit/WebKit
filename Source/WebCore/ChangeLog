@@ -1,3 +1,18 @@
+2020-01-05  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][Integration] Fix fast/repaint/simple-line-layout-shrinking-content.html
+        https://bugs.webkit.org/show_bug.cgi?id=205773
+        <rdar://problem/58319960>
+
+        Reviewed by Antti Koivisto.
+
+        Let's add padding and border to the repaint rect (which is not quite right since at this level reapint rect should
+        be about the content change, but that's what SLL does and it fixes some repaint issues when
+        the box with padding/border shrinks).
+
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::layoutLFCLines):
+
 2020-01-05  youenn fablet  <youenn@apple.com>
 
         Make MediaRecorderPrivate use CompletionHandler for retrieving encoded data
