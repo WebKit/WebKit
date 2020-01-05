@@ -149,10 +149,17 @@ ExceptionOr<void> MediaRecorder::stopRecording()
 
         stopRecordingInternal();
         ASSERT(m_state == RecordingState::Inactive);
-        dispatchEvent(BlobEvent::create(eventNames().dataavailableEvent, Event::CanBubble::No, Event::IsCancelable::No, createRecordingDataBlob()));
-        if (!m_isActive)
-            return;
-        dispatchEvent(Event::create(eventNames().stopEvent, Event::CanBubble::No, Event::IsCancelable::No));
+        m_private->fetchData([this, protectedThis = makeRef(*this)](auto&& buffer, auto& mimeType) {
+            if (!m_isActive)
+                return;
+    
+            dispatchEvent(BlobEvent::create(eventNames().dataavailableEvent, Event::CanBubble::No, Event::IsCancelable::No, buffer ? Blob::create(buffer.releaseNonNull(), mimeType) : Blob::create()));
+
+            if (!m_isActive)
+                return;
+
+            dispatchEvent(Event::create(eventNames().stopEvent, Event::CanBubble::No, Event::IsCancelable::No));
+        });
     });
     return { };
 }
@@ -167,14 +174,6 @@ void MediaRecorder::stopRecordingInternal()
 
     m_state = RecordingState::Inactive;
     m_private->stopRecording();
-}
-
-Ref<Blob> MediaRecorder::createRecordingDataBlob()
-{
-    auto data = m_private->fetchData();
-    if (!data)
-        return Blob::create();
-    return Blob::create(*data, m_private->mimeType());
 }
 
 void MediaRecorder::didAddOrRemoveTrack()

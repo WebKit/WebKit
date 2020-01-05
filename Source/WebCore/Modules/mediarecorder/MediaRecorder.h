@@ -74,11 +74,9 @@ public:
     
 private:
     MediaRecorder(Document&, Ref<MediaStream>&&, std::unique_ptr<MediaRecorderPrivate>&&, Options&& = { });
-    
+
     static std::unique_ptr<MediaRecorderPrivate> getPrivateImpl(const MediaStreamPrivate&);
     
-    Ref<Blob> createRecordingDataBlob();
-
     Document* document() const;
 
     // EventTarget

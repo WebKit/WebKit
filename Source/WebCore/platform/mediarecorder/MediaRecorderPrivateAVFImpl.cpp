@@ -103,9 +103,11 @@ void MediaRecorderPrivateAVFImpl::stopRecording()
     m_writer->stopRecording();
 }
 
-RefPtr<SharedBuffer> MediaRecorderPrivateAVFImpl::fetchData()
+void MediaRecorderPrivateAVFImpl::fetchData(CompletionHandler<void(RefPtr<SharedBuffer>&&, const String&)>&& completionHandler)
 {
-    return m_writer->fetchData();
+    m_writer->fetchData([completionHandler = WTFMove(completionHandler), mimeType = mimeType()](auto&& buffer) mutable {
+        completionHandler(WTFMove(buffer), mimeType);
+    });
 }
 
 const String& MediaRecorderPrivateAVFImpl::mimeType()

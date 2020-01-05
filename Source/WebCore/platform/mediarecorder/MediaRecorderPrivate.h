@@ -24,6 +24,7 @@
 
 #pragma once
 
+#include <wtf/CompletionHandler.h>
 #include <wtf/Forward.h>
 
 #if ENABLE(MEDIA_STREAM)
@@ -44,9 +45,8 @@ class MediaRecorderPrivate {
 public:
     virtual void sampleBufferUpdated(MediaStreamTrackPrivate&, MediaSample&) = 0;
     virtual void audioSamplesAvailable(MediaStreamTrackPrivate&, const WTF::MediaTime&, const PlatformAudioData&, const AudioStreamDescription&, size_t) = 0;
-    
-    virtual RefPtr<SharedBuffer> fetchData() = 0;
-    virtual const String& mimeType() = 0;
+
+    virtual void fetchData(CompletionHandler<void(RefPtr<SharedBuffer>&&, const String& mimeType)>&&) = 0;
     virtual ~MediaRecorderPrivate() = default;
     virtual void stopRecording() { }
 };

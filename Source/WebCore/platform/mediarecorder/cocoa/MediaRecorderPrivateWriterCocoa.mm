@@ -35,6 +35,7 @@
 #include <AVFoundation/AVAssetWriter.h>
 #include <AVFoundation/AVAssetWriterInput.h>
 #include <pal/cf/CoreMediaSoftLink.h>
+#include <wtf/CompletionHandler.h>
 #include <wtf/FileSystem.h>
 
 #import <pal/cocoa/AVFoundationSoftLink.h>
@@ -358,12 +359,13 @@ void MediaRecorderPrivateWriter::stopRecording()
     m_finishWritingSemaphore.wait();
 }
 
-RefPtr<SharedBuffer> MediaRecorderPrivateWriter::fetchData()
+void MediaRecorderPrivateWriter::fetchData(CompletionHandler<void(RefPtr<SharedBuffer>&&)>&& completionHandler)
 {
     if ((m_path.isEmpty() && !m_isStopped) || !m_hasStartedWriting)
-        return nullptr;
-    
-    return SharedBuffer::createWithContentsOfFile(m_path);
+        return completionHandler(nullptr);
+
+    // FIXME: We should read in a background thread.
+    completionHandler(SharedBuffer::createWithContentsOfFile(m_path));
 }
 
 } // namespace WebCore

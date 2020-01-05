@@ -60,8 +60,8 @@ public:
     void appendVideoSampleBuffer(CMSampleBufferRef);
     void appendAudioSampleBuffer(const PlatformAudioData&, const AudioStreamDescription&, const WTF::MediaTime&, size_t);
     void stopRecording();
-    RefPtr<SharedBuffer> fetchData();
-    
+    void fetchData(CompletionHandler<void(RefPtr<SharedBuffer>&&)>&&);
+
 private:
     MediaRecorderPrivateWriter(RetainPtr<AVAssetWriter>&&, String&& path);
     void clear();

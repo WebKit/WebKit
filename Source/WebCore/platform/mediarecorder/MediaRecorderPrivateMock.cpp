@@ -56,13 +56,13 @@ void MediaRecorderPrivateMock::generateMockString(MediaStreamTrackPrivate& track
     m_buffer.append("\r\n---------\r\n");
 }
 
-RefPtr<SharedBuffer> MediaRecorderPrivateMock::fetchData()
+void MediaRecorderPrivateMock::fetchData(CompletionHandler<void(RefPtr<SharedBuffer>&&, const String&)>&& completionHandler)
 {
     auto locker = holdLock(m_bufferLock);
     Vector<uint8_t> value(m_buffer.length());
     memcpy(value.data(), m_buffer.characters8(), m_buffer.length());
     m_buffer.clear();
-    return SharedBuffer::create(WTFMove(value));
+    completionHandler(SharedBuffer::create(WTFMove(value)), mimeType());
 }
 
 const String& MediaRecorderPrivateMock::mimeType()

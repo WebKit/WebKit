@@ -45,8 +45,8 @@ private:
 
     void sampleBufferUpdated(MediaStreamTrackPrivate&, MediaSample&) final;
     void audioSamplesAvailable(MediaStreamTrackPrivate&, const WTF::MediaTime&, const PlatformAudioData&, const AudioStreamDescription&, size_t) final;
-    RefPtr<SharedBuffer> fetchData() final;
-    const String& mimeType() final;
+    void fetchData(CompletionHandler<void(RefPtr<SharedBuffer>&&, const String&)>&&) final;
+    const String& mimeType();
     void stopRecording();
     
     Ref<MediaRecorderPrivateWriter> m_writer;
