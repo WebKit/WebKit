@@ -50,7 +50,6 @@ my $configuration = configuration();
 my $root;
 my $showHelp;
 my @extraTests = ();
-my $jsDriverArgs;
 my $childProcesses;
 my $shellRunner;
 my $makeRunner;
