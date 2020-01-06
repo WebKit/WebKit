@@ -31,6 +31,7 @@ WI.QuickConsole = class QuickConsole extends WI.View
 
         this._toggleOrFocusKeyboardShortcut = new WI.KeyboardShortcut(null, WI.KeyboardShortcut.Key.Escape, this._toggleOrFocus.bind(this));
         this._toggleOrFocusKeyboardShortcut.implicitlyPreventsDefault = false;
+        this._keyboardShortcutDisabled = false;
 
         this._automaticExecutionContextPathComponent = this._createExecutionContextPathComponent(null, WI.UIString("Auto"));
         this._updateAutomaticExecutionContextPathComponentTooltip();
@@ -99,6 +100,11 @@ WI.QuickConsole = class QuickConsole extends WI.View
     get navigationBar()
     {
         return this._navigationBar;
+    }
+
+    set keyboardShortcutDisabled(disabled)
+    {
+        this._keyboardShortcutDisabled = disabled;
     }
 
     closed()
@@ -446,6 +452,9 @@ WI.QuickConsole = class QuickConsole extends WI.View
 
     _toggleOrFocus(event)
     {
+        if (this._keyboardShortcutDisabled)
+            return;
+
         if (this.prompt.focused) {
             WI.toggleSplitConsole();
             event.preventDefault();
