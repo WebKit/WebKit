@@ -1,3 +1,40 @@
+2020-01-06  Alex Christensen  <achristensen@webkit.org>
+
+        Remove _WKProcessPoolConfiguration.CTDataConnectionServiceType and suppressesConnectionTerminationOnSystemChange
+        https://bugs.webkit.org/show_bug.cgi?id=205751
+
+        Reviewed by Darin Adler.
+
+        Their replacements on _WKWebViewConfiguration have been adopted.
+
+        * NetworkProcess/NetworkProcess.h:
+        (WebKit::NetworkProcess::suppressesConnectionTerminationOnSystemChange const): Deleted.
+        * NetworkProcess/NetworkProcessCreationParameters.cpp:
+        (WebKit::NetworkProcessCreationParameters::encode const):
+        (WebKit::NetworkProcessCreationParameters::decode):
+        * NetworkProcess/NetworkProcessCreationParameters.h:
+        * NetworkProcess/cocoa/NetworkProcessCocoa.mm:
+        (WebKit::NetworkProcess::platformInitializeNetworkProcessCocoa):
+        * NetworkProcess/cocoa/NetworkSessionCocoa.h:
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (WebKit::NetworkSessionCocoa::dataConnectionServiceType const):
+        (WebKit::NetworkSessionCocoa::NetworkSessionCocoa):
+        (WebKit::globalCTDataConnectionServiceType): Deleted.
+        (WebKit::NetworkSessionCocoa::setCTDataConnectionServiceType): Deleted.
+        * UIProcess/API/APIProcessPoolConfiguration.cpp:
+        (API::ProcessPoolConfiguration::copy):
+        * UIProcess/API/APIProcessPoolConfiguration.h:
+        * UIProcess/API/Cocoa/_WKProcessPoolConfiguration.h:
+        * UIProcess/API/Cocoa/_WKProcessPoolConfiguration.mm:
+        (-[_WKProcessPoolConfiguration suppressesConnectionTerminationOnSystemChange]): Deleted.
+        (-[_WKProcessPoolConfiguration setSuppressesConnectionTerminationOnSystemChange:]): Deleted.
+        (-[_WKProcessPoolConfiguration CTDataConnectionServiceType]): Deleted.
+        (-[_WKProcessPoolConfiguration setCTDataConnectionServiceType:]): Deleted.
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::WebProcessPool::platformInitializeNetworkProcess):
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::paymentCoordinatorCTDataConnectionServiceType):
+
 2020-01-06  Keith Rollin  <krollin@apple.com>
 
         Reformat WebPage logging

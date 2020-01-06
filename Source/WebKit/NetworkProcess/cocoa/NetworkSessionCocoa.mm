@@ -959,22 +959,8 @@ const String& NetworkSessionCocoa::sourceApplicationSecondaryIdentifier() const
 }
 
 #if PLATFORM(IOS_FAMILY)
-static String& globalCTDataConnectionServiceType()
-{
-    static NeverDestroyed<String> ctDataConnectionServiceType;
-    return ctDataConnectionServiceType.get();
-}
-
-void NetworkSessionCocoa::setCTDataConnectionServiceType(const String& type)
-{
-    ASSERT(!sessionsCreated);
-    globalCTDataConnectionServiceType() = type;
-}
-
 const String& NetworkSessionCocoa::dataConnectionServiceType() const
 {
-    if (!globalCTDataConnectionServiceType().isEmpty())
-        return globalCTDataConnectionServiceType();
     return m_dataConnectionServiceType;
 }
 #endif
@@ -1067,9 +1053,7 @@ NetworkSessionCocoa::NetworkSessionCocoa(NetworkProcess& networkProcess, Network
     configuration.connectionProxyDictionary = proxyDictionary(parameters.httpProxy, parameters.httpsProxy);
 
 #if PLATFORM(IOS_FAMILY)
-    if (!globalCTDataConnectionServiceType().isEmpty())
-        configuration._CTDataConnectionServiceType = globalCTDataConnectionServiceType();
-    else if (!m_dataConnectionServiceType.isEmpty())
+    if (!m_dataConnectionServiceType.isEmpty())
         configuration._CTDataConnectionServiceType = m_dataConnectionServiceType;
 #endif
 
@@ -1081,7 +1065,7 @@ NetworkSessionCocoa::NetworkSessionCocoa(NetworkProcess& networkProcess, Network
 
 #if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400) || PLATFORM(IOS_FAMILY)
     // FIXME: Replace @"kCFStreamPropertyAutoErrorOnSystemChange" with a constant from the SDK once rdar://problem/40650244 is in a build.
-    if (networkProcess.suppressesConnectionTerminationOnSystemChange() || parameters.suppressesConnectionTerminationOnSystemChange)
+    if (parameters.suppressesConnectionTerminationOnSystemChange)
         configuration._socketStreamProperties = @{ @"kCFStreamPropertyAutoErrorOnSystemChange" : @NO };
 #endif
 
