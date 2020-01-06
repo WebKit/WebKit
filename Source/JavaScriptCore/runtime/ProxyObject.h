@@ -110,7 +110,8 @@ private:
     bool performPreventExtensions(JSGlobalObject*);
     bool performIsExtensible(JSGlobalObject*);
     bool performDefineOwnProperty(JSGlobalObject*, PropertyName, const PropertyDescriptor&, bool shouldThrow);
-    void performGetOwnPropertyNames(JSGlobalObject*, PropertyNameArray&, EnumerationMode);
+    void performGetOwnPropertyNames(JSGlobalObject*, PropertyNameArray&);
+    void performGetOwnEnumerablePropertyNames(JSGlobalObject*, PropertyNameArray&);
     bool performSetPrototype(JSGlobalObject*, JSValue prototype, bool shouldThrowIfCantSet);
 
     WriteBarrier<JSObject> m_target;
