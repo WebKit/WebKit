@@ -29,8 +29,7 @@
 #include "config.h"
 #include "FormDataStreamCFNet.h"
 
-#include "BlobData.h"
-#include "BlobRegistry.h"
+#include "BlobRegistryImpl.h"
 #include "FormData.h"
 #include <sys/stat.h>
 #include <sys/types.h>
@@ -371,14 +370,16 @@ static void formEventCallback(CFReadStreamRef stream, CFStreamEventType type, vo
 
 RetainPtr<CFReadStreamRef> createHTTPBodyCFReadStream(FormData& formData)
 {
-    auto resolvedFormData = formData.resolveBlobReferences(blobRegistry().blobRegistryImpl());
+    auto resolvedFormData = formData.resolveBlobReferences();
     auto dataForUpload = resolvedFormData->prepareForUpload();
 
     // Precompute the content length so CFNetwork doesn't use chunked mode.
     unsigned long long length = 0;
-    for (auto& element : dataForUpload.data().elements())
-        length += element.lengthInBytes(blobRegistry().blobRegistryImpl());
-
+    for (auto& element : dataForUpload.data().elements()) {
+        length += element.lengthInBytes([](auto& url) {
+            return blobRegistry().blobRegistryImpl()->blobSize(url);
+        });
+    }
     FormCreationContext* formContext = new FormCreationContext { WTFMove(dataForUpload), length };
     CFReadStreamCallBacksV1 callBacks = { 1, formCreate, formFinalize, nullptr, formOpen, nullptr, formRead, nullptr, formCanRead, formClose, formCopyProperty, nullptr, nullptr, formSchedule, formUnschedule };
     return adoptCF(CFReadStreamCreate(nullptr, static_cast<const void*>(&callBacks), formContext));
