@@ -65,7 +65,7 @@ public:
 protected:
     WebGLRenderbuffer(WebGLRenderingContextBase&);
 
-    void deleteObjectImpl(GraphicsContext3D*, Platform3DObject) override;
+    void deleteObjectImpl(GraphicsContextGLOpenGL*, Platform3DObject) override;
 
 private:
     bool isRenderbuffer() const override { return true; }

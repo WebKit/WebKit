@@ -31,7 +31,7 @@
 #include "Logging.h"
 #include <OpenGL/CGLTypes.h>
 #include <OpenGL/OpenGL.h>
-#include <WebCore/GraphicsContext3DManager.h>
+#include <WebCore/GraphicsContextGLOpenGLManager.h>
 
 namespace WebKit {
 

@@ -41,12 +41,12 @@ typedef struct __CVOpenGLESTextureCache *CVOpenGLESTextureCacheRef;
 
 namespace WebCore {
 
-class GraphicsContext3D;
+class GraphicsContextGLOpenGL;
 
 class TextureCacheCV : public CanMakeWeakPtr<TextureCacheCV> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static std::unique_ptr<TextureCacheCV> create(GraphicsContext3D&);
+    static std::unique_ptr<TextureCacheCV> create(GraphicsContextGLOpenGL&);
 
 #if USE(OPENGL_ES)
     using TextureCacheType = CVOpenGLESTextureCacheRef;
@@ -56,13 +56,13 @@ public:
     using TextureType = CVOpenGLTextureRef;
 #endif
 
-    TextureCacheCV(GraphicsContext3D&, RetainPtr<TextureCacheType>&&);
+    TextureCacheCV(GraphicsContextGLOpenGL&, RetainPtr<TextureCacheType>&&);
 
     RetainPtr<TextureType> textureFromImage(CVPixelBufferRef, GC3Denum outputTarget, GC3Dint level, GC3Denum internalFormat, GC3Denum format, GC3Denum type);
-    GraphicsContext3D& context() { return m_context.get(); }
+    GraphicsContextGLOpenGL& context() { return m_context.get(); }
 
 private:
-    Ref<GraphicsContext3D> m_context;
+    Ref<GraphicsContextGLOpenGL> m_context;
     RetainPtr<TextureCacheType> m_cache;
 };
 

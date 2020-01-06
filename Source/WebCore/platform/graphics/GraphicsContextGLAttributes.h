@@ -27,13 +27,13 @@
 
 namespace WebCore {
 
-enum class GraphicsContext3DPowerPreference {
+enum class GraphicsContextGLPowerPreference {
     Default,
     LowPower,
     HighPerformance
 };
 
-struct GraphicsContext3DAttributes {
+struct GraphicsContextGLAttributes {
     // WebGLContextAttributes
     bool alpha { true };
     bool depth { true };
@@ -42,7 +42,7 @@ struct GraphicsContext3DAttributes {
     bool premultipliedAlpha { true };
     bool preserveDrawingBuffer { false };
     bool failIfMajorPerformanceCaveat { false };
-    using PowerPreference = GraphicsContext3DPowerPreference;
+    using PowerPreference = GraphicsContextGLPowerPreference;
     PowerPreference powerPreference { PowerPreference::Default };
 
     // Additional attributes.

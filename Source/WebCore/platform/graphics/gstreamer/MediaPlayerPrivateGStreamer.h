@@ -86,7 +86,7 @@ namespace WebCore {
 class BitmapTextureGL;
 class GLContext;
 class GraphicsContext;
-class GraphicsContext3D;
+class GraphicsContextGLOpenGL;
 class IntSize;
 class IntRect;
 class VideoTextureCopierGStreamer;
@@ -208,7 +208,7 @@ public:
 #endif
 
 #if USE(GSTREAMER_GL)
-    bool copyVideoTextureToPlatformTexture(GraphicsContext3D*, Platform3DObject, GC3Denum, GC3Dint, GC3Denum, GC3Denum, GC3Denum, bool, bool) override;
+    bool copyVideoTextureToPlatformTexture(GraphicsContextGLOpenGL*, Platform3DObject, GC3Denum, GC3Dint, GC3Denum, GC3Denum, GC3Denum, bool, bool) override;
     NativeImagePtr nativeImageForCurrentTime() override;
 #endif
 

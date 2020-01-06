@@ -723,7 +723,7 @@ PlatformLayer* ImageBuffer::platformLayer() const
     return 0;
 }
 
-bool ImageBuffer::copyToPlatformTexture(GraphicsContext3D&, GC3Denum target, Platform3DObject destinationTexture, GC3Denum internalformat, bool premultiplyAlpha, bool flipY)
+bool ImageBuffer::copyToPlatformTexture(GraphicsContextGLOpenGL&, GC3Denum target, Platform3DObject destinationTexture, GC3Denum internalformat, bool premultiplyAlpha, bool flipY)
 {
 #if ENABLE(ACCELERATED_2D_CANVAS)
     ASSERT_WITH_MESSAGE(m_resolutionScale == 1.0, "Since the HiDPI Canvas feature is removed, the resolution factor here is always 1.");

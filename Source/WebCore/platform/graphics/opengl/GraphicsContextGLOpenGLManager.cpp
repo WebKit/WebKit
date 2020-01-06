@@ -25,10 +25,10 @@
 
 #include "config.h"
 
-#if ENABLE(GRAPHICS_CONTEXT_3D)
-#include "GraphicsContext3DManager.h"
+#if ENABLE(GRAPHICS_CONTEXT_GL)
+#include "GraphicsContextGLOpenGLManager.h"
 
-#include "GraphicsContext3D.h"
+#include "GraphicsContextGLOpenGL.h"
 #include "Logging.h"
 
 #if HAVE(APPLE_GRAPHICS_CONTROL)
@@ -117,22 +117,22 @@ bool hasLowAndHighPowerGPUs()
 }
 #endif // HAVE(APPLE_GRAPHICS_CONTROL)
 
-GraphicsContext3DManager& GraphicsContext3DManager::sharedManager()
+GraphicsContextGLOpenGLManager& GraphicsContextGLOpenGLManager::sharedManager()
 {
-    static NeverDestroyed<GraphicsContext3DManager> s_manager;
+    static NeverDestroyed<GraphicsContextGLOpenGLManager> s_manager;
     return s_manager;
 }
 
 #if PLATFORM(MAC)
-void GraphicsContext3DManager::displayWasReconfigured(CGDirectDisplayID, CGDisplayChangeSummaryFlags flags, void*)
+void GraphicsContextGLOpenGLManager::displayWasReconfigured(CGDirectDisplayID, CGDisplayChangeSummaryFlags flags, void*)
 {
-    LOG(WebGL, "GraphicsContext3DManager::displayWasReconfigured");
+    LOG(WebGL, "GraphicsContextGLOpenGLManager::displayWasReconfigured");
     if (flags & kCGDisplaySetModeFlag)
-        GraphicsContext3DManager::sharedManager().updateAllContexts();
+        GraphicsContextGLOpenGLManager::sharedManager().updateAllContexts();
 }
 #endif
 
-void GraphicsContext3DManager::updateAllContexts()
+void GraphicsContextGLOpenGLManager::updateAllContexts()
 {
 #if PLATFORM(MAC) && (USE(OPENGL) || USE(ANGLE))
     for (const auto& context : m_contexts) {
@@ -143,7 +143,7 @@ void GraphicsContext3DManager::updateAllContexts()
 }
 
 #if PLATFORM(MAC)
-void GraphicsContext3DManager::screenDidChange(PlatformDisplayID displayID, const HostWindow* window)
+void GraphicsContextGLOpenGLManager::screenDidChange(PlatformDisplayID displayID, const HostWindow* window)
 {
     for (const auto& contextAndWindow : m_contextWindowMap) {
         if (contextAndWindow.value == window) {
@@ -154,7 +154,7 @@ void GraphicsContext3DManager::screenDidChange(PlatformDisplayID displayID, cons
 }
 #endif
 
-void GraphicsContext3DManager::addContext(GraphicsContext3D* context, HostWindow* window)
+void GraphicsContextGLOpenGLManager::addContext(GraphicsContextGLOpenGL* context, HostWindow* window)
 {
     ASSERT(context);
     if (!context)
@@ -170,7 +170,7 @@ void GraphicsContext3DManager::addContext(GraphicsContext3D* context, HostWindow
     m_contextWindowMap.set(context, window);
 }
 
-void GraphicsContext3DManager::removeContext(GraphicsContext3D* context)
+void GraphicsContextGLOpenGLManager::removeContext(GraphicsContextGLOpenGL* context)
 {
     if (!m_contexts.contains(context))
         return;
@@ -184,13 +184,13 @@ void GraphicsContext3DManager::removeContext(GraphicsContext3D* context)
 #endif
 }
 
-HostWindow* GraphicsContext3DManager::hostWindowForContext(GraphicsContext3D* context) const
+HostWindow* GraphicsContextGLOpenGLManager::hostWindowForContext(GraphicsContextGLOpenGL* context) const
 {
     ASSERT(m_contextWindowMap.contains(context));
     return m_contextWindowMap.get(context);
 }
 
-void GraphicsContext3DManager::addContextRequiringHighPerformance(GraphicsContext3D* context)
+void GraphicsContextGLOpenGLManager::addContextRequiringHighPerformance(GraphicsContextGLOpenGL* context)
 {
     ASSERT(context);
     if (!context)
@@ -205,7 +205,7 @@ void GraphicsContext3DManager::addContextRequiringHighPerformance(GraphicsContex
     updateHighPerformanceState();
 }
 
-void GraphicsContext3DManager::removeContextRequiringHighPerformance(GraphicsContext3D* context)
+void GraphicsContextGLOpenGLManager::removeContextRequiringHighPerformance(GraphicsContextGLOpenGL* context)
 {
     if (!context)
         return;
@@ -219,7 +219,7 @@ void GraphicsContext3DManager::removeContextRequiringHighPerformance(GraphicsCon
     updateHighPerformanceState();
 }
 
-void GraphicsContext3DManager::updateHighPerformanceState()
+void GraphicsContextGLOpenGLManager::updateHighPerformanceState()
 {
 #if PLATFORM(MAC) && (USE(OPENGL) || USE(ANGLE))
     if (!hasLowAndHighPowerGPUs())
@@ -255,7 +255,7 @@ void GraphicsContext3DManager::updateHighPerformanceState()
 #endif
 }
 
-void GraphicsContext3DManager::disableHighPerformanceGPUTimerFired()
+void GraphicsContextGLOpenGLManager::disableHighPerformanceGPUTimerFired()
 {
     if (m_contextsRequiringHighPerformance.size())
         return;
@@ -266,14 +266,14 @@ void GraphicsContext3DManager::disableHighPerformanceGPUTimerFired()
 #endif
 }
 
-void GraphicsContext3DManager::recycleContextIfNecessary()
+void GraphicsContextGLOpenGLManager::recycleContextIfNecessary()
 {
     if (hasTooManyContexts()) {
-        LOG(WebGL, "GraphicsContext3DManager recycled context (%p).", m_contexts[0]);
+        LOG(WebGL, "GraphicsContextGLOpenGLManager recycled context (%p).", m_contexts[0]);
         m_contexts[0]->recycleContext();
     }
 }
 
 } // namespace WebCore
 
-#endif // ENABLE(GRAPHICS_CONTEXT_3D)
+#endif // ENABLE(GRAPHICS_CONTEXT_GL)

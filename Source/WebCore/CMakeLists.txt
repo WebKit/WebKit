@@ -1488,11 +1488,11 @@ if (ENABLE_QUOTA)
     )
 endif ()
 
-if (ENABLE_GRAPHICS_CONTEXT_3D)
+if (ENABLE_GRAPHICS_CONTEXT_GL)
     list(APPEND WebCore_SOURCES
         platform/graphics/ANGLEWebKitBridge.cpp
         platform/graphics/FormatConverter.cpp
-        platform/graphics/GraphicsContext3D.cpp
+        platform/graphics/opengl/GraphicsContextGLOpenGLBase.cpp
     )
 
     list(APPEND WebCore_LIBRARIES ANGLEFramework)

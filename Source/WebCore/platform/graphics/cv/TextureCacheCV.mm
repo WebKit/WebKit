@@ -28,20 +28,20 @@
 
 #if HAVE(CORE_VIDEO)
 
-#include "GraphicsContext3D.h"
+#include "GraphicsContextGLOpenGL.h"
 
 #include "CoreVideoSoftLink.h"
 
 namespace WebCore {
 
-std::unique_ptr<TextureCacheCV> TextureCacheCV::create(GraphicsContext3D& context)
+std::unique_ptr<TextureCacheCV> TextureCacheCV::create(GraphicsContextGLOpenGL& context)
 {
     TextureCacheType cache = nullptr;
 #if USE(OPENGL_ES)
-    CVEAGLContext eaglContext = static_cast<CVEAGLContext>(context.platformGraphicsContext3D());
+    CVEAGLContext eaglContext = static_cast<CVEAGLContext>(context.platformGraphicsContextGL());
     CVReturn error = CVOpenGLESTextureCacheCreate(kCFAllocatorDefault, nullptr, eaglContext, nullptr, &cache);
 #elif USE(OPENGL)
-    CGLContextObj cglContext = static_cast<CGLContextObj>(context.platformGraphicsContext3D());
+    CGLContextObj cglContext = static_cast<CGLContextObj>(context.platformGraphicsContextGL());
     CVReturn error = CVOpenGLTextureCacheCreate(kCFAllocatorDefault, nullptr, cglContext, CGLGetPixelFormat(cglContext), nullptr, &cache);
 #elif USE(ANGLE)
     // FIXME: figure out how to do this integrating via ANGLE.
@@ -55,7 +55,7 @@ std::unique_ptr<TextureCacheCV> TextureCacheCV::create(GraphicsContext3D& contex
     return makeUnique<TextureCacheCV>(context, WTFMove(strongCache));
 }
 
-TextureCacheCV::TextureCacheCV(GraphicsContext3D& context, RetainPtr<TextureCacheType>&& cache)
+TextureCacheCV::TextureCacheCV(GraphicsContextGLOpenGL& context, RetainPtr<TextureCacheType>&& cache)
     : m_context(context)
     , m_cache(cache)
 {

@@ -19,9 +19,9 @@
 
 #pragma once
 
-#if ENABLE(GRAPHICS_CONTEXT_3D) && USE(TEXTURE_MAPPER) && !USE(NICOSIA)
+#if ENABLE(GRAPHICS_CONTEXT_GL) && USE(TEXTURE_MAPPER) && !USE(NICOSIA)
 
-#include "GraphicsContext3D.h"
+#include "GraphicsContextGLOpenGL.h"
 #include "PlatformLayer.h"
 #include "TextureMapperPlatformLayer.h"
 #include "TextureMapperPlatformLayerProxyProvider.h"
@@ -34,11 +34,11 @@ class TextureMapperPlatformLayerProxy;
 class TextureMapperGC3DPlatformLayer : public PlatformLayer {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    TextureMapperGC3DPlatformLayer(GraphicsContext3D&, GraphicsContext3D::Destination);
+    TextureMapperGC3DPlatformLayer(GraphicsContextGLOpenGL&, GraphicsContextGLOpenGL::Destination);
     virtual ~TextureMapperGC3DPlatformLayer();
 
     bool makeContextCurrent();
-    PlatformGraphicsContext3D platformContext() const;
+    PlatformGraphicsContextGL platformContext() const;
 
 #if USE(COORDINATED_GRAPHICS)
     RefPtr<TextureMapperPlatformLayerProxy> proxy() const override;
@@ -48,7 +48,7 @@ public:
 #endif
 
 private:
-    GraphicsContext3D& m_context;
+    GraphicsContextGLOpenGL& m_context;
     std::unique_ptr<GLContext> m_glContext;
 
 #if USE(COORDINATED_GRAPHICS)
@@ -58,4 +58,4 @@ private:
 
 } // namespace WebCore
 
-#endif // ENABLE(GRAPHICS_CONTEXT_3D) && USE(TEXTURE_MAPPER)
+#endif // ENABLE(GRAPHICS_CONTEXT_GL) && USE(TEXTURE_MAPPER)

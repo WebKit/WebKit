@@ -286,7 +286,7 @@ list(APPEND WebCore_SOURCES
     platform/graphics/cg/FloatRectCG.cpp
     platform/graphics/cg/FloatSizeCG.cpp
     platform/graphics/cg/GradientCG.cpp
-    platform/graphics/cg/GraphicsContext3DCG.cpp
+    platform/graphics/cg/GraphicsContextGLCG.cpp
     platform/graphics/cg/GraphicsContextCG.cpp
     platform/graphics/cg/IOSurfacePool.cpp
     platform/graphics/cg/ImageBufferCG.cpp
@@ -304,7 +304,7 @@ list(APPEND WebCore_SOURCES
     platform/graphics/cg/TransformationMatrixCG.cpp
     platform/graphics/cg/UTIRegistry.cpp
 
-    platform/graphics/cocoa/GraphicsContext3DCocoa.mm
+    platform/graphics/cocoa/GraphicsContextGLOpenGLCocoa.mm
     platform/graphics/cocoa/GraphicsContextCocoa.mm
     platform/graphics/cocoa/FontCacheCoreText.cpp
     platform/graphics/cocoa/FontCascadeCocoa.mm
@@ -346,10 +346,10 @@ list(APPEND WebCore_SOURCES
     platform/graphics/mac/SimpleFontDataCoreText.cpp
     platform/graphics/mac/WebLayer.mm
 
-    platform/graphics/opengl/Extensions3DOpenGL.cpp
-    platform/graphics/opengl/Extensions3DOpenGLCommon.cpp
-    platform/graphics/opengl/GraphicsContext3DOpenGL.cpp
-    platform/graphics/opengl/GraphicsContext3DOpenGLCommon.cpp
+    platform/graphics/opengl/ExtensionsGLOpenGL.cpp
+    platform/graphics/opengl/ExtensionsGLOpenGLCommon.cpp
+    platform/graphics/opengl/GraphicsContextGLOpenGLBase.cpp
+    platform/graphics/opengl/GraphicsContextGLOpenGLCommon.cpp
     platform/graphics/opengl/TemporaryOpenGLSetting.cpp
 
     platform/graphics/opentype/OpenTypeCG.cpp

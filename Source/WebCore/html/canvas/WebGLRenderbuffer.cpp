@@ -46,17 +46,17 @@ WebGLRenderbuffer::~WebGLRenderbuffer()
 
 WebGLRenderbuffer::WebGLRenderbuffer(WebGLRenderingContextBase& ctx)
     : WebGLSharedObject(ctx)
-    , m_internalFormat(GraphicsContext3D::RGBA4)
+    , m_internalFormat(GraphicsContextGL::RGBA4)
     , m_initialized(false)
     , m_width(0)
     , m_height(0)
     , m_isValid(true)
     , m_hasEverBeenBound(false)
 {
-    setObject(ctx.graphicsContext3D()->createRenderbuffer());
+    setObject(ctx.graphicsContextGL()->createRenderbuffer());
 }
 
-void WebGLRenderbuffer::deleteObjectImpl(GraphicsContext3D* context3d, Platform3DObject object)
+void WebGLRenderbuffer::deleteObjectImpl(GraphicsContextGLOpenGL* context3d, Platform3DObject object)
 {
     context3d->deleteRenderbuffer(object);
 }

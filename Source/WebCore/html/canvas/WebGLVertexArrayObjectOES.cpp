@@ -29,7 +29,7 @@
 
 #include "WebGLVertexArrayObjectOES.h"
 
-#include "Extensions3D.h"
+#include "ExtensionsGL.h"
 #include "WebGLRenderingContextBase.h"
 
 namespace WebCore {
@@ -46,7 +46,7 @@ WebGLVertexArrayObjectOES::WebGLVertexArrayObjectOES(WebGLRenderingContextBase& 
     case Type::Default:
         break;
     case Type::User:
-        setObject(this->context()->graphicsContext3D()->getExtensions().createVertexArrayOES());
+        setObject(this->context()->graphicsContextGL()->getExtensions().createVertexArrayOES());
         break;
     }
 }
@@ -56,7 +56,7 @@ WebGLVertexArrayObjectOES::~WebGLVertexArrayObjectOES()
     deleteObject(nullptr);
 }
 
-void WebGLVertexArrayObjectOES::deleteObjectImpl(GraphicsContext3D* context3d, Platform3DObject object)
+void WebGLVertexArrayObjectOES::deleteObjectImpl(GraphicsContextGLOpenGL* context3d, Platform3DObject object)
 {
     switch (m_type) {
     case Type::Default:

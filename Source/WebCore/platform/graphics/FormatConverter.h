@@ -25,9 +25,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#if ENABLE(GRAPHICS_CONTEXT_3D)
+#if ENABLE(GRAPHICS_CONTEXT_GL)
 
-#include "GraphicsContext3D.h"
+#include "GraphicsContextGLOpenGL.h"
 #include <wtf/StdLibExtras.h>
 #include <wtf/UniqueArray.h>
 
@@ -51,17 +51,17 @@ public:
         ASSERT(m_unpackedIntermediateSrcData.get());
     }
 
-    void convert(GraphicsContext3D::DataFormat srcFormat, GraphicsContext3D::DataFormat dstFormat, GraphicsContext3D::AlphaOp);
+    void convert(GraphicsContextGL::DataFormat srcFormat, GraphicsContextGL::DataFormat dstFormat, GraphicsContextGL::AlphaOp);
     bool success() const { return m_success; }
 
 private:
-    template<GraphicsContext3D::DataFormat SrcFormat>
-    ALWAYS_INLINE void convert(GraphicsContext3D::DataFormat dstFormat, GraphicsContext3D::AlphaOp);
+    template<GraphicsContextGL::DataFormat SrcFormat>
+    ALWAYS_INLINE void convert(GraphicsContextGL::DataFormat dstFormat, GraphicsContextGL::AlphaOp);
 
-    template<GraphicsContext3D::DataFormat SrcFormat, GraphicsContext3D::DataFormat DstFormat>
-    ALWAYS_INLINE void convert(GraphicsContext3D::AlphaOp);
+    template<GraphicsContextGL::DataFormat SrcFormat, GraphicsContextGL::DataFormat DstFormat>
+    ALWAYS_INLINE void convert(GraphicsContextGL::AlphaOp);
 
-    template<GraphicsContext3D::DataFormat SrcFormat, GraphicsContext3D::DataFormat DstFormat, GraphicsContext3D::AlphaOp alphaOp>
+    template<GraphicsContextGL::DataFormat SrcFormat, GraphicsContextGL::DataFormat DstFormat, GraphicsContextGL::AlphaOp alphaOp>
     ALWAYS_INLINE void convert();
 
     const unsigned m_width, m_height;
@@ -74,4 +74,4 @@ private:
 
 } // namespace WebCore
 
-#endif // ENABLE(GRAPHICS_CONTEXT_3D)
+#endif // ENABLE(GRAPHICS_CONTEXT_GL)

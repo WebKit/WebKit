@@ -27,7 +27,7 @@
 
 #if ENABLE(WEBGL)
 
-#include "GraphicsContext3D.h"
+#include "GraphicsContextGLOpenGL.h"
 #include "WebGLBuffer.h"
 #include "WebGLContextObject.h"
 
@@ -46,7 +46,7 @@ public:
         RefPtr<WebGLBuffer> bufferBinding;
         GC3Dsizei bytesPerElement { 0 };
         GC3Dint size { 4 };
-        GC3Denum type { GraphicsContext3D::FLOAT };
+        GC3Denum type { GraphicsContextGL::FLOAT };
         bool normalized { false };
         GC3Dsizei stride { 16 };
         GC3Dsizei originalStride { 0 };
@@ -70,7 +70,7 @@ public:
 
 protected:
     WebGLVertexArrayObjectBase(WebGLRenderingContextBase&, Type);
-    void deleteObjectImpl(GraphicsContext3D*, Platform3DObject) override = 0;
+    void deleteObjectImpl(GraphicsContextGLOpenGL*, Platform3DObject) override = 0;
 
     Type m_type;
     bool m_hasEverBeenBound { false };

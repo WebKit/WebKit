@@ -294,7 +294,7 @@ void HTMLVideoElement::paintCurrentFrameInContext(GraphicsContext& context, cons
     player->paintCurrentFrameInContext(context, destRect);
 }
 
-bool HTMLVideoElement::copyVideoTextureToPlatformTexture(GraphicsContext3D* context, Platform3DObject texture, GC3Denum target, GC3Dint level, GC3Denum internalFormat, GC3Denum format, GC3Denum type, bool premultiplyAlpha, bool flipY)
+bool HTMLVideoElement::copyVideoTextureToPlatformTexture(GraphicsContextGLOpenGL* context, Platform3DObject texture, GC3Denum target, GC3Dint level, GC3Denum internalFormat, GC3Denum format, GC3Denum type, bool premultiplyAlpha, bool flipY)
 {
     if (!player())
         return false;

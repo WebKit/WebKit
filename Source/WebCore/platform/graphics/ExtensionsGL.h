@@ -23,8 +23,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef Extensions3D_h
-#define Extensions3D_h
+#pragma once
 
 #include "GraphicsTypes3D.h"
 
@@ -41,9 +40,9 @@ namespace WebCore {
 // Calling any extension function not supported by the current context
 // must be a no-op; in particular, it may not have side effects. In
 // this situation, if the function has a return value, 0 is returned.
-class Extensions3D {
+class ExtensionsGL {
 public:
-    virtual ~Extensions3D() = default;
+    virtual ~ExtensionsGL() = default;
 
     // Supported extensions:
     //   GL_EXT_texture_format_BGRA8888
@@ -113,13 +112,13 @@ public:
 
         // GL_EXT/OES_packed_depth_stencil enums
         DEPTH24_STENCIL8 = 0x88F0,
-        
+
         // GL_ANGLE_framebuffer_blit names
         READ_FRAMEBUFFER = 0x8CA8,
         DRAW_FRAMEBUFFER = 0x8CA9,
-        DRAW_FRAMEBUFFER_BINDING = 0x8CA6, 
+        DRAW_FRAMEBUFFER_BINDING = 0x8CA6,
         READ_FRAMEBUFFER_BINDING = 0x8CAA,
-        
+
         // GL_ANGLE_framebuffer_multisample names
         RENDERBUFFER_SAMPLES = 0x8CAB,
         FRAMEBUFFER_INCOMPLETE_MULTISAMPLE = 0x8D56,
@@ -137,7 +136,7 @@ public:
         // GL_OES_rgb8_rgba8 names
         RGB8_OES = 0x8051,
         RGBA8_OES = 0x8058,
-        
+
         // GL_OES_vertex_array_object names
         VERTEX_ARRAY_BINDING_OES = 0x85B5,
 
@@ -180,7 +179,7 @@ public:
         COMPRESSED_ATC_RGB_AMD = 0x8C92,
         COMPRESSED_ATC_RGBA_EXPLICIT_ALPHA_AMD = 0x8C93,
         COMPRESSED_ATC_RGBA_INTERPOLATED_ALPHA_AMD = 0x87EE,
-        
+
         // GL_KHR_texture_compression_astc_hdr
         COMPRESSED_RGBA_ASTC_4x4_KHR = 0x93B0,
         COMPRESSED_RGBA_ASTC_5x4_KHR = 0x93B1,
@@ -196,7 +195,7 @@ public:
         COMPRESSED_RGBA_ASTC_10x10_KHR = 0x93BB,
         COMPRESSED_RGBA_ASTC_12x10_KHR = 0x93BC,
         COMPRESSED_RGBA_ASTC_12x12_KHR = 0x93BD,
-        
+
         COMPRESSED_SRGB8_ALPHA8_ASTC_4x4_KHR = 0x93D0,
         COMPRESSED_SRGB8_ALPHA8_ASTC_5x4_KHR = 0x93D1,
         COMPRESSED_SRGB8_ALPHA8_ASTC_5x5_KHR = 0x93D2,
@@ -258,16 +257,16 @@ public:
     // specification in the following way:
     // The implementation must not reset the error state during this call.
     // If getGraphicsResetStatusARB returns an error, it should continue
-    // returning the same error. Restoring the GraphicsContext3D is handled
+    // returning the same error. Restoring the GraphicsContextGLOpenGL is handled
     // externally.
     virtual int getGraphicsResetStatusARB() = 0;
-    
+
     // GL_ANGLE_framebuffer_blit
     virtual void blitFramebuffer(long srcX0, long srcY0, long srcX1, long srcY1, long dstX0, long dstY0, long dstX1, long dstY1, unsigned long mask, unsigned long filter) = 0;
-    
+
     // GL_ANGLE_framebuffer_multisample
     virtual void renderbufferStorageMultisample(unsigned long target, unsigned long samples, unsigned long internalformat, unsigned long width, unsigned long height) = 0;
-    
+
     // GL_OES_vertex_array_object
     virtual Platform3DObject createVertexArrayOES() = 0;
     virtual void deleteVertexArrayOES(Platform3DObject) = 0;
@@ -309,5 +308,3 @@ public:
 };
 
 } // namespace WebCore
-
-#endif // Extensions3D_h

@@ -32,7 +32,7 @@
 
 namespace WebCore {
 
-class GraphicsContext3D;
+class GraphicsContextGLOpenGL;
 class WebGLContextGroup;
 class WebGLRenderingContextBase;
 
@@ -45,10 +45,10 @@ public:
     // deleteObject may not always delete the OpenGL resource.  For programs and
     // shaders, deletion is delayed until they are no longer attached.
     // FIXME: revisit this when resource sharing between contexts are implemented.
-    void deleteObject(GraphicsContext3D*);
+    void deleteObject(GraphicsContextGLOpenGL*);
 
     void onAttached() { ++m_attachmentCount; }
-    void onDetached(GraphicsContext3D*);
+    void onDetached(GraphicsContextGLOpenGL*);
 
     // This indicates whether the client side issue a delete call already, not
     // whether the OpenGL resource is deleted.
@@ -65,13 +65,13 @@ protected:
     void setObject(Platform3DObject);
 
     // deleteObjectImpl should be only called once to delete the OpenGL resource.
-    virtual void deleteObjectImpl(GraphicsContext3D*, Platform3DObject) = 0;
+    virtual void deleteObjectImpl(GraphicsContextGLOpenGL*, Platform3DObject) = 0;
 
     virtual bool hasGroupOrContext() const = 0;
 
     virtual void detach();
 
-    virtual GraphicsContext3D* getAGraphicsContext3D() const = 0;
+    virtual GraphicsContextGLOpenGL* getAGraphicsContextGL() const = 0;
 
 private:
     Platform3DObject m_object { 0 };

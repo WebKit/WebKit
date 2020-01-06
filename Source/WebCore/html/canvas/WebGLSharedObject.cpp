@@ -54,9 +54,9 @@ void WebGLSharedObject::detachContextGroup()
     }
 }
 
-GraphicsContext3D* WebGLSharedObject::getAGraphicsContext3D() const
+GraphicsContextGLOpenGL* WebGLSharedObject::getAGraphicsContextGL() const
 {
-    return m_contextGroup ? &m_contextGroup->getAGraphicsContext3D() : nullptr;
+    return m_contextGroup ? &m_contextGroup->getAGraphicsContextGL() : nullptr;
 }
 
 }

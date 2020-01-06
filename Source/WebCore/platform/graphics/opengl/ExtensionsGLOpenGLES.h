@@ -26,7 +26,7 @@
 
 #pragma once
 
-#include "Extensions3DOpenGLCommon.h"
+#include "ExtensionsGLOpenGLCommon.h"
 
 #if USE(OPENGL_ES)
 
@@ -64,13 +64,13 @@ typedef void (GL_APIENTRYP PFNGLGETNUNIFORMIVEXTPROC) (GLuint program, GLint loc
 
 namespace WebCore {
 
-class Extensions3DOpenGLES : public Extensions3DOpenGLCommon {
+class ExtensionsGLOpenGLES : public ExtensionsGLOpenGLCommon {
 public:
-    // This class only needs to be instantiated by GraphicsContext3D implementations.
-    Extensions3DOpenGLES(GraphicsContext3D*, bool useIndexedGetString);
-    virtual ~Extensions3DOpenGLES();
+    // This class only needs to be instantiated by GraphicsContextGLOpenGL implementations.
+    ExtensionsGLOpenGLES(GraphicsContextGLOpenGL*, bool useIndexedGetString);
+    virtual ~ExtensionsGLOpenGLES();
 
-    virtual void framebufferTexture2DMultisampleIMG(unsigned long target, unsigned long attachment, unsigned long textarget, unsigned int texture, int level, unsigned long samples);
+    virtual void framebufferTexture2DMultisampleIMG(unsigned long target, unsigned long attachment, unsigned long textarget, unsigned texture, int level, unsigned long samples);
     virtual void renderbufferStorageMultisampleIMG(unsigned long target, unsigned long samples, unsigned long internalformat, unsigned long width, unsigned long height);
 
     // Extension3D methods

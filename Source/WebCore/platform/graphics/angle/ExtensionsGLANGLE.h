@@ -1,6 +1,5 @@
 /*
- * Copyright (C) 2011 Google Inc. All rights reserved.
- * Copyright (C) 2012 Research In Motion Limited. All rights reserved.
+ * Copyright (C) 2019 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,33 +25,43 @@
 
 #pragma once
 
-#include "Extensions3D.h"
+#include "ExtensionsGL.h"
 
-#include "GraphicsContext3D.h"
-#include <wtf/HashSet.h>
+#include "GraphicsContextGLOpenGL.h"
 #include <wtf/text/StringHash.h>
 
 namespace WebCore {
 
-class Extensions3DOpenGLCommon : public Extensions3D {
+class ExtensionsGLANGLE : public ExtensionsGL {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    virtual ~Extensions3DOpenGLCommon();
+    // This class only needs to be instantiated by GraphicsContextGLOpenGL implementations.
+    ExtensionsGLANGLE(GraphicsContextGLOpenGL*, bool useIndexedGetString = false);
+    virtual ~ExtensionsGLANGLE();
 
-    // Extensions3D methods.
+    // ExtensionsGL methods.
     bool supports(const String&) override;
     void ensureEnabled(const String&) override;
     bool isEnabled(const String&) override;
     int getGraphicsResetStatusARB() override;
 
-    Platform3DObject createVertexArrayOES() override = 0;
-    void deleteVertexArrayOES(Platform3DObject) override = 0;
-    GC3Dboolean isVertexArrayOES(Platform3DObject) override = 0;
-    void bindVertexArrayOES(Platform3DObject) override = 0;
-
-    void drawBuffersEXT(GC3Dsizei, const GC3Denum*) override = 0;
+    Platform3DObject createVertexArrayOES() override;
+    void deleteVertexArrayOES(Platform3DObject) override;
+    GC3Dboolean isVertexArrayOES(Platform3DObject) override;
+    void bindVertexArrayOES(Platform3DObject) override;
+    void insertEventMarkerEXT(const String&) override;
+    void pushGroupMarkerEXT(const String&) override;
+    void popGroupMarkerEXT(void) override;
+    void drawBuffersEXT(GC3Dsizei, const GC3Denum*) override;
 
     String getTranslatedShaderSourceANGLE(Platform3DObject) override;
+
+    void blitFramebuffer(long srcX0, long srcY0, long srcX1, long srcY1, long dstX0, long dstY0, long dstX1, long dstY1, unsigned long mask, unsigned long filter) override;
+    void renderbufferStorageMultisample(unsigned long target, unsigned long samples, unsigned long internalformat, unsigned long width, unsigned long height) override;
+
+    void drawArraysInstanced(GC3Denum mode, GC3Dint first, GC3Dsizei count, GC3Dsizei primcount) override;
+    void drawElementsInstanced(GC3Denum mode, GC3Dsizei count, GC3Denum type, long long offset, GC3Dsizei primcount) override;
+    void vertexAttribDivisor(GC3Duint index, GC3Duint divisor) override;
 
     // EXT Robustness - uses getGraphicsResetStatusARB()
     void readnPixelsEXT(int x, int y, GC3Dsizei width, GC3Dsizei height, GC3Denum format, GC3Denum type, GC3Dsizei bufSize, void *data) override;
@@ -68,19 +77,18 @@ public:
     bool requiresBuiltInFunctionEmulation() override { return m_requiresBuiltInFunctionEmulation; }
     bool requiresRestrictedMaximumTextureSize() override { return m_requiresRestrictedMaximumTextureSize; }
 
-protected:
-    friend class Extensions3DOpenGLES;
-    Extensions3DOpenGLCommon(GraphicsContext3D*, bool useIndexedGetString);
-
-    virtual bool supportsExtension(const String&) = 0;
-    virtual String getExtensions() = 0;
+private:
+    bool supportsExtension(const WTF::String&);
+    String getExtensions();
 
     virtual void initializeAvailableExtensions();
     bool m_initializedAvailableExtensions;
     HashSet<String> m_availableExtensions;
+    HashSet<String> m_requestableExtensions;
+    HashSet<String> m_enabledExtensions;
 
-    // Weak pointer back to GraphicsContext3D
-    GraphicsContext3D* m_context;
+    // Weak pointer back to GraphicsContextGLOpenGL.
+    GraphicsContextGLOpenGL* m_context;
 
     bool m_isNVIDIA;
     bool m_isAMD;

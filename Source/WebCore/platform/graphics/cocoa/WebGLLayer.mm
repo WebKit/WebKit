@@ -28,8 +28,8 @@
 #if ENABLE(WEBGL)
 #import "WebGLLayer.h"
 
-#import "GraphicsContext3D.h"
 #import "GraphicsContextCG.h"
+#import "GraphicsContextGLOpenGL.h"
 #import "GraphicsLayer.h"
 #import "GraphicsLayerCA.h"
 #import "ImageBufferUtilitiesCG.h"
@@ -61,7 +61,7 @@
 
 @synthesize context=_context;
 
--(id)initWithGraphicsContext3D:(WebCore::GraphicsContext3D*)context
+-(id)initWithGraphicsContextGL:(WebCore::GraphicsContextGLOpenGL*)context
 {
     _context = context;
     self = [super init];
@@ -108,7 +108,7 @@ static void freeData(void *, const void *data, size_t /* size */)
         return nullptr;
 
 #if USE(OPENGL)
-    CGLContextObj cglContext = static_cast<CGLContextObj>(_context->platformGraphicsContext3D());
+    CGLContextObj cglContext = static_cast<CGLContextObj>(_context->platformGraphicsContextGL());
     CGLSetCurrentContext(cglContext);
 
     RetainPtr<CGColorSpaceRef> imageColorSpace = colorSpace;
@@ -163,7 +163,7 @@ static void freeData(void *, const void *data, size_t /* size */)
         if (_latchedPbuffer) {
 
             GC3Denum texture = _context->platformTexture();
-            gl::BindTexture(GraphicsContext3D::IOSurfaceTextureTarget, texture);
+            gl::BindTexture(GraphicsContextGL::IOSurfaceTextureTarget, texture);
             if (!EGL_ReleaseTexImage(_eglDisplay, _latchedPbuffer, EGL_BACK_BUFFER)) {
                 // FIXME: report error.
                 notImplemented();
@@ -222,7 +222,7 @@ static void freeData(void *, const void *data, size_t /* size */)
         EGL_WIDTH, size.width(),
         EGL_HEIGHT, size.height(),
         EGL_IOSURFACE_PLANE_ANGLE, 0,
-        EGL_TEXTURE_TARGET, GraphicsContext3D::EGLIOSurfaceTextureTarget,
+        EGL_TEXTURE_TARGET, GraphicsContextGL::EGLIOSurfaceTextureTarget,
         EGL_TEXTURE_INTERNAL_FORMAT_ANGLE, usingAlpha ? GL_BGRA_EXT : GL_RGB,
         EGL_TEXTURE_FORMAT, EGL_TEXTURE_RGBA,
         EGL_TEXTURE_TYPE_ANGLE, GL_UNSIGNED_BYTE,
@@ -250,13 +250,13 @@ static void freeData(void *, const void *data, size_t /* size */)
     GC3Denum internalFormat = _usingAlpha ? GL_RGBA : GL_RGB;
 
     // Link the IOSurface to the texture.
-    CGLContextObj cglContext = static_cast<CGLContextObj>(_context->platformGraphicsContext3D());
+    CGLContextObj cglContext = static_cast<CGLContextObj>(_context->platformGraphicsContextGL());
     CGLError error = CGLTexImageIOSurface2D(cglContext, GL_TEXTURE_RECTANGLE_ARB, internalFormat, _bufferSize.width(), _bufferSize.height(), GL_BGRA, GL_UNSIGNED_INT_8_8_8_8_REV, ioSurface, 0);
     ASSERT_UNUSED(error, error == kCGLNoError);
 #elif USE(ANGLE)
     GC3Denum texture = _context->platformTexture();
 
-    gl::BindTexture(GraphicsContext3D::IOSurfaceTextureTarget, texture);
+    gl::BindTexture(GraphicsContextGL::IOSurfaceTextureTarget, texture);
 
     if (_latchedPbuffer) {
         if (!EGL_ReleaseTexImage(_eglDisplay, _latchedPbuffer, EGL_BACK_BUFFER)) {

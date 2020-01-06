@@ -338,7 +338,7 @@ public:
 #if ENABLE(WEBGL)
     virtual bool allowWebGL(bool enabledPerSettings) { return enabledPerSettings; }
     // Informs the embedder that a WebGL canvas inside this frame received a lost context
-    // notification with the given GL_ARB_robustness guilt/innocence code (see Extensions3D.h).
+    // notification with the given GL_ARB_robustness guilt/innocence code (see ExtensionsGL.h).
     virtual void didLoseWebGLContext(int) { }
     virtual WebGLLoadPolicy webGLPolicyForURL(const URL&) const { return WebGLAllowCreation; }
     virtual WebGLLoadPolicy resolveWebGLPolicyForURL(const URL&) const { return WebGLAllowCreation; }

@@ -25,10 +25,10 @@
 
 #include "config.h"
 
-#if ENABLE(GRAPHICS_CONTEXT_3D) && USE(ANGLE)
-#include "Extensions3DANGLE.h"
+#if ENABLE(GRAPHICS_CONTEXT_GL) && USE(ANGLE)
+#include "ExtensionsGLANGLE.h"
 
-#include "GraphicsContext3D.h"
+#include "GraphicsContextGLOpenGL.h"
 
 #include <ANGLE/entry_points_gles_2_0_autogen.h>
 #include <ANGLE/entry_points_gles_3_0_autogen.h>
@@ -43,7 +43,7 @@ typedef void* GLeglContext;
 
 namespace WebCore {
 
-Extensions3DANGLE::Extensions3DANGLE(GraphicsContext3D* context, bool useIndexedGetString)
+ExtensionsGLANGLE::ExtensionsGLANGLE(GraphicsContextGLOpenGL* context, bool useIndexedGetString)
     : m_initializedAvailableExtensions(false)
     , m_context(context)
     , m_isNVIDIA(false)
@@ -70,9 +70,9 @@ Extensions3DANGLE::Extensions3DANGLE(GraphicsContext3D* context, bool useIndexed
         m_isImagination = true;
 }
 
-Extensions3DANGLE::~Extensions3DANGLE() = default;
+ExtensionsGLANGLE::~ExtensionsGLANGLE() = default;
 
-bool Extensions3DANGLE::supports(const String& name)
+bool ExtensionsGLANGLE::supports(const String& name)
 {
     if (!m_initializedAvailableExtensions)
         initializeAvailableExtensions();
@@ -80,7 +80,7 @@ bool Extensions3DANGLE::supports(const String& name)
     return supportsExtension(name);
 }
 
-void Extensions3DANGLE::ensureEnabled(const String& name)
+void ExtensionsGLANGLE::ensureEnabled(const String& name)
 {
     // Enable support in ANGLE (if not enabled already).
     if (m_requestableExtensions.contains(name) && !m_enabledExtensions.contains(name)) {
@@ -90,17 +90,17 @@ void Extensions3DANGLE::ensureEnabled(const String& name)
     }
 }
 
-bool Extensions3DANGLE::isEnabled(const String& name)
+bool ExtensionsGLANGLE::isEnabled(const String& name)
 {
     return m_availableExtensions.contains(name) || m_enabledExtensions.contains(name);
 }
 
-int Extensions3DANGLE::getGraphicsResetStatusARB()
+int ExtensionsGLANGLE::getGraphicsResetStatusARB()
 {
-    return GraphicsContext3D::NO_ERROR;
+    return GraphicsContextGL::NO_ERROR;
 }
 
-String Extensions3DANGLE::getTranslatedShaderSourceANGLE(Platform3DObject shader)
+String ExtensionsGLANGLE::getTranslatedShaderSourceANGLE(Platform3DObject shader)
 {
     int sourceLength = 0;
     m_context->getShaderiv(shader, GL_TRANSLATED_SHADER_SOURCE_LENGTH_ANGLE, &sourceLength);
@@ -116,7 +116,7 @@ String Extensions3DANGLE::getTranslatedShaderSourceANGLE(Platform3DObject shader
     return String(name.data(), returnedLength);
 }
 
-void Extensions3DANGLE::initializeAvailableExtensions()
+void ExtensionsGLANGLE::initializeAvailableExtensions()
 {
     if (m_useIndexedGetString) {
         GLint numExtensions = 0;
@@ -137,33 +137,33 @@ void Extensions3DANGLE::initializeAvailableExtensions()
     m_initializedAvailableExtensions = true;
 }
 
-void Extensions3DANGLE::readnPixelsEXT(int, int, GC3Dsizei, GC3Dsizei, GC3Denum, GC3Denum, GC3Dsizei, void *)
+void ExtensionsGLANGLE::readnPixelsEXT(int, int, GC3Dsizei, GC3Dsizei, GC3Denum, GC3Denum, GC3Dsizei, void *)
 {
     m_context->synthesizeGLError(GL_INVALID_OPERATION);
 }
 
-void Extensions3DANGLE::getnUniformfvEXT(GC3Duint, int, GC3Dsizei, float *)
+void ExtensionsGLANGLE::getnUniformfvEXT(GC3Duint, int, GC3Dsizei, float *)
 {
     m_context->synthesizeGLError(GL_INVALID_OPERATION);
 }
 
-void Extensions3DANGLE::getnUniformivEXT(GC3Duint, int, GC3Dsizei, int *)
+void ExtensionsGLANGLE::getnUniformivEXT(GC3Duint, int, GC3Dsizei, int *)
 {
     m_context->synthesizeGLError(GL_INVALID_OPERATION);
 }
 
-void Extensions3DANGLE::blitFramebuffer(long srcX0, long srcY0, long srcX1, long srcY1, long dstX0, long dstY0, long dstX1, long dstY1, unsigned long mask, unsigned long filter)
+void ExtensionsGLANGLE::blitFramebuffer(long srcX0, long srcY0, long srcX1, long srcY1, long dstX0, long dstY0, long dstX1, long dstY1, unsigned long mask, unsigned long filter)
 {
     // FIXME: consider adding support for APPLE_framebuffer_multisample.
     gl::BlitFramebufferANGLE(srcX0, srcY0, srcX1, srcY1, dstX0, dstY0, dstX1, dstY1, mask, filter);
 }
 
-void Extensions3DANGLE::renderbufferStorageMultisample(unsigned long target, unsigned long samples, unsigned long internalformat, unsigned long width, unsigned long height)
+void ExtensionsGLANGLE::renderbufferStorageMultisample(unsigned long target, unsigned long samples, unsigned long internalformat, unsigned long width, unsigned long height)
 {
     gl::RenderbufferStorageMultisampleANGLE(target, samples, internalformat, width, height);
 }
 
-Platform3DObject Extensions3DANGLE::createVertexArrayOES()
+Platform3DObject ExtensionsGLANGLE::createVertexArrayOES()
 {
     m_context->makeContextCurrent();
     GLuint array = 0;
@@ -171,7 +171,7 @@ Platform3DObject Extensions3DANGLE::createVertexArrayOES()
     return array;
 }
 
-void Extensions3DANGLE::deleteVertexArrayOES(Platform3DObject array)
+void ExtensionsGLANGLE::deleteVertexArrayOES(Platform3DObject array)
 {
     if (!array)
         return;
@@ -180,7 +180,7 @@ void Extensions3DANGLE::deleteVertexArrayOES(Platform3DObject array)
     gl::DeleteVertexArraysOES(1, &array);
 }
 
-GC3Dboolean Extensions3DANGLE::isVertexArrayOES(Platform3DObject array)
+GC3Dboolean ExtensionsGLANGLE::isVertexArrayOES(Platform3DObject array)
 {
     if (!array)
         return GL_FALSE;
@@ -189,63 +189,63 @@ GC3Dboolean Extensions3DANGLE::isVertexArrayOES(Platform3DObject array)
     return gl::IsVertexArrayOES(array);
 }
 
-void Extensions3DANGLE::bindVertexArrayOES(Platform3DObject array)
+void ExtensionsGLANGLE::bindVertexArrayOES(Platform3DObject array)
 {
     m_context->makeContextCurrent();
     gl::BindVertexArrayOES(array);
 }
 
-void Extensions3DANGLE::insertEventMarkerEXT(const String&)
+void ExtensionsGLANGLE::insertEventMarkerEXT(const String&)
 {
     // FIXME: implement this function and add GL_EXT_debug_marker in supports().
     return;
 }
 
-void Extensions3DANGLE::pushGroupMarkerEXT(const String&)
+void ExtensionsGLANGLE::pushGroupMarkerEXT(const String&)
 {
     // FIXME: implement this function and add GL_EXT_debug_marker in supports().
     return;
 }
 
-void Extensions3DANGLE::popGroupMarkerEXT(void)
+void ExtensionsGLANGLE::popGroupMarkerEXT(void)
 {
     // FIXME: implement this function and add GL_EXT_debug_marker in supports().
     return;
 }
 
-bool Extensions3DANGLE::supportsExtension(const String& name)
+bool ExtensionsGLANGLE::supportsExtension(const String& name)
 {
     return m_availableExtensions.contains(name) || m_requestableExtensions.contains(name);
 }
 
-void Extensions3DANGLE::drawBuffersEXT(GC3Dsizei n, const GC3Denum* bufs)
+void ExtensionsGLANGLE::drawBuffersEXT(GC3Dsizei n, const GC3Denum* bufs)
 {
     gl::DrawBuffersEXT(n, bufs);
 }
 
-void Extensions3DANGLE::drawArraysInstanced(GC3Denum mode, GC3Dint first, GC3Dsizei count, GC3Dsizei primcount)
+void ExtensionsGLANGLE::drawArraysInstanced(GC3Denum mode, GC3Dint first, GC3Dsizei count, GC3Dsizei primcount)
 {
     m_context->makeContextCurrent();
     gl::DrawArraysInstancedANGLE(mode, first, count, primcount);
 }
 
-void Extensions3DANGLE::drawElementsInstanced(GC3Denum mode, GC3Dsizei count, GC3Denum type, long long offset, GC3Dsizei primcount)
+void ExtensionsGLANGLE::drawElementsInstanced(GC3Denum mode, GC3Dsizei count, GC3Denum type, long long offset, GC3Dsizei primcount)
 {
     m_context->makeContextCurrent();
     gl::DrawElementsInstancedANGLE(mode, count, type, reinterpret_cast<GLvoid*>(static_cast<intptr_t>(offset)), primcount);
 }
 
-void Extensions3DANGLE::vertexAttribDivisor(GC3Duint index, GC3Duint divisor)
+void ExtensionsGLANGLE::vertexAttribDivisor(GC3Duint index, GC3Duint divisor)
 {
     m_context->makeContextCurrent();
     gl::VertexAttribDivisorANGLE(index, divisor);
 }
 
-String Extensions3DANGLE::getExtensions()
+String ExtensionsGLANGLE::getExtensions()
 {
     return String(reinterpret_cast<const char*>(gl::GetString(GL_EXTENSIONS)));
 }
 
 } // namespace WebCore
 
-#endif // ENABLE(GRAPHICS_CONTEXT_3D) && USE(ANGLE)
+#endif // ENABLE(GRAPHICS_CONTEXT_GL) && USE(ANGLE)

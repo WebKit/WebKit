@@ -68,8 +68,8 @@ private:
 #endif
     bool isEGLContext() const override { return true; }
 
-#if ENABLE(GRAPHICS_CONTEXT_3D)
-    PlatformGraphicsContext3D platformContext() override;
+#if ENABLE(GRAPHICS_CONTEXT_GL)
+    PlatformGraphicsContextGL platformContext() override;
 #endif
 
     enum EGLSurfaceType { PbufferSurface, WindowSurface, PixmapSurface, Surfaceless };

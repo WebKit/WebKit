@@ -26,17 +26,16 @@
 
 #include "config.h"
 
-#if ENABLE(GRAPHICS_CONTEXT_3D)
-
-#include "GraphicsContext3D.h"
+#if ENABLE(GRAPHICS_CONTEXT_GL)
 
 #include "BitmapImage.h"
 #include "GraphicsContextCG.h"
+#include "GraphicsContextGLOpenGL.h"
 #include "Image.h"
 #include "ImageBufferUtilitiesCG.h"
 
 #if HAVE(ARM_NEON_INTRINSICS)
-#include "GraphicsContext3DNEON.h"
+#include "GraphicsContextGLNEON.h"
 #endif
 
 #include <CoreGraphics/CGBitmapContext.h>
@@ -68,7 +67,7 @@ enum AlphaFormat {
 };
 
 // This returns SourceFormatNumFormats if the combination of input parameters is unsupported.
-static GraphicsContext3D::DataFormat getSourceDataFormat(unsigned componentsPerPixel, AlphaFormat alphaFormat, bool is16BitFormat, bool bigEndian)
+static GraphicsContextGL::DataFormat getSourceDataFormat(unsigned componentsPerPixel, AlphaFormat alphaFormat, bool is16BitFormat, bool bigEndian)
 {
     const static SourceDataFormatBase formatTableBase[4][AlphaFormatNumFormats] = { // componentsPerPixel x AlphaFormat
         // AlphaFormatNone            AlphaFormatFirst            AlphaFormatLast
@@ -77,21 +76,21 @@ static GraphicsContext3D::DataFormat getSourceDataFormat(unsigned componentsPerP
         { SourceFormatBaseRGB,        SourceFormatBaseNumFormats, SourceFormatBaseNumFormats }, // 3 componentsPerPixel
         { SourceFormatBaseNumFormats, SourceFormatBaseARGB,       SourceFormatBaseRGBA        } // 4 componentsPerPixel
     };
-    const static GraphicsContext3D::DataFormat formatTable[SourceFormatBaseNumFormats][4] = { // SourceDataFormat::Base x bitsPerComponent x endian
+    const static GraphicsContextGL::DataFormat formatTable[SourceFormatBaseNumFormats][4] = { // SourceDataFormat::Base x bitsPerComponent x endian
         // 8bits, little endian                 8bits, big endian                     16bits, little endian                        16bits, big endian
-        { GraphicsContext3D::DataFormat::R8,    GraphicsContext3D::DataFormat::R8,    GraphicsContext3D::DataFormat::R16Little,    GraphicsContext3D::DataFormat::R16Big },
-        { GraphicsContext3D::DataFormat::A8,    GraphicsContext3D::DataFormat::A8,    GraphicsContext3D::DataFormat::A16Little,    GraphicsContext3D::DataFormat::A16Big },
-        { GraphicsContext3D::DataFormat::AR8,   GraphicsContext3D::DataFormat::RA8,   GraphicsContext3D::DataFormat::RA16Little,   GraphicsContext3D::DataFormat::RA16Big },
-        { GraphicsContext3D::DataFormat::RA8,   GraphicsContext3D::DataFormat::AR8,   GraphicsContext3D::DataFormat::AR16Little,   GraphicsContext3D::DataFormat::AR16Big },
-        { GraphicsContext3D::DataFormat::BGR8,  GraphicsContext3D::DataFormat::RGB8,  GraphicsContext3D::DataFormat::RGB16Little,  GraphicsContext3D::DataFormat::RGB16Big },
-        { GraphicsContext3D::DataFormat::ABGR8, GraphicsContext3D::DataFormat::RGBA8, GraphicsContext3D::DataFormat::RGBA16Little, GraphicsContext3D::DataFormat::RGBA16Big },
-        { GraphicsContext3D::DataFormat::BGRA8, GraphicsContext3D::DataFormat::ARGB8, GraphicsContext3D::DataFormat::ARGB16Little, GraphicsContext3D::DataFormat::ARGB16Big }
+        { GraphicsContextGL::DataFormat::R8,    GraphicsContextGL::DataFormat::R8,    GraphicsContextGL::DataFormat::R16Little,    GraphicsContextGL::DataFormat::R16Big },
+        { GraphicsContextGL::DataFormat::A8,    GraphicsContextGL::DataFormat::A8,    GraphicsContextGL::DataFormat::A16Little,    GraphicsContextGL::DataFormat::A16Big },
+        { GraphicsContextGL::DataFormat::AR8,   GraphicsContextGL::DataFormat::RA8,   GraphicsContextGL::DataFormat::RA16Little,   GraphicsContextGL::DataFormat::RA16Big },
+        { GraphicsContextGL::DataFormat::RA8,   GraphicsContextGL::DataFormat::AR8,   GraphicsContextGL::DataFormat::AR16Little,   GraphicsContextGL::DataFormat::AR16Big },
+        { GraphicsContextGL::DataFormat::BGR8,  GraphicsContextGL::DataFormat::RGB8,  GraphicsContextGL::DataFormat::RGB16Little,  GraphicsContextGL::DataFormat::RGB16Big },
+        { GraphicsContextGL::DataFormat::ABGR8, GraphicsContextGL::DataFormat::RGBA8, GraphicsContextGL::DataFormat::RGBA16Little, GraphicsContextGL::DataFormat::RGBA16Big },
+        { GraphicsContextGL::DataFormat::BGRA8, GraphicsContextGL::DataFormat::ARGB8, GraphicsContextGL::DataFormat::ARGB16Little, GraphicsContextGL::DataFormat::ARGB16Big }
     };
 
     ASSERT(componentsPerPixel <= 4 && componentsPerPixel > 0);
     SourceDataFormatBase formatBase = formatTableBase[componentsPerPixel - 1][alphaFormat];
     if (formatBase == SourceFormatBaseNumFormats)
-        return GraphicsContext3D::DataFormat::NumFormats;
+        return GraphicsContextGL::DataFormat::NumFormats;
     return formatTable[formatBase][(is16BitFormat ? 2 : 0) + (bigEndian ? 1 : 0)];
 }
 
@@ -106,13 +105,13 @@ uint8_t convertColor16BigTo8(uint16_t value)
     return static_cast<uint8_t>(value & 0x00FF);
 }
 
-template<GraphicsContext3D::DataFormat format, typename SourceType, typename DstType>
+template<GraphicsContextGL::DataFormat format, typename SourceType, typename DstType>
 ALWAYS_INLINE void convert16BitFormatToRGBA8(const SourceType*, DstType*, unsigned)
 {
     ASSERT_NOT_REACHED();
 }
 
-template<> ALWAYS_INLINE void convert16BitFormatToRGBA8<GraphicsContext3D::DataFormat::RGBA16Little, uint16_t, uint8_t>(const uint16_t* source, uint8_t* destination, unsigned pixelsPerRow)
+template<> ALWAYS_INLINE void convert16BitFormatToRGBA8<GraphicsContextGL::DataFormat::RGBA16Little, uint16_t, uint8_t>(const uint16_t* source, uint8_t* destination, unsigned pixelsPerRow)
 {
 #if HAVE(ARM_NEON_INTRINSICS)
     SIMD::unpackOneRowOfRGBA16LittleToRGBA8(source, destination, pixelsPerRow);
@@ -127,7 +126,7 @@ template<> ALWAYS_INLINE void convert16BitFormatToRGBA8<GraphicsContext3D::DataF
     }
 }
 
-template<> ALWAYS_INLINE void convert16BitFormatToRGBA8<GraphicsContext3D::DataFormat::RGBA16Big, uint16_t, uint8_t>(const uint16_t* source, uint8_t* destination, unsigned pixelsPerRow)
+template<> ALWAYS_INLINE void convert16BitFormatToRGBA8<GraphicsContextGL::DataFormat::RGBA16Big, uint16_t, uint8_t>(const uint16_t* source, uint8_t* destination, unsigned pixelsPerRow)
 {
     for (unsigned i = 0; i < pixelsPerRow; ++i) {
         destination[0] = convertColor16BigTo8(source[0]);
@@ -139,7 +138,7 @@ template<> ALWAYS_INLINE void convert16BitFormatToRGBA8<GraphicsContext3D::DataF
     }
 }
 
-template<> ALWAYS_INLINE void convert16BitFormatToRGBA8<GraphicsContext3D::DataFormat::RGB16Little, uint16_t, uint8_t>(const uint16_t* source, uint8_t* destination, unsigned pixelsPerRow)
+template<> ALWAYS_INLINE void convert16BitFormatToRGBA8<GraphicsContextGL::DataFormat::RGB16Little, uint16_t, uint8_t>(const uint16_t* source, uint8_t* destination, unsigned pixelsPerRow)
 {
 #if HAVE(ARM_NEON_INTRINSICS)
     SIMD::unpackOneRowOfRGB16LittleToRGBA8(source, destination, pixelsPerRow);
@@ -154,7 +153,7 @@ template<> ALWAYS_INLINE void convert16BitFormatToRGBA8<GraphicsContext3D::DataF
     }
 }
 
-template<> ALWAYS_INLINE void convert16BitFormatToRGBA8<GraphicsContext3D::DataFormat::RGB16Big, uint16_t, uint8_t>(const uint16_t* source, uint8_t* destination, unsigned pixelsPerRow)
+template<> ALWAYS_INLINE void convert16BitFormatToRGBA8<GraphicsContextGL::DataFormat::RGB16Big, uint16_t, uint8_t>(const uint16_t* source, uint8_t* destination, unsigned pixelsPerRow)
 {
     for (unsigned i = 0; i < pixelsPerRow; ++i) {
         destination[0] = convertColor16BigTo8(source[0]);
@@ -166,7 +165,7 @@ template<> ALWAYS_INLINE void convert16BitFormatToRGBA8<GraphicsContext3D::DataF
     }
 }
 
-template<> ALWAYS_INLINE void convert16BitFormatToRGBA8<GraphicsContext3D::DataFormat::ARGB16Little, uint16_t, uint8_t>(const uint16_t* source, uint8_t* destination, unsigned pixelsPerRow)
+template<> ALWAYS_INLINE void convert16BitFormatToRGBA8<GraphicsContextGL::DataFormat::ARGB16Little, uint16_t, uint8_t>(const uint16_t* source, uint8_t* destination, unsigned pixelsPerRow)
 {
 #if HAVE(ARM_NEON_INTRINSICS)
     SIMD::unpackOneRowOfARGB16LittleToRGBA8(source, destination, pixelsPerRow);
@@ -181,7 +180,7 @@ template<> ALWAYS_INLINE void convert16BitFormatToRGBA8<GraphicsContext3D::DataF
     }
 }
 
-template<> ALWAYS_INLINE void convert16BitFormatToRGBA8<GraphicsContext3D::DataFormat::ARGB16Big, uint16_t, uint8_t>(const uint16_t* source, uint8_t* destination, unsigned pixelsPerRow)
+template<> ALWAYS_INLINE void convert16BitFormatToRGBA8<GraphicsContextGL::DataFormat::ARGB16Big, uint16_t, uint8_t>(const uint16_t* source, uint8_t* destination, unsigned pixelsPerRow)
 {
     for (unsigned i = 0; i < pixelsPerRow; ++i) {
         destination[0] = convertColor16BigTo8(source[1]);
@@ -193,7 +192,7 @@ template<> ALWAYS_INLINE void convert16BitFormatToRGBA8<GraphicsContext3D::DataF
     }
 }
 
-template<> ALWAYS_INLINE void convert16BitFormatToRGBA8<GraphicsContext3D::DataFormat::R16Little, uint16_t, uint8_t>(const uint16_t* source, uint8_t* destination, unsigned pixelsPerRow)
+template<> ALWAYS_INLINE void convert16BitFormatToRGBA8<GraphicsContextGL::DataFormat::R16Little, uint16_t, uint8_t>(const uint16_t* source, uint8_t* destination, unsigned pixelsPerRow)
 {
     for (unsigned i = 0; i < pixelsPerRow; ++i) {
         destination[0] = convertColor16LittleTo8(source[0]);
@@ -205,7 +204,7 @@ template<> ALWAYS_INLINE void convert16BitFormatToRGBA8<GraphicsContext3D::DataF
     }
 }
 
-template<> ALWAYS_INLINE void convert16BitFormatToRGBA8<GraphicsContext3D::DataFormat::R16Big, uint16_t, uint8_t>(const uint16_t* source, uint8_t* destination, unsigned pixelsPerRow)
+template<> ALWAYS_INLINE void convert16BitFormatToRGBA8<GraphicsContextGL::DataFormat::R16Big, uint16_t, uint8_t>(const uint16_t* source, uint8_t* destination, unsigned pixelsPerRow)
 {
     for (unsigned i = 0; i < pixelsPerRow; ++i) {
         destination[0] = convertColor16BigTo8(source[0]);
@@ -217,7 +216,7 @@ template<> ALWAYS_INLINE void convert16BitFormatToRGBA8<GraphicsContext3D::DataF
     }
 }
 
-template<> ALWAYS_INLINE void convert16BitFormatToRGBA8<GraphicsContext3D::DataFormat::RA16Little, uint16_t, uint8_t>(const uint16_t* source, uint8_t* destination, unsigned pixelsPerRow)
+template<> ALWAYS_INLINE void convert16BitFormatToRGBA8<GraphicsContextGL::DataFormat::RA16Little, uint16_t, uint8_t>(const uint16_t* source, uint8_t* destination, unsigned pixelsPerRow)
 {
     for (unsigned i = 0; i < pixelsPerRow; ++i) {
         destination[0] = convertColor16LittleTo8(source[0]);
@@ -229,7 +228,7 @@ template<> ALWAYS_INLINE void convert16BitFormatToRGBA8<GraphicsContext3D::DataF
     }
 }
 
-template<> ALWAYS_INLINE void convert16BitFormatToRGBA8<GraphicsContext3D::DataFormat::RA16Big, uint16_t, uint8_t>(const uint16_t* source, uint8_t* destination, unsigned pixelsPerRow)
+template<> ALWAYS_INLINE void convert16BitFormatToRGBA8<GraphicsContextGL::DataFormat::RA16Big, uint16_t, uint8_t>(const uint16_t* source, uint8_t* destination, unsigned pixelsPerRow)
 {
     for (unsigned i = 0; i < pixelsPerRow; ++i) {
         destination[0] = convertColor16BigTo8(source[0]);
@@ -241,7 +240,7 @@ template<> ALWAYS_INLINE void convert16BitFormatToRGBA8<GraphicsContext3D::DataF
     }
 }
 
-template<> ALWAYS_INLINE void convert16BitFormatToRGBA8<GraphicsContext3D::DataFormat::AR16Little, uint16_t, uint8_t>(const uint16_t* source, uint8_t* destination, unsigned pixelsPerRow)
+template<> ALWAYS_INLINE void convert16BitFormatToRGBA8<GraphicsContextGL::DataFormat::AR16Little, uint16_t, uint8_t>(const uint16_t* source, uint8_t* destination, unsigned pixelsPerRow)
 {
     for (unsigned i = 0; i < pixelsPerRow; ++i) {
         destination[0] = convertColor16LittleTo8(source[1]);
@@ -253,7 +252,7 @@ template<> ALWAYS_INLINE void convert16BitFormatToRGBA8<GraphicsContext3D::DataF
     }
 }
 
-template<> ALWAYS_INLINE void convert16BitFormatToRGBA8<GraphicsContext3D::DataFormat::AR16Big, uint16_t, uint8_t>(const uint16_t* source, uint8_t* destination, unsigned pixelsPerRow)
+template<> ALWAYS_INLINE void convert16BitFormatToRGBA8<GraphicsContextGL::DataFormat::AR16Big, uint16_t, uint8_t>(const uint16_t* source, uint8_t* destination, unsigned pixelsPerRow)
 {
     for (unsigned i = 0; i < pixelsPerRow; ++i) {
         destination[0] = convertColor16BigTo8(source[1]);
@@ -265,7 +264,7 @@ template<> ALWAYS_INLINE void convert16BitFormatToRGBA8<GraphicsContext3D::DataF
     }
 }
 
-template<> ALWAYS_INLINE void convert16BitFormatToRGBA8<GraphicsContext3D::DataFormat::A16Little, uint16_t, uint8_t>(const uint16_t* source, uint8_t* destination, unsigned pixelsPerRow)
+template<> ALWAYS_INLINE void convert16BitFormatToRGBA8<GraphicsContextGL::DataFormat::A16Little, uint16_t, uint8_t>(const uint16_t* source, uint8_t* destination, unsigned pixelsPerRow)
 {
     for (unsigned i = 0; i < pixelsPerRow; ++i) {
         destination[0] = 0x0;
@@ -277,7 +276,7 @@ template<> ALWAYS_INLINE void convert16BitFormatToRGBA8<GraphicsContext3D::DataF
     }
 }
 
-template<> ALWAYS_INLINE void convert16BitFormatToRGBA8<GraphicsContext3D::DataFormat::A16Big, uint16_t, uint8_t>(const uint16_t* source, uint8_t* destination, unsigned pixelsPerRow)
+template<> ALWAYS_INLINE void convert16BitFormatToRGBA8<GraphicsContextGL::DataFormat::A16Big, uint16_t, uint8_t>(const uint16_t* source, uint8_t* destination, unsigned pixelsPerRow)
 {
     for (unsigned i = 0; i < pixelsPerRow; ++i) {
         destination[0] = 0x0;
@@ -289,27 +288,27 @@ template<> ALWAYS_INLINE void convert16BitFormatToRGBA8<GraphicsContext3D::DataF
     }
 }
 
-void convert16BitFormatToRGBA8(GraphicsContext3D::DataFormat srcFormat, const uint16_t* source, uint8_t* destination, unsigned pixelsPerRow)
+void convert16BitFormatToRGBA8(GraphicsContextGL::DataFormat srcFormat, const uint16_t* source, uint8_t* destination, unsigned pixelsPerRow)
 {
 #define CONVERT16BITFORMATTORGBA8(SrcFormat) \
     case SrcFormat: \
         return convert16BitFormatToRGBA8<SrcFormat>(source, destination, pixelsPerRow);
 
     switch (srcFormat) {
-        CONVERT16BITFORMATTORGBA8(GraphicsContext3D::DataFormat::R16Little)
-        CONVERT16BITFORMATTORGBA8(GraphicsContext3D::DataFormat::R16Big)
-        CONVERT16BITFORMATTORGBA8(GraphicsContext3D::DataFormat::A16Little)
-        CONVERT16BITFORMATTORGBA8(GraphicsContext3D::DataFormat::A16Big)
-        CONVERT16BITFORMATTORGBA8(GraphicsContext3D::DataFormat::RA16Little)
-        CONVERT16BITFORMATTORGBA8(GraphicsContext3D::DataFormat::RA16Big)
-        CONVERT16BITFORMATTORGBA8(GraphicsContext3D::DataFormat::AR16Little)
-        CONVERT16BITFORMATTORGBA8(GraphicsContext3D::DataFormat::AR16Big)
-        CONVERT16BITFORMATTORGBA8(GraphicsContext3D::DataFormat::RGB16Little)
-        CONVERT16BITFORMATTORGBA8(GraphicsContext3D::DataFormat::RGB16Big)
-        CONVERT16BITFORMATTORGBA8(GraphicsContext3D::DataFormat::RGBA16Little)
-        CONVERT16BITFORMATTORGBA8(GraphicsContext3D::DataFormat::RGBA16Big)
-        CONVERT16BITFORMATTORGBA8(GraphicsContext3D::DataFormat::ARGB16Little)
-        CONVERT16BITFORMATTORGBA8(GraphicsContext3D::DataFormat::ARGB16Big)
+        CONVERT16BITFORMATTORGBA8(GraphicsContextGL::DataFormat::R16Little)
+        CONVERT16BITFORMATTORGBA8(GraphicsContextGL::DataFormat::R16Big)
+        CONVERT16BITFORMATTORGBA8(GraphicsContextGL::DataFormat::A16Little)
+        CONVERT16BITFORMATTORGBA8(GraphicsContextGL::DataFormat::A16Big)
+        CONVERT16BITFORMATTORGBA8(GraphicsContextGL::DataFormat::RA16Little)
+        CONVERT16BITFORMATTORGBA8(GraphicsContextGL::DataFormat::RA16Big)
+        CONVERT16BITFORMATTORGBA8(GraphicsContextGL::DataFormat::AR16Little)
+        CONVERT16BITFORMATTORGBA8(GraphicsContextGL::DataFormat::AR16Big)
+        CONVERT16BITFORMATTORGBA8(GraphicsContextGL::DataFormat::RGB16Little)
+        CONVERT16BITFORMATTORGBA8(GraphicsContextGL::DataFormat::RGB16Big)
+        CONVERT16BITFORMATTORGBA8(GraphicsContextGL::DataFormat::RGBA16Little)
+        CONVERT16BITFORMATTORGBA8(GraphicsContextGL::DataFormat::RGBA16Big)
+        CONVERT16BITFORMATTORGBA8(GraphicsContextGL::DataFormat::ARGB16Little)
+        CONVERT16BITFORMATTORGBA8(GraphicsContextGL::DataFormat::ARGB16Big)
     default:
         ASSERT_NOT_REACHED();
     }
@@ -318,9 +317,9 @@ void convert16BitFormatToRGBA8(GraphicsContext3D::DataFormat srcFormat, const ui
 
 }
 
-GraphicsContext3D::ImageExtractor::~ImageExtractor() = default;
+GraphicsContextGLOpenGL::ImageExtractor::~ImageExtractor() = default;
 
-bool GraphicsContext3D::ImageExtractor::extractImage(bool premultiplyAlpha, bool ignoreGammaAndColorProfile)
+bool GraphicsContextGLOpenGL::ImageExtractor::extractImage(bool premultiplyAlpha, bool ignoreGammaAndColorProfile)
 {
     if (!m_image)
         return false;
@@ -465,7 +464,7 @@ bool GraphicsContext3D::ImageExtractor::extractImage(bool premultiplyAlpha, bool
 
     m_imagePixelData = reinterpret_cast<const void*>(CFDataGetBytePtr(m_pixelData.get()));
 
-    unsigned int srcUnpackAlignment = 0;
+    unsigned srcUnpackAlignment = 0;
     size_t bytesPerRow = CGImageGetBytesPerRow(m_cgImage.get());
     unsigned padding = bytesPerRow - bitsPerPixel / 8 * m_imageWidth;
     if (padding) {
@@ -501,7 +500,7 @@ static void releaseImageData(void*, const void* data, size_t)
     fastFree(const_cast<void*>(data));
 }
 
-void GraphicsContext3D::paintToCanvas(const unsigned char* imagePixels, const IntSize& imageSize, const IntSize& canvasSize, GraphicsContext& context)
+void GraphicsContextGLOpenGL::paintToCanvas(const unsigned char* imagePixels, const IntSize& imageSize, const IntSize& canvasSize, GraphicsContext& context)
 {
     if (!imagePixels || imageSize.isEmpty() || canvasSize.isEmpty())
         return;
@@ -544,4 +543,4 @@ void GraphicsContext3D::paintToCanvas(const unsigned char* imagePixels, const In
 
 } // namespace WebCore
 
-#endif // ENABLE(GRAPHICS_CONTEXT_3D)
+#endif // ENABLE(GRAPHICS_CONTEXT_GL)

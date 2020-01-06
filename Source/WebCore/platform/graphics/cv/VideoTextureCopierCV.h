@@ -27,7 +27,7 @@
 
 #if HAVE(CORE_VIDEO)
 
-#import "GraphicsContext3D.h"
+#import "GraphicsContextGLOpenGL.h"
 #import <wtf/UnsafePointer.h>
 
 typedef struct __CVBuffer* CVImageBufferRef;
@@ -42,7 +42,7 @@ class TextureCacheCV;
 class VideoTextureCopierCV {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    VideoTextureCopierCV(GraphicsContext3D&);
+    VideoTextureCopierCV(GraphicsContextGLOpenGL&);
     ~VideoTextureCopierCV();
 
 #if PLATFORM(IOS_FAMILY)
@@ -54,7 +54,7 @@ public:
     bool copyImageToPlatformTexture(CVPixelBufferRef, size_t width, size_t height, Platform3DObject outputTexture, GC3Denum outputTarget, GC3Dint level, GC3Denum internalFormat, GC3Denum format, GC3Denum type, bool premultiplyAlpha, bool flipY);
     bool copyVideoTextureToPlatformTexture(TextureType, size_t width, size_t height, Platform3DObject outputTexture, GC3Denum outputTarget, GC3Dint level, GC3Denum internalFormat, GC3Denum format, GC3Denum type, bool premultiplyAlpha, bool flipY, bool swapColorChannels = false);
 
-    GraphicsContext3D& context() { return m_context; }
+    GraphicsContextGLOpenGL& context() { return m_context; }
 
 private:
     bool copyVideoTextureToPlatformTexture(Platform3DObject inputTexture, GC3Denum inputTarget, size_t width, size_t height, Platform3DObject outputTexture, GC3Denum outputTarget, GC3Dint level, GC3Denum internalFormat, GC3Denum format, GC3Denum type, bool premultiplyAlpha, bool flipY, bool swapColorChannels);
@@ -81,8 +81,8 @@ private:
     void detachIOSurfaceFromTexture(void* handle);
 #endif
 
-    Ref<GraphicsContext3D> m_sharedContext;
-    Ref<GraphicsContext3D> m_context;
+    Ref<GraphicsContextGLOpenGL> m_sharedContext;
+    Ref<GraphicsContextGLOpenGL> m_context;
 #if !USE(ANGLE)
     std::unique_ptr<TextureCacheCV> m_textureCache;
 #endif

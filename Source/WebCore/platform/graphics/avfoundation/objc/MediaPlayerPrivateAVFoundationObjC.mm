@@ -38,11 +38,11 @@
 #import "CDMSessionAVFoundationObjC.h"
 #import "Cookie.h"
 #import "DeprecatedGlobalSettings.h"
-#import "Extensions3D.h"
+#import "ExtensionsGL.h"
 #import "FloatConversion.h"
 #import "GraphicsContext.h"
-#import "GraphicsContext3D.h"
 #import "GraphicsContextCG.h"
+#import "GraphicsContextGLOpenGL.h"
 #import "ImageRotationSessionVT.h"
 #import "InbandMetadataTextTrackPrivateAVF.h"
 #import "InbandTextTrackPrivateAVFObjC.h"
@@ -2295,7 +2295,7 @@ void MediaPlayerPrivateAVFoundationObjC::paintWithVideoOutput(GraphicsContext& c
 
 }
 
-bool MediaPlayerPrivateAVFoundationObjC::copyVideoTextureToPlatformTexture(GraphicsContext3D* context, Platform3DObject outputTexture, GC3Denum outputTarget, GC3Dint level, GC3Denum internalFormat, GC3Denum format, GC3Denum type, bool premultiplyAlpha, bool flipY)
+bool MediaPlayerPrivateAVFoundationObjC::copyVideoTextureToPlatformTexture(GraphicsContextGLOpenGL* context, Platform3DObject outputTexture, GC3Denum outputTarget, GC3Dint level, GC3Denum internalFormat, GC3Denum format, GC3Denum type, bool premultiplyAlpha, bool flipY)
 {
     ASSERT(context);
 

@@ -28,7 +28,7 @@
 #if ENABLE(WEBGL)
 
 #include "ANGLEWebKitBridge.h"
-#include "GraphicsContext3DBase.h"
+#include "GraphicsContextGL.h"
 #include <memory>
 #include <wtf/HashCountedSet.h>
 #include <wtf/HashMap.h>
@@ -67,13 +67,13 @@ class GC3DLayer;
 #endif
 
 namespace WebCore {
-class Extensions3D;
+class ExtensionsGL;
 #if USE(ANGLE)
-class Extensions3DANGLE;
+class ExtensionsGLANGLE;
 #elif !PLATFORM(COCOA) && USE(OPENGL_ES)
-class Extensions3DOpenGLES;
+class ExtensionsGLOpenGLES;
 #elif USE(OPENGL) || (PLATFORM(COCOA) && USE(OPENGL_ES))
-class Extensions3DOpenGL;
+class ExtensionsGLOpenGL;
 #endif
 class HostWindow;
 class ImageBuffer;
@@ -84,9 +84,9 @@ class TextureMapperGC3DPlatformLayer;
 
 typedef WTF::HashMap<CString, uint64_t> ShaderNameHash;
 
-class GraphicsContext3DPrivate;
+class GraphicsContextGLOpenGLPrivate;
 
-class GraphicsContext3D : public GraphicsContext3DBase {
+class GraphicsContextGLOpenGL : public GraphicsContextGL {
 public:
     class Client {
     public:
@@ -97,23 +97,23 @@ public:
         virtual void dispatchContextChangedNotification() = 0;
     };
 
-    static RefPtr<GraphicsContext3D> create(GraphicsContext3DAttributes, HostWindow*, Destination = Destination::Offscreen);
-    virtual ~GraphicsContext3D();
+    static RefPtr<GraphicsContextGLOpenGL> create(GraphicsContextGLAttributes, HostWindow*, Destination = Destination::Offscreen);
+    virtual ~GraphicsContextGLOpenGL();
 
 #if PLATFORM(COCOA)
-    static Ref<GraphicsContext3D> createShared(GraphicsContext3D& sharedContext);
+    static Ref<GraphicsContextGLOpenGL> createShared(GraphicsContextGLOpenGL& sharedContext);
 #endif
 
 #if PLATFORM(COCOA)
-    PlatformGraphicsContext3D platformGraphicsContext3D() const override { return m_contextObj; }
+    PlatformGraphicsContextGL platformGraphicsContextGL() const override { return m_contextObj; }
     Platform3DObject platformTexture() const override { return m_texture; }
     CALayer* platformLayer() const override { return reinterpret_cast<CALayer*>(m_webGLLayer.get()); }
 #if USE(ANGLE)
-    PlatformGraphicsContext3DDisplay platformDisplay() const { return m_displayObj; }
-    PlatformGraphicsContext3DConfig platformConfig() const { return m_configObj; }
+    PlatformGraphicsContextGLDisplay platformDisplay() const { return m_displayObj; }
+    PlatformGraphicsContextGLConfig platformConfig() const { return m_configObj; }
 #endif // USE(ANGLE)
 #else
-    PlatformGraphicsContext3D platformGraphicsContext3D() const override;
+    PlatformGraphicsContextGL platformGraphicsContextGL() const override;
     Platform3DObject platformTexture() const override;
     PlatformLayer* platformLayer() const override;
 #endif
@@ -150,9 +150,9 @@ public:
     // for the given format and type combination. Returns false if
     // either was an invalid enum.
     static bool computeFormatAndTypeParameters(GC3Denum format,
-                                               GC3Denum type,
-                                               unsigned int* componentsPerPixel,
-                                               unsigned int* bytesPerComponent);
+        GC3Denum type,
+        unsigned* componentsPerPixel,
+        unsigned* bytesPerComponent);
 
     // Computes the image size in bytes. If paddingInBytes is not null, padding
     // is also calculated in return. Returns NO_ERROR if succeed, otherwise
@@ -160,12 +160,12 @@ public:
     //   INVALID_VALUE if width/height is negative or overflow happens.
     //   INVALID_ENUM if format/type is illegal.
     static GC3Denum computeImageSizeInBytes(GC3Denum format,
-                                     GC3Denum type,
-                                     GC3Dsizei width,
-                                     GC3Dsizei height,
-                                     GC3Dint alignment,
-                                     unsigned int* imageSizeInBytes,
-                                     unsigned int* paddingInBytes);
+        GC3Denum type,
+        GC3Dsizei width,
+        GC3Dsizei height,
+        GC3Dint alignment,
+        unsigned* imageSizeInBytes,
+        unsigned* paddingInBytes);
 
     static bool possibleFormatAndTypeForInternalFormat(GC3Denum internalFormat, GC3Denum& format, GC3Denum& type);
 
@@ -174,23 +174,23 @@ public:
     // and obeying the flipY and premultiplyAlpha flags. Returns true
     // upon success.
     static bool extractImageData(ImageData*,
-                          GC3Denum format,
-                          GC3Denum type,
-                          bool flipY,
-                          bool premultiplyAlpha,
-                          Vector<uint8_t>& data);
+        GC3Denum format,
+        GC3Denum type,
+        bool flipY,
+        bool premultiplyAlpha,
+        Vector<uint8_t>& data);
 
     // Helper function which extracts the user-supplied texture
     // data, applying the flipY and premultiplyAlpha parameters.
     // If the data is not tightly packed according to the passed
     // unpackAlignment, the output data will be tightly packed.
     // Returns true if successful, false if any error occurred.
-    static bool extractTextureData(unsigned int width, unsigned int height,
-                            GC3Denum format, GC3Denum type,
-                            unsigned int unpackAlignment,
-                            bool flipY, bool premultiplyAlpha,
-                            const void* pixels,
-                            Vector<uint8_t>& data);
+    static bool extractTextureData(unsigned width, unsigned height,
+        GC3Denum format, GC3Denum type,
+        unsigned unpackAlignment,
+        bool flipY, bool premultiplyAlpha,
+        const void* pixels,
+        Vector<uint8_t>& data);
 
     //----------------------------------------------------------------------
     // Entry points for WebGL.
@@ -411,7 +411,7 @@ public:
 
     void setContextVisibility(bool);
 
-    GraphicsContext3DPowerPreference powerPreferenceUsedForCreation() const { return m_powerPreferenceUsedForCreation; }
+    GraphicsContextGLPowerPreference powerPreferenceUsedForCreation() const { return m_powerPreferenceUsedForCreation; }
 
     // Support for buffer creation and deletion
     Platform3DObject createBuffer() override;
@@ -444,9 +444,9 @@ public:
 
     // Support for extensions. Returns a non-null object, though not
     // all methods it contains may necessarily be supported on the
-    // current hardware. Must call Extensions3D::supports() to
+    // current hardware. Must call ExtensionsGL::supports() to
     // determine this.
-    Extensions3D& getExtensions() override;
+    ExtensionsGL& getExtensions() override;
 
     IntSize getInternalFramebufferSize() const;
 
@@ -509,7 +509,7 @@ public:
 #endif
 
 private:
-    GraphicsContext3D(GraphicsContext3DAttributes, HostWindow*, Destination = Destination::Offscreen, GraphicsContext3D* sharedContext = nullptr);
+    GraphicsContextGLOpenGL(GraphicsContextGLAttributes, HostWindow*, Destination = Destination::Offscreen, GraphicsContextGLOpenGL* sharedContext = nullptr);
 
     // Helper for packImageData/extractImageData/extractTextureData which implement packing of pixel
     // data into the specified OpenGL destination format and type.
@@ -550,10 +550,10 @@ private:
 
 #if PLATFORM(COCOA)
     RetainPtr<WebGLLayer> m_webGLLayer;
-    PlatformGraphicsContext3D m_contextObj { nullptr };
+    PlatformGraphicsContextGL m_contextObj { nullptr };
 #if USE(ANGLE)
-    PlatformGraphicsContext3DDisplay m_displayObj { nullptr };
-    PlatformGraphicsContext3DConfig m_configObj { nullptr };
+    PlatformGraphicsContextGLDisplay m_displayObj { nullptr };
+    PlatformGraphicsContextGLConfig m_configObj { nullptr };
 #endif // USE(ANGLE)
 #endif // PLATFORM(COCOA)
 
@@ -631,19 +631,19 @@ private:
 #endif // !USE(ANGLE)
 
 #if USE(ANGLE)
-    friend class Extensions3DANGLE;
-    std::unique_ptr<Extensions3DANGLE> m_extensions;
+    friend class ExtensionsGLANGLE;
+    std::unique_ptr<ExtensionsGLANGLE> m_extensions;
 #elif !PLATFORM(COCOA) && USE(OPENGL_ES)
-    friend class Extensions3DOpenGLES;
-    friend class Extensions3DOpenGLCommon;
-    std::unique_ptr<Extensions3DOpenGLES> m_extensions;
+    friend class ExtensionsGLOpenGLES;
+    friend class ExtensionsGLOpenGLCommon;
+    std::unique_ptr<ExtensionsGLOpenGLES> m_extensions;
 #elif USE(OPENGL) || (PLATFORM(COCOA) && USE(OPENGL_ES))
-    friend class Extensions3DOpenGL;
-    friend class Extensions3DOpenGLCommon;
-    std::unique_ptr<Extensions3DOpenGL> m_extensions;
+    friend class ExtensionsGLOpenGL;
+    friend class ExtensionsGLOpenGLCommon;
+    std::unique_ptr<ExtensionsGLOpenGL> m_extensions;
 #endif
 
-    GraphicsContext3DPowerPreference m_powerPreferenceUsedForCreation { GraphicsContext3DPowerPreference::Default };
+    GraphicsContextGLPowerPreference m_powerPreferenceUsedForCreation { GraphicsContextGLPowerPreference::Default };
     Vector<Vector<float>> m_vertexArray;
 
 #if !USE(ANGLE)
@@ -665,12 +665,12 @@ private:
     GC3Duint m_internalColorFormat { 0 };
 
 #if USE(ANGLE) && PLATFORM(COCOA)
-    PlatformGraphicsContext3DSurface m_pbuffer;
+    PlatformGraphicsContextGLSurface m_pbuffer;
 #endif
 
-    struct GraphicsContext3DState {
+    struct GraphicsContextGLState {
         GC3Duint boundFBO { 0 };
-        GC3Denum activeTextureUnit { GraphicsContext3D::TEXTURE0 };
+        GC3Denum activeTextureUnit { GraphicsContextGL::TEXTURE0 };
 
         using BoundTextureMap = HashMap<GC3Denum,
             std::pair<GC3Duint, GC3Denum>,
@@ -706,7 +706,7 @@ private:
         TextureSeedCount textureSeedCount;
     };
 
-    GraphicsContext3DState m_state;
+    GraphicsContextGLState m_state;
 
     // For multisampling
     GC3Duint m_multisampleFBO { 0 };
@@ -722,9 +722,9 @@ private:
 #elif USE(TEXTURE_MAPPER)
     friend class TextureMapperGC3DPlatformLayer;
     std::unique_ptr<TextureMapperGC3DPlatformLayer> m_texmapLayer;
-#else
-    friend class GraphicsContext3DPrivate;
-    std::unique_ptr<GraphicsContext3DPrivate> m_private;
+#elif !PLATFORM(COCOA)
+    friend class GraphicsContextGLOpenGLPrivate;
+    std::unique_ptr<GraphicsContextGLOpenGLPrivate> m_private;
 #endif
 
     HashSet<Client*> m_clients;

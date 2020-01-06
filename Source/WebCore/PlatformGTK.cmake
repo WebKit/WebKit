@@ -131,28 +131,28 @@ endif ()
 
 if (USE_ANGLE_WEBGL)
     list(APPEND WebCore_SOURCES
-        platform/graphics/angle/Extensions3DANGLE.cpp
-        platform/graphics/angle/GraphicsContext3DANGLE.cpp
+        platform/graphics/angle/ExtensionsGLANGLE.cpp
+        platform/graphics/angle/GraphicsContextGLANGLE.cpp
         platform/graphics/angle/TemporaryANGLESetting.cpp
     )
 else ()
     list(APPEND WebCore_SOURCES
-        platform/graphics/opengl/Extensions3DOpenGLCommon.cpp
-        platform/graphics/opengl/GraphicsContext3DOpenGLCommon.cpp
+        platform/graphics/opengl/ExtensionsGLOpenGLCommon.cpp
+        platform/graphics/opengl/GraphicsContextGLOpenGLCommon.cpp
         platform/graphics/opengl/TemporaryOpenGLSetting.cpp
     )
 
     if (USE_OPENGL_ES)
         list(APPEND WebCore_SOURCES
-            platform/graphics/opengl/Extensions3DOpenGLES.cpp
-            platform/graphics/opengl/GraphicsContext3DOpenGLES.cpp
+            platform/graphics/opengl/ExtensionsGLOpenGLES.cpp
+            platform/graphics/opengl/GraphicsContextGLOpenGLES.cpp
         )
     endif ()
 
     if (USE_OPENGL)
         list(APPEND WebCore_SOURCES
-            platform/graphics/opengl/Extensions3DOpenGL.cpp
-            platform/graphics/opengl/GraphicsContext3DOpenGL.cpp
+            platform/graphics/opengl/ExtensionsGLOpenGL.cpp
+            platform/graphics/opengl/GraphicsContextGLOpenGLBase.cpp
         )
     endif ()
 endif ()

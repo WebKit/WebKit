@@ -163,10 +163,11 @@
         "WebGL": {
             "filename": r"Source/WebCore/html/canvas/.*WebGL.*"
                         r"|Source/WebCore/bindings/js/.*WebGL.*"
+                        r"|Source/WebCore/platform/graphics/angle"
                         r"|Source/WebCore/platform/graphics/gpu"
                         r"|Source/WebCore/platform/graphics/opengl"
                         r"|Source/WebCore/platform/graphics/ANGLE.*"
-                        r"|Source/WebCore/platform/graphics/.*GraphicsContext3D.*"
+                        r"|Source/WebCore/platform/graphics/.*GraphicsContextGL.*"
                         r"|Source/ThirdParty/ANGLE",
         },
         "Filters": {

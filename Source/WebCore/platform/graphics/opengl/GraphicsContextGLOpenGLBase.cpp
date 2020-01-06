@@ -25,15 +25,14 @@
  */
 
 #include "config.h"
+#include "GraphicsContextGLOpenGL.h"
 
-#if ENABLE(GRAPHICS_CONTEXT_3D) && (USE(OPENGL) || (PLATFORM(COCOA) && USE(OPENGL_ES)))
-
-#include "GraphicsContext3D.h"
+#if ENABLE(GRAPHICS_CONTEXT_GL) && (USE(OPENGL) || (PLATFORM(COCOA) && USE(OPENGL_ES)))
 
 #if PLATFORM(IOS_FAMILY)
-#include "GraphicsContext3DIOS.h"
+#include "GraphicsContextGLOpenGLESIOS.h"
 #endif
-#include "Extensions3DOpenGL.h"
+#include "ExtensionsGLOpenGL.h"
 #include "IntRect.h"
 #include "IntSize.h"
 #include "NotImplemented.h"
@@ -63,7 +62,7 @@
 
 namespace WebCore {
 
-void GraphicsContext3D::releaseShaderCompiler()
+void GraphicsContextGLOpenGL::releaseShaderCompiler()
 {
     makeContextCurrent();
     notImplemented();
@@ -80,7 +79,7 @@ static void wipeAlphaChannelFromPixels(int width, int height, unsigned char* pix
 }
 #endif
 
-void GraphicsContext3D::readPixelsAndConvertToBGRAIfNecessary(int x, int y, int width, int height, unsigned char* pixels)
+void GraphicsContextGLOpenGL::readPixelsAndConvertToBGRAIfNecessary(int x, int y, int width, int height, unsigned char* pixels)
 {
     auto attrs = contextAttributes();
 
@@ -117,12 +116,12 @@ void GraphicsContext3D::readPixelsAndConvertToBGRAIfNecessary(int x, int y, int 
 #endif
 }
 
-void GraphicsContext3D::validateAttributes()
+void GraphicsContextGLOpenGL::validateAttributes()
 {
     validateDepthStencil("GL_EXT_packed_depth_stencil");
 }
 
-bool GraphicsContext3D::reshapeFBOs(const IntSize& size)
+bool GraphicsContextGLOpenGL::reshapeFBOs(const IntSize& size)
 {
     auto attrs = contextAttributes();
     const int width = size.width();
@@ -137,9 +136,9 @@ bool GraphicsContext3D::reshapeFBOs(const IntSize& size)
     }
     if (attrs.stencil || attrs.depth) {
         // We don't allow the logic where stencil is required and depth is not.
-        // See GraphicsContext3D::validateAttributes.
+        // See GraphicsContextGLOpenGL::validateAttributes.
 
-        Extensions3D& extensions = getExtensions();
+        ExtensionsGL& extensions = getExtensions();
         // Use a 24 bit depth buffer where we know we have it.
         if (extensions.supports("GL_EXT_packed_depth_stencil"))
             internalDepthStencilFormat = GL_DEPTH24_STENCIL8_EXT;
@@ -226,7 +225,7 @@ bool GraphicsContext3D::reshapeFBOs(const IntSize& size)
     return mustRestoreFBO;
 }
 
-void GraphicsContext3D::attachDepthAndStencilBufferIfNeeded(GLuint internalDepthStencilFormat, int width, int height)
+void GraphicsContextGLOpenGL::attachDepthAndStencilBufferIfNeeded(GLuint internalDepthStencilFormat, int width, int height)
 {
     auto attrs = contextAttributes();
 
@@ -246,7 +245,7 @@ void GraphicsContext3D::attachDepthAndStencilBufferIfNeeded(GLuint internalDepth
     }
 }
 
-void GraphicsContext3D::resolveMultisamplingIfNecessary(const IntRect& rect)
+void GraphicsContextGLOpenGL::resolveMultisamplingIfNecessary(const IntRect& rect)
 {
     TemporaryOpenGLSetting scopedScissor(GL_SCISSOR_TEST, GL_FALSE);
     TemporaryOpenGLSetting scopedDither(GL_DITHER, GL_FALSE);
@@ -276,7 +275,7 @@ void GraphicsContext3D::resolveMultisamplingIfNecessary(const IntRect& rect)
 #endif
 }
 
-void GraphicsContext3D::renderbufferStorage(GC3Denum target, GC3Denum internalformat, GC3Dsizei width, GC3Dsizei height)
+void GraphicsContextGLOpenGL::renderbufferStorage(GC3Denum target, GC3Denum internalformat, GC3Dsizei width, GC3Dsizei height)
 {
     makeContextCurrent();
 #if USE(OPENGL)
@@ -299,7 +298,7 @@ void GraphicsContext3D::renderbufferStorage(GC3Denum target, GC3Denum internalfo
     ::glRenderbufferStorageEXT(target, internalformat, width, height);
 }
 
-void GraphicsContext3D::getIntegerv(GC3Denum pname, GC3Dint* value)
+void GraphicsContextGLOpenGL::getIntegerv(GC3Denum pname, GC3Dint* value)
 {
     // Need to emulate MAX_FRAGMENT/VERTEX_UNIFORM_VECTORS and MAX_VARYING_VECTORS
     // because desktop GL's corresponding queries return the number of components
@@ -359,7 +358,7 @@ void GraphicsContext3D::getIntegerv(GC3Denum pname, GC3Dint* value)
     }
 }
 
-void GraphicsContext3D::getShaderPrecisionFormat(GC3Denum shaderType, GC3Denum precisionType, GC3Dint* range, GC3Dint* precision)
+void GraphicsContextGLOpenGL::getShaderPrecisionFormat(GC3Denum shaderType, GC3Denum precisionType, GC3Dint* range, GC3Dint* precision)
 {
     UNUSED_PARAM(shaderType);
     ASSERT(range);
@@ -368,17 +367,17 @@ void GraphicsContext3D::getShaderPrecisionFormat(GC3Denum shaderType, GC3Denum p
     makeContextCurrent();
 
     switch (precisionType) {
-    case GraphicsContext3D::LOW_INT:
-    case GraphicsContext3D::MEDIUM_INT:
-    case GraphicsContext3D::HIGH_INT:
+    case GraphicsContextGL::LOW_INT:
+    case GraphicsContextGL::MEDIUM_INT:
+    case GraphicsContextGL::HIGH_INT:
         // These values are for a 32-bit twos-complement integer format.
         range[0] = 31;
         range[1] = 30;
         precision[0] = 0;
         break;
-    case GraphicsContext3D::LOW_FLOAT:
-    case GraphicsContext3D::MEDIUM_FLOAT:
-    case GraphicsContext3D::HIGH_FLOAT:
+    case GraphicsContextGL::LOW_FLOAT:
+    case GraphicsContextGL::MEDIUM_FLOAT:
+    case GraphicsContextGL::HIGH_FLOAT:
         // These values are for an IEEE single-precision floating-point format.
         range[0] = 127;
         range[1] = 127;
@@ -390,7 +389,7 @@ void GraphicsContext3D::getShaderPrecisionFormat(GC3Denum shaderType, GC3Denum p
     }
 }
 
-bool GraphicsContext3D::texImage2D(GC3Denum target, GC3Dint level, GC3Denum internalformat, GC3Dsizei width, GC3Dsizei height, GC3Dint border, GC3Denum format, GC3Denum type, const void* pixels)
+bool GraphicsContextGLOpenGL::texImage2D(GC3Denum target, GC3Dint level, GC3Denum internalformat, GC3Dsizei width, GC3Dsizei height, GC3Dint border, GC3Denum format, GC3Denum type, const void* pixels)
 {
     if (width && height && !pixels) {
         synthesizeGLError(INVALID_VALUE);
@@ -419,10 +418,10 @@ bool GraphicsContext3D::texImage2D(GC3Denum target, GC3Dint level, GC3Denum inte
         type = GL_HALF_FLOAT_ARB;
     }
 
-    ASSERT(format != Extensions3D::SRGB8_ALPHA8_EXT);
-    if (format == Extensions3D::SRGB_ALPHA_EXT)
+    ASSERT(format != ExtensionsGL::SRGB8_ALPHA8_EXT);
+    if (format == ExtensionsGL::SRGB_ALPHA_EXT)
         openGLFormat = GL_RGBA;
-    else if (format == Extensions3D::SRGB_EXT)
+    else if (format == ExtensionsGL::SRGB_EXT)
         openGLFormat = GL_RGB;
 #endif
 
@@ -456,7 +455,7 @@ bool GraphicsContext3D::texImage2D(GC3Denum target, GC3Dint level, GC3Denum inte
     return true;
 }
 
-void GraphicsContext3D::depthRange(GC3Dclampf zNear, GC3Dclampf zFar)
+void GraphicsContextGLOpenGL::depthRange(GC3Dclampf zNear, GC3Dclampf zFar)
 {
     makeContextCurrent();
 #if PLATFORM(COCOA) && USE(OPENGL_ES)
@@ -466,7 +465,7 @@ void GraphicsContext3D::depthRange(GC3Dclampf zNear, GC3Dclampf zFar)
 #endif
 }
 
-void GraphicsContext3D::clearDepth(GC3Dclampf depth)
+void GraphicsContextGLOpenGL::clearDepth(GC3Dclampf depth)
 {
     makeContextCurrent();
 #if PLATFORM(COCOA) && USE(OPENGL_ES)
@@ -477,19 +476,19 @@ void GraphicsContext3D::clearDepth(GC3Dclampf depth)
 }
 
 #if !PLATFORM(GTK)
-Extensions3D& GraphicsContext3D::getExtensions()
+ExtensionsGL& GraphicsContextGLOpenGL::getExtensions()
 {
     if (!m_extensions)
 #if PLATFORM(COCOA) && USE(OPENGL_ES)
-        m_extensions = makeUnique<Extensions3DOpenGL>(this, false);
+        m_extensions = makeUnique<ExtensionsGLOpenGL>(this, false);
 #else
-        m_extensions = makeUnique<Extensions3DOpenGL>(this, isGLES2Compliant());
+        m_extensions = makeUnique<ExtensionsGLOpenGL>(this, isGLES2Compliant());
 #endif
     return *m_extensions;
 }
 #endif
 
-void GraphicsContext3D::readPixels(GC3Dint x, GC3Dint y, GC3Dsizei width, GC3Dsizei height, GC3Denum format, GC3Denum type, void* data)
+void GraphicsContextGLOpenGL::readPixels(GC3Dint x, GC3Dint y, GC3Dsizei width, GC3Dsizei height, GC3Denum format, GC3Denum type, void* data)
 {
     auto attrs = contextAttributes();
 
@@ -499,19 +498,19 @@ void GraphicsContext3D::readPixels(GC3Dint x, GC3Dint y, GC3Dsizei width, GC3Dsi
     ::glFlush();
     if (attrs.antialias && m_state.boundFBO == m_multisampleFBO) {
         resolveMultisamplingIfNecessary(IntRect(x, y, width, height));
-        ::glBindFramebufferEXT(GraphicsContext3D::FRAMEBUFFER, m_fbo);
+        ::glBindFramebufferEXT(GraphicsContextGL::FRAMEBUFFER, m_fbo);
         ::glFlush();
     }
     ::glReadPixels(x, y, width, height, format, type, data);
     if (attrs.antialias && m_state.boundFBO == m_multisampleFBO)
-        ::glBindFramebufferEXT(GraphicsContext3D::FRAMEBUFFER, m_multisampleFBO);
+        ::glBindFramebufferEXT(GraphicsContextGL::FRAMEBUFFER, m_multisampleFBO);
 
 #if PLATFORM(MAC)
-    if (!attrs.alpha && (format == GraphicsContext3D::RGBA || format == GraphicsContext3D::BGRA) && (m_state.boundFBO == m_fbo || (attrs.antialias && m_state.boundFBO == m_multisampleFBO)))
+    if (!attrs.alpha && (format == GraphicsContextGL::RGBA || format == GraphicsContextGL::BGRA) && (m_state.boundFBO == m_fbo || (attrs.antialias && m_state.boundFBO == m_multisampleFBO)))
         wipeAlphaChannelFromPixels(width, height, static_cast<unsigned char*>(data));
 #endif
 }
 
 }
 
-#endif // ENABLE(GRAPHICS_CONTEXT_3D) && (USE(OPENGL) || (PLATFORM(COCOA) && USE(OPENGL_ES)))
+#endif // ENABLE(GRAPHICS_CONTEXT_GL) && (USE(OPENGL) || (PLATFORM(COCOA) && USE(OPENGL_ES)))

@@ -30,7 +30,7 @@
 #include "ActivityStateChangeObserver.h"
 #include "ExceptionOr.h"
 #include "GPUBasedCanvasRenderingContext.h"
-#include "GraphicsContext3D.h"
+#include "GraphicsContextGLOpenGL.h"
 #include "ImageBuffer.h"
 #include "SuspendableTimer.h"
 #include "Timer.h"
@@ -103,7 +103,7 @@ using WebGLCanvas = WTF::Variant<RefPtr<HTMLCanvasElement>, RefPtr<OffscreenCanv
 using WebGLCanvas = WTF::Variant<RefPtr<HTMLCanvasElement>>;
 #endif
 
-class WebGLRenderingContextBase : public GraphicsContext3D::Client, public GPUBasedCanvasRenderingContext, private ActivityStateChangeObserver {
+class WebGLRenderingContextBase : public GraphicsContextGLOpenGL::Client, public GPUBasedCanvasRenderingContext, private ActivityStateChangeObserver {
     WTF_MAKE_ISO_ALLOCATED(WebGLRenderingContextBase);
 public:
     static std::unique_ptr<WebGLRenderingContextBase> create(CanvasBase&, WebGLContextAttributes&, const String&);
@@ -344,7 +344,7 @@ public:
     void loseContextImpl(LostContextMode);
     WEBCORE_EXPORT void simulateContextChanged();
 
-    GraphicsContext3D* graphicsContext3D() const { return m_context.get(); }
+    GraphicsContextGLOpenGL* graphicsContextGL() const { return m_context.get(); }
     WebGLContextGroup* contextGroup() const { return m_contextGroup.get(); }
     PlatformLayer* platformLayer() const override;
 
@@ -367,7 +367,7 @@ public:
     // Used for testing only, from Internals.
     WEBCORE_EXPORT void setFailNextGPUStatusCheck();
 
-    // GraphicsContext3D::Client
+    // GraphicsContextGL::Client
     void didComposite() override;
     void forceContextLost() override;
     void recycleContext() override;
@@ -378,7 +378,7 @@ public:
 
 protected:
     WebGLRenderingContextBase(CanvasBase&, WebGLContextAttributes);
-    WebGLRenderingContextBase(CanvasBase&, Ref<GraphicsContext3D>&&, WebGLContextAttributes);
+    WebGLRenderingContextBase(CanvasBase&, Ref<GraphicsContextGLOpenGL>&&, WebGLContextAttributes);
 
     friend class WebGLDrawBuffers;
     friend class WebGLFramebuffer;
@@ -410,7 +410,7 @@ protected:
     void addContextObject(WebGLContextObject&);
     void detachAndRemoveAllObjects();
 
-    void destroyGraphicsContext3D();
+    void destroyGraphicsContextGL();
     void markContextChanged();
     void markContextChangedAndNotifyCanvasObserver();
 
@@ -457,7 +457,7 @@ protected:
 
     bool enableSupportedExtension(ASCIILiteral extensionNameLiteral);
 
-    RefPtr<GraphicsContext3D> m_context;
+    RefPtr<GraphicsContextGLOpenGL> m_context;
     RefPtr<WebGLContextGroup> m_contextGroup;
 
     // Dispatches a context lost event once it is determined that one is needed.
@@ -644,9 +644,9 @@ protected:
     void restoreStateAfterClear();
 
     void texImage2DBase(GC3Denum target, GC3Dint level, GC3Denum internalformat, GC3Dsizei width, GC3Dsizei height, GC3Dint border, GC3Denum format, GC3Denum type, const void* pixels);
-    void texImage2DImpl(GC3Denum target, GC3Dint level, GC3Denum internalformat, GC3Denum format, GC3Denum type, Image*, GraphicsContext3D::DOMSource, bool flipY, bool premultiplyAlpha);
+    void texImage2DImpl(GC3Denum target, GC3Dint level, GC3Denum internalformat, GC3Denum format, GC3Denum type, Image*, GraphicsContextGL::DOMSource, bool flipY, bool premultiplyAlpha);
     void texSubImage2DBase(GC3Denum target, GC3Dint level, GC3Dint xoffset, GC3Dint yoffset, GC3Dsizei width, GC3Dsizei height, GC3Denum internalformat, GC3Denum format, GC3Denum type, const void* pixels);
-    void texSubImage2DImpl(GC3Denum target, GC3Dint level, GC3Dint xoffset, GC3Dint yoffset, GC3Denum format, GC3Denum type, Image*, GraphicsContext3D::DOMSource, bool flipY, bool premultiplyAlpha);
+    void texSubImage2DImpl(GC3Denum target, GC3Dint level, GC3Dint xoffset, GC3Dint yoffset, GC3Denum format, GC3Denum type, Image*, GraphicsContextGL::DOMSource, bool flipY, bool premultiplyAlpha);
 
     bool checkTextureCompleteness(const char*, bool);
 
@@ -823,7 +823,7 @@ protected:
     bool validateSimulatedVertexAttrib0(GC3Duint numVertex);
     void restoreStatesAfterVertexAttrib0Simulation();
 
-    // Wrapper for GraphicsContext3D::synthesizeGLError that sends a message to the JavaScript console.
+    // Wrapper for GraphicsContextGLOpenGL::synthesizeGLError that sends a message to the JavaScript console.
     enum ConsoleDisplayPreference { DisplayInConsole, DontDisplayInConsole };
     void synthesizeGLError(GC3Denum, const char* functionName, const char* description, ConsoleDisplayPreference = DisplayInConsole);
 

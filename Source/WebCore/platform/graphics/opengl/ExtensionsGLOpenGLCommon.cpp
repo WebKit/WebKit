@@ -26,11 +26,11 @@
 
 #include "config.h"
 
-#if ENABLE(GRAPHICS_CONTEXT_3D) && (USE(OPENGL) || USE(OPENGL_ES))
-#include "Extensions3DOpenGLCommon.h"
+#if ENABLE(GRAPHICS_CONTEXT_GL) && (USE(OPENGL) || USE(OPENGL_ES))
+#include "ExtensionsGLOpenGLCommon.h"
 
 #include "ANGLEWebKitBridge.h"
-#include "GraphicsContext3D.h"
+#include "GraphicsContextGLOpenGL.h"
 
 #if PLATFORM(COCOA)
 
@@ -63,7 +63,7 @@
 
 namespace WebCore {
 
-Extensions3DOpenGLCommon::Extensions3DOpenGLCommon(GraphicsContext3D* context, bool useIndexedGetString)
+ExtensionsGLOpenGLCommon::ExtensionsGLOpenGLCommon(GraphicsContextGLOpenGL* context, bool useIndexedGetString)
     : m_initializedAvailableExtensions(false)
     , m_context(context)
     , m_isNVIDIA(false)
@@ -96,9 +96,9 @@ Extensions3DOpenGLCommon::Extensions3DOpenGLCommon(GraphicsContext3D* context, b
 #endif
 }
 
-Extensions3DOpenGLCommon::~Extensions3DOpenGLCommon() = default;
+ExtensionsGLOpenGLCommon::~ExtensionsGLOpenGLCommon() = default;
 
-bool Extensions3DOpenGLCommon::supports(const String& name)
+bool ExtensionsGLOpenGLCommon::supports(const String& name)
 {
     if (!m_initializedAvailableExtensions)
         initializeAvailableExtensions();
@@ -112,7 +112,7 @@ bool Extensions3DOpenGLCommon::supports(const String& name)
     return supportsExtension(name);
 }
 
-void Extensions3DOpenGLCommon::ensureEnabled(const String& name)
+void ExtensionsGLOpenGLCommon::ensureEnabled(const String& name)
 {
     if (name == "GL_OES_standard_derivatives") {
         // Enable support in ANGLE (if not enabled already)
@@ -128,7 +128,7 @@ void Extensions3DOpenGLCommon::ensureEnabled(const String& name)
         ShBuiltInResources ANGLEResources = compiler.getResources();
         if (!ANGLEResources.EXT_draw_buffers) {
             ANGLEResources.EXT_draw_buffers = 1;
-            m_context->getIntegerv(Extensions3D::MAX_DRAW_BUFFERS_EXT, &ANGLEResources.MaxDrawBuffers);
+            m_context->getIntegerv(ExtensionsGL::MAX_DRAW_BUFFERS_EXT, &ANGLEResources.MaxDrawBuffers);
             compiler.setResources(ANGLEResources);
         }
     } else if (name == "GL_EXT_shader_texture_lod") {
@@ -150,7 +150,7 @@ void Extensions3DOpenGLCommon::ensureEnabled(const String& name)
     }
 }
 
-bool Extensions3DOpenGLCommon::isEnabled(const String& name)
+bool ExtensionsGLOpenGLCommon::isEnabled(const String& name)
 {
     if (name == "GL_OES_standard_derivatives") {
         ANGLEWebKitBridge& compiler = m_context->m_compiler;
@@ -159,12 +159,12 @@ bool Extensions3DOpenGLCommon::isEnabled(const String& name)
     return supports(name);
 }
 
-int Extensions3DOpenGLCommon::getGraphicsResetStatusARB()
+int ExtensionsGLOpenGLCommon::getGraphicsResetStatusARB()
 {
-    return GraphicsContext3D::NO_ERROR;
+    return GraphicsContextGL::NO_ERROR;
 }
 
-String Extensions3DOpenGLCommon::getTranslatedShaderSourceANGLE(Platform3DObject shader)
+String ExtensionsGLOpenGLCommon::getTranslatedShaderSourceANGLE(Platform3DObject shader)
 {
     ASSERT(shader);
     int GLshaderType;
@@ -172,21 +172,21 @@ String Extensions3DOpenGLCommon::getTranslatedShaderSourceANGLE(Platform3DObject
 
     ANGLEWebKitBridge& compiler = m_context->m_compiler;
 
-    m_context->getShaderiv(shader, GraphicsContext3D::SHADER_TYPE, &GLshaderType);
+    m_context->getShaderiv(shader, GraphicsContextGL::SHADER_TYPE, &GLshaderType);
 
-    if (GLshaderType == GraphicsContext3D::VERTEX_SHADER)
+    if (GLshaderType == GraphicsContextGL::VERTEX_SHADER)
         shaderType = SHADER_TYPE_VERTEX;
-    else if (GLshaderType == GraphicsContext3D::FRAGMENT_SHADER)
+    else if (GLshaderType == GraphicsContextGL::FRAGMENT_SHADER)
         shaderType = SHADER_TYPE_FRAGMENT;
     else
         return ""; // Invalid shader type.
 
-    HashMap<Platform3DObject, GraphicsContext3D::ShaderSourceEntry>::iterator result = m_context->m_shaderSourceMap.find(shader);
+    HashMap<Platform3DObject, GraphicsContextGLOpenGL::ShaderSourceEntry>::iterator result = m_context->m_shaderSourceMap.find(shader);
 
     if (result == m_context->m_shaderSourceMap.end())
         return "";
 
-    GraphicsContext3D::ShaderSourceEntry& entry = result->value;
+    GraphicsContextGLOpenGL::ShaderSourceEntry& entry = result->value;
 
     String translatedShaderSource;
     String shaderInfoLog;
@@ -212,7 +212,7 @@ String Extensions3DOpenGLCommon::getTranslatedShaderSourceANGLE(Platform3DObject
     return translatedShaderSource;
 }
 
-void Extensions3DOpenGLCommon::initializeAvailableExtensions()
+void ExtensionsGLOpenGLCommon::initializeAvailableExtensions()
 {
 #if (PLATFORM(COCOA) && USE(OPENGL)) || (PLATFORM(GTK) && !USE(OPENGL_ES))
     if (m_useIndexedGetString) {
@@ -239,21 +239,21 @@ void Extensions3DOpenGLCommon::initializeAvailableExtensions()
     m_initializedAvailableExtensions = true;
 }
 
-void Extensions3DOpenGLCommon::readnPixelsEXT(int, int, GC3Dsizei, GC3Dsizei, GC3Denum, GC3Denum, GC3Dsizei, void *)
+void ExtensionsGLOpenGLCommon::readnPixelsEXT(int, int, GC3Dsizei, GC3Dsizei, GC3Denum, GC3Denum, GC3Dsizei, void *)
 {
     m_context->synthesizeGLError(GL_INVALID_OPERATION);
 }
 
-void Extensions3DOpenGLCommon::getnUniformfvEXT(GC3Duint, int, GC3Dsizei, float *)
+void ExtensionsGLOpenGLCommon::getnUniformfvEXT(GC3Duint, int, GC3Dsizei, float *)
 {
     m_context->synthesizeGLError(GL_INVALID_OPERATION);
 }
 
-void Extensions3DOpenGLCommon::getnUniformivEXT(GC3Duint, int, GC3Dsizei, int *)
+void ExtensionsGLOpenGLCommon::getnUniformivEXT(GC3Duint, int, GC3Dsizei, int *)
 {
     m_context->synthesizeGLError(GL_INVALID_OPERATION);
 }
 
 } // namespace WebCore
 
-#endif // ENABLE(GRAPHICS_CONTEXT_3D) && (USE(OPENGL) || USE(OPENGL_ES))
+#endif // ENABLE(GRAPHICS_CONTEXT_GL) && (USE(OPENGL) || USE(OPENGL_ES))

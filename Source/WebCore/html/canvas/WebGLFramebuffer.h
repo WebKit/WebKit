@@ -52,9 +52,9 @@ public:
         virtual bool isValid() const = 0;
         virtual bool isInitialized() const = 0;
         virtual void setInitialized() = 0;
-        virtual void onDetached(GraphicsContext3D*) = 0;
-        virtual void attach(GraphicsContext3D*, GC3Denum attachment) = 0;
-        virtual void unattach(GraphicsContext3D*, GC3Denum attachment) = 0;
+        virtual void onDetached(GraphicsContextGLOpenGL*) = 0;
+        virtual void attach(GraphicsContextGLOpenGL*, GC3Denum attachment) = 0;
+        virtual void unattach(GraphicsContextGLOpenGL*, GC3Denum attachment) = 0;
 
     protected:
         WebGLAttachment();
@@ -82,7 +82,7 @@ public:
     // Return false if the framebuffer is incomplete; otherwise initialize
     // the buffers if they haven't been initialized and
     // needToInitializeAttachments is true.
-    bool onAccess(GraphicsContext3D*, const char** reason);
+    bool onAccess(GraphicsContextGLOpenGL*, const char** reason);
 
     // Software version of glCheckFramebufferStatus(), except that when
     // FRAMEBUFFER_COMPLETE is returned, it is still possible for
@@ -104,13 +104,13 @@ public:
 protected:
     WebGLFramebuffer(WebGLRenderingContextBase&);
 
-    void deleteObjectImpl(GraphicsContext3D*, Platform3DObject) override;
+    void deleteObjectImpl(GraphicsContextGLOpenGL*, Platform3DObject) override;
 
 private:
     WebGLAttachment* getAttachment(GC3Denum) const;
 
     // Return false if framebuffer is incomplete.
-    bool initializeAttachments(GraphicsContext3D*, const char** reason);
+    bool initializeAttachments(GraphicsContextGLOpenGL*, const char** reason);
 
     // Check if the framebuffer is currently bound.
     bool isBound() const;

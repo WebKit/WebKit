@@ -48,7 +48,7 @@ public:
 private:
     WebGLShader(WebGLRenderingContextBase&, GC3Denum);
 
-    void deleteObjectImpl(GraphicsContext3D*, Platform3DObject) final;
+    void deleteObjectImpl(GraphicsContextGLOpenGL*, Platform3DObject) final;
 
     GC3Denum m_type;
     String m_source;

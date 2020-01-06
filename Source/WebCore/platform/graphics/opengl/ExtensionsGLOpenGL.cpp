@@ -24,12 +24,11 @@
  */
 
 #include "config.h"
+#include "ExtensionsGLOpenGL.h"
 
-#if ENABLE(GRAPHICS_CONTEXT_3D) && (USE(OPENGL) || (PLATFORM(COCOA) && USE(OPENGL_ES)))
+#if ENABLE(GRAPHICS_CONTEXT_GL) && (USE(OPENGL) || (PLATFORM(COCOA) && USE(OPENGL_ES)))
 
-#include "Extensions3DOpenGL.h"
-
-#include "GraphicsContext3D.h"
+#include "GraphicsContextGLOpenGL.h"
 
 #if PLATFORM(GTK) || PLATFORM(WIN)
 #include "OpenGLShims.h"
@@ -40,20 +39,20 @@
 #endif
 
 #if PLATFORM(IOS_FAMILY)
-#include "GraphicsContext3DIOS.h"
+#include "GraphicsContextGLOpenGLESIOS.h"
 #endif
 
 namespace WebCore {
 
-Extensions3DOpenGL::Extensions3DOpenGL(GraphicsContext3D* context, bool useIndexedGetString)
-    : Extensions3DOpenGLCommon(context, useIndexedGetString)
+ExtensionsGLOpenGL::ExtensionsGLOpenGL(GraphicsContextGLOpenGL* context, bool useIndexedGetString)
+    : ExtensionsGLOpenGLCommon(context, useIndexedGetString)
 {
 }
 
-Extensions3DOpenGL::~Extensions3DOpenGL() = default;
+ExtensionsGLOpenGL::~ExtensionsGLOpenGL() = default;
 
 
-void Extensions3DOpenGL::blitFramebuffer(long srcX0, long srcY0, long srcX1, long srcY1, long dstX0, long dstY0, long dstX1, long dstY1, unsigned long mask, unsigned long filter)
+void ExtensionsGLOpenGL::blitFramebuffer(long srcX0, long srcY0, long srcX1, long srcY1, long dstX0, long dstY0, long dstX1, long dstY1, unsigned long mask, unsigned long filter)
 {
 #if PLATFORM(COCOA) && USE(OPENGL_ES)
     UNUSED_PARAM(srcX0);
@@ -72,12 +71,12 @@ void Extensions3DOpenGL::blitFramebuffer(long srcX0, long srcY0, long srcX1, lon
 #endif
 }
 
-void Extensions3DOpenGL::renderbufferStorageMultisample(unsigned long target, unsigned long samples, unsigned long internalformat, unsigned long width, unsigned long height)
+void ExtensionsGLOpenGL::renderbufferStorageMultisample(unsigned long target, unsigned long samples, unsigned long internalformat, unsigned long width, unsigned long height)
 {
     ::glRenderbufferStorageMultisampleEXT(target, samples, internalformat, width, height);
 }
 
-Platform3DObject Extensions3DOpenGL::createVertexArrayOES()
+Platform3DObject ExtensionsGLOpenGL::createVertexArrayOES()
 {
     m_context->makeContextCurrent();
     GLuint array = 0;
@@ -90,7 +89,7 @@ Platform3DObject Extensions3DOpenGL::createVertexArrayOES()
     return array;
 }
 
-void Extensions3DOpenGL::deleteVertexArrayOES(Platform3DObject array)
+void ExtensionsGLOpenGL::deleteVertexArrayOES(Platform3DObject array)
 {
     if (!array)
         return;
@@ -104,7 +103,7 @@ void Extensions3DOpenGL::deleteVertexArrayOES(Platform3DObject array)
 #endif
 }
 
-GC3Dboolean Extensions3DOpenGL::isVertexArrayOES(Platform3DObject array)
+GC3Dboolean ExtensionsGLOpenGL::isVertexArrayOES(Platform3DObject array)
 {
     if (!array)
         return GL_FALSE;
@@ -119,7 +118,7 @@ GC3Dboolean Extensions3DOpenGL::isVertexArrayOES(Platform3DObject array)
     return GL_FALSE;
 }
 
-void Extensions3DOpenGL::bindVertexArrayOES(Platform3DObject array)
+void ExtensionsGLOpenGL::bindVertexArrayOES(Platform3DObject array)
 {
     m_context->makeContextCurrent();
 #if PLATFORM(GTK) || PLATFORM(WIN) || (PLATFORM(COCOA) && USE(OPENGL_ES))
@@ -132,25 +131,25 @@ void Extensions3DOpenGL::bindVertexArrayOES(Platform3DObject array)
 #endif
 }
 
-void Extensions3DOpenGL::insertEventMarkerEXT(const String&)
+void ExtensionsGLOpenGL::insertEventMarkerEXT(const String&)
 {
     // FIXME: implement this function and add GL_EXT_debug_marker in supports().
     return;
 }
 
-void Extensions3DOpenGL::pushGroupMarkerEXT(const String&)
+void ExtensionsGLOpenGL::pushGroupMarkerEXT(const String&)
 {
     // FIXME: implement this function and add GL_EXT_debug_marker in supports().
     return;
 }
 
-void Extensions3DOpenGL::popGroupMarkerEXT(void)
+void ExtensionsGLOpenGL::popGroupMarkerEXT(void)
 {
     // FIXME: implement this function and add GL_EXT_debug_marker in supports().
     return;
 }
 
-bool Extensions3DOpenGL::supportsExtension(const String& name)
+bool ExtensionsGLOpenGL::supportsExtension(const String& name)
 {
     // GL_ANGLE_framebuffer_blit and GL_ANGLE_framebuffer_multisample are "fake". They are implemented using other
     // extensions. In particular GL_EXT_framebuffer_blit and GL_EXT_framebuffer_multisample/GL_APPLE_framebuffer_multisample.
@@ -241,7 +240,7 @@ bool Extensions3DOpenGL::supportsExtension(const String& name)
     return m_availableExtensions.contains(name);
 }
 
-void Extensions3DOpenGL::drawBuffersEXT(GC3Dsizei n, const GC3Denum* bufs)
+void ExtensionsGLOpenGL::drawBuffersEXT(GC3Dsizei n, const GC3Denum* bufs)
 {
     //  FIXME: implement support for other platforms.
 #if PLATFORM(MAC)
@@ -254,7 +253,7 @@ void Extensions3DOpenGL::drawBuffersEXT(GC3Dsizei n, const GC3Denum* bufs)
 #endif
 }
 
-void Extensions3DOpenGL::drawArraysInstanced(GC3Denum mode, GC3Dint first, GC3Dsizei count, GC3Dsizei primcount)
+void ExtensionsGLOpenGL::drawArraysInstanced(GC3Denum mode, GC3Dint first, GC3Dsizei count, GC3Dsizei primcount)
 {
     m_context->makeContextCurrent();
 #if PLATFORM(GTK)
@@ -269,7 +268,7 @@ void Extensions3DOpenGL::drawArraysInstanced(GC3Denum mode, GC3Dint first, GC3Ds
 #endif
 }
 
-void Extensions3DOpenGL::drawElementsInstanced(GC3Denum mode, GC3Dsizei count, GC3Denum type, long long offset, GC3Dsizei primcount)
+void ExtensionsGLOpenGL::drawElementsInstanced(GC3Denum mode, GC3Dsizei count, GC3Denum type, long long offset, GC3Dsizei primcount)
 {
     m_context->makeContextCurrent();
 #if PLATFORM(GTK)
@@ -285,7 +284,7 @@ void Extensions3DOpenGL::drawElementsInstanced(GC3Denum mode, GC3Dsizei count, G
 #endif
 }
 
-void Extensions3DOpenGL::vertexAttribDivisor(GC3Duint index, GC3Duint divisor)
+void ExtensionsGLOpenGL::vertexAttribDivisor(GC3Duint index, GC3Duint divisor)
 {
     m_context->makeContextCurrent();
 #if PLATFORM(GTK)
@@ -298,14 +297,14 @@ void Extensions3DOpenGL::vertexAttribDivisor(GC3Duint index, GC3Duint divisor)
 #endif
 }
 
-String Extensions3DOpenGL::getExtensions()
+String ExtensionsGLOpenGL::getExtensions()
 {
     ASSERT(!m_useIndexedGetString);
     return String(reinterpret_cast<const char*>(::glGetString(GL_EXTENSIONS)));
 }
 
 #if PLATFORM(GTK) || PLATFORM(WIN) || (PLATFORM(COCOA) && USE(OPENGL_ES))
-bool Extensions3DOpenGL::isVertexArrayObjectSupported()
+bool ExtensionsGLOpenGL::isVertexArrayObjectSupported()
 {
     static const bool supportsVertexArrayObject = supports("GL_OES_vertex_array_object");
     return supportsVertexArrayObject;
@@ -314,4 +313,4 @@ bool Extensions3DOpenGL::isVertexArrayObjectSupported()
 
 } // namespace WebCore
 
-#endif // ENABLE(GRAPHICS_CONTEXT_3D) && (USE(OPENGL) || (PLATFORM(COCOA) && USE(OPENGL_ES)))
+#endif // ENABLE(GRAPHICS_CONTEXT_GL) && (USE(OPENGL) || (PLATFORM(COCOA) && USE(OPENGL_ES)))

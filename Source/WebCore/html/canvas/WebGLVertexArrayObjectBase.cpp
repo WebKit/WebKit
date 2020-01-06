@@ -44,7 +44,7 @@ void WebGLVertexArrayObjectBase::setElementArrayBuffer(WebGLBuffer* buffer)
     if (buffer)
         buffer->onAttached();
     if (m_boundElementArrayBuffer)
-        m_boundElementArrayBuffer->onDetached(context()->graphicsContext3D());
+        m_boundElementArrayBuffer->onDetached(context()->graphicsContextGL());
     m_boundElementArrayBuffer = buffer;
     
 }
@@ -58,7 +58,7 @@ void WebGLVertexArrayObjectBase::setVertexAttribState(GC3Duint index, GC3Dsizei 
     if (buffer)
         buffer->onAttached();
     if (state.bufferBinding)
-        state.bufferBinding->onDetached(context()->graphicsContext3D());
+        state.bufferBinding->onDetached(context()->graphicsContextGL());
     
     state.bufferBinding = buffer;
     state.bytesPerElement = bytesPerElement;
@@ -73,21 +73,21 @@ void WebGLVertexArrayObjectBase::setVertexAttribState(GC3Duint index, GC3Dsizei 
 void WebGLVertexArrayObjectBase::unbindBuffer(WebGLBuffer& buffer)
 {
     if (m_boundElementArrayBuffer == &buffer) {
-        m_boundElementArrayBuffer->onDetached(context()->graphicsContext3D());
+        m_boundElementArrayBuffer->onDetached(context()->graphicsContextGL());
         m_boundElementArrayBuffer = nullptr;
     }
     
     for (size_t i = 0; i < m_vertexAttribState.size(); ++i) {
         auto& state = m_vertexAttribState[i];
         if (state.bufferBinding == &buffer) {
-            buffer.onDetached(context()->graphicsContext3D());
+            buffer.onDetached(context()->graphicsContextGL());
             
             if (!i && !context()->isGLES2Compliant()) {
                 state.bufferBinding = context()->m_vertexAttrib0Buffer;
                 state.bufferBinding->onAttached();
                 state.bytesPerElement = 0;
                 state.size = 4;
-                state.type = GraphicsContext3D::FLOAT;
+                state.type = GraphicsContextGL::FLOAT;
                 state.normalized = false;
                 state.stride = 16;
                 state.originalStride = 0;

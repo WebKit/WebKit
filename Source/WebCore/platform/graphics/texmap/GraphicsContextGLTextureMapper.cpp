@@ -26,16 +26,15 @@
  */
 
 #include "config.h"
-#include "GraphicsContext3D.h"
+#include "GraphicsContextGLOpenGL.h"
 
-#if ENABLE(GRAPHICS_CONTEXT_3D) && USE(TEXTURE_MAPPER)
+#if ENABLE(GRAPHICS_CONTEXT_GL) && USE(TEXTURE_MAPPER)
 
-#include "GraphicsContext3DPrivate.h"
+#include "GraphicsContextGLOpenGLPrivate.h"
 #include "TextureMapperGC3DPlatformLayer.h"
+#include <ANGLE/ShaderLang.h>
 #include <wtf/Deque.h>
 #include <wtf/NeverDestroyed.h>
-
-#include <ANGLE/ShaderLang.h>
 
 #if USE(ANGLE)
 #define EGL_EGL_PROTOTYPES 0
@@ -67,11 +66,11 @@ typedef void* GLeglContext;
 #endif
 
 #if USE(ANGLE)
-#include "Extensions3DANGLE.h"
+#include "ExtensionsGLANGLE.h"
 #elif USE(OPENGL_ES)
-#include "Extensions3DOpenGLES.h"
+#include "ExtensionsGLOpenGLES.h"
 #else
-#include "Extensions3DOpenGL.h"
+#include "ExtensionsGLOpenGL.h"
 #endif
 
 #if USE(NICOSIA)
@@ -85,13 +84,13 @@ typedef void* GLeglContext;
 namespace WebCore {
 
 static const size_t MaxActiveContexts = 16;
-static Deque<GraphicsContext3D*, MaxActiveContexts>& activeContexts()
+static Deque<GraphicsContextGLOpenGL*, MaxActiveContexts>& activeContexts()
 {
-    static NeverDestroyed<Deque<GraphicsContext3D*, MaxActiveContexts>> s_activeContexts;
+    static NeverDestroyed<Deque<GraphicsContextGLOpenGL*, MaxActiveContexts>> s_activeContexts;
     return s_activeContexts;
 }
 
-RefPtr<GraphicsContext3D> GraphicsContext3D::create(GraphicsContext3DAttributes attributes, HostWindow* hostWindow, GraphicsContext3D::Destination destination)
+RefPtr<GraphicsContextGLOpenGL> GraphicsContextGLOpenGL::create(GraphicsContextGLAttributes attributes, HostWindow* hostWindow, GraphicsContextGLOpenGL::Destination destination)
 {
     // This implementation doesn't currently support rendering directly to the HostWindow.
     if (destination == Destination::DirectlyToHostWindow)
@@ -117,8 +116,8 @@ RefPtr<GraphicsContext3D> GraphicsContext3D::create(GraphicsContext3DAttributes 
     if (contexts.size() >= MaxActiveContexts)
         return nullptr;
 
-    // Create the GraphicsContext3D object first in order to establist a current context on this thread.
-    auto context = adoptRef(new GraphicsContext3D(attributes, hostWindow, destination));
+    // Create the GraphicsContextGLOpenGL object first in order to establist a current context on this thread.
+    auto context = adoptRef(new GraphicsContextGLOpenGL(attributes, hostWindow, destination));
 
 #if USE(LIBEPOXY) && USE(OPENGL_ES)
     // Bail if GLES3 was requested but cannot be provided.
@@ -131,8 +130,8 @@ RefPtr<GraphicsContext3D> GraphicsContext3D::create(GraphicsContext3DAttributes 
 }
 
 #if USE(ANGLE)
-GraphicsContext3D::GraphicsContext3D(GraphicsContext3DAttributes attributes, HostWindow*, GraphicsContext3D::Destination destination, GraphicsContext3D* sharedContext)
-    : GraphicsContext3DBase(attributes, destination, sharedContext)
+GraphicsContextGLOpenGL::GraphicsContextGLOpenGL(GraphicsContextGLAttributes attributes, HostWindow*, GraphicsContextGLOpenGL::Destination destination, GraphicsContextGLOpenGL* sharedContext)
+    : GraphicsContextGL(attributes, destination, sharedContext)
 {
     ASSERT_UNUSED(sharedContext, !sharedContext);
 #if USE(NICOSIA)
@@ -203,8 +202,8 @@ GraphicsContext3D::GraphicsContext3D(GraphicsContext3DAttributes attributes, Hos
     gl::ClearColor(0, 0, 0, 0);
 }
 #else
-GraphicsContext3D::GraphicsContext3D(GraphicsContext3DAttributes attributes, HostWindow*, GraphicsContext3D::Destination destination, GraphicsContext3D* sharedContext)
-    : GraphicsContext3DBase(attributes, destination, sharedContext)
+GraphicsContextGLOpenGL::GraphicsContextGLOpenGL(GraphicsContextGLAttributes attributes, HostWindow*, GraphicsContextGLOpenGL::Destination destination, GraphicsContextGLOpenGL* sharedContext)
+    : GraphicsContextGL(attributes, destination, sharedContext)
 {
     ASSERT_UNUSED(sharedContext, !sharedContext);
 #if USE(NICOSIA)
@@ -260,7 +259,7 @@ GraphicsContext3D::GraphicsContext3D(GraphicsContext3DAttributes attributes, Hos
                 ::glGenRenderbuffers(1, &m_multisampleDepthStencilBuffer);
         } else {
             // Bind canvas FBO.
-            glBindFramebuffer(GraphicsContext3D::FRAMEBUFFER, m_fbo);
+            glBindFramebuffer(GraphicsContextGLOpenGL::FRAMEBUFFER, m_fbo);
             m_state.boundFBO = m_fbo;
 #if USE(OPENGL_ES)
             if (attributes.depth)
@@ -285,9 +284,9 @@ GraphicsContext3D::GraphicsContext3D(GraphicsContext3DAttributes attributes, Hos
 
         // From version 3.2 on we use the OpenGL Core profile, and we need a VAO for rendering.
         // A VAO could be created and bound by each component using GL rendering (TextureMapper, WebGL, etc). This is
-        // a simpler solution: the first GraphicsContext3D created on a GLContext will create and bind a VAO for that context.
+        // a simpler solution: the first GraphicsContextGLOpenGL created on a GLContext will create and bind a VAO for that context.
         GC3Dint currentVAO = 0;
-        getIntegerv(GraphicsContext3D::VERTEX_ARRAY_BINDING, &currentVAO);
+        getIntegerv(GraphicsContextGLOpenGL::VERTEX_ARRAY_BINDING, &currentVAO);
         if (!currentVAO) {
             m_vao = createVertexArray();
             bindVertexArray(m_vao);
@@ -308,19 +307,19 @@ GraphicsContext3D::GraphicsContext3D(GraphicsContext3DAttributes attributes, Hos
     ShBuiltInResources ANGLEResources;
     sh::InitBuiltInResources(&ANGLEResources);
 
-    getIntegerv(GraphicsContext3D::MAX_VERTEX_ATTRIBS, &ANGLEResources.MaxVertexAttribs);
-    getIntegerv(GraphicsContext3D::MAX_VERTEX_UNIFORM_VECTORS, &ANGLEResources.MaxVertexUniformVectors);
-    getIntegerv(GraphicsContext3D::MAX_VARYING_VECTORS, &ANGLEResources.MaxVaryingVectors);
-    getIntegerv(GraphicsContext3D::MAX_VERTEX_TEXTURE_IMAGE_UNITS, &ANGLEResources.MaxVertexTextureImageUnits);
-    getIntegerv(GraphicsContext3D::MAX_COMBINED_TEXTURE_IMAGE_UNITS, &ANGLEResources.MaxCombinedTextureImageUnits);
-    getIntegerv(GraphicsContext3D::MAX_TEXTURE_IMAGE_UNITS, &ANGLEResources.MaxTextureImageUnits);
-    getIntegerv(GraphicsContext3D::MAX_FRAGMENT_UNIFORM_VECTORS, &ANGLEResources.MaxFragmentUniformVectors);
+    getIntegerv(GraphicsContextGLOpenGL::MAX_VERTEX_ATTRIBS, &ANGLEResources.MaxVertexAttribs);
+    getIntegerv(GraphicsContextGLOpenGL::MAX_VERTEX_UNIFORM_VECTORS, &ANGLEResources.MaxVertexUniformVectors);
+    getIntegerv(GraphicsContextGLOpenGL::MAX_VARYING_VECTORS, &ANGLEResources.MaxVaryingVectors);
+    getIntegerv(GraphicsContextGLOpenGL::MAX_VERTEX_TEXTURE_IMAGE_UNITS, &ANGLEResources.MaxVertexTextureImageUnits);
+    getIntegerv(GraphicsContextGLOpenGL::MAX_COMBINED_TEXTURE_IMAGE_UNITS, &ANGLEResources.MaxCombinedTextureImageUnits);
+    getIntegerv(GraphicsContextGLOpenGL::MAX_TEXTURE_IMAGE_UNITS, &ANGLEResources.MaxTextureImageUnits);
+    getIntegerv(GraphicsContextGLOpenGL::MAX_FRAGMENT_UNIFORM_VECTORS, &ANGLEResources.MaxFragmentUniformVectors);
 
     // Always set to 1 for OpenGL ES.
     ANGLEResources.MaxDrawBuffers = 1;
 
     GC3Dint range[2], precision;
-    getShaderPrecisionFormat(GraphicsContext3D::FRAGMENT_SHADER, GraphicsContext3D::HIGH_FLOAT, range, &precision);
+    getShaderPrecisionFormat(GraphicsContextGLOpenGL::FRAGMENT_SHADER, GraphicsContextGLOpenGL::HIGH_FLOAT, range, &precision);
     ANGLEResources.FragmentPrecisionHigh = (range[0] || range[1] || precision);
 
     m_compiler.setResources(ANGLEResources);
@@ -330,7 +329,7 @@ GraphicsContext3D::GraphicsContext3D(GraphicsContext3DAttributes attributes, Hos
 #endif
 
 #if USE(ANGLE)
-GraphicsContext3D::~GraphicsContext3D()
+GraphicsContextGLOpenGL::~GraphicsContextGLOpenGL()
 {
     makeContextCurrent();
     if (m_texture)
@@ -374,7 +373,7 @@ GraphicsContext3D::~GraphicsContext3D()
     ASSERT_UNUSED(activeContext, !!activeContext);
 }
 #else
-GraphicsContext3D::~GraphicsContext3D()
+GraphicsContextGLOpenGL::~GraphicsContextGLOpenGL()
 {
     makeContextCurrent();
     if (m_texture)
@@ -419,7 +418,7 @@ GraphicsContext3D::~GraphicsContext3D()
 }
 #endif // USE(ANGLE)
 
-bool GraphicsContext3D::makeContextCurrent()
+bool GraphicsContextGLOpenGL::makeContextCurrent()
 {
 #if USE(NICOSIA)
     return m_nicosiaLayer->makeContextCurrent();
@@ -428,11 +427,11 @@ bool GraphicsContext3D::makeContextCurrent()
 #endif
 }
 
-void GraphicsContext3D::checkGPUStatus()
+void GraphicsContextGLOpenGL::checkGPUStatus()
 {
 }
 
-PlatformGraphicsContext3D GraphicsContext3D::platformGraphicsContext3D() const
+PlatformGraphicsContextGL GraphicsContextGLOpenGL::platformGraphicsContextGL() const
 {
 #if USE(NICOSIA)
     return m_nicosiaLayer->platformContext();
@@ -441,12 +440,12 @@ PlatformGraphicsContext3D GraphicsContext3D::platformGraphicsContext3D() const
 #endif
 }
 
-Platform3DObject GraphicsContext3D::platformTexture() const
+Platform3DObject GraphicsContextGLOpenGL::platformTexture() const
 {
     return m_texture;
 }
 
-bool GraphicsContext3D::isGLES2Compliant() const
+bool GraphicsContextGLOpenGL::isGLES2Compliant() const
 {
 #if USE(OPENGL_ES)
     return true;
@@ -455,7 +454,7 @@ bool GraphicsContext3D::isGLES2Compliant() const
 #endif
 }
 
-PlatformLayer* GraphicsContext3D::platformLayer() const
+PlatformLayer* GraphicsContextGLOpenGL::platformLayer() const
 {
 #if USE(NICOSIA)
     return &m_nicosiaLayer->contentLayer();
@@ -465,15 +464,15 @@ PlatformLayer* GraphicsContext3D::platformLayer() const
 }
 
 #if PLATFORM(GTK) && !USE(ANGLE)
-Extensions3D& GraphicsContext3D::getExtensions()
+ExtensionsGL& GraphicsContextGLOpenGL::getExtensions()
 {
     if (!m_extensions) {
 #if USE(OPENGL_ES)
         // glGetStringi is not available on GLES2.
-        m_extensions = makeUnique<Extensions3DOpenGLES>(this,  false);
+        m_extensions = makeUnique<ExtensionsGLOpenGLES>(this,  false);
 #else
         // From OpenGL 3.2 on we use the Core profile, and there we must use glGetStringi.
-        m_extensions = makeUnique<Extensions3DOpenGL>(this, GLContext::current()->version() >= 320);
+        m_extensions = makeUnique<ExtensionsGLOpenGL>(this, GLContext::current()->version() >= 320);
 #endif
     }
     return *m_extensions;
@@ -481,41 +480,41 @@ Extensions3D& GraphicsContext3D::getExtensions()
 #endif
 
 #if (PLATFORM(GTK) && !USE(ANGLE)) || PLATFORM(WIN)
-void* GraphicsContext3D::mapBufferRange(GC3Denum, GC3Dintptr, GC3Dsizeiptr, GC3Dbitfield)
+void* GraphicsContextGLOpenGL::mapBufferRange(GC3Denum, GC3Dintptr, GC3Dsizeiptr, GC3Dbitfield)
 {
     return nullptr;
 }
 
-GC3Dboolean GraphicsContext3D::unmapBuffer(GC3Denum)
+GC3Dboolean GraphicsContextGLOpenGL::unmapBuffer(GC3Denum)
 {
     return 0;
 }
 
-void GraphicsContext3D::copyBufferSubData(GC3Denum, GC3Denum, GC3Dintptr, GC3Dintptr, GC3Dsizeiptr)
+void GraphicsContextGLOpenGL::copyBufferSubData(GC3Denum, GC3Denum, GC3Dintptr, GC3Dintptr, GC3Dsizeiptr)
 {
 }
 
-void GraphicsContext3D::getInternalformativ(GC3Denum, GC3Denum, GC3Denum, GC3Dsizei, GC3Dint*)
+void GraphicsContextGLOpenGL::getInternalformativ(GC3Denum, GC3Denum, GC3Denum, GC3Dsizei, GC3Dint*)
 {
 }
 
-void GraphicsContext3D::renderbufferStorageMultisample(GC3Denum, GC3Dsizei, GC3Denum, GC3Dsizei, GC3Dsizei)
+void GraphicsContextGLOpenGL::renderbufferStorageMultisample(GC3Denum, GC3Dsizei, GC3Denum, GC3Dsizei, GC3Dsizei)
 {
 }
 
-void GraphicsContext3D::texStorage2D(GC3Denum, GC3Dsizei, GC3Denum, GC3Dsizei, GC3Dsizei)
+void GraphicsContextGLOpenGL::texStorage2D(GC3Denum, GC3Dsizei, GC3Denum, GC3Dsizei, GC3Dsizei)
 {
 }
 
-void GraphicsContext3D::texStorage3D(GC3Denum, GC3Dsizei, GC3Denum, GC3Dsizei, GC3Dsizei, GC3Dsizei)
+void GraphicsContextGLOpenGL::texStorage3D(GC3Denum, GC3Dsizei, GC3Denum, GC3Dsizei, GC3Dsizei, GC3Dsizei)
 {
 }
 
-void GraphicsContext3D::getActiveUniforms(Platform3DObject, const Vector<GC3Duint>&, GC3Denum, Vector<GC3Dint>&)
+void GraphicsContextGLOpenGL::getActiveUniforms(Platform3DObject, const Vector<GC3Duint>&, GC3Denum, Vector<GC3Dint>&)
 {
 }
 #endif
 
 } // namespace WebCore
 
-#endif // ENABLE(GRAPHICS_CONTEXT_3D) && USE(TEXTURE_MAPPER)
+#endif // ENABLE(GRAPHICS_CONTEXT_GL) && USE(TEXTURE_MAPPER)

@@ -42,7 +42,7 @@ Ref<WebGLBuffer> WebGLBuffer::create(WebGLRenderingContextBase& ctx)
 WebGLBuffer::WebGLBuffer(WebGLRenderingContextBase& ctx)
     : WebGLSharedObject(ctx)
 {
-    setObject(ctx.graphicsContext3D()->createBuffer());
+    setObject(ctx.graphicsContextGL()->createBuffer());
     clearCachedMaxIndices();
 }
 
@@ -51,7 +51,7 @@ WebGLBuffer::~WebGLBuffer()
     deleteObject(0);
 }
 
-void WebGLBuffer::deleteObjectImpl(GraphicsContext3D* context3d, Platform3DObject object)
+void WebGLBuffer::deleteObjectImpl(GraphicsContextGLOpenGL* context3d, Platform3DObject object)
 {
     context3d->deleteBuffer(object);
 }
@@ -62,7 +62,7 @@ bool WebGLBuffer::associateBufferDataImpl(const void* data, GC3Dsizeiptr byteLen
         return false;
 
     switch (m_target) {
-    case GraphicsContext3D::ELEMENT_ARRAY_BUFFER:
+    case GraphicsContextGL::ELEMENT_ARRAY_BUFFER:
         if (byteLength > std::numeric_limits<unsigned>::max())
             return false;
         m_byteLength = byteLength;
@@ -82,18 +82,18 @@ bool WebGLBuffer::associateBufferDataImpl(const void* data, GC3Dsizeiptr byteLen
         } else
             m_elementArrayBuffer = nullptr;
         return true;
-    case GraphicsContext3D::ARRAY_BUFFER:
+    case GraphicsContextGL::ARRAY_BUFFER:
         m_byteLength = byteLength;
         return true;
     default:
 #if ENABLE(WEBGL2)
         switch (m_target) {
-        case GraphicsContext3D::COPY_READ_BUFFER:
-        case GraphicsContext3D::COPY_WRITE_BUFFER:
-        case GraphicsContext3D::PIXEL_PACK_BUFFER:
-        case GraphicsContext3D::PIXEL_UNPACK_BUFFER:
-        case GraphicsContext3D::TRANSFORM_FEEDBACK_BUFFER:
-        case GraphicsContext3D::UNIFORM_BUFFER:
+        case GraphicsContextGL::COPY_READ_BUFFER:
+        case GraphicsContextGL::COPY_WRITE_BUFFER:
+        case GraphicsContextGL::PIXEL_PACK_BUFFER:
+        case GraphicsContextGL::PIXEL_UNPACK_BUFFER:
+        case GraphicsContextGL::TRANSFORM_FEEDBACK_BUFFER:
+        case GraphicsContextGL::UNIFORM_BUFFER:
             m_byteLength = byteLength;
             return true;
         }
@@ -135,7 +135,7 @@ bool WebGLBuffer::associateBufferSubDataImpl(GC3Dintptr offset, const void* data
     }
 
     switch (m_target) {
-    case GraphicsContext3D::ELEMENT_ARRAY_BUFFER:
+    case GraphicsContextGL::ELEMENT_ARRAY_BUFFER:
         clearCachedMaxIndices();
         if (byteLength) {
             if (!m_elementArrayBuffer)
@@ -143,17 +143,17 @@ bool WebGLBuffer::associateBufferSubDataImpl(GC3Dintptr offset, const void* data
             memcpy(static_cast<unsigned char*>(m_elementArrayBuffer->data()) + offset, data, byteLength);
         }
         return true;
-    case GraphicsContext3D::ARRAY_BUFFER:
+    case GraphicsContextGL::ARRAY_BUFFER:
         return true;
     default:
 #if ENABLE(WEBGL2)
         switch (m_target) {
-        case GraphicsContext3D::COPY_READ_BUFFER:
-        case GraphicsContext3D::COPY_WRITE_BUFFER:
-        case GraphicsContext3D::PIXEL_PACK_BUFFER:
-        case GraphicsContext3D::PIXEL_UNPACK_BUFFER:
-        case GraphicsContext3D::TRANSFORM_FEEDBACK_BUFFER:
-        case GraphicsContext3D::UNIFORM_BUFFER:
+        case GraphicsContextGL::COPY_READ_BUFFER:
+        case GraphicsContextGL::COPY_WRITE_BUFFER:
+        case GraphicsContextGL::PIXEL_PACK_BUFFER:
+        case GraphicsContextGL::PIXEL_UNPACK_BUFFER:
+        case GraphicsContextGL::TRANSFORM_FEEDBACK_BUFFER:
+        case GraphicsContextGL::UNIFORM_BUFFER:
             return true;
         }
 #endif
@@ -194,7 +194,7 @@ bool WebGLBuffer::associateCopyBufferSubData(const WebGLBuffer& readBuffer, GC3D
     }
 
     switch (m_target) {
-    case GraphicsContext3D::ELEMENT_ARRAY_BUFFER:
+    case GraphicsContextGL::ELEMENT_ARRAY_BUFFER:
         clearCachedMaxIndices();
         if (size) {
             if (!m_elementArrayBuffer)
@@ -202,17 +202,17 @@ bool WebGLBuffer::associateCopyBufferSubData(const WebGLBuffer& readBuffer, GC3D
             memcpy(static_cast<unsigned char*>(m_elementArrayBuffer->data()) + writeOffset, static_cast<const unsigned char*>(readBuffer.elementArrayBuffer()->data()) + readOffset, size);
         }
         return true;
-    case GraphicsContext3D::ARRAY_BUFFER:
+    case GraphicsContextGL::ARRAY_BUFFER:
         return true;
     default:
 #if ENABLE(WEBGL2)
         switch (m_target) {
-        case GraphicsContext3D::COPY_READ_BUFFER:
-        case GraphicsContext3D::COPY_WRITE_BUFFER:
-        case GraphicsContext3D::PIXEL_PACK_BUFFER:
-        case GraphicsContext3D::PIXEL_UNPACK_BUFFER:
-        case GraphicsContext3D::TRANSFORM_FEEDBACK_BUFFER:
-        case GraphicsContext3D::UNIFORM_BUFFER:
+        case GraphicsContextGL::COPY_READ_BUFFER:
+        case GraphicsContextGL::COPY_WRITE_BUFFER:
+        case GraphicsContextGL::PIXEL_PACK_BUFFER:
+        case GraphicsContextGL::PIXEL_UNPACK_BUFFER:
+        case GraphicsContextGL::TRANSFORM_FEEDBACK_BUFFER:
+        case GraphicsContextGL::UNIFORM_BUFFER:
             return true;
         }
 #endif
@@ -258,17 +258,17 @@ void WebGLBuffer::setTarget(GC3Denum target, bool forWebGL2)
     // In WebGL, a buffer is bound to one target in its lifetime
     if (m_target)
         return;
-    if (target == GraphicsContext3D::ARRAY_BUFFER || target == GraphicsContext3D::ELEMENT_ARRAY_BUFFER)
+    if (target == GraphicsContextGL::ARRAY_BUFFER || target == GraphicsContextGL::ELEMENT_ARRAY_BUFFER)
         m_target = target;
     else if (forWebGL2) {
 #if ENABLE(WEBGL2)
         switch (target) {
-        case GraphicsContext3D::COPY_READ_BUFFER:
-        case GraphicsContext3D::COPY_WRITE_BUFFER:
-        case GraphicsContext3D::PIXEL_PACK_BUFFER:
-        case GraphicsContext3D::PIXEL_UNPACK_BUFFER:
-        case GraphicsContext3D::TRANSFORM_FEEDBACK_BUFFER:
-        case GraphicsContext3D::UNIFORM_BUFFER:
+        case GraphicsContextGL::COPY_READ_BUFFER:
+        case GraphicsContextGL::COPY_WRITE_BUFFER:
+        case GraphicsContextGL::PIXEL_PACK_BUFFER:
+        case GraphicsContextGL::PIXEL_UNPACK_BUFFER:
+        case GraphicsContextGL::TRANSFORM_FEEDBACK_BUFFER:
+        case GraphicsContextGL::UNIFORM_BUFFER:
             m_target = target;
         }
 #endif

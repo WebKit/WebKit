@@ -17,28 +17,25 @@
  *  Boston, MA 02110-1301 USA
  */
 
-#ifndef GraphicsContext3DPrivate_h
-#define GraphicsContext3DPrivate_h
+#pragma once
 
 #include "GLContext.h"
-#include "GraphicsContext3D.h"
+#include "GraphicsContextGLOpenGL.h"
 
 namespace WebCore {
 
 class BitmapTextureGL;
 
-class GraphicsContext3DPrivate {
+class GraphicsContextGLOpenGLPrivate {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    GraphicsContext3DPrivate(GraphicsContext3D*, GraphicsContext3D::Destination);
-    ~GraphicsContext3DPrivate();
+    GraphicsContextGLOpenGLPrivate(GraphicsContextGLOpenGL*, GraphicsContextGLOpenGL::Destination);
+    ~GraphicsContextGLOpenGLPrivate();
     bool makeContextCurrent();
-    PlatformGraphicsContext3D platformContext();
+    PlatformGraphicsContextGL platformContext();
 
 private:
     std::unique_ptr<GLContext> m_glContext;
 };
 
 }
-
-#endif // GraphicsContext3DPrivate_h

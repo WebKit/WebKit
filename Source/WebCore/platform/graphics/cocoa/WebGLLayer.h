@@ -31,7 +31,7 @@
 
 namespace WebCore {
 class GraphicsLayer;
-class GraphicsContext3D;
+class GraphicsContextGLOpenGL;
 }
 
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
@@ -46,7 +46,7 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 #error Unsupported platform
 #endif
 {
-    WebCore::GraphicsContext3D* _context;
+    WebCore::GraphicsContextGLOpenGL* _context;
     float _devicePixelRatio;
 #if HAVE(IOSURFACE) && (USE(OPENGL) || USE(ANGLE))
     std::unique_ptr<WebCore::IOSurface> _contentsBuffer;
@@ -65,9 +65,9 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 #endif
 }
 
-@property (nonatomic) WebCore::GraphicsContext3D* context;
+@property (nonatomic) WebCore::GraphicsContextGLOpenGL* context;
 
-- (id)initWithGraphicsContext3D:(WebCore::GraphicsContext3D*)context;
+- (id)initWithGraphicsContextGL:(WebCore::GraphicsContextGLOpenGL*)context;
 
 - (CGImageRef)copyImageSnapshotWithColorSpace:(CGColorSpaceRef)colorSpace;
 

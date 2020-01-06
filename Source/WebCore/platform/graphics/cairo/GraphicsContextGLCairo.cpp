@@ -26,9 +26,9 @@
  */
 
 #include "config.h"
-#include "GraphicsContext3D.h"
+#include "GraphicsContextGLOpenGL.h"
 
-#if ENABLE(GRAPHICS_CONTEXT_3D) && USE(CAIRO)
+#if ENABLE(GRAPHICS_CONTEXT_GL) && USE(CAIRO)
 
 #include "CairoUtilities.h"
 #include "Image.h"
@@ -39,9 +39,9 @@
 
 namespace WebCore {
 
-GraphicsContext3D::ImageExtractor::~ImageExtractor() = default;
+GraphicsContextGLOpenGL::ImageExtractor::~ImageExtractor() = default;
 
-bool GraphicsContext3D::ImageExtractor::extractImage(bool premultiplyAlpha, bool ignoreGammaAndColorProfile)
+bool GraphicsContextGLOpenGL::ImageExtractor::extractImage(bool premultiplyAlpha, bool ignoreGammaAndColorProfile)
 {
     if (!m_image)
         return false;
@@ -88,7 +88,7 @@ bool GraphicsContext3D::ImageExtractor::extractImage(bool premultiplyAlpha, bool
     if (cairo_image_surface_get_format(m_imageSurface.get()) != CAIRO_FORMAT_ARGB32)
         return false;
 
-    unsigned int srcUnpackAlignment = 1;
+    unsigned srcUnpackAlignment = 1;
     size_t bytesPerRow = cairo_image_surface_get_stride(m_imageSurface.get());
     size_t bitsPerPixel = 32;
     unsigned padding = bytesPerRow - bitsPerPixel / 8 * m_imageWidth;
@@ -104,7 +104,7 @@ bool GraphicsContext3D::ImageExtractor::extractImage(bool premultiplyAlpha, bool
     return true;
 }
 
-void GraphicsContext3D::paintToCanvas(const unsigned char* imagePixels, const IntSize& imageSize, const IntSize& canvasSize, GraphicsContext& context)
+void GraphicsContextGLOpenGL::paintToCanvas(const unsigned char* imagePixels, const IntSize& imageSize, const IntSize& canvasSize, GraphicsContext& context)
 {
     if (!imagePixels || imageSize.isEmpty() || canvasSize.isEmpty())
         return;
@@ -137,4 +137,4 @@ void GraphicsContext3D::paintToCanvas(const unsigned char* imagePixels, const In
 
 } // namespace WebCore
 
-#endif // ENABLE(GRAPHICS_CONTEXT_3D) && USE(CAIRO)
+#endif // ENABLE(GRAPHICS_CONTEXT_GL) && USE(CAIRO)

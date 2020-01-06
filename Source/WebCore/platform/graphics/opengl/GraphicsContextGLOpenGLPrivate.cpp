@@ -19,8 +19,8 @@
 
 #include "config.h"
 
-#if ENABLE(GRAPHICS_CONTEXT_3D)
-#include "GraphicsContext3DPrivate.h"
+#if ENABLE(GRAPHICS_CONTEXT_GL)
+#include "GraphicsContextGLOpenGLPrivate.h"
 
 #include "HostWindow.h"
 #include <wtf/StdLibExtras.h>
@@ -38,30 +38,30 @@
 
 namespace WebCore {
 
-GraphicsContext3DPrivate::GraphicsContext3DPrivate(GraphicsContext3D*, GraphicsContext3D::Destination destination)
+GraphicsContextGLOpenGLPrivate::GraphicsContextGLOpenGLPrivate(GraphicsContextGLOpenGL*, GraphicsContextGLOpenGL::Destination destination)
 {
     switch (destination) {
-    case GraphicsContext3D::Destination::Offscreen:
+    case GraphicsContextGLOpenGL::Destination::Offscreen:
         m_glContext = GLContext::createOffscreenContext(&PlatformDisplay::sharedDisplayForCompositing());
         break;
-    case GraphicsContext3D::Destination::DirectlyToHostWindow:
+    case GraphicsContextGLOpenGL::Destination::DirectlyToHostWindow:
         ASSERT_NOT_REACHED();
         break;
     }
 }
 
-GraphicsContext3DPrivate::~GraphicsContext3DPrivate() = default;
+GraphicsContextGLOpenGLPrivate::~GraphicsContextGLOpenGLPrivate() = default;
 
-bool GraphicsContext3DPrivate::makeContextCurrent()
+bool GraphicsContextGLOpenGLPrivate::makeContextCurrent()
 {
     return m_glContext ? m_glContext->makeContextCurrent() : false;
 }
 
-PlatformGraphicsContext3D GraphicsContext3DPrivate::platformContext()
+PlatformGraphicsContextGL GraphicsContextGLOpenGLPrivate::platformContext()
 {
     return m_glContext ? m_glContext->platformContext() : GLContext::current()->platformContext();
 }
 
 } // namespace WebCore
 
-#endif // ENABLE(GRAPHICS_CONTEXT_3D)
+#endif // ENABLE(GRAPHICS_CONTEXT_GL)

@@ -25,21 +25,21 @@
 
 #pragma once
 
-#include "Extensions3DOpenGLCommon.h"
+#include "ExtensionsGLOpenGLCommon.h"
 
-#include "GraphicsContext3D.h"
+#include "GraphicsContextGLOpenGL.h"
 #include <wtf/text/StringHash.h>
 
 namespace WebCore {
 
-class Extensions3DOpenGL : public Extensions3DOpenGLCommon {
+class ExtensionsGLOpenGL : public ExtensionsGLOpenGLCommon {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    // This class only needs to be instantiated by GraphicsContext3D implementations.
-    Extensions3DOpenGL(GraphicsContext3D*, bool useIndexedGetString);
-    virtual ~Extensions3DOpenGL();
+    // This class only needs to be instantiated by GraphicsContextGLOpenGL implementations.
+    ExtensionsGLOpenGL(GraphicsContextGLOpenGL*, bool useIndexedGetString);
+    virtual ~ExtensionsGLOpenGL();
 
-    // Extensions3D methods.
+    // ExtensionsGL methods.
     void blitFramebuffer(long srcX0, long srcY0, long srcX1, long srcY1, long dstX0, long dstY0, long dstX1, long dstY1, unsigned long mask, unsigned long filter) override;
     void renderbufferStorageMultisample(unsigned long target, unsigned long samples, unsigned long internalformat, unsigned long width, unsigned long height) override;
 

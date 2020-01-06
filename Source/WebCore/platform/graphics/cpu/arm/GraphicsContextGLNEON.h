@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef GraphicsContext3DNEON_h
-#define GraphicsContext3DNEON_h
+#pragma once
 
 #if HAVE(ARM_NEON_INTRINSICS)
 
@@ -300,5 +299,3 @@ ALWAYS_INLINE void packOneRowOfRGBA8ToUnsignedShort565(const uint8_t*& source, u
 } // namespace WebCore
 
 #endif // HAVE(ARM_NEON_INTRINSICS)
-
-#endif // GraphicsContext3DNEON_h

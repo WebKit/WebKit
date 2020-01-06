@@ -174,19 +174,19 @@ bool GC3DANGLELayer::ANGLEContext::makeContextCurrent()
     return true;
 }
 
-PlatformGraphicsContext3D GC3DANGLELayer::ANGLEContext::platformContext() const
+PlatformGraphicsContextGL GC3DANGLELayer::ANGLEContext::platformContext() const
 {
     return m_context;
 }
 
-GC3DANGLELayer::GC3DANGLELayer(GraphicsContext3D& context, GraphicsContext3D::Destination destination)
+GC3DANGLELayer::GC3DANGLELayer(GraphicsContextGLOpenGL& context, GraphicsContextGLOpenGL::Destination destination)
     : GC3DLayer(context)
 {
     switch (destination) {
-    case GraphicsContext3D::Destination::Offscreen:
+    case GraphicsContextGLOpenGL::Destination::Offscreen:
         m_angleContext = ANGLEContext::createContext();
         break;
-    case GraphicsContext3D::Destination::DirectlyToHostWindow:
+    case GraphicsContextGLOpenGL::Destination::DirectlyToHostWindow:
         ASSERT_NOT_REACHED();
         break;
     }
@@ -203,7 +203,7 @@ bool GC3DANGLELayer::makeContextCurrent()
 
 }
 
-PlatformGraphicsContext3D GC3DANGLELayer::platformContext() const
+PlatformGraphicsContextGL GC3DANGLELayer::platformContext() const
 {
     ASSERT(m_angleContext);
     return m_angleContext->platformContext();

@@ -52,10 +52,10 @@ WebGLVertexArrayObject::WebGLVertexArrayObject(WebGLRenderingContextBase& contex
 #else
     ASSERT(type != Type::Default || !(this->context()->m_defaultVertexArrayObject));
 #endif
-    setObject(this->context()->graphicsContext3D()->createVertexArray());
+    setObject(this->context()->graphicsContextGL()->createVertexArray());
 }
 
-void WebGLVertexArrayObject::deleteObjectImpl(GraphicsContext3D* context3d, Platform3DObject object)
+void WebGLVertexArrayObject::deleteObjectImpl(GraphicsContextGLOpenGL* context3d, Platform3DObject object)
 {
     switch (m_type) {
     case Type::Default:

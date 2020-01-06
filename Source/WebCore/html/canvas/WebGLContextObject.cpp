@@ -47,15 +47,15 @@ void WebGLContextObject::detachContext()
 {
     detach();
     if (m_context) {
-        deleteObject(m_context->graphicsContext3D());
+        deleteObject(m_context->graphicsContextGL());
         m_context->removeContextObject(*this);
         m_context = nullptr;
     }
 }
 
-GraphicsContext3D* WebGLContextObject::getAGraphicsContext3D() const
+GraphicsContextGLOpenGL* WebGLContextObject::getAGraphicsContextGL() const
 {
-    return m_context ? m_context->graphicsContext3D() : nullptr;
+    return m_context ? m_context->graphicsContextGL() : nullptr;
 }
 
 }

@@ -191,7 +191,7 @@ PlatformLayer* ImageBuffer::platformLayer() const
     return 0;
 }
 
-bool ImageBuffer::copyToPlatformTexture(GraphicsContext3D&, GC3Denum, Platform3DObject, GC3Denum, bool, bool)
+bool ImageBuffer::copyToPlatformTexture(GraphicsContextGLOpenGL&, GC3Denum, Platform3DObject, GC3Denum, bool, bool)
 {
     return false;
 }

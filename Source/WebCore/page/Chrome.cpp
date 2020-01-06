@@ -61,8 +61,8 @@
 #include "DataListSuggestionPicker.h"
 #endif
 
-#if PLATFORM(MAC) && ENABLE(GRAPHICS_CONTEXT_3D)
-#include "GraphicsContext3DManager.h"
+#if PLATFORM(MAC) && ENABLE(GRAPHICS_CONTEXT_GL)
+#include "GraphicsContextGLOpenGLManager.h"
 #endif
 
 namespace WebCore {
@@ -516,8 +516,8 @@ void Chrome::windowScreenDidChange(PlatformDisplayID displayID)
 #endif
     m_page.setNeedsRecalcStyleInAllFrames();
 
-#if PLATFORM(MAC) && ENABLE(GRAPHICS_CONTEXT_3D)
-    GraphicsContext3DManager::sharedManager().screenDidChange(displayID, this);
+#if PLATFORM(MAC) && ENABLE(GRAPHICS_CONTEXT_GL)
+    GraphicsContextGLOpenGLManager::sharedManager().screenDidChange(displayID, this);
 #endif
 }
 

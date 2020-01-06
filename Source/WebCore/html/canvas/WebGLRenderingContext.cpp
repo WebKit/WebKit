@@ -35,7 +35,7 @@
 #include "EXTShaderTextureLOD.h"
 #include "EXTTextureFilterAnisotropic.h"
 #include "EXTsRGB.h"
-#include "Extensions3D.h"
+#include "ExtensionsGL.h"
 #include "HTMLCanvasElement.h"
 #include "HTMLImageElement.h"
 #include "HTMLVideoElement.h"
@@ -72,7 +72,7 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(WebGLRenderingContext);
 
-std::unique_ptr<WebGLRenderingContext> WebGLRenderingContext::create(CanvasBase& canvas, GraphicsContext3DAttributes attributes)
+std::unique_ptr<WebGLRenderingContext> WebGLRenderingContext::create(CanvasBase& canvas, GraphicsContextGLAttributes attributes)
 {
     auto renderingContext = std::unique_ptr<WebGLRenderingContext>(new WebGLRenderingContext(canvas, attributes));
 
@@ -81,7 +81,7 @@ std::unique_ptr<WebGLRenderingContext> WebGLRenderingContext::create(CanvasBase&
     return renderingContext;
 }
 
-std::unique_ptr<WebGLRenderingContext> WebGLRenderingContext::create(CanvasBase& canvas, Ref<GraphicsContext3D>&& context, GraphicsContext3DAttributes attributes)
+std::unique_ptr<WebGLRenderingContext> WebGLRenderingContext::create(CanvasBase& canvas, Ref<GraphicsContextGLOpenGL>&& context, GraphicsContextGLAttributes attributes)
 {
     auto renderingContext = std::unique_ptr<WebGLRenderingContext>(new WebGLRenderingContext(canvas, WTFMove(context), attributes));
 
@@ -90,12 +90,12 @@ std::unique_ptr<WebGLRenderingContext> WebGLRenderingContext::create(CanvasBase&
     return renderingContext;
 }
 
-WebGLRenderingContext::WebGLRenderingContext(CanvasBase& canvas, GraphicsContext3DAttributes attributes)
+WebGLRenderingContext::WebGLRenderingContext(CanvasBase& canvas, GraphicsContextGLAttributes attributes)
     : WebGLRenderingContextBase(canvas, attributes)
 {
 }
 
-WebGLRenderingContext::WebGLRenderingContext(CanvasBase& canvas, Ref<GraphicsContext3D>&& context, GraphicsContext3DAttributes attributes)
+WebGLRenderingContext::WebGLRenderingContext(CanvasBase& canvas, Ref<GraphicsContextGLOpenGL>&& context, GraphicsContextGLAttributes attributes)
     : WebGLRenderingContextBase(canvas, WTFMove(context), attributes)
 {
     initializeVertexArrayObjects();
@@ -251,58 +251,58 @@ WebGLAny WebGLRenderingContext::getFramebufferAttachmentParameter(GC3Denum targe
         return nullptr;
     
     if (!m_framebufferBinding || !m_framebufferBinding->object()) {
-        synthesizeGLError(GraphicsContext3D::INVALID_OPERATION, "getFramebufferAttachmentParameter", "no framebuffer bound");
+        synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, "getFramebufferAttachmentParameter", "no framebuffer bound");
         return nullptr;
     }
     
     auto object = makeRefPtr(m_framebufferBinding->getAttachmentObject(attachment));
     if (!object) {
-        if (pname == GraphicsContext3D::FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE)
-            return static_cast<unsigned>(GraphicsContext3D::NONE);
+        if (pname == GraphicsContextGL::FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE)
+            return static_cast<unsigned>(GraphicsContextGL::NONE);
         // OpenGL ES 2.0 specifies INVALID_ENUM in this case, while desktop GL
         // specifies INVALID_OPERATION.
-        synthesizeGLError(GraphicsContext3D::INVALID_ENUM, "getFramebufferAttachmentParameter", "invalid parameter name");
+        synthesizeGLError(GraphicsContextGL::INVALID_ENUM, "getFramebufferAttachmentParameter", "invalid parameter name");
         return nullptr;
     }
     
     if (object->isTexture()) {
         switch (pname) {
-        case GraphicsContext3D::FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE:
-            return static_cast<unsigned>(GraphicsContext3D::TEXTURE);
-        case GraphicsContext3D::FRAMEBUFFER_ATTACHMENT_OBJECT_NAME:
+        case GraphicsContextGL::FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE:
+            return static_cast<unsigned>(GraphicsContextGL::TEXTURE);
+        case GraphicsContextGL::FRAMEBUFFER_ATTACHMENT_OBJECT_NAME:
             return makeRefPtr(reinterpret_cast<WebGLTexture&>(*object));
-        case GraphicsContext3D::FRAMEBUFFER_ATTACHMENT_TEXTURE_LEVEL:
-        case GraphicsContext3D::FRAMEBUFFER_ATTACHMENT_TEXTURE_CUBE_MAP_FACE:
-        case Extensions3D::FRAMEBUFFER_ATTACHMENT_COLOR_ENCODING_EXT: {
+        case GraphicsContextGL::FRAMEBUFFER_ATTACHMENT_TEXTURE_LEVEL:
+        case GraphicsContextGL::FRAMEBUFFER_ATTACHMENT_TEXTURE_CUBE_MAP_FACE:
+        case ExtensionsGL::FRAMEBUFFER_ATTACHMENT_COLOR_ENCODING_EXT: {
             GC3Dint value = 0;
             m_context->getFramebufferAttachmentParameteriv(target, attachment, pname, &value);
             return value;
         }
         default:
-            synthesizeGLError(GraphicsContext3D::INVALID_ENUM, "getFramebufferAttachmentParameter", "invalid parameter name for texture attachment");
+            synthesizeGLError(GraphicsContextGL::INVALID_ENUM, "getFramebufferAttachmentParameter", "invalid parameter name for texture attachment");
             return nullptr;
         }
     } else {
         ASSERT(object->isRenderbuffer());
         switch (pname) {
-        case GraphicsContext3D::FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE:
-            return static_cast<unsigned>(GraphicsContext3D::RENDERBUFFER);
-        case GraphicsContext3D::FRAMEBUFFER_ATTACHMENT_OBJECT_NAME:
+        case GraphicsContextGL::FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE:
+            return static_cast<unsigned>(GraphicsContextGL::RENDERBUFFER);
+        case GraphicsContextGL::FRAMEBUFFER_ATTACHMENT_OBJECT_NAME:
             return makeRefPtr(reinterpret_cast<WebGLRenderbuffer&>(*object));
-        case Extensions3D::FRAMEBUFFER_ATTACHMENT_COLOR_ENCODING_EXT: {
+        case ExtensionsGL::FRAMEBUFFER_ATTACHMENT_COLOR_ENCODING_EXT: {
             if (!m_extsRGB) {
-                synthesizeGLError(GraphicsContext3D::INVALID_ENUM, "getFramebufferAttachmentParameter", "invalid parameter name for renderbuffer attachment");
+                synthesizeGLError(GraphicsContextGL::INVALID_ENUM, "getFramebufferAttachmentParameter", "invalid parameter name for renderbuffer attachment");
                 return nullptr;
             }
             RefPtr<WebGLRenderbuffer> renderBuffer = reinterpret_cast<WebGLRenderbuffer*>(object.get());
             GC3Denum renderBufferFormat = renderBuffer->getInternalFormat();
-            ASSERT(renderBufferFormat != Extensions3D::SRGB_EXT && renderBufferFormat != Extensions3D::SRGB_ALPHA_EXT);
-            if (renderBufferFormat == Extensions3D::SRGB8_ALPHA8_EXT)
-                return static_cast<unsigned>(Extensions3D::SRGB_EXT);
-            return static_cast<unsigned>(GraphicsContext3D::LINEAR);
+            ASSERT(renderBufferFormat != ExtensionsGL::SRGB_EXT && renderBufferFormat != ExtensionsGL::SRGB_ALPHA_EXT);
+            if (renderBufferFormat == ExtensionsGL::SRGB8_ALPHA8_EXT)
+                return static_cast<unsigned>(ExtensionsGL::SRGB_EXT);
+            return static_cast<unsigned>(GraphicsContextGL::LINEAR);
         }
         default:
-            synthesizeGLError(GraphicsContext3D::INVALID_ENUM, "getFramebufferAttachmentParameter", "invalid parameter name for renderbuffer attachment");
+            synthesizeGLError(GraphicsContextGL::INVALID_ENUM, "getFramebufferAttachmentParameter", "invalid parameter name for renderbuffer attachment");
             return nullptr;
         }
     }
@@ -310,24 +310,24 @@ WebGLAny WebGLRenderingContext::getFramebufferAttachmentParameter(GC3Denum targe
 
 bool WebGLRenderingContext::validateFramebufferFuncParameters(const char* functionName, GC3Denum target, GC3Denum attachment)
 {
-    if (target != GraphicsContext3D::FRAMEBUFFER) {
-        synthesizeGLError(GraphicsContext3D::INVALID_ENUM, functionName, "invalid target");
+    if (target != GraphicsContextGL::FRAMEBUFFER) {
+        synthesizeGLError(GraphicsContextGL::INVALID_ENUM, functionName, "invalid target");
         return false;
     }
     // FIXME: Why does this return true unconditionally for COLOR_ATTACHMENT0,
     // but false for other COLOR_ATTACHMENT values if m_webglDrawBuffers is false?
     switch (attachment) {
-    case GraphicsContext3D::COLOR_ATTACHMENT0:
-    case GraphicsContext3D::DEPTH_ATTACHMENT:
-    case GraphicsContext3D::STENCIL_ATTACHMENT:
-    case GraphicsContext3D::DEPTH_STENCIL_ATTACHMENT:
+    case GraphicsContextGL::COLOR_ATTACHMENT0:
+    case GraphicsContextGL::DEPTH_ATTACHMENT:
+    case GraphicsContextGL::STENCIL_ATTACHMENT:
+    case GraphicsContextGL::DEPTH_STENCIL_ATTACHMENT:
         return true;
     default:
         if (m_webglDrawBuffers
-            && attachment >= GraphicsContext3D::COLOR_ATTACHMENT0
-            && attachment < static_cast<GC3Denum>(GraphicsContext3D::COLOR_ATTACHMENT0 + getMaxColorAttachments()))
+            && attachment >= GraphicsContextGL::COLOR_ATTACHMENT0
+            && attachment < static_cast<GC3Denum>(GraphicsContextGL::COLOR_ATTACHMENT0 + getMaxColorAttachments()))
             return true;
-        synthesizeGLError(GraphicsContext3D::INVALID_ENUM, functionName, "invalid attachment");
+        synthesizeGLError(GraphicsContextGL::INVALID_ENUM, functionName, "invalid attachment");
         return false;
     }
 }
@@ -336,25 +336,25 @@ void WebGLRenderingContext::renderbufferStorage(GC3Denum target, GC3Denum intern
 {
     if (isContextLostOrPending())
         return;
-    if (target != GraphicsContext3D::RENDERBUFFER) {
-        synthesizeGLError(GraphicsContext3D::INVALID_ENUM, "renderbufferStorage", "invalid target");
+    if (target != GraphicsContextGL::RENDERBUFFER) {
+        synthesizeGLError(GraphicsContextGL::INVALID_ENUM, "renderbufferStorage", "invalid target");
         return;
     }
     if (!m_renderbufferBinding || !m_renderbufferBinding->object()) {
-        synthesizeGLError(GraphicsContext3D::INVALID_OPERATION, "renderbufferStorage", "no bound renderbuffer");
+        synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, "renderbufferStorage", "no bound renderbuffer");
         return;
     }
     if (!validateSize("renderbufferStorage", width, height))
         return;
     switch (internalformat) {
-    case GraphicsContext3D::DEPTH_COMPONENT16:
-    case GraphicsContext3D::RGBA4:
-    case GraphicsContext3D::RGB5_A1:
-    case GraphicsContext3D::RGB565:
-    case GraphicsContext3D::STENCIL_INDEX8:
-    case Extensions3D::SRGB8_ALPHA8_EXT:
-        if (internalformat == Extensions3D::SRGB8_ALPHA8_EXT && !m_extsRGB) {
-            synthesizeGLError(GraphicsContext3D::INVALID_ENUM, "renderbufferStorage", "invalid internalformat");
+    case GraphicsContextGL::DEPTH_COMPONENT16:
+    case GraphicsContextGL::RGBA4:
+    case GraphicsContextGL::RGB5_A1:
+    case GraphicsContextGL::RGB565:
+    case GraphicsContextGL::STENCIL_INDEX8:
+    case ExtensionsGL::SRGB8_ALPHA8_EXT:
+        if (internalformat == ExtensionsGL::SRGB8_ALPHA8_EXT && !m_extsRGB) {
+            synthesizeGLError(GraphicsContextGL::INVALID_ENUM, "renderbufferStorage", "invalid internalformat");
             return;
         }
         m_context->renderbufferStorage(target, internalformat, width, height);
@@ -362,15 +362,15 @@ void WebGLRenderingContext::renderbufferStorage(GC3Denum target, GC3Denum intern
         m_renderbufferBinding->setIsValid(true);
         m_renderbufferBinding->setSize(width, height);
         break;
-    case GraphicsContext3D::DEPTH_STENCIL:
+    case GraphicsContextGL::DEPTH_STENCIL:
         if (isDepthStencilSupported())
-            m_context->renderbufferStorage(target, Extensions3D::DEPTH24_STENCIL8, width, height);
+            m_context->renderbufferStorage(target, ExtensionsGL::DEPTH24_STENCIL8, width, height);
         m_renderbufferBinding->setSize(width, height);
         m_renderbufferBinding->setIsValid(isDepthStencilSupported());
         m_renderbufferBinding->setInternalFormat(internalformat);
         break;
     default:
-        synthesizeGLError(GraphicsContext3D::INVALID_ENUM, "renderbufferStorage", "invalid internalformat");
+        synthesizeGLError(GraphicsContextGL::INVALID_ENUM, "renderbufferStorage", "invalid internalformat");
         return;
     }
     applyStencilTest();
@@ -382,16 +382,16 @@ void WebGLRenderingContext::hint(GC3Denum target, GC3Denum mode)
         return;
     bool isValid = false;
     switch (target) {
-    case GraphicsContext3D::GENERATE_MIPMAP_HINT:
+    case GraphicsContextGL::GENERATE_MIPMAP_HINT:
         isValid = true;
         break;
-    case Extensions3D::FRAGMENT_SHADER_DERIVATIVE_HINT_OES: // OES_standard_derivatives
+    case ExtensionsGL::FRAGMENT_SHADER_DERIVATIVE_HINT_OES: // OES_standard_derivatives
         if (m_oesStandardDerivatives)
             isValid = true;
         break;
     }
     if (!isValid) {
-        synthesizeGLError(GraphicsContext3D::INVALID_ENUM, "hint", "invalid target");
+        synthesizeGLError(GraphicsContextGL::INVALID_ENUM, "hint", "invalid target");
         return;
     }
     m_context->hint(target, mode);
@@ -401,13 +401,13 @@ void WebGLRenderingContext::clear(GC3Dbitfield mask)
 {
     if (isContextLostOrPending())
         return;
-    if (mask & ~(GraphicsContext3D::COLOR_BUFFER_BIT | GraphicsContext3D::DEPTH_BUFFER_BIT | GraphicsContext3D::STENCIL_BUFFER_BIT)) {
-        synthesizeGLError(GraphicsContext3D::INVALID_VALUE, "clear", "invalid mask");
+    if (mask & ~(GraphicsContextGL::COLOR_BUFFER_BIT | GraphicsContextGL::DEPTH_BUFFER_BIT | GraphicsContextGL::STENCIL_BUFFER_BIT)) {
+        synthesizeGLError(GraphicsContextGL::INVALID_VALUE, "clear", "invalid mask");
         return;
     }
     const char* reason = "framebuffer incomplete";
     if (m_framebufferBinding && !m_framebufferBinding->onAccess(m_context.get(), &reason)) {
-        synthesizeGLError(GraphicsContext3D::INVALID_FRAMEBUFFER_OPERATION, "clear", reason);
+        synthesizeGLError(GraphicsContextGL::INVALID_FRAMEBUFFER_OPERATION, "clear", reason);
         return;
     }
     if (!clearIfComposited(mask))
@@ -421,243 +421,243 @@ WebGLAny WebGLRenderingContext::getParameter(GC3Denum pname)
         return nullptr;
 
     switch (pname) {
-    case GraphicsContext3D::ACTIVE_TEXTURE:
+    case GraphicsContextGL::ACTIVE_TEXTURE:
         return getUnsignedIntParameter(pname);
-    case GraphicsContext3D::ALIASED_LINE_WIDTH_RANGE:
+    case GraphicsContextGL::ALIASED_LINE_WIDTH_RANGE:
         return getWebGLFloatArrayParameter(pname);
-    case GraphicsContext3D::ALIASED_POINT_SIZE_RANGE:
+    case GraphicsContextGL::ALIASED_POINT_SIZE_RANGE:
         return getWebGLFloatArrayParameter(pname);
-    case GraphicsContext3D::ALPHA_BITS:
+    case GraphicsContextGL::ALPHA_BITS:
         if (!m_framebufferBinding && !m_attributes.alpha)
             return 0;
         return getIntParameter(pname);
-    case GraphicsContext3D::ARRAY_BUFFER_BINDING:
+    case GraphicsContextGL::ARRAY_BUFFER_BINDING:
         return m_boundArrayBuffer;
-    case GraphicsContext3D::BLEND:
+    case GraphicsContextGL::BLEND:
         return getBooleanParameter(pname);
-    case GraphicsContext3D::BLEND_COLOR:
+    case GraphicsContextGL::BLEND_COLOR:
         return getWebGLFloatArrayParameter(pname);
-    case GraphicsContext3D::BLEND_DST_ALPHA:
+    case GraphicsContextGL::BLEND_DST_ALPHA:
         return getUnsignedIntParameter(pname);
-    case GraphicsContext3D::BLEND_DST_RGB:
+    case GraphicsContextGL::BLEND_DST_RGB:
         return getUnsignedIntParameter(pname);
-    case GraphicsContext3D::BLEND_EQUATION_ALPHA:
+    case GraphicsContextGL::BLEND_EQUATION_ALPHA:
         return getUnsignedIntParameter(pname);
-    case GraphicsContext3D::BLEND_EQUATION_RGB:
+    case GraphicsContextGL::BLEND_EQUATION_RGB:
         return getUnsignedIntParameter(pname);
-    case GraphicsContext3D::BLEND_SRC_ALPHA:
+    case GraphicsContextGL::BLEND_SRC_ALPHA:
         return getUnsignedIntParameter(pname);
-    case GraphicsContext3D::BLEND_SRC_RGB:
+    case GraphicsContextGL::BLEND_SRC_RGB:
         return getUnsignedIntParameter(pname);
-    case GraphicsContext3D::BLUE_BITS:
+    case GraphicsContextGL::BLUE_BITS:
         return getIntParameter(pname);
-    case GraphicsContext3D::COLOR_CLEAR_VALUE:
+    case GraphicsContextGL::COLOR_CLEAR_VALUE:
         return getWebGLFloatArrayParameter(pname);
-    case GraphicsContext3D::COLOR_WRITEMASK:
+    case GraphicsContextGL::COLOR_WRITEMASK:
         return getBooleanArrayParameter(pname);
-    case GraphicsContext3D::COMPRESSED_TEXTURE_FORMATS:
+    case GraphicsContextGL::COMPRESSED_TEXTURE_FORMATS:
         return Uint32Array::tryCreate(m_compressedTextureFormats.data(), m_compressedTextureFormats.size());
-    case GraphicsContext3D::CULL_FACE:
+    case GraphicsContextGL::CULL_FACE:
         return getBooleanParameter(pname);
-    case GraphicsContext3D::CULL_FACE_MODE:
+    case GraphicsContextGL::CULL_FACE_MODE:
         return getUnsignedIntParameter(pname);
-    case GraphicsContext3D::CURRENT_PROGRAM:
+    case GraphicsContextGL::CURRENT_PROGRAM:
         return m_currentProgram;
-    case GraphicsContext3D::DEPTH_BITS:
+    case GraphicsContextGL::DEPTH_BITS:
         if (!m_framebufferBinding && !m_attributes.depth)
             return 0;
         return getIntParameter(pname);
-    case GraphicsContext3D::DEPTH_CLEAR_VALUE:
+    case GraphicsContextGL::DEPTH_CLEAR_VALUE:
         return getFloatParameter(pname);
-    case GraphicsContext3D::DEPTH_FUNC:
+    case GraphicsContextGL::DEPTH_FUNC:
         return getUnsignedIntParameter(pname);
-    case GraphicsContext3D::DEPTH_RANGE:
+    case GraphicsContextGL::DEPTH_RANGE:
         return getWebGLFloatArrayParameter(pname);
-    case GraphicsContext3D::DEPTH_TEST:
+    case GraphicsContextGL::DEPTH_TEST:
         return getBooleanParameter(pname);
-    case GraphicsContext3D::DEPTH_WRITEMASK:
+    case GraphicsContextGL::DEPTH_WRITEMASK:
         return getBooleanParameter(pname);
-    case GraphicsContext3D::DITHER:
+    case GraphicsContextGL::DITHER:
         return getBooleanParameter(pname);
-    case GraphicsContext3D::ELEMENT_ARRAY_BUFFER_BINDING:
+    case GraphicsContextGL::ELEMENT_ARRAY_BUFFER_BINDING:
         return makeRefPtr(m_boundVertexArrayObject->getElementArrayBuffer());
-    case GraphicsContext3D::FRAMEBUFFER_BINDING:
+    case GraphicsContextGL::FRAMEBUFFER_BINDING:
         return m_framebufferBinding;
-    case GraphicsContext3D::FRONT_FACE:
+    case GraphicsContextGL::FRONT_FACE:
         return getUnsignedIntParameter(pname);
-    case GraphicsContext3D::GENERATE_MIPMAP_HINT:
+    case GraphicsContextGL::GENERATE_MIPMAP_HINT:
         return getUnsignedIntParameter(pname);
-    case GraphicsContext3D::GREEN_BITS:
+    case GraphicsContextGL::GREEN_BITS:
         return getIntParameter(pname);
-    case GraphicsContext3D::IMPLEMENTATION_COLOR_READ_FORMAT:
+    case GraphicsContextGL::IMPLEMENTATION_COLOR_READ_FORMAT:
         return getIntParameter(pname);
-    case GraphicsContext3D::IMPLEMENTATION_COLOR_READ_TYPE:
+    case GraphicsContextGL::IMPLEMENTATION_COLOR_READ_TYPE:
         return getIntParameter(pname);
-    case GraphicsContext3D::LINE_WIDTH:
+    case GraphicsContextGL::LINE_WIDTH:
         return getFloatParameter(pname);
-    case GraphicsContext3D::MAX_COMBINED_TEXTURE_IMAGE_UNITS:
+    case GraphicsContextGL::MAX_COMBINED_TEXTURE_IMAGE_UNITS:
         return getIntParameter(pname);
-    case GraphicsContext3D::MAX_CUBE_MAP_TEXTURE_SIZE:
+    case GraphicsContextGL::MAX_CUBE_MAP_TEXTURE_SIZE:
         return getIntParameter(pname);
-    case GraphicsContext3D::MAX_FRAGMENT_UNIFORM_VECTORS:
+    case GraphicsContextGL::MAX_FRAGMENT_UNIFORM_VECTORS:
         return getIntParameter(pname);
-    case GraphicsContext3D::MAX_RENDERBUFFER_SIZE:
+    case GraphicsContextGL::MAX_RENDERBUFFER_SIZE:
         return getIntParameter(pname);
-    case GraphicsContext3D::MAX_TEXTURE_IMAGE_UNITS:
+    case GraphicsContextGL::MAX_TEXTURE_IMAGE_UNITS:
         return getIntParameter(pname);
-    case GraphicsContext3D::MAX_TEXTURE_SIZE:
+    case GraphicsContextGL::MAX_TEXTURE_SIZE:
         return getIntParameter(pname);
-    case GraphicsContext3D::MAX_VARYING_VECTORS:
+    case GraphicsContextGL::MAX_VARYING_VECTORS:
         return getIntParameter(pname);
-    case GraphicsContext3D::MAX_VERTEX_ATTRIBS:
+    case GraphicsContextGL::MAX_VERTEX_ATTRIBS:
         return getIntParameter(pname);
-    case GraphicsContext3D::MAX_VERTEX_TEXTURE_IMAGE_UNITS:
+    case GraphicsContextGL::MAX_VERTEX_TEXTURE_IMAGE_UNITS:
         return getIntParameter(pname);
-    case GraphicsContext3D::MAX_VERTEX_UNIFORM_VECTORS:
+    case GraphicsContextGL::MAX_VERTEX_UNIFORM_VECTORS:
         return getIntParameter(pname);
-    case GraphicsContext3D::MAX_VIEWPORT_DIMS:
+    case GraphicsContextGL::MAX_VIEWPORT_DIMS:
         return getWebGLIntArrayParameter(pname);
-    case GraphicsContext3D::NUM_SHADER_BINARY_FORMATS:
+    case GraphicsContextGL::NUM_SHADER_BINARY_FORMATS:
         return getIntParameter(pname);
-    case GraphicsContext3D::PACK_ALIGNMENT:
+    case GraphicsContextGL::PACK_ALIGNMENT:
         return getIntParameter(pname);
-    case GraphicsContext3D::POLYGON_OFFSET_FACTOR:
+    case GraphicsContextGL::POLYGON_OFFSET_FACTOR:
         return getFloatParameter(pname);
-    case GraphicsContext3D::POLYGON_OFFSET_FILL:
+    case GraphicsContextGL::POLYGON_OFFSET_FILL:
         return getBooleanParameter(pname);
-    case GraphicsContext3D::POLYGON_OFFSET_UNITS:
+    case GraphicsContextGL::POLYGON_OFFSET_UNITS:
         return getFloatParameter(pname);
-    case GraphicsContext3D::RED_BITS:
+    case GraphicsContextGL::RED_BITS:
         return getIntParameter(pname);
-    case GraphicsContext3D::RENDERBUFFER_BINDING:
+    case GraphicsContextGL::RENDERBUFFER_BINDING:
         return m_renderbufferBinding;
-    case GraphicsContext3D::RENDERER:
+    case GraphicsContextGL::RENDERER:
         return "WebKit WebGL"_str;
-    case GraphicsContext3D::SAMPLE_BUFFERS:
+    case GraphicsContextGL::SAMPLE_BUFFERS:
         return getIntParameter(pname);
-    case GraphicsContext3D::SAMPLE_COVERAGE_INVERT:
+    case GraphicsContextGL::SAMPLE_COVERAGE_INVERT:
         return getBooleanParameter(pname);
-    case GraphicsContext3D::SAMPLE_COVERAGE_VALUE:
+    case GraphicsContextGL::SAMPLE_COVERAGE_VALUE:
         return getFloatParameter(pname);
-    case GraphicsContext3D::SAMPLES:
+    case GraphicsContextGL::SAMPLES:
         return getIntParameter(pname);
-    case GraphicsContext3D::SCISSOR_BOX:
+    case GraphicsContextGL::SCISSOR_BOX:
         return getWebGLIntArrayParameter(pname);
-    case GraphicsContext3D::SCISSOR_TEST:
+    case GraphicsContextGL::SCISSOR_TEST:
         return getBooleanParameter(pname);
-    case GraphicsContext3D::SHADING_LANGUAGE_VERSION:
-        return "WebGL GLSL ES 1.0 (" + m_context->getString(GraphicsContext3D::SHADING_LANGUAGE_VERSION) + ")";
-    case GraphicsContext3D::STENCIL_BACK_FAIL:
+    case GraphicsContextGL::SHADING_LANGUAGE_VERSION:
+        return "WebGL GLSL ES 1.0 (" + m_context->getString(GraphicsContextGL::SHADING_LANGUAGE_VERSION) + ")";
+    case GraphicsContextGL::STENCIL_BACK_FAIL:
         return getUnsignedIntParameter(pname);
-    case GraphicsContext3D::STENCIL_BACK_FUNC:
+    case GraphicsContextGL::STENCIL_BACK_FUNC:
         return getUnsignedIntParameter(pname);
-    case GraphicsContext3D::STENCIL_BACK_PASS_DEPTH_FAIL:
+    case GraphicsContextGL::STENCIL_BACK_PASS_DEPTH_FAIL:
         return getUnsignedIntParameter(pname);
-    case GraphicsContext3D::STENCIL_BACK_PASS_DEPTH_PASS:
+    case GraphicsContextGL::STENCIL_BACK_PASS_DEPTH_PASS:
         return getUnsignedIntParameter(pname);
-    case GraphicsContext3D::STENCIL_BACK_REF:
+    case GraphicsContextGL::STENCIL_BACK_REF:
         return getIntParameter(pname);
-    case GraphicsContext3D::STENCIL_BACK_VALUE_MASK:
+    case GraphicsContextGL::STENCIL_BACK_VALUE_MASK:
         return getUnsignedIntParameter(pname);
-    case GraphicsContext3D::STENCIL_BACK_WRITEMASK:
+    case GraphicsContextGL::STENCIL_BACK_WRITEMASK:
         return getUnsignedIntParameter(pname);
-    case GraphicsContext3D::STENCIL_BITS:
+    case GraphicsContextGL::STENCIL_BITS:
         if (!m_framebufferBinding && !m_attributes.stencil)
             return 0;
         return getIntParameter(pname);
-    case GraphicsContext3D::STENCIL_CLEAR_VALUE:
+    case GraphicsContextGL::STENCIL_CLEAR_VALUE:
         return getIntParameter(pname);
-    case GraphicsContext3D::STENCIL_FAIL:
+    case GraphicsContextGL::STENCIL_FAIL:
         return getUnsignedIntParameter(pname);
-    case GraphicsContext3D::STENCIL_FUNC:
+    case GraphicsContextGL::STENCIL_FUNC:
         return getUnsignedIntParameter(pname);
-    case GraphicsContext3D::STENCIL_PASS_DEPTH_FAIL:
+    case GraphicsContextGL::STENCIL_PASS_DEPTH_FAIL:
         return getUnsignedIntParameter(pname);
-    case GraphicsContext3D::STENCIL_PASS_DEPTH_PASS:
+    case GraphicsContextGL::STENCIL_PASS_DEPTH_PASS:
         return getUnsignedIntParameter(pname);
-    case GraphicsContext3D::STENCIL_REF:
+    case GraphicsContextGL::STENCIL_REF:
         return getIntParameter(pname);
-    case GraphicsContext3D::STENCIL_TEST:
+    case GraphicsContextGL::STENCIL_TEST:
         return getBooleanParameter(pname);
-    case GraphicsContext3D::STENCIL_VALUE_MASK:
+    case GraphicsContextGL::STENCIL_VALUE_MASK:
         return getUnsignedIntParameter(pname);
-    case GraphicsContext3D::STENCIL_WRITEMASK:
+    case GraphicsContextGL::STENCIL_WRITEMASK:
         return getUnsignedIntParameter(pname);
-    case GraphicsContext3D::SUBPIXEL_BITS:
+    case GraphicsContextGL::SUBPIXEL_BITS:
         return getIntParameter(pname);
-    case GraphicsContext3D::TEXTURE_BINDING_2D:
+    case GraphicsContextGL::TEXTURE_BINDING_2D:
         return m_textureUnits[m_activeTextureUnit].texture2DBinding;
-    case GraphicsContext3D::TEXTURE_BINDING_CUBE_MAP:
+    case GraphicsContextGL::TEXTURE_BINDING_CUBE_MAP:
         return m_textureUnits[m_activeTextureUnit].textureCubeMapBinding;
-    case GraphicsContext3D::UNPACK_ALIGNMENT:
+    case GraphicsContextGL::UNPACK_ALIGNMENT:
         return getIntParameter(pname);
-    case GraphicsContext3D::UNPACK_FLIP_Y_WEBGL:
+    case GraphicsContextGL::UNPACK_FLIP_Y_WEBGL:
         return m_unpackFlipY;
-    case GraphicsContext3D::UNPACK_PREMULTIPLY_ALPHA_WEBGL:
+    case GraphicsContextGL::UNPACK_PREMULTIPLY_ALPHA_WEBGL:
         return m_unpackPremultiplyAlpha;
-    case GraphicsContext3D::UNPACK_COLORSPACE_CONVERSION_WEBGL:
+    case GraphicsContextGL::UNPACK_COLORSPACE_CONVERSION_WEBGL:
         return m_unpackColorspaceConversion;
-    case GraphicsContext3D::VENDOR:
+    case GraphicsContextGL::VENDOR:
         return "WebKit"_str;
-    case GraphicsContext3D::VERSION:
+    case GraphicsContextGL::VERSION:
         return "WebGL 1.0"_str;
-    case GraphicsContext3D::VIEWPORT:
+    case GraphicsContextGL::VIEWPORT:
         return getWebGLIntArrayParameter(pname);
-    case Extensions3D::FRAGMENT_SHADER_DERIVATIVE_HINT_OES: // OES_standard_derivatives
+    case ExtensionsGL::FRAGMENT_SHADER_DERIVATIVE_HINT_OES: // OES_standard_derivatives
         if (m_oesStandardDerivatives)
-            return getUnsignedIntParameter(Extensions3D::FRAGMENT_SHADER_DERIVATIVE_HINT_OES);
-        synthesizeGLError(GraphicsContext3D::INVALID_ENUM, "getParameter", "invalid parameter name, OES_standard_derivatives not enabled");
+            return getUnsignedIntParameter(ExtensionsGL::FRAGMENT_SHADER_DERIVATIVE_HINT_OES);
+        synthesizeGLError(GraphicsContextGL::INVALID_ENUM, "getParameter", "invalid parameter name, OES_standard_derivatives not enabled");
         return nullptr;
     case WebGLDebugRendererInfo::UNMASKED_RENDERER_WEBGL:
         if (m_webglDebugRendererInfo) {
 #if PLATFORM(IOS_FAMILY)
             return "Apple GPU"_str;
 #else
-            return m_context->getString(GraphicsContext3D::RENDERER);
+            return m_context->getString(GraphicsContextGL::RENDERER);
 #endif
         }
-        synthesizeGLError(GraphicsContext3D::INVALID_ENUM, "getParameter", "invalid parameter name, WEBGL_debug_renderer_info not enabled");
+        synthesizeGLError(GraphicsContextGL::INVALID_ENUM, "getParameter", "invalid parameter name, WEBGL_debug_renderer_info not enabled");
         return nullptr;
     case WebGLDebugRendererInfo::UNMASKED_VENDOR_WEBGL:
         if (m_webglDebugRendererInfo)
-            return m_context->getString(GraphicsContext3D::VENDOR);
-        synthesizeGLError(GraphicsContext3D::INVALID_ENUM, "getParameter", "invalid parameter name, WEBGL_debug_renderer_info not enabled");
+            return m_context->getString(GraphicsContextGL::VENDOR);
+        synthesizeGLError(GraphicsContextGL::INVALID_ENUM, "getParameter", "invalid parameter name, WEBGL_debug_renderer_info not enabled");
         return nullptr;
-    case Extensions3D::VERTEX_ARRAY_BINDING_OES: // OES_vertex_array_object
+    case ExtensionsGL::VERTEX_ARRAY_BINDING_OES: // OES_vertex_array_object
         if (m_oesVertexArrayObject) {
             if (m_boundVertexArrayObject->isDefaultObject())
                 return nullptr;
             return makeRefPtr(static_cast<WebGLVertexArrayObjectOES&>(*m_boundVertexArrayObject));
         }
-        synthesizeGLError(GraphicsContext3D::INVALID_ENUM, "getParameter", "invalid parameter name, OES_vertex_array_object not enabled");
+        synthesizeGLError(GraphicsContextGL::INVALID_ENUM, "getParameter", "invalid parameter name, OES_vertex_array_object not enabled");
         return nullptr;
-    case Extensions3D::MAX_TEXTURE_MAX_ANISOTROPY_EXT: // EXT_texture_filter_anisotropic
+    case ExtensionsGL::MAX_TEXTURE_MAX_ANISOTROPY_EXT: // EXT_texture_filter_anisotropic
         if (m_extTextureFilterAnisotropic)
-            return getUnsignedIntParameter(Extensions3D::MAX_TEXTURE_MAX_ANISOTROPY_EXT);
-        synthesizeGLError(GraphicsContext3D::INVALID_ENUM, "getParameter", "invalid parameter name, EXT_texture_filter_anisotropic not enabled");
+            return getUnsignedIntParameter(ExtensionsGL::MAX_TEXTURE_MAX_ANISOTROPY_EXT);
+        synthesizeGLError(GraphicsContextGL::INVALID_ENUM, "getParameter", "invalid parameter name, EXT_texture_filter_anisotropic not enabled");
         return nullptr;
-    case Extensions3D::MAX_COLOR_ATTACHMENTS_EXT: // EXT_draw_buffers BEGIN
+    case ExtensionsGL::MAX_COLOR_ATTACHMENTS_EXT: // EXT_draw_buffers BEGIN
         if (m_webglDrawBuffers)
             return getMaxColorAttachments();
-        synthesizeGLError(GraphicsContext3D::INVALID_ENUM, "getParameter", "invalid parameter name, WEBGL_draw_buffers not enabled");
+        synthesizeGLError(GraphicsContextGL::INVALID_ENUM, "getParameter", "invalid parameter name, WEBGL_draw_buffers not enabled");
         return nullptr;
-    case Extensions3D::MAX_DRAW_BUFFERS_EXT:
+    case ExtensionsGL::MAX_DRAW_BUFFERS_EXT:
         if (m_webglDrawBuffers)
             return getMaxDrawBuffers();
-        synthesizeGLError(GraphicsContext3D::INVALID_ENUM, "getParameter", "invalid parameter name, WEBGL_draw_buffers not enabled");
+        synthesizeGLError(GraphicsContextGL::INVALID_ENUM, "getParameter", "invalid parameter name, WEBGL_draw_buffers not enabled");
         return nullptr;
     default:
         if (m_webglDrawBuffers
-            && pname >= Extensions3D::DRAW_BUFFER0_EXT
-            && pname < static_cast<GC3Denum>(Extensions3D::DRAW_BUFFER0_EXT + getMaxDrawBuffers())) {
-            GC3Dint value = GraphicsContext3D::NONE;
+            && pname >= ExtensionsGL::DRAW_BUFFER0_EXT
+            && pname < static_cast<GC3Denum>(ExtensionsGL::DRAW_BUFFER0_EXT + getMaxDrawBuffers())) {
+            GC3Dint value = GraphicsContextGL::NONE;
             if (m_framebufferBinding)
                 value = m_framebufferBinding->getDrawBuffer(pname);
             else // emulated backbuffer
                 value = m_backDrawBuffer;
             return value;
         }
-        synthesizeGLError(GraphicsContext3D::INVALID_ENUM, "getParameter", "invalid parameter name");
+        synthesizeGLError(GraphicsContextGL::INVALID_ENUM, "getParameter", "invalid parameter name");
         return nullptr;
     }
 }
@@ -667,9 +667,9 @@ GC3Dint WebGLRenderingContext::getMaxDrawBuffers()
     if (!supportsDrawBuffers())
         return 0;
     if (!m_maxDrawBuffers)
-        m_context->getIntegerv(Extensions3D::MAX_DRAW_BUFFERS_EXT, &m_maxDrawBuffers);
+        m_context->getIntegerv(ExtensionsGL::MAX_DRAW_BUFFERS_EXT, &m_maxDrawBuffers);
     if (!m_maxColorAttachments)
-        m_context->getIntegerv(Extensions3D::MAX_COLOR_ATTACHMENTS_EXT, &m_maxColorAttachments);
+        m_context->getIntegerv(ExtensionsGL::MAX_COLOR_ATTACHMENTS_EXT, &m_maxColorAttachments);
     // WEBGL_draw_buffers requires MAX_COLOR_ATTACHMENTS >= MAX_DRAW_BUFFERS.
     return std::min(m_maxDrawBuffers, m_maxColorAttachments);
 }
@@ -679,7 +679,7 @@ GC3Dint WebGLRenderingContext::getMaxColorAttachments()
     if (!supportsDrawBuffers())
         return 0;
     if (!m_maxColorAttachments)
-        m_context->getIntegerv(Extensions3D::MAX_COLOR_ATTACHMENTS_EXT, &m_maxColorAttachments);
+        m_context->getIntegerv(ExtensionsGL::MAX_COLOR_ATTACHMENTS_EXT, &m_maxColorAttachments);
     return m_maxColorAttachments;
 }
     
@@ -707,20 +707,20 @@ bool WebGLRenderingContext::validateIndexArrayConservative(GC3Denum type, unsign
     if (!maxIndex) {
         // Compute the maximum index in the entire buffer for the given type of index.
         switch (type) {
-        case GraphicsContext3D::UNSIGNED_BYTE: {
+        case GraphicsContextGL::UNSIGNED_BYTE: {
             const GC3Dubyte* p = static_cast<const GC3Dubyte*>(buffer->data());
             for (GC3Dsizeiptr i = 0; i < numElements; i++)
                 maxIndex = maxIndex ? std::max(maxIndex.value(), static_cast<unsigned>(p[i])) : static_cast<unsigned>(p[i]);
             break;
         }
-        case GraphicsContext3D::UNSIGNED_SHORT: {
+        case GraphicsContextGL::UNSIGNED_SHORT: {
             numElements /= sizeof(GC3Dushort);
             const GC3Dushort* p = static_cast<const GC3Dushort*>(buffer->data());
             for (GC3Dsizeiptr i = 0; i < numElements; i++)
                 maxIndex = maxIndex ? std::max(maxIndex.value(), static_cast<unsigned>(p[i])) : static_cast<unsigned>(p[i]);
             break;
         }
-        case GraphicsContext3D::UNSIGNED_INT: {
+        case GraphicsContextGL::UNSIGNED_INT: {
             if (!m_oesElementIndexUint)
                 return false;
             numElements /= sizeof(GC3Duint);
@@ -751,19 +751,19 @@ bool WebGLRenderingContext::validateIndexArrayConservative(GC3Denum type, unsign
 bool WebGLRenderingContext::validateBlendEquation(const char* functionName, GC3Denum mode)
 {
     switch (mode) {
-    case GraphicsContext3D::FUNC_ADD:
-    case GraphicsContext3D::FUNC_SUBTRACT:
-    case GraphicsContext3D::FUNC_REVERSE_SUBTRACT:
-    case Extensions3D::MIN_EXT:
-    case Extensions3D::MAX_EXT:
-        if ((mode == Extensions3D::MIN_EXT || mode == Extensions3D::MAX_EXT) && !m_extBlendMinMax) {
-            synthesizeGLError(GraphicsContext3D::INVALID_ENUM, functionName, "invalid mode");
+    case GraphicsContextGL::FUNC_ADD:
+    case GraphicsContextGL::FUNC_SUBTRACT:
+    case GraphicsContextGL::FUNC_REVERSE_SUBTRACT:
+    case ExtensionsGL::MIN_EXT:
+    case ExtensionsGL::MAX_EXT:
+        if ((mode == ExtensionsGL::MIN_EXT || mode == ExtensionsGL::MAX_EXT) && !m_extBlendMinMax) {
+            synthesizeGLError(GraphicsContextGL::INVALID_ENUM, functionName, "invalid mode");
             return false;
         }
         return true;
         break;
     default:
-        synthesizeGLError(GraphicsContext3D::INVALID_ENUM, functionName, "invalid mode");
+        synthesizeGLError(GraphicsContextGL::INVALID_ENUM, functionName, "invalid mode");
         return false;
     }
 }
@@ -771,18 +771,18 @@ bool WebGLRenderingContext::validateBlendEquation(const char* functionName, GC3D
 bool WebGLRenderingContext::validateCapability(const char* functionName, GC3Denum cap)
 {
     switch (cap) {
-    case GraphicsContext3D::BLEND:
-    case GraphicsContext3D::CULL_FACE:
-    case GraphicsContext3D::DEPTH_TEST:
-    case GraphicsContext3D::DITHER:
-    case GraphicsContext3D::POLYGON_OFFSET_FILL:
-    case GraphicsContext3D::SAMPLE_ALPHA_TO_COVERAGE:
-    case GraphicsContext3D::SAMPLE_COVERAGE:
-    case GraphicsContext3D::SCISSOR_TEST:
-    case GraphicsContext3D::STENCIL_TEST:
+    case GraphicsContextGL::BLEND:
+    case GraphicsContextGL::CULL_FACE:
+    case GraphicsContextGL::DEPTH_TEST:
+    case GraphicsContextGL::DITHER:
+    case GraphicsContextGL::POLYGON_OFFSET_FILL:
+    case GraphicsContextGL::SAMPLE_ALPHA_TO_COVERAGE:
+    case GraphicsContextGL::SAMPLE_COVERAGE:
+    case GraphicsContextGL::SCISSOR_TEST:
+    case GraphicsContextGL::STENCIL_TEST:
         return true;
     default:
-        synthesizeGLError(GraphicsContext3D::INVALID_ENUM, functionName, "invalid capability");
+        synthesizeGLError(GraphicsContextGL::INVALID_ENUM, functionName, "invalid capability");
         return false;
     }
 }

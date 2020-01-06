@@ -47,21 +47,21 @@ namespace Nicosia {
 
 using namespace WebCore;
 
-GC3DLayer::GC3DLayer(GraphicsContext3D& context)
+GC3DLayer::GC3DLayer(GraphicsContextGLOpenGL& context)
     : m_context(context)
     , m_contentLayer(Nicosia::ContentLayer::create(Nicosia::ContentLayerTextureMapperImpl::createFactory(*this)))
 {
 }
 
-GC3DLayer::GC3DLayer(GraphicsContext3D& context, GraphicsContext3D::Destination destination)
+GC3DLayer::GC3DLayer(GraphicsContextGLOpenGL& context, GraphicsContextGLOpenGL::Destination destination)
     : m_context(context)
     , m_contentLayer(Nicosia::ContentLayer::create(Nicosia::ContentLayerTextureMapperImpl::createFactory(*this)))
 {
     switch (destination) {
-    case GraphicsContext3D::Destination::Offscreen:
+    case GraphicsContextGLOpenGL::Destination::Offscreen:
         m_glContext = GLContext::createOffscreenContext(&PlatformDisplay::sharedDisplayForCompositing());
         break;
-    case GraphicsContext3D::Destination::DirectlyToHostWindow:
+    case GraphicsContextGLOpenGL::Destination::DirectlyToHostWindow:
         ASSERT_NOT_REACHED();
         break;
     }
@@ -78,7 +78,7 @@ bool GC3DLayer::makeContextCurrent()
     return m_glContext->makeContextCurrent();
 }
 
-PlatformGraphicsContext3D GC3DLayer::platformContext() const
+PlatformGraphicsContextGL GC3DLayer::platformContext() const
 {
     ASSERT(m_glContext);
     return m_glContext->platformContext();

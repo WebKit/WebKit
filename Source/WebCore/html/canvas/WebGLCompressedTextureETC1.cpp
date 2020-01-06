@@ -28,7 +28,7 @@
 #if ENABLE(WEBGL)
 #include "WebGLCompressedTextureETC1.h"
 
-#include "Extensions3D.h"
+#include "ExtensionsGL.h"
 #include "WebGLRenderingContextBase.h"
 
 namespace WebCore {
@@ -36,9 +36,9 @@ namespace WebCore {
 WebGLCompressedTextureETC1::WebGLCompressedTextureETC1(WebGLRenderingContextBase& context)
     : WebGLExtension(context)
 {
-    context.graphicsContext3D()->getExtensions().ensureEnabled("GL_OES_compressed_ETC1_RGB8_texture");
+    context.graphicsContextGL()->getExtensions().ensureEnabled("GL_OES_compressed_ETC1_RGB8_texture");
 
-    context.addCompressedTextureFormat(Extensions3D::ETC1_RGB8_OES);
+    context.addCompressedTextureFormat(ExtensionsGL::ETC1_RGB8_OES);
 }
 
 WebGLCompressedTextureETC1::~WebGLCompressedTextureETC1() = default;
@@ -50,7 +50,7 @@ WebGLExtension::ExtensionName WebGLCompressedTextureETC1::getName() const
 
 bool WebGLCompressedTextureETC1::supported(WebGLRenderingContextBase& context)
 {
-    return context.graphicsContext3D()->getExtensions().supports("GL_OES_compressed_ETC1_RGB8_texture");
+    return context.graphicsContextGL()->getExtensions().supports("GL_OES_compressed_ETC1_RGB8_texture");
 }
 
 } // namespace WebCore

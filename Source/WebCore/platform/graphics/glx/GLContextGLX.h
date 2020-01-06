@@ -50,8 +50,8 @@ private:
     cairo_device_t* cairoDevice() override;
     bool isEGLContext() const override { return false; }
 
-#if ENABLE(GRAPHICS_CONTEXT_3D)
-    PlatformGraphicsContext3D platformContext() override;
+#if ENABLE(GRAPHICS_CONTEXT_GL)
+    PlatformGraphicsContextGL platformContext() override;
 #endif
 
     GLContextGLX(PlatformDisplay&, XUniqueGLXContext&&, GLNativeWindowType);

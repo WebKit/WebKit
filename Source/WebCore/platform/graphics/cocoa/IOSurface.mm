@@ -28,8 +28,8 @@
 
 #if HAVE(IOSURFACE)
 
-#import "GraphicsContext3D.h"
 #import "GraphicsContextCG.h"
+#import "GraphicsContextGLOpenGL.h"
 #import "HostWindow.h"
 #import "IOSurfacePool.h"
 #import "ImageBuffer.h"

@@ -28,7 +28,7 @@
 
 #if ENABLE(WEBGL)
 
-#include "GraphicsContext3D.h"
+#include "GraphicsContextGLOpenGL.h"
 #include "WebGLRenderingContextBase.h"
 #include "WebGLSharedObject.h"
 
@@ -44,10 +44,10 @@ WebGLContextGroup::~WebGLContextGroup()
     detachAndRemoveAllObjects();
 }
 
-GraphicsContext3D& WebGLContextGroup::getAGraphicsContext3D()
+GraphicsContextGLOpenGL& WebGLContextGroup::getAGraphicsContextGL()
 {
     ASSERT(!m_contexts.isEmpty());
-    return *(*m_contexts.begin())->graphicsContext3D();
+    return *(*m_contexts.begin())->graphicsContextGL();
 }
 
 void WebGLContextGroup::addContext(WebGLRenderingContextBase& context)

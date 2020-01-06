@@ -18,7 +18,7 @@
 
 #include "config.h"
 
-#if ENABLE(GRAPHICS_CONTEXT_3D)
+#if ENABLE(GRAPHICS_CONTEXT_GL)
 #include "GLContext.h"
 #include <wtf/ThreadSpecific.h>
 

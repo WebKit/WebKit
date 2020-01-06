@@ -37,14 +37,13 @@ list(APPEND WebCore_SOURCES
 
     platform/audio/PlatformMediaSessionManager.cpp
 
-    platform/graphics/GraphicsContext3DPrivate.cpp
-
     platform/graphics/egl/GLContextEGL.cpp
 
-    platform/graphics/opengl/Extensions3DOpenGLCommon.cpp
-    platform/graphics/opengl/Extensions3DOpenGLES.cpp
-    platform/graphics/opengl/GraphicsContext3DOpenGLCommon.cpp
-    platform/graphics/opengl/GraphicsContext3DOpenGLES.cpp
+    platform/graphics/opengl/ExtensionsGLOpenGLCommon.cpp
+    platform/graphics/opengl/ExtensionsGLOpenGLES.cpp
+    platform/graphics/opengl/GraphicsContextGLOpenGLCommon.cpp
+    platform/graphics/opengl/GraphicsContextGLOpenGLES.cpp
+    platform/graphics/opengl/GraphicsContextGLOpenGLPrivate.cpp
     platform/graphics/opengl/TemporaryOpenGLSetting.cpp
 
     platform/graphics/opentype/OpenTypeUtilities.cpp

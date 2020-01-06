@@ -34,7 +34,7 @@
 #include <wtf/text/WTFString.h>
 
 #if ENABLE(WEBGL)
-#include "GraphicsContext3D.h"
+#include "GraphicsContextGLOpenGL.h"
 #include "WebGLProgram.h"
 #include "WebGLRenderingContextBase.h"
 #include "WebGLShader.h"
@@ -110,10 +110,10 @@ static WebGLShader* shaderForType(WebGLProgram& program, Inspector::Protocol::Ca
 {
     switch (shaderType) {
     case Inspector::Protocol::Canvas::ShaderType::Fragment:
-        return program.getAttachedShader(GraphicsContext3D::FRAGMENT_SHADER);
+        return program.getAttachedShader(GraphicsContextGL::FRAGMENT_SHADER);
 
     case Inspector::Protocol::Canvas::ShaderType::Vertex:
-        return program.getAttachedShader(GraphicsContext3D::VERTEX_SHADER);
+        return program.getAttachedShader(GraphicsContextGL::VERTEX_SHADER);
 
     // Compute shaders are a WebGPU concept.
     case Inspector::Protocol::Canvas::ShaderType::Compute:

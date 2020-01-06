@@ -28,7 +28,7 @@
 
 #if ENABLE(WEBGL)
 
-#include "Extensions3D.h"
+#include "ExtensionsGL.h"
 #include "WebGLRenderingContext.h"
 
 namespace WebCore {
@@ -61,13 +61,13 @@ void OESVertexArrayObject::deleteVertexArrayOES(WebGLVertexArrayObjectOES* array
     if (!arrayObject->isDefaultObject() && arrayObject == static_cast<WebGLRenderingContext&>(m_context).m_boundVertexArrayObject)
         static_cast<WebGLRenderingContext&>(m_context).setBoundVertexArrayObject(nullptr);
 
-    arrayObject->deleteObject(m_context.graphicsContext3D());
+    arrayObject->deleteObject(m_context.graphicsContextGL());
 }
 
 GC3Dboolean OESVertexArrayObject::isVertexArrayOES(WebGLVertexArrayObjectOES* arrayObject)
 {
     return arrayObject && !m_context.isContextLost() && arrayObject->hasEverBeenBound()
-        && m_context.graphicsContext3D()->getExtensions().isVertexArrayOES(arrayObject->object());
+        && m_context.graphicsContextGL()->getExtensions().isVertexArrayOES(arrayObject->object());
 }
 
 void OESVertexArrayObject::bindVertexArrayOES(WebGLVertexArrayObjectOES* arrayObject)
@@ -76,11 +76,11 @@ void OESVertexArrayObject::bindVertexArrayOES(WebGLVertexArrayObjectOES* arrayOb
         return;
 
     if (arrayObject && (arrayObject->isDeleted() || !arrayObject->validate(nullptr, context()))) {
-        m_context.graphicsContext3D()->synthesizeGLError(GraphicsContext3D::INVALID_OPERATION);
+        m_context.graphicsContextGL()->synthesizeGLError(GraphicsContextGL::INVALID_OPERATION);
         return;
     }
 
-    auto& extensions = m_context.graphicsContext3D()->getExtensions();
+    auto& extensions = m_context.graphicsContextGL()->getExtensions();
     auto& context = downcast<WebGLRenderingContext>(m_context);
     if (arrayObject && !arrayObject->isDefaultObject() && arrayObject->object()) {
         extensions.bindVertexArrayOES(arrayObject->object());

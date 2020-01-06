@@ -28,7 +28,7 @@
 
 #if ENABLE(WEBGL)
 
-#include "GraphicsContext3D.h"
+#include "GraphicsContextGLOpenGL.h"
 #include <wtf/RefCounted.h>
 
 namespace WebCore {

@@ -35,8 +35,8 @@ namespace WebCore {
 class WebGLRenderingContext final : public WebGLRenderingContextBase {
     WTF_MAKE_ISO_ALLOCATED(WebGLRenderingContext);
 public:
-    static std::unique_ptr<WebGLRenderingContext> create(CanvasBase&, GraphicsContext3DAttributes);
-    static std::unique_ptr<WebGLRenderingContext> create(CanvasBase&, Ref<GraphicsContext3D>&&, GraphicsContext3DAttributes);
+    static std::unique_ptr<WebGLRenderingContext> create(CanvasBase&, GraphicsContextGLAttributes);
+    static std::unique_ptr<WebGLRenderingContext> create(CanvasBase&, Ref<GraphicsContextGLOpenGL>&&, GraphicsContextGLAttributes);
 
     bool isWebGL1() const final { return true; }
 
@@ -58,8 +58,8 @@ public:
     bool validateCapability(const char* functionName, GC3Denum cap) final;
 
 private:
-    WebGLRenderingContext(CanvasBase&, GraphicsContext3DAttributes);
-    WebGLRenderingContext(CanvasBase&, Ref<GraphicsContext3D>&&, GraphicsContext3DAttributes);
+    WebGLRenderingContext(CanvasBase&, GraphicsContextGLAttributes);
+    WebGLRenderingContext(CanvasBase&, Ref<GraphicsContextGLOpenGL>&&, GraphicsContextGLAttributes);
 };
 
 } // namespace WebCore

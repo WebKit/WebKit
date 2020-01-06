@@ -43,10 +43,10 @@ Ref<WebGLTexture> WebGLTexture::create(WebGLRenderingContextBase& ctx)
 WebGLTexture::WebGLTexture(WebGLRenderingContextBase& ctx)
     : WebGLSharedObject(ctx)
     , m_target(0)
-    , m_minFilter(GraphicsContext3D::NEAREST_MIPMAP_LINEAR)
-    , m_magFilter(GraphicsContext3D::LINEAR)
-    , m_wrapS(GraphicsContext3D::REPEAT)
-    , m_wrapT(GraphicsContext3D::REPEAT)
+    , m_minFilter(GraphicsContextGL::NEAREST_MIPMAP_LINEAR)
+    , m_magFilter(GraphicsContextGL::LINEAR)
+    , m_wrapS(GraphicsContextGL::REPEAT)
+    , m_wrapT(GraphicsContextGL::REPEAT)
     , m_isNPOT(false)
     , m_isComplete(false)
     , m_needToUseBlackTexture(false)
@@ -55,7 +55,7 @@ WebGLTexture::WebGLTexture(WebGLRenderingContextBase& ctx)
     , m_isHalfFloatType(false)
     , m_isForWebGL1(ctx.isWebGL1())
 {
-    setObject(ctx.graphicsContext3D()->createTexture());
+    setObject(ctx.graphicsContextGL()->createTexture());
 }
 
 WebGLTexture::~WebGLTexture()
@@ -71,12 +71,12 @@ void WebGLTexture::setTarget(GC3Denum target, GC3Dint maxLevel)
     if (m_target)
         return;
     switch (target) {
-    case GraphicsContext3D::TEXTURE_2D:
+    case GraphicsContextGL::TEXTURE_2D:
         m_target = target;
         m_info.resize(1);
         m_info[0].resize(maxLevel);
         break;
-    case GraphicsContext3D::TEXTURE_CUBE_MAP:
+    case GraphicsContextGL::TEXTURE_CUBE_MAP:
         m_target = target;
         m_info.resize(6);
         for (int ii = 0; ii < 6; ++ii)
@@ -90,40 +90,40 @@ void WebGLTexture::setParameteri(GC3Denum pname, GC3Dint param)
     if (!object() || !m_target)
         return;
     switch (pname) {
-    case GraphicsContext3D::TEXTURE_MIN_FILTER:
+    case GraphicsContextGL::TEXTURE_MIN_FILTER:
         switch (param) {
-        case GraphicsContext3D::NEAREST:
-        case GraphicsContext3D::LINEAR:
-        case GraphicsContext3D::NEAREST_MIPMAP_NEAREST:
-        case GraphicsContext3D::LINEAR_MIPMAP_NEAREST:
-        case GraphicsContext3D::NEAREST_MIPMAP_LINEAR:
-        case GraphicsContext3D::LINEAR_MIPMAP_LINEAR:
+        case GraphicsContextGL::NEAREST:
+        case GraphicsContextGL::LINEAR:
+        case GraphicsContextGL::NEAREST_MIPMAP_NEAREST:
+        case GraphicsContextGL::LINEAR_MIPMAP_NEAREST:
+        case GraphicsContextGL::NEAREST_MIPMAP_LINEAR:
+        case GraphicsContextGL::LINEAR_MIPMAP_LINEAR:
             m_minFilter = param;
             break;
         }
         break;
-    case GraphicsContext3D::TEXTURE_MAG_FILTER:
+    case GraphicsContextGL::TEXTURE_MAG_FILTER:
         switch (param) {
-        case GraphicsContext3D::NEAREST:
-        case GraphicsContext3D::LINEAR:
+        case GraphicsContextGL::NEAREST:
+        case GraphicsContextGL::LINEAR:
             m_magFilter = param;
             break;
         }
         break;
-    case GraphicsContext3D::TEXTURE_WRAP_S:
+    case GraphicsContextGL::TEXTURE_WRAP_S:
         switch (param) {
-        case GraphicsContext3D::CLAMP_TO_EDGE:
-        case GraphicsContext3D::MIRRORED_REPEAT:
-        case GraphicsContext3D::REPEAT:
+        case GraphicsContextGL::CLAMP_TO_EDGE:
+        case GraphicsContextGL::MIRRORED_REPEAT:
+        case GraphicsContextGL::REPEAT:
             m_wrapS = param;
             break;
         }
         break;
-    case GraphicsContext3D::TEXTURE_WRAP_T:
+    case GraphicsContextGL::TEXTURE_WRAP_T:
         switch (param) {
-        case GraphicsContext3D::CLAMP_TO_EDGE:
-        case GraphicsContext3D::MIRRORED_REPEAT:
-        case GraphicsContext3D::REPEAT:
+        case GraphicsContextGL::CLAMP_TO_EDGE:
+        case GraphicsContextGL::MIRRORED_REPEAT:
+        case GraphicsContextGL::REPEAT:
             m_wrapT = param;
             break;
         }
@@ -252,7 +252,7 @@ bool WebGLTexture::needToUseBlackTexture(TextureExtensionFlag extensions) const
         return false;
     if (m_needToUseBlackTexture)
         return true;
-    if (m_magFilter == GraphicsContext3D::NEAREST && (m_minFilter == GraphicsContext3D::NEAREST || m_minFilter == GraphicsContext3D::NEAREST_MIPMAP_NEAREST))
+    if (m_magFilter == GraphicsContextGL::NEAREST && (m_minFilter == GraphicsContextGL::NEAREST || m_minFilter == GraphicsContextGL::NEAREST_MIPMAP_NEAREST))
         return false;
     if (m_isForWebGL1 && m_isHalfFloatType && !(extensions & TextureExtensionHalfFloatLinearEnabled))
         return true;
@@ -274,29 +274,29 @@ void WebGLTexture::setCompressed()
     m_isCompressed = true;
 }
 
-void WebGLTexture::deleteObjectImpl(GraphicsContext3D* context3d, Platform3DObject object)
+void WebGLTexture::deleteObjectImpl(GraphicsContextGLOpenGL* context3d, Platform3DObject object)
 {
     context3d->deleteTexture(object);
 }
 
 int WebGLTexture::mapTargetToIndex(GC3Denum target) const
 {
-    if (m_target == GraphicsContext3D::TEXTURE_2D) {
-        if (target == GraphicsContext3D::TEXTURE_2D)
+    if (m_target == GraphicsContextGL::TEXTURE_2D) {
+        if (target == GraphicsContextGL::TEXTURE_2D)
             return 0;
-    } else if (m_target == GraphicsContext3D::TEXTURE_CUBE_MAP) {
+    } else if (m_target == GraphicsContextGL::TEXTURE_CUBE_MAP) {
         switch (target) {
-        case GraphicsContext3D::TEXTURE_CUBE_MAP_POSITIVE_X:
+        case GraphicsContextGL::TEXTURE_CUBE_MAP_POSITIVE_X:
             return 0;
-        case GraphicsContext3D::TEXTURE_CUBE_MAP_NEGATIVE_X:
+        case GraphicsContextGL::TEXTURE_CUBE_MAP_NEGATIVE_X:
             return 1;
-        case GraphicsContext3D::TEXTURE_CUBE_MAP_POSITIVE_Y:
+        case GraphicsContextGL::TEXTURE_CUBE_MAP_POSITIVE_Y:
             return 2;
-        case GraphicsContext3D::TEXTURE_CUBE_MAP_NEGATIVE_Y:
+        case GraphicsContextGL::TEXTURE_CUBE_MAP_NEGATIVE_Y:
             return 3;
-        case GraphicsContext3D::TEXTURE_CUBE_MAP_POSITIVE_Z:
+        case GraphicsContextGL::TEXTURE_CUBE_MAP_POSITIVE_Z:
             return 4;
-        case GraphicsContext3D::TEXTURE_CUBE_MAP_NEGATIVE_Z:
+        case GraphicsContextGL::TEXTURE_CUBE_MAP_NEGATIVE_Z:
             return 5;
         }
     }
@@ -341,12 +341,12 @@ GC3Dint WebGLTexture::computeLevelCount(GC3Dsizei width, GC3Dsizei height)
 static bool internalFormatIsFloatType(GC3Denum internalFormat)
 {
     switch (internalFormat) {
-    case GraphicsContext3D::R32F:
-    case GraphicsContext3D::RG32F:
-    case GraphicsContext3D::RGB32F:
-    case GraphicsContext3D::RGBA32F:
-    case GraphicsContext3D::DEPTH_COMPONENT32F:
-    case GraphicsContext3D::DEPTH32F_STENCIL8:
+    case GraphicsContextGL::R32F:
+    case GraphicsContextGL::RG32F:
+    case GraphicsContextGL::RGB32F:
+    case GraphicsContextGL::RGBA32F:
+    case GraphicsContextGL::DEPTH_COMPONENT32F:
+    case GraphicsContextGL::DEPTH32F_STENCIL8:
         return true;
     default:
         return false;
@@ -356,12 +356,12 @@ static bool internalFormatIsFloatType(GC3Denum internalFormat)
 static bool internalFormatIsHalfFloatType(GC3Denum internalFormat)
 {
     switch (internalFormat) {
-    case GraphicsContext3D::R16F:
-    case GraphicsContext3D::RG16F:
-    case GraphicsContext3D::R11F_G11F_B10F:
-    case GraphicsContext3D::RGB9_E5:
-    case GraphicsContext3D::RGB16F:
-    case GraphicsContext3D::RGBA16F:
+    case GraphicsContextGL::R16F:
+    case GraphicsContextGL::RG16F:
+    case GraphicsContextGL::R11F_G11F_B10F:
+    case GraphicsContextGL::RGB9_E5:
+    case GraphicsContextGL::RGB16F:
+    case GraphicsContextGL::RGBA16F:
         return true;
     default:
         return false;
@@ -412,12 +412,12 @@ void WebGLTexture::update()
     if (m_isForWebGL1) {
         if (m_isComplete) {
             if (m_isForWebGL1)
-                m_isFloatType = m_info[0][0].type == GraphicsContext3D::FLOAT;
+                m_isFloatType = m_info[0][0].type == GraphicsContextGL::FLOAT;
             else
                 m_isFloatType = internalFormatIsFloatType(m_info[0][0].internalFormat);
         } else {
             for (size_t ii = 0; ii < m_info.size(); ++ii) {
-                if ((m_isForWebGL1 && m_info[ii][0].type == GraphicsContext3D::FLOAT)
+                if ((m_isForWebGL1 && m_info[ii][0].type == GraphicsContextGL::FLOAT)
                     || (!m_isForWebGL1 && internalFormatIsFloatType(m_info[ii][0].internalFormat))) {
                     m_isFloatType = true;
                     break;
@@ -432,10 +432,10 @@ void WebGLTexture::update()
             if (m_isForWebGL1)
                 m_isHalfFloatType = internalFormatIsHalfFloatType(m_info[0][0].internalFormat);
             else
-                m_isHalfFloatType = m_info[0][0].type == GraphicsContext3D::HALF_FLOAT_OES;
+                m_isHalfFloatType = m_info[0][0].type == GraphicsContextGL::HALF_FLOAT_OES;
         } else {
             for (size_t ii = 0; ii < m_info.size(); ++ii) {
-                if ((m_isForWebGL1 && m_info[ii][0].type == GraphicsContext3D::HALF_FLOAT_OES)
+                if ((m_isForWebGL1 && m_info[ii][0].type == GraphicsContextGL::HALF_FLOAT_OES)
                     || (!m_isForWebGL1 && internalFormatIsHalfFloatType(m_info[ii][0].internalFormat))) {
                     m_isHalfFloatType = true;
                     break;
@@ -446,11 +446,11 @@ void WebGLTexture::update()
 
     m_needToUseBlackTexture = false;
     // NPOT
-    if (m_isNPOT && ((m_minFilter != GraphicsContext3D::NEAREST && m_minFilter != GraphicsContext3D::LINEAR)
-                     || m_wrapS != GraphicsContext3D::CLAMP_TO_EDGE || m_wrapT != GraphicsContext3D::CLAMP_TO_EDGE))
+    if (m_isNPOT && ((m_minFilter != GraphicsContextGL::NEAREST && m_minFilter != GraphicsContextGL::LINEAR)
+        || m_wrapS != GraphicsContextGL::CLAMP_TO_EDGE || m_wrapT != GraphicsContextGL::CLAMP_TO_EDGE))
         m_needToUseBlackTexture = true;
     // Completeness
-    if (!m_isComplete && m_minFilter != GraphicsContext3D::NEAREST && m_minFilter != GraphicsContext3D::LINEAR)
+    if (!m_isComplete && m_minFilter != GraphicsContextGL::NEAREST && m_minFilter != GraphicsContextGL::LINEAR)
         m_needToUseBlackTexture = true;
 }
 

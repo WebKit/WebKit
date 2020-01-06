@@ -42,7 +42,7 @@ public:
     void addObject(WebGLSharedObject&);
     void removeObject(WebGLSharedObject&);
 
-    GraphicsContext3D& getAGraphicsContext3D();
+    GraphicsContextGLOpenGL& getAGraphicsContextGL();
 
     void loseContextGroup(WebGLRenderingContextBase::LostContextMode);
 

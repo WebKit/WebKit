@@ -1026,7 +1026,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/DisplayRefreshMonitorClient.h
     platform/graphics/DisplayRefreshMonitorManager.h
     platform/graphics/ExtendedColor.h
-    platform/graphics/Extensions3D.h
+    platform/graphics/ExtensionsGL.h
     platform/graphics/FloatPoint.h
     platform/graphics/FloatPoint3D.h
     platform/graphics/FloatQuad.h
@@ -1057,10 +1057,8 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/GlyphPage.h
     platform/graphics/Gradient.h
     platform/graphics/GraphicsContext.h
-    platform/graphics/GraphicsContext3D.h
-    platform/graphics/GraphicsContext3DBase.h
-    platform/graphics/GraphicsContext3DAttributes.h
-    platform/graphics/GraphicsContext3DManager.h
+    platform/graphics/GraphicsContextGL.h
+    platform/graphics/GraphicsContextGLAttributes.h
     platform/graphics/GraphicsContextImpl.h
     platform/graphics/GraphicsLayer.h
     platform/graphics/GraphicsLayerClient.h
@@ -1123,7 +1121,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/WidthCache.h
     platform/graphics/WindRule.h
 
-    platform/graphics/angle/Extensions3DANGLE.h
+    platform/graphics/angle/ExtensionsGLANGLE.h
 
     platform/graphics/displaylists/DisplayList.h
     platform/graphics/displaylists/DisplayListItems.h
@@ -1142,9 +1140,11 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
 
     platform/graphics/libwpe/PlatformDisplayLibWPE.h
 
-    platform/graphics/opengl/Extensions3DOpenGL.h
-    platform/graphics/opengl/Extensions3DOpenGLCommon.h
-    platform/graphics/opengl/Extensions3DOpenGLES.h
+    platform/graphics/opengl/ExtensionsGLOpenGL.h
+    platform/graphics/opengl/ExtensionsGLOpenGLCommon.h
+    platform/graphics/opengl/ExtensionsGLOpenGLES.h
+    platform/graphics/opengl/GraphicsContextGLOpenGL.h
+    platform/graphics/opengl/GraphicsContextGLOpenGLManager.h
     platform/graphics/opengl/TemporaryOpenGLSetting.h
 
     platform/graphics/opentype/OpenTypeMathData.h

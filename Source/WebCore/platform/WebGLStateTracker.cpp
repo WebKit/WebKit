@@ -36,10 +36,10 @@ WebGLStateTracker::WebGLStateTracker(StateChangeHandler&& handler)
 {
 }
 
-auto WebGLStateTracker::token(GraphicsContext3DPowerPreference powerPreference) -> Token
+auto WebGLStateTracker::token(GraphicsContextGLPowerPreference powerPreference) -> Token
 {
     // We only track high performance WebGL contexts at the moment.
-    if (powerPreference != GraphicsContext3DPowerPreference::HighPerformance)
+    if (powerPreference != GraphicsContextGLPowerPreference::HighPerformance)
         return { };
     return m_webGLContextCounter.count();
 }

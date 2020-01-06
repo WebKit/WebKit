@@ -28,10 +28,10 @@
 #include "config.h"
 
 #if USE(OPENGL_ES)
-#include "Extensions3DOpenGLES.h"
+#include "ExtensionsGLOpenGLES.h"
 
-#if ENABLE(GRAPHICS_CONTEXT_3D)
-#include "GraphicsContext3D.h"
+#if ENABLE(GRAPHICS_CONTEXT_GL)
+#include "GraphicsContextGLOpenGL.h"
 #include "NotImplemented.h"
 
 #if USE(LIBEPOXY)
@@ -42,8 +42,8 @@
 
 namespace WebCore {
 
-Extensions3DOpenGLES::Extensions3DOpenGLES(GraphicsContext3D* context, bool useIndexedGetString)
-    : Extensions3DOpenGLCommon(context, useIndexedGetString)
+ExtensionsGLOpenGLES::ExtensionsGLOpenGLES(GraphicsContextGLOpenGL* context, bool useIndexedGetString)
+    : ExtensionsGLOpenGLCommon(context, useIndexedGetString)
     , m_contextResetStatus(GL_NO_ERROR)
     , m_supportsOESvertexArrayObject(false)
     , m_supportsIMGMultisampledRenderToTexture(false)
@@ -64,26 +64,26 @@ Extensions3DOpenGLES::Extensions3DOpenGLES(GraphicsContext3D* context, bool useI
 {
 }
 
-Extensions3DOpenGLES::~Extensions3DOpenGLES() = default;
+ExtensionsGLOpenGLES::~ExtensionsGLOpenGLES() = default;
 
-bool Extensions3DOpenGLES::isEnabled(const String& name)
+bool ExtensionsGLOpenGLES::isEnabled(const String& name)
 {
     // Return false immediately if the extension is not supported by the drivers.
-    bool enabled = Extensions3DOpenGLCommon::isEnabled(name);
+    bool enabled = ExtensionsGLOpenGLCommon::isEnabled(name);
     if (!enabled)
         return false;
 
     // For GL_EXT_robustness, check that the context supports robust access.
     if (name == "GL_EXT_robustness") {
         GLint robustAccess = GL_FALSE;
-        m_context->getIntegerv(Extensions3D::CONTEXT_ROBUST_ACCESS, &robustAccess);
+        m_context->getIntegerv(ExtensionsGL::CONTEXT_ROBUST_ACCESS, &robustAccess);
         return robustAccess == GL_TRUE;
     }
 
     return true;
 }
 
-void Extensions3DOpenGLES::framebufferTexture2DMultisampleIMG(unsigned long target, unsigned long attachment, unsigned long textarget, unsigned int texture, int level, unsigned long samples)
+void ExtensionsGLOpenGLES::framebufferTexture2DMultisampleIMG(unsigned long target, unsigned long attachment, unsigned long textarget, unsigned texture, int level, unsigned long samples)
 {
     if (m_glFramebufferTexture2DMultisampleIMG)
         m_glFramebufferTexture2DMultisampleIMG(target, attachment, textarget, texture, level, samples);
@@ -91,7 +91,7 @@ void Extensions3DOpenGLES::framebufferTexture2DMultisampleIMG(unsigned long targ
         m_context->synthesizeGLError(GL_INVALID_OPERATION);
 }
 
-void Extensions3DOpenGLES::renderbufferStorageMultisampleIMG(unsigned long target, unsigned long samples, unsigned long internalformat, unsigned long width, unsigned long height)
+void ExtensionsGLOpenGLES::renderbufferStorageMultisampleIMG(unsigned long target, unsigned long samples, unsigned long internalformat, unsigned long width, unsigned long height)
 {
     if (m_glRenderbufferStorageMultisampleIMG)
         m_glRenderbufferStorageMultisampleIMG(target, samples, internalformat, width, height);
@@ -99,12 +99,12 @@ void Extensions3DOpenGLES::renderbufferStorageMultisampleIMG(unsigned long targe
         m_context->synthesizeGLError(GL_INVALID_OPERATION);
 }
 
-void Extensions3DOpenGLES::blitFramebuffer(long /* srcX0 */, long /* srcY0 */, long /* srcX1 */, long /* srcY1 */, long /* dstX0 */, long /* dstY0 */, long /* dstX1 */, long /* dstY1 */, unsigned long /* mask */, unsigned long /* filter */)
+void ExtensionsGLOpenGLES::blitFramebuffer(long /* srcX0 */, long /* srcY0 */, long /* srcX1 */, long /* srcY1 */, long /* dstX0 */, long /* dstY0 */, long /* dstX1 */, long /* dstY1 */, unsigned long /* mask */, unsigned long /* filter */)
 {
     notImplemented();
 }
 
-void Extensions3DOpenGLES::renderbufferStorageMultisample(unsigned long target, unsigned long samples, unsigned long internalformat, unsigned long width, unsigned long height)
+void ExtensionsGLOpenGLES::renderbufferStorageMultisample(unsigned long target, unsigned long samples, unsigned long internalformat, unsigned long width, unsigned long height)
 {
     if (m_glRenderbufferStorageMultisampleIMG)
         renderbufferStorageMultisampleIMG(target, samples, internalformat, width, height);
@@ -112,22 +112,22 @@ void Extensions3DOpenGLES::renderbufferStorageMultisample(unsigned long target, 
         notImplemented();
 }
 
-void Extensions3DOpenGLES::insertEventMarkerEXT(const String&)
+void ExtensionsGLOpenGLES::insertEventMarkerEXT(const String&)
 {
     notImplemented();
 }
 
-void Extensions3DOpenGLES::pushGroupMarkerEXT(const String&)
+void ExtensionsGLOpenGLES::pushGroupMarkerEXT(const String&)
 {
     notImplemented();
 }
 
-void Extensions3DOpenGLES::popGroupMarkerEXT(void)
+void ExtensionsGLOpenGLES::popGroupMarkerEXT(void)
 {
     notImplemented();
 }
 
-Platform3DObject Extensions3DOpenGLES::createVertexArrayOES()
+Platform3DObject ExtensionsGLOpenGLES::createVertexArrayOES()
 {
     m_context->makeContextCurrent();
     if (m_glGenVertexArraysOES) {
@@ -140,7 +140,7 @@ Platform3DObject Extensions3DOpenGLES::createVertexArrayOES()
     return 0;
 }
 
-void Extensions3DOpenGLES::deleteVertexArrayOES(Platform3DObject array)
+void ExtensionsGLOpenGLES::deleteVertexArrayOES(Platform3DObject array)
 {
     if (!array)
         return;
@@ -152,7 +152,7 @@ void Extensions3DOpenGLES::deleteVertexArrayOES(Platform3DObject array)
         m_context->synthesizeGLError(GL_INVALID_OPERATION);
 }
 
-GC3Dboolean Extensions3DOpenGLES::isVertexArrayOES(Platform3DObject array)
+GC3Dboolean ExtensionsGLOpenGLES::isVertexArrayOES(Platform3DObject array)
 {
     if (!array)
         return GL_FALSE;
@@ -165,7 +165,7 @@ GC3Dboolean Extensions3DOpenGLES::isVertexArrayOES(Platform3DObject array)
     return false;
 }
 
-void Extensions3DOpenGLES::bindVertexArrayOES(Platform3DObject array)
+void ExtensionsGLOpenGLES::bindVertexArrayOES(Platform3DObject array)
 {
     m_context->makeContextCurrent();
     if (m_glBindVertexArrayOES)
@@ -174,13 +174,13 @@ void Extensions3DOpenGLES::bindVertexArrayOES(Platform3DObject array)
         m_context->synthesizeGLError(GL_INVALID_OPERATION);
 }
 
-void Extensions3DOpenGLES::drawBuffersEXT(GC3Dsizei /* n */, const GC3Denum* /* bufs */)
+void ExtensionsGLOpenGLES::drawBuffersEXT(GC3Dsizei /* n */, const GC3Denum* /* bufs */)
 {
     // FIXME: implement the support.
     notImplemented();
 }
 
-int Extensions3DOpenGLES::getGraphicsResetStatusARB()
+int ExtensionsGLOpenGLES::getGraphicsResetStatusARB()
 {
     // FIXME: This does not call getGraphicsResetStatusARB, but instead getGraphicsResetStatusEXT.
     // The return codes from the two extensions are identical and their purpose is the same, so it
@@ -199,7 +199,7 @@ int Extensions3DOpenGLES::getGraphicsResetStatusARB()
     return false;
 }
 
-void Extensions3DOpenGLES::readnPixelsEXT(int x, int y, GC3Dsizei width, GC3Dsizei height, GC3Denum format, GC3Denum type, GC3Dsizei bufSize, void *data)
+void ExtensionsGLOpenGLES::readnPixelsEXT(int x, int y, GC3Dsizei width, GC3Dsizei height, GC3Denum format, GC3Denum type, GC3Dsizei bufSize, void *data)
 {
     if (m_glReadnPixelsEXT) {
         m_context->makeContextCurrent();
@@ -216,7 +216,7 @@ void Extensions3DOpenGLES::readnPixelsEXT(int x, int y, GC3Dsizei width, GC3Dsiz
     m_context->synthesizeGLError(GL_INVALID_OPERATION);
 }
 
-void Extensions3DOpenGLES::getnUniformfvEXT(GC3Duint program, int location, GC3Dsizei bufSize, float *params)
+void ExtensionsGLOpenGLES::getnUniformfvEXT(GC3Duint program, int location, GC3Dsizei bufSize, float *params)
 {
     if (m_glGetnUniformfvEXT) {
         m_context->makeContextCurrent();
@@ -227,7 +227,7 @@ void Extensions3DOpenGLES::getnUniformfvEXT(GC3Duint program, int location, GC3D
     m_context->synthesizeGLError(GL_INVALID_OPERATION);
 }
 
-void Extensions3DOpenGLES::getnUniformivEXT(GC3Duint program, int location, GC3Dsizei bufSize, int *params)
+void ExtensionsGLOpenGLES::getnUniformivEXT(GC3Duint program, int location, GC3Dsizei bufSize, int *params)
 {
     if (m_glGetnUniformivEXT) {
         m_context->makeContextCurrent();
@@ -238,7 +238,7 @@ void Extensions3DOpenGLES::getnUniformivEXT(GC3Duint program, int location, GC3D
     m_context->synthesizeGLError(GL_INVALID_OPERATION);
 }
 
-void Extensions3DOpenGLES::drawArraysInstanced(GC3Denum mode, GC3Dint first, GC3Dsizei count, GC3Dsizei primcount)
+void ExtensionsGLOpenGLES::drawArraysInstanced(GC3Denum mode, GC3Dint first, GC3Dsizei count, GC3Dsizei primcount)
 {
     if (!m_glDrawArraysInstancedANGLE) {
         m_context->synthesizeGLError(GL_INVALID_OPERATION);
@@ -249,7 +249,7 @@ void Extensions3DOpenGLES::drawArraysInstanced(GC3Denum mode, GC3Dint first, GC3
     m_glDrawArraysInstancedANGLE(mode, first, count, primcount);
 }
 
-void Extensions3DOpenGLES::drawElementsInstanced(GC3Denum mode, GC3Dsizei count, GC3Denum type, long long offset, GC3Dsizei primcount)
+void ExtensionsGLOpenGLES::drawElementsInstanced(GC3Denum mode, GC3Dsizei count, GC3Denum type, long long offset, GC3Dsizei primcount)
 {
     if (!m_glDrawElementsInstancedANGLE) {
         m_context->synthesizeGLError(GL_INVALID_OPERATION);
@@ -260,7 +260,7 @@ void Extensions3DOpenGLES::drawElementsInstanced(GC3Denum mode, GC3Dsizei count,
     m_glDrawElementsInstancedANGLE(mode, count, type, reinterpret_cast<GLvoid*>(static_cast<intptr_t>(offset)), primcount);
 }
 
-void Extensions3DOpenGLES::vertexAttribDivisor(GC3Duint index, GC3Duint divisor)
+void ExtensionsGLOpenGLES::vertexAttribDivisor(GC3Duint index, GC3Duint divisor)
 {
     if (!m_glVertexAttribDivisorANGLE) {
         m_context->synthesizeGLError(GL_INVALID_OPERATION);
@@ -271,7 +271,7 @@ void Extensions3DOpenGLES::vertexAttribDivisor(GC3Duint index, GC3Duint divisor)
     m_glVertexAttribDivisorANGLE(index, divisor);
 }
 
-bool Extensions3DOpenGLES::supportsExtension(const String& name)
+bool ExtensionsGLOpenGLES::supportsExtension(const String& name)
 {
     if (m_availableExtensions.contains(name)) {
         if (!m_supportsOESvertexArrayObject && name == "GL_OES_vertex_array_object") {
@@ -304,13 +304,13 @@ bool Extensions3DOpenGLES::supportsExtension(const String& name)
     return false;
 }
 
-String Extensions3DOpenGLES::getExtensions()
+String ExtensionsGLOpenGLES::getExtensions()
 {
     return String(reinterpret_cast<const char*>(::glGetString(GL_EXTENSIONS)));
 }
 
 } // namespace WebCore
 
-#endif // ENABLE(GRAPHICS_CONTEXT_3D)
+#endif // ENABLE(GRAPHICS_CONTEXT_GL)
 
 #endif // USE(OPENGL_ES)

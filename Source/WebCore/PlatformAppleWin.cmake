@@ -129,7 +129,7 @@ else ()
         platform/graphics/cg/FloatRectCG.cpp
         platform/graphics/cg/FloatSizeCG.cpp
         platform/graphics/cg/GradientCG.cpp
-        platform/graphics/cg/GraphicsContext3DCG.cpp
+        platform/graphics/cg/GraphicsContextGLCG.cpp
         platform/graphics/cg/GraphicsContextCG.cpp
         platform/graphics/cg/IOSurfacePool.cpp
         platform/graphics/cg/ImageBufferCG.cpp

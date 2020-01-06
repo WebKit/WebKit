@@ -21,7 +21,7 @@
 
 #if USE(EGL)
 
-#include "GraphicsContext3D.h"
+#include "GraphicsContextGLOpenGL.h"
 #include "PlatformDisplay.h"
 
 #if USE(LIBEPOXY)
@@ -487,8 +487,8 @@ cairo_device_t* GLContextEGL::cairoDevice()
 }
 #endif
 
-#if ENABLE(GRAPHICS_CONTEXT_3D)
-PlatformGraphicsContext3D GLContextEGL::platformContext()
+#if ENABLE(GRAPHICS_CONTEXT_GL)
+PlatformGraphicsContextGL GLContextEGL::platformContext()
 {
     return m_context;
 }

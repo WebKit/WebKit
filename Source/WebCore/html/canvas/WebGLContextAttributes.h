@@ -29,12 +29,12 @@
 
 #if ENABLE(WEBGL)
 
-#include "GraphicsContext3DAttributes.h"
+#include "GraphicsContextGLAttributes.h"
 
 namespace WebCore {
 
-using WebGLPowerPreference = GraphicsContext3DPowerPreference;
-using WebGLContextAttributes = GraphicsContext3DAttributes;
+using WebGLPowerPreference = GraphicsContextGLPowerPreference;
+using WebGLContextAttributes = GraphicsContextGLAttributes;
 
 } // namespace WebCore
 

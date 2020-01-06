@@ -45,7 +45,7 @@ WebGLShader::WebGLShader(WebGLRenderingContextBase& ctx, GC3Denum type)
     , m_source(emptyString())
     , m_isValid(false)
 {
-    setObject(ctx.graphicsContext3D()->createShader(type));
+    setObject(ctx.graphicsContextGL()->createShader(type));
 }
 
 WebGLShader::~WebGLShader()
@@ -53,7 +53,7 @@ WebGLShader::~WebGLShader()
     deleteObject(0);
 }
 
-void WebGLShader::deleteObjectImpl(GraphicsContext3D* context3d, Platform3DObject object)
+void WebGLShader::deleteObjectImpl(GraphicsContextGLOpenGL* context3d, Platform3DObject object)
 {
     context3d->deleteShader(object);
 }

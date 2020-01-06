@@ -1,3 +1,173 @@
+2020-01-05  Dean Jackson  <dino@apple.com>
+
+        Rename GraphicsContext3D to GraphicsContextGL
+        https://bugs.webkit.org/show_bug.cgi?id=205778
+        <rdar://problem/58327597>
+
+        Reviewed by Sam Weinig.
+
+        Rename all the GraphicsContext3D things to GraphicsContextGL
+        (includes Extensions3D and GRAPHICS_CONTEXT_3D).
+
+        GraphicsContext3DBase now becomes GraphicsContextGL.
+        GraphicsContext3D is now GraphicsContextGLOpenGL (since it represents
+        the OpenGL implementation of the API).
+
+        * CMakeLists.txt:
+        * Headers.cmake:
+        * PlatformAppleWin.cmake:
+        * PlatformFTW.cmake:
+        * PlatformGTK.cmake:
+        * PlatformMac.cmake:
+        * PlatformPlayStation.cmake:
+        * PlatformWin.cmake:
+        * Sources.txt:
+        * SourcesCocoa.txt:
+        * SourcesGTK.txt:
+        * SourcesWPE.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * html/HTMLVideoElement.cpp:
+        * html/HTMLVideoElement.h:
+        * html/OffscreenCanvas.cpp:
+        * html/canvas/ANGLEInstancedArrays.cpp:
+        * html/canvas/OESVertexArrayObject.cpp:
+        * html/canvas/WebGL2RenderingContext.cpp:
+        * html/canvas/WebGL2RenderingContext.h:
+        * html/canvas/WebGLActiveInfo.h:
+        * html/canvas/WebGLBuffer.cpp:
+        * html/canvas/WebGLBuffer.h:
+        * html/canvas/WebGLCompressedTextureASTC.cpp:
+        * html/canvas/WebGLCompressedTextureATC.cpp:
+        * html/canvas/WebGLCompressedTextureETC.cpp:
+        * html/canvas/WebGLCompressedTextureETC1.cpp:
+        * html/canvas/WebGLCompressedTexturePVRTC.cpp:
+        * html/canvas/WebGLCompressedTextureS3TC.cpp:
+        * html/canvas/WebGLContextAttributes.h:
+        * html/canvas/WebGLContextGroup.cpp:
+        * html/canvas/WebGLContextGroup.h:
+        * html/canvas/WebGLContextObject.cpp:
+        * html/canvas/WebGLContextObject.h:
+        * html/canvas/WebGLDebugShaders.cpp:
+        * html/canvas/WebGLDepthTexture.cpp:
+        * html/canvas/WebGLDepthTexture.h:
+        * html/canvas/WebGLDrawBuffers.cpp:
+        * html/canvas/WebGLFramebuffer.cpp:
+        * html/canvas/WebGLFramebuffer.h:
+        * html/canvas/WebGLObject.cpp:
+        * html/canvas/WebGLObject.h:
+        * html/canvas/WebGLProgram.cpp:
+        * html/canvas/WebGLProgram.h:
+        * html/canvas/WebGLQuery.cpp:
+        * html/canvas/WebGLQuery.h:
+        * html/canvas/WebGLRenderbuffer.cpp:
+        * html/canvas/WebGLRenderbuffer.h:
+        * html/canvas/WebGLRenderingContext.cpp:
+        * html/canvas/WebGLRenderingContext.h:
+        * html/canvas/WebGLRenderingContextBase.cpp:
+        * html/canvas/WebGLRenderingContextBase.h:
+        * html/canvas/WebGLSampler.cpp:
+        * html/canvas/WebGLSampler.h:
+        * html/canvas/WebGLShader.cpp:
+        * html/canvas/WebGLShader.h:
+        * html/canvas/WebGLShaderPrecisionFormat.h:
+        * html/canvas/WebGLSharedObject.cpp:
+        * html/canvas/WebGLSharedObject.h:
+        * html/canvas/WebGLSync.cpp:
+        * html/canvas/WebGLSync.h:
+        * html/canvas/WebGLTexture.cpp:
+        * html/canvas/WebGLTexture.h:
+        * html/canvas/WebGLTransformFeedback.cpp:
+        * html/canvas/WebGLTransformFeedback.h:
+        * html/canvas/WebGLVertexArrayObject.cpp:
+        * html/canvas/WebGLVertexArrayObject.h:
+        * html/canvas/WebGLVertexArrayObjectBase.cpp:
+        * html/canvas/WebGLVertexArrayObjectBase.h:
+        * html/canvas/WebGLVertexArrayObjectOES.cpp:
+        * html/canvas/WebGLVertexArrayObjectOES.h:
+        * inspector/InspectorShaderProgram.cpp:
+        * loader/FrameLoaderClient.h:
+        * page/Chrome.cpp:
+        * platform/SourcesCairo.txt:
+        * platform/TextureMapper.cmake:
+        * platform/WebGLStateTracker.cpp:
+        * platform/WebGLStateTracker.h:
+        * platform/graphics/ANGLEWebKitBridge.cpp:
+        * platform/graphics/ExtensionsGL.h: Renamed from Source/WebCore/platform/graphics/Extensions3D.h.
+        * platform/graphics/FormatConverter.cpp:
+        * platform/graphics/FormatConverter.h:
+        * platform/graphics/GLContext.cpp:
+        * platform/graphics/GLContext.h:
+        * platform/graphics/GraphicsContext.h:
+        * platform/graphics/GraphicsContext3D.cpp: Removed.
+        * platform/graphics/GraphicsContext3DBase.cpp: Removed.
+        * platform/graphics/GraphicsContextGL.cpp: Added.
+        * platform/graphics/GraphicsContextGL.h: Renamed from Source/WebCore/platform/graphics/GraphicsContext3DBase.h.
+        * platform/graphics/GraphicsContextGLAttributes.h: Renamed from Source/WebCore/platform/graphics/GraphicsContext3DAttributes.h.
+        * platform/graphics/ImageBuffer.cpp:
+        * platform/graphics/ImageBuffer.h:
+        * platform/graphics/MediaPlayer.cpp:
+        * platform/graphics/MediaPlayer.h:
+        * platform/graphics/MediaPlayerPrivate.h:
+        * platform/graphics/OpenGLShims.cpp:
+        * platform/graphics/angle/ExtensionsGLANGLE.cpp: Renamed from Source/WebCore/platform/graphics/angle/Extensions3DANGLE.cpp.
+        * platform/graphics/angle/ExtensionsGLANGLE.h: Renamed from Source/WebCore/platform/graphics/angle/Extensions3DANGLE.h.
+        * platform/graphics/angle/GraphicsContextGLANGLE.cpp: Renamed from Source/WebCore/platform/graphics/angle/GraphicsContext3DANGLE.cpp.
+        * platform/graphics/angle/TemporaryANGLESetting.cpp:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.h:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.h:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.mm:
+        * platform/graphics/cairo/GraphicsContextGLCairo.cpp: Renamed from Source/WebCore/platform/graphics/cairo/GraphicsContext3DCairo.cpp.
+        * platform/graphics/cairo/ImageBufferCairo.cpp:
+        * platform/graphics/cg/GraphicsContextGLCG.cpp: Renamed from Source/WebCore/platform/graphics/cg/GraphicsContext3DCG.cpp.
+        * platform/graphics/cocoa/GraphicsContextGLOpenGLCocoa.mm: Renamed from Source/WebCore/platform/graphics/cocoa/GraphicsContext3DCocoa.mm.
+        * platform/graphics/cocoa/IOSurface.mm:
+        * platform/graphics/cocoa/WebGLLayer.h:
+        * platform/graphics/cocoa/WebGLLayer.mm:
+        * platform/graphics/cpu/arm/GraphicsContextGLNEON.h: Renamed from Source/WebCore/platform/graphics/cpu/arm/GraphicsContext3DNEON.h.
+        * platform/graphics/cv/TextureCacheCV.h:
+        * platform/graphics/cv/TextureCacheCV.mm:
+        * platform/graphics/cv/VideoTextureCopierCV.cpp:
+        * platform/graphics/cv/VideoTextureCopierCV.h:
+        * platform/graphics/egl/GLContextEGL.cpp:
+        * platform/graphics/egl/GLContextEGL.h:
+        * platform/graphics/glx/GLContextGLX.cpp:
+        * platform/graphics/glx/GLContextGLX.h:
+        * platform/graphics/gpu/Texture.cpp:
+        * platform/graphics/gpu/Texture.h:
+        * platform/graphics/gstreamer/GLVideoSinkGStreamer.cpp:
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.h:
+        * platform/graphics/ios/GraphicsContextGLOpenGLESIOS.h: Renamed from Source/WebCore/platform/graphics/ios/GraphicsContext3DIOS.h.
+        * platform/graphics/nicosia/texmap/NicosiaGC3DANGLELayer.cpp:
+        * platform/graphics/nicosia/texmap/NicosiaGC3DANGLELayer.h:
+        * platform/graphics/nicosia/texmap/NicosiaGC3DLayer.cpp:
+        * platform/graphics/nicosia/texmap/NicosiaGC3DLayer.h:
+        * platform/graphics/opengl/ExtensionsGLOpenGL.cpp: Renamed from Source/WebCore/platform/graphics/opengl/Extensions3DOpenGL.cpp.
+        * platform/graphics/opengl/ExtensionsGLOpenGL.h: Renamed from Source/WebCore/platform/graphics/opengl/Extensions3DOpenGL.h.
+        * platform/graphics/opengl/ExtensionsGLOpenGLCommon.cpp: Renamed from Source/WebCore/platform/graphics/opengl/Extensions3DOpenGLCommon.cpp.
+        * platform/graphics/opengl/ExtensionsGLOpenGLCommon.h: Renamed from Source/WebCore/platform/graphics/opengl/Extensions3DOpenGLCommon.h.
+        * platform/graphics/opengl/ExtensionsGLOpenGLES.cpp: Renamed from Source/WebCore/platform/graphics/opengl/Extensions3DOpenGLES.cpp.
+        * platform/graphics/opengl/ExtensionsGLOpenGLES.h: Renamed from Source/WebCore/platform/graphics/opengl/Extensions3DOpenGLES.h.
+        * platform/graphics/opengl/GraphicsContextGLOpenGL.cpp: Added.
+        * platform/graphics/opengl/GraphicsContextGLOpenGL.h: Renamed from Source/WebCore/platform/graphics/GraphicsContext3D.h.
+        * platform/graphics/opengl/GraphicsContextGLOpenGLBase.cpp: Renamed from Source/WebCore/platform/graphics/opengl/GraphicsContext3DOpenGL.cpp.
+        * platform/graphics/opengl/GraphicsContextGLOpenGLCommon.cpp: Renamed from Source/WebCore/platform/graphics/opengl/GraphicsContext3DOpenGLCommon.cpp.
+        * platform/graphics/opengl/GraphicsContextGLOpenGLES.cpp: Renamed from Source/WebCore/platform/graphics/opengl/GraphicsContext3DOpenGLES.cpp.
+        * platform/graphics/opengl/GraphicsContextGLOpenGLManager.cpp: Renamed from Source/WebCore/platform/graphics/GraphicsContext3DManager.cpp.
+        * platform/graphics/opengl/GraphicsContextGLOpenGLManager.h: Renamed from Source/WebCore/platform/graphics/GraphicsContext3DManager.h.
+        * platform/graphics/opengl/GraphicsContextGLOpenGLPrivate.cpp: Renamed from Source/WebCore/platform/graphics/GraphicsContext3DPrivate.cpp.
+        * platform/graphics/opengl/GraphicsContextGLOpenGLPrivate.h: Renamed from Source/WebCore/platform/graphics/GraphicsContext3DPrivate.h.
+        * platform/graphics/opengl/TemporaryOpenGLSetting.cpp:
+        * platform/graphics/opengl/TemporaryOpenGLSetting.h:
+        * platform/graphics/texmap/BitmapTextureGL.cpp:
+        * platform/graphics/texmap/GraphicsContextGLTextureMapper.cpp: Renamed from Source/WebCore/platform/graphics/texmap/GraphicsContext3DTextureMapper.cpp.
+        * platform/graphics/texmap/TextureMapperGC3DPlatformLayer.cpp:
+        * platform/graphics/texmap/TextureMapperGC3DPlatformLayer.h:
+        * platform/graphics/texmap/TextureMapperGL.cpp:
+        * platform/graphics/win/GraphicsContextGLDirect2D.cpp: Renamed from Source/WebCore/platform/graphics/win/GraphicsContext3DDirect2D.cpp.
+        * testing/Internals.cpp:
+
 2020-01-05  Simon Fraser  <simon.fraser@apple.com>
 
         REGRESSION (r252724): Unable to tap on play button on google video 'See the top search trends of 2019'

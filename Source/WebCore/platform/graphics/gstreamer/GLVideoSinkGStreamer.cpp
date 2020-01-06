@@ -207,7 +207,7 @@ static bool ensureGstGLContext(WebKitGLVideoSink* sink)
     ASSERT_NOT_REACHED();
 #endif
 
-    PlatformGraphicsContext3D contextHandle = sharedContext->platformContext();
+    PlatformGraphicsContextGL contextHandle = sharedContext->platformContext();
     if (!contextHandle)
         return false;
 

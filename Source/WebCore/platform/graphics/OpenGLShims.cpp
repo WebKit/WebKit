@@ -17,7 +17,7 @@
  */
 
 #include "config.h"
-#if ENABLE(GRAPHICS_CONTEXT_3D)
+#if ENABLE(GRAPHICS_CONTEXT_GL)
 
 #define DISABLE_SHIMS
 #include "OpenGLShims.h"
@@ -230,4 +230,4 @@ bool initializeOpenGLShims()
 
 } // namespace WebCore
 
-#endif // ENABLE(GRAPHICS_CONTEXT_3D)
+#endif // ENABLE(GRAPHICS_CONTEXT_GL)

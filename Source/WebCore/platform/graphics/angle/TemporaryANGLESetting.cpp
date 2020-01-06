@@ -26,7 +26,7 @@
 
 #include "config.h"
 
-#if ENABLE(GRAPHICS_CONTEXT_3D) && USE(ANGLE)
+#if ENABLE(GRAPHICS_CONTEXT_GL) && USE(ANGLE)
 #include "TemporaryANGLESetting.h"
 
 #include <ANGLE/entry_points_gles_2_0_autogen.h>
@@ -60,4 +60,4 @@ TemporaryANGLESetting::~TemporaryANGLESetting()
 
 }
 
-#endif // ENABLE(GRAPHICS_CONTEXT_3D) && USE(ANGLE)
+#endif // ENABLE(GRAPHICS_CONTEXT_GL) && USE(ANGLE)

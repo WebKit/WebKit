@@ -27,12 +27,11 @@
  */
 
 #include "config.h"
+#include "GraphicsContextGLOpenGL.h"
 
-#if ENABLE(GRAPHICS_CONTEXT_3D) && USE(OPENGL_ES) && !PLATFORM(IOS_FAMILY)
+#if ENABLE(GRAPHICS_CONTEXT_GL) && USE(OPENGL_ES) && !PLATFORM(IOS_FAMILY)
 
-#include "GraphicsContext3D.h"
-
-#include "Extensions3DOpenGLES.h"
+#include "ExtensionsGLOpenGLES.h"
 #include "IntRect.h"
 #include "IntSize.h"
 #include "NotImplemented.h"
@@ -41,13 +40,13 @@
 
 namespace WebCore {
 
-void GraphicsContext3D::releaseShaderCompiler()
+void GraphicsContextGLOpenGL::releaseShaderCompiler()
 {
     makeContextCurrent();
     ::glReleaseShaderCompiler();
 }
 
-void GraphicsContext3D::readPixels(GC3Dint x, GC3Dint y, GC3Dsizei width, GC3Dsizei height, GC3Denum format, GC3Denum type, void* data)
+void GraphicsContextGLOpenGL::readPixels(GC3Dint x, GC3Dint y, GC3Dsizei width, GC3Dsizei height, GC3Denum format, GC3Denum type, void* data)
 {
     makeContextCurrent();
 
@@ -57,7 +56,7 @@ void GraphicsContext3D::readPixels(GC3Dint x, GC3Dint y, GC3Dsizei width, GC3Dsi
     // all previous rendering calls should be done before reading pixels.
     ::glFlush();
     if (attributes.antialias && m_state.boundFBO == m_multisampleFBO) {
-         resolveMultisamplingIfNecessary(IntRect(x, y, width, height));
+        resolveMultisamplingIfNecessary(IntRect(x, y, width, height));
         ::glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);
         ::glFlush();
     }
@@ -68,7 +67,7 @@ void GraphicsContext3D::readPixels(GC3Dint x, GC3Dint y, GC3Dsizei width, GC3Dsi
         ::glBindFramebuffer(GL_FRAMEBUFFER, m_multisampleFBO);
 }
 
-void GraphicsContext3D::readPixelsAndConvertToBGRAIfNecessary(int x, int y, int width, int height, unsigned char* pixels)
+void GraphicsContextGLOpenGL::readPixelsAndConvertToBGRAIfNecessary(int x, int y, int width, int height, unsigned char* pixels)
 {
     ::glReadPixels(x, y, width, height, GL_RGBA, GL_UNSIGNED_BYTE, pixels);
     int totalBytes = width * height * 4;
@@ -78,7 +77,7 @@ void GraphicsContext3D::readPixelsAndConvertToBGRAIfNecessary(int x, int y, int 
     }
 }
 
-bool GraphicsContext3D::reshapeFBOs(const IntSize& size)
+bool GraphicsContextGLOpenGL::reshapeFBOs(const IntSize& size)
 {
     const int width = size.width();
     const int height = size.height();
@@ -94,7 +93,7 @@ bool GraphicsContext3D::reshapeFBOs(const IntSize& size)
     }
 
     // We don't allow the logic where stencil is required and depth is not.
-    // See GraphicsContext3D::validateAttributes.
+    // See GraphicsContextGLOpenGL::validateAttributes.
     bool supportPackedDepthStencilBuffer = (attributes.stencil || attributes.depth) && getExtensions().supports("GL_OES_packed_depth_stencil");
 
     // Resize regular FBO.
@@ -121,10 +120,10 @@ bool GraphicsContext3D::reshapeFBOs(const IntSize& size)
     ::glBindTexture(GL_TEXTURE_2D, 0);
 #endif
 
-    Extensions3DOpenGLES& extensions = static_cast<Extensions3DOpenGLES&>(getExtensions());
+    ExtensionsGLOpenGLES& extensions = static_cast<ExtensionsGLOpenGLES&>(getExtensions());
     if (extensions.isImagination() && attributes.antialias) {
         GLint maxSampleCount;
-        ::glGetIntegerv(Extensions3D::MAX_SAMPLES_IMG, &maxSampleCount); 
+        ::glGetIntegerv(ExtensionsGL::MAX_SAMPLES_IMG, &maxSampleCount); 
         GLint sampleCount = std::min(8, maxSampleCount);
 
         extensions.framebufferTexture2DMultisampleIMG(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_texture, 0, sampleCount);
@@ -185,25 +184,25 @@ bool GraphicsContext3D::reshapeFBOs(const IntSize& size)
     return mustRestoreFBO;
 }
 
-void GraphicsContext3D::resolveMultisamplingIfNecessary(const IntRect&)
+void GraphicsContextGLOpenGL::resolveMultisamplingIfNecessary(const IntRect&)
 {
     // FIXME: We don't support antialiasing yet.
     notImplemented();
 }
 
-void GraphicsContext3D::renderbufferStorage(GC3Denum target, GC3Denum internalformat, GC3Dsizei width, GC3Dsizei height)
+void GraphicsContextGLOpenGL::renderbufferStorage(GC3Denum target, GC3Denum internalformat, GC3Dsizei width, GC3Dsizei height)
 {
     makeContextCurrent();
     ::glRenderbufferStorage(target, internalformat, width, height);
 }
 
-void GraphicsContext3D::getIntegerv(GC3Denum pname, GC3Dint* value)
+void GraphicsContextGLOpenGL::getIntegerv(GC3Denum pname, GC3Dint* value)
 {
     makeContextCurrent();
     ::glGetIntegerv(pname, value);
 }
 
-void GraphicsContext3D::getShaderPrecisionFormat(GC3Denum shaderType, GC3Denum precisionType, GC3Dint* range, GC3Dint* precision)
+void GraphicsContextGLOpenGL::getShaderPrecisionFormat(GC3Denum shaderType, GC3Denum precisionType, GC3Dint* range, GC3Dint* precision)
 {
     ASSERT(range);
     ASSERT(precision);
@@ -212,7 +211,7 @@ void GraphicsContext3D::getShaderPrecisionFormat(GC3Denum shaderType, GC3Denum p
     ::glGetShaderPrecisionFormat(shaderType, precisionType, range, precision);
 }
 
-bool GraphicsContext3D::texImage2D(GC3Denum target, GC3Dint level, GC3Denum internalformat, GC3Dsizei width, GC3Dsizei height, GC3Dint border, GC3Denum format, GC3Denum type, const void* pixels)
+bool GraphicsContextGLOpenGL::texImage2D(GC3Denum target, GC3Dint level, GC3Denum internalformat, GC3Dsizei width, GC3Dsizei height, GC3Dint border, GC3Denum format, GC3Denum type, const void* pixels)
 {
     if (width && height && !pixels) {
         synthesizeGLError(INVALID_VALUE);
@@ -223,7 +222,7 @@ bool GraphicsContext3D::texImage2D(GC3Denum target, GC3Dint level, GC3Denum inte
     return true;
 }
 
-void GraphicsContext3D::validateAttributes()
+void GraphicsContextGLOpenGL::validateAttributes()
 {
     validateDepthStencil("GL_OES_packed_depth_stencil");
 
@@ -235,29 +234,29 @@ void GraphicsContext3D::validateAttributes()
     }
 }
 
-void GraphicsContext3D::depthRange(GC3Dclampf zNear, GC3Dclampf zFar)
+void GraphicsContextGLOpenGL::depthRange(GC3Dclampf zNear, GC3Dclampf zFar)
 {
     makeContextCurrent();
     ::glDepthRangef(zNear, zFar);
 }
 
-void GraphicsContext3D::clearDepth(GC3Dclampf depth)
+void GraphicsContextGLOpenGL::clearDepth(GC3Dclampf depth)
 {
     makeContextCurrent();
     ::glClearDepthf(depth);
 }
 
 #if !PLATFORM(GTK)
-Extensions3D& GraphicsContext3D::getExtensions()
+ExtensionsGL& GraphicsContextGLOpenGL::getExtensions()
 {
     if (!m_extensions)
-        m_extensions = makeUnique<Extensions3DOpenGLES>(this, isGLES2Compliant());
+        m_extensions = makeUnique<ExtensionsGLOpenGLES>(this, isGLES2Compliant());
     return *m_extensions;
 }
 #endif
 
 #if PLATFORM(WIN) && USE(CA)
-RefPtr<GraphicsContext3D> GraphicsContext3D::create(GraphicsContext3DAttributes attributes, HostWindow* hostWindow, GraphicsContext3D::Destination destination)
+RefPtr<GraphicsContextGLOpenGL> GraphicsContextGLOpenGL::create(GraphicsContextGLAttributes attributes, HostWindow* hostWindow, GraphicsContextGLOpenGL::Destination destination)
 {
     // This implementation doesn't currently support rendering directly to the HostWindow.
     if (destination == Destination::DirectlyToHostWindow)
@@ -274,13 +273,13 @@ RefPtr<GraphicsContext3D> GraphicsContext3D::create(GraphicsContext3DAttributes 
     if (!success)
         return nullptr;
     
-    return adoptRef(new GraphicsContext3D(attributes, hostWindow, renderStyle));
+    return adoptRef(new GraphicsContextGLOpenGL(attributes, hostWindow, renderStyle));
 }
 
-GraphicsContext3D::GraphicsContext3D(GraphicsContext3DAttributes attributes, HostWindow*, GraphicsContext3D::Destination destination, GraphicsContext3D* sharedContext)
-    : GraphicsContext3DBase(attributes, destination, sharedContext)
+GraphicsContextGLOpenGL::GraphicsContextGLOpenGL(GraphicsContextGLAttributes attributes, HostWindow*, GraphicsContextGLOpenGL::Destination destination, GraphicsContextGLOpenGL* sharedContext)
+    : GraphicsContextGL(attributes, destination, sharedContext)
     , m_compiler(isGLES2Compliant() ? SH_ESSL_OUTPUT : SH_GLSL_COMPATIBILITY_OUTPUT)
-    , m_private(makeUnique<GraphicsContext3DPrivate>(this, destination))
+    , m_private(makeUnique<GraphicsContextGLOpenGLPrivate>(this, destination))
 {
     ASSERT_UNUSED(sharedContext, !sharedContext);
     makeContextCurrent();
@@ -321,19 +320,19 @@ GraphicsContext3D::GraphicsContext3D(GraphicsContext3DAttributes attributes, Hos
     ShBuiltInResources ANGLEResources;
     ShInitBuiltInResources(&ANGLEResources);
     
-    getIntegerv(GraphicsContext3D::MAX_VERTEX_ATTRIBS, &ANGLEResources.MaxVertexAttribs);
-    getIntegerv(GraphicsContext3D::MAX_VERTEX_UNIFORM_VECTORS, &ANGLEResources.MaxVertexUniformVectors);
-    getIntegerv(GraphicsContext3D::MAX_VARYING_VECTORS, &ANGLEResources.MaxVaryingVectors);
-    getIntegerv(GraphicsContext3D::MAX_VERTEX_TEXTURE_IMAGE_UNITS, &ANGLEResources.MaxVertexTextureImageUnits);
-    getIntegerv(GraphicsContext3D::MAX_COMBINED_TEXTURE_IMAGE_UNITS, &ANGLEResources.MaxCombinedTextureImageUnits);
-    getIntegerv(GraphicsContext3D::MAX_TEXTURE_IMAGE_UNITS, &ANGLEResources.MaxTextureImageUnits);
-    getIntegerv(GraphicsContext3D::MAX_FRAGMENT_UNIFORM_VECTORS, &ANGLEResources.MaxFragmentUniformVectors);
+    getIntegerv(GraphicsContextGLOpenGL::MAX_VERTEX_ATTRIBS, &ANGLEResources.MaxVertexAttribs);
+    getIntegerv(GraphicsContextGLOpenGL::MAX_VERTEX_UNIFORM_VECTORS, &ANGLEResources.MaxVertexUniformVectors);
+    getIntegerv(GraphicsContextGLOpenGL::MAX_VARYING_VECTORS, &ANGLEResources.MaxVaryingVectors);
+    getIntegerv(GraphicsContextGLOpenGL::MAX_VERTEX_TEXTURE_IMAGE_UNITS, &ANGLEResources.MaxVertexTextureImageUnits);
+    getIntegerv(GraphicsContextGLOpenGL::MAX_COMBINED_TEXTURE_IMAGE_UNITS, &ANGLEResources.MaxCombinedTextureImageUnits);
+    getIntegerv(GraphicsContextGLOpenGL::MAX_TEXTURE_IMAGE_UNITS, &ANGLEResources.MaxTextureImageUnits);
+    getIntegerv(GraphicsContextGLOpenGL::MAX_FRAGMENT_UNIFORM_VECTORS, &ANGLEResources.MaxFragmentUniformVectors);
     
     // Always set to 1 for OpenGL ES.
     ANGLEResources.MaxDrawBuffers = 1;
     
     GC3Dint range[2], precision;
-    getShaderPrecisionFormat(GraphicsContext3D::FRAGMENT_SHADER, GraphicsContext3D::HIGH_FLOAT, range, &precision);
+    getShaderPrecisionFormat(GraphicsContextGLOpenGL::FRAGMENT_SHADER, GraphicsContextGLOpenGL::HIGH_FLOAT, range, &precision);
     ANGLEResources.FragmentPrecisionHigh = (range[0] || range[1] || precision);
     
     m_compiler.setResources(ANGLEResources);
@@ -346,7 +345,7 @@ GraphicsContext3D::GraphicsContext3D(GraphicsContext3DAttributes attributes, Hos
     ::glClearColor(0, 0, 0, 0);
 }
 
-GraphicsContext3D::~GraphicsContext3D()
+GraphicsContextGLOpenGL::~GraphicsContextGLOpenGL()
 {
     makeContextCurrent();
     ::glDeleteTextures(1, &m_texture);
@@ -365,36 +364,36 @@ GraphicsContext3D::~GraphicsContext3D()
     ::glDeleteFramebuffers(1, &m_fbo);
 }
 
-void GraphicsContext3D::setContextLostCallback(std::unique_ptr<ContextLostCallback>)
+void GraphicsContextGLOpenGL::setContextLostCallback(std::unique_ptr<ContextLostCallback>)
 {
 }
 
-void GraphicsContext3D::setErrorMessageCallback(std::unique_ptr<ErrorMessageCallback>)
+void GraphicsContextGLOpenGL::setErrorMessageCallback(std::unique_ptr<ErrorMessageCallback>)
 {
 }
 
-bool GraphicsContext3D::makeContextCurrent()
+bool GraphicsContextGLOpenGL::makeContextCurrent()
 {
     if (!m_private)
         return false;
     return m_private->makeContextCurrent();
 }
 
-void GraphicsContext3D::checkGPUStatus()
+void GraphicsContextGLOpenGL::checkGPUStatus()
 {
 }
 
-PlatformGraphicsContext3D GraphicsContext3D::platformGraphicsContext3D()
+PlatformGraphicsContextGL GraphicsContextGLOpenGL::platformGraphicsContextGL()
 {
     return m_private->platformContext();
 }
 
-Platform3DObject GraphicsContext3D::platformTexture() const
+Platform3DObject GraphicsContextGLOpenGL::platformTexture() const
 {
     return m_texture;
 }
 
-bool GraphicsContext3D::isGLES2Compliant() const
+bool GraphicsContextGLOpenGL::isGLES2Compliant() const
 {
 #if USE(OPENGL_ES)
     return true;
@@ -403,7 +402,7 @@ bool GraphicsContext3D::isGLES2Compliant() const
 #endif
 }
 
-PlatformLayer* GraphicsContext3D::platformLayer() const
+PlatformLayer* GraphicsContextGLOpenGL::platformLayer() const
 {
     return m_webGLLayer->platformLayer();
 }
@@ -411,4 +410,4 @@ PlatformLayer* GraphicsContext3D::platformLayer() const
 
 }
 
-#endif // ENABLE(GRAPHICS_CONTEXT_3D) && USE(OPENGL_ES) && !PLATFORM(IOS_FAMILY)
+#endif // ENABLE(GRAPHICS_CONTEXT_GL) && USE(OPENGL_ES) && !PLATFORM(IOS_FAMILY)

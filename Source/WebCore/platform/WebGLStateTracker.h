@@ -27,7 +27,7 @@
 
 #if ENABLE(WEBGL)
 
-#include "GraphicsContext3DAttributes.h"
+#include "GraphicsContextGLAttributes.h"
 #include <wtf/Function.h>
 #include <wtf/RefCounter.h>
 
@@ -43,7 +43,7 @@ public:
     using WebGLContextCounter = RefCounter<WebGLContextCounterType>;
     using Token = WebGLContextCounter::Token;
 
-    Token token(GraphicsContext3DPowerPreference);
+    Token token(GraphicsContextGLPowerPreference);
 
 private:
     void updateWebGLState();

@@ -61,7 +61,7 @@ namespace WebCore {
 class AudioSourceProvider;
 class CDMInstance;
 class CachedResourceLoader;
-class GraphicsContext3D;
+class GraphicsContextGLOpenGL;
 class GraphicsContext;
 class InbandTextTrackPrivate;
 class LegacyCDMSessionClient;
@@ -421,7 +421,7 @@ public:
     // The destination texture may need to be resized to to the dimensions of the source texture or re-defined to the required internalFormat.
     // The current restrictions require that format shoud be RGB or RGBA, type should be UNSIGNED_BYTE and level should be 0. It may be lifted in the future.
 
-    bool copyVideoTextureToPlatformTexture(GraphicsContext3D*, Platform3DObject texture, GC3Denum target, GC3Dint level, GC3Denum internalFormat, GC3Denum format, GC3Denum type, bool premultiplyAlpha, bool flipY);
+    bool copyVideoTextureToPlatformTexture(GraphicsContextGLOpenGL*, Platform3DObject texture, GC3Denum target, GC3Dint level, GC3Denum internalFormat, GC3Denum format, GC3Denum type, bool premultiplyAlpha, bool flipY);
 
     NativeImagePtr nativeImageForCurrentTime();
 

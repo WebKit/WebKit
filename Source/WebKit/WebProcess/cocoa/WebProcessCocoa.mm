@@ -110,7 +110,7 @@
 #if PLATFORM(MAC)
 #import "WKAccessibilityWebPageObjectMac.h"
 #import "WebSwitchingGPUClient.h"
-#import <WebCore/GraphicsContext3DManager.h>
+#import <WebCore/GraphicsContextGLOpenGLManager.h>
 #import <WebCore/ScrollbarThemeMac.h>
 #import <pal/spi/mac/NSScrollerImpSPI.h>
 #endif
@@ -806,7 +806,7 @@ void WebProcess::scrollerStylePreferenceChanged(bool useOverlayScrollbars)
 
 void WebProcess::displayConfigurationChanged(CGDirectDisplayID displayID, CGDisplayChangeSummaryFlags flags)
 {
-    GraphicsContext3DManager::displayWasReconfigured(displayID, flags, nullptr);
+    GraphicsContextGLOpenGLManager::displayWasReconfigured(displayID, flags, nullptr);
 }
     
 void WebProcess::displayWasRefreshed(CGDirectDisplayID displayID)

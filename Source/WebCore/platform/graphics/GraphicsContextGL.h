@@ -27,7 +27,7 @@
 
 #if ENABLE(WEBGL)
 
-#include "GraphicsContext3DAttributes.h"
+#include "GraphicsContextGLAttributes.h"
 #include "GraphicsTypes3D.h"
 #include "Image.h"
 #include "IntRect.h"
@@ -43,18 +43,18 @@
 #endif
 #endif
 
-typedef void* PlatformGraphicsContext3D;
-typedef void* PlatformGraphicsContext3DDisplay;
-typedef void* PlatformGraphicsContext3DSurface;
-typedef void* PlatformGraphicsContext3DConfig;
+typedef void* PlatformGraphicsContextGL;
+typedef void* PlatformGraphicsContextGLDisplay;
+typedef void* PlatformGraphicsContextGLSurface;
+typedef void* PlatformGraphicsContextGLConfig;
 
 namespace WebCore {
-class Extensions3D;
+class ExtensionsGL;
 class HostWindow;
 class ImageBuffer;
 class ImageData;
 
-class GraphicsContext3DBase : public RefCounted<GraphicsContext3DBase> {
+class GraphicsContextGL : public RefCounted<GraphicsContextGL> {
 public:
     enum {
         // WebGL 1 constants.
@@ -756,7 +756,7 @@ public:
     };
 #endif // USE(ANGLE)
 
-    virtual PlatformGraphicsContext3D platformGraphicsContext3D() const = 0;
+    virtual PlatformGraphicsContextGL platformGraphicsContextGL() const = 0;
     virtual Platform3DObject platformTexture() const = 0;
     virtual PlatformLayer* platformLayer() const = 0;
 
@@ -841,8 +841,8 @@ public:
         GC3Dint size;
     };
 
-    GraphicsContext3DBase(GraphicsContext3DAttributes, Destination = Destination::Offscreen, GraphicsContext3DBase* sharedContext = nullptr);
-    virtual ~GraphicsContext3DBase() = default;
+    GraphicsContextGL(GraphicsContextGLAttributes, Destination = Destination::Offscreen, GraphicsContextGL* sharedContext = nullptr);
+    virtual ~GraphicsContextGL() = default;
 
     // ========== WebGL 1 entry points.
 
@@ -1037,8 +1037,8 @@ public:
     virtual void drawElementsInstanced(GC3Denum mode, GC3Dsizei count, GC3Denum type, GC3Dintptr offset, GC3Dsizei primcount) = 0;
     virtual void vertexAttribDivisor(GC3Duint index, GC3Duint divisor) = 0;
 
-    GraphicsContext3DAttributes contextAttributes() const { return m_attrs; }
-    void setContextAttributes(const GraphicsContext3DAttributes& attrs) { m_attrs = attrs; }
+    GraphicsContextGLAttributes contextAttributes() const { return m_attrs; }
+    void setContextAttributes(const GraphicsContextGLAttributes& attrs) { m_attrs = attrs; }
 
     // VertexArrayOject calls
     virtual Platform3DObject createVertexArray() = 0;
@@ -1052,9 +1052,9 @@ public:
 
     // Support for extensions. Returns a non-null object, though not
     // all methods it contains may necessarily be supported on the
-    // current hardware. Must call Extensions3D::supports() to
+    // current hardware. Must call ExtensionsGL::supports() to
     // determine this.
-    virtual Extensions3D& getExtensions() = 0;
+    virtual ExtensionsGL& getExtensions() = 0;
 
     // ========== WebGL 2 entry points.
 
@@ -1082,7 +1082,7 @@ public:
     Destination destination() const { return m_destination; }
 
 private:
-    GraphicsContext3DAttributes m_attrs;
+    GraphicsContextGLAttributes m_attrs;
     Destination m_destination;
 };
 

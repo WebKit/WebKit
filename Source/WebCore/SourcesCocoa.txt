@@ -226,8 +226,8 @@ platform/graphics/MediaPlaybackTargetPicker.cpp
 
 // These sources can't be unified with others in case they are merged
 // with files that use the system OpenGL.
-platform/graphics/angle/Extensions3DANGLE.cpp @no-unify
-platform/graphics/angle/GraphicsContext3DANGLE.cpp @no-unify
+platform/graphics/angle/ExtensionsGLANGLE.cpp @no-unify
+platform/graphics/angle/GraphicsContextGLANGLE.cpp @no-unify
 platform/graphics/angle/TemporaryANGLESetting.cpp @no-unify
 
 platform/graphics/avfoundation/AVTrackPrivateAVFObjCImpl.mm @no-unify
@@ -285,7 +285,7 @@ platform/graphics/cg/FloatPointCG.cpp
 platform/graphics/cg/FloatRectCG.cpp
 platform/graphics/cg/FloatSizeCG.cpp
 platform/graphics/cg/GradientCG.cpp
-platform/graphics/cg/GraphicsContext3DCG.cpp
+platform/graphics/cg/GraphicsContextGLCG.cpp
 platform/graphics/cg/GraphicsContextCG.cpp
 platform/graphics/cg/IOSurfacePool.cpp
 platform/graphics/cg/ImageBufferCG.cpp
@@ -305,7 +305,7 @@ platform/graphics/cg/TransformationMatrixCG.cpp
 platform/graphics/cg/UTIRegistry.cpp
 
 platform/graphics/cocoa/ColorCocoa.mm
-platform/graphics/cocoa/GraphicsContext3DCocoa.mm
+platform/graphics/cocoa/GraphicsContextGLOpenGLCocoa.mm
 platform/graphics/cocoa/GraphicsContextCocoa.mm
 platform/graphics/cocoa/FontCacheCoreText.cpp
 platform/graphics/cocoa/FontCascadeCocoa.mm
@@ -375,10 +375,11 @@ platform/graphics/mac/SwitchingGPUClient.cpp
 platform/graphics/mac/WebLayer.mm
 platform/graphics/mac/WebKitNSImageExtras.mm
 
-platform/graphics/opengl/Extensions3DOpenGL.cpp
-platform/graphics/opengl/Extensions3DOpenGLCommon.cpp
-platform/graphics/opengl/GraphicsContext3DOpenGL.cpp
-platform/graphics/opengl/GraphicsContext3DOpenGLCommon.cpp
+platform/graphics/opengl/ExtensionsGLOpenGL.cpp
+platform/graphics/opengl/ExtensionsGLOpenGLCommon.cpp
+platform/graphics/opengl/GraphicsContextGLOpenGLBase.cpp
+platform/graphics/opengl/GraphicsContextGLOpenGLCommon.cpp
+platform/graphics/opengl/GraphicsContextGLOpenGLManager.cpp
 platform/graphics/opengl/TemporaryOpenGLSetting.cpp
 
 platform/graphics/opentype/OpenTypeCG.cpp

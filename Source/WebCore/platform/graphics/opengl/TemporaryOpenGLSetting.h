@@ -28,7 +28,7 @@
 
 #include "GraphicsTypes3D.h"
 
-#if ENABLE(GRAPHICS_CONTEXT_3D) && (USE(OPENGL) || USE(OPENGL_ES))
+#if ENABLE(GRAPHICS_CONTEXT_GL) && (USE(OPENGL) || USE(OPENGL_ES))
 
 #include <wtf/Noncopyable.h>
 

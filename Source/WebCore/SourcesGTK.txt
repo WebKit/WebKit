@@ -69,7 +69,6 @@ platform/UserAgentQuirks.cpp
 platform/generic/ScrollAnimatorGeneric.cpp
 
 platform/graphics/GLContext.cpp @no-unify
-platform/graphics/GraphicsContext3DPrivate.cpp
 platform/graphics/PlatformDisplay.cpp @no-unify
 
 platform/graphics/cairo/BackingStoreBackendCairoX11.cpp @no-unify
@@ -91,6 +90,8 @@ platform/graphics/gtk/ImageGtk.cpp
 platform/graphics/gstreamer/ImageGStreamerCairo.cpp
 
 platform/graphics/libwpe/PlatformDisplayLibWPE.cpp
+
+platform/graphics/opengl/GraphicsContextGLOpenGLPrivate.cpp
 
 platform/graphics/opentype/OpenTypeVerticalData.cpp
 

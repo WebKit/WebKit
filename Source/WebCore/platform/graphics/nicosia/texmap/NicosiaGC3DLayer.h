@@ -30,7 +30,7 @@
 
 #if USE(NICOSIA) && USE(TEXTURE_MAPPER)
 
-#include "GraphicsContext3D.h"
+#include "GraphicsContextGLOpenGL.h"
 #include "NicosiaContentLayerTextureMapperImpl.h"
 #include <memory>
 
@@ -43,19 +43,19 @@ namespace Nicosia {
 class GC3DLayer : public ContentLayerTextureMapperImpl::Client {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    explicit GC3DLayer(WebCore::GraphicsContext3D&);
-    GC3DLayer(WebCore::GraphicsContext3D&, WebCore::GraphicsContext3D::Destination);
+    explicit GC3DLayer(WebCore::GraphicsContextGLOpenGL&);
+    GC3DLayer(WebCore::GraphicsContextGLOpenGL&, WebCore::GraphicsContextGLOpenGL::Destination);
 
     virtual ~GC3DLayer();
 
     ContentLayer& contentLayer() const { return m_contentLayer; }
     virtual bool makeContextCurrent();
-    virtual PlatformGraphicsContext3D platformContext() const;
+    virtual PlatformGraphicsContextGL platformContext() const;
 
     void swapBuffersIfNeeded() override;
 
 private:
-    WebCore::GraphicsContext3D& m_context;
+    WebCore::GraphicsContextGLOpenGL& m_context;
     std::unique_ptr<WebCore::GLContext> m_glContext;
 
     Ref<ContentLayer> m_contentLayer;

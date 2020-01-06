@@ -41,8 +41,8 @@ class WebGLVertexArrayObject;
 class WebGL2RenderingContext final : public WebGLRenderingContextBase {
     WTF_MAKE_ISO_ALLOCATED(WebGL2RenderingContext);
 public:
-    static std::unique_ptr<WebGL2RenderingContext> create(CanvasBase&, GraphicsContext3DAttributes);
-    static std::unique_ptr<WebGL2RenderingContext> create(CanvasBase&, Ref<GraphicsContext3D>&&, GraphicsContext3DAttributes);
+    static std::unique_ptr<WebGL2RenderingContext> create(CanvasBase&, GraphicsContextGLAttributes);
+    static std::unique_ptr<WebGL2RenderingContext> create(CanvasBase&, Ref<GraphicsContextGLOpenGL>&&, GraphicsContextGLAttributes);
 
     // Buffer objects
     using WebGLRenderingContextBase::bufferData;
@@ -206,8 +206,8 @@ public:
     void hint(GC3Denum target, GC3Denum mode) final;
 
 private:
-    WebGL2RenderingContext(CanvasBase&, GraphicsContext3DAttributes);
-    WebGL2RenderingContext(CanvasBase&, Ref<GraphicsContext3D>&&, GraphicsContext3DAttributes);
+    WebGL2RenderingContext(CanvasBase&, GraphicsContextGLAttributes);
+    WebGL2RenderingContext(CanvasBase&, Ref<GraphicsContextGLOpenGL>&&, GraphicsContextGLAttributes);
 
     bool isWebGL2() const final { return true; }
 

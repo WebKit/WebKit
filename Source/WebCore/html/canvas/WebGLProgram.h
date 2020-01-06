@@ -73,10 +73,10 @@ public:
 protected:
     WebGLProgram(WebGLRenderingContextBase&);
 
-    void deleteObjectImpl(GraphicsContext3D*, Platform3DObject) override;
+    void deleteObjectImpl(GraphicsContextGLOpenGL*, Platform3DObject) override;
 
 private:
-    void cacheActiveAttribLocations(GraphicsContext3D*);
+    void cacheActiveAttribLocations(GraphicsContextGLOpenGL*);
     void cacheInfoIfNeeded();
 
     Vector<GC3Dint> m_activeAttribLocations;

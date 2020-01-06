@@ -302,7 +302,7 @@
 #endif
 
 #if PLATFORM(MAC)
-#include "GraphicsContext3DManager.h"
+#include "GraphicsContextGLOpenGLManager.h"
 #endif
 
 #if PLATFORM(COCOA)
