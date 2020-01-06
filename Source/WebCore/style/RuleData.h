@@ -75,6 +75,7 @@ public:
 
 private:
     RefPtr<const StyleRule> m_styleRule;
+    // Keep in sync with RuleFeature's selectorIndex and selectorListIndex size.
     unsigned m_selectorIndex : 16;
     unsigned m_selectorListIndex : 16;
     // This number was picked fairly arbitrarily. We can probably lower it if we need to.

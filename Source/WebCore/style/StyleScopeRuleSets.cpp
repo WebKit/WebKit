@@ -201,7 +201,8 @@ void ScopeRuleSets::collectFeatures() const
     m_features.shrinkToFit();
 }
 
-static Vector<InvalidationRuleSet>* ensureInvalidationRuleSets(const AtomString& key, HashMap<AtomString, std::unique_ptr<Vector<InvalidationRuleSet>>>& ruleSetMap, const HashMap<AtomString, std::unique_ptr<Vector<RuleFeature>>>& ruleFeatures)
+template<typename RuleFeatureType>
+static Vector<InvalidationRuleSet>* ensureInvalidationRuleSets(const AtomString& key, HashMap<AtomString, std::unique_ptr<Vector<InvalidationRuleSet>>>& ruleSetMap, const HashMap<AtomString, std::unique_ptr<Vector<RuleFeatureType>>>& ruleFeatures)
 {
     return ruleSetMap.ensure(key, [&] () -> std::unique_ptr<Vector<InvalidationRuleSet>> {
         auto* features = ruleFeatures.get(key);
@@ -216,8 +217,10 @@ static Vector<InvalidationRuleSet>* ensureInvalidationRuleSets(const AtomString&
             if (!ruleSet)
                 ruleSet = RuleSet::create();
             ruleSet->addRule(*feature.styleRule, feature.selectorIndex, feature.selectorListIndex);
-            if (feature.invalidationSelector)
-                invalidationSelectorArray[arrayIndex].append(feature.invalidationSelector);
+            if constexpr (std::is_same<RuleFeatureType, RuleFeatureWithInvalidationSelector>::value) {
+                if (feature.invalidationSelector)
+                    invalidationSelectorArray[arrayIndex].append(feature.invalidationSelector);
+            }
         }
         auto invalidationRuleSets = makeUnique<Vector<InvalidationRuleSet>>();
         for (unsigned i = 0; i < matchElementArray.size(); ++i) {

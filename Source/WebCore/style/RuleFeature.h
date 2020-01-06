@@ -36,16 +36,25 @@ namespace Style {
 
 class RuleData;
 
-enum class MatchElement { Subject, Parent, Ancestor, DirectSibling, IndirectSibling, AnySibling, ParentSibling, AncestorSibling, Host };
+enum class MatchElement : uint8_t { Subject, Parent, Ancestor, DirectSibling, IndirectSibling, AnySibling, ParentSibling, AncestorSibling, Host };
 constexpr unsigned matchElementCount = static_cast<unsigned>(MatchElement::Host) + 1;
 
 struct RuleFeature {
-    RuleFeature(const RuleData&, Optional<MatchElement> = WTF::nullopt, const CSSSelector* invalidationSelector = nullptr);
+    RuleFeature(const RuleData&, Optional<MatchElement> = WTF::nullopt);
 
     RefPtr<const StyleRule> styleRule;
-    unsigned selectorIndex;
-    unsigned selectorListIndex;
+    uint16_t selectorIndex; // Keep in sync with RuleData's selectorIndex size.
+    uint16_t selectorListIndex; // Keep in sync with RuleData's selectorListIndex size.
     Optional<MatchElement> matchElement { };
+};
+static_assert(sizeof(RuleFeature) <= 16, "RuleFeature is a frquently alocated object. Keep it small.");
+
+struct RuleFeatureWithInvalidationSelector : public RuleFeature {
+    RuleFeatureWithInvalidationSelector(const RuleData& data, Optional<MatchElement> matchElement = WTF::nullopt, const CSSSelector* invalidationSelector = nullptr)
+        : RuleFeature(data, WTFMove(matchElement))
+        , invalidationSelector(invalidationSelector)
+    { }
+
     const CSSSelector* invalidationSelector { nullptr };
 };
 
@@ -65,7 +74,7 @@ struct RuleFeatureSet {
     Vector<RuleFeature> uncommonAttributeRules;
     
     HashMap<AtomString, std::unique_ptr<Vector<RuleFeature>>> classRules;
-    HashMap<AtomString, std::unique_ptr<Vector<RuleFeature>>> attributeRules;
+    HashMap<AtomString, std::unique_ptr<Vector<RuleFeatureWithInvalidationSelector>>> attributeRules;
     HashSet<AtomString> classesAffectingHost;
     HashSet<AtomString> attributesAffectingHost;
 

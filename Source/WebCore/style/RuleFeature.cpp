@@ -55,13 +55,14 @@ static bool isSiblingOrSubject(MatchElement matchElement)
     return false;
 }
 
-RuleFeature::RuleFeature(const RuleData& ruleData, Optional<MatchElement> matchElement, const CSSSelector* invalidationSelector)
+RuleFeature::RuleFeature(const RuleData& ruleData, Optional<MatchElement> matchElement)
     : styleRule(&ruleData.styleRule())
     , selectorIndex(ruleData.selectorIndex())
     , selectorListIndex(ruleData.selectorListIndex())
     , matchElement(matchElement)
-    , invalidationSelector(invalidationSelector)
 {
+    ASSERT(selectorIndex == ruleData.selectorIndex());
+    ASSERT(selectorListIndex == ruleData.selectorListIndex());
 }
 
 MatchElement RuleFeatureSet::computeNextMatchElement(MatchElement matchElement, CSSSelector::RelationType relation)
@@ -193,7 +194,7 @@ void RuleFeatureSet::collectFeatures(const RuleData& ruleData)
         auto* selector = selectorAndMatch.first;
         auto matchElement = selectorAndMatch.second;
         attributeRules.ensure(selector->attribute().localName().convertToASCIILowercase(), [] {
-            return makeUnique<Vector<RuleFeature>>();
+            return makeUnique<Vector<RuleFeatureWithInvalidationSelector>>();
         }).iterator->value->append({ ruleData, matchElement, selector });
         if (matchElement == MatchElement::Host)
             attributesAffectingHost.add(selector->attribute().localName().convertToASCIILowercase());
@@ -218,7 +219,7 @@ void RuleFeatureSet::add(const RuleFeatureSet& other)
 
     for (auto& keyValuePair : other.attributeRules) {
         attributeRules.ensure(keyValuePair.key, [] {
-            return makeUnique<Vector<RuleFeature>>();
+            return makeUnique<Vector<RuleFeatureWithInvalidationSelector>>();
         }).iterator->value->appendVector(*keyValuePair.value);
     }
     attributesAffectingHost.add(other.attributesAffectingHost.begin(), other.attributesAffectingHost.end());
