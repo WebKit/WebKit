@@ -393,8 +393,8 @@ WebProcess/InjectedBundle/glib/InjectedBundleGlib.cpp
 
 WebProcess/MediaCache/WebMediaKeyStorageManager.cpp
 
-WebProcess/Plugins/Netscape/unix/NetscapePluginUnix.cpp
-WebProcess/Plugins/Netscape/unix/PluginProxyUnix.cpp
+WebProcess/Plugins/Netscape/unix/NetscapePluginUnix.cpp @no-unify
+WebProcess/Plugins/Netscape/unix/PluginProxyUnix.cpp @no-unify
 
 WebProcess/Plugins/Netscape/x11/NetscapePluginX11.cpp @no-unify
 

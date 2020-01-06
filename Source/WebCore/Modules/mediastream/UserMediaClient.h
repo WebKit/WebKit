@@ -39,6 +39,7 @@
 namespace WebCore {
 
 class CaptureDevice;
+class Document;
 class Page;
 class UserMediaRequest;
 

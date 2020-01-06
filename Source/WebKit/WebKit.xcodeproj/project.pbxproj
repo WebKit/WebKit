@@ -84,7 +84,6 @@
 		005D158F18E4C4EB00734619 /* _WKFindDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 005D158E18E4C4EB00734619 /* _WKFindDelegate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		00B9661618E24CBA00CE1F88 /* APIFindClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 00B9661518E24CBA00CE1F88 /* APIFindClient.h */; };
 		00B9661A18E25AE100CE1F88 /* FindClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 00B9661818E25AE100CE1F88 /* FindClient.h */; };
-		0701789D23BAFF35005F0FAA /* RemoteMediaPlayerMIMETypeCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 0701789C23BAE262005F0FAA /* RemoteMediaPlayerMIMETypeCache.h */; };
 		0701789E23BE9CFC005F0FAA /* RemoteMediaPlayerMIMETypeCache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0701789B23BAE261005F0FAA /* RemoteMediaPlayerMIMETypeCache.cpp */; };
 		07297F9F1C17BBEA003F0735 /* UserMediaPermissionCheckProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 07297F9D1C17BBEA003F0735 /* UserMediaPermissionCheckProxy.h */; };
 		07297F9F1C17BBEA015F0735 /* DeviceIdHashSaltStorage.h in Headers */ = {isa = PBXBuildFile; fileRef = 07297F9D1C17BBEA223F0735 /* DeviceIdHashSaltStorage.h */; };
@@ -99,10 +98,7 @@
 		0792314B239CBCB8009598E2 /* RemoteMediaPlayerManagerProxyMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 07923145239CBCB7009598E2 /* RemoteMediaPlayerManagerProxyMessageReceiver.cpp */; };
 		0792314C239CBCB8009598E2 /* RemoteMediaPlayerManagerProxyMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 07923146239CBCB7009598E2 /* RemoteMediaPlayerManagerProxyMessages.h */; };
 		0792314D239CBCB8009598E2 /* RemoteMediaPlayerManagerMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 07923147239CBCB7009598E2 /* RemoteMediaPlayerManagerMessages.h */; };
-		0792314F239D623E009598E2 /* MediaPlayerPrivateRemoteIdentifier.h in Headers */ = {isa = PBXBuildFile; fileRef = 0792314E239D5F53009598E2 /* MediaPlayerPrivateRemoteIdentifier.h */; };
 		07A5EBBC1C7BA43E00B9CA69 /* WKFrameHandleRef.h in Headers */ = {isa = PBXBuildFile; fileRef = 07A5EBBA1C7BA43E00B9CA69 /* WKFrameHandleRef.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		07B3B47023AB302D00BA5B12 /* RemoteMediaPlayerState.h in Headers */ = {isa = PBXBuildFile; fileRef = 07B3B46F23AB2CB300BA5B12 /* RemoteMediaPlayerState.h */; };
-		07B93FF623AF12170036F8EA /* RemoteMediaPlayerConfiguration.h in Headers */ = {isa = PBXBuildFile; fileRef = 07B93FF523AF0CB80036F8EA /* RemoteMediaPlayerConfiguration.h */; };
 		0E97D74D200E900400BF6643 /* SafeBrowsingSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 0E97D74C200E8FF300BF6643 /* SafeBrowsingSPI.h */; };
 		0EDE85032004E75D00030560 /* WebsitePopUpPolicy.h in Headers */ = {isa = PBXBuildFile; fileRef = 0EDE85022004E74900030560 /* WebsitePopUpPolicy.h */; };
 		0F08CF521D63C13A00B48DF1 /* WKFormSelectPicker.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F08CF511D63C13A00B48DF1 /* WKFormSelectPicker.h */; };
@@ -409,20 +405,10 @@
 		1CA8B946127C882A00576C2B /* WebInspectorProxyMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 1CA8B944127C882A00576C2B /* WebInspectorProxyMessages.h */; };
 		1CBBE4A019B66C53006B7D81 /* WebInspectorUIMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1CBBE49E19B66C53006B7D81 /* WebInspectorUIMessageReceiver.cpp */; };
 		1CBBE4A119B66C53006B7D81 /* WebInspectorUIMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 1CBBE49F19B66C53006B7D81 /* WebInspectorUIMessages.h */; };
-		1D32F89C23A84BA600B1EA6A /* RemoteMediaResourceProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 1D32F89B23A84BA600B1EA6A /* RemoteMediaResourceProxy.h */; };
-		1D32F89E23A84C5B00B1EA6A /* RemoteMediaResourceProxy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1D32F89D23A84C5B00B1EA6A /* RemoteMediaResourceProxy.cpp */; };
-		1D3AB05023AC01A0005C1FF0 /* RemoteMediaPlayerManagerProxy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0725EFAD239B024500A538A9 /* RemoteMediaPlayerManagerProxy.cpp */; };
-		1D3AB05123AC01AA005C1FF0 /* RemoteMediaPlayerProxy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 07BAF35723A2CC190044257E /* RemoteMediaPlayerProxy.cpp */; };
-		1D3AB05223AC01AE005C1FF0 /* RemoteMediaResource.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1D32F89923A8468000B1EA6A /* RemoteMediaResource.cpp */; };
-		1D3AB05323AC01B3005C1FF0 /* RemoteMediaResourceLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1D3AB04E23AB009B005C1FF0 /* RemoteMediaResourceLoader.cpp */; };
-		1D3AB05423AC01B7005C1FF0 /* RemoteMediaResourceManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1DA4089E23A827780058C950 /* RemoteMediaResourceManager.cpp */; };
-		1D3AB05523AC01F3005C1FF0 /* MediaPlayerPrivateRemote.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 07923131239B3B0C009598E2 /* MediaPlayerPrivateRemote.cpp */; };
-		1D3AB05623AC01F6005C1FF0 /* RemoteMediaPlayerManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 07923130239B3B0C009598E2 /* RemoteMediaPlayerManager.cpp */; };
 		1D4D737023A9E54700717A25 /* RemoteMediaResourceManagerMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1D4D736B23A9DF5500717A25 /* RemoteMediaResourceManagerMessageReceiver.cpp */; };
 		1D4D737123A9E56200717A25 /* RemoteMediaResourceManagerMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 1D4D736C23A9DF6000717A25 /* RemoteMediaResourceManagerMessages.h */; };
 		1D4D737623A9ED1800717A25 /* RemoteMediaResourceManagerMessagesReplies.h in Headers */ = {isa = PBXBuildFile; fileRef = 1D4D737523A9EB6800717A25 /* RemoteMediaResourceManagerMessagesReplies.h */; };
 		1D67B339212E1F6100FAA786 /* ShareSheetCallbackID.h in Headers */ = {isa = PBXBuildFile; fileRef = 1D67B338212E1F6100FAA786 /* ShareSheetCallbackID.h */; };
-		1DA4089523A80A3E0058C950 /* RemoteMediaResourceManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 1DA4089423A80A3E0058C950 /* RemoteMediaResourceManager.h */; };
 		1DB01943211CF002009FB3E8 /* WKShareSheet.h in Headers */ = {isa = PBXBuildFile; fileRef = 1DE0D095211CC21300439B5F /* WKShareSheet.h */; };
 		1DB01944211CF005009FB3E8 /* WKShareSheet.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1DBBB061211CC3CB00502ECC /* WKShareSheet.mm */; };
 		1F335BC0185B84F0001A201A /* WKWebProcessPlugInLoadDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 1F335BBF185B84D8001A201A /* WKWebProcessPlugInLoadDelegate.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -10100,7 +10086,6 @@
 				1A6D86C21DF75265007745E8 /* MachMessage.h in Headers */,
 				BCC56F791159957D001CCAF9 /* MachPort.h in Headers */,
 				1A24B5F311F531E800C38269 /* MachUtilities.h in Headers */,
-				0792314F239D623E009598E2 /* MediaPlayerPrivateRemoteIdentifier.h in Headers */,
 				51933DEF1965EB31008AC3EA /* MenuUtilities.h in Headers */,
 				1AC4C82916B876A90069DCCD /* MessageFlags.h in Headers */,
 				1A3EED12161A53D600AEB4F5 /* MessageReceiver.h in Headers */,
@@ -10261,17 +10246,12 @@
 				0FF264A01A1FF9CC001FE759 /* RemoteLayerTreeScrollingPerformanceData.h in Headers */,
 				1AF1AC6C1651759E00C17D7F /* RemoteLayerTreeTransaction.h in Headers */,
 				2DC18FB3218A6E9E0025A88D /* RemoteLayerTreeViews.h in Headers */,
-				07B93FF623AF12170036F8EA /* RemoteMediaPlayerConfiguration.h in Headers */,
 				0792314D239CBCB8009598E2 /* RemoteMediaPlayerManagerMessages.h in Headers */,
 				0792314A239CBCB8009598E2 /* RemoteMediaPlayerManagerMessagesReplies.h in Headers */,
 				0792314C239CBCB8009598E2 /* RemoteMediaPlayerManagerProxyMessages.h in Headers */,
 				07923148239CBCB8009598E2 /* RemoteMediaPlayerManagerProxyMessagesReplies.h in Headers */,
-				0701789D23BAFF35005F0FAA /* RemoteMediaPlayerMIMETypeCache.h in Headers */,
-				07B3B47023AB302D00BA5B12 /* RemoteMediaPlayerState.h in Headers */,
-				1DA4089523A80A3E0058C950 /* RemoteMediaResourceManager.h in Headers */,
 				1D4D737123A9E56200717A25 /* RemoteMediaResourceManagerMessages.h in Headers */,
 				1D4D737623A9ED1800717A25 /* RemoteMediaResourceManagerMessagesReplies.h in Headers */,
-				1D32F89C23A84BA600B1EA6A /* RemoteMediaResourceProxy.h in Headers */,
 				E1B78471163F24690007B692 /* RemoteNetworkingContext.h in Headers */,
 				1A5704FC1BE1751100874AF1 /* RemoteObjectInvocation.h in Headers */,
 				1AC1338018590AE400F3EC05 /* RemoteObjectRegistry.h in Headers */,
@@ -11883,7 +11863,6 @@
 				2984F57C164B915F004BC0C6 /* LegacyCustomProtocolManagerProxyMessageReceiver.cpp in Sources */,
 				449D90DA21FDC30B00F677C0 /* LocalAuthenticationSoftLink.mm in Sources */,
 				2D92A779212B6A6100F493FD /* Logging.cpp in Sources */,
-				1D3AB05523AC01F3005C1FF0 /* MediaPlayerPrivateRemote.cpp in Sources */,
 				2D92A781212B6A7100F493FD /* MessageReceiverMap.cpp in Sources */,
 				2D92A782212B6A7100F493FD /* MessageSender.cpp in Sources */,
 				2D92A77A212B6A6100F493FD /* Module.cpp in Sources */,
@@ -11940,17 +11919,10 @@
 				2D72A1FA212BF46E00517A20 /* RemoteLayerTreeDrawingArea.mm in Sources */,
 				0FF24A2D1879E4BC003ABF0C /* RemoteLayerTreeDrawingAreaProxyMessageReceiver.cpp in Sources */,
 				2DC18FB4218A6E9E0025A88D /* RemoteLayerTreeViews.mm in Sources */,
-				1D3AB05623AC01F6005C1FF0 /* RemoteMediaPlayerManager.cpp in Sources */,
 				07923149239CBCB8009598E2 /* RemoteMediaPlayerManagerMessageReceiver.cpp in Sources */,
-				1D3AB05023AC01A0005C1FF0 /* RemoteMediaPlayerManagerProxy.cpp in Sources */,
 				0792314B239CBCB8009598E2 /* RemoteMediaPlayerManagerProxyMessageReceiver.cpp in Sources */,
 				0701789E23BE9CFC005F0FAA /* RemoteMediaPlayerMIMETypeCache.cpp in Sources */,
-				1D3AB05123AC01AA005C1FF0 /* RemoteMediaPlayerProxy.cpp in Sources */,
-				1D3AB05223AC01AE005C1FF0 /* RemoteMediaResource.cpp in Sources */,
-				1D3AB05323AC01B3005C1FF0 /* RemoteMediaResourceLoader.cpp in Sources */,
-				1D3AB05423AC01B7005C1FF0 /* RemoteMediaResourceManager.cpp in Sources */,
 				1D4D737023A9E54700717A25 /* RemoteMediaResourceManagerMessageReceiver.cpp in Sources */,
-				1D32F89E23A84C5B00B1EA6A /* RemoteMediaResourceProxy.cpp in Sources */,
 				1AC1338518590C4600F3EC05 /* RemoteObjectRegistryMessageReceiver.cpp in Sources */,
 				0F5947A7187B517600437857 /* RemoteScrollingCoordinatorMessageReceiver.cpp in Sources */,
 				A55BA8261BA25CFD007CD33D /* RemoteWebInspectorProxyMessageReceiver.cpp in Sources */,
