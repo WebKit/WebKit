@@ -1,3 +1,33 @@
+2020-01-05  Sam Weinig  <weinig@apple.com>
+
+        Further simplify StringBuilder usage by standardizing hex formating to a single hex() function
+        https://bugs.webkit.org/show_bug.cgi?id=205759
+
+        Reviewed by Dean Jackson.
+
+        * Modules/websockets/WebSocket.cpp:
+        (WebCore::encodeProtocolString):
+        * css/CSSMarkup.cpp:
+        (WebCore::serializeCharacterAsCodePoint):
+        * css/parser/CSSParserToken.cpp:
+        (WebCore::CSSParserToken::serialize const):
+        * platform/graphics/Color.cpp:
+        (WebCore::Color::serialized const):
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivateGStreamer::processMpegTsSection):
+        * platform/graphics/opengl/GraphicsContext3DOpenGLCommon.cpp:
+        (WebCore::generateHashedName):
+        * platform/network/curl/CurlCacheEntry.cpp:
+        (WebCore::CurlCacheEntry::generateBaseFilename):
+        * rendering/RenderTreeAsText.cpp:
+        (WebCore::quoteAndEscapeNonPrintables):
+        Replace appendByteAsHex()/appendUnsignedAsHex()/appendUnsignedAsHexFixedSize() with append(hex()).
+
+        * platform/network/FormDataBuilder.cpp:
+        (WebCore::FormDataBuilder::appendFormURLEncoded):
+        This was the last non-StringBuilder/makeString use of appendByteAsHex. Rather than keep appendByteAsHex
+        around, it is replaced with direct appends of the character buffer hex() produces.
+
 2020-01-05  Zalan Bujtas  <zalan@apple.com>
 
         [SLL] Generate runs for preserved new lines

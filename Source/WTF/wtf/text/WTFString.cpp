@@ -1120,7 +1120,7 @@ Vector<char> asciiDebug(StringImpl* impl)
         } else {
             buffer.append('\\');
             buffer.append('u');
-            appendUnsignedAsHexFixedSize(ch, buffer, 4);
+            buffer.append(hex(ch, 4));
         }
     }
     CString narrowString = buffer.toString().ascii();

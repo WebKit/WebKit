@@ -314,15 +314,8 @@ String Color::serialized() const
     if (isExtended())
         return asExtended().cssText();
 
-    if (isOpaque()) {
-        StringBuilder builder;
-        builder.reserveCapacity(7);
-        builder.append('#');
-        appendByteAsHex(red(), builder, Lowercase);
-        appendByteAsHex(green(), builder, Lowercase);
-        appendByteAsHex(blue(), builder, Lowercase);
-        return builder.toString();
-    }
+    if (isOpaque())
+        return makeString('#', hex(red(), 2, Lowercase), hex(green(), 2, Lowercase), hex(blue(), 2, Lowercase));
 
     return cssText();
 }

@@ -218,8 +218,10 @@ void CurlCacheEntry::generateBaseFilename(const CString& url)
     md5.checksum(sum);
     uint8_t* rawdata = sum.data();
 
+    StringBuilder baseNameBuilder;
     for (size_t i = 0; i < MD5::hashSize; i++)
-        appendByteAsHex(rawdata[i], m_basename, Lowercase);
+        baseNameBuilder.append(hex(rawdata[i], Lowercase));
+    m_basename = baseNameBuilder.toString();
 }
 
 bool CurlCacheEntry::loadFileToBuffer(const String& filepath, Vector<char>& buffer)

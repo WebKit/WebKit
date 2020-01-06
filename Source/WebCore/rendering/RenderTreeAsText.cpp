@@ -160,7 +160,7 @@ String quoteAndEscapeNonPrintables(StringView s)
                 result.append(c);
             else {
                 result.appendLiteral("\\x{");
-                appendUnsignedAsHex(c, result);
+                result.append(hex(c));
                 result.append('}');
             }
         }

@@ -98,7 +98,9 @@ static void appendFormURLEncoded(Vector<char>& buffer, const uint8_t* string, si
             append(buffer, "%0D%0A"); // FIXME: Unclear exactly where this rule about normalizing line endings to CRLF comes from.
         else if (character != '\r') {
             append(buffer, '%');
-            appendByteAsHex(character, buffer);
+            auto hexBuffer = hex(character, 2);
+            append(buffer, hexBuffer.characters()[0]);
+            append(buffer, hexBuffer.characters()[1]);
         }
     }
 }

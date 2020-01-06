@@ -2349,14 +2349,14 @@ void MediaPlayerPrivateGStreamer::processMpegTsSection(GstMpegtsSection* section
                 // following the "ES_info_length" field. The text track in-band metadata track dispatch type must be
                 // set to the concatenation of the stream type byte and the zero or more descriptor bytes bytes,
                 // expressed in hexadecimal using uppercase ASCII hex digits.
-                String inbandMetadataTrackDispatchType;
-                appendUnsignedAsHexFixedSize(stream->stream_type, inbandMetadataTrackDispatchType, 2);
+                StringBuilder inbandMetadataTrackDispatchType;
+                inbandMetadataTrackDispatchType.append(hex(stream->stream_type, 2));
                 for (unsigned j = 0; j < stream->descriptors->len; ++j) {
                     const GstMpegtsDescriptor* descriptor = static_cast<const GstMpegtsDescriptor*>(g_ptr_array_index(stream->descriptors, j));
                     for (unsigned k = 0; k < descriptor->length; ++k)
-                        appendByteAsHex(descriptor->data[k], inbandMetadataTrackDispatchType);
+                        inbandMetadataTrackDispatchType.append(hex(descriptor->data[k], 2));
                 }
-                track->setInBandMetadataTrackDispatchType(inbandMetadataTrackDispatchType);
+                track->setInBandMetadataTrackDispatchType(inbandMetadataTrackDispatchType.toString());
 
                 m_metadataTracks.add(pid, track);
                 m_player->addTextTrack(*track);

@@ -1,3 +1,45 @@
+2020-01-05  Sam Weinig  <weinig@apple.com>
+
+        Further simplify StringBuilder usage by standardizing hex formating to a single hex() function
+        https://bugs.webkit.org/show_bug.cgi?id=205759
+
+        Reviewed by Dean Jackson.
+
+        Removes appendByteAsHex, appendUnsignedAsHex and appendUnsignedAsHexFixedSize with the
+        following mappings:
+
+            appendByteAsHex(value, builder, case) 
+              -> builder.append(hex(static_cast<unsigned char>(value), 2, case))
+            appendUnsignedAsHex(value, builder, case) 
+              -> builder.append(hex(value, case))
+            appendUnsignedAsHexFixedSize(value, builder, size, case)
+              -> builder.append(hex(value, size, case))
+        
+        Adds new API test for HexNumber.cpp
+
+        * wtf/HexNumber.h:
+        (WTF::appendByteAsHex): Deleted.
+        (WTF::appendUnsignedAsHex): Deleted.
+        (WTF::appendUnsignedAsHexFixedSize): Deleted.
+        Remove now unused helper functions.
+        
+        * wtf/FileSystem.cpp:
+        (WTF::FileSystemImpl::encodeForFileName):
+        Replace appendByteAsHex with direct use of hex(x, 2). The static_cast is needed
+        since there was an implicit down cast when appendByteAsHex was used.
+ 
+        * wtf/Logger.cpp:
+        (WTF::Logger::LogSiteIdentifier::toString const):
+        (WTF::>::toString):
+        * wtf/UUID.cpp:
+        (WTF::createCanonicalUUIDString):
+        Replace appendUnsignedAsHex/appendUnsignedAsHexFixedSize with hex(). Use makeString() 
+        rather StringBuilder to simplify things further.
+
+        * wtf/text/WTFString.cpp:
+        (asciiDebug):
+        Replace appendUnsignedAsHexFixedSize with append(hex()).
+
 2020-01-05  Ross Kirsling  <ross.kirsling@sony.com>
 
         JavaScript: Invalid date parse for ISO 8601 strings when no timezone given

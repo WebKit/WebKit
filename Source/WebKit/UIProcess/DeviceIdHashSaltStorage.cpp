@@ -215,7 +215,7 @@ void DeviceIdHashSaltStorage::completeDeviceIdHashSaltForOriginCall(SecurityOrig
         StringBuilder builder;
         builder.reserveCapacity(hashSaltSize);
         for (unsigned i = 0; i < randomDataSize; i++)
-            appendUnsignedAsHex(randomData[i], builder);
+            builder.append(hex(randomData[i]));
 
         String deviceIdHashSalt = builder.toString();
 

@@ -484,7 +484,7 @@ const char* WebBackForwardList::loggingString()
     StringBuilder builder;
 
     builder.appendLiteral("WebBackForwardList 0x");
-    appendUnsignedAsHex(reinterpret_cast<uintptr_t>(this), builder);
+    builder.append(hex(reinterpret_cast<uintptr_t>(this)));
     builder.appendLiteral(" - ");
     builder.appendNumber(m_entries.size());
     builder.appendLiteral(" entries, has current index ");

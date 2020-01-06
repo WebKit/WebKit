@@ -1,3 +1,15 @@
+2020-01-05  Sam Weinig  <weinig@apple.com>
+
+        Further simplify StringBuilder usage by standardizing hex formating to a single hex() function
+        https://bugs.webkit.org/show_bug.cgi?id=205759
+
+        Reviewed by Dean Jackson.
+
+        * TestWebKitAPI/CMakeLists.txt:
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WTF/HexNumber.cpp: Added.
+        Add testing for hex formatting of integers.
+
 2020-01-05  Simon Fraser  <simon.fraser@apple.com>
 
         DumpRenderTree doesn't always call updateRendering() when a test completes

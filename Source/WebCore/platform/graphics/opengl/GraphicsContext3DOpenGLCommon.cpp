@@ -985,10 +985,7 @@ static String generateHashedName(const String& name)
     if (name.isEmpty())
         return name;
     uint64_t number = nameHashForShader(name.utf8().data(), name.length());
-    StringBuilder builder;
-    builder.appendLiteral("webgl_");
-    appendUnsignedAsHex(number, builder, Lowercase);
-    return builder.toString();
+    return makeString("webgl_", hex(number, Lowercase));
 }
 
 Optional<String> GraphicsContext3D::mappedSymbolInShaderSourceMap(Platform3DObject shader, ANGLEShaderSymbolType symbolType, const String& name)

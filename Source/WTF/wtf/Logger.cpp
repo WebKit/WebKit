@@ -33,29 +33,14 @@ namespace WTF {
 
 String Logger::LogSiteIdentifier::toString() const
 {
-    StringBuilder builder;
-
-    if (className) {
-        builder.append(className);
-        builder.appendLiteral("::");
-    }
-    builder.append(methodName);
-    builder.append('(');
-    appendUnsignedAsHex(objectPtr, builder);
-    builder.appendLiteral(") ");
-    return builder.toString();
+    if (className)
+        return makeString(className, "::", methodName, '(', hex(objectPtr), ") ");
+    return makeString(methodName, '(', hex(objectPtr), ") ");
 }
 
 String LogArgument<const void*>::toString(const void* argument)
 {
-    StringBuilder builder;
-    builder.append('(');
-    appendUnsignedAsHex(reinterpret_cast<uintptr_t>(argument), builder);
-    builder.append(')');
-    return builder.toString();
+    return makeString('(', hex(reinterpret_cast<uintptr_t>(argument)), ')');
 }
 
 } // namespace WTF
-
-using WTF::Logger;
-using WTF::JSONLogValue;

@@ -79,7 +79,7 @@ static void serializeCharacter(UChar32 c, StringBuilder& appendTo)
 static void serializeCharacterAsCodePoint(UChar32 c, StringBuilder& appendTo)
 {
     appendTo.append('\\');
-    appendUnsignedAsHex(c, appendTo, Lowercase);
+    appendTo.append(hex(c, Lowercase));
     appendTo.append(' ');
 }
 

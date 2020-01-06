@@ -103,7 +103,7 @@ static String encodeProtocolString(const String& protocol)
     for (size_t i = 0; i < protocol.length(); i++) {
         if (protocol[i] < 0x20 || protocol[i] > 0x7E) {
             builder.appendLiteral("\\u");
-            appendUnsignedAsHexFixedSize(protocol[i], builder, 4);
+            builder.append(hex(protocol[i], 4));
         } else if (protocol[i] == 0x5c)
             builder.appendLiteral("\\\\");
         else

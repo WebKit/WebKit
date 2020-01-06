@@ -434,9 +434,9 @@ void CSSParserToken::serialize(StringBuilder& builder) const
         break;
     case UnicodeRangeToken:
         builder.appendLiteral("U+");
-        appendUnsignedAsHex(unicodeRangeStart(), builder);
+        builder.append(hex(unicodeRangeStart()));
         builder.append('-');
-        appendUnsignedAsHex(unicodeRangeEnd(), builder);
+        builder.append(hex(unicodeRangeEnd()));
         break;
     case StringToken:
         serializeString(value().toString(), builder);

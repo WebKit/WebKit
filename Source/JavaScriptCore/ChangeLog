@@ -1,3 +1,17 @@
+2020-01-05  Sam Weinig  <weinig@apple.com>
+
+        Further simplify StringBuilder usage by standardizing hex formating to a single hex() function
+        https://bugs.webkit.org/show_bug.cgi?id=205759
+
+        Reviewed by Dean Jackson.
+
+        * heap/HeapSnapshotBuilder.cpp:
+        (JSC::HeapSnapshotBuilder::json):
+        * runtime/JSGlobalObjectFunctions.cpp:
+        (JSC::encode):
+        (JSC::globalFuncEscape):
+        Replace appendUnsignedAsHex() and appendByteAsHex() with append(hex()).
+
 2020-01-05  Ross Kirsling  <ross.kirsling@sony.com>
 
         JavaScript: Invalid date parse for ISO 8601 strings when no timezone given

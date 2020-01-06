@@ -1,3 +1,16 @@
+2020-01-05  Sam Weinig  <weinig@apple.com>
+
+        Further simplify StringBuilder usage by standardizing hex formating to a single hex() function
+        https://bugs.webkit.org/show_bug.cgi?id=205759
+
+        Reviewed by Dean Jackson.
+
+        * UIProcess/DeviceIdHashSaltStorage.cpp:
+        (WebKit::DeviceIdHashSaltStorage::completeDeviceIdHashSaltForOriginCall):
+        * UIProcess/WebBackForwardList.cpp:
+        (WebKit::WebBackForwardList::loggingString):
+        Replace appendUnsignedAsHex() with append(hex()).
+
 2020-01-05  Simon Fraser  <simon.fraser@apple.com>
 
         DumpRenderTree doesn't always call updateRendering() when a test completes

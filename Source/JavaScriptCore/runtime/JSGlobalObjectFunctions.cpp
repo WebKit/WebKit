@@ -145,7 +145,7 @@ static JSValue encode(JSGlobalObject* globalObject, const Bitmap<256>& doNotEsca
             // 4-d-vi-2. Let S be a String containing three code units "%XY" where XY are two uppercase hexadecimal digits encoding the value of jOctet.
             // 4-d-vi-3. Let R be a new String value computed by concatenating the previous value of R and S.
             builder.append('%');
-            appendByteAsHex(utf8OctetsBuffer[index], builder);
+            builder.append(hex(utf8OctetsBuffer[index], 2));
         }
     }
 
@@ -608,7 +608,7 @@ EncodedJSValue JSC_HOST_CALL globalFuncEscape(JSGlobalObject* globalObject, Call
                     builder.append(*c);
                 else {
                     builder.append('%');
-                    appendByteAsHex(u, builder);
+                    builder.append(hex(u, 2));
                 }
             }
             return jsString(vm, builder.toString());
@@ -619,13 +619,13 @@ EncodedJSValue JSC_HOST_CALL globalFuncEscape(JSGlobalObject* globalObject, Call
             UChar u = c[0];
             if (u >= doNotEscape.size()) {
                 builder.appendLiteral("%u");
-                appendByteAsHex(u >> 8, builder);
-                appendByteAsHex(u & 0xFF, builder);
+                builder.append(hex(static_cast<unsigned char>(u >> 8), 2));
+                builder.append(hex(static_cast<unsigned char>(u & 0xFF), 2));
             } else if (doNotEscape.get(static_cast<LChar>(u)))
                 builder.append(*c);
             else {
                 builder.append('%');
-                appendByteAsHex(u, builder);
+                builder.append(hex(static_cast<unsigned char>(u), 2));
             }
         }
 

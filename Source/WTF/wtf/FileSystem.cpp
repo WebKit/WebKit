@@ -125,11 +125,11 @@ String encodeForFileName(const String& inputString)
         if (shouldEscapeUChar(character, previousCharacter, nextCharacter)) {
             if (character <= 255) {
                 result.append('%');
-                appendByteAsHex(character, result);
+                result.append(hex(static_cast<unsigned char>(character), 2));
             } else {
                 result.appendLiteral("%+");
-                appendByteAsHex(character >> 8, result);
-                appendByteAsHex(character, result);
+                result.append(hex(static_cast<unsigned char>(character >> 8), 2));
+                result.append(hex(static_cast<unsigned char>(character), 2));
             }
         } else
             result.append(character);
