@@ -324,7 +324,7 @@ TEST(DocumentEditingContext, RequestMarkedText)
             EXPECT_EQ(CGRectMake(59, 8, 9, 19), [rectValues[1] CGRectValue]);
             EXPECT_EQ(CGRectMake(67, 8, 6, 19), [rectValues[2] CGRectValue]);
             EXPECT_EQ(CGRectMake(72, 8, 5, 19), [rectValues[3] CGRectValue]);
-            EXPECT_EQ(CGRectMake(76, 8, 9, 19), [rectValues[4] CGRectValue]);
+            EXPECT_EQ(CGRectMake(76, 8, 8, 19), [rectValues[4] CGRectValue]);
         }
     }
     [contentView unmarkText];
@@ -368,7 +368,7 @@ TEST(DocumentEditingContext, RequestMarkedText)
         if (rectValues.count >= 3) {
             EXPECT_EQ(CGRectMake(8, 8, 6, 19), [rectValues[0] CGRectValue]);
             EXPECT_EQ(CGRectMake(13, 8, 9, 19), [rectValues[1] CGRectValue]);
-            EXPECT_EQ(CGRectMake(21, 8, 9, 19), [rectValues[2] CGRectValue]);
+            EXPECT_EQ(CGRectMake(21, 8, 8, 19), [rectValues[2] CGRectValue]);
         }
     }
     [contentView unmarkText];
@@ -389,7 +389,7 @@ TEST(DocumentEditingContext, RequestMarkedText)
         if (rectValues.count >= 3) {
             EXPECT_EQ(CGRectMake(29, 8, 9, 19), [rectValues[0] CGRectValue]);
             EXPECT_EQ(CGRectMake(37, 8, 8, 19), [rectValues[1] CGRectValue]);
-            EXPECT_EQ(CGRectMake(44, 8, 6, 19), [rectValues[2] CGRectValue]);
+            EXPECT_EQ(CGRectMake(44, 8, 5, 19), [rectValues[2] CGRectValue]);
         }
     }
 }
@@ -434,12 +434,12 @@ TEST(DocumentEditingContext, SpatialRequestInTextField)
         EXPECT_EQ(CGRectMake(19, 9, 8, 19), textRects[1].CGRectValue);
         EXPECT_EQ(CGRectMake(26, 9, 6, 19), textRects[2].CGRectValue);
         EXPECT_EQ(CGRectMake(31, 9, 5, 19), textRects[3].CGRectValue);
-        EXPECT_EQ(CGRectMake(35, 9, 9, 19), textRects[4].CGRectValue);
+        EXPECT_EQ(CGRectMake(35, 9, 8, 19), textRects[4].CGRectValue);
         EXPECT_EQ(CGRectMake(182, 9, 13, 19), textRects[5].CGRectValue);
         EXPECT_EQ(CGRectMake(194, 9, 9, 19), textRects[6].CGRectValue);
         EXPECT_EQ(CGRectMake(202, 9, 6, 19), textRects[7].CGRectValue);
         EXPECT_EQ(CGRectMake(207, 9, 6, 19), textRects[8].CGRectValue);
-        EXPECT_EQ(CGRectMake(212, 9, 9, 19), textRects[9].CGRectValue);
+        EXPECT_EQ(CGRectMake(212, 9, 8, 19), textRects[9].CGRectValue);
     }
 }
 

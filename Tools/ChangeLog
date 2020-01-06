@@ -1,3 +1,20 @@
+2020-01-06  Daniel Bates  <dabates@apple.com>
+
+        Precision of getClientRects(), getBoundingClientRect() differs depending whether simple line layout or line box layout is used
+        https://bugs.webkit.org/show_bug.cgi?id=205563
+        <rdar://problem/58165528>
+
+        Reviewed by Zalan Bujtas.
+
+        Update test results.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/DocumentEditingContext.mm:
+        (TEST):
+        * TestWebKitAPI/Tests/ios/AccessibilityTestsIOS.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/ios/AutocorrectionTestsIOS.mm:
+        (TEST):
+
 2020-01-06  youenn fablet  <youenn@apple.com>
 
         XMLHTTPRequest POSTs blob data to a custom WKURLSchemeHandler protocol crash

@@ -212,6 +212,30 @@ inline const FontCascade& InlineTextBox::lineFont() const
     return combinedText() ? combinedText()->textCombineFont() : lineStyle().fontCascade();
 }
 
+LayoutRect snappedSelectionRect(const LayoutRect& selectionRect, float logicalRight, float selectionTop, float selectionHeight, bool isHorizontal)
+{
+    auto snappedSelectionRect = enclosingIntRect(selectionRect);
+    auto logicalWidth = snappedSelectionRect.width();
+    if (snappedSelectionRect.x() > logicalRight)
+        logicalWidth = 0;
+    else if (snappedSelectionRect.maxX() > logicalRight)
+        logicalWidth = logicalRight - snappedSelectionRect.x();
+
+    LayoutPoint topPoint;
+    LayoutUnit width;
+    LayoutUnit height;
+    if (isHorizontal) {
+        topPoint = LayoutPoint { snappedSelectionRect.x(), selectionTop };
+        width = logicalWidth;
+        height = selectionHeight;
+    } else {
+        topPoint = LayoutPoint { selectionTop, snappedSelectionRect.x() };
+        width = selectionHeight;
+        height = logicalWidth;
+    }
+    return LayoutRect { topPoint, LayoutSize { width, height } };
+}
+
 // FIXME: Share more code with paintMarkedTextBackground().
 LayoutRect InlineTextBox::localSelectionRect(unsigned startPos, unsigned endPos) const
 {
@@ -232,18 +256,7 @@ LayoutRect InlineTextBox::localSelectionRect(unsigned startPos, unsigned endPos)
         lineFont().adjustSelectionRectForText(textRun, selectionRect, sPos, ePos);
     // FIXME: The computation of the snapped selection rect differs from the computation of this rect
     // in paintMarkedTextBackground(). See <https://bugs.webkit.org/show_bug.cgi?id=138913>.
-    IntRect snappedSelectionRect = enclosingIntRect(selectionRect);
-    LayoutUnit logicalWidth = snappedSelectionRect.width();
-    if (snappedSelectionRect.x() > logicalRight())
-        logicalWidth  = 0;
-    else if (snappedSelectionRect.maxX() > logicalRight())
-        logicalWidth = logicalRight() - snappedSelectionRect.x();
-
-    LayoutPoint topPoint = isHorizontal() ? LayoutPoint(snappedSelectionRect.x(), selectionTop) : LayoutPoint(selectionTop, snappedSelectionRect.x());
-    LayoutUnit width = isHorizontal() ? logicalWidth : selectionHeight;
-    LayoutUnit height = isHorizontal() ? selectionHeight : logicalWidth;
-
-    return LayoutRect(topPoint, LayoutSize(width, height));
+    return snappedSelectionRect(selectionRect, logicalRight(), selectionTop, selectionHeight, isHorizontal());
 }
 
 void InlineTextBox::deleteLine()

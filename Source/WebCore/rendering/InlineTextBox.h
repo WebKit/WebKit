@@ -218,6 +218,8 @@ private:
     unsigned short m_truncation { cNoTruncation };
 };
 
+LayoutRect snappedSelectionRect(const LayoutRect&, float logicalRight, float selectionTop, float selectionHeight, bool isHorizontal);
+
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_INLINE_BOX(InlineTextBox, isInlineTextBox())

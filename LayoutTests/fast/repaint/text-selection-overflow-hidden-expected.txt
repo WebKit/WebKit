@@ -1,6 +1,6 @@
 Should have green background
 
 (repaint rects
-  (rect 8 16 199 18)
+  (rect 8 16 198 18)
 )
 

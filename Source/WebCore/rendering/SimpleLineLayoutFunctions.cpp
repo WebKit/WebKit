@@ -234,6 +234,7 @@ Vector<FloatQuad> collectAbsoluteQuadsForRange(const RenderObject& renderer, uns
         auto localEnd = std::min(run.end(), end) - run.start();
         ASSERT(localStart <= localEnd);
         style.fontCascade().adjustSelectionRectForText(textRun, runRect, localStart, localEnd);
+        runRect = snappedSelectionRect(runRect, run.logicalRight(), runRect.y(), runRect.height(), true /* isHorizontal */);
         quads.append(renderer.localToAbsoluteQuad(FloatQuad(runRect), UseTransforms, wasFixed));
     }
     return quads;
