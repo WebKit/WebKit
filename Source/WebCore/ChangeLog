@@ -1,3 +1,50 @@
+2020-01-05  Eric Carlson  <eric.carlson@apple.com>
+
+        [Media in GPU process] Add remote MIME type cache
+        https://bugs.webkit.org/show_bug.cgi?id=205763
+        <rdar://problem/58312152>
+
+        Reviewed by Dean Jackson.
+        
+        Create a MIME type cache for RemoteMediaPlayerManager so types without a
+        'codecs' parameter don't typically require IPC, and when it is required the
+        result is cached so it is only required once.
+
+        * platform/graphics/MIMETypeCache.cpp:
+        (WebCore::MIMETypeCache::supportsContainerType):
+        (WebCore::MIMETypeCache::canDecodeType):
+        (WebCore::MIMETypeCache::setSupportedTypes):
+        (WebCore::MIMETypeCache::staticContainerTypeList):
+        (WebCore::MIMETypeCache::isUnsupportedContainerType):
+        (WebCore::MIMETypeCache::isAvailable const):
+        (WebCore::MIMETypeCache::isEmpty const):
+        (WebCore::MIMETypeCache::initializeCache):
+        (WebCore::MIMETypeCache::canDecodeExtendedType):
+        (WebCore::MIMETypeCache::canDecodeTypePrivate): Deleted.
+        (WebCore::MIMETypeCache::addSupportedTypes): Deleted.
+        (WebCore::MIMETypeCache::addSupportedType): Deleted.
+        * platform/graphics/MIMETypeCache.h:
+        (WebCore::MIMETypeCache::isUnsupportedContainerType): Deleted.
+        (WebCore::MIMETypeCache::isAvailable const): Deleted.
+        (WebCore::MIMETypeCache::isEmpty const): Deleted.
+        (WebCore::MIMETypeCache::canDecodeTypeInternal): Deleted.
+        (WebCore::MIMETypeCache::initializeCache): Deleted.
+        * platform/graphics/avfoundation/objc/AVAssetMIMETypeCache.h:
+        * platform/graphics/avfoundation/objc/AVAssetMIMETypeCache.mm:
+        (WebCore::AVAssetMIMETypeCache::canDecodeExtendedType):
+        (WebCore::AVAssetMIMETypeCache::setSupportedTypes):
+        (WebCore::AVAssetMIMETypeCache::canDecodeTypeInternal): Deleted.
+        * platform/graphics/avfoundation/objc/AVStreamDataParserMIMETypeCache.h:
+        * platform/graphics/avfoundation/objc/AVStreamDataParserMIMETypeCache.mm:
+        (WebCore::AVStreamDataParserMIMETypeCache::canDecodeExtendedType):
+        (WebCore::AVStreamDataParserMIMETypeCache::canDecodeTypeInternal): Deleted.
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.h:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::supportsTypeAndCodecs):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::supportsType): Deleted.
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.mm:
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::supportsType):
+
 2020-01-05  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Work towards implementing DisplayList::DrawGlyphs

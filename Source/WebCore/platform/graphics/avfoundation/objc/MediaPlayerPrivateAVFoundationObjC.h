@@ -164,7 +164,7 @@ private:
     // engine support
     friend class MediaPlayerFactoryAVFoundationObjC;
     static void getSupportedTypes(HashSet<String, ASCIICaseInsensitiveHash>& types);
-    static MediaPlayer::SupportsType supportsType(const MediaEngineSupportParameters&);
+    static MediaPlayer::SupportsType supportsTypeAndCodecs(const MediaEngineSupportParameters&);
     static bool supportsKeySystem(const String& keySystem, const String& mimeType);
 
     static bool isAvailable();

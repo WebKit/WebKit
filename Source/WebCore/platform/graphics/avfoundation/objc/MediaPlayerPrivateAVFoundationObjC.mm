@@ -289,7 +289,7 @@ private:
 
     MediaPlayer::SupportsType supportsTypeAndCodecs(const MediaEngineSupportParameters& parameters) const final
     {
-        return MediaPlayerPrivateAVFoundationObjC::supportsType(parameters);
+        return MediaPlayerPrivateAVFoundationObjC::supportsTypeAndCodecs(parameters);
     }
 
     HashSet<RefPtr<SecurityOrigin>> originsInMediaCache(const String& path) const final
@@ -1617,7 +1617,7 @@ static bool keySystemIsSupported(const String& keySystem)
 }
 #endif
 
-MediaPlayer::SupportsType MediaPlayerPrivateAVFoundationObjC::supportsType(const MediaEngineSupportParameters& parameters)
+MediaPlayer::SupportsType MediaPlayerPrivateAVFoundationObjC::supportsTypeAndCodecs(const MediaEngineSupportParameters& parameters)
 {
 #if ENABLE(MEDIA_SOURCE)
     if (parameters.isMediaSource)

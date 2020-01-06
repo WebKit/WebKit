@@ -44,6 +44,7 @@ class Settings;
 namespace WebKit {
 
 class MediaPlayerPrivateRemote;
+class RemoteMediaPlayerMIMETypeCache;
 class WebProcess;
 
 class RemoteMediaPlayerManager : public WebProcessSupplement, public IPC::MessageReceiver {
@@ -93,6 +94,8 @@ private:
     HashSet<RefPtr<WebCore::SecurityOrigin>> originsInMediaCache(WebCore::MediaPlayerEnums::MediaEngineIdentifier, const String&);
     void clearMediaCache(WebCore::MediaPlayerEnums::MediaEngineIdentifier, const String&, WallTime modifiedSince);
     void clearMediaCacheForOrigins(WebCore::MediaPlayerEnums::MediaEngineIdentifier, const String&, const HashSet<RefPtr<WebCore::SecurityOrigin>>&);
+
+    RemoteMediaPlayerMIMETypeCache& typeCache(WebCore::MediaPlayerEnums::MediaEngineIdentifier);
 
     HashMap<MediaPlayerPrivateRemoteIdentifier, WeakPtr<MediaPlayerPrivateRemote>> m_players;
     WebProcess& m_process;

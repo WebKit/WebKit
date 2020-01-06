@@ -46,7 +46,7 @@ private:
     friend NeverDestroyed<AVStreamDataParserMIMETypeCache>;
     AVStreamDataParserMIMETypeCache() = default;
 
-    bool canDecodeTypeInternal(const ContentType&) final;
+    bool canDecodeExtendedType(const ContentType&) final;
     void initializeCache(HashSet<String, ASCIICaseInsensitiveHash>&) final;
 };
 

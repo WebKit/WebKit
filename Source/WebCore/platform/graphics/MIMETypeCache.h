@@ -36,7 +36,8 @@ namespace WebCore {
 
 class ContentType;
 
-class MIMETypeCache {
+class WEBCORE_EXPORT MIMETypeCache {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     MIMETypeCache() = default;
     virtual ~MIMETypeCache() = default;
@@ -44,22 +45,18 @@ public:
     bool supportsContainerType(const String&);
     MediaPlayerEnums::SupportsType canDecodeType(const String&);
 
-    HashSet<String, ASCIICaseInsensitiveHash>& supportedTypes();
-    WEBCORE_EXPORT void addSupportedTypes(const Vector<String>&);
-    void addSupportedType(const String&);
-
-    virtual bool isUnsupportedContainerType(const String&) { return false; }
-
-    virtual bool isAvailable() const { return true; }
-    bool isEmpty() const { return m_supportedTypes && !m_supportedTypes->isEmpty(); }
-
-protected:
-    virtual bool canDecodeTypeInternal(const ContentType&) { return false; }
-    virtual void initializeCache(HashSet<String, ASCIICaseInsensitiveHash>&) { }
     virtual const HashSet<String, ASCIICaseInsensitiveHash>& staticContainerTypeList();
+    virtual bool isUnsupportedContainerType(const String&);
+
+    HashSet<String, ASCIICaseInsensitiveHash>& supportedTypes();
+    virtual void addSupportedTypes(const Vector<String>&);
+
+    virtual bool isAvailable() const;
+    bool isEmpty() const;
 
 private:
-    MediaPlayerEnums::SupportsType canDecodeTypePrivate(const String&);
+    virtual void initializeCache(HashSet<String, ASCIICaseInsensitiveHash>&);
+    virtual bool canDecodeExtendedType(const ContentType&);
 
     Optional<HashSet<String, ASCIICaseInsensitiveHash>> m_supportedTypes;
     Optional<HashMap<String, MediaPlayerEnums::SupportsType, ASCIICaseInsensitiveHash>> m_cachedResults;

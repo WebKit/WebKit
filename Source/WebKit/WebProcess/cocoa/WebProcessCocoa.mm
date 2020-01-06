@@ -834,7 +834,9 @@ void WebProcess::backlightLevelDidChange(float backlightLevel)
 
 void WebProcess::setMediaMIMETypes(const Vector<String> types)
 {
-    AVAssetMIMETypeCache::singleton().addSupportedTypes(types);
+    auto& cache = AVAssetMIMETypeCache::singleton();
+    if (cache.isEmpty())
+        cache.addSupportedTypes(types);
 }
 
 } // namespace WebKit

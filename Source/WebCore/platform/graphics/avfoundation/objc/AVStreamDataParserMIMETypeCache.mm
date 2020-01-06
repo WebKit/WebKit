@@ -54,7 +54,7 @@ AVStreamDataParserMIMETypeCache& AVStreamDataParserMIMETypeCache::singleton()
     return cache.get();
 }
 
-bool AVStreamDataParserMIMETypeCache::canDecodeTypeInternal(const ContentType& type)
+bool AVStreamDataParserMIMETypeCache::canDecodeExtendedType(const ContentType& type)
 {
 #if ENABLE(VIDEO) && USE(AVFOUNDATION)
     ASSERT(isAvailable());

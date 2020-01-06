@@ -254,10 +254,6 @@ MediaPlayer::SupportsType MediaPlayerPrivateMediaSourceAVFObjC::supportsType(con
     // This engine does not support non-media-source sources.
     if (!parameters.isMediaSource)
         return MediaPlayer::SupportsType::IsNotSupported;
-#if ENABLE(MEDIA_STREAM)
-    if (parameters.isMediaStream)
-        return MediaPlayer::SupportsType::IsNotSupported;
-#endif
 
     auto supported = MediaPlayer::SupportsType::IsNotSupported;
     auto& streamDataParserCache = AVStreamDataParserMIMETypeCache::singleton();

@@ -31,6 +31,7 @@
 #include "GPUProcessConnection.h"
 #include "MediaPlayerPrivateRemote.h"
 #include "RemoteMediaPlayerConfiguration.h"
+#include "RemoteMediaPlayerMIMETypeCache.h"
 #include "RemoteMediaPlayerManagerMessages.h"
 #include "RemoteMediaPlayerManagerProxyMessages.h"
 #include "RemoteMediaPlayerProxyConfiguration.h"
@@ -111,9 +112,34 @@ const char* RemoteMediaPlayerManager::supplementName()
     return "RemoteMediaPlayerManager";
 }
 
-void RemoteMediaPlayerManager::initialize(const WebProcessCreationParameters&)
+using RemotePlayerTypeCache = HashMap<MediaPlayerEnums::MediaEngineIdentifier, std::unique_ptr<RemoteMediaPlayerMIMETypeCache>, WTF::IntHash<MediaPlayerEnums::MediaEngineIdentifier>, WTF::StrongEnumHashTraits<MediaPlayerEnums::MediaEngineIdentifier>>;
+static RemotePlayerTypeCache& mimeCaches()
 {
-// FIXME: Use parameters.mediaMIMETypes.
+    static NeverDestroyed<RemotePlayerTypeCache> caches;
+    return caches;
+}
+
+RemoteMediaPlayerMIMETypeCache& RemoteMediaPlayerManager::typeCache(MediaPlayerEnums::MediaEngineIdentifier remoteEngineIdentifier)
+{
+    auto& cachePtr = mimeCaches().add(remoteEngineIdentifier, nullptr).iterator->value;
+    if (!cachePtr)
+        cachePtr = makeUnique<RemoteMediaPlayerMIMETypeCache>(*this, remoteEngineIdentifier);
+
+    return *cachePtr;
+}
+
+void RemoteMediaPlayerManager::initialize(const WebProcessCreationParameters& parameters)
+{
+    UNUSED_PARAM(parameters);
+
+#if PLATFORM(COCOA)
+    if (parameters.mediaMIMETypes.isEmpty())
+        return;
+
+    auto& cache = typeCache(MediaPlayerEnums::MediaEngineIdentifier::AVFoundation);
+    if (cache.isEmpty())
+        cache.addSupportedTypes(parameters.mediaMIMETypes);
+#endif
 }
 
 std::unique_ptr<MediaPlayerPrivateInterface> RemoteMediaPlayerManager::createRemoteMediaPlayer(MediaPlayer* player, MediaPlayerEnums::MediaEngineIdentifier remoteEngineIdentifier)
@@ -157,7 +183,13 @@ void RemoteMediaPlayerManager::deleteRemoteMediaPlayer(MediaPlayerPrivateRemoteI
 
 void RemoteMediaPlayerManager::getSupportedTypes(MediaPlayerEnums::MediaEngineIdentifier remoteEngineIdentifier, HashSet<String, ASCIICaseInsensitiveHash>& result)
 {
-    // FIXME: supported types don't change, cache them.
+    auto& cache = typeCache(remoteEngineIdentifier);
+    if (!cache.isEmpty()) {
+        result = HashSet<String, ASCIICaseInsensitiveHash>();
+        for (auto& type : cache.supportedTypes())
+            result.add(type);
+        return;
+    }
 
     Vector<String> types;
     if (!gpuProcessConnection().sendSync(Messages::RemoteMediaPlayerManagerProxy::GetSupportedTypes(remoteEngineIdentifier), Messages::RemoteMediaPlayerManagerProxy::GetSupportedTypes::Reply(types), 0))
@@ -166,17 +198,12 @@ void RemoteMediaPlayerManager::getSupportedTypes(MediaPlayerEnums::MediaEngineId
     result = HashSet<String, ASCIICaseInsensitiveHash>();
     for (auto& type : types)
         result.add(type);
+    cache.addSupportedTypes(types);
 }
 
 MediaPlayer::SupportsType RemoteMediaPlayerManager::supportsTypeAndCodecs(MediaPlayerEnums::MediaEngineIdentifier remoteEngineIdentifier, const MediaEngineSupportParameters& parameters)
 {
-    // FIXME: supported types don't change, cache them.
-
-    MediaPlayer::SupportsType result;
-    if (!gpuProcessConnection().sendSync(Messages::RemoteMediaPlayerManagerProxy::SupportsType(remoteEngineIdentifier, parameters), Messages::RemoteMediaPlayerManagerProxy::SupportsType::Reply(result), 0))
-        return MediaPlayer::SupportsType::IsNotSupported;
-
-    return result;
+    return typeCache(remoteEngineIdentifier).supportsTypeAndCodecs(parameters);
 }
 
 bool RemoteMediaPlayerManager::supportsKeySystem(MediaPlayerEnums::MediaEngineIdentifier, const String& keySystem, const String& mimeType)

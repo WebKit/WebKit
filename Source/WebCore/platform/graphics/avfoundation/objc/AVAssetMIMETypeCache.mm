@@ -31,7 +31,6 @@
 #import "ContentType.h"
 #import <pal/cf/CoreMediaSoftLink.h>
 #import <pal/cocoa/AVFoundationSoftLink.h>
-#import <wtf/HashSet.h>
 
 #if !PLATFORM(MACCATALYST)
 SOFT_LINK_FRAMEWORK_OPTIONAL_PREFLIGHT(AVFoundation)
@@ -60,7 +59,7 @@ bool AVAssetMIMETypeCache::isAvailable() const
 #endif
 }
 
-bool AVAssetMIMETypeCache::canDecodeTypeInternal(const ContentType& type)
+bool AVAssetMIMETypeCache::canDecodeExtendedType(const ContentType& type)
 {
 #if ENABLE(VIDEO) && USE(AVFOUNDATION)
     ASSERT(isAvailable());
@@ -134,6 +133,13 @@ const HashSet<String, ASCIICaseInsensitiveHash>& AVAssetMIMETypeCache::staticCon
         "video/x-mpg",
     });
     return cache;
+}
+
+void AVAssetMIMETypeCache::addSupportedTypes(const Vector<String>& types)
+{
+    MIMETypeCache::addSupportedTypes(types);
+    if (m_cacheTypeCallback)
+        m_cacheTypeCallback(types);
 }
 
 void AVAssetMIMETypeCache::initializeCache(HashSet<String, ASCIICaseInsensitiveHash>& cache)

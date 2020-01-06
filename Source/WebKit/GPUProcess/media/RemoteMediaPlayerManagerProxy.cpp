@@ -40,6 +40,10 @@
 #include <WebCore/MediaPlayerPrivate.h>
 #include <wtf/UniqueRef.h>
 
+#if PLATFORM(COCOA)
+#include <WebCore/AVAssetMIMETypeCache.h>
+#endif
+
 #define MESSAGE_CHECK_CONTEXTID(identifier) MESSAGE_CHECK_BASE(m_proxies.isValidKey(identifier), &m_gpuConnectionToWebProcess.connection())
 
 namespace WebKit {
@@ -98,7 +102,7 @@ void RemoteMediaPlayerManagerProxy::getSupportedTypes(MediaPlayerEnums::MediaEng
     completionHandler(WTFMove(result));
 }
 
-void RemoteMediaPlayerManagerProxy::supportsType(MediaPlayerEnums::MediaEngineIdentifier engineIdentifier, const WebCore::MediaEngineSupportParameters&& parameters, CompletionHandler<void(MediaPlayer::SupportsType)>&& completionHandler)
+void RemoteMediaPlayerManagerProxy::supportsTypeAndCodecs(MediaPlayerEnums::MediaEngineIdentifier engineIdentifier, const WebCore::MediaEngineSupportParameters&& parameters, CompletionHandler<void(MediaPlayer::SupportsType)>&& completionHandler)
 {
     auto engine = MediaPlayer::mediaEngine(engineIdentifier);
     if (!engine) {
@@ -109,6 +113,32 @@ void RemoteMediaPlayerManagerProxy::supportsType(MediaPlayerEnums::MediaEngineId
 
     auto result = engine->supportsTypeAndCodecs(parameters);
     completionHandler(result);
+}
+
+void RemoteMediaPlayerManagerProxy::canDecodeExtendedType(WebCore::MediaPlayerEnums::MediaEngineIdentifier engineIdentifier, const String&& mimeType, CompletionHandler<void(bool)>&& completionHandler)
+{
+    bool supported = false;
+
+    switch (engineIdentifier) {
+    case MediaPlayerEnums::MediaEngineIdentifier::AVFoundation:
+#if PLATFORM(COCOA)
+        supported = AVAssetMIMETypeCache::singleton().canDecodeType(mimeType) == MediaPlayerEnums::SupportsType::IsSupported;
+        break;
+#endif
+
+    case MediaPlayerEnums::MediaEngineIdentifier::AVFoundationMSE:
+    case MediaPlayerEnums::MediaEngineIdentifier::AVFoundationMediaStream:
+    case MediaPlayerEnums::MediaEngineIdentifier::AVFoundationCF:
+    case MediaPlayerEnums::MediaEngineIdentifier::GStreamer:
+    case MediaPlayerEnums::MediaEngineIdentifier::GStreamerMSE:
+    case MediaPlayerEnums::MediaEngineIdentifier::HolePunch:
+    case MediaPlayerEnums::MediaEngineIdentifier::MediaFoundation:
+    case MediaPlayerEnums::MediaEngineIdentifier::MockMSE:
+        ASSERT_NOT_REACHED();
+        break;
+    }
+
+    completionHandler(supported);
 }
 
 void RemoteMediaPlayerManagerProxy::originsInMediaCache(MediaPlayerEnums::MediaEngineIdentifier engineIdentifier, const String&& path, CompletionHandler<void(Vector<WebCore::SecurityOriginData>&&)>&& completionHandler)

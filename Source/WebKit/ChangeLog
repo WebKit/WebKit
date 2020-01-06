@@ -1,3 +1,43 @@
+2020-01-05  Eric Carlson  <eric.carlson@apple.com>
+
+        [Media in GPU process] Add remote MIME type cache
+        https://bugs.webkit.org/show_bug.cgi?id=205763
+        <rdar://problem/58312152>
+
+        Reviewed by Dean Jackson.
+
+        * GPUProcess/media/RemoteMediaPlayerManagerProxy.cpp:
+        (WebKit::RemoteMediaPlayerManagerProxy::supportsTypeAndCodecs):
+        (WebKit::RemoteMediaPlayerManagerProxy::canDecodeExtendedType):
+        (WebKit::RemoteMediaPlayerManagerProxy::supportsType): Deleted.
+
+        * GPUProcess/media/RemoteMediaPlayerManagerProxy.h:
+        * GPUProcess/media/RemoteMediaPlayerManagerProxy.messages.in:
+        * Sources.txt:
+        * WebKit.xcodeproj/project.pbxproj:
+
+        * WebProcess/GPU/media/RemoteMediaPlayerMIMETypeCache.cpp: Added.
+        (WebKit::RemoteMediaPlayerMIMETypeCache::RemoteMediaPlayerMIMETypeCache):
+        (WebKit::RemoteMediaPlayerMIMETypeCache::mimeCache const):
+        (WebKit::RemoteMediaPlayerMIMETypeCache::isAvailable const):
+        (WebKit::RemoteMediaPlayerMIMETypeCache::staticContainerTypeList):
+        (WebKit::RemoteMediaPlayerMIMETypeCache::isUnsupportedContainerType):
+        (WebKit::RemoteMediaPlayerMIMETypeCache::canDecodeExtendedType):
+        (WebKit::RemoteMediaPlayerMIMETypeCache::supportsTypeAndCodecs):
+        (WebKit::RemoteMediaPlayerMIMETypeCache::initializeCache):
+        * WebProcess/GPU/media/RemoteMediaPlayerMIMETypeCache.h:  Added.
+
+        * WebProcess/GPU/media/RemoteMediaPlayerManager.cpp:
+        (WebKit::mimeCaches):
+        (WebKit::RemoteMediaPlayerManager::typeCache):
+        (WebKit::RemoteMediaPlayerManager::initialize):
+        (WebKit::RemoteMediaPlayerManager::getSupportedTypes):
+        (WebKit::RemoteMediaPlayerManager::supportsTypeAndCodecs):
+
+        * WebProcess/GPU/media/RemoteMediaPlayerManager.h:
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::setMediaMIMETypes):
+
 2020-01-05  Sam Weinig  <weinig@apple.com>
 
         Further simplify StringBuilder usage by standardizing hex formating to a single hex() function

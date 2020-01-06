@@ -33,7 +33,7 @@ namespace WebCore {
 HashSet<String, ASCIICaseInsensitiveHash>& MIMETypeCache::supportedTypes()
 {
     if (!m_supportedTypes) {
-        m_supportedTypes = HashSet<String, ASCIICaseInsensitiveHash>();
+        m_supportedTypes = HashSet<String, ASCIICaseInsensitiveHash> { };
         initializeCache(*m_supportedTypes);
     }
 
@@ -45,6 +45,9 @@ bool MIMETypeCache::supportsContainerType(const String& containerType)
     if (!isAvailable() || containerType.isEmpty())
         return false;
 
+    if (isUnsupportedContainerType(containerType))
+        return false;
+
     if (staticContainerTypeList().contains(containerType))
         return true;
 
@@ -53,7 +56,7 @@ bool MIMETypeCache::supportsContainerType(const String& containerType)
 
 MediaPlayerEnums::SupportsType MIMETypeCache::canDecodeType(const String& mimeType)
 {
-    if (!isAvailable() || mimeType.isEmpty())
+    if (mimeType.isEmpty())
         return MediaPlayerEnums::SupportsType::IsNotSupported;
 
     if (m_cachedResults) {
@@ -62,7 +65,24 @@ MediaPlayerEnums::SupportsType MIMETypeCache::canDecodeType(const String& mimeTy
             return it->value;
     }
 
-    auto result = canDecodeTypePrivate(mimeType);
+    auto result = MediaPlayerEnums::SupportsType::IsNotSupported;
+    do {
+        if (!isAvailable() || mimeType.isEmpty())
+            break;
+
+        auto contentType = ContentType { mimeType };
+        auto containerType = contentType.containerType();
+        if (!supportsContainerType(containerType))
+            break;
+
+        result = MediaPlayerEnums::SupportsType::MayBeSupported;
+        if (contentType.codecs().isEmpty())
+            break;
+
+        if (canDecodeExtendedType(contentType))
+            result = MediaPlayerEnums::SupportsType::IsSupported;
+    } while (0);
+
     if (!m_cachedResults)
         m_cachedResults = HashMap<String, MediaPlayerEnums::SupportsType, ASCIICaseInsensitiveHash>();
     m_cachedResults->add(mimeType, result);
@@ -70,41 +90,43 @@ MediaPlayerEnums::SupportsType MIMETypeCache::canDecodeType(const String& mimeTy
     return result;
 }
 
-MediaPlayerEnums::SupportsType MIMETypeCache::canDecodeTypePrivate(const String& mimeType)
-{
-    ASSERT(isAvailable() && !mimeType.isEmpty());
-
-    auto contentType = ContentType { mimeType };
-    auto containerType = contentType.containerType();
-
-    if (isUnsupportedContainerType(containerType))
-        return MediaPlayerEnums::SupportsType::IsNotSupported;
-
-    if (!supportsContainerType(containerType))
-        return MediaPlayerEnums::SupportsType::IsNotSupported;
-
-    if (!contentType.codecs().isEmpty() && canDecodeTypeInternal(contentType))
-        return MediaPlayerEnums::SupportsType::IsSupported;
-
-    return MediaPlayerEnums::SupportsType::MayBeSupported;
-}
-
 void MIMETypeCache::addSupportedTypes(const Vector<String>& newTypes)
 {
-    auto& storage = supportedTypes();
-    for (auto& type : newTypes)
-        storage.add(type);
-}
+    if (!m_supportedTypes)
+        m_supportedTypes = HashSet<String, ASCIICaseInsensitiveHash> { };
 
-void MIMETypeCache::addSupportedType(const String& type)
-{
-    supportedTypes().add(type);
+    for (auto& type : newTypes)
+        m_supportedTypes->add(type);
 }
 
 const HashSet<String, ASCIICaseInsensitiveHash>& MIMETypeCache::staticContainerTypeList()
 {
     static const auto cache = makeNeverDestroyed(HashSet<String, ASCIICaseInsensitiveHash> { });
     return cache;
+}
+
+bool MIMETypeCache::isUnsupportedContainerType(const String&)
+{
+    return false;
+}
+
+bool MIMETypeCache::isAvailable() const
+{
+    return true;
+}
+
+bool MIMETypeCache::isEmpty() const
+{
+    return m_supportedTypes && m_supportedTypes->isEmpty();
+}
+
+void MIMETypeCache::initializeCache(HashSet<String, ASCIICaseInsensitiveHash>&)
+{
+}
+
+bool MIMETypeCache::canDecodeExtendedType(const ContentType&)
+{
+    return false;
 }
 
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,38 +25,37 @@
 
 #pragma once
 
-#if PLATFORM(COCOA)
+#if ENABLE(GPU_PROCESS)
 
-#include "MIMETypeCache.h"
+#include "RemoteMediaPlayerManager.h"
+#include <WebCore/MIMETypeCache.h>
+#include <WebCore/MediaPlayerPrivate.h>
 
 namespace WebCore {
+struct MediaEngineSupportParameters;
+}
 
-class ContentType;
+namespace WebKit {
 
-class WEBCORE_EXPORT AVAssetMIMETypeCache final : public MIMETypeCache {
+class RemoteMediaPlayerMIMETypeCache final : public WebCore::MIMETypeCache {
 public:
-    static AVAssetMIMETypeCache& singleton();
+    RemoteMediaPlayerMIMETypeCache(RemoteMediaPlayerManager&, WebCore::MediaPlayerEnums::MediaEngineIdentifier);
 
-    bool isAvailable() const final;
-
-    using CacheMIMETypesCallback = std::function<void(const Vector<String>&)>;
-    void setCacheMIMETypesCallback(CacheMIMETypesCallback&& callback) { m_cacheTypeCallback = WTFMove(callback); }
-
-    const HashSet<String, ASCIICaseInsensitiveHash>& staticContainerTypeList() final;
-    bool isUnsupportedContainerType(const String&) final;
-
-    void addSupportedTypes(const Vector<String>&) final;
+    WebCore::MediaPlayerEnums::SupportsType supportsTypeAndCodecs(const WebCore::MediaEngineSupportParameters&);
 
 private:
-    friend NeverDestroyed<AVAssetMIMETypeCache>;
-    AVAssetMIMETypeCache() = default;
-
-    bool canDecodeExtendedType(const ContentType&) final;
+    const HashSet<String, ASCIICaseInsensitiveHash>& staticContainerTypeList() final;
+    bool isUnsupportedContainerType(const String&) final;
     void initializeCache(HashSet<String, ASCIICaseInsensitiveHash>&) final;
+    bool canDecodeExtendedType(const WebCore::ContentType&) final;
 
-    CacheMIMETypesCallback m_cacheTypeCallback;
+    MIMETypeCache* mimeCache() const;
+
+    RemoteMediaPlayerManager& m_manager;
+    WebCore::MediaPlayerEnums::MediaEngineIdentifier m_engineIdentifier;
+    Optional<HashMap<String, WebCore::MediaPlayerEnums::SupportsType, ASCIICaseInsensitiveHash>> m_supportsTypeAndCodecsCache;
 };
 
-}
+} // namespace WebKit
 
 #endif

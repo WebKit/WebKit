@@ -511,6 +511,7 @@ WebProcess/GPU/GPUProcessConnection.cpp
 //WebProcess/GPU/media/MediaPlayerPrivateRemote.cpp
 //WebProcess/GPU/media/RemoteMediaPlayerManager.cpp
 //WebProcess/GPU/media/RemoteMediaResourceProxy.cpp
+WebProcess/GPU/media/RemoteMediaPlayerMIMETypeCache.cpp @no-unify
 WebProcess/GPU/webrtc/LibWebRTCCodecs.cpp
 
 WebProcess/Network/NetworkProcessConnection.cpp
