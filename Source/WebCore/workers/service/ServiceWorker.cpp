@@ -102,6 +102,8 @@ ExceptionOr<void> ServiceWorker::postMessage(ScriptExecutionContext& context, JS
 
     auto* execState = context.execState();
     ASSERT(execState);
+    if (!execState)
+        return Exception { InvalidStateError };
 
     Vector<RefPtr<MessagePort>> ports;
     auto messageData = SerializedScriptValue::create(*execState, messageValue, WTFMove(transfer), ports, SerializationContext::WorkerPostMessage);
