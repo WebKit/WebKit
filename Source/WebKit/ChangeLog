@@ -1,3 +1,25 @@
+2020-01-06  Rob Buis  <rbuis@igalia.com>
+
+        Remove unused GlobalFrameID from NetworkCacheSpeculativeLoad
+        https://bugs.webkit.org/show_bug.cgi?id=205796
+
+        Reviewed by Chris Dumez.
+
+        Remove unused GlobalFrameID from NetworkCacheSpeculativeLoad
+        and NetworkCache::update.
+
+        No change in behavior.
+
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::didReceiveResponse):
+        * NetworkProcess/cache/NetworkCache.cpp:
+        (WebKit::NetworkCache::Cache::update):
+        * NetworkProcess/cache/NetworkCache.h:
+        * NetworkProcess/cache/NetworkCacheSpeculativeLoad.cpp:
+        (WebKit::NetworkCache::SpeculativeLoad::SpeculativeLoad):
+        (WebKit::NetworkCache::SpeculativeLoad::didReceiveResponse):
+        * NetworkProcess/cache/NetworkCacheSpeculativeLoad.h:
+
 2020-01-06  Per Arne Vollan  <pvollan@apple.com>
 
         [iOS] Issue mach lookup extension to launch services daemon for Mail
