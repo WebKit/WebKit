@@ -1,4 +1,4 @@
-# Copyright (C) 2005-2007, 2010-2016 Apple Inc. All rights reserved.
+# Copyright (C) 2005-2019 Apple Inc. All rights reserved.
 # Copyright (C) 2009 Google Inc. All rights reserved.
 # Copyright (C) 2011 Research In Motion Limited. All rights reserved.
 # Copyright (C) 2013 Nokia Corporation and/or its subsidiary(-ies).
@@ -132,6 +132,7 @@ our @EXPORT_OK;
 
 my $architecture;
 my $asanIsEnabled;
+my $forceOptimizationLevel;
 my $ltoMode;
 my $numberOfCPUs;
 my $maxCPULoad;
@@ -420,6 +421,18 @@ sub determineASanIsEnabled
         close ASAN;
         chomp $asanConfigurationValue;
         $asanIsEnabled = 1 if $asanConfigurationValue eq "YES";
+    }
+}
+
+sub determineForceOptimizationLevel
+{
+    return if defined $forceOptimizationLevel;
+    determineBaseProductDir();
+
+    if (open ForceOptimizationLevel, "$baseProductDir/ForceOptimizationLevel") {
+        $forceOptimizationLevel = <ForceOptimizationLevel>;
+        close ForceOptimizationLevel;
+        chomp $forceOptimizationLevel;
     }
 }
 
@@ -807,6 +820,12 @@ sub asanIsEnabled()
     return $asanIsEnabled;
 }
 
+sub forceOptimizationLevel()
+{
+    determineForceOptimizationLevel();
+    return $forceOptimizationLevel;
+}
+
 sub ltoMode()
 {
     determineLTOMode();
@@ -855,6 +874,7 @@ sub XcodeOptions
     determineConfiguration();
     determineArchitecture();
     determineASanIsEnabled();
+    determineForceOptimizationLevel();
     determineLTOMode();
     determineXcodeSDK();
 
@@ -863,6 +883,7 @@ sub XcodeOptions
     push @options, "-ShowBuildOperationDuration=YES";
     push @options, ("-configuration", $configuration);
     push @options, ("-xcconfig", sourceDir() . "/Tools/asan/asan.xcconfig", "ASAN_IGNORE=" . sourceDir() . "/Tools/asan/webkit-asan-ignore.txt") if $asanIsEnabled;
+    push @options, ("GCC_OPTIMIZATION_LEVEL=$forceOptimizationLevel") if $forceOptimizationLevel;
     push @options, "WK_LTO_MODE=$ltoMode" if $ltoMode;
     push @options, @baseProductDirOption;
     push @options, "ARCHS=$architecture" if $architecture;
