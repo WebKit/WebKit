@@ -1,3 +1,38 @@
+2020-01-05  Simon Fraser  <simon.fraser@apple.com>
+
+        REGRESSION (r252724): Unable to tap on play button on google video 'See the top search trends of 2019'
+        https://bugs.webkit.org/show_bug.cgi?id=205694
+        <rdar://problem/58062987>
+
+        Reviewed by Zalan Bujtas.
+
+        After r252724, which separated 'used' from 'specified' z-index in style, we need to copy
+        the specified to the used z-index in animated styles, while preserving the existing 'forceStackingContext'
+        behavior which set the used z-index to 0.
+
+        Do so by creating Adjuster::adjustAnimatedStyle(), which is called from TreeResolver::createAnimatedElementUpdate()
+        if any animations could have affected the style. We need to pass back information about whether the animation should
+        force stacking context.
+
+        Test: animations/z-index-in-keyframe.html
+
+        * animation/KeyframeEffect.cpp:
+        (WebCore::KeyframeEffect::apply):
+        * animation/KeyframeEffect.h:
+        (WebCore::KeyframeEffect::triggersStackingContext const):
+        * dom/Element.cpp:
+        (WebCore::Element::applyKeyframeEffects):
+        * dom/Element.h:
+        * page/animation/CSSAnimationController.h:
+        (): Deleted.
+        * page/animation/CompositeAnimation.cpp:
+        (WebCore::CompositeAnimation::animate):
+        * style/StyleAdjuster.cpp:
+        (WebCore::Style::Adjuster::adjustAnimatedStyle):
+        * style/StyleAdjuster.h:
+        * style/StyleTreeResolver.cpp:
+        (WebCore::Style::TreeResolver::createAnimatedElementUpdate):
+
 2020-01-06  Per Arne Vollan  <pvollan@apple.com>
 
         [iOS] Issue mach lookup extension to launch services daemon for Mail

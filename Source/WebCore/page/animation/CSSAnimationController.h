@@ -30,6 +30,7 @@
 
 #include "AnimationBase.h"
 #include "CSSPropertyNames.h"
+#include "Element.h"
 #include "RenderStyle.h"
 #include <wtf/Forward.h>
 
@@ -37,14 +38,14 @@ namespace WebCore {
 
 class CSSAnimationControllerPrivate;
 class Document;
-class Element;
 class Frame;
 class LayoutRect;
 class RenderElement;
 
 struct AnimationUpdate {
     std::unique_ptr<RenderStyle> style;
-    bool animationChangeRequiresRecomposite { false };
+    OptionSet<AnimationImpact> impact;
+
 };
 
 class CSSAnimationController {

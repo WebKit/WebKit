@@ -49,6 +49,7 @@
 #include "RuntimeEnabledFeatures.h"
 #include "Settings.h"
 #include "ShadowRoot.h"
+#include "StyleAdjuster.h"
 #include "StyleFontSizeFunctions.h"
 #include "StyleResolver.h"
 #include "StyleScope.h"
@@ -302,8 +303,8 @@ const RenderStyle* TreeResolver::parentBoxStyleForPseudo(const ElementUpdate& el
 ElementUpdate TreeResolver::createAnimatedElementUpdate(std::unique_ptr<RenderStyle> newStyle, Element& element, Change parentChange)
 {
     auto* oldStyle = element.renderOrDisplayContentsStyle();
-
-    bool shouldRecompositeLayer = false;
+    
+    OptionSet<AnimationImpact> animationImpact;
 
     // New code path for CSS Animations and CSS Transitions.
     if (RuntimeEnabledFeatures::sharedFeatures().webAnimationsCSSIntegrationEnabled()) {
@@ -323,7 +324,7 @@ ElementUpdate TreeResolver::createAnimatedElementUpdate(std::unique_ptr<RenderSt
     // as animations created via the JS API.
     if (element.hasKeyframeEffects()) {
         auto animatedStyle = RenderStyle::clonePtr(*newStyle);
-        shouldRecompositeLayer = element.applyKeyframeEffects(*animatedStyle);
+        animationImpact = element.applyKeyframeEffects(*animatedStyle);
         newStyle = WTFMove(animatedStyle);
     }
 
@@ -332,11 +333,14 @@ ElementUpdate TreeResolver::createAnimatedElementUpdate(std::unique_ptr<RenderSt
         auto& animationController = m_document.frame()->animation();
 
         auto animationUpdate = animationController.updateAnimations(element, *newStyle, oldStyle);
-        shouldRecompositeLayer = animationUpdate.animationChangeRequiresRecomposite;
+        animationImpact.add(animationUpdate.impact);
 
         if (animationUpdate.style)
             newStyle = WTFMove(animationUpdate.style);
     }
+
+    if (animationImpact)
+        Adjuster::adjustAnimatedStyle(*newStyle, parentBoxStyle(), animationImpact);
 
     auto change = oldStyle ? determineChange(*oldStyle, *newStyle) : Detach;
 
@@ -344,8 +348,7 @@ ElementUpdate TreeResolver::createAnimatedElementUpdate(std::unique_ptr<RenderSt
     if (validity >= Validity::SubtreeAndRenderersInvalid || parentChange == Detach)
         change = Detach;
 
-    shouldRecompositeLayer |= element.styleResolutionShouldRecompositeLayer();
-
+    bool shouldRecompositeLayer = animationImpact.contains(AnimationImpact::RequiresRecomposite) || element.styleResolutionShouldRecompositeLayer();
     return { WTFMove(newStyle), change, shouldRecompositeLayer };
 }
 
