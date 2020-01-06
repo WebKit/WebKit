@@ -25,6 +25,8 @@
 
 #pragma once
 
+#include <wtf/EnumTraits.h>
+
 namespace WebCore {
 
 enum class TextRenderingMode : uint8_t {
@@ -388,3 +390,18 @@ enum class AllowUserInstalledFonts : uint8_t {
 };
 
 }
+
+namespace WTF {
+
+template<> struct EnumTraits<WebCore::FontSmoothingMode> {
+    using values = EnumValues<
+    WebCore::FontSmoothingMode,
+    WebCore::FontSmoothingMode::AutoSmoothing,
+    WebCore::FontSmoothingMode::NoSmoothing,
+    WebCore::FontSmoothingMode::Antialiased,
+    WebCore::FontSmoothingMode::SubpixelAntialiased,
+    WebCore::FontSmoothingMode::AutoSmoothing
+    >;
+};
+
+} // namespace WTF

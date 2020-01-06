@@ -63,11 +63,37 @@ public:
     {
     }
 
+    template<class Encoder> void encode(Encoder&) const;
+    template<class Decoder> static Optional<GlyphBufferAdvance> decode(Decoder&);
+
     void setWidth(CGFloat width) { this->CGSize::width = width; }
     void setHeight(CGFloat height) { this->CGSize::height = height; }
     CGFloat width() const { return this->CGSize::width; }
     CGFloat height() const { return this->CGSize::height; }
 };
+
+template<class Encoder>
+void GlyphBufferAdvance::encode(Encoder& encoder) const
+{
+    encoder << width();
+    encoder << height();
+}
+
+template<class Decoder>
+Optional<GlyphBufferAdvance> GlyphBufferAdvance::decode(Decoder& decoder)
+{
+    Optional<CGFloat> width;
+    decoder >> width;
+    if (!width)
+        return WTF::nullopt;
+
+    Optional<CGFloat> height;
+    decoder >> height;
+    if (!height)
+        return WTF::nullopt;
+
+    return GlyphBufferAdvance(CGSizeMake(*width, *height));
+}
 #else
 typedef FloatSize GlyphBufferAdvance;
 #endif

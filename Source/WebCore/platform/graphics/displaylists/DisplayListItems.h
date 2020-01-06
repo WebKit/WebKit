@@ -1057,6 +1057,8 @@ public:
         return adoptRef(*new DrawGlyphs(font, glyphs, advances, count, blockLocation, localAnchor, smoothingMode));
     }
 
+    WEBCORE_EXPORT virtual ~DrawGlyphs();
+
     const FloatPoint& blockLocation() const { return m_blockLocation; }
     void setBlockLocation(const FloatPoint& blockLocation) { m_blockLocation = blockLocation; }
 
@@ -1066,8 +1068,11 @@ public:
 
     const Vector<GlyphBufferGlyph, 128>& glyphs() const { return m_glyphs; }
 
+    template<class Encoder> void encode(Encoder&) const;
+    template<class Decoder> static Optional<Ref<DrawGlyphs>> decode(Decoder&);
+
 private:
-    DrawGlyphs(const Font&, const GlyphBufferGlyph*, const GlyphBufferAdvance*, unsigned count, const FloatPoint& blockLocation, const FloatSize& localAnchor, FontSmoothingMode);
+    WEBCORE_EXPORT DrawGlyphs(const Font&, const GlyphBufferGlyph*, const GlyphBufferAdvance*, unsigned count, const FloatPoint& blockLocation, const FloatSize& localAnchor, FontSmoothingMode);
 
     void computeBounds();
 
@@ -1085,6 +1090,52 @@ private:
     FloatSize m_localAnchor;
     FontSmoothingMode m_smoothingMode;
 };
+
+template<class Encoder>
+void DrawGlyphs::encode(Encoder& encoder) const
+{
+    // FIXME: Add font data to the encoder.
+    encoder << m_glyphs;
+    encoder << m_advances;
+    encoder << m_blockLocation;
+    encoder << m_localAnchor;
+    encoder << m_smoothingMode;
+}
+
+template<class Decoder>
+Optional<Ref<DrawGlyphs>> DrawGlyphs::decode(Decoder& decoder)
+{
+    Optional<Vector<GlyphBufferGlyph, 128>> glyphs;
+    decoder >> glyphs;
+    if (!glyphs)
+        return WTF::nullopt;
+
+    Optional<Vector<GlyphBufferAdvance, 128>> advances;
+    decoder >> advances;
+    if (!advances)
+        return WTF::nullopt;
+
+    if (glyphs->size() != advances->size())
+        return WTF::nullopt;
+
+    Optional<FloatPoint> blockLocation;
+    decoder >> blockLocation;
+    if (!blockLocation)
+        return WTF::nullopt;
+
+    Optional<FloatSize> localAnchor;
+    decoder >> localAnchor;
+    if (!localAnchor)
+        return WTF::nullopt;
+
+    Optional<FontSmoothingMode> smoothingMode;
+    decoder >> smoothingMode;
+    if (!smoothingMode)
+        return WTF::nullopt;
+
+    // FIXME: Create and return a DrawGlyphs once we're able to decode font data.
+    return WTF::nullopt;
+}
 
 class DrawImage : public DrawingItem {
 public:
@@ -2722,7 +2773,7 @@ void Item::encode(Encoder& encoder) const
         encoder << downcast<ClipPath>(*this);
         break;
     case ItemType::DrawGlyphs:
-        WTFLogAlways("DisplayList::Item::encode cannot yet encode DrawGlyphs");
+        encoder << downcast<DrawGlyphs>(*this);
         break;
     case ItemType::DrawImage:
         encoder << downcast<DrawImage>(*this);
@@ -2899,7 +2950,8 @@ Optional<Ref<Item>> Item::decode(Decoder& decoder)
             return static_reference_cast<Item>(WTFMove(*item));
         break;
     case ItemType::DrawGlyphs:
-        WTFLogAlways("DisplayList::Item::decode cannot yet decode DrawGlyphs");
+        if (auto item = DrawGlyphs::decode(decoder))
+            return static_reference_cast<Item>(WTFMove(*item));
         break;
     case ItemType::DrawImage:
         if (auto item = DrawImage::decode(decoder))

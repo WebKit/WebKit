@@ -1,3 +1,29 @@
+2020-01-05  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Work towards implementing DisplayList::DrawGlyphs
+        https://bugs.webkit.org/show_bug.cgi?id=205782
+
+        Reviewed by Sam Weinig.
+
+        Encode DrawGlyphs when serializing the drawing item over IPC, with the exception of data in WebCore::Font.
+        No change in behavior.
+
+        * platform/graphics/GlyphBuffer.h:
+
+        Make GlyphBufferAdvance codable.
+
+        (WebCore::GlyphBufferAdvance::encode const):
+        (WebCore::GlyphBufferAdvance::decode):
+        * platform/graphics/displaylists/DisplayListItems.cpp:
+        * platform/graphics/displaylists/DisplayListItems.h:
+        (WebCore::DisplayList::DrawGlyphs::encode const):
+        (WebCore::DisplayList::DrawGlyphs::decode):
+        (WebCore::DisplayList::Item::encode const):
+        (WebCore::DisplayList::Item::decode):
+        * platform/text/TextFlags.h:
+
+        Add EnumTraits for FontSmoothingMode, so that it is encodable using `<<`.
+
 2020-01-05  Sam Weinig  <weinig@apple.com>
 
         Further simplify StringBuilder usage by standardizing hex formating to a single hex() function

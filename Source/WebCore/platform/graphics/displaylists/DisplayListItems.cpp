@@ -528,6 +528,8 @@ DrawGlyphs::DrawGlyphs(const Font& font, const GlyphBufferGlyph* glyphs, const G
     computeBounds();
 }
 
+DrawGlyphs::~DrawGlyphs() = default;
+
 inline GlyphBuffer DrawGlyphs::generateGlyphBuffer() const
 {
     GlyphBuffer result;
