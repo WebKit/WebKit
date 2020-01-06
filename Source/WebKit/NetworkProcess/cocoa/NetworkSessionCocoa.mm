@@ -1178,6 +1178,21 @@ SessionWrapper& NetworkSessionCocoa::isolatedSession(WebCore::StoredCredentialsP
 
     entry->lastUsed = WallTime::now();
 
+    auto& sessionWrapper = [&] (auto storedCredentialsPolicy) -> SessionWrapper& {
+        switch (storedCredentialsPolicy) {
+        case WebCore::StoredCredentialsPolicy::Use:
+            LOG(NetworkSession, "Using isolated NSURLSession with credential storage.");
+            return entry->sessionWithCredentialStorage;
+        case WebCore::StoredCredentialsPolicy::DoNotUse:
+            LOG(NetworkSession, "Using isolated NSURLSession without credential storage.");
+            return entry->sessionWithoutCredentialStorage;
+        case WebCore::StoredCredentialsPolicy::EphemeralStateless:
+            if (!m_ephemeralStatelessSession.session)
+                initializeEphemeralStatelessSession();
+            return m_ephemeralStatelessSession;
+        }
+    } (storedCredentialsPolicy);
+    
     if (m_isolatedSessions.size() > maxNumberOfIsolatedSessions) {
         WebCore::RegistrableDomain keyToRemove;
         auto oldestTimestamp = WallTime::now();
@@ -1194,18 +1209,7 @@ SessionWrapper& NetworkSessionCocoa::isolatedSession(WebCore::StoredCredentialsP
 
     RELEASE_ASSERT(m_isolatedSessions.size() <= maxNumberOfIsolatedSessions);
 
-    switch (storedCredentialsPolicy) {
-    case WebCore::StoredCredentialsPolicy::Use:
-        LOG(NetworkSession, "Using isolated NSURLSession with credential storage.");
-        return entry->sessionWithCredentialStorage;
-    case WebCore::StoredCredentialsPolicy::DoNotUse:
-        LOG(NetworkSession, "Using isolated NSURLSession without credential storage.");
-        return entry->sessionWithoutCredentialStorage;
-    case WebCore::StoredCredentialsPolicy::EphemeralStateless:
-        if (!m_ephemeralStatelessSession.session)
-            initializeEphemeralStatelessSession();
-        return m_ephemeralStatelessSession;
-    }
+    return sessionWrapper;
 }
 
 bool NetworkSessionCocoa::hasIsolatedSession(const WebCore::RegistrableDomain domain) const
