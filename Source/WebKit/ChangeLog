@@ -1,3 +1,39 @@
+2020-01-06  Keith Rollin  <krollin@apple.com>
+
+        Reformat WebPage logging
+        https://bugs.webkit.org/show_bug.cgi?id=205709
+        <rdar://problem/58290285>
+
+        Reviewed by Brent Fulgham.
+
+        Update the format used by WebPage in its RELEASE_LOG logging. Use the
+        format used by WebPageProxy and NetworkResourceLoader, which is
+        generally of the form:
+
+            <object-address> - [<values that help thread together operations>] <class>::<method>: <message and other useful values>
+
+        So, for example:
+
+            0x4a1df5000 - WebLoaderStrategy::scheduleLoad: Resource is being scheduled with the NetworkProcess (frame=0x4a1db0220, priority=0, webPageID=15, frameID=3, resourceID=32)',
+
+        becomes:
+
+            0x4a1df5000 - [resourceLoader=0x1418b7200, frameLoader=0x1326d7340, frame=0x4a1db0220, webPageID=15, frameID=3, resourceID=32] WebLoaderStrategy::scheduleLoad: Resource is being scheduled with the NetworkProcess (priority=2)
+
+        This new form is a lot more verbose, but it really helps in tracing
+        activity from the top of our page/frame/resource load stack to the
+        bottom.
+
+        No new tests - no added or changed functionality.
+
+        * WebProcess/Network/WebLoaderStrategy.cpp:
+        (WebKit::WebLoaderStrategy::scheduleLoad):
+        (WebKit::WebLoaderStrategy::tryLoadingUsingURLSchemeHandler):
+        (WebKit::WebLoaderStrategy::scheduleLoadFromNetworkProcess):
+        (WebKit::WebLoaderStrategy::networkProcessCrashed):
+        (WebKit::WebLoaderStrategy::loadResourceSynchronously):
+        * WebProcess/Network/WebLoaderStrategy.h:
+
 2020-01-06  Luming Yin  <luming_yin@apple.com>
 
         Add WKWebView SPI to query _WKMediaMutedState
