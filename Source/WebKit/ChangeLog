@@ -1,3 +1,26 @@
+2020-01-06  Luming Yin  <luming_yin@apple.com>
+
+        Add WKWebView SPI to query _WKMediaMutedState
+        https://bugs.webkit.org/show_bug.cgi?id=205789
+        <rdar://problem/58335241>
+
+        Reviewed by Eric Carlson.
+
+        Add plumbing for clients to query the media muted state on WKWebView.
+
+        * SourcesCocoa.txt:
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _mediaMutedState]):
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+        * UIProcess/Cocoa/MediaUtilities.h: Renamed from Source/WebKit/UIProcess/Cocoa/MediaCaptureUtilities.h.
+        * UIProcess/Cocoa/MediaUtilities.mm: Renamed from Source/WebKit/UIProcess/Cocoa/MediaCaptureUtilities.mm.
+        (WebKit::toWKMediaCaptureState):
+        (WebKit::toWKMediaMutedState):
+        * UIProcess/Cocoa/UIDelegate.mm:
+        * UIProcess/WebPageProxy.h:
+        (WebKit::WebPageProxy::mutedStateFlags const):
+        * WebKit.xcodeproj/project.pbxproj:
+
 2020-01-05  Dean Jackson  <dino@apple.com>
 
         Rename GraphicsContext3D to GraphicsContextGL

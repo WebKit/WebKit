@@ -29,7 +29,7 @@
 #import "APIFrameInfo.h"
 #import "APIHitTestResult.h"
 #import "CompletionHandlerCallChecker.h"
-#import "MediaCaptureUtilities.h"
+#import "MediaUtilities.h"
 #import "NativeWebWheelEvent.h"
 #import "NavigationActionData.h"
 #import "UserMediaPermissionCheckProxy.h"

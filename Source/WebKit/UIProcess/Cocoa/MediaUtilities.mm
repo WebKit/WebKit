@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "MediaCaptureUtilities.h"
+#include "MediaUtilities.h"
 
 namespace WebKit {
 
@@ -41,6 +41,20 @@ _WKMediaCaptureState toWKMediaCaptureState(WebCore::MediaProducer::MediaStateFla
         mediaCaptureState |= _WKMediaCaptureStateMutedCamera;
 
     return mediaCaptureState;
+}
+
+_WKMediaMutedState toWKMediaMutedState(WebCore::MediaProducer::MutedStateFlags state)
+{
+    _WKMediaMutedState mediaMutedState = _WKMediaNoneMuted;
+    if (state & WebCore::MediaProducer::NoneMuted)
+        mediaMutedState |= _WKMediaNoneMuted;
+    if (state & WebCore::MediaProducer::AudioIsMuted)
+        mediaMutedState |= _WKMediaAudioMuted;
+    if (state & WebCore::MediaProducer::AudioAndVideoCaptureIsMuted)
+        mediaMutedState |= _WKMediaCaptureDevicesMuted;
+    if (state & WebCore::MediaProducer::ScreenCaptureIsMuted)
+        mediaMutedState |= _WKMediaScreenCaptureMuted;
+    return mediaMutedState;
 }
 
 } // namespace WebKit

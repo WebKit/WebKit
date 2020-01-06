@@ -38,7 +38,7 @@
 #import "IconLoadingDelegate.h"
 #import "LegacySessionStateCoding.h"
 #import "Logging.h"
-#import "MediaCaptureUtilities.h"
+#import "MediaUtilities.h"
 #import "NavigationState.h"
 #import "ObjCObjectGraph.h"
 #import "PageClient.h"
@@ -1735,6 +1735,11 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(FORWARD_ACTION_TO_WKCONTENTVIEW)
 #if HAVE(TOUCH_BAR) && ENABLE(WEB_PLAYBACK_CONTROLS_MANAGER)
     _impl->togglePictureInPicture();
 #endif
+}
+
+- (_WKMediaMutedState)_mediaMutedState
+{
+    return WebKit::toWKMediaMutedState(_page->mutedStateFlags());
 }
 
 - (void)_closeAllMediaPresentations

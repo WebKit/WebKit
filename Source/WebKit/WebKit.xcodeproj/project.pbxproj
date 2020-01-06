@@ -3277,8 +3277,8 @@
 		410482CB1DDD2FB500F006D0 /* RTCNetwork.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RTCNetwork.cpp; sourceTree = "<group>"; };
 		410482CC1DDD2FB500F006D0 /* RTCNetwork.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RTCNetwork.h; sourceTree = "<group>"; };
 		4111436320F677B10026F912 /* InjectUserScriptImmediately.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InjectUserScriptImmediately.h; sourceTree = "<group>"; };
-		411286EF21C8A90C003A8550 /* MediaCaptureUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaCaptureUtilities.h; sourceTree = "<group>"; };
-		411286F021C8A90D003A8550 /* MediaCaptureUtilities.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MediaCaptureUtilities.mm; sourceTree = "<group>"; };
+		411286EF21C8A90C003A8550 /* MediaUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaUtilities.h; sourceTree = "<group>"; };
+		411286F021C8A90D003A8550 /* MediaUtilities.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MediaUtilities.mm; sourceTree = "<group>"; };
 		4112B5471F9FD3AB00E67875 /* NetworkRTCResolver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NetworkRTCResolver.cpp; sourceTree = "<group>"; };
 		4112B5471F9FD3AB00E67986 /* NetworkRTCResolverCocoa.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NetworkRTCResolverCocoa.cpp; sourceTree = "<group>"; };
 		4112B5481F9FD3AC00E67875 /* NetworkRTCResolver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetworkRTCResolver.h; sourceTree = "<group>"; };
@@ -5888,8 +5888,8 @@
 				51C0C9731DDD74F00032CAD3 /* IconLoadingDelegate.mm */,
 				7A821F4B1E2F664800604577 /* LegacyCustomProtocolManagerClient.h */,
 				7A821F4D1E2F679E00604577 /* LegacyCustomProtocolManagerClient.mm */,
-				411286EF21C8A90C003A8550 /* MediaCaptureUtilities.h */,
-				411286F021C8A90D003A8550 /* MediaCaptureUtilities.mm */,
+				411286EF21C8A90C003A8550 /* MediaUtilities.h */,
+				411286F021C8A90D003A8550 /* MediaUtilities.mm */,
 				1ABC3DF41899E437004F0626 /* NavigationState.h */,
 				1ABC3DF31899E437004F0626 /* NavigationState.mm */,
 				5C6CE6D31F59EA350007C6CB /* PageClientImplCocoa.h */,
