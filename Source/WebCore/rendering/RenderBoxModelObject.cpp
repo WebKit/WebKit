@@ -445,7 +445,8 @@ const RenderBox& RenderBoxModelObject::enclosingClippingBoxForStickyPosition(con
 {
     ASSERT(isStickilyPositioned());
 
-    auto* clipLayer = layer()->enclosingOverflowClipLayer(ExcludeSelf);
+    RenderLayer* clipLayer = hasLayer() ? layer()->enclosingOverflowClipLayer(ExcludeSelf) : nullptr;
+
     if (enclosingClippingLayer)
         *enclosingClippingLayer = clipLayer;
 
@@ -536,7 +537,8 @@ void RenderBoxModelObject::computeStickyPositionConstraints(StickyPositionViewpo
 
 FloatRect RenderBoxModelObject::constrainingRectForStickyPosition() const
 {
-    RenderLayer* enclosingClippingLayer = layer()->enclosingOverflowClipLayer(ExcludeSelf);
+    RenderLayer* enclosingClippingLayer = hasLayer() ? layer()->enclosingOverflowClipLayer(ExcludeSelf) : nullptr;
+
     if (enclosingClippingLayer) {
         RenderBox& enclosingClippingBox = downcast<RenderBox>(enclosingClippingLayer->renderer());
         LayoutRect clipRect = enclosingClippingBox.overflowClipRect(LayoutPoint(), nullptr); // FIXME: make this work in regions.
@@ -560,8 +562,6 @@ FloatRect RenderBoxModelObject::constrainingRectForStickyPosition() const
 
 LayoutSize RenderBoxModelObject::stickyPositionOffset() const
 {
-    ASSERT(hasLayer());
-    
     FloatRect constrainingRect = constrainingRectForStickyPosition();
     StickyPositionViewportConstraints constraints;
     computeStickyPositionConstraints(constraints, constrainingRect);

@@ -1,3 +1,13 @@
+2020-01-06  Jack Lee  <shihchieh_lee@apple.com>
+
+        ASSERTION FAILED: hasLayer() in RenderLayer::enclosingOverflowClipLayer
+        https://bugs.webkit.org/show_bug.cgi?id=205474
+
+        Reviewed by Simon Fraser.
+
+        * fast/css/sticky/sticky-tablecol-crash-expected.txt: Added.
+        * fast/css/sticky/sticky-tablecol-crash.html: Added.
+
 2020-01-06  Antoine Quint  <graouts@apple.com>
 
         REGRESSION: [ iOS ] imported/w3c/web-platform-tests/dom/events/Event-dispatch-on-disabled-elements.html is failing
