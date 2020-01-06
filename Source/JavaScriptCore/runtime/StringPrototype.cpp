@@ -220,31 +220,17 @@ static NEVER_INLINE void substituteBackreferencesSlow(StringBuilder& result, Str
             backrefLength = source.length() - backrefStart;
         } else if (reg && ref == '<') {
             // Named back reference
-            if (!hasNamedCaptures) {
-                result.append(replacement.substring(i, 2));
-                offset = i + 2;
-                advance = 1;
+            if (!hasNamedCaptures)
                 continue;
-            }
 
             size_t closingBracket = replacement.find('>', i + 2);
-            if (closingBracket == WTF::notFound) {
-                // FIXME: https://bugs.webkit.org/show_bug.cgi?id=176434
-                // Current proposed spec change throws a syntax error in this case.
-                // We have made the case that it makes more sense to treat this a literal
-                // If throwSyntaxError(globalObject, scope, "Missing closing '>' in replacement text");
+            if (closingBracket == WTF::notFound)
                 continue;
-            }
 
             unsigned nameLength = closingBracket - i - 2;
             unsigned backrefIndex = reg->subpatternForName(replacement.substring(i + 2, nameLength).toString());
 
             if (!backrefIndex || backrefIndex > reg->numSubpatterns()) {
-                // FIXME: https://bugs.webkit.org/show_bug.cgi?id=176434
-                // Proposed spec change throws a throw syntax error in this case.
-                // We have made the case that a non-existent back reference should be replaced with
-                // and empty string.
-                // throwSyntaxError(globalObject, scope, makeString("Replacement text references non-existent backreference \"" + replacement.substring(i + 2, nameLength).toString()));
                 backrefStart = 0;
                 backrefLength = 0;
             } else {

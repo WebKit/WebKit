@@ -1270,9 +1270,6 @@ test/built-ins/RegExp/named-groups/groups-object-subclass-sans.js:
 test/built-ins/RegExp/named-groups/groups-object-subclass.js:
   default: 'Test262Error: Expected SameValue(«b», «$<a>») to be true'
   strict mode: 'Test262Error: Expected SameValue(«b», «$<a>») to be true'
-test/built-ins/RegExp/named-groups/string-replace-nocaptures.js:
-  default: 'Test262Error: Expected SameValue(«$<snd>$<fst>cd», «$<$<fst>cd») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«$<snd>$<fst>cd», «$<$<fst>cd») to be true'
 test/built-ins/RegExp/named-groups/unicode-property-names.js:
   default: 'SyntaxError: Invalid regular expression: invalid group specifier name'
   strict mode: 'SyntaxError: Invalid regular expression: invalid group specifier name'
