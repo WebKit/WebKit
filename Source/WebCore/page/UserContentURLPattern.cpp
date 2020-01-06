@@ -114,7 +114,7 @@ bool UserContentURLPattern::matches(const URL& test) const
     if (m_invalid)
         return false;
 
-    if (!equalIgnoringASCIICase(test.protocol(), m_scheme))
+    if (m_scheme != "*" && !equalIgnoringASCIICase(test.protocol(), m_scheme))
         return false;
 
     if (!equalLettersIgnoringASCIICase(m_scheme, "file") && !matchesHost(test))
