@@ -1,3 +1,16 @@
+2020-01-06  Simon Fraser  <simon.fraser@apple.com>
+
+        REGRESSION: [r254042] pageoverlay/overlay- tests are failing in WK1
+        https://bugs.webkit.org/show_bug.cgi?id=205810
+
+        Unreviewed test gardening. Page Overlay test in WK1 now dump one or more repaint rects after r254042.
+
+        * platform/mac-wk1/pageoverlay/overlay-installation-expected.txt:
+        * platform/mac-wk1/pageoverlay/overlay-large-document-expected.txt:
+        * platform/mac-wk1/pageoverlay/overlay-large-document-scrolled-expected.txt:
+        * platform/mac-wk1/pageoverlay/overlay-small-frame-mouse-events-expected.txt:
+        * platform/mac-wk1/pageoverlay/overlay-small-frame-paints-expected.txt:
+
 2020-01-06  Truitt Savell  <tsavell@apple.com>
 
         REGRESSION: [ Catalina wk1 ] editing/mac/attributed-string/attributed-string-across-shadow-boundaries-with-style-2.html is failing
