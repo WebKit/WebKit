@@ -202,4 +202,9 @@
 #endif
 }
 
++ (void)_setApplicationBundleIdentifier:(NSString *)bundleIdentifier
+{
+    WebCore::setApplicationBundleIdentifier(String(bundleIdentifier));
+}
+
 @end

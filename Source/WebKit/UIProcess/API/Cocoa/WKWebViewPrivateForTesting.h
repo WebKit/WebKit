@@ -59,4 +59,6 @@
 @property (nonatomic, readonly) BOOL _hasServiceWorkerForegroundActivityForTesting;
 - (void)_setAssertionStateForTesting:(int)state;
 
++ (void)_setApplicationBundleIdentifier:(NSString *)bundleIdentifier;
+
 @end

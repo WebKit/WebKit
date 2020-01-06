@@ -109,7 +109,8 @@ struct TestOptions {
     HashMap<String, bool> experimentalFeatures;
     HashMap<String, bool> internalDebugFeatures;
     String contentMode;
-
+    String applicationBundleIdentifier;
+    
     ContextOptions contextOptions;
 
     TestOptions(const std::string& pathOrURL);
@@ -155,6 +156,7 @@ struct TestOptions {
             || shouldPresentPopovers != options.shouldPresentPopovers
             || contentInsetTop != options.contentInsetTop
             || contentMode != options.contentMode
+            || applicationBundleIdentifier != options.applicationBundleIdentifier
             || enableAppNap != options.enableAppNap
             || enableBackForwardCache != options.enableBackForwardCache
             || enableLazyImageLoading != options.enableLazyImageLoading

@@ -622,6 +622,17 @@ WKRetainPtr<WKPageConfigurationRef> TestController::generatePageConfiguration(co
 
 void TestController::createWebViewWithOptions(const TestOptions& options)
 {
+#if PLATFORM(COCOA)
+    if (m_hasSetApplicationBundleIdentifier) {
+        // Exit if the application bundle identifier has already been set, since it can only be set once.
+        exit(1);
+    }
+    if (!options.applicationBundleIdentifier.isEmpty()) {
+        setApplicationBundleIdentifier(options.applicationBundleIdentifier);
+        m_hasSetApplicationBundleIdentifier = true;
+    }
+#endif
+
     auto configuration = generatePageConfiguration(options);
 
     // Some preferences (notably mock scroll bars setting) currently cannot be re-applied to an existing view, so we need to set them now.
@@ -1449,6 +1460,8 @@ static void updateTestOptionsFromTestHeader(TestOptions& testOptions, const std:
             testOptions.contextOptions.ignoreSynchronousMessagingTimeouts = parseBooleanTestHeaderValue(value);
         else if (key == "contentMode")
             testOptions.contentMode = { value.c_str() };
+        else if (key == "applicationBundleIdentifier")
+            testOptions.applicationBundleIdentifier = { value.c_str() };
         else if (key == "enableAppNap")
             testOptions.enableAppNap = parseBooleanTestHeaderValue(value);
         else if (key == "enableBackForwardCache")

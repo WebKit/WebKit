@@ -241,6 +241,9 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
     if (parameters.compilerServiceExtensionHandle)
         SandboxExtension::consumePermanently(*parameters.compilerServiceExtensionHandle);
 
+    if (parameters.launchServicesOpenExtensionHandle)
+        SandboxExtension::consumePermanently(*parameters.launchServicesOpenExtensionHandle);
+
     if (parameters.diagnosticsExtensionHandle)
         SandboxExtension::consumePermanently(*parameters.diagnosticsExtensionHandle);
 

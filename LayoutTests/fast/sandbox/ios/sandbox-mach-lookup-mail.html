@@ -1,0 +1,14 @@
+<!DOCTYPE html><!-- webkit-test-runner [ applicationBundleIdentifier=com.apple.mobilemail ] -->
+<html>
+<head>
+<script src="../../../resources/js-test-pre.js"></script>
+<script>
+description('Regression tests for mach lookup sandbox changes for Mail on iOS');
+
+if (window.internals) {
+    shouldBeTrue("internals.hasSandboxMachLookupAccessToGlobalName(\"com.apple.WebKit.WebContent\", \"com.apple.lsd.open\")");
+}
+</script>
+</head>
+<body>
+</body>

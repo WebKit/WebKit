@@ -1,3 +1,16 @@
+2020-01-06  Per Arne Vollan  <pvollan@apple.com>
+
+        [iOS] Issue mach lookup extension to launch services daemon for Mail
+        https://bugs.webkit.org/show_bug.cgi?id=205316
+
+        Reviewed by Brent Fulgham.
+
+        Export function getting bundle identifier.
+
+        Test: fast/sandbox/ios/sandbox-mach-lookup-mail.html
+
+        * platform/RuntimeApplicationChecks.h:
+
 2020-01-06  Youenn Fablet  <youenn@apple.com>
 
         RemoteVideoSample::create does not need to take a MediaSample r value

@@ -241,7 +241,7 @@ void WebProcessPool::platformInitializeWebProcess(const WebProcessProxy& process
     parameters.uiProcessBundleResourcePath = m_resolvedPaths.uiProcessBundleResourcePath;
     SandboxExtension::createHandleWithoutResolvingPath(parameters.uiProcessBundleResourcePath, SandboxExtension::Type::ReadOnly, parameters.uiProcessBundleResourcePathExtensionHandle);
 
-    parameters.uiProcessBundleIdentifier = String([[NSBundle mainBundle] bundleIdentifier]);
+    parameters.uiProcessBundleIdentifier = applicationBundleIdentifier();
     parameters.uiProcessSDKVersion = dyld_get_program_sdk_version();
 
 #if PLATFORM(IOS_FAMILY)
@@ -315,6 +315,12 @@ void WebProcessPool::platformInitializeWebProcess(const WebProcessProxy& process
         SandboxExtension::createHandleForMachLookup("com.apple.AGXCompilerService", WTF::nullopt, compilerServiceExtensionHandle);
         parameters.compilerServiceExtensionHandle = WTFMove(compilerServiceExtensionHandle);
     }
+
+    if (WebCore::IOSApplication::isMobileMail()) {
+        SandboxExtension::Handle launchServicesOpenExtensionHandle;
+        SandboxExtension::createHandleForMachLookup("com.apple.lsd.open", WTF::nullopt, launchServicesOpenExtensionHandle);
+        parameters.launchServicesOpenExtensionHandle = WTFMove(launchServicesOpenExtensionHandle);
+    }
     
     if (isInternalInstall()) {
         SandboxExtension::Handle diagnosticsExtensionHandle;
@@ -348,7 +354,7 @@ void WebProcessPool::platformInitializeWebProcess(const WebProcessProxy& process
 
 void WebProcessPool::platformInitializeNetworkProcess(NetworkProcessCreationParameters& parameters)
 {
-    parameters.uiProcessBundleIdentifier = [[NSBundle mainBundle] bundleIdentifier];
+    parameters.uiProcessBundleIdentifier = applicationBundleIdentifier();
     parameters.uiProcessSDKVersion = dyld_get_program_sdk_version();
 
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];

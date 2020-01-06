@@ -362,6 +362,7 @@ private:
 #if PLATFORM(COCOA)
     void cocoaPlatformInitialize();
     void cocoaResetStateToConsistentValues(const TestOptions&);
+    void setApplicationBundleIdentifier(const String&);
 #endif
     void platformConfigureViewForTest(const TestInvocation&);
     void platformWillRunTest(const TestInvocation&);
@@ -616,6 +617,10 @@ private:
     bool m_allowsAnySSLCertificate { true };
     bool m_shouldSwapToEphemeralSessionOnNextNavigation { false };
     bool m_shouldSwapToDefaultSessionOnNextNavigation { false };
+    
+#if PLATFORM(COCOA)
+    bool m_hasSetApplicationBundleIdentifier { false };
+#endif
 };
 
 struct TestCommand {

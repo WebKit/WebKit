@@ -250,6 +250,15 @@ void TestController::resetContentExtensions()
     }
 }
 
+void TestController::setApplicationBundleIdentifier(const String& bundleIdentifier)
+{
+    if (bundleIdentifier.isEmpty())
+        return;
+    
+    auto applicationBundleIdentifier = adoptNS([NSString stringWithUTF8String:bundleIdentifier.utf8().data()]);
+    [TestRunnerWKWebView _setApplicationBundleIdentifier:applicationBundleIdentifier.get()];
+}
+
 void TestController::cocoaResetStateToConsistentValues(const TestOptions& options)
 {
     m_calendarSwizzler = nullptr;

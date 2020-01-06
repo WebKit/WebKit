@@ -163,6 +163,7 @@ void WebProcessCreationParameters::encode(IPC::Encoder& encoder) const
 #if PLATFORM(IOS)
     encoder << compilerServiceExtensionHandle;
     encoder << contentFilterExtensionHandle;
+    encoder << launchServicesOpenExtensionHandle;
     encoder << diagnosticsExtensionHandle;
 #endif
     
@@ -418,6 +419,12 @@ bool WebProcessCreationParameters::decode(IPC::Decoder& decoder, WebProcessCreat
     if (!contentFilterExtensionHandle)
         return false;
     parameters.contentFilterExtensionHandle = WTFMove(*contentFilterExtensionHandle);
+
+    Optional<Optional<SandboxExtension::Handle>> launchServicesOpenExtensionHandle;
+    decoder >> launchServicesOpenExtensionHandle;
+    if (!launchServicesOpenExtensionHandle)
+        return false;
+    parameters.launchServicesOpenExtensionHandle = WTFMove(*launchServicesOpenExtensionHandle);
 
     Optional<Optional<SandboxExtension::Handle>> diagnosticsExtensionHandle;
     decoder >> diagnosticsExtensionHandle;

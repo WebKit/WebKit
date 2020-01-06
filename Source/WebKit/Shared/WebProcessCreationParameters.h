@@ -201,6 +201,7 @@ struct WebProcessCreationParameters {
 #if PLATFORM(IOS)
     Optional<SandboxExtension::Handle> compilerServiceExtensionHandle;
     Optional<SandboxExtension::Handle> contentFilterExtensionHandle;
+    Optional<SandboxExtension::Handle> launchServicesOpenExtensionHandle;
     Optional<SandboxExtension::Handle> diagnosticsExtensionHandle;
 #endif
 

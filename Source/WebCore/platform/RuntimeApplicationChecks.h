@@ -47,7 +47,7 @@ WEBCORE_EXPORT void setApplicationSDKVersion(uint32_t);
 WEBCORE_EXPORT uint32_t applicationSDKVersion();
 
 WEBCORE_EXPORT void setApplicationBundleIdentifier(const String&);
-String applicationBundleIdentifier();
+WEBCORE_EXPORT String applicationBundleIdentifier();
 
 #if PLATFORM(MAC)
 
