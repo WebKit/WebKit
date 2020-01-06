@@ -1,3 +1,14 @@
+2020-01-06  Philippe Normand  <pnormand@igalia.com>
+
+        [WPE][Qt] TestRunJavaScript failure
+        https://bugs.webkit.org/show_bug.cgi?id=205766
+
+        Reviewed by Carlos Garcia Campos.
+
+        * TestWebKitAPI/Tests/WPEQt/TestRunJavaScript.cpp:
+        (TestRunJavaScript::main): Surround JS function with parentheses
+        to comply with the ECMAScript specification.
+
 2020-01-05  Sam Weinig  <weinig@apple.com>
 
         Further simplify StringBuilder usage by standardizing hex formating to a single hex() function

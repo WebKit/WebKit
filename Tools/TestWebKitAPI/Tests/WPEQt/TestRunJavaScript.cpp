@@ -37,7 +37,7 @@ void TestRunJavaScript::main()
     QVERIFY(!m_view->isLoading());
     QCOMPARE(m_view->title(), title);
     const QString tstProperty = QString(QLatin1String("Qt.tst_data"));
-    QJSValue callback = m_engine.evaluate(QString("function(result) { %1 = result; }").arg(tstProperty));
+    QJSValue callback = m_engine.evaluate(QString("(function(result) { %1 = result; })").arg(tstProperty));
     QVERIFY2(!callback.isError(), qPrintable(callback.toString()));
     QVERIFY(!callback.isUndefined());
     QVERIFY(callback.isCallable());
