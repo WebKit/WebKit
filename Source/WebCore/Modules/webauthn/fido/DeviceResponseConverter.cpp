@@ -44,8 +44,6 @@ namespace fido {
 using namespace WebCore;
 using CBOR = cbor::CBORValue;
 
-constexpr size_t kResponseCodeLength = 1;
-
 static ProtocolVersion convertStringToProtocolVersion(const String& version)
 {
     if (version == kCtap2Version)

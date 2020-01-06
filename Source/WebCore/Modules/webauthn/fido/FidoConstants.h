@@ -107,6 +107,8 @@ enum class CtapDeviceResponseCode : uint8_t {
 
 bool isCtapDeviceResponseCode(CtapDeviceResponseCode);
 
+const size_t kResponseCodeLength = 1;
+
 // Commands supported by CTAPHID device as specified in
 // https://fidoalliance.org/specs/fido-v2.0-ps-20170927/fido-client-to-authenticator-protocol-v2.0-ps-20170927.html#ctaphid-commands
 enum class FidoHidDeviceCommand : uint8_t {

@@ -41,9 +41,14 @@
 #include "CryptoKeyAES.h"
 #include "CryptoKeyEC.h"
 #include "CryptoKeyHMAC.h"
+#include "DeviceResponseConverter.h"
+#include "WebAuthenticationConstants.h"
 #include <pal/crypto/CryptoDigest.h>
 
 namespace fido {
+using namespace WebCore;
+using CBOR = cbor::CBORValue;
+
 namespace pin {
 using namespace cbor;
 
