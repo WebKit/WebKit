@@ -34,12 +34,12 @@ PASS createEvent('deviceorientationevent') should be initialized correctly.
 PASS DEVICEORIENTATIONEVENT should be an alias for DeviceOrientationEvent. 
 PASS createEvent('DEVICEORIENTATIONEVENT') should be initialized correctly. 
 PASS Should throw NOT_SUPPORTED_ERR for pluralized legacy event interface "DeviceOrientationEvents" 
-FAIL DragEvent should be an alias for DragEvent. The operation is not supported.
-FAIL createEvent('DragEvent') should be initialized correctly. undefined is not an object (evaluating 'ev.type')
-FAIL dragevent should be an alias for DragEvent. The operation is not supported.
-FAIL createEvent('dragevent') should be initialized correctly. undefined is not an object (evaluating 'ev.type')
-FAIL DRAGEVENT should be an alias for DragEvent. The operation is not supported.
-FAIL createEvent('DRAGEVENT') should be initialized correctly. undefined is not an object (evaluating 'ev.type')
+PASS DragEvent should be an alias for DragEvent. 
+PASS createEvent('DragEvent') should be initialized correctly. 
+PASS dragevent should be an alias for DragEvent. 
+PASS createEvent('dragevent') should be initialized correctly. 
+PASS DRAGEVENT should be an alias for DragEvent. 
+PASS createEvent('DRAGEVENT') should be initialized correctly. 
 PASS Should throw NOT_SUPPORTED_ERR for pluralized legacy event interface "DragEvents" 
 PASS Event should be an alias for Event. 
 PASS createEvent('Event') should be initialized correctly. 
