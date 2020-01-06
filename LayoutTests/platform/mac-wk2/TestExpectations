@@ -927,3 +927,5 @@ webkit.org/b/203256 [ Debug ] imported/w3c/web-platform-tests/webrtc/RTCPeerConn
 webkit.org/b/205301 [ Mojave+ ] inspector/canvas/requestShaderSource-webgpu.html [ Pass Failure ]
 
 webkit.org/b/171784 fast/shadow-dom/link-element-in-shadow-tree.html [ Pass Failure ]
+
+webkit.org/b/205808 fast/text/international/unicode-bidi-other-neutrals.html [ Pass Failure ]
