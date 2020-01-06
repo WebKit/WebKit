@@ -52,6 +52,13 @@
     overflow-y: scroll;
 }
 
+.sidebar > .panel.navigation.canvas.showing-recording > .content > .tree-outline.canvas {
+    flex-shrink: 0;
+    height: fit-content;
+    max-height: 110px;
+    overflow-y: auto;
+}
+
 .sidebar > .panel.navigation.canvas:not(.has-recordings) > .filter-bar,
 .sidebar > .panel.navigation.canvas:not(.has-recordings) > .content > :matches(.navigation-bar, .recording-content) {
     display: none;
