@@ -31,6 +31,7 @@ WI.Slider = class Slider extends WI.Object
 
         this._element = document.createElement("div");
         this._element.className = "slider";
+        this._element.tabIndex = 0;
 
         this._knob = this._element.appendChild(document.createElement("img"));
 
@@ -39,6 +40,7 @@ WI.Slider = class Slider extends WI.Object
         this._maxY = 0;
 
         this._element.addEventListener("mousedown", this);
+        this._element.addEventListener("keydown", this._handleKeyDown.bind(this));
     }
 
     // Public
@@ -108,6 +110,9 @@ WI.Slider = class Slider extends WI.Object
 
     _handleMousedown(event)
     {
+        if (event.button !== 0 || event.ctrlKey)
+            return;
+
         if (event.target !== this._knob)
             this.value = 1 - ((this._localPointForEvent(event).y - 3) / this.maxY);
 
@@ -118,6 +123,8 @@ WI.Slider = class Slider extends WI.Object
 
         window.addEventListener("mousemove", this, true);
         window.addEventListener("mouseup", this, true);
+
+        this._element.focus();
     }
 
     _handleMousemove(event)
@@ -134,6 +141,26 @@ WI.Slider = class Slider extends WI.Object
 
         window.removeEventListener("mousemove", this, true);
         window.removeEventListener("mouseup", this, true);
+    }
+
+    _handleKeyDown(event)
+    {
+        let y = 0;
+        let step = event.shiftKey ? 0.1 : 0.01;
+
+        switch (event.keyIdentifier) {
+        case "Down":
+            y -= step;
+            break;
+        case "Up":
+            y += step;
+            break;
+        }
+
+        if (y) {
+            event.preventDefault();
+            this.value += y;
+        }
     }
 
     _localPointForEvent(event)

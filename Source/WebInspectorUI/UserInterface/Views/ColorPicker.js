@@ -143,6 +143,11 @@ WI.ColorPicker = class ColorPicker extends WI.Object
         this._showColorComponentInputs();
     }
 
+    focus()
+    {
+        this._colorSquare.element.focus();
+    }
+
     colorSquareColorDidChange(colorSquare)
     {
         this._updateColor();

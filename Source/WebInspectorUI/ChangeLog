@@ -1,5 +1,41 @@
 2020-01-06  Nikita Vasilyev  <nvasilyev@apple.com>
 
+        Web Inspector: Color picker: make it keyboard accessible
+        https://bugs.webkit.org/show_bug.cgi?id=205572
+        <rdar://problem/58169943>
+
+        Reviewed by Brian Burg.
+
+        For the color square, make up, down, left, and right keys move the crosshair.
+
+        For the hue and opacity sliders:
+        - Pressing up and down keys should adjust the value by 1%.
+        - When holding Shift, up and down keys adjust the value by 10%.
+
+        * UserInterface/Views/ColorPicker.js:
+        (WI.ColorPicker.prototype.focus):
+        * UserInterface/Views/ColorSquare.css:
+        (.color-square):
+        Match the border of the hue and opacity sliders.
+
+        * UserInterface/Views/ColorSquare.js:
+        (WI.ColorSquare):
+        Make the color square focusable.
+
+        (WI.ColorSquare.prototype._handleMousedown):
+        (WI.ColorSquare.prototype._handleKeyDown):
+        * UserInterface/Views/InlineSwatch.js:
+        * UserInterface/Views/Slider.css:
+        (.slider:focus):
+        * UserInterface/Views/Slider.js:
+        (WI.Slider):
+        (WI.Slider.prototype._handleMousedown):
+        Drive-by: right clicking the slider shouldn't move the thumb.
+
+        (WI.Slider.prototype._handleKeyDown):
+
+2020-01-06  Nikita Vasilyev  <nvasilyev@apple.com>
+
         REGRESSION(r218839): Web Inspector: Color picker: pressing Esc should hide color picker
         https://bugs.webkit.org/show_bug.cgi?id=205570
         <rdar://problem/58169820>

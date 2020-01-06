@@ -269,6 +269,7 @@ WI.InlineSwatch = class InlineSwatch extends WI.Object
         switch (this._type) {
         case WI.InlineSwatch.Type.Color:
             this._valueEditor.color = value;
+            this._valueEditor.focus();
             break;
 
         case WI.InlineSwatch.Type.Gradient:

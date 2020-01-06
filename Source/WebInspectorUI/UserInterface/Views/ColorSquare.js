@@ -37,6 +37,7 @@ WI.ColorSquare = class ColorSquare
 
         this._element = document.createElement("div");
         this._element.className = "color-square";
+        this._element.tabIndex = 0;
 
         let saturationGradientElement = this._element.appendChild(document.createElement("div"));
         saturationGradientElement.className = "saturation-gradient fill";
@@ -49,6 +50,7 @@ WI.ColorSquare = class ColorSquare
         this._polylineElement = null;
 
         this._element.addEventListener("mousedown", this);
+        this._element.addEventListener("keydown", this._handleKeyDown.bind(this));
 
         this._crosshairElement = this._element.appendChild(document.createElement("div"));
         this._crosshairElement.className = "crosshair";
@@ -172,6 +174,7 @@ WI.ColorSquare = class ColorSquare
 
         // Prevent text selection.
         event.stop();
+        this._element.focus();
     }
 
     _handleMousemove(event)
@@ -183,6 +186,36 @@ WI.ColorSquare = class ColorSquare
     {
         window.removeEventListener("mousemove", this, true);
         window.removeEventListener("mouseup", this, true);
+    }
+
+    _handleKeyDown(event)
+    {
+        let dx = 0;
+        let dy = 0;
+        let step = event.shiftKey ? 10 : 1;
+
+        switch (event.keyIdentifier) {
+        case "Right":
+            dx += step;
+            break;
+        case "Left":
+            dx -= step;
+            break;
+        case "Down":
+            dy += step;
+            break;
+        case "Up":
+            dy -= step;
+            break;
+        }
+
+        if (dx || dy) {
+            event.preventDefault();
+            this._setCrosshairPosition(new WI.Point(this._x + dx, this._y + dy));
+
+            if (this._delegate && this._delegate.colorSquareColorDidChange)
+                this._delegate.colorSquareColorDidChange(this);
+        }
     }
 
     _updateColorForMouseEvent(event)

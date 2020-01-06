@@ -25,6 +25,7 @@
 
 .color-square {
     position: relative;
+    outline: 0.5px solid hsl(0, 0%, 70%);
 
     --stroke-opacity: 0.8;
 }
