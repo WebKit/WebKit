@@ -532,6 +532,7 @@ WKWebsiteDataStoreRef TestController::websiteDataStore()
             WKWebsiteDataStoreConfigurationSetWebSQLDatabaseDirectory(configuration.get(), toWK(temporaryFolder + pathSeparator + "Databases" + pathSeparator + "WebSQL").get());
             WKWebsiteDataStoreConfigurationSetMediaKeysStorageDirectory(configuration.get(), toWK(temporaryFolder + pathSeparator + "MediaKeys").get());
             WKWebsiteDataStoreConfigurationSetResourceLoadStatisticsDirectory(configuration.get(), toWK(temporaryFolder + pathSeparator + "ResourceLoadStatistics").get());
+            WKWebsiteDataStoreConfigurationSetServiceWorkerRegistrationDirectory(configuration.get(), toWK(temporaryFolder + pathSeparator + "ServiceWorkers").get());
             WKWebsiteDataStoreConfigurationSetPerOriginStorageQuota(configuration.get(), 400 * 1024);
             WKWebsiteDataStoreConfigurationSetNetworkCacheSpeculativeValidationEnabled(configuration.get(), true);
             WKWebsiteDataStoreConfigurationSetStaleWhileRevalidateEnabled(configuration.get(), true);
@@ -3073,13 +3074,6 @@ WKContextRef TestController::platformAdjustContext(WKContextRef context, WKConte
 {
     auto* dataStore = TestController::websiteDataStore();
     WKWebsiteDataStoreSetResourceLoadStatisticsEnabled(dataStore, true);
-
-    if (const char* dumpRenderTreeTemp = libraryPathForTesting()) {
-        String temporaryFolder = String::fromUTF8(dumpRenderTreeTemp);
-
-        WKWebsiteDataStoreSetServiceWorkerRegistrationDirectory(dataStore, toWK(temporaryFolder + pathSeparator + "ServiceWorkers").get());
-    }
-
     return context;
 }
 

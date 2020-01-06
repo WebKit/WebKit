@@ -1,5 +1,33 @@
 2020-01-06  Alex Christensen  <achristensen@webkit.org>
 
+        Remove WebsiteDataStore::setServiceWorkerRegistrationDirectory
+        https://bugs.webkit.org/show_bug.cgi?id=205754
+
+        Reviewed by Youenn Fablet.
+
+        The directory is now only set in the configuration, which will prevent misuse of the misplaced SPI.
+        Updated API tests, which still work.
+
+        * UIProcess/API/C/WKWebsiteDataStoreConfigurationRef.cpp:
+        (WKWebsiteDataStoreConfigurationCopyServiceWorkerRegistrationDirectory):
+        (WKWebsiteDataStoreConfigurationSetServiceWorkerRegistrationDirectory):
+        * UIProcess/API/C/WKWebsiteDataStoreConfigurationRef.h:
+        * UIProcess/API/C/WKWebsiteDataStoreRef.cpp:
+        (WKWebsiteDataStoreCopyServiceWorkerRegistrationDirectory): Deleted.
+        (WKWebsiteDataStoreSetServiceWorkerRegistrationDirectory): Deleted.
+        * UIProcess/API/C/WKWebsiteDataStoreRef.h:
+        * UIProcess/API/Cocoa/WKWebsiteDataStore.mm:
+        (-[WKWebsiteDataStore _hasRegisteredServiceWorker]):
+        (-[WKWebsiteDataStore _serviceWorkerRegistrationDirectory]): Deleted.
+        (-[WKWebsiteDataStore _setServiceWorkerRegistrationDirectory:]): Deleted.
+        * UIProcess/API/Cocoa/WKWebsiteDataStorePrivate.h:
+        * UIProcess/WebsiteData/WebsiteDataStore.h:
+        (WebKit::WebsiteDataStore::setCacheStorageDirectory):
+        (WebKit::WebsiteDataStore::serviceWorkerRegistrationDirectory const): Deleted.
+        (WebKit::WebsiteDataStore::setServiceWorkerRegistrationDirectory): Deleted.
+
+2020-01-06  Alex Christensen  <achristensen@webkit.org>
+
         Remove _WKProcessPoolConfiguration.CTDataConnectionServiceType and suppressesConnectionTerminationOnSystemChange
         https://bugs.webkit.org/show_bug.cgi?id=205751
 

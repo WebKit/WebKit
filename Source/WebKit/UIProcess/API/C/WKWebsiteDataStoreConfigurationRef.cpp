@@ -110,6 +110,16 @@ void WKWebsiteDataStoreConfigurationSetResourceLoadStatisticsDirectory(WKWebsite
     WebKit::toImpl(configuration)->setResourceLoadStatisticsDirectory(WebKit::toImpl(directory)->string());
 }
 
+WKStringRef WKWebsiteDataStoreConfigurationCopyServiceWorkerRegistrationDirectory(WKWebsiteDataStoreConfigurationRef configuration)
+{
+    return WebKit::toCopiedAPI(WebKit::toImpl(configuration)->serviceWorkerRegistrationDirectory());
+}
+
+void WKWebsiteDataStoreConfigurationSetServiceWorkerRegistrationDirectory(WKWebsiteDataStoreConfigurationRef configuration, WKStringRef directory)
+{
+    WebKit::toImpl(configuration)->setServiceWorkerRegistrationDirectory(WebKit::toImpl(directory)->string());
+}
+
 uint64_t WKWebsiteDataStoreConfigurationGetPerOriginStorageQuota(WKWebsiteDataStoreConfigurationRef configuration)
 {
     return WebKit::toImpl(configuration)->perOriginStorageQuota();

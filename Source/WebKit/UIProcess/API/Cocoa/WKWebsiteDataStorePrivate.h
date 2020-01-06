@@ -51,7 +51,6 @@ typedef NS_OPTIONS(NSUInteger, _WKWebsiteDataStoreFetchOptions) {
 @property (nonatomic, setter=_setResourceLoadStatisticsDebugMode:) BOOL _resourceLoadStatisticsDebugMode WK_API_AVAILABLE(macos(10.14), ios(12.0));
 @property (nonatomic, setter=_setPerOriginStorageQuota:) NSUInteger _perOriginStorageQuota WK_API_DEPRECATED_WITH_REPLACEMENT("_WKWebsiteDataStoreConfiguration.perOriginStorageQuota", macos(10.13.4, WK_MAC_TBA), ios(11.3, WK_IOS_TBA));
 @property (nonatomic, setter=_setCacheStorageDirectory:) NSString* _cacheStorageDirectory WK_API_DEPRECATED_WITH_REPLACEMENT("_WKWebsiteDataStoreConfiguration.cacheStorageDirectory", macos(10.13.4, WK_MAC_TBA), ios(11.3, WK_IOS_TBA));
-@property (nonatomic, setter=_setServiceWorkerRegistrationDirectory:) NSString* _serviceWorkerRegistrationDirectory WK_API_DEPRECATED_WITH_REPLACEMENT("_WKWebsiteDataStoreConfiguration.serviceWorkerRegistrationDirectory", macos(10.13.4, WK_MAC_TBA), ios(11.3, WK_IOS_TBA));
 
 @property (nonatomic, setter=_setBoundInterfaceIdentifier:) NSString *_boundInterfaceIdentifier WK_API_DEPRECATED_WITH_REPLACEMENT("_WKWebsiteDataStoreConfiguration.boundInterfaceIdentifier", macos(10.13.4, WK_MAC_TBA), ios(11.3, WK_IOS_TBA));
 @property (nonatomic, setter=_setAllowsCellularAccess:) BOOL _allowsCellularAccess WK_API_DEPRECATED_WITH_REPLACEMENT("_WKWebsiteDataStoreConfiguration.allowsCellularAccess", macos(10.13.4, WK_MAC_TBA), ios(11.3, WK_IOS_TBA));

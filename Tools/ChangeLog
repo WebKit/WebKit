@@ -1,5 +1,19 @@
 2020-01-06  Alex Christensen  <achristensen@webkit.org>
 
+        Remove WebsiteDataStore::setServiceWorkerRegistrationDirectory
+        https://bugs.webkit.org/show_bug.cgi?id=205754
+
+        Reviewed by Youenn Fablet.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/ServiceWorkerBasic.mm:
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::websiteDataStore):
+        (WTR::TestController::platformAdjustContext):
+        * WebKitTestRunner/cocoa/TestControllerCocoa.mm:
+        (WTR::initializeWebViewConfiguration):
+
+2020-01-06  Alex Christensen  <achristensen@webkit.org>
+
         Allow wildcard scheme in UserContentURLPattern
         https://bugs.webkit.org/show_bug.cgi?id=205695
 

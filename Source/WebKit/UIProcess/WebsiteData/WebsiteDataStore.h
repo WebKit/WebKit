@@ -127,8 +127,6 @@ public:
     uint64_t perThirdPartyOriginStorageQuota() const;
     const String& cacheStorageDirectory() const { return m_resolvedConfiguration->cacheStorageDirectory(); }
     void setCacheStorageDirectory(String&& directory) { m_resolvedConfiguration->setCacheStorageDirectory(WTFMove(directory)); }
-    const String& serviceWorkerRegistrationDirectory() const { return m_resolvedConfiguration->serviceWorkerRegistrationDirectory(); }
-    void setServiceWorkerRegistrationDirectory(String&& directory) { m_resolvedConfiguration->setServiceWorkerRegistrationDirectory(WTFMove(directory)); }
 
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
     WebResourceLoadStatisticsStore* resourceLoadStatistics() const { return m_resourceLoadStatistics.get(); }

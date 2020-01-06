@@ -329,16 +329,6 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
     _websiteDataStore->setCacheStorageDirectory(directory);
 }
 
-- (NSString *)_serviceWorkerRegistrationDirectory
-{
-    return _websiteDataStore->serviceWorkerRegistrationDirectory();
-}
-
-- (void)_setServiceWorkerRegistrationDirectory:(NSString *)directory
-{
-    _websiteDataStore->setServiceWorkerRegistrationDirectory(directory);
-}
-
 - (void)_setBoundInterfaceIdentifier:(NSString *)identifier
 {
     _websiteDataStore->setBoundInterfaceIdentifier(identifier);
@@ -570,7 +560,7 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
 - (bool)_hasRegisteredServiceWorker
 {
 #if ENABLE(SERVICE_WORKER)
-    return FileSystem::fileExists(WebCore::serviceWorkerRegistrationDatabaseFilename(_websiteDataStore->serviceWorkerRegistrationDirectory()));
+    return FileSystem::fileExists(WebCore::serviceWorkerRegistrationDatabaseFilename(_websiteDataStore->configuration().serviceWorkerRegistrationDirectory()));
 #else
     return NO;
 #endif

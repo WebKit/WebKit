@@ -1351,16 +1351,15 @@ TEST(ServiceWorkers, ServiceWorkerAndCacheStorageDefaultDirectories)
 
 TEST(ServiceWorkers, ServiceWorkerAndCacheStorageSpecificDirectories)
 {
-    [WKWebsiteDataStore defaultDataStore];
     [WKWebsiteDataStore _allowWebsiteDataRecordsForAllOrigins];
 
-    RetainPtr<WKWebViewConfiguration> configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
-
-    configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     setConfigurationInjectedBundlePath(configuration.get());
-    auto websiteDataStore = [configuration websiteDataStore];
+    auto dataStoreConfiguration = adoptNS([_WKWebsiteDataStoreConfiguration new]);
+    [dataStoreConfiguration _setServiceWorkerRegistrationDirectory:[NSURL fileURLWithPath:@"/var/tmp"]];
+    auto websiteDataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:dataStoreConfiguration.get()]);
     [websiteDataStore _setCacheStorageDirectory:@"/var/tmp"];
-    [websiteDataStore _setServiceWorkerRegistrationDirectory:@"/var/tmp"];
+    [configuration setWebsiteDataStore:websiteDataStore.get()];
 
     RetainPtr<DirectoryPageMessageHandler> directoryPageMessageHandler = adoptNS([[DirectoryPageMessageHandler alloc] init]);
     [[configuration userContentController] addScriptMessageHandler:directoryPageMessageHandler.get() name:@"sw"];
@@ -1900,7 +1899,7 @@ TEST(ServiceWorkers, SuspendNetworkProcess)
     done = false;
 
     auto store = [configuration websiteDataStore];
-    auto path = store._serviceWorkerRegistrationDirectory;
+    auto path = store._configuration._serviceWorkerRegistrationDirectory.path;
 
     NSURL* directory = [NSURL fileURLWithPath:path isDirectory:YES];
     NSURL *swDBPath = [directory URLByAppendingPathComponent:@"ServiceWorkerRegistrations-4.sqlite3"];
