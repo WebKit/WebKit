@@ -1,3 +1,23 @@
+2020-01-06  Antoine Quint  <graouts@apple.com>
+
+        REGRESSION: [ iOS ] imported/w3c/web-platform-tests/dom/events/Event-dispatch-on-disabled-elements.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=205458
+        <rdar://problem/58081704>
+
+        Reviewed by Wenson Hsieh.
+
+        The last sub-test in imported/w3c/web-platform-tests/dom/events/Event-dispatch-on-disabled-elements.html checks on the
+        ability to activate various form controls after disabling and re-enabling them. Two of those form controls, <select>
+        and <textarea>, would trigger animations of the web view's UIScrollView causing touches to be consumed by UIKit and
+        never seen by the WKContentView, and as such the expected "click" events would not be received. It would have been
+        possible to modify the test to wait on any potential page scroll to complete before dispatching taps, but since this
+        is a WPT test, we cannot modify it. Instead, we make a change to the function called by uiScriptController.singleTapAtPoint()
+        to interrupt any pending UIScrollView animation when a tap is being triggered on the web view. Credit to Wenson Hsieh
+        for suggesting this simple and effective approach.
+
+        * WebKitTestRunner/ios/UIScriptControllerIOS.mm:
+        (WTR::UIScriptControllerIOS::singleTapAtPointWithModifiers):
+
 2020-01-06  Mark Lam  <mark.lam@apple.com>
 
         Add --force-optimization-level option to Tools/Scripts/set-webkit-configuration.
