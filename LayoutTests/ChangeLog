@@ -1,3 +1,12 @@
+2020-01-06  Truitt Savell  <tsavell@apple.com>
+
+        REGRESSION: [ Mac Debug ] inspector/page/setBootstrapScript-main-frame.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=205807
+
+        Unreviewed test gardening.
+
+        * platform/mac/TestExpectations:
+
 2020-01-06  Zalan Bujtas  <zalan@apple.com>
 
         REGRESSION: [ Mojave ]  tables/mozilla_expected_failures/bugs/bug2479-5.html is failing
