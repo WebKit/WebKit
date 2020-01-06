@@ -3165,7 +3165,7 @@ TextRun RenderBlock::constructTextRun(const UChar* characters, unsigned length, 
     return constructTextRun(StringView(characters, length), style, expansion);
 }
 
-#ifndef NDEBUG
+#if ASSERT_ENABLED
 void RenderBlock::checkPositionedObjectsNeedLayout()
 {
     auto* positionedDescendants = positionedObjects();
@@ -3175,8 +3175,7 @@ void RenderBlock::checkPositionedObjectsNeedLayout()
     for (auto* renderer : *positionedDescendants)
         ASSERT(!renderer->needsLayout());
 }
-
-#endif
+#endif // ASSERT_ENABLED
 
 bool RenderBlock::hasDefiniteLogicalHeight() const
 {

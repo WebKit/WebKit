@@ -1835,7 +1835,7 @@ void Page::setVolumeOfMediaElement(double volume, uint64_t elementID)
 
 #endif
 
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
 
 void Page::checkSubframeCountConsistency() const
 {
@@ -1848,7 +1848,7 @@ void Page::checkSubframeCountConsistency() const
     ASSERT(m_subframeCount + 1 == subframeCount);
 }
 
-#endif
+#endif // ASSERT_ENABLED
 
 void Page::resumeAnimatingImages()
 {

@@ -2943,7 +2943,7 @@ ULONG WebView::Release()
 
     ULONG newRef = --m_refCount;
     if (!newRef) {
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
         m_deletionHasBegun = true;
 #endif
         delete(this);

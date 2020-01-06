@@ -186,7 +186,7 @@ protected:
     // Handle platform-specific data
     void invalidatePlatformData();
 
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     bool notSolidColor() override;
 #endif
 
@@ -232,7 +232,7 @@ private:
     bool m_clearDecoderAfterAsyncFrameRequestForTesting { false };
     bool m_largeImageAsyncDecodingEnabledForTesting { false };
 
-#if !LOG_DISABLED
+#if ASSERT_ENABLED || !LOG_DISABLED
     size_t m_lateFrameCount { 0 };
     size_t m_earlyFrameCount { 0 };
     size_t m_cachedFrameCount { 0 };

@@ -370,7 +370,7 @@ private:
     static_assert(String::MaxLength == std::numeric_limits<int32_t>::max(), "");
     Checked<int32_t, ConditionalCrashOnOverflow> m_length;
     bool m_is8Bit { true };
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     mutable bool m_isReified { false };
 #endif
 };

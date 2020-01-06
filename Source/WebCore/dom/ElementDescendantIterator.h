@@ -52,7 +52,7 @@ private:
     Element* m_current;
     Vector<Element*, 16> m_ancestorSiblingStack;
 
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     ElementIteratorAssertions m_assertions;
 #endif
 };
@@ -76,7 +76,7 @@ private:
     const Element* m_current;
     Vector<Element*, 16> m_ancestorSiblingStack;
 
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     ElementIteratorAssertions m_assertions;
 #endif
 };
@@ -115,7 +115,7 @@ inline ElementDescendantIterator::ElementDescendantIterator()
 
 inline ElementDescendantIterator::ElementDescendantIterator(Element* current)
     : m_current(current)
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     , m_assertions(current)
 #endif
 {
@@ -124,7 +124,7 @@ inline ElementDescendantIterator::ElementDescendantIterator(Element* current)
 
 inline void ElementDescendantIterator::dropAssertions()
 {
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     m_assertions.clear();
 #endif
 }
@@ -151,7 +151,7 @@ ALWAYS_INLINE ElementDescendantIterator& ElementDescendantIterator::operator++()
 
     m_current = m_ancestorSiblingStack.takeLast();
 
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     // Drop the assertion when the iterator reaches the end.
     if (!m_current)
         m_assertions.dropEventDispatchAssertion();
@@ -185,7 +185,7 @@ ALWAYS_INLINE ElementDescendantIterator& ElementDescendantIterator::operator--()
 
     m_current = deepestSibling;
 
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     // Drop the assertion when the iterator reaches the end.
     if (!m_current)
         m_assertions.dropEventDispatchAssertion();
@@ -228,7 +228,7 @@ inline ElementDescendantConstIterator::ElementDescendantConstIterator()
 
 inline ElementDescendantConstIterator::ElementDescendantConstIterator(const Element* current)
     : m_current(current)
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     , m_assertions(current)
 #endif
 {
@@ -237,7 +237,7 @@ inline ElementDescendantConstIterator::ElementDescendantConstIterator(const Elem
 
 inline void ElementDescendantConstIterator::dropAssertions()
 {
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     m_assertions.clear();
 #endif
 }
@@ -264,7 +264,7 @@ ALWAYS_INLINE ElementDescendantConstIterator& ElementDescendantConstIterator::op
 
     m_current = m_ancestorSiblingStack.takeLast();
 
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     // Drop the assertion when the iterator reaches the end.
     if (!m_current)
         m_assertions.dropEventDispatchAssertion();

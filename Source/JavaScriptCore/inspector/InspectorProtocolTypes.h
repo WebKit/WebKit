@@ -57,16 +57,16 @@ template<typename T> struct BindingTraits<JSON::ArrayOf<T>> {
 
     static void assertValueHasExpectedType(JSON::Value* value)
     {
-#if ASSERT_DISABLED
-        UNUSED_PARAM(value);
-#else
+#if ASSERT_ENABLED
         ASSERT_ARG(value, value);
         RefPtr<JSON::Array> array;
         bool castSucceeded = value->asArray(array);
         ASSERT_UNUSED(castSucceeded, castSucceeded);
         for (unsigned i = 0; i < array->length(); i++)
             BindingTraits<T>::assertValueHasExpectedType(array->get(i).get());
-#endif // !ASSERT_DISABLED
+#else
+        UNUSED_PARAM(value);
+#endif // ASSERT_ENABLED
     }
 };
 

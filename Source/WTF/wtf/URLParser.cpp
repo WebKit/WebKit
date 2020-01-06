@@ -1148,7 +1148,7 @@ URLParser::URLParser(const String& input, const URL& base, const URLTextEncoding
         || (input.isAllSpecialCharacters<isC0ControlOrSpace>()
             && m_url.m_string == base.m_string.left(base.m_queryEnd)));
     ASSERT(internalValuesConsistent(m_url));
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     if (!m_didSeeSyntaxViolation) {
         // Force a syntax violation at the beginning to make sure we get the same result.
         URLParser parser(makeString(" ", input), base, nonUTF8QueryEncoding);
@@ -1156,7 +1156,7 @@ URLParser::URLParser(const String& input, const URL& base, const URLTextEncoding
         if (parsed.isValid())
             ASSERT(allValuesEqual(parser.result(), m_url));
     }
-#endif
+#endif // ASSERT_ENABLED
 }
 
 template<typename CharacterType>
@@ -2548,14 +2548,14 @@ template<typename CharacterType> Optional<URLParser::LCharBuffer> URLParser::dom
     int32_t numCharactersConverted = uidna_nameToASCII(&internationalDomainNameTranscoder(), StringView(domain).upconvertedCharacters(), domain.length(), hostnameBuffer, maxDomainLength, &processingDetails, &error);
 
     if (U_SUCCESS(error) && !processingDetails.errors) {
-#if ASSERT_DISABLED
-        UNUSED_PARAM(numCharactersConverted);
-#else
+#if ASSERT_ENABLED
         for (int32_t i = 0; i < numCharactersConverted; ++i) {
             ASSERT(isASCII(hostnameBuffer[i]));
             ASSERT(!isASCIIUpper(hostnameBuffer[i]));
         }
-#endif
+#else
+        UNUSED_PARAM(numCharactersConverted);
+#endif // ASSERT_ENABLED
         ascii.append(hostnameBuffer, numCharactersConverted);
         if (domain != StringView(ascii.data(), ascii.size()))
             syntaxViolation(iteratorForSyntaxViolationPosition);

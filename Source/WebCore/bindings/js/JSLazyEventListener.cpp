@@ -80,7 +80,7 @@ JSLazyEventListener::JSLazyEventListener(CreationArguments&& arguments, const St
 #endif
 }
 
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
 static inline bool isCloneInShadowTreeOfSVGUseElement(Node& originalNode, EventTarget& eventTarget)
 {
     if (!eventTarget.isNode())

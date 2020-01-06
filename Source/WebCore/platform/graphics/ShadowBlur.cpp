@@ -61,7 +61,7 @@ public:
     ScratchBuffer()
         : m_purgeTimer(*this, &ScratchBuffer::clearScratchBuffer)
         , m_lastWasInset(false)
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
         , m_bufferInUse(false)
 #endif
     {
@@ -70,7 +70,7 @@ public:
     ImageBuffer* getScratchBuffer(const IntSize& size)
     {
         ASSERT(!m_bufferInUse);
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
         m_bufferInUse = true;
 #endif
         // We do not need to recreate the buffer if the current buffer is large enough.
@@ -119,7 +119,7 @@ public:
 
     void scheduleScratchBufferPurge()
     {
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
         m_bufferInUse = false;
 #endif
         if (m_purgeTimer.isActive())
@@ -150,7 +150,7 @@ private:
     bool m_lastWasInset;
     FloatSize m_lastLayerSize;
 
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     bool m_bufferInUse;
 #endif
 };

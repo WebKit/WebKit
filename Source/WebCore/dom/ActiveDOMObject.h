@@ -143,7 +143,7 @@ private:
     void queueTaskToDispatchEventInternal(EventTarget&, TaskSource, Ref<Event>&&);
 
     unsigned m_pendingActivityCount { 0 };
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     bool m_suspendIfNeededWasCalled { false };
     Ref<Thread> m_creationThread { Thread::current() };
 #endif
@@ -151,7 +151,7 @@ private:
     friend class ActiveDOMObjectEventDispatchTask;
 };
 
-#if ASSERT_DISABLED
+#if !ASSERT_ENABLED
 
 inline void ActiveDOMObject::assertSuspendIfNeededWasCalled() const
 {

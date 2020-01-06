@@ -56,7 +56,7 @@ private:
     CSSStyleSheet* m_styleSheet;
 };
 
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
 static bool isAcceptableCSSStyleSheetParent(Node* parentNode)
 {
     // Only these nodes can be parents of StyleSheets, and they need to call clearOwnerNode() when moved out of document.
@@ -67,7 +67,7 @@ static bool isAcceptableCSSStyleSheetParent(Node* parentNode)
         || is<SVGStyleElement>(*parentNode)
         || parentNode->nodeType() == Node::PROCESSING_INSTRUCTION_NODE;
 }
-#endif
+#endif // ASSERT_ENABLED
 
 Ref<CSSStyleSheet> CSSStyleSheet::create(Ref<StyleSheetContents>&& sheet, CSSImportRule* ownerRule)
 {

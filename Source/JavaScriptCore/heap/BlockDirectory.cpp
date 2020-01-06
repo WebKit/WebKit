@@ -296,7 +296,7 @@ void BlockDirectory::shrink()
 
 void BlockDirectory::assertNoUnswept()
 {
-    if (ASSERT_DISABLED)
+    if (!ASSERT_ENABLED)
         return;
     
     if (m_bits.unswept().isEmpty())

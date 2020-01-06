@@ -245,7 +245,7 @@ static void* runJavaScriptThread(void* arg)
 
 - (void)accessStoredWebScriptObject
 {
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     BOOL isWindowObject = [storedWebScriptObject isKindOfClass:[DOMAbstractView class]];
     JSObjectRef jsObject = [storedWebScriptObject JSObject];
     ASSERT((jsObject && isWindowObject) || (!jsObject && !isWindowObject));

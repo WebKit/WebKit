@@ -94,25 +94,25 @@ class CustomElementReactionDisallowedScope {
 public:
     CustomElementReactionDisallowedScope()
     {
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
         s_customElementReactionDisallowedCount++;
 #endif
     }
 
     ~CustomElementReactionDisallowedScope()
     {
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
         ASSERT(s_customElementReactionDisallowedCount);
         s_customElementReactionDisallowedCount--;
 #endif
     }
 
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     static bool isReactionAllowed() { return !s_customElementReactionDisallowedCount; }
 #endif
 
     class AllowedScope {
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     public:
         AllowedScope()
             : m_originalCount(s_customElementReactionDisallowedCount)
@@ -127,11 +127,11 @@ public:
 
     private:
         unsigned m_originalCount;
-#endif
+#endif // ASSERT_ENABLED
     };
 
 private:
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     WEBCORE_EXPORT static unsigned s_customElementReactionDisallowedCount;
 
     friend class AllowedScope;

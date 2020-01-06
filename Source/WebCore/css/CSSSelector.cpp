@@ -812,7 +812,7 @@ String CSSSelector::selectorText(const String& rightSide) const
             return tagHistory->selectorText(" ~ " + builder.toString() + rightSide);
         case CSSSelector::Subselector:
             ASSERT_NOT_REACHED();
-#if ASSERT_DISABLED
+#if !ASSERT_ENABLED
             FALLTHROUGH;
 #endif
         case CSSSelector::ShadowDescendant:

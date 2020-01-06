@@ -42,7 +42,7 @@ TableGrid::Column::Column(const Box* columnBox)
 
 void TableGrid::Column::setWidthConstraints(FormattingContext::IntrinsicWidthConstraints widthConstraints)
 {
-#ifndef NDEBUG
+#if ASSERT_ENABLED
     m_hasWidthConstraints = true;
 #endif
     m_widthConstraints = widthConstraints;
@@ -56,7 +56,7 @@ FormattingContext::IntrinsicWidthConstraints TableGrid::Column::widthConstraints
 
 void TableGrid::Column::setLogicalWidth(LayoutUnit computedLogicalWidth)
 {
-#ifndef NDEBUG
+#if ASSERT_ENABLED
     m_hasComputedWidth = true;
 #endif
     m_computedLogicalWidth = computedLogicalWidth;
@@ -70,7 +70,7 @@ LayoutUnit TableGrid::Column::logicalWidth() const
 
 void TableGrid::Column::setLogicalLeft(LayoutUnit computedLogicalLeft)
 {
-#ifndef NDEBUG
+#if ASSERT_ENABLED
     m_hasComputedLeft = true;
 #endif
     m_computedLogicalLeft = computedLogicalLeft;

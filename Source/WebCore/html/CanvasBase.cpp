@@ -155,7 +155,7 @@ void CanvasBase::notifyObserversCanvasDestroyed()
 
     m_observers.clear();
 
-#ifndef NDEBUG
+#if ASSERT_ENABLED
     m_didNotifyObserversCanvasDestroyed = true;
 #endif
 }

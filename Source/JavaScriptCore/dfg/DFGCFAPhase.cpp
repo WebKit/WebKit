@@ -235,7 +235,7 @@ private:
                 break;
             }
             
-            if (!ASSERT_DISABLED
+            if (ASSERT_ENABLED
                 && m_state.didClobberOrFolded() != writesOverlap(m_graph, node, JSCell_structureID))
                 DFG_CRASH(m_graph, node, toCString("AI-clobberize disagreement; AI says ", m_state.clobberState(), " while clobberize says ", writeSet(m_graph, node)).data());
         }

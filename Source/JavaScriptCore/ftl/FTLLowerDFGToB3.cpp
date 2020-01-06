@@ -121,7 +121,7 @@ namespace {
 
 std::atomic<int> compileCounter;
 
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
 NO_RETURN_DUE_TO_CRASH static void ftlUnreachable(
     CodeBlock* codeBlock, BlockIndex blockIndex, unsigned nodeIndex)
 {
@@ -131,7 +131,7 @@ NO_RETURN_DUE_TO_CRASH static void ftlUnreachable(
     dataLog(".\n");
     CRASH();
 }
-#endif
+#endif // ASSERT_ENABLED
 
 // Using this instead of typeCheck() helps to reduce the load on B3, by creating
 // significantly less dead code.
@@ -17566,7 +17566,7 @@ private:
         m_out.store32(
             m_out.constInt32(callSiteIndex.bits()),
             tagFor(VirtualRegister(CallFrameSlot::argumentCountIncludingThis)));
-#if !USE(BUILTIN_FRAME_ADDRESS) || !ASSERT_DISABLED
+#if !USE(BUILTIN_FRAME_ADDRESS) || ASSERT_ENABLED
         m_out.storePtr(m_callFrame, m_out.absolute(&vm().topCallFrame));
 #endif
     }
@@ -17598,7 +17598,7 @@ private:
     {
         JSGlobalObject* globalObject = m_graph.globalObjectFor(m_node->origin.semantic);
         if (Options::useExceptionFuzz()) {
-#if !USE(BUILTIN_FRAME_ADDRESS) || !ASSERT_DISABLED
+#if !USE(BUILTIN_FRAME_ADDRESS) || ASSERT_ENABLED
             m_out.storePtr(m_callFrame, m_out.absolute(&vm().topCallFrame));
 #endif
             m_out.call(Void, m_out.operation(operationExceptionFuzz), weakPointer(globalObject));
@@ -18170,7 +18170,7 @@ private:
     {
         BlockIndex blockIndex = block->index;
         unsigned nodeIndex = node ? node->index() : UINT_MAX;
-#if ASSERT_DISABLED
+#if !ASSERT_ENABLED
         m_out.patchpoint(Void)->setGenerator(
             [=] (CCallHelpers& jit, const StackmapGenerationParams&) {
                 AllowMacroScratchRegisterUsage allowScratch(jit);
@@ -18181,7 +18181,7 @@ private:
                     jit.move(CCallHelpers::TrustedImm32(node->op()), GPRInfo::regT2);
                 jit.abortWithReason(FTLCrash);
             });
-#else
+#else // ASSERT_ENABLED
         m_out.call(
             Void,
             m_out.constIntPtr(ftlUnreachable),
@@ -18189,7 +18189,7 @@ private:
             // that would cause it to always get collected.
             m_out.constIntPtr(bitwise_cast<intptr_t>(codeBlock())), m_out.constInt32(blockIndex),
             m_out.constInt32(nodeIndex));
-#endif
+#endif // ASSERT_ENABLED
         m_out.unreachable();
     }
 

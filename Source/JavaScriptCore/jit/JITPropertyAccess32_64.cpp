@@ -840,7 +840,7 @@ void JIT::emit_op_get_from_scope(const Instruction* currentInstruction)
             
             move(regT0, base);
             load32(operandSlot, offset);
-            if (!ASSERT_DISABLED) {
+            if (ASSERT_ENABLED) {
                 Jump isOutOfLine = branch32(GreaterThanOrEqual, offset, TrustedImm32(firstOutOfLineOffset));
                 abortWithReason(JITOffsetIsNotOutOfLine);
                 isOutOfLine.link(this);

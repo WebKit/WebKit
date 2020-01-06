@@ -74,7 +74,7 @@ static void dispatchChildRemovalEvents(Ref<Node>&);
 ChildNodesLazySnapshot* ChildNodesLazySnapshot::latestSnapshot;
 
 unsigned ScriptDisallowedScope::s_count = 0;
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
 ScriptDisallowedScope::EventAllowedScope* ScriptDisallowedScope::EventAllowedScope::s_currentScope = nullptr;
 #endif
 

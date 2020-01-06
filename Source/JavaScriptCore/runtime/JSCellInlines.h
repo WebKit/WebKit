@@ -292,7 +292,7 @@ ALWAYS_INLINE void JSCell::setStructure(VM& vm, Structure* structure)
 inline const MethodTable* JSCell::methodTable(VM& vm) const
 {
     Structure* structure = this->structure(vm);
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     if (Structure* rootStructure = structure->structure(vm))
         ASSERT(rootStructure == rootStructure->structure(vm));
 #endif

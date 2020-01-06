@@ -44,7 +44,7 @@ namespace JSC { namespace B3 {
 
 class Procedure;
 
-#if ASSERT_DISABLED
+#if !ASSERT_ENABLED
 IGNORE_RETURN_TYPE_WARNINGS_BEGIN
 #endif
 
@@ -392,7 +392,7 @@ private:
 
 } } } // namespace JSC::B3::Air
 
-#if ASSERT_DISABLED
+#if !ASSERT_ENABLED
 IGNORE_RETURN_TYPE_WARNINGS_END
 #endif
 

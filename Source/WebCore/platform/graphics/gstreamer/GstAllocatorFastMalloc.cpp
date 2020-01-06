@@ -72,7 +72,7 @@ static GstMemory* gstAllocatorFastMallocAlloc(GstAllocator* allocator, gsize siz
 
 static void gstAllocatorFastMallocFree(GstAllocator* allocator, GstMemory* memory)
 {
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     ASSERT(G_TYPE_CHECK_INSTANCE_TYPE(allocator, gst_allocator_fast_malloc_get_type()));
 #else
     UNUSED_PARAM(allocator);

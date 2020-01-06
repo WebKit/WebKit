@@ -127,7 +127,7 @@ private:
     Seconds m_parserTimeLimit;
     Timer m_continueNextChunkTimer;
     bool m_isSuspendedWithActiveTimer;
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     bool m_suspended;
 #endif
     bool m_documentHasActiveParserYieldTokens { false };

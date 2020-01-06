@@ -231,7 +231,7 @@ private:
     size_t m_size { 0 };
     mutable DataSegmentVector m_segments;
 
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     mutable bool m_hasBeenCombinedIntoOneSegment { false };
     bool internallyConsistent() const;
 #endif

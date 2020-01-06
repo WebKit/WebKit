@@ -341,7 +341,7 @@ private:
 
     void checkConsistency()
     {
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
         // The rules for locals and constants in the stack are:
         // 1) Locals have to be materialized whenever a control entry is pushed to the control stack (i.e. every time we splitStack)
         //    NOTE: This is a trade-off so that set_local does not have to walk up the control stack looking for delayed get_locals
@@ -357,7 +357,7 @@ private:
         walkExpressionStack(m_parser->expressionStack(), [&](VirtualRegister expression, VirtualRegister slot) {
             ASSERT(expression == slot || expression.isConstant() || expression.isArgument() || expression.toLocal() < m_codeBlock->m_numVars);
         });
-#endif
+#endif // ASSERT_ENABLED
     }
 
     void materializeConstantsAndLocals(Stack& expressionStack)

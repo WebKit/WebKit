@@ -416,7 +416,7 @@ namespace WTF {
         template<typename HashTranslator, typename T> ValueType* lookup(const T&);
         template<typename HashTranslator, typename T> ValueType* inlineLookup(const T&);
 
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
         void checkTableConsistency() const;
 #else
         static void checkTableConsistency() { }
@@ -468,7 +468,7 @@ namespace WTF {
         iterator makeKnownGoodIterator(ValueType* pos) { return iterator(this, pos, m_table + m_tableSize, HashItemKnownGood); }
         const_iterator makeKnownGoodConstIterator(ValueType* pos) const { return const_iterator(this, pos, m_table + m_tableSize, HashItemKnownGood); }
 
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
         void checkTableConsistencyExceptSize() const;
 #else
         static void checkTableConsistencyExceptSize() { }
@@ -568,7 +568,7 @@ namespace WTF {
         return key;
     }
 
-#if ASSERT_DISABLED
+#if !ASSERT_ENABLED
 
     template<typename Key, typename Value, typename Extractor, typename HashFunctions, typename Traits, typename KeyTraits>
     template<typename HashTranslator, typename T>
@@ -1337,7 +1337,7 @@ namespace WTF {
         return *this;
     }
 
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
 
     template<typename Key, typename Value, typename Extractor, typename HashFunctions, typename Traits, typename KeyTraits>
     void HashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits>::checkTableConsistency() const
@@ -1379,7 +1379,7 @@ namespace WTF {
         ASSERT(m_tableSize == m_tableSizeMask + 1);
     }
 
-#endif // ASSERT_DISABLED
+#endif // ASSERT_ENABLED
 
 #if CHECK_HASHTABLE_ITERATORS
 

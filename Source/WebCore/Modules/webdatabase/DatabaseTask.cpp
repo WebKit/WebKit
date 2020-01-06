@@ -80,7 +80,7 @@ void DatabaseTask::performTask()
     if (m_synchronizer)
         m_synchronizer->taskCompleted();
 
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     m_complete = true;
 #endif
 }

@@ -126,7 +126,7 @@ void JIT::emitNotifyWrite(GPRReg pointerToSet)
 
 void JIT::assertStackPointerOffset()
 {
-    if (ASSERT_DISABLED)
+    if (!ASSERT_ENABLED)
         return;
     
     addPtr(TrustedImm32(stackPointerOffsetFor(m_codeBlock) * sizeof(Register)), callFrameRegister, regT0);
@@ -770,7 +770,7 @@ void JIT::compileWithoutLinking(JITCompilationEffort effort)
         move(returnValueGPR, GPRInfo::argumentGPR0);
         emitNakedCall(m_vm->getCTIStub(arityFixupGenerator).retaggedCode<NoPtrTag>());
 
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
         m_bytecodeIndex = BytecodeIndex(); // Reset this, in order to guard its use with ASSERTs.
 #endif
 

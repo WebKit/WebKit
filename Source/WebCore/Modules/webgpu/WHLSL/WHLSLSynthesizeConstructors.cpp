@@ -100,7 +100,7 @@ private:
     void appendNamedType(AST::NamedType& type)
     {
         // The way we walk the AST ensures we should never visit a named type twice.
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
         for (auto& entry : m_namedTypes)
             ASSERT(&entry.get().unifyNode() != &type.unifyNode());
 #endif

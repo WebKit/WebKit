@@ -30,7 +30,7 @@
 #include "B3Bank.h"
 #include "B3Type.h"
 
-#if ASSERT_DISABLED
+#if !ASSERT_ENABLED
 IGNORE_RETURN_TYPE_WARNINGS_BEGIN
 #endif
 
@@ -143,7 +143,7 @@ void printInternal(PrintStream&, JSC::B3::Width);
 
 } // namespace WTF
 
-#if ASSERT_DISABLED
+#if !ASSERT_ENABLED
 IGNORE_RETURN_TYPE_WARNINGS_END
 #endif
 

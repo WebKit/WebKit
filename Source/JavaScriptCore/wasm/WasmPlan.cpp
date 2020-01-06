@@ -89,7 +89,7 @@ bool Plan::tryRemoveContextAndCancelIfLast(Context& context)
 {
     LockHolder locker(m_lock);
 
-    if (!ASSERT_DISABLED) {
+    if (ASSERT_ENABLED) {
         // We allow the first completion task to not have a Context.
         for (unsigned i = 1; i < m_completionTasks.size(); ++i)
             ASSERT(m_completionTasks[i].first);

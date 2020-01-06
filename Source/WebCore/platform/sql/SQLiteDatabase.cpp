@@ -438,7 +438,7 @@ const char* SQLiteDatabase::lastErrorMsg()
     return m_openErrorMessage.isNull() ? notOpenErrorMessage : m_openErrorMessage.data();
 }
 
-#ifndef NDEBUG
+#if ASSERT_ENABLED
 void SQLiteDatabase::disableThreadingChecks()
 {
     // Note that SQLite could be compiled with -DTHREADSAFE, or you may have turned off the mutexes.

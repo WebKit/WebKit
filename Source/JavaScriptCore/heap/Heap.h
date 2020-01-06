@@ -96,11 +96,7 @@ class SpeculativeJIT;
 class Worklist;
 }
 
-#if !ASSERT_DISABLED
-#define ENABLE_DFG_DOES_GC_VALIDATION 1
-#else
-#define ENABLE_DFG_DOES_GC_VALIDATION 0
-#endif
+#define ENABLE_DFG_DOES_GC_VALIDATION ASSERT_ENABLED
 constexpr bool validateDFGDoesGC = ENABLE_DFG_DOES_GC_VALIDATION;
 
 typedef HashCountedSet<JSCell*> ProtectCountSet;

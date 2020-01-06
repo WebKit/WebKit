@@ -392,7 +392,7 @@ void ImageBufferData::putData(const Uint8ClampedArray& source, AlphaPremultiplic
     if (width <= 0 || height <= 0)
         return;
 
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     if (bitmap) {
         auto pixelSize = bitmap->GetPixelSize();
         ASSERT(pixelSize.width >= sourceSize.width());

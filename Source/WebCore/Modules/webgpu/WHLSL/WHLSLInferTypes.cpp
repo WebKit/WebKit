@@ -50,7 +50,7 @@ static bool matches(const AST::Type& unifyThis, const AST::Type& unifyOther)
         return true;
 
     if (is<AST::NamedType>(unifyThis) && is<AST::NamedType>(unifyOther)) {
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
         auto& namedThis = downcast<AST::NamedType>(unifyThis);
         auto& namedOther = downcast<AST::NamedType>(unifyOther);
         ASSERT(!is<AST::TypeDefinition>(namedThis) && !is<AST::TypeDefinition>(namedOther));

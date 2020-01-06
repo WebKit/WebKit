@@ -126,7 +126,7 @@ private:
     mutable std::unique_ptr<GraphicsContextStateSaver> m_contextStateSaver;
 
     bool m_originClean { true };
-#ifndef NDEBUG
+#if ASSERT_ENABLED
     bool m_didNotifyObserversCanvasDestroyed { false };
 #endif
     HashSet<CanvasObserver*> m_observers;

@@ -709,22 +709,20 @@ Optional<Inspector::Protocol::Test::CastedAnimals> parseEnumValueFromString<Insp
 
 void BindingTraits<Inspector::Protocol::Test::CastedAnimals>::assertValueHasExpectedType(JSON::Value* value)
 {
-#if ASSERT_DISABLED
-    UNUSED_PARAM(value);
-#else
+#if ASSERT_ENABLED
     ASSERT_ARG(value, value);
     String result;
     bool castSucceeded = value->asString(result);
     ASSERT(castSucceeded);
     ASSERT(result == "Ducks" || result == "Hens" || result == "Crows" || result == "Flamingos");
-#endif // !ASSERT_DISABLED
+#else // ASSERT_ENABLED
+    UNUSED_PARAM(value);
+#endif // ASSERT_ENABLED
 }
 
 void BindingTraits<Inspector::Protocol::Test::TypeNeedingCast>::assertValueHasExpectedType(JSON::Value* value)
 {
-#if ASSERT_DISABLED
-    UNUSED_PARAM(value);
-#else
+#if ASSERT_ENABLED
     ASSERT_ARG(value, value);
     RefPtr<JSON::Object> object;
     bool castSucceeded = value->asObject(object);
@@ -758,7 +756,9 @@ void BindingTraits<Inspector::Protocol::Test::TypeNeedingCast>::assertValueHasEx
     int foundPropertiesCount = 5;
     if (foundPropertiesCount != object->size())
         FATAL("Unexpected properties in object: %s\n", object->toJSONString().ascii().data());
-#endif // !ASSERT_DISABLED
+#else // ASSERT_ENABLED
+    UNUSED_PARAM(value);
+#endif // ASSERT_ENABLED
 }
 
 RefPtr<Inspector::Protocol::Test::TypeNeedingCast> BindingTraits<Inspector::Protocol::Test::TypeNeedingCast>::runtimeCast(RefPtr<JSON::Value>&& value)
@@ -774,9 +774,7 @@ RefPtr<Inspector::Protocol::Test::TypeNeedingCast> BindingTraits<Inspector::Prot
 
 void BindingTraits<Inspector::Protocol::Test::RecursiveObject1>::assertValueHasExpectedType(JSON::Value* value)
 {
-#if ASSERT_DISABLED
-    UNUSED_PARAM(value);
-#else
+#if ASSERT_ENABLED
     ASSERT_ARG(value, value);
     RefPtr<JSON::Object> object;
     bool castSucceeded = value->asObject(object);
@@ -792,14 +790,14 @@ void BindingTraits<Inspector::Protocol::Test::RecursiveObject1>::assertValueHasE
     }
     if (foundPropertiesCount != object->size())
         FATAL("Unexpected properties in object: %s\n", object->toJSONString().ascii().data());
-#endif // !ASSERT_DISABLED
+#else // ASSERT_ENABLED
+    UNUSED_PARAM(value);
+#endif // ASSERT_ENABLED
 }
 
 void BindingTraits<Inspector::Protocol::Test::RecursiveObject2>::assertValueHasExpectedType(JSON::Value* value)
 {
-#if ASSERT_DISABLED
-    UNUSED_PARAM(value);
-#else
+#if ASSERT_ENABLED
     ASSERT_ARG(value, value);
     RefPtr<JSON::Object> object;
     bool castSucceeded = value->asObject(object);
@@ -815,7 +813,9 @@ void BindingTraits<Inspector::Protocol::Test::RecursiveObject2>::assertValueHasE
     }
     if (foundPropertiesCount != object->size())
         FATAL("Unexpected properties in object: %s\n", object->toJSONString().ascii().data());
-#endif // !ASSERT_DISABLED
+#else // ASSERT_ENABLED
+    UNUSED_PARAM(value);
+#endif // ASSERT_ENABLED
 }
 
 } // namespace Protocol

@@ -76,7 +76,7 @@ static NSURLSessionResponseDisposition toNSURLSessionResponseDisposition(WebCore
     switch (disposition) {
     case WebCore::PolicyAction::StopAllLoads:
         ASSERT_NOT_REACHED();
-#if ASSERT_DISABLED
+#if !ASSERT_ENABLED
         FALLTHROUGH;
 #endif
     case WebCore::PolicyAction::Ignore:
@@ -926,7 +926,7 @@ static inline void processServerTrustEvaluation(NetworkSessionCocoa *session, Se
 
 namespace WebKit {
 
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
 static bool sessionsCreated = false;
 #endif
 
@@ -1012,7 +1012,7 @@ NetworkSessionCocoa::NetworkSessionCocoa(NetworkProcess& networkProcess, Network
 {
     ASSERT(hasProcessPrivilege(ProcessPrivilege::CanAccessRawCookies));
 
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     sessionsCreated = true;
 #endif
 

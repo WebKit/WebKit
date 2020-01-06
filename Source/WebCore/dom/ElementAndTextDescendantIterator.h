@@ -77,7 +77,7 @@ private:
     Vector<AncestorSibling, 16> m_ancestorSiblingStack;
     unsigned m_depth { 0 };
 
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     ElementIteratorAssertions m_assertions;
 #endif
 };
@@ -103,7 +103,7 @@ inline ElementAndTextDescendantIterator::ElementAndTextDescendantIterator()
 
 inline ElementAndTextDescendantIterator::ElementAndTextDescendantIterator(ContainerNode& root, FirstChildTag)
     : m_current(firstChild(root))
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     , m_assertions(m_current)
 #endif
 {
@@ -115,7 +115,7 @@ inline ElementAndTextDescendantIterator::ElementAndTextDescendantIterator(Contai
 
 inline ElementAndTextDescendantIterator::ElementAndTextDescendantIterator(ContainerNode& root, Node* current)
     : m_current(current)
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     , m_assertions(m_current)
 #endif
 {
@@ -143,7 +143,7 @@ inline ElementAndTextDescendantIterator::ElementAndTextDescendantIterator(Contai
 
 inline void ElementAndTextDescendantIterator::dropAssertions()
 {
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     m_assertions.clear();
 #endif
 }
@@ -178,7 +178,7 @@ inline void ElementAndTextDescendantIterator::popAncestorSiblingStack()
     m_depth = m_ancestorSiblingStack.last().depth;
     m_ancestorSiblingStack.removeLast();
 
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     // Drop the assertion when the iterator reaches the end.
     if (!m_current)
         m_assertions.dropEventDispatchAssertion();
@@ -230,7 +230,7 @@ inline ElementAndTextDescendantIterator& ElementAndTextDescendantIterator::trave
 
     m_current = nextSibling(*m_current);
 
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     if (!m_current)
         m_assertions.dropEventDispatchAssertion();
 #endif
@@ -244,7 +244,7 @@ inline ElementAndTextDescendantIterator& ElementAndTextDescendantIterator::trave
 
     m_current = previousSibling(*m_current);
 
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     if (!m_current)
         m_assertions.dropEventDispatchAssertion();
 #endif

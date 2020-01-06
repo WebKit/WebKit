@@ -64,7 +64,7 @@ public:
 
 private:
     Function<Out(In...)> m_function;
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     bool m_wasConstructedOnMainThread { isMainThread() };
 #endif
 };

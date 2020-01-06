@@ -482,7 +482,7 @@ public:
     bool hasOneRef() const;
     unsigned refCount() const;
 
-#ifndef NDEBUG
+#if ASSERT_ENABLED
     bool m_deletionHasBegun { false };
     mutable bool m_inRemovedLastRefFunction { false };
     bool m_adoptionIsRequired { true };
@@ -679,7 +679,7 @@ private:
     std::unique_ptr<NodeRareData, NodeRareDataDeleter> m_rareData;
 };
 
-#ifndef NDEBUG
+#if ASSERT_ENABLED
 inline void adopted(Node* node)
 {
     if (!node)
@@ -688,7 +688,7 @@ inline void adopted(Node* node)
     ASSERT(!node->m_inRemovedLastRefFunction);
     node->m_adoptionIsRequired = false;
 }
-#endif
+#endif // ASSERT_ENABLED
 
 ALWAYS_INLINE void Node::ref() const
 {
@@ -710,7 +710,7 @@ ALWAYS_INLINE void Node::deref() const
     if (!updatedRefCount) {
         // Don't update m_refCountAndParentBit to avoid double destruction through use of Ref<T>/RefPtr<T>.
         // (This is a security mitigation in case of programmer error. It will ASSERT in debug builds.)
-#ifndef NDEBUG
+#if ASSERT_ENABLED
         m_inRemovedLastRefFunction = true;
 #endif
         const_cast<Node&>(*this).removedLastRef();

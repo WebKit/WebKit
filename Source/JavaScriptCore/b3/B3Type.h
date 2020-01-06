@@ -30,7 +30,7 @@
 #include "B3Common.h"
 #include <wtf/StdLibExtras.h>
 
-#if ASSERT_DISABLED
+#if !ASSERT_ENABLED
 IGNORE_RETURN_TYPE_WARNINGS_BEGIN
 #endif
 
@@ -135,7 +135,7 @@ void printInternal(PrintStream&, JSC::B3::Type);
 
 } // namespace WTF
 
-#if ASSERT_DISABLED
+#if !ASSERT_ENABLED
 IGNORE_RETURN_TYPE_WARNINGS_END
 #endif
 

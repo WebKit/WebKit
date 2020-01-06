@@ -58,10 +58,10 @@ void CodeBlockHash::dump(PrintStream& out) const
 {
     std::array<char, 7> buffer = integerToSixCharacterHashString(m_hash);
     
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     CodeBlockHash recompute(buffer.data());
     ASSERT(recompute == *this);
-#endif // !ASSERT_DISABLED
+#endif // ASSERT_ENABLED
     
     out.print(buffer.data());
 }

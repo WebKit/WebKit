@@ -141,7 +141,7 @@ private:
 
     void checkConsistency() const
     {
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
         void* currentPosition = &currentPosition;
         ASSERT(m_origin != m_bound);
         ASSERT(isGrowingDownward()

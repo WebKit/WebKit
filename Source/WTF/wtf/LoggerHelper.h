@@ -69,7 +69,7 @@ public:
         static uint64_t lowWord = cryptographicallyRandomNumber();
         return reinterpret_cast<const void*>((highWord << 32) + lowWord);
     }
-#else
+#else // RELEASE_LOG_DISABLED
 
 #define LOGIDENTIFIER (WTF::nullopt)
 
@@ -88,8 +88,8 @@ public:
 #define INFO_LOG_IF(condition, ...)       ((void)0)
 #define DEBUG_LOG_IF(condition, ...)      ((void)0)
 
-#endif
-    
+#endif // RELEASE_LOG_DISABLED
+
 };
 
 } // namespace WTF

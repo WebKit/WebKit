@@ -60,7 +60,7 @@ PaintingContextCairo::ForPainting::ForPainting(Buffer& buffer)
 
             // Deref the Buffer object.
             userData->first->deref();
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
             // Mark the deletion of the cairo_surface_t object associated with this
             // PaintingContextCairo as complete. This way we check that the cairo_surface_t
             // object doesn't outlive the PaintingContextCairo through which it was used.

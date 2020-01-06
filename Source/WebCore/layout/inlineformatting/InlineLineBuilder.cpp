@@ -863,7 +863,7 @@ void LineBuilder::CollapsibleContent::append(size_t runIndex)
 InlineLayoutUnit LineBuilder::CollapsibleContent::collapse()
 {
     ASSERT(!isEmpty());
-#ifndef NDEBUG
+#if ASSERT_ENABLED
     auto hasSeenNonWhitespaceTextContent = false;
 #endif
     // Collapse collapsible trailing content and move all the other trailing runs.
@@ -883,7 +883,7 @@ InlineLayoutUnit LineBuilder::CollapsibleContent::collapse()
             run.setCollapsesToZeroAdvanceWidth();
         } else {
             ASSERT(!hasSeenNonWhitespaceTextContent);
-#ifndef NDEBUG
+#if ASSERT_ENABLED
             hasSeenNonWhitespaceTextContent = true;
 #endif
             // Must be a letter spacing collapse.

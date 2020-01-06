@@ -50,7 +50,7 @@ public:
         InlineLayoutUnit descent() const;
 
     private:
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
         bool m_hasValidAscent { false };
         bool m_hasValidDescent { false };
 #endif
@@ -126,7 +126,7 @@ public:
     void setIsConsideredNonEmpty() { m_isConsideredEmpty = false; }
 
 private:
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     bool m_hasValidBaseline { false };
     bool m_hasValidBaselineOffset { false };
 #endif
@@ -143,7 +143,7 @@ inline LineBox::LineBox(const InlineRect& rect, const Baseline& baseline, Inline
     , m_baseline(baseline)
     , m_baselineOffset(baselineOffset)
 {
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     m_hasValidBaseline = true;
     m_hasValidBaselineOffset = true;
 #endif
@@ -164,7 +164,7 @@ inline const LineBox::Baseline& LineBox::baseline() const
 
 inline void LineBox::setBaselineOffsetIfGreater(InlineLayoutUnit baselineOffset)
 {
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     m_hasValidBaselineOffset = true;
 #endif
     m_baselineOffset = std::max(baselineOffset, m_baselineOffset);
@@ -193,7 +193,7 @@ inline InlineLayoutUnit LineBox::baselineOffset() const
 
 inline void LineBox::resetBaseline()
 {
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     m_hasValidBaselineOffset = true;
 #endif
     m_baselineOffset = 0_lu;
@@ -204,7 +204,7 @@ inline LineBox::Baseline::Baseline(InlineLayoutUnit ascent, InlineLayoutUnit des
     : m_ascent(ascent)
     , m_descent(descent)
 {
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     m_hasValidAscent = true;
     m_hasValidDescent = true;
 #endif
@@ -212,7 +212,7 @@ inline LineBox::Baseline::Baseline(InlineLayoutUnit ascent, InlineLayoutUnit des
 
 inline void LineBox::Baseline::setAscent(InlineLayoutUnit ascent)
 {
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     m_hasValidAscent = true;
 #endif
     m_ascent = ascent;
@@ -220,7 +220,7 @@ inline void LineBox::Baseline::setAscent(InlineLayoutUnit ascent)
 
 inline void LineBox::Baseline::setDescent(InlineLayoutUnit descent)
 {
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     m_hasValidDescent = true;
 #endif
     m_descent = descent;
@@ -228,7 +228,7 @@ inline void LineBox::Baseline::setDescent(InlineLayoutUnit descent)
 
 inline void LineBox::Baseline::reset()
 {
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     m_hasValidAscent = true;
     m_hasValidDescent = true;
 #endif

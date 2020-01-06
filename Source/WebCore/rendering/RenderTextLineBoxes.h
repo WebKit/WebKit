@@ -69,7 +69,7 @@ public:
     Vector<FloatQuad> absoluteQuadsForRange(const RenderText&, unsigned start, unsigned end, bool useSelectionHeight, bool* wasFixed) const;
     Vector<IntRect> absoluteRectsForRange(const RenderText&, unsigned start, unsigned end, bool useSelectionHeight, bool* wasFixed) const;
 
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     ~RenderTextLineBoxes();
 #endif
 

@@ -69,7 +69,7 @@ public:
     void prepareCallOperation(VM& vm)
     {
         UNUSED_PARAM(vm);
-#if !USE(BUILTIN_FRAME_ADDRESS) || !ASSERT_DISABLED
+#if !USE(BUILTIN_FRAME_ADDRESS) || ASSERT_ENABLED
         storePtr(GPRInfo::callFrameRegister, &vm.topCallFrame);
 #endif
     }
@@ -1277,7 +1277,7 @@ public:
     void debugCall(VM&, V_DebugOperation_EPP function, void* argument);
 
     // These methods JIT generate dynamic, debug-only checks - akin to ASSERTs.
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     void jitAssertIsInt32(GPRReg);
     void jitAssertIsJSInt32(GPRReg);
     void jitAssertIsJSNumber(GPRReg);

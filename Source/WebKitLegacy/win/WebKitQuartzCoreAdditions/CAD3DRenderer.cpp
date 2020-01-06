@@ -142,7 +142,7 @@ CComPtr<IDirect3DSwapChain9> CAD3DRenderer::swapChain(CWindow window, const CGSi
     if (useDefaultSwapChain) {
         CComPtr<IDirect3DSwapChain9> defaultSwapChain;
         if (SUCCEEDED(m_d3dDevice->GetSwapChain(0, &defaultSwapChain))) {
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
             // Since we just initialized or reset the device, its default swap chain should be
             // associated with and sized to match this window.
             D3DPRESENT_PARAMETERS parameters;
@@ -252,7 +252,7 @@ static bool hardwareCapabilitiesIndicateCoreAnimationSupport(const D3DCAPS9& cap
 
 bool CAD3DRenderer::initialize(CWindow window, const CGSize& size)
 {
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     if (!m_deviceThreadID)
         m_deviceThreadID = ::GetCurrentThreadId();
     // MSDN says that IDirect3D9::CreateDevice must "be called from the same thread that handles

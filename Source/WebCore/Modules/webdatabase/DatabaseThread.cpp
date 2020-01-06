@@ -77,7 +77,7 @@ void DatabaseThread::requestTermination(DatabaseTaskSynchronizer* cleanupSync)
 
 bool DatabaseThread::terminationRequested(DatabaseTaskSynchronizer* taskSynchronizer) const
 {
-#ifndef NDEBUG
+#if ASSERT_ENABLED
     if (taskSynchronizer)
         taskSynchronizer->setHasCheckedForTermination();
 #else

@@ -74,7 +74,7 @@ class TypeAnnotation {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     TypeAnnotation()
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
         : m_empty(true)
 #endif
     {
@@ -129,7 +129,7 @@ public:
 
 private:
     Variant<LeftValue, AbstractLeftValue, RightValue> m_inner;
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     bool m_empty { false };
 #endif
 };

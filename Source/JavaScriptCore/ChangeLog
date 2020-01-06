@@ -1,3 +1,249 @@
+2020-01-06  Mark Lam  <mark.lam@apple.com>
+
+        Convert ASSERT_DISABLED to ASSERT_ENABLED, and fix some tests of NDEBUG that should actually test for ASSERT_ENABLED.
+        https://bugs.webkit.org/show_bug.cgi?id=205776
+
+        Reviewed by Saam Barati.
+
+        * API/tests/testapi.c:
+        * assembler/ARM64Assembler.h:
+        (JSC::ARM64Assembler::replaceWithLoad):
+        (JSC::ARM64Assembler::replaceWithAddressComputation):
+        * assembler/AssemblerBuffer.h:
+        (JSC::AssemblerBuffer::LocalWriter::LocalWriter):
+        * assembler/LinkBuffer.cpp:
+        (JSC::LinkBuffer::copyCompactAndLinkCode):
+        * assembler/ProbeStack.cpp:
+        (JSC::Probe::Stack::Stack):
+        * assembler/ProbeStack.h:
+        * b3/B3FoldPathConstants.cpp:
+        * b3/B3LowerToAir.cpp:
+        * b3/B3MemoryValue.cpp:
+        (JSC::B3::MemoryValue::MemoryValue):
+        * b3/B3Opcode.cpp:
+        * b3/B3Type.h:
+        * b3/B3TypeMap.h:
+        * b3/B3Width.h:
+        * b3/air/AirAllocateRegistersAndStackAndGenerateCode.cpp:
+        (JSC::B3::Air::GenerateAndAllocateRegisters::prepareForGeneration):
+        (JSC::B3::Air::GenerateAndAllocateRegisters::generate):
+        * b3/air/AirAllocateRegistersAndStackAndGenerateCode.h:
+        * b3/air/AirAllocateRegistersByGraphColoring.cpp:
+        * b3/air/AirArg.cpp:
+        * b3/air/AirArg.h:
+        * b3/air/AirCode.h:
+        * b3/air/AirEmitShuffle.cpp:
+        (JSC::B3::Air::emitShuffle):
+        * builtins/BuiltinExecutables.cpp:
+        (JSC::BuiltinExecutables::createExecutable):
+        * bytecode/AccessCase.cpp:
+        * bytecode/AccessCase.h:
+        * bytecode/CallVariant.cpp:
+        (JSC::variantListWithVariant):
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::ensureCatchLivenessIsComputedForBytecodeIndex):
+        * bytecode/CodeBlockHash.cpp:
+        (JSC::CodeBlockHash::dump const):
+        * bytecode/StructureStubInfo.cpp:
+        * bytecode/StructureStubInfo.h:
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::FunctionCallResolveNode::emitBytecode):
+        * bytecompiler/RegisterID.h:
+        (JSC::RegisterID::RegisterID):
+        (JSC::RegisterID::setIndex):
+        * debugger/Debugger.cpp:
+        (JSC::Debugger::removeBreakpoint):
+        * debugger/DebuggerEvalEnabler.h:
+        (JSC::DebuggerEvalEnabler::DebuggerEvalEnabler):
+        (JSC::DebuggerEvalEnabler::~DebuggerEvalEnabler):
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::observeTransitions):
+        * dfg/DFGAbstractValue.cpp:
+        * dfg/DFGAbstractValue.h:
+        (JSC::DFG::AbstractValue::merge):
+        (JSC::DFG::AbstractValue::checkConsistency const):
+        (JSC::DFG::AbstractValue::assertIsRegistered const):
+        * dfg/DFGArithMode.h:
+        (JSC::DFG::doesOverflow):
+        * dfg/DFGBasicBlock.cpp:
+        (JSC::DFG::BasicBlock::BasicBlock):
+        * dfg/DFGBasicBlock.h:
+        (JSC::DFG::BasicBlock::didLink):
+        * dfg/DFGCFAPhase.cpp:
+        (JSC::DFG::CFAPhase::performBlockCFA):
+        * dfg/DFGCommon.h:
+        (JSC::DFG::validationEnabled):
+        * dfg/DFGCommonData.cpp:
+        (JSC::DFG::CommonData::finalizeCatchEntrypoints):
+        * dfg/DFGDesiredWatchpoints.h:
+        * dfg/DFGDoesGC.cpp:
+        (JSC::DFG::doesGC):
+        * dfg/DFGEdge.h:
+        (JSC::DFG::Edge::makeWord):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGJITCode.cpp:
+        (JSC::DFG::JITCode::finalizeOSREntrypoints):
+        * dfg/DFGObjectAllocationSinkingPhase.cpp:
+        * dfg/DFGSSAConversionPhase.cpp:
+        (JSC::DFG::SSAConversionPhase::run):
+        * dfg/DFGScoreBoard.h:
+        (JSC::DFG::ScoreBoard::assertClear):
+        * dfg/DFGSlowPathGenerator.h:
+        (JSC::DFG::SlowPathGenerator::generate):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileCurrentBlock):
+        (JSC::DFG::SpeculativeJIT::emitBinarySwitchStringRecurse):
+        (JSC::DFG::SpeculativeJIT::emitAllocateButterfly):
+        (JSC::DFG::SpeculativeJIT::compileAllocateNewArrayWithSize):
+        (JSC::DFG::SpeculativeJIT::compileMakeRope):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::fillSpeculateCell):
+        * dfg/DFGStructureAbstractValue.cpp:
+        * dfg/DFGStructureAbstractValue.h:
+        (JSC::DFG::StructureAbstractValue::assertIsRegistered const):
+        * dfg/DFGVarargsForwardingPhase.cpp:
+        * dfg/DFGVirtualRegisterAllocationPhase.cpp:
+        (JSC::DFG::VirtualRegisterAllocationPhase::run):
+        * ftl/FTLLink.cpp:
+        (JSC::FTL::link):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::callPreflight):
+        (JSC::FTL::DFG::LowerDFGToB3::callCheck):
+        (JSC::FTL::DFG::LowerDFGToB3::crash):
+        * ftl/FTLOperations.cpp:
+        (JSC::FTL::operationMaterializeObjectInOSR):
+        * heap/BlockDirectory.cpp:
+        (JSC::BlockDirectory::assertNoUnswept):
+        * heap/GCSegmentedArray.h:
+        (JSC::GCArraySegment::GCArraySegment):
+        * heap/GCSegmentedArrayInlines.h:
+        (JSC::GCSegmentedArray<T>::clear):
+        (JSC::GCSegmentedArray<T>::expand):
+        (JSC::GCSegmentedArray<T>::validatePrevious):
+        * heap/HandleSet.cpp:
+        * heap/HandleSet.h:
+        * heap/Heap.cpp:
+        (JSC::Heap::updateAllocationLimits):
+        * heap/Heap.h:
+        * heap/MarkedBlock.cpp:
+        * heap/MarkedBlock.h:
+        (JSC::MarkedBlock::assertValidCell const):
+        (JSC::MarkedBlock::assertMarksNotStale):
+        * heap/MarkedSpace.cpp:
+        (JSC::MarkedSpace::beginMarking):
+        (JSC::MarkedSpace::endMarking):
+        (JSC::MarkedSpace::assertNoUnswept):
+        * heap/PreciseAllocation.cpp:
+        * heap/PreciseAllocation.h:
+        (JSC::PreciseAllocation::assertValidCell const):
+        * heap/SlotVisitor.cpp:
+        (JSC::SlotVisitor::SlotVisitor):
+        (JSC::SlotVisitor::appendJSCellOrAuxiliary):
+        * heap/SlotVisitor.h:
+        * inspector/InspectorProtocolTypes.h:
+        (Inspector::Protocol::BindingTraits<JSON::ArrayOf<T>>::assertValueHasExpectedType):
+        * inspector/scripts/codegen/generate_cpp_protocol_types_implementation.py:
+        (CppProtocolTypesImplementationGenerator._generate_assertion_for_object_declaration):
+        (CppProtocolTypesImplementationGenerator):
+        (CppProtocolTypesImplementationGenerator._generate_assertion_for_enum):
+        * inspector/scripts/tests/generic/expected/type-requiring-runtime-casts.json-result:
+        * interpreter/FrameTracers.h:
+        (JSC::JITOperationPrologueCallFrameTracer::JITOperationPrologueCallFrameTracer):
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::Interpreter):
+        * interpreter/Interpreter.h:
+        * jit/AssemblyHelpers.cpp:
+        (JSC::AssemblyHelpers::emitStoreStructureWithTypeInfo):
+        * jit/AssemblyHelpers.h:
+        (JSC::AssemblyHelpers::prepareCallOperation):
+        * jit/BinarySwitch.cpp:
+        (JSC::BinarySwitch::BinarySwitch):
+        * jit/CCallHelpers.h:
+        (JSC::CCallHelpers::setupStubArgs):
+        * jit/CallFrameShuffler.cpp:
+        (JSC::CallFrameShuffler::emitDeltaCheck):
+        (JSC::CallFrameShuffler::prepareAny):
+        * jit/JIT.cpp:
+        (JSC::JIT::assertStackPointerOffset):
+        (JSC::JIT::compileWithoutLinking):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emitSlow_op_loop_hint):
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emit_op_get_from_scope):
+        * jit/JITPropertyAccess32_64.cpp:
+        (JSC::JIT::emit_op_get_from_scope):
+        * jit/Repatch.cpp:
+        (JSC::linkPolymorphicCall):
+        * jit/ThunkGenerators.cpp:
+        (JSC::emitPointerValidation):
+        * llint/LLIntData.cpp:
+        (JSC::LLInt::Data::performAssertions):
+        * llint/LLIntOfflineAsmConfig.h:
+        * parser/Lexer.cpp:
+        * parser/Lexer.h:
+        (JSC::isSafeBuiltinIdentifier):
+        (JSC::Lexer<T>::lexExpectIdentifier):
+        * runtime/ArgList.h:
+        (JSC::MarkedArgumentBuffer::setNeedsOverflowCheck):
+        (JSC::MarkedArgumentBuffer::clearNeedsOverflowCheck):
+        * runtime/Butterfly.h:
+        (JSC::ContiguousData::ContiguousData):
+        (JSC::ContiguousData::Data::Data):
+        * runtime/HashMapImpl.h:
+        (JSC::HashMapImpl::checkConsistency const):
+        (JSC::HashMapImpl::assertBufferIsEmpty const):
+        * runtime/JSCellInlines.h:
+        (JSC::JSCell::methodTable const):
+        * runtime/JSFunction.cpp:
+        * runtime/JSFunction.h:
+        (JSC::JSFunction::assertTypeInfoFlagInvariants):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+        * runtime/JSGlobalObject.h:
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::visitChildren):
+        (JSC::JSFinalObject::visitChildren):
+        * runtime/JSObjectInlines.h:
+        (JSC::JSObject::validatePutOwnDataProperty):
+        * runtime/JSSegmentedVariableObject.h:
+        (JSC::JSSegmentedVariableObject::assertVariableIsInThisObject):
+        * runtime/LiteralParser.cpp:
+        (JSC::LiteralParser<CharType>::Lexer::lex):
+        * runtime/LiteralParser.h:
+        * runtime/Operations.h:
+        (JSC::scribbleFreeCells):
+        * runtime/OptionsList.h:
+        * runtime/VM.cpp:
+        (JSC::VM::computeCanUseJIT):
+        * runtime/VM.h:
+        (JSC::VM::canUseJIT):
+        * runtime/VarOffset.h:
+        (JSC::VarOffset::checkSanity const):
+        * runtime/WeakMapImpl.h:
+        (JSC::WeakMapImpl::checkConsistency const):
+        (JSC::WeakMapImpl::assertBufferIsEmpty const):
+        * wasm/WasmAirIRGenerator.cpp:
+        (JSC::Wasm::AirIRGenerator::validateInst):
+        * wasm/WasmB3IRGenerator.cpp:
+        (JSC::Wasm::parseAndCompile):
+        * wasm/WasmFunctionParser.h:
+        (JSC::Wasm::FunctionParser::validationFail const):
+        * wasm/WasmLLIntGenerator.cpp:
+        (JSC::Wasm::LLIntGenerator::checkConsistency):
+        * wasm/WasmPlan.cpp:
+        (JSC::Wasm::Plan::tryRemoveContextAndCancelIfLast):
+        * wasm/WasmSectionParser.h:
+        * wasm/WasmSections.h:
+        * wasm/WasmSignatureInlines.h:
+        (JSC::Wasm::SignatureInformation::get):
+        * wasm/WasmWorklist.cpp:
+        (JSC::Wasm::Worklist::enqueue):
+        * wasm/js/JSToWasm.cpp:
+        (JSC::Wasm::createJSToWasmWrapper):
+        * wasm/js/WebAssemblyFunction.cpp:
+        (JSC::WebAssemblyFunction::previousInstanceOffset const):
+
 2020-01-06  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         Proxy's [[OwnPropertyKeys]] is incorrect in DontEnumPropertiesMode::Exclude

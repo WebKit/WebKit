@@ -55,7 +55,7 @@ void RenderGeometryMap::mapToContainer(TransformState& transformState, const Ren
     }
     
     bool inFixed = false;
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     bool foundContainer = !container || (m_mapping.size() && m_mapping[0].m_renderer == container);
 #endif
 
@@ -64,7 +64,7 @@ void RenderGeometryMap::mapToContainer(TransformState& transformState, const Ren
 
         // If container is the RenderView (step 0) we want to apply its scroll offset.
         if (i > 0 && currentStep.m_renderer == container) {
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
             foundContainer = true;
 #endif
             break;
@@ -102,7 +102,7 @@ void RenderGeometryMap::mapToContainer(TransformState& transformState, const Ren
 FloatPoint RenderGeometryMap::mapToContainer(const FloatPoint& p, const RenderLayerModelObject* container) const
 {
     FloatPoint result;
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     FloatPoint rendererMappedResult = m_mapping.last().m_renderer->localToAbsolute(p, m_mapCoordinatesFlags);
 #endif
     

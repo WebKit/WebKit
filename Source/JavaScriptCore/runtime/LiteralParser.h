@@ -134,7 +134,7 @@ private:
         
         TokenType next();
         
-#if ASSERT_DISABLED
+#if !ASSERT_ENABLED
         typedef const LiteralParserToken<CharType>* LiteralParserTokenPtr;
 
         LiteralParserTokenPtr currentToken()
@@ -167,7 +167,7 @@ private:
         {
             return LiteralParserTokenPtr(*this);
         }
-#endif
+#endif // ASSERT_ENABLED
         
         String getErrorMessage() { return m_lexErrorMessage; }
         
@@ -183,7 +183,7 @@ private:
         const CharType* m_ptr;
         const CharType* m_end;
         StringBuilder m_builder;
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
         unsigned m_currentTokenID { 0 };
 #endif
     };

@@ -977,7 +977,7 @@ BidiRun* ComplexLineLayout::computeInlineDirectionPositionsForSegment(RootInline
 void ComplexLineLayout::removeInlineBox(BidiRun& run, const RootInlineBox& rootLineBox) const
 {
     auto* inlineBox = run.box();
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     auto* inlineParent = inlineBox->parent();
     while (inlineParent && inlineParent != &rootLineBox) {
         ASSERT(!inlineParent->isDirty());

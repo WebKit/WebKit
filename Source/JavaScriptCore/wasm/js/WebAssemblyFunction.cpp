@@ -173,7 +173,7 @@ ptrdiff_t WebAssemblyFunction::previousInstanceOffset() const
 {
     ptrdiff_t result = calleeSaves().numberOfSetRegisters() * sizeof(CPURegister);
     result = -result - sizeof(CPURegister);
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     ptrdiff_t minOffset = 1;
     for (const RegisterAtOffset& regAtOffset : usedCalleeSaveRegisters()) {
         ptrdiff_t offset = regAtOffset.offset();

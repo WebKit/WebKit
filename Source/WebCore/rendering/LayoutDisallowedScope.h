@@ -31,10 +31,10 @@ class LayoutDisallowedScope {
 public:
     enum class Reason { PerformanceOptimization, ReentrancyAvoidance };
 
-#if ASSERT_DISABLED
+#if !ASSERT_ENABLED
     LayoutDisallowedScope(Reason) { }
     static bool isLayoutAllowed() { return true; }
-#else
+#else // ASSERT_ENABLED
     LayoutDisallowedScope(Reason)
         : m_previousAssertion(s_currentAssertion)
     {
@@ -51,7 +51,7 @@ public:
 private:
     LayoutDisallowedScope* m_previousAssertion;
     static LayoutDisallowedScope* s_currentAssertion;
-#endif
+#endif // ASSERT_ENABLED
 };
 
 }

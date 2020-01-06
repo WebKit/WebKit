@@ -86,7 +86,7 @@ private:
     DocumentOrWorkerIdentifier m_contextIdentifier;
     RefPtr<WorkerScriptLoader> m_scriptLoader;
 
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     Ref<Thread> m_creationThread { Thread::current() };
 #endif
 };

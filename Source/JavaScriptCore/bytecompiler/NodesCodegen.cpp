@@ -941,8 +941,8 @@ RegisterID* FunctionCallValueNode::emitBytecode(BytecodeGenerator& generator, Re
 
 RegisterID* FunctionCallResolveNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
 {
-    if (UNLIKELY(m_ident == generator.vm().propertyNames->builtinNames().assertPrivateName())) {
-        if (ASSERT_DISABLED)
+    if (!ASSERT_ENABLED) {
+        if (UNLIKELY(m_ident == generator.vm().propertyNames->builtinNames().assertPrivateName()))
             return generator.move(dst, generator.emitLoad(nullptr, jsUndefined()));
     }
 

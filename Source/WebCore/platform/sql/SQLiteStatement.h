@@ -96,8 +96,8 @@ private:
     SQLiteDatabase& m_database;
     String m_query;
     sqlite3_stmt* m_statement;
-#ifndef NDEBUG
-    bool m_isPrepared;
+#if ASSERT_ENABLED
+    bool m_isPrepared { false };
 #endif
 };
 

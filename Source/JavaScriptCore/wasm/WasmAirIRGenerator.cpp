@@ -331,7 +331,7 @@ private:
     B3::Type toB3ResultType(BlockSignature returnType);
     ALWAYS_INLINE void validateInst(Inst& inst)
     {
-        if (!ASSERT_DISABLED) {
+        if (ASSERT_ENABLED) {
             if (!inst.isValidForm()) {
                 dataLogLn("Inst validation failed:");
                 dataLogLn(inst, "\n");

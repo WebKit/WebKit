@@ -93,7 +93,7 @@ Ref<SharedBuffer> SharedBuffer::create(Vector<uint8_t>&& vector)
 
 void SharedBuffer::combineIntoOneSegment() const
 {
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     // FIXME: We ought to be able to set this to true and have no assertions fire.
     // Remove all instances of appending after calling this, because they are all O(n^2) algorithms since r215686.
     // m_hasBeenCombinedIntoOneSegment = true;
@@ -200,7 +200,7 @@ Ref<SharedBuffer> SharedBuffer::copy() const
     return clone;
 }
 
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
 bool SharedBuffer::internallyConsistent() const
 {
     size_t position = 0;
@@ -211,7 +211,7 @@ bool SharedBuffer::internallyConsistent() const
     }
     return position == m_size;
 }
-#endif
+#endif // ASSERT_ENABLED
 
 const char* SharedBuffer::DataSegment::data() const
 {

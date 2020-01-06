@@ -40,7 +40,7 @@ public:
     void cancelEvent(T&);
     void dispatchPendingEvents();
 
-#ifndef NDEBUG
+#if ASSERT_ENABLED
     bool hasPendingEvents(T& sender) const
     {
         return m_dispatchSoonList.find(&sender) != notFound || m_dispatchingList.find(&sender) != notFound;

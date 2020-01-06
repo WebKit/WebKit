@@ -218,7 +218,7 @@ private:
 
     bool m_framesetOk { true };
 
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     bool m_destroyed { false };
     bool m_destructionProhibited { true };
 #endif
@@ -226,7 +226,7 @@ private:
 
 inline HTMLTreeBuilder::~HTMLTreeBuilder()
 {
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     ASSERT(!m_destroyed);
     ASSERT(!m_destructionProhibited);
     m_destroyed = true;

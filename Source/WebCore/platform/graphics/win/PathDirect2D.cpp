@@ -100,7 +100,7 @@ void Path::clearGeometries()
 
 void Path::appendGeometry(ID2D1Geometry* geometry)
 {
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     unsigned before = refCount(geometry);
 #endif
 
@@ -143,7 +143,7 @@ void Path::createGeometryWithFillMode(WindRule webkitFillMode, COMPtr<ID2D1Geome
 
 Path::Path(const Path& other)
 {
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     unsigned pathCount = refCount(other.m_path.get());
     unsigned activePathCount = refCount(other.m_activePath.get());
 #endif
@@ -159,7 +159,7 @@ Path::Path(const Path& other)
     
 Path::Path(Path&& other)
 {
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     unsigned pathCount = refCount(other.m_path.get());
     unsigned activePathCount = refCount(other.m_activePath.get());
 #endif
@@ -175,7 +175,7 @@ Path& Path::operator=(const Path& other)
 {
     if (this == &other)
         return *this;
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     unsigned pathCount = refCount(other.m_path.get());
     unsigned activePathCount = refCount(other.m_activePath.get());
 #endif
@@ -196,7 +196,7 @@ Path& Path::operator=(Path&& other)
     if (this == &other)
         return *this;
 
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     unsigned pathCount = refCount(other.m_path.get());
     unsigned activePathCount = refCount(other.m_activePath.get());
 #endif
@@ -234,7 +234,7 @@ bool Path::strokeContains(StrokeStyleApplier& applier, const FloatPoint& point) 
     GraphicsContext scratchContext(&scratchContextD2D, GraphicsContext::BitmapRenderingContextType::GPUMemory);
     applier.strokeStyle(&scratchContext);
 
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     unsigned before = refCount(m_path.get());
 #endif
 
@@ -276,7 +276,7 @@ void Path::transform(const AffineTransform& transform)
     if (m_activePath)
         closeAnyOpenGeometries(D2D1_FIGURE_END_OPEN);
 
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     unsigned before = refCount(m_path.get());
 #endif
 

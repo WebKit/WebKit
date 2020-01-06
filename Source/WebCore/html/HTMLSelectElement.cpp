@@ -736,7 +736,7 @@ const Vector<HTMLElement*>& HTMLSelectElement::listItems() const
     if (m_shouldRecalcListItems)
         recalcListItems();
     else {
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
         Vector<HTMLElement*> items = m_listItems;
         recalcListItems(false);
         ASSERT(items == m_listItems);

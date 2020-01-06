@@ -138,10 +138,10 @@ public:
         return m_set.size();
     }
 
-#if ASSERT_DISABLED
-    void checkConsistency() const { }
-#else
+#if ASSERT_ENABLED
     void checkConsistency() const { m_set.checkConsistency(); }
+#else
+    void checkConsistency() const { }
 #endif
 
 private:

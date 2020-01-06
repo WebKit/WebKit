@@ -2288,7 +2288,7 @@ void Element::addShadowRoot(Ref<ShadowRoot>&& newShadowRoot)
         shadowRoot.setHost(this);
         shadowRoot.setParentTreeScope(treeScope());
 
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
         ASSERT(notifyChildNodeInserted(*this, shadowRoot).isEmpty());
 #else
         notifyChildNodeInserted(*this, shadowRoot);
@@ -3551,7 +3551,7 @@ DatasetDOMStringMap& Element::dataset()
 
 URL Element::getURLAttribute(const QualifiedName& name) const
 {
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     if (elementData()) {
         if (const Attribute* attribute = findAttributeByName(name))
             ASSERT(isURLAttribute(*attribute));
@@ -3562,7 +3562,7 @@ URL Element::getURLAttribute(const QualifiedName& name) const
 
 URL Element::getNonEmptyURLAttribute(const QualifiedName& name) const
 {
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     if (elementData()) {
         if (const Attribute* attribute = findAttributeByName(name))
             ASSERT(isURLAttribute(*attribute));
@@ -3784,7 +3784,7 @@ bool Element::isSpellCheckingEnabled() const
     return true;
 }
 
-#ifndef NDEBUG
+#if ASSERT_ENABLED
 bool Element::fastAttributeLookupAllowed(const QualifiedName& name) const
 {
     if (name == HTMLNames::styleAttr)

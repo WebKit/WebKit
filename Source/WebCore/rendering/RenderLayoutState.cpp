@@ -39,11 +39,9 @@ RenderLayoutState::RenderLayoutState(RenderElement& renderer, IsPaginated isPagi
     : m_clipped(false)
     , m_isPaginated(isPaginated == IsPaginated::Yes)
     , m_pageLogicalHeightChanged(false)
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     , m_layoutDeltaXSaturated(false)
     , m_layoutDeltaYSaturated(false)
-#endif
-#ifndef NDEBUG
     , m_renderer(&renderer)
 #endif
 {
@@ -68,11 +66,9 @@ RenderLayoutState::RenderLayoutState(const FrameViewLayoutContext::LayoutStateSt
     : m_clipped(false)
     , m_isPaginated(false)
     , m_pageLogicalHeightChanged(false)
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     , m_layoutDeltaXSaturated(false)
     , m_layoutDeltaYSaturated(false)
-#endif
-#ifndef NDEBUG
     , m_renderer(&renderer)
 #endif
 {
@@ -109,7 +105,7 @@ void RenderLayoutState::computeOffsets(const RenderLayoutState& ancestor, Render
         m_paintOffset -= toLayoutSize(renderer.scrollPosition());
 
     m_layoutDelta = ancestor.layoutDelta();
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     m_layoutDeltaXSaturated = ancestor.m_layoutDeltaXSaturated;
     m_layoutDeltaYSaturated = ancestor.m_layoutDeltaYSaturated;
 #endif
@@ -260,13 +256,13 @@ void RenderLayoutState::establishLineGrid(const FrameViewLayoutContext::LayoutSt
 void RenderLayoutState::addLayoutDelta(LayoutSize delta)
 {
     m_layoutDelta += delta;
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     m_layoutDeltaXSaturated |= m_layoutDelta.width() == LayoutUnit::max() || m_layoutDelta.width() == LayoutUnit::min();
     m_layoutDeltaYSaturated |= m_layoutDelta.height() == LayoutUnit::max() || m_layoutDelta.height() == LayoutUnit::min();
 #endif
 }
 
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
 bool RenderLayoutState::layoutDeltaMatches(LayoutSize delta) const
 {
     return (delta.width() == m_layoutDelta.width() || m_layoutDeltaXSaturated) && (delta.height() == m_layoutDelta.height() || m_layoutDeltaYSaturated);

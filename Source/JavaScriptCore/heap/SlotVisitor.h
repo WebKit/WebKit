@@ -266,7 +266,7 @@ private:
     // Put padding here to mitigate false sharing between multiple SlotVisitors.
     char padding[64];
 public:
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     bool m_isCheckingForDefaultMarkViolation;
     bool m_isDraining;
 #endif

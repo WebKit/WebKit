@@ -186,7 +186,7 @@ String Blob::normalizedContentType(const String& contentType)
     return contentType.convertToASCIILowercase();
 }
 
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
 bool Blob::isNormalizedContentType(const String& contentType)
 {
     // FIXME: Do we really want to treat the empty string and null string as valid content types?
@@ -213,7 +213,7 @@ bool Blob::isNormalizedContentType(const CString& contentType)
     }
     return true;
 }
-#endif
+#endif // ASSERT_ENABLED
 
 URLRegistry& Blob::registry() const
 {

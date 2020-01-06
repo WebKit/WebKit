@@ -336,17 +336,13 @@ RefPtr<Uint8ClampedArray> ImageBufferData::getData(AlphaPremultiplication output
 
 void ImageBufferData::putData(const Uint8ClampedArray& source, AlphaPremultiplication sourceFormat, const IntSize& sourceSize, const IntRect& sourceRect, const IntPoint& destPoint, const IntSize& size, bool accelerateRendering)
 {
-#if ASSERT_DISABLED
-    UNUSED_PARAM(size);
-#endif
-
     ASSERT(sourceRect.width() > 0);
     ASSERT(sourceRect.height() > 0);
     
     Checked<int> originx = sourceRect.x();
     Checked<int> destx = (Checked<int>(destPoint.x()) + sourceRect.x());
     ASSERT(destx.unsafeGet() >= 0);
-    ASSERT(destx.unsafeGet() < size.width());
+    ASSERT_UNUSED(size, destx.unsafeGet() < size.width());
     ASSERT(originx.unsafeGet() >= 0);
     ASSERT(originx.unsafeGet() <= sourceRect.maxX());
     

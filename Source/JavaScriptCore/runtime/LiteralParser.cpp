@@ -438,7 +438,7 @@ static constexpr const TokenType TokenTypesOfLatin1Characters[256] = {
 template <typename CharType>
 ALWAYS_INLINE TokenType LiteralParser<CharType>::Lexer::lex(LiteralParserToken<CharType>& token)
 {
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     m_currentTokenID++;
 #endif
 

@@ -43,7 +43,7 @@ namespace JSC {
         RegisterID()
             : m_refCount(0)
             , m_isTemporary(false)
-#ifndef NDEBUG
+#if ASSERT_ENABLED
             , m_didSetIndex(false)
 #endif
         {
@@ -53,7 +53,7 @@ namespace JSC {
             : m_refCount(0)
             , m_virtualRegister(virtualRegister)
             , m_isTemporary(false)
-#ifndef NDEBUG
+#if ASSERT_ENABLED
             , m_didSetIndex(true)
 #endif
         {
@@ -63,7 +63,7 @@ namespace JSC {
             : m_refCount(0)
             , m_virtualRegister(VirtualRegister(index))
             , m_isTemporary(false)
-#ifndef NDEBUG
+#if ASSERT_ENABLED
             , m_didSetIndex(true)
 #endif
         {
@@ -71,7 +71,7 @@ namespace JSC {
 
         void setIndex(VirtualRegister index)
         {
-#ifndef NDEBUG
+#if ASSERT_ENABLED
             m_didSetIndex = true;
 #endif
             m_virtualRegister = index;
@@ -120,7 +120,7 @@ namespace JSC {
         int m_refCount;
         VirtualRegister m_virtualRegister;
         bool m_isTemporary;
-#ifndef NDEBUG
+#if ASSERT_ENABLED
         bool m_didSetIndex;
 #endif
     };

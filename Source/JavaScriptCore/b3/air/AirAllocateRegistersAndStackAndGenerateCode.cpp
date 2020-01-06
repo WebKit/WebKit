@@ -286,7 +286,7 @@ void GenerateAndAllocateRegisters::prepareForGeneration()
         data.spillSlot = m_code.addStackSlot(8, StackSlotKind::Spill);
         data.reg = Reg();
         m_map[tmp] = data;
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
         m_allTmps[tmp.bank()].append(tmp);
 #endif
     };
@@ -324,7 +324,7 @@ void GenerateAndAllocateRegisters::prepareForGeneration()
     lowerStackArgs(m_code);
 
     // Verify none of these passes add any tmps.
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     forEachBank([&] (Bank bank) {
         ASSERT(m_allTmps[bank].size() - m_registers[bank].size() == m_code.numTmps(bank));
     });
@@ -417,7 +417,7 @@ void GenerateAndAllocateRegisters::generate(CCallHelpers& jit)
         }
 
         forEachBank([&] (Bank bank) {
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
             // By default, everything is spilled at block boundaries. We do this after we process each block
             // so we don't have to walk all Tmps, since #Tmps >> #Available regs. Instead, we walk the register file at
             // each block boundary and clear entries in this map.

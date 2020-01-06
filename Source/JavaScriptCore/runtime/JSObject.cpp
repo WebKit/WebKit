@@ -436,7 +436,7 @@ void JSObject::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
     JSObject* thisObject = jsCast<JSObject*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     bool wasCheckingForDefaultMarkViolation = visitor.m_isCheckingForDefaultMarkViolation;
     visitor.m_isCheckingForDefaultMarkViolation = false;
 #endif
@@ -445,7 +445,7 @@ void JSObject::visitChildren(JSCell* cell, SlotVisitor& visitor)
     
     thisObject->visitButterfly(visitor);
     
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     visitor.m_isCheckingForDefaultMarkViolation = wasCheckingForDefaultMarkViolation;
 #endif
 }
@@ -492,7 +492,7 @@ void JSFinalObject::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
     JSFinalObject* thisObject = jsCast<JSFinalObject*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     bool wasCheckingForDefaultMarkViolation = visitor.m_isCheckingForDefaultMarkViolation;
     visitor.m_isCheckingForDefaultMarkViolation = false;
 #endif
@@ -504,7 +504,7 @@ void JSFinalObject::visitChildren(JSCell* cell, SlotVisitor& visitor)
             visitor.appendValuesHidden(thisObject->inlineStorage(), storageSize);
     }
     
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     visitor.m_isCheckingForDefaultMarkViolation = wasCheckingForDefaultMarkViolation;
 #endif
 }

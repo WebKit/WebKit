@@ -62,7 +62,7 @@ void setMachExceptionPort(mach_port_t exceptionPort)
     ASSERT(MACH_PORT_VALID(exceptionPort));
 
     // Assert that we dont try to call setMachExceptionPort more than once per process.
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     static mach_port_t taskExceptionPort = MACH_PORT_NULL;
     ASSERT(taskExceptionPort == MACH_PORT_NULL);
     taskExceptionPort = exceptionPort;

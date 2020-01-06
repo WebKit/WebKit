@@ -438,13 +438,13 @@ void RelatedNodeRetargeter::collectTreeScopes()
     ASSERT_WITH_SECURITY_IMPLICATION(!m_ancestorTreeScopes.isEmpty());
 }
 
-#if ASSERT_DISABLED
+#if !ASSERT_ENABLED
 
 inline void RelatedNodeRetargeter::checkConsistency(Node&)
 {
 }
 
-#else
+#else // ASSERT_ENABLED
 
 void RelatedNodeRetargeter::checkConsistency(Node& currentTarget)
 {
@@ -454,6 +454,6 @@ void RelatedNodeRetargeter::checkConsistency(Node& currentTarget)
     ASSERT(m_retargetedRelatedNode == &currentTarget.treeScope().retargetToScope(m_relatedNode));
 }
 
-#endif
+#endif // ASSERT_ENABLED
 
 }

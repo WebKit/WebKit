@@ -46,7 +46,7 @@ public:
         : m_clipped(false)
         , m_isPaginated(false)
         , m_pageLogicalHeightChanged(false)
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
         , m_layoutDeltaXSaturated(false)
         , m_layoutDeltaYSaturated(false)
 #endif
@@ -76,7 +76,7 @@ public:
 
     bool needsBlockDirectionLocationSetBeforeLayout() const { return m_lineGrid || (m_isPaginated && m_pageLogicalHeight); }
 
-#ifndef NDEBUG
+#if ASSERT_ENABLED
     RenderElement* renderer() const { return m_renderer; }
 #endif
     LayoutRect clipRect() const { return m_clipRect; }
@@ -84,7 +84,7 @@ public:
 
     void addLayoutDelta(LayoutSize);
     LayoutSize layoutDelta() const { return m_layoutDelta; }
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     bool layoutDeltaMatches(LayoutSize) const;
 #endif
 
@@ -102,7 +102,7 @@ private:
     bool m_isPaginated : 1;
     // If our page height has changed, this will force all blocks to relayout.
     bool m_pageLogicalHeightChanged : 1;
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     bool m_layoutDeltaXSaturated : 1;
     bool m_layoutDeltaYSaturated : 1;
 #endif
@@ -128,7 +128,7 @@ private:
     LayoutSize m_pageOffset;
     LayoutSize m_lineGridOffset;
     LayoutSize m_lineGridPaginationOrigin;
-#ifndef NDEBUG
+#if ASSERT_ENABLED
     RenderElement* m_renderer { nullptr };
 #endif
 };

@@ -689,7 +689,7 @@ String DateComponents::toStringForTime(SecondFormat format) const
     switch (effectiveFormat) {
     default:
         ASSERT_NOT_REACHED();
-#if ASSERT_DISABLED
+#if !ASSERT_ENABLED
         FALLTHROUGH; // To None.
 #endif
     case None:

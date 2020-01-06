@@ -1888,7 +1888,7 @@ void SpeculativeJIT::compileCurrentBlock()
     }
     
     // Perform the most basic verification that children have been used correctly.
-    if (!ASSERT_DISABLED) {
+    if (ASSERT_ENABLED) {
         for (auto& info : m_generationInfo)
             RELEASE_ASSERT(!info.alive());
     }
@@ -10958,7 +10958,7 @@ void SpeculativeJIT::emitBinarySwitchStringRecurse(
         // We've already checked that the input string is a prefix of all of the cases,
         // so we just check length to jump to that case.
         
-        if (!ASSERT_DISABLED) {
+        if (ASSERT_ENABLED) {
             ASSERT(cases[begin].string->length() == commonChars);
             for (unsigned i = begin + 1; i < end; ++i)
                 ASSERT(cases[i].string->length() > commonChars);
@@ -11975,7 +11975,7 @@ void SpeculativeJIT::emitAllocateButterfly(GPRReg storageResultGPR, GPRReg sizeG
     m_jit.zeroExtend32ToPtr(sizeGPR, scratch1);
     m_jit.lshift32(TrustedImm32(3), scratch1);
     m_jit.add32(TrustedImm32(sizeof(IndexingHeader)), scratch1, scratch2);
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     MacroAssembler::Jump didNotOverflow = m_jit.branch32(MacroAssembler::AboveOrEqual, scratch2, sizeGPR);
     m_jit.abortWithReason(UncheckedOverflow);
     didNotOverflow.link(&m_jit);
@@ -13482,14 +13482,14 @@ void SpeculativeJIT::compileAllocateNewArrayWithSize(JSGlobalObject* globalObjec
     MacroAssembler::JumpList slowCases;
     if (shouldConvertLargeSizeToArrayStorage)
         slowCases.append(m_jit.branch32(MacroAssembler::AboveOrEqual, sizeGPR, TrustedImm32(MIN_ARRAY_STORAGE_CONSTRUCTION_LENGTH)));
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     else {
         MacroAssembler::Jump lengthIsWithinLimits;
         lengthIsWithinLimits = m_jit.branch32(MacroAssembler::Below, sizeGPR, TrustedImm32(MIN_ARRAY_STORAGE_CONSTRUCTION_LENGTH));
         m_jit.abortWithReason(UncheckedOverflow);
         lengthIsWithinLimits.link(&m_jit);
     }
-#endif
+#endif // ASSERT_ENABLED
 
     // We can use resultGPR as a scratch right now.
     emitAllocateButterfly(storageGPR, sizeGPR, scratchGPR, scratch2GPR, resultGPR, slowCases);
@@ -14010,7 +14010,7 @@ void SpeculativeJIT::compileMakeRope(Node* node)
             }
         }
 
-        if (!ASSERT_DISABLED) {
+        if (ASSERT_ENABLED) {
             CCallHelpers::Jump ok = m_jit.branch32(
                 CCallHelpers::GreaterThanOrEqual, allocatorGPR, TrustedImm32(0));
             m_jit.abortWithReason(DFGNegativeStringLength);
@@ -14054,7 +14054,7 @@ void SpeculativeJIT::compileMakeRope(Node* node)
         }
     }
 
-    if (!ASSERT_DISABLED) {
+    if (ASSERT_ENABLED) {
         CCallHelpers::Jump ok = m_jit.branch32(
             CCallHelpers::GreaterThanOrEqual, allocatorGPR, TrustedImm32(0));
         m_jit.abortWithReason(DFGNegativeStringLength);

@@ -237,7 +237,7 @@ public:
 
     WEBCORE_EXPORT Vector<Ref<ArchiveResource>> subresources() const;
 
-#ifndef NDEBUG
+#if ASSERT_ENABLED
     bool isSubstituteLoadPending(ResourceLoader*) const;
 #endif
     void cancelPendingSubstituteLoad(ResourceLoader*);   
@@ -620,7 +620,7 @@ private:
     Optional<DocumentIdentifier> m_temporaryServiceWorkerClient;
 #endif
 
-#ifndef NDEBUG
+#if ASSERT_ENABLED
     bool m_hasEverBeenAttached { false };
 #endif
 

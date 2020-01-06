@@ -808,9 +808,7 @@ public:
     ALWAYS_INLINE static bool canUseJIT()
     {
 #if ENABLE(JIT)
-#if !ASSERT_DISABLED
-        RELEASE_ASSERT(s_canUseJITIsSet);
-#endif
+        ASSERT(s_canUseJITIsSet);
         return s_canUseJIT;
 #else
         return false;
@@ -1239,7 +1237,7 @@ private:
     uintptr_t m_currentWeakRefVersion { 0 };
 
 #if ENABLE(JIT)
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     JS_EXPORT_PRIVATE static bool s_canUseJITIsSet;
 #endif
     JS_EXPORT_PRIVATE static bool s_canUseJIT;

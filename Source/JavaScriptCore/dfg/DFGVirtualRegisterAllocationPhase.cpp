@@ -55,7 +55,7 @@ public:
                 continue;
             if (!block->isReachable)
                 continue;
-            if (!ASSERT_DISABLED) {
+            if (ASSERT_ENABLED) {
                 // Force usage of highest-numbered virtual registers.
                 scoreBoard.sortFree();
             }

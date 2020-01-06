@@ -95,7 +95,7 @@ private:
 
     HashMap<AtomString, std::unique_ptr<Slot>> m_slots;
 
-#ifndef NDEBUG
+#if ASSERT_ENABLED
     HashSet<HTMLSlotElement*> m_slotElementsForConsistencyCheck;
 #endif
 

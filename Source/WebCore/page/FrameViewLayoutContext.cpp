@@ -618,7 +618,7 @@ void FrameViewLayoutContext::addLayoutDelta(const LayoutSize& delta)
         layoutState->addLayoutDelta(delta);
 }
     
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
 bool FrameViewLayoutContext::layoutDeltaMatches(const LayoutSize& delta)
 {
     if (auto* layoutState = this->layoutState())

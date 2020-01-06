@@ -45,9 +45,6 @@ SQLiteStatement::SQLiteStatement(SQLiteDatabase& db, const String& sql)
     : m_database(db)
     , m_query(sql)
     , m_statement(0)
-#ifndef NDEBUG
-    , m_isPrepared(false)
-#endif
 {
 }
 
@@ -79,7 +76,7 @@ int SQLiteStatement::prepare()
     if (tail && *tail)
         error = SQLITE_ERROR;
 
-#ifndef NDEBUG
+#if ASSERT_ENABLED
     m_isPrepared = error == SQLITE_OK;
 #endif
     return error;
@@ -108,7 +105,7 @@ int SQLiteStatement::step()
     
 int SQLiteStatement::finalize()
 {
-#ifndef NDEBUG
+#if ASSERT_ENABLED
     m_isPrepared = false;
 #endif
     if (!m_statement)

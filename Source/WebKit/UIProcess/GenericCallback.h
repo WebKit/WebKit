@@ -141,7 +141,7 @@ private:
 
     Optional<CallbackFunction> m_callback;
 
-#ifndef NDEBUG
+#if ASSERT_ENABLED
     Ref<Thread> m_originThread { Thread::current() };
 #endif
 };

@@ -45,7 +45,7 @@ Box::Box(const Box& other)
     , m_hasClearance(other.m_hasClearance)
     , m_border(other.m_border)
     , m_padding(other.m_padding)
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     , m_hasValidTop(other.m_hasValidTop)
     , m_hasValidLeft(other.m_hasValidLeft)
     , m_hasValidHorizontalMargin(other.m_hasValidHorizontalMargin)

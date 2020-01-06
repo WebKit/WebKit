@@ -1993,7 +1993,7 @@ Expected<std::unique_ptr<InternalFunction>, String> parseAndCompile(CompilationC
     irGenerator.insertConstants();
 
     procedure.resetReachability();
-    if (!ASSERT_DISABLED)
+    if (ASSERT_ENABLED)
         validate(procedure, "After parsing:\n");
 
     dataLogIf(WasmB3IRGeneratorInternal::verbose, "Pre SSA: ", procedure);

@@ -228,7 +228,7 @@ template<typename T, typename U> inline bool operator!=(T* a, const COMPtr<U>& b
     return a != b.get();
 }
 
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
 inline unsigned refCount(IUnknown* ptr)
 {
     if (!ptr)

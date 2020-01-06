@@ -111,7 +111,7 @@ public:
     // If we're doing a full repaint m_layoutState will be 0, but in that case layoutDelta doesn't matter.
     LayoutSize layoutDelta() const;
     void addLayoutDelta(const LayoutSize& delta);
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     bool layoutDeltaMatches(const LayoutSize& delta);
 #endif
     using LayoutStateStack = Vector<std::unique_ptr<RenderLayoutState>>;

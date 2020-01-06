@@ -1783,7 +1783,7 @@ void CodeBlock::ensureCatchLivenessIsComputedForBytecodeIndex(BytecodeIndex byte
     OpCatch op = instruction->as<OpCatch>();
     auto& metadata = op.metadata(this);
     if (!!metadata.m_buffer) {
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
         ConcurrentJSLocker locker(m_lock);
         bool found = false;
         auto* rareData = m_rareData.get();
@@ -1795,7 +1795,7 @@ void CodeBlock::ensureCatchLivenessIsComputedForBytecodeIndex(BytecodeIndex byte
             }
         }
         ASSERT(found);
-#endif
+#endif // ASSERT_ENABLED
         return;
     }
 

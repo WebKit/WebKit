@@ -222,7 +222,7 @@ class ClipRectsCache {
 public:
     ClipRectsCache()
     {
-#ifndef NDEBUG
+#if ASSERT_ENABLED
         for (int i = 0; i < NumCachedClipRectsTypes; ++i) {
             m_clipRectsRoot[i] = 0;
             m_scrollbarRelevancy[i] = IgnoreOverlayScrollbarSize;
@@ -240,7 +240,7 @@ public:
         m_clipRects[getIndex(clipRectsType, respectOverflow)] = WTFMove(clipRects);
     }
 
-#ifndef NDEBUG
+#if ASSERT_ENABLED
     const RenderLayer* m_clipRectsRoot[NumCachedClipRectsTypes];
     OverlayScrollbarSizeRelevancy m_scrollbarRelevancy[NumCachedClipRectsTypes];
 #endif
@@ -327,7 +327,7 @@ RenderLayer::RenderLayer(RenderLayerModelObject& rendererLayerModelObject)
     , m_requiresScrollPositionReconciliation(false)
     , m_containsDirtyOverlayScrollbars(false)
     , m_updatingMarqueePosition(false)
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     , m_layerListMutationAllowed(true)
 #endif
 #if ENABLE(CSS_COMPOSITING)
@@ -4763,7 +4763,7 @@ void RenderLayer::paintList(LayerList layerIterator, GraphicsContext& context, c
     if (!hasSelfPaintingLayerDescendant())
         return;
 
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     LayerListMutationDetector mutationChecker(*this);
 #endif
 
@@ -5378,7 +5378,7 @@ RenderLayer* RenderLayer::hitTestLayer(RenderLayer* rootLayer, RenderLayer* cont
 
     // This variable tracks which layer the mouse ends up being inside.
     RenderLayer* candidateLayer = nullptr;
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     LayerListMutationDetector mutationChecker(*this);
 #endif
 
@@ -5659,7 +5659,7 @@ Ref<ClipRects> RenderLayer::updateClipRects(const ClipRectsContext& clipRectsCon
     
     if (!m_clipRectsCache)
         m_clipRectsCache = makeUnique<ClipRectsCache>();
-#ifndef NDEBUG
+#if ASSERT_ENABLED
     m_clipRectsCache->m_clipRectsRoot[clipRectsType] = clipRectsContext.rootLayer;
     m_clipRectsCache->m_scrollbarRelevancy[clipRectsType] = clipRectsContext.overlayScrollbarSizeRelevancy;
 #endif
@@ -6172,7 +6172,7 @@ LayoutRect RenderLayer::calculateLayerBounds(const RenderLayer* ancestorLayer, c
     
     ASSERT(isStackingContext() || !positiveZOrderLayers().size());
 
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     LayerListMutationDetector mutationChecker(const_cast<RenderLayer&>(*this));
 #endif
 

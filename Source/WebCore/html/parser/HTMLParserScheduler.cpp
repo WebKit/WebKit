@@ -80,7 +80,7 @@ HTMLParserScheduler::HTMLParserScheduler(HTMLDocumentParser& parser)
     , m_parserTimeLimit(Seconds(parserTimeLimit(m_parser.document()->page())))
     , m_continueNextChunkTimer(*this, &HTMLParserScheduler::continueNextChunkTimerFired)
     , m_isSuspendedWithActiveTimer(false)
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     , m_suspended(false)
 #endif
 {
@@ -128,7 +128,7 @@ void HTMLParserScheduler::suspend()
 {
     ASSERT(!m_suspended);
     ASSERT(!m_isSuspendedWithActiveTimer);
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     m_suspended = true;
 #endif
 
@@ -142,7 +142,7 @@ void HTMLParserScheduler::resume()
 {
     ASSERT(m_suspended);
     ASSERT(!m_continueNextChunkTimer.isActive());
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     m_suspended = false;
 #endif
 

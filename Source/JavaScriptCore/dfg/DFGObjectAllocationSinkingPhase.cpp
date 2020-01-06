@@ -494,7 +494,7 @@ public:
         for (Node* identifier : toEscape)
             escapeAllocation(identifier);
 
-        if (!ASSERT_DISABLED) {
+        if (ASSERT_ENABLED) {
             for (const auto& entry : m_allocations)
                 ASSERT_UNUSED(entry, entry.value.isEscapedAllocation() || other.m_allocations.contains(entry.key));
         }
@@ -519,7 +519,7 @@ public:
 
     void assertIsValid() const
     {
-        if (ASSERT_DISABLED)
+        if (!ASSERT_ENABLED)
             return;
 
         // Pointers should point to an actual allocation

@@ -451,14 +451,14 @@ void Debugger::removeBreakpoint(BreakpointID id)
     toggleBreakpoint(*breakpoint, BreakpointDisabled);
 
     BreakpointsList& breakpoints = *breaksIt->value;
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     bool found = false;
     for (Breakpoint* current = breakpoints.head(); current && !found; current = current->next()) {
         if (current->id == breakpoint->id)
             found = true;
     }
     ASSERT(found);
-#endif
+#endif // ASSERT_ENABLED
 
     m_breakpointIDToBreakpoint.remove(idIt);
     breakpoints.remove(breakpoint);

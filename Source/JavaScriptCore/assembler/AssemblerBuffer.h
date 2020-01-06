@@ -247,7 +247,7 @@ namespace JSC {
                 buffer.ensureSpace(requiredSpace);
                 m_storageBuffer = buffer.m_storage.buffer();
                 m_index = buffer.m_index;
-#if !defined(NDEBUG)
+#if ASSERT_ENABLED
                 m_initialIndex = m_index;
                 m_requiredSpace = requiredSpace;
 #endif
@@ -276,7 +276,7 @@ namespace JSC {
             AssemblerBuffer& m_buffer;
             char* m_storageBuffer;
             unsigned m_index;
-#if !defined(NDEBUG)
+#if ASSERT_ENABLED
             unsigned m_initialIndex;
             unsigned m_requiredSpace;
 #endif

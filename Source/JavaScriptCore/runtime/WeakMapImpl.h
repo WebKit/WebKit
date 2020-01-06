@@ -444,7 +444,7 @@ private:
 
     ALWAYS_INLINE void checkConsistency() const
     {
-        if (!ASSERT_DISABLED) {
+        if (ASSERT_ENABLED) {
             uint32_t size = 0;
             auto* buffer = this->buffer();
             for (uint32_t index = 0; index < m_capacity; ++index) {
@@ -469,7 +469,7 @@ private:
 
     ALWAYS_INLINE void assertBufferIsEmpty() const
     {
-        if (!ASSERT_DISABLED) {
+        if (ASSERT_ENABLED) {
             for (unsigned i = 0; i < m_capacity; i++)
                 ASSERT((buffer() + i)->isEmpty());
         }

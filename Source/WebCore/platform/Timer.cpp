@@ -49,7 +49,7 @@ class TimerHeapReference;
 // Then we set a single shared system timer to fire at that time.
 //
 // When a timer's "next fire time" changes, we need to move it around in the priority queue.
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
 static ThreadTimerHeap& threadGlobalTimerHeap()
 {
     return threadGlobalData().threadTimers().timerHeap();
@@ -300,7 +300,7 @@ Seconds TimerBase::nextFireInterval() const
 
 inline void TimerBase::checkHeapIndex() const
 {
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     ASSERT(m_heapItem);
     auto& heap = m_heapItem->timerHeap();
     ASSERT(&heap == &threadGlobalTimerHeap());
@@ -434,7 +434,7 @@ void TimerBase::updateHeapIfNeeded(MonotonicTime oldTime)
     if (fireTime && hasValidHeapPosition())
         return;
 
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     Optional<unsigned> oldHeapIndex;
     if (m_heapItem->isInHeap())
         oldHeapIndex = m_heapItem->heapIndex();
@@ -449,7 +449,7 @@ void TimerBase::updateHeapIfNeeded(MonotonicTime oldTime)
     else
         heapIncreaseKey();
 
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     Optional<unsigned> newHeapIndex;
     if (m_heapItem->isInHeap())
         newHeapIndex = m_heapItem->heapIndex();

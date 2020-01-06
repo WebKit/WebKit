@@ -105,7 +105,7 @@ private:
     CComPtr<IDirect3DDevice9> m_d3dDevice;
     CARenderOGLContext* m_renderOGLContext { nullptr };
     CComPtr<IDirect3DPixelShader9> m_pixelShader;
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     DWORD m_deviceThreadID { 0 };
 #endif
     bool m_initialized { false };

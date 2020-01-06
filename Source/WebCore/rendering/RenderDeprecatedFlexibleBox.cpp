@@ -302,7 +302,7 @@ void RenderDeprecatedFlexibleBox::layoutBlock(bool relayoutChildren, LayoutUnit)
 
         m_stretchingChildren = false;
 
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
         LayoutSize oldLayoutDelta = view().frameView().layoutContext().layoutDelta();
 #endif
 

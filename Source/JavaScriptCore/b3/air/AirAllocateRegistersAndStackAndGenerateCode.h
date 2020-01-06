@@ -71,7 +71,7 @@ private:
 
     TmpMap<TmpData> m_map;
 
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     Vector<Tmp> m_allTmps[numBanks];
 #endif
 

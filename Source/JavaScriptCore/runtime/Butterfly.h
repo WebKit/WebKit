@@ -43,7 +43,7 @@ struct ContiguousData {
     ContiguousData() = default;
     ContiguousData(T* data, size_t length)
         : m_data(data)
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
         , m_length(length)
 #endif
     {
@@ -53,7 +53,7 @@ struct ContiguousData {
     struct Data {
         Data(T& location, IndexingType indexingMode)
             : m_data(location)
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
             , m_isWritable(!isCopyOnWrite(indexingMode))
 #endif
         {
@@ -103,7 +103,7 @@ struct ContiguousData {
 
 
         T& m_data;
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
         bool m_isWritable;
 #endif
     };
@@ -114,13 +114,13 @@ struct ContiguousData {
     T& atUnsafe(size_t index) { ASSERT(index < m_length); return m_data[index]; }
 
     T* data() const { return m_data; }
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     size_t length() const { return m_length; }
 #endif
 
 private:
     T* m_data { nullptr };
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     size_t m_length { 0 };
 #endif
 };

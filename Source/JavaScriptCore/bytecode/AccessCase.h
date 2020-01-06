@@ -239,7 +239,7 @@ public:
     Box<Identifier> identifier() const { return m_identifier; }
 
 
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     void checkConsistency(StructureStubInfo&);
 #else
     ALWAYS_INLINE void checkConsistency(StructureStubInfo&) { }

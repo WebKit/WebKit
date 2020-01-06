@@ -123,13 +123,13 @@ void ScriptExecutionContext::removeFromContextsMap()
     }
 }
 
-#if ASSERT_DISABLED
+#if !ASSERT_ENABLED
 
 inline void ScriptExecutionContext::checkConsistency() const
 {
 }
 
-#else
+#else // ASSERT_ENABLED
 
 void ScriptExecutionContext::checkConsistency() const
 {
@@ -145,13 +145,13 @@ void ScriptExecutionContext::checkConsistency() const
     }
 }
 
-#endif
+#endif // ASSERT_ENABLED
 
 ScriptExecutionContext::~ScriptExecutionContext()
 {
     checkConsistency();
 
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     if (m_contextIdentifier) {
         Locker<Lock> locker(allScriptExecutionContextsMapLock);
         ASSERT_WITH_MESSAGE(!allScriptExecutionContextsMap().contains(m_contextIdentifier),
@@ -159,7 +159,7 @@ ScriptExecutionContext::~ScriptExecutionContext()
     }
 
     m_inScriptExecutionContextDestructor = true;
-#endif
+#endif // ASSERT_ENABLED
 
 #if ENABLE(SERVICE_WORKER)
     setActiveServiceWorker(nullptr);
@@ -168,7 +168,7 @@ ScriptExecutionContext::~ScriptExecutionContext()
     while (auto* destructionObserver = m_destructionObservers.takeAny())
         destructionObserver->contextDestroyed();
 
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     m_inScriptExecutionContextDestructor = false;
 #endif
 }

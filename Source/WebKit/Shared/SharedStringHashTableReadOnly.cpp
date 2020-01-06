@@ -32,7 +32,7 @@ namespace WebKit {
 
 using namespace WebCore;
 
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
 static inline bool isPowerOf2(unsigned v)
 {
     // Taken from http://www.cs.utk.edu/~vose/c-stuff/bithacks.html

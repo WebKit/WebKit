@@ -3083,7 +3083,7 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
                 return cssValuePool.createValue(style.textEmphasisCustomMark(), CSSUnitType::CSS_STRING);
             case TextEmphasisMark::Auto:
                 ASSERT_NOT_REACHED();
-#if ASSERT_DISABLED
+#if !ASSERT_ENABLED
                 FALLTHROUGH;
 #endif
             case TextEmphasisMark::Dot:

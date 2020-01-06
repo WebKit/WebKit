@@ -125,7 +125,7 @@ public:
     const BorderValue& borderAdjoiningCellAfter(const RenderTableCell&);
 
     using RenderBlockFlow::nodeAtPoint;
-#ifndef NDEBUG
+#if ASSERT_ENABLED
     bool isFirstOrLastCellInRow() const { return !table()->cellAfter(this) || !table()->cellBefore(this); }
 #endif
     

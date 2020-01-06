@@ -304,7 +304,7 @@ void CustomElementReactionQueue::enqueueElementOnAppropriateElementQueue(Element
     queue->add(element);
 }
 
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
 unsigned CustomElementReactionDisallowedScope::s_customElementReactionDisallowedCount = 0;
 #endif
 

@@ -68,14 +68,14 @@ public:
     explicit operator bool() const { return m_ptr; }
     void clear() { m_ptr = nullptr; }
 
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     bool wasConstructedOnMainThread() const { return m_wasConstructedOnMainThread; }
 #endif
 
 private:
     template<typename T> explicit WeakPtrImpl(T* ptr)
         : m_ptr(static_cast<typename T::WeakValueType*>(ptr))
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
         , m_wasConstructedOnMainThread(isMainThread())
 #endif
     {
@@ -83,7 +83,7 @@ private:
     }
 
     void* m_ptr;
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     bool m_wasConstructedOnMainThread;
 #endif
 };
@@ -141,7 +141,7 @@ class WeakPtrFactory {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     WeakPtrFactory()
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
         : m_wasConstructedOnMainThread(isMainThread())
 #endif
     {
@@ -192,7 +192,7 @@ private:
     template<typename> friend class WeakHashSet;
 
     mutable RefPtr<WeakPtrImpl> m_impl;
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     bool m_wasConstructedOnMainThread;
 #endif
 };

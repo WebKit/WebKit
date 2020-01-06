@@ -1,3 +1,32 @@
+2020-01-06  Mark Lam  <mark.lam@apple.com>
+
+        Convert ASSERT_DISABLED to ASSERT_ENABLED, and fix some tests of NDEBUG that should actually test for ASSERT_ENABLED.
+        https://bugs.webkit.org/show_bug.cgi?id=205776
+
+        Reviewed by Saam Barati.
+
+        * JetStream2/wasm/HashSet.cpp:
+        * StitchMarker/wtf/Assertions.h:
+        * StitchMarker/wtf/DateMath.cpp:
+        (WTF::initializeDates):
+        * StitchMarker/wtf/HashTable.h:
+        * StitchMarker/wtf/Hasher.h:
+        (WTF::StringHasher::addCharacters):
+        * StitchMarker/wtf/NeverDestroyed.h:
+        (WTF::LazyNeverDestroyed::construct):
+        * StitchMarker/wtf/StackBounds.h:
+        (WTF::StackBounds::checkConsistency const):
+        * StitchMarker/wtf/ValueCheck.h:
+        * StitchMarker/wtf/Vector.h:
+        (WTF::minCapacity>::checkConsistency):
+        * StitchMarker/wtf/text/AtomicStringImpl.cpp:
+        * StitchMarker/wtf/text/AtomicStringImpl.h:
+        * StitchMarker/wtf/text/StringCommon.h:
+        (WTF::hasPrefixWithLettersIgnoringASCIICaseCommon):
+        * StitchMarker/wtf/text/StringImpl.h:
+        * StitchMarker/wtf/text/SymbolImpl.h:
+        * StitchMarker/wtf/text/UniquedStringImpl.h:
+
 2020-01-05  Dean Jackson  <dino@apple.com>
 
         Rename GraphicsContext3D to GraphicsContextGL

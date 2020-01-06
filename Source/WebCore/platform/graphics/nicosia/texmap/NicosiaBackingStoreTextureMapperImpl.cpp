@@ -55,7 +55,7 @@ void BackingStoreTextureMapperImpl::createTile(uint32_t tileID, float scale)
     auto& update = m_layerState.update;
 
     // Assert no tile with this ID has been registered yet.
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     auto matchesTile = [tileID](auto& tile) { return tile.tileID == tileID; };
 #endif
     ASSERT(std::none_of(update.tilesToCreate.begin(), update.tilesToCreate.end(), matchesTile));

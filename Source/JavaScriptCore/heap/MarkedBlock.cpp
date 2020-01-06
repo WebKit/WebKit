@@ -265,12 +265,12 @@ void MarkedBlock::resetMarks()
     footer().m_markingVersion = MarkedSpace::nullVersion;
 }
 
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
 void MarkedBlock::assertMarksNotStale()
 {
     ASSERT(footer().m_markingVersion == vm().heap.objectSpace().markingVersion());
 }
-#endif // !ASSERT_DISABLED
+#endif // ASSERT_ENABLED
 
 bool MarkedBlock::areMarksStale()
 {
@@ -361,13 +361,13 @@ void MarkedBlock::Handle::didRemoveFromDirectory()
     blockFooter().m_subspace = nullptr;
 }
 
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
 void MarkedBlock::assertValidCell(VM& vm, HeapCell* cell) const
 {
     RELEASE_ASSERT(&vm == &this->vm());
     RELEASE_ASSERT(const_cast<MarkedBlock*>(this)->handle().cellAlign(cell) == cell);
 }
-#endif
+#endif // ASSERT_ENABLED
 
 void MarkedBlock::Handle::dumpState(PrintStream& out)
 {

@@ -377,7 +377,7 @@ LocalTimeOffset calculateLocalTimeOffset(double ms, TimeType inputTimeType)
 
 void initializeDates()
 {
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     static bool alreadyInitialized;
     ASSERT(!alreadyInitialized);
     alreadyInitialized = true;

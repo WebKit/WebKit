@@ -69,7 +69,7 @@ public:
         return add(*stringTableProvider.atomicStringTable(), *string);
     }
 
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     WTF_EXPORT_STRING_API static bool isInAtomicStringTable(StringImpl*);
 #endif
 
@@ -100,7 +100,7 @@ private:
     WTF_EXPORT_STRING_API static RefPtr<AtomicStringImpl> lookUpSlowCase(StringImpl&);
 };
 
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
 // AtomicStringImpls created from StaticStringImpl will ASSERT
 // in the generic ValueCheck<T>::checkConsistency
 // as they are not allocated by fastMalloc.

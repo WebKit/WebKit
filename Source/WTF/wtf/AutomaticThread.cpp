@@ -171,7 +171,7 @@ void AutomaticThread::start(const AbstractLocker&)
             RefPtr<AutomaticThread> thread = preserveThisForThread;
             thread->threadDidStart();
             
-            if (!ASSERT_DISABLED) {
+            if (ASSERT_ENABLED) {
                 LockHolder locker(*m_lock);
                 ASSERT(m_condition->contains(locker, this));
             }

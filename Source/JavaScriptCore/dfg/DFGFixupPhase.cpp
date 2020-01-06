@@ -2438,9 +2438,7 @@ private:
             break;
         }
 
-
-
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
         // Have these no-op cases here to ensure that nobody forgets to add handlers for new opcodes.
         case SetArgumentDefinitely:
         case SetArgumentMaybe:
@@ -2530,10 +2528,10 @@ private:
         case InvalidationPoint:
         case CreateArgumentsButterfly:
             break;
-#else
+#else // not ASSERT_ENABLED
         default:
             break;
-#endif
+#endif // not ASSERT_ENABLED
         }
     }
 

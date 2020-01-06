@@ -254,7 +254,7 @@ NativeImagePtr SVGImage::nativeImage(const GraphicsContext* targetContext)
     if (!SUCCEEDED(hr))
         return nullptr;
 
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     auto nativeImageSize = nativeImage->GetPixelSize();
     ASSERT(nativeImageSize.height = rect().size().height());
     ASSERT(nativeImageSize.width = rect().size().width());

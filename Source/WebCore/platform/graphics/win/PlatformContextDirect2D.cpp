@@ -307,7 +307,7 @@ void PlatformContextDirect2D::endDraw()
 
 void PlatformContextDirect2D::setTags(D2D1_TAG tag1, D2D1_TAG tag2)
 {
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     m_renderTarget->SetTags(tag1, tag2);
 #else
     UNUSED_PARAM(tag1);

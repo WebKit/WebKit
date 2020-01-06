@@ -138,7 +138,7 @@ public:
     WEBCORE_EXPORT static Parameters xhtmlMobileParameters();
     WEBCORE_EXPORT static Parameters testingParameters();
     
-#ifndef NDEBUG
+#if !LOG_DISABLED
     String description() const;
     WEBCORE_EXPORT void dump() const;
 #endif

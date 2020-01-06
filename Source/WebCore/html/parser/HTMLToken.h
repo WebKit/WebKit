@@ -275,7 +275,7 @@ inline void HTMLToken::beginStartTag(UChar character)
     m_selfClosing = false;
     m_attributes.clear();
 
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     m_currentAttribute = nullptr;
 #endif
 
@@ -290,7 +290,7 @@ inline void HTMLToken::beginEndTag(LChar character)
     m_selfClosing = false;
     m_attributes.clear();
 
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     m_currentAttribute = nullptr;
 #endif
 
@@ -304,7 +304,7 @@ inline void HTMLToken::beginEndTag(const Vector<LChar, 32>& characters)
     m_selfClosing = false;
     m_attributes.clear();
 
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     m_currentAttribute = nullptr;
 #endif
 
@@ -327,7 +327,7 @@ inline void HTMLToken::endAttribute(unsigned offset)
     ASSERT(offset);
     ASSERT(m_currentAttribute);
     m_currentAttribute->endOffset = offset - m_attributeBaseOffset;
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     m_currentAttribute = nullptr;
 #endif
 }

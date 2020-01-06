@@ -128,7 +128,7 @@ private:
 
     void checkConsistency() const
     {
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
         void* currentPosition = currentStackPointer();
         ASSERT(m_origin != m_bound);
         ASSERT(currentPosition < m_origin && currentPosition > m_bound);

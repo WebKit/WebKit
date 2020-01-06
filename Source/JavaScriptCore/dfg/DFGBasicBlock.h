@@ -175,7 +175,7 @@ struct BasicBlock : RefCounted<BasicBlock> {
     
     void didLink()
     {
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
         isLinked = true;
 #endif
     }
@@ -197,7 +197,7 @@ struct BasicBlock : RefCounted<BasicBlock> {
     bool isOSRTarget;
     bool isCatchEntrypoint;
 
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     bool isLinked;
 #endif
     bool isReachable;

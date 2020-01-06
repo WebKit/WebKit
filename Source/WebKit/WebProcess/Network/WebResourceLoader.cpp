@@ -137,11 +137,11 @@ void WebResourceLoader::didReceiveResponse(const ResourceResponse& response, boo
 
     CompletionHandler<void()> policyDecisionCompletionHandler;
     if (needsContinueDidReceiveResponseMessage) {
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
         m_isProcessingNetworkResponse = true;
 #endif
         policyDecisionCompletionHandler = [this, protectedThis = WTFMove(protectedThis)] {
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
             m_isProcessingNetworkResponse = false;
 #endif
             // If m_coreLoader becomes null as a result of the didReceiveResponse callback, we can't use the send function().

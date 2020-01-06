@@ -441,7 +441,7 @@ FiltrationResult AbstractValue::normalizeClarity(Graph& graph)
     return result;
 }
 
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
 void AbstractValue::checkConsistency() const
 {
     if (!(m_type & SpecCell)) {
@@ -465,7 +465,7 @@ void AbstractValue::assertIsRegistered(Graph& graph) const
 {
     m_structure.assertIsRegistered(graph);
 }
-#endif // !ASSERT_DISABLED
+#endif // ASSERT_ENABLED
 
 ResultType AbstractValue::resultType() const
 {

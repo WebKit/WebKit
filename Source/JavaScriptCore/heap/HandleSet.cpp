@@ -102,7 +102,7 @@ unsigned HandleSet::protectedGlobalObjectCount()
     return count;
 }
 
-#if ENABLE(GC_VALIDATION) || !ASSERT_DISABLED
+#if ENABLE(GC_VALIDATION) || ASSERT_ENABLED
 bool HandleSet::isLiveNode(Node* node)
 {
     if (node->prev()->next() != node)
@@ -112,6 +112,6 @@ bool HandleSet::isLiveNode(Node* node)
         
     return true;
 }
-#endif
+#endif // ENABLE(GC_VALIDATION) || ASSERT_ENABLED
 
 } // namespace JSC

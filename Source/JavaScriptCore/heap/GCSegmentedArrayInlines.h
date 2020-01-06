@@ -62,7 +62,7 @@ void GCSegmentedArray<T>::clear()
     }
     m_top = 0;
     m_numberOfSegments = 1;
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     m_segments.head()->m_top = 0;
 #endif
 }
@@ -75,7 +75,7 @@ void GCSegmentedArray<T>::expand()
     GCArraySegment<T>* nextSegment = GCArraySegment<T>::create();
     m_numberOfSegments++;
     
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     nextSegment->m_top = 0;
 #endif
 
@@ -174,9 +174,7 @@ inline size_t GCSegmentedArray<T>::top()
 }
 
 template <typename T>
-#if ASSERT_DISABLED
-inline void GCSegmentedArray<T>::validatePrevious() { }
-#else
+#if ASSERT_ENABLED
 inline void GCSegmentedArray<T>::validatePrevious()
 {
     unsigned count = 0;
@@ -184,7 +182,9 @@ inline void GCSegmentedArray<T>::validatePrevious()
         count++;
     ASSERT(m_segments.size() == m_numberOfSegments);
 }
-#endif
+#else
+inline void GCSegmentedArray<T>::validatePrevious() { }
+#endif // ASSERT_ENABLED
 
 template <typename T>
 inline void GCSegmentedArray<T>::append(T value)

@@ -27,10 +27,10 @@
 
 namespace WTF {
 
-#if defined(NDEBUG) && !ENABLE(SECURITY_ASSERTIONS)
-#define CHECK_REF_COUNTED_LIFECYCLE 0
-#else
+#if ASSERT_ENABLED || ENABLE(SECURITY_ASSERTIONS)
 #define CHECK_REF_COUNTED_LIFECYCLE 1
+#else
+#define CHECK_REF_COUNTED_LIFECYCLE 0
 #endif
 
 // This base class holds the non-template methods and attributes.
@@ -75,14 +75,14 @@ public:
     // locking at call sites).
     void disableThreadingChecks()
     {
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
         m_areThreadingChecksEnabled = false;
 #endif
     }
 
     static void enableThreadingChecksGlobally()
     {
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
         areThreadingChecksEnabledGlobally = true;
 #endif
     }
@@ -90,7 +90,7 @@ public:
 protected:
     RefCountedBase()
         : m_refCount(1)
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
         , m_isOwnedByMainThread(isMainThread())
 #endif
 #if CHECK_REF_COUNTED_LIFECYCLE
@@ -102,7 +102,7 @@ protected:
 
     void applyRefDerefThreadingCheck() const
     {
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
         if (hasOneRef()) {
             // Likely an ownership transfer across threads that may be safe.
             m_isOwnedByMainThread = isMainThread();
@@ -160,7 +160,7 @@ private:
 #endif
 
     mutable unsigned m_refCount;
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     mutable bool m_isOwnedByMainThread;
     bool m_areThreadingChecksEnabled { true };
 #endif

@@ -120,7 +120,7 @@ private:
     bool m_shouldFlushPendingGraphicsLayerChanges { false };
     bool m_isFlushingLayerChanges { false };
 
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     enum { WindowNotSet, WindowSet, WindowCleared } m_state { WindowNotSet };
 #endif
 };

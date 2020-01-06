@@ -299,7 +299,7 @@ static EncodedJSValue JSC_HOST_CALL hasOwnLengthProperty(JSGlobalObject* globalO
     return JSValue::encode(jsBoolean(target->hasOwnProperty(globalObject, vm.propertyNames->length)));
 }
 
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
 static EncodedJSValue JSC_HOST_CALL assertCall(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
     RELEASE_ASSERT(callFrame->argument(0).isBoolean());
@@ -325,7 +325,7 @@ static EncodedJSValue JSC_HOST_CALL assertCall(JSGlobalObject* globalObject, Cal
     RELEASE_ASSERT_WITH_MESSAGE(false, "JS assertion failed at line %u in:\n%s\n", line, codeBlock->sourceCodeForTools().data());
     return JSValue::encode(jsUndefined());
 }
-#endif
+#endif // ASSERT_ENABLED
 
 } // namespace JSC
 
@@ -1168,7 +1168,7 @@ capitalName ## Constructor* lowerName ## Constructor = featureFlag ? capitalName
         GlobalPropertyInfo(vm.propertyNames->NaN, jsNaN(), PropertyAttribute::DontEnum | PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly),
         GlobalPropertyInfo(vm.propertyNames->Infinity, jsNumber(std::numeric_limits<double>::infinity()), PropertyAttribute::DontEnum | PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly),
         GlobalPropertyInfo(vm.propertyNames->undefinedKeyword, jsUndefined(), PropertyAttribute::DontEnum | PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly),
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
         GlobalPropertyInfo(vm.propertyNames->builtinNames().assertPrivateName(), JSFunction::create(vm, this, 1, String(), assertCall), PropertyAttribute::DontEnum | PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly),
 #endif
     };

@@ -70,7 +70,7 @@ void RenderQuote::styleDidChange(StyleDifference diff, const RenderStyle* oldSty
 
 const unsigned maxDistinctQuoteCharacters = 16;
 
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
 
 static void checkNumberOfDistinctQuoteCharacters(UChar character)
 {
@@ -87,7 +87,7 @@ static void checkNumberOfDistinctQuoteCharacters(UChar character)
     ASSERT_NOT_REACHED();
 }
 
-#endif
+#endif // ASSERT_ENABLED
 
 struct QuotesForLanguage {
     const char* language;
@@ -259,7 +259,7 @@ static const QuotesForLanguage* quotesForLanguage(const String& language)
 
     const unsigned maxLanguageLength = 8;
 
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     // One time check that the table meets the constraints that the code below relies on.
 
     static bool didOneTimeCheck = false;
@@ -284,7 +284,7 @@ static const QuotesForLanguage* quotesForLanguage(const String& language)
             checkNumberOfDistinctQuoteCharacters(quoteTable[i].close2);
         }
     }
-#endif
+#endif // ASSERT_ENABLED
 
     unsigned length = language.length();
     if (!length || length > maxLanguageLength)

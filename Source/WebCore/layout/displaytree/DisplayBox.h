@@ -112,7 +112,7 @@ public:
     Rect paddingBox() const;
     Rect contentBox() const;
 
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     void setHasEstimatedMarginBefore() { m_hasEstimatedMarginBefore = true; }
 #endif
 
@@ -135,7 +135,7 @@ public:
     void setPadding(Optional<Layout::Edges>);
 
 private:
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     void invalidateMargin();
     void invalidateBorder() { m_hasValidBorder = false; }
     void invalidatePadding() { m_hasValidPadding = false; }
@@ -153,7 +153,7 @@ private:
 
     void setHasValidContentHeight() { m_hasValidContentHeight = true; }
     void setHasValidContentWidth() { m_hasValidContentWidth = true; }
-#endif
+#endif // ASSERT_ENABLED
 
     LayoutPoint m_topLeft;
     LayoutUnit m_contentWidth;
@@ -167,7 +167,7 @@ private:
     Layout::Edges m_border;
     Optional<Layout::Edges> m_padding;
 
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     bool m_hasValidTop { false };
     bool m_hasValidLeft { false };
     bool m_hasValidHorizontalMargin { false };
@@ -179,10 +179,10 @@ private:
     bool m_hasValidContentHeight { false };
     bool m_hasValidContentWidth { false };
     bool m_hasEstimatedMarginBefore { false };
-#endif
+#endif // ASSERT_ENABLED
 };
 
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
 inline void Box::invalidateMargin()
 {
     m_hasValidHorizontalMargin = false;
@@ -211,7 +211,7 @@ inline LayoutPoint Box::topLeft() const
 
 inline void Box::setTopLeft(const LayoutPoint& topLeft)
 {
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     setHasValidTop();
     setHasValidLeft();
 #endif
@@ -220,7 +220,7 @@ inline void Box::setTopLeft(const LayoutPoint& topLeft)
 
 inline void Box::setTop(LayoutUnit top)
 {
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     setHasValidTop();
 #endif
     m_topLeft.setY(top);
@@ -228,7 +228,7 @@ inline void Box::setTop(LayoutUnit top)
 
 inline void Box::setLeft(LayoutUnit left)
 {
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     setHasValidLeft();
 #endif
     m_topLeft.setX(left);
@@ -236,7 +236,7 @@ inline void Box::setLeft(LayoutUnit left)
 
 inline void Box::setContentBoxHeight(LayoutUnit height)
 { 
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     setHasValidContentHeight();
 #endif
     m_contentHeight = height;
@@ -244,7 +244,7 @@ inline void Box::setContentBoxHeight(LayoutUnit height)
 
 inline void Box::setContentBoxWidth(LayoutUnit width)
 { 
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     setHasValidContentWidth();
 #endif
     m_contentWidth = width;
@@ -264,7 +264,7 @@ inline LayoutUnit Box::contentBoxWidth() const
 
 inline void Box::setHorizontalMargin(Layout::UsedHorizontalMargin margin)
 {
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     setHasValidHorizontalMargin();
 #endif
     m_horizontalMargin = margin;
@@ -272,7 +272,7 @@ inline void Box::setHorizontalMargin(Layout::UsedHorizontalMargin margin)
 
 inline void Box::setVerticalMargin(Layout::UsedVerticalMargin margin)
 {
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     setHasValidVerticalMargin();
     setHasValidVerticalNonCollapsedMargin();
     invalidateEstimatedMarginBefore();
@@ -282,7 +282,7 @@ inline void Box::setVerticalMargin(Layout::UsedVerticalMargin margin)
 
 inline void Box::setHorizontalComputedMargin(Layout::ComputedHorizontalMargin margin)
 {
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     setHasValidHorizontalComputedMargin();
 #endif
     m_horizontalComputedMargin = margin;
@@ -290,7 +290,7 @@ inline void Box::setHorizontalComputedMargin(Layout::ComputedHorizontalMargin ma
 
 inline void Box::setBorder(Layout::Edges border)
 {
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     setHasValidBorder();
 #endif
     m_border = border;
@@ -298,7 +298,7 @@ inline void Box::setBorder(Layout::Edges border)
 
 inline void Box::setPadding(Optional<Layout::Edges> padding)
 {
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     setHasValidPadding();
 #endif
     m_padding = padding;

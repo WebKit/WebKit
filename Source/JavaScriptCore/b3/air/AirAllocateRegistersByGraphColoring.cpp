@@ -162,7 +162,7 @@ protected:
 
     bool hasBeenSimplified(IndexType tmpIndex)
     {
-        if (!ASSERT_DISABLED) {
+        if (ASSERT_ENABLED) {
             if (!!m_coalescedTmps[tmpIndex])
                 ASSERT(getAlias(tmpIndex) != tmpIndex);
         }
@@ -648,7 +648,7 @@ public:
         // added to the select stack, it's not on either list, but only on the select stack.
         // Once on the select stack, logically, it's no longer in the interference graph.
         auto assertInvariants = [&] () {
-            if (ASSERT_DISABLED)
+            if (!ASSERT_ENABLED)
                 return;
             if (!shouldValidateIRAtEachPhase())
                 return;
@@ -689,7 +689,7 @@ public:
             }
         } while (changed);
 
-        if (!ASSERT_DISABLED) {
+        if (ASSERT_ENABLED) {
             ASSERT(!m_simplifyWorklist.size());
             ASSERT(m_spillWorklist.isEmpty());
             IndexType firstNonRegIndex = m_lastPrecoloredRegisterIndex + 1;
@@ -727,7 +727,7 @@ protected:
             // No coalescing will remove the interference.
             moveIndex = UINT_MAX;
 
-            if (!ASSERT_DISABLED) {
+            if (ASSERT_ENABLED) {
                 if (isPrecolored(v))
                     ASSERT(isPrecolored(u));
             }
@@ -910,7 +910,7 @@ protected:
             if (traceDebug)
                 dataLogLn("Moving tmp ", tmpIndex, " from spill list to simplify list because it's degree is now less than k");
 
-            if (!ASSERT_DISABLED)
+            if (ASSERT_ENABLED)
                 ASSERT(m_unspillableTmps.contains(tmpIndex) || m_spillWorklist.contains(tmpIndex));
             m_spillWorklist.quickClear(tmpIndex);
 

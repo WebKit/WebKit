@@ -143,7 +143,7 @@ std::unique_ptr<InternalFunction> createJSToWasmWrapper(CCallHelpers& jit, const
     const PinnedRegisterInfo& pinnedRegs = PinnedRegisterInfo::get();
     RegisterSet toSave = pinnedRegs.toSave(mode);
 
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     unsigned toSaveSize = toSave.numberOfSetGPRs();
     // They should all be callee saves.
     toSave.filter(RegisterSet::calleeSaveRegisters());

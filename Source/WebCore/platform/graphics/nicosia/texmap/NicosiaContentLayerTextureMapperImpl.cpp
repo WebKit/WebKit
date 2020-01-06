@@ -51,7 +51,7 @@ ContentLayerTextureMapperImpl::ContentLayerTextureMapperImpl(Client& client)
 
 ContentLayerTextureMapperImpl::~ContentLayerTextureMapperImpl()
 {
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     LockHolder locker(m_client.lock);
     ASSERT(!m_client.client);
 #endif

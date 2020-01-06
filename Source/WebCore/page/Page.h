@@ -999,12 +999,12 @@ inline PageGroup& Page::group()
     return *m_group;
 }
 
-#if ASSERT_DISABLED
+#if !ASSERT_ENABLED
 
 inline void Page::checkSubframeCountConsistency() const
 {
 }
 
-#endif
+#endif // !ASSERT_ENABLED
 
 } // namespace WebCore

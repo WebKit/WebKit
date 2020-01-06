@@ -159,7 +159,7 @@ private:
     void removeEstimatedMarginBefore(const Box& layoutBox) { m_estimatedMarginBeforeList.remove(&layoutBox); }
     bool hasEstimatedMarginBefore(const Box&) const;
     Optional<LayoutUnit> usedAvailableWidthForFloatAvoider(const FloatingContext&, const Box&) const;
-#ifndef NDEBUG
+#if ASSERT_ENABLED
     EstimatedMarginBefore estimatedMarginBefore(const Box& layoutBox) const { return m_estimatedMarginBeforeList.get(&layoutBox); }
     bool hasPrecomputedMarginBefore(const Box&) const;
 #endif

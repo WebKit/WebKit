@@ -703,7 +703,7 @@ private:
 
     ALWAYS_INLINE void checkConsistency() const
     {
-        if (!ASSERT_DISABLED) {
+        if (ASSERT_ENABLED) {
             HashMapBucketType* iter = m_head->next();
             HashMapBucketType* end = m_tail.get();
             uint32_t size = 0;
@@ -729,7 +729,7 @@ private:
 
     ALWAYS_INLINE void assertBufferIsEmpty() const
     {
-        if (!ASSERT_DISABLED) {
+        if (ASSERT_ENABLED) {
             for (unsigned i = 0; i < m_capacity; i++)
                 ASSERT(isEmpty(buffer()[i]));
         }

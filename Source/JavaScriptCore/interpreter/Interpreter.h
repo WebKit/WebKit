@@ -100,7 +100,7 @@ namespace JSC {
 
         static inline OpcodeID getOpcodeID(Opcode);
 
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
         static bool isOpcode(Opcode);
 #endif
 
@@ -144,9 +144,9 @@ namespace JSC {
 #endif
         
 #if ENABLE(COMPUTED_GOTO_OPCODES)
-#if !USE(LLINT_EMBEDDED_OPCODE_ID) || !ASSERT_DISABLED
+#if !USE(LLINT_EMBEDDED_OPCODE_ID) || ASSERT_ENABLED
         static HashMap<Opcode, OpcodeID>& opcodeIDTable(); // Maps Opcode => OpcodeID.
-#endif // !USE(LLINT_EMBEDDED_OPCODE_ID) || !ASSERT_DISABLED
+#endif // !USE(LLINT_EMBEDDED_OPCODE_ID) || ASSERT_ENABLED
 #endif // ENABLE(COMPUTED_GOTO_OPCODES)
     };
 

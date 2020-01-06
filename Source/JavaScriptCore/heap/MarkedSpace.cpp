@@ -437,7 +437,7 @@ void MarkedSpace::beginMarking()
             allocation->flip();
     }
 
-    if (!ASSERT_DISABLED) {
+    if (ASSERT_ENABLED) {
         forEachBlock(
             [&] (MarkedBlock::Handle* block) {
                 if (block->areMarksStale())
@@ -463,7 +463,7 @@ void MarkedSpace::endMarking()
     for (unsigned i = m_preciseAllocationsOffsetForThisCollection; i < m_preciseAllocations.size(); ++i)
         m_preciseAllocations[i]->clearNewlyAllocated();
 
-    if (!ASSERT_DISABLED) {
+    if (ASSERT_ENABLED) {
         for (PreciseAllocation* allocation : m_preciseAllocations)
             ASSERT_UNUSED(allocation, !allocation->isNewlyAllocated());
     }
@@ -569,7 +569,7 @@ void MarkedSpace::snapshotUnswept()
 
 void MarkedSpace::assertNoUnswept()
 {
-    if (ASSERT_DISABLED)
+    if (!ASSERT_ENABLED)
         return;
     forEachDirectory(
         [&] (BlockDirectory& directory) -> IterationStatus {

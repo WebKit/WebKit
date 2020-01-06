@@ -878,7 +878,7 @@ using StaticStringImpl = StringImpl::StaticStringImpl;
 
 static_assert(sizeof(StringImpl) == sizeof(StaticStringImpl), "");
 
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
 // StringImpls created from StaticStringImpl will ASSERT
 // in the generic ValueCheck<T>::checkConsistency
 // as they are not allocated by fastMalloc.

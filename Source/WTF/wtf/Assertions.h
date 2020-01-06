@@ -64,39 +64,30 @@ extern "C" void _ReadWriteBarrier(void);
 #endif
 #endif
 
-#ifdef NDEBUG
-/* Disable ASSERT* macros in release mode. */
-#define ASSERTIONS_DISABLED_DEFAULT 1
-#else
-#define ASSERTIONS_DISABLED_DEFAULT 0
-#endif
+/* ASSERT_ENABLED is defined in Platform.h. */
 
 #ifndef BACKTRACE_DISABLED
-#define BACKTRACE_DISABLED ASSERTIONS_DISABLED_DEFAULT
-#endif
-
-#ifndef ASSERT_DISABLED
-#define ASSERT_DISABLED ASSERTIONS_DISABLED_DEFAULT
+#define BACKTRACE_DISABLED !ASSERT_ENABLED
 #endif
 
 #ifndef ASSERT_MSG_DISABLED
-#define ASSERT_MSG_DISABLED ASSERTIONS_DISABLED_DEFAULT
+#define ASSERT_MSG_DISABLED !ASSERT_ENABLED
 #endif
 
 #ifndef ASSERT_ARG_DISABLED
-#define ASSERT_ARG_DISABLED ASSERTIONS_DISABLED_DEFAULT
+#define ASSERT_ARG_DISABLED !ASSERT_ENABLED
 #endif
 
 #ifndef FATAL_DISABLED
-#define FATAL_DISABLED ASSERTIONS_DISABLED_DEFAULT
+#define FATAL_DISABLED !ASSERT_ENABLED
 #endif
 
 #ifndef ERROR_DISABLED
-#define ERROR_DISABLED ASSERTIONS_DISABLED_DEFAULT
+#define ERROR_DISABLED !ASSERT_ENABLED
 #endif
 
 #ifndef LOG_DISABLED
-#define LOG_DISABLED ASSERTIONS_DISABLED_DEFAULT
+#define LOG_DISABLED !ASSERT_ENABLED
 #endif
 
 #ifndef RELEASE_LOG_DISABLED
@@ -302,7 +293,7 @@ WTF_EXPORT_PRIVATE NO_RETURN_DUE_TO_CRASH void WTFCrashWithSecurityImplication(v
 #undef ASSERT
 #endif
 
-#if ASSERT_DISABLED
+#if !ASSERT_ENABLED
 
 #define ASSERT(assertion, ...) ((void)0)
 #define ASSERT_UNDER_CONSTEXPR_CONTEXT(assertion) ((void)0)
@@ -322,12 +313,12 @@ WTF_EXPORT_PRIVATE NO_RETURN_DUE_TO_CRASH void WTFCrashWithSecurityImplication(v
         (void)0)
 
 #define ASSERT_WITH_SECURITY_IMPLICATION_DISABLED 0
-#else
+#else /* not ENABLE(SECURITY_ASSERTIONS) */
 #define ASSERT_WITH_SECURITY_IMPLICATION(assertion) ((void)0)
 #define ASSERT_WITH_SECURITY_IMPLICATION_DISABLED 1
-#endif
+#endif /* ENABLE(SECURITY_ASSERTIONS) */
 
-#else
+#else /* ASSERT_ENABLED */
 
 #define ASSERT(assertion, ...) do { \
     if (!(assertion)) { \
@@ -385,7 +376,8 @@ WTF_EXPORT_PRIVATE NO_RETURN_DUE_TO_CRASH void WTFCrashWithSecurityImplication(v
          CRASH_WITH_SECURITY_IMPLICATION()) : \
         (void)0)
 #define ASSERT_WITH_SECURITY_IMPLICATION_DISABLED 0
-#endif
+
+#endif /* ASSERT_ENABLED */
 
 /* ASSERT_WITH_MESSAGE */
 
@@ -531,7 +523,8 @@ constexpr bool assertionFailureDueToUnreachableCode = false;
 
 /* RELEASE_ASSERT */
 
-#if ASSERT_DISABLED
+#if !ASSERT_ENABLED
+
 #define RELEASE_ASSERT(assertion, ...) do { \
     if (UNLIKELY(!(assertion))) \
         CRASH_WITH_INFO(__VA_ARGS__); \
@@ -544,13 +537,16 @@ constexpr bool assertionFailureDueToUnreachableCode = false;
         CRASH_UNDER_CONSTEXPR_CONTEXT(); \
     } \
 } while (0)
-#else
+
+#else /* ASSERT_ENABLED */
+
 #define RELEASE_ASSERT(assertion, ...) ASSERT(assertion, __VA_ARGS__)
 #define RELEASE_ASSERT_WITH_MESSAGE(assertion, ...) ASSERT_WITH_MESSAGE(assertion, __VA_ARGS__)
 #define RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(assertion) ASSERT_WITH_SECURITY_IMPLICATION(assertion)
 #define RELEASE_ASSERT_NOT_REACHED() ASSERT_NOT_REACHED()
 #define RELEASE_ASSERT_UNDER_CONSTEXPR_CONTEXT(assertion) ASSERT_UNDER_CONSTEXPR_CONTEXT(assertion)
-#endif
+
+#endif /* ASSERT_ENABLED */
 
 #ifdef __cplusplus
 #define RELEASE_ASSERT_NOT_REACHED_WITH_MESSAGE(...) RELEASE_ASSERT_WITH_MESSAGE(assertionFailureDueToUnreachableCode, __VA_ARGS__)

@@ -70,7 +70,7 @@ public:
         return add(*stringTableProvider.atomStringTable(), *string);
     }
 
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     WTF_EXPORT_PRIVATE static bool isInAtomStringTable(StringImpl*);
 #endif
 
@@ -101,7 +101,7 @@ private:
     WTF_EXPORT_PRIVATE static RefPtr<AtomStringImpl> lookUpSlowCase(StringImpl&);
 };
 
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
 
 // AtomStringImpls created from StaticStringImpl will ASSERT in the generic ValueCheck<T>::checkConsistency,
 // as they are not allocated by fastMalloc. We don't currently have any way to detect that case, so we don't
@@ -115,7 +115,7 @@ template<> struct ValueCheck<const AtomStringImpl*> {
     static void checkConsistency(const AtomStringImpl*) { }
 };
 
-#endif
+#endif // ASSERT_ENABLED
 
 }
 

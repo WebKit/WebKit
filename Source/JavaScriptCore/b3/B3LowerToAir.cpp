@@ -64,7 +64,7 @@
 #include <wtf/IndexSet.h>
 #include <wtf/ListDump.h>
 
-#if ASSERT_DISABLED
+#if !ASSERT_ENABLED
 IGNORE_RETURN_TYPE_WARNINGS_BEGIN
 #endif
 
@@ -3688,7 +3688,7 @@ void lowerToAir(Procedure& procedure)
 
 } } // namespace JSC::B3
 
-#if ASSERT_DISABLED
+#if !ASSERT_ENABLED
 IGNORE_RETURN_TYPE_WARNINGS_END
 #endif
 

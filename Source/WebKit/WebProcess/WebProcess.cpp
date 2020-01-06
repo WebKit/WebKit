@@ -1912,7 +1912,7 @@ void WebProcess::grantUserMediaDeviceSandboxExtensions(MediaDeviceSandboxExtensi
 
 static inline void checkDocumentsCaptureStateConsistency(const Vector<String>& extensionIDs)
 {
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     bool isCapturingAudio = WTF::anyOf(Document::allDocumentsMap().values(), [](auto* document) {
         return document->mediaState() & MediaProducer::AudioCaptureMask;
     });
@@ -1924,7 +1924,7 @@ static inline void checkDocumentsCaptureStateConsistency(const Vector<String>& e
         ASSERT(extensionIDs.findMatching([](auto& id) { return id.contains("microphone"); }) == notFound);
     if (isCapturingVideo)
         ASSERT(extensionIDs.findMatching([](auto& id) { return id.contains("camera"); }) == notFound);
-#endif
+#endif // ASSERT_ENABLED
 }
 
 void WebProcess::revokeUserMediaDeviceSandboxExtensions(const Vector<String>& extensionIDs)

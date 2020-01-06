@@ -27,7 +27,7 @@
 namespace WebCore {
 
 // FIXME: Delete this class after fixing FormAssociatedElement to avoid calling getElementById during a tree removal.
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
 class ContainerChildRemovalScope {
 public:
     ContainerChildRemovalScope(ContainerNode& parentOfRemovedTree, Node& child)
@@ -54,12 +54,12 @@ private:
     ContainerChildRemovalScope* m_previousScope;
     static ContainerChildRemovalScope* s_scope;
 };
-#else
+#else // not ASSERT_ENABLED
 class ContainerChildRemovalScope {
 public:
     ContainerChildRemovalScope(ContainerNode&, Node&) { }
 };
-#endif
+#endif // not ASSERT_ENABLED
 
 NodeVector notifyChildNodeInserted(ContainerNode& parentOfInsertedTree, Node&);
 void notifyChildNodeRemoved(ContainerNode& oldParentOfRemovedTree, Node&);

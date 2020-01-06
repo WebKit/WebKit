@@ -146,7 +146,7 @@ void Worklist::enqueue(Ref<Plan> plan)
 {
     LockHolder locker(*m_lock);
 
-    if (!ASSERT_DISABLED) {
+    if (ASSERT_ENABLED) {
         for (const auto& element : m_queue)
             ASSERT_UNUSED(element, element.plan.get() != &plan.get());
     }

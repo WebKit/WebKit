@@ -1287,7 +1287,7 @@ CSSUnitType CSSCalcOperationNode::primitiveType() const
     auto unitCategory = category();
     switch (unitCategory) {
     case CalculationCategory::Number:
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
         for (auto& child : m_children)
             ASSERT(child->category() == CalculationCategory::Number);
 #endif

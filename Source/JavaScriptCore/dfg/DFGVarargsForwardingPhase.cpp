@@ -421,7 +421,7 @@ private:
                 break;
 
             default:
-                if (ASSERT_DISABLED)
+                if (!ASSERT_ENABLED)
                     break;
                 m_graph.doToChildren(
                     node,

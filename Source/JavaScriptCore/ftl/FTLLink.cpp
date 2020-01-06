@@ -151,7 +151,7 @@ void link(State& state)
             jit.jumpToExceptionHandler(vm);
             noException.link(&jit);
 
-            if (!ASSERT_DISABLED) {
+            if (ASSERT_ENABLED) {
                 jit.load64(vm.addressOfException(), GPRInfo::regT1);
                 jit.jitAssertIsNull(GPRInfo::regT1);
             }

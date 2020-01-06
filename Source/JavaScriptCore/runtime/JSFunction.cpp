@@ -909,7 +909,7 @@ JSFunction::PropertyStatus JSFunction::reifyLazyBoundNameIfNeeded(VM& vm, JSGlob
     return PropertyStatus::Reified;
 }
 
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
 void JSFunction::assertTypeInfoFlagInvariants()
 {
     // If you change this, you'll need to update speculationFromClassInfo.
@@ -919,6 +919,6 @@ void JSFunction::assertTypeInfoFlagInvariants()
     else
         RELEASE_ASSERT(info != JSBoundFunction::info());
 }
-#endif
+#endif // ASSERT_ENABLED
 
 } // namespace JSC

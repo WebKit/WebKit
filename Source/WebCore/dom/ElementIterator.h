@@ -27,7 +27,7 @@
 
 #include "ElementTraversal.h"
 
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
 #include "ElementIteratorAssertions.h"
 #endif
 
@@ -58,7 +58,7 @@ private:
     const ContainerNode* m_root;
     ElementType* m_current;
 
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     ElementIteratorAssertions m_assertions;
 #endif
 };
@@ -88,7 +88,7 @@ private:
     const ContainerNode* m_root;
     const ElementType* m_current;
 
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     ElementIteratorAssertions m_assertions;
 #endif
 };
@@ -106,7 +106,7 @@ template <typename ElementType>
 inline ElementIterator<ElementType>::ElementIterator(const ContainerNode* root, ElementType* current)
     : m_root(root)
     , m_current(current)
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     , m_assertions(current)
 #endif
 {
@@ -118,7 +118,7 @@ inline ElementIterator<ElementType>& ElementIterator<ElementType>::traverseNext(
     ASSERT(m_current);
     ASSERT(!m_assertions.domTreeHasMutated());
     m_current = Traversal<ElementType>::next(*m_current, m_root);
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     // Drop the assertion when the iterator reaches the end.
     if (!m_current)
         m_assertions.dropEventDispatchAssertion();
@@ -132,7 +132,7 @@ inline ElementIterator<ElementType>& ElementIterator<ElementType>::traversePrevi
     ASSERT(m_current);
     ASSERT(!m_assertions.domTreeHasMutated());
     m_current = Traversal<ElementType>::previous(*m_current, m_root);
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     // Drop the assertion when the iterator reaches the end.
     if (!m_current)
         m_assertions.dropEventDispatchAssertion();
@@ -146,7 +146,7 @@ inline ElementIterator<ElementType>& ElementIterator<ElementType>::traverseNextS
     ASSERT(m_current);
     ASSERT(!m_assertions.domTreeHasMutated());
     m_current = Traversal<ElementType>::nextSibling(*m_current);
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     // Drop the assertion when the iterator reaches the end.
     if (!m_current)
         m_assertions.dropEventDispatchAssertion();
@@ -160,7 +160,7 @@ inline ElementIterator<ElementType>& ElementIterator<ElementType>::traversePrevi
     ASSERT(m_current);
     ASSERT(!m_assertions.domTreeHasMutated());
     m_current = Traversal<ElementType>::previousSibling(*m_current);
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     // Drop the assertion when the iterator reaches the end.
     if (!m_current)
         m_assertions.dropEventDispatchAssertion();
@@ -174,7 +174,7 @@ inline ElementIterator<ElementType>& ElementIterator<ElementType>::traverseNextS
     ASSERT(m_current);
     ASSERT(!m_assertions.domTreeHasMutated());
     m_current = Traversal<ElementType>::nextSkippingChildren(*m_current, m_root);
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     // Drop the assertion when the iterator reaches the end.
     if (!m_current)
         m_assertions.dropEventDispatchAssertion();
@@ -185,7 +185,7 @@ inline ElementIterator<ElementType>& ElementIterator<ElementType>::traverseNextS
 template <typename ElementType>
 inline void ElementIterator<ElementType>::dropAssertions()
 {
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     m_assertions.clear();
 #endif
 }
@@ -213,7 +213,7 @@ inline ElementIterator<ElementType>& ElementIterator<ElementType>::traverseAnces
     ASSERT(m_current != m_root);
     ASSERT(!m_assertions.domTreeHasMutated());
     m_current = findElementAncestorOfType<ElementType>(*m_current);
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     // Drop the assertion when the iterator reaches the end.
     if (!m_current)
         m_assertions.dropEventDispatchAssertion();
@@ -264,7 +264,7 @@ template <typename ElementType>
 inline ElementConstIterator<ElementType>::ElementConstIterator(const ContainerNode* root, const ElementType* current)
     : m_root(root)
     , m_current(current)
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     , m_assertions(current)
 #endif
 {
@@ -276,7 +276,7 @@ inline ElementConstIterator<ElementType>& ElementConstIterator<ElementType>::tra
     ASSERT(m_current);
     ASSERT(!m_assertions.domTreeHasMutated());
     m_current = Traversal<ElementType>::next(*m_current, m_root);
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     // Drop the assertion when the iterator reaches the end.
     if (!m_current)
         m_assertions.dropEventDispatchAssertion();
@@ -290,7 +290,7 @@ inline ElementConstIterator<ElementType>& ElementConstIterator<ElementType>::tra
     ASSERT(m_current);
     ASSERT(!m_assertions.domTreeHasMutated());
     m_current = Traversal<ElementType>::previous(*m_current, m_root);
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     // Drop the assertion when the iterator reaches the end.
     if (!m_current)
         m_assertions.dropEventDispatchAssertion();
@@ -304,7 +304,7 @@ inline ElementConstIterator<ElementType>& ElementConstIterator<ElementType>::tra
     ASSERT(m_current);
     ASSERT(!m_assertions.domTreeHasMutated());
     m_current = Traversal<ElementType>::nextSibling(*m_current);
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     // Drop the assertion when the iterator reaches the end.
     if (!m_current)
         m_assertions.dropEventDispatchAssertion();
@@ -318,7 +318,7 @@ inline ElementConstIterator<ElementType>& ElementConstIterator<ElementType>::tra
     ASSERT(m_current);
     ASSERT(!m_assertions.domTreeHasMutated());
     m_current = Traversal<ElementType>::previousSibling(*m_current);
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     // Drop the assertion when the iterator reaches the end.
     if (!m_current)
         m_assertions.dropEventDispatchAssertion();
@@ -332,7 +332,7 @@ inline ElementConstIterator<ElementType>& ElementConstIterator<ElementType>::tra
     ASSERT(m_current);
     ASSERT(!m_assertions.domTreeHasMutated());
     m_current = Traversal<ElementType>::nextSkippingChildren(*m_current, m_root);
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     // Drop the assertion when the iterator reaches the end.
     if (!m_current)
         m_assertions.dropEventDispatchAssertion();
@@ -347,7 +347,7 @@ inline ElementConstIterator<ElementType>& ElementConstIterator<ElementType>::tra
     ASSERT(m_current != m_root);
     ASSERT(!m_assertions.domTreeHasMutated());
     m_current = findElementAncestorOfType<const ElementType>(*m_current);
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     // Drop the assertion when the iterator reaches the end.
     if (!m_current)
         m_assertions.dropEventDispatchAssertion();
@@ -358,7 +358,7 @@ inline ElementConstIterator<ElementType>& ElementConstIterator<ElementType>::tra
 template <typename ElementType>
 inline void ElementConstIterator<ElementType>::dropAssertions()
 {
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     m_assertions.clear();
 #endif
 }

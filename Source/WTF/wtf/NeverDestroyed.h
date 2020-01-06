@@ -100,7 +100,7 @@ public:
     {
         ASSERT(!m_isConstructed);
 
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
         m_isConstructed = true;
 #endif
 
@@ -117,7 +117,7 @@ public:
 
     const T* operator->() const { return storagePointer(); }
 
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     bool isConstructed() const { return m_isConstructed; }
 #endif
 
@@ -137,7 +137,7 @@ private:
         explicit MaybeRelax(PtrType* ptr) { ptr->relaxAdoptionRequirement(); }
     };
 
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     // LazyNeverDestroyed objects are always static, so this variable is initialized to false.
     // It must not be initialized dynamically; that would not be thread safe.
     bool m_isConstructed;

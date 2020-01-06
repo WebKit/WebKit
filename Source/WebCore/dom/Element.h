@@ -709,7 +709,7 @@ private:
     
     void attachAttributeNodeIfNeeded(Attr&);
 
-#ifndef NDEBUG
+#if ASSERT_ENABLED
     WEBCORE_EXPORT bool fastAttributeLookupAllowed(const QualifiedName&) const;
 #endif
 

@@ -102,11 +102,11 @@ private:
             : m_converter(other.m_converter)
             , m_baseOfOffset(other.m_baseOfOffset)
             , m_location(other.m_location)
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
             , m_active(other.m_active)
 #endif
         {
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
             other.m_active = false;
 #endif
         }
@@ -117,7 +117,7 @@ private:
             size_t delta = m_converter.m_result.size() - m_baseOfOffset;
             ASSERT(delta < std::numeric_limits<uint16_t>::max());
             m_converter.overwrite16(m_location, delta);
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
             m_active = false;
 #endif
         }
@@ -131,7 +131,7 @@ private:
         SVGToOTFFontConverter& m_converter;
         const size_t m_baseOfOffset;
         const size_t m_location;
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
         bool m_active = { true };
 #endif
     };
@@ -637,7 +637,7 @@ void SVGToOTFFontConverter::appendCFFTable()
     append32(1 + sizeOfTopIndex); // 1-index offset just past end of DICT data
 
     // DICT information
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     unsigned topDictStart = m_result.size();
 #endif
     m_result.append(operand32Bit);
@@ -717,13 +717,13 @@ void SVGToOTFFontConverter::appendCFFTable()
 
 Glyph SVGToOTFFontConverter::firstGlyph(const Vector<Glyph, 1>& v, UChar32 codepoint) const
 {
-#if ASSERT_DISABLED
+#if !ASSERT_ENABLED
     UNUSED_PARAM(codepoint);
 #endif
     ASSERT(!v.isEmpty());
     if (v.isEmpty())
         return 0;
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     auto codePoints = StringView(m_glyphs[v[0]].codepoints).codePoints();
     auto codePointsIterator = codePoints.begin();
     ASSERT(codePointsIterator != codePoints.end());
@@ -1108,7 +1108,7 @@ void SVGToOTFFontConverter::appendKERNTable()
     append16(0); // Version
     append16(2); // Number of subtables
 
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     auto subtablesOffset = m_result.size();
 #endif
 

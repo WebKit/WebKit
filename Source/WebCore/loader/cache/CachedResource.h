@@ -378,7 +378,7 @@ private:
     bool m_switchingClientsToRevalidatedResource { false };
     bool m_ignoreForRequestCount { false };
 
-#ifndef NDEBUG
+#if ASSERT_ENABLED
     bool m_deleted { false };
     unsigned m_lruIndex { 0 };
 #endif

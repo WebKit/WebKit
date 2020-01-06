@@ -267,7 +267,7 @@ void BlockFormattingContext::computeEstimatedVerticalPosition(const Box& layoutB
     auto verticalMargin = UsedVerticalMargin { nonCollapsedValues, collapsedValues };
     displayBox.setVerticalMargin(verticalMargin);
     displayBox.setTop(verticalPositionWithMargin(layoutBox, verticalMargin));
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     displayBox.setHasEstimatedMarginBefore();
 #endif
 }
@@ -337,7 +337,7 @@ void BlockFormattingContext::computeEstimatedVerticalPositionForFloatClear(const
         displayBox.setHasClearance();
 }
 
-#ifndef NDEBUG
+#if ASSERT_ENABLED
 bool BlockFormattingContext::hasPrecomputedMarginBefore(const Box& layoutBox) const
 {
     for (auto* ancestor = layoutBox.containingBlock(); ancestor && !ancestor->establishesBlockFormattingContext(); ancestor = ancestor->containingBlock()) {
@@ -347,7 +347,7 @@ bool BlockFormattingContext::hasPrecomputedMarginBefore(const Box& layoutBox) co
     }
     return true;
 }
-#endif
+#endif // ASSERT_ENABLED
 
 void BlockFormattingContext::computeFloatingPosition(const FloatingContext& floatingContext, const Box& layoutBox)
 {

@@ -174,7 +174,7 @@ void CACFLayerTreeHost::setWindow(HWND window)
     if (window == m_window)
         return;
 
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     switch (m_state) {
     case WindowNotSet:
         ASSERT_ARG(window, window);

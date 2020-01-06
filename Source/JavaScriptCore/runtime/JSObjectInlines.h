@@ -477,7 +477,7 @@ inline void JSObject::setIndexQuicklyForTypedArray(unsigned i, JSValue value)
     
 inline void JSObject::validatePutOwnDataProperty(VM& vm, PropertyName propertyName, JSValue value)
 {
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     ASSERT(value);
     ASSERT(!Heap::heap(value) || Heap::heap(value) == Heap::heap(this));
     unsigned attributes;
@@ -488,11 +488,11 @@ inline void JSObject::validatePutOwnDataProperty(VM& vm, PropertyName propertyNa
         if (auto entry = findPropertyHashEntry(vm, propertyName))
             ASSERT(!(entry->value->attributes() & (PropertyAttribute::Accessor | PropertyAttribute::CustomAccessor | PropertyAttribute::ReadOnly)));
     }
-#else
+#else // not ASSERT_ENABLED
     UNUSED_PARAM(vm);
     UNUSED_PARAM(propertyName);
     UNUSED_PARAM(value);
-#endif
+#endif // not ASSERT_ENABLED
 }
 
 inline bool JSObject::putOwnDataProperty(VM& vm, PropertyName propertyName, JSValue value, PutPropertySlot& slot)

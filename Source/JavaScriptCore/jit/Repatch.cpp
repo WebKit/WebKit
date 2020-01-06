@@ -1145,7 +1145,7 @@ void linkPolymorphicCall(JSGlobalObject* globalObject, CallFrame* callFrame, Cal
                 newCaseValue = bitwise_cast<intptr_t>(variant.internalFunction());
         }
 
-        if (!ASSERT_DISABLED) {
+        if (ASSERT_ENABLED) {
             if (caseValues.contains(newCaseValue)) {
                 dataLog("ERROR: Attempt to add duplicate case value.\n");
                 dataLog("Existing case values: ");

@@ -85,7 +85,7 @@ ActiveDOMObject::~ActiveDOMObject()
 
 void ActiveDOMObject::suspendIfNeeded()
 {
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     ASSERT(!m_suspendIfNeededWasCalled);
     m_suspendIfNeededWasCalled = true;
 #endif
@@ -95,18 +95,16 @@ void ActiveDOMObject::suspendIfNeeded()
     m_scriptExecutionContext->suspendActiveDOMObjectIfNeeded(*this);
 }
 
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
 
 void ActiveDOMObject::assertSuspendIfNeededWasCalled() const
 {
-#if !ASSERT_DISABLED
     if (!m_suspendIfNeededWasCalled)
         WTFLogAlways("Failed to call suspendIfNeeded() for %s", activeDOMObjectName());
-#endif
     ASSERT(m_suspendIfNeededWasCalled);
 }
 
-#endif
+#endif // ASSERT_ENABLED
 
 bool ActiveDOMObject::hasPendingActivity() const
 {

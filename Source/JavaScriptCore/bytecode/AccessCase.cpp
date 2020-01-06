@@ -1983,7 +1983,7 @@ TypedArrayType AccessCase::toTypedArrayType(AccessType accessType)
     }
 }
 
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
 void AccessCase::checkConsistency(StructureStubInfo& stubInfo)
 {
     RELEASE_ASSERT(!(requiresInt32PropertyCheck() && requiresIdentifierNameMatch()));
@@ -1993,7 +1993,7 @@ void AccessCase::checkConsistency(StructureStubInfo& stubInfo)
         RELEASE_ASSERT(requiresIdentifierNameMatch());
     }
 }
-#endif
+#endif // ASSERT_ENABLED
 
 } // namespace JSC
 

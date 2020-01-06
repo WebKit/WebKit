@@ -2289,7 +2289,7 @@ void Heap::updateAllocationLimits()
     // It's up to the user to ensure that extraMemorySize() ends up corresponding to allocation-time
     // extra memory reporting.
     currentHeapSize += extraMemorySize();
-    if (!ASSERT_DISABLED) {
+    if (ASSERT_ENABLED) {
         Checked<size_t, RecordOverflow> checkedCurrentHeapSize = m_totalBytesVisited;
         checkedCurrentHeapSize += extraMemorySize();
         ASSERT(!checkedCurrentHeapSize.hasOverflowed() && checkedCurrentHeapSize.unsafeGet() == currentHeapSize);

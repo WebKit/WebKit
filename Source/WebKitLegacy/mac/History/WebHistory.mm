@@ -254,7 +254,7 @@ static inline WebHistoryDateKey dateKey(NSTimeInterval date)
 
     [_entriesByURL removeObjectForKey:URLString];
     
-#if ASSERT_DISABLED
+#if !ASSERT_ENABLED
     [self removeItemFromDateCaches:entry];
 #else
     BOOL itemWasInDateCaches = [self removeItemFromDateCaches:entry];

@@ -32,7 +32,7 @@
 
 namespace JSC { namespace DFG {
 
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
 void StructureAbstractValue::assertIsRegistered(Graph& graph) const
 {
     if (isTop())
@@ -41,7 +41,7 @@ void StructureAbstractValue::assertIsRegistered(Graph& graph) const
     for (unsigned i = size(); i--;)
         graph.assertIsRegistered(at(i).get());
 }
-#endif // !ASSERT_DISABLED
+#endif // ASSERT_ENABLED
 
 void StructureAbstractValue::clobber()
 {

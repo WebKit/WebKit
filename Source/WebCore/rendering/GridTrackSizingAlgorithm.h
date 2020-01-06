@@ -130,7 +130,7 @@ public:
 
     bool hasAnyPercentSizedRowsIndefiniteHeight() const { return m_hasPercentSizedRowsIndefiniteHeight; }
 
-#ifndef NDEBUG
+#if ASSERT_ENABLED
     bool tracksAreWiderThanMinTrackBreadth() const;
 #endif
 

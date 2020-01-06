@@ -253,7 +253,7 @@ void JITCode::finalizeOSREntrypoints()
     };
     std::sort(osrEntry.begin(), osrEntry.end(), comparator);
 
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     auto verifyIsSorted = [&] (auto& osrVector) {
         for (unsigned i = 0; i + 1 < osrVector.size(); ++i)
             ASSERT(osrVector[i].m_bytecodeIndex <= osrVector[i + 1].m_bytecodeIndex);

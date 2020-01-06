@@ -324,7 +324,7 @@ private:
     mutable bool m_activeDOMObjectAdditionForbidden { false };
     bool m_willprocessMessageWithMessagePortsSoon { false };
 
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     bool m_inScriptExecutionContextDestructor { false };
 #endif
 

@@ -41,7 +41,7 @@ protected:
     UniquedStringImpl(CreateSymbolTag) : StringImpl(CreateSymbol) { }
 };
 
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
 // UniquedStringImpls created from StaticStringImpl will ASSERT
 // in the generic ValueCheck<T>::checkConsistency
 // as they are not allocated by fastMalloc.

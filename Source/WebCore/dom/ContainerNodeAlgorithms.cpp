@@ -35,7 +35,7 @@
 
 namespace WebCore {
 
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
 ContainerChildRemovalScope* ContainerChildRemovalScope::s_scope = nullptr;
 #endif
 

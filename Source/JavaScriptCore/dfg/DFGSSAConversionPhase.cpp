@@ -159,7 +159,7 @@ public:
                         nodeIndex, node->variableAccessData()->prediction(),
                         GetStack, node->origin,
                         OpInfo(m_graph.m_stackAccessData.add(variable->operand(), variable->flushFormat())));
-                    if (!ASSERT_DISABLED)
+                    if (ASSERT_ENABLED)
                         m_argumentGetters.add(childNode);
                     m_argumentMapping.add(node, childNode);
                 }

@@ -95,7 +95,7 @@ public:
         LayoutUnit m_computedLogicalLeft;
         WeakPtr<const Box> m_columnBox;
 
-#ifndef NDEBUG
+#if ASSERT_ENABLED
         bool m_hasWidthConstraints { false };
         bool m_hasComputedWidth { false };
         bool m_hasComputedLeft { false };

@@ -115,7 +115,7 @@ bool TouchEventContext::isTouchEventContext() const
     return true;
 }
 
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
 
 void TouchEventContext::checkReachability(const Ref<TouchList>& touchList) const
 {
@@ -124,7 +124,7 @@ void TouchEventContext::checkReachability(const Ref<TouchList>& touchList) const
         ASSERT(!isUnreachableNode(downcast<Node>(touchList->item(i)->target())));
 }
 
-#endif
+#endif // ASSERT_ENABLED
 
 #endif // ENABLE(TOUCH_EVENTS)
 

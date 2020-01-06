@@ -55,7 +55,7 @@ private:
 
     void willBeAddedToMessageReceiverMap()
     {
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
         m_messageReceiverMapCount++;
 #endif
     }
@@ -63,12 +63,12 @@ private:
     void willBeRemovedFromMessageReceiverMap()
     {
         ASSERT(m_messageReceiverMapCount);
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
         m_messageReceiverMapCount--;
 #endif
     }
 
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     unsigned m_messageReceiverMapCount { 0 };
 #endif
 };

@@ -46,7 +46,7 @@ NetscapePluginStream::NetscapePluginStream(Ref<NetscapePlugin>&& plugin, uint64_
     , m_offset(0)
     , m_fileHandle(FileSystem::invalidPlatformFileHandle)
     , m_isStarted(false)
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     , m_urlNotifyHasBeenCalled(false)
 #endif    
     , m_deliveryDataTimer(RunLoop::main(), this, &NetscapePluginStream::deliverDataToPlugin)
@@ -364,7 +364,7 @@ void NetscapePluginStream::notifyAndDestroyStream(NPReason reason)
     if (m_sendNotification) {
         m_plugin->NPP_URLNotify(m_requestURLString.utf8().data(), reason, m_notificationData);
     
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
         m_urlNotifyHasBeenCalled = true;
 #endif    
     }

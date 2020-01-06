@@ -545,7 +545,7 @@ template <class OverflowHandler, typename = std::enable_if_t<!std::is_scalar<Ove
 inline constexpr bool observesOverflow() { return true; }
 
 template <>
-inline constexpr bool observesOverflow<AssertNoOverflow>() { return !ASSERT_DISABLED; }
+inline constexpr bool observesOverflow<AssertNoOverflow>() { return ASSERT_ENABLED; }
 
 template <typename U, typename V, typename R> static inline bool safeAdd(U lhs, V rhs, R& result)
 {

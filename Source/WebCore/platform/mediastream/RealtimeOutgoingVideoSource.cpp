@@ -57,7 +57,7 @@ RealtimeOutgoingVideoSource::RealtimeOutgoingVideoSource(Ref<MediaStreamTrackPri
 RealtimeOutgoingVideoSource::~RealtimeOutgoingVideoSource()
 {
 ASSERT(!m_videoSource->hasObserver(*this));
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     auto locker = holdLock(m_sinksLock);
 #endif
     ASSERT(m_sinks.isEmpty());

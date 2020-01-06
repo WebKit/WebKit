@@ -287,7 +287,7 @@ public:
             return nullptr;
         if (loop->header() == block)
             return loop;
-        if (!ASSERT_DISABLED) {
+        if (ASSERT_ENABLED) {
             for (; loop; loop = innerMostOuterLoop(*loop))
                 ASSERT(loop->header() != block);
         }

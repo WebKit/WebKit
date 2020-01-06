@@ -537,7 +537,7 @@ using StaticStringImpl = StringImpl::StaticStringImpl;
 
 static_assert(sizeof(StringImpl) == sizeof(StaticStringImpl), "");
 
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
 
 // StringImpls created from StaticStringImpl will ASSERT in the generic ValueCheck<T>::checkConsistency
 // as they are not allocated by fastMalloc. We don't currently have any way to detect that case
@@ -546,7 +546,7 @@ template<> struct ValueCheck<StringImpl*> {
     static void checkConsistency(const StringImpl*) { }
 };
 
-#endif
+#endif // ASSERT_ENABLED
 
 WTF_EXPORT_PRIVATE bool equal(const StringImpl*, const StringImpl*);
 WTF_EXPORT_PRIVATE bool equal(const StringImpl*, const LChar*);

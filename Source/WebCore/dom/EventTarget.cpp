@@ -69,7 +69,7 @@ bool EventTarget::isPaymentRequest() const
 
 bool EventTarget::addEventListener(const AtomString& eventType, Ref<EventListener>&& listener, const AddEventListenerOptions& options)
 {
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     listener->checkValidityForEventTarget(*this);
 #endif
 
@@ -149,7 +149,7 @@ bool EventTarget::setAttributeEventListener(const AtomString& eventType, RefPtr<
     if (existingListener) {
         InspectorInstrumentation::willRemoveEventListener(*this, eventType, *existingListener, false);
 
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
         listener->checkValidityForEventTarget(*this);
 #endif
 
@@ -308,7 +308,7 @@ void EventTarget::innerInvokeEventListeners(Event& event, EventListenerVector li
         if (registeredListener->isPassive())
             event.setInPassiveListener(true);
 
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
         registeredListener->callback().checkValidityForEventTarget(*this);
 #endif
 

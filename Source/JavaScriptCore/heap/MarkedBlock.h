@@ -352,10 +352,10 @@ public:
     
     bool hasAnyMarked() const;
     void noteMarked();
-#if ASSERT_DISABLED
-    void assertValidCell(VM&, HeapCell*) const { }
-#else
+#if ASSERT_ENABLED
     void assertValidCell(VM&, HeapCell*) const;
+#else
+    void assertValidCell(VM&, HeapCell*) const { }
 #endif
         
     WeakSet& weakSet();
@@ -365,10 +365,10 @@ public:
     
     Dependency aboutToMark(HeapVersion markingVersion);
         
-#if ASSERT_DISABLED
-    void assertMarksNotStale() { }
-#else
+#if ASSERT_ENABLED
     JS_EXPORT_PRIVATE void assertMarksNotStale();
+#else
+    void assertMarksNotStale() { }
 #endif
         
     void resetMarks();

@@ -38,7 +38,7 @@ void RenderTreePosition::computeNextSibling(const Node& node)
 {
     ASSERT(!node.renderer());
     if (m_hasValidNextSibling) {
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
         const unsigned oNSquaredAvoidanceLimit = 20;
         bool skipAssert = m_parent.isRenderView() || ++m_assertionLimitCounter > oNSquaredAvoidanceLimit;
         ASSERT(skipAssert || nextSiblingRenderer(node) == m_nextSibling);

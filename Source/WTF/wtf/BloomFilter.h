@@ -182,7 +182,7 @@ public:
     bool mayContain(const AtomString& string) const { return mayContain(string.impl()->existingHash()); }
     bool mayContain(const String& string) const { return mayContain(string.impl()->hash()); }
 
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     // Slow.
     bool likelyEmpty() const;
     bool isClear() const;
@@ -236,7 +236,7 @@ inline void CountingBloomFilter<keyBits>::clear()
     m_buckets.fill(0);
 }
 
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
 template <unsigned keyBits>
 bool CountingBloomFilter<keyBits>::likelyEmpty() const
 {
@@ -256,9 +256,9 @@ bool CountingBloomFilter<keyBits>::isClear() const
     }
     return true;
 }
-#endif
+#endif // ASSERT_ENABLED
 
-}
+} // namespace WTF
 
 using WTF::BloomFilter;
 using WTF::CountingBloomFilter;

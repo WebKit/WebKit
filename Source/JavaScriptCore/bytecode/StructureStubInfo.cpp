@@ -374,7 +374,7 @@ void StructureStubInfo::setCacheType(CacheType newCacheType)
     m_cacheType = newCacheType;
 }
 
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
 void StructureStubInfo::checkConsistency()
 {
     if (thisValueIsInThisGPR()) {
@@ -383,7 +383,7 @@ void StructureStubInfo::checkConsistency()
         RELEASE_ASSERT(hasConstantIdentifier);
     }
 }
-#endif
+#endif // ASSERT_ENABLED
 
 #endif // ENABLE(JIT)
 

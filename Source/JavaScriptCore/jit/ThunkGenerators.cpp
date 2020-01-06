@@ -48,7 +48,7 @@ namespace JSC {
 template<typename TagType>
 inline void emitPointerValidation(CCallHelpers& jit, GPRReg pointerGPR, TagType tag)
 {
-    if (ASSERT_DISABLED)
+    if (!ASSERT_ENABLED)
         return;
     CCallHelpers::Jump isNonZero = jit.branchTestPtr(CCallHelpers::NonZero, pointerGPR);
     jit.abortWithReason(TGInvalidPointer);

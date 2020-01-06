@@ -77,7 +77,7 @@ public:
     
     WriteBarrier<Unknown>* assertVariableIsInThisObject(WriteBarrier<Unknown>* variablePointer)
     {
-        if (!ASSERT_DISABLED)
+        if (ASSERT_ENABLED)
             findVariableIndex(variablePointer);
         return variablePointer;
     }

@@ -90,10 +90,10 @@ public:
         m_set.m_pointer = topValue;
     }
     
-#if ASSERT_DISABLED
-    void assertIsRegistered(Graph&) const { }
-#else
+#if ASSERT_ENABLED
     void assertIsRegistered(Graph&) const;
+#else
+    void assertIsRegistered(Graph&) const { }
 #endif
     
     void clobber();

@@ -94,7 +94,7 @@ private:
     // Whether NPP_NewStream has successfully been called.
     bool m_isStarted;
 
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     bool m_urlNotifyHasBeenCalled;
 #endif
 

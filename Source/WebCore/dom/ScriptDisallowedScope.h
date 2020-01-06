@@ -84,7 +84,7 @@ public:
         // Release asserts in canExecuteScript should be sufficient for security defense purposes.
         static bool isEventDispatchAllowedInSubtree(Node& node)
         {
-#if !ASSERT_DISABLED || ENABLE(SECURITY_ASSERTIONS)
+#if ASSERT_ENABLED || ENABLE(SECURITY_ASSERTIONS)
             return isScriptAllowed() || EventAllowedScope::isAllowedNode(node);
 #else
             UNUSED_PARAM(node);
@@ -109,7 +109,7 @@ public:
         }
     };
     
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     class EventAllowedScope {
     public:
         explicit EventAllowedScope(ContainerNode& userAgentContentRoot)
@@ -140,13 +140,13 @@ public:
         EventAllowedScope* m_previousScope;
         static EventAllowedScope* s_currentScope;
     };
-#else
+#else // not ASSERT_ENABLED
     class EventAllowedScope {
     public:
         explicit EventAllowedScope(ContainerNode&) { }
         static bool isAllowedNode(Node&) { return true; }
     };
-#endif
+#endif // not ASSERT_ENABLED
 
     // FIXME: Remove this class once the sync layout inside SVGImage::draw is removed,
     // CachedSVGFont::ensureCustomFontData no longer synchronously creates a document during style resolution,

@@ -89,7 +89,7 @@ SlotVisitor::SlotVisitor(Heap& heap, CString codeName)
     , m_markingVersion(MarkedSpace::initialVersion)
     , m_heap(heap)
     , m_codeName(codeName)
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     , m_isCheckingForDefaultMarkViolation(false)
     , m_isDraining(false)
 #endif
@@ -209,7 +209,7 @@ void SlotVisitor::appendJSCellOrAuxiliary(HeapCell* heapCell)
     
     // In debug mode, we validate before marking since this makes it clearer what the problem
     // was. It's also slower, so we don't do it normally.
-    if (!ASSERT_DISABLED && isJSCellKind(heapCell->cellKind()))
+    if (ASSERT_ENABLED && isJSCellKind(heapCell->cellKind()))
         validateCell(static_cast<JSCell*>(heapCell));
     
     if (Heap::testAndSetMarked(m_markingVersion, heapCell))

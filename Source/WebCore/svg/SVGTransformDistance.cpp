@@ -57,7 +57,7 @@ SVGTransformDistance::SVGTransformDistance(const SVGTransformValue& fromSVGTrans
     switch (m_type) {
     case SVGTransformValue::SVG_TRANSFORM_MATRIX:
         ASSERT_NOT_REACHED();
-#if ASSERT_DISABLED
+#if !ASSERT_ENABLED
         FALLTHROUGH;
 #endif
     case SVGTransformValue::SVG_TRANSFORM_UNKNOWN:
@@ -92,7 +92,7 @@ SVGTransformDistance SVGTransformDistance::scaledDistance(float scaleFactor) con
     switch (m_type) {
     case SVGTransformValue::SVG_TRANSFORM_MATRIX:
         ASSERT_NOT_REACHED();
-#if ASSERT_DISABLED
+#if !ASSERT_ENABLED
         FALLTHROUGH;
 #endif
     case SVGTransformValue::SVG_TRANSFORM_UNKNOWN:
@@ -125,7 +125,7 @@ SVGTransformValue SVGTransformDistance::addSVGTransforms(const SVGTransformValue
     switch (first.type()) {
     case SVGTransformValue::SVG_TRANSFORM_MATRIX:
         ASSERT_NOT_REACHED();
-#if ASSERT_DISABLED
+#if !ASSERT_ENABLED
         FALLTHROUGH;
 #endif
     case SVGTransformValue::SVG_TRANSFORM_UNKNOWN:
@@ -167,7 +167,7 @@ SVGTransformValue SVGTransformDistance::addToSVGTransform(const SVGTransformValu
     switch (m_type) {
     case SVGTransformValue::SVG_TRANSFORM_MATRIX:
         ASSERT_NOT_REACHED();
-#if ASSERT_DISABLED
+#if !ASSERT_ENABLED
         FALLTHROUGH;
 #endif
     case SVGTransformValue::SVG_TRANSFORM_UNKNOWN:
@@ -211,7 +211,7 @@ float SVGTransformDistance::distance() const
     switch (m_type) {
     case SVGTransformValue::SVG_TRANSFORM_MATRIX:
         ASSERT_NOT_REACHED();
-#if ASSERT_DISABLED
+#if !ASSERT_ENABLED
         FALLTHROUGH;
 #endif
     case SVGTransformValue::SVG_TRANSFORM_UNKNOWN:

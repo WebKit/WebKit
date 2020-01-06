@@ -1347,7 +1347,7 @@ void GridTrackSizingAlgorithm::reset()
     m_hasPercentSizedRowsIndefiniteHeight = false;
 }
 
-#ifndef NDEBUG
+#if ASSERT_ENABLED
 bool GridTrackSizingAlgorithm::tracksAreWiderThanMinTrackBreadth() const
 {
     const Vector<GridTrack>& allTracks = tracks(m_direction);
@@ -1358,7 +1358,7 @@ bool GridTrackSizingAlgorithm::tracksAreWiderThanMinTrackBreadth() const
     }
     return true;
 }
-#endif
+#endif // ASSERT_ENABLED
 
 GridTrackSizingAlgorithm::StateMachine::StateMachine(GridTrackSizingAlgorithm& algorithm)
     : m_algorithm(algorithm)

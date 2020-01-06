@@ -83,7 +83,7 @@ inline bool shouldDumpGraphAtEachPhase(CompilationMode mode)
 
 inline bool validationEnabled()
 {
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     return true;
 #else
     return Options::validateGraph() || Options::validateGraphAtEachPhase();

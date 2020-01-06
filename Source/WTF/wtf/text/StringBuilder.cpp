@@ -50,7 +50,7 @@ void StringBuilder::reifyString() const
         return;
     }
 
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     m_isReified = true;
 #endif
 

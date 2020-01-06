@@ -905,7 +905,7 @@ template<typename CharacterType> inline void Lexer<CharacterType>::recordUnicode
     }
 }
 
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
 bool isSafeBuiltinIdentifier(VM& vm, const Identifier* ident)
 {
     if (!ident)
@@ -924,7 +924,7 @@ bool isSafeBuiltinIdentifier(VM& vm, const Identifier* ident)
         return false;
     return true;
 }
-#endif
+#endif // ASSERT_ENABLED
     
 template <>
 template <bool shouldCreateIdentifier> ALWAYS_INLINE JSTokenType Lexer<LChar>::parseIdentifier(JSTokenData* tokenData, OptionSet<LexerFlags> lexerFlags, bool strictMode)

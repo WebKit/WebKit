@@ -511,7 +511,7 @@ public:
     ConsoleClient* m_consoleClient { nullptr };
     Optional<unsigned> m_stackTraceLimit;
 
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     const JSGlobalObject* m_globalObjectAtDebuggerEntry { nullptr };
 #endif
 
@@ -963,7 +963,7 @@ public:
         m_webAssemblyDisabledErrorMessage = errorMessage;
     }
 
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     const JSGlobalObject* globalObjectAtDebuggerEntry() const { return m_globalObjectAtDebuggerEntry; }
     void setGlobalObjectAtDebuggerEntry(const JSGlobalObject* globalObject) { m_globalObjectAtDebuggerEntry = globalObject; }
 #endif

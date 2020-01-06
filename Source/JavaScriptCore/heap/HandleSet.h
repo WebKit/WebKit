@@ -88,7 +88,7 @@ private:
 
     JS_EXPORT_PRIVATE void grow();
     
-#if ENABLE(GC_VALIDATION) || !ASSERT_DISABLED
+#if ENABLE(GC_VALIDATION) || ASSERT_ENABLED
     bool isLiveNode(Node*);
 #endif
 

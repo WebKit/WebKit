@@ -263,7 +263,7 @@ public:
 
     bool thisValueIsInThisGPR() const { return accessType == AccessType::GetByIdWithThis; }
 
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     void checkConsistency();
 #else
     ALWAYS_INLINE void checkConsistency() { }

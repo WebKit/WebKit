@@ -562,7 +562,7 @@ bool RenderTextLineBoxes::dirtyRange(RenderText& renderer, unsigned start, unsig
 
 inline void RenderTextLineBoxes::checkConsistency() const
 {
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
 #ifdef CHECK_CONSISTENCY
     const InlineTextBox* prev = nullptr;
     for (auto* child = m_first; child; child = child->nextTextBox()) {
@@ -572,10 +572,10 @@ inline void RenderTextLineBoxes::checkConsistency() const
     }
     ASSERT(prev == m_last);
 #endif
-#endif
+#endif // ASSERT_ENABLED
 }
 
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
 RenderTextLineBoxes::~RenderTextLineBoxes()
 {
     ASSERT(!m_first);

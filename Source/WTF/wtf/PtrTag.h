@@ -103,10 +103,10 @@ constexpr PtrTag AnyPtrTag = static_cast<PtrTag>(-1); // Only used for assertion
 WTF_EXPORT_PRIVATE void registerPtrTagLookup(PtrTagLookup*);
 WTF_EXPORT_PRIVATE void reportBadTag(const void*, PtrTag expectedTag);
 
-#if ASSERT_DISABLED
-constexpr bool enablePtrTagDebugAssert = false;
-#else
+#if ASSERT_ENABLED
 constexpr bool enablePtrTagDebugAssert = true;
+#else
+constexpr bool enablePtrTagDebugAssert = false;
 #endif
 
 #define WTF_PTRTAG_ASSERT(action, ptr, expectedTag, assertion) \

@@ -627,7 +627,7 @@ inline void tryHyphenating(RenderText& text, const FontCascade& font, const Atom
 
     ASSERT(pos - lastSpace - prefixLength >= minimumSuffixLength);
 
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     HashSet<const Font*> fallbackFonts;
     float prefixWidth = hyphenWidth + textWidth(text, lastSpace, prefixLength, font, xPos, isFixedPitch, collapseWhiteSpace, fallbackFonts) + lastSpaceWordSpacing;
     ASSERT(xPos + prefixWidth <= availableWidth);

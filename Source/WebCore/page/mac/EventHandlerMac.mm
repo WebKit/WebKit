@@ -109,7 +109,7 @@ public:
 
 private:
     RetainPtr<NSEvent> m_savedCurrentEvent;
-#ifndef NDEBUG
+#if ASSERT_ENABLED
     RetainPtr<NSEvent> m_event;
 #endif
     RetainPtr<NSEvent> m_savedPressureEvent;
@@ -118,7 +118,7 @@ private:
 
 inline CurrentEventScope::CurrentEventScope(NSEvent *event, NSEvent *correspondingPressureEvent)
     : m_savedCurrentEvent(currentNSEventSlot())
-#ifndef NDEBUG
+#if ASSERT_ENABLED
     , m_event(event)
 #endif
     , m_savedPressureEvent(correspondingPressureEventSlot())

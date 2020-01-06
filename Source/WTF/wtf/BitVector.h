@@ -247,7 +247,7 @@ public:
     size_t findBit(size_t index, bool value) const
     {
         size_t result = findBitFast(index, value);
-        if (!ASSERT_DISABLED) {
+        if (ASSERT_ENABLED) {
             size_t expectedResult = findBitSimple(index, value);
             if (result != expectedResult) {
                 dataLog("findBit(", index, ", ", value, ") on ", *this, " should have gotten ", expectedResult, " but got ", result, "\n");

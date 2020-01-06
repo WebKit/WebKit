@@ -60,7 +60,7 @@ private:
 
     FetchBodyOwner* m_bodyOwner;
     bool m_isCancelling { false };
-#ifndef NDEBUG
+#if ASSERT_ENABLED
     bool m_isClosed { false };
 #endif
 };

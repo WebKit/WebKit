@@ -60,7 +60,7 @@ public:
     
     void assertClear()
     {
-        if (ASSERT_DISABLED)
+        if (!ASSERT_ENABLED)
             return;
         
         // For every entry in the used list the use count of the virtual register should be zero, or max, due to it being a preserved local.

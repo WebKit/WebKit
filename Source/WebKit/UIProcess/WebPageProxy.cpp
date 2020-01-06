@@ -514,7 +514,7 @@ WebPageProxy::~WebPageProxy()
     RELEASE_LOG_IF_ALLOWED(Loading, "destructor:");
 
     ASSERT(m_process->webPage(m_identifier) != this);
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     for (WebPageProxy* page : m_process->pages())
         ASSERT(page != this);
 #endif
@@ -7368,7 +7368,7 @@ void WebPageProxy::resetStateAfterProcessExited(ProcessTerminationReason termina
 
     PageClientProtector protector(pageClient());
 
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     // FIXME: It's weird that resetStateAfterProcessExited() is called even though the process is launching.
     if (terminationReason != ProcessTerminationReason::NavigationSwap)
         ASSERT(m_process->state() == WebProcessProxy::State::Launching || m_process->state() == WebProcessProxy::State::Terminated);

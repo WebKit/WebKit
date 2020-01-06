@@ -269,7 +269,7 @@ HTMLTreeBuilder::HTMLTreeBuilder(HTMLDocumentParser& parser, HTMLDocument& docum
     , m_tree(document, parserContentPolicy, options.maximumDOMTreeDepth)
     , m_scriptToProcessStartPosition(uninitializedPositionValue1())
 {
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     m_destructionProhibited = false;
 #endif
 }
@@ -294,7 +294,7 @@ HTMLTreeBuilder::HTMLTreeBuilder(HTMLDocumentParser& parser, DocumentFragment& f
 
     m_tree.setForm(is<HTMLFormElement>(contextElement) ? &downcast<HTMLFormElement>(contextElement) : HTMLFormElement::findClosestFormAncestor(contextElement));
 
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     m_destructionProhibited = false;
 #endif
 }
@@ -338,7 +338,7 @@ RefPtr<ScriptElement> HTMLTreeBuilder::takeScriptToProcess(TextPosition& scriptS
 
 void HTMLTreeBuilder::constructTree(AtomicHTMLToken&& token)
 {
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     ASSERT(!m_destroyed);
     ASSERT(!m_destructionProhibited);
     m_destructionProhibited = true;
@@ -357,7 +357,7 @@ void HTMLTreeBuilder::constructTree(AtomicHTMLToken&& token)
     m_parser.tokenizer().setForceNullCharacterReplacement(m_insertionMode == InsertionMode::Text || inForeignContent);
     m_parser.tokenizer().setShouldAllowCDATA(inForeignContent);
 
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     m_destructionProhibited = false;
 #endif
 

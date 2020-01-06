@@ -283,7 +283,7 @@ struct AbstractValue {
         if (other.isClear())
             return false;
         
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
         AbstractValue oldMe = *this;
 #endif
         bool result = false;
@@ -431,12 +431,12 @@ struct AbstractValue {
             || !arrayModesAreClearOrTop(m_arrayModes);
     }
     
-#if ASSERT_DISABLED
-    void checkConsistency() const { }
-    void assertIsRegistered(Graph&) const { }
-#else
+#if ASSERT_ENABLED
     JS_EXPORT_PRIVATE void checkConsistency() const;
     void assertIsRegistered(Graph&) const;
+#else
+    void checkConsistency() const { }
+    void assertIsRegistered(Graph&) const { }
 #endif
 
     ResultType resultType() const;

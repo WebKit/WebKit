@@ -46,7 +46,7 @@ RealtimeOutgoingAudioSource::RealtimeOutgoingAudioSource(Ref<MediaStreamTrackPri
 RealtimeOutgoingAudioSource::~RealtimeOutgoingAudioSource()
 {
 ASSERT(!m_audioSource->hasObserver(*this));
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     auto locker = holdLock(m_sinksLock);
 #endif
     ASSERT(m_sinks.isEmpty());

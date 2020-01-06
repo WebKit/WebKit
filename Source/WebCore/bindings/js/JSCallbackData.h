@@ -65,7 +65,7 @@ protected:
 
 private:
     JSC::Weak<JSDOMGlobalObject> m_globalObject;
-#ifndef NDEBUG
+#if ASSERT_ENABLED
     Ref<Thread> m_thread { Thread::current() };
 #endif
 };

@@ -50,9 +50,6 @@ inline StorageAreaImpl::StorageAreaImpl(StorageType storageType, const SecurityO
     , m_securityOrigin(origin)
     , m_storageMap(StorageMap::create(quota))
     , m_storageSyncManager(WTFMove(syncManager))
-#ifndef NDEBUG
-    , m_isShutdown(false)
-#endif
     , m_accessCount(0)
     , m_closeDatabaseTimer(*this, &StorageAreaImpl::closeDatabaseTimerFired)
 {
@@ -87,7 +84,7 @@ StorageAreaImpl::StorageAreaImpl(const StorageAreaImpl& area)
     , m_securityOrigin(area.m_securityOrigin)
     , m_storageMap(area.m_storageMap)
     , m_storageSyncManager(area.m_storageSyncManager)
-#ifndef NDEBUG
+#if ASSERT_ENABLED
     , m_isShutdown(area.m_isShutdown)
 #endif
     , m_accessCount(0)
@@ -206,7 +203,7 @@ void StorageAreaImpl::close()
     if (m_storageAreaSync)
         m_storageAreaSync->scheduleFinalSync();
 
-#ifndef NDEBUG
+#if ASSERT_ENABLED
     m_isShutdown = true;
 #endif
 }

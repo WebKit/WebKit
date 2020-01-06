@@ -1,3 +1,94 @@
+2020-01-06  Mark Lam  <mark.lam@apple.com>
+
+        Convert ASSERT_DISABLED to ASSERT_ENABLED, and fix some tests of NDEBUG that should actually test for ASSERT_ENABLED.
+        https://bugs.webkit.org/show_bug.cgi?id=205776
+
+        Reviewed by Saam Barati.
+
+        This patch did the following changes:
+
+        1. Replaced ASSERT_DISABLED with ASSERT_ENABLED.  This change does away
+           with the need for the double negative !ASSERT_DISABLED test that is commonly
+           used all over the code, thereby improving code readability.
+
+           In Assertions.h, there is also BACKTRACE_DISABLED, ASSERT_MSG_DISABLED,
+           ASSERT_ARG_DISABLED, FATAL_DISABLED, ERROR_DISABLED, LOG_DISABLED, and
+           RELEASE_LOG_DISABLED.  We should replace those with ..._ENABLED equivalents
+           as well.  We'll do that in another patch.  For now, they are left as is to
+           minimize the size of this patch.
+           See https://bugs.webkit.org/show_bug.cgi?id=205780.
+
+        2. Fixed some code was guarded with "#ifndef NDEBUG" that should actually be
+           guarded by "#if ASSERT_ENABLED" instead.
+
+        3. In cases where the change is minimal, we move some code around so that we can
+           test for "#if ASSERT_ENABLED" instead of "#if !ASSERT_ENABLED".
+
+        * wtf/Assertions.h:
+        * wtf/AutomaticThread.cpp:
+        (WTF::AutomaticThread::start):
+        * wtf/BitVector.h:
+        * wtf/BlockObjCExceptions.mm:
+        (ReportBlockedObjCException):
+        * wtf/BloomFilter.h:
+        * wtf/CallbackAggregator.h:
+        (WTF::CallbackAggregator::CallbackAggregator):
+        * wtf/CheckedArithmetic.h:
+        (WTF::observesOverflow<AssertNoOverflow>):
+        * wtf/CheckedBoolean.h:
+        (CheckedBoolean::CheckedBoolean):
+        (CheckedBoolean::operator bool):
+        * wtf/CompletionHandler.h:
+        (WTF::CompletionHandler<Out):
+        * wtf/DateMath.cpp:
+        (WTF::initializeDates):
+        * wtf/Gigacage.cpp:
+        (Gigacage::tryAllocateZeroedVirtualPages):
+        * wtf/HashTable.h:
+        (WTF::KeyTraits>::checkKey):
+        (WTF::KeyTraits>::checkTableConsistencyExceptSize const):
+        * wtf/LoggerHelper.h:
+        * wtf/NaturalLoops.h:
+        (WTF::NaturalLoops::headerOf const):
+        * wtf/NeverDestroyed.h:
+        (WTF::LazyNeverDestroyed::construct):
+        * wtf/OptionSet.h:
+        (WTF::OptionSet::OptionSet):
+        * wtf/Platform.h:
+        * wtf/PtrTag.h:
+        * wtf/RefCounted.h:
+        (WTF::RefCountedBase::disableThreadingChecks):
+        (WTF::RefCountedBase::enableThreadingChecksGlobally):
+        (WTF::RefCountedBase::RefCountedBase):
+        (WTF::RefCountedBase::applyRefDerefThreadingCheck const):
+        * wtf/SingleRootGraph.h:
+        (WTF::SingleRootGraph::assertIsConsistent const):
+        * wtf/SizeLimits.cpp:
+        * wtf/StackBounds.h:
+        (WTF::StackBounds::checkConsistency const):
+        * wtf/URLParser.cpp:
+        (WTF::URLParser::URLParser):
+        (WTF::URLParser::domainToASCII):
+        * wtf/ValueCheck.h:
+        * wtf/Vector.h:
+        (WTF::Malloc>::checkConsistency):
+        * wtf/WeakHashSet.h:
+        * wtf/WeakPtr.h:
+        (WTF::WeakPtrImpl::WeakPtrImpl):
+        (WTF::WeakPtrFactory::WeakPtrFactory):
+        * wtf/text/AtomStringImpl.cpp:
+        * wtf/text/AtomStringImpl.h:
+        * wtf/text/StringBuilder.cpp:
+        (WTF::StringBuilder::reifyString const):
+        * wtf/text/StringBuilder.h:
+        * wtf/text/StringCommon.h:
+        (WTF::hasPrefixWithLettersIgnoringASCIICaseCommon):
+        * wtf/text/StringHasher.h:
+        (WTF::StringHasher::addCharacters):
+        * wtf/text/StringImpl.h:
+        * wtf/text/SymbolImpl.h:
+        * wtf/text/UniquedStringImpl.h:
+
 2020-01-05  Dean Jackson  <dino@apple.com>
 
         Rename GraphicsContext3D to GraphicsContextGL

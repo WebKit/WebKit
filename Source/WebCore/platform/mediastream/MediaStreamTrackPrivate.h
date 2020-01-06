@@ -106,7 +106,7 @@ public:
 
     void addObserver(Observer&);
     void removeObserver(Observer&);
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     bool hasObserver(Observer&) const;
 #endif
 
@@ -170,7 +170,7 @@ private:
 
 typedef Vector<RefPtr<MediaStreamTrackPrivate>> MediaStreamTrackPrivateVector;
 
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
 inline bool MediaStreamTrackPrivate::hasObserver(Observer& observer) const
 {
     auto locker = holdLock(m_observersLock);

@@ -113,7 +113,7 @@ static inline bool isValidCSSUnitTypeForDoubleConversion(CSSUnitType unitType)
     return false;
 }
 
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
 
 static inline bool isStringType(CSSUnitType type)
 {
@@ -176,7 +176,7 @@ static inline bool isStringType(CSSUnitType type)
     return false;
 }
 
-#endif // !ASSERT_DISABLED
+#endif // ASSERT_ENABLED
 
 typedef HashMap<const CSSPrimitiveValue*, String> CSSTextCache;
 static CSSTextCache& cssTextCache()

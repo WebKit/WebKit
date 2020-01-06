@@ -76,7 +76,7 @@ private:
 
     ~PaintWorkletGlobalScope()
     {
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
         auto locker = holdLock(paintDefinitionLock());
         ASSERT(paintDefinitionMap().isEmpty());
 #endif

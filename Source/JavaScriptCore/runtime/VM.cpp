@@ -219,7 +219,7 @@
 namespace JSC {
 
 #if ENABLE(JIT)
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
 bool VM::s_canUseJITIsSet = false;
 #endif
 bool VM::s_canUseJIT = false;
@@ -271,7 +271,7 @@ bool VM::canUseAssembler()
 void VM::computeCanUseJIT()
 {
 #if ENABLE(JIT)
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     RELEASE_ASSERT(!s_canUseJITIsSet);
     s_canUseJITIsSet = true;
 #endif

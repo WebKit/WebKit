@@ -509,7 +509,7 @@ static NSURL *createUniqueWebDataURL();
         [documentView deselectAll];
 }
 
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
 - (BOOL)_atMostOneFrameHasSelection
 {
     // FIXME: 4186050 is one known case that makes this debug check fail.
@@ -524,7 +524,7 @@ static NSURL *createUniqueWebDataURL();
     }
     return YES;
 }
-#endif
+#endif // ASSERT_ENABLED
 
 - (WebFrame *)_findFrameWithSelection
 {

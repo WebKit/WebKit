@@ -1494,7 +1494,7 @@ inline MallocPtr<T> Vector<T, inlineCapacity, OverflowHandler, minCapacity>::rel
 template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t minCapacity>
 inline void Vector<T, inlineCapacity, OverflowHandler, minCapacity>::checkConsistency()
 {
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     for (size_t i = 0; i < size(); ++i)
         ValueCheck<T>::checkConsistency(at(i));
 #endif
@@ -1521,7 +1521,7 @@ inline bool operator!=(const Vector<T, inlineCapacity, OverflowHandler, minCapac
     return !(a == b);
 }
 
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
 template<typename T> struct ValueCheck<Vector<T>> {
     typedef Vector<T> TraitType;
     static void checkConsistency(const Vector<T>& v)

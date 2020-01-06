@@ -213,9 +213,7 @@ class CppProtocolTypesImplementationGenerator(CppGenerator):
 
         lines.append('void BindingTraits<%s>::assertValueHasExpectedType(JSON::Value* value)' % (CppGenerator.cpp_protocol_type_for_type(object_declaration.type)))
         lines.append("""{
-#if ASSERT_DISABLED
-    UNUSED_PARAM(value);
-#else
+#if ASSERT_ENABLED
     ASSERT_ARG(value, value);
     RefPtr<JSON::Object> object;
     bool castSucceeded = value->asObject(object);
@@ -255,7 +253,9 @@ class CppProtocolTypesImplementationGenerator(CppGenerator):
         if should_count_properties:
             lines.append('    if (foundPropertiesCount != object->size())')
             lines.append('        FATAL("Unexpected properties in object: %s\\n", object->toJSONString().ascii().data());')
-        lines.append('#endif // !ASSERT_DISABLED')
+        lines.append('#else // ASSERT_ENABLED')
+        lines.append('    UNUSED_PARAM(value);')
+        lines.append('#endif // ASSERT_ENABLED')
         lines.append('}')
         return '\n'.join(lines)
 
@@ -263,9 +263,7 @@ class CppProtocolTypesImplementationGenerator(CppGenerator):
         lines = []
         lines.append('void %s(JSON::Value* value)' % CppGenerator.cpp_assertion_method_for_type_member(enum_member, object_declaration))
         lines.append('{')
-        lines.append('#if ASSERT_DISABLED')
-        lines.append('    UNUSED_PARAM(value);')
-        lines.append('#else')
+        lines.append('#if ASSERT_ENABLED')
         lines.append('    ASSERT_ARG(value, value);')
         lines.append('    String result;')
         lines.append('    bool castSucceeded = value->asString(result);')
@@ -273,7 +271,9 @@ class CppProtocolTypesImplementationGenerator(CppGenerator):
 
         assert_condition = ' || '.join(['result == "%s"' % enum_value for enum_value in enum_member.type.enum_values()])
         lines.append('    ASSERT(%s);' % assert_condition)
-        lines.append('#endif // !ASSERT_DISABLED')
+        lines.append('#else // ASSERT_ENABLED')
+        lines.append('    UNUSED_PARAM(value);')
+        lines.append('#endif // ASSERT_ENABLED')
         lines.append('}')
 
         return '\n'.join(lines)

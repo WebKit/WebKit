@@ -115,7 +115,7 @@ CallVariantList variantListWithVariant(const CallVariantList& list, CallVariant 
     if (!!variantToAdd)
         result.append(variantToAdd);
     
-    if (!ASSERT_DISABLED) {
+    if (ASSERT_ENABLED) {
         for (unsigned i = 0; i < result.size(); ++i) {
             for (unsigned j = i + 1; j < result.size(); ++j) {
                 if (result[i] != result[j])

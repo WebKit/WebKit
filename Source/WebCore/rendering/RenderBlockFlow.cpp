@@ -717,7 +717,7 @@ void RenderBlockFlow::layoutBlockChild(RenderBox& child, MarginInfo& marginInfo,
     LayoutRect oldRect = child.frameRect();
     LayoutUnit oldLogicalTop = logicalTopForChild(child);
 
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     LayoutSize oldLayoutDelta = view().frameView().layoutContext().layoutDelta();
 #endif
     // Position the child as though it didn't collapse with the top.
@@ -2359,7 +2359,7 @@ void RenderBlockFlow::removeFloatingObject(RenderBox& floatBox)
                         ASSERT(&floatingObject.originatingLine()->renderer() == this);
                         floatingObject.originatingLine()->markDirty();
                     }
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
                     floatingObject.clearOriginatingLine();
 #endif
                 }
@@ -3749,7 +3749,7 @@ void RenderBlockFlow::ensureLineBoxes()
 
     auto& complexLineLayout = *this->complexLineLayout();
 
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     LayoutUnit oldHeight = logicalHeight();
 #endif
     bool didNeedLayout = needsLayout();

@@ -79,7 +79,7 @@ void FetchBodySource::doCancel()
 
 void FetchBodySource::close()
 {
-#ifndef NDEBUG
+#if ASSERT_ENABLED
     m_isClosed = true;
 #endif
 

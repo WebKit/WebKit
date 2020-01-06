@@ -177,7 +177,7 @@ void Gradient::fill(GraphicsContext& context, const FloatRect& rect)
             if (!m_cachedHash || !m_gradient)
                 generateGradient(d2dContext);
 
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
             d2dContext->SetTags(GRADIENT_DRAWING, __LINE__);
 #endif
 
@@ -206,7 +206,7 @@ void Gradient::fill(GraphicsContext& context, const FloatRect& rect)
             if (!m_cachedHash || !m_gradient)
                 generateGradient(d2dContext);
 
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
             d2dContext->SetTags(GRADIENT_DRAWING, __LINE__);
 #endif
 

@@ -190,7 +190,7 @@ public:
     bool hasWritesToFlush();
     void flushWrites();
 
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     bool isValid() { return m_isValid; }
 #endif
 
@@ -211,7 +211,7 @@ private:
     StackBounds m_stackBounds;
     HashMap<void*, std::unique_ptr<Page>> m_pages;
 
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     bool m_isValid { true };
 #endif
 };

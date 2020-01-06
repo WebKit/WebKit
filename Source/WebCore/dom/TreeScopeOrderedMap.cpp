@@ -59,7 +59,7 @@ void TreeScopeOrderedMap::add(const AtomStringImpl& key, Element& element, const
     });
     MapEntry& entry = addResult.iterator->value;
 
-#if !ASSERT_DISABLED || ENABLE(SECURITY_ASSERTIONS)
+#if ASSERT_ENABLED || ENABLE(SECURITY_ASSERTIONS)
     ASSERT_WITH_SECURITY_IMPLICATION(!entry.registeredElements.contains(&element));
     entry.registeredElements.add(&element);
 #endif
@@ -122,7 +122,7 @@ inline Element* TreeScopeOrderedMap::get(const AtomStringImpl& key, const TreeSc
         return &element;
     }
 
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     // FormAssociatedElement may call getElementById to find its owner form in the middle of a tree removal.
     if (auto* currentScope = ContainerChildRemovalScope::currentScope()) {
         ASSERT(&scope.rootNode() == &currentScope->parentOfRemovedTree().rootNode());
@@ -137,7 +137,7 @@ inline Element* TreeScopeOrderedMap::get(const AtomStringImpl& key, const TreeSc
         }
     }
     ASSERT_NOT_REACHED();
-#endif
+#endif // ASSERT_ENABLED
 
     return nullptr;
 }

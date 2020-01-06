@@ -117,7 +117,7 @@ static Iterator end(const FloatingState::FloatList& floats)
     return Iterator(floats, { });
 }
 
-#ifndef NDEBUG
+#if ASSERT_ENABLED
 static bool areFloatsHorizontallySorted(const FloatingState& floatingState)
 {
     auto& floats = floatingState.floats();

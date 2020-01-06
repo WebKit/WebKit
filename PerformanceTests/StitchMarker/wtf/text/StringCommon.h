@@ -605,7 +605,7 @@ template<typename CharacterType, unsigned lowercaseLettersLength> inline bool eq
 
 template<typename StringClass> bool inline hasPrefixWithLettersIgnoringASCIICaseCommon(const StringClass& string, const char* lowercaseLetters, unsigned length)
 {
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     ASSERT(*lowercaseLetters);
     for (const char* letter = lowercaseLetters; *letter; ++letter)
         ASSERT(toASCIILowerUnchecked(*letter) == *letter);

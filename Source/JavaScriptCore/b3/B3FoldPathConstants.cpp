@@ -77,7 +77,7 @@ public:
             Vector<Override>& forValue =
                 overrides.add(value, Vector<Override>()).iterator->value;
 
-            if (!ASSERT_DISABLED) {
+            if (ASSERT_ENABLED) {
                 for (const Override& otherOverride : forValue)
                     ASSERT_UNUSED(otherOverride, otherOverride.block != override.block);
             }

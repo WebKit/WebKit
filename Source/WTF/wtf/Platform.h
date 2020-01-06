@@ -1046,12 +1046,20 @@
 #endif
 #endif
 
-#ifndef ENABLE_EXCEPTION_SCOPE_VERIFICATION
+/* ASSERT_ENABLED should be true if we want the current compilation unit to
+   do debug assertion checks unconditionally (e.g. treat a debug ASSERT
+   like a RELEASE_ASSERT.
+*/
+#ifndef ASSERT_ENABLED
 #ifdef NDEBUG
-#define ENABLE_EXCEPTION_SCOPE_VERIFICATION 0
+#define ASSERT_ENABLED 0
 #else
-#define ENABLE_EXCEPTION_SCOPE_VERIFICATION 1
+#define ASSERT_ENABLED 1
 #endif
+#endif
+
+#ifndef ENABLE_EXCEPTION_SCOPE_VERIFICATION
+#define ENABLE_EXCEPTION_SCOPE_VERIFICATION ASSERT_ENABLED
 #endif
 
 #if ENABLE(DFG_JIT) && HAVE(MACHINE_CONTEXT) && (CPU(X86_64) || CPU(ARM64))

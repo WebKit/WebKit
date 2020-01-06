@@ -30,7 +30,7 @@
 #include "B3Type.h"
 #include <wtf/PrintStream.h>
 
-#if ASSERT_DISABLED
+#if !ASSERT_ENABLED
 IGNORE_RETURN_TYPE_WARNINGS_BEGIN
 #endif
 
@@ -103,7 +103,7 @@ private:
 
 } } // namespace JSC::B3
 
-#if ASSERT_DISABLED
+#if !ASSERT_ENABLED
 IGNORE_RETURN_TYPE_WARNINGS_END
 #endif
 

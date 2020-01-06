@@ -47,7 +47,7 @@ private:
     static RefPtr<JSLazyEventListener> create(CreationArguments&&);
     JSLazyEventListener(CreationArguments&&, const String& sourceURL, const TextPosition&);
 
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     void checkValidityForEventTarget(EventTarget&) final;
 #endif
 

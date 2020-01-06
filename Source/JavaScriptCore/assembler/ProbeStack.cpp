@@ -104,7 +104,7 @@ Stack::Stack(Stack&& other)
     , m_pages(WTFMove(other.m_pages))
 {
     m_savedStackPointer = other.m_savedStackPointer;
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     other.m_isValid = false;
 #endif
 }

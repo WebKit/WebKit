@@ -89,7 +89,7 @@ private:
     template<unsigned NumberOfRegisters, typename RegType>
     ALWAYS_INLINE void setupStubArgs(std::array<RegType, NumberOfRegisters> destinations, std::array<RegType, NumberOfRegisters> sources)
     {
-        if (!ASSERT_DISABLED) {
+        if (ASSERT_ENABLED) {
             RegisterSet set;
             for (RegType dest : destinations)
                 set.set(dest);
@@ -104,7 +104,7 @@ private:
                 pairs.append(std::make_pair(sources[i], destinations[i]));
         }
 
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
         auto numUniqueSources = [&] () -> unsigned {
             RegisterSet set;
             for (auto& pair : pairs) {

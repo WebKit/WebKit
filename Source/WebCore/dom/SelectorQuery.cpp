@@ -36,7 +36,7 @@
 
 namespace WebCore {
 
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
 static bool isSingleTagNameSelector(const CSSSelector& selector)
 {
     return selector.isLastInTagHistory() && selector.match() == CSSSelector::Tag;
@@ -46,7 +46,7 @@ static bool isSingleClassNameSelector(const CSSSelector& selector)
 {
     return selector.isLastInTagHistory() && selector.match() == CSSSelector::Class;
 }
-#endif
+#endif // ASSERT_ENABLED
 
 enum class IdMatchingType : uint8_t {
     None,
@@ -542,7 +542,7 @@ ALWAYS_INLINE void SelectorDataList::execute(ContainerNode& rootNode, typename S
     case CompiledSingleWithRootFilter:
     case CompiledSingle:
         ASSERT_NOT_REACHED();
-#if ASSERT_DISABLED
+#if !ASSERT_ENABLED
         FALLTHROUGH;
 #endif
 #endif // ENABLE(CSS_SELECTOR_JIT)

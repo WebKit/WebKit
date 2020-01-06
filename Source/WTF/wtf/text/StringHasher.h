@@ -77,12 +77,12 @@ public:
     void addCharacters(UChar a, UChar b)
     {
         if (m_hasPendingCharacter) {
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
             m_hasPendingCharacter = false;
 #endif
             addCharactersAssumingAligned(m_pendingCharacter, a);
             m_pendingCharacter = b;
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
             m_hasPendingCharacter = true;
 #endif
             return;

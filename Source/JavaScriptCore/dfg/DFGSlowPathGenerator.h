@@ -52,7 +52,7 @@ public:
         jit->m_origin = m_origin;
         generateInternal(jit);
         jit->m_outOfLineStreamIndex = WTF::nullopt;
-        if (!ASSERT_DISABLED)
+        if (ASSERT_ENABLED)
             jit->m_jit.abortWithReason(DFGSlowPathGeneratorFellThrough);
     }
     MacroAssembler::Label label() const { return m_label; }

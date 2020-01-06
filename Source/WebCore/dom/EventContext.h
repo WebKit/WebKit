@@ -52,7 +52,7 @@ public:
     virtual bool isTouchEventContext() const;
 
 protected:
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     bool isUnreachableNode(EventTarget*) const;
 #endif
 
@@ -100,7 +100,7 @@ private:
 
 #endif // ENABLE(TOUCH_EVENTS)
 
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
 
 inline bool EventContext::isUnreachableNode(EventTarget* target) const
 {
@@ -134,7 +134,7 @@ inline TouchList& TouchEventContext::touchList(TouchListType type)
 
 #endif
 
-#if ENABLE(TOUCH_EVENTS) && ASSERT_DISABLED
+#if ENABLE(TOUCH_EVENTS) && !ASSERT_ENABLED
 
 inline void TouchEventContext::checkReachability(const Ref<TouchList>&) const
 {

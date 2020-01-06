@@ -45,14 +45,14 @@ public:
 private:
     explicit CallbackAggregator(CompletionHandler<void()>&& callback)
         : m_callback(WTFMove(callback))
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
         , m_wasConstructedOnMainThread(isMainThread())
 #endif
     {
     }
 
     CompletionHandler<void()> m_callback;
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     bool m_wasConstructedOnMainThread;
 #endif
 };

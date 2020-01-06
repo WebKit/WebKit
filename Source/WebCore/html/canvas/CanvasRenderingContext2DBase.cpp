@@ -160,7 +160,7 @@ void CanvasRenderingContext2DBase::unwindStateStack()
 
 CanvasRenderingContext2DBase::~CanvasRenderingContext2DBase()
 {
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     unwindStateStack();
 #endif
 

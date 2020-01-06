@@ -333,11 +333,11 @@ ALWAYS_INLINE const Identifier* Lexer<T>::makeLCharIdentifier(const UChar* chara
     return &m_arena->makeIdentifierLCharFromUChar(m_vm, characters, length);
 }
 
-#if ASSERT_DISABLED
-ALWAYS_INLINE bool isSafeBuiltinIdentifier(VM&, const Identifier*) { return true; }
-#else
+#if ASSERT_ENABLED
 bool isSafeBuiltinIdentifier(VM&, const Identifier*);
-#endif
+#else
+ALWAYS_INLINE bool isSafeBuiltinIdentifier(VM&, const Identifier*) { return true; }
+#endif // ASSERT_ENABLED
 
 template <typename T>
 ALWAYS_INLINE JSTokenType Lexer<T>::lexExpectIdentifier(JSToken* tokenRecord, OptionSet<LexerFlags> lexerFlags, bool strictMode)
@@ -375,7 +375,7 @@ ALWAYS_INLINE JSTokenType Lexer<T>::lexExpectIdentifier(JSToken* tokenRecord, Op
 
     // Create the identifier if needed
     if (lexerFlags.contains(LexerFlags::DontBuildKeywords)
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
         && !m_parsingBuiltinFunction
 #endif
         )
@@ -390,7 +390,7 @@ ALWAYS_INLINE JSTokenType Lexer<T>::lexExpectIdentifier(JSToken* tokenRecord, Op
     ASSERT(tokenLocation->startOffset >= tokenLocation->lineStartOffset);
     tokenRecord->m_startPosition = startPosition;
     tokenRecord->m_endPosition = currentPosition();
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     if (m_parsingBuiltinFunction) {
         if (!isSafeBuiltinIdentifier(m_vm, tokenData->ident))
             return ERRORTOK;

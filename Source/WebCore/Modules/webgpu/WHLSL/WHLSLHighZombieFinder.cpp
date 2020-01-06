@@ -61,7 +61,7 @@ void findHighZombies(Program& program)
 {
     UNUSED_PARAM(program);
 
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     HighZombieFinder finder;
     finder.Visitor::visit(program);
 #endif

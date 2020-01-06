@@ -47,7 +47,7 @@ namespace WebCore {
 
 struct SameSizeAsScrollableArea {
     virtual ~SameSizeAsScrollableArea();
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     bool weakPtrFactorWasConstructedOnMainThread;
 #endif
 #if ENABLE(CSS_SCROLL_SNAP)

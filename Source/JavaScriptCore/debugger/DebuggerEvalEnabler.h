@@ -39,7 +39,7 @@ public:
 
     DebuggerEvalEnabler(JSGlobalObject* globalObject, Mode mode = Mode::EvalOnCurrentCallFrame)
         : m_globalObject(globalObject)
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
         , m_mode(mode)
 #endif
         
@@ -49,7 +49,7 @@ public:
             m_evalWasDisabled = !globalObject->evalEnabled();
             if (m_evalWasDisabled)
                 globalObject->setEvalEnabled(true, globalObject->evalDisabledErrorMessage());
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
             if (m_mode == Mode::EvalOnGlobalObjectAtDebuggerEntry)
                 globalObject->setGlobalObjectAtDebuggerEntry(globalObject);
 #endif
@@ -62,7 +62,7 @@ public:
             JSGlobalObject* globalObject = m_globalObject;
             if (m_evalWasDisabled)
                 globalObject->setEvalEnabled(false, globalObject->evalDisabledErrorMessage());
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
             if (m_mode == Mode::EvalOnGlobalObjectAtDebuggerEntry)
                 globalObject->setGlobalObjectAtDebuggerEntry(nullptr);
 #endif
@@ -72,7 +72,7 @@ public:
 private:
     JSGlobalObject* m_globalObject;
     bool m_evalWasDisabled { false };
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     DebuggerEvalEnabler::Mode m_mode;
 #endif
 };

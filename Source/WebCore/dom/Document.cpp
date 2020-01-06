@@ -1166,7 +1166,7 @@ struct UnicodeCodePointRange {
     UChar32 maximum;
 };
 
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
 
 static inline bool operator<(const UnicodeCodePointRange& a, const UnicodeCodePointRange& b)
 {
@@ -1175,7 +1175,7 @@ static inline bool operator<(const UnicodeCodePointRange& a, const UnicodeCodePo
     return a.maximum < b.minimum;
 }
 
-#endif
+#endif // ASSERT_ENABLED
 
 static inline bool operator<(const UnicodeCodePointRange& a, UChar32 b)
 {
@@ -8210,7 +8210,7 @@ bool Document::hitTest(const HitTestRequest& request, const HitTestLocation& loc
     if (!renderView())
         return false;
 
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     SetForScope<bool> hitTestRestorer { m_inHitTesting, true };
 #endif
 

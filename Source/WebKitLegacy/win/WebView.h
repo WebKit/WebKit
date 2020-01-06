@@ -617,7 +617,7 @@ protected:
 #endif
 
     ULONG m_refCount { 0 };
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     bool m_deletionHasBegun { false };
 #endif
     HWND m_hostWindow { nullptr };

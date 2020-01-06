@@ -210,7 +210,7 @@ void LinkBuffer::copyCompactAndLinkCode(MacroAssembler& macroAssembler, void* ow
             jumpsToLink[i].setFrom(writePtr);
         }
     } else {
-        if (!ASSERT_DISABLED) {
+        if (ASSERT_ENABLED) {
             for (unsigned i = 0; i < jumpCount; ++i)
                 ASSERT(!MacroAssembler::canCompact(jumpsToLink[i].type()));
         }

@@ -249,7 +249,7 @@ bool doesGC(Graph& graph, Node* node)
     case DataViewSet:
         return false;
 
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     case ArrayPush:
     case ArrayPop:
     case PushWithScope:
@@ -399,11 +399,11 @@ bool doesGC(Graph& graph, Node* node)
     case ValuePow:
     case ValueBitNot:
     case ValueNegate:
-#else
-    // See comment at the top for why be default for all nodes should be to
+#else // not ASSERT_ENABLED
+    // See comment at the top for why the default for all nodes should be to
     // return true.
     default:
-#endif
+#endif // not ASSERT_ENABLED
         return true;
 
     case CallStringConstructor:

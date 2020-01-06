@@ -48,7 +48,7 @@ static const AtomString& slotNameFromSlotAttribute(const Node& child)
     return slotNameFromAttributeValue(downcast<Element>(child).attributeWithoutSynchronization(slotAttr));
 }
 
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
 static HTMLSlotElement* findSlotElement(ShadowRoot& shadowRoot, const AtomString& slotName)
 {
     for (auto& slotElement : descendantsOfType<HTMLSlotElement>(shadowRoot)) {
@@ -57,7 +57,7 @@ static HTMLSlotElement* findSlotElement(ShadowRoot& shadowRoot, const AtomString
     }
     return nullptr;
 }
-#endif
+#endif // ASSERT_ENABLED
 
 static HTMLSlotElement* nextSlotElementSkippingSubtree(ContainerNode& startingNode, ContainerNode* skippedSubtree)
 {
@@ -106,7 +106,7 @@ void SlotAssignment::renameSlotElement(HTMLSlotElement& slotElement, const AtomS
 
 void SlotAssignment::addSlotElementByName(const AtomString& name, HTMLSlotElement& slotElement, ShadowRoot& shadowRoot)
 {
-#ifndef NDEBUG
+#if ASSERT_ENABLED
     ASSERT(!m_slotElementsForConsistencyCheck.contains(&slotElement));
     m_slotElementsForConsistencyCheck.add(&slotElement);
 #endif
@@ -142,7 +142,7 @@ void SlotAssignment::addSlotElementByName(const AtomString& name, HTMLSlotElemen
 
 void SlotAssignment::removeSlotElementByName(const AtomString& name, HTMLSlotElement& slotElement, ContainerNode* oldParentOfRemovedTreeForRemoval, ShadowRoot& shadowRoot)
 {
-#ifndef NDEBUG
+#if ASSERT_ENABLED
     ASSERT(m_slotElementsForConsistencyCheck.contains(&slotElement));
     m_slotElementsForConsistencyCheck.remove(&slotElement);
 #endif
@@ -235,7 +235,7 @@ void SlotAssignment::resolveSlotsAfterSlotMutation(ShadowRoot& shadowRoot, SlotM
     if (mutationType == SlotMutationType::Insertion) {
         // This code path is taken only when continue above for !currentSlot is taken.
         // i.e. there is a new slot being inserted into the tree but we have yet to invoke addSlotElementByName on it.
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
         for (auto& entry : m_slots)
             ASSERT(entry.value->seenFirstElement || !findSlotElement(shadowRoot, entry.key));
 #endif
@@ -341,10 +341,8 @@ HTMLSlotElement* SlotAssignment::findFirstSlotElement(Slot& slot, ShadowRoot& sh
     if (slot.shouldResolveSlotElement())
         resolveAllSlotElements(shadowRoot);
 
-#ifndef NDEBUG
     ASSERT(!slot.element || m_slotElementsForConsistencyCheck.contains(slot.element.get()));
     ASSERT(!!slot.element == !!slot.elementCount);
-#endif
 
     return slot.element.get();
 }

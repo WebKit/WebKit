@@ -90,8 +90,8 @@ private:
     RefPtr<StorageAreaSync> m_storageAreaSync;
     RefPtr<WebCore::StorageSyncManager> m_storageSyncManager;
 
-#ifndef NDEBUG
-    bool m_isShutdown;
+#if ASSERT_ENABLED
+    bool m_isShutdown { false };
 #endif
     unsigned m_accessCount;
     WebCore::Timer m_closeDatabaseTimer;

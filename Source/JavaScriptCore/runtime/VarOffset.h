@@ -169,7 +169,7 @@ public:
     
     void checkSanity() const
     {
-        if (ASSERT_DISABLED)
+        if (!ASSERT_ENABLED)
             return;
         
         switch (m_kind) {

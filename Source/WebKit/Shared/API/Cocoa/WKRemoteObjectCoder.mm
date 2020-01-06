@@ -74,7 +74,7 @@ static RefPtr<API::Dictionary> createEncodedObject(WKRemoteObjectEncoder *, id);
     return self;
 }
 
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
 - (void)dealloc
 {
     ASSERT(_currentDictionary == _rootDictionary);

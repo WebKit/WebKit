@@ -165,15 +165,15 @@ private:
         return &slotFor(0);
     }
 
-#if ASSERT_DISABLED
-    void setNeedsOverflowCheck() { }
-    void clearNeedsOverflowCheck() { }
-#else
+#if ASSERT_ENABLED
     void setNeedsOverflowCheck() { m_needsOverflowCheck = true; }
     void clearNeedsOverflowCheck() { m_needsOverflowCheck = false; }
 
     bool m_needsOverflowCheck { false };
-#endif
+#else
+    void setNeedsOverflowCheck() { }
+    void clearNeedsOverflowCheck() { }
+#endif // ASSERT_ENABLED
     int m_size;
     int m_capacity;
     EncodedJSValue m_inlineBuffer[inlineCapacity];

@@ -38,12 +38,12 @@
 
 namespace WebCore {
 
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
 static bool constraintsAreAllRelative(const ViewportConfiguration::Parameters& configuration)
 {
     return !configuration.widthIsSet && !configuration.heightIsSet && !configuration.initialScaleIsSet;
 }
-#endif
+#endif // ASSERT_ENABLED
 
 static float platformDeviceWidthOverride()
 {
@@ -633,7 +633,7 @@ bool ViewportConfiguration::setIsKnownToLayOutWiderThanViewport(bool value)
     return true;
 }
 
-#ifndef NDEBUG
+#if !LOG_DISABLED
 
 TextStream& operator<<(TextStream& ts, const ViewportConfiguration::Parameters& parameters)
 {

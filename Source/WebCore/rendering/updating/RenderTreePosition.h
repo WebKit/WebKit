@@ -56,7 +56,7 @@ private:
     RenderElement& m_parent;
     WeakPtr<RenderObject> m_nextSibling { nullptr };
     bool m_hasValidNextSibling { false };
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     unsigned m_assertionLimitCounter { 0 };
 #endif
 };

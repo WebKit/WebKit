@@ -54,7 +54,7 @@ private:
     StringToElementsMap m_nameMap;
     Vector<AtomString> m_propertyNames;
 
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     bool m_didPopulate { false };
 #endif
 };
@@ -150,7 +150,7 @@ inline size_t CollectionNamedElementCache::memoryCost() const
 
 inline void CollectionNamedElementCache::didPopulate()
 {
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     m_didPopulate = true;
 #endif
     if (size_t cost = memoryCost())

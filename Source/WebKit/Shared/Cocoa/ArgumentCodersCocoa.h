@@ -41,7 +41,7 @@ template<typename T, typename = IsObjCObject<T>> bool decode(Decoder&, RetainPtr
 template<typename T, typename = IsObjCObject<T>> Optional<RetainPtr<T>> decode(Decoder&, NSArray<Class> *allowedClasses = @[ [T class] ]);
 template<typename T, typename = IsObjCObject<T>> Optional<RetainPtr<T>> decode(Decoder&, Class allowedClass);
 
-#ifndef NDEBUG
+#if ASSERT_ENABLED
 
 static inline bool isObjectClassAllowed(id object, NSArray<Class> *allowedClasses)
 {
@@ -52,7 +52,7 @@ static inline bool isObjectClassAllowed(id object, NSArray<Class> *allowedClasse
     return false;
 }
 
-#endif
+#endif // ASSERT_ENABLED
 
 template<typename T, typename>
 void encode(Encoder& encoder, T *object)

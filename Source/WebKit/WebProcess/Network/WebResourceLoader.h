@@ -101,7 +101,7 @@ private:
     WebResourceInterceptController m_interceptController;
     size_t m_numBytesReceived { 0 };
 
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     bool m_isProcessingNetworkResponse { false };
 #endif
 };

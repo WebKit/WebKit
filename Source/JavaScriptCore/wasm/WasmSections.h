@@ -27,7 +27,7 @@
 
 #if ENABLE(WEBASSEMBLY)
 
-#if ASSERT_DISABLED
+#if !ASSERT_ENABLED
 IGNORE_RETURN_TYPE_WARNINGS_BEGIN
 #endif
 
@@ -106,7 +106,7 @@ inline const char* makeString(Section section)
 
 } } // namespace JSC::Wasm
 
-#if ASSERT_DISABLED
+#if !ASSERT_ENABLED
 IGNORE_RETURN_TYPE_WARNINGS_END
 #endif
 

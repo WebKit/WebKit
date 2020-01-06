@@ -536,7 +536,7 @@ RefPtr<AtomicStringImpl> AtomicStringImpl::lookUp(const UChar* characters, unsig
     return nullptr;
 }
 
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
 bool AtomicStringImpl::isInAtomicStringTable(StringImpl* string)
 {
     AtomicStringTableLocker locker;

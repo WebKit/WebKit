@@ -205,7 +205,7 @@ UnlinkedFunctionExecutable* BuiltinExecutables::createExecutable(VM& vm, const S
     metadata.overrideName(name);
     metadata.setEndPosition(positionBeforeLastNewline);
 
-    if (!ASSERT_DISABLED || Options::validateBytecode()) {
+    if (UNLIKELY(ASSERT_ENABLED || Options::validateBytecode())) {
         JSTextPosition positionBeforeLastNewlineFromParser;
         ParserError error;
         JSParserBuiltinMode builtinMode = isBuiltinDefaultClassConstructor ? JSParserBuiltinMode::NotBuiltin : JSParserBuiltinMode::Builtin;

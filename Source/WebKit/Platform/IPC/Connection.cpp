@@ -520,7 +520,7 @@ std::unique_ptr<Decoder> Connection::waitForMessage(StringReference messageRecei
 
     // Don't even start waiting if we have InterruptWaitingIfSyncMessageArrives and there's a sync message already in the queue.
     if (hasIncomingSynchronousMessage && waitForOptions.contains(WaitForOption::InterruptWaitingIfSyncMessageArrives)) {
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
         std::lock_guard<Lock> lock(m_waitForMessageMutex);
         // We don't support having multiple clients waiting for messages.
         ASSERT(!m_waitingForMessage);

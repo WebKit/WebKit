@@ -198,7 +198,7 @@ private:
         ASSERT(useKind >= 0 && useKind < LastUseKind);
         static_assert((static_cast<uintptr_t>(LastUseKind) << 2) < (static_cast<uintptr_t>(1) << shift()), "We rely on this being true to not clobber the node pointer.");
         uintptr_t result = shiftedValue | (static_cast<uintptr_t>(useKind) << 2) | (DFG::doesKill(killStatus) << 1) | static_cast<uintptr_t>(DFG::isProved(proofStatus));
-        if (!ASSERT_DISABLED) {
+        if (ASSERT_ENABLED) {
             union U {
                 U() { word = 0; }
                 uintptr_t word;

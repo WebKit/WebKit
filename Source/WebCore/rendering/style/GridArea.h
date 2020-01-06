@@ -148,7 +148,7 @@ private:
     GridSpan(int startLine, int endLine, GridSpanType type)
         : m_type(type)
     {
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
         ASSERT(startLine < endLine);
         if (type == TranslatedDefinite) {
             ASSERT(startLine >= 0);

@@ -213,7 +213,7 @@ LayoutUnit FormattingContext::mapRightToFormattingContextRoot(const Box& layoutB
 const Display::Box& FormattingContext::geometryForBox(const Box& layoutBox, Optional<EscapeType> escapeType) const
 {
     UNUSED_PARAM(escapeType);
-#ifndef NDEBUG
+#if ASSERT_ENABLED
     auto isOkToAccessDisplayBox = [&] {
         // 1. Highly common case of accessing the formatting root's display box itself. This is formatting context escaping in the strict sense, since
         // the formatting context root box lives in the parent formatting context.

@@ -375,7 +375,7 @@ public:
         ASSERT(!m_deletionHasBegun || !m_referencingNodeCount);
         --m_referencingNodeCount;
         if (!m_referencingNodeCount && !refCount()) {
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
             m_deletionHasBegun = true;
 #endif
             m_refCountAndParentBit = s_refCountIncrement; // Avoid double destruction through use of Ref<T>/RefPtr<T>. (This is a security mitigation in case of programmer error. It will ASSERT in debug builds.)
@@ -1527,7 +1527,7 @@ public:
 
     WEBCORE_EXPORT bool hitTest(const HitTestRequest&, HitTestResult&);
     bool hitTest(const HitTestRequest&, const HitTestLocation&, HitTestResult&);
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     bool inHitTesting() const { return m_inHitTesting; }
 #endif
 
@@ -2004,7 +2004,7 @@ private:
 
     bool m_areDeviceMotionAndOrientationUpdatesSuspended { false };
     bool m_userDidInteractWithPage { false };
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     bool m_inHitTesting { false };
 #endif
 

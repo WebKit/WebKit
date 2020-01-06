@@ -210,10 +210,10 @@ private:
     PropertyStatus reifyLazyNameIfNeeded(VM&, JSGlobalObject*, PropertyName);
     PropertyStatus reifyLazyBoundNameIfNeeded(VM&, JSGlobalObject*, PropertyName);
 
-#if ASSERT_DISABLED
-    void assertTypeInfoFlagInvariants() { }
-#else
+#if ASSERT_ENABLED
     void assertTypeInfoFlagInvariants();
+#else
+    void assertTypeInfoFlagInvariants() { }
 #endif
 
     friend class LLIntOffsetsExtractor;

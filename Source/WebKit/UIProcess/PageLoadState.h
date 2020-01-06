@@ -97,14 +97,14 @@ public:
         class Token {
         public:
             Token(Transaction& transaction)
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
                 : m_pageLoadState(*transaction.m_pageLoadState)
 #endif
             {
                 transaction.m_pageLoadState->m_mayHaveUncommittedChanges = true;
             }
 
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
             PageLoadState& m_pageLoadState;
 #endif
         };

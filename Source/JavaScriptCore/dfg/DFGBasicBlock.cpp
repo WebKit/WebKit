@@ -46,7 +46,7 @@ BasicBlock::BasicBlock(BytecodeIndex bytecodeBegin, unsigned numArguments, unsig
     , intersectionOfCFAHasVisited(true)
     , isOSRTarget(false)
     , isCatchEntrypoint(false)
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     , isLinked(false)
 #endif
     , isReachable(false)

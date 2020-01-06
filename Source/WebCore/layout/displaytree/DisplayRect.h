@@ -75,7 +75,7 @@ public:
     operator LayoutRect() const;
 
 private:
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     void invalidateTop() { m_hasValidTop = false; }
     void invalidateLeft() { m_hasValidLeft = false; }
     void invalidateWidth() { m_hasValidWidth = false; }
@@ -93,14 +93,14 @@ private:
     bool m_hasValidLeft { false };
     bool m_hasValidWidth { false };
     bool m_hasValidHeight { false };
-#endif
+#endif // ASSERT_ENABLED
     LayoutRect m_rect;
 };
 
 inline Rect::Rect(LayoutUnit top, LayoutUnit left, LayoutUnit width, LayoutUnit height)
     : m_rect(left, top, width, height)
 {
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     m_hasValidTop = true;
     m_hasValidLeft = true;
     m_hasValidWidth = true;
@@ -113,7 +113,7 @@ inline Rect::Rect(LayoutPoint topLeft, LayoutUnit width, LayoutUnit height)
 {
 }
 
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
 inline void Rect::invalidatePosition()
 {
     invalidateTop();
@@ -189,7 +189,7 @@ inline LayoutUnit Rect::height() const
 
 inline void Rect::setTopLeft(const LayoutPoint& topLeft)
 {
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     setHasValidPosition();
 #endif
     m_rect.setLocation(topLeft);
@@ -197,7 +197,7 @@ inline void Rect::setTopLeft(const LayoutPoint& topLeft)
 
 inline void Rect::setTop(LayoutUnit top)
 {
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     m_hasValidTop = true;
 #endif
     m_rect.setY(top);
@@ -205,7 +205,7 @@ inline void Rect::setTop(LayoutUnit top)
 
 inline void Rect::setLeft(LayoutUnit left)
 {
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     m_hasValidLeft = true;
 #endif
     m_rect.setX(left);
@@ -213,7 +213,7 @@ inline void Rect::setLeft(LayoutUnit left)
 
 inline void Rect::setWidth(LayoutUnit width)
 {
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     m_hasValidWidth = true;
 #endif
     m_rect.setWidth(width);
@@ -221,7 +221,7 @@ inline void Rect::setWidth(LayoutUnit width)
 
 inline void Rect::setHeight(LayoutUnit height)
 {
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     m_hasValidHeight = true;
 #endif
     m_rect.setHeight(height);
@@ -229,7 +229,7 @@ inline void Rect::setHeight(LayoutUnit height)
 
 inline void Rect::setSize(const LayoutSize& size)
 {
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     setHasValidSize();
 #endif
     m_rect.setSize(size);
@@ -281,7 +281,7 @@ inline void Rect::expand(Optional<LayoutUnit> width, Optional<LayoutUnit> height
 inline Rect Rect::clone() const
 {
     Rect rect;
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     rect.m_hasValidTop = m_hasValidTop;
     rect.m_hasValidLeft = m_hasValidLeft;
     rect.m_hasValidWidth = m_hasValidWidth;

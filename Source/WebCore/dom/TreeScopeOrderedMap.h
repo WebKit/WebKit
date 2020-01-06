@@ -79,7 +79,7 @@ private:
         Element* element { nullptr };
         unsigned count { 0 };
         Vector<Element*> orderedList;
-#if !ASSERT_DISABLED || ENABLE(SECURITY_ASSERTIONS)
+#if ASSERT_ENABLED || ENABLE(SECURITY_ASSERTIONS)
         HashSet<Element*> registeredElements;
 #endif
     };

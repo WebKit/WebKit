@@ -987,7 +987,7 @@ void Storage::setCapacity(size_t capacity)
 {
     ASSERT(RunLoop::isMain());
 
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
     const size_t assumedAverageRecordSize = 50 << 10;
     size_t maximumRecordCount = capacity / assumedAverageRecordSize;
     // ~10 bits per element are required for <1% false positive rate.

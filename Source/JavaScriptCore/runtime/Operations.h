@@ -501,7 +501,7 @@ ALWAYS_INLINE JSValue jsMul(JSGlobalObject* globalObject, JSValue v1, JSValue v2
 
 inline bool scribbleFreeCells()
 {
-    return !ASSERT_DISABLED || Options::scribbleFreeCells();
+    return ASSERT_ENABLED || Options::scribbleFreeCells();
 }
 
 #define SCRIBBLE_WORD static_cast<intptr_t>(0xbadbeef0)
