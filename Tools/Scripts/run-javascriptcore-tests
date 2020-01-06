@@ -40,6 +40,7 @@ use lib $FindBin::Bin;
 use List::Util qw(min max);
 use POSIX;
 use webkitdirs;
+use Text::ParseWords;
 
 # determine configuration
 setConfiguration();
@@ -200,6 +201,9 @@ sub defaultStringForTestState {
         return "will run";
     }
 }
+
+# Additional environment parameters
+push @ARGV, parse_line('\s+', 0, $ENV{'TEST_JSC_ARGS'}) if ($ENV{'TEST_JSC_ARGS'});
 
 my $programName = basename($0);
 my $buildJSCDefault = $buildJSC ? "will check" : "will not check";
