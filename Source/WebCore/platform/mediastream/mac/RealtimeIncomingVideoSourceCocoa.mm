@@ -43,8 +43,6 @@ ALLOW_UNUSED_PARAMETERS_END
 
 #include <wtf/cf/TypeCastsCF.h>
 
-#include "CoreVideoSoftLink.h"
-
 namespace WebCore {
 using namespace PAL;
 
@@ -95,28 +93,7 @@ RetainPtr<CVPixelBufferRef> createBlackPixelBuffer(size_t width, size_t height)
 CVPixelBufferPoolRef RealtimeIncomingVideoSourceCocoa::pixelBufferPool(size_t width, size_t height)
 {
     if (!m_pixelBufferPool || m_pixelBufferPoolWidth != width || m_pixelBufferPoolHeight != height) {
-        const OSType videoCaptureFormat = kCVPixelFormatType_420YpCbCr8BiPlanarFullRange;
-        auto pixelAttributes = @{
-            (__bridge NSString *)kCVPixelBufferWidthKey: @(width),
-            (__bridge NSString *)kCVPixelBufferHeightKey: @(height),
-            (__bridge NSString *)kCVPixelBufferPixelFormatTypeKey: @(videoCaptureFormat),
-            (__bridge NSString *)kCVPixelBufferCGImageCompatibilityKey: @NO,
-#if PLATFORM(IOS_FAMILY)
-            (__bridge NSString *)kCVPixelFormatOpenGLESCompatibility : @YES,
-#else
-            (__bridge NSString *)kCVPixelBufferOpenGLCompatibilityKey : @YES,
-#endif
-            (__bridge NSString *)kCVPixelBufferIOSurfacePropertiesKey : @{ }
-        };
-
-        CVPixelBufferPoolRef pool = nullptr;
-        auto status = CVPixelBufferPoolCreate(kCFAllocatorDefault, nullptr, (__bridge CFDictionaryRef)pixelAttributes, &pool);
-
-        if (status != kCVReturnSuccess) {
-            ERROR_LOG_IF(loggerPtr(), LOGIDENTIFIER, "Failed creating a pixel buffer pool with error ", status);
-            return nullptr;
-        }
-        m_pixelBufferPool = adoptCF(pool);
+        m_pixelBufferPool = createPixelBufferPool(width, height);
         m_pixelBufferPoolWidth = width;
         m_pixelBufferPoolHeight = height;
     }

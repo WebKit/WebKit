@@ -41,6 +41,7 @@
 #include "Framework/Native/api/video_decoder_factory.h"
 #include "Framework/Native/api/video_encoder_factory.h"
 #include "VideoProcessingSoftLink.h"
+#include "WebKitEncoder.h"
 
 #include <mutex>
 

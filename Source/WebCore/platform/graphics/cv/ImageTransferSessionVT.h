@@ -56,6 +56,7 @@ public:
 #endif
 
 #if HAVE(IOSURFACE) && !PLATFORM(MACCATALYST)
+    WEBCORE_EXPORT RetainPtr<CVPixelBufferRef> createPixelBuffer(IOSurfaceRef);
     WEBCORE_EXPORT RetainPtr<CVPixelBufferRef> createPixelBuffer(IOSurfaceRef, const IntSize&);
 #endif
 

@@ -29,6 +29,8 @@
 
 #include "MessageReceiver.h"
 #include "RTCDecoderIdentifier.h"
+#include "RTCEncoderIdentifier.h"
+#include <WebCore/ImageTransferSessionVT.h>
 
 namespace IPC {
 class Connection;
@@ -36,8 +38,13 @@ class Decoder;
 class DataReference;
 }
 
+namespace WebCore {
+class RemoteVideoSample;
+}
+
 namespace webrtc {
 using LocalDecoder = void*;
+using LocalEncoder = void*;
 }
 
 namespace WebKit {
@@ -59,8 +66,19 @@ private:
     void releaseDecoder(RTCDecoderIdentifier);
     void decodeFrame(RTCDecoderIdentifier, uint32_t timeStamp, const IPC::DataReference&);
 
+    void createEncoder(RTCEncoderIdentifier, const Vector<std::pair<String, String>>&);
+    void releaseEncoder(RTCEncoderIdentifier);
+    void initializeEncoder(RTCEncoderIdentifier, uint16_t width, uint16_t height, unsigned startBitrate, unsigned maxBitrate, unsigned minBitrate, uint32_t maxFramerate);
+    void encodeFrame(RTCEncoderIdentifier, WebCore::RemoteVideoSample&&, bool shouldEncodeAsKeyFrame);
+    void setEncodeRates(RTCEncoderIdentifier, uint32_t bitRate, uint32_t frameRate);
+
+    CFDictionaryRef ioSurfacePixelBufferCreationOptions(IOSurfaceRef);
+
     GPUConnectionToWebProcess& m_gpuConnectionToWebProcess;
     HashMap<RTCDecoderIdentifier, webrtc::LocalDecoder> m_decoders;
+    HashMap<RTCEncoderIdentifier, webrtc::LocalEncoder> m_encoders;
+
+    std::unique_ptr<WebCore::ImageTransferSessionVT> m_imageTransferSession;
 };
 
 }

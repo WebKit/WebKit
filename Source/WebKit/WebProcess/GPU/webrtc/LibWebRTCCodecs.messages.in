@@ -23,8 +23,10 @@
 #if USE(LIBWEBRTC) && PLATFORM(COCOA) && ENABLE(GPU_PROCESS)
 
 messages -> LibWebRTCCodecs NotRefCounted {
-    FailedDecoding(WebKit::RTCDecoderIdentifier id)
-    CompletedDecoding(WebKit::RTCDecoderIdentifier id, uint32_t timeStamp, WebCore::RemoteVideoSample sample)
+    FailedDecoding(WebKit::RTCDecoderIdentifier identifier)
+    CompletedDecoding(WebKit::RTCDecoderIdentifier identifier, uint32_t timeStamp, WebCore::RemoteVideoSample sample)
+
+    CompletedEncoding(WebKit::RTCEncoderIdentifier identifier, IPC::DataReference data, struct webrtc::WebKitEncodedFrameInfo info, webrtc::WebKitRTPFragmentationHeader fragmentationHeader);
 }
 
 #endif // USE(LIBWEBRTC) && PLATFORM(COCOA) && ENABLE(GPU_PROCESS)

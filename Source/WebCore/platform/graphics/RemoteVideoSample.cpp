@@ -61,7 +61,7 @@ std::unique_ptr<RemoteVideoSample> RemoteVideoSample::create(MediaSample&& sampl
     return std::unique_ptr<RemoteVideoSample>(new RemoteVideoSample(surface, sRGBColorSpaceRef(), sample.presentationTime(), sample.videoRotation(), sample.videoMirrored()));
 }
 
-std::unique_ptr<RemoteVideoSample> RemoteVideoSample::create(CVPixelBufferRef imageBuffer, MediaTime&& presentationTime)
+std::unique_ptr<RemoteVideoSample> RemoteVideoSample::create(CVPixelBufferRef imageBuffer, MediaTime&& presentationTime, MediaSample::VideoRotation rotation)
 {
     auto surface = CVPixelBufferGetIOSurface(imageBuffer);
     if (!surface) {
@@ -69,7 +69,7 @@ std::unique_ptr<RemoteVideoSample> RemoteVideoSample::create(CVPixelBufferRef im
         return nullptr;
     }
 
-    return std::unique_ptr<RemoteVideoSample>(new RemoteVideoSample(surface, sRGBColorSpaceRef(), WTFMove(presentationTime), MediaSample::VideoRotation::None, false));
+    return std::unique_ptr<RemoteVideoSample>(new RemoteVideoSample(surface, sRGBColorSpaceRef(), WTFMove(presentationTime), rotation, false));
 }
 
 RemoteVideoSample::RemoteVideoSample(IOSurfaceRef surface, CGColorSpaceRef colorSpace, MediaTime&& time, MediaSample::VideoRotation rotation, bool mirrored)

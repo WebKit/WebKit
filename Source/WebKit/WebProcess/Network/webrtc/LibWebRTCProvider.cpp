@@ -141,7 +141,7 @@ std::unique_ptr<webrtc::VideoDecoderFactory> LibWebRTCProvider::createDecoderFac
 #if ENABLE(GPU_PROCESS)
     // We only support efficient sending of video frames with IOSURFACE
 #if HAVE(IOSURFACE) && !PLATFORM(MACCATALYST)
-    LibWebRTCCodecs::setVideoDecoderCallbacks(m_useGPUProcess);
+    LibWebRTCCodecs::setCallbacks(m_useGPUProcess);
 #endif
 #endif
     return LibWebRTCProviderCocoa::createDecoderFactory();

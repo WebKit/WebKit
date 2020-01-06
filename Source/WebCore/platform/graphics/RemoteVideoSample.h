@@ -49,13 +49,14 @@ public:
 
 #if HAVE(IOSURFACE)
     WEBCORE_EXPORT static std::unique_ptr<RemoteVideoSample> create(MediaSample&&);
-    WEBCORE_EXPORT static std::unique_ptr<RemoteVideoSample> create(CVPixelBufferRef, MediaTime&& presentationTime);
+    WEBCORE_EXPORT static std::unique_ptr<RemoteVideoSample> create(CVPixelBufferRef, MediaTime&& presentationTime, MediaSample::VideoRotation = MediaSample::VideoRotation::None);
     WEBCORE_EXPORT IOSurfaceRef surface();
 #endif
 
     const MediaTime& time() const { return m_time; }
     uint32_t videoFormat() const { return m_videoFormat; }
     IntSize size() const { return m_size; }
+    MediaSample::VideoRotation rotation() const { return m_rotation; }
 
     template<class Encoder> void encode(Encoder& encoder) const
     {

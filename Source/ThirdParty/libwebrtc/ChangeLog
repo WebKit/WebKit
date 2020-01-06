@@ -1,3 +1,45 @@
+2020-01-06  youenn fablet  <youenn@apple.com>
+
+        Implement RTC VTB encoders in GPUProcess
+        https://bugs.webkit.org/show_bug.cgi?id=205713
+
+        Reviewed by Eric Carlson.
+
+        Add support for remote video encoders created and used through simple routines.
+        Add factory to create video encoders implemented elsewhere than in WebRTC backend.
+        This is used for H264 encoders.
+
+        * Configurations/libwebrtc.iOS.exp:
+        * Configurations/libwebrtc.iOSsim.exp:
+        * Configurations/libwebrtc.mac.exp:
+        * Source/webrtc/sdk/WebKit/WebKitEncoder.h: Added.
+        (webrtc::WebKitRTPFragmentationHeader::value):
+        (webrtc::WebKitEncodedFrameInfo::decode):
+        (webrtc::WebKitEncodedFrameInfo::encode const):
+        (webrtc::WebKitRTPFragmentationHeader::WebKitRTPFragmentationHeader):
+        (webrtc::WebKitRTPFragmentationHeader::encode const):
+        (webrtc::WebKitRTPFragmentationHeader::decode):
+        * Source/webrtc/sdk/WebKit/WebKitEncoder.mm: Added.
+        (webrtc::VideoEncoderFactoryWithSimulcast::CreateVideoEncoder):
+        (webrtc::videoEncoderCallbacks):
+        (webrtc::setVideoEncoderCallbacks):
+        (webrtc::RemoteVideoEncoder::RemoteVideoEncoder):
+        (webrtc::RemoteVideoEncoder::InitEncode):
+        (webrtc::RemoteVideoEncoder::Release):
+        (webrtc::RemoteVideoEncoder::Encode):
+        (webrtc::RemoteVideoEncoder::SetRates):
+        (webrtc::RemoteVideoEncoder::GetEncoderInfo const):
+        (webrtc::RemoteVideoEncoder::RegisterEncodeCompleteCallback):
+        (webrtc::RemoteVideoEncoder::encodeComplete):
+        (webrtc::createLocalEncoder):
+        (webrtc::releaseLocalEncoder):
+        (webrtc::initializeLocalEncoder):
+        (webrtc::encodeLocalEncoderFrame):
+        (webrtc::setLocalEncoderRates):
+        * Source/webrtc/sdk/WebKit/WebKitUtilities.h:
+        * Source/webrtc/sdk/WebKit/WebKitUtilities.mm:
+        * libwebrtc.xcodeproj/project.pbxproj:
+
 2020-01-01  youenn fablet  <youenn@apple.com>
 
         Implement transceiver setCodecPreferences

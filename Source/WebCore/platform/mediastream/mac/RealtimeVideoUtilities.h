@@ -27,6 +27,9 @@
 
 #include <CoreVideo/CoreVideo.h>
 
+using CVPixelBufferPoolRef = struct __CVPixelBufferPool*;
+using CVPixelBufferRef = struct __CVBuffer*;
+
 namespace WebCore {
 
 static inline OSType preferedPixelBufferFormat()
@@ -37,5 +40,8 @@ static inline OSType preferedPixelBufferFormat()
     return kCVPixelFormatType_420YpCbCr8BiPlanarFullRange;
 #endif
 }
+
+WEBCORE_EXPORT RetainPtr<CVPixelBufferPoolRef> createPixelBufferPool(size_t width, size_t height);
+WEBCORE_EXPORT RetainPtr<CVPixelBufferRef> createPixelBufferFromPool(CVPixelBufferPoolRef);
 
 }

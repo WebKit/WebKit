@@ -29,18 +29,28 @@
 
 #include "MessageReceiver.h"
 #include "RTCDecoderIdentifier.h"
+#include "RTCEncoderIdentifier.h"
 #include <WebCore/ImageTransferSessionVT.h>
+#include <map>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/Lock.h>
 
+using CVPixelBufferPoolRef = struct __CVPixelBufferPool*;
+
 namespace IPC {
 class Connection;
+class DataReference;
 class Decoder;
 }
 
 namespace WebCore {
 class RemoteVideoSample;
+}
+
+namespace webrtc {
+class WebKitRTPFragmentationHeader;
+struct WebKitEncodedFrameInfo;
 }
 
 namespace WebKit {
@@ -49,6 +59,8 @@ class LibWebRTCCodecs : private IPC::MessageReceiver {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     LibWebRTCCodecs() = default;
+
+    static void setCallbacks(bool useGPUProcess);
 
     struct Decoder {
         WTF_MAKE_FAST_ALLOCATED;
@@ -60,23 +72,46 @@ public:
         RefPtr<IPC::Connection> connection;
     };
 
-    static void setVideoDecoderCallbacks(bool useGPUProcess);
-
     Decoder* createDecoder();
     int32_t releaseDecoder(Decoder&);
     int32_t decodeFrame(Decoder&, uint32_t timeStamp, const uint8_t*, size_t);
     void registerDecodeFrameCallback(Decoder&, void* decodedImageCallback);
+
+    struct Encoder {
+        WTF_MAKE_FAST_ALLOCATED;
+    public:
+        RTCEncoderIdentifier identifier;
+        void* encodedImageCallback { nullptr };
+        Lock encodedImageCallbackLock;
+        RefPtr<IPC::Connection> connection;
+    };
+
+    Encoder* createEncoder(const std::map<std::string, std::string>&);
+    int32_t releaseEncoder(Encoder&);
+    int32_t initializeEncoder(Encoder&, uint16_t width, uint16_t height, unsigned startBitrate, unsigned maxBitrate, unsigned minBitrate, uint32_t maxFramerate);
+    int32_t encodeFrame(Encoder&, const WebCore::RemoteVideoSample&, bool shouldEncodeAsKeyFrame);
+    void registerEncodeFrameCallback(Encoder&, void* encodedImageCallback);
+    void setEncodeRates(Encoder&, uint32_t bitRate, uint32_t frameRate);
+    
+    CVPixelBufferPoolRef pixelBufferPool(size_t width, size_t height);
 
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
 
 private:
     void failedDecoding(RTCDecoderIdentifier);
     void completedDecoding(RTCDecoderIdentifier, uint32_t timeStamp, WebCore::RemoteVideoSample&&);
+    void completedEncoding(RTCEncoderIdentifier, IPC::DataReference&&, const webrtc::WebKitEncodedFrameInfo&, webrtc::WebKitRTPFragmentationHeader&&);
 
-    HashMap<RTCDecoderIdentifier, std::unique_ptr<Decoder>> m_decodeCallbacks;
+private:
+    HashMap<RTCDecoderIdentifier, std::unique_ptr<Decoder>> m_decoders;
     HashSet<RTCDecoderIdentifier> m_decodingErrors;
 
+    HashMap<RTCEncoderIdentifier, std::unique_ptr<Encoder>> m_encoders;
+
     std::unique_ptr<WebCore::ImageTransferSessionVT> m_imageTransferSession;
+    RetainPtr<CVPixelBufferPoolRef> m_pixelBufferPool;
+    size_t m_pixelBufferPoolWidth { 0 };
+    size_t m_pixelBufferPoolHeight { 0 };
 };
 
 } // namespace WebKit

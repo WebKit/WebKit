@@ -52,23 +52,6 @@ bool isH264HardwareEncoderAllowed();
 CVPixelBufferRef pixelBufferFromFrame(const VideoFrame&, const std::function<CVPixelBufferRef(size_t, size_t)>&);
 rtc::scoped_refptr<webrtc::VideoFrameBuffer> pixelBufferToFrame(CVPixelBufferRef);
 
-class VideoEncoderFactoryWithSimulcast final : public VideoEncoderFactory {
-public:
-    explicit VideoEncoderFactoryWithSimulcast(std::unique_ptr<VideoEncoderFactory>&& factory)
-        : m_internalEncoderFactory(std::move(factory))
-    {
-    }
-
-    VideoEncoderFactory::CodecInfo QueryVideoEncoder(const SdpVideoFormat& format) const final { return m_internalEncoderFactory->QueryVideoEncoder(format); }
-
-    std::unique_ptr<VideoEncoder> CreateVideoEncoder(const SdpVideoFormat& format) final { return std::make_unique<EncoderSimulcastProxy>(m_internalEncoderFactory.get(), format); }
-
-    std::vector<SdpVideoFormat> GetSupportedFormats() const final { return m_internalEncoderFactory->GetSupportedFormats(); }
-
-private:
-    const std::unique_ptr<VideoEncoderFactory> m_internalEncoderFactory;
-};
-
 using WebKitVideoDecoder = void*;
 using VideoDecoderCreateCallback = WebKitVideoDecoder(*)(const SdpVideoFormat& format);
 using VideoDecoderReleaseCallback = int32_t(*)(WebKitVideoDecoder);

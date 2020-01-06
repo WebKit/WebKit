@@ -307,6 +307,20 @@ CFDictionaryRef ImageTransferSessionVT::ioSurfacePixelBufferCreationOptions(IOSu
     return m_ioSurfaceBufferAttributes.get();
 }
 
+RetainPtr<CVPixelBufferRef> ImageTransferSessionVT::createPixelBuffer(IOSurfaceRef surface)
+{
+    if (!surface)
+        return nullptr;
+
+    CVPixelBufferRef pixelBuffer;
+    auto status = CVPixelBufferCreateWithIOSurface(kCFAllocatorDefault, surface, ioSurfacePixelBufferCreationOptions(surface), &pixelBuffer);
+    if (status) {
+        RELEASE_LOG(Media, "CVPixelBufferCreateWithIOSurface failed with error code: %d", static_cast<int>(status));
+        return nullptr;
+    }
+    return adoptCF(pixelBuffer);
+}
+
 RetainPtr<CVPixelBufferRef> ImageTransferSessionVT::createPixelBuffer(IOSurfaceRef surface, const IntSize& size)
 {
     if (!surface || !setSize(size))
