@@ -633,7 +633,7 @@ public:
         @NO, WebKitDialogElementEnabledPreferenceKey,
         @NO, WebKitHighlightAPIEnabledPreferenceKey,
         @YES, WebKitModernMediaControlsEnabledPreferenceKey,
-        @NO, WebKitWebAnimationsCSSIntegrationEnabledPreferenceKey,
+        @YES, WebKitWebAnimationsCSSIntegrationEnabledPreferenceKey,
 
 #if ENABLE(WEBGL2)
         @NO, WebKitWebGL2EnabledPreferenceKey,
