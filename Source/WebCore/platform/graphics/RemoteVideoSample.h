@@ -48,7 +48,7 @@ public:
     ~RemoteVideoSample() = default;
 
 #if HAVE(IOSURFACE)
-    WEBCORE_EXPORT static std::unique_ptr<RemoteVideoSample> create(MediaSample&&);
+    WEBCORE_EXPORT static std::unique_ptr<RemoteVideoSample> create(MediaSample&);
     WEBCORE_EXPORT static std::unique_ptr<RemoteVideoSample> create(CVPixelBufferRef, MediaTime&& presentationTime, MediaSample::VideoRotation = MediaSample::VideoRotation::None);
     WEBCORE_EXPORT IOSurfaceRef surface();
 #endif

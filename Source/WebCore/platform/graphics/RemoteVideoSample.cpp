@@ -42,7 +42,7 @@ namespace WebCore {
 using namespace PAL;
 
 #if HAVE(IOSURFACE)
-std::unique_ptr<RemoteVideoSample> RemoteVideoSample::create(MediaSample&& sample)
+std::unique_ptr<RemoteVideoSample> RemoteVideoSample::create(MediaSample& sample)
 {
     ASSERT(sample.platformSample().type == PlatformSample::CMSampleBufferType);
 

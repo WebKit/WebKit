@@ -125,7 +125,7 @@ private:
     void videoSampleAvailable(MediaSample& sample) final
     {
 #if HAVE(IOSURFACE)
-        auto remoteSample = RemoteVideoSample::create(WTFMove(sample));
+        auto remoteSample = RemoteVideoSample::create(sample);
         if (remoteSample)
             m_connection->send(Messages::UserMediaCaptureManager::RemoteVideoSampleAvailable(m_id, WTFMove(*remoteSample)), 0);
 #else
