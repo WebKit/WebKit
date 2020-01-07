@@ -89,9 +89,9 @@ let AutomationSessionProxy = class AutomationSessionProxy
         return JSON.parse(string, (key, value) => this._reviveJSONValue(key, value));
     }
 
-    _jsonStringify(original)
+    _jsonStringify(value)
     {
-        return JSON.stringify(original, (key, value) => this._replaceJSONValue(key, value)) || "null";
+        return JSON.stringify(this._jsonClone(value));
     }
 
     _reviveJSONValue(key, value)
@@ -101,19 +101,97 @@ let AutomationSessionProxy = class AutomationSessionProxy
         return value;
     }
 
-    _replaceJSONValue(key, value)
+    _isCollection(value) {
+        switch (Object.prototype.toString.call(value)) {
+        case "[object Arguments]":
+        case "[object Array]":
+        case "[object FileList]":
+        case "[object HTMLAllCollection]":
+        case "[object HTMLCollection]":
+        case "[object HTMLFormControlsCollection]":
+        case "[object HTMLOptionsCollection]":
+        case "[object NodeList]":
+            return true;
+        }
+        return false;
+    }
+
+    _checkCyclic(value, stack = [])
     {
+        function isCyclic(value, proxy, stack = []) {
+            if (value === undefined || value === null)
+                return false;
+
+            if (typeof value === "boolean" || typeof value === "number" || typeof value === "string")
+                return false;
+
+            if (value instanceof Node)
+                return false;
+
+            if (stack.includes(value))
+                return true;
+
+            if (proxy._isCollection(value)) {
+                stack.push(value);
+                for (let i = 0; i < value.length; i++) {
+                    if (isCyclic(value[i], proxy, stack))
+                        return true;
+                }
+
+                stack.pop();
+                return false;
+            }
+
+            stack.push(value);
+            for (let property in value) {
+                if (isCyclic(value[property], proxy, stack))
+                    return true;
+            }
+
+            stack.pop();
+            return false;
+        }
+
+        if (isCyclic(value, this))
+            throw new TypeError("cannot serialize cyclic structures.");
+    }
+
+    _jsonClone(value)
+    {
+        // Internal JSON clone algorithm.
+        // https://w3c.github.io/webdriver/#dfn-internal-json-clone-algorithm
+        if (value === undefined || value === null)
+            return null;
+
+        if (typeof value === "boolean" || typeof value === "number" || typeof value === "string")
+            return value;
+
+        if (this._isCollection(value)) {
+            this._checkCyclic(value);
+            return [...value].map(item => this._jsonClone(item));
+        }
+
         if (value instanceof Node)
             return this._createNodeHandle(value);
 
-        if (value instanceof NodeList || value instanceof HTMLCollection)
-            value = Array.from(value).map(this._createNodeHandle, this);
+        // FIXME: implement window proxy serialization.
 
-        return value;
+        if (typeof value.toJSON === "function")
+            return value.toJSON();
+
+        let customObject = {};
+        for (let property in value) {
+            this._checkCyclic(value);
+            customObject[property] = this._jsonClone(value[property]);
+        }
+        return customObject;
     }
 
     _createNodeHandle(node)
     {
+        if (node.ownerDocument !== window.document || !node.isConnected)
+            throw {name: "NodeNotFound", message: "Stale element found when trying to create the node handle"};
+
         return {[sessionNodePropertyName]: this._identifierForNode(node)};
     }
 

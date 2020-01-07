@@ -1,5 +1,30 @@
 2020-01-07  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        WebDriver: several w3c collections tests added in r230953 are failing
+        https://bugs.webkit.org/show_bug.cgi?id=184966
+
+        Reviewed by Brian Burg.
+
+        This is because JSON.stringify() is not enough, we need to first clone the value using the internal JSON clone
+        algorithm explained in the spec. See https://w3c.github.io/webdriver/#dfn-internal-json-clone-algorithm.
+
+        Fixes: imported/w3c/webdriver/tests/execute_script/collections.py::test_arguments
+               imported/w3c/webdriver/tests/execute_script/collections.py::test_file_list
+               imported/w3c/webdriver/tests/execute_script/collections.py::test_html_all_collection
+               imported/w3c/webdriver/tests/execute_async_script/collections.py::test_arguments
+               imported/w3c/webdriver/tests/execute_async_script/collections.py::test_file_list
+               imported/w3c/webdriver/tests/execute_async_script/collections.py::test_html_all_collection
+
+        * WebProcess/Automation/WebAutomationSessionProxy.js:
+        (WebKitAutomation.AutomationSessionProxy.prototype._jsonStringify): Call JSON.stringify(), but without the
+        replacer and passing the result of _jsonClone().
+        (WebKitAutomation.AutomationSessionProxy.prototype._isCollection): Helper to check if the value is a collection.
+        (WebKitAutomation.AutomationSessionProxy.prototype._checkCyclic): Throw an error if the value is a cyclic structure.
+        (WebKitAutomation.AutomationSessionProxy.prototype._jsonClone): Implement the internal JSON clone algorithm.
+        (WebKitAutomation.AutomationSessionProxy.prototype._createNodeHandle): Trhow an error if the node is stale.
+
+2020-01-07  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [SOUP] HSTS Support causes page loading to fail with "Operation was cancelled"
         https://bugs.webkit.org/show_bug.cgi?id=203620
 

@@ -1,5 +1,16 @@
 2020-01-07  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        WebDriver: several w3c collections tests added in r230953 are failing
+        https://bugs.webkit.org/show_bug.cgi?id=184966
+
+        Reviewed by Brian Burg.
+
+        Remove expectations for tests that are now passing.
+
+        * TestExpectations.json:
+
+2020-01-07  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         WebDriver: several tests in imported/w3c/webdriver/tests/state/get_element_attribute.py are failing
         https://bugs.webkit.org/show_bug.cgi?id=180415
 

@@ -532,32 +532,6 @@
             }
         }
     },
-    "imported/w3c/webdriver/tests/execute_script/collections.py": {
-        "subtests": {
-            "test_arguments": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/184966"}}
-            },
-            "test_file_list": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/184966"}}
-            },
-            "test_html_all_collection": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/184966"}}
-            }
-        }
-    },
-    "imported/w3c/webdriver/tests/execute_async_script/collections.py": {
-        "subtests": {
-            "test_arguments": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/184966"}}
-            },
-            "test_file_list": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/184966"}}
-            },
-            "test_html_all_collection": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/184966"}}
-            }
-        }
-    },
     "imported/w3c/webdriver/tests/execute_async_script/promise.py": {
         "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/204151"}},
         "subtests": {
