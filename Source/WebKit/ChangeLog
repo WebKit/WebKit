@@ -1,3 +1,15 @@
+2020-01-07  youenn fablet  <youenn@apple.com>
+
+        Fix non GPUProcess build issue in UserMediaCaptureManager
+        https://bugs.webkit.org/show_bug.cgi?id=205851
+
+        Reviewed by Eric Carlson.
+
+        Build fix, no change of behavior.
+
+        * WebProcess/cocoa/UserMediaCaptureManager.cpp:
+        (WebKit::UserMediaCaptureManager::Source::connection):
+
 2020-01-07  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK][WPE] Add API to retrieve and delete surrounding text for input methods
