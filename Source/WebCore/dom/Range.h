@@ -120,11 +120,12 @@ public:
         RespectClipping = 1 << 0,
         UseVisibleBounds = 1 << 1,
         IgnoreTinyRects = 1 << 2,
+        IgnoreEmptyTextSelections = 1 << 3, // Do not return empty text rectangles, which is required for Element.getClientRect() conformance.
     };
 
     // Not transform-friendly
     WEBCORE_EXPORT void absoluteTextRects(Vector<IntRect>&, bool useSelectionHeight = false, RangeInFixedPosition* = nullptr, OptionSet<BoundingRectBehavior> = { }) const;
-    WEBCORE_EXPORT IntRect absoluteBoundingBox() const;
+    WEBCORE_EXPORT IntRect absoluteBoundingBox(OptionSet<BoundingRectBehavior> = { }) const;
 
     // Transform-friendly
     WEBCORE_EXPORT void absoluteTextQuads(Vector<FloatQuad>&, bool useSelectionHeight = false, RangeInFixedPosition* = nullptr) const;
