@@ -1,3 +1,33 @@
+2020-01-07  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Remove vm accessor in JSVirtualMachine to reduce binary size
+        https://bugs.webkit.org/show_bug.cgi?id=205880
+
+        Reviewed by Mark Lam.
+
+        Objective-C has reflection mechanism. This means that fields, methods, and their types
+        need to hold its string representations in binary even if we are using release build.
+        While typical Objective-C class does not have large size of type names, C++ struct / class
+        has very large one, and putting them in Objective-C method names, parameter types, or fields
+        makes binary size very large.
+
+        By analyzing JavaScriptCore binary, I found that Objective-C method type symbols are taking 200~KB
+        binary size. (Section __objc_methtype: 235081 (addr 0x105e9a3 offset 17164707)). And it is due to
+        JSC::VM type included in `[JSVirtualMachine vm]` accessor.
+
+        This patch removes this accessor and gets 200KB binary size reduction.
+
+        * API/JSScript.mm:
+        (-[JSScript readCache]):
+        (-[JSScript sourceCode]):
+        (-[JSScript jsSourceCode]):
+        (-[JSScript writeCache:]):
+        * API/JSVirtualMachine.mm:
+        (-[JSVirtualMachine JSContextGroupRef]):
+        (-[JSVirtualMachine isWebThreadAware]):
+        (-[JSVirtualMachine vm]): Deleted.
+        * API/JSVirtualMachineInternal.h:
+
 2020-01-07  Keith Miller  <keith_miller@apple.com>
 
         Unreviewed non-arm64e build fix.
