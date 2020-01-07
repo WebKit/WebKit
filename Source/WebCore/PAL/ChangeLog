@@ -1,3 +1,20 @@
+2020-01-07  Jer Noble  <jer.noble@apple.com>
+
+        Flaky API Test: TestWebKitAPI.WebKitLegacy.AudioSessionCategoryIOS
+        https://bugs.webkit.org/show_bug.cgi?id=194340
+        <rdar://problem/50507254>
+
+        Reviewed by Eric Carlson.
+
+        Workaround for AVFoundation crash for OS versions prior to platform fix. This crash occurrs infrequently
+        while triggering KVO due to an internal @property change. Work around the crash by disabling KVO for that
+        property at runtime, by injecting a new class method +automaticallyNotifiesObserversOfSuppressesVideoLayers
+        immediately after soft linking the AVFoundation library.
+
+        * pal/cocoa/AVFoundationSoftLink.mm:
+        (PAL::justReturnsNO):
+        (PAL::AVFoundationLibrary):
+
 2020-01-07  Chris Fleizach  <cfleizach@apple.com>
 
         AX: Enable ACCESSIBILITY_ISOLATED_TREE
