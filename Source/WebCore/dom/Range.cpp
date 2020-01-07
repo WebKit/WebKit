@@ -1143,13 +1143,11 @@ Node* Range::pastLastNode() const
     return NodeTraversal::nextSkippingChildren(endContainer());
 }
 
-IntRect Range::absoluteBoundingBox(OptionSet<BoundingRectBehavior> rectOptions) const
+IntRect Range::absoluteBoundingBox() const
 {
     IntRect result;
     Vector<IntRect> rects;
-    bool useSelectionHeight = false;
-    RangeInFixedPosition* inFixed = nullptr;
-    absoluteTextRects(rects, useSelectionHeight, inFixed, rectOptions);
+    absoluteTextRects(rects);
     for (auto& rect : rects)
         result.unite(rect);
     return result;
@@ -1160,7 +1158,7 @@ Vector<FloatRect> Range::absoluteRectsForRangeInText(Node* node, RenderText& ren
     unsigned startOffset = node == &startContainer() ? m_start.offset() : 0;
     unsigned endOffset = node == &endContainer() ? m_end.offset() : std::numeric_limits<unsigned>::max();
 
-    auto textQuads = renderText.absoluteQuadsForRange(startOffset, endOffset, useSelectionHeight, rectOptions.contains(BoundingRectBehavior::IgnoreEmptyTextSelections), &isFixed);
+    auto textQuads = renderText.absoluteQuadsForRange(startOffset, endOffset, useSelectionHeight, &isFixed);
 
     if (rectOptions.contains(BoundingRectBehavior::RespectClipping)) {
         Vector<FloatRect> clippedRects;
@@ -1229,7 +1227,7 @@ void Range::absoluteTextQuads(Vector<FloatQuad>& quads, bool useSelectionHeight,
         else if (is<RenderText>(*renderer)) {
             unsigned startOffset = node == &startContainer() ? m_start.offset() : 0;
             unsigned endOffset = node == &endContainer() ? m_end.offset() : std::numeric_limits<unsigned>::max();
-            quads.appendVector(downcast<RenderText>(*renderer).absoluteQuadsForRange(startOffset, endOffset, useSelectionHeight, false /* ignoreEmptyTextSelections */, &isFixed));
+            quads.appendVector(downcast<RenderText>(*renderer).absoluteQuadsForRange(startOffset, endOffset, useSelectionHeight, &isFixed));
         } else
             continue;
         allFixed &= isFixed;

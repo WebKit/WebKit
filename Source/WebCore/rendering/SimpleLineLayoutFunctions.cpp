@@ -209,14 +209,12 @@ unsigned textOffsetForPoint(const LayoutPoint& point, const RenderText& renderer
     return run.start() + style.fontCascade().offsetForPosition(textRun, point.x() - run.logicalLeft(), true);
 }
 
-Vector<FloatQuad> collectAbsoluteQuadsForRange(const RenderObject& renderer, unsigned start, unsigned end, const Layout& layout, bool ignoreEmptyTextSelections, bool* wasFixed)
+Vector<FloatQuad> collectAbsoluteQuadsForRange(const RenderObject& renderer, unsigned start, unsigned end, const Layout& layout, bool* wasFixed)
 {
     auto& style = downcast<RenderBlockFlow>(*renderer.parent()).style();
     Vector<FloatQuad> quads;
     auto& resolver = layout.runResolver();
     for (auto run : resolver.rangeForRendererWithOffsets(renderer, start, end)) {
-        if (ignoreEmptyTextSelections && run.start() == run.end())
-            continue;
         // This run is fully contained.
         if (start <= run.start() && end >= run.end()) {
             quads.append(renderer.localToAbsoluteQuad(FloatQuad(run.rect()), UseTransforms, wasFixed));

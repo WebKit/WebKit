@@ -431,7 +431,7 @@ void RenderText::absoluteQuads(Vector<FloatQuad>& quads, bool* wasFixed) const
     quads.appendVector(m_lineBoxes.absoluteQuads(*this, wasFixed, RenderTextLineBoxes::NoClipping));
 }
 
-Vector<FloatQuad> RenderText::absoluteQuadsForRange(unsigned start, unsigned end, bool useSelectionHeight, bool ignoreEmptyTextSelections, bool* wasFixed) const
+Vector<FloatQuad> RenderText::absoluteQuadsForRange(unsigned start, unsigned end, bool useSelectionHeight, bool* wasFixed) const
 {
     // Work around signed/unsigned issues. This function takes unsigneds, and is often passed UINT_MAX
     // to mean "all the way to the end". InlineTextBox coordinates are unsigneds, so changing this
@@ -443,9 +443,9 @@ Vector<FloatQuad> RenderText::absoluteQuadsForRange(unsigned start, unsigned end
     start = std::min(start, static_cast<unsigned>(INT_MAX));
     end = std::min(end, static_cast<unsigned>(INT_MAX));
     if (simpleLineLayout() && !useSelectionHeight)
-        return collectAbsoluteQuadsForRange(*this, start, end, *simpleLineLayout(), ignoreEmptyTextSelections, wasFixed);
+        return collectAbsoluteQuadsForRange(*this, start, end, *simpleLineLayout(), wasFixed);
     const_cast<RenderText&>(*this).ensureLineBoxes();
-    return m_lineBoxes.absoluteQuadsForRange(*this, start, end, useSelectionHeight, ignoreEmptyTextSelections, wasFixed);
+    return m_lineBoxes.absoluteQuadsForRange(*this, start, end, useSelectionHeight, wasFixed);
 }
 
 Position RenderText::positionForPoint(const LayoutPoint& point)

@@ -429,12 +429,10 @@ static FloatRect localQuadForTextBox(const InlineTextBox& box, unsigned start, u
     return boxSelectionRect;
 }
 
-Vector<FloatQuad> RenderTextLineBoxes::absoluteQuadsForRange(const RenderText& renderer, unsigned start, unsigned end, bool useSelectionHeight, bool ignoreEmptyTextSelections, bool* wasFixed) const
+Vector<FloatQuad> RenderTextLineBoxes::absoluteQuadsForRange(const RenderText& renderer, unsigned start, unsigned end, bool useSelectionHeight, bool* wasFixed) const
 {
     Vector<FloatQuad> quads;
     for (auto* box = m_first; box; box = box->nextTextBox()) {
-        if (ignoreEmptyTextSelections && !box->isSelected(start, end))
-            continue;
         if (start <= box->start() && box->end() <= end) {
             FloatRect boundaries = box->calculateBoundaries();
             if (useSelectionHeight) {
@@ -459,7 +457,7 @@ Vector<FloatQuad> RenderTextLineBoxes::absoluteQuadsForRange(const RenderText& r
 
 Vector<IntRect> RenderTextLineBoxes::absoluteRectsForRange(const RenderText& renderer, unsigned start, unsigned end, bool useSelectionHeight, bool* wasFixed) const
 {
-    return absoluteQuadsForRange(renderer, start, end, useSelectionHeight, false /* ignoreEmptyTextSelections */, wasFixed).map([](auto& quad) { return quad.enclosingBoundingBox(); });
+    return absoluteQuadsForRange(renderer, start, end, useSelectionHeight, wasFixed).map([](auto& quad) { return quad.enclosingBoundingBox(); });
 }
 
 Vector<FloatQuad> RenderTextLineBoxes::absoluteQuads(const RenderText& renderer, bool* wasFixed, ClippingOption option) const

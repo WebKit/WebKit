@@ -1,3 +1,16 @@
+2020-01-07  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed, rolling out r254144.
+
+        Broke the iOS build.
+
+        Reverted changeset:
+
+        "First character in each word-wrapped line has incorrect
+        character rect when requested range spans multiple lines"
+        https://bugs.webkit.org/show_bug.cgi?id=205842
+        https://trac.webkit.org/changeset/254144
+
 2020-01-07  Keith Rollin  <krollin@apple.com>
 
         Reformat WebFrameLoaderClient logging

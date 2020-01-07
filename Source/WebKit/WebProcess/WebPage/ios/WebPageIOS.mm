@@ -4061,7 +4061,7 @@ void WebPage::requestDocumentEditingContext(DocumentEditingContextRequest reques
                 continue;
             }
 
-            rects.append({ contextIterator.range()->absoluteBoundingBox(BoundingRectBehavior::IgnoreEmptyTextSelections), { currentLocation, 1 } });
+            rects.append({ contextIterator.range()->absoluteBoundingBox(), { currentLocation, 1 } });
             currentLocation++;
             contextIterator.advance(1);
         }
