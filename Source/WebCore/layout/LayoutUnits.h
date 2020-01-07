@@ -48,10 +48,6 @@ using InlineLayoutSize = LayoutSize;
 using InlineLayoutRect = LayoutRect;
 #endif
 
-namespace Display {
-class Box;
-}
-
 namespace Layout {
 
 struct Position {
@@ -186,7 +182,6 @@ struct UsedHorizontalValues {
 
 struct UsedVerticalValues {
     struct Constraints {
-        explicit Constraints(const Display::Box& containingBlockGeometry);
         explicit Constraints(LayoutUnit contentBoxTop, Optional<LayoutUnit> verticalConstraint = WTF::nullopt)
             : contentBoxTop(contentBoxTop)
             , height(verticalConstraint)

@@ -234,7 +234,7 @@ void BlockFormattingContext::placeInFlowPositionedChildren(const Box& layoutBox)
 
 void BlockFormattingContext::computeStaticVerticalPosition(const FloatingContext& floatingContext, const Box& layoutBox)
 {
-    auto usedVerticalValues = UsedVerticalValues { UsedVerticalValues::Constraints { geometryForBox(*layoutBox.containingBlock()) } };
+    auto usedVerticalValues = UsedVerticalValues { UsedVerticalValues::Constraints { geometryForBox(*layoutBox.containingBlock()).contentBoxTop() } };
     formattingState().displayBox(layoutBox).setTop(geometry().staticVerticalPosition(layoutBox, usedVerticalValues));
     if (layoutBox.hasFloatClear())
         computeEstimatedVerticalPositionForFloatClear(floatingContext, layoutBox);
@@ -428,7 +428,7 @@ void BlockFormattingContext::computeHeightAndMargin(const Box& layoutBox)
         return { };
     };
 
-    auto verticalConstraints = UsedVerticalValues::Constraints { containingBlockGeometry };
+    auto verticalConstraints = UsedVerticalValues::Constraints { containingBlockGeometry.contentBoxTop() };
     auto contentHeightAndMargin = compute(UsedVerticalValues { verticalConstraints });
     if (auto maxHeight = geometry().computedMaxHeight(layoutBox)) {
         if (contentHeightAndMargin.contentHeight > *maxHeight) {

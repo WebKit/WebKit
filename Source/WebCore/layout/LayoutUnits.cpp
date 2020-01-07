@@ -28,15 +28,8 @@
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
-#include "DisplayBox.h"
-
 namespace WebCore {
 namespace Layout {
-
-UsedVerticalValues::Constraints::Constraints(const Display::Box& containingBlockGeometry)
-    : contentBoxTop(containingBlockGeometry.contentBoxTop())
-{
-}
 
 }
 }
