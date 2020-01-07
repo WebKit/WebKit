@@ -791,6 +791,7 @@ public:
 
 #if PLATFORM(GTK) || PLATFORM(WPE)
     void cancelComposition(const String& compositionString);
+    void deleteSurrounding(int64_t offset, unsigned characterCount);
 
     void setInputMethodState(Optional<InputMethodState>&&);
 #endif

@@ -115,3 +115,4 @@ void webkitWebViewDidLosePointerLock(WebKitWebView*);
 void webkitWebViewSetComposition(WebKitWebView*, const String&, const Vector<WebCore::CompositionUnderline>&, WebKit::EditingRange&&);
 void webkitWebViewConfirmComposition(WebKitWebView*, const String&);
 void webkitWebViewCancelComposition(WebKitWebView*, const String&);
+void webkitWebViewDeleteSurrounding(WebKitWebView*, int offset, unsigned characterCount);

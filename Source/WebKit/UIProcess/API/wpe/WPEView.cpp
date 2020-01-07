@@ -239,8 +239,10 @@ void View::setInputMethodState(Optional<InputMethodState>&& state)
 void View::selectionDidChange()
 {
     const auto& editorState = m_pageProxy->editorState();
-    if (!editorState.isMissingPostLayoutData)
+    if (!editorState.isMissingPostLayoutData) {
         m_inputMethodFilter.notifyCursorRect(editorState.postLayoutData().caretRectAtStart);
+        m_inputMethodFilter.notifySurrounding(editorState.postLayoutData().paragraphContext, editorState.postLayoutData().paragraphContextCursorPosition);
+    }
 }
 
 void View::setSize(const WebCore::IntSize& size)

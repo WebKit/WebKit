@@ -415,6 +415,7 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
 
 #if PLATFORM(GTK) || PLATFORM(WPE)
     CancelComposition(String text)
+    DeleteSurrounding(int64_t offset, unsigned characterCount)
 #endif
 
 #if PLATFORM(GTK)

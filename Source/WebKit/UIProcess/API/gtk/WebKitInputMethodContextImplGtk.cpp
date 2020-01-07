@@ -24,9 +24,12 @@
 #include <wtf/MathExtras.h>
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/glib/WTFGType.h>
+#include <wtf/text/CString.h>
 
 struct _WebKitInputMethodContextImplGtkPrivate {
     GRefPtr<GtkIMContext> context;
+    CString surroundingText;
+    unsigned surroundingCursorIndex;
 };
 
 WEBKIT_DEFINE_TYPE(WebKitInputMethodContextImplGtk, webkit_input_method_context_impl_gtk, WEBKIT_TYPE_INPUT_METHOD_CONTEXT)
@@ -101,6 +104,13 @@ static void contextCommitCallback(WebKitInputMethodContextImplGtk* context, cons
     g_signal_emit_by_name(context, "committed", text, nullptr);
 }
 
+static gboolean contextRetrieveSurrounding(WebKitInputMethodContextImplGtk* context)
+{
+    auto* priv = context->priv;
+    gtk_im_context_set_surrounding(priv->context.get(), priv->surroundingText.data(), priv->surroundingText.length(), priv->surroundingCursorIndex);
+    return TRUE;
+}
+
 static void webkitInputMethodContextImplGtkConstructed(GObject* object)
 {
     G_OBJECT_CLASS(webkit_input_method_context_impl_gtk_parent_class)->constructed(object);
@@ -114,6 +124,7 @@ static void webkitInputMethodContextImplGtkConstructed(GObject* object)
     g_signal_connect_object(priv->context.get(), "preedit-changed", G_CALLBACK(contextPreeditChangedCallback), object, G_CONNECT_SWAPPED);
     g_signal_connect_object(priv->context.get(), "preedit-end", G_CALLBACK(contextPreeditEndCallback), object, G_CONNECT_SWAPPED);
     g_signal_connect_object(priv->context.get(), "commit", G_CALLBACK(contextCommitCallback), object, G_CONNECT_SWAPPED);
+    g_signal_connect_object(priv->context.get(), "retrieve-surrounding", G_CALLBACK(contextRetrieveSurrounding), object, G_CONNECT_SWAPPED);
 }
 
 static void webkitInputMethodContextImplGtkSetEnablePreedit(WebKitInputMethodContext* context, gboolean enabled)
@@ -182,6 +193,13 @@ static void webkitInputMethodContextImplGtkNotifyCursorArea(WebKitInputMethodCon
     gtk_im_context_set_cursor_location(priv->context.get(), &cursorRect);
 }
 
+static void webkitInputMethodContextImplGtkNotifySurrounding(WebKitInputMethodContext* context, const gchar* text, unsigned length, unsigned cursorIndex)
+{
+    auto* priv = WEBKIT_INPUT_METHOD_CONTEXT_IMPL_GTK(context)->priv;
+    priv->surroundingText = { text, length };
+    priv->surroundingCursorIndex = cursorIndex;
+}
+
 static void webkitInputMethodContextImplGtkReset(WebKitInputMethodContext* context)
 {
     auto* priv = WEBKIT_INPUT_METHOD_CONTEXT_IMPL_GTK(context)->priv;
@@ -200,6 +218,7 @@ static void webkit_input_method_context_impl_gtk_class_init(WebKitInputMethodCon
     imClass->notify_focus_in = webkitInputMethodContextImplGtkNotifyFocusIn;
     imClass->notify_focus_out = webkitInputMethodContextImplGtkNotifyFocusOut;
     imClass->notify_cursor_area = webkitInputMethodContextImplGtkNotifyCursorArea;
+    imClass->notify_surrounding = webkitInputMethodContextImplGtkNotifySurrounding;
     imClass->reset = webkitInputMethodContextImplGtkReset;
 }
 

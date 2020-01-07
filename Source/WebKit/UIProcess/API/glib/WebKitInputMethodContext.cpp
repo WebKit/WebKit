@@ -60,6 +60,8 @@ enum {
 
     COMMITTED,
 
+    DELETE_SURROUNDING,
+
     LAST_SIGNAL
 };
 
@@ -157,6 +159,9 @@ WEBKIT_DEFINE_ABSTRACT_TYPE(WebKitInputMethodContext, webkit_input_method_contex
  * @notify_cursor_area: Called via webkit_input_method_context_notify_cursor_area()
  *   to inform the input method of the current cursor location relative to
  *   the client window.
+ * @notify_surrounding: Called via webkit_input_method_context_notify_surrounding() to
+ *   update the context surrounding the cursor. The provided text should not include
+ *   the preedit string.
  * @reset: Called via webkit_input_method_context_reset() to signal a change that
  *   requires a reset. An input method that implements preediting
  *   should override this method to clear the preedit state on reset.
@@ -239,7 +244,7 @@ static void webkit_input_method_context_class_init(WebKitInputMethodContextClass
             WEBKIT_PARAM_READWRITE));
 
     /**
-     * WebKitInputMethodContext::preedit-started
+     * WebKitInputMethodContext::preedit-started:
      * @context: the #WebKitInputMethodContext on which the signal is emitted
      *
      * Emitted when a new preediting sequence starts.
@@ -256,7 +261,7 @@ static void webkit_input_method_context_class_init(WebKitInputMethodContextClass
         G_TYPE_NONE, 0);
 
     /**
-     * WebKitInputMethodContext::preedit-changed
+     * WebKitInputMethodContext::preedit-changed:
      * @context: the #WebKitInputMethodContext on which the signal is emitted
      *
      * Emitted whenever the preedit sequence currently being entered has changed.
@@ -275,7 +280,7 @@ static void webkit_input_method_context_class_init(WebKitInputMethodContextClass
         G_TYPE_NONE, 0);
 
     /**
-     * WebKitInputMethodContext::preedit-finished
+     * WebKitInputMethodContext::preedit-finished:
      * @context: the #WebKitInputMethodContext on which the signal is emitted
      *
      * Emitted when a preediting sequence has been completed or canceled.
@@ -292,7 +297,7 @@ static void webkit_input_method_context_class_init(WebKitInputMethodContextClass
         G_TYPE_NONE, 0);
 
     /**
-     * WebKitInputMethodContext::committed
+     * WebKitInputMethodContext::committed:
      * @context: the #WebKitInputMethodContext on which the signal is emitted
      * @text: the string result
      *
@@ -311,6 +316,28 @@ static void webkit_input_method_context_class_init(WebKitInputMethodContextClass
         g_cclosure_marshal_generic,
         G_TYPE_NONE, 1,
         G_TYPE_STRING);
+
+    /**
+     * WebKitInputMethodContext::delete-surrounding:
+     * @context: the #WebKitInputMethodContext on which the signal is emitted
+     * @offset: the character offset from the cursor position of the text to be deleted.
+     * @n_chars: the number of characters to be deleted
+     *
+     * Emitted when the input method wants to delete the context surrounding the cursor.
+     * If @offset is a negative value, it means a position before the cursor.
+     *
+     * Since: 2.28
+     */
+    signals[DELETE_SURROUNDING] = g_signal_new(
+        "delete-surrounding",
+        G_TYPE_FROM_CLASS(klass),
+        G_SIGNAL_RUN_LAST,
+        G_STRUCT_OFFSET(WebKitInputMethodContextClass, delete_surrounding),
+        nullptr, nullptr,
+        g_cclosure_marshal_generic,
+        G_TYPE_NONE, 2,
+        G_TYPE_INT,
+        G_TYPE_UINT);
 }
 
 void webkitInputMethodContextSetWebView(WebKitInputMethodContext* context, WebKitWebView* webView)
@@ -424,6 +451,33 @@ void webkit_input_method_context_notify_cursor_area(WebKitInputMethodContext* co
     auto* imClass = WEBKIT_INPUT_METHOD_CONTEXT_GET_CLASS(context);
     if (imClass->notify_cursor_area)
         imClass->notify_cursor_area(context, x, y, width, height);
+}
+
+/**
+ * webkit_input_method_context_notify_surrounding:
+ * @context: a #WebKitInputMethodContext
+ * @text: text surrounding the insertion point
+ * @length: the length of @text, or -1 if @text is nul-terminated
+ * @cursor_index: the byte index of the insertion cursor within @text.
+ *
+ * Notify @context that the context surrounding the cursor has changed.
+ *
+ * Since: 2.28
+ */
+void webkit_input_method_context_notify_surrounding(WebKitInputMethodContext* context, const char* text, int length, unsigned cursorIndex)
+{
+    g_return_if_fail(WEBKIT_IS_INPUT_METHOD_CONTEXT(context));
+    g_return_if_fail(text || !length);
+
+    if (!text)
+        text = "";
+    if (length < 0)
+        length = strlen(text);
+    g_return_if_fail(cursorIndex <= static_cast<unsigned>(length));
+
+    auto* imClass = WEBKIT_INPUT_METHOD_CONTEXT_GET_CLASS(context);
+    if (imClass->notify_surrounding)
+        imClass->notify_surrounding(context, text, length, cursorIndex);
 }
 
 /**

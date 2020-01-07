@@ -41,6 +41,8 @@ typedef struct _WebKitInputMethodContextMock {
     bool enabled;
     GString* preedit;
     bool commitNextCharacter;
+    char* surroundingText;
+    unsigned surroundingCursorIndex;
 } WebKitInputMethodContextMock;
 
 typedef struct _WebKitInputMethodContextMockClass {
@@ -67,6 +69,7 @@ static void webkitInputMethodContextMockFinalize(GObject* object)
         g_string_free(mock->preedit, TRUE);
         mock->preedit = nullptr;
     }
+    g_clear_pointer(&mock->surroundingText, g_free);
     G_OBJECT_CLASS(webkit_input_method_context_mock_parent_class)->finalize(object);
 }
 
@@ -171,6 +174,19 @@ static void webkitInputMethodContextMockNotifyFocusOut(WebKitInputMethodContext*
     reinterpret_cast<WebKitInputMethodContextMock*>(context)->enabled = false;
 }
 
+static void webkitInputMethodContextMockNotifySurrounding(WebKitInputMethodContext* context, const gchar *text, unsigned length, unsigned cursorIndex)
+{
+    auto* mock = reinterpret_cast<WebKitInputMethodContextMock*>(context);
+    g_clear_pointer(&mock->surroundingText, g_free);
+
+    if (!mock->preedit && cursorIndex >= 3 && text[cursorIndex - 3] == ':' && text[cursorIndex - 2] == '-' && text[cursorIndex - 1] == ')') {
+        g_signal_emit_by_name(context, "delete-surrounding", -3, 3, nullptr);
+        g_signal_emit_by_name(context, "committed", "😀️", nullptr);
+    }
+    mock->surroundingText = g_strndup(text, length);
+    mock->surroundingCursorIndex = cursorIndex;
+}
+
 static void webkitInputMethodContextMockReset(WebKitInputMethodContext* context)
 {
     auto* mock = reinterpret_cast<WebKitInputMethodContextMock*>(context);
@@ -179,6 +195,8 @@ static void webkitInputMethodContextMockReset(WebKitInputMethodContext* context)
 
     g_string_free(mock->preedit, TRUE);
     mock->preedit = nullptr;
+    g_clear_pointer(&mock->surroundingText, g_free);
+    mock->surroundingCursorIndex = 0;
 
     g_signal_emit_by_name(context, "preedit-changed", nullptr);
     g_signal_emit_by_name(context, "preedit-finished", nullptr);
@@ -194,6 +212,7 @@ static void webkit_input_method_context_mock_class_init(WebKitInputMethodContext
     imClass->filter_key_event = webkitInputMethodContextMockFilterKeyEvent;
     imClass->notify_focus_in = webkitInputMethodContextMockNotifyFocusIn;
     imClass->notify_focus_out = webkitInputMethodContextMockNotifyFocusOut;
+    imClass->notify_surrounding = webkitInputMethodContextMockNotifySurrounding;
     imClass->reset = webkitInputMethodContextMockReset;
 }
 
@@ -403,9 +422,36 @@ public:
         return webkit_input_method_context_get_input_hints(WEBKIT_INPUT_METHOD_CONTEXT(m_context.get()));
     }
 
+    const char* surroundingText() const
+    {
+        return m_context->surroundingText;
+    }
+
+    unsigned surroundingCursorIndex() const
+    {
+        return m_context->surroundingCursorIndex;
+    }
+
+    void waitForSurroundingText(const char* text)
+    {
+        m_expectedSurroundingText = text;
+        g_idle_add([](gpointer userData) -> gboolean {
+            auto* test = static_cast<InputMethodTest*>(userData);
+            if (!g_strcmp0(test->m_context->surroundingText, test->m_expectedSurroundingText.data())) {
+                test->quitMainLoop();
+                return FALSE;
+            }
+
+            return TRUE;
+        }, this);
+        g_main_loop_run(m_mainLoop);
+        m_expectedSurroundingText = { };
+    }
+
     GRefPtr<WebKitInputMethodContextMock> m_context;
     Vector<Event> m_events;
     unsigned m_eventsExpected { 0 };
+    CString m_expectedSurroundingText;
 };
 
 static void testWebKitInputMethodContextSimple(InputMethodTest* test, gconstpointer)
@@ -690,6 +736,85 @@ static void testWebKitInputMethodContextCancelSequence(InputMethodTest* test, gc
     test->resetEditable();
 }
 
+static void testWebKitInputMethodContextSurrounding(InputMethodTest* test, gconstpointer)
+{
+    test->loadHtml(testHTML, nullptr);
+    test->waitUntilLoadFinished();
+
+    test->focusEditableAndWaitUntilInputMethodEnabled();
+
+    g_assert_null(test->surroundingText());
+    g_assert_cmpuint(test->surroundingCursorIndex(), ==, 0);
+
+    test->keyStrokeAndWaitForEvents(KEY(a), 3);
+    test->keyStrokeAndWaitForEvents(KEY(b), 6);
+    test->keyStrokeAndWaitForEvents(KEY(c), 9);
+    g_assert_cmpstr(test->surroundingText(), ==, "abc");
+    g_assert_cmpuint(test->surroundingCursorIndex(), ==, 3);
+    test->m_events.clear();
+
+    // Check preedit string is not included in surrounding.
+    // 1. Preedit string at the beginning of context.
+    test->keyStrokeAndWaitForEvents(KEY(Left), 2);
+    test->keyStrokeAndWaitForEvents(KEY(Left), 4);
+    test->keyStrokeAndWaitForEvents(KEY(Left), 6);
+    g_assert_cmpstr(test->surroundingText(), ==, "abc");
+    g_assert_cmpuint(test->surroundingCursorIndex(), ==, 0);
+    test->m_events.clear();
+    test->keyStrokeAndWaitForEvents(KEY(w), 4, CONTROL_MASK | SHIFT_MASK);
+    g_assert_cmpstr(test->surroundingText(), ==, "abc");
+    g_assert_cmpuint(test->surroundingCursorIndex(), ==, 0);
+    test->keyStrokeAndWaitForEvents(KEY(g), 7);
+    test->keyStrokeAndWaitForEvents(KEY(t), 10);
+    test->keyStrokeAndWaitForEvents(KEY(k), 13);
+    g_assert_cmpstr(test->surroundingText(), ==, "abc");
+    g_assert_cmpuint(test->surroundingCursorIndex(), ==, 0);
+    test->keyStrokeAndWaitForEvents(KEY(ISO_Enter), 16);
+    g_assert_cmpstr(test->surroundingText(), ==, "WebKitGTKabc");
+    g_assert_cmpuint(test->surroundingCursorIndex(), ==, 9);
+    test->m_events.clear();
+    // 2. Preedit string in the middle of context.
+    test->keyStrokeAndWaitForEvents(KEY(w), 4, CONTROL_MASK | SHIFT_MASK);
+    g_assert_cmpstr(test->surroundingText(), ==, "WebKitGTKabc");
+    g_assert_cmpuint(test->surroundingCursorIndex(), ==, 9);
+    test->keyStrokeAndWaitForEvents(KEY(w), 7);
+    test->keyStrokeAndWaitForEvents(KEY(p), 10);
+    test->keyStrokeAndWaitForEvents(KEY(e), 13);
+    g_assert_cmpstr(test->surroundingText(), ==, "WebKitGTKabc");
+    g_assert_cmpuint(test->surroundingCursorIndex(), ==, 9);
+    test->keyStrokeAndWaitForEvents(KEY(space), 16);
+    g_assert_cmpstr(test->surroundingText(), ==, "WebKitGTKWPEWebKitabc");
+    g_assert_cmpuint(test->surroundingCursorIndex(), ==, 18);
+    test->m_events.clear();
+    // 3. Preedit string at the end of context.
+    test->keyStrokeAndWaitForEvents(KEY(Right), 2);
+    test->keyStrokeAndWaitForEvents(KEY(Right), 4);
+    test->keyStrokeAndWaitForEvents(KEY(Right), 6);
+    g_assert_cmpstr(test->surroundingText(), ==, "WebKitGTKWPEWebKitabc");
+    g_assert_cmpuint(test->surroundingCursorIndex(), ==, 21);
+    test->m_events.clear();
+    test->keyStrokeAndWaitForEvents(KEY(w), 4, CONTROL_MASK | SHIFT_MASK);
+    g_assert_cmpstr(test->surroundingText(), ==, "WebKitGTKWPEWebKitabc");
+    g_assert_cmpuint(test->surroundingCursorIndex(), ==, 21);
+    test->keyStrokeAndWaitForEvents(KEY(g), 7);
+    test->keyStrokeAndWaitForEvents(KEY(t), 10);
+    test->keyStrokeAndWaitForEvents(KEY(k), 13);
+    g_assert_cmpstr(test->surroundingText(), ==, "WebKitGTKWPEWebKitabc");
+    g_assert_cmpuint(test->surroundingCursorIndex(), ==, 21);
+    test->keyStrokeAndWaitForEvents(KEY(ISO_Enter), 16);
+    g_assert_cmpstr(test->surroundingText(), ==, "WebKitGTKWPEWebKitabcWebKitGTK");
+    g_assert_cmpuint(test->surroundingCursorIndex(), ==, 30);
+    test->m_events.clear();
+
+    // Check text replacements (get surrounding + delete surrounding).
+    test->keyStrokeAndWaitForEvents(KEY(colon), 3);
+    test->keyStrokeAndWaitForEvents(KEY(minus), 6);
+    test->keyStrokeAndWaitForEvents(KEY(parenright), 9);
+    test->waitForSurroundingText("WebKitGTKWPEWebKitabcWebKitGTK😀️");
+    g_assert_cmpstr(test->surroundingText(), ==, "WebKitGTKWPEWebKitabcWebKitGTK😀️");
+    g_assert_cmpuint(test->surroundingCursorIndex(), ==, 37);
+}
+
 static void testWebKitInputMethodContextReset(InputMethodTest* test, gconstpointer)
 {
     test->loadHtml(testHTML, nullptr);
@@ -881,6 +1006,7 @@ void beforeAll()
     InputMethodTest::add("WebKitInputMethodContext", "sequence", testWebKitInputMethodContextSequence);
     InputMethodTest::add("WebKitInputMethodContext", "invalid-sequence", testWebKitInputMethodContextInvalidSequence);
     InputMethodTest::add("WebKitInputMethodContext", "cancel-sequence", testWebKitInputMethodContextCancelSequence);
+    InputMethodTest::add("WebKitInputMethodContext", "surrounding", testWebKitInputMethodContextSurrounding);
     InputMethodTest::add("WebKitInputMethodContext", "reset", testWebKitInputMethodContextReset);
     InputMethodTest::add("WebKitInputMethodContext", "content-type", testWebKitInputMethodContextContentType);
 }

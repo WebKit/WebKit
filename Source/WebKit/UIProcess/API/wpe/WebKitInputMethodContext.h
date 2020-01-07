@@ -109,6 +109,9 @@ struct _WebKitInputMethodContextClass {
     void     (* preedit_finished)   (WebKitInputMethodContext        *context);
     void     (* committed)          (WebKitInputMethodContext        *context,
                                      const char                      *text);
+    void     (* delete_surrounding) (WebKitInputMethodContext        *context,
+                                     int                              offset,
+                                     guint                            n_chars);
 
     /* Virtual functions */
     void     (* set_enable_preedit) (WebKitInputMethodContext        *context,
@@ -126,6 +129,10 @@ struct _WebKitInputMethodContextClass {
                                      int                              y,
                                      int                              width,
                                      int                              height);
+    void     (* notify_surrounding) (WebKitInputMethodContext        *context,
+                                     const gchar                     *text,
+                                     guint                            length,
+                                     guint                            cursor_index);
     void     (* reset)              (WebKitInputMethodContext        *context);
 
     void (*_webkit_reserved0) (void);
@@ -167,6 +174,12 @@ webkit_input_method_context_notify_cursor_area (WebKitInputMethodContext        
                                                 int                              y,
                                                 int                              width,
                                                 int                              height);
+
+WEBKIT_API void
+webkit_input_method_context_notify_surrounding (WebKitInputMethodContext        *context,
+                                                const gchar                     *text,
+                                                int                              length,
+                                                guint                            cursor_index);
 
 WEBKIT_API void
 webkit_input_method_context_reset              (WebKitInputMethodContext        *context);

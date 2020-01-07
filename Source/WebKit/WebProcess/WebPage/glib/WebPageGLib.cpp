@@ -26,6 +26,7 @@
 #include "config.h"
 #include "WebPage.h"
 
+#include "EditorState.h"
 #include "InputMethodState.h"
 #include "UserMessage.h"
 #include "WebKitExtensionManager.h"
@@ -33,8 +34,14 @@
 #include "WebKitWebExtension.h"
 #include "WebKitWebPagePrivate.h"
 #include "WebPageProxyMessages.h"
+#include <WebCore/Editor.h>
+#include <WebCore/Frame.h>
+#include <WebCore/FrameView.h>
 #include <WebCore/HTMLInputElement.h>
 #include <WebCore/HTMLTextAreaElement.h>
+#include <WebCore/TextIterator.h>
+#include <WebCore/VisiblePosition.h>
+#include <WebCore/VisibleUnits.h>
 
 namespace WebKit {
 using namespace WebCore;
@@ -59,6 +66,62 @@ void WebPage::sendMessageToWebExtensionWithReply(UserMessage&& message, Completi
 void WebPage::sendMessageToWebExtension(UserMessage&& message)
 {
     sendMessageToWebExtensionWithReply(WTFMove(message), [](UserMessage&&) { });
+}
+
+void WebPage::platformEditorState(Frame& frame, EditorState& result, IncludePostLayoutDataHint shouldIncludePostLayoutData) const
+{
+    if (shouldIncludePostLayoutData == IncludePostLayoutDataHint::No || !frame.view() || frame.view()->needsLayout()) {
+        result.isMissingPostLayoutData = true;
+        return;
+    }
+
+    auto& postLayoutData = result.postLayoutData();
+    postLayoutData.caretRectAtStart = frame.selection().absoluteCaretBounds();
+
+    const VisibleSelection& selection = frame.selection().selection();
+    if (selection.isNone())
+        return;
+
+#if PLATFORM(GTK)
+    const Editor& editor = frame.editor();
+    if (selection.isRange()) {
+        if (editor.selectionHasStyle(CSSPropertyFontWeight, "bold") == TrueTriState)
+            postLayoutData.typingAttributes |= AttributeBold;
+        if (editor.selectionHasStyle(CSSPropertyFontStyle, "italic") == TrueTriState)
+            postLayoutData.typingAttributes |= AttributeItalics;
+        if (editor.selectionHasStyle(CSSPropertyWebkitTextDecorationsInEffect, "underline") == TrueTriState)
+            postLayoutData.typingAttributes |= AttributeUnderline;
+        if (editor.selectionHasStyle(CSSPropertyWebkitTextDecorationsInEffect, "line-through") == TrueTriState)
+            postLayoutData.typingAttributes |= AttributeStrikeThrough;
+    } else if (selection.isCaret()) {
+        if (editor.selectionStartHasStyle(CSSPropertyFontWeight, "bold"))
+            postLayoutData.typingAttributes |= AttributeBold;
+        if (editor.selectionStartHasStyle(CSSPropertyFontStyle, "italic"))
+            postLayoutData.typingAttributes |= AttributeItalics;
+        if (editor.selectionStartHasStyle(CSSPropertyWebkitTextDecorationsInEffect, "underline"))
+            postLayoutData.typingAttributes |= AttributeUnderline;
+        if (editor.selectionStartHasStyle(CSSPropertyWebkitTextDecorationsInEffect, "line-through"))
+            postLayoutData.typingAttributes |= AttributeStrikeThrough;
+    }
+#endif
+
+    if (selection.isContentEditable()) {
+        auto selectionStart = selection.visibleStart();
+        auto paragraphStart = startOfParagraph(selectionStart);
+        auto paragraphEnd = endOfParagraph(selectionStart);
+        auto paragraphRange = makeRange(paragraphStart, paragraphEnd);
+        auto compositionRange = frame.editor().compositionRange();
+        if (compositionRange && paragraphRange->contains(*compositionRange)) {
+            auto clonedRange = paragraphRange->cloneRange();
+            paragraphRange->setEnd(compositionRange->startPosition());
+            clonedRange->setStart(compositionRange->endPosition());
+            postLayoutData.paragraphContext = plainText(paragraphRange.get()) + plainText(clonedRange.ptr());
+            postLayoutData.paragraphContextCursorPosition = TextIterator::rangeLength(paragraphRange.get());
+        } else {
+            postLayoutData.paragraphContext = plainText(paragraphRange.get());
+            postLayoutData.paragraphContextCursorPosition = TextIterator::rangeLength(makeRange(paragraphStart, selectionStart).get());
+        }
+    }
 }
 
 static Optional<InputMethodState> inputMethodSateForElement(Element* element)

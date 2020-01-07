@@ -1,5 +1,58 @@
 2020-01-07  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK][WPE] Add API to retrieve and delete surrounding text for input methods
+        https://bugs.webkit.org/show_bug.cgi?id=205716
+
+        Reviewed by Žan Doberšek.
+
+        Extend WebKitInputMethodContext to be able to retrieve and delete surrounding text.
+
+        * Shared/EditorState.cpp:
+        (WebKit::EditorState::PostLayoutData::encode const): Encode paragraphContext and paragraphContextCursorPosition.
+        (WebKit::EditorState::PostLayoutData::decode): Decode paragraphContext and paragraphContextCursorPosition.
+        * Shared/EditorState.h: Add paragraphContext and paragraphContextCursorPosition.
+        * UIProcess/API/glib/InputMethodFilter.cpp:
+        (WebKit::InputMethodFilter::deleteSurroundingCallback): Callback to handle
+        WebKitInputMethodContext::delete-surrounding signal.
+        (WebKit::InputMethodFilter::setContext): Connect to WebKitInputMethodContext::delete-surrounding signal.
+        (WebKit::InputMethodFilter::notifySurrounding): Save the new surrounding text and position and call
+        webkit_input_method_context_notify_surrounding().
+        (WebKit::InputMethodFilter::deleteSurrounding): Ask WebKitWebView to delete the surrounding text.
+        * UIProcess/API/glib/InputMethodFilter.h:
+        * UIProcess/API/glib/WebKitInputMethodContext.cpp:
+        (webkit_input_method_context_class_init): Add delete-surrounding signal.
+        (webkit_input_method_context_notify_surrounding): Call the virtual method notify_surrounding if implemented.
+        * UIProcess/API/glib/WebKitWebView.cpp:
+        (webkitWebViewDeleteSurrounding): Call WebPageProxy::deleteSurrounding().
+        * UIProcess/API/glib/WebKitWebViewPrivate.h:
+        * UIProcess/API/gtk/WebKitInputMethodContext.h:
+        * UIProcess/API/gtk/WebKitInputMethodContextImplGtk.cpp:
+        (contextRetrieveSurrounding): Call gtk_im_context_set_surrounding() with the current surrounding text and position.
+        (webkitInputMethodContextImplGtkConstructed): Connect to GtkIMContext::retrieve-surrounding signal.
+        (webkitInputMethodContextImplGtkNotifySurrounding): Save the new surrounding text and position.
+        (webkit_input_method_context_impl_gtk_class_init): Add implementation for notify_surrounding vfunc.
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (webkitWebViewBaseUpdateTextInputState): Also notify the context about surrounding text and position.
+        * UIProcess/API/gtk/docs/webkit2gtk-4.0-sections.txt:
+        * UIProcess/API/wpe/WPEView.cpp:
+        (WKWPE::View::selectionDidChange): Ditto.
+        * UIProcess/API/wpe/WebKitInputMethodContext.h:
+        * UIProcess/API/wpe/docs/wpe-1.0-sections.txt:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::deleteSurrounding): Send DeleteSurrounding message to web process.
+        * UIProcess/WebPageProxy.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::deleteSurrounding): Delete the given range.
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in: Add DeleteSurrounding message.
+        * WebProcess/WebPage/glib/WebPageGLib.cpp:
+        (WebKit::WebPage::platformEditorState const): Moved from GTK and WPE here and also added paragraphContext and
+        paragraphContextCursorPosition initialization.
+        * WebProcess/WebPage/gtk/WebPageGtk.cpp: Remove platformEditorState().
+        * WebProcess/WebPage/wpe/WebPageWPE.cpp: Ditto.
+
+2020-01-07  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK][WPE] Add API to set purpose and hints of active editable element to input methods
         https://bugs.webkit.org/show_bug.cgi?id=205605
 

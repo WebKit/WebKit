@@ -8210,7 +8210,15 @@ void WebPageProxy::cancelComposition(const String& compositionString)
     }
     send(Messages::WebPage::CancelComposition(compositionString));
 }
-#endif // PLATFORM(GTK)
+
+void WebPageProxy::deleteSurrounding(int64_t offset, unsigned characterCount)
+{
+    if (!hasRunningProcess())
+        return;
+
+    send(Messages::WebPage::DeleteSurrounding(offset, characterCount));
+}
+#endif // PLATFORM(GTK) || PLATFORM(WPE)
 
 void WebPageProxy::setScrollPinningBehavior(ScrollPinningBehavior pinning)
 {

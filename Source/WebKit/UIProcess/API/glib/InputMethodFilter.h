@@ -67,6 +67,7 @@ public:
     void notifyFocusedOut();
     void notifyMouseButtonPress();
     void notifyCursorRect(const WebCore::IntRect&);
+    void notifySurrounding(const String&, uint64_t);
 
     void cancelComposition();
 
@@ -75,11 +76,13 @@ private:
     static void preeditChangedCallback(InputMethodFilter*);
     static void preeditFinishedCallback(InputMethodFilter*);
     static void committedCallback(InputMethodFilter*, const char*);
+    static void deleteSurroundingCallback(InputMethodFilter*, int offset, unsigned characterCount);
 
     void preeditStarted();
     void preeditChanged();
     void preeditFinished();
     void committed(const char*);
+    void deleteSurrounding(int offset, unsigned characterCount);
 
     bool isEnabled() const { return !!m_state; }
     bool isViewFocused() const;
@@ -103,6 +106,11 @@ private:
 
     String m_compositionResult;
     WebCore::IntPoint m_cursorLocation;
+
+    struct {
+        String text;
+        uint64_t cursorPosition;
+    } m_surrounding;
 };
 
 } // namespace WebKit

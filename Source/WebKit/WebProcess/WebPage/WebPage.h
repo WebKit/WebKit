@@ -784,6 +784,7 @@ public:
 
 #if PLATFORM(GTK) || PLATFORM(WPE)
     void cancelComposition(const String& text);
+    void deleteSurrounding(int64_t offset, unsigned characterCount);
 #endif
 
 #if PLATFORM(GTK)

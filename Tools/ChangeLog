@@ -1,5 +1,22 @@
 2020-01-07  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK][WPE] Add API to retrieve and delete surrounding text for input methods
+        https://bugs.webkit.org/show_bug.cgi?id=205716
+
+        Reviewed by Žan Doberšek.
+
+        Add new test case for the new API.
+
+        * TestWebKitAPI/Tests/WebKitGLib/TestInputMethodContext.cpp:
+        (webkitInputMethodContextMockFinalize):
+        (webkitInputMethodContextMockNotifySurrounding):
+        (webkitInputMethodContextMockReset):
+        (webkit_input_method_context_mock_class_init):
+        (testWebKitInputMethodContextSurrounding):
+        (beforeAll):
+
+2020-01-07  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK][WPE] Add API to set purpose and hints of active editable element to input methods
         https://bugs.webkit.org/show_bug.cgi?id=205605
 

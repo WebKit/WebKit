@@ -5364,6 +5364,29 @@ void WebPage::cancelComposition(const String& compositionString)
     if (auto* targetFrame = targetFrameForEditing(*this))
         targetFrame->editor().confirmComposition(compositionString);
 }
+
+void WebPage::deleteSurrounding(int64_t offset, unsigned characterCount)
+{
+    auto* targetFrame = targetFrameForEditing(*this);
+    if (!targetFrame)
+        return;
+
+    const VisibleSelection& selection = targetFrame->selection().selection();
+    if (selection.isNone())
+        return;
+
+    auto selectionStart = selection.visibleStart();
+    auto paragraphRange = makeRange(startOfParagraph(selectionStart), selectionStart);
+    auto cursorPosition = TextIterator::rangeLength(paragraphRange.get());
+    auto& rootNode = paragraphRange->startContainer().treeScope().rootNode();
+    auto selectionRange = TextIterator::rangeFromLocationAndLength(&rootNode, cursorPosition + offset, characterCount);
+
+    targetFrame->editor().setIgnoreSelectionChanges(true);
+    targetFrame->selection().setSelection(VisibleSelection(*selectionRange, SEL_DEFAULT_AFFINITY));
+    targetFrame->editor().deleteSelectionWithSmartDelete(false);
+    targetFrame->editor().setIgnoreSelectionChanges(false);
+    sendEditorStateUpdate();
+}
 #endif
 
 void WebPage::didApplyStyle()

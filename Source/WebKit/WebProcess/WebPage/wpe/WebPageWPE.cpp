@@ -26,18 +26,10 @@
 #include "config.h"
 #include "WebPage.h"
 
-#include "EditorState.h"
 #include "WebKitWebPageAccessibilityObject.h"
 #include "WebPageProxy.h"
 #include "WebPageProxyMessages.h"
-#include "WebPreferencesKeys.h"
-#include "WebPreferencesStore.h"
-#include <WebCore/Frame.h>
-#include <WebCore/FrameSelection.h>
-#include <WebCore/FrameView.h>
 #include <WebCore/NotImplemented.h>
-#include <WebCore/Settings.h>
-#include <WebCore/SharedBuffer.h>
 
 namespace WebKit {
 using namespace WebCore;
@@ -61,17 +53,6 @@ void WebPage::platformReinitialize()
 
 void WebPage::platformDetach()
 {
-}
-
-void WebPage::platformEditorState(Frame& frame, EditorState& result, IncludePostLayoutDataHint shouldIncludePostLayoutData) const
-{
-    if (shouldIncludePostLayoutData == IncludePostLayoutDataHint::No || !frame.view() || frame.view()->needsLayout()) {
-        result.isMissingPostLayoutData = true;
-        return;
-    }
-
-    auto& postLayoutData = result.postLayoutData();
-    postLayoutData.caretRectAtStart = frame.selection().absoluteCaretBounds();
 }
 
 bool WebPage::performDefaultBehaviorForKeyEvent(const WebKeyboardEvent&)

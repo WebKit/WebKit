@@ -2715,6 +2715,11 @@ void webkitWebViewCancelComposition(WebKitWebView* webView, const String& text)
     getPage(webView).cancelComposition(text);
 }
 
+void webkitWebViewDeleteSurrounding(WebKitWebView* webView, int offset, unsigned characterCount)
+{
+    getPage(webView).deleteSurrounding(offset, characterCount);
+}
+
 #if PLATFORM(WPE)
 /**
  * webkit_web_view_get_backend:

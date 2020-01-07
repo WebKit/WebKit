@@ -54,6 +54,11 @@ void InputMethodFilter::committedCallback(InputMethodFilter* filter, const char*
     filter->committed(compositionString);
 }
 
+void InputMethodFilter::deleteSurroundingCallback(InputMethodFilter* filter, int offset, unsigned characterCount)
+{
+    filter->deleteSurrounding(offset, characterCount);
+}
+
 void InputMethodFilter::setContext(WebKitInputMethodContext* context)
 {
     if (m_context) {
@@ -70,6 +75,7 @@ void InputMethodFilter::setContext(WebKitInputMethodContext* context)
     g_signal_connect_swapped(m_context.get(), "preedit-changed", G_CALLBACK(preeditChangedCallback), this);
     g_signal_connect_swapped(m_context.get(), "preedit-finished", G_CALLBACK(preeditFinishedCallback), this);
     g_signal_connect_swapped(m_context.get(), "committed", G_CALLBACK(committedCallback), this);
+    g_signal_connect_swapped(m_context.get(), "delete-surrounding", G_CALLBACK(deleteSurroundingCallback), this);
 
     if (isEnabled() && isViewFocused())
         notifyFocusedIn();
@@ -204,6 +210,22 @@ void InputMethodFilter::notifyCursorRect(const IntRect& cursorRect)
     webkit_input_method_context_notify_cursor_area(m_context.get(), translatedRect.x(), translatedRect.y(), translatedRect.width(), translatedRect.height());
 }
 
+void InputMethodFilter::notifySurrounding(const String& text, uint64_t cursorPosition)
+{
+    if (!isEnabled() || !m_context)
+        return;
+
+    if (m_surrounding.text == text && m_surrounding.cursorPosition == cursorPosition)
+        return;
+
+    m_surrounding.text = text;
+    m_surrounding.cursorPosition = cursorPosition;
+
+    auto textUTF8 = m_surrounding.text.utf8();
+    auto cursorPositionUTF8 = cursorPosition != text.length() ? text.substring(0, cursorPosition).utf8().length() : textUTF8.length();
+    webkit_input_method_context_notify_surrounding(m_context.get(), textUTF8.data(), textUTF8.length(), cursorPositionUTF8);
+}
+
 void InputMethodFilter::preeditStarted()
 {
     if (!isEnabled())
@@ -285,6 +307,16 @@ void InputMethodFilter::committed(const char* compositionString)
     }
     webkitWebViewConfirmComposition(webView, m_compositionResult);
     m_compositionResult = { };
+}
+
+void InputMethodFilter::deleteSurrounding(int offset, unsigned characterCount)
+{
+    if (!isEnabled())
+        return;
+
+    auto* webView = webkitInputMethodContextGetWebView(m_context.get());
+    ASSERT(webView);
+    webkitWebViewDeleteSurrounding(webView, offset, characterCount);
 }
 
 void InputMethodFilter::cancelComposition()
