@@ -312,6 +312,7 @@ struct EditorState;
 struct FocusedElementInformation;
 struct FontInfo;
 struct FrameInfoData;
+struct InputMethodState;
 struct InsertTextOptions;
 struct InteractionInformationAtPosition;
 struct InteractionInformationRequest;
@@ -791,7 +792,7 @@ public:
 #if PLATFORM(GTK) || PLATFORM(WPE)
     void cancelComposition(const String& compositionString);
 
-    void setInputMethodState(bool enabled);
+    void setInputMethodState(Optional<InputMethodState>&&);
 #endif
 
 #if PLATFORM(GTK)

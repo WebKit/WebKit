@@ -256,7 +256,7 @@
     IMPL->click();
 }
 
-#if ENABLE(IOS_AUTOCORRECT_AND_AUTOCAPITALIZE)
+#if ENABLE(AUTOCORRECT)
 
 - (BOOL)autocorrect
 {
@@ -269,6 +269,10 @@
     WebCore::JSMainThreadNullState state;
     IMPL->setAutocorrect(newAutocorrect);
 }
+
+#endif
+
+#if ENABLE(AUTOCAPITALIZE)
 
 - (NSString *)autocapitalize
 {

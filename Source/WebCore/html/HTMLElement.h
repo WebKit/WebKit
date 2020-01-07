@@ -22,7 +22,7 @@
 
 #pragma once
 
-#if ENABLE(IOS_AUTOCORRECT_AND_AUTOCAPITALIZE)
+#if ENABLE(AUTOCAPITALIZE)
 #include "Autocapitalize.h"
 #endif
 
@@ -102,11 +102,13 @@ public:
     bool canBeActuallyDisabled() const;
     bool isActuallyDisabled() const;
 
-#if ENABLE(IOS_AUTOCORRECT_AND_AUTOCAPITALIZE)
+#if ENABLE(AUTOCAPITALIZE)
     WEBCORE_EXPORT virtual AutocapitalizeType autocapitalizeType() const;
     WEBCORE_EXPORT const AtomString& autocapitalize() const;
     WEBCORE_EXPORT void setAutocapitalize(const AtomString& value);
+#endif
 
+#if ENABLE(AUTOCORRECT)
     bool autocorrect() const { return shouldAutocorrect(); }
     WEBCORE_EXPORT virtual bool shouldAutocorrect() const;
     WEBCORE_EXPORT void setAutocorrect(bool);

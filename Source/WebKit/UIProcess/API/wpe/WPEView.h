@@ -81,7 +81,7 @@ public:
 
     void setInputMethodContext(WebKitInputMethodContext*);
     WebKitInputMethodContext* inputMethodContext() const;
-    void setInputMethodState(bool);
+    void setInputMethodState(Optional<WebKit::InputMethodState>&&);
     void synthesizeCompositionKeyPress(const String&, Optional<Vector<WebCore::CompositionUnderline>>&&, Optional<WebKit::EditingRange>&&);
 
     void selectionDidChange();

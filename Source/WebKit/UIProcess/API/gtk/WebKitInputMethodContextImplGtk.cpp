@@ -31,6 +31,56 @@ struct _WebKitInputMethodContextImplGtkPrivate {
 
 WEBKIT_DEFINE_TYPE(WebKitInputMethodContextImplGtk, webkit_input_method_context_impl_gtk, WEBKIT_TYPE_INPUT_METHOD_CONTEXT)
 
+static GtkInputPurpose toGtkInputPurpose(WebKitInputPurpose purpose)
+{
+    switch (purpose) {
+    case WEBKIT_INPUT_PURPOSE_FREE_FORM:
+        return GTK_INPUT_PURPOSE_FREE_FORM;
+    case WEBKIT_INPUT_PURPOSE_DIGITS:
+        return GTK_INPUT_PURPOSE_DIGITS;
+    case WEBKIT_INPUT_PURPOSE_NUMBER:
+        return GTK_INPUT_PURPOSE_NUMBER;
+    case WEBKIT_INPUT_PURPOSE_PHONE:
+        return GTK_INPUT_PURPOSE_PHONE;
+    case WEBKIT_INPUT_PURPOSE_URL:
+        return GTK_INPUT_PURPOSE_URL;
+    case WEBKIT_INPUT_PURPOSE_EMAIL:
+        return GTK_INPUT_PURPOSE_EMAIL;
+    case WEBKIT_INPUT_PURPOSE_PASSWORD:
+        return GTK_INPUT_PURPOSE_PASSWORD;
+    }
+
+    RELEASE_ASSERT_NOT_REACHED();
+}
+
+static GtkInputHints toGtkInputHints(WebKitInputHints hints)
+{
+    unsigned gtkHints = 0;
+    if (hints & WEBKIT_INPUT_HINT_SPELLCHECK)
+        gtkHints |= GTK_INPUT_HINT_SPELLCHECK;
+    if (hints & WEBKIT_INPUT_HINT_LOWERCASE)
+        gtkHints |= GTK_INPUT_HINT_LOWERCASE;
+    if (hints & WEBKIT_INPUT_HINT_UPPERCASE_CHARS)
+        gtkHints |= GTK_INPUT_HINT_UPPERCASE_CHARS;
+    if (hints & WEBKIT_INPUT_HINT_UPPERCASE_WORDS)
+        gtkHints |= GTK_INPUT_HINT_UPPERCASE_WORDS;
+    if (hints & WEBKIT_INPUT_HINT_UPPERCASE_SENTENCES)
+        gtkHints |= GTK_INPUT_HINT_UPPERCASE_SENTENCES;
+    if (hints & WEBKIT_INPUT_HINT_INHIBIT_OSK)
+        gtkHints |= GTK_INPUT_HINT_INHIBIT_OSK;
+    return static_cast<GtkInputHints>(gtkHints);
+}
+
+static void inputPurposeChangedCallback(WebKitInputMethodContextImplGtk* context)
+{
+    g_object_set(context->priv->context.get(), "input-purpose", toGtkInputPurpose(webkit_input_method_context_get_input_purpose(WEBKIT_INPUT_METHOD_CONTEXT(context))), nullptr);
+}
+
+static void inputHintsChangedCallback(WebKitInputMethodContextImplGtk* context)
+{
+    g_object_set(context->priv->context.get(), "input-hints", toGtkInputHints(webkit_input_method_context_get_input_hints(WEBKIT_INPUT_METHOD_CONTEXT(context))), nullptr);
+}
+
 static void contextPreeditStartCallback(WebKitInputMethodContextImplGtk* context)
 {
     g_signal_emit_by_name(context, "preedit-started", nullptr);
@@ -54,6 +104,9 @@ static void contextCommitCallback(WebKitInputMethodContextImplGtk* context, cons
 static void webkitInputMethodContextImplGtkConstructed(GObject* object)
 {
     G_OBJECT_CLASS(webkit_input_method_context_impl_gtk_parent_class)->constructed(object);
+
+    g_signal_connect_swapped(object, "notify::input-purpose", G_CALLBACK(inputPurposeChangedCallback), object);
+    g_signal_connect_swapped(object, "notify::input-hints", G_CALLBACK(inputHintsChangedCallback), object);
 
     auto* priv = WEBKIT_INPUT_METHOD_CONTEXT_IMPL_GTK(object)->priv;
     priv->context = adoptGRef(gtk_im_multicontext_new());

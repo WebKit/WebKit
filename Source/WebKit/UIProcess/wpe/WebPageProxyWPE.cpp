@@ -27,6 +27,7 @@
 #include "WebPageProxy.h"
 
 #include "EditorState.h"
+#include "InputMethodState.h"
 #include "PageClientImpl.h"
 #include "WebsiteDataStore.h"
 #include <WebCore/NotImplemented.h>
@@ -95,9 +96,9 @@ void WebPageProxy::sendMessageToWebView(UserMessage&& message)
     sendMessageToWebViewWithReply(WTFMove(message), [](UserMessage&&) { });
 }
 
-void WebPageProxy::setInputMethodState(bool enabled)
+void WebPageProxy::setInputMethodState(Optional<InputMethodState>&& state)
 {
-    static_cast<PageClientImpl&>(pageClient()).setInputMethodState(enabled);
+    static_cast<PageClientImpl&>(pageClient()).setInputMethodState(WTFMove(state));
 }
 
 } // namespace WebKit

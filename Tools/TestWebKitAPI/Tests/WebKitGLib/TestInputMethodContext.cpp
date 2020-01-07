@@ -338,6 +338,26 @@ public:
         g_assert_true(m_context->enabled);
     }
 
+    void unfocusEditableAndWaitUntilInputMethodDisabled()
+    {
+        g_assert_true(m_context->enabled);
+        runJavaScriptAndWaitUntilFinished("document.getElementById('editable').blur()", nullptr);
+        if (!m_context->enabled)
+            return;
+
+        g_idle_add([](gpointer userData) -> gboolean {
+            auto* test = static_cast<InputMethodTest*>(userData);
+            if (!test->m_context->enabled) {
+                test->quitMainLoop();
+                return FALSE;
+            }
+
+            return TRUE;
+        }, this);
+        g_main_loop_run(m_mainLoop);
+        g_assert_false(m_context->enabled);
+    }
+
     void resetEditable()
     {
         runJavaScriptAndWaitUntilFinished("document.getElementById('editable').value = ''", nullptr);
@@ -371,6 +391,16 @@ public:
         clickMouseButton(0, 0, 1);
         g_main_loop_run(m_mainLoop);
         m_eventsExpected = 0;
+    }
+
+    WebKitInputPurpose purpose() const
+    {
+        return webkit_input_method_context_get_input_purpose(WEBKIT_INPUT_METHOD_CONTEXT(m_context.get()));
+    }
+
+    WebKitInputHints hints() const
+    {
+        return webkit_input_method_context_get_input_hints(WEBKIT_INPUT_METHOD_CONTEXT(m_context.get()));
     }
 
     GRefPtr<WebKitInputMethodContextMock> m_context;
@@ -692,6 +722,159 @@ static void testWebKitInputMethodContextReset(InputMethodTest* test, gconstpoint
     test->resetEditable();
 }
 
+static void testWebKitInputMethodContextContentType(InputMethodTest* test, gconstpointer)
+{
+    test->loadHtml("<input id='editable' spellcheck='false'></input>", nullptr);
+    test->waitUntilLoadFinished();
+    test->focusEditableAndWaitUntilInputMethodEnabled();
+    g_assert_cmpuint(test->purpose(), ==, WEBKIT_INPUT_PURPOSE_FREE_FORM);
+    g_assert_cmpuint(test->hints(), ==, WEBKIT_INPUT_HINT_NONE);
+    test->unfocusEditableAndWaitUntilInputMethodDisabled();
+
+    test->loadHtml("<input id='editable' type='number' spellcheck='false'>", nullptr);
+    test->waitUntilLoadFinished();
+    test->focusEditableAndWaitUntilInputMethodEnabled();
+    g_assert_cmpuint(test->purpose(), ==, WEBKIT_INPUT_PURPOSE_NUMBER);
+    g_assert_cmpuint(test->hints(), ==, WEBKIT_INPUT_HINT_NONE);
+    test->unfocusEditableAndWaitUntilInputMethodDisabled();
+
+    test->loadHtml("<input id='editable' type='number' spellcheck='false' pattern='[0-9]*'>", nullptr);
+    test->waitUntilLoadFinished();
+    test->focusEditableAndWaitUntilInputMethodEnabled();
+    g_assert_cmpuint(test->purpose(), ==, WEBKIT_INPUT_PURPOSE_DIGITS);
+    g_assert_cmpuint(test->hints(), ==, WEBKIT_INPUT_HINT_NONE);
+    test->unfocusEditableAndWaitUntilInputMethodDisabled();
+
+    test->loadHtml("<input id='editable' type='text' spellcheck='false' pattern='\\d*'>", nullptr);
+    test->waitUntilLoadFinished();
+    test->focusEditableAndWaitUntilInputMethodEnabled();
+    g_assert_cmpuint(test->purpose(), ==, WEBKIT_INPUT_PURPOSE_DIGITS);
+    g_assert_cmpuint(test->hints(), ==, WEBKIT_INPUT_HINT_NONE);
+    test->unfocusEditableAndWaitUntilInputMethodDisabled();
+
+    test->loadHtml("<input id='editable' type='tel' spellcheck='false'>", nullptr);
+    test->waitUntilLoadFinished();
+    test->focusEditableAndWaitUntilInputMethodEnabled();
+    g_assert_cmpuint(test->purpose(), ==, WEBKIT_INPUT_PURPOSE_PHONE);
+    g_assert_cmpuint(test->hints(), ==, WEBKIT_INPUT_HINT_NONE);
+    test->unfocusEditableAndWaitUntilInputMethodDisabled();
+
+    test->loadHtml("<input id='editable' type='url' spellcheck='false'>", nullptr);
+    test->waitUntilLoadFinished();
+    test->focusEditableAndWaitUntilInputMethodEnabled();
+    g_assert_cmpuint(test->purpose(), ==, WEBKIT_INPUT_PURPOSE_URL);
+    g_assert_cmpuint(test->hints(), ==, WEBKIT_INPUT_HINT_NONE);
+    test->unfocusEditableAndWaitUntilInputMethodDisabled();
+
+    test->loadHtml("<input id='editable' type='email' spellcheck='false'>", nullptr);
+    test->waitUntilLoadFinished();
+    test->focusEditableAndWaitUntilInputMethodEnabled();
+    g_assert_cmpuint(test->purpose(), ==, WEBKIT_INPUT_PURPOSE_EMAIL);
+    g_assert_cmpuint(test->hints(), ==, WEBKIT_INPUT_HINT_NONE);
+    test->unfocusEditableAndWaitUntilInputMethodDisabled();
+
+#if 0
+    // FIXME: We should enable input methods in password fields too.
+    test->loadHtml("<input id='editable' type='password'>", nullptr);
+    test->waitUntilLoadFinished();
+    test->focusEditableAndWaitUntilInputMethodEnabled();
+    g_assert_cmpuint(test->purpose(), ==, WEBKIT_INPUT_PURPOSE_PASSWORD);
+    g_assert_cmpuint(test->hints(), ==, WEBKIT_INPUT_HINT_NONE);
+    test->unfocusEditableAndWaitUntilInputMethodDisabled();
+#endif
+
+    test->loadHtml("<div contenteditable id='editable' inputmode='text' spellcheck='false'></div>", nullptr);
+    test->waitUntilLoadFinished();
+    test->focusEditableAndWaitUntilInputMethodEnabled();
+    g_assert_cmpuint(test->purpose(), ==, WEBKIT_INPUT_PURPOSE_FREE_FORM);
+    g_assert_cmpuint(test->hints(), ==, WEBKIT_INPUT_HINT_NONE);
+    test->unfocusEditableAndWaitUntilInputMethodDisabled();
+
+    test->loadHtml("<div contenteditable id='editable' inputmode='decimal' spellcheck='false'></div>", nullptr);
+    test->waitUntilLoadFinished();
+    test->focusEditableAndWaitUntilInputMethodEnabled();
+    g_assert_cmpuint(test->purpose(), ==, WEBKIT_INPUT_PURPOSE_NUMBER);
+    g_assert_cmpuint(test->hints(), ==, WEBKIT_INPUT_HINT_NONE);
+    test->unfocusEditableAndWaitUntilInputMethodDisabled();
+
+    test->loadHtml("<div contenteditable id='editable' inputmode='numeric' spellcheck='false'></div>", nullptr);
+    test->waitUntilLoadFinished();
+    test->focusEditableAndWaitUntilInputMethodEnabled();
+    g_assert_cmpuint(test->purpose(), ==, WEBKIT_INPUT_PURPOSE_DIGITS);
+    g_assert_cmpuint(test->hints(), ==, WEBKIT_INPUT_HINT_NONE);
+    test->unfocusEditableAndWaitUntilInputMethodDisabled();
+
+    test->loadHtml("<div contenteditable id='editable' inputmode='tel' spellcheck='false'></div>", nullptr);
+    test->waitUntilLoadFinished();
+    test->focusEditableAndWaitUntilInputMethodEnabled();
+    g_assert_cmpuint(test->purpose(), ==, WEBKIT_INPUT_PURPOSE_PHONE);
+    g_assert_cmpuint(test->hints(), ==, WEBKIT_INPUT_HINT_NONE);
+    test->unfocusEditableAndWaitUntilInputMethodDisabled();
+
+    test->loadHtml("<div contenteditable id='editable' inputmode='email' spellcheck='false'></div>", nullptr);
+    test->waitUntilLoadFinished();
+    test->focusEditableAndWaitUntilInputMethodEnabled();
+    g_assert_cmpuint(test->purpose(), ==, WEBKIT_INPUT_PURPOSE_EMAIL);
+    g_assert_cmpuint(test->hints(), ==, WEBKIT_INPUT_HINT_NONE);
+    test->unfocusEditableAndWaitUntilInputMethodDisabled();
+
+    test->loadHtml("<div contenteditable id='editable' inputmode='url' spellcheck='false'></div>", nullptr);
+    test->waitUntilLoadFinished();
+    test->focusEditableAndWaitUntilInputMethodEnabled();
+    g_assert_cmpuint(test->purpose(), ==, WEBKIT_INPUT_PURPOSE_URL);
+    g_assert_cmpuint(test->hints(), ==, WEBKIT_INPUT_HINT_NONE);
+    test->unfocusEditableAndWaitUntilInputMethodDisabled();
+
+    test->loadHtml("<div contenteditable id='editable' inputmode='search' spellcheck='false'></div>", nullptr);
+    test->waitUntilLoadFinished();
+    test->focusEditableAndWaitUntilInputMethodEnabled();
+    g_assert_cmpuint(test->purpose(), ==, WEBKIT_INPUT_PURPOSE_FREE_FORM);
+    g_assert_cmpuint(test->hints(), ==, WEBKIT_INPUT_HINT_NONE);
+    test->unfocusEditableAndWaitUntilInputMethodDisabled();
+
+    test->loadHtml("<div contenteditable id='editable' inputmode='none' spellcheck='false'></div>", nullptr);
+    test->waitUntilLoadFinished();
+    test->focusEditableAndWaitUntilInputMethodEnabled();
+    g_assert_cmpuint(test->purpose(), ==, WEBKIT_INPUT_PURPOSE_FREE_FORM);
+    g_assert_cmpuint(test->hints(), ==, WEBKIT_INPUT_HINT_INHIBIT_OSK);
+    test->unfocusEditableAndWaitUntilInputMethodDisabled();
+
+    test->loadHtml("<textarea id='editable'></textarea>", nullptr);
+    test->waitUntilLoadFinished();
+    test->focusEditableAndWaitUntilInputMethodEnabled();
+    g_assert_cmpuint(test->purpose(), ==, WEBKIT_INPUT_PURPOSE_FREE_FORM);
+    g_assert_cmpuint(test->hints(), ==, WEBKIT_INPUT_HINT_SPELLCHECK);
+    test->unfocusEditableAndWaitUntilInputMethodDisabled();
+
+    test->loadHtml("<textarea id='editable' autocapitalize='none'></textarea>", nullptr);
+    test->waitUntilLoadFinished();
+    test->focusEditableAndWaitUntilInputMethodEnabled();
+    g_assert_cmpuint(test->purpose(), ==, WEBKIT_INPUT_PURPOSE_FREE_FORM);
+    g_assert_cmpuint(test->hints(), ==, WEBKIT_INPUT_HINT_SPELLCHECK | WEBKIT_INPUT_HINT_LOWERCASE);
+    test->unfocusEditableAndWaitUntilInputMethodDisabled();
+
+    test->loadHtml("<textarea id='editable' autocapitalize='sentences'></textarea>", nullptr);
+    test->waitUntilLoadFinished();
+    test->focusEditableAndWaitUntilInputMethodEnabled();
+    g_assert_cmpuint(test->purpose(), ==, WEBKIT_INPUT_PURPOSE_FREE_FORM);
+    g_assert_cmpuint(test->hints(), ==, WEBKIT_INPUT_HINT_SPELLCHECK | WEBKIT_INPUT_HINT_UPPERCASE_SENTENCES);
+    test->unfocusEditableAndWaitUntilInputMethodDisabled();
+
+    test->loadHtml("<textarea id='editable' autocapitalize='words'></textarea>", nullptr);
+    test->waitUntilLoadFinished();
+    test->focusEditableAndWaitUntilInputMethodEnabled();
+    g_assert_cmpuint(test->purpose(), ==, WEBKIT_INPUT_PURPOSE_FREE_FORM);
+    g_assert_cmpuint(test->hints(), ==, WEBKIT_INPUT_HINT_SPELLCHECK | WEBKIT_INPUT_HINT_UPPERCASE_WORDS);
+    test->unfocusEditableAndWaitUntilInputMethodDisabled();
+
+    test->loadHtml("<textarea id='editable' autocapitalize='characters'></textarea>", nullptr);
+    test->waitUntilLoadFinished();
+    test->focusEditableAndWaitUntilInputMethodEnabled();
+    g_assert_cmpuint(test->purpose(), ==, WEBKIT_INPUT_PURPOSE_FREE_FORM);
+    g_assert_cmpuint(test->hints(), ==, WEBKIT_INPUT_HINT_SPELLCHECK | WEBKIT_INPUT_HINT_UPPERCASE_CHARS);
+    test->unfocusEditableAndWaitUntilInputMethodDisabled();
+}
+
 void beforeAll()
 {
     InputMethodTest::add("WebKitInputMethodContext", "simple", testWebKitInputMethodContextSimple);
@@ -699,6 +882,7 @@ void beforeAll()
     InputMethodTest::add("WebKitInputMethodContext", "invalid-sequence", testWebKitInputMethodContextInvalidSequence);
     InputMethodTest::add("WebKitInputMethodContext", "cancel-sequence", testWebKitInputMethodContextCancelSequence);
     InputMethodTest::add("WebKitInputMethodContext", "reset", testWebKitInputMethodContextReset);
+    InputMethodTest::add("WebKitInputMethodContext", "content-type", testWebKitInputMethodContextContentType);
 }
 
 void afterAll()

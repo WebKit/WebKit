@@ -19,6 +19,7 @@
 
 #pragma once
 
+#include "InputMethodState.h"
 #include <WebCore/CompositionUnderline.h>
 #include <WebCore/IntPoint.h>
 #include <wtf/Noncopyable.h>
@@ -49,7 +50,7 @@ public:
     void setContext(WebKitInputMethodContext*);
     WebKitInputMethodContext* context() const { return m_context.get(); }
 
-    void setEnabled(bool);
+    void setState(Optional<InputMethodState>&&);
 
 #if PLATFORM(GTK)
     using PlatformEventKey = GdkEventKey;
@@ -80,12 +81,13 @@ private:
     void preeditFinished();
     void committed(const char*);
 
+    bool isEnabled() const { return !!m_state; }
     bool isViewFocused() const;
 
     WebCore::IntRect platformTransformCursorRectToViewCoordinates(const WebCore::IntRect&);
     bool platformEventKeyIsKeyPress(PlatformEventKey*) const;
 
-    bool m_enabled { false };
+    Optional<InputMethodState> m_state;
     GRefPtr<WebKitInputMethodContext> m_context;
 
     struct {

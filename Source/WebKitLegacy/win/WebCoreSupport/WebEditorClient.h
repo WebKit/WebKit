@@ -113,7 +113,7 @@ private:
     void getGuessesForWord(const WTF::String& word, const WTF::String& context, const WebCore::VisibleSelection& currentSelection, WTF::Vector<WTF::String>& guesses) final;
 
     void willSetInputMethodState() final;
-    void setInputMethodState(bool) final;
+    void setInputMethodState(WebCore::Element*) final;
     void requestCheckingOfString(WebCore::TextCheckingRequest&, const WebCore::VisibleSelection&) final { }
     bool performTwoStepDrop(WebCore::DocumentFragment&, WebCore::Range&, bool) final { return false; }
 

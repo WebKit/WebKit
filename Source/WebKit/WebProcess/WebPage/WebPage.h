@@ -100,6 +100,10 @@ typedef struct _AtkObject AtkObject;
 #include "WebPrintOperationGtk.h"
 #endif
 
+#if PLATFORM(GTK) || PLATFORM(WPE)
+#include "InputMethodState.h"
+#endif
+
 #if PLATFORM(IOS_FAMILY)
 #include "GestureTypes.h"
 #include <WebCore/IntPointHash.h>
@@ -1087,7 +1091,7 @@ public:
     void postMessageIgnoringFullySynchronousMode(const String& messageName, API::Object* messageBody);
 
 #if PLATFORM(GTK) || PLATFORM(WPE)
-    void setInputMethodState(bool);
+    void setInputMethodState(WebCore::Element*);
 #endif
 
     void imageOrMediaDocumentSizeChanged(const WebCore::IntSize&);
@@ -1960,7 +1964,7 @@ private:
     mutable EditorStateIsContentEditable m_lastEditorStateWasContentEditable { EditorStateIsContentEditable::Unset };
 
 #if PLATFORM(GTK) || PLATFORM(WPE)
-    bool m_inputMethodEnabled { false };
+    Optional<InputMethodState> m_inputMethodState;
 #endif
 
 #if ENABLE(VIDEO) && USE(GSTREAMER)

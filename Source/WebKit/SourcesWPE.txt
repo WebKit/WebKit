@@ -81,6 +81,7 @@ Shared/Plugins/Netscape/unix/NetscapePluginModuleUnix.cpp
 Shared/cairo/ShareableBitmapCairo.cpp
 
 Shared/glib/ArgumentCodersGLib.cpp
+Shared/glib/InputMethodState.cpp
 Shared/glib/ProcessExecutablePathGLib.cpp
 Shared/glib/UserMessage.cpp
 Shared/glib/WebContextMenuItemGlib.cpp

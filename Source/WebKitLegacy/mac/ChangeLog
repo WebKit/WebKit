@@ -1,3 +1,15 @@
+2020-01-07  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK][WPE] Add API to set purpose and hints of active editable element to input methods
+        https://bugs.webkit.org/show_bug.cgi?id=205605
+
+        Reviewed by Žan Doberšek.
+
+        * DOM/DOMHTMLElement.mm: Use ENABLE(AUTOCORRECT) and ENABLE(AUTOCAPITALIZE).
+        * WebCoreSupport/WebEditorClient.h: Update tom the new API to WebEditorClient::setInputMethodState.
+        * WebCoreSupport/WebEditorClient.mm:
+        (WebEditorClient::setInputMethodState): Ditto.
+
 2020-01-07  Chris Fleizach  <cfleizach@apple.com>
 
         AX: Enable ACCESSIBILITY_ISOLATED_TREE

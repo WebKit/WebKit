@@ -31,10 +31,6 @@
 #include <wtf/IsoMalloc.h>
 #include <wtf/WeakHashSet.h>
 
-#if ENABLE(IOS_AUTOCORRECT_AND_AUTOCAPITALIZE)
-#include "Autocapitalize.h"
-#endif
-
 namespace WebCore {
 
 class Event;
@@ -67,7 +63,7 @@ public:
     WEBCORE_EXPORT void setAutocomplete(const AtomString&);
     WEBCORE_EXPORT const AtomString& autocomplete() const;
 
-#if ENABLE(IOS_AUTOCORRECT_AND_AUTOCAPITALIZE)
+#if ENABLE(AUTOCORRECT)
     WEBCORE_EXPORT bool shouldAutocorrect() const final;
 #endif
 

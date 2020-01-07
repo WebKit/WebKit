@@ -299,7 +299,7 @@ private:
     bool spellingUIIsShowing() final { return false; }
 
     void willSetInputMethodState() final { }
-    void setInputMethodState(bool) final { }
+    void setInputMethodState(Element*) final { }
 
     bool canShowFontPanel() const final { return false; }
 

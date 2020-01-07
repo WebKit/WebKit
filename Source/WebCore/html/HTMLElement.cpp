@@ -1069,7 +1069,7 @@ bool HTMLElement::isActuallyDisabled() const
     return canBeActuallyDisabled() && isDisabledFormControl();
 }
 
-#if ENABLE(IOS_AUTOCORRECT_AND_AUTOCAPITALIZE)
+#if ENABLE(AUTOCAPITALIZE)
 
 const AtomString& HTMLElement::autocapitalize() const
 {
@@ -1085,6 +1085,10 @@ void HTMLElement::setAutocapitalize(const AtomString& value)
 {
     setAttributeWithoutSynchronization(autocapitalizeAttr, value);
 }
+
+#endif
+
+#if ENABLE(AUTOCORRECT)
 
 bool HTMLElement::shouldAutocorrect() const
 {

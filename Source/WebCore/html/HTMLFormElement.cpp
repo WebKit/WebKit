@@ -406,7 +406,7 @@ void HTMLFormElement::resetAssociatedFormControlElements()
         associatedFormControlElement->reset();
 }
 
-#if ENABLE(IOS_AUTOCORRECT_AND_AUTOCAPITALIZE)
+#if ENABLE(AUTOCORRECT)
 
 // FIXME: We should look to share this code with class HTMLFormControlElement instead of duplicating the logic.
 

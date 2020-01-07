@@ -234,6 +234,7 @@ def types_that_cannot_be_forward_declared():
 
 def conditions_for_header(header):
     conditions = {
+        '"InputMethodState.h"': ["PLATFORM(GTK)", "PLATFORM(WPE)"],
         '"LayerHostingContext.h"': ["PLATFORM(COCOA)", ],
     }
     if not header in conditions:

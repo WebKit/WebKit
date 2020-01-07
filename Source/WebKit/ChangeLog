@@ -1,5 +1,86 @@
 2020-01-07  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK][WPE] Add API to set purpose and hints of active editable element to input methods
+        https://bugs.webkit.org/show_bug.cgi?id=205605
+
+        Reviewed by Žan Doberšek.
+
+        Add input-purpose and input-hints properties to WebKitInputMethodContext. The message SetInputMethodState now
+        receives an optional InputMethodState struct with information about the purpose and hints of the active editable
+        element.
+
+        * Scripts/webkit/messages.py: Only include InputMethodState.h for GTK and WPE.
+        * Shared/glib/InputMethodState.cpp: Added.
+        (WebKit::InputMethodState::setPurposeOrHintForInputMode):
+        (WebKit::inputElementHasDigitsPattern):
+        (WebKit::InputMethodState::setPurposeForInputElement):
+        (WebKit::InputMethodState::addHintsForAutocapitalizeType):
+        (WebKit::InputMethodState::encode const):
+        (WebKit::InputMethodState::decode):
+        * Shared/glib/InputMethodState.h: Added.
+        (WebKit::operator==):
+        * SourcesGTK.txt:
+        * SourcesWPE.txt:
+        * UIProcess/API/glib/InputMethodFilter.cpp:
+        (WebKit::InputMethodFilter::setContext): Use isEnabled() instead of m_enabled.
+        (WebKit::InputMethodFilter::setState): Now receives an optional InputMethodState struct.
+        (WebKit::InputMethodFilter::filterKeyEvent): Use isEnabled() instead of m_enabled.
+        (WebKit::InputMethodFilter::isViewFocused const): Ditto.
+        (WebKit::toWebKitPurpose): Helper to convert InputMethodState::Purpose to WebKitInputPurpose.
+        (WebKit::toWebKitHints): Helper to convert InputMethodState::Hint to WebKitInputHints.
+        (WebKit::InputMethodFilter::notifyFocusedIn): Set the purpose and hints to the context.
+        (WebKit::InputMethodFilter::notifyFocusedOut): Use isEnabled() instead of m_enabled.
+        (WebKit::InputMethodFilter::notifyCursorRect): Ditto.
+        (WebKit::InputMethodFilter::preeditStarted): Ditto.
+        (WebKit::InputMethodFilter::preeditChanged): Ditto.
+        (WebKit::InputMethodFilter::preeditFinished): Ditto.
+        (WebKit::InputMethodFilter::committed): Ditto.
+        * UIProcess/API/glib/InputMethodFilter.h:
+        (WebKit::InputMethodFilter::isEnabled const): Return true if we have a state.
+        * UIProcess/API/glib/WebKitInputMethodContext.cpp:
+        (webkitInputMethodContextSetProperty): Properties setter.
+        (webkitInputMethodContextGetProperty): Properties getter.
+        (webkit_input_method_context_class_init): Add implementation for properties getter and setter.
+        (webkit_input_method_context_get_input_purpose):
+        (webkit_input_method_context_set_input_purpose):
+        (webkit_input_method_context_get_input_hints):
+        (webkit_input_method_context_set_input_hints):
+        * UIProcess/API/gtk/WebKitInputMethodContext.h:
+        * UIProcess/API/gtk/WebKitInputMethodContextImplGtk.cpp:
+        (toGtkInputPurpose): Helper to convert WebKitInputPurpose to GtkInputPurpose.
+        (toGtkInputHints): Helper to convert WebKitInputHints to GtkInputHints.
+        (inputPurposeChangedCallback): Set the purpose on GtkIMContext.
+        (inputHintsChangedCallback): Set the hints on GtkIMContext.
+        (webkitInputMethodContextImplGtkConstructed): Connect to notify signal for input-purpose and input-hints
+        properties of the context.
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (webkitWebViewBaseSetInputMethodState):
+        * UIProcess/API/gtk/WebKitWebViewBasePrivate.h:
+        * UIProcess/API/gtk/docs/webkit2gtk-4.0-sections.txt:
+        * UIProcess/API/wpe/PageClientImpl.cpp:
+        (WebKit::PageClientImpl::setInputMethodState):
+        * UIProcess/API/wpe/PageClientImpl.h:
+        * UIProcess/API/wpe/WPEView.cpp:
+        (WKWPE::View::setInputMethodState):
+        * UIProcess/API/wpe/WPEView.h:
+        * UIProcess/API/wpe/WebKitInputMethodContext.h:
+        * UIProcess/API/wpe/docs/wpe-1.0-sections.txt:
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/gtk/WebPageProxyGtk.cpp:
+        (WebKit::WebPageProxy::setInputMethodState):
+        * UIProcess/wpe/WebPageProxyWPE.cpp:
+        (WebKit::WebPageProxy::setInputMethodState):
+        * WebProcess/WebCoreSupport/WebEditorClient.cpp:
+        (WebKit::WebEditorClient::setInputMethodState):
+        * WebProcess/WebCoreSupport/WebEditorClient.h:
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/glib/WebPageGLib.cpp:
+        (WebKit::inputMethodSateForElement): Build an InputMethodState for the given element.
+        (WebKit::WebPage::setInputMethodState):
+
+2020-01-07  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         WebDriver: several w3c collections tests added in r230953 are failing
         https://bugs.webkit.org/show_bug.cgi?id=184966
 

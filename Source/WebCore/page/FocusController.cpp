@@ -835,14 +835,14 @@ bool FocusController::setFocusedElement(Element* element, Frame& newFocusedFrame
     if (!element) {
         if (oldDocument)
             oldDocument->setFocusedElement(nullptr);
-        m_page.editorClient().setInputMethodState(false);
+        m_page.editorClient().setInputMethodState(nullptr);
         return true;
     }
 
     Ref<Document> newDocument(element->document());
 
     if (newDocument->focusedElement() == element) {
-        m_page.editorClient().setInputMethodState(element->shouldUseInputMethod());
+        m_page.editorClient().setInputMethodState(element);
         return true;
     }
     
@@ -862,7 +862,7 @@ bool FocusController::setFocusedElement(Element* element, Frame& newFocusedFrame
         return false;
 
     if (newDocument->focusedElement() == element)
-        m_page.editorClient().setInputMethodState(element->shouldUseInputMethod());
+        m_page.editorClient().setInputMethodState(element);
 
     m_focusSetTime = MonotonicTime::now();
     m_focusRepaintTimer.stop();

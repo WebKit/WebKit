@@ -1095,6 +1095,7 @@ history/CachedFrame.cpp
 history/CachedPage.cpp
 history/HistoryItem.cpp
 
+html/Autocapitalize.cpp
 html/Autofill.cpp
 html/BaseButtonInputType.cpp
 html/BaseCheckableInputType.cpp

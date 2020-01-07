@@ -615,7 +615,7 @@ void HTMLFormControlElement::dispatchBlurEvent(RefPtr<Element>&& newFocusedEleme
     hideVisibleValidationMessage();
 }
 
-#if ENABLE(IOS_AUTOCORRECT_AND_AUTOCAPITALIZE)
+#if ENABLE(AUTOCORRECT)
 
 // FIXME: We should look to share this code with class HTMLFormElement instead of duplicating the logic.
 
@@ -628,6 +628,10 @@ bool HTMLFormControlElement::shouldAutocorrect() const
         return form->shouldAutocorrect();
     return true;
 }
+
+#endif
+
+#if ENABLE(AUTOCAPITALIZE)
 
 AutocapitalizeType HTMLFormControlElement::autocapitalizeType() const
 {

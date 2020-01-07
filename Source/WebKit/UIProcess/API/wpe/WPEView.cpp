@@ -231,9 +231,9 @@ WebKitInputMethodContext* View::inputMethodContext() const
     return m_inputMethodFilter.context();
 }
 
-void View::setInputMethodState(bool enabled)
+void View::setInputMethodState(Optional<InputMethodState>&& state)
 {
-    m_inputMethodFilter.setEnabled(enabled);
+    m_inputMethodFilter.setState(WTFMove(state));
 }
 
 void View::selectionDidChange()

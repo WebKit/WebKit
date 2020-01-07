@@ -20,8 +20,10 @@
 #include "config.h"
 #include "WebKitInputMethodContext.h"
 
+#include "WebKitEnumTypes.h"
 #include "WebKitInputMethodContextPrivate.h"
 #include "WebKitWebView.h"
+#include <glib/gi18n-lib.h>
 #include <wtf/glib/WTFGType.h>
 
 using namespace WebCore;
@@ -43,6 +45,13 @@ using namespace WebCore;
  *
  * Since: 2.28
  */
+
+enum {
+    PROP_0,
+
+    PROP_INPUT_PURPOSE,
+    PROP_INPUT_HINTS
+};
 
 enum {
     PREEDIT_STARTED,
@@ -116,6 +125,8 @@ void webkit_input_method_underline_free(WebKitInputMethodUnderline* underline)
 
 struct _WebKitInputMethodContextPrivate {
     WebKitWebView* webView;
+    WebKitInputPurpose purpose;
+    WebKitInputHints hints;
 };
 
 static guint signals[LAST_SIGNAL] = { 0, };
@@ -153,8 +164,80 @@ WEBKIT_DEFINE_ABSTRACT_TYPE(WebKitInputMethodContext, webkit_input_method_contex
  * Since: 2.28
  */
 
+static void webkitInputMethodContextSetProperty(GObject* object, guint propId, const GValue* value, GParamSpec* paramSpec)
+{
+    WebKitInputMethodContext* context = WEBKIT_INPUT_METHOD_CONTEXT(object);
+
+    switch (propId) {
+    case PROP_INPUT_PURPOSE:
+        webkit_input_method_context_set_input_purpose(context, static_cast<WebKitInputPurpose>(g_value_get_enum(value)));
+        break;
+    case PROP_INPUT_HINTS:
+        webkit_input_method_context_set_input_hints(context, static_cast<WebKitInputHints>(g_value_get_flags(value)));
+        break;
+    default:
+        G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propId, paramSpec);
+    }
+}
+
+static void webkitInputMethodContextGetProperty(GObject* object, guint propId, GValue* value, GParamSpec* paramSpec)
+{
+    WebKitInputMethodContext* context = WEBKIT_INPUT_METHOD_CONTEXT(object);
+
+    switch (propId) {
+    case PROP_INPUT_PURPOSE:
+        g_value_set_enum(value, webkit_input_method_context_get_input_purpose(context));
+        break;
+    case PROP_INPUT_HINTS:
+        g_value_set_flags(value, webkit_input_method_context_get_input_hints(context));
+        break;
+    default:
+        G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propId, paramSpec);
+    }
+}
+
 static void webkit_input_method_context_class_init(WebKitInputMethodContextClass* klass)
 {
+    GObjectClass* gObjectClass = G_OBJECT_CLASS(klass);
+    gObjectClass->set_property = webkitInputMethodContextSetProperty;
+    gObjectClass->get_property = webkitInputMethodContextGetProperty;
+
+    /**
+     * WebKitInputMethodContext::input-purpose:
+     *
+     * The #WebKitInputPurpose of the input associated with this context.
+     *
+     * Since: 2.28
+     */
+    g_object_class_install_property(
+        gObjectClass,
+        PROP_INPUT_PURPOSE,
+        g_param_spec_enum(
+            "input-purpose",
+            _("Input Purpose"),
+            _("The purpose of the input associated"),
+            WEBKIT_TYPE_INPUT_PURPOSE,
+            WEBKIT_INPUT_PURPOSE_FREE_FORM,
+            WEBKIT_PARAM_READWRITE));
+
+    /**
+     * WebKitInputMethodContext::input-hints:
+     *
+     * The #WebKitInputHints of the input associated with this context.
+     *
+     * Since: 2.28
+     */
+    g_object_class_install_property(
+        gObjectClass,
+        PROP_INPUT_HINTS,
+        g_param_spec_flags(
+            "input-hints",
+            _("Input Hints"),
+            _("The hints of the input associated"),
+            WEBKIT_TYPE_INPUT_HINTS,
+            WEBKIT_INPUT_HINT_NONE,
+            WEBKIT_PARAM_READWRITE));
+
     /**
      * WebKitInputMethodContext::preedit-started
      * @context: the #WebKitInputMethodContext on which the signal is emitted
@@ -358,4 +441,78 @@ void webkit_input_method_context_reset(WebKitInputMethodContext* context)
     auto* imClass = WEBKIT_INPUT_METHOD_CONTEXT_GET_CLASS(context);
     if (imClass->reset)
         imClass->reset(context);
+}
+
+/**
+ * webkit_input_method_context_get_input_purpose:
+ * @context: a #WebKitInputMethodContext
+ *
+ * Get the value of the #WebKitInputMethodContext:input-purpose property.
+ *
+ * Returns: the #WebKitInputPurpose of the input associated with @context
+ *
+ * Since: 2.28
+ */
+WebKitInputPurpose webkit_input_method_context_get_input_purpose(WebKitInputMethodContext* context)
+{
+    g_return_val_if_fail(WEBKIT_IS_INPUT_METHOD_CONTEXT(context), WEBKIT_INPUT_PURPOSE_FREE_FORM);
+
+    return context->priv->purpose;
+}
+
+/**
+ * webkit_input_method_context_set_input_purpose:
+ * @context: a #WebKitInputMethodContext
+ * @purpose: a #WebKitInputPurpose
+ *
+ * Set the value of the #WebKitInputMethodContext:input-purpose property.
+ *
+ * Since: 2.28
+ */
+void webkit_input_method_context_set_input_purpose(WebKitInputMethodContext* context, WebKitInputPurpose purpose)
+{
+    g_return_if_fail(WEBKIT_IS_INPUT_METHOD_CONTEXT(context));
+
+    if (context->priv->purpose == purpose)
+        return;
+
+    context->priv->purpose = purpose;
+    g_object_notify(G_OBJECT(context), "input-purpose");
+}
+
+/**
+ * webkit_input_method_context_get_input_hints:
+ * @context: a #WebKitInputMethodContext
+ *
+ * Get the value of the #WebKitInputMethodContext:input-hints property.
+ *
+ * Returns: the #WebKitInputHints of the input associated with @context
+ *
+ * Since: 2.28
+ */
+WebKitInputHints webkit_input_method_context_get_input_hints(WebKitInputMethodContext* context)
+{
+    g_return_val_if_fail(WEBKIT_IS_INPUT_METHOD_CONTEXT(context), WEBKIT_INPUT_HINT_NONE);
+
+    return context->priv->hints;
+}
+
+/*
+ * webkit_input_method_context_set_input_hints:
+ * @context: a #WebKitInputMethodContext
+ * @hints: a #WebKitInputHints
+ *
+ * Set the value of the #WebKitInputMethodContext:input-hints property.
+ *
+ * Since: 2.28
+ */
+void webkit_input_method_context_set_input_hints(WebKitInputMethodContext* context, WebKitInputHints hints)
+{
+    g_return_if_fail(WEBKIT_IS_INPUT_METHOD_CONTEXT(context));
+
+    if (context->priv->hints == hints)
+        return;
+
+    context->priv->hints = hints;
+    g_object_notify(G_OBJECT(context), "input-hints");
 }

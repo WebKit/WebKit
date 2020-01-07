@@ -25,6 +25,8 @@
 
 #pragma once
 
+#if ENABLE(AUTOCAPITALIZE)
+
 #include "AutocapitalizeTypes.h"
 #include <wtf/text/AtomString.h>
 
@@ -34,3 +36,5 @@ AutocapitalizeType autocapitalizeTypeForAttributeValue(const AtomString&);
 const AtomString& stringForAutocapitalizeType(AutocapitalizeType);
 
 } // namespace WebCore
+
+#endif // ENABLE(AUTOCAPITALIZE)

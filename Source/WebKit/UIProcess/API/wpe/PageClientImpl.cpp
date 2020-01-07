@@ -430,9 +430,9 @@ void PageClientImpl::sendMessageToWebView(UserMessage&& message, CompletionHandl
     m_view.didReceiveUserMessage(WTFMove(message), WTFMove(completionHandler));
 }
 
-void PageClientImpl::setInputMethodState(bool enabled)
+void PageClientImpl::setInputMethodState(Optional<InputMethodState>&& state)
 {
-    m_view.setInputMethodState(enabled);
+    m_view.setInputMethodState(WTFMove(state));
 }
 
 void PageClientImpl::selectionDidChange()

@@ -604,13 +604,13 @@ void WebEditorClient::willSetInputMethodState()
 {
 }
 
-void WebEditorClient::setInputMethodState(bool enabled)
+void WebEditorClient::setInputMethodState(Element* element)
 {
 #if PLATFORM(GTK) || PLATFORM(WPE)
-    m_page->setInputMethodState(enabled);
+    m_page->setInputMethodState(element);
 #else
     notImplemented();
-    UNUSED_PARAM(enabled);
+    UNUSED_PARAM(element);
 #endif
 }
 

@@ -887,7 +887,7 @@ void WebEditorClient::willSetInputMethodState()
 {
 }
 
-void WebEditorClient::setInputMethodState(bool enabled)
+void WebEditorClient::setInputMethodState(WebCore::Element* element)
 {
-    m_webView->setInputMethodState(enabled);
+    m_webView->setInputMethodState(element && element->shouldUseInputMethod());
 }

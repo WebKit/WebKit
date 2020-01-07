@@ -1666,9 +1666,9 @@ bool webkitWebViewBaseIsInWindow(WebKitWebViewBase* webViewBase)
     return webViewBase->priv->activityState.contains(ActivityState::IsInWindow);
 }
 
-void webkitWebViewBaseSetInputMethodState(WebKitWebViewBase* webkitWebViewBase, bool enabled)
+void webkitWebViewBaseSetInputMethodState(WebKitWebViewBase* webkitWebViewBase, Optional<InputMethodState>&& state)
 {
-    webkitWebViewBase->priv->inputMethodFilter.setEnabled(enabled);
+    webkitWebViewBase->priv->inputMethodFilter.setState(WTFMove(state));
 }
 
 void webkitWebViewBaseUpdateTextInputState(WebKitWebViewBase* webkitWebViewBase)

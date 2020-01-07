@@ -26,6 +26,8 @@
 #include "config.h"
 #include "Autocapitalize.h"
 
+#if ENABLE(AUTOCAPITALIZE)
+
 #include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
@@ -77,3 +79,5 @@ const AtomString& stringForAutocapitalizeType(AutocapitalizeType type)
 }
 
 } // namespace WebCore
+
+#endif // ENABLE(AUTOCAPITALIZE)

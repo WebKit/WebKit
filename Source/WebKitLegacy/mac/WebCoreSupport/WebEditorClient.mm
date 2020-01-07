@@ -1098,7 +1098,7 @@ void WebEditorClient::willSetInputMethodState()
 {
 }
 
-void WebEditorClient::setInputMethodState(bool)
+void WebEditorClient::setInputMethodState(WebCore::Element*)
 {
 }
 

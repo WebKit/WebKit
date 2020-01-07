@@ -219,7 +219,7 @@ messages -> WebPageProxy {
 #endif
 
 #if PLATFORM(GTK) || PLATFORM(WPE)
-    SetInputMethodState(bool enabled);
+    SetInputMethodState(Optional<WebKit::InputMethodState> state);
 #endif
 
     # BackForward messages

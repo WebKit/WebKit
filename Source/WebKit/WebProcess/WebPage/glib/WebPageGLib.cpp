@@ -26,14 +26,18 @@
 #include "config.h"
 #include "WebPage.h"
 
+#include "InputMethodState.h"
 #include "UserMessage.h"
 #include "WebKitExtensionManager.h"
 #include "WebKitUserMessage.h"
 #include "WebKitWebExtension.h"
 #include "WebKitWebPagePrivate.h"
 #include "WebPageProxyMessages.h"
+#include <WebCore/HTMLInputElement.h>
+#include <WebCore/HTMLTextAreaElement.h>
 
 namespace WebKit {
+using namespace WebCore;
 
 void WebPage::sendMessageToWebExtensionWithReply(UserMessage&& message, CompletionHandler<void(UserMessage&&)>&& completionHandler)
 {
@@ -57,13 +61,36 @@ void WebPage::sendMessageToWebExtension(UserMessage&& message)
     sendMessageToWebExtensionWithReply(WTFMove(message), [](UserMessage&&) { });
 }
 
-void WebPage::setInputMethodState(bool enabled)
+static Optional<InputMethodState> inputMethodSateForElement(Element* element)
 {
-    if (m_inputMethodEnabled == enabled)
+    if (!element || !element->shouldUseInputMethod())
+        return WTF::nullopt;
+
+    InputMethodState state;
+    if (is<HTMLInputElement>(*element)) {
+        auto& inputElement = downcast<HTMLInputElement>(*element);
+        state.setPurposeForInputElement(inputElement);
+        state.addHintsForAutocapitalizeType(inputElement.autocapitalizeType());
+    } else if (is<HTMLTextAreaElement>(*element) || (element->hasEditableStyle() && is<HTMLElement>(*element))) {
+        auto& htmlElement = downcast<HTMLElement>(*element);
+        state.setPurposeOrHintForInputMode(htmlElement.canonicalInputMode());
+        state.addHintsForAutocapitalizeType(htmlElement.autocapitalizeType());
+    }
+
+    if (element->isSpellCheckingEnabled())
+        state.hints.add(InputMethodState::Hint::Spellcheck);
+
+    return state;
+}
+
+void WebPage::setInputMethodState(Element* element)
+{
+    auto state = inputMethodSateForElement(element);
+    if (m_inputMethodState == state)
         return;
 
-    m_inputMethodEnabled = enabled;
-    send(Messages::WebPageProxy::SetInputMethodState(enabled));
+    m_inputMethodState = state;
+    send(Messages::WebPageProxy::SetInputMethodState(state));
 }
 
 } // namespace WebKit

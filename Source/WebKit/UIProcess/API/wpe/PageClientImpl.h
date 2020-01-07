@@ -42,6 +42,7 @@ enum class DOMPasteAccessResponse : uint8_t;
 namespace WebKit {
 
 class ScrollGestureController;
+struct InputMethodState;
 struct UserMessage;
 
 enum class UndoOrRedo : bool;
@@ -62,7 +63,7 @@ public:
 #endif
 
     void sendMessageToWebView(UserMessage&&, CompletionHandler<void(UserMessage&&)>&&);
-    void setInputMethodState(bool enabled);
+    void setInputMethodState(Optional<InputMethodState>&&);
 
 private:
     // PageClient

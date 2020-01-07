@@ -71,23 +71,23 @@ void InputMethodFilter::setContext(WebKitInputMethodContext* context)
     g_signal_connect_swapped(m_context.get(), "preedit-finished", G_CALLBACK(preeditFinishedCallback), this);
     g_signal_connect_swapped(m_context.get(), "committed", G_CALLBACK(committedCallback), this);
 
-    if (m_enabled && isViewFocused())
+    if (isEnabled() && isViewFocused())
         notifyFocusedIn();
 }
 
-void InputMethodFilter::setEnabled(bool enabled)
+void InputMethodFilter::setState(Optional<InputMethodState>&& state)
 {
-    if (!enabled)
+    if (!state)
         notifyFocusedOut();
 
-    m_enabled = enabled;
-    if (m_enabled && isViewFocused())
+    m_state = WTFMove(state);
+    if (isEnabled() && isViewFocused())
         notifyFocusedIn();
 }
 
 InputMethodFilter::FilterResult InputMethodFilter::filterKeyEvent(PlatformEventKey* keyEvent)
 {
-    if (!m_enabled || !m_context)
+    if (!isEnabled() || !m_context)
         return { };
 
     SetForScope<bool> filteringContextIsAcive(m_filteringContext.isActive, true);
@@ -110,7 +110,7 @@ InputMethodFilter::FilterResult InputMethodFilter::filterKeyEvent(PlatformEventK
 
 bool InputMethodFilter::isViewFocused() const
 {
-    if (!m_enabled || !m_context)
+    if (!isEnabled() || !m_context)
         return false;
 
 #if ENABLE(DEVELOPER_MODE) && PLATFORM(X11)
@@ -127,17 +127,60 @@ bool InputMethodFilter::isViewFocused() const
     return webkitWebViewGetPage(webView).isViewFocused();
 }
 
+static WebKitInputPurpose toWebKitPurpose(InputMethodState::Purpose purpose)
+{
+    switch (purpose) {
+    case InputMethodState::Purpose::FreeForm:
+        return WEBKIT_INPUT_PURPOSE_FREE_FORM;
+    case InputMethodState::Purpose::Digits:
+        return WEBKIT_INPUT_PURPOSE_DIGITS;
+    case InputMethodState::Purpose::Number:
+        return WEBKIT_INPUT_PURPOSE_NUMBER;
+    case InputMethodState::Purpose::Phone:
+        return WEBKIT_INPUT_PURPOSE_PHONE;
+    case InputMethodState::Purpose::Url:
+        return WEBKIT_INPUT_PURPOSE_URL;
+    case InputMethodState::Purpose::Email:
+        return WEBKIT_INPUT_PURPOSE_EMAIL;
+    case InputMethodState::Purpose::Password:
+        return WEBKIT_INPUT_PURPOSE_PASSWORD;
+    }
+
+    RELEASE_ASSERT_NOT_REACHED();
+}
+
+static WebKitInputHints toWebKitHints(const OptionSet<InputMethodState::Hint>& hints)
+{
+    unsigned wkHints = 0;
+    if (hints.contains(InputMethodState::Hint::Spellcheck))
+        wkHints |= WEBKIT_INPUT_HINT_SPELLCHECK;
+    if (hints.contains(InputMethodState::Hint::Lowercase))
+        wkHints |= WEBKIT_INPUT_HINT_LOWERCASE;
+    if (hints.contains(InputMethodState::Hint::UppercaseChars))
+        wkHints |= WEBKIT_INPUT_HINT_UPPERCASE_CHARS;
+    if (hints.contains(InputMethodState::Hint::UppercaseWords))
+        wkHints |= WEBKIT_INPUT_HINT_UPPERCASE_WORDS;
+    if (hints.contains(InputMethodState::Hint::UppercaseSentences))
+        wkHints |= WEBKIT_INPUT_HINT_UPPERCASE_SENTENCES;
+    if (hints.contains(InputMethodState::Hint::InhibitOnScreenKeyboard))
+        wkHints |= WEBKIT_INPUT_HINT_INHIBIT_OSK;
+    return static_cast<WebKitInputHints>(wkHints);
+}
 void InputMethodFilter::notifyFocusedIn()
 {
-    if (!m_enabled || !m_context)
+    if (!isEnabled() || !m_context)
         return;
 
+    g_object_freeze_notify(G_OBJECT(m_context.get()));
+    webkit_input_method_context_set_input_purpose(m_context.get(), toWebKitPurpose(m_state->purpose));
+    webkit_input_method_context_set_input_hints(m_context.get(), toWebKitHints(m_state->hints));
+    g_object_thaw_notify(G_OBJECT(m_context.get()));
     webkit_input_method_context_notify_focus_in(m_context.get());
 }
 
 void InputMethodFilter::notifyFocusedOut()
 {
-    if (!m_enabled || !m_context)
+    if (!isEnabled() || !m_context)
         return;
 
     cancelComposition();
@@ -146,7 +189,7 @@ void InputMethodFilter::notifyFocusedOut()
 
 void InputMethodFilter::notifyCursorRect(const IntRect& cursorRect)
 {
-    if (!m_enabled || !m_context)
+    if (!isEnabled() || !m_context)
         return;
 
     // Don't move the window unless the cursor actually moves more than 10
@@ -163,7 +206,7 @@ void InputMethodFilter::notifyCursorRect(const IntRect& cursorRect)
 
 void InputMethodFilter::preeditStarted()
 {
-    if (!m_enabled)
+    if (!isEnabled())
         return;
 
     if (m_filteringContext.isActive)
@@ -174,7 +217,7 @@ void InputMethodFilter::preeditStarted()
 
 void InputMethodFilter::preeditChanged()
 {
-    if (!m_enabled)
+    if (!isEnabled())
         return;
 
     if (m_filteringContext.isActive)
@@ -208,7 +251,7 @@ void InputMethodFilter::preeditChanged()
 
 void InputMethodFilter::preeditFinished()
 {
-    if (!m_enabled)
+    if (!isEnabled())
         return;
 
     if (m_filteringContext.isActive)
@@ -227,7 +270,7 @@ void InputMethodFilter::preeditFinished()
 
 void InputMethodFilter::committed(const char* compositionString)
 {
-    if (!m_enabled)
+    if (!isEnabled())
         return;
 
     m_compositionResult = String::fromUTF8(compositionString);

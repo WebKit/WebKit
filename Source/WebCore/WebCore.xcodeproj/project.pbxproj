@@ -3166,7 +3166,6 @@
 		A5CE9F3F1E4C4174001BBE7C /* ResourceTiming.h in Headers */ = {isa = PBXBuildFile; fileRef = A5CE9F3C1E4BC586001BBE7C /* ResourceTiming.h */; };
 		A5DEBDA416FB908700836FE0 /* WebKitPlaybackTargetAvailabilityEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = A5DEBDA016FB908700836FE0 /* WebKitPlaybackTargetAvailabilityEvent.h */; };
 		A5F36D3B18F758720054C024 /* PageScriptDebugServer.h in Headers */ = {isa = PBXBuildFile; fileRef = A5F36D3918F758720054C024 /* PageScriptDebugServer.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		A5F6E16B132ED46E008EDAE3 /* Autocapitalize.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5F6E16C132ED46E008EDAE3 /* Autocapitalize.cpp */; };
 		A6148A7912E41E3B0044A784 /* JSHTMLKeygenElement.h in Headers */ = {isa = PBXBuildFile; fileRef = A6148A7712E41E3B0044A784 /* JSHTMLKeygenElement.h */; };
 		A6D169641346B4C1000EB770 /* ShadowRoot.h in Headers */ = {isa = PBXBuildFile; fileRef = A6D169631346B4C1000EB770 /* ShadowRoot.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A6D5A99C1629D70000297330 /* ScrollingTreeScrollingNodeDelegate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A6D5A99A1629D6FF00297330 /* ScrollingTreeScrollingNodeDelegate.cpp */; };
@@ -33569,7 +33568,6 @@
 				BE88E0DB1715D2A200658D98 /* AudioTrackList.cpp in Sources */,
 				CDE3A85717F6020400C5BE20 /* AudioTrackPrivateAVFObjC.mm in Sources */,
 				CD54A762180F9F7000B076C9 /* AudioTrackPrivateMediaSourceAVFObjC.cpp in Sources */,
-				A5F6E16B132ED46E008EDAE3 /* Autocapitalize.cpp in Sources */,
 				0719427F1D088F21002AA51D /* AVAssetMIMETypeCache.mm in Sources */,
 				CDECA89A1EDF447D00DCB08B /* AVAssetTrackUtilities.mm in Sources */,
 				CDC675221EAEA9B700727C84 /* AVAudioSessionCaptureDeviceManager.mm in Sources */,
