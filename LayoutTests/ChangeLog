@@ -1,3 +1,19 @@
+2020-01-07  Devin Rousso  <drousso@apple.com>
+
+        REGRESSION: [ Mac Debug ] inspector/page/setBootstrapScript-main-frame.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=205807
+        <rdar://problem/58344669>
+
+        Reviewed by Dean Jackson.
+
+        * inspector/page/setBootstrapScript-main-frame.html:
+        In addition to waiting for `Page.reload`, we should also wait for the page to actually load.
+        Set the content of the bootstrap script during its creation instead of as a two step process.
+        Avoid an assertion by setting the enabled state after the bootstrap script is initalized.
+
+        * platform/mac/TestExpectations:
+        Remove expectation added in r254059.
+
 2020-01-07  Truitt Savell  <tsavell@apple.com>
 
         Correct some conflicting expectations for fast/text/emoji-gender- tests

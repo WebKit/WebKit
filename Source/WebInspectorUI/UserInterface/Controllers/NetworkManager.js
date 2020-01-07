@@ -324,9 +324,7 @@ WI.NetworkManager = class NetworkManager extends WI.Object
         const sourceURL = NetworkManager.bootstrapScriptURL;
         this._bootstrapScript = new WI.LocalScript(target, url, sourceURL, WI.Script.SourceType.Program, source, {injected: true, editable: true});
         this._bootstrapScript.addEventListener(WI.SourceCode.Event.ContentDidChange, this._handleBootstrapScriptContentDidChange, this);
-
-        if (!this._bootstrapScript.content)
-            WI.objectStores.general.put("", NetworkManager.bootstrapScriptSourceObjectStoreKey);
+        this._handleBootstrapScriptContentDidChange();
 
         this.dispatchEventToListeners(NetworkManager.Event.BootstrapScriptCreated, {bootstrapScript: this._bootstrapScript});
     }
@@ -1431,7 +1429,7 @@ WI.NetworkManager = class NetworkManager extends WI.Object
 
     _handleBootstrapScriptContentDidChange(event)
     {
-        let source = this._bootstrapScript.content;
+        let source = this._bootstrapScript.content || "";
 
         WI.objectStores.general.put(source, NetworkManager.bootstrapScriptSourceObjectStoreKey);
 

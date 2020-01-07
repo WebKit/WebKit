@@ -1,3 +1,18 @@
+2020-01-07  Devin Rousso  <drousso@apple.com>
+
+        REGRESSION: [ Mac Debug ] inspector/page/setBootstrapScript-main-frame.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=205807
+        <rdar://problem/58344669>
+
+        Reviewed by Dean Jackson.
+
+        * UserInterface/Controllers/NetworkManager.js:
+        (WI.NetworkManager.prototype.async createBootstrapScript):
+        (WI.NetworkManager.prototype._handleBootstrapScriptContentDidChange):
+        Ensure that `Page.setBootstrapScript` is called when restoring the bootstrap script from the
+        IndexedDB storage. Otherwise, in situations like when Web Inspector is first opened, we will
+        show the Inspector Bootstrap Script in the UI, but not actually set it on the inspected page.
+
 2020-01-06  Yury Semikhatsky  <yurys@chromium.org>
 
         REGRESSION: [ Mac wk2 ] http/tests/inspector/target/provisional-load-cancels-previous-load.html is a flaky failure
