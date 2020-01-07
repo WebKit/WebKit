@@ -64,16 +64,15 @@ static inline const Box* nextInPreOrder(const Box& layoutBox, const Container& s
     return nullptr;
 }
 
-void InlineFormattingContext::layoutInFlowContent(InvalidationState& invalidationState, const UsedHorizontalValues::Constraints&)
+void InlineFormattingContext::layoutInFlowContent(InvalidationState& invalidationState, const UsedHorizontalValues::Constraints& horiztonalConstraints)
 {
     if (!root().hasInFlowOrFloatingChild())
         return;
 
     invalidateFormattingState(invalidationState);
     LOG_WITH_STREAM(FormattingContextLayout, stream << "[Start] -> inline formatting context -> formatting root(" << &root() << ")");
-    auto& rootGeometry = geometryForBox(root());
-    auto usedHorizontalValues = UsedHorizontalValues { Geometry::inFlowHorizontalConstraints(rootGeometry) };
-    auto usedVerticalValues = UsedVerticalValues { UsedVerticalValues::Constraints { rootGeometry.contentBoxTop() } };
+    auto usedHorizontalValues = UsedHorizontalValues { horiztonalConstraints };
+    auto usedVerticalValues = UsedVerticalValues { UsedVerticalValues::Constraints { geometryForBox(root()).contentBoxTop() } };
     auto* layoutBox = root().firstInFlowOrFloatingChild();
     // 1. Visit each inline box and partially compute their geometry (margins, paddings and borders).
     // 2. Collect the inline items (flatten the the layout tree) and place them on lines in bidirectional order. 

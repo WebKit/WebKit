@@ -52,7 +52,7 @@ BlockFormattingContext::BlockFormattingContext(const Container& formattingContex
 }
 
 enum class LayoutDirection { Child, Sibling };
-void BlockFormattingContext::layoutInFlowContent(InvalidationState& invalidationState, const UsedHorizontalValues::Constraints&)
+void BlockFormattingContext::layoutInFlowContent(InvalidationState& invalidationState, const UsedHorizontalValues::Constraints& rootHorizontalConstraints)
 {
     // 9.4.1 Block formatting contexts
     // In a block formatting context, boxes are laid out one after the other, vertically, beginning at the top of a containing block.
@@ -89,6 +89,13 @@ void BlockFormattingContext::layoutInFlowContent(InvalidationState& invalidation
         return false;
     };
 
+    auto horizontalConstraintsForLayoutBox = [&] (const auto& layoutBox) {
+        auto* containingBlock = layoutBox.containingBlock();
+        ASSERT(containingBlock);
+        if (containingBlock == &formattingRoot)
+            return rootHorizontalConstraints;
+        return Geometry::inFlowHorizontalConstraints(geometryForBox(*containingBlock));
+    };
     // This is a post-order tree traversal layout.
     // The root container layout is done in the formatting context it lives in, not that one it creates, so let's start with the first child.
     appendNextToLayoutQueue(formattingRoot, LayoutDirection::Child);
@@ -109,11 +116,12 @@ void BlockFormattingContext::layoutInFlowContent(InvalidationState& invalidation
                     break;
                 continue;
             }
-
-            auto horizontalConstraints = Geometry::inFlowHorizontalConstraints(geometryForBox(*layoutBox.containingBlock()));
-            computeBorderAndPadding(layoutBox, horizontalConstraints);
-            computeWidthAndMargin(layoutBox, horizontalConstraints);
-            computeStaticPosition(floatingContext, layoutBox, horizontalConstraints);
+            {
+                auto horizontalConstraints = horizontalConstraintsForLayoutBox(layoutBox);
+                computeBorderAndPadding(layoutBox, horizontalConstraints);
+                computeWidthAndMargin(layoutBox, horizontalConstraints);
+                computeStaticPosition(floatingContext, layoutBox, horizontalConstraints);
+            }
 
             if (!appendNextToLayoutQueue(layoutBox, LayoutDirection::Child))
                 break;
