@@ -14,6 +14,7 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/frame-ancestors/frame-ancestors-from-serviceworker.https.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/frame-ancestors/frame-ancestors-nested-cross-in-cross-none-block.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/frame-ancestors/frame-ancestors-nested-cross-in-cross-self-block.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/frame-ancestors/frame-ancestors-nested-cross-in-cross-star-allow.html
@@ -43,3 +44,5 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/frame-ancestors/frame-ancestors-star-allow-sameorigin.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/frame-ancestors/frame-ancestors-url-allow.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/frame-ancestors/frame-ancestors-url-block.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/frame-ancestors/report-blocked-frame.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/frame-ancestors/report-only-frame.sub.html

@@ -428,6 +428,12 @@
     "imported/w3c/web-platform-tests/beacon/beacon-navigate.html": [
         "slow"
     ],
+    "imported/w3c/web-platform-tests/content-security-policy/frame-ancestors/report-blocked-frame.sub.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/frame-ancestors/report-only-frame.sub.html": [
+        "slow"
+    ],
     "imported/w3c/web-platform-tests/content-security-policy/generic/no-default-src.sub.html": [
         "slow"
     ],

@@ -14,6 +14,10 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/frame-ancestors/support/content-security-policy-report-only.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/frame-ancestors/support/content-security-policy-report-only.sub.html.sub.headers
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/frame-ancestors/support/content-security-policy.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/frame-ancestors/support/content-security-policy.sub.html.sub.headers
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/frame-ancestors/support/frame-ancestors-and-x-frame-options.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/frame-ancestors/support/frame-ancestors-and-x-frame-options.sub.html.sub.headers
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/frame-ancestors/support/frame-ancestors-test.sub.js
@@ -21,3 +25,4 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/frame-ancestors/support/frame-ancestors.sub.html.sub.headers
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/frame-ancestors/support/frame-in-frame.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/frame-ancestors/support/frame-in-frame.sub.html.sub.headers
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/frame-ancestors/support/service-worker.js

@@ -64,6 +64,8 @@
         "web-platform-tests/content-security-policy/README.html",
         "web-platform-tests/content-security-policy/form-action/support/post-message-to-opener.sub.html",
         "web-platform-tests/content-security-policy/form-action/support/post-message-to-parent.sub.html",
+        "web-platform-tests/content-security-policy/frame-ancestors/support/content-security-policy-report-only.sub.html",
+        "web-platform-tests/content-security-policy/frame-ancestors/support/content-security-policy.sub.html",
         "web-platform-tests/content-security-policy/frame-ancestors/support/frame-ancestors-and-x-frame-options.sub.html",
         "web-platform-tests/content-security-policy/frame-ancestors/support/frame-ancestors.sub.html",
         "web-platform-tests/content-security-policy/frame-src/support/frame.html",

@@ -32,6 +32,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/reporting/report-multiple-violations-02.html.sub.headers
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/reporting/report-only-in-meta.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/reporting/report-only-in-meta.sub.html.sub.headers
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/reporting/report-only-unsafe-eval.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/reporting/report-only-unsafe-eval.html.sub.headers
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/reporting/report-original-url.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/reporting/report-original-url.sub.html.sub.headers
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/reporting/report-same-origin-with-cookies.html

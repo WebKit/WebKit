@@ -1,0 +1,3 @@
+
+PASS CSP script-hash block causes error event 
+

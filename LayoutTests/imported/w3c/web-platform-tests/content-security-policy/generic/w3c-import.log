@@ -26,7 +26,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/generic/filesystem-urls-match-filesystem.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/generic/generic-0_1-img-src.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/generic/generic-0_1-script-src.html
-/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/generic/generic-0_10.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/generic/generic-0_10.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/generic/generic-0_10_1.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/generic/generic-0_2.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/generic/generic-0_2_2.sub.html

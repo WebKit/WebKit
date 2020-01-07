@@ -14,7 +14,11 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/script-src/support/change-scripthash-before-execute.js
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/script-src/support/change-scriptnonce-before-execute.js
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/script-src/support/empty.css
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/script-src/support/inject-script.js
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/script-src/support/inline-script-should-be-blocked.js
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/script-src/support/post-message.js
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/script-src/support/worker-eval.js
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/script-src/support/worker-eval.js.sub.headers

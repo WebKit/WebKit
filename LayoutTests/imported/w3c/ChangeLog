@@ -1,3 +1,124 @@
+2020-01-07  Pablo Saavedra  <psaavedra@igalia.com>
+
+        Re-sync web-platform-tests/content-security-policy from upstream
+        https://bugs.webkit.org/show_bug.cgi?id=205639
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        * resources/resource-files.json:
+        * web-platform-tests/content-security-policy/README.html:
+        * web-platform-tests/content-security-policy/connect-src/connect-src-beacon-allowed.sub.html:
+        * web-platform-tests/content-security-policy/connect-src/connect-src-beacon-blocked.sub.html:
+        * web-platform-tests/content-security-policy/connect-src/connect-src-beacon-redirect-to-blocked.sub.html:
+        * web-platform-tests/content-security-policy/embedded-enforcement/support/echo-required-csp.py:
+        (main):
+        * web-platform-tests/content-security-policy/font-src/font-none-blocked.sub.html:
+        * web-platform-tests/content-security-policy/frame-ancestors/frame-ancestors-from-serviceworker.https-expected.txt: Added.
+        * web-platform-tests/content-security-policy/frame-ancestors/frame-ancestors-from-serviceworker.https.html: Added.
+        * web-platform-tests/content-security-policy/frame-ancestors/frame-ancestors-nested-cross-in-same-none-block-expected.txt:
+        * web-platform-tests/content-security-policy/frame-ancestors/frame-ancestors-nested-cross-in-same-self-block-expected.txt:
+        * web-platform-tests/content-security-policy/frame-ancestors/frame-ancestors-nested-cross-in-same-star-allow-expected.txt:
+        * web-platform-tests/content-security-policy/frame-ancestors/frame-ancestors-nested-cross-in-same-url-allow-expected.txt:
+        * web-platform-tests/content-security-policy/frame-ancestors/frame-ancestors-nested-cross-in-same-url-block-expected.txt:
+        * web-platform-tests/content-security-policy/frame-ancestors/frame-ancestors-nested-cross-in-sandboxed-cross-url-block.html:
+        * web-platform-tests/content-security-policy/frame-ancestors/frame-ancestors-nested-same-in-same-none-block-expected.txt:
+        * web-platform-tests/content-security-policy/frame-ancestors/frame-ancestors-nested-same-in-same-url-block-expected.txt:
+        * web-platform-tests/content-security-policy/frame-ancestors/frame-ancestors-none-block-expected.txt:
+        * web-platform-tests/content-security-policy/frame-ancestors/report-blocked-frame.sub-expected.txt: Added.
+        * web-platform-tests/content-security-policy/frame-ancestors/report-blocked-frame.sub.html: Added.
+        * web-platform-tests/content-security-policy/frame-ancestors/report-only-frame.sub-expected.txt: Added.
+        * web-platform-tests/content-security-policy/frame-ancestors/report-only-frame.sub.html: Added.
+        * web-platform-tests/content-security-policy/frame-ancestors/support/content-security-policy-report-only.sub.html: Added.
+        * web-platform-tests/content-security-policy/frame-ancestors/support/content-security-policy-report-only.sub.html.sub.headers: Added.
+        * web-platform-tests/content-security-policy/frame-ancestors/support/content-security-policy.sub.html: Added.
+        * web-platform-tests/content-security-policy/frame-ancestors/support/content-security-policy.sub.html.sub.headers: Added.
+        * web-platform-tests/content-security-policy/frame-ancestors/support/frame-ancestors-test.sub.js:
+        (iframeLoaded):
+        * web-platform-tests/content-security-policy/frame-ancestors/support/service-worker.js: Added.
+        (self.onfetch.e.e.respondWith):
+        * web-platform-tests/content-security-policy/frame-ancestors/support/w3c-import.log:
+        * web-platform-tests/content-security-policy/frame-ancestors/w3c-import.log:
+        * web-platform-tests/content-security-policy/frame-src/frame-src-same-document-expected.txt: Added.
+        * web-platform-tests/content-security-policy/frame-src/frame-src-same-document-meta-expected.txt: Added.
+        * web-platform-tests/content-security-policy/frame-src/frame-src-same-document-meta.html: Added.
+        * web-platform-tests/content-security-policy/frame-src/frame-src-same-document.html: Added.
+        * web-platform-tests/content-security-policy/frame-src/frame-src-same-document.html.headers: Added.
+        * web-platform-tests/content-security-policy/frame-src/w3c-import.log:
+        * web-platform-tests/content-security-policy/generic/generic-0_1-script-src.html:
+        * web-platform-tests/content-security-policy/generic/generic-0_10.sub-expected.txt: Copied from LayoutTests/imported/w3c/web-platform-tests/content-security-policy/generic/generic-0_9.sub-expected.txt.
+        * web-platform-tests/content-security-policy/generic/generic-0_10.sub.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/content-security-policy/generic/generic-0_10.html.
+        * web-platform-tests/content-security-policy/generic/generic-0_2-expected.txt:
+        * web-platform-tests/content-security-policy/generic/generic-0_2.html:
+        * web-platform-tests/content-security-policy/generic/generic-0_8.sub-expected.txt:
+        * web-platform-tests/content-security-policy/generic/generic-0_8.sub.html:
+        * web-platform-tests/content-security-policy/generic/generic-0_8_1.sub.html:
+        * web-platform-tests/content-security-policy/generic/generic-0_9.sub-expected.txt:
+        * web-platform-tests/content-security-policy/generic/generic-0_9.sub.html:
+        * web-platform-tests/content-security-policy/generic/no-default-src.sub-expected.txt:
+        * web-platform-tests/content-security-policy/generic/no-default-src.sub.html:
+        * web-platform-tests/content-security-policy/generic/positiveTest.js:
+        (onload): Deleted.
+        * web-platform-tests/content-security-policy/generic/w3c-import.log:
+        * web-platform-tests/content-security-policy/img-src/img-src-4_1.sub-expected.txt:
+        * web-platform-tests/content-security-policy/img-src/img-src-4_1.sub.html:
+        * web-platform-tests/content-security-policy/img-src/img-src-host-partial-wildcard-allowed.sub-expected.txt:
+        * web-platform-tests/content-security-policy/img-src/img-src-host-partial-wildcard-allowed.sub.html:
+        * web-platform-tests/content-security-policy/img-src/img-src-port-wildcard-allowed.sub-expected.txt:
+        * web-platform-tests/content-security-policy/img-src/img-src-port-wildcard-allowed.sub.html:
+        * web-platform-tests/content-security-policy/inside-worker/support/connect-src-allow.sub.js:
+        * web-platform-tests/content-security-policy/inside-worker/support/connect-src-self.sub.js:
+        (promise_test.t.return.new.Promise):
+        (async_test.t.Promise.all.new.Promise): Deleted.
+        * web-platform-tests/content-security-policy/inside-worker/support/script-src-allow.sub.js:
+        * web-platform-tests/content-security-policy/inside-worker/support/script-src-self.sub.js:
+        * web-platform-tests/content-security-policy/media-src/media-src-7_3.sub.html:
+        * web-platform-tests/content-security-policy/media-src/media-src-7_3_2.sub.html:
+        * web-platform-tests/content-security-policy/meta/sandbox-iframe-expected.txt: Added.
+        * web-platform-tests/content-security-policy/meta/sandbox-iframe.html: Added.
+        * web-platform-tests/content-security-policy/meta/w3c-import.log:
+        * web-platform-tests/content-security-policy/reporting/report-cross-origin-no-cookies.sub.html:
+        * web-platform-tests/content-security-policy/reporting/report-only-in-meta.sub.html:
+        * web-platform-tests/content-security-policy/reporting/report-only-unsafe-eval-expected.txt: Added.
+        * web-platform-tests/content-security-policy/reporting/report-only-unsafe-eval.html: Added.
+        * web-platform-tests/content-security-policy/reporting/report-only-unsafe-eval.html.sub.headers: Added.
+        * web-platform-tests/content-security-policy/reporting/report-uri-from-child-frame-expected.txt:
+        * web-platform-tests/content-security-policy/reporting/report-uri-from-child-frame.html:
+        * web-platform-tests/content-security-policy/reporting/w3c-import.log:
+        * web-platform-tests/content-security-policy/script-src/script-src-sri_hash.sub-expected.txt:
+        * web-platform-tests/content-security-policy/script-src/script-src-sri_hash.sub.html:
+        * web-platform-tests/content-security-policy/script-src/scripthash-basic-blocked-error-event-expected.txt: Added.
+        * web-platform-tests/content-security-policy/script-src/scripthash-basic-blocked-error-event.html: Added.
+        * web-platform-tests/content-security-policy/script-src/scripthash-changed-1-expected.txt: Added.
+        * web-platform-tests/content-security-policy/script-src/scripthash-changed-1.html: Added.
+        * web-platform-tests/content-security-policy/script-src/scripthash-changed-2-expected.txt: Added.
+        * web-platform-tests/content-security-policy/script-src/scripthash-changed-2.html: Added.
+        * web-platform-tests/content-security-policy/script-src/scripthash-unicode-normalization.sub.html:
+        * web-platform-tests/content-security-policy/script-src/scriptnonce-changed-1-expected.txt: Added.
+        * web-platform-tests/content-security-policy/script-src/scriptnonce-changed-1.html: Added.
+        * web-platform-tests/content-security-policy/script-src/scriptnonce-changed-2-expected.txt: Added.
+        * web-platform-tests/content-security-policy/script-src/scriptnonce-changed-2.html: Added.
+        * web-platform-tests/content-security-policy/script-src/support/change-scripthash-before-execute.js: Added.
+        (document.getElementById):
+        * web-platform-tests/content-security-policy/script-src/support/change-scriptnonce-before-execute.js: Added.
+        (document.getElementById):
+        * web-platform-tests/content-security-policy/script-src/support/empty.css: Added.
+        * web-platform-tests/content-security-policy/script-src/support/inline-script-should-be-blocked.js: Added.
+        (async_test.t.s.onerror.t.step_func):
+        (async_test.t.s.onload.t.step_func):
+        * web-platform-tests/content-security-policy/script-src/support/w3c-import.log:
+        * web-platform-tests/content-security-policy/script-src/support/worker-importscripts.js:
+        * web-platform-tests/content-security-policy/script-src/w3c-import.log:
+        * web-platform-tests/content-security-policy/securitypolicyviolation/securitypolicyviolation-block-cross-origin-image-from-script.sub.html:
+        * web-platform-tests/content-security-policy/securitypolicyviolation/securitypolicyviolation-block-cross-origin-image.sub.html:
+        * web-platform-tests/content-security-policy/securitypolicyviolation/securitypolicyviolation-block-image-from-script.sub.html:
+        * web-platform-tests/content-security-policy/securitypolicyviolation/securitypolicyviolation-block-image.sub.html:
+        * web-platform-tests/content-security-policy/securitypolicyviolation/support/inside-worker.sub.js:
+        * web-platform-tests/content-security-policy/style-src/inline-style-allowed-while-cloning-objects.sub.html:
+        * web-platform-tests/content-security-policy/style-src/style-src-stylesheet-nonce-allowed.html:
+        * web-platform-tests/content-security-policy/style-src/style-src-stylesheet-nonce-blocked.html:
+        * web-platform-tests/content-security-policy/support/inject-image.sub.js:
+        * web-platform-tests/content-security-policy/svg/object-in-svg-foreignobject.sub.html:
+
 2020-01-07  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         Re-sync web-platform-tests/css/cssom-view from upstream

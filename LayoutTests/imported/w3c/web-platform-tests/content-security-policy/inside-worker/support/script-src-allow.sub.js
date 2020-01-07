@@ -1,7 +1,7 @@
 importScripts("{{location[server]}}/resources/testharness.js");
 
 test(t => {
-  importScripts("http://{{domains[www]}}:{{ports[http][1]}}/content-security-policy/support/testharness-helper.js");
+  importScripts("http://{{hosts[alt][]}}:{{ports[http][1]}}/content-security-policy/support/testharness-helper.js");
 }, "Cross-origin `importScripts()` not blocked in " + self.location.protocol + self.location.search);
 
 test(t => {

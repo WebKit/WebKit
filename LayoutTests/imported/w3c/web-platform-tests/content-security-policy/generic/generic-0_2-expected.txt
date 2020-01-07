@@ -2,4 +2,5 @@
 
 
 PASS Should fire violation events for every failed violation 
+PASS Allows scripts from the same host. 
 

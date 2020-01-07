@@ -1,0 +1,3 @@
+
+FAIL scr2.innerText before modification should be blocked assert_equals: expected "" but got "scr2 at #execute-the-script-block"
+
