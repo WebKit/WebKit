@@ -42,26 +42,78 @@ function(element, attributeName) {
         }
     }
 
+    function getAttribute(element, attributeName) {
+        let attr = element.getAttributeNode(attributeName);
+        return (attr && attr.specified) ? attr.value : null;
+    }
+
     // Special Case: For images and links, require the existence of
     // the attribute before accessing the property.
     if ((tagName === "IMG" && lowercaseAttributeName === "src") || (tagName === "A" && lowercaseAttributeName === "href")) {
-        let value = element.getAttribute(lowercaseAttributeName);
+        let value = getAttribute(element, lowercaseAttributeName);
         return value ? element[lowercaseAttributeName] : value;
+    }
+
+    function isBooleanAttribute(element, attributeName) {
+        const booleanElements = {
+            audio: ["autoplay", "controls", "loop", "muted"],
+            button: ["autofocus", "disabled", "formnovalidate"],
+            details: ["open"],
+            dialog: ["open"],
+            fieldset: ["disabled"],
+            form: ["novalidate"],
+            iframe: ["allowfullscreen"],
+            img: ["ismap"],
+            input: [
+                "autofocus",
+                "checked",
+                "disabled",
+                "formnovalidate",
+                "multiple",
+                "readonly",
+                "required",
+            ],
+            keygen: ["autofocus", "disabled"],
+            menuitem: ["checked", "default", "disabled"],
+            ol: ["reversed"],
+            optgroup: ["disabled"],
+            option: ["disabled", "selected"],
+            script: ["async", "defer"],
+            select: ["autofocus", "disabled", "multiple", "required"],
+            textarea: ["autofocus", "disabled", "readonly", "required"],
+            track: ["default"],
+            video: ["autoplay", "controls", "loop", "muted"],
+        };
+
+        // Global boolean attributes that apply to all HTML elements.
+        if (attributeName == "hidden" || attributeName == "itemscope")
+            return true;
+
+        if (!booleanElements.hasOwnProperty(element.localName))
+            return false;
+
+        return booleanElements[element.localName].includes(attributeName);
     }
 
     // Prefer the element's property over the attribute if the
     // property value is not null and not an object. For boolean
     // properties return null if false.
+    const propertyNameAliases = {"class": "className", "readonly": "readOnly"};
+    let propertyName = propertyNameAliases[attributeName] || attributeName;
+    if (isBooleanAttribute(element, lowercaseAttributeName)) {
+        let value = !(getAttribute(element, attributeName) === null) || element[propertyName];
+        return value ? 'true' : null;
+    }
+
+    let property;
     try {
-        const propertyNameAliases = {"class": "className", "readonly": "readOnly"};
-        let propertyName = propertyNameAliases[attributeName] || attributeName;
-        let value = element[propertyName];
-        if (value != null && typeof value !== "object") {
-            if (typeof value === "boolean")
-                return value ? "true" : null;
-            return value.toString();
-        }
+        property = element[propertyName];
     } catch (e) { }
 
-    return element.getAttribute(attributeName);
+    if (property == null || typeof property == "object") {
+        let value = getAttribute(element, attributeName);
+        return value != null ? value.toString() : null;
+    }
+
+    return property != null ? property.toString() : null;
 }

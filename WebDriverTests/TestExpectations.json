@@ -611,33 +611,6 @@
         "subtests": {
             "test_element_not_found": {
                 "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/180413"}}
-            },
-            "test_boolean_attribute[button-attrs1]": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/180415"}}
-            },
-            "test_boolean_attribute[dialog-attrs3]": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/180415"}}
-            },
-            "test_boolean_attribute[form-attrs5]": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/180415"}}
-            },
-            "test_boolean_attribute[iframe-attrs6]": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/180415"}}
-            },
-            "test_boolean_attribute[img-attrs7]": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/180415"}}
-            },
-            "test_boolean_attribute[input-attrs8]": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/180415"}}
-            },
-            "test_boolean_attribute[menuitem-attrs9]": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/180415"}}
-            },
-            "test_boolean_attribute[object-attrs10]": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/180415"}}
-            },
-            "test_global_boolean_attributes": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/180415"}}
             }
         }
     },

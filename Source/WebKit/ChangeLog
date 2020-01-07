@@ -1,3 +1,18 @@
+2020-01-07  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        WebDriver: several tests in imported/w3c/webdriver/tests/state/get_element_attribute.py are failing
+        https://bugs.webkit.org/show_bug.cgi?id=180415
+
+        Reviewed by Brian Burg.
+
+        Update the ElementAttribute atom to properly handle boolean attributes, following what the selenium original
+        atom does.
+
+        * UIProcess/Automation/atoms/ElementAttribute.js:
+        (getAttribute):
+        (tagName.string_appeared_here.lowercaseAttributeName.string_appeared_here):
+        (isBooleanAttribute):
+
 2020-01-07  Chris Fleizach  <cfleizach@apple.com>
 
         AX: Enable ACCESSIBILITY_ISOLATED_TREE
