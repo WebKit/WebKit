@@ -911,6 +911,9 @@ legacyGetUserMediaEnabled:
 isInAppBrowserPrivacyEnabled:
   initial: false
 
+isAccessibilityIsolatedTreeEnabled:
+  initial: false
+
 # Deprecated
 
 iceCandidateFilteringEnabled:

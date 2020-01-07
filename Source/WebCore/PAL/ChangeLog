@@ -1,3 +1,13 @@
+2020-01-07  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: Enable ACCESSIBILITY_ISOLATED_TREE
+        https://bugs.webkit.org/show_bug.cgi?id=205535
+        <rdar://problem/58131075>
+
+        Reviewed by Zalan Bujtas.
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2020-01-05  Simon Fraser  <simon.fraser@apple.com>
 
         DumpRenderTree doesn't always call updateRendering() when a test completes

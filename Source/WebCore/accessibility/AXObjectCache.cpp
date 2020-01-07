@@ -95,6 +95,7 @@
 #include "RenderTableCell.h"
 #include "RenderTableRow.h"
 #include "RenderView.h"
+#include "RuntimeEnabledFeatures.h"
 #include "SVGElement.h"
 #include "ScriptDisallowedScope.h"
 #include "ScrollView.h"
@@ -712,8 +713,11 @@ AccessibilityObject* AXObjectCache::getOrCreate(RenderObject* renderer)
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
 bool AXObjectCache::clientSupportsIsolatedTree()
 {
+    if (!RuntimeEnabledFeatures::sharedFeatures().isAccessibilityIsolatedTreeEnabled())
+        return false;
+
     AXClientType type = _AXGetClientForCurrentRequestUntrusted();
-    // FIXME: Remove unknown client before enabling ACCESSIBILITY_ISOLATED_TREE.
+    // FIXME: Remove unknown client before setting isAccessibilityIsolatedTreeEnabled initial value = true.
     return type == kAXClientTypeVoiceOver
         || type == kAXClientTypeUnknown
         || type == kAXClientTypeNoActiveRequestFound; // For LayoutTests.
