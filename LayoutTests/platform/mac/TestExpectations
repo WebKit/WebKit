@@ -1972,3 +1972,4 @@ webkit.org/b/205807 [ Debug ] inspector/page/setBootstrapScript-main-frame.html 
 
 webkit.org/b/205862 [ Mojave+ ] webgpu/whlsl/while-loop-break.html [ Pass Failure ]
 webkit.org/b/205865 [ Mojave+ ] webgpu/whlsl/ensure-proper-variable-lifetime-2.html [ Pass Failure ]
+webkit.org/b/205867 [ Mojave+ ] webgpu/draw-indexed-triangles.html [ Pass Failure ]
