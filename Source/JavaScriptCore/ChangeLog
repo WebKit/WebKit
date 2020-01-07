@@ -1,5 +1,12 @@
 2020-01-07  Keith Miller  <keith_miller@apple.com>
 
+        Unreviewed non-arm64e build fix.
+
+        * dfg/DFGOSRExitCompilerCommon.cpp:
+        (JSC::DFG::reifyInlinedCallFrames):
+
+2020-01-07  Keith Miller  <keith_miller@apple.com>
+
         Bytecode checkpoint fixes for arm64(e)
         https://bugs.webkit.org/show_bug.cgi?id=205871
 
