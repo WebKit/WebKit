@@ -2947,11 +2947,11 @@ class OrderOfIncludesTest(CppStyleTestBase):
 
     def test_check_next_include_order__no_config(self):
         self.assertEqual('Header file should not contain WebCore config.h.',
-                         self.include_state.check_next_include_order(cpp_style._CONFIG_HEADER, 'Foo.h', True, True))
+                         self.include_state.check_next_include_order(cpp_style._CONFIG_HEADER, 'Foo.h', True, True, True))
 
     def test_check_next_include_order__no_self(self):
         self.assertEqual('Header file should not contain itself.',
-                         self.include_state.check_next_include_order(cpp_style._PRIMARY_HEADER, 'Foo.h', True, True))
+                         self.include_state.check_next_include_order(cpp_style._PRIMARY_HEADER, 'Foo.h', True, True, True))
         # Test actual code to make sure that header types are correctly assigned.
         self.assert_language_rules_check('Foo.h',
                                          '#include "Foo.h"\n',
@@ -2963,22 +2963,26 @@ class OrderOfIncludesTest(CppStyleTestBase):
 
     def test_check_next_include_order__likely_then_config(self):
         self.assertEqual('Found header this file implements before WebCore config.h.',
-                         self.include_state.check_next_include_order(cpp_style._PRIMARY_HEADER, 'Foo.cpp', False, True))
+                         self.include_state.check_next_include_order(cpp_style._PRIMARY_HEADER, 'Foo.cpp', False, True, True))
         self.assertEqual('Found WebCore config.h after a header this file implements.',
-                         self.include_state.check_next_include_order(cpp_style._CONFIG_HEADER, 'Foo.cpp', False, True))
+                         self.include_state.check_next_include_order(cpp_style._CONFIG_HEADER, 'Foo.cpp', False, True, True))
+
+    def test_check_next_include_order__no_config_module(self):
+        self.assertEqual('',
+                         self.include_state.check_next_include_order(cpp_style._PRIMARY_HEADER, 'Foo.cpp', False, True, False))
 
     def test_check_next_include_order__other_then_config(self):
         self.assertEqual('Found other header before WebCore config.h.',
-                         self.include_state.check_next_include_order(cpp_style._OTHER_HEADER, 'Foo.cpp', False, True))
+                         self.include_state.check_next_include_order(cpp_style._OTHER_HEADER, 'Foo.cpp', False, True, True))
         self.assertEqual('Found WebCore config.h after other header.',
-                         self.include_state.check_next_include_order(cpp_style._CONFIG_HEADER, 'Foo.cpp', False, True))
+                         self.include_state.check_next_include_order(cpp_style._CONFIG_HEADER, 'Foo.cpp', False, True, True))
 
     def test_check_next_include_order__config_then_other_then_likely(self):
-        self.assertEqual('', self.include_state.check_next_include_order(cpp_style._CONFIG_HEADER, 'Foo.cpp', False, True))
+        self.assertEqual('', self.include_state.check_next_include_order(cpp_style._CONFIG_HEADER, 'Foo.cpp', False, True, True))
         self.assertEqual('Found other header before a header this file implements.',
-                         self.include_state.check_next_include_order(cpp_style._OTHER_HEADER, 'Foo.cpp', False, True))
+                         self.include_state.check_next_include_order(cpp_style._OTHER_HEADER, 'Foo.cpp', False, True, True))
         self.assertEqual('Found header this file implements after other header.',
-                         self.include_state.check_next_include_order(cpp_style._PRIMARY_HEADER, 'Foo.cpp', False, True))
+                         self.include_state.check_next_include_order(cpp_style._PRIMARY_HEADER, 'Foo.cpp', False, True, True))
 
     def test_check_alphabetical_include_order(self):
         self.assert_language_rules_check('foo.h',

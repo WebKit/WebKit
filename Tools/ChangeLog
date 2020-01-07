@@ -1,3 +1,15 @@
+2020-01-07  Basuke Suzuki  <basuke.suzuki@sony.com>
+
+        check-webkit-style: bmalloc doesn't use config.h
+        https://bugs.webkit.org/show_bug.cgi?id=205840
+
+        Reviewed by Jonathan Bedard.
+
+        * Scripts/webkitpy/style/checkers/cpp.py:
+        (_IncludeState.check_next_include_order):
+        (check_include_line):
+        (check_has_config_header):
+
 2020-01-07  youenn fablet  <youenn@apple.com>
 
         Add an option to make video capture in GPUProcess

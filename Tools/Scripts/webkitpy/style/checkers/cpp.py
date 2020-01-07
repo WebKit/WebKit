@@ -137,6 +137,10 @@ _AUTO_GENERATED_FILES = [
 _unit_test_config = {}
 
 
+_NO_CONFIG_H_PATH_PATTERNS = [
+    '^Source/bmalloc/',
+]
+
 def iteratively_replace_matches_with_char(pattern, char_replacement, s):
     """Returns the string with replacement done.
 
@@ -294,7 +298,7 @@ class _IncludeState(dict):
     def visited_soft_link_section(self):
         return self._visited_soft_link_section
 
-    def check_next_include_order(self, header_type, filename, file_is_header, primary_header_exists):
+    def check_next_include_order(self, header_type, filename, file_is_header, primary_header_exists, has_config_header):
         """Returns a non-empty error message if the next header is out of order.
 
         This function also updates the internal state to be ready to check
@@ -305,6 +309,7 @@ class _IncludeState(dict):
           filename: The name of the current file.
           file_is_header: Whether the file that owns this _IncludeState is itself a header
           primary_header_exists: Whether the primary header file actually exists on disk
+          has_config_header: Whether project uses config.h or not.
 
         Returns:
           The empty string if the header is in the right order, or an
@@ -334,7 +339,7 @@ class _IncludeState(dict):
         elif header_type == _PRIMARY_HEADER:
             if self._section >= self._PRIMARY_SECTION:
                 error_message = after_error_message
-            elif self._section < self._CONFIG_SECTION:
+            elif has_config_header and self._section < self._CONFIG_SECTION:
                 error_message = before_error_message
             self._section = self._PRIMARY_SECTION
             self._visited_primary_section = True
@@ -3181,6 +3186,8 @@ def check_include_line(filename, file_extension, clean_lines, line_number, inclu
 
     header_type = _classify_include(filename, include, is_system, include_state)
     primary_header_exists = _does_primary_header_exist(filename)
+    has_config_header = check_has_config_header(filename)
+
     include_state.header_types[line_number] = header_type
 
     # Only proceed if this isn't a duplicate header.
@@ -3195,7 +3202,8 @@ def check_include_line(filename, file_extension, clean_lines, line_number, inclu
     error_message = include_state.check_next_include_order(header_type,
                                                            filename,
                                                            file_extension == "h",
-                                                           primary_header_exists)
+                                                           primary_header_exists,
+                                                           has_config_header)
 
     # Check to make sure *SoftLink.h headers always appear last and never in a header.
     if error_message and include_state.visited_soft_link_section():
@@ -3209,7 +3217,7 @@ def check_include_line(filename, file_extension, clean_lines, line_number, inclu
         if not is_blank_line(next_line):
             error(line_number, 'build/include_order', 4,
                 'You should add a blank line after implementation file\'s own header.')
-        if is_blank_line(previous_line):
+        if has_config_header and is_blank_line(previous_line):
             error(line_number, 'build/include_order', 4,
                 'You should not add a blank line before implementation file\'s own header.')
 
@@ -3798,6 +3806,15 @@ def is_generated_file(file_path):
     # Convert file paths using unix path separator for normalization.
     file_path = file_path.replace(os.path.sep, '/')
     return file_path in _AUTO_GENERATED_FILES
+
+
+def check_has_config_header(file_path):
+    """Check if the module uses config.h"""
+    file_path = file_path.replace(os.path.sep, '/')
+    for pattern in _NO_CONFIG_H_PATH_PATTERNS:
+        if re.match(pattern, file_path):
+            return False
+    return True
 
 
 def files_belong_to_same_module(filename_cpp, filename_h):
