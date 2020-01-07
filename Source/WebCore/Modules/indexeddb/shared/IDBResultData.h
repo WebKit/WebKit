@@ -88,6 +88,7 @@ public:
     static IDBResultData iterateCursorSuccess(const IDBResourceIdentifier&, const IDBGetResult&);
 
     WEBCORE_EXPORT IDBResultData(const IDBResultData&);
+    IDBResultData(IDBResultData&&) = default;
     IDBResultData& operator=(IDBResultData&&) = default;
 
     enum IsolatedCopyTag { IsolatedCopy };
