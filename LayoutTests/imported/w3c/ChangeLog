@@ -1,3 +1,15 @@
+2020-01-07  Pablo Saavedra  <psaavedra@igalia.com>
+
+        Re-sync web-platform-tests/domparsing from upstream
+        https://bugs.webkit.org/show_bug.cgi?id=205638
+
+        Reviewed by Chris Dumez.
+
+        * resources/import-expectations.json:
+
+        Remove not longer needed domparsing skip instructions in the
+        import-expectations.json file
+
 2020-01-05  Rob Buis  <rbuis@igalia.com>
 
         Tighten up stylesheet loading
