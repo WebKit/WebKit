@@ -79,6 +79,7 @@ void RemoteMediaPlayerProxy::getConfiguration(RemoteMediaPlayerConfiguration& co
     configuration.supportsPictureInPicture = m_player->supportsPictureInPicture();
     configuration.supportsAcceleratedRendering = m_player->supportsAcceleratedRendering();
     configuration.canPlayToWirelessPlaybackTarget = m_player->canPlayToWirelessPlaybackTarget();
+    configuration.shouldIgnoreIntrinsicSize = m_player->shouldIgnoreIntrinsicSize();
 }
 
 void RemoteMediaPlayerProxy::load(const URL& url, const ContentType& contentType, const String& keySystem, CompletionHandler<void(RemoteMediaPlayerConfiguration&&)>&& completionHandler)
@@ -159,6 +160,52 @@ void RemoteMediaPlayerProxy::setPreservesPitch(bool preservesPitch)
     m_player->setPreservesPitch(preservesPitch);
 }
 
+void RemoteMediaPlayerProxy::prepareForRendering()
+{
+    m_player->prepareForRendering();
+}
+
+void RemoteMediaPlayerProxy::setSize(const WebCore::IntSize& size)
+{
+    m_player->setSize(size);
+}
+
+void RemoteMediaPlayerProxy::setVisible(bool visible)
+{
+    m_player->setVisible(visible);
+}
+
+void RemoteMediaPlayerProxy::setShouldMaintainAspectRatio(bool maintainRatio)
+{
+    m_player->setShouldMaintainAspectRatio(maintainRatio);
+}
+
+void RemoteMediaPlayerProxy::setVideoFullscreenFrame(WebCore::FloatRect rect)
+{
+    m_player->setVideoFullscreenFrame(rect);
+}
+
+void RemoteMediaPlayerProxy::setVideoFullscreenGravity(WebCore::MediaPlayerEnums::VideoGravity gravity)
+{
+    m_player->setVideoFullscreenGravity(gravity);
+}
+
+void RemoteMediaPlayerProxy::acceleratedRenderingStateChanged(bool renderingCanBeAccelerated)
+{
+    m_renderingCanBeAccelerated = renderingCanBeAccelerated;
+    m_player->acceleratedRenderingStateChanged();
+}
+
+void RemoteMediaPlayerProxy::setShouldDisableSleep(bool disable)
+{
+    m_player->setShouldDisableSleep(disable);
+}
+
+void RemoteMediaPlayerProxy::setRate(double rate)
+{
+    m_player->setRate(rate);
+}
+
 Ref<PlatformMediaResource> RemoteMediaPlayerProxy::requestResource(ResourceRequest&& request, PlatformMediaResourceLoader::LoadOptions options)
 {
     auto& remoteMediaResourceManager = m_manager.gpuConnectionToWebProcess().remoteMediaResourceManager();
@@ -188,6 +235,7 @@ void RemoteMediaPlayerProxy::mediaPlayerNetworkStateChanged()
 void RemoteMediaPlayerProxy::mediaPlayerReadyStateChanged()
 {
     updateCachedState();
+    m_cachedState.naturalSize = m_player->naturalSize();
     m_webProcessConnection->send(Messages::RemoteMediaPlayerManager::ReadyStateChanged(m_id, m_cachedState), 0);
 }
 
@@ -299,6 +347,11 @@ void RemoteMediaPlayerProxy::mediaPlayerCharacteristicChanged()
     m_webProcessConnection->send(Messages::RemoteMediaPlayerManager::CharacteristicChanged(m_id, m_player->hasAudio(), m_player->hasVideo(), m_player->movieLoadType()), 0);
 }
 
+bool RemoteMediaPlayerProxy::mediaPlayerRenderingCanBeAccelerated()
+{
+    return m_renderingCanBeAccelerated;
+}
+
 // FIXME: Unimplemented
 void RemoteMediaPlayerProxy::mediaPlayerResourceNotSupported()
 {
@@ -318,12 +371,6 @@ void RemoteMediaPlayerProxy::mediaPlayerEngineUpdated()
 void RemoteMediaPlayerProxy::mediaPlayerFirstVideoFrameAvailable()
 {
     notImplemented();
-}
-
-bool RemoteMediaPlayerProxy::mediaPlayerRenderingCanBeAccelerated()
-{
-    notImplemented();
-    return false;
 }
 
 void RemoteMediaPlayerProxy::mediaPlayerRenderingModeChanged()

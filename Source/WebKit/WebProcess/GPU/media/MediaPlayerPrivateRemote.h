@@ -71,6 +71,7 @@ public:
     void engineFailedToLoad(long);
     void updateCachedState(RemoteMediaPlayerState&&);
     void characteristicChanged(bool hasAudio, bool hasVideo, WebCore::MediaPlayerEnums::MovieLoadType);
+    void sizeChanged(WebCore::FloatSize);
 
     void requestResource(RemoteMediaResourceIdentifier, WebCore::ResourceRequest&&, WebCore::PlatformMediaResourceLoader::LoadOptions);
     void removeResource(RemoteMediaResourceIdentifier);
@@ -105,6 +106,8 @@ private:
     void setMuted(bool) final;
     void setPrivateBrowsingMode(bool) final;
     void setPreservesPitch(bool) final;
+
+    bool shouldIgnoreIntrinsicSize() final;
 
     // Unimplemented
     PlatformLayer* platformLayer() const final;
@@ -296,8 +299,6 @@ private:
 #endif
 
     bool performTaskAtMediaTime(WTF::Function<void()>&&, MediaTime) final;
-
-    bool shouldIgnoreIntrinsicSize() final;
 
     WebCore::MediaPlayer* m_player { nullptr };
     RefPtr<WebCore::PlatformMediaResourceLoader> m_mediaResourceLoader;

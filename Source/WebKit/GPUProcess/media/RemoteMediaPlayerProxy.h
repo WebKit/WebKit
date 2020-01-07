@@ -78,6 +78,16 @@ public:
     void setPrivateBrowsingMode(bool);
     void setPreservesPitch(bool);
 
+    void prepareForRendering();
+    void setSize(const WebCore::IntSize&);
+    void setVisible(bool);
+    void setShouldMaintainAspectRatio(bool);
+    void setVideoFullscreenFrame(WebCore::FloatRect);
+    void setVideoFullscreenGravity(WebCore::MediaPlayerEnums::VideoGravity);
+    void acceleratedRenderingStateChanged(bool);
+    void setShouldDisableSleep(bool);
+    void setRate(double);
+
     Ref<WebCore::PlatformMediaResource> requestResource(WebCore::ResourceRequest&&, WebCore::PlatformMediaResourceLoader::LoadOptions);
     void removeResource(RemoteMediaResourceIdentifier);
 
@@ -94,6 +104,7 @@ private:
     void mediaPlayerEngineFailedToLoad() const final;
     void mediaPlayerBufferedTimeRangesChanged() final;
     void mediaPlayerSeekableTimeRangesChanged() final;
+    bool mediaPlayerRenderingCanBeAccelerated() final;
 
     // Not implemented
     void mediaPlayerResourceNotSupported() final;
@@ -101,7 +112,6 @@ private:
     void mediaPlayerEngineUpdated() final;
     void mediaPlayerFirstVideoFrameAvailable() final;
     void mediaPlayerCharacteristicChanged() final;
-    bool mediaPlayerRenderingCanBeAccelerated() final;
     void mediaPlayerRenderingModeChanged() final;
     void mediaPlayerActiveSourceBuffersChanged() final;
 
@@ -186,6 +196,7 @@ private:
     RemoteMediaPlayerProxyConfiguration m_configuration;
     bool m_seekableChanged { true };
     bool m_bufferedChanged { true };
+    bool m_renderingCanBeAccelerated { true };
 
 #if !RELEASE_LOG_DISABLED
     const Logger& m_logger;

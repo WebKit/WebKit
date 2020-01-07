@@ -275,6 +275,60 @@ void RemoteMediaPlayerManagerProxy::setPreservesPitch(MediaPlayerPrivateRemoteId
         player->setPreservesPitch(preservesPitch);
 }
 
+void RemoteMediaPlayerManagerProxy::prepareForRendering(MediaPlayerPrivateRemoteIdentifier id)
+{
+    if (auto player = m_proxies.get(id))
+        player->prepareForRendering();
+}
+
+void RemoteMediaPlayerManagerProxy::setSize(MediaPlayerPrivateRemoteIdentifier id, const WebCore::IntSize& size)
+{
+    if (auto player = m_proxies.get(id))
+        player->setSize(size);
+}
+
+void RemoteMediaPlayerManagerProxy::setVisible(MediaPlayerPrivateRemoteIdentifier id, bool visible)
+{
+    if (auto player = m_proxies.get(id))
+        player->setVisible(visible);
+}
+
+void RemoteMediaPlayerManagerProxy::setShouldMaintainAspectRatio(MediaPlayerPrivateRemoteIdentifier id, bool maintainRatio)
+{
+    if (auto player = m_proxies.get(id))
+        player->setShouldMaintainAspectRatio(maintainRatio);
+}
+
+void RemoteMediaPlayerManagerProxy::setVideoFullscreenFrame(MediaPlayerPrivateRemoteIdentifier id, WebCore::FloatRect rect)
+{
+    if (auto player = m_proxies.get(id))
+        player->setVideoFullscreenFrame(rect);
+}
+
+void RemoteMediaPlayerManagerProxy::setVideoFullscreenGravity(MediaPlayerPrivateRemoteIdentifier id, WebCore::MediaPlayerEnums::VideoGravity gravity)
+{
+    if (auto player = m_proxies.get(id))
+        player->setVideoFullscreenGravity(gravity);
+}
+
+void RemoteMediaPlayerManagerProxy::acceleratedRenderingStateChanged(MediaPlayerPrivateRemoteIdentifier id, bool renderingCanBeAccelerated)
+{
+    if (auto player = m_proxies.get(id))
+        player->acceleratedRenderingStateChanged(renderingCanBeAccelerated);
+}
+
+void RemoteMediaPlayerManagerProxy::setShouldDisableSleep(MediaPlayerPrivateRemoteIdentifier id, bool disable)
+{
+    if (auto player = m_proxies.get(id))
+        player->setShouldDisableSleep(disable);
+}
+
+void RemoteMediaPlayerManagerProxy::setRate(WebKit::MediaPlayerPrivateRemoteIdentifier id, double rate)
+{
+    if (auto player = m_proxies.get(id))
+        player->setRate(rate);
+}
+
 #if !RELEASE_LOG_DISABLED
 const Logger& RemoteMediaPlayerManagerProxy::logger() const
 {

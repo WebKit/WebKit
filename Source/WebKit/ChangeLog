@@ -1,3 +1,64 @@
+2020-01-06  Eric Carlson  <eric.carlson@apple.com>
+
+        Add some of the remote media player messages needed for video playback
+        https://bugs.webkit.org/show_bug.cgi?id=205812
+        <rdar://problem/58346531>
+
+        Reviewed by Jer Noble.
+
+        No new tests, it isn't possible to play video yet.
+
+        * GPUProcess/media/RemoteMediaPlayerManagerProxy.cpp:
+        (WebKit::RemoteMediaPlayerManagerProxy::prepareForRendering):
+        (WebKit::RemoteMediaPlayerManagerProxy::setSize):
+        (WebKit::RemoteMediaPlayerManagerProxy::setVisible):
+        (WebKit::RemoteMediaPlayerManagerProxy::setShouldMaintainAspectRatio):
+        (WebKit::RemoteMediaPlayerManagerProxy::setVideoFullscreenFrame):
+        (WebKit::RemoteMediaPlayerManagerProxy::setVideoFullscreenGravity):
+        (WebKit::RemoteMediaPlayerManagerProxy::acceleratedRenderingStateChanged):
+        (WebKit::RemoteMediaPlayerManagerProxy::setShouldDisableSleep):
+        (WebKit::RemoteMediaPlayerManagerProxy::setRate):
+        * GPUProcess/media/RemoteMediaPlayerManagerProxy.h:
+        * GPUProcess/media/RemoteMediaPlayerManagerProxy.messages.in:
+        * GPUProcess/media/RemoteMediaPlayerProxy.cpp:
+        (WebKit::RemoteMediaPlayerProxy::getConfiguration):
+        (WebKit::RemoteMediaPlayerProxy::prepareForRendering):
+        (WebKit::RemoteMediaPlayerProxy::setSize):
+        (WebKit::RemoteMediaPlayerProxy::setVisible):
+        (WebKit::RemoteMediaPlayerProxy::setShouldMaintainAspectRatio):
+        (WebKit::RemoteMediaPlayerProxy::setVideoFullscreenFrame):
+        (WebKit::RemoteMediaPlayerProxy::setVideoFullscreenGravity):
+        (WebKit::RemoteMediaPlayerProxy::acceleratedRenderingStateChanged):
+        (WebKit::RemoteMediaPlayerProxy::setShouldDisableSleep):
+        (WebKit::RemoteMediaPlayerProxy::setRate):
+        (WebKit::RemoteMediaPlayerProxy::mediaPlayerReadyStateChanged):
+        (WebKit::RemoteMediaPlayerProxy::mediaPlayerRenderingCanBeAccelerated):
+        * GPUProcess/media/RemoteMediaPlayerProxy.h:
+        * WebProcess/GPU/media/MediaPlayerPrivateRemote.cpp:
+        (WebKit::MediaPlayerPrivateRemote::sizeChanged):
+        (WebKit::MediaPlayerPrivateRemote::updateCachedState):
+        (WebKit::MediaPlayerPrivateRemote::shouldIgnoreIntrinsicSize):
+        (WebKit::MediaPlayerPrivateRemote::prepareForRendering):
+        (WebKit::MediaPlayerPrivateRemote::setSize):
+        (WebKit::MediaPlayerPrivateRemote::setVisible):
+        (WebKit::MediaPlayerPrivateRemote::setShouldMaintainAspectRatio):
+        (WebKit::MediaPlayerPrivateRemote::setVideoFullscreenFrame):
+        (WebKit::MediaPlayerPrivateRemote::setVideoFullscreenGravity):
+        (WebKit::MediaPlayerPrivateRemote::acceleratedRenderingStateChanged):
+        (WebKit::MediaPlayerPrivateRemote::setShouldDisableSleep):
+        (WebKit::MediaPlayerPrivateRemote::naturalSize const):
+        * WebProcess/GPU/media/MediaPlayerPrivateRemote.h:
+        * WebProcess/GPU/media/RemoteMediaPlayerConfiguration.h:
+        (WebKit::RemoteMediaPlayerConfiguration::encode const):
+        (WebKit::RemoteMediaPlayerConfiguration::decode):
+        * WebProcess/GPU/media/RemoteMediaPlayerManager.cpp:
+        (WebKit::RemoteMediaPlayerManager::sizeChanged):
+        * WebProcess/GPU/media/RemoteMediaPlayerManager.h:
+        * WebProcess/GPU/media/RemoteMediaPlayerManager.messages.in:
+        * WebProcess/GPU/media/RemoteMediaPlayerState.h:
+        (WebKit::RemoteMediaPlayerState::encode const):
+        (WebKit::RemoteMediaPlayerState::decode):
+
 2020-01-06  Chris Dumez  <cdumez@apple.com>
 
         Improve logging for when a synchronous IPC times out

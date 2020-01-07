@@ -54,6 +54,16 @@ messages -> RemoteMediaPlayerManagerProxy NotRefCounted {
     SetPreload(WebKit::MediaPlayerPrivateRemoteIdentifier id, enum:uint8_t WebCore::MediaPlayerEnums::Preload preload)
     SetPrivateBrowsingMode(WebKit::MediaPlayerPrivateRemoteIdentifier id, bool privateMode)
     SetPreservesPitch(WebKit::MediaPlayerPrivateRemoteIdentifier id, bool preservesPitch)
+
+    PrepareForRendering(WebKit::MediaPlayerPrivateRemoteIdentifier id)
+    SetSize(WebKit::MediaPlayerPrivateRemoteIdentifier id, WebCore::IntSize size)
+    SetVisible(WebKit::MediaPlayerPrivateRemoteIdentifier id, bool visible)
+    SetShouldMaintainAspectRatio(WebKit::MediaPlayerPrivateRemoteIdentifier id, bool maintainAspectRatio)
+    SetVideoFullscreenFrame(WebKit::MediaPlayerPrivateRemoteIdentifier id, WebCore::FloatRect rect)
+    SetVideoFullscreenGravity(WebKit::MediaPlayerPrivateRemoteIdentifier id, enum:uint8_t WebCore::MediaPlayerEnums::VideoGravity gravity)
+    AcceleratedRenderingStateChanged(WebKit::MediaPlayerPrivateRemoteIdentifier id, bool canBeAccelerated)
+    SetShouldDisableSleep(WebKit::MediaPlayerPrivateRemoteIdentifier id, bool disable)
+    SetRate(WebKit::MediaPlayerPrivateRemoteIdentifier id, double rate)
 }
 
 #endif

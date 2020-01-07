@@ -100,6 +100,16 @@ private:
     void setPrivateBrowsingMode(MediaPlayerPrivateRemoteIdentifier, bool);
     void setPreservesPitch(MediaPlayerPrivateRemoteIdentifier, bool);
 
+    void prepareForRendering(MediaPlayerPrivateRemoteIdentifier);
+    void setSize(MediaPlayerPrivateRemoteIdentifier, const WebCore::IntSize&);
+    void setVisible(MediaPlayerPrivateRemoteIdentifier, bool);
+    void setShouldMaintainAspectRatio(MediaPlayerPrivateRemoteIdentifier, bool);
+    void setVideoFullscreenFrame(MediaPlayerPrivateRemoteIdentifier, WebCore::FloatRect);
+    void setVideoFullscreenGravity(MediaPlayerPrivateRemoteIdentifier, WebCore::MediaPlayerEnums::VideoGravity);
+    void acceleratedRenderingStateChanged(MediaPlayerPrivateRemoteIdentifier, bool);
+    void setShouldDisableSleep(MediaPlayerPrivateRemoteIdentifier, bool);
+    void setRate(WebKit::MediaPlayerPrivateRemoteIdentifier, double);
+
     HashMap<MediaPlayerPrivateRemoteIdentifier, std::unique_ptr<RemoteMediaPlayerProxy>> m_proxies;
     GPUConnectionToWebProcess& m_gpuConnectionToWebProcess;
 

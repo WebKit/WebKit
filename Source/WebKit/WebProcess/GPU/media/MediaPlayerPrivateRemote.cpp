@@ -30,6 +30,7 @@
 
 #include "Logging.h"
 #include "RemoteMediaPlayerManagerProxyMessages.h"
+#include "WebCoreArgumentCoders.h"
 #include <WebCore/MediaPlayer.h>
 #include <WebCore/NotImplemented.h>
 #include <WebCore/PlatformLayer.h>
@@ -254,6 +255,12 @@ void MediaPlayerPrivateRemote::characteristicChanged(bool hasAudio, bool hasVide
     m_player->characteristicChanged();
 }
 
+void MediaPlayerPrivateRemote::sizeChanged(WebCore::FloatSize naturalSize)
+{
+    m_cachedState.naturalSize = naturalSize;
+    m_player->sizeChanged();
+}
+
 String MediaPlayerPrivateRemote::engineDescription() const
 {
     return m_configuration.engineDescription;
@@ -294,8 +301,59 @@ void MediaPlayerPrivateRemote::updateCachedState(RemoteMediaPlayerState&& state)
     m_cachedState.readyState = state.readyState;
     m_cachedState.paused = state.paused;
     m_cachedState.loadingProgressed = state.loadingProgressed;
+    m_cachedState.naturalSize = state.naturalSize;
     if (state.bufferedRanges.length())
         m_cachedBufferedTimeRanges = makeUnique<PlatformTimeRanges>(state.bufferedRanges);
+}
+
+bool MediaPlayerPrivateRemote::shouldIgnoreIntrinsicSize()
+{
+    return m_configuration.shouldIgnoreIntrinsicSize;
+}
+
+void MediaPlayerPrivateRemote::prepareForRendering()
+{
+    m_manager.gpuProcessConnection().send(Messages::RemoteMediaPlayerManagerProxy::PrepareForRendering(m_id), 0);
+}
+
+void MediaPlayerPrivateRemote::setSize(const WebCore::IntSize& size)
+{
+    m_manager.gpuProcessConnection().send(Messages::RemoteMediaPlayerManagerProxy::SetSize(m_id, size), 0);
+}
+
+void MediaPlayerPrivateRemote::setVisible(bool visible)
+{
+    m_manager.gpuProcessConnection().send(Messages::RemoteMediaPlayerManagerProxy::SetVisible(m_id, visible), 0);
+}
+
+void MediaPlayerPrivateRemote::setShouldMaintainAspectRatio(bool maintainRatio)
+{
+    m_manager.gpuProcessConnection().send(Messages::RemoteMediaPlayerManagerProxy::SetShouldMaintainAspectRatio(m_id, maintainRatio), 0);
+}
+
+void MediaPlayerPrivateRemote::setVideoFullscreenFrame(WebCore::FloatRect rect)
+{
+    m_manager.gpuProcessConnection().send(Messages::RemoteMediaPlayerManagerProxy::SetVideoFullscreenFrame(m_id, rect), 0);
+}
+
+void MediaPlayerPrivateRemote::setVideoFullscreenGravity(WebCore::MediaPlayerEnums::VideoGravity gravity)
+{
+    m_manager.gpuProcessConnection().send(Messages::RemoteMediaPlayerManagerProxy::SetVideoFullscreenGravity(m_id, gravity), 0);
+}
+
+void MediaPlayerPrivateRemote::acceleratedRenderingStateChanged()
+{
+    m_manager.gpuProcessConnection().send(Messages::RemoteMediaPlayerManagerProxy::AcceleratedRenderingStateChanged(m_id, m_player->supportsAcceleratedRendering()), 0);
+}
+
+void MediaPlayerPrivateRemote::setShouldDisableSleep(bool disable)
+{
+    m_manager.gpuProcessConnection().send(Messages::RemoteMediaPlayerManagerProxy::SetShouldDisableSleep(m_id, disable), 0);
+}
+
+FloatSize MediaPlayerPrivateRemote::naturalSize() const
+{
+    return m_cachedState.naturalSize;
 }
 
 // FIXME: Unimplemented
@@ -345,16 +403,6 @@ void MediaPlayerPrivateRemote::updateVideoFullscreenInlineImage()
     notImplemented();
 }
 
-void MediaPlayerPrivateRemote::setVideoFullscreenFrame(FloatRect)
-{
-    notImplemented();
-}
-
-void MediaPlayerPrivateRemote::setVideoFullscreenGravity(MediaPlayer::VideoGravity)
-{
-    notImplemented();
-}
-
 void MediaPlayerPrivateRemote::setVideoFullscreenMode(MediaPlayer::VideoFullscreenMode)
 {
     notImplemented();
@@ -395,17 +443,6 @@ bool MediaPlayerPrivateRemote::canSaveMediaData() const
 {
     notImplemented();
     return false;
-}
-
-FloatSize MediaPlayerPrivateRemote::naturalSize() const
-{
-    notImplemented();
-    return { };
-}
-
-void MediaPlayerPrivateRemote::setVisible(bool)
-{
-    notImplemented();
 }
 
 MediaTime MediaPlayerPrivateRemote::getStartDate() const
@@ -474,11 +511,6 @@ unsigned long long MediaPlayerPrivateRemote::totalBytes() const
 {
     notImplemented();
     return 0;
-}
-
-void MediaPlayerPrivateRemote::setSize(const IntSize&)
-{
-    notImplemented();
 }
 
 void MediaPlayerPrivateRemote::paint(GraphicsContext&, const FloatRect&)
@@ -570,20 +602,10 @@ bool MediaPlayerPrivateRemote::canEnterFullscreen() const
 }
 #endif
 
-void MediaPlayerPrivateRemote::acceleratedRenderingStateChanged()
-{
-    notImplemented();
-}
-
 bool MediaPlayerPrivateRemote::shouldMaintainAspectRatio() const
 {
     notImplemented();
     return true;
-}
-
-void MediaPlayerPrivateRemote::setShouldMaintainAspectRatio(bool)
-{
-    notImplemented();
 }
 
 bool MediaPlayerPrivateRemote::hasSingleSecurityOrigin() const
@@ -602,11 +624,6 @@ Optional<bool> MediaPlayerPrivateRemote::wouldTaintOrigin(const SecurityOrigin&)
 {
     notImplemented();
     return WTF::nullopt;
-}
-
-void MediaPlayerPrivateRemote::prepareForRendering()
-{
-    notImplemented();
 }
 
 MediaTime MediaPlayerPrivateRemote::mediaTimeForTimeValue(const MediaTime& timeValue) const
@@ -775,11 +792,6 @@ void MediaPlayerPrivateRemote::notifyActiveSourceBuffersChanged()
     notImplemented();
 }
 
-void MediaPlayerPrivateRemote::setShouldDisableSleep(bool)
-{
-    notImplemented();
-}
-
 void MediaPlayerPrivateRemote::applicationWillResignActive()
 {
     notImplemented();
@@ -791,12 +803,6 @@ void MediaPlayerPrivateRemote::applicationDidBecomeActive()
 }
 
 bool MediaPlayerPrivateRemote::performTaskAtMediaTime(WTF::Function<void()>&&, MediaTime)
-{
-    notImplemented();
-    return false;
-}
-
-bool MediaPlayerPrivateRemote::shouldIgnoreIntrinsicSize()
 {
     notImplemented();
     return false;

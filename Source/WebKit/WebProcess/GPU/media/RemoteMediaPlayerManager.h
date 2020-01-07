@@ -84,6 +84,8 @@ private:
     void engineFailedToLoad(WebKit::MediaPlayerPrivateRemoteIdentifier, long);
     void updateCachedState(WebKit::MediaPlayerPrivateRemoteIdentifier, RemoteMediaPlayerState&&);
     void characteristicChanged(WebKit::MediaPlayerPrivateRemoteIdentifier, bool hasAudio, bool hasVideo, WebCore::MediaPlayerEnums::MovieLoadType);
+    void sizeChanged(WebKit::MediaPlayerPrivateRemoteIdentifier, WebCore::FloatSize);
+
     void requestResource(MediaPlayerPrivateRemoteIdentifier, RemoteMediaResourceIdentifier, WebCore::ResourceRequest&&, WebCore::PlatformMediaResourceLoader::LoadOptions, CompletionHandler<void()>&&);
     void removeResource(MediaPlayerPrivateRemoteIdentifier, RemoteMediaResourceIdentifier);
 

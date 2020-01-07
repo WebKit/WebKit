@@ -297,7 +297,13 @@ void RemoteMediaPlayerManager::characteristicChanged(WebKit::MediaPlayerPrivateR
     if (auto player = m_players.get(id))
         player->characteristicChanged(hasAudio, hasVideo, loadType);
 }
-    
+
+void RemoteMediaPlayerManager::sizeChanged(WebKit::MediaPlayerPrivateRemoteIdentifier id, WebCore::FloatSize naturalSize)
+{
+    if (auto player = m_players.get(id))
+        player->sizeChanged(naturalSize);
+}
+
 void RemoteMediaPlayerManager::requestResource(MediaPlayerPrivateRemoteIdentifier id, RemoteMediaResourceIdentifier remoteMediaResourceIdentifier, ResourceRequest&& request, PlatformMediaResourceLoader::LoadOptions options, CompletionHandler<void()>&& completionHandler)
 {
     if (const auto& player = m_players.get(id))

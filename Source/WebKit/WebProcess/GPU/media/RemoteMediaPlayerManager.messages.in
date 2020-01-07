@@ -35,6 +35,7 @@ messages -> RemoteMediaPlayerManager NotRefCounted {
     EngineFailedToLoad(WebKit::MediaPlayerPrivateRemoteIdentifier id, int platformErrorCode)
     UpdateCachedState(WebKit::MediaPlayerPrivateRemoteIdentifier id, struct WebKit::RemoteMediaPlayerState state)
     CharacteristicChanged(WebKit::MediaPlayerPrivateRemoteIdentifier id, bool hasAudio, bool hasVideo, enum:uint8_t WebCore::MediaPlayerEnums::MovieLoadType movieLoadType)
+    SizeChanged(WebKit::MediaPlayerPrivateRemoteIdentifier id, WebCore::FloatSize naturalSize)
 
     RequestResource(WebKit::MediaPlayerPrivateRemoteIdentifier mediaPlayerPrivateRemoteIdentifier, WebKit::RemoteMediaResourceIdentifier remoteMediaResourceIdentifier, WebCore::ResourceRequest request, enum:uint8_t WebCore::PlatformMediaResourceLoader::LoadOptions options) -> () Async
     RemoveResource(WebKit::MediaPlayerPrivateRemoteIdentifier mediaPlayerPrivateRemoteIdentifier, WebKit::RemoteMediaResourceIdentifier remoteMediaResourceIdentifier)

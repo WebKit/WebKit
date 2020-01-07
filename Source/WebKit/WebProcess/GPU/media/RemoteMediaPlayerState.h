@@ -27,6 +27,7 @@
 
 #if ENABLE(GPU_PROCESS)
 
+#include <WebCore/FloatSize.h>
 #include <WebCore/MediaPlayerEnums.h>
 #include <WebCore/PlatformTimeRanges.h>
 #include <wtf/MediaTime.h>
@@ -41,6 +42,7 @@ struct RemoteMediaPlayerState {
     WebCore::PlatformTimeRanges bufferedRanges;
     WebCore::MediaPlayerEnums::NetworkState networkState { WebCore::MediaPlayerEnums::NetworkState::Empty };
     WebCore::MediaPlayerEnums::ReadyState readyState { WebCore::MediaPlayerEnums::ReadyState::HaveNothing };
+    WebCore::FloatSize naturalSize;
     bool paused { true };
     bool loadingProgressed { false };
 
@@ -54,6 +56,7 @@ struct RemoteMediaPlayerState {
         encoder << bufferedRanges;
         encoder.encodeEnum(networkState);
         encoder.encodeEnum(readyState);
+        encoder << naturalSize;
         encoder << paused;
         encoder << loadingProgressed;
     }
@@ -94,6 +97,11 @@ struct RemoteMediaPlayerState {
         if (!decoder.decodeEnum(readyState))
             return WTF::nullopt;
 
+        Optional<WebCore::FloatSize> naturalSize;
+        decoder >> naturalSize;
+        if (!naturalSize)
+            return WTF::nullopt;
+
         Optional<bool> paused;
         decoder >> paused;
         if (!paused)
@@ -104,7 +112,17 @@ struct RemoteMediaPlayerState {
         if (!loadingProgressed)
             return WTF::nullopt;
 
-        return {{ WTFMove(*currentTime), WTFMove(*duration), WTFMove(*minTimeSeekable), WTFMove(*maxTimeSeekable), WTFMove(*bufferedRanges), networkState, readyState, WTFMove(*paused), WTFMove(*loadingProgressed) }};
+        return {{
+            WTFMove(*currentTime),
+            WTFMove(*duration),
+            WTFMove(*minTimeSeekable),
+            WTFMove(*maxTimeSeekable),
+            WTFMove(*bufferedRanges),
+            networkState,
+            readyState,
+            WTFMove(*naturalSize),
+            *paused,
+            *loadingProgressed }};
     }
 
 };
