@@ -215,7 +215,7 @@ inline const FontCascade& InlineTextBox::lineFont() const
 LayoutRect snappedSelectionRect(const LayoutRect& selectionRect, float logicalRight, float selectionTop, float selectionHeight, bool isHorizontal)
 {
     auto snappedSelectionRect = enclosingIntRect(selectionRect);
-    auto logicalWidth = snappedSelectionRect.width();
+    LayoutUnit logicalWidth = snappedSelectionRect.width();
     if (snappedSelectionRect.x() > logicalRight)
         logicalWidth = 0;
     else if (snappedSelectionRect.maxX() > logicalRight)
