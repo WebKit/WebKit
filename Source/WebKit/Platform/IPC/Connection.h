@@ -265,7 +265,7 @@ private:
     
     std::unique_ptr<Decoder> waitForMessage(StringReference messageReceiverName, StringReference messageName, uint64_t destinationID, Seconds timeout, OptionSet<WaitForOption>);
     
-    std::unique_ptr<Decoder> waitForSyncReply(uint64_t syncRequestID, Seconds timeout, OptionSet<SendSyncOption>);
+    std::unique_ptr<Decoder> waitForSyncReply(uint64_t syncRequestID, StringReference messageReceiverName, StringReference messageName, Seconds timeout, OptionSet<SendSyncOption>);
 
     bool dispatchMessageToWorkQueueReceiver(std::unique_ptr<Decoder>&);
     bool dispatchMessageToThreadReceiver(std::unique_ptr<Decoder>&);

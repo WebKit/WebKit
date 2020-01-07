@@ -600,12 +600,14 @@ std::unique_ptr<Decoder> Connection::sendSyncMessage(uint64_t syncRequestID, std
     if (sendSyncOptions.contains(SendSyncOption::ForceDispatchWhenDestinationIsWaitingForUnboundedSyncReply))
         sendOptions = sendOptions | IPC::SendOption::DispatchMessageEvenWhenWaitingForUnboundedSyncReply;
 
+    auto messageReceiverName = encoder->messageReceiverName();
+    auto messageName = encoder->messageName();
     sendMessage(WTFMove(encoder), sendOptions);
 
     // Then wait for a reply. Waiting for a reply could involve dispatching incoming sync messages, so
     // keep an extra reference to the connection here in case it's invalidated.
     Ref<Connection> protect(*this);
-    std::unique_ptr<Decoder> reply = waitForSyncReply(syncRequestID, timeout, sendSyncOptions);
+    std::unique_ptr<Decoder> reply = waitForSyncReply(syncRequestID, messageReceiverName, messageName, timeout, sendSyncOptions);
 
     --m_inSendSyncCount;
 
@@ -622,7 +624,7 @@ std::unique_ptr<Decoder> Connection::sendSyncMessage(uint64_t syncRequestID, std
     return reply;
 }
 
-std::unique_ptr<Decoder> Connection::waitForSyncReply(uint64_t syncRequestID, Seconds timeout, OptionSet<SendSyncOption> sendSyncOptions)
+std::unique_ptr<Decoder> Connection::waitForSyncReply(uint64_t syncRequestID, StringReference messageReceiverName, StringReference messageName, Seconds timeout, OptionSet<SendSyncOption> sendSyncOptions)
 {
     timeout = timeoutRespectingIgnoreTimeoutsForTesting(timeout);
     MonotonicTime absoluteTime = MonotonicTime::now() + timeout;
@@ -666,7 +668,12 @@ std::unique_ptr<Decoder> Connection::waitForSyncReply(uint64_t syncRequestID, Se
         timedOut = !SyncMessageState::singleton().wait(absoluteTime);
     }
 
-    RELEASE_LOG_ERROR(IPC, "Connection::waitForSyncReply: Timed-out while waiting for reply, id = %" PRIu64, syncRequestID);
+#if OS(DARWIN)
+    RELEASE_LOG_ERROR(IPC, "Connection::waitForSyncReply: Timed-out while waiting for reply for %{public}s::%{public}s from process %d, id = %" PRIu64, messageReceiverName.toString().data(), messageName.toString().data(), remoteProcessID(), syncRequestID);
+#else
+    RELEASE_LOG_ERROR(IPC, "Connection::waitForSyncReply: Timed-out while waiting for reply for %s::%s, id = %" PRIu64, messageReceiverName.toString().data(), messageName.toString().data(), syncRequestID);
+#endif
+
     didReceiveSyncReply(sendSyncOptions);
 
     return nullptr;
