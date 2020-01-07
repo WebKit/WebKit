@@ -25,7 +25,7 @@
 
 //# sourceURL=__InjectedScript_WebAutomationSessionProxy.js
 
-(function (sessionIdentifier, evaluate, createUUID) {
+(function (sessionIdentifier, evaluate, createUUID, isValidNodeIdentifier) {
 
 const sessionNodePropertyName = "session-node-" + sessionIdentifier;
 
@@ -119,6 +119,9 @@ let AutomationSessionProxy = class AutomationSessionProxy
 
     _nodeForIdentifier(identifier)
     {
+        if (!isValidNodeIdentifier(identifier))
+            throw {name: "InvalidNodeIdentifier", message: "Node identifier '" + identifier + "' is invalid"};
+
         let node = this._idToNodeMap.get(identifier);
         if (node)
             return node;

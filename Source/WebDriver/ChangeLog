@@ -1,3 +1,19 @@
+2020-01-07  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        WebDriver: handle no such element errors
+        https://bugs.webkit.org/show_bug.cgi?id=204684
+
+        Reviewed by Brian Burg.
+
+        Handle InvalidNodeIdentifier errors.
+
+        Fixes: imported/w3c/webdriver/tests/get_element_tag_name/get.py::test_element_not_found
+               imported/w3c/webdriver/tests/get_element_property/get.py::test_element_not_found
+               imported/w3c/webdriver/tests/get_element_attribute/get.py::test_element_not_found
+
+        * CommandResult.cpp:
+        (WebDriver::CommandResult::CommandResult):
+
 2019-12-23  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         WebDriver: fix handling of session timeouts for values higher than MAX_INT

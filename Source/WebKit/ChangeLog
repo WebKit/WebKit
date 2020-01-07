@@ -1,5 +1,29 @@
 2020-01-07  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        WebDriver: handle no such element errors
+        https://bugs.webkit.org/show_bug.cgi?id=204684
+
+        Reviewed by Brian Burg.
+
+        Add InvalidNodeIdentifier to be generated when the elementID provided by WebDriver is not a valid node identifier.
+
+        * UIProcess/Automation/Automation.json: Add InvalidNodeIdentifier error.
+        * WebProcess/Automation/WebAutomationSessionProxy.cpp:
+        (WebKit::isValidNodeHandle): Helper function to check the given node handle is valid.
+        (WebKit::isValidNodeIdentifier): JavaScript callback function to check the node identifier is valid.
+        (WebKit::WebAutomationSessionProxy::scriptObjectForFrame): Add isValidNodeIdentifier function.
+        (WebKit::WebAutomationSessionProxy::evaluateJavaScriptFunction): Handle InvalidNodeIdentifier errors.
+        (WebKit::WebAutomationSessionProxy::resolveChildFrameWithNodeHandle): Call isValidNodeHandle() and generate
+        InvalidNodeIdentifier error if it fails.
+        (WebKit::WebAutomationSessionProxy::computeElementLayout): Ditto.
+        (WebKit::WebAutomationSessionProxy::selectOptionElement): Ditto.
+        (WebKit::WebAutomationSessionProxy::takeScreenshot): Ditto.
+        * WebProcess/Automation/WebAutomationSessionProxy.js:
+        (let.AutomationSessionProxy.prototype._nodeForIdentifier): Call isValidNodeIdentifier() and throw
+        InvalidNodeIdentifier if it fails.
+
+2020-01-07  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         WebDriver: several tests in imported/w3c/webdriver/tests/state/get_element_attribute.py are failing
         https://bugs.webkit.org/show_bug.cgi?id=180415
 

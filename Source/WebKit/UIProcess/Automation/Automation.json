@@ -71,6 +71,7 @@
                 "WindowNotFound",
                 "FrameNotFound",
                 "NodeNotFound",
+                "InvalidNodeIdentifier",
                 "InvalidElementState",
                 "NoJavaScriptDialog",
                 "NotImplemented",

@@ -92,6 +92,8 @@ CommandResult::CommandResult(RefPtr<JSON::Value>&& result, Optional<ErrorCode> e
             m_errorCode = ErrorCode::ScriptTimeout;
         else if (errorName == "NodeNotFound")
             m_errorCode = ErrorCode::StaleElementReference;
+        else if (errorName == "InvalidNodeIdentifier")
+            m_errorCode = ErrorCode::NoSuchElement;
         else if (errorName == "MissingParameter" || errorName == "InvalidParameter")
             m_errorCode = ErrorCode::InvalidArgument;
         else if (errorName == "InvalidElementState")
