@@ -1,5 +1,20 @@
 2020-01-06  Jonathan Bedard  <jbedard@apple.com>
 
+        results.webkit.org: Tweak processing constants
+        https://bugs.webkit.org/show_bug.cgi?id=205828
+        <rdar://problem/58146698>
+
+        Rubber-stamped by Aakash Jain.
+
+        * resultsdbpy/resultsdbpy/model/upload_context.py:
+        (UploadContext):
+        Increase process timeout to 1 week.
+        Allow 5 retries instead of 3.
+        Retry stuck tasks after 10 minutes instead of 5.
+        Include more tasks so that a scan is always greater than the number of workers.
+
+2020-01-06  Jonathan Bedard  <jbedard@apple.com>
+
         test-lldb-webkit: Use logging module
         https://bugs.webkit.org/show_bug.cgi?id=205832
 

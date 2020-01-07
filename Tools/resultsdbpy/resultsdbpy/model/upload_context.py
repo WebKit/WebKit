@@ -37,10 +37,10 @@ from resultsdbpy.model.configuration_context import ClusteredByConfiguration
 
 class UploadContext(object):
     QUEUE_NAME = 'upload_queue'
-    PROCESS_TIMEOUT = 24 * 60 * 60
-    MAX_ATTEMPTS = 3
-    RETRY_TIME = 5 * 60  # After 5 minutes, re-try a task even if it's in-flight
-    MAX_TASKS_IN_SCAN = 10
+    PROCESS_TIMEOUT = 7 * 24 * 60 * 60
+    MAX_ATTEMPTS = 5
+    RETRY_TIME = 10 * 60  # After 10 minutes, re-try a task even if it's in-flight
+    MAX_TASKS_IN_SCAN = 40
 
     class SuitesByConfiguration(ClusteredByConfiguration):
         __table_name__ = 'suites_by_configuration_and_branch'
