@@ -1,3 +1,30 @@
+2020-01-07  Keith Miller  <keith_miller@apple.com>
+
+        Bytecode checkpoint fixes for arm64(e)
+        https://bugs.webkit.org/show_bug.cgi?id=205871
+
+        Reviewed by Michael Saboff.
+
+        The original bytecode checkpoint patch had a couple of bugs on
+        arm64(e). For arm64 generally, when osr exiting to an inline
+        varargs frame we didn't set the return value of callee before
+        moving the call frame register into a0 for the slow path
+        call. This meant we clobber the return value on arm64 as a0 == r0.
+
+        On arm64e the osr exit compiler set the tag for the return pc for
+        an inline frame to JSEntryTag but the code expected
+        NoTag. Additionally, in the stack unwinder, we were using the
+        JSEntryTag but we should have been stripping the tag from the
+        stack value.
+
+        * dfg/DFGOSRExitCompilerCommon.cpp:
+        (JSC::DFG::callerReturnPC):
+        (JSC::DFG::reifyInlinedCallFrames):
+        * dfg/DFGOSRExitCompilerCommon.h:
+        * interpreter/Interpreter.cpp:
+        (JSC::UnwindFunctor::operator() const):
+        * llint/LowLevelInterpreter.asm:
+
 2020-01-07  Chris Fleizach  <cfleizach@apple.com>
 
         AX: Enable ACCESSIBILITY_ISOLATED_TREE
