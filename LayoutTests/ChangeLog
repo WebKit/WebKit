@@ -1,5 +1,13 @@
 2020-01-06  Fujii Hironori  <Hironori.Fujii@sony.com>
 
+        Unreviewed test gardening for WinCairo port after r253326 and r250849.
+
+        * platform/wincairo/fast/css/invalidation-errors-2-expected.txt:
+        * platform/wincairo/fast/css/invalidation-errors-expected.txt:
+        * platform/wincairo/fast/text/international/bidi-layout-across-linebreak-expected.txt:
+
+2020-01-06  Fujii Hironori  <Hironori.Fujii@sony.com>
+
         Unreviewed test gardening for WinCairo port after r252598.
 
         * platform/wincairo/fast/box-shadow/inset-box-shadow-radius-expected.txt:
