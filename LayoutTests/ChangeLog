@@ -1,5 +1,14 @@
 2020-01-07  Truitt Savell  <tsavell@apple.com>
 
+        Correct some conflicting expectations for fast/text/emoji-gender- tests
+        https://bugs.webkit.org/show_bug.cgi?id=204820
+
+        Unreviewed test gardening.
+
+        * platform/mac/TestExpectations:
+
+2020-01-07  Truitt Savell  <tsavell@apple.com>
+
         Correct expectations made in r254134, r254135, and r254136
         https://bugs.webkit.org/show_bug.cgi?id=205862
         https://bugs.webkit.org/show_bug.cgi?id=205865
