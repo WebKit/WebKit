@@ -100,7 +100,7 @@ public:
     Ref<MediaStreamTrackPrivate> clone();
 
     RealtimeMediaSource& source() { return m_source.get(); }
-    WEBCORE_EXPORT RealtimeMediaSource::Type type() const;
+    RealtimeMediaSource::Type type() const;
 
     void endTrack();
 
@@ -110,7 +110,7 @@ public:
     bool hasObserver(Observer&) const;
 #endif
 
-    WEBCORE_EXPORT const RealtimeMediaSourceSettings& settings() const;
+    const RealtimeMediaSourceSettings& settings() const;
     const RealtimeMediaSourceCapabilities& capabilities() const;
 
     void applyConstraints(const MediaConstraints&, RealtimeMediaSource::ApplyConstraintsHandler&&);

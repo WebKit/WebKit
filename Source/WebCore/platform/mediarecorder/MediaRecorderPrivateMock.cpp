@@ -33,17 +33,17 @@
 
 namespace WebCore {
 
-void MediaRecorderPrivateMock::sampleBufferUpdated(const MediaStreamTrackPrivate& track, MediaSample&)
+void MediaRecorderPrivateMock::sampleBufferUpdated(MediaStreamTrackPrivate& track, MediaSample&)
 {
     generateMockString(track);
 }
 
-void MediaRecorderPrivateMock::audioSamplesAvailable(const MediaStreamTrackPrivate& track, const WTF::MediaTime&, const PlatformAudioData&, const AudioStreamDescription&, size_t)
+void MediaRecorderPrivateMock::audioSamplesAvailable(MediaStreamTrackPrivate& track, const WTF::MediaTime&, const PlatformAudioData&, const AudioStreamDescription&, size_t)
 {
     generateMockString(track);
 }
 
-void MediaRecorderPrivateMock::generateMockString(const MediaStreamTrackPrivate& track)
+void MediaRecorderPrivateMock::generateMockString(MediaStreamTrackPrivate& track)
 {
     auto locker = holdLock(m_bufferLock);
     if (track.type() == RealtimeMediaSource::Type::Audio)

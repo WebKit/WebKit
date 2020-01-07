@@ -80,8 +80,6 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     Modules/indexeddb/shared/IDBResultData.h
     Modules/indexeddb/shared/IDBTransactionInfo.h
 
-    Modules/mediarecorder/MediaRecorderProvider.h
-
     Modules/mediasession/MediaSessionEvents.h
     Modules/mediasession/MediaSessionMetadata.h
     Modules/mediasession/WebMediaSessionManager.h
@@ -1156,8 +1154,6 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/transforms/TransformOperation.h
     platform/graphics/transforms/TransformOperations.h
     platform/graphics/transforms/TransformationMatrix.h
-
-    platform/mediarecorder/MediaRecorderPrivate.h
 
     platform/mediastream/CaptureDevice.h
     platform/mediastream/CaptureDeviceManager.h

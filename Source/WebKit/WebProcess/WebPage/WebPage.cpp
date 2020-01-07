@@ -45,7 +45,6 @@
 #include "LibWebRTCProvider.h"
 #include "LoadParameters.h"
 #include "Logging.h"
-#include "MediaRecorderProvider.h"
 #include "NetscapePlugin.h"
 #include "NetworkConnectionToWebProcessMessages.h"
 #include "NetworkProcessConnection.h"
@@ -462,8 +461,7 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
         WebProcess::singleton().cacheStorageProvider(),
         WebBackForwardListProxy::create(*this),
         WebCookieJar::create(),
-        makeUniqueRef<WebProgressTrackerClient>(*this),
-        makeUniqueRef<MediaRecorderProvider>()
+        makeUniqueRef<WebProgressTrackerClient>(*this)
     );
     pageConfiguration.chromeClient = new WebChromeClient(*this);
 #if ENABLE(CONTEXT_MENUS)

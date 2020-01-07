@@ -129,13 +129,6 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/RemoteMediaPlayerManagerMessagesRep
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/RemoteMediaPlayerManagerProxyMessageReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/RemoteMediaPlayerManagerProxyMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/RemoteMediaPlayerManagerProxyMessagesReplies.h
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/RemoteMediaRecorderManagerMessageReceiver.cpp
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/RemoteMediaRecorderManagerMessages.h
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/RemoteMediaRecorderManagerMessagesReplies.h
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/RemoteMediaRecorderMessageReceiver.cpp
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/RemoteMediaRecorderMessages.h
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/RemoteMediaRecorderMessagesReplies.h
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/RemoteMediaRecordersMessagesReplies.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/RemoteMediaResourceManagerMessageReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/RemoteMediaResourceManagerMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/RemoteMediaResourceManagerMessagesReplies.h

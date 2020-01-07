@@ -110,7 +110,6 @@ class LibWebRTCProvider;
 class LowPowerModeNotifier;
 class MediaCanStartListener;
 class MediaPlaybackTarget;
-class MediaRecorderProvider;
 class PageConfiguration;
 class PageConsoleClient;
 class PageDebuggable;
@@ -585,7 +584,6 @@ public:
     DatabaseProvider& databaseProvider() { return m_databaseProvider; }
     CacheStorageProvider& cacheStorageProvider() { return m_cacheStorageProvider; }
     SocketProvider& socketProvider() { return m_socketProvider; }
-    MediaRecorderProvider& mediaRecorderProvider() { return m_mediaRecorderProvider; }
     CookieJar& cookieJar() { return m_cookieJar.get(); }
 
     StorageNamespaceProvider& storageNamespaceProvider() { return m_storageNamespaceProvider.get(); }
@@ -797,7 +795,6 @@ private:
     std::unique_ptr<SpeechSynthesisClient> m_speechSynthesisClient;
 #endif
 
-    UniqueRef<MediaRecorderProvider> m_mediaRecorderProvider;
     UniqueRef<LibWebRTCProvider> m_libWebRTCProvider;
     RTCController m_rtcController;
 
@@ -923,6 +920,7 @@ private:
     Ref<UserContentProvider> m_userContentProvider;
     Ref<VisitedLinkStore> m_visitedLinkStore;
     RefPtr<WheelEventTestMonitor> m_wheelEventTestMonitor;
+
     HashSet<ActivityStateChangeObserver*> m_activityStateChangeObservers;
 
 #if ENABLE(RESOURCE_USAGE)

@@ -49,10 +49,9 @@ class AudioStreamDescription;
 class MediaStreamTrackPrivate;
 class PlatformAudioData;
 
-class WEBCORE_EXPORT MediaRecorderPrivateWriter : public ThreadSafeRefCounted<MediaRecorderPrivateWriter, WTF::DestructionThread::Main>, public CanMakeWeakPtr<MediaRecorderPrivateWriter> {
+class MediaRecorderPrivateWriter : public ThreadSafeRefCounted<MediaRecorderPrivateWriter, WTF::DestructionThread::Main>, public CanMakeWeakPtr<MediaRecorderPrivateWriter> {
 public:
     static RefPtr<MediaRecorderPrivateWriter> create(const MediaStreamTrackPrivate* audioTrack, const MediaStreamTrackPrivate* videoTrack);
-    static RefPtr<MediaRecorderPrivateWriter> create(bool hasAudio, int width, int height);
     ~MediaRecorderPrivateWriter();
     
     bool setupWriter();

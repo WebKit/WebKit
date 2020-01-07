@@ -24,8 +24,6 @@
 GPUProcess/GPUProcess.cpp
 GPUProcess/GPUConnectionToWebProcess.cpp
 GPUProcess/GPUProcessCreationParameters.cpp
-GPUProcess/webrtc/RemoteMediaRecorder.cpp
-GPUProcess/webrtc/RemoteMediaRecorderManager.cpp
 GPUProcess/media/RemoteMediaPlayerManagerProxy.cpp
 GPUProcess/media/RemoteMediaPlayerProxy.cpp
 GPUProcess/media/RemoteMediaResource.cpp
@@ -515,8 +513,6 @@ WebProcess/GPU/media/RemoteMediaPlayerManager.cpp
 WebProcess/GPU/media/RemoteMediaPlayerMIMETypeCache.cpp @no-unify
 WebProcess/GPU/media/RemoteMediaResourceProxy.cpp
 WebProcess/GPU/webrtc/LibWebRTCCodecs.cpp
-WebProcess/GPU/webrtc/MediaRecorderPrivate.cpp
-WebProcess/GPU/webrtc/MediaRecorderProvider.cpp
 
 WebProcess/Network/NetworkProcessConnection.cpp
 WebProcess/Network/WebLoaderStrategy.cpp
