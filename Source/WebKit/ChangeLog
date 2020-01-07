@@ -1,5 +1,72 @@
 2020-01-07  youenn fablet  <youenn@apple.com>
 
+        Implement MediaRecorder backend in GPUProcess
+        https://bugs.webkit.org/show_bug.cgi?id=205802
+
+        Reviewed by Eric Carlson.
+
+        Add support for sending audio/video tracks to record from WebProcess to GPUProcess.
+        Add a MediaRecorderPrivate implementation that supports sending one audio track and/or one video track to GPUProcess
+        and stopping/fetching data from the remote recorder in GPUProcess.
+
+        In GPUProcess, implement the remote recorder using the existing WebCore recorder writer.
+
+        * CMakeLists.txt:
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources-output.xcfilelist:
+        * DerivedSources.make:
+        * GPUProcess/GPUConnectionToWebProcess.cpp:
+        (WebKit::GPUConnectionToWebProcess::userMediaCaptureManagerProxy):
+        (WebKit::GPUConnectionToWebProcess::mediaRecorderManager):
+        (WebKit::GPUConnectionToWebProcess::didReceiveMessage):
+        * GPUProcess/GPUConnectionToWebProcess.h:
+        * GPUProcess/mac/com.apple.WebKit.GPUProcess.sb.in:
+        * GPUProcess/webrtc/RemoteMediaRecorder.cpp: Added.
+        (WebKit::RemoteMediaRecorder::create):
+        (WebKit::RemoteMediaRecorder::RemoteMediaRecorder):
+        (WebKit::RemoteMediaRecorder::~RemoteMediaRecorder):
+        (WebKit::RemoteMediaRecorder::storage):
+        (WebKit::RemoteMediaRecorder::audioSamplesStorageChanged):
+        (WebKit::RemoteMediaRecorder::audioSamplesAvailable):
+        (WebKit::RemoteMediaRecorder::videoSampleAvailable):
+        (WebKit::RemoteMediaRecorder::fetchData):
+        (WebKit::RemoteMediaRecorder::stopRecording):
+        * GPUProcess/webrtc/RemoteMediaRecorder.h: Added.
+        * GPUProcess/webrtc/RemoteMediaRecorder.messages.in: Added.
+        * GPUProcess/webrtc/RemoteMediaRecorderManager.cpp: Added.
+        (WebKit::RemoteMediaRecorderManager::RemoteMediaRecorderManager):
+        (WebKit::RemoteMediaRecorderManager::~RemoteMediaRecorderManager):
+        (WebKit::RemoteMediaRecorderManager::didReceiveRemoteMediaRecorderMessage):
+        (WebKit::RemoteMediaRecorderManager::createRecorder):
+        (WebKit::RemoteMediaRecorderManager::releaseRecorder):
+        * GPUProcess/webrtc/RemoteMediaRecorderManager.h: Added.
+        (WebKit::RemoteMediaRecorderManager::didReceiveMessageFromWebProcess):
+        * GPUProcess/webrtc/RemoteMediaRecorderManager.messages.in: Added.
+        * Scripts/webkit/messages.py:
+        * Sources.txt:
+        * SourcesCocoa.txt:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/GPU/media/MediaRecorderProvider.cpp: Added.
+        (WebCore::MediaRecorderProvider::createMediaRecorderPrivate):
+        * WebProcess/GPU/media/MediaRecorderProvider.h: Added.
+        * WebProcess/GPU/webrtc/MediaRecorderIdentifier.h: Added.
+        * WebProcess/GPU/webrtc/MediaRecorderPrivate.cpp: Added.
+        (WebKit::MediaRecorderPrivate::MediaRecorderPrivate):
+        (WebKit::MediaRecorderPrivate::~MediaRecorderPrivate):
+        (WebKit::MediaRecorderPrivate::sampleBufferUpdated):
+        (WebKit::MediaRecorderPrivate::audioSamplesAvailable):
+        (WebKit::MediaRecorderPrivate::storageChanged):
+        (WebKit::MediaRecorderPrivate::fetchData):
+        (WebKit::MediaRecorderPrivate::stopRecording):
+        * WebProcess/GPU/webrtc/MediaRecorderPrivate.h: Added.
+        * WebProcess/GPU/webrtc/MediaRecorderProvider.cpp: Added.
+        (WebKit::MediaRecorderProvider::createMediaRecorderPrivate):
+        * WebProcess/GPU/webrtc/MediaRecorderProvider.h: Added.
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::m_overriddenMediaType):
+
+2020-01-07  youenn fablet  <youenn@apple.com>
+
         Add an option to make video capture in GPUProcess
         https://bugs.webkit.org/show_bug.cgi?id=205853
 

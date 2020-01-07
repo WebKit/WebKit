@@ -53,6 +53,8 @@
 #include "IDBConnectionToServer.h"
 #include "InspectorClient.h"
 #include "LibWebRTCProvider.h"
+#include "MediaRecorderPrivate.h"
+#include "MediaRecorderProvider.h"
 #include "NetworkStorageSession.h"
 #include "Page.h"
 #include "PageConfiguration.h"
@@ -571,8 +573,17 @@ Ref<StorageNamespace> EmptyStorageNamespaceProvider::createTransientLocalStorage
     return adoptRef(*new EmptyStorageNamespace { sessionID });
 }
 
-class EmptyStorageSessionProvider : public StorageSessionProvider {
+class EmptyStorageSessionProvider final : public StorageSessionProvider {
     NetworkStorageSession* storageSession() const final { return nullptr; }
+};
+
+class EmptyMediaRecorderProvider final : public MediaRecorderProvider {
+public:
+    EmptyMediaRecorderProvider() = default;
+private:
+#if ENABLE(MEDIA_STREAM)
+    std::unique_ptr<MediaRecorderPrivate> createMediaRecorderPrivate(const MediaStreamPrivate&) final { return nullptr; }
+#endif
 };
 
 PageConfiguration pageConfigurationWithEmptyClients(PAL::SessionID sessionID)
@@ -585,7 +596,8 @@ PageConfiguration pageConfigurationWithEmptyClients(PAL::SessionID sessionID)
         CacheStorageProvider::create(),
         adoptRef(*new EmptyBackForwardClient),
         CookieJar::create(adoptRef(*new EmptyStorageSessionProvider)),
-        makeUniqueRef<EmptyProgressTrackerClient>()
+        makeUniqueRef<EmptyProgressTrackerClient>(),
+        makeUniqueRef<EmptyMediaRecorderProvider>()
     };
 
     static NeverDestroyed<EmptyChromeClient> dummyChromeClient;

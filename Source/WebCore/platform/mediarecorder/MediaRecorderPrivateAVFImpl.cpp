@@ -40,7 +40,6 @@ std::unique_ptr<MediaRecorderPrivateAVFImpl> MediaRecorderPrivateAVFImpl::create
 {
     // FIXME: we will need to implement support for multiple audio/video tracks
     // Currently we only choose the first track as the recorded track.
-    // FIXME: We would better to throw an exception to JavaScript if writer creation fails.
 
     String audioTrackId;
     String videoTrackId;
@@ -82,14 +81,14 @@ MediaRecorderPrivateAVFImpl::MediaRecorderPrivateAVFImpl(Ref<MediaRecorderPrivat
 {
 }
 
-void MediaRecorderPrivateAVFImpl::sampleBufferUpdated(MediaStreamTrackPrivate& track, MediaSample& sampleBuffer)
+void MediaRecorderPrivateAVFImpl::sampleBufferUpdated(const MediaStreamTrackPrivate& track, MediaSample& sampleBuffer)
 {
     if (track.id() != m_recordedVideoTrackID)
         return;
     m_writer->appendVideoSampleBuffer(sampleBuffer.platformSample().sample.cmSampleBuffer);
 }
 
-void MediaRecorderPrivateAVFImpl::audioSamplesAvailable(MediaStreamTrackPrivate& track, const WTF::MediaTime& mediaTime, const PlatformAudioData& data, const AudioStreamDescription& description, size_t sampleCount)
+void MediaRecorderPrivateAVFImpl::audioSamplesAvailable(const MediaStreamTrackPrivate& track, const WTF::MediaTime& mediaTime, const PlatformAudioData& data, const AudioStreamDescription& description, size_t sampleCount)
 {
     if (track.id() != m_recordedAudioTrackID)
         return;

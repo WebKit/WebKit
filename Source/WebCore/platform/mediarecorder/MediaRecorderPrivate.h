@@ -26,6 +26,7 @@
 
 #include <wtf/CompletionHandler.h>
 #include <wtf/Forward.h>
+#include "Exception.h"
 
 #if ENABLE(MEDIA_STREAM)
 
@@ -43,12 +44,19 @@ class SharedBuffer;
 
 class MediaRecorderPrivate {
 public:
-    virtual void sampleBufferUpdated(MediaStreamTrackPrivate&, MediaSample&) = 0;
-    virtual void audioSamplesAvailable(MediaStreamTrackPrivate&, const WTF::MediaTime&, const PlatformAudioData&, const AudioStreamDescription&, size_t) = 0;
+    virtual ~MediaRecorderPrivate() = default;
+
+    virtual void sampleBufferUpdated(const MediaStreamTrackPrivate&, MediaSample&) = 0;
+    virtual void audioSamplesAvailable(const MediaStreamTrackPrivate&, const WTF::MediaTime&, const PlatformAudioData&, const AudioStreamDescription&, size_t) = 0;
 
     virtual void fetchData(CompletionHandler<void(RefPtr<SharedBuffer>&&, const String& mimeType)>&&) = 0;
-    virtual ~MediaRecorderPrivate() = default;
-    virtual void stopRecording() { }
+    virtual void stopRecording() { };
+
+    using ErrorCallback = Function<void(Optional<Exception>&&)>;
+    void setErrorCallback(ErrorCallback&& errorCallback) { m_errorCallback = WTFMove(errorCallback); }
+
+protected:
+    ErrorCallback m_errorCallback;
 };
     
 } // namespace WebCore

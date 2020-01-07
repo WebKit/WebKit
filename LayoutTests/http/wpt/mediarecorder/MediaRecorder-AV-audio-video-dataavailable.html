@@ -20,6 +20,10 @@
     </canvas>
 </div>
 <script>
+    // This test is not passing with GPUProcess as long as capture frames are not IOSurfaced backed.
+    if (window.internals)
+        window.internals.setUseGPUProcessForWebRTC(false);
+
     var context;
     var drawStartTime;
 
