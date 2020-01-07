@@ -625,11 +625,10 @@ class RunTest(unittest.TestCase, StreamTestingMixin):
         self.assertTrue(host.filesystem.exists('/tmp/layout-test-results/failures/flaky/text-actual.txt'))
         self.assertFalse(host.filesystem.exists('/tmp/layout-test-results/retries/failures/flaky/text-actual.txt'))
 
-        # Now we test that --clobber-old-results does remove the old entries and the old retries,
-        # and that we don't retry again.
+        # Now we test that --clobber-old-results does remove the old entries and the old retries.
         host = MockHost()
         details, err, _ = logging_run(['--no-retry-failures', '--clobber-old-results', 'failures/flaky'], tests_included=True, host=host)
-        self.assertEqual(details.exit_code, 1)
+        self.assertEqual(details.exit_code, 0)
         self.assertTrue('Clobbering old results' in err.getvalue())
         self.assertTrue('flaky/text.html' in err.getvalue())
         self.assertTrue(host.filesystem.exists('/tmp/layout-test-results/failures/flaky/text-actual.txt'))
