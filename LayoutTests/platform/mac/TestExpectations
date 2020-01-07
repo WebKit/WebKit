@@ -1969,3 +1969,5 @@ webkit.org/b/205757 webgl/1.0.3/conformance/textures/texture-upload-size.html [ 
 webkit.org/b/205756 webgl/2.0.0/conformance2/glsl3/no-attribute-vertex-shader.html [ Pass Failure ]
 
 webkit.org/b/205807 [ Debug ] inspector/page/setBootstrapScript-main-frame.html [ Pass Failure ]
+
+webkit.org/b/205862 [ Mojave+ ] webgpu/whlsl/while-loop-break.html [ Pass Failure ]
