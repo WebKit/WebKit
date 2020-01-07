@@ -1,5 +1,18 @@
 2020-01-07  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [SOUP] HSTS Support causes page loading to fail with "Operation was cancelled"
+        https://bugs.webkit.org/show_bug.cgi?id=203620
+
+        Reviewed by Michael Catanzaro.
+
+        The problem is that we are assuming that request cancellation happens synchronously, but it can happen that the
+        async ready callback for the previous request is called after the new one has started.
+
+        * NetworkProcess/soup/NetworkDataTaskSoup.cpp:
+        (WebKit::NetworkDataTaskSoup::sendRequestCallback): Return early if this is a previous request already cancelled.
+
+2020-01-07  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         WebDriver: handle no such element errors
         https://bugs.webkit.org/show_bug.cgi?id=204684
 
