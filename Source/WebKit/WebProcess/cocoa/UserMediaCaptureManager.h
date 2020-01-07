@@ -54,16 +54,15 @@ public:
     static const char* supplementName();
 
     void didReceiveMessageFromGPUProcess(IPC::Connection& connection, IPC::Decoder& decoder) { didReceiveMessage(connection, decoder); }
+    void setupCaptureProcesses(bool shouldCaptureAudioInUIProcess, bool shouldCaptureAudioInGPUProcess, bool shouldCaptureVideoInUIProcess, bool shouldCaptureVideoInGPUProcess, bool shouldCaptureDisplayInUIProcess);
 
 private:
-    // WebProcessSupplement
-    void initialize(const WebProcessCreationParameters&) final;
-
     // WebCore::RealtimeMediaSource factories
     class AudioFactory : public WebCore::AudioCaptureFactory {
     public:
         explicit AudioFactory(UserMediaCaptureManager& manager) : m_manager(manager) { }
         void setShouldCaptureInGPUProcess(bool value) { m_shouldCaptureInGPUProcess = value; }
+
     private:
         WebCore::CaptureSourceOrError createAudioCaptureSource(const WebCore::CaptureDevice&, String&& hashSalt, const WebCore::MediaConstraints*) final;
         WebCore::CaptureDeviceManager& audioCaptureDeviceManager() final { return m_manager.m_noOpCaptureDeviceManager; }
@@ -77,15 +76,17 @@ private:
     class VideoFactory : public WebCore::VideoCaptureFactory {
     public:
         explicit VideoFactory(UserMediaCaptureManager& manager) : m_manager(manager) { }
+        void setShouldCaptureInGPUProcess(bool value) { m_shouldCaptureInGPUProcess = value; }
 
     private:
-        WebCore::CaptureSourceOrError createVideoCaptureSource(const WebCore::CaptureDevice& device, String&& hashSalt, const WebCore::MediaConstraints* constraints) final { return m_manager.createCaptureSource(device, WTFMove(hashSalt), constraints); }
+        WebCore::CaptureSourceOrError createVideoCaptureSource(const WebCore::CaptureDevice&, String&& hashSalt, const WebCore::MediaConstraints*) final;
         WebCore::CaptureDeviceManager& videoCaptureDeviceManager() final { return m_manager.m_noOpCaptureDeviceManager; }
 #if PLATFORM(IOS_FAMILY)
         void setVideoCapturePageState(bool interrupted, bool pageMuted) final;
 #endif
 
         UserMediaCaptureManager& m_manager;
+        bool m_shouldCaptureInGPUProcess { false };
     };
     class DisplayFactory : public WebCore::DisplayCaptureFactory {
     public:

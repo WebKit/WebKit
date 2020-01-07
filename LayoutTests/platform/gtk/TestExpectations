@@ -593,7 +593,7 @@ webkit.org/b/169811 fast/mediastream/captureStream/canvas3d.html [ Crash Timeout
 webkit.org/b/190576 fast/mediastream/get-user-media-device-id.html [ Failure ]
 
 # No support for GPUProcess yet
-fast/mediastream/captureAudioInGPUProcess.html [ Skip ]
+fast/mediastream/captureInGPUProcess.html [ Skip ]
 
 # Requires Resolution Media Query support
 webkit.org/b/100137 fast/media/mq-resolution.html [ Failure ]

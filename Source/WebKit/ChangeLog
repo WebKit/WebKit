@@ -1,5 +1,49 @@
 2020-01-07  youenn fablet  <youenn@apple.com>
 
+        Add an option to make video capture in GPUProcess
+        https://bugs.webkit.org/show_bug.cgi?id=205853
+
+        Reviewed by Eric Carlson.
+
+        Add an option to make video capture in GPU process.
+        Pass this option at creation of the web page so that the process can be updated after launch time.
+        Apply the same principle to other audio/video capture parameters.
+        Add SPI to update this preference.
+        Fix bug in the passing of preference to process pool for the video capture in UIProcess parameter, which is now an experimental flag and not an internal one.
+
+        Test: fast/mediastream/captureInGPUProcess.html
+
+        * Shared/WebPageCreationParameters.cpp:
+        (WebKit::WebPageCreationParameters::encode const):
+        (WebKit::WebPageCreationParameters::decode):
+        * Shared/WebPageCreationParameters.h:
+        * Shared/WebPreferences.yaml:
+        * Shared/WebProcessCreationParameters.cpp:
+        (WebKit::WebProcessCreationParameters::encode const):
+        (WebKit::WebProcessCreationParameters::decode):
+        * Shared/WebProcessCreationParameters.h:
+        * UIProcess/API/APIProcessPoolConfiguration.h:
+        * UIProcess/API/C/WKPreferences.cpp:
+        (WKPreferencesSetCaptureVideoInGPUProcessEnabled):
+        (WKPreferencesGetCaptureVideoInGPUProcessEnabled):
+        * UIProcess/API/C/WKPreferencesRef.h:
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::WebProcessPool::platformInitializeWebProcess):
+        * UIProcess/WebPageProxy.cpp:
+        * UIProcess/WebPreferences.cpp:
+        (WebKit::WebPreferences::updateBoolValueForInternalDebugFeatureKey):
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::initializeNewWebProcess):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::m_overriddenMediaType):
+        * WebProcess/cocoa/UserMediaCaptureManager.cpp:
+        (WebKit::UserMediaCaptureManager::setupCaptureProcesses):
+        (WebKit::UserMediaCaptureManager::VideoFactory::createVideoCaptureSource):
+        * WebProcess/cocoa/UserMediaCaptureManager.h:
+        (WebKit::UserMediaCaptureManager::VideoFactory::setShouldCaptureInGPUProcess):
+
+2020-01-07  youenn fablet  <youenn@apple.com>
+
         Fix non GPUProcess build issue in UserMediaCaptureManager
         https://bugs.webkit.org/show_bug.cgi?id=205851
 

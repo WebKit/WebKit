@@ -2169,6 +2169,16 @@ bool WKPreferencesGetCaptureVideoInUIProcessEnabled(WKPreferencesRef preferences
     return toImpl(preferencesRef)->captureVideoInUIProcessEnabled();
 }
 
+void WKPreferencesSetCaptureVideoInGPUProcessEnabled(WKPreferencesRef preferencesRef, bool flag)
+{
+    toImpl(preferencesRef)->setCaptureVideoInGPUProcessEnabled(flag);
+}
+
+bool WKPreferencesGetCaptureVideoInGPUProcessEnabled(WKPreferencesRef preferencesRef)
+{
+    return toImpl(preferencesRef)->captureVideoInGPUProcessEnabled();
+}
+
 void WKPreferencesSetReferrerPolicyAttributeEnabled(WKPreferencesRef preferencesRef, bool flag)
 {
     toImpl(preferencesRef)->setReferrerPolicyAttributeEnabled(flag);

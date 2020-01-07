@@ -7550,6 +7550,12 @@ WebPageCreationParameters WebPageProxy::creationParameters(WebProcessProxy& proc
 
     process.addWebUserContentControllerProxy(m_userContentController, parameters);
 
+    parameters.shouldCaptureAudioInUIProcess = m_process->processPool().configuration().shouldCaptureAudioInUIProcess();
+    parameters.shouldCaptureAudioInGPUProcess = m_process->processPool().configuration().shouldCaptureAudioInGPUProcess();
+    parameters.shouldCaptureVideoInUIProcess = m_process->processPool().configuration().shouldCaptureVideoInUIProcess();
+    parameters.shouldCaptureVideoInGPUProcess = m_process->processPool().configuration().shouldCaptureVideoInGPUProcess();
+    parameters.shouldCaptureDisplayInUIProcess = m_process->processPool().configuration().shouldCaptureDisplayInUIProcess();
+
     return parameters;
 }
 

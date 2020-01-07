@@ -1502,6 +1502,15 @@ CaptureVideoInUIProcessEnabled:
   webcoreBinding: none
   condition: ENABLE(MEDIA_STREAM)
 
+CaptureVideoInGPUProcessEnabled:
+  type: bool
+  defaultValue: false
+  humanReadableName: "Capture video in GPUProcess"
+  humanReadableDescription: "Enable video capture in GPUProcess"
+  category: internal
+  webcoreBinding: none
+  condition: ENABLE(MEDIA_STREAM)
+
 
 # For internal features:
 # The type should be boolean.

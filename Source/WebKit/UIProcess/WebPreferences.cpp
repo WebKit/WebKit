@@ -119,20 +119,20 @@ void WebPreferences::updateBoolValueForInternalDebugFeatureKey(const String& key
         return;
     }
     if (key == WebPreferencesKey::captureAudioInUIProcessEnabledKey()) {
-        for (auto* page : m_pages)
-            page->process().processPool().configuration().setShouldCaptureAudioInUIProcess(value);
+        for (auto* processPool : WebProcessPool::allProcessPools())
+            processPool->configuration().setShouldCaptureAudioInUIProcess(value);
 
         return;
     }
     if (key == WebPreferencesKey::captureAudioInGPUProcessEnabledKey()) {
-        for (auto* page : m_pages)
-            page->process().processPool().configuration().setShouldCaptureAudioInGPUProcess(value);
+        for (auto* processPool : WebProcessPool::allProcessPools())
+            processPool->configuration().setShouldCaptureAudioInGPUProcess(value);
 
         return;
     }
-    if (key == WebPreferencesKey::captureVideoInUIProcessEnabledKey()) {
-        for (auto* page : m_pages)
-            page->process().processPool().configuration().setShouldCaptureVideoInUIProcess(value);
+    if (key == WebPreferencesKey::captureVideoInGPUProcessEnabledKey()) {
+        for (auto* processPool : WebProcessPool::allProcessPools())
+            processPool->configuration().setShouldCaptureVideoInGPUProcess(value);
 
         return;
     }
@@ -142,6 +142,12 @@ void WebPreferences::updateBoolValueForInternalDebugFeatureKey(const String& key
 
 void WebPreferences::updateBoolValueForExperimentalFeatureKey(const String& key, bool value)
 {
+    if (key == WebPreferencesKey::captureVideoInUIProcessEnabledKey()) {
+        for (auto* processPool : WebProcessPool::allProcessPools())
+            processPool->configuration().setShouldCaptureVideoInUIProcess(value);
+
+        return;
+    }
     update(); // FIXME: Only send over the changed key and value.
 }
 

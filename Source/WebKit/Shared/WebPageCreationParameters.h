@@ -203,6 +203,12 @@ struct WebPageCreationParameters {
 
     String overriddenMediaType;
     Vector<String> corsDisablingPatterns;
+
+    bool shouldCaptureAudioInUIProcess { false };
+    bool shouldCaptureAudioInGPUProcess { false };
+    bool shouldCaptureVideoInUIProcess { false };
+    bool shouldCaptureVideoInGPUProcess { false };
+    bool shouldCaptureDisplayInUIProcess { false };
 };
 
 } // namespace WebKit

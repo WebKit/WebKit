@@ -1,4 +1,4 @@
-<!-- webkit-test-runner [ enableCaptureAudioInGPUProcess=true ] -->
+<!-- webkit-test-runner [ enableCaptureAudioInGPUProcess=true enableCaptureVideoInGPUProcess=true ] -->
 <!doctype html>
 <html>
     <head>
@@ -14,6 +14,11 @@ promise_test(async (test) => {
     video.srcObject = await navigator.mediaDevices.getUserMedia({ audio: true });
     await video.play();
 }, "Play audio captured in GPU process");
+
+promise_test(async (test) => {
+    video.srcObject = await navigator.mediaDevices.getUserMedia({ video: true });
+    await video.play();
+}, "Play video captured in GPU process");
         </script>
     </body>
 </html>

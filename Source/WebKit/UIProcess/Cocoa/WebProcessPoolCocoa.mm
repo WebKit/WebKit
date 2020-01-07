@@ -295,7 +295,7 @@ void WebProcessPool::platformInitializeWebProcess(const WebProcessProxy& process
 #endif
 
     // FIXME: Remove this and related parameter when <rdar://problem/29448368> is fixed.
-    if (isSafari && !parameters.shouldCaptureAudioInUIProcess && mediaDevicesEnabled)
+    if (isSafari && !m_configuration->shouldCaptureAudioInUIProcess() && !m_configuration->shouldCaptureAudioInGPUProcess() && mediaDevicesEnabled)
         SandboxExtension::createHandleForGenericExtension("com.apple.webkit.microphone", parameters.audioCaptureExtensionHandle);
 #endif
 
