@@ -1,3 +1,24 @@
+2020-01-06  Yury Semikhatsky  <yurys@chromium.org>
+
+        REGRESSION: [ Mac wk2 ] http/tests/inspector/target/provisional-load-cancels-previous-load.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=205473
+        <rdar://problem/58093690>
+
+        The failure was due to attempts to add output to the test page which could be not fully
+        loaded after navigation. To make it deterministic it is now possible to keep provisional
+        navigation paused and to defer output until the test page is ready.
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Protocol/Target.js:
+        (WI.Target.prototype.initialize):
+        (WI.Target.prototype._resumeIfPaused): extracted resume logic in a method that
+        can be overridden in the tests.
+
+        * UserInterface/Test/FrontendTestHarness.js:
+        (FrontendTestHarness.prototype.deferOutputUntilTestPageIsReloaded): allow to pause
+        output when navigation is started via protocol commands rather than the test harness.
+
 2020-01-06  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Color picker: make it keyboard accessible
