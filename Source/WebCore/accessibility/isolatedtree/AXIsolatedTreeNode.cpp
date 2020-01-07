@@ -78,7 +78,6 @@ void AXIsolatedObject::initializeAttributeData(AXCoreObject& object, bool isRoot
     setProperty(AXPropertyName::IsSlider, object.isSlider());
     setProperty(AXPropertyName::IsControl, object.isControl());
     setProperty(AXPropertyName::IsList, object.isList());
-    setProperty(AXPropertyName::IsTable, object.isTable());
     setProperty(AXPropertyName::IsTableRow, object.isTableRow());
     setProperty(AXPropertyName::IsTableColumn, object.isTableColumn());
     setProperty(AXPropertyName::IsTableCell, object.isTableCell());
@@ -185,6 +184,7 @@ void AXIsolatedObject::initializeAttributeData(AXCoreObject& object, bool isRoot
     setProperty(AXPropertyName::ReadOnlyValue, object.readOnlyValue());
     setProperty(AXPropertyName::AutoCompleteValue, object.autoCompleteValue());
     setProperty(AXPropertyName::SpeakAs, object.speakAsProperty());
+    setProperty(AXPropertyName::StringValue, object.stringValue().isolatedCopy());
 #if PLATFORM(COCOA) && !PLATFORM(IOS_FAMILY)
     setProperty(AXPropertyName::CaretBrowsingEnabled, object.caretBrowsingEnabled());
 #endif
@@ -880,12 +880,6 @@ bool AXIsolatedObject::isAccessibilitySVGElement() const
     return false;
 }
 
-bool AXIsolatedObject::containsText(String const&) const
-{
-    ASSERT_NOT_REACHED();
-    return false;
-}
-
 bool AXIsolatedObject::isAttachmentElement() const
 {
     ASSERT_NOT_REACHED();
@@ -1407,12 +1401,6 @@ bool AXIsolatedObject::isARIAStaticText() const
 {
     ASSERT_NOT_REACHED();
     return false;
-}
-
-String AXIsolatedObject::stringValue() const
-{
-    ASSERT_NOT_REACHED();
-    return String();
 }
 
 String AXIsolatedObject::text() const

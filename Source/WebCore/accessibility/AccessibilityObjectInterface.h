@@ -28,6 +28,7 @@
 #include "HTMLTextFormControlElement.h"
 #include "LayoutRect.h"
 #include "Range.h"
+#include "TextIterator.h"
 #include "TextIteratorBehavior.h"
 #include "VisiblePosition.h"
 #include "VisibleSelection.h"
@@ -489,7 +490,6 @@ public:
     virtual bool isAccessibilitySVGRoot() const = 0;
     virtual bool isAccessibilitySVGElement() const = 0;
 
-    virtual bool containsText(String const&) const = 0;
     virtual bool isAttachmentElement() const = 0;
     virtual bool isHeading() const = 0;
     virtual bool isLink() const = 0;
@@ -763,6 +763,14 @@ public:
     virtual String accessibilityDescription() const = 0;
     virtual String title() const = 0;
     virtual String helpText() const = 0;
+    bool containsText(String const& text) const
+    {
+        // If text is empty we return true.
+        return text.isEmpty()
+            || findPlainText(title(), text, CaseInsensitive)
+            || findPlainText(accessibilityDescription(), text, CaseInsensitive)
+            || findPlainText(stringValue(), text, CaseInsensitive);
+    }
 
     // Methods for determining accessibility text.
     virtual bool isARIAStaticText() const = 0;

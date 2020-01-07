@@ -120,8 +120,6 @@ public:
     bool isAccessibilitySVGRoot() const override { return false; }
     bool isAccessibilitySVGElement() const override { return false; }
 
-    bool containsText(String const&) const override;
-
     bool isAttachmentElement() const override { return false; }
     bool isHeading() const override { return false; }
     bool isLink() const override { return false; }
