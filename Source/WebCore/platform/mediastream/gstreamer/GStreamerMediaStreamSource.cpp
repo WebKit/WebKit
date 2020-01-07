@@ -150,21 +150,21 @@ public:
     WebKitMediaStreamObserver(WebKitMediaStreamSrc* src)
         : m_mediaStreamSrc(src) { }
 
-    void characteristicsChanged() final { GST_DEBUG_OBJECT(m_mediaStreamSrc.get(), "renegotiation should happen"); }
+    void characteristicsChanged() final { GST_DEBUG_OBJECT(m_mediaStreamSrc, "renegotiation should happen"); }
     void activeStatusChanged() final { }
 
     void didAddTrack(MediaStreamTrackPrivate& track) final
     {
-        webkitMediaStreamSrcAddTrack(m_mediaStreamSrc.get(), &track, false);
+        webkitMediaStreamSrcAddTrack(m_mediaStreamSrc, &track, false);
     }
 
     void didRemoveTrack(MediaStreamTrackPrivate& track) final
     {
-        webkitMediaStreamSrcRemoveTrackByType(m_mediaStreamSrc.get(), track.type());
+        webkitMediaStreamSrcRemoveTrackByType(m_mediaStreamSrc, track.type());
     }
 
 private:
-    GRefPtr<WebKitMediaStreamSrc> m_mediaStreamSrc;
+    WebKitMediaStreamSrc* m_mediaStreamSrc;
 };
 
 typedef struct _WebKitMediaStreamSrcClass WebKitMediaStreamSrcClass;
