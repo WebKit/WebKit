@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <title>cssom-view - elementFromPoint</title>
-<script src="../../../../../resources/testharness.js"></script>
-<script src="../../../../../resources/testharnessreport.js"></script>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
 <style>
   .size {
     width:60px;
@@ -40,7 +40,7 @@
   xmlns="http://www.w3.org/2000/svg"
   xmlns:xlink="http://www.w3.org/1999/xlink">
 
-  <!--  Now we add a text element and apply rotate and translate to both  -->
+  <!-- Now we add a text element and apply rotate and translate to both -->
   <rect x="50" y="50" height="60" width="60" style="stroke:#000; fill: #0086B2" transform="translate(30) rotate(45 50 50)"></rect>
   <text x="60" y="105" transform="translate(30) rotate(45 50 50)"> Hello! </text>
 
@@ -53,9 +53,9 @@
     <area id="circleO" shape="circle" coords="120,60,30" href="#" alt="area 2"/>
     <area id="polyLE" shape="poly" coords="280,0,310,0,360,30,360,90,280,90" href="#" alt="area 3"/>
   </map>
-  <!--  Test for fieldsets not doing weird things.  Use a 200x200 div to hold
+  <!-- Test for fieldsets not doing weird things.  Use a 200x200 div to hold
        all the bits for this test. Also, place it top/right, so it is not below
-       the bottom edge of the viewport.  -->
+       the bottom edge of the viewport. -->
   <div style="position: absolute; width: 200px; height: 200px; right: 0; top: 0">
     <div id="fieldset-div"
          class="size" style="position: absolute; top: 0; left: 0">
@@ -63,8 +63,8 @@
     <fieldset id="fieldset"
               class="size"
               style="position: absolute; top: 100px; left: 100px; border-radius: 100px">
-      <!--  Place the child span so the overflow area of the fieldset overlaps
-           the div  -->
+      <!-- Place the child span so the overflow area of the fieldset overlaps
+           the div -->
       <span style="position: absolute; top: -100px; left: -100px; height: 1px; width: 1px"></span>
     </fieldset>
   </div>

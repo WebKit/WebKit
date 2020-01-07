@@ -1,11 +1,11 @@
 <!doctype html>
 <meta charset=utf-8>
-<!--  WARNING: These tests are preliminary and probably partly incorrect.   -->
+<!-- WARNING: These tests are preliminary and probably partly incorrect.  -->
 <title>CSSOM View automated IDL tests</title>
 <link rel="author" title="Ms2ger" href="mailto:Ms2ger@gmail.com">
 <link rel="help" href="https://drafts.csswg.org/cssom-view-1/#idl-index">
-<script src=../../../../../resources/testharness.js></script>
-<script src=../../../../../resources/testharnessreport.js></script>
+<script src=/resources/testharness.js></script>
+<script src=/resources/testharnessreport.js></script>
 <script src=/resources/WebIDLParser.js></script>
 <script src=/resources/idlharness.js></script>
 
@@ -34,7 +34,7 @@ idl_test(
       HTMLElement: ['document.createElement("div")'],
       HTMLImageElement: ['document.createElement("img")'],
       Range: ['new Range()'],
-      // MouseEvent: ['new MouseEvent("foo")'],
+      MouseEvent: ['new MouseEvent("foo")'],
       Text: ['document.createTextNode("x")'],
       // CSSPseudoElement: [],
     });

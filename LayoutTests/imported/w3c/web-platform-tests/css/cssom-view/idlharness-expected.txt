@@ -139,6 +139,16 @@ PASS MouseEvent interface: attribute x
 PASS MouseEvent interface: attribute y 
 PASS MouseEvent interface: attribute offsetX 
 PASS MouseEvent interface: attribute offsetY 
+PASS MouseEvent interface: new MouseEvent("foo") must inherit property "screenX" with the proper type 
+PASS MouseEvent interface: new MouseEvent("foo") must inherit property "screenY" with the proper type 
+PASS MouseEvent interface: new MouseEvent("foo") must inherit property "pageX" with the proper type 
+PASS MouseEvent interface: new MouseEvent("foo") must inherit property "pageY" with the proper type 
+PASS MouseEvent interface: new MouseEvent("foo") must inherit property "clientX" with the proper type 
+PASS MouseEvent interface: new MouseEvent("foo") must inherit property "clientY" with the proper type 
+PASS MouseEvent interface: new MouseEvent("foo") must inherit property "x" with the proper type 
+PASS MouseEvent interface: new MouseEvent("foo") must inherit property "y" with the proper type 
+PASS MouseEvent interface: new MouseEvent("foo") must inherit property "offsetX" with the proper type 
+PASS MouseEvent interface: new MouseEvent("foo") must inherit property "offsetY" with the proper type 
 PASS HTMLElement interface: attribute offsetParent 
 PASS HTMLElement interface: attribute offsetTop 
 PASS HTMLElement interface: attribute offsetLeft 

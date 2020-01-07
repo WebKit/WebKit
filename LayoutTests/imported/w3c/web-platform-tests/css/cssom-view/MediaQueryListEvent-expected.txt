@@ -1,0 +1,10 @@
+
+FAIL type can be different from "change" Can't find variable: MediaQueryListEvent
+FAIL init dictionary default values Can't find variable: MediaQueryListEvent
+FAIL init dictionary overrides Can't find variable: MediaQueryListEvent
+FAIL argument of addListener promise_test: Unhandled rejection with value: object "TypeError: Right hand side of instanceof is not an object"
+FAIL argument of onchange promise_test: Unhandled rejection with value: object "TypeError: Right hand side of instanceof is not an object"
+FAIL constructor of "change" event promise_test: Unhandled rejection with value: object "TypeError: mql.addEventListener is not a function. (In 'mql.addEventListener("change", event => {
+        _event = event;
+    })', 'mql.addEventListener' is undefined)"
+

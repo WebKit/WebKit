@@ -1,0 +1,20 @@
+
+FAIL onchange adds listener promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating '_event.media')"
+FAIL onchange removes listener assert_equals: expected 1 but got 0
+FAIL listeners for "change" type are called promise_test: Unhandled rejection with value: object "TypeError: mql.addEventListener is not a function. (In 'mql.addEventListener("change", {
+        handleEvent() {
+            calls++;
+        },
+    })', 'mql.addEventListener' is undefined)"
+FAIL listeners with different type are not called promise_test: Unhandled rejection with value: object "TypeError: mql.addEventListener is not a function. (In 'mql.addEventListener("matches", t.unreached_func("should not be called"))', 'mql.addEventListener' is undefined)"
+FAIL addEventListener "once" option is respected promise_test: Unhandled rejection with value: object "TypeError: mql.addEventListener is not a function. (In 'mql.addEventListener("change", {
+        handleEvent() {
+            calls++;
+        },
+    }, {once: true})', 'mql.addEventListener' is undefined)"
+FAIL removeEventListener removes listener promise_test: Unhandled rejection with value: object "TypeError: mql.addEventListener is not a function. (In 'mql.addEventListener("change", listener)', 'mql.addEventListener' is undefined)"
+FAIL dispatchEvent works as expected mql.addEventListener is not a function. (In 'mql.addEventListener("custom", event => {
+        receivedEvent = event;
+        event.preventDefault();
+    }, true)', 'mql.addEventListener' is undefined)
+

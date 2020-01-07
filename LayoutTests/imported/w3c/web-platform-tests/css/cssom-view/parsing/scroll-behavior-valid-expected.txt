@@ -1,0 +1,4 @@
+
+FAIL e.style['scroll-behavior'] = "auto" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['scroll-behavior'] = "smooth" should set the property value assert_not_equals: property should be set got disallowed value ""
+

@@ -4,8 +4,8 @@
 <link rel="author" title="Frédéric Wang" href="mailto:fwang@igalia.com">
 <link rel="help" href="https://drafts.csswg.org/cssom-view/#propdef-scroll-behavior">
 <link rel="help" href="https://drafts.csswg.org/cssom-view/#scrolling-box">
-<script src="../../../../../resources/testharness.js"></script>
-<script src="../../../../../resources/testharnessreport.js"></script>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
 <script src="support/scroll-behavior.js"></script>
 <style>
   .scrollable {
@@ -59,6 +59,34 @@
           });
         });
       }, `Scroll positions when performing smooth scrolling from (${initial.left}, ${initial.top}) to (${finalLeft}, ${finalTop}) using ${scrollFunction}() `);
+    });
+  });
+
+  [{scrollAttribute: "scrollLeft", scrollValue: 500}, {scrollAttribute: "scrollTop", scrollValue: 250}].forEach(function(scrollTest) {
+    var initialPosition = Number(scrollTest.scrollValue) * 2;
+    [0, initialPosition].forEach((initial) => {
+      promise_test(() => {
+        return new Promise(function(resolve, reject) {
+          scrollNode(overflowNode, "scroll", "instant", initial, initial);
+          var oldValue = overflowNode[scrollTest.scrollAttribute];
+          assert_equals(oldValue, initial, `${scrollTest.scrollAttribute} should be at initial position`);
+          var expectedValue = Number(scrollTest.scrollValue);
+          overflowNode[scrollTest.scrollAttribute] = expectedValue;
+          observeScrolling(overflowNode, function(done) {
+            try {
+              var newValue = overflowNode[scrollTest.scrollAttribute];
+              assert_less_than_equal(Math.abs(expectedValue - newValue), Math.abs(expectedValue - oldValue), "Scroll position should move towards the final position");
+              if (done)
+                assert_equals(newValue, expectedValue, `${scrollTest.scrollAttribute} should reach final position`);
+              oldValue = newValue;
+            } catch(e) {
+              reject(e);
+            }
+            if (done)
+              resolve();
+          });
+        });
+      }, `Scroll positions when performing smooth scrolling from ${initial} to ${scrollTest.scrollValue} by setting ${scrollTest.scrollAttribute} `);
     });
   });
 

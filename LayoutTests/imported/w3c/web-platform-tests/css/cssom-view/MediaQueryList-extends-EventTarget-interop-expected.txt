@@ -1,0 +1,14 @@
+
+FAIL dispatchEvent triggers listener added with addListener mql.dispatchEvent is not a function. (In 'mql.dispatchEvent(dispatchedEvent)', 'mql.dispatchEvent' is undefined)
+FAIL listener added with addListener and addEventListener is called once promise_test: Unhandled rejection with value: object "TypeError: Argument 1 ('listener') to MediaQueryList.addListener must be a function"
+FAIL listener added with addListener and addEventListener (capture) is called twice promise_test: Unhandled rejection with value: object "TypeError: mql.addEventListener is not a function. (In 'mql.addEventListener("change", listener, true)', 'mql.addEventListener' is undefined)"
+FAIL removeEventListener removes listener added with addListener promise_test: Unhandled rejection with value: object "TypeError: Argument 1 ('listener') to MediaQueryList.addListener must be a function"
+FAIL removeEventListener (capture) doesn't remove listener added with addListener promise_test: Unhandled rejection with value: object "TypeError: mql.removeEventListener is not a function. (In 'mql.removeEventListener("change", listener, true)', 'mql.removeEventListener' is undefined)"
+FAIL removeListener removes listener added with addEventListener promise_test: Unhandled rejection with value: object "TypeError: mql.addEventListener is not a function. (In 'mql.addEventListener("change", listener)', 'mql.addEventListener' is undefined)"
+FAIL removeListener doesn't remove listener added with addEventListener (capture) promise_test: Unhandled rejection with value: object "TypeError: mql.addEventListener is not a function. (In 'mql.addEventListener("change", listener, true)', 'mql.addEventListener' is undefined)"
+FAIL capturing event listener fires before non-capturing listener at target promise_test: Unhandled rejection with value: object "TypeError: mql.addEventListener is not a function. (In 'mql.addEventListener("change", {
+        handleEvent() {
+            calls.push("addEventListener");
+        },
+    }, true)', 'mql.addEventListener' is undefined)"
+

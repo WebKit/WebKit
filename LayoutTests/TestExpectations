@@ -746,7 +746,7 @@ webkit.org/b/184066 imported/w3c/web-platform-tests/IndexedDB/nested-cloning-lar
 webkit.org/b/184066 imported/w3c/web-platform-tests/IndexedDB/nested-cloning-large.html [ Skip ]
 webkit.org/b/184066 imported/w3c/web-platform-tests/IndexedDB/nested-cloning-small.html [ Skip ]
 imported/w3c/web-platform-tests/css/cssom/interfaces.html [ Pass Timeout ]
-[ Debug ] imported/w3c/web-platform-tests/css/cssom-view/interfaces.html [ Skip ]
+[ Debug ] imported/w3c/web-platform-tests/css/cssom-view/idlharness.html [ Skip ]
 webkit.org/b/182292 imported/w3c/web-platform-tests/css/cssom-view/scrollingElement-quirks-dynamic-001.html [ ImageOnlyFailure ]
 webkit.org/b/182292 imported/w3c/web-platform-tests/css/cssom-view/scrollingElement-quirks-dynamic-002.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-ui/text-overflow-010.html [ ImageOnlyFailure ]

@@ -1,0 +1,8 @@
+
+FAIL calls handleEvent method of event listener promise_test: Unhandled rejection with value: object "TypeError: Argument 1 ('listener') to MediaQueryList.addListener must be a function"
+FAIL looks up handleEvent method on every event dispatch promise_test: Unhandled rejection with value: object "TypeError: Argument 1 ('listener') to MediaQueryList.addListener must be a function"
+PASS doesn't look up handleEvent method on callable event listeners 
+FAIL rethrows errors when getting handleEvent promise_rejects_exactly: function "function () { throw e }" threw object "TypeError: Argument 1 ('listener') to MediaQueryList.addListener must be a function" but we expected it to throw object "[object Object]"
+PASS throws if handleEvent is falsy and not callable 
+PASS throws if handleEvent is thruthy and not callable 
+

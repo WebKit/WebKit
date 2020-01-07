@@ -32,6 +32,10 @@ FAIL Main frame with smooth scroll-behavior ; scrollIntoView() with default beha
 FAIL Main frame with smooth scroll-behavior ; scrollIntoView() with auto behavior assert_less_than: Should not set scrollLeft immediately expected a number less than 2430 but got 2430
 PASS Main frame with smooth scroll-behavior ; scrollIntoView() with instant behavior 
 FAIL Main frame with smooth scroll-behavior ; scrollIntoView() with smooth behavior assert_less_than: Should not set scrollLeft immediately expected a number less than 2430 but got 2430
+PASS Set scrollLeft to frame with auto scroll-behavior 
+FAIL Set scrollLeft to frame with smooth scroll-behavior assert_less_than: Shouldn't set scroll attribute immediately expected a number less than 2430 but got 2430
+PASS Set scrollTop to frame with auto scroll-behavior 
+FAIL Set scrollTop to frame with smooth scroll-behavior assert_less_than: Shouldn't set scroll attribute immediately expected a number less than 2480 but got 2480
 PASS Aborting an ongoing smooth scrolling on the main frame with another smooth scrolling 
 PASS Aborting an ongoing smooth scrolling on the main frame with an instant scrolling 
 

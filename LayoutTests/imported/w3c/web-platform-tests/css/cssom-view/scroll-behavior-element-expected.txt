@@ -31,6 +31,10 @@ FAIL Element with smooth scroll-behavior ; scrollIntoView() with default behavio
 FAIL Element with smooth scroll-behavior ; scrollIntoView() with auto behavior assert_less_than: Should not set scrollLeft immediately expected a number less than 500 but got 500
 PASS Element with smooth scroll-behavior ; scrollIntoView() with instant behavior 
 FAIL Element with smooth scroll-behavior ; scrollIntoView() with smooth behavior assert_less_than: Should not set scrollLeft immediately expected a number less than 500 but got 500
+PASS Set scrollLeft to element with auto scroll-behavior 
+FAIL Set scrollLeft to element with smooth scroll-behavior assert_less_than: Shouldn't set scroll attribute immediately expected a number less than 500 but got 500
+PASS Set scrollTop to element with auto scroll-behavior 
+FAIL Set scrollTop to element with smooth scroll-behavior assert_less_than: Shouldn't set scroll attribute immediately expected a number less than 250 but got 250
 PASS Aborting an ongoing smooth scrolling on an element with another smooth scrolling 
 PASS Aborting an ongoing smooth scrolling on an element with an instant scrolling 
 
