@@ -134,7 +134,7 @@ void InlineFormattingContext::layoutFormattingContextRoot(const Box& formattingC
 {
     ASSERT(formattingContextRoot.isFloatingPositioned() || formattingContextRoot.isInlineBlockBox());
 
-    computeBorderAndPadding(formattingContextRoot, usedHorizontalValues);
+    computeBorderAndPadding(formattingContextRoot, usedHorizontalValues.constraints);
     computeWidthAndMargin(formattingContextRoot, usedHorizontalValues);
     // Swich over to the new formatting context (the one that the root creates).
     if (is<Container>(formattingContextRoot)) {
@@ -154,7 +154,7 @@ void InlineFormattingContext::computeHorizontalAndVerticalGeometry(const Box& la
     if (is<Container>(layoutBox)) {
         // Inline containers (<span>) can't get sized/positioned yet. At this point we can only compute their margins, borders and paddings.
         computeHorizontalMargin(layoutBox, usedHorizontalValues);
-        computeBorderAndPadding(layoutBox, usedHorizontalValues);
+        computeBorderAndPadding(layoutBox, usedHorizontalValues.constraints);
         // Inline containers have 0 computed vertical margins.
         formattingState().displayBox(layoutBox).setVerticalMargin({ { }, { } });
         return;
@@ -162,7 +162,7 @@ void InlineFormattingContext::computeHorizontalAndVerticalGeometry(const Box& la
 
     if (layoutBox.isReplaced()) {
         // Replaced elements (img, video) can be sized but not yet positioned.
-        computeBorderAndPadding(layoutBox, usedHorizontalValues);
+        computeBorderAndPadding(layoutBox, usedHorizontalValues.constraints);
         computeWidthAndMargin(layoutBox, usedHorizontalValues);
         computeHeightAndMargin(layoutBox, usedHorizontalValues, usedVerticalValues);
         return;
@@ -197,7 +197,7 @@ FormattingContext::IntrinsicWidthConstraints InlineFormattingContext::computedIn
             formattingContextRootList.append(layoutBox);
             computeIntrinsicWidthForFormattingRoot(*layoutBox, usedHorizontalValues);
         } else if (layoutBox->isReplaced() || is<Container>(*layoutBox)) {
-            computeBorderAndPadding(*layoutBox, usedHorizontalValues);
+            computeBorderAndPadding(*layoutBox, usedHorizontalValues.constraints);
             // inline-block and replaced.
             auto needsWidthComputation = layoutBox->isReplaced();
             if (needsWidthComputation)
@@ -254,7 +254,7 @@ void InlineFormattingContext::computeIntrinsicWidthForFormattingRoot(const Box& 
 {
     ASSERT(formattingRoot.establishesFormattingContext());
 
-    computeBorderAndPadding(formattingRoot, usedHorizontalValues);
+    computeBorderAndPadding(formattingRoot, usedHorizontalValues.constraints);
     computeHorizontalMargin(formattingRoot, usedHorizontalValues);
 
     auto constraints = IntrinsicWidthConstraints { };
@@ -316,7 +316,7 @@ void InlineFormattingContext::computeWidthAndHeightForReplacedInlineBox(const Bo
     ASSERT(!layoutBox.establishesFormattingContext());
     ASSERT(layoutBox.replaced());
 
-    computeBorderAndPadding(layoutBox, usedHorizontalValues);
+    computeBorderAndPadding(layoutBox, usedHorizontalValues.constraints);
     computeWidthAndMargin(layoutBox, usedHorizontalValues);
     computeHeightAndMargin(layoutBox, usedHorizontalValues, usedVerticalValues);
 }

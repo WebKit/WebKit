@@ -100,7 +100,7 @@ protected:
     const FormattingState& formattingState() const { return m_formattingState; }
     FormattingState& formattingState() { return m_formattingState; }
 
-    void computeBorderAndPadding(const Box&, Optional<UsedHorizontalValues> = WTF::nullopt);
+    void computeBorderAndPadding(const Box&, const UsedHorizontalValues::Constraints&);
 
 #ifndef NDEBUG
     virtual void validateGeometryConstraintsAfterLayout() const;

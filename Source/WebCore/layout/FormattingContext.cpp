@@ -131,13 +131,11 @@ void FormattingContext::computeOutOfFlowVerticalGeometry(const Box& layoutBox)
     displayBox.setVerticalMargin({ nonCollapsedVerticalMargin, { } });
 }
 
-void FormattingContext::computeBorderAndPadding(const Box& layoutBox, Optional<UsedHorizontalValues> usedHorizontalValues)
+void FormattingContext::computeBorderAndPadding(const Box& layoutBox, const UsedHorizontalValues::Constraints& horizontalConstraint)
 {
-    if (!usedHorizontalValues)
-        usedHorizontalValues = UsedHorizontalValues { Geometry::inFlowHorizontalConstraints(geometryForBox(*layoutBox.containingBlock())) };
     auto& displayBox = formattingState().displayBox(layoutBox);
     displayBox.setBorder(geometry().computedBorder(layoutBox));
-    displayBox.setPadding(geometry().computedPadding(layoutBox, *usedHorizontalValues));
+    displayBox.setPadding(geometry().computedPadding(layoutBox, UsedHorizontalValues { horizontalConstraint }));
 }
 
 void FormattingContext::layoutOutOfFlowContent(InvalidationState& invalidationState)
@@ -151,7 +149,8 @@ void FormattingContext::layoutOutOfFlowContent(InvalidationState& invalidationSt
         if (!invalidationState.needsLayout(*outOfFlowBox))
             continue;
 
-        computeBorderAndPadding(*outOfFlowBox);
+        auto constraints = Geometry::inFlowHorizontalConstraints(geometryForBox(*outOfFlowBox->containingBlock()));
+        computeBorderAndPadding(*outOfFlowBox, constraints);
         computeOutOfFlowHorizontalGeometry(*outOfFlowBox);
         if (is<Container>(*outOfFlowBox)) {
             auto& outOfFlowRootContainer = downcast<Container>(*outOfFlowBox);

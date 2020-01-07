@@ -99,9 +99,10 @@ void TableFormattingContext::layoutInFlowContent(InvalidationState& invalidation
 
 void TableFormattingContext::layoutTableCellBox(const Box& cellLayoutBox, const TableGrid::Column& column, InvalidationState& invalidationState)
 {
-    auto& cellDisplayBox = formattingState().displayBox(cellLayoutBox);
-    computeBorderAndPadding(cellLayoutBox);
+    auto horizontalConstraints = Geometry::inFlowHorizontalConstraints(geometryForBox(*cellLayoutBox.containingBlock()));
+    computeBorderAndPadding(cellLayoutBox, horizontalConstraints);
     // Margins do not apply to internal table elements.
+    auto& cellDisplayBox = formattingState().displayBox(cellLayoutBox);
     cellDisplayBox.setHorizontalMargin({ });
     cellDisplayBox.setHorizontalComputedMargin({ });
     // Don't know the actual position yet.
