@@ -677,9 +677,10 @@ void WebGL2RenderingContext::texImage2D(GC3Denum, GC3Dint, GC3Dint, GC3Dsizei, G
     LOG(WebGL, "[[ NOT IMPLEMENTED ]] texImage2D()");
 }
 
-void WebGL2RenderingContext::texImage2D(GC3Denum, GC3Dint, GC3Dint, GC3Dsizei, GC3Dsizei, GC3Dint, GC3Denum, GC3Denum, TexImageSource&&)
+ExceptionOr<void> WebGL2RenderingContext::texImage2D(GC3Denum, GC3Dint, GC3Dint, GC3Dsizei, GC3Dsizei, GC3Dint, GC3Denum, GC3Denum, TexImageSource&&)
 {
     LOG(WebGL, "[[ NOT IMPLEMENTED ]] texImage2D()");
+    return { };
 }
 
 void WebGL2RenderingContext::texImage2D(GC3Denum, GC3Dint, GC3Dint, GC3Dsizei, GC3Dsizei, GC3Dint, GC3Denum, GC3Denum, RefPtr<ArrayBufferView>&&, GC3Duint)
@@ -692,9 +693,10 @@ void WebGL2RenderingContext::texImage3D(GC3Denum, GC3Dint, GC3Dint, GC3Dsizei, G
     LOG(WebGL, "[[ NOT IMPLEMENTED ]] texImage3D()");
 }
 
-void WebGL2RenderingContext::texImage3D(GC3Denum, GC3Dint, GC3Dint, GC3Dsizei, GC3Dsizei, GC3Dsizei, GC3Dint, GC3Denum, GC3Denum, TexImageSource&&)
+ExceptionOr<void> WebGL2RenderingContext::texImage3D(GC3Denum, GC3Dint, GC3Dint, GC3Dsizei, GC3Dsizei, GC3Dsizei, GC3Dint, GC3Denum, GC3Denum, TexImageSource&&)
 {
     LOG(WebGL, "[[ NOT IMPLEMENTED ]] texImage3D()");
+    return { };
 }
 
 void WebGL2RenderingContext::texImage3D(GC3Denum, GC3Dint, GC3Dint, GC3Dsizei, GC3Dsizei, GC3Dsizei, GC3Dint, GC3Denum, GC3Denum, RefPtr<ArrayBufferView>&&)
@@ -712,9 +714,10 @@ void WebGL2RenderingContext::texSubImage2D(GC3Denum, GC3Dint, GC3Dint, GC3Dint, 
     LOG(WebGL, "[[ NOT IMPLEMENTED ]] texSubImage2D()");
 }
 
-void WebGL2RenderingContext::texSubImage2D(GC3Denum, GC3Dint, GC3Dint, GC3Dint, GC3Dsizei, GC3Dsizei, GC3Denum, GC3Denum, TexImageSource&&)
+ExceptionOr<void> WebGL2RenderingContext::texSubImage2D(GC3Denum, GC3Dint, GC3Dint, GC3Dint, GC3Dsizei, GC3Dsizei, GC3Denum, GC3Denum, TexImageSource&&)
 {
     LOG(WebGL, "[[ NOT IMPLEMENTED ]] texSubImage2D()");
+    return { };
 }
 
 void WebGL2RenderingContext::texSubImage2D(GC3Denum, GC3Dint, GC3Dint, GC3Dint, GC3Dsizei, GC3Dsizei, GC3Denum, GC3Denum, RefPtr<ArrayBufferView>&&, GC3Duint)
@@ -732,24 +735,15 @@ void WebGL2RenderingContext::texSubImage3D(GC3Denum, GC3Dint, GC3Dint, GC3Dint, 
     LOG(WebGL, "[[ NOT IMPLEMENTED ]] texSubImage3D()");
 }
 
-void WebGL2RenderingContext::texSubImage3D(GC3Denum, GC3Dint, GC3Dint, GC3Dint, GC3Dint, GC3Dsizei, GC3Dsizei, GC3Dsizei, GC3Denum, GC3Denum, TexImageSource&&)
+ExceptionOr<void> WebGL2RenderingContext::texSubImage3D(GC3Denum, GC3Dint, GC3Dint, GC3Dint, GC3Dint, GC3Dsizei, GC3Dsizei, GC3Dsizei, GC3Denum, GC3Denum, TexImageSource&&)
 {
     LOG(WebGL, "[[ NOT IMPLEMENTED ]] texSubImage3D()");
+    return { };
 }
 
 void WebGL2RenderingContext::copyTexSubImage3D(GC3Denum, GC3Dint, GC3Dint, GC3Dint, GC3Dint, GC3Dint, GC3Dint, GC3Dsizei, GC3Dsizei)
 {
     LOG(WebGL, "[[ NOT IMPLEMENTED ]] copyTexSubImage3D()");
-}
-
-void WebGL2RenderingContext::compressedTexImage2D(GC3Denum, GC3Dint, GC3Denum, GC3Dsizei, GC3Dsizei, GC3Dint, GC3Dsizei, GC3Dint64)
-{
-    LOG(WebGL, "[[ NOT IMPLEMENTED ]] compressedTexImage2D()");
-}
-
-void WebGL2RenderingContext::compressedTexImage2D(GC3Denum, GC3Dint, GC3Denum, GC3Dsizei, GC3Dsizei, GC3Dint, ArrayBufferView&, GC3Duint, GC3Duint)
-{
-    LOG(WebGL, "[[ NOT IMPLEMENTED ]] compressedTexImage2D()");
 }
 
 void WebGL2RenderingContext::compressedTexImage3D(GC3Denum, GC3Dint, GC3Denum, GC3Dsizei, GC3Dsizei, GC3Dsizei, GC3Dint, GC3Dsizei, GC3Dint64)
@@ -2184,6 +2178,207 @@ bool WebGL2RenderingContext::validateCapability(const char* functionName, GC3Den
         synthesizeGLError(GraphicsContextGL::INVALID_ENUM, functionName, "invalid capability");
         return false;
     }
+}
+
+void WebGL2RenderingContext::compressedTexImage2D(GC3Denum target, GC3Dint level, GC3Denum internalformat, GC3Dsizei width, GC3Dsizei height, GC3Dint border, GC3Dsizei imageSize, GC3Dint64 offset)
+{
+    UNUSED_PARAM(target);
+    UNUSED_PARAM(level);
+    UNUSED_PARAM(internalformat);
+    UNUSED_PARAM(width);
+    UNUSED_PARAM(height);
+    UNUSED_PARAM(border);
+    UNUSED_PARAM(imageSize);
+    UNUSED_PARAM(offset);
+
+    LOG(WebGL, "[[ NOT IMPLEMENTED ]] compressedTexImage2D()");
+}
+
+void WebGL2RenderingContext::compressedTexImage2D(GC3Denum target, GC3Dint level, GC3Denum internalformat, GC3Dsizei width, GC3Dsizei height, GC3Dint border, ArrayBufferView& srcData, GC3Duint srcOffset, GC3Duint srcLengthOverride)
+{
+    UNUSED_PARAM(target);
+    UNUSED_PARAM(level);
+    UNUSED_PARAM(internalformat);
+    UNUSED_PARAM(width);
+    UNUSED_PARAM(height);
+    UNUSED_PARAM(border);
+    UNUSED_PARAM(srcData);
+    UNUSED_PARAM(srcOffset);
+    UNUSED_PARAM(srcLengthOverride);
+
+    LOG(WebGL, "[[ NOT IMPLEMENTED ]] compressedTexImage2D()");
+}
+
+void WebGL2RenderingContext::compressedTexSubImage2D(GLenum target, GLint level, GLint xoffset, GLint yoffset, GLsizei width, GLsizei height, GLenum format, GLsizei imageSize, GLintptr offset)
+{
+    UNUSED_PARAM(target);
+    UNUSED_PARAM(level);
+    UNUSED_PARAM(xoffset);
+    UNUSED_PARAM(yoffset);
+    UNUSED_PARAM(width);
+    UNUSED_PARAM(height);
+    UNUSED_PARAM(format);
+    UNUSED_PARAM(imageSize);
+    UNUSED_PARAM(offset);
+
+    LOG(WebGL, "[[ NOT IMPLEMENTED ]] compressedTexSubImage2D()");
+}
+
+void WebGL2RenderingContext::compressedTexSubImage2D(GLenum target, GLint level, GLint xoffset, GLint yoffset, GLsizei width, GLsizei height, GLenum format, ArrayBufferView& srcData, GLuint srcOffset, GLuint srcLengthOverride)
+{
+    UNUSED_PARAM(target);
+    UNUSED_PARAM(level);
+    UNUSED_PARAM(xoffset);
+    UNUSED_PARAM(yoffset);
+    UNUSED_PARAM(width);
+    UNUSED_PARAM(height);
+    UNUSED_PARAM(format);
+    UNUSED_PARAM(srcData);
+    UNUSED_PARAM(srcOffset);
+    UNUSED_PARAM(srcLengthOverride);
+
+    LOG(WebGL, "[[ NOT IMPLEMENTED ]] compressedTexSubImage2D()");
+
+}
+
+void WebGL2RenderingContext::uniform1fv(WebGLUniformLocation* location, Float32List data, GLuint srcOffset, GLuint srcLength)
+{
+    UNUSED_PARAM(location);
+    UNUSED_PARAM(data);
+    UNUSED_PARAM(srcOffset);
+    UNUSED_PARAM(srcLength);
+
+    LOG(WebGL, "[[ NOT IMPLEMENTED ]] uniform1fv()");
+}
+
+void WebGL2RenderingContext::uniform2fv(WebGLUniformLocation* location, Float32List data, GLuint srcOffset, GLuint srcLength)
+{
+    UNUSED_PARAM(location);
+    UNUSED_PARAM(data);
+    UNUSED_PARAM(srcOffset);
+    UNUSED_PARAM(srcLength);
+
+    LOG(WebGL, "[[ NOT IMPLEMENTED ]] uniform2fv()");
+}
+
+void WebGL2RenderingContext::uniform3fv(WebGLUniformLocation* location, Float32List data, GLuint srcOffset, GLuint srcLength)
+{
+    UNUSED_PARAM(location);
+    UNUSED_PARAM(data);
+    UNUSED_PARAM(srcOffset);
+    UNUSED_PARAM(srcLength);
+
+    LOG(WebGL, "[[ NOT IMPLEMENTED ]] uniform3fv()");
+}
+
+void WebGL2RenderingContext::uniform4fv(WebGLUniformLocation* location, Float32List data, GLuint srcOffset, GLuint srcLength)
+{
+    UNUSED_PARAM(location);
+    UNUSED_PARAM(data);
+    UNUSED_PARAM(srcOffset);
+    UNUSED_PARAM(srcLength);
+
+    LOG(WebGL, "[[ NOT IMPLEMENTED ]] uniform4fv()");
+}
+
+void WebGL2RenderingContext::uniform1iv(WebGLUniformLocation* location, Int32List data, GLuint srcOffset, GLuint srcLength)
+{
+    UNUSED_PARAM(location);
+    UNUSED_PARAM(data);
+    UNUSED_PARAM(srcOffset);
+    UNUSED_PARAM(srcLength);
+
+    LOG(WebGL, "[[ NOT IMPLEMENTED ]] uniform1iv()");
+}
+
+void WebGL2RenderingContext::uniform2iv(WebGLUniformLocation* location, Int32List data, GLuint srcOffset, GLuint srcLength)
+{
+    UNUSED_PARAM(location);
+    UNUSED_PARAM(data);
+    UNUSED_PARAM(srcOffset);
+    UNUSED_PARAM(srcLength);
+
+    LOG(WebGL, "[[ NOT IMPLEMENTED ]] uniform2iv()");
+}
+
+void WebGL2RenderingContext::uniform3iv(WebGLUniformLocation* location, Int32List data, GLuint srcOffset, GLuint srcLength)
+{
+    UNUSED_PARAM(location);
+    UNUSED_PARAM(data);
+    UNUSED_PARAM(srcOffset);
+    UNUSED_PARAM(srcLength);
+
+    LOG(WebGL, "[[ NOT IMPLEMENTED ]] uniform3iv()");
+}
+
+void WebGL2RenderingContext::uniform4iv(WebGLUniformLocation* location, Int32List data, GLuint srcOffset, GLuint srcLength)
+{
+    UNUSED_PARAM(location);
+    UNUSED_PARAM(data);
+    UNUSED_PARAM(srcOffset);
+    UNUSED_PARAM(srcLength);
+
+    LOG(WebGL, "[[ NOT IMPLEMENTED ]] uniform4iv()");
+}
+
+void WebGL2RenderingContext::uniformMatrix2fv(WebGLUniformLocation* location, GLboolean transpose, Float32List data, GLuint srcOffset, GLuint srcLength)
+{
+    UNUSED_PARAM(location);
+    UNUSED_PARAM(transpose);
+    UNUSED_PARAM(data);
+    UNUSED_PARAM(srcOffset);
+    UNUSED_PARAM(srcLength);
+
+    LOG(WebGL, "[[ NOT IMPLEMENTED ]] uniformMatrix2fv()");
+}
+
+void WebGL2RenderingContext::uniformMatrix3fv(WebGLUniformLocation* location, GLboolean transpose, Float32List data, GLuint srcOffset, GLuint srcLength)
+{
+    UNUSED_PARAM(location);
+    UNUSED_PARAM(transpose);
+    UNUSED_PARAM(data);
+    UNUSED_PARAM(srcOffset);
+    UNUSED_PARAM(srcLength);
+
+    LOG(WebGL, "[[ NOT IMPLEMENTED ]] uniformMatrix3fv()");
+}
+
+void WebGL2RenderingContext::uniformMatrix4fv(WebGLUniformLocation* location, GLboolean transpose, Float32List data, GLuint srcOffset, GLuint srcLength)
+{
+    UNUSED_PARAM(location);
+    UNUSED_PARAM(transpose);
+    UNUSED_PARAM(data);
+    UNUSED_PARAM(srcOffset);
+    UNUSED_PARAM(srcLength);
+
+    LOG(WebGL, "[[ NOT IMPLEMENTED ]] uniformMatrix4fv()");
+}
+
+void WebGL2RenderingContext::readPixels(GLint x, GLint y, GLsizei width, GLsizei height, GLenum format, GLenum type, GLintptr offset)
+{
+    UNUSED_PARAM(x);
+    UNUSED_PARAM(y);
+    UNUSED_PARAM(width);
+    UNUSED_PARAM(height);
+    UNUSED_PARAM(format);
+    UNUSED_PARAM(type);
+    UNUSED_PARAM(offset);
+
+    LOG(WebGL, "[[ NOT IMPLEMENTED ]] readPixels()");
+}
+
+void WebGL2RenderingContext::readPixels(GLint x, GLint y, GLsizei width, GLsizei height, GLenum format, GLenum type, ArrayBufferView& dstData, GLuint dstOffset)
+{
+    UNUSED_PARAM(x);
+    UNUSED_PARAM(y);
+    UNUSED_PARAM(width);
+    UNUSED_PARAM(height);
+    UNUSED_PARAM(format);
+    UNUSED_PARAM(type);
+    UNUSED_PARAM(dstData);
+    UNUSED_PARAM(dstOffset);
+
+    LOG(WebGL, "[[ NOT IMPLEMENTED ]] readPixels()");
 }
 
 } // namespace WebCore

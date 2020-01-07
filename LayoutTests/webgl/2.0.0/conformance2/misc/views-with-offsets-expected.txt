@@ -51,30 +51,20 @@ Test: ../../resources/webgl_test_files/conformance2/misc/views-with-offsets.html
 [ 48: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR :
 [ 49: FAIL ] Does not support texSubImage3D with offsets into views.
 [ 50: FAIL ] Does not support compressedTexImage2D with offsets into views.
-[ 51: FAIL ] getError expected: NO_ERROR. Was INVALID_VALUE :
-[ 52: FAIL ] getError expected: NO_ERROR. Was INVALID_VALUE :
-[ 53: PASS ] getError was expected value: INVALID_VALUE :
-[ 54: PASS ] getError was expected value: INVALID_VALUE :
-[ 55: PASS ] getError was expected value: INVALID_VALUE :
-[ 56: PASS ] getError was expected value: INVALID_VALUE :
-[ 57: PASS ] getError was expected value: INVALID_VALUE :
-[ 58: PASS ] getError was expected value: INVALID_VALUE :
-[ 59: PASS ] getError was expected value: INVALID_VALUE :
-[ 60: PASS ] getError was expected value: INVALID_VALUE :
-[ 61: PASS ] getError was expected value: INVALID_VALUE :
-[ 62: PASS ] getError was expected value: NO_ERROR :
-[ 63: PASS ] getError was expected value: NO_ERROR :
-[ 64: FAIL ] getError expected: INVALID_VALUE. Was NO_ERROR :
-[ 65: FAIL ] getError expected: INVALID_VALUE. Was NO_ERROR :
-[ 66: FAIL ] getError expected: INVALID_VALUE. Was NO_ERROR :
-[ 67: FAIL ] getError expected: INVALID_VALUE. Was NO_ERROR :
-[ 68: FAIL ] getError expected: INVALID_VALUE. Was NO_ERROR :
-[ 69: FAIL ] getError expected: INVALID_VALUE. Was NO_ERROR :
-[ 70: FAIL ] getError expected: INVALID_VALUE. Was NO_ERROR :
-[ 71: FAIL ] getError expected: INVALID_VALUE. Was NO_ERROR :
-[ 72: FAIL ] getError expected: INVALID_VALUE. Was NO_ERROR :
-[ 73: FAIL ] Does not support compressedTexSubImage3D with offsets into views.
-[ 74: FAIL ] Does not support doReadPixels with offsets into views.
-[ 75: PASS ] successfullyParsed is true
-[ FAIL ] 37 failures reported
+[ 51: FAIL ] Does not support compressedTexSubImage2D with offsets into views.
+[ 52: PASS ] getError was expected value: NO_ERROR :
+[ 53: PASS ] getError was expected value: NO_ERROR :
+[ 54: FAIL ] getError expected: INVALID_VALUE. Was NO_ERROR :
+[ 55: FAIL ] getError expected: INVALID_VALUE. Was NO_ERROR :
+[ 56: FAIL ] getError expected: INVALID_VALUE. Was NO_ERROR :
+[ 57: FAIL ] getError expected: INVALID_VALUE. Was NO_ERROR :
+[ 58: FAIL ] getError expected: INVALID_VALUE. Was NO_ERROR :
+[ 59: FAIL ] getError expected: INVALID_VALUE. Was NO_ERROR :
+[ 60: FAIL ] getError expected: INVALID_VALUE. Was NO_ERROR :
+[ 61: FAIL ] getError expected: INVALID_VALUE. Was NO_ERROR :
+[ 62: FAIL ] getError expected: INVALID_VALUE. Was NO_ERROR :
+[ 63: FAIL ] Does not support compressedTexSubImage3D with offsets into views.
+[ 64: FAIL ] Does not support doReadPixels with offsets into views.
+[ 65: PASS ] successfullyParsed is true
+[ FAIL ] 36 failures reported
 

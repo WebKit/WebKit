@@ -76,29 +76,34 @@ public:
 
     using WebGLRenderingContextBase::texImage2D;
     void texImage2D(GC3Denum target, GC3Dint level, GC3Dint internalformat, GC3Dsizei width, GC3Dsizei height, GC3Dint border, GC3Denum format, GC3Denum type, GC3Dint64 pboOffset);
-    void texImage2D(GC3Denum target, GC3Dint level, GC3Dint internalformat, GC3Dsizei width, GC3Dsizei height, GC3Dint border, GC3Denum format, GC3Denum type, TexImageSource&&);
+    ExceptionOr<void> texImage2D(GC3Denum target, GC3Dint level, GC3Dint internalformat, GC3Dsizei width, GC3Dsizei height, GC3Dint border, GC3Denum format, GC3Denum type, TexImageSource&&);
     void texImage2D(GC3Denum target, GC3Dint level, GC3Dint internalformat, GC3Dsizei width, GC3Dsizei height, GC3Dint border, GC3Denum format, GC3Denum type, RefPtr<ArrayBufferView>&& srcData, GC3Duint srcOffset);
 
     void texImage3D(GC3Denum target, GC3Dint level, GC3Dint internalformat, GC3Dsizei width, GC3Dsizei height, GC3Dsizei depth, GC3Dint border, GC3Denum format, GC3Denum type, GC3Dint64 pboOffset);
-    void texImage3D(GC3Denum target, GC3Dint level, GC3Dint internalformat, GC3Dsizei width, GC3Dsizei height, GC3Dsizei depth, GC3Dint border, GC3Denum format, GC3Denum type, TexImageSource&&);
+    ExceptionOr<void> texImage3D(GC3Denum target, GC3Dint level, GC3Dint internalformat, GC3Dsizei width, GC3Dsizei height, GC3Dsizei depth, GC3Dint border, GC3Denum format, GC3Denum type, TexImageSource&&);
     void texImage3D(GC3Denum target, GC3Dint level, GC3Dint internalformat, GC3Dsizei width, GC3Dsizei height, GC3Dsizei depth, GC3Dint border, GC3Denum format, GC3Denum type, RefPtr<ArrayBufferView>&& pixels);
     void texImage3D(GC3Denum target, GC3Dint level, GC3Dint internalformat, GC3Dsizei width, GC3Dsizei height, GC3Dsizei depth, GC3Dint border, GC3Denum format, GC3Denum type, RefPtr<ArrayBufferView>&& srcData, GC3Duint srcOffset);
 
     using WebGLRenderingContextBase::texSubImage2D;
     void texSubImage2D(GC3Denum target, GC3Dint level, GC3Dint xoffset, GC3Dint yoffset, GC3Dsizei width, GC3Dsizei height, GC3Denum format, GC3Denum type, GC3Dint64 pboOffset);
-    void texSubImage2D(GC3Denum target, GC3Dint level, GC3Dint xoffset, GC3Dint yoffset, GC3Dsizei width, GC3Dsizei height, GC3Denum format, GC3Denum type, TexImageSource&&);
+    ExceptionOr<void> texSubImage2D(GC3Denum target, GC3Dint level, GC3Dint xoffset, GC3Dint yoffset, GC3Dsizei width, GC3Dsizei height, GC3Denum format, GC3Denum type, TexImageSource&&);
     void texSubImage2D(GC3Denum target, GC3Dint level, GC3Dint xoffset, GC3Dint yoffset, GC3Dsizei width, GC3Dsizei height, GC3Denum format, GC3Denum type, RefPtr<ArrayBufferView>&& srcData, GC3Duint srcOffset);
 
     void texSubImage3D(GC3Denum target, GC3Dint level, GC3Dint xoffset, GC3Dint yoffset, GC3Dint zoffset, GC3Dsizei width, GC3Dsizei height, GC3Dsizei depth, GC3Denum format, GC3Denum type, GC3Dint64 pboOffset);
     void texSubImage3D(GC3Denum target, GC3Dint level, GC3Dint xoffset, GC3Dint yoffset, GC3Dint zoffset, GC3Dsizei width, GC3Dsizei height, GC3Dsizei depth, GC3Denum format, GC3Denum type, RefPtr<ArrayBufferView>&& pixels, GC3Duint srcOffset);
-    void texSubImage3D(GC3Denum target, GC3Dint level, GC3Dint xoffset, GC3Dint yoffset, GC3Dint zoffset, GC3Dsizei width, GC3Dsizei height, GC3Dsizei depth, GC3Denum format, GC3Denum type, TexImageSource&&);
+    ExceptionOr<void> texSubImage3D(GC3Denum target, GC3Dint level, GC3Dint xoffset, GC3Dint yoffset, GC3Dint zoffset, GC3Dsizei width, GC3Dsizei height, GC3Dsizei depth, GC3Denum format, GC3Denum type, TexImageSource&&);
 
     void copyTexSubImage3D(GC3Denum target, GC3Dint level, GC3Dint xoffset, GC3Dint yoffset, GC3Dint zoffset, GC3Dint x, GC3Dint y, GC3Dsizei width, GC3Dsizei height);
 
+    using WebGLRenderingContextBase::compressedTexImage2D;
     void compressedTexImage2D(GC3Denum target, GC3Dint level, GC3Denum internalformat, GC3Dsizei width, GC3Dsizei height, GC3Dint border, GC3Dsizei imageSize, GC3Dint64 offset);
-    void compressedTexImage2D(GC3Denum target, GC3Dint level, GC3Denum internalformat, GC3Dsizei width, GC3Dsizei height, GC3Dint border, ArrayBufferView& data, GC3Duint, GC3Duint);
+    void compressedTexImage2D(GC3Denum target, GC3Dint level, GC3Denum internalformat, GC3Dsizei width, GC3Dsizei height, GC3Dint border, ArrayBufferView& data, GC3Duint srcOffset, GC3Duint srcLengthOverride);
     void compressedTexImage3D(GC3Denum target, GC3Dint level, GC3Denum internalformat, GC3Dsizei width, GC3Dsizei height, GC3Dsizei depth, GC3Dint border, GC3Dsizei imageSize, GC3Dint64 offset);
     void compressedTexImage3D(GC3Denum target, GC3Dint level, GC3Denum internalformat, GC3Dsizei width, GC3Dsizei height, GC3Dsizei depth, GC3Dint border, ArrayBufferView& srcData, GC3Duint srcOffset, GC3Duint srcLengthOverride);
+
+    using WebGLRenderingContextBase::compressedTexSubImage2D;
+    void compressedTexSubImage2D(GLenum target, GLint level, GLint xoffset, GLint yoffset, GLsizei width, GLsizei height, GLenum format, GLsizei imageSize, GLintptr offset);
+    void compressedTexSubImage2D(GLenum target, GLint level, GLint xoffset, GLint yoffset, GLsizei width, GLsizei height, GLenum format, ArrayBufferView& srcData, GLuint srcOffset, GLuint srcLengthOverride);
 
     void compressedTexSubImage3D(GC3Denum target, GC3Dint level, GC3Dint xoffset, GC3Dint yoffset, GC3Dint zoffset, GC3Dsizei width, GC3Dsizei height, GC3Dsizei depth, GC3Denum format, GC3Dsizei imageSize, GC3Dint64 offset);
     void compressedTexSubImage3D(GC3Denum target, GC3Dint level, GC3Dint xoffset, GC3Dint yoffset, GC3Dint zoffset, GC3Dsizei width, GC3Dsizei height, GC3Dsizei depth, GC3Denum format, ArrayBufferView& data, GC3Duint srcOffset, GC3Duint srcLengthOverride);
@@ -128,7 +133,32 @@ public:
     void vertexAttribI4ui(GC3Duint index, GC3Duint x, GC3Duint y, GC3Duint z, GC3Duint w);
     void vertexAttribI4uiv(GC3Duint index, Uint32List&& v);
     void vertexAttribIPointer(GC3Duint index, GC3Dint size, GC3Denum type, GC3Dsizei stride, GC3Dint64 offset);
-    
+
+    using WebGLRenderingContextBase::uniform1fv;
+    using WebGLRenderingContextBase::uniform2fv;
+    using WebGLRenderingContextBase::uniform3fv;
+    using WebGLRenderingContextBase::uniform4fv;
+    void uniform1fv(WebGLUniformLocation* location, Float32List data, GLuint srcOffset, GLuint srcLength);
+    void uniform2fv(WebGLUniformLocation* location, Float32List data, GLuint srcOffset, GLuint srcLength);
+    void uniform3fv(WebGLUniformLocation* location, Float32List data, GLuint srcOffset, GLuint srcLength);
+    void uniform4fv(WebGLUniformLocation* location, Float32List data, GLuint srcOffset, GLuint srcLength);
+
+    using WebGLRenderingContextBase::uniform1iv;
+    using WebGLRenderingContextBase::uniform2iv;
+    using WebGLRenderingContextBase::uniform3iv;
+    using WebGLRenderingContextBase::uniform4iv;
+    void uniform1iv(WebGLUniformLocation* location, Int32List data, GLuint srcOffset, GLuint srcLength);
+    void uniform2iv(WebGLUniformLocation* location, Int32List data, GLuint srcOffset, GLuint srcLength);
+    void uniform3iv(WebGLUniformLocation* location, Int32List data, GLuint srcOffset, GLuint srcLength);
+    void uniform4iv(WebGLUniformLocation* location, Int32List data, GLuint srcOffset, GLuint srcLength);
+
+    using WebGLRenderingContextBase::uniformMatrix2fv;
+    using WebGLRenderingContextBase::uniformMatrix3fv;
+    using WebGLRenderingContextBase::uniformMatrix4fv;
+    void uniformMatrix2fv(WebGLUniformLocation* location, GLboolean transpose, Float32List data, GLuint srcOffset, GLuint srcLength);
+    void uniformMatrix3fv(WebGLUniformLocation* location, GLboolean transpose, Float32List data, GLuint srcOffset, GLuint srcLength);
+    void uniformMatrix4fv(WebGLUniformLocation* location, GLboolean transpose, Float32List data, GLuint srcOffset, GLuint srcLength);
+
     // Writing to the drawing buffer
     void clear(GC3Dbitfield mask) final;
     void vertexAttribDivisor(GC3Duint index, GC3Duint divisor);
@@ -201,6 +231,10 @@ public:
     WebGLExtension* getExtension(const String&) final;
     Optional<Vector<String>> getSupportedExtensions() final;
     WebGLAny getParameter(GC3Denum pname) final;
+
+    using WebGLRenderingContextBase::readPixels;
+    void readPixels(GLint x, GLint y, GLsizei width, GLsizei height, GLenum format, GLenum type, GLintptr offset);
+    void readPixels(GLint x, GLint y, GLsizei width, GLsizei height, GLenum format, GLenum type, ArrayBufferView& dstData, GLuint dstOffset);
 
     void renderbufferStorage(GC3Denum target, GC3Denum internalformat, GC3Dsizei width, GC3Dsizei height) final;
     void hint(GC3Denum target, GC3Denum mode) final;

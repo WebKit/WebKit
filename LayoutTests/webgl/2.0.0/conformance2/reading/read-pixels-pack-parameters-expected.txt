@@ -1,174 +1,506 @@
-CONSOLE MESSAGE: line 159: TypeError: Argument 7 ('pixels') to WebGL2RenderingContext.readPixels must be an instance of ArrayBufferView
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../resources/webgl_test_files/conformance2/reading/read-pixels-pack-parameters.html
 [ 1: PASS ] context exists
 [ 2: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_ENUM : buffer too small
 [ 3: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : readPixels should succeed
-[ 4: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_ENUM : buffer too small
-[ 5: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : readPixels should succeed
+[ 4: FAIL ] first pixel of row 0: expected [249,102,0,255], got [255,255,255,255]
+[ 5: FAIL ] last pixel of row 0: expected [249,102,0,255], got [255,255,255,255]
 [ 6: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_ENUM : buffer too small
 [ 7: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : readPixels should succeed
-[ 8: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_ENUM : buffer too small
-[ 9: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : readPixels should succeed
+[ 8: FAIL ] first pixel of row 0: expected [249,102,0,255], got [255,255,255,255]
+[ 9: FAIL ] last pixel of row 0: expected [249,102,0,255], got [255,255,255,255]
 [ 10: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_ENUM : buffer too small
 [ 11: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : readPixels should succeed
-[ 12: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_ENUM : buffer too small
-[ 13: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : readPixels should succeed
+[ 12: FAIL ] first pixel of row 0: expected [249,102,0,255], got [255,255,255,255]
+[ 13: FAIL ] last pixel of row 0: expected [249,102,0,255], got [255,255,255,255]
 [ 14: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_ENUM : buffer too small
 [ 15: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : readPixels should succeed
-[ 16: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_ENUM : buffer too small
-[ 17: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : readPixels should succeed
-[ 18: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : readPixels should succeed
-[ 19: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_ENUM : buffer too small
-[ 20: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : readPixels should succeed
-[ 21: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_ENUM : buffer too small
-[ 22: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : readPixels should succeed
+[ 16: FAIL ] first pixel of row 0: expected [249,102,0,255], got [255,255,255,255]
+[ 17: FAIL ] last pixel of row 0: expected [249,102,0,255], got [255,255,255,255]
+[ 18: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_ENUM : buffer too small
+[ 19: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : readPixels should succeed
+[ 20: FAIL ] first pixel of row 0: expected [249,102,0,255], got [255,255,255,255]
+[ 21: FAIL ] last pixel of row 0: expected [249,102,0,255], got [255,255,255,255]
+[ 22: FAIL ] last pixel of row 1: expected [2,200,102,255], got [255,255,255,255]
 [ 23: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_ENUM : buffer too small
-[ 24: PASS ] getError was expected value: INVALID_OPERATION : Invalid pack params combination
-[ 25: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_ENUM : buffer too small
-[ 26: PASS ] getError was expected value: INVALID_OPERATION : Invalid pack params combination
-[ 27: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_ENUM : buffer too small
-[ 28: PASS ] getError was expected value: INVALID_OPERATION : Invalid pack params combination
-[ 29: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_ENUM : buffer too small
-[ 30: PASS ] getError was expected value: INVALID_OPERATION : Invalid pack params combination
-[ 31: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_ENUM : buffer too small
-[ 32: PASS ] getError was expected value: INVALID_OPERATION : Invalid pack params combination
-[ 33: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_ENUM : buffer too small
-[ 34: PASS ] getError was expected value: INVALID_OPERATION : Invalid pack params combination
-[ 35: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_ENUM : buffer too small
-[ 36: PASS ] getError was expected value: INVALID_OPERATION : Invalid pack params combination
-[ 37: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_ENUM : buffer too small
-[ 38: PASS ] getError was expected value: INVALID_OPERATION : Invalid pack params combination
-[ 39: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_ENUM : buffer too small
-[ 40: PASS ] getError was expected value: INVALID_OPERATION : Invalid pack params combination
+[ 24: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : readPixels should succeed
+[ 25: FAIL ] first pixel of row 0: expected [249,102,0,255], got [255,255,255,255]
+[ 26: FAIL ] last pixel of row 0: expected [249,102,0,255], got [255,255,255,255]
+[ 27: FAIL ] last pixel of row 1: expected [2,200,102,255], got [255,255,255,255]
+[ 28: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_ENUM : buffer too small
+[ 29: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : readPixels should succeed
+[ 30: FAIL ] first pixel of row 0: expected [249,102,0,255], got [255,255,255,255]
+[ 31: FAIL ] last pixel of row 0: expected [249,102,0,255], got [255,255,255,255]
+[ 32: FAIL ] last pixel of row 1: expected [2,200,102,255], got [255,255,255,255]
+[ 33: FAIL ] last pixel of row 2: expected [134,87,234,255], got [255,255,255,255]
+[ 34: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_ENUM : buffer too small
+[ 35: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : readPixels should succeed
+[ 36: FAIL ] first pixel of row 0: expected [249,102,0,255], got [255,255,255,255]
+[ 37: FAIL ] last pixel of row 0: expected [249,102,0,255], got [255,255,255,255]
+[ 38: FAIL ] last pixel of row 1: expected [2,200,102,255], got [255,255,255,255]
+[ 39: FAIL ] last pixel of row 2: expected [134,87,234,255], got [255,255,255,255]
+[ 40: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : readPixels should succeed
 [ 41: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_ENUM : buffer too small
-[ 42: PASS ] getError was expected value: INVALID_OPERATION : Invalid pack params combination
-[ 43: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_ENUM : buffer too small
-[ 44: PASS ] getError was expected value: INVALID_OPERATION : Invalid pack params combination
+[ 42: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : readPixels should succeed
+[ 43: FAIL ] first pixel of row 0: expected [249,102,0,255], got [255,255,255,255]
+[ 44: FAIL ] last pixel of row 0: expected [249,102,0,255], got [255,255,255,255]
 [ 45: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_ENUM : buffer too small
-[ 46: PASS ] getError was expected value: INVALID_OPERATION : Invalid pack params combination
-[ 47: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_ENUM : buffer too small
-[ 48: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : readPixels should succeed
+[ 46: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : readPixels should succeed
+[ 47: FAIL ] first pixel of row 0: expected [249,102,0,255], got [255,255,255,255]
+[ 48: FAIL ] last pixel of row 0: expected [249,102,0,255], got [255,255,255,255]
 [ 49: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_ENUM : buffer too small
-[ 50: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : readPixels should succeed
+[ 50: PASS ] getError was expected value: INVALID_OPERATION : Invalid pack params combination
 [ 51: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_ENUM : buffer too small
-[ 52: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : readPixels should succeed
+[ 52: PASS ] getError was expected value: INVALID_OPERATION : Invalid pack params combination
 [ 53: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_ENUM : buffer too small
-[ 54: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : readPixels should succeed
+[ 54: PASS ] getError was expected value: INVALID_OPERATION : Invalid pack params combination
 [ 55: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_ENUM : buffer too small
-[ 56: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : readPixels should succeed
+[ 56: PASS ] getError was expected value: INVALID_OPERATION : Invalid pack params combination
 [ 57: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_ENUM : buffer too small
-[ 58: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : readPixels should succeed
+[ 58: PASS ] getError was expected value: INVALID_OPERATION : Invalid pack params combination
 [ 59: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_ENUM : buffer too small
-[ 60: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : readPixels should succeed
+[ 60: PASS ] getError was expected value: INVALID_OPERATION : Invalid pack params combination
 [ 61: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_ENUM : buffer too small
-[ 62: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : readPixels should succeed
+[ 62: PASS ] getError was expected value: INVALID_OPERATION : Invalid pack params combination
 [ 63: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_ENUM : buffer too small
-[ 64: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : readPixels should succeed
+[ 64: PASS ] getError was expected value: INVALID_OPERATION : Invalid pack params combination
 [ 65: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_ENUM : buffer too small
-[ 66: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : readPixels should succeed
+[ 66: PASS ] getError was expected value: INVALID_OPERATION : Invalid pack params combination
 [ 67: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_ENUM : buffer too small
-[ 68: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : readPixels should succeed
+[ 68: PASS ] getError was expected value: INVALID_OPERATION : Invalid pack params combination
 [ 69: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_ENUM : buffer too small
-[ 70: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : readPixels should succeed
+[ 70: PASS ] getError was expected value: INVALID_OPERATION : Invalid pack params combination
 [ 71: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_ENUM : buffer too small
-[ 72: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : readPixels should succeed
+[ 72: PASS ] getError was expected value: INVALID_OPERATION : Invalid pack params combination
 [ 73: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_ENUM : buffer too small
 [ 74: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : readPixels should succeed
-[ 75: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_ENUM : buffer too small
-[ 76: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : readPixels should succeed
-[ 77: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_ENUM : buffer too small
-[ 78: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : readPixels should succeed
+[ 75: FAIL ] first pixel of row 0: expected [249,102,0,255], got [255,255,255,255]
+[ 76: FAIL ] last pixel of row 0: expected [249,102,0,255], got [255,255,255,255]
+[ 77: FAIL ] last pixel of row 1: expected [2,200,102,255], got [255,255,255,255]
+[ 78: FAIL ] last pixel of row 2: expected [134,87,234,255], got [255,255,255,255]
 [ 79: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_ENUM : buffer too small
 [ 80: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : readPixels should succeed
-[ 81: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_ENUM : buffer too small
-[ 82: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : readPixels should succeed
+[ 81: FAIL ] last pixel of row 0: expected [249,102,0,255], got [255,255,255,255]
+[ 82: FAIL ] last pixel of row 1: expected [2,200,102,255], got [255,255,255,255]
 [ 83: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_ENUM : buffer too small
 [ 84: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : readPixels should succeed
-[ 85: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_ENUM : buffer too small
-[ 86: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : readPixels should succeed
-[ 87: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_ENUM : buffer too small
-[ 88: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : readPixels should succeed
-[ 89: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_ENUM : buffer too small
-[ 90: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : readPixels should succeed
-[ 91: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_ENUM : buffer too small
-[ 92: PASS ] getError was expected value: NO_ERROR : readPixels should succeed
-[ 93: FAIL ] Padding byte 4 of row 0 changed: expected 1, got 2
-[ 94: FAIL ] last pixel of row 1: expected [2,200,102,255], got [134,87,234,255]
-[ 95: FAIL ] Padding byte 0 of row 1 changed: expected 1, got 134
-[ 96: FAIL ] first pixel of row 2: expected [134,87,234,255], got [1,2,3,4]
-[ 97: FAIL ] last pixel of row 2: expected [134,87,234,255], got [1,2,3,4]
-[ 98: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_ENUM : buffer too small
-[ 99: PASS ] getError was expected value: NO_ERROR : readPixels should succeed
-[ 100: FAIL ] Padding byte 8 of row 0 changed: expected 1, got 2
-[ 101: FAIL ] first pixel of row 1: expected [1,2,3,4], got [2,200,102,255]
-[ 102: FAIL ] last pixel of row 1: expected [2,200,102,255], got [1,2,3,4]
-[ 103: FAIL ] Padding byte 0 of row 1 changed: expected 1, got 134
-[ 104: FAIL ] last pixel of row 2: expected [134,87,234,255], got [1,2,3,4]
-[ 105: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_ENUM : buffer too small
-[ 106: PASS ] getError was expected value: NO_ERROR : readPixels should succeed
-[ 107: FAIL ] Padding byte 4 of row 0 changed: expected 1, got 249
-[ 108: FAIL ] last pixel of row 1: expected [249,102,0,255], got [2,200,102,255]
-[ 109: FAIL ] Padding byte 0 of row 1 changed: expected 1, got 2
-[ 110: FAIL ] first pixel of row 2: expected [2,200,102,255], got [1,2,3,4]
-[ 111: FAIL ] last pixel of row 2: expected [2,200,102,255], got [1,2,3,4]
-[ 112: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_ENUM : buffer too small
-[ 113: PASS ] getError was expected value: NO_ERROR : readPixels should succeed
-[ 114: FAIL ] Padding byte 8 of row 0 changed: expected 1, got 249
-[ 115: FAIL ] first pixel of row 1: expected [1,2,3,4], got [249,102,0,255]
-[ 116: FAIL ] last pixel of row 1: expected [249,102,0,255], got [1,2,3,4]
-[ 117: FAIL ] Padding byte 0 of row 1 changed: expected 1, got 2
-[ 118: FAIL ] last pixel of row 2: expected [2,200,102,255], got [1,2,3,4]
-[ 119: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_ENUM : buffer too small
-[ 120: PASS ] getError was expected value: NO_ERROR : readPixels should succeed
+[ 85: FAIL ] first pixel of row 1: expected [249,102,0,255], got [255,255,255,255]
+[ 86: FAIL ] last pixel of row 1: expected [249,102,0,255], got [255,255,255,255]
+[ 87: FAIL ] last pixel of row 2: expected [2,200,102,255], got [255,255,255,255]
+[ 88: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_ENUM : buffer too small
+[ 89: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : readPixels should succeed
+[ 90: FAIL ] last pixel of row 1: expected [249,102,0,255], got [255,255,255,255]
+[ 91: FAIL ] last pixel of row 2: expected [2,200,102,255], got [255,255,255,255]
+[ 92: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_ENUM : buffer too small
+[ 93: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : readPixels should succeed
+[ 94: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_ENUM : buffer too small
+[ 95: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : readPixels should succeed
+[ 96: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_ENUM : buffer too small
+[ 97: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : readPixels should succeed
+[ 98: FAIL ] first pixel of row 0: expected [249,102,0,255], got [255,255,255,255]
+[ 99: FAIL ] first pixel of row 1: expected [2,200,102,255], got [255,255,255,255]
+[ 100: FAIL ] first pixel of row 2: expected [134,87,234,255], got [255,255,255,255]
+[ 101: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_ENUM : buffer too small
+[ 102: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : readPixels should succeed
+[ 103: FAIL ] last pixel of row 0: expected [134,87,234,255], got [255,255,255,255]
+[ 104: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_ENUM : buffer too small
+[ 105: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : readPixels should succeed
+[ 106: FAIL ] first pixel of row 0: expected [134,87,234,255], got [255,255,255,255]
+[ 107: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_ENUM : buffer too small
+[ 108: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : readPixels should succeed
+[ 109: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_ENUM : buffer too small
+[ 110: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : readPixels should succeed
+[ 111: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_ENUM : buffer too small
+[ 112: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : readPixels should succeed
+[ 113: FAIL ] first pixel of row 0: expected [249,102,0,255], got [255,255,255,255]
+[ 114: FAIL ] last pixel of row 0: expected [249,102,0,255], got [255,255,255,255]
+[ 115: FAIL ] last pixel of row 1: expected [2,200,102,255], got [255,255,255,255]
+[ 116: FAIL ] last pixel of row 2: expected [134,87,234,255], got [255,255,255,255]
+[ 117: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_ENUM : buffer too small
+[ 118: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : readPixels should succeed
+[ 119: FAIL ] last pixel of row 0: expected [249,102,0,255], got [255,255,255,255]
+[ 120: FAIL ] last pixel of row 1: expected [2,200,102,255], got [255,255,255,255]
 [ 121: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_ENUM : buffer too small
-[ 122: PASS ] getError was expected value: NO_ERROR : readPixels should succeed
-[ 123: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_ENUM : buffer too small
-[ 124: PASS ] getError was expected value: NO_ERROR : readPixels should succeed
-[ 125: FAIL ] Padding byte 4 of row 0 changed: expected 1, got 2
-[ 126: FAIL ] first pixel of row 1: expected [2,200,102,255], got [1,2,3,4]
-[ 127: FAIL ] last pixel of row 1: expected [1,2,3,4], got [134,87,234,255]
-[ 128: FAIL ] Padding byte 0 of row 1 changed: expected 1, got 134
-[ 129: FAIL ] first pixel of row 2: expected [134,87,234,255], got [1,2,3,4]
+[ 122: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : readPixels should succeed
+[ 123: FAIL ] first pixel of row 1: expected [249,102,0,255], got [255,255,255,255]
+[ 124: FAIL ] last pixel of row 1: expected [249,102,0,255], got [255,255,255,255]
+[ 125: FAIL ] last pixel of row 2: expected [2,200,102,255], got [255,255,255,255]
+[ 126: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_ENUM : buffer too small
+[ 127: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : readPixels should succeed
+[ 128: FAIL ] last pixel of row 1: expected [249,102,0,255], got [255,255,255,255]
+[ 129: FAIL ] last pixel of row 2: expected [2,200,102,255], got [255,255,255,255]
 [ 130: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_ENUM : buffer too small
-[ 131: PASS ] getError was expected value: NO_ERROR : readPixels should succeed
-[ 132: FAIL ] Padding byte 4 of row 0 changed: expected 1, got 99
-[ 133: FAIL ] last pixel of row 1: expected [99,5,76,255], got [1,2,3,4]
+[ 131: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : readPixels should succeed
+[ 132: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_ENUM : buffer too small
+[ 133: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : readPixels should succeed
 [ 134: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_ENUM : buffer too small
-[ 135: PASS ] getError was expected value: NO_ERROR : readPixels should succeed
-[ 136: FAIL ] Padding byte 4 of row 0 changed: expected 1, got 99
-[ 137: FAIL ] first pixel of row 1: expected [99,5,76,255], got [1,2,3,4]
-[ 138: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_ENUM : buffer too small
-[ 139: PASS ] getError was expected value: NO_ERROR : readPixels should succeed
-[ 140: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_ENUM : buffer too small
-[ 141: PASS ] getError was expected value: NO_ERROR : readPixels should succeed
+[ 135: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : readPixels should succeed
+[ 136: FAIL ] first pixel of row 0: expected [249,102,0,255], got [255,255,255,255]
+[ 137: FAIL ] first pixel of row 1: expected [2,200,102,255], got [255,255,255,255]
+[ 138: FAIL ] first pixel of row 2: expected [134,87,234,255], got [255,255,255,255]
+[ 139: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_ENUM : buffer too small
+[ 140: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : readPixels should succeed
+[ 141: FAIL ] last pixel of row 0: expected [134,87,234,255], got [255,255,255,255]
 [ 142: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_ENUM : buffer too small
-[ 143: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : Invalid pack params combination
-[ 144: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_ENUM : buffer too small
-[ 145: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : Invalid pack params combination
-[ 146: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_ENUM : buffer too small
-[ 147: PASS ] getError was expected value: NO_ERROR : readPixels should succeed
-[ 148: FAIL ] skipped bytes changed at index 0: expected 1 got 249
-[ 149: FAIL ] first pixel of row 0: expected [249,102,0,255], got [1,2,3,4]
-[ 150: FAIL ] last pixel of row 0: expected [249,102,0,255], got [1,2,3,4]
-[ 151: FAIL ] first pixel of row 1: expected [2,200,102,255], got [1,2,3,4]
-[ 152: FAIL ] last pixel of row 1: expected [2,200,102,255], got [1,2,3,4]
-[ 153: FAIL ] first pixel of row 2: expected [134,87,234,255], got [1,2,3,4]
-[ 154: FAIL ] last pixel of row 2: expected [134,87,234,255], got [1,2,3,4]
-[ 155: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_ENUM : buffer too small
-[ 156: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : Invalid pack params combination
-[ 157: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_ENUM : buffer too small
-[ 158: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : Invalid pack params combination
+[ 143: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : readPixels should succeed
+[ 144: FAIL ] first pixel of row 0: expected [134,87,234,255], got [255,255,255,255]
+[ 145: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_ENUM : buffer too small
+[ 146: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : readPixels should succeed
+[ 147: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_ENUM : buffer too small
+[ 148: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : readPixels should succeed
+[ 149: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_ENUM : buffer too small
+[ 150: PASS ] getError was expected value: NO_ERROR : readPixels should succeed
+[ 151: FAIL ] first pixel of row 0: expected [249,102,0,255], got [255,255,255,255]
+[ 152: FAIL ] last pixel of row 0: expected [249,102,0,255], got [255,255,255,255]
+[ 153: FAIL ] Padding byte 4 of row 0 changed: expected 1, got 2
+[ 154: FAIL ] first pixel of row 1: expected [2,200,102,255], got [255,255,255,255]
+[ 155: FAIL ] last pixel of row 1: expected [2,200,102,255], got [134,87,234,255]
+[ 156: FAIL ] Padding byte 0 of row 1 changed: expected 1, got 134
+[ 157: FAIL ] first pixel of row 2: expected [134,87,234,255], got [1,2,3,4]
+[ 158: FAIL ] last pixel of row 2: expected [134,87,234,255], got [1,2,3,4]
 [ 159: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_ENUM : buffer too small
 [ 160: PASS ] getError was expected value: NO_ERROR : readPixels should succeed
-[ 161: FAIL ] skipped bytes changed at index 0: expected 1 got 249
-[ 162: FAIL ] first pixel of row 0: expected [249,102,0,255], got [1,2,3,4]
-[ 163: FAIL ] last pixel of row 0: expected [249,102,0,255], got [1,2,3,4]
-[ 164: FAIL ] first pixel of row 1: expected [2,200,102,255], got [1,2,3,4]
-[ 165: FAIL ] last pixel of row 1: expected [2,200,102,255], got [1,2,3,4]
-[ 166: FAIL ] first pixel of row 2: expected [134,87,234,255], got [1,2,3,4]
-[ 167: FAIL ] last pixel of row 2: expected [134,87,234,255], got [1,2,3,4]
-[ 168: FAIL ] successfullyParsed should be true (of type boolean). Was undefined (of type undefined).
-[ FAIL ] 142 failures reported
+[ 161: FAIL ] last pixel of row 0: expected [249,102,0,255], got [255,255,255,255]
+[ 162: FAIL ] Padding byte 8 of row 0 changed: expected 1, got 2
+[ 163: FAIL ] first pixel of row 1: expected [1,2,3,4], got [255,255,255,255]
+[ 164: FAIL ] last pixel of row 1: expected [2,200,102,255], got [1,2,3,4]
+[ 165: FAIL ] Padding byte 0 of row 1 changed: expected 1, got 134
+[ 166: FAIL ] last pixel of row 2: expected [134,87,234,255], got [1,2,3,4]
+[ 167: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_ENUM : buffer too small
+[ 168: PASS ] getError was expected value: NO_ERROR : readPixels should succeed
+[ 169: FAIL ] Padding byte 4 of row 0 changed: expected 1, got 255
+[ 170: FAIL ] first pixel of row 1: expected [249,102,0,255], got [255,255,255,255]
+[ 171: FAIL ] last pixel of row 1: expected [249,102,0,255], got [2,200,102,255]
+[ 172: FAIL ] Padding byte 0 of row 1 changed: expected 1, got 255
+[ 173: FAIL ] first pixel of row 2: expected [2,200,102,255], got [1,2,3,4]
+[ 174: FAIL ] last pixel of row 2: expected [2,200,102,255], got [1,2,3,4]
+[ 175: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_ENUM : buffer too small
+[ 176: PASS ] getError was expected value: NO_ERROR : readPixels should succeed
+[ 177: FAIL ] Padding byte 8 of row 0 changed: expected 1, got 255
+[ 178: FAIL ] first pixel of row 1: expected [1,2,3,4], got [255,255,255,255]
+[ 179: FAIL ] last pixel of row 1: expected [249,102,0,255], got [1,2,3,4]
+[ 180: FAIL ] Padding byte 0 of row 1 changed: expected 1, got 2
+[ 181: FAIL ] last pixel of row 2: expected [2,200,102,255], got [1,2,3,4]
+[ 182: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_ENUM : buffer too small
+[ 183: PASS ] getError was expected value: NO_ERROR : readPixels should succeed
+[ 184: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_ENUM : buffer too small
+[ 185: PASS ] getError was expected value: NO_ERROR : readPixels should succeed
+[ 186: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_ENUM : buffer too small
+[ 187: PASS ] getError was expected value: NO_ERROR : readPixels should succeed
+[ 188: FAIL ] first pixel of row 0: expected [249,102,0,255], got [255,255,255,255]
+[ 189: FAIL ] Padding byte 4 of row 0 changed: expected 1, got 255
+[ 190: FAIL ] first pixel of row 1: expected [2,200,102,255], got [1,2,3,4]
+[ 191: FAIL ] last pixel of row 1: expected [1,2,3,4], got [255,255,255,255]
+[ 192: FAIL ] Padding byte 0 of row 1 changed: expected 1, got 255
+[ 193: FAIL ] first pixel of row 2: expected [134,87,234,255], got [1,2,3,4]
+[ 194: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_ENUM : buffer too small
+[ 195: PASS ] getError was expected value: NO_ERROR : readPixels should succeed
+[ 196: FAIL ] last pixel of row 0: expected [134,87,234,255], got [255,255,255,255]
+[ 197: FAIL ] Padding byte 4 of row 0 changed: expected 1, got 99
+[ 198: FAIL ] last pixel of row 1: expected [99,5,76,255], got [1,2,3,4]
+[ 199: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_ENUM : buffer too small
+[ 200: PASS ] getError was expected value: NO_ERROR : readPixels should succeed
+[ 201: FAIL ] first pixel of row 0: expected [134,87,234,255], got [255,255,255,255]
+[ 202: FAIL ] Padding byte 4 of row 0 changed: expected 1, got 99
+[ 203: FAIL ] first pixel of row 1: expected [99,5,76,255], got [1,2,3,4]
+[ 204: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_ENUM : buffer too small
+[ 205: PASS ] getError was expected value: NO_ERROR : readPixels should succeed
+[ 206: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_ENUM : buffer too small
+[ 207: PASS ] getError was expected value: NO_ERROR : readPixels should succeed
+[ 208: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_ENUM : buffer too small
+[ 209: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : Invalid pack params combination
+[ 210: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_ENUM : buffer too small
+[ 211: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : Invalid pack params combination
+[ 212: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_ENUM : buffer too small
+[ 213: PASS ] getError was expected value: NO_ERROR : readPixels should succeed
+[ 214: FAIL ] skipped bytes changed at index 0: expected 1 got 255
+[ 215: FAIL ] first pixel of row 0: expected [249,102,0,255], got [1,2,3,4]
+[ 216: FAIL ] last pixel of row 0: expected [249,102,0,255], got [1,2,3,4]
+[ 217: FAIL ] first pixel of row 1: expected [2,200,102,255], got [1,2,3,4]
+[ 218: FAIL ] last pixel of row 1: expected [2,200,102,255], got [1,2,3,4]
+[ 219: FAIL ] first pixel of row 2: expected [134,87,234,255], got [1,2,3,4]
+[ 220: FAIL ] last pixel of row 2: expected [134,87,234,255], got [1,2,3,4]
+[ 221: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_ENUM : buffer too small
+[ 222: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : Invalid pack params combination
+[ 223: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_ENUM : buffer too small
+[ 224: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : Invalid pack params combination
+[ 225: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_ENUM : buffer too small
+[ 226: PASS ] getError was expected value: NO_ERROR : readPixels should succeed
+[ 227: FAIL ] skipped bytes changed at index 0: expected 1 got 255
+[ 228: FAIL ] first pixel of row 0: expected [249,102,0,255], got [1,2,3,4]
+[ 229: FAIL ] last pixel of row 0: expected [249,102,0,255], got [1,2,3,4]
+[ 230: FAIL ] first pixel of row 1: expected [2,200,102,255], got [1,2,3,4]
+[ 231: FAIL ] last pixel of row 1: expected [2,200,102,255], got [1,2,3,4]
+[ 232: FAIL ] first pixel of row 2: expected [134,87,234,255], got [1,2,3,4]
+[ 233: FAIL ] last pixel of row 2: expected [134,87,234,255], got [1,2,3,4]
+[ 234: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_ENUM : buffer too small
+[ 235: PASS ] getError was expected value: NO_ERROR : readPixels should succeed
+[ 236: FAIL ] first pixel of row 0: expected [249,102,0,255], got [1,2,3,4]
+[ 237: FAIL ] last pixel of row 0: expected [249,102,0,255], got [1,2,3,4]
+[ 238: FAIL ] first pixel of row 1: expected [2,200,102,255], got [1,2,3,4]
+[ 239: FAIL ] last pixel of row 1: expected [2,200,102,255], got [1,2,3,4]
+[ 240: FAIL ] first pixel of row 2: expected [134,87,234,255], got [1,2,3,4]
+[ 241: FAIL ] last pixel of row 2: expected [134,87,234,255], got [1,2,3,4]
+[ 242: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_ENUM : buffer too small
+[ 243: PASS ] getError was expected value: NO_ERROR : readPixels should succeed
+[ 244: FAIL ] first pixel of row 0: expected [249,102,0,255], got [1,2,3,4]
+[ 245: FAIL ] last pixel of row 0: expected [249,102,0,255], got [1,2,3,4]
+[ 246: FAIL ] first pixel of row 1: expected [2,200,102,255], got [1,2,3,4]
+[ 247: FAIL ] last pixel of row 1: expected [2,200,102,255], got [1,2,3,4]
+[ 248: FAIL ] first pixel of row 2: expected [134,87,234,255], got [1,2,3,4]
+[ 249: FAIL ] last pixel of row 2: expected [134,87,234,255], got [1,2,3,4]
+[ 250: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_ENUM : buffer too small
+[ 251: PASS ] getError was expected value: NO_ERROR : readPixels should succeed
+[ 252: FAIL ] first pixel of row 0: expected [249,102,0,255], got [1,2,3,4]
+[ 253: FAIL ] last pixel of row 0: expected [249,102,0,255], got [1,2,3,4]
+[ 254: FAIL ] first pixel of row 1: expected [2,200,102,255], got [1,2,3,4]
+[ 255: FAIL ] last pixel of row 1: expected [2,200,102,255], got [1,2,3,4]
+[ 256: FAIL ] first pixel of row 2: expected [134,87,234,255], got [1,2,3,4]
+[ 257: FAIL ] last pixel of row 2: expected [134,87,234,255], got [1,2,3,4]
+[ 258: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_ENUM : buffer too small
+[ 259: PASS ] getError was expected value: NO_ERROR : readPixels should succeed
+[ 260: FAIL ] first pixel of row 0: expected [249,102,0,255], got [1,2,3,4]
+[ 261: FAIL ] last pixel of row 0: expected [249,102,0,255], got [1,2,3,4]
+[ 262: FAIL ] first pixel of row 1: expected [2,200,102,255], got [1,2,3,4]
+[ 263: FAIL ] last pixel of row 1: expected [2,200,102,255], got [1,2,3,4]
+[ 264: FAIL ] first pixel of row 2: expected [134,87,234,255], got [1,2,3,4]
+[ 265: FAIL ] last pixel of row 2: expected [134,87,234,255], got [1,2,3,4]
+[ 266: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_ENUM : buffer too small
+[ 267: PASS ] getError was expected value: NO_ERROR : readPixels should succeed
+[ 268: FAIL ] first pixel of row 0: expected [249,102,0,255], got [1,2,3,4]
+[ 269: FAIL ] last pixel of row 0: expected [249,102,0,255], got [1,2,3,4]
+[ 270: FAIL ] first pixel of row 1: expected [2,200,102,255], got [1,2,3,4]
+[ 271: FAIL ] last pixel of row 1: expected [2,200,102,255], got [1,2,3,4]
+[ 272: FAIL ] first pixel of row 2: expected [134,87,234,255], got [1,2,3,4]
+[ 273: FAIL ] last pixel of row 2: expected [134,87,234,255], got [1,2,3,4]
+[ 274: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_ENUM : buffer too small
+[ 275: PASS ] getError was expected value: NO_ERROR : readPixels should succeed
+[ 276: FAIL ] first pixel of row 0: expected [249,102,0,255], got [1,2,3,4]
+[ 277: FAIL ] last pixel of row 0: expected [249,102,0,255], got [1,2,3,4]
+[ 278: FAIL ] first pixel of row 1: expected [2,200,102,255], got [1,2,3,4]
+[ 279: FAIL ] last pixel of row 1: expected [2,200,102,255], got [1,2,3,4]
+[ 280: FAIL ] first pixel of row 2: expected [134,87,234,255], got [1,2,3,4]
+[ 281: FAIL ] last pixel of row 2: expected [134,87,234,255], got [1,2,3,4]
+[ 282: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_ENUM : buffer too small
+[ 283: PASS ] getError was expected value: NO_ERROR : readPixels should succeed
+[ 284: FAIL ] first pixel of row 0: expected [249,102,0,255], got [1,2,3,4]
+[ 285: FAIL ] last pixel of row 0: expected [249,102,0,255], got [1,2,3,4]
+[ 286: FAIL ] first pixel of row 1: expected [2,200,102,255], got [1,2,3,4]
+[ 287: FAIL ] last pixel of row 1: expected [2,200,102,255], got [1,2,3,4]
+[ 288: FAIL ] first pixel of row 2: expected [134,87,234,255], got [1,2,3,4]
+[ 289: FAIL ] last pixel of row 2: expected [134,87,234,255], got [1,2,3,4]
+[ 290: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_ENUM : buffer too small
+[ 291: PASS ] getError was expected value: NO_ERROR : readPixels should succeed
+[ 292: FAIL ] first pixel of row 0: expected [249,102,0,255], got [1,2,3,4]
+[ 293: FAIL ] last pixel of row 0: expected [249,102,0,255], got [1,2,3,4]
+[ 294: FAIL ] first pixel of row 1: expected [2,200,102,255], got [1,2,3,4]
+[ 295: FAIL ] last pixel of row 1: expected [2,200,102,255], got [1,2,3,4]
+[ 296: FAIL ] first pixel of row 2: expected [134,87,234,255], got [1,2,3,4]
+[ 297: FAIL ] last pixel of row 2: expected [134,87,234,255], got [1,2,3,4]
+[ 298: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : readPixels should succeed
+[ 299: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_ENUM : buffer too small
+[ 300: PASS ] getError was expected value: NO_ERROR : readPixels should succeed
+[ 301: FAIL ] first pixel of row 0: expected [249,102,0,255], got [1,2,3,4]
+[ 302: FAIL ] last pixel of row 0: expected [249,102,0,255], got [1,2,3,4]
+[ 303: FAIL ] first pixel of row 1: expected [2,200,102,255], got [1,2,3,4]
+[ 304: FAIL ] last pixel of row 1: expected [2,200,102,255], got [1,2,3,4]
+[ 305: FAIL ] first pixel of row 2: expected [134,87,234,255], got [1,2,3,4]
+[ 306: FAIL ] last pixel of row 2: expected [134,87,234,255], got [1,2,3,4]
+[ 307: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_ENUM : buffer too small
+[ 308: PASS ] getError was expected value: NO_ERROR : readPixels should succeed
+[ 309: FAIL ] first pixel of row 0: expected [249,102,0,255], got [1,2,3,4]
+[ 310: FAIL ] last pixel of row 0: expected [249,102,0,255], got [1,2,3,4]
+[ 311: FAIL ] first pixel of row 1: expected [2,200,102,255], got [1,2,3,4]
+[ 312: FAIL ] last pixel of row 1: expected [2,200,102,255], got [1,2,3,4]
+[ 313: FAIL ] first pixel of row 2: expected [134,87,234,255], got [1,2,3,4]
+[ 314: FAIL ] last pixel of row 2: expected [134,87,234,255], got [1,2,3,4]
+[ 315: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_ENUM : buffer too small
+[ 316: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : Invalid pack params combination
+[ 317: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_ENUM : buffer too small
+[ 318: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : Invalid pack params combination
+[ 319: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_ENUM : buffer too small
+[ 320: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : Invalid pack params combination
+[ 321: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_ENUM : buffer too small
+[ 322: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : Invalid pack params combination
+[ 323: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_ENUM : buffer too small
+[ 324: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : Invalid pack params combination
+[ 325: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_ENUM : buffer too small
+[ 326: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : Invalid pack params combination
+[ 327: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_ENUM : buffer too small
+[ 328: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : Invalid pack params combination
+[ 329: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_ENUM : buffer too small
+[ 330: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : Invalid pack params combination
+[ 331: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_ENUM : buffer too small
+[ 332: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : Invalid pack params combination
+[ 333: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_ENUM : buffer too small
+[ 334: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : Invalid pack params combination
+[ 335: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_ENUM : buffer too small
+[ 336: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : Invalid pack params combination
+[ 337: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_ENUM : buffer too small
+[ 338: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : Invalid pack params combination
+[ 339: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_ENUM : buffer too small
+[ 340: PASS ] getError was expected value: NO_ERROR : readPixels should succeed
+[ 341: FAIL ] first pixel of row 0: expected [249,102,0,255], got [1,2,3,4]
+[ 342: FAIL ] last pixel of row 0: expected [249,102,0,255], got [1,2,3,4]
+[ 343: FAIL ] first pixel of row 1: expected [2,200,102,255], got [1,2,3,4]
+[ 344: FAIL ] last pixel of row 1: expected [2,200,102,255], got [1,2,3,4]
+[ 345: FAIL ] first pixel of row 2: expected [134,87,234,255], got [1,2,3,4]
+[ 346: FAIL ] last pixel of row 2: expected [134,87,234,255], got [1,2,3,4]
+[ 347: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_ENUM : buffer too small
+[ 348: PASS ] getError was expected value: NO_ERROR : readPixels should succeed
+[ 349: FAIL ] last pixel of row 0: expected [249,102,0,255], got [1,2,3,4]
+[ 350: FAIL ] last pixel of row 1: expected [2,200,102,255], got [1,2,3,4]
+[ 351: FAIL ] last pixel of row 2: expected [134,87,234,255], got [1,2,3,4]
+[ 352: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_ENUM : buffer too small
+[ 353: PASS ] getError was expected value: NO_ERROR : readPixels should succeed
+[ 354: FAIL ] first pixel of row 1: expected [249,102,0,255], got [1,2,3,4]
+[ 355: FAIL ] last pixel of row 1: expected [249,102,0,255], got [1,2,3,4]
+[ 356: FAIL ] first pixel of row 2: expected [2,200,102,255], got [1,2,3,4]
+[ 357: FAIL ] last pixel of row 2: expected [2,200,102,255], got [1,2,3,4]
+[ 358: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_ENUM : buffer too small
+[ 359: PASS ] getError was expected value: NO_ERROR : readPixels should succeed
+[ 360: FAIL ] last pixel of row 1: expected [249,102,0,255], got [1,2,3,4]
+[ 361: FAIL ] last pixel of row 2: expected [2,200,102,255], got [1,2,3,4]
+[ 362: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_ENUM : buffer too small
+[ 363: PASS ] getError was expected value: NO_ERROR : readPixels should succeed
+[ 364: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_ENUM : buffer too small
+[ 365: PASS ] getError was expected value: NO_ERROR : readPixels should succeed
+[ 366: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_ENUM : buffer too small
+[ 367: PASS ] getError was expected value: NO_ERROR : readPixels should succeed
+[ 368: FAIL ] first pixel of row 0: expected [249,102,0,255], got [1,2,3,4]
+[ 369: FAIL ] first pixel of row 1: expected [2,200,102,255], got [1,2,3,4]
+[ 370: FAIL ] first pixel of row 2: expected [134,87,234,255], got [1,2,3,4]
+[ 371: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_ENUM : buffer too small
+[ 372: PASS ] getError was expected value: NO_ERROR : readPixels should succeed
+[ 373: FAIL ] first pixel of row 0: expected [134,87,234,255], got [1,2,3,4]
+[ 374: FAIL ] last pixel of row 0: expected [134,87,234,255], got [1,2,3,4]
+[ 375: FAIL ] first pixel of row 1: expected [99,5,76,255], got [1,2,3,4]
+[ 376: FAIL ] last pixel of row 1: expected [99,5,76,255], got [1,2,3,4]
+[ 377: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_ENUM : buffer too small
+[ 378: PASS ] getError was expected value: NO_ERROR : readPixels should succeed
+[ 379: FAIL ] first pixel of row 0: expected [134,87,234,255], got [1,2,3,4]
+[ 380: FAIL ] first pixel of row 1: expected [99,5,76,255], got [1,2,3,4]
+[ 381: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_ENUM : buffer too small
+[ 382: PASS ] getError was expected value: NO_ERROR : readPixels should succeed
+[ 383: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_ENUM : buffer too small
+[ 384: PASS ] getError was expected value: NO_ERROR : readPixels should succeed
+[ 385: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_ENUM : buffer too small
+[ 386: PASS ] getError was expected value: NO_ERROR : readPixels should succeed
+[ 387: FAIL ] first pixel of row 0: expected [249,102,0,255], got [1,2,3,4]
+[ 388: FAIL ] last pixel of row 0: expected [249,102,0,255], got [1,2,3,4]
+[ 389: FAIL ] first pixel of row 1: expected [2,200,102,255], got [1,2,3,4]
+[ 390: FAIL ] last pixel of row 1: expected [2,200,102,255], got [1,2,3,4]
+[ 391: FAIL ] first pixel of row 2: expected [134,87,234,255], got [1,2,3,4]
+[ 392: FAIL ] last pixel of row 2: expected [134,87,234,255], got [1,2,3,4]
+[ 393: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_ENUM : buffer too small
+[ 394: PASS ] getError was expected value: NO_ERROR : readPixels should succeed
+[ 395: FAIL ] last pixel of row 0: expected [249,102,0,255], got [1,2,3,4]
+[ 396: FAIL ] last pixel of row 1: expected [2,200,102,255], got [1,2,3,4]
+[ 397: FAIL ] last pixel of row 2: expected [134,87,234,255], got [1,2,3,4]
+[ 398: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_ENUM : buffer too small
+[ 399: PASS ] getError was expected value: NO_ERROR : readPixels should succeed
+[ 400: FAIL ] first pixel of row 1: expected [249,102,0,255], got [1,2,3,4]
+[ 401: FAIL ] last pixel of row 1: expected [249,102,0,255], got [1,2,3,4]
+[ 402: FAIL ] first pixel of row 2: expected [2,200,102,255], got [1,2,3,4]
+[ 403: FAIL ] last pixel of row 2: expected [2,200,102,255], got [1,2,3,4]
+[ 404: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_ENUM : buffer too small
+[ 405: PASS ] getError was expected value: NO_ERROR : readPixels should succeed
+[ 406: FAIL ] last pixel of row 1: expected [249,102,0,255], got [1,2,3,4]
+[ 407: FAIL ] last pixel of row 2: expected [2,200,102,255], got [1,2,3,4]
+[ 408: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_ENUM : buffer too small
+[ 409: PASS ] getError was expected value: NO_ERROR : readPixels should succeed
+[ 410: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_ENUM : buffer too small
+[ 411: PASS ] getError was expected value: NO_ERROR : readPixels should succeed
+[ 412: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_ENUM : buffer too small
+[ 413: PASS ] getError was expected value: NO_ERROR : readPixels should succeed
+[ 414: FAIL ] first pixel of row 0: expected [249,102,0,255], got [1,2,3,4]
+[ 415: FAIL ] first pixel of row 1: expected [2,200,102,255], got [1,2,3,4]
+[ 416: FAIL ] first pixel of row 2: expected [134,87,234,255], got [1,2,3,4]
+[ 417: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_ENUM : buffer too small
+[ 418: PASS ] getError was expected value: NO_ERROR : readPixels should succeed
+[ 419: FAIL ] first pixel of row 0: expected [134,87,234,255], got [1,2,3,4]
+[ 420: FAIL ] last pixel of row 0: expected [134,87,234,255], got [1,2,3,4]
+[ 421: FAIL ] first pixel of row 1: expected [99,5,76,255], got [1,2,3,4]
+[ 422: FAIL ] last pixel of row 1: expected [99,5,76,255], got [1,2,3,4]
+[ 423: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_ENUM : buffer too small
+[ 424: PASS ] getError was expected value: NO_ERROR : readPixels should succeed
+[ 425: FAIL ] first pixel of row 0: expected [134,87,234,255], got [1,2,3,4]
+[ 426: FAIL ] first pixel of row 1: expected [99,5,76,255], got [1,2,3,4]
+[ 427: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_ENUM : buffer too small
+[ 428: PASS ] getError was expected value: NO_ERROR : readPixels should succeed
+[ 429: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_ENUM : buffer too small
+[ 430: PASS ] getError was expected value: NO_ERROR : readPixels should succeed
+[ 431: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_ENUM : buffer too small
+[ 432: PASS ] getError was expected value: NO_ERROR : readPixels should succeed
+[ 433: FAIL ] first pixel of row 0: expected [249,102,0,255], got [1,2,3,4]
+[ 434: FAIL ] last pixel of row 0: expected [249,102,0,255], got [1,2,3,4]
+[ 435: FAIL ] first pixel of row 1: expected [2,200,102,255], got [1,2,3,4]
+[ 436: FAIL ] last pixel of row 1: expected [2,200,102,255], got [1,2,3,4]
+[ 437: FAIL ] first pixel of row 2: expected [134,87,234,255], got [1,2,3,4]
+[ 438: FAIL ] last pixel of row 2: expected [134,87,234,255], got [1,2,3,4]
+[ 439: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_ENUM : buffer too small
+[ 440: PASS ] getError was expected value: NO_ERROR : readPixels should succeed
+[ 441: FAIL ] last pixel of row 0: expected [249,102,0,255], got [1,2,3,4]
+[ 442: FAIL ] last pixel of row 1: expected [2,200,102,255], got [1,2,3,4]
+[ 443: FAIL ] last pixel of row 2: expected [134,87,234,255], got [1,2,3,4]
+[ 444: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_ENUM : buffer too small
+[ 445: PASS ] getError was expected value: NO_ERROR : readPixels should succeed
+[ 446: FAIL ] first pixel of row 1: expected [249,102,0,255], got [1,2,3,4]
+[ 447: FAIL ] last pixel of row 1: expected [249,102,0,255], got [1,2,3,4]
+[ 448: FAIL ] first pixel of row 2: expected [2,200,102,255], got [1,2,3,4]
+[ 449: FAIL ] last pixel of row 2: expected [2,200,102,255], got [1,2,3,4]
+[ 450: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_ENUM : buffer too small
+[ 451: PASS ] getError was expected value: NO_ERROR : readPixels should succeed
+[ 452: FAIL ] last pixel of row 1: expected [249,102,0,255], got [1,2,3,4]
+[ 453: FAIL ] last pixel of row 2: expected [2,200,102,255], got [1,2,3,4]
+[ 454: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_ENUM : buffer too small
+[ 455: PASS ] getError was expected value: NO_ERROR : readPixels should succeed
+[ 456: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_ENUM : buffer too small
+[ 457: PASS ] getError was expected value: NO_ERROR : readPixels should succeed
+[ 458: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_ENUM : buffer too small
+[ 459: PASS ] getError was expected value: NO_ERROR : readPixels should succeed
+[ 460: FAIL ] first pixel of row 0: expected [249,102,0,255], got [1,2,3,4]
+[ 461: FAIL ] first pixel of row 1: expected [2,200,102,255], got [1,2,3,4]
+[ 462: FAIL ] first pixel of row 2: expected [134,87,234,255], got [1,2,3,4]
+[ 463: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_ENUM : buffer too small
+[ 464: PASS ] getError was expected value: NO_ERROR : readPixels should succeed
+[ 465: FAIL ] first pixel of row 0: expected [134,87,234,255], got [1,2,3,4]
+[ 466: FAIL ] last pixel of row 0: expected [134,87,234,255], got [1,2,3,4]
+[ 467: FAIL ] first pixel of row 1: expected [99,5,76,255], got [1,2,3,4]
+[ 468: FAIL ] last pixel of row 1: expected [99,5,76,255], got [1,2,3,4]
+[ 469: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_ENUM : buffer too small
+[ 470: PASS ] getError was expected value: NO_ERROR : readPixels should succeed
+[ 471: FAIL ] first pixel of row 0: expected [134,87,234,255], got [1,2,3,4]
+[ 472: FAIL ] first pixel of row 1: expected [99,5,76,255], got [1,2,3,4]
+[ 473: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_ENUM : buffer too small
+[ 474: PASS ] getError was expected value: NO_ERROR : readPixels should succeed
+[ 475: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_ENUM : buffer too small
+[ 476: PASS ] getError was expected value: NO_ERROR : readPixels should succeed
+[ 477: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_ENUM : buffer too small
+[ 478: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : Invalid pack params combination
+[ 479: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_ENUM : buffer too small
+[ 480: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : Invalid pack params combination
+[ 481: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_ENUM : buffer too small
+[ 482: PASS ] getError was expected value: NO_ERROR : readPixels should succeed
+[ 483: FAIL ] first pixel of row 0: expected [249,102,0,255], got [1,2,3,4]
+[ 484: FAIL ] last pixel of row 0: expected [249,102,0,255], got [1,2,3,4]
+[ 485: FAIL ] first pixel of row 1: expected [2,200,102,255], got [1,2,3,4]
+[ 486: FAIL ] last pixel of row 1: expected [2,200,102,255], got [1,2,3,4]
+[ 487: FAIL ] first pixel of row 2: expected [134,87,234,255], got [1,2,3,4]
+[ 488: FAIL ] last pixel of row 2: expected [134,87,234,255], got [1,2,3,4]
+[ 489: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_ENUM : buffer too small
+[ 490: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : Invalid pack params combination
+[ 491: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_ENUM : buffer too small
+[ 492: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : Invalid pack params combination
+[ 493: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_ENUM : buffer too small
+[ 494: PASS ] getError was expected value: NO_ERROR : readPixels should succeed
+[ 495: FAIL ] first pixel of row 0: expected [249,102,0,255], got [1,2,3,4]
+[ 496: FAIL ] last pixel of row 0: expected [249,102,0,255], got [1,2,3,4]
+[ 497: FAIL ] first pixel of row 1: expected [2,200,102,255], got [1,2,3,4]
+[ 498: FAIL ] last pixel of row 1: expected [2,200,102,255], got [1,2,3,4]
+[ 499: FAIL ] first pixel of row 2: expected [134,87,234,255], got [1,2,3,4]
+[ 500: FAIL ] last pixel of row 2: expected [134,87,234,255], got [1,2,3,4]
+[ 501: PASS ] successfullyParsed is true
+[ FAIL ] 429 failures reported
 

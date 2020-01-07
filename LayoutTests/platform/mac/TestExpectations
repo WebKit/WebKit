@@ -1807,7 +1807,7 @@ webkit.org/b/136627 [ Mojave+ ] media/track/track-cue-rendering-vertical.html [ 
 [ Mojave+ ] webgl/2.0.0/conformance2/glsl3/unary-minus-operator-in-dynamic-loop.html [ Failure ]
 [ Mojave+ ] webgl/2.0.0/conformance2/glsl3/vector-dynamic-indexing-nv-driver-bug.html [ Failure ]
 [ Mojave+ ] webgl/2.0.0/conformance2/glsl3/vector-dynamic-indexing.html [ Failure ]
-[ Mojave+ ] webgl/2.0.0/conformance2/reading/read-pixels-pack-parameters.html [ Failure ]
+[ HighSierra+ ] webgl/2.0.0/conformance2/reading/read-pixels-pack-parameters.html [ Failure ]
 [ Mojave+ ] webgl/2.0.0/conformance2/renderbuffers/multisample-with-full-sample-counts.html [ Failure ]
 [ Mojave+ ] webgl/2.0.0/conformance2/rendering/blitframebuffer-test.html [ Failure ]
 [ Mojave+ ] webgl/2.0.0/conformance2/rendering/instanced-arrays.html [ Failure ]
