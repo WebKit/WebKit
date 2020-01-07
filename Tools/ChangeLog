@@ -1,3 +1,13 @@
+2020-01-07  Aakash Jain  <aakash_jain@apple.com>
+
+        [EWS] Limit pre-existing JSC tests failures to display in buildbot summary
+        https://bugs.webkit.org/show_bug.cgi?id=205878
+
+        Reviewed by Jonathan Bedard.
+
+        * BuildSlaveSupport/ews-build/steps.py:
+        (AnalyzeJSCTestsResults.start): Limit the number of failures to display.
+
 2020-01-07  Daniel Bates  <dabates@apple.com>
 
         First character in each word-wrapped line has incorrect character rect when requested range spans multiple lines
