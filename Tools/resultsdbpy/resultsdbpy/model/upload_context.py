@@ -152,14 +152,16 @@ class UploadContext(object):
     def _do_job_for_key(self, key, attempts=1):
         job_complete = False
         try:
-            data = json.loads(self.redis.get(f'data_for_{key}'))
-            self.synchronously_process_test_results(
-                configuration=Configuration.from_json(data['configuration']),
-                commits=[Commit.from_json(commit_json) for commit_json in data['commits']],
-                suite=data['suite'],
-                timestamp=data['timestamp'],
-                test_results=data['test_results'],
-            )
+            raw_data = self.redis.get(f'data_for_{key}')
+            if raw_data:
+                data = json.loads(raw_data)
+                self.synchronously_process_test_results(
+                    configuration=Configuration.from_json(data['configuration']),
+                    commits=[Commit.from_json(commit_json) for commit_json in data['commits']],
+                    suite=data['suite'],
+                    timestamp=data['timestamp'],
+                    test_results=data['test_results'],
+                )
             job_complete = True
         finally:
             if job_complete or attempts >= self.MAX_ATTEMPTS:
