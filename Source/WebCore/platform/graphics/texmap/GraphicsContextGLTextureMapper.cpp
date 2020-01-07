@@ -479,42 +479,6 @@ ExtensionsGL& GraphicsContextGLOpenGL::getExtensions()
 }
 #endif
 
-#if (PLATFORM(GTK) && !USE(ANGLE)) || PLATFORM(WIN)
-void* GraphicsContextGLOpenGL::mapBufferRange(GC3Denum, GC3Dintptr, GC3Dsizeiptr, GC3Dbitfield)
-{
-    return nullptr;
-}
-
-GC3Dboolean GraphicsContextGLOpenGL::unmapBuffer(GC3Denum)
-{
-    return 0;
-}
-
-void GraphicsContextGLOpenGL::copyBufferSubData(GC3Denum, GC3Denum, GC3Dintptr, GC3Dintptr, GC3Dsizeiptr)
-{
-}
-
-void GraphicsContextGLOpenGL::getInternalformativ(GC3Denum, GC3Denum, GC3Denum, GC3Dsizei, GC3Dint*)
-{
-}
-
-void GraphicsContextGLOpenGL::renderbufferStorageMultisample(GC3Denum, GC3Dsizei, GC3Denum, GC3Dsizei, GC3Dsizei)
-{
-}
-
-void GraphicsContextGLOpenGL::texStorage2D(GC3Denum, GC3Dsizei, GC3Denum, GC3Dsizei, GC3Dsizei)
-{
-}
-
-void GraphicsContextGLOpenGL::texStorage3D(GC3Denum, GC3Dsizei, GC3Denum, GC3Dsizei, GC3Dsizei, GC3Dsizei)
-{
-}
-
-void GraphicsContextGLOpenGL::getActiveUniforms(Platform3DObject, const Vector<GC3Duint>&, GC3Denum, Vector<GC3Dint>&)
-{
-}
-#endif
-
 } // namespace WebCore
 
 #endif // ENABLE(GRAPHICS_CONTEXT_GL) && USE(TEXTURE_MAPPER)

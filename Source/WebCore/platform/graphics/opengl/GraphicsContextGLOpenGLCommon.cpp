@@ -558,7 +558,7 @@ void GraphicsContextGLOpenGL::bufferSubData(GC3Denum target, GC3Dintptr offset, 
     ::glBufferSubData(target, offset, size, data);
 }
 
-#if PLATFORM(COCOA) || PLATFORM(WPE)
+#if USE(OPENGL_3) || USE(OPENGL_ES_3)
 void* GraphicsContextGLOpenGL::mapBufferRange(GC3Denum target, GC3Dintptr offset, GC3Dsizeiptr length, GC3Dbitfield access)
 {
     makeContextCurrent();
@@ -618,7 +618,41 @@ void GraphicsContextGLOpenGL::getActiveUniforms(Platform3DObject program, const 
 
     ::glGetActiveUniformsiv(program, uniformIndices.size(), uniformIndices.data(), pname, params.data());
 }
-#endif
+#else
+void* GraphicsContextGLOpenGL::mapBufferRange(GC3Denum, GC3Dintptr, GC3Dsizeiptr, GC3Dbitfield)
+{
+    return nullptr;
+}
+
+GC3Dboolean GraphicsContextGLOpenGL::unmapBuffer(GC3Denum)
+{
+    return 0;
+}
+
+void GraphicsContextGLOpenGL::copyBufferSubData(GC3Denum, GC3Denum, GC3Dintptr, GC3Dintptr, GC3Dsizeiptr)
+{
+}
+
+void GraphicsContextGLOpenGL::getInternalformativ(GC3Denum, GC3Denum, GC3Denum, GC3Dsizei, GC3Dint*)
+{
+}
+
+void GraphicsContextGLOpenGL::renderbufferStorageMultisample(GC3Denum, GC3Dsizei, GC3Denum, GC3Dsizei, GC3Dsizei)
+{
+}
+
+void GraphicsContextGLOpenGL::texStorage2D(GC3Denum, GC3Dsizei, GC3Denum, GC3Dsizei, GC3Dsizei)
+{
+}
+
+void GraphicsContextGLOpenGL::texStorage3D(GC3Denum, GC3Dsizei, GC3Denum, GC3Dsizei, GC3Dsizei, GC3Dsizei)
+{
+}
+
+void GraphicsContextGLOpenGL::getActiveUniforms(Platform3DObject, const Vector<GC3Duint>&, GC3Denum, Vector<GC3Dint>&)
+{
+}
+#endif // USE(OPENGL_3) || USE(OPENGL_ES_3)
 
 GC3Denum GraphicsContextGLOpenGL::checkFramebufferStatus(GC3Denum target)
 {

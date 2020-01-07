@@ -1118,11 +1118,15 @@
    It replaces USE_OPENGL, USE_OPENGL_ES and USE_EGL. */
 #if PLATFORM(MAC) || (PLATFORM(MACCATALYST) && __has_include(<OpenGL/OpenGL.h>))
 #define USE_OPENGL 1
+#define USE_OPENGL_3 1
 #define USE_OPENGL_ES 0
+#define USE_OPENGL_ES_3 0
 #define USE_ANGLE 0
 #else
 #define USE_OPENGL 0
+#define USE_OPENGL_3 0
 #define USE_OPENGL_ES 1
+#define USE_OPENGL_ES_3 1
 #define USE_ANGLE 0
 #endif
 #if PLATFORM(COCOA)
@@ -1138,12 +1142,6 @@
 #define USE_ACCESSIBILITY_CONTEXT_MENUS 1
 #endif
 
-#endif
-
-#if ENABLE(WEBGL) && PLATFORM(WIN)
-#define USE_OPENGL 1
-#define USE_OPENGL_ES 1
-#define USE_EGL 1
 #endif
 
 #if ENABLE(WEBGL)

@@ -27,7 +27,7 @@
 #include "config.h"
 
 #if ENABLE(GRAPHICS_CONTEXT_GL) && USE(ANGLE)
-#include "GraphicsContextGLOpenGL.h"
+#include "GraphicsContextGL.h"
 
 #if PLATFORM(IOS_FAMILY)
 #include "GraphicsContextGLOpenGLESIOS.h"

@@ -25,6 +25,8 @@
 
 #pragma once
 
+#if ENABLE(GRAPHICS_CONTEXT_GL)
+
 namespace WebCore {
 
 enum class GraphicsContextGLPowerPreference {
@@ -54,3 +56,5 @@ struct GraphicsContextGLAttributes {
 };
 
 }
+
+#endif // ENABLE(GRAPHICS_CONTEXT_GL)

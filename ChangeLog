@@ -1,3 +1,21 @@
+2020-01-06  Don Olmstead  <don.olmstead@sony.com>
+
+        Rename GraphicsContext3D to GraphicsContextGL
+        https://bugs.webkit.org/show_bug.cgi?id=205778
+        <rdar://problem/58327597>
+
+        Reviewed by Ross Kirsling.
+
+        Fix the build after r254064 on Windows and PlayStation.
+
+        Add USE_OPENGL_ES_3 to Windows and WPE builds to simplify the Platform checks
+        for GL functions available in OpenGL ES 3.0+. Expose additional USE macros for
+        Windows builds to remove Platform.h entries around ENABLE(WEBGL).
+
+        * Source/cmake/OptionsFTW.cmake:
+        * Source/cmake/OptionsWPE.cmake:
+        * Source/cmake/OptionsWinCairo.cmake:
+
 2020-01-05  Dean Jackson  <dino@apple.com>
 
         Rename GraphicsContext3D to GraphicsContextGL

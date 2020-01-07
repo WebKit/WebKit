@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if ENABLE(WEBGL)
+#if ENABLE(GRAPHICS_CONTEXT_GL)
 
 #include "ANGLEWebKitBridge.h"
 #include "GraphicsContextGL.h"
@@ -746,4 +746,4 @@ private:
 
 } // namespace WebCore
 
-#endif
+#endif // ENABLE(GRAPHICS_CONTEXT_GL)
