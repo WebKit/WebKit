@@ -1178,6 +1178,9 @@ editing/pasteboard/paste-cocoa-writer-markup-with-system-fonts.html [ Failure ]
 # We don't use Cocoa
 editing/pasteboard/paste-cocoa-writer-markup-with-webkit-standard-font-family.html [ Failure ]
 
+webkit.org/b/205857 media/encrypted-media/mock-MediaKeySession-generateRequest.html [ Skip ]
+webkit.org/b/205860 media/encrypted-media/mock-MediaKeySession-remove.html [ Skip ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Expected failures.
 #
@@ -2524,7 +2527,6 @@ webkit.org/b/188103 imported/w3c/web-platform-tests/mathml/presentation-markup/f
 webkit.org/b/188104 webgl/1.0.3/conformance/ogles/GL/vec/vec_009_to_016.html [ Timeout Pass ]
 webkit.org/b/188106 webgl/1.0.3/conformance/ogles/GL/swizzlers/swizzlers_017_to_024.html [ Timeout Pass ]
 
-webkit.org/b/205117 media/encrypted-media/clearKey/clearKey-cenc-video-playback-mse.html [ Timeout ]
 media/encrypted-media/clearKey/clearKey-cenc-video-playback-mse-multikey.html [ Skip ]
 
 webkit.org/b/191008 webanimations/accelerated-animation-suspension.html [ Timeout ]
@@ -2561,9 +2563,6 @@ webkit.org/b/202245 http/tests/workers/service/registration-clear-redundant-work
 
 webkit.org/b/99036 pointer-lock/pointerlockchange-event-on-lock-lost.html [ Timeout ]
 webkit.org/b/99036 pointer-lock/pointerlockelement-null-when-pending.html [ Timeout ]
-
-webkit.org/b/204670 media/encrypted-media/clearKey/clearKey-cenc-audio-playback-mse.html [ Timeout ]
-webkit.org/b/204670 media/encrypted-media/clearKey/clearKey-webm-video-playback-mse.html [ Timeout ]
 
 webkit.org/b/205112 media/remoteplayback-cancel-invalid.html [ Timeout ]
 webkit.org/b/205112 media/remoteplayback-prompt.html [ Timeout ]

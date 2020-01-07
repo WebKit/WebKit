@@ -1,3 +1,14 @@
+2020-01-07  Charlie Turner  <mail@charles.plus>
+
+        [GTK][EME] ClearKey encrypted media gardening
+        https://bugs.webkit.org/show_bug.cgi?id=205857
+
+        Unreviewed gardening.
+
+        * platform/gtk/TestExpectations: Skip
+        mock-MediaKeySession-{generateRequest,remove}.html and update some
+        no longer timing out test-cases.
+
 2020-01-07  youenn fablet  <youenn@apple.com>
 
         Add an option to make video capture in GPUProcess
