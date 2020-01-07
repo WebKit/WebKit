@@ -237,10 +237,8 @@ String AccessibilityObject::rolePlatformDescription() const
 
     // Only returning for DL (not UL or OL) because description changed with HTML5 from 'definition list' to
     // superset 'description list' and does not return the same values in AX API on some OS versions.
-    if (is<AccessibilityList>(*this)) {
-        if (downcast<AccessibilityList>(*this).isDescriptionList())
-            return AXDescriptionListText();
-    }
+    if (isDescriptionList())
+        return AXDescriptionListText();
 
     if (role == AccessibilityRole::HorizontalRule)
         return AXHorizontalRuleDescriptionText();

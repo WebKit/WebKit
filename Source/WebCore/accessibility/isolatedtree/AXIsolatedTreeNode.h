@@ -147,6 +147,7 @@ private:
         IsChecked,
         IsCollapsed,
         IsControl,
+        IsDescriptionList,
         IsEnabled,
         IsExpanded,
         IsFieldset,
@@ -200,6 +201,7 @@ private:
         IsMultiSelectable,
         IsOffScreen,
         IsOnScreen,
+        IsOrderedList,
         IsOutput,
         IsPasswordField,
         IsPressed,
@@ -219,6 +221,7 @@ private:
         IsTextControl,
         IsTree,
         IsTreeItem,
+        IsUnorderedList,
         IsUnvisited,
         IsValueAutofilled,
         IsValueAutofillAvailable,
@@ -347,7 +350,12 @@ private:
     bool isProgressIndicator() const override { return boolAttributeValue(AXPropertyName::IsProgressIndicator); }
     bool isSlider() const override { return boolAttributeValue(AXPropertyName::IsSlider); }
     bool isControl() const override { return boolAttributeValue(AXPropertyName::IsControl); }
+
     bool isList() const override { return boolAttributeValue(AXPropertyName::IsList); }
+    bool isUnorderedList() const override { return boolAttributeValue(AXPropertyName::IsUnorderedList); }
+    bool isOrderedList() const override { return boolAttributeValue(AXPropertyName::IsOrderedList); }
+    bool isDescriptionList() const override { return boolAttributeValue(AXPropertyName::IsDescriptionList); }
+
     bool isTable() const override { return false; }
     bool isTableRow() const override { return boolAttributeValue(AXPropertyName::IsTableRow); }
     bool isTableColumn() const override { return boolAttributeValue(AXPropertyName::IsTableColumn); }

@@ -2089,16 +2089,15 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     
     if (m_object->isFieldset())
         return @"AXFieldset";
-    
-    if (is<AccessibilityList>(*m_object)) {
-        auto& listObject = downcast<AccessibilityList>(*m_object);
-        if (listObject.isUnorderedList() || listObject.isOrderedList())
+
+    if (m_object->isList()) {
+        if (m_object->isUnorderedList() || m_object->isOrderedList())
             return NSAccessibilityContentListSubrole;
-        if (listObject.isDescriptionList()) {
+        if (m_object->isDescriptionList()) {
             return NSAccessibilityDescriptionListSubrole;
         }
     }
-    
+
     // ARIA content subroles.
     switch (role) {
     case AccessibilityRole::LandmarkBanner:

@@ -78,6 +78,9 @@ void AXIsolatedObject::initializeAttributeData(AXCoreObject& object, bool isRoot
     setProperty(AXPropertyName::IsSlider, object.isSlider());
     setProperty(AXPropertyName::IsControl, object.isControl());
     setProperty(AXPropertyName::IsList, object.isList());
+    setProperty(AXPropertyName::IsUnorderedList, object.isUnorderedList());
+    setProperty(AXPropertyName::IsOrderedList, object.isOrderedList());
+    setProperty(AXPropertyName::IsDescriptionList, object.isDescriptionList());
     setProperty(AXPropertyName::IsTableRow, object.isTableRow());
     setProperty(AXPropertyName::IsTableColumn, object.isTableColumn());
     setProperty(AXPropertyName::IsTableCell, object.isTableCell());

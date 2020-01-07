@@ -523,7 +523,12 @@ public:
     virtual bool isInputSlider() const = 0;
     virtual bool isControl() const = 0;
     virtual bool isLabel() const = 0;
+    // lists support (l, ul, ol, dl)
     virtual bool isList() const = 0;
+    virtual bool isUnorderedList() const = 0;
+    virtual bool isOrderedList() const = 0;
+    virtual bool isDescriptionList() const = 0;
+
     virtual bool isTable() const = 0;
     virtual bool isDataTable() const = 0;
     virtual bool isTableRow() const = 0;

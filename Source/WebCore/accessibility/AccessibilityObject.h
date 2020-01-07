@@ -148,7 +148,12 @@ public:
     bool isInputSlider() const override { return false; }
     bool isControl() const override { return false; }
     bool isLabel() const override { return false; }
+
     bool isList() const override { return false; }
+    bool isUnorderedList() const override { return false; }
+    bool isOrderedList() const override { return false; }
+    bool isDescriptionList() const override { return false; }
+
     bool isTable() const override { return false; }
     bool isDataTable() const override { return false; }
     bool isTableRow() const override { return false; }
