@@ -125,7 +125,7 @@ messages -> WebProcess LegacyReceiver NotRefCounted {
 #endif
 #endif
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     BacklightLevelDidChange(float backlightLevel)
 #endif
 

@@ -605,7 +605,7 @@ private:
 
     void updateBackForwardCacheCapacity();
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     static float displayBrightness();
     static void backlightLevelDidChangeCallback(CFNotificationCenterRef, void *observer, CFStringRef name, const void *, CFDictionaryRef userInfo);    
 #endif

@@ -80,12 +80,12 @@
 #import <wtf/cocoa/NSURLExtras.h>
 
 #if PLATFORM(IOS)
-#import "UIKitSPI.h"
 #import <WebCore/ParentalControlsContentFilter.h>
 #endif
 
 #if PLATFORM(IOS_FAMILY)
-#include <bmalloc/MemoryStatusSPI.h>
+#import "UIKitSPI.h"
+#import <bmalloc/MemoryStatusSPI.h>
 #endif
 
 #if PLATFORM(IOS_FAMILY)
@@ -815,7 +815,7 @@ void WebProcess::displayWasRefreshed(CGDirectDisplayID displayID)
 }
 #endif
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 static float currentBacklightLevel()
 {
     return WebProcess::singleton().backlightLevel();

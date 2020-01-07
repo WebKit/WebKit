@@ -1,3 +1,22 @@
+2020-01-06  Per Arne Vollan  <pvollan@apple.com>
+
+        [iOS] Get display level in the UI process for all iOS platforms
+        https://bugs.webkit.org/show_bug.cgi?id=205835
+        <rdar://problem/58116883>
+
+        Reviewed by Brent Fulgham.
+
+        This was previously only done for iOS, but should be done for all iOS platforms.
+
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::WebProcessPool::registerNotificationObservers):
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::initializeNewWebProcess):
+        * UIProcess/WebProcessPool.h:
+        * WebProcess/WebProcess.h:
+        * WebProcess/WebProcess.messages.in:
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+
 2020-01-06  Eric Carlson  <eric.carlson@apple.com>
 
         Add some of the remote media player messages needed for video playback
