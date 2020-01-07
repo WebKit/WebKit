@@ -3403,7 +3403,6 @@ webkit.org/b/177934 http/tests/preconnect/link-header-rel-preconnect-http.html [
 webkit.org/b/177936 fast/text/all-small-caps-whitespace.html [ ImageOnlyFailure ]
 webkit.org/b/177936 fast/text/regional-indicator-symobls.html [ Failure ]
 webkit.org/b/177936 fast/text/selection-in-initial-advance-region.html [ Failure ]
-webkit.org/b/177936 imported/blink/editing/selection/offset-from-point-complex-scripts.html [ Failure ]
 
 webkit.org/b/177937 fast/text/soft-hyphen-min-preferred-width.html [ ImageOnlyFailure ]
 webkit.org/b/177937 fast/text/unknown-char-notdef.html [ ImageOnlyFailure ]
