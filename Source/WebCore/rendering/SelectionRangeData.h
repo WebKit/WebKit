@@ -50,26 +50,26 @@ public:
         Context(RenderObject* start, RenderObject* end, unsigned startOffset, unsigned endOffset)
             : m_start(makeWeakPtr(start))
             , m_end(makeWeakPtr(end))
-            , m_startPosition(startOffset)
-            , m_endPosition(endOffset)
+            , m_startOffset(startOffset)
+            , m_endOffset(endOffset)
         {
         }
 
         RenderObject* start() const { return m_start.get(); }
         RenderObject* end() const { return m_end.get(); }
-        Optional<unsigned> startPosition() const { return m_startPosition; }
-        Optional<unsigned> endPosition() const { return m_endPosition; }
+        Optional<unsigned> startOffset() const { return m_startOffset; }
+        Optional<unsigned> endOffset() const { return m_endOffset; }
 
         bool operator==(const Context& other) const
         {
-            return m_start == other.m_start && m_end == other.m_end && m_startPosition == other.m_startPosition && m_endPosition == other.m_endPosition;
+            return m_start == other.m_start && m_end == other.m_end && m_startOffset == other.m_startOffset && m_endOffset == other.m_endOffset;
         }
 
     private:
         WeakPtr<RenderObject> m_start;
         WeakPtr<RenderObject> m_end;
-        Optional<unsigned> m_startPosition;
-        Optional<unsigned> m_endPosition;
+        Optional<unsigned> m_startOffset;
+        Optional<unsigned> m_endOffset;
     };
     
     void setContext(const Context&);
@@ -81,8 +81,8 @@ public:
     RenderObject* start() const { return m_selectionContext.start(); }
     RenderObject* end() const { return m_selectionContext.end(); }
 
-    unsigned startPosition() const { ASSERT(m_selectionContext.startPosition()); return m_selectionContext.startPosition().valueOr(0); }
-    unsigned endPosition() const { ASSERT(m_selectionContext.endPosition()); return m_selectionContext.endPosition().valueOr(0); }
+    unsigned startOffset() const { ASSERT(m_selectionContext.startOffset()); return m_selectionContext.startOffset().valueOr(0); }
+    unsigned endOffset() const { ASSERT(m_selectionContext.endOffset()); return m_selectionContext.endOffset().valueOr(0); }
 
     void clear();
     IntRect bounds() const { return collectBounds(ClipToVisibleContent::No); }

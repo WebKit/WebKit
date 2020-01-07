@@ -1422,29 +1422,29 @@ LayoutRect RenderText::collectSelectionRectsForLineBoxes(const RenderLayerModelO
 
     // Now calculate startPos and endPos for painting selection.
     // We include a selection while endPos > 0
-    unsigned startPos;
-    unsigned endPos;
+    unsigned startOffset;
+    unsigned endOffset;
     if (selectionState() == SelectionInside) {
         // We are fully selected.
-        startPos = 0;
-        endPos = text().length();
+        startOffset = 0;
+        endOffset = text().length();
     } else {
-        startPos = view().selection().startPosition();
-        endPos = view().selection().endPosition();
+        startOffset = view().selection().startOffset();
+        endOffset = view().selection().endOffset();
         if (selectionState() == SelectionStart)
-            endPos = text().length();
+            endOffset = text().length();
         else if (selectionState() == SelectionEnd)
-            startPos = 0;
+            startOffset = 0;
     }
 
-    if (startPos == endPos)
+    if (startOffset == endOffset)
         return IntRect();
 
     LayoutRect resultRect;
     if (!rects)
-        resultRect = m_lineBoxes.selectionRectForRange(startPos, endPos);
+        resultRect = m_lineBoxes.selectionRectForRange(startOffset, endOffset);
     else {
-        m_lineBoxes.collectSelectionRectsForRange(startPos, endPos, *rects);
+        m_lineBoxes.collectSelectionRectsForRange(startOffset, endOffset, *rects);
         for (auto& rect : *rects) {
             resultRect.unite(rect);
             rect = localToContainerQuad(FloatRect(rect), repaintContainer).enclosingBoundingBox();

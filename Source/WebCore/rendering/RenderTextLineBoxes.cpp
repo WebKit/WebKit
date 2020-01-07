@@ -350,8 +350,8 @@ void RenderTextLineBoxes::setSelectionState(RenderText& renderer, RenderObject::
         return;
     }
 
-    auto start = renderer.view().selection().startPosition();
-    auto end = renderer.view().selection().endPosition();
+    auto start = renderer.view().selection().startOffset();
+    auto end = renderer.view().selection().endOffset();
     if (state == RenderObject::SelectionStart) {
         end = renderer.text().length();
         // to handle selection from end of text to end of line

@@ -665,8 +665,8 @@ bool RenderReplaced::isSelected() const
     if (state == SelectionInside)
         return true;
 
-    auto selectionStart = view().selection().startPosition();
-    auto selectionEnd = view().selection().endPosition();
+    auto selectionStart = view().selection().startOffset();
+    auto selectionEnd = view().selection().endOffset();
     if (state == SelectionStart)
         return !selectionStart;
 

@@ -49,8 +49,8 @@ struct SelectionData {
     using RendererMap = HashMap<RenderObject*, std::unique_ptr<RenderSelectionInfo>>;
     using RenderBlockMap = HashMap<const RenderBlock*, std::unique_ptr<RenderBlockSelectionInfo>>;
 
-    Optional<unsigned> startPosition;
-    Optional<unsigned> endPosition;
+    Optional<unsigned> startOffset;
+    Optional<unsigned> endOffset;
     RendererMap renderers;
     RenderBlockMap blocks;
 };
@@ -98,7 +98,7 @@ private:
 
 } // anonymous namespace
 
-static RenderObject* rendererAfterPosition(const RenderObject& renderer, unsigned offset)
+static RenderObject* rendererAfterOffset(const RenderObject& renderer, unsigned offset)
 {
     auto* child = renderer.childAt(offset);
     return child ? child : renderer.nextInPreOrderAfterChildren();
@@ -119,14 +119,14 @@ static RenderBlock* containingBlockBelowView(const RenderObject& renderer)
 
 static SelectionData collect(const SelectionRangeData::Context& selection, bool repaintDifference)
 {
-    SelectionData oldSelectionData { selection.startPosition(), selection.endPosition(), { }, { } };
+    SelectionData oldSelectionData { selection.startOffset(), selection.endOffset(), { }, { } };
     // Blocks contain selected objects and fill gaps between them, either on the left, right, or in between lines and blocks.
     // In order to get the repaint rect right, we have to examine left, middle, and right rects individually, since otherwise
     // the union of those rects might remain the same even when changes have occurred.
     auto* start = selection.start();
     RenderObject* stop = nullptr;
     if (selection.end())
-        stop = rendererAfterPosition(*selection.end(), selection.endPosition().value());
+        stop = rendererAfterOffset(*selection.end(), selection.endOffset().value());
     SelectionIterator selectionIterator(start);
     while (start && start != stop) {
         if (isValidRendererForSelection(*start, selection)) {
@@ -179,7 +179,7 @@ RenderObject::SelectionState SelectionRangeData::selectionStateForRenderer(Rende
     RenderObject* selectionEnd = nullptr;
     auto* selectionDataEnd = m_selectionContext.end();
     if (selectionDataEnd)
-        selectionEnd = rendererAfterPosition(*selectionDataEnd, m_selectionContext.endPosition().value());
+        selectionEnd = rendererAfterOffset(*selectionDataEnd, m_selectionContext.endOffset().value());
     SelectionIterator selectionIterator(m_selectionContext.start());
     for (auto* currentRenderer = m_selectionContext.start(); currentRenderer && currentRenderer != m_selectionContext.end(); currentRenderer = selectionIterator.next()) {
         if (currentRenderer == m_selectionContext.start() || currentRenderer == m_selectionContext.end())
@@ -221,7 +221,7 @@ void SelectionRangeData::repaint() const
     HashSet<RenderBlock*> processedBlocks;
     RenderObject* end = nullptr;
     if (m_selectionContext.end())
-        end = rendererAfterPosition(*m_selectionContext.end(), m_selectionContext.endPosition().value());
+        end = rendererAfterOffset(*m_selectionContext.end(), m_selectionContext.endOffset().value());
     SelectionIterator selectionIterator(m_selectionContext.start());
     for (auto* renderer = selectionIterator.current(); renderer && renderer != end; renderer = selectionIterator.next()) {
         if (!renderer->canBeSelectionLeaf() && renderer != m_selectionContext.start() && renderer != m_selectionContext.end())
@@ -244,7 +244,7 @@ IntRect SelectionRangeData::collectBounds(ClipToVisibleContent clipToVisibleCont
     auto* start = m_selectionContext.start();
     RenderObject* stop = nullptr;
     if (m_selectionContext.end())
-        stop = rendererAfterPosition(*m_selectionContext.end(), m_selectionContext.endPosition().value());
+        stop = rendererAfterOffset(*m_selectionContext.end(), m_selectionContext.endOffset().value());
     SelectionIterator selectionIterator(start);
     while (start && start != stop) {
         if ((start->canBeSelectionLeaf() || start == m_selectionContext.start() || start == m_selectionContext.end())
@@ -298,7 +298,7 @@ void SelectionRangeData::apply(const Context& newSelection, RepaintMode blockRep
     RenderObject* selectionEnd = nullptr;
     auto* selectionDataEnd = m_selectionContext.end();
     if (selectionDataEnd)
-        selectionEnd = rendererAfterPosition(*selectionDataEnd, m_selectionContext.endPosition().value());
+        selectionEnd = rendererAfterOffset(*selectionDataEnd, m_selectionContext.endOffset().value());
     SelectionIterator selectionIterator(selectionStart);
     for (auto* currentRenderer = selectionStart; currentRenderer && currentRenderer != selectionEnd; currentRenderer = selectionIterator.next()) {
         if (currentRenderer == selectionStart || currentRenderer == m_selectionContext.end())
@@ -349,8 +349,8 @@ void SelectionRangeData::apply(const Context& newSelection, RepaintMode blockRep
         auto* newInfo = newSelectedRenderers.get(renderer);
         auto* oldInfo = selectedRendererInfo.value.get();
         if (!newInfo || oldInfo->rect() != newInfo->rect() || oldInfo->state() != newInfo->state()
-            || (m_selectionContext.start() == renderer && oldSelectionData.startPosition != m_selectionContext.startPosition())
-            || (m_selectionContext.end() == renderer && oldSelectionData.endPosition != m_selectionContext.endPosition())) {
+            || (m_selectionContext.start() == renderer && oldSelectionData.startOffset != m_selectionContext.startOffset())
+            || (m_selectionContext.end() == renderer && oldSelectionData.endOffset != m_selectionContext.endOffset())) {
             oldInfo->repaint();
             if (newInfo) {
                 newInfo->repaint();
