@@ -1,5 +1,95 @@
 2020-01-07  Pablo Saavedra  <psaavedra@igalia.com>
 
+        Re-sync web-platform-tests/xhr from upstream
+        https://bugs.webkit.org/show_bug.cgi?id=205641
+
+        Reviewed by Youenn Fablet.
+
+        * web-platform-tests/xhr/FormData-append-expected.txt:
+        * web-platform-tests/xhr/FormData-append.html:
+        * web-platform-tests/xhr/META.yml:
+        * web-platform-tests/xhr/abort-after-receive.htm: Removed.
+        * web-platform-tests/xhr/abort-after-send.htm: Removed.
+        * web-platform-tests/xhr/abort-after-stop.htm: Removed.
+        * web-platform-tests/xhr/abort-after-timeout.htm: Removed.
+        * web-platform-tests/xhr/abort-during-done.htm: Removed.
+        * web-platform-tests/xhr/abort-during-headers-received.htm: Removed.
+        * web-platform-tests/xhr/abort-during-loading.htm: Removed.
+        * web-platform-tests/xhr/abort-during-unsent.htm: Removed.
+        * web-platform-tests/xhr/abort-during-upload.htm: Removed.
+        * web-platform-tests/xhr/abort-event-abort.htm: Removed.
+        * web-platform-tests/xhr/abort-event-listeners.htm: Removed.
+        * web-platform-tests/xhr/abort-event-loadend.htm: Removed.
+        * web-platform-tests/xhr/abort-upload-event-abort.htm: Removed.
+        * web-platform-tests/xhr/abort-upload-event-loadend.htm: Removed.
+        * web-platform-tests/xhr/access-control-and-redirects-async-same-origin.htm: Removed.
+        * web-platform-tests/xhr/access-control-and-redirects-async.htm: Removed.
+        * web-platform-tests/xhr/access-control-and-redirects.htm: Removed.
+        * web-platform-tests/xhr/access-control-basic-allow-access-control-origin-header.htm: Removed.
+        * web-platform-tests/xhr/access-control-basic-allow-async.htm: Removed.
+        * web-platform-tests/xhr/access-control-basic-allow-non-cors-safelisted-method-async.htm: Removed.
+        * web-platform-tests/xhr/access-control-basic-allow-non-cors-safelisted-method.htm: Removed.
+        * web-platform-tests/xhr/access-control-basic-allow-preflight-cache-invalidation-by-header.htm: Removed.
+        * web-platform-tests/xhr/access-control-basic-allow-preflight-cache-invalidation-by-method.htm: Removed.
+        * web-platform-tests/xhr/access-control-basic-allow-preflight-cache-timeout.htm: Removed.
+        * web-platform-tests/xhr/access-control-basic-allow-preflight-cache.htm: Removed.
+        * web-platform-tests/xhr/access-control-basic-allow-star.htm: Removed.
+        * web-platform-tests/xhr/access-control-basic-allow.htm: Removed.
+        * web-platform-tests/xhr/access-control-basic-cors-safelisted-request-headers-expected.txt:
+        * web-platform-tests/xhr/access-control-basic-cors-safelisted-request-headers.htm:
+        * web-platform-tests/xhr/event-abort.htm: Removed.
+        * web-platform-tests/xhr/event-error.sub.html: Removed.
+        * web-platform-tests/xhr/event-load.htm: Removed.
+        * web-platform-tests/xhr/event-loadend.htm: Removed.
+        * web-platform-tests/xhr/event-loadstart-upload.htm: Removed.
+        * web-platform-tests/xhr/event-loadstart.htm: Removed.
+        * web-platform-tests/xhr/event-progress.htm: Removed.
+        * web-platform-tests/xhr/event-readystate-sync-open.htm: Removed.
+        * web-platform-tests/xhr/event-readystatechange-loaded.htm: Removed.
+        * web-platform-tests/xhr/event-timeout-order.htm: Removed.
+        * web-platform-tests/xhr/event-timeout.htm: Removed.
+        * web-platform-tests/xhr/event-upload-progress-crossorigin.htm: Removed.
+        * web-platform-tests/xhr/event-upload-progress.htm: Removed.
+        * web-platform-tests/xhr/formdata-expected.txt:
+        * web-platform-tests/xhr/formdata-set-expected.txt:
+        * web-platform-tests/xhr/formdata-set.htm:
+        * web-platform-tests/xhr/formdata.htm:
+        * web-platform-tests/xhr/getallresponseheaders-expected.txt:
+        * web-platform-tests/xhr/getallresponseheaders.htm:
+        * web-platform-tests/xhr/idlharness.any.js:
+        * web-platform-tests/xhr/open-during-abort-processing-expected.txt:
+        * web-platform-tests/xhr/open-during-abort-processing.htm:
+        * web-platform-tests/xhr/overridemimetype-blob.html:
+        * web-platform-tests/xhr/overridemimetype-unsent-state-force-shiftjis.htm: Removed.
+        * web-platform-tests/xhr/resources/access-control-basic-options-not-supported.py:
+        (main):
+        * web-platform-tests/xhr/resources/authentication.py:
+        (main):
+        * web-platform-tests/xhr/resources/echo-method.py:
+        (main):
+        * web-platform-tests/xhr/resources/headers.asis:
+        * web-platform-tests/xhr/response-data-progress.htm:
+        * web-platform-tests/xhr/responsexml-document-properties-expected.txt:
+        * web-platform-tests/xhr/responsexml-document-properties.htm:
+        * web-platform-tests/xhr/send-authentication-basic-cors-not-enabled-expected.txt:
+        * web-platform-tests/xhr/send-authentication-basic-cors-not-enabled.htm:
+        * web-platform-tests/xhr/send-authentication-basic-repeat-no-args.htm:
+        * web-platform-tests/xhr/send-content-type-charset.htm:
+        * web-platform-tests/xhr/send-data-arraybuffer.htm: Removed.
+        * web-platform-tests/xhr/send-data-arraybufferview.htm: Removed.
+        * web-platform-tests/xhr/send-data-es-object.htm: Removed.
+        * web-platform-tests/xhr/send-data-formdata.htm: Removed.
+        * web-platform-tests/xhr/send-redirect-bogus-sync-expected.txt:
+        * web-platform-tests/xhr/send-redirect-bogus-sync.htm:
+        * web-platform-tests/xhr/send-redirect-bogus.htm:
+        * web-platform-tests/xhr/send-redirect-post-upload.htm:
+        * web-platform-tests/xhr/setrequestheader-content-type.htm:
+        * web-platform-tests/xhr/sync-no-progress.any.js:
+        * web-platform-tests/xhr/timeout-cors-async.htm:
+        * web-platform-tests/xhr/w3c-import.log:
+
+2020-01-07  Pablo Saavedra  <psaavedra@igalia.com>
+
         Re-sync web-platform-tests/content-security-policy from upstream
         https://bugs.webkit.org/show_bug.cgi?id=205639
 

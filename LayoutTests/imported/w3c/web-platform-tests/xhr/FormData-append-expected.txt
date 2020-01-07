@@ -12,5 +12,7 @@ PASS testFormDataAppendToFormUndefined1
 PASS testFormDataAppendToFormUndefined2 
 PASS testFormDataAppendToFormNull1 
 PASS testFormDataAppendToFormNull2 
+PASS testFormDataAppendToFormString 
+PASS testFormDataAppendToFormWrongPlatformObject 
 PASS testFormDataAppendEmptyBlob 
 

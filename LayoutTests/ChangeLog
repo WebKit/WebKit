@@ -1,3 +1,17 @@
+2020-01-07  Pablo Saavedra  <psaavedra@igalia.com>
+
+        Re-sync web-platform-tests/xhr from upstream
+        https://bugs.webkit.org/show_bug.cgi?id=205641
+
+        Reviewed by Youenn Fablet.
+
+        * TestExpectations:
+        * platform/gtk/TestExpectations:
+        * platform/ios-simulator-wk2/TestExpectations:
+        * platform/ios/imported/w3c/web-platform-tests/xhr/getallresponseheaders-expected.txt:
+        * platform/mac-wk1/TestExpectations:
+        * tests-options.json:
+
 2020-01-07  Alexey Proskuryakov  <ap@apple.com>
 
         Mark webexposed/css-properties-behind-flags.html as flaky

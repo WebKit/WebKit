@@ -1,0 +1,3 @@
+
+PASS Preflight cache should be invalidated by changed method 
+

@@ -235,7 +235,6 @@ webkit.org/b/201666 imported/w3c/web-platform-tests/service-workers/service-work
 
 # Newly imported service worker tests that are flaky.
 imported/w3c/web-platform-tests/service-workers/service-worker/worker-client-id.https.html [ Pass Failure ]
-imported/w3c/web-platform-tests/xhr/event-timeout-order.htm [ Pass Failure ]
 imported/w3c/web-platform-tests/service-workers/service-worker/update-not-allowed.https.html [ Pass Failure ]
 imported/w3c/web-platform-tests/service-workers/service-worker/performance-timeline.https.html [ Pass Failure ]
 
@@ -513,6 +512,7 @@ imported/w3c/web-platform-tests/workers/SharedWorker_blobUrl.html [ Skip ]
 
 http/tests/cache-storage/page-cache-domcache-pending-promise.html [ DumpJSConsoleLogInStdErr ]
 
+imported/w3c/web-platform-tests/xhr/event-timeout-order.any.worker.html [ Failure ]
 imported/w3c/web-platform-tests/xhr/send-authentication-basic-setrequestheader-existing-session.htm [ Failure ]
 imported/w3c/web-platform-tests/xhr/send-authentication-competing-names-passwords.htm [ Failure ]
 imported/w3c/web-platform-tests/xhr/preserve-ua-header-on-redirect.htm [ Failure ]

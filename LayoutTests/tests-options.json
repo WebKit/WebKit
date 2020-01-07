@@ -2183,10 +2183,19 @@
     "imported/w3c/web-platform-tests/workers/semantics/multiple-workers/007.html": [
         "slow"
     ],
+    "imported/w3c/web-platform-tests/xhr/overridemimetype-blob.html": [
+        "slow"
+    ],
     "imported/w3c/web-platform-tests/xhr/progress-events-response-data-gzip.htm": [
         "slow"
     ],
+    "imported/w3c/web-platform-tests/xhr/response-data-progress.htm": [
+        "slow"
+    ],
     "imported/w3c/web-platform-tests/xhr/send-redirect-bogus.htm": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/xhr/setrequestheader-content-type.htm": [
         "slow"
     ],
     "imported/w3c/web-platform-tests/xhr/xmlhttprequest-timeout-aborted.html": [

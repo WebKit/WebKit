@@ -1,5 +1,5 @@
 
-FAIL domain assert_equals: expected (undefined) undefined but got (string) "localhost"
+PASS domain 
 PASS URL 
 PASS documentURI 
 PASS baseURI 
@@ -11,7 +11,7 @@ PASS location
 PASS defaultView 
 PASS body 
 PASS doctype 
-FAIL all assert_equals: expected undefined but got [object HTMLAllCollection]
+PASS all 
 PASS cookie 
 PASS Test document URL properties after redirect 
 PASS Test document URL properties of document with <base> after redirect 
