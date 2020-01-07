@@ -4506,3 +4506,8 @@ webkit.org/b/204974 http/tests/xmlhttprequest/sync-xhr-in-unload.html [ Failure 
 webkit.org/b/205272 js/integer-division-neg2tothe32-by-neg1.html [ Failure ]
 
 webkit.org/b/205273 imported/blink/fast/sub-pixel/negative-composited-offset.html [ Pass ImageOnlyFailure ]
+
+webkit.org/b/205855 http/wpt/css/css-highlight-api/highlight-text-across-elements.html [ ImageOnlyFailure ]
+webkit.org/b/205855 http/wpt/css/css-highlight-api/highlight-text-cascade.html [ ImageOnlyFailure ]
+webkit.org/b/205855 http/wpt/css/css-highlight-api/highlight-text-replace.html [ ImageOnlyFailure ]
+webkit.org/b/205855 http/wpt/css/css-highlight-api/highlight-text.html [ ImageOnlyFailure ]
