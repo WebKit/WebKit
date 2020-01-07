@@ -28,14 +28,18 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import argparse
+import logging
 import os
 import sys
 import time
 
 from webkitpy.common.host import Host
 from webkitpy.common.system.executive import ScriptError
+from webkitpy.common.system.logutils import configure_logging
 from webkitpy.port.config import Config
 from webkitpy.test.main import Tester
+
+_log = logging.getLogger(__name__)
 
 EXCEPTIONAL_EXIT_STATUS = -1
 
@@ -80,6 +84,7 @@ class LldbTester(Tester):
         return parser.parse_args()
 
     def run(self, host=None, webkit_root=None):
+        configure_logging(logger=_log)
         host = host or Host()
         self._options = self.parse_args()
         self.printer.configure(self._options)
