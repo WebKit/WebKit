@@ -51,7 +51,7 @@ void collectFlowOverflow(RenderBlockFlow&, const Layout&);
 
 Vector<FloatQuad> collectAbsoluteQuads(const RenderObject&, const Layout&, bool* wasFixed);
 unsigned textOffsetForPoint(const LayoutPoint&, const RenderText&, const Layout&);
-Vector<FloatQuad> collectAbsoluteQuadsForRange(const RenderObject&, unsigned start, unsigned end, const Layout&, bool* wasFixed);
+Vector<FloatQuad> collectAbsoluteQuadsForRange(const RenderObject&, unsigned start, unsigned end, const Layout&, bool ignoreEmptyTextSelections, bool* wasFixed);
 
 LayoutUnit lineHeightFromFlow(const RenderBlockFlow&);
 LayoutUnit baselineFromFlow(const RenderBlockFlow&);

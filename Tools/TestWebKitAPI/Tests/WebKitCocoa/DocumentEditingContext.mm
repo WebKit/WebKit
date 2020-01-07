@@ -443,6 +443,44 @@ TEST(DocumentEditingContext, SpatialRequestInTextField)
     }
 }
 
+TEST(DocumentEditingContext, RequestRectsInTextAreaAcrossWordWrappedLine)
+{
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
+    // Use "padding: 0" as the default user-agent stylesheet can effect text wrapping.
+    [webView synchronouslyLoadHTMLString:applyAhemStyle(@"<textarea id='test' style='width: 26em; padding: 0'>The quick brown fox jumps over the lazy dog.</textarea>")]; // Word wraps "over" onto next line
+    [webView stringByEvaluatingJavaScript:@"test.focus(); test.setSelectionRange(25, 25)"]; // Place caret after 's' in "jumps".
+
+    auto *context = [webView synchronouslyRequestDocumentContext:makeRequest(UIWKDocumentRequestText | UIWKDocumentRequestRects, UITextGranularityWord, 2)];
+    EXPECT_NOT_NULL(context);
+    EXPECT_NSSTRING_EQ("fox jumps", context.contextBefore);
+    EXPECT_NSSTRING_EQ(" over the", context.contextAfter);
+    auto *textRects = [context textRects];
+    EXPECT_EQ(18U, textRects.count);
+    if (textRects.count >= 18) {
+        CGFloat x = 401;
+        EXPECT_EQ(CGRectMake(x + 0 * glyphWidth, 3, 25, 25), textRects[0].CGRectValue); // f
+        EXPECT_EQ(CGRectMake(x + 1 * glyphWidth, 3, 25, 25), textRects[1].CGRectValue); // o
+        EXPECT_EQ(CGRectMake(x + 2 * glyphWidth, 3, 25, 25), textRects[2].CGRectValue); // x
+        EXPECT_EQ(CGRectMake(x + 3 * glyphWidth, 3, 25, 25), textRects[3].CGRectValue); //
+        EXPECT_EQ(CGRectMake(x + 4 * glyphWidth, 3, 25, 25), textRects[4].CGRectValue); // j
+        EXPECT_EQ(CGRectMake(x + 5 * glyphWidth, 3, 25, 25), textRects[5].CGRectValue); // u
+        EXPECT_EQ(CGRectMake(x + 6 * glyphWidth, 3, 25, 25), textRects[6].CGRectValue); // m
+        EXPECT_EQ(CGRectMake(x + 7 * glyphWidth, 3, 25, 25), textRects[7].CGRectValue); // p
+        EXPECT_EQ(CGRectMake(x + 8 * glyphWidth, 3, 25, 25), textRects[8].CGRectValue); // s
+        EXPECT_EQ(CGRectMake(x + 9 * glyphWidth, 3, 23, 25), textRects[9].CGRectValue); //
+
+        x = 1;
+        EXPECT_EQ(CGRectMake(x + 0 * glyphWidth, 28, 25, 25), textRects[10].CGRectValue); // o
+        EXPECT_EQ(CGRectMake(x + 1 * glyphWidth, 28, 25, 25), textRects[11].CGRectValue); // v
+        EXPECT_EQ(CGRectMake(x + 2 * glyphWidth, 28, 25, 25), textRects[12].CGRectValue); // e
+        EXPECT_EQ(CGRectMake(x + 3 * glyphWidth, 28, 25, 25), textRects[13].CGRectValue); // r
+        EXPECT_EQ(CGRectMake(x + 4 * glyphWidth, 28, 25, 25), textRects[14].CGRectValue); //
+        EXPECT_EQ(CGRectMake(x + 5 * glyphWidth, 28, 25, 25), textRects[15].CGRectValue); // t
+        EXPECT_EQ(CGRectMake(x + 6 * glyphWidth, 28, 25, 25), textRects[16].CGRectValue); // h
+        EXPECT_EQ(CGRectMake(x + 7 * glyphWidth, 28, 25, 25), textRects[17].CGRectValue); // e
+    }
+}
+
 // MARK: Tests using word granularity
 
 TEST(DocumentEditingContext, RequestFirstTwoWords)

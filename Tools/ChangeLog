@@ -1,3 +1,16 @@
+2020-01-07  Daniel Bates  <dabates@apple.com>
+
+        First character in each word-wrapped line has incorrect character rect when requested range spans multiple lines
+        https://bugs.webkit.org/show_bug.cgi?id=205842
+        <rdar://problem/56884325>
+
+        Reviewed by Zalan Bujtas.
+
+        Add a new test.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/DocumentEditingContext.mm:
+        (TEST):
+
 2020-01-07  Basuke Suzuki  <basuke.suzuki@sony.com>
 
         check-webkit-style: bmalloc doesn't use config.h
