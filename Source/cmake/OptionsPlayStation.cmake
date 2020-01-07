@@ -3,6 +3,22 @@ set(PORT PlayStation)
 include(Sign)
 
 add_definitions(-DWTF_PLATFORM_PLAYSTATION=1)
+add_definitions(-DBPLATFORM_PLAYSTATION=1)
+
+add_definitions(-DSCE_LIBC_DISABLE_CPP14_HEADER_WARNING= -DSCE_LIBC_DISABLE_CPP17_HEADER_WARNING=)
+
+set(ENABLE_API_TESTS ON CACHE BOOL "Build APITests")
+set(ENABLE_WEBCORE ON CACHE BOOL "Build WebCore")
+set(ENABLE_WEBKIT OFF CACHE BOOL "Build WebKit")
+set(ENABLE_WEBKIT_LEGACY OFF)
+
+if (NOT ENABLE_WEBCORE)
+    set(ENABLE_WEBKIT OFF)
+endif ()
+
+if (NOT ENABLE_WEBKIT)
+    set(ENABLE_API_TESTS OFF)
+endif ()
 
 WEBKIT_OPTION_BEGIN()
 
@@ -70,6 +86,8 @@ endif ()
 
 list(APPEND CMAKE_PREFIX_PATH ${WEBKIT_LIBRARIES_DIR})
 
+set(HarfBuzz_ICU_NAMES harfbuzz)
+
 find_library(C_STD_LIBRARY c)
 find_library(KERNEL_LIBRARY kernel)
 
@@ -78,7 +96,7 @@ find_package(CURL REQUIRED)
 find_package(EGL REQUIRED)
 find_package(Fontconfig REQUIRED)
 find_package(Freetype REQUIRED)
-find_package(HarfBuzz REQUIRED)
+find_package(HarfBuzz REQUIRED COMPONENTS ICU)
 find_package(ICU REQUIRED COMPONENTS data i18n uc)
 find_package(JPEG REQUIRED)
 find_package(LibPSL REQUIRED)
@@ -125,11 +143,6 @@ SET_AND_EXPOSE_TO_BUILD(USE_TILED_BACKING_STORE ON)
 set(WTF_LIBRARY_TYPE STATIC)
 set(JavaScriptCore_LIBRARY_TYPE STATIC)
 set(WebCore_LIBRARY_TYPE STATIC)
-
-set(ENABLE_API_TESTS ON)
-set(ENABLE_WEBCORE ON)
-set(ENABLE_WEBKIT OFF)
-set(ENABLE_WEBKIT_LEGACY OFF)
 
 # Enable multi process builds for Visual Studio
 if (NOT ${CMAKE_GENERATOR} MATCHES "Ninja")

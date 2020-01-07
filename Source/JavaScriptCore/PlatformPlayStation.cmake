@@ -34,6 +34,17 @@ list(APPEND JavaScriptCore_SOURCES
     inspector/remote/socket/posix/RemoteInspectorSocketPOSIX.cpp
 )
 
+# With the VisualStudio generator, the compiler complains about -std=c++* for C sources.
+set_source_files_properties(
+    disassembler/udis86/udis86.c
+    disassembler/udis86/udis86_decode.c
+    disassembler/udis86/udis86_itab_holder.c
+    disassembler/udis86/udis86_syn-att.c
+    disassembler/udis86/udis86_syn-intel.c
+    disassembler/udis86/udis86_syn.c
+    PROPERTIES LANGUAGE CXX
+)
+
 if (${WTF_LIBRARY_TYPE} STREQUAL "STATIC")
     add_definitions(-DSTATICALLY_LINKED_WITH_WTF)
 endif ()

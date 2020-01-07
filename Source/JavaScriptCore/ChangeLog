@@ -1,3 +1,13 @@
+2020-01-06  Yoshiaki Jitsukawa  <yoshiaki.jitsukawa@sony.com>
+
+        [PlayStation] Update port cmake
+        https://bugs.webkit.org/show_bug.cgi?id=205846
+
+        Reviewed by Don Olmstead.
+
+        * PlatformPlayStation.cmake:
+        Workaround of compilation errors with VisualStudio generator, which gives -std=c++* options to C sources.
+
 2020-01-06  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         String.prototype.replace() incorrectly handles named references on RegExp w/o named groups
