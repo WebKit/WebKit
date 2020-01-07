@@ -142,6 +142,11 @@ protected:
 
         LayoutUnit contentHeightForFormattingContextRoot(const Box&) const;
 
+        static UsedHorizontalValues::Constraints outOfFlowHorizontalConstraints(const Display::Box& containingBlockGeometry);
+        static UsedVerticalValues::Constraints outOfFlowVerticalConstraints(const Display::Box& containingBlockGeometry);
+        static UsedHorizontalValues::Constraints inFlowHorizontalConstraints(const Display::Box& containingBlockGeometry);
+        static UsedVerticalValues::Constraints inFlowVerticalConstraints(const Display::Box& containingBlockGeometry);
+
     protected:
         friend class FormattingContext;
         Geometry(const FormattingContext&);

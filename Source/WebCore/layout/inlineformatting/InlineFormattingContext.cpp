@@ -72,7 +72,7 @@ void InlineFormattingContext::layoutInFlowContent(InvalidationState& invalidatio
     invalidateFormattingState(invalidationState);
     LOG_WITH_STREAM(FormattingContextLayout, stream << "[Start] -> inline formatting context -> formatting root(" << &root() << ")");
     auto& rootGeometry = geometryForBox(root());
-    auto usedHorizontalValues = UsedHorizontalValues { UsedHorizontalValues::Constraints { rootGeometry } };
+    auto usedHorizontalValues = UsedHorizontalValues { Geometry::inFlowHorizontalConstraints(rootGeometry) };
     auto usedVerticalValues = UsedVerticalValues { UsedVerticalValues::Constraints { rootGeometry } };
     auto* layoutBox = root().firstInFlowOrFloatingChild();
     // 1. Visit each inline box and partially compute their geometry (margins, paddings and borders).

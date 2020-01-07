@@ -50,7 +50,8 @@ LayoutUnit FormattingContext::Quirks::heightValueOfNearestContainingBlockWithFix
         if (containingBlock->isBodyBox() || containingBlock->isDocumentBox()) {
             auto& boxGeometry = formattingContext.geometryForBox(*containingBlock, FormattingContext::EscapeType::AccessAncestorFormattingContext);
 
-            auto usedValues = UsedHorizontalValues { UsedHorizontalValues::Constraints { formattingContext.geometryForBox(*containingBlock->containingBlock(), FormattingContext::EscapeType::AccessAncestorFormattingContext) } };
+            auto& containingBlockDisplayBox = formattingContext.geometryForBox(*containingBlock->containingBlock(), FormattingContext::EscapeType::AccessAncestorFormattingContext);
+            auto usedValues = UsedHorizontalValues { Geometry::inFlowHorizontalConstraints(containingBlockDisplayBox) };
             auto verticalMargin = formattingContext.geometry().computedVerticalMargin(*containingBlock, usedValues);
             auto verticalPadding = boxGeometry.paddingTop().valueOr(0) + boxGeometry.paddingBottom().valueOr(0);
             auto verticalBorder = boxGeometry.borderTop() + boxGeometry.borderBottom();

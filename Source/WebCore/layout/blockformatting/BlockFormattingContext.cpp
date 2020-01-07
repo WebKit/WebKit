@@ -215,7 +215,7 @@ void BlockFormattingContext::placeInFlowPositionedChildren(const Box& layoutBox)
             continue;
 
         auto computeInFlowPositionedPosition = [&] {
-            auto usedHorizontalValues = UsedHorizontalValues { UsedHorizontalValues::Constraints { geometryForBox(*childBox.containingBlock()) } };
+            auto usedHorizontalValues = UsedHorizontalValues { Geometry::inFlowHorizontalConstraints(geometryForBox(*childBox.containingBlock())) };
             auto positionOffset = geometry().inFlowPositionedPositionOffset(childBox, usedHorizontalValues);
 
             auto& displayBox = formattingState().displayBox(childBox);
@@ -243,7 +243,7 @@ void BlockFormattingContext::computeStaticVerticalPosition(const FloatingContext
 
 void BlockFormattingContext::computeStaticHorizontalPosition(const Box& layoutBox)
 {
-    auto usedHorizontalValues = UsedHorizontalValues { UsedHorizontalValues::Constraints { geometryForBox(*layoutBox.containingBlock()) } };
+    auto usedHorizontalValues = UsedHorizontalValues { Geometry::inFlowHorizontalConstraints(geometryForBox(*layoutBox.containingBlock())) };
     formattingState().displayBox(layoutBox).setLeft(geometry().staticHorizontalPosition(layoutBox, usedHorizontalValues));
 }
 
@@ -255,7 +255,7 @@ void BlockFormattingContext::computeStaticPosition(const FloatingContext& floati
 
 void BlockFormattingContext::computeEstimatedVerticalPosition(const Box& layoutBox)
 {
-    auto usedHorizontalValues = UsedHorizontalValues { UsedHorizontalValues::Constraints { geometryForBox(*layoutBox.containingBlock()) } };
+    auto usedHorizontalValues = UsedHorizontalValues { Geometry::inFlowHorizontalConstraints(geometryForBox(*layoutBox.containingBlock())) };
     auto computedVerticalMargin = geometry().computedVerticalMargin(layoutBox, usedHorizontalValues);
     auto usedNonCollapsedMargin = UsedVerticalMargin::NonCollapsedValues { computedVerticalMargin.before.valueOr(0), computedVerticalMargin.after.valueOr(0) };
     auto estimatedMarginBefore = marginCollapse().estimatedMarginBefore(layoutBox, usedNonCollapsedMargin);
@@ -415,9 +415,8 @@ void BlockFormattingContext::computeWidthAndMargin(const Box& layoutBox, Optiona
 void BlockFormattingContext::computeHeightAndMargin(const Box& layoutBox)
 {
     auto& containingBlockGeometry = geometryForBox(*layoutBox.containingBlock());
+    auto usedHorizontalValues = UsedHorizontalValues { Geometry::inFlowHorizontalConstraints(containingBlockGeometry) };
     auto compute = [&](auto usedVerticalValues) -> ContentHeightAndMargin {
-
-        auto usedHorizontalValues = UsedHorizontalValues { UsedHorizontalValues::Constraints { containingBlockGeometry } };
         if (layoutBox.isInFlow())
             return geometry().inFlowHeightAndMargin(layoutBox, usedHorizontalValues, usedVerticalValues);
 

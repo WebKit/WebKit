@@ -33,12 +33,6 @@
 namespace WebCore {
 namespace Layout {
 
-UsedHorizontalValues::Constraints::Constraints(const Display::Box& containingBlockGeometry)
-    : contentBoxLeft(containingBlockGeometry.contentBoxLeft())
-    , width(containingBlockGeometry.contentBoxWidth())
-{
-}
-
 UsedVerticalValues::Constraints::Constraints(const Display::Box& containingBlockGeometry)
     : contentBoxTop(containingBlockGeometry.contentBoxTop())
 {
