@@ -1,3 +1,21 @@
+2020-01-07  Antoine Quint  <graouts@apple.com>
+
+        transitions/default-timing-function.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=205804
+        <rdar://problem/58343509>
+
+        Reviewed by Simon Fraser.
+
+        To pause a Web Animation at a given time, we need to call `pause()` first and set `currentTime` after. Otherwise, the animation's hold
+        time will not be set to the provided value and the time may progress between the moment pause() was called and the moment the pending
+        pause task it creates is performed.
+        
+        The reason the behavior changed for this test is because in r254042 we added a call to updateRendering() which updates the timeline time
+        which otherwise wouldn't have been updated.
+
+        * animations/resources/animation-test-helpers.js:
+        * transitions/resources/transition-test-helpers.js:
+
 2020-01-07  Devin Rousso  <drousso@apple.com>
 
         REGRESSION: [ Mac Debug ] inspector/page/setBootstrapScript-main-frame.html is a flaky failure

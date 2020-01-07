@@ -392,8 +392,8 @@ function pauseTransitionAtTimeOnElement(transitionProperty, time, element)
     const animations = element.getAnimations();
     for (let animation of animations) {
         if (animation instanceof CSSTransition && animation.transitionProperty == transitionProperty) {
-            animation.currentTime = time * 1000;
             animation.pause();
+            animation.currentTime = time * 1000;
             return true;
         }
     }

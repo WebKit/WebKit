@@ -522,8 +522,8 @@ function pauseAnimationAtTimeOnElement(animationName, time, element)
     const animations = element.getAnimations();
     for (let animation of animations) {
         if (animation instanceof CSSAnimation && animation.animationName == animationName) {
-            animation.currentTime = time * 1000;
             animation.pause();
+            animation.currentTime = time * 1000;
             return true;
         }
     }
