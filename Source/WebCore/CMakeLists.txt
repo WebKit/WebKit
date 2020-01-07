@@ -1492,7 +1492,7 @@ if (ENABLE_GRAPHICS_CONTEXT_GL)
     list(APPEND WebCore_SOURCES
         platform/graphics/ANGLEWebKitBridge.cpp
         platform/graphics/FormatConverter.cpp
-        platform/graphics/opengl/GraphicsContextGLOpenGLBase.cpp
+        platform/graphics/opengl/GraphicsContextGLOpenGL.cpp
     )
 
     list(APPEND WebCore_LIBRARIES ANGLEFramework)
