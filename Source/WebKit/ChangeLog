@@ -1,3 +1,33 @@
+2020-01-07  Keith Rollin  <krollin@apple.com>
+
+        Reformat WebFrameLoaderClient logging
+        https://bugs.webkit.org/show_bug.cgi?id=205869
+        <rdar://problem/58379240>
+
+        Reviewed by Brent Fulgham.
+
+        Update the format used by WebFrameLoaderClient in its RELEASE_LOG
+        logging. Use the format used by WebPageProxy and
+        NetworkResourceLoader, which is generally of the form:
+
+            <object-address> - [<values that help thread together operations>] <class>::<method>: <message and other useful values>
+
+        So, for example:
+
+            0x4a1d7c310 - WebFrameLoaderClient::dispatchDidReachLayoutMilestone: dispatching didCompletePageTransition, page = 0x7f83ba009208
+
+        becomes:
+
+            0x4a1d7c310 - [webFrame=0x7ff703f03b68, webFrameID=3, webPage=0x7ff704831808, webPageID=15] WebFrameLoaderClient::dispatchDidReachLayoutMilestone: dispatching didCompletePageTransition
+
+        No new tests - no added or changed functionality.
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchDidReceiveServerRedirectForProvisionalLoad):
+        (WebKit::WebFrameLoaderClient::dispatchDidFailProvisionalLoad):
+        (WebKit::WebFrameLoaderClient::dispatchDidFailLoad):
+        (WebKit::WebFrameLoaderClient::dispatchDidReachLayoutMilestone):
+
 2020-01-07  Daniel Bates  <dabates@apple.com>
 
         First character in each word-wrapped line has incorrect character rect when requested range spans multiple lines
