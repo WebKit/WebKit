@@ -9,11 +9,17 @@ layer at (0,0) size 785x790
       RenderBlock {PRE} at (0,36) size 769x112
         RenderText {#text} at (0,0) size 560x112
           text run at (0,0) width 208: "P.one {line-height: 200%;}"
+          text run at (208,0) width 0: " "
           text run at (0,16) width 552: "SPAN.two {border-style: solid; border-width: 10px; border-color: red;"
+          text run at (552,16) width 0: " "
           text run at (0,32) width 304: "          padding: 2pt; margin: 30pt;}"
+          text run at (304,32) width 0: " "
           text run at (0,48) width 360: "P.three {font-size: 10pt; line-height: 12pt;}"
+          text run at (360,48) width 0: " "
           text run at (0,64) width 560: "SPAN.four {border-style: solid; border-width: 12px; border-color: red;"
+          text run at (560,64) width 0: " "
           text run at (0,80) width 192: "          padding: 2pt;}"
+          text run at (192,80) width 0: " "
           text run at (0,96) width 0: " "
       RenderBlock {HR} at (0,161) size 769x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,179) size 769x192

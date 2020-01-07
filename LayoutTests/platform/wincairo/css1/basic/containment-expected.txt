@@ -9,15 +9,25 @@ layer at (0,0) size 785x1009
       RenderBlock {PRE} at (0,36) size 769x160
         RenderText {#text} at (0,0) size 728x160
           text run at (0,0) width 624: "<LINK rel=\"stylesheet\" type=\"text/css\" href=\"linktest.css\" title=\"Default SS\">"
+          text run at (624,0) width 0: " "
           text run at (0,16) width 728: "<LINK rel=\"alternate stylesheet\" type=\"text/css\" href=\"linktest2.css\" title=\"Alternate SS\">"
+          text run at (728,16) width 0: " "
           text run at (0,32) width 208: "@import url(imptest1.css);"
+          text run at (208,32) width 0: " "
           text run at (0,48) width 192: "@import \"imptest1a.css\";"
+          text run at (192,48) width 0: " "
           text run at (0,64) width 128: "UL {color: red;}"
+          text run at (128,64) width 0: " "
           text run at (0,80) width 176: ".four {color: purple;}"
+          text run at (176,80) width 0: " "
           text run at (0,96) width 208: "@import url(imptest2.css);"
+          text run at (208,96) width 0: " "
           text run at (0,112) width 32: "<!--"
+          text run at (32,112) width 0: " "
           text run at (0,128) width 168: "P.six {color: green;}"
+          text run at (168,128) width 0: " "
           text run at (0,144) width 24: "-->"
+          text run at (24,144) width 0: " "
       RenderBlock {HR} at (0,209) size 769x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,227) size 769x20
         RenderText {#text} at (0,0) size 383x19

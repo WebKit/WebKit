@@ -9,19 +9,33 @@ layer at (0,0) size 785x2649
       RenderBlock {PRE} at (0,36) size 769x224
         RenderText {#text} at (0,0) size 400x224
           text run at (0,0) width 344: ".one {line-height: 0.5in; font-size: 12px;}"
+          text run at (344,0) width 0: " "
           text run at (0,16) width 328: ".two {line-height: 2cm; font-size: 12px;}"
+          text run at (328,16) width 0: " "
           text run at (0,32) width 352: ".three {line-height: 20mm; font-size: 12px;}"
+          text run at (352,32) width 0: " "
           text run at (0,48) width 344: ".four {line-height: 24pt; font-size: 12px;}"
+          text run at (344,48) width 0: " "
           text run at (0,64) width 336: ".five {line-height: 2pc; font-size: 12px;}"
+          text run at (336,64) width 0: " "
           text run at (0,80) width 328: ".six {line-height: 2em; font-size: 12px;}"
+          text run at (328,80) width 0: " "
           text run at (0,96) width 344: ".seven {line-height: 3ex; font-size: 12px;}"
+          text run at (344,96) width 0: " "
           text run at (0,112) width 352: ".eight {line-height: 200%; font-size: 12px;}"
+          text run at (352,112) width 0: " "
           text run at (0,128) width 320: ".nine {line-height: 2; font-size: 12px;}"
+          text run at (320,128) width 0: " "
           text run at (0,144) width 336: ".ten {line-height: 50px; font-size: 12px;}"
+          text run at (336,144) width 0: " "
           text run at (0,160) width 360: ".eleven {line-height: -1em; font-size: 12px;}"
+          text run at (360,160) width 0: " "
           text run at (0,176) width 400: "TABLE .ten {line-height: normal; font-size: 12px;}"
+          text run at (400,176) width 0: " "
           text run at (0,192) width 248: "DIV {background-color: silver;}"
+          text run at (248,192) width 0: " "
           text run at (0,208) width 304: "SPAN.color {background-color: silver;}"
+          text run at (304,208) width 0: " "
       RenderBlock {HR} at (0,273) size 769x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,287) size 769x48
         RenderText {#text} at (0,16) size 511x15

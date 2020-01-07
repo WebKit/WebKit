@@ -9,15 +9,25 @@ layer at (0,0) size 785x849
       RenderBlock {PRE} at (0,36) size 769x176
         RenderText {#text} at (0,0) size 576x176
           text run at (0,0) width 576: "<LINK rel=\"stylesheet\" type=\"text/css\" HREF=\"../resources/linktest.css\">"
+          text run at (576,0) width 0: " "
           text run at (0,16) width 152: "LI {color: purple;}"
+          text run at (152,16) width 0: " "
           text run at (0,32) width 160: "UL LI {color: blue;}"
+          text run at (160,32) width 0: " "
           text run at (0,48) width 184: "UL LI LI {color: gray;}"
+          text run at (184,48) width 0: " "
           text run at (0,64) width 176: "LI.red {color: green;}"
+          text run at (176,64) width 0: " "
           text run at (0,80) width 216: "UL LI.mar {color: #660000;}"
+          text run at (216,80) width 0: " "
           text run at (0,96) width 200: "UL LI#gre {color: green;}"
+          text run at (200,96) width 0: " "
           text run at (0,112) width 160: ".test {color: blue;}"
+          text run at (160,112) width 0: " "
           text run at (0,128) width 176: ".test {color: purple;}"
+          text run at (176,128) width 0: " "
           text run at (0,144) width 296: ".one {text-decoration: line-through;}"
+          text run at (296,144) width 0: " "
           text run at (0,160) width 0: " "
       RenderBlock {HR} at (0,225) size 769x2 [border: (1px inset #000000)]
       RenderBlock {UL} at (0,243) size 769x160

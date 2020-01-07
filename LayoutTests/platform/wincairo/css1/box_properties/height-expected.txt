@@ -9,7 +9,9 @@ layer at (0,0) size 785x997
       RenderBlock {PRE} at (0,36) size 769x48
         RenderText {#text} at (0,0) size 168x48
           text run at (0,0) width 160: ".one {height: 50px;}"
+          text run at (160,0) width 0: " "
           text run at (0,16) width 168: ".two {height: 100px;}"
+          text run at (168,16) width 0: " "
           text run at (0,32) width 0: " "
       RenderBlock {HR} at (0,97) size 769x2 [border: (1px inset #000000)]
       RenderBlock (anonymous) at (0,107) size 769x50

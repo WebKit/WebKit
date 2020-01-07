@@ -9,13 +9,20 @@ layer at (0,0) size 785x826
       RenderBlock {PRE} at (0,33) size 769x144
         RenderText {#text} at (0,0) size 616x144
           text run at (0,0) width 392: "P { margin: 0; padding: 0; text-align:  justify;}"
+          text run at (392,0) width 0: " "
           text run at (0,16) width 0: " "
           text run at (0,32) width 384: "DIV.menu {float: left; clear: left; width: 11em;"
+          text run at (384,32) width 0: " "
           text run at (0,48) width 464: "          margin: 0; margin-bottom: 10px; padding: 0.5em;}"
+          text run at (464,48) width 0: " "
           text run at (0,64) width 432: "DIV.menu H1 {font-size: 1.2em; margin: 0; padding: 0;}"
+          text run at (432,64) width 0: " "
           text run at (0,80) width 448: "DIV.menu UL {margin: 0.2em 0.3em 0.2em 1em; padding: 0;}"
+          text run at (448,80) width 0: " "
           text run at (0,96) width 616: "DIV.article {padding: 0.5em; margin: 0; margin-left: 14em; margin-right: 2em;"
+          text run at (616,96) width 0: " "
           text run at (0,112) width 480: "             color: black; background: yellow; clear: none;}"
+          text run at (480,112) width 0: " "
           text run at (0,128) width 0: " "
       RenderBlock {HR} at (0,190) size 769x2 [border: (1px inset #000000)]
       RenderBlock (floating) {DIV} at (0,200) size 192x126 [color=#FFFFFF] [bgcolor=#008000]

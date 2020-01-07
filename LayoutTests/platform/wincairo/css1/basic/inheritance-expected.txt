@@ -9,12 +9,19 @@ layer at (0,0) size 785x767
       RenderBlock {PRE} at (0,36) size 769x112
         RenderText {#text} at (0,0) size 272x112
           text run at (0,0) width 160: "BODY {color: green;}"
+          text run at (160,0) width 0: " "
           text run at (0,16) width 136: "H3 {color: blue;}"
+          text run at (136,16) width 0: " "
           text run at (0,32) width 152: "EM {color: purple;}"
+          text run at (152,32) width 0: " "
           text run at (0,48) width 208: ".one {font-style: italic;}"
+          text run at (208,48) width 0: " "
           text run at (0,64) width 272: ".two {text-decoration: underline;}"
+          text run at (272,64) width 0: " "
           text run at (0,80) width 152: "#two {color: navy;}"
+          text run at (152,80) width 0: " "
           text run at (0,96) width 184: ".three {color: purple;}"
+          text run at (184,96) width 0: " "
       RenderBlock {HR} at (0,161) size 769x2 [border: (1px inset #008000)]
       RenderBlock {H3} at (0,181) size 769x25 [color=#0000FF]
         RenderText {#text} at (0,0) size 221x22

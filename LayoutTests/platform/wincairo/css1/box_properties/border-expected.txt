@@ -9,14 +9,23 @@ layer at (0,0) size 785x1395
       RenderBlock {PRE} at (0,36) size 769x144
         RenderText {#text} at (0,0) size 272x144
           text run at (0,0) width 272: ".one {border: medium black solid;}"
+          text run at (272,0) width 0: " "
           text run at (0,16) width 264: ".two {border: thin maroon ridge;}"
+          text run at (264,16) width 0: " "
           text run at (0,32) width 272: ".three {border: 10px teal outset;}"
+          text run at (272,32) width 0: " "
           text run at (0,48) width 264: ".four {border: 10px olive inset;}"
+          text run at (264,48) width 0: " "
           text run at (0,64) width 224: ".five {border: 10px maroon;}"
+          text run at (224,64) width 0: " "
           text run at (0,80) width 232: ".six {border: maroon double;}"
+          text run at (232,80) width 0: " "
           text run at (0,96) width 256: ".seven {border: left red solid;}"
+          text run at (256,96) width 0: " "
           text run at (0,112) width 168: ".eight {border: 0px;}"
+          text run at (168,112) width 0: " "
           text run at (0,128) width 232: "TD {border: 2px solid green;}"
+          text run at (232,128) width 0: " "
       RenderBlock {HR} at (0,193) size 769x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,211) size 769x40
         RenderText {#text} at (0,0) size 758x39

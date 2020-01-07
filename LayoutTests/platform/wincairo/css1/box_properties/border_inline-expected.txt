@@ -9,7 +9,9 @@ layer at (0,0) size 800x600
       RenderBlock {PRE} at (0,36) size 784x48
         RenderText {#text} at (0,0) size 256x48
           text run at (0,0) width 256: ".one {border: 10px teal outset;}"
+          text run at (256,0) width 0: " "
           text run at (0,16) width 256: ".two {border: 10px olive inset;}"
+          text run at (256,16) width 0: " "
           text run at (0,32) width 0: " "
       RenderBlock {HR} at (0,97) size 784x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,115) size 784x60 [bgcolor=#C0C0C0]

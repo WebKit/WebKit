@@ -9,8 +9,11 @@ layer at (0,0) size 800x600
       RenderBlock {PRE} at (0,36) size 784x48
         RenderText {#text} at (0,0) size 568x48
           text run at (0,0) width 560: ".one {border-style: dashed; border-color: black; border-width: thick;}"
+          text run at (560,0) width 0: " "
           text run at (0,16) width 544: ".two {border-style: groove; border-color: red; border-width: thick;}"
+          text run at (544,16) width 0: " "
           text run at (0,32) width 568: ".three {border-style: none; border-color: purple; border-width: thick;}"
+          text run at (568,32) width 0: " "
       RenderBlock {HR} at (0,97) size 784x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,115) size 784x60 [bgcolor=#C0C0C0]
         RenderText {#text} at (0,0) size 627x19

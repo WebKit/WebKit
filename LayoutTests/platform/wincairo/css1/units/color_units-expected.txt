@@ -9,17 +9,29 @@ layer at (0,0) size 785x1745
       RenderBlock {PRE} at (0,36) size 769x192
         RenderText {#text} at (0,0) size 288x192
           text run at (0,0) width 160: "BODY {color: black;}"
+          text run at (160,0) width 0: " "
           text run at (0,16) width 152: ".one {color: #080;}"
+          text run at (152,16) width 0: " "
           text run at (0,32) width 176: ".two {color: #008000;}"
+          text run at (176,32) width 0: " "
           text run at (0,48) width 232: ".three {color: rgb(0,128,0);}"
+          text run at (232,48) width 0: " "
           text run at (0,64) width 240: ".four {color: rgb(0%,50%,0%);}"
+          text run at (240,64) width 0: " "
           text run at (0,80) width 288: ".five {color: rgb(0.0%,50.0%,0.0%);}"
+          text run at (288,80) width 0: " "
           text run at (0,96) width 160: ".six {color: green;}"
+          text run at (160,96) width 0: " "
           text run at (0,112) width 232: ".seven {color: invalidValue;}"
+          text run at (232,112) width 0: " "
           text run at (0,128) width 256: ".eight {color: rgb(0,128,1280);}"
+          text run at (256,128) width 0: " "
           text run at (0,144) width 240: ".nine {color: rgb(0,128,255);}"
+          text run at (240,144) width 0: " "
           text run at (0,160) width 264: ".ten {color: rgb(50%,-500%,60%);}"
+          text run at (264,160) width 0: " "
           text run at (0,176) width 264: ".eleven {color: rgb(50%,0%,60%);}"
+          text run at (264,176) width 0: " "
       RenderBlock {HR} at (0,241) size 769x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,259) size 769x20
         RenderText {#text} at (0,0) size 184x19

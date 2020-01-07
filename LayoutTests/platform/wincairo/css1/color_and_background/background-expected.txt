@@ -9,9 +9,13 @@ layer at (0,0) size 785x777
       RenderBlock {PRE} at (0,36) size 769x64
         RenderText {#text} at (0,0) size 648x64
           text run at (0,0) width 648: "BODY {background: green url(../resources/oransqr.gif) repeat-x center top fixed;}"
+          text run at (648,0) width 0: " "
           text run at (0,16) width 568: ".one {background: lime url(../resources/oransqr.gif) repeat-y 100% 0%;}"
+          text run at (568,16) width 0: " "
           text run at (0,32) width 592: ".two {background: lime url(../resources/oransqr.gif) repeat-y center top;}"
+          text run at (592,32) width 0: " "
           text run at (0,48) width 592: ".three {background: lime url(../resources/oransqr.gif) repeat-x left top;}"
+          text run at (592,48) width 0: " "
       RenderBlock {HR} at (0,113) size 769x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,131) size 769x60
         RenderText {#text} at (0,0) size 695x19

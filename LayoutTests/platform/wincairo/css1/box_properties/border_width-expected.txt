@@ -9,11 +9,17 @@ layer at (0,0) size 785x941
       RenderBlock {PRE} at (0,36) size 769x96
         RenderText {#text} at (0,0) size 408x96
           text run at (0,0) width 400: ".zero {background-color: silver; border-width: 0;}"
+          text run at (400,0) width 0: " "
           text run at (0,16) width 376: ".one {border-width: 50px; border-style: solid;}"
+          text run at (376,16) width 0: " "
           text run at (0,32) width 384: ".two {border-width: thick; border-style: solid;}"
+          text run at (384,32) width 0: " "
           text run at (0,48) width 408: ".three {border-width: medium; border-style: solid;}"
+          text run at (408,48) width 0: " "
           text run at (0,64) width 384: ".four {border-width: thin; border-style: solid;}"
+          text run at (384,64) width 0: " "
           text run at (0,80) width 216: ".five {border-width: 25px;}"
+          text run at (216,80) width 0: " "
       RenderBlock {HR} at (0,145) size 769x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,163) size 769x20
         RenderText {#text} at (0,0) size 145x19

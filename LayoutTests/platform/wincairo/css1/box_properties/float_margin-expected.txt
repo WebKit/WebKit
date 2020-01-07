@@ -9,13 +9,21 @@ layer at (0,0) size 785x1915
       RenderBlock {PRE} at (0,36) size 769x144
         RenderText {#text} at (0,0) size 560x144
           text run at (0,0) width 344: "P.test {background: white; font-size: 20px;"
+          text run at (344,0) width 0: " "
           text run at (0,16) width 560: "        margin-left: 30px; margin-right: 10px; padding: 0; border: 0;}"
+          text run at (560,16) width 0: " "
           text run at (0,32) width 312: "IMG {padding: 0; border: 0; margin: 0;}"
+          text run at (312,32) width 0: " "
           text run at (0,48) width 200: "P.test IMG {float: left;}"
+          text run at (200,48) width 0: " "
           text run at (0,64) width 352: "#img2 {margin-top: 30px; margin-left: 30px;}"
+          text run at (352,64) width 0: " "
           text run at (0,80) width 368: "#img3 {margin-top: -30px; margin-left: -30px;}"
+          text run at (368,80) width 0: " "
           text run at (0,96) width 384: "#img4 {margin-right: 30px; margin-bottom: 30px;}"
+          text run at (384,96) width 0: " "
           text run at (0,112) width 400: "#img5 {margin-right: -30px; margin-bottom: -30px;}"
+          text run at (400,112) width 0: " "
           text run at (0,128) width 0: " "
       RenderBlock {HR} at (0,193) size 769x2 [border: (1px inset #000000)]
       RenderBlock {P} at (30,215) size 729x92 [bgcolor=#FFFFFF]
