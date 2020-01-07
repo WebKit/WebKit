@@ -1,5 +1,16 @@
 2020-01-06  Fujii Hironori  <Hironori.Fujii@sony.com>
 
+        Unreviewed test gardening for WinCairo port after r252598.
+
+        * platform/wincairo/fast/box-shadow/inset-box-shadow-radius-expected.txt:
+        * platform/wincairo/fast/css/hsl-color-expected.txt:
+        * platform/wincairo/fast/css/hsla-color-expected.txt:
+        * platform/wincairo/fast/css/percentage-non-integer-expected.txt:
+        * platform/wincairo/fast/css/shadow-multiple-expected.txt:
+        * platform/wincairo/fast/css/viewport-units-dynamic-expected.txt:
+
+2020-01-06  Fujii Hironori  <Hironori.Fujii@sony.com>
+
         Unreviewed test gardening for WinCairo port after r254044.
 
         * platform/wincairo/css1/basic/containment-expected.txt:
