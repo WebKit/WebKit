@@ -43,7 +43,7 @@ class InlineFormattingContext : public FormattingContext {
     WTF_MAKE_ISO_ALLOCATED(InlineFormattingContext);
 public:
     InlineFormattingContext(const Container& formattingContextRoot, InlineFormattingState&);
-    void layoutInFlowContent(InvalidationState&) override;
+    void layoutInFlowContent(InvalidationState&, const UsedHorizontalValues::Constraints&) override;
 
 private:
     IntrinsicWidthConstraints computedIntrinsicWidthConstraints() override;

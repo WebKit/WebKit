@@ -42,7 +42,7 @@ class TableFormattingContext : public FormattingContext {
     WTF_MAKE_ISO_ALLOCATED(TableFormattingContext);
 public:
     TableFormattingContext(const Container& formattingContextRoot, TableFormattingState&);
-    void layoutInFlowContent(InvalidationState&) override;
+    void layoutInFlowContent(InvalidationState&, const UsedHorizontalValues::Constraints&) override;
 
 private:
     class Geometry : public FormattingContext::Geometry {

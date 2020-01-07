@@ -64,7 +64,7 @@ static inline const Box* nextInPreOrder(const Box& layoutBox, const Container& s
     return nullptr;
 }
 
-void InlineFormattingContext::layoutInFlowContent(InvalidationState& invalidationState)
+void InlineFormattingContext::layoutInFlowContent(InvalidationState& invalidationState, const UsedHorizontalValues::Constraints&)
 {
     if (!root().hasInFlowOrFloatingChild())
         return;
@@ -140,7 +140,7 @@ void InlineFormattingContext::layoutFormattingContextRoot(const Box& formattingC
     if (is<Container>(formattingContextRoot)) {
         auto& rootContainer = downcast<Container>(formattingContextRoot);
         auto formattingContext = LayoutContext::createFormattingContext(rootContainer, layoutState());
-        formattingContext->layoutInFlowContent(invalidationState);
+        formattingContext->layoutInFlowContent(invalidationState, usedHorizontalValues.constraints);
         // Come back and finalize the root's height and margin.
         computeHeightAndMargin(rootContainer, usedHorizontalValues, usedVerticalValues);
         // Now that we computed the root's height, we can go back and layout the out-of-flow content.

@@ -93,7 +93,9 @@ void LayoutContext::layoutFormattingContextSubtree(const Container& formattingCo
 {
     RELEASE_ASSERT(formattingContextRoot.establishesFormattingContext());
     auto formattingContext = createFormattingContext(formattingContextRoot, layoutState());
-    formattingContext->layoutInFlowContent(invalidationState);
+    auto& displayBoxForFormattingContextRoot = layoutState().displayBoxForLayoutBox(formattingContextRoot);
+    auto constraints = UsedHorizontalValues::Constraints { displayBoxForFormattingContextRoot.contentBoxLeft(), displayBoxForFormattingContextRoot.contentBoxWidth() };
+    formattingContext->layoutInFlowContent(invalidationState, constraints);
     formattingContext->layoutOutOfFlowContent(invalidationState);
 }
 

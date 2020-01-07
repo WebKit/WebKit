@@ -155,8 +155,9 @@ void FormattingContext::layoutOutOfFlowContent(InvalidationState& invalidationSt
         computeOutOfFlowHorizontalGeometry(*outOfFlowBox);
         if (is<Container>(*outOfFlowBox)) {
             auto& outOfFlowRootContainer = downcast<Container>(*outOfFlowBox);
+            auto& outOfFlowRootDisplayBox = geometryForBox(outOfFlowRootContainer);
             auto formattingContext = LayoutContext::createFormattingContext(outOfFlowRootContainer, layoutState());
-            formattingContext->layoutInFlowContent(invalidationState);
+            formattingContext->layoutInFlowContent(invalidationState, Geometry::inFlowHorizontalConstraints(outOfFlowRootDisplayBox));
             computeOutOfFlowVerticalGeometry(outOfFlowRootContainer);
             formattingContext->layoutOutOfFlowContent(invalidationState);
         } else

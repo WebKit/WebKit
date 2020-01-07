@@ -52,7 +52,7 @@ BlockFormattingContext::BlockFormattingContext(const Container& formattingContex
 }
 
 enum class LayoutDirection { Child, Sibling };
-void BlockFormattingContext::layoutInFlowContent(InvalidationState& invalidationState)
+void BlockFormattingContext::layoutInFlowContent(InvalidationState& invalidationState, const UsedHorizontalValues::Constraints&)
 {
     // 9.4.1 Block formatting contexts
     // In a block formatting context, boxes are laid out one after the other, vertically, beginning at the top of a containing block.
@@ -187,8 +187,9 @@ void BlockFormattingContext::layoutFormattingContextRoot(FloatingContext& floati
     if (is<Container>(layoutBox)) {
         // Swich over to the new formatting context (the one that the root creates).
         auto& rootContainer = downcast<Container>(layoutBox);
+        auto& rootContainerDisplayBox = geometryForBox(rootContainer);
         auto formattingContext = LayoutContext::createFormattingContext(rootContainer, layoutState());
-        formattingContext->layoutInFlowContent(invalidationState);
+        formattingContext->layoutInFlowContent(invalidationState, Geometry::inFlowHorizontalConstraints(rootContainerDisplayBox));
         // Come back and finalize the root's geometry.
         computeHeightAndMargin(rootContainer);
         // Now that we computed the root's height, we can go back and layout the out-of-flow content.
