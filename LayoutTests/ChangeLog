@@ -21,6 +21,16 @@
         * platform/mac-wk1/TestExpectations:
         * tests-options.json:
 
+2020-01-07  Simon Fraser  <simon.fraser@apple.com>
+
+        WebKit rejects changes between similar unprefixed & prefixed gradient syntax
+        https://bugs.webkit.org/show_bug.cgi?id=171015
+
+        Reviewed by Dean Jackson.
+
+        * fast/css/gradient-prefixed-unprefixed-toggle-expected.html: Added.
+        * fast/css/gradient-prefixed-unprefixed-toggle.html: Added.
+
 2020-01-07  Alexey Proskuryakov  <ap@apple.com>
 
         Mark webexposed/css-properties-behind-flags.html as flaky

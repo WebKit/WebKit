@@ -925,6 +925,9 @@ bool CSSLinearGradientValue::equals(const CSSLinearGradientValue& other) const
             && compareCSSValuePtr(m_secondY, other.m_secondY)
             && m_stops == other.m_stops;
 
+    if (m_gradientType != other.m_gradientType)
+        return false;
+
     if (m_repeating != other.m_repeating)
         return false;
 
@@ -1288,6 +1291,9 @@ bool CSSRadialGradientValue::equals(const CSSRadialGradientValue& other) const
             && compareCSSValuePtr(m_firstRadius, other.m_firstRadius)
             && compareCSSValuePtr(m_secondRadius, other.m_secondRadius)
             && m_stops == other.m_stops;
+
+    if (m_gradientType != other.m_gradientType)
+        return false;
 
     if (m_repeating != other.m_repeating)
         return false;
