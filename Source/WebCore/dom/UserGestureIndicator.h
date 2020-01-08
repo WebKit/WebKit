@@ -88,6 +88,8 @@ public:
         return m_startTime + expirationInterval < MonotonicTime::now();
     }
 
+    MonotonicTime startTime() const { return m_startTime; }
+
 private:
     UserGestureToken(ProcessingUserGestureState state, UserGestureType gestureType)
         : m_state(state)

@@ -127,7 +127,9 @@ void Navigator::share(ScriptExecutionContext& context, ShareData data, Ref<Defer
         }
     }
     
-    if (!UserGestureIndicator::processingUserGesture()) {
+    auto* window = this->window();
+    // Note that the specification does not indicate we should consume user activation. We are intentionally stricter here.
+    if (!window || !window->consumeTransientActivation()) {
         promise->reject(NotAllowedError);
         return;
     }

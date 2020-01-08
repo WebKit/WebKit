@@ -1,3 +1,18 @@
+2020-01-07  Chris Dumez  <cdumez@apple.com>
+
+        Using Web Share API preceded by an AJAX call
+        https://bugs.webkit.org/show_bug.cgi?id=197779
+        <rdar://problem/50708309>
+
+        Reviewed by Dean Jackson.
+
+        Add layout test coverage.
+
+        * fast/web-share/share-transient-activation-expected.txt: Added.
+        * fast/web-share/share-transient-activation-expired-expected.txt: Added.
+        * fast/web-share/share-transient-activation-expired.html: Added.
+        * fast/web-share/share-transient-activation.html: Added.
+
 2020-01-07  Daniel Bates  <dabates@apple.com>
 
         Fix up layout tests results following r254160
