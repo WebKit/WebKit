@@ -447,10 +447,6 @@ the public iOS SDK. See <https://webkit.org/b/179167>. */
 #define ENABLE_CSS_COMPOSITING 0
 #endif
 
-#if !defined(ENABLE_CSS_IMAGE_ORIENTATION)
-#define ENABLE_CSS_IMAGE_ORIENTATION 0
-#endif
-
 #if !defined(ENABLE_CSS_IMAGE_RESOLUTION)
 #define ENABLE_CSS_IMAGE_RESOLUTION 0
 #endif

@@ -1,3 +1,17 @@
+2020-01-07  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Implement css3-images image-orientation
+        https://bugs.webkit.org/show_bug.cgi?id=89052
+
+        Reviewed by Simon Fraser.
+
+        * web-platform-tests/css/css-images/inheritance-expected.txt:
+        * web-platform-tests/css/css-images/inheritance.html:
+        This test is re-synced from upstream
+
+        * web-platform-tests/css/css-images/parsing/image-orientation-computed-expected.txt:
+        * web-platform-tests/css/css-images/parsing/image-orientation-valid-expected.txt:
+
 2020-01-07  Chris Dumez  <cdumez@apple.com>
 
         Remove document.origin

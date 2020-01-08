@@ -81,6 +81,7 @@ public:
     template<CSSPropertyID> static NinePieceImage convertBorderImage(BuilderState&, CSSValue&);
     template<CSSPropertyID> static NinePieceImage convertBorderMask(BuilderState&, CSSValue&);
     template<CSSPropertyID> static RefPtr<StyleImage> convertStyleImage(BuilderState&, CSSValue&);
+    static ImageOrientation convertImageOrientation(BuilderState&, const CSSValue&);
     static TransformOperations convertTransform(BuilderState&, const CSSValue&);
 #if ENABLE(DARK_MODE_CSS)
     static StyleColorScheme convertColorScheme(BuilderState&, const CSSValue&);
@@ -466,6 +467,14 @@ template<CSSPropertyID>
 inline RefPtr<StyleImage> BuilderConverter::convertStyleImage(BuilderState& builderState, CSSValue& value)
 {
     return builderState.createStyleImage(value);
+}
+
+inline ImageOrientation BuilderConverter::convertImageOrientation(BuilderState&, const CSSValue& value)
+{
+    auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
+    if (primitiveValue.valueID() == CSSValueFromImage)
+        return ImageOrientation::FromImage;
+    return ImageOrientation::None;
 }
 
 inline TransformOperations BuilderConverter::convertTransform(BuilderState& builderState, const CSSValue& value)

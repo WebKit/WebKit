@@ -948,10 +948,7 @@ public:
     void setSpecifiedLineHeight(Length&&);
 #endif
 
-#if ENABLE(CSS_IMAGE_ORIENTATION)
     void setImageOrientation(ImageOrientation v) { SET_VAR(m_rareInheritedData, imageOrientation, static_cast<int>(v)); }
-#endif
-
     void setImageRendering(ImageRendering v) { SET_VAR(m_rareInheritedData, imageRendering, static_cast<unsigned>(v)); }
 
 #if ENABLE(CSS_IMAGE_RESOLUTION)
@@ -1601,7 +1598,7 @@ public:
     static OptionSet<TextEmphasisPosition> initialTextEmphasisPosition() { return { TextEmphasisPosition::Over, TextEmphasisPosition::Right }; }
     static RubyPosition initialRubyPosition() { return RubyPosition::Before; }
     static OptionSet<LineBoxContain> initialLineBoxContain() { return { LineBoxContain::Block, LineBoxContain::Inline, LineBoxContain::Replaced }; }
-    static ImageOrientation initialImageOrientation() { return ImageOrientation::None; }
+    static ImageOrientation initialImageOrientation() { return ImageOrientation::FromImage; }
     static ImageRendering initialImageRendering() { return ImageRendering::Auto; }
     static ImageResolutionSource initialImageResolutionSource() { return ImageResolutionSource::Specified; }
     static ImageResolutionSnap initialImageResolutionSnap() { return ImageResolutionSnap::None; }
@@ -2112,11 +2109,7 @@ inline bool RenderStyle::hasInlineColumnAxis() const
 
 inline ImageOrientation RenderStyle::imageOrientation() const
 {
-#if ENABLE(CSS_IMAGE_ORIENTATION)
-    return ImageOrientation(m_rareInheritedData->imageOrientation);
-#else
-    return ImageOrientation::None;
-#endif
+    return static_cast<ImageOrientation::Orientation>(m_rareInheritedData->imageOrientation);
 }
 
 inline void RenderStyle::setLogicalWidth(Length&& logicalWidth)

@@ -1,3 +1,19 @@
+2020-01-07  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Implement css3-images image-orientation
+        https://bugs.webkit.org/show_bug.cgi?id=89052
+
+        Reviewed by Simon Fraser.
+
+        Test the css image-orientation property.
+
+        * fast/images/image-orientation-dynamic-from-image-expected.html: Added.
+        * fast/images/image-orientation-dynamic-from-image.html: Added.
+        * fast/images/image-orientation-dynamic-none-expected.html: Added.
+        * fast/images/image-orientation-dynamic-none.html: Added.
+        * fast/images/image-orientation-none-expected.html: Added.
+        * fast/images/image-orientation-none.html: Added.
+
 2020-01-07  Fujii Hironori  <fujii.hironori@gmail.com>
 
         [GTK] fast/text/atsui-rtl-override-selection.html is failing since r254114
