@@ -1,3 +1,15 @@
+2020-01-08  David Kilzer  <ddkilzer@apple.com>
+
+        IPC::Connection::sendMessage() should use CRASH_WITH_INFO()
+        <https://webkit.org/b/205419>
+        <rdar://problem/58058661>
+
+        Reviewed by Mark Lam.
+
+        * Platform/IPC/cocoa/ConnectionCocoa.mm:
+        (IPC::Connection::sendMessage):
+        - Switch from CRASH() to CRASH_WITH_INFO().
+
 2020-01-08  Truitt Savell  <tsavell@apple.com>
 
         Unreviewed, rolling out r254174.
