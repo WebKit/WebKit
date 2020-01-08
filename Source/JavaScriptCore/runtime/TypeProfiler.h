@@ -78,7 +78,7 @@ struct QueryKey {
 
     unsigned hash() const 
     { 
-        unsigned hash = m_sourceID + m_divot * m_searchDescriptor;
+        unsigned hash = static_cast<unsigned>(m_sourceID) + m_divot * m_searchDescriptor;
         return hash;
     }
 

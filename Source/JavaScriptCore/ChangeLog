@@ -1,5 +1,17 @@
 2020-01-08  Michael Saboff  <msaboff@apple.com>
 
+        TypeProfiler.h: Multiplication result converted to larger type
+        https://bugs.webkit.org/show_bug.cgi?id=205947
+
+        Reviewed by Mark Lam.
+
+        Added cast to keep the hash() calculation unsigned.
+
+        * runtime/TypeProfiler.h:
+        (JSC::QueryKey::hash const):
+
+2020-01-08  Michael Saboff  <msaboff@apple.com>
+
         JSArrayBufferView.h: Multiplication result converted to larger type
         https://bugs.webkit.org/show_bug.cgi?id=205943
 
