@@ -956,8 +956,6 @@ void ProxyObject::performGetOwnPropertyNames(JSGlobalObject* globalObject, Prope
 
     HashSet<UniquedStringImpl*> uncheckedResultKeys;
     {
-        HashSet<RefPtr<UniquedStringImpl>> seenKeys;
-
         RuntimeTypeMask resultFilter = 0;
         switch (propertyNames.propertyNameMode()) {
         case PropertyNameMode::Symbols:
@@ -979,23 +977,14 @@ void ProxyObject::performGetOwnPropertyNames(JSGlobalObject* globalObject, Prope
             Identifier ident = value.toPropertyKey(globalObject);
             RETURN_IF_EXCEPTION(scope, doExitEarly);
 
-            // If trapResult contains any duplicate entries, throw a TypeError exception.
-            //    
-            // Per spec[1], filtering by type should occur _after_ [[OwnPropertyKeys]], so duplicates
-            // are tracked in a separate hashtable from uncheckedResultKeys (which only contain the
-            // keys filtered by type).
-            //
-            // [1] Per https://tc39.github.io/ecma262/#sec-proxy-object-internal-methods-and-internal-slots-ownpropertykeysmust not contain any duplicate names"_s);
-            if (!seenKeys.add(ident.impl()).isNewEntry) {
+            if (!uncheckedResultKeys.add(ident.impl()).isNewEntry) {
                 throwTypeError(globalObject, scope, "Proxy handler's 'ownKeys' trap result must not contain any duplicate names"_s);
                 return doExitEarly;
             }
 
-            if (!(type & resultFilter))
-                return dontExitEarly;
+            if (type & resultFilter)
+                propertyNames.add(ident.impl());
 
-            uncheckedResultKeys.add(ident.impl());
-            propertyNames.add(ident.impl());
             return dontExitEarly;
         };
 
@@ -1007,7 +996,7 @@ void ProxyObject::performGetOwnPropertyNames(JSGlobalObject* globalObject, Prope
     bool targetIsExensible = target->isExtensible(globalObject);
     RETURN_IF_EXCEPTION(scope, void());
 
-    PropertyNameArray targetKeys(vm, propertyNames.propertyNameMode(), propertyNames.privateSymbolMode());
+    PropertyNameArray targetKeys(vm, PropertyNameMode::StringsAndSymbols, PrivateSymbolMode::Exclude);
     target->methodTable(vm)->getOwnPropertyNames(target, globalObject, targetKeys, enumerationMode);
     RETURN_IF_EXCEPTION(scope, void());
     Vector<UniquedStringImpl*> targetConfigurableKeys;

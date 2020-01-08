@@ -1,5 +1,31 @@
 2020-01-08  Alexey Shvayka  <shvaikalesh@gmail.com>
 
+        Proxy's [[OwnPropertyKeys]] is correct only in PropertyNameMode::StringsAndSymbols
+        https://bugs.webkit.org/show_bug.cgi?id=205772
+
+        Reviewed by Ross Kirsling.
+
+        This change fixes two spec compatibility issues:
+        (steps 8-11 of https://tc39.es/ecma262/#sec-proxy-object-internal-methods-and-internal-slots-ownpropertykeys)
+
+        1. If Object.getOwnPropertyNames is called on Proxy with "ownKeys" trap,
+        symbol keys of Proxy's target are ignored during invariants validation.
+
+        2. If Object.getOwnPropertySymbols is called on Proxy with "ownKeys" trap,
+        string keys of Proxy's target are ignored during invariants validation.
+
+        Given that per spec `uncheckedResultKeys` contains both strings and symbols,
+        `seenKeys` and explanation comment about it is removed.
+
+        Specifying PrivateSymbolMode::Exclude eliminates any chance of false TypeErrors
+        during invariants validation, since user code can't possibly return a private symbol
+        from "ownKeys" trap, yet an object with private symbols can be Proxy's target.
+
+        * runtime/ProxyObject.cpp:
+        (JSC::ProxyObject::performGetOwnPropertyNames):
+
+2020-01-08  Alexey Shvayka  <shvaikalesh@gmail.com>
+
         RegExp.prototype[Symbol.replace] does not support named capture groups
         https://bugs.webkit.org/show_bug.cgi?id=205783
 
