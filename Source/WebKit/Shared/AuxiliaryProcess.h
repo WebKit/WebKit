@@ -164,7 +164,7 @@ private:
 
     UserActivity m_processSuppressionDisabled;
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     std::unique_ptr<DependencyProcessAssertion> m_uiProcessDependencyProcessAssertion;
 #endif
 #if PLATFORM(COCOA)
