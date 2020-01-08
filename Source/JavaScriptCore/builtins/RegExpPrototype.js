@@ -179,7 +179,7 @@ function replace(strArg, replace)
 {
     "use strict";
 
-    function getSubstitution(matched, str, position, captures, replacement)
+    function getSubstitution(matched, str, position, captures, namedCaptures, replacement)
     {
         "use strict";
 
@@ -217,6 +217,24 @@ function replace(strArg, replace)
                 case "'":
                     if (tailPos < stringLength)
                         result = result + str.substring(tailPos);
+                    start++;
+                    break;
+                case "<":
+                    if (namedCaptures !== @undefined) {
+                        let groupNameStartIndex = start + 1;
+                        let groupNameEndIndex = replacement.indexOf(">", groupNameStartIndex);
+                        if (groupNameEndIndex !== -1) {
+                            let groupName = replacement.substring(groupNameStartIndex, groupNameEndIndex);
+                            let capture = namedCaptures[groupName];
+                            if (capture !== @undefined)
+                                result = result + @toString(capture);
+
+                            start = groupNameEndIndex + 1;
+                            break;
+                        }
+                    }
+
+                    result = result + "$<";
                     start++;
                     break;
                 default:
@@ -325,16 +343,24 @@ function replace(strArg, replace)
         }
 
         let replacement;
+        let namedCaptures = result.groups;
 
         if (functionalReplace) {
             let replacerArgs = [ matched ].concat(captures);
             replacerArgs.@push(position);
             replacerArgs.@push(str);
 
+            if (namedCaptures !== @undefined)
+                replacerArgs.@push(namedCaptures);
+
             let replValue = replace.@apply(@undefined, replacerArgs);
             replacement = @toString(replValue);
-        } else
-            replacement = getSubstitution(matched, str, position, captures, replace);
+        } else {
+            if (namedCaptures !== @undefined)
+                namedCaptures = @toObject(namedCaptures, "RegExp.prototype[Symbol.replace] requires 'groups' property of a match not be null");
+
+            replacement = getSubstitution(matched, str, position, captures, namedCaptures, replace);
+        }
 
         if (position >= nextSourcePosition && position >= lastPosition) {
             accumulatedResult = accumulatedResult + str.substring(nextSourcePosition, position) + replacement;

@@ -1,3 +1,21 @@
+2020-01-08  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        RegExp.prototype[Symbol.replace] does not support named capture groups
+        https://bugs.webkit.org/show_bug.cgi?id=205783
+
+        Reviewed by Ross Kirsling.
+
+        This patch adds named capture groups support to RegExp.prototype[Symbol.replace],
+        for both functional and string pattern replacement.
+        (steps 14.j-l of https://tc39.es/ecma262/#sec-regexp.prototype-@@replace)
+
+        This method is used in slow path of String.prototype.replace (RegExp subclass handling),
+        yet it also can be invoked directly in user code.
+
+        * builtins/RegExpPrototype.js:
+        (getSubstitution):
+        (Symbol.replace):
+
 2020-01-07  Saam Barati  <sbarati@apple.com>
 
         AI rule for ValueMod/ValueDiv produce constants with the wrong format when the result can be an int32

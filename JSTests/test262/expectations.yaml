@@ -1264,12 +1264,6 @@ test/built-ins/Proxy/construct/return-not-object-throws-undefined-realm.js:
 test/built-ins/Proxy/construct/trap-is-not-callable-realm.js:
   default: 'Test262Error: Expected a TypeError but got a TypeError'
   strict mode: 'Test262Error: Expected a TypeError but got a TypeError'
-test/built-ins/RegExp/named-groups/groups-object-subclass-sans.js:
-  default: 'Test262Error: Expected SameValue(«b», «$<a>») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«b», «$<a>») to be true'
-test/built-ins/RegExp/named-groups/groups-object-subclass.js:
-  default: 'Test262Error: Expected SameValue(«b», «$<a>») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«b», «$<a>») to be true'
 test/built-ins/RegExp/named-groups/unicode-property-names.js:
   default: 'SyntaxError: Invalid regular expression: invalid group specifier name'
   strict mode: 'SyntaxError: Invalid regular expression: invalid group specifier name'
@@ -1669,9 +1663,6 @@ test/built-ins/Set/proto-from-ctor-realm.js:
 test/built-ins/String/proto-from-ctor-realm.js:
   default: 'Test262Error: Expected SameValue(«», «») to be true'
   strict mode: 'Test262Error: Expected SameValue(«», «») to be true'
-test/built-ins/String/prototype/replaceAll/searchValue-replacer-RegExp-call.js:
-  default: "Test262Error: sample 11: 'abcba'.replaceAll(/(?<named>b)/g, '($<named>)') Expected SameValue(«a($<named>)c($<named>)a», «a(b)c(b)a») to be true"
-  strict mode: "Test262Error: sample 11: 'abcba'.replaceAll(/(?<named>b)/g, '($<named>)') Expected SameValue(«a($<named>)c($<named>)a», «a(b)c(b)a») to be true"
 test/built-ins/ThrowTypeError/extensible.js:
   default: 'Test262Error: Expected SameValue(«true», «false») to be true'
   strict mode: 'Test262Error: Expected SameValue(«true», «false») to be true'
