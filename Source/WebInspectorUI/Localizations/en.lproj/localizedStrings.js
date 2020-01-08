@@ -526,8 +526,10 @@ localizedStrings["Export recording (%s)\nShift-click to export a HTML reduction"
 localizedStrings["Export result (%s)"] = "Export result (%s)";
 localizedStrings["Expression"] = "Expression";
 localizedStrings["Extension Scripts"] = "Extension Scripts";
+localizedStrings["Extension Style Sheets"] = "Extension Style Sheets";
 localizedStrings["Extensions"] = "Extensions";
 localizedStrings["Extra Scripts"] = "Extra Scripts";
+localizedStrings["Extra Style Sheets"] = "Extra Style Sheets";
 localizedStrings["Fade unexecuted code"] = "Fade unexecuted code";
 localizedStrings["Failed to upgrade"] = "Failed to upgrade";
 localizedStrings["Failure status code"] = "Failure status code";

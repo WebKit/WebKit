@@ -33,8 +33,11 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
         this._workerTargetTreeElementMap = new Map;
         this._mainFrameTreeElement = null;
         this._extensionScriptsFolderTreeElement = null;
+        this._extensionStyleSheetsFolderTreeElement = null;
         this._extraScriptsFolderTreeElement = null;
+        this._extraStyleSheetsFolderTreeElement = null;
         this._anonymousScriptsFolderTreeElement = null;
+        this._anonymousStyleSheetsFolderTreeElement = null;
 
         this._originTreeElementMap = new Map;
 
@@ -314,6 +317,7 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
         WI.auditManager.addEventListener(WI.AuditManager.Event.TestCompleted, this._handleAuditManagerTestCompleted, this);
 
         WI.cssManager.addEventListener(WI.CSSManager.Event.StyleSheetAdded, this._handleCSSStyleSheetAdded, this);
+        WI.cssManager.addEventListener(WI.CSSManager.Event.StyleSheetRemoved, this._handleCSSStyleSheetRemoved, this);
 
         WI.targetManager.addEventListener(WI.TargetManager.Event.TargetAdded, this._handleTargetAdded, this);
         WI.targetManager.addEventListener(WI.TargetManager.Event.TargetRemoved, this._handleTargetRemoved, this);
@@ -744,12 +748,18 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
             (treeElement) => treeElement instanceof WI.OriginTreeElement,
             (treeElement) => {
                 return treeElement !== this._extensionScriptsFolderTreeElement
+                    && treeElement !== this._extensionStyleSheetsFolderTreeElement
                     && treeElement !== this._extraScriptsFolderTreeElement
-                    && treeElement !== this._anonymousScriptsFolderTreeElement;
+                    && treeElement !== this._extraStyleSheetsFolderTreeElement
+                    && treeElement !== this._anonymousScriptsFolderTreeElement
+                    && treeElement !== this._anonymousStyleSheetsFolderTreeElement;
             },
             (treeElement) => treeElement === this._extensionScriptsFolderTreeElement,
+            (treeElement) => treeElement === this._extensionStyleSheetsFolderTreeElement,
             (treeElement) => treeElement === this._extraScriptsFolderTreeElement,
+            (treeElement) => treeElement === this._extraStyleSheetsFolderTreeElement,
             (treeElement) => treeElement === this._anonymousScriptsFolderTreeElement,
+            (treeElement) => treeElement === this._anonymousStyleSheetsFolderTreeElement,
         ];
 
         let aRank = rankFunctions.findIndex((rankFunction) => rankFunction(a));
@@ -861,8 +871,10 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
 
             let parentTreeElement = null;
 
-            if (resource instanceof WI.CSSStyleSheet && resource.isInspectorStyleSheet())
+            if (resource instanceof WI.CSSStyleSheet) {
+                console.assert(resource.isInspectorStyleSheet());
                 parentTreeElement = this._resourcesTreeOutline.findTreeElement(resource.parentFrame.mainResource);
+            }
 
             if (!parentTreeElement) {
                 let origin = resource.urlComponents.origin;
@@ -915,6 +927,38 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
             for (let styleSheet of WI.cssManager.inspectorStyleSheetsForFrame(frame))
                 this._addResource(styleSheet);
         }
+    }
+
+    _addStyleSheet(styleSheet)
+    {
+        console.assert(styleSheet instanceof WI.CSSStyleSheet);
+        console.assert(!styleSheet.isInspectorStyleSheet());
+
+        let parentTreeElement = null;
+
+        if (styleSheet.injected) {
+            if (!this._extensionStyleSheetsFolderTreeElement)
+                this._extensionStyleSheetsFolderTreeElement = new WI.FolderTreeElement(WI.UIString("Extension Style Sheets"), new WI.CSSStyleSheetCollection);
+            parentTreeElement = this._extensionStyleSheetsFolderTreeElement;
+        } else if (!styleSheet.anonymous) {
+            if (!this._extraStyleSheetsFolderTreeElement)
+                this._extraStyleSheetsFolderTreeElement = new WI.FolderTreeElement(WI.UIString("Extra Style Sheets"), new WI.CSSStyleSheetCollection);
+            parentTreeElement = this._extraStyleSheetsFolderTreeElement;
+        } else {
+            if (!this._anonymousStyleSheetsFolderTreeElement)
+                this._anonymousStyleSheetsFolderTreeElement = new WI.FolderTreeElement(WI.UIString("Anonymous Style Sheets"), new WI.CSSStyleSheetCollection);
+            parentTreeElement = this._anonymousStyleSheetsFolderTreeElement;
+        }
+
+        if (!parentTreeElement.parent) {
+            let index = insertionIndexForObjectInListSortedByFunction(parentTreeElement, this._resourcesTreeOutline.children, this._boundCompareTreeElements);
+            this._resourcesTreeOutline.insertChild(parentTreeElement, index);
+        }
+
+        let treeElement = new WI.CSSStyleSheetTreeElement(styleSheet);
+
+        let index = insertionIndexForObjectInListSortedByFunction(treeElement, parentTreeElement.children, this._boundCompareTreeElements);
+        parentTreeElement.insertChild(treeElement, index);
     }
 
     _addScript(script)
@@ -1987,8 +2031,11 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
         this._workerTargetTreeElementMap.clear();
         this._mainFrameTreeElement = null;
         this._extensionScriptsFolderTreeElement = null;
+        this._extensionStyleSheetsFolderTreeElement = null;
         this._extraScriptsFolderTreeElement = null;
+        this._extraStyleSheetsFolderTreeElement = null;
         this._anonymousScriptsFolderTreeElement = null;
+        this._anonymousStyleSheetsFolderTreeElement = null;
 
         this._originTreeElementMap.clear();
 
@@ -2015,6 +2062,11 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
 
             if (script.sourceMaps.length && WI.SourcesNavigationSidebarPanel.shouldPlaceResourcesAtTopLevel())
                 this._resourcesTreeOutline.disclosureButtons = true;
+        }
+
+        for (let styleSheet of WI.cssManager.styleSheets) {
+            if (styleSheet.origin !== WI.CSSStyleSheet.Type.Author && !styleSheet.isInspectorStyleSheet())
+                this._addStyleSheet(styleSheet);
         }
     }
 
@@ -2362,19 +2414,53 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
 
     _handleCSSStyleSheetAdded(event)
     {
-        let styleSheet = event.data.styleSheet;
-        if (!styleSheet.isInspectorStyleSheet())
+        let {styleSheet} = event.data;
+        if (styleSheet.origin === WI.CSSStyleSheet.Type.Author)
             return;
 
-        if (WI.settings.resourceGroupingMode.value === WI.Resource.GroupingMode.Type) {
-            let frameTreeElement = this.treeElementForRepresentedObject(styleSheet.parentFrame);
-            if (frameTreeElement) {
-                frameTreeElement.addRepresentedObjectToNewChildQueue(styleSheet);
-                return;
+        if (styleSheet.isInspectorStyleSheet()) {
+            if (WI.settings.resourceGroupingMode.value === WI.Resource.GroupingMode.Type) {
+                let frameTreeElement = this.treeElementForRepresentedObject(styleSheet.parentFrame);
+                if (frameTreeElement) {
+                    frameTreeElement.addRepresentedObjectToNewChildQueue(styleSheet);
+                    return;
+                }
             }
-        }
 
-        this._addResource(styleSheet);
+            this._addResource(styleSheet);
+        } else
+            this._addStyleSheet(styleSheet);
+    }
+
+    _handleCSSStyleSheetRemoved(event)
+    {
+        let {styleSheet} = event.data;
+        if (styleSheet.origin === WI.CSSStyleSheet.Type.Author)
+            return;
+
+        let treeElement = this._resourcesTreeOutline.findTreeElement(styleSheet);
+        if (!treeElement)
+            return;
+
+        let parent = treeElement.parent;
+        treeElement.parent.removeChild(treeElement);
+
+        if (!parent.children.length)
+            parent.parent.removeChild(parent);
+
+        switch (parent) {
+        case this._extensionStyleSheetsFolderTreeElement:
+            this._extensionStyleSheetsFolderTreeElement = null;
+            break;
+
+        case this._extraStyleSheetsFolderTreeElement:
+            this._extraStyleSheetsFolderTreeElement = null;
+            break;
+
+        case this._anonymousStyleSheetsFolderTreeElement:
+            this._anonymousStyleSheetsFolderTreeElement = null;
+            break;
+        }
     }
 
     _handleTargetAdded(event)

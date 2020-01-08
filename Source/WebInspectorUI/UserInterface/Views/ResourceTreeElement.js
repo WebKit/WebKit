@@ -46,16 +46,35 @@ WI.ResourceTreeElement = class ResourceTreeElement extends WI.SourceCodeTreeElem
 
     static compareResourceTreeElements(a, b)
     {
+        console.assert(a instanceof WI.SourceCodeTreeElement);
+        console.assert(b instanceof WI.SourceCodeTreeElement);
+
+        let resourceA = a.resource || a.representedObject;
+        let resourceB = b.resource || b.representedObject;
+
+        function resolvedType(resource) {
+            if (resource instanceof WI.Resource)
+                return resource.type;
+            if (resource instanceof WI.CSSStyleSheet)
+                return WI.Resource.Type.StyleSheet;
+            if (resource instanceof WI.Script)
+                return WI.Resource.Type.Script;
+            return WI.Resource.Type.Other;
+        }
+
+        let typeA = resolvedType(resourceA);
+        let typeB = resolvedType(resourceB);
+
         // Compare by type first to keep resources grouped by type when not sorted into folders.
-        var comparisonResult = a.resource.type.extendedLocaleCompare(b.resource.type);
+        var comparisonResult = typeA.extendedLocaleCompare(typeB);
         if (comparisonResult !== 0)
             return comparisonResult;
 
         // Compare async resource types by their first timestamp so they are in chronological order.
-        if (a.resource.type === WI.Resource.Type.XHR
-            || a.resource.type === WI.Resource.Type.Fetch
-            || a.resource.type === WI.Resource.Type.WebSocket)
-            return a.resource.firstTimestamp - b.resource.firstTimestamp || 0;
+        if (typeA === WI.Resource.Type.XHR
+            || typeA === WI.Resource.Type.Fetch
+            || typeA === WI.Resource.Type.WebSocket)
+            return resourceA.firstTimestamp - resourceB.firstTimestamp || 0;
 
         // Compare by subtitle when the types are the same. The subtitle is used to show the
         // domain of the resource. This causes resources to group by domain. If the resource

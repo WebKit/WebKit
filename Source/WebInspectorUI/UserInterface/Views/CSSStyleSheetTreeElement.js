@@ -28,8 +28,23 @@ WI.CSSStyleSheetTreeElement = class CSSStyleSheetTreeElement extends WI.SourceCo
     constructor(styleSheet)
     {
         console.assert(styleSheet instanceof WI.CSSStyleSheet);
-        console.assert(styleSheet.isInspectorStyleSheet());
 
-        super(styleSheet, ["style-sheet", "style-sheet-icon"], WI.UIString("Inspector Style Sheet"));
+        const title = null;
+        const subtitle = null;
+        super(styleSheet, ["style-sheet", "style-sheet-icon"], title, subtitle);
+
+        this.mainTitle = styleSheet.displayName;
+
+        if (styleSheet.url) {
+            if (styleSheet.urlComponents.scheme === "web-inspector")
+                this.tooltip = this.mainTitle;
+            else {
+                // Show the host as the subtitle if it is different from the main title.
+                let host = WI.displayNameForHost(styleSheet.urlComponents.host);
+                this.subtitle = this.mainTitle !== host ? host : null;
+
+                this.tooltip = styleSheet.url;
+            }
+        }
     }
 };

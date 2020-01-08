@@ -517,6 +517,10 @@ const Vector<RefPtr<CSSStyleSheet>> Scope::activeStyleSheetsForInspector()
 {
     Vector<RefPtr<CSSStyleSheet>> result;
 
+    if (auto* pageUserSheet = m_document.extensionStyleSheets().pageUserSheet())
+        result.append(pageUserSheet);
+    result.appendVector(m_document.extensionStyleSheets().documentUserStyleSheets());
+    result.appendVector(m_document.extensionStyleSheets().injectedUserStyleSheets());
     result.appendVector(m_document.extensionStyleSheets().injectedAuthorStyleSheets());
     result.appendVector(m_document.extensionStyleSheets().authorStyleSheetsForTesting());
 

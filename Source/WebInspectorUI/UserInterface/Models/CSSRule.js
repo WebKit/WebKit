@@ -54,7 +54,7 @@ WI.CSSRule = class CSSRule extends WI.Object
 
     get editable()
     {
-        return !!this._id && (this._type === WI.CSSStyleSheet.Type.Author || this._type === WI.CSSStyleSheet.Type.Inspector);
+        return !!this._id && this._type !== WI.CSSStyleSheet.Type.UserAgent;
     }
 
     get selectorText()
@@ -135,9 +135,8 @@ WI.CSSRule = class CSSRule extends WI.Object
         }
 
         if (this._ownerStyleSheet) {
-            if (!sourceCodeLocation && this._ownerStyleSheet.isInspectorStyleSheet())
+            if (!sourceCodeLocation && sourceRange)
                 sourceCodeLocation = this._ownerStyleSheet.createSourceCodeLocation(sourceRange.startLine, sourceRange.startColumn);
-
             sourceCodeLocation = this._ownerStyleSheet.offsetSourceCodeLocation(sourceCodeLocation);
         }
 

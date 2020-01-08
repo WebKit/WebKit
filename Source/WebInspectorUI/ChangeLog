@@ -1,5 +1,77 @@
 2020-01-07  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: unable to edit or view the source of style sheets injected by safari app extensions
+        https://bugs.webkit.org/show_bug.cgi?id=205900
+        <rdar://problem/57898773>
+
+        Reviewed by Timothy Hatcher.
+
+        Remove the restrictions around `CSS.StyleSheetOrigin.User` style sheets, thereby allowing
+        Web Inspector to get the source information that is necessary to show the "resource" in the
+        Sources Tab.
+
+        * UserInterface/Models/CSSStyleSheet.js:
+        (WI.CSSStyleSheet.prototype.get displayName):
+        (WI.CSSStyleSheet.prototype.get injected): Added.
+        (WI.CSSStyleSheet.prototype.get anonymous): Added.
+
+        * UserInterface/Models/DOMNodeStyles.js:
+        (WI.DOMNodeStyles.prototype._parseRulePayload):
+        * UserInterface/Models/CSSRule.js:
+        (WI.CSSRule):
+        (WI.CSSRule.prototype.get editable):
+        (WI.CSSRule.prototype._selectorResolved):
+        Attempt to create a source code location for any style sheet with a source range, not just
+        for the Inspector Style Sheet.
+
+        * UserInterface/Views/CSSStyleSheetTreeElement.js:
+        (WI.CSSStyleSheetTreeElement):
+        Instead of hardcoding "Inspector Style Sheet", use the associated `WI.CSSStyleSheet`'s info.
+
+        * UserInterface/Views/FrameTreeElement.js:
+        (WI.FrameTreeElement):
+        (WI.FrameTreeElement.prototype.onattach):
+        (WI.FrameTreeElement.prototype.ondetach):
+        (WI.FrameTreeElement.prototype._styleSheetAdded):
+        (WI.FrameTreeElement.prototype._styleSheetRemoved): Added.
+        Ensure that only non-injected non-anonymous style sheets are shown under frames.
+
+        * UserInterface/Views/SourcesNavigationSidebarPanel.js:
+        (WI.SourcesNavigationSidebarPanel):
+        (WI.SourcesNavigationSidebarPanel.prototype._compareTreeElements):
+        (WI.SourcesNavigationSidebarPanel.prototype._addResource):
+        (WI.SourcesNavigationSidebarPanel.prototype._addStyleSheet): Added.
+        (WI.SourcesNavigationSidebarPanel.prototype._handleResourceGroupingModeChanged):
+        (WI.SourcesNavigationSidebarPanel.prototype._handleCSSStyleSheetAdded): Added.
+        (WI.SourcesNavigationSidebarPanel.prototype._handleCSSStyleSheetRemoved): Added.
+        Add "Extension Style Sheets", "Extra Style Sheets", and "Anonymous Style Sheets" folders,
+        just like for scripts, with a similar logic as to when style sheets are added to each.
+
+        * UserInterface/Views/OpenResourceDialog.js:
+        (WI.OpenResourceDialog):
+        (WI.OpenResourceDialog.prototype.representedObjectIsValid): Added.
+        (WI.OpenResourceDialog.prototype._populateResourceTreeOutline):
+        (WI.OpenResourceDialog.prototype._populateResourceTreeOutline.createTreeElement):
+        (WI.OpenResourceDialog.prototype.didDismissDialog):
+        (WI.OpenResourceDialog.prototype.didPresentDialog):
+        (WI.OpenResourceDialog.prototype._removeResource): Added.
+        (WI.OpenResourceDialog.prototype._resourceWasRemoved): Added.
+        (WI.OpenResourceDialog.prototype._scriptAdded):
+        (WI.OpenResourceDialog.prototype._scriptRemoved): Added.
+        (WI.OpenResourceDialog.prototype._handleStyleSheetAdded): Added.
+        (WI.OpenResourceDialog.prototype._handleStyleSheetRemoved): Added.
+        Add any non-injected non-anonymous style sheets when populating the list of resources.
+        Drive-by: remove listings for any resources that are removed from the inspected page.
+
+        * UserInterface/Views/ResourceTreeElement.js:
+        (WI.ResourceTreeElement.compareResourceTreeElements):
+        (WI.ResourceTreeElement.compareResourceTreeElements.resolvedType): Added.
+        Support comparisons against non-resource tree elements.
+
+        * Localizations/en.lproj/localizedStrings.js:
+
+2020-01-07  Devin Rousso  <drousso@apple.com>
+
         REGRESSION: [ Mac Debug ] inspector/page/setBootstrapScript-main-frame.html is a flaky failure
         https://bugs.webkit.org/show_bug.cgi?id=205807
         <rdar://problem/58344669>

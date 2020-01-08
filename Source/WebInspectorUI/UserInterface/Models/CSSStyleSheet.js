@@ -68,6 +68,16 @@ WI.CSSStyleSheet = class CSSStyleSheet extends WI.SourceCode
         return this._origin;
     }
 
+    get injected()
+    {
+        return this.urlComponents && this.urlComponents.scheme.endsWith("extension");
+    }
+
+    get anonymous()
+    {
+        return !this.isInspectorStyleSheet() && !this._url;
+    }
+
     get url()
     {
         return this._url;
@@ -87,6 +97,9 @@ WI.CSSStyleSheet = class CSSStyleSheet extends WI.SourceCode
 
     get displayName()
     {
+        if (this.isInspectorStyleSheet())
+            return WI.UIString("Inspector Style Sheet");
+
         if (this._url)
             return WI.displayNameForURL(this._url, this.urlComponents);
 

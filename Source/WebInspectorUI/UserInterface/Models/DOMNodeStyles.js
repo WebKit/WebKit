@@ -689,9 +689,8 @@ WI.DOMNodeStyles = class DOMNodeStyles extends WI.Object
         }
 
         if (styleSheet) {
-            if (!sourceCodeLocation && styleSheet.isInspectorStyleSheet())
+            if (!sourceCodeLocation && sourceRange)
                 sourceCodeLocation = styleSheet.createSourceCodeLocation(sourceRange.startLine, sourceRange.startColumn);
-
             sourceCodeLocation = styleSheet.offsetSourceCodeLocation(sourceCodeLocation);
         }
 

@@ -41,6 +41,7 @@
 #include "ContentSecurityPolicy.h"
 #include "Document.h"
 #include "Element.h"
+#include "ExtensionStyleSheets.h"
 #include "HTMLHeadElement.h"
 #include "HTMLNames.h"
 #include "HTMLParserIdioms.h"
@@ -1167,8 +1168,7 @@ RefPtr<Inspector::Protocol::CSS::CSSRule> InspectorStyleSheet::buildObjectForRul
         .setStyle(buildObjectForStyle(&rule->style()))
         .release();
 
-    // "sourceURL" is present only for regular rules, otherwise "origin" should be used in the frontend.
-    if (m_origin == Inspector::Protocol::CSS::StyleSheetOrigin::Regular)
+    if (m_origin == Inspector::Protocol::CSS::StyleSheetOrigin::Regular || m_origin == Inspector::Protocol::CSS::StyleSheetOrigin::User)
         result->setSourceURL(finalURL());
 
     if (canBind()) {
@@ -1404,15 +1404,12 @@ InspectorCSSId InspectorStyleSheet::ruleId(CSSStyleRule* rule) const
 
 bool InspectorStyleSheet::originalStyleSheetText(String* result) const
 {
-    bool success = inlineStyleSheetText(result);
-    if (!success)
-        success = resourceStyleSheetText(result);
-    return success;
+    return inlineStyleSheetText(result) || resourceStyleSheetText(result) || extensionStyleSheetText(result);
 }
 
 bool InspectorStyleSheet::resourceStyleSheetText(String* result) const
 {
-    if (m_origin == Inspector::Protocol::CSS::StyleSheetOrigin::User || m_origin == Inspector::Protocol::CSS::StyleSheetOrigin::UserAgent)
+    if (m_origin != Inspector::Protocol::CSS::StyleSheetOrigin::Regular && m_origin != Inspector::Protocol::CSS::StyleSheetOrigin::Inspector)
         return false;
 
     if (!m_pageStyleSheet || !ownerDocument() || !ownerDocument()->frame())
@@ -1426,17 +1423,37 @@ bool InspectorStyleSheet::resourceStyleSheetText(String* result) const
 
 bool InspectorStyleSheet::inlineStyleSheetText(String* result) const
 {
+    if (m_origin != Inspector::Protocol::CSS::StyleSheetOrigin::Regular)
+        return false;
+
     if (!m_pageStyleSheet)
         return false;
 
-    Node* ownerNode = m_pageStyleSheet->ownerNode();
+    auto* ownerNode = m_pageStyleSheet->ownerNode();
     if (!is<Element>(ownerNode))
         return false;
-    Element& ownerElement = downcast<Element>(*ownerNode);
 
+    auto& ownerElement = downcast<Element>(*ownerNode);
     if (!is<HTMLStyleElement>(ownerElement) && !is<SVGStyleElement>(ownerElement))
         return false;
+
     *result = ownerElement.textContent();
+    return true;
+}
+
+bool InspectorStyleSheet::extensionStyleSheetText(String* result) const
+{
+    if (m_origin != Inspector::Protocol::CSS::StyleSheetOrigin::User)
+        return false;
+
+    if (!m_pageStyleSheet || !ownerDocument())
+        return false;
+
+    auto content = ownerDocument()->extensionStyleSheets().contentForInjectedStyleSheet(m_pageStyleSheet);
+    if (content.isEmpty())
+        return false;
+
+    *result = content;
     return true;
 }
 

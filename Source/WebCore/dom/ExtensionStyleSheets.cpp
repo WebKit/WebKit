@@ -117,9 +117,11 @@ void ExtensionStyleSheets::updateInjectedStyleSheetCache() const
 {
     if (m_injectedStyleSheetCacheValid)
         return;
+
     m_injectedStyleSheetCacheValid = true;
     m_injectedUserStyleSheets.clear();
     m_injectedAuthorStyleSheets.clear();
+    m_injectedStyleSheetToSource.clear();
 
     Page* owningPage = m_document.page();
     if (!owningPage)
@@ -133,6 +135,8 @@ void ExtensionStyleSheets::updateInjectedStyleSheetCache() const
             return;
 
         auto sheet = createExtensionsStyleSheet(const_cast<Document&>(m_document), userStyleSheet.url(), userStyleSheet.source(), userStyleSheet.level());
+
+        m_injectedStyleSheetToSource.set(sheet.copyRef(), userStyleSheet.source());
 
         if (userStyleSheet.level() == UserStyleUserLevel)
             m_injectedUserStyleSheets.append(WTFMove(sheet));
@@ -188,6 +192,11 @@ void ExtensionStyleSheets::maybeAddContentExtensionSheet(const String& identifie
 
 }
 #endif // ENABLE(CONTENT_EXTENSIONS)
+
+String ExtensionStyleSheets::contentForInjectedStyleSheet(const RefPtr<CSSStyleSheet>& styleSheet) const
+{
+    return m_injectedStyleSheetToSource.get(styleSheet);
+}
 
 void ExtensionStyleSheets::detachFromDocument()
 {
