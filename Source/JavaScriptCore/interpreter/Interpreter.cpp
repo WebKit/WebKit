@@ -544,7 +544,7 @@ public:
         if (m_codeBlock) {
             // FIXME: We should support exception handling in checkpoints.
 #if ENABLE(DFG_JIT)
-            if (m_returnPC == LLInt::getCodePtr<JSEntryPtrTag>(checkpoint_osr_exit_from_inlined_call_trampoline).executableAddress())
+            if (removeCodePtrTag(m_returnPC) == LLInt::getCodePtr<NoPtrTag>(checkpoint_osr_exit_from_inlined_call_trampoline).executableAddress())
                 m_codeBlock->vm().findCheckpointOSRSideState(m_callFrame);
 #endif
             if (!m_isTermination) {
