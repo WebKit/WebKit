@@ -5213,69 +5213,124 @@ void WebViewImpl::flagsChanged(NSEvent *event)
     });
 }
 
-#define NATIVE_MOUSE_EVENT_HANDLER(EventName) \
-    void WebViewImpl::EventName(NSEvent *event) \
-    { \
-        if (m_ignoresNonWheelEvents) \
-            return; \
-        if (NSTextInputContext *context = [m_view inputContext]) { \
-            auto weakThis = makeWeakPtr(*this); \
-            RetainPtr<NSEvent> retainedEvent = event; \
-            [context handleEvent:event completionHandler:[weakThis, retainedEvent] (BOOL handled) { \
-                if (!weakThis) \
-                    return; \
-                if (handled) \
-                    LOG(TextInput, "%s was handled by text input context", String(#EventName).substring(0, String(#EventName).find("Internal")).ascii().data()); \
-                else { \
-                    NativeWebMouseEvent webEvent(retainedEvent.get(), weakThis->m_lastPressureEvent.get(), weakThis->m_view.getAutoreleased()); \
-                    weakThis->m_page->handleMouseEvent(webEvent); \
-                } \
-            }]; \
-            return; \
-        } \
-        NativeWebMouseEvent webEvent(event, m_lastPressureEvent.get(), m_view.getAutoreleased()); \
-        m_page->handleMouseEvent(webEvent); \
-    }
-#define NATIVE_MOUSE_EVENT_HANDLER_INTERNAL(EventName) \
-    void WebViewImpl::EventName(NSEvent *event) \
-    { \
-        if (m_ignoresNonWheelEvents || m_safeBrowsingWarning) \
-            return; \
-        if (NSTextInputContext *context = [m_view inputContext]) { \
-            auto weakThis = makeWeakPtr(*this); \
-            RetainPtr<NSEvent> retainedEvent = event; \
-            [context handleEvent:event completionHandler:[weakThis, retainedEvent] (BOOL handled) { \
-                if (!weakThis) \
-                    return; \
-                if (handled) \
-                    LOG(TextInput, "%s was handled by text input context", String(#EventName).substring(0, String(#EventName).find("Internal")).ascii().data()); \
-                else { \
-                    NativeWebMouseEvent webEvent(retainedEvent.get(), weakThis->m_lastPressureEvent.get(), weakThis->m_view.getAutoreleased()); \
-                    weakThis->m_page->handleMouseEvent(webEvent); \
-                } \
-            }]; \
-            return; \
-        } \
-        NativeWebMouseEvent webEvent(event, m_lastPressureEvent.get(), m_view.getAutoreleased()); \
-        m_page->handleMouseEvent(webEvent); \
+#if !LOG_DISABLED
+static TextStream& operator<<(TextStream& ts, NSEventType eventType)
+{
+    switch (eventType) {
+    case NSEventTypeLeftMouseDown: ts << "NSEventTypeLeftMouseDown"; break;
+    case NSEventTypeLeftMouseUp: ts << "NSEventTypeLeftMouseUp"; break;
+    case NSEventTypeRightMouseDown: ts << "NSEventTypeRightMouseDown"; break;
+    case NSEventTypeRightMouseUp: ts << "NSEventTypeRightMouseUp"; break;
+    case NSEventTypeMouseMoved: ts << "NSEventTypeMouseMoved"; break;
+    case NSEventTypeLeftMouseDragged: ts << "NSEventTypeLeftMouseDragged"; break;
+    case NSEventTypeRightMouseDragged: ts << "NSEventTypeRightMouseDragged"; break;
+    case NSEventTypeMouseEntered: ts << "NSEventTypeMouseEntered"; break;
+    case NSEventTypeMouseExited: ts << "NSEventTypeMouseExited"; break;
+    case NSEventTypeKeyDown: ts << "NSEventTypeKeyDown"; break;
+    case NSEventTypeKeyUp: ts << "NSEventTypeKeyUp"; break;
+    case NSEventTypeScrollWheel: ts << "NSEventTypeScrollWheel"; break;
+    case NSEventTypeOtherMouseDown: ts << "NSEventTypeOtherMouseDown"; break;
+    case NSEventTypeOtherMouseUp: ts << "NSEventTypeOtherMouseUp"; break;
+    case NSEventTypeOtherMouseDragged: ts << "NSEventTypeOtherMouseDragged"; break;
+    default:
+        ts << "Other";
     }
 
-NATIVE_MOUSE_EVENT_HANDLER(mouseEntered)
-NATIVE_MOUSE_EVENT_HANDLER(mouseExited)
-NATIVE_MOUSE_EVENT_HANDLER(otherMouseDown)
-NATIVE_MOUSE_EVENT_HANDLER(otherMouseDragged)
-NATIVE_MOUSE_EVENT_HANDLER(otherMouseUp)
-NATIVE_MOUSE_EVENT_HANDLER(rightMouseDown)
-NATIVE_MOUSE_EVENT_HANDLER(rightMouseDragged)
-NATIVE_MOUSE_EVENT_HANDLER(rightMouseUp)
+    return ts;
+}
+#endif
 
-NATIVE_MOUSE_EVENT_HANDLER_INTERNAL(mouseMovedInternal)
-NATIVE_MOUSE_EVENT_HANDLER_INTERNAL(mouseDownInternal)
-NATIVE_MOUSE_EVENT_HANDLER_INTERNAL(mouseUpInternal)
-NATIVE_MOUSE_EVENT_HANDLER_INTERNAL(mouseDraggedInternal)
+void WebViewImpl::nativeMouseEventHandler(NSEvent *event)
+{
+    if (m_ignoresNonWheelEvents)
+        return;
 
-#undef NATIVE_MOUSE_EVENT_HANDLER
-#undef NATIVE_MOUSE_EVENT_HANDLER_INTERNAL
+    if (NSTextInputContext *context = [m_view inputContext]) {
+        auto weakThis = makeWeakPtr(*this);
+        RetainPtr<NSEvent> retainedEvent = event;
+        [context handleEvent:event completionHandler:[weakThis, retainedEvent] (BOOL handled) {
+            if (!weakThis)
+                return;
+            if (handled)
+                LOG_WITH_STREAM(TextInput, stream << "Event " << [retainedEvent type] << " was handled by text input context");
+            else {
+                NativeWebMouseEvent webEvent(retainedEvent.get(), weakThis->m_lastPressureEvent.get(), weakThis->m_view.getAutoreleased());
+                weakThis->m_page->handleMouseEvent(webEvent);
+            }
+        }];
+        return;
+    }
+    NativeWebMouseEvent webEvent(event, m_lastPressureEvent.get(), m_view.getAutoreleased());
+    m_page->handleMouseEvent(webEvent);
+}
+
+void WebViewImpl::nativeMouseEventHandlerInternal(NSEvent *event)
+{
+    if (m_safeBrowsingWarning)
+        return;
+
+    nativeMouseEventHandler(event);
+}
+
+void WebViewImpl::mouseEntered(NSEvent *event)
+{
+    nativeMouseEventHandler(event);
+}
+
+void WebViewImpl::mouseExited(NSEvent *event)
+{
+    nativeMouseEventHandler(event);
+}
+
+void WebViewImpl::otherMouseDown(NSEvent *event)
+{
+    nativeMouseEventHandler(event);
+}
+
+void WebViewImpl::otherMouseDragged(NSEvent *event)
+{
+    nativeMouseEventHandler(event);
+}
+
+void WebViewImpl::otherMouseUp(NSEvent *event)
+{
+    nativeMouseEventHandler(event);
+}
+
+void WebViewImpl::rightMouseDown(NSEvent *event)
+{
+    nativeMouseEventHandler(event);
+}
+
+void WebViewImpl::rightMouseDragged(NSEvent *event)
+{
+    nativeMouseEventHandler(event);
+}
+
+void WebViewImpl::rightMouseUp(NSEvent *event)
+{
+    nativeMouseEventHandler(event);
+}
+
+void WebViewImpl::mouseMovedInternal(NSEvent *event)
+{
+    nativeMouseEventHandlerInternal(event);
+}
+
+void WebViewImpl::mouseDownInternal(NSEvent *event)
+{
+    nativeMouseEventHandlerInternal(event);
+}
+
+void WebViewImpl::mouseUpInternal(NSEvent *event)
+{
+    nativeMouseEventHandlerInternal(event);
+}
+
+void WebViewImpl::mouseDraggedInternal(NSEvent *event)
+{
+    nativeMouseEventHandlerInternal(event);
+}
 
 void WebViewImpl::mouseMoved(NSEvent *event)
 {

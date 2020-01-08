@@ -1,3 +1,32 @@
+2020-01-08  Simon Fraser  <simon.fraser@apple.com>
+
+        Remove NATIVE_MOUSE_EVENT_HANDLER macros
+        https://bugs.webkit.org/show_bug.cgi?id=205897
+
+        Reviewed by Tim Horton.
+
+        Remove the NATIVE_MOUSE_EVENT_HANDLER and NATIVE_MOUSE_EVENT_HANDLER_INTERNAL which are almost identical,
+        calling a couple of shared functions instead. The only reason the eventName was used was for logging, so just
+        log the -[NSEvent type] instead.
+
+        * UIProcess/Cocoa/WebViewImpl.h:
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (WebKit::operator<<):
+        (WebKit::WebViewImpl::nativeMouseEventHandler):
+        (WebKit::WebViewImpl::nativeMouseEventHandlerInternal):
+        (WebKit::WebViewImpl::mouseEntered):
+        (WebKit::WebViewImpl::mouseExited):
+        (WebKit::WebViewImpl::otherMouseDown):
+        (WebKit::WebViewImpl::otherMouseDragged):
+        (WebKit::WebViewImpl::otherMouseUp):
+        (WebKit::WebViewImpl::rightMouseDown):
+        (WebKit::WebViewImpl::rightMouseDragged):
+        (WebKit::WebViewImpl::rightMouseUp):
+        (WebKit::WebViewImpl::mouseMovedInternal):
+        (WebKit::WebViewImpl::mouseDownInternal):
+        (WebKit::WebViewImpl::mouseUpInternal):
+        (WebKit::WebViewImpl::mouseDraggedInternal):
+
 2020-01-08  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Remove an unused variable in WebCoreArgumentCodersCocoa.mm after r254202

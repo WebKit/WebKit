@@ -664,6 +664,9 @@ private:
     Vector<WebCore::KeypressCommand> collectKeyboardLayoutCommandsForEvent(NSEvent *);
     void interpretKeyEvent(NSEvent *, void(^completionHandler)(BOOL handled, const Vector<WebCore::KeypressCommand>&));
 
+    void nativeMouseEventHandler(NSEvent *);
+    void nativeMouseEventHandlerInternal(NSEvent *);
+    
     void mouseMovedInternal(NSEvent *);
     void mouseDownInternal(NSEvent *);
     void mouseUpInternal(NSEvent *);
