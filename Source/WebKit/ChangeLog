@@ -1,3 +1,20 @@
+2020-01-08  Chris Dumez  <cdumez@apple.com>
+
+        Move UIProcess DependencyProcessAssertion from WebContent to AuxiliaryProcess
+        https://bugs.webkit.org/show_bug.cgi?id=205836
+
+        Reviewed by Alex Christensen.
+
+        Move UIProcess DependencyProcessAssertion from WebContent to AuxiliaryProcess, so that other auxiliary
+        processes (Network Process, GPU Process) also benefit from it.
+
+        * Shared/AuxiliaryProcess.cpp:
+        (WebKit::AuxiliaryProcess::initializeConnection):
+        * Shared/AuxiliaryProcess.h:
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::initializeConnection):
+        * WebProcess/WebProcess.h:
+
 2020-01-08  Brent Fulgham  <bfulgham@apple.com>
 
         Network process sandboxes should not include 'common.sb' or 'system.sb'

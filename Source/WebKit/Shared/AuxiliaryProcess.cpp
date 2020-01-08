@@ -26,6 +26,7 @@
 #include "config.h"
 #include "AuxiliaryProcess.h"
 
+#include "DependencyProcessAssertion.h"
 #include "Logging.h"
 #include "SandboxInitializationParameters.h"
 #include <pal/SessionID.h>
@@ -101,8 +102,12 @@ void AuxiliaryProcess::initializeProcessName(const AuxiliaryProcessInitializatio
 {
 }
 
-void AuxiliaryProcess::initializeConnection(IPC::Connection*)
+void AuxiliaryProcess::initializeConnection(IPC::Connection* connection)
 {
+#if PLATFORM(IOS_FAMILY)
+    ASSERT(!m_uiProcessDependencyProcessAssertion);
+    m_uiProcessDependencyProcessAssertion = makeUnique<DependencyProcessAssertion>(connection->remoteProcessID(), "Child process dependency on UIProcess"_s);
+#endif
 }
 
 void AuxiliaryProcess::addMessageReceiver(IPC::StringReference messageReceiverName, IPC::MessageReceiver& messageReceiver)

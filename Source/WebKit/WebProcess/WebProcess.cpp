@@ -31,7 +31,6 @@
 #include "APIPageHandle.h"
 #include "AuthenticationManager.h"
 #include "AuxiliaryProcessMessages.h"
-#include "DependencyProcessAssertion.h"
 #include "DrawingArea.h"
 #include "EventDispatcher.h"
 #include "InjectedBundle.h"
@@ -275,9 +274,6 @@ void WebProcess::initializeConnection(IPC::Connection* connection)
     m_eventDispatcher->initializeConnection(connection);
 #if PLATFORM(IOS_FAMILY)
     m_viewUpdateDispatcher->initializeConnection(connection);
-
-    ASSERT(!m_uiProcessDependencyProcessAssertion);
-    m_uiProcessDependencyProcessAssertion = makeUnique<DependencyProcessAssertion>(connection->remoteProcessID(), "WebContent process dependency on UIProcess"_s);
 #endif // PLATFORM(IOS_FAMILY)
 
     m_webInspectorInterruptDispatcher->initializeConnection(connection);
