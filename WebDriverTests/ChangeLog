@@ -1,5 +1,11 @@
 2020-01-08  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        Unreviewed gardening. Add expectations for several tests failing
+
+        * TestExpectations.json:
+
+2020-01-08  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         Unreviewed. Update W3C WebDriver imported tests.
 
         * TestExpectations.json:

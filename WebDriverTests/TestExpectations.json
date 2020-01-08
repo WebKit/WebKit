@@ -376,6 +376,9 @@
         "subtests": {
             "test_release_char_sequence_sends_keyup_events_in_reverse": {
                 "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/184967"}}
+            },
+            "test_release_mouse_sequence_resets_dblclick_state": {
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/184967"}}
             }
         }
     },
@@ -619,6 +622,9 @@
             },
             "test_negative_x_y": {
                 "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/180418"}}
+            },
+            "test_height_width_smaller_than_minimum_browser_size": {
+                "expected": {"gtk": {"status": ["FAIL"], "bug": "webkit.org/b/205919"}}
             }
         }
     },
@@ -633,6 +639,13 @@
         "subtests": {
             "test_fully_exit_fullscreen": {
                 "expected": {"gtk": {"status": ["FAIL"], "bug": "webkit.org/b/188118"}}
+            }
+        }
+    },
+    "imported/w3c/webdriver/tests/is_element_enabled/enabled.py": {
+        "subtests": {
+            "test_xml_always_not_enabled": {
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/205923"}}
             }
         }
     },
