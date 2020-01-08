@@ -1,3 +1,15 @@
+2020-01-08  Michael Saboff  <msaboff@apple.com>
+
+        JSArrayBufferView.h: Multiplication result converted to larger type
+        https://bugs.webkit.org/show_bug.cgi?id=205943
+
+        Reviewed by Saam Barati.
+
+        Added cast to size_t to make the whole calculation size_t.
+
+        * runtime/JSArrayBufferView.h:
+        (JSC::JSArrayBufferView::sizeOf):
+
 2020-01-08  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         Proxy's [[OwnPropertyKeys]] is correct only in PropertyNameMode::StringsAndSymbols
