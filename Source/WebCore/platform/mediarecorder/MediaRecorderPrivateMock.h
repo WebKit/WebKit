@@ -36,12 +36,12 @@ class MediaStreamTrackPrivate;
 
 class WEBCORE_EXPORT MediaRecorderPrivateMock final : public MediaRecorderPrivate {
 private:
-    void sampleBufferUpdated(MediaStreamTrackPrivate&, MediaSample&) final;
-    void audioSamplesAvailable(MediaStreamTrackPrivate&, const WTF::MediaTime&, const PlatformAudioData&, const AudioStreamDescription&, size_t) final;
+    void sampleBufferUpdated(const MediaStreamTrackPrivate&, MediaSample&) final;
+    void audioSamplesAvailable(const MediaStreamTrackPrivate&, const WTF::MediaTime&, const PlatformAudioData&, const AudioStreamDescription&, size_t) final;
     void fetchData(CompletionHandler<void(RefPtr<SharedBuffer>&&, const String&)>&&) final;
     const String& mimeType();
     
-    void generateMockString(MediaStreamTrackPrivate&);
+    void generateMockString(const MediaStreamTrackPrivate&);
 
     mutable Lock m_bufferLock;
     StringBuilder m_buffer;

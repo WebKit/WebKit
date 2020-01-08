@@ -34,13 +34,11 @@
 #include "EventNames.h"
 #include "MediaRecorderErrorEvent.h"
 #include "MediaRecorderPrivate.h"
+#include "MediaRecorderProvider.h"
+#include "Page.h"
 #include "SharedBuffer.h"
 #include "WindowEventLoop.h"
 #include <wtf/IsoMallocInlines.h>
-
-#if PLATFORM(COCOA)
-#include "MediaRecorderPrivateAVFImpl.h"
-#endif
 
 namespace WebCore {
 
@@ -50,11 +48,14 @@ creatorFunction MediaRecorder::m_customCreator = nullptr;
 
 ExceptionOr<Ref<MediaRecorder>> MediaRecorder::create(Document& document, Ref<MediaStream>&& stream, Options&& options)
 {
-    auto privateInstance = MediaRecorder::getPrivateImpl(stream->privateStream());
+    auto privateInstance = MediaRecorder::createMediaRecorderPrivate(document, stream->privateStream());
     if (!privateInstance)
         return Exception { NotSupportedError, "The MediaRecorder is unsupported on this platform"_s };
     auto recorder = adoptRef(*new MediaRecorder(document, WTFMove(stream), WTFMove(privateInstance), WTFMove(options)));
     recorder->suspendIfNeeded();
+    recorder->m_private->setErrorCallback([recorder = recorder.copyRef()](auto&& exception) mutable {
+        recorder->dispatchError(WTFMove(*exception));
+    });
     return recorder;
 }
 
@@ -63,14 +64,19 @@ void MediaRecorder::setCustomPrivateRecorderCreator(creatorFunction creator)
     m_customCreator = creator;
 }
 
-std::unique_ptr<MediaRecorderPrivate> MediaRecorder::getPrivateImpl(const MediaStreamPrivate& stream)
+std::unique_ptr<MediaRecorderPrivate> MediaRecorder::createMediaRecorderPrivate(Document& document, const MediaStreamPrivate& stream)
 {
     if (m_customCreator)
         return m_customCreator();
-    
+
 #if PLATFORM(COCOA)
-    return MediaRecorderPrivateAVFImpl::create(stream);
+    auto* page = document.page();
+    if (!page)
+        return nullptr;
+
+    return page->mediaRecorderProvider().createMediaRecorderPrivate(stream);
 #else
+    UNUSED_PARAM(document);
     UNUSED_PARAM(stream);
     return nullptr;
 #endif
@@ -182,9 +188,15 @@ void MediaRecorder::didAddOrRemoveTrack()
         if (!m_isActive || state() == RecordingState::Inactive)
             return;
         stopRecordingInternal();
-        auto event = MediaRecorderErrorEvent::create(eventNames().errorEvent, Exception { UnknownError, "Track cannot be added to or removed from the MediaStream while recording is happening"_s });
-        dispatchEvent(WTFMove(event));
+        dispatchError(Exception { UnknownError, "Track cannot be added to or removed from the MediaStream while recording is happening"_s });
     });
+}
+
+void MediaRecorder::dispatchError(Exception&& exception)
+{
+    if (!m_isActive)
+        return;
+    dispatchEvent(MediaRecorderErrorEvent::create(eventNames().errorEvent, WTFMove(exception)));
 }
 
 void MediaRecorder::trackEnded(MediaStreamTrackPrivate&)

@@ -180,6 +180,7 @@
 #import <WebCore/LocalizedStrings.h>
 #import <WebCore/LogInitialization.h>
 #import <WebCore/MIMETypeRegistry.h>
+#import <WebCore/MediaRecorderProvider.h>
 #import <WebCore/MemoryCache.h>
 #import <WebCore/MemoryRelease.h>
 #import <WebCore/NetworkStorageSession.h>
@@ -1448,7 +1449,8 @@ static void WebKitInitializeGamepadProviderIfNecessary()
         WebCore::CacheStorageProvider::create(),
         BackForwardList::create(self),
         WebCore::CookieJar::create(storageProvider.copyRef()),
-        makeUniqueRef<WebProgressTrackerClient>(self)
+        makeUniqueRef<WebProgressTrackerClient>(self),
+        makeUniqueRef<WebCore::MediaRecorderProvider>()
     );
 #if !PLATFORM(IOS_FAMILY)
     pageConfiguration.chromeClient = new WebChromeClient(self);
@@ -1717,7 +1719,8 @@ static void WebKitInitializeGamepadProviderIfNecessary()
         WebCore::CacheStorageProvider::create(),
         BackForwardList::create(self),
         WebCore::CookieJar::create(storageProvider.copyRef()),
-        makeUniqueRef<WebProgressTrackerClient>(self)
+        makeUniqueRef<WebProgressTrackerClient>(self),
+        makeUniqueRef<WebCore::MediaRecorderProvider>()
     );
     pageConfiguration.chromeClient = new WebChromeClientIOS(self);
 #if ENABLE(DRAG_SUPPORT)

@@ -220,6 +220,7 @@ def types_that_cannot_be_forward_declared():
         'WebKit::ActivityStateChangeID',
         'WebKit::LayerHostingContextID',
         'WebKit::MediaPlayerPrivateRemoteIdentifier',
+        'WebKit::MediaRecorderIdentifier',
         'WebKit::RemoteMediaResourceIdentifier',
         'WebKit::RTCDecoderIdentifier',
         'WebKit::RTCEncoderIdentifier',

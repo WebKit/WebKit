@@ -151,6 +151,7 @@ Modules/mediacontrols/MediaControlsHost.cpp
 
 Modules/mediarecorder/BlobEvent.cpp
 Modules/mediarecorder/MediaRecorder.cpp
+Modules/mediarecorder/MediaRecorderProvider.cpp
 Modules/mediarecorder/MediaRecorderErrorEvent.cpp
 
 Modules/mediasession/HTMLMediaElementMediaSession.cpp

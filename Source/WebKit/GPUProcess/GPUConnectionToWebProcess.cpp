@@ -39,6 +39,9 @@
 #include "RemoteLayerTreeDrawingAreaProxyMessages.h"
 #include "RemoteMediaPlayerManagerProxy.h"
 #include "RemoteMediaPlayerManagerProxyMessages.h"
+#include "RemoteMediaRecorderManager.h"
+#include "RemoteMediaRecorderManagerMessages.h"
+#include "RemoteMediaRecorderMessages.h"
 #include "RemoteMediaResourceManager.h"
 #include "RemoteMediaResourceManagerMessages.h"
 #include "RemoteScrollingCoordinatorTransaction.h"
@@ -137,6 +140,14 @@ UserMediaCaptureManagerProxy& GPUConnectionToWebProcess::userMediaCaptureManager
 
     return *m_userMediaCaptureManagerProxy;
 }
+
+RemoteMediaRecorderManager& GPUConnectionToWebProcess::mediaRecorderManager()
+{
+    if (!m_remoteMediaRecorderManager)
+        m_remoteMediaRecorderManager = makeUnique<RemoteMediaRecorderManager>(*this);
+
+    return *m_remoteMediaRecorderManager;
+}
 #endif
 
 #if PLATFORM(COCOA) && USE(LIBWEBRTC)
@@ -161,6 +172,14 @@ void GPUConnectionToWebProcess::didReceiveMessage(IPC::Connection& connection, I
 #if ENABLE(MEDIA_STREAM)
     if (decoder.messageReceiverName() == Messages::UserMediaCaptureManagerProxy::messageReceiverName()) {
         userMediaCaptureManagerProxy().didReceiveMessageFromGPUProcess(connection, decoder);
+        return;
+    }
+    if (decoder.messageReceiverName() == Messages::RemoteMediaRecorderManager::messageReceiverName()) {
+        mediaRecorderManager().didReceiveMessageFromWebProcess(connection, decoder);
+        return;
+    }
+    if (decoder.messageReceiverName() == Messages::RemoteMediaRecorder::messageReceiverName()) {
+        mediaRecorderManager().didReceiveRemoteMediaRecorderMessage(connection, decoder);
         return;
     }
 #endif

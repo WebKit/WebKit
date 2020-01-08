@@ -91,6 +91,17 @@ static NSString *getAVEncoderBitRateKeyWithFallback()
 
 RefPtr<MediaRecorderPrivateWriter> MediaRecorderPrivateWriter::create(const MediaStreamTrackPrivate* audioTrack, const MediaStreamTrackPrivate* videoTrack)
 {
+    int width = 0, height = 0;
+    if (videoTrack) {
+        auto& settings = videoTrack->settings();
+        width = settings.width();
+        height = settings.height();
+    }
+    return create(!!audioTrack, width, height);
+}
+
+RefPtr<MediaRecorderPrivateWriter> MediaRecorderPrivateWriter::create(bool hasAudio, int width, int height)
+{
     NSString *directory = FileSystem::createTemporaryDirectory(@"videos");
     NSString *filename = [NSString stringWithFormat:@"/%lld.mp4", CMClockGetTime(CMClockGetHostTimeClock()).value];
     NSString *path = [directory stringByAppendingString:filename];
@@ -106,12 +117,11 @@ RefPtr<MediaRecorderPrivateWriter> MediaRecorderPrivateWriter::create(const Medi
 
     auto writer = adoptRef(*new MediaRecorderPrivateWriter(WTFMove(avAssetWriter), WTFMove(filePath)));
 
-    if (audioTrack && !writer->setAudioInput())
+    if (hasAudio && !writer->setAudioInput())
         return nullptr;
 
-    if (videoTrack) {
-        auto& settings = videoTrack->settings();
-        if (!writer->setVideoInput(settings.width(), settings.height()))
+    if (width && height) {
+        if (!writer->setVideoInput(width, height))
             return nullptr;
     }
 

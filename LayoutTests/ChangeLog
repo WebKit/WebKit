@@ -1,3 +1,13 @@
+2020-01-08  youenn fablet  <youenn@apple.com>
+
+        Implement MediaRecorder backend in GPUProcess
+        https://bugs.webkit.org/show_bug.cgi?id=205802
+
+        Reviewed by Eric Carlson.
+
+        * http/wpt/mediarecorder/MediaRecorder-AV-audio-video-dataavailable.html:
+        Do not use GPUProcess for this test until canvas buffers are IOSurfaces.
+
 2020-01-08  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [CSS Font Loading] Import css-font-loading WPT tests
