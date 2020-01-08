@@ -18,6 +18,10 @@ function test()
             const url = "http://localhost:8000/inspector/target/provisional-load-cancels-previous-load.html";
             let navigatedTwice = false;
 
+            let originalResumeIfPaused = WI.Target.prototype._resumeIfPaused;
+            // Keep first provisional navigation paused.
+            WI.Target.prototype._resumeIfPaused = () => {};
+
             WI.targetManager.addEventListener(WI.TargetManager.Event.TargetAdded, (event) => {
                 let target = event.data.target;
                 let targetId = targetIdMap.get(target.identifier);
@@ -26,6 +30,9 @@ function test()
                 InspectorTest.expectTrue(target.isPaused, `Target ${targetId} should be paused on start.`);
                 if (!navigatedTwice) {
                     navigatedTwice = true;
+                    WI.Target.prototype._resumeIfPaused = originalResumeIfPaused;
+
+                    InspectorTest.deferOutputUntilTestPageIsReloaded();
 
                     // Send two consequtive navigation requests. The latter will cancel provisional
                     // load of the former.

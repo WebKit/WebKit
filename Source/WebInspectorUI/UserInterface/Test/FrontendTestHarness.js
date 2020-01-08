@@ -127,6 +127,12 @@ FrontendTestHarness = class FrontendTestHarness extends TestHarness
         }
     }
 
+    deferOutputUntilTestPageIsReloaded()
+    {
+        console.assert(!this._testPageIsReloading);
+        this._testPageIsReloading = true;
+    }
+
     testPageDidLoad()
     {
         if (this.dumpActivityToSystemConsole)
