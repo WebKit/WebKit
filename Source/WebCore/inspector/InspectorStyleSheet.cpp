@@ -1404,15 +1404,14 @@ InspectorCSSId InspectorStyleSheet::ruleId(CSSStyleRule* rule) const
 
 bool InspectorStyleSheet::originalStyleSheetText(String* result) const
 {
+    if (!m_pageStyleSheet || m_origin == Inspector::Protocol::CSS::StyleSheetOrigin::UserAgent)
+        return false;
     return inlineStyleSheetText(result) || resourceStyleSheetText(result) || extensionStyleSheetText(result);
 }
 
 bool InspectorStyleSheet::resourceStyleSheetText(String* result) const
 {
-    if (m_origin != Inspector::Protocol::CSS::StyleSheetOrigin::Regular && m_origin != Inspector::Protocol::CSS::StyleSheetOrigin::Inspector)
-        return false;
-
-    if (!m_pageStyleSheet || !ownerDocument() || !ownerDocument()->frame())
+    if (!ownerDocument() || !ownerDocument()->frame())
         return false;
 
     String error;
@@ -1423,12 +1422,6 @@ bool InspectorStyleSheet::resourceStyleSheetText(String* result) const
 
 bool InspectorStyleSheet::inlineStyleSheetText(String* result) const
 {
-    if (m_origin != Inspector::Protocol::CSS::StyleSheetOrigin::Regular)
-        return false;
-
-    if (!m_pageStyleSheet)
-        return false;
-
     auto* ownerNode = m_pageStyleSheet->ownerNode();
     if (!is<Element>(ownerNode))
         return false;
@@ -1443,10 +1436,7 @@ bool InspectorStyleSheet::inlineStyleSheetText(String* result) const
 
 bool InspectorStyleSheet::extensionStyleSheetText(String* result) const
 {
-    if (m_origin != Inspector::Protocol::CSS::StyleSheetOrigin::User)
-        return false;
-
-    if (!m_pageStyleSheet || !ownerDocument())
+    if (!ownerDocument())
         return false;
 
     auto content = ownerDocument()->extensionStyleSheets().contentForInjectedStyleSheet(m_pageStyleSheet);
