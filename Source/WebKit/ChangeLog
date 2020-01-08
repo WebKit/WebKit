@@ -1,3 +1,16 @@
+2020-01-08  youenn fablet  <youenn@apple.com>
+
+        Improve logging of creating a service worker
+        https://bugs.webkit.org/show_bug.cgi?id=205849
+
+        Reviewed by Chris Dumez.
+
+        Add some release logging to identify which service worker is created in which process.
+        No change of observable behavior.
+
+        * WebProcess/Storage/WebSWContextManagerConnection.cpp:
+        (WebKit::WebSWContextManagerConnection::installServiceWorker):
+
 2020-01-07  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Implement css3-images image-orientation
