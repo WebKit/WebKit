@@ -553,6 +553,11 @@ webkit.org/b/177533 webrtc/video-interruption.html
 
 webkit.org/b/186933 webrtc/peer-connection-createMediaStreamDestination.html
 
+webkit.org/b/205930 webrtc/audio-peer-connection-webaudio.html [ Failure ]
+webkit.org/b/205930 webrtc/peer-connection-audio-mute2.html [ Failure ]
+webkit.org/b/205930 webrtc/peer-connection-audio-unmute.html [ Failure ]
+webkit.org/b/205930 webrtc/peer-connection-remote-audio-mute2.html [ Failure ]
+
 imported/w3c/web-platform-tests/webrtc/ [ Skip ]
 http/tests/webrtc [ Skip ]
 # The MediaStream implementation is also still not completed
@@ -1092,6 +1097,9 @@ webkit.org/b/177633 editing/async-clipboard/clipboard-read-text-same-origin.html
 webkit.org/b/177633 editing/async-clipboard/clipboard-write-basic.html [ Timeout ]
 webkit.org/b/177633 editing/async-clipboard/clipboard-write-items-twice.html [ Timeout ]
 webkit.org/b/177633 editing/async-clipboard/clipboard-write-text.html [ Timeout ]
+webkit.org/b/177633 editing/async-clipboard/clipboard-item-get-type-basic.html [ Failure ]
+webkit.org/b/177633 editing/async-clipboard/clipboard-read-text.html [ Failure ]
+webkit.org/b/177633 editing/async-clipboard/sanitize-when-reading-markup.html [ Failure ]
 
 webkit.org/b/180062 fast/text/user-installed-fonts [ Skip ]
 
@@ -3688,6 +3696,7 @@ webkit.org/b/193631 fast/text/font-variations-feature-detection.html [ ImageOnly
 webkit.org/b/193632 fast/text/narrow-non-breaking-space.html [ ImageOnlyFailure ]
 
 webkit.org/b/193323 http/wpt/cache-storage/cache-quota.any.html [ Failure ]
+webkit.org/b/205921 http/wpt/cache-storage/cache-quota-add.any.html [ Failure ]
 
 webkit.org/b/193638 media/video-webkit-playsinline.html [ Failure ]
 
