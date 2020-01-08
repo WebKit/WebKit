@@ -1,3 +1,20 @@
+2020-01-07  Saam Barati  <sbarati@apple.com>
+
+        AI rule for ValueMod/ValueDiv produce constants with the wrong format when the result can be an int32
+        https://bugs.webkit.org/show_bug.cgi?id=205906
+        <rdar://problem/56108519>
+
+        Reviewed by Yusuke Suzuki.
+
+        * stress/ai-value-div-should-result-in-constant-int-where-possible.js: Added.
+        (foo.bar.f):
+        (foo.):
+        (foo):
+        * stress/ai-value-mod-should-result-in-constant-int-where-possible.js: Added.
+        (foo.bar.f):
+        (foo.):
+        (foo):
+
 2020-01-06  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         String.prototype.replace() incorrectly handles named references on RegExp w/o named groups

@@ -1,3 +1,18 @@
+2020-01-07  Saam Barati  <sbarati@apple.com>
+
+        AI rule for ValueMod/ValueDiv produce constants with the wrong format when the result can be an int32
+        https://bugs.webkit.org/show_bug.cgi?id=205906
+        <rdar://problem/56108519>
+
+        Reviewed by Yusuke Suzuki.
+
+        The runtime code for ValueMod and ValueDiv produces an int32 when the result
+        is of int32 value. However, the AI was saying the result is in double format.
+        This patch fixes AI to produce a JSValue in the right format.
+
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::handleConstantDivOp):
+
 2020-01-07  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Implement css3-images image-orientation

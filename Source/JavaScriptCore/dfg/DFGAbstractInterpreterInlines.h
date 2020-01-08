@@ -323,10 +323,17 @@ bool AbstractInterpreter<AbstractStateType>::handleConstantDivOp(Node* node)
             if (isClobbering)
                 didFoldClobberWorld();
 
-            if (isDivOperation)
-                setConstant(node, jsDoubleNumber(left.asNumber() / right.asNumber()));
-            else
-                setConstant(node, jsDoubleNumber(fmod(left.asNumber(), right.asNumber())));
+            if (isDivOperation) {
+                if (op == ValueDiv)
+                    setConstant(node, jsNumber(left.asNumber() / right.asNumber()));
+                else
+                    setConstant(node, jsDoubleNumber(left.asNumber() / right.asNumber()));
+            } else {
+                if (op == ValueMod)
+                    setConstant(node, jsNumber(fmod(left.asNumber(), right.asNumber())));
+                else
+                    setConstant(node, jsDoubleNumber(fmod(left.asNumber(), right.asNumber())));
+            }
 
             return true;
         }
