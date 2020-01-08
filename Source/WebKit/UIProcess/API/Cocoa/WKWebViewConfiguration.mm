@@ -1146,6 +1146,44 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     return _undoManagerAPIEnabled;
 }
 
+static WebKit::WebViewCategory toWebKitWebViewCategory(_WKWebViewCategory category)
+{
+    switch (category) {
+    case _WKWebViewCategoryHybridApp:
+        return WebKit::WebViewCategory::HybridApp;
+    case _WKWebViewCategoryInAppBrowser:
+        return WebKit::WebViewCategory::InAppBrowser;
+    case _WKWebViewCategoryWebBrowser:
+        return WebKit::WebViewCategory::WebBrowser;
+    }
+    ASSERT_NOT_REACHED();
+    return WebKit::WebViewCategory::HybridApp;
+}
+
+static _WKWebViewCategory toWKWebViewCategory(WebKit::WebViewCategory category)
+{
+    switch (category) {
+    case WebKit::WebViewCategory::HybridApp:
+        return _WKWebViewCategoryHybridApp;
+    case WebKit::WebViewCategory::InAppBrowser:
+        return _WKWebViewCategoryInAppBrowser;
+    case WebKit::WebViewCategory::WebBrowser:
+        return _WKWebViewCategoryWebBrowser;
+    }
+    ASSERT_NOT_REACHED();
+    return _WKWebViewCategoryHybridApp;
+}
+
+- (_WKWebViewCategory)_webViewCategory
+{
+    return toWKWebViewCategory(_pageConfiguration->webViewCategory());
+}
+
+- (void)_setWebViewCategory:(_WKWebViewCategory)category
+{
+    _pageConfiguration->setWebViewCategory(toWebKitWebViewCategory(category));
+}
+
 @end
 
 @implementation WKWebViewConfiguration (WKDeprecated)

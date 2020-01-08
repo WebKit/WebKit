@@ -1,3 +1,17 @@
+2020-01-07  Kate Cheney  <katherine_cheney@apple.com>
+
+        Create a mechanism for 'safe by default' web views
+        https://bugs.webkit.org/show_bug.cgi?id=205407
+        <rdar://problem/58053071>
+
+        Reviewed by Alex Christensen.
+
+        Test the default WebView category is correct and that the setter works
+        properly.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/Configuration.mm:
+        (TEST):
+
 2020-01-07  Truitt Savell  <tsavell@apple.com>
 
         Unreviewed, rolling out r254165.

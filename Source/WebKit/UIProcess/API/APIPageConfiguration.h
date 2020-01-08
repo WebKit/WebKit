@@ -27,6 +27,7 @@
 
 #include "APIObject.h"
 #include "WebPreferencesStore.h"
+#include "WebViewCategory.h"
 #include <wtf/Forward.h>
 #include <wtf/GetPtr.h>
 #include <wtf/HashSet.h>
@@ -138,6 +139,9 @@ public:
     const Vector<WTF::String>& corsDisablingPatterns() const { return m_corsDisablingPatterns; }
     void setCORSDisablingPatterns(Vector<WTF::String>&& patterns) { m_corsDisablingPatterns = WTFMove(patterns); }
 
+    WebKit::WebViewCategory webViewCategory() const { return m_webViewCategory; }
+    void setWebViewCategory(WebKit::WebViewCategory category) { m_webViewCategory = category; }
+
 private:
 
     RefPtr<WebKit::WebProcessPool> m_processPool;
@@ -175,6 +179,7 @@ private:
 
     HashMap<WTF::String, Ref<WebKit::WebURLSchemeHandler>> m_urlSchemeHandlers;
     Vector<WTF::String> m_corsDisablingPatterns;
+    WebKit::WebViewCategory m_webViewCategory { WebKit::WebViewCategory::HybridApp };
 };
 
 } // namespace API

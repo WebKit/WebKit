@@ -80,6 +80,7 @@ Ref<PageConfiguration> PageConfiguration::copy() const
     for (auto& pair : this->m_urlSchemeHandlers)
         copy->m_urlSchemeHandlers.set(pair.key, pair.value.copyRef());
     copy->m_corsDisablingPatterns = this->m_corsDisablingPatterns;
+    copy->m_webViewCategory = this->m_webViewCategory;
 
     return copy;
 }
