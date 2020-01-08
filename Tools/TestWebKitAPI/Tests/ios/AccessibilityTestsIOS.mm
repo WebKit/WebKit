@@ -68,9 +68,9 @@ TEST(AccessibilityTests, RectsForSpeakingSelectionBasic)
     [webView synchronouslyLoadHTMLString:@"<meta name='viewport' content='width=device-width,initial-scale=1'><span id='first'>first</span><span id='second'> second</span><br><span id='third'> third</span>"];
     [webView stringByEvaluatingJavaScript:@"document.execCommand('SelectAll')"];
 
-    checkCGRectValueAtIndex([webView rectsAtSelectionOffset:0 withText:@"first"], CGRectMake(8, 8, 25, 19), 0);
-    checkCGRectValueAtIndex([webView rectsAtSelectionOffset:6 withText:@"second"], CGRectMake(37, 8, 45, 19), 0);
-    checkCGRectValueAtIndex([webView rectsAtSelectionOffset:13 withText:@"third"], CGRectMake(8, 27, 30, 20), 0);
+    checkCGRectValueAtIndex([webView rectsAtSelectionOffset:0 withText:@"first"], CGRectMake(8, 8, 26, 19), 0);
+    checkCGRectValueAtIndex([webView rectsAtSelectionOffset:6 withText:@"second"], CGRectMake(37, 8, 46, 19), 0);
+    checkCGRectValueAtIndex([webView rectsAtSelectionOffset:13 withText:@"third"], CGRectMake(8, 27, 31, 20), 0);
 }
 
 TEST(AccessibilityTests, RectsForSpeakingSelectionWithLineWrapping)
@@ -84,7 +84,7 @@ TEST(AccessibilityTests, RectsForSpeakingSelectionWithLineWrapping)
     checkCGRectValueAtIndex(rects, CGRectMake(8, 122, 304, 117), 1);
     checkCGRectValueAtIndex(rects, CGRectMake(8, 239, 304, 117), 2);
     checkCGRectValueAtIndex(rects, CGRectMake(8, 356, 304, 117), 3);
-    checkCGRectValueAtIndex(rects, CGRectMake(8, 473, 144, 117), 4);
+    checkCGRectValueAtIndex(rects, CGRectMake(8, 473, 145, 117), 4);
 }
 
 TEST(AccessibilityTests, RectsForSpeakingSelectionDoNotCrashWhenChangingSelection)
@@ -109,14 +109,14 @@ TEST(AccessibilityTests, StoreSelection)
     // Select first node and store the selection
     [webView stringByEvaluatingJavaScript:@"getSelection().setBaseAndExtent(first, 0, first, 1)"];
     [webView _accessibilityStoreSelection];
-    checkCGRectValueAtIndex([webView rectsAtSelectionOffset:0 withText:@"first"], CGRectMake(8, 8, 25, 19), 0);
+    checkCGRectValueAtIndex([webView rectsAtSelectionOffset:0 withText:@"first"], CGRectMake(8, 8, 26, 19), 0);
     // Now select the second node, we should use the stored selection to retrieve rects
     [webView stringByEvaluatingJavaScript:@"getSelection().setBaseAndExtent(second, 0, second, 1)"];
-    checkCGRectValueAtIndex([webView rectsAtSelectionOffset:0 withText:@"first"], CGRectMake(8, 8, 25, 19), 0);
+    checkCGRectValueAtIndex([webView rectsAtSelectionOffset:0 withText:@"first"], CGRectMake(8, 8, 26, 19), 0);
     
     // Clear the stored selection, we should use the current selection to retrieve rects
     [webView _accessibilityClearSelection];
-    checkCGRectValueAtIndex([webView rectsAtSelectionOffset:0 withText:@"first"], CGRectMake(8, 27, 25, 20), 0);
+    checkCGRectValueAtIndex([webView rectsAtSelectionOffset:0 withText:@"first"], CGRectMake(8, 27, 26, 20), 0);
 }
 
 TEST(AccessibilityTests, WebProcessLoaderBundleLoaded)

@@ -1,3 +1,19 @@
+2020-01-08  Daniel Bates  <dabates@apple.com>
+
+        Regression r254160: 6 API test failures
+        https://bugs.webkit.org/show_bug.cgi?id=205935
+        <rdar://problem/58411559>
+
+        Revert API test changes in r254160. I mistakenly thought this were legitimate changes,
+        but they were actually the result of a bug I have since corrected in r254167.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/DocumentEditingContext.mm:
+        (TEST):
+        * TestWebKitAPI/Tests/ios/AccessibilityTestsIOS.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/ios/AutocorrectionTestsIOS.mm:
+        (TEST):
+
 2020-01-08  Keith Miller  <keith_miller@apple.com>
 
         Fix testing Makefile to inherit preprocessor definitions
