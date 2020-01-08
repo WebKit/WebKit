@@ -738,7 +738,7 @@ public:
         Image,
         Canvas,
         Video,
-        None,
+        DOMSourceNone,
     };
 
 #if USE(ANGLE)
