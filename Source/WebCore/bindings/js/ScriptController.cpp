@@ -58,6 +58,7 @@
 #include "npruntime_impl.h"
 #include "runtime_root.h"
 #include <JavaScriptCore/Debugger.h>
+#include <JavaScriptCore/Heap.h>
 #include <JavaScriptCore/InitializeThreading.h>
 #include <JavaScriptCore/JSFunction.h>
 #include <JavaScriptCore/JSInternalPromise.h>
@@ -70,6 +71,7 @@
 #include <JavaScriptCore/StrongInlines.h>
 #include <JavaScriptCore/WeakGCMapInlines.h>
 #include <wtf/SetForScope.h>
+#include <wtf/SharedTask.h>
 #include <wtf/Threading.h>
 #include <wtf/text/TextPosition.h>
 
@@ -699,13 +701,67 @@ ValueOrException ScriptController::executeUserAgentScriptInWorldInternal(DOMWrap
     return executeScriptInWorld(world, WTFMove(parameters));
 }
 
-void ScriptController::executeAsynchronousUserAgentScriptInWorld(DOMWrapperWorld& world, RunJavaScriptParameters&& parameters, ResolveFunction&& resolveFunction)
+void ScriptController::executeAsynchronousUserAgentScriptInWorld(DOMWrapperWorld& world, RunJavaScriptParameters&& parameters, ResolveFunction&& resolveCompletionHandler)
 {
     auto result = executeUserAgentScriptInWorldInternal(world, WTFMove(parameters));
+    
+    if (parameters.runAsAsyncFunction == RunAsAsyncFunction::No || !result || !result.value().isObject()) {
+        resolveCompletionHandler(result);
+        return;
+    }
 
-    // FIXME: If the result is a thenable, install the fulfill/reject handlers instead of resolving now.
+    // When running JavaScript as an async function, any "thenable" object gets promise-like behavior of deferred completion.
+    auto thenIdentifier = world.vm().propertyNames->then;
+    auto& proxy = jsWindowProxy(world);
+    auto& globalObject = *proxy.window();
 
-    resolveFunction(result);
+    auto thenFunction = result.value().get(&globalObject, thenIdentifier);
+    if (!thenFunction.isObject()) {
+        resolveCompletionHandler(result);
+        return;
+    }
+
+    CallData callData;
+    CallType callType = asObject(thenFunction)->methodTable(world.vm())->getCallData(asObject(thenFunction), callData);
+    if (callType == CallType::None) {
+        resolveCompletionHandler(result);
+        return;
+    }
+
+    auto sharedResolveFunction = createSharedTask<void(ValueOrException)>([resolveCompletionHandler = WTFMove(resolveCompletionHandler)](ValueOrException result) mutable {
+        if (resolveCompletionHandler)
+            resolveCompletionHandler(result);
+        resolveCompletionHandler = nullptr;
+    });
+
+    auto* fulfillHandler = JSC::JSNativeStdFunction::create(world.vm(), &globalObject, 1, String { }, [sharedResolveFunction = sharedResolveFunction.copyRef()] (JSGlobalObject*, CallFrame* callFrame) mutable {
+        sharedResolveFunction->run(callFrame->argument(0));
+        return JSValue::encode(jsUndefined());
+    });
+
+    auto* rejectHandler = JSC::JSNativeStdFunction::create(world.vm(), &globalObject, 1, String { }, [sharedResolveFunction = sharedResolveFunction.copyRef()] (JSGlobalObject* globalObject, CallFrame* callFrame) mutable {
+        sharedResolveFunction->run(makeUnexpected(ExceptionDetails { callFrame->argument(0).toWTFString(globalObject) }));
+        return JSValue::encode(jsUndefined());
+    });
+
+    auto finalizeCount = makeUniqueWithoutFastMallocCheck<unsigned>(0);
+    auto finalizeGuard = createSharedTask<void()>([sharedResolveFunction = WTFMove(sharedResolveFunction), finalizeCount = WTFMove(finalizeCount)]() {
+        if (++(*finalizeCount) == 2)
+            sharedResolveFunction->run(makeUnexpected(ExceptionDetails { "Completion handler for function call is no longer reachable"_s }));
+    });
+
+    world.vm().heap.addFinalizer(fulfillHandler, [finalizeGuard = finalizeGuard.copyRef()](JSCell*) {
+        finalizeGuard->run();
+    });
+    world.vm().heap.addFinalizer(rejectHandler, [finalizeGuard = finalizeGuard.copyRef()](JSCell*) {
+        finalizeGuard->run();
+    });
+
+    JSC::MarkedArgumentBuffer arguments;
+    arguments.append(fulfillHandler);
+    arguments.append(rejectHandler);
+
+    call(&globalObject, thenFunction, callType, callData, result.value(), arguments);
 }
 
 Expected<void, ExceptionDetails> ScriptController::shouldAllowUserAgentScripts(Document& document) const

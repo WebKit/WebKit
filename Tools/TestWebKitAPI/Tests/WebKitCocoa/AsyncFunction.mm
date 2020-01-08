@@ -177,5 +177,75 @@ TEST(AsyncFunction, RoundTrip)
     EXPECT_TRUE([value isEqual:result]);
 }
 
+static void tryGCPromise(WKWebView *webView, bool& done)
+{
+    if (done)
+        return;
+
+    NSString *functionBody = @"return new Promise(function(resolve, reject) { })";
+    [webView _callAsyncFunction:functionBody withArguments:nil completionHandler:[&] (id result, NSError *error) {
+        EXPECT_NULL(result);
+        EXPECT_TRUE(error != nil);
+        EXPECT_TRUE([[error description] containsString:@"no longer reachable"]);
+        done = true;
+    }];
+
+    dispatch_async(dispatch_get_main_queue(), ^{ tryGCPromise(webView, done); });
+}
+
+TEST(AsyncFunction, Promise)
+{
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
+
+    NSString *functionBody = @"return new Promise(function(resolve, reject) { setTimeout(function(){ resolve(42) }, 0); })";
+
+    bool done = false;
+    [webView _callAsyncFunction:functionBody withArguments:nil completionHandler:[&] (id result, NSError *error) {
+        EXPECT_NULL(error);
+        EXPECT_TRUE([result isKindOfClass:[NSNumber class]]);
+        EXPECT_TRUE([result isEqualToNumber:@42]);
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    functionBody = @"return new Promise(function(resolve, reject) { setTimeout(function(){ reject('Rejected!') }, 0); })";
+
+    done = false;
+    [webView _callAsyncFunction:functionBody withArguments:nil completionHandler:[&] (id result, NSError *error) {
+        EXPECT_NULL(result);
+        EXPECT_TRUE(error != nil);
+        EXPECT_TRUE([[error description] containsString:@"Rejected!"]);
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+
+    functionBody = @"let p = new Proxy(function(resolve, reject) { setTimeout(function() { resolve(42); }, 0); }, { }); return { then: p };";
+
+    done = false;
+    [webView _callAsyncFunction:functionBody withArguments:nil completionHandler:[&] (id result, NSError *error) {
+        EXPECT_NULL(error);
+        EXPECT_TRUE([result isKindOfClass:[NSNumber class]]);
+        EXPECT_TRUE([result isEqualToNumber:@42]);
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+
+    functionBody = @"let p = new Proxy(function(resolve, reject) { setTimeout(function() { reject('Rejected!'); }, 0); }, { }); return { then: p };";
+
+    done = false;
+    [webView _callAsyncFunction:functionBody withArguments:nil completionHandler:[&] (id result, NSError *error) {
+        EXPECT_NULL(result);
+        EXPECT_TRUE(error != nil);
+        EXPECT_TRUE([[error description] containsString:@"Rejected!"]);
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+
+    done = false;
+    tryGCPromise(webView.get(), done);
+    TestWebKitAPI::Util::run(&done);
+}
+
 }
 

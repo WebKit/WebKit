@@ -1,3 +1,21 @@
+2020-01-08  Brady Eidson  <beidson@apple.com>
+
+        Make _callAsyncFunction:withArguments: work with promises.
+        https://bugs.webkit.org/show_bug.cgi?id=205654
+
+        Reviewed by Saam Barati.
+
+        Test that:
+        - Resolve results in success handler being called
+        - Reject results in error handler being called
+        - Both resolve and reject becoming unreachable results in the error handler being called
+        - Both native Promise objects and arbitrary thenables work
+        - Any object where "then" is callable - even if not a function - works
+        
+        * TestWebKitAPI/Tests/WebKitCocoa/AsyncFunction.mm:
+        (TestWebKitAPI::tryGCPromise):
+        (TestWebKitAPI::TEST): 
+
 2020-01-08  Daniel Bates  <dabates@apple.com>
 
         Regression r254160: 6 API test failures
