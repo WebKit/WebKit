@@ -32,6 +32,7 @@
 #if USE(CAIRO)
 
 #include "BitmapImage.h"
+#include "CairoOperations.h"
 #include "CairoUtilities.h"
 #include "Color.h"
 #include "GraphicsContext.h"

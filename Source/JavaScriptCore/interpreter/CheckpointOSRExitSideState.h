@@ -26,6 +26,7 @@
 #pragma once
 
 #include "BytecodeIndex.h"
+#include "Operands.h"
 
 namespace JSC {
 

@@ -36,18 +36,18 @@
 
 namespace WebKit {
 
-Ref<WebIDBServer> WebIDBServer::create(PAL::SessionID sessionID, const String& directory, IDBServer::IDBServer::StorageQuotaManagerSpaceRequester&& spaceRequester)
+Ref<WebIDBServer> WebIDBServer::create(PAL::SessionID sessionID, const String& directory, WebCore::IDBServer::IDBServer::StorageQuotaManagerSpaceRequester&& spaceRequester)
 {
     return adoptRef(*new WebIDBServer(sessionID, directory, WTFMove(spaceRequester)));
 }
 
-WebIDBServer::WebIDBServer(PAL::SessionID sessionID, const String& directory, IDBServer::IDBServer::StorageQuotaManagerSpaceRequester&& spaceRequester)
+WebIDBServer::WebIDBServer(PAL::SessionID sessionID, const String& directory, WebCore::IDBServer::IDBServer::StorageQuotaManagerSpaceRequester&& spaceRequester)
     : CrossThreadTaskHandler("com.apple.WebKit.IndexedDBServer", WTF::CrossThreadTaskHandler::AutodrainedPoolForRunLoop::Use)
 {
     ASSERT(RunLoop::isMain());
 
     postTask([this, protectedThis = makeRef(*this), sessionID, directory = directory.isolatedCopy(), spaceRequester = WTFMove(spaceRequester)] () mutable {
-        m_server = makeUnique<IDBServer::IDBServer>(sessionID, directory, WTFMove(spaceRequester));
+        m_server = makeUnique<WebCore::IDBServer::IDBServer>(sessionID, directory, WTFMove(spaceRequester));
     });
 }
     
@@ -66,7 +66,7 @@ void WebIDBServer::closeAndDeleteDatabasesModifiedSince(WallTime modificationTim
     });
 }
 
-void WebIDBServer::closeAndDeleteDatabasesForOrigins(const Vector<SecurityOriginData>& originDatas, CompletionHandler<void()>&& callback)
+void WebIDBServer::closeAndDeleteDatabasesForOrigins(const Vector<WebCore::SecurityOriginData>& originDatas, CompletionHandler<void()>&& callback)
 {
     ASSERT(RunLoop::isMain());
 
@@ -85,7 +85,7 @@ void WebIDBServer::suspend(ShouldForceStop shouldForceStop)
 {
     ASSERT(RunLoop::isMain());
 
-    if (shouldForceStop == ShouldForceStop::No && SQLiteDatabaseTracker::hasTransactionInProgress())
+    if (shouldForceStop == ShouldForceStop::No && WebCore::SQLiteDatabaseTracker::hasTransactionInProgress())
         return;
 
     if (m_isSuspended)
@@ -290,7 +290,7 @@ void WebIDBServer::abortOpenAndUpgradeNeeded(uint64_t databaseConnectionIdentifi
     m_server->abortOpenAndUpgradeNeeded(databaseConnectionIdentifier, transactionIdentifier);
 }
 
-void WebIDBServer::didFireVersionChangeEvent(uint64_t databaseConnectionIdentifier, const WebCore::IDBResourceIdentifier& requestIdentifier, IndexedDB::ConnectionClosedOnBehalfOfServer connectionClosed)
+void WebIDBServer::didFireVersionChangeEvent(uint64_t databaseConnectionIdentifier, const WebCore::IDBResourceIdentifier& requestIdentifier, WebCore::IndexedDB::ConnectionClosedOnBehalfOfServer connectionClosed)
 {
     ASSERT(!RunLoop::isMain());
 

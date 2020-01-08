@@ -1,3 +1,12 @@
+2020-01-07  Ross Kirsling  <ross.kirsling@sony.com>
+
+        Unreviewed restabilization of non-unified build.
+
+        * bytecode/MethodOfGettingAValueProfile.h:
+        * dfg/DFGVariableEvent.h:
+        * dfg/DFGVariableEventStream.cpp:
+        * interpreter/CheckpointOSRExitSideState.h:
+
 2020-01-07  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Remove vm accessor in JSVirtualMachine to reduce binary size

@@ -33,6 +33,7 @@
 #include "DFGValueSource.h"
 #include "InlineCallFrame.h"
 #include "JSCInlines.h"
+#include "OperandsInlines.h"
 #include <wtf/DataLog.h>
 #include <wtf/HashMap.h>
 

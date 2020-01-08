@@ -1,3 +1,16 @@
+2020-01-07  Ross Kirsling  <ross.kirsling@sony.com>
+
+        Unreviewed restabilization of non-unified build.
+
+        * NetworkProcess/IndexedDB/WebIDBConnectionToClient.cpp:
+        * NetworkProcess/IndexedDB/WebIDBServer.cpp:
+        (WebKit::WebIDBServer::create):
+        (WebKit::WebIDBServer::WebIDBServer):
+        (WebKit::WebIDBServer::closeAndDeleteDatabasesForOrigins):
+        (WebKit::WebIDBServer::suspend):
+        (WebKit::WebIDBServer::didFireVersionChangeEvent):
+        * UIProcess/WebContextClient.h:
+
 2020-01-07  Daniel Bates  <dabates@apple.com>
 
         First character in each word-wrapped line has incorrect character rect when requested range spans multiple lines

@@ -29,6 +29,7 @@
 #include "APIClient.h"
 #include "APIData.h"
 #include "WKContext.h"
+#include <wtf/ProcessID.h>
 
 namespace API {
 template<> struct ClientTraits<WKContextClientBase> {

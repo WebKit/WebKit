@@ -33,6 +33,7 @@
 
 #include "BytecodeIndex.h"
 #include "GPRInfo.h"
+#include "Operands.h"
 
 namespace JSC {
 

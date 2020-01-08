@@ -25,6 +25,8 @@
 
 #pragma once
 
+#include <wtf/OptionSet.h>
+
 namespace WebCore {
 
 class Document;
@@ -32,6 +34,8 @@ class Element;
 class RenderStyle;
 class SVGElement;
 class Settings;
+
+enum class AnimationImpact;
 
 namespace Style {
 

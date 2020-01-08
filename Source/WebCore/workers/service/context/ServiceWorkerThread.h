@@ -42,9 +42,7 @@ class MessagePortChannel;
 class SerializedScriptValue;
 class WorkerObjectProxy;
 struct MessageWithMessagePorts;
-struct ServiceWorkerClientData;
 struct ServiceWorkerClientIdentifier;
-struct ServiceWorkerContextData;
 
 class ServiceWorkerThread : public WorkerThread {
 public:

@@ -30,6 +30,7 @@
 #include "DFGMinifiedID.h"
 #include "DataFormat.h"
 #include "MacroAssembler.h"
+#include "Operands.h"
 #include "VirtualRegister.h"
 #include <stdio.h>
 
