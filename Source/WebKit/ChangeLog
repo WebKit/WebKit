@@ -1,3 +1,31 @@
+2020-01-08  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Add support for encoding WebCore::Font over IPC for DisplayList::DrawGlyphs
+        https://bugs.webkit.org/show_bug.cgi?id=205830
+        <rdar://problem/57347719>
+
+        Reviewed by Dean Jackson.
+
+        Add basic support for encoding and decoding a FontHandle.
+
+        * Shared/Cocoa/WebCoreArgumentCodersCocoa.mm:
+        (IPC::ArgumentCoder<FontHandle>::encodePlatformData):
+        (IPC::ArgumentCoder<FontHandle>::decodePlatformData):
+        * Shared/WebCoreArgumentCoders.cpp:
+        (IPC::ArgumentCoder<FontHandle>::encode):
+        (IPC::ArgumentCoder<FontHandle>::decode):
+
+        When encoding a Font on Cocoa platforms, send across the font face data (if present); otherwise, fall back to
+        sending the font descriptor for the UIFont or NSFont (as is the case for installed fonts).
+
+        * Shared/WebCoreArgumentCoders.h:
+        * Shared/curl/WebCoreArgumentCodersCurl.cpp:
+        (IPC::ArgumentCoder<FontHandle>::encodePlatformData):
+        (IPC::ArgumentCoder<FontHandle>::decodePlatformData):
+        * Shared/soup/WebCoreArgumentCodersSoup.cpp:
+        (IPC::ArgumentCoder<FontHandle>::encodePlatformData):
+        (IPC::ArgumentCoder<FontHandle>::decodePlatformData):
+
 2020-01-08  Milan Crha  <mcrha@redhat.com>
 
         [GTK] Editing: Allow line breaks in lists

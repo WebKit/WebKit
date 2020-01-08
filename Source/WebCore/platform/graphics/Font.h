@@ -218,8 +218,11 @@ public:
     static float ascentConsideringMacAscentHack(const WCHAR*, float ascent, float descent);
 #endif
 
+    SharedBuffer* fontFaceData() const { return m_fontFaceData.get(); }
+    void setFontFaceData(RefPtr<SharedBuffer>&&);
+
 private:
-    Font(const FontPlatformData&, Origin, Interstitial, Visibility, OrientationFallback);
+    WEBCORE_EXPORT Font(const FontPlatformData&, Origin, Interstitial, Visibility, OrientationFallback);
 
     void platformInit();
     void platformGlyphInit();
@@ -291,6 +294,8 @@ private:
     mutable SCRIPT_FONTPROPERTIES* m_scriptFontProperties;
 #endif
 
+    RefPtr<SharedBuffer> m_fontFaceData;
+
     Glyph m_spaceGlyph { 0 };
     Glyph m_zeroGlyph { 0 };
     Glyph m_zeroWidthSpaceGlyph { 0 };
@@ -319,6 +324,14 @@ private:
 #if PLATFORM(IOS_FAMILY)
     unsigned m_shouldNotBeUsedForArabic : 1;
 #endif
+};
+
+class FontHandle {
+public:
+    FontHandle() = default;
+    WEBCORE_EXPORT FontHandle(Ref<SharedBuffer>&& fontFaceData, Font::Origin, float fontSize, bool syntheticBold, bool syntheticItalic);
+
+    RefPtr<Font> font;
 };
 
 #if PLATFORM(IOS_FAMILY)

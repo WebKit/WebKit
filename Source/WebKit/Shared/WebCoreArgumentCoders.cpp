@@ -48,6 +48,7 @@
 #include <WebCore/FileChooser.h>
 #include <WebCore/FilterOperation.h>
 #include <WebCore/FilterOperations.h>
+#include <WebCore/Font.h>
 #include <WebCore/FontAttributes.h>
 #include <WebCore/GraphicsContext.h>
 #include <WebCore/GraphicsLayer.h>
@@ -1123,6 +1124,71 @@ void ArgumentCoder<NativeImageHandle>::encode(Encoder& encoder, const NativeImag
 bool ArgumentCoder<NativeImageHandle>::decode(Decoder& decoder, NativeImageHandle& imageHandle)
 {
     return decodeOptionalNativeImage(decoder, imageHandle.image);
+}
+
+void ArgumentCoder<FontHandle>::encode(Encoder& encoder, const FontHandle& handle)
+{
+    encoder << !!handle.font;
+    if (!handle.font)
+        return;
+
+    auto* fontFaceData = handle.font->fontFaceData();
+    encoder << !!fontFaceData;
+    if (fontFaceData) {
+        encodeSharedBuffer(encoder, fontFaceData);
+        auto& data = handle.font->platformData();
+        encoder << data.size();
+        encoder << data.syntheticBold();
+        encoder << data.syntheticOblique();
+    }
+
+    encodePlatformData(encoder, handle);
+}
+
+bool ArgumentCoder<FontHandle>::decode(Decoder& decoder, FontHandle& handle)
+{
+    Optional<bool> hasFont;
+    decoder >> hasFont;
+    if (!hasFont.hasValue())
+        return false;
+
+    if (!hasFont.value())
+        return true;
+
+    Optional<bool> hasFontFaceData;
+    decoder >> hasFontFaceData;
+    if (!hasFontFaceData.hasValue())
+        return false;
+
+    if (hasFontFaceData.value()) {
+        RefPtr<SharedBuffer> fontFaceData;
+        if (!decodeSharedBuffer(decoder, fontFaceData))
+            return false;
+
+        if (!fontFaceData)
+            return false;
+
+        Optional<float> fontSize;
+        decoder >> fontSize;
+        if (!fontSize)
+            return false;
+
+        Optional<bool> syntheticBold;
+        decoder >> syntheticBold;
+        if (!syntheticBold)
+            return false;
+
+        Optional<bool> syntheticItalic;
+        decoder >> syntheticItalic;
+        if (!syntheticItalic)
+            return false;
+
+        FontDescription description;
+        description.setComputedSize(*fontSize);
+        handle = { fontFaceData.releaseNonNull(), Font::Origin::Remote, *fontSize, *syntheticBold, *syntheticItalic };
+    }
+
+    return decodePlatformData(decoder, handle);
 }
 
 void ArgumentCoder<Cursor>::encode(Encoder& encoder, const Cursor& cursor)

@@ -28,6 +28,7 @@
 
 #import "ArgumentCodersCocoa.h"
 #import <WebCore/DictionaryPopupInfo.h>
+#import <WebCore/Font.h>
 #import <WebCore/FontAttributes.h>
 
 #if ENABLE(APPLE_PAY)
@@ -470,6 +471,38 @@ Optional<FontAttributes> ArgumentCoder<WebCore::FontAttributes>::decodePlatformD
     if (!IPC::decode(decoder, attributes.font))
         return WTF::nullopt;
     return attributes;
+}
+
+#if PLATFORM(IOS_FAMILY)
+#define CocoaFont UIFont
+#else
+#define CocoaFont NSFont
+#endif
+
+void ArgumentCoder<FontHandle>::encodePlatformData(Encoder& encoder, const FontHandle& handle)
+{
+    auto ctFont = handle.font && !handle.font->fontFaceData() ? handle.font->getCTFont() : nil;
+    encoder << !!ctFont;
+    if (ctFont)
+        encoder << (__bridge CocoaFont *)ctFont;
+}
+
+bool ArgumentCoder<FontHandle>::decodePlatformData(Decoder& decoder, FontHandle& handle)
+{
+    bool hasPlatformFont;
+    if (!decoder.decode(hasPlatformFont))
+        return false;
+
+    if (!hasPlatformFont)
+        return true;
+
+    RetainPtr<CocoaFont> font;
+    if (!IPC::decode(decoder, font))
+        return false;
+
+    auto previousValue = handle.font;
+    handle.font = Font::create({ (__bridge CTFontRef)font.get(), static_cast<float>([font pointSize]) });
+    return true;
 }
 
 } // namespace IPC

@@ -1057,6 +1057,11 @@ public:
         return adoptRef(*new DrawGlyphs(font, glyphs, advances, count, blockLocation, localAnchor, smoothingMode));
     }
 
+    static Ref<DrawGlyphs> create(const Font& font, Vector<GlyphBufferGlyph, 128>&& glyphs, Vector<GlyphBufferAdvance, 128>&& advances, const FloatPoint& blockLocation, const FloatSize& localAnchor, FontSmoothingMode smoothingMode)
+    {
+        return adoptRef(*new DrawGlyphs(font, WTFMove(glyphs), WTFMove(advances), blockLocation, localAnchor, smoothingMode));
+    }
+
     WEBCORE_EXPORT virtual ~DrawGlyphs();
 
     const FloatPoint& blockLocation() const { return m_blockLocation; }
@@ -1072,7 +1077,8 @@ public:
     template<class Decoder> static Optional<Ref<DrawGlyphs>> decode(Decoder&);
 
 private:
-    WEBCORE_EXPORT DrawGlyphs(const Font&, const GlyphBufferGlyph*, const GlyphBufferAdvance*, unsigned count, const FloatPoint& blockLocation, const FloatSize& localAnchor, FontSmoothingMode);
+    DrawGlyphs(const Font&, const GlyphBufferGlyph*, const GlyphBufferAdvance*, unsigned count, const FloatPoint& blockLocation, const FloatSize& localAnchor, FontSmoothingMode);
+    WEBCORE_EXPORT DrawGlyphs(const Font&, Vector<GlyphBufferGlyph, 128>&&, Vector<GlyphBufferAdvance, 128>&&, const FloatPoint& blockLocation, const FloatSize& localAnchor, FontSmoothingMode);
 
     void computeBounds();
 
@@ -1094,7 +1100,9 @@ private:
 template<class Encoder>
 void DrawGlyphs::encode(Encoder& encoder) const
 {
-    // FIXME: Add font data to the encoder.
+    FontHandle handle;
+    handle.font = m_font.ptr();
+    encoder << handle;
     encoder << m_glyphs;
     encoder << m_advances;
     encoder << m_blockLocation;
@@ -1105,6 +1113,11 @@ void DrawGlyphs::encode(Encoder& encoder) const
 template<class Decoder>
 Optional<Ref<DrawGlyphs>> DrawGlyphs::decode(Decoder& decoder)
 {
+    Optional<FontHandle> handle;
+    decoder >> handle;
+    if (!handle || !handle->font)
+        return WTF::nullopt;
+
     Optional<Vector<GlyphBufferGlyph, 128>> glyphs;
     decoder >> glyphs;
     if (!glyphs)
@@ -1133,8 +1146,7 @@ Optional<Ref<DrawGlyphs>> DrawGlyphs::decode(Decoder& decoder)
     if (!smoothingMode)
         return WTF::nullopt;
 
-    // FIXME: Create and return a DrawGlyphs once we're able to decode font data.
-    return WTF::nullopt;
+    return DrawGlyphs::create(handle->font.releaseNonNull(), WTFMove(*glyphs), WTFMove(*advances), *blockLocation, *localAnchor, *smoothingMode);
 }
 
 class DrawImage : public DrawingItem {

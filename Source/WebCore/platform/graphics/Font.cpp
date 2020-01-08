@@ -33,10 +33,13 @@
 #if PLATFORM(COCOA)
 #include <pal/spi/cocoa/CoreTextSPI.h>
 #endif
+#include "CachedFont.h"
 #include "CharacterProperties.h"
 #include "FontCache.h"
 #include "FontCascade.h"
+#include "FontCustomPlatformData.h"
 #include "OpenTypeMathData.h"
+#include "SharedBuffer.h"
 #include <wtf/MathExtras.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/text/AtomStringHash.h>
@@ -703,6 +706,20 @@ const Path& Font::pathForGlyph(Glyph glyph) const
     auto path = platformPathForGlyph(glyph);
     m_glyphPathMap.setMetricsForGlyph(glyph, path);
     return *m_glyphPathMap.existingMetricsForGlyph(glyph);
+}
+
+void Font::setFontFaceData(RefPtr<SharedBuffer>&& fontFaceData)
+{
+    m_fontFaceData = WTFMove(fontFaceData);
+}
+
+FontHandle::FontHandle(Ref<SharedBuffer>&& fontFaceData, Font::Origin origin, float fontSize, bool syntheticBold, bool syntheticItalic)
+{
+    bool wrapping;
+    auto customFontData = CachedFont::createCustomFontData(fontFaceData.get(), { }, wrapping);
+    FontDescription description;
+    description.setComputedSize(fontSize);
+    font = Font::create(CachedFont::platformDataFromCustomData(*customFontData, description, syntheticBold, syntheticItalic, { }, { }), origin);
 }
 
 } // namespace WebCore

@@ -30,6 +30,7 @@
 #include <WebCore/CertificateInfo.h>
 #include <WebCore/CurlProxySettings.h>
 #include <WebCore/DictionaryPopupInfo.h>
+#include <WebCore/Font.h>
 #include <WebCore/FontAttributes.h>
 #include <WebCore/ProtectionSpace.h>
 #include <WebCore/ResourceError.h>
@@ -229,6 +230,17 @@ void ArgumentCoder<DictionaryPopupInfo>::encodePlatformData(Encoder&, const Dict
 }
 
 bool ArgumentCoder<DictionaryPopupInfo>::decodePlatformData(Decoder&, DictionaryPopupInfo&)
+{
+    ASSERT_NOT_REACHED();
+    return false;
+}
+
+void ArgumentCoder<FontHandle>::encodePlatformData(Encoder&, const FontHandle&)
+{
+    ASSERT_NOT_REACHED();
+}
+
+bool ArgumentCoder<FontHandle>::decodePlatformData(Decoder&, FontHandle&)
 {
     ASSERT_NOT_REACHED();
     return false;

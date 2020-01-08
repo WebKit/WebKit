@@ -80,6 +80,7 @@ class FloatRect;
 class FloatRoundedRect;
 class FloatSize;
 class FixedPositionViewportConstraints;
+class FontHandle;
 class HTTPHeaderMap;
 class ImageHandle;
 class IntPoint;
@@ -377,6 +378,13 @@ template<> struct ArgumentCoder<WebCore::Credential> {
 template<> struct ArgumentCoder<WebCore::Cursor> {
     static void encode(Encoder&, const WebCore::Cursor&);
     static bool decode(Decoder&, WebCore::Cursor&);
+};
+
+template<> struct ArgumentCoder<WebCore::FontHandle> {
+    static void encode(Encoder&, const WebCore::FontHandle&);
+    static bool decode(Decoder&, WebCore::FontHandle&);
+    static void encodePlatformData(Encoder&, const WebCore::FontHandle&);
+    static bool decodePlatformData(Decoder&, WebCore::FontHandle&);
 };
 
 template<> struct ArgumentCoder<WebCore::ImageHandle> {

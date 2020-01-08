@@ -512,6 +512,18 @@ static TextStream& operator<<(TextStream& ts, const ClipPath& item)
     return ts;
 }
 
+DrawGlyphs::DrawGlyphs(const Font& font, Vector<GlyphBufferGlyph, 128>&& glyphs, Vector<GlyphBufferAdvance, 128>&& advances, const FloatPoint& blockLocation, const FloatSize& localAnchor, FontSmoothingMode smoothingMode)
+    : DrawingItem(ItemType::DrawGlyphs)
+    , m_font(const_cast<Font&>(font))
+    , m_glyphs(WTFMove(glyphs))
+    , m_advances(WTFMove(advances))
+    , m_blockLocation(blockLocation)
+    , m_localAnchor(localAnchor)
+    , m_smoothingMode(smoothingMode)
+{
+    computeBounds();
+}
+
 DrawGlyphs::DrawGlyphs(const Font& font, const GlyphBufferGlyph* glyphs, const GlyphBufferAdvance* advances, unsigned count, const FloatPoint& blockLocation, const FloatSize& localAnchor, FontSmoothingMode smoothingMode)
     : DrawingItem(ItemType::DrawGlyphs)
     , m_font(const_cast<Font&>(font))
