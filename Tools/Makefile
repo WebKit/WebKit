@@ -34,7 +34,7 @@ release r deployment dep deploy:
 
 testing t:
 	@for dir in $(MODULES); do ${MAKE} $@ -C $$dir; exit_status=$$?; \
-        if [ $$exit_status -ne 0 ]; then exit $$exit_status; fi; done
+	if [ $$exit_status -ne 0 ]; then exit $$exit_status; fi; done
 
 analyze:
 	@for dir in $(MODULES); do ${MAKE} $@ -C $$dir; exit_status=$$?; \

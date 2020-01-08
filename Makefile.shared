@@ -103,7 +103,7 @@ release r deployment dep deploy: force
 
 testing t: force
 	$(SCRIPTS_PATH)/set-webkit-configuration --release $(ASAN_OPTION) $(WK_LTO_OPTION)
-	( $(SET_COLOR_DIAGNOSTICS_ARG); xcodebuild $(OTHER_OPTIONS) $(XCODE_OPTIONS) GCC_PREPROCESSOR_DEFINITIONS="ASSERT_ENABLED=1" | $(OUTPUT_FILTER) && exit $${PIPESTATUS[0]} )
+	( $(SET_COLOR_DIAGNOSTICS_ARG); xcodebuild $(OTHER_OPTIONS) $(XCODE_OPTIONS) GCC_PREPROCESSOR_DEFINITIONS='ASSERT_ENABLED=1 $$(inherited)' | $(OUTPUT_FILTER) && exit $${PIPESTATUS[0]} )
 
 analyze:
 	$(SCRIPTS_PATH)/set-webkit-configuration --debug $(ASAN_OPTION) $(WK_LTO_OPTION)
