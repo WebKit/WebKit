@@ -1,3 +1,25 @@
+2020-01-07  Brent Fulgham  <bfulgham@apple.com>
+
+        Network process sandboxes should not include 'common.sb' or 'system.sb'
+        https://bugs.webkit.org/show_bug.cgi?id=205521
+        <rdar://problem/58095870>
+
+        Reviewed by Per Arne Vollan.
+
+        This patch replaces the 'include' with a copy/paste of the contents of the relevant
+        sandbox include file. I removed definitions that were not referenced in the existing
+        Network sandbox, but did not otherwise edit the contents. There are duplicates and
+        redundancies after this patch, which I will remove as a follow-up step once we confirm
+        that this has no regressions.
+
+        I also updated the sandbox to generate telemetry for some mach connections that we think
+        are unneeded, or that should be targeted for removal.
+
+        No new tests. There should be no change in behavior.
+
+        * NetworkProcess/mac/com.apple.WebKit.NetworkProcess.sb.in:
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.Networking.sb:
+
 2020-01-07  Ross Kirsling  <ross.kirsling@sony.com>
 
         Unreviewed restabilization of non-unified build.
