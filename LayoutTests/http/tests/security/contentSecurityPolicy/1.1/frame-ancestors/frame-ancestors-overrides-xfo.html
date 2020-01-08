@@ -10,7 +10,7 @@
             var i = document.createElement('iframe');
             i.src = "../../resources/frame-ancestors-and-x-frame-options.pl?policy='self'&xfo=DENY";
             i.onload = t.step_func_done(function () {
-                assert_equals(i.contentDocument.origin, document.origin, "The same-origin page loaded.");
+                assert_equals(i.contentWindow.origin, self.origin, "The same-origin page loaded.");
             });
             document.body.appendChild(i);
         }, "A 'frame-ancestors' CSP directive overrides an 'x-frame-options' header which would block the page.");
@@ -21,7 +21,7 @@
             i.onload = t.step_func_done(function () {
                 assert_throws(
                     "SecurityError",
-                    function () { i.contentDocument.origin },
+                    function () { i.contentWindow.origin },
                     "The same-origin page was blocked and sandboxed.");
             });
             document.body.appendChild(i);

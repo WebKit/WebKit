@@ -22,7 +22,7 @@ function shouldFail(origin) {
     shouldThrow("xhr.send(null)");
 }
 
-var pageOrigin = document.origin;
+var pageOrigin = self.origin;
 
 shouldPass("*");
 shouldPass(" *  ");

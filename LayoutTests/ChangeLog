@@ -1,5 +1,17 @@
 2020-01-07  Chris Dumez  <cdumez@apple.com>
 
+        Remove document.origin
+        https://bugs.webkit.org/show_bug.cgi?id=205681
+
+        Reviewed by Geoffrey Garen.
+
+        * fast/dom/Document/document-constructor-expected.txt:
+        * fast/dom/Document/document-constructor.html:
+        * fast/dom/domparser-parsefromstring-origin-expected.txt:
+        * fast/dom/domparser-parsefromstring-origin.html:
+
+2020-01-07  Chris Dumez  <cdumez@apple.com>
+
         Using Web Share API preceded by an AJAX call
         https://bugs.webkit.org/show_bug.cgi?id=197779
         <rdar://problem/50708309>

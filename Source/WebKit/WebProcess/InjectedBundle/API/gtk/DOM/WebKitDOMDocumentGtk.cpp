@@ -57,6 +57,7 @@
 #include <WebCore/Document.h>
 #include <WebCore/FullscreenManager.h>
 #include <WebCore/JSExecState.h>
+#include <WebCore/SecurityOrigin.h>
 #include <wtf/GetPtr.h>
 #include <wtf/RefPtr.h>
 
@@ -1916,7 +1917,7 @@ gchar* webkit_dom_document_get_origin(WebKitDOMDocument* self)
     WebCore::JSMainThreadNullState state;
     g_return_val_if_fail(WEBKIT_DOM_IS_DOCUMENT(self), 0);
     WebCore::Document* item = WebKit::core(self);
-    gchar* result = convertToUTF8String(item->origin());
+    gchar* result = convertToUTF8String(item->securityOrigin().toString());
     return result;
 }
 

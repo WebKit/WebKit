@@ -15,7 +15,7 @@
                 await navigator.mediaDevices.getUserMedia({video: true, audio: true });
                 let devices = await navigator.mediaDevices.enumerateDevices();
                 let result = {
-                    origin: document.origin, 
+                    origin: self.origin, 
                     devices: devices.map(device => { return {deviceId: device.deviceId, kind: device.kind} }),
                 };
 

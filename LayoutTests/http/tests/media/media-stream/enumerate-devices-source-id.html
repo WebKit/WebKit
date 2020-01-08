@@ -22,7 +22,7 @@
             let map = { };
             function checkID(origin, device)
             {
-                let origins = `${document.origin}-${origin}`;
+                let origins = `${self.origin}-${origin}`;
 
                 if (!map[origins])
                     map[origins] = { };
@@ -32,10 +32,10 @@
                     originInfo[device.deviceId] = device.kind;
                 
                 if (originInfo[device.deviceId] != device.kind)
-                    testFailed(`: duplicate device IDs for ${device.kind} and ${originInfo[device.deviceId]} in ${origin}/${document.origin}`);
+                    testFailed(`: duplicate device IDs for ${device.kind} and ${originInfo[device.deviceId]} in ${origin}/${self.origin}`);
 
                 if (Object.keys(originInfo).length > 4)
-                    testFailed(`: more then four unique device IDs in ${origin}/${document.origin}`);
+                    testFailed(`: more then four unique device IDs in ${origin}/${self.origin}`);
             }
 
             let eventCount = 0;
@@ -48,7 +48,7 @@
 
                 await navigator.mediaDevices.getUserMedia({video: true, audio: true });
                 let devices = await navigator.mediaDevices.enumerateDevices();
-                devices.forEach(device => checkID(document.origin, device));
+                devices.forEach(device => checkID(self.origin, device));
 
                 debug('');
                 if (internals)

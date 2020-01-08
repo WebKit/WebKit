@@ -8,7 +8,6 @@ shouldBe('typeof new Document', '"object"');
 shouldBe('Object.prototype.toString.call(new Document)', '"[object Document]"');
 shouldBeTrue('new Document instanceof Document');
 shouldBe('Object.getPrototypeOf(new Document)', 'Document.prototype');
-shouldBe('document.origin', 'new Document().origin');
 
 </script>
 <script src="../../../resources/js-test-post.js"></script>

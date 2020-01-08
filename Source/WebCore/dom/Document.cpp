@@ -5005,11 +5005,6 @@ String Document::referrer()
     return String();
 }
 
-String Document::origin() const
-{
-    return securityOrigin().toString();
-}
-
 String Document::domain() const
 {
     return securityOrigin().domain();
@@ -8378,7 +8373,7 @@ void Document::dispatchSystemPreviewActionEvent(const SystemPreviewInfo& systemP
     if (!is<HTMLAnchorElement>(element))
         return;
 
-    auto event = MessageEvent::create(message, origin());
+    auto event = MessageEvent::create(message, securityOrigin().toString());
     UserGestureIndicator gestureIndicator(ProcessingUserGesture, this);
     element->dispatchEvent(event);
 }

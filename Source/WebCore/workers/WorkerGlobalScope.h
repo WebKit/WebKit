@@ -69,7 +69,7 @@ public:
     EventLoopTaskGroup& eventLoop() final;
 
     const URL& url() const final { return m_url; }
-    String origin() const final;
+    String origin() const;
     const String& identifier() const { return m_identifier; }
 
 #if ENABLE(INDEXED_DATABASE)

@@ -32,31 +32,32 @@ PASS Historical DOM features must be removed: width
 PASS Historical DOM features must be removed: commands 
 PASS Historical DOM features must be removed: cssElementMap 
 PASS Historical DOM features must be removed: async 
+PASS Historical DOM features must be removed: origin 
 PASS document.load 
 PASS XMLDocument.load 
-PASS DOMImplementation.getFeature() must be nuked. 
+PASS DOMImplementation.getFeature() must be removed. 
 PASS Historical DOM features must be removed: schemaTypeInfo 
 PASS Historical DOM features must be removed: setIdAttribute 
 PASS Historical DOM features must be removed: setIdAttributeNS 
 PASS Historical DOM features must be removed: setIdAttributeNode 
-PASS Attr member must be nuked: schemaTypeInfo 
-PASS Attr member must be nuked: isId 
-PASS DocumentType member must be nuked: entities 
-PASS DocumentType member must be nuked: notations 
-PASS DocumentType member must be nuked: internalSubset 
-PASS Text member must be nuked: isElementContentWhitespace 
-PASS Text member must be nuked: replaceWholeText 
-PASS Node member must be nuked: hasAttributes 
-PASS Node member must be nuked: attributes 
-PASS Node member must be nuked: namespaceURI 
-PASS Node member must be nuked: prefix 
-PASS Node member must be nuked: localName 
-PASS Node member must be nuked: isSupported 
-PASS Node member must be nuked: getFeature 
-PASS Node member must be nuked: getUserData 
-PASS Node member must be nuked: setUserData 
-PASS Node member must be nuked: rootNode 
-PASS Window member must be nuked: attachEvent 
+PASS Attr member must be removed: schemaTypeInfo 
+PASS Attr member must be removed: isId 
+PASS DocumentType member must be removed: entities 
+PASS DocumentType member must be removed: notations 
+PASS DocumentType member must be removed: internalSubset 
+PASS Text member must be removed: isElementContentWhitespace 
+PASS Text member must be removed: replaceWholeText 
+PASS Node member must be removed: hasAttributes 
+PASS Node member must be removed: attributes 
+PASS Node member must be removed: namespaceURI 
+PASS Node member must be removed: prefix 
+PASS Node member must be removed: localName 
+PASS Node member must be removed: isSupported 
+PASS Node member must be removed: getFeature 
+PASS Node member must be removed: getUserData 
+PASS Node member must be removed: setUserData 
+PASS Node member must be removed: rootNode 
+PASS Window member must be removed: attachEvent 
 PASS Event should not have this constant: MOUSEDOWN 
 PASS Event should not have this constant: MOUSEUP 
 PASS Event should not have this constant: MOUSEOVER 

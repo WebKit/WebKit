@@ -62,7 +62,6 @@ public:
     EventLoopTaskGroup& eventLoop() final;
 
     const URL& url() const final { return m_code.url(); }
-    String origin() const final;
 
     void evaluate();
 

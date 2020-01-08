@@ -1,3 +1,22 @@
+2020-01-07  Chris Dumez  <cdumez@apple.com>
+
+        Remove document.origin
+        https://bugs.webkit.org/show_bug.cgi?id=205681
+
+        Reviewed by Geoffrey Garen.
+
+        Merge upstream changes from:
+        - https://github.com/web-platform-tests/wpt/pull/20995
+
+        * web-platform-tests/dom/historical-expected.txt:
+        * web-platform-tests/dom/historical.html:
+        * web-platform-tests/dom/nodes/Document-constructor-svg.svg:
+        * web-platform-tests/dom/nodes/Document-constructor-xml.xml:
+        * web-platform-tests/dom/nodes/Document-constructor.html:
+        * web-platform-tests/dom/nodes/Node-cloneNode.html:
+        * web-platform-tests/html/browsers/windows/browsing-context.html:
+        * web-platform-tests/html/dom/usvstring-reflection.https.html:
+
 2020-01-07  Pablo Saavedra  <psaavedra@igalia.com>
 
         Re-sync web-platform-tests/xhr from upstream

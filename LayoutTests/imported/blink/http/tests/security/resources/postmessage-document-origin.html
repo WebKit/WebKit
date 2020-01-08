@@ -3,7 +3,7 @@
     // origin.
     window.addEventListener('message', function (e) {
         event.source.postMessage({
-            'origin': document.origin,
+            'origin': self.origin,
             'id': e.data.id
         }, e.origin);
     });

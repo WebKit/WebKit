@@ -7,7 +7,6 @@ PASS typeof new Document is "object"
 PASS Object.prototype.toString.call(new Document) is "[object Document]"
 PASS new Document instanceof Document is true
 PASS Object.getPrototypeOf(new Document) is Document.prototype
-PASS document.origin is new Document().origin
 PASS successfullyParsed is true
 
 TEST COMPLETE

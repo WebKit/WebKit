@@ -31,6 +31,7 @@
 #import <WebCore/CSSStyleDeclaration.h>
 #import <WebCore/Comment.h>
 #import <WebCore/DocumentFullscreen.h>
+#import <WebCore/SecurityOrigin.h>
 #import "DOMAbstractViewInternal.h"
 #import "DOMAttrInternal.h"
 #import "DOMCDATASectionInternal.h"
@@ -413,7 +414,7 @@
 - (NSString *)origin
 {
     WebCore::JSMainThreadNullState state;
-    return IMPL->origin();
+    return IMPL->securityOrigin().toString();
 }
 
 - (DOMElement *)scrollingElement

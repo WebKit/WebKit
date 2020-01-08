@@ -335,7 +335,6 @@ PASS Document interface: existence and properties of interface prototype object'
 PASS Document interface: attribute implementation 
 PASS Document interface: attribute URL 
 PASS Document interface: attribute documentURI 
-PASS Document interface: attribute origin 
 PASS Document interface: attribute compatMode 
 PASS Document interface: attribute characterSet 
 PASS Document interface: attribute charset 
@@ -378,7 +377,6 @@ PASS Stringification of new Document()
 PASS Document interface: new Document() must inherit property "implementation" with the proper type 
 PASS Document interface: new Document() must inherit property "URL" with the proper type 
 PASS Document interface: new Document() must inherit property "documentURI" with the proper type 
-PASS Document interface: new Document() must inherit property "origin" with the proper type 
 PASS Document interface: new Document() must inherit property "compatMode" with the proper type 
 PASS Document interface: new Document() must inherit property "characterSet" with the proper type 
 PASS Document interface: new Document() must inherit property "charset" with the proper type 
@@ -517,7 +515,6 @@ PASS Stringification of xmlDoc
 PASS Document interface: xmlDoc must inherit property "implementation" with the proper type 
 PASS Document interface: xmlDoc must inherit property "URL" with the proper type 
 PASS Document interface: xmlDoc must inherit property "documentURI" with the proper type 
-PASS Document interface: xmlDoc must inherit property "origin" with the proper type 
 PASS Document interface: xmlDoc must inherit property "compatMode" with the proper type 
 PASS Document interface: xmlDoc must inherit property "characterSet" with the proper type 
 PASS Document interface: xmlDoc must inherit property "charset" with the proper type 

@@ -45,7 +45,6 @@ typedef (
     readonly attribute DOMImplementation implementation; // FIXME: Should be [SameObject].
     [ImplementedAs=urlForBindings] readonly attribute USVString URL;
     [ImplementedAs=urlForBindings] readonly attribute USVString documentURI;
-    readonly attribute USVString origin;
     readonly attribute DOMString compatMode;
     [ImplementedAs=characterSetWithUTF8Fallback] readonly attribute DOMString characterSet;
     [ImplementedAs=characterSetWithUTF8Fallback] readonly attribute DOMString charset; // Historical alias of .characterSet,
