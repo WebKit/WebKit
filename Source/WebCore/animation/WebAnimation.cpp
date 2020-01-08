@@ -40,11 +40,13 @@
 #include "JSWebAnimation.h"
 #include "KeyframeEffect.h"
 #include "KeyframeEffectStack.h"
+#include "Logging.h"
 #include "RenderElement.h"
 #include "StyledElement.h"
 #include "WebAnimationUtilities.h"
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/Optional.h>
+#include <wtf/text/TextStream.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -363,6 +365,8 @@ Optional<Seconds> WebAnimation::currentTime(RespectHoldTime respectHoldTime) con
 
 ExceptionOr<void> WebAnimation::silentlySetCurrentTime(Optional<Seconds> seekTime)
 {
+    LOG_WITH_STREAM(Animations, stream << "WebAnimation " << this << " silentlySetCurrentTime " << seekTime);
+
     // 3.4.5. Setting the current time of an animation
     // https://drafts.csswg.org/web-animations-1/#setting-the-current-time-of-an-animation
 
@@ -401,6 +405,8 @@ ExceptionOr<void> WebAnimation::silentlySetCurrentTime(Optional<Seconds> seekTim
 
 ExceptionOr<void> WebAnimation::setCurrentTime(Optional<Seconds> seekTime)
 {
+    LOG_WITH_STREAM(Animations, stream << "WebAnimation " << this << " setCurrentTime " << seekTime);
+
     // 3.4.5. Setting the current time of an animation
     // https://drafts.csswg.org/web-animations-1/#setting-the-current-time-of-an-animation
 
@@ -574,6 +580,8 @@ void WebAnimation::cancel()
 
 void WebAnimation::cancel(Silently silently)
 {
+    LOG_WITH_STREAM(Animations, stream << "WebAnimation " << this << " cancel(silently " << (silently == Silently::Yes) << ") (current time is " << currentTime() << ")");
+
     // 3.4.16. Canceling an animation
     // https://drafts.csswg.org/web-animations-1/#canceling-an-animation-section
     //
@@ -670,6 +678,8 @@ void WebAnimation::resetPendingTasks(Silently silently)
 
 ExceptionOr<void> WebAnimation::finish()
 {
+    LOG_WITH_STREAM(Animations, stream << "WebAnimation " << this << " finish (current time is " << currentTime() << ")");
+
     // 3.4.15. Finishing an animation
     // https://drafts.csswg.org/web-animations-1/#finishing-an-animation-section
 
@@ -855,6 +865,8 @@ ExceptionOr<void> WebAnimation::play()
 
 ExceptionOr<void> WebAnimation::play(AutoRewind autoRewind)
 {
+    LOG_WITH_STREAM(Animations, stream << "WebAnimation " << this << " play(autoRewind " << (autoRewind == AutoRewind::Yes) << ") (current time is " << currentTime() << ")");
+
     // 3.4.10. Playing an animation
     // https://drafts.csswg.org/web-animations-1/#play-an-animation
 
@@ -928,6 +940,8 @@ ExceptionOr<void> WebAnimation::play(AutoRewind autoRewind)
 
 void WebAnimation::runPendingPlayTask()
 {
+    LOG_WITH_STREAM(Animations, stream << "WebAnimation " << this << " runPendingPlayTask (current time is " << currentTime() << ")");
+
     // 3.4.10. Playing an animation, step 8.
     // https://drafts.csswg.org/web-animations-1/#play-an-animation
 
@@ -988,6 +1002,8 @@ void WebAnimation::runPendingPlayTask()
 
 ExceptionOr<void> WebAnimation::pause()
 {
+    LOG_WITH_STREAM(Animations, stream << "WebAnimation " << this << " pause (current time is " << currentTime() << ")");
+
     // 3.4.11. Pausing an animation
     // https://drafts.csswg.org/web-animations-1/#pause-an-animation
 
@@ -1042,6 +1058,8 @@ ExceptionOr<void> WebAnimation::pause()
 
 ExceptionOr<void> WebAnimation::reverse()
 {
+    LOG_WITH_STREAM(Animations, stream << "WebAnimation " << this << " reverse (current time is " << currentTime() << ")");
+
     // 3.4.18. Reversing an animation
     // https://drafts.csswg.org/web-animations-1/#reverse-an-animation
 
@@ -1073,6 +1091,8 @@ ExceptionOr<void> WebAnimation::reverse()
 
 void WebAnimation::runPendingPauseTask()
 {
+    LOG_WITH_STREAM(Animations, stream << "WebAnimation " << this << " runPendingPauseTask (current time is " << currentTime() << ")");
+
     // 3.4.11. Pausing an animation, step 7.
     // https://drafts.csswg.org/web-animations-1/#pause-an-animation
 

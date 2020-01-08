@@ -45,6 +45,7 @@
 #include "JSDOMConvert.h"
 #include "JSKeyframeEffect.h"
 #include "KeyframeEffectStack.h"
+#include "Logging.h"
 #include "RenderBox.h"
 #include "RenderBoxModelObject.h"
 #include "RenderElement.h"
@@ -58,6 +59,7 @@
 #include "WillChangeData.h"
 #include <JavaScriptCore/Exception.h>
 #include <wtf/UUID.h>
+#include <wtf/text/TextStream.h>
 
 namespace WebCore {
 using namespace JSC;
@@ -1115,6 +1117,7 @@ void KeyframeEffect::getAnimatedStyle(std::unique_ptr<RenderStyle>& animatedStyl
         return;
 
     auto progress = getComputedTiming().progress;
+    LOG_WITH_STREAM(Animations, stream << "KeyframeEffect " << this << " getAnimatedStyle - progress " << progress);
     if (!progress)
         return;
 

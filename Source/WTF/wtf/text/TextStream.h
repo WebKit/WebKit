@@ -26,6 +26,8 @@
 #pragma once
 
 #include <wtf/Forward.h>
+#include <wtf/Markable.h>
+#include <wtf/Optional.h>
 #include <wtf/text/StringBuilder.h>
 
 namespace WTF {
@@ -181,6 +183,15 @@ TextStream& operator<<(TextStream& ts, const Optional<Item>& item)
         return ts << item.value();
     
     return ts << "nullopt";
+}
+
+template<typename T, typename Traits>
+TextStream& operator<<(TextStream& ts, const Markable<T, Traits>& item)
+{
+    if (item)
+        return ts << item.value();
+    
+    return ts << "unset";
 }
 
 template<typename Item>

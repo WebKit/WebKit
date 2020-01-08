@@ -1075,7 +1075,7 @@ void GraphicsLayerCA::pauseAnimation(const String& animationName, double timeOff
 
 void GraphicsLayerCA::seekAnimation(const String& animationName, double timeOffset)
 {
-    LOG_WITH_STREAM(Animations, stream << "GraphicsLayerCA " << this << " id " << primaryLayerID() << " seekAnimation " << animationName << " (is running " << animationIsRunning(animationName) << ")");
+    LOG_WITH_STREAM(Animations, stream << "GraphicsLayerCA " << this << " id " << primaryLayerID() << " seekAnimation " << animationName << " to " << timeOffset << " (is running " << animationIsRunning(animationName) << ")");
 
     // Call add since if there is already a Remove in there, we don't want to overwrite it with a Pause.
     addProcessingActionForAnimation(animationName, AnimationProcessingAction { Seek, Seconds { timeOffset } });
