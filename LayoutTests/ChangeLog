@@ -1,3 +1,33 @@
+2020-01-07  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        Unreviewed test gardening for GTK port after r252598.
+
+        * platform/gtk/compositing/images/direct-image-background-color-expected.txt:
+        * platform/gtk/compositing/webgl/webgl-background-color-expected.txt:
+        * platform/gtk/fast/backgrounds/background-leakage-expected.txt:
+        * platform/gtk/fast/backgrounds/background-leakage-transforms-expected.txt:
+        * platform/gtk/fast/block/float/intruding-painted-twice-expected.txt:
+        * platform/gtk/fast/borders/mixed-border-styles-expected.txt:
+        * platform/gtk/fast/borders/mixed-border-styles-radius-expected.txt:
+        * platform/gtk/fast/borders/mixed-border-styles-radius2-expected.txt:
+        * platform/gtk/fast/box-shadow/inset-box-shadow-radius-expected.txt:
+        * platform/gtk/fast/css/percentage-non-integer-expected.txt:
+        * platform/gtk/fast/css/shadow-multiple-expected.txt:
+        * platform/gtk/fast/css/viewport-units-dynamic-expected.txt:
+        * platform/gtk/fast/multicol/client-rects-expected.txt:
+        * platform/gtk/fast/multicol/client-rects-spanners-complex-expected.txt:
+        * platform/gtk/fast/multicol/client-rects-spanners-expected.txt:
+        * platform/gtk/fast/multicol/newmulticol/client-rects-expected.txt:
+        * platform/gtk/fast/overflow/float-in-relpositioned-expected.txt:
+        * platform/gtk/fast/ruby/select-ruby-expected.txt:
+        * platform/gtk/fast/table/border-collapsing/equal-precedence-resolution-expected.txt:
+        * platform/gtk/fast/table/border-collapsing/equal-precedence-resolution-vertical-expected.txt:
+        * platform/gtk/fast/text/shadow-no-blur-expected.txt:
+        * platform/gtk/fast/text/shadow-translucent-fill-expected.txt:
+        * platform/gtk/imported/w3c/web-platform-tests/svg/import/color-prop-02-f-manual-expected.txt:
+        * platform/gtk/imported/w3c/web-platform-tests/svg/import/color-prop-03-t-manual-expected.txt:
+        * platform/gtk/transforms/3d/point-mapping/3d-point-mapping-overlapping-expected.txt:
+
 2020-01-07  Chris Dumez  <cdumez@apple.com>
 
         Remove document.origin

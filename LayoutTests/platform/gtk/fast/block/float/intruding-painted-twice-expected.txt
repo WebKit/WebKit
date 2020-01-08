@@ -19,10 +19,10 @@ layer at (0,0) size 800x600
       RenderBlock {P} at (0,52) size 784x18
         RenderText {#text} at (0,0) size 360x17
           text run at (0,0) width 360: "These two lines of text should be the same shade of gray:"
-      RenderBlock {DIV} at (0,86) size 784x27 [color=#0000007F]
+      RenderBlock {DIV} at (0,86) size 784x27 [color=#00000080]
         RenderText {#text} at (0,0) size 270x26
           text run at (0,0) width 270: "Lorem ipsum dolor sit amet"
-      RenderBlock {DIV} at (0,113) size 784x0 [color=#0000007F]
+      RenderBlock {DIV} at (0,113) size 784x0 [color=#00000080]
         RenderBlock (floating) {DIV} at (0,0) size 270x27
           RenderText {#text} at (0,0) size 270x26
             text run at (0,0) width 270: "Lorem ipsum dolor sit amet"
