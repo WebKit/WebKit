@@ -1,3 +1,24 @@
+2020-01-07  Saam Barati  <sbarati@apple.com>
+
+        run-jsc should not print "... I should not be here ..." when it doesn't get killed when sending a signal to itself
+        https://bugs.webkit.org/show_bug.cgi?id=205907
+
+        Reviewed by Ross Kirsling.
+
+        In r253024, I added code that would try to make run-jsc exit with the same
+        signal that the actual jsc binary exitted with. This made it so crashes and
+        in the `jsc` process would look like equivalent crashes in `run-jsc` process.
+        Not thinking of non terminating signals, I added code like this:
+        ```
+        system("kill -" . $signal . " " . $PID);
+        print STDERR "\n... I should not be here ...\n";
+        ```
+        
+        However, this print will happen for totally legitimate reasons, like when
+        you Ctrl+C from the REPL when  using `run-jsc`. This patch removes this print.
+
+        * Scripts/run-jsc:
+
 2020-01-07  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Implement css3-images image-orientation

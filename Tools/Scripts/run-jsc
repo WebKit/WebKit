@@ -68,7 +68,6 @@ while ($count--) {
     my $status = ($? >> 8) & 0xff;
     if ($signal != 0) {
         system("kill -" . $signal . " " . $PID); # We kill ourselves with the same signal that the `jsc` process was killed with to make it look like `jsc` was directly invoked.
-        print STDERR "\n... I should not be here ...\n";
     }
     if ($status != 0) {
         print STDERR "\njsc exited with non-zero status: $status\n";
