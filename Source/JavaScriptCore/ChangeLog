@@ -1,3 +1,25 @@
+2020-01-08  Tuomas Karkkainen  <tuomas.webkit@apple.com>
+
+        Add FuzzerAgents that narrow and widen number predictions
+        https://bugs.webkit.org/show_bug.cgi?id=203993
+
+        Reviewed by Yusuke Suzuki.
+
+        Add two FuzzerAgents such that for any predictions that are originally subsets of SpecFullNumber:
+        - one adds more number types to the prediction
+        - the other removes some of the number types from the prediction
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Sources.txt:
+        * runtime/NarrowingNumberPredictionFuzzerAgent.cpp: Added.
+        * runtime/NarrowingNumberPredictionFuzzerAgent.h: Added.
+        * runtime/NumberPredictionFuzzerAgent.cpp: Added.
+        * runtime/NumberPredictionFuzzerAgent.h: Added.
+        * runtime/OptionsList.h:
+        * runtime/VM.cpp:
+        * runtime/WideningNumberPredictionFuzzerAgent.cpp: Added.
+        * runtime/WideningNumberPredictionFuzzerAgent.h: Added.
+
 2020-01-08  Michael Saboff  <msaboff@apple.com>
 
         TypeProfiler.h: Multiplication result converted to larger type

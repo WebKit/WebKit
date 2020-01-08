@@ -135,6 +135,7 @@
 #include "MinimumReservedZoneSize.h"
 #include "ModuleProgramCodeBlock.h"
 #include "ModuleProgramExecutable.h"
+#include "NarrowingNumberPredictionFuzzerAgent.h"
 #include "NativeErrorConstructor.h"
 #include "NativeExecutable.h"
 #include "Nodes.h"
@@ -179,6 +180,7 @@
 #include "WebAssemblyFunction.h"
 #include "WebAssemblyModuleRecord.h"
 #include "WebAssemblyWrapperFunction.h"
+#include "WideningNumberPredictionFuzzerAgent.h"
 #include <wtf/ProcessID.h>
 #include <wtf/ReadWriteLock.h>
 #include <wtf/SimpleStats.h>
@@ -545,6 +547,10 @@ VM::VM(VMType vmType, HeapType heapType)
         setFuzzerAgent(makeUnique<FileBasedFuzzerAgent>(*this));
     if (Options::usePredictionFileCreatingFuzzerAgent())
         setFuzzerAgent(makeUnique<PredictionFileCreatingFuzzerAgent>(*this));
+    if (Options::useNarrowingNumberPredictionFuzzerAgent())
+        setFuzzerAgent(makeUnique<NarrowingNumberPredictionFuzzerAgent>(*this));
+    if (Options::useWideningNumberPredictionFuzzerAgent())
+        setFuzzerAgent(makeUnique<WideningNumberPredictionFuzzerAgent>(*this));
 
     if (Options::alwaysGeneratePCToCodeOriginMap())
         setShouldBuildPCToCodeOriginMapping();

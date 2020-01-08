@@ -4834,6 +4834,12 @@
 		CECFAD332372DAA700291599 /* FileBasedFuzzerAgent.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = FileBasedFuzzerAgent.cpp; sourceTree = "<group>"; };
 		CECFAD342372DAA700291599 /* FuzzerPredictions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FuzzerPredictions.h; sourceTree = "<group>"; };
 		CECFAD352372DAA700291599 /* FuzzerPredictions.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = FuzzerPredictions.cpp; sourceTree = "<group>"; };
+		CE27A3D523759BAC0089605E /* WideningNumberPredictionFuzzerAgent.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WideningNumberPredictionFuzzerAgent.h; sourceTree = "<group>"; };
+		CE27A3D623759BAC0089605E /* WideningNumberPredictionFuzzerAgent.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WideningNumberPredictionFuzzerAgent.cpp; sourceTree = "<group>"; };
+		CE27A3D723759BAC0089605E /* NarrowingNumberPredictionFuzzerAgent.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = NarrowingNumberPredictionFuzzerAgent.cpp; sourceTree = "<group>"; };
+		CE27A3D823759BAC0089605E /* NarrowingNumberPredictionFuzzerAgent.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NarrowingNumberPredictionFuzzerAgent.h; sourceTree = "<group>"; };
+		CE27A3D92375A6DC0089605E /* NumberPredictionFuzzerAgent.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = NumberPredictionFuzzerAgent.cpp; sourceTree = "<group>"; };
+		CE27A3DA2375A6DC0089605E /* NumberPredictionFuzzerAgent.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NumberPredictionFuzzerAgent.h; sourceTree = "<group>"; };
 		D21202280AD4310C00ED79B6 /* DateConversion.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = DateConversion.cpp; sourceTree = "<group>"; };
 		D21202290AD4310C00ED79B6 /* DateConversion.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = DateConversion.h; sourceTree = "<group>"; };
 		DC00039019D8BE6F00023EB0 /* DFGPreciseLocalClobberize.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGPreciseLocalClobberize.h; path = dfg/DFGPreciseLocalClobberize.h; sourceTree = "<group>"; };
@@ -7414,6 +7420,8 @@
 				FE2A875F1F02381600EB31B2 /* MinimumReservedZoneSize.h */,
 				147341DD1DC2CE9600AA29BA /* ModuleProgramExecutable.cpp */,
 				147341D51DC02EB900AA29BA /* ModuleProgramExecutable.h */,
+				CE27A3D723759BAC0089605E /* NarrowingNumberPredictionFuzzerAgent.cpp */,
+				CE27A3D823759BAC0089605E /* NarrowingNumberPredictionFuzzerAgent.h */,
 				BC02E9080E1839DB000F9297 /* NativeErrorConstructor.cpp */,
 				BC02E9090E1839DB000F9297 /* NativeErrorConstructor.h */,
 				BC02E90A0E1839DB000F9297 /* NativeErrorPrototype.cpp */,
@@ -7429,6 +7437,8 @@
 				BC2680C30E16D4E900A06E92 /* NumberConstructor.h */,
 				F692A8700255597D01FF60F7 /* NumberObject.cpp */,
 				F692A8710255597D01FF60F7 /* NumberObject.h */,
+				CE27A3D92375A6DC0089605E /* NumberPredictionFuzzerAgent.cpp */,
+				CE27A3DA2375A6DC0089605E /* NumberPredictionFuzzerAgent.h */,
 				BC2680C40E16D4E900A06E92 /* NumberPrototype.cpp */,
 				BC2680C50E16D4E900A06E92 /* NumberPrototype.h */,
 				142D3938103E4560007DCB52 /* NumericStrings.h */,
@@ -7633,6 +7643,8 @@
 				709FB8641AE335C60039D069 /* WeakSetConstructor.h */,
 				709FB8651AE335C60039D069 /* WeakSetPrototype.cpp */,
 				709FB8661AE335C60039D069 /* WeakSetPrototype.h */,
+				CE27A3D623759BAC0089605E /* WideningNumberPredictionFuzzerAgent.cpp */,
+				CE27A3D523759BAC0089605E /* WideningNumberPredictionFuzzerAgent.h */,
 				A7DCB77912E3D90500911940 /* WriteBarrier.h */,
 				C2B6D75218A33793004A9301 /* WriteBarrierInlines.h */,
 			);

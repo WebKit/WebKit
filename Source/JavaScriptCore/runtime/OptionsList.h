@@ -400,6 +400,8 @@ constexpr bool enableWebAssemblyStreamingApi = false;
     v(Bool, usePredictionFileCreatingFuzzerAgent, false, Normal, nullptr) \
     v(Bool, requirePredictionForFileBasedFuzzerAgent, false, Normal, nullptr) \
     v(OptionString, fuzzerPredictionsFile, nullptr, Normal, "file with list of predictions for FileBasedFuzzerAgent") \
+    v(Bool, useNarrowingNumberPredictionFuzzerAgent, false, Normal, nullptr) \
+    v(Bool, useWideningNumberPredictionFuzzerAgent, false, Normal, nullptr) \
     \
     v(Bool, logPhaseTimes, false, Normal, nullptr) \
     v(Double, rareBlockPenalty, 0.001, Normal, nullptr) \

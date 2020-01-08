@@ -897,6 +897,7 @@ runtime/MathCommon.cpp
 runtime/MathObject.cpp
 runtime/MemoryStatistics.cpp
 runtime/ModuleProgramExecutable.cpp
+runtime/NarrowingNumberPredictionFuzzerAgent.cpp
 runtime/NativeErrorConstructor.cpp
 runtime/NativeErrorPrototype.cpp
 runtime/NativeExecutable.cpp
@@ -904,6 +905,7 @@ runtime/NullGetterFunction.cpp
 runtime/NullSetterFunction.cpp
 runtime/NumberConstructor.cpp
 runtime/NumberObject.cpp
+runtime/NumberPredictionFuzzerAgent.cpp
 runtime/NumberPrototype.cpp
 runtime/ObjectConstructor.cpp
 runtime/ObjectInitializationScope.cpp
@@ -983,6 +985,7 @@ runtime/WeakObjectRefConstructor.cpp
 runtime/WeakObjectRefPrototype.cpp
 runtime/WeakSetConstructor.cpp
 runtime/WeakSetPrototype.cpp
+runtime/WideningNumberPredictionFuzzerAgent.cpp
 
 // Derived Sources
 // FIXME: We should move this to runtime but it kept breaking the Windows build in weird ways... https://bugs.webkit.org/show_bug.cgi?id=177486
