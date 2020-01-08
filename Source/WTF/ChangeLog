@@ -1,3 +1,33 @@
+2020-01-08  Alicia Boya García  <aboya@igalia.com>
+
+        [WTF] Allow MediaTime static constants
+        https://bugs.webkit.org/show_bug.cgi?id=205723
+
+        Reviewed by Darin Adler.
+
+        Despite all its convenience methods, at its core MediaTime is a rather
+        trivial class with only integral members. Despite this, since it had a
+        destructor declared, this made the class non-trivially destructible
+        even if the implementation was empty, and therefore clang did not
+        allow to use it for static variables unless done in form of a pointer.
+
+        By removing the destructor this restriction is lifted and we don't
+        need heap allocations for static MediaTime objects.
+
+        Previous usages of heap allocation for static MediaTime objects have
+        been rewritten to take advantage of this. Test coverage is provided by
+        successful compilation without [-Werror,-Wexit-time-destructors]
+        errors and existing tests.
+
+        * wtf/MediaTime.cpp:
+        (WTF::MediaTime::zeroTime):
+        (WTF::MediaTime::invalidTime):
+        (WTF::MediaTime::positiveInfiniteTime):
+        (WTF::MediaTime::negativeInfiniteTime):
+        (WTF::MediaTime::indefiniteTime):
+        (WTF::MediaTime::~MediaTime): Deleted.
+        * wtf/MediaTime.h:
+
 2020-01-07  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Implement css3-images image-orientation

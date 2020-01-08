@@ -495,8 +495,6 @@ void SourceBuffer::seekToTime(const MediaTime& time)
 MediaTime SourceBuffer::sourceBufferPrivateFastSeekTimeForMediaTime(const MediaTime& targetTime, const MediaTime& negativeThreshold, const MediaTime& positiveThreshold)
 {
     MediaTime seekTime = targetTime;
-    MediaTime lowerBoundTime = targetTime - negativeThreshold;
-    MediaTime upperBoundTime = targetTime + positiveThreshold;
 
     for (auto& trackBuffer : m_trackBufferMap.values()) {
         // Find the sample which contains the target time time.
@@ -810,7 +808,6 @@ void SourceBuffer::removeCodedFrames(const MediaTime& start, const MediaTime& en
     // https://dvcs.w3.org/hg/html-media/raw-file/tip/media-source/media-source.html#sourcebuffer-coded-frame-removal
 
     // 1. Let start be the starting presentation timestamp for the removal range.
-    MediaTime durationMediaTime = m_source->duration();
     MediaTime currentMediaTime = m_source->currentTime();
 
     // 2. Let end be the end presentation timestamp for the removal range.

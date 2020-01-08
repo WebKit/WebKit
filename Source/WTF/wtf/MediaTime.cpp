@@ -41,6 +41,8 @@
 
 namespace WTF {
 
+static_assert(std::is_trivially_destructible_v<MediaTime>, "MediaTime should be trivially destructible.");
+
 static uint32_t greatestCommonDivisor(uint32_t a, uint32_t b)
 {
     ASSERT(a);
@@ -86,10 +88,6 @@ MediaTime::MediaTime(int64_t value, uint32_t scale, uint8_t flags)
         return;
 
     *this = value < 0 ? negativeInfiniteTime() : positiveInfiniteTime();
-}
-
-MediaTime::~MediaTime()
-{
 }
 
 MediaTime::MediaTime(const MediaTime& rhs)
@@ -457,32 +455,32 @@ bool MediaTime::isBetween(const MediaTime& a, const MediaTime& b) const
 
 const MediaTime& MediaTime::zeroTime()
 {
-    static const MediaTime* time = new MediaTime(0, 1, Valid);
-    return *time;
+    static const MediaTime time(0, 1, Valid);
+    return time;
 }
 
 const MediaTime& MediaTime::invalidTime()
 {
-    static const MediaTime* time = new MediaTime(-1, 1, 0);
-    return *time;
+    static const MediaTime time(-1, 1, 0);
+    return time;
 }
 
 const MediaTime& MediaTime::positiveInfiniteTime()
 {
-    static const MediaTime* time = new MediaTime(0, 1, PositiveInfinite | Valid);
-    return *time;
+    static const MediaTime time(0, 1, PositiveInfinite | Valid);
+    return time;
 }
 
 const MediaTime& MediaTime::negativeInfiniteTime()
 {
-    static const MediaTime* time = new MediaTime(-1, 1, NegativeInfinite | Valid);
-    return *time;
+    static const MediaTime time(-1, 1, NegativeInfinite | Valid);
+    return time;
 }
 
 const MediaTime& MediaTime::indefiniteTime()
 {
-    static const MediaTime* time = new MediaTime(0, 1, Indefinite | Valid);
-    return *time;
+    static const MediaTime time(0, 1, Indefinite | Valid);
+    return time;
 }
 
 MediaTime MediaTime::toTimeScale(uint32_t timeScale, RoundingFlags flags) const

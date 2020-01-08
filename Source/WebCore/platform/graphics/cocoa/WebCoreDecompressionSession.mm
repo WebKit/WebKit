@@ -474,7 +474,9 @@ RetainPtr<CVPixelBufferRef> WebCoreDecompressionSession::imageForTime(const Medi
     bool allowLater = flags == WebCoreDecompressionSession::AllowLater;
 
     MediaTime startTime = PAL::toMediaTime(CMBufferQueueGetFirstPresentationTimeStamp(m_producerQueue.get()));
+#if !LOG_DISABLED
     MediaTime endTime = PAL::toMediaTime(CMBufferQueueGetEndPresentationTimeStamp(m_producerQueue.get()));
+#endif
     if (!allowLater && time < startTime) {
         LOG(Media, "WebCoreDecompressionSession::imageForTime(%p) - time(%s) too early for queue(%s -> %s)", this, toString(time).utf8().data(), toString(startTime).utf8().data(), toString(endTime).utf8().data());
         return nullptr;
