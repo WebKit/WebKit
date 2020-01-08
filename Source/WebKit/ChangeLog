@@ -1,3 +1,16 @@
+2020-01-08  Truitt Savell  <tsavell@apple.com>
+
+        Unreviewed, rolling out r254174.
+
+        Broke 80 tests on Catalina
+
+        Reverted changeset:
+
+        "Network process sandboxes should not include 'common.sb' or
+        'system.sb'"
+        https://bugs.webkit.org/show_bug.cgi?id=205521
+        https://trac.webkit.org/changeset/254174
+
 2020-01-08  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Add support for encoding WebCore::Font over IPC for DisplayList::DrawGlyphs
