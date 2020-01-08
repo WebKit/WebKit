@@ -106,7 +106,7 @@ public:
 
 #if PLATFORM(COCOA)
     PlatformGraphicsContextGL platformGraphicsContextGL() const override { return m_contextObj; }
-    Platform3DObject platformTexture() const override { return m_texture; }
+    PlatformGLObject platformTexture() const override { return m_texture; }
     CALayer* platformLayer() const override { return reinterpret_cast<CALayer*>(m_webGLLayer.get()); }
 #if USE(ANGLE)
     PlatformGraphicsContextGLDisplay platformDisplay() const { return m_displayObj; }
@@ -114,7 +114,7 @@ public:
 #endif // USE(ANGLE)
 #else
     PlatformGraphicsContextGL platformGraphicsContextGL() const override;
-    Platform3DObject platformTexture() const override;
+    PlatformGLObject platformTexture() const override;
     PlatformLayer* platformLayer() const override;
 #endif
 
@@ -127,18 +127,18 @@ public:
     void prepareTexture();
 
     // Equivalent to ::glTexImage2D(). Allows pixels==0 with no allocation.
-    void texImage2DDirect(GC3Denum target, GC3Dint level, GC3Denum internalformat, GC3Dsizei width, GC3Dsizei height, GC3Dint border, GC3Denum format, GC3Denum type, const void* pixels);
+    void texImage2DDirect(GCGLenum target, GCGLint level, GCGLenum internalformat, GCGLsizei width, GCGLsizei height, GCGLint border, GCGLenum format, GCGLenum type, const void* pixels);
 
     // Get an attribute location without checking the name -> mangledname mapping.
-    int getAttribLocationDirect(Platform3DObject program, const String& name);
+    int getAttribLocationDirect(PlatformGLObject program, const String& name);
 
     // Compile a shader without going through ANGLE.
-    void compileShaderDirect(Platform3DObject);
+    void compileShaderDirect(PlatformGLObject);
 
     // Helper to texImage2D with pixel==0 case: pixels are initialized to 0.
     // Return true if no GL error is synthesized.
     // By default, alignment is 4, the OpenGL default setting.
-    bool texImage2DResourceSafe(GC3Denum target, GC3Dint level, GC3Denum internalformat, GC3Dsizei width, GC3Dsizei height, GC3Dint border, GC3Denum format, GC3Denum type, GC3Dint alignment = 4);
+    bool texImage2DResourceSafe(GCGLenum target, GCGLint level, GCGLenum internalformat, GCGLsizei width, GCGLsizei height, GCGLint border, GCGLenum format, GCGLenum type, GCGLint alignment = 4);
 
     bool isGLES2Compliant() const;
 
@@ -149,8 +149,8 @@ public:
     // Computes the components per pixel and bytes per component
     // for the given format and type combination. Returns false if
     // either was an invalid enum.
-    static bool computeFormatAndTypeParameters(GC3Denum format,
-        GC3Denum type,
+    static bool computeFormatAndTypeParameters(GCGLenum format,
+        GCGLenum type,
         unsigned* componentsPerPixel,
         unsigned* bytesPerComponent);
 
@@ -159,23 +159,23 @@ public:
     // return the suggested GL error indicating the cause of the failure:
     //   INVALID_VALUE if width/height is negative or overflow happens.
     //   INVALID_ENUM if format/type is illegal.
-    static GC3Denum computeImageSizeInBytes(GC3Denum format,
-        GC3Denum type,
-        GC3Dsizei width,
-        GC3Dsizei height,
-        GC3Dint alignment,
+    static GCGLenum computeImageSizeInBytes(GCGLenum format,
+        GCGLenum type,
+        GCGLsizei width,
+        GCGLsizei height,
+        GCGLint alignment,
         unsigned* imageSizeInBytes,
         unsigned* paddingInBytes);
 
-    static bool possibleFormatAndTypeForInternalFormat(GC3Denum internalFormat, GC3Denum& format, GC3Denum& type);
+    static bool possibleFormatAndTypeForInternalFormat(GCGLenum internalFormat, GCGLenum& format, GCGLenum& type);
 
     // Extracts the contents of the given ImageData into the passed Vector,
     // packing the pixel data according to the given format and type,
     // and obeying the flipY and premultiplyAlpha flags. Returns true
     // upon success.
     static bool extractImageData(ImageData*,
-        GC3Denum format,
-        GC3Denum type,
+        GCGLenum format,
+        GCGLenum type,
         bool flipY,
         bool premultiplyAlpha,
         Vector<uint8_t>& data);
@@ -186,7 +186,7 @@ public:
     // unpackAlignment, the output data will be tightly packed.
     // Returns true if successful, false if any error occurred.
     static bool extractTextureData(unsigned width, unsigned height,
-        GC3Denum format, GC3Denum type,
+        GCGLenum format, GCGLenum type,
         unsigned unpackAlignment,
         bool flipY, bool premultiplyAlpha,
         const void* pixels,
@@ -196,183 +196,183 @@ public:
     // Entry points for WebGL.
     //
 
-    void activeTexture(GC3Denum texture) override;
-    void attachShader(Platform3DObject program, Platform3DObject shader) override;
-    void bindAttribLocation(Platform3DObject, GC3Duint index, const String& name) override;
-    void bindBuffer(GC3Denum target, Platform3DObject) override;
-    void bindFramebuffer(GC3Denum target, Platform3DObject) override;
-    void bindRenderbuffer(GC3Denum target, Platform3DObject) override;
-    void bindTexture(GC3Denum target, Platform3DObject) override;
-    void blendColor(GC3Dclampf red, GC3Dclampf green, GC3Dclampf blue, GC3Dclampf alpha) override;
-    void blendEquation(GC3Denum mode) override;
-    void blendEquationSeparate(GC3Denum modeRGB, GC3Denum modeAlpha) override;
-    void blendFunc(GC3Denum sfactor, GC3Denum dfactor) override;
-    void blendFuncSeparate(GC3Denum srcRGB, GC3Denum dstRGB, GC3Denum srcAlpha, GC3Denum dstAlpha) override;
+    void activeTexture(GCGLenum texture) override;
+    void attachShader(PlatformGLObject program, PlatformGLObject shader) override;
+    void bindAttribLocation(PlatformGLObject, GCGLuint index, const String& name) override;
+    void bindBuffer(GCGLenum target, PlatformGLObject) override;
+    void bindFramebuffer(GCGLenum target, PlatformGLObject) override;
+    void bindRenderbuffer(GCGLenum target, PlatformGLObject) override;
+    void bindTexture(GCGLenum target, PlatformGLObject) override;
+    void blendColor(GCGLclampf red, GCGLclampf green, GCGLclampf blue, GCGLclampf alpha) override;
+    void blendEquation(GCGLenum mode) override;
+    void blendEquationSeparate(GCGLenum modeRGB, GCGLenum modeAlpha) override;
+    void blendFunc(GCGLenum sfactor, GCGLenum dfactor) override;
+    void blendFuncSeparate(GCGLenum srcRGB, GCGLenum dstRGB, GCGLenum srcAlpha, GCGLenum dstAlpha) override;
 
-    void bufferData(GC3Denum target, GC3Dsizeiptr size, GC3Denum usage) override;
-    void bufferData(GC3Denum target, GC3Dsizeiptr size, const void* data, GC3Denum usage) override;
-    void bufferSubData(GC3Denum target, GC3Dintptr offset, GC3Dsizeiptr size, const void* data) override;
+    void bufferData(GCGLenum target, GCGLsizeiptr size, GCGLenum usage) override;
+    void bufferData(GCGLenum target, GCGLsizeiptr size, const void* data, GCGLenum usage) override;
+    void bufferSubData(GCGLenum target, GCGLintptr offset, GCGLsizeiptr size, const void* data) override;
 
-    void* mapBufferRange(GC3Denum target, GC3Dintptr offset, GC3Dsizeiptr length, GC3Dbitfield access) override;
-    GC3Dboolean unmapBuffer(GC3Denum target) override;
-    void copyBufferSubData(GC3Denum readTarget, GC3Denum writeTarget, GC3Dintptr readOffset, GC3Dintptr writeOffset, GC3Dsizeiptr) override;
+    void* mapBufferRange(GCGLenum target, GCGLintptr offset, GCGLsizeiptr length, GCGLbitfield access) override;
+    GCGLboolean unmapBuffer(GCGLenum target) override;
+    void copyBufferSubData(GCGLenum readTarget, GCGLenum writeTarget, GCGLintptr readOffset, GCGLintptr writeOffset, GCGLsizeiptr) override;
 
-    void getInternalformativ(GC3Denum target, GC3Denum internalformat, GC3Denum pname, GC3Dsizei bufSize, GC3Dint* params) override;
-    void renderbufferStorageMultisample(GC3Denum target, GC3Dsizei samples, GC3Denum internalformat, GC3Dsizei width, GC3Dsizei height) override;
+    void getInternalformativ(GCGLenum target, GCGLenum internalformat, GCGLenum pname, GCGLsizei bufSize, GCGLint* params) override;
+    void renderbufferStorageMultisample(GCGLenum target, GCGLsizei samples, GCGLenum internalformat, GCGLsizei width, GCGLsizei height) override;
 
-    void texStorage2D(GC3Denum target, GC3Dsizei levels, GC3Denum internalformat, GC3Dsizei width, GC3Dsizei height) override;
-    void texStorage3D(GC3Denum target, GC3Dsizei levels, GC3Denum internalformat, GC3Dsizei width, GC3Dsizei height, GC3Dsizei depth) override;
+    void texStorage2D(GCGLenum target, GCGLsizei levels, GCGLenum internalformat, GCGLsizei width, GCGLsizei height) override;
+    void texStorage3D(GCGLenum target, GCGLsizei levels, GCGLenum internalformat, GCGLsizei width, GCGLsizei height, GCGLsizei depth) override;
 
-    void getActiveUniforms(Platform3DObject program, const Vector<GC3Duint>& uniformIndices, GC3Denum pname, Vector<GC3Dint>& params) override;
+    void getActiveUniforms(PlatformGLObject program, const Vector<GCGLuint>& uniformIndices, GCGLenum pname, Vector<GCGLint>& params) override;
 
-    GC3Denum checkFramebufferStatus(GC3Denum target) override;
-    void clear(GC3Dbitfield mask) override;
-    void clearColor(GC3Dclampf red, GC3Dclampf green, GC3Dclampf blue, GC3Dclampf alpha) override;
-    void clearDepth(GC3Dclampf depth) override;
-    void clearStencil(GC3Dint s) override;
-    void colorMask(GC3Dboolean red, GC3Dboolean green, GC3Dboolean blue, GC3Dboolean alpha) override;
-    void compileShader(Platform3DObject) override;
+    GCGLenum checkFramebufferStatus(GCGLenum target) override;
+    void clear(GCGLbitfield mask) override;
+    void clearColor(GCGLclampf red, GCGLclampf green, GCGLclampf blue, GCGLclampf alpha) override;
+    void clearDepth(GCGLclampf depth) override;
+    void clearStencil(GCGLint s) override;
+    void colorMask(GCGLboolean red, GCGLboolean green, GCGLboolean blue, GCGLboolean alpha) override;
+    void compileShader(PlatformGLObject) override;
 
-    void compressedTexImage2D(GC3Denum target, GC3Dint level, GC3Denum internalformat, GC3Dsizei width, GC3Dsizei height, GC3Dint border, GC3Dsizei imageSize, const void* data) override;
-    void compressedTexSubImage2D(GC3Denum target, GC3Dint level, GC3Dint xoffset, GC3Dint yoffset, GC3Dsizei width, GC3Dsizei height, GC3Denum format, GC3Dsizei imageSize, const void* data) override;
-    void copyTexImage2D(GC3Denum target, GC3Dint level, GC3Denum internalformat, GC3Dint x, GC3Dint y, GC3Dsizei width, GC3Dsizei height, GC3Dint border) override;
-    void copyTexSubImage2D(GC3Denum target, GC3Dint level, GC3Dint xoffset, GC3Dint yoffset, GC3Dint x, GC3Dint y, GC3Dsizei width, GC3Dsizei height) override;
-    void cullFace(GC3Denum mode) override;
-    void depthFunc(GC3Denum func) override;
-    void depthMask(GC3Dboolean flag) override;
-    void depthRange(GC3Dclampf zNear, GC3Dclampf zFar) override;
-    void detachShader(Platform3DObject, Platform3DObject) override;
-    void disable(GC3Denum cap) override;
-    void disableVertexAttribArray(GC3Duint index) override;
-    void drawArrays(GC3Denum mode, GC3Dint first, GC3Dsizei count) override;
-    void drawElements(GC3Denum mode, GC3Dsizei count, GC3Denum type, GC3Dintptr offset) override;
+    void compressedTexImage2D(GCGLenum target, GCGLint level, GCGLenum internalformat, GCGLsizei width, GCGLsizei height, GCGLint border, GCGLsizei imageSize, const void* data) override;
+    void compressedTexSubImage2D(GCGLenum target, GCGLint level, GCGLint xoffset, GCGLint yoffset, GCGLsizei width, GCGLsizei height, GCGLenum format, GCGLsizei imageSize, const void* data) override;
+    void copyTexImage2D(GCGLenum target, GCGLint level, GCGLenum internalformat, GCGLint x, GCGLint y, GCGLsizei width, GCGLsizei height, GCGLint border) override;
+    void copyTexSubImage2D(GCGLenum target, GCGLint level, GCGLint xoffset, GCGLint yoffset, GCGLint x, GCGLint y, GCGLsizei width, GCGLsizei height) override;
+    void cullFace(GCGLenum mode) override;
+    void depthFunc(GCGLenum func) override;
+    void depthMask(GCGLboolean flag) override;
+    void depthRange(GCGLclampf zNear, GCGLclampf zFar) override;
+    void detachShader(PlatformGLObject, PlatformGLObject) override;
+    void disable(GCGLenum cap) override;
+    void disableVertexAttribArray(GCGLuint index) override;
+    void drawArrays(GCGLenum mode, GCGLint first, GCGLsizei count) override;
+    void drawElements(GCGLenum mode, GCGLsizei count, GCGLenum type, GCGLintptr offset) override;
 
-    void enable(GC3Denum cap) override;
-    void enableVertexAttribArray(GC3Duint index) override;
+    void enable(GCGLenum cap) override;
+    void enableVertexAttribArray(GCGLuint index) override;
     void finish() override;
     void flush() override;
-    void framebufferRenderbuffer(GC3Denum target, GC3Denum attachment, GC3Denum renderbuffertarget, Platform3DObject) override;
-    void framebufferTexture2D(GC3Denum target, GC3Denum attachment, GC3Denum textarget, Platform3DObject, GC3Dint level) override;
-    void frontFace(GC3Denum mode) override;
-    void generateMipmap(GC3Denum target) override;
+    void framebufferRenderbuffer(GCGLenum target, GCGLenum attachment, GCGLenum renderbuffertarget, PlatformGLObject) override;
+    void framebufferTexture2D(GCGLenum target, GCGLenum attachment, GCGLenum textarget, PlatformGLObject, GCGLint level) override;
+    void frontFace(GCGLenum mode) override;
+    void generateMipmap(GCGLenum target) override;
 
-    bool getActiveAttrib(Platform3DObject program, GC3Duint index, ActiveInfo&) override;
-    bool getActiveAttribImpl(Platform3DObject program, GC3Duint index, ActiveInfo&);
-    bool getActiveUniform(Platform3DObject program, GC3Duint index, ActiveInfo&) override;
-    bool getActiveUniformImpl(Platform3DObject program, GC3Duint index, ActiveInfo&);
-    void getAttachedShaders(Platform3DObject program, GC3Dsizei maxCount, GC3Dsizei* count, Platform3DObject* shaders) override;
-    GC3Dint getAttribLocation(Platform3DObject, const String& name) override;
-    void getBooleanv(GC3Denum pname, GC3Dboolean* value) override;
-    void getBufferParameteriv(GC3Denum target, GC3Denum pname, GC3Dint* value) override;
-    GC3Denum getError() override;
-    void getFloatv(GC3Denum pname, GC3Dfloat* value) override;
-    void getFramebufferAttachmentParameteriv(GC3Denum target, GC3Denum attachment, GC3Denum pname, GC3Dint* value) override;
-    void getIntegerv(GC3Denum pname, GC3Dint* value) override;
-    void getInteger64v(GC3Denum pname, GC3Dint64* value) override;
-    void getProgramiv(Platform3DObject program, GC3Denum pname, GC3Dint* value) override;
+    bool getActiveAttrib(PlatformGLObject program, GCGLuint index, ActiveInfo&) override;
+    bool getActiveAttribImpl(PlatformGLObject program, GCGLuint index, ActiveInfo&);
+    bool getActiveUniform(PlatformGLObject program, GCGLuint index, ActiveInfo&) override;
+    bool getActiveUniformImpl(PlatformGLObject program, GCGLuint index, ActiveInfo&);
+    void getAttachedShaders(PlatformGLObject program, GCGLsizei maxCount, GCGLsizei* count, PlatformGLObject* shaders) override;
+    GCGLint getAttribLocation(PlatformGLObject, const String& name) override;
+    void getBooleanv(GCGLenum pname, GCGLboolean* value) override;
+    void getBufferParameteriv(GCGLenum target, GCGLenum pname, GCGLint* value) override;
+    GCGLenum getError() override;
+    void getFloatv(GCGLenum pname, GCGLfloat* value) override;
+    void getFramebufferAttachmentParameteriv(GCGLenum target, GCGLenum attachment, GCGLenum pname, GCGLint* value) override;
+    void getIntegerv(GCGLenum pname, GCGLint* value) override;
+    void getInteger64v(GCGLenum pname, GCGLint64* value) override;
+    void getProgramiv(PlatformGLObject program, GCGLenum pname, GCGLint* value) override;
 #if !USE(ANGLE)
-    void getNonBuiltInActiveSymbolCount(Platform3DObject program, GC3Denum pname, GC3Dint* value);
+    void getNonBuiltInActiveSymbolCount(PlatformGLObject program, GCGLenum pname, GCGLint* value);
 #endif // !USE(ANGLE)
-    String getProgramInfoLog(Platform3DObject) override;
-    String getUnmangledInfoLog(Platform3DObject[2], GC3Dsizei, const String&);
-    void getRenderbufferParameteriv(GC3Denum target, GC3Denum pname, GC3Dint* value) override;
-    void getShaderiv(Platform3DObject, GC3Denum pname, GC3Dint* value) override;
-    String getShaderInfoLog(Platform3DObject) override;
-    void getShaderPrecisionFormat(GC3Denum shaderType, GC3Denum precisionType, GC3Dint* range, GC3Dint* precision) override;
-    String getShaderSource(Platform3DObject) override;
-    String getString(GC3Denum name) override;
-    void getTexParameterfv(GC3Denum target, GC3Denum pname, GC3Dfloat* value) override;
-    void getTexParameteriv(GC3Denum target, GC3Denum pname, GC3Dint* value) override;
-    void getUniformfv(Platform3DObject program, GC3Dint location, GC3Dfloat* value) override;
-    void getUniformiv(Platform3DObject program, GC3Dint location, GC3Dint* value) override;
-    GC3Dint getUniformLocation(Platform3DObject, const String& name) override;
-    void getVertexAttribfv(GC3Duint index, GC3Denum pname, GC3Dfloat* value) override;
-    void getVertexAttribiv(GC3Duint index, GC3Denum pname, GC3Dint* value) override;
-    GC3Dsizeiptr getVertexAttribOffset(GC3Duint index, GC3Denum pname) override;
+    String getProgramInfoLog(PlatformGLObject) override;
+    String getUnmangledInfoLog(PlatformGLObject[2], GCGLsizei, const String&);
+    void getRenderbufferParameteriv(GCGLenum target, GCGLenum pname, GCGLint* value) override;
+    void getShaderiv(PlatformGLObject, GCGLenum pname, GCGLint* value) override;
+    String getShaderInfoLog(PlatformGLObject) override;
+    void getShaderPrecisionFormat(GCGLenum shaderType, GCGLenum precisionType, GCGLint* range, GCGLint* precision) override;
+    String getShaderSource(PlatformGLObject) override;
+    String getString(GCGLenum name) override;
+    void getTexParameterfv(GCGLenum target, GCGLenum pname, GCGLfloat* value) override;
+    void getTexParameteriv(GCGLenum target, GCGLenum pname, GCGLint* value) override;
+    void getUniformfv(PlatformGLObject program, GCGLint location, GCGLfloat* value) override;
+    void getUniformiv(PlatformGLObject program, GCGLint location, GCGLint* value) override;
+    GCGLint getUniformLocation(PlatformGLObject, const String& name) override;
+    void getVertexAttribfv(GCGLuint index, GCGLenum pname, GCGLfloat* value) override;
+    void getVertexAttribiv(GCGLuint index, GCGLenum pname, GCGLint* value) override;
+    GCGLsizeiptr getVertexAttribOffset(GCGLuint index, GCGLenum pname) override;
 
-    void hint(GC3Denum target, GC3Denum mode) override;
-    GC3Dboolean isBuffer(Platform3DObject) override;
-    GC3Dboolean isEnabled(GC3Denum cap) override;
-    GC3Dboolean isFramebuffer(Platform3DObject) override;
-    GC3Dboolean isProgram(Platform3DObject) override;
-    GC3Dboolean isRenderbuffer(Platform3DObject) override;
-    GC3Dboolean isShader(Platform3DObject) override;
-    GC3Dboolean isTexture(Platform3DObject) override;
-    void lineWidth(GC3Dfloat) override;
-    void linkProgram(Platform3DObject) override;
-    void pixelStorei(GC3Denum pname, GC3Dint param) override;
-    void polygonOffset(GC3Dfloat factor, GC3Dfloat units) override;
+    void hint(GCGLenum target, GCGLenum mode) override;
+    GCGLboolean isBuffer(PlatformGLObject) override;
+    GCGLboolean isEnabled(GCGLenum cap) override;
+    GCGLboolean isFramebuffer(PlatformGLObject) override;
+    GCGLboolean isProgram(PlatformGLObject) override;
+    GCGLboolean isRenderbuffer(PlatformGLObject) override;
+    GCGLboolean isShader(PlatformGLObject) override;
+    GCGLboolean isTexture(PlatformGLObject) override;
+    void lineWidth(GCGLfloat) override;
+    void linkProgram(PlatformGLObject) override;
+    void pixelStorei(GCGLenum pname, GCGLint param) override;
+    void polygonOffset(GCGLfloat factor, GCGLfloat units) override;
 
-    void readPixels(GC3Dint x, GC3Dint y, GC3Dsizei width, GC3Dsizei height, GC3Denum format, GC3Denum type, void* data) override;
+    void readPixels(GCGLint x, GCGLint y, GCGLsizei width, GCGLsizei height, GCGLenum format, GCGLenum type, void* data) override;
 
     void releaseShaderCompiler();
 
-    void renderbufferStorage(GC3Denum target, GC3Denum internalformat, GC3Dsizei width, GC3Dsizei height) override;
-    void sampleCoverage(GC3Dclampf value, GC3Dboolean invert) override;
-    void scissor(GC3Dint x, GC3Dint y, GC3Dsizei width, GC3Dsizei height) override;
-    void shaderSource(Platform3DObject, const String& string) override;
-    void stencilFunc(GC3Denum func, GC3Dint ref, GC3Duint mask) override;
-    void stencilFuncSeparate(GC3Denum face, GC3Denum func, GC3Dint ref, GC3Duint mask) override;
-    void stencilMask(GC3Duint mask) override;
-    void stencilMaskSeparate(GC3Denum face, GC3Duint mask) override;
-    void stencilOp(GC3Denum fail, GC3Denum zfail, GC3Denum zpass) override;
-    void stencilOpSeparate(GC3Denum face, GC3Denum fail, GC3Denum zfail, GC3Denum zpass) override;
+    void renderbufferStorage(GCGLenum target, GCGLenum internalformat, GCGLsizei width, GCGLsizei height) override;
+    void sampleCoverage(GCGLclampf value, GCGLboolean invert) override;
+    void scissor(GCGLint x, GCGLint y, GCGLsizei width, GCGLsizei height) override;
+    void shaderSource(PlatformGLObject, const String& string) override;
+    void stencilFunc(GCGLenum func, GCGLint ref, GCGLuint mask) override;
+    void stencilFuncSeparate(GCGLenum face, GCGLenum func, GCGLint ref, GCGLuint mask) override;
+    void stencilMask(GCGLuint mask) override;
+    void stencilMaskSeparate(GCGLenum face, GCGLuint mask) override;
+    void stencilOp(GCGLenum fail, GCGLenum zfail, GCGLenum zpass) override;
+    void stencilOpSeparate(GCGLenum face, GCGLenum fail, GCGLenum zfail, GCGLenum zpass) override;
 
-    bool texImage2D(GC3Denum target, GC3Dint level, GC3Denum internalformat, GC3Dsizei width, GC3Dsizei height, GC3Dint border, GC3Denum format, GC3Denum type, const void* pixels) override;
-    void texParameterf(GC3Denum target, GC3Denum pname, GC3Dfloat param) override;
-    void texParameteri(GC3Denum target, GC3Denum pname, GC3Dint param) override;
-    void texSubImage2D(GC3Denum target, GC3Dint level, GC3Dint xoffset, GC3Dint yoffset, GC3Dsizei width, GC3Dsizei height, GC3Denum format, GC3Denum type, const void* pixels) override;
+    bool texImage2D(GCGLenum target, GCGLint level, GCGLenum internalformat, GCGLsizei width, GCGLsizei height, GCGLint border, GCGLenum format, GCGLenum type, const void* pixels) override;
+    void texParameterf(GCGLenum target, GCGLenum pname, GCGLfloat param) override;
+    void texParameteri(GCGLenum target, GCGLenum pname, GCGLint param) override;
+    void texSubImage2D(GCGLenum target, GCGLint level, GCGLint xoffset, GCGLint yoffset, GCGLsizei width, GCGLsizei height, GCGLenum format, GCGLenum type, const void* pixels) override;
 
-    void uniform1f(GC3Dint location, GC3Dfloat x) override;
-    void uniform1fv(GC3Dint location, GC3Dsizei, const GC3Dfloat* v) override;
-    void uniform1i(GC3Dint location, GC3Dint x) override;
-    void uniform1iv(GC3Dint location, GC3Dsizei, const GC3Dint* v) override;
-    void uniform2f(GC3Dint location, GC3Dfloat x, GC3Dfloat y) override;
-    void uniform2fv(GC3Dint location, GC3Dsizei, const GC3Dfloat* v) override;
-    void uniform2i(GC3Dint location, GC3Dint x, GC3Dint y) override;
-    void uniform2iv(GC3Dint location, GC3Dsizei, const GC3Dint* v) override;
-    void uniform3f(GC3Dint location, GC3Dfloat x, GC3Dfloat y, GC3Dfloat z) override;
-    void uniform3fv(GC3Dint location, GC3Dsizei, const GC3Dfloat* v) override;
-    void uniform3i(GC3Dint location, GC3Dint x, GC3Dint y, GC3Dint z) override;
-    void uniform3iv(GC3Dint location, GC3Dsizei, const GC3Dint* v) override;
-    void uniform4f(GC3Dint location, GC3Dfloat x, GC3Dfloat y, GC3Dfloat z, GC3Dfloat w) override;
-    void uniform4fv(GC3Dint location, GC3Dsizei, const GC3Dfloat* v) override;
-    void uniform4i(GC3Dint location, GC3Dint x, GC3Dint y, GC3Dint z, GC3Dint w) override;
-    void uniform4iv(GC3Dint location, GC3Dsizei, const GC3Dint* v) override;
-    void uniformMatrix2fv(GC3Dint location, GC3Dsizei, GC3Dboolean transpose, const GC3Dfloat* value) override;
-    void uniformMatrix3fv(GC3Dint location, GC3Dsizei, GC3Dboolean transpose, const GC3Dfloat* value) override;
-    void uniformMatrix4fv(GC3Dint location, GC3Dsizei, GC3Dboolean transpose, const GC3Dfloat* value) override;
+    void uniform1f(GCGLint location, GCGLfloat x) override;
+    void uniform1fv(GCGLint location, GCGLsizei, const GCGLfloat* v) override;
+    void uniform1i(GCGLint location, GCGLint x) override;
+    void uniform1iv(GCGLint location, GCGLsizei, const GCGLint* v) override;
+    void uniform2f(GCGLint location, GCGLfloat x, GCGLfloat y) override;
+    void uniform2fv(GCGLint location, GCGLsizei, const GCGLfloat* v) override;
+    void uniform2i(GCGLint location, GCGLint x, GCGLint y) override;
+    void uniform2iv(GCGLint location, GCGLsizei, const GCGLint* v) override;
+    void uniform3f(GCGLint location, GCGLfloat x, GCGLfloat y, GCGLfloat z) override;
+    void uniform3fv(GCGLint location, GCGLsizei, const GCGLfloat* v) override;
+    void uniform3i(GCGLint location, GCGLint x, GCGLint y, GCGLint z) override;
+    void uniform3iv(GCGLint location, GCGLsizei, const GCGLint* v) override;
+    void uniform4f(GCGLint location, GCGLfloat x, GCGLfloat y, GCGLfloat z, GCGLfloat w) override;
+    void uniform4fv(GCGLint location, GCGLsizei, const GCGLfloat* v) override;
+    void uniform4i(GCGLint location, GCGLint x, GCGLint y, GCGLint z, GCGLint w) override;
+    void uniform4iv(GCGLint location, GCGLsizei, const GCGLint* v) override;
+    void uniformMatrix2fv(GCGLint location, GCGLsizei, GCGLboolean transpose, const GCGLfloat* value) override;
+    void uniformMatrix3fv(GCGLint location, GCGLsizei, GCGLboolean transpose, const GCGLfloat* value) override;
+    void uniformMatrix4fv(GCGLint location, GCGLsizei, GCGLboolean transpose, const GCGLfloat* value) override;
 
-    void useProgram(Platform3DObject) override;
-    void validateProgram(Platform3DObject) override;
+    void useProgram(PlatformGLObject) override;
+    void validateProgram(PlatformGLObject) override;
 #if !USE(ANGLE)
-    bool checkVaryingsPacking(Platform3DObject vertexShader, Platform3DObject fragmentShader) const;
-    bool precisionsMatch(Platform3DObject vertexShader, Platform3DObject fragmentShader) const;
+    bool checkVaryingsPacking(PlatformGLObject vertexShader, PlatformGLObject fragmentShader) const;
+    bool precisionsMatch(PlatformGLObject vertexShader, PlatformGLObject fragmentShader) const;
 #endif
 
-    void vertexAttrib1f(GC3Duint index, GC3Dfloat x) override;
-    void vertexAttrib1fv(GC3Duint index, const GC3Dfloat* values) override;
-    void vertexAttrib2f(GC3Duint index, GC3Dfloat x, GC3Dfloat y) override;
-    void vertexAttrib2fv(GC3Duint index, const GC3Dfloat* values) override;
-    void vertexAttrib3f(GC3Duint index, GC3Dfloat x, GC3Dfloat y, GC3Dfloat z) override;
-    void vertexAttrib3fv(GC3Duint index, const GC3Dfloat* values) override;
-    void vertexAttrib4f(GC3Duint index, GC3Dfloat x, GC3Dfloat y, GC3Dfloat z, GC3Dfloat w) override;
-    void vertexAttrib4fv(GC3Duint index, const GC3Dfloat* values) override;
-    void vertexAttribPointer(GC3Duint index, GC3Dint size, GC3Denum type, GC3Dboolean normalized, GC3Dsizei stride, GC3Dintptr offset) override;
+    void vertexAttrib1f(GCGLuint index, GCGLfloat x) override;
+    void vertexAttrib1fv(GCGLuint index, const GCGLfloat* values) override;
+    void vertexAttrib2f(GCGLuint index, GCGLfloat x, GCGLfloat y) override;
+    void vertexAttrib2fv(GCGLuint index, const GCGLfloat* values) override;
+    void vertexAttrib3f(GCGLuint index, GCGLfloat x, GCGLfloat y, GCGLfloat z) override;
+    void vertexAttrib3fv(GCGLuint index, const GCGLfloat* values) override;
+    void vertexAttrib4f(GCGLuint index, GCGLfloat x, GCGLfloat y, GCGLfloat z, GCGLfloat w) override;
+    void vertexAttrib4fv(GCGLuint index, const GCGLfloat* values) override;
+    void vertexAttribPointer(GCGLuint index, GCGLint size, GCGLenum type, GCGLboolean normalized, GCGLsizei stride, GCGLintptr offset) override;
 
-    void viewport(GC3Dint x, GC3Dint y, GC3Dsizei width, GC3Dsizei height) override;
+    void viewport(GCGLint x, GCGLint y, GCGLsizei width, GCGLsizei height) override;
 
     void reshape(int width, int height);
 
-    void drawArraysInstanced(GC3Denum mode, GC3Dint first, GC3Dsizei count, GC3Dsizei primcount) override;
-    void drawElementsInstanced(GC3Denum mode, GC3Dsizei count, GC3Denum type, GC3Dintptr offset, GC3Dsizei primcount) override;
-    void vertexAttribDivisor(GC3Duint index, GC3Duint divisor) override;
+    void drawArraysInstanced(GCGLenum mode, GCGLint first, GCGLsizei count, GCGLsizei primcount) override;
+    void drawElementsInstanced(GCGLenum mode, GCGLsizei count, GCGLenum type, GCGLintptr offset, GCGLsizei primcount) override;
+    void vertexAttribDivisor(GCGLuint index, GCGLuint divisor) override;
 
     // VertexArrayOject calls
-    Platform3DObject createVertexArray() override;
-    void deleteVertexArray(Platform3DObject) override;
-    GC3Dboolean isVertexArray(Platform3DObject) override;
-    void bindVertexArray(Platform3DObject) override;
+    PlatformGLObject createVertexArray() override;
+    void deleteVertexArray(PlatformGLObject) override;
+    GCGLboolean isVertexArray(PlatformGLObject) override;
+    void bindVertexArray(PlatformGLObject) override;
 
     void paintToCanvas(const unsigned char* imagePixels, const IntSize& imageSize, const IntSize& canvasSize, GraphicsContext&);
 
@@ -390,11 +390,11 @@ public:
     bool paintCompositedResultsToCanvas(ImageBuffer*);
 
 #if USE(OPENGL) && ENABLE(WEBGL2)
-    void primitiveRestartIndex(GC3Duint) override;
+    void primitiveRestartIndex(GCGLuint) override;
 #endif
 
 #if PLATFORM(COCOA)
-    bool texImageIOSurface2D(GC3Denum target, GC3Denum internalFormat, GC3Dsizei width, GC3Dsizei height, GC3Denum format, GC3Denum type, IOSurfaceRef, GC3Duint plane);
+    bool texImageIOSurface2D(GCGLenum target, GCGLenum internalFormat, GCGLsizei width, GCGLsizei height, GCGLenum format, GCGLenum type, IOSurfaceRef, GCGLuint plane);
 
 #if USE(OPENGL_ES)
     void presentRenderbuffer();
@@ -414,19 +414,19 @@ public:
     GraphicsContextGLPowerPreference powerPreferenceUsedForCreation() const { return m_powerPreferenceUsedForCreation; }
 
     // Support for buffer creation and deletion
-    Platform3DObject createBuffer() override;
-    Platform3DObject createFramebuffer() override;
-    Platform3DObject createProgram() override;
-    Platform3DObject createRenderbuffer() override;
-    Platform3DObject createShader(GC3Denum) override;
-    Platform3DObject createTexture() override;
+    PlatformGLObject createBuffer() override;
+    PlatformGLObject createFramebuffer() override;
+    PlatformGLObject createProgram() override;
+    PlatformGLObject createRenderbuffer() override;
+    PlatformGLObject createShader(GCGLenum) override;
+    PlatformGLObject createTexture() override;
 
-    void deleteBuffer(Platform3DObject) override;
-    void deleteFramebuffer(Platform3DObject) override;
-    void deleteProgram(Platform3DObject) override;
-    void deleteRenderbuffer(Platform3DObject) override;
-    void deleteShader(Platform3DObject) override;
-    void deleteTexture(Platform3DObject) override;
+    void deleteBuffer(PlatformGLObject) override;
+    void deleteFramebuffer(PlatformGLObject) override;
+    void deleteProgram(PlatformGLObject) override;
+    void deleteRenderbuffer(PlatformGLObject) override;
+    void deleteShader(PlatformGLObject) override;
+    void deleteTexture(PlatformGLObject) override;
 
     // Synthesizes an OpenGL error which will be returned from a
     // later call to getError. This is used to emulate OpenGL ES
@@ -436,7 +436,7 @@ public:
     // Per the behavior of glGetError, this stores at most one
     // instance of any given error, and returns them from calls to
     // getError in the order they were added.
-    void synthesizeGLError(GC3Denum error);
+    void synthesizeGLError(GCGLenum error);
 
     // Read real OpenGL errors, and move them to the synthetic
     // error list. Return true if at least one error is moved.
@@ -453,7 +453,7 @@ public:
     // Packs the contents of the given Image which is passed in |pixels| into the passed Vector
     // according to the given format and type, and obeying the flipY and AlphaOp flags.
     // Returns true upon success.
-    static bool packImageData(Image*, const void* pixels, GC3Denum format, GC3Denum type, bool flipY, AlphaOp, DataFormat sourceFormat, unsigned width, unsigned height, unsigned sourceUnpackAlignment, Vector<uint8_t>& data);
+    static bool packImageData(Image*, const void* pixels, GCGLenum format, GCGLenum type, bool flipY, AlphaOp, DataFormat sourceFormat, unsigned width, unsigned height, unsigned sourceUnpackAlignment, Vector<uint8_t>& data);
 
     class ImageExtractor {
     public:
@@ -498,10 +498,10 @@ public:
 
     void setFailNextGPUStatusCheck() { m_failNextStatusCheck = true; }
 
-    GC3Denum activeTextureUnit() const { return m_state.activeTextureUnit; }
-    GC3Denum currentBoundTexture() const { return m_state.currentBoundTexture(); }
-    GC3Denum currentBoundTarget() const { return m_state.currentBoundTarget(); }
-    unsigned textureSeed(GC3Duint texture) { return m_state.textureSeedCount.count(texture); }
+    GCGLenum activeTextureUnit() const { return m_state.activeTextureUnit; }
+    GCGLenum currentBoundTexture() const { return m_state.currentBoundTexture(); }
+    GCGLenum currentBoundTarget() const { return m_state.currentBoundTarget(); }
+    unsigned textureSeed(GCGLuint texture) { return m_state.textureSeedCount.count(texture); }
 
 #if PLATFORM(MAC)
     using PlatformDisplayID = uint32_t;
@@ -534,7 +534,7 @@ private:
     void readPixelsAndConvertToBGRAIfNecessary(int x, int y, int width, int height, unsigned char* pixels);
 
 #if USE(OPENGL_ES)
-    void setRenderbufferStorageFromDrawable(GC3Dsizei width, GC3Dsizei height);
+    void setRenderbufferStorageFromDrawable(GCGLsizei width, GCGLsizei height);
 #endif
 
     bool reshapeFBOs(const IntSize&);
@@ -564,7 +564,7 @@ private:
     typedef HashMap<String, sh::ShaderVariable> ShaderSymbolMap;
 
     struct ShaderSourceEntry {
-        GC3Denum type;
+        GCGLenum type;
         String source;
         String translatedSource;
         String log;
@@ -591,22 +591,22 @@ private:
 
 #if !USE(ANGLE)
     // FIXME: Shaders are never removed from this map, even if they and their program are deleted.
-    // This is bad, and it also relies on the fact we never reuse Platform3DObject numbers.
-    typedef HashMap<Platform3DObject, ShaderSourceEntry> ShaderSourceMap;
+    // This is bad, and it also relies on the fact we never reuse PlatformGLObject numbers.
+    typedef HashMap<PlatformGLObject, ShaderSourceEntry> ShaderSourceMap;
     ShaderSourceMap m_shaderSourceMap;
 
-    typedef HashMap<Platform3DObject, std::pair<Platform3DObject, Platform3DObject>> LinkedShaderMap;
+    typedef HashMap<PlatformGLObject, std::pair<PlatformGLObject, PlatformGLObject>> LinkedShaderMap;
     LinkedShaderMap m_linkedShaderMap;
 
     struct ActiveShaderSymbolCounts {
-        Vector<GC3Dint> filteredToActualAttributeIndexMap;
-        Vector<GC3Dint> filteredToActualUniformIndexMap;
+        Vector<GCGLint> filteredToActualAttributeIndexMap;
+        Vector<GCGLint> filteredToActualUniformIndexMap;
 
         ActiveShaderSymbolCounts()
         {
         }
 
-        GC3Dint countForType(GC3Denum activeType)
+        GCGLint countForType(GCGLenum activeType)
         {
             ASSERT(activeType == ACTIVE_ATTRIBUTES || activeType == ACTIVE_UNIFORMS);
             if (activeType == ACTIVE_ATTRIBUTES)
@@ -615,17 +615,17 @@ private:
             return filteredToActualUniformIndexMap.size();
         }
     };
-    typedef HashMap<Platform3DObject, ActiveShaderSymbolCounts> ShaderProgramSymbolCountMap;
+    typedef HashMap<PlatformGLObject, ActiveShaderSymbolCounts> ShaderProgramSymbolCountMap;
     ShaderProgramSymbolCountMap m_shaderProgramSymbolCountMap;
 
     typedef HashMap<String, String> HashedSymbolMap;
     HashedSymbolMap m_possiblyUnusedAttributeMap;
 
-    String mappedSymbolName(Platform3DObject program, ANGLEShaderSymbolType, const String& name);
-    String mappedSymbolName(Platform3DObject shaders[2], size_t count, const String& name);
-    String originalSymbolName(Platform3DObject program, ANGLEShaderSymbolType, const String& name);
-    Optional<String> mappedSymbolInShaderSourceMap(Platform3DObject shader, ANGLEShaderSymbolType, const String& name);
-    Optional<String> originalSymbolInShaderSourceMap(Platform3DObject shader, ANGLEShaderSymbolType, const String& name);
+    String mappedSymbolName(PlatformGLObject program, ANGLEShaderSymbolType, const String& name);
+    String mappedSymbolName(PlatformGLObject shaders[2], size_t count, const String& name);
+    String originalSymbolName(PlatformGLObject program, ANGLEShaderSymbolType, const String& name);
+    Optional<String> mappedSymbolInShaderSourceMap(PlatformGLObject shader, ANGLEShaderSymbolType, const String& name);
+    Optional<String> originalSymbolInShaderSourceMap(PlatformGLObject shader, ANGLEShaderSymbolType, const String& name);
 
     std::unique_ptr<ShaderNameHash> nameHashMapForShaders;
 #endif // !USE(ANGLE)
@@ -650,37 +650,37 @@ private:
     ANGLEWebKitBridge m_compiler;
 #endif
 
-    GC3Duint m_texture { 0 };
-    GC3Duint m_fbo { 0 };
+    GCGLuint m_texture { 0 };
+    GCGLuint m_fbo { 0 };
 #if USE(COORDINATED_GRAPHICS)
-    GC3Duint m_compositorTexture { 0 };
-    GC3Duint m_intermediateTexture { 0 };
+    GCGLuint m_compositorTexture { 0 };
+    GCGLuint m_intermediateTexture { 0 };
 #endif
 
-    GC3Duint m_depthBuffer { 0 };
-    GC3Duint m_stencilBuffer { 0 };
-    GC3Duint m_depthStencilBuffer { 0 };
+    GCGLuint m_depthBuffer { 0 };
+    GCGLuint m_stencilBuffer { 0 };
+    GCGLuint m_depthStencilBuffer { 0 };
 
     bool m_layerComposited { false };
-    GC3Duint m_internalColorFormat { 0 };
+    GCGLuint m_internalColorFormat { 0 };
 
 #if USE(ANGLE) && PLATFORM(COCOA)
     PlatformGraphicsContextGLSurface m_pbuffer;
 #endif
 
     struct GraphicsContextGLState {
-        GC3Duint boundFBO { 0 };
-        GC3Denum activeTextureUnit { GraphicsContextGL::TEXTURE0 };
+        GCGLuint boundFBO { 0 };
+        GCGLenum activeTextureUnit { GraphicsContextGL::TEXTURE0 };
 
-        using BoundTextureMap = HashMap<GC3Denum,
-            std::pair<GC3Duint, GC3Denum>,
-            WTF::IntHash<GC3Denum>, 
-            WTF::UnsignedWithZeroKeyHashTraits<GC3Duint>,
-            WTF::PairHashTraits<WTF::UnsignedWithZeroKeyHashTraits<GC3Duint>, WTF::UnsignedWithZeroKeyHashTraits<GC3Duint>>
+        using BoundTextureMap = HashMap<GCGLenum,
+            std::pair<GCGLuint, GCGLenum>,
+            WTF::IntHash<GCGLenum>, 
+            WTF::UnsignedWithZeroKeyHashTraits<GCGLuint>,
+            WTF::PairHashTraits<WTF::UnsignedWithZeroKeyHashTraits<GCGLuint>, WTF::UnsignedWithZeroKeyHashTraits<GCGLuint>>
         >;
         BoundTextureMap boundTextureMap;
-        GC3Duint currentBoundTexture() const { return boundTexture(activeTextureUnit); }
-        GC3Duint boundTexture(GC3Denum textureUnit) const
+        GCGLuint currentBoundTexture() const { return boundTexture(activeTextureUnit); }
+        GCGLuint boundTexture(GCGLenum textureUnit) const
         {
             auto iterator = boundTextureMap.find(textureUnit);
             if (iterator != boundTextureMap.end())
@@ -688,8 +688,8 @@ private:
             return 0;
         }
 
-        GC3Duint currentBoundTarget() const { return boundTarget(activeTextureUnit); }
-        GC3Denum boundTarget(GC3Denum textureUnit) const
+        GCGLuint currentBoundTarget() const { return boundTarget(activeTextureUnit); }
+        GCGLenum boundTarget(GCGLenum textureUnit) const
         {
             auto iterator = boundTextureMap.find(textureUnit);
             if (iterator != boundTextureMap.end())
@@ -697,24 +697,24 @@ private:
             return 0;
         }
 
-        void setBoundTexture(GC3Denum textureUnit, GC3Duint texture, GC3Denum target)
+        void setBoundTexture(GCGLenum textureUnit, GCGLuint texture, GCGLenum target)
         {
             boundTextureMap.set(textureUnit, std::make_pair(texture, target));
         }
 
-        using TextureSeedCount = HashCountedSet<GC3Duint, WTF::IntHash<GC3Duint>, WTF::UnsignedWithZeroKeyHashTraits<GC3Duint>>;
+        using TextureSeedCount = HashCountedSet<GCGLuint, WTF::IntHash<GCGLuint>, WTF::UnsignedWithZeroKeyHashTraits<GCGLuint>>;
         TextureSeedCount textureSeedCount;
     };
 
     GraphicsContextGLState m_state;
 
     // For multisampling
-    GC3Duint m_multisampleFBO { 0 };
-    GC3Duint m_multisampleDepthStencilBuffer { 0 };
-    GC3Duint m_multisampleColorBuffer { 0 };
+    GCGLuint m_multisampleFBO { 0 };
+    GCGLuint m_multisampleDepthStencilBuffer { 0 };
+    GCGLuint m_multisampleColorBuffer { 0 };
 
     // Errors raised by synthesizeGLError().
-    ListHashSet<GC3Denum> m_syntheticErrors;
+    ListHashSet<GCGLenum> m_syntheticErrors;
 
 #if USE(NICOSIA) && USE(TEXTURE_MAPPER)
     friend class Nicosia::GC3DLayer;
@@ -736,7 +736,7 @@ private:
     bool m_failNextStatusCheck { false };
 
 #if USE(CAIRO)
-    Platform3DObject m_vao { 0 };
+    PlatformGLObject m_vao { 0 };
 #endif
 
 #if PLATFORM(COCOA) && (USE(OPENGL) || USE(ANGLE))

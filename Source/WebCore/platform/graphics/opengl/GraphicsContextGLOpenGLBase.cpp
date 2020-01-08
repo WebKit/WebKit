@@ -275,7 +275,7 @@ void GraphicsContextGLOpenGL::resolveMultisamplingIfNecessary(const IntRect& rec
 #endif
 }
 
-void GraphicsContextGLOpenGL::renderbufferStorage(GC3Denum target, GC3Denum internalformat, GC3Dsizei width, GC3Dsizei height)
+void GraphicsContextGLOpenGL::renderbufferStorage(GCGLenum target, GCGLenum internalformat, GCGLsizei width, GCGLsizei height)
 {
     makeContextCurrent();
 #if USE(OPENGL)
@@ -298,7 +298,7 @@ void GraphicsContextGLOpenGL::renderbufferStorage(GC3Denum target, GC3Denum inte
     ::glRenderbufferStorageEXT(target, internalformat, width, height);
 }
 
-void GraphicsContextGLOpenGL::getIntegerv(GC3Denum pname, GC3Dint* value)
+void GraphicsContextGLOpenGL::getIntegerv(GCGLenum pname, GCGLint* value)
 {
     // Need to emulate MAX_FRAGMENT/VERTEX_UNIFORM_VECTORS and MAX_VARYING_VECTORS
     // because desktop GL's corresponding queries return the number of components
@@ -358,7 +358,7 @@ void GraphicsContextGLOpenGL::getIntegerv(GC3Denum pname, GC3Dint* value)
     }
 }
 
-void GraphicsContextGLOpenGL::getShaderPrecisionFormat(GC3Denum shaderType, GC3Denum precisionType, GC3Dint* range, GC3Dint* precision)
+void GraphicsContextGLOpenGL::getShaderPrecisionFormat(GCGLenum shaderType, GCGLenum precisionType, GCGLint* range, GCGLint* precision)
 {
     UNUSED_PARAM(shaderType);
     ASSERT(range);
@@ -389,15 +389,15 @@ void GraphicsContextGLOpenGL::getShaderPrecisionFormat(GC3Denum shaderType, GC3D
     }
 }
 
-bool GraphicsContextGLOpenGL::texImage2D(GC3Denum target, GC3Dint level, GC3Denum internalformat, GC3Dsizei width, GC3Dsizei height, GC3Dint border, GC3Denum format, GC3Denum type, const void* pixels)
+bool GraphicsContextGLOpenGL::texImage2D(GCGLenum target, GCGLint level, GCGLenum internalformat, GCGLsizei width, GCGLsizei height, GCGLint border, GCGLenum format, GCGLenum type, const void* pixels)
 {
     if (width && height && !pixels) {
         synthesizeGLError(INVALID_VALUE);
         return false;
     }
 
-    GC3Denum openGLFormat = format;
-    GC3Denum openGLInternalFormat = internalformat;
+    GCGLenum openGLFormat = format;
+    GCGLenum openGLInternalFormat = internalformat;
 #if USE(OPENGL)
     if (type == GL_FLOAT) {
         if (format == GL_RGBA)
@@ -455,7 +455,7 @@ bool GraphicsContextGLOpenGL::texImage2D(GC3Denum target, GC3Dint level, GC3Denu
     return true;
 }
 
-void GraphicsContextGLOpenGL::depthRange(GC3Dclampf zNear, GC3Dclampf zFar)
+void GraphicsContextGLOpenGL::depthRange(GCGLclampf zNear, GCGLclampf zFar)
 {
     makeContextCurrent();
 #if PLATFORM(COCOA) && USE(OPENGL_ES)
@@ -465,7 +465,7 @@ void GraphicsContextGLOpenGL::depthRange(GC3Dclampf zNear, GC3Dclampf zFar)
 #endif
 }
 
-void GraphicsContextGLOpenGL::clearDepth(GC3Dclampf depth)
+void GraphicsContextGLOpenGL::clearDepth(GCGLclampf depth)
 {
     makeContextCurrent();
 #if PLATFORM(COCOA) && USE(OPENGL_ES)
@@ -488,7 +488,7 @@ ExtensionsGL& GraphicsContextGLOpenGL::getExtensions()
 }
 #endif
 
-void GraphicsContextGLOpenGL::readPixels(GC3Dint x, GC3Dint y, GC3Dsizei width, GC3Dsizei height, GC3Denum format, GC3Denum type, void* data)
+void GraphicsContextGLOpenGL::readPixels(GCGLint x, GCGLint y, GCGLsizei width, GCGLsizei height, GCGLenum format, GCGLenum type, void* data)
 {
     auto attrs = contextAttributes();
 

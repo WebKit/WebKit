@@ -724,7 +724,7 @@ PlatformLayer* ImageBuffer::platformLayer() const
     return 0;
 }
 
-bool ImageBuffer::copyToPlatformTexture(GraphicsContextGLOpenGL&, GC3Denum target, Platform3DObject destinationTexture, GC3Denum internalformat, bool premultiplyAlpha, bool flipY)
+bool ImageBuffer::copyToPlatformTexture(GraphicsContextGLOpenGL&, GCGLenum target, PlatformGLObject destinationTexture, GCGLenum internalformat, bool premultiplyAlpha, bool flipY)
 {
 #if ENABLE(ACCELERATED_2D_CANVAS)
     ASSERT_WITH_MESSAGE(m_resolutionScale == 1.0, "Since the HiDPI Canvas feature is removed, the resolution factor here is always 1.");
@@ -734,7 +734,7 @@ bool ImageBuffer::copyToPlatformTexture(GraphicsContextGLOpenGL&, GC3Denum targe
     if (!m_data.m_texture)
         return false;
 
-    GC3Denum bindTextureTarget;
+    GCGLenum bindTextureTarget;
     switch (target) {
     case GL_TEXTURE_2D:
         bindTextureTarget = GL_TEXTURE_2D;

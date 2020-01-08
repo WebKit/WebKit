@@ -64,7 +64,7 @@ void OESVertexArrayObject::deleteVertexArrayOES(WebGLVertexArrayObjectOES* array
     arrayObject->deleteObject(m_context.graphicsContextGL());
 }
 
-GC3Dboolean OESVertexArrayObject::isVertexArrayOES(WebGLVertexArrayObjectOES* arrayObject)
+GCGLboolean OESVertexArrayObject::isVertexArrayOES(WebGLVertexArrayObjectOES* arrayObject)
 {
     return arrayObject && !m_context.isContextLost() && arrayObject->hasEverBeenBound()
         && m_context.graphicsContextGL()->getExtensions().isVertexArrayOES(arrayObject->object());

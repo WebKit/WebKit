@@ -1068,7 +1068,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/GraphicsLayerTransform.h
     platform/graphics/GraphicsLayerUpdater.h
     platform/graphics/GraphicsTypes.h
-    platform/graphics/GraphicsTypes3D.h
+    platform/graphics/GraphicsTypesGL.h
     platform/graphics/Icon.h
     platform/graphics/Image.h
     platform/graphics/ImageBackingStore.h

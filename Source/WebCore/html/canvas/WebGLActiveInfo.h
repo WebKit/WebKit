@@ -35,16 +35,16 @@ namespace WebCore {
 
 class WebGLActiveInfo : public RefCounted<WebGLActiveInfo> {
 public:
-    static Ref<WebGLActiveInfo> create(const String& name, GC3Denum type, GC3Dint size)
+    static Ref<WebGLActiveInfo> create(const String& name, GCGLenum type, GCGLint size)
     {
         return adoptRef(*new WebGLActiveInfo(name, type, size));
     }
     String name() const { return m_name; }
-    GC3Denum type() const { return m_type; }
-    GC3Dint size() const { return m_size; }
+    GCGLenum type() const { return m_type; }
+    GCGLint size() const { return m_size; }
 
 private:
-    WebGLActiveInfo(const String& name, GC3Denum type, GC3Dint size)
+    WebGLActiveInfo(const String& name, GCGLenum type, GCGLint size)
         : m_name(name)
         , m_type(type)
         , m_size(size)
@@ -54,8 +54,8 @@ private:
         ASSERT(size);
     }
     String m_name;
-    GC3Denum m_type;
-    GC3Dint m_size;
+    GCGLenum m_type;
+    GCGLint m_size;
 };
 
 } // namespace WebCore

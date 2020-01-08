@@ -245,7 +245,7 @@ Optional<Vector<String>> WebGLRenderingContext::getSupportedExtensions()
     return result;
 }
 
-WebGLAny WebGLRenderingContext::getFramebufferAttachmentParameter(GC3Denum target, GC3Denum attachment, GC3Denum pname)
+WebGLAny WebGLRenderingContext::getFramebufferAttachmentParameter(GCGLenum target, GCGLenum attachment, GCGLenum pname)
 {
     if (isContextLostOrPending() || !validateFramebufferFuncParameters("getFramebufferAttachmentParameter", target, attachment))
         return nullptr;
@@ -274,7 +274,7 @@ WebGLAny WebGLRenderingContext::getFramebufferAttachmentParameter(GC3Denum targe
         case GraphicsContextGL::FRAMEBUFFER_ATTACHMENT_TEXTURE_LEVEL:
         case GraphicsContextGL::FRAMEBUFFER_ATTACHMENT_TEXTURE_CUBE_MAP_FACE:
         case ExtensionsGL::FRAMEBUFFER_ATTACHMENT_COLOR_ENCODING_EXT: {
-            GC3Dint value = 0;
+            GCGLint value = 0;
             m_context->getFramebufferAttachmentParameteriv(target, attachment, pname, &value);
             return value;
         }
@@ -295,7 +295,7 @@ WebGLAny WebGLRenderingContext::getFramebufferAttachmentParameter(GC3Denum targe
                 return nullptr;
             }
             RefPtr<WebGLRenderbuffer> renderBuffer = reinterpret_cast<WebGLRenderbuffer*>(object.get());
-            GC3Denum renderBufferFormat = renderBuffer->getInternalFormat();
+            GCGLenum renderBufferFormat = renderBuffer->getInternalFormat();
             ASSERT(renderBufferFormat != ExtensionsGL::SRGB_EXT && renderBufferFormat != ExtensionsGL::SRGB_ALPHA_EXT);
             if (renderBufferFormat == ExtensionsGL::SRGB8_ALPHA8_EXT)
                 return static_cast<unsigned>(ExtensionsGL::SRGB_EXT);
@@ -308,7 +308,7 @@ WebGLAny WebGLRenderingContext::getFramebufferAttachmentParameter(GC3Denum targe
     }
 }
 
-bool WebGLRenderingContext::validateFramebufferFuncParameters(const char* functionName, GC3Denum target, GC3Denum attachment)
+bool WebGLRenderingContext::validateFramebufferFuncParameters(const char* functionName, GCGLenum target, GCGLenum attachment)
 {
     if (target != GraphicsContextGL::FRAMEBUFFER) {
         synthesizeGLError(GraphicsContextGL::INVALID_ENUM, functionName, "invalid target");
@@ -325,14 +325,14 @@ bool WebGLRenderingContext::validateFramebufferFuncParameters(const char* functi
     default:
         if (m_webglDrawBuffers
             && attachment >= GraphicsContextGL::COLOR_ATTACHMENT0
-            && attachment < static_cast<GC3Denum>(GraphicsContextGL::COLOR_ATTACHMENT0 + getMaxColorAttachments()))
+            && attachment < static_cast<GCGLenum>(GraphicsContextGL::COLOR_ATTACHMENT0 + getMaxColorAttachments()))
             return true;
         synthesizeGLError(GraphicsContextGL::INVALID_ENUM, functionName, "invalid attachment");
         return false;
     }
 }
     
-void WebGLRenderingContext::renderbufferStorage(GC3Denum target, GC3Denum internalformat, GC3Dsizei width, GC3Dsizei height)
+void WebGLRenderingContext::renderbufferStorage(GCGLenum target, GCGLenum internalformat, GCGLsizei width, GCGLsizei height)
 {
     if (isContextLostOrPending())
         return;
@@ -376,7 +376,7 @@ void WebGLRenderingContext::renderbufferStorage(GC3Denum target, GC3Denum intern
     applyStencilTest();
 }
 
-void WebGLRenderingContext::hint(GC3Denum target, GC3Denum mode)
+void WebGLRenderingContext::hint(GCGLenum target, GCGLenum mode)
 {
     if (isContextLostOrPending())
         return;
@@ -397,7 +397,7 @@ void WebGLRenderingContext::hint(GC3Denum target, GC3Denum mode)
     m_context->hint(target, mode);
 }
     
-void WebGLRenderingContext::clear(GC3Dbitfield mask)
+void WebGLRenderingContext::clear(GCGLbitfield mask)
 {
     if (isContextLostOrPending())
         return;
@@ -415,7 +415,7 @@ void WebGLRenderingContext::clear(GC3Dbitfield mask)
     markContextChangedAndNotifyCanvasObserver();
 }
 
-WebGLAny WebGLRenderingContext::getParameter(GC3Denum pname)
+WebGLAny WebGLRenderingContext::getParameter(GCGLenum pname)
 {
     if (isContextLostOrPending())
         return nullptr;
@@ -649,8 +649,8 @@ WebGLAny WebGLRenderingContext::getParameter(GC3Denum pname)
     default:
         if (m_webglDrawBuffers
             && pname >= ExtensionsGL::DRAW_BUFFER0_EXT
-            && pname < static_cast<GC3Denum>(ExtensionsGL::DRAW_BUFFER0_EXT + getMaxDrawBuffers())) {
-            GC3Dint value = GraphicsContextGL::NONE;
+            && pname < static_cast<GCGLenum>(ExtensionsGL::DRAW_BUFFER0_EXT + getMaxDrawBuffers())) {
+            GCGLint value = GraphicsContextGL::NONE;
             if (m_framebufferBinding)
                 value = m_framebufferBinding->getDrawBuffer(pname);
             else // emulated backbuffer
@@ -662,7 +662,7 @@ WebGLAny WebGLRenderingContext::getParameter(GC3Denum pname)
     }
 }
 
-GC3Dint WebGLRenderingContext::getMaxDrawBuffers()
+GCGLint WebGLRenderingContext::getMaxDrawBuffers()
 {
     if (!supportsDrawBuffers())
         return 0;
@@ -674,7 +674,7 @@ GC3Dint WebGLRenderingContext::getMaxDrawBuffers()
     return std::min(m_maxDrawBuffers, m_maxColorAttachments);
 }
 
-GC3Dint WebGLRenderingContext::getMaxColorAttachments()
+GCGLint WebGLRenderingContext::getMaxColorAttachments()
 {
     if (!supportsDrawBuffers())
         return 0;
@@ -683,7 +683,7 @@ GC3Dint WebGLRenderingContext::getMaxColorAttachments()
     return m_maxColorAttachments;
 }
     
-bool WebGLRenderingContext::validateIndexArrayConservative(GC3Denum type, unsigned& numElementsRequired)
+bool WebGLRenderingContext::validateIndexArrayConservative(GCGLenum type, unsigned& numElementsRequired)
 {
     // Performs conservative validation by caching a maximum index of
     // the given type per element array buffer. If all of the bound
@@ -696,7 +696,7 @@ bool WebGLRenderingContext::validateIndexArrayConservative(GC3Denum type, unsign
     if (!elementArrayBuffer)
         return false;
     
-    GC3Dsizeiptr numElements = elementArrayBuffer->byteLength();
+    GCGLsizeiptr numElements = elementArrayBuffer->byteLength();
     // The case count==0 is already dealt with in drawElements before validateIndexArrayConservative.
     if (!numElements)
         return false;
@@ -708,24 +708,24 @@ bool WebGLRenderingContext::validateIndexArrayConservative(GC3Denum type, unsign
         // Compute the maximum index in the entire buffer for the given type of index.
         switch (type) {
         case GraphicsContextGL::UNSIGNED_BYTE: {
-            const GC3Dubyte* p = static_cast<const GC3Dubyte*>(buffer->data());
-            for (GC3Dsizeiptr i = 0; i < numElements; i++)
+            const GCGLubyte* p = static_cast<const GCGLubyte*>(buffer->data());
+            for (GCGLsizeiptr i = 0; i < numElements; i++)
                 maxIndex = maxIndex ? std::max(maxIndex.value(), static_cast<unsigned>(p[i])) : static_cast<unsigned>(p[i]);
             break;
         }
         case GraphicsContextGL::UNSIGNED_SHORT: {
-            numElements /= sizeof(GC3Dushort);
-            const GC3Dushort* p = static_cast<const GC3Dushort*>(buffer->data());
-            for (GC3Dsizeiptr i = 0; i < numElements; i++)
+            numElements /= sizeof(GCGLushort);
+            const GCGLushort* p = static_cast<const GCGLushort*>(buffer->data());
+            for (GCGLsizeiptr i = 0; i < numElements; i++)
                 maxIndex = maxIndex ? std::max(maxIndex.value(), static_cast<unsigned>(p[i])) : static_cast<unsigned>(p[i]);
             break;
         }
         case GraphicsContextGL::UNSIGNED_INT: {
             if (!m_oesElementIndexUint)
                 return false;
-            numElements /= sizeof(GC3Duint);
-            const GC3Duint* p = static_cast<const GC3Duint*>(buffer->data());
-            for (GC3Dsizeiptr i = 0; i < numElements; i++)
+            numElements /= sizeof(GCGLuint);
+            const GCGLuint* p = static_cast<const GCGLuint*>(buffer->data());
+            for (GCGLsizeiptr i = 0; i < numElements; i++)
                 maxIndex = maxIndex ? std::max(maxIndex.value(), static_cast<unsigned>(p[i])) : static_cast<unsigned>(p[i]);
             break;
         }
@@ -748,7 +748,7 @@ bool WebGLRenderingContext::validateIndexArrayConservative(GC3Denum type, unsign
     return true;
 }
 
-bool WebGLRenderingContext::validateBlendEquation(const char* functionName, GC3Denum mode)
+bool WebGLRenderingContext::validateBlendEquation(const char* functionName, GCGLenum mode)
 {
     switch (mode) {
     case GraphicsContextGL::FUNC_ADD:
@@ -768,7 +768,7 @@ bool WebGLRenderingContext::validateBlendEquation(const char* functionName, GC3D
     }
 }
 
-bool WebGLRenderingContext::validateCapability(const char* functionName, GC3Denum cap)
+bool WebGLRenderingContext::validateCapability(const char* functionName, GCGLenum cap)
 {
     switch (cap) {
     case GraphicsContextGL::BLEND:

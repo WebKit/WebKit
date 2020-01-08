@@ -51,12 +51,12 @@ WebGLBuffer::~WebGLBuffer()
     deleteObject(0);
 }
 
-void WebGLBuffer::deleteObjectImpl(GraphicsContextGLOpenGL* context3d, Platform3DObject object)
+void WebGLBuffer::deleteObjectImpl(GraphicsContextGLOpenGL* context3d, PlatformGLObject object)
 {
     context3d->deleteBuffer(object);
 }
 
-bool WebGLBuffer::associateBufferDataImpl(const void* data, GC3Dsizeiptr byteLength)
+bool WebGLBuffer::associateBufferDataImpl(const void* data, GCGLsizeiptr byteLength)
 {
     if (byteLength < 0)
         return false;
@@ -102,7 +102,7 @@ bool WebGLBuffer::associateBufferDataImpl(const void* data, GC3Dsizeiptr byteLen
     }
 }
 
-bool WebGLBuffer::associateBufferData(GC3Dsizeiptr size)
+bool WebGLBuffer::associateBufferData(GCGLsizeiptr size)
 {
     return associateBufferDataImpl(nullptr, size);
 }
@@ -121,15 +121,15 @@ bool WebGLBuffer::associateBufferData(ArrayBufferView* array)
     return associateBufferDataImpl(array->baseAddress(), array->byteLength());
 }
 
-bool WebGLBuffer::associateBufferSubDataImpl(GC3Dintptr offset, const void* data, GC3Dsizeiptr byteLength)
+bool WebGLBuffer::associateBufferSubDataImpl(GCGLintptr offset, const void* data, GCGLsizeiptr byteLength)
 {
     if (!data || offset < 0 || byteLength < 0)
         return false;
 
     if (byteLength) {
-        Checked<GC3Dintptr, RecordOverflow> checkedBufferOffset(offset);
-        Checked<GC3Dsizeiptr, RecordOverflow> checkedDataLength(byteLength);
-        Checked<GC3Dintptr, RecordOverflow> checkedBufferMax = checkedBufferOffset + checkedDataLength;
+        Checked<GCGLintptr, RecordOverflow> checkedBufferOffset(offset);
+        Checked<GCGLsizeiptr, RecordOverflow> checkedDataLength(byteLength);
+        Checked<GCGLintptr, RecordOverflow> checkedBufferMax = checkedBufferOffset + checkedDataLength;
         if (checkedBufferMax.hasOverflowed() || offset > m_byteLength || checkedBufferMax.unsafeGet() > m_byteLength)
             return false;
     }
@@ -161,34 +161,34 @@ bool WebGLBuffer::associateBufferSubDataImpl(GC3Dintptr offset, const void* data
     }
 }
 
-bool WebGLBuffer::associateBufferSubData(GC3Dintptr offset, ArrayBuffer* array)
+bool WebGLBuffer::associateBufferSubData(GCGLintptr offset, ArrayBuffer* array)
 {
     if (!array)
         return false;
     return associateBufferSubDataImpl(offset, array->data(), array->byteLength());
 }
 
-bool WebGLBuffer::associateBufferSubData(GC3Dintptr offset, ArrayBufferView* array)
+bool WebGLBuffer::associateBufferSubData(GCGLintptr offset, ArrayBufferView* array)
 {
     if (!array)
         return false;
     return associateBufferSubDataImpl(offset, array->baseAddress(), array->byteLength());
 }
 
-bool WebGLBuffer::associateCopyBufferSubData(const WebGLBuffer& readBuffer, GC3Dintptr readOffset, GC3Dintptr writeOffset, GC3Dsizeiptr size)
+bool WebGLBuffer::associateCopyBufferSubData(const WebGLBuffer& readBuffer, GCGLintptr readOffset, GCGLintptr writeOffset, GCGLsizeiptr size)
 {
     if (readOffset < 0 || writeOffset < 0 || size < 0)
         return false;
 
     if (size) {
-        Checked<GC3Dintptr, RecordOverflow> checkedReadBufferOffset(readOffset);
-        Checked<GC3Dsizeiptr, RecordOverflow> checkedDataLength(size);
-        Checked<GC3Dintptr, RecordOverflow> checkedReadBufferMax = checkedReadBufferOffset + checkedDataLength;
+        Checked<GCGLintptr, RecordOverflow> checkedReadBufferOffset(readOffset);
+        Checked<GCGLsizeiptr, RecordOverflow> checkedDataLength(size);
+        Checked<GCGLintptr, RecordOverflow> checkedReadBufferMax = checkedReadBufferOffset + checkedDataLength;
         if (checkedReadBufferMax.hasOverflowed() || readOffset > readBuffer.byteLength() || checkedReadBufferMax.unsafeGet() > readBuffer.byteLength())
             return false;
 
-        Checked<GC3Dintptr, RecordOverflow> checkedWriteBufferOffset(writeOffset);
-        Checked<GC3Dintptr, RecordOverflow> checkedWriteBufferMax = checkedWriteBufferOffset + checkedDataLength;
+        Checked<GCGLintptr, RecordOverflow> checkedWriteBufferOffset(writeOffset);
+        Checked<GCGLintptr, RecordOverflow> checkedWriteBufferMax = checkedWriteBufferOffset + checkedDataLength;
         if (checkedWriteBufferMax.hasOverflowed() || writeOffset > m_byteLength || checkedWriteBufferMax.unsafeGet() > m_byteLength)
             return false;
     }
@@ -226,12 +226,12 @@ void WebGLBuffer::disassociateBufferData()
     clearCachedMaxIndices();
 }
 
-GC3Dsizeiptr WebGLBuffer::byteLength() const
+GCGLsizeiptr WebGLBuffer::byteLength() const
 {
     return m_byteLength;
 }
 
-Optional<unsigned> WebGLBuffer::getCachedMaxIndex(GC3Denum type)
+Optional<unsigned> WebGLBuffer::getCachedMaxIndex(GCGLenum type)
 {
     for (auto& cache : m_maxIndexCache) {
         if (cache.type == type)
@@ -240,7 +240,7 @@ Optional<unsigned> WebGLBuffer::getCachedMaxIndex(GC3Denum type)
     return WTF::nullopt;
 }
 
-void WebGLBuffer::setCachedMaxIndex(GC3Denum type, unsigned value)
+void WebGLBuffer::setCachedMaxIndex(GCGLenum type, unsigned value)
 {
     for (auto& cache : m_maxIndexCache) {
         if (cache.type == type) {
@@ -253,7 +253,7 @@ void WebGLBuffer::setCachedMaxIndex(GC3Denum type, unsigned value)
     m_nextAvailableCacheEntry = (m_nextAvailableCacheEntry + 1) % WTF_ARRAY_LENGTH(m_maxIndexCache);
 }
 
-void WebGLBuffer::setTarget(GC3Denum target, bool forWebGL2)
+void WebGLBuffer::setTarget(GCGLenum target, bool forWebGL2)
 {
     // In WebGL, a buffer is bound to one target in its lifetime
     if (m_target)

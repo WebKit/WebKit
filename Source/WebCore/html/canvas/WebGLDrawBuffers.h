@@ -40,7 +40,7 @@ public:
 
     ExtensionName getName() const override;
 
-    void drawBuffersWEBGL(const Vector<GC3Denum>& buffers);
+    void drawBuffersWEBGL(const Vector<GCGLenum>& buffers);
 
 private:
     static bool satisfiesWebGLRequirements(WebGLRenderingContextBase&);

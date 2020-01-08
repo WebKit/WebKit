@@ -49,7 +49,7 @@ WebGLTransformFeedback::WebGLTransformFeedback(WebGLRenderingContextBase& ctx)
     // FIXME: Call createTransformFeedback from GraphicsContextGLOpenGL.
 }
 
-void WebGLTransformFeedback::deleteObjectImpl(GraphicsContextGLOpenGL* context3d, Platform3DObject object)
+void WebGLTransformFeedback::deleteObjectImpl(GraphicsContextGLOpenGL* context3d, PlatformGLObject object)
 {
     UNUSED_PARAM(context3d);
     UNUSED_PARAM(object);

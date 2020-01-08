@@ -34,12 +34,12 @@
 
 namespace WebCore {
 
-Ref<WebGLShader> WebGLShader::create(WebGLRenderingContextBase& ctx, GC3Denum type)
+Ref<WebGLShader> WebGLShader::create(WebGLRenderingContextBase& ctx, GCGLenum type)
 {
     return adoptRef(*new WebGLShader(ctx, type));
 }
 
-WebGLShader::WebGLShader(WebGLRenderingContextBase& ctx, GC3Denum type)
+WebGLShader::WebGLShader(WebGLRenderingContextBase& ctx, GCGLenum type)
     : WebGLSharedObject(ctx)
     , m_type(type)
     , m_source(emptyString())
@@ -53,7 +53,7 @@ WebGLShader::~WebGLShader()
     deleteObject(0);
 }
 
-void WebGLShader::deleteObjectImpl(GraphicsContextGLOpenGL* context3d, Platform3DObject object)
+void WebGLShader::deleteObjectImpl(GraphicsContextGLOpenGL* context3d, PlatformGLObject object)
 {
     context3d->deleteShader(object);
 }

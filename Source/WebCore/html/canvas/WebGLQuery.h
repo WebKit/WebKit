@@ -38,7 +38,7 @@ public:
 
 protected:
     explicit WebGLQuery(WebGLRenderingContextBase&);
-    void deleteObjectImpl(GraphicsContextGLOpenGL*, Platform3DObject) override;
+    void deleteObjectImpl(GraphicsContextGLOpenGL*, PlatformGLObject) override;
 };
 
 } // namespace WebCore

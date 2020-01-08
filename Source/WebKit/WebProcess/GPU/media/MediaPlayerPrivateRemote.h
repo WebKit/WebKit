@@ -187,7 +187,7 @@ private:
     void paint(WebCore::GraphicsContext&, const WebCore::FloatRect&) final;
 
     void paintCurrentFrameInContext(WebCore::GraphicsContext&, const WebCore::FloatRect&) final;
-    bool copyVideoTextureToPlatformTexture(WebCore::GraphicsContextGLOpenGL*, Platform3DObject, GC3Denum, GC3Dint, GC3Denum, GC3Denum, GC3Denum, bool, bool) final;
+    bool copyVideoTextureToPlatformTexture(WebCore::GraphicsContextGLOpenGL*, PlatformGLObject, GCGLenum, GCGLint, GCGLenum, GCGLenum, GCGLenum, bool, bool) final;
     WebCore::NativeImagePtr nativeImageForCurrentTime() final;
 
     void setPreload(WebCore::MediaPlayer::Preload) final;

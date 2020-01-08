@@ -41,21 +41,21 @@ public:
     bool isWebGL1() const final { return true; }
 
     WebGLExtension* getExtension(const String&) final;
-    WebGLAny getParameter(GC3Denum pname) final;
+    WebGLAny getParameter(GCGLenum pname) final;
     Optional<Vector<String>> getSupportedExtensions() final;
 
-    WebGLAny getFramebufferAttachmentParameter(GC3Denum target, GC3Denum attachment, GC3Denum pname) final;
-    void renderbufferStorage(GC3Denum target, GC3Denum internalformat, GC3Dsizei width, GC3Dsizei height) final;
-    bool validateFramebufferFuncParameters(const char* functionName, GC3Denum target, GC3Denum attachment) final;
-    void hint(GC3Denum target, GC3Denum mode) final;
-    void clear(GC3Dbitfield mask) final;
+    WebGLAny getFramebufferAttachmentParameter(GCGLenum target, GCGLenum attachment, GCGLenum pname) final;
+    void renderbufferStorage(GCGLenum target, GCGLenum internalformat, GCGLsizei width, GCGLsizei height) final;
+    bool validateFramebufferFuncParameters(const char* functionName, GCGLenum target, GCGLenum attachment) final;
+    void hint(GCGLenum target, GCGLenum mode) final;
+    void clear(GCGLbitfield mask) final;
 
-    GC3Dint getMaxDrawBuffers() final;
-    GC3Dint getMaxColorAttachments() final;
+    GCGLint getMaxDrawBuffers() final;
+    GCGLint getMaxColorAttachments() final;
     void initializeVertexArrayObjects() final;
-    bool validateIndexArrayConservative(GC3Denum type, unsigned& numElementsRequired) final;
-    bool validateBlendEquation(const char* functionName, GC3Denum mode) final;
-    bool validateCapability(const char* functionName, GC3Denum cap) final;
+    bool validateIndexArrayConservative(GCGLenum type, unsigned& numElementsRequired) final;
+    bool validateBlendEquation(const char* functionName, GCGLenum mode) final;
+    bool validateCapability(const char* functionName, GCGLenum cap) final;
 
 private:
     WebGLRenderingContext(CanvasBase&, GraphicsContextGLAttributes);

@@ -51,15 +51,15 @@
 #ifndef GL_EXT_robustness
 #define GL_EXT_robustness 1
 #ifdef GL_GLEXT_PROTOTYPES
-GL_APICALL GC3Denum GL_APIENTRY glGetGraphicsResetStatusEXT(void);
-GL_APICALL void GL_APIENTRY glReadnPixelsEXT(GLint x, GLint y, GC3Dsizei width, GC3Dsizei height, GC3Denum format, GC3Denum type, GC3Dsizei bufSize, void *data);
-GL_APICALL void GL_APIENTRY glGetnUniformfvEXT(GLuint program, GLint location, GC3Dsizei bufSize, float *params);
-GL_APICALL void GL_APIENTRY glGetnUniformivEXT(GLuint program, GLint location, GC3Dsizei bufSize, GLint *params);
+GL_APICALL GCGLenum GL_APIENTRY glGetGraphicsResetStatusEXT(void);
+GL_APICALL void GL_APIENTRY glReadnPixelsEXT(GLint x, GLint y, GCGLsizei width, GCGLsizei height, GCGLenum format, GCGLenum type, GCGLsizei bufSize, void *data);
+GL_APICALL void GL_APIENTRY glGetnUniformfvEXT(GLuint program, GLint location, GCGLsizei bufSize, float *params);
+GL_APICALL void GL_APIENTRY glGetnUniformivEXT(GLuint program, GLint location, GCGLsizei bufSize, GLint *params);
 #endif
-typedef GC3Denum (GL_APIENTRYP PFNGLGETGRAPHICSRESETSTATUSEXTPROC) (void);
-typedef void (GL_APIENTRYP PFNGLREADNPIXELSEXTPROC) (GLint x, GLint y, GC3Dsizei width, GC3Dsizei height, GC3Denum format, GC3Denum type, GC3Dsizei bufSize, void *data);
-typedef void (GL_APIENTRYP PFNGLGETNUNIFORMFVEXTPROC) (GLuint program, GLint location, GC3Dsizei bufSize, float *params);
-typedef void (GL_APIENTRYP PFNGLGETNUNIFORMIVEXTPROC) (GLuint program, GLint location, GC3Dsizei bufSize, GLint *params);
+typedef GCGLenum (GL_APIENTRYP PFNGLGETGRAPHICSRESETSTATUSEXTPROC) (void);
+typedef void (GL_APIENTRYP PFNGLREADNPIXELSEXTPROC) (GLint x, GLint y, GCGLsizei width, GCGLsizei height, GCGLenum format, GCGLenum type, GCGLsizei bufSize, void *data);
+typedef void (GL_APIENTRYP PFNGLGETNUNIFORMFVEXTPROC) (GLuint program, GLint location, GCGLsizei bufSize, float *params);
+typedef void (GL_APIENTRYP PFNGLGETNUNIFORMIVEXTPROC) (GLuint program, GLint location, GCGLsizei bufSize, GLint *params);
 #endif
 
 namespace WebCore {
@@ -81,29 +81,29 @@ public:
     void pushGroupMarkerEXT(const String&) override;
     void popGroupMarkerEXT(void) override;
 
-    Platform3DObject createVertexArrayOES() override;
-    void deleteVertexArrayOES(Platform3DObject) override;
-    GC3Dboolean isVertexArrayOES(Platform3DObject) override;
-    void bindVertexArrayOES(Platform3DObject) override;
-    void drawBuffersEXT(GC3Dsizei, const GC3Denum*) override;
+    PlatformGLObject createVertexArrayOES() override;
+    void deleteVertexArrayOES(PlatformGLObject) override;
+    GCGLboolean isVertexArrayOES(PlatformGLObject) override;
+    void bindVertexArrayOES(PlatformGLObject) override;
+    void drawBuffersEXT(GCGLsizei, const GCGLenum*) override;
 
-    void drawArraysInstanced(GC3Denum mode, GC3Dint first, GC3Dsizei count, GC3Dsizei primcount) override;
-    void drawElementsInstanced(GC3Denum mode, GC3Dsizei count, GC3Denum type, long long offset, GC3Dsizei primcount) override;
-    void vertexAttribDivisor(GC3Duint index, GC3Duint divisor) override;
+    void drawArraysInstanced(GCGLenum mode, GCGLint first, GCGLsizei count, GCGLsizei primcount) override;
+    void drawElementsInstanced(GCGLenum mode, GCGLsizei count, GCGLenum type, long long offset, GCGLsizei primcount) override;
+    void vertexAttribDivisor(GCGLuint index, GCGLuint divisor) override;
 
     // EXT Robustness - reset
     int getGraphicsResetStatusARB() override;
 
     // EXT Robustness - etc
-    void readnPixelsEXT(int x, int y, GC3Dsizei width, GC3Dsizei height, GC3Denum format, GC3Denum type, GC3Dsizei bufSize, void *data) override;
-    void getnUniformfvEXT(GC3Duint program, int location, GC3Dsizei bufSize, float *params) override;
-    void getnUniformivEXT(GC3Duint program, int location, GC3Dsizei bufSize, int *params) override;
+    void readnPixelsEXT(int x, int y, GCGLsizei width, GCGLsizei height, GCGLenum format, GCGLenum type, GCGLsizei bufSize, void *data) override;
+    void getnUniformfvEXT(GCGLuint program, int location, GCGLsizei bufSize, float *params) override;
+    void getnUniformivEXT(GCGLuint program, int location, GCGLsizei bufSize, int *params) override;
 
 protected:
     bool supportsExtension(const String&) override;
     String getExtensions() override;
 
-    GC3Denum m_contextResetStatus;
+    GCGLenum m_contextResetStatus;
 
     bool m_supportsOESvertexArrayObject;
     bool m_supportsIMGMultisampledRenderToTexture;

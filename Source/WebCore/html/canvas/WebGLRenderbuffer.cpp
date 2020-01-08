@@ -56,7 +56,7 @@ WebGLRenderbuffer::WebGLRenderbuffer(WebGLRenderingContextBase& ctx)
     setObject(ctx.graphicsContextGL()->createRenderbuffer());
 }
 
-void WebGLRenderbuffer::deleteObjectImpl(GraphicsContextGLOpenGL* context3d, Platform3DObject object)
+void WebGLRenderbuffer::deleteObjectImpl(GraphicsContextGLOpenGL* context3d, PlatformGLObject object)
 {
     context3d->deleteRenderbuffer(object);
 }

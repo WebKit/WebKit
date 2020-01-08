@@ -164,7 +164,7 @@ int ExtensionsGLOpenGLCommon::getGraphicsResetStatusARB()
     return GraphicsContextGL::NO_ERROR;
 }
 
-String ExtensionsGLOpenGLCommon::getTranslatedShaderSourceANGLE(Platform3DObject shader)
+String ExtensionsGLOpenGLCommon::getTranslatedShaderSourceANGLE(PlatformGLObject shader)
 {
     ASSERT(shader);
     int GLshaderType;
@@ -181,7 +181,7 @@ String ExtensionsGLOpenGLCommon::getTranslatedShaderSourceANGLE(Platform3DObject
     else
         return ""; // Invalid shader type.
 
-    HashMap<Platform3DObject, GraphicsContextGLOpenGL::ShaderSourceEntry>::iterator result = m_context->m_shaderSourceMap.find(shader);
+    HashMap<PlatformGLObject, GraphicsContextGLOpenGL::ShaderSourceEntry>::iterator result = m_context->m_shaderSourceMap.find(shader);
 
     if (result == m_context->m_shaderSourceMap.end())
         return "";
@@ -239,17 +239,17 @@ void ExtensionsGLOpenGLCommon::initializeAvailableExtensions()
     m_initializedAvailableExtensions = true;
 }
 
-void ExtensionsGLOpenGLCommon::readnPixelsEXT(int, int, GC3Dsizei, GC3Dsizei, GC3Denum, GC3Denum, GC3Dsizei, void *)
+void ExtensionsGLOpenGLCommon::readnPixelsEXT(int, int, GCGLsizei, GCGLsizei, GCGLenum, GCGLenum, GCGLsizei, void *)
 {
     m_context->synthesizeGLError(GL_INVALID_OPERATION);
 }
 
-void ExtensionsGLOpenGLCommon::getnUniformfvEXT(GC3Duint, int, GC3Dsizei, float *)
+void ExtensionsGLOpenGLCommon::getnUniformfvEXT(GCGLuint, int, GCGLsizei, float *)
 {
     m_context->synthesizeGLError(GL_INVALID_OPERATION);
 }
 
-void ExtensionsGLOpenGLCommon::getnUniformivEXT(GC3Duint, int, GC3Dsizei, int *)
+void ExtensionsGLOpenGLCommon::getnUniformivEXT(GCGLuint, int, GCGLsizei, int *)
 {
     m_context->synthesizeGLError(GL_INVALID_OPERATION);
 }

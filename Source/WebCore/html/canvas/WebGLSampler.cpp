@@ -49,7 +49,7 @@ WebGLSampler::WebGLSampler(WebGLRenderingContextBase& ctx)
     // FIXME: Call createSampler from GraphicsContextGLOpenGL.
 }
 
-void WebGLSampler::deleteObjectImpl(GraphicsContextGLOpenGL* context3d, Platform3DObject object)
+void WebGLSampler::deleteObjectImpl(GraphicsContextGLOpenGL* context3d, PlatformGLObject object)
 {
     UNUSED_PARAM(context3d);
     UNUSED_PARAM(object);

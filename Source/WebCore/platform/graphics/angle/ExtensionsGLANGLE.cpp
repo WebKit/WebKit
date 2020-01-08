@@ -100,7 +100,7 @@ int ExtensionsGLANGLE::getGraphicsResetStatusARB()
     return GraphicsContextGL::NO_ERROR;
 }
 
-String ExtensionsGLANGLE::getTranslatedShaderSourceANGLE(Platform3DObject shader)
+String ExtensionsGLANGLE::getTranslatedShaderSourceANGLE(PlatformGLObject shader)
 {
     int sourceLength = 0;
     m_context->getShaderiv(shader, GL_TRANSLATED_SHADER_SOURCE_LENGTH_ANGLE, &sourceLength);
@@ -137,17 +137,17 @@ void ExtensionsGLANGLE::initializeAvailableExtensions()
     m_initializedAvailableExtensions = true;
 }
 
-void ExtensionsGLANGLE::readnPixelsEXT(int, int, GC3Dsizei, GC3Dsizei, GC3Denum, GC3Denum, GC3Dsizei, void *)
+void ExtensionsGLANGLE::readnPixelsEXT(int, int, GCGLsizei, GCGLsizei, GCGLenum, GCGLenum, GCGLsizei, void *)
 {
     m_context->synthesizeGLError(GL_INVALID_OPERATION);
 }
 
-void ExtensionsGLANGLE::getnUniformfvEXT(GC3Duint, int, GC3Dsizei, float *)
+void ExtensionsGLANGLE::getnUniformfvEXT(GCGLuint, int, GCGLsizei, float *)
 {
     m_context->synthesizeGLError(GL_INVALID_OPERATION);
 }
 
-void ExtensionsGLANGLE::getnUniformivEXT(GC3Duint, int, GC3Dsizei, int *)
+void ExtensionsGLANGLE::getnUniformivEXT(GCGLuint, int, GCGLsizei, int *)
 {
     m_context->synthesizeGLError(GL_INVALID_OPERATION);
 }
@@ -163,7 +163,7 @@ void ExtensionsGLANGLE::renderbufferStorageMultisample(unsigned long target, uns
     gl::RenderbufferStorageMultisampleANGLE(target, samples, internalformat, width, height);
 }
 
-Platform3DObject ExtensionsGLANGLE::createVertexArrayOES()
+PlatformGLObject ExtensionsGLANGLE::createVertexArrayOES()
 {
     m_context->makeContextCurrent();
     GLuint array = 0;
@@ -171,7 +171,7 @@ Platform3DObject ExtensionsGLANGLE::createVertexArrayOES()
     return array;
 }
 
-void ExtensionsGLANGLE::deleteVertexArrayOES(Platform3DObject array)
+void ExtensionsGLANGLE::deleteVertexArrayOES(PlatformGLObject array)
 {
     if (!array)
         return;
@@ -180,7 +180,7 @@ void ExtensionsGLANGLE::deleteVertexArrayOES(Platform3DObject array)
     gl::DeleteVertexArraysOES(1, &array);
 }
 
-GC3Dboolean ExtensionsGLANGLE::isVertexArrayOES(Platform3DObject array)
+GCGLboolean ExtensionsGLANGLE::isVertexArrayOES(PlatformGLObject array)
 {
     if (!array)
         return GL_FALSE;
@@ -189,7 +189,7 @@ GC3Dboolean ExtensionsGLANGLE::isVertexArrayOES(Platform3DObject array)
     return gl::IsVertexArrayOES(array);
 }
 
-void ExtensionsGLANGLE::bindVertexArrayOES(Platform3DObject array)
+void ExtensionsGLANGLE::bindVertexArrayOES(PlatformGLObject array)
 {
     m_context->makeContextCurrent();
     gl::BindVertexArrayOES(array);
@@ -218,24 +218,24 @@ bool ExtensionsGLANGLE::supportsExtension(const String& name)
     return m_availableExtensions.contains(name) || m_requestableExtensions.contains(name);
 }
 
-void ExtensionsGLANGLE::drawBuffersEXT(GC3Dsizei n, const GC3Denum* bufs)
+void ExtensionsGLANGLE::drawBuffersEXT(GCGLsizei n, const GCGLenum* bufs)
 {
     gl::DrawBuffersEXT(n, bufs);
 }
 
-void ExtensionsGLANGLE::drawArraysInstanced(GC3Denum mode, GC3Dint first, GC3Dsizei count, GC3Dsizei primcount)
+void ExtensionsGLANGLE::drawArraysInstanced(GCGLenum mode, GCGLint first, GCGLsizei count, GCGLsizei primcount)
 {
     m_context->makeContextCurrent();
     gl::DrawArraysInstancedANGLE(mode, first, count, primcount);
 }
 
-void ExtensionsGLANGLE::drawElementsInstanced(GC3Denum mode, GC3Dsizei count, GC3Denum type, long long offset, GC3Dsizei primcount)
+void ExtensionsGLANGLE::drawElementsInstanced(GCGLenum mode, GCGLsizei count, GCGLenum type, long long offset, GCGLsizei primcount)
 {
     m_context->makeContextCurrent();
     gl::DrawElementsInstancedANGLE(mode, count, type, reinterpret_cast<GLvoid*>(static_cast<intptr_t>(offset)), primcount);
 }
 
-void ExtensionsGLANGLE::vertexAttribDivisor(GC3Duint index, GC3Duint divisor)
+void ExtensionsGLANGLE::vertexAttribDivisor(GCGLuint index, GCGLuint divisor)
 {
     m_context->makeContextCurrent();
     gl::VertexAttribDivisorANGLE(index, divisor);

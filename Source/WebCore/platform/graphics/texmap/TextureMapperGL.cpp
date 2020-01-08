@@ -721,7 +721,7 @@ void TextureMapperGL::drawEdgeTriangles(TextureMapperShaderProgram& program)
     };
 #undef SIDE_TRIANGLE_DATA
 
-    GLuint vbo = data().getStaticVBO(GL_ARRAY_BUFFER, sizeof(GC3Dfloat) * 48, unitRectSideTriangles);
+    GLuint vbo = data().getStaticVBO(GL_ARRAY_BUFFER, sizeof(GCGLfloat) * 48, unitRectSideTriangles);
     glBindBuffer(GL_ARRAY_BUFFER, vbo);
     glVertexAttribPointer(program.vertexLocation(), 4, GL_FLOAT, false, 0, 0);
     glDrawArrays(GL_TRIANGLES, 0, 12);

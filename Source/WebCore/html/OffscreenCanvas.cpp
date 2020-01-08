@@ -154,7 +154,7 @@ ExceptionOr<RefPtr<ImageBitmap>> OffscreenCanvas::transferToImageBitmap()
         // creates a new backing store. Since we're not doing that yet, we
         // need to erase what's there.
 
-        GC3Dfloat clearColor[4];
+        GCGLfloat clearColor[4];
         gc3d->getFloatv(GraphicsContextGL::COLOR_CLEAR_VALUE, clearColor);
         gc3d->clearColor(0, 0, 0, 0);
         gc3d->clear(GraphicsContextGL::COLOR_BUFFER_BIT | GraphicsContextGL::DEPTH_BUFFER_BIT | GraphicsContextGL::STENCIL_BUFFER_BIT);

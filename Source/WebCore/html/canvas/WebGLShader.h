@@ -34,10 +34,10 @@ namespace WebCore {
 
 class WebGLShader final : public WebGLSharedObject {
 public:
-    static Ref<WebGLShader> create(WebGLRenderingContextBase&, GC3Denum);
+    static Ref<WebGLShader> create(WebGLRenderingContextBase&, GCGLenum);
     virtual ~WebGLShader();
 
-    GC3Denum getType() const { return m_type; }
+    GCGLenum getType() const { return m_type; }
     const String& getSource() const { return m_source; }
 
     void setSource(const String& source) { m_source = source; }
@@ -46,11 +46,11 @@ public:
     void setValid(bool valid) { m_isValid = valid; }
 
 private:
-    WebGLShader(WebGLRenderingContextBase&, GC3Denum);
+    WebGLShader(WebGLRenderingContextBase&, GCGLenum);
 
-    void deleteObjectImpl(GraphicsContextGLOpenGL*, Platform3DObject) final;
+    void deleteObjectImpl(GraphicsContextGLOpenGL*, PlatformGLObject) final;
 
-    GC3Denum m_type;
+    GCGLenum m_type;
     String m_source;
     bool m_isValid;
 };

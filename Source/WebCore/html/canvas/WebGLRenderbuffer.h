@@ -37,20 +37,20 @@ public:
 
     static Ref<WebGLRenderbuffer> create(WebGLRenderingContextBase&);
 
-    void setInternalFormat(GC3Denum internalformat)
+    void setInternalFormat(GCGLenum internalformat)
     {
         m_internalFormat = internalformat;
         m_initialized = false;
     }
-    GC3Denum getInternalFormat() const { return m_internalFormat; }
+    GCGLenum getInternalFormat() const { return m_internalFormat; }
 
-    void setSize(GC3Dsizei width, GC3Dsizei height)
+    void setSize(GCGLsizei width, GCGLsizei height)
     {
         m_width = width;
         m_height = height;
     }
-    GC3Dsizei getWidth() const { return m_width; }
-    GC3Dsizei getHeight() const { return m_height; }
+    GCGLsizei getWidth() const { return m_width; }
+    GCGLsizei getHeight() const { return m_height; }
 
     void setIsValid(bool isValid) { m_isValid = isValid; }
     bool isValid() const { return m_isValid; }
@@ -65,14 +65,14 @@ public:
 protected:
     WebGLRenderbuffer(WebGLRenderingContextBase&);
 
-    void deleteObjectImpl(GraphicsContextGLOpenGL*, Platform3DObject) override;
+    void deleteObjectImpl(GraphicsContextGLOpenGL*, PlatformGLObject) override;
 
 private:
     bool isRenderbuffer() const override { return true; }
 
-    GC3Denum m_internalFormat;
+    GCGLenum m_internalFormat;
     bool m_initialized;
-    GC3Dsizei m_width, m_height;
+    GCGLsizei m_width, m_height;
     bool m_isValid; // This is only false if internalFormat is DEPTH_STENCIL and packed_depth_stencil is not supported.
 
     bool m_hasEverBeenBound;

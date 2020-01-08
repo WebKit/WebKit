@@ -51,19 +51,19 @@ public:
     typedef CVOpenGLTextureRef TextureType;
 #endif
 
-    bool copyImageToPlatformTexture(CVPixelBufferRef, size_t width, size_t height, Platform3DObject outputTexture, GC3Denum outputTarget, GC3Dint level, GC3Denum internalFormat, GC3Denum format, GC3Denum type, bool premultiplyAlpha, bool flipY);
-    bool copyVideoTextureToPlatformTexture(TextureType, size_t width, size_t height, Platform3DObject outputTexture, GC3Denum outputTarget, GC3Dint level, GC3Denum internalFormat, GC3Denum format, GC3Denum type, bool premultiplyAlpha, bool flipY, bool swapColorChannels = false);
+    bool copyImageToPlatformTexture(CVPixelBufferRef, size_t width, size_t height, PlatformGLObject outputTexture, GCGLenum outputTarget, GCGLint level, GCGLenum internalFormat, GCGLenum format, GCGLenum type, bool premultiplyAlpha, bool flipY);
+    bool copyVideoTextureToPlatformTexture(TextureType, size_t width, size_t height, PlatformGLObject outputTexture, GCGLenum outputTarget, GCGLint level, GCGLenum internalFormat, GCGLenum format, GCGLenum type, bool premultiplyAlpha, bool flipY, bool swapColorChannels = false);
 
     GraphicsContextGLOpenGL& context() { return m_context; }
 
 private:
-    bool copyVideoTextureToPlatformTexture(Platform3DObject inputTexture, GC3Denum inputTarget, size_t width, size_t height, Platform3DObject outputTexture, GC3Denum outputTarget, GC3Dint level, GC3Denum internalFormat, GC3Denum format, GC3Denum type, bool premultiplyAlpha, bool flipY, bool swapColorChannels);
+    bool copyVideoTextureToPlatformTexture(PlatformGLObject inputTexture, GCGLenum inputTarget, size_t width, size_t height, PlatformGLObject outputTexture, GCGLenum outputTarget, GCGLint level, GCGLenum internalFormat, GCGLenum format, GCGLenum type, bool premultiplyAlpha, bool flipY, bool swapColorChannels);
 
     bool initializeContextObjects();
     bool initializeUVContextObjects();
 
 #if HAVE(IOSURFACE)
-    unsigned lastTextureSeed(GC3Duint texture)
+    unsigned lastTextureSeed(GCGLuint texture)
     {
         auto iterator = m_lastTextureSeed.find(texture);
         return iterator == m_lastTextureSeed.end() ? 0 : iterator->value;
@@ -77,7 +77,7 @@ private:
 
     // Returns a handle which, if non-null, must be released via the
     // detach call below.
-    void* attachIOSurfaceToTexture(GC3Denum target, GC3Denum internalFormat, GC3Dsizei width, GC3Dsizei height, GC3Denum type, IOSurfaceRef, GC3Duint plane);
+    void* attachIOSurfaceToTexture(GCGLenum target, GCGLenum internalFormat, GCGLsizei width, GCGLsizei height, GCGLenum type, IOSurfaceRef, GCGLuint plane);
     void detachIOSurfaceFromTexture(void* handle);
 #endif
 
@@ -86,31 +86,31 @@ private:
 #if !USE(ANGLE)
     std::unique_ptr<TextureCacheCV> m_textureCache;
 #endif
-    Platform3DObject m_framebuffer { 0 };
-    Platform3DObject m_program { 0 };
-    Platform3DObject m_vertexBuffer { 0 };
-    GC3Dint m_textureUniformLocation { -1 };
-    GC3Dint m_textureDimensionsUniformLocation { -1 };
-    GC3Dint m_flipYUniformLocation { -1 };
-    GC3Dint m_swapColorChannelsUniformLocation { -1 };
-    GC3Dint m_premultiplyUniformLocation { -1 };
-    GC3Dint m_positionAttributeLocation { -1 };
-    Platform3DObject m_yuvProgram { 0 };
-    Platform3DObject m_yuvVertexBuffer { 0 };
-    GC3Dint m_yTextureUniformLocation { -1 };
-    GC3Dint m_uvTextureUniformLocation { -1 };
-    GC3Dint m_yuvFlipYUniformLocation { -1 };
-    GC3Dint m_colorMatrixUniformLocation { -1 };
-    GC3Dint m_yuvPositionAttributeLocation { -1 };
-    GC3Dint m_yTextureSizeUniformLocation { -1 };
-    GC3Dint m_uvTextureSizeUniformLocation { -1 };
+    PlatformGLObject m_framebuffer { 0 };
+    PlatformGLObject m_program { 0 };
+    PlatformGLObject m_vertexBuffer { 0 };
+    GCGLint m_textureUniformLocation { -1 };
+    GCGLint m_textureDimensionsUniformLocation { -1 };
+    GCGLint m_flipYUniformLocation { -1 };
+    GCGLint m_swapColorChannelsUniformLocation { -1 };
+    GCGLint m_premultiplyUniformLocation { -1 };
+    GCGLint m_positionAttributeLocation { -1 };
+    PlatformGLObject m_yuvProgram { 0 };
+    PlatformGLObject m_yuvVertexBuffer { 0 };
+    GCGLint m_yTextureUniformLocation { -1 };
+    GCGLint m_uvTextureUniformLocation { -1 };
+    GCGLint m_yuvFlipYUniformLocation { -1 };
+    GCGLint m_colorMatrixUniformLocation { -1 };
+    GCGLint m_yuvPositionAttributeLocation { -1 };
+    GCGLint m_yTextureSizeUniformLocation { -1 };
+    GCGLint m_uvTextureSizeUniformLocation { -1 };
 
 #if HAVE(IOSURFACE)
     bool m_lastFlipY { false };
     UnsafePointer<IOSurfaceRef> m_lastSurface;
     uint32_t m_lastSurfaceSeed { 0 };
 
-    using TextureSeedMap = HashMap<GC3Duint, unsigned, WTF::IntHash<GC3Duint>, WTF::UnsignedWithZeroKeyHashTraits<GC3Duint>>;
+    using TextureSeedMap = HashMap<GCGLuint, unsigned, WTF::IntHash<GCGLuint>, WTF::UnsignedWithZeroKeyHashTraits<GCGLuint>>;
     TextureSeedMap m_lastTextureSeed;
 #endif
 };

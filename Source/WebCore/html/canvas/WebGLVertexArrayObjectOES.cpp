@@ -56,7 +56,7 @@ WebGLVertexArrayObjectOES::~WebGLVertexArrayObjectOES()
     deleteObject(nullptr);
 }
 
-void WebGLVertexArrayObjectOES::deleteObjectImpl(GraphicsContextGLOpenGL* context3d, Platform3DObject object)
+void WebGLVertexArrayObjectOES::deleteObjectImpl(GraphicsContextGLOpenGL* context3d, PlatformGLObject object)
 {
     switch (m_type) {
     case Type::Default:

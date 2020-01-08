@@ -49,7 +49,7 @@ WebGLQuery::WebGLQuery(WebGLRenderingContextBase& ctx)
     // FIXME: Call createQuery from GraphicsContextGLOpenGL.
 }
 
-void WebGLQuery::deleteObjectImpl(GraphicsContextGLOpenGL* context3d, Platform3DObject object)
+void WebGLQuery::deleteObjectImpl(GraphicsContextGLOpenGL* context3d, PlatformGLObject object)
 {
     UNUSED_PARAM(context3d);
     UNUSED_PARAM(object);

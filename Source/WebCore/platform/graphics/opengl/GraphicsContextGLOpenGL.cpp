@@ -41,7 +41,7 @@ namespace WebCore {
 
 namespace {
 
-GraphicsContextGL::DataFormat getDataFormat(GC3Denum destinationFormat, GC3Denum destinationType)
+GraphicsContextGL::DataFormat getDataFormat(GCGLenum destinationFormat, GCGLenum destinationType)
 {
     GraphicsContextGL::DataFormat dstFormat = GraphicsContextGL::DataFormat::RGBA8;
     switch (destinationType) {
@@ -143,13 +143,13 @@ GraphicsContextGL::DataFormat getDataFormat(GC3Denum destinationFormat, GC3Denum
 
 } // anonymous namespace
 
-bool GraphicsContextGLOpenGL::texImage2DResourceSafe(GC3Denum target, GC3Dint level, GC3Denum internalformat, GC3Dsizei width, GC3Dsizei height, GC3Dint border, GC3Denum format, GC3Denum type, GC3Dint unpackAlignment)
+bool GraphicsContextGLOpenGL::texImage2DResourceSafe(GCGLenum target, GCGLint level, GCGLenum internalformat, GCGLsizei width, GCGLsizei height, GCGLint border, GCGLenum format, GCGLenum type, GCGLint unpackAlignment)
 {
     ASSERT(unpackAlignment == 1 || unpackAlignment == 2 || unpackAlignment == 4 || unpackAlignment == 8);
     UniqueArray<unsigned char> zero;
     if (width > 0 && height > 0) {
         unsigned size;
-        GC3Denum error = computeImageSizeInBytes(format, type, width, height, unpackAlignment, &size, nullptr);
+        GCGLenum error = computeImageSizeInBytes(format, type, width, height, unpackAlignment, &size, nullptr);
         if (error != GraphicsContextGL::NO_ERROR) {
             synthesizeGLError(error);
             return false;
@@ -164,7 +164,7 @@ bool GraphicsContextGLOpenGL::texImage2DResourceSafe(GC3Denum target, GC3Dint le
     return texImage2D(target, level, internalformat, width, height, border, format, type, zero.get());
 }
 
-bool GraphicsContextGLOpenGL::computeFormatAndTypeParameters(GC3Denum format, GC3Denum type, unsigned* componentsPerPixel, unsigned* bytesPerComponent)
+bool GraphicsContextGLOpenGL::computeFormatAndTypeParameters(GCGLenum format, GCGLenum type, unsigned* componentsPerPixel, unsigned* bytesPerComponent)
 {
     switch (format) {
     case GraphicsContextGL::RED:
@@ -197,45 +197,45 @@ bool GraphicsContextGLOpenGL::computeFormatAndTypeParameters(GC3Denum format, GC
 
     switch (type) {
     case GraphicsContextGL::UNSIGNED_BYTE:
-        *bytesPerComponent = sizeof(GC3Dubyte);
+        *bytesPerComponent = sizeof(GCGLubyte);
         break;
     case GraphicsContextGL::BYTE:
-        *bytesPerComponent = sizeof(GC3Dbyte);
+        *bytesPerComponent = sizeof(GCGLbyte);
         break;
     case GraphicsContextGL::UNSIGNED_SHORT:
-        *bytesPerComponent = sizeof(GC3Dushort);
+        *bytesPerComponent = sizeof(GCGLushort);
         break;
     case GraphicsContextGL::SHORT:
-        *bytesPerComponent = sizeof(GC3Dshort);
+        *bytesPerComponent = sizeof(GCGLshort);
         break;
     case GraphicsContextGL::UNSIGNED_SHORT_5_6_5:
     case GraphicsContextGL::UNSIGNED_SHORT_4_4_4_4:
     case GraphicsContextGL::UNSIGNED_SHORT_5_5_5_1:
         *componentsPerPixel = 1;
-        *bytesPerComponent = sizeof(GC3Dushort);
+        *bytesPerComponent = sizeof(GCGLushort);
         break;
     case GraphicsContextGL::UNSIGNED_INT_24_8:
     case GraphicsContextGL::UNSIGNED_INT_2_10_10_10_REV:
     case GraphicsContextGL::UNSIGNED_INT_10F_11F_11F_REV:
     case GraphicsContextGL::UNSIGNED_INT_5_9_9_9_REV:
         *componentsPerPixel = 1;
-        *bytesPerComponent = sizeof(GC3Duint);
+        *bytesPerComponent = sizeof(GCGLuint);
         break;
     case GraphicsContextGL::UNSIGNED_INT:
-        *bytesPerComponent = sizeof(GC3Duint);
+        *bytesPerComponent = sizeof(GCGLuint);
         break;
     case GraphicsContextGL::INT:
-        *bytesPerComponent = sizeof(GC3Dint);
+        *bytesPerComponent = sizeof(GCGLint);
         break;
     case GraphicsContextGL::FLOAT: // OES_texture_float
-        *bytesPerComponent = sizeof(GC3Dfloat);
+        *bytesPerComponent = sizeof(GCGLfloat);
         break;
     case GraphicsContextGL::HALF_FLOAT:
     case GraphicsContextGL::HALF_FLOAT_OES: // OES_texture_half_float
-        *bytesPerComponent = sizeof(GC3Dhalffloat);
+        *bytesPerComponent = sizeof(GCGLhalffloat);
         break;
     case GraphicsContextGL::FLOAT_32_UNSIGNED_INT_24_8_REV:
-        *bytesPerComponent = sizeof(GC3Dfloat) + sizeof(GC3Duint);
+        *bytesPerComponent = sizeof(GCGLfloat) + sizeof(GCGLuint);
         break;
     default:
         return false;
@@ -243,7 +243,7 @@ bool GraphicsContextGLOpenGL::computeFormatAndTypeParameters(GC3Denum format, GC
     return true;
 }
 
-bool GraphicsContextGLOpenGL::possibleFormatAndTypeForInternalFormat(GC3Denum internalFormat, GC3Denum& format, GC3Denum& type)
+bool GraphicsContextGLOpenGL::possibleFormatAndTypeForInternalFormat(GCGLenum internalFormat, GCGLenum& format, GCGLenum& type)
 {
 #define POSSIBLE_FORMAT_TYPE_CASE(internalFormatMacro, formatMacro, typeMacro) case internalFormatMacro: \
         format = formatMacro; \
@@ -322,7 +322,7 @@ bool GraphicsContextGLOpenGL::possibleFormatAndTypeForInternalFormat(GC3Denum in
     return true;
 }
 
-GC3Denum GraphicsContextGLOpenGL::computeImageSizeInBytes(GC3Denum format, GC3Denum type, GC3Dsizei width, GC3Dsizei height, GC3Dint alignment, unsigned* imageSizeInBytes, unsigned* paddingInBytes)
+GCGLenum GraphicsContextGLOpenGL::computeImageSizeInBytes(GCGLenum format, GCGLenum type, GCGLsizei width, GCGLsizei height, GCGLint alignment, unsigned* imageSizeInBytes, unsigned* paddingInBytes)
 {
     ASSERT(imageSizeInBytes);
     ASSERT(alignment == 1 || alignment == 2 || alignment == 4 || alignment == 8);
@@ -367,7 +367,7 @@ GraphicsContextGLOpenGL::ImageExtractor::ImageExtractor(Image* image, DOMSource 
     m_extractSucceeded = extractImage(premultiplyAlpha, ignoreGammaAndColorProfile);
 }
 
-bool GraphicsContextGLOpenGL::packImageData(Image* image, const void* pixels, GC3Denum format, GC3Denum type, bool flipY, AlphaOp alphaOp, DataFormat sourceFormat, unsigned width, unsigned height, unsigned sourceUnpackAlignment, Vector<uint8_t>& data)
+bool GraphicsContextGLOpenGL::packImageData(Image* image, const void* pixels, GCGLenum format, GCGLenum type, bool flipY, AlphaOp alphaOp, DataFormat sourceFormat, unsigned width, unsigned height, unsigned sourceUnpackAlignment, Vector<uint8_t>& data)
 {
     if (!image || !pixels)
         return false;
@@ -385,7 +385,7 @@ bool GraphicsContextGLOpenGL::packImageData(Image* image, const void* pixels, GC
     return true;
 }
 
-bool GraphicsContextGLOpenGL::extractImageData(ImageData* imageData, GC3Denum format, GC3Denum type, bool flipY, bool premultiplyAlpha, Vector<uint8_t>& data)
+bool GraphicsContextGLOpenGL::extractImageData(ImageData* imageData, GCGLenum format, GCGLenum type, bool flipY, bool premultiplyAlpha, Vector<uint8_t>& data)
 {
     if (!imageData)
         return false;
@@ -404,7 +404,7 @@ bool GraphicsContextGLOpenGL::extractImageData(ImageData* imageData, GC3Denum fo
     return true;
 }
 
-bool GraphicsContextGLOpenGL::extractTextureData(unsigned width, unsigned height, GC3Denum format, GC3Denum type, unsigned unpackAlignment, bool flipY, bool premultiplyAlpha, const void* pixels, Vector<uint8_t>& data)
+bool GraphicsContextGLOpenGL::extractTextureData(unsigned width, unsigned height, GCGLenum format, GCGLenum type, unsigned unpackAlignment, bool flipY, bool premultiplyAlpha, const void* pixels, Vector<uint8_t>& data)
 {
     // Assumes format, type, etc. have already been validated.
     DataFormat sourceDataFormat = getDataFormat(format, type);

@@ -23,36 +23,33 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef GraphicsTypes3D_h
-#define GraphicsTypes3D_h
+#pragma once
 
 #include <wtf/Forward.h>
 
-// GC3D types match the corresponding GL types as defined in OpenGL ES 2.0
+// GCGL types match the corresponding GL types as defined in OpenGL ES 2.0
 // header file gl2.h from khronos.org.
-typedef unsigned int GC3Denum;
-typedef unsigned char GC3Dboolean;
-typedef unsigned int GC3Dbitfield;
-typedef signed char GC3Dbyte;
-typedef unsigned char GC3Dubyte;
-typedef short GC3Dshort;
-typedef unsigned short GC3Dushort;
-typedef int GC3Dint;
-typedef int GC3Dsizei;
-typedef unsigned int GC3Duint;
-typedef float GC3Dfloat;
-typedef unsigned short GC3Dhalffloat;
-typedef float GC3Dclampf;
-typedef intptr_t GC3Dintptr;
-typedef intptr_t GC3Dsizeiptr;
-typedef char GC3Dchar;
-typedef long long GC3Dint64;
-typedef unsigned long long GC3Duint64;
+typedef unsigned GCGLenum;
+typedef unsigned char GCGLboolean;
+typedef unsigned GCGLbitfield;
+typedef signed char GCGLbyte;
+typedef unsigned char GCGLubyte;
+typedef short GCGLshort;
+typedef unsigned short GCGLushort;
+typedef int GCGLint;
+typedef int GCGLsizei;
+typedef unsigned GCGLuint;
+typedef float GCGLfloat;
+typedef unsigned short GCGLhalffloat;
+typedef float GCGLclampf;
+typedef intptr_t GCGLintptr;
+typedef intptr_t GCGLsizeiptr;
+typedef char GCGLchar;
+typedef long long GCGLint64;
+typedef unsigned long long GCGLuint64;
 
-typedef GC3Duint Platform3DObject;
+typedef GCGLuint PlatformGLObject;
 
 #if !PLATFORM(COCOA)
 typedef unsigned GLuint;
-#endif
-
 #endif

@@ -2153,7 +2153,7 @@
 		7779BD961F32246A00C21417 /* JSVisualViewport.h in Headers */ = {isa = PBXBuildFile; fileRef = 7779BD921F2FDBF700C21417 /* JSVisualViewport.h */; };
 		77A17A7212F28182004E02F6 /* OESVertexArrayObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 77A17A6F12F28182004E02F6 /* OESVertexArrayObject.h */; };
 		77A17A7812F28642004E02F6 /* WebGLVertexArrayObjectOES.h in Headers */ = {isa = PBXBuildFile; fileRef = 77A17A7512F28642004E02F6 /* WebGLVertexArrayObjectOES.h */; };
-		77A17A7B12F2890B004E02F6 /* GraphicsTypes3D.h in Headers */ = {isa = PBXBuildFile; fileRef = 77A17A7A12F2890B004E02F6 /* GraphicsTypes3D.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		77A17A7B12F2890B004E02F6 /* GraphicsTypesGL.h in Headers */ = {isa = PBXBuildFile; fileRef = 77A17A7A12F2890B004E02F6 /* GraphicsTypesGL.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		77A17AA712F28B2A004E02F6 /* JSOESVertexArrayObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 77A17AA312F28B2A004E02F6 /* JSOESVertexArrayObject.h */; };
 		77D510041ED4F71E00DA4C87 /* JSCredentialRequestOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = 77D50FFF1ED4F70C00DA4C87 /* JSCredentialRequestOptions.h */; };
 		77D510061ED4F72500DA4C87 /* JSCredentialCreationOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = 77D50FFD1ED4F70C00DA4C87 /* JSCredentialCreationOptions.h */; };
@@ -9671,7 +9671,7 @@
 		77A17A7412F28642004E02F6 /* WebGLVertexArrayObjectOES.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebGLVertexArrayObjectOES.cpp; sourceTree = "<group>"; };
 		77A17A7512F28642004E02F6 /* WebGLVertexArrayObjectOES.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebGLVertexArrayObjectOES.h; sourceTree = "<group>"; };
 		77A17A7612F28642004E02F6 /* WebGLVertexArrayObjectOES.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebGLVertexArrayObjectOES.idl; sourceTree = "<group>"; };
-		77A17A7A12F2890B004E02F6 /* GraphicsTypes3D.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GraphicsTypes3D.h; sourceTree = "<group>"; };
+		77A17A7A12F2890B004E02F6 /* GraphicsTypesGL.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GraphicsTypesGL.h; sourceTree = "<group>"; };
 		77A17AA212F28B2A004E02F6 /* JSOESVertexArrayObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSOESVertexArrayObject.cpp; sourceTree = "<group>"; };
 		77A17AA312F28B2A004E02F6 /* JSOESVertexArrayObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSOESVertexArrayObject.h; sourceTree = "<group>"; };
 		77AAD6831ECFB66200BFA2D1 /* CredentialCreationOptions.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CredentialCreationOptions.idl; sourceTree = "<group>"; };
@@ -25074,7 +25074,7 @@
 				0FA24D78162DF91900A3F4C0 /* GraphicsLayerUpdater.h */,
 				B2A015940AF6CD53006BCE0E /* GraphicsTypes.cpp */,
 				B2A015950AF6CD53006BCE0E /* GraphicsTypes.h */,
-				77A17A7A12F2890B004E02F6 /* GraphicsTypes3D.h */,
+				77A17A7A12F2890B004E02F6 /* GraphicsTypesGL.h */,
 				CDA595922146DEC300A84185 /* HEVCUtilities.cpp */,
 				CDA595912146DEC300A84185 /* HEVCUtilities.h */,
 				B27535400B053814002CE64F /* Icon.h */,
@@ -30065,7 +30065,7 @@
 				1AC69593161A1E53003732CB /* GraphicsLayerFactory.h in Headers */,
 				0FA24D7A162DF91900A3F4C0 /* GraphicsLayerUpdater.h in Headers */,
 				B2A015AB0AF6CD53006BCE0E /* GraphicsTypes.h in Headers */,
-				77A17A7B12F2890B004E02F6 /* GraphicsTypes3D.h in Headers */,
+				77A17A7B12F2890B004E02F6 /* GraphicsTypesGL.h in Headers */,
 				E112F4721E3A861600D6CDFD /* Grid.h in Headers */,
 				CD3E251C18046B0600E27F56 /* GridArea.h in Headers */,
 				CDEF4FD717E85C8F00AEE24B /* GridLength.h in Headers */,

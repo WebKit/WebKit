@@ -40,7 +40,7 @@ GraphicsContextGL::GraphicsContextGL(GraphicsContextGLAttributes attrs, Destinat
 {
 }
 
-unsigned GraphicsContextGL::getClearBitsByAttachmentType(GC3Denum attachment)
+unsigned GraphicsContextGL::getClearBitsByAttachmentType(GCGLenum attachment)
 {
     switch (attachment) {
     case GraphicsContextGL::COLOR_ATTACHMENT0:
@@ -71,7 +71,7 @@ unsigned GraphicsContextGL::getClearBitsByAttachmentType(GC3Denum attachment)
     }
 }
 
-unsigned GraphicsContextGL::getClearBitsByFormat(GC3Denum format)
+unsigned GraphicsContextGL::getClearBitsByFormat(GCGLenum format)
 {
     switch (format) {
     case GraphicsContextGL::RGB:
@@ -147,7 +147,7 @@ unsigned GraphicsContextGL::getClearBitsByFormat(GC3Denum format)
     }
 }
 
-uint8_t GraphicsContextGL::getChannelBitsByFormat(GC3Denum format)
+uint8_t GraphicsContextGL::getChannelBitsByFormat(GCGLenum format)
 {
     switch (format) {
     case GraphicsContextGL::ALPHA:

@@ -28,7 +28,7 @@
 #if ENABLE(GRAPHICS_CONTEXT_GL)
 
 #include "GraphicsContextGLAttributes.h"
-#include "GraphicsTypes3D.h"
+#include "GraphicsTypesGL.h"
 #include "Image.h"
 #include "IntRect.h"
 #include "IntSize.h"
@@ -757,7 +757,7 @@ public:
 #endif // USE(ANGLE)
 
     virtual PlatformGraphicsContextGL platformGraphicsContextGL() const = 0;
-    virtual Platform3DObject platformTexture() const = 0;
+    virtual PlatformGLObject platformTexture() const = 0;
     virtual PlatformLayer* platformLayer() const = 0;
 
     ALWAYS_INLINE static bool hasAlpha(DataFormat format)
@@ -837,8 +837,8 @@ public:
 
     struct ActiveInfo {
         String name;
-        GC3Denum type;
-        GC3Dint size;
+        GCGLenum type;
+        GCGLint size;
     };
 
     GraphicsContextGL(GraphicsContextGLAttributes, Destination = Destination::Offscreen, GraphicsContextGL* sharedContext = nullptr);
@@ -846,208 +846,208 @@ public:
 
     // ========== WebGL 1 entry points.
 
-    virtual void activeTexture(GC3Denum texture) = 0;
-    virtual void attachShader(Platform3DObject program, Platform3DObject shader) = 0;
-    virtual void bindAttribLocation(Platform3DObject, GC3Duint index, const String& name) = 0;
-    virtual void bindBuffer(GC3Denum target, Platform3DObject) = 0;
-    virtual void bindFramebuffer(GC3Denum target, Platform3DObject) = 0;
-    virtual void bindRenderbuffer(GC3Denum target, Platform3DObject) = 0;
-    virtual void bindTexture(GC3Denum target, Platform3DObject) = 0;
-    virtual void blendColor(GC3Dclampf red, GC3Dclampf green, GC3Dclampf blue, GC3Dclampf alpha) = 0;
-    virtual void blendEquation(GC3Denum mode) = 0;
-    virtual void blendEquationSeparate(GC3Denum modeRGB, GC3Denum modeAlpha) = 0;
-    virtual void blendFunc(GC3Denum sfactor, GC3Denum dfactor) = 0;
-    virtual void blendFuncSeparate(GC3Denum srcRGB, GC3Denum dstRGB, GC3Denum srcAlpha, GC3Denum dstAlpha) = 0;
+    virtual void activeTexture(GCGLenum texture) = 0;
+    virtual void attachShader(PlatformGLObject program, PlatformGLObject shader) = 0;
+    virtual void bindAttribLocation(PlatformGLObject, GCGLuint index, const String& name) = 0;
+    virtual void bindBuffer(GCGLenum target, PlatformGLObject) = 0;
+    virtual void bindFramebuffer(GCGLenum target, PlatformGLObject) = 0;
+    virtual void bindRenderbuffer(GCGLenum target, PlatformGLObject) = 0;
+    virtual void bindTexture(GCGLenum target, PlatformGLObject) = 0;
+    virtual void blendColor(GCGLclampf red, GCGLclampf green, GCGLclampf blue, GCGLclampf alpha) = 0;
+    virtual void blendEquation(GCGLenum mode) = 0;
+    virtual void blendEquationSeparate(GCGLenum modeRGB, GCGLenum modeAlpha) = 0;
+    virtual void blendFunc(GCGLenum sfactor, GCGLenum dfactor) = 0;
+    virtual void blendFuncSeparate(GCGLenum srcRGB, GCGLenum dstRGB, GCGLenum srcAlpha, GCGLenum dstAlpha) = 0;
 
-    virtual GC3Denum checkFramebufferStatus(GC3Denum target) = 0;
-    virtual void clear(GC3Dbitfield mask) = 0;
-    virtual void clearColor(GC3Dclampf red, GC3Dclampf green, GC3Dclampf blue, GC3Dclampf alpha) = 0;
-    virtual void clearDepth(GC3Dclampf depth) = 0;
-    virtual void clearStencil(GC3Dint s) = 0;
-    virtual void colorMask(GC3Dboolean red, GC3Dboolean green, GC3Dboolean blue, GC3Dboolean alpha) = 0;
-    virtual void compileShader(Platform3DObject) = 0;
+    virtual GCGLenum checkFramebufferStatus(GCGLenum target) = 0;
+    virtual void clear(GCGLbitfield mask) = 0;
+    virtual void clearColor(GCGLclampf red, GCGLclampf green, GCGLclampf blue, GCGLclampf alpha) = 0;
+    virtual void clearDepth(GCGLclampf depth) = 0;
+    virtual void clearStencil(GCGLint s) = 0;
+    virtual void colorMask(GCGLboolean red, GCGLboolean green, GCGLboolean blue, GCGLboolean alpha) = 0;
+    virtual void compileShader(PlatformGLObject) = 0;
 
-    virtual void copyTexImage2D(GC3Denum target, GC3Dint level, GC3Denum internalformat, GC3Dint x, GC3Dint y, GC3Dsizei width, GC3Dsizei height, GC3Dint border) = 0;
-    virtual void copyTexSubImage2D(GC3Denum target, GC3Dint level, GC3Dint xoffset, GC3Dint yoffset, GC3Dint x, GC3Dint y, GC3Dsizei width, GC3Dsizei height) = 0;
+    virtual void copyTexImage2D(GCGLenum target, GCGLint level, GCGLenum internalformat, GCGLint x, GCGLint y, GCGLsizei width, GCGLsizei height, GCGLint border) = 0;
+    virtual void copyTexSubImage2D(GCGLenum target, GCGLint level, GCGLint xoffset, GCGLint yoffset, GCGLint x, GCGLint y, GCGLsizei width, GCGLsizei height) = 0;
 
-    virtual Platform3DObject createBuffer() = 0;
-    virtual Platform3DObject createFramebuffer() = 0;
-    virtual Platform3DObject createProgram() = 0;
-    virtual Platform3DObject createRenderbuffer() = 0;
-    virtual Platform3DObject createShader(GC3Denum) = 0;
-    virtual Platform3DObject createTexture() = 0;
+    virtual PlatformGLObject createBuffer() = 0;
+    virtual PlatformGLObject createFramebuffer() = 0;
+    virtual PlatformGLObject createProgram() = 0;
+    virtual PlatformGLObject createRenderbuffer() = 0;
+    virtual PlatformGLObject createShader(GCGLenum) = 0;
+    virtual PlatformGLObject createTexture() = 0;
 
-    virtual void cullFace(GC3Denum mode) = 0;
+    virtual void cullFace(GCGLenum mode) = 0;
 
-    virtual void deleteBuffer(Platform3DObject) = 0;
-    virtual void deleteFramebuffer(Platform3DObject) = 0;
-    virtual void deleteProgram(Platform3DObject) = 0;
-    virtual void deleteRenderbuffer(Platform3DObject) = 0;
-    virtual void deleteShader(Platform3DObject) = 0;
-    virtual void deleteTexture(Platform3DObject) = 0;
+    virtual void deleteBuffer(PlatformGLObject) = 0;
+    virtual void deleteFramebuffer(PlatformGLObject) = 0;
+    virtual void deleteProgram(PlatformGLObject) = 0;
+    virtual void deleteRenderbuffer(PlatformGLObject) = 0;
+    virtual void deleteShader(PlatformGLObject) = 0;
+    virtual void deleteTexture(PlatformGLObject) = 0;
 
-    virtual void depthFunc(GC3Denum func) = 0;
-    virtual void depthMask(GC3Dboolean flag) = 0;
-    virtual void depthRange(GC3Dclampf zNear, GC3Dclampf zFar) = 0;
-    virtual void detachShader(Platform3DObject, Platform3DObject) = 0;
-    virtual void disable(GC3Denum cap) = 0;
-    virtual void disableVertexAttribArray(GC3Duint index) = 0;
-    virtual void drawArrays(GC3Denum mode, GC3Dint first, GC3Dsizei count) = 0;
-    virtual void drawElements(GC3Denum mode, GC3Dsizei count, GC3Denum type, GC3Dintptr offset) = 0;
+    virtual void depthFunc(GCGLenum func) = 0;
+    virtual void depthMask(GCGLboolean flag) = 0;
+    virtual void depthRange(GCGLclampf zNear, GCGLclampf zFar) = 0;
+    virtual void detachShader(PlatformGLObject, PlatformGLObject) = 0;
+    virtual void disable(GCGLenum cap) = 0;
+    virtual void disableVertexAttribArray(GCGLuint index) = 0;
+    virtual void drawArrays(GCGLenum mode, GCGLint first, GCGLsizei count) = 0;
+    virtual void drawElements(GCGLenum mode, GCGLsizei count, GCGLenum type, GCGLintptr offset) = 0;
 
-    virtual void enable(GC3Denum cap) = 0;
-    virtual void enableVertexAttribArray(GC3Duint index) = 0;
+    virtual void enable(GCGLenum cap) = 0;
+    virtual void enableVertexAttribArray(GCGLuint index) = 0;
     virtual void finish() = 0;
     virtual void flush() = 0;
-    virtual void framebufferRenderbuffer(GC3Denum target, GC3Denum attachment, GC3Denum renderbuffertarget, Platform3DObject) = 0;
-    virtual void framebufferTexture2D(GC3Denum target, GC3Denum attachment, GC3Denum textarget, Platform3DObject, GC3Dint level) = 0;
-    virtual void frontFace(GC3Denum mode) = 0;
+    virtual void framebufferRenderbuffer(GCGLenum target, GCGLenum attachment, GCGLenum renderbuffertarget, PlatformGLObject) = 0;
+    virtual void framebufferTexture2D(GCGLenum target, GCGLenum attachment, GCGLenum textarget, PlatformGLObject, GCGLint level) = 0;
+    virtual void frontFace(GCGLenum mode) = 0;
 
-    virtual void generateMipmap(GC3Denum target) = 0;
+    virtual void generateMipmap(GCGLenum target) = 0;
 
-    virtual bool getActiveAttrib(Platform3DObject program, GC3Duint index, ActiveInfo&) = 0;
-    virtual bool getActiveUniform(Platform3DObject program, GC3Duint index, ActiveInfo&) = 0;
-    virtual void getAttachedShaders(Platform3DObject program, GC3Dsizei maxCount, GC3Dsizei* count, Platform3DObject* shaders) = 0;
+    virtual bool getActiveAttrib(PlatformGLObject program, GCGLuint index, ActiveInfo&) = 0;
+    virtual bool getActiveUniform(PlatformGLObject program, GCGLuint index, ActiveInfo&) = 0;
+    virtual void getAttachedShaders(PlatformGLObject program, GCGLsizei maxCount, GCGLsizei* count, PlatformGLObject* shaders) = 0;
 
-    virtual GC3Dint getAttribLocation(Platform3DObject, const String& name) = 0;
+    virtual GCGLint getAttribLocation(PlatformGLObject, const String& name) = 0;
 
-    virtual void getBufferParameteriv(GC3Denum target, GC3Denum pname, GC3Dint* value) = 0;
+    virtual void getBufferParameteriv(GCGLenum target, GCGLenum pname, GCGLint* value) = 0;
 
     // getParameter
-    virtual String getString(GC3Denum name) = 0;
-    virtual void getFloatv(GC3Denum pname, GC3Dfloat* value) = 0;
-    virtual void getIntegerv(GC3Denum pname, GC3Dint* value) = 0;
-    virtual void getInteger64v(GC3Denum pname, GC3Dint64* value) = 0;
-    virtual void getProgramiv(Platform3DObject program, GC3Denum pname, GC3Dint* value) = 0;
-    virtual void getBooleanv(GC3Denum pname, GC3Dboolean* value) = 0;
+    virtual String getString(GCGLenum name) = 0;
+    virtual void getFloatv(GCGLenum pname, GCGLfloat* value) = 0;
+    virtual void getIntegerv(GCGLenum pname, GCGLint* value) = 0;
+    virtual void getInteger64v(GCGLenum pname, GCGLint64* value) = 0;
+    virtual void getProgramiv(PlatformGLObject program, GCGLenum pname, GCGLint* value) = 0;
+    virtual void getBooleanv(GCGLenum pname, GCGLboolean* value) = 0;
 
-    virtual GC3Denum getError() = 0;
+    virtual GCGLenum getError() = 0;
 
     // getFramebufferAttachmentParameter
-    virtual void getFramebufferAttachmentParameteriv(GC3Denum target, GC3Denum attachment, GC3Denum pname, GC3Dint* value) = 0;
+    virtual void getFramebufferAttachmentParameteriv(GCGLenum target, GCGLenum attachment, GCGLenum pname, GCGLint* value) = 0;
 
     // getProgramParameter
-    virtual String getProgramInfoLog(Platform3DObject) = 0;
+    virtual String getProgramInfoLog(PlatformGLObject) = 0;
 
     // getRenderbufferParameter
-    virtual void getRenderbufferParameteriv(GC3Denum target, GC3Denum pname, GC3Dint* value) = 0;
+    virtual void getRenderbufferParameteriv(GCGLenum target, GCGLenum pname, GCGLint* value) = 0;
 
     // getShaderParameter
-    virtual void getShaderiv(Platform3DObject, GC3Denum pname, GC3Dint* value) = 0;
+    virtual void getShaderiv(PlatformGLObject, GCGLenum pname, GCGLint* value) = 0;
 
-    virtual String getShaderInfoLog(Platform3DObject) = 0;
-    virtual void getShaderPrecisionFormat(GC3Denum shaderType, GC3Denum precisionType, GC3Dint* range, GC3Dint* precision) = 0;
+    virtual String getShaderInfoLog(PlatformGLObject) = 0;
+    virtual void getShaderPrecisionFormat(GCGLenum shaderType, GCGLenum precisionType, GCGLint* range, GCGLint* precision) = 0;
 
-    virtual String getShaderSource(Platform3DObject) = 0;
+    virtual String getShaderSource(PlatformGLObject) = 0;
 
     // getTexParameter
-    virtual void getTexParameterfv(GC3Denum target, GC3Denum pname, GC3Dfloat* value) = 0;
-    virtual void getTexParameteriv(GC3Denum target, GC3Denum pname, GC3Dint* value) = 0;
+    virtual void getTexParameterfv(GCGLenum target, GCGLenum pname, GCGLfloat* value) = 0;
+    virtual void getTexParameteriv(GCGLenum target, GCGLenum pname, GCGLint* value) = 0;
 
     // getUniform
-    virtual void getUniformfv(Platform3DObject program, GC3Dint location, GC3Dfloat* value) = 0;
-    virtual void getUniformiv(Platform3DObject program, GC3Dint location, GC3Dint* value) = 0;
+    virtual void getUniformfv(PlatformGLObject program, GCGLint location, GCGLfloat* value) = 0;
+    virtual void getUniformiv(PlatformGLObject program, GCGLint location, GCGLint* value) = 0;
 
-    virtual GC3Dint getUniformLocation(Platform3DObject, const String& name) = 0;
+    virtual GCGLint getUniformLocation(PlatformGLObject, const String& name) = 0;
 
     // getVertexAttrib
-    virtual void getVertexAttribfv(GC3Duint index, GC3Denum pname, GC3Dfloat* value) = 0;
-    virtual void getVertexAttribiv(GC3Duint index, GC3Denum pname, GC3Dint* value) = 0;
+    virtual void getVertexAttribfv(GCGLuint index, GCGLenum pname, GCGLfloat* value) = 0;
+    virtual void getVertexAttribiv(GCGLuint index, GCGLenum pname, GCGLint* value) = 0;
 
-    virtual GC3Dsizeiptr getVertexAttribOffset(GC3Duint index, GC3Denum pname) = 0;
+    virtual GCGLsizeiptr getVertexAttribOffset(GCGLuint index, GCGLenum pname) = 0;
 
-    virtual void hint(GC3Denum target, GC3Denum mode) = 0;
-    virtual GC3Dboolean isBuffer(Platform3DObject) = 0;
-    virtual GC3Dboolean isEnabled(GC3Denum cap) = 0;
-    virtual GC3Dboolean isFramebuffer(Platform3DObject) = 0;
-    virtual GC3Dboolean isProgram(Platform3DObject) = 0;
-    virtual GC3Dboolean isRenderbuffer(Platform3DObject) = 0;
-    virtual GC3Dboolean isShader(Platform3DObject) = 0;
-    virtual GC3Dboolean isTexture(Platform3DObject) = 0;
-    virtual void lineWidth(GC3Dfloat) = 0;
-    virtual void linkProgram(Platform3DObject) = 0;
-    virtual void pixelStorei(GC3Denum pname, GC3Dint param) = 0;
-    virtual void polygonOffset(GC3Dfloat factor, GC3Dfloat units) = 0;
+    virtual void hint(GCGLenum target, GCGLenum mode) = 0;
+    virtual GCGLboolean isBuffer(PlatformGLObject) = 0;
+    virtual GCGLboolean isEnabled(GCGLenum cap) = 0;
+    virtual GCGLboolean isFramebuffer(PlatformGLObject) = 0;
+    virtual GCGLboolean isProgram(PlatformGLObject) = 0;
+    virtual GCGLboolean isRenderbuffer(PlatformGLObject) = 0;
+    virtual GCGLboolean isShader(PlatformGLObject) = 0;
+    virtual GCGLboolean isTexture(PlatformGLObject) = 0;
+    virtual void lineWidth(GCGLfloat) = 0;
+    virtual void linkProgram(PlatformGLObject) = 0;
+    virtual void pixelStorei(GCGLenum pname, GCGLint param) = 0;
+    virtual void polygonOffset(GCGLfloat factor, GCGLfloat units) = 0;
 
-    virtual void renderbufferStorage(GC3Denum target, GC3Denum internalformat, GC3Dsizei width, GC3Dsizei height) = 0;
-    virtual void sampleCoverage(GC3Dclampf value, GC3Dboolean invert) = 0;
-    virtual void scissor(GC3Dint x, GC3Dint y, GC3Dsizei width, GC3Dsizei height) = 0;
+    virtual void renderbufferStorage(GCGLenum target, GCGLenum internalformat, GCGLsizei width, GCGLsizei height) = 0;
+    virtual void sampleCoverage(GCGLclampf value, GCGLboolean invert) = 0;
+    virtual void scissor(GCGLint x, GCGLint y, GCGLsizei width, GCGLsizei height) = 0;
 
-    virtual void shaderSource(Platform3DObject, const String& string) = 0;
+    virtual void shaderSource(PlatformGLObject, const String& string) = 0;
 
-    virtual void stencilFunc(GC3Denum func, GC3Dint ref, GC3Duint mask) = 0;
-    virtual void stencilFuncSeparate(GC3Denum face, GC3Denum func, GC3Dint ref, GC3Duint mask) = 0;
-    virtual void stencilMask(GC3Duint mask) = 0;
-    virtual void stencilMaskSeparate(GC3Denum face, GC3Duint mask) = 0;
-    virtual void stencilOp(GC3Denum fail, GC3Denum zfail, GC3Denum zpass) = 0;
-    virtual void stencilOpSeparate(GC3Denum face, GC3Denum fail, GC3Denum zfail, GC3Denum zpass) = 0;
+    virtual void stencilFunc(GCGLenum func, GCGLint ref, GCGLuint mask) = 0;
+    virtual void stencilFuncSeparate(GCGLenum face, GCGLenum func, GCGLint ref, GCGLuint mask) = 0;
+    virtual void stencilMask(GCGLuint mask) = 0;
+    virtual void stencilMaskSeparate(GCGLenum face, GCGLuint mask) = 0;
+    virtual void stencilOp(GCGLenum fail, GCGLenum zfail, GCGLenum zpass) = 0;
+    virtual void stencilOpSeparate(GCGLenum face, GCGLenum fail, GCGLenum zfail, GCGLenum zpass) = 0;
 
-    virtual void texParameterf(GC3Denum target, GC3Denum pname, GC3Dfloat param) = 0;
-    virtual void texParameteri(GC3Denum target, GC3Denum pname, GC3Dint param) = 0;
+    virtual void texParameterf(GCGLenum target, GCGLenum pname, GCGLfloat param) = 0;
+    virtual void texParameteri(GCGLenum target, GCGLenum pname, GCGLint param) = 0;
 
-    virtual void uniform1f(GC3Dint location, GC3Dfloat x) = 0;
-    virtual void uniform1fv(GC3Dint location, GC3Dsizei, const GC3Dfloat* v) = 0;
-    virtual void uniform1i(GC3Dint location, GC3Dint x) = 0;
-    virtual void uniform1iv(GC3Dint location, GC3Dsizei, const GC3Dint* v) = 0;
-    virtual void uniform2f(GC3Dint location, GC3Dfloat x, GC3Dfloat y) = 0;
-    virtual void uniform2fv(GC3Dint location, GC3Dsizei, const GC3Dfloat* v) = 0;
-    virtual void uniform2i(GC3Dint location, GC3Dint x, GC3Dint y) = 0;
-    virtual void uniform2iv(GC3Dint location, GC3Dsizei, const GC3Dint* v) = 0;
-    virtual void uniform3f(GC3Dint location, GC3Dfloat x, GC3Dfloat y, GC3Dfloat z) = 0;
-    virtual void uniform3fv(GC3Dint location, GC3Dsizei, const GC3Dfloat* v) = 0;
-    virtual void uniform3i(GC3Dint location, GC3Dint x, GC3Dint y, GC3Dint z) = 0;
-    virtual void uniform3iv(GC3Dint location, GC3Dsizei, const GC3Dint* v) = 0;
-    virtual void uniform4f(GC3Dint location, GC3Dfloat x, GC3Dfloat y, GC3Dfloat z, GC3Dfloat w) = 0;
-    virtual void uniform4fv(GC3Dint location, GC3Dsizei, const GC3Dfloat* v) = 0;
-    virtual void uniform4i(GC3Dint location, GC3Dint x, GC3Dint y, GC3Dint z, GC3Dint w) = 0;
-    virtual void uniform4iv(GC3Dint location, GC3Dsizei, const GC3Dint* v) = 0;
-    virtual void uniformMatrix2fv(GC3Dint location, GC3Dsizei, GC3Dboolean transpose, const GC3Dfloat* value) = 0;
-    virtual void uniformMatrix3fv(GC3Dint location, GC3Dsizei, GC3Dboolean transpose, const GC3Dfloat* value) = 0;
-    virtual void uniformMatrix4fv(GC3Dint location, GC3Dsizei, GC3Dboolean transpose, const GC3Dfloat* value) = 0;
+    virtual void uniform1f(GCGLint location, GCGLfloat x) = 0;
+    virtual void uniform1fv(GCGLint location, GCGLsizei, const GCGLfloat* v) = 0;
+    virtual void uniform1i(GCGLint location, GCGLint x) = 0;
+    virtual void uniform1iv(GCGLint location, GCGLsizei, const GCGLint* v) = 0;
+    virtual void uniform2f(GCGLint location, GCGLfloat x, GCGLfloat y) = 0;
+    virtual void uniform2fv(GCGLint location, GCGLsizei, const GCGLfloat* v) = 0;
+    virtual void uniform2i(GCGLint location, GCGLint x, GCGLint y) = 0;
+    virtual void uniform2iv(GCGLint location, GCGLsizei, const GCGLint* v) = 0;
+    virtual void uniform3f(GCGLint location, GCGLfloat x, GCGLfloat y, GCGLfloat z) = 0;
+    virtual void uniform3fv(GCGLint location, GCGLsizei, const GCGLfloat* v) = 0;
+    virtual void uniform3i(GCGLint location, GCGLint x, GCGLint y, GCGLint z) = 0;
+    virtual void uniform3iv(GCGLint location, GCGLsizei, const GCGLint* v) = 0;
+    virtual void uniform4f(GCGLint location, GCGLfloat x, GCGLfloat y, GCGLfloat z, GCGLfloat w) = 0;
+    virtual void uniform4fv(GCGLint location, GCGLsizei, const GCGLfloat* v) = 0;
+    virtual void uniform4i(GCGLint location, GCGLint x, GCGLint y, GCGLint z, GCGLint w) = 0;
+    virtual void uniform4iv(GCGLint location, GCGLsizei, const GCGLint* v) = 0;
+    virtual void uniformMatrix2fv(GCGLint location, GCGLsizei, GCGLboolean transpose, const GCGLfloat* value) = 0;
+    virtual void uniformMatrix3fv(GCGLint location, GCGLsizei, GCGLboolean transpose, const GCGLfloat* value) = 0;
+    virtual void uniformMatrix4fv(GCGLint location, GCGLsizei, GCGLboolean transpose, const GCGLfloat* value) = 0;
 
-    virtual void useProgram(Platform3DObject) = 0;
-    virtual void validateProgram(Platform3DObject) = 0;
+    virtual void useProgram(PlatformGLObject) = 0;
+    virtual void validateProgram(PlatformGLObject) = 0;
 
-    virtual void vertexAttrib1f(GC3Duint index, GC3Dfloat x) = 0;
-    virtual void vertexAttrib1fv(GC3Duint index, const GC3Dfloat* values) = 0;
-    virtual void vertexAttrib2f(GC3Duint index, GC3Dfloat x, GC3Dfloat y) = 0;
-    virtual void vertexAttrib2fv(GC3Duint index, const GC3Dfloat* values) = 0;
-    virtual void vertexAttrib3f(GC3Duint index, GC3Dfloat x, GC3Dfloat y, GC3Dfloat z) = 0;
-    virtual void vertexAttrib3fv(GC3Duint index, const GC3Dfloat* values) = 0;
-    virtual void vertexAttrib4f(GC3Duint index, GC3Dfloat x, GC3Dfloat y, GC3Dfloat z, GC3Dfloat w) = 0;
-    virtual void vertexAttrib4fv(GC3Duint index, const GC3Dfloat* values) = 0;
+    virtual void vertexAttrib1f(GCGLuint index, GCGLfloat x) = 0;
+    virtual void vertexAttrib1fv(GCGLuint index, const GCGLfloat* values) = 0;
+    virtual void vertexAttrib2f(GCGLuint index, GCGLfloat x, GCGLfloat y) = 0;
+    virtual void vertexAttrib2fv(GCGLuint index, const GCGLfloat* values) = 0;
+    virtual void vertexAttrib3f(GCGLuint index, GCGLfloat x, GCGLfloat y, GCGLfloat z) = 0;
+    virtual void vertexAttrib3fv(GCGLuint index, const GCGLfloat* values) = 0;
+    virtual void vertexAttrib4f(GCGLuint index, GCGLfloat x, GCGLfloat y, GCGLfloat z, GCGLfloat w) = 0;
+    virtual void vertexAttrib4fv(GCGLuint index, const GCGLfloat* values) = 0;
 
-    virtual void vertexAttribPointer(GC3Duint index, GC3Dint size, GC3Denum type, GC3Dboolean normalized, GC3Dsizei stride, GC3Dintptr offset) = 0;
+    virtual void vertexAttribPointer(GCGLuint index, GCGLint size, GCGLenum type, GCGLboolean normalized, GCGLsizei stride, GCGLintptr offset) = 0;
 
-    virtual void viewport(GC3Dint x, GC3Dint y, GC3Dsizei width, GC3Dsizei height) = 0;
+    virtual void viewport(GCGLint x, GCGLint y, GCGLsizei width, GCGLsizei height) = 0;
 
-    virtual void bufferData(GC3Denum target, GC3Dsizeiptr size, GC3Denum usage) = 0;
-    virtual void bufferData(GC3Denum target, GC3Dsizeiptr size, const void* data, GC3Denum usage) = 0;
-    virtual void bufferSubData(GC3Denum target, GC3Dintptr offset, GC3Dsizeiptr size, const void* data) = 0;
+    virtual void bufferData(GCGLenum target, GCGLsizeiptr size, GCGLenum usage) = 0;
+    virtual void bufferData(GCGLenum target, GCGLsizeiptr size, const void* data, GCGLenum usage) = 0;
+    virtual void bufferSubData(GCGLenum target, GCGLintptr offset, GCGLsizeiptr size, const void* data) = 0;
 
-    virtual void compressedTexImage2D(GC3Denum target, GC3Dint level, GC3Denum internalformat, GC3Dsizei width, GC3Dsizei height, GC3Dint border, GC3Dsizei imageSize, const void* data) = 0;
-    virtual void compressedTexSubImage2D(GC3Denum target, GC3Dint level, GC3Dint xoffset, GC3Dint yoffset, GC3Dsizei width, GC3Dsizei height, GC3Denum format, GC3Dsizei imageSize, const void* data) = 0;
+    virtual void compressedTexImage2D(GCGLenum target, GCGLint level, GCGLenum internalformat, GCGLsizei width, GCGLsizei height, GCGLint border, GCGLsizei imageSize, const void* data) = 0;
+    virtual void compressedTexSubImage2D(GCGLenum target, GCGLint level, GCGLint xoffset, GCGLint yoffset, GCGLsizei width, GCGLsizei height, GCGLenum format, GCGLsizei imageSize, const void* data) = 0;
 
-    virtual void readPixels(GC3Dint x, GC3Dint y, GC3Dsizei width, GC3Dsizei height, GC3Denum format, GC3Denum type, void* data) = 0;
+    virtual void readPixels(GCGLint x, GCGLint y, GCGLsizei width, GCGLsizei height, GCGLenum format, GCGLenum type, void* data) = 0;
 
-    virtual bool texImage2D(GC3Denum target, GC3Dint level, GC3Denum internalformat, GC3Dsizei width, GC3Dsizei height, GC3Dint border, GC3Denum format, GC3Denum type, const void* pixels) = 0;
-    virtual void texSubImage2D(GC3Denum target, GC3Dint level, GC3Dint xoffset, GC3Dint yoffset, GC3Dsizei width, GC3Dsizei height, GC3Denum format, GC3Denum type, const void* pixels) = 0;
+    virtual bool texImage2D(GCGLenum target, GCGLint level, GCGLenum internalformat, GCGLsizei width, GCGLsizei height, GCGLint border, GCGLenum format, GCGLenum type, const void* pixels) = 0;
+    virtual void texSubImage2D(GCGLenum target, GCGLint level, GCGLint xoffset, GCGLint yoffset, GCGLsizei width, GCGLsizei height, GCGLenum format, GCGLenum type, const void* pixels) = 0;
 
-    virtual void drawArraysInstanced(GC3Denum mode, GC3Dint first, GC3Dsizei count, GC3Dsizei primcount) = 0;
-    virtual void drawElementsInstanced(GC3Denum mode, GC3Dsizei count, GC3Denum type, GC3Dintptr offset, GC3Dsizei primcount) = 0;
-    virtual void vertexAttribDivisor(GC3Duint index, GC3Duint divisor) = 0;
+    virtual void drawArraysInstanced(GCGLenum mode, GCGLint first, GCGLsizei count, GCGLsizei primcount) = 0;
+    virtual void drawElementsInstanced(GCGLenum mode, GCGLsizei count, GCGLenum type, GCGLintptr offset, GCGLsizei primcount) = 0;
+    virtual void vertexAttribDivisor(GCGLuint index, GCGLuint divisor) = 0;
 
     GraphicsContextGLAttributes contextAttributes() const { return m_attrs; }
     void setContextAttributes(const GraphicsContextGLAttributes& attrs) { m_attrs = attrs; }
 
     // VertexArrayOject calls
-    virtual Platform3DObject createVertexArray() = 0;
-    virtual void deleteVertexArray(Platform3DObject) = 0;
-    virtual GC3Dboolean isVertexArray(Platform3DObject) = 0;
-    virtual void bindVertexArray(Platform3DObject) = 0;
+    virtual PlatformGLObject createVertexArray() = 0;
+    virtual void deleteVertexArray(PlatformGLObject) = 0;
+    virtual GCGLboolean isVertexArray(PlatformGLObject) = 0;
+    virtual void bindVertexArray(PlatformGLObject) = 0;
 
 #if USE(OPENGL) && ENABLE(WEBGL2)
-    virtual void primitiveRestartIndex(GC3Duint) = 0;
+    virtual void primitiveRestartIndex(GCGLuint) = 0;
 #endif
 
     // Support for extensions. Returns a non-null object, though not
@@ -1058,26 +1058,26 @@ public:
 
     // ========== WebGL 2 entry points.
 
-    virtual void* mapBufferRange(GC3Denum target, GC3Dintptr offset, GC3Dsizeiptr length, GC3Dbitfield access) = 0;
-    virtual GC3Dboolean unmapBuffer(GC3Denum target) = 0;
-    virtual void copyBufferSubData(GC3Denum readTarget, GC3Denum writeTarget, GC3Dintptr readOffset, GC3Dintptr writeOffset, GC3Dsizeiptr) = 0;
+    virtual void* mapBufferRange(GCGLenum target, GCGLintptr offset, GCGLsizeiptr length, GCGLbitfield access) = 0;
+    virtual GCGLboolean unmapBuffer(GCGLenum target) = 0;
+    virtual void copyBufferSubData(GCGLenum readTarget, GCGLenum writeTarget, GCGLintptr readOffset, GCGLintptr writeOffset, GCGLsizeiptr) = 0;
 
     // getInternalFormatParameter
-    virtual void getInternalformativ(GC3Denum target, GC3Denum internalformat, GC3Denum pname, GC3Dsizei bufSize, GC3Dint* params) = 0;
+    virtual void getInternalformativ(GCGLenum target, GCGLenum internalformat, GCGLenum pname, GCGLsizei bufSize, GCGLint* params) = 0;
 
-    virtual void renderbufferStorageMultisample(GC3Denum target, GC3Dsizei samples, GC3Denum internalformat, GC3Dsizei width, GC3Dsizei height) = 0;
+    virtual void renderbufferStorageMultisample(GCGLenum target, GCGLsizei samples, GCGLenum internalformat, GCGLsizei width, GCGLsizei height) = 0;
 
-    virtual void texStorage2D(GC3Denum target, GC3Dsizei levels, GC3Denum internalformat, GC3Dsizei width, GC3Dsizei height) = 0;
-    virtual void texStorage3D(GC3Denum target, GC3Dsizei levels, GC3Denum internalformat, GC3Dsizei width, GC3Dsizei height, GC3Dsizei depth) = 0;
+    virtual void texStorage2D(GCGLenum target, GCGLsizei levels, GCGLenum internalformat, GCGLsizei width, GCGLsizei height) = 0;
+    virtual void texStorage3D(GCGLenum target, GCGLsizei levels, GCGLenum internalformat, GCGLsizei width, GCGLsizei height, GCGLsizei depth) = 0;
 
-    virtual void getActiveUniforms(Platform3DObject program, const Vector<GC3Duint>& uniformIndices, GC3Denum pname, Vector<GC3Dint>& params) = 0;
+    virtual void getActiveUniforms(PlatformGLObject program, const Vector<GCGLuint>& uniformIndices, GCGLenum pname, Vector<GCGLint>& params) = 0;
 
     // ========== Non-WebGL based entry points.
 
-    static unsigned getClearBitsByAttachmentType(GC3Denum);
-    static unsigned getClearBitsByFormat(GC3Denum);
+    static unsigned getClearBitsByAttachmentType(GCGLenum);
+    static unsigned getClearBitsByFormat(GCGLenum);
 
-    static uint8_t getChannelBitsByFormat(GC3Denum);
+    static uint8_t getChannelBitsByFormat(GCGLenum);
 
     Destination destination() const { return m_destination; }
 

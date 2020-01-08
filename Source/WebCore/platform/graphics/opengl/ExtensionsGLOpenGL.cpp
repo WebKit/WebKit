@@ -76,7 +76,7 @@ void ExtensionsGLOpenGL::renderbufferStorageMultisample(unsigned long target, un
     ::glRenderbufferStorageMultisampleEXT(target, samples, internalformat, width, height);
 }
 
-Platform3DObject ExtensionsGLOpenGL::createVertexArrayOES()
+PlatformGLObject ExtensionsGLOpenGL::createVertexArrayOES()
 {
     m_context->makeContextCurrent();
     GLuint array = 0;
@@ -89,7 +89,7 @@ Platform3DObject ExtensionsGLOpenGL::createVertexArrayOES()
     return array;
 }
 
-void ExtensionsGLOpenGL::deleteVertexArrayOES(Platform3DObject array)
+void ExtensionsGLOpenGL::deleteVertexArrayOES(PlatformGLObject array)
 {
     if (!array)
         return;
@@ -103,7 +103,7 @@ void ExtensionsGLOpenGL::deleteVertexArrayOES(Platform3DObject array)
 #endif
 }
 
-GC3Dboolean ExtensionsGLOpenGL::isVertexArrayOES(Platform3DObject array)
+GCGLboolean ExtensionsGLOpenGL::isVertexArrayOES(PlatformGLObject array)
 {
     if (!array)
         return GL_FALSE;
@@ -118,7 +118,7 @@ GC3Dboolean ExtensionsGLOpenGL::isVertexArrayOES(Platform3DObject array)
     return GL_FALSE;
 }
 
-void ExtensionsGLOpenGL::bindVertexArrayOES(Platform3DObject array)
+void ExtensionsGLOpenGL::bindVertexArrayOES(PlatformGLObject array)
 {
     m_context->makeContextCurrent();
 #if PLATFORM(GTK) || PLATFORM(WIN) || (PLATFORM(COCOA) && USE(OPENGL_ES))
@@ -240,7 +240,7 @@ bool ExtensionsGLOpenGL::supportsExtension(const String& name)
     return m_availableExtensions.contains(name);
 }
 
-void ExtensionsGLOpenGL::drawBuffersEXT(GC3Dsizei n, const GC3Denum* bufs)
+void ExtensionsGLOpenGL::drawBuffersEXT(GCGLsizei n, const GCGLenum* bufs)
 {
     //  FIXME: implement support for other platforms.
 #if PLATFORM(MAC)
@@ -253,7 +253,7 @@ void ExtensionsGLOpenGL::drawBuffersEXT(GC3Dsizei n, const GC3Denum* bufs)
 #endif
 }
 
-void ExtensionsGLOpenGL::drawArraysInstanced(GC3Denum mode, GC3Dint first, GC3Dsizei count, GC3Dsizei primcount)
+void ExtensionsGLOpenGL::drawArraysInstanced(GCGLenum mode, GCGLint first, GCGLsizei count, GCGLsizei primcount)
 {
     m_context->makeContextCurrent();
 #if PLATFORM(GTK)
@@ -268,7 +268,7 @@ void ExtensionsGLOpenGL::drawArraysInstanced(GC3Denum mode, GC3Dint first, GC3Ds
 #endif
 }
 
-void ExtensionsGLOpenGL::drawElementsInstanced(GC3Denum mode, GC3Dsizei count, GC3Denum type, long long offset, GC3Dsizei primcount)
+void ExtensionsGLOpenGL::drawElementsInstanced(GCGLenum mode, GCGLsizei count, GCGLenum type, long long offset, GCGLsizei primcount)
 {
     m_context->makeContextCurrent();
 #if PLATFORM(GTK)
@@ -284,7 +284,7 @@ void ExtensionsGLOpenGL::drawElementsInstanced(GC3Denum mode, GC3Dsizei count, G
 #endif
 }
 
-void ExtensionsGLOpenGL::vertexAttribDivisor(GC3Duint index, GC3Duint divisor)
+void ExtensionsGLOpenGL::vertexAttribDivisor(GCGLuint index, GCGLuint divisor)
 {
     m_context->makeContextCurrent();
 #if PLATFORM(GTK)

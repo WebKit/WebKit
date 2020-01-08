@@ -127,7 +127,7 @@ void ExtensionsGLOpenGLES::popGroupMarkerEXT(void)
     notImplemented();
 }
 
-Platform3DObject ExtensionsGLOpenGLES::createVertexArrayOES()
+PlatformGLObject ExtensionsGLOpenGLES::createVertexArrayOES()
 {
     m_context->makeContextCurrent();
     if (m_glGenVertexArraysOES) {
@@ -140,7 +140,7 @@ Platform3DObject ExtensionsGLOpenGLES::createVertexArrayOES()
     return 0;
 }
 
-void ExtensionsGLOpenGLES::deleteVertexArrayOES(Platform3DObject array)
+void ExtensionsGLOpenGLES::deleteVertexArrayOES(PlatformGLObject array)
 {
     if (!array)
         return;
@@ -152,7 +152,7 @@ void ExtensionsGLOpenGLES::deleteVertexArrayOES(Platform3DObject array)
         m_context->synthesizeGLError(GL_INVALID_OPERATION);
 }
 
-GC3Dboolean ExtensionsGLOpenGLES::isVertexArrayOES(Platform3DObject array)
+GCGLboolean ExtensionsGLOpenGLES::isVertexArrayOES(PlatformGLObject array)
 {
     if (!array)
         return GL_FALSE;
@@ -165,7 +165,7 @@ GC3Dboolean ExtensionsGLOpenGLES::isVertexArrayOES(Platform3DObject array)
     return false;
 }
 
-void ExtensionsGLOpenGLES::bindVertexArrayOES(Platform3DObject array)
+void ExtensionsGLOpenGLES::bindVertexArrayOES(PlatformGLObject array)
 {
     m_context->makeContextCurrent();
     if (m_glBindVertexArrayOES)
@@ -174,7 +174,7 @@ void ExtensionsGLOpenGLES::bindVertexArrayOES(Platform3DObject array)
         m_context->synthesizeGLError(GL_INVALID_OPERATION);
 }
 
-void ExtensionsGLOpenGLES::drawBuffersEXT(GC3Dsizei /* n */, const GC3Denum* /* bufs */)
+void ExtensionsGLOpenGLES::drawBuffersEXT(GCGLsizei /* n */, const GCGLenum* /* bufs */)
 {
     // FIXME: implement the support.
     notImplemented();
@@ -199,7 +199,7 @@ int ExtensionsGLOpenGLES::getGraphicsResetStatusARB()
     return false;
 }
 
-void ExtensionsGLOpenGLES::readnPixelsEXT(int x, int y, GC3Dsizei width, GC3Dsizei height, GC3Denum format, GC3Denum type, GC3Dsizei bufSize, void *data)
+void ExtensionsGLOpenGLES::readnPixelsEXT(int x, int y, GCGLsizei width, GCGLsizei height, GCGLenum format, GCGLenum type, GCGLsizei bufSize, void *data)
 {
     if (m_glReadnPixelsEXT) {
         m_context->makeContextCurrent();
@@ -216,7 +216,7 @@ void ExtensionsGLOpenGLES::readnPixelsEXT(int x, int y, GC3Dsizei width, GC3Dsiz
     m_context->synthesizeGLError(GL_INVALID_OPERATION);
 }
 
-void ExtensionsGLOpenGLES::getnUniformfvEXT(GC3Duint program, int location, GC3Dsizei bufSize, float *params)
+void ExtensionsGLOpenGLES::getnUniformfvEXT(GCGLuint program, int location, GCGLsizei bufSize, float *params)
 {
     if (m_glGetnUniformfvEXT) {
         m_context->makeContextCurrent();
@@ -227,7 +227,7 @@ void ExtensionsGLOpenGLES::getnUniformfvEXT(GC3Duint program, int location, GC3D
     m_context->synthesizeGLError(GL_INVALID_OPERATION);
 }
 
-void ExtensionsGLOpenGLES::getnUniformivEXT(GC3Duint program, int location, GC3Dsizei bufSize, int *params)
+void ExtensionsGLOpenGLES::getnUniformivEXT(GCGLuint program, int location, GCGLsizei bufSize, int *params)
 {
     if (m_glGetnUniformivEXT) {
         m_context->makeContextCurrent();
@@ -238,7 +238,7 @@ void ExtensionsGLOpenGLES::getnUniformivEXT(GC3Duint program, int location, GC3D
     m_context->synthesizeGLError(GL_INVALID_OPERATION);
 }
 
-void ExtensionsGLOpenGLES::drawArraysInstanced(GC3Denum mode, GC3Dint first, GC3Dsizei count, GC3Dsizei primcount)
+void ExtensionsGLOpenGLES::drawArraysInstanced(GCGLenum mode, GCGLint first, GCGLsizei count, GCGLsizei primcount)
 {
     if (!m_glDrawArraysInstancedANGLE) {
         m_context->synthesizeGLError(GL_INVALID_OPERATION);
@@ -249,7 +249,7 @@ void ExtensionsGLOpenGLES::drawArraysInstanced(GC3Denum mode, GC3Dint first, GC3
     m_glDrawArraysInstancedANGLE(mode, first, count, primcount);
 }
 
-void ExtensionsGLOpenGLES::drawElementsInstanced(GC3Denum mode, GC3Dsizei count, GC3Denum type, long long offset, GC3Dsizei primcount)
+void ExtensionsGLOpenGLES::drawElementsInstanced(GCGLenum mode, GCGLsizei count, GCGLenum type, long long offset, GCGLsizei primcount)
 {
     if (!m_glDrawElementsInstancedANGLE) {
         m_context->synthesizeGLError(GL_INVALID_OPERATION);
@@ -260,7 +260,7 @@ void ExtensionsGLOpenGLES::drawElementsInstanced(GC3Denum mode, GC3Dsizei count,
     m_glDrawElementsInstancedANGLE(mode, count, type, reinterpret_cast<GLvoid*>(static_cast<intptr_t>(offset)), primcount);
 }
 
-void ExtensionsGLOpenGLES::vertexAttribDivisor(GC3Duint index, GC3Duint divisor)
+void ExtensionsGLOpenGLES::vertexAttribDivisor(GCGLuint index, GCGLuint divisor)
 {
     if (!m_glVertexAttribDivisorANGLE) {
         m_context->synthesizeGLError(GL_INVALID_OPERATION);

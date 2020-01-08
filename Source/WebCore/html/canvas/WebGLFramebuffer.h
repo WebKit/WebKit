@@ -44,17 +44,17 @@ public:
     public:
         virtual ~WebGLAttachment();
 
-        virtual GC3Dsizei getWidth() const = 0;
-        virtual GC3Dsizei getHeight() const = 0;
-        virtual GC3Denum getFormat() const = 0;
+        virtual GCGLsizei getWidth() const = 0;
+        virtual GCGLsizei getHeight() const = 0;
+        virtual GCGLenum getFormat() const = 0;
         virtual WebGLSharedObject* getObject() const = 0;
         virtual bool isSharedObject(WebGLSharedObject*) const = 0;
         virtual bool isValid() const = 0;
         virtual bool isInitialized() const = 0;
         virtual void setInitialized() = 0;
         virtual void onDetached(GraphicsContextGLOpenGL*) = 0;
-        virtual void attach(GraphicsContextGLOpenGL*, GC3Denum attachment) = 0;
-        virtual void unattach(GraphicsContextGLOpenGL*, GC3Denum attachment) = 0;
+        virtual void attach(GraphicsContextGLOpenGL*, GCGLenum attachment) = 0;
+        virtual void unattach(GraphicsContextGLOpenGL*, GCGLenum attachment) = 0;
 
     protected:
         WebGLAttachment();
@@ -64,17 +64,17 @@ public:
 
     static Ref<WebGLFramebuffer> create(WebGLRenderingContextBase&);
 
-    void setAttachmentForBoundFramebuffer(GC3Denum attachment, GC3Denum texTarget, WebGLTexture*, GC3Dint level);
-    void setAttachmentForBoundFramebuffer(GC3Denum attachment, WebGLRenderbuffer*);
+    void setAttachmentForBoundFramebuffer(GCGLenum attachment, GCGLenum texTarget, WebGLTexture*, GCGLint level);
+    void setAttachmentForBoundFramebuffer(GCGLenum attachment, WebGLRenderbuffer*);
     // If an object is attached to the currently bound framebuffer, remove it.
     void removeAttachmentFromBoundFramebuffer(WebGLSharedObject*);
     // If a given attachment point for the currently bound framebuffer is not null, remove the attached object.
-    void removeAttachmentFromBoundFramebuffer(GC3Denum);
-    WebGLSharedObject* getAttachmentObject(GC3Denum) const;
+    void removeAttachmentFromBoundFramebuffer(GCGLenum);
+    WebGLSharedObject* getAttachmentObject(GCGLenum) const;
 
-    GC3Denum getColorBufferFormat() const;
-    GC3Dsizei getColorBufferWidth() const;
-    GC3Dsizei getColorBufferHeight() const;
+    GCGLenum getColorBufferFormat() const;
+    GCGLsizei getColorBufferWidth() const;
+    GCGLsizei getColorBufferHeight() const;
 
     // This should always be called before drawArray, drawElements, clear,
     // readPixels, copyTexImage2D, copyTexSubImage2D if this framebuffer is
@@ -88,7 +88,7 @@ public:
     // FRAMEBUFFER_COMPLETE is returned, it is still possible for
     // glCheckFramebufferStatus() to return FRAMEBUFFER_UNSUPPORTED,
     // depending on hardware implementation.
-    GC3Denum checkStatus(const char** reason) const;
+    GCGLenum checkStatus(const char** reason) const;
 
     bool hasEverBeenBound() const { return object() && m_hasEverBeenBound; }
 
@@ -97,17 +97,17 @@ public:
     bool hasStencilBuffer() const;
 
     // Wrapper for drawBuffersEXT/drawBuffersARB to work around a driver bug.
-    void drawBuffers(const Vector<GC3Denum>& bufs);
+    void drawBuffers(const Vector<GCGLenum>& bufs);
 
-    GC3Denum getDrawBuffer(GC3Denum);
+    GCGLenum getDrawBuffer(GCGLenum);
 
 protected:
     WebGLFramebuffer(WebGLRenderingContextBase&);
 
-    void deleteObjectImpl(GraphicsContextGLOpenGL*, Platform3DObject) override;
+    void deleteObjectImpl(GraphicsContextGLOpenGL*, PlatformGLObject) override;
 
 private:
-    WebGLAttachment* getAttachment(GC3Denum) const;
+    WebGLAttachment* getAttachment(GCGLenum) const;
 
     // Return false if framebuffer is incomplete.
     bool initializeAttachments(GraphicsContextGLOpenGL*, const char** reason);
@@ -116,19 +116,19 @@ private:
     bool isBound() const;
 
     // attach 'attachment' at 'attachmentPoint'.
-    void attach(GC3Denum attachment, GC3Denum attachmentPoint);
+    void attach(GCGLenum attachment, GCGLenum attachmentPoint);
 
     // Check if a new drawBuffers call should be issued. This is called when we add or remove an attachment.
     void drawBuffersIfNecessary(bool force);
 
-    typedef WTF::HashMap<GC3Denum, RefPtr<WebGLAttachment>> AttachmentMap;
+    typedef WTF::HashMap<GCGLenum, RefPtr<WebGLAttachment>> AttachmentMap;
 
     AttachmentMap m_attachments;
 
     bool m_hasEverBeenBound;
 
-    Vector<GC3Denum> m_drawBuffers;
-    Vector<GC3Denum> m_filteredDrawBuffers;
+    Vector<GCGLenum> m_drawBuffers;
+    Vector<GCGLenum> m_filteredDrawBuffers;
 };
 
 } // namespace WebCore

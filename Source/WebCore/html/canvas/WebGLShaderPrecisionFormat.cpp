@@ -33,27 +33,27 @@
 namespace WebCore {
 
 // static
-Ref<WebGLShaderPrecisionFormat> WebGLShaderPrecisionFormat::create(GC3Dint rangeMin, GC3Dint rangeMax, GC3Dint precision)
+Ref<WebGLShaderPrecisionFormat> WebGLShaderPrecisionFormat::create(GCGLint rangeMin, GCGLint rangeMax, GCGLint precision)
 {
     return adoptRef(*new WebGLShaderPrecisionFormat(rangeMin, rangeMax, precision));
 }
 
-GC3Dint WebGLShaderPrecisionFormat::rangeMin() const
+GCGLint WebGLShaderPrecisionFormat::rangeMin() const
 {
     return m_rangeMin;
 }
 
-GC3Dint WebGLShaderPrecisionFormat::rangeMax() const
+GCGLint WebGLShaderPrecisionFormat::rangeMax() const
 {
     return m_rangeMax;
 }
 
-GC3Dint WebGLShaderPrecisionFormat::precision() const
+GCGLint WebGLShaderPrecisionFormat::precision() const
 {
     return m_precision;
 }
 
-WebGLShaderPrecisionFormat::WebGLShaderPrecisionFormat(GC3Dint rangeMin, GC3Dint rangeMax, GC3Dint precision)
+WebGLShaderPrecisionFormat::WebGLShaderPrecisionFormat(GCGLint rangeMin, GCGLint rangeMax, GCGLint precision)
     : m_rangeMin(rangeMin)
     , m_rangeMax(rangeMax)
     , m_precision(precision)

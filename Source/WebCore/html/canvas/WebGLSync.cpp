@@ -49,7 +49,7 @@ WebGLSync::WebGLSync(WebGLRenderingContextBase& ctx)
     // FIXME: Call fenceSync from GraphicsContextGLOpenGL.
 }
 
-void WebGLSync::deleteObjectImpl(GraphicsContextGLOpenGL* context3d, Platform3DObject object)
+void WebGLSync::deleteObjectImpl(GraphicsContextGLOpenGL* context3d, PlatformGLObject object)
 {
     UNUSED_PARAM(context3d);
     UNUSED_PARAM(object);

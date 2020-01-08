@@ -506,7 +506,7 @@ GraphicsContextGLOpenGL::GraphicsContextGLOpenGL(GraphicsContextGLAttributes att
     // Always set to 1 for OpenGL ES.
     ANGLEResources.MaxDrawBuffers = 1;
     
-    GC3Dint range[2], precision;
+    GCGLint range[2], precision;
     getShaderPrecisionFormat(GraphicsContextGL::FRAGMENT_SHADER, GraphicsContextGL::HIGH_FLOAT, range, &precision);
     ANGLEResources.FragmentPrecisionHigh = (range[0] || range[1] || precision);
 
@@ -589,7 +589,7 @@ GraphicsContextGLOpenGL::~GraphicsContextGLOpenGL()
 }
 
 #if USE(OPENGL_ES)
-void GraphicsContextGLOpenGL::setRenderbufferStorageFromDrawable(GC3Dsizei width, GC3Dsizei height)
+void GraphicsContextGLOpenGL::setRenderbufferStorageFromDrawable(GCGLsizei width, GCGLsizei height)
 {
     // We need to make a call to setBounds below to update the backing store size but we also
     // do not want to clobber the bounds set during layout.
@@ -686,7 +686,7 @@ void GraphicsContextGLOpenGL::presentRenderbuffer()
 }
 #endif
 
-bool GraphicsContextGLOpenGL::texImageIOSurface2D(GC3Denum target, GC3Denum internalFormat, GC3Dsizei width, GC3Dsizei height, GC3Denum format, GC3Denum type, IOSurfaceRef surface, GC3Duint plane)
+bool GraphicsContextGLOpenGL::texImageIOSurface2D(GCGLenum target, GCGLenum internalFormat, GCGLsizei width, GCGLsizei height, GCGLenum format, GCGLenum type, IOSurfaceRef surface, GCGLuint plane)
 {
 #if USE(OPENGL)
     CGLContextObj cglContext = static_cast<CGLContextObj>(platformGraphicsContextGL());

@@ -514,11 +514,11 @@ bool VideoTextureCopierCV::initializeContextObjects()
     vertexShaderSource.appendLiteral("    gl_Position = a_position;\n");
     vertexShaderSource.appendLiteral("}\n");
 
-    Platform3DObject vertexShader = m_context->createShader(GraphicsContextGL::VERTEX_SHADER);
+    PlatformGLObject vertexShader = m_context->createShader(GraphicsContextGL::VERTEX_SHADER);
     m_context->shaderSource(vertexShader, vertexShaderSource.toString());
     m_context->compileShaderDirect(vertexShader);
 
-    GC3Dint value = 0;
+    GCGLint value = 0;
     m_context->getShaderiv(vertexShader, GraphicsContextGL::COMPILE_STATUS, &value);
     if (!value) {
         LOG(WebGL, "VideoTextureCopierCV::copyVideoTextureToPlatformTexture(%p) - Vertex shader failed to compile.", this);
@@ -561,7 +561,7 @@ bool VideoTextureCopierCV::initializeContextObjects()
     fragmentShaderSource.appendLiteral("    }\n");
     fragmentShaderSource.appendLiteral("}\n");
 
-    Platform3DObject fragmentShader = m_context->createShader(GraphicsContextGL::FRAGMENT_SHADER);
+    PlatformGLObject fragmentShader = m_context->createShader(GraphicsContextGL::FRAGMENT_SHADER);
     m_context->shaderSource(fragmentShader, fragmentShaderSource.toString());
     m_context->compileShaderDirect(fragmentShader);
 
@@ -639,11 +639,11 @@ bool VideoTextureCopierCV::initializeUVContextObjects()
         "}\n"_s
     };
 
-    Platform3DObject vertexShader = m_context->createShader(GraphicsContextGL::VERTEX_SHADER);
+    PlatformGLObject vertexShader = m_context->createShader(GraphicsContextGL::VERTEX_SHADER);
     m_context->shaderSource(vertexShader, vertexShaderSource);
     m_context->compileShaderDirect(vertexShader);
 
-    GC3Dint status = 0;
+    GCGLint status = 0;
     m_context->getShaderiv(vertexShader, GraphicsContextGL::COMPILE_STATUS, &status);
     if (!status) {
         LOG(WebGL, "VideoTextureCopierCV::initializeUVContextObjects(%p) - Vertex shader failed to compile.", this);
@@ -678,7 +678,7 @@ bool VideoTextureCopierCV::initializeUVContextObjects()
         "}\n"_s
     };
 
-    Platform3DObject fragmentShader = m_context->createShader(GraphicsContextGL::FRAGMENT_SHADER);
+    PlatformGLObject fragmentShader = m_context->createShader(GraphicsContextGL::FRAGMENT_SHADER);
     m_context->shaderSource(fragmentShader, fragmentShaderSource);
     m_context->compileShaderDirect(fragmentShader);
 
@@ -730,7 +730,7 @@ bool VideoTextureCopierCV::initializeUVContextObjects()
 }
 
 #if USE(ANGLE)
-void* VideoTextureCopierCV::attachIOSurfaceToTexture(GC3Denum target, GC3Denum internalFormat, GC3Dsizei width, GC3Dsizei height, GC3Denum type, IOSurfaceRef surface, GC3Duint plane)
+void* VideoTextureCopierCV::attachIOSurfaceToTexture(GCGLenum target, GCGLenum internalFormat, GCGLsizei width, GCGLsizei height, GCGLenum type, IOSurfaceRef surface, GCGLuint plane)
 {
     auto display = m_context->platformDisplay();
     EGLint eglTextureTarget = 0;
@@ -778,7 +778,7 @@ void VideoTextureCopierCV::detachIOSurfaceFromTexture(void* handle)
 }
 #endif
 
-bool VideoTextureCopierCV::copyImageToPlatformTexture(CVPixelBufferRef image, size_t width, size_t height, Platform3DObject outputTexture, GC3Denum outputTarget, GC3Dint level, GC3Denum internalFormat, GC3Denum format, GC3Denum type, bool premultiplyAlpha, bool flipY)
+bool VideoTextureCopierCV::copyImageToPlatformTexture(CVPixelBufferRef image, size_t width, size_t height, PlatformGLObject outputTexture, GCGLenum outputTarget, GCGLint level, GCGLenum internalFormat, GCGLenum format, GCGLenum type, bool premultiplyAlpha, bool flipY)
 {
     // CVOpenGLTextureCache seems to be disabled since the deprecation of
     // OpenGL. To avoid porting unused code to the ANGLE code paths, remove it.
@@ -842,7 +842,7 @@ bool VideoTextureCopierCV::copyImageToPlatformTexture(CVPixelBufferRef image, si
     m_context->texImage2DDirect(GraphicsContextGL::TEXTURE_2D, level, internalFormat, width, height, 0, format, type, nullptr);
 
     m_context->framebufferTexture2D(GraphicsContextGL::FRAMEBUFFER, GraphicsContextGL::COLOR_ATTACHMENT0, GraphicsContextGL::TEXTURE_2D, outputTexture, level);
-    GC3Denum status = m_context->checkFramebufferStatus(GraphicsContextGL::FRAMEBUFFER);
+    GCGLenum status = m_context->checkFramebufferStatus(GraphicsContextGL::FRAMEBUFFER);
     if (status != GraphicsContextGL::FRAMEBUFFER_COMPLETE) {
         LOG(WebGL, "VideoTextureCopierCV::copyVideoTextureToPlatformTexture(%p) - Unable to create framebuffer for outputTexture.", this);
         return false;
@@ -858,11 +858,11 @@ bool VideoTextureCopierCV::copyImageToPlatformTexture(CVPixelBufferRef image, si
     auto uvPlaneHeight = IOSurfaceGetHeightOfPlane(surface, 1);
 
 #if USE(OPENGL_ES)
-    GC3Denum videoTextureTarget = GraphicsContextGL::TEXTURE_2D;
+    GCGLenum videoTextureTarget = GraphicsContextGL::TEXTURE_2D;
 #elif USE(OPENGL)
-    GC3Denum videoTextureTarget = GraphicsContextGL::TEXTURE_RECTANGLE_ARB;
+    GCGLenum videoTextureTarget = GraphicsContextGL::TEXTURE_RECTANGLE_ARB;
 #elif USE(ANGLE)
-    GC3Denum videoTextureTarget = GraphicsContextGL::IOSurfaceTextureTarget;
+    GCGLenum videoTextureTarget = GraphicsContextGL::IOSurfaceTextureTarget;
 #else
 #error Unsupported configuration
 #endif
@@ -948,7 +948,7 @@ bool VideoTextureCopierCV::copyImageToPlatformTexture(CVPixelBufferRef image, si
 #endif // HAVE(IOSURFACE)
 }
 
-bool VideoTextureCopierCV::copyVideoTextureToPlatformTexture(TextureType inputVideoTexture, size_t width, size_t height, Platform3DObject outputTexture, GC3Denum outputTarget, GC3Dint level, GC3Denum internalFormat, GC3Denum format, GC3Denum type, bool premultiplyAlpha, bool flipY, bool swapColorChannels)
+bool VideoTextureCopierCV::copyVideoTextureToPlatformTexture(TextureType inputVideoTexture, size_t width, size_t height, PlatformGLObject outputTexture, GCGLenum outputTarget, GCGLint level, GCGLenum internalFormat, GCGLenum format, GCGLenum type, bool premultiplyAlpha, bool flipY, bool swapColorChannels)
 {
     if (!inputVideoTexture)
         return false;
@@ -957,8 +957,8 @@ bool VideoTextureCopierCV::copyVideoTextureToPlatformTexture(TextureType inputVi
     GLfloat lowerRight[2] = { 0, 0 };
     GLfloat upperRight[2] = { 0, 0 };
     GLfloat upperLeft[2] = { 0, 0 };
-    Platform3DObject videoTextureName;
-    GC3Denum videoTextureTarget;
+    PlatformGLObject videoTextureName;
+    GCGLenum videoTextureTarget;
 
 #if USE(OPENGL_ES)
     videoTextureName = CVOpenGLESTextureGetName(inputVideoTexture);
@@ -999,7 +999,7 @@ bool VideoTextureCopierCV::copyVideoTextureToPlatformTexture(TextureType inputVi
     return copyVideoTextureToPlatformTexture(videoTextureName, videoTextureTarget, width, height, outputTexture, outputTarget, level, internalFormat, format, type, premultiplyAlpha, flipY, swapColorChannels);
 }
 
-bool VideoTextureCopierCV::copyVideoTextureToPlatformTexture(Platform3DObject videoTextureName, GC3Denum videoTextureTarget, size_t width, size_t height, Platform3DObject outputTexture, GC3Denum outputTarget, GC3Dint level, GC3Denum internalFormat, GC3Denum format, GC3Denum type, bool premultiplyAlpha, bool flipY, bool swapColorChannels)
+bool VideoTextureCopierCV::copyVideoTextureToPlatformTexture(PlatformGLObject videoTextureName, GCGLenum videoTextureTarget, size_t width, size_t height, PlatformGLObject outputTexture, GCGLenum outputTarget, GCGLint level, GCGLenum internalFormat, GCGLenum format, GCGLenum type, bool premultiplyAlpha, bool flipY, bool swapColorChannels)
 {
     LOG(WebGL, "VideoTextureCopierCV::copyVideoTextureToPlatformTexture(%p) - internalFormat: %s, format: %s, type: %s flipY: %s, premultiplyAlpha: %s", this, enumToStringMap()[internalFormat], enumToStringMap()[format], enumToStringMap()[type], flipY ? "true" : "false", premultiplyAlpha ? "true" : "false");
 
@@ -1021,7 +1021,7 @@ bool VideoTextureCopierCV::copyVideoTextureToPlatformTexture(Platform3DObject vi
     m_context->texImage2DDirect(GraphicsContextGL::TEXTURE_2D, level, internalFormat, width, height, 0, format, type, nullptr);
 
     m_context->framebufferTexture2D(GraphicsContextGL::FRAMEBUFFER, GraphicsContextGL::COLOR_ATTACHMENT0, GraphicsContextGL::TEXTURE_2D, outputTexture, level);
-    GC3Denum status = m_context->checkFramebufferStatus(GraphicsContextGL::FRAMEBUFFER);
+    GCGLenum status = m_context->checkFramebufferStatus(GraphicsContextGL::FRAMEBUFFER);
     if (status != GraphicsContextGL::FRAMEBUFFER_COMPLETE) {
         LOG(WebGL, "VideoTextureCopierCV::copyVideoTextureToPlatformTexture(%p) - Unable to create framebuffer for outputTexture.", this);
         return false;

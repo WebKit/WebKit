@@ -40,7 +40,7 @@ public:
 protected:
     WebGLSync(WebGLRenderingContextBase&);
 
-    void deleteObjectImpl(GraphicsContextGLOpenGL*, Platform3DObject) override;
+    void deleteObjectImpl(GraphicsContextGLOpenGL*, PlatformGLObject) override;
 };
 
 } // namespace WebCore

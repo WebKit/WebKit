@@ -46,7 +46,7 @@ void GraphicsContextGLOpenGL::releaseShaderCompiler()
     ::glReleaseShaderCompiler();
 }
 
-void GraphicsContextGLOpenGL::readPixels(GC3Dint x, GC3Dint y, GC3Dsizei width, GC3Dsizei height, GC3Denum format, GC3Denum type, void* data)
+void GraphicsContextGLOpenGL::readPixels(GCGLint x, GCGLint y, GCGLsizei width, GCGLsizei height, GCGLenum format, GCGLenum type, void* data)
 {
     makeContextCurrent();
 
@@ -190,19 +190,19 @@ void GraphicsContextGLOpenGL::resolveMultisamplingIfNecessary(const IntRect&)
     notImplemented();
 }
 
-void GraphicsContextGLOpenGL::renderbufferStorage(GC3Denum target, GC3Denum internalformat, GC3Dsizei width, GC3Dsizei height)
+void GraphicsContextGLOpenGL::renderbufferStorage(GCGLenum target, GCGLenum internalformat, GCGLsizei width, GCGLsizei height)
 {
     makeContextCurrent();
     ::glRenderbufferStorage(target, internalformat, width, height);
 }
 
-void GraphicsContextGLOpenGL::getIntegerv(GC3Denum pname, GC3Dint* value)
+void GraphicsContextGLOpenGL::getIntegerv(GCGLenum pname, GCGLint* value)
 {
     makeContextCurrent();
     ::glGetIntegerv(pname, value);
 }
 
-void GraphicsContextGLOpenGL::getShaderPrecisionFormat(GC3Denum shaderType, GC3Denum precisionType, GC3Dint* range, GC3Dint* precision)
+void GraphicsContextGLOpenGL::getShaderPrecisionFormat(GCGLenum shaderType, GCGLenum precisionType, GCGLint* range, GCGLint* precision)
 {
     ASSERT(range);
     ASSERT(precision);
@@ -211,7 +211,7 @@ void GraphicsContextGLOpenGL::getShaderPrecisionFormat(GC3Denum shaderType, GC3D
     ::glGetShaderPrecisionFormat(shaderType, precisionType, range, precision);
 }
 
-bool GraphicsContextGLOpenGL::texImage2D(GC3Denum target, GC3Dint level, GC3Denum internalformat, GC3Dsizei width, GC3Dsizei height, GC3Dint border, GC3Denum format, GC3Denum type, const void* pixels)
+bool GraphicsContextGLOpenGL::texImage2D(GCGLenum target, GCGLint level, GCGLenum internalformat, GCGLsizei width, GCGLsizei height, GCGLint border, GCGLenum format, GCGLenum type, const void* pixels)
 {
     if (width && height && !pixels) {
         synthesizeGLError(INVALID_VALUE);
@@ -234,13 +234,13 @@ void GraphicsContextGLOpenGL::validateAttributes()
     }
 }
 
-void GraphicsContextGLOpenGL::depthRange(GC3Dclampf zNear, GC3Dclampf zFar)
+void GraphicsContextGLOpenGL::depthRange(GCGLclampf zNear, GCGLclampf zFar)
 {
     makeContextCurrent();
     ::glDepthRangef(zNear, zFar);
 }
 
-void GraphicsContextGLOpenGL::clearDepth(GC3Dclampf depth)
+void GraphicsContextGLOpenGL::clearDepth(GCGLclampf depth)
 {
     makeContextCurrent();
     ::glClearDepthf(depth);
@@ -331,7 +331,7 @@ GraphicsContextGLOpenGL::GraphicsContextGLOpenGL(GraphicsContextGLAttributes att
     // Always set to 1 for OpenGL ES.
     ANGLEResources.MaxDrawBuffers = 1;
     
-    GC3Dint range[2], precision;
+    GCGLint range[2], precision;
     getShaderPrecisionFormat(GraphicsContextGLOpenGL::FRAGMENT_SHADER, GraphicsContextGLOpenGL::HIGH_FLOAT, range, &precision);
     ANGLEResources.FragmentPrecisionHigh = (range[0] || range[1] || precision);
     
@@ -388,7 +388,7 @@ PlatformGraphicsContextGL GraphicsContextGLOpenGL::platformGraphicsContextGL()
     return m_private->platformContext();
 }
 
-Platform3DObject GraphicsContextGLOpenGL::platformTexture() const
+PlatformGLObject GraphicsContextGLOpenGL::platformTexture() const
 {
     return m_texture;
 }

@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "GraphicsTypes3D.h"
+#include "GraphicsTypesGL.h"
 
 #include <wtf/text/WTFString.h>
 
@@ -268,18 +268,18 @@ public:
     virtual void renderbufferStorageMultisample(unsigned long target, unsigned long samples, unsigned long internalformat, unsigned long width, unsigned long height) = 0;
 
     // GL_OES_vertex_array_object
-    virtual Platform3DObject createVertexArrayOES() = 0;
-    virtual void deleteVertexArrayOES(Platform3DObject) = 0;
-    virtual GC3Dboolean isVertexArrayOES(Platform3DObject) = 0;
-    virtual void bindVertexArrayOES(Platform3DObject) = 0;
+    virtual PlatformGLObject createVertexArrayOES() = 0;
+    virtual void deleteVertexArrayOES(PlatformGLObject) = 0;
+    virtual GCGLboolean isVertexArrayOES(PlatformGLObject) = 0;
+    virtual void bindVertexArrayOES(PlatformGLObject) = 0;
 
     // GL_ANGLE_translated_shader_source
-    virtual String getTranslatedShaderSourceANGLE(Platform3DObject) = 0;
+    virtual String getTranslatedShaderSourceANGLE(PlatformGLObject) = 0;
 
     // EXT Robustness - uses getGraphicsResetStatusARB
-    virtual void readnPixelsEXT(int x, int y, GC3Dsizei width, GC3Dsizei height, GC3Denum format, GC3Denum type, GC3Dsizei bufSize, void *data) = 0;
-    virtual void getnUniformfvEXT(GC3Duint program, int location, GC3Dsizei bufSize, float *params) = 0;
-    virtual void getnUniformivEXT(GC3Duint program, int location, GC3Dsizei bufSize, int *params) = 0;
+    virtual void readnPixelsEXT(int x, int y, GCGLsizei width, GCGLsizei height, GCGLenum format, GCGLenum type, GCGLsizei bufSize, void *data) = 0;
+    virtual void getnUniformfvEXT(GCGLuint program, int location, GCGLsizei bufSize, float *params) = 0;
+    virtual void getnUniformivEXT(GCGLuint program, int location, GCGLsizei bufSize, int *params) = 0;
 
     // GL_EXT_debug_marker
     virtual void insertEventMarkerEXT(const String&) = 0;
@@ -287,12 +287,12 @@ public:
     virtual void popGroupMarkerEXT(void) = 0;
 
     // GL_ARB_draw_buffers / GL_EXT_draw_buffers
-    virtual void drawBuffersEXT(GC3Dsizei n, const GC3Denum* bufs) = 0;
+    virtual void drawBuffersEXT(GCGLsizei n, const GCGLenum* bufs) = 0;
 
     // GL_ANGLE_instanced_arrays
-    virtual void drawArraysInstanced(GC3Denum mode, GC3Dint first, GC3Dsizei count, GC3Dsizei primcount) = 0;
-    virtual void drawElementsInstanced(GC3Denum mode, GC3Dsizei count, GC3Denum type, long long offset, GC3Dsizei primcount) = 0;
-    virtual void vertexAttribDivisor(GC3Duint index, GC3Duint divisor) = 0;
+    virtual void drawArraysInstanced(GCGLenum mode, GCGLint first, GCGLsizei count, GCGLsizei primcount) = 0;
+    virtual void drawElementsInstanced(GCGLenum mode, GCGLsizei count, GCGLenum type, long long offset, GCGLsizei primcount) = 0;
+    virtual void vertexAttribDivisor(GCGLuint index, GCGLuint divisor) = 0;
 
     virtual bool isNVIDIA() = 0;
     virtual bool isAMD() = 0;

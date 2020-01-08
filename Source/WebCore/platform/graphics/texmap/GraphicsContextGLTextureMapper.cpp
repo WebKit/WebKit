@@ -285,7 +285,7 @@ GraphicsContextGLOpenGL::GraphicsContextGLOpenGL(GraphicsContextGLAttributes att
         // From version 3.2 on we use the OpenGL Core profile, and we need a VAO for rendering.
         // A VAO could be created and bound by each component using GL rendering (TextureMapper, WebGL, etc). This is
         // a simpler solution: the first GraphicsContextGLOpenGL created on a GLContext will create and bind a VAO for that context.
-        GC3Dint currentVAO = 0;
+        GCGLint currentVAO = 0;
         getIntegerv(GraphicsContextGLOpenGL::VERTEX_ARRAY_BINDING, &currentVAO);
         if (!currentVAO) {
             m_vao = createVertexArray();
@@ -318,7 +318,7 @@ GraphicsContextGLOpenGL::GraphicsContextGLOpenGL(GraphicsContextGLAttributes att
     // Always set to 1 for OpenGL ES.
     ANGLEResources.MaxDrawBuffers = 1;
 
-    GC3Dint range[2], precision;
+    GCGLint range[2], precision;
     getShaderPrecisionFormat(GraphicsContextGLOpenGL::FRAGMENT_SHADER, GraphicsContextGLOpenGL::HIGH_FLOAT, range, &precision);
     ANGLEResources.FragmentPrecisionHigh = (range[0] || range[1] || precision);
 
@@ -440,7 +440,7 @@ PlatformGraphicsContextGL GraphicsContextGLOpenGL::platformGraphicsContextGL() c
 #endif
 }
 
-Platform3DObject GraphicsContextGLOpenGL::platformTexture() const
+PlatformGLObject GraphicsContextGLOpenGL::platformTexture() const
 {
     return m_texture;
 }

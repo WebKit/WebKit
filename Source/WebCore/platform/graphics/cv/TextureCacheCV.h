@@ -27,7 +27,7 @@
 
 #if HAVE(CORE_VIDEO)
 
-#include "GraphicsTypes3D.h"
+#include "GraphicsTypesGL.h"
 #include <wtf/Ref.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/WeakPtr.h>
@@ -58,7 +58,7 @@ public:
 
     TextureCacheCV(GraphicsContextGLOpenGL&, RetainPtr<TextureCacheType>&&);
 
-    RetainPtr<TextureType> textureFromImage(CVPixelBufferRef, GC3Denum outputTarget, GC3Dint level, GC3Denum internalFormat, GC3Denum format, GC3Denum type);
+    RetainPtr<TextureType> textureFromImage(CVPixelBufferRef, GCGLenum outputTarget, GCGLint level, GCGLenum internalFormat, GCGLenum format, GCGLenum type);
     GraphicsContextGLOpenGL& context() { return m_context.get(); }
 
 private:

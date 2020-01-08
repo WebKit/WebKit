@@ -32,12 +32,12 @@
 
 namespace WebCore {
 
-Ref<WebGLUniformLocation> WebGLUniformLocation::create(WebGLProgram* program, GC3Dint location, GC3Denum type)
+Ref<WebGLUniformLocation> WebGLUniformLocation::create(WebGLProgram* program, GCGLint location, GCGLenum type)
 {
     return adoptRef(*new WebGLUniformLocation(program, location, type));
 }
 
-WebGLUniformLocation::WebGLUniformLocation(WebGLProgram* program, GC3Dint location, GC3Denum type)
+WebGLUniformLocation::WebGLUniformLocation(WebGLProgram* program, GCGLint location, GCGLenum type)
     : m_program(program)
     , m_location(location)
     , m_type(type)
@@ -55,7 +55,7 @@ WebGLProgram* WebGLUniformLocation::program() const
     return m_program.get();
 }
 
-GC3Dint WebGLUniformLocation::location() const
+GCGLint WebGLUniformLocation::location() const
 {
     // If the program has been linked again, then this UniformLocation is no
     // longer valid.
@@ -63,7 +63,7 @@ GC3Dint WebGLUniformLocation::location() const
     return m_location;
 }
     
-GC3Denum WebGLUniformLocation::type() const
+GCGLenum WebGLUniformLocation::type() const
 {
     // If the program has been linked again, then this UniformLocation is no
     // longer valid.

@@ -40,9 +40,9 @@ public:
 
     static bool supported(WebGLRenderingContextBase&);
 
-    void drawArraysInstancedANGLE(GC3Denum mode, GC3Dint first, GC3Dsizei count, GC3Dsizei primcount);
-    void drawElementsInstancedANGLE(GC3Denum mode, GC3Dsizei count, GC3Denum type, long long offset, GC3Dsizei primcount);
-    void vertexAttribDivisorANGLE(GC3Duint index, GC3Duint divisor);
+    void drawArraysInstancedANGLE(GCGLenum mode, GCGLint first, GCGLsizei count, GCGLsizei primcount);
+    void drawElementsInstancedANGLE(GCGLenum mode, GCGLsizei count, GCGLenum type, long long offset, GCGLsizei primcount);
+    void vertexAttribDivisorANGLE(GCGLuint index, GCGLuint divisor);
 };
 
 } // namespace WebCore

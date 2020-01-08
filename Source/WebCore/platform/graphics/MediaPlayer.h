@@ -29,7 +29,7 @@
 
 #include "AudioTrackPrivate.h"
 #include "ContentType.h"
-#include "GraphicsTypes3D.h"
+#include "GraphicsTypesGL.h"
 #include "LayoutRect.h"
 #include "LegacyCDMSession.h"
 #include "MediaPlayerEnums.h"
@@ -421,7 +421,7 @@ public:
     // The destination texture may need to be resized to to the dimensions of the source texture or re-defined to the required internalFormat.
     // The current restrictions require that format shoud be RGB or RGBA, type should be UNSIGNED_BYTE and level should be 0. It may be lifted in the future.
 
-    bool copyVideoTextureToPlatformTexture(GraphicsContextGLOpenGL*, Platform3DObject texture, GC3Denum target, GC3Dint level, GC3Denum internalFormat, GC3Denum format, GC3Denum type, bool premultiplyAlpha, bool flipY);
+    bool copyVideoTextureToPlatformTexture(GraphicsContextGLOpenGL*, PlatformGLObject texture, GCGLenum target, GCGLint level, GCGLenum internalFormat, GCGLenum format, GCGLenum type, bool premultiplyAlpha, bool flipY);
 
     NativeImagePtr nativeImageForCurrentTime();
 

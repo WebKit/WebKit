@@ -162,7 +162,7 @@ static void freeData(void *, const void *data, size_t /* size */)
     if (_drawingBuffer) {
         if (_latchedPbuffer) {
 
-            GC3Denum texture = _context->platformTexture();
+            GCGLenum texture = _context->platformTexture();
             gl::BindTexture(GraphicsContextGL::IOSurfaceTextureTarget, texture);
             if (!EGL_ReleaseTexImage(_eglDisplay, _latchedPbuffer, EGL_BACK_BUFFER)) {
                 // FIXME: report error.
@@ -240,21 +240,21 @@ static void freeData(void *, const void *data, size_t /* size */)
 - (void)bindFramebufferToNextAvailableSurface
 {
 #if USE(OPENGL)
-    GC3Denum texture = _context->platformTexture();
+    GCGLenum texture = _context->platformTexture();
     glBindTexture(GL_TEXTURE_RECTANGLE_ARB, texture);
 
     if (_drawingBuffer && _drawingBuffer->isInUse())
         std::swap(_drawingBuffer, _spareBuffer);
 
     IOSurfaceRef ioSurface = _drawingBuffer->surface();
-    GC3Denum internalFormat = _usingAlpha ? GL_RGBA : GL_RGB;
+    GCGLenum internalFormat = _usingAlpha ? GL_RGBA : GL_RGB;
 
     // Link the IOSurface to the texture.
     CGLContextObj cglContext = static_cast<CGLContextObj>(_context->platformGraphicsContextGL());
     CGLError error = CGLTexImageIOSurface2D(cglContext, GL_TEXTURE_RECTANGLE_ARB, internalFormat, _bufferSize.width(), _bufferSize.height(), GL_BGRA, GL_UNSIGNED_INT_8_8_8_8_REV, ioSurface, 0);
     ASSERT_UNUSED(error, error == kCGLNoError);
 #elif USE(ANGLE)
-    GC3Denum texture = _context->platformTexture();
+    GCGLenum texture = _context->platformTexture();
 
     gl::BindTexture(GraphicsContextGL::IOSurfaceTextureTarget, texture);
 

@@ -30,7 +30,7 @@
 #include "AffineTransform.h"
 #include "ColorSpace.h"
 #include "GraphicsTypes.h"
-#include "GraphicsTypes3D.h"
+#include "GraphicsTypesGL.h"
 #include "ImageBufferData.h"
 #include "ImagePaintingOptions.h"
 #include "IntSize.h"
@@ -134,7 +134,7 @@ public:
 
     // FIXME: current implementations of this method have the restriction that they only work
     // with textures that are RGB or RGBA format, and UNSIGNED_BYTE type.
-    bool copyToPlatformTexture(GraphicsContextGLOpenGL&, GC3Denum, Platform3DObject, GC3Denum, bool, bool);
+    bool copyToPlatformTexture(GraphicsContextGLOpenGL&, GCGLenum, PlatformGLObject, GCGLenum, bool, bool);
 
     // These functions are used when clamping the ImageBuffer which is created for filter, masker or clipper.
     static bool sizeNeedsClamping(const FloatSize&);

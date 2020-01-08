@@ -61,7 +61,7 @@ TextureCacheCV::TextureCacheCV(GraphicsContextGLOpenGL& context, RetainPtr<Textu
 {
 }
 
-RetainPtr<TextureCacheCV::TextureType> TextureCacheCV::textureFromImage(CVPixelBufferRef image, GC3Denum outputTarget, GC3Dint level, GC3Denum internalFormat, GC3Denum format, GC3Denum type)
+RetainPtr<TextureCacheCV::TextureType> TextureCacheCV::textureFromImage(CVPixelBufferRef image, GCGLenum outputTarget, GCGLint level, GCGLenum internalFormat, GCGLenum format, GCGLenum type)
 {
 #if USE(ANGLE)
     // FIXME: figure out how to do this integrating via ANGLE.

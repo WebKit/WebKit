@@ -27,7 +27,7 @@
 
 #if ENABLE(WEBGL)
 
-#include "GraphicsTypes3D.h"
+#include "GraphicsTypesGL.h"
 #include <wtf/RefCounted.h>
 
 namespace WebCore {
@@ -40,7 +40,7 @@ class WebGLObject : public RefCounted<WebGLObject> {
 public:
     virtual ~WebGLObject() = default;
 
-    Platform3DObject object() const { return m_object; }
+    PlatformGLObject object() const { return m_object; }
 
     // deleteObject may not always delete the OpenGL resource.  For programs and
     // shaders, deletion is delayed until they are no longer attached.
@@ -62,10 +62,10 @@ protected:
     WebGLObject() = default;
 
     // setObject should be only called once right after creating a WebGLObject.
-    void setObject(Platform3DObject);
+    void setObject(PlatformGLObject);
 
     // deleteObjectImpl should be only called once to delete the OpenGL resource.
-    virtual void deleteObjectImpl(GraphicsContextGLOpenGL*, Platform3DObject) = 0;
+    virtual void deleteObjectImpl(GraphicsContextGLOpenGL*, PlatformGLObject) = 0;
 
     virtual bool hasGroupOrContext() const = 0;
 
@@ -74,12 +74,12 @@ protected:
     virtual GraphicsContextGLOpenGL* getAGraphicsContextGL() const = 0;
 
 private:
-    Platform3DObject m_object { 0 };
+    PlatformGLObject m_object { 0 };
     unsigned m_attachmentCount { 0 };
     bool m_deleted { false };
 };
 
-inline Platform3DObject objectOrZero(WebGLObject* object)
+inline PlatformGLObject objectOrZero(WebGLObject* object)
 {
     return object ? object->object() : 0;
 }

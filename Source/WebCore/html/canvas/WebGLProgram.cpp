@@ -93,7 +93,7 @@ void WebGLProgram::contextDestroyed()
     ContextDestructionObserver::contextDestroyed();
 }
 
-void WebGLProgram::deleteObjectImpl(GraphicsContextGLOpenGL* context3d, Platform3DObject obj)
+void WebGLProgram::deleteObjectImpl(GraphicsContextGLOpenGL* context3d, PlatformGLObject obj)
 {
     context3d->deleteProgram(obj);
     if (m_vertexShader) {
@@ -112,7 +112,7 @@ unsigned WebGLProgram::numActiveAttribLocations()
     return m_activeAttribLocations.size();
 }
 
-GC3Dint WebGLProgram::getActiveAttribLocation(GC3Duint index)
+GCGLint WebGLProgram::getActiveAttribLocation(GCGLuint index)
 {
     cacheInfoIfNeeded();
     if (index >= numActiveAttribLocations())
@@ -148,7 +148,7 @@ void WebGLProgram::increaseLinkCount()
     m_infoValid = false;
 }
 
-WebGLShader* WebGLProgram::getAttachedShader(GC3Denum type)
+WebGLShader* WebGLProgram::getAttachedShader(GCGLenum type)
 {
     switch (type) {
     case GraphicsContextGL::VERTEX_SHADER:
@@ -204,7 +204,7 @@ void WebGLProgram::cacheActiveAttribLocations(GraphicsContextGLOpenGL* context3d
 {
     m_activeAttribLocations.clear();
 
-    GC3Dint numAttribs = 0;
+    GCGLint numAttribs = 0;
     context3d->getProgramiv(object(), GraphicsContextGL::ACTIVE_ATTRIBUTES, &numAttribs);
     m_activeAttribLocations.resize(static_cast<size_t>(numAttribs));
     for (int i = 0; i < numAttribs; ++i) {
@@ -225,7 +225,7 @@ void WebGLProgram::cacheInfoIfNeeded()
     GraphicsContextGLOpenGL* context = getAGraphicsContextGL();
     if (!context)
         return;
-    GC3Dint linkStatus = 0;
+    GCGLint linkStatus = 0;
     context->getProgramiv(object(), GraphicsContextGL::LINK_STATUS, &linkStatus);
     m_linkStatus = linkStatus;
     if (m_linkStatus)

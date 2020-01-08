@@ -35,18 +35,18 @@ namespace WebCore {
 
 class WebGLShaderPrecisionFormat : public RefCounted<WebGLShaderPrecisionFormat> {
 public:
-    static Ref<WebGLShaderPrecisionFormat> create(GC3Dint rangeMin, GC3Dint rangeMax, GC3Dint precision);
+    static Ref<WebGLShaderPrecisionFormat> create(GCGLint rangeMin, GCGLint rangeMax, GCGLint precision);
 
-    GC3Dint rangeMin() const;
-    GC3Dint rangeMax() const;
-    GC3Dint precision() const;
+    GCGLint rangeMin() const;
+    GCGLint rangeMax() const;
+    GCGLint precision() const;
 
 private:
-    WebGLShaderPrecisionFormat(GC3Dint rangeMin, GC3Dint rangeMax, GC3Dint precision);
+    WebGLShaderPrecisionFormat(GCGLint rangeMin, GCGLint rangeMax, GCGLint precision);
 
-    GC3Dint m_rangeMin;
-    GC3Dint m_rangeMax;
-    GC3Dint m_precision;
+    GCGLint m_rangeMin;
+    GCGLint m_rangeMax;
+    GCGLint m_precision;
 };
 
 } // namespace WebCore

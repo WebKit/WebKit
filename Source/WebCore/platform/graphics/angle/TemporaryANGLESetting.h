@@ -26,7 +26,7 @@
 
 #pragma once
 
-#include "GraphicsTypes3D.h"
+#include "GraphicsTypesGL.h"
 
 #include <wtf/Noncopyable.h>
 
@@ -42,13 +42,13 @@ namespace WebCore {
 class TemporaryANGLESetting {
     WTF_MAKE_NONCOPYABLE(TemporaryANGLESetting);
 public:
-    TemporaryANGLESetting(GC3Denum capability, GC3Denum scopedState);
+    TemporaryANGLESetting(GCGLenum capability, GCGLenum scopedState);
     ~TemporaryANGLESetting();
 
 private:
-    const GC3Denum m_capability;
-    const GC3Denum m_scopedState;
-    GC3Denum m_originalState;
+    const GCGLenum m_capability;
+    const GCGLenum m_scopedState;
+    GCGLenum m_originalState;
 };
 
 }

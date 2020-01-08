@@ -37,7 +37,7 @@
 
 namespace WebCore {
 
-void WebGLObject::setObject(Platform3DObject object)
+void WebGLObject::setObject(PlatformGLObject object)
 {
     ASSERT(!m_object);
     ASSERT(!m_deleted);

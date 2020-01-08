@@ -43,18 +43,18 @@ public:
     void blitFramebuffer(long srcX0, long srcY0, long srcX1, long srcY1, long dstX0, long dstY0, long dstX1, long dstY1, unsigned long mask, unsigned long filter) override;
     void renderbufferStorageMultisample(unsigned long target, unsigned long samples, unsigned long internalformat, unsigned long width, unsigned long height) override;
 
-    Platform3DObject createVertexArrayOES() override;
-    void deleteVertexArrayOES(Platform3DObject) override;
-    GC3Dboolean isVertexArrayOES(Platform3DObject) override;
-    void bindVertexArrayOES(Platform3DObject) override;
+    PlatformGLObject createVertexArrayOES() override;
+    void deleteVertexArrayOES(PlatformGLObject) override;
+    GCGLboolean isVertexArrayOES(PlatformGLObject) override;
+    void bindVertexArrayOES(PlatformGLObject) override;
     void insertEventMarkerEXT(const String&) override;
     void pushGroupMarkerEXT(const String&) override;
     void popGroupMarkerEXT(void) override;
-    void drawBuffersEXT(GC3Dsizei, const GC3Denum*) override;
+    void drawBuffersEXT(GCGLsizei, const GCGLenum*) override;
 
-    void drawArraysInstanced(GC3Denum mode, GC3Dint first, GC3Dsizei count, GC3Dsizei primcount) override;
-    void drawElementsInstanced(GC3Denum mode, GC3Dsizei count, GC3Denum type, long long offset, GC3Dsizei primcount) override;
-    void vertexAttribDivisor(GC3Duint index, GC3Duint divisor) override;
+    void drawArraysInstanced(GCGLenum mode, GCGLint first, GCGLsizei count, GCGLsizei primcount) override;
+    void drawElementsInstanced(GCGLenum mode, GCGLsizei count, GCGLenum type, long long offset, GCGLsizei primcount) override;
+    void vertexAttribDivisor(GCGLuint index, GCGLuint divisor) override;
 
 protected:
     bool supportsExtension(const WTF::String&) override;

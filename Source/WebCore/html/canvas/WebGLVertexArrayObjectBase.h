@@ -44,14 +44,14 @@ public:
 
         bool enabled { false };
         RefPtr<WebGLBuffer> bufferBinding;
-        GC3Dsizei bytesPerElement { 0 };
-        GC3Dint size { 4 };
-        GC3Denum type { GraphicsContextGL::FLOAT };
+        GCGLsizei bytesPerElement { 0 };
+        GCGLint size { 4 };
+        GCGLenum type { GraphicsContextGL::FLOAT };
         bool normalized { false };
-        GC3Dsizei stride { 16 };
-        GC3Dsizei originalStride { 0 };
-        GC3Dintptr offset { 0 };
-        GC3Duint divisor { 0 };
+        GCGLsizei stride { 16 };
+        GCGLsizei originalStride { 0 };
+        GCGLintptr offset { 0 };
+        GCGLuint divisor { 0 };
     };
 
     bool isDefaultObject() const { return m_type == Type::Default; }
@@ -63,14 +63,14 @@ public:
     void setElementArrayBuffer(WebGLBuffer*);
 
     VertexAttribState& getVertexAttribState(int index) { return m_vertexAttribState[index]; }
-    void setVertexAttribState(GC3Duint, GC3Dsizei, GC3Dint, GC3Denum, GC3Dboolean, GC3Dsizei, GC3Dintptr, WebGLBuffer*);
+    void setVertexAttribState(GCGLuint, GCGLsizei, GCGLint, GCGLenum, GCGLboolean, GCGLsizei, GCGLintptr, WebGLBuffer*);
     void unbindBuffer(WebGLBuffer&);
 
-    void setVertexAttribDivisor(GC3Duint index, GC3Duint divisor);
+    void setVertexAttribDivisor(GCGLuint index, GCGLuint divisor);
 
 protected:
     WebGLVertexArrayObjectBase(WebGLRenderingContextBase&, Type);
-    void deleteObjectImpl(GraphicsContextGLOpenGL*, Platform3DObject) override = 0;
+    void deleteObjectImpl(GraphicsContextGLOpenGL*, PlatformGLObject) override = 0;
 
     Type m_type;
     bool m_hasEverBeenBound { false };

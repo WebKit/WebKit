@@ -45,19 +45,19 @@ public:
     bool isEnabled(const String&) override;
     int getGraphicsResetStatusARB() override;
 
-    Platform3DObject createVertexArrayOES() override = 0;
-    void deleteVertexArrayOES(Platform3DObject) override = 0;
-    GC3Dboolean isVertexArrayOES(Platform3DObject) override = 0;
-    void bindVertexArrayOES(Platform3DObject) override = 0;
+    PlatformGLObject createVertexArrayOES() override = 0;
+    void deleteVertexArrayOES(PlatformGLObject) override = 0;
+    GCGLboolean isVertexArrayOES(PlatformGLObject) override = 0;
+    void bindVertexArrayOES(PlatformGLObject) override = 0;
 
-    void drawBuffersEXT(GC3Dsizei, const GC3Denum*) override = 0;
+    void drawBuffersEXT(GCGLsizei, const GCGLenum*) override = 0;
 
-    String getTranslatedShaderSourceANGLE(Platform3DObject) override;
+    String getTranslatedShaderSourceANGLE(PlatformGLObject) override;
 
     // EXT Robustness - uses getGraphicsResetStatusARB()
-    void readnPixelsEXT(int x, int y, GC3Dsizei width, GC3Dsizei height, GC3Denum format, GC3Denum type, GC3Dsizei bufSize, void *data) override;
-    void getnUniformfvEXT(GC3Duint program, int location, GC3Dsizei bufSize, float *params) override;
-    void getnUniformivEXT(GC3Duint program, int location, GC3Dsizei bufSize, int *params) override;
+    void readnPixelsEXT(int x, int y, GCGLsizei width, GCGLsizei height, GCGLenum format, GCGLenum type, GCGLsizei bufSize, void *data) override;
+    void getnUniformfvEXT(GCGLuint program, int location, GCGLsizei bufSize, float *params) override;
+    void getnUniformivEXT(GCGLuint program, int location, GCGLsizei bufSize, int *params) override;
 
     bool isNVIDIA() override { return m_isNVIDIA; }
     bool isAMD() override { return m_isAMD; }
