@@ -733,7 +733,7 @@ void HTMLElement::setTranslate(bool enable)
     setAttributeWithoutSynchronization(translateAttr, enable ? "yes" : "no");
 }
 
-bool HTMLElement::rendererIsNeeded(const RenderStyle& style)
+bool HTMLElement::rendererIsEverNeeded()
 {
     if (hasTagName(noscriptTag)) {
         RefPtr<Frame> frame = document().frame();
@@ -744,7 +744,7 @@ bool HTMLElement::rendererIsNeeded(const RenderStyle& style)
         if (frame && frame->loader().subframeLoader().allowPlugins())
             return false;
     }
-    return StyledElement::rendererIsNeeded(style);
+    return StyledElement::rendererIsEverNeeded();
 }
 
 RenderPtr<RenderElement> HTMLElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)

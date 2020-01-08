@@ -1,3 +1,16 @@
+2020-01-08  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Stop creating CSS Animations for <noscript> elements
+        https://bugs.webkit.org/show_bug.cgi?id=205925
+        <rdar://problem/58158479>
+
+        Reviewed by Antti Koivisto.
+
+        Add a new test that checks that setting the `animation` property on a <noscript> element does not yield the creation of a CSSAnimation object.
+
+        * webanimations/no-css-animation-on-noscript-expected.txt: Added.
+        * webanimations/no-css-animation-on-noscript.html: Added.
+
 2020-01-08  youenn fablet  <youenn@apple.com>
 
         Implement MediaRecorder backend in GPUProcess
