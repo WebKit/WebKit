@@ -1,5 +1,23 @@
 2020-01-07  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r254143. rdar://problem/58310178
+
+    Unreviewed non-arm64e build fix.
+    
+    * dfg/DFGOSRExitCompilerCommon.cpp:
+    (JSC::DFG::reifyInlinedCallFrames):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@254143 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-01-07  Keith Miller  <keith_miller@apple.com>
+
+            Unreviewed non-arm64e build fix.
+
+            * dfg/DFGOSRExitCompilerCommon.cpp:
+            (JSC::DFG::reifyInlinedCallFrames):
+
+2020-01-07  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r254142. rdar://problem/58310178
 
     Bytecode checkpoint fixes for arm64(e)
