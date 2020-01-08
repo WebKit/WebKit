@@ -22,6 +22,10 @@ release r:
 	$(SCRIPTS_PATH)/set-webkit-configuration --release
 	@$(MAKE) libs
 
+testing t:
+	$(SCRIPTS_PATH)/set-webkit-configuration --release
+	@$(MAKE) libs
+
 analyze:
 	$(SCRIPTS_PATH)/set-webkit-configuration --debug
 	@$(MAKE) libs
