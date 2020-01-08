@@ -1,3 +1,29 @@
+2020-01-08  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [CSS Font Loading] Import css-font-loading WPT tests
+        https://bugs.webkit.org/show_bug.cgi?id=205863
+
+        Reviewed by Manuel Rego Casasnovas.
+
+        * resources/import-expectations.json:
+        * resources/resource-files.json:
+        * web-platform-tests/css/css-font-loading/META.yml: Added.
+        * web-platform-tests/css/css-font-loading/empty-family-load-expected.txt: Added.
+        * web-platform-tests/css/css-font-loading/empty-family-load.html: Added.
+        * web-platform-tests/css/css-font-loading/font-face-reject-expected.txt: Added.
+        * web-platform-tests/css/css-font-loading/font-face-reject.html: Added.
+        * web-platform-tests/css/css-font-loading/fontface-descriptor-updates-expected.html: Added.
+        * web-platform-tests/css/css-font-loading/fontface-descriptor-updates.html: Added.
+        * web-platform-tests/css/css-font-loading/fontfaceset-no-root-element.html: Added.
+        * web-platform-tests/css/css-font-loading/fontfacesetloadevent-constructor-expected.txt: Added.
+        * web-platform-tests/css/css-font-loading/fontfacesetloadevent-constructor.html: Added.
+        * web-platform-tests/css/css-font-loading/idlharness.https-expected.txt: Added.
+        * web-platform-tests/css/css-font-loading/idlharness.https.html: Added.
+        * web-platform-tests/css/css-font-loading/resources/GenI102.woff2: Added.
+        * web-platform-tests/css/css-font-loading/resources/GenR102.woff2: Added.
+        * web-platform-tests/css/css-font-loading/resources/w3c-import.log: Added.
+        * web-platform-tests/css/css-font-loading/w3c-import.log: Added.
+
 2020-01-07  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Implement css3-images image-orientation

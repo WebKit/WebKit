@@ -1,3 +1,18 @@
+2020-01-08  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [CSS Font Loading] Import css-font-loading WPT tests
+        https://bugs.webkit.org/show_bug.cgi?id=205863
+
+        Reviewed by Manuel Rego Casasnovas.
+
+        Tests failing:
+
+        - https://webkit.org/b/184138 imported/w3c/web-platform-tests/css/css-font-loading/fontfacesetloadevent-constructor.html
+        - https://webkit.org/b/184138 imported/w3c/web-platform-tests/css/css-font-loading/idlharness.https.html
+        - https://webkit.org/b/205864 imported/w3c/web-platform-tests/css/css-font-loading/font-face-reject.html
+
+        * TestExpectations:
+
 2020-01-08  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [HarfBuzz][GTK] fast/text/complex-first-glyph-with-initial-advance.html is failing
