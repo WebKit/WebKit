@@ -1,3 +1,13 @@
+2020-01-08  Milan Crha  <mcrha@redhat.com>
+
+        [GTK] Editing: Allow line breaks in lists
+        https://bugs.webkit.org/show_bug.cgi?id=205913
+
+        Reviewed by Carlos Garcia Campos.
+
+        * UIProcess/gtk/KeyBindingTranslator.cpp:
+        Treat Shift+Enter as "InsertLineBreak", instead of "InsertNewLine".
+
 2020-01-08  youenn fablet  <youenn@apple.com>
 
         Implement MediaRecorder backend in GPUProcess

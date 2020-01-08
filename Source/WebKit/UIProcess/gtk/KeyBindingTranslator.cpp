@@ -193,12 +193,18 @@ struct KeyCombinationEntry {
 };
 
 static const KeyCombinationEntry customKeyBindings[] = {
-    { GDK_KEY_b,         GDK_CONTROL_MASK,               "ToggleBold"    },
-    { GDK_KEY_i,         GDK_CONTROL_MASK,               "ToggleItalic"  },
-    { GDK_KEY_Escape,    0,                              "Cancel"        },
-    { GDK_KEY_greater,   GDK_CONTROL_MASK,               "Cancel"        },
-    { GDK_KEY_Tab,       0,                              "InsertTab"     },
-    { GDK_KEY_Tab,       GDK_SHIFT_MASK,                 "InsertBacktab" },
+    { GDK_KEY_b,         GDK_CONTROL_MASK, "ToggleBold"      },
+    { GDK_KEY_i,         GDK_CONTROL_MASK, "ToggleItalic"    },
+    { GDK_KEY_Escape,    0,                "Cancel"          },
+    { GDK_KEY_greater,   GDK_CONTROL_MASK, "Cancel"          },
+    { GDK_KEY_Tab,       0,                "InsertTab"       },
+    { GDK_KEY_Tab,       GDK_SHIFT_MASK,   "InsertBacktab"   },
+    { GDK_KEY_Return,    0,                "InsertNewLine"   },
+    { GDK_KEY_KP_Enter,  0,                "InsertNewLine"   },
+    { GDK_KEY_ISO_Enter, 0,                "InsertNewLine"   },
+    { GDK_KEY_Return,    GDK_SHIFT_MASK,   "InsertLineBreak" },
+    { GDK_KEY_KP_Enter,  GDK_SHIFT_MASK,   "InsertLineBreak" },
+    { GDK_KEY_ISO_Enter, GDK_SHIFT_MASK,   "InsertLineBreak" },
 };
 
 Vector<String> KeyBindingTranslator::commandsForKeyEvent(GdkEventKey* event)
@@ -214,12 +220,8 @@ Vector<String> KeyBindingTranslator::commandsForKeyEvent(GdkEventKey* event)
     if (!m_pendingEditorCommands.isEmpty())
         return WTFMove(m_pendingEditorCommands);
 
-    // Special-case enter keys for we want them to work regardless of modifier.
-    if ((keyval == GDK_KEY_Return || keyval == GDK_KEY_KP_Enter || keyval == GDK_KEY_ISO_Enter))
-        return { "InsertNewLine" };
-
     // For keypress events, we want charCode(), but keyCode() does that.
-    unsigned mapKey = state << 16 | keyval;
+    unsigned mapKey = (state & (GDK_SHIFT_MASK | GDK_CONTROL_MASK | GDK_MOD1_MASK)) << 16 | keyval;
     if (!mapKey)
         return { };
 
