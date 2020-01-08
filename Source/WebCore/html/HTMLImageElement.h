@@ -178,6 +178,8 @@ private:
 
     void copyNonAttributePropertiesFromElement(const Element&) final;
 
+    float effectiveImageDevicePixelRatio() const;
+
 #if ENABLE(SERVICE_CONTROLS)
     void updateImageControls();
     void tryCreateImageControls();

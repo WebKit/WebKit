@@ -286,18 +286,29 @@ FloatSize CachedImage::imageSizeForRenderer(const RenderElement* renderer, SizeT
     return m_image->size(renderer ? renderer->imageOrientation() : ImageOrientation(ImageOrientation::FromImage));
 }
 
-LayoutSize CachedImage::imageSizeForRenderer(const RenderElement* renderer, float multiplier, SizeType sizeType) const
+
+LayoutSize CachedImage::unclampedImageSizeForRenderer(const RenderElement* renderer, float multiplier, SizeType sizeType) const
 {
     LayoutSize imageSize = LayoutSize(imageSizeForRenderer(renderer, sizeType));
     if (imageSize.isEmpty() || multiplier == 1.0f)
         return imageSize;
 
-    // Don't let images that have a width/height >= 1 shrink below 1 when zoomed.
     float widthScale = m_image->hasRelativeWidth() ? 1.0f : multiplier;
     float heightScale = m_image->hasRelativeHeight() ? 1.0f : multiplier;
-    LayoutSize minimumSize(imageSize.width() > 0 ? 1 : 0, imageSize.height() > 0 ? 1 : 0);
     imageSize.scale(widthScale, heightScale);
+    return imageSize;    
+}
+
+LayoutSize CachedImage::imageSizeForRenderer(const RenderElement* renderer, float multiplier, SizeType sizeType) const
+{
+    auto imageSize = unclampedImageSizeForRenderer(renderer, multiplier, sizeType);
+    if (imageSize.isEmpty() || multiplier == 1.0f)
+        return imageSize;
+
+    // Don't let images that have a width/height >= 1 shrink below 1 when zoomed.
+    LayoutSize minimumSize(imageSize.width() > 0 ? 1 : 0, imageSize.height() > 0 ? 1 : 0);
     imageSize.clampToMinimumSize(minimumSize);
+
     ASSERT(multiplier != 1.0f || (imageSize.width().fraction() == 0.0f && imageSize.height().fraction() == 0.0f));
     return imageSize;
 }

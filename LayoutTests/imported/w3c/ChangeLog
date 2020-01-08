@@ -1,3 +1,18 @@
+2020-01-08  Noam Rosenthal  <noam@webkit.org>
+
+        <img>.naturalWidth should return the density-corrected intrinsic width
+        https://bugs.webkit.org/show_bug.cgi?id=150443
+
+        Reviewed by Simon Fraser.
+
+        Updated expected results. 
+
+        * web-platform-tests/html/semantics/embedded-content/the-img-element/current-pixel-density/basic-expected.txt:
+                All tests now pass.
+
+        * web-platform-tests/html/semantics/embedded-content/the-img-element/intrinsicsize/intrinsicsize-with-responsive-images.tentative-expected.txt:
+                Still fails but failure values are different.
+
 2020-01-08  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [CSS Font Loading] Import css-font-loading WPT tests

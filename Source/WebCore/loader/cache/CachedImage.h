@@ -78,6 +78,7 @@ public:
     WEBCORE_EXPORT FloatSize imageSizeForRenderer(const RenderElement* renderer, SizeType = UsedSize) const;
     // This method takes a zoom multiplier that can be used to increase the natural size of the image by the zoom.
     LayoutSize imageSizeForRenderer(const RenderElement*, float multiplier, SizeType = UsedSize) const; // returns the size of the complete image.
+    LayoutSize unclampedImageSizeForRenderer(const RenderElement* renderer, float multiplier, SizeType = UsedSize) const;
     void computeIntrinsicDimensions(Length& intrinsicWidth, Length& intrinsicHeight, FloatSize& intrinsicRatio);
 
     bool isManuallyCached() const { return m_isManuallyCached; }
