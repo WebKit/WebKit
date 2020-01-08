@@ -164,7 +164,13 @@ class Test(object):
         self.environment = {"protocol": protocol, "prefs": self.prefs}
 
     def __eq__(self, other):
+        if not isinstance(other, Test):
+            return False
         return self.id == other.id
+
+    # Python 2 does not have this delegation, while Python 3 does.
+    def __ne__(self, other):
+        return not self.__eq__(other)
 
     def update_metadata(self, metadata=None):
         if metadata is None:
@@ -346,6 +352,17 @@ class Test(object):
             return []
         except KeyError:
             return []
+
+    def expect_any_subtest_status(self):
+        metadata = self._get_metadata()
+        if metadata is None:
+            return False
+        try:
+            # This key is used by the Blink CI to ignore subtest statuses
+            metadata.get("blink_expect_any_subtest_status")
+            return True
+        except KeyError:
+            return False
 
     def __repr__(self):
         return "<%s.%s %s>" % (self.__module__, self.__class__.__name__, self.id)
