@@ -1,3 +1,15 @@
+2020-01-08  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Remove an unused variable in WebCoreArgumentCodersCocoa.mm after r254202
+        https://bugs.webkit.org/show_bug.cgi?id=205939
+
+        Reviewed by Tim Horton.
+
+        Remove an unused temporary variable that was only used for debugging.
+
+        * Shared/Cocoa/WebCoreArgumentCodersCocoa.mm:
+        (IPC::ArgumentCoder<FontHandle>::decodePlatformData):
+
 2020-01-08  Chris Dumez  <cdumez@apple.com>
 
         Move UIProcess DependencyProcessAssertion from WebContent to AuxiliaryProcess

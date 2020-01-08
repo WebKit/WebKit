@@ -500,7 +500,6 @@ bool ArgumentCoder<FontHandle>::decodePlatformData(Decoder& decoder, FontHandle&
     if (!IPC::decode(decoder, font))
         return false;
 
-    auto previousValue = handle.font;
     handle.font = Font::create({ (__bridge CTFontRef)font.get(), static_cast<float>([font pointSize]) });
     return true;
 }
