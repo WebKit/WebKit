@@ -1,3 +1,15 @@
+2020-01-08  Paulo Matos  <pmatos@igalia.com>
+
+        Allow multiple cmakeargs inside inside envvar
+        https://bugs.webkit.org/show_bug.cgi?id=205722
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        Allow sub-argument lists to be passed in a build environment variable.
+
+        * Scripts/build-jsc:
+        * Scripts/build-webkit:
+
 2020-01-07  Saam Barati  <sbarati@apple.com>
 
         run-jsc should not print "... I should not be here ..." when it doesn't get killed when sending a signal to itself

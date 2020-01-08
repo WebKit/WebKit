@@ -36,6 +36,7 @@ use lib $FindBin::Bin;
 use webkitdirs;
 use webkitperl::FeatureList qw(getFeatureOptionList);
 use POSIX;
+use Text::ParseWords;
 
 sub writeCongrats();
 
@@ -69,7 +70,7 @@ foreach (@features) {
 }
 
 # Additional environment parameters
-push @ARGV, split(/ /, $ENV{'BUILD_JSC_ARGS'}) if ($ENV{'BUILD_JSC_ARGS'});
+push @ARGV, parse_line('\s+', 0, $ENV{'BUILD_JSC_ARGS'}) if ($ENV{'BUILD_JSC_ARGS'});
 
 my $programName = basename($0);
 my $usage = <<EOF;

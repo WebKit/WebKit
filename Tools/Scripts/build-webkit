@@ -44,6 +44,7 @@ use webkitdirs;
 use List::Util qw(first);
 use webkitperl::FeatureList qw(getFeatureOptionList);
 use POSIX;
+use Text::ParseWords;
 
 sub writeCongrats();
 
@@ -82,7 +83,7 @@ my $useCCache = -1;
 my @features = getFeatureOptionList();
 
 # Additional environment parameters
-push @ARGV, split(/ /, $ENV{'BUILD_WEBKIT_ARGS'}) if ($ENV{'BUILD_WEBKIT_ARGS'});
+push @ARGV, parse_line('\s+', 0, $ENV{'BUILD_WEBKIT_ARGS'}) if ($ENV{'BUILD_WEBKIT_ARGS'});
 
 # Initialize values from defaults
 foreach (@ARGV) {
