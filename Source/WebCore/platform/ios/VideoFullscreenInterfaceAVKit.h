@@ -218,6 +218,7 @@ protected:
     bool m_targetStandby { false };
 
     bool m_waitingForPreparedToExit { false };
+    bool m_shouldIgnoreAVKitCallbackAboutExitFullscreenReason { false };
 };
 
 }
