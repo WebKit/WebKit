@@ -1,3 +1,17 @@
+2020-01-08  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [HarfBuzz][GTK] fast/text/complex-first-glyph-with-initial-advance.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=118221
+
+        Reviewed by Carlos Garcia Campos.
+
+        * platform/gtk/TestExpectations: Unmarked
+        fast/text/complex-first-glyph-with-initial-advance.html and
+        fast/text/initial-advance-in-intermediate-run-complex.html.
+        * platform/wincairo/TestExpectations: Unmarked
+        fast/text/complex-first-glyph-with-initial-advance.html and
+        fast/text/complex-initial-advance.html.
+
 2020-01-07  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Implement css3-images image-orientation

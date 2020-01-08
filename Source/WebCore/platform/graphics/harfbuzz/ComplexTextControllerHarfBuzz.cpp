@@ -164,17 +164,15 @@ ComplexTextController::ComplexTextRun::ComplexTextRun(hb_buffer_t* buffer, const
         }
 
         float offsetX = harfBuzzPositionToFloat(glyphPositions[i].x_offset);
-        float offsetY = -harfBuzzPositionToFloat(glyphPositions[i].y_offset);
+        float offsetY = harfBuzzPositionToFloat(glyphPositions[i].y_offset);
         float advanceX = harfBuzzPositionToFloat(glyphPositions[i].x_advance);
         float advanceY = harfBuzzPositionToFloat(glyphPositions[i].y_advance);
-
-        if (!i)
-            m_initialAdvance = { offsetX, -offsetY };
 
         m_glyphs[i] = glyph;
         m_baseAdvances[i] = { advanceX, advanceY };
         m_glyphOrigins[i] = { offsetX, offsetY };
     }
+    m_initialAdvance = toFloatSize(m_glyphOrigins[0]);
 }
 
 static const hb_tag_t s_vertTag = HB_TAG('v', 'e', 'r', 't');
