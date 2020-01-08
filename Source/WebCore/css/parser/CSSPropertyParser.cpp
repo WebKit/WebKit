@@ -2901,13 +2901,6 @@ static RefPtr<CSSValue> consumeReflect(CSSParserTokenRange& range, const CSSPars
     return CSSReflectValue::create(direction.releaseNonNull(), offset.releaseNonNull(), WTFMove(mask));
 }
 
-static RefPtr<CSSValue> consumeImageOrientation(CSSParserTokenRange& range)
-{
-    if (range.peek().id() == CSSValueNone || range.peek().id() == CSSValueFromImage)
-        return consumeIdent(range);
-    return nullptr;
-}
-
 static RefPtr<CSSPrimitiveValue> consumeBackgroundBlendMode(CSSParserTokenRange& range)
 {
     CSSValueID id = range.peek().id();
@@ -4168,8 +4161,6 @@ RefPtr<CSSValue> CSSPropertyParser::parseSingleValue(CSSPropertyID property, CSS
         return consumeReflect(m_range, m_context);
     case CSSPropertyWebkitLineBoxContain:
         return consumeLineBoxContain(m_range);
-    case CSSPropertyImageOrientation:
-        return consumeImageOrientation(m_range);
     case CSSPropertyBackgroundAttachment:
     case CSSPropertyBackgroundBlendMode:
     case CSSPropertyBackgroundClip:
