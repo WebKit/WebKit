@@ -1,3 +1,17 @@
+2020-01-08  Mark Lam  <mark.lam@apple.com>
+
+        Rename testing build configuration to release+assert, and add new testing build configuration.
+        https://bugs.webkit.org/show_bug.cgi?id=205954
+
+        Reviewed by Yusuke Suzuki.
+
+        Added a --force-opt shortcut for the --force-optimization-level option of
+        set-webkit-configuration.  This makes it less painful to type this on the command
+        line for those of us who would like to use this option often in our local builds.
+
+        * Makefile:
+        * Scripts/set-webkit-configuration:
+
 2020-01-08  Matt Lewis  <jlewis3@apple.com>
 
         Move EWS from macOS High Sierra to macOS Mojave

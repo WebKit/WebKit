@@ -22,8 +22,12 @@ release r:
 	$(SCRIPTS_PATH)/set-webkit-configuration --release
 	@$(MAKE) libs
 
-testing t:
+release+assert ra:
 	$(SCRIPTS_PATH)/set-webkit-configuration --release
+	@$(MAKE) libs
+
+testing t:
+	$(SCRIPTS_PATH)/set-webkit-configuration --debug --force-optimization-level=O3
 	@$(MAKE) libs
 
 analyze:

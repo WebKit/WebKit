@@ -54,7 +54,8 @@ if (!checkForArgumentAndRemoveFromARGVGettingValue("--lto-mode", \$ltoMode)) {
     $ltoMode="";
 }
 my $forceOptimizationLevel;
-if (!checkForArgumentAndRemoveFromARGVGettingValue("--force-optimization-level", \$forceOptimizationLevel)) {
+if (!checkForArgumentAndRemoveFromARGVGettingValue("--force-optimization-level", \$forceOptimizationLevel)
+    && !checkForArgumentAndRemoveFromARGVGettingValue("--force-opt", \$forceOptimizationLevel)) {
     $forceOptimizationLevel="";
 }
 
