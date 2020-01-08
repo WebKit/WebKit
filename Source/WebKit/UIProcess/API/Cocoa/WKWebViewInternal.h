@@ -68,6 +68,7 @@ namespace WebKit {
 enum class ContinueUnsafeLoad : bool;
 class IconLoadingDelegate;
 class NavigationState;
+class ResourceLoadDelegate;
 class SafeBrowsingWarning;
 class ViewSnapshot;
 class WebPageProxy;
@@ -108,6 +109,7 @@ class ViewGestureController;
     std::unique_ptr<WebKit::NavigationState> _navigationState;
     std::unique_ptr<WebKit::UIDelegate> _uiDelegate;
     std::unique_ptr<WebKit::IconLoadingDelegate> _iconLoadingDelegate;
+    std::unique_ptr<WebKit::ResourceLoadDelegate> _resourceLoadDelegate;
 
     WeakObjCPtr<id <_WKTextManipulationDelegate>> _textManipulationDelegate;
     WeakObjCPtr<id <_WKInputDelegate>> _inputDelegate;

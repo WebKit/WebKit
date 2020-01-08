@@ -46,6 +46,7 @@
 #import "RemoteLayerTreeScrollingPerformanceData.h"
 #import "RemoteObjectRegistry.h"
 #import "RemoteObjectRegistryMessages.h"
+#import "ResourceLoadDelegate.h"
 #import "SafeBrowsingWarning.h"
 #import "UIDelegate.h"
 #import "VersionChecks.h"
@@ -505,6 +506,7 @@ static void hardwareKeyboardAvailabilityChangedCallback(CFNotificationCenterRef,
     _page->setDiagnosticLoggingClient(makeUnique<WebKit::DiagnosticLoggingClient>(self));
 
     _iconLoadingDelegate = makeUnique<WebKit::IconLoadingDelegate>(self);
+    _resourceLoadDelegate = makeUnique<WebKit::ResourceLoadDelegate>(self);
 
     _usePlatformFindUI = YES;
 
@@ -681,6 +683,17 @@ static void hardwareKeyboardAvailabilityChangedCallback(CFNotificationCenterRef,
 {
     _page->setIconLoadingClient(_iconLoadingDelegate->createIconLoadingClient());
     _iconLoadingDelegate->setDelegate(iconLoadingDelegate);
+}
+
+- (id <_WKResourceLoadDelegate>)_resourceLoadDelegate
+{
+    return _resourceLoadDelegate->delegate().autorelease();
+}
+
+- (void)_setResourceLoadDelegate:(id<_WKResourceLoadDelegate>)delegate
+{
+    _page->setResourceLoadClient(_resourceLoadDelegate->createResourceLoadClient());
+    _resourceLoadDelegate->setDelegate(delegate);
 }
 
 - (WKNavigation *)loadRequest:(NSURLRequest *)request

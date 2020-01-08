@@ -108,7 +108,6 @@ typedef NS_OPTIONS(NSUInteger, _WKRectEdge) {
 @class _WKApplicationManifest;
 @class _WKFrameHandle;
 @class _WKHitTestResult;
-@class _WKIconLoadingDelegate;
 @class _WKInspector;
 @class _WKRemoteObjectRegistry;
 @class _WKSafeBrowsingWarning;
@@ -126,6 +125,7 @@ typedef NS_OPTIONS(NSUInteger, _WKRectEdge) {
 @protocol _WKFullscreenDelegate;
 @protocol _WKIconLoadingDelegate;
 @protocol _WKInputDelegate;
+@protocol _WKResourceLoadDelegate;
 @protocol _WKTextManipulationDelegate;
 
 @interface WKWebView (WKPrivate)
@@ -138,6 +138,7 @@ typedef NS_OPTIONS(NSUInteger, _WKRectEdge) {
 
 @property (nonatomic, weak, setter=_setHistoryDelegate:) id <WKHistoryDelegatePrivate> _historyDelegate;
 @property (nonatomic, weak, setter=_setIconLoadingDelegate:) id <_WKIconLoadingDelegate> _iconLoadingDelegate;
+@property (nonatomic, weak, setter=_setResourceLoadDelegate:) id <_WKResourceLoadDelegate> _resourceLoadDelegate WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 
 @property (nonatomic, readonly) NSURL *_unreachableURL;
 @property (nonatomic, readonly) NSURL *_mainFrameURL WK_API_AVAILABLE(macos(10.15), ios(13.0));

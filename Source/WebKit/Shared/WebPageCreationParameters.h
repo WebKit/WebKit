@@ -131,6 +131,8 @@ struct WebPageCreationParameters {
 
     LayerHostingMode layerHostingMode;
 
+    bool hasResourceLoadClient { false };
+
     Vector<String> mimeTypesWithCustomContentProviders;
 
     bool controlledByAutomation;

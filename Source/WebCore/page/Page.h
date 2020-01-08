@@ -617,6 +617,9 @@ public:
     WEBCORE_EXPORT void resumeAllMediaBuffering();
     bool mediaBufferingIsSuspended() const { return m_mediaBufferingIsSuspended; }
 
+    void setHasResourceLoadClient(bool has) { m_hasResourceLoadClient = has; }
+    bool hasResourceLoadClient() const { return m_hasResourceLoadClient; }
+
 #if ENABLE(MEDIA_SESSION)
     WEBCORE_EXPORT void handleMediaEvent(MediaEventType);
     WEBCORE_EXPORT void setVolumeOfMediaElement(double, uint64_t);
@@ -989,6 +992,7 @@ private:
     bool m_mediaPlaybackIsSuspended { false };
     bool m_mediaBufferingIsSuspended { false };
     bool m_inUpdateRendering { false };
+    bool m_hasResourceLoadClient { false };
     Vector<UserContentURLPattern> m_corsDisablingPatterns;
 };
 

@@ -1,3 +1,15 @@
+2020-01-07  Alex Christensen  <achristensen@webkit.org>
+
+        Introduce _WKResourceLoadDelegate
+        https://bugs.webkit.org/show_bug.cgi?id=205887
+
+        Reviewed by Dean Jackson.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKitCocoa/ResourceLoadDelegate.mm: Added.
+        (-[TestResourceLoadDelegate webView:willSendRequest:]):
+        (TEST):
+
 2020-01-07  Keith Miller  <keith_miller@apple.com>
 
         Add a testing target to make that is release + assertions

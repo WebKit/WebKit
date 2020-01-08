@@ -559,6 +559,7 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
 #endif
 
     m_page->setControlledByAutomation(parameters.controlledByAutomation);
+    m_page->setHasResourceLoadClient(parameters.hasResourceLoadClient);
 
     m_page->setCanStartMedia(false);
     m_mayStartMediaWhenInWindow = parameters.mayStartMediaWhenInWindow;
@@ -1219,6 +1220,12 @@ uint64_t WebPage::renderTreeSize() const
     if (!m_page)
         return 0;
     return m_page->renderTreeSize();
+}
+
+void WebPage::setHasResourceLoadClient(bool has)
+{
+    if (m_page)
+        m_page->setHasResourceLoadClient(has);
 }
 
 void WebPage::setTracksRepaints(bool trackRepaints)

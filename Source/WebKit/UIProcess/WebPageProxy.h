@@ -174,6 +174,7 @@ class LoaderClient;
 class Navigation;
 class NavigationClient;
 class PolicyClient;
+class ResourceLoadClient;
 class UIClient;
 class URLRequest;
 }
@@ -466,6 +467,8 @@ public:
 
     WebInspectorProxy* inspector() const;
 
+    void willSendRequest(const WebCore::ResourceRequest&);
+
     void didChangeInspectorFrontendCount(unsigned count) { m_inspectorFrontendCount = count; }
     unsigned inspectorFrontendCount() const { return m_inspectorFrontendCount; }
     bool hasInspectorFrontend() const { return m_inspectorFrontendCount > 0; }
@@ -530,6 +533,7 @@ public:
     void setLoaderClient(std::unique_ptr<API::LoaderClient>&&);
     void setPolicyClient(std::unique_ptr<API::PolicyClient>&&);
     void setInjectedBundleClient(const WKPageInjectedBundleClientBase*);
+    void setResourceLoadClient(std::unique_ptr<API::ResourceLoadClient>&&);
 
     API::UIClient& uiClient() { return *m_uiClient; }
     void setUIClient(std::unique_ptr<API::UIClient>&&);
@@ -2210,6 +2214,7 @@ private:
     std::unique_ptr<API::FindClient> m_findClient;
     std::unique_ptr<API::FindMatchesClient> m_findMatchesClient;
     std::unique_ptr<API::DiagnosticLoggingClient> m_diagnosticLoggingClient;
+    std::unique_ptr<API::ResourceLoadClient> m_resourceLoadClient;
 #if ENABLE(CONTEXT_MENUS)
     std::unique_ptr<API::ContextMenuClient> m_contextMenuClient;
 #endif

@@ -264,6 +264,8 @@ void WebLoaderStrategy::scheduleLoadFromNetworkProcess(ResourceLoader& resourceL
     ContentEncodingSniffingPolicy contentEncodingSniffingPolicy = resourceLoader.shouldSniffContentEncoding() ? ContentEncodingSniffingPolicy::Sniff : ContentEncodingSniffingPolicy::DoNotSniff;
     StoredCredentialsPolicy storedCredentialsPolicy = resourceLoader.shouldUseCredentialStorage() ? StoredCredentialsPolicy::Use : StoredCredentialsPolicy::DoNotUse;
 
+    auto* frame = resourceLoader.frame();
+
     NetworkResourceLoadParameters loadParameters;
     loadParameters.identifier = identifier;
     loadParameters.webPageProxyID = trackingParameters.webPageProxyID;
@@ -284,7 +286,11 @@ void WebLoaderStrategy::scheduleLoadFromNetworkProcess(ResourceLoader& resourceL
     loadParameters.maximumBufferingTime = maximumBufferingTime;
     loadParameters.options = resourceLoader.options();
     loadParameters.preflightPolicy = resourceLoader.options().preflightPolicy;
-    loadParameters.isHTTPSUpgradeEnabled = resourceLoader.frame() ? resourceLoader.frame()->settings().HTTPSUpgradeEnabled() : false;
+    if (frame) {
+        loadParameters.isHTTPSUpgradeEnabled = frame->settings().HTTPSUpgradeEnabled();
+        if (auto* page = frame->page())
+            loadParameters.pageHasResourceLoadClient = page->hasResourceLoadClient();
+    }
 
 #if ENABLE(SERVICE_WORKER)
     loadParameters.serviceWorkersMode = resourceLoader.options().serviceWorkersMode;
@@ -292,7 +298,7 @@ void WebLoaderStrategy::scheduleLoadFromNetworkProcess(ResourceLoader& resourceL
     loadParameters.httpHeadersToKeep = resourceLoader.options().httpHeadersToKeep;
 #endif
 
-    auto* document = resourceLoader.frame() ? resourceLoader.frame()->document() : nullptr;
+    auto* document = frame ? frame->document() : nullptr;
     if (resourceLoader.options().cspResponseHeaders)
         loadParameters.cspResponseHeaders = resourceLoader.options().cspResponseHeaders;
     else if (document && !document->shouldBypassMainWorldContentSecurityPolicy() && resourceLoader.options().contentSecurityPolicyImposition == ContentSecurityPolicyImposition::DoPolicyCheck) {

@@ -1,3 +1,59 @@
+2020-01-07  Alex Christensen  <achristensen@webkit.org>
+
+        Introduce _WKResourceLoadDelegate
+        https://bugs.webkit.org/show_bug.cgi?id=205887
+
+        Reviewed by Dean Jackson.
+
+        Add a new delegate that will be informed about main and subresource requests.
+        This is distinct from the WKNavigationDelegate, which primarily receives callbacks about main resource requests.
+        Because the IPC churn can be a significant performance reduction, only send the IPC messages if the page has such a client.
+        This client will need to be expanded to implement <rdar://problem/57132290> but this is a minimal testable start.
+        The simple case is covered by an API test.
+
+        * NetworkProcess/NetworkResourceLoadParameters.cpp:
+        (WebKit::NetworkResourceLoadParameters::encode const):
+        (WebKit::NetworkResourceLoadParameters::decode):
+        * NetworkProcess/NetworkResourceLoadParameters.h:
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::startNetworkLoad):
+        * Shared/WebPageCreationParameters.cpp:
+        (WebKit::WebPageCreationParameters::encode const):
+        (WebKit::WebPageCreationParameters::decode):
+        * Shared/WebPageCreationParameters.h:
+        * SourcesCocoa.txt:
+        * UIProcess/API/APIResourceLoadClient.h: Added.
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _initializeWithConfiguration:]):
+        (-[WKWebView _resourceLoadDelegate]):
+        (-[WKWebView _setResourceLoadDelegate:]):
+        * UIProcess/API/Cocoa/WKWebViewInternal.h:
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+        * UIProcess/API/Cocoa/_WKResourceLoadDelegate.h: Added.
+        * UIProcess/Cocoa/ResourceLoadDelegate.h: Added.
+        * UIProcess/Cocoa/ResourceLoadDelegate.mm: Added.
+        (WebKit::ResourceLoadDelegate::ResourceLoadDelegate):
+        (WebKit::ResourceLoadDelegate::createResourceLoadClient):
+        (WebKit::ResourceLoadDelegate::delegate):
+        (WebKit::ResourceLoadDelegate::setDelegate):
+        (WebKit::ResourceLoadDelegate::ResourceLoadClient::ResourceLoadClient):
+        (WebKit::ResourceLoadDelegate::ResourceLoadClient::willSendRequest const):
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::pageWillSendRequest):
+        * UIProcess/Network/NetworkProcessProxy.h:
+        * UIProcess/Network/NetworkProcessProxy.messages.in:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::setResourceLoadClient):
+        * UIProcess/WebPageProxy.h:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/Network/WebLoaderStrategy.cpp:
+        (WebKit::WebLoaderStrategy::scheduleLoadFromNetworkProcess):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::m_overriddenMediaType):
+        (WebKit::WebPage::setHasResourceLoadClient):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
 2020-01-07  Kate Cheney  <katherine_cheney@apple.com>
 
         Create a mechanism for 'safe by default' web views

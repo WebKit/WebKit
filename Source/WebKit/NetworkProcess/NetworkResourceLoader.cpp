@@ -37,6 +37,7 @@
 #include "NetworkLoadChecker.h"
 #include "NetworkProcess.h"
 #include "NetworkProcessConnectionMessages.h"
+#include "NetworkProcessProxyMessages.h"
 #include "NetworkSession.h"
 #include "ServiceWorkerFetchTask.h"
 #include "SharedBufferDataReference.h"
@@ -320,6 +321,9 @@ void NetworkResourceLoader::startNetworkLoad(ResourceRequest&& request, FirstLoa
 
     if (request.url().protocolIsBlob())
         parameters.blobFileReferences = networkSession->blobRegistry().filesInBlob(originalRequest().url());
+
+    if (m_parameters.pageHasResourceLoadClient)
+        m_connection->networkProcess().parentProcessConnection()->send(Messages::NetworkProcessProxy::PageWillSendRequest(m_parameters.webPageProxyID, request), 0);
 
     parameters.request = WTFMove(request);
     m_networkLoad = makeUnique<NetworkLoad>(*this, &networkSession->blobRegistry(), WTFMove(parameters), *networkSession);

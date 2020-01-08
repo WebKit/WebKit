@@ -78,6 +78,7 @@ void WebPageCreationParameters::encode(IPC::Encoder& encoder) const
     encoder << isProcessSwap;
     encoder << useDarkAppearance;
     encoder << useElevatedUserInterfaceLevel;
+    encoder << hasResourceLoadClient;
 
 #if PLATFORM(MAC)
     encoder << colorSpace;
@@ -260,6 +261,12 @@ Optional<WebPageCreationParameters> WebPageCreationParameters::decode(IPC::Decod
         return WTF::nullopt;
     if (!decoder.decode(parameters.useElevatedUserInterfaceLevel))
         return WTF::nullopt;
+
+    Optional<bool> hasResourceLoadClient;
+    decoder >> hasResourceLoadClient;
+    if (!hasResourceLoadClient)
+        return WTF::nullopt;
+    parameters.hasResourceLoadClient = WTFMove(*hasResourceLoadClient);
 
 #if PLATFORM(MAC)
     if (!decoder.decode(parameters.colorSpace))

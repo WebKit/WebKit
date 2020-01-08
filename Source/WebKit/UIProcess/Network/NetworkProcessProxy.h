@@ -201,6 +201,8 @@ public:
 
     void resetQuota(PAL::SessionID, CompletionHandler<void()>&&);
 
+    void pageWillSendRequest(WebPageProxyIdentifier, const WebCore::ResourceRequest&);
+
 private:
     // AuxiliaryProcessProxy
     void getLaunchOptions(ProcessLauncher::LaunchOptions&) override;

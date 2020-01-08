@@ -48,6 +48,7 @@
 #include "APIOpenPanelParameters.h"
 #include "APIPageConfiguration.h"
 #include "APIPolicyClient.h"
+#include "APIResourceLoadClient.h"
 #include "APISecurityOrigin.h"
 #include "APIUIClient.h"
 #include "APIURLRequest.h"
@@ -712,6 +713,15 @@ void WebPageProxy::setInjectedBundleClient(const WKPageInjectedBundleClientBase*
 
     m_injectedBundleClient = makeUnique<WebPageInjectedBundleClient>();
     m_injectedBundleClient->initialize(client);
+}
+
+void WebPageProxy::setResourceLoadClient(std::unique_ptr<API::ResourceLoadClient>&& client)
+{
+    bool hadResourceLoadClient = !!m_resourceLoadClient;
+    m_resourceLoadClient = WTFMove(client);
+    bool hasResourceLoadClient = !!m_resourceLoadClient;
+    if (hadResourceLoadClient != hasResourceLoadClient)
+        send(Messages::WebPage::SetHasResourceLoadClient(hasResourceLoadClient));
 }
 
 void WebPageProxy::handleMessage(IPC::Connection& connection, const String& messageName, const WebKit::UserData& messageBody)
@@ -5906,6 +5916,12 @@ WebInspectorProxy* WebPageProxy::inspector() const
     return m_inspector.get();
 }
 
+void WebPageProxy::willSendRequest(const WebCore::ResourceRequest& request)
+{
+    if (m_resourceLoadClient)
+        m_resourceLoadClient->willSendRequest(request);
+}
+
 #if ENABLE(FULLSCREEN_API)
 WebFullScreenManagerProxy* WebPageProxy::fullScreenManager()
 {
@@ -7547,6 +7563,7 @@ WebPageCreationParameters WebPageProxy::creationParameters(WebProcessProxy& proc
 
     parameters.overriddenMediaType = m_overriddenMediaType;
     parameters.corsDisablingPatterns = m_configuration->corsDisablingPatterns();
+    parameters.hasResourceLoadClient = !!m_resourceLoadClient;
 
     process.addWebUserContentControllerProxy(m_userContentController, parameters);
 

@@ -452,6 +452,15 @@ void NetworkProcessProxy::logGlobalDiagnosticMessageWithValue(const String& mess
         page->logDiagnosticMessageWithValue(message, description, value, significantFigures, shouldSample);
 }
 
+void NetworkProcessProxy::pageWillSendRequest(WebPageProxyIdentifier pageID, const WebCore::ResourceRequest& request)
+{
+    auto* page = WebProcessProxy::webPage(pageID);
+    if (!page)
+        return;
+
+    page->willSendRequest(request);
+}
+
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
 void NetworkProcessProxy::dumpResourceLoadStatistics(PAL::SessionID sessionID, CompletionHandler<void(String)>&& completionHandler)
 {
