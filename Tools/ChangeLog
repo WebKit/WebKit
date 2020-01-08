@@ -1,3 +1,12 @@
+2020-01-08  Matt Lewis  <jlewis3@apple.com>
+
+        Move EWS from macOS High Sierra to macOS Mojave
+        https://bugs.webkit.org/show_bug.cgi?id=205948
+        
+        Reviewed by Aakash Jain.
+
+        * BuildSlaveSupport/ews-build/config.json:
+
 2020-01-08  Brady Eidson  <beidson@apple.com>
 
         Make _callAsyncFunction:withArguments: work with promises.

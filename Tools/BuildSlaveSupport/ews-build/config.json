@@ -63,35 +63,35 @@
     },
     {
       "name": "ews100",
-      "platform": "mac-highsierra"
+      "platform": "mac-mojave"
     },
     {
       "name": "ews101",
-      "platform": "mac-highsierra"
+      "platform": "mac-mojave"
     },
     {
       "name": "ews102",
-      "platform": "mac-highsierra"
+      "platform": "mac-mojave"
     },
     {
       "name": "ews103",
-      "platform": "mac-highsierra"
+      "platform": "mac-mojave"
     },
     {
       "name": "ews104",
-      "platform": "mac-highsierra"
+      "platform": "mac-mojave"
     },
     {
       "name": "ews105",
-      "platform": "mac-highsierra"
+      "platform": "mac-mojave"
     },
     {
       "name": "ews106",
-      "platform": "mac-highsierra"
+      "platform": "mac-mojave"
     },
     {
       "name": "ews107",
-      "platform": "mac-highsierra"
+      "platform": "mac-mojave"
     },
     {
       "name": "ews108",
@@ -103,39 +103,39 @@
     },
     {
       "name": "ews112",
-      "platform": "mac-highsierra"
+      "platform": "mac-mojave"
     },
     {
       "name": "ews113",
-      "platform": "mac-highsierra"
+      "platform": "mac-mojave"
     },
     {
       "name": "ews114",
-      "platform": "mac-highsierra"
+      "platform": "mac-mojave"
     },
     {
       "name": "ews115",
-      "platform": "mac-highsierra"
+      "platform": "mac-mojave"
     },
     {
       "name": "ews116",
-      "platform": "mac-highsierra"
+      "platform": "mac-mojave"
     },
     {
       "name": "ews117",
-      "platform": "mac-highsierra"
+      "platform": "mac-mojave"
     },
     {
       "name": "ews118",
-      "platform": "mac-highsierra"
+      "platform": "mac-mojave"
     },
     {
       "name": "ews119",
-      "platform": "mac-highsierra"
+      "platform": "mac-mojave"
     },
     {
       "name": "ews120",
-      "platform": "mac-highsierra"
+      "platform": "mac-mojave"
     },
     {
       "name": "ews121",
@@ -163,11 +163,11 @@
     },
     {
       "name": "ews127",
-      "platform": "mac-highsierra"
+      "platform": "mac-mojave"
     },
     {
       "name": "ews128",
-      "platform": "mac-highsierra"
+      "platform": "mac-mojave"
     },
     {
       "name": "ews150",
@@ -280,15 +280,15 @@
     },
     {
       "name": "webkit-cq-01",
-      "platform": "mac-highsierra"
+      "platform": "mac-mojave"
     },
     {
       "name": "webkit-cq-02",
-      "platform": "mac-highsierra"
+      "platform": "mac-mojave"
     },
     {
       "name": "webkit-cq-03",
-      "platform": "mac-highsierra"
+      "platform": "mac-mojave"
     }
   ],
   "builders": [
@@ -349,53 +349,53 @@
       "workernames": ["ews121", "ews122", "ews123", "ews124", "ews125", "ews126"]
     },
     {
-      "name": "macOS-High-Sierra-Release-Build-EWS",
+      "name": "macOS-Mojave-Release-Build-EWS",
       "shortname": "mac",
       "icon": "buildOnly",
       "factory": "macOSBuildFactory",
-      "platform": "mac-highsierra",
+      "platform": "mac-mojave",
       "configuration": "release",
       "architectures": ["x86_64"],
-      "triggers": ["api-tests-mac-ews", "macos-high-sierra-release-wk1-tests-ews", "macos-high-sierra-release-wk2-tests-ews"],
+      "triggers": ["api-tests-mac-ews", "macos-mojave-release-wk1-tests-ews", "macos-mojave-release-wk2-tests-ews"],
       "workernames": ["ews118", "ews119", "ews120", "ews150"]
     },
     {
-      "name": "macOS-High-Sierra-Release-WK1-Tests-EWS",
+      "name": "macOS-Mojave-Release-WK1-Tests-EWS",
       "shortname": "mac-wk1",
       "icon": "testOnly",
       "factory": "macOSWK1Factory",
-      "platform": "mac-highsierra",
+      "platform": "mac-mojave",
       "configuration": "release",
       "architectures": ["x86_64"],
       "workernames": ["ews100", "ews101", "ews102", "ews103"]
     },
     {
-      "name": "macOS-High-Sierra-Release-WK2-Tests-EWS",
+      "name": "macOS-Mojave-Release-WK2-Tests-EWS",
       "shortname": "mac-wk2",
       "icon": "testOnly",
       "factory": "macOSWK2Factory",
-      "platform": "mac-highsierra",
+      "platform": "mac-mojave",
       "configuration": "release",
       "architectures": ["x86_64"],
       "workernames": ["ews104", "ews105", "ews106", "ews107"]
     },
     {
-      "name": "macOS-High-Sierra-Debug-Build-EWS",
+      "name": "macOS-Mojave-Debug-Build-EWS",
       "shortname": "mac-debug",
       "icon": "buildOnly",
       "factory": "macOSBuildFactory",
-      "platform": "mac-highsierra",
+      "platform": "mac-mojave",
       "configuration": "debug",
       "architectures": ["x86_64"],
-      "triggers": ["macos-high-sierra-debug-wk1-tests-ews"],
+      "triggers": ["macos-mojave-debug-wk1-tests-ews"],
       "workernames": ["ews112", "ews113", "ews114", "ews115", "ews116", "ews117"]
     },
     {
-      "name": "macOS-High-Sierra-Debug-WK1-Tests-EWS",
+      "name": "macOS-Mojave-Debug-WK1-Tests-EWS",
       "shortname": "mac-debug-wk1",
       "icon": "testOnly",
       "factory": "macOSWK1Factory",
-      "platform": "mac-highsierra",
+      "platform": "mac-mojave",
       "configuration": "debug",
       "architectures": ["x86_64"],
       "workernames": ["ews112", "ews113", "ews114", "ews115", "ews117"]
@@ -435,7 +435,7 @@
       "shortname": "jsc",
       "icon": "buildAndTest",
       "factory": "JSCTestsFactory",
-      "platform": "mac-highsierra",
+      "platform": "mac-mojave",
       "configuration": "release",
       "runTests": "true",
       "workernames": ["ews127", "ews128"]
@@ -527,7 +527,7 @@
       "shortname": "commit",
       "icon": "buildAndTest",
       "factory": "CommitQueueFactory",
-      "platform": "mac-highsierra",
+      "platform": "mac-mojave",
       "configuration": "release",
       "architectures": ["x86_64"],
       "workernames": ["webkit-cq-01", "webkit-cq-02", "webkit-cq-03"]
@@ -539,7 +539,7 @@
       "name": "try",
       "port": 5555,
       "builderNames": ["Apply-WatchList-EWS", "Bindings-Tests-EWS", "GTK-Webkit2-EWS", "iOS-13-Build-EWS", "iOS-13-Simulator-Build-EWS",
-                       "JSC-ARMv7-32bits-EWS", "JSC-i386-32bits-EWS", "JSC-MIPSEL-32bits-EWS", "JSC-Tests-EWS", "macOS-High-Sierra-Debug-Build-EWS", "macOS-High-Sierra-Release-Build-EWS",
+                       "JSC-ARMv7-32bits-EWS", "JSC-i386-32bits-EWS", "JSC-MIPSEL-32bits-EWS", "JSC-Tests-EWS", "macOS-Mojave-Debug-Build-EWS", "macOS-Mojave-Release-Build-EWS",
                        "Services-EWS", "Style-EWS", "WebKitPerl-Tests-EWS", "WebKitPy-Tests-EWS", "WPE-EWS", "WinCairo-EWS", "Windows-EWS"]
     },
     {
@@ -550,23 +550,23 @@
     },
     {
       "type": "Triggerable",
-      "name": "macos-high-sierra-debug-wk1-tests-ews",
+      "name": "macos-mojave-debug-wk1-tests-ews",
       "builderNames": [
-        "macOS-High-Sierra-Debug-WK1-Tests-EWS"
+        "macOS-Mojave-Debug-WK1-Tests-EWS"
       ]
     },
     {
       "type": "Triggerable",
-      "name": "macos-high-sierra-release-wk1-tests-ews",
+      "name": "macos-mojave-release-wk1-tests-ews",
       "builderNames": [
-        "macOS-High-Sierra-Release-WK1-Tests-EWS"
+        "macOS-Mojave-Release-WK1-Tests-EWS"
       ]
     },
     {
       "type": "Triggerable",
-      "name": "macos-high-sierra-release-wk2-tests-ews",
+      "name": "macos-mojave-release-wk2-tests-ews",
       "builderNames": [
-        "macOS-High-Sierra-Release-WK2-Tests-EWS"
+        "macOS-Mojave-Release-WK2-Tests-EWS"
       ]
     },
     {
