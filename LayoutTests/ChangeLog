@@ -1,3 +1,16 @@
+2020-01-07  Daniel Bates  <dabates@apple.com>
+
+        Fix up layout tests results following r254160
+        <rdar://problem/58383099>
+
+        Revert some results back to pre-r254091. These results were changed because I made
+        an accident (corrected in r254160) that made me mistakenly think the new results
+        were legitimate. They weren't.
+
+        * fast/dom/Range/getClientRects-expected.txt:
+        * fast/dom/Range/getClientRects.html:
+        * fast/repaint/text-selection-overflow-hidden-expected.txt:
+
 2020-01-07  Truitt Savell  <tsavell@apple.com>
 
         REGRESSION: [ Mac wk2 ] http/wpt/service-workers/persistent-importScripts.html is a flaky failure

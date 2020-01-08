@@ -42,7 +42,7 @@ Test 3
 PASS rects.length is 4
 PASS rects[0].left.toFixed(2) is "81.00"
 PASS rects[0].top.toFixed(2) is "411.00"
-PASS rects[0].width.toFixed(2) is "313.00"
+PASS rects[0].width.toFixed(2) is "313.58"
 PASS rects[0].height.toFixed(2) is "18.00"
 PASS rects[1].left.toFixed(2) is "8.00"
 PASS rects[1].top.toFixed(2) is "451.00"
@@ -90,7 +90,7 @@ Test 5
 PASS rects.length is 5
 PASS rects[0].left.toFixed(2) is "81.00"
 PASS rects[0].top.toFixed(2) is "921.00"
-PASS rects[0].width.toFixed(2) is "313.00"
+PASS rects[0].width.toFixed(2) is "313.58"
 PASS rects[0].height.toFixed(2) is "18.00"
 PASS rects[1].left.toFixed(2) is "8.00"
 PASS rects[1].top.toFixed(2) is "1039.00"
