@@ -102,6 +102,7 @@ class WebKitTableOfContents {
 
     public static function index( $matches ) {
         list($marked, $level, $heading) = $matches;
+        $heading = strip_tags($heading);
         $anchor = sanitize_title_with_dashes($heading);
         self::$toc[ "$level::$anchor" ] = $heading;
         return sprintf('<h%2$d><a name="%1$s"></a>%3$s</h%2$d>', $anchor, $level, $heading);
