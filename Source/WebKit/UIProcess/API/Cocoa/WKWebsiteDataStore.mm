@@ -395,17 +395,6 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
     return [NSURL fileURLWithPath:_websiteDataStore->configuration().indexedDBDatabaseDirectory() isDirectory:YES];
 }
 
-- (void)_resourceLoadStatisticsSetShouldSubmitTelemetry:(BOOL)value
-{
-#if ENABLE(RESOURCE_LOAD_STATISTICS)
-    auto* store = _websiteDataStore->resourceLoadStatistics();
-    if (!store)
-        return;
-
-    store->setShouldSubmitTelemetry(value);
-#endif
-}
-
 - (void)_setResourceLoadStatisticsTestingCallback:(void (^)(WKWebsiteDataStore *, NSString *))callback
 {
 #if ENABLE(RESOURCE_LOAD_STATISTICS)

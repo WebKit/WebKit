@@ -1,4 +1,4 @@
-Test logging of link decorated cross-site navigations from a prevalent resource.
+Non-user initiated, delayed cross-site navigations done client-side should be detected as top frame redirects by ITP.
 
 Resource load statistics:
 
@@ -8,9 +8,7 @@ Registrable domain: localhost
     grandfathered: No
     topFrameUniqueRedirectsFrom:
         127.0.0.1
-    topFrameLinkDecorationsFrom:
-        127.0.0.1
-    gotLinkDecorationFromPrevalentResource: Yes
+    gotLinkDecorationFromPrevalentResource: No
     isPrevalentResource: No
     isVeryPrevalentResource: No
     dataRecordsRemoved: 0
@@ -21,6 +19,6 @@ Registrable domain: 127.0.0.1
     topFrameUniqueRedirectsTo:
         localhost
     gotLinkDecorationFromPrevalentResource: No
-    isPrevalentResource: Yes
+    isPrevalentResource: No
     isVeryPrevalentResource: No
     dataRecordsRemoved: 0

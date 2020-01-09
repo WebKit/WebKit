@@ -2156,7 +2156,7 @@ private:
     void didAttachToRunningProcess();
 
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
-    void logFrameNavigation(const WebFrameProxy&, const URL& pageURL, const WebCore::ResourceRequest&, const URL& redirectURL);
+    void logFrameNavigation(const WebFrameProxy&, const URL& pageURL, const WebCore::ResourceRequest&, const URL& redirectURL, bool wasPotentiallyInitiatedByUser);
 #endif
 
     // WebPaymentCoordinatorProxy::Client
@@ -2659,6 +2659,10 @@ private:
         
 #if PLATFORM(IOS_FAMILY) && ENABLE(DEVICE_ORIENTATION)
     std::unique_ptr<WebDeviceOrientationUpdateProviderProxy> m_webDeviceOrientationUpdateProviderProxy;
+#endif
+
+#if ENABLE(RESOURCE_LOAD_STATISTICS)
+    MonotonicTime m_didFinishDocumentLoadForMainFrameTimestamp;
 #endif
 };
 

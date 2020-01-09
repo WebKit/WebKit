@@ -1,3 +1,69 @@
+2020-01-09  John Wilander  <wilander@apple.com>
+
+        Resource Load Statistics: Add timing information to WebPageProxy::logFrameNavigation() to detect delayed client-side redirects
+        https://bugs.webkit.org/show_bug.cgi?id=205522
+        <rdar://problem/58125759>
+
+        Reviewed by Chris Dumez.
+
+        The purpose of this patch is to capture navigations that happen programmatically
+        after the document has loaded. These are delayed redirects and should be counted
+        as redirects in ITP.
+
+        To achieve this, a timestamp is captured in
+        WebPageProxy::didFinishDocumentLoadForFrame() to be able to calculate how much time
+        has passed since that timestamp in the IPC sent from
+        WebPageProxy::logFrameNavigation(). The IPC also gets information on whether
+        userInitiatedActivity exists so that ITP can decide whether to treat the navigation
+        as triggered by the user or not.
+
+        A new test was added and existing test expectations were updated.
+
+        * NetworkProcess/Classifier/ResourceLoadStatisticsDatabaseStore.cpp:
+        (WebKit::ResourceLoadStatisticsDatabaseStore::logFrameNavigation):
+            Now takes the extra parameters delayAfterMainFrameDocumentLoad
+            and wasPotentiallyInitiatedByUser.
+        * NetworkProcess/Classifier/ResourceLoadStatisticsDatabaseStore.h:
+        * NetworkProcess/Classifier/ResourceLoadStatisticsMemoryStore.cpp:
+        (WebKit::ResourceLoadStatisticsMemoryStore::logFrameNavigation):
+            Now takes the extra parameters delayAfterMainFrameDocumentLoad
+            and wasPotentiallyInitiatedByUser.
+        * NetworkProcess/Classifier/ResourceLoadStatisticsMemoryStore.h:
+        * NetworkProcess/Classifier/ResourceLoadStatisticsStore.h:
+        * NetworkProcess/Classifier/WebResourceLoadStatisticsStore.cpp:
+        (WebKit::WebResourceLoadStatisticsStore::logFrameNavigation):
+            Now takes the extra parameters delayAfterMainFrameDocumentLoad
+            and wasPotentiallyInitiatedByUser.
+            The deleted WebResourceLoadStatisticsStore::logFrameNavigation() was dead code.
+        * NetworkProcess/Classifier/WebResourceLoadStatisticsStore.h:
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::logFrameNavigation):
+            Now takes the extra parameters delayAfterMainFrameDocumentLoad
+            and wasPotentiallyInitiatedByUser.
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/NetworkProcess.messages.in:
+        * UIProcess/API/Cocoa/WKWebsiteDataStore.mm:
+        (-[WKWebsiteDataStore _resourceLoadStatisticsSetShouldSubmitTelemetry:]): Deleted.
+            Dead code.
+        * UIProcess/API/Cocoa/WKWebsiteDataStorePrivate.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didFinishDocumentLoadForFrame):
+            Now captures a timestamp.
+        (WebKit::WebPageProxy::decidePolicyForNavigationAction):
+            Removed dead code.
+        (WebKit::WebPageProxy::logFrameNavigation):
+            Now sends the diff between now and the timestamp captured in
+            WebPageProxy::didFinishDocumentLoadForFrame().
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebsiteData/Cocoa/WebsiteDataStoreCocoa.mm:
+        (WebKit::WebsiteDataStore::platformInitialize):
+            Removed dead code.
+        (WebKit::WebsiteDataStore::platformDestroy):
+            Removed dead code.
+        * UIProcess/WebsiteData/WebsiteDataStore.h:
+        (WebKit::WebsiteDataStore::resourceLoadStatistics const): Deleted.
+            Dead code.
+
 2020-01-09  Andres Gonzalez  <andresg_22@apple.com>
 
         WKAccessibilityWebPageObject should use Accessibility::retrieveValueFromMainThread.

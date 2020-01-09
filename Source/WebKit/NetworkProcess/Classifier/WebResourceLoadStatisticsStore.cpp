@@ -554,43 +554,13 @@ void WebResourceLoadStatisticsStore::submitTelemetry(CompletionHandler<void()>&&
     });
 }
 
-void WebResourceLoadStatisticsStore::logFrameNavigation(const WebFrameProxy& frame, const URL& pageURL, const WebCore::ResourceRequest& request, const URL& redirectURL)
+void WebResourceLoadStatisticsStore::logFrameNavigation(const RegistrableDomain& targetDomain, const RegistrableDomain& topFrameDomain, const RegistrableDomain& sourceDomain, bool isRedirect, bool isMainFrame, Seconds delayAfterMainFrameDocumentLoad, bool wasPotentiallyInitiatedByUser)
 {
     ASSERT(RunLoop::isMain());
 
-    auto sourceURL = redirectURL;
-    bool isRedirect = !redirectURL.isNull();
-    if (!isRedirect) {
-        sourceURL = frame.url();
-        if (sourceURL.isNull())
-            sourceURL = pageURL;
-    }
-
-    auto& targetURL = request.url();
-
-    if (!targetURL.isValid() || !pageURL.isValid())
-        return;
-
-    auto targetHost = targetURL.host();
-    auto mainFrameHost = pageURL.host();
-
-    if (targetHost.isEmpty() || mainFrameHost.isEmpty() || targetHost == sourceURL.host())
-        return;
-
-    RegistrableDomain targetDomain { targetURL };
-    RegistrableDomain topFrameDomain { pageURL };
-    RegistrableDomain sourceDomain { sourceURL };
-
-    logFrameNavigation(targetDomain, topFrameDomain, sourceDomain, isRedirect, frame.isMainFrame());
-}
-
-void WebResourceLoadStatisticsStore::logFrameNavigation(const RegistrableDomain& targetDomain, const RegistrableDomain& topFrameDomain, const RegistrableDomain& sourceDomain, bool isRedirect, bool isMainFrame)
-{
-    ASSERT(RunLoop::isMain());
-
-    postTask([this, targetDomain = targetDomain.isolatedCopy(), topFrameDomain = topFrameDomain.isolatedCopy(), sourceDomain = sourceDomain.isolatedCopy(), isRedirect, isMainFrame] {
+    postTask([this, targetDomain = targetDomain.isolatedCopy(), topFrameDomain = topFrameDomain.isolatedCopy(), sourceDomain = sourceDomain.isolatedCopy(), isRedirect, isMainFrame, delayAfterMainFrameDocumentLoad, wasPotentiallyInitiatedByUser] {
         if (m_statisticsStore)
-            m_statisticsStore->logFrameNavigation(targetDomain, topFrameDomain, sourceDomain, isRedirect, isMainFrame);
+            m_statisticsStore->logFrameNavigation(targetDomain, topFrameDomain, sourceDomain, isRedirect, isMainFrame, delayAfterMainFrameDocumentLoad, wasPotentiallyInitiatedByUser);
     });
 }
 
