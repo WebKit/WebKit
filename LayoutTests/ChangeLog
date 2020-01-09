@@ -1,3 +1,16 @@
+2020-01-09  Youenn Fablet  <youenn@apple.com>
+
+        REGRESSION: [ Mac ] webrtc/video-autoplay.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=205893
+        <rdar://problem/58391046>
+
+        Reviewed by Eric Carlson.
+
+        * webrtc/video-autoplay.html:
+        Speculative fix as I am not able to reproduce locally.
+        Hypothesis is that removing from DOM the video element is supposed to asynchronously pause the video element.
+        We should therefore ensure that the video element is paused before calling getUserMedia.
+
 2020-01-09  Miguel Gomez  <magomez@igalia.com>
 
         Unreviewed WPE gardening: rebaseline several tests after r254044.
