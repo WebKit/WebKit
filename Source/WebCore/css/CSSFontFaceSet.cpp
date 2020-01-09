@@ -300,7 +300,7 @@ CSSFontFace& CSSFontFaceSet::operator[](size_t i)
     return m_faces[i];
 }
 
-static FontSelectionRequest computeFontSelectionRequest(MutableStyleProperties& style)
+static ExceptionOr<FontSelectionRequest> computeFontSelectionRequest(MutableStyleProperties& style)
 {
     RefPtr<CSSValue> weightValue = style.getPropertyCSSValue(CSSPropertyFontWeight).get();
     if (!weightValue)
@@ -314,11 +314,14 @@ static FontSelectionRequest computeFontSelectionRequest(MutableStyleProperties& 
     if (!styleValue)
         styleValue = CSSFontStyleValue::create(CSSValuePool::singleton().createIdentifierValue(CSSValueNormal));
 
+    if (weightValue->isGlobalKeyword() || stretchValue->isGlobalKeyword() || styleValue->isGlobalKeyword())
+        return Exception { SyntaxError };
+    
     auto weightSelectionValue = StyleBuilderConverter::convertFontWeightFromValue(*weightValue);
     auto stretchSelectionValue = StyleBuilderConverter::convertFontStretchFromValue(*stretchValue);
     auto styleSelectionValue = StyleBuilderConverter::convertFontStyleFromValue(*styleValue);
 
-    return { weightSelectionValue, stretchSelectionValue, styleSelectionValue };
+    return {{ weightSelectionValue, stretchSelectionValue, styleSelectionValue }};
 }
 
 static HashSet<UChar32> codePointsFromString(StringView stringView)
@@ -344,7 +347,10 @@ ExceptionOr<Vector<std::reference_wrapper<CSSFontFace>>> CSSFontFaceSet::matchin
     if (parseResult == CSSParser::ParseResult::Error)
         return Exception { SyntaxError };
 
-    FontSelectionRequest request = computeFontSelectionRequest(style.get());
+    auto requestOrException = computeFontSelectionRequest(style.get());
+    if (requestOrException.hasException())
+        return requestOrException.releaseException();
+    auto request = requestOrException.releaseReturnValue();
 
     auto family = style->getPropertyCSSValue(CSSPropertyFontFamily);
     if (!is<CSSValueList>(family))
