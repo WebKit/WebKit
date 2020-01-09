@@ -1,3 +1,15 @@
+2020-01-08  Sihui Liu  <sihui_liu@apple.com>
+
+        REGRESSION (r242911?): High Sierra Release WK2 Perf bot timing out while running IndexedDB/large-number-of-inserts.html
+        https://bugs.webkit.org/show_bug.cgi?id=195952
+        <rdar://problem/49137688>
+
+        Re-enable the test after recent IDB performance improvement.
+
+        Reviewed by Alexey Proskuryakov.
+
+        * Skipped:
+
 2020-01-07  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK][WPE] Add API to set purpose and hints of active editable element to input methods
