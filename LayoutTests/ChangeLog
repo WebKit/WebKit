@@ -1,3 +1,16 @@
+2020-01-09  youenn fablet  <youenn@apple.com>
+
+        REGRESSION: [ Mac wk2 ] http/wpt/service-workers/persistent-importScripts.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=205886
+        <rdar://problem/58387910>
+
+        Reviewed by Chris Dumez.
+
+        Make sure registrations are stored on disk before crashing the network process.
+
+        * http/wpt/service-workers/persistent-importScripts.html:
+        * platform/mac-wk2/TestExpectations:
+
 2020-01-09  Youenn Fablet  <youenn@apple.com>
 
         REGRESSION: [ Mac ] webrtc/video-autoplay.html is a flaky failure
