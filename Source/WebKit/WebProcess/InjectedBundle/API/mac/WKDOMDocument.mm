@@ -32,6 +32,7 @@
 #import <WebCore/HTMLElement.h>
 #import <WebCore/Text.h>
 #import <WebCore/markup.h>
+#import <wtf/NakedRef.h>
 
 @interface WKDOMDocumentParserYieldToken : NSObject
 
@@ -41,10 +42,10 @@
     std::unique_ptr<WebCore::DocumentParserYieldToken> _token;
 }
 
-- (instancetype)initWithDocument:(WebCore::Document&)document
+- (instancetype)initWithDocument:(NakedRef<WebCore::Document>)document
 {
     if (self = [super init])
-        _token = document.createParserYieldToken();
+        _token = document->createParserYieldToken();
     return self;
 }
 

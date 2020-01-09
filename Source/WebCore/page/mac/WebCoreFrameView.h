@@ -25,6 +25,7 @@
 
 #import "ScrollTypes.h"
 #import <wtf/Platform.h>
+#import <wtf/NakedPtr.h>
 
 #if PLATFORM(IOS_FAMILY)
 #import "WAKAppKitStubs.h"
@@ -44,5 +45,5 @@ class Frame;
 @end
 
 @protocol WebCoreFrameView
-- (WebCore::Frame*)_web_frame;
+- (NakedPtr<WebCore::Frame>)_web_frame;
 @end

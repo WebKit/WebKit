@@ -1,3 +1,82 @@
+2020-01-08  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Reduce binary size by purging C++ type information in Objective-C fields and parameters
+        https://bugs.webkit.org/show_bug.cgi?id=205905
+
+        Reviewed by Saam Barati.
+
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (-[WKNetworkSessionDelegate initWithNetworkSession:wrapper:withCredentials:]):
+        * Shared/API/Cocoa/WKBrowsingContextHandle.mm:
+        (-[WKBrowsingContextHandle _initWithPageProxy:]):
+        (-[WKBrowsingContextHandle _initWithPage:]):
+        * Shared/API/Cocoa/WKBrowsingContextHandleInternal.h:
+        * Shared/API/Cocoa/_WKRemoteObjectRegistry.mm:
+        (-[_WKRemoteObjectRegistry _initWithWebPage:]):
+        (-[_WKRemoteObjectRegistry _initWithWebPageProxy:]):
+        * Shared/API/Cocoa/_WKRemoteObjectRegistryInternal.h:
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _page]):
+        * UIProcess/API/Cocoa/WKWebViewInternal.h:
+        * UIProcess/API/Cocoa/WKWebsiteDataStore.mm:
+        (-[WKWebsiteDataStore _getAllStorageAccessEntriesFor:completionHandler:]):
+        * UIProcess/API/Cocoa/_WKThumbnailView.mm:
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView initWithFrame:processPool:configuration:]):
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (WebKit::WebViewImpl::WebViewImpl):
+        (WebKit::WebViewImpl::setLayoutMode):
+        (WebKit::WebViewImpl::fullScreenWindowController):
+        (WebKit::WebViewImpl::remoteObjectRegistry):
+        * UIProcess/ios/WKApplicationStateTrackingView.mm:
+        (-[WKApplicationStateTrackingView willMoveToWindow:]):
+        (-[WKApplicationStateTrackingView didMoveToWindow]):
+        * UIProcess/ios/WKContentView.h:
+        * UIProcess/ios/WKContentView.mm:
+        (-[WKContentView initWithFrame:processPool:configuration:webView:]):
+        * UIProcess/ios/fullscreen/WKFullScreenViewController.mm:
+        (-[WKFullScreenViewController videoControlsManagerDidChange]):
+        (-[WKFullScreenViewController _manager]):
+        (-[WKFullScreenViewController _togglePiPAction:]):
+        (-[WKFullScreenViewController _showPhishingAlert]):
+        * UIProcess/ios/fullscreen/WKFullScreenWindowControllerIOS.mm:
+        (WebKit::WKWebViewState::applyTo):
+        (WebKit::WKWebViewState::store):
+        (-[WKFullScreenWindowController enterFullScreen]):
+        (-[WKFullScreenWindowController beganEnterFullScreenWithInitialFrame:finalFrame:]):
+        (-[WKFullScreenWindowController beganExitFullScreenWithInitialFrame:finalFrame:]):
+        (-[WKFullScreenWindowController _completedExitFullScreen]):
+        (-[WKFullScreenWindowController _exitFullscreenImmediately]):
+        (-[WKFullScreenWindowController _manager]):
+        * UIProcess/mac/WKFullScreenWindowController.h:
+        * UIProcess/mac/WKFullScreenWindowController.mm:
+        (-[WKFullScreenWindowController initWithWindow:webView:page:]):
+        * UIProcess/mac/WKImmediateActionController.h:
+        * UIProcess/mac/WKImmediateActionController.mm:
+        (-[WKImmediateActionController initWithPage:view:viewImpl:recognizer:]):
+        (-[WKImmediateActionController _animationControllerForDataDetectedText]):
+        (-[WKImmediateActionController _animationControllerForDataDetectedLink]):
+        * UIProcess/mac/WKInspectorViewController.h:
+        * UIProcess/mac/WKInspectorViewController.mm:
+        (-[WKInspectorViewController initWithInspectedPage:]):
+        * UIProcess/mac/WKTextFinderClient.h:
+        * UIProcess/mac/WKTextFinderClient.mm:
+        (-[WKTextFinderClient initWithPage:view:usePlatformFindUI:]):
+        * UIProcess/mac/WKViewLayoutStrategy.h:
+        * UIProcess/mac/WKViewLayoutStrategy.mm:
+        (+[WKViewLayoutStrategy layoutStrategyWithPage:view:viewImpl:mode:]):
+        (-[WKViewLayoutStrategy initWithPage:view:viewImpl:mode:]):
+        (-[WKViewViewSizeLayoutStrategy initWithPage:view:viewImpl:mode:]):
+        (-[WKViewFixedSizeLayoutStrategy initWithPage:view:viewImpl:mode:]):
+        (-[WKViewDynamicSizeComputedFromViewScaleLayoutStrategy initWithPage:view:viewImpl:mode:]):
+        (-[WKViewDynamicSizeComputedFromMinimumDocumentSizeLayoutStrategy initWithPage:view:viewImpl:mode:]):
+        * WebProcess/InjectedBundle/API/mac/WKDOMDocument.mm:
+        (-[WKDOMDocumentParserYieldToken initWithDocument:]):
+        * WebProcess/WebPage/mac/WKAccessibilityWebPageObjectBase.h:
+        * WebProcess/WebPage/mac/WKAccessibilityWebPageObjectBase.mm:
+        (-[WKAccessibilityWebPageObjectBase axObjectCache]):
+        (-[WKAccessibilityWebPageObjectBase setWebPage:]):
+
 2020-01-08  John Wilander  <wilander@apple.com>
 
         Resource Load Statistics: Flip experimental cookie blocking setting from an enable to a disable

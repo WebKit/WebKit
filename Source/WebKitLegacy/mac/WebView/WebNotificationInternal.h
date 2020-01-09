@@ -27,6 +27,7 @@
  */
 
 #import "WebNotification.h"
+#import <wtf/NakedPtr.h>
 
 #if ENABLE(NOTIFICATIONS)
 
@@ -37,7 +38,7 @@ class Notification;
 WebCore::Notification* core(WebNotification *);
 
 @interface WebNotification (WebNotificationInternal)
-- (id)initWithCoreNotification:(WebCore::Notification*)coreNotification notificationID:(uint64_t)notificationID;
+- (id)initWithCoreNotification:(NakedPtr<WebCore::Notification>)coreNotification notificationID:(uint64_t)notificationID;
 @end
 
 #endif

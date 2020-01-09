@@ -175,13 +175,13 @@ static BOOL isArrayOfClass(id object, Class elementClass)
 
     Vector<Ref<ArchiveResource>> coreResources;
     for (WebResource *subresource in subresources)
-        coreResources.append([subresource _coreResource]);
+        coreResources.append([subresource _coreResource].get());
 
     Vector<Ref<LegacyWebArchive>> coreArchives;
     for (WebArchive *subframeArchive in subframeArchives)
         coreArchives.append(*[subframeArchive->_private coreArchive]);
 
-    [_private setCoreArchive:LegacyWebArchive::create([mainResource _coreResource], WTFMove(coreResources), WTFMove(coreArchives))];
+    [_private setCoreArchive:LegacyWebArchive::create([mainResource _coreResource].get(), WTFMove(coreResources), WTFMove(coreArchives))];
     return self;
 }
 

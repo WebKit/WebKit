@@ -1310,7 +1310,7 @@ inline WebKit::FindOptions toFindOptions(WKFindConfiguration *configuration)
     return toAPI(_page.get());
 }
 
-- (WebKit::WebPageProxy *)_page
+- (NakedPtr<WebKit::WebPageProxy>)_page
 {
     return _page.get();
 }

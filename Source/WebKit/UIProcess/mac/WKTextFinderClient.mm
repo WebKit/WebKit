@@ -36,6 +36,7 @@
 #import <pal/spi/mac/NSTextFinderSPI.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/Deque.h>
+#import <wtf/NakedPtr.h>
 
 // FIXME: Implement scrollFindMatchToVisible.
 // FIXME: The NSTextFinder overlay doesn't move with scrolling; we should have a mode where we manage the overlay.
@@ -151,21 +152,21 @@ private:
 @end
 
 @implementation WKTextFinderClient {
-    WebKit::WebPageProxy* _page;
+    NakedPtr<WebKit::WebPageProxy> _page;
     NSView *_view;
     Deque<WTF::Function<void(NSArray *, bool didWrap)>> _findReplyCallbacks;
     Deque<WTF::Function<void(NSImage *)>> _imageReplyCallbacks;
     BOOL _usePlatformFindUI;
 }
 
-- (instancetype)initWithPage:(WebKit::WebPageProxy&)page view:(NSView *)view usePlatformFindUI:(BOOL)usePlatformFindUI
+- (instancetype)initWithPage:(NakedRef<WebKit::WebPageProxy>)page view:(NSView *)view usePlatformFindUI:(BOOL)usePlatformFindUI
 {
     self = [super init];
 
     if (!self)
         return nil;
 
-    _page = &page;
+    _page = page.ptr();
     _view = view;
     _usePlatformFindUI = usePlatformFindUI;
     

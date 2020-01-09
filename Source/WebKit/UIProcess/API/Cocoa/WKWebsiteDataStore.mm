@@ -435,7 +435,7 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
         return;
     }
 
-    auto* webPageProxy = [webView _page];
+    auto webPageProxy = [webView _page];
     if (!webPageProxy) {
         completionHandler({ });
         return;

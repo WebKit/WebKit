@@ -47,23 +47,23 @@
 
 @implementation WKViewLayoutStrategy
 
-+ (instancetype)layoutStrategyWithPage:(WebKit::WebPageProxy&)page view:(NSView *)view viewImpl:(WebKit::WebViewImpl&)webViewImpl mode:(WKLayoutMode)mode
++ (instancetype)layoutStrategyWithPage:(NakedRef<WebKit::WebPageProxy>)page view:(NSView *)view viewImpl:(NakedRef<WebKit::WebViewImpl>)webViewImpl mode:(WKLayoutMode)mode
 {
     WKViewLayoutStrategy *strategy;
 
     switch (mode) {
     case kWKLayoutModeFixedSize:
-        strategy = [[WKViewFixedSizeLayoutStrategy alloc] initWithPage:page view:view viewImpl:webViewImpl mode:mode];
+        strategy = [[WKViewFixedSizeLayoutStrategy alloc] initWithPage:page.copyRef() view:view viewImpl:webViewImpl.copyRef() mode:mode];
         break;
     case kWKLayoutModeDynamicSizeComputedFromViewScale:
-        strategy = [[WKViewDynamicSizeComputedFromViewScaleLayoutStrategy alloc] initWithPage:page view:view viewImpl:webViewImpl mode:mode];
+        strategy = [[WKViewDynamicSizeComputedFromViewScaleLayoutStrategy alloc] initWithPage:page.copyRef() view:view viewImpl:webViewImpl.copyRef() mode:mode];
         break;
     case kWKLayoutModeDynamicSizeComputedFromMinimumDocumentSize:
-        strategy = [[WKViewDynamicSizeComputedFromMinimumDocumentSizeLayoutStrategy alloc] initWithPage:page view:view viewImpl:webViewImpl mode:mode];
+        strategy = [[WKViewDynamicSizeComputedFromMinimumDocumentSizeLayoutStrategy alloc] initWithPage:page.copyRef() view:view viewImpl:webViewImpl.copyRef() mode:mode];
         break;
     case kWKLayoutModeViewSize:
     default:
-        strategy = [[WKViewViewSizeLayoutStrategy alloc] initWithPage:page view:view viewImpl:webViewImpl mode:mode];
+        strategy = [[WKViewViewSizeLayoutStrategy alloc] initWithPage:page.copyRef() view:view viewImpl:webViewImpl.copyRef() mode:mode];
         break;
     }
 
@@ -72,15 +72,15 @@
     return [strategy autorelease];
 }
 
-- (instancetype)initWithPage:(WebKit::WebPageProxy&)page view:(NSView *)view viewImpl:(WebKit::WebViewImpl&)webViewImpl mode:(WKLayoutMode)mode
+- (instancetype)initWithPage:(NakedRef<WebKit::WebPageProxy>)page view:(NSView *)view viewImpl:(NakedRef<WebKit::WebViewImpl>)webViewImpl mode:(WKLayoutMode)mode
 {
     self = [super init];
 
     if (!self)
         return nil;
 
-    _page = &page;
-    _webViewImpl = &webViewImpl;
+    _page = page.ptr();
+    _webViewImpl = webViewImpl.ptr();
     _view = view;
     _layoutMode = mode;
 
@@ -152,14 +152,14 @@
 
 @implementation WKViewViewSizeLayoutStrategy
 
-- (instancetype)initWithPage:(WebKit::WebPageProxy&)page view:(NSView *)view viewImpl:(WebKit::WebViewImpl&)webViewImpl mode:(WKLayoutMode)mode
+- (instancetype)initWithPage:(NakedRef<WebKit::WebPageProxy>)page view:(NSView *)view viewImpl:(NakedRef<WebKit::WebViewImpl>)webViewImpl mode:(WKLayoutMode)mode
 {
-    self = [super initWithPage:page view:view viewImpl:webViewImpl mode:mode];
+    self = [super initWithPage:page.copyRef() view:view viewImpl:webViewImpl.copyRef() mode:mode];
 
     if (!self)
         return nil;
 
-    page.setUseFixedLayout(false);
+    page->setUseFixedLayout(false);
 
     return self;
 }
@@ -172,14 +172,14 @@
 
 @implementation WKViewFixedSizeLayoutStrategy
 
-- (instancetype)initWithPage:(WebKit::WebPageProxy&)page view:(NSView *)view viewImpl:(WebKit::WebViewImpl&)webViewImpl mode:(WKLayoutMode)mode
+- (instancetype)initWithPage:(NakedRef<WebKit::WebPageProxy>)page view:(NSView *)view viewImpl:(NakedRef<WebKit::WebViewImpl>)webViewImpl mode:(WKLayoutMode)mode
 {
-    self = [super initWithPage:page view:view viewImpl:webViewImpl mode:mode];
+    self = [super initWithPage:page.copyRef() view:view viewImpl:webViewImpl.copyRef() mode:mode];
 
     if (!self)
         return nil;
 
-    page.setUseFixedLayout(true);
+    page->setUseFixedLayout(true);
 
     return self;
 }
@@ -192,14 +192,14 @@
 
 @implementation WKViewDynamicSizeComputedFromViewScaleLayoutStrategy
 
-- (instancetype)initWithPage:(WebKit::WebPageProxy&)page view:(NSView *)view viewImpl:(WebKit::WebViewImpl&)webViewImpl mode:(WKLayoutMode)mode
+- (instancetype)initWithPage:(NakedRef<WebKit::WebPageProxy>)page view:(NSView *)view viewImpl:(NakedRef<WebKit::WebViewImpl>)webViewImpl mode:(WKLayoutMode)mode
 {
-    self = [super initWithPage:page view:view viewImpl:webViewImpl mode:mode];
+    self = [super initWithPage:page.copyRef() view:view viewImpl:webViewImpl.copyRef() mode:mode];
 
     if (!self)
         return nil;
 
-    page.setUseFixedLayout(true);
+    page->setUseFixedLayout(true);
 
     return self;
 }
@@ -231,9 +231,9 @@
 
 @implementation WKViewDynamicSizeComputedFromMinimumDocumentSizeLayoutStrategy
 
-- (instancetype)initWithPage:(WebKit::WebPageProxy&)page view:(NSView *)view viewImpl:(WebKit::WebViewImpl&)webViewImpl mode:(WKLayoutMode)mode
+- (instancetype)initWithPage:(NakedRef<WebKit::WebPageProxy>)page view:(NSView *)view viewImpl:(NakedRef<WebKit::WebViewImpl>)webViewImpl mode:(WKLayoutMode)mode
 {
-    self = [super initWithPage:page view:view viewImpl:webViewImpl mode:mode];
+    self = [super initWithPage:page.copyRef() view:view viewImpl:webViewImpl.copyRef() mode:mode];
 
     if (!self)
         return nil;

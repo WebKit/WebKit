@@ -390,7 +390,7 @@ static void copyPrototypeProperties(JSContext *context, Class objcClass, Protoco
 @interface JSObjCClassInfo : NSObject {
     Class m_class;
     bool m_block;
-    JSClassRef m_classRef;
+    NakedPtr<OpaqueJSClass> m_classRef;
     JSC::Weak<JSC::JSObject> m_prototype;
     JSC::Weak<JSC::JSObject> m_constructor;
     JSC::Weak<JSC::Structure> m_structure;
@@ -424,7 +424,7 @@ static void copyPrototypeProperties(JSContext *context, Class objcClass, Protoco
 
 - (void)dealloc
 {
-    JSClassRelease(m_classRef);
+    JSClassRelease(m_classRef.get());
     [super dealloc];
 }
 

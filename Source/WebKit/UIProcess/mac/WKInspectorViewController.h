@@ -26,6 +26,7 @@
 #pragma once
 
 #import <WebKit/WKFoundation.h>
+#import <wtf/NakedPtr.h>
 
 #if PLATFORM(MAC)
 
@@ -44,7 +45,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, readonly) WKWebView *webView;
 @property (nonatomic, weak) id <WKInspectorViewControllerDelegate> delegate;
 
-- (instancetype)initWithInspectedPage:(WebKit::WebPageProxy* _Nullable)inspectedPage;
+- (instancetype)initWithInspectedPage:(NakedPtr<WebKit::WebPageProxy>)inspectedPage;
 
 + (BOOL)viewIsInspectorWebView:(NSView *)view;
 

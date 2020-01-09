@@ -45,7 +45,7 @@
 
 @implementation WKAccessibilityWebPageObjectBase
 
-- (WebCore::AXObjectCache*)axObjectCache
+- (NakedPtr<WebCore::AXObjectCache>)axObjectCache
 {
     if (!m_page)
         return nullptr;
@@ -99,7 +99,7 @@
     return nil;
 }
 
-- (void)setWebPage:(WebKit::WebPage*)page
+- (void)setWebPage:(NakedPtr<WebKit::WebPage>)page
 {
     m_page = page;
 

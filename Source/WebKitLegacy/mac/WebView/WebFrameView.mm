@@ -133,7 +133,7 @@ enum {
     return [[self _scrollView] verticalLineScroll];
 }
 
-- (WebCore::Frame*)_web_frame
+- (NakedPtr<WebCore::Frame>)_web_frame
 {
     return core(_private->webFrame);
 }
@@ -331,7 +331,7 @@ enum {
     // See WebFrameLoaderClient::provisionalLoadStarted.
     if ([[[self webFrame] webView] drawsBackground])
         [[self _scrollView] setDrawsBackground:YES];
-    if (auto* coreFrame = [self _web_frame]) {
+    if (auto coreFrame = [self _web_frame]) {
         if (auto* coreFrameView = coreFrame->view())
             coreFrameView->availableContentSizeChanged(WebCore::ScrollableArea::AvailableSizeChangeReason::AreaSizeChanged);
     }
@@ -613,7 +613,7 @@ enum {
 
 - (BOOL)_isVerticalDocument
 {
-    auto* coreFrame = [self _web_frame];
+    auto coreFrame = [self _web_frame];
     if (!coreFrame)
         return YES;
     auto* document = coreFrame->document();
@@ -627,7 +627,7 @@ enum {
 
 - (BOOL)_isFlippedDocument
 {
-    auto* coreFrame = [self _web_frame];
+    auto coreFrame = [self _web_frame];
     if (!coreFrame)
         return NO;
     auto* document = coreFrame->document();
@@ -895,7 +895,7 @@ enum {
 #endif
     int index, count;
     BOOL callSuper = YES;
-    auto* coreFrame = [self _web_frame];
+    auto coreFrame = [self _web_frame];
     BOOL maintainsBackForwardList = coreFrame && static_cast<BackForwardList&>(coreFrame->page()->backForward().client()).enabled() ? YES : NO;
 
     count = [characters length];

@@ -28,6 +28,7 @@
 
 #import "WebDataSourcePrivate.h"
 #import <wtf/Forward.h>
+#import <wtf/NakedPtr.h>
 
 namespace WebCore {
 class DocumentLoader;
@@ -57,7 +58,7 @@ class WebDocumentLoaderMac;
 - (void)_receivedData:(NSData *)data;
 - (void)_revertToProvisionalState;
 - (void)_setMainDocumentError:(NSError *)error;
-- (WebCore::DocumentLoader*)_documentLoader;
+- (NakedPtr<WebCore::DocumentLoader>)_documentLoader;
 #if USE(QUICK_LOOK)
 @property (nonatomic, copy, setter=_setQuickLookContent:) NSDictionary *_quickLookContent;
 @property (nonatomic, setter=_setQuickLookPreviewLoaderClient:) WebCore::LegacyPreviewLoaderClient* _quickLookPreviewLoaderClient;

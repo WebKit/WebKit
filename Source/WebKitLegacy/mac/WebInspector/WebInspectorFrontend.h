@@ -23,13 +23,15 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
+#import <wtf/NakedPtr.h>
+
 class WebInspectorFrontendClient;
 
 @interface WebInspectorFrontend : NSObject {
 @private
-    WebInspectorFrontendClient *m_frontendClient;
+    NakedPtr<WebInspectorFrontendClient> m_frontendClient;
 }
-- (id)initWithFrontendClient:(WebInspectorFrontendClient *)frontendClient;
+- (id)initWithFrontendClient:(NakedPtr<WebInspectorFrontendClient>)frontendClient;
 - (void)attach;
 - (void)detach;
 - (void)close;

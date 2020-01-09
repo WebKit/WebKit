@@ -143,6 +143,7 @@
 #import <wtf/BlockObjCExceptions.h>
 #import <wtf/MainThread.h>
 #import <wtf/MathExtras.h>
+#import <wtf/NakedPtr.h>
 #import <wtf/ObjCRuntimeExtras.h>
 #import <wtf/RunLoop.h>
 #import <wtf/SystemTracing.h>
@@ -236,11 +237,11 @@ using WebEvent = NSEvent;
 const auto WebEventMouseDown = NSEventTypeLeftMouseDown;
 
 @interface WebMenuTarget : NSObject {
-    WebCore::ContextMenuController* _menuController;
+    NakedPtr<WebCore::ContextMenuController> _menuController;
 }
 + (WebMenuTarget*)sharedMenuTarget;
-- (WebCore::ContextMenuController*)menuController;
-- (void)setMenuController:(WebCore::ContextMenuController*)menuController;
+- (NakedPtr<WebCore::ContextMenuController>)menuController;
+- (void)setMenuController:(NakedPtr<WebCore::ContextMenuController>)menuController;
 - (void)forwardContextMenuAction:(id)sender;
 @end
 
@@ -622,12 +623,12 @@ static Optional<NSInteger> toTag(WebCore::ContextMenuAction action)
     return target;
 }
 
-- (WebCore::ContextMenuController*)menuController
+- (NakedPtr<WebCore::ContextMenuController>)menuController
 {
     return _menuController;
 }
 
-- (void)setMenuController:(WebCore::ContextMenuController*)menuController
+- (void)setMenuController:(NakedPtr<WebCore::ContextMenuController>)menuController
 {
     _menuController = menuController;
 }
@@ -987,7 +988,7 @@ struct WebHTMLViewInterpretKeyEventsParameters {
     RetainPtr<WebDataSource> dataSource;
 
 #if PLATFORM(MAC)
-    WebCore::CachedImage* promisedDragTIFFDataSource;
+    NakedPtr<WebCore::CachedImage> promisedDragTIFFDataSource;
 #endif
 
     SEL selectorForDoCommandBySelector;
@@ -4358,7 +4359,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     NSFileWrapper *wrapper = nil;
     NSURL *draggingElementURL = nil;
     
-    if (auto* tiffResource = _private->promisedDragTIFFDataSource) {
+    if (auto tiffResource = _private->promisedDragTIFFDataSource) {
         if (auto* buffer = tiffResource->resourceBuffer()) {
             NSURLResponse *response = tiffResource->response().nsURLResponse();
             draggingElementURL = [response URL];
@@ -5983,7 +5984,7 @@ static BOOL writingDirectionKeyBindingsEnabled()
 
 #if PLATFORM(MAC)
 
-- (BOOL)_interpretKeyEvent:(WebCore::KeyboardEvent*)event savingCommands:(BOOL)savingCommands
+- (BOOL)_interpretKeyEvent:(NakedPtr<WebCore::KeyboardEvent>)event savingCommands:(BOOL)savingCommands
 {
     ASSERT(core([self _frame]) == downcast<WebCore::Node>(event->target())->document().frame());
     ASSERT(!savingCommands || event->keypressCommands().isEmpty()); // Save commands once for each event.
@@ -6112,7 +6113,7 @@ static BOOL writingDirectionKeyBindingsEnabled()
 
 #if PLATFORM(MAC)
 
-- (void)setPromisedDragTIFFDataSource:(WebCore::CachedImage*)source
+- (void)setPromisedDragTIFFDataSource:(NakedPtr<WebCore::CachedImage>)source
 {
     if (source)
         source->addClient(promisedDataClient());

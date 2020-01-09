@@ -115,7 +115,7 @@ struct WKWebViewState {
         [[webView scrollView] setContentInset:_savedEdgeInset];
         [[webView scrollView] setContentOffset:_savedContentOffset];
         [[webView scrollView] setScrollIndicatorInsets:_savedScrollIndicatorInsets];
-        if (auto* page = webView._page) {
+        if (auto page = webView._page) {
             page->setTopContentInset(_savedTopContentInset);
             page->setForceAlwaysUserScalable(_savedForceAlwaysUserScalable);
         }
@@ -135,7 +135,7 @@ struct WKWebViewState {
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         _savedScrollIndicatorInsets = [[webView scrollView] scrollIndicatorInsets];
 ALLOW_DEPRECATED_DECLARATIONS_END
-        if (auto* page = webView._page) {
+        if (auto page = webView._page) {
             _savedTopContentInset = page->topContentInset();
             _savedForceAlwaysUserScalable = page->forceAlwaysUserScalable();
         }
@@ -505,7 +505,7 @@ static RetainPtr<UIWindow> makeWindowFromView(UIView *)
         return;
 
     RetainPtr<WKWebView> webView = self._webView;
-    auto* page = [webView _page];
+    auto page = [webView _page];
     auto* manager = self._manager;
     if (!page || !manager)
         return;
@@ -567,7 +567,7 @@ static RetainPtr<UIWindow> makeWindowFromView(UIView *)
     WKSnapshotConfiguration* config = nil;
     [webView takeSnapshotWithConfiguration:config completionHandler:^(UIImage * snapshotImage, NSError * error) {
         RetainPtr<WKWebView> webView = self._webView;
-        auto* page = [self._webView _page];
+        auto page = [self._webView _page];
         if (!page)
             return;
 
@@ -654,7 +654,7 @@ static RetainPtr<UIWindow> makeWindowFromView(UIView *)
             return;
         }
 
-        auto* page = [self._webView _page];
+        auto page = [self._webView _page];
         auto* manager = self._manager;
         if (page && manager) {
             [self._webView becomeFirstResponder];
@@ -716,7 +716,7 @@ static RetainPtr<UIWindow> makeWindowFromView(UIView *)
     _finalFrame.size = WebKit::sizeExpandedToSize(_finalFrame.size, CGSizeMake(1, 1));
     _finalFrame = WebKit::safeInlineRect(_finalFrame, [_rootViewController view].frame.size);
 
-    if (auto* page = [self._webView _page])
+    if (auto page = [self._webView _page])
         page->setSuppressVisibilityUpdates(true);
 
     [_fullscreenViewController setPrefersStatusBarHidden:NO];
@@ -748,7 +748,7 @@ static RetainPtr<UIWindow> makeWindowFromView(UIView *)
     [webView becomeFirstResponder];
 
     _viewState.applyTo(webView.get());
-    if (auto* page = [webView _page])
+    if (auto page = [webView _page])
         page->setOverrideViewportArguments(WTF::nullopt);
 
     [webView setNeedsLayout];
@@ -775,11 +775,11 @@ static RetainPtr<UIWindow> makeWindowFromView(UIView *)
         _webViewPlaceholder.get().parent = nil;
         [_webViewPlaceholder removeFromSuperview];
 
-        if (auto* page = [self._webView _page])
+        if (auto page = [self._webView _page])
             page->setSuppressVisibilityUpdates(false);
     });
 
-    if (auto* page = [self._webView _page])
+    if (auto page = [self._webView _page])
         page->forceRepaint(_repaintCallback.copyRef());
     else
         _repaintCallback->performCallback();
@@ -893,7 +893,7 @@ static RetainPtr<UIWindow> makeWindowFromView(UIView *)
     RetainPtr<WKWebView> webView = self._webView;
     _webViewPlaceholder.get().parent = nil;
     WebKit::replaceViewWithView(_webViewPlaceholder.get(), webView.get());
-    if (auto* page = [webView _page])
+    if (auto page = [webView _page])
         page->setSuppressVisibilityUpdates(false);
     _webViewPlaceholder = nil;
 }
@@ -992,7 +992,7 @@ static RetainPtr<UIWindow> makeWindowFromView(UIView *)
 
 - (WebKit::WebFullScreenManagerProxy*)_manager
 {
-    if (auto* page = [self._webView _page])
+    if (auto page = [self._webView _page])
         return page->fullScreenManager();
     return nullptr;
 }

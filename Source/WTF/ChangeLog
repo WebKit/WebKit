@@ -1,3 +1,54 @@
+2020-01-08  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Reduce binary size by purging C++ type information in Objective-C fields and parameters
+        https://bugs.webkit.org/show_bug.cgi?id=205905
+
+        Reviewed by Saam Barati.
+
+        Objective-C has reflection mechanisms. This means that fields, methods, and their types
+        need to hold its string representations in binary even if we are using release build.
+        While typical Objective-C class does not have large size of type names, C++ struct / class
+        has very large one, and putting them in Objective-C method names, parameter types, or fields
+        makes binary size very large.
+
+        Interesting thing is that type information is gathered when parameter is a C++ pointer, reference,
+        or value. And it gathers one-level deep information from this pointer etc. This means that, if
+        we use RefPtr<T>, collected type information is the one of RefPtr, not one of T. So it becomes significantly
+        smaller.
+
+        This patch introduces NakedRef<T>. This is similar to Ref while it does not have any ownership. So it
+        is just a wrapper around T&. We already have NakedPtr<T>. And use NakedRef<T> / NakedPtr<T> instead
+        of T& and T* if,
+
+            1. T is C++ class.
+            2. T* / T& is in Objective-C fields or parameter types (including a return type).
+
+        Then, these type information is one of NakedRef<T> / NakedPtr<T> instead of T, and we can reduce binary size.
+
+        This patch saves 600~KB in binary size.
+
+        Note the following things.
+
+        1. If we use `__attribute__((objc_direct))`, `__attribute__((objc_direct_members))`, possibly, we can completely remove these
+           metadata without using NakedRef / NakedPtr[1]. However, this is not available for our supporting platforms now (including
+           pre-Catalina OSes). This NakedRef / NakedPtr technique can reduce binary without waiting for it.
+        2. Reverting NakedRef / NakedPtr to usual reference / pointer is fairly easy since it is well typed. Once `__attribute__((objc_direct))`
+           becomes available in our platforms, we can consider it. But using NakedRef / NakedPtr is harmless.
+
+        [1]: https://github.com/llvm/llvm-project/commit/d4e1ba3fa9dfec2613bdcc7db0b58dea490c56b1
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/CMakeLists.txt:
+        * wtf/NakedRef.h: Added.
+        (WTF::NakedRef::NakedRef):
+        (WTF::NakedRef::operator-> const):
+        (WTF::NakedRef::get const):
+        (WTF::NakedRef::operator T& const):
+        (WTF::NakedRef::operator! const):
+        (WTF::=):
+        (WTF::NakedRef<T>::swap):
+        (WTF::swap):
+
 2020-01-08  Alicia Boya García  <aboya@igalia.com>
 
         [WTF] Allow MediaTime static constants

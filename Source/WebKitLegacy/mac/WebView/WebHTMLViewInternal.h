@@ -61,13 +61,13 @@ namespace WebCore {
 
 #if PLATFORM(MAC)
 - (void)_lookUpInDictionaryFromMenu:(id)sender;
-- (BOOL)_interpretKeyEvent:(WebCore::KeyboardEvent *)event savingCommands:(BOOL)savingCommands;
+- (BOOL)_interpretKeyEvent:(NakedPtr<WebCore::KeyboardEvent>)event savingCommands:(BOOL)savingCommands;
 - (DOMDocumentFragment *)_documentFragmentFromPasteboard:(NSPasteboard *)pasteboard;
 - (NSEvent *)_mouseDownEvent;
 - (BOOL)isGrammarCheckingEnabled;
 - (void)setGrammarCheckingEnabled:(BOOL)flag;
 - (void)toggleGrammarChecking:(id)sender;
-- (void)setPromisedDragTIFFDataSource:(WebCore::CachedImage*)source;
+- (void)setPromisedDragTIFFDataSource:(NakedPtr<WebCore::CachedImage>)source;
 #endif
 
 #if PLATFORM(IOS_FAMILY)

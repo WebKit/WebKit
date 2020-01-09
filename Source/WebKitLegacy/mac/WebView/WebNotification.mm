@@ -62,7 +62,7 @@ Notification* core(WebNotification *notification)
     return notification->_private->_internal.get();
 }
 
-- (id)initWithCoreNotification:(Notification*)coreNotification notificationID:(uint64_t)notificationID
+- (id)initWithCoreNotification:(NakedPtr<Notification>)coreNotification notificationID:(uint64_t)notificationID
 {
     if (!(self = [super init]))
         return nil;

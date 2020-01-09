@@ -81,7 +81,7 @@ using namespace WebCore;
 
 @implementation WebNodeHighlight
 
-- (id)initWithTargetView:(NSView *)targetView inspectorController:(InspectorController*)inspectorController
+- (id)initWithTargetView:(NSView *)targetView inspectorController:(NakedPtr<InspectorController>)inspectorController
 {
     self = [super init];
     if (!self)
@@ -250,7 +250,7 @@ using namespace WebCore;
     return _targetView;
 }
 
-- (InspectorController*)inspectorController
+- (NakedPtr<InspectorController>)inspectorController
 {
     return _inspectorController;
 }

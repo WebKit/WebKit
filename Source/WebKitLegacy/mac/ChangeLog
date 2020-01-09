@@ -1,3 +1,113 @@
+2020-01-08  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Reduce binary size by purging C++ type information in Objective-C fields and parameters
+        https://bugs.webkit.org/show_bug.cgi?id=205905
+
+        Reviewed by Saam Barati.
+
+        * Plugins/WebBaseNetscapePluginView.h:
+        * Plugins/WebBaseNetscapePluginView.mm:
+        (-[WebBaseNetscapePluginView element]):
+        * WebCoreSupport/WebEditorClient.mm:
+        (_WebCreateFragment):
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::transitionToCommittedForNewPage):
+        (-[WebFramePolicyListener initWithFrame:identifier:policyFunction:defaultPolicy:]):
+        (-[WebFramePolicyListener initWithFrame:identifier:policyFunction:defaultPolicy:appLinkURL:]):
+        * WebCoreSupport/WebGeolocationClient.mm:
+        (-[WebGeolocationPolicyListener initWithGeolocation:]):
+        (-[WebGeolocationPolicyListener initWithGeolocation:forWebView:]):
+        (-[WebGeolocationProviderInitializationListener initWithGeolocation:]):
+        * WebCoreSupport/WebInspectorClient.mm:
+        (WebInspectorFrontendClient::resetState):
+        (-[WebInspectorWindowController setFrontendClient:]):
+        (-[WebInspectorWindowController setInspectorClient:]):
+        (-[WebInspectorWindowController inspectorClient]):
+        * WebInspector/WebInspectorFrontend.h:
+        * WebInspector/WebInspectorFrontend.mm:
+        * WebInspector/WebNodeHighlight.h:
+        * WebInspector/WebNodeHighlight.mm:
+        (-[WebNodeHighlight initWithTargetView:inspectorController:]):
+        * WebView/WebArchive.mm:
+        (-[WebArchive initWithMainResource:subresources:subframeArchives:]):
+        * WebView/WebDataSource.mm:
+        (-[WebDataSource _documentLoader]):
+        (-[WebDataSource addSubresource:]):
+        * WebView/WebDataSourceInternal.h:
+        * WebView/WebFrame.mm:
+        (getWebView):
+        (-[WebFrame _updateBackgroundAndUpdatesWhileOffscreen]):
+        (-[WebFrame _unmarkAllBadGrammar]):
+        (-[WebFrame _unmarkAllMisspellings]):
+        (-[WebFrame _hasSelection]):
+        (-[WebFrame _atMostOneFrameHasSelection]):
+        (-[WebFrame _findFrameWithSelection]):
+        (-[WebFrame _scrollDOMRangeToVisible:withInset:]):
+        (-[WebFrame _documentFragmentWithMarkupString:baseURLString:]):
+        (-[WebFrame _documentFragmentWithNodesAsParagraphs:]):
+        (-[WebFrame _canProvideDocumentSource]):
+        (-[WebFrame _isDescendantOfFrame:]):
+        (-[WebFrame _recursive_resumeNullEventsForAllNetscapePlugins]):
+        (-[WebFrame _recursive_pauseNullEventsForAllNetscapePlugins]):
+        (-[WebFrame setTimeoutsPaused:]):
+        (-[WebFrame prepareForPause]):
+        (-[WebFrame resumeFromPause]):
+        (-[WebFrame resetTextAutosizingBeforeLayout]):
+        (-[WebFrame _globalContextForScriptWorld:]):
+        (-[WebFrame _layerTreeAsText]):
+        (-[WebFrame _clearOpener]):
+        (-[WebFrame focusedNodeHasContent]):
+        (-[WebFrame _dispatchDidReceiveTitle:]):
+        (-[WebFrame jsWrapperForNode:inScriptWorld:]):
+        (-[WebFrame elementAtPoint:]):
+        (-[WebFrame name]):
+        (-[WebFrame DOMDocument]):
+        (-[WebFrame frameElement]):
+        (-[WebFrame provisionalDataSource]):
+        (-[WebFrame dataSource]):
+        (-[WebFrame loadRequest:]):
+        (-[WebFrame findFrameNamed:]):
+        (-[WebFrame parentFrame]):
+        (-[WebFrame childFrames]):
+        (-[WebFrame windowObject]):
+        (-[WebFrame globalContext]):
+        (-[WebFrame javaScriptContext]):
+        * WebView/WebFrameInternal.h:
+        * WebView/WebFrameView.mm:
+        (-[WebFrameView _web_frame]):
+        (-[WebFrameView _frameSizeChanged]):
+        (-[WebFrameView _isVerticalDocument]):
+        (-[WebFrameView _isFlippedDocument]):
+        (-[WebFrameView keyDown:keyDown:]):
+        * WebView/WebFullScreenController.mm:
+        (-[WebFullScreenController _document]):
+        * WebView/WebHTMLView.mm:
+        (-[WebMenuTarget menuController]):
+        (-[WebMenuTarget setMenuController:]):
+        (-[WebHTMLView namesOfPromisedFilesDroppedAtDestination:]):
+        (-[WebHTMLView _interpretKeyEvent:savingCommands:]):
+        (-[WebHTMLView setPromisedDragTIFFDataSource:]):
+        * WebView/WebHTMLViewInternal.h:
+        * WebView/WebNotification.mm:
+        (-[WebNotification initWithCoreNotification:notificationID:]):
+        * WebView/WebNotificationInternal.h:
+        * WebView/WebResource.mm:
+        (-[WebResource _coreResource]):
+        * WebView/WebResourceInternal.h:
+        * WebView/WebVideoFullscreenController.h:
+        * WebView/WebVideoFullscreenController.mm:
+        (-[WebVideoFullscreenController videoElement]):
+        (-[WebVideoFullscreenController setVideoElement:]):
+        * WebView/WebVideoFullscreenHUDWindowController.h:
+        * WebView/WebView.mm:
+        (-[WebView page]):
+        (-[WebView _enterVideoFullscreenForVideoElement:mode:]):
+        (-[WebView _setUpPlaybackControlsManagerForMediaElement:]):
+        (-[WebView _supportsFullScreenForElement:withKeyboard:]):
+        (-[WebView _enterFullScreenForElement:]):
+        (-[WebView _exitFullScreenForElement:]):
+        * WebView/WebViewInternal.h:
+
 2020-01-08  youenn fablet  <youenn@apple.com>
 
         Implement MediaRecorder backend in GPUProcess

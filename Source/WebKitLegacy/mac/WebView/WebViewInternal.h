@@ -45,6 +45,8 @@
 #import <WebCore/WebCoreKeyboardUIMode.h>
 #import <functional>
 #import <wtf/Forward.h>
+#import <wtf/NakedPtr.h>
+#import <wtf/NakedRef.h>
 #import <wtf/RetainPtr.h>
 
 namespace WebCore {
@@ -165,7 +167,7 @@ OBJC_CLASS NSTextAlternatives;
 + (WebCacheModel)_cacheModel;
 
 #ifdef __cplusplus
-- (WebCore::Page*)page;
+- (NakedPtr<WebCore::Page>)page;
 - (WTF::String)_userAgentString;
 #endif
 
@@ -271,19 +273,19 @@ OBJC_CLASS NSTextAlternatives;
 - (void)_invalidateUserAgentCache;
 
 #if ENABLE(VIDEO) && defined(__cplusplus)
-- (void)_enterVideoFullscreenForVideoElement:(WebCore::HTMLVideoElement*)videoElement mode:(WebCore::HTMLMediaElementEnums::VideoFullscreenMode)mode;
+- (void)_enterVideoFullscreenForVideoElement:(NakedPtr<WebCore::HTMLVideoElement>)videoElement mode:(WebCore::HTMLMediaElementEnums::VideoFullscreenMode)mode;
 - (void)_exitVideoFullscreen;
 #if PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE)
 - (BOOL)_hasActiveVideoForControlsInterface;
-- (void)_setUpPlaybackControlsManagerForMediaElement:(WebCore::HTMLMediaElement&)mediaElement;
+- (void)_setUpPlaybackControlsManagerForMediaElement:(NakedRef<WebCore::HTMLMediaElement>)mediaElement;
 - (void)_clearPlaybackControlsManager;
 #endif
 #endif
 
 #if ENABLE(FULLSCREEN_API) && !PLATFORM(IOS_FAMILY) && defined(__cplusplus)
-- (BOOL)_supportsFullScreenForElement:(WebCore::Element*)element withKeyboard:(BOOL)withKeyboard;
-- (void)_enterFullScreenForElement:(WebCore::Element*)element;
-- (void)_exitFullScreenForElement:(WebCore::Element*)element;
+- (BOOL)_supportsFullScreenForElement:(NakedPtr<WebCore::Element>)element withKeyboard:(BOOL)withKeyboard;
+- (void)_enterFullScreenForElement:(NakedPtr<WebCore::Element>)element;
+- (void)_exitFullScreenForElement:(NakedPtr<WebCore::Element>)element;
 #endif
 
 // Conversion functions between WebCore root view coordinates and web view coordinates.

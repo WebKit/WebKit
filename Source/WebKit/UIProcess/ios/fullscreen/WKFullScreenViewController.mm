@@ -255,7 +255,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (void)videoControlsManagerDidChange
 {
-    WebKit::WebPageProxy* page = [self._webView _page];
+    auto page = [self._webView _page];
     auto* videoFullscreenManager = page ? page->videoFullscreenManager() : nullptr;
     auto* videoFullscreenInterface = videoFullscreenManager ? videoFullscreenManager->controlsManagerInterface() : nullptr;
     auto* playbackSessionInterface = videoFullscreenInterface ? &videoFullscreenInterface->playbackSessionInterface() : nullptr;
@@ -480,7 +480,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 @dynamic _manager;
 - (WebKit::WebFullScreenManagerProxy*)_manager
 {
-    if (auto* page = [self._webView _page])
+    if (auto page = [self._webView _page])
         return page->fullScreenManager();
     return nullptr;
 }
@@ -504,7 +504,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (void)_togglePiPAction:(id)sender
 {
-    WebKit::WebPageProxy* page = [self._webView _page];
+    auto page = [self._webView _page];
     if (!page)
         return;
 
@@ -558,21 +558,21 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     NSString *alertMessage = [NSString stringWithFormat:WEB_UI_STRING("Typing is not allowed in full screen websites. “%@” may be showing a fake keyboard to trick you into disclosing personal or financial information.", "Full Screen Deceptive Website Warning Sheet Content Text"), (NSString *)self.location];
     UIAlertController* alert = [UIAlertController alertControllerWithTitle:alertTitle message:alertMessage preferredStyle:UIAlertControllerStyleAlert];
 
-    if (auto* page = [self._webView _page]) {
+    if (auto page = [self._webView _page]) {
         page->suspendAllMediaPlayback();
         page->suspendActiveDOMObjectsAndAnimations();
     }
 
     UIAlertAction* exitAction = [UIAlertAction actionWithTitle:WEB_UI_STRING_KEY("Exit Full Screen", "Exit Full Screen (Element Full Screen)", "Full Screen Deceptive Website Exit Action") style:UIAlertActionStyleCancel handler:^(UIAlertAction * action) {
         [self _cancelAction:action];
-        if (auto* page = [self._webView _page]) {
+        if (auto page = [self._webView _page]) {
             page->resumeActiveDOMObjectsAndAnimations();
             page->resumeAllMediaPlayback();
         }
     }];
 
     UIAlertAction* stayAction = [UIAlertAction actionWithTitle:WEB_UI_STRING_KEY("Stay in Full Screen", "Stay in Full Screen (Element Full Screen)", "Full Screen Deceptive Website Stay Action") style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
-        if (auto* page = [self._webView _page]) {
+        if (auto page = [self._webView _page]) {
             page->resumeActiveDOMObjectsAndAnimations();
             page->resumeAllMediaPlayback();
         }

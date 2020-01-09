@@ -49,6 +49,7 @@
 #import <pal/spi/cg/CoreGraphicsSPI.h>
 #import <pal/system/SleepDisabler.h>
 #import <wtf/BlockObjCExceptions.h>
+#import <wtf/NakedRef.h>
 
 static const NSTimeInterval DefaultWatchdogTimerInterval = 1;
 
@@ -121,7 +122,7 @@ static void makeResponderFirstResponderIfDescendantOfView(NSWindow *window, NSRe
 
 #pragma mark -
 #pragma mark Initialization
-- (id)initWithWindow:(NSWindow *)window webView:(NSView *)webView page:(WebKit::WebPageProxy&)page
+- (id)initWithWindow:(NSWindow *)window webView:(NSView *)webView page:(NakedRef<WebKit::WebPageProxy>)page
 {
     self = [super initWithWindow:window];
     if (!self)
@@ -150,7 +151,7 @@ static void makeResponderFirstResponderIfDescendantOfView(NSWindow *window, NSRe
     [self windowDidLoad];
     [window displayIfNeeded];
     _webView = webView;
-    _page = &page;
+    _page = page.ptr();
 
     _videoFullscreenClient = makeUnique<WebKit::WKFullScreenWindowControllerVideoFullscreenModelClient>();
     _videoFullscreenClient->setParent(self);

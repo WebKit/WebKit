@@ -49,12 +49,12 @@
 @end
 
 @implementation WKInspectorViewController {
-    WebKit::WebPageProxy* _inspectedPage;
+    NakedPtr<WebKit::WebPageProxy> _inspectedPage;
     RetainPtr<WKInspectorWKWebView> _webView;
     WeakObjCPtr<id <WKInspectorViewControllerDelegate>> _delegate;
 }
 
-- (instancetype)initWithInspectedPage:(WebKit::WebPageProxy*)inspectedPage
+- (instancetype)initWithInspectedPage:(NakedPtr<WebKit::WebPageProxy>)inspectedPage
 {
     if (!(self = [super init]))
         return nil;

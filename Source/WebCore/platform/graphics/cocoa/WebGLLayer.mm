@@ -61,7 +61,7 @@
 
 @synthesize context=_context;
 
--(id)initWithGraphicsContextGL:(WebCore::GraphicsContextGLOpenGL*)context
+-(id)initWithGraphicsContextGL:(NakedPtr<WebCore::GraphicsContextGLOpenGL>)context
 {
     _context = context;
     self = [super init];

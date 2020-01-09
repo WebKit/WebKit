@@ -50,6 +50,7 @@
 #import <pal/spi/cf/CFNetworkSPI.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/MainThread.h>
+#import <wtf/NakedRef.h>
 #import <wtf/NeverDestroyed.h>
 #import <wtf/ObjCRuntimeExtras.h>
 #import <wtf/ProcessPrivilege.h>
@@ -401,20 +402,20 @@ static String stringForSSLCipher(SSLCipherSuite cipher)
     bool _withCredentials;
 }
 
-- (id)initWithNetworkSession:(WebKit::NetworkSessionCocoa&)session wrapper:(WebKit::SessionWrapper&)sessionWrapper withCredentials:(bool)withCredentials;
+- (id)initWithNetworkSession:(NakedRef<WebKit::NetworkSessionCocoa>)session wrapper:(WebKit::SessionWrapper&)sessionWrapper withCredentials:(bool)withCredentials;
 - (void)sessionInvalidated;
 
 @end
 
 @implementation WKNetworkSessionDelegate
 
-- (id)initWithNetworkSession:(WebKit::NetworkSessionCocoa&)session wrapper:(WebKit::SessionWrapper&)sessionWrapper withCredentials:(bool)withCredentials
+- (id)initWithNetworkSession:(NakedRef<WebKit::NetworkSessionCocoa>)session wrapper:(WebKit::SessionWrapper&)sessionWrapper withCredentials:(bool)withCredentials
 {
     self = [super init];
     if (!self)
         return nil;
 
-    _session = makeWeakPtr(session);
+    _session = makeWeakPtr(session.get());
     _sessionWrapper = makeWeakPtr(sessionWrapper);
     _withCredentials = withCredentials;
 

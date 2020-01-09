@@ -139,6 +139,7 @@ set(WTF_PUBLIC_HEADERS
     MetaAllocatorPtr.h
     MonotonicTime.h
     NakedPtr.h
+    NakedRef.h
     NaturalLoops.h
     NeverDestroyed.h
     NoLock.h

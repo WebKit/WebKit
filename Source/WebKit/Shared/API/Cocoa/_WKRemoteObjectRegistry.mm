@@ -106,22 +106,22 @@ struct PendingReply {
     return remoteObject.autorelease();
 }
 
-- (id)_initWithWebPage:(WebKit::WebPage&)page
+- (id)_initWithWebPage:(NakedRef<WebKit::WebPage>)page
 {
     if (!(self = [super init]))
         return nil;
 
-    _remoteObjectRegistry = makeUnique<WebKit::WebRemoteObjectRegistry>(self, page);
+    _remoteObjectRegistry = makeUnique<WebKit::WebRemoteObjectRegistry>(self, page.get());
 
     return self;
 }
 
-- (id)_initWithWebPageProxy:(WebKit::WebPageProxy&)page
+- (id)_initWithWebPageProxy:(NakedRef<WebKit::WebPageProxy>)page
 {
     if (!(self = [super init]))
         return nil;
 
-    _remoteObjectRegistry = makeUnique<WebKit::UIRemoteObjectRegistry>(self, page);
+    _remoteObjectRegistry = makeUnique<WebKit::UIRemoteObjectRegistry>(self, page.get());
 
     return self;
 }

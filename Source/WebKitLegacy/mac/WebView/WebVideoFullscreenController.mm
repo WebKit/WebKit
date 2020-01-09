@@ -93,14 +93,14 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(applicationDidChangeScreenParameters:) name:NSApplicationDidChangeScreenParametersNotification object:NSApp];
 }
 
-- (WebCore::HTMLVideoElement *)videoElement
+- (NakedPtr<WebCore::HTMLVideoElement>)videoElement
 {
     return _videoElement.get();
 }
 
 // FIXME: This method is not really a setter. The caller relies on its side effects, and it's
 // called once each time we enter full screen. So it should have a different name.
-- (void)setVideoElement:(WebCore::HTMLVideoElement *)videoElement
+- (void)setVideoElement:(NakedPtr<WebCore::HTMLVideoElement>)videoElement
 {
     ASSERT(videoElement);
     _videoElement = videoElement;

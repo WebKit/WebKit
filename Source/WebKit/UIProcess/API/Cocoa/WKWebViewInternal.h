@@ -31,6 +31,7 @@
 #import "_WKAttachmentInternal.h"
 #import "_WKWebViewPrintFormatterInternal.h"
 #import <wtf/CompletionHandler.h>
+#import <wtf/NakedPtr.h>
 #import <wtf/RefPtr.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/Variant.h>
@@ -252,7 +253,7 @@ class ViewGestureController;
 - (Optional<BOOL>)_resolutionForShareSheetImmediateCompletionForTesting;
 
 - (WKPageRef)_pageForTesting;
-- (WebKit::WebPageProxy*)_page;
+- (NakedPtr<WebKit::WebPageProxy>)_page;
 
 @end
 

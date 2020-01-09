@@ -35,6 +35,7 @@
 #import <WebCore/FrameSelection.h>
 #import <WebCore/Position.h>
 #import <WebCore/Settings.h>
+#import <wtf/NakedPtr.h>
 
 @class DOMCSSStyleDeclaration;
 @class DOMDocumentFragment;
@@ -85,7 +86,7 @@ WebView *getWebView(WebFrame *webFrame);
 
 @interface WebFramePrivate : NSObject {
 @public
-    WebCore::Frame* coreFrame;
+    NakedPtr<WebCore::Frame> coreFrame;
     WebFrameView *webFrameView;
     std::unique_ptr<WebScriptDebugger> scriptDebugger;
     id internalLoadDelegate;

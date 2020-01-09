@@ -128,6 +128,7 @@
 #import <pal/spi/cocoa/NSURLFileTypeMappingsSPI.h>
 #import <wtf/BlockObjCExceptions.h>
 #import <wtf/MainThread.h>
+#import <wtf/NakedPtr.h>
 #import <wtf/Ref.h>
 #import <wtf/RunLoop.h>
 #import <wtf/text/WTFString.h>
@@ -187,9 +188,9 @@ NSString *WebPluginContainerKey = @"WebPluginContainer";
     WebCore::PolicyAction _defaultPolicy;
 }
 
-- (id)initWithFrame:(WebCore::Frame*)frame identifier:(WebCore::PolicyCheckIdentifier)identifier policyFunction:(WebCore::FramePolicyFunction&&)policyFunction defaultPolicy:(WebCore::PolicyAction)defaultPolicy;
+- (id)initWithFrame:(NakedPtr<WebCore::Frame>)frame identifier:(WebCore::PolicyCheckIdentifier)identifier policyFunction:(WebCore::FramePolicyFunction&&)policyFunction defaultPolicy:(WebCore::PolicyAction)defaultPolicy;
 #if HAVE(APP_LINKS)
-- (id)initWithFrame:(WebCore::Frame*)frame identifier:(WebCore::PolicyCheckIdentifier)identifier policyFunction:(WebCore::FramePolicyFunction&&)policyFunction defaultPolicy:(WebCore::PolicyAction)defaultPolicy appLinkURL:(NSURL *)url;
+- (id)initWithFrame:(NakedPtr<WebCore::Frame>)frame identifier:(WebCore::PolicyCheckIdentifier)identifier policyFunction:(WebCore::FramePolicyFunction&&)policyFunction defaultPolicy:(WebCore::PolicyAction)defaultPolicy appLinkURL:(NSURL *)url;
 #endif
 
 - (void)invalidate;
@@ -1485,7 +1486,7 @@ void WebFrameLoaderClient::transitionToCommittedForNewPage()
     // The following is a no-op for WebHTMLRepresentation, but for custom document types
     // like the ones that Safari uses for bookmarks it is the only way the DocumentLoader
     // will get the proper title.
-    if (auto* documentLoader = [dataSource _documentLoader])
+    if (auto documentLoader = [dataSource _documentLoader])
         documentLoader->setTitle({ [dataSource pageTitle], WebCore::TextDirection::LTR });
 
     if (auto* ownerElement = coreFrame->ownerElement())
@@ -2359,7 +2360,7 @@ void WebFrameLoaderClient::finishedLoadingIcon(uint64_t callbackID, WebCore::Sha
 #endif
 }
 
-- (id)initWithFrame:(WebCore::Frame*)frame identifier:(WebCore::PolicyCheckIdentifier)identifier policyFunction:(WebCore::FramePolicyFunction&&)policyFunction defaultPolicy:(WebCore::PolicyAction)defaultPolicy
+- (id)initWithFrame:(NakedPtr<WebCore::Frame>)frame identifier:(WebCore::PolicyCheckIdentifier)identifier policyFunction:(WebCore::FramePolicyFunction&&)policyFunction defaultPolicy:(WebCore::PolicyAction)defaultPolicy
 {
     self = [self init];
     if (!self)
@@ -2374,7 +2375,7 @@ void WebFrameLoaderClient::finishedLoadingIcon(uint64_t callbackID, WebCore::Sha
 }
 
 #if HAVE(APP_LINKS)
-- (id)initWithFrame:(WebCore::Frame*)frame identifier:(WebCore::PolicyCheckIdentifier)identifier policyFunction:(WebCore::FramePolicyFunction&&)policyFunction defaultPolicy:(WebCore::PolicyAction)defaultPolicy appLinkURL:(NSURL *)appLinkURL
+- (id)initWithFrame:(NakedPtr<WebCore::Frame>)frame identifier:(WebCore::PolicyCheckIdentifier)identifier policyFunction:(WebCore::FramePolicyFunction&&)policyFunction defaultPolicy:(WebCore::PolicyAction)defaultPolicy appLinkURL:(NSURL *)appLinkURL
 {
     self = [self initWithFrame:frame identifier:identifier policyFunction:WTFMove(policyFunction) defaultPolicy:defaultPolicy];
     if (!self)

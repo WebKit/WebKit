@@ -51,12 +51,12 @@ using namespace WebCore;
 #if !HAVE(AVKIT)
 
 @implementation WebVideoFullscreenController
-- (void)setVideoElement:(WebCore::HTMLVideoElement*)videoElement
+- (void)setVideoElement:(NakedPtr<WebCore::HTMLVideoElement>)videoElement
 {
     UNUSED_PARAM(videoElement);
 }
 
-- (WebCore::HTMLVideoElement*)videoElement
+- (NakedPtr<WebCore::HTMLVideoElement>)videoElement
 {
     return nullptr;
 }
@@ -1023,12 +1023,12 @@ void VideoFullscreenControllerContext::requestHideAndExitFullscreen()
     return self;
 }
 
-- (void)setVideoElement:(HTMLVideoElement*)videoElement
+- (void)setVideoElement:(NakedPtr<HTMLVideoElement>)videoElement
 {
     _videoElement = videoElement;
 }
 
-- (HTMLVideoElement*)videoElement
+- (NakedPtr<HTMLVideoElement>)videoElement
 {
     return _videoElement.get();
 }

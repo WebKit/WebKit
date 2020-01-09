@@ -31,6 +31,7 @@
 #import <AppKit/NSTrackingArea.h>
 #import <AppKit/NSWindow.h>
 #import <AppKit/NSWindowController.h>
+#import <wtf/NakedPtr.h>
 
 namespace WebCore {
 class HTMLVideoElement;
@@ -64,7 +65,7 @@ class HTMLVideoElement;
 
 @protocol WebVideoFullscreenHUDWindowControllerDelegate <NSObject>
 - (void)requestExitFullscreen;
-- (WebCore::HTMLVideoElement*)videoElement;
+- (NakedPtr<WebCore::HTMLVideoElement>)videoElement;
 @end
 
 #endif

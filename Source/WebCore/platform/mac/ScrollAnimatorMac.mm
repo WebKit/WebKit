@@ -40,6 +40,7 @@
 #include "ScrollbarThemeMac.h"
 #include <pal/spi/mac/NSScrollerImpSPI.h>
 #include <wtf/BlockObjCExceptions.h>
+#include <wtf/NakedPtr.h>
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {
@@ -81,9 +82,9 @@ using WebCore::CubicBezierTimingFunction;
 
 @interface WebScrollAnimationHelperDelegate : NSObject
 {
-    WebCore::ScrollAnimatorMac* _animator;
+    NakedPtr<WebCore::ScrollAnimatorMac> _animator;
 }
-- (id)initWithScrollAnimator:(WebCore::ScrollAnimatorMac*)scrollAnimator;
+- (id)initWithScrollAnimator:(NakedPtr<WebCore::ScrollAnimatorMac>)scrollAnimator;
 @end
 
 static NSSize abs(NSSize size)
@@ -98,7 +99,7 @@ static NSSize abs(NSSize size)
 
 @implementation WebScrollAnimationHelperDelegate
 
-- (id)initWithScrollAnimator:(WebCore::ScrollAnimatorMac*)scrollAnimator
+- (id)initWithScrollAnimator:(NakedPtr<WebCore::ScrollAnimatorMac>)scrollAnimator
 {
     self = [super init];
     if (!self)
@@ -110,7 +111,7 @@ static NSSize abs(NSSize size)
 
 - (void)invalidate
 {
-    _animator = 0;
+    _animator = nullptr;
 }
 
 - (NSRect)bounds
@@ -473,7 +474,7 @@ enum FeatureToAnimate {
     END_BLOCK_OBJC_EXCEPTIONS;
 }
 
-- (ScrollAnimatorMac*)scrollAnimator
+- (NakedPtr<ScrollAnimatorMac>)scrollAnimator
 {
     return &static_cast<ScrollAnimatorMac&>(_scrollbar->scrollableArea().scrollAnimator());
 }

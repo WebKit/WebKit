@@ -31,6 +31,7 @@
 
 #import "WebNetscapePluginPackage.h"
 #import <wtf/Forward.h>
+#import <wtf/NakedPtr.h>
 #import <wtf/RefPtr.h>
 #import <wtf/RetainPtr.h>
 
@@ -97,7 +98,7 @@ namespace WebCore {
 - (WebDataSource *)dataSource;
 - (WebView *)webView;
 - (NSWindow *)currentWindow;
-- (WebCore::HTMLPlugInElement*)element;
+- (NakedPtr<WebCore::HTMLPlugInElement>)element;
 
 - (void)removeTrackingRect;
 - (void)resetTrackingRect;

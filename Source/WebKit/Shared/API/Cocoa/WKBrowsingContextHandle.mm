@@ -32,14 +32,14 @@
 
 @implementation WKBrowsingContextHandle
 
-- (id)_initWithPageProxy:(WebKit::WebPageProxy&)page
+- (id)_initWithPageProxy:(NakedRef<WebKit::WebPageProxy>)page
 {
-    return [self _initWithPageProxyID:page.identifier() andWebPageID:page.webPageID()];
+    return [self _initWithPageProxyID:page->identifier() andWebPageID:page->webPageID()];
 }
 
-- (id)_initWithPage:(WebKit::WebPage&)page
+- (id)_initWithPage:(NakedRef<WebKit::WebPage>)page
 {
-    return [self _initWithPageProxyID:page.webPageProxyIdentifier() andWebPageID:page.identifier()];
+    return [self _initWithPageProxyID:page->webPageProxyIdentifier() andWebPageID:page->identifier()];
 }
 
 - (id)_initWithPageProxyID:(WebKit::WebPageProxyIdentifier)pageProxyID andWebPageID:(WebCore::PageIdentifier)webPageID

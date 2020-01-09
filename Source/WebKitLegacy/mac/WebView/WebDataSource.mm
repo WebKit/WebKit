@@ -61,6 +61,7 @@
 #import <WebKitLegacy/DOMPrivate.h>
 #import <wtf/Assertions.h>
 #import <wtf/MainThread.h>
+#import <wtf/NakedPtr.h>
 #import <wtf/RefPtr.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/RunLoop.h>
@@ -394,7 +395,7 @@ void addTypesFromClass(NSMutableDictionary *allTypes, Class objCClass, NSArray *
 #endif
 }
 
-- (WebCore::DocumentLoader*)_documentLoader
+- (NakedPtr<WebCore::DocumentLoader>)_documentLoader
 {
     return toPrivate(_private)->loader.ptr();
 }
@@ -564,7 +565,7 @@ void addTypesFromClass(NSMutableDictionary *allTypes, Class objCClass, NSArray *
 
 - (void)addSubresource:(WebResource *)subresource
 {    
-    toPrivate(_private)->loader->addArchiveResource([subresource _coreResource]);
+    toPrivate(_private)->loader->addArchiveResource([subresource _coreResource].get());
 }
 
 @end

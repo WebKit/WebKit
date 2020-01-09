@@ -28,6 +28,7 @@
 #import "IOSurface.h"
 #import "IntSize.h"
 #import <QuartzCore/QuartzCore.h>
+#import <wtf/NakedPtr.h>
 
 namespace WebCore {
 class GraphicsLayer;
@@ -46,7 +47,7 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 #error Unsupported platform
 #endif
 {
-    WebCore::GraphicsContextGLOpenGL* _context;
+    NakedPtr<WebCore::GraphicsContextGLOpenGL> _context;
     float _devicePixelRatio;
 #if HAVE(IOSURFACE) && (USE(OPENGL) || USE(ANGLE))
     std::unique_ptr<WebCore::IOSurface> _contentsBuffer;
@@ -65,9 +66,9 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 #endif
 }
 
-@property (nonatomic) WebCore::GraphicsContextGLOpenGL* context;
+@property (nonatomic) NakedPtr<WebCore::GraphicsContextGLOpenGL> context;
 
-- (id)initWithGraphicsContextGL:(WebCore::GraphicsContextGLOpenGL*)context;
+- (id)initWithGraphicsContextGL:(NakedPtr<WebCore::GraphicsContextGLOpenGL>)context;
 
 - (CGImageRef)copyImageSnapshotWithColorSpace:(CGColorSpaceRef)colorSpace;
 

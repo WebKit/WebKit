@@ -63,7 +63,7 @@ static WebCore::IntRect screenRectOfContents(WebCore::Element* element)
 @interface WebFullScreenController(Private)<NSAnimationDelegate>
 - (void)_updateMenuAndDockForFullScreen;
 - (void)_swapView:(NSView*)view with:(NSView*)otherView;
-- (WebCore::Document*)_document;
+- (NakedPtr<WebCore::Document>)_document;
 - (WebCore::FullscreenManager*)_manager;
 - (void)_startEnterFullScreenAnimationWithDuration:(NSTimeInterval)duration;
 - (void)_startExitFullScreenAnimationWithDuration:(NSTimeInterval)duration;
@@ -450,7 +450,7 @@ static void setClipRectForWindow(NSWindow *window, NSRect clipRect)
 #pragma mark -
 #pragma mark Utility Functions
 
-- (WebCore::Document*)_document
+- (NakedPtr<WebCore::Document>)_document
 {
     return &_element->document();
 }

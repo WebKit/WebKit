@@ -29,6 +29,8 @@
 #if PLATFORM(MAC)
 
 #import "WKLayoutMode.h"
+#import <wtf/NakedPtr.h>
+#import <wtf/NakedRef.h>
 
 namespace WebKit {
 class WebPageProxy;
@@ -39,15 +41,15 @@ class WebViewImpl;
 
 @interface WKViewLayoutStrategy : NSObject {
 @package
-    WebKit::WebPageProxy* _page;
-    WebKit::WebViewImpl* _webViewImpl;
+    NakedPtr<WebKit::WebPageProxy> _page;
+    NakedPtr<WebKit::WebViewImpl> _webViewImpl;
     NSView *_view;
 
     WKLayoutMode _layoutMode;
     unsigned _frameSizeUpdatesDisabledCount;
 }
 
-+ (instancetype)layoutStrategyWithPage:(WebKit::WebPageProxy&)page view:(NSView *)view viewImpl:(WebKit::WebViewImpl&)webViewImpl mode:(WKLayoutMode)mode;
++ (instancetype)layoutStrategyWithPage:(NakedRef<WebKit::WebPageProxy>)page view:(NSView *)view viewImpl:(NakedRef<WebKit::WebViewImpl>)webViewImpl mode:(WKLayoutMode)mode;
 
 - (void)invalidate;
 

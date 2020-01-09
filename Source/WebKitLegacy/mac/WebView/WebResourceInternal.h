@@ -27,6 +27,7 @@
  */
 
 #import "WebResourcePrivate.h"
+#import <wtf/NakedRef.h>
 #import <wtf/Ref.h>
 
 namespace WebCore {
@@ -35,5 +36,5 @@ namespace WebCore {
 
 @interface WebResource (WebResourceInternal)
 - (id)_initWithCoreResource:(Ref<WebCore::ArchiveResource>&&)coreResource;
-- (WebCore::ArchiveResource&)_coreResource;
+- (NakedRef<WebCore::ArchiveResource>)_coreResource;
 @end

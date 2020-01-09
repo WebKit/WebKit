@@ -35,6 +35,7 @@
 #import "WKWebViewInternal.h"
 #import "WebPageProxy.h"
 #import <pal/spi/cg/CoreGraphicsSPI.h>
+#import <wtf/NakedPtr.h>
 
 // FIXME: Make it possible to leave a snapshot of the content presented in the WKView while the thumbnail is live.
 // FIXME: Don't make new speculative tiles while thumbnailed.
@@ -47,7 +48,7 @@
     RetainPtr<WKView> _wkView;
     ALLOW_DEPRECATED_DECLARATIONS_END
     RetainPtr<WKWebView> _wkWebView;
-    WebKit::WebPageProxy* _webPageProxy;
+    NakedPtr<WebKit::WebPageProxy> _webPageProxy;
 
     BOOL _originalMayStartMediaWhenInWindow;
     BOOL _originalSourceViewIsInWindow;
