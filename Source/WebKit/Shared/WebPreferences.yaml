@@ -1831,11 +1831,11 @@ LazyImageLoadingEnabled:
   webcoreBinding: RuntimeEnabledFeatures
   category: experimental
 
-IsThirdPartyCookieBlockingEnabled:
+IsThirdPartyCookieBlockingDisabled:
   type: bool
-  defaultValue: true
-  humanReadableName: "Block All 3rd-Party Cookies (ITP)"
-  humanReadableDescription: "Block all third-party cookies when Intelligent Tracking Prevention is enabled"
+  defaultValue: false
+  humanReadableName: "Disable Full 3rd-Party Cookie Blocking (ITP)"
+  humanReadableDescription: "Disable full third-party cookie blocking when Intelligent Tracking Prevention is enabled"
   category: experimental
 
 IsFirstPartyWebsiteDataRemovalEnabled:

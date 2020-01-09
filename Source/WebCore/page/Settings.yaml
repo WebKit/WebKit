@@ -886,8 +886,8 @@ webRTCEncryptionEnabled:
   initial: true
   inspectorOverride: true
 
-isThirdPartyCookieBlockingEnabled:
-  initial: true
+isThirdPartyCookieBlockingDisabled:
+  initial: false
 
 isFirstPartyWebsiteDataRemovalEnabled:
   initial: true
