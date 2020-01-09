@@ -113,7 +113,7 @@ CaptureSourceOrError AVVideoCaptureSource::create(String&& id, String&& hashSalt
 {
     AVCaptureDevice *device = [PAL::getAVCaptureDeviceClass() deviceWithUniqueID:id];
     if (!device)
-        return { };
+        return { "No AVVideoCaptureSource device"_s };
 
     auto source = adoptRef(*new AVVideoCaptureSource(device, WTFMove(id), WTFMove(hashSalt)));
     if (constraints) {

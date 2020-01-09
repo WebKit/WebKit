@@ -51,7 +51,7 @@ CaptureSourceOrError MockRealtimeAudioSource::create(String&& deviceID, String&&
     auto device = MockRealtimeMediaSourceCenter::mockDeviceWithPersistentID(deviceID);
     ASSERT(device);
     if (!device)
-        return { };
+        return { "No mock microphone device"_s };
 #endif
 
     auto source = adoptRef(*new MockRealtimeAudioSource(WTFMove(deviceID), WTFMove(name), WTFMove(hashSalt)));

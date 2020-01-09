@@ -56,7 +56,7 @@ CaptureSourceOrError MockRealtimeVideoSource::create(String&& deviceID, String&&
     auto device = MockRealtimeMediaSourceCenter::mockDeviceWithPersistentID(deviceID);
     ASSERT(device);
     if (!device)
-        return { };
+        return { "No mock camera device"_s };
 #endif
 
     auto source = adoptRef(*new MockRealtimeVideoSource(WTFMove(deviceID), WTFMove(name), WTFMove(hashSalt)));

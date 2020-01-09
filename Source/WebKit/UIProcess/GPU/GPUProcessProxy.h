@@ -57,7 +57,11 @@ public:
 
     // ProcessThrottlerClient
     void sendProcessDidResume() final { }
-    
+
+#if ENABLE(MEDIA_STREAM)
+    void setUseMockCaptureDevices(bool);
+#endif
+
 private:
     explicit GPUProcessProxy();
     ~GPUProcessProxy();
@@ -92,6 +96,10 @@ private:
 
     ProcessThrottler m_throttler;
     ProcessThrottler::ActivityVariant m_activityFromWebProcesses;
+
+#if ENABLE(MEDIA_STREAM)
+    bool m_useMockCaptureDevices { false };
+#endif
 };
 
 } // namespace WebKit

@@ -64,7 +64,7 @@ GPUProcessProxy& GPUProcessProxy::singleton()
 
         GPUProcessCreationParameters parameters;
 #if ENABLE(MEDIA_STREAM)
-        parameters.useMockCaptureDevices = MockRealtimeMediaSourceCenter::mockRealtimeMediaSourceCenterEnabled();
+        parameters.useMockCaptureDevices = gpuProcess->m_useMockCaptureDevices;
 #endif
         // Initialize the GPU process.
         gpuProcess->send(Messages::GPUProcess::InitializeGPUProcess(parameters), 0);
@@ -77,6 +77,9 @@ GPUProcessProxy& GPUProcessProxy::singleton()
 GPUProcessProxy::GPUProcessProxy()
     : AuxiliaryProcessProxy()
     , m_throttler(*this, false)
+#if ENABLE(MEDIA_STREAM)
+    , m_useMockCaptureDevices(MockRealtimeMediaSourceCenter::mockRealtimeMediaSourceCenterEnabled())
+#endif
 {
     connect();
 }
@@ -86,6 +89,16 @@ GPUProcessProxy::~GPUProcessProxy()
     for (auto& request : m_connectionRequests.values())
         request.reply({ });
 }
+
+#if ENABLE(MEDIA_STREAM)
+void GPUProcessProxy::setUseMockCaptureDevices(bool value)
+{
+    if (value == m_useMockCaptureDevices)
+        return;
+    m_useMockCaptureDevices = value;
+    send(Messages::GPUProcess::SetMockCaptureDevicesEnabled { m_useMockCaptureDevices }, 0);
+}
+#endif
 
 void GPUProcessProxy::getLaunchOptions(ProcessLauncher::LaunchOptions& launchOptions)
 {

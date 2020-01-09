@@ -602,7 +602,7 @@ CaptureSourceOrError CoreAudioCaptureSource::create(String&& deviceID, String&& 
 #if PLATFORM(MAC)
     auto device = CoreAudioCaptureDeviceManager::singleton().coreAudioDeviceWithUID(deviceID);
     if (!device)
-        return { };
+        return { "No CoreAudioCaptureSource device"_s };
 
     auto source = adoptRef(*new CoreAudioCaptureSource(WTFMove(deviceID), String { device->label() }, WTFMove(hashSalt), device->deviceID()));
 #elif PLATFORM(IOS_FAMILY)

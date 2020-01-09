@@ -704,13 +704,15 @@ void UserMediaPermissionRequestManagerProxy::syncWithWebCorePrefs() const
     // Enable/disable the mock capture devices for the UI process as per the WebCore preferences. Note that
     // this is a noop if the preference hasn't changed since the last time this was called.
     bool mockDevicesEnabled = m_mockDevicesEnabledOverride ? *m_mockDevicesEnabledOverride : m_page.preferences().mockCaptureDevicesEnabled();
+
+#if ENABLE(GPU_PROCESS)
+    if (m_page.preferences().captureAudioInGPUProcessEnabled() || m_page.preferences().captureVideoInGPUProcessEnabled())
+        GPUProcessProxy::singleton().setUseMockCaptureDevices(mockDevicesEnabled);
+#endif
+
     if (MockRealtimeMediaSourceCenter::mockRealtimeMediaSourceCenterEnabled() == mockDevicesEnabled)
         return;
     MockRealtimeMediaSourceCenter::setMockRealtimeMediaSourceCenterEnabled(mockDevicesEnabled);
-#if ENABLE(GPU_PROCESS)
-    if (m_page.preferences().captureAudioInGPUProcessEnabled())
-        GPUProcessProxy::singleton().send(Messages::GPUProcess::SetMockCaptureDevicesEnabled { mockDevicesEnabled }, 0);
-#endif
 #endif
 }
 

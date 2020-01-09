@@ -94,7 +94,7 @@ public:
     {
         ASSERT(device.type() == CaptureDevice::DeviceType::Camera);
         if (!MockRealtimeMediaSourceCenter::captureDeviceWithPersistentID(CaptureDevice::DeviceType::Camera, device.persistentId()))
-            return { };
+            return { "Unable to find mock camera device with given persistentID"_s };
 
         return MockRealtimeVideoSource::create(String { device.persistentId() }, String { device.label() }, WTFMove(hashSalt), constraints);
     }
@@ -115,7 +115,7 @@ public:
     CaptureSourceOrError createDisplayCaptureSource(const CaptureDevice& device, const MediaConstraints* constraints) final
     {
         if (!MockRealtimeMediaSourceCenter::captureDeviceWithPersistentID(device.type(), device.persistentId()))
-            return { };
+            return { "Unable to find mock  display device with given persistentID"_s };
 
         switch (device.type()) {
         case CaptureDevice::DeviceType::Screen:
@@ -141,7 +141,7 @@ public:
     {
         ASSERT(device.type() == CaptureDevice::DeviceType::Microphone);
         if (!MockRealtimeMediaSourceCenter::captureDeviceWithPersistentID(CaptureDevice::DeviceType::Microphone, device.persistentId()))
-            return { };
+            return { "Unable to find mock microphone device with given persistentID"_s };
 
         return MockRealtimeAudioSource::create(String { device.persistentId() }, String { device.label() }, WTFMove(hashSalt), constraints);
     }

@@ -59,13 +59,14 @@ CaptureSourceOrError MockRealtimeVideoSource::create(String&& deviceID, String&&
     auto device = MockRealtimeMediaSourceCenter::mockDeviceWithPersistentID(deviceID);
     ASSERT(device);
     if (!device)
-        return { };
+        return { "No mock camera device"_s };
 #endif
 
     auto source = adoptRef(*new MockRealtimeVideoSourceMac(WTFMove(deviceID), WTFMove(name), WTFMove(hashSalt)));
-    // FIXME: We should report error messages
-    if (constraints && source->applyConstraints(*constraints))
-        return { };
+    if (constraints) {
+        if (auto error = source->applyConstraints(*constraints))
+            return WTFMove(error->message);
+    }
 
     return CaptureSourceOrError(RealtimeVideoSource::create(WTFMove(source)));
 }
