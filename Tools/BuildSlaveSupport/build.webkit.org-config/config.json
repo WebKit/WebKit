@@ -397,6 +397,9 @@
                     { "type": "PlatformSpecificScheduler", "platform": "mac-catalina", "branch": "trunk", "treeStableTimer": 45.0,
                       "builderNames": ["Apple-Catalina-Release-Build", "Apple-Catalina-Debug-Build", "Apple-Catalina-LLINT-CLoop-BuildAndTest"]
                     },
+                    { "type": "Triggerable", "name": "catalina-release-perf-tests",
+                      "builderNames": ["Apple-Catalina-Release-WK2-Perf"]
+                    },
                     { "type": "Triggerable", "name": "catalina-release-tests-wk1",
                       "builderNames": ["Apple-Catalina-Release-WK1-Tests"]
                     },
