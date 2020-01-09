@@ -70,7 +70,7 @@ WI.CSSStyleSheet = class CSSStyleSheet extends WI.SourceCode
 
     get injected()
     {
-        return this.urlComponents.scheme && this.urlComponents.scheme.endsWith("extension");
+        return isWebKitExtensionScheme(this.urlComponents.scheme);
     }
 
     get anonymous()

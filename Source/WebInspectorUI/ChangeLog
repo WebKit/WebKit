@@ -1,3 +1,31 @@
+2020-01-08  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Sources: not all injected scripts and style sheets are from extensions
+        https://bugs.webkit.org/show_bug.cgi?id=205955
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Base/Utilities.js:
+        (isWebKitExtensionScheme): Added.
+        * UserInterface/Models/CSSStyleSheet.js:
+        (WI.CSSStyleSheet.prototype.get injected):
+        * .eslintrc:
+        Move the logic for detecting an extension injected resource to its own function.
+
+        * UserInterface/Views/SourcesNavigationSidebarPanel.js:
+        (WI.SourcesNavigationSidebarPanel.prototype.treeElementForRepresentedObject):
+        (WI.SourcesNavigationSidebarPanel.prototype._addStyleSheet):
+        (WI.SourcesNavigationSidebarPanel.prototype._addScript):
+        Only show the Anonymous Style Sheets folder once the user tries to show a style sheet that
+        would be in it.
+
+        * UserInterface/Views/OpenResourceDialog.js:
+        (WI.OpenResourceDialog.prototype.didPresentDialog):
+        (WI.OpenResourceDialog.prototype._addScriptsForTarget):
+        (WI.OpenResourceDialog.prototype._handleStyleSheetAdded):
+        (WI.OpenResourceDialog.prototype._handleStyleSheetRemoved):
+        Ignore anonymous scripts, and allow injected style sheets to be added after presenting.
+
 2020-01-08  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Show RGBA input fields for p3 color picker

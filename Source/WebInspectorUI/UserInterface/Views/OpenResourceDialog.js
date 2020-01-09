@@ -189,7 +189,7 @@ WI.OpenResourceDialog = class OpenResourceDialog extends WI.Dialog
         }
 
         for (let styleSheet of WI.cssManager.styleSheets) {
-            if (styleSheet.origin !== WI.CSSStyleSheet.Type.Author)
+            if (styleSheet.origin !== WI.CSSStyleSheet.Type.Author && !styleSheet.anonymous)
                 this._addResource(styleSheet);
         }
 
@@ -372,9 +372,7 @@ WI.OpenResourceDialog = class OpenResourceDialog extends WI.Dialog
 
         let targetData = WI.debuggerManager.dataForTarget(target);
         for (let script of targetData.scripts) {
-            if (script.resource)
-                continue;
-            if (script.dynamicallyAddedScriptElement)
+            if (script.anonymous || script.resource || script.dynamicallyAddedScriptElement)
                 continue;
             if (!WI.settings.debugShowConsoleEvaluations.value && isWebInspectorConsoleEvaluationScript(script.sourceURL))
                 continue;
@@ -440,7 +438,7 @@ WI.OpenResourceDialog = class OpenResourceDialog extends WI.Dialog
     _handleStyleSheetAdded(event)
     {
         let {styleSheet} = event.data;
-        if (styleSheet.origin === WI.CSSStyleSheet.Type.Author || styleSheet.injected || styleSheet.anonymous)
+        if (styleSheet.origin === WI.CSSStyleSheet.Type.Author || styleSheet.anonymous)
             return;
 
         this._addResource(styleSheet);
@@ -449,7 +447,7 @@ WI.OpenResourceDialog = class OpenResourceDialog extends WI.Dialog
     _handleStyleSheetRemoved(event)
     {
         let {styleSheet} = event.data;
-        if (styleSheet.origin === WI.CSSStyleSheet.Type.Author || styleSheet.injected || styleSheet.anonymous)
+        if (styleSheet.origin === WI.CSSStyleSheet.Type.Author || styleSheet.anonymous)
             return;
 
         this._removeResource(styleSheet);

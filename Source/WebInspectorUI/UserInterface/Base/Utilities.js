@@ -1644,6 +1644,11 @@ function isWebKitInternalScript(url)
     return url && url.startsWith("__Web") && url.endsWith("__");
 }
 
+function isWebKitExtensionScheme(scheme)
+{
+    return scheme && scheme.endsWith("extension");
+}
+
 function isFunctionStringNativeCode(str)
 {
     return str.endsWith("{\n    [native code]\n}");

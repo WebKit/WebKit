@@ -522,35 +522,58 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
         if (treeElement)
             return treeElement;
 
-        // Only special case Script objects.
-        if (!(representedObject instanceof WI.Script)) {
-            console.error("Didn't find a TreeElement for representedObject", representedObject);
-            return null;
+        if (representedObject instanceof WI.Script) {
+            // If the Script has a URL we should have found it earlier.
+            if (representedObject.url) {
+                console.assert(false, "Didn't find a ScriptTreeElement for a Script with a URL.", representedObject);
+                return null;
+            }
+
+            console.assert(representedObject.anonymous, representedObject);
+
+            // Since the Script does not have a URL we consider it an 'anonymous' script. These scripts happen from calls to
+            // window.eval() or browser features like Auto Fill and Reader. They are not normally added to the sidebar, but since
+            // we have a ScriptContentView asking for the tree element we will make a ScriptTreeElement on demand and add it.
+
+            if (!this._anonymousScriptsFolderTreeElement)
+                this._anonymousScriptsFolderTreeElement = new WI.FolderTreeElement(WI.UIString("Anonymous Scripts"), new WI.ScriptCollection);
+
+            if (!this._anonymousScriptsFolderTreeElement.parent) {
+                let index = insertionIndexForObjectInListSortedByFunction(this._anonymousScriptsFolderTreeElement, this._resourcesTreeOutline.children, this._boundCompareTreeElements);
+                this._resourcesTreeOutline.insertChild(this._anonymousScriptsFolderTreeElement, index);
+            }
+
+            this._anonymousScriptsFolderTreeElement.representedObject.add(representedObject);
+
+            let scriptTreeElement = new WI.ScriptTreeElement(representedObject);
+            this._anonymousScriptsFolderTreeElement.appendChild(scriptTreeElement);
+            return scriptTreeElement;
         }
 
-        // If the Script has a URL we should have found it earlier.
-        if (representedObject.url) {
-            console.error("Didn't find a ScriptTreeElement for a Script with a URL.");
-            return null;
+        if (representedObject instanceof WI.CSSStyleSheet) {
+            // If the CSSStyleSheet has a URL we should have found it earlier.
+            if (representedObject.url) {
+                console.assert(false, "Didn't find a CSSStyleSheetTreeElement for a CSSStyleSheet with a URL.", representedObject);
+                return null;
+            }
+
+            console.assert(representedObject.anonymous, representedObject);
+
+            if (!this._anonymousStyleSheetsFolderTreeElement)
+                this._anonymousStyleSheetsFolderTreeElement = new WI.FolderTreeElement(WI.UIString("Anonymous Style Sheets"), new WI.CSSStyleSheetCollection);
+
+            if (!this._anonymousStyleSheetsFolderTreeElement.parent) {
+                let index = insertionIndexForObjectInListSortedByFunction(this._anonymousStyleSheetsFolderTreeElement, this._resourcesTreeOutline.children, this._boundCompareTreeElements);
+                this._resourcesTreeOutline.insertChild(this._anonymousStyleSheetsFolderTreeElement, index);
+            }
+
+           let cssStyleSheetTreeElement = new WI.CSSStyleSheetTreeElement(representedObject);
+           this._anonymousStyleSheetsFolderTreeElement.appendChild(cssStyleSheetTreeElement);
+           return cssStyleSheetTreeElement;
         }
 
-        // Since the Script does not have a URL we consider it an 'anonymous' script. These scripts happen from calls to
-        // window.eval() or browser features like Auto Fill and Reader. They are not normally added to the sidebar, but since
-        // we have a ScriptContentView asking for the tree element we will make a ScriptTreeElement on demand and add it.
-
-        if (!this._anonymousScriptsFolderTreeElement)
-            this._anonymousScriptsFolderTreeElement = new WI.FolderTreeElement(WI.UIString("Anonymous Scripts"), new WI.ScriptCollection);
-
-        if (!this._anonymousScriptsFolderTreeElement.parent) {
-            let index = insertionIndexForObjectInListSortedByFunction(this._anonymousScriptsFolderTreeElement, this._resourcesTreeOutline.children, this._boundCompareTreeElements);
-            this._resourcesTreeOutline.insertChild(this._anonymousScriptsFolderTreeElement, index);
-        }
-
-        this._anonymousScriptsFolderTreeElement.representedObject.add(representedObject);
-
-        let scriptTreeElement = new WI.ScriptTreeElement(representedObject);
-        this._anonymousScriptsFolderTreeElement.appendChild(scriptTreeElement);
-        return scriptTreeElement;
+        console.assert(false, "Didn't find a TreeElement for representedObject", representedObject);
+        return null;
     }
 
     // Protected
@@ -934,20 +957,22 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
         console.assert(styleSheet instanceof WI.CSSStyleSheet);
         console.assert(!styleSheet.isInspectorStyleSheet());
 
+        // We don't add style sheets without URLs here. Those style sheets can quickly clutter the
+        // interface and are usually more transient. They will get added if/when they need to be
+        // shown in a content view.
+        if (styleSheet.anonymous)
+            return;
+
         let parentTreeElement = null;
 
-        if (styleSheet.injected) {
+        if (isWebKitExtensionScheme(styleSheet.urlComponents.scheme)) {
             if (!this._extensionStyleSheetsFolderTreeElement)
                 this._extensionStyleSheetsFolderTreeElement = new WI.FolderTreeElement(WI.UIString("Extension Style Sheets"), new WI.CSSStyleSheetCollection);
             parentTreeElement = this._extensionStyleSheetsFolderTreeElement;
-        } else if (!styleSheet.anonymous) {
+        } else {
             if (!this._extraStyleSheetsFolderTreeElement)
                 this._extraStyleSheetsFolderTreeElement = new WI.FolderTreeElement(WI.UIString("Extra Style Sheets"), new WI.CSSStyleSheetCollection);
             parentTreeElement = this._extraStyleSheetsFolderTreeElement;
-        } else {
-            if (!this._anonymousStyleSheetsFolderTreeElement)
-                this._anonymousStyleSheetsFolderTreeElement = new WI.FolderTreeElement(WI.UIString("Anonymous Style Sheets"), new WI.CSSStyleSheetCollection);
-            parentTreeElement = this._anonymousStyleSheetsFolderTreeElement;
         }
 
         if (!parentTreeElement.parent) {
@@ -963,9 +988,11 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
 
     _addScript(script)
     {
+        console.assert(script instanceof WI.Script);
+
         // We don't add scripts without URLs here. Those scripts can quickly clutter the interface and
         // are usually more transient. They will get added if/when they need to be shown in a content view.
-        if (!script.url && !script.sourceURL)
+        if (script.anonymous)
             return;
 
         // Target main resource.
@@ -993,7 +1020,7 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
         } else {
             let parentFolderTreeElement = null;
 
-            if (script.injected) {
+            if (isWebKitExtensionScheme(script.urlComponents.scheme)) {
                 if (!this._extensionScriptsFolderTreeElement) {
                     let collection = new WI.ScriptCollection;
                     this._extensionScriptsFolderTreeElement = new WI.FolderTreeElement(WI.UIString("Extension Scripts"), collection);
