@@ -1,5 +1,38 @@
 2020-01-09  Jon Davis  <jond@apple.com>
 
+        Add styles to support Web Inspector reference articles
+        https://bugs.webkit.org/show_bug.cgi?id=206032
+
+        Reviewed by Devin Rousso.
+
+        * wp-content/themes/webkit/style.css:
+        (main h1,):
+        (main h1):
+        (article .meta .updated):
+        (article .bodycopy,):
+        (.image):
+        (p .image,):
+        (.image.block):
+        (.image img):
+        (.widescreen .image):
+        (.image.slice-top > picture > img):
+        (.image.slice-right > picture > img):
+        (.image.slice-bottom > picture > img):
+        (.image.slice-left > picture > img):
+        (.flex):
+        (.flex.center):
+        (figure.widescreen):
+        (article picture):
+        (article picture > img):
+        (.single-web_inspector_page .landing-link):
+        (.single-web_inspector_page .landing-link:hover):
+        (@media(prefers-color-scheme:dark) article .invert-brightness,):
+        (@media(prefers-color-scheme:dark) .table-of-contents label:after):
+        (article h1,): Deleted.
+        (article .bodycopy): Deleted.
+
+2020-01-09  Jon Davis  <jond@apple.com>
+
         Fix redundant anchor tags when generating table of contents
         https://bugs.webkit.org/show_bug.cgi?id=206016
 

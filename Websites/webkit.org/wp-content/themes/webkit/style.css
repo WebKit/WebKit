@@ -1389,6 +1389,7 @@ article::after {
     display: table;
 }
 
+main h1,
 article h1,
 article h1 a {
     margin: 0 auto 3rem;
@@ -1400,6 +1401,10 @@ article h1 a {
     text-decoration: none;
     color: hsl(0, 0%, 26.7%);
     color: var(--text-color-heading);
+}
+
+main h1 {
+    text-align: left;
 }
 
 article h2 {
@@ -1598,6 +1603,13 @@ article .foreword {
     font-style: italic;
 }
 
+article .meta .updated {
+    text-align: right;
+    font-size: 1.2rem;
+    font-style: italic;
+    text-transform: uppercase;
+}
+
 article .two-columns {
     columns: 2;
     column-gap: 6rem;
@@ -1626,7 +1638,8 @@ article .byline {
     box-sizing: border-box;
 }
 
-article .bodycopy {
+article .bodycopy,
+article .meta {
     width: 66%;
     margin: 0 auto;
     position: relative;
@@ -1721,6 +1734,58 @@ article .mattewhite {
     padding-bottom: 3rem;
 }
 
+.image {
+    padding: var(--image-padding) var(--image-padding) 0;
+    --image-padding: 0.5em;
+}
+
+p .image,
+li .image {
+    --image-padding: 0;
+}
+
+.image.block {
+    display: block;
+}
+
+.image img {
+    border-color: hsl(0, 0%, 90.6%);
+    border-color: var(--article-border-color);
+    border-style: solid;
+    border-width: 0px;
+}
+
+.widescreen .image {
+    display: inline-block;
+}
+
+.image.slice-top > picture > img {
+    border-top-width: 1px;
+}
+
+.image.slice-right > picture > img {
+    border-right-width: 1px;
+}
+
+.image.slice-bottom > picture > img {
+    border-bottom-width: 1px;
+}
+
+.image.slice-left > picture > img {
+    border-left-width: 1px;
+}
+
+.flex {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    margin-top: 1em;
+}
+
+.flex.center {
+    justify-content: center;
+}
+
 article .mattewhite:not(.widescreen) {
     border: 1px solid hsl(0, 0%, 90.6%);
     border-color: var(--article-border-color);
@@ -1752,6 +1817,7 @@ figure.widescreen {
     width: 100vw;
     left: 50%;
     transform: translate(-50%);
+    clear: both;
 }
 
 figure.widescreen img,
@@ -1782,6 +1848,16 @@ figure.table {
     padding: 3rem;
     margin-left: -3rem;
 }
+
+article picture {
+    max-width: 100%;
+}
+
+article picture > img {
+    max-width: 100%;
+    max-height: 100%;
+}
+
 
 article video.alignleft,
 article video.alignright {
@@ -1850,6 +1926,21 @@ article.page h1 {
 
 .page .bodycopy h1 {
     width: 100%;
+}
+
+/** Web Inspector Pages **/
+.single-web_inspector_page .landing-link {
+    display: block;
+    text-align: left;
+    font-size: 1.3rem;
+    text-transform: uppercase;
+    color: var(--link-color);
+    color: hsl(200, 100%, 40%);
+    margin-bottom: 0;
+}
+
+.single-web_inspector_page .landing-link:hover {
+    text-decoration: underline;
 }
 
 /** Load Effects **/
@@ -2511,7 +2602,6 @@ header .menu-item { /* add bottom dimension to main menu items */
 }
 
 @media only screen and (max-width: 415px) {
-
     .nextrouter-copy {
         font-size: 1.7rem;
         letter-spacing: -0.016rem;
@@ -2617,7 +2707,7 @@ header .menu-item { /* add bottom dimension to main menu items */
 
 @media(prefers-color-scheme:dark) {
     article .invert-brightness,
-    figure img {
+    figure > img {
         filter: url(#invertLightness);
     }
 
@@ -2636,6 +2726,10 @@ header .menu-item { /* add bottom dimension to main menu items */
     .nextrouter .link,
     a.readmore {
         background-image: url('images/chevron-dark.svg');
+    }
+
+    .table-of-contents label:after {
+        filter: invert(100%);
     }
 }
 
