@@ -1,3 +1,12 @@
+2020-01-08  Diego Pino Garcia  <dpino@igalia.com>
+
+        Fix test transferToImageBitmap-empty.html after r253099
+        https://bugs.webkit.org/show_bug.cgi?id=205924
+
+        Reviewed by Žan Doberšek.
+
+        * http/wpt/offscreen-canvas/transferToImageBitmap-empty.html:
+
 2020-01-08  Keith Miller  <keith_miller@apple.com>
 
         [JSC] Introduce JSArrayIterator

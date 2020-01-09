@@ -7,8 +7,7 @@
 
 test(function() {
     let offscreenCanvas = new OffscreenCanvas(100, 100);
-    let imageBitmap = offscreenCanvas.transferToImageBitmap();
-    assert_equals(imageBitmap, null);
+    assert_throws('InvalidStateError', () => { offscreenCanvas.transferToImageBitmap() });
 }, "Test transferToImageBitmap.");
 
 </script>
