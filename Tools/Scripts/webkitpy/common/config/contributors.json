@@ -4373,6 +4373,15 @@
          "podivilov"
       ]
    },
+   "Peng Liu" : {
+      "emails" : [
+         "peng.liu6@apple.com"
+      ],
+      "nicks" : [
+         "peng"
+      ],
+      "status" : "committer"
+   },
    "Per Arne Vollan" : {
       "emails" : [
          "pvollan@apple.com",
