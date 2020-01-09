@@ -201,7 +201,19 @@ sub buildMyProject
     my $result;
     chdir $projectDirectory or die "Can't find $projectName directory to build from";
     if (isAppleCocoaWebKit()) {
-        $result = system "sh", "-c", ('xcodebuild -project ' . $projectName . '.xcodeproj "$@" | grep -v setenv && exit ${PIPESTATUS[0]}'), "xcodebuild",  @options, @ARGV, @additionalSupportOptions;
+        my $compilerFlags = 'GCC_PREPROCESSOR_ADDITIONS="';
+        if ($forceCLoop) {
+            $compilerFlags .= "ENABLE_JIT=0 ENABLE_C_LOOP=1";
+        }
+        $compilerFlags .= '"';
+
+        my $command = "make " . (lc configuration()) . " " . $compilerFlags . " " . join(" ", @ARGV);
+
+        print "\n";
+        print "building ", $projectName, "\n";
+        print "running build command '", $command, "' in ", $projectDirectory, "\n\n";
+
+        $result = system $command;
     } else {
         die "Building not defined for this platform!\n";
     }
@@ -223,6 +235,9 @@ sub writeCongrats()
 buildMyProject("Source/bmalloc", "bmalloc");
 buildMyProject("Source/WTF", "WTF");
 buildMyProject("Source/JavaScriptCore", "JavaScriptCore");
+if (isAppleCocoaWebKit()) {
+    writeCongrats();
+}
 if (isAppleCocoaWebKit() && $cli) {
     buildMyProject("Tools/jsc-cli", "jsc-cli");
 }

@@ -1,3 +1,25 @@
+2020-01-08  Saam Barati  <sbarati@apple.com>
+
+        build-jsc should invoke make instead of calling xcodebuild directly
+        https://bugs.webkit.org/show_bug.cgi?id=205960
+
+        Reviewed by Keith Miller.
+
+        This makes build-jsc invoke make instead of directly invoking xcodebuild.
+        There are some benefits here:
+        - 'make' is a more standard way to build than build-jsc, so as we make
+        improvements to the make build (e.g r254234), we'll get the same improvements
+        in build-jsc.
+        
+        - There has been a longstanding bug where if you did if you did
+        `build-jsc --release && cd Source/JavaScriptCore && make release`
+        then the `make release` call would rebuild all of JavaScriptCore.
+        If build-jsc directly invokes make, this issue goes away and allows
+        the two to interoperate as expected.
+
+        * Scripts/build-jsc:
+        (buildMyProject):
+
 2020-01-08  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r254235.
