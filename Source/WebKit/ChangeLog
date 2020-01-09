@@ -1,3 +1,13 @@
+2020-01-09  Tim Horton  <timothy_horton@apple.com>
+
+        Fix a tiny logging mistake in launchProcess
+        https://bugs.webkit.org/show_bug.cgi?id=206026
+
+        Reviewed by Wenson Hsieh.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::launchProcess):
+
 2020-01-09  John Wilander  <wilander@apple.com>
 
         Resource Load Statistics: Add timing information to WebPageProxy::logFrameNavigation() to detect delayed client-side redirects

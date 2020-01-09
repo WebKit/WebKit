@@ -752,7 +752,7 @@ void WebPageProxy::launchProcess(const RegistrableDomain& registrableDomain, Pro
     ASSERT(!m_isClosed);
     ASSERT(!hasRunningProcess());
 
-    RELEASE_LOG_IF_ALLOWED(Loading, "launchProcess:" PRIu64);
+    RELEASE_LOG_IF_ALLOWED(Loading, "launchProcess:");
 
     m_process->removeWebPage(*this, WebProcessProxy::EndsUsingDataStore::Yes);
     m_process->removeMessageReceiver(Messages::WebPageProxy::messageReceiverName(), m_webPageID);
