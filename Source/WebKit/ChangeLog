@@ -1,3 +1,20 @@
+2020-01-08  Brent Fulgham  <bfulgham@apple.com>
+
+        Allow some sysctl-read calls needed by WebRTC
+        https://bugs.webkit.org/show_bug.cgi?id=205946
+        <rdar://problem/58416475>
+
+        Reviewed by Per Arne Vollan.
+
+        This patch allows some sysctl-read calls that are needed when running WebRTC tests.
+        It also removes telemetry and logging from a UIKit class that was confirmed to be
+        needed by Performance and PowerLogging code.
+
+        * NetworkProcess/mac/com.apple.WebKit.NetworkProcess.sb.in:
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.Networking.sb:
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2020-01-08  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, fix some IOS_FAMILY builds after r254210.

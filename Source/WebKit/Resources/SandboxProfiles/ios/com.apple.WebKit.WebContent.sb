@@ -844,6 +844,7 @@
         "hw.activecpu"
         "hw.availcpu"
         "hw.cachelinesize"
+        "hw.cpufamily" ;; <rdar://problem/58416475>
         "hw.cputype"
         "hw.l2cachesize"
         "hw.logicalcpu"

@@ -163,11 +163,13 @@
     (sysctl-name
         "hw.byteorder"
         "hw.busfrequency_max"
+        "hw.cpufamily" ;; <rdar://problem/58416475>
         "hw.cputype"
         "hw.machine"
         "hw.memsize"
         "hw.model"
         "hw.ncpu"
+        "hw.physicalcpu" ;; <rdar://problem/58416475>
         "hw.vectorunit"
         "kern.bootargs" ;; <rdar://problem/47738015>
         "kern.hostname"
@@ -572,11 +574,14 @@
     (iokit-user-client-class "AppleMultitouchDeviceUserClient")
     (iokit-user-client-class "AppleUpstreamUserClient")
     (iokit-user-client-class "IOHIDParamUserClient")
-    (iokit-user-client-class "RootDomainUserClient")
     (iokit-user-client-class "IOAudioControlUserClient")
     (iokit-user-client-class "IOAudioEngineUserClient")
     ;; Following is needed due to <rdar://problem/10427451> && <rdar://problem/10808817>
     (iokit-user-client-class "AudioAUUC"))
+
+(allow iokit-open
+    (iokit-user-client-class "RootDomainUserClient") ;; Needed by WebCore::PerformanceMonitor
+)
 
 ;; cookied.
 ;; FIXME: Update for <rdar://problem/13642852>.
@@ -1021,4 +1026,3 @@
         (syscall-number SYS_fsetxattr) ;; <rdar://problem/56332491>
     )
 )
-

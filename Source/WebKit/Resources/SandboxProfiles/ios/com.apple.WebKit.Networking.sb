@@ -561,6 +561,7 @@
         "hw.model"
         "kern.maxfilesperproc"
         "kern.memorystatus_level"
+        "kern.tcsm_available" ;; Needed for IndexedDB support.
         "vm.footprint_suspend"))
 
 ;; Access to client's cache folder & re-vending to CFNetwork.
