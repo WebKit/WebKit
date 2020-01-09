@@ -24,9 +24,9 @@
  */
 
 #include "config.h"
-#include "RemoteScrollingCoordinatorProxy.h"
 
-#if ENABLE(ASYNC_SCROLLING)
+#if ENABLE(UI_SIDE_COMPOSITING)
+#include "RemoteScrollingCoordinatorProxy.h"
 
 #include "ArgumentCoders.h"
 #include "RemoteLayerTreeDrawingAreaProxy.h"
@@ -282,4 +282,4 @@ void RemoteScrollingCoordinatorProxy::clearTouchActionsForTouchIdentifier(unsign
 
 } // namespace WebKit
 
-#endif // ENABLE(ASYNC_SCROLLING)
+#endif // ENABLE(UI_SIDE_COMPOSITING)

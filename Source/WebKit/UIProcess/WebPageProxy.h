@@ -679,6 +679,10 @@ public:
     void textInputContextsInRect(WebCore::FloatRect, CompletionHandler<void(const Vector<WebCore::ElementContext>&)>&&);
     void focusTextInputContext(const WebCore::ElementContext&, CompletionHandler<void(bool)>&&);
 
+#if ENABLE(UI_SIDE_COMPOSITING)
+    void updateVisibleContentRects(const VisibleContentRectUpdateInfo&);
+#endif
+
 #if PLATFORM(IOS_FAMILY)
     double displayedContentScale() const { return m_lastVisibleContentRectUpdate.scale(); }
     const WebCore::FloatRect& exposedContentRect() const { return m_lastVisibleContentRectUpdate.exposedContentRect(); }
@@ -688,7 +692,6 @@ public:
     // When visual viewports are enabled, this is the layout viewport rect.
     const WebCore::FloatRect& layoutViewportRect() const { return m_lastVisibleContentRectUpdate.layoutViewportRect(); }
 
-    void updateVisibleContentRects(const VisibleContentRectUpdateInfo&);
     void resendLastVisibleContentRects();
 
     WebCore::FloatRect computeLayoutViewportRect(const WebCore::FloatRect& unobscuredContentRect, const WebCore::FloatRect& unobscuredContentRectRespectingInputViewBounds, const WebCore::FloatRect& currentLayoutViewportRect, double displayedContentScale, WebCore::FrameView::LayoutViewportConstraint = WebCore::FrameView::LayoutViewportConstraint::Unconstrained) const;
@@ -2269,7 +2272,6 @@ private:
 #if PLATFORM(IOS_FAMILY)
     Optional<WebCore::InputMode> m_pendingInputModeChange;
     Optional<WebCore::ViewportArguments> m_overrideViewportArguments;
-    VisibleContentRectUpdateInfo m_lastVisibleContentRectUpdate;
     TransactionID m_firstLayerTreeTransactionIdAfterDidCommitLoad;
     int32_t m_deviceOrientation { 0 };
     bool m_hasReceivedLayerTreeTransactionAfterDidCommitLoad { true };
@@ -2277,7 +2279,11 @@ private:
     bool m_isKeyboardAnimatingIn { false };
     bool m_isScrollingOrZooming { false };
 #endif
-        
+
+#if ENABLE(UI_SIDE_COMPOSITING)
+    VisibleContentRectUpdateInfo m_lastVisibleContentRectUpdate;
+#endif
+
 #if PLATFORM(MAC)
     bool m_useSystemAppearance { false };
 #endif

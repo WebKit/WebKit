@@ -1,3 +1,15 @@
+2020-01-09  Simon Fraser  <simon.fraser@apple.com>
+
+        Add ENABLE_UI_SIDE_COMPOSITING and use it in a few places
+        https://bugs.webkit.org/show_bug.cgi?id=205982
+
+        Reviewed by Jon Lee.
+        
+        Add a #define ENABLE_UI_SIDE_COMPOSITING for Cocoa platforms. Minor comment cleanup, and
+        move the duplicate ENABLE_ASYNC_SCROLLING from iOS and macOS sections into the Cocoa section.
+
+        * wtf/FeatureDefines.h:
+
 2020-01-08  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Reduce binary size by purging C++ type information in Objective-C fields and parameters

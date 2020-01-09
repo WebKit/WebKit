@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if ENABLE(ASYNC_SCROLLING)
+#if ENABLE(UI_SIDE_COMPOSITING)
 
 #include "MessageReceiver.h"
 #include "RemoteScrollingCoordinator.h"
@@ -137,4 +137,4 @@ private:
 
 } // namespace WebKit
 
-#endif // ENABLE(ASYNC_SCROLLING)
+#endif // ENABLE(UI_SIDE_COMPOSITING)

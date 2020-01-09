@@ -26,7 +26,7 @@
 #include "config.h"
 #include "ViewUpdateDispatcher.h"
 
-#if PLATFORM(IOS_FAMILY)
+#if ENABLE(UI_SIDE_COMPOSITING)
 
 #include "ViewUpdateDispatcherMessages.h"
 #include "WebPage.h"
@@ -90,4 +90,4 @@ void ViewUpdateDispatcher::dispatchVisibleContentRectUpdate()
 
 } // namespace WebKit
 
-#endif // PLATFORM(IOS_FAMILY)
+#endif // ENABLE(UI_SIDE_COMPOSITING)

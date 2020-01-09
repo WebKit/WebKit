@@ -228,7 +228,6 @@ class RemoteWebInspectorUI;
 class TextCheckingControllerProxy;
 class UserMediaPermissionRequestManager;
 class ViewGestureGeometryCollector;
-class VisibleContentRectUpdateInfo;
 class WebColorChooser;
 class WebContextMenu;
 class WebContextMenuItemData;
@@ -285,6 +284,10 @@ struct WebPageCreationParameters;
 struct WebPreferencesStore;
 struct WebSelectionData;
 struct WebsitePoliciesData;
+
+#if ENABLE(UI_SIDE_COMPOSITING)
+class VisibleContentRectUpdateInfo;
+#endif
 
 using SnapshotOptions = uint32_t;
 using WKEventModifiers = uint32_t;
@@ -969,8 +972,6 @@ public:
     void setDeviceOrientation(int32_t);
     void setOverrideViewportArguments(const Optional<WebCore::ViewportArguments>&);
     void dynamicViewportSizeUpdate(const WebCore::FloatSize& viewLayoutSize, const WebCore::FloatSize& maximumUnobscuredSize, const WebCore::FloatRect& targetExposedContentRect, const WebCore::FloatRect& targetUnobscuredRect, const WebCore::FloatRect& targetUnobscuredRectInScrollViewCoordinates, const WebCore::FloatBoxExtent& targetUnobscuredSafeAreaInsets, double scale, int32_t deviceOrientation, DynamicViewportSizeUpdateID);
-    Optional<float> scaleFromUIProcess(const VisibleContentRectUpdateInfo&) const;
-    void updateVisibleContentRects(const VisibleContentRectUpdateInfo&, MonotonicTime oldestTimestamp);
     bool scaleWasSetByUIProcess() const { return m_scaleWasSetByUIProcess; }
     void willStartUserTriggeredZooming();
     void applicationWillResignActive();
@@ -988,6 +989,11 @@ public:
     void updateStringForFind(const String&);
     
     bool canShowWhileLocked() const { return m_canShowWhileLocked; }
+#endif
+
+#if ENABLE(UI_SIDE_COMPOSITING)
+    Optional<float> scaleFromUIProcess(const VisibleContentRectUpdateInfo&) const;
+    void updateVisibleContentRects(const VisibleContentRectUpdateInfo&, MonotonicTime oldestTimestamp);
 #endif
 
 #if ENABLE(IOS_TOUCH_EVENTS)

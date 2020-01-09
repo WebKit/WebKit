@@ -25,6 +25,8 @@
 
 #pragma once
 
+#if ENABLE(UI_SIDE_COMPOSITING)
+
 #include "TransactionID.h"
 #include <WebCore/FloatRect.h>
 #include <WebCore/LengthBox.h>
@@ -132,3 +134,5 @@ inline bool operator==(const VisibleContentRectUpdateInfo& a, const VisibleConte
 WTF::TextStream& operator<<(WTF::TextStream&, const VisibleContentRectUpdateInfo&);
 
 } // namespace WebKit
+
+#endif // ENABLE(UI_SIDE_COMPOSITING)

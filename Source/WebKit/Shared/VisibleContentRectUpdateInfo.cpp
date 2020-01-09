@@ -24,6 +24,9 @@
  */
 
 #include "config.h"
+
+#if ENABLE(UI_SIDE_COMPOSITING)
+
 #include "VisibleContentRectUpdateInfo.h"
 
 #include "WebCoreArgumentCoders.h"
@@ -130,3 +133,5 @@ TextStream& operator<<(TextStream& ts, const VisibleContentRectUpdateInfo& info)
 }
 
 } // namespace WebKit
+
+#endif // ENABLE(UI_SIDE_COMPOSITING)

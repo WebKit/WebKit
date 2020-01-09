@@ -50,7 +50,7 @@
 
 /* FIXME: Move out the PLATFORM specific rules into platform specific files. */
 
-/* --------- Apple IOS (but not MAC) port --------- */
+/* --------- Apple iOS (but not macOS) port --------- */
 #if PLATFORM(IOS_FAMILY)
 
 #if !defined(ENABLE_AIRPLAY_PICKER)
@@ -63,10 +63,6 @@
 #if !PLATFORM(APPLETV) && !PLATFORM(MACCATALYST) && !PLATFORM(WATCHOS)
 #define ENABLE_APPLE_PAY_REMOTE_UI 1
 #endif
-#endif
-
-#if !defined(ENABLE_ASYNC_SCROLLING)
-#define ENABLE_ASYNC_SCROLLING 1
 #endif
 
 #if !defined(ENABLE_CONTENT_EXTENSIONS)
@@ -233,12 +229,12 @@ the public iOS SDK. See <https://webkit.org/b/179167>. */
 
 #endif /* PLATFORM(IOS_FAMILY) */
 
-/* --------- Apple WATCHOS port --------- */
+/* --------- Apple watchOS port --------- */
 #if PLATFORM(WATCHOS)
 
 #endif /* PLATFORM(WATCHOS) */
 
-/* --------- Apple MAC port (not IOS) --------- */
+/* --------- Apple macOS port (not iOS) --------- */
 #if PLATFORM(MAC)
 
 #if !defined(ENABLE_CONTENT_EXTENSIONS)
@@ -263,10 +259,6 @@ the public iOS SDK. See <https://webkit.org/b/179167>. */
 
 #if !defined(ENABLE_SMOOTH_SCROLLING)
 #define ENABLE_SMOOTH_SCROLLING 1
-#endif
-
-#if !defined(ENABLE_ASYNC_SCROLLING)
-#define ENABLE_ASYNC_SCROLLING 1
 #endif
 
 #if ENABLE(VIDEO)
@@ -323,6 +315,8 @@ the public iOS SDK. See <https://webkit.org/b/179167>. */
 
 #endif /* PLATFORM(MAC) */
 
+/* --------- Apple Cocoa platforms --------- */
+
 #if PLATFORM(COCOA)
 
 #if !defined(ENABLE_LEGACY_ENCRYPTED_MEDIA)
@@ -339,6 +333,14 @@ the public iOS SDK. See <https://webkit.org/b/179167>. */
 
 #if !defined(ENABLE_PAYMENT_REQUEST)
 #define ENABLE_PAYMENT_REQUEST 1
+#endif
+
+#if !defined(ENABLE_ASYNC_SCROLLING)
+#define ENABLE_ASYNC_SCROLLING 1
+#endif
+
+#if !defined(ENABLE_UI_SIDE_COMPOSITING)
+#define ENABLE_UI_SIDE_COMPOSITING 1
 #endif
 
 #endif /* PLATFORM(COCOA) */

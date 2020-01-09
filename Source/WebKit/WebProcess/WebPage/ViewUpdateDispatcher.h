@@ -23,8 +23,9 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ViewUpdateDispatcher_h
-#define ViewUpdateDispatcher_h
+#pragma once
+
+#if ENABLE(UI_SIDE_COMPOSITING)
 
 #include "Connection.h"
 
@@ -64,4 +65,4 @@ private:
 
 } // namespace WebKit
 
-#endif // ViewportUpdateDispatcher_h
+#endif // ENABLE(UI_SIDE_COMPOSITING)
