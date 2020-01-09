@@ -1,3 +1,9 @@
+2020-01-09  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed gardening. Mark imported/w3c/webdriver/tests/switch_to_frame/cross_origin.py::test_nested_cross_origin_iframe as failure
+
+        * TestExpectations.json:
+
 2020-01-08  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed gardening. Add expectations for several tests failing

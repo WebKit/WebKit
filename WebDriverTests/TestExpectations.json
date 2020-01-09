@@ -696,5 +696,12 @@
     },
     "imported/w3c/webdriver/tests/take_element_screenshot/user_prompts.py": {
         "expected": {"all": {"status": ["FAIL"]}}
+    },
+    "imported/w3c/webdriver/tests/switch_to_frame/cross_origin.py": {
+        "subtests": {
+            "test_nested_cross_origin_iframe": {
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/205994"}}
+            }
+        }
     }
 }
