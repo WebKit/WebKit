@@ -64,8 +64,8 @@ public:
     FormattingContext(const Container& formattingContextRoot, FormattingState&);
     virtual ~FormattingContext();
 
-    virtual void layoutInFlowContent(InvalidationState&, const UsedHorizontalValues::Constraints&, const UsedVerticalValues::Constraints&) = 0;
-    void layoutOutOfFlowContent(InvalidationState&, const UsedHorizontalValues::Constraints&, const UsedVerticalValues::Constraints&);
+    virtual void layoutInFlowContent(InvalidationState&, const HorizontalConstraints&, const VerticalConstraints&) = 0;
+    void layoutOutOfFlowContent(InvalidationState&, const HorizontalConstraints&, const VerticalConstraints&);
 
     struct IntrinsicWidthConstraints {
         void expand(LayoutUnit horizontalValue);
@@ -100,7 +100,7 @@ protected:
     const FormattingState& formattingState() const { return m_formattingState; }
     FormattingState& formattingState() { return m_formattingState; }
 
-    void computeBorderAndPadding(const Box&, const UsedHorizontalValues::Constraints&);
+    void computeBorderAndPadding(const Box&, const HorizontalConstraints&);
 
 #ifndef NDEBUG
     virtual void validateGeometryConstraintsAfterLayout() const;
@@ -142,10 +142,10 @@ protected:
 
         LayoutUnit contentHeightForFormattingContextRoot(const Box&) const;
 
-        static UsedHorizontalValues::Constraints horizontalConstraintsForOutOfFlow(const Display::Box& containingBlockGeometry);
-        static UsedVerticalValues::Constraints verticalConstraintsForOutOfFlow(const Display::Box& containingBlockGeometry);
-        static UsedHorizontalValues::Constraints horizontalConstraintsForInFlow(const Display::Box& containingBlockGeometry);
-        static UsedVerticalValues::Constraints verticalConstraintsForInFlow(const Display::Box& containingBlockGeometry);
+        static HorizontalConstraints horizontalConstraintsForOutOfFlow(const Display::Box& containingBlockGeometry);
+        static VerticalConstraints verticalConstraintsForOutOfFlow(const Display::Box& containingBlockGeometry);
+        static HorizontalConstraints horizontalConstraintsForInFlow(const Display::Box& containingBlockGeometry);
+        static VerticalConstraints verticalConstraintsForInFlow(const Display::Box& containingBlockGeometry);
 
     protected:
         friend class FormattingContext;
@@ -197,8 +197,8 @@ protected:
 
 private:
     void collectOutOfFlowDescendantsIfNeeded();
-    void computeOutOfFlowVerticalGeometry(const Box&, const UsedHorizontalValues::Constraints&, const UsedVerticalValues::Constraints&);
-    void computeOutOfFlowHorizontalGeometry(const Box&, const UsedHorizontalValues::Constraints&, const UsedVerticalValues::Constraints&);
+    void computeOutOfFlowVerticalGeometry(const Box&, const HorizontalConstraints&, const VerticalConstraints&);
+    void computeOutOfFlowHorizontalGeometry(const Box&, const HorizontalConstraints&, const VerticalConstraints&);
 
     WeakPtr<const Container> m_root;
     FormattingState& m_formattingState;

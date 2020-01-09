@@ -151,54 +151,42 @@ struct VerticalGeometry {
     ContentHeightAndMargin contentHeightAndMargin;
 };
 
+struct HorizontalConstraints {
+    LayoutUnit logicalLeft;
+    LayoutUnit logicalWidth;
+};
+
+struct VerticalConstraints {
+    LayoutUnit logicalTop;
+    Optional<LayoutUnit> logicalHeight;
+};
+
 struct UsedHorizontalValues {
-    struct Constraints {
-        explicit Constraints(LayoutUnit contentBoxLeft, LayoutUnit horizontalConstraint)
-            : contentBoxLeft(contentBoxLeft)
-            , width(horizontalConstraint)
-        {
-        }
-
-        LayoutUnit contentBoxLeft;
-        LayoutUnit width;
-    };
-
-    explicit UsedHorizontalValues(Constraints constraints)
+    explicit UsedHorizontalValues(HorizontalConstraints constraints)
         : constraints(constraints)
     {
     }
 
-    explicit UsedHorizontalValues(Constraints constraints, Optional<LayoutUnit> width, Optional<UsedHorizontalMargin> margin)
+    explicit UsedHorizontalValues(HorizontalConstraints constraints, Optional<LayoutUnit> width, Optional<UsedHorizontalMargin> margin)
         : constraints(constraints)
         , width(width)
         , margin(margin)
     {
     }
 
-    Constraints constraints;
+    HorizontalConstraints constraints;
     Optional<LayoutUnit> width;
     Optional<UsedHorizontalMargin> margin;
 };
 
 struct UsedVerticalValues {
-    struct Constraints {
-        explicit Constraints(LayoutUnit contentBoxTop, Optional<LayoutUnit> verticalConstraint = WTF::nullopt)
-            : contentBoxTop(contentBoxTop)
-            , height(verticalConstraint)
-        {
-        }
-
-        LayoutUnit contentBoxTop;
-        Optional<LayoutUnit> height;
-    };
-
-    explicit UsedVerticalValues(Constraints constraints, Optional<LayoutUnit> height = { })
+    explicit UsedVerticalValues(VerticalConstraints constraints, Optional<LayoutUnit> height = { })
         : constraints(constraints)
         , height(height)
     {
     }
 
-    Constraints constraints;
+    VerticalConstraints constraints;
     Optional<LayoutUnit> height;
 };
 

@@ -64,7 +64,7 @@ static inline const Box* nextInPreOrder(const Box& layoutBox, const Container& s
     return nullptr;
 }
 
-void InlineFormattingContext::layoutInFlowContent(InvalidationState& invalidationState, const UsedHorizontalValues::Constraints& horiztonalConstraints, const UsedVerticalValues::Constraints& verticalConstraints)
+void InlineFormattingContext::layoutInFlowContent(InvalidationState& invalidationState, const HorizontalConstraints& horiztonalConstraints, const VerticalConstraints& verticalConstraints)
 {
     if (!root().hasInFlowOrFloatingChild())
         return;
@@ -192,7 +192,7 @@ FormattingContext::IntrinsicWidthConstraints InlineFormattingContext::computedIn
     }
 
     Vector<const Box*> formattingContextRootList;
-    auto usedHorizontalValues = UsedHorizontalValues { UsedHorizontalValues::Constraints { 0_lu, 0_lu } };
+    auto usedHorizontalValues = UsedHorizontalValues { HorizontalConstraints { 0_lu, 0_lu } };
     auto* layoutBox = root().firstInFlowOrFloatingChild();
     while (layoutBox) {
         if (layoutBox->establishesFormattingContext()) {
@@ -222,7 +222,7 @@ FormattingContext::IntrinsicWidthConstraints InlineFormattingContext::computedIn
             auto contentWidth = (availableWidth ? intrinsicWidths->maximum : intrinsicWidths->minimum) - displayBox.horizontalMarginBorderAndPadding();
             displayBox.setContentBoxWidth(contentWidth);
         }
-        auto usedHorizontalValues = UsedHorizontalValues { UsedHorizontalValues::Constraints { 0_lu, toLayoutUnit(availableWidth) } };
+        auto usedHorizontalValues = UsedHorizontalValues { HorizontalConstraints { 0_lu, toLayoutUnit(availableWidth) } };
         return computedIntrinsicWidthForConstraint(usedHorizontalValues);
     };
 
@@ -240,7 +240,7 @@ InlineLayoutUnit InlineFormattingContext::computedIntrinsicWidthForConstraint(co
     auto lineLayoutContext = LineLayoutContext { *this, root(), inlineItems };
     while (leadingInlineItemIndex < inlineItems.size()) {
         // Only the horiztonal available width is constrained when computing intrinsic width.
-        lineBuilder.initialize(LineBuilder::Constraints { { }, usedHorizontalValues.constraints.width, false, { } });
+        lineBuilder.initialize(LineBuilder::Constraints { { }, usedHorizontalValues.constraints.logicalWidth, false, { } });
         auto lineContent = lineLayoutContext.layoutLine(lineBuilder, leadingInlineItemIndex, { });
 
         leadingInlineItemIndex = *lineContent.trailingInlineItemIndex + 1;
@@ -377,7 +377,7 @@ void InlineFormattingContext::collectInlineContentIfNeeded()
 LineBuilder::Constraints InlineFormattingContext::constraintsForLine(const UsedHorizontalValues& usedHorizontalValues, InlineLayoutUnit lineLogicalTop)
 {
     auto lineLogicalLeft = geometryForBox(root()).contentBoxLeft();
-    auto lineLogicalRight = lineLogicalLeft + usedHorizontalValues.constraints.width;
+    auto lineLogicalRight = lineLogicalLeft + usedHorizontalValues.constraints.logicalWidth;
     auto lineIsConstrainedByFloat = false;
 
     auto floatingContext = FloatingContext { root(), *this, formattingState().floatingState() };

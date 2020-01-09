@@ -51,9 +51,9 @@ ContentWidthAndMargin InlineFormattingContext::Geometry::inlineBlockWidthAndMarg
     // If 'width' is 'auto', the used value is the shrink-to-fit width as for floating elements.
     // A computed value of 'auto' for 'margin-left' or 'margin-right' becomes a used value of '0'.
     // #1
-    auto width = computedValueIfNotAuto(formattingContextRoot.style().logicalWidth(), usedHorizontalValues.constraints.width);
+    auto width = computedValueIfNotAuto(formattingContextRoot.style().logicalWidth(), usedHorizontalValues.constraints.logicalWidth);
     if (!width)
-        width = shrinkToFitWidth(formattingContextRoot, usedHorizontalValues.constraints.width);
+        width = shrinkToFitWidth(formattingContextRoot, usedHorizontalValues.constraints.logicalWidth);
 
     // #2
     auto computedHorizontalMargin = Geometry::computedHorizontalMargin(formattingContextRoot, usedHorizontalValues);
@@ -74,12 +74,12 @@ ContentHeightAndMargin InlineFormattingContext::Geometry::inlineBlockHeightAndMa
     return complicatedCases(layoutBox, usedHorizontalValues, usedVerticalValues);
 }
 
-Optional<InlineLayoutUnit> InlineFormattingContext::Geometry::computedTextIndent(const Container& formattingContextRoot, const UsedHorizontalValues::Constraints& horizontalConstraints) const
+Optional<InlineLayoutUnit> InlineFormattingContext::Geometry::computedTextIndent(const Container& formattingContextRoot, const HorizontalConstraints& horizontalConstraints) const
 {
     auto textIndent = formattingContextRoot.style().textIndent();
     if (textIndent == RenderStyle::initialTextIndent())
         return { };
-    return InlineLayoutUnit { minimumValueForLength(textIndent, horizontalConstraints.width) };
+    return InlineLayoutUnit { minimumValueForLength(textIndent, horizontalConstraints.logicalWidth) };
 }
 
 }

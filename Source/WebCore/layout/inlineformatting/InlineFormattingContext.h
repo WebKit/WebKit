@@ -43,7 +43,7 @@ class InlineFormattingContext : public FormattingContext {
     WTF_MAKE_ISO_ALLOCATED(InlineFormattingContext);
 public:
     InlineFormattingContext(const Container& formattingContextRoot, InlineFormattingState&);
-    void layoutInFlowContent(InvalidationState&, const UsedHorizontalValues::Constraints&, const UsedVerticalValues::Constraints&) override;
+    void layoutInFlowContent(InvalidationState&, const HorizontalConstraints&, const VerticalConstraints&) override;
 
 private:
     IntrinsicWidthConstraints computedIntrinsicWidthConstraints() override;
@@ -66,7 +66,7 @@ private:
     public:
         ContentHeightAndMargin inlineBlockHeightAndMargin(const Box&, const UsedHorizontalValues&, const UsedVerticalValues&) const;
         ContentWidthAndMargin inlineBlockWidthAndMargin(const Box&, const UsedHorizontalValues&);
-        Optional<InlineLayoutUnit> computedTextIndent(const Container& formattingContextRoot, const UsedHorizontalValues::Constraints&) const;
+        Optional<InlineLayoutUnit> computedTextIndent(const Container& formattingContextRoot, const HorizontalConstraints&) const;
 
     private:
         friend class InlineFormattingContext;

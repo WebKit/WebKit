@@ -58,7 +58,7 @@ TableFormattingContext::TableFormattingContext(const Container& formattingContex
 {
 }
 
-void TableFormattingContext::layoutInFlowContent(InvalidationState& invalidationState, const UsedHorizontalValues::Constraints&, const UsedVerticalValues::Constraints&)
+void TableFormattingContext::layoutInFlowContent(InvalidationState& invalidationState, const HorizontalConstraints&, const VerticalConstraints&)
 {
     auto& grid = formattingState().tableGrid();
     auto& columnsContext = grid.columnsContext();
@@ -237,7 +237,7 @@ void TableFormattingContext::computePreferredWidthForColumns()
                 intrinsicWidth = LayoutContext::createFormattingContext(downcast<Container>(tableCellBox), layoutState())->computedIntrinsicWidthConstraints();
             intrinsicWidth = geometry().constrainByMinMaxWidth(tableCellBox, *intrinsicWidth);
             auto border = geometry().computedBorder(tableCellBox);
-            auto padding = *geometry().computedPadding(tableCellBox, UsedHorizontalValues { UsedHorizontalValues::Constraints { { }, { } } });
+            auto padding = *geometry().computedPadding(tableCellBox, UsedHorizontalValues { HorizontalConstraints { { }, { } } });
 
             intrinsicWidth->expand(border.horizontal.width() + padding.horizontal.width());
             formattingState.setIntrinsicWidthConstraintsForBox(tableCellBox, *intrinsicWidth);

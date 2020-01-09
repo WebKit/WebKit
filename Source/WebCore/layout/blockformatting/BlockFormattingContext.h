@@ -48,18 +48,18 @@ class BlockFormattingContext : public FormattingContext {
 public:
     BlockFormattingContext(const Container& formattingContextRoot, BlockFormattingState&);
 
-    void layoutInFlowContent(InvalidationState&, const UsedHorizontalValues::Constraints&, const UsedVerticalValues::Constraints&) override;
+    void layoutInFlowContent(InvalidationState&, const HorizontalConstraints&, const VerticalConstraints&) override;
 
 private:
-    void layoutFormattingContextRoot(const Box&, FloatingContext&, InvalidationState&, const UsedHorizontalValues::Constraints&, const UsedVerticalValues::Constraints&);
-    void placeInFlowPositionedChildren(const Box&, Optional<UsedHorizontalValues::Constraints> = WTF::nullopt);
+    void layoutFormattingContextRoot(const Box&, FloatingContext&, InvalidationState&, const HorizontalConstraints&, const VerticalConstraints&);
+    void placeInFlowPositionedChildren(const Box&, Optional<HorizontalConstraints> = WTF::nullopt);
 
-    void computeWidthAndMargin(const Box&, const UsedHorizontalValues::Constraints&);
-    void computeHeightAndMargin(const Box&, const UsedHorizontalValues::Constraints&, const UsedVerticalValues::Constraints&);
+    void computeWidthAndMargin(const Box&, const HorizontalConstraints&);
+    void computeHeightAndMargin(const Box&, const HorizontalConstraints&, const VerticalConstraints&);
 
-    void computeStaticHorizontalPosition(const Box&, const UsedHorizontalValues::Constraints&);
-    void computeStaticVerticalPosition(const FloatingContext&, const Box&, const UsedVerticalValues::Constraints&);
-    void computeStaticPosition(const FloatingContext&, const Box&, const UsedHorizontalValues::Constraints&, const UsedVerticalValues::Constraints&);
+    void computeStaticHorizontalPosition(const Box&, const HorizontalConstraints&);
+    void computeStaticVerticalPosition(const FloatingContext&, const Box&, const VerticalConstraints&);
+    void computeStaticPosition(const FloatingContext&, const Box&, const HorizontalConstraints&, const VerticalConstraints&);
     void computeFloatingPosition(const FloatingContext&, const Box&);
     void computePositionToAvoidFloats(const FloatingContext&, const Box&);
 

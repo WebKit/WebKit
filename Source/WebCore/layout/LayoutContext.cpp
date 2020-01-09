@@ -95,8 +95,8 @@ void LayoutContext::layoutFormattingContextSubtree(const Container& formattingCo
     auto formattingContext = createFormattingContext(formattingContextRoot, layoutState());
     auto& displayBox = layoutState().displayBoxForLayoutBox(formattingContextRoot);
 
-    auto horizontalConstraints = UsedHorizontalValues::Constraints { displayBox.contentBoxLeft(), displayBox.contentBoxWidth() };
-    auto verticalConstraints = UsedVerticalValues::Constraints { displayBox.contentBoxTop(), { } };
+    auto horizontalConstraints = HorizontalConstraints { displayBox.contentBoxLeft(), displayBox.contentBoxWidth() };
+    auto verticalConstraints = VerticalConstraints { displayBox.contentBoxTop(), { } };
     formattingContext->layoutInFlowContent(invalidationState, horizontalConstraints, verticalConstraints);
 
     // FIXME: layoutFormattingContextSubtree() does not perform layout on the root, rather it lays out the root's content.
@@ -104,8 +104,8 @@ void LayoutContext::layoutFormattingContextSubtree(const Container& formattingCo
     // It also means that the formattingContextRoot has to have a valid/clean geometry at this point.
     // Currently the integration codepath does not guarantee it and that's fine as long as we layout inflow content only.
     if (!RuntimeEnabledFeatures::sharedFeatures().layoutFormattingContextIntegrationEnabled()) {
-        auto horizontalConstraints = UsedHorizontalValues::Constraints { displayBox.paddingBoxLeft(), displayBox.paddingBoxWidth() };
-        auto verticalConstraints = UsedVerticalValues::Constraints { displayBox.paddingBoxTop(), displayBox.paddingBoxHeight() };
+        auto horizontalConstraints = HorizontalConstraints { displayBox.paddingBoxLeft(), displayBox.paddingBoxWidth() };
+        auto verticalConstraints = VerticalConstraints { displayBox.paddingBoxTop(), displayBox.paddingBoxHeight() };
         formattingContext->layoutOutOfFlowContent(invalidationState, horizontalConstraints, verticalConstraints);
     }
 }
