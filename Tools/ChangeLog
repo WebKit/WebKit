@@ -1,3 +1,23 @@
+2020-01-09  Paulo Matos  <pmatos@igalia.com>
+
+        Race condition in run-jsc-stress-tests chdir
+        https://bugs.webkit.org/show_bug.cgi?id=205910
+
+        Reviewed by Keith Miller.
+
+        chdir block was in a race condition when multiple remotes are used.
+        As an example of this see line 3345 of:
+          https://ews-build.webkit.org/#/builders/26/builds/5719/steps/12/logs/stdio
+
+        quote error:
+        Tools/Scripts/run-jsc-stress-tests:1946: warning: conflicting chdir during another chdir block
+
+        Multiple threads should not enter a chdir block simultaneously, therefore we need
+        a mutex to guard it. More information is here:
+          https://bugs.ruby-lang.org/issues/15661
+
+        * Scripts/run-jsc-stress-tests:
+
 2020-01-09  Ryan Haddad  <ryanhaddad@apple.com>
 
         Move commit queue to Mojave

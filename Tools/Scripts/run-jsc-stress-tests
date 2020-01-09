@@ -1941,11 +1941,14 @@ def numberOfProcessors
     return numProcessors
 end
 
+$runnerDirMutex = Mutex.new
 def runAndMonitorTestRunnerCommand(*cmd)
     numberOfTests = 0
-    Dir.chdir($runnerDir) {
-        # -1 for the runscript, and -2 for '..' and '.'
-        numberOfTests = Dir.entries(".").count - 3
+    $runnerDirMutex.synchronize {
+        Dir.chdir($runnerDir) {
+            # -1 for the runscript, and -2 for '..' and '.'
+            numberOfTests = Dir.entries(".").count - 3
+        }
     }
     unless $progressMeter
         mysys(cmd.join(' '))
