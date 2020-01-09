@@ -1,3 +1,18 @@
+2020-01-08  Saam Barati  <sbarati@apple.com>
+
+        build-jsc should invoke make instead of calling xcodebuild directly
+        https://bugs.webkit.org/show_bug.cgi?id=205960
+
+        Reviewed by Keith Miller.
+
+        The various jsc, and test* binaries can all be compiled in parallel.
+        This patch makes that happen when building with make via the CLI
+        that these are built in parallel. To make this work, in Xcode, I needed
+        to mark these binaries as depending on JavaScriptCore.framework.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Makefile:
+
 2020-01-08  Tuomas Karkkainen  <tuomas.webkit@apple.com>
 
         Add FuzzerAgents that narrow and widen number predictions
