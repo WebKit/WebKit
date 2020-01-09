@@ -329,6 +329,8 @@
     "web-platform-tests/resize-observer/": "import", 
     "web-platform-tests/resource-timing": "import", 
     "web-platform-tests/resources": "import", 
+    "web-platform-tests/resources/chromium": "skip", 
+    "web-platform-tests/resources/test": "skip", 
     "web-platform-tests/screen-orientation": "skip", 
     "web-platform-tests/scroll-anchoring": "skip", 
     "web-platform-tests/scroll-into-view": "skip", 
