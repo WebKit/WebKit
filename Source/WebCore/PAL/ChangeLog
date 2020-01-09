@@ -1,3 +1,14 @@
+2020-01-09  Eric Carlson  <eric.carlson@apple.com>
+
+        Don't softlink AVCapture classes on watchOS or tvOS
+        https://bugs.webkit.org/show_bug.cgi?id=205974
+        <rdar://problem/45508044>
+
+        Reviewed by Jon Lee.
+
+        * pal/cocoa/AVFoundationSoftLink.h:
+        * pal/cocoa/AVFoundationSoftLink.mm:
+
 2020-01-07  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Implement css3-images image-orientation
