@@ -298,9 +298,6 @@
     (allow sysctl-read
            (sysctl-name #"kern.bootsessionuuid"))
 
-    (allow mach-lookup (with report) (with telemetry)
-        (xpc-service-name-prefix "com.apple.AGXCompilerService"))
-
     (allow mach-lookup
        ;; <rdar://problem/47268166>
        (xpc-service-name "com.apple.MTLCompilerService"))

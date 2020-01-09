@@ -1,3 +1,18 @@
+2020-01-09  Brent Fulgham  <bfulgham@apple.com>
+
+        Remove AGXCompilerService access from the WebContent sandbox
+        https://bugs.webkit.org/show_bug.cgi?id=206020
+        <rdar://problem/58451395>
+
+        Reviewed by Per Arne Vollan.
+
+        Now that we generate a dynamic extension for 'com.apple.AGXCompilerService', we should remove the
+        blanket allow rule from the sandbox.
+
+        Covered by existing tests.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+
 2020-01-09  Tim Horton  <timothy_horton@apple.com>
 
         Fix a tiny logging mistake in launchProcess
