@@ -51,7 +51,7 @@ public:
     void layoutInFlowContent(InvalidationState&, const UsedHorizontalValues::Constraints&) override;
 
 private:
-    void layoutFormattingContextRoot(FloatingContext&, const Box&, InvalidationState&);
+    void layoutFormattingContextRoot(const Box&, FloatingContext&, InvalidationState&, const UsedHorizontalValues::Constraints&);
     void placeInFlowPositionedChildren(const Box&);
 
     void computeWidthAndMargin(const Box&, const UsedHorizontalValues::Constraints&);

@@ -107,22 +107,19 @@ void BlockFormattingContext::layoutInFlowContent(InvalidationState& invalidation
         // Traverse down on the descendants and compute width/static position until we find a leaf node.
         while (true) {
             auto& layoutBox = *layoutQueue.last();
+            auto horizontalConstraints = horizontalConstraintsForLayoutBox(layoutBox);
 
             if (layoutBox.establishesFormattingContext()) {
                 // layoutFormattingContextRoot() takes care of the layoutBox itself and its descendants.
-                layoutFormattingContextRoot(floatingContext, layoutBox, invalidationState);
+                layoutFormattingContextRoot(layoutBox, floatingContext, invalidationState, horizontalConstraints);
                 layoutQueue.removeLast();
                 if (!appendNextToLayoutQueue(layoutBox, LayoutDirection::Sibling))
                     break;
                 continue;
             }
-            {
-                auto horizontalConstraints = horizontalConstraintsForLayoutBox(layoutBox);
-                computeBorderAndPadding(layoutBox, horizontalConstraints);
-                computeWidthAndMargin(layoutBox, horizontalConstraints);
-                computeStaticPosition(floatingContext, layoutBox, horizontalConstraints);
-            }
-
+            computeBorderAndPadding(layoutBox, horizontalConstraints);
+            computeWidthAndMargin(layoutBox, horizontalConstraints);
+            computeStaticPosition(floatingContext, layoutBox, horizontalConstraints);
             if (!appendNextToLayoutQueue(layoutBox, LayoutDirection::Child))
                 break;
         }
@@ -179,23 +176,21 @@ Optional<LayoutUnit> BlockFormattingContext::usedAvailableWidthForFloatAvoider(c
     return availableWidth;
 }
 
-void BlockFormattingContext::layoutFormattingContextRoot(FloatingContext& floatingContext, const Box& layoutBox, InvalidationState& invalidationState)
+void BlockFormattingContext::layoutFormattingContextRoot(const Box& layoutBox, FloatingContext& floatingContext, InvalidationState& invalidationState, const UsedHorizontalValues::Constraints& horizontalConstraints)
 {
     ASSERT(layoutBox.establishesFormattingContext());
     // Start laying out this formatting root in the formatting contenxt it lives in.
     LOG_WITH_STREAM(FormattingContextLayout, stream << "[Compute] -> [Position][Border][Padding][Width][Margin] -> for layoutBox(" << &layoutBox << ")");
-
-    Optional<LayoutUnit> usedAvailableWidthForFloatAvoider;
+    auto adjustedHorizontalConstraints = horizontalConstraints;
     auto horizontalAvailableSpaceIsConstrainedByExistingFloats = layoutBox.isFloatAvoider() && !layoutBox.isFloatingPositioned();
     if (horizontalAvailableSpaceIsConstrainedByExistingFloats)
-        usedAvailableWidthForFloatAvoider = this->usedAvailableWidthForFloatAvoider(floatingContext, layoutBox);
-    auto containingBlockGeometry = geometryForBox(*layoutBox.containingBlock());
-    auto horizontalAvailableSpace = usedAvailableWidthForFloatAvoider.valueOr(containingBlockGeometry.contentBoxWidth());
-    auto horizontalConstraints = UsedHorizontalValues::Constraints { containingBlockGeometry.contentBoxLeft(), horizontalAvailableSpace };
-    computeBorderAndPadding(layoutBox, horizontalConstraints);
+        adjustedHorizontalConstraints.width = usedAvailableWidthForFloatAvoider(floatingContext, layoutBox).valueOr(horizontalConstraints.width);
+
+    computeBorderAndPadding(layoutBox, adjustedHorizontalConstraints);
     computeStaticVerticalPosition(floatingContext, layoutBox);
-    computeWidthAndMargin(layoutBox, horizontalConstraints);
-    computeStaticHorizontalPosition(layoutBox, horizontalConstraints);
+    computeWidthAndMargin(layoutBox, adjustedHorizontalConstraints);
+    computeStaticHorizontalPosition(layoutBox, adjustedHorizontalConstraints);
+
     if (is<Container>(layoutBox)) {
         // Swich over to the new formatting context (the one that the root creates).
         auto& rootContainer = downcast<Container>(layoutBox);
