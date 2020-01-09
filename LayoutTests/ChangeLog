@@ -1,3 +1,13 @@
+2020-01-09  Pablo Saavedra  <psaavedra@igalia.com>
+
+        Bad baseline for Catalina on xhr web-platform-tests imported in r254154
+        https://bugs.webkit.org/show_bug.cgi?id=205991
+
+        Unreviewed, fix some Catalina builds after r254154.
+
+        * platform/mac-highsierra/imported/w3c/web-platform-tests/xhr/getallresponseheaders-expected.txt: Copied from LayoutTests/imported/w3c/web-platform-tests/xhr/getallresponseheaders-expected.txt.
+        * platform/mac-mojave/imported/w3c/web-platform-tests/xhr/getallresponseheaders-expected.txt: Copied from LayoutTests/imported/w3c/web-platform-tests/xhr/getallresponseheaders-expected.txt.
+
 2020-01-09  Justin Fan  <justin_fan@apple.com>
 
         [WebGL] Skip all webgl/2.0.0 tests, as ANGLE switch obsoletes all old expectated results
