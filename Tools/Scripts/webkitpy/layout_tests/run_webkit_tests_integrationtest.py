@@ -630,7 +630,7 @@ class RunTest(unittest.TestCase, StreamTestingMixin):
         host = MockHost()
         details, err, _ = logging_run(['--no-retry-failures', '--clobber-old-results', 'failures/flaky'], tests_included=True, host=host)
         self.assertEqual(details.exit_code, 1)
-        self.assertTrue('Clobbering old results' in err.getvalue())
+        self.assertTrue('Clobbering all results' in err.getvalue())
         self.assertTrue('flaky/text.html' in err.getvalue())
         self.assertTrue(host.filesystem.exists('/tmp/layout-test-results/failures/flaky/text-actual.txt'))
         self.assertFalse(host.filesystem.exists('retries'))
