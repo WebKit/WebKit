@@ -87,7 +87,7 @@ public:
     NSURL *storageURL() const { return m_storageURL.get(); }
     bool persistentStateAllowed() const { return m_persistentStateAllowed; }
     SharedBuffer* serverCertificate() const { return m_serverCertificate.get(); }
-    AVContentKeySession* contentKeySession() { return m_session.get(); }
+    AVContentKeySession* contentKeySession();
 
     // AVContentKeySessionDelegateClient
     void didProvideRequest(AVContentKeyRequest*) final;
@@ -106,8 +106,6 @@ public:
     CDMInstanceSessionFairPlayStreamingAVFObjC* sessionForGroup(AVContentKeyReportGroup*) const;
 
 private:
-    void ensureSession();
-
     RetainPtr<AVContentKeySession> m_session;
     RetainPtr<WebCoreFPSContentKeySessionDelegate> m_delegate;
     RefPtr<SharedBuffer> m_serverCertificate;
