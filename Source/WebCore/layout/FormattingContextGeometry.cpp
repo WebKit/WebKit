@@ -1124,7 +1124,7 @@ UsedHorizontalValues::Constraints FormattingContext::Geometry::horizontalConstra
 
 UsedVerticalValues::Constraints FormattingContext::Geometry::verticalConstraintsForInFlow(const Display::Box& containingBlockGeometry)
 {
-    return UsedVerticalValues::Constraints { containingBlockGeometry.contentBoxTop(), containingBlockGeometry.contentBoxHeight() };
+    return UsedVerticalValues::Constraints { containingBlockGeometry.contentBoxTop(), { } };
 }
 
 }
