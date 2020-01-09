@@ -1135,7 +1135,7 @@ String webCryptoMasterKeyKeychainLabel(const String& localizedApplicationName)
 #elif USE(GLIB)
     return formatLocalizedString(WEB_UI_STRING("%s WebCrypto Master Key", "Name of application's single WebCrypto master key in Keychain"), localizedApplicationName.utf8().data());
 #else
-    return String::fromUTF8("<application> WebCrypto Master Key", "Name of application's single WebCrypto master key in Keychain").replace("<application>", localizedApplicationName);
+    return WEB_UI_STRING("<application> WebCrypto Master Key", "Name of application's single WebCrypto master key in Keychain").replace("<application>", localizedApplicationName);
 #endif
 }
 
