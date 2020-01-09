@@ -69,11 +69,9 @@ LayoutState& FormattingContext::layoutState() const
 void FormattingContext::computeOutOfFlowHorizontalGeometry(const Box& layoutBox, const HorizontalConstraints& horizontalConstraints, const VerticalConstraints& verticalConstraints)
 {
     ASSERT(layoutBox.isOutOfFlowPositioned());
-    auto usedVerticalValues = UsedVerticalValues { verticalConstraints, { } };
-
     auto compute = [&](Optional<LayoutUnit> usedWidth) {
         auto usedHorizontalValues = UsedHorizontalValues { horizontalConstraints, usedWidth, { } };
-        return geometry().outOfFlowHorizontalGeometry(layoutBox, usedHorizontalValues, usedVerticalValues);
+        return geometry().outOfFlowHorizontalGeometry(layoutBox, usedHorizontalValues, verticalConstraints);
     };
 
     auto containingBlockWidth = horizontalConstraints.logicalWidth;
@@ -100,21 +98,21 @@ void FormattingContext::computeOutOfFlowHorizontalGeometry(const Box& layoutBox,
 void FormattingContext::computeOutOfFlowVerticalGeometry(const Box& layoutBox, const HorizontalConstraints& horizontalConstraints, const VerticalConstraints& verticalConstraints)
 {
     ASSERT(layoutBox.isOutOfFlowPositioned());
-    auto compute = [&](const auto& usedHorizontalValues, const auto& usedVerticalValues) {
-        return geometry().outOfFlowVerticalGeometry(layoutBox, usedHorizontalValues, usedVerticalValues);
+    auto compute = [&](Optional<LayoutUnit> usedHeight) {
+        auto usedVerticalValues = UsedVerticalValues { verticalConstraints, usedHeight };
+        return geometry().outOfFlowVerticalGeometry(layoutBox, horizontalConstraints, usedVerticalValues);
     };
 
-    auto usedHorizontalValues = UsedHorizontalValues { horizontalConstraints };
     auto containingBlockHeight = *verticalConstraints.logicalHeight;
-    auto verticalGeometry = compute(usedHorizontalValues, UsedVerticalValues { verticalConstraints, { } });
+    auto verticalGeometry = compute({ });
     if (auto maxHeight = geometry().computedMaxHeight(layoutBox, containingBlockHeight)) {
-        auto maxVerticalGeometry = compute(usedHorizontalValues, UsedVerticalValues { verticalConstraints, maxHeight });
+        auto maxVerticalGeometry = compute(maxHeight);
         if (verticalGeometry.contentHeightAndMargin.contentHeight > maxVerticalGeometry.contentHeightAndMargin.contentHeight)
             verticalGeometry = maxVerticalGeometry;
     }
 
     if (auto minHeight = geometry().computedMinHeight(layoutBox, containingBlockHeight)) {
-        auto minVerticalGeometry = compute(usedHorizontalValues, UsedVerticalValues { verticalConstraints, minHeight });
+        auto minVerticalGeometry = compute(minHeight);
         if (verticalGeometry.contentHeightAndMargin.contentHeight < minVerticalGeometry.contentHeightAndMargin.contentHeight)
             verticalGeometry = minVerticalGeometry;
     }
@@ -131,7 +129,7 @@ void FormattingContext::computeBorderAndPadding(const Box& layoutBox, const Hori
 {
     auto& displayBox = formattingState().displayBox(layoutBox);
     displayBox.setBorder(geometry().computedBorder(layoutBox));
-    displayBox.setPadding(geometry().computedPadding(layoutBox, UsedHorizontalValues { horizontalConstraint }));
+    displayBox.setPadding(geometry().computedPadding(layoutBox, horizontalConstraint));
 }
 
 void FormattingContext::layoutOutOfFlowContent(InvalidationState& invalidationState, const HorizontalConstraints& rootHorizontalConstraints, const VerticalConstraints& rootVerticalConstraints)

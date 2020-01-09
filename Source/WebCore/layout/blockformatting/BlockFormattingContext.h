@@ -74,12 +74,12 @@ private:
     // This class implements positioning and sizing for boxes participating in a block formatting context.
     class Geometry : public FormattingContext::Geometry {
     public:
-        ContentHeightAndMargin inFlowHeightAndMargin(const Box&, const UsedHorizontalValues&, const UsedVerticalValues&);
+        ContentHeightAndMargin inFlowHeightAndMargin(const Box&, const HorizontalConstraints&, const UsedVerticalValues&);
         ContentWidthAndMargin inFlowWidthAndMargin(const Box&, const UsedHorizontalValues&);
 
-        Point staticPosition(const Box&, const UsedHorizontalValues&, const UsedVerticalValues&) const;
-        LayoutUnit staticVerticalPosition(const Box&, const UsedVerticalValues&) const;
-        LayoutUnit staticHorizontalPosition(const Box&, const UsedHorizontalValues&) const;
+        Point staticPosition(const Box&, const HorizontalConstraints&, const VerticalConstraints&) const;
+        LayoutUnit staticVerticalPosition(const Box&, const VerticalConstraints&) const;
+        LayoutUnit staticHorizontalPosition(const Box&, const HorizontalConstraints&) const;
 
         IntrinsicWidthConstraints intrinsicWidthConstraints(const Box&);
 
@@ -87,7 +87,7 @@ private:
         friend class BlockFormattingContext;
         Geometry(const BlockFormattingContext&);
 
-        ContentHeightAndMargin inFlowNonReplacedHeightAndMargin(const Box&, const UsedHorizontalValues&, const UsedVerticalValues&);
+        ContentHeightAndMargin inFlowNonReplacedHeightAndMargin(const Box&, const HorizontalConstraints&, const UsedVerticalValues&);
         ContentWidthAndMargin inFlowNonReplacedWidthAndMargin(const Box&, const UsedHorizontalValues&) const;
         ContentWidthAndMargin inFlowReplacedWidthAndMargin(const Box&, const UsedHorizontalValues&) const;
         Point staticPositionForOutOfFlowPositioned(const Box&) const;

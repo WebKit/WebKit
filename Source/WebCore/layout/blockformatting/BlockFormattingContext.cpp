@@ -230,12 +230,12 @@ void BlockFormattingContext::placeInFlowPositionedChildren(const Box& layoutBox,
         return;
     LOG_WITH_STREAM(FormattingContextLayout, stream << "Start: move in-flow positioned children -> parent: " << &layoutBox);
 
-    auto usedHorizontalValues = UsedHorizontalValues { horizontalConstraints ? *horizontalConstraints : Geometry::horizontalConstraintsForInFlow(geometryForBox(layoutBox)) };
+    auto usedHorizontalConstraints = HorizontalConstraints { horizontalConstraints ? *horizontalConstraints : Geometry::horizontalConstraintsForInFlow(geometryForBox(layoutBox)) };
     auto& container = downcast<Container>(layoutBox);
     for (auto& childBox : childrenOfType<Box>(container)) {
         if (!childBox.isInFlowPositioned())
             continue;
-        auto positionOffset = geometry().inFlowPositionedPositionOffset(childBox, usedHorizontalValues);
+        auto positionOffset = geometry().inFlowPositionedPositionOffset(childBox, usedHorizontalConstraints);
         formattingState().displayBox(childBox).move(positionOffset);
     }
     LOG_WITH_STREAM(FormattingContextLayout, stream << "End: move in-flow positioned children -> parent: " << &layoutBox);
@@ -243,7 +243,7 @@ void BlockFormattingContext::placeInFlowPositionedChildren(const Box& layoutBox,
 
 void BlockFormattingContext::computeStaticVerticalPosition(const FloatingContext& floatingContext, const Box& layoutBox, const VerticalConstraints& verticalConstraints)
 {
-    formattingState().displayBox(layoutBox).setTop(geometry().staticVerticalPosition(layoutBox, UsedVerticalValues { verticalConstraints }));
+    formattingState().displayBox(layoutBox).setTop(geometry().staticVerticalPosition(layoutBox, verticalConstraints));
     if (layoutBox.hasFloatClear())
         computeEstimatedVerticalPositionForFloatClear(floatingContext, layoutBox);
     else if (layoutBox.establishesFormattingContext())
@@ -252,7 +252,7 @@ void BlockFormattingContext::computeStaticVerticalPosition(const FloatingContext
 
 void BlockFormattingContext::computeStaticHorizontalPosition(const Box& layoutBox, const HorizontalConstraints& horizontalConstraints)
 {
-    formattingState().displayBox(layoutBox).setLeft(geometry().staticHorizontalPosition(layoutBox, UsedHorizontalValues { horizontalConstraints }));
+    formattingState().displayBox(layoutBox).setLeft(geometry().staticHorizontalPosition(layoutBox, horizontalConstraints));
 }
 
 void BlockFormattingContext::computeStaticPosition(const FloatingContext& floatingContext, const Box& layoutBox, const HorizontalConstraints& horizontalConstraints, const VerticalConstraints& verticalConstraints)
@@ -264,7 +264,7 @@ void BlockFormattingContext::computeStaticPosition(const FloatingContext& floati
 void BlockFormattingContext::computeEstimatedVerticalPosition(const Box& layoutBox)
 {
     auto usedHorizontalValues = UsedHorizontalValues { Geometry::horizontalConstraintsForInFlow(geometryForBox(*layoutBox.containingBlock())) };
-    auto computedVerticalMargin = geometry().computedVerticalMargin(layoutBox, usedHorizontalValues);
+    auto computedVerticalMargin = geometry().computedVerticalMargin(layoutBox, usedHorizontalValues.constraints);
     auto usedNonCollapsedMargin = UsedVerticalMargin::NonCollapsedValues { computedVerticalMargin.before.valueOr(0), computedVerticalMargin.after.valueOr(0) };
     auto estimatedMarginBefore = marginCollapse().estimatedMarginBefore(layoutBox, usedNonCollapsedMargin);
     setEstimatedMarginBefore(layoutBox, estimatedMarginBefore);
@@ -415,22 +415,22 @@ void BlockFormattingContext::computeWidthAndMargin(const Box& layoutBox, const H
 
 void BlockFormattingContext::computeHeightAndMargin(const Box& layoutBox, const HorizontalConstraints& horizontalConstraints, const VerticalConstraints& verticalConstraints)
 {
-    auto usedHorizontalValues = UsedHorizontalValues { horizontalConstraints };
-    auto compute = [&](auto usedVerticalValues) -> ContentHeightAndMargin {
+    auto compute = [&](Optional<LayoutUnit> usedHeight) -> ContentHeightAndMargin {
+        auto usedVerticalValues = UsedVerticalValues { verticalConstraints, usedHeight };
         if (layoutBox.isInFlow())
-            return geometry().inFlowHeightAndMargin(layoutBox, usedHorizontalValues, usedVerticalValues);
+            return geometry().inFlowHeightAndMargin(layoutBox, horizontalConstraints, usedVerticalValues);
 
         if (layoutBox.isFloatingPositioned())
-            return geometry().floatingHeightAndMargin(layoutBox, usedHorizontalValues, usedVerticalValues);
+            return geometry().floatingHeightAndMargin(layoutBox, horizontalConstraints, usedVerticalValues);
 
         ASSERT_NOT_REACHED();
         return { };
     };
 
-    auto contentHeightAndMargin = compute(UsedVerticalValues { verticalConstraints });
+    auto contentHeightAndMargin = compute({ });
     if (auto maxHeight = geometry().computedMaxHeight(layoutBox)) {
         if (contentHeightAndMargin.contentHeight > *maxHeight) {
-            auto maxHeightAndMargin = compute(UsedVerticalValues { verticalConstraints, maxHeight });
+            auto maxHeightAndMargin = compute(maxHeight);
             // Used height should remain the same.
             ASSERT((layoutState().inQuirksMode() && (layoutBox.isBodyBox() || layoutBox.isDocumentBox())) || maxHeightAndMargin.contentHeight == *maxHeight);
             contentHeightAndMargin = { *maxHeight, maxHeightAndMargin.nonCollapsedMargin };
@@ -439,7 +439,7 @@ void BlockFormattingContext::computeHeightAndMargin(const Box& layoutBox, const 
 
     if (auto minHeight = geometry().computedMinHeight(layoutBox)) {
         if (contentHeightAndMargin.contentHeight < *minHeight) {
-            auto minHeightAndMargin = compute(UsedVerticalValues { verticalConstraints, minHeight });
+            auto minHeightAndMargin = compute(minHeight);
             // Used height should remain the same.
             ASSERT((layoutState().inQuirksMode() && (layoutBox.isBodyBox() || layoutBox.isDocumentBox())) || minHeightAndMargin.contentHeight == *minHeight);
             contentHeightAndMargin = { *minHeight, minHeightAndMargin.nonCollapsedMargin };
