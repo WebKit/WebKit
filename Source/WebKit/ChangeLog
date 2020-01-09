@@ -1,3 +1,26 @@
+2020-01-09  John Wilander  <wilander@apple.com>
+
+        Resource Load Statistics: Flip experimental website data removal setting from an enable to a disable
+        https://bugs.webkit.org/show_bug.cgi?id=205966
+        <rdar://problem/58425000>
+
+        Reviewed by Brent Fulgham.
+
+        To get default on behavior, experimental features in the network process need to be
+        turned from enable flags to disable flags. This patch does that for the experimental
+        website data removal flag.
+
+        This change also aligns the init values of the setting to match the default.
+
+        * NetworkProcess/Classifier/ResourceLoadStatisticsStore.h:
+        * NetworkProcess/NetworkSession.h:
+        * NetworkProcess/NetworkSessionCreationParameters.h:
+        * Shared/WebPreferences.yaml:
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::ensureNetworkProcess):
+        * UIProcess/WebsiteData/Cocoa/WebsiteDataStoreCocoa.mm:
+        (WebKit::WebsiteDataStore::parameters):
+
 2020-01-09  Megan Gardner  <megan_gardner@apple.com>
 
         Set the title for images so it will be correctly displayed in UIContextMenus

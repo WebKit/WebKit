@@ -889,8 +889,8 @@ webRTCEncryptionEnabled:
 isThirdPartyCookieBlockingDisabled:
   initial: false
 
-isFirstPartyWebsiteDataRemovalEnabled:
-  initial: true
+isFirstPartyWebsiteDataRemovalDisabled:
+  initial: false
 
 isFirstPartyWebsiteDataRemovalLiveOnTestingEnabled:
   initial: false
