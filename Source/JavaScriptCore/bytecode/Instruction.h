@@ -118,8 +118,8 @@ public:
     size_t size() const
     {
         auto sizeShiftAmount = this->sizeShiftAmount<Traits>();
-        auto prefixSize = sizeShiftAmount ? 1 : 0;
-        auto operandSize = 1 << sizeShiftAmount;
+        size_t prefixSize = sizeShiftAmount ? 1 : 0;
+        size_t operandSize = static_cast<size_t>(1) << sizeShiftAmount;
         size_t sizeOfBytecode = 1;
         return sizeOfBytecode + (Traits::opcodeLengths[opcodeID<Traits>()] - 1) * operandSize + prefixSize;
     }
