@@ -77,7 +77,7 @@ private:
     };
     InlineFormattingContext::Geometry geometry() const { return Geometry(*this); }
 
-    void lineLayout(const HorizontalConstraints&);
+    void lineLayout(const HorizontalConstraints&, const VerticalConstraints&);
     void layoutFormattingContextRoot(const Box&, InvalidationState&, const HorizontalConstraints&, const VerticalConstraints&);
     void computeHorizontalAndVerticalGeometry(const Box&, const HorizontalConstraints&);
 

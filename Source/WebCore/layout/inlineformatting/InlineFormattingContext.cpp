@@ -83,14 +83,14 @@ void InlineFormattingContext::layoutInFlowContent(InvalidationState& invalidatio
     }
 
     collectInlineContentIfNeeded();
-    lineLayout(horizontalConstraints);
+    lineLayout(horizontalConstraints, verticalConstraints);
     LOG_WITH_STREAM(FormattingContextLayout, stream << "[End] -> inline formatting context -> formatting root(" << &root() << ")");
 }
 
-void InlineFormattingContext::lineLayout(const HorizontalConstraints& horizontalConstraints)
+void InlineFormattingContext::lineLayout(const HorizontalConstraints& horizontalConstraints, const VerticalConstraints& verticalConstraints)
 {
     auto& inlineItems = formattingState().inlineItems();
-    auto lineLogicalTop = geometryForBox(root()).contentBoxTop();
+    auto lineLogicalTop = verticalConstraints.logicalTop;
     unsigned leadingInlineItemIndex = 0;
     Optional<unsigned> partialLeadingContentLength;
     auto lineBuilder = LineBuilder { *this, root().style().textAlign(), LineBuilder::IntrinsicSizing::No };
@@ -377,7 +377,7 @@ void InlineFormattingContext::collectInlineContentIfNeeded()
 
 LineBuilder::Constraints InlineFormattingContext::constraintsForLine(const HorizontalConstraints& horizontalConstraints, InlineLayoutUnit lineLogicalTop)
 {
-    auto lineLogicalLeft = geometryForBox(root()).contentBoxLeft();
+    auto lineLogicalLeft = horizontalConstraints.logicalLeft;
     auto lineLogicalRight = lineLogicalLeft + horizontalConstraints.logicalWidth;
     auto lineIsConstrainedByFloat = false;
 
@@ -389,7 +389,6 @@ LineBuilder::Constraints InlineFormattingContext::constraintsForLine(const Horiz
         if (floatConstraints.left && floatConstraints.left->x <= lineLogicalLeft)
             floatConstraints.left = { };
 
-        auto lineLogicalRight = geometryForBox(root()).contentBoxRight();
         if (floatConstraints.right && floatConstraints.right->x >= lineLogicalRight)
             floatConstraints.right = { };
 

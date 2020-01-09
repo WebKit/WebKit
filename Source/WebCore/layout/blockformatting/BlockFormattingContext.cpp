@@ -102,7 +102,7 @@ void BlockFormattingContext::layoutInFlowContent(InvalidationState& invalidation
         ASSERT(containingBlock);
         if (containingBlock == &formattingRoot)
             return rootVerticalConstraints;
-        return Geometry::verticalConstraintsForInFlow(geometryForBox(*layoutBox.containingBlock()));
+        return Geometry::verticalConstraintsForInFlow(geometryForBox(*containingBlock));
     };
     // This is a post-order tree traversal layout.
     // The root container layout is done in the formatting context it lives in, not that one it creates, so let's start with the first child.
