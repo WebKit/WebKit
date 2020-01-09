@@ -1,3 +1,24 @@
+2020-01-09  David Kilzer  <ddkilzer@apple.com>
+
+        WebKitTestRunner leaks objects in a top-level autoreleasePool that's never cleared
+        <https://webkit.org/b/205950>
+        <rdar://problem/50987831>
+
+        Reviewed by Joseph Pecoraro.
+
+        * WebKitTestRunner/ios/mainIOS.mm:
+        (main):
+        - Add an @autoreleasepool block around a line of code
+          that generates autoreleased objects.  These objects
+          would never be released for the life of the process
+          prior to this change.
+        * WebKitTestRunner/mac/main.mm:
+        (main):
+        - Move instantiation of WTR::TestController outside of
+          @autoreleasepool block so the pool can be drained
+          while running tests.  Prior to this change, this
+          autoreleasePool would never be drained.
+
 2020-01-08  Saam Barati  <sbarati@apple.com>
 
         build-jsc should work with "testing" and "release+assert" targets

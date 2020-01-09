@@ -1,3 +1,17 @@
+2020-01-09  David Kilzer  <ddkilzer@apple.com>
+
+        WebKitTestRunner leaks objects in a top-level autoreleasePool that's never cleared
+        <https://webkit.org/b/205950>
+        <rdar://problem/50987831>
+
+        Reviewed by Joseph Pecoraro.
+
+        * UIProcess/mac/WebPreferencesMac.mm:
+        (WebKit::WebPreferences::platformInitializeStore):
+        - Add an @autoreleasepool block around the contents of
+          this method since it generates numerous autoreleased
+          objects when run.
+
 2020-01-08  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Reduce binary size by purging C++ type information in Objective-C fields and parameters

@@ -64,8 +64,8 @@ int main(int argc, const char* argv[])
         [NSApplication sharedApplication];
         setDefaultsToConsistentValuesForTesting();
         disableAppNapInUIProcess(); // For secondary processes, app nap is disabled using WKPreferencesSetPageVisibilityBasedProcessSuppressionEnabled().
-        WTR::TestController controller(argc, argv);
     }
+    WTR::TestController controller(argc, argv);
     return 0;
 }
 
