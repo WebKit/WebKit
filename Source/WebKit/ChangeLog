@@ -1,3 +1,19 @@
+2020-01-09  Peng Liu  <peng.liu6@apple.com>
+
+        Fullscreen videos do not enter PiP in first tap
+        https://bugs.webkit.org/show_bug.cgi?id=205986
+
+        Reviewed by Eric Carlson.
+
+        This patch essentially reverts the fix for webkit.org/b/204461.
+        The fix for webkit.org/b/204461 depends on a fix in AVKit along
+        with a corresponding update in WebKit (webkit.org/b/204979).
+        We will need to reapply the fix for webkit.org/b/204461 after they are landed.
+
+        * WebProcess/cocoa/VideoFullscreenManager.mm:
+        (WebKit::VideoFullscreenManager::enterVideoFullscreenForVideoElement):
+        (WebKit::VideoFullscreenManager::exitVideoFullscreenForVideoElement):
+
 2020-01-09  Kate Cheney  <katherine_cheney@apple.com>
 
         ITP API classes need WK_CLASS_AVAILABLE tags
