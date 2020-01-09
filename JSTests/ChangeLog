@@ -1,3 +1,10 @@
+2020-01-08  Saam Barati  <sbarati@apple.com>
+
+        Unreviewed follow up on r254188. I accidentally included the same test
+        twice instead of including the two different variants.
+
+        * stress/ai-value-mod-should-result-in-constant-int-where-possible.js:
+
 2020-01-08  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         Proxy's [[OwnPropertyKeys]] is correct only in PropertyNameMode::StringsAndSymbols
