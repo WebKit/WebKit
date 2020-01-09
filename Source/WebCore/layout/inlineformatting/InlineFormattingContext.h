@@ -64,8 +64,8 @@ private:
 
     class Geometry : public FormattingContext::Geometry {
     public:
-        ContentHeightAndMargin inlineBlockHeightAndMargin(const Box&, const HorizontalConstraints&, const UsedVerticalValues&) const;
-        ContentWidthAndMargin inlineBlockWidthAndMargin(const Box&, const HorizontalConstraints&, const UsedHorizontalValues&);
+        ContentHeightAndMargin inlineBlockHeightAndMargin(const Box&, const HorizontalConstraints&, const OverrideVerticalValues&) const;
+        ContentWidthAndMargin inlineBlockWidthAndMargin(const Box&, const HorizontalConstraints&, const OverrideHorizontalValues&);
         Optional<InlineLayoutUnit> computedTextIndent(const Container& formattingContextRoot, const HorizontalConstraints&) const;
 
     private:

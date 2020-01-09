@@ -278,7 +278,7 @@ void InlineFormattingContext::computeWidthAndMargin(const Box& layoutBox, const 
 {
     ContentWidthAndMargin contentWidthAndMargin;
     // FIXME: Add support for min/max-width.
-    auto usedWidth = UsedHorizontalValues { }; 
+    auto usedWidth = OverrideHorizontalValues { };
     if (layoutBox.isFloatingPositioned())
         contentWidthAndMargin = geometry().floatingWidthAndMargin(layoutBox, horizontalConstraints, usedWidth);
     else if (layoutBox.isInlineBlockBox())
@@ -298,7 +298,7 @@ void InlineFormattingContext::computeHeightAndMargin(const Box& layoutBox, const
 {
     ContentHeightAndMargin contentHeightAndMargin;
     // FIXME: Add min/max-height support.
-    auto usedHeight = UsedVerticalValues { };
+    auto usedHeight = OverrideVerticalValues { };
     if (layoutBox.isFloatingPositioned())
         contentHeightAndMargin = geometry().floatingHeightAndMargin(layoutBox, horizontalConstraints, usedHeight);
     else if (layoutBox.isInlineBlockBox())

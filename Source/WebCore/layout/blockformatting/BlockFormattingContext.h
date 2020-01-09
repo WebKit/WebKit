@@ -74,8 +74,8 @@ private:
     // This class implements positioning and sizing for boxes participating in a block formatting context.
     class Geometry : public FormattingContext::Geometry {
     public:
-        ContentHeightAndMargin inFlowHeightAndMargin(const Box&, const HorizontalConstraints&, const UsedVerticalValues&);
-        ContentWidthAndMargin inFlowWidthAndMargin(const Box&, const HorizontalConstraints&, const UsedHorizontalValues&);
+        ContentHeightAndMargin inFlowHeightAndMargin(const Box&, const HorizontalConstraints&, const OverrideVerticalValues&);
+        ContentWidthAndMargin inFlowWidthAndMargin(const Box&, const HorizontalConstraints&, const OverrideHorizontalValues&);
 
         Point staticPosition(const Box&, const HorizontalConstraints&, const VerticalConstraints&) const;
         LayoutUnit staticVerticalPosition(const Box&, const VerticalConstraints&) const;
@@ -87,9 +87,9 @@ private:
         friend class BlockFormattingContext;
         Geometry(const BlockFormattingContext&);
 
-        ContentHeightAndMargin inFlowNonReplacedHeightAndMargin(const Box&, const HorizontalConstraints&, const UsedVerticalValues&);
-        ContentWidthAndMargin inFlowNonReplacedWidthAndMargin(const Box&, const HorizontalConstraints&, const UsedHorizontalValues&) const;
-        ContentWidthAndMargin inFlowReplacedWidthAndMargin(const Box&, const HorizontalConstraints&, const UsedHorizontalValues&) const;
+        ContentHeightAndMargin inFlowNonReplacedHeightAndMargin(const Box&, const HorizontalConstraints&, const OverrideVerticalValues&);
+        ContentWidthAndMargin inFlowNonReplacedWidthAndMargin(const Box&, const HorizontalConstraints&, const OverrideHorizontalValues&) const;
+        ContentWidthAndMargin inFlowReplacedWidthAndMargin(const Box&, const HorizontalConstraints&, const OverrideHorizontalValues&) const;
         Point staticPositionForOutOfFlowPositioned(const Box&) const;
 
         const BlockFormattingContext& formattingContext() const { return downcast<BlockFormattingContext>(FormattingContext::Geometry::formattingContext()); }

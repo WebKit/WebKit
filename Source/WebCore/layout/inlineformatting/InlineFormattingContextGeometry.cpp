@@ -36,7 +36,7 @@
 namespace WebCore {
 namespace Layout {
 
-ContentWidthAndMargin InlineFormattingContext::Geometry::inlineBlockWidthAndMargin(const Box& formattingContextRoot, const HorizontalConstraints& horizontalConstraints, const UsedHorizontalValues& usedHorizontalValues)
+ContentWidthAndMargin InlineFormattingContext::Geometry::inlineBlockWidthAndMargin(const Box& formattingContextRoot, const HorizontalConstraints& horizontalConstraints, const OverrideHorizontalValues& overrideHorizontalValues)
 {
     ASSERT(formattingContextRoot.isInFlow());
 
@@ -44,7 +44,7 @@ ContentWidthAndMargin InlineFormattingContext::Geometry::inlineBlockWidthAndMarg
 
     // Exactly as inline replaced elements.
     if (formattingContextRoot.replaced())
-        return inlineReplacedWidthAndMargin(formattingContextRoot, horizontalConstraints, usedHorizontalValues);
+        return inlineReplacedWidthAndMargin(formattingContextRoot, horizontalConstraints, overrideHorizontalValues);
 
     // 10.3.9 'Inline-block', non-replaced elements in normal flow
 
@@ -61,17 +61,17 @@ ContentWidthAndMargin InlineFormattingContext::Geometry::inlineBlockWidthAndMarg
     return ContentWidthAndMargin { *width, { computedHorizontalMargin.start.valueOr(0_lu), computedHorizontalMargin.end.valueOr(0_lu) }, computedHorizontalMargin };
 }
 
-ContentHeightAndMargin InlineFormattingContext::Geometry::inlineBlockHeightAndMargin(const Box& layoutBox, const HorizontalConstraints& horizontalConstraints, const UsedVerticalValues& usedVerticalValues) const
+ContentHeightAndMargin InlineFormattingContext::Geometry::inlineBlockHeightAndMargin(const Box& layoutBox, const HorizontalConstraints& horizontalConstraints, const OverrideVerticalValues& overrideVerticalValues) const
 {
     ASSERT(layoutBox.isInFlow());
 
     // 10.6.2 Inline replaced elements, block-level replaced elements in normal flow, 'inline-block' replaced elements in normal flow and floating replaced elements
     if (layoutBox.replaced())
-        return inlineReplacedHeightAndMargin(layoutBox, horizontalConstraints, { }, usedVerticalValues);
+        return inlineReplacedHeightAndMargin(layoutBox, horizontalConstraints, { }, overrideVerticalValues);
 
     // 10.6.6 Complicated cases
     // - 'Inline-block', non-replaced elements.
-    return complicatedCases(layoutBox, horizontalConstraints, usedVerticalValues);
+    return complicatedCases(layoutBox, horizontalConstraints, overrideVerticalValues);
 }
 
 Optional<InlineLayoutUnit> InlineFormattingContext::Geometry::computedTextIndent(const Container& formattingContextRoot, const HorizontalConstraints& horizontalConstraints) const
