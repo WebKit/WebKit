@@ -29,6 +29,7 @@
 
 #include <wtf/Forward.h>
 #include <wtf/Optional.h>
+#include <wtf/RunLoop.h>
 #include <wtf/SynchronizedFixedQueue.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/WorkQueue.h>
@@ -40,7 +41,7 @@ class BitmapImage;
 class GraphicsContext;
 class ImageDecoder;
 
-class ImageSource : public ThreadSafeRefCounted<ImageSource, WTF::DestructionThread::Main>, public CanMakeWeakPtr<ImageSource> {
+class ImageSource : public ThreadSafeRefCounted<ImageSource>, public CanMakeWeakPtr<ImageSource> {
     friend class BitmapImage;
 public:
     ~ImageSource();
@@ -200,6 +201,8 @@ private:
     Optional<ImageOrientation> m_orientation;
     Optional<Color> m_singlePixelSolidColor;
     Optional<SubsamplingLevel> m_maximumSubsamplingLevel;
+
+    RunLoop& m_runLoop;
 };
 
 }

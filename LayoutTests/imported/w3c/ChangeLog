@@ -1,3 +1,14 @@
+2020-01-09  Chris Lord  <clord@igalia.com>
+
+        ImageBitmap can't be created in workers in some cases due to main-thread assert in ImageSource
+        https://bugs.webkit.org/show_bug.cgi?id=205850
+
+        Reviewed by Dean Jackson.
+
+        * web-platform-tests/2dcontext/imagebitmap/createImageBitmap-in-worker-transfer-expected.txt: Added.
+        * web-platform-tests/2dcontext/imagebitmap/createImageBitmap-in-worker-transfer.html: Added.
+        * web-platform-tests/2dcontext/imagebitmap/createImageBitmap-worker.js: Added.
+
 2020-01-09  Pablo Saavedra  <psaavedra@igalia.com>
 
         Bad baseline for Catalina on xhr web-platform-tests imported in r254154
