@@ -89,11 +89,7 @@
     width: 100%;
 }
 
-.color-picker > .color-inputs > div[hidden] {
-    display: none;
-}
-
-.color-picker > .color-inputs > div:not([hidden]) + div {
+.color-picker > .color-inputs > div + div {
     -webkit-margin-start: 4px;
 }
 

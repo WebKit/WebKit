@@ -41,7 +41,6 @@ WI.CodeMirrorColorEditingController = class CodeMirrorColorEditingController ext
     {
         this._colorPicker = new WI.ColorPicker;
         this._colorPicker.addEventListener(WI.ColorPicker.Event.ColorChanged, this._colorPickerColorChanged, this);
-        this._colorPicker.addEventListener(WI.ColorPicker.Event.FormatChanged, (event) => popover.update());
         popover.content = this._colorPicker.element;
     }
 

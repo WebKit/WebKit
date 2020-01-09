@@ -1,3 +1,33 @@
+2020-01-08  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Show RGBA input fields for p3 color picker
+        https://bugs.webkit.org/show_bug.cgi?id=203928
+        <rdar://problem/56963805>
+
+        Reviewed by Brian Burg.
+
+        Display numeric input fields for colors defined via `color(...)` CSS syntax.
+
+        * UserInterface/Controllers/CodeMirrorColorEditingController.js:
+        (WI.CodeMirrorColorEditingController.prototype.popoverWillPresent):
+        Remove unnecessary WI.ColorPicker.Event.FormatChanged event.
+
+        * UserInterface/Views/ColorPicker.css:
+        (.color-picker > .color-inputs > div + div):
+        * UserInterface/Views/ColorPicker.js:
+        (WI.ColorPicker):
+        Don't append inputs of all possible color formats to DOM on instantiation.
+
+        (WI.ColorPicker.prototype.set color):
+        (WI.ColorPicker.prototype.set enableColorComponentInputs):
+        (WI.ColorPicker.prototype._updateColor):
+        (WI.ColorPicker.prototype._updateColorGamut):
+        (WI.ColorPicker.prototype._createColorInputsIfNeeded):
+        (WI.ColorPicker.prototype._showColorComponentInputs):
+        (WI.ColorPicker.prototype._handleColorInputsContainerInput):
+        * UserInterface/Views/InlineSwatch.js:
+        Remove unnecessary WI.ColorPicker.Event.FormatChanged event.
+
 2020-01-08  Devin Rousso  <drousso@apple.com>
 
         REGRESSION: (r254186) [ Mac ] inspector/css/add-rule.html is failing
