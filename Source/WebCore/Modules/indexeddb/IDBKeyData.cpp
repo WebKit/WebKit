@@ -472,6 +472,37 @@ bool IDBKeyData::operator==(const IDBKeyData& other) const
     RELEASE_ASSERT_NOT_REACHED();
 }
 
+size_t IDBKeyData::size() const
+{
+    if (m_isNull)
+        return 0;
+
+    switch (m_type) {
+    case IndexedDB::KeyType::Invalid:
+        return 0;
+    case IndexedDB::KeyType::Array: {
+        Vector<RefPtr<IDBKey>> array;
+        size_t totalSize = 0;
+        for (auto& keyData : WTF::get<Vector<IDBKeyData>>(m_value))
+            totalSize += keyData.size();
+        return totalSize;
+    }
+    case IndexedDB::KeyType::Binary:
+        return WTF::get<ThreadSafeDataBuffer>(m_value).size();
+    case IndexedDB::KeyType::String:
+        return WTF::get<String>(m_value).sizeInBytes();
+    case IndexedDB::KeyType::Date:
+    case IndexedDB::KeyType::Number:
+        return sizeof(double);
+    case IndexedDB::KeyType::Max:
+    case IndexedDB::KeyType::Min:
+        return 0;
+    }
+
+    ASSERT_NOT_REACHED();
+    return 0;
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(INDEXED_DATABASE)

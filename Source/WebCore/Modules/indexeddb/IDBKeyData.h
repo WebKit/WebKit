@@ -187,6 +187,8 @@ public:
         return WTF::get<Vector<IDBKeyData>>(m_value);
     }
 
+    size_t size() const;
+
 private:
     static void isolatedCopy(const IDBKeyData& source, IDBKeyData& destination);
 

@@ -854,25 +854,20 @@ void UniqueIDBDatabase::iterateCursor(const IDBRequestData& requestData, const I
 
     callback(error, result);
 
-    if (error.isNull()) {
-        m_cursorPrefetches.add(cursorIdentifier);
-        prefetchCursor(transactionIdentifier, cursorIdentifier);
-    }
+    if (error.isNull())
+        prefetchCursor(transactionIdentifier, cursorIdentifier, data.count ? data.count : 1);
 }
 
-void UniqueIDBDatabase::prefetchCursor(const IDBResourceIdentifier& transactionIdentifier, const IDBResourceIdentifier& cursorIdentifier)
+void UniqueIDBDatabase::prefetchCursor(const IDBResourceIdentifier& transactionIdentifier, const IDBResourceIdentifier& cursorIdentifier, uint64_t step)
 {
     LOG(IndexedDB, "UniqueIDBDatabase::prefetchCursor");
 
     ASSERT(!isMainThread());
-    ASSERT(m_cursorPrefetches.contains(cursorIdentifier));
 
-    uint64_t countToPrefetch = 2;
+    uint64_t countToPrefetch = step * 2;
     while (countToPrefetch --) {
-        if (!m_backingStore->prefetchCursor(transactionIdentifier, cursorIdentifier)) {
-            m_cursorPrefetches.remove(cursorIdentifier);
+        if (!m_backingStore->prefetchCursor(transactionIdentifier, cursorIdentifier))
             return;
-        }
     }
 }
 

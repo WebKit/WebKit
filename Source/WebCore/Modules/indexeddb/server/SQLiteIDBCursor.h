@@ -120,6 +120,7 @@ private:
     IDBKeyData m_currentUpperKey;
 
     Deque<SQLiteCursorRecord> m_fetchedRecords;
+    uint64_t m_fetchedRecordsSize { 0 };
     IDBKeyData m_currentKeyForUniqueness;
 
     std::unique_ptr<SQLiteStatement> m_statement;

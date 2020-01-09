@@ -39,6 +39,8 @@ struct IDBCursorRecord {
 
     template<class Encoder> void encode(Encoder&) const;
     template<class Decoder> static bool decode(Decoder&, IDBCursorRecord&);
+
+    size_t size() const { return key.size() + primaryKey.size() + (value ? value->size() : 0); }
 };
 
 template<class Encoder>

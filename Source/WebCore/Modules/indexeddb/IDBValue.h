@@ -54,6 +54,7 @@ public:
     template<class Encoder> void encode(Encoder&) const;
     template<class Decoder> static Optional<IDBValue> decode(Decoder&);
 
+    size_t size() const;
 private:
     ThreadSafeDataBuffer m_data;
     Vector<String> m_blobURLs;

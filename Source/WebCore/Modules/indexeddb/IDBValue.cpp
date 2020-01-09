@@ -86,6 +86,21 @@ IDBValue IDBValue::isolatedCopy() const
     return result;
 }
 
+size_t IDBValue::size() const
+{
+    size_t totalSize = 0;
+
+    for (auto& url : m_blobURLs)
+        totalSize += url.sizeInBytes();
+
+    for (auto& path : m_blobFilePaths)
+        totalSize += path.sizeInBytes();
+
+    totalSize += m_data.size();
+
+    return totalSize;
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(INDEXED_DATABASE)

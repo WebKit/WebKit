@@ -42,7 +42,8 @@
 namespace WebCore {
 namespace IDBServer {
 
-static const size_t prefetchLimit = 8;
+static const size_t prefetchLimit = 128;
+static const size_t prefetchSizeLimit = 8 * MB;
 
 std::unique_ptr<SQLiteIDBCursor> SQLiteIDBCursor::maybeCreate(SQLiteIDBTransaction& transaction, const IDBCursorInfo& info)
 {
@@ -222,10 +223,15 @@ void SQLiteIDBCursor::objectStoreRecordsChanged()
         if (!m_fetchedRecords.last().isTerminalRecord())
             fetch(ShouldFetchForSameKey::Yes);
 
-        while (m_fetchedRecords.last().record.key != m_fetchedRecords.first().record.key)
+        while (m_fetchedRecords.last().record.key != m_fetchedRecords.first().record.key) {
+            ASSERT(m_fetchedRecordsSize >= m_fetchedRecords.last().record.size());
+            m_fetchedRecordsSize -= m_fetchedRecords.last().record.size();
             m_fetchedRecords.removeLast();
-    } else
+        }
+    } else {
         m_fetchedRecords.clear();
+        m_fetchedRecordsSize = 0;
+    }
 
     // If ObjectStore or Index contents changed, we need to reset the statement and bind new parameters to it.
     // This is to pick up any changes that might exist.
@@ -307,13 +313,13 @@ bool SQLiteIDBCursor::prefetch()
 {
     LOG(IndexedDB, "SQLiteIDBCursor::prefetch() - Cursor already has %zu fetched records", m_fetchedRecords.size());
 
-    if (m_fetchedRecords.isEmpty() || m_fetchedRecords.size() >= prefetchLimit || m_fetchedRecords.last().isTerminalRecord())
+    if (m_fetchedRecordsSize >= prefetchSizeLimit || m_fetchedRecords.isEmpty() || m_fetchedRecords.size() >= prefetchLimit || m_fetchedRecords.last().isTerminalRecord())
         return false;
 
     m_currentKeyForUniqueness = m_fetchedRecords.last().record.key;
     fetch();
 
-    return m_fetchedRecords.size() < prefetchLimit;
+    return m_fetchedRecords.size() < prefetchLimit && m_fetchedRecordsSize < prefetchSizeLimit;
 }
 
 bool SQLiteIDBCursor::advance(uint64_t count)
@@ -335,6 +341,8 @@ bool SQLiteIDBCursor::advance(uint64_t count)
         if (m_fetchedRecords.first().isTerminalRecord())
             break;
 
+        ASSERT(m_fetchedRecordsSize >= m_fetchedRecords.first().record.size());
+        m_fetchedRecordsSize -= m_fetchedRecords.first().record.size();
         m_fetchedRecords.removeFirst();
     }
 
@@ -353,6 +361,9 @@ bool SQLiteIDBCursor::advance(uint64_t count)
         if (!m_fetchedRecords.isEmpty()) {
             ASSERT(m_fetchedRecords.size() == 1);
             m_currentKeyForUniqueness = m_fetchedRecords.first().record.key;
+
+            ASSERT(m_fetchedRecordsSize >= m_fetchedRecords.first().record.size());
+            m_fetchedRecordsSize -= m_fetchedRecords.first().record.size();
             m_fetchedRecords.removeFirst();
         }
 
@@ -375,10 +386,16 @@ bool SQLiteIDBCursor::fetch(ShouldFetchForSameKey shouldFetchForSameKey)
     m_fetchedRecords.append({ });
 
     bool isUnique = m_cursorDirection == IndexedDB::CursorDirection::Nextunique || m_cursorDirection == IndexedDB::CursorDirection::Prevunique || shouldFetchForSameKey == ShouldFetchForSameKey::Yes;
-    if (!isUnique)
-        return fetchNextRecord(m_fetchedRecords.last());
+    if (!isUnique) {
+        bool fetchSucceeded = fetchNextRecord(m_fetchedRecords.last());
+        if (fetchSucceeded)
+            m_fetchedRecordsSize += m_fetchedRecords.last().record.size();
+        return fetchSucceeded;
+    }
 
     while (fetchNextRecord(m_fetchedRecords.last())) {
+        m_fetchedRecordsSize += m_fetchedRecords.last().record.size();
+
         if (m_currentKeyForUniqueness.compare(m_fetchedRecords.last().record.key))
             return true;
 
