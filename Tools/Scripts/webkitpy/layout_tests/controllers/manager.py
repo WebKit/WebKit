@@ -457,9 +457,16 @@ class Manager(object):
                     _log.debug("Adding results for other crash: " + str(test))
 
     def _clobber_old_results(self):
-        self._printer.write_update("Clobbering all results in {}".format(self._results_directory))
-        if self._filesystem.isdir(self._results_directory):
-            self._filesystem.rmtree(self._results_directory)
+        # Just clobber the actual test results directories since the other
+        # files in the results directory are explicitly used for cross-run
+        # tracking.
+        self._printer.write_update("Clobbering old results in %s" %
+                                   self._results_directory)
+        layout_tests_dir = self._port.layout_tests_dir()
+        possible_dirs = self._port.test_dirs()
+        for dirname in possible_dirs:
+            if self._filesystem.isdir(self._filesystem.join(layout_tests_dir, dirname)):
+                self._filesystem.rmtree(self._filesystem.join(self._results_directory, dirname))
 
     def _tests_to_retry(self, run_results, include_crashes):
         return [result.test_name for result in run_results.unexpected_results_by_name.values() if
