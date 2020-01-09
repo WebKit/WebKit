@@ -64,7 +64,7 @@ static inline const Box* nextInPreOrder(const Box& layoutBox, const Container& s
     return nullptr;
 }
 
-void InlineFormattingContext::layoutInFlowContent(InvalidationState& invalidationState, const UsedHorizontalValues::Constraints& horiztonalConstraints)
+void InlineFormattingContext::layoutInFlowContent(InvalidationState& invalidationState, const UsedHorizontalValues::Constraints& horiztonalConstraints, const UsedVerticalValues::Constraints& verticalConstraints)
 {
     if (!root().hasInFlowOrFloatingChild())
         return;
@@ -72,7 +72,7 @@ void InlineFormattingContext::layoutInFlowContent(InvalidationState& invalidatio
     invalidateFormattingState(invalidationState);
     LOG_WITH_STREAM(FormattingContextLayout, stream << "[Start] -> inline formatting context -> formatting root(" << &root() << ")");
     auto usedHorizontalValues = UsedHorizontalValues { horiztonalConstraints };
-    auto usedVerticalValues = UsedVerticalValues { UsedVerticalValues::Constraints { geometryForBox(root()).contentBoxTop() } };
+    auto usedVerticalValues = UsedVerticalValues { verticalConstraints };
     auto* layoutBox = root().firstInFlowOrFloatingChild();
     // 1. Visit each inline box and partially compute their geometry (margins, paddings and borders).
     // 2. Collect the inline items (flatten the the layout tree) and place them on lines in bidirectional order. 
@@ -139,7 +139,7 @@ void InlineFormattingContext::layoutFormattingContextRoot(const Box& formattingC
     if (is<Container>(formattingContextRoot)) {
         auto& rootContainer = downcast<Container>(formattingContextRoot);
         auto formattingContext = LayoutContext::createFormattingContext(rootContainer, layoutState());
-        formattingContext->layoutInFlowContent(invalidationState, usedHorizontalValues.constraints);
+        formattingContext->layoutInFlowContent(invalidationState, usedHorizontalValues.constraints, usedVerticalValues.constraints);
         // Come back and finalize the root's height and margin.
         computeHeightAndMargin(rootContainer, usedHorizontalValues, usedVerticalValues);
         // Now that we computed the root's height, we can go back and layout the out-of-flow content.

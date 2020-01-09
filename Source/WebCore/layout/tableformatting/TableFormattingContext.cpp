@@ -58,7 +58,7 @@ TableFormattingContext::TableFormattingContext(const Container& formattingContex
 {
 }
 
-void TableFormattingContext::layoutInFlowContent(InvalidationState& invalidationState, const UsedHorizontalValues::Constraints&)
+void TableFormattingContext::layoutInFlowContent(InvalidationState& invalidationState, const UsedHorizontalValues::Constraints&, const UsedVerticalValues::Constraints&)
 {
     auto& grid = formattingState().tableGrid();
     auto& columnsContext = grid.columnsContext();
@@ -111,7 +111,7 @@ void TableFormattingContext::layoutTableCellBox(const Box& cellLayoutBox, const 
 
     ASSERT(cellLayoutBox.establishesBlockFormattingContext());
     if (is<Container>(cellLayoutBox))
-        LayoutContext::createFormattingContext(downcast<Container>(cellLayoutBox), layoutState())->layoutInFlowContent(invalidationState, Geometry::horizontalConstraintsForInFlow(cellDisplayBox));
+        LayoutContext::createFormattingContext(downcast<Container>(cellLayoutBox), layoutState())->layoutInFlowContent(invalidationState, Geometry::horizontalConstraintsForInFlow(cellDisplayBox), Geometry::verticalConstraintsForInFlow(cellDisplayBox));
     cellDisplayBox.setVerticalMargin({ { }, { } });
     cellDisplayBox.setContentBoxHeight(geometry().tableCellHeightAndMargin(cellLayoutBox).contentHeight);
     // FIXME: Check what to do with out-of-flow content.

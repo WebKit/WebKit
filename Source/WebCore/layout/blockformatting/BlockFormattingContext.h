@@ -48,7 +48,7 @@ class BlockFormattingContext : public FormattingContext {
 public:
     BlockFormattingContext(const Container& formattingContextRoot, BlockFormattingState&);
 
-    void layoutInFlowContent(InvalidationState&, const UsedHorizontalValues::Constraints&) override;
+    void layoutInFlowContent(InvalidationState&, const UsedHorizontalValues::Constraints&, const UsedVerticalValues::Constraints&) override;
 
 private:
     void layoutFormattingContextRoot(const Box&, FloatingContext&, InvalidationState&, const UsedHorizontalValues::Constraints&, const UsedVerticalValues::Constraints&);

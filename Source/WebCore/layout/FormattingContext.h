@@ -64,7 +64,7 @@ public:
     FormattingContext(const Container& formattingContextRoot, FormattingState&);
     virtual ~FormattingContext();
 
-    virtual void layoutInFlowContent(InvalidationState&, const UsedHorizontalValues::Constraints&) = 0;
+    virtual void layoutInFlowContent(InvalidationState&, const UsedHorizontalValues::Constraints&, const UsedVerticalValues::Constraints&) = 0;
     void layoutOutOfFlowContent(InvalidationState&, const UsedHorizontalValues::Constraints&, const UsedVerticalValues::Constraints&);
 
     struct IntrinsicWidthConstraints {

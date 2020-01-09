@@ -52,7 +52,7 @@ BlockFormattingContext::BlockFormattingContext(const Container& formattingContex
 }
 
 enum class LayoutDirection { Child, Sibling };
-void BlockFormattingContext::layoutInFlowContent(InvalidationState& invalidationState, const UsedHorizontalValues::Constraints& rootHorizontalConstraints)
+void BlockFormattingContext::layoutInFlowContent(InvalidationState& invalidationState, const UsedHorizontalValues::Constraints& rootHorizontalConstraints, const UsedVerticalValues::Constraints& rootVerticalConstraints)
 {
     // 9.4.1 Block formatting contexts
     // In a block formatting context, boxes are laid out one after the other, vertically, beginning at the top of a containing block.
@@ -98,6 +98,10 @@ void BlockFormattingContext::layoutInFlowContent(InvalidationState& invalidation
     };
 
     auto verticalConstraintsForLayoutBox = [&] (const auto& layoutBox) {
+        auto* containingBlock = layoutBox.containingBlock();
+        ASSERT(containingBlock);
+        if (containingBlock == &formattingRoot)
+            return rootVerticalConstraints;
         return Geometry::verticalConstraintsForInFlow(geometryForBox(*layoutBox.containingBlock()));
     };
     // This is a post-order tree traversal layout.
@@ -203,7 +207,7 @@ void BlockFormattingContext::layoutFormattingContextRoot(const Box& layoutBox, F
         auto& rootContainer = downcast<Container>(layoutBox);
         auto& rootContainerDisplayBox = geometryForBox(rootContainer);
         auto formattingContext = LayoutContext::createFormattingContext(rootContainer, layoutState());
-        formattingContext->layoutInFlowContent(invalidationState, Geometry::horizontalConstraintsForInFlow(rootContainerDisplayBox));
+        formattingContext->layoutInFlowContent(invalidationState, Geometry::horizontalConstraintsForInFlow(rootContainerDisplayBox), Geometry::verticalConstraintsForInFlow(rootContainerDisplayBox));
         // Come back and finalize the root's geometry.
         computeHeightAndMargin(rootContainer, adjustedHorizontalConstraints, verticalConstraints);
         // Now that we computed the root's height, we can go back and layout the out-of-flow content.

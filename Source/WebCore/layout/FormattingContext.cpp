@@ -170,7 +170,7 @@ void FormattingContext::layoutOutOfFlowContent(InvalidationState& invalidationSt
         if (is<Container>(*outOfFlowBox)) {
             auto& outOfFlowRootContainer = downcast<Container>(*outOfFlowBox);
             auto formattingContext = LayoutContext::createFormattingContext(outOfFlowRootContainer, layoutState());
-            formattingContext->layoutInFlowContent(invalidationState, Geometry::horizontalConstraintsForInFlow(outOfFlowRootDisplayBox));
+            formattingContext->layoutInFlowContent(invalidationState, Geometry::horizontalConstraintsForInFlow(outOfFlowRootDisplayBox), Geometry::verticalConstraintsForInFlow(outOfFlowRootDisplayBox));
             computeOutOfFlowVerticalGeometry(outOfFlowRootContainer, horizontalConstraints, verticalConstraints);
 
             formattingContext->layoutOutOfFlowContent(invalidationState, Geometry::horizontalConstraintsForInFlow(outOfFlowRootDisplayBox), Geometry::verticalConstraintsForInFlow(outOfFlowRootDisplayBox));
