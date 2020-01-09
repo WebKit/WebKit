@@ -76,6 +76,7 @@
 #include "JITMulGenerator.h"
 #include "JITRightShiftGenerator.h"
 #include "JITSubGenerator.h"
+#include "JSArrayIterator.h"
 #include "JSAsyncFunction.h"
 #include "JSAsyncGenerator.h"
 #include "JSAsyncGeneratorFunction.h"
@@ -966,6 +967,9 @@ private:
         case CheckArray:
             compileCheckArray();
             break;
+        case CheckNeutered:
+            compileCheckNeutered();
+            break;
         case GetArrayLength:
             compileGetArrayLength();
             break;
@@ -1066,6 +1070,9 @@ private:
             break;
         case NewAsyncGenerator:
             compileNewAsyncGenerator();
+            break;
+        case NewArrayIterator:
+            compileNewArrayIterator();
             break;
         case NewStringObject:
             compileNewStringObject();
@@ -1466,6 +1473,9 @@ private:
         case MaterializeCreateActivation:
             compileMaterializeCreateActivation();
             break;
+        case MaterializeNewInternalFieldObject:
+            compileMaterializeNewInternalFieldObject();
+            break;
         case CheckTraps:
             compileCheckTraps();
             break;
@@ -1579,6 +1589,7 @@ private:
         case PhantomNewGeneratorFunction:
         case PhantomNewAsyncGeneratorFunction:
         case PhantomNewAsyncFunction:
+        case PhantomNewArrayIterator:
         case PhantomCreateActivation:
         case PhantomDirectArguments:
         case PhantomCreateRest:
@@ -2069,8 +2080,11 @@ private:
 
         ValueFromBlock slowResult;
         if (m_node->op() == ToObject) {
+            UniquedStringImpl* errorMessage = nullptr;
+            if (m_node->identifierNumber() != UINT32_MAX)
+                errorMessage = m_graph.identifiers()[m_node->identifierNumber()];
             auto* globalObject = m_graph.globalObjectFor(m_node->origin.semantic);
-            slowResult = m_out.anchor(vmCall(Int64, operationToObject, weakPointer(globalObject), value, m_out.constIntPtr(m_graph.identifiers()[m_node->identifierNumber()])));
+            slowResult = m_out.anchor(vmCall(Int64, operationToObject, weakPointer(globalObject), value, m_out.constIntPtr(errorMessage)));
         } else
             slowResult = m_out.anchor(vmCall(Int64, operationCallObjectConstructor, frozenPointer(m_node->cellOperand()), value));
         m_out.jump(continuation);
@@ -4042,13 +4056,26 @@ private:
     {
         Edge edge = m_node->child1();
         LValue cell = lowCell(edge);
-        
+
         if (m_node->arrayMode().alreadyChecked(m_graph, m_node, abstractValue(edge)))
             return;
         
         speculate(
             BadIndexingType, jsValueValue(cell), 0,
             m_out.logicalNot(isArrayTypeForCheckArray(cell, m_node->arrayMode())));
+    }
+
+    void compileCheckNeutered()
+    {
+        Edge edge = m_node->child1();
+        LValue cell = lowCell(edge);
+        
+        // We only emit this node after we have checked this is a typed array so that better be true now.
+        DFG_ASSERT(m_graph, m_node, speculationChecked(abstractValue(edge).m_type, SpecTypedArrayView));
+
+        speculate(
+            BadIndexingType, jsValueValue(cell), edge.node(),
+            m_out.isNull(m_out.loadPtr(cell, m_heaps.JSArrayBufferView_vector)));
     }
 
     void compileGetTypedArrayByteOffset()
@@ -6142,7 +6169,7 @@ private:
 
         LValue object = allocateObject<JSClass>(m_node->structure(), m_out.intPtrZero, slowCase);
         auto initialValues = JSClass::initialValues();
-        ASSERT(initialValues.size() == JSClass::numberOfInternalFields);
+        static_assert(initialValues.size() == JSClass::numberOfInternalFields);
         for (unsigned index = 0; index < initialValues.size(); ++index)
             m_out.store64(m_out.constInt64(JSValue::encode(initialValues[index])), object, m_heaps.JSInternalFieldObjectImpl_internalFields[index]);
         mutatorFence();
@@ -6165,6 +6192,11 @@ private:
     void compileNewAsyncGenerator()
     {
         compileNewInternalFieldObject<JSAsyncGenerator>(operationNewAsyncGenerator);
+    }
+
+    void compileNewArrayIterator()
+    {
+        compileNewInternalFieldObject<JSArrayIterator>(operationNewArrayIterator);
     }
 
     void compileNewStringObject()
@@ -6675,7 +6707,7 @@ private:
         m_out.appendTo(fastAllocationCase, slowCase);
         LValue object = allocateObject<JSClass>(structure, m_out.intPtrZero, slowCase);
         auto initialValues = JSClass::initialValues();
-        ASSERT(initialValues.size() == JSClass::numberOfInternalFields);
+        static_assert(initialValues.size() == JSClass::numberOfInternalFields, "We don't support non-constant fields in create yet.");
         for (unsigned index = 0; index < initialValues.size(); ++index)
             m_out.store64(m_out.constInt64(JSValue::encode(initialValues[index])), object, m_heaps.JSInternalFieldObjectImpl_internalFields[index]);
         mutatorFence();
@@ -11989,6 +12021,63 @@ private:
 
         mutatorFence();
         setJSValue(activation);
+    }
+
+    template<typename JSClass, typename Operation>
+    void compileMaterializeNewInternalFieldObjectImpl(Operation operation)
+    {
+        ObjectMaterializationData& data = m_node->objectMaterializationData();
+
+        Vector<LValue, JSClass::numberOfInternalFields> values;
+        ASSERT(data.m_properties.size() == JSClass::numberOfInternalFields);
+        for (unsigned i = 0; i < data.m_properties.size(); ++i)
+            values.append(lowJSValue(m_graph.varArgChild(m_node, 1 + i)));
+
+        RegisteredStructure structure = m_node->structure();
+
+        LBasicBlock slowPath = m_out.newBlock();
+        LBasicBlock continuation = m_out.newBlock();
+
+        LBasicBlock lastNext = m_out.insertNewBlocksBefore(slowPath);
+
+        RELEASE_ASSERT(data.m_properties.size() == JSClass::numberOfInternalFields);
+        LValue fastObject = allocateObject<JSClass>(structure, m_out.intPtrZero, slowPath);
+        ValueFromBlock fastResult = m_out.anchor(fastObject);
+        m_out.jump(continuation);
+
+        m_out.appendTo(slowPath, continuation);
+        VM& vm = this->vm();
+        LValue callResult = lazySlowPath(
+            [=, &vm] (const Vector<Location>& locations) -> RefPtr<LazySlowPath::Generator> {
+                return createLazyCallGenerator(vm,
+                    operation, locations[0].directGPR(), &vm,
+                    CCallHelpers::TrustedImmPtr(structure.get()));
+            });
+        ValueFromBlock slowResult = m_out.anchor(callResult);
+        m_out.jump(continuation);
+
+        m_out.appendTo(continuation, lastNext);
+        LValue object = m_out.phi(pointerType(), fastResult, slowResult);
+        for (unsigned i = 0; i < data.m_properties.size(); ++i) {
+            PromotedLocationDescriptor descriptor = data.m_properties[i];
+            ASSERT(descriptor.kind() == InternalFieldObjectPLoc);
+            RELEASE_ASSERT(descriptor.info() < JSClass::numberOfInternalFields);
+            m_out.store64(values[i], object, m_heaps.JSInternalFieldObjectImpl_internalFields[descriptor.info()]);
+        }
+
+        mutatorFence();
+        setJSValue(object);
+    }
+
+    void compileMaterializeNewInternalFieldObject()
+    {
+        switch (m_node->structure()->typeInfo().type()) {
+        case JSArrayIteratorType:
+            compileMaterializeNewInternalFieldObjectImpl<JSArrayIterator>(operationNewArrayIterator);
+            break;
+        default:
+            DFG_CRASH(m_graph, m_node, "Bad structure");
+        }
     }
 
     void compileCheckTraps()

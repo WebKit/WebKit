@@ -1093,6 +1093,7 @@
 		539930C822AD3B9A0051CDE2 /* WeakObjectRefConstructor.h in Headers */ = {isa = PBXBuildFile; fileRef = 539930C722AD3B9A0051CDE2 /* WeakObjectRefConstructor.h */; };
 		539BFBAE22AD3C3A0023F4C0 /* WeakObjectRefPrototype.h in Headers */ = {isa = PBXBuildFile; fileRef = 539BFBAD22AD3C3A0023F4C0 /* WeakObjectRefPrototype.h */; };
 		539BFBB022AD3CDC0023F4C0 /* JSWeakObjectRef.h in Headers */ = {isa = PBXBuildFile; fileRef = 539BFBAF22AD3CDC0023F4C0 /* JSWeakObjectRef.h */; };
+		539DD7F523C1BBB500905F13 /* JSArrayIterator.h in Headers */ = {isa = PBXBuildFile; fileRef = 539DD7F423C1BBA900905F13 /* JSArrayIterator.h */; };
 		539FB8BA1C99DA7C00940FA1 /* JSArrayInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 539FB8B91C99DA7C00940FA1 /* JSArrayInlines.h */; };
 		53B4BD121F68B32500D2BEA3 /* WasmOps.h in Headers */ = {isa = PBXBuildFile; fileRef = 533B15DE1DC7F463004D500A /* WasmOps.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		53B601EC2034B8C5006BE667 /* JSCast.h in Headers */ = {isa = PBXBuildFile; fileRef = 53B601EB2034B8C5006BE667 /* JSCast.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -3855,6 +3856,8 @@
 		539BFBAD22AD3C3A0023F4C0 /* WeakObjectRefPrototype.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WeakObjectRefPrototype.h; sourceTree = "<group>"; };
 		539BFBAF22AD3CDC0023F4C0 /* JSWeakObjectRef.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JSWeakObjectRef.h; sourceTree = "<group>"; };
 		539BFBB122AD3D8C0023F4C0 /* JSWeakObjectRef.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = JSWeakObjectRef.cpp; sourceTree = "<group>"; };
+		539DD7F323C1BBA900905F13 /* JSArrayIterator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSArrayIterator.cpp; sourceTree = "<group>"; };
+		539DD7F423C1BBA900905F13 /* JSArrayIterator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSArrayIterator.h; sourceTree = "<group>"; };
 		539FB8B91C99DA7C00940FA1 /* JSArrayInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSArrayInlines.h; sourceTree = "<group>"; };
 		53B0BE331E561AC900A8FC29 /* GetterSetterAccessCase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GetterSetterAccessCase.cpp; sourceTree = "<group>"; };
 		53B0BE351E561B0900A8FC29 /* ProxyableAccessCase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ProxyableAccessCase.cpp; sourceTree = "<group>"; };
@@ -7295,6 +7298,8 @@
 				0F2B66BB17B6B5AB00A7AE3F /* JSArrayBufferView.h */,
 				0F2B66BC17B6B5AB00A7AE3F /* JSArrayBufferViewInlines.h */,
 				539FB8B91C99DA7C00940FA1 /* JSArrayInlines.h */,
+				539DD7F323C1BBA900905F13 /* JSArrayIterator.cpp */,
+				539DD7F423C1BBA900905F13 /* JSArrayIterator.h */,
 				5B70CFD91DB69E5C00EC23F9 /* JSAsyncFunction.cpp */,
 				5B70CFD81DB69E5C00EC23F9 /* JSAsyncFunction.h */,
 				E39FEBE12339C5D400B40AB0 /* JSAsyncGenerator.cpp */,
@@ -9777,6 +9782,7 @@
 				0F2B66E917B6B5AB00A7AE3F /* JSArrayBufferView.h in Headers */,
 				0F2B66EA17B6B5AB00A7AE3F /* JSArrayBufferViewInlines.h in Headers */,
 				539FB8BA1C99DA7C00940FA1 /* JSArrayInlines.h in Headers */,
+				539DD7F523C1BBB500905F13 /* JSArrayIterator.h in Headers */,
 				5B70CFDE1DB69E6600EC23F9 /* JSAsyncFunction.h in Headers */,
 				E39FEBE32339C5D900B40AB0 /* JSAsyncGenerator.h in Headers */,
 				8BC064891E1ABA6400B2B8CA /* JSAsyncGeneratorFunction.h in Headers */,

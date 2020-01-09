@@ -374,7 +374,7 @@ const JSC::ClassInfo TestNodeIteratorPrototype::s_info = { "TestNode Iterator", 
 
 static inline EncodedJSValue jsTestNodePrototypeFunctionEntriesCaller(JSGlobalObject*, CallFrame*, JSTestNode* thisObject, JSC::ThrowScope&)
 {
-    return JSValue::encode(iteratorCreate<TestNodeIterator>(*thisObject, IterationKind::Value));
+    return JSValue::encode(iteratorCreate<TestNodeIterator>(*thisObject, IterationKind::Values));
 }
 
 JSC::EncodedJSValue JSC_HOST_CALL jsTestNodePrototypeFunctionEntries(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame)
@@ -384,7 +384,7 @@ JSC::EncodedJSValue JSC_HOST_CALL jsTestNodePrototypeFunctionEntries(JSC::JSGlob
 
 static inline EncodedJSValue jsTestNodePrototypeFunctionKeysCaller(JSGlobalObject*, CallFrame*, JSTestNode* thisObject, JSC::ThrowScope&)
 {
-    return JSValue::encode(iteratorCreate<TestNodeIterator>(*thisObject, IterationKind::Key));
+    return JSValue::encode(iteratorCreate<TestNodeIterator>(*thisObject, IterationKind::Keys));
 }
 
 JSC::EncodedJSValue JSC_HOST_CALL jsTestNodePrototypeFunctionKeys(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame)
@@ -394,7 +394,7 @@ JSC::EncodedJSValue JSC_HOST_CALL jsTestNodePrototypeFunctionKeys(JSC::JSGlobalO
 
 static inline EncodedJSValue jsTestNodePrototypeFunctionValuesCaller(JSGlobalObject*, CallFrame*, JSTestNode* thisObject, JSC::ThrowScope&)
 {
-    return JSValue::encode(iteratorCreate<TestNodeIterator>(*thisObject, IterationKind::Value));
+    return JSValue::encode(iteratorCreate<TestNodeIterator>(*thisObject, IterationKind::Values));
 }
 
 JSC::EncodedJSValue JSC_HOST_CALL jsTestNodePrototypeFunctionValues(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame)

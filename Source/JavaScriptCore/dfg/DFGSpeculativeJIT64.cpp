@@ -2370,6 +2370,11 @@ void SpeculativeJIT::compile(Node* node)
         compileFromCharCode(node);
         break;
     }
+
+    case CheckNeutered: {
+        compileCheckNeutered(node);
+        break;
+    }
         
     case CheckArray: {
         checkArray(node);
@@ -3575,6 +3580,11 @@ void SpeculativeJIT::compile(Node* node)
 
     case NewAsyncGenerator: {
         compileNewAsyncGenerator(node);
+        break;
+    }
+
+    case NewArrayIterator: {
+        compileNewArrayIterator(node);
         break;
     }
 
@@ -5261,6 +5271,7 @@ void SpeculativeJIT::compile(Node* node)
     case PhantomNewGeneratorFunction:
     case PhantomNewAsyncFunction:
     case PhantomNewAsyncGeneratorFunction:
+    case PhantomNewArrayIterator:
     case PhantomCreateActivation:
     case PhantomNewRegexp:
     case GetMyArgumentByVal:
@@ -5269,6 +5280,7 @@ void SpeculativeJIT::compile(Node* node)
     case PutHint:
     case CheckStructureImmediate:
     case MaterializeCreateActivation:
+    case MaterializeNewInternalFieldObject:
     case PutStack:
     case KillStack:
     case GetStack:

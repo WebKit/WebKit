@@ -110,6 +110,7 @@ enum JSType : uint8_t {
     ProxyObjectType,
     JSGeneratorType,
     JSAsyncGeneratorType,
+    JSArrayIteratorType,
     JSPromiseType,
     JSMapType,
     JSSetType,

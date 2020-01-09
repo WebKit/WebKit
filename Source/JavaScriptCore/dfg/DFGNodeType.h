@@ -238,6 +238,8 @@ namespace JSC { namespace DFG {
     macro(GetButterfly, NodeResultStorage) \
     macro(NukeStructureAndSetButterfly, NodeMustGenerate) \
     macro(CheckArray, NodeMustGenerate) \
+    /* This checks if the edge is a typed array and if it is neutered. */ \
+    macro(CheckNeutered, NodeMustGenerate) \
     macro(Arrayify, NodeMustGenerate) \
     macro(ArrayifyToStructure, NodeMustGenerate) \
     macro(GetIndexedPropertyStorage, NodeResultStorage) \
@@ -355,6 +357,7 @@ namespace JSC { namespace DFG {
     macro(NewArrayWithSpread, NodeResultJS | NodeHasVarArgs) \
     macro(NewArrayWithSize, NodeResultJS | NodeMustGenerate) \
     macro(NewArrayBuffer, NodeResultJS) \
+    macro(NewArrayIterator, NodeResultJS) \
     macro(NewTypedArray, NodeResultJS | NodeMustGenerate) \
     macro(NewRegexp, NodeResultJS) \
     macro(NewSymbol, NodeResultJS) \
@@ -373,6 +376,8 @@ namespace JSC { namespace DFG {
     macro(PhantomNewGeneratorFunction, NodeResultJS | NodeMustGenerate) \
     macro(PhantomNewAsyncFunction, NodeResultJS | NodeMustGenerate) \
     macro(PhantomNewAsyncGeneratorFunction, NodeResultJS | NodeMustGenerate) \
+    macro(PhantomNewArrayIterator, NodeResultJS | NodeMustGenerate) \
+    macro(MaterializeNewInternalFieldObject, NodeResultJS | NodeHasVarArgs) \
     macro(PhantomCreateActivation, NodeResultJS | NodeMustGenerate) \
     macro(MaterializeCreateActivation, NodeResultJS | NodeHasVarArgs) \
     macro(PhantomNewRegexp, NodeResultJS | NodeMustGenerate) \

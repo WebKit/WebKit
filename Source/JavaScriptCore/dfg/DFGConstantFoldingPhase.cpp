@@ -1074,6 +1074,7 @@ private:
             case PhantomNewGeneratorFunction:
             case PhantomNewAsyncGeneratorFunction:
             case PhantomNewAsyncFunction:
+            case PhantomNewArrayIterator:
             case PhantomCreateActivation:
             case PhantomDirectArguments:
             case PhantomClonedArguments:

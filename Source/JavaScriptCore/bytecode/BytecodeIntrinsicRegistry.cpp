@@ -31,6 +31,7 @@
 #include "BuiltinNames.h"
 #include "BytecodeGenerator.h"
 #include "IterationKind.h"
+#include "JSArrayIterator.h"
 #include "JSAsyncGenerator.h"
 #include "JSCInlines.h"
 #include "JSGenerator.h"
@@ -55,9 +56,9 @@ BytecodeIntrinsicRegistry::BytecodeIntrinsicRegistry(VM& vm)
 
     m_undefined.set(m_vm, jsUndefined());
     m_Infinity.set(m_vm, jsDoubleNumber(std::numeric_limits<double>::infinity()));
-    m_iterationKindKey.set(m_vm, jsNumber(IterateKey));
-    m_iterationKindValue.set(m_vm, jsNumber(IterateValue));
-    m_iterationKindKeyValue.set(m_vm, jsNumber(IterateKeyValue));
+    m_iterationKindKey.set(m_vm, jsNumber(static_cast<unsigned>(IterationKind::Keys)));
+    m_iterationKindValue.set(m_vm, jsNumber(static_cast<unsigned>(IterationKind::Values)));
+    m_iterationKindKeyValue.set(m_vm, jsNumber(static_cast<unsigned>(IterationKind::Entries)));
     m_MAX_ARRAY_INDEX.set(m_vm, jsNumber(MAX_ARRAY_INDEX));
     m_MAX_STRING_LENGTH.set(m_vm, jsNumber(JSString::MaxLength));
     m_MAX_SAFE_INTEGER.set(m_vm, jsDoubleNumber(maxSafeInteger()));
@@ -87,6 +88,10 @@ BytecodeIntrinsicRegistry::BytecodeIntrinsicRegistry(VM& vm)
     m_GeneratorResumeModeReturn.set(m_vm, jsNumber(static_cast<int32_t>(JSGenerator::GeneratorResumeMode::ReturnMode)));
     m_GeneratorStateCompleted.set(m_vm, jsNumber(static_cast<int32_t>(JSGenerator::GeneratorState::Completed)));
     m_GeneratorStateExecuting.set(m_vm, jsNumber(static_cast<int32_t>(JSGenerator::GeneratorState::Executing)));
+    m_arrayIteratorFieldIteratedObject.set(m_vm, jsNumber(static_cast<int32_t>(JSArrayIterator::Field::IteratedObject)));
+    m_arrayIteratorFieldIndex.set(m_vm, jsNumber(static_cast<int32_t>(JSArrayIterator::Field::Index)));
+    m_arrayIteratorFieldIsDone.set(m_vm, jsNumber(static_cast<int32_t>(JSArrayIterator::Field::IsDone)));
+    m_arrayIteratorFieldKind.set(m_vm, jsNumber(static_cast<int32_t>(JSArrayIterator::Field::Kind)));
     m_asyncGeneratorFieldSuspendReason.set(m_vm, jsNumber(static_cast<unsigned>(JSAsyncGenerator::Field::SuspendReason)));
     m_asyncGeneratorFieldQueueFirst.set(m_vm, jsNumber(static_cast<unsigned>(JSAsyncGenerator::Field::QueueFirst)));
     m_asyncGeneratorFieldQueueLast.set(m_vm, jsNumber(static_cast<unsigned>(JSAsyncGenerator::Field::QueueLast)));

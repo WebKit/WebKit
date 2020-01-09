@@ -1,3 +1,171 @@
+2020-01-08  Keith Miller  <keith_miller@apple.com>
+
+        [JSC] Introduce JSArrayIterator
+        https://bugs.webkit.org/show_bug.cgi?id=204043
+
+        Reviewed by Yusuke Suzuki.
+
+        This patch introduces JSArrayIterator that changes the iterator object
+        from a JSFinalObject to an InternalFieldsObject. This makes accessing it
+        much easier from C++ code and makes the iterator object smaller. It also
+        means that the JS code for the next function is much simpler and can *almost*
+        be inlined without shenanigans.
+
+        As part of this patch the keys/values/entries functions have been converted to
+        C++ with intrinsics since that's slightly more efficient in the LLInt/Baseline.
+
+        Lastly, this patch also add a custom ISOSubspace for JSArrayIterator objects.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Sources.txt:
+        * builtins/ArrayIteratorPrototype.js:
+        (next):
+        (globalPrivate.arrayIteratorNextHelper):
+        (globalPrivate.arrayIteratorValueNext): Deleted.
+        (globalPrivate.arrayIteratorKeyNext): Deleted.
+        (globalPrivate.arrayIteratorKeyValueNext): Deleted.
+        * builtins/ArrayPrototype.js:
+        (globalPrivate.ArrayIterator): Deleted.
+        (values): Deleted.
+        (keys): Deleted.
+        (entries): Deleted.
+        * builtins/TypedArrayPrototype.js:
+        (values): Deleted.
+        (keys): Deleted.
+        (entries): Deleted.
+        * bytecode/BytecodeIntrinsicRegistry.cpp:
+        (JSC::BytecodeIntrinsicRegistry::BytecodeIntrinsicRegistry):
+        * bytecode/BytecodeIntrinsicRegistry.h:
+        * bytecompiler/BytecodeGenerator.h:
+        (JSC::BytecodeGenerator::emitIsArrayIterator):
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::arrayIteratorInternalFieldIndex):
+        (JSC::BytecodeIntrinsicNode::emit_intrinsic_getArrayIteratorInternalField):
+        (JSC::BytecodeIntrinsicNode::emit_intrinsic_putArrayIteratorInternalField):
+        (JSC::BytecodeIntrinsicNode::emit_intrinsic_isGenerator): Deleted.
+        (JSC::BytecodeIntrinsicNode::emit_intrinsic_isAsyncGenerator): Deleted.
+        (JSC::BytecodeIntrinsicNode::emit_intrinsic_isJSArray): Deleted.
+        (JSC::BytecodeIntrinsicNode::emit_intrinsic_isPromise): Deleted.
+        (JSC::BytecodeIntrinsicNode::emit_intrinsic_isProxyObject): Deleted.
+        (JSC::BytecodeIntrinsicNode::emit_intrinsic_isRegExpObject): Deleted.
+        (JSC::BytecodeIntrinsicNode::emit_intrinsic_isObject): Deleted.
+        (JSC::BytecodeIntrinsicNode::emit_intrinsic_isDerivedArray): Deleted.
+        (JSC::BytecodeIntrinsicNode::emit_intrinsic_isMap): Deleted.
+        (JSC::BytecodeIntrinsicNode::emit_intrinsic_isSet): Deleted.
+        (JSC::BytecodeIntrinsicNode::emit_intrinsic_isUndefinedOrNull): Deleted.
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::handleIntrinsicCall):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGClobbersExitState.cpp:
+        (JSC::DFG::clobbersExitState):
+        * dfg/DFGConstantFoldingPhase.cpp:
+        (JSC::DFG::ConstantFoldingPhase::foldConstants):
+        * dfg/DFGDoesGC.cpp:
+        (JSC::DFG::doesGC):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::dump):
+        * dfg/DFGHeapLocation.cpp:
+        (WTF::printInternal):
+        * dfg/DFGHeapLocation.h:
+        * dfg/DFGMayExit.cpp:
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::convertToPhantomNewObject):
+        (JSC::DFG::Node::convertToPhantomNewArrayIterator):
+        (JSC::DFG::Node::convertToPhantomCreateActivation):
+        (JSC::DFG::Node::hasStructure):
+        (JSC::DFG::Node::hasObjectMaterializationData):
+        (JSC::DFG::Node::isPhantomAllocation):
+        * dfg/DFGNodeType.h:
+        * dfg/DFGObjectAllocationSinkingPhase.cpp:
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGOperations.h:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        * dfg/DFGPromotedHeapLocation.cpp:
+        (WTF::printInternal):
+        * dfg/DFGPromotedHeapLocation.h:
+        (JSC::DFG::PromotedLocationDescriptor::neededForMaterialization const):
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileCheckNeutered):
+        (JSC::DFG::SpeculativeJIT::compileToObjectOrCallObjectConstructor):
+        (JSC::DFG::SpeculativeJIT::compileNewInternalFieldObject):
+        (JSC::DFG::SpeculativeJIT::compileNewArrayIterator):
+        * dfg/DFGSpeculativeJIT.h:
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGStoreBarrierInsertionPhase.cpp:
+        * dfg/DFGTypeCheckHoistingPhase.cpp:
+        (JSC::DFG::TypeCheckHoistingPhase::identifyRedundantStructureChecks):
+        (JSC::DFG::TypeCheckHoistingPhase::identifyRedundantArrayChecks):
+        * dfg/DFGValidate.cpp:
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileNode):
+        (JSC::FTL::DFG::LowerDFGToB3::compileToObjectOrCallObjectConstructor):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCheckArray):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCheckNeutered):
+        (JSC::FTL::DFG::LowerDFGToB3::compileNewInternalFieldObject):
+        (JSC::FTL::DFG::LowerDFGToB3::compileNewArrayIterator):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCreateInternalFieldObject):
+        (JSC::FTL::DFG::LowerDFGToB3::compileMaterializeNewInternalFieldObjectImpl):
+        (JSC::FTL::DFG::LowerDFGToB3::compileMaterializeNewInternalFieldObject):
+        * ftl/FTLOperations.cpp:
+        (JSC::FTL::operationPopulateObjectInOSR):
+        (JSC::FTL::operationMaterializeObjectInOSR):
+        * inspector/JSInjectedScriptHost.cpp:
+        (Inspector::JSInjectedScriptHost::subtype):
+        (Inspector::JSInjectedScriptHost::getInternalProperties):
+        (Inspector::cloneArrayIteratorObject):
+        (Inspector::JSInjectedScriptHost::iteratorEntries):
+        * runtime/ArrayPrototype.cpp:
+        (JSC::ArrayPrototype::finishCreation):
+        (JSC::createArrayIteratorObject):
+        (JSC::arrayProtoFuncValues):
+        (JSC::arrayProtoFuncEntries):
+        (JSC::arrayProtoFuncKeys):
+        * runtime/CommonIdentifiers.h:
+        * runtime/Intrinsic.cpp:
+        (JSC::intrinsicName):
+        * runtime/Intrinsic.h:
+        * runtime/IterationKind.h:
+        (): Deleted.
+        * runtime/JSArrayIterator.cpp: Added.
+        (JSC::JSArrayIterator::create):
+        (JSC::JSArrayIterator::createWithInitialValues):
+        (JSC::JSArrayIterator::createStructure):
+        (JSC::JSArrayIterator::JSArrayIterator):
+        (JSC::JSArrayIterator::finishCreation):
+        (JSC::JSArrayIterator::visitChildren):
+        * runtime/JSArrayIterator.h: Added.
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+        (JSC::JSGlobalObject::visitChildren):
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::arrayIteratorPrototype const):
+        (JSC::JSGlobalObject::arrayIteratorStructure const):
+        * runtime/JSMapIterator.h:
+        * runtime/JSSetIterator.h:
+        * runtime/JSType.cpp:
+        (WTF::printInternal):
+        * runtime/JSType.h:
+        * runtime/JSTypedArrayViewPrototype.cpp:
+        (JSC::createTypedArrayIteratorObject):
+        (JSC::typedArrayViewProtoFuncValues):
+        (JSC::typedArrayProtoViewFuncEntries):
+        (JSC::typedArrayViewProtoFuncKeys):
+        (JSC::JSTypedArrayViewPrototype::finishCreation):
+        * runtime/VM.cpp:
+        * runtime/VM.h:
+
 2020-01-08  Michael Saboff  <msaboff@apple.com>
 
         Instruction.h: Multiplication result converted to larger type

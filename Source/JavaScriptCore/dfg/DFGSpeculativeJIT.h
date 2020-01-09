@@ -714,6 +714,8 @@ public:
     void compileMovHint(Node*);
     void compileMovHintAndCheck(Node*);
 
+    void compileCheckNeutered(Node*);
+
     void cachedGetById(CodeOrigin, JSValueRegs base, JSValueRegs result, unsigned identifierNumber, JITCompiler::Jump slowPathTarget, SpillRegistersMode, AccessType);
     void cachedPutById(CodeOrigin, GPRReg baseGPR, JSValueRegs valueRegs, GPRReg scratchGPR, unsigned identifierNumber, PutKind, JITCompiler::Jump slowPathTarget = JITCompiler::Jump(), SpillRegistersMode = NeedToSpill);
     void cachedGetByVal(CodeOrigin, JSValueRegs base, JSValueRegs property, JSValueRegs result, JITCompiler::Jump slowPathTarget);
@@ -1485,6 +1487,7 @@ public:
     void compileNewPromise(Node*);
     void compileNewGenerator(Node*);
     void compileNewAsyncGenerator(Node*);
+    void compileNewArrayIterator(Node*);
     void compileToPrimitive(Node*);
     void compileToNumeric(Node*);
     void compileLogShadowChickenPrologue(Node*);

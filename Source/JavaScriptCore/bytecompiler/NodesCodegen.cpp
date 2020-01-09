@@ -33,6 +33,7 @@
 #include "BytecodeGeneratorBaseInlines.h"
 #include "CallFrame.h"
 #include "JIT.h"
+#include "JSArrayIterator.h"
 #include "JSAsyncGenerator.h"
 #include "JSCInlines.h"
 #include "JSFunction.h"
@@ -1063,6 +1064,21 @@ static JSAsyncGenerator::Field asyncGeneratorInternalFieldIndex(BytecodeIntrinsi
     return JSAsyncGenerator::Field::State;
 }
 
+static JSArrayIterator::Field arrayIteratorInternalFieldIndex(BytecodeIntrinsicNode* node)
+{
+    ASSERT(node->entry().type() == BytecodeIntrinsicRegistry::Type::Emitter);
+    if (node->entry().emitter() == &BytecodeIntrinsicNode::emit_intrinsic_arrayIteratorFieldIndex)
+        return JSArrayIterator::Field::Index;
+    if (node->entry().emitter() == &BytecodeIntrinsicNode::emit_intrinsic_arrayIteratorFieldIsDone)
+        return JSArrayIterator::Field::IsDone;
+    if (node->entry().emitter() == &BytecodeIntrinsicNode::emit_intrinsic_arrayIteratorFieldIteratedObject)
+        return JSArrayIterator::Field::IteratedObject;
+    if (node->entry().emitter() == &BytecodeIntrinsicNode::emit_intrinsic_arrayIteratorFieldKind)
+        return JSArrayIterator::Field::Kind;
+    RELEASE_ASSERT_NOT_REACHED();
+    return JSArrayIterator::Field::Index;
+}
+
 RegisterID* BytecodeIntrinsicNode::emit_intrinsic_getPromiseInternalField(BytecodeGenerator& generator, RegisterID* dst)
 {
     ArgumentListNode* node = m_args->m_listNode;
@@ -1097,6 +1113,19 @@ RegisterID* BytecodeIntrinsicNode::emit_intrinsic_getAsyncGeneratorInternalField
     RELEASE_ASSERT(node->m_expr->isBytecodeIntrinsicNode());
     unsigned index = static_cast<unsigned>(asyncGeneratorInternalFieldIndex(static_cast<BytecodeIntrinsicNode*>(node->m_expr)));
     ASSERT(index < JSAsyncGenerator::numberOfInternalFields);
+    ASSERT(!node->m_next);
+
+    return generator.emitGetInternalField(generator.finalDestination(dst), base.get(), index);
+}
+
+RegisterID* BytecodeIntrinsicNode::emit_intrinsic_getArrayIteratorInternalField(BytecodeGenerator& generator, RegisterID* dst)
+{
+    ArgumentListNode* node = m_args->m_listNode;
+    RefPtr<RegisterID> base = generator.emitNode(node);
+    node = node->m_next;
+    RELEASE_ASSERT(node->m_expr->isBytecodeIntrinsicNode());
+    unsigned index = static_cast<unsigned>(arrayIteratorInternalFieldIndex(static_cast<BytecodeIntrinsicNode*>(node->m_expr)));
+    ASSERT(index < JSArrayIterator::numberOfInternalFields);
     ASSERT(!node->m_next);
 
     return generator.emitGetInternalField(generator.finalDestination(dst), base.get(), index);
@@ -1219,6 +1248,22 @@ RegisterID* BytecodeIntrinsicNode::emit_intrinsic_putAsyncGeneratorInternalField
     return generator.move(dst, generator.emitPutInternalField(base.get(), index, value.get()));
 }
 
+RegisterID* BytecodeIntrinsicNode::emit_intrinsic_putArrayIteratorInternalField(BytecodeGenerator& generator, RegisterID* dst)
+{
+    ArgumentListNode* node = m_args->m_listNode;
+    RefPtr<RegisterID> base = generator.emitNode(node);
+    node = node->m_next;
+    RELEASE_ASSERT(node->m_expr->isBytecodeIntrinsicNode());
+    unsigned index = static_cast<unsigned>(arrayIteratorInternalFieldIndex(static_cast<BytecodeIntrinsicNode*>(node->m_expr)));
+    ASSERT(index < JSArrayIterator::numberOfInternalFields);
+    node = node->m_next;
+    RefPtr<RegisterID> value = generator.emitNode(node);
+
+    ASSERT(!node->m_next);
+
+    return generator.move(dst, generator.emitPutInternalField(base.get(), index, value.get()));
+}
+
 RegisterID* BytecodeIntrinsicNode::emit_intrinsic_tailCallForwardArguments(BytecodeGenerator& generator, RegisterID* dst)
 {
     ArgumentListNode* node = m_args->m_listNode;
@@ -1333,104 +1378,29 @@ RegisterID* BytecodeIntrinsicNode::emit_intrinsic_idWithProfile(BytecodeGenerato
     return generator.move(dst, generator.emitIdWithProfile(idValue.get(), speculation));
 }
 
-RegisterID* BytecodeIntrinsicNode::emit_intrinsic_isGenerator(JSC::BytecodeGenerator& generator, JSC::RegisterID* dst)
-{
-    ArgumentListNode* node = m_args->m_listNode;
-    RefPtr<RegisterID> src = generator.emitNode(node);
-    ASSERT(!node->m_next);
+#define CREATE_INTRINSIC_FOR_BRAND_CHECK(lowerName, upperName) \
+    RegisterID* BytecodeIntrinsicNode::emit_intrinsic_##lowerName(JSC::BytecodeGenerator& generator, JSC::RegisterID* dst) \
+    {                                                                                                                      \
+        ArgumentListNode* node = m_args->m_listNode;                                                                       \
+        RefPtr<RegisterID> src = generator.emitNode(node);                                                                 \
+        ASSERT(!node->m_next);                                                                                             \
+        return generator.move(dst, generator.emit##upperName(generator.tempDestination(dst), src.get()));                  \
+    }
 
-    return generator.move(dst, generator.emitIsGenerator(generator.tempDestination(dst), src.get()));
-}
+CREATE_INTRINSIC_FOR_BRAND_CHECK(isObject, IsObject)
+CREATE_INTRINSIC_FOR_BRAND_CHECK(isJSArray, IsJSArray)
+CREATE_INTRINSIC_FOR_BRAND_CHECK(isProxyObject, IsProxyObject)
+CREATE_INTRINSIC_FOR_BRAND_CHECK(isDerivedArray, IsDerivedArray)
+CREATE_INTRINSIC_FOR_BRAND_CHECK(isGenerator, IsGenerator)
+CREATE_INTRINSIC_FOR_BRAND_CHECK(isAsyncGenerator, IsAsyncGenerator)
+CREATE_INTRINSIC_FOR_BRAND_CHECK(isPromise, IsPromise)
+CREATE_INTRINSIC_FOR_BRAND_CHECK(isRegExpObject, IsRegExpObject)
+CREATE_INTRINSIC_FOR_BRAND_CHECK(isMap, IsMap)
+CREATE_INTRINSIC_FOR_BRAND_CHECK(isSet, IsSet)
+CREATE_INTRINSIC_FOR_BRAND_CHECK(isArrayIterator, IsArrayIterator)
+CREATE_INTRINSIC_FOR_BRAND_CHECK(isUndefinedOrNull, IsUndefinedOrNull)
 
-RegisterID* BytecodeIntrinsicNode::emit_intrinsic_isAsyncGenerator(JSC::BytecodeGenerator& generator, JSC::RegisterID* dst)
-{
-    ArgumentListNode* node = m_args->m_listNode;
-    RefPtr<RegisterID> src = generator.emitNode(node);
-    ASSERT(!node->m_next);
-
-    return generator.move(dst, generator.emitIsAsyncGenerator(generator.tempDestination(dst), src.get()));
-}
-
-RegisterID* BytecodeIntrinsicNode::emit_intrinsic_isJSArray(JSC::BytecodeGenerator& generator, JSC::RegisterID* dst)
-{
-    ArgumentListNode* node = m_args->m_listNode;
-    RefPtr<RegisterID> src = generator.emitNode(node);
-    ASSERT(!node->m_next);
-
-    return generator.move(dst, generator.emitIsJSArray(generator.tempDestination(dst), src.get()));
-}
-
-RegisterID* BytecodeIntrinsicNode::emit_intrinsic_isPromise(JSC::BytecodeGenerator& generator, JSC::RegisterID* dst)
-{
-    ArgumentListNode* node = m_args->m_listNode;
-    RefPtr<RegisterID> src = generator.emitNode(node);
-    ASSERT(!node->m_next);
-
-    return generator.move(dst, generator.emitIsPromise(generator.tempDestination(dst), src.get()));
-}
-
-RegisterID* BytecodeIntrinsicNode::emit_intrinsic_isProxyObject(JSC::BytecodeGenerator& generator, JSC::RegisterID* dst)
-{
-    ArgumentListNode* node = m_args->m_listNode;
-    RefPtr<RegisterID> src = generator.emitNode(node);
-    ASSERT(!node->m_next);
-
-    return generator.move(dst, generator.emitIsProxyObject(generator.tempDestination(dst), src.get()));
-}
-
-RegisterID* BytecodeIntrinsicNode::emit_intrinsic_isRegExpObject(JSC::BytecodeGenerator& generator, JSC::RegisterID* dst)
-{
-    ArgumentListNode* node = m_args->m_listNode;
-    RefPtr<RegisterID> src = generator.emitNode(node);
-    ASSERT(!node->m_next);
-
-    return generator.move(dst, generator.emitIsRegExpObject(generator.tempDestination(dst), src.get()));
-}
-
-RegisterID* BytecodeIntrinsicNode::emit_intrinsic_isObject(BytecodeGenerator& generator, RegisterID* dst)
-{
-    ArgumentListNode* node = m_args->m_listNode;
-    RefPtr<RegisterID> src = generator.emitNode(node);
-    ASSERT(!node->m_next);
-
-    return generator.move(dst, generator.emitIsObject(generator.tempDestination(dst), src.get()));
-}
-
-RegisterID* BytecodeIntrinsicNode::emit_intrinsic_isDerivedArray(JSC::BytecodeGenerator& generator, JSC::RegisterID* dst)
-{
-    ArgumentListNode* node = m_args->m_listNode;
-    RefPtr<RegisterID> src = generator.emitNode(node);
-    ASSERT(!node->m_next);
-
-    return generator.move(dst, generator.emitIsDerivedArray(generator.tempDestination(dst), src.get()));
-}
-
-RegisterID* BytecodeIntrinsicNode::emit_intrinsic_isMap(JSC::BytecodeGenerator& generator, JSC::RegisterID* dst)
-{
-    ArgumentListNode* node = m_args->m_listNode;
-    RefPtr<RegisterID> src = generator.emitNode(node);
-    ASSERT(!node->m_next);
-
-    return generator.move(dst, generator.emitIsMap(generator.tempDestination(dst), src.get()));
-}
-
-RegisterID* BytecodeIntrinsicNode::emit_intrinsic_isSet(JSC::BytecodeGenerator& generator, JSC::RegisterID* dst)
-{
-    ArgumentListNode* node = m_args->m_listNode;
-    RefPtr<RegisterID> src = generator.emitNode(node);
-    ASSERT(!node->m_next);
-
-    return generator.move(dst, generator.emitIsSet(generator.tempDestination(dst), src.get()));
-}
-
-RegisterID* BytecodeIntrinsicNode::emit_intrinsic_isUndefinedOrNull(JSC::BytecodeGenerator& generator, JSC::RegisterID* dst)
-{
-    ArgumentListNode* node = m_args->m_listNode;
-    RefPtr<RegisterID> src = generator.emitNode(node);
-    ASSERT(!node->m_next);
-
-    return generator.move(dst, generator.emitIsUndefinedOrNull(generator.tempDestination(dst), src.get()));
-}
+#undef CREATE_INTRINSIC_FOR_BRAND_CHECK
 
 RegisterID* BytecodeIntrinsicNode::emit_intrinsic_newArrayWithSize(JSC::BytecodeGenerator& generator, JSC::RegisterID* dst)
 {

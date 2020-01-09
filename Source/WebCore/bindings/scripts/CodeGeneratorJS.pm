@@ -6467,10 +6467,10 @@ static inline EncodedJSValue ${functionName}Caller(JSGlobalObject* lexicalGlobal
 
 END
         } else {
-            my $iterationKind = "KeyValue";
-            $iterationKind = "Key" if $propertyName eq "keys";
-            $iterationKind = "Value" if $propertyName eq "values";
-            $iterationKind = "Value" if $propertyName eq "entries" and not $interface->iterable->isKeyValue;
+            my $iterationKind = "Entries";
+            $iterationKind = "Keys" if $propertyName eq "keys";
+            $iterationKind = "Values" if $propertyName eq "values";
+            $iterationKind = "Values" if $propertyName eq "entries" and not $interface->iterable->isKeyValue;
 
             push(@implContent,  <<END);
 static inline EncodedJSValue ${functionName}Caller(JSGlobalObject*, CallFrame*, JS$interfaceName* thisObject, JSC::ThrowScope&)

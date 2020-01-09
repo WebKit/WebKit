@@ -135,8 +135,8 @@ void printInternal(PrintStream& out, PromotedLocationKind kind)
         out.print("RegExpObjectLastIndexPLoc");
         return;
 
-    case PromiseInternalFieldPLoc:
-        out.print("PromiseInternalFieldPLoc");
+    case InternalFieldObjectPLoc:
+        out.print("InternalFieldObjectPLoc");
         return;
     }
     

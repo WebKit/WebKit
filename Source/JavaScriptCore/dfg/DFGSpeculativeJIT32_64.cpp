@@ -2218,6 +2218,11 @@ void SpeculativeJIT::compile(Node* node)
         break;
     }
         
+    case CheckNeutered: {
+        compileCheckNeutered(node);
+        break;
+    }
+
     case CheckArray: {
         checkArray(node);
         break;
@@ -3250,6 +3255,11 @@ void SpeculativeJIT::compile(Node* node)
         break;
     }
 
+    case NewArrayIterator: {
+        compileNewArrayIterator(node);
+        break;
+    }
+
     case GetCallee: {
         compileGetCallee(node);
         break;
@@ -4197,10 +4207,12 @@ void SpeculativeJIT::compile(Node* node)
     case PhantomNewAsyncFunction:
     case PhantomNewAsyncGeneratorFunction:
     case PhantomCreateActivation:
+    case PhantomNewArrayIterator:
     case PhantomNewRegexp:
     case PutHint:
     case CheckStructureImmediate:
     case MaterializeCreateActivation:
+    case MaterializeNewInternalFieldObject:
     case PutStack:
     case KillStack:
     case GetStack:

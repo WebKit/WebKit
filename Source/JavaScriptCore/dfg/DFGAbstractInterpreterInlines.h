@@ -1466,7 +1466,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
                     bool ok = true;
                     Optional<bool> result;
                     child.m_structure.forEach(
-                        [&](RegisteredStructure structure) {
+                        [&] (RegisteredStructure structure) {
                             bool matched = structure->typeInfo().type() == node->queriedType();
                             if (!result)
                                 result = matched;
@@ -1488,7 +1488,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
                     break;
             }
         }
-        
+
         // FIXME: This code should really use AbstractValue::isType() and
         // AbstractValue::couldBeType().
         // https://bugs.webkit.org/show_bug.cgi?id=146870
@@ -2844,17 +2844,11 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
     }
 
     case NewPromise:
-        ASSERT(!!node->structure().get());
-        setForNode(node, node->structure());
-        break;
-
     case NewGenerator:
-    case NewAsyncGenerator:
-        ASSERT(!!node->structure().get());
-        setForNode(node, node->structure());
-        break;
-        
+    case NewAsyncGenerator:    
+    case NewArrayIterator:
     case NewObject:
+    case MaterializeNewInternalFieldObject:
         ASSERT(!!node->structure().get());
         setForNode(node, node->structure());
         break;
@@ -2936,6 +2930,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
     case PhantomSpread:
     case PhantomNewArrayWithSpread:
     case PhantomNewArrayBuffer:
+    case PhantomNewArrayIterator:
     case PhantomNewRegexp:
     case BottomValue: {
         clearForNode(node);
@@ -3364,6 +3359,11 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         setTypeForNode(node, signature->result);
         break;
     }
+
+    case CheckNeutered: {
+        break;
+    }
+
     case CheckArray: {
         if (node->arrayMode().alreadyChecked(m_graph, node, forNode(node->child1()))) {
             m_state.setShouldTryConstantFolding(true);
@@ -3423,6 +3423,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         filterArrayModes(node->child1(), node->arrayMode().arrayModesThatPassFiltering());
         break;
     }
+
     case Arrayify: {
         if (node->arrayMode().alreadyChecked(m_graph, node, forNode(node->child1()))) {
             didFoldClobberStructures();

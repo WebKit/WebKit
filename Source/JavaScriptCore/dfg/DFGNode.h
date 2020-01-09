@@ -614,7 +614,7 @@ public:
     
     void convertToPhantomNewObject()
     {
-        ASSERT(m_op == NewObject || m_op == MaterializeNewObject);
+        ASSERT(m_op == NewObject);
         m_op = PhantomNewObject;
         m_flags &= ~NodeHasVarArgs;
         m_flags |= NodeMustGenerate;
@@ -643,6 +643,17 @@ public:
         children = AdjacencyList();
     }
 
+    void convertToPhantomNewArrayIterator()
+    {
+        ASSERT(m_op == NewArrayIterator);
+        m_op = PhantomNewArrayIterator;
+        m_flags &= ~NodeHasVarArgs;
+        m_flags |= NodeMustGenerate;
+        m_opInfo = OpInfoWrapper();
+        m_opInfo2 = OpInfoWrapper();
+        children = AdjacencyList();
+    }
+
     void convertToPhantomNewAsyncFunction()
     {
         ASSERT(m_op == NewAsyncFunction);
@@ -665,7 +676,7 @@ public:
     
     void convertToPhantomCreateActivation()
     {
-        ASSERT(m_op == CreateActivation || m_op == MaterializeCreateActivation);
+        ASSERT(m_op == CreateActivation);
         m_op = PhantomCreateActivation;
         m_flags &= ~NodeHasVarArgs;
         m_flags |= NodeMustGenerate;
@@ -1939,10 +1950,12 @@ public:
     {
         switch (op()) {
         case ArrayifyToStructure:
+        case MaterializeNewInternalFieldObject:
         case NewObject:
         case NewPromise:
         case NewGenerator:
         case NewAsyncGenerator:
+        case NewArrayIterator:
         case NewStringObject:
             return true;
         default:
@@ -2011,6 +2024,7 @@ public:
     {
         switch (op()) {
         case MaterializeNewObject:
+        case MaterializeNewInternalFieldObject:
         case MaterializeCreateActivation:
             return true;
 
@@ -2107,6 +2121,7 @@ public:
         case PhantomNewGeneratorFunction:
         case PhantomNewAsyncFunction:
         case PhantomNewAsyncGeneratorFunction:
+        case PhantomNewArrayIterator:
         case PhantomCreateActivation:
         case PhantomNewRegexp:
             return true;

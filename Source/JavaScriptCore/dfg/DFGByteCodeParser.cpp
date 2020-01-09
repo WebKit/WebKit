@@ -52,6 +52,7 @@
 #include "Heap.h"
 #include "InByIdStatus.h"
 #include "InstanceOfStatus.h"
+#include "JSArrayIterator.h"
 #include "JSCInlines.h"
 #include "JSImmutableButterfly.h"
 #include "JSInternalPromise.h"
@@ -2358,6 +2359,63 @@ bool ByteCodeParser::handleIntrinsicCall(Node* callee, VirtualRegister result, I
             VirtualRegister xOperand = virtualRegisterForArgument(1, registerOffset);
             VirtualRegister yOperand = virtualRegisterForArgument(2, registerOffset);
             setResult(addToGraph(ArithPow, get(xOperand), get(yOperand)));
+            return true;
+        }
+
+        case TypedArrayEntriesIntrinsic:
+        case TypedArrayKeysIntrinsic:
+        case TypedArrayValuesIntrinsic: {
+            if (m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadIndexingType)
+                || m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadType))
+                return false;
+
+            ArrayMode mode = getArrayMode(Array::Read);
+            if (!mode.isSomeTypedArrayView())
+                return false;
+
+            addToGraph(CheckArray, OpInfo(mode.asWord()), get(virtualRegisterForArgument(0, registerOffset)));
+            addToGraph(CheckNeutered, get(virtualRegisterForArgument(0, registerOffset)));
+            FALLTHROUGH;
+        }
+
+        case ArrayEntriesIntrinsic:
+        case ArrayKeysIntrinsic:
+        case ArrayValuesIntrinsic: {
+            insertChecks();
+
+            IterationKind kind;
+            switch (intrinsic) {
+            case ArrayValuesIntrinsic:
+            case TypedArrayValuesIntrinsic:
+                kind = IterationKind::Values;
+                break;
+            case ArrayKeysIntrinsic:
+            case TypedArrayKeysIntrinsic:
+                kind = IterationKind::Keys;
+                break;
+            case ArrayEntriesIntrinsic:
+            case TypedArrayEntriesIntrinsic:
+                kind = IterationKind::Entries;
+                break;
+            default:
+                RELEASE_ASSERT_NOT_REACHED();
+                break;
+            }
+
+            // Add the constant before exit becomes invalid because we may want to insert (redundant) checks on it in Fixup.
+            Node* kindNode = jsConstant(jsNumber(static_cast<uint32_t>(kind)));
+
+            // We don't have an existing error string.
+            unsigned errorStringIndex = UINT32_MAX;
+            Node* object = addToGraph(ToObject, OpInfo(errorStringIndex), OpInfo(SpecNone), get(virtualRegisterForArgument(0, registerOffset)));
+
+            JSGlobalObject* globalObject = m_graph.globalObjectFor(currentNodeOrigin().semantic);
+            Node* iterator = addToGraph(NewArrayIterator, OpInfo(m_graph.registerStructure(globalObject->arrayIteratorStructure())));
+
+            addToGraph(PutInternalField, OpInfo(static_cast<uint32_t>(JSArrayIterator::Field::IteratedObject)), iterator, object);
+            addToGraph(PutInternalField, OpInfo(static_cast<uint32_t>(JSArrayIterator::Field::Kind)), iterator, kindNode);
+
+            setResult(iterator);
             return true;
         }
             

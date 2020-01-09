@@ -27,11 +27,11 @@
 
 namespace JSC {
     
-enum IterationKind : uint32_t {
-    IterateKey,
-    IterateValue,
-    IterateKeyValue,
+enum class IterationKind : uint32_t {
+    Keys,
+    Values,
+    Entries,
 };
 
-    
+
 } // namespace JSC

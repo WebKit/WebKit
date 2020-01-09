@@ -25,6 +25,8 @@
 
 #pragma once
 
+#include "IterationKind.h"
+
 namespace JSC {
 
 enum Intrinsic : uint8_t {
@@ -52,6 +54,9 @@ enum Intrinsic : uint8_t {
     ArrayPopIntrinsic,
     ArraySliceIntrinsic,
     ArrayIndexOfIntrinsic,
+    ArrayValuesIntrinsic,
+    ArrayKeysIntrinsic,
+    ArrayEntriesIntrinsic,
     CharCodeAtIntrinsic,
     CharAtIntrinsic,
     DatePrototypeGetTimeIntrinsic,
@@ -105,6 +110,9 @@ enum Intrinsic : uint8_t {
     RandomIntrinsic,
     FRoundIntrinsic,
     TruncIntrinsic,
+    TypedArrayValuesIntrinsic,
+    TypedArrayKeysIntrinsic,
+    TypedArrayEntriesIntrinsic,
     IsTypedArrayViewIntrinsic,
     BoundFunctionCallIntrinsic,
     JSMapGetIntrinsic,

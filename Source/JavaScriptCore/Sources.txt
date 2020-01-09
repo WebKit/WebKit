@@ -820,6 +820,7 @@ runtime/JSArrayBufferView.cpp
 runtime/JSAsyncFunction.cpp
 runtime/JSAsyncGenerator.cpp
 runtime/JSAsyncGeneratorFunction.cpp
+runtime/JSArrayIterator.cpp
 runtime/JSBigInt.cpp
 runtime/JSBoundFunction.cpp
 runtime/JSCConfig.cpp

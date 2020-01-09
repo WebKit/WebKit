@@ -473,7 +473,7 @@ private:
                     Node* node = block->at(i);
                     m_graph.doToChildren(node, [&] (const Edge& edge) {
                         Node* child = edge.node();
-                        VALIDATE((node), block->isInPhis(child) || seenNodes.contains(child));
+                        VALIDATE((node, edge), block->isInPhis(child) || seenNodes.contains(child));
                     });
                     seenNodes.add(node);
                 }

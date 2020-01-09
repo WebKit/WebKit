@@ -79,9 +79,9 @@ public:
         if (!bucket)
             return false;
 
-        if (m_kind == IterateValue)
+        if (m_kind == IterationKind::Values)
             value = bucket->value();
-        else if (m_kind == IterateKey)
+        else if (m_kind == IterationKind::Keys)
             value = bucket->key();
         else
             value = createPair(globalObject, bucket->key(), bucket->value());

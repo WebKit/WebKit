@@ -1069,7 +1069,7 @@ const JSC::ClassInfo TestInterfaceIteratorPrototype::s_info = { "TestInterface I
 
 static inline EncodedJSValue jsTestInterfacePrototypeFunctionEntriesCaller(JSGlobalObject*, CallFrame*, JSTestInterface* thisObject, JSC::ThrowScope&)
 {
-    return JSValue::encode(iteratorCreate<TestInterfaceIterator>(*thisObject, IterationKind::KeyValue));
+    return JSValue::encode(iteratorCreate<TestInterfaceIterator>(*thisObject, IterationKind::Entries));
 }
 
 JSC::EncodedJSValue JSC_HOST_CALL jsTestInterfacePrototypeFunctionEntries(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame)
@@ -1079,7 +1079,7 @@ JSC::EncodedJSValue JSC_HOST_CALL jsTestInterfacePrototypeFunctionEntries(JSC::J
 
 static inline EncodedJSValue jsTestInterfacePrototypeFunctionKeysCaller(JSGlobalObject*, CallFrame*, JSTestInterface* thisObject, JSC::ThrowScope&)
 {
-    return JSValue::encode(iteratorCreate<TestInterfaceIterator>(*thisObject, IterationKind::Key));
+    return JSValue::encode(iteratorCreate<TestInterfaceIterator>(*thisObject, IterationKind::Keys));
 }
 
 JSC::EncodedJSValue JSC_HOST_CALL jsTestInterfacePrototypeFunctionKeys(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame)
@@ -1089,7 +1089,7 @@ JSC::EncodedJSValue JSC_HOST_CALL jsTestInterfacePrototypeFunctionKeys(JSC::JSGl
 
 static inline EncodedJSValue jsTestInterfacePrototypeFunctionValuesCaller(JSGlobalObject*, CallFrame*, JSTestInterface* thisObject, JSC::ThrowScope&)
 {
-    return JSValue::encode(iteratorCreate<TestInterfaceIterator>(*thisObject, IterationKind::Value));
+    return JSValue::encode(iteratorCreate<TestInterfaceIterator>(*thisObject, IterationKind::Values));
 }
 
 JSC::EncodedJSValue JSC_HOST_CALL jsTestInterfacePrototypeFunctionValues(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame)

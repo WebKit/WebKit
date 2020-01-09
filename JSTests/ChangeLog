@@ -1,3 +1,33 @@
+2020-01-08  Keith Miller  <keith_miller@apple.com>
+
+        [JSC] Introduce JSArrayIterator
+        https://bugs.webkit.org/show_bug.cgi?id=204043
+
+        Reviewed by Yusuke Suzuki.
+
+        * stress/array-iterator-materialize-at-osr-exit.js: Added.
+        (shouldBe):
+        (test):
+        * stress/array-iterator-materialize-one-path.js: Added.
+        (shouldBe):
+        (test):
+        * stress/array-iterator-materialize.js: Added.
+        (shouldBe):
+        (test):
+        * stress/array-iterator-sinking.js: Added.
+        (shouldBe):
+        (test):
+        * stress/array-iterators-next-error-messages.js:
+        (catch):
+        * stress/array-iterators-next-with-call.js:
+        * stress/for-of-iteration.js: Added.
+        (shouldBe):
+        (test1):
+        (test2):
+        (test3):
+        * stress/typedarray-functions-with-neutered.js:
+        (checkProtoFunc):
+
 2020-01-08  Saam Barati  <sbarati@apple.com>
 
         Unreviewed follow up on r254188. I accidentally included the same test

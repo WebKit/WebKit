@@ -28,81 +28,38 @@ function next()
 {
     "use strict";
 
-    if (@isUndefinedOrNull(this))
-        @throwTypeError("%ArrayIteratorPrototype%.next requires that |this| not be null or undefined");
-
-    let next = @getByIdDirectPrivate(this, "arrayIteratorNext");
-    if (next === @undefined)
+    if (!@isArrayIterator(this))
         @throwTypeError("%ArrayIteratorPrototype%.next requires that |this| be an Array Iterator instance");
 
-    return next.@call(this);
+    var array = @getArrayIteratorInternalField(this, @arrayIteratorFieldIteratedObject);
+    var kind = @getArrayIteratorInternalField(this, @arrayIteratorFieldKind);
+    return @arrayIteratorNextHelper.@call(this, array, kind);
 }
 
+// FIXME: We have to have this because we can't implement this all as one function and meet our inlining heuristics.
+// Collectively, next and this have ~130 bytes of bytecodes but our limit is 120.
 @globalPrivate
-function arrayIteratorValueNext()
+function arrayIteratorNextHelper(array, kind)
 {
     "use strict";
     var done = true;
     var value;
 
-    var array = @getByIdDirectPrivate(this, "iteratedObject");
-    if (!@getByIdDirectPrivate(this, "arrayIteratorIsDone")) {
-        var index = @getByIdDirectPrivate(this, "arrayIteratorNextIndex");
+    if (!@getArrayIteratorInternalField(this, @arrayIteratorFieldIsDone)) {
+        var index = @getArrayIteratorInternalField(this, @arrayIteratorFieldIndex);
         var length = array.length >>> 0;
-        if (index >= length)
-            @putByIdDirectPrivate(this, "arrayIteratorIsDone", true);
-        else {
-            @putByIdDirectPrivate(this, "arrayIteratorNextIndex", index + 1);
+        if (index < length) {
+            @putArrayIteratorInternalField(this, @arrayIteratorFieldIndex, index + 1);
             done = false;
-            value = array[index];
+            if (kind === @iterationKindKey)
+                value = index;
+            else { 
+                value = array[index];
+                value = kind === @iterationKindValue ? value : [index, value];
+            }
         }
     }
-
-    return { value, done };
-}
-
-@globalPrivate
-function arrayIteratorKeyNext()
-{
-    "use strict";
-    var done = true;
-    var value;
-
-    var array = @getByIdDirectPrivate(this, "iteratedObject");
-    if (!@getByIdDirectPrivate(this, "arrayIteratorIsDone")) {
-        var index = @getByIdDirectPrivate(this, "arrayIteratorNextIndex");
-        var length = array.length >>> 0;
-        if (index >= length)
-            @putByIdDirectPrivate(this, "arrayIteratorIsDone", true);
-        else {
-            @putByIdDirectPrivate(this, "arrayIteratorNextIndex", index + 1);
-            done = false;
-            value = index;
-        }
-    }
-
-    return { value, done };
-}
-
-@globalPrivate
-function arrayIteratorKeyValueNext()
-{
-    "use strict";
-    var done = true;
-    var value;
-
-    var array = @getByIdDirectPrivate(this, "iteratedObject");
-    if (!@getByIdDirectPrivate(this, "arrayIteratorIsDone")) {
-        var index = @getByIdDirectPrivate(this, "arrayIteratorNextIndex");
-        var length = array.length >>> 0;
-        if (index >= length)
-            @putByIdDirectPrivate(this, "arrayIteratorIsDone", true);
-        else {
-            @putByIdDirectPrivate(this, "arrayIteratorNextIndex", index + 1);
-            done = false;
-            value = [ index, array[index] ];
-        }
-    }
+    @putArrayIteratorInternalField(this, @arrayIteratorFieldIsDone, done);
 
     return { value, done };
 }

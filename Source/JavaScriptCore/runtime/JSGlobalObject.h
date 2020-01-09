@@ -62,6 +62,7 @@ class JSGlobalObjectInspectorController;
 namespace JSC {
 class ArrayConstructor;
 class ArrayPrototype;
+class ArrayIteratorPrototype;
 class AsyncIteratorPrototype;
 class AsyncFunctionPrototype;
 class AsyncGeneratorPrototype;
@@ -321,6 +322,7 @@ public:
     WriteBarrier<GeneratorFunctionPrototype> m_generatorFunctionPrototype;
     WriteBarrier<GeneratorPrototype> m_generatorPrototype;
     WriteBarrier<AsyncGeneratorPrototype> m_asyncGeneratorPrototype;
+    WriteBarrier<ArrayIteratorPrototype> m_arrayIteratorPrototype;
 
     LazyProperty<JSGlobalObject, Structure> m_debuggerScopeStructure;
     LazyProperty<JSGlobalObject, Structure> m_withScopeStructure;
@@ -375,6 +377,7 @@ public:
     WriteBarrier<Structure> m_generatorFunctionStructure;
     WriteBarrier<Structure> m_generatorStructure;
     WriteBarrier<Structure> m_asyncGeneratorStructure;
+    WriteBarrier<Structure> m_arrayIteratorStructure;
     LazyProperty<JSGlobalObject, Structure> m_iteratorResultObjectStructure;
     WriteBarrier<Structure> m_regExpMatchesArrayStructure;
     LazyProperty<JSGlobalObject, Structure> m_moduleRecordStructure;
@@ -652,6 +655,7 @@ public:
     GeneratorFunctionPrototype* generatorFunctionPrototype() const { return m_generatorFunctionPrototype.get(); }
     GeneratorPrototype* generatorPrototype() const { return m_generatorPrototype.get(); }
     AsyncFunctionPrototype* asyncFunctionPrototype() const { return m_asyncFunctionPrototype.get(); }
+    ArrayIteratorPrototype* arrayIteratorPrototype() const { return m_arrayIteratorPrototype.get(); }
     JSObject* mapPrototype() const { return m_mapStructure.prototype(this); }
     // Workaround for the name conflict between JSCell::setPrototype.
     JSObject* jsSetPrototype() const { return m_setStructure.prototype(this); }
@@ -759,6 +763,7 @@ public:
     Structure* generatorFunctionStructure() const { return m_generatorFunctionStructure.get(); }
     Structure* asyncFunctionStructure() const { return m_asyncFunctionStructure.get(); }
     Structure* asyncGeneratorFunctionStructure() const { return m_asyncGeneratorFunctionStructure.get(); }
+    Structure* arrayIteratorStructure() const { return m_arrayIteratorStructure.get(); }    
     Structure* stringObjectStructure() const { return m_stringObjectStructure.get(); }
     Structure* iteratorResultObjectStructure() const { return m_iteratorResultObjectStructure.get(this); }
     Structure* regExpMatchesArrayStructure() const { return m_regExpMatchesArrayStructure.get(); }

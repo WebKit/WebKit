@@ -1,3 +1,16 @@
+2020-01-08  Keith Miller  <keith_miller@apple.com>
+
+        [JSC] Introduce JSArrayIterator
+        https://bugs.webkit.org/show_bug.cgi?id=204043
+
+        Reviewed by Yusuke Suzuki.
+
+        Change the labels of iteration kinds to match what JS refers to them as.
+
+        * inspector/model/remote-object/iterator-expected.txt:
+        * inspector/model/remote-object/iterator-large-expected.txt:
+        * inspector/model/remote-object/iterators-mutated-expected.txt:
+
 2020-01-08  Ryan Haddad  <ryanhaddad@apple.com>
 
         few web-platform-tests are failing on iOS

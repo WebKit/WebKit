@@ -24,40 +24,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-@constructor
-@globalPrivate
-function ArrayIterator(iteratedObject, kind, iterationFunction)
-{
-    "use strict";
-
-    @putByIdDirectPrivate(this, "iteratedObject", iteratedObject);
-    @putByIdDirectPrivate(this, "arrayIteratorKind", kind);
-    @putByIdDirectPrivate(this, "arrayIteratorNextIndex", 0);
-    @putByIdDirectPrivate(this, "arrayIteratorNext", iterationFunction);
-    @putByIdDirectPrivate(this, "arrayIteratorIsDone", false);
-}
-
-function values()
-{
-    "use strict";
-
-    return new @ArrayIterator(@toObject(this, "Array.prototype.values requires that |this| not be null or undefined"), "value", @arrayIteratorValueNext);
-}
-
-function keys()
-{
-    "use strict";
-
-    return new @ArrayIterator(@toObject(this, "Array.prototype.keys requires that |this| not be null or undefined"), "key", @arrayIteratorKeyNext);
-}
-
-function entries()
-{
-    "use strict";
-
-    return new @ArrayIterator(@toObject(this, "Array.prototype.entries requires that |this| not be null or undefined"), "key+value", @arrayIteratorKeyValueNext);
-}
-
 function reduce(callback /*, initialValue */)
 {
     "use strict";

@@ -74,7 +74,7 @@ private:
     void finishCreation(JSC::VM&, JSC::JSGlobalObject*);
 };
 
-enum class IterationKind { Key, Value, KeyValue };
+using IterationKind = JSC::IterationKind;
 
 template<typename JSWrapper, typename IteratorTraits> class JSDOMIterator : public JSDOMObject {
 public:
@@ -155,11 +155,11 @@ template<typename IteratorValue, typename T> inline EnableIfMap<T, JSC::JSValue>
     ASSERT(value);
     
     switch (m_kind) {
-    case IterationKind::Key:
+    case IterationKind::Keys:
         return toJS<typename Traits::KeyType>(lexicalGlobalObject, *globalObject(), value->key);
-    case IterationKind::Value:
+    case IterationKind::Values:
         return toJS<typename Traits::ValueType>(lexicalGlobalObject, *globalObject(), value->value);
-    case IterationKind::KeyValue:
+    case IterationKind::Entries:
         return jsPair<typename Traits::KeyType, typename Traits::ValueType>(lexicalGlobalObject, *globalObject(), value->key, value->value);
     };
     
@@ -176,10 +176,10 @@ template<typename IteratorValue, typename T> inline EnableIfSet<T, JSC::JSValue>
     auto result = toJS<typename Traits::ValueType>(lexicalGlobalObject, *globalObject, value);
 
     switch (m_kind) {
-    case IterationKind::Key:
-    case IterationKind::Value:
+    case IterationKind::Keys:
+    case IterationKind::Values:
         return result;
-    case IterationKind::KeyValue:
+    case IterationKind::Entries:
         return jsPair(lexicalGlobalObject, *globalObject, result, result);
     };
 

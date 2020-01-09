@@ -271,6 +271,7 @@ private:
                 case PutByValAlias:
                 case GetArrayLength:
                 case CheckArray:
+                case CheckNeutered:
                 case GetIndexedPropertyStorage:
                 case GetTypedArrayByteOffset:
                 case Phantom:
@@ -336,6 +337,7 @@ private:
                 }
 
                 case CheckStructure:
+                case CheckNeutered:
                 case GetByOffset:
                 case PutByOffset:
                 case PutStructure:

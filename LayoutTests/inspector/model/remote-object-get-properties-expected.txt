@@ -79,8 +79,8 @@ ALL PROPERTIES:
     reduce
     reduceRight
     map
-    entries
     keys
+    entries
     find
     findIndex
     includes
@@ -132,8 +132,8 @@ OWN PROPERTIES:
     reduce
     reduceRight
     map
-    entries
     keys
+    entries
     find
     findIndex
     includes
@@ -170,8 +170,8 @@ DISPLAYABLE PROPERTIES:
     reduce
     reduceRight
     map
-    entries
     keys
+    entries
     find
     findIndex
     includes
@@ -208,8 +208,8 @@ ALL PROPERTIES:
     reduce
     reduceRight
     map
-    entries
     keys
+    entries
     find
     findIndex
     includes

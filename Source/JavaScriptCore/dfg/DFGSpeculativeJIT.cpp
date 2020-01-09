@@ -51,6 +51,7 @@
 #include "JITMulGenerator.h"
 #include "JITRightShiftGenerator.h"
 #include "JITSubGenerator.h"
+#include "JSArrayIterator.h"
 #include "JSAsyncFunction.h"
 #include "JSAsyncGeneratorFunction.h"
 #include "JSCInlines.h"
@@ -1778,6 +1779,21 @@ void SpeculativeJIT::compileMovHint(Node* node)
     noticeOSRBirth(child);
     
     m_stream->appendAndLog(VariableEvent::movHint(MinifiedID(child), node->unlinkedOperand()));
+}
+
+void SpeculativeJIT::compileCheckNeutered(Node* node)
+{
+    SpeculateCellOperand base(this, node->child1());
+    GPRReg baseReg = base.gpr();
+
+    // We only emit this node after we have checked this is a typed array so that better be true now.
+    DFG_ASSERT(m_graph, node, speculationChecked(m_state.forNode(node->child1()).m_type, SpecTypedArrayView));
+
+    speculationCheck(
+        BadIndexingType, JSValueSource::unboxedCell(baseReg), node->child1(), 
+        m_jit.branchTestPtr(MacroAssembler::Zero, MacroAssembler::Address(baseReg, JSArrayBufferView::offsetOfVector())));
+
+    noResult(node);
 }
 
 void SpeculativeJIT::bail(AbortReason reason)
@@ -4307,9 +4323,12 @@ void SpeculativeJIT::compileToObjectOrCallObjectConstructor(Node* node)
     slowCases.append(m_jit.branchIfNotObject(valueRegs.payloadGPR()));
     m_jit.move(valueRegs.payloadGPR(), resultGPR);
 
-    if (node->op() == ToObject)
-        addSlowPathGenerator(slowPathCall(slowCases, this, operationToObject, resultGPR, TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(node->origin.semantic)), valueRegs, identifierUID(node->identifierNumber())));
-    else
+    if (node->op() == ToObject) {
+        UniquedStringImpl* errorMessage = nullptr;
+        if (node->identifierNumber() != UINT32_MAX)
+            errorMessage = identifierUID(node->identifierNumber());
+        addSlowPathGenerator(slowPathCall(slowCases, this, operationToObject, resultGPR, TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(node->origin.semantic)), valueRegs, errorMessage));
+    } else
         addSlowPathGenerator(slowPathCall(slowCases, this, operationCallObjectConstructor, resultGPR, TrustedImmPtr(node->cellOperand()), valueRegs));
 
     cellResult(resultGPR, node);
@@ -12987,7 +13006,7 @@ void SpeculativeJIT::compileNewInternalFieldObject(Node* node, Operation operati
     auto butterfly = TrustedImmPtr(nullptr);
     emitAllocateJSObjectWithKnownSize<JSClass>(resultGPR, TrustedImmPtr(structure), butterfly, scratch1GPR, scratch2GPR, slowCases, sizeof(JSClass));
     auto initialValues = JSClass::initialValues();
-    ASSERT(initialValues.size() == JSClass::numberOfInternalFields);
+    static_assert(initialValues.size() == JSClass::numberOfInternalFields);
     for (unsigned index = 0; index < initialValues.size(); ++index)
         m_jit.storeTrustedValue(initialValues[index], CCallHelpers::Address(resultGPR, JSInternalFieldObjectImpl<>::offsetOfInternalField(index)));
     m_jit.mutatorFence(m_jit.vm());
@@ -13005,6 +13024,11 @@ void SpeculativeJIT::compileNewGenerator(Node* node)
 void SpeculativeJIT::compileNewAsyncGenerator(Node* node)
 {
     compileNewInternalFieldObject<JSAsyncGenerator>(node, operationNewAsyncGenerator);
+}
+
+void SpeculativeJIT::compileNewArrayIterator(Node* node)
+{
+    compileNewInternalFieldObject<JSArrayIterator>(node, operationNewArrayIterator);
 }
 
 void SpeculativeJIT::compileToPrimitive(Node* node)

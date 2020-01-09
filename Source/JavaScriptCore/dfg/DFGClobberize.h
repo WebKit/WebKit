@@ -1101,6 +1101,10 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
         read(JSCell_structureID);
         return;
 
+    case CheckNeutered:
+        read(MiscFields);
+        return; 
+        
     case CheckTypeInfoFlags:
         read(JSCell_typeInfoFlags);
         def(HeapLocation(CheckTypeInfoFlagsLoc, JSCell_typeInfoFlags, node->child1()), LazyNode(node));
@@ -1348,14 +1352,14 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
     case GetInternalField: {
         AbstractHeap heap(JSPromiseFields, node->internalFieldIndex());
         read(heap);
-        def(HeapLocation(PromiseInternalFieldLoc, heap, node->child1()), LazyNode(node));
+        def(HeapLocation(InternalFieldObjectLoc, heap, node->child1()), LazyNode(node));
         return;
     }
 
     case PutInternalField: {
         AbstractHeap heap(JSPromiseFields, node->internalFieldIndex());
         write(heap);
-        def(HeapLocation(PromiseInternalFieldLoc, heap, node->child1()), LazyNode(node->child2().node()));
+        def(HeapLocation(InternalFieldObjectLoc, heap, node->child1()), LazyNode(node->child2().node()));
         return;
     }
 
@@ -1595,6 +1599,7 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
     case NewPromise:
     case NewGenerator:
     case NewAsyncGenerator:
+    case NewArrayIterator:
     case NewRegexp:
     case NewSymbol:
     case NewStringObject:
@@ -1604,6 +1609,8 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
     case PhantomNewGeneratorFunction:
     case PhantomNewAsyncFunction:
     case PhantomNewAsyncGeneratorFunction:
+    case PhantomNewArrayIterator:
+    case MaterializeNewInternalFieldObject:
     case PhantomCreateActivation:
     case MaterializeCreateActivation:
     case PhantomNewRegexp:

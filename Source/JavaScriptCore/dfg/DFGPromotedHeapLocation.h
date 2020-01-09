@@ -54,7 +54,7 @@ enum PromotedLocationKind {
     ArgumentPLoc,
     ArgumentsCalleePLoc,
     ClosureVarPLoc,
-    PromiseInternalFieldPLoc,
+    InternalFieldObjectPLoc,
     FunctionActivationPLoc,
     FunctionExecutablePLoc,
     IndexedPropertyPLoc,
@@ -121,6 +121,7 @@ public:
         case NamedPropertyPLoc:
         case ClosureVarPLoc:
         case RegExpObjectLastIndexPLoc:
+        case InternalFieldObjectPLoc:
             return false;
 
         default:

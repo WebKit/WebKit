@@ -1869,6 +1869,12 @@ private:
             break;
         }
 
+        case CheckNeutered:
+        case CheckArray: {
+            fixEdge<CellUse>(node->child1());
+            break;
+        }
+
         case Phi:
         case Upsilon:
         case EntrySwitch:
@@ -1877,7 +1883,6 @@ private:
         case CheckTierUpInLoop:
         case CheckTierUpAtReturn:
         case CheckTierUpAndOSREnter:
-        case CheckArray:
         case CheckInBounds:
         case ConstantStoragePointer:
         case DoubleAsInt32:
@@ -1893,6 +1898,7 @@ private:
         case PhantomNewGeneratorFunction:
         case PhantomNewAsyncGeneratorFunction:
         case PhantomNewAsyncFunction:
+        case PhantomNewArrayIterator:
         case PhantomCreateActivation:
         case PhantomDirectArguments:
         case PhantomCreateRest:
@@ -1909,6 +1915,7 @@ private:
         case CheckStructureOrEmpty:
         case MaterializeNewObject:
         case MaterializeCreateActivation:
+        case MaterializeNewInternalFieldObject:
         case PutStack:
         case KillStack:
         case GetStack:
@@ -2476,6 +2483,7 @@ private:
         case NewPromise:
         case NewGenerator:
         case NewAsyncGenerator:
+        case NewArrayIterator:
         case NewRegexp:
         case DeleteById:
         case DeleteByVal:

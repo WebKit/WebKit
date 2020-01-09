@@ -243,7 +243,7 @@ void Graph::dump(PrintStream& out, const char* prefixStr, Node* node, DumpContex
         out.print(comma, node->argumentIndex());
     if (node->hasRegisterPointer())
         out.print(comma, "global", "(", RawPointer(node->variablePointer()), ")");
-    if (node->hasIdentifier())
+    if (node->hasIdentifier() && node->identifierNumber() != UINT32_MAX)
         out.print(comma, "id", node->identifierNumber(), "{", identifiers()[node->identifierNumber()], "}");
     if (node->hasPromotedLocationDescriptor())
         out.print(comma, node->promotedLocationDescriptor());

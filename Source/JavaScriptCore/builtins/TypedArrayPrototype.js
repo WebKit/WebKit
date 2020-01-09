@@ -68,27 +68,6 @@ function typedArrayClampArgumentToStartOrEnd(value, length, undefinedValue)
     return int > length ? length : int;
 }
 
-function values()
-{
-    "use strict";
-    @typedArrayLength(this);
-    return new @ArrayIterator(this, "value", @arrayIteratorValueNext);
-}
-
-function keys()
-{
-    "use strict";
-    @typedArrayLength(this);
-    return new @ArrayIterator(this, "key", @arrayIteratorKeyNext);
-}
-
-function entries()
-{
-    "use strict";
-    @typedArrayLength(this);
-    return new @ArrayIterator(this, "key+value", @arrayIteratorKeyValueNext);
-}
-
 function every(callback /*, thisArg */)
 {
     "use strict";

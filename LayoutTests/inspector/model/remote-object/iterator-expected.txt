@@ -144,7 +144,7 @@ EXPRESSION: [][Symbol.iterator]()
       {
         "_name": "kind",
         "_type": "string",
-        "_value": "value",
+        "_value": "values",
         "_internal": true
       }
     ],
@@ -191,7 +191,7 @@ EXPRESSION: [1][Symbol.iterator]()
       {
         "_name": "kind",
         "_type": "string",
-        "_value": "value",
+        "_value": "values",
         "_internal": true
       }
     ],
@@ -234,7 +234,7 @@ EXPRESSION: [1, "two", 3, "four", 5, "size"][Symbol.iterator]()
       {
         "_name": "kind",
         "_type": "string",
-        "_value": "value",
+        "_value": "values",
         "_internal": true
       }
     ],
@@ -317,7 +317,7 @@ EXPRESSION: [1, "two", 3, "four", 5, "size"].keys()
       {
         "_name": "kind",
         "_type": "string",
-        "_value": "key",
+        "_value": "keys",
         "_internal": true
       }
     ],
@@ -400,7 +400,7 @@ EXPRESSION: [1, "two", 3, "four", 5, "size"].entries()
       {
         "_name": "kind",
         "_type": "string",
-        "_value": "key+value",
+        "_value": "entries",
         "_internal": true
       }
     ],
@@ -548,7 +548,7 @@ EXPRESSION: map = new Map; map.set(1, 2); map.set("key", "value"); map.values()
       {
         "_name": "kind",
         "_type": "string",
-        "_value": "value",
+        "_value": "values",
         "_internal": true
       }
     ],
@@ -601,7 +601,7 @@ EXPRESSION: map.keys()
       {
         "_name": "kind",
         "_type": "string",
-        "_value": "key",
+        "_value": "keys",
         "_internal": true
       }
     ],
@@ -654,7 +654,7 @@ EXPRESSION: map.entries()
       {
         "_name": "kind",
         "_type": "string",
-        "_value": "key+value",
+        "_value": "entries",
         "_internal": true
       }
     ],
@@ -733,7 +733,7 @@ EXPRESSION: set = new Set; for (var i = 0; i <= 100; i++) set.add(i); set.values
       {
         "_name": "kind",
         "_type": "string",
-        "_value": "value",
+        "_value": "values",
         "_internal": true
       }
     ],
@@ -816,7 +816,7 @@ EXPRESSION: map.entries()
       {
         "_name": "kind",
         "_type": "string",
-        "_value": "key+value",
+        "_value": "entries",
         "_internal": true
       }
     ],
@@ -915,7 +915,7 @@ EXPRESSION: x = undefined; (function() { x = arguments; })(1, "two"); x[Symbol.i
       {
         "_name": "kind",
         "_type": "string",
-        "_value": "value",
+        "_value": "values",
         "_internal": true
       }
     ],
@@ -988,7 +988,7 @@ EXPRESSION: iter = [1, 2][Symbol.iterator](); iter["return"] = function(){}; ite
       {
         "_name": "kind",
         "_type": "string",
-        "_value": "value",
+        "_value": "values",
         "_internal": true
       }
     ],

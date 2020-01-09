@@ -63,7 +63,7 @@ function checkProtoFunc(testArgs) {
     }
 
     if (!arrays.every(throwsCorrectError))
-        throw "bad" + testArgs.func.name;
+        throw new Error("bad " + testArgs.func.name);
 }
 
 function test() {

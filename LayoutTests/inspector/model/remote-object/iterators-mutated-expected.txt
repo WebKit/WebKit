@@ -124,7 +124,7 @@ EXPRESSION: map = new Map; map.set(1, 2); map.set('key', 'value'); iter = map[Sy
       {
         "_name": "kind",
         "_type": "string",
-        "_value": "key+value",
+        "_value": "entries",
         "_internal": true
       }
     ],
@@ -203,7 +203,7 @@ EXPRESSION: iter.__proto__.next = function(){}; iter
       {
         "_name": "kind",
         "_type": "string",
-        "_value": "key+value",
+        "_value": "entries",
         "_internal": true
       }
     ],
@@ -235,7 +235,7 @@ EXPRESSION: set = new Set; for (var i = 0; i <= 100; i++) set.add(i); iter = set
       {
         "_name": "kind",
         "_type": "string",
-        "_value": "value",
+        "_value": "values",
         "_internal": true
       }
     ],
@@ -318,7 +318,7 @@ EXPRESSION: iter.__proto__.next = function(){}; iter
       {
         "_name": "kind",
         "_type": "string",
-        "_value": "value",
+        "_value": "values",
         "_internal": true
       }
     ],
@@ -375,7 +375,7 @@ EXPRESSION: arrayIter = [1,2,3][Symbol.iterator]()
       {
         "_name": "kind",
         "_type": "string",
-        "_value": "value",
+        "_value": "values",
         "_internal": true
       }
     ],
@@ -458,7 +458,7 @@ EXPRESSION: x = undefined; (function() { x = arguments; })(3, 'arg'); argumentsI
       {
         "_name": "kind",
         "_type": "string",
-        "_value": "value",
+        "_value": "values",
         "_internal": true
       }
     ],
@@ -536,7 +536,7 @@ EXPRESSION: arrayIter.__proto__.next = function(){}; arrayIter
       {
         "_name": "kind",
         "_type": "string",
-        "_value": "value",
+        "_value": "values",
         "_internal": true
       }
     ],
@@ -588,7 +588,7 @@ EXPRESSION: argumentsIter.__proto__.next = function(){}; argumentsIter
       {
         "_name": "kind",
         "_type": "string",
-        "_value": "value",
+        "_value": "values",
         "_internal": true
       }
     ],

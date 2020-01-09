@@ -51,6 +51,7 @@
 #include "JIT.h"
 #include "JITExceptions.h"
 #include "JSArrayInlines.h"
+#include "JSArrayIterator.h"
 #include "JSAsyncGenerator.h"
 #include "JSBigInt.h"
 #include "JSCInlines.h"
@@ -2085,6 +2086,15 @@ char* JIT_OPERATION operationNewFloat64ArrayWithOneArgument(
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
     return reinterpret_cast<char*>(constructGenericTypedArrayViewWithArguments<JSFloat64Array>(globalObject, structure, encodedValue, 0, WTF::nullopt));
+}
+
+JSCell* JIT_OPERATION operationNewArrayIterator(VM* vmPointer, Structure* structure)
+{
+    VM& vm = *vmPointer;
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
+
+    return JSArrayIterator::createWithInitialValues(vm, structure);
 }
 
 JSCell* JIT_OPERATION operationCreateActivationDirect(VM* vmPointer, Structure* structure, JSScope* scope, SymbolTable* table, EncodedJSValue initialValueEncoded)

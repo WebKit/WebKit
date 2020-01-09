@@ -71,6 +71,7 @@ ExitMode mayExitImpl(Graph& graph, Node* node, StateType& state)
     case BottomValue:
     case PutHint:
     case PhantomNewObject:
+    case PhantomNewArrayIterator:
     case PutStack:
     case KillStack:
     case GetStack:
@@ -121,12 +122,14 @@ ExitMode mayExitImpl(Graph& graph, Node* node, StateType& state)
     case CreateActivation:
     case MaterializeCreateActivation:
     case MaterializeNewObject:
+    case MaterializeNewInternalFieldObject:
     case NewFunction:
     case NewGeneratorFunction:
     case NewAsyncFunction:
     case NewAsyncGeneratorFunction:
     case NewStringObject:
     case NewSymbol:
+    case NewArrayIterator:
     case NewRegexp:
     case ToNumber:
     case ToNumeric:

@@ -99,7 +99,7 @@ EXPRESSION: arr = new Int8Array(new ArrayBuffer(1000000)); arr[Symbol.iterator](
       {
         "_name": "kind",
         "_type": "string",
-        "_value": "value",
+        "_value": "values",
         "_internal": true
       }
     ],
@@ -131,7 +131,7 @@ EXPRESSION: map = new Map; for (var i = 0; i < 1000000; i++) map.set(i, i); map[
       {
         "_name": "kind",
         "_type": "string",
-        "_value": "key+value",
+        "_value": "entries",
         "_internal": true
       }
     ],
@@ -279,7 +279,7 @@ EXPRESSION: set = new Set; for (var i = 0; i < 1000000; i++) set.add(i); set[Sym
       {
         "_name": "kind",
         "_type": "string",
-        "_value": "value",
+        "_value": "values",
         "_internal": true
       }
     ],
