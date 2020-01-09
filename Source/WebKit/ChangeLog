@@ -1,3 +1,26 @@
+2020-01-09  Andres Gonzalez  <andresg_22@apple.com>
+
+        WKAccessibilityWebPageObject should use Accessibility::retrieveValueFromMainThread.
+        https://bugs.webkit.org/show_bug.cgi?id=206009
+
+        Reviewed by Chris Fleizach.
+
+        - WKAccessibilityWebPageObject now uses Accessibility::retrieveValueFromMainThread,
+        which is consistent with WebAccessibilityObjectWrapper.
+        - It also uses a captured protectedSelf to ensure the object is alive
+        when the lambda is invoked on the main thread.
+        - Added nullity check for m_page in accessibilityAttributeSizeValue,
+        which is a potential crasher in the multithreaded mode.
+
+        * WebProcess/WebPage/mac/WKAccessibilityWebPageObjectMac.mm:
+        (-[WKAccessibilityWebPageObject ALLOW_DEPRECATED_IMPLEMENTATIONS_END]):
+        (-[WKAccessibilityWebPageObject convertScreenPointToRootView:]):
+        (-[WKAccessibilityWebPageObject accessibilityAttributeSizeValue]):
+        (-[WKAccessibilityWebPageObject accessibilityAttributePositionValue]):
+        (-[WKAccessibilityWebPageObject accessibilityDataDetectorValue:point:]):
+        (-[WKAccessibilityWebPageObject accessibilityHitTest:]):
+        (retrieveAccessibilityValueFromMainThread): Not needed since it uses now the one in Accessibility nasespace.
+
 2020-01-09  John Wilander  <wilander@apple.com>
 
         Resource Load Statistics: Flip experimental website data removal setting from an enable to a disable
