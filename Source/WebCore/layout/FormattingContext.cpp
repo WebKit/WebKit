@@ -70,7 +70,7 @@ void FormattingContext::computeOutOfFlowHorizontalGeometry(const Box& layoutBox,
 {
     ASSERT(layoutBox.isOutOfFlowPositioned());
     auto compute = [&](Optional<LayoutUnit> usedWidth) {
-        return geometry().outOfFlowHorizontalGeometry(layoutBox, horizontalConstraints, { usedWidth });
+        return geometry().outOfFlowHorizontalGeometry(layoutBox, horizontalConstraints, { usedWidth, { } });
     };
 
     auto containingBlockWidth = horizontalConstraints.logicalWidth;

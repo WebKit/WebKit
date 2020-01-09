@@ -382,10 +382,10 @@ void BlockFormattingContext::computeWidthAndMargin(const Box& layoutBox, const H
 {
     auto compute = [&](Optional<LayoutUnit> usedWidth) -> ContentWidthAndMargin {
         if (layoutBox.isInFlow())
-            return geometry().inFlowWidthAndMargin(layoutBox, horizontalConstraints, { usedWidth });
+            return geometry().inFlowWidthAndMargin(layoutBox, horizontalConstraints, { usedWidth, { } });
 
         if (layoutBox.isFloatingPositioned())
-            return geometry().floatingWidthAndMargin(layoutBox, horizontalConstraints, { usedWidth });
+            return geometry().floatingWidthAndMargin(layoutBox, horizontalConstraints, { usedWidth, { } });
 
         ASSERT_NOT_REACHED();
         return { };
