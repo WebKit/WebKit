@@ -99,7 +99,7 @@ void TableFormattingContext::layoutInFlowContent(InvalidationState& invalidation
 
 void TableFormattingContext::layoutTableCellBox(const Box& cellLayoutBox, const TableGrid::Column& column, InvalidationState& invalidationState)
 {
-    auto horizontalConstraints = Geometry::inFlowHorizontalConstraints(geometryForBox(*cellLayoutBox.containingBlock()));
+    auto horizontalConstraints = Geometry::horizontalConstraintsForInFlow(geometryForBox(*cellLayoutBox.containingBlock()));
     computeBorderAndPadding(cellLayoutBox, horizontalConstraints);
     // Margins do not apply to internal table elements.
     auto& cellDisplayBox = formattingState().displayBox(cellLayoutBox);
@@ -111,7 +111,7 @@ void TableFormattingContext::layoutTableCellBox(const Box& cellLayoutBox, const 
 
     ASSERT(cellLayoutBox.establishesBlockFormattingContext());
     if (is<Container>(cellLayoutBox))
-        LayoutContext::createFormattingContext(downcast<Container>(cellLayoutBox), layoutState())->layoutInFlowContent(invalidationState, Geometry::inFlowHorizontalConstraints(cellDisplayBox));
+        LayoutContext::createFormattingContext(downcast<Container>(cellLayoutBox), layoutState())->layoutInFlowContent(invalidationState, Geometry::horizontalConstraintsForInFlow(cellDisplayBox));
     cellDisplayBox.setVerticalMargin({ { }, { } });
     cellDisplayBox.setContentBoxHeight(geometry().tableCellHeightAndMargin(cellLayoutBox).contentHeight);
     // FIXME: Check what to do with out-of-flow content.

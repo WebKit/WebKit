@@ -82,7 +82,7 @@ ContentHeightAndMargin BlockFormattingContext::Quirks::stretchedInFlowHeight(con
         // Here is the quirky part for body box:
         // Stretch the body using the initial containing block's height and shrink it with document box's margin/border/padding.
         // This looks extremely odd when html has non-auto height.
-        auto documentBoxVerticalMargin = formattingContext.geometry().computedVerticalMargin(documentBox, UsedHorizontalValues { Geometry::inFlowHorizontalConstraints(initialContainingBlockGeometry) });
+        auto documentBoxVerticalMargin = formattingContext.geometry().computedVerticalMargin(documentBox, UsedHorizontalValues { Geometry::horizontalConstraintsForInFlow(initialContainingBlockGeometry) });
         strechedHeight -= (documentBoxVerticalMargin.before.valueOr(0) + documentBoxVerticalMargin.after.valueOr(0));
 
         auto& bodyBoxGeometry = formattingContext.geometryForBox(layoutBox);

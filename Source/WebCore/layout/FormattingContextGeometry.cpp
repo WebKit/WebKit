@@ -1107,22 +1107,22 @@ FormattingContext::IntrinsicWidthConstraints FormattingContext::Geometry::constr
     return intrinsicWidth;
 }
 
-UsedHorizontalValues::Constraints FormattingContext::Geometry::outOfFlowHorizontalConstraints(const Display::Box& containingBlockGeometry)
+UsedHorizontalValues::Constraints FormattingContext::Geometry::horizontalConstraintsForOutOfFlow(const Display::Box& containingBlockGeometry)
 {
     return UsedHorizontalValues::Constraints { containingBlockGeometry.paddingBoxLeft(), containingBlockGeometry.paddingBoxWidth() };
 }
 
-UsedVerticalValues::Constraints FormattingContext::Geometry::outOfFlowVerticalConstraints(const Display::Box& containingBlockGeometry)
+UsedVerticalValues::Constraints FormattingContext::Geometry::verticalConstraintsForOutOfFlow(const Display::Box& containingBlockGeometry)
 {
     return UsedVerticalValues::Constraints { containingBlockGeometry.paddingBoxTop(), containingBlockGeometry.paddingBoxHeight() };
 }
 
-UsedHorizontalValues::Constraints FormattingContext::Geometry::inFlowHorizontalConstraints(const Display::Box& containingBlockGeometry)
+UsedHorizontalValues::Constraints FormattingContext::Geometry::horizontalConstraintsForInFlow(const Display::Box& containingBlockGeometry)
 {
     return UsedHorizontalValues::Constraints { containingBlockGeometry.contentBoxLeft(), containingBlockGeometry.contentBoxWidth() };
 }
 
-UsedVerticalValues::Constraints FormattingContext::Geometry::inFlowVerticalConstraints(const Display::Box& containingBlockGeometry)
+UsedVerticalValues::Constraints FormattingContext::Geometry::verticalConstraintsForInFlow(const Display::Box& containingBlockGeometry)
 {
     return UsedVerticalValues::Constraints { containingBlockGeometry.contentBoxTop(), containingBlockGeometry.contentBoxHeight() };
 }

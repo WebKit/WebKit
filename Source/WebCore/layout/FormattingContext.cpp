@@ -66,17 +66,17 @@ LayoutState& FormattingContext::layoutState() const
     return m_formattingState.layoutState();
 }
 
-void FormattingContext::computeOutOfFlowHorizontalGeometry(const Box& layoutBox)
+void FormattingContext::computeOutOfFlowHorizontalGeometry(const Box& layoutBox, const UsedHorizontalValues::Constraints& horizontalConstraints, const UsedVerticalValues::Constraints& verticalConstraints)
 {
-    auto& containingBlockGeometry = geometryForBox(*layoutBox.containingBlock());
-    auto containingBlockWidth = containingBlockGeometry.paddingBoxWidth();
+    ASSERT(layoutBox.isOutOfFlowPositioned());
+    auto usedVerticalValues = UsedVerticalValues { verticalConstraints, { } };
 
     auto compute = [&](Optional<LayoutUnit> usedWidth) {
-        auto usedHorizontalValues = UsedHorizontalValues { Geometry::outOfFlowHorizontalConstraints(containingBlockGeometry), usedWidth, { } };
-        auto usedVerticalValues = UsedVerticalValues { Geometry::outOfFlowVerticalConstraints(containingBlockGeometry), { } };
+        auto usedHorizontalValues = UsedHorizontalValues { horizontalConstraints, usedWidth, { } };
         return geometry().outOfFlowHorizontalGeometry(layoutBox, usedHorizontalValues, usedVerticalValues);
     };
 
+    auto containingBlockWidth = horizontalConstraints.width;
     auto horizontalGeometry = compute({ });
     if (auto maxWidth = geometry().computedMaxWidth(layoutBox, containingBlockWidth)) {
         auto maxHorizontalGeometry = compute(maxWidth);
@@ -97,28 +97,24 @@ void FormattingContext::computeOutOfFlowHorizontalGeometry(const Box& layoutBox)
     displayBox.setHorizontalComputedMargin(horizontalGeometry.contentWidthAndMargin.computedMargin);
 }
 
-void FormattingContext::computeOutOfFlowVerticalGeometry(const Box& layoutBox)
+void FormattingContext::computeOutOfFlowVerticalGeometry(const Box& layoutBox, const UsedHorizontalValues::Constraints& horizontalConstraints, const UsedVerticalValues::Constraints& verticalConstraints)
 {
-    auto compute = [&](auto usedHorizontalValues, auto usedVerticalValues) {
+    ASSERT(layoutBox.isOutOfFlowPositioned());
+    auto compute = [&](const auto& usedHorizontalValues, const auto& usedVerticalValues) {
         return geometry().outOfFlowVerticalGeometry(layoutBox, usedHorizontalValues, usedVerticalValues);
     };
-    auto& containingBlockGeometry = geometryForBox(*layoutBox.containingBlock());
-    auto containingBlockHeight = containingBlockGeometry.paddingBoxHeight();
 
-    auto usedVerticalValuesForHeight = UsedVerticalValues { Geometry::outOfFlowVerticalConstraints(containingBlockGeometry), { } };
-    auto usedHorizontalValues = UsedHorizontalValues { Geometry::outOfFlowHorizontalConstraints(containingBlockGeometry) };
-
-    auto verticalGeometry = compute(usedHorizontalValues, usedVerticalValuesForHeight);
+    auto usedHorizontalValues = UsedHorizontalValues { horizontalConstraints };
+    auto containingBlockHeight = *verticalConstraints.height;
+    auto verticalGeometry = compute(usedHorizontalValues, UsedVerticalValues { verticalConstraints, { } });
     if (auto maxHeight = geometry().computedMaxHeight(layoutBox, containingBlockHeight)) {
-        auto usedValuesForMaxHeight = UsedVerticalValues { Geometry::outOfFlowVerticalConstraints(containingBlockGeometry), maxHeight };
-        auto maxVerticalGeometry = compute(usedHorizontalValues, usedValuesForMaxHeight);
+        auto maxVerticalGeometry = compute(usedHorizontalValues, UsedVerticalValues { verticalConstraints, maxHeight });
         if (verticalGeometry.contentHeightAndMargin.contentHeight > maxVerticalGeometry.contentHeightAndMargin.contentHeight)
             verticalGeometry = maxVerticalGeometry;
     }
 
     if (auto minHeight = geometry().computedMinHeight(layoutBox, containingBlockHeight)) {
-        auto usedValuesForMinHeight = UsedVerticalValues { Geometry::outOfFlowVerticalConstraints(containingBlockGeometry), minHeight };
-        auto minVerticalGeometry = compute(usedHorizontalValues, usedValuesForMinHeight);
+        auto minVerticalGeometry = compute(usedHorizontalValues, UsedVerticalValues { verticalConstraints, minHeight });
         if (verticalGeometry.contentHeightAndMargin.contentHeight < minVerticalGeometry.contentHeightAndMargin.contentHeight)
             verticalGeometry = minVerticalGeometry;
     }
@@ -138,29 +134,48 @@ void FormattingContext::computeBorderAndPadding(const Box& layoutBox, const Used
     displayBox.setPadding(geometry().computedPadding(layoutBox, UsedHorizontalValues { horizontalConstraint }));
 }
 
-void FormattingContext::layoutOutOfFlowContent(InvalidationState& invalidationState)
+void FormattingContext::layoutOutOfFlowContent(InvalidationState& invalidationState, const UsedHorizontalValues::Constraints& rootHorizontalConstraints, const UsedVerticalValues::Constraints& rootVerticalConstraints)
 {
     LOG_WITH_STREAM(FormattingContextLayout, stream << "Start: layout out-of-flow content -> context: " << &layoutState() << " root: " << &root());
 
     collectOutOfFlowDescendantsIfNeeded();
+
+    auto horizontalConstraintsForOutOfFlowBox = [&] (const auto& outOfFlowBox) {
+        auto* containingBlock = outOfFlowBox.containingBlock();
+        ASSERT(containingBlock);
+        if (containingBlock == &root())
+            return rootHorizontalConstraints;
+        return Geometry::horizontalConstraintsForOutOfFlow(geometryForBox(*containingBlock));
+    };
+
+    auto verticalConstraintsForOutOfFlowBox = [&] (const auto& outOfFlowBox) {
+        auto* containingBlock = outOfFlowBox.containingBlock();
+        ASSERT(containingBlock);
+        if (containingBlock == &root())
+            return rootVerticalConstraints;
+        return Geometry::verticalConstraintsForOutOfFlow(geometryForBox(*containingBlock));
+    };
 
     for (auto& outOfFlowBox : formattingState().outOfFlowBoxes()) {
         ASSERT(outOfFlowBox->establishesFormattingContext());
         if (!invalidationState.needsLayout(*outOfFlowBox))
             continue;
 
-        auto constraints = Geometry::inFlowHorizontalConstraints(geometryForBox(*outOfFlowBox->containingBlock()));
-        computeBorderAndPadding(*outOfFlowBox, constraints);
-        computeOutOfFlowHorizontalGeometry(*outOfFlowBox);
+        auto horizontalConstraints = horizontalConstraintsForOutOfFlowBox(*outOfFlowBox);
+        auto verticalConstraints = verticalConstraintsForOutOfFlowBox(*outOfFlowBox);
+        // Borders and paddings are resolved against the containing block's content box like if this box was an in-flow box.
+        auto& outOfFlowRootDisplayBox = geometryForBox(*outOfFlowBox);
+        computeBorderAndPadding(*outOfFlowBox, Geometry::horizontalConstraintsForInFlow(outOfFlowRootDisplayBox));
+        computeOutOfFlowHorizontalGeometry(*outOfFlowBox, horizontalConstraints, verticalConstraints);
         if (is<Container>(*outOfFlowBox)) {
             auto& outOfFlowRootContainer = downcast<Container>(*outOfFlowBox);
-            auto& outOfFlowRootDisplayBox = geometryForBox(outOfFlowRootContainer);
             auto formattingContext = LayoutContext::createFormattingContext(outOfFlowRootContainer, layoutState());
-            formattingContext->layoutInFlowContent(invalidationState, Geometry::inFlowHorizontalConstraints(outOfFlowRootDisplayBox));
-            computeOutOfFlowVerticalGeometry(outOfFlowRootContainer);
-            formattingContext->layoutOutOfFlowContent(invalidationState);
+            formattingContext->layoutInFlowContent(invalidationState, Geometry::horizontalConstraintsForInFlow(outOfFlowRootDisplayBox));
+            computeOutOfFlowVerticalGeometry(outOfFlowRootContainer, horizontalConstraints, verticalConstraints);
+
+            formattingContext->layoutOutOfFlowContent(invalidationState, Geometry::horizontalConstraintsForInFlow(outOfFlowRootDisplayBox), Geometry::verticalConstraintsForInFlow(outOfFlowRootDisplayBox));
         } else
-            computeOutOfFlowVerticalGeometry(*outOfFlowBox);
+            computeOutOfFlowVerticalGeometry(*outOfFlowBox, horizontalConstraints, verticalConstraints);
     }
     LOG_WITH_STREAM(FormattingContextLayout, stream << "End: layout out-of-flow content -> context: " << &layoutState() << " root: " << &root());
 }

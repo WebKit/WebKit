@@ -143,7 +143,10 @@ void InlineFormattingContext::layoutFormattingContextRoot(const Box& formattingC
         // Come back and finalize the root's height and margin.
         computeHeightAndMargin(rootContainer, usedHorizontalValues, usedVerticalValues);
         // Now that we computed the root's height, we can go back and layout the out-of-flow content.
-        formattingContext->layoutOutOfFlowContent(invalidationState);
+        auto& rootContainerDisplayBox = geometryForBox(rootContainer);
+        auto horizontalConstraintsForOutOfFlow =  Geometry::horizontalConstraintsForOutOfFlow(rootContainerDisplayBox);
+        auto verticalConstraintsForOutOfFlow = Geometry::verticalConstraintsForOutOfFlow(rootContainerDisplayBox);
+        formattingContext->layoutOutOfFlowContent(invalidationState, horizontalConstraintsForOutOfFlow, verticalConstraintsForOutOfFlow);
     } else
         computeHeightAndMargin(formattingContextRoot, usedHorizontalValues, usedVerticalValues);
 }

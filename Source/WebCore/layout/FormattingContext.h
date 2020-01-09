@@ -65,7 +65,7 @@ public:
     virtual ~FormattingContext();
 
     virtual void layoutInFlowContent(InvalidationState&, const UsedHorizontalValues::Constraints&) = 0;
-    void layoutOutOfFlowContent(InvalidationState&);
+    void layoutOutOfFlowContent(InvalidationState&, const UsedHorizontalValues::Constraints&, const UsedVerticalValues::Constraints&);
 
     struct IntrinsicWidthConstraints {
         void expand(LayoutUnit horizontalValue);
@@ -142,10 +142,10 @@ protected:
 
         LayoutUnit contentHeightForFormattingContextRoot(const Box&) const;
 
-        static UsedHorizontalValues::Constraints outOfFlowHorizontalConstraints(const Display::Box& containingBlockGeometry);
-        static UsedVerticalValues::Constraints outOfFlowVerticalConstraints(const Display::Box& containingBlockGeometry);
-        static UsedHorizontalValues::Constraints inFlowHorizontalConstraints(const Display::Box& containingBlockGeometry);
-        static UsedVerticalValues::Constraints inFlowVerticalConstraints(const Display::Box& containingBlockGeometry);
+        static UsedHorizontalValues::Constraints horizontalConstraintsForOutOfFlow(const Display::Box& containingBlockGeometry);
+        static UsedVerticalValues::Constraints verticalConstraintsForOutOfFlow(const Display::Box& containingBlockGeometry);
+        static UsedHorizontalValues::Constraints horizontalConstraintsForInFlow(const Display::Box& containingBlockGeometry);
+        static UsedVerticalValues::Constraints verticalConstraintsForInFlow(const Display::Box& containingBlockGeometry);
 
     protected:
         friend class FormattingContext;
@@ -197,8 +197,8 @@ protected:
 
 private:
     void collectOutOfFlowDescendantsIfNeeded();
-    void computeOutOfFlowVerticalGeometry(const Box&);
-    void computeOutOfFlowHorizontalGeometry(const Box&);
+    void computeOutOfFlowVerticalGeometry(const Box&, const UsedHorizontalValues::Constraints&, const UsedVerticalValues::Constraints&);
+    void computeOutOfFlowHorizontalGeometry(const Box&, const UsedHorizontalValues::Constraints&, const UsedVerticalValues::Constraints&);
 
     WeakPtr<const Container> m_root;
     FormattingState& m_formattingState;

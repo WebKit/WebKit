@@ -94,7 +94,7 @@ void BlockFormattingContext::layoutInFlowContent(InvalidationState& invalidation
         ASSERT(containingBlock);
         if (containingBlock == &formattingRoot)
             return rootHorizontalConstraints;
-        return Geometry::inFlowHorizontalConstraints(geometryForBox(*containingBlock));
+        return Geometry::horizontalConstraintsForInFlow(geometryForBox(*containingBlock));
     };
     // This is a post-order tree traversal layout.
     // The root container layout is done in the formatting context it lives in, not that one it creates, so let's start with the first child.
@@ -201,11 +201,13 @@ void BlockFormattingContext::layoutFormattingContextRoot(FloatingContext& floati
         auto& rootContainer = downcast<Container>(layoutBox);
         auto& rootContainerDisplayBox = geometryForBox(rootContainer);
         auto formattingContext = LayoutContext::createFormattingContext(rootContainer, layoutState());
-        formattingContext->layoutInFlowContent(invalidationState, Geometry::inFlowHorizontalConstraints(rootContainerDisplayBox));
+        formattingContext->layoutInFlowContent(invalidationState, Geometry::horizontalConstraintsForInFlow(rootContainerDisplayBox));
         // Come back and finalize the root's geometry.
         computeHeightAndMargin(rootContainer);
         // Now that we computed the root's height, we can go back and layout the out-of-flow content.
-        formattingContext->layoutOutOfFlowContent(invalidationState);
+        auto horizontalConstraintsForOutOfFlow =  Geometry::horizontalConstraintsForOutOfFlow(rootContainerDisplayBox);
+        auto verticalConstraintsForOutOfFlow = Geometry::verticalConstraintsForOutOfFlow(rootContainerDisplayBox);
+        formattingContext->layoutOutOfFlowContent(invalidationState, horizontalConstraintsForOutOfFlow, verticalConstraintsForOutOfFlow);
     } else
         computeHeightAndMargin(layoutBox);
     // Float related final positioning.
@@ -228,7 +230,7 @@ void BlockFormattingContext::placeInFlowPositionedChildren(const Box& layoutBox)
             continue;
 
         auto computeInFlowPositionedPosition = [&] {
-            auto usedHorizontalValues = UsedHorizontalValues { Geometry::inFlowHorizontalConstraints(geometryForBox(*childBox.containingBlock())) };
+            auto usedHorizontalValues = UsedHorizontalValues { Geometry::horizontalConstraintsForInFlow(geometryForBox(*childBox.containingBlock())) };
             auto positionOffset = geometry().inFlowPositionedPositionOffset(childBox, usedHorizontalValues);
 
             auto& displayBox = formattingState().displayBox(childBox);
@@ -267,7 +269,7 @@ void BlockFormattingContext::computeStaticPosition(const FloatingContext& floati
 
 void BlockFormattingContext::computeEstimatedVerticalPosition(const Box& layoutBox)
 {
-    auto usedHorizontalValues = UsedHorizontalValues { Geometry::inFlowHorizontalConstraints(geometryForBox(*layoutBox.containingBlock())) };
+    auto usedHorizontalValues = UsedHorizontalValues { Geometry::horizontalConstraintsForInFlow(geometryForBox(*layoutBox.containingBlock())) };
     auto computedVerticalMargin = geometry().computedVerticalMargin(layoutBox, usedHorizontalValues);
     auto usedNonCollapsedMargin = UsedVerticalMargin::NonCollapsedValues { computedVerticalMargin.before.valueOr(0), computedVerticalMargin.after.valueOr(0) };
     auto estimatedMarginBefore = marginCollapse().estimatedMarginBefore(layoutBox, usedNonCollapsedMargin);
@@ -420,7 +422,7 @@ void BlockFormattingContext::computeWidthAndMargin(const Box& layoutBox, const U
 void BlockFormattingContext::computeHeightAndMargin(const Box& layoutBox)
 {
     auto& containingBlockGeometry = geometryForBox(*layoutBox.containingBlock());
-    auto usedHorizontalValues = UsedHorizontalValues { Geometry::inFlowHorizontalConstraints(containingBlockGeometry) };
+    auto usedHorizontalValues = UsedHorizontalValues { Geometry::horizontalConstraintsForInFlow(containingBlockGeometry) };
     auto compute = [&](auto usedVerticalValues) -> ContentHeightAndMargin {
         if (layoutBox.isInFlow())
             return geometry().inFlowHeightAndMargin(layoutBox, usedHorizontalValues, usedVerticalValues);
