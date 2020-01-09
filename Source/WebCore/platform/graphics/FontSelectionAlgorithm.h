@@ -66,6 +66,12 @@ public:
 
     constexpr BackingType rawValue() const { return m_backing; }
 
+    template<class Encoder>
+    void encode(Encoder&) const;
+
+    template<class Decoder>
+    static Optional<FontSelectionValue> decode(Decoder&);
+
 private:
     enum class RawTag { RawTag };
     constexpr FontSelectionValue(int, RawTag);
@@ -73,6 +79,25 @@ private:
     static constexpr int fractionalEntropy = 4;
     BackingType m_backing { 0 };
 };
+
+template<class Encoder>
+void FontSelectionValue::encode(Encoder& encoder) const
+{
+    encoder << m_backing;
+}
+
+template<class Decoder>
+Optional<FontSelectionValue> FontSelectionValue::decode(Decoder& decoder)
+{
+    Optional<FontSelectionValue::BackingType> backing;
+    decoder >> backing;
+    if (!backing)
+        return WTF::nullopt;
+
+    FontSelectionValue result;
+    result.m_backing = *backing;
+    return result;
+}
 
 constexpr FontSelectionValue::FontSelectionValue(int x)
     : m_backing(x * fractionalEntropy)
@@ -317,9 +342,38 @@ struct FontSelectionRange {
         return minimum.rawValue() << 16 | maximum.rawValue();
     }
 
+    template<class Encoder>
+    void encode(Encoder&) const;
+
+    template<class Decoder>
+    static Optional<FontSelectionRange> decode(Decoder&);
+
     Value minimum { 1 };
     Value maximum { 0 };
 };
+
+template<class Encoder>
+void FontSelectionRange::encode(Encoder& encoder) const
+{
+    encoder << minimum;
+    encoder << maximum;
+}
+
+template<class Decoder>
+Optional<FontSelectionRange> FontSelectionRange::decode(Decoder& decoder)
+{
+    Optional<FontSelectionRange::Value> minimum;
+    decoder >> minimum;
+    if (!minimum)
+        return WTF::nullopt;
+
+    Optional<FontSelectionRange::Value> maximum;
+    decoder >> maximum;
+    if (!maximum)
+        return WTF::nullopt;
+
+    return {{ *minimum, *maximum }};
+}
 
 inline void add(Hasher& hasher, const FontSelectionRange& range)
 {
@@ -445,10 +499,45 @@ struct FontSelectionSpecifiedCapabilities {
         return slope.valueOr(Range { normalItalicValue() });
     }
 
+    template<class Encoder>
+    void encode(Encoder&) const;
+
+    template<class Decoder>
+    static Optional<FontSelectionSpecifiedCapabilities> decode(Decoder&);
+
     OptionalRange weight;
     OptionalRange width;
     OptionalRange slope;
 };
+
+template<class Encoder>
+void FontSelectionSpecifiedCapabilities::encode(Encoder& encoder) const
+{
+    encoder << weight;
+    encoder << width;
+    encoder << slope;
+}
+
+template<class Decoder>
+Optional<FontSelectionSpecifiedCapabilities> FontSelectionSpecifiedCapabilities::decode(Decoder& decoder)
+{
+    Optional<OptionalRange> weight;
+    decoder >> weight;
+    if (!weight)
+        return WTF::nullopt;
+
+    Optional<OptionalRange> width;
+    decoder >> width;
+    if (!width)
+        return WTF::nullopt;
+
+    Optional<OptionalRange> slope;
+    decoder >> slope;
+    if (!slope)
+        return WTF::nullopt;
+
+    return {{ *weight, *width, *slope }};
+}
 
 constexpr bool operator==(const FontSelectionSpecifiedCapabilities& a, const FontSelectionSpecifiedCapabilities& b)
 {

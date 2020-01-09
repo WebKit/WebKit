@@ -70,6 +70,9 @@ public:
     T value() const { return m_value; }
     bool enabled() const { return value(); }
 
+    template<class Encoder> void encode(Encoder&) const;
+    template<class Decoder> static Optional<FontTaggedSetting<T>> decode(Decoder&);
+
 private:
     FontTag m_tag;
     T m_value;
@@ -102,6 +105,54 @@ bool FontTaggedSetting<T>::operator<(const FontTaggedSetting<T>& other) const
 }
 
 template <typename T>
+template <class Encoder>
+void FontTaggedSetting<T>::encode(Encoder& encoder) const
+{
+    encoder << static_cast<uint8_t>(m_tag[0]);
+    encoder << static_cast<uint8_t>(m_tag[1]);
+    encoder << static_cast<uint8_t>(m_tag[2]);
+    encoder << static_cast<uint8_t>(m_tag[3]);
+    encoder << m_value;
+}
+
+template <typename T>
+template <class Decoder>
+Optional<FontTaggedSetting<T>> FontTaggedSetting<T>::decode(Decoder& decoder)
+{
+    Optional<uint8_t> char0;
+    decoder >> char0;
+    if (!char0)
+        return WTF::nullopt;
+
+    Optional<uint8_t> char1;
+    decoder >> char1;
+    if (!char1)
+        return WTF::nullopt;
+
+    Optional<uint8_t> char2;
+    decoder >> char2;
+    if (!char2)
+        return WTF::nullopt;
+
+    Optional<uint8_t> char3;
+    decoder >> char3;
+    if (!char3)
+        return WTF::nullopt;
+
+    Optional<T> value;
+    decoder >> value;
+    if (!value)
+        return WTF::nullopt;
+
+    return FontTaggedSetting<T>({{
+        static_cast<char>(*char0),
+        static_cast<char>(*char1),
+        static_cast<char>(*char2),
+        static_cast<char>(*char3)
+    }}, *value);
+}
+
+template <typename T>
 class FontTaggedSettings {
 public:
     void insert(FontTaggedSetting<T>&&);
@@ -117,6 +168,9 @@ public:
     typename Vector<FontTaggedSetting<T>>::const_iterator end() const { return m_list.end(); }
 
     unsigned hash() const;
+
+    template<class Encoder> void encode(Encoder&) const;
+    template<class Decoder> static Optional<FontTaggedSettings<T>> decode(Decoder&);
 
 private:
     Vector<FontTaggedSetting<T>> m_list;
@@ -134,6 +188,27 @@ void FontTaggedSettings<T>::insert(FontTaggedSetting<T>&& feature)
     if (i < m_list.size() && feature.tag() == m_list[i].tag())
         m_list.remove(i);
     m_list.insert(i, WTFMove(feature));
+}
+
+template <typename T>
+template <class Encoder>
+void FontTaggedSettings<T>::encode(Encoder& encoder) const
+{
+    encoder << m_list;
+}
+
+template <typename T>
+template <class Decoder>
+Optional<FontTaggedSettings<T>> FontTaggedSettings<T>::decode(Decoder& decoder)
+{
+    Optional<Vector<FontTaggedSetting<T>>> list;
+    decoder >> list;
+    if (!list)
+        return WTF::nullopt;
+
+    FontTaggedSettings result;
+    result.m_list = WTFMove(*list);
+    return result;
 }
 
 typedef FontTaggedSetting<int> FontFeature;
