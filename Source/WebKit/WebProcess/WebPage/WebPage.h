@@ -1277,7 +1277,7 @@ private:
     void platformWillPerformEditingCommand();
     void sendEditorStateUpdate();
 
-#if PLATFORM(COCOA)
+#if HAVE(TOUCH_BAR)
     void sendTouchBarMenuDataAddedUpdate(WebCore::HTMLMenuElement&);
     void sendTouchBarMenuDataRemovedUpdate(WebCore::HTMLMenuElement&);
     void sendTouchBarMenuItemDataAddedUpdate(WebCore::HTMLMenuItemElement&);
@@ -1873,8 +1873,11 @@ private:
 
     bool m_userIsInteracting { false };
     bool m_hasEverFocusedElementDueToUserInteractionSincePageTransition { false };
+
+#if HAVE(TOUCH_BAR)
     bool m_isTouchBarUpdateSupressedForHiddenContentEditable { false };
     bool m_isNeverRichlyEditableForTouchBar { false };
+#endif
     OptionSet<WebCore::ActivityState::Flag> m_lastActivityStateChanges;
 
 #if ENABLE(CONTEXT_MENUS)

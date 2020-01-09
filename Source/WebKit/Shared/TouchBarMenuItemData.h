@@ -24,6 +24,9 @@
  */
 
 #pragma once
+
+#if HAVE(TOUCH_BAR)
+
 #include "ArgumentCoders.h"
 #include <wtf/text/WTFString.h>
 
@@ -91,3 +94,5 @@ inline bool operator!=(const TouchBarMenuItemData& lhs, const TouchBarMenuItemDa
 }
 
 }
+
+#endif // HAVE(TOUCH_BAR)

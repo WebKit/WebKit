@@ -24,6 +24,9 @@
  */
 
 #pragma once
+
+#if HAVE(TOUCH_BAR)
+
 #include "ArgumentCoders.h"
 #include "TouchBarMenuItemData.h"
 #include <wtf/text/WTFString.h>
@@ -63,5 +66,7 @@ private:
     
     bool m_isPageCustomized { false };
 };
-    
+
 }
+
+#endif // HAVE(TOUCH_BAR)

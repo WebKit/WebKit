@@ -262,8 +262,6 @@
 #include "RemoteLayerTreeTransaction.h"
 #include "RemoteObjectRegistryMessages.h"
 #include "TextCheckingControllerProxy.h"
-#include "TouchBarMenuData.h"
-#include "TouchBarMenuItemData.h"
 #include "UserMediaCaptureManager.h"
 #include "VideoFullscreenManager.h"
 #include "WKStringCF.h"
@@ -271,6 +269,11 @@
 #include <WebCore/LegacyWebArchive.h>
 #include <WebCore/UTIRegistry.h>
 #include <wtf/MachSendRight.h>
+#endif
+
+#if HAVE(TOUCH_BAR)
+#include "TouchBarMenuData.h"
+#include "TouchBarMenuItemData.h"
 #endif
 
 #if PLATFORM(GTK)
@@ -3273,18 +3276,24 @@ void WebPage::didStartPageTransition()
 #endif
     m_hasEverFocusedElementDueToUserInteractionSincePageTransition = false;
     m_lastEditorStateWasContentEditable = EditorStateIsContentEditable::Unset;
+
 #if PLATFORM(MAC)
     if (hasPreviouslyFocusedDueToUserInteraction)
         send(Messages::WebPageProxy::SetHasHadSelectionChangesFromUserInteraction(m_hasEverFocusedElementDueToUserInteractionSincePageTransition));
+#endif
+
+#if HAVE(TOUCH_BAR)
     if (m_isTouchBarUpdateSupressedForHiddenContentEditable) {
         m_isTouchBarUpdateSupressedForHiddenContentEditable = false;
         send(Messages::WebPageProxy::SetIsTouchBarUpdateSupressedForHiddenContentEditable(m_isTouchBarUpdateSupressedForHiddenContentEditable));
     }
+
     if (m_isNeverRichlyEditableForTouchBar) {
         m_isNeverRichlyEditableForTouchBar = false;
         send(Messages::WebPageProxy::SetIsNeverRichlyEditableForTouchBar(m_isNeverRichlyEditableForTouchBar));
     }
 #endif
+
 #if PLATFORM(IOS_FAMILY)
     m_isShowingInputViewForFocusedElement = false;
 #endif
@@ -5442,6 +5451,7 @@ void WebPage::didChangeSelectionOrOverflowScrollPosition()
     m_hasEverFocusedElementDueToUserInteractionSincePageTransition |= m_userIsInteracting;
 
     if (!hasPreviouslyFocusedDueToUserInteraction && m_hasEverFocusedElementDueToUserInteractionSincePageTransition) {
+#if HAVE(TOUCH_BAR)
         if (frame.document()->quirks().isTouchBarUpdateSupressedForHiddenContentEditable()) {
             m_isTouchBarUpdateSupressedForHiddenContentEditable = true;
             send(Messages::WebPageProxy::SetIsTouchBarUpdateSupressedForHiddenContentEditable(m_isTouchBarUpdateSupressedForHiddenContentEditable));
@@ -5451,6 +5461,7 @@ void WebPage::didChangeSelectionOrOverflowScrollPosition()
             m_isNeverRichlyEditableForTouchBar = true;
             send(Messages::WebPageProxy::SetIsNeverRichlyEditableForTouchBar(m_isNeverRichlyEditableForTouchBar));
         }
+#endif
 
         send(Messages::WebPageProxy::SetHasHadSelectionChangesFromUserInteraction(m_hasEverFocusedElementDueToUserInteractionSincePageTransition));
     }
@@ -5890,7 +5901,7 @@ void WebPage::didFinishLoad(WebFrame& frame)
 
 void WebPage::didInsertMenuElement(HTMLMenuElement& element)
 {
-#if PLATFORM(COCOA)
+#if HAVE(TOUCH_BAR)
     sendTouchBarMenuDataAddedUpdate(element);
 #else
     UNUSED_PARAM(element);
@@ -5899,7 +5910,7 @@ void WebPage::didInsertMenuElement(HTMLMenuElement& element)
 
 void WebPage::didRemoveMenuElement(HTMLMenuElement& element)
 {
-#if PLATFORM(COCOA)
+#if HAVE(TOUCH_BAR)
     sendTouchBarMenuDataRemovedUpdate(element);
 #else
     UNUSED_PARAM(element);
@@ -5908,7 +5919,7 @@ void WebPage::didRemoveMenuElement(HTMLMenuElement& element)
 
 void WebPage::didInsertMenuItemElement(HTMLMenuItemElement& element)
 {
-#if PLATFORM(COCOA)
+#if HAVE(TOUCH_BAR)
     sendTouchBarMenuItemDataAddedUpdate(element);
 #else
     UNUSED_PARAM(element);
@@ -5917,7 +5928,7 @@ void WebPage::didInsertMenuItemElement(HTMLMenuItemElement& element)
 
 void WebPage::didRemoveMenuItemElement(HTMLMenuItemElement& element)
 {
-#if PLATFORM(COCOA)
+#if HAVE(TOUCH_BAR)
     sendTouchBarMenuItemDataRemovedUpdate(element);
 #else
     UNUSED_PARAM(element);
@@ -6165,7 +6176,7 @@ void WebPage::scheduleFullEditorStateUpdate()
     m_drawingArea->scheduleCompositingLayerFlush();
 }
 
-#if PLATFORM(COCOA)
+#if HAVE(TOUCH_BAR)
 void WebPage::sendTouchBarMenuDataRemovedUpdate(HTMLMenuElement& element)
 {
     send(Messages::WebPageProxy::TouchBarMenuDataChanged(TouchBarMenuData { }));

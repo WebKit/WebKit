@@ -24,6 +24,9 @@
  */
 
 #include "config.h"
+
+#if HAVE(TOUCH_BAR)
+
 #include "TouchBarMenuData.h"
 
 #include "Decoder.h"
@@ -68,3 +71,5 @@ bool TouchBarMenuData::decode(IPC::Decoder& decoder, TouchBarMenuData& data)
 }
     
 }
+
+#endif // HAVE(TOUCH_BAR)

@@ -38,6 +38,34 @@
 
 2020-01-09  Simon Fraser  <simon.fraser@apple.com>
 
+        Use HAVE(TOUCH_BAR) instead of PLATFORM(COCOA) in more places
+        https://bugs.webkit.org/show_bug.cgi?id=205975
+
+        Reviewed by Wenson Hsieh.
+
+        Protect Touch Bar-related code with HAVE(TOUCH_BAR) instead of PLATFORM(COCOA).
+
+        * Shared/TouchBarMenuData.cpp:
+        * Shared/TouchBarMenuData.h:
+        * Shared/TouchBarMenuItemData.cpp:
+        * Shared/TouchBarMenuItemData.h:
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (WebKit::WebViewImpl::forceRequestCandidatesForTesting):
+        (WebKit::WebViewImpl::setEditableElementIsFocused):
+        * UIProcess/WebPageProxy.cpp:
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::didStartPageTransition):
+        (WebKit::WebPage::didChangeSelectionOrOverflowScrollPosition):
+        (WebKit::WebPage::didInsertMenuElement):
+        (WebKit::WebPage::didRemoveMenuElement):
+        (WebKit::WebPage::didInsertMenuItemElement):
+        (WebKit::WebPage::didRemoveMenuItemElement):
+        * WebProcess/WebPage/WebPage.h:
+
+2020-01-09  Simon Fraser  <simon.fraser@apple.com>
+
         Add ENABLE_UI_SIDE_COMPOSITING and use it in a few places
         https://bugs.webkit.org/show_bug.cgi?id=205982
 

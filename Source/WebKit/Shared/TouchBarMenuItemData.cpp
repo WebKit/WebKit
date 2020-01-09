@@ -22,7 +22,11 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
+
 #include "config.h"
+
+#if HAVE(TOUCH_BAR)
+
 #include "TouchBarMenuItemData.h"
 
 #include "Decoder.h"
@@ -69,3 +73,5 @@ Optional<TouchBarMenuItemData> TouchBarMenuItemData::decode(IPC::Decoder& decode
 }
 
 }
+
+#endif // HAVE(TOUCH_BAR)

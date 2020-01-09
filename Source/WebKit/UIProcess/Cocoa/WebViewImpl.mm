@@ -1293,8 +1293,6 @@ void WebViewImpl::updateMediaTouchBar()
 #endif
 }
 
-#if HAVE(TOUCH_BAR)
-
 bool WebViewImpl::canTogglePictureInPicture()
 {
 #if ENABLE(WEB_PLAYBACK_CONTROLS_MANAGER)
@@ -1304,14 +1302,10 @@ bool WebViewImpl::canTogglePictureInPicture()
 #endif
 }
 
-#endif // HAVE(TOUCH_BAR)
-
 void WebViewImpl::forceRequestCandidatesForTesting()
 {
     m_canCreateTouchBars = true;
-#if HAVE(TOUCH_BAR)
     updateTouchBar();
-#endif
 }
 
 bool WebViewImpl::shouldRequestCandidates() const
@@ -1323,15 +1317,15 @@ void WebViewImpl::setEditableElementIsFocused(bool editableElementIsFocused)
 {
     m_editableElementIsFocused = editableElementIsFocused;
 
-#if HAVE(TOUCH_BAR)
     // If the editable elements have blurred, then we might need to get rid of the editing function bar.
     if (!m_editableElementIsFocused)
         updateTouchBar();
-#endif
 }
 
 } // namespace WebKit
+
 #else // !HAVE(TOUCH_BAR)
+
 namespace WebKit {
 
 void WebViewImpl::forceRequestCandidatesForTesting()
@@ -1349,6 +1343,7 @@ void WebViewImpl::setEditableElementIsFocused(bool editableElementIsFocused)
 }
 
 } // namespace WebKit
+
 #endif // HAVE(TOUCH_BAR)
 
 namespace WebKit {

@@ -196,8 +196,6 @@
 #include "InsertTextOptions.h"
 #include "RemoteLayerTreeDrawingAreaProxy.h"
 #include "RemoteLayerTreeScrollingPerformanceData.h"
-#include "TouchBarMenuData.h"
-#include "TouchBarMenuItemData.h"
 #include "UserMediaCaptureManagerProxy.h"
 #include "VersionChecks.h"
 #include "VideoFullscreenManagerProxy.h"
@@ -205,6 +203,11 @@
 #include <WebCore/RunLoopObserver.h>
 #include <WebCore/TextIndicatorWindow.h>
 #include <wtf/MachSendRight.h>
+#endif
+
+#if HAVE(TOUCH_BAR)
+#include "TouchBarMenuData.h"
+#include "TouchBarMenuItemData.h"
 #endif
 
 #if PLATFORM(COCOA) || PLATFORM(GTK)
@@ -5974,6 +5977,8 @@ void WebPageProxy::setHasHadSelectionChangesFromUserInteraction(bool hasHadUserS
     m_hasHadSelectionChangesFromUserInteraction = hasHadUserSelectionChanges;
 }
 
+#if HAVE(TOUCH_BAR)
+
 void WebPageProxy::setIsTouchBarUpdateSupressedForHiddenContentEditable(bool ignoreTouchBarUpdate)
 {
     m_isTouchBarUpdateSupressedForHiddenContentEditable = ignoreTouchBarUpdate;
@@ -5983,6 +5988,8 @@ void WebPageProxy::setIsNeverRichlyEditableForTouchBar(bool isNeverRichlyEditabl
 {
     m_isNeverRichlyEditableForTouchBar = isNeverRichlyEditable;
 }
+
+#endif
 
 void WebPageProxy::requestDOMPasteAccess(const WebCore::IntRect& elementRect, const String& originIdentifier, CompletionHandler<void(WebCore::DOMPasteAccessResponse)>&& completionHandler)
 {
@@ -9068,7 +9075,7 @@ void WebPageProxy::effectiveAppearanceDidChange()
     send(Messages::WebPage::EffectiveAppearanceDidChange(useDarkAppearance(), useElevatedUserInterfaceLevel()));
 }
 
-#if PLATFORM(COCOA)
+#if HAVE(TOUCH_BAR)
 void WebPageProxy::touchBarMenuDataChanged(const TouchBarMenuData& touchBarMenuData)
 {
     m_touchBarMenuData = touchBarMenuData;

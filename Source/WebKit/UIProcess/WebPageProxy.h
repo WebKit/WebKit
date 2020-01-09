@@ -134,6 +134,9 @@ OBJC_CLASS _WKRemoteObjectRegistry;
 #if PLATFORM(COCOA)
 #include "DynamicViewportSizeUpdate.h"
 #include "RemoteLayerTreeNode.h"
+#endif
+
+#if HAVE(TOUCH_BAR)
 #include "TouchBarMenuData.h"
 #include "TouchBarMenuItemData.h"
 #endif
@@ -659,7 +662,7 @@ public:
 
     Optional<WebCore::FontAttributes> cachedFontAttributesAtSelectionStart() const { return m_cachedFontAttributesAtSelectionStart; }
 
-#if PLATFORM(COCOA)
+#if HAVE(TOUCH_BAR)
     const TouchBarMenuData& touchBarMenuData() const { return m_touchBarMenuData; }
 #endif
 
@@ -1480,8 +1483,11 @@ public:
     void setUserInterfaceLayoutDirection(WebCore::UserInterfaceLayoutDirection);
 
     bool hasHadSelectionChangesFromUserInteraction() const { return m_hasHadSelectionChangesFromUserInteraction; }
+
+#if HAVE(TOUCH_BAR)
     bool isTouchBarUpdateSupressedForHiddenContentEditable() const { return m_isTouchBarUpdateSupressedForHiddenContentEditable; }
     bool isNeverRichlyEditableForTouchBar() const { return m_isNeverRichlyEditableForTouchBar; }
+#endif
 
     bool isAlwaysOnLoggingAllowed() const;
 
@@ -1506,7 +1512,7 @@ public:
     void scheduleFullEditorStateUpdate();
     void dispatchDidReceiveEditorStateAfterFocus();
 
-#if PLATFORM(COCOA)
+#if HAVE(TOUCH_BAR)
     void touchBarMenuDataRemoved();
     void touchBarMenuDataChanged(const TouchBarMenuData&);
     void touchBarMenuItemDataAdded(const TouchBarMenuItemData&);
@@ -1858,8 +1864,11 @@ private:
 
     void compositionWasCanceled();
     void setHasHadSelectionChangesFromUserInteraction(bool);
+
+#if HAVE(TOUCH_BAR)
     void setIsTouchBarUpdateSupressedForHiddenContentEditable(bool);
     void setIsNeverRichlyEditableForTouchBar(bool);
+#endif
 
     void requestDOMPasteAccess(const WebCore::IntRect&, const String&, CompletionHandler<void(WebCore::DOMPasteAccessResponse)>&&);
 
@@ -2349,7 +2358,7 @@ private:
     EditorState m_editorState;
     bool m_isEditable { false };
 
-#if PLATFORM(COCOA)
+#if HAVE(TOUCH_BAR)
     TouchBarMenuData m_touchBarMenuData;
 #endif
 
@@ -2566,8 +2575,11 @@ private:
     WebCore::MediaProducer::MediaStateFlags m_mediaState { WebCore::MediaProducer::IsNotPlaying };
 
     bool m_hasHadSelectionChangesFromUserInteraction { false };
+
+#if HAVE(TOUCH_BAR)
     bool m_isTouchBarUpdateSupressedForHiddenContentEditable { false };
     bool m_isNeverRichlyEditableForTouchBar { false };
+#endif
 
 #if ENABLE(MEDIA_SESSION)
     bool m_hasMediaSessionWithActiveMediaElements { false };
