@@ -1,7 +1,7 @@
 SCRIPTS_PATH ?= ../Tools/Scripts
 
 SET_COLOR_DIAGNOSTICS_ARG = if [[ -t 1 ]]; then COLOR_DIAGNOSTICS_ARG="COLOR_DIAGNOSTICS=YES"; fi
-XCODE_OPTIONS += `perl -I$(SCRIPTS_PATH) -Mwebkitdirs -e 'print XcodeOptionString()' -- $(BUILD_WEBKIT_OPTIONS)` $${COLOR_DIAGNOSTICS_ARG} $(ARGS)
+XCODE_OPTIONS = `perl -I$(SCRIPTS_PATH) -Mwebkitdirs -e 'print XcodeOptionString()' -- $(BUILD_WEBKIT_OPTIONS)` $${COLOR_DIAGNOSTICS_ARG} $(ARGS)
 
 ifneq (,$(SDKROOT))
 	ifneq (,$(OVERRIDE_SDKROOT))

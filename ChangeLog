@@ -1,3 +1,17 @@
+2020-01-09  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r254234.
+        https://bugs.webkit.org/show_bug.cgi?id=206011
+
+        Broke production builds (Requested by ap on #webkit).
+
+        Reverted changeset:
+
+        "build-jsc should invoke make instead of calling xcodebuild
+        directly"
+        https://bugs.webkit.org/show_bug.cgi?id=205960
+        https://trac.webkit.org/changeset/254234
+
 2020-01-08  Saam Barati  <sbarati@apple.com>
 
         build-jsc should invoke make instead of calling xcodebuild directly
