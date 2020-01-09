@@ -1,3 +1,19 @@
+2020-01-08  Kenneth Russell  <kbr@chromium.org>
+
+        Remove some #ifdefs related to iOS port of ANGLE
+        https://bugs.webkit.org/show_bug.cgi?id=205781
+
+        Since the port to the iOS Simulator in
+        https://bugs.webkit.org/show_bug.cgi?id=205618 , these #ifdefs
+        should no longer be needed.
+
+        Reviewed by Dean Jackson.
+
+        * src/common/PackedEnums.cpp:
+        (egl_gl::EGLTextureTargetToTextureType):
+        * src/libANGLE/validationES2.cpp:
+        (gl::ValidateFramebufferTexture2D):
+
 2020-01-05  Kenneth Russell  <kbr@chromium.org>
 
         REGRESSION (r253926): Flaky crashes on webgl/1.0.3/conformance/textures/texture-copying-feedback-loops.html and webgl/2.0.0/conformance/textures/misc/texture-copying-feedback-loops.html
