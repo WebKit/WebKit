@@ -1,3 +1,16 @@
+2020-01-09  Justin Fan  <justin_fan@apple.com>
+
+        [WebGL] Skip all webgl/2.0.0 tests, as ANGLE switch obsoletes all old expectated results
+        https://bugs.webkit.org/show_bug.cgi?id=205988
+
+        Unreviewed test gardening.
+
+        The WebGL dedicated queue will continue to run failing tests.
+        Normal bots will only enable 2.0.0 tests after development work confirms they are passing with ANGLE.
+
+        * TestExpectations:
+        * platform/mac/TestExpectations:
+
 2020-01-09  youenn fablet  <youenn@apple.com>
 
         REGRESSION: [ Mac wk2 ] http/wpt/service-workers/persistent-importScripts.html is a flaky failure
