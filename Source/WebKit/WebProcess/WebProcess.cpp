@@ -1630,7 +1630,7 @@ StorageAreaMap* WebProcess::storageAreaMap(StorageAreaIdentifier identifier) con
 
 void WebProcess::setResourceLoadStatisticsEnabled(bool enabled)
 {
-    if (WebCore::DeprecatedGlobalSettings::resourceLoadStatisticsEnabled() == enabled || m_sessionID->isEphemeral())
+    if (WebCore::DeprecatedGlobalSettings::resourceLoadStatisticsEnabled() == enabled || (m_sessionID && m_sessionID->isEphemeral()))
         return;
     WebCore::DeprecatedGlobalSettings::setResourceLoadStatisticsEnabled(enabled);
 #if ENABLE(RESOURCE_LOAD_STATISTICS)

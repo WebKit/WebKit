@@ -1,3 +1,17 @@
+2020-01-09  John Wilander  <wilander@apple.com>
+
+        Check the existence of the optional m_sessionID before using it in WebProcess::setResourceLoadStatisticsEnabled()
+        https://bugs.webkit.org/show_bug.cgi?id=206035
+        <rdar://problem/58455306>
+
+        Reviewed by Brent Fulgham.
+
+        No new tests.
+
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::setResourceLoadStatisticsEnabled):
+            Added a check that m_sessionID exists.
+
 2020-01-09  Tim Horton  <timothy_horton@apple.com>
 
         Install WebKit framework symlink for more iOS-derived platforms
