@@ -121,6 +121,7 @@ public:
     void setLeft(LayoutUnit);
     void moveHorizontally(LayoutUnit offset) { m_topLeft.move(offset, 0_lu); }
     void moveVertically(LayoutUnit offset) { m_topLeft.move(0_lu, offset); }
+    void move(const LayoutSize& size) { m_topLeft.move(size); }
     void moveBy(LayoutPoint offset) { m_topLeft.moveBy(offset); }
 
     void setContentBoxHeight(LayoutUnit);

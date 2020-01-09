@@ -52,10 +52,10 @@ public:
 
 private:
     void layoutFormattingContextRoot(const Box&, FloatingContext&, InvalidationState&, const UsedHorizontalValues::Constraints&);
-    void placeInFlowPositionedChildren(const Box&);
+    void placeInFlowPositionedChildren(const Box&, Optional<UsedHorizontalValues::Constraints> = WTF::nullopt);
 
     void computeWidthAndMargin(const Box&, const UsedHorizontalValues::Constraints&);
-    void computeHeightAndMargin(const Box&);
+    void computeHeightAndMargin(const Box&, const UsedHorizontalValues::Constraints&);
 
     void computeStaticHorizontalPosition(const Box&, const UsedHorizontalValues::Constraints&);
     void computeStaticVerticalPosition(const FloatingContext&, const Box&);
