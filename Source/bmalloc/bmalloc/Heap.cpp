@@ -30,9 +30,10 @@
 #include "BumpAllocator.h"
 #include "Chunk.h"
 #include "CryptoRandom.h"
+#include "DebugHeap.h"
 #include "Environment.h"
 #include "Gigacage.h"
-#include "DebugHeap.h"
+#include "HeapConstants.h"
 #include "PerProcess.h"
 #include "Scavenger.h"
 #include "SmallLine.h"
@@ -45,15 +46,8 @@
 namespace bmalloc {
 
 Heap::Heap(HeapKind kind, std::lock_guard<Mutex>&)
-    : m_kind(kind)
-    , m_vmPageSizePhysical(vmPageSizePhysical())
+    : m_kind { kind }, m_constants { *HeapConstants::get() }
 {
-    RELEASE_BASSERT(vmPageSizePhysical() >= smallPageSize);
-    RELEASE_BASSERT(vmPageSize() >= vmPageSizePhysical());
-
-    initializeLineMetadata();
-    initializePageMetadata();
-    
     BASSERT(!Environment::get()->isDebugHeapEnabled());
 
     Gigacage::ensureGigacage();
@@ -85,62 +79,6 @@ void* Heap::gigacageBasePtr()
 size_t Heap::gigacageSize()
 {
     return Gigacage::size(gigacageKind(m_kind));
-}
-
-void Heap::initializeLineMetadata()
-{
-    size_t sizeClassCount = bmalloc::sizeClass(smallLineSize);
-    size_t smallLineCount = m_vmPageSizePhysical / smallLineSize;
-    m_smallLineMetadata.grow(sizeClassCount * smallLineCount);
-
-    for (size_t sizeClass = 0; sizeClass < sizeClassCount; ++sizeClass) {
-        size_t size = objectSize(sizeClass);
-        LineMetadata* pageMetadata = &m_smallLineMetadata[sizeClass * smallLineCount];
-
-        size_t object = 0;
-        size_t line = 0;
-        while (object < m_vmPageSizePhysical) {
-            line = object / smallLineSize;
-            size_t leftover = object % smallLineSize;
-
-            size_t objectCount;
-            size_t remainder;
-            divideRoundingUp(smallLineSize - leftover, size, objectCount, remainder);
-
-            pageMetadata[line] = { static_cast<unsigned char>(leftover), static_cast<unsigned char>(objectCount) };
-
-            object += objectCount * size;
-        }
-
-        // Don't allow the last object in a page to escape the page.
-        if (object > m_vmPageSizePhysical) {
-            BASSERT(pageMetadata[line].objectCount);
-            --pageMetadata[line].objectCount;
-        }
-    }
-}
-
-void Heap::initializePageMetadata()
-{
-    auto computePageSize = [&](size_t sizeClass) {
-        size_t size = objectSize(sizeClass);
-        if (sizeClass < bmalloc::sizeClass(smallLineSize))
-            return m_vmPageSizePhysical;
-
-        for (size_t pageSize = m_vmPageSizePhysical;
-            pageSize < pageSizeMax;
-            pageSize += m_vmPageSizePhysical) {
-            RELEASE_BASSERT(pageSize <= chunkSize / 2);
-            size_t waste = pageSize % size;
-            if (waste <= pageSize / pageSizeWasteFactor)
-                return pageSize;
-        }
-        
-        return pageSizeMax;
-    };
-
-    for (size_t i = 0; i < sizeClassCount; ++i)
-        m_pageClasses[i] = (computePageSize(i) - 1) / smallPageSize;
 }
 
 size_t Heap::freeableMemory(std::lock_guard<Mutex>&)
@@ -342,7 +280,7 @@ SmallPage* Heap::allocateSmallPage(std::unique_lock<Mutex>& lock, size_t sizeCla
     m_scavenger->didStartGrowing();
     
     SmallPage* page = [&]() -> SmallPage* {
-        size_t pageClass = m_pageClasses[sizeClass];
+        size_t pageClass = m_constants.pageClass(sizeClass);
         
         if (m_freePages[pageClass].isEmpty())
             allocateSmallChunk(lock, pageClass, action);
@@ -399,8 +337,7 @@ void Heap::deallocateSmallLine(std::unique_lock<Mutex>& lock, Object object, Lin
     if (page->refCount(lock))
         return;
 
-    size_t sizeClass = page->sizeClass();
-    size_t pageClass = m_pageClasses[sizeClass];
+    size_t pageClass = m_constants.pageClass(page->sizeClass());
 
     m_freeableMemory += physicalPageSizeSloppy(page->begin()->begin(), pageSize(pageClass));
 
@@ -440,13 +377,11 @@ void Heap::allocateSmallBumpRangesByMetadata(
     }
     SmallLine* lines = page->begin();
     BASSERT(page->hasFreeLines(lock));
-    size_t smallLineCount = m_vmPageSizePhysical / smallLineSize;
-    LineMetadata* pageMetadata = &m_smallLineMetadata[sizeClass * smallLineCount];
-    
+
     auto findSmallBumpRange = [&](size_t& lineNumber) {
-        for ( ; lineNumber < smallLineCount; ++lineNumber) {
+        for ( ; lineNumber < m_constants.smallLineCount(); ++lineNumber) {
             if (!lines[lineNumber].refCount(lock)) {
-                if (pageMetadata[lineNumber].objectCount)
+                if (m_constants.objectCount(sizeClass, lineNumber))
                     return true;
             }
         }
@@ -454,18 +389,19 @@ void Heap::allocateSmallBumpRangesByMetadata(
     };
 
     auto allocateSmallBumpRange = [&](size_t& lineNumber) -> BumpRange {
-        char* begin = lines[lineNumber].begin() + pageMetadata[lineNumber].startOffset;
+        char* begin = lines[lineNumber].begin() + m_constants.startOffset(sizeClass, lineNumber);
         unsigned short objectCount = 0;
         
-        for ( ; lineNumber < smallLineCount; ++lineNumber) {
+        for ( ; lineNumber < m_constants.smallLineCount(); ++lineNumber) {
             if (lines[lineNumber].refCount(lock))
                 break;
 
-            if (!pageMetadata[lineNumber].objectCount)
+            auto lineObjectCount = m_constants.objectCount(sizeClass, lineNumber);
+            if (!lineObjectCount)
                 continue;
 
-            objectCount += pageMetadata[lineNumber].objectCount;
-            lines[lineNumber].ref(lock, pageMetadata[lineNumber].objectCount);
+            objectCount += lineObjectCount;
+            lines[lineNumber].ref(lock, lineObjectCount);
             page->ref(lock);
         }
         return { begin, objectCount };
@@ -533,7 +469,7 @@ void Heap::allocateSmallBumpRangesByObject(
     };
 
     Object it(page->begin()->begin());
-    Object end(it + pageSize(m_pageClasses[sizeClass]));
+    Object end(it + pageSize(m_constants.pageClass(page->sizeClass())));
     for (;;) {
         if (!findSmallBumpRange(it, end)) {
             page->setHasFreeLines(lock, false);

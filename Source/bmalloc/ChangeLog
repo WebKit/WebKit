@@ -1,3 +1,38 @@
+2020-01-09  Basuke Suzuki  <basuke.suzuki@sony.com>
+
+        [bmalloc] Extract constants from Heap and share it among Heaps.
+        https://bugs.webkit.org/show_bug.cgi?id=205834
+
+        Reviewed by Geoffrey Garen.
+
+        A Heap has many constants (m_vmPageSizePhysical, m_smallLineMetadata and m_pageClasses) and they
+        are dependent only to vmPageSizePhysical and identical for all Heaps.
+
+        Extracting them into a class and make it sharable among heaps. Also this is the first step for
+        making Heap constants to actual `constexpr`.
+
+        * CMakeLists.txt: Added HeapConstants.cpp.
+        * bmalloc.xcodeproj/project.pbxproj: Ditto.
+        * bmalloc/Heap.cpp: Referencing HeapConstants object to get information.
+        (bmalloc::Heap::Heap):
+        (bmalloc::Heap::allocateSmallPage):
+        (bmalloc::Heap::deallocateSmallLine):
+        (bmalloc::Heap::allocateSmallBumpRangesByMetadata):
+        (bmalloc::Heap::allocateSmallBumpRangesByObject):
+        (bmalloc::Heap::initializeLineMetadata): Moved to HeapConstants.cpp.
+        (bmalloc::Heap::initializePageMetadata): Moved to HeapConstants.cpp.
+        * bmalloc/Heap.h: Extract metadata initialization and member variables.
+        * bmalloc/HeapConstants.cpp: Added.
+        (bmalloc::HeapConstants::HeapConstants):
+        (bmalloc::HeapConstants::initializeLineMetadata):
+        (bmalloc::HeapConstants::initializePageMetadata):
+        * bmalloc/HeapConstants.h:
+        (bmalloc::HeapConstants::pageClass const):
+        (bmalloc::HeapConstants::smallLineCount const):
+        (bmalloc::HeapConstants::startOffset):
+        (bmalloc::HeapConstants::objectCount):
+        (bmalloc::HeapConstants::lineMetadata):
+
 2020-01-02  Yusuke Suzuki  <ysuzuki@apple.com> and Simon Fraser  <simon.fraser@apple.com>
 
         Experiment: create lots of different malloc zones for easier accounting of memory use
