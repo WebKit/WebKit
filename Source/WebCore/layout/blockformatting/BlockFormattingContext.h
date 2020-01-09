@@ -55,7 +55,7 @@ private:
     void placeInFlowPositionedChildren(const Box&, Optional<HorizontalConstraints> = WTF::nullopt);
 
     void computeWidthAndMargin(const Box&, const HorizontalConstraints&);
-    void computeHeightAndMargin(const Box&, const HorizontalConstraints&, const VerticalConstraints&);
+    void computeHeightAndMargin(const Box&, const HorizontalConstraints&);
 
     void computeStaticHorizontalPosition(const Box&, const HorizontalConstraints&);
     void computeStaticVerticalPosition(const FloatingContext&, const Box&, const VerticalConstraints&);
@@ -75,7 +75,7 @@ private:
     class Geometry : public FormattingContext::Geometry {
     public:
         ContentHeightAndMargin inFlowHeightAndMargin(const Box&, const HorizontalConstraints&, const UsedVerticalValues&);
-        ContentWidthAndMargin inFlowWidthAndMargin(const Box&, const UsedHorizontalValues&);
+        ContentWidthAndMargin inFlowWidthAndMargin(const Box&, const HorizontalConstraints&, const UsedHorizontalValues&);
 
         Point staticPosition(const Box&, const HorizontalConstraints&, const VerticalConstraints&) const;
         LayoutUnit staticVerticalPosition(const Box&, const VerticalConstraints&) const;
@@ -88,8 +88,8 @@ private:
         Geometry(const BlockFormattingContext&);
 
         ContentHeightAndMargin inFlowNonReplacedHeightAndMargin(const Box&, const HorizontalConstraints&, const UsedVerticalValues&);
-        ContentWidthAndMargin inFlowNonReplacedWidthAndMargin(const Box&, const UsedHorizontalValues&) const;
-        ContentWidthAndMargin inFlowReplacedWidthAndMargin(const Box&, const UsedHorizontalValues&) const;
+        ContentWidthAndMargin inFlowNonReplacedWidthAndMargin(const Box&, const HorizontalConstraints&, const UsedHorizontalValues&) const;
+        ContentWidthAndMargin inFlowReplacedWidthAndMargin(const Box&, const HorizontalConstraints&, const UsedHorizontalValues&) const;
         Point staticPositionForOutOfFlowPositioned(const Box&) const;
 
         const BlockFormattingContext& formattingContext() const { return downcast<BlockFormattingContext>(FormattingContext::Geometry::formattingContext()); }

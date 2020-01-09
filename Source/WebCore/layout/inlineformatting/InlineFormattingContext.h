@@ -65,7 +65,7 @@ private:
     class Geometry : public FormattingContext::Geometry {
     public:
         ContentHeightAndMargin inlineBlockHeightAndMargin(const Box&, const HorizontalConstraints&, const UsedVerticalValues&) const;
-        ContentWidthAndMargin inlineBlockWidthAndMargin(const Box&, const UsedHorizontalValues&);
+        ContentWidthAndMargin inlineBlockWidthAndMargin(const Box&, const HorizontalConstraints&, const UsedHorizontalValues&);
         Optional<InlineLayoutUnit> computedTextIndent(const Container& formattingContextRoot, const HorizontalConstraints&) const;
 
     private:
@@ -79,14 +79,14 @@ private:
 
     void lineLayout(const HorizontalConstraints&);
     void layoutFormattingContextRoot(const Box&, InvalidationState&, const HorizontalConstraints&, const VerticalConstraints&);
-    void computeHorizontalAndVerticalGeometry(const Box&, const HorizontalConstraints&, const VerticalConstraints&);
+    void computeHorizontalAndVerticalGeometry(const Box&, const HorizontalConstraints&);
 
     void computeIntrinsicWidthForFormattingRoot(const Box&, const HorizontalConstraints&);
-    void computeWidthAndHeightForReplacedInlineBox(const Box&, const HorizontalConstraints&, const VerticalConstraints&);
+    void computeWidthAndHeightForReplacedInlineBox(const Box&, const HorizontalConstraints&);
     InlineLayoutUnit computedIntrinsicWidthForConstraint(const HorizontalConstraints&) const;
 
     void computeHorizontalMargin(const Box&, const HorizontalConstraints&);
-    void computeHeightAndMargin(const Box&, const HorizontalConstraints&, const VerticalConstraints&);
+    void computeHeightAndMargin(const Box&, const HorizontalConstraints&);
     void computeWidthAndMargin(const Box&, const HorizontalConstraints&);
 
     void collectInlineContentIfNeeded();

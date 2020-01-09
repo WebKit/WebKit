@@ -103,11 +103,11 @@ ContentHeightAndMargin BlockFormattingContext::Geometry::inFlowNonReplacedHeight
     // 10.6.7 'Auto' heights for block formatting context roots
     auto isAutoHeight = !usedVerticalValues.height && !computedContentHeight(layoutBox);
     if (isAutoHeight && layoutBox.establishesBlockFormattingContext())
-        return compute( UsedVerticalValues { usedVerticalValues.constraints, contentHeightForFormattingContextRoot(layoutBox) });
+        return compute( UsedVerticalValues { contentHeightForFormattingContextRoot(layoutBox) });
     return compute(usedVerticalValues);
 }
 
-ContentWidthAndMargin BlockFormattingContext::Geometry::inFlowNonReplacedWidthAndMargin(const Box& layoutBox, const UsedHorizontalValues& usedHorizontalValues) const
+ContentWidthAndMargin BlockFormattingContext::Geometry::inFlowNonReplacedWidthAndMargin(const Box& layoutBox, const HorizontalConstraints& horizontalConstraints, const UsedHorizontalValues& usedHorizontalValues) const
 {
     ASSERT(layoutBox.isInFlow());
 
@@ -134,11 +134,11 @@ ContentWidthAndMargin BlockFormattingContext::Geometry::inFlowNonReplacedWidthAn
         // 5. If both 'margin-left' and 'margin-right' are 'auto', their used values are equal. This horizontally centers the element with respect to the
         //    edges of the containing block.
 
-        auto containingBlockWidth = usedHorizontalValues.constraints.logicalWidth;
+        auto containingBlockWidth = horizontalConstraints.logicalWidth;
         auto& boxGeometry = formattingContext().geometryForBox(layoutBox);
 
         auto width = usedHorizontalValues.width ? usedHorizontalValues.width : computedContentWidth(layoutBox, containingBlockWidth);
-        auto computedHorizontalMargin = Geometry::computedHorizontalMargin(layoutBox, usedHorizontalValues.constraints);
+        auto computedHorizontalMargin = Geometry::computedHorizontalMargin(layoutBox, horizontalConstraints);
         UsedHorizontalMargin usedHorizontalMargin;
         auto borderLeft = boxGeometry.borderLeft();
         auto borderRight = boxGeometry.borderRight();
@@ -197,7 +197,7 @@ ContentWidthAndMargin BlockFormattingContext::Geometry::inFlowNonReplacedWidthAn
     return contentWidthAndMargin;
 }
 
-ContentWidthAndMargin BlockFormattingContext::Geometry::inFlowReplacedWidthAndMargin(const Box& layoutBox, const UsedHorizontalValues& usedHorizontalValues) const
+ContentWidthAndMargin BlockFormattingContext::Geometry::inFlowReplacedWidthAndMargin(const Box& layoutBox, const HorizontalConstraints& horizontalConstraints, const UsedHorizontalValues& usedHorizontalValues) const
 {
     ASSERT(layoutBox.isInFlow() && layoutBox.replaced());
 
@@ -207,9 +207,9 @@ ContentWidthAndMargin BlockFormattingContext::Geometry::inFlowReplacedWidthAndMa
     // 2. Then the rules for non-replaced block-level elements are applied to determine the margins.
 
     // #1
-    auto usedWidth = inlineReplacedWidthAndMargin(layoutBox, usedHorizontalValues, { }).contentWidth;
+    auto usedWidth = inlineReplacedWidthAndMargin(layoutBox, horizontalConstraints, usedHorizontalValues).contentWidth;
     // #2
-    auto nonReplacedWidthAndMargin = inFlowNonReplacedWidthAndMargin(layoutBox, UsedHorizontalValues { usedHorizontalValues.constraints, usedWidth, usedHorizontalValues.margin });
+    auto nonReplacedWidthAndMargin = inFlowNonReplacedWidthAndMargin(layoutBox, horizontalConstraints, UsedHorizontalValues { usedWidth, usedHorizontalValues.margin });
 
     LOG_WITH_STREAM(FormattingContextLayout, stream << "[Width][Margin] -> inflow replaced -> width(" << usedWidth  << "px) margin(" << nonReplacedWidthAndMargin.usedMargin.start << "px, " << nonReplacedWidthAndMargin.usedMargin.end << "px) -> layoutBox(" << &layoutBox << ")");
     return { usedWidth, nonReplacedWidthAndMargin.usedMargin, nonReplacedWidthAndMargin.computedMargin };
@@ -247,7 +247,7 @@ ContentHeightAndMargin BlockFormattingContext::Geometry::inFlowHeightAndMargin(c
     // 10.6.2 Inline replaced elements, block-level replaced elements in normal flow, 'inline-block'
     // replaced elements in normal flow and floating replaced elements
     if (layoutBox.replaced())
-        return inlineReplacedHeightAndMargin(layoutBox, horizontalConstraints, usedVerticalValues);
+        return inlineReplacedHeightAndMargin(layoutBox, horizontalConstraints, { }, usedVerticalValues);
 
     ContentHeightAndMargin contentHeightAndMargin;
     // FIXME: Let's special case the table height computation for now -> figure out whether tables fall into the "inFlowNonReplacedHeightAndMargin" category.
@@ -272,19 +272,19 @@ ContentHeightAndMargin BlockFormattingContext::Geometry::inFlowHeightAndMargin(c
     return contentHeightAndMargin;
 }
 
-ContentWidthAndMargin BlockFormattingContext::Geometry::inFlowWidthAndMargin(const Box& layoutBox, const UsedHorizontalValues& usedHorizontalValues)
+ContentWidthAndMargin BlockFormattingContext::Geometry::inFlowWidthAndMargin(const Box& layoutBox, const HorizontalConstraints& horizontalConstraints, const UsedHorizontalValues& usedHorizontalValues)
 {
     ASSERT(layoutBox.isInFlow());
 
     if (!layoutBox.replaced()) {
         if (!layoutBox.establishesTableFormattingContext())
-            return inFlowNonReplacedWidthAndMargin(layoutBox, usedHorizontalValues);
+            return inFlowNonReplacedWidthAndMargin(layoutBox, horizontalConstraints, usedHorizontalValues);
         // This is a special table "fit-content size" behavior handling. Not in the spec though.
         // Table returns its final width as min/max. Use this final width value to computed horizontal margins etc.
-        auto usedWidth = usedHorizontalValues.width ? usedHorizontalValues.width : shrinkToFitWidth(layoutBox, usedHorizontalValues.constraints.logicalWidth);
-        return inFlowNonReplacedWidthAndMargin(layoutBox, UsedHorizontalValues { usedHorizontalValues.constraints, usedWidth, usedHorizontalValues.margin });
+        auto usedWidth = usedHorizontalValues.width ? usedHorizontalValues.width : shrinkToFitWidth(layoutBox, horizontalConstraints.logicalWidth);
+        return inFlowNonReplacedWidthAndMargin(layoutBox, horizontalConstraints, UsedHorizontalValues { usedWidth, usedHorizontalValues.margin });
     }
-    return inFlowReplacedWidthAndMargin(layoutBox, usedHorizontalValues);
+    return inFlowReplacedWidthAndMargin(layoutBox, horizontalConstraints, usedHorizontalValues);
 }
 
 FormattingContext::IntrinsicWidthConstraints BlockFormattingContext::Geometry::intrinsicWidthConstraints(const Box& layoutBox)

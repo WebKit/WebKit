@@ -109,14 +109,14 @@ protected:
     // This class implements generic positioning and sizing.
     class Geometry {
     public:
-        VerticalGeometry outOfFlowVerticalGeometry(const Box&, const HorizontalConstraints&, const UsedVerticalValues&) const;
-        HorizontalGeometry outOfFlowHorizontalGeometry(const Box&, const UsedHorizontalValues&, const VerticalConstraints&);
+        VerticalGeometry outOfFlowVerticalGeometry(const Box&, const HorizontalConstraints&, const VerticalConstraints&, const UsedVerticalValues&) const;
+        HorizontalGeometry outOfFlowHorizontalGeometry(const Box&, const HorizontalConstraints&, const UsedHorizontalValues&);
 
         ContentHeightAndMargin floatingHeightAndMargin(const Box&, const HorizontalConstraints&, const UsedVerticalValues&) const;
-        ContentWidthAndMargin floatingWidthAndMargin(const Box&, const UsedHorizontalValues&);
+        ContentWidthAndMargin floatingWidthAndMargin(const Box&, const HorizontalConstraints&, const UsedHorizontalValues&);
 
-        ContentHeightAndMargin inlineReplacedHeightAndMargin(const Box&, const HorizontalConstraints&, const UsedVerticalValues&) const;
-        ContentWidthAndMargin inlineReplacedWidthAndMargin(const Box&, const UsedHorizontalValues&, const VerticalConstraints&) const;
+        ContentHeightAndMargin inlineReplacedHeightAndMargin(const Box&, const HorizontalConstraints&, Optional<VerticalConstraints>, const UsedVerticalValues&) const;
+        ContentWidthAndMargin inlineReplacedWidthAndMargin(const Box&, const HorizontalConstraints&, const UsedHorizontalValues&) const;
 
         LayoutSize inFlowPositionedPositionOffset(const Box&, const HorizontalConstraints&) const;
 
@@ -161,16 +161,16 @@ protected:
         const FormattingContext& formattingContext() const { return m_formattingContext; }
 
     private:
-        VerticalGeometry outOfFlowReplacedVerticalGeometry(const Box&, const HorizontalConstraints&, const UsedVerticalValues&) const;
-        HorizontalGeometry outOfFlowReplacedHorizontalGeometry(const Box&, const UsedHorizontalValues&, const VerticalConstraints&) const;
+        VerticalGeometry outOfFlowReplacedVerticalGeometry(const Box&, const HorizontalConstraints&, const VerticalConstraints&, const UsedVerticalValues&) const;
+        HorizontalGeometry outOfFlowReplacedHorizontalGeometry(const Box&, const HorizontalConstraints&, const UsedHorizontalValues&) const;
 
-        VerticalGeometry outOfFlowNonReplacedVerticalGeometry(const Box&, const HorizontalConstraints&, const UsedVerticalValues&) const;
-        HorizontalGeometry outOfFlowNonReplacedHorizontalGeometry(const Box&, const UsedHorizontalValues&);
+        VerticalGeometry outOfFlowNonReplacedVerticalGeometry(const Box&, const HorizontalConstraints&, const VerticalConstraints&, const UsedVerticalValues&) const;
+        HorizontalGeometry outOfFlowNonReplacedHorizontalGeometry(const Box&, const HorizontalConstraints&, const UsedHorizontalValues&);
 
         ContentHeightAndMargin floatingReplacedHeightAndMargin(const Box&, const HorizontalConstraints&, const UsedVerticalValues&) const;
-        ContentWidthAndMargin floatingReplacedWidthAndMargin(const Box&, const UsedHorizontalValues&) const;
+        ContentWidthAndMargin floatingReplacedWidthAndMargin(const Box&, const HorizontalConstraints&, const UsedHorizontalValues&) const;
 
-        ContentWidthAndMargin floatingNonReplacedWidthAndMargin(const Box&, const UsedHorizontalValues&);
+        ContentWidthAndMargin floatingNonReplacedWidthAndMargin(const Box&, const HorizontalConstraints&, const UsedHorizontalValues&);
 
         LayoutUnit staticVerticalPositionForOutOfFlowPositioned(const Box&, const VerticalConstraints&) const;
         LayoutUnit staticHorizontalPositionForOutOfFlowPositioned(const Box&, const HorizontalConstraints&) const;
@@ -198,7 +198,7 @@ protected:
 private:
     void collectOutOfFlowDescendantsIfNeeded();
     void computeOutOfFlowVerticalGeometry(const Box&, const HorizontalConstraints&, const VerticalConstraints&);
-    void computeOutOfFlowHorizontalGeometry(const Box&, const HorizontalConstraints&, const VerticalConstraints&);
+    void computeOutOfFlowHorizontalGeometry(const Box&, const HorizontalConstraints&);
 
     WeakPtr<const Container> m_root;
     FormattingState& m_formattingState;

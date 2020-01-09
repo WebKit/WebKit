@@ -36,7 +36,7 @@
 namespace WebCore {
 namespace Layout {
 
-ContentWidthAndMargin InlineFormattingContext::Geometry::inlineBlockWidthAndMargin(const Box& formattingContextRoot, const UsedHorizontalValues& usedHorizontalValues)
+ContentWidthAndMargin InlineFormattingContext::Geometry::inlineBlockWidthAndMargin(const Box& formattingContextRoot, const HorizontalConstraints& horizontalConstraints, const UsedHorizontalValues& usedHorizontalValues)
 {
     ASSERT(formattingContextRoot.isInFlow());
 
@@ -44,19 +44,19 @@ ContentWidthAndMargin InlineFormattingContext::Geometry::inlineBlockWidthAndMarg
 
     // Exactly as inline replaced elements.
     if (formattingContextRoot.replaced())
-        return inlineReplacedWidthAndMargin(formattingContextRoot, usedHorizontalValues, { });
+        return inlineReplacedWidthAndMargin(formattingContextRoot, horizontalConstraints, usedHorizontalValues);
 
     // 10.3.9 'Inline-block', non-replaced elements in normal flow
 
     // If 'width' is 'auto', the used value is the shrink-to-fit width as for floating elements.
     // A computed value of 'auto' for 'margin-left' or 'margin-right' becomes a used value of '0'.
     // #1
-    auto width = computedValueIfNotAuto(formattingContextRoot.style().logicalWidth(), usedHorizontalValues.constraints.logicalWidth);
+    auto width = computedValueIfNotAuto(formattingContextRoot.style().logicalWidth(), horizontalConstraints.logicalWidth);
     if (!width)
-        width = shrinkToFitWidth(formattingContextRoot, usedHorizontalValues.constraints.logicalWidth);
+        width = shrinkToFitWidth(formattingContextRoot, horizontalConstraints.logicalWidth);
 
     // #2
-    auto computedHorizontalMargin = Geometry::computedHorizontalMargin(formattingContextRoot, usedHorizontalValues.constraints);
+    auto computedHorizontalMargin = Geometry::computedHorizontalMargin(formattingContextRoot, horizontalConstraints);
 
     return ContentWidthAndMargin { *width, { computedHorizontalMargin.start.valueOr(0_lu), computedHorizontalMargin.end.valueOr(0_lu) }, computedHorizontalMargin };
 }
@@ -67,7 +67,7 @@ ContentHeightAndMargin InlineFormattingContext::Geometry::inlineBlockHeightAndMa
 
     // 10.6.2 Inline replaced elements, block-level replaced elements in normal flow, 'inline-block' replaced elements in normal flow and floating replaced elements
     if (layoutBox.replaced())
-        return inlineReplacedHeightAndMargin(layoutBox, horizontalConstraints, usedVerticalValues);
+        return inlineReplacedHeightAndMargin(layoutBox, horizontalConstraints, { }, usedVerticalValues);
 
     // 10.6.6 Complicated cases
     // - 'Inline-block', non-replaced elements.

@@ -162,31 +162,12 @@ struct VerticalConstraints {
 };
 
 struct UsedHorizontalValues {
-    explicit UsedHorizontalValues(HorizontalConstraints constraints)
-        : constraints(constraints)
-    {
-    }
-
-    explicit UsedHorizontalValues(HorizontalConstraints constraints, Optional<LayoutUnit> width, Optional<UsedHorizontalMargin> margin)
-        : constraints(constraints)
-        , width(width)
-        , margin(margin)
-    {
-    }
-
-    HorizontalConstraints constraints;
     Optional<LayoutUnit> width;
     Optional<UsedHorizontalMargin> margin;
 };
 
 struct UsedVerticalValues {
-    explicit UsedVerticalValues(VerticalConstraints constraints, Optional<LayoutUnit> height = { })
-        : constraints(constraints)
-        , height(height)
-    {
-    }
-
-    VerticalConstraints constraints;
+    // Consider collapsing it.
     Optional<LayoutUnit> height;
 };
 

@@ -78,7 +78,7 @@ void InlineFormattingContext::layoutInFlowContent(InvalidationState& invalidatio
         if (layoutBox->establishesFormattingContext())
             layoutFormattingContextRoot(*layoutBox, invalidationState, horizontalConstraints, verticalConstraints);
         else
-            computeHorizontalAndVerticalGeometry(*layoutBox, horizontalConstraints, verticalConstraints);
+            computeHorizontalAndVerticalGeometry(*layoutBox, horizontalConstraints);
         layoutBox = nextInPreOrder(*layoutBox, root());
     }
 
@@ -139,17 +139,17 @@ void InlineFormattingContext::layoutFormattingContextRoot(const Box& formattingC
         auto formattingContext = LayoutContext::createFormattingContext(rootContainer, layoutState());
         formattingContext->layoutInFlowContent(invalidationState, horizontalConstraints, verticalConstraints);
         // Come back and finalize the root's height and margin.
-        computeHeightAndMargin(rootContainer, horizontalConstraints, verticalConstraints);
+        computeHeightAndMargin(rootContainer, horizontalConstraints);
         // Now that we computed the root's height, we can go back and layout the out-of-flow content.
         auto& rootContainerDisplayBox = geometryForBox(rootContainer);
         auto horizontalConstraintsForOutOfFlow = Geometry::horizontalConstraintsForOutOfFlow(rootContainerDisplayBox);
         auto verticalConstraintsForOutOfFlow = Geometry::verticalConstraintsForOutOfFlow(rootContainerDisplayBox);
         formattingContext->layoutOutOfFlowContent(invalidationState, horizontalConstraintsForOutOfFlow, verticalConstraintsForOutOfFlow);
     } else
-        computeHeightAndMargin(formattingContextRoot, horizontalConstraints, verticalConstraints);
+        computeHeightAndMargin(formattingContextRoot, horizontalConstraints);
 }
 
-void InlineFormattingContext::computeHorizontalAndVerticalGeometry(const Box& layoutBox, const HorizontalConstraints& horizontalConstraints, const VerticalConstraints& verticalConstraints)
+void InlineFormattingContext::computeHorizontalAndVerticalGeometry(const Box& layoutBox, const HorizontalConstraints& horizontalConstraints)
 {
     if (is<Container>(layoutBox)) {
         // Inline containers (<span>) can't get sized/positioned yet. At this point we can only compute their margins, borders and paddings.
@@ -164,7 +164,7 @@ void InlineFormattingContext::computeHorizontalAndVerticalGeometry(const Box& la
         // Replaced elements (img, video) can be sized but not yet positioned.
         computeBorderAndPadding(layoutBox, horizontalConstraints);
         computeWidthAndMargin(layoutBox, horizontalConstraints);
-        computeHeightAndMargin(layoutBox, horizontalConstraints, verticalConstraints);
+        computeHeightAndMargin(layoutBox, horizontalConstraints);
         return;
     }
 
@@ -276,15 +276,15 @@ void InlineFormattingContext::computeHorizontalMargin(const Box& layoutBox, cons
 
 void InlineFormattingContext::computeWidthAndMargin(const Box& layoutBox, const HorizontalConstraints& horizontalConstraints)
 {
-    // FIXME: Add support for min/max-width.
-    auto usedHorizontalValues = UsedHorizontalValues { horizontalConstraints }; 
     ContentWidthAndMargin contentWidthAndMargin;
+    // FIXME: Add support for min/max-width.
+    auto usedWidth = UsedHorizontalValues { }; 
     if (layoutBox.isFloatingPositioned())
-        contentWidthAndMargin = geometry().floatingWidthAndMargin(layoutBox, usedHorizontalValues);
+        contentWidthAndMargin = geometry().floatingWidthAndMargin(layoutBox, horizontalConstraints, usedWidth);
     else if (layoutBox.isInlineBlockBox())
-        contentWidthAndMargin = geometry().inlineBlockWidthAndMargin(layoutBox, usedHorizontalValues);
+        contentWidthAndMargin = geometry().inlineBlockWidthAndMargin(layoutBox, horizontalConstraints, usedWidth);
     else if (layoutBox.replaced())
-        contentWidthAndMargin = geometry().inlineReplacedWidthAndMargin(layoutBox, usedHorizontalValues, { });
+        contentWidthAndMargin = geometry().inlineReplacedWidthAndMargin(layoutBox, horizontalConstraints, usedWidth);
     else
         ASSERT_NOT_REACHED();
 
@@ -294,17 +294,17 @@ void InlineFormattingContext::computeWidthAndMargin(const Box& layoutBox, const 
     displayBox.setHorizontalComputedMargin(contentWidthAndMargin.computedMargin);
 }
 
-void InlineFormattingContext::computeHeightAndMargin(const Box& layoutBox, const HorizontalConstraints& horizontalConstraints, const VerticalConstraints& verticalConstraints)
+void InlineFormattingContext::computeHeightAndMargin(const Box& layoutBox, const HorizontalConstraints& horizontalConstraints)
 {
-    // FIXME: Add min/max-height support.
     ContentHeightAndMargin contentHeightAndMargin;
-    auto usedVerticalValues = UsedVerticalValues { verticalConstraints };
+    // FIXME: Add min/max-height support.
+    auto usedHeight = UsedVerticalValues { };
     if (layoutBox.isFloatingPositioned())
-        contentHeightAndMargin = geometry().floatingHeightAndMargin(layoutBox, horizontalConstraints, usedVerticalValues);
+        contentHeightAndMargin = geometry().floatingHeightAndMargin(layoutBox, horizontalConstraints, usedHeight);
     else if (layoutBox.isInlineBlockBox())
-        contentHeightAndMargin = geometry().inlineBlockHeightAndMargin(layoutBox, horizontalConstraints, usedVerticalValues);
+        contentHeightAndMargin = geometry().inlineBlockHeightAndMargin(layoutBox, horizontalConstraints, usedHeight);
     else if (layoutBox.replaced())
-        contentHeightAndMargin = geometry().inlineReplacedHeightAndMargin(layoutBox, horizontalConstraints, usedVerticalValues);
+        contentHeightAndMargin = geometry().inlineReplacedHeightAndMargin(layoutBox, horizontalConstraints, { }, usedHeight);
     else
         ASSERT_NOT_REACHED();
 
@@ -313,7 +313,7 @@ void InlineFormattingContext::computeHeightAndMargin(const Box& layoutBox, const
     displayBox.setVerticalMargin({ contentHeightAndMargin.nonCollapsedMargin, { } });
 }
 
-void InlineFormattingContext::computeWidthAndHeightForReplacedInlineBox(const Box& layoutBox, const HorizontalConstraints& horizontalConstraints, const VerticalConstraints& verticalConstraints)
+void InlineFormattingContext::computeWidthAndHeightForReplacedInlineBox(const Box& layoutBox, const HorizontalConstraints& horizontalConstraints)
 {
     ASSERT(!layoutBox.isContainer());
     ASSERT(!layoutBox.establishesFormattingContext());
@@ -321,7 +321,7 @@ void InlineFormattingContext::computeWidthAndHeightForReplacedInlineBox(const Bo
 
     computeBorderAndPadding(layoutBox, horizontalConstraints);
     computeWidthAndMargin(layoutBox, horizontalConstraints);
-    computeHeightAndMargin(layoutBox, horizontalConstraints, verticalConstraints);
+    computeHeightAndMargin(layoutBox, horizontalConstraints);
 }
 
 void InlineFormattingContext::collectInlineContentIfNeeded()
