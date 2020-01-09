@@ -723,7 +723,7 @@
     {
         "name": "Web SQL Database",
         "status": {
-            "status": "Removed In Preview"
+            "status": "Removed"
         },
         "url": "https://dev.w3.org/html5/webdatabase/",
         "keywords": ["websql", "web sql", "db", "storage", "database"],
