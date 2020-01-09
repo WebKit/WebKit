@@ -841,7 +841,7 @@ class CompileWebKit(shell.Compile):
     def evaluateCommand(self, cmd):
         if cmd.didFail():
             self.setProperty('patchFailedToBuild', True)
-            steps_to_add = [UnApplyPatchIfRequired()]
+            steps_to_add = [UnApplyPatchIfRequired(), ValidatePatch(verifyBugClosed=False, addURLs=False)]
             platform = self.getProperty('platform')
             if platform == 'wpe':
                 steps_to_add.append(InstallWpeDependencies())
