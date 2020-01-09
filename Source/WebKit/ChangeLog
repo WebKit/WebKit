@@ -1,3 +1,20 @@
+2020-01-09  Alan Coon  <alancoon@apple.com>
+
+        Apply patch. rdar://problem/58396582
+
+    2020-01-09  Per Arne Vollan  <pvollan@apple.com>
+
+            Allow mach lookup for backboard service on watchOS.
+            <rdar://problem/58396582>
+
+            Reviewed by Brent Fulgham.
+
+            Mach lookup to the service "com.apple.backboard.hid.services" was no longer allowed in the sandbox in iOS 13.
+            This was done for all iOS families, but the related code changes were only done for iPhone/iPad, causing a
+            watchOS crash. As a temporary crash fix on watchOS, add it back to the sandbox, but only for watchOS.
+
+            * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+
 2019-11-04  Kocsen Chung  <kocsen_chung@apple.com>
 
         Cherry-pick r248552. rdar://problem/56868427

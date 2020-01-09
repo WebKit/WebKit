@@ -397,6 +397,12 @@
 
 (allow mach-lookup (extension "com.apple.webkit.extension.mach"))
 
+(if gizmo?
+    (allow mach-lookup
+        (global-name "com.apple.backboard.hid.services")
+    )
+)
+
 ;; These services have been identified as unused during living-on.
 ;; This list overrides some definitions above and in common.sb.
 ;; FIXME: remove overridden rules once the final list has been
