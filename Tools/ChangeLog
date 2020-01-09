@@ -1,5 +1,16 @@
 2020-01-08  Saam Barati  <sbarati@apple.com>
 
+        build-jsc should work with "testing" and "release+assert" targets
+        https://bugs.webkit.org/show_bug.cgi?id=205978
+
+        Reviewed by Mark Lam.
+
+        * Scripts/webkitdirs.pm:
+        (determineConfiguration):
+        (determinePassedConfiguration):
+
+2020-01-08  Saam Barati  <sbarati@apple.com>
+
         build-jsc should invoke make instead of calling xcodebuild directly
         https://bugs.webkit.org/show_bug.cgi?id=205960
 

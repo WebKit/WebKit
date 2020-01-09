@@ -948,6 +948,10 @@ sub determinePassedConfiguration
         $passedConfiguration = "Release";
     } elsif (checkForArgumentAndRemoveFromARGV("--profile") || checkForArgumentAndRemoveFromARGV("--profiling")) {
         $passedConfiguration = "Profiling";
+    } elsif(checkForArgumentAndRemoveFromARGV("--testing")) {
+        $passedConfiguration = "Testing";
+    } elsif(checkForArgumentAndRemoveFromARGV("--release-and-assert") || checkForArgumentAndRemoveFromARGV("--ra")) {
+        $passedConfiguration = "Release+Assert";
     }
 }
 
