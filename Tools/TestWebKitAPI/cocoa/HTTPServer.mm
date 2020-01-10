@@ -76,14 +76,20 @@ void HTTPServer::respondToRequests(nw_connection_t connection)
         });
         request.append(0);
 
-        const char* pathPrefix = "GET ";
+        const char* getPathPrefix = "GET ";
+        const char* postPathPrefix = "POST ";
         const char* pathSuffix = " HTTP/1.1\r\n";
         const char* pathEnd = strstr(request.data(), pathSuffix);
         ASSERT_WITH_MESSAGE(pathEnd, "HTTPServer assumes request is HTTP 1.1");
-        ASSERT_WITH_MESSAGE(!memcmp(request.data(), pathPrefix, strlen(pathPrefix)), "HTTPServer assumes request is GET");
         ASSERT_WITH_MESSAGE(strstr(request.data(), "\r\n\r\n"), "HTTPServer assumes entire HTTP request is received at once");
-        size_t pathLength = pathEnd - request.data() - strlen(pathPrefix);
-        String path(request.data() + strlen(pathPrefix), pathLength);
+        size_t pathPrefixLength = 0;
+        if (!memcmp(request.data(), getPathPrefix, strlen(getPathPrefix)))
+            pathPrefixLength = strlen(getPathPrefix);
+        else if (!memcmp(request.data(), postPathPrefix, strlen(postPathPrefix)))
+            pathPrefixLength = strlen(postPathPrefix);
+        ASSERT_WITH_MESSAGE(pathPrefixLength, "HTTPServer assumes request is GET or POST");
+        size_t pathLength = pathEnd - request.data() - pathPrefixLength;
+        String path(request.data() + pathPrefixLength, pathLength);
         ASSERT_WITH_MESSAGE(m_requestResponseMap.contains(path), "This HTTPServer does not know how to respond to a request for %s", path.utf8().data());
         
         auto response = m_requestResponseMap.get(path);

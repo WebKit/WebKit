@@ -1,3 +1,20 @@
+2020-01-10  Alex Christensen  <achristensen@webkit.org>
+
+        Fix test assertions after r254345
+        https://bugs.webkit.org/show_bug.cgi?id=206037
+
+        There were two assertions being hit in the new tests:
+        1. Beacon sends POST requests, so the HTTP server that receives them needs to be able to handle POST requests.
+        2. There was an assertion in the destructor of NetworkResourceLoader because we were destroying a WKWebView during a sync xhr.
+        This isn't a problem in practice, but we may as well wait for the sync xhr to finish before completing the test so we can
+        keep the sync xhr assertion, which is useful to prevent hangs.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/ResourceLoadDelegate.mm:
+        (-[TestUIDelegate webView:runJavaScriptAlertPanelWithMessage:initiatedByFrame:completionHandler:]):
+        (TEST):
+        * TestWebKitAPI/cocoa/HTTPServer.mm:
+        (TestWebKitAPI::HTTPServer::respondToRequests):
+
 2020-01-10  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [GTK][WPE] EWS should not wipe the JHBuild in the unapply patch step

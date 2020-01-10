@@ -80,6 +80,24 @@
 
 @end
 
+@interface TestUIDelegate : NSObject <WKUIDelegate>
+
+@property (nonatomic, copy) void (^runJavaScriptAlertPanelWithMessage)(WKWebView *, NSString *, WKFrameInfo *, void (^)(void));
+
+@end
+
+@implementation TestUIDelegate
+
+- (void)webView:(WKWebView *)webView runJavaScriptAlertPanelWithMessage:(NSString *)message initiatedByFrame:(WKFrameInfo *)frame completionHandler:(void (^)(void))completionHandler
+{
+    if (_runJavaScriptAlertPanelWithMessage)
+        _runJavaScriptAlertPanelWithMessage(webView, message, frame, completionHandler);
+    else
+        completionHandler();
+}
+
+@end
+
 TEST(ResourceLoadDelegate, Basic)
 {
     auto webView = adoptNS([WKWebView new]);
@@ -126,6 +144,14 @@ TEST(ResourceLoadDelegate, BeaconAndSyncXHR)
         requestFromDelegate = request;
         receivedCallback = true;
     }];
+    
+    __block bool receivedAlert = false;
+    auto uiDelegate = adoptNS([TestUIDelegate new]);
+    [webView setUIDelegate:uiDelegate.get()];
+    [uiDelegate setRunJavaScriptAlertPanelWithMessage:^(WKWebView *, NSString *, WKFrameInfo *, void (^completionHandler)(void)) {
+        receivedAlert = true;
+        completionHandler();
+    }];
 
     [webView evaluateJavaScript:@"navigator.sendBeacon('/beaconTarget')" completionHandler:nil];
     TestWebKitAPI::Util::run(&receivedCallback);
@@ -136,9 +162,11 @@ TEST(ResourceLoadDelegate, BeaconAndSyncXHR)
         @"var request = new XMLHttpRequest();"
         "var asynchronous = false;"
         "request.open('GET', 'xhrTarget', asynchronous);"
-        "request.send();" completionHandler:nil];
+        "request.send();"
+        "alert('done');" completionHandler:nil];
     TestWebKitAPI::Util::run(&receivedCallback);
     EXPECT_WK_STREQ("/xhrTarget", requestFromDelegate.get().URL.path);
+    TestWebKitAPI::Util::run(&receivedAlert);
 }
 
 TEST(ResourceLoadDelegate, Redirect)
