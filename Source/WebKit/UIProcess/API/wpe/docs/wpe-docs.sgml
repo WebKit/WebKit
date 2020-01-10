@@ -58,7 +58,7 @@
     <xi:include href="xml/WebKitColor.xml"/>
     <xi:include href="xml/WebKitGeolocationManager.xml"/>
     <xi:include href="xml/WebKitUserMessage.xml"/>
-    <xi:include href="xml/WebKitInputMethodFilter.xml"/>
+    <xi:include href="xml/WebKitInputMethodContext.xml"/>
   </chapter>
 
   <chapter>

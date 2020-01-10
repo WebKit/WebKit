@@ -1,5 +1,13 @@
 2020-01-10  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        Unreviewed. Fix GTK and WPE API docs generation
+
+        Add index for new symbols in 2.28.
+
+        * API/glib/docs/jsc-glib-docs.sgml:
+
+2020-01-10  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GLIB] Add GLib specific API for JSC JSValueRef.h's JSValueMakeFromJSONString and JSValueCreateJSONString methods
         https://bugs.webkit.org/show_bug.cgi?id=205161
 
