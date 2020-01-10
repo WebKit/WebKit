@@ -1,5 +1,27 @@
 2020-01-10  Simon Fraser  <simon.fraser@apple.com>
 
+        Clean up -[WKWebView _didCommitLayerTree:]
+        https://bugs.webkit.org/show_bug.cgi?id=206049
+
+        Reviewed by Tim Horton.
+
+        In preparation for sharing more of this code with macOS, factors parts of -[WKWebView _didCommitLayerTree:]
+        into new functions.
+        
+        Also pull out part of -[WKWebView _updateVisibleContentRects] into its own function.
+
+        * UIProcess/API/ios/WKWebViewIOS.mm:
+        (-[WKWebView _trackTransactionCommit:]):
+        (-[WKWebView _updateScrollViewForTransaction:]):
+        (-[WKWebView _restoreScrollAndZoomStateForTransaction:]):
+        (-[WKWebView _didCommitLayerTree:]):
+        (-[WKWebView _allowsDoubleTapGestures]):
+        (-[WKWebView currentlyVisibleContentInsetsWithScale:obscuredInsets:]):
+        (-[WKWebView _updateVisibleContentRects]):
+        (areEssentiallyEqualAsFloat): Deleted.
+
+2020-01-10  Simon Fraser  <simon.fraser@apple.com>
+
         [macOS UI-side compositing] Introduce WKScrollView and WKContentView for macOS
         https://bugs.webkit.org/show_bug.cgi?id=206042
 
