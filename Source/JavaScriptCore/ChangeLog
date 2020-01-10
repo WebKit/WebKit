@@ -1,3 +1,57 @@
+2020-01-10  Saam Barati  <sbarati@apple.com>
+
+        ObjectAllocationSinkingPhase doesn't model pointers to allocations in control flow properly
+        https://bugs.webkit.org/show_bug.cgi?id=204738
+        <rdar://problem/57553238>
+
+        Reviewed by Yusuke Suzuki.
+
+        Allocation sinking phase conducts a points to analysis. It uses this
+        information for programs like:
+        
+        ```
+        1: NewObject
+        2: NewObject
+        3: PutByOffset(@2, @1, "x")
+        4: GetByOffset(@2, "x")
+        ```
+        
+        It solves the points to problem knowing @4 points to @1.
+        
+        It tracks this data in the LocalHeap data structure. This is used to track
+        the heap across blocks, and it includes a merge function to handle control
+        flow merges. However, this merge function would not always merge the pointer
+        sets together. It sometimes would merge them together, since it had a fast
+        path check inside merge, which would just copy the contents of the block to be
+        merged with itself if it were this block's first time merging. This fast path happened
+        to hide the bug in general case merge code. If we didn't take this fast path,
+        we would just never transfer pointer sets from predecessor to successor. This
+        could lead to all kinds of issues, including using the incorrect phantom node
+        in IR instead of its materialized version. It could also lead to the phase not
+        sinking objects it is capable of sinking.
+        
+        This patch makes it so that we merge together the pointer sets. We always add
+        new pointers to the set. So in pointer A->B, if the set has yet to see A, we
+        add it. If the set already contains pointer A->B, and we encounter a new
+        pointer A->C, or if we encounter a merge without any A->* pointer, we mark
+        the A pointer as top, marking it A->TOP. We do this to ensure that we fixpoint.
+        We're guaranteed that m_pointers is monotonically increasing (module liveness
+        pruning, which is a constant). And once something is TOP, it never becomes
+        anything else. (Instead of marking a pointer top, we used to just remove it
+        from the set, but this has issues, as it could lead to us ping-ponging in
+        our fixpoint analysis, add, remove, add, remove, etc.)
+        
+        So the merge rules are:
+        {A->B} merge {A->B}    => {A->B}
+        {A->B} merge {A->C}    => {A->TOP}
+        {A->B} merge {A->TOP}  => {A->TOP}
+        {A->B} merge {}        => {A->TOP}
+        
+        
+        Thanks to Samuel Groß of Google Project Zero for identifying this bug.
+
+        * dfg/DFGObjectAllocationSinkingPhase.cpp:
+
 2020-01-10  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix GTK and WPE API docs generation

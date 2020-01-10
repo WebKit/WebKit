@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -402,7 +402,7 @@ public:
     Node* follow(Node* node) const
     {
         auto iter = m_pointers.find(node);
-        ASSERT(iter == m_pointers.end() || m_allocations.contains(iter->value));
+        ASSERT(iter == m_pointers.end() || (!iter->value || m_allocations.contains(iter->value)));
         return iter == m_pointers.end() ? nullptr : iter->value;
     }
 
@@ -499,7 +499,70 @@ public:
             }
         }
 
-        mergePointerSets(m_pointers, other.m_pointers, toEscape);
+        {
+            // This works because we won't collect all pointers until all of our predecessors
+            // merge their pointer sets with ours. That allows us to see the full state of the
+            // world during our fixpoint analysis. Once we have the full set of pointers, we
+            // only mark pointers to TOP, so we will eventually converge.
+            for (auto entry : other.m_pointers) {
+                auto addResult = m_pointers.add(entry.key, entry.value);
+                if (addResult.iterator->value != entry.value) {
+                    if (addResult.iterator->value) {
+                        toEscape.addVoid(addResult.iterator->value);
+                        addResult.iterator->value = nullptr;
+                    }
+                    if (entry.value)
+                        toEscape.addVoid(entry.value);
+                }
+            }
+            // This allows us to rule out pointers for graphs like this:
+            // bb#0
+            // branch #1, #2
+            // #1:
+            // x = pointer A
+            // jump #3
+            // #2:
+            // y = pointer B
+            // jump #3
+            // #3:
+            // ...
+            //
+            // When we merge state at #3, we'll very likely prune away the x and y pointer,
+            // since they're not live. But if they do happen to make it to this merge function, when
+            // #3 merges with #2 and #1, it'll eventually rule out x and y as not existing
+            // in the other, and therefore not existing in #3, which is the desired behavior.
+            //
+            // This also is necessary for a graph like this:
+            // #0
+            // o = {}
+            // o2 = {}
+            // jump #1
+            // 
+            // #1
+            // o.f = o2
+            // effects()
+            // x = o.f
+            // escape(o)
+            // branch #2, #1
+            // 
+            // #2
+            // x cannot be o2 here, it has to be TOP
+            // ...
+            //
+            // On the first fixpoint iteration, we might think that x is o2 at the head
+            // of #2. However, when we fixpoint our analysis, we determine that o gets
+            // escaped. This means that when we fixpoint, x will eventually not be a pointer.
+            // When we merge again here, we'll notice and mark o2 as escaped.
+            for (auto& entry : m_pointers) {
+                if (!other.m_pointers.contains(entry.key)) {
+                    if (entry.value) {
+                        toEscape.addVoid(entry.value);
+                        entry.value = nullptr;
+                        ASSERT(!m_pointers.find(entry.key)->value);
+                    }
+                }
+            }
+        }
 
         for (Node* identifier : toEscape)
             escapeAllocation(identifier);
@@ -534,8 +597,8 @@ public:
 
         // Pointers should point to an actual allocation
         for (const auto& entry : m_pointers) {
-            ASSERT_UNUSED(entry, entry.value);
-            ASSERT(m_allocations.contains(entry.value));
+            if (entry.value)
+                ASSERT(m_allocations.contains(entry.value));
         }
 
         for (const auto& allocationEntry : m_allocations) {
@@ -565,19 +628,19 @@ public:
         return m_allocations;
     }
 
-    const HashMap<Node*, Node*>& pointers() const
-    {
-        return m_pointers;
-    }
-
     void dump(PrintStream& out) const
     {
         out.print("  Allocations:\n");
         for (const auto& entry : m_allocations)
             out.print("    #", entry.key, ": ", entry.value, "\n");
         out.print("  Pointers:\n");
-        for (const auto& entry : m_pointers)
-            out.print("    ", entry.key, " => #", entry.value, "\n");
+        for (const auto& entry : m_pointers) {
+            out.print("    ", entry.key, " => #");
+            if (entry.value)
+                out.print(entry.value, "\n");
+            else
+                out.print("TOP\n");
+        }
     }
 
     bool reached() const
@@ -671,8 +734,10 @@ private:
     void prune()
     {
         NodeSet reachable;
-        for (const auto& entry : m_pointers)
-            reachable.addVoid(entry.value);
+        for (const auto& entry : m_pointers) {
+            if (entry.value)
+                reachable.addVoid(entry.value);
+        }
 
         // Repeatedly mark as reachable allocations in fields of other
         // reachable allocations
@@ -810,7 +875,7 @@ private:
                 // live pointer, or (recursively) stored in a field of
                 // a live allocation.
                 //
-                // This means we can accidentaly leak non-dominating
+                // This means we can accidentally leak non-dominating
                 // nodes into the successor. However, due to the
                 // non-dominance property, we are guaranteed that the
                 // successor has at least one predecessor that is not
@@ -819,8 +884,17 @@ private:
                 // trigger an escape and get pruned during the merge.
                 m_heap.pruneByLiveness(m_combinedLiveness.liveAtTail[block]);
 
-                for (BasicBlock* successorBlock : block->successors())
+                for (BasicBlock* successorBlock : block->successors()) {
+                    // FIXME: Maybe we should:
+                    // 1. Store the liveness pruned heap as part of m_heapAtTail
+                    // 2. Move this code above where we make block merge with
+                    // its predecessors before walking the block forward.
+                    // https://bugs.webkit.org/show_bug.cgi?id=206041
+                    LocalHeap heap = m_heapAtHead[successorBlock];
                     m_heapAtHead[successorBlock].merge(m_heap);
+                    if (heap != m_heapAtHead[successorBlock])
+                        changed = true;
+                }
             }
         } while (changed);
     }

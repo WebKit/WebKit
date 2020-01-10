@@ -1,3 +1,28 @@
+2020-01-10  Saam Barati  <sbarati@apple.com>
+
+        ObjectAllocationSinkingPhase doesn't model pointers to allocations in control flow properly
+        https://bugs.webkit.org/show_bug.cgi?id=204738
+        <rdar://problem/57553238>
+
+        Reviewed by Yusuke Suzuki.
+
+        * stress/allocation-sinking-must-model-allocation-pointers-properly-2.js: Added.
+        (assert):
+        (v9):
+        * stress/allocation-sinking-must-model-allocation-pointers-properly-3.js: Added.
+        (assert):
+        (v9):
+        * stress/allocation-sinking-must-model-allocation-pointers-properly-4.js: Added.
+        (bool):
+        (effects):
+        (escape):
+        (bar):
+        * stress/allocation-sinking-must-model-allocation-pointers-properly.js: Added.
+        (alwaysFalse):
+        (sometimesZero):
+        (assert):
+        (v9):
+
 2020-01-08  Keith Miller  <keith_miller@apple.com>
 
         [JSC] Introduce JSArrayIterator
