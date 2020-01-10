@@ -1,5 +1,20 @@
 2020-01-10  Brent Fulgham  <bfulgham@apple.com>
 
+        [iOS] Remove 'com.apple.cookied' from the WebContent process sandbox
+        https://bugs.webkit.org/show_bug.cgi?id=206083
+        <rdar://problem/56963865>
+
+        Reviewed by Per Arne Vollan.
+
+        Telemetry and testing have confirmed that we no longer use the 'com.apple.cookied' mach connection
+        in the WebContent process on iOS. We should remove this from the WebContent process sandbox
+
+        Tested by fast/sandbox/ios/sandbox-mach-lookup.html.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+
+2020-01-10  Brent Fulgham  <bfulgham@apple.com>
+
         Remove com.apple.locationd.registration from the WebContent sandbox
         https://bugs.webkit.org/show_bug.cgi?id=206021
         <rdar://problem/58451384>

@@ -939,7 +939,6 @@
     (global-name "com.apple.analyticsd"))
 
 (allow mach-lookup (with report) (with telemetry)
-    (global-name "com.apple.cookied")
     (global-name "com.apple.PowerManagement.control"))
 
 (deny file-write-create (vnode-type SYMLINK))
