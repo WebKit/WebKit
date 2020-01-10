@@ -26,6 +26,8 @@
 #include "config.h"
 #include "WideningNumberPredictionFuzzerAgent.h"
 
+#include "CodeBlock.h"
+
 namespace JSC {
 
 WideningNumberPredictionFuzzerAgent::WideningNumberPredictionFuzzerAgent(VM& vm)

@@ -28,6 +28,7 @@
 
 #if ENABLE(WEBASSEMBLY)
 
+#include "ButterflyInlines.h"
 #include "FrameTracers.h"
 #include "IteratorOperations.h"
 #include "JITExceptions.h"

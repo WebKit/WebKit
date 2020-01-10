@@ -28,6 +28,8 @@
 
 #include "CodeBlock.h"
 #include "IsoCellSetInlines.h"
+#include "JSObjectInlines.h"
+#include "StructureInlines.h"
 
 namespace JSC {
 

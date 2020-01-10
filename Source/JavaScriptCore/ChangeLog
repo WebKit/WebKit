@@ -1,3 +1,17 @@
+2020-01-10  Adrian Perez de Castro  <aperez@igalia.com>
+
+        Fix various non-unified build issues introduced since r253538
+        https://bugs.webkit.org/show_bug.cgi?id=205996
+
+        Reviewed by Youenn Fablet.
+
+        * bytecode/ExecutableToCodeBlockEdge.cpp: Add missing inclusion of JSObjectInlines.h and
+        StructureInlines.h
+        * dfg/DFGVariableEvent.cpp: Add missing inclusion of OperandsInlines.h
+        * runtime/NarrowingNumberPredictionFuzzerAgent.cpp: Add missing inclusion of CodeBlock.h
+        * runtime/WideningNumberPredictionFuzzerAgent.cpp: Ditto.
+        * wasm/WasmOperations.cpp: Add missing inclusion of ButterflyInlines.h
+
 2020-01-09  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r254234.

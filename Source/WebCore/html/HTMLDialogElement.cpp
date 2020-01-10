@@ -90,7 +90,7 @@ void HTMLDialogElement::close(const String& returnValue)
 
 void HTMLDialogElement::parseAttribute(const QualifiedName& name, const AtomString& value)
 {
-    if (name == openAttr) {
+    if (name == HTMLNames::openAttr) {
         m_isOpen = !value.isNull();
         return;
     }
@@ -101,7 +101,7 @@ void HTMLDialogElement::parseAttribute(const QualifiedName& name, const AtomStri
 void HTMLDialogElement::toggleOpen()
 {
     m_isOpen = !m_isOpen;
-    setAttributeWithoutSynchronization(openAttr, m_isOpen ? emptyAtom() : nullAtom());
+    setAttributeWithoutSynchronization(HTMLNames::openAttr, m_isOpen ? emptyAtom() : nullAtom());
 }
 
 }

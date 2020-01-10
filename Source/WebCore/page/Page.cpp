@@ -74,6 +74,7 @@
 #include "Logging.h"
 #include "LowPowerModeNotifier.h"
 #include "MediaCanStartListener.h"
+#include "MediaRecorderProvider.h"
 #include "Navigator.h"
 #include "PageConfiguration.h"
 #include "PageConsoleClient.h"

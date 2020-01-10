@@ -26,6 +26,8 @@
 #include "config.h"
 #include "NarrowingNumberPredictionFuzzerAgent.h"
 
+#include "CodeBlock.h"
+
 namespace JSC {
 
 NarrowingNumberPredictionFuzzerAgent::NarrowingNumberPredictionFuzzerAgent(VM& vm)

@@ -26,10 +26,12 @@
 #pragma once
 
 #include <pal/SessionID.h>
+#include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/Optional.h>
 #include <wtf/RefPtr.h>
 #include <wtf/UniqueRef.h>
+#include <wtf/Vector.h>
 
 #if ENABLE(APPLICATION_MANIFEST)
 #include "ApplicationManifest.h"
