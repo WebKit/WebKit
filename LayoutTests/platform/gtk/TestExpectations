@@ -2954,8 +2954,6 @@ webkit.org/b/112228 svg/custom/resources-css-scaled.html [ ImageOnlyFailure ]
 
 webkit.org/b/99893 svg/animations/mozilla/animateMotion-mpath-targetChange-1.svg [ ImageOnlyFailure Pass ]
 
-webkit.org/b/115437 fast/text/complex-initial-advance.html [ ImageOnlyFailure ]
-
 webkit.org/b/117582 fast/flexbox/clear-overflow-before-scroll-update.html [ Failure ]
 webkit.org/b/169007 css3/flexbox/flex-item-contains-strict.html [ Failure ]
 
@@ -3182,7 +3180,6 @@ webkit.org/b/151267 imported/blink/fast/css/text-overflow-ellipsis-button.html [
 webkit.org/b/151267 imported/blink/fast/gradients/large-horizontal-gradient.html [ ImageOnlyFailure ]
 webkit.org/b/151267 imported/blink/fast/gradients/large-vertical-gradient.html [ ImageOnlyFailure ]
 webkit.org/b/151267 imported/blink/fast/replaced/viewport-percentage-height-with-dynamic-container-height.html [ ImageOnlyFailure Pass ]
-webkit.org/b/151267 imported/blink/fast/text/international/vertical-positioning-with-combining-marks.html [ ImageOnlyFailure ]
 webkit.org/b/151267 imported/blink/fast/transforms/transform-update-frame-overflow.html [ ImageOnlyFailure Pass ]
 webkit.org/b/151267 imported/blink/scrollbars/avoid-double-scrollbars-when-html-element-is-not-the-renderview.html [ ImageOnlyFailure Pass ]
 webkit.org/b/151267 imported/blink/svg/animations/no-attr-radialgradient-spreadmethod.svg [ ImageOnlyFailure ]
@@ -3462,7 +3459,6 @@ webkit.org/b/182763 accessibility/gtk/text-in-span-block-in-a-block.html [ Failu
 webkit.org/b/182763 accessibility/notification-listeners.html [ Failure ]
 webkit.org/b/182763 accessibility/gtk/caret-offsets.html [ Timeout ]
 
-webkit.org/b/182765 fast/backgrounds/background-leakage-transforms.html [ Failure ImageOnlyFailure ]
 webkit.org/b/182765 fast/text/emphasis-overlap.html [ Failure ImageOnlyFailure ]
 
 webkit.org/b/183033 http/tests/plugins/supported-plugin-origin-specific-visibility.html [ Failure ]
@@ -3977,7 +3973,11 @@ webkit.org/b/204675 imported/w3c/web-platform-tests/offscreen-canvas/the-offscre
 
 ietestcenter/css3/flexbox/flexbox-layout-001.htm [ Pass ]
 
+imported/mozilla/svg/blend-hard-light.svg [ Pass ]
+
 imported/w3c/canvas/2d.line.cap.round.html [ Pass ]
+
+imported/w3c/web-platform-tests/cors/preflight-failure.htm [ Pass ]
 
 imported/w3c/web-platform-tests/css/css-animations/animation-delay-010.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-animations/animation-opacity-pause-and-set-time.html [ Pass ]
@@ -3999,6 +3999,8 @@ imported/w3c/web-platform-tests/css/selectors/selector-read-write-type-change-00
 imported/w3c/web-platform-tests/css/selectors/selector-required-type-change-002.html [ Pass ]
 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-embed-element/embed-represent-nothing-02.html [ Pass ]
 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-area-element/area-coords.html [ Pass ]
+
+fast/history/page-cache-indexed-closed-db.html [ Pass ]
 
 fast/multicol/multicol-with-child-renderLayer-for-input.html [ Pass ]
 

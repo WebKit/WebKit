@@ -664,6 +664,8 @@ webkit.org/b/138676 imported/w3c/canvas/2d.line.cap.round.html [ Pass ]
 
 webkit.org/b/136754 css3/flexbox/csswg/flexbox_flex-natural-mixed-basis-auto.html [ Pass ]
 
+imported/w3c/web-platform-tests/cors/preflight-failure.htm [ Pass ]
+
 imported/w3c/web-platform-tests/css/css-pseudo/first-letter-002.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-pseudo/first-letter-003.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-ui/text-overflow-005.html [ Pass ]
