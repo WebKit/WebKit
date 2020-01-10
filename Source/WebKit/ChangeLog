@@ -1,3 +1,22 @@
+2020-01-09  Simon Fraser  <simon.fraser@apple.com>
+
+        Clean up -[WKWebView _initializeWithConfiguration:]
+        https://bugs.webkit.org/show_bug.cgi?id=206039
+
+        Reviewed by Tim Horton.
+
+        -[WKWebView _initializeWithConfiguration:] is full of platform #ifdefs so needs
+        cleaning up before adding more code. Factor out WKScrollView and view hookup,
+        pageConfiguration setup, and notification registration.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _initializeWithConfiguration:]):
+        (-[WKWebView _setupPageConfiguration:]):
+        * UIProcess/API/ios/WKWebViewIOS.h:
+        * UIProcess/API/ios/WKWebViewIOS.mm:
+        (-[WKWebView _setupScrollAndContentViews]):
+        (-[WKWebView _registerForNotifications]):
+
 2020-01-09  John Wilander  <wilander@apple.com>
 
         Check the existence of the optional m_sessionID before using it in WebProcess::setResourceLoadStatisticsEnabled()

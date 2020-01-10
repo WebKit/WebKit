@@ -29,6 +29,9 @@
 
 @interface WKWebView (WKViewInternalIOS)
 
+- (void)_setupScrollAndContentViews;
+- (void)_registerForNotifications;
+
 - (void)_keyboardWillChangeFrame:(NSNotification *)notification;
 - (void)_keyboardDidChangeFrame:(NSNotification *)notification;
 - (void)_keyboardWillShow:(NSNotification *)notification;

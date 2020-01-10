@@ -138,6 +138,49 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 #pragma mark - iOS implementation methods
 
+- (void)_setupScrollAndContentViews
+{
+    CGRect bounds = self.bounds;
+    _scrollView = adoptNS([[WKScrollView alloc] initWithFrame:bounds]);
+    [_scrollView setInternalDelegate:self];
+    [_scrollView setBouncesZoom:YES];
+
+    if ([_scrollView respondsToSelector:@selector(_setAvoidsJumpOnInterruptedBounce:)]) {
+        [_scrollView setTracksImmediatelyWhileDecelerating:NO];
+        [_scrollView _setAvoidsJumpOnInterruptedBounce:YES];
+    }
+
+    if ([_configuration _editableImagesEnabled])
+        [_scrollView panGestureRecognizer].allowedTouchTypes = @[ @(UITouchTypeDirect) ];
+
+    [self _updateScrollViewInsetAdjustmentBehavior];
+
+    [self addSubview:_scrollView.get()];
+
+    [self _dispatchSetDeviceOrientation:deviceOrientation()];
+
+    [_contentView layer].anchorPoint = CGPointZero;
+    [_contentView setFrame:bounds];
+    [_scrollView addSubview:_contentView.get()];
+    [_scrollView addSubview:[_contentView unscaledView]];
+}
+
+- (void)_registerForNotifications
+{
+    NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
+    [center addObserver:self selector:@selector(_keyboardWillChangeFrame:) name:UIKeyboardWillChangeFrameNotification object:nil];
+    [center addObserver:self selector:@selector(_keyboardDidChangeFrame:) name:UIKeyboardDidChangeFrameNotification object:nil];
+    [center addObserver:self selector:@selector(_keyboardWillShow:) name:UIKeyboardWillShowNotification object:nil];
+    [center addObserver:self selector:@selector(_keyboardDidShow:) name:UIKeyboardDidShowNotification object:nil];
+    [center addObserver:self selector:@selector(_keyboardWillHide:) name:UIKeyboardWillHideNotification object:nil];
+    [center addObserver:self selector:@selector(_windowDidRotate:) name:UIWindowDidRotateNotification object:nil];
+    [center addObserver:self selector:@selector(_contentSizeCategoryDidChange:) name:UIContentSizeCategoryDidChangeNotification object:nil];
+
+    [center addObserver:self selector:@selector(_accessibilitySettingsDidChange:) name:UIAccessibilityGrayscaleStatusDidChangeNotification object:nil];
+    [center addObserver:self selector:@selector(_accessibilitySettingsDidChange:) name:UIAccessibilityInvertColorsStatusDidChangeNotification object:nil];
+    [center addObserver:self selector:@selector(_accessibilitySettingsDidChange:) name:UIAccessibilityReduceMotionStatusDidChangeNotification object:nil];
+}
+
 - (BOOL)_isShowingVideoPictureInPicture
 {
 #if !HAVE(AVKIT)

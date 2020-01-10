@@ -167,8 +167,16 @@
 #endif
 
 #if PLATFORM(IOS_FAMILY)
-static const uint32_t firstSDKVersionWithLinkPreviewEnabledByDefault = 0xA0000;
+#if PLATFORM(WATCHOS)
+static const BOOL defaultAllowsViewportShrinkToFit = YES;
+static const BOOL defaultFastClickingEnabled = YES;
+#else
+static const BOOL defaultAllowsViewportShrinkToFit = NO;
+static const BOOL defaultFastClickingEnabled = NO;
 #endif
+
+static const uint32_t firstSDKVersionWithLinkPreviewEnabledByDefault = 0xA0000;
+#endif // PLATFORM(IOS_FAMILY)
 
 static HashMap<WebKit::WebPageProxy*, __unsafe_unretained WKWebView *>& pageToViewMap()
 {
@@ -302,6 +310,88 @@ static void hardwareKeyboardAvailabilityChangedCallback(CFNotificationCenterRef,
     auto pageConfiguration = [configuration copyPageConfiguration];
 
     pageConfiguration->setProcessPool(&processPool);
+    
+    [self _setupPageConfiguration:pageConfiguration];
+
+    _usePlatformFindUI = YES;
+#if PLATFORM(IOS_FAMILY)
+    _avoidsUnsafeArea = YES;
+    _obscuredInsetEdgesAffectedBySafeArea = UIRectEdgeTop | UIRectEdgeLeft | UIRectEdgeRight;
+    _viewportMetaTagWidth = WebCore::ViewportArguments::ValueAuto;
+    _initialScaleFactor = 1;
+    _allowsViewportShrinkToFit = defaultAllowsViewportShrinkToFit;
+
+    static uint32_t programSDKVersion = dyld_get_program_sdk_version();
+    _allowsLinkPreview = programSDKVersion >= firstSDKVersionWithLinkPreviewEnabledByDefault;
+
+    auto fastClickingEnabled = []() {
+        if (NSNumber *enabledValue = [[NSUserDefaults standardUserDefaults] objectForKey:@"WebKitFastClickingDisabled"])
+            return enabledValue.boolValue;
+        return defaultFastClickingEnabled;
+    };
+
+    _fastClickingIsDisabled = fastClickingEnabled();
+    _dragInteractionPolicy = _WKDragInteractionPolicyDefault;
+
+    _contentView = adoptNS([[WKContentView alloc] initWithFrame:self.bounds processPool:processPool configuration:pageConfiguration.copyRef() webView:self]);
+    _page = [_contentView page];
+    [[_configuration _contentProviderRegistry] addPage:*_page];
+
+    [self _setupScrollAndContentViews];
+    if (!self.opaque || !pageConfiguration->drawsBackground())
+        [self _setOpaqueInternal:NO];
+    else
+        [self _updateScrollViewBackground];
+
+    [self _frameOrBoundsChanged];
+    [self _registerForNotifications];
+
+    _page->contentSizeCategoryDidChange([self _contentSizeCategory]);
+    _page->setForceAlwaysUserScalable([_configuration ignoresViewportScaleLimits]);
+
+    CFNotificationCenterAddObserver(CFNotificationCenterGetDarwinNotifyCenter(), (__bridge const void *)(self), hardwareKeyboardAvailabilityChangedCallback, (CFStringRef)[NSString stringWithUTF8String:kGSEventHardwareKeyboardAvailabilityChangedNotification], nullptr, CFNotificationSuspensionBehaviorCoalesce);
+#endif // PLATFORM(IOS_FAMILY)
+
+#if PLATFORM(MAC)
+    _impl = makeUnique<WebKit::WebViewImpl>(self, self, processPool, pageConfiguration.copyRef());
+    _page = &_impl->page();
+
+    _impl->setAutomaticallyAdjustsContentInsets(true);
+    _impl->setRequiresUserActionForEditingControlsManager([configuration _requiresUserActionForEditingControlsManager]);
+#endif
+
+    if (NSString *applicationNameForUserAgent = configuration.applicationNameForUserAgent)
+        _page->setApplicationNameForUserAgent(applicationNameForUserAgent);
+
+    _page->setApplicationNameForDesktopUserAgent(configuration._applicationNameForDesktopUserAgent);
+
+    _navigationState = makeUnique<WebKit::NavigationState>(self);
+    _page->setNavigationClient(_navigationState->createNavigationClient());
+
+    _uiDelegate = makeUnique<WebKit::UIDelegate>(self);
+    _page->setFindClient(makeUnique<WebKit::FindClient>(self));
+    _page->setDiagnosticLoggingClient(makeUnique<WebKit::DiagnosticLoggingClient>(self));
+
+    _iconLoadingDelegate = makeUnique<WebKit::IconLoadingDelegate>(self);
+    _resourceLoadDelegate = makeUnique<WebKit::ResourceLoadDelegate>(self);
+
+    [self _setUpSQLiteDatabaseTrackerClient];
+
+    for (auto& pair : pageConfiguration->urlSchemeHandlers())
+        _page->setURLSchemeHandlerForScheme(WebKit::WebURLSchemeHandlerCocoa::create(static_cast<WebKit::WebURLSchemeHandlerCocoa&>(pair.value.get()).apiHandler()), pair.key);
+
+    pageToViewMap().add(_page.get(), self);
+
+#if PLATFORM(IOS_FAMILY)
+    auto timeNow = MonotonicTime::now();
+    _timeOfRequestForVisibleContentRectUpdate = timeNow;
+    _timeOfLastVisibleContentRectUpdate = timeNow;
+    _timeOfFirstVisibleContentRectUpdateWithPendingCommit = timeNow;
+#endif // PLATFORM(IOS_FAMILY)
+}
+
+- (void)_setupPageConfiguration:(Ref<API::PageConfiguration>&)pageConfiguration
+{
     pageConfiguration->setPreferences([_configuration preferences]->_preferences.get());
     if (WKWebView *relatedWebView = [_configuration _relatedWebView])
         pageConfiguration->setRelatedPage(relatedWebView->_page.get());
@@ -312,15 +402,15 @@ static void hardwareKeyboardAvailabilityChangedCallback(CFNotificationCenterRef,
     pageConfiguration->setDefaultWebsitePolicies([_configuration defaultWebpagePreferences]->_websitePolicies.get());
 
 #if PLATFORM(MAC)
-    if (auto pageGroup = WebKit::toImpl([configuration _pageGroup])) {
+    if (auto pageGroup = WebKit::toImpl([_configuration _pageGroup])) {
         pageConfiguration->setPageGroup(pageGroup);
         pageConfiguration->setUserContentController(&pageGroup->userContentController());
     } else
 #endif
     {
-        NSString *groupIdentifier = configuration._groupIdentifier;
+        NSString *groupIdentifier = [_configuration _groupIdentifier];
         if (groupIdentifier.length)
-            pageConfiguration->setPageGroup(WebKit::WebPageGroup::create(configuration._groupIdentifier).ptr());
+            pageConfiguration->setPageGroup(WebKit::WebPageGroup::create(groupIdentifier).ptr());
     }
 
     pageConfiguration->setAdditionalSupportedImageTypes(WebCore::webCoreStringVectorFromNSStringArray([_configuration _additionalSupportedImageTypes]));
@@ -370,7 +460,7 @@ static void hardwareKeyboardAvailabilityChangedCallback(CFNotificationCenterRef,
 #if USE(SYSTEM_PREVIEW)
     pageConfiguration->preferenceValues().set(WebKit::WebPreferencesKey::systemPreviewEnabledKey(), WebKit::WebPreferencesStore::Value(!![_configuration _systemPreviewEnabled]));
 #endif
-#endif
+#endif // PLATFORM(IOS_FAMILY)
 
     WKAudiovisualMediaTypes mediaTypesRequiringUserGesture = [_configuration mediaTypesRequiringUserActionForPlayback];
     pageConfiguration->preferenceValues().set(WebKit::WebPreferencesKey::requiresUserGestureForVideoPlaybackKey(), WebKit::WebPreferencesStore::Value((mediaTypesRequiringUserGesture & WKAudiovisualMediaTypeVideo) == WKAudiovisualMediaTypeVideo));
@@ -412,125 +502,6 @@ static void hardwareKeyboardAvailabilityChangedCallback(CFNotificationCenterRef,
 
     if (!linkedOnOrAfter(WebKit::SDKVersion::FirstWhereSiteSpecificQuirksAreEnabledByDefault))
         pageConfiguration->preferenceValues().set(WebKit::WebPreferencesKey::needsSiteSpecificQuirksKey(), WebKit::WebPreferencesStore::Value(false));
-
-#if PLATFORM(IOS_FAMILY)
-    CGRect bounds = self.bounds;
-    _scrollView = adoptNS([[WKScrollView alloc] initWithFrame:bounds]);
-    [_scrollView setInternalDelegate:self];
-    [_scrollView setBouncesZoom:YES];
-
-    if ([_scrollView respondsToSelector:@selector(_setAvoidsJumpOnInterruptedBounce:)]) {
-        [_scrollView setTracksImmediatelyWhileDecelerating:NO];
-        [_scrollView _setAvoidsJumpOnInterruptedBounce:YES];
-    }
-
-    if ([_configuration _editableImagesEnabled])
-        [_scrollView panGestureRecognizer].allowedTouchTypes = @[ @(UITouchTypeDirect) ];
-
-    _avoidsUnsafeArea = YES;
-    [self _updateScrollViewInsetAdjustmentBehavior];
-
-    [self addSubview:_scrollView.get()];
-
-    static uint32_t programSDKVersion = dyld_get_program_sdk_version();
-    _allowsLinkPreview = programSDKVersion >= firstSDKVersionWithLinkPreviewEnabledByDefault;
-
-    _contentView = adoptNS([[WKContentView alloc] initWithFrame:bounds processPool:processPool configuration:pageConfiguration.copyRef() webView:self]);
-
-    _page = [_contentView page];
-    [self _dispatchSetDeviceOrientation:deviceOrientation()];
-
-    if (!self.opaque || !pageConfiguration->drawsBackground())
-        [self _setOpaqueInternal:NO];
-
-    [_contentView layer].anchorPoint = CGPointZero;
-    [_contentView setFrame:bounds];
-    [_scrollView addSubview:_contentView.get()];
-    [_scrollView addSubview:[_contentView unscaledView]];
-    [self _updateScrollViewBackground];
-    _obscuredInsetEdgesAffectedBySafeArea = UIRectEdgeTop | UIRectEdgeLeft | UIRectEdgeRight;
-
-    _viewportMetaTagWidth = WebCore::ViewportArguments::ValueAuto;
-    _initialScaleFactor = 1;
-
-    if (NSNumber *enabledValue = [[NSUserDefaults standardUserDefaults] objectForKey:@"WebKitFastClickingDisabled"])
-        _fastClickingIsDisabled = enabledValue.boolValue;
-    else {
-#if PLATFORM(WATCHOS)
-        _fastClickingIsDisabled = YES;
-#else
-        _fastClickingIsDisabled = NO;
-#endif
-    }
-
-    [self _frameOrBoundsChanged];
-
-    NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
-    [center addObserver:self selector:@selector(_keyboardWillChangeFrame:) name:UIKeyboardWillChangeFrameNotification object:nil];
-    [center addObserver:self selector:@selector(_keyboardDidChangeFrame:) name:UIKeyboardDidChangeFrameNotification object:nil];
-    [center addObserver:self selector:@selector(_keyboardWillShow:) name:UIKeyboardWillShowNotification object:nil];
-    [center addObserver:self selector:@selector(_keyboardDidShow:) name:UIKeyboardDidShowNotification object:nil];
-    [center addObserver:self selector:@selector(_keyboardWillHide:) name:UIKeyboardWillHideNotification object:nil];
-    [center addObserver:self selector:@selector(_windowDidRotate:) name:UIWindowDidRotateNotification object:nil];
-    [center addObserver:self selector:@selector(_contentSizeCategoryDidChange:) name:UIContentSizeCategoryDidChangeNotification object:nil];
-    _page->contentSizeCategoryDidChange([self _contentSizeCategory]);
-
-    [center addObserver:self selector:@selector(_accessibilitySettingsDidChange:) name:UIAccessibilityGrayscaleStatusDidChangeNotification object:nil];
-    [center addObserver:self selector:@selector(_accessibilitySettingsDidChange:) name:UIAccessibilityInvertColorsStatusDidChangeNotification object:nil];
-    [center addObserver:self selector:@selector(_accessibilitySettingsDidChange:) name:UIAccessibilityReduceMotionStatusDidChangeNotification object:nil];
-
-    [[_configuration _contentProviderRegistry] addPage:*_page];
-    _page->setForceAlwaysUserScalable([_configuration ignoresViewportScaleLimits]);
-
-    CFNotificationCenterAddObserver(CFNotificationCenterGetDarwinNotifyCenter(), (__bridge const void *)(self), hardwareKeyboardAvailabilityChangedCallback, (CFStringRef)[NSString stringWithUTF8String:kGSEventHardwareKeyboardAvailabilityChangedNotification], nullptr, CFNotificationSuspensionBehaviorCoalesce);
-#endif
-
-#if PLATFORM(MAC)
-    _impl = makeUnique<WebKit::WebViewImpl>(self, self, processPool, pageConfiguration.copyRef());
-    _page = &_impl->page();
-
-    _impl->setAutomaticallyAdjustsContentInsets(true);
-    _impl->setRequiresUserActionForEditingControlsManager([configuration _requiresUserActionForEditingControlsManager]);
-#endif
-
-    if (NSString *applicationNameForUserAgent = configuration.applicationNameForUserAgent)
-        _page->setApplicationNameForUserAgent(applicationNameForUserAgent);
-
-    _page->setApplicationNameForDesktopUserAgent(configuration._applicationNameForDesktopUserAgent);
-
-    _navigationState = makeUnique<WebKit::NavigationState>(self);
-    _page->setNavigationClient(_navigationState->createNavigationClient());
-
-    _uiDelegate = makeUnique<WebKit::UIDelegate>(self);
-    _page->setFindClient(makeUnique<WebKit::FindClient>(self));
-    _page->setDiagnosticLoggingClient(makeUnique<WebKit::DiagnosticLoggingClient>(self));
-
-    _iconLoadingDelegate = makeUnique<WebKit::IconLoadingDelegate>(self);
-    _resourceLoadDelegate = makeUnique<WebKit::ResourceLoadDelegate>(self);
-
-    _usePlatformFindUI = YES;
-
-    [self _setUpSQLiteDatabaseTrackerClient];
-
-    for (auto& pair : pageConfiguration->urlSchemeHandlers())
-        _page->setURLSchemeHandlerForScheme(WebKit::WebURLSchemeHandlerCocoa::create(static_cast<WebKit::WebURLSchemeHandlerCocoa&>(pair.value.get()).apiHandler()), pair.key);
-
-    pageToViewMap().add(_page.get(), self);
-
-#if PLATFORM(IOS_FAMILY)
-    _dragInteractionPolicy = _WKDragInteractionPolicyDefault;
-
-    auto timeNow = MonotonicTime::now();
-    _timeOfRequestForVisibleContentRectUpdate = timeNow;
-    _timeOfLastVisibleContentRectUpdate = timeNow;
-    _timeOfFirstVisibleContentRectUpdateWithPendingCommit = timeNow;
-
-#if PLATFORM(WATCHOS)
-    _allowsViewportShrinkToFit = YES;
-#else
-    _allowsViewportShrinkToFit = NO;
-#endif
-#endif // PLATFORM(IOS_FAMILY)
 }
 
 - (void)_setUpSQLiteDatabaseTrackerClient
