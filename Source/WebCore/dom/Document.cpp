@@ -3366,7 +3366,7 @@ bool Document::canNavigate(Frame* targetFrame, const URL& destinationURL)
         return false;
 
     if (isNavigationBlockedByThirdPartyIFrameRedirectBlocking(*targetFrame, destinationURL)) {
-        printNavigationErrorMessage(*targetFrame, url(), "The frame attempting navigation of the top-level window is cross-origin and the user has never interacted with the frame."_s);
+        printNavigationErrorMessage(*targetFrame, url(), "The frame attempting navigation of the top-level window is cross-origin or untrusted and the user has never interacted with the frame."_s);
         return false;
     }
 
@@ -3456,6 +3456,16 @@ bool Document::canNavigateInternal(Frame& targetFrame)
     return false;
 }
 
+void Document::willLoadScriptElement(const URL& scriptURL)
+{
+    m_hasLoadedThirdPartyScript = m_hasLoadedThirdPartyScript || !securityOrigin().isSameOriginAs(SecurityOrigin::create(scriptURL));
+}
+
+void Document::willLoadFrameElement(const URL& frameURL)
+{
+    m_hasLoadedThirdPartyFrame = m_hasLoadedThirdPartyFrame || !securityOrigin().isSameOriginAs(SecurityOrigin::create(frameURL));
+}
+
 // Prevent cross-site top-level redirects from third-party iframes unless the user has ever interacted with the frame.
 bool Document::isNavigationBlockedByThirdPartyIFrameRedirectBlocking(Frame& targetFrame, const URL& destinationURL)
 {
@@ -3475,8 +3485,9 @@ bool Document::isNavigationBlockedByThirdPartyIFrameRedirectBlocking(Frame& targ
     if (sandboxFlags() != SandboxNone)
         return false;
 
-    // Only prevent navigations by third-party iframes.
-    if (canAccessAncestor(securityOrigin(), &targetFrame))
+    // Only prevent navigations by third-party iframes or untrusted first-party iframes.
+    bool isUntrustedIframe = m_hasLoadedThirdPartyScript && m_hasLoadedThirdPartyFrame;
+    if (canAccessAncestor(securityOrigin(), &targetFrame) && !isUntrustedIframe)
         return false;
 
     // Only prevent cross-site navigations.

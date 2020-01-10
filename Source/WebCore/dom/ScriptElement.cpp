@@ -290,7 +290,10 @@ bool ScriptElement::requestClassicScript(const String& sourceURL)
             scriptCharset(),
             m_element.localName(),
             m_element.isInUserAgentShadowTree());
-        if (script->load(m_element.document(), m_element.document().completeURL(sourceURL))) {
+
+        auto scriptURL = m_element.document().completeURL(sourceURL);
+        m_element.document().willLoadScriptElement(scriptURL);
+        if (script->load(m_element.document(), scriptURL)) {
             m_loadableScript = WTFMove(script);
             m_isExternalScript = true;
         }

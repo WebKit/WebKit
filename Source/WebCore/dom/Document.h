@@ -1327,6 +1327,9 @@ public:
     SecurityOrigin& securityOrigin() const { return *SecurityContext::securityOrigin(); }
     SecurityOrigin& topOrigin() const final { return topDocument().securityOrigin(); }
 
+    void willLoadScriptElement(const URL&);
+    void willLoadFrameElement(const URL&);
+
     Ref<FontFaceSet> fonts();
 
     void ensurePlugInsInjectedScript(DOMWrapperWorld&);
@@ -2055,6 +2058,8 @@ private:
     bool m_isRunningUserScripts { false };
     bool m_mayBeDetachedFromFrame { true };
     bool m_shouldPreventEnteringBackForwardCacheForTesting { false };
+    bool m_hasLoadedThirdPartyScript { false };
+    bool m_hasLoadedThirdPartyFrame { false };
 #if ENABLE(APPLE_PAY)
     bool m_hasStartedApplePaySession { false };
 #endif

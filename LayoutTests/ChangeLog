@@ -1,3 +1,19 @@
+2020-01-09  Chris Dumez  <cdumez@apple.com>
+
+        Block cross-site top-frame navigations from untrusted iframes
+        https://bugs.webkit.org/show_bug.cgi?id=206027
+        <rdar://problem/58320516>
+
+        Reviewed by Geoffrey Garen.
+
+        Add layout test coverage.
+
+        * http/tests/security/block-top-level-navigations-by-third-party-iframes-expected.txt:
+        * http/tests/security/block-top-level-navigations-by-untrusted-first-party-iframes-expected.txt: Added.
+        * http/tests/security/block-top-level-navigations-by-untrusted-first-party-iframes.html: Added.
+        * http/tests/security/resources/navigate-top-level-frame-to-failure-page-untrusted-iframe.html: Added.
+        * http/tests/security/resources/navigate-top-to-error-page.js: Added.
+
 2020-01-09  Diego Pino Garcia  <dpino@igalia.com>
 
         [GTK] Unreviewed test gardening
