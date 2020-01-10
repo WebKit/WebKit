@@ -113,6 +113,8 @@ jsc_value_function_callv
 jsc_value_is_constructor
 jsc_value_constructor_call
 jsc_value_constructor_callv
+jsc_value_new_from_json
+jsc_value_to_json
 
 <SUBSECTION Standard>
 JSCValueClass

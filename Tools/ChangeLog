@@ -1,3 +1,16 @@
+2020-01-10  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GLIB] Add GLib specific API for JSC JSValueRef.h's JSValueMakeFromJSONString and JSValueCreateJSONString methods
+        https://bugs.webkit.org/show_bug.cgi?id=205161
+
+        Reviewed by Adrian Perez de Castro.
+
+        Add tests for new API.
+
+        * TestWebKitAPI/Tests/JavaScriptCore/glib/TestJSC.cpp:
+        (testJSCJSON):
+        (main):
+
 2020-01-09  Ryan Haddad  <ryanhaddad@apple.com>
 
         Move macOS Test262, JSC, and perf queues to Catalina

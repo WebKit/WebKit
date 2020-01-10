@@ -28,6 +28,7 @@
 #include "JSCInlines.h"
 #include "JSCValuePrivate.h"
 #include "JSRetainPtr.h"
+#include "LiteralParser.h"
 #include "OpaqueJSString.h"
 #include <gobject/gvaluecollector.h>
 #include <wtf/glib/GRefPtr.h>
@@ -1445,4 +1446,84 @@ JSCValue* jsc_value_constructor_callv(JSCValue* value, unsigned parametersCount,
         return jsc_value_new_undefined(priv->context.get());
 
     return jscContextGetOrCreateValue(priv->context.get(), result).leakRef();
+}
+
+/**
+ * jsc_value_new_from_json:
+ * @context: a #JSCContext
+ * @json: the JSON string to be parsed
+ *
+ * Create a new #JSCValue referencing a new value created by parsing @json.
+ *
+ * Returns: (transfer full): a #JSCValue.
+ *
+ * Since: 2.28
+ */
+JSCValue* jsc_value_new_from_json(JSCContext* context, const char* json)
+{
+    g_return_val_if_fail(JSC_IS_CONTEXT(context), nullptr);
+
+    if (!json)
+        return jsc_value_new_null(context);
+
+    auto* jsContext = jscContextGetJSContext(context);
+    JSC::JSGlobalObject* globalObject = toJS(jsContext);
+    JSC::JSLockHolder locker(globalObject);
+
+    JSValueRef exception = nullptr;
+    JSC::JSValue jsValue;
+    String jsonString = String::fromUTF8(json);
+    if (jsonString.is8Bit()) {
+        JSC::LiteralParser<LChar> jsonParser(globalObject, jsonString.characters8(), jsonString.length(), JSC::StrictJSON);
+        jsValue = jsonParser.tryLiteralParse();
+        if (!jsValue)
+            exception = toRef(JSC::createSyntaxError(globalObject, jsonParser.getErrorMessage()));
+    } else {
+        JSC::LiteralParser<UChar> jsonParser(globalObject, jsonString.characters16(), jsonString.length(), JSC::StrictJSON);
+        jsValue = jsonParser.tryLiteralParse();
+        if (!jsValue)
+            exception = toRef(JSC::createSyntaxError(globalObject, jsonParser.getErrorMessage()));
+    }
+
+    if (exception) {
+        jscContextHandleExceptionIfNeeded(context, exception);
+        return nullptr;
+    }
+
+    return jsValue ? jscContextGetOrCreateValue(context, toRef(globalObject, jsValue)).leakRef() : nullptr;
+}
+
+/**
+ * jsc_value_to_json:
+ * @value: a #JSCValue
+ * @indent: The number of spaces to indent when nesting.
+ *
+ * Create a JSON string of @value serialization. If @indent is 0, the resulting JSON will
+ * not contain newlines. The size of the indent is clamped to 10 spaces.
+ *
+ * Returns: (transfer full): a null-terminated JSON string with serialization of @value
+ *
+ * Since: 2.28
+ */
+char* jsc_value_to_json(JSCValue* value, unsigned indent)
+{
+    g_return_val_if_fail(JSC_IS_VALUE(value), nullptr);
+
+    JSCValuePrivate* priv = value->priv;
+    JSValueRef exception = nullptr;
+    JSRetainPtr<JSStringRef> jsJSON(Adopt, JSValueCreateJSONString(jscContextGetJSContext(priv->context.get()), priv->jsValue, indent, &exception));
+    if (jscContextHandleExceptionIfNeeded(priv->context.get(), exception))
+        return nullptr;
+
+    if (!jsJSON)
+        return nullptr;
+
+    size_t maxSize = JSStringGetMaximumUTF8CStringSize(jsJSON.get());
+    auto* json = static_cast<char*>(g_malloc(maxSize));
+    if (!JSStringGetUTF8CString(jsJSON.get(), json, maxSize)) {
+        g_free(json);
+        return nullptr;
+    }
+
+    return json;
 }

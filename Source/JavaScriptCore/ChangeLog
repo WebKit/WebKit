@@ -1,3 +1,18 @@
+2020-01-10  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GLIB] Add GLib specific API for JSC JSValueRef.h's JSValueMakeFromJSONString and JSValueCreateJSONString methods
+        https://bugs.webkit.org/show_bug.cgi?id=205161
+
+        Reviewed by Adrian Perez de Castro.
+
+        Add jsc_value_new_from_json() and jsc_value_to_json().
+
+        * API/glib/JSCValue.cpp:
+        (jsc_value_new_from_json):
+        (jsc_value_to_json):
+        * API/glib/JSCValue.h:
+        * API/glib/docs/jsc-glib-4.0-sections.txt:
+
 2020-01-10  Adrian Perez de Castro  <aperez@igalia.com>
 
         Fix various non-unified build issues introduced since r253538

@@ -260,6 +260,14 @@ jsc_value_constructor_callv               (JSCValue             *value,
                                            guint                 n_parameters,
                                            JSCValue            **parameters);
 
+JSC_API JSCValue *
+jsc_value_new_from_json                   (JSCContext           *context,
+                                           const char           *json);
+
+JSC_API char *
+jsc_value_to_json                         (JSCValue             *value,
+                                           guint                 indent);
+
 G_END_DECLS
 
 #endif /* JSCValue_h */
