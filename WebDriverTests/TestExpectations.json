@@ -535,22 +535,6 @@
             }
         }
     },
-    "imported/w3c/webdriver/tests/execute_async_script/promise.py": {
-        "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/204151"}},
-        "subtests": {
-            "test_await_promise_reject": {
-                "expected": {"all": {"status": ["PASS"]}}
-            }
-        }
-    },
-    "imported/w3c/webdriver/tests/execute_script/promise.py": {
-        "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/204151"}},
-        "subtests": {
-            "test_await_promise_reject": {
-                "expected": {"all": {"status": ["PASS"]}}
-            }
-        }
-    },
     "imported/w3c/webdriver/tests/element_send_keys/content_editable.py": {
         "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/180403"}}
     },

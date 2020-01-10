@@ -2133,13 +2133,12 @@ void Session::executeScript(const String& script, RefPtr<JSON::Array>&& argument
         parameters->setString("browsingContextHandle"_s, m_toplevelBrowsingContext.value());
         if (m_currentBrowsingContext)
             parameters->setString("frameHandle"_s, m_currentBrowsingContext.value());
-        parameters->setString("function"_s, "function(){" + script + '}');
+        parameters->setString("function"_s, "function(){\n" + script + "\n}");
         parameters->setArray("arguments"_s, WTFMove(arguments));
-        if (mode == ExecuteScriptMode::Async) {
+        if (mode == ExecuteScriptMode::Async)
             parameters->setBoolean("expectsImplicitCallbackArgument"_s, true);
-            if (m_scriptTimeout != std::numeric_limits<double>::infinity())
-                parameters->setDouble("callbackTimeout"_s, m_scriptTimeout);
-        }
+        if (m_scriptTimeout != std::numeric_limits<double>::infinity())
+            parameters->setDouble("callbackTimeout"_s, m_scriptTimeout);
         m_host->sendCommandToBackend("evaluateJavaScriptFunction"_s, WTFMove(parameters), [this, protectedThis = protectedThis.copyRef(), completionHandler = WTFMove(completionHandler)](SessionHost::CommandResponse&& response) mutable {
             if (response.isError || !response.responseObject) {
                 auto result = CommandResult::fail(WTFMove(response.responseObject));

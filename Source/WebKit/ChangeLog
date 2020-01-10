@@ -1,5 +1,28 @@
 2020-01-10  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        Automation: evaluateJavaScriptFunction should use Promises
+        https://bugs.webkit.org/show_bug.cgi?id=204151
+
+        Reviewed by Brian Burg.
+
+        Make the function to run scripts async and handle the result as a promise. To implement the script timeout we
+        use another promise that starts the timer and then we run a Promise.race() with both promises. To simplify the
+        results reporting, all exceptions (including timeout errors that are now handled as exceptions) are now handled
+        as errors passed to the resultCallback. The boolean parameter has been removed, we can simply check the type of
+        the value received because results are always strings and errors are always exception objects.
+
+        * WebProcess/Automation/WebAutomationSessionProxy.cpp:
+        (WebKit::evaluateJavaScriptCallback): Handle the script result, including all possible errors now (not only timeouts).
+        (WebKit::WebAutomationSessionProxy::evaluateJavaScriptFunction): Any exception running the script should be an
+        internal error now. The code to handle error has been moved to evaluateJavaScriptCallback().
+        * WebProcess/Automation/WebAutomationSessionProxy.js:
+        (WebKitAutomation.AutomationSessionProxy.prototype.evaluateJavaScriptFunction): Call _execute and handle the
+        promise result to call resultCallback wityh either the result or the error.
+        (WebKitAutomation.AutomationSessionProxy.prototype._execute): Make the function to run the script async and
+        handle the result as a promise.
+
+2020-01-10  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         Automation: scripts are executed in the wrong js context after a history navigation
         https://bugs.webkit.org/show_bug.cgi?id=204880
         <rdar://problem/58413615>

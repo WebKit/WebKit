@@ -148,12 +148,11 @@ unsigned CommandResult::httpStatusCode() const
     case ErrorCode::InvalidSessionID:
     case ErrorCode::UnknownCommand:
         return 404;
-    case ErrorCode::ScriptTimeout:
-    case ErrorCode::Timeout:
-        return 408;
     case ErrorCode::JavascriptError:
     case ErrorCode::MoveTargetOutOfBounds:
+    case ErrorCode::ScriptTimeout:
     case ErrorCode::SessionNotCreated:
+    case ErrorCode::Timeout:
     case ErrorCode::UnableToCaptureScreen:
     case ErrorCode::UnexpectedAlertOpen:
     case ErrorCode::UnknownError:

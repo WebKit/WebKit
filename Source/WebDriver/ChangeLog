@@ -1,3 +1,16 @@
+2020-01-10  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Automation: evaluateJavaScriptFunction should use Promises
+        https://bugs.webkit.org/show_bug.cgi?id=204151
+
+        Reviewed by Brian Burg.
+
+        * CommandResult.cpp:
+        (WebDriver::CommandResult::httpStatusCode const): Timeout errors should return 500 not 408.
+        * Session.cpp:
+        (WebDriver::Session::executeScript): Ensure the script body goes between new lines to avoid problems with
+        trailing comments like in function() { return foo; // Comment }.
+
 2020-01-07  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         WebDriver: handle no such element errors

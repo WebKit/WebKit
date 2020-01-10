@@ -181,11 +181,10 @@ static JSValueRef createUUID(JSContextRef context, JSObjectRef function, JSObjec
 
 static JSValueRef evaluateJavaScriptCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
-    ASSERT_ARG(argumentCount, argumentCount == 4);
+    ASSERT_ARG(argumentCount, argumentCount == 3);
     ASSERT_ARG(arguments, JSValueIsNumber(context, arguments[0]));
     ASSERT_ARG(arguments, JSValueIsNumber(context, arguments[1]));
-    ASSERT_ARG(arguments, JSValueIsString(context, arguments[2]));
-    ASSERT_ARG(arguments, JSValueIsBoolean(context, arguments[3]));
+    ASSERT_ARG(arguments, JSValueIsObject(context, arguments[2]) || JSValueIsString(context, arguments[2]));
 
     auto automationSessionProxy = WebProcess::singleton().automationSessionProxy();
     if (!automationSessionProxy)
@@ -193,21 +192,36 @@ static JSValueRef evaluateJavaScriptCallback(JSContextRef context, JSObjectRef f
 
     WebCore::FrameIdentifier frameID = WebCore::frameIdentifierFromID(JSValueToNumber(context, arguments[0], exception));
     uint64_t callbackID = JSValueToNumber(context, arguments[1], exception);
-    auto result = adoptRef(JSValueToStringCopy(context, arguments[2], exception));
+    if (JSValueIsString(context, arguments[2])) {
+        auto result = adoptRef(JSValueToStringCopy(context, arguments[2], exception));
+        automationSessionProxy->didEvaluateJavaScriptFunction(frameID, callbackID, result->string(), { });
+    } else if (JSValueIsObject(context, arguments[2])) {
+        JSObjectRef error = JSValueToObject(context, arguments[2], exception);
+        JSValueRef nameValue = JSObjectGetProperty(context, error, OpaqueJSString::tryCreate("name"_s).get(), exception);
+        String exceptionName = adoptRef(JSValueToStringCopy(context, nameValue, nullptr))->string();
+        String errorType = Inspector::Protocol::AutomationHelpers::getEnumConstantValue(Inspector::Protocol::Automation::ErrorMessage::JavaScriptError);
+        if (exceptionName == "JavaScriptTimeout")
+            errorType = Inspector::Protocol::AutomationHelpers::getEnumConstantValue(Inspector::Protocol::Automation::ErrorMessage::JavaScriptTimeout);
+        else if (exceptionName == "NodeNotFound")
+            errorType = Inspector::Protocol::AutomationHelpers::getEnumConstantValue(Inspector::Protocol::Automation::ErrorMessage::NodeNotFound);
+        else if (exceptionName == "InvalidNodeIdentifier")
+            errorType = Inspector::Protocol::AutomationHelpers::getEnumConstantValue(Inspector::Protocol::Automation::ErrorMessage::InvalidNodeIdentifier);
+        else if (exceptionName == "InvalidElementState")
+            errorType = Inspector::Protocol::AutomationHelpers::getEnumConstantValue(Inspector::Protocol::Automation::ErrorMessage::InvalidElementState);
+        else if (exceptionName == "InvalidParameter")
+            errorType = Inspector::Protocol::AutomationHelpers::getEnumConstantValue(Inspector::Protocol::Automation::ErrorMessage::InvalidParameter);
+        else if (exceptionName == "InvalidSelector")
+            errorType = Inspector::Protocol::AutomationHelpers::getEnumConstantValue(Inspector::Protocol::Automation::ErrorMessage::InvalidSelector);
+        else if (exceptionName == "ElementNotInteractable")
+            errorType = Inspector::Protocol::AutomationHelpers::getEnumConstantValue(Inspector::Protocol::Automation::ErrorMessage::ElementNotInteractable);
 
-    bool resultIsErrorName = JSValueToBoolean(context, arguments[3]);
-
-    if (resultIsErrorName) {
-        if (result->string() == "JavaScriptTimeout") {
-            String errorType = Inspector::Protocol::AutomationHelpers::getEnumConstantValue(Inspector::Protocol::Automation::ErrorMessage::JavaScriptTimeout);
-            automationSessionProxy->didEvaluateJavaScriptFunction(frameID, callbackID, String(), errorType);
-        } else {
-            ASSERT_NOT_REACHED();
-            String errorType = Inspector::Protocol::AutomationHelpers::getEnumConstantValue(Inspector::Protocol::Automation::ErrorMessage::InternalError);
-            automationSessionProxy->didEvaluateJavaScriptFunction(frameID, callbackID, String(), errorType);
-        }
-    } else
-        automationSessionProxy->didEvaluateJavaScriptFunction(frameID, callbackID, result->string(), String());
+        JSValueRef messageValue = JSObjectGetProperty(context, error, OpaqueJSString::tryCreate("message"_s).get(), exception);
+        auto exceptionMessage = adoptRef(JSValueToStringCopy(context, messageValue, exception))->string();
+        automationSessionProxy->didEvaluateJavaScriptFunction(frameID, callbackID, exceptionMessage, errorType);
+    } else {
+        String errorType = Inspector::Protocol::AutomationHelpers::getEnumConstantValue(Inspector::Protocol::Automation::ErrorMessage::InternalError);
+        automationSessionProxy->didEvaluateJavaScriptFunction(frameID, callbackID, { }, errorType);
+    }
 
     return JSValueMakeUndefined(context);
 }
@@ -338,25 +352,10 @@ void WebAutomationSessionProxy::evaluateJavaScriptFunction(WebCore::PageIdentifi
     if (!exception)
         return;
 
-    String errorType = Inspector::Protocol::AutomationHelpers::getEnumConstantValue(Inspector::Protocol::Automation::ErrorMessage::JavaScriptError);
+    String errorType = Inspector::Protocol::AutomationHelpers::getEnumConstantValue(Inspector::Protocol::Automation::ErrorMessage::InternalError);
 
     String exceptionMessage;
     if (JSValueIsObject(context, exception)) {
-        JSValueRef nameValue = JSObjectGetProperty(context, const_cast<JSObjectRef>(exception), OpaqueJSString::tryCreate("name"_s).get(), nullptr);
-        auto exceptionName = adoptRef(JSValueToStringCopy(context, nameValue, nullptr))->string();
-        if (exceptionName == "NodeNotFound")
-            errorType = Inspector::Protocol::AutomationHelpers::getEnumConstantValue(Inspector::Protocol::Automation::ErrorMessage::NodeNotFound);
-        else if (exceptionName == "InvalidNodeIdentifier")
-            errorType = Inspector::Protocol::AutomationHelpers::getEnumConstantValue(Inspector::Protocol::Automation::ErrorMessage::InvalidNodeIdentifier);
-        else if (exceptionName == "InvalidElementState")
-            errorType = Inspector::Protocol::AutomationHelpers::getEnumConstantValue(Inspector::Protocol::Automation::ErrorMessage::InvalidElementState);
-        else if (exceptionName == "InvalidParameter")
-            errorType = Inspector::Protocol::AutomationHelpers::getEnumConstantValue(Inspector::Protocol::Automation::ErrorMessage::InvalidParameter);
-        else if (exceptionName == "InvalidSelector")
-            errorType = Inspector::Protocol::AutomationHelpers::getEnumConstantValue(Inspector::Protocol::Automation::ErrorMessage::InvalidSelector);
-        else if (exceptionName == "ElementNotInteractable")
-            errorType = Inspector::Protocol::AutomationHelpers::getEnumConstantValue(Inspector::Protocol::Automation::ErrorMessage::ElementNotInteractable);
-
         JSValueRef messageValue = JSObjectGetProperty(context, const_cast<JSObjectRef>(exception), OpaqueJSString::tryCreate("message"_s).get(), nullptr);
         exceptionMessage = adoptRef(JSValueToStringCopy(context, messageValue, nullptr))->string();
     } else

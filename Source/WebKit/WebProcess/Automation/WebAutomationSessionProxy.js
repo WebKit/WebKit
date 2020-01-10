@@ -41,33 +41,9 @@ let AutomationSessionProxy = class AutomationSessionProxy
 
     evaluateJavaScriptFunction(functionString, argumentStrings, expectsImplicitCallbackArgument, frameID, callbackID, resultCallback, callbackTimeout)
     {
-        // The script is expected to be a function declaration. Evaluate it inside parenthesis to get the function value.
-        let functionValue = evaluate("(" + functionString + ")");
-        if (typeof functionValue !== "function")
-            throw new TypeError("Script did not evaluate to a function.");
-
-        this._clearStaleNodes();
-
-        let argumentValues = argumentStrings.map(this._jsonParse, this);
-
-        let timeoutIdentifier = 0;
-        let resultReported = false;
-
-        let reportResult = (result) => {
-            if (timeoutIdentifier)
-                clearTimeout(timeoutIdentifier);
-            resultCallback(frameID, callbackID, this._jsonStringify(result), false);
-            resultReported = true;
-        };
-        let reportTimeoutError = () => { resultCallback(frameID, callbackID, "JavaScriptTimeout", true); };
-
-        if (expectsImplicitCallbackArgument) {
-            argumentValues.push(reportResult);
-            functionValue.apply(null, argumentValues);
-            if (!resultReported && callbackTimeout >= 0)
-                timeoutIdentifier = setTimeout(reportTimeoutError, callbackTimeout);
-        } else
-            reportResult(functionValue.apply(null, argumentValues));
+        this._execute(functionString, argumentStrings, expectsImplicitCallbackArgument, callbackTimeout)
+            .then(result => { resultCallback(frameID, callbackID, this._jsonStringify(result)); })
+            .catch(error => { resultCallback(frameID, callbackID, error); });
     }
 
     nodeForIdentifier(identifier)
@@ -81,6 +57,59 @@ let AutomationSessionProxy = class AutomationSessionProxy
     }
 
     // Private
+
+    _execute(functionString, argumentStrings, expectsImplicitCallbackArgument, callbackTimeout)
+    {
+        let timeoutPromise;
+        let timeoutIdentifier = 0;
+        if (callbackTimeout >= 0) {
+            timeoutPromise = new Promise((resolve, reject) => {
+                timeoutIdentifier = setTimeout(() => {
+                    reject({ name: "JavaScriptTimeout", message: "script timed out after " + callbackTimeout + "ms" });
+                }, callbackTimeout);
+            });
+        }
+
+        let promise = new Promise((resolve, reject) => {
+            // The script is expected to be a function declaration. Evaluate it inside parenthesis to get the function value.
+            let functionValue = evaluate("(async " + functionString + ")");
+            if (typeof functionValue !== "function")
+                reject(new TypeError("Script did not evaluate to a function."));
+
+            this._clearStaleNodes();
+
+            let argumentValues = argumentStrings.map(this._jsonParse, this);
+            if (expectsImplicitCallbackArgument)
+                argumentValues.push(resolve);
+            let resultPromise = functionValue.apply(null, argumentValues);
+
+            let promises = [resultPromise];
+            if (timeoutPromise)
+                promises.push(timeoutPromise);
+            Promise.race(promises)
+                .then(result => {
+                    if (!expectsImplicitCallbackArgument) {
+                        resolve(result);
+                    }
+                })
+                .catch(error => {
+                    reject(error);
+                });
+        });
+
+        // Async scripts can call Promise.resolve() in the function script, generating a new promise that is resolved in a
+        // timer (see w3c test execute_async_script/promise.py::test_promise_resolve_timeout). In that case, the internal race
+        // finishes resolved, so we need to start a new one here to wait for the second promise to be resolved or the timeout.
+        let promises = [promise];
+        if (timeoutPromise)
+            promises.push(timeoutPromise);
+        return Promise.race(promises)
+            .finally(() => {
+                if (timeoutIdentifier) {
+                    clearTimeout(timeoutIdentifier);
+                }
+            });
+    }
 
     _jsonParse(string)
     {
