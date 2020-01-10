@@ -257,6 +257,8 @@ TEST(ResourceLoadDelegate, LoadInfo)
 
 #endif // HAVE(NETWORK_FRAMEWORK)
 
+#if HAVE(SSL)
+
 TEST(ResourceLoadDelegate, Challenge)
 {
     using namespace TestWebKitAPI;
@@ -291,3 +293,5 @@ TEST(ResourceLoadDelegate, Challenge)
     TestWebKitAPI::Util::run(&receivedErrorNotification);
     EXPECT_TRUE(receivedChallengeNotificiation);
 }
+
+#endif // HAVE(SSL)

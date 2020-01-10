@@ -1,3 +1,10 @@
+2020-01-10  Alex Christensen  <achristensen@webkit.org>
+
+        Build fix for builds without libwebrtc's BoringSSL.
+        https://bugs.webkit.org/show_bug.cgi?id=206037
+
+        * TestWebKitAPI/Tests/WebKitCocoa/ResourceLoadDelegate.mm:
+
 2020-01-10  Jiewen Tan  <jiewen_tan@apple.com>
 
         [WebAuthn] Support authenticatorGetNextAssertion
