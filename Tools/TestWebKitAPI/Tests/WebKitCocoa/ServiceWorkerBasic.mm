@@ -1357,8 +1357,8 @@ TEST(ServiceWorkers, ServiceWorkerAndCacheStorageSpecificDirectories)
     setConfigurationInjectedBundlePath(configuration.get());
     auto dataStoreConfiguration = adoptNS([_WKWebsiteDataStoreConfiguration new]);
     [dataStoreConfiguration _setServiceWorkerRegistrationDirectory:[NSURL fileURLWithPath:@"/var/tmp"]];
+    [dataStoreConfiguration _setCacheStorageDirectory:[NSURL fileURLWithPath:@"/var/tmp"]];
     auto websiteDataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:dataStoreConfiguration.get()]);
-    [websiteDataStore _setCacheStorageDirectory:@"/var/tmp"];
     [configuration setWebsiteDataStore:websiteDataStore.get()];
 
     RetainPtr<DirectoryPageMessageHandler> directoryPageMessageHandler = adoptNS([[DirectoryPageMessageHandler alloc] init]);

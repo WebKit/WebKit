@@ -529,6 +529,7 @@ WKWebsiteDataStoreRef TestController::websiteDataStore()
 
             WKWebsiteDataStoreConfigurationSetApplicationCacheDirectory(configuration.get(), toWK(temporaryFolder + pathSeparator + "ApplicationCache").get());
             WKWebsiteDataStoreConfigurationSetNetworkCacheDirectory(configuration.get(), toWK(temporaryFolder + pathSeparator + "Cache").get());
+            WKWebsiteDataStoreConfigurationSetCacheStorageDirectory(configuration.get(), toWK(temporaryFolder + pathSeparator + "CacheStorage").get());
             WKWebsiteDataStoreConfigurationSetIndexedDBDatabaseDirectory(configuration.get(), toWK(temporaryFolder + pathSeparator + "Databases" + pathSeparator + "IndexedDB").get());
             WKWebsiteDataStoreConfigurationSetLocalStorageDirectory(configuration.get(), toWK(temporaryFolder + pathSeparator + "LocalStorage").get());
             WKWebsiteDataStoreConfigurationSetWebSQLDatabaseDirectory(configuration.get(), toWK(temporaryFolder + pathSeparator + "Databases" + pathSeparator + "WebSQL").get());

@@ -319,16 +319,6 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
 {
 }
 
-- (NSString *)_cacheStorageDirectory
-{
-    return _websiteDataStore->cacheStorageDirectory();
-}
-
-- (void)_setCacheStorageDirectory:(NSString *)directory
-{
-    _websiteDataStore->setCacheStorageDirectory(directory);
-}
-
 - (void)_setBoundInterfaceIdentifier:(NSString *)identifier
 {
     _websiteDataStore->setBoundInterfaceIdentifier(identifier);

@@ -71,12 +71,6 @@ void initializeWebViewConfiguration(const char* libraryPath, WKStringRef injecte
 
     WKContextSetStorageAccessAPIEnabled(context, true);
 
-    WKWebsiteDataStore* poolWebsiteDataStore = (__bridge WKWebsiteDataStore *)TestController::websiteDataStore();
-    if (libraryPath) {
-        String cacheStorageDirectory = String(libraryPath) + '/' + "CacheStorage";
-        [poolWebsiteDataStore _setCacheStorageDirectory: cacheStorageDirectory];
-    }
-
     [globalWebViewConfiguration.websiteDataStore _setResourceLoadStatisticsEnabled:YES];
 
     [globalWebsiteDataStoreDelegateClient release];

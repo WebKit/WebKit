@@ -1202,7 +1202,7 @@ void NetworkProcessProxy::retrieveCacheStorageParameters(PAL::SessionID sessionI
         return;
     }
 
-    auto& cacheStorageDirectory = store->cacheStorageDirectory();
+    auto& cacheStorageDirectory = store->configuration().cacheStorageDirectory();
     SandboxExtension::Handle cacheStorageDirectoryExtensionHandle;
     if (!cacheStorageDirectory.isEmpty())
         SandboxExtension::createHandleForReadWriteDirectory(cacheStorageDirectory, cacheStorageDirectoryExtensionHandle);
