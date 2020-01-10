@@ -168,6 +168,12 @@ class CleanWorkingDirectory(shell.ShellCommand):
     def __init__(self, **kwargs):
         super(CleanWorkingDirectory, self).__init__(logEnviron=False, **kwargs)
 
+    def start(self):
+        platform = self.getProperty('platform')
+        if platform in ('gtk', 'wpe'):
+            self.setCommand(self.command + ['--keep-jhbuild-directory'])
+        return shell.ShellCommand.start(self)
+
 
 class UpdateWorkingDirectory(shell.ShellCommand):
     name = 'update-working-directory'

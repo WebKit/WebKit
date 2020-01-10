@@ -359,6 +359,13 @@ class SCMTest(unittest.TestCase):
         scm.discard_untracked_files(discard_ignored_files=True)
         self.assertEqual(scm.untracked_files(True), [])
 
+        os.mkdir("WebKitBuild")
+        self.assertEqual(scm.untracked_files(True), ["WebKitBuild"])
+        scm.discard_untracked_files(discard_ignored_files=True, keep_webkitbuild_directory=True)
+        self.assertEqual(scm.untracked_files(True), ["WebKitBuild"])
+        scm.discard_untracked_files(discard_ignored_files=True, keep_webkitbuild_directory=False)
+        self.assertEqual(scm.untracked_files(True), [])
+
         if os.path.isdir("test_dir_new"):
             shutil.rmtree("test_dir_new")
         if os.path.isfile("test_file_new"):

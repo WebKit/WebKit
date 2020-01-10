@@ -28,19 +28,39 @@
 # SUCH DAMAGE.
 
 import sys
+import argparse
 
 from webkitpy.common.checkout.scm.detection import SCMDetector
 from webkitpy.common.host import Host
 from webkitpy.common.system.filesystem import FileSystem
 
 
-def main():
+def main(args):
     fs = FileSystem()
     host = Host()
     scm = SCMDetector(fs, host.executive).detect_scm_system(fs.getcwd())
-    
+
     scm.discard_working_directory_changes()
-    scm.discard_untracked_files(discard_ignored_files=True)
+
+    if args.keep_jhbuild_directory:
+        # Clean everything inside WebKitBuild, except the JHBuild directories.
+        scm.discard_untracked_files(discard_ignored_files=True, keep_webkitbuild_directory=True)
+        if fs.isdir("WebKitBuild"):
+            for build_dir in fs.listdir("WebKitBuild"):
+                build_path = fs.join("WebKitBuild", build_dir)
+                if fs.isdir(build_path):
+                    if build_dir not in ["DependenciesGTK", "DependenciesWPE"]:
+                        fs.rmtree(build_path)
+                else:
+                    fs.remove(build_path)
+    else:
+        scm.discard_untracked_files(discard_ignored_files=True)
 
 
-sys.exit(main())
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description="Clean WebKit")
+    parser.add_argument("--keep-jhbuild-directory", action="store_true",
+                        help="Don't wipe the JHBuild build directories.")
+
+    args = parser.parse_args()
+    sys.exit(main(args))
