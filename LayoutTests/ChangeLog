@@ -1,3 +1,10 @@
+2020-01-09  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GTK] Unreviewed test gardening
+        https://bugs.webkit.org/show_bug.cgi?id=206007
+
+        * platform/gtk/TestExpectations:
+
 2020-01-09  Brent Fulgham  <bfulgham@apple.com>
 
         REGRESSION (r253662): Large Data URLs are not being handled properly

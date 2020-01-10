@@ -953,6 +953,8 @@ webkit.org/b/156148 svg/text/text-text-04-t.svg [ Failure ]
 webkit.org/b/156148 svg/text/text-text-06-t.svg [ Failure ]
 webkit.org/b/156148 svg/text/text-vkern.svg [ Failure ]
 
+webkit.org/b/205998 imported/w3c/web-platform-tests/svg/extensibility/foreignObject/masked.html [ ImageOnlyFailure ]
+
 # Since r200320 resource-timing feature is a runtime flag.
 webkit.org/b/158617 fast/dom/Window/window-properties-performance-resource-timing.html [ Failure ]
 
@@ -1187,6 +1189,13 @@ editing/pasteboard/paste-cocoa-writer-markup-with-webkit-standard-font-family.ht
 
 webkit.org/b/205857 media/encrypted-media/mock-MediaKeySession-generateRequest.html [ Skip ]
 webkit.org/b/205860 media/encrypted-media/mock-MediaKeySession-remove.html [ Skip ]
+
+# ch units should be ignored in these tests.
+webkit.org/b/206001 imported/w3c/web-platform-tests/css/css-values/ch-unit-016.html [ ImageOnlyFailure ]
+webkit.org/b/206001 imported/w3c/web-platform-tests/css/css-values/ch-unit-017.html [ ImageOnlyFailure ]
+
+webkit.org/b/206002 http/wpt/css/css-highlight-api/highlight-text-replace.html [ ImageOnlyFailure ]
+webkit.org/b/206002 http/wpt/css/css-highlight-api/highlight-text.html [ ImageOnlyFailure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Expected failures.
@@ -3619,6 +3628,7 @@ webkit.org/b/191400 fast/block/basic/inline-content-with-floating-images2.html [
 webkit.org/b/191400 fast/block/basic/quirk-mode-percent-height.html [ Failure ]
 
 webkit.org/b/191402 fast/css/has-attachment.html [ Failure ]
+webkit.org/b/206006 fast/attachment/attachment-border-should-stay-inside-attachment.html [ ImageOnlyFailure ]
 
 webkit.org/b/191688 compositing/backing/no-backing-for-clip-overlap.html [ Failure ]
 webkit.org/b/191688 compositing/backing/no-backing-for-clip.html [ Failure ]
@@ -3703,6 +3713,7 @@ webkit.org/b/193638 media/video-webkit-playsinline.html [ Failure ]
 webkit.org/b/193641 webrtc/video-setDirection.html [ Failure ]
 
 webkit.org/b/194384 compositing/clipping/border-radius-async-overflow-clipping-layer.html [ Failure ]
+webkit.org/b/206000 compositing/clipping/border-radius-async-overflow-non-stacking.html [ ImageOnlyFailure ]
 
 webkit.org/b/194606 accessibility/set-value-not-work-for-disabled-sliders.html [ Failure ]
 
@@ -3801,6 +3812,10 @@ webkit.org/b/201982 fast/images/exif-orientation-image-document.html [ ImageOnly
 webkit.org/b/201982 fast/images/exif-orientation-image-object.html [ ImageOnlyFailure ]
 webkit.org/b/201982 fast/images/exif-orientation-svg-feimage.html [ ImageOnlyFailure ]
 webkit.org/b/201982 fast/images/exif-orientation-svg-image.html [ ImageOnlyFailure ]
+webkit.org/b/201982 fast/images/exif-orientation-webgl-texture.html [ ImageOnlyFailure ]
+webkit.org/b/201982 fast/images/image-orientation-dynamic-from-image.html [ ImageOnlyFailure ]
+webkit.org/b/201982 fast/images/image-orientation-dynamic-none.html [ ImageOnlyFailure ]
+webkit.org/b/201982 fast/images/image-orientation-none.html [ ImageOnlyFailure ]
 
 webkit.org/b/202225 accessibility/misspelling-range.html [ Failure ]
 webkit.org/b/202226 animations/animation-direction-normal.html [ Failure ]
