@@ -38,13 +38,15 @@ struct TestOptions {
         bool ignoreSynchronousMessagingTimeouts { false };
         bool enableProcessSwapOnNavigation { true };
         bool enableProcessSwapOnWindowOpen { false };
+        bool useServiceWorkerShortTimeout { false };
 
         bool hasSameInitializationOptions(const ContextOptions& options) const
         {
             if (ignoreSynchronousMessagingTimeouts != options.ignoreSynchronousMessagingTimeouts
                 || overrideLanguages != options.overrideLanguages
                 || enableProcessSwapOnNavigation != options.enableProcessSwapOnNavigation
-                || enableProcessSwapOnWindowOpen != options.enableProcessSwapOnWindowOpen)
+                || enableProcessSwapOnWindowOpen != options.enableProcessSwapOnWindowOpen
+                || useServiceWorkerShortTimeout != options.useServiceWorkerShortTimeout)
                 return false;
             return true;
         }

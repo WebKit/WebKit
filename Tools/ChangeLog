@@ -1,3 +1,21 @@
+2020-01-10  youenn fablet  <youenn@apple.com>
+
+        [WTR] Use short heart beat timer as a TestOption
+        https://bugs.webkit.org/show_bug.cgi?id=205795
+
+        Reviewed by Chris Dumez.
+
+        Using short service worker heartbeat timeout values creates flakiness on slow bots.
+        By default, use regular service worker heartbeat timeout values for layout tests.
+        Add a WTR option value to use short service worker timeout values.
+        Use this option for service worker spinning layout tests.
+
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::resetPreferencesToConsistentValues):
+        (WTR::updateTestOptionsFromTestHeader):
+        * WebKitTestRunner/TestOptions.h:
+        (WTR::TestOptions::hasSameInitializationOptions const):
+
 2020-01-10  Jonathan Bedard  <jbedard@apple.com>
 
         Python 3: Add support to run-webkit-tests
