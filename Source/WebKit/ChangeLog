@@ -1,3 +1,14 @@
+2020-01-10  Mark Lam  <mark.lam@apple.com>
+
+        Gardening: simple build fix after r254119.
+
+        Not reviewed.
+
+        We should be using ASSERT_ENABLED instead of ASSERT_DSIABLED.
+
+        * NetworkProcess/soup/NetworkDataTaskSoup.cpp:
+        (WebKit::NetworkDataTaskSoup::sendRequestCallback):
+
 2020-01-10  Brent Fulgham  <bfulgham@apple.com>
 
         [iOS] Remove 'com.apple.powerlog.plxpclogger.xpc' from the WebContent process sandbox

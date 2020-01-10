@@ -300,7 +300,7 @@ void NetworkDataTaskSoup::sendRequestCallback(SoupRequest* soupRequest, GAsyncRe
         // This can happen when the request is cancelled and a new one is started before
         // the previous async operation completed. This is common when forcing a redirection
         // due to HSTS. We can simply ignore this old request.
-#if !ASSERT_DISABLED
+#if ASSERT_ENABLED
         GUniqueOutPtr<GError> error;
         GRefPtr<GInputStream> inputStream = adoptGRef(soup_request_send_finish(soupRequest, result, &error.outPtr()));
         ASSERT(g_error_matches(error.get(), G_IO_ERROR, G_IO_ERROR_CANCELLED));
