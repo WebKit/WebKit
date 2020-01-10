@@ -122,6 +122,7 @@ private:
 
     WeakPtr<Document> m_document;
     WeakHashSet<Element> m_mutatedElements;
+    WeakHashSet<Element> m_recentlyInsertedElements;
     ManipulationItemCallback m_callback;
     Vector<ExclusionRule> m_exclusionRules;
     HashMap<ItemIdentifier, ManipulationItem> m_items;

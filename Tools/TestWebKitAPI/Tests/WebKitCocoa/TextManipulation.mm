@@ -62,14 +62,6 @@ typedef void(^ItemCallback)(_WKTextManipulationItem *);
     return self;
 }
 
-- (instancetype)initWithItemCallback
-{
-    if (!(self = [super init]))
-        return nil;
-    _items = adoptNS([[NSMutableArray alloc] init]);
-    return self;
-}
-
 - (void)_webView:(WKWebView *)webView didFindTextManipulationItem:(_WKTextManipulationItem *)item
 {
     [_items addObject:item];
@@ -903,6 +895,50 @@ TEST(TextManipulation, CompleteTextManipulationPreservesExcludedContent)
 
     TestWebKitAPI::Util::run(&done);
     EXPECT_WK_STREQ("<p>Hello, <em>WebKitten</em></p>", [webView stringByEvaluatingJavaScript:@"document.body.innerHTML"]);
+}
+
+TEST(TextManipulation, CompleteTextManipulationDoesNotCreateMoreTextManipulationItems)
+{
+    auto delegate = adoptNS([[TextManipulationDelegate alloc] init]);
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 400, 400)]);
+    [webView _setTextManipulationDelegate:delegate.get()];
+
+    [webView synchronouslyLoadHTMLString:@"<!DOCTYPE html><html><body><p>Foo <strong>bar</strong> baz</p></body></html>"];
+
+    auto configuration = adoptNS([[_WKTextManipulationConfiguration alloc] init]);
+
+    done = false;
+    [webView _startTextManipulationsWithConfiguration:configuration.get() completion:^{
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+
+    auto *items = [delegate items];
+    EXPECT_EQ(items.count, 1UL);
+
+    auto* firstItem = items.firstObject;
+    EXPECT_EQ(firstItem.tokens.count, 3UL);
+
+    __block BOOL foundNewItemAfterCompletingTextManipulation = false;
+    [delegate setItemCallback:^(_WKTextManipulationItem *) {
+        foundNewItemAfterCompletingTextManipulation = true;
+    }];
+
+    done = false;
+    [webView _completeTextManipulation:(_WKTextManipulationItem *)createItem(firstItem.identifier, {
+        { firstItem.tokens[0].identifier, @"bar " },
+        { firstItem.tokens[1].identifier, @"garply" },
+        { firstItem.tokens[2].identifier, @" foo" },
+    }).get() completion:^(BOOL success) {
+        EXPECT_TRUE(success);
+        done = true;
+    }];
+
+    TestWebKitAPI::Util::run(&done);
+    [webView waitForNextPresentationUpdate];
+
+    EXPECT_FALSE(foundNewItemAfterCompletingTextManipulation);
+    EXPECT_WK_STREQ("<p>bar <strong>garply</strong> foo</p>", [webView stringByEvaluatingJavaScript:@"document.body.innerHTML"]);
 }
 
 TEST(TextManipulation, TextManipulationTokenDebugDescription)

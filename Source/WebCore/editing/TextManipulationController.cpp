@@ -178,6 +178,9 @@ void TextManipulationController::observeParagraphs(VisiblePosition& start, Visib
 
 void TextManipulationController::didCreateRendererForElement(Element& element)
 {
+    if (m_recentlyInsertedElements.contains(element))
+        return;
+
     if (m_mutatedElements.computesEmpty())
         scheduleObservartionUpdate();
 
@@ -398,7 +401,13 @@ auto TextManipulationController::replace(const ManipulationItem& item, const Vec
             insertionPoint.containerNode()->insertBefore(insertion.child, insertionPoint.computeNodeBeforePosition());
         else
             insertion.parentIfDifferentFromCommonAncestor->appendChild(insertion.child);
+        if (is<Element>(insertion.child.get()))
+            m_recentlyInsertedElements.add(downcast<Element>(insertion.child.get()));
     }
+    m_document->eventLoop().queueTask(TaskSource::InternalAsyncTask, [weakThis = makeWeakPtr(*this)] {
+        if (auto strongThis = weakThis.get())
+            strongThis->m_recentlyInsertedElements.clear();
+    });
 
     return ManipulationResult::Success;
 }

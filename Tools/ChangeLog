@@ -1,3 +1,20 @@
+2020-01-09  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Text manipulation controller should not observe changes in new replacement elements
+        https://bugs.webkit.org/show_bug.cgi?id=206015
+        <rdar://problem/58353667>
+
+        Reviewed by Tim Horton.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/TextManipulation.mm:
+
+        Add a new API test to verify that we don't fire text manipulation item callbacks due to inserting elements when
+        completing text manipulation.
+
+        (-[TextManipulationDelegate initWithItemCallback]): Deleted.
+
+        Remove a stray initializer that was unused (and also doesn't take an ItemCallback, as its name might suggest).
+
 2020-01-09  Ryan Haddad  <ryanhaddad@apple.com>
 
         Move macOS Test262, JSC, and perf queues to Catalina
