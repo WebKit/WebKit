@@ -868,7 +868,16 @@
 (allow mach-lookup
     (require-all
         (extension "com.apple.webkit.extension.mach")
-        (global-name "com.apple.nehelper" "com.apple.nesessionmanager.content-filter")))
+        (global-name
+            "com.apple.nehelper"
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101500 || PLATFORM(MACCATALYST)
+            "com.apple.nesessionmanager.content-filter"
+#else
+            "com.apple.nesessionmanager"
+#endif
+        )
+    )
+)
 
 (when (defined? 'syscall-unix)
     (deny syscall-unix (with send-signal SIGKILL))

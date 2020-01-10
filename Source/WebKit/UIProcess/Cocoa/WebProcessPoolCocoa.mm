@@ -334,7 +334,11 @@ void WebProcessPool::platformInitializeWebProcess(const WebProcessProxy& process
         SandboxExtension::Handle handle;
         SandboxExtension::createHandleForMachLookup("com.apple.nehelper", WTF::nullopt, handle);
         parameters.neHelperExtensionHandle = WTFMove(handle);
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED < 101500
+        SandboxExtension::createHandleForMachLookup("com.apple.nesessionmanager", WTF::nullopt, handle);
+#else
         SandboxExtension::createHandleForMachLookup("com.apple.nesessionmanager.content-filter", WTF::nullopt, handle);
+#endif
         parameters.neSessionManagerExtensionHandle = WTFMove(handle);
     }
 #endif

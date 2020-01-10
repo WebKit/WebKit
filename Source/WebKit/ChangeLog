@@ -1,3 +1,19 @@
+2020-01-10  Brent Fulgham  <bfulgham@apple.com>
+
+        [macOS] Issue sandbox extension to "com.apple.nesessionmanager" prior to 10.15 
+        https://bugs.webkit.org/show_bug.cgi?id=206031
+        <rdar://problem/58455467>
+
+        Reviewed by Per Arne Vollan.
+
+        The mach name of 'com.apple.nesessionmanager' changed between macOS 10.14 and 10.15.
+        We should continue to issue the old name when building for older operating systems."
+
+        Covered by existing tests.
+
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::WebProcessPool::platformInitializeWebProcess):
+
 2020-01-10  Alex Christensen  <achristensen@webkit.org>
 
         Remove WebsiteDataStore::setCacheStorageDirectory which has been replaced by WebsiteDataStoreConfiguration::setCacheStorageDirectory
