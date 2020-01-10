@@ -1,5 +1,19 @@
 2020-01-10  Brent Fulgham  <bfulgham@apple.com>
 
+        Remove 'com.apple.iohideventsystem' from the WebContent process sandbox
+        https://bugs.webkit.org/show_bug.cgi?id=206085
+        <rdar://problem/36085204>
+
+        Reviewed by Alex Christensen.
+
+        After r253357 we no longer need access to 'com.apple.iohideventsystem', and should remove it from
+        the WebContent process sandbox.
+
+        * fast/sandbox/ios/sandbox-mach-lookup-expected.txt:
+        * fast/sandbox/ios/sandbox-mach-lookup.html:
+
+2020-01-10  Brent Fulgham  <bfulgham@apple.com>
+
         [iOS] Remove 'com.apple.cookied' from the WebContent process sandbox
         https://bugs.webkit.org/show_bug.cgi?id=206083
         <rdar://problem/56963865>

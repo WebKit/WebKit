@@ -443,7 +443,6 @@
 
     (allow mach-lookup (with report) (with telemetry)
         (global-name "com.apple.frontboard.systemappservices")                 ; -[UIViewServiceInterface _createProcessAssertion] -> SBSProcessIDForDisplayIdentifier()
-        (global-name "com.apple.iohideventsystem")
     )
 
     (allow mach-lookup
