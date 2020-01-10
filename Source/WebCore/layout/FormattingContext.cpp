@@ -211,44 +211,61 @@ LayoutUnit FormattingContext::mapRightToFormattingContextRoot(const Box& layoutB
     return mapHorizontalPositionToAncestor(*this, geometryForBox(layoutBox).right(), *layoutBox.containingBlock(), root());
 }
 
-const Display::Box& FormattingContext::geometryForBox(const Box& layoutBox, Optional<EscapeType> escapeType) const
+const Display::Box& FormattingContext::geometryForBox(const Box& layoutBox, Optional<EscapeReason> escapeReason) const
 {
-    UNUSED_PARAM(escapeType);
+    UNUSED_PARAM(escapeReason);
 #if ASSERT_ENABLED
     auto isOkToAccessDisplayBox = [&] {
-        // 1. Highly common case of accessing the formatting root's display box itself. This is formatting context escaping in the strict sense, since
-        // the formatting context root box lives in the parent formatting context.
-        // This happens e.g. when a block level box box needs to stretch horizontally and checks its containing block for horizontal space (this should probably be limited to reading horizontal constraint values).
-        if (&layoutBox == &root())
+        if (!layoutBox.isInitialContainingBlock() && &layoutBox.formattingContextRoot() == &root()) {
+            // This is the non-escape case of accessing a box's geometry information within the same formatting context.
             return true;
-
-        // 2. Special case when accessing the ICB's display box
-        if (layoutBox.isInitialContainingBlock()) {
-            // There has to be a valid reason to access the ICB.
-            if (!escapeType)
-                return false;
-            return *escapeType == EscapeType::AccessParentFormattingContext || *escapeType == EscapeType::AccessAncestorFormattingContext;
         }
 
-        // 3. Most common case of accessing box/containing block display box within the same formatting context tree.
-        if (&layoutBox.formattingContextRoot() == &root())
+        if (&layoutBox == &root()) {
+            // FIXME: This is formatting context escaping in the strict sense, since the formatting context root box lives in the parent formatting context.
+            // This happens e.g. when a block level box box needs to stretch horizontally and checks its containing block for horizontal space (this should probably be limited to reading horizontal constraint values).
             return true;
+        }
 
-        if (!escapeType)
+        if (!escapeReason) {
+            // At this point any access is considered an escape.
             return false;
+        }
 
-        // 4. Accessing child formatting context subtree is relatively rare. It happens when e.g a shrink to fit (out-of-flow block level) box checks the content width.
-        // Checking the content width means to get display boxes from the established formatting context (we try to access display boxes in a child formatting context)
-        if (*escapeType == EscapeType::AccessChildFormattingContext && &layoutBox.formattingContextRoot().formattingContextRoot() == &root())
+        if (*escapeReason == EscapeReason::BodyStrechesToViewportQuirk) {
+            ASSERT(layoutState().inQuirksMode());
+            return layoutBox.isInitialContainingBlock();
+        }
+
+        if (*escapeReason == EscapeReason::StrokeOverflowNeedsViewportGeometry)
+            return layoutBox.isInitialContainingBlock();
+
+        if (*escapeReason == EscapeReason::NeedsGeometryFromEstablishedFormattingContext) {
+            // This is the case when a formatting root collects geometry information from the established
+            // formatting context to be able to determine width/height.
+            // e.g <div>text content</div>. The <div> is a formatting root of the IFC.
+            // In order to compute the height of the <div>, we need to look inside the IFC and gather geometry information.
+            return &layoutBox.formattingContextRoot().formattingContextRoot() == &root();
+        }
+
+        if (*escapeReason == EscapeReason::OutOfFlowBoxNeedsInFlowGeometry) {
+            // When computing the static position of an out-of-flow box, we need to gather sibling/parent geometry information
+            // as if the out-of-flow box was a simple inflow box.
+            // Now since the out-of-flow and the sibling/parent boxes could very well be in different containing block subtrees
+            // the formatting context they live in could also be very different.
             return true;
+        }
 
-        // 5. Float box top/left values are mapped relative to the FloatState's root. Inline formatting contexts(A) inherit floats from parent
-        // block formatting contexts(B). Floats in these inline formatting contexts(A) need to be mapped to the parent, block formatting context(B).
-        if (*escapeType == EscapeType::AccessParentFormattingContext && &layoutBox.formattingContextRoot() == &root().formattingContextRoot())
-            return true;
+        if (*escapeReason == EscapeReason::FloatBoxNeedsToBeInAbsoluteCoordinates) {
+            // Float box top/left values are mapped relative to the FloatState's root. Inline formatting contexts(A) inherit floats from parent
+            // block formatting contexts(B). Floats in these inline formatting contexts(A) need to be mapped to the parent, block formatting context(B).
+            auto& formattingContextRoot = layoutBox.formattingContextRoot();
+            return &formattingContextRoot == &root() || &formattingContextRoot == &root().formattingContextRoot();
+        }
 
-        // 6. Finding the first containing block with fixed height quirk. See Quirks::heightValueOfNearestContainingBlockWithFixedHeight
-        if (*escapeType == EscapeType::AccessAncestorFormattingContext) {
+        if (*escapeReason == EscapeReason::FindFixedHeightAncestorQuirk) {
+            ASSERT(layoutState().inQuirksMode());
+            // Find the first containing block with fixed height quirk. See Quirks::heightValueOfNearestContainingBlockWithFixedHeight
             auto& targetFormattingRoot = layoutBox.formattingContextRoot();
             auto* ancestorFormattingContextRoot = &root().formattingContextRoot();
             while (true) {
@@ -258,15 +275,17 @@ const Display::Box& FormattingContext::geometryForBox(const Box& layoutBox, Opti
                     return false;
                 ancestorFormattingContextRoot = &ancestorFormattingContextRoot->formattingContextRoot();
             }
+            return false;
         }
 
-        // 7. Tables are wrapped in a 2 level formatting context structure. A <table> element initiates a block formatting context for its principal table box
-        // where the caption and the table content live. It also initiates a table wrapper box which establishes the table formatting context.
-        // In many cases the TFC needs access to the parent (generated) BFC.
-        if (*escapeType == EscapeType::TableFormattingContextAccessParentTableWrapperBlockFormattingContext
-            && (&layoutBox == &root().formattingContextRoot() || &layoutBox.formattingContextRoot() == &root().formattingContextRoot()))
-            return true;
+        if (*escapeReason == EscapeReason::TableNeedsAccessToTableWrapper) {
+            // Tables are wrapped in a 2 level formatting context structure. A <table> element initiates a block formatting context for its principal table box
+            // where the caption and the table content live. It also initiates a table wrapper box which establishes the table formatting context.
+            // In many cases the TFC needs access to the parent (generated) BFC.
+            return &layoutBox == &root().formattingContextRoot();
+        }
 
+        ASSERT_NOT_REACHED();
         return false;
     };
 #endif

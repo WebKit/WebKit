@@ -69,7 +69,7 @@ ContentHeightAndMargin BlockFormattingContext::Quirks::stretchedInFlowHeight(con
     auto& documentBox = layoutBox.isDocumentBox() ? layoutBox : *layoutBox.parent();
     auto& documentBoxGeometry = formattingContext.geometryForBox(documentBox);
 
-    auto& initialContainingBlockGeometry = formattingContext.geometryForBox(initialContainingBlock(layoutBox));
+    auto& initialContainingBlockGeometry = formattingContext.geometryForBox(initialContainingBlock(layoutBox), EscapeReason::BodyStrechesToViewportQuirk);
     auto strechedHeight = initialContainingBlockGeometry.contentBoxHeight();
     strechedHeight -= documentBoxGeometry.verticalBorder() + documentBoxGeometry.verticalPadding().valueOr(0);
 

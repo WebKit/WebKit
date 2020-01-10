@@ -466,7 +466,7 @@ void InlineFormattingContext::setDisplayBoxesForLine(const LineLayoutContext::Li
         // ICB is not the real ICB when lyoutFormattingContextIntegrationEnabled is on.
         initialContaingBlockSize = layoutState().viewportSize();
     } else
-        initialContaingBlockSize = geometryForBox(root().initialContainingBlock()).contentBox().size();
+        initialContaingBlockSize = geometryForBox(root().initialContainingBlock(), EscapeReason::StrokeOverflowNeedsViewportGeometry).contentBox().size();
     auto& inlineContent = formattingState.ensureDisplayInlineContent();
     auto lineIndex = inlineContent.lineBoxes.size();
     inlineContent.lineBoxes.append(lineContent.lineBox);

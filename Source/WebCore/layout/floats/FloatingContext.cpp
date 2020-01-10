@@ -425,7 +425,7 @@ FloatingContext::AbsoluteCoordinateValuesForFloatAvoider FloatingContext::absolu
     auto displayBox = mapToFloatingStateRoot(floatAvoider);
 
     if (&containingBlock == &floatingState().root()) {
-        auto containingBlockGeometry = formattingContext().geometryForBox(containingBlock, FormattingContext::EscapeType::AccessParentFormattingContext);
+        auto containingBlockGeometry = formattingContext().geometryForBox(containingBlock, FormattingContext::EscapeReason::FloatBoxNeedsToBeInAbsoluteCoordinates);
         return { displayBox, { }, {  containingBlockGeometry.contentBoxLeft(), containingBlockGeometry.contentBoxRight() } };
     }
     auto containingBlockAbsoluteDisplayBox = mapToFloatingStateRoot(containingBlock);
@@ -436,10 +436,10 @@ FloatingContext::AbsoluteCoordinateValuesForFloatAvoider FloatingContext::absolu
 Display::Box FloatingContext::mapToFloatingStateRoot(const Box& floatBox) const
 {
     auto& floatingStateRoot = floatingState().root();
-    auto& boxGeometry = formattingContext().geometryForBox(floatBox, FormattingContext::EscapeType::AccessParentFormattingContext);
+    auto& boxGeometry = formattingContext().geometryForBox(floatBox, FormattingContext::EscapeReason::FloatBoxNeedsToBeInAbsoluteCoordinates);
     auto topLeft = boxGeometry.topLeft();
     for (auto* containingBlock = floatBox.containingBlock(); containingBlock && containingBlock != &floatingStateRoot; containingBlock = containingBlock->containingBlock())
-        topLeft.moveBy(formattingContext().geometryForBox(*containingBlock, FormattingContext::EscapeType::AccessParentFormattingContext).topLeft());
+        topLeft.moveBy(formattingContext().geometryForBox(*containingBlock, FormattingContext::EscapeReason::FloatBoxNeedsToBeInAbsoluteCoordinates).topLeft());
 
     auto mappedDisplayBox = Display::Box(boxGeometry);
     mappedDisplayBox.setTopLeft(topLeft);
@@ -449,9 +449,9 @@ Display::Box FloatingContext::mapToFloatingStateRoot(const Box& floatBox) const
 LayoutUnit FloatingContext::mapTopToFloatingStateRoot(const Box& floatBox) const
 {
     auto& floatingStateRoot = floatingState().root();
-    auto top = formattingContext().geometryForBox(floatBox, FormattingContext::EscapeType::AccessParentFormattingContext).top();
+    auto top = formattingContext().geometryForBox(floatBox, FormattingContext::EscapeReason::FloatBoxNeedsToBeInAbsoluteCoordinates).top();
     for (auto* container = floatBox.containingBlock(); container && container != &floatingStateRoot; container = container->containingBlock())
-        top += formattingContext().geometryForBox(*container, FormattingContext::EscapeType::AccessParentFormattingContext).top();
+        top += formattingContext().geometryForBox(*container, FormattingContext::EscapeReason::FloatBoxNeedsToBeInAbsoluteCoordinates).top();
     return top;
 }
 
@@ -463,7 +463,7 @@ Point FloatingContext::mapPointFromFormattingContextRootToFloatingStateRoot(Poin
         return position;
     auto mappedPosition = position;
     for (auto* container = &from; container && container != &to; container = container->containingBlock())
-        mappedPosition.moveBy(formattingContext().geometryForBox(*container, FormattingContext::EscapeType::AccessParentFormattingContext).topLeft());
+        mappedPosition.moveBy(formattingContext().geometryForBox(*container, FormattingContext::EscapeReason::FloatBoxNeedsToBeInAbsoluteCoordinates).topLeft());
     return mappedPosition;
 }
 

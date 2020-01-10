@@ -316,7 +316,7 @@ void TableFormattingContext::computeAndDistributeExtraHorizontalSpace()
     };
 
     auto& tableBox = root();
-    auto containingBlockWidth = geometryForBox(*tableBox.containingBlock(), EscapeType::TableFormattingContextAccessParentTableWrapperBlockFormattingContext).contentBoxWidth();
+    auto containingBlockWidth = geometryForBox(*tableBox.containingBlock(), EscapeReason::TableNeedsAccessToTableWrapper).contentBoxWidth();
     auto contentWidth = geometry().computedContentWidth(tableBox, containingBlockWidth);
     if (contentWidth) {
         if (*contentWidth > tableWidthConstraints.minimum)

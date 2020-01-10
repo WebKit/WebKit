@@ -84,13 +84,16 @@ public:
     bool isInlineFormattingContext() const { return root().establishesInlineFormattingContext(); }
     bool isTableFormattingContext() const { return root().establishesTableFormattingContext(); }
 
-    enum class EscapeType {
-        AccessChildFormattingContext,
-        AccessParentFormattingContext,
-        AccessAncestorFormattingContext,
-        TableFormattingContextAccessParentTableWrapperBlockFormattingContext
+    enum class EscapeReason {
+        NeedsGeometryFromEstablishedFormattingContext,
+        OutOfFlowBoxNeedsInFlowGeometry,
+        FloatBoxNeedsToBeInAbsoluteCoordinates,
+        FindFixedHeightAncestorQuirk,
+        BodyStrechesToViewportQuirk,
+        StrokeOverflowNeedsViewportGeometry,
+        TableNeedsAccessToTableWrapper
     };
-    const Display::Box& geometryForBox(const Box&, Optional<EscapeType> = WTF::nullopt) const;
+    const Display::Box& geometryForBox(const Box&, Optional<EscapeReason> = WTF::nullopt) const;
 
 protected:
     using LayoutQueue = Vector<const Box*>;
