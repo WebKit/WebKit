@@ -399,7 +399,18 @@ TEST(CTAPResponseTest, TestReadMakeCredentialResponse)
 
 // Leveraging example 5 of section 6.1 of the CTAP spec.
 // https://fidoalliance.org/specs/fido-v2.0-ps-20170927/fido-client-to-authenticator-protocol-v2.0-ps-20170927.html
-TEST(CTAPResponseTest, TestReadGetAssertionResponse)
+TEST(CTAPResponseTest, TestReadGetAssertionResponse1)
+{
+    auto getAssertionResponse = readCTAPGetAssertionResponse(convertBytesToVector(TestData::kDeviceGetAssertionResponseShort, sizeof(TestData::kDeviceGetAssertionResponseShort)));
+    ASSERT_TRUE(getAssertionResponse);
+
+    EXPECT_EQ(getAssertionResponse->authenticatorData()->byteLength(), sizeof(TestData::kCtap2GetAssertionAuthData));
+    EXPECT_EQ(memcmp(getAssertionResponse->authenticatorData()->data(), TestData::kCtap2GetAssertionAuthData, sizeof(TestData::kCtap2GetAssertionAuthData)), 0);
+    EXPECT_EQ(getAssertionResponse->signature()->byteLength(), sizeof(TestData::kCtap2GetAssertionSignature));
+    EXPECT_EQ(memcmp(getAssertionResponse->signature()->data(), TestData::kCtap2GetAssertionSignature, sizeof(TestData::kCtap2GetAssertionSignature)), 0);
+}
+
+TEST(CTAPResponseTest, TestReadGetAssertionResponse2)
 {
     auto getAssertionResponse = readCTAPGetAssertionResponse(convertBytesToVector(TestData::kDeviceGetAssertionResponse, sizeof(TestData::kDeviceGetAssertionResponse)));
     ASSERT_TRUE(getAssertionResponse);
@@ -408,6 +419,24 @@ TEST(CTAPResponseTest, TestReadGetAssertionResponse)
     EXPECT_EQ(memcmp(getAssertionResponse->authenticatorData()->data(), TestData::kCtap2GetAssertionAuthData, sizeof(TestData::kCtap2GetAssertionAuthData)), 0);
     EXPECT_EQ(getAssertionResponse->signature()->byteLength(), sizeof(TestData::kCtap2GetAssertionSignature));
     EXPECT_EQ(memcmp(getAssertionResponse->signature()->data(), TestData::kCtap2GetAssertionSignature, sizeof(TestData::kCtap2GetAssertionSignature)), 0);
+    EXPECT_EQ(getAssertionResponse->userHandle()->byteLength(), sizeof(TestData::kCtap2GetAssertionUserHandle));
+    EXPECT_EQ(memcmp(getAssertionResponse->userHandle()->data(), TestData::kCtap2GetAssertionUserHandle, sizeof(TestData::kCtap2GetAssertionUserHandle)), 0);
+}
+
+TEST(CTAPResponseTest, TestReadGetAssertionResponse3)
+{
+    auto getAssertionResponse = readCTAPGetAssertionResponse(convertBytesToVector(TestData::kDeviceGetAssertionResponseLong, sizeof(TestData::kDeviceGetAssertionResponseLong)));
+    ASSERT_TRUE(getAssertionResponse);
+
+    EXPECT_EQ(getAssertionResponse->authenticatorData()->byteLength(), sizeof(TestData::kCtap2GetAssertionAuthData));
+    EXPECT_EQ(memcmp(getAssertionResponse->authenticatorData()->data(), TestData::kCtap2GetAssertionAuthData, sizeof(TestData::kCtap2GetAssertionAuthData)), 0);
+    EXPECT_EQ(getAssertionResponse->signature()->byteLength(), sizeof(TestData::kCtap2GetAssertionSignature));
+    EXPECT_EQ(memcmp(getAssertionResponse->signature()->data(), TestData::kCtap2GetAssertionSignature, sizeof(TestData::kCtap2GetAssertionSignature)), 0);
+    EXPECT_EQ(getAssertionResponse->userHandle()->byteLength(), sizeof(TestData::kCtap2GetAssertionUserHandle));
+    EXPECT_EQ(memcmp(getAssertionResponse->userHandle()->data(), TestData::kCtap2GetAssertionUserHandle, sizeof(TestData::kCtap2GetAssertionUserHandle)), 0);
+    EXPECT_STREQ(getAssertionResponse->name().utf8().data(), "johnpsmith@example.com");
+    EXPECT_STREQ(getAssertionResponse->displayName().utf8().data(), "John P. Smith");
+    EXPECT_EQ(getAssertionResponse->numberOfCredentials(), 1u);
 }
 
 // Test that U2F register response is properly parsed.

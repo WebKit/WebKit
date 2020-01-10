@@ -1,3 +1,17 @@
+2020-01-10  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [WebAuthn] Support authenticatorGetNextAssertion
+        https://bugs.webkit.org/show_bug.cgi?id=203346
+        <rdar://problem/56558488>
+
+        Reviewed by Brent Fulgham.
+
+        * http/wpt/webauthn/public-key-credential-get-failure-hid.https-expected.txt:
+        * http/wpt/webauthn/public-key-credential-get-failure-hid.https.html:
+        * http/wpt/webauthn/public-key-credential-get-success-hid.https-expected.txt:
+        * http/wpt/webauthn/public-key-credential-get-success-hid.https.html:
+        * http/wpt/webauthn/resources/util.js:
+
 2020-01-10  Brent Fulgham  <bfulgham@apple.com>
 
         Remove 'com.apple.nehelper' from the WebContent sandbox.

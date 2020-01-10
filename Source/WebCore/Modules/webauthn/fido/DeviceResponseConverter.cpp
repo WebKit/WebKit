@@ -164,6 +164,7 @@ RefPtr<AuthenticatorAssertionResponse> readCTAPGetAssertionResponse(const Vector
         return nullptr;
     auto& signature = it->second.getByteString();
 
+    RefPtr<AuthenticatorAssertionResponse> response;
     it = responseMap.find(CBOR(4));
     if (it != responseMap.end() && it->second.isMap()) {
         auto& user = it->second.getMap();
@@ -171,10 +172,30 @@ RefPtr<AuthenticatorAssertionResponse> readCTAPGetAssertionResponse(const Vector
         if (itr == user.end() || !itr->second.isByteString())
             return nullptr;
         auto& userHandle = itr->second.getByteString();
-        return AuthenticatorAssertionResponse::create(credentialId, authData, signature, userHandle);
+        response = AuthenticatorAssertionResponse::create(credentialId, authData, signature, userHandle);
+
+        itr = user.find(CBOR(kEntityNameMapKey));
+        if (itr != user.end()) {
+            if (!itr->second.isString())
+                return nullptr;
+            response->setName(itr->second.getString());
+        }
+
+        itr = user.find(CBOR(kDisplayNameMapKey));
+        if (itr != user.end()) {
+            if (!itr->second.isString())
+                return nullptr;
+            response->setDisplayName(itr->second.getString());
+        }
+    } else {
+        response = AuthenticatorAssertionResponse::create(credentialId, authData, signature, { });
     }
 
-    return AuthenticatorAssertionResponse::create(credentialId, authData, signature, { });
+    it = responseMap.find(CBOR(5));
+    if (it != responseMap.end() && it->second.isUnsigned())
+        response->setNumberOfCredentials(it->second.getUnsigned());
+
+    return response;
 }
 
 Optional<AuthenticatorGetInfoResponse> readCTAPGetInfoResponse(const Vector<uint8_t>& inBuffer)

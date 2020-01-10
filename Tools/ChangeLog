@@ -1,3 +1,16 @@
+2020-01-10  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [WebAuthn] Support authenticatorGetNextAssertion
+        https://bugs.webkit.org/show_bug.cgi?id=203346
+        <rdar://problem/56558488>
+
+        Reviewed by Brent Fulgham.
+
+        * TestWebKitAPI/Tests/WebCore/CtapResponseTest.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebCore/FidoTestData.h:
+        Adds new test case for new logic in DeviceResponseConverter.
+
 2020-01-10  Jonathan Bedard  <jbedard@apple.com>
 
         Python 3: Add support to run-webkit-tests (Follow-up fix)

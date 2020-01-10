@@ -158,7 +158,7 @@ void MockHidConnection::parseRequest()
             auto cmd = static_cast<CtapRequestCommand>(payload[0]);
             payload.remove(0);
             auto requestMap = CBORReader::read(payload);
-            ASSERT(requestMap);
+            ASSERT(requestMap || cmd == CtapRequestCommand::kAuthenticatorGetNextAssertion);
 
             if (cmd == CtapRequestCommand::kAuthenticatorMakeCredential) {
                 auto it = requestMap->getMap().find(CBORValue(CtapMakeCredentialRequestOptionsKey)); // Find options.

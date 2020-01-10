@@ -35,6 +35,10 @@
 #include <wtf/RefCounted.h>
 #include <wtf/WeakPtr.h>
 
+namespace WebCore {
+class AuthenticatorAssertionResponse;
+}
+
 namespace WebKit {
 
 class Authenticator : public RefCounted<Authenticator>, public CanMakeWeakPtr<Authenticator> {
@@ -47,6 +51,7 @@ public:
         virtual void respondReceived(Respond&&) = 0;
         virtual void downgrade(Authenticator* id, Ref<Authenticator>&& downgradedAuthenticator) = 0;
         virtual void authenticatorStatusUpdated(WebAuthenticationStatus) = 0;
+        virtual void selectAssertionResponses(const HashSet<Ref<WebCore::AuthenticatorAssertionResponse>>&, CompletionHandler<void(const Ref<WebCore::AuthenticatorAssertionResponse>&)>&&) = 0;
     };
 
     virtual ~Authenticator() = default;

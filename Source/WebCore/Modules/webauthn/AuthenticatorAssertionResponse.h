@@ -41,6 +41,13 @@ public:
     ArrayBuffer* signature() const { return m_signature.ptr(); }
     ArrayBuffer* userHandle() const { return m_userHandle.get(); }
 
+    void setName(const String& name) { m_name = name; }
+    String name() const { return m_name; }
+    void setDisplayName(const String& displayName) { m_displayName = displayName; }
+    String displayName() const { return m_displayName; }
+    void setNumberOfCredentials(size_t numberOfCredentials) { m_numberOfCredentials = numberOfCredentials; }
+    size_t numberOfCredentials() const { return m_numberOfCredentials; }
+
 private:
     AuthenticatorAssertionResponse(Ref<ArrayBuffer>&&, Ref<ArrayBuffer>&&, Ref<ArrayBuffer>&&, RefPtr<ArrayBuffer>&&);
 
@@ -50,6 +57,10 @@ private:
     Ref<ArrayBuffer> m_authenticatorData;
     Ref<ArrayBuffer> m_signature;
     RefPtr<ArrayBuffer> m_userHandle;
+
+    String m_name;
+    String m_displayName;
+    size_t m_numberOfCredentials { 0 };
 };
 
 } // namespace WebCore

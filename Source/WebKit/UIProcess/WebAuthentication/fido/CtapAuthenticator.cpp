@@ -100,7 +100,56 @@ void CtapAuthenticator::continueGetAssertionAfterResponseReceived(Vector<uint8_t
         receiveRespond(ExceptionData { UnknownError, makeString("Unknown internal error. Error code: ", static_cast<uint8_t>(error)) });
         return;
     }
-    receiveRespond(response.releaseNonNull());
+
+    if (response->numberOfCredentials() <= 1) {
+        receiveRespond(response.releaseNonNull());
+        return;
+    }
+
+    m_remainingAssertionResponses = response->numberOfCredentials() - 1;
+    auto addResult = m_assertionResponses.add(response.releaseNonNull());
+    ASSERT_UNUSED(addResult, addResult.isNewEntry);
+    driver().transact(encodeEmptyAuthenticatorRequest(CtapRequestCommand::kAuthenticatorGetNextAssertion), [weakThis = makeWeakPtr(*this)](Vector<uint8_t>&& data) {
+        ASSERT(RunLoop::isMain());
+        if (!weakThis)
+            return;
+        weakThis->continueGetNextAssertionAfterResponseReceived(WTFMove(data));
+    });
+}
+
+void CtapAuthenticator::continueGetNextAssertionAfterResponseReceived(Vector<uint8_t>&& data)
+{
+    auto response = readCTAPGetAssertionResponse(data);
+    if (!response) {
+        auto error = getResponseCode(data);
+        receiveRespond(ExceptionData { UnknownError, makeString("Unknown internal error. Error code: ", static_cast<uint8_t>(error)) });
+        return;
+    }
+    m_remainingAssertionResponses--;
+    auto addResult = m_assertionResponses.add(response.releaseNonNull());
+    ASSERT_UNUSED(addResult, addResult.isNewEntry);
+
+    if (!m_remainingAssertionResponses) {
+        if (auto* observer = this->observer()) {
+            observer->selectAssertionResponses(m_assertionResponses, [this, weakThis = makeWeakPtr(*this)] (const Ref<AuthenticatorAssertionResponse>& response) {
+                ASSERT(RunLoop::isMain());
+                if (!weakThis)
+                    return;
+                auto returnResponse = m_assertionResponses.take(response);
+                if (!returnResponse)
+                    return;
+                receiveRespond(WTFMove(*returnResponse));
+            });
+        }
+        return;
+    }
+
+    driver().transact(encodeEmptyAuthenticatorRequest(CtapRequestCommand::kAuthenticatorGetNextAssertion), [weakThis = makeWeakPtr(*this)](Vector<uint8_t>&& data) {
+        ASSERT(RunLoop::isMain());
+        if (!weakThis)
+            return;
+        weakThis->continueGetNextAssertionAfterResponseReceived(WTFMove(data));
+    });
 }
 
 bool CtapAuthenticator::tryDowngrade()

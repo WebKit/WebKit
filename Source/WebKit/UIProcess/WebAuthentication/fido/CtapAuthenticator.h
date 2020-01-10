@@ -48,12 +48,15 @@ private:
     void continueMakeCredentialAfterResponseReceived(Vector<uint8_t>&&) const;
     void getAssertion() final;
     void continueGetAssertionAfterResponseReceived(Vector<uint8_t>&&);
+    void continueGetNextAssertionAfterResponseReceived(Vector<uint8_t>&&);
 
     bool tryDowngrade();
     bool processGoogleLegacyAppIdSupportExtension();
 
     fido::AuthenticatorGetInfoResponse m_info;
     bool m_isDowngraded { false };
+    size_t m_remainingAssertionResponses { 0 };
+    HashSet<Ref<WebCore::AuthenticatorAssertionResponse>> m_assertionResponses;
 };
 
 } // namespace WebKit

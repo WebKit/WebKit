@@ -1,3 +1,32 @@
+2020-01-10  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [WebAuthn] Support authenticatorGetNextAssertion
+        https://bugs.webkit.org/show_bug.cgi?id=203346
+        <rdar://problem/56558488>
+
+        Reviewed by Brent Fulgham.
+
+        This patch implements authenticatorGetNextAssertion as suggested by the spec:
+        https://fidoalliance.org/specs/fido-v2.0-ps-20190130/fido-client-to-authenticator-protocol-v2.0-ps-20190130.html#authenticatorGetNextAssertion
+
+        The work flow is as follow:
+        1) When a valid assertion response is received, check its numberOfCredentials member;
+        2) When it is larger then 1, use authenticatorGetNextAssertion to get all remaining responses;
+        3) Once all responses are gathered, ask UI clients to pick one to return.
+
+        * UIProcess/API/APIWebAuthenticationPanelClient.h:
+        (API::WebAuthenticationPanelClient::selectAssertionResponses const):
+        * UIProcess/WebAuthentication/Authenticator.h:
+        * UIProcess/WebAuthentication/AuthenticatorManager.cpp:
+        (WebKit::AuthenticatorManager::selectAssertionResponses):
+        * UIProcess/WebAuthentication/AuthenticatorManager.h:
+        * UIProcess/WebAuthentication/Mock/MockHidConnection.cpp:
+        (WebKit::MockHidConnection::parseRequest):
+        * UIProcess/WebAuthentication/fido/CtapAuthenticator.cpp:
+        (WebKit::CtapAuthenticator::continueGetAssertionAfterResponseReceived):
+        (WebKit::CtapAuthenticator::continueGetNextAssertionAfterResponseReceived):
+        * UIProcess/WebAuthentication/fido/CtapAuthenticator.h:
+
 2020-01-10  Brent Fulgham  <bfulgham@apple.com>
 
         Remove 'com.apple.nehelper' from the WebContent sandbox.
