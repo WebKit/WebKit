@@ -373,7 +373,7 @@
 /* OS(IOS) - iOS only, not including macCatalyst */
 /* OS(MAC_OS_X) - macOS (not including iOS family) */
 #if OS(DARWIN)
-#if TARGET_OS_IOS && !(defined(TARGET_OS_IOSMAC) && TARGET_OS_IOSMAC)
+#if TARGET_OS_IOS && !(defined(TARGET_OS_MACCATALYST) && TARGET_OS_MACCATALYST)
 #define WTF_OS_IOS 1
 #endif
 #if TARGET_OS_IPHONE
@@ -536,7 +536,7 @@
 #endif
 #define WTF_PLATFORM_IOS_FAMILY_SIMULATOR 1
 #endif
-#if defined(TARGET_OS_IOSMAC) && TARGET_OS_IOSMAC
+#if defined(TARGET_OS_MACCATALYST) && TARGET_OS_MACCATALYST
 #define WTF_PLATFORM_MACCATALYST 1
 #endif
 #elif OS(WINDOWS)

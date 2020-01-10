@@ -62,6 +62,6 @@
 #import <WebKit/WKWebsiteDataStore.h>
 #import <WebKit/WKWindowFeatures.h>
 
-#if !defined(TARGET_OS_IOSMAC) || !TARGET_OS_IOSMAC
+#if !defined(TARGET_OS_MACCATALYST) || !TARGET_OS_MACCATALYST
 #import <WebKit/WebKitLegacy.h>
 #endif

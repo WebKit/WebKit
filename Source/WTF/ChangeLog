@@ -1,3 +1,13 @@
+2020-01-09  Tim Horton  <timothy_horton@apple.com>
+
+        Adopt TARGET_OS_MACCATALYST in more places
+        https://bugs.webkit.org/show_bug.cgi?id=206040
+        <rdar://problem/57127108>
+
+        Reviewed by Simon Fraser.
+
+        * wtf/Platform.h:
+
 2020-01-09  Simon Fraser  <simon.fraser@apple.com>
 
         Add ENABLE_UI_SIDE_COMPOSITING and use it in a few places
