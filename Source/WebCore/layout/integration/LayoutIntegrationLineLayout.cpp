@@ -105,7 +105,11 @@ void LineLayout::prepareRootGeometryForLayout()
 size_t LineLayout::lineCount() const
 {
     auto* inlineContent = displayInlineContent();
-    return inlineContent ? inlineContent->lineBoxes.size() : 0;
+    if (!inlineContent)
+        return 0;
+    if (inlineContent->runs.isEmpty())
+        return 0;
+    return inlineContent->lineBoxes.size();
 }
 
 LayoutUnit LineLayout::firstLineBaseline() const
