@@ -661,6 +661,9 @@ public:
         // OpenGL ES 3 constants.
         MAP_READ_BIT = 0x0001,
 
+        // WebGL-specific.
+        MAX_CLIENT_WAIT_TIMEOUT_WEBGL = 0x9247,
+
         // Necessary desktop OpenGL constants.
         TEXTURE_RECTANGLE_ARB = 0x84F5
     };
@@ -1058,19 +1061,149 @@ public:
 
     // ========== WebGL 2 entry points.
 
+    virtual void bufferData(GCGLenum target, const void* data, GCGLenum usage, GCGLuint srcOffset, GCGLuint length) = 0;
+    virtual void bufferSubData(GCGLenum target, GCGLintptr dstByteOffset, const void* srcData, GCGLuint srcOffset, GCGLuint length) = 0;
+
+    virtual void copyBufferSubData(GCGLenum readTarget, GCGLenum writeTarget, GCGLintptr readOffset, GCGLintptr writeOffset, GCGLsizeiptr size) = 0;
+    virtual void getBufferSubData(GCGLenum target, GCGLintptr srcByteOffset, const void* dstData, GCGLuint dstOffset, GCGLuint length) = 0;
     virtual void* mapBufferRange(GCGLenum target, GCGLintptr offset, GCGLsizeiptr length, GCGLbitfield access) = 0;
     virtual GCGLboolean unmapBuffer(GCGLenum target) = 0;
-    virtual void copyBufferSubData(GCGLenum readTarget, GCGLenum writeTarget, GCGLintptr readOffset, GCGLintptr writeOffset, GCGLsizeiptr) = 0;
+
+    virtual void blitFramebuffer(GCGLint srcX0, GCGLint srcY0, GCGLint srcX1, GCGLint srcY1, GCGLint dstX0, GCGLint dstY0, GCGLint dstX1, GCGLint dstY1, GCGLbitfield mask, GCGLenum filter) = 0;
+    virtual void framebufferTextureLayer(GCGLenum target, GCGLenum attachment, PlatformGLObject texture, GCGLint level, GCGLint layer) = 0;
+    virtual void invalidateFramebuffer(GCGLenum target, const Vector<GCGLenum>& attachments) = 0;
+    virtual void invalidateSubFramebuffer(GCGLenum target, const Vector<GCGLenum>& attachments, GCGLint x, GCGLint y, GCGLsizei width, GCGLsizei height) = 0;
+    virtual void readBuffer(GCGLenum src) = 0;
 
     // getInternalFormatParameter
     virtual void getInternalformativ(GCGLenum target, GCGLenum internalformat, GCGLenum pname, GCGLsizei bufSize, GCGLint* params) = 0;
-
     virtual void renderbufferStorageMultisample(GCGLenum target, GCGLsizei samples, GCGLenum internalformat, GCGLsizei width, GCGLsizei height) = 0;
 
     virtual void texStorage2D(GCGLenum target, GCGLsizei levels, GCGLenum internalformat, GCGLsizei width, GCGLsizei height) = 0;
     virtual void texStorage3D(GCGLenum target, GCGLsizei levels, GCGLenum internalformat, GCGLsizei width, GCGLsizei height, GCGLsizei depth) = 0;
 
+    virtual void texImage3D(GCGLenum target, GCGLint level, GCGLint internalformat, GCGLsizei width, GCGLsizei height, GCGLsizei depth, GCGLint border, GCGLenum format, GCGLenum type, GCGLintptr pboOffset) = 0;
+    virtual void texImage3D(GCGLenum target, GCGLint level, GCGLint internalformat, GCGLsizei width, GCGLsizei height, GCGLsizei depth, GCGLint border, GCGLenum format, GCGLenum type, const void* pixels) = 0;
+    virtual void texImage3D(GCGLenum target, GCGLint level, GCGLint internalformat, GCGLsizei width, GCGLsizei height, GCGLsizei depth, GCGLint border, GCGLenum format, GCGLenum type, const void* srcData, GCGLuint srcOffset) = 0;
+
+    virtual void texSubImage3D(GCGLenum target, GCGLint level, GCGLint xoffset, GCGLint yoffset, GCGLint zoffset, GCGLsizei width, GCGLsizei height, GCGLsizei depth, GCGLenum format, GCGLenum type, GCGLintptr pboOffset) = 0;
+    virtual void texSubImage3D(GCGLenum target, GCGLint level, GCGLint xoffset, GCGLint yoffset, GCGLint zoffset, GCGLsizei width, GCGLsizei height, GCGLsizei depth, GCGLenum format, GCGLenum type, const void* srcData, GCGLuint srcOffset) = 0;
+
+    virtual void copyTexSubImage3D(GCGLenum target, GCGLint level, GCGLint xoffset, GCGLint yoffset, GCGLint zoffset, GCGLint x, GCGLint y, GCGLsizei width, GCGLsizei height) = 0;
+
+    virtual void compressedTexImage3D(GCGLenum target, GCGLint level, GCGLenum internalformat, GCGLsizei width, GCGLsizei height, GCGLsizei depth, GCGLint border, GCGLsizei imageSize, GCGLintptr offset) = 0;
+    virtual void compressedTexImage3D(GCGLenum target, GCGLint level, GCGLenum internalformat, GCGLsizei width, GCGLsizei height, GCGLsizei depth, GCGLint border, const void* srcData, GCGLuint srcOffset, GCGLuint srcLengthOverride) = 0;
+    virtual void compressedTexSubImage3D(GCGLenum target, GCGLint level, GCGLint xoffset, GCGLint yoffset, GCGLint zoffset, GCGLsizei width, GCGLsizei height, GCGLsizei depth, GCGLenum format, GCGLsizei imageSize, GCGLintptr offset) = 0;
+    virtual void compressedTexSubImage3D(GCGLenum target, GCGLint level, GCGLint xoffset, GCGLint yoffset, GCGLint zoffset, GCGLsizei width, GCGLsizei height, GCGLsizei depth, GCGLenum format, const void* srcData, GCGLuint srcOffset, GCGLuint srcLengthOverride) = 0;
+
+    virtual GCGLint getFragDataLocation(PlatformGLObject program, const String& name) = 0;
+
+    virtual void uniform1ui(GCGLint location, GCGLuint v0) = 0;
+    virtual void uniform2ui(GCGLint location, GCGLuint v0, GCGLuint v1) = 0;
+    virtual void uniform3ui(GCGLint location, GCGLuint v0, GCGLuint v1, GCGLuint v2) = 0;
+    virtual void uniform4ui(GCGLint location, GCGLuint v0, GCGLuint v1, GCGLuint v2, GCGLuint v3) = 0;
+    virtual void uniform1uiv(GCGLint location, const GCGLuint* data, GCGLuint srcOffset, GCGLuint srcLength) = 0;
+    virtual void uniform2uiv(GCGLint location, const GCGLuint* data, GCGLuint srcOffset, GCGLuint srcLength) = 0;
+    virtual void uniform3uiv(GCGLint location, const GCGLuint* data, GCGLuint srcOffset, GCGLuint srcLength) = 0;
+    virtual void uniform4uiv(GCGLint location, const GCGLuint* data, GCGLuint srcOffset, GCGLuint srcLength) = 0;
+    virtual void uniformMatrix2x3fv(GCGLint location, GCGLboolean transpose, const GCGLfloat* data, GCGLuint srcOffset, GCGLuint srcLength) = 0;
+    virtual void uniformMatrix3x2fv(GCGLint location, GCGLboolean transpose, const GCGLfloat* data, GCGLuint srcOffset, GCGLuint srcLength) = 0;
+    virtual void uniformMatrix2x4fv(GCGLint location, GCGLboolean transpose, const GCGLfloat* data, GCGLuint srcOffset, GCGLuint srcLength) = 0;
+    virtual void uniformMatrix4x2fv(GCGLint location, GCGLboolean transpose, const GCGLfloat* data, GCGLuint srcOffset, GCGLuint srcLength) = 0;
+    virtual void uniformMatrix3x4fv(GCGLint location, GCGLboolean transpose, const GCGLfloat* data, GCGLuint srcOffset, GCGLuint srcLength) = 0;
+    virtual void uniformMatrix4x3fv(GCGLint location, GCGLboolean transpose, const GCGLfloat* data, GCGLuint srcOffset, GCGLuint srcLength) = 0;
+    virtual void vertexAttribI4i(GCGLuint index, GCGLint x, GCGLint y, GCGLint z, GCGLint w) = 0;
+    virtual void vertexAttribI4iv(GCGLuint index, const GCGLint* values) = 0;
+    virtual void vertexAttribI4ui(GCGLuint index, GCGLuint x, GCGLuint y, GCGLuint z, GCGLuint w) = 0;
+    virtual void vertexAttribI4uiv(GCGLuint index, const GCGLuint* values) = 0;
+    virtual void vertexAttribIPointer(GCGLuint index, GCGLint size, GCGLenum type, GCGLsizei stride, GCGLintptr offset) = 0;
+
+    virtual void drawRangeElements(GCGLenum mode, GCGLuint start, GCGLuint end, GCGLsizei count, GCGLenum type, GCGLintptr offset) = 0;
+
+    virtual void drawBuffers(const Vector<GCGLenum>& buffers) = 0;
+    virtual void clearBufferiv(GCGLenum buffer, GCGLint drawbuffer, const GCGLint* values, GCGLuint srcOffset) = 0;
+    virtual void clearBufferuiv(GCGLenum buffer, GCGLint drawbuffer, const GCGLuint* values, GCGLuint srcOffset) = 0;
+    virtual void clearBufferfv(GCGLenum buffer, GCGLint drawbuffer, const GCGLfloat* values, GCGLuint srcOffset) = 0;
+    virtual void clearBufferfi(GCGLenum buffer, GCGLint drawbuffer, GCGLfloat depth, GCGLint stencil) = 0;
+
+    virtual PlatformGLObject createQuery() = 0;
+    virtual void deleteQuery(PlatformGLObject query) = 0;
+    virtual GCGLboolean isQuery(PlatformGLObject query) = 0;
+    virtual void beginQuery(GCGLenum target, PlatformGLObject query) = 0;
+    virtual void endQuery(GCGLenum target) = 0;
+    virtual PlatformGLObject getQuery(GCGLenum target, GCGLenum pname) = 0;
+    // getQueryParameter
+    virtual void glGetQueryObjectuiv(PlatformGLObject query, GCGLenum pname, GCGLuint* value) = 0;
+
+    virtual PlatformGLObject createSampler() = 0;
+    virtual void deleteSampler(PlatformGLObject sampler) = 0;
+    virtual GCGLboolean isSampler(PlatformGLObject sampler) = 0;
+    virtual void bindSampler(GCGLuint unit, PlatformGLObject sampler) = 0;
+    virtual void samplerParameteri(PlatformGLObject sampler, GCGLenum pname, GCGLint param) = 0;
+    virtual void samplerParameterf(PlatformGLObject sampler, GCGLenum pname, GCGLfloat param) = 0;
+    // getSamplerParameter
+    virtual void getSamplerParameterfv(PlatformGLObject sampler, GCGLenum pname, GCGLfloat* value) = 0;
+    virtual void getSamplerParameteriv(PlatformGLObject sampler, GCGLenum pname, GCGLint* value) = 0;
+
+    virtual PlatformGLObject fenceSync(GCGLenum condition, GCGLbitfield flags) = 0;
+    virtual GCGLboolean isSync(PlatformGLObject sync) = 0;
+    virtual void deleteSync(PlatformGLObject sync) = 0;
+    virtual GCGLenum clientWaitSync(PlatformGLObject sync, GCGLbitfield flags, GCGLuint64 timeout) = 0;
+    virtual void waitSync(PlatformGLObject sync, GCGLbitfield flags, GCGLint64 timeout) = 0;
+    // getSyncParameter
+    virtual void getSynciv(PlatformGLObject sync, GCGLenum pname, GCGLsizei bufSize, GCGLint* value) = 0;
+
+    virtual PlatformGLObject createTransformFeedback() = 0;
+    virtual void deleteTransformFeedback(PlatformGLObject id) = 0;
+    virtual GCGLboolean isTransformFeedback(PlatformGLObject id) = 0;
+    virtual void bindTransformFeedback(GCGLenum target, PlatformGLObject id) = 0;
+    virtual void beginTransformFeedback(GCGLenum primitiveMode) = 0;
+    virtual void endTransformFeedback() = 0;
+    virtual void transformFeedbackVaryings(PlatformGLObject program, const Vector<String>& varyings, GCGLenum bufferMode) = 0;
+    virtual PlatformGLObject getTransformFeedbackVarying(PlatformGLObject program, GCGLuint index) = 0;
+    virtual void pauseTransformFeedback() = 0;
+    virtual void resumeTransformFeedback() = 0;
+
+    virtual void bindBufferBase(GCGLenum target, GCGLuint index, PlatformGLObject buffer) = 0;
+    virtual void bindBufferRange(GCGLenum target, GCGLuint index, PlatformGLObject buffer, GCGLintptr offset, GCGLsizeiptr size) = 0;
+    // getIndexedParameter -> use getParameter calls above.
+    virtual Vector<GCGLuint> getUniformIndices(PlatformGLObject program, const Vector<String>& uniformNames) = 0;
     virtual void getActiveUniforms(PlatformGLObject program, const Vector<GCGLuint>& uniformIndices, GCGLenum pname, Vector<GCGLint>& params) = 0;
+
+    virtual GCGLuint getUniformBlockIndex(PlatformGLObject program, const String& uniformBlockName) = 0;
+    // getActiveUniformBlockParameter
+    virtual void getActiveUniformBlockiv(PlatformGLObject program, GCGLuint uniformBlockIndex, GCGLenum pname, GCGLint* params) = 0;
+    virtual String getActiveUniformBlockName(PlatformGLObject program, GCGLuint uniformBlockIndex) = 0;
+    virtual void uniformBlockBinding(PlatformGLObject program, GCGLuint uniformBlockIndex, GCGLuint uniformBlockBinding) = 0;
+
+    virtual void texImage2D(GCGLenum target, GCGLint level, GCGLint internalformat, GCGLsizei width, GCGLsizei height, GCGLint border, GCGLenum format, GCGLenum type, GCGLintptr pboOffset) = 0;
+    virtual void texImage2D(GCGLenum target, GCGLint level, GCGLint internalformat, GCGLsizei width, GCGLsizei height, GCGLint border, GCGLenum format, GCGLenum type, const void* srcData, GCGLuint srcOffset) = 0;
+
+    virtual void texSubImage2D(GCGLenum target, GCGLint level, GCGLint xoffset, GCGLint yoffset, GCGLsizei width, GCGLsizei height, GCGLenum format, GCGLenum type, GCGLintptr pboOffset) = 0;
+    virtual void texSubImage2D(GCGLenum target, GCGLint level, GCGLint xoffset, GCGLint yoffset, GCGLsizei width, GCGLsizei height, GCGLenum format, GCGLenum type, const void* srcData, GCGLuint srcOffset) = 0;
+
+    virtual void compressedTexImage2D(GCGLenum target, GCGLint level, GCGLenum internalformat, GCGLsizei width, GCGLsizei height, GCGLint border, GCGLsizei imageSize, GCGLintptr offset) = 0;
+    virtual void compressedTexImage2D(GCGLenum target, GCGLint level, GCGLenum internalformat, GCGLsizei width, GCGLsizei height, GCGLint border, const void* srcData, GCGLuint srcOffset, GCGLuint srcLengthOverride) = 0;
+
+    virtual void compressedTexSubImage2D(GCGLenum target, GCGLint level, GCGLint xoffset, GCGLint yoffset, GCGLsizei width, GCGLsizei height, GCGLenum format, GCGLsizei imageSize, GCGLintptr offset) = 0;
+    virtual void compressedTexSubImage2D(GCGLenum target, GCGLint level, GCGLint xoffset, GCGLint yoffset, GCGLsizei width, GCGLsizei height, GCGLenum format, const void* srcData, GCGLuint srcOffset, GCGLuint srcLengthOverride) = 0;
+
+    virtual void uniform1fv(GCGLint location, const GCGLfloat* data, GCGLuint srcOffset, GCGLuint srcLength) = 0;
+    virtual void uniform2fv(GCGLint location, const GCGLfloat* data, GCGLuint srcOffset, GCGLuint srcLength) = 0;
+    virtual void uniform3fv(GCGLint location, const GCGLfloat* data, GCGLuint srcOffset, GCGLuint srcLength) = 0;
+    virtual void uniform4fv(GCGLint location, const GCGLfloat* data, GCGLuint srcOffset, GCGLuint srcLength) = 0;
+
+    virtual void uniform1iv(GCGLint location, const GCGLint* data, GCGLuint srcOffset, GCGLuint srcLength) = 0;
+    virtual void uniform2iv(GCGLint location, const GCGLint* data, GCGLuint srcOffset, GCGLuint srcLength) = 0;
+    virtual void uniform3iv(GCGLint location, const GCGLint* data, GCGLuint srcOffset, GCGLuint srcLength) = 0;
+    virtual void uniform4iv(GCGLint location, const GCGLint* data, GCGLuint srcOffset, GCGLuint srcLength) = 0;
+
+    virtual void uniformMatrix2fv(GCGLint location, GCGLboolean transpose, const GCGLfloat* data, GCGLuint srcOffset, GCGLuint srcLength) = 0;
+    virtual void uniformMatrix3fv(GCGLint location, GCGLboolean transpose, const GCGLfloat* data, GCGLuint srcOffset, GCGLuint srcLength) = 0;
+    virtual void uniformMatrix4fv(GCGLint location, GCGLboolean transpose, const GCGLfloat* data, GCGLuint srcOffset, GCGLuint srcLength) = 0;
+
+    virtual void readPixels(GCGLint x, GCGLint y, GCGLsizei width, GCGLsizei height, GCGLenum format, GCGLenum type, GCGLintptr offset) = 0;
+    virtual void readPixels(GCGLint x, GCGLint y, GCGLsizei width, GCGLsizei height, GCGLenum format, GCGLenum type, const void* dstData, GCGLuint dstOffset) = 0;
 
     // ========== Non-WebGL based entry points.
 
