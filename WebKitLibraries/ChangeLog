@@ -1,3 +1,15 @@
+2020-01-10  Jonathan Bedard  <jbedard@apple.com>
+
+        WebKitLibraries: Remove old private framework stubs
+        https://bugs.webkit.org/show_bug.cgi?id=206067
+        <rdar://problem/58479518>
+
+        Reviewed by Alexey Proskuryakov.
+
+        * WebKitPrivateFrameworkStubs/iOS/10: Removed.
+        * WebKitPrivateFrameworkStubs/iOS/11: Removed.
+        * WebKitPrivateFrameworkStubs/iOS/12: Removed.
+
 2020-01-08  Mark Lam  <mark.lam@apple.com>
 
         Rename testing build configuration to release+assert, and add new testing build configuration.
