@@ -28,6 +28,7 @@
 #include "Connection.h"
 #include "CoordinateSystem.h"
 #include <JavaScriptCore/JSBase.h>
+#include <JavaScriptCore/PrivateName.h>
 #include <WebCore/FrameIdentifier.h>
 #include <WebCore/IntRect.h>
 #include <WebCore/PageIdentifier.h>
@@ -56,6 +57,8 @@ public:
     void didEvaluateJavaScriptFunction(WebCore::FrameIdentifier, uint64_t callbackID, const String& result, const String& errorType);
 
 private:
+    JSObjectRef scriptObject(JSGlobalContextRef);
+    void setScriptObject(JSGlobalContextRef, JSObjectRef);
     JSObjectRef scriptObjectForFrame(WebFrame&);
     WebCore::Element* elementForNodeHandle(WebFrame&, const String&);
 
@@ -77,8 +80,8 @@ private:
     void deleteCookie(WebCore::PageIdentifier, Optional<WebCore::FrameIdentifier>, String cookieName, CompletionHandler<void(Optional<String>)>&&);
 
     String m_sessionIdentifier;
+    JSC::PrivateName m_scriptObjectIdentifier;
 
-    HashMap<WebCore::FrameIdentifier, JSObjectRef> m_webFrameScriptObjectMap;
     HashMap<WebCore::FrameIdentifier, Vector<uint64_t>> m_webFramePendingEvaluateJavaScriptCallbacksMap;
 };
 

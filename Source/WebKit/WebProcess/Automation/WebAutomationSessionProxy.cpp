@@ -108,6 +108,7 @@ static inline JSValueRef callPropertyFunction(JSContextRef context, JSObjectRef 
 
 WebAutomationSessionProxy::WebAutomationSessionProxy(const String& sessionIdentifier)
     : m_sessionIdentifier(sessionIdentifier)
+    , m_scriptObjectIdentifier(JSC::PrivateName::Description, "automationSessionProxy"_s)
 {
     WebProcess::singleton().addMessageReceiver(Messages::WebAutomationSessionProxy::messageReceiverName(), *this);
 }
@@ -211,31 +212,48 @@ static JSValueRef evaluateJavaScriptCallback(JSContextRef context, JSObjectRef f
     return JSValueMakeUndefined(context);
 }
 
+JSObjectRef WebAutomationSessionProxy::scriptObject(JSGlobalContextRef context)
+{
+    JSC::JSGlobalObject* globalObject = toJS(context);
+    JSC::VM& vm = globalObject->vm();
+    JSC::JSLockHolder locker(vm);
+    auto scriptObjectID = JSC::Identifier::fromUid(m_scriptObjectIdentifier);
+    if (!globalObject->hasProperty(globalObject, scriptObjectID))
+        return nullptr;
+
+    return const_cast<JSObjectRef>(toRef(globalObject, globalObject->get(globalObject, scriptObjectID)));
+}
+
+void WebAutomationSessionProxy::setScriptObject(JSGlobalContextRef context, JSObjectRef object)
+{
+    JSC::JSGlobalObject* globalObject = toJS(context);
+    JSC::VM& vm = globalObject->vm();
+    JSC::JSLockHolder locker(vm);
+    auto scriptObjectID = JSC::Identifier::fromUid(m_scriptObjectIdentifier);
+    PutPropertySlot slot(globalObject);
+    globalObject->methodTable(vm)->put(globalObject, globalObject, scriptObjectID, toJS(globalObject, object), slot);
+}
+
 JSObjectRef WebAutomationSessionProxy::scriptObjectForFrame(WebFrame& frame)
 {
-    if (JSObjectRef scriptObject = m_webFrameScriptObjectMap.get(frame.frameID()))
+    JSGlobalContextRef context = frame.jsContext();
+    if (auto* scriptObject = this->scriptObject(context))
         return scriptObject;
 
     JSValueRef exception = nullptr;
-    JSGlobalContextRef context = frame.jsContext();
+    String script = StringImpl::createWithoutCopying(WebAutomationSessionProxyScriptSource, sizeof(WebAutomationSessionProxyScriptSource));
+    JSObjectRef scriptObjectFunction = const_cast<JSObjectRef>(JSEvaluateScript(context, OpaqueJSString::tryCreate(script).get(), nullptr, nullptr, 0, &exception));
+    ASSERT(JSValueIsObject(context, scriptObjectFunction));
 
     JSValueRef sessionIdentifier = toJSValue(context, m_sessionIdentifier);
     JSObjectRef evaluateFunction = JSObjectMakeFunctionWithCallback(context, nullptr, evaluate);
     JSObjectRef createUUIDFunction = JSObjectMakeFunctionWithCallback(context, nullptr, createUUID);
     JSObjectRef isValidNodeIdentifierFunction = JSObjectMakeFunctionWithCallback(context, nullptr, isValidNodeIdentifier);
-
-    String script = StringImpl::createWithoutCopying(WebAutomationSessionProxyScriptSource, sizeof(WebAutomationSessionProxyScriptSource));
-
-    JSObjectRef scriptObjectFunction = const_cast<JSObjectRef>(JSEvaluateScript(context, OpaqueJSString::tryCreate(script).get(), nullptr, nullptr, 0, &exception));
-    ASSERT(JSValueIsObject(context, scriptObjectFunction));
-
     JSValueRef arguments[] = { sessionIdentifier, evaluateFunction, createUUIDFunction, isValidNodeIdentifierFunction };
     JSObjectRef scriptObject = const_cast<JSObjectRef>(JSObjectCallAsFunction(context, scriptObjectFunction, nullptr, WTF_ARRAY_LENGTH(arguments), arguments, &exception));
     ASSERT(JSValueIsObject(context, scriptObject));
 
-    JSValueProtect(context, scriptObject);
-    m_webFrameScriptObjectMap.add(frame.frameID(), scriptObject);
-
+    setScriptObject(context, scriptObject);
     return scriptObject;
 }
 
@@ -244,11 +262,10 @@ WebCore::Element* WebAutomationSessionProxy::elementForNodeHandle(WebFrame& fram
     // Don't use scriptObjectForFrame() since we can assume if the script object
     // does not exist, there are no nodes mapped to handles. Using scriptObjectForFrame()
     // will make a new script object if it can't find one, preventing us from returning fast.
-    JSObjectRef scriptObject = m_webFrameScriptObjectMap.get(frame.frameID());
+    JSGlobalContextRef context = frame.jsContext();
+    auto* scriptObject = this->scriptObject(context);
     if (!scriptObject)
         return nullptr;
-
-    JSGlobalContextRef context = frame.jsContext();
 
     JSValueRef functionArguments[] = {
         toJSValue(context, nodeHandle)
@@ -268,14 +285,10 @@ WebCore::Element* WebAutomationSessionProxy::elementForNodeHandle(WebFrame& fram
 
 void WebAutomationSessionProxy::didClearWindowObjectForFrame(WebFrame& frame)
 {
-    WebCore::FrameIdentifier frameID = frame.frameID();
-    if (JSObjectRef scriptObject = m_webFrameScriptObjectMap.take(frameID))
-        JSValueUnprotect(frame.jsContext(), scriptObject);
-
     String errorMessage = "Callback was not called before the unload event."_s;
     String errorType = Inspector::Protocol::AutomationHelpers::getEnumConstantValue(Inspector::Protocol::Automation::ErrorMessage::JavaScriptError);
 
-    auto pendingFrameCallbacks = m_webFramePendingEvaluateJavaScriptCallbacksMap.take(frameID);
+    auto pendingFrameCallbacks = m_webFramePendingEvaluateJavaScriptCallbacksMap.take(frame.frameID());
     for (uint64_t callbackID : pendingFrameCallbacks)
         WebProcess::singleton().parentProcessConnection()->send(Messages::WebAutomationSession::DidEvaluateJavaScriptFunction(callbackID, errorMessage, errorType), 0);
 }

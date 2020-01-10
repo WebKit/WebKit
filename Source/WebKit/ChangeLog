@@ -1,3 +1,32 @@
+2020-01-10  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Automation: scripts are executed in the wrong js context after a history navigation
+        https://bugs.webkit.org/show_bug.cgi?id=204880
+        <rdar://problem/58413615>
+
+        Reviewed by Brian Burg.
+
+        After a history navigation we use the script object from the previous frame js context because
+        didClearWindowObjectForFrame() is not called in that case. We are caching the script object for every frame ID,
+        and after a history navigation the frame ID is the same, but the frame js context isn't. That also means we might
+        be leaking the script objects in those cases, because we end up calling JSValueUnprotect with the wrong
+        context. It would be easier to set the script object as a property of the global object and let JSC handle the
+        lifetime. Instead of caching the script object and protect/unprotect it, we just check if the global object of
+        the current js context has the property or not to get or create it. We use a private symbol as the key of the
+        global object property to ensure it's not visible.
+
+        * WebProcess/Automation/WebAutomationSessionProxy.cpp:
+        (WebKit::WebAutomationSessionProxy::WebAutomationSessionProxy): Initialize m_scriptObjectIdentifier.
+        (WebKit::WebAutomationSessionProxy::scriptObject): Helper function to get the script object for the given
+        JavaScript context.
+        (WebKit::WebAutomationSessionProxy::setScriptObject): Helper function to set the script object for the given
+        JavaScript context.
+        (WebKit::WebAutomationSessionProxy::scriptObjectForFrame): Get or create the script object.
+        (WebKit::WebAutomationSessionProxy::elementForNodeHandle): Get the script object from global object.
+        (WebKit::WebAutomationSessionProxy::didClearWindowObjectForFrame): Remove the code to unprotect script objects
+        of the frame.
+        * WebProcess/Automation/WebAutomationSessionProxy.h: Add m_scriptObjectIdentifier and remove m_webFrameScriptObjectMap.
+
 2020-01-09  Ross Kirsling  <ross.kirsling@sony.com>
 
         REGRESSION(r253868): Socket-based remote inspector cannot inspect any target
