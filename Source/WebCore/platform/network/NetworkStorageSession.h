@@ -203,7 +203,7 @@ private:
     Optional<Seconds> m_ageCapForClientSideCookiesShort { };
     HashMap<WebCore::PageIdentifier, RegistrableDomain> m_navigatedToWithLinkDecorationByPrevalentResource;
     bool m_navigationWithLinkDecorationTestMode = false;
-    ThirdPartyCookieBlockingMode m_thirdPartyCookieBlockingMode { ThirdPartyCookieBlockingMode::AllOnSitesWithoutUserInteraction };
+    ThirdPartyCookieBlockingMode m_thirdPartyCookieBlockingMode { ThirdPartyCookieBlockingMode::All };
 #endif
 
 #if PLATFORM(COCOA)
