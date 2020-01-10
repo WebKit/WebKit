@@ -1,4 +1,23 @@
 ================
+WebKitGTK 2.27.4
+================
+
+What's new in WebKitGTK 2.27.4?
+
+  - Add API for input methods.
+  - Add API to serialize/deserialize a JSCValue to/from a JSON string.
+  - Add support for strict secure cookies.
+  - Add support for saving data from remote inspector.
+  - Make ondemand hardware acceleration policy never leave accelerated compositing mode.
+  - Fix rendering of conic gradients in high resolution displays.
+  - Fix special combination characters not respecting the keystroke order when high CPU load.
+  - Honor the IndexedDB directory set in WebsiteDataManager.
+  - Fix rendering of text when there's an initial advance in the text run.
+  - Fix web process crash when displaying a KaTeX formula.
+  - Fix network process crash with PSON enabled.
+  - Fix several crashes and rendering issues.
+
+================
 WebKitGTK 2.27.3
 ================
 
