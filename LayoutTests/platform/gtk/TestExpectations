@@ -1885,6 +1885,8 @@ webkit.org/b/186638 imported/w3c/web-platform-tests/mathml/relations/html5-tree/
 
 webkit.org/b/186664 media/video-playsinline.html [ Failure Pass ]
 
+webkit.org/b/206065 imported/w3c/web-platform-tests/xhr/anonymous-mode-unsupported.htm [ Failure Pass ]
+
 # Warning: this test is expected to fail in the global expectations file, but
 # we expect it to Pass because we support RTL scrollbars. When fixed, it should
 # not be removed, but moved to the expected passes section of this file.
