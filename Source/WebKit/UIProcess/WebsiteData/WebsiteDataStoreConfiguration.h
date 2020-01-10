@@ -76,6 +76,9 @@ public:
     bool allowsCellularAccess() const { return m_allowsCellularAccess; }
     void setAllowsCellularAccess(bool allows) { m_allowsCellularAccess = allows; }
 
+    bool legacyTLSEnabled() const { return m_legacyTLSEnabled; }
+    void setLegacyTLSEnabled(bool enabled) { m_legacyTLSEnabled = enabled; }
+
     bool fastServerTrustEvaluationEnabled() const { return m_fastServerTrustEvaluationEnabled; }
     void setFastServerTrustEvaluationEnabled(bool enabled) { m_fastServerTrustEvaluationEnabled = enabled; }
 
@@ -181,6 +184,7 @@ private:
     bool m_deviceManagementRestrictionsEnabled { false };
     bool m_allLoadsBlockedByDeviceManagementRestrictionsForTesting { false };
     bool m_allowsCellularAccess { true };
+    bool m_legacyTLSEnabled { false };
     bool m_fastServerTrustEvaluationEnabled { false };
     bool m_serviceWorkerProcessTerminationDelayEnabled { true };
     bool m_testingSessionEnabled { false };
