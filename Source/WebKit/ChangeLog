@@ -1,3 +1,17 @@
+2020-01-10  Víctor Manuel Jáquez Leal  <vjaquez@igalia.com>
+
+        Silence compiler warning
+        https://bugs.webkit.org/show_bug.cgi?id=206070
+
+        Reviewed by Chris Dumez.
+
+        Silence compiler by using the proper formatter for log out.
+
+        No functional changes.
+
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::didReceiveMessage):
+
 2020-01-10  Alex Christensen  <achristensen@webkit.org>
 
         Expand _WKResourceLoadDelegate callbacks

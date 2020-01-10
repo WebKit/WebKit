@@ -759,7 +759,7 @@ void WebProcess::didReceiveMessage(IPC::Connection& connection, IPC::Decoder& de
     }
 #endif
 
-    LOG_ERROR("Unhandled web process message '%s:%s' (destination: %llu)", decoder.messageReceiverName().toString().data(), decoder.messageName().toString().data(), decoder.destinationID());
+    LOG_ERROR("Unhandled web process message '%s:%s' (destination: %" PRIu64 ")", decoder.messageReceiverName().toString().data(), decoder.messageName().toString().data(), decoder.destinationID());
 }
 
 WebFrame* WebProcess::webFrame(FrameIdentifier frameID) const
