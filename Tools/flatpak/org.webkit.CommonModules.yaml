@@ -304,7 +304,8 @@
   sources:
     - type: git
       url: https://github.com/icecc/icecream
-      branch: "1.1"
+      tag: "1.2"
+      commit: e3d10a32bc6c046d8f3d1182e75c659d4b28ed49
   config-opts:
     - --without-man
 

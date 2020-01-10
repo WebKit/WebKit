@@ -1,3 +1,19 @@
+2020-01-10  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [Flatpak] Update IceCC to version 1.2
+        https://bugs.webkit.org/show_bug.cgi?id=206059
+
+        Reviewed by Philippe Normand.
+
+        Update IceCC/Icecream to version 1.2, which is the same version
+        currently shipped with Debian stable (Buster). This bump is needed
+        because IceCC 1.1 does not seem to interoperate with the scheduler
+        from newer versions and it is expected that people who run IceCC will
+        install IceCC in their build farm from distribution packages.
+
+        * flatpak/org.webkit.CommonModules.yaml: Bump IceCC version to 1.2,
+        add the Git commit-id for the release tag.
+
 2020-01-10  Charlie Turner  <mail@charles.plus>
 
         [EME][ClearKey] Refactor CDMClearKey::update()
