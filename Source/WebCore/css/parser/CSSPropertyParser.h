@@ -122,7 +122,7 @@ private:
 };
 
 CSSPropertyID cssPropertyID(StringView);
-CSSValueID cssValueKeywordID(StringView);
+WEBCORE_EXPORT CSSValueID cssValueKeywordID(StringView);
 bool isCustomPropertyName(const String&);
 
 #if PLATFORM(IOS_FAMILY)

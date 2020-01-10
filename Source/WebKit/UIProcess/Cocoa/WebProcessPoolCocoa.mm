@@ -353,6 +353,7 @@ void WebProcessPool::platformInitializeWebProcess(const WebProcessProxy& process
     
 #if PLATFORM(IOS_FAMILY)
     parameters.currentUserInterfaceIdiomIsPad = currentUserInterfaceIdiomIsPad();
+    parameters.cssValueToSystemColorMap = RenderThemeIOS::cssValueToSystemColorMap();
 #endif
 }
 

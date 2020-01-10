@@ -51,6 +51,10 @@
 #include <WebCore/SoupNetworkProxySettings.h>
 #endif
 
+#if PLATFORM(IOS_FAMILY)
+#include <WebCore/RenderThemeIOS.h>
+#endif
+
 namespace API {
 class Data;
 }
@@ -208,6 +212,7 @@ struct WebProcessCreationParameters {
 
 #if PLATFORM(IOS_FAMILY)
     bool currentUserInterfaceIdiomIsPad { false };
+    WebCore::RenderThemeIOS::CSSValueToSystemColorMap cssValueToSystemColorMap;
 #endif
 };
 

@@ -924,6 +924,8 @@ public:
 
     String windowLocationHost(DOMWindow&);
 
+    String systemColorForCSSValue(const String& cssValue, bool useDarkModeAppearance, bool useElevatedUserInterfaceLevel);
+
 private:
     explicit Internals(Document&);
     Document* contextDocument() const;

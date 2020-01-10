@@ -60,7 +60,7 @@ public:
 
     static Color colorFromKeyword(CSSValueID, OptionSet<Options>);
     static bool isColorKeyword(CSSValueID);
-    static bool isSystemColor(CSSValueID);
+    WEBCORE_EXPORT static bool isSystemColor(CSSValueID);
 
 private:
     Color m_color;

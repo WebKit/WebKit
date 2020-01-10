@@ -1,0 +1,49 @@
+<html>
+<head id="head">
+<script src="../../../resources/js-test-pre.js"></script>
+</head>
+<body >
+<script>
+    
+description("Test that system colors for CSS values are correct.");
+
+if (window.internals) {
+    shouldBe("internals.systemColorForCSSValue('-apple-system-label', true, false)", "'rgb(255, 255, 255)'");
+    shouldBe("internals.systemColorForCSSValue('-apple-system-header-text', true, false)", "'rgb(255, 255, 255)'");
+    shouldBe("internals.systemColorForCSSValue('-apple-system-secondary-label', true, false)", "'rgba(235, 235, 245, 0.6)'");
+    shouldBe("internals.systemColorForCSSValue('-apple-system-tertiary-label', true, false)", "'rgba(235, 235, 245, 0.298)'");
+    shouldBe("internals.systemColorForCSSValue('-apple-system-quaternary-label', true, false)", "'rgba(235, 235, 245, 0.18)'");
+    shouldBe("internals.systemColorForCSSValue('-apple-system-placeholder-text', true, false)", "'rgba(235, 235, 245, 0.298)'");
+    shouldBe("internals.systemColorForCSSValue('-webkit-control-background', true, false)", "'rgb(0, 0, 0)'");
+    shouldBe("internals.systemColorForCSSValue('-apple-system-control-background', true, false)", "'rgb(0, 0, 0)'");
+    shouldBe("internals.systemColorForCSSValue('-apple-system-text-background', true, false)", "'rgb(0, 0, 0)'");
+    shouldBe("internals.systemColorForCSSValue('-apple-system-background', true, false)", "'rgb(0, 0, 0)'");
+    shouldBe("internals.systemColorForCSSValue('-apple-system-secondary-background', true, false)", "'rgb(28, 28, 30)'");
+    shouldBe("internals.systemColorForCSSValue('-apple-system-tertiary-background', true, false)", "'rgb(44, 44, 46)'");
+    shouldBe("internals.systemColorForCSSValue('-apple-system-grouped-background', true, false)", "'rgb(0, 0, 0)'");
+    shouldBe("internals.systemColorForCSSValue('-apple-system-secondary-grouped-background', true, false)", "'rgb(28, 28, 30)'");
+    shouldBe("internals.systemColorForCSSValue('-apple-system-tertiary-grouped-background', true, false)", "'rgb(44, 44, 46)'");
+    shouldBe("internals.systemColorForCSSValue('-apple-system-grid', true, false)", "'rgba(84, 84, 88, 0.6)'");
+    shouldBe("internals.systemColorForCSSValue('-apple-system-separator', true, false)", "'rgba(84, 84, 88, 0.6)'");
+    shouldBe("internals.systemColorForCSSValue('-apple-system-container-border', true, false)", "'rgba(84, 84, 88, 0.6)'");
+    shouldBe("internals.systemColorForCSSValue('-apple-system-selected-content-background', true, false)", "'rgb(58, 58, 60)'");
+    shouldBe("internals.systemColorForCSSValue('-apple-system-unemphasized-selected-content-background', true, false)", "'rgb(58, 58, 60)'");
+    shouldBe("internals.systemColorForCSSValue('-apple-system-brown', true, false)", "'rgb(172, 142, 104)'");
+    shouldBe("internals.systemColorForCSSValue('-apple-system-indigo', true, false)", "'rgb(94, 92, 230)'");
+    shouldBe("internals.systemColorForCSSValue('-apple-system-teal', true, false)", "'rgb(100, 210, 255)'");
+    shouldBe("internals.systemColorForCSSValue('-apple-wireless-playback-target-active', true, false)", "'rgb(10, 132, 255)'");
+    shouldBe("internals.systemColorForCSSValue('-apple-system-blue', true, false)", "'rgb(10, 132, 255)'");
+    shouldBe("internals.systemColorForCSSValue('-apple-system-gray', true, false)", "'rgb(142, 142, 147)'");
+    shouldBe("internals.systemColorForCSSValue('-apple-system-green', true, false)", "'rgb(48, 209, 88)'");
+    shouldBe("internals.systemColorForCSSValue('-apple-system-orange', true, false)", "'rgb(255, 159, 10)'");
+    shouldBe("internals.systemColorForCSSValue('-apple-system-pink', true, false)", "'rgb(255, 55, 95)'");
+    shouldBe("internals.systemColorForCSSValue('-apple-system-purple', true, false)", "'rgb(191, 90, 242)'");
+    shouldBe("internals.systemColorForCSSValue('-apple-system-red', true, false)", "'rgb(255, 69, 58)'");
+    shouldBe("internals.systemColorForCSSValue('-apple-system-yellow', true, false)", "'rgb(255, 214, 10)'");
+}
+
+</script>
+
+<script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

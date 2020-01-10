@@ -1,3 +1,22 @@
+2020-01-09  Per Arne Vollan  <pvollan@apple.com>
+
+        Map CSS value ID to system color in the UI process
+        https://bugs.webkit.org/show_bug.cgi?id=204314
+
+        Reviewed by Dean Jackson.
+
+        Create mapping between CSS value IDs and system colors in the UI process and send to the WebContent process
+        on process startup.
+
+        * Shared/WebProcessCreationParameters.cpp:
+        (WebKit::WebProcessCreationParameters::encode const):
+        (WebKit::WebProcessCreationParameters::decode):
+        * Shared/WebProcessCreationParameters.h:
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::WebProcessPool::platformInitializeWebProcess):
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::platformInitializeWebProcess):
+
 2020-01-10  Mark Lam  <mark.lam@apple.com>
 
         Gardening: simple build fix after r254119.
