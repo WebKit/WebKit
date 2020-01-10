@@ -6,6 +6,9 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 PASS internals.hasSandboxMachLookupAccessToXPCServiceName("com.apple.WebKit.WebContent", "com.apple.apple-extension-service") is false
 PASS internals.hasSandboxMachLookupAccessToXPCServiceName("com.apple.WebKit.WebContent", "com.apple.viewservice") is false
 PASS internals.hasSandboxMachLookupAccessToGlobalName("com.apple.WebKit.WebContent", "com.apple.TextInput") is false
+PASS internals.hasSandboxMachLookupAccessToGlobalName("com.apple.WebKit.WebContent", "com.apple.nehelper") is false
+PASS internals.hasSandboxMachLookupAccessToGlobalName("com.apple.WebKit.WebContent", "com.apple.nesessionmanager") is false
+PASS internals.hasSandboxMachLookupAccessToGlobalName("com.apple.WebKit.WebContent", "com.apple.nesessionmanager.content-filter") is false
 PASS internals.hasSandboxMachLookupAccessToGlobalName("com.apple.WebKit.WebContent", "com.apple.pluginkit.pkd") is false
 PASS internals.hasSandboxMachLookupAccessToGlobalName("com.apple.WebKit.WebContent", "com.apple.system.logger") is false
 

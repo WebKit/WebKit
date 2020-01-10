@@ -1,3 +1,19 @@
+2020-01-10  Brent Fulgham  <bfulgham@apple.com>
+
+        Remove 'com.apple.nehelper' from the WebContent sandbox.
+        https://bugs.webkit.org/show_bug.cgi?id=206025
+        <rdar://problem/58453508>
+
+        Reviewed by Per Arne Vollan.
+
+        Now that we generate a dynamic extension for 'com.apple.nehelper' and 'com.apple.nesessionmanager.content-filter',
+        we should remove the blanket allow rules from the sandbox.
+
+        * fast/sandbox/ios/sandbox-mach-lookup-expected.txt:
+        * fast/sandbox/ios/sandbox-mach-lookup.html:
+        * fast/sandbox/mac/sandbox-mach-lookup-expected.txt:
+        * fast/sandbox/mac/sandbox-mach-lookup.html:
+
 2020-01-10  youenn fablet  <youenn@apple.com>
 
         [WTR] Use short heart beat timer as a TestOption

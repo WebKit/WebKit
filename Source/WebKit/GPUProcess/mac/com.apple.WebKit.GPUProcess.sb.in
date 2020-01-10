@@ -690,15 +690,6 @@
 ;; CFNetwork
 (allow file-read-data (path "/private/var/db/nsurlstoraged/dafsaData.bin"))
 
-;; Network Extensions / VPN helper.
-(allow mach-lookup
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101500 || PLATFORM(MACCATALYST)
-    (global-name "com.apple.nesessionmanager.content-filter") ;; <rdar://problem/48442387>
-#else
-    (global-name "com.apple.nesessionmanager") ;; <rdar://problem/55570995>
-#endif
-    (global-name "com.apple.nehelper"))
-
 #if PLATFORM(MAC)
 ;; FIXME should be removed when <rdar://problem/9347205> + related radar in Safari is fixed
 (allow mach-lookup

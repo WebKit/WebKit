@@ -484,13 +484,6 @@
         (home-subpath "/Library/Dictionaries"))
 )
 
-(define-once (network-extensions-support)
-    ;; Network Extensions / VPN helper.
-    (allow mach-lookup (with report) (with telemetry)
-        (global-name "com.apple.nehelper")
-        (global-name "com.apple.nesessionmanager.content-filter")) ;; <rdar://problem/48442387>
-)
-
 (deny file-map-executable)
 
 (deny file-write-mount file-write-unmount)
@@ -743,8 +736,6 @@
 
 ;; Permit reading assets via MobileAsset framework.
 (asset-access 'with-media-playback)
-
-(network-extensions-support)
 
 ;; allow 3rd party applications to access nsurlstoraged's top level domain data cache
 (allow-well-known-system-group-container-literal-read
