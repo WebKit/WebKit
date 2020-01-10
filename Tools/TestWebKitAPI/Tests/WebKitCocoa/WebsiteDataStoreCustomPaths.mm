@@ -578,7 +578,7 @@ TEST(WebKit, ApplicationCacheDirectories)
     TestWebKitAPI::HTTPServer server({
         { "/index.html", { "<html manifest='test.appcache'>" } },
         { "/test.appcache", { "CACHE MANIFEST\nindex.html\ntest.mp4\n" } },
-        { "/test.mp4", { "test!", {{ "Content-Type", "video/test" }}}},
+        { "/test.mp4", { {{ "Content-Type", "video/test" }}, "test!" }},
     });
     
     NSURL *tempDir = [NSURL fileURLWithPath:[NSTemporaryDirectory() stringByAppendingPathComponent:@"CustomPathsTest"] isDirectory:YES];

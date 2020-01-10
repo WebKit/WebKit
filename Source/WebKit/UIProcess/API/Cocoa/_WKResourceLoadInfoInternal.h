@@ -25,22 +25,20 @@
 
 #pragma once
 
+#import "APIResourceLoadInfo.h"
+#import "WKObject.h"
+#import "_WKResourceLoadInfo.h"
+
 namespace WebKit {
-class AuthenticationChallengeProxy;
-struct ResourceLoadInfo;
-}
 
-namespace API {
-
-class ResourceLoadClient {
-public:
-    virtual ~ResourceLoadClient() = default;
-
-    virtual void didSendRequest(WebKit::ResourceLoadInfo&&, WebCore::ResourceRequest&&) const = 0;
-    virtual void didPerformHTTPRedirection(WebKit::ResourceLoadInfo&&, WebCore::ResourceResponse&&, WebCore::ResourceRequest&&) const = 0;
-    virtual void didReceiveChallenge(WebKit::ResourceLoadInfo&&, WebKit::AuthenticationChallengeProxy&) const = 0;
-    virtual void didReceiveResponse(WebKit::ResourceLoadInfo&&, WebCore::ResourceResponse&&) const = 0;
-    virtual void didCompleteWithError(WebKit::ResourceLoadInfo&&, WebCore::ResourceError&&) const = 0;
+template<> struct WrapperTraits<API::ResourceLoadInfo> {
+    using WrapperClass = _WKResourceLoadInfo;
 };
 
-} // namespace API
+}
+
+@interface _WKResourceLoadInfo () <WKObject> {
+@package
+    API::ObjectStorage<API::ResourceLoadInfo> _info;
+}
+@end

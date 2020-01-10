@@ -30,6 +30,7 @@
 #include <WebCore/ResourceResponse.h>
 
 namespace WebCore {
+class AuthenticationChallenge;
 class NetworkLoadMetrics;
 class SharedBuffer;
 enum class PolicyAction : uint8_t;
@@ -54,6 +55,7 @@ public:
     virtual void didFinishLoading(const WebCore::NetworkLoadMetrics&) = 0;
     virtual void didFailLoading(const WebCore::ResourceError&) = 0;
     virtual void didBlockAuthenticationChallenge() { };
+    virtual void didReceiveChallenge(const WebCore::AuthenticationChallenge&) { };
     virtual bool shouldCaptureExtraNetworkLoadMetrics() const { return false; }
 };
 

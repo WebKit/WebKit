@@ -325,6 +325,7 @@ struct NavigationActionData;
 struct PlatformPopupMenuData;
 struct PrintInfo;
 struct PDFContextMenu;
+struct ResourceLoadInfo;
 struct WebAutocorrectionData;
 struct WebHitTestResultData;
 struct WebNavigationDataStore;
@@ -470,7 +471,11 @@ public:
 
     WebInspectorProxy* inspector() const;
 
-    void willSendRequest(const WebCore::ResourceRequest&);
+    void resourceLoadDidSendRequest(ResourceLoadInfo&&, WebCore::ResourceRequest&&);
+    void resourceLoadDidPerformHTTPRedirection(ResourceLoadInfo&&, WebCore::ResourceResponse&&, WebCore::ResourceRequest&&);
+    void resourceLoadDidReceiveChallenge(ResourceLoadInfo&&, WebKit::AuthenticationChallengeProxy&);
+    void resourceLoadDidReceiveResponse(ResourceLoadInfo&&, WebCore::ResourceResponse&&);
+    void resourceLoadDidCompleteWithError(ResourceLoadInfo&&, WebCore::ResourceError&&);
 
     void didChangeInspectorFrontendCount(unsigned count) { m_inspectorFrontendCount = count; }
     unsigned inspectorFrontendCount() const { return m_inspectorFrontendCount; }

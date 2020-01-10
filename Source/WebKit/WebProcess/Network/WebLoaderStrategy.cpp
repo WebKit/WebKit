@@ -526,9 +526,10 @@ Optional<WebLoaderStrategy::SyncLoadResult> WebLoaderStrategy::tryLoadingSynchro
 
 void WebLoaderStrategy::loadResourceSynchronously(FrameLoader& frameLoader, unsigned long resourceLoadIdentifier, const ResourceRequest& request, ClientCredentialPolicy clientCredentialPolicy,  const FetchOptions& options, const HTTPHeaderMap& originalRequestHeaders, ResourceError& error, ResourceResponse& response, Vector<char>& data)
 {
-    WebFrameLoaderClient* webFrameLoaderClient = toWebFrameLoaderClient(frameLoader.client());
-    WebFrame* webFrame = webFrameLoaderClient ? webFrameLoaderClient->webFrame() : nullptr;
-    WebPage* webPage = webFrame ? webFrame->page() : nullptr;
+    auto* webFrameLoaderClient = toWebFrameLoaderClient(frameLoader.client());
+    auto* webFrame = webFrameLoaderClient ? webFrameLoaderClient->webFrame() : nullptr;
+    auto* webPage = webFrame ? webFrame->page() : nullptr;
+    auto* page = webPage ? webPage->corePage() : nullptr;
 
     auto webPageProxyID = webPage ? webPage->webPageProxyIdentifier() : WebPageProxyIdentifier { };
     auto pageID = webPage ? webPage->identifier() : PageIdentifier { };
@@ -579,6 +580,8 @@ void WebLoaderStrategy::loadResourceSynchronously(FrameLoader& frameLoader, unsi
             loadParameters.cspResponseHeaders = contentSecurityPolicy->responseHeaders();
     }
     loadParameters.originalRequestHeaders = originalRequestHeaders;
+    if (page)
+        loadParameters.pageHasResourceLoadClient = page->hasResourceLoadClient();
 
     data.shrink(0);
 
@@ -591,7 +594,7 @@ void WebLoaderStrategy::loadResourceSynchronously(FrameLoader& frameLoader, unsi
 
     if (!WebProcess::singleton().ensureNetworkProcessConnection().connection().sendSync(Messages::NetworkConnectionToWebProcess::PerformSynchronousLoad(loadParameters), Messages::NetworkConnectionToWebProcess::PerformSynchronousLoad::Reply(error, response, data), 0)) {
         WEBLOADERSTRATEGY_WITH_FRAMELOADER_RELEASE_LOG_ERROR_IF_ALLOWED("loadResourceSynchronously: failed sending synchronous network process message");
-        if (auto* page = webPage ? webPage->corePage() : nullptr)
+        if (page)
             page->diagnosticLoggingClient().logDiagnosticMessage(WebCore::DiagnosticLoggingKeys::internalErrorKey(), WebCore::DiagnosticLoggingKeys::synchronousMessageFailedKey(), WebCore::ShouldSample::No);
         response = ResourceResponse();
         error = internalError(request.url());
@@ -644,6 +647,8 @@ void WebLoaderStrategy::startPingLoad(Frame& frame, ResourceRequest& request, co
         if (auto* contentSecurityPolicy = document->contentSecurityPolicy())
             loadParameters.cspResponseHeaders = contentSecurityPolicy->responseHeaders();
     }
+    if (auto* page = document->page())
+        loadParameters.pageHasResourceLoadClient = page->hasResourceLoadClient();
 
 #if ENABLE(CONTENT_EXTENSIONS)
     loadParameters.mainDocumentURL = document->topDocument().url();

@@ -1,5 +1,89 @@
 2020-01-10  Alex Christensen  <achristensen@webkit.org>
 
+        Expand _WKResourceLoadDelegate callbacks
+        https://bugs.webkit.org/show_bug.cgi?id=206037
+        <rdar://problem/57132290>
+
+        Reviewed by Youenn Fablet.
+
+        Add 5 informative delegate callbacks at these times during the loading process:
+        1. When a request is sent.
+        2. When a redirect happens.
+        3. When a challenge happens.
+        4. When a response is received.
+        5. When loading completes or fails.
+
+        As mentioned in r254183 these callbacks are only called when a _WKResourceLoadDelegate is given to a WKWebView.
+        We add a new struct ResourceLoadInfo which will need to be expanded containing currently only the load identifier.
+        Covered by new API tests which verify the validity of the sent information.
+
+        * NetworkProcess/NetworkLoad.cpp:
+        (WebKit::NetworkLoad::didReceiveChallenge):
+        * NetworkProcess/NetworkLoadClient.h:
+        (WebKit::NetworkLoadClient::didReceiveChallenge):
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::generateResourceLoadID):
+        (WebKit::NetworkResourceLoader::startNetworkLoad):
+        (WebKit::NetworkResourceLoader::resourceLoadInfo):
+        (WebKit::NetworkResourceLoader::didReceiveResponse):
+        (WebKit::NetworkResourceLoader::didFinishLoading):
+        (WebKit::NetworkResourceLoader::didFailLoading):
+        (WebKit::NetworkResourceLoader::didReceiveChallenge):
+        Add a way to send a message informing that a challenge happened with information gathered from the NetworkResourceLoader,
+        which previously was not informed of challenges because the challenges went directly from the NetworkLoad to the AuthenticationManager.
+        (WebKit::NetworkResourceLoader::willSendRedirectedRequest):
+        (WebKit::NetworkResourceLoader::continueWillSendRequest):
+        (WebKit::m_shouldCaptureExtraNetworkLoadMetrics): Deleted.
+        * NetworkProcess/NetworkResourceLoader.h:
+        * Shared/API/APIObject.h:
+        * Shared/Cocoa/APIObject.mm:
+        (API::Object::newObject):
+        * Shared/ResourceLoadInfo.h: Added.
+        (WebKit::ResourceLoadInfo::encode const):
+        (WebKit::ResourceLoadInfo::decode):
+        * SourcesCocoa.txt:
+        * UIProcess/API/APIResourceLoadClient.h:
+        * UIProcess/API/APIResourceLoadInfo.h: Added.
+        * UIProcess/API/Cocoa/_WKResourceLoadDelegate.h:
+        * UIProcess/API/Cocoa/_WKResourceLoadInfo.h: Added.
+        * UIProcess/API/Cocoa/_WKResourceLoadInfo.mm: Added.
+        (-[_WKResourceLoadInfo dealloc]):
+        (-[_WKResourceLoadInfo resourceLoadID]):
+        (-[_WKResourceLoadInfo _apiObject]):
+        * UIProcess/API/Cocoa/_WKResourceLoadInfoInternal.h: Added.
+        * UIProcess/Authentication/AuthenticationChallengeProxy.cpp:
+        (WebKit::AuthenticationChallengeProxy::AuthenticationChallengeProxy):
+        An AuthenticationChallengeProxy was only used for challenges that needed credentials, so they wrapped a CompletionHandler.
+        This new type of informative-only challenge will be given a null CompletionHandler, which means no action can be taken.
+        * UIProcess/Cocoa/ResourceLoadDelegate.h:
+        * UIProcess/Cocoa/ResourceLoadDelegate.mm:
+        (WebKit::ResourceLoadDelegate::setDelegate):
+        (WebKit::ResourceLoadDelegate::ResourceLoadClient::didSendRequest const):
+        (WebKit::ResourceLoadDelegate::ResourceLoadClient::didPerformHTTPRedirection const):
+        (WebKit::ResourceLoadDelegate::ResourceLoadClient::didReceiveChallenge const):
+        (WebKit::ResourceLoadDelegate::ResourceLoadClient::didReceiveResponse const):
+        (WebKit::ResourceLoadDelegate::ResourceLoadClient::didCompleteWithError const):
+        (WebKit::ResourceLoadDelegate::ResourceLoadClient::willSendRequest const): Deleted.
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::resourceLoadDidSendRequest):
+        (WebKit::NetworkProcessProxy::resourceLoadDidPerformHTTPRedirection):
+        (WebKit::NetworkProcessProxy::resourceLoadDidReceiveChallenge):
+        (WebKit::NetworkProcessProxy::resourceLoadDidReceiveResponse):
+        (WebKit::NetworkProcessProxy::resourceLoadDidCompleteWithError):
+        (WebKit::NetworkProcessProxy::pageWillSendRequest): Deleted.
+        * UIProcess/Network/NetworkProcessProxy.h:
+        * UIProcess/Network/NetworkProcessProxy.messages.in:
+        * UIProcess/WebPageProxy.cpp:
+        * UIProcess/WebPageProxy.h:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/Network/WebLoaderStrategy.cpp:
+        (WebKit::WebLoaderStrategy::loadResourceSynchronously):
+        (WebKit::WebLoaderStrategy::startPingLoad):
+        * WebProcess/Network/WebResourceLoader.cpp:
+        (WebKit::WebResourceLoader::willSendRequest):
+
+2020-01-10  Alex Christensen  <achristensen@webkit.org>
+
         Add SPI to enable TLS 1.0 and 1.1 in WKWebViews
         https://bugs.webkit.org/show_bug.cgi?id=206046
 

@@ -189,6 +189,8 @@ void NetworkLoad::willPerformHTTPRedirection(ResourceResponse&& redirectResponse
 
 void NetworkLoad::didReceiveChallenge(AuthenticationChallenge&& challenge, ChallengeCompletionHandler&& completionHandler)
 {
+    m_client.get().didReceiveChallenge(challenge);
+
     auto scheme = challenge.protectionSpace().authenticationScheme();
     bool isTLSHandshake = scheme == ProtectionSpaceAuthenticationSchemeServerTrustEvaluationRequested
         || scheme == ProtectionSpaceAuthenticationSchemeClientCertificateRequested;

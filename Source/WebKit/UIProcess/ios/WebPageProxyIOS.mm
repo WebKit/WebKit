@@ -48,6 +48,7 @@
 #import "RemoteLayerTreeTransaction.h"
 #import "RemoteScrollingCoordinatorProxy.h"
 #import "ShareableResource.h"
+#import "UIKitSPI.h"
 #import "UserData.h"
 #import "UserInterfaceIdiom.h"
 #import "VersionChecks.h"

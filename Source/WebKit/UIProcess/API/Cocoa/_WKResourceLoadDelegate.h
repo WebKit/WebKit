@@ -25,13 +25,19 @@
 
 #import <WebKit/WKFoundation.h>
 
+@class _WKResourceLoadInfo;
+
 NS_ASSUME_NONNULL_BEGIN
 
 WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA))
 @protocol _WKResourceLoadDelegate <NSObject>
 @optional
 
-- (void)webView:(WKWebView *)webView willSendRequest:(NSURLRequest *)request;
+- (void)webView:(WKWebView *)webView resourceLoad:(_WKResourceLoadInfo *)resourceLoad didSendRequest:(NSURLRequest *)request;
+- (void)webView:(WKWebView *)webView resourceLoad:(_WKResourceLoadInfo *)resourceLoad didPerformHTTPRedirection:(NSURLResponse *)response newRequest:(NSURLRequest *)request;
+- (void)webView:(WKWebView *)webView resourceLoad:(_WKResourceLoadInfo *)resourceLoad didReceiveChallenge:(NSURLAuthenticationChallenge *)challenge;
+- (void)webView:(WKWebView *)webView resourceLoad:(_WKResourceLoadInfo *)resourceLoad didReceiveResponse:(NSURLResponse *)response;
+- (void)webView:(WKWebView *)webView resourceLoad:(_WKResourceLoadInfo *)resourceLoad didCompleteWithError:(NSError * __nullable)error;
 
 @end
 

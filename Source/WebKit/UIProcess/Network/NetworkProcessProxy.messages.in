@@ -68,5 +68,9 @@ messages -> NetworkProcessProxy LegacyReceiver NotRefCounted {
 
     RequestStorageSpace(PAL::SessionID sessionID, struct WebCore::ClientOrigin origin, uint64_t quota, uint64_t currentSize, uint64_t spaceRequired) -> (Optional<uint64_t> newQuota) Async
     
-    PageWillSendRequest(WebKit::WebPageProxyIdentifier pageIdentifier, WebCore::ResourceRequest request)
+    ResourceLoadDidSendRequest(WebKit::WebPageProxyIdentifier pageIdentifier, struct WebKit::ResourceLoadInfo resourceLoadInfo, WebCore::ResourceRequest request)
+    ResourceLoadDidPerformHTTPRedirection(WebKit::WebPageProxyIdentifier pageIdentifier, struct WebKit::ResourceLoadInfo resourceLoadInfo, WebCore::ResourceResponse resourceResponse, WebCore::ResourceRequest request)
+    ResourceLoadDidReceiveChallenge(WebKit::WebPageProxyIdentifier pageIdentifier, struct WebKit::ResourceLoadInfo resourceLoadInfo, WebCore::AuthenticationChallenge challenge)
+    ResourceLoadDidReceiveResponse(WebKit::WebPageProxyIdentifier pageIdentifier, struct WebKit::ResourceLoadInfo resourceLoadInfo, WebCore::ResourceResponse response)
+    ResourceLoadDidCompleteWithError(WebKit::WebPageProxyIdentifier pageIdentifier, struct WebKit::ResourceLoadInfo resourceLoadInfo, WebCore::ResourceError error)
 }

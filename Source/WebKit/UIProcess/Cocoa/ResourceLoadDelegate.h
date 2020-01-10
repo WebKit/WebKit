@@ -57,7 +57,11 @@ private:
 
     private:
         // API::ResourceLoadClient
-        void willSendRequest(const WebCore::ResourceRequest&) const final;
+        void didSendRequest(ResourceLoadInfo&&, WebCore::ResourceRequest&&) const final;
+        void didPerformHTTPRedirection(ResourceLoadInfo&&, WebCore::ResourceResponse&&, WebCore::ResourceRequest&&) const final;
+        void didReceiveChallenge(ResourceLoadInfo&&, WebKit::AuthenticationChallengeProxy&) const final;
+        void didReceiveResponse(ResourceLoadInfo&&, WebCore::ResourceResponse&&) const final;
+        void didCompleteWithError(ResourceLoadInfo&&, WebCore::ResourceError&&) const final;
 
         ResourceLoadDelegate& m_resourceLoadDelegate;
     };
@@ -66,7 +70,11 @@ private:
     WeakObjCPtr<id <_WKResourceLoadDelegate> > m_delegate;
 
     struct {
-        bool willSendRequest : 1;
+        bool didSendRequest : 1;
+        bool didPerformHTTPRedirection : 1;
+        bool didReceiveChallenge : 1;
+        bool didReceiveResponse : 1;
+        bool didCompleteWithError : 1;
     } m_delegateMethods;
 };
 

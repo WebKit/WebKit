@@ -25,25 +25,57 @@
 
 #import "config.h"
 
+#import "HTTPServer.h"
 #import "PlatformUtilities.h"
+#import "TCPServer.h"
 #import "TestNavigationDelegate.h"
+#import "TestWKWebView.h"
 #import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/WebKit.h>
 #import <WebKit/_WKResourceLoadDelegate.h>
+#import <WebKit/_WKResourceLoadInfo.h>
 #import <wtf/RetainPtr.h>
 
 @interface TestResourceLoadDelegate : NSObject <_WKResourceLoadDelegate>
 
-@property (nonatomic, copy) void (^willSendRequest)(WKWebView *, NSURLRequest *);
+@property (nonatomic, copy) void (^didSendRequest)(WKWebView *, _WKResourceLoadInfo *, NSURLRequest *);
+@property (nonatomic, copy) void (^didPerformHTTPRedirection)(WKWebView *, _WKResourceLoadInfo *, NSURLResponse *, NSURLRequest *);
+@property (nonatomic, copy) void (^didReceiveChallenge)(WKWebView *, _WKResourceLoadInfo *, NSURLAuthenticationChallenge *);
+@property (nonatomic, copy) void (^didReceiveResponse)(WKWebView *, _WKResourceLoadInfo *, NSURLResponse *);
+@property (nonatomic, copy) void (^didCompleteWithError)(WKWebView *, _WKResourceLoadInfo *, NSError *);
 
 @end
 
 @implementation TestResourceLoadDelegate
 
-- (void)webView:(WKWebView *)webView willSendRequest:(NSURLRequest *)request
+- (void)webView:(WKWebView *)webView resourceLoad:(_WKResourceLoadInfo *)resourceLoad didSendRequest:(NSURLRequest *)request
 {
-    if (_willSendRequest)
-        _willSendRequest(webView, request);
+    if (_didSendRequest)
+        _didSendRequest(webView, resourceLoad, request);
+}
+
+- (void)webView:(WKWebView *)webView resourceLoad:(_WKResourceLoadInfo *)resourceLoad didPerformHTTPRedirection:(NSURLResponse *)response newRequest:(NSURLRequest *)request
+{
+    if (_didPerformHTTPRedirection)
+        _didPerformHTTPRedirection(webView, resourceLoad, response, request);
+}
+
+- (void)webView:(WKWebView *)webView resourceLoad:(_WKResourceLoadInfo *)resourceLoad didReceiveChallenge:(NSURLAuthenticationChallenge *)challenge
+{
+    if (_didReceiveChallenge)
+        _didReceiveChallenge(webView, resourceLoad, challenge);
+}
+
+- (void)webView:(WKWebView *)webView resourceLoad:(_WKResourceLoadInfo *)resourceLoad didReceiveResponse:(NSURLResponse *)response
+{
+    if (_didReceiveResponse)
+        _didReceiveResponse(webView, resourceLoad, response);
+}
+
+- (void)webView:(WKWebView *)webView resourceLoad:(_WKResourceLoadInfo *)resourceLoad didCompleteWithError:(NSError *)error
+{
+    if (_didCompleteWithError)
+        _didCompleteWithError(webView, resourceLoad, error);
 }
 
 @end
@@ -62,7 +94,7 @@ TEST(ResourceLoadDelegate, Basic)
     __block RetainPtr<NSURLRequest> requestFromDelegate;
     auto resourceLoadDelegate = adoptNS([TestResourceLoadDelegate new]);
     [webView _setResourceLoadDelegate:resourceLoadDelegate.get()];
-    [resourceLoadDelegate setWillSendRequest:^(WKWebView *, NSURLRequest *request) {
+    [resourceLoadDelegate setDidSendRequest:^(WKWebView *, _WKResourceLoadInfo *, NSURLRequest *request) {
         requestFromDelegate = request;
     }];
 
@@ -71,4 +103,191 @@ TEST(ResourceLoadDelegate, Basic)
     TestWebKitAPI::Util::run(&done);
     
     EXPECT_WK_STREQ(requestLoaded.get().URL.absoluteString, requestFromDelegate.get().URL.absoluteString);
+}
+
+#if HAVE(NETWORK_FRAMEWORK)
+
+TEST(ResourceLoadDelegate, BeaconAndSyncXHR)
+{
+    TestWebKitAPI::HTTPServer server({
+        { "/", { "hello" } },
+        { "/xhrTarget", { "hi" } },
+        { "/beaconTarget", { "hi" } },
+    });
+
+    auto webView = adoptNS([TestWKWebView new]);
+    [webView synchronouslyLoadRequest:server.request()];
+
+    __block RetainPtr<NSURLRequest> requestFromDelegate;
+    __block bool receivedCallback = false;
+    auto resourceLoadDelegate = adoptNS([TestResourceLoadDelegate new]);
+    [webView _setResourceLoadDelegate:resourceLoadDelegate.get()];
+    [resourceLoadDelegate setDidSendRequest:^(WKWebView *, _WKResourceLoadInfo *, NSURLRequest *request) {
+        requestFromDelegate = request;
+        receivedCallback = true;
+    }];
+
+    [webView evaluateJavaScript:@"navigator.sendBeacon('/beaconTarget')" completionHandler:nil];
+    TestWebKitAPI::Util::run(&receivedCallback);
+    EXPECT_WK_STREQ("/beaconTarget", requestFromDelegate.get().URL.path);
+
+    receivedCallback = false;
+    [webView evaluateJavaScript:
+        @"var request = new XMLHttpRequest();"
+        "var asynchronous = false;"
+        "request.open('GET', 'xhrTarget', asynchronous);"
+        "request.send();" completionHandler:nil];
+    TestWebKitAPI::Util::run(&receivedCallback);
+    EXPECT_WK_STREQ("/xhrTarget", requestFromDelegate.get().URL.path);
+}
+
+TEST(ResourceLoadDelegate, Redirect)
+{
+    TestWebKitAPI::HTTPServer server({
+        { "/", { 301, {{ "Location", "/redirectTarget" }} } },
+        { "/redirectTarget", { "hi" } },
+    });
+
+    __block bool done = false;
+    auto resourceLoadDelegate = adoptNS([TestResourceLoadDelegate new]);
+    [resourceLoadDelegate setDidPerformHTTPRedirection:^(WKWebView *, _WKResourceLoadInfo *, NSURLResponse *response, NSURLRequest *request) {
+        EXPECT_WK_STREQ(response.URL.path, "/");
+        EXPECT_WK_STREQ(request.URL.path, "/redirectTarget");
+        done = true;
+    }];
+
+    auto webView = adoptNS([WKWebView new]);
+    [webView _setResourceLoadDelegate:resourceLoadDelegate.get()];
+    [webView loadRequest:server.request()];
+    TestWebKitAPI::Util::run(&done);
+}
+
+TEST(ResourceLoadDelegate, LoadInfo)
+{
+    TestWebKitAPI::HTTPServer server({
+        { "/", { "<iframe src='iframeSrc'></iframe>" } },
+        { "/iframeSrc", { "<script>fetch('fetchTarget')</script>" } },
+        { "/fetchTarget", { "hi" } },
+    });
+
+    enum class Callback {
+        DidSendRequest,
+        DidReceiveResponse,
+        DidCompleteWithError,
+    };
+
+    __block Vector<Callback> callbacks;
+    __block Vector<RetainPtr<WKWebView>> webViews;
+    __block Vector<RetainPtr<_WKResourceLoadInfo>> loadInfos;
+    __block Vector<RetainPtr<id>> otherParameters;
+
+    __block size_t resourceCompletionCount = 0;
+    auto delegate = adoptNS([TestResourceLoadDelegate new]);
+    [delegate setDidSendRequest:^(WKWebView *webView, _WKResourceLoadInfo *loadInfo, NSURLRequest *request) {
+        callbacks.append(Callback::DidSendRequest);
+        webViews.append(webView);
+        loadInfos.append(loadInfo);
+        otherParameters.append(request);
+    }];
+    [delegate setDidReceiveResponse:^(WKWebView *webView, _WKResourceLoadInfo *loadInfo, NSURLResponse *response) {
+        callbacks.append(Callback::DidReceiveResponse);
+        webViews.append(webView);
+        loadInfos.append(loadInfo);
+        otherParameters.append(response);
+    }];
+    [delegate setDidCompleteWithError:^(WKWebView *webView, _WKResourceLoadInfo *loadInfo, NSError *error) {
+        callbacks.append(Callback::DidCompleteWithError);
+        webViews.append(webView);
+        loadInfos.append(loadInfo);
+        otherParameters.append(error);
+        resourceCompletionCount++;
+    }];
+
+    auto webView = adoptNS([WKWebView new]);
+    [webView _setResourceLoadDelegate:delegate.get()];
+    [webView loadRequest:server.request()];
+    while (resourceCompletionCount < 3)
+        TestWebKitAPI::Util::spinRunLoop();
+
+    Vector<Callback> expectedCallbacks {
+        Callback::DidSendRequest,
+        Callback::DidReceiveResponse,
+        Callback::DidCompleteWithError,
+        Callback::DidSendRequest,
+        Callback::DidReceiveResponse,
+        Callback::DidCompleteWithError,
+        Callback::DidSendRequest,
+        Callback::DidReceiveResponse,
+        Callback::DidCompleteWithError
+    };
+    EXPECT_EQ(callbacks, expectedCallbacks);
+
+    EXPECT_EQ(webViews.size(), 9ull);
+    for (auto& view : webViews)
+        EXPECT_EQ(webView.get(), view.get());
+
+    EXPECT_EQ(loadInfos.size(), 9ull);
+    EXPECT_EQ(loadInfos[0].get().resourceLoadID, loadInfos[1].get().resourceLoadID);
+    EXPECT_EQ(loadInfos[0].get().resourceLoadID, loadInfos[2].get().resourceLoadID);
+    EXPECT_NE(loadInfos[0].get().resourceLoadID, loadInfos[3].get().resourceLoadID);
+    EXPECT_EQ(loadInfos[3].get().resourceLoadID, loadInfos[4].get().resourceLoadID);
+    EXPECT_EQ(loadInfos[3].get().resourceLoadID, loadInfos[5].get().resourceLoadID);
+    EXPECT_NE(loadInfos[3].get().resourceLoadID, loadInfos[6].get().resourceLoadID);
+    EXPECT_EQ(loadInfos[6].get().resourceLoadID, loadInfos[7].get().resourceLoadID);
+    EXPECT_EQ(loadInfos[6].get().resourceLoadID, loadInfos[8].get().resourceLoadID);
+    EXPECT_NE(loadInfos[6].get().resourceLoadID, loadInfos[0].get().resourceLoadID);
+
+    EXPECT_EQ(otherParameters.size(), 9ull);
+    EXPECT_WK_STREQ(NSStringFromClass([otherParameters[0] class]), "NSMutableURLRequest");
+    EXPECT_WK_STREQ([otherParameters[0] URL].path, "/");
+    EXPECT_WK_STREQ(NSStringFromClass([otherParameters[1] class]), "NSHTTPURLResponse");
+    EXPECT_WK_STREQ([otherParameters[1] URL].path, "/");
+    EXPECT_EQ(otherParameters[2], nil);
+    EXPECT_WK_STREQ(NSStringFromClass([otherParameters[3] class]), "NSMutableURLRequest");
+    EXPECT_WK_STREQ([otherParameters[3] URL].path, "/iframeSrc");
+    EXPECT_WK_STREQ(NSStringFromClass([otherParameters[4] class]), "NSHTTPURLResponse");
+    EXPECT_WK_STREQ([otherParameters[4] URL].path, "/iframeSrc");
+    EXPECT_EQ(otherParameters[5], nil);
+    EXPECT_WK_STREQ(NSStringFromClass([otherParameters[6] class]), "NSMutableURLRequest");
+    EXPECT_WK_STREQ([otherParameters[6] URL].path, "/fetchTarget");
+    EXPECT_WK_STREQ(NSStringFromClass([otherParameters[7] class]), "NSHTTPURLResponse");
+    EXPECT_WK_STREQ([otherParameters[7] URL].path, "/fetchTarget");
+    EXPECT_EQ(otherParameters[8], nil);
+}
+
+#endif // HAVE(NETWORK_FRAMEWORK)
+
+TEST(ResourceLoadDelegate, Challenge)
+{
+    using namespace TestWebKitAPI;
+    TCPServer server(TCPServer::Protocol::HTTPS, [] (SSL* ssl) {
+        EXPECT_TRUE(!!ssl); // Connection should succeed after a server trust challenge.
+        // Send nothing to make the resource load fail.
+    });
+
+    auto navigationDelegate = adoptNS([TestNavigationDelegate new]);
+    [navigationDelegate setDidReceiveAuthenticationChallenge:^(WKWebView *, NSURLAuthenticationChallenge *challenge, void (^completionHandler)(NSURLSessionAuthChallengeDisposition, NSURLCredential *)) {
+        EXPECT_WK_STREQ(challenge.protectionSpace.authenticationMethod, NSURLAuthenticationMethodServerTrust);
+        completionHandler(NSURLSessionAuthChallengeUseCredential, [NSURLCredential credentialForTrust:challenge.protectionSpace.serverTrust]);
+    }];
+
+    __block bool receivedErrorNotification = false;
+    __block bool receivedChallengeNotificiation = false;
+    auto resourceLoadDelegate = adoptNS([TestResourceLoadDelegate new]);
+    [resourceLoadDelegate setDidReceiveChallenge:^(WKWebView *, _WKResourceLoadInfo *, NSURLAuthenticationChallenge *challenge) {
+        EXPECT_WK_STREQ(challenge.protectionSpace.authenticationMethod, NSURLAuthenticationMethodServerTrust);
+        receivedChallengeNotificiation = true;
+    }];
+    [resourceLoadDelegate setDidCompleteWithError:^(WKWebView *, _WKResourceLoadInfo *, NSError *error) {
+        EXPECT_EQ(error.code, kCFURLErrorCannotConnectToHost);
+        EXPECT_WK_STREQ(error.domain, NSURLErrorDomain);
+        receivedErrorNotification = true;
+    }];
+
+    auto webView = adoptNS([WKWebView new]);
+    [webView setNavigationDelegate:navigationDelegate.get()];
+    [webView _setResourceLoadDelegate:resourceLoadDelegate.get()];
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"https://127.0.0.1:%d/", server.port()]]]];
+    TestWebKitAPI::Util::run(&receivedErrorNotification);
+    EXPECT_TRUE(receivedChallengeNotificiation);
 }

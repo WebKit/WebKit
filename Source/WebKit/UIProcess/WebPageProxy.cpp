@@ -5921,10 +5921,34 @@ WebInspectorProxy* WebPageProxy::inspector() const
     return m_inspector.get();
 }
 
-void WebPageProxy::willSendRequest(const WebCore::ResourceRequest& request)
+void WebPageProxy::resourceLoadDidSendRequest(ResourceLoadInfo&& loadInfo, WebCore::ResourceRequest&& request)
 {
     if (m_resourceLoadClient)
-        m_resourceLoadClient->willSendRequest(request);
+        m_resourceLoadClient->didSendRequest(WTFMove(loadInfo), WTFMove(request));
+}
+
+void WebPageProxy::resourceLoadDidPerformHTTPRedirection(ResourceLoadInfo&& loadInfo, WebCore::ResourceResponse&& response, WebCore::ResourceRequest&& request)
+{
+    if (m_resourceLoadClient)
+        m_resourceLoadClient->didPerformHTTPRedirection(WTFMove(loadInfo), WTFMove(response), WTFMove(request));
+}
+
+void WebPageProxy::resourceLoadDidReceiveChallenge(ResourceLoadInfo&& loadInfo, WebKit::AuthenticationChallengeProxy& challenge)
+{
+    if (m_resourceLoadClient)
+        m_resourceLoadClient->didReceiveChallenge(WTFMove(loadInfo), challenge);
+}
+
+void WebPageProxy::resourceLoadDidReceiveResponse(ResourceLoadInfo&& loadInfo, WebCore::ResourceResponse&& response)
+{
+    if (m_resourceLoadClient)
+        m_resourceLoadClient->didReceiveResponse(WTFMove(loadInfo), WTFMove(response));
+}
+
+void WebPageProxy::resourceLoadDidCompleteWithError(ResourceLoadInfo&& loadInfo, WebCore::ResourceError&& error)
+{
+    if (m_resourceLoadClient)
+        m_resourceLoadClient->didCompleteWithError(WTFMove(loadInfo), WTFMove(error));
 }
 
 #if ENABLE(FULLSCREEN_API)

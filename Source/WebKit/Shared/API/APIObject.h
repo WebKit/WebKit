@@ -71,6 +71,7 @@ public:
         ProtectionSpace,
         RenderLayer,
         RenderObject,
+        ResourceLoadInfo,
         SecurityOrigin,
         SessionState,
         SerializedScriptValue,

@@ -23,24 +23,16 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+NS_ASSUME_NONNULL_BEGIN
 
-namespace WebKit {
-class AuthenticationChallengeProxy;
-struct ResourceLoadInfo;
-}
+WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA))
+@interface _WKResourceLoadInfo : NSObject
 
-namespace API {
++ (instancetype)new NS_UNAVAILABLE;
+- (instancetype)init NS_UNAVAILABLE;
 
-class ResourceLoadClient {
-public:
-    virtual ~ResourceLoadClient() = default;
+@property (nonatomic, readonly) uint64_t resourceLoadID;
 
-    virtual void didSendRequest(WebKit::ResourceLoadInfo&&, WebCore::ResourceRequest&&) const = 0;
-    virtual void didPerformHTTPRedirection(WebKit::ResourceLoadInfo&&, WebCore::ResourceResponse&&, WebCore::ResourceRequest&&) const = 0;
-    virtual void didReceiveChallenge(WebKit::ResourceLoadInfo&&, WebKit::AuthenticationChallengeProxy&) const = 0;
-    virtual void didReceiveResponse(WebKit::ResourceLoadInfo&&, WebCore::ResourceResponse&&) const = 0;
-    virtual void didCompleteWithError(WebKit::ResourceLoadInfo&&, WebCore::ResourceError&&) const = 0;
-};
+@end
 
-} // namespace API
+NS_ASSUME_NONNULL_END

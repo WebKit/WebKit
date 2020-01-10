@@ -452,13 +452,50 @@ void NetworkProcessProxy::logGlobalDiagnosticMessageWithValue(const String& mess
         page->logDiagnosticMessageWithValue(message, description, value, significantFigures, shouldSample);
 }
 
-void NetworkProcessProxy::pageWillSendRequest(WebPageProxyIdentifier pageID, const WebCore::ResourceRequest& request)
+void NetworkProcessProxy::resourceLoadDidSendRequest(WebPageProxyIdentifier pageID, ResourceLoadInfo&& loadInfo, WebCore::ResourceRequest&& request)
 {
     auto* page = WebProcessProxy::webPage(pageID);
     if (!page)
         return;
 
-    page->willSendRequest(request);
+    page->resourceLoadDidSendRequest(WTFMove(loadInfo), WTFMove(request));
+}
+
+void NetworkProcessProxy::resourceLoadDidPerformHTTPRedirection(WebPageProxyIdentifier pageID, ResourceLoadInfo&& loadInfo, WebCore::ResourceResponse&& response, WebCore::ResourceRequest&& request)
+{
+    auto* page = WebProcessProxy::webPage(pageID);
+    if (!page)
+        return;
+
+    page->resourceLoadDidPerformHTTPRedirection(WTFMove(loadInfo), WTFMove(response), WTFMove(request));
+}
+
+void NetworkProcessProxy::resourceLoadDidReceiveChallenge(WebPageProxyIdentifier pageID, ResourceLoadInfo&& loadInfo, WebCore::AuthenticationChallenge&& challenge)
+{
+    auto* page = WebProcessProxy::webPage(pageID);
+    if (!page)
+        return;
+
+    auto challengeProxy = AuthenticationChallengeProxy::create(WTFMove(challenge), 0, *connection(), nullptr);
+    page->resourceLoadDidReceiveChallenge(WTFMove(loadInfo), challengeProxy.get());
+}
+
+void NetworkProcessProxy::resourceLoadDidReceiveResponse(WebPageProxyIdentifier pageID, ResourceLoadInfo&& loadInfo, WebCore::ResourceResponse&& response)
+{
+    auto* page = WebProcessProxy::webPage(pageID);
+    if (!page)
+        return;
+
+    page->resourceLoadDidReceiveResponse(WTFMove(loadInfo), WTFMove(response));
+}
+
+void NetworkProcessProxy::resourceLoadDidCompleteWithError(WebPageProxyIdentifier pageID, ResourceLoadInfo&& loadInfo, WebCore::ResourceError&& error)
+{
+    auto* page = WebProcessProxy::webPage(pageID);
+    if (!page)
+        return;
+
+    page->resourceLoadDidCompleteWithError(WTFMove(loadInfo), WTFMove(error));
 }
 
 #if ENABLE(RESOURCE_LOAD_STATISTICS)

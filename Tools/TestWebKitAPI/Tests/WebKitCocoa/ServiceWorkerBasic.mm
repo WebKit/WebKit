@@ -1705,7 +1705,7 @@ TEST(ServiceWorkers, ThrottleCrash)
 
     TestWebKitAPI::HTTPServer server({
         { "/", { mainBytes } },
-        { "/sw.js", { scriptBytes, {{ "Content-Type", "application/javascript" }} } },
+        { "/sw.js", { {{ "Content-Type", "application/javascript" }}, scriptBytes } },
     });
 
     auto navigationDelegate = adoptNS([[TestNavigationDelegate alloc] init]);

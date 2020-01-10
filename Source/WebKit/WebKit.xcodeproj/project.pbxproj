@@ -1170,6 +1170,8 @@
 		5CB2378C1DF0DE6E00117AA3 /* _WKWebsitePolicies.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CB237891DF0DD4300117AA3 /* _WKWebsitePolicies.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5CB2378E1DF0E0D300117AA3 /* _WKWebsitePoliciesInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CB2378D1DF0E0C200117AA3 /* _WKWebsitePoliciesInternal.h */; };
 		5CB7AFE023C52CE500E49CF3 /* _WKResourceLoadDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CB7AFDF23C52CBC00E49CF3 /* _WKResourceLoadDelegate.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		5CB7AFE723C6820700E49CF3 /* ResourceLoadInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CB7AFE623C681B000E49CF3 /* ResourceLoadInfo.h */; };
+		5CB7AFE823C69B6100E49CF3 /* _WKResourceLoadInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CB7AFE323C67D3700E49CF3 /* _WKResourceLoadInfo.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5CBC9B8E1C652CA000A8FDCF /* NetworkDataTask.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CBC9B891C6524A500A8FDCF /* NetworkDataTask.h */; };
 		5CBD595C2280EDF4002B22AA /* _WKCustomHeaderFields.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5C5D2388227A1892000B9BDA /* _WKCustomHeaderFields.mm */; };
 		5CD286511E7235990094FDC8 /* WKContentRuleListStore.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CD2864D1E722F440094FDC8 /* WKContentRuleListStore.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -3907,6 +3909,11 @@
 		5CB7AFDD23C5273D00E49CF3 /* ResourceLoadDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ResourceLoadDelegate.h; sourceTree = "<group>"; };
 		5CB7AFDE23C5273D00E49CF3 /* ResourceLoadDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ResourceLoadDelegate.mm; sourceTree = "<group>"; };
 		5CB7AFDF23C52CBC00E49CF3 /* _WKResourceLoadDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKResourceLoadDelegate.h; sourceTree = "<group>"; };
+		5CB7AFE223C67D3700E49CF3 /* _WKResourceLoadInfo.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = _WKResourceLoadInfo.mm; sourceTree = "<group>"; };
+		5CB7AFE323C67D3700E49CF3 /* _WKResourceLoadInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKResourceLoadInfo.h; sourceTree = "<group>"; };
+		5CB7AFE423C67D6400E49CF3 /* APIResourceLoadInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APIResourceLoadInfo.h; sourceTree = "<group>"; };
+		5CB7AFE523C67DF900E49CF3 /* _WKResourceLoadInfoInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKResourceLoadInfoInternal.h; sourceTree = "<group>"; };
+		5CB7AFE623C681B000E49CF3 /* ResourceLoadInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ResourceLoadInfo.h; sourceTree = "<group>"; };
 		5CBC9B891C6524A500A8FDCF /* NetworkDataTask.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetworkDataTask.h; sourceTree = "<group>"; };
 		5CBC9B8B1C65257300A8FDCF /* NetworkDataTaskCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = NetworkDataTaskCocoa.mm; sourceTree = "<group>"; };
 		5CC5DB9121488E16006CB8A8 /* SharedBufferDataReference.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SharedBufferDataReference.h; sourceTree = "<group>"; };
@@ -3919,6 +3926,7 @@
 		5CD2864E1E722F440094FDC8 /* WKContentRuleListStore.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKContentRuleListStore.mm; sourceTree = "<group>"; };
 		5CD2864F1E722F440094FDC8 /* WKContentRuleListStoreInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKContentRuleListStoreInternal.h; sourceTree = "<group>"; };
 		5CD286501E722F440094FDC8 /* WKContentRuleListStorePrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKContentRuleListStorePrivate.h; sourceTree = "<group>"; };
+		5CD748B523C8EB190092A9B5 /* NetworkResourceLoadIdentifier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetworkResourceLoadIdentifier.h; sourceTree = "<group>"; };
 		5CE0C366229F2D3D003695F0 /* APIContextMenuElementInfo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = APIContextMenuElementInfo.cpp; sourceTree = "<group>"; };
 		5CE0C367229F2D3E003695F0 /* APIContextMenuElementInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APIContextMenuElementInfo.h; sourceTree = "<group>"; };
 		5CE0C368229F2D4A003695F0 /* WKContextMenuElementInfo.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKContextMenuElementInfo.mm; sourceTree = "<group>"; };
@@ -5617,6 +5625,7 @@
 				DF58C6311371AC5800F9A37C /* NativeWebWheelEvent.h */,
 				1ADCB868189831B30022EE5A /* NavigationActionData.cpp */,
 				1ADCB869189831B30022EE5A /* NavigationActionData.h */,
+				5CD748B523C8EB190092A9B5 /* NetworkResourceLoadIdentifier.h */,
 				9BC59D6D1EFCDC6D001E8D09 /* OptionalCallbackID.h */,
 				7AFBD36E21E546E3005DBACB /* PersistencyUtils.cpp */,
 				7AFBD36D21E546E3005DBACB /* PersistencyUtils.h */,
@@ -5626,6 +5635,7 @@
 				E1CC1B8E12D7EADF00625838 /* PrintInfo.h */,
 				463FD4811EB94EAD00A2982C /* ProcessTerminationReason.h */,
 				F6A0C13F13281E6E0070430F /* ResourceCachesToClear.h */,
+				5CB7AFE623C681B000E49CF3 /* ResourceLoadInfo.h */,
 				410482CB1DDD2FB500F006D0 /* RTCNetwork.cpp */,
 				410482CC1DDD2FB500F006D0 /* RTCNetwork.h */,
 				41B28B091F83AD3E00FB52AC /* RTCPacketOptions.cpp */,
@@ -6782,6 +6792,9 @@
 				A55BA80D1BA12BE1007CD33D /* _WKRemoteWebInspectorViewController.mm */,
 				990E1E082384A88B004602DF /* _WKRemoteWebInspectorViewControllerPrivate.h */,
 				5CB7AFDF23C52CBC00E49CF3 /* _WKResourceLoadDelegate.h */,
+				5CB7AFE323C67D3700E49CF3 /* _WKResourceLoadInfo.h */,
+				5CB7AFE223C67D3700E49CF3 /* _WKResourceLoadInfo.mm */,
+				5CB7AFE523C67DF900E49CF3 /* _WKResourceLoadInfoInternal.h */,
 				49FBEFFB239ADB1800BD032F /* _WKResourceLoadStatisticsFirstParty.h */,
 				49FBEFFC239B011D00BD032F /* _WKResourceLoadStatisticsFirstParty.mm */,
 				49BCA19023A175490028A836 /* _WKResourceLoadStatisticsFirstPartyInternal.h */,
@@ -8492,6 +8505,7 @@
 				7CE4D21D1A4914CA00C7F152 /* APIProcessPoolConfiguration.cpp */,
 				7CE4D21E1A4914CA00C7F152 /* APIProcessPoolConfiguration.h */,
 				5CB7AFDA23C43E6400E49CF3 /* APIResourceLoadClient.h */,
+				5CB7AFE423C67D6400E49CF3 /* APIResourceLoadInfo.h */,
 				49BCA19123A177660028A836 /* APIResourceLoadStatisticsFirstParty.h */,
 				49BCA19623A18F620028A836 /* APIResourceLoadStatisticsThirdParty.h */,
 				1AFDE65F1954E9B100C48FFA /* APISessionState.cpp */,
@@ -9839,6 +9853,7 @@
 				377216B81A4E6BE000DCA718 /* _WKRenderingProgressEvents.h in Headers */,
 				1F604BAA1889FBB800EE0395 /* _WKRenderingProgressEventsInternal.h in Headers */,
 				5CB7AFE023C52CE500E49CF3 /* _WKResourceLoadDelegate.h in Headers */,
+				5CB7AFE823C69B6100E49CF3 /* _WKResourceLoadInfo.h in Headers */,
 				49FBF001239B1F8D00BD032F /* _WKResourceLoadStatisticsFirstParty.h in Headers */,
 				49BCA19523A18CFD0028A836 /* _WKResourceLoadStatisticsFirstPartyInternal.h in Headers */,
 				49FBF000239B1F7500BD032F /* _WKResourceLoadStatisticsThirdParty.h in Headers */,
@@ -10299,6 +10314,7 @@
 				A55BA81F1BA25B27007CD33D /* RemoteWebInspectorProxy.h in Headers */,
 				A55BA8251BA25CFB007CD33D /* RemoteWebInspectorProxyMessages.h in Headers */,
 				A55BA8171BA23E12007CD33D /* RemoteWebInspectorUI.h in Headers */,
+				5CB7AFE723C6820700E49CF3 /* ResourceLoadInfo.h in Headers */,
 				6BE969CD1E54E054008B7483 /* ResourceLoadStatisticsClassifier.h in Headers */,
 				6BE969CB1E54D4CF008B7483 /* ResourceLoadStatisticsClassifierCocoa.h in Headers */,
 				7AFBD36721E51BAB005DBACB /* ResourceLoadStatisticsMemoryStore.h in Headers */,

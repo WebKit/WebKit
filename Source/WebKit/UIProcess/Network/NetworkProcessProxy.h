@@ -64,12 +64,15 @@ namespace WebKit {
 class DownloadProxy;
 class DownloadProxyMap;
 class WebProcessPool;
+class WebUserContentControllerProxy;
+
 enum class ShouldGrandfatherStatistics : bool;
 enum class StorageAccessStatus : uint8_t;
 enum class WebsiteDataFetchOption;
 enum class WebsiteDataType;
+
 struct NetworkProcessCreationParameters;
-class WebUserContentControllerProxy;
+struct ResourceLoadInfo;
 struct WebsiteData;
 
 class NetworkProcessProxy final : public AuxiliaryProcessProxy, private ProcessThrottlerClient, public CanMakeWeakPtr<NetworkProcessProxy> {
@@ -201,7 +204,11 @@ public:
 
     void resetQuota(PAL::SessionID, CompletionHandler<void()>&&);
 
-    void pageWillSendRequest(WebPageProxyIdentifier, const WebCore::ResourceRequest&);
+    void resourceLoadDidSendRequest(WebPageProxyIdentifier, ResourceLoadInfo&&, WebCore::ResourceRequest&&);
+    void resourceLoadDidPerformHTTPRedirection(WebPageProxyIdentifier, ResourceLoadInfo&&, WebCore::ResourceResponse&&, WebCore::ResourceRequest&&);
+    void resourceLoadDidReceiveChallenge(WebPageProxyIdentifier, ResourceLoadInfo&&, WebCore::AuthenticationChallenge&&);
+    void resourceLoadDidReceiveResponse(WebPageProxyIdentifier, ResourceLoadInfo&&, WebCore::ResourceResponse&&);
+    void resourceLoadDidCompleteWithError(WebPageProxyIdentifier, ResourceLoadInfo&&, WebCore::ResourceError&&);
 
 private:
     // AuxiliaryProcessProxy

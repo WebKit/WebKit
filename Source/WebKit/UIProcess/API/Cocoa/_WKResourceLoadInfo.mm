@@ -23,24 +23,29 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#import "config.h"
+#import "_WKResourceLoadInfo.h"
 
-namespace WebKit {
-class AuthenticationChallengeProxy;
-struct ResourceLoadInfo;
+#import "APIResourceLoadInfo.h"
+#import "_WKResourceLoadInfoInternal.h"
+
+@implementation _WKResourceLoadInfo
+
+- (void)dealloc
+{
+    _info->API::ResourceLoadInfo::~ResourceLoadInfo();
+    [super dealloc];
 }
 
-namespace API {
+- (uint64_t)resourceLoadID
+{
+    return _info->resourceLoadID().toUInt64();
+}
 
-class ResourceLoadClient {
-public:
-    virtual ~ResourceLoadClient() = default;
+- (API::Object&)_apiObject
+{
+    return *_info;
+}
 
-    virtual void didSendRequest(WebKit::ResourceLoadInfo&&, WebCore::ResourceRequest&&) const = 0;
-    virtual void didPerformHTTPRedirection(WebKit::ResourceLoadInfo&&, WebCore::ResourceResponse&&, WebCore::ResourceRequest&&) const = 0;
-    virtual void didReceiveChallenge(WebKit::ResourceLoadInfo&&, WebKit::AuthenticationChallengeProxy&) const = 0;
-    virtual void didReceiveResponse(WebKit::ResourceLoadInfo&&, WebCore::ResourceResponse&&) const = 0;
-    virtual void didCompleteWithError(WebKit::ResourceLoadInfo&&, WebCore::ResourceError&&) const = 0;
-};
+@end
 
-} // namespace API

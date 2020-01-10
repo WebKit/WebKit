@@ -52,6 +52,18 @@ HTTPServer::HTTPServer(std::initializer_list<std::pair<String, HTTPResponse>> re
     nw_listener_start(m_listener.get());
 }
 
+static String statusText(unsigned statusCode)
+{
+    switch (statusCode) {
+    case 200:
+        return "OK"_s;
+    case 301:
+        return "Moved Permanently"_s;
+    }
+    ASSERT_NOT_REACHED();
+    return { };
+}
+
 void HTTPServer::respondToRequests(nw_connection_t connection)
 {
     nw_connection_receive(connection, 1, std::numeric_limits<uint32_t>::max(), ^(dispatch_data_t content, nw_content_context_t context, bool complete, nw_error_t error) {
@@ -76,7 +88,11 @@ void HTTPServer::respondToRequests(nw_connection_t connection)
         
         auto response = m_requestResponseMap.get(path);
         StringBuilder responseBuilder;
-        responseBuilder.append("HTTP/1.1 200 OK\r\nContent-Length: ");
+        responseBuilder.append("HTTP/1.1 ");
+        responseBuilder.appendNumber(response.statusCode);
+        responseBuilder.append(' ');
+        responseBuilder.append(statusText(response.statusCode));
+        responseBuilder.append("\r\nContent-Length: ");
         responseBuilder.appendNumber(response.body.length());
         responseBuilder.append("\r\n");
         for (auto& pair : response.headerFields) {

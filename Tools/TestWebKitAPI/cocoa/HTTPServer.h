@@ -52,9 +52,13 @@ private:
 struct HTTPServer::HTTPResponse {
     HTTPResponse(String&& body)
         : body(WTFMove(body)) { }
-    HTTPResponse(String&& body, HashMap<String, String>&& headerFields)
-        : body(WTFMove(body))
-        , headerFields(WTFMove(headerFields)) { }
+    HTTPResponse(HashMap<String, String>&& headerFields, String&& body)
+        : headerFields(WTFMove(headerFields))
+        , body(WTFMove(body)) { }
+    HTTPResponse(unsigned statusCode, HashMap<String, String>&& headerFields, String&& body = { })
+        : statusCode(statusCode)
+        , headerFields(WTFMove(headerFields))
+        , body(WTFMove(body)) { }
 
     HTTPResponse(const HTTPResponse&) = default;
     HTTPResponse(HTTPResponse&&) = default;
@@ -62,8 +66,9 @@ struct HTTPServer::HTTPResponse {
     HTTPResponse& operator=(const HTTPResponse&) = default;
     HTTPResponse& operator=(HTTPResponse&&) = default;
     
-    String body;
+    unsigned statusCode { 200 };
     HashMap<String, String> headerFields;
+    String body;
 };
 
 } // namespace TestWebKitAPI

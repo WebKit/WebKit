@@ -25,22 +25,28 @@
 
 #pragma once
 
-namespace WebKit {
-class AuthenticationChallengeProxy;
-struct ResourceLoadInfo;
-}
+#include "APIObject.h"
+#include "ResourceLoadInfo.h"
 
 namespace API {
 
-class ResourceLoadClient {
+class ResourceLoadInfo final : public ObjectImpl<Object::Type::ResourceLoadInfo> {
 public:
-    virtual ~ResourceLoadClient() = default;
+    static Ref<ResourceLoadInfo> create(WebKit::ResourceLoadInfo&& info)
+    {
+        return adoptRef(*new ResourceLoadInfo(WTFMove(info)));
+    }
 
-    virtual void didSendRequest(WebKit::ResourceLoadInfo&&, WebCore::ResourceRequest&&) const = 0;
-    virtual void didPerformHTTPRedirection(WebKit::ResourceLoadInfo&&, WebCore::ResourceResponse&&, WebCore::ResourceRequest&&) const = 0;
-    virtual void didReceiveChallenge(WebKit::ResourceLoadInfo&&, WebKit::AuthenticationChallengeProxy&) const = 0;
-    virtual void didReceiveResponse(WebKit::ResourceLoadInfo&&, WebCore::ResourceResponse&&) const = 0;
-    virtual void didCompleteWithError(WebKit::ResourceLoadInfo&&, WebCore::ResourceError&&) const = 0;
+    WebKit::NetworkResourceLoadIdentifier resourceLoadID() const { return m_info.resourceLoadID; }
+
+private:
+    explicit ResourceLoadInfo(WebKit::ResourceLoadInfo&& info)
+        : m_info(WTFMove(info))
+    {
+    }
+
+    const WebKit::ResourceLoadInfo m_info;
+
 };
 
 } // namespace API
