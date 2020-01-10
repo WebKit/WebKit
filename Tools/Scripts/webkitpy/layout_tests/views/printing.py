@@ -239,7 +239,7 @@ class Printer(object):
         self._print_debug("Time to process slowest subdirectories:")
         min_seconds_to_print = 10
         for timing in timings:
-            if timing[0] > min_seconds_to_print:
+            if timing[1] > min_seconds_to_print:
                 self._print_debug("  %s took %s seconds to run %s tests." % timing)
         self._print_debug("")
 
@@ -254,10 +254,10 @@ class Printer(object):
         percentile99 = timings[int(.99 * num_tests)]
 
         if num_tests % 2 == 1:
-            median = timings[((num_tests - 1) / 2) - 1]
+            median = timings[(num_tests - 1) // 2 - 1]
         else:
-            lower = timings[num_tests / 2 - 1]
-            upper = timings[num_tests / 2]
+            lower = timings[num_tests // 2 - 1]
+            upper = timings[num_tests // 2]
             median = (float(lower + upper)) / 2
 
         mean = sum(timings) / num_tests

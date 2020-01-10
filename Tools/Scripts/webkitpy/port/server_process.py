@@ -35,6 +35,9 @@ import signal
 import sys
 import time
 
+from webkitpy.common.system.executive import ScriptError
+from webkitpy.common.unicode_compatibility import encode_if_necessary
+
 # Note that although win32 python does provide an implementation of
 # the win32 select API, it only works on sockets, and not on the named pipes
 # used by subprocess, so we have to use the native APIs directly.
@@ -46,8 +49,6 @@ else:
     import fcntl
     import os
     import select
-
-from webkitpy.common.system.executive import ScriptError
 
 
 _log = logging.getLogger(__name__)
@@ -178,9 +179,9 @@ class ServerProcess(object):
         if not self._proc:
             self._start()
         try:
-            self._proc.stdin.write(bytes)
+            self._proc.stdin.write(encode_if_necessary(bytes))
             self._proc.stdin.flush()
-        except IOError as e:
+        except (IOError, ValueError) as e:
             self.stop(0.0)
             # stop() calls _reset(), so we have to set crashed to True after calling stop()
             # unless we already know that this is a timeout.

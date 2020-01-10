@@ -563,7 +563,7 @@ class SimulatedDevice(object):
             _log.debug(u'{} has no service to check if the device is usable'.format(self.device_type.software_variant))
             return True
 
-        system_processes = self.executive.run_command([SimulatedDeviceManager.xcrun, 'simctl', 'spawn', self.udid, 'launchctl', 'print', 'system'], decode_output=False)
+        system_processes = self.executive.run_command([SimulatedDeviceManager.xcrun, 'simctl', 'spawn', self.udid, 'launchctl', 'print', 'system'], decode_output=True)
         if re.search(r'"{}"'.format(home_screen_service), system_processes) or re.search(r'A\s+{}'.format(home_screen_service), system_processes):
             return True
         return False
@@ -604,7 +604,7 @@ class SimulatedDevice(object):
 
     def install_app(self, app_path, env=None):
         # Even after carousel is running, it takes a few seconds for watchOS to allow installs.
-        for i in xrange(self.NUM_INSTALL_RETRIES):
+        for i in range(self.NUM_INSTALL_RETRIES):
             exit_code = self.executive.run_command(['xcrun', 'simctl', 'install', self.udid, app_path], return_exit_code=True)
             if exit_code == 0:
                 return True

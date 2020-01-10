@@ -47,7 +47,7 @@ class TestResult(object):
         self.failures = failures or []
         self.test_run_time = test_run_time or 0  # The time taken to execute the test itself.
         self.has_stderr = has_stderr
-        self.reftest_type = reftest_type or []
+        self.reftest_type = sorted(reftest_type or [])
         self.pid = pid
         self.references = references or []
 

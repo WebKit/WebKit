@@ -39,6 +39,7 @@ from collections import defaultdict
 from os.path import normpath
 from webkitpy.common.system import path
 from webkitpy.common.system.profiler import ProfilerFactory
+from webkitpy.common.unicode_compatibility import encode_if_necessary, decode_for
 
 
 _log = logging.getLogger(__name__)
@@ -86,11 +87,11 @@ class DriverOutput(object):
             test_time=0, measurements=None, timeout=False, error='', crashed_process_name='??',
             crashed_pid=None, crash_log=None, pid=None):
         # FIXME: Args could be renamed to better clarify what they do.
-        self.text = text
+        self.text = decode_for(text, str) if text else None
         self.image = image  # May be empty-string if the test crashes.
         self.image_hash = image_hash
         self.image_diff = None  # image_diff gets filled in after construction.
-        self.audio = audio  # Binary format is port-dependent.
+        self.audio = encode_if_necessary(audio) if audio else None  # Binary format is port-dependent.
         self.crash = crash
         self.crashed_process_name = crashed_process_name
         self.crashed_pid = crashed_pid
@@ -161,7 +162,7 @@ class Driver(object):
         # stderr output, as well as if we've seen #EOF on this driver instance.
         # FIXME: We should probably remove _read_first_block and _read_optional_image_block and
         # instead scope these locally in run_test.
-        self.error_from_test = str()
+        self.error_from_test = ''
         self.err_seen_eof = False
 
         self._server_name = self._port.driver_name()
@@ -196,7 +197,7 @@ class Driver(object):
         test_begin_time = time.time()
         self._driver_timed_out = False
         self._crash_report_from_driver = None
-        self.error_from_test = str()
+        self.error_from_test = ''
         self.err_seen_eof = False
 
         command = self._command_from_driver_input(driver_input)
@@ -214,6 +215,7 @@ class Driver(object):
         self._server_process.write(command)
         text, audio = self._read_first_block(deadline, driver_input.test_name)  # First block is either text or audio
         image, actual_image_hash = self._read_optional_image_block(deadline, driver_input.test_name)  # The second (optional) block is image data.
+        text = decode_for(text, str)
 
         crashed = self.has_crashed()
         timed_out = self._server_process.timed_out
@@ -227,9 +229,9 @@ class Driver(object):
             # In the timeout case, we kill the hung process as well.
             out, err = self._server_process.stop(self._port.driver_stop_timeout() if stop_when_done else 0.0)
             if out:
-                text += out
+                text += decode_for(out, str)
             if err:
-                self.error_from_test += err
+                self.error_from_test += decode_for(err, str)
             self._server_process = None
 
         crash_log = None
@@ -280,10 +282,10 @@ class Driver(object):
         child_processes = defaultdict(list)
 
         for line in output.splitlines():
-            m = re.match('^([^:]+): ([0-9]+)$', line)
+            m = re.match(b'^([^:]+): ([0-9]+)$', line)
             if m:
-                process_name = m.group(1)
-                process_id = m.group(2)
+                process_name = decode_for(m.group(1), str)
+                process_id = decode_for(m.group(2), str)
                 child_processes[process_name].append(process_id)
 
         return child_processes
@@ -540,10 +542,10 @@ class Driver(object):
         return cmd
 
     def _check_for_driver_timeout(self, out_line):
-        if out_line.startswith("#PID UNRESPONSIVE - "):
-            match = re.match('#PID UNRESPONSIVE - (\S+)', out_line)
-            child_process_name = match.group(1) if match else 'WebProcess'
-            match = re.search('pid (\d+)', out_line)
+        if out_line.startswith(b"#PID UNRESPONSIVE - "):
+            match = re.match(b'#PID UNRESPONSIVE - (\S+)', out_line)
+            child_process_name = decode_for(match.group(1), str) if match else 'WebProcess'
+            match = re.search(b'pid (\d+)', out_line)
             child_process_pid = int(match.group(1)) if match else None
             err_line = 'Wait on notifyDone timed out, process ' + child_process_name + ' pid = ' + str(child_process_pid)
             self.error_from_test += err_line
@@ -554,32 +556,32 @@ class Driver(object):
             self._driver_timed_out = True
 
     def _check_for_address_sanitizer_violation(self, error_line):
-        if "ERROR: AddressSanitizer" in error_line:
+        if b"ERROR: AddressSanitizer" in error_line:
             return True
 
     def _check_for_driver_crash_or_unresponsiveness(self, error_line):
-        crashed_check = error_line.rstrip('\r\n')
-        if crashed_check == "#CRASHED":
+        crashed_check = error_line.rstrip(b'\r\n')
+        if crashed_check == b"#CRASHED":
             self._crashed_process_name = self._server_process.process_name()
             self._crashed_pid = self._server_process.system_pid()
             return True
-        elif error_line.startswith("#CRASHED - "):
-            match = re.match('#CRASHED - (\S+)', error_line)
-            self._crashed_process_name = match.group(1) if match else 'WebProcess'
-            match = re.search('pid (\d+)', error_line)
+        elif error_line.startswith(b"#CRASHED - "):
+            match = re.match(b'#CRASHED - (\S+)', error_line)
+            self._crashed_process_name = decode_for(match.group(1), str) if match else 'WebProcess'
+            match = re.search(b'pid (\d+)', error_line)
             self._crashed_pid = int(match.group(1)) if match else None
             _log.debug('%s crash, pid = %s' % (self._crashed_process_name, str(self._crashed_pid)))
             return True
-        elif error_line.startswith("#PROCESS UNRESPONSIVE - "):
-            match = re.match('#PROCESS UNRESPONSIVE - (\S+)', error_line)
-            child_process_name = match.group(1) if match else 'WebProcess'
-            match = re.search('pid (\d+)', error_line)
+        elif error_line.startswith(b"#PROCESS UNRESPONSIVE - "):
+            match = re.match(b'#PROCESS UNRESPONSIVE - (\S+)', error_line)
+            child_process_name = decode_for(match.group(1), str) if match else 'WebProcess'
+            match = re.search(b'pid (\d+)', error_line)
             child_process_pid = int(match.group(1)) if match else None
             _log.debug('%s is unresponsive, pid = %s' % (child_process_name, str(child_process_pid)))
             self._driver_timed_out = True
             if child_process_pid:
                 self._port.sample_process(child_process_name, child_process_pid, self._target_host)
-            self.error_from_test += error_line
+            self.error_from_test += decode_for(error_line, str)
             self._server_process.write('#SAMPLE FINISHED\n', True)  # Must be able to ignore a broken pipe here, target process may already be closed.
             return True
         return self.has_crashed()
@@ -628,12 +630,12 @@ class Driver(object):
         # returns (image, actual_image_hash)
         block = self._read_block(deadline, test_name, wait_for_stderr_eof=True)
         if block.content and block.content_type == 'image/png':
-            return (block.decoded_content, block.content_hash)
+            return (block.decoded_content if block.encoding == 'base64' else block.content, block.content_hash)
         return (None, block.content_hash)
 
     def _read_header(self, block, line, header_text, header_attr, header_filter=None):
         if line.startswith(header_text) and getattr(block, header_attr) is None:
-            value = line.split()[1]
+            value = decode_for(line.split()[1], str)
             if header_filter:
                 value = header_filter(value)
             setattr(block, header_attr, value)
@@ -641,19 +643,23 @@ class Driver(object):
         return False
 
     def _process_stdout_line(self, block, line):
-        if (self._read_header(block, line, 'Content-Type: ', 'content_type')
-            or self._read_header(block, line, 'Content-Transfer-Encoding: ', 'encoding')
-            or self._read_header(block, line, 'Content-Length: ', '_content_length', int)
-            or self._read_header(block, line, 'ActualHash: ', 'content_hash')
-            or self._read_header(block, line, 'DumpMalloc: ', 'malloc')
-            or self._read_header(block, line, 'DumpJSHeap: ', 'js_heap')):
-            return
+        for header in [
+            (b'Content-Type: ', 'content_type', None),
+            (b'Content-Transfer-Encoding: ', 'encoding', None),
+            (b'Content-Length: ', '_content_length', int),
+            (b'ActualHash: ', 'content_hash', None),
+            (b'DumpMalloc: ', 'malloc', None),
+            (b'DumpJSHeap: ', 'js_heap', None),
+        ]:
+            if self._read_header(block, line, header[0], header[1], header[2]):
+                return
+
         # Note, we're not reading ExpectedHash: here, but we could.
         # If the line wasn't a header, we just append it to the content.
-        block.content += line
+        block.content = encode_if_necessary(block.content) + line
 
     def _strip_eof(self, line):
-        if line and line.endswith("#EOF\n"):
+        if line and line.endswith(b"#EOF\n"):
             return line[:-5], True
         return line, False
 
@@ -688,34 +694,34 @@ class Driver(object):
 
             if out_line:
                 self._check_for_driver_timeout(out_line)
-                if out_line[-1] != "\n":
+                if out_line[-1] != '\n' and out_line[-1] != 10:
                     _log.error("  %s -> Last character read from DRT stdout line was not a newline!  This indicates either a NRWT or DRT bug." % test_name)
                 content_length_before_header_check = block._content_length
                 self._process_stdout_line(block, out_line)
                 # FIXME: Unlike HTTP, DRT dumps the content right after printing a Content-Length header.
                 # Don't wait until we're done with headers, just read the binary blob right now.
                 if content_length_before_header_check != block._content_length:
-                    block.content = self._server_process.read_stdout(deadline, block._content_length)
+                    block.content = encode_if_necessary(self._server_process.read_stdout(deadline, block._content_length))
 
             if err_line:
                 if self._check_for_driver_crash_or_unresponsiveness(err_line):
                     break
                 elif self._check_for_address_sanitizer_violation(err_line):
                     asan_violation_detected = True
-                    self._crash_report_from_driver = ""
+                    self._crash_report_from_driver = b''
                     # ASan report starts with a nondescript line, we only detect the second line.
                     end_of_previous_error_line = self.error_from_test.rfind('\n', 0, -1)
                     if end_of_previous_error_line > 0:
                         self.error_from_test = self.error_from_test[:end_of_previous_error_line]
                     else:
-                        self.error_from_test = ""
+                        self.error_from_test = ''
                     # Symbolication can take a very long time, give it 10 extra minutes to finish.
                     # FIXME: This can likely be removed once <rdar://problem/18701447> is fixed.
                     deadline += 10 * 60 * 1000
                 if asan_violation_detected:
-                    self._crash_report_from_driver += err_line
+                    self._crash_report_from_driver += decode_for(err_line, str)
                 else:
-                    self.error_from_test += err_line
+                    self.error_from_test += decode_for(err_line, str)
 
         if asan_violation_detected and not self._crashed_process_name:
             self._crashed_process_name = self._server_process.process_name()
@@ -738,7 +744,7 @@ class ContentBlock(object):
         self.content_hash = None
         self._content_length = None
         # Content is treated as binary data even though the text output is usually UTF-8.
-        self.content = str()  # FIXME: Should be bytearray() once we require Python 2.6.
+        self.content = b''
         self.decoded_content = None
         self.malloc = None
         self.js_heap = None
@@ -747,7 +753,10 @@ class ContentBlock(object):
         if self.encoding == 'base64' and self.content is not None:
             self.decoded_content = base64.b64decode(self.content)
         else:
-            self.decoded_content = self.content
+            try:
+                self.decoded_content = decode_for(self.content, str)
+            except UnicodeDecodeError:
+                self.decoded_content = None
 
 
 class DriverProxy(object):
