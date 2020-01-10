@@ -1,5 +1,20 @@
 2020-01-10  Brent Fulgham  <bfulgham@apple.com>
 
+        [iOS] Remove 'com.apple.powerlog.plxpclogger.xpc' from the WebContent process sandbox
+        https://bugs.webkit.org/show_bug.cgi?id=206086
+        <rdar://problem/57195681>
+
+        Reviewed by Per Arne Vollan.
+
+        Telemetry and testing have confirmed that we no longer need a mach connection to the
+        'com.apple.powerlog.plxpclogger.xpc' service. We should remove it from the WebContent process sandbox.
+
+        Test: fast/sandbox/ios/sandbox-mach-lookup.html
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+
+2020-01-10  Brent Fulgham  <bfulgham@apple.com>
+
         Remove 'com.apple.iohideventsystem' from the WebContent process sandbox
         https://bugs.webkit.org/show_bug.cgi?id=206085
         <rdar://problem/36085204>
