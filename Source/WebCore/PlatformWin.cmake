@@ -50,6 +50,7 @@ list(APPEND WebCore_SOURCES
 
     platform/graphics/win/ColorDirect2D.cpp
     platform/graphics/win/ComplexTextControllerDirectWrite.cpp
+    platform/graphics/win/ComplexTextControllerUniscribe.cpp
     platform/graphics/win/DIBPixelData.cpp
     platform/graphics/win/FloatPointDirect2D.cpp
     platform/graphics/win/FloatRectDirect2D.cpp
@@ -68,7 +69,6 @@ list(APPEND WebCore_SOURCES
     platform/graphics/win/SimpleFontDataWin.cpp
     platform/graphics/win/TransformationMatrixDirect2D.cpp
     platform/graphics/win/TransformationMatrixWin.cpp
-    platform/graphics/win/UniscribeController.cpp
 
     platform/network/win/DownloadBundleWin.cpp
     platform/network/win/NetworkStateNotifierWin.cpp

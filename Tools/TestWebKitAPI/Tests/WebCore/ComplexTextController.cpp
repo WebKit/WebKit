@@ -25,8 +25,6 @@
 
 #include "config.h"
 
-#if !PLATFORM(WIN)
-
 #include <JavaScriptCore/InitializeThreading.h>
 #include <WebCore/ComplexTextController.h>
 #include <WebCore/FontCascade.h>
@@ -367,5 +365,3 @@ TEST_F(ComplexTextControllerTest, TotalWidthWithJustification)
 }
 
 }
-
-#endif

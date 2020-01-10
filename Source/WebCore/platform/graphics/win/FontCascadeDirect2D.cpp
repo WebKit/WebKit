@@ -37,7 +37,6 @@
 #include "GraphicsContextPlatformPrivateDirect2D.h"
 #include "IntRect.h"
 #include "PlatformContextDirect2D.h"
-#include "UniscribeController.h"
 #include "WebCoreTextRenderer.h"
 #include <d2d1.h>
 #include <dwrite_3.h>

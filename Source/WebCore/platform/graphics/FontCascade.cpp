@@ -41,10 +41,6 @@
 #include <wtf/text/AtomStringHash.h>
 #include <wtf/text/StringBuilder.h>
 
-#if PLATFORM(WIN) && !USE(DIRECT2D)
-#include "UniscribeController.h"
-#endif
-
 namespace WebCore {
 
 using namespace WTF::Unicode;
@@ -350,15 +346,6 @@ float FontCascade::widthOfTextRange(const TextRun& run, unsigned from, unsigned 
 
     auto codePathToUse = codePath(run);
     if (codePathToUse == Complex) {
-#if PLATFORM(WIN) && !USE(DIRECT2D)
-        UniscribeController it(this, run);
-        it.advance(from);
-        offsetBeforeRange = it.runWidthSoFar();
-        it.advance(to);
-        offsetAfterRange = it.runWidthSoFar();
-        it.advance(to);
-        totalWidth = it.runWidthSoFar();
-#else
         ComplexTextController complexIterator(*this, run, false, fallbackFonts);
         complexIterator.advance(from, nullptr, IncludePartialGlyphs, fallbackFonts);
         offsetBeforeRange = complexIterator.runWidthSoFar();
@@ -366,7 +353,6 @@ float FontCascade::widthOfTextRange(const TextRun& run, unsigned from, unsigned 
         offsetAfterRange = complexIterator.runWidthSoFar();
         complexIterator.advance(run.length(), nullptr, IncludePartialGlyphs, fallbackFonts);
         totalWidth = complexIterator.runWidthSoFar();
-#endif
     } else {
         WidthIterator simpleIterator(this, run, fallbackFonts);
         simpleIterator.advance(from, nullptr);
@@ -1397,7 +1383,6 @@ float FontCascade::getGlyphsAndAdvancesForSimpleText(const TextRun& run, unsigne
     return initialAdvance;
 }
 
-#if !PLATFORM(WIN) || USE(DIRECT2D)
 float FontCascade::getGlyphsAndAdvancesForComplexText(const TextRun& run, unsigned from, unsigned to, GlyphBuffer& glyphBuffer, ForTextEmphasisOrNot forTextEmphasis) const
 {
     float initialAdvance;
@@ -1427,7 +1412,6 @@ float FontCascade::getGlyphsAndAdvancesForComplexText(const TextRun& run, unsign
 
     return initialAdvance;
 }
-#endif
 
 void FontCascade::drawEmphasisMarksForSimpleText(GraphicsContext& context, const TextRun& run, const AtomString& mark, const FloatPoint& point, unsigned from, unsigned to) const
 {
@@ -1452,13 +1436,7 @@ void FontCascade::drawGlyphBuffer(GraphicsContext& context, const GlyphBuffer& g
 {
     // Draw each contiguous run of glyphs that use the same font data.
     const Font* fontData = glyphBuffer.fontAt(0);
-#if PLATFORM(WIN)
-    FloatPoint startPoint(point.x() + glyphBuffer.initialAdvance().width(), point.y() + glyphBuffer.initialAdvance().height());
-#else
-    // FIXME: Why do we subtract the initial advance's height but not its width???
-    // We should use the line above from Windows instead.
     FloatPoint startPoint(point.x(), point.y() - glyphBuffer.initialAdvance().height());
-#endif
     float nextX = startPoint.x() + glyphBuffer.advanceAt(0).width();
     float nextY = startPoint.y() + glyphBuffer.advanceAt(0).height();
     unsigned lastFrom = 0;
@@ -1545,7 +1523,6 @@ float FontCascade::floatWidthForSimpleText(const TextRun& run, HashSet<const Fon
     return it.m_runWidthSoFar;
 }
 
-#if !PLATFORM(WIN) || USE(DIRECT2D)
 float FontCascade::floatWidthForComplexText(const TextRun& run, HashSet<const Font*>* fallbackFonts, GlyphOverflow* glyphOverflow) const
 {
     ComplexTextController controller(*this, run, true, fallbackFonts);
@@ -1557,7 +1534,6 @@ float FontCascade::floatWidthForComplexText(const TextRun& run, HashSet<const Fo
     }
     return controller.totalWidth();
 }
-#endif
 
 void FontCascade::adjustSelectionRectForSimpleText(const TextRun& run, LayoutRect& selectionRect, unsigned from, unsigned to) const
 {
@@ -1578,7 +1554,6 @@ void FontCascade::adjustSelectionRectForSimpleText(const TextRun& run, LayoutRec
     selectionRect.setWidth(LayoutUnit::fromFloatCeil(afterWidth - beforeWidth));
 }
 
-#if !PLATFORM(WIN) || USE(DIRECT2D)
 void FontCascade::adjustSelectionRectForComplexText(const TextRun& run, LayoutRect& selectionRect, unsigned from, unsigned to) const
 {
     ComplexTextController controller(*this, run);
@@ -1593,7 +1568,6 @@ void FontCascade::adjustSelectionRectForComplexText(const TextRun& run, LayoutRe
         selectionRect.move(beforeWidth, 0);
     selectionRect.setWidth(LayoutUnit::fromFloatCeil(afterWidth - beforeWidth));
 }
-#endif
 
 int FontCascade::offsetForPositionForSimpleText(const TextRun& run, float x, bool includePartialGlyphs) const
 {
@@ -1638,13 +1612,11 @@ int FontCascade::offsetForPositionForSimpleText(const TextRun& run, float x, boo
     return offset;
 }
 
-#if !PLATFORM(WIN) || USE(DIRECT2D)
 int FontCascade::offsetForPositionForComplexText(const TextRun& run, float x, bool includePartialGlyphs) const
 {
     ComplexTextController controller(*this, run);
     return controller.offsetForPosition(x, includePartialGlyphs);
 }
-#endif
 
 #if !PLATFORM(COCOA) && !USE(HARFBUZZ)
 // FIXME: Unify this with the macOS and iOS implementation.

@@ -43,33 +43,6 @@
 
 namespace WebCore {
 
-#if PLATFORM(WIN) && !USE(DIRECT2D)
-
-class TextLayout {
-};
-
-void TextLayoutDeleter::operator()(TextLayout*) const
-{
-}
-
-std::unique_ptr<TextLayout, TextLayoutDeleter> FontCascade::createLayout(RenderText&, float, bool) const
-{
-    return nullptr;
-}
-
-float FontCascade::width(TextLayout&, unsigned, unsigned, HashSet<const Font*>*)
-{
-    ASSERT_NOT_REACHED();
-    return 0;
-}
-
-void ComplexTextController::collectComplexTextRunsForCharacters(const UChar*, unsigned, unsigned, const Font*)
-{
-    ASSERT_NOT_REACHED();
-}
-
-#else
-
 class TextLayout {
     WTF_MAKE_FAST_ALLOCATED;
 public:
@@ -905,7 +878,5 @@ ComplexTextController::ComplexTextRun::ComplexTextRun(const Vector<FloatSize>& a
     , m_isLTR(ltr)
 {
 }
-
-#endif
 
 } // namespace WebCore
