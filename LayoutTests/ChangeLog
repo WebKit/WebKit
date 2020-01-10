@@ -1,3 +1,41 @@
+2020-01-10  Kocsen Chung  <kocsen_chung@apple.com>
+
+        Cherry-pick r254301. rdar://problem/58480222
+
+    REGRESSION (r253662): Large Data URLs are not being handled properly
+    https://bugs.webkit.org/show_bug.cgi?id=205979
+    <rdar://problem/58346124>
+    
+    Reviewed by Youenn Fablet.
+    
+    Source/WebCore:
+    
+    The URL size limitation added in r253662 was too low. We should bump it to handle
+    reasonable data URI sizes.
+    
+    Test: fast/url/data-url-large.html.
+    
+    * page/SecurityOrigin.cpp:
+    
+    LayoutTests:
+    
+    * fast/url/data-url-large-expected.txt: Added.
+    * fast/url/data-url-large.html: Added.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@254301 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-01-09  Brent Fulgham  <bfulgham@apple.com>
+
+            REGRESSION (r253662): Large Data URLs are not being handled properly
+            https://bugs.webkit.org/show_bug.cgi?id=205979
+            <rdar://problem/58346124>
+
+            Reviewed by Youenn Fablet.
+
+            * fast/url/data-url-large-expected.txt: Added.
+            * fast/url/data-url-large.html: Added.
+
 2020-01-09  Kocsen Chung  <kocsen_chung@apple.com>
 
         Cherry-pick r254220. rdar://problem/58450166
