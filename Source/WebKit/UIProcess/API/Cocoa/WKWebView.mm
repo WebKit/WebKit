@@ -161,6 +161,7 @@
 
 #if PLATFORM(MAC)
 #import "AppKitSPI.h"
+#import "WKContentViewMac.h"
 #import "WKTextFinderClient.h"
 #import "WKViewInternal.h"
 #import <WebCore/ColorMac.h>
@@ -314,6 +315,7 @@ static void hardwareKeyboardAvailabilityChangedCallback(CFNotificationCenterRef,
     [self _setupPageConfiguration:pageConfiguration];
 
     _usePlatformFindUI = YES;
+
 #if PLATFORM(IOS_FAMILY)
     _avoidsUnsafeArea = YES;
     _obscuredInsetEdgesAffectedBySafeArea = UIRectEdgeTop | UIRectEdgeLeft | UIRectEdgeRight;
@@ -356,8 +358,13 @@ static void hardwareKeyboardAvailabilityChangedCallback(CFNotificationCenterRef,
     _impl = makeUnique<WebKit::WebViewImpl>(self, self, processPool, pageConfiguration.copyRef());
     _page = &_impl->page();
 
+    if (_impl->isUsingUISideCompositing())
+        _contentView = adoptNS([[WKContentView alloc] initWithFrame:self.bounds page:_page.copyRef()]);
+
     _impl->setAutomaticallyAdjustsContentInsets(true);
     _impl->setRequiresUserActionForEditingControlsManager([configuration _requiresUserActionForEditingControlsManager]);
+
+    [self _setupScrollAndContentViews];
 #endif
 
     if (NSString *applicationNameForUserAgent = configuration.applicationNameForUserAgent)

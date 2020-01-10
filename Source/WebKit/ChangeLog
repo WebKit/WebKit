@@ -1,3 +1,43 @@
+2020-01-10  Simon Fraser  <simon.fraser@apple.com>
+
+        [macOS UI-side compositing] Introduce WKScrollView and WKContentView for macOS
+        https://bugs.webkit.org/show_bug.cgi?id=206042
+
+        Reviewed by Tim Horton.
+
+        Add WKScrollViewMac and WKWebViewMac, with bare-bones implementations. WKScrollViewMac
+        has a WKScrollViewDelegate to make it more iOS-like, to avoid clients having to register
+        boundsDidChange notifications, and WKWebView on macOS becomes the delegate.
+
+        These views are only created when UI-side compositing is enabled.
+
+        * SourcesCocoa.txt:
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _initializeWithConfiguration:]):
+        * UIProcess/API/Cocoa/WKWebViewInternal.h:
+        * UIProcess/API/mac/WKContentViewMac.h: Added.
+        * UIProcess/API/mac/WKContentViewMac.mm: Added.
+        (-[WKContentView initWithFrame:page:]):
+        (-[WKContentView isFlipped]):
+        (-[WKContentView _setAcceleratedCompositingRootLayer:]):
+        * UIProcess/API/mac/WKScrollViewMac.h: Added.
+        * UIProcess/API/mac/WKScrollViewMac.mm: Added.
+        (+[WKScrollView isCompatibleWithResponsiveScrolling]):
+        (-[WKScrollView initWithFrame:]):
+        (-[WKScrollView dealloc]):
+        (-[WKScrollView delegate]):
+        (-[WKScrollView setDelegate:]):
+        (-[WKScrollView contentOffset]):
+        (-[WKScrollView boundsDidChange:]):
+        (-[WKScrollView setContentInsets:]):
+        * UIProcess/API/mac/WKWebViewMac.h:
+        * UIProcess/API/mac/WKWebViewMac.mm:
+        (-[WKWebView scrollViewDidScroll:]):
+        (-[WKWebView scrollViewContentInsetsDidChange:]):
+        (-[WKWebView _setupScrollAndContentViews]):
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        * WebKit.xcodeproj/project.pbxproj:
+
 2020-01-10  Jiewen Tan  <jiewen_tan@apple.com>
 
         [WebAuthn] Support authenticatorGetNextAssertion

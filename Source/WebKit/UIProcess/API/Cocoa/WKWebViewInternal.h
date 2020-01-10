@@ -83,13 +83,14 @@ class ViewGestureController;
 #endif
 }
 
-@class WKWebViewContentProviderRegistry;
+@class WKContentView;
 @class WKPasswordView;
-@class _WKFrameHandle;
 @class WKSafeBrowsingWarning;
+@class WKScrollView;
+@class WKWebViewContentProviderRegistry;
+@class _WKFrameHandle;
 
 #if PLATFORM(IOS_FAMILY)
-@class WKScrollView;
 @class WKFullScreenWindowController;
 @protocol WKWebViewContentProvider;
 #endif
@@ -126,6 +127,10 @@ class ViewGestureController;
 #if PLATFORM(MAC)
     std::unique_ptr<WebKit::WebViewImpl> _impl;
     RetainPtr<WKTextFinderClient> _textFinderClient;
+
+    // Only used with UI-side compositing.
+    RetainPtr<WKScrollView> _scrollView;
+    RetainPtr<WKContentView> _contentView;
 #endif
 
 #if PLATFORM(IOS_FAMILY)
