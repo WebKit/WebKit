@@ -439,6 +439,12 @@ void WebAutomationSessionProxy::resolveChildFrameWithNodeHandle(WebCore::PageIde
     }
 
     WebCore::Element* coreElement = elementForNodeHandle(*frame, nodeHandle);
+    if (!coreElement) {
+        String nodeNotFoundErrorType = Inspector::Protocol::AutomationHelpers::getEnumConstantValue(Inspector::Protocol::Automation::ErrorMessage::NodeNotFound);
+        completionHandler(nodeNotFoundErrorType, WTF::nullopt);
+        return;
+    }
+
     if (!is<WebCore::HTMLFrameElementBase>(coreElement)) {
         completionHandler(frameNotFoundErrorType, WTF::nullopt);
         return;

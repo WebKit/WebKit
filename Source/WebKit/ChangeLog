@@ -1,5 +1,22 @@
 2020-01-10  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        Automation: resolveChildFrameWithNodeHandle should return NodeNotFound when node doesn't exist
+        https://bugs.webkit.org/show_bug.cgi?id=205993
+
+        Reviewed by Brian Burg.
+
+        According to the spec:
+
+        "If element is stale, return error with error code stale element reference."
+        https://w3c.github.io/webdriver/#switch-to-frame
+
+        Fixes: imported/w3c/webdriver/tests/switch_to_frame/switch.py::test_frame_id_webelement_stale_reference
+
+        * WebProcess/Automation/WebAutomationSessionProxy.cpp:
+        (WebKit::WebAutomationSessionProxy::resolveChildFrameWithNodeHandle):
+
+2020-01-10  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         Automation: evaluateJavaScriptFunction should use Promises
         https://bugs.webkit.org/show_bug.cgi?id=204151
 
