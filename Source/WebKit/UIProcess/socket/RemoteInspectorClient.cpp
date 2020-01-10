@@ -201,23 +201,6 @@ void RemoteInspectorClient::setBackendCommands(const Event& event)
     m_backendCommandsURL = makeString("data:text/javascript;base64,", base64Encode(event.message->utf8()));
 }
 
-static String debuggableTypeToString(Inspector::DebuggableType debuggableType)
-{
-    switch (debuggableType) {
-    case Inspector::DebuggableType::JavaScript:
-        return "javascript"_s;
-    case Inspector::DebuggableType::Page:
-        return "page"_s;
-    case Inspector::DebuggableType::ServiceWorker:
-        return "service-worker"_s;
-    case Inspector::DebuggableType::WebPage:
-        return "web-page"_s;
-    }
-
-    ASSERT_NOT_REACHED();
-    return String();
-}
-
 void RemoteInspectorClient::setTargetList(const Event& event)
 {
     if (!event.connectionID || !event.message)
@@ -241,7 +224,7 @@ void RemoteInspectorClient::setTargetList(const Event& event)
         if (!itemObject->getInteger("targetID"_s, target.id)
             || !itemObject->getString("name"_s, target.name)
             || !itemObject->getString("url"_s, target.url)
-            || !itemObject->getString("type"_s, debuggableTypeToString(target.type)))
+            || !itemObject->getString("type"_s, target.type))
             continue;
 
         targetList.append(WTFMove(target));

@@ -56,9 +56,11 @@ public:
     RemoteInspectorClient(URL, RemoteInspectorObserver&);
     ~RemoteInspectorClient();
 
+    // FIXME: We should update the messaging protocol to use DebuggableType instead of String for the target type.
+    // https://bugs.webkit.org/show_bug.cgi?id=206047
     struct Target {
         TargetID id;
-        Inspector::DebuggableType type;
+        String type;
         String name;
         String url;
     };

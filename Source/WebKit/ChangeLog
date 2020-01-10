@@ -1,3 +1,20 @@
+2020-01-09  Ross Kirsling  <ross.kirsling@sony.com>
+
+        REGRESSION(r253868): Socket-based remote inspector cannot inspect any target
+        https://bugs.webkit.org/show_bug.cgi?id=206045
+
+        Reviewed by Don Olmstead.
+
+        Revert part of patch, ensuring Target struct stays consistent with socket inspector's messaging protocol.
+
+        * UIProcess/socket/RemoteInspectorClient.cpp:
+        (WebKit::RemoteInspectorClient::setTargetList):
+        (WebKit::debuggableTypeToString): Deleted.
+        * UIProcess/socket/RemoteInspectorClient.h:
+        * UIProcess/socket/RemoteInspectorProtocolHandler.cpp:
+        (WebKit::RemoteInspectorProtocolHandler::targetListChanged):
+        (WebKit::debuggableTypeToString): Deleted.
+
 2020-01-09  Tim Horton  <timothy_horton@apple.com>
 
         Adopt TARGET_OS_MACCATALYST in more places
