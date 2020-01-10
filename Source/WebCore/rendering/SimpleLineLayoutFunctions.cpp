@@ -185,15 +185,6 @@ void collectFlowOverflow(RenderBlockFlow& flow, const Layout& layout)
     }
 }
 
-Vector<FloatQuad> collectAbsoluteQuads(const RenderObject& renderer, const Layout& layout, bool* wasFixed)
-{
-    Vector<FloatQuad> quads;
-    auto& resolver = layout.runResolver();
-    for (auto run : resolver.rangeForRenderer(renderer))
-        quads.append(renderer.localToAbsoluteQuad(FloatQuad(run.rect()), UseTransforms, wasFixed));
-    return quads;
-}
-
 unsigned textOffsetForPoint(const LayoutPoint& point, const RenderText& renderer, const Layout& layout)
 {
     auto& flow = downcast<RenderBlockFlow>(*renderer.parent());

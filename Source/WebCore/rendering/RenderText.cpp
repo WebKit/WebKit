@@ -413,19 +413,30 @@ void RenderText::collectSelectionRects(Vector<SelectionRect>& rects, unsigned st
 }
 #endif
 
+static Vector<FloatQuad> collectAbsoluteQuadsForNonComplexPaths(const RenderText& textRenderer, bool* wasFixed)
+{
+    // FIXME: This generic function doesn't currently cover everything that is needed for the complex line layout path.
+    ASSERT(!textRenderer.usesComplexLineLayoutPath());
+
+    Vector<FloatQuad> quads;
+    for (auto& box : LineLayoutTraversal::textBoxesFor(textRenderer))
+        quads.append(textRenderer.localToAbsoluteQuad(FloatQuad(box.rect()), UseTransforms, wasFixed));
+    return quads;
+}
+
 Vector<FloatQuad> RenderText::absoluteQuadsClippedToEllipsis() const
 {
-    if (auto* layout = simpleLineLayout()) {
+    if (!usesComplexLineLayoutPath()) {
         ASSERT(style().textOverflow() != TextOverflow::Ellipsis);
-        return SimpleLineLayout::collectAbsoluteQuads(*this, *layout, nullptr);
+        return collectAbsoluteQuadsForNonComplexPaths(*this, nullptr);
     }
     return m_lineBoxes.absoluteQuads(*this, nullptr, RenderTextLineBoxes::ClipToEllipsis);
 }
 
 void RenderText::absoluteQuads(Vector<FloatQuad>& quads, bool* wasFixed) const
 {
-    if (auto* layout = simpleLineLayout()) {
-        quads.appendVector(SimpleLineLayout::collectAbsoluteQuads(*this, *layout, wasFixed));
+    if (!usesComplexLineLayoutPath()) {
+        quads.appendVector(collectAbsoluteQuadsForNonComplexPaths(*this, wasFixed));
         return;
     }
     quads.appendVector(m_lineBoxes.absoluteQuads(*this, wasFixed, RenderTextLineBoxes::NoClipping));
@@ -1327,6 +1338,26 @@ const SimpleLineLayout::Layout* RenderText::simpleLineLayout() const
     if (!is<RenderBlockFlow>(*parent()))
         return nullptr;
     return downcast<RenderBlockFlow>(*parent()).simpleLineLayout();
+}
+
+#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
+const LayoutIntegration::LineLayout* RenderText::layoutFormattingContextLineLayout() const
+{
+    if (!is<RenderBlockFlow>(*parent()))
+        return nullptr;
+    return downcast<RenderBlockFlow>(*parent()).layoutFormattingContextLineLayout();
+}
+#endif
+
+bool RenderText::usesComplexLineLayoutPath() const
+{
+    if (simpleLineLayout())
+        return false;
+#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
+    if (layoutFormattingContextLineLayout())
+        return false;
+#endif
+    return true;
 }
 
 float RenderText::width(unsigned from, unsigned len, float xPos, bool firstLine, HashSet<const Font*>* fallbackFonts, GlyphOverflow* glyphOverflow) const

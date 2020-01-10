@@ -35,6 +35,10 @@ class Font;
 class InlineTextBox;
 struct GlyphOverflow;
 
+namespace LayoutIntegration {
+class LineLayout;
+}
+
 class RenderText : public RenderObject {
     WTF_MAKE_ISO_ALLOCATED(RenderText);
 public:
@@ -165,6 +169,10 @@ public:
 
     void ensureLineBoxes();
     const SimpleLineLayout::Layout* simpleLineLayout() const;
+#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
+    const LayoutIntegration::LineLayout* layoutFormattingContextLineLayout() const;
+#endif
+    bool usesComplexLineLayoutPath() const;
 
     StringView stringView(unsigned start = 0, Optional<unsigned> stop = WTF::nullopt) const;
 
