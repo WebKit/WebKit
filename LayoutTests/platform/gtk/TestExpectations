@@ -3484,13 +3484,9 @@ webkit.org/b/184777 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-m
 webkit.org/b/185254 http/tests/xmlhttprequest/onloadend-event-after-error.html [ Failure ]
 webkit.org/b/185254 http/tests/xmlhttprequest/response-access-on-error.html [ Failure ]
 webkit.org/b/185254 http/tests/xmlhttprequest/state-after-network-error.html [ Failure ]
-webkit.org/b/185254 imported/w3c/web-platform-tests/xhr/send-redirect-infinite.htm [ Failure ]
-webkit.org/b/185254 imported/w3c/web-platform-tests/xhr/xmlhttprequest-network-error.htm [ Failure ]
 webkit.org/b/185254 http/tests/cache/network-error-during-revalidation.html [ Failure ]
 webkit.org/b/185254 http/tests/xmlhttprequest/XMLHttpRequestException.html [ Failure ]
 webkit.org/b/185254 http/tests/xmlhttprequest/onloadend-event-after-sync-requests.html [ Failure ]
-webkit.org/b/185254 imported/w3c/web-platform-tests/xhr/send-redirect-infinite-sync.htm [ Failure ]
-webkit.org/b/185254 imported/w3c/web-platform-tests/xhr/xmlhttprequest-network-error-sync.htm [ Failure ]
 webkit.org/b/185254 http/tests/xmlhttprequest/connection-error-sync.html [ Failure ]
 
 webkit.org/b/185548 accessibility/scroll-to-make-visible-iframe-offscreen.html [ Failure ]
@@ -3647,7 +3643,6 @@ webkit.org/b/191885 fast/inline/simple-inline-with-out-of-flow-descendant.html [
 webkit.org/b/191885 fast/inline/simple-inline-with-out-of-flow-descendant2.html [ Failure ]
 webkit.org/b/191885 fast/inline/simple-intruding-floats3.html [ Failure ]
 
-webkit.org/b/192150 imported/w3c/web-platform-tests/xhr/getallresponseheaders.htm [ Failure ]
 webkit.org/b/192150 imported/w3c/web-platform-tests/xhr/getresponseheader.any.html [ Failure ]
 webkit.org/b/192150 imported/w3c/web-platform-tests/xhr/getresponseheader.any.worker.html [ Failure ]
 webkit.org/b/192150 imported/w3c/web-platform-tests/xhr/setrequestheader-content-type.htm [ Failure ]
