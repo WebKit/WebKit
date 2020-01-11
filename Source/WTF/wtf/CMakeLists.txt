@@ -21,6 +21,7 @@ set(WTF_PUBLIC_HEADERS
     BubbleSort.h
     BumpPointerAllocator.h
     ByteOrder.h
+    CPU.h
     CPUTime.h
     CagedPtr.h
     CagedUniquePtr.h
