@@ -142,6 +142,7 @@ private:
     void appendLineBreak(const InlineItem&);
 
     void removeTrailingCollapsibleContent();
+    void visuallyCollapsePreWrapOverflowContent();
     HangingContent collectHangingContent(IsLastLineWithInlineContent);
     void alignHorizontally(RunList&, const HangingContent&, IsLastLineWithInlineContent);
     void alignContentVertically(RunList&);
@@ -179,6 +180,7 @@ private:
         bool isCollapsed() const { return m_isCollapsed; }
 
         void moveHorizontally(InlineLayoutUnit offset) { m_logicalLeft += offset; }
+        void adjustLogicalWidth(InlineLayoutUnit adjustedWidth) { m_logicalWidth = adjustedWidth; }
 
         bool isCollapsibleWhitespace() const;
         bool hasTrailingLetterSpacing() const;

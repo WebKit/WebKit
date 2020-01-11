@@ -234,6 +234,7 @@ LineBuilder::RunList LineBuilder::close(IsLastLineWithInlineContent isLastLineWi
     // 2. Join text runs together when possible [foo][ ][bar] -> [foo bar].
     // 3. Align merged runs both vertically and horizontally.
     removeTrailingCollapsibleContent();
+    visuallyCollapsePreWrapOverflowContent();
     auto hangingContent = collectHangingContent(isLastLineWithInlineContent);
 
     auto mergedInlineItemRuns = [&] {
@@ -506,6 +507,41 @@ void LineBuilder::removeTrailingCollapsibleContent()
     if (lineIsVisuallyEmpty())
         m_lineBox.setIsConsideredEmpty();
     m_lineIsVisuallyEmptyBeforeCollapsibleContent = { };
+}
+
+void LineBuilder::visuallyCollapsePreWrapOverflowContent()
+{
+    ASSERT(m_collapsibleContent.isEmpty());
+    // If white-space is set to pre-wrap, the UA must
+    // ...
+    // It may also visually collapse the character advance widths of any that would otherwise overflow.
+    auto overflowWidth = -availableWidth();
+    if (overflowWidth <= 0)
+        return;
+    // Let's just find the trailing pre-wrap whitespace content for now (e.g check if there are multiple trailing runs with
+    // different set of white-space values and decide if the in-between pre-wrap content should be collapsed as well.)
+    InlineLayoutUnit trimmedContentWidth = 0;
+    for (auto& inlineItemRun : WTF::makeReversedRange(m_inlineItemRuns)) {
+        if (inlineItemRun.style().whiteSpace() != WhiteSpace::PreWrap) {
+            // We are only interested in pre-wrap trailing content.
+            break;
+        }
+        auto preWrapVisuallyCollapsibleInlineItem = inlineItemRun.isContainerStart() || inlineItemRun.isContainerEnd() || inlineItemRun.isWhitespace();
+        if (!preWrapVisuallyCollapsibleInlineItem)
+            break;
+        auto runLogicalWidth = inlineItemRun.logicalWidth();
+        // Never partially collapse inline container start/end items.
+        auto isPartialCollapsingAllowed = inlineItemRun.isText();
+        // FIXME: We should always collapse the run at a glyph boundary as the spec indicates: "collapse the character advance widths of any that would otherwise overflow"
+        auto runLogicalWidthAfterCollapsing = isPartialCollapsingAllowed ? std::max<InlineLayoutUnit>(0, runLogicalWidth - overflowWidth) : 0;
+        auto trimmed = runLogicalWidth - runLogicalWidthAfterCollapsing;
+        trimmedContentWidth += trimmed;
+        overflowWidth -= trimmed;
+        inlineItemRun.adjustLogicalWidth(runLogicalWidthAfterCollapsing);
+        if (overflowWidth <= 0)
+            break;
+    }
+    m_lineBox.shrinkHorizontally(trimmedContentWidth);
 }
 
 HangingContent LineBuilder::collectHangingContent(IsLastLineWithInlineContent isLastLineWithInlineContent)
