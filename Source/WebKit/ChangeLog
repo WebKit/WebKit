@@ -1,5 +1,26 @@
 2020-01-10  Brent Fulgham  <bfulgham@apple.com>
 
+        [iOS] Remove used media-related mach services from the WebContent process sandbox
+        https://bugs.webkit.org/show_bug.cgi?id=206089
+        <rdar://problem/58489478>
+
+        Reviewed by Per Arne Vollan.
+
+        After conducting multiple test passes and large-scale living-on testing with telemetry, we have
+        confirmed that the following XPC services are not used by the media logic in WebKit, and can be
+        removed:
+
+            com.apple.coremedia.cpeprotector.xpc
+            com.apple.coremedia.figcontentkeysession.xpc
+            com.apple.coremedia.routingsessionmanager.xpc
+            com.apple.coremedia.sts
+
+        Test: fast/sandbox/ios/sandbox-mach-lookup.html
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+
+2020-01-10  Brent Fulgham  <bfulgham@apple.com>
+
         [iOS] Remove 'com.apple.awdd' from the WebContent process sandbox
         https://bugs.webkit.org/show_bug.cgi?id=206095
         <rdar://problem/56871147>
