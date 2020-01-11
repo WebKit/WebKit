@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,6 +27,7 @@
 
 #if ENABLE(GPU_PROCESS)
 
+#include "GPUProcessConnection.h"
 #include "MediaPlayerPrivateRemoteIdentifier.h"
 #include "MessageReceiver.h"
 #include "RemoteMediaPlayerState.h"
@@ -54,10 +55,11 @@ public:
     ~RemoteMediaPlayerManager();
 
     static const char* supplementName();
+    WebProcess& parentProcess() const { return m_process; }
 
     void updatePreferences(const WebCore::Settings&);
 
-    IPC::Connection& gpuProcessConnection() const;
+    GPUProcessConnection& gpuProcessConnection() const;
 
     void didReceiveMessageFromGPUProcess(IPC::Connection& connection, IPC::Decoder& decoder) { didReceiveMessage(connection, decoder); }
 
@@ -101,6 +103,7 @@ private:
 
     HashMap<MediaPlayerPrivateRemoteIdentifier, WeakPtr<MediaPlayerPrivateRemote>> m_players;
     WebProcess& m_process;
+    mutable GPUProcessConnection* m_gpuProcessConnection { nullptr };
 };
 
 } // namespace WebKit

@@ -37,7 +37,7 @@ messages -> RemoteMediaPlayerManagerProxy NotRefCounted {
 
     PrepareForPlayback(WebKit::MediaPlayerPrivateRemoteIdentifier id, bool privateMode, enum:uint8_t WebCore::MediaPlayerEnums::Preload preload, bool preservesPitch, bool prepareForRendering)
 
-    Load(WebKit::MediaPlayerPrivateRemoteIdentifier id, URL url, WebCore::ContentType contentType, String keySystem) -> (struct WebKit::RemoteMediaPlayerConfiguration playerConfiguration) Async
+    Load(WebKit::MediaPlayerPrivateRemoteIdentifier id, URL url, Optional<WebKit::SandboxExtension::Handle> sandboxExtension, WebCore::ContentType contentType, String keySystem) -> (struct WebKit::RemoteMediaPlayerConfiguration playerConfiguration) Async
     CancelLoad(WebKit::MediaPlayerPrivateRemoteIdentifier id)
 
     PrepareToPlay(WebKit::MediaPlayerPrivateRemoteIdentifier id)

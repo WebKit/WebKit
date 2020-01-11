@@ -1,3 +1,13 @@
+2020-01-10  Eric Carlson  <eric.carlson@apple.com>
+
+        [Media in GPU process] Extend the GPU process sandbox to allow access to local files when necessary
+        https://bugs.webkit.org/show_bug.cgi?id=205967
+        <rdar://problem/58425020>
+
+        Reviewed by youenn fablet.
+
+        * gpu-process/TestExpectations:
+
 2020-01-10  Myles C. Maxfield  <mmaxfield@apple.com>
 
         REGRESSION(r185816): In the Hong Kong locale, navigator.language reports it's in the Taiwan locale

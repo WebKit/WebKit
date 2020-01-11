@@ -69,6 +69,10 @@ void RemoteMediaPlayerProxy::invalidate()
 {
     m_updateCachedStateMessageTimer.stop();
     m_player->invalidate();
+    if (m_sandboxExtension) {
+        m_sandboxExtension->revoke();
+        m_sandboxExtension = nullptr;
+    }
 }
 
 void RemoteMediaPlayerProxy::getConfiguration(RemoteMediaPlayerConfiguration& configuration)
@@ -82,11 +86,19 @@ void RemoteMediaPlayerProxy::getConfiguration(RemoteMediaPlayerConfiguration& co
     configuration.shouldIgnoreIntrinsicSize = m_player->shouldIgnoreIntrinsicSize();
 }
 
-void RemoteMediaPlayerProxy::load(const URL& url, const ContentType& contentType, const String& keySystem, CompletionHandler<void(RemoteMediaPlayerConfiguration&&)>&& completionHandler)
+void RemoteMediaPlayerProxy::load(const URL& url, Optional<SandboxExtension::Handle>&& sandboxExtensionHandle, const ContentType& contentType, const String& keySystem, CompletionHandler<void(RemoteMediaPlayerConfiguration&&)>&& completionHandler)
 {
-    m_player->load(url, contentType, keySystem);
-
     RemoteMediaPlayerConfiguration configuration;
+
+    if (sandboxExtensionHandle) {
+        m_sandboxExtension = SandboxExtension::create(WTFMove(sandboxExtensionHandle.value()));
+        if (m_sandboxExtension)
+            m_sandboxExtension->consume();
+        else
+            WTFLogAlways("Unable to create sandbox extension for media url.\n");
+    }
+
+    m_player->load(url, contentType, keySystem);
     getConfiguration(configuration);
     completionHandler(WTFMove(configuration));
 }

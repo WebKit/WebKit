@@ -1,3 +1,77 @@
+2020-01-10  Eric Carlson  <eric.carlson@apple.com>
+
+        [Media in GPU process] Extend the GPU process sandbox to allow access to local files when necessary
+        https://bugs.webkit.org/show_bug.cgi?id=205967
+        <rdar://problem/58425020>
+
+        Reviewed by youenn fablet.
+
+        No new tests, un-skipped existing tests that pass because of this change.
+        
+        The GPU process sandbox does not allow access to local files so extend it before 
+        attempting to open a file:// url, and revoke the extension when the file is closed.
+
+        * GPUProcess/media/RemoteMediaPlayerManagerProxy.cpp:
+        (WebKit::RemoteMediaPlayerManagerProxy::load):
+        * GPUProcess/media/RemoteMediaPlayerManagerProxy.h:
+        * GPUProcess/media/RemoteMediaPlayerManagerProxy.messages.in:
+        * GPUProcess/media/RemoteMediaPlayerProxy.cpp:
+        (WebKit::RemoteMediaPlayerProxy::invalidate):
+        (WebKit::RemoteMediaPlayerProxy::load):
+        * GPUProcess/media/RemoteMediaPlayerProxy.h:
+        * UIProcess/GPU/GPUProcessProxy.cpp:
+        (WebKit::GPUProcessProxy::openGPUProcessConnection):
+        * UIProcess/GPU/GPUProcessProxy.h:
+        * UIProcess/WebProcessProxy.cpp:
+        * UIProcess/WebProcessProxy.h:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/GPU/GPUProcessConnection.h:
+        (WebKit::GPUProcessConnection::setAuditToken):
+        (WebKit::GPUProcessConnection::auditToken const):
+        * WebProcess/GPU/GPUProcessConnectionInfo.h:
+        (WebKit::GPUProcessConnectionInfo::encode const):
+        (WebKit::GPUProcessConnectionInfo::decode):
+        * WebProcess/GPU/media/MediaPlayerPrivateRemote.cpp:
+        (WebKit::MediaPlayerPrivateRemote::prepareForPlayback):
+        (WebKit::MediaPlayerPrivateRemote::MediaPlayerPrivateRemote::load):
+        (WebKit::MediaPlayerPrivateRemote::cancelLoad):
+        (WebKit::MediaPlayerPrivateRemote::prepareToPlay):
+        (WebKit::MediaPlayerPrivateRemote::play):
+        (WebKit::MediaPlayerPrivateRemote::pause):
+        (WebKit::MediaPlayerPrivateRemote::setPreservesPitch):
+        (WebKit::MediaPlayerPrivateRemote::setVolumeDouble):
+        (WebKit::MediaPlayerPrivateRemote::setMuted):
+        (WebKit::MediaPlayerPrivateRemote::setPreload):
+        (WebKit::MediaPlayerPrivateRemote::setPrivateBrowsingMode):
+        (WebKit::MediaPlayerPrivateRemote::seek):
+        (WebKit::MediaPlayerPrivateRemote::seekWithTolerance):
+        (WebKit::MediaPlayerPrivateRemote::prepareForRendering):
+        (WebKit::MediaPlayerPrivateRemote::setSize):
+        (WebKit::MediaPlayerPrivateRemote::setVisible):
+        (WebKit::MediaPlayerPrivateRemote::setShouldMaintainAspectRatio):
+        (WebKit::MediaPlayerPrivateRemote::setVideoFullscreenFrame):
+        (WebKit::MediaPlayerPrivateRemote::setVideoFullscreenGravity):
+        (WebKit::MediaPlayerPrivateRemote::acceleratedRenderingStateChanged):
+        (WebKit::MediaPlayerPrivateRemote::setShouldDisableSleep):
+        (WebKit::MediaPlayerPrivateRemote::requestResource):
+        * WebProcess/GPU/media/MediaPlayerPrivateRemote.h:
+        * WebProcess/GPU/media/RemoteMediaPlayerMIMETypeCache.cpp:
+        (WebKit::RemoteMediaPlayerMIMETypeCache::canDecodeExtendedType):
+        (WebKit::RemoteMediaPlayerMIMETypeCache::supportsTypeAndCodecs):
+        (WebKit::RemoteMediaPlayerMIMETypeCache::initializeCache):
+        * WebProcess/GPU/media/RemoteMediaPlayerManager.cpp:
+        (WebKit::RemoteMediaPlayerManager::createRemoteMediaPlayer):
+        (WebKit::RemoteMediaPlayerManager::deleteRemoteMediaPlayer):
+        (WebKit::RemoteMediaPlayerManager::getSupportedTypes):
+        (WebKit::RemoteMediaPlayerManager::originsInMediaCache):
+        (WebKit::RemoteMediaPlayerManager::clearMediaCache):
+        (WebKit::RemoteMediaPlayerManager::clearMediaCacheForOrigins):
+        (WebKit::RemoteMediaPlayerManager::gpuProcessConnection const):
+        * WebProcess/GPU/media/RemoteMediaPlayerManager.h:
+        (WebKit::RemoteMediaPlayerManager::parentProcess const):
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::ensureGPUProcessConnection):
+
 2020-01-10  Jer Noble  <jer.noble@apple.com>
 
         [iOS] Audio from non-frontmost tab continues when app is backgrounded

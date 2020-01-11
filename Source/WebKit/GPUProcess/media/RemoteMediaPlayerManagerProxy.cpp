@@ -203,10 +203,10 @@ void RemoteMediaPlayerManagerProxy::prepareForPlayback(MediaPlayerPrivateRemoteI
         player->prepareForPlayback(privateMode, preload, preservesPitch, prepareForRendering);
 }
 
-void RemoteMediaPlayerManagerProxy::load(MediaPlayerPrivateRemoteIdentifier id, URL&& url, WebCore::ContentType&& contentType, String&& keySystem, CompletionHandler<void(RemoteMediaPlayerConfiguration&&)>&& completionHandler)
+void RemoteMediaPlayerManagerProxy::load(MediaPlayerPrivateRemoteIdentifier id, URL&& url, Optional<SandboxExtension::Handle>&& sandboxExtension, WebCore::ContentType&& contentType, String&& keySystem, CompletionHandler<void(RemoteMediaPlayerConfiguration&&)>&& completionHandler)
 {
     if (auto player = m_proxies.get(id))
-        player->load(WTFMove(url), WTFMove(contentType), WTFMove(keySystem), WTFMove(completionHandler));
+        player->load(WTFMove(url), WTFMove(sandboxExtension), WTFMove(contentType), WTFMove(keySystem), WTFMove(completionHandler));
 }
 
 void RemoteMediaPlayerManagerProxy::cancelLoad(MediaPlayerPrivateRemoteIdentifier id)
