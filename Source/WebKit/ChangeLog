@@ -1,3 +1,33 @@
+2020-01-10  Simon Fraser  <simon.fraser@apple.com>
+
+        Introduce ENABLE_META_VIEWPORT and use it in some WK2 code
+        https://bugs.webkit.org/show_bug.cgi?id=206091
+
+        Reviewed by Tim Horton.
+        
+        Use ENABLE(META_VIEWPORT) rather than PLATFORM(IOS_FAMILY) to enable various
+        bits of viewport-related code.
+
+        * Shared/WebCoreArgumentCoders.cpp:
+        (IPC::ArgumentCoder<ViewportArguments>::decode):
+        (IPC::ArgumentCoder<ViewportAttributes>::encode):
+        (IPC::ArgumentCoder<ViewportAttributes>::decode):
+        * Shared/WebCoreArgumentCoders.h:
+        * Shared/WebPageCreationParameters.cpp:
+        (WebKit::WebPageCreationParameters::encode const):
+        (WebKit::WebPageCreationParameters::decode):
+        * Shared/WebPageCreationParameters.h:
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageSetIgnoresViewportScaleLimits):
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _initializeWithConfiguration:]):
+        * UIProcess/WebPageProxy.cpp:
+        * UIProcess/WebPageProxy.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::didCommitLoad):
+        * WebProcess/WebPage/WebPage.h:
+        (WebKit::WebPage::viewportConfiguration const):
+
 2020-01-10  Jonathan Bedard  <jbedard@apple.com>
 
         Python3: Support Source/WebKit/Scripts/webkit

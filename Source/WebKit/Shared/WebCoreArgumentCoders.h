@@ -148,6 +148,9 @@ class SelectionRect;
 struct Highlight;
 struct PasteboardImage;
 struct PasteboardWebContent;
+#endif
+
+#if ENABLE(META_VIEWPORT)
 struct ViewportArguments;
 #endif
 
@@ -295,13 +298,21 @@ template<> struct ArgumentCoder<WebCore::FloatQuad> {
     static void encode(Encoder&, const WebCore::FloatQuad&);
     static Optional<WebCore::FloatQuad> decode(Decoder&);
 };
+#endif // PLATFORM(IOS_FAMILY)
 
+#if ENABLE(META_VIEWPORT)
 template<> struct ArgumentCoder<WebCore::ViewportArguments> {
     static void encode(Encoder&, const WebCore::ViewportArguments&);
     static bool decode(Decoder&, WebCore::ViewportArguments&);
     static Optional<WebCore::ViewportArguments> decode(Decoder&);
 };
-#endif // PLATFORM(IOS_FAMILY)
+
+#endif
+
+template<> struct ArgumentCoder<WebCore::ViewportAttributes> {
+    static void encode(Encoder&, const WebCore::ViewportAttributes&);
+    static bool decode(Decoder&, WebCore::ViewportAttributes&);
+};
 
 template<> struct ArgumentCoder<WebCore::IntPoint> {
     static void encode(Encoder&, const WebCore::IntPoint&);
@@ -334,11 +345,6 @@ template<> struct ArgumentCoder<WebCore::LayoutPoint> {
 template<> struct ArgumentCoder<WebCore::Length> {
     static void encode(Encoder&, const WebCore::Length&);
     static bool decode(Decoder&, WebCore::Length&);
-};
-
-template<> struct ArgumentCoder<WebCore::ViewportAttributes> {
-    static void encode(Encoder&, const WebCore::ViewportAttributes&);
-    static bool decode(Decoder&, WebCore::ViewportAttributes&);
 };
 
 template<> struct ArgumentCoder<WebCore::VelocityData> {

@@ -227,6 +227,10 @@ the public iOS SDK. See <https://webkit.org/b/179167>. */
 #endif
 #endif
 
+#if !defined(ENABLE_META_VIEWPORT)
+#define ENABLE_META_VIEWPORT 1
+#endif
+
 #endif /* PLATFORM(IOS_FAMILY) */
 
 /* --------- Apple watchOS port --------- */

@@ -1,3 +1,14 @@
+2020-01-10  Simon Fraser  <simon.fraser@apple.com>
+
+        Introduce ENABLE_META_VIEWPORT and use it in some WK2 code
+        https://bugs.webkit.org/show_bug.cgi?id=206091
+
+        Reviewed by Tim Horton.
+
+        Define ENABLE_META_VIEWPORT for iOS.
+
+        * wtf/FeatureDefines.h:
+
 2020-01-09  Tim Horton  <timothy_horton@apple.com>
 
         Adopt TARGET_OS_MACCATALYST in more places

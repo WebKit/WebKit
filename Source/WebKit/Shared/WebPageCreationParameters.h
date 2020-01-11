@@ -145,21 +145,23 @@ struct WebPageCreationParameters {
     ColorSpaceData colorSpace;
     bool useSystemAppearance;
 #endif
-#if PLATFORM(IOS_FAMILY)
-    WebCore::FloatSize screenSize;
-    WebCore::FloatSize availableScreenSize;
-    WebCore::FloatSize overrideScreenSize;
-    float textAutosizingWidth;
+#if ENABLE(META_VIEWPORT)
     bool ignoresViewportScaleLimits;
     WebCore::FloatSize viewportConfigurationViewLayoutSize;
     double viewportConfigurationLayoutSizeScaleFactor;
     double viewportConfigurationMinimumEffectiveDeviceWidth;
     WebCore::FloatSize viewportConfigurationViewSize;
+    Optional<WebCore::ViewportArguments> overrideViewportArguments;
+#endif
+#if PLATFORM(IOS_FAMILY)
+    WebCore::FloatSize screenSize;
+    WebCore::FloatSize availableScreenSize;
+    WebCore::FloatSize overrideScreenSize;
+    float textAutosizingWidth;
     WebCore::FloatSize maximumUnobscuredSize;
     int32_t deviceOrientation { 0 };
     bool keyboardIsAttached { false };
     bool canShowWhileLocked { false };
-    Optional<WebCore::ViewportArguments> overrideViewportArguments;
 #endif
 #if PLATFORM(COCOA)
     bool smartInsertDeleteEnabled;

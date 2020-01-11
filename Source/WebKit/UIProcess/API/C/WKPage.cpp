@@ -2873,7 +2873,7 @@ void WKPageCallAfterNextPresentationUpdate(WKPageRef pageRef, void* context, WKP
 
 void WKPageSetIgnoresViewportScaleLimits(WKPageRef page, bool ignoresViewportScaleLimits)
 {
-#if PLATFORM(IOS_FAMILY)
+#if ENABLE(META_VIEWPORT)
     toImpl(page)->setForceAlwaysUserScalable(ignoresViewportScaleLimits);
 #endif
 }

@@ -349,10 +349,13 @@ static void hardwareKeyboardAvailabilityChangedCallback(CFNotificationCenterRef,
     [self _registerForNotifications];
 
     _page->contentSizeCategoryDidChange([self _contentSizeCategory]);
-    _page->setForceAlwaysUserScalable([_configuration ignoresViewportScaleLimits]);
 
     CFNotificationCenterAddObserver(CFNotificationCenterGetDarwinNotifyCenter(), (__bridge const void *)(self), hardwareKeyboardAvailabilityChangedCallback, (CFStringRef)[NSString stringWithUTF8String:kGSEventHardwareKeyboardAvailabilityChangedNotification], nullptr, CFNotificationSuspensionBehaviorCoalesce);
 #endif // PLATFORM(IOS_FAMILY)
+
+#if ENABLE(META_VIEWPORT)
+    _page->setForceAlwaysUserScalable([_configuration ignoresViewportScaleLimits]);
+#endif
 
 #if PLATFORM(MAC)
     _impl = makeUnique<WebKit::WebViewImpl>(self, self, processPool, pageConfiguration.copyRef());
