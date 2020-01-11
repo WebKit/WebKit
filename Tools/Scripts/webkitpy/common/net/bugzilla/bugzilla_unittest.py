@@ -364,7 +364,7 @@ Ignore this bug.  Just for testing failure modes of webkit-patch and the commit-
         bugzilla = Bugzilla()
 
         title_html = b'<title>Attachment 317591 added to Bug 175247</title>'
-        self.assertEqual(bugzilla._parse_attachment_id_from_add_patch_to_bug_response(title_html), b'317591')
+        self.assertEqual(bugzilla._parse_attachment_id_from_add_patch_to_bug_response(title_html), '317591')
 
         title_html = b'<title>Attachment 317591; malformed</title>'
         self.assertEqual(bugzilla._parse_attachment_id_from_add_patch_to_bug_response(title_html), None)

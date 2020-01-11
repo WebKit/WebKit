@@ -1,3 +1,19 @@
+2020-01-10  Jonathan Bedard  <jbedard@apple.com>
+
+        webkit-patch crashes when creating new bug with Python 3
+        https://bugs.webkit.org/show_bug.cgi?id=205911
+
+        Reviewed by Stephanie Lewis.
+
+        * Scripts/webkitpy/common/net/bugzilla/bugzilla.py:
+        (BugzillaQueries.is_invalid_bugzilla_email): Decode page before applying regex.
+        (Bugzilla.authenticate): Decode group before printing.
+        (Bugzilla._parse_attachment_id_from_add_patch_to_bug_response): Ensure HTML response
+        Is a string before applying the regex.
+        (Bugzilla._check_create_bug_response): Ditto.
+        * Scripts/webkitpy/common/net/bugzilla/bugzilla_unittest.py: Attachment ID should be a string,
+        not a byte array.
+
 2020-01-10  Alex Christensen  <achristensen@webkit.org>
 
         Fix test assertions after r254345
