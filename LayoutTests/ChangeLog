@@ -2,6 +2,17 @@
 
         REGRESSION(r185816): In the Hong Kong locale, navigator.language reports it's in the Taiwan locale
         https://bugs.webkit.org/show_bug.cgi?id=200043
+
+        Temporarily mark the navigator-language tests as flakey until I can figure out what to do with them.
+
+        Unreviewed.
+
+        * platform/mac/TestExpectations:
+
+2020-01-10  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        REGRESSION(r185816): In the Hong Kong locale, navigator.language reports it's in the Taiwan locale
+        https://bugs.webkit.org/show_bug.cgi?id=200043
         <rdar://problem/44119496>
 
         Reviewed by Dean Jackson.
