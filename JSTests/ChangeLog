@@ -1,3 +1,14 @@
+2020-01-10  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Flush old tables in End phase
+        https://bugs.webkit.org/show_bug.cgi?id=206120
+        <rdar://problem/58039989>
+
+        Reviewed by Mark Lam.
+
+        * stress/create-many-realms.js: Added.
+        (foo):
+
 2020-01-10  Caitlin Potter  <caitp@igalia.com> and Alexey Shvayka  <shvaikalesh@gmail.com>
 
         Object.keys should throw if called on module namespace object with uninitialized binding

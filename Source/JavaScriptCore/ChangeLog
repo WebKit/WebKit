@@ -1,3 +1,21 @@
+2020-01-10  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Flush old tables in End phase
+        https://bugs.webkit.org/show_bug.cgi?id=206120
+        <rdar://problem/58039989>
+
+        Reviewed by Mark Lam.
+
+        stopThePeriphery is stopping compiler threads and main thread (mutator), which means making m_worldIsStopped = true.
+        It is not for stopping all heap threads including a concurrent marker. The concurrent collector can work while executing
+        stopThePeriphery. This means that concurrent collectors can access to the old StructureIDTable while it is destroyed
+        in stopThePeriphery. Destroying old StructureIDTable in GC End phase, this is appropriate phase that we can ensure no
+        other threads (accessing to heap) are working including concurrent markers, mutator, and compiler threads.
+
+        * heap/Heap.cpp:
+        (JSC::Heap::runEndPhase):
+        (JSC::Heap::stopThePeriphery):
+
 2020-01-10  Caitlin Potter  <caitp@igalia.com> and Alexey Shvayka  <shvaikalesh@gmail.com>
 
         Object.keys should throw if called on module namespace object with uninitialized binding

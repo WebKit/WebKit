@@ -1516,6 +1516,8 @@ NEVER_INLINE bool Heap::runEndPhase(GCConductor conn)
     if (vm().typeProfiler())
         vm().typeProfiler()->invalidateTypeSetCache(vm());
 
+    m_structureIDTable.flushOldTables();
+
     reapWeakHandles();
     pruneStaleEntriesFromWeakGCMaps();
     sweepArrayBuffers();
@@ -1663,7 +1665,6 @@ void Heap::stopThePeriphery(GCConductor conn)
     if (auto* shadowChicken = vm().shadowChicken())
         shadowChicken->update(vm(), vm().topCallFrame);
     
-    m_structureIDTable.flushOldTables();
     m_objectSpace.stopAllocating();
     
     m_stopTime = MonotonicTime::now();
