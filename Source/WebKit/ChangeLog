@@ -1,3 +1,18 @@
+2020-01-10  Brent Fulgham  <bfulgham@apple.com>
+
+        [iOS] Remove 'com.apple.awdd' from the WebContent process sandbox
+        https://bugs.webkit.org/show_bug.cgi?id=206095
+        <rdar://problem/56871147>
+
+        Reviewed by Per Arne Vollan.
+
+        We no longer need access to 'com.apple.awdd' in the iOS WebContent sandbox. We should remove
+        it from the sandbox.
+
+        Test: fast/sandbox/ios/sandbox-mach-lookup.html
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+
 2020-01-09  Per Arne Vollan  <pvollan@apple.com>
 
         Map CSS value ID to system color in the UI process

@@ -364,8 +364,7 @@
         (allow-create-directory (literal base-directory))
         (allow file-read* file-write*
             (prefix (string-append base-directory "/awd-" daemon-name ".log")))
-        (allow mach-lookup (with report) (with telemetry)
-               (global-name "com.apple.awdd"))))
+))
 
 (define-once (logd-diagnostic-paths)
     (require-any
