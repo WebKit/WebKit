@@ -1,3 +1,17 @@
+2020-01-11  Cathie Chen  <cathiechen@igalia.com>
+
+        Import WPT test cases for 2dcontext/imagebitmap
+        https://bugs.webkit.org/show_bug.cgi?id=205908
+
+        Reviewed by Manuel Rego Casasnovas
+
+        Update the expected files.
+
+        * platform/gtk/imported/w3c/web-platform-tests/2dcontext/imagebitmap/createImageBitmap-serializable-expected.txt:
+        * platform/gtk/imported/w3c/web-platform-tests/2dcontext/imagebitmap/createImageBitmap-transfer-expected.txt:
+        * platform/wpe/imported/w3c/web-platform-tests/2dcontext/imagebitmap/createImageBitmap-serializable-expected.txt:
+        * platform/wpe/imported/w3c/web-platform-tests/2dcontext/imagebitmap/createImageBitmap-transfer-expected.txt:
+
 2020-01-11  Antti Koivisto  <antti@apple.com>
 
         [LFC][Integration] fast/text/simple-lines-float.html should be about simple line layout only

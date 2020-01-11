@@ -1,5 +1,3 @@
 
-Harness Error (TIMEOUT), message = null
-
-NOTRUN createImageBitmap(HTMLVideoElement) with resize option 
+PASS createImageBitmap(HTMLVideoElement) with resize option 
 

@@ -1,3 +1,20 @@
+2020-01-11  Cathie Chen  <cathiechen@igalia.com>
+
+        Import WPT test cases for 2dcontext/imagebitmap
+        https://bugs.webkit.org/show_bug.cgi?id=205908
+
+        Reviewed by Manuel Rego Casasnovas
+
+        * web-platform-tests/2dcontext/imagebitmap/canvas-createImageBitmap-video-resize-expected.txt:
+        * web-platform-tests/2dcontext/imagebitmap/canvas-createImageBitmap-video-resize.html:
+        * web-platform-tests/2dcontext/imagebitmap/createImageBitmap-serializable-expected.txt:
+        * web-platform-tests/2dcontext/imagebitmap/createImageBitmap-serializable.html:
+        * web-platform-tests/2dcontext/imagebitmap/createImageBitmap-transfer-expected.txt:
+        * web-platform-tests/2dcontext/imagebitmap/createImageBitmap-transfer.html:
+        * web-platform-tests/2dcontext/imagebitmap/no-coop-coep.https.window.html: Removed.
+        * web-platform-tests/2dcontext/imagebitmap/no-coop-coep.https.window.js: Removed.
+        * web-platform-tests/2dcontext/imagebitmap/w3c-import.log:
+
 2020-01-09  Chris Lord  <clord@igalia.com>
 
         ImageBitmap can't be created in workers in some cases due to main-thread assert in ImageSource

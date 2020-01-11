@@ -27,5 +27,4 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/2dcontext/imagebitmap/createImageBitmap-serializable.html
 /LayoutTests/imported/w3c/web-platform-tests/2dcontext/imagebitmap/createImageBitmap-sizeOverflow.html
 /LayoutTests/imported/w3c/web-platform-tests/2dcontext/imagebitmap/createImageBitmap-transfer.html
-/LayoutTests/imported/w3c/web-platform-tests/2dcontext/imagebitmap/no-coop-coep.https.window.js
 /LayoutTests/imported/w3c/web-platform-tests/2dcontext/imagebitmap/transfer-worker.js
