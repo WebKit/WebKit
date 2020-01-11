@@ -309,6 +309,11 @@ ResourceLoadStatisticsDatabaseStore::ResourceLoadStatisticsDatabaseStore(WebReso
 
 void ResourceLoadStatisticsDatabaseStore::openITPDatabase()
 {
+    if (!FileSystem::fileExists(m_storageDirectoryPath))
+        m_isNewResourceLoadStatisticsDatabaseFile = true;
+    else
+        m_isNewResourceLoadStatisticsDatabaseFile = false;
+
     if (!m_database.open(m_storageDirectoryPath)) {
         RELEASE_LOG_ERROR(Network, "%p - ResourceLoadStatisticsDatabaseStore::open failed, error message: %{public}s, database path: %{public}s", this, m_database.lastErrorMsg(), m_storageDirectoryPath.utf8().data());
         ASSERT_NOT_REACHED();

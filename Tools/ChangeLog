@@ -1,3 +1,24 @@
+2020-01-11  Kate Cheney  <katherine_cheney@apple.com>
+
+        Add correct grandfathering functionality to the ITP database backend
+        https://bugs.webkit.org/show_bug.cgi?id=205844
+        <rdar://problem/58360450>
+
+        Reviewed by John Wilander.
+
+        In order to test both the ITP database and memory stores, this patch
+        had to restructure the grandfathering API tests.
+
+        If the test is for the database backend (ends in *Database), it will
+        check if the default store matches. If so, it continues on with the
+        normal test. If not, it has to use an API call to reconstruct the
+        new store and ensure the grandfathering still happens. Vice versa for
+        the memory store tests.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/ResourceLoadStatistics.mm:
+        (isITPDatabaseEnabled):
+        (TEST):
+
 2020-01-10  Myles C. Maxfield  <mmaxfield@apple.com>
 
         REGRESSION(r185816): In the Hong Kong locale, navigator.language reports it's in the Taiwan locale

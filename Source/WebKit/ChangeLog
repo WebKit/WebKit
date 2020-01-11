@@ -1,3 +1,55 @@
+2020-01-11  Kate Cheney  <katherine_cheney@apple.com>
+
+        Add correct grandfathering functionality to the ITP database backend
+        https://bugs.webkit.org/show_bug.cgi?id=205844
+        <rdar://problem/58360450>
+
+        Reviewed by John Wilander.
+
+        This patch adds functionality for grandfathering statistics upon
+        creation of a new ITP database file. The memory store relies on
+        the presence of the ITP plist to indicate whether the data should
+        be grandfathered. Since the database does not use a plist, this patch
+        adds a boolean variable to track whether the database file previously
+        existed or not to indicate when to grandfather.
+
+        * NetworkProcess/Classifier/ResourceLoadStatisticsDatabaseStore.cpp:
+        (WebKit::ResourceLoadStatisticsDatabaseStore::openITPDatabase):
+        * NetworkProcess/Classifier/ResourceLoadStatisticsDatabaseStore.h:
+        The boolean variable m_isNewResourceLoadStatisticDatabaseFile is set 
+        to true if the database file did not previously exist, indicating ITP
+        is being used for the first time and data should be grandfathered.
+
+        * NetworkProcess/Classifier/WebResourceLoadStatisticsStore.cpp:
+        (WebKit::WebResourceLoadStatisticsStore::populateMemoryStoreFromDisk):
+        This is where the grandfathering happens. The call to logTestingEvent
+        is for API testing purposes only.
+
+        (WebKit::WebResourceLoadStatisticsStore::scheduleClearInMemoryAndPersistent):
+        If a scheduleClearInMemoryAndPersistent is called, the plist is
+        deleted, and data will be grandfathered upon recreation. To mimic
+        this, the ITP database store is cleared and becomes "new" again, so
+        the boolean is set to true.
+
+        * UIProcess/API/C/WKPreferences.cpp:
+        (WKPreferencesSetIsITPDatabaseEnabled):
+        (WKPreferencesGetIsITPDatabaseEnabled):
+        * UIProcess/API/C/WKPreferencesRef.h:
+        * UIProcess/API/Cocoa/WKPreferences.mm:
+        (-[WKPreferences _isITPDatabaseEnabled]):
+        * UIProcess/API/Cocoa/WKPreferencesPrivate.h:
+        In order to properly run the grandfathering
+        API tests, the 'isITPDatabaseEnabled' boolean needs to be exposed from
+        Web Preferences.
+
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        The API tests rely on the ITP database flag being set correctly. Since
+        being on-by-default, the ITP database flag does not show up in the
+        user defaults menu if enabled. This patch fixes this by first checking 
+        to see if the value is in the defaults menu, otherwise returning the 
+        default preferences value. This ensures the preferences value matches 
+        the actual store being initialized.
+
 2020-01-10  Eric Carlson  <eric.carlson@apple.com>
 
         [Media in GPU process] Extend the GPU process sandbox to allow access to local files when necessary

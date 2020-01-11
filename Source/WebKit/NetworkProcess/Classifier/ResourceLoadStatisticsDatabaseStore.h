@@ -135,6 +135,8 @@ public:
     bool isCorrectSubStatisticsCount(const RegistrableDomain&, const TopFrameDomain&);
     void resourceToString(StringBuilder&, const String&) const;
     Seconds getMostRecentlyUpdatedTimestamp(const RegistrableDomain&, const TopFrameDomain&) const;
+    bool isNewResourceLoadStatisticsDatabaseFile() const { return m_isNewResourceLoadStatisticsDatabaseFile; }
+    void setIsNewResourceLoadStatisticsDatabaseFile(bool isNewResourceLoadStatisticsDatabaseFile) { m_isNewResourceLoadStatisticsDatabaseFile = isNewResourceLoadStatisticsDatabaseFile; }
 
 private:
     void openITPDatabase();
@@ -256,6 +258,7 @@ private:
     mutable WebCore::SQLiteStatement m_storageAccessExistsStatement;
     mutable WebCore::SQLiteStatement m_getMostRecentlyUpdatedTimestampStatement;
     PAL::SessionID m_sessionID;
+    bool m_isNewResourceLoadStatisticsDatabaseFile { false };
 };
 
 } // namespace WebKit
