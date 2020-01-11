@@ -451,10 +451,9 @@
     (allow iokit-open
         (iokit-user-client-class "AppleJPEGDriverUserClient")
         (iokit-user-client-class "IOSurfaceAcceleratorClient")
-        (iokit-user-client-class "IOSurfaceSendRight"))
-    (allow iokit-open (with report) (with telemetry)
-        ;; Requires by UIView -> UITextMagnifierRenderer -> UIWindow
-        (iokit-user-client-class "IOSurfaceRootUserClient"))
+        (iokit-user-client-class "IOSurfaceSendRight")
+        (iokit-user-client-class "IOSurfaceRootUserClient") ;; Needed by Tiled Grid code.
+    )
 
     ;; Silence sandbox violations from apps trying to create the empty plist if it doesn't exist.
     ;; <rdar://problem/13796537>
@@ -647,8 +646,9 @@
     (deny ipc-posix-sem-create ipc-posix-sem-post ipc-posix-sem-unlink ipc-posix-sem-wait)
     (allow ipc-posix-sem-open))
 
-(allow mach-lookup (with report) (with telemetry)
-    (global-name "com.apple.runningboard"))
+(allow mach-lookup (with telemetry)
+    (global-name "com.apple.runningboard") ;; Needed by process assertion code (ProcessTaskStateObserver).
+)
 
 (allow system-sched
        (require-entitlement "com.apple.private.kernel.override-cpumon"))
