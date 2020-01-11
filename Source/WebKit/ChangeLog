@@ -1,3 +1,16 @@
+2020-01-10  Jonathan Bedard  <jbedard@apple.com>
+
+        Python3: Support Source/WebKit/Scripts/webkit
+        https://bugs.webkit.org/show_bug.cgi?id=206078
+
+        Reviewed by Stephanie Lewis.
+
+        Covered by existing unit tests.
+
+        * Scripts/webkit/LegacyMessages-expected.h: Sort forward declarations.
+        * Scripts/webkit/Messages-expected.h: Ditto.
+        * Scripts/webkit/messages.py: Sort printed outputs.
+
 2020-01-10  Brent Fulgham  <bfulgham@apple.com>
 
         [iOS] Remove reporting for some well-understood sandbox rules

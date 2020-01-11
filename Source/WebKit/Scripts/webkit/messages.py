@@ -195,7 +195,7 @@ def forward_declaration(namespace, kind_and_type):
 def forward_declarations_for_namespace(namespace, kind_and_types):
     result = []
     result.append('namespace %s {\n' % namespace)
-    result += ['%s;\n' % forward_declaration(namespace, x) for x in kind_and_types]
+    result += ['%s;\n' % forward_declaration(namespace, x) for x in sorted(kind_and_types)]
     result.append('}\n')
     return ''.join(result)
 
@@ -290,7 +290,7 @@ def forward_declarations_and_headers(receiver):
     for header in sorted(headers):
         conditions = conditions_for_header(header)
         if conditions and not None in conditions:
-            header_include = '#if %s\n' % ' || '.join(set(conditions))
+            header_include = '#if %s\n' % ' || '.join(sorted(set(conditions)))
             header_include += '#include %s\n' % header
             header_include += '#endif\n'
             header_includes.append(header_include)
@@ -347,7 +347,7 @@ def forward_declarations_and_headers_for_replies(receiver):
     for header in sorted(headers):
         conditions = conditions_for_header(header)
         if conditions and not None in conditions:
-            header_include = '#if %s\n' % ' || '.join(set(conditions))
+            header_include = '#if %s\n' % ' || '.join(sorted(set(conditions)))
             header_include += '#include %s\n' % header
             header_include += '#endif\n'
             header_includes.append(header_include)
@@ -702,7 +702,7 @@ def generate_message_handler(receiver):
     result.append('#include "%s.h"\n\n' % receiver.name)
     for header in sorted(header_conditions):
         if header_conditions[header] and not None in header_conditions[header]:
-            result.append('#if %s\n' % ' || '.join(set(header_conditions[header])))
+            result.append('#if %s\n' % ' || '.join(sorted(set(header_conditions[header]))))
             result += ['#include %s\n' % header]
             result.append('#endif\n')
         else:

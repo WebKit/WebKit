@@ -41,13 +41,13 @@
 #include <wtf/text/WTFString.h>
 
 namespace IPC {
-class MachPort;
 class DummyType;
+class MachPort;
 }
 
 namespace WebKit {
-class WebTouchEvent;
 class WebPreferencesStore;
+class WebTouchEvent;
 }
 
 namespace Messages {
