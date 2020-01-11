@@ -130,6 +130,9 @@ public:
     const Box* previousInFlowSibling() const;
     const Box* previousInFlowOrFloatingSibling() const;
 
+    // FIXME: This is currently needed for style updates.
+    Box* nextSibling() { return m_nextSibling; }
+
     bool isContainer() const { return m_baseTypeFlags & ContainerFlag; }
     bool isBlockContainer() const { return isBlockLevelBox() && isContainer(); }
     bool isInlineContainer() const { return isInlineLevelBox() && isContainer(); }

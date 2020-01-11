@@ -76,6 +76,19 @@ bool LineLayout::canUseFor(const RenderBlockFlow& flow)
     return true;
 }
 
+void LineLayout::updateStyle()
+{
+    auto& root = rootLayoutBox();
+
+    // FIXME: Encapsulate style updates better.
+    root.updateStyle(m_flow.style());
+
+    for (auto* child = root.firstChild(); child; child = child->nextSibling()) {
+        if (child->isAnonymous())
+            child->updateStyle(RenderStyle::createAnonymousStyleWithDisplay(root.style(), DisplayType::Inline));
+    }
+}
+
 void LineLayout::layout()
 {
     if (!m_layoutState)
@@ -195,6 +208,11 @@ LineLayoutTraversal::ElementBoxIterator LineLayout::elementBoxFor(const RenderLi
 }
 
 const Layout::Container& LineLayout::rootLayoutBox() const
+{
+    return m_treeContent->rootLayoutBox();
+}
+
+Layout::Container& LineLayout::rootLayoutBox()
 {
     return m_treeContent->rootLayoutBox();
 }

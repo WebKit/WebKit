@@ -60,6 +60,7 @@ public:
 
     static bool canUseFor(const RenderBlockFlow&);
 
+    void updateStyle();
     void layout();
 
     LayoutUnit contentLogicalHeight() const { return m_contentLogicalHeight; }
@@ -80,11 +81,12 @@ public:
 
 private:
     const Layout::Container& rootLayoutBox() const;
+    Layout::Container& rootLayoutBox();
     void prepareRootGeometryForLayout();
     ShadowData* debugTextShadow();
 
     const RenderBlockFlow& m_flow;
-    std::unique_ptr<const Layout::LayoutTreeContent> m_treeContent;
+    std::unique_ptr<Layout::LayoutTreeContent> m_treeContent;
     std::unique_ptr<Layout::LayoutState> m_layoutState;
     LayoutUnit m_contentLogicalHeight;
 };

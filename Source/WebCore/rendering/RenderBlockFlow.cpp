@@ -2104,6 +2104,11 @@ void RenderBlockFlow::styleDidChange(StyleDifference diff, const RenderStyle* ol
 
     if (multiColumnFlow())
         updateStylesForColumnChildren();
+
+#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
+    if (layoutFormattingContextLineLayout())
+        layoutFormattingContextLineLayout()->updateStyle();
+#endif
 }
 
 void RenderBlockFlow::updateStylesForColumnChildren()

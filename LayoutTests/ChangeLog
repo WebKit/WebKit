@@ -1,3 +1,13 @@
+2020-01-10  Antti Koivisto  <antti@apple.com>
+
+        [LFC][Integration] Update style for layout boxes
+        https://bugs.webkit.org/show_bug.cgi?id=206074
+
+        Reviewed by Zalan Bujtas.
+
+        * fast/css/simple-color-change-expected.html: Added.
+        * fast/css/simple-color-change.html: Added.
+
 2020-01-10  Brent Fulgham  <bfulgham@apple.com>
 
         [iOS] Remove 'com.apple.awdd' from the WebContent process sandbox
