@@ -1,3 +1,17 @@
+2020-01-10  John Wilander  <wilander@apple.com>
+
+        Make http/tests/resourceLoadStatistics/classify-as-non-prevalent-based-on-sub-frame-under-top-frame-origins* use resource/util.js
+        https://bugs.webkit.org/show_bug.cgi?id=206100
+        <rdar://problem/58492335>
+
+        Unreviewed test gardening.
+
+        * http/tests/resourceLoadStatistics/classify-as-non-prevalent-based-on-sub-frame-under-top-frame-origins-database.html:
+        * http/tests/resourceLoadStatistics/classify-as-non-prevalent-based-on-sub-frame-under-top-frame-origins.html:
+            These two tests now use setEnableFeature() in resources/util.js which makes sure 
+            testRunner.setStatisticsNotifyPagesWhenDataRecordsWereScanned() is called with
+            false before ending the test.
+
 2020-01-10  Ryan Haddad  <ryanhaddad@apple.com>
 
         3 editing/spelling test failures on Mojave Release WK1
