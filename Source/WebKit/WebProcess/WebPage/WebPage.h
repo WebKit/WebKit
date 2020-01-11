@@ -977,6 +977,8 @@ public:
     void applicationDidFinishSnapshottingAfterEnteringBackground();
     void applicationWillEnterForeground(bool isSuspendedUnderLock);
     void applicationDidBecomeActive();
+    void applicationDidEnterBackgroundForMedia(bool isSuspendedUnderLock);
+    void applicationWillEnterForegroundForMedia(bool isSuspendedUnderLock);
     void didFinishContentChangeObserving(WKContentChange);
 
     bool platformPrefersTextLegibilityBasedZoomScaling() const;

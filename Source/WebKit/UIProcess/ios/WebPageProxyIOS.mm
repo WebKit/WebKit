@@ -696,6 +696,22 @@ void WebPageProxy::applicationWillResignActive()
     m_process->send(Messages::WebPage::ApplicationWillResignActive(), m_webPageID);
 }
 
+void WebPageProxy::applicationDidEnterBackgroundForMedia()
+{
+    bool isSuspendedUnderLock = [UIApp isSuspendedUnderLock];
+    RELEASE_LOG_IF_ALLOWED(ViewState, "applicationWillEnterForegroundForMedia: isSuspendedUnderLock? %d", isSuspendedUnderLock);
+
+    m_process->send(Messages::WebPage::ApplicationDidEnterBackgroundForMedia(isSuspendedUnderLock), m_webPageID);
+}
+
+void WebPageProxy::applicationWillEnterForegroundForMedia()
+{
+    bool isSuspendedUnderLock = [UIApp isSuspendedUnderLock];
+    RELEASE_LOG_IF_ALLOWED(ViewState, "applicationDidEnterBackgroundForMedia: isSuspendedUnderLock? %d", isSuspendedUnderLock);
+
+    m_process->send(Messages::WebPage::ApplicationWillEnterForegroundForMedia(isSuspendedUnderLock), m_webPageID);
+}
+
 void WebPageProxy::applicationDidBecomeActive()
 {
 #if HAVE(AVKIT)

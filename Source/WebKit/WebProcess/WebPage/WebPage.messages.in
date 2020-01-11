@@ -99,6 +99,8 @@ messages -> WebPage LegacyReceiver {
     ApplicationDidFinishSnapshottingAfterEnteringBackground()
     ApplicationWillEnterForeground(bool isSuspendedUnderLock)
     ApplicationDidBecomeActive()
+    ApplicationDidEnterBackgroundForMedia(bool isSuspendedUnderLock)
+    ApplicationWillEnterForegroundForMedia(bool isSuspendedUnderLock)
     ContentSizeCategoryDidChange(String contentSizeCategory)
     GetSelectionContext(WebKit::CallbackID callbackID)
     SetAllowsMediaDocumentInlinePlayback(bool allows)

@@ -1,3 +1,33 @@
+2020-01-10  Jer Noble  <jer.noble@apple.com>
+
+        [iOS] Audio from non-frontmost tab continues when app is backgrounded
+        https://bugs.webkit.org/show_bug.cgi?id=206101
+        <rdar://problem/58089916>
+
+        Reviewed by Eric Carlson.
+
+        Tests: WKWebViewPausePlayingAudioTests.InWindow
+               WKWebViewPausePlayingAudioTests.OutOfWindow
+
+        The ApplicationStateTracker will only send notifications about application state to 
+        WebPageProxies when those proxies' views are actually in-window. Add a separate application
+        state observer strictly for media which fires only when application state notifications are
+        received while the view is not in-window.
+
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/ios/WKContentView.mm:
+        (-[WKContentView _commonInitializationWithProcessPool:configuration:]):
+        (-[WKContentView _applicationDidEnterBackground:]):
+        (-[WKContentView _applicationWillEnterForeground:]):
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::applicationDidEnterBackgroundForMedia):
+        (WebKit::WebPageProxy::applicationWillEnterForegroundForMedia):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::applicationDidEnterBackgroundForMedia):
+        (WebKit::WebPage::applicationWillEnterForegroundForMedia):
+
 2020-01-10  Simon Fraser  <simon.fraser@apple.com>
 
         Introduce ENABLE_META_VIEWPORT and use it in some WK2 code
