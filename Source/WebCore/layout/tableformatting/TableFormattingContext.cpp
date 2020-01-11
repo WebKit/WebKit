@@ -58,7 +58,7 @@ TableFormattingContext::TableFormattingContext(const Container& formattingContex
 {
 }
 
-void TableFormattingContext::layoutInFlowContent(InvalidationState& invalidationState, const HorizontalConstraints&, const VerticalConstraints&)
+void TableFormattingContext::layoutInFlowContent(InvalidationState& invalidationState, const HorizontalConstraints& horizontalConstraints, const VerticalConstraints&)
 {
     auto& grid = formattingState().tableGrid();
     auto& columnsContext = grid.columnsContext();
@@ -79,7 +79,7 @@ void TableFormattingContext::layoutInFlowContent(InvalidationState& invalidation
     ASSERT(!cellList.isEmpty());
     for (auto& cell : cellList) {
         auto& cellLayoutBox = cell->tableCellBox;
-        layoutTableCellBox(cellLayoutBox, columnList.at(cell->position.x()), invalidationState);
+        layoutTableCellBox(cellLayoutBox, columnList.at(cell->position.x()), invalidationState, horizontalConstraints);
         // FIXME: Add support for column and row spanning and this requires a 2 pass layout.
         auto& row = grid.rows().at(cell->position.y());
         row.setLogicalHeight(std::max(row.logicalHeight(), geometryForBox(cellLayoutBox).marginBoxHeight()));
@@ -97,9 +97,8 @@ void TableFormattingContext::layoutInFlowContent(InvalidationState& invalidation
     setComputedGeometryForRows();
 }
 
-void TableFormattingContext::layoutTableCellBox(const Box& cellLayoutBox, const TableGrid::Column& column, InvalidationState& invalidationState)
+void TableFormattingContext::layoutTableCellBox(const Box& cellLayoutBox, const TableGrid::Column& column, InvalidationState& invalidationState, const HorizontalConstraints& horizontalConstraints)
 {
-    auto horizontalConstraints = Geometry::horizontalConstraintsForInFlow(geometryForBox(*cellLayoutBox.containingBlock()));
     computeBorderAndPadding(cellLayoutBox, horizontalConstraints);
     // Margins do not apply to internal table elements.
     auto& cellDisplayBox = formattingState().displayBox(cellLayoutBox);
