@@ -1,3 +1,20 @@
+2020-01-10  Caitlin Potter  <caitp@igalia.com> and Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        Object.keys should throw if called on module namespace object with uninitialized binding
+        https://bugs.webkit.org/show_bug.cgi?id=205983
+
+        Reviewed by Yusuke Suzuki.
+
+        If JSModuleNamespaceObject::getOwnPropertyNames method is called by
+        Object.keys or for/in loop, it should invoke [[GetOwnProperty]] on
+        every binding so a ReferenceError is thrown if the binding is uninitialized.
+
+        Complete call stack of internal methods and abstract ops is in "info" meta of
+        JSTests/test262/test/language/module-code/namespace/internals/object-keys-binding-uninit.js
+
+        * runtime/JSModuleNamespaceObject.cpp:
+        (JSC::JSModuleNamespaceObject::getOwnPropertyNames):
+
 2020-01-10  Saam Barati  <sbarati@apple.com>
 
         ObjectAllocationSinkingPhase doesn't model pointers to allocations in control flow properly

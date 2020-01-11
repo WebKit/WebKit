@@ -1,3 +1,12 @@
+2020-01-10  Caitlin Potter  <caitp@igalia.com> and Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        Object.keys should throw if called on module namespace object with uninitialized binding
+        https://bugs.webkit.org/show_bug.cgi?id=205983
+
+        Reviewed by Yusuke Suzuki.
+
+        * test262/expectations.yaml: Mark 2 test cases as passing.
+
 2020-01-10  Saam Barati  <sbarati@apple.com>
 
         ObjectAllocationSinkingPhase doesn't model pointers to allocations in control flow properly

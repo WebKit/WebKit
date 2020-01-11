@@ -3477,8 +3477,6 @@ test/language/module-code/namespace/internals/get-nested-namespace-dflt-skip.js:
   module: "SyntaxError: Unexpected identifier 'as'. Expected 'from' before exported module name."
 test/language/module-code/namespace/internals/get-nested-namespace-props-nrml.js:
   module: "SyntaxError: Unexpected identifier 'as'. Expected 'from' before exported module name."
-test/language/module-code/namespace/internals/object-keys-binding-uninit.js:
-  module: 'Test262Error: Expected a ReferenceError to be thrown but no exception was thrown at all'
 test/language/module-code/namespace/internals/set.js:
   module: 'Test262Error: Reflect.defineProperty: local1 Expected SameValue(«false», «true») to be true'
 test/language/module-code/parse-err-hoist-lex-fun.js:
