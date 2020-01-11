@@ -2009,7 +2009,7 @@ void GraphicsContextGLOpenGL::vertexAttribDivisor(GCGLuint index, GCGLuint divis
     getExtensions().vertexAttribDivisor(index, divisor);
 }
 
-#if USE(OPENGL) && ENABLE(WEBGL2)
+#if HAVE(OPENGL_4) && ENABLE(WEBGL2)
 void GraphicsContextGLOpenGL::primitiveRestartIndex(GCGLuint index)
 {
     makeContextCurrent();
@@ -2035,13 +2035,13 @@ void GraphicsContextGLOpenGL::bufferSubData(GCGLenum target, GCGLintptr dstByteO
     UNUSED_PARAM(length);
 }
 
-#if USE(OPENGL_3) || USE(OPENGL_ES_3)
+#if HAVE(OPENGL_4) || HAVE(OPENGL_ES_3)
 void GraphicsContextGLOpenGL::copyBufferSubData(GCGLenum readTarget, GCGLenum writeTarget, GCGLintptr readOffset, GCGLintptr writeOffset, GCGLsizeiptr size)
 {
     makeContextCurrent();
     ::glCopyBufferSubData(readTarget, writeTarget, readOffset, writeOffset, size);
 }
-#else
+#elif !USE(ANGLE)
 void GraphicsContextGLOpenGL::copyBufferSubData(GCGLenum, GCGLenum, GCGLintptr, GCGLintptr, GCGLsizeiptr)
 {
 }
@@ -2056,7 +2056,7 @@ void GraphicsContextGLOpenGL::getBufferSubData(GCGLenum target, GCGLintptr srcBy
     UNUSED_PARAM(length);
 }
 
-#if USE(OPENGL_3) || USE(OPENGL_ES_3)
+#if HAVE(OPENGL_4) || HAVE(OPENGL_ES_3)
 void* GraphicsContextGLOpenGL::mapBufferRange(GCGLenum target, GCGLintptr offset, GCGLsizeiptr length, GCGLbitfield access)
 {
     makeContextCurrent();
@@ -2068,7 +2068,7 @@ GCGLboolean GraphicsContextGLOpenGL::unmapBuffer(GCGLenum target)
     makeContextCurrent();
     return ::glUnmapBuffer(target);
 }
-#else
+#elif !USE(ANGLE)
 void* GraphicsContextGLOpenGL::mapBufferRange(GCGLenum, GCGLintptr, GCGLsizeiptr, GCGLbitfield)
 {
     return nullptr;
@@ -2124,7 +2124,7 @@ void GraphicsContextGLOpenGL::readBuffer(GCGLenum src)
     UNUSED_PARAM(src);
 }
 
-#if USE(OPENGL_3) || USE(OPENGL_ES_3)
+#if HAVE(OPENGL_4) || HAVE(OPENGL_ES_3)
 void GraphicsContextGLOpenGL::getInternalformativ(GCGLenum target, GCGLenum internalformat, GCGLenum pname, GCGLsizei bufSize, GCGLint* params)
 {
 #if USE(OPENGL_ES)
@@ -2158,7 +2158,7 @@ void GraphicsContextGLOpenGL::texStorage3D(GCGLenum target, GCGLsizei levels, GC
     ::glTexStorage3D(target, levels, internalformat, width, height, depth);
     m_state.textureSeedCount.add(m_state.currentBoundTexture());
 }
-#else
+#elif !USE(ANGLE)
 void GraphicsContextGLOpenGL::getInternalformativ(GCGLenum, GCGLenum, GCGLenum, GCGLsizei, GCGLint*)
 {
 }
@@ -2748,7 +2748,7 @@ Vector<GCGLuint> GraphicsContextGLOpenGL::getUniformIndices(PlatformGLObject pro
     return { };
 }
 
-#if USE(OPENGL_3) || USE(OPENGL_ES_3)
+#if HAVE(OPENGL_4) || HAVE(OPENGL_ES_3)
 void GraphicsContextGLOpenGL::getActiveUniforms(PlatformGLObject program, const Vector<GCGLuint>& uniformIndices, GCGLenum pname, Vector<GCGLint>& params)
 {
     ASSERT(program);
@@ -2787,7 +2787,7 @@ void GraphicsContextGLOpenGL::uniformBlockBinding(PlatformGLObject program, GCGL
     UNUSED_PARAM(uniformBlockIndex);
     UNUSED_PARAM(uniformBlockBinding);
 }
-#else
+#elif !USE(ANGLE)
 void GraphicsContextGLOpenGL::getActiveUniforms(PlatformGLObject, const Vector<GCGLuint>&, GCGLenum, Vector<GCGLint>&)
 {
 }

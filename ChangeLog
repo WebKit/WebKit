@@ -1,3 +1,18 @@
+2020-01-10  Dean Jackson  <dino@apple.com>
+
+        [WebGL] Clarify USE_OPENGL_ES_3
+        https://bugs.webkit.org/show_bug.cgi?id=206081
+        <rdar://problem/58486798>
+
+        Reviewed by Simon Fraser.
+
+        Make it clear that USE_ANGLE | USE_OPENGL | USE_OPENGL_ES are exclusive,
+        and that the availability of OpenGL ES 3 is a separate query.
+
+        * Source/cmake/OptionsFTW.cmake:
+        * Source/cmake/OptionsWPE.cmake:
+        * Source/cmake/OptionsWinCairo.cmake:
+
 2020-01-10  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Update OptionsGTK.cmake and NEWS for 2.27.4 release

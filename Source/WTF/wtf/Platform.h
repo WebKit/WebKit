@@ -1118,21 +1118,26 @@
    It replaces USE_OPENGL, USE_OPENGL_ES and USE_EGL. */
 #if PLATFORM(MAC) || (PLATFORM(MACCATALYST) && __has_include(<OpenGL/OpenGL.h>))
 #define USE_OPENGL 1
-#define USE_OPENGL_3 1
 #define USE_OPENGL_ES 0
-#define USE_OPENGL_ES_3 0
 #define USE_ANGLE 0
 #else
 #define USE_OPENGL 0
-#define USE_OPENGL_3 0
 #define USE_OPENGL_ES 1
-#define USE_OPENGL_ES_3 1
 #define USE_ANGLE 0
 #endif
 #if PLATFORM(COCOA)
 #ifndef GL_SILENCE_DEPRECATION
 #define GL_SILENCE_DEPRECATION 1
 #endif
+#if USE(OPENGL) && !defined(HAVE_OPENGL_4)
+#define HAVE_OPENGL_4 1
+#endif
+#if USE(OPENGL_ES) && !defined(HAVE_OPENGL_ES_3)
+#define HAVE_OPENGL_ES_3 1
+#endif
+#endif
+#if USE_ANGLE && (USE_OPENGL || USE_OPENGL_ES)
+#error USE_ANGLE is incompatible with USE_OPENGL and USE_OPENGL_ES
 #endif
 #endif
 

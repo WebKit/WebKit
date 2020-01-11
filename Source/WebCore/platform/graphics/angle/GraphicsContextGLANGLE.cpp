@@ -1832,6 +1832,89 @@ void GraphicsContextGLOpenGL::vertexAttribDivisor(GCGLuint index, GCGLuint divis
     getExtensions().vertexAttribDivisor(index, divisor);
 }
 
+void GraphicsContextGLOpenGL::copyBufferSubData(GCGLenum readTarget, GCGLenum writeTarget, GCGLintptr readOffset, GCGLintptr writeOffset, GCGLsizeiptr size)
+{
+    makeContextCurrent();
+    gl::CopyBufferSubData(readTarget, writeTarget, readOffset, writeOffset, size);
+}
+
+void* GraphicsContextGLOpenGL::mapBufferRange(GCGLenum target, GCGLintptr offset, GCGLsizeiptr length, GCGLbitfield access)
+{
+    makeContextCurrent();
+    return gl::MapBufferRange(target, offset, length, access);
+}
+
+GCGLboolean GraphicsContextGLOpenGL::unmapBuffer(GCGLenum target)
+{
+    makeContextCurrent();
+    return gl::UnmapBuffer(target);
+}
+
+void GraphicsContextGLOpenGL::getInternalformativ(GCGLenum target, GCGLenum internalformat, GCGLenum pname, GCGLsizei bufSize, GCGLint* params)
+{
+    makeContextCurrent();
+    gl::GetInternalformativ(target, internalformat, pname, bufSize, params);
+}
+
+void GraphicsContextGLOpenGL::renderbufferStorageMultisample(GCGLenum target, GCGLsizei samples, GCGLenum internalformat, GCGLsizei width, GCGLsizei height)
+{
+    makeContextCurrent();
+    gl::RenderbufferStorageMultisample(target, samples, internalformat, width, height);
+}
+
+void GraphicsContextGLOpenGL::texStorage2D(GCGLenum target, GCGLsizei levels, GCGLenum internalformat, GCGLsizei width, GCGLsizei height)
+{
+    makeContextCurrent();
+    gl::TexStorage2D(target, levels, internalformat, width, height);
+    m_state.textureSeedCount.add(m_state.currentBoundTexture());
+}
+
+void GraphicsContextGLOpenGL::texStorage3D(GCGLenum target, GCGLsizei levels, GCGLenum internalformat, GCGLsizei width, GCGLsizei height, GCGLsizei depth)
+{
+    makeContextCurrent();
+    gl::TexStorage3D(target, levels, internalformat, width, height, depth);
+    m_state.textureSeedCount.add(m_state.currentBoundTexture());
+}
+
+void GraphicsContextGLOpenGL::getActiveUniforms(PlatformGLObject program, const Vector<GCGLuint>& uniformIndices, GCGLenum pname, Vector<GCGLint>& params)
+{
+    ASSERT(program);
+    makeContextCurrent();
+
+    gl::GetActiveUniformsiv(program, uniformIndices.size(), uniformIndices.data(), pname, params.data());
+}
+
+GCGLuint GraphicsContextGLOpenGL::getUniformBlockIndex(PlatformGLObject program, const String& uniformBlockName)
+{
+    UNUSED_PARAM(program);
+    UNUSED_PARAM(uniformBlockName);
+
+    return 0;
+}
+
+void GraphicsContextGLOpenGL::getActiveUniformBlockiv(PlatformGLObject program, GCGLuint uniformBlockIndex, GCGLenum pname, GCGLint* params)
+{
+    UNUSED_PARAM(program);
+    UNUSED_PARAM(uniformBlockIndex);
+    UNUSED_PARAM(pname);
+    UNUSED_PARAM(params);
+}
+
+String GraphicsContextGLOpenGL::getActiveUniformBlockName(PlatformGLObject program, GCGLuint uniformBlockIndex)
+{
+    UNUSED_PARAM(program);
+    UNUSED_PARAM(uniformBlockIndex);
+
+    return emptyString();
+}
+
+void GraphicsContextGLOpenGL::uniformBlockBinding(PlatformGLObject program, GCGLuint uniformBlockIndex, GCGLuint uniformBlockBinding)
+{
+    UNUSED_PARAM(program);
+    UNUSED_PARAM(uniformBlockIndex);
+    UNUSED_PARAM(uniformBlockBinding);
+}
+
 }
 
 #endif // ENABLE(GRAPHICS_CONTEXT_GL) && USE(ANGLE)
