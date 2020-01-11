@@ -1,3 +1,12 @@
+2020-01-10  Ryan Haddad  <ryanhaddad@apple.com>
+
+        3 editing/spelling test failures on Mojave Release WK1
+        https://bugs.webkit.org/show_bug.cgi?id=206071
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk1/TestExpectations: Update test expectations to disable failing tests.
+
 2020-01-10  Brent Fulgham  <bfulgham@apple.com>
 
         [iOS] Remove used media-related mach services from the WebContent process sandbox
