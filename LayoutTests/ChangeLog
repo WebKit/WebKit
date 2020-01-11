@@ -1,3 +1,54 @@
+2020-01-10  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        REGRESSION(r185816): In the Hong Kong locale, navigator.language reports it's in the Taiwan locale
+        https://bugs.webkit.org/show_bug.cgi?id=200043
+        <rdar://problem/44119496>
+
+        Reviewed by Dean Jackson.
+
+        Migrate and update tests from TestWebKitAPI to LayoutTests, to match the rest of our system language tests.
+
+        * platform/mac/TestExpectations: Mark these tests as possibly failing on older versions of macOS.
+        * fast/text/international/system-language/navigator-language/navigator-language-en-GB-expected.txt: Added.
+        * fast/text/international/system-language/navigator-language/navigator-language-en-GB.html: Added.
+        * fast/text/international/system-language/navigator-language/navigator-language-en-US-expected.txt: Added.
+        * fast/text/international/system-language/navigator-language/navigator-language-en-US.html: Added.
+        * fast/text/international/system-language/navigator-language/navigator-language-en-expected.txt: Added.
+        * fast/text/international/system-language/navigator-language/navigator-language-en.html: Added.
+        * fast/text/international/system-language/navigator-language/navigator-language-es-419-expected.txt: Added.
+        * fast/text/international/system-language/navigator-language/navigator-language-es-419.html: Added.
+        * fast/text/international/system-language/navigator-language/navigator-language-es-ES-expected.txt: Added.
+        * fast/text/international/system-language/navigator-language/navigator-language-es-ES.html: Added.
+        * fast/text/international/system-language/navigator-language/navigator-language-es-MX-expected.txt: Added.
+        * fast/text/international/system-language/navigator-language/navigator-language-es-MX.html: Added.
+        * fast/text/international/system-language/navigator-language/navigator-language-es-expected.txt: Added.
+        * fast/text/international/system-language/navigator-language/navigator-language-es.html: Added.
+        * fast/text/international/system-language/navigator-language/navigator-language-fr-CA-expected.txt: Added.
+        * fast/text/international/system-language/navigator-language/navigator-language-fr-CA.html: Added.
+        * fast/text/international/system-language/navigator-language/navigator-language-fr-expected.txt: Added.
+        * fast/text/international/system-language/navigator-language/navigator-language-fr.html: Added.
+        * fast/text/international/system-language/navigator-language/navigator-language-hi-expected.txt: Added.
+        * fast/text/international/system-language/navigator-language/navigator-language-hi.html: Added.
+        * fast/text/international/system-language/navigator-language/navigator-language-ja-expected.txt: Added.
+        * fast/text/international/system-language/navigator-language/navigator-language-ja.html: Added.
+        * fast/text/international/system-language/navigator-language/navigator-language-pt-BR-expected.txt: Added.
+        * fast/text/international/system-language/navigator-language/navigator-language-pt-BR.html: Added.
+        * fast/text/international/system-language/navigator-language/navigator-language-pt-PT-expected.txt: Added.
+        * fast/text/international/system-language/navigator-language/navigator-language-pt-PT.html: Added.
+        * fast/text/international/system-language/navigator-language/navigator-language-ru-expected.txt: Added.
+        * fast/text/international/system-language/navigator-language/navigator-language-ru.html: Added.
+        * fast/text/international/system-language/navigator-language/navigator-language-zh-HK-expected.txt: Added.
+        * fast/text/international/system-language/navigator-language/navigator-language-zh-HK.html: Added.
+        * fast/text/international/system-language/navigator-language/navigator-language-zh-Hans-expected.txt: Added.
+        * fast/text/international/system-language/navigator-language/navigator-language-zh-Hans.html: Added.
+        * fast/text/international/system-language/navigator-language/navigator-language-zh-Hant-HK-expected.txt: Added.
+        * fast/text/international/system-language/navigator-language/navigator-language-zh-Hant-HK.html: Added.
+        * fast/text/international/system-language/navigator-language/navigator-language-zh-Hant-expected.txt: Added.
+        * fast/text/international/system-language/navigator-language/navigator-language-zh-Hant.html: Added.
+        * fast/text/international/system-language/navigator-language/navigator-language-zh-TW-expected.txt: Added.
+        * fast/text/international/system-language/navigator-language/navigator-language-zh-TW.html: Added.
+        * js/dom/navigator-language-expected.txt:
+
 2020-01-10  John Wilander  <wilander@apple.com>
 
         Make http/tests/resourceLoadStatistics/classify-as-non-prevalent-based-on-sub-frame-under-top-frame-origins* use resource/util.js
