@@ -260,7 +260,7 @@ public:
     static_assert((lhsObservedTypeShift + ObservedType::numBitsNeeded + 1) <= sizeof(BinaryArithProfileBase) * 8, "Should fit in a uint32_t.");
     static_assert(!(specialFastPathBit & ~clearLhsObservedTypeBitMask), "These bits should not intersect.");
     static_assert(specialFastPathBit & clearLhsObservedTypeBitMask, "These bits should intersect.");
-    static_assert(specialFastPathBit > ~clearLhsObservedTypeBitMask, "These bits should not intersect and specialFastPathBit should be a higher bit.");
+    static_assert(static_cast<unsigned>(specialFastPathBit) > static_cast<unsigned>(~clearLhsObservedTypeBitMask), "These bits should not intersect and specialFastPathBit should be a higher bit.");
 
     BinaryArithProfile()
         : ArithProfile<BinaryArithProfileBase> ()
