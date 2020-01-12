@@ -25,14 +25,13 @@
 
 #import <Foundation/Foundation.h>
 
-#if PLATFORM(MAC) && USE(APPLE_INTERNAL_SDK)
+#if USE(APPLE_INTERNAL_SDK)
 
 #import <InternationalSupport/NSLocale+InternationalSupportExtensions.h>
 
-#else
+#endif
 
 @interface NSLocale ()
 + (nonnull NSArray<NSString *> *)minimizedLanguagesFromLanguages:(nonnull NSArray<NSString *> *)languages;
 @end
 
-#endif
