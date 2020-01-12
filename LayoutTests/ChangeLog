@@ -1,3 +1,12 @@
+2020-01-10  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [WebCore] Fix crash in module loader due to change in fragment reservation
+        https://bugs.webkit.org/show_bug.cgi?id=206125
+
+        Reviewed by Dean Jackson.
+
+        * TestExpectations:
+
 2020-01-11  Noam Rosenthal  <noam@webkit.org>
 
         Support image-set() standard syntax
