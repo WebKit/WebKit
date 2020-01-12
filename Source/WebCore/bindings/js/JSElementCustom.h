@@ -37,7 +37,7 @@ struct InheritsTraits<WebCore::JSElement> {
     template<typename From>
     static inline bool inherits(VM&, From* from)
     {
-        return from->type() >= WebCore::JSElementType;
+        return from->type() == WebCore::JSElementType;
     }
 };
 

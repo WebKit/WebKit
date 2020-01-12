@@ -137,7 +137,7 @@ static constexpr uint32_t NumberOfTypedArrayTypes = LastTypedArrayType - FirstTy
 static constexpr uint32_t NumberOfTypedArrayTypesExcludingDataView = NumberOfTypedArrayTypes - 1;
 
 static_assert(sizeof(JSType) == sizeof(uint8_t), "sizeof(JSType) is one byte.");
-static_assert(LastJSCObjectType < 128, "The highest bit is reserved for embedder's extension.");
+static_assert(LastJSCObjectType < 0b11100000, "Embedder can use 0b11100000 or upper.");
 
 inline constexpr bool isTypedArrayType(JSType type)
 {

@@ -141,7 +141,7 @@ inline CCallHelpers::Jump branchIfNotNode(CCallHelpers& jit, GPRReg target)
 inline CCallHelpers::Jump branchIfElement(CCallHelpers& jit, GPRReg target)
 {
     return jit.branch8(
-        CCallHelpers::AboveOrEqual,
+        CCallHelpers::Equal,
         CCallHelpers::Address(target, JSC::JSCell::typeInfoTypeOffset()),
         CCallHelpers::TrustedImm32(JSC::JSType(JSElementType)));
 }
@@ -149,7 +149,7 @@ inline CCallHelpers::Jump branchIfElement(CCallHelpers& jit, GPRReg target)
 inline CCallHelpers::Jump branchIfNotElement(CCallHelpers& jit, GPRReg target)
 {
     return jit.branch8(
-        CCallHelpers::Below,
+        CCallHelpers::NotEqual,
         CCallHelpers::Address(target, JSC::JSCell::typeInfoTypeOffset()),
         CCallHelpers::TrustedImm32(JSC::JSType(JSElementType)));
 }
