@@ -33,7 +33,7 @@ namespace WTF {
 
 bool canMinimizeLanguages()
 {
-    static NeverDestroyed<bool> result = [NSLocale respondsToSelector:@selector(minimizedLanguagesFromLanguages:)];
+    static bool result = [NSLocale respondsToSelector:@selector(minimizedLanguagesFromLanguages:)];
     return result.get();
 }
 

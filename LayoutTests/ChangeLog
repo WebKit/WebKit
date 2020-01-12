@@ -1,3 +1,32 @@
+2020-01-11  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        REGRESSION(r185816): In the Hong Kong locale, navigator.language reports it's in the Taiwan locale
+        https://bugs.webkit.org/show_bug.cgi?id=200043
+
+        Unreviewed.
+
+        Addressing additional review comments.
+
+        * fast/text/international/system-language/navigator-language/navigator-language-en-GB.html:
+        * fast/text/international/system-language/navigator-language/navigator-language-en-US.html:
+        * fast/text/international/system-language/navigator-language/navigator-language-en.html:
+        * fast/text/international/system-language/navigator-language/navigator-language-es-419.html:
+        * fast/text/international/system-language/navigator-language/navigator-language-es-ES.html:
+        * fast/text/international/system-language/navigator-language/navigator-language-es-MX.html:
+        * fast/text/international/system-language/navigator-language/navigator-language-es.html:
+        * fast/text/international/system-language/navigator-language/navigator-language-fr-CA.html:
+        * fast/text/international/system-language/navigator-language/navigator-language-fr.html:
+        * fast/text/international/system-language/navigator-language/navigator-language-hi.html:
+        * fast/text/international/system-language/navigator-language/navigator-language-ja.html:
+        * fast/text/international/system-language/navigator-language/navigator-language-pt-BR.html:
+        * fast/text/international/system-language/navigator-language/navigator-language-pt-PT.html:
+        * fast/text/international/system-language/navigator-language/navigator-language-ru.html:
+        * fast/text/international/system-language/navigator-language/navigator-language-zh-HK.html:
+        * fast/text/international/system-language/navigator-language/navigator-language-zh-Hans.html:
+        * fast/text/international/system-language/navigator-language/navigator-language-zh-Hant-HK.html:
+        * fast/text/international/system-language/navigator-language/navigator-language-zh-Hant.html:
+        * fast/text/international/system-language/navigator-language/navigator-language-zh-TW.html:
+
 2020-01-10  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [WebCore] Fix crash in module loader due to change in fragment reservation
