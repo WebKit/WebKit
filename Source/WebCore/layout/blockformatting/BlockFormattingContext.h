@@ -64,15 +64,15 @@ private:
     void computeHeightAndMargin(const Box&, const ConstraintsPair<HorizontalConstraints>&);
 
     void computeStaticHorizontalPosition(const Box&, const ConstraintsPair<HorizontalConstraints>&);
-    void computeStaticVerticalPosition(const FloatingContext&, const Box&, const ConstraintsPair<VerticalConstraints>&);
+    void computeStaticVerticalPosition(const FloatingContext&, const Box&, const ConstraintsPair<HorizontalConstraints>&, const ConstraintsPair<VerticalConstraints>&);
     void computeStaticPosition(const FloatingContext&, const Box&, const ConstraintsPair<HorizontalConstraints>&, const ConstraintsPair<VerticalConstraints>&);
     void computeFloatingPosition(const FloatingContext&, const Box&);
     void computePositionToAvoidFloats(const FloatingContext&, const Box&);
 
-    void computeEstimatedVerticalPosition(const Box&);
-    void computeEstimatedVerticalPositionForAncestors(const Box&);
-    void computeEstimatedVerticalPositionForFormattingRoot(const Box&);
-    void computeEstimatedVerticalPositionForFloatClear(const FloatingContext&, const Box&);
+    void computeEstimatedVerticalPosition(const Box&, const HorizontalConstraints&);
+    void computeEstimatedVerticalPositionForAncestors(const Box&, const ConstraintsPair<HorizontalConstraints>&);
+    void computeEstimatedVerticalPositionForFormattingRoot(const Box&, const ConstraintsPair<HorizontalConstraints>&);
+    void computeEstimatedVerticalPositionForFloatClear(const FloatingContext&, const Box&, const ConstraintsPair<HorizontalConstraints>&);
 
     IntrinsicWidthConstraints computedIntrinsicWidthConstraints() override;
     LayoutUnit verticalPositionWithMargin(const Box&, const UsedVerticalMargin&) const;
