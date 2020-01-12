@@ -128,7 +128,7 @@ std::unique_ptr<IDBBackingStore> IDBServer::createBackingStore(const IDBDatabase
 
     auto databaseDirectoryPath = this->databaseDirectoryPathIsolatedCopy();
     if (databaseDirectoryPath.isEmpty())
-        return MemoryIDBBackingStore::create(m_sessionID, identifier);
+        return makeUnique<MemoryIDBBackingStore>(m_sessionID, identifier);
 
     return makeUnique<SQLiteIDBBackingStore>(m_sessionID, identifier, databaseDirectoryPath);
 }

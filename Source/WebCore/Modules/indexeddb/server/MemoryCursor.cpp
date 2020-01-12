@@ -29,7 +29,6 @@
 #if ENABLE(INDEXED_DATABASE)
 
 #include "IDBResourceIdentifier.h"
-#include "MemoryIDBBackingStore.h"
 #include <wtf/HashMap.h>
 #include <wtf/NeverDestroyed.h>
 
