@@ -18,9 +18,6 @@ PASS cssRule is null
 
 Scale factor is 0 : url('#a') 0x
 PASS cssRule is null
-
-No url function : '#a' 1x
-PASS cssRule is null
 PASS successfullyParsed is true
 
 TEST COMPLETE

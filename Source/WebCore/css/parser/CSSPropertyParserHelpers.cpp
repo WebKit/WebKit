@@ -1479,13 +1479,20 @@ static RefPtr<CSSValue> consumeGeneratedImage(CSSParserTokenRange& range, CSSPar
     return result;
 }
 
+static StringView consumeUrlOrStringAsStringView(CSSParserTokenRange& args)
+{
+    if (args.peek().type() == StringToken)
+        return args.consumeIncludingWhitespace().value();
+    return consumeUrlAsStringView(args);
+}
+
 static RefPtr<CSSValue> consumeImageSet(CSSParserTokenRange& range, const CSSParserContext& context)
 {
     CSSParserTokenRange rangeCopy = range;
     CSSParserTokenRange args = consumeFunction(rangeCopy);
     RefPtr<CSSImageSetValue> imageSet = CSSImageSetValue::create(context.isContentOpaque ? LoadedFromOpaqueSource::Yes : LoadedFromOpaqueSource::No);
     do {
-        AtomString urlValue = consumeUrlAsStringView(args).toAtomString();
+        AtomString urlValue = consumeUrlOrStringAsStringView(args).toAtomString();
         if (urlValue.isNull())
             return nullptr;
 

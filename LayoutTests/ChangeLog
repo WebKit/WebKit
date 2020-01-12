@@ -1,3 +1,32 @@
+2020-01-11  Noam Rosenthal  <noam@webkit.org>
+
+        Support image-set() standard syntax
+        https://bugs.webkit.org/show_bug.cgi?id=160934
+        <rdar://problem/27891501>
+
+        Reviewed by Dean Jackson.
+
+        * fast/css/image-set-parsing-invalid.html:
+        * fast/css/image-set-parsing.html:
+                Update parsing to include raw strings
+        * fast/hidpi/image-set-as-background-quotes-expected.html: Added.
+        * fast/hidpi/image-set-as-background-quotes.html: Added.
+                Added ref-test for image-set without url().
+
+
+2020-01-09  Noam Rosenthal  <noam@webkit.org>
+
+        Support image-set() standard syntax
+        https://bugs.webkit.org/show_bug.cgi?id=160934
+        <rdar://problem/27891501>
+
+        Reviewed by Simon Fraser.
+
+
+        * fast/hidpi/image-set-as-background-quotes-expected.html: Added.
+        * fast/hidpi/image-set-as-background-quotes.html: Added.
+                Ref-test, image with quotes should work the same as image with url()
+
 2020-01-11  Cathie Chen  <cathiechen@igalia.com>
 
         Import WPT test cases for 2dcontext/imagebitmap

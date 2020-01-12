@@ -81,6 +81,21 @@ testImageSetRule("Multiple values for background-image",
                 "url('#a') 1x, url('#b') 2x", 4,
                 ["a", "1", "b", "2"]);
 
+testImageSetRule("Single value for background-image without url() function",
+                "background-image",
+                "'#a' 1x", 2,
+                ["a", "1"]);
+
+testImageSetRule("Multiple values for background-image without url() function",
+                "background-image",
+                "'#a' 1x, '#b' 2x", 4,
+                ["a", "1", "b", "2"]);
+
+testImageSetRule("Mix values with and without url() function",
+                "background-image",
+                "'#a' 1x, url('#b') 2x", 4,
+                ["a", "1", "b", "2"]);
+
 testImageSetRule("Multiple values for background-image, out of order",
                 "background-image",
                 "url('#c') 3x, url('#b') 2x, url('#a') 1x", 6,
