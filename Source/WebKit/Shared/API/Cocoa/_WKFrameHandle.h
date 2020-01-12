@@ -30,4 +30,6 @@
 WK_CLASS_AVAILABLE(macos(10.10), ios(8.0))
 @interface _WKFrameHandle : NSObject <NSCopying, NSSecureCoding>
 
+@property (nonatomic, readonly) uint64_t frameID WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+
 @end

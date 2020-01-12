@@ -32,6 +32,7 @@
 #import "TestWKWebView.h"
 #import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/WebKit.h>
+#import <WebKit/_WKFrameHandle.h>
 #import <WebKit/_WKResourceLoadDelegate.h>
 #import <WebKit/_WKResourceLoadInfo.h>
 #import <wtf/RetainPtr.h>
@@ -129,7 +130,7 @@ TEST(ResourceLoadDelegate, BeaconAndSyncXHR)
 {
     TestWebKitAPI::HTTPServer server({
         { "/", { "hello" } },
-        { "/xhrTarget", { "hi" } },
+        { "/xhrTarget", { {{ "Content-Type", "text/html" }},  "hi" } },
         { "/beaconTarget", { "hi" } },
     });
 
@@ -140,9 +141,11 @@ TEST(ResourceLoadDelegate, BeaconAndSyncXHR)
     __block bool receivedCallback = false;
     auto resourceLoadDelegate = adoptNS([TestResourceLoadDelegate new]);
     [webView _setResourceLoadDelegate:resourceLoadDelegate.get()];
-    [resourceLoadDelegate setDidSendRequest:^(WKWebView *, _WKResourceLoadInfo *, NSURLRequest *request) {
+    [resourceLoadDelegate setDidSendRequest:^(WKWebView *, _WKResourceLoadInfo *info, NSURLRequest *request) {
         requestFromDelegate = request;
         receivedCallback = true;
+        EXPECT_TRUE(!!info.frame);
+        EXPECT_FALSE(!!info.parentFrame);
     }];
     
     __block bool receivedAlert = false;
@@ -264,6 +267,27 @@ TEST(ResourceLoadDelegate, LoadInfo)
     EXPECT_EQ(loadInfos[6].get().resourceLoadID, loadInfos[7].get().resourceLoadID);
     EXPECT_EQ(loadInfos[6].get().resourceLoadID, loadInfos[8].get().resourceLoadID);
     EXPECT_NE(loadInfos[6].get().resourceLoadID, loadInfos[0].get().resourceLoadID);
+    auto checkFrames = ^(size_t index, _WKFrameHandle *expectedFrame, _WKFrameHandle *expectedParent) {
+        _WKResourceLoadInfo *info = loadInfos[index].get();
+        EXPECT_EQ(!!info.frame, !!expectedFrame);
+        EXPECT_EQ(!!info.parentFrame, !!expectedParent);
+        EXPECT_EQ(info.frame.frameID, expectedFrame.frameID);
+        EXPECT_EQ(info.parentFrame.frameID, expectedParent.frameID);
+    };
+    _WKFrameHandle *main = loadInfos[0].get().frame;
+    _WKFrameHandle *sub = loadInfos[8].get().frame;
+    EXPECT_TRUE(!!main);
+    EXPECT_TRUE(!!sub);
+    EXPECT_TRUE(main.frameID != sub.frameID);
+    checkFrames(0, main, nil);
+    checkFrames(1, main, nil);
+    checkFrames(2, main, nil);
+    checkFrames(3, sub, main);
+    checkFrames(4, sub, main);
+    checkFrames(5, sub, main);
+    checkFrames(6, sub, main);
+    checkFrames(7, sub, main);
+    checkFrames(8, sub, main);
 
     EXPECT_EQ(otherParameters.size(), 9ull);
     EXPECT_WK_STREQ(NSStringFromClass([otherParameters[0] class]), "NSMutableURLRequest");

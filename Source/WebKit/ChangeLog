@@ -1,3 +1,53 @@
+2020-01-11  Alex Christensen  <achristensen@webkit.org>
+
+        Expose frame information on _WKResourceLoadInfo
+        https://bugs.webkit.org/show_bug.cgi?id=206104
+        <rdar://problem/57132290>
+
+        Reviewed by Dean Jackson.
+
+        * NetworkProcess/NetworkResourceLoadParameters.cpp:
+        (WebKit::NetworkResourceLoadParameters::encode const):
+        (WebKit::NetworkResourceLoadParameters::decode):
+        * NetworkProcess/NetworkResourceLoadParameters.h:
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::resourceLoadInfo):
+        * Shared/API/Cocoa/_WKFrameHandle.h:
+        * Shared/API/Cocoa/_WKFrameHandle.mm:
+        (-[_WKFrameHandle frameID]):
+        (-[_WKFrameHandle initWithCoder:]):
+        (-[_WKFrameHandle encodeWithCoder:]):
+        (-[_WKFrameHandle _frameID]): Deleted.
+        * Shared/API/Cocoa/_WKFrameHandleInternal.h:
+        * Shared/ResourceLoadInfo.h:
+        (WebKit::ResourceLoadInfo::encode const):
+        (WebKit::ResourceLoadInfo::decode):
+        * UIProcess/API/APIResourceLoadInfo.h:
+        * UIProcess/API/Cocoa/_WKInspector.mm:
+        (-[_WKInspector showMainResourceForFrame:]):
+        * UIProcess/API/Cocoa/_WKResourceLoadInfo.h:
+        * UIProcess/API/Cocoa/_WKResourceLoadInfo.mm:
+        (-[_WKResourceLoadInfo frame]):
+        (-[_WKResourceLoadInfo parentFrame]):
+        * UIProcess/API/mac/WKWebViewMac.mm:
+        (-[WKWebView _canChangeFrameLayout:]):
+        (-[WKWebView _printOperationWithPrintInfo:forFrame:]):
+        * UIProcess/Cocoa/WKReloadFrameErrorRecoveryAttempter.mm:
+        (-[WKReloadFrameErrorRecoveryAttempter attemptRecovery]):
+        * UIProcess/ios/WKContentView.mm:
+        (-[WKContentView _wk_pageCountForPrintFormatter:]):
+        * WebProcess/Automation/WebAutomationSessionProxy.cpp:
+        (WebKit::evaluateJavaScriptCallback):
+        * WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInFrame.mm:
+        (+[WKWebProcessPlugInFrame lookUpFrameFromHandle:]):
+        * WebProcess/Network/WebLoaderStrategy.cpp:
+        (WebKit::addParametersFromFrame):
+        (WebKit::WebLoaderStrategy::scheduleLoadFromNetworkProcess):
+        (WebKit::WebLoaderStrategy::loadResourceSynchronously):
+        (WebKit::WebLoaderStrategy::startPingLoad):
+        * WebProcess/Storage/WebSWContextManagerConnection.cpp:
+        (WebKit::WebSWContextManagerConnection::installServiceWorker):
+
 2020-01-11  Kate Cheney  <katherine_cheney@apple.com>
 
         Add correct grandfathering functionality to the ITP database backend

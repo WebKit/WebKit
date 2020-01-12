@@ -63,7 +63,7 @@
     if (!webView)
         return NO;
 
-    WebKit::WebFrameProxy* webFrameProxy = webView->_page->process().webFrame(WebCore::frameIdentifierFromID([_frameHandle _frameID]));
+    WebKit::WebFrameProxy* webFrameProxy = webView->_page->process().webFrame(_frameHandle->_frameHandle->frameID());
     if (!webFrameProxy)
         return NO;
 

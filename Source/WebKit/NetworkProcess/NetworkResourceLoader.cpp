@@ -336,7 +336,9 @@ void NetworkResourceLoader::startNetworkLoad(ResourceRequest&& request, FirstLoa
 ResourceLoadInfo NetworkResourceLoader::resourceLoadInfo()
 {
     return {
-        m_resourceLoadID
+        m_resourceLoadID,
+        m_parameters.webFrameID,
+        m_parameters.parentFrameID,
     };
 }
 

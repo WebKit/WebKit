@@ -23,6 +23,10 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import <WebKit/WKFoundation.h>
+
+@class _WKFrameHandle;
+
 NS_ASSUME_NONNULL_BEGIN
 
 WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA))
@@ -32,6 +36,8 @@ WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA))
 - (instancetype)init NS_UNAVAILABLE;
 
 @property (nonatomic, readonly) uint64_t resourceLoadID;
+@property (nonatomic, readonly) _WKFrameHandle* frame;
+@property (nonatomic, readonly, nullable) _WKFrameHandle* parentFrame;
 
 @end
 

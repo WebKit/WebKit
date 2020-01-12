@@ -32,9 +32,4 @@ namespace WebCore {
 enum FrameIdentifierType { };
 using FrameIdentifier = ObjectIdentifier<FrameIdentifierType>;
 
-inline FrameIdentifier frameIdentifierFromID(uint64_t frameID)
-{
-    return makeObjectIdentifier<FrameIdentifierType>(frameID);
-}
-
 }

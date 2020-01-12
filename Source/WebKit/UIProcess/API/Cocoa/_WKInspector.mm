@@ -109,7 +109,7 @@
 - (void)showMainResourceForFrame:(_WKFrameHandle *)frame
 {
     if (auto* page = _inspector->inspectedPage())
-        _inspector->showMainResourceForFrame(page->process().webFrame(WebCore::frameIdentifierFromID(frame._frameID)));
+        _inspector->showMainResourceForFrame(page->process().webFrame(frame->_frameHandle->frameID()));
 }
 
 - (void)attach

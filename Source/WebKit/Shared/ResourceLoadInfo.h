@@ -27,16 +27,21 @@
 
 #include "ArgumentCoders.h"
 #include "NetworkResourceLoadIdentifier.h"
+#include <WebCore/FrameIdentifier.h>
 
 namespace WebKit {
 
 struct ResourceLoadInfo {
 
     NetworkResourceLoadIdentifier resourceLoadID;
+    Optional<WebCore::FrameIdentifier> frameID;
+    Optional<WebCore::FrameIdentifier> parentFrameID;
     
     void encode(IPC::Encoder& encoder) const
     {
         encoder << resourceLoadID;
+        encoder << frameID;
+        encoder << parentFrameID;
     }
 
     static Optional<ResourceLoadInfo> decode(IPC::Decoder& decoder)
@@ -46,8 +51,20 @@ struct ResourceLoadInfo {
         if (!resourceLoadID)
             return WTF::nullopt;
 
+        Optional<Optional<WebCore::FrameIdentifier>> frameID;
+        decoder >> frameID;
+        if (!frameID)
+            return WTF::nullopt;
+
+        Optional<Optional<WebCore::FrameIdentifier>> parentFrameID;
+        decoder >> parentFrameID;
+        if (!parentFrameID)
+            return WTF::nullopt;
+
         return {{
             WTFMove(*resourceLoadID),
+            WTFMove(*frameID),
+            WTFMove(*parentFrameID),
         }};
     }
 };

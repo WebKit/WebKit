@@ -148,7 +148,7 @@ void WebSWContextManagerConnection::installServiceWorker(const ServiceWorkerCont
     // FIXME: This method should be moved directly to WebCore::SWContextManager::Connection
     // If it weren't for ServiceWorkerFrameLoaderClient's dependence on WebDocumentLoader, this could already happen.
     // FIXME: Weird to pass m_previousServiceWorkerID as a FrameIdentifier.
-    auto frameLoaderClient = makeUnique<ServiceWorkerFrameLoaderClient>(*this, m_webPageProxyID, m_pageID, frameIdentifierFromID(++m_previousServiceWorkerID), effectiveUserAgent);
+    auto frameLoaderClient = makeUnique<ServiceWorkerFrameLoaderClient>(*this, m_webPageProxyID, m_pageID, makeObjectIdentifier<WebCore::FrameIdentifierType>(++m_previousServiceWorkerID), effectiveUserAgent);
     pageConfiguration.loaderClientForMainFrame = frameLoaderClient.get();
     m_loaders.add(WTFMove(frameLoaderClient));
 

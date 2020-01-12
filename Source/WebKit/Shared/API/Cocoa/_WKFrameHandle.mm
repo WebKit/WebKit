@@ -28,9 +28,7 @@
 
 #import <WebCore/FrameIdentifier.h>
 
-@implementation _WKFrameHandle {
-    API::ObjectStorage<API::FrameHandle> _frameHandle;
-}
+@implementation _WKFrameHandle
 
 - (void)dealloc
 {
@@ -55,7 +53,7 @@
     return _frameHandle->frameID().toUInt64();
 }
 
-- (uint64_t)_frameID
+- (uint64_t)frameID
 {
     return _frameHandle->frameID().toUInt64();
 }
@@ -85,14 +83,14 @@
         return nil;
     }
 
-    API::Object::constructInWrapper<API::FrameHandle>(self, WebCore::frameIdentifierFromID(frameID.unsignedLongLongValue), false);
+    API::Object::constructInWrapper<API::FrameHandle>(self, makeObjectIdentifier<WebCore::FrameIdentifierType>(frameID.unsignedLongLongValue), false);
 
     return self;
 }
 
 - (void)encodeWithCoder:(NSCoder *)coder
 {
-    [coder encodeObject:@([self _frameID]) forKey:@"frameID"];
+    [coder encodeObject:@(self.frameID) forKey:@"frameID"];
 }
 
 #pragma mark WKObject protocol implementation

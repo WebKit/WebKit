@@ -36,8 +36,8 @@ template<> struct WrapperTraits<API::FrameHandle> {
 
 }
 
-@interface _WKFrameHandle () <WKObject>
-
-@property (nonatomic, readonly) uint64_t _frameID;
-
+@interface _WKFrameHandle () <WKObject> {
+@package
+    API::ObjectStorage<API::FrameHandle> _frameHandle;
+}
 @end

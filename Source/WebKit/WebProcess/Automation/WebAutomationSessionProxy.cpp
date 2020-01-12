@@ -190,7 +190,7 @@ static JSValueRef evaluateJavaScriptCallback(JSContextRef context, JSObjectRef f
     if (!automationSessionProxy)
         return JSValueMakeUndefined(context);
 
-    WebCore::FrameIdentifier frameID = WebCore::frameIdentifierFromID(JSValueToNumber(context, arguments[0], exception));
+    WebCore::FrameIdentifier frameID = makeObjectIdentifier<WebCore::FrameIdentifierType>(JSValueToNumber(context, arguments[0], exception));
     uint64_t callbackID = JSValueToNumber(context, arguments[1], exception);
     if (JSValueIsString(context, arguments[2])) {
         auto result = adoptRef(JSValueToStringCopy(context, arguments[2], exception));

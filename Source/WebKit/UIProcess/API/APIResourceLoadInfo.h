@@ -38,6 +38,8 @@ public:
     }
 
     WebKit::NetworkResourceLoadIdentifier resourceLoadID() const { return m_info.resourceLoadID; }
+    Optional<WebCore::FrameIdentifier> frameID() const { return m_info.frameID; }
+    Optional<WebCore::FrameIdentifier> parentFrameID() const { return m_info.parentFrameID; }
 
 private:
     explicit ResourceLoadInfo(WebKit::ResourceLoadInfo&& info)

@@ -26,7 +26,9 @@
 #import "config.h"
 #import "_WKResourceLoadInfo.h"
 
+#import "APIFrameHandle.h"
 #import "APIResourceLoadInfo.h"
+#import "_WKFrameHandleInternal.h"
 #import "_WKResourceLoadInfoInternal.h"
 
 @implementation _WKResourceLoadInfo
@@ -40,6 +42,20 @@
 - (uint64_t)resourceLoadID
 {
     return _info->resourceLoadID().toUInt64();
+}
+
+- (_WKFrameHandle *)frame
+{
+    if (auto frameID = _info->frameID())
+        return wrapper(API::FrameHandle::create(*frameID));
+    return nil;
+}
+
+- (_WKFrameHandle *)parentFrame
+{
+    if (auto parentFrameID = _info->parentFrameID())
+        return wrapper(API::FrameHandle::create(*parentFrameID));
+    return nil;
 }
 
 - (API::Object&)_apiObject

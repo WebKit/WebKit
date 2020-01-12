@@ -57,6 +57,7 @@
 #include <WebCore/FetchOptions.h>
 #include <WebCore/Frame.h>
 #include <WebCore/FrameLoader.h>
+#include <WebCore/HTMLFrameOwnerElement.h>
 #include <WebCore/NetscapePlugInStreamLoader.h>
 #include <WebCore/NetworkLoadInformation.h>
 #include <WebCore/PlatformStrategies.h>
@@ -253,6 +254,22 @@ bool WebLoaderStrategy::tryLoadingUsingURLSchemeHandler(ResourceLoader& resource
     return false;
 }
 
+static void addParametersFromFrame(const Frame* frame, NetworkResourceLoadParameters& parameters)
+{
+    if (!frame)
+        return;
+
+    parameters.isHTTPSUpgradeEnabled = frame->settings().HTTPSUpgradeEnabled();
+
+    if (auto* page = frame->page())
+        parameters.pageHasResourceLoadClient = page->hasResourceLoadClient();
+
+    if (auto* ownerElement = frame->ownerElement()) {
+        if (auto* parentFrame = ownerElement->document().frame())
+            parameters.parentFrameID = parentFrame->loader().client().frameID();
+    }
+}
+
 void WebLoaderStrategy::scheduleLoadFromNetworkProcess(ResourceLoader& resourceLoader, const ResourceRequest& request, const WebResourceLoader::TrackingParameters& trackingParameters, bool shouldClearReferrerOnHTTPSToHTTPRedirect, Seconds maximumBufferingTime)
 {
     ResourceLoadIdentifier identifier = resourceLoader.identifier();
@@ -286,11 +303,7 @@ void WebLoaderStrategy::scheduleLoadFromNetworkProcess(ResourceLoader& resourceL
     loadParameters.maximumBufferingTime = maximumBufferingTime;
     loadParameters.options = resourceLoader.options();
     loadParameters.preflightPolicy = resourceLoader.options().preflightPolicy;
-    if (frame) {
-        loadParameters.isHTTPSUpgradeEnabled = frame->settings().HTTPSUpgradeEnabled();
-        if (auto* page = frame->page())
-            loadParameters.pageHasResourceLoadClient = page->hasResourceLoadClient();
-    }
+    addParametersFromFrame(frame, loadParameters);
 
 #if ENABLE(SERVICE_WORKER)
     loadParameters.serviceWorkersMode = resourceLoader.options().serviceWorkersMode;
@@ -580,8 +593,7 @@ void WebLoaderStrategy::loadResourceSynchronously(FrameLoader& frameLoader, unsi
             loadParameters.cspResponseHeaders = contentSecurityPolicy->responseHeaders();
     }
     loadParameters.originalRequestHeaders = originalRequestHeaders;
-    if (page)
-        loadParameters.pageHasResourceLoadClient = page->hasResourceLoadClient();
+    addParametersFromFrame(webFrame->coreFrame(), loadParameters);
 
     data.shrink(0);
 
@@ -647,8 +659,7 @@ void WebLoaderStrategy::startPingLoad(Frame& frame, ResourceRequest& request, co
         if (auto* contentSecurityPolicy = document->contentSecurityPolicy())
             loadParameters.cspResponseHeaders = contentSecurityPolicy->responseHeaders();
     }
-    if (auto* page = document->page())
-        loadParameters.pageHasResourceLoadClient = page->hasResourceLoadClient();
+    addParametersFromFrame(&frame, loadParameters);
 
 #if ENABLE(CONTENT_EXTENSIONS)
     loadParameters.mainDocumentURL = document->topDocument().url();

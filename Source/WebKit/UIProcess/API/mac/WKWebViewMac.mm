@@ -1491,7 +1491,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 
 - (BOOL)_canChangeFrameLayout:(_WKFrameHandle *)frameHandle
 {
-    if (auto* webFrameProxy = _page->process().webFrame(WebCore::frameIdentifierFromID(frameHandle._frameID)))
+    if (auto* webFrameProxy = _page->process().webFrame(frameHandle->_frameHandle->frameID()))
         return _impl->canChangeFrameLayout(*webFrameProxy);
     return false;
 }
@@ -1578,7 +1578,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 
 - (NSPrintOperation *)_printOperationWithPrintInfo:(NSPrintInfo *)printInfo forFrame:(_WKFrameHandle *)frameHandle
 {
-    if (auto* webFrameProxy = _page->process().webFrame(WebCore::frameIdentifierFromID(frameHandle._frameID)))
+    if (auto* webFrameProxy = _page->process().webFrame(frameHandle->_frameHandle->frameID()))
         return _impl->printOperationWithPrintInfo(printInfo, *webFrameProxy);
     return nil;
 }

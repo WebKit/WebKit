@@ -1,3 +1,14 @@
+2020-01-11  Alex Christensen  <achristensen@webkit.org>
+
+        Expose frame information on _WKResourceLoadInfo
+        https://bugs.webkit.org/show_bug.cgi?id=206104
+        <rdar://problem/57132290>
+
+        Reviewed by Dean Jackson.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/ResourceLoadDelegate.mm:
+        (TEST):
+
 2020-01-11  Kate Cheney  <katherine_cheney@apple.com>
 
         Add correct grandfathering functionality to the ITP database backend
