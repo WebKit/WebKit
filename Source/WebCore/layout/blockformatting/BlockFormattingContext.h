@@ -51,15 +51,21 @@ public:
     void layoutInFlowContent(InvalidationState&, const HorizontalConstraints&, const VerticalConstraints&) override;
 
 private:
-    void layoutFormattingContextRoot(const Box&, FloatingContext&, InvalidationState&, const HorizontalConstraints&, const VerticalConstraints&);
-    void placeInFlowPositionedChildren(const Box&, Optional<HorizontalConstraints> = WTF::nullopt);
 
-    void computeWidthAndMargin(const Box&, const HorizontalConstraints&);
-    void computeHeightAndMargin(const Box&, const HorizontalConstraints&);
+    template<typename T>
+    struct ConstraintsPair {
+        const T root;
+        const T containingBlock;
+    };
+    void layoutFormattingContextRoot(const Box&, FloatingContext&, InvalidationState&, const ConstraintsPair<HorizontalConstraints>&, const ConstraintsPair<VerticalConstraints>&);
+    void placeInFlowPositionedChildren(const Box&, const ConstraintsPair<HorizontalConstraints>&);
 
-    void computeStaticHorizontalPosition(const Box&, const HorizontalConstraints&);
-    void computeStaticVerticalPosition(const FloatingContext&, const Box&, const VerticalConstraints&);
-    void computeStaticPosition(const FloatingContext&, const Box&, const HorizontalConstraints&, const VerticalConstraints&);
+    void computeWidthAndMargin(const Box&, const ConstraintsPair<HorizontalConstraints>&);
+    void computeHeightAndMargin(const Box&, const ConstraintsPair<HorizontalConstraints>&);
+
+    void computeStaticHorizontalPosition(const Box&, const ConstraintsPair<HorizontalConstraints>&);
+    void computeStaticVerticalPosition(const FloatingContext&, const Box&, const ConstraintsPair<VerticalConstraints>&);
+    void computeStaticPosition(const FloatingContext&, const Box&, const ConstraintsPair<HorizontalConstraints>&, const ConstraintsPair<VerticalConstraints>&);
     void computeFloatingPosition(const FloatingContext&, const Box&);
     void computePositionToAvoidFloats(const FloatingContext&, const Box&);
 
