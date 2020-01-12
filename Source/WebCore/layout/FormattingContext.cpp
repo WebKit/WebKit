@@ -221,14 +221,8 @@ const Display::Box& FormattingContext::geometryForBox(const Box& layoutBox, Opti
             return true;
         }
 
-        if (&layoutBox == &root()) {
-            // FIXME: This is formatting context escaping in the strict sense, since the formatting context root box lives in the parent formatting context.
-            // This happens e.g. when a block level box box needs to stretch horizontally and checks its containing block for horizontal space (this should probably be limited to reading horizontal constraint values).
-            return true;
-        }
-
         if (!escapeReason) {
-            // At this point any access is considered an escape.
+            // Any geometry access outside of the formatting context without a valid reason is considered an escape.
             return false;
         }
 
