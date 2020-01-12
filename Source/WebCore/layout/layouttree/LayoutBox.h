@@ -69,9 +69,11 @@ public:
 
     bool establishesFormattingContext() const;
     bool establishesBlockFormattingContext() const;
-    bool establishesTableFormattingContext() const;
-    bool establishesBlockFormattingContextOnly() const;
     bool establishesInlineFormattingContext() const;
+    bool establishesTableFormattingContext() const;
+    bool establishesIndependentFormattingContext() const;
+
+    bool establishesBlockFormattingContextOnly() const;
     bool establishesInlineFormattingContextOnly() const;
 
     bool isInFlow() const { return !isFloatingOrOutOfFlowPositioned(); }

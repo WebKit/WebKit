@@ -75,7 +75,7 @@ bool Box::establishesFormattingContext() const
 {
     // We need the final tree structure to tell whether a box establishes a certain formatting context. 
     ASSERT(!Phase::isInTreeBuilding());
-    return establishesBlockFormattingContext() || establishesInlineFormattingContext() || establishesTableFormattingContext();
+    return establishesBlockFormattingContext() || establishesInlineFormattingContext() || establishesTableFormattingContext() || establishesIndependentFormattingContext();
 }
 
 bool Box::establishesBlockFormattingContext() const
@@ -129,6 +129,12 @@ bool Box::establishesInlineFormattingContextOnly() const
 bool Box::establishesTableFormattingContext() const
 {
     return isTableBox();
+}
+
+bool Box::establishesIndependentFormattingContext() const
+{
+    // FIXME: This is where we would check for 'contain' property.
+    return isAbsolutelyPositioned();
 }
 
 bool Box::establishesBlockFormattingContextOnly() const
