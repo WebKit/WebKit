@@ -1,3 +1,12 @@
+2020-01-13  Truitt Savell  <tsavell@apple.com>
+
+        Flaky Test: imported/w3c/web-platform-tests/svg/import/struct-dom-06-b-manual.svg
+        https://bugs.webkit.org/show_bug.cgi?id=204312
+
+        Unreviewed test gardening.
+
+        * platform/mac/TestExpectations:
+
 2020-01-13  Zalan Bujtas  <zalan@apple.com>
 
         Explain why we started skipping "insert-span-into-long-text-bug-28245.html" in debug.
