@@ -3,7 +3,7 @@
 var createBuiltin = $vm.createBuiltin;
 
 // This is pretty bad but I need a private name.
-var putFuncToPrivateName = createBuiltin(`(function (func) { @arrayIteratorIsDone = func })`)
+var putFuncToPrivateName = createBuiltin(`(function (func) { @generatorThis = func })`)
 putFuncToPrivateName(function (a,b) { return b; })
 
 function createTailCallForwardingFuncWith(body, thisValue) {
@@ -12,7 +12,7 @@ function createTailCallForwardingFuncWith(body, thisValue) {
 
         ${body}
 
-        return @tailCallForwardArguments(@arrayIteratorIsDone, ${thisValue});
+        return @tailCallForwardArguments(@generatorThis, ${thisValue});
     })`);
 }
 

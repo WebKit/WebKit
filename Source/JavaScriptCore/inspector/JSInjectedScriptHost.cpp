@@ -431,7 +431,7 @@ JSValue JSInjectedScriptHost::getInternalProperties(JSGlobalObject* globalObject
         JSArray* array = constructEmptyArray(globalObject, nullptr, 1);
         RETURN_IF_EXCEPTION(scope, JSValue());
         scope.release();
-        array->putDirectIndex(globalObject, index++, constructInternalProperty(globalObject, "string", stringIterator->iteratedValue(globalObject)));
+        array->putDirectIndex(globalObject, index++, constructInternalProperty(globalObject, "string", stringIterator->iteratedString()));
         return array;
     }
 

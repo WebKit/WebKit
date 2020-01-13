@@ -46,6 +46,7 @@ enum class LinkTimeConstant : int32_t;
     macro(getGeneratorInternalField) \
     macro(getAsyncGeneratorInternalField) \
     macro(getArrayIteratorInternalField) \
+    macro(getStringIteratorInternalField) \
     macro(idWithProfile) \
     macro(isObject) \
     macro(isJSArray) \
@@ -57,6 +58,7 @@ enum class LinkTimeConstant : int32_t;
     macro(isRegExpObject) \
     macro(isMap) \
     macro(isSet) \
+    macro(isStringIterator) \
     macro(isArrayIterator) \
     macro(isUndefinedOrNull) \
     macro(tailCallForwardArguments) \
@@ -71,6 +73,7 @@ enum class LinkTimeConstant : int32_t;
     macro(putGeneratorInternalField) \
     macro(putAsyncGeneratorInternalField) \
     macro(putArrayIteratorInternalField) \
+    macro(putStringIteratorInternalField) \
     macro(toNumber) \
     macro(toString) \
     macro(toObject) \
@@ -122,6 +125,8 @@ enum class LinkTimeConstant : int32_t;
     macro(arrayIteratorFieldIsDone) \
     macro(arrayIteratorFieldIteratedObject) \
     macro(arrayIteratorFieldKind) \
+    macro(stringIteratorFieldIndex) \
+    macro(stringIteratorFieldIteratedString) \
     macro(asyncGeneratorFieldSuspendReason) \
     macro(asyncGeneratorFieldQueueFirst) \
     macro(asyncGeneratorFieldQueueLast) \

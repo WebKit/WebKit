@@ -1860,7 +1860,7 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncIterator(JSGlobalObject* globalObjec
         return throwVMTypeError(globalObject, scope);
     JSString* string = thisValue.toString(globalObject);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
-    return JSValue::encode(JSStringIterator::create(globalObject, globalObject->stringIteratorStructure(), string));
+    return JSValue::encode(JSStringIterator::create(vm, globalObject->stringIteratorStructure(), string));
 }
 
 enum class NormalizationForm { NFC, NFD, NFKC, NFKD };

@@ -38,6 +38,7 @@
 #include "JSGlobalObject.h"
 #include "JSModuleLoader.h"
 #include "JSPromise.h"
+#include "JSStringIterator.h"
 #include "Nodes.h"
 #include "StrongInlines.h"
 
@@ -91,6 +92,8 @@ BytecodeIntrinsicRegistry::BytecodeIntrinsicRegistry(VM& vm)
     m_arrayIteratorFieldIteratedObject.set(m_vm, jsNumber(static_cast<int32_t>(JSArrayIterator::Field::IteratedObject)));
     m_arrayIteratorFieldIndex.set(m_vm, jsNumber(static_cast<int32_t>(JSArrayIterator::Field::Index)));
     m_arrayIteratorFieldKind.set(m_vm, jsNumber(static_cast<int32_t>(JSArrayIterator::Field::Kind)));
+    m_stringIteratorFieldIndex.set(m_vm, jsNumber(static_cast<int32_t>(JSStringIterator::Field::Index)));
+    m_stringIteratorFieldIteratedString.set(m_vm, jsNumber(static_cast<int32_t>(JSStringIterator::Field::IteratedString)));
     m_asyncGeneratorFieldSuspendReason.set(m_vm, jsNumber(static_cast<unsigned>(JSAsyncGenerator::Field::SuspendReason)));
     m_asyncGeneratorFieldQueueFirst.set(m_vm, jsNumber(static_cast<unsigned>(JSAsyncGenerator::Field::QueueFirst)));
     m_asyncGeneratorFieldQueueLast.set(m_vm, jsNumber(static_cast<unsigned>(JSAsyncGenerator::Field::QueueLast)));

@@ -1,5 +1,44 @@
 2020-01-12  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        [JSC] Use internal object field mechanism to implement JSStringIterator
+        https://bugs.webkit.org/show_bug.cgi?id=206144
+
+        Reviewed by Ross Kirsling.
+
+        This patch uses internal object field mechanism to implement JSStringIterator,
+        and we also put JSStringIterator into IsoSubspace.
+
+        * builtins/BuiltinNames.h:
+        * builtins/StringIteratorPrototype.js:
+        (next):
+        * bytecode/BytecodeIntrinsicRegistry.cpp:
+        (JSC::BytecodeIntrinsicRegistry::BytecodeIntrinsicRegistry):
+        * bytecode/BytecodeIntrinsicRegistry.h:
+        * bytecompiler/BytecodeGenerator.h:
+        (JSC::BytecodeGenerator::emitIsStringIterator):
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::stringIteratorInternalFieldIndex):
+        (JSC::BytecodeIntrinsicNode::emit_intrinsic_getStringIteratorInternalField):
+        (JSC::BytecodeIntrinsicNode::emit_intrinsic_putStringIteratorInternalField):
+        * inspector/JSInjectedScriptHost.cpp:
+        (Inspector::JSInjectedScriptHost::getInternalProperties):
+        * runtime/JSCast.h:
+        * runtime/JSStringIterator.cpp:
+        (JSC::JSStringIterator::finishCreation):
+        (JSC::JSStringIterator::clone):
+        (JSC::JSStringIterator::visitChildren):
+        (JSC::JSStringIterator::iteratedValue const): Deleted.
+        * runtime/JSStringIterator.h:
+        * runtime/JSType.cpp:
+        (WTF::printInternal):
+        * runtime/JSType.h:
+        * runtime/StringPrototype.cpp:
+        (JSC::stringProtoFuncIterator):
+        * runtime/VM.cpp:
+        * runtime/VM.h:
+
+2020-01-12  Yusuke Suzuki  <ysuzuki@apple.com>
+
         [JSC] Remove IsDone from JSArrayIterator
         https://bugs.webkit.org/show_bug.cgi?id=206140
 

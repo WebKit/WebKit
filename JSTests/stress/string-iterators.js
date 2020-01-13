@@ -181,8 +181,6 @@ for (var primitive of primitives) {
     if (!didThrow)
         throw "Error: no error thrown";
     var message = 'TypeError: %StringIteratorPrototype%.next requires that |this| be a String Iterator instance';
-    if (primitive == null)
-        message = 'TypeError: %StringIteratorPrototype%.next requires that |this| not be null or undefined'
     if (String(didThrow) !== message)
         throw "Error: bad error thrown: " + didThrow;
 }

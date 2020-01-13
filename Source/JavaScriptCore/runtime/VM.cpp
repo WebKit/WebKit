@@ -116,6 +116,7 @@
 #include "JSSet.h"
 #include "JSSetIterator.h"
 #include "JSSourceCode.h"
+#include "JSStringIterator.h"
 #include "JSTemplateObjectDescriptor.h"
 #include "JSToWasmICCallee.h"
 #include "JSTypedArrays.h"
@@ -1441,6 +1442,7 @@ void VM::ensureShadowChicken()
 DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(apiGlobalObjectSpace, apiGlobalObjectHeapCellType.get(), JSAPIGlobalObject)
 DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(apiValueWrapperSpace, cellHeapCellType.get(), JSAPIValueWrapper)
 DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(arrayBufferSpace, cellHeapCellType.get(), JSArrayBuffer)
+DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(arrayIteratorSpace, cellHeapCellType.get(), JSArrayIterator)
 DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(asyncGeneratorSpace, cellHeapCellType.get(), JSAsyncGenerator)
 DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(bigIntObjectSpace, cellHeapCellType.get(), BigIntObject)
 DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(booleanObjectSpace, cellHeapCellType.get(), BooleanObject)
@@ -1457,7 +1459,6 @@ DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(float32ArraySpace, cellHeapCellType.get(
 DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(float64ArraySpace, cellHeapCellType.get(), JSFloat64Array)
 DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(functionRareDataSpace, destructibleCellHeapCellType.get(), FunctionRareData)
 DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(generatorSpace, cellHeapCellType.get(), JSGenerator)
-DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(arrayIteratorSpace, cellHeapCellType.get(), JSArrayIterator)
 DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(globalObjectSpace, globalObjectHeapCellType.get(), JSGlobalObject)
 DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(jsModuleRecordSpace, jsModuleRecordHeapCellType.get(), JSModuleRecord)
 DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(int8ArraySpace, cellHeapCellType.get(), JSInt8Array)
@@ -1477,6 +1478,7 @@ DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(setBucketSpace, cellHeapCellType.get(), 
 DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(setIteratorSpace, cellHeapCellType.get(), JSSetIterator)
 DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(setSpace, cellHeapCellType.get(), JSSet)
 DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(strictEvalActivationSpace, cellHeapCellType.get(), StrictEvalActivation)
+DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(stringIteratorSpace, cellHeapCellType.get(), JSStringIterator)
 DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(sourceCodeSpace, destructibleCellHeapCellType.get(), JSSourceCode)
 DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(symbolSpace, destructibleCellHeapCellType.get(), Symbol)
 DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(symbolObjectSpace, cellHeapCellType.get(), SymbolObject)
