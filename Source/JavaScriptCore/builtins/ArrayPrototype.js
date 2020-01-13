@@ -317,16 +317,16 @@ function sort(comparator)
 
     function stringComparator(a, b)
     {
-        let aString = a.string;
-        let bString = b.string;
+        var aString = a.string;
+        var bString = b.string;
 
-        let aLength = aString.length;
-        let bLength = bString.length;
-        let length = min(aLength, bLength);
+        var aLength = aString.length;
+        var bLength = bString.length;
+        var length = min(aLength, bLength);
 
-        for (let i = 0; i < length; ++i) {
-            let aCharCode = aString.@charCodeAt(i);
-            let bCharCode = bString.@charCodeAt(i);
+        for (var i = 0; i < length; ++i) {
+            var aCharCode = aString.@charCodeAt(i);
+            var bCharCode = bString.@charCodeAt(i);
 
             if (aCharCode == bCharCode)
                 continue;
@@ -340,25 +340,25 @@ function sort(comparator)
     // Move undefineds and holes to the end of a sparse array. Result is [values..., undefineds..., holes...].
     function compactSparse(array, dst, src, length)
     {
-        let values = [ ];
-        let seen = { };
-        let valueCount = 0;
-        let undefinedCount = 0;
+        var values = [ ];
+        var seen = { };
+        var valueCount = 0;
+        var undefinedCount = 0;
 
         // Clean up after the in-progress non-sparse compaction that failed.
-        for (let i = dst; i < src; ++i)
+        for (var i = dst; i < src; ++i)
             delete array[i];
 
-        for (let object = array; object; object = @Object.@getPrototypeOf(object)) {
-            let propertyNames = @Object.@getOwnPropertyNames(object);
-            for (let i = 0; i < propertyNames.length; ++i) {
-                let index = propertyNames[i];
+        for (var object = array; object; object = @Object.@getPrototypeOf(object)) {
+            var propertyNames = @Object.@getOwnPropertyNames(object);
+            for (var i = 0; i < propertyNames.length; ++i) {
+                var index = propertyNames[i];
                 if (index < length) { // Exclude non-numeric properties and properties past length.
                     if (seen[index]) // Exclude duplicates.
                         continue;
                     seen[index] = 1;
 
-                    let value = array[index];
+                    var value = array[index];
                     delete array[index];
 
                     if (value === @undefined) {
@@ -371,7 +371,7 @@ function sort(comparator)
             }
         }
 
-        for (let i = valueCount; i < valueCount + undefinedCount; ++i)
+        for (var i = valueCount; i < valueCount + undefinedCount; ++i)
             array[i] = @undefined;
 
         return valueCount;
@@ -379,10 +379,10 @@ function sort(comparator)
 
     function compactSlow(array, length)
     {
-        let holeCount = 0;
+        var holeCount = 0;
 
-        let dst = 0;
-        let src = 0;
+        var dst = 0;
+        var src = 0;
         for (; src < length; ++src) {
             if (!(src in array)) {
                 ++holeCount;
@@ -391,20 +391,20 @@ function sort(comparator)
                 return compactSparse(array, dst, src, length);
             }
 
-            let value = array[src];
+            var value = array[src];
             if (value === @undefined)
                 continue;
 
             array[dst++] = value;
         }
 
-        let valueCount = dst;
-        let undefinedCount = length - valueCount - holeCount;
+        var valueCount = dst;
+        var undefinedCount = length - valueCount - holeCount;
 
-        for (let i = valueCount; i < valueCount + undefinedCount; ++i)
+        for (var i = valueCount; i < valueCount + undefinedCount; ++i)
             array[i] = @undefined;
 
-        for (let i = valueCount + undefinedCount; i < length; ++i)
+        for (var i = valueCount + undefinedCount; i < length; ++i)
             delete array[i];
 
         return valueCount;
@@ -413,7 +413,7 @@ function sort(comparator)
     // Move undefineds and holes to the end of an array. Result is [values..., undefineds..., holes...].
     function compact(array, length)
     {
-        for (let i = 0; i < array.length; ++i) {
+        for (var i = 0; i < array.length; ++i) {
             if (array[i] === @undefined)
                 return compactSlow(array, length);
         }
@@ -423,19 +423,19 @@ function sort(comparator)
 
     function merge(dst, src, srcIndex, srcEnd, width, comparator)
     {
-        let left = srcIndex;
-        let leftEnd = min(left + width, srcEnd);
-        let right = leftEnd;
-        let rightEnd = min(right + width, srcEnd);
+        var left = srcIndex;
+        var leftEnd = min(left + width, srcEnd);
+        var right = leftEnd;
+        var rightEnd = min(right + width, srcEnd);
 
-        for (let dstIndex = left; dstIndex < rightEnd; ++dstIndex) {
+        for (var dstIndex = left; dstIndex < rightEnd; ++dstIndex) {
             if (right < rightEnd) {
                 if (left >= leftEnd) {
                     dst[dstIndex] = src[right++];
                     continue;
                 }
 
-                let comparisonResult = comparator(src[right], src[left]);
+                var comparisonResult = comparator(src[right], src[left]);
                 if ((typeof comparisonResult === "boolean" && !comparisonResult) || comparisonResult < 0) {
                     dst[dstIndex] = src[right++];
                     continue;
@@ -449,22 +449,22 @@ function sort(comparator)
 
     function mergeSort(array, valueCount, comparator)
     {
-        let buffer = [ ];
+        var buffer = [ ];
         buffer.length = valueCount;
 
-        let dst = buffer;
-        let src = array;
-        for (let width = 1; width < valueCount; width *= 2) {
-            for (let srcIndex = 0; srcIndex < valueCount; srcIndex += 2 * width)
+        var dst = buffer;
+        var src = array;
+        for (var width = 1; width < valueCount; width *= 2) {
+            for (var srcIndex = 0; srcIndex < valueCount; srcIndex += 2 * width)
                 merge(dst, src, srcIndex, valueCount, width, comparator);
 
-            let tmp = src;
+            var tmp = src;
             src = dst;
             dst = tmp;
         }
 
         if (src != array) {
-            for(let i = 0; i < valueCount; i++)
+            for(var i = 0; i < valueCount; i++)
                 array[i] = src[i];
         }
     }
@@ -473,27 +473,27 @@ function sort(comparator)
     {
         if (bucket.length < 32 || depth > 32) {
             mergeSort(bucket, bucket.length, stringComparator);
-            for (let i = 0; i < bucket.length; ++i)
+            for (var i = 0; i < bucket.length; ++i)
                 array[dst++] = bucket[i].value;
             return dst;
         }
 
-        let buckets = [ ];
-        for (let i = 0; i < bucket.length; ++i) {
-            let entry = bucket[i];
-            let string = entry.string;
+        var buckets = [ ];
+        for (var i = 0; i < bucket.length; ++i) {
+            var entry = bucket[i];
+            var string = entry.string;
             if (string.length == depth) {
                 array[dst++] = entry.value;
                 continue;
             }
 
-            let c = string.@charCodeAt(depth);
+            var c = string.@charCodeAt(depth);
             if (!buckets[c])
                 buckets[c] = [ ];
             buckets[c][buckets[c].length] = entry;
         }
 
-        for (let i = 0; i < buckets.length; ++i) {
+        for (var i = 0; i < buckets.length; ++i) {
             if (!buckets[i])
                 continue;
             dst = bucketSort(array, dst, buckets[i], depth + 1);
@@ -504,22 +504,22 @@ function sort(comparator)
 
     function comparatorSort(array, length, comparator)
     {
-        let valueCount = compact(array, length);
+        var valueCount = compact(array, length);
         mergeSort(array, valueCount, comparator);
     }
 
     function stringSort(array, length)
     {
-        let valueCount = compact(array, length);
+        var valueCount = compact(array, length);
 
-        let strings = @newArrayWithSize(valueCount);
-        for (let i = 0; i < valueCount; ++i)
+        var strings = @newArrayWithSize(valueCount);
+        for (var i = 0; i < valueCount; ++i)
             strings[i] = { string: @toString(array[i]), value: array[i] };
 
         bucketSort(array, 0, strings, 0);
     }
 
-    let sortFunction;
+    var sortFunction;
     if (typeof comparator == "function")
         sortFunction = comparatorSort;
     else if (comparator === @undefined)
@@ -527,9 +527,9 @@ function sort(comparator)
     else
         @throwTypeError("Array.prototype.sort requires the comparsion function be a function or undefined");
 
-    let array = @toObject(this, "Array.prototype.sort requires that |this| not be null or undefined");
+    var array = @toObject(this, "Array.prototype.sort requires that |this| not be null or undefined");
 
-    let length = @toLength(array.length);
+    var length = @toLength(array.length);
 
     // For compatibility with Firefox and Chrome, do nothing observable
     // to the target array if it has 0 or 1 sortable properties.
@@ -555,9 +555,9 @@ function concatSlowPath()
     var argIndex = 0;
 
     do {
-        let spreadable = @isObject(currentElement) && currentElement.@isConcatSpreadableSymbol;
+        var spreadable = @isObject(currentElement) && currentElement.@isConcatSpreadableSymbol;
         if ((spreadable === @undefined && @isArray(currentElement)) || spreadable) {
-            let length = @toLength(currentElement.length);
+            var length = @toLength(currentElement.length);
             if (length + resultIndex > @MAX_ARRAY_INDEX)
                 @throwRangeError("Length exceeded the maximum array length");
             if (resultIsArray && @isJSArray(currentElement)) {
@@ -591,7 +591,7 @@ function concat(first)
         && this.@isConcatSpreadableSymbol === @undefined
         && (!@isObject(first) || (!@isProxyObject(first) && first.@isConcatSpreadableSymbol === @undefined))) {
 
-        let result = @concatMemcpy(this, first);
+        var result = @concatMemcpy(this, first);
         if (result !== null)
             return result;
     }

@@ -30,12 +30,12 @@ function performIteration(iterable)
     // and returning the result in an array.
     // https://tc39.github.io/ecma262/#sec-runtime-semantics-arrayaccumulation
 
-    let result = [];
+    var result = [];
 
-    let iterator = iterable.@iteratorSymbol();
-    let next = iterator.next;
-    let item;
-    let index = 0;
+    var iterator = iterable.@iteratorSymbol();
+    var next = iterator.next;
+    var item;
+    var index = 0;
     while (true) {
         item = next.@call(iterator);
         if (!@isObject(item))

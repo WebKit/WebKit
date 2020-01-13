@@ -1,5 +1,83 @@
 2020-01-12  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        [JSC] Consistently use "var" in builtin JS
+        https://bugs.webkit.org/show_bug.cgi?id=206157
+
+        Reviewed by Mark Lam.
+
+        let / const requires additional bytecode to make it Empty initialized for now.
+        For builtin JS, we would like to keep it as efficient and compact as we can
+        so we should use `var` consistently.
+
+        * builtins/ArrayPrototype.js:
+        (sort.stringComparator):
+        (sort.compactSparse):
+        (sort.compactSlow):
+        (sort.compact):
+        (sort.merge):
+        (sort.mergeSort):
+        (sort.bucketSort):
+        (sort.comparatorSort):
+        (sort.stringSort):
+        (sort):
+        (globalPrivate.concatSlowPath):
+        (concat):
+        * builtins/FunctionPrototype.js:
+        (call):
+        (overriddenName.string_appeared_here.symbolHasInstance):
+        * builtins/GlobalOperations.js:
+        (globalPrivate.copyDataProperties):
+        (globalPrivate.copyDataPropertiesNoExclusions):
+        * builtins/IteratorHelpers.js:
+        (performIteration):
+        * builtins/ModuleLoader.js:
+        (async loadModule):
+        (async loadAndEvaluateModule):
+        (async requestImportModule):
+        (dependencyKeysIfEvaluated):
+        * builtins/ObjectConstructor.js:
+        (fromEntries):
+        * builtins/PromisePrototype.js:
+        (finally):
+        (valueThunk):
+        (globalPrivate.getThenFinally):
+        (thrower):
+        (globalPrivate.getCatchFinally):
+        (const.valueThunk): Deleted.
+        (const.thrower): Deleted.
+        * builtins/RegExpPrototype.js:
+        (globalPrivate.advanceStringIndex):
+        (globalPrivate.regExpExec):
+        (globalPrivate.hasObservableSideEffectsForRegExpMatch):
+        (globalPrivate.matchSlow):
+        (overriddenName.string_appeared_here.match):
+        (overriddenName.string_appeared_here.matchAll):
+        (getSubstitution):
+        (overriddenName.string_appeared_here.replace):
+        (overriddenName.string_appeared_here.search):
+        (globalPrivate.hasObservableSideEffectsForRegExpSplit):
+        (overriddenName.string_appeared_here.split):
+        (intrinsic.RegExpTestIntrinsic.test):
+        * builtins/RegExpStringIteratorPrototype.js:
+        (next):
+        * builtins/StringPrototype.js:
+        (match):
+        (matchAll):
+        (globalPrivate.hasObservableSideEffectsForStringReplace):
+        (intrinsic.StringPrototypeReplaceIntrinsic.replace):
+        (globalPrivate.createHTML):
+        * builtins/TypedArrayConstructor.js:
+        (of):
+        (from):
+        * builtins/TypedArrayPrototype.js:
+        (globalPrivate.typedArraySpeciesConstructor):
+        (globalPrivate.typedArrayClampArgumentToStartOrEnd):
+        (fill):
+        (find):
+        (subarray):
+
+2020-01-12  Yusuke Suzuki  <ysuzuki@apple.com>
+
         [WebCore] Reorganize JSType in WebCore to offer more bits to JSC
         https://bugs.webkit.org/show_bug.cgi?id=206141
 

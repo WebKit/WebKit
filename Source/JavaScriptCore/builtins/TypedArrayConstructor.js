@@ -31,14 +31,14 @@
 function of(/* items... */)
 {
     "use strict";
-    let len = arguments.length;
-    let constructFunction = @getByIdDirectPrivate(this, "allocateTypedArray");
+    var len = arguments.length;
+    var constructFunction = @getByIdDirectPrivate(this, "allocateTypedArray");
     if (constructFunction === @undefined)
         @throwTypeError("TypedArray.of requires its this argument to subclass a TypedArray constructor");
 
-    let result = constructFunction(len);
+    var result = constructFunction(len);
 
-    for (let i = 0; i < len; i++)
+    for (var i = 0; i < len; i++)
         result[i] = arguments[i];
 
     return result;
@@ -48,9 +48,9 @@ function from(items /* [ , mapfn [ , thisArg ] ] */)
 {
     "use strict";
 
-    let mapFn = @argument(1);
+    var mapFn = @argument(1);
 
-    let thisArg;
+    var thisArg;
 
     if (mapFn !== @undefined) {
         if (typeof mapFn !== "function")
@@ -59,25 +59,25 @@ function from(items /* [ , mapfn [ , thisArg ] ] */)
         thisArg = @argument(2);
     }
 
-    let arrayLike = @toObject(items, "TypedArray.from requires an array-like object - not null or undefined");
+    var arrayLike = @toObject(items, "TypedArray.from requires an array-like object - not null or undefined");
 
-    let iteratorMethod = items.@iteratorSymbol;
+    var iteratorMethod = items.@iteratorSymbol;
     if (iteratorMethod != null) {
         if (typeof iteratorMethod !== "function")
             @throwTypeError("TypedArray.from requires that the property of the first argument, items[Symbol.iterator], when exists, be a function");
 
-        let accumulator = [];
+        var accumulator = [];
 
-        let k = 0;
-        let iterator = iteratorMethod.@call(items);
+        var k = 0;
+        var iterator = iteratorMethod.@call(items);
 
         // Since for-of loop once more looks up the @@iterator property of a given iterable,
         // it could be observable if the user defines a getter for @@iterator.
         // To avoid this situation, we define a wrapper object that @@iterator just returns a given iterator.
-        let wrapper = {};
+        var wrapper = {};
         wrapper.@iteratorSymbol = function() { return iterator; }
 
-        for (let value of wrapper) {
+        for (var value of wrapper) {
             if (mapFn)
                 @putByValDirect(accumulator, k, thisArg === @undefined ? mapFn(value, k) : mapFn.@call(thisArg, value, k));
             else
@@ -85,30 +85,30 @@ function from(items /* [ , mapfn [ , thisArg ] ] */)
             k++;
         }
 
-        let constructFunction = @getByIdDirectPrivate(this, "allocateTypedArray");
+        var constructFunction = @getByIdDirectPrivate(this, "allocateTypedArray");
         if (constructFunction === @undefined)
             @throwTypeError("TypedArray.from requires its this argument subclass a TypedArray constructor");
 
-        let result = constructFunction(k);
+        var result = constructFunction(k);
 
-        for (let i = 0; i < k; i++) 
+        for (var i = 0; i < k; i++) 
             result[i] = accumulator[i];
 
 
         return result;
     }
 
-    let arrayLikeLength = @toLength(arrayLike.length);
+    var arrayLikeLength = @toLength(arrayLike.length);
 
-    let constructFunction = @getByIdDirectPrivate(this, "allocateTypedArray");
+    var constructFunction = @getByIdDirectPrivate(this, "allocateTypedArray");
     if (constructFunction === @undefined)
         @throwTypeError("this does not subclass a TypedArray constructor");
 
-    let result = constructFunction(arrayLikeLength);
+    var result = constructFunction(arrayLikeLength);
 
-    let k = 0;
+    var k = 0;
     while (k < arrayLikeLength) {
-        let value = arrayLike[k];
+        var value = arrayLike[k];
         if (mapFn)
             result[k] = thisArg === @undefined ? mapFn(value, k) : mapFn.@call(thisArg, value, k);
         else

@@ -30,27 +30,27 @@ function next()
     if (!@isObject(this))
         @throwTypeError("%RegExpStringIteratorPrototype%.next requires |this| to be an Object");
 
-    let done = @getByIdDirectPrivate(this, "regExpStringIteratorDone");
+    var done = @getByIdDirectPrivate(this, "regExpStringIteratorDone");
     if (done === @undefined)
         @throwTypeError("%RegExpStringIteratorPrototype%.next requires |this| to be an RegExp String Iterator instance");
 
     if (done)
         return { value: @undefined, done: true };
 
-    let regExp = @getByIdDirectPrivate(this, "regExpStringIteratorRegExp");
-    let string = @getByIdDirectPrivate(this, "regExpStringIteratorString");
-    let global = @getByIdDirectPrivate(this, "regExpStringIteratorGlobal");
-    let fullUnicode = @getByIdDirectPrivate(this, "regExpStringIteratorUnicode");
-    let match = @regExpExec(regExp, string);
+    var regExp = @getByIdDirectPrivate(this, "regExpStringIteratorRegExp");
+    var string = @getByIdDirectPrivate(this, "regExpStringIteratorString");
+    var global = @getByIdDirectPrivate(this, "regExpStringIteratorGlobal");
+    var fullUnicode = @getByIdDirectPrivate(this, "regExpStringIteratorUnicode");
+    var match = @regExpExec(regExp, string);
     if (match === null) {
         @putByIdDirectPrivate(this, "regExpStringIteratorDone", true);
         return { value: @undefined, done: true };
     }
 
     if (global) {
-        let matchStr = @toString(match[0]);
+        var matchStr = @toString(match[0]);
         if (matchStr === "") {
-            let thisIndex = @toLength(regExp.lastIndex);
+            var thisIndex = @toLength(regExp.lastIndex);
             regExp.lastIndex = @advanceStringIndex(string, thisIndex, fullUnicode);
         }
     } else

@@ -27,9 +27,9 @@ function call(thisArgument)
 {
     "use strict";
 
-    let argumentValues = [];
+    var argumentValues = [];
     // Start from 1 to ignore thisArgument
-    for (let i = 1; i < arguments.length; i++)
+    for (var i = 1; i < arguments.length; i++)
         @putByValDirect(argumentValues, i-1, arguments[i]);
 
     return this.@apply(thisArgument, argumentValues);
@@ -53,7 +53,7 @@ function symbolHasInstance(value)
     if (@isBoundFunction(this))
         return @hasInstanceBoundFunction(this, value);
 
-    let target = this.prototype;
+    var target = this.prototype;
     return @instanceOf(value, target);
 }
 

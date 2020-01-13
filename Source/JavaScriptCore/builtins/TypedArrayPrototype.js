@@ -35,7 +35,7 @@
 function typedArraySpeciesConstructor(value)
 {
     "use strict";
-    let constructor = value.constructor;
+    var constructor = value.constructor;
     if (constructor === @undefined)
         return @typedArrayGetOriginalConstructor(value);
 
@@ -60,7 +60,7 @@ function typedArrayClampArgumentToStartOrEnd(value, length, undefinedValue)
     if (value === @undefined)
         return undefinedValue;
 
-    let int = @toInteger(value);
+    var int = @toInteger(value);
     if (int < 0) {
         int += length;
         return int < 0 ? 0 : int;
@@ -89,15 +89,15 @@ function fill(value /* [, start [, end]] */)
 {
     "use strict";
 
-    let length = @typedArrayLength(this);
+    var length = @typedArrayLength(this);
 
-    let start = @argument(1);
-    let end = @argument(2);
+    var start = @argument(1);
+    var end = @argument(2);
 
     start = @typedArrayClampArgumentToStartOrEnd(start, length, 0);
     end = @typedArrayClampArgumentToStartOrEnd(end, length, length);
 
-    for (let i = start; i < end; i++)
+    for (var i = start; i < end; i++)
         this[i] = value;
     return this;
 }
@@ -112,7 +112,7 @@ function find(callback /* [, thisArg] */)
         @throwTypeError("TypedArray.prototype.find callback must be a function");
 
     for (var i = 0; i < length; i++) {
-        let elem = this[i];
+        var elem = this[i];
         if (callback.@call(thisArg, elem, i, this))
             return elem;
     }
@@ -238,12 +238,12 @@ function subarray(begin, end)
     if (!@isTypedArrayView(this))
         @throwTypeError("|this| should be a typed array view");
 
-    let start = @toInteger(begin);
-    let finish;
+    var start = @toInteger(begin);
+    var finish;
     if (end !== @undefined)
         finish = @toInteger(end);
 
-    let constructor = @typedArraySpeciesConstructor(this);
+    var constructor = @typedArraySpeciesConstructor(this);
 
     return @typedArraySubarrayCreate.@call(this, start, finish, constructor);
 }

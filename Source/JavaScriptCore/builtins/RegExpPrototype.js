@@ -48,11 +48,11 @@ function advanceStringIndex(string, index, unicode)
     if (index + 1 >= string.length)
         return index + 1;
 
-    let first = string.@charCodeAt(index);
+    var first = string.@charCodeAt(index);
     if (first < 0xD800 || first > 0xDBFF)
         return index + 1;
 
-    let second = string.@charCodeAt(index + 1);
+    var second = string.@charCodeAt(index + 1);
     if (second < 0xDC00 || second > 0xDFFF)
         return index + 1;
 
@@ -64,10 +64,10 @@ function regExpExec(regexp, str)
 {
     "use strict";
 
-    let exec = regexp.exec;
-    let builtinExec = @regExpBuiltinExec;
+    var exec = regexp.exec;
+    var builtinExec = @regExpBuiltinExec;
     if (exec !== builtinExec && typeof exec === "function") {
-        let result = exec.@call(regexp, str);
+        var result = exec.@call(regexp, str);
         if (result !== null && !@isObject(result))
             @throwTypeError("The result of a RegExp exec must be null or an object");
         return result;
@@ -84,14 +84,14 @@ function hasObservableSideEffectsForRegExpMatch(regexp)
         return true;
 
     // This is accessed by the RegExpExec internal function.
-    let regexpExec = @tryGetById(regexp, "exec");
+    var regexpExec = @tryGetById(regexp, "exec");
     if (regexpExec !== @regExpBuiltinExec)
         return true;
 
-    let regexpGlobal = @tryGetById(regexp, "global");
+    var regexpGlobal = @tryGetById(regexp, "global");
     if (regexpGlobal !== @regExpProtoGlobalGetter)
         return true;
-    let regexpUnicode = @tryGetById(regexp, "unicode");
+    var regexpUnicode = @tryGetById(regexp, "unicode");
     if (regexpUnicode !== @regExpProtoUnicodeGetter)
         return true;
 
@@ -106,17 +106,17 @@ function matchSlow(regexp, str)
     if (!regexp.global)
         return @regExpExec(regexp, str);
     
-    let unicode = regexp.unicode;
+    var unicode = regexp.unicode;
     regexp.lastIndex = 0;
-    let resultList = [];
+    var resultList = [];
 
     // FIXME: It would be great to implement a solution similar to what we do in
     // RegExpObject::matchGlobal(). It's not clear if this is possible, since this loop has
     // effects. https://bugs.webkit.org/show_bug.cgi?id=158145
-    const maximumReasonableMatchSize = 100000000;
+    var maximumReasonableMatchSize = 100000000;
 
     while (true) {
-        let result = @regExpExec(regexp, str);
+        var result = @regExpExec(regexp, str);
         
         if (result === null) {
             if (resultList.length === 0)
@@ -127,7 +127,7 @@ function matchSlow(regexp, str)
         if (resultList.length > maximumReasonableMatchSize)
             @throwOutOfMemoryError();
 
-        let resultString = @toString(result[0]);
+        var resultString = @toString(result[0]);
 
         if (!resultString.length)
             regexp.lastIndex = @advanceStringIndex(str, regexp.lastIndex, unicode);
@@ -144,7 +144,7 @@ function match(strArg)
     if (!@isObject(this))
         @throwTypeError("RegExp.prototype.@@match requires that |this| be an Object");
 
-    let str = @toString(strArg);
+    var str = @toString(strArg);
 
     // Check for observable side effects and call the fast path if there aren't any.
     if (!@hasObservableSideEffectsForRegExpMatch(this))
@@ -157,19 +157,19 @@ function matchAll(strArg)
 {
     "use strict";
 
-    let regExp = this;
+    var regExp = this;
     if (!@isObject(regExp))
         @throwTypeError("RegExp.prototype.@@matchAll requires |this| to be an Object");
 
-    let string = @toString(strArg);
-    let Matcher = @speciesConstructor(regExp, @RegExp);
+    var string = @toString(strArg);
+    var Matcher = @speciesConstructor(regExp, @RegExp);
 
-    let flags = @toString(regExp.flags);
-    let matcher = new Matcher(regExp, flags);
+    var flags = @toString(regExp.flags);
+    var matcher = new Matcher(regExp, flags);
     matcher.lastIndex = @toLength(regExp.lastIndex);
 
-    let global = @stringIncludesInternal.@call(flags, "g");
-    let fullUnicode = @stringIncludesInternal.@call(flags, "u");
+    var global = @stringIncludesInternal.@call(flags, "g");
+    var fullUnicode = @stringIncludesInternal.@call(flags, "u");
 
     return new @RegExpStringIterator(matcher, string, global, fullUnicode);
 }
@@ -183,19 +183,19 @@ function replace(strArg, replace)
     {
         "use strict";
 
-        let matchLength = matched.length;
-        let stringLength = str.length;
-        let tailPos = position + matchLength;
-        let m = captures.length;
-        let replacementLength = replacement.length;
-        let result = "";
-        let lastStart = 0;
+        var matchLength = matched.length;
+        var stringLength = str.length;
+        var tailPos = position + matchLength;
+        var m = captures.length;
+        var replacementLength = replacement.length;
+        var result = "";
+        var lastStart = 0;
 
-        for (let start = 0; start = replacement.indexOf("$", lastStart), start !== -1; lastStart = start) {
+        for (var start = 0; start = replacement.indexOf("$", lastStart), start !== -1; lastStart = start) {
             if (start - lastStart > 0)
                 result = result + replacement.substring(lastStart, start);
             start++;
-            let ch = replacement.charAt(start);
+            var ch = replacement.charAt(start);
             if (ch === "")
                 result = result + "$";
             else {
@@ -221,11 +221,11 @@ function replace(strArg, replace)
                     break;
                 case "<":
                     if (namedCaptures !== @undefined) {
-                        let groupNameStartIndex = start + 1;
-                        let groupNameEndIndex = replacement.indexOf(">", groupNameStartIndex);
+                        var groupNameStartIndex = start + 1;
+                        var groupNameEndIndex = replacement.indexOf(">", groupNameStartIndex);
                         if (groupNameEndIndex !== -1) {
-                            let groupName = replacement.substring(groupNameStartIndex, groupNameEndIndex);
-                            let capture = namedCaptures[groupName];
+                            var groupName = replacement.substring(groupNameStartIndex, groupNameEndIndex);
+                            var capture = namedCaptures[groupName];
                             if (capture !== @undefined)
                                 result = result + @toString(capture);
 
@@ -238,21 +238,21 @@ function replace(strArg, replace)
                     start++;
                     break;
                 default:
-                    let chCode = ch.charCodeAt(0);
+                    var chCode = ch.charCodeAt(0);
                     if (chCode >= 0x30 && chCode <= 0x39) {
-                        let originalStart = start - 1;
+                        var originalStart = start - 1;
                         start++;
 
-                        let n = chCode - 0x30;
+                        var n = chCode - 0x30;
                         if (n > m) {
                             result = result + replacement.substring(originalStart, start);
                             break;
                         }
 
                         if (start < replacementLength) {
-                            let nextChCode = replacement.charCodeAt(start);
+                            var nextChCode = replacement.charCodeAt(start);
                             if (nextChCode >= 0x30 && nextChCode <= 0x39) {
-                                let nn = 10 * n + nextChCode - 0x30;
+                                var nn = 10 * n + nextChCode - 0x30;
                                 if (nn <= m) {
                                     n = nn;
                                     start++;
@@ -265,7 +265,7 @@ function replace(strArg, replace)
                             break;
                         }
 
-                        let capture = captures[n - 1];
+                        var capture = captures[n - 1];
                         if (capture !== @undefined)
                             result = result + capture;
                     } else
@@ -281,26 +281,26 @@ function replace(strArg, replace)
     if (!@isObject(this))
         @throwTypeError("RegExp.prototype.@@replace requires that |this| be an Object");
 
-    let regexp = this;
+    var regexp = this;
 
-    let str = @toString(strArg);
-    let stringLength = str.length;
-    let functionalReplace = typeof replace === 'function';
+    var str = @toString(strArg);
+    var stringLength = str.length;
+    var functionalReplace = typeof replace === 'function';
 
     if (!functionalReplace)
         replace = @toString(replace);
 
-    let global = regexp.global;
-    let unicode = false;
+    var global = regexp.global;
+    var unicode = false;
 
     if (global) {
         unicode = regexp.unicode;
         regexp.lastIndex = 0;
     }
 
-    let resultList = [];
-    let result;
-    let done = false;
+    var resultList = [];
+    var result;
+    var done = false;
     while (!done) {
         result = @regExpExec(regexp, str);
 
@@ -311,7 +311,7 @@ function replace(strArg, replace)
             if (!global)
                 done = true;
             else {
-                let matchStr = @toString(result[0]);
+                var matchStr = @toString(result[0]);
 
                 if (!matchStr.length)
                     regexp.lastIndex = @advanceStringIndex(str, regexp.lastIndex, unicode);
@@ -319,41 +319,41 @@ function replace(strArg, replace)
         }
     }
 
-    let accumulatedResult = "";
-    let nextSourcePosition = 0;
-    let lastPosition = 0;
+    var accumulatedResult = "";
+    var nextSourcePosition = 0;
+    var lastPosition = 0;
 
-    for (let i = 0, resultListLength = resultList.length; i < resultListLength; ++i) {
-        let result = resultList[i];
-        let nCaptures = result.length - 1;
+    for (var i = 0, resultListLength = resultList.length; i < resultListLength; ++i) {
+        var result = resultList[i];
+        var nCaptures = result.length - 1;
         if (nCaptures < 0)
             nCaptures = 0;
-        let matched = @toString(result[0]);
-        let matchLength = matched.length;
-        let position = result.index;
+        var matched = @toString(result[0]);
+        var matchLength = matched.length;
+        var position = result.index;
         position = (position > stringLength) ? stringLength : position;
         position = (position < 0) ? 0 : position;
 
-        let captures = [];
-        for (let n = 1; n <= nCaptures; n++) {
-            let capN = result[n];
+        var captures = [];
+        for (var n = 1; n <= nCaptures; n++) {
+            var capN = result[n];
             if (capN !== @undefined)
                 capN = @toString(capN);
             captures.@push(capN);
         }
 
-        let replacement;
-        let namedCaptures = result.groups;
+        var replacement;
+        var namedCaptures = result.groups;
 
         if (functionalReplace) {
-            let replacerArgs = [ matched ].concat(captures);
+            var replacerArgs = [ matched ].concat(captures);
             replacerArgs.@push(position);
             replacerArgs.@push(str);
 
             if (namedCaptures !== @undefined)
                 replacerArgs.@push(namedCaptures);
 
-            let replValue = replace.@apply(@undefined, replacerArgs);
+            var replValue = replace.@apply(@undefined, replacerArgs);
             replacement = @toString(replValue);
         } else {
             if (namedCaptures !== @undefined)
@@ -381,7 +381,7 @@ function search(strArg)
 {
     "use strict";
 
-    let regexp = this;
+    var regexp = this;
 
     // Check for observable side effects and call the fast path if there aren't any.
     if (@isRegExpObject(regexp)
@@ -395,10 +395,10 @@ function search(strArg)
         @throwTypeError("RegExp.prototype.@@search requires that |this| be an Object");
 
     // 3. Let S be ? ToString(string).
-    let str = @toString(strArg)
+    var str = @toString(strArg)
 
     // 4. Let previousLastIndex be ? Get(rx, "lastIndex").
-    let previousLastIndex = regexp.lastIndex;
+    var previousLastIndex = regexp.lastIndex;
 
     // 5.If SameValue(previousLastIndex, 0) is false, then
     // 5.a. Perform ? Set(rx, "lastIndex", 0, true).
@@ -407,7 +407,7 @@ function search(strArg)
         regexp.lastIndex = 0;
 
     // 6. Let result be ? RegExpExec(rx, S).
-    let result = @regExpExec(regexp, str);
+    var result = @regExpExec(regexp, str);
 
     // 7. Let currentLastIndex be ? Get(rx, "lastIndex").
     // 8. If SameValue(currentLastIndex, previousLastIndex) is false, then
@@ -433,34 +433,34 @@ function hasObservableSideEffectsForRegExpSplit(regexp)
         return true;
 
     // This is accessed by the RegExpExec internal function.
-    let regexpExec = @tryGetById(regexp, "exec");
+    var regexpExec = @tryGetById(regexp, "exec");
     if (regexpExec !== @regExpBuiltinExec)
         return true;
     
     // This is accessed by step 5 below.
-    let regexpFlags = @tryGetById(regexp, "flags");
+    var regexpFlags = @tryGetById(regexp, "flags");
     if (regexpFlags !== @regExpProtoFlagsGetter)
         return true;
     
     // These are accessed by the builtin flags getter.
-    let regexpGlobal = @tryGetById(regexp, "global");
+    var regexpGlobal = @tryGetById(regexp, "global");
     if (regexpGlobal !== @regExpProtoGlobalGetter)
         return true;
-    let regexpIgnoreCase = @tryGetById(regexp, "ignoreCase");
+    var regexpIgnoreCase = @tryGetById(regexp, "ignoreCase");
     if (regexpIgnoreCase !== @regExpProtoIgnoreCaseGetter)
         return true;
-    let regexpMultiline = @tryGetById(regexp, "multiline");
+    var regexpMultiline = @tryGetById(regexp, "multiline");
     if (regexpMultiline !== @regExpProtoMultilineGetter)
         return true;
-    let regexpSticky = @tryGetById(regexp, "sticky");
+    var regexpSticky = @tryGetById(regexp, "sticky");
     if (regexpSticky !== @regExpProtoStickyGetter)
         return true;
-    let regexpUnicode = @tryGetById(regexp, "unicode");
+    var regexpUnicode = @tryGetById(regexp, "unicode");
     if (regexpUnicode !== @regExpProtoUnicodeGetter)
         return true;
     
     // This is accessed by the RegExp species constructor.
-    let regexpSource = @tryGetById(regexp, "source");
+    var regexpSource = @tryGetById(regexp, "source");
     if (regexpSource !== @regExpProtoSourceGetter)
         return true;
 
@@ -477,29 +477,29 @@ function split(string, limit)
     // 2. If Type(rx) is not Object, throw a TypeError exception.
     if (!@isObject(this))
         @throwTypeError("RegExp.prototype.@@split requires that |this| be an Object");
-    let regexp = this;
+    var regexp = this;
 
     // 3. Let S be ? ToString(string).
-    let str = @toString(string);
+    var str = @toString(string);
 
     // 4. Let C be ? SpeciesConstructor(rx, %RegExp%).
-    let speciesConstructor = @speciesConstructor(regexp, @RegExp);
+    var speciesConstructor = @speciesConstructor(regexp, @RegExp);
 
     if (speciesConstructor === @RegExp && !@hasObservableSideEffectsForRegExpSplit(regexp))
         return @regExpSplitFast.@call(regexp, str, limit);
 
     // 5. Let flags be ? ToString(? Get(rx, "flags")).
-    let flags = @toString(regexp.flags);
+    var flags = @toString(regexp.flags);
 
-    // 6. If flags contains "u", let unicodeMatching be true.
+    // 6. If flags contains "u", var unicodeMatching be true.
     // 7. Else, let unicodeMatching be false.
-    let unicodeMatching = @stringIncludesInternal.@call(flags, "u");
-    // 8. If flags contains "y", let newFlags be flags.
+    var unicodeMatching = @stringIncludesInternal.@call(flags, "u");
+    // 8. If flags contains "y", var newFlags be flags.
     // 9. Else, let newFlags be the string that is the concatenation of flags and "y".
-    let newFlags = @stringIncludesInternal.@call(flags, "y") ? flags : flags + "y";
+    var newFlags = @stringIncludesInternal.@call(flags, "y") ? flags : flags + "y";
 
     // 10. Let splitter be ? Construct(C, « rx, newFlags »).
-    let splitter = new speciesConstructor(regexp, newFlags);
+    var splitter = new speciesConstructor(regexp, newFlags);
 
     // We need to check again for RegExp subclasses that will fail the speciesConstructor test
     // but can still use the fast path after we invoke the constructor above.
@@ -508,9 +508,9 @@ function split(string, limit)
 
     // 11. Let A be ArrayCreate(0).
     // 12. Let lengthA be 0.
-    let result = [];
+    var result = [];
 
-    // 13. If limit is undefined, let lim be 2^32-1; else let lim be ? ToUint32(limit).
+    // 13. If limit is undefined, let lim be 2^32-1; else var lim be ? ToUint32(limit).
     limit = (limit === @undefined) ? 0xffffffff : limit >>> 0;
 
     // 16. If lim = 0, return A.
@@ -518,12 +518,12 @@ function split(string, limit)
         return result;
 
     // 14. [Defered from above] Let size be the number of elements in S.
-    let size = str.length;
+    var size = str.length;
 
     // 17. If size = 0, then
     if (!size) {
         // a. Let z be ? RegExpExec(splitter, S).
-        let z = @regExpExec(splitter, str);
+        var z = @regExpExec(splitter, str);
         // b. If z is not null, return A.
         if (z != null)
             return result;
@@ -534,23 +534,23 @@ function split(string, limit)
     }
 
     // 15. [Defered from above] Let p be 0.
-    let position = 0;
+    var position = 0;
     // 18. Let q be p.
-    let matchPosition = 0;
+    var matchPosition = 0;
 
     // 19. Repeat, while q < size
     while (matchPosition < size) {
         // a. Perform ? Set(splitter, "lastIndex", q, true).
         splitter.lastIndex = matchPosition;
         // b. Let z be ? RegExpExec(splitter, S).
-        let matches = @regExpExec(splitter, str);
+        var matches = @regExpExec(splitter, str);
         // c. If z is null, let q be AdvanceStringIndex(S, q, unicodeMatching).
         if (matches === null)
             matchPosition = @advanceStringIndex(str, matchPosition, unicodeMatching);
         // d. Else z is not null,
         else {
             // i. Let e be ? ToLength(? Get(splitter, "lastIndex")).
-            let endPosition = @toLength(splitter.lastIndex);
+            var endPosition = @toLength(splitter.lastIndex);
             // ii. Let e be min(e, size).
             endPosition = (endPosition <= size) ? endPosition : size;
             // iii. If e = p, let q be AdvanceStringIndex(S, q, unicodeMatching).
@@ -559,7 +559,7 @@ function split(string, limit)
             // iv. Else e != p,
             else {
                 // 1. Let T be a String value equal to the substring of S consisting of the elements at indices p (inclusive) through q (exclusive).
-                let subStr = @stringSubstrInternal.@call(str, position, matchPosition - position);
+                var subStr = @stringSubstrInternal.@call(str, position, matchPosition - position);
                 // 2. Perform ! CreateDataProperty(A, ! ToString(lengthA), T).
                 // 3. Let lengthA be lengthA + 1.
                 @putByValDirect(result, result.length, subStr);
@@ -571,14 +571,14 @@ function split(string, limit)
                 position = endPosition;
                 // 6. Let numberOfCaptures be ? ToLength(? Get(z, "length")).
                 // 7. Let numberOfCaptures be max(numberOfCaptures-1, 0).
-                let numberOfCaptures = matches.length > 1 ? matches.length - 1 : 0;
+                var numberOfCaptures = matches.length > 1 ? matches.length - 1 : 0;
 
                 // 8. Let i be 1.
-                let i = 1;
+                var i = 1;
                 // 9. Repeat, while i <= numberOfCaptures,
                 while (i <= numberOfCaptures) {
                     // a. Let nextCapture be ? Get(z, ! ToString(i)).
-                    let nextCapture = matches[i];
+                    var nextCapture = matches[i];
                     // b. Perform ! CreateDataProperty(A, ! ToString(lengthA), nextCapture).
                     // d. Let lengthA be lengthA + 1.
                     @putByValDirect(result, result.length, nextCapture);
@@ -594,7 +594,7 @@ function split(string, limit)
         }
     }
     // 20. Let T be a String value equal to the substring of S consisting of the elements at indices p (inclusive) through size (exclusive).
-    let remainingStr = @stringSubstrInternal.@call(str, position, size);
+    var remainingStr = @stringSubstrInternal.@call(str, position, size);
     // 21. Perform ! CreateDataProperty(A, ! ToString(lengthA), T).
     @putByValDirect(result, result.length, remainingStr);
     // 22. Return A.
@@ -607,7 +607,7 @@ function test(strArg)
 {
     "use strict";
 
-    let regexp = this;
+    var regexp = this;
 
     // Check for observable side effects and call the fast path if there aren't any.
     if (@isRegExpObject(regexp)
@@ -621,10 +621,10 @@ function test(strArg)
         @throwTypeError("RegExp.prototype.test requires that |this| be an Object");
 
     // 3. Let string be ? ToString(S).
-    let str = @toString(strArg);
+    var str = @toString(strArg);
 
     // 4. Let match be ? RegExpExec(R, string).
-    let match = @regExpExec(regexp, str);
+    var match = @regExpExec(regexp, str);
 
     // 5. If match is not null, return true; else return false.
     if (match !== null)

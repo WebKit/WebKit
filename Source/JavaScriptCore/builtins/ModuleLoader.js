@@ -338,8 +338,8 @@ async function loadModule(moduleName, parameters, fetcher)
     // resolve: moduleName => Promise(moduleKey)
     // Take the name and resolve it to the unique identifier for the resource location.
     // For example, take the "jquery" and return the URL for the resource.
-    let key = await this.resolve(moduleName, @undefined, fetcher);
-    let entry = await this.requestSatisfy(this.ensureRegistered(key), parameters, fetcher, new @Set);
+    var key = await this.resolve(moduleName, @undefined, fetcher);
+    var entry = await this.requestSatisfy(this.ensureRegistered(key), parameters, fetcher, new @Set);
     return entry.key;
 }
 
@@ -359,7 +359,7 @@ async function loadAndEvaluateModule(moduleName, parameters, fetcher)
 {
     "use strict";
 
-    let key = await this.loadModule(moduleName, parameters, fetcher);
+    var key = await this.loadModule(moduleName, parameters, fetcher);
     return await this.linkAndEvaluateModule(key, fetcher);
 }
 
@@ -367,7 +367,7 @@ async function requestImportModule(key, parameters, fetcher)
 {
     "use strict";
 
-    let entry = await this.requestSatisfy(this.ensureRegistered(key), parameters, fetcher, new @Set);
+    var entry = await this.requestSatisfy(this.ensureRegistered(key), parameters, fetcher, new @Set);
     this.linkAndEvaluateModule(entry.key, fetcher);
     return this.getModuleNamespaceObject(entry.module);
 }
@@ -376,14 +376,14 @@ function dependencyKeysIfEvaluated(key)
 {
     "use strict";
 
-    let entry = this.registry.@get(key);
+    var entry = this.registry.@get(key);
     if (!entry || !entry.evaluated)
         return null;
 
-    let dependencies = entry.dependencies;
-    let length = dependencies.length;
-    let result = new @Array(length);
-    for (let i = 0; i < length; ++i)
+    var dependencies = entry.dependencies;
+    var length = dependencies.length;
+    var result = new @Array(length);
+    for (var i = 0; i < length; ++i)
         result[i] = dependencies[i].key;
 
     return result;
