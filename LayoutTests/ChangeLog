@@ -1,5 +1,35 @@
 2020-01-13  Antti Koivisto  <antti@apple.com>
 
+        [LFC][Integration] Enable LFC integration
+        https://bugs.webkit.org/show_bug.cgi?id=206128
+
+        Reviewed by Zalan Bujtas.
+
+        Rebase for some progressions.
+
+        * fast/dom/Range/getBoundingClientRect-expected.txt:
+        * fast/dom/Range/getBoundingClientRect.html:
+
+        Update the test for new results. These match the complex line layout results (simple lines produce wrong results).
+
+        * platform/ios/fast/text/whitespace/pre-break-word-expected.txt:
+        * platform/ios/fast/text/word-break-expected.txt:
+        * platform/mac/fast/text/hyphenate-limit-lines-expected.txt:
+        * platform/mac/fast/text/whitespace/pre-break-word-expected.txt:
+        * platform/mac/fast/text/word-break-expected.txt:
+
+        Line breaking and white-space progressions.
+
+        * platform/ios/TestExpectations:
+
+        A subtest of editing/text-iterator/findString.html fails on iOS. This needs futher analysis.
+
+        * platform/win/TestExpectations:
+
+        fast/dom/Range/getBoundingClientRect.html now fails on windows because LFC is not enabled there.
+
+2020-01-13  Antti Koivisto  <antti@apple.com>
+
         [LFC][Integration] Ensure that simple line layout tests stays don't turn into LFC tests
         https://bugs.webkit.org/show_bug.cgi?id=206153
 

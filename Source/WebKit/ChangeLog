@@ -1,3 +1,12 @@
+2020-01-13  Antti Koivisto  <antti@apple.com>
+
+        [LFC][Integration] Enable LFC integration
+        https://bugs.webkit.org/show_bug.cgi?id=206128
+
+        Reviewed by Zalan Bujtas.
+
+        * Shared/WebPreferences.yaml:
+
 2020-01-13  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         WebDriver: pressed virtual keys not correctly handled in action sequences

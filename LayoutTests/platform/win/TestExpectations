@@ -4519,3 +4519,5 @@ webkit.org/b/205855 http/wpt/css/css-highlight-api/highlight-text-replace.html [
 webkit.org/b/205855 http/wpt/css/css-highlight-api/highlight-text.html [ ImageOnlyFailure ]
 
 webkit.org/b/205856 storage/indexeddb/IDBTransaction-page-cache.html [ Pass Timeout ]
+
+webkit.org/b/206165 fast/dom/Range/getBoundingClientRect.html [ Failure ]
