@@ -1868,7 +1868,7 @@ LayoutUnit RenderBlock::textIndentOffset() const
 {
     LayoutUnit cw;
     if (style().textIndent().isPercentOrCalculated())
-        cw = containingBlock()->availableLogicalWidth();
+        cw = availableLogicalWidth();
     return minimumValueForLength(style().textIndent(), cw);
 }
 
