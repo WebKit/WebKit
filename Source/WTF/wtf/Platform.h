@@ -33,6 +33,9 @@
 /* Include CPU specific macros */
 #include <wtf/CPU.h>
 
+/* Include underlying operating system specific macros */
+#include <wtf/OS.h>
+
 /* ==== PLATFORM handles OS, operating environment, graphics API, and
    CPU. This macro will be phased out in favor of platform adaptation
    macros, policy decision macros, and top-level port definitions. ==== */
@@ -41,13 +44,8 @@
 
 /* ==== Platform adaptation macros: these describe properties of the target environment. ==== */
 
-/* CPU() - the target CPU architecture */
-#define CPU(WTF_FEATURE) (defined WTF_CPU_##WTF_FEATURE  && WTF_CPU_##WTF_FEATURE)
 /* HAVE() - specific system features (headers, functions or similar) that are present or not */
 #define HAVE(WTF_FEATURE) (defined HAVE_##WTF_FEATURE  && HAVE_##WTF_FEATURE)
-/* OS() - underlying operating system; only to be used for mandated low-level services like 
-   virtual memory, not to choose a GUI toolkit */
-#define OS(WTF_FEATURE) (defined WTF_OS_##WTF_FEATURE  && WTF_OS_##WTF_FEATURE)
 
 
 /* ==== Policy decision macros: these define policy choices for a particular port. ==== */
@@ -84,90 +82,6 @@
 #endif
 
 
-
-/* ==== OS() - underlying operating system; only to be used for mandated low-level services like 
-   virtual memory, not to choose a GUI toolkit ==== */
-
-/* OS(AIX) - AIX */
-#ifdef _AIX
-#define WTF_OS_AIX 1
-#endif
-
-/* OS(DARWIN) - Any Darwin-based OS, including Mac OS X and iPhone OS */
-#ifdef __APPLE__
-#define WTF_OS_DARWIN 1
-
-#include <Availability.h>
-#include <AvailabilityMacros.h>
-#include <TargetConditionals.h>
-#endif
-
-/* OS(IOS_FAMILY) - iOS family, including iOS, macCatalyst, tvOS, watchOS */
-/* OS(IOS) - iOS only, not including macCatalyst */
-/* OS(MAC_OS_X) - macOS (not including iOS family) */
-#if OS(DARWIN)
-#if TARGET_OS_IOS && !(defined(TARGET_OS_MACCATALYST) && TARGET_OS_MACCATALYST)
-#define WTF_OS_IOS 1
-#endif
-#if TARGET_OS_IPHONE
-#define WTF_OS_IOS_FAMILY 1
-#elif TARGET_OS_MAC
-#define WTF_OS_MAC_OS_X 1
-#endif
-#endif
-
-/* OS(FREEBSD) - FreeBSD */
-#if defined(__FreeBSD__) || defined(__DragonFly__) || defined(__FreeBSD_kernel__)
-#define WTF_OS_FREEBSD 1
-#endif
-
-/* OS(FUCHSIA) - Fuchsia */
-#ifdef __Fuchsia__
-#define WTF_OS_FUCHSIA 1
-#endif
-
-/* OS(HURD) - GNU/Hurd */
-#ifdef __GNU__
-#define WTF_OS_HURD 1
-#endif
-
-/* OS(LINUX) - Linux */
-#ifdef __linux__
-#define WTF_OS_LINUX 1
-#endif
-
-/* OS(NETBSD) - NetBSD */
-#if defined(__NetBSD__)
-#define WTF_OS_NETBSD 1
-#endif
-
-/* OS(OPENBSD) - OpenBSD */
-#ifdef __OpenBSD__
-#define WTF_OS_OPENBSD 1
-#endif
-
-/* OS(WINDOWS) - Any version of Windows */
-#if defined(WIN32) || defined(_WIN32)
-#define WTF_OS_WINDOWS 1
-#endif
-
-#define WTF_OS_WIN ERROR "USE WINDOWS WITH OS NOT WIN"
-#define WTF_OS_MAC ERROR "USE MAC_OS_X WITH OS NOT MAC"
-
-/* OS(UNIX) - Any Unix-like system */
-#if    OS(AIX)              \
-    || OS(DARWIN)           \
-    || OS(FREEBSD)          \
-    || OS(FUCHSIA)          \
-    || OS(HURD)             \
-    || OS(LINUX)            \
-    || OS(NETBSD)           \
-    || OS(OPENBSD)          \
-    || defined(unix)        \
-    || defined(__unix)      \
-    || defined(__unix__)
-#define WTF_OS_UNIX 1
-#endif
 
 /* Operating environments */
 

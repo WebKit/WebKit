@@ -149,6 +149,7 @@ set(WTF_PUBLIC_HEADERS
     Nonmovable.h
     NotFound.h
     NumberOfCores.h
+    OS.h
     OSAllocator.h
     OSObjectPtr.h
     OSRandomSource.h
