@@ -1,3 +1,12 @@
+2020-01-13  Aakash Jain  <aakash_jain@apple.com>
+
+        [EWS] Add unit tests for factories
+        https://bugs.webkit.org/show_bug.cgi?id=206159
+
+        Reviewed by Jonathan Bedard.
+
+        * BuildSlaveSupport/ews-build/factories_unittest.py: Added unit tests for factories.
+
 2020-01-13  Eric Carlson  <eric.carlson@apple.com>
 
         Don't softlink AVCapture classes on watchOS or tvOS
