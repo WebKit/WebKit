@@ -31,6 +31,7 @@
 #include <WebCore/AuthenticatorGetInfoResponse.h>
 #include <WebCore/CBORReader.h>
 #include <WebCore/FidoConstants.h>
+#include <WebCore/Pin.h>
 #include <WebCore/WebAuthenticationConstants.h>
 #include <wtf/BlockPtr.h>
 #include <wtf/CryptographicallyRandomNumber.h>
@@ -223,10 +224,18 @@ void MockHidConnection::feedReports()
 
     Optional<FidoHidMessage> message;
     if (m_stage == Mock::HidStage::Info && m_subStage == Mock::HidSubStage::Msg) {
+        // FIXME(205839):
         Vector<uint8_t> infoData;
         if (m_configuration.hid->canDowngrade)
             infoData = encodeAsCBOR(AuthenticatorGetInfoResponse({ ProtocolVersion::kCtap, ProtocolVersion::kU2f }, Vector<uint8_t>(aaguidLength, 0u)));
-        else
+        else if (m_configuration.hid->supportClientPin) {
+            AuthenticatorGetInfoResponse infoResponse({ ProtocolVersion::kCtap }, Vector<uint8_t>(aaguidLength, 0u));
+            infoResponse.setPinProtocols({ pin::kProtocolVersion });
+            AuthenticatorSupportedOptions options;
+            options.setClientPinAvailability(AuthenticatorSupportedOptions::ClientPinAvailability::kSupportedAndPinSet);
+            infoResponse.setOptions(WTFMove(options));
+            infoData = encodeAsCBOR(infoResponse);
+        } else
             infoData = encodeAsCBOR(AuthenticatorGetInfoResponse({ ProtocolVersion::kCtap }, Vector<uint8_t>(aaguidLength, 0u)));
         infoData.insert(0, static_cast<uint8_t>(CtapDeviceResponseCode::kSuccess)); // Prepend status code.
         if (stagesMatch() && m_configuration.hid->error == Mock::HidError::WrongChannelId)

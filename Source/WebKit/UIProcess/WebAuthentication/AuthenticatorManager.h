@@ -82,6 +82,7 @@ private:
     void downgrade(Authenticator* id, Ref<Authenticator>&& downgradedAuthenticator) final;
     void authenticatorStatusUpdated(WebAuthenticationStatus) final;
     void selectAssertionResponses(const HashSet<Ref<WebCore::AuthenticatorAssertionResponse>>&, CompletionHandler<void(const Ref<WebCore::AuthenticatorAssertionResponse>&)>&&) final;
+    void requestPin(uint64_t retries, CompletionHandler<void(const WTF::String&)>&&) final;
 
     // Overriden by MockAuthenticatorManager.
     virtual UniqueRef<AuthenticatorTransportService> createService(WebCore::AuthenticatorTransport, AuthenticatorTransportService::Observer&) const;

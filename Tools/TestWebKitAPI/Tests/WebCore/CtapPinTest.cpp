@@ -41,7 +41,7 @@
 #include <WebCore/Pin.h>
 #include <WebCore/WebAuthenticationConstants.h>
 #include <WebCore/WebAuthenticationUtils.h>
-#include <wtf/text/Base64.h>
+#include <pal/crypto/CryptoDigest.h>
 
 namespace TestWebKitAPI {
 using namespace WebCore;
@@ -98,7 +98,7 @@ TEST(CtapPinTest, TestRetriesResponse)
     // Success cases
     result = RetriesResponse::parse(convertBytesToVector(TestData::kCtapClientPinRetriesResponse, sizeof(TestData::kCtapClientPinRetriesResponse)));
     EXPECT_TRUE(result);
-    EXPECT_EQ(result->retries, 8);
+    EXPECT_EQ(result->retries, 8u);
 }
 
 TEST(CtapPinTest, TestKeyAgreementRequest)
@@ -124,6 +124,11 @@ TEST(CtapPinTest, TestKeyAgreementResponse)
 
     result = KeyAgreementResponse::parse(convertBytesToVector(TestData::kCtapClientPinTokenResponse, sizeof(TestData::kCtapClientPinTokenResponse))); // wrong response
     EXPECT_FALSE(result);
+
+#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400) || PLATFORM(IOS)
+    result = KeyAgreementResponse::parse(convertBytesToVector(TestData::kCtapClientPinInvalidKeyAgreementResponse, sizeof(TestData::kCtapClientPinInvalidKeyAgreementResponse))); // The point is not on the curve.
+    EXPECT_FALSE(result);
+#endif
 
     // Test COSE
     auto coseKey = encodeCOSEPublicKey(Vector<uint8_t>(65));
@@ -176,7 +181,7 @@ TEST(CtapPinTest, TestTokenRequest)
     auto token = TokenRequest::tryCreate(pin, downcast<CryptoKeyEC>(*keyPair.publicKey));
     EXPECT_TRUE(token);
     auto result = encodeAsCBOR(*token);
-    EXPECT_EQ(result.size(), 120u);
+    EXPECT_EQ(result.size(), 103u);
     EXPECT_EQ(result[0], static_cast<uint8_t>(CtapRequestCommand::kAuthenticatorClientPin));
 
     // Decode the CBOR binary to check if each field is encoded correctly.
@@ -224,12 +229,17 @@ TEST(CtapPinTest, TestTokenRequest)
     // Check the encrypted Pin.
     auto sharedKeyResult = CryptoAlgorithmECDH::platformDeriveBits(downcast<CryptoKeyEC>(*keyPair.privateKey), *cosePublicKey);
     EXPECT_TRUE(sharedKeyResult);
-    auto aesKey = CryptoKeyAES::importRaw(CryptoAlgorithmIdentifier::AES_CBC, WTFMove(*sharedKeyResult), true, CryptoKeyUsageDecrypt);
+
+    auto crypto = PAL::CryptoDigest::create(PAL::CryptoDigest::Algorithm::SHA_256);
+    crypto->addBytes(sharedKeyResult->data(), sharedKeyResult->size());
+    auto sharedKeyHash = crypto->computeHash();
+
+    auto aesKey = CryptoKeyAES::importRaw(CryptoAlgorithmIdentifier::AES_CBC, WTFMove(sharedKeyHash), true, CryptoKeyUsageDecrypt);
     EXPECT_TRUE(aesKey);
 
     const auto& it6 = responseMap.find(CBORValue(static_cast<uint8_t>(RequestKey::kPinHashEnc)));
     EXPECT_NE(it6, responseMap.end());
-    auto pinHashResult = CryptoAlgorithmAES_CBC::platformDecrypt({ }, *aesKey, it6->second.getByteString());
+    auto pinHashResult = CryptoAlgorithmAES_CBC::platformDecrypt({ }, *aesKey, it6->second.getByteString(), CryptoAlgorithmAES_CBC::Padding::No);
     EXPECT_FALSE(pinHashResult.hasException());
     auto pinHash = pinHashResult.releaseReturnValue();
     const uint8_t expectedPinHash[] = { 0x03, 0xac, 0x67, 0x42, 0x16, 0xf3, 0xe1, 0x5c, 0x76, 0x1e, 0xe1, 0xa5, 0xe2, 0x55, 0xf0, 0x67 };
@@ -240,10 +250,10 @@ TEST(CtapPinTest, TestTokenRequest)
 TEST(CtapPinTest, TestTokenResponse)
 {
     const uint8_t sharedKeyData[] = {
-        0x03, 0xac, 0x67, 0x42, 0x16, 0xf3, 0xe1, 0x5c,
-        0x76, 0x1e, 0xe1, 0xa5, 0xe2, 0x55, 0xf0, 0x67,
-        0x95, 0x36, 0x23, 0xc8, 0xb3, 0x88, 0xb4, 0x45,
-        0x9e, 0x13, 0xf9, 0x78, 0xd7, 0xc8, 0x46, 0xf4, };
+        0x29, 0x9E, 0x65, 0xB8, 0xE7, 0x71, 0xB8, 0x1D,
+        0xB1, 0xC4, 0x8D, 0xBE, 0xCE, 0x50, 0x2A, 0x84,
+        0x05, 0x44, 0x7F, 0x46, 0x2D, 0xE6, 0x81, 0xFA,
+        0xEF, 0x0A, 0x6C, 0x67, 0xA7, 0x2B, 0xB5, 0x0F, };
     auto sharedKey = CryptoKeyAES::importRaw(CryptoAlgorithmIdentifier::AES_CBC, convertBytesToVector(sharedKeyData, sizeof(sharedKeyData)), true, CryptoKeyUsageEncrypt | CryptoKeyUsageDecrypt);
     ASSERT_TRUE(sharedKey);
 
@@ -274,10 +284,10 @@ TEST(CtapPinTest, TestPinAuth)
 {
     // 1. Generate the token.
     const uint8_t sharedKeyData[] = {
-        0x03, 0xac, 0x67, 0x42, 0x16, 0xf3, 0xe1, 0x5c,
-        0x76, 0x1e, 0xe1, 0xa5, 0xe2, 0x55, 0xf0, 0x67,
-        0x95, 0x36, 0x23, 0xc8, 0xb3, 0x88, 0xb4, 0x45,
-        0x9e, 0x13, 0xf9, 0x78, 0xd7, 0xc8, 0x46, 0xf4, };
+        0x29, 0x9E, 0x65, 0xB8, 0xE7, 0x71, 0xB8, 0x1D,
+        0xB1, 0xC4, 0x8D, 0xBE, 0xCE, 0x50, 0x2A, 0x84,
+        0x05, 0x44, 0x7F, 0x46, 0x2D, 0xE6, 0x81, 0xFA,
+        0xEF, 0x0A, 0x6C, 0x67, 0xA7, 0x2B, 0xB5, 0x0F, };
     auto sharedKey = CryptoKeyAES::importRaw(CryptoAlgorithmIdentifier::AES_CBC, convertBytesToVector(sharedKeyData, sizeof(sharedKeyData)), true, CryptoKeyUsageEncrypt | CryptoKeyUsageDecrypt);
     ASSERT_TRUE(sharedKey);
     auto result = TokenResponse::parse(*sharedKey, convertBytesToVector(TestData::kCtapClientPinTokenResponse, sizeof(TestData::kCtapClientPinTokenResponse)));
@@ -285,7 +295,7 @@ TEST(CtapPinTest, TestPinAuth)
 
     // 2. Generate the pinAuth.
     auto pinAuth = result->pinAuth(convertBytesToVector(sharedKeyData, sizeof(sharedKeyData))); // sharedKeyData pretends to be clientDataHash
-    const uint8_t expectedPinAuth[] = { 0xb3, 0xc2, 0x65, 0x1c, 0xfd, 0xc8, 0x42, 0xb4, 0x60, 0x16, 0xed, 0x20, 0x64, 0x53, 0xaf, 0x84 };
+    const uint8_t expectedPinAuth[] = { 0x0b, 0xec, 0x9d, 0xba, 0x69, 0xb0, 0x0f, 0x45, 0x0b, 0xec, 0x66, 0xb4, 0x75, 0x7f, 0x93, 0x85 };
     EXPECT_EQ(pinAuth.size(), 16u);
     EXPECT_EQ(memcmp(pinAuth.data(), expectedPinAuth, pinAuth.size()), 0);
 }

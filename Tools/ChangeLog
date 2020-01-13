@@ -1,3 +1,24 @@
+2020-01-06  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [WebAuthn] Support CTAP Client Pin
+        https://bugs.webkit.org/show_bug.cgi?id=191516
+        <rdar://problem/56558558>
+
+        Reviewed by Brent Fulgham.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebCore/CtapPinTest.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebCore/FidoTestData.h:
+        * TestWebKitAPI/Tests/WebKitCocoa/_WKWebAuthenticationPanel.mm:
+        (-[TestWebAuthenticationPanelDelegate panel:requestPINWithRemainingRetries:completionHandler:]):
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/web-authentication-get-assertion-hid-pin.html: Added.
+        * TestWebKitAPI/Tests/WebKitCocoa/web-authentication-make-credential-hid-pin-get-key-agreement-error.html: Added.
+        * TestWebKitAPI/Tests/WebKitCocoa/web-authentication-make-credential-hid-pin-get-pin-token-error.html: Added.
+        * TestWebKitAPI/Tests/WebKitCocoa/web-authentication-make-credential-hid-pin-get-retries-error.html: Added.
+        * TestWebKitAPI/Tests/WebKitCocoa/web-authentication-make-credential-hid-pin.html: Added.
+
 2020-01-11  Alex Christensen  <achristensen@webkit.org>
 
         Expose frame information on _WKResourceLoadInfo

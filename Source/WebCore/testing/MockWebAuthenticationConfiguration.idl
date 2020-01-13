@@ -92,6 +92,7 @@
     boolean continueAfterErrorData = false;
     boolean canDowngrade = false;
     boolean expectCancel = false;
+    boolean supportClientPin = false;
 };
 
 [

@@ -34,10 +34,11 @@
 
 namespace WebCore {
 
-static ExceptionOr<Vector<uint8_t>> transformAES_CBC(CCOperation operation, const Vector<uint8_t>& iv, const Vector<uint8_t>& key, const Vector<uint8_t>& data)
+static ExceptionOr<Vector<uint8_t>> transformAES_CBC(CCOperation operation, const Vector<uint8_t>& iv, const Vector<uint8_t>& key, const Vector<uint8_t>& data, CryptoAlgorithmAES_CBC::Padding padding)
 {
+    CCOptions options = padding == CryptoAlgorithmAES_CBC::Padding::Yes ? kCCOptionPKCS7Padding : 0;
     CCCryptorRef cryptor;
-    CCCryptorStatus status = CCCryptorCreate(operation, kCCAlgorithmAES, kCCOptionPKCS7Padding, key.data(), key.size(), iv.data(), &cryptor);
+    CCCryptorStatus status = CCCryptorCreate(operation, kCCAlgorithmAES, options, key.data(), key.size(), iv.data(), &cryptor);
     if (status)
         return Exception { OperationError };
 
@@ -49,10 +50,12 @@ static ExceptionOr<Vector<uint8_t>> transformAES_CBC(CCOperation operation, cons
         return Exception { OperationError };
 
     uint8_t* p = result.data() + bytesWritten;
-    status = CCCryptorFinal(cryptor, p, result.end() - p, &bytesWritten);
-    p += bytesWritten;
-    if (status)
-        return Exception { OperationError };
+    if (padding == CryptoAlgorithmAES_CBC::Padding::Yes) {
+        status = CCCryptorFinal(cryptor, p, result.end() - p, &bytesWritten);
+        p += bytesWritten;
+        if (status)
+            return Exception { OperationError };
+    }
 
     ASSERT(p <= result.end());
     result.shrink(p - result.begin());
@@ -62,16 +65,18 @@ static ExceptionOr<Vector<uint8_t>> transformAES_CBC(CCOperation operation, cons
     return WTFMove(result);
 }
 
-ExceptionOr<Vector<uint8_t>> CryptoAlgorithmAES_CBC::platformEncrypt(const CryptoAlgorithmAesCbcCfbParams& parameters, const CryptoKeyAES& key, const Vector<uint8_t>& plainText)
+ExceptionOr<Vector<uint8_t>> CryptoAlgorithmAES_CBC::platformEncrypt(const CryptoAlgorithmAesCbcCfbParams& parameters, const CryptoKeyAES& key, const Vector<uint8_t>& plainText, Padding padding)
 {
     ASSERT(parameters.ivVector().size() == kCCBlockSizeAES128 || parameters.ivVector().isEmpty());
-    return transformAES_CBC(kCCEncrypt, parameters.ivVector(), key.key(), plainText);
+    ASSERT(padding == Padding::Yes || !(plainText.size() % kCCBlockSizeAES128));
+    return transformAES_CBC(kCCEncrypt, parameters.ivVector(), key.key(), plainText, padding);
 }
 
-ExceptionOr<Vector<uint8_t>> CryptoAlgorithmAES_CBC::platformDecrypt(const CryptoAlgorithmAesCbcCfbParams& parameters, const CryptoKeyAES& key, const Vector<uint8_t>& cipherText)
+ExceptionOr<Vector<uint8_t>> CryptoAlgorithmAES_CBC::platformDecrypt(const CryptoAlgorithmAesCbcCfbParams& parameters, const CryptoKeyAES& key, const Vector<uint8_t>& cipherText, Padding padding)
 {
     ASSERT(parameters.ivVector().size() == kCCBlockSizeAES128 || parameters.ivVector().isEmpty());
-    return transformAES_CBC(kCCDecrypt, parameters.ivVector(), key.key(), cipherText);
+    ASSERT(padding == Padding::Yes || !(cipherText.size() % kCCBlockSizeAES128));
+    return transformAES_CBC(kCCDecrypt, parameters.ivVector(), key.key(), cipherText, padding);
 }
 
 } // namespace WebCore

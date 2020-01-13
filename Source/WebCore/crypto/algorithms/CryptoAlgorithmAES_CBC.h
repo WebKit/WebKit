@@ -36,13 +36,18 @@ class CryptoKeyAES;
 
 class CryptoAlgorithmAES_CBC final : public CryptoAlgorithm {
 public:
+    enum class Padding : uint8_t {
+        Yes,
+        No
+    };
+
     static constexpr const char* s_name = "AES-CBC";
     static constexpr CryptoAlgorithmIdentifier s_identifier = CryptoAlgorithmIdentifier::AES_CBC;
     static Ref<CryptoAlgorithm> create();
 
     // Operations can be performed directly.
-    WEBCORE_EXPORT static ExceptionOr<Vector<uint8_t>> platformEncrypt(const CryptoAlgorithmAesCbcCfbParams&, const CryptoKeyAES&, const Vector<uint8_t>&);
-    WEBCORE_EXPORT static ExceptionOr<Vector<uint8_t>> platformDecrypt(const CryptoAlgorithmAesCbcCfbParams&, const CryptoKeyAES&, const Vector<uint8_t>&);
+    WEBCORE_EXPORT static ExceptionOr<Vector<uint8_t>> platformEncrypt(const CryptoAlgorithmAesCbcCfbParams&, const CryptoKeyAES&, const Vector<uint8_t>&, Padding padding = Padding::Yes);
+    WEBCORE_EXPORT static ExceptionOr<Vector<uint8_t>> platformDecrypt(const CryptoAlgorithmAesCbcCfbParams&, const CryptoKeyAES&, const Vector<uint8_t>&, Padding padding = Padding::Yes);
 
 private:
     CryptoAlgorithmAES_CBC() = default;

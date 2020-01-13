@@ -1,3 +1,60 @@
+2020-01-06  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [WebAuthn] Support CTAP Client Pin
+        https://bugs.webkit.org/show_bug.cgi?id=191516
+        <rdar://problem/56558558>
+
+        Reviewed by Brent Fulgham.
+
+        This patch implements authenticatorClientPIN from the spec:
+        https://fidoalliance.org/specs/fido-v2.0-ps-20190130/fido-client-to-authenticator-protocol-v2.0-ps-20190130.html#authenticatorClientPIN
+        Specifically, it implements section 5.5.1, 5.5.3, 5.5.4, 5.5.7, and 5.5.8.
+
+        Here is the flow how makeCredential/getAssertion works with a PIN in our implementation:
+        1. Determine if the connected authenticator has a PIN;
+        2. If yes, send the makeCredential/getAssertion request to the authenticator with an empty pinAuth
+        such that the authenticator will wink for user gestures. This step intends to confirm the authenticator
+        is the one the user wants to use. Otherwise, we don't know which authenticator to send the PIN
+        if multiple are connected;
+        3. Once the user confirms the authetnicator, it will return either CTAP2_ERR_PIN_INVALID or
+        CTAP2_ERR_PIN_AUTH_INVALID. Some authenticators return CTAP2_ERR_PIN_AUTH_INVALID even though
+        it is not suggested by the spec;
+        4. Get retries from the authenticator;
+        5. Get key agreement from the authenticator;
+        6. Ask the UI client for the PIN and at the meantime inform it the retries;
+        7. Get pin token from the authenticator;
+        8. Resend the makeCredential/getAssertion request with the desired pinAuth.
+
+        Besides implementating the above flow, this patch also fixes some bugs within the PIN commands encoder:
+        1. pinAuth/pinProtocol are wrongly encoded for makeCredential/getAssertion;
+        2. AES CBC should be called without any padding. Therefore, CryptoAlgorithmAES_CBC adds a no padding mode;
+        3. The sharedSecret is the SHA256 digest of the ECDH key agreement instead of the raw key agreement.
+
+        * UIProcess/API/APIWebAuthenticationPanelClient.h:
+        (API::WebAuthenticationPanelClient::requestPin const):
+        * UIProcess/WebAuthentication/Authenticator.h:
+        * UIProcess/WebAuthentication/AuthenticatorManager.cpp:
+        (WebKit::AuthenticatorManager::requestPin):
+        * UIProcess/WebAuthentication/AuthenticatorManager.h:
+        * UIProcess/WebAuthentication/Cocoa/WebAuthenticationPanelClient.h:
+        * UIProcess/WebAuthentication/Cocoa/WebAuthenticationPanelClient.mm:
+        (WebKit::WebAuthenticationPanelClient::WebAuthenticationPanelClient):
+        (WebKit::WebAuthenticationPanelClient::requestPin const):
+        * UIProcess/WebAuthentication/Mock/MockHidConnection.cpp:
+        (WebKit::MockHidConnection::feedReports):
+        * UIProcess/WebAuthentication/fido/CtapAuthenticator.cpp:
+        (WebKit::CtapAuthenticator::makeCredential):
+        (WebKit::CtapAuthenticator::continueMakeCredentialAfterResponseReceived):
+        (WebKit::CtapAuthenticator::getAssertion):
+        (WebKit::CtapAuthenticator::continueGetAssertionAfterResponseReceived):
+        (WebKit::CtapAuthenticator::getRetries):
+        (WebKit::CtapAuthenticator::continueGetKeyAgreementAfterGetRetries):
+        (WebKit::CtapAuthenticator::continueRequestPinAfterGetKeyAgreement):
+        (WebKit::CtapAuthenticator::continueGetPinTokenAfterRequestPin):
+        (WebKit::CtapAuthenticator::continueRequestAfterGetPinToken):
+        (WebKit::CtapAuthenticator::continueMakeCredentialAfterResponseReceived const): Deleted.
+        * UIProcess/WebAuthentication/fido/CtapAuthenticator.h:
+
 2020-01-13  Brent Fulgham  <bfulgham@apple.com>
 
         [iOS] Remove 'com.apple.diagnosticd' from WebContent process sandbox

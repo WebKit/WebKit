@@ -49,6 +49,7 @@ private:
     // API::WebAuthenticationPanelClient
     void updatePanel(WebAuthenticationStatus) const final;
     void dismissPanel(WebAuthenticationResult) const final;
+    void requestPin(uint64_t, CompletionHandler<void(const WTF::String&)>&&) const final;
 
     _WKWebAuthenticationPanel *m_panel;
     WeakObjCPtr<id <_WKWebAuthenticationPanelDelegate> > m_delegate;
@@ -56,6 +57,7 @@ private:
     struct {
         bool panelUpdateWebAuthenticationPanel : 1;
         bool panelDismissWebAuthenticationPanelWithResult : 1;
+        bool panelRequestPinWithRemainingRetriesCompletionHandler : 1;
     } m_delegateMethods;
 };
 

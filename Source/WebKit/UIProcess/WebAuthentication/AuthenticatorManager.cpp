@@ -279,6 +279,12 @@ void AuthenticatorManager::selectAssertionResponses(const HashSet<Ref<WebCore::A
         panel->client().selectAssertionResponses(responses, WTFMove(completionHandler));
 }
 
+void AuthenticatorManager::requestPin(uint64_t retries, CompletionHandler<void(const WTF::String&)>&& completionHandler)
+{
+    if (auto* panel = m_pendingRequestData.panel.get())
+        panel->client().requestPin(retries, WTFMove(completionHandler));
+}
+
 UniqueRef<AuthenticatorTransportService> AuthenticatorManager::createService(AuthenticatorTransport transport, AuthenticatorTransportService::Observer& observer) const
 {
     return AuthenticatorTransportService::create(transport, observer);

@@ -52,6 +52,7 @@ public:
         virtual void downgrade(Authenticator* id, Ref<Authenticator>&& downgradedAuthenticator) = 0;
         virtual void authenticatorStatusUpdated(WebAuthenticationStatus) = 0;
         virtual void selectAssertionResponses(const HashSet<Ref<WebCore::AuthenticatorAssertionResponse>>&, CompletionHandler<void(const Ref<WebCore::AuthenticatorAssertionResponse>&)>&&) = 0;
+        virtual void requestPin(uint64_t retries, CompletionHandler<void(const WTF::String&)>&&) = 0;
     };
 
     virtual ~Authenticator() = default;

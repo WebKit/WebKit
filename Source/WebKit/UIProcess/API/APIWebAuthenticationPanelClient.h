@@ -30,6 +30,7 @@
 #include <wtf/CompletionHandler.h>
 #include <wtf/HashSet.h>
 #include <wtf/RefCounted.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 class AuthenticatorAssertionResponse;
@@ -50,6 +51,7 @@ public:
     virtual void updatePanel(WebKit::WebAuthenticationStatus) const { }
     virtual void dismissPanel(WebKit::WebAuthenticationResult) const { }
     virtual void selectAssertionResponses(const HashSet<Ref<WebCore::AuthenticatorAssertionResponse>>& responses, CompletionHandler<void(const Ref<WebCore::AuthenticatorAssertionResponse>&)>&& completionHandler) const { completionHandler(*responses.begin()); }
+    virtual void requestPin(uint64_t, CompletionHandler<void(const WTF::String&)>&& completionHandler) const { completionHandler(emptyString()); }
 };
 
 } // namespace API

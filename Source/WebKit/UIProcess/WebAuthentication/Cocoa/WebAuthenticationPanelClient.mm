@@ -28,8 +28,10 @@
 
 #if ENABLE(WEB_AUTHN)
 
+#import "CompletionHandlerCallChecker.h"
 #import "WebAuthenticationFlags.h"
 #import "_WKWebAuthenticationPanel.h"
+#import <wtf/BlockPtr.h>
 #import <wtf/RunLoop.h>
 
 namespace WebKit {
@@ -40,6 +42,7 @@ WebAuthenticationPanelClient::WebAuthenticationPanelClient(_WKWebAuthenticationP
 {
     m_delegateMethods.panelUpdateWebAuthenticationPanel = [delegate respondsToSelector:@selector(panel:updateWebAuthenticationPanel:)];
     m_delegateMethods.panelDismissWebAuthenticationPanelWithResult = [delegate respondsToSelector:@selector(panel:dismissWebAuthenticationPanelWithResult:)];
+    m_delegateMethods.panelRequestPinWithRemainingRetriesCompletionHandler = [delegate respondsToSelector:@selector(panel:requestPINWithRemainingRetries:completionHandler:)];
 }
 
 RetainPtr<id <_WKWebAuthenticationPanelDelegate> > WebAuthenticationPanelClient::delegate()
@@ -104,6 +107,37 @@ void WebAuthenticationPanelClient::dismissPanel(WebAuthenticationResult result) 
             return;
 
         [delegate panel:m_panel dismissWebAuthenticationPanelWithResult:wkWebAuthenticationResult(result)];
+    });
+}
+
+void WebAuthenticationPanelClient::requestPin(uint64_t retries, CompletionHandler<void(const WTF::String&)>&& completionHandler) const
+{
+    // Call delegates in the next run loop to prevent clients' reentrance that would potentially modify the state
+    // of the current run loop in unexpected ways.
+    RunLoop::main().dispatch([weakThis = makeWeakPtr(*this), this, retries, completionHandler = WTFMove(completionHandler)] () mutable {
+        if (!weakThis) {
+            completionHandler(emptyString());
+            return;
+        }
+
+        if (!m_delegateMethods.panelRequestPinWithRemainingRetriesCompletionHandler) {
+            completionHandler(emptyString());
+            return;
+        }
+
+        auto delegate = m_delegate.get();
+        if (!delegate) {
+            completionHandler(emptyString());
+            return;
+        }
+
+        auto checker = CompletionHandlerCallChecker::create(delegate.get(), @selector(panel:requestPINWithRemainingRetries:completionHandler:));
+        [delegate panel:m_panel requestPINWithRemainingRetries:retries completionHandler:makeBlockPtr([completionHandler = WTFMove(completionHandler), checker = WTFMove(checker)](NSString *pin) mutable {
+            if (checker->completionHandlerHasBeenCalled())
+                return;
+            checker->didCallCompletionHandler();
+            completionHandler(pin);
+        }).get()];
     });
 }
 

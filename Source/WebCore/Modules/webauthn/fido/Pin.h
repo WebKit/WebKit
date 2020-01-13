@@ -79,7 +79,7 @@ enum class ResponseKey : uint8_t {
 
 // kProtocolVersion is the version of the PIN protocol that this code
 // implements.
-constexpr int kProtocolVersion = 1;
+constexpr int64_t kProtocolVersion = 1;
 
 // encodeCOSEPublicKey takes a raw ECDH256 public key and returns it as a COSE structure.
 WEBCORE_EXPORT cbor::CBORValue::MapValue encodeCOSEPublicKey(const Vector<uint8_t>& key);
@@ -110,7 +110,7 @@ struct RetriesResponse {
 
     // retries is the number of PIN attempts remaining before the authenticator
     // locks.
-    int retries;
+    uint64_t retries;
 
 private:
     RetriesResponse();
@@ -145,7 +145,7 @@ public:
 
     // sharedKey returns the shared ECDH key that was used to encrypt the PIN.
     // This is needed to decrypt the response.
-    const WebCore::CryptoKeyAES& sharedKey() const;
+    WEBCORE_EXPORT const WebCore::CryptoKeyAES& sharedKey() const;
 
     friend Vector<uint8_t> encodeAsCBOR(const TokenRequest&);
 
