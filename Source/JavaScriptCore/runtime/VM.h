@@ -452,6 +452,7 @@ public:
     IsoSubspace getterSetterSpace;
     IsoSubspace globalLexicalEnvironmentSpace;
     IsoSubspace internalFunctionSpace;
+    IsoSubspace jsProxySpace;
     IsoSubspace nativeExecutableSpace;
     IsoSubspace numberObjectSpace;
     IsoSubspace promiseSpace;

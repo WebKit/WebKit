@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "JSObject.h"
+#include "JSInternalFieldObjectImpl.h"
 
 namespace JSC {
 

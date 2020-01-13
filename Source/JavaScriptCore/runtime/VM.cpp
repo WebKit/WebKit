@@ -111,6 +111,7 @@
 #include "JSNativeStdFunction.h"
 #include "JSPromise.h"
 #include "JSPropertyNameEnumerator.h"
+#include "JSProxy.h"
 #include "JSScriptFetchParameters.h"
 #include "JSScriptFetcher.h"
 #include "JSSet.h"
@@ -369,6 +370,7 @@ VM::VM(VMType vmType, HeapType heapType)
     , getterSetterSpace ISO_SUBSPACE_INIT(heap, cellHeapCellType.get(), GetterSetter)
     , globalLexicalEnvironmentSpace ISO_SUBSPACE_INIT(heap, globalLexicalEnvironmentHeapCellType.get(), JSGlobalLexicalEnvironment)
     , internalFunctionSpace ISO_SUBSPACE_INIT(heap, cellHeapCellType.get(), InternalFunction) // Hash:0xf845c464
+    , jsProxySpace ISO_SUBSPACE_INIT(heap, cellHeapCellType.get(), JSProxy)
     , nativeExecutableSpace ISO_SUBSPACE_INIT(heap, destructibleCellHeapCellType.get(), NativeExecutable) // Hash:0x67567f95
     , numberObjectSpace ISO_SUBSPACE_INIT(heap, cellHeapCellType.get(), NumberObject)
     , promiseSpace ISO_SUBSPACE_INIT(heap, cellHeapCellType.get(), JSPromise)

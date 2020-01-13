@@ -25,14 +25,21 @@
 
 #pragma once
 
-#include "JSDestructibleObject.h"
+#include "JSObject.h"
 
 namespace JSC {
 
-class JSProxy : public JSDestructibleObject {
+class JSProxy : public JSNonFinalObject {
 public:
-    using Base = JSDestructibleObject;
+    using Base = JSNonFinalObject;
     static constexpr unsigned StructureFlags = Base::StructureFlags | OverridesGetOwnPropertySlot | OverridesGetPropertyNames | InterceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero;
+
+    template<typename CellType, SubspaceAccess>
+    static IsoSubspace* subspaceFor(VM& vm)
+    {
+        static_assert(sizeof(CellType) == sizeof(JSProxy));
+        return &vm.jsProxySpace;
+    }
 
     static JSProxy* create(VM& vm, Structure* structure, JSObject* target)
     {
