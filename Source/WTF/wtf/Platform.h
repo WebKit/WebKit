@@ -172,21 +172,47 @@
 #define WTF_PLATFORM_WATCHOS 1
 #endif
 
-/* Graphics engines */
+/* FIXME: ASSERT_ENABLED should defined in different, perhaps its own, file. */
+/* ASSERT_ENABLED should be true if we want the current compilation unit to
+   do debug assertion checks unconditionally (e.g. treat a debug ASSERT
+   like a RELEASE_ASSERT.
+*/
+#ifndef ASSERT_ENABLED
+#ifdef NDEBUG
+#define ASSERT_ENABLED 0
+#else
+#define ASSERT_ENABLED 1
+#endif
+#endif
 
-/* USE(CG) and PLATFORM(CI) */
+
+
 #if PLATFORM(COCOA)
 #define USE_CG 1
+#endif
+
+#if PLATFORM(COCOA)
 #define USE_CA 1
 #endif
 
 #if PLATFORM(GTK) || PLATFORM(WPE)
 #define USE_GLIB 1
+#endif
+
+#if PLATFORM(GTK) || PLATFORM(WPE)
 #define USE_FREETYPE 1
+#endif
+
+#if PLATFORM(GTK) || PLATFORM(WPE)
 #define USE_HARFBUZZ 1
+#endif
+
+#if PLATFORM(GTK) || PLATFORM(WPE)
 #define USE_SOUP 1
+#endif
+
+#if PLATFORM(GTK) || PLATFORM(WPE)
 #define USE_WEBP 1
-#define USE_FILE_LOCK 1
 #endif
 
 #if PLATFORM(GTK)
@@ -208,114 +234,241 @@
 #endif
 
 #if PLATFORM(COCOA)
-
 #define HAVE_OUT_OF_PROCESS_LAYER_HOSTING 1
-#define USE_CF 1
-#define USE_FILE_LOCK 1
-#define USE_FOUNDATION 1
-#define USE_NETWORK_CFDATA_ARRAY_CALLBACK 1
+#endif
 
+#if PLATFORM(COCOA)
+#define USE_CF 1
+#endif
+
+#if PLATFORM(COCOA) || (PLATFORM(GTK) || PLATFORM(WPE))
+#define USE_FILE_LOCK 1
+#endif
+
+#if PLATFORM(COCOA)
+#define USE_FOUNDATION 1
+#endif
+
+#if PLATFORM(COCOA)
+#define USE_NETWORK_CFDATA_ARRAY_CALLBACK 1
+#endif
+
+
+#if PLATFORM(COCOA)
 /* Cocoa defines a series of platform macros for debugging. */
 /* Some of them are really annoying because they use common names (e.g. check()). */
 /* Disable those macros so that we are not limited in how we name methods and functions. */
 #undef __ASSERT_MACROS_DEFINE_VERSIONS_WITHOUT_UNDERSCORES
 #define __ASSERT_MACROS_DEFINE_VERSIONS_WITHOUT_UNDERSCORES 0
-
 #endif
 
 #if PLATFORM(MAC)
-
 #define HAVE_RUNLOOP_TIMER 1
-#define HAVE_SEC_KEYCHAIN 1
-#define HAVE_HISERVICES 1
-#define USE_APPKIT 1
-#define USE_PASSKIT 1
+#endif
 
-#if CPU(X86_64)
+#if PLATFORM(MAC)
+#define HAVE_SEC_KEYCHAIN 1
+#endif
+
+#if PLATFORM(MAC)
+#define HAVE_HISERVICES 1
+#endif
+
+#if PLATFORM(MAC)
+#define USE_APPKIT 1
+#endif
+
+#if PLATFORM(MAC)
+#define USE_PASSKIT 1
+#endif
+
+#if PLATFORM(MAC)
 #define HAVE_NETWORK_EXTENSION 1
+#endif
+
+#if PLATFORM(MAC)
 #define USE_PLUGIN_HOST_PROCESS 1
 #endif
-#endif /* PLATFORM(MAC) */
 
 #if PLATFORM(IOS_FAMILY)
-
 #define HAVE_NETWORK_EXTENSION 1
-#define HAVE_READLINE 1
-#define USE_UIKIT_EDITING 1
-#define USE_WEB_THREAD 1
-
-#if CPU(ARM64)
-#define ENABLE_JIT_CONSTANT_BLINDING 0
 #endif
 
-#if CPU(ARM_NEON)
+#if PLATFORM(IOS_FAMILY)
+#define HAVE_READLINE 1
+#endif
+
+#if PLATFORM(IOS_FAMILY)
+#define USE_UIKIT_EDITING 1
+#endif
+
+#if PLATFORM(IOS_FAMILY)
+#define USE_WEB_THREAD 1
+#endif
+
+#if PLATFORM(IOS_FAMILY) && CPU(ARM_NEON)
 #undef HAVE_ARM_NEON_INTRINSICS
 #define HAVE_ARM_NEON_INTRINSICS 0
 #endif
 
-#endif /* PLATFORM(IOS_FAMILY) */
+#if !defined(HAVE_PDFHOSTVIEWCONTROLLER_SNAPSHOTTING) && PLATFORM(IOS)
+#define HAVE_PDFHOSTVIEWCONTROLLER_SNAPSHOTTING 1
+#endif
 
-#if !defined(HAVE_ACCESSIBILITY)
-#if PLATFORM(COCOA) || PLATFORM(WIN) || PLATFORM(GTK) || PLATFORM(WPE)
+#if !defined(HAVE_VISIBILITY_PROPAGATION_VIEW) && PLATFORM(IOS_FAMILY)
+#define HAVE_VISIBILITY_PROPAGATION_VIEW 1
+#endif
+
+#if !defined(HAVE_UISCENE) && PLATFORM(IOS_FAMILY)
+#define HAVE_UISCENE 1
+#endif
+
+#if !defined(HAVE_AVSTREAMSESSION) && PLATFORM(MAC)
+#define HAVE_AVSTREAMSESSION 1
+#endif
+
+#if !defined(HAVE_PASSKIT_API_TYPE) && (PLATFORM(IOS_FAMILY) || PLATFORM(MAC))
+#define HAVE_PASSKIT_API_TYPE 1
+#endif
+
+#if !defined(HAVE_PASSKIT_BOUND_INTERFACE_IDENTIFIER) && (PLATFORM(IOS) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400))
+#define HAVE_PASSKIT_BOUND_INTERFACE_IDENTIFIER 1
+#endif
+
+#if !defined(USE_UIKIT_KEYBOARD_ADDITIONS) && (PLATFORM(IOS) || PLATFORM(MACCATALYST))
+#define USE_UIKIT_KEYBOARD_ADDITIONS 1
+#endif
+
+
+#if !defined(HAVE_ACCESSIBILITY) && (PLATFORM(COCOA) || PLATFORM(WIN) || PLATFORM(GTK) || PLATFORM(WPE))
 #define HAVE_ACCESSIBILITY 1
 #endif
-#endif /* !defined(HAVE_ACCESSIBILITY) */
 
 /* FIXME: Remove after CMake build enabled on Darwin */
 #if OS(DARWIN)
 #define HAVE_ERRNO_H 1
-#define HAVE_LANGINFO_H 1
-#define HAVE_LOCALTIME_R 1
-#define HAVE_MMAP 1
-#define HAVE_REGEX_H 1
-#define HAVE_SIGNAL_H 1
-#define HAVE_STAT_BIRTHTIME 1
-#define HAVE_STRINGS_H 1
-#define HAVE_STRNSTR 1
-#define HAVE_SYS_PARAM_H 1
-#define HAVE_SYS_TIME_H 1 
-#define HAVE_TM_GMTOFF 1
-#define HAVE_TM_ZONE 1
-#define HAVE_TIMEGM 1
-#define HAVE_PTHREAD_MAIN_NP 1
+#endif
 
-#if CPU(X86_64) || CPU(ARM64)
+#if OS(DARWIN)
+#define HAVE_LANGINFO_H 1
+#endif
+
+#if OS(DARWIN)
+#define HAVE_LOCALTIME_R 1
+#endif
+
+#if OS(DARWIN)
+#define HAVE_MMAP 1
+#endif
+
+#if OS(DARWIN)
+#define HAVE_REGEX_H 1
+#endif
+
+#if OS(DARWIN)
+#define HAVE_SIGNAL_H 1
+#endif
+
+#if OS(DARWIN)
+#define HAVE_STAT_BIRTHTIME 1
+#endif
+
+#if OS(DARWIN)
+#define HAVE_STRINGS_H 1
+#endif
+
+#if OS(DARWIN)
+#define HAVE_STRNSTR 1
+#endif
+
+#if OS(DARWIN)
+#define HAVE_SYS_PARAM_H 1
+#endif
+
+#if OS(DARWIN)
+#define HAVE_SYS_TIME_H 1
+#endif
+
+#if OS(DARWIN)
+#define HAVE_TM_GMTOFF 1
+#endif
+
+#if OS(DARWIN)
+#define HAVE_TM_ZONE 1
+#endif
+
+#if OS(DARWIN)
+#define HAVE_TIMEGM 1
+#endif
+
+#if OS(DARWIN)
+#define HAVE_PTHREAD_MAIN_NP 1
+#endif
+
+#if OS(DARWIN) && (CPU(X86_64) || CPU(ARM64))
 #define HAVE_INT128_T 1
 #endif
-#endif /* OS(DARWIN) */
 
 #if OS(UNIX)
 #define USE_PTHREADS 1
-#endif /* OS(UNIX) */
+#endif
 
 #if OS(UNIX) && !OS(FUCHSIA)
 #define HAVE_RESOURCE_H 1
+#endif
+
+#if OS(UNIX) && !OS(FUCHSIA)
 #define HAVE_PTHREAD_SETSCHEDPARAM 1
 #endif
 
 #if OS(DARWIN)
 #define HAVE_DISPATCH_H 1
-#define HAVE_MADV_FREE 1
-#define HAVE_MADV_FREE_REUSE 1
-#define HAVE_MADV_DONTNEED 1
-#define HAVE_MERGESORT 1
-#define HAVE_PTHREAD_SETNAME_NP 1
-#define HAVE_READLINE 1
-#define HAVE_SYS_TIMEB_H 1
-#define HAVE_AUDIT_TOKEN 1
+#endif
 
-#if __has_include(<mach/mach_exc.defs>) && !PLATFORM(GTK)
+#if OS(DARWIN)
+#define HAVE_MADV_FREE 1
+#endif
+
+#if OS(DARWIN)
+#define HAVE_MADV_FREE_REUSE 1
+#endif
+
+#if OS(DARWIN)
+#define HAVE_MADV_DONTNEED 1
+#endif
+
+#if OS(DARWIN)
+#define HAVE_MERGESORT 1
+#endif
+
+#if OS(DARWIN)
+#define HAVE_PTHREAD_SETNAME_NP 1
+#endif
+
+#if OS(DARWIN)
+#define HAVE_READLINE 1
+#endif
+
+#if OS(DARWIN)
+#define HAVE_SYS_TIMEB_H 1
+#endif
+
+#if OS(DARWIN)
+#define HAVE_AUDIT_TOKEN 1
+#endif
+
+#if OS(DARWIN) && __has_include(<mach/mach_exc.defs>) && !PLATFORM(GTK)
 #define HAVE_MACH_EXCEPTIONS 1
 #endif
 
-#if !PLATFORM(GTK)
+#if OS(DARWIN) && !PLATFORM(GTK)
 #define USE_ACCELERATE 1
 #endif
-#if !PLATFORM(IOS_FAMILY)
+
+#if OS(DARWIN) && !PLATFORM(IOS_FAMILY)
 #define HAVE_HOSTED_CORE_ANIMATION 1
 #endif
 
-#endif /* OS(DARWIN) */
 
 #if OS(DARWIN) || OS(FUCHSIA) || ((OS(FREEBSD) || defined(__GLIBC__) || defined(__BIONIC__)) && (CPU(X86) || CPU(X86_64) || CPU(ARM) || CPU(ARM64) || CPU(MIPS)))
 #define HAVE_MACHINE_CONTEXT 1
@@ -335,25 +488,9 @@
 #endif /* OS(DARWIN) || OS(LINUX) */
 
 
-/* ENABLE macro defaults */
-
-/* FIXME: move out all ENABLE() defines from here to FeatureDefines.h */
-
-#if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/AdditionalPlatform.h>)
-#include <WebKitAdditions/AdditionalPlatform.h>
-#endif
-
-#if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/AdditionalFeatureDefines.h>)
-#include <WebKitAdditions/AdditionalFeatureDefines.h>
-#endif
-
-/* Include feature macros */
-#include <wtf/FeatureDefines.h>
-
 #if OS(WINDOWS)
 #define USE_SYSTEM_MALLOC 1
 #endif
-
 
 #if !defined(USE_JSVALUE64) && !defined(USE_JSVALUE32_64)
 #if CPU(ADDRESS64) || CPU(ARM64)
@@ -363,314 +500,18 @@
 #endif
 #endif /* !defined(USE_JSVALUE64) && !defined(USE_JSVALUE32_64) */
 
-/* The JIT is enabled by default on all x86-64 & ARM64 platforms. */
-#if !defined(ENABLE_JIT) \
-    && (CPU(X86_64) || CPU(ARM64)) \
-    && !CPU(APPLE_ARMV7K)
-#define ENABLE_JIT 1
-#endif
-
-#if USE(JSVALUE32_64)
-#if (CPU(ARM_THUMB2) || CPU(MIPS)) && OS(LINUX)
-/* On ARMv7 and MIPS on Linux the JIT is enabled unless explicitly disabled. */
-#if !defined(ENABLE_JIT)
-#define ENABLE_JIT 1
-#endif
-#else
-/* Disable JIT and force C_LOOP on all other 32bit architectures. */
-#undef ENABLE_JIT
-#define ENABLE_JIT 0
-#undef ENABLE_C_LOOP
-#define ENABLE_C_LOOP 1
-#endif
-#endif
-
-#if !defined(ENABLE_C_LOOP)
-#if ENABLE(JIT) \
-    || CPU(X86_64) || (CPU(ARM64) && !defined(__ILP32__))
-#define ENABLE_C_LOOP 0
-#else
-#define ENABLE_C_LOOP 1
-#endif
-#endif
-
-/* The FTL *does not* work on 32-bit platforms. Disable it even if someone asked us to enable it. */
-#if USE(JSVALUE32_64)
-#undef ENABLE_FTL_JIT
-#define ENABLE_FTL_JIT 0
-#endif
-
-/* The FTL is disabled on the iOS simulator, mostly for simplicity. */
-#if PLATFORM(IOS_FAMILY_SIMULATOR)
-#undef ENABLE_FTL_JIT
-#define ENABLE_FTL_JIT 0
-#endif
-
-/* If possible, try to enable a disassembler. This is optional. We proceed in two
-   steps: first we try to find some disassembler that we can use, and then we
-   decide if the high-level disassembler API can be enabled. */
-#if !defined(USE_UDIS86) && ENABLE(JIT) && CPU(X86_64) && !USE(CAPSTONE)
-#define USE_UDIS86 1
-#endif
-
-#if !defined(USE_ARM64_DISASSEMBLER) && ENABLE(JIT) && CPU(ARM64) && !USE(CAPSTONE)
-#define USE_ARM64_DISASSEMBLER 1
-#endif
-
-#if !defined(ENABLE_DISASSEMBLER) && (USE(UDIS86) || USE(ARM64_DISASSEMBLER) || (ENABLE(JIT) && USE(CAPSTONE)))
-#define ENABLE_DISASSEMBLER 1
-#endif
-
-#if !defined(ENABLE_DFG_JIT) && ENABLE(JIT)
-/* Enable the DFG JIT on X86 and X86_64. */
-#if CPU(X86_64) && (OS(DARWIN) || OS(LINUX) || OS(FREEBSD) || OS(HURD) || OS(WINDOWS))
-#define ENABLE_DFG_JIT 1
-#endif
-/* Enable the DFG JIT on ARMv7.  Only tested on iOS, Linux, and FreeBSD. */
-#if (CPU(ARM_THUMB2) || CPU(ARM64)) && (PLATFORM(IOS_FAMILY) || OS(LINUX) || OS(FREEBSD))
-#define ENABLE_DFG_JIT 1
-#endif
-/* Enable the DFG JIT on MIPS. */
-#if CPU(MIPS)
-#define ENABLE_DFG_JIT 1
-#endif
-#endif
-
-/* Concurrent JS only works on 64-bit platforms because it requires that
-   values get stored to atomically. This is trivially true on 64-bit platforms,
-   but not true at all on 32-bit platforms where values are composed of two
-   separate sub-values. */
-#if ENABLE(JIT) && USE(JSVALUE64)
-#define ENABLE_CONCURRENT_JS 1
-#endif
-
 #if __has_include(<System/pthread_machdep.h>)
 #define HAVE_FAST_TLS 1
 #endif
 
-#if (CPU(X86_64) || CPU(ARM64)) && HAVE(FAST_TLS)
-#define ENABLE_FAST_TLS_JIT 1
-#endif
-
-#if CPU(X86) || CPU(X86_64) || CPU(ARM_THUMB2) || CPU(ARM64) || CPU(MIPS)
-#define ENABLE_MASM_PROBE 1
-#else
-#define ENABLE_MASM_PROBE 0
-#endif
-
-#if !ENABLE(JIT)
-#undef ENABLE_MASM_PROBE
-#define ENABLE_MASM_PROBE 0
-#endif
-
-/* If the baseline jit is not available, then disable upper tiers as well.
-   The MacroAssembler::probe() is also required for supporting the upper tiers. */
-#if !ENABLE(JIT) || !ENABLE(MASM_PROBE)
-#undef ENABLE_DFG_JIT
-#undef ENABLE_FTL_JIT
-#define ENABLE_DFG_JIT 0
-#define ENABLE_FTL_JIT 0
-#endif
-
-/* If the DFG jit is not available, then disable upper tiers as well: */
-#if !ENABLE(DFG_JIT)
-#undef ENABLE_FTL_JIT
-#define ENABLE_FTL_JIT 0
-#endif
-
-/* This controls whether B3 is built. B3 is needed for FTL JIT and WebAssembly */
-#if ENABLE(FTL_JIT)
-#define ENABLE_B3_JIT 1
-#endif
-
-#if !defined(ENABLE_WEBASSEMBLY)
-#if ENABLE(B3_JIT) && PLATFORM(COCOA) && CPU(ADDRESS64)
-#define ENABLE_WEBASSEMBLY 1
-#else
-#define ENABLE_WEBASSEMBLY 0
-#endif
-#endif
-
-/* The SamplingProfiler is the probabilistic and low-overhead profiler used by
- * JSC to measure where time is spent inside a JavaScript program.
- * In configurations other than Windows and Darwin, because layout of mcontext_t depends on standard libraries (like glibc),
- * sampling profiler is enabled if WebKit uses pthreads and glibc. */
-#if !defined(ENABLE_SAMPLING_PROFILER)
-#if !ENABLE(C_LOOP) && (OS(WINDOWS) || HAVE(MACHINE_CONTEXT))
-#define ENABLE_SAMPLING_PROFILER 1
-#else
-#define ENABLE_SAMPLING_PROFILER 0
-#endif
-#endif
-
-#if ENABLE(WEBASSEMBLY) && HAVE(MACHINE_CONTEXT)
-#define ENABLE_WEBASSEMBLY_FAST_MEMORY 1
-#endif
-
-/* Counts uses of write barriers using sampling counters. Be sure to also
-   set ENABLE_SAMPLING_COUNTERS to 1. */
-#if !defined(ENABLE_WRITE_BARRIER_PROFILING)
-#define ENABLE_WRITE_BARRIER_PROFILING 0
-#endif
-
-/* Logs all allocation-related activity that goes through fastMalloc or the
-   JSC GC (both cells and butterflies). Also logs marking. Note that this
-   isn't a completely accurate view of the heap since it doesn't include all
-   butterfly resize operations, doesn't tell you what is going on with weak
-   references (other than to tell you when they're marked), and doesn't
-   track direct mmap() allocations or things like JIT allocation. */
-#if !defined(ENABLE_ALLOCATION_LOGGING)
-#define ENABLE_ALLOCATION_LOGGING 0
-#endif
-
-/* Enable verification that that register allocations are not made within generated control flow.
-   Turned on for debug builds. */
-#if !defined(ENABLE_DFG_REGISTER_ALLOCATION_VALIDATION) && ENABLE(DFG_JIT)
-#if !defined(NDEBUG)
-#define ENABLE_DFG_REGISTER_ALLOCATION_VALIDATION 1
-#else
-#define ENABLE_DFG_REGISTER_ALLOCATION_VALIDATION 0
-#endif
-#endif
-
-/* Configure the JIT */
-#if CPU(X86) && COMPILER(MSVC)
-#define JSC_HOST_CALL __fastcall
-#elif CPU(X86) && COMPILER(GCC_COMPATIBLE)
-#define JSC_HOST_CALL __attribute__ ((fastcall))
-#else
-#define JSC_HOST_CALL
-#endif
-
-#if CPU(X86) && OS(WINDOWS)
-#define CALLING_CONVENTION_IS_STDCALL 1
-#ifndef CDECL
-#if COMPILER(MSVC)
-#define CDECL __cdecl
-#else
-#define CDECL __attribute__ ((__cdecl))
-#endif
-#endif
-#else
-#define CALLING_CONVENTION_IS_STDCALL 0
-#endif
-
-#if CPU(X86)
-#define WTF_COMPILER_SUPPORTS_FASTCALL_CALLING_CONVENTION 1
-#ifndef FASTCALL
-#if COMPILER(MSVC)
-#define FASTCALL __fastcall
-#else
-#define FASTCALL  __attribute__ ((fastcall))
-#endif
-#endif
-#else
-#define WTF_COMPILER_SUPPORTS_FASTCALL_CALLING_CONVENTION 0
-#endif
-
-#if ENABLE(JIT) && CALLING_CONVENTION_IS_STDCALL
-#define JIT_OPERATION CDECL
-#else
-#define JIT_OPERATION
-#endif
-
-#if PLATFORM(IOS_FAMILY) && CPU(ARM64) && (!ENABLE(FAST_JIT_PERMISSIONS) || !CPU(ARM64E))
-#define ENABLE_SEPARATED_WX_HEAP 1
-#else
-#define ENABLE_SEPARATED_WX_HEAP 0
-#endif
-
-/* Configure the interpreter */
 #if COMPILER(GCC_COMPATIBLE)
 #define HAVE_COMPUTED_GOTO 1
 #endif
 
-/* Determine if we need to enable Computed Goto Opcodes or not: */
-#if HAVE(COMPUTED_GOTO) || !ENABLE(C_LOOP)
-#define ENABLE_COMPUTED_GOTO_OPCODES 1
-#endif
-
-#if !defined(USE_LLINT_EMBEDDED_OPCODE_ID) && !ENABLE(C_LOOP) && !COMPILER(MSVC) && \
-    (CPU(X86) || CPU(X86_64) || CPU(ARM64) || (CPU(ARM_THUMB2) && OS(DARWIN)))
-/* This feature works by embedding the OpcodeID in the 32 bit just before the generated LLint code
-   that executes each opcode. It cannot be supported by the CLoop since there's no way to embed the
-   OpcodeID word in the CLoop's switch statement cases. It is also currently not implemented for MSVC.
-*/
-#define USE_LLINT_EMBEDDED_OPCODE_ID 1
-#endif
-
+/* FIXME: This name should be more specific if it is only for use with CallFrame* */
 /* Use __builtin_frame_address(1) to get CallFrame* */
 #if COMPILER(GCC_COMPATIBLE) && (CPU(ARM64) || CPU(X86_64))
 #define USE_BUILTIN_FRAME_ADDRESS 1
-#endif
-
-/* Regular Expression Tracing - Set to 1 to trace RegExp's in jsc.  Results dumped at exit */
-#define ENABLE_REGEXP_TRACING 0
-
-/* Yet Another Regex Runtime - turned on by default for JIT enabled ports. */
-#if !defined(ENABLE_YARR_JIT) && ENABLE(JIT)
-#define ENABLE_YARR_JIT 1
-
-/* Setting this flag compares JIT results with interpreter results. */
-#define ENABLE_YARR_JIT_DEBUG 0
-#endif
-
-#if ENABLE(YARR_JIT)
-#if CPU(ARM64) || (CPU(X86_64) && !OS(WINDOWS))
-/* Enable JIT'ing Regular Expressions that have nested parenthesis and back references. */
-#define ENABLE_YARR_JIT_ALL_PARENS_EXPRESSIONS 1
-#define ENABLE_YARR_JIT_BACKREFERENCES 1
-#endif
-#endif
-
-/* If either the JIT or the RegExp JIT is enabled, then the Assembler must be
-   enabled as well: */
-#if ENABLE(JIT) || ENABLE(YARR_JIT) || !ENABLE(C_LOOP)
-#if defined(ENABLE_ASSEMBLER) && !ENABLE_ASSEMBLER
-#error "Cannot enable the JIT or RegExp JIT without enabling the Assembler"
-#else
-#undef ENABLE_ASSEMBLER
-#define ENABLE_ASSEMBLER 1
-#endif
-#endif
-
-/* If the Disassembler is enabled, then the Assembler must be enabled as well: */
-#if ENABLE(DISASSEMBLER)
-#if defined(ENABLE_ASSEMBLER) && !ENABLE_ASSEMBLER
-#error "Cannot enable the Disassembler without enabling the Assembler"
-#else
-#undef ENABLE_ASSEMBLER
-#define ENABLE_ASSEMBLER 1
-#endif
-#endif
-
-/* ASSERT_ENABLED should be true if we want the current compilation unit to
-   do debug assertion checks unconditionally (e.g. treat a debug ASSERT
-   like a RELEASE_ASSERT.
-*/
-#ifndef ASSERT_ENABLED
-#ifdef NDEBUG
-#define ASSERT_ENABLED 0
-#else
-#define ASSERT_ENABLED 1
-#endif
-#endif
-
-#ifndef ENABLE_EXCEPTION_SCOPE_VERIFICATION
-#define ENABLE_EXCEPTION_SCOPE_VERIFICATION ASSERT_ENABLED
-#endif
-
-#if ENABLE(DFG_JIT) && HAVE(MACHINE_CONTEXT) && (CPU(X86_64) || CPU(ARM64))
-#define ENABLE_SIGNAL_BASED_VM_TRAPS 1
-#endif
-
-/* CSS Selector JIT Compiler */
-#if !defined(ENABLE_CSS_SELECTOR_JIT)
-#if (CPU(X86_64) || CPU(ARM64) || (CPU(ARM_THUMB2) && PLATFORM(IOS_FAMILY))) && ENABLE(JIT) && (OS(DARWIN) || PLATFORM(GTK) || PLATFORM(WPE))
-#define ENABLE_CSS_SELECTOR_JIT 1
-#else
-#define ENABLE_CSS_SELECTOR_JIT 0
-#endif
 #endif
 
 #if CPU(ARM64E) && OS(DARWIN)
@@ -679,13 +520,25 @@
 
 #if PLATFORM(IOS)
 #define HAVE_APP_LINKS 1
+#endif
+
+#if PLATFORM(IOS)
 #define USE_PASSKIT 1
+#endif
+
+#if PLATFORM(IOS)
 #define USE_QUICK_LOOK 1
+#endif
+
+#if PLATFORM(IOS)
 #define USE_SYSTEM_PREVIEW 1
 #endif
 
 #if PLATFORM(IOS_FAMILY) && !PLATFORM(MACCATALYST)
 #define HAVE_CELESTIAL 1
+#endif
+
+#if PLATFORM(IOS_FAMILY) && !PLATFORM(MACCATALYST)
 #define HAVE_CORE_ANIMATION_RENDER_SERVER 1
 #endif
 
@@ -694,84 +547,26 @@
 #endif
 
 #if PLATFORM(COCOA)
-
 #define USE_AVFOUNDATION 1
-#define USE_PROTECTION_SPACE_AUTH_CALLBACK 1
+#endif
 
-#if !PLATFORM(WATCHOS) && !PLATFORM(APPLETV) && !PLATFORM(MACCATALYST)
-#define ENABLE_DATA_DETECTION 1
+#if PLATFORM(COCOA)
+#define USE_PROTECTION_SPACE_AUTH_CALLBACK 1
 #endif
 
 /* FIXME: Enable HAVE_PARENTAL_CONTROLS for watchOS Simulator once rdar://problem/54608386 is resolved */
-#if !PLATFORM(APPLETV) && (!PLATFORM(WATCHOS) || !PLATFORM(IOS_FAMILY_SIMULATOR))
+#if PLATFORM(COCOA) && (!PLATFORM(APPLETV) && (!PLATFORM(WATCHOS) || !PLATFORM(IOS_FAMILY_SIMULATOR)))
 #define HAVE_PARENTAL_CONTROLS 1
 #endif
 
-#if !PLATFORM(APPLETV)
+#if PLATFORM(COCOA) && !PLATFORM(APPLETV)
 #define HAVE_AVKIT 1
 #endif
 
-#if ENABLE(WEBGL)
-/* USE_ANGLE=1 uses ANGLE for the WebGL backend.
-   It replaces USE_OPENGL, USE_OPENGL_ES and USE_EGL. */
-#if PLATFORM(MAC) || (PLATFORM(MACCATALYST) && __has_include(<OpenGL/OpenGL.h>))
-#define USE_OPENGL 1
-#define USE_OPENGL_ES 0
-#define USE_ANGLE 0
-#else
-#define USE_OPENGL 0
-#define USE_OPENGL_ES 1
-#define USE_ANGLE 0
-#endif
 #if PLATFORM(COCOA)
-#ifndef GL_SILENCE_DEPRECATION
-#define GL_SILENCE_DEPRECATION 1
-#endif
-#if USE(OPENGL) && !defined(HAVE_OPENGL_4)
-#define HAVE_OPENGL_4 1
-#endif
-#if USE(OPENGL_ES) && !defined(HAVE_OPENGL_ES_3)
-#define HAVE_OPENGL_ES_3 1
-#endif
-#endif
-#if USE_ANGLE && (USE_OPENGL || USE_OPENGL_ES)
-#error USE_ANGLE is incompatible with USE_OPENGL and USE_OPENGL_ES
-#endif
-#endif
-
 #define USE_METAL 1
-
-#if ENABLE(ACCESSIBILITY)
-#define USE_ACCESSIBILITY_CONTEXT_MENUS 1
 #endif
 
-#endif
-
-#if ENABLE(WEBGL)
-#if !defined(USE_ANGLE)
-#define USE_ANGLE 0
-#endif
-
-#if (USE_ANGLE && (USE_OPENGL || USE_OPENGL_ES || (defined(USE_EGL) && USE_EGL))) && !USE(TEXTURE_MAPPER)
-#error USE_ANGLE is incompatible with USE_OPENGL, USE_OPENGL_ES and USE_EGL
-#endif
-#endif
-
-#if USE(TEXTURE_MAPPER) && ENABLE(GRAPHICS_CONTEXT_GL) && !defined(USE_TEXTURE_MAPPER_GL)
-#define USE_TEXTURE_MAPPER_GL 1
-#endif
-
-#if CPU(ARM_THUMB2) || CPU(ARM64)
-#define ENABLE_BRANCH_COMPACTION 1
-#endif
-
-#if !defined(ENABLE_THREADING_LIBDISPATCH) && HAVE(DISPATCH_H)
-#define ENABLE_THREADING_LIBDISPATCH 1
-#elif !defined(ENABLE_THREADING_OPENMP) && defined(_OPENMP)
-#define ENABLE_THREADING_OPENMP 1
-#elif !defined(THREADING_GENERIC)
-#define ENABLE_THREADING_GENERIC 1
-#endif
 
 #if USE(GLIB)
 #include <wtf/glib/GTypedefs.h>
@@ -789,35 +584,23 @@
 #define USE_IMLANG_FONT_LINK2 1
 #endif
 
-#if !defined(ENABLE_GC_VALIDATION) && !defined(NDEBUG)
-#define ENABLE_GC_VALIDATION 1
-#endif
-
-#if !defined(ENABLE_BINDING_INTEGRITY) && !OS(WINDOWS)
-#define ENABLE_BINDING_INTEGRITY 1
-#endif
-
-#if !defined(ENABLE_TREE_DEBUGGING)
-#if !defined(NDEBUG)
-#define ENABLE_TREE_DEBUGGING 1
-#else
-#define ENABLE_TREE_DEBUGGING 0
-#endif
-#endif
-
-/*
- * Enable this to put each IsoHeap and other allocation categories into their own malloc heaps, so that tools like vmmap can show how big each heap is.
- * Turn BENABLE_MALLOC_HEAP_BREAKDOWN on in bmalloc together when using this.
- */
-#if !defined(ENABLE_MALLOC_HEAP_BREAKDOWN)
-#define ENABLE_MALLOC_HEAP_BREAKDOWN 0
+#if PLATFORM(COCOA)
+#define USE_COREMEDIA 1
 #endif
 
 #if PLATFORM(COCOA)
-#define USE_COREMEDIA 1
 #define USE_VIDEOTOOLBOX 1
+#endif
+
+#if PLATFORM(COCOA)
 #define HAVE_AVFOUNDATION_VIDEO_OUTPUT 1
+#endif
+
+#if PLATFORM(COCOA)
 #define HAVE_CORE_VIDEO 1
+#endif
+
+#if PLATFORM(COCOA)
 #define HAVE_MEDIA_PLAYER 1
 #endif
 
@@ -827,6 +610,9 @@
 
 #if PLATFORM(COCOA)
 #define HAVE_AVFOUNDATION_LEGIBLE_OUTPUT_SUPPORT 1
+#endif
+
+#if PLATFORM(COCOA)
 #define HAVE_MEDIA_ACCESSIBILITY_FRAMEWORK 1
 #endif
 
@@ -840,6 +626,9 @@
 
 #if PLATFORM(MAC) || PLATFORM(MACCATALYST)
 #define HAVE_APPLE_GRAPHICS_CONTROL 1
+#endif
+
+#if PLATFORM(MAC) || PLATFORM(MACCATALYST)
 #define HAVE_NSCURSOR 1
 #endif
 
@@ -851,16 +640,12 @@
 #define USE_ZLIB 1
 #endif
 
-#ifndef HAVE_QOS_CLASSES
-#if PLATFORM(COCOA)
+#if !defined(HAVE_QOS_CLASSES) && PLATFORM(COCOA)
 #define HAVE_QOS_CLASSES 1
 #endif
-#endif
 
-#ifndef HAVE_VOUCHERS
-#if PLATFORM(COCOA)
+#if !defined(HAVE_VOUCHERS) && PLATFORM(COCOA)
 #define HAVE_VOUCHERS 1
-#endif
 #endif
 
 #define USE_GRAMMAR_CHECKING 1
@@ -868,6 +653,7 @@
 #if PLATFORM(COCOA) || PLATFORM(GTK)
 #define USE_UNIFIED_TEXT_CHECKING 1
 #endif
+
 #if PLATFORM(MAC)
 #define USE_AUTOMATIC_TEXT_REPLACEMENT 1
 #endif
@@ -906,15 +692,6 @@
 #define HAVE_IOSURFACE_ACCELERATOR 1
 #endif
 
-#if PLATFORM(COCOA)
-#define ENABLE_RESOURCE_USAGE 1
-#endif
-
-#if PLATFORM(GTK) || PLATFORM(WPE)
-#undef ENABLE_OPENTYPE_VERTICAL
-#define ENABLE_OPENTYPE_VERTICAL 1
-#endif
-
 #if COMPILER(MSVC)
 #undef __STDC_FORMAT_MACROS
 #define __STDC_FORMAT_MACROS
@@ -926,13 +703,6 @@
 #define HAVE_NS_ACTIVITY 1
 #endif
 
-/* Disable SharedArrayBuffers until Spectre security concerns are mitigated. */
-#define ENABLE_SHARED_ARRAY_BUFFER 0
-
-#if (OS(DARWIN) && USE(CG)) || (USE(FREETYPE) && !PLATFORM(GTK)) || (PLATFORM(WIN) && (USE(CG) || USE(CAIRO)))
-#undef ENABLE_OPENTYPE_MATH
-#define ENABLE_OPENTYPE_MATH 1
-#endif
 
 /* Set TARGET_OS_IPHONE to 0 by default to allow using it as a guard 
  * in cross-platform the same way as it is used in OS(DARWIN) code. */ 
@@ -946,9 +716,10 @@
 
 #if PLATFORM(COCOA)
 #define USE_OS_LOG 1
-#if USE(APPLE_INTERNAL_SDK)
-#define USE_OS_STATE 1
 #endif
+
+#if PLATFORM(COCOA) && USE(APPLE_INTERNAL_SDK)
+#define USE_OS_STATE 1
 #endif
 
 #if PLATFORM(COCOA)
@@ -990,16 +761,12 @@
 
 #if PLATFORM(MAC)
 #define HAVE_TOUCH_BAR 1
+#endif
+
+#if PLATFORM(MAC)
 #define USE_DICTATION_ALTERNATIVES 1
-
-#if defined(__LP64__)
-#define ENABLE_WEB_PLAYBACK_CONTROLS_MANAGER 1
 #endif
-#endif /* PLATFORM(MAC) */
 
-#if PLATFORM(COCOA) && ENABLE(WEB_RTC)
-#define USE_LIBWEBRTC 1
-#endif
 
 #if PLATFORM(MAC) || PLATFORM(IOS) || PLATFORM(MACCATALYST) || USE(GCRYPT)
 #define HAVE_RSA_PSS 1
@@ -1098,26 +865,12 @@
 #define HAVE_LINK_PREVIEW 1
 #endif
 
-#if PLATFORM(COCOA)
-/* FIXME: This is a USE style macro, as it triggers the use of CFURLConnection framework stubs. */
-/* FIXME: Is this still necessary? CFURLConnection isn't used on Cocoa platforms any more. */
-#define ENABLE_SEC_ITEM_SHIM 1
-#endif
-
 #if (PLATFORM(IOS_FAMILY) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400))
 #define HAVE_ACCESSIBILITY_SUPPORT 1
 #endif
 
 #if PLATFORM(IOS_FAMILY) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 130000 && __IPHONE_OS_VERSION_MAX_ALLOWED >= 130100
 #define HAVE_ACCESSIBILITY_BUNDLES_PATH 1
-#endif
-
-#if PLATFORM(MAC)
-#define ENABLE_FULL_KEYBOARD_ACCESS 1
-#endif
-
-#if ((PLATFORM(COCOA) || PLATFORM(PLAYSTATION) || PLATFORM(WPE)) && ENABLE(ASYNC_SCROLLING)) || PLATFORM(GTK)
-#define ENABLE_KINETIC_SCROLLING 1
 #endif
 
 #if PLATFORM(IOS_FAMILY) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400)
@@ -1156,12 +909,6 @@
 #define HAVE_MDNS_FAST_REGISTRATION 1
 #endif
 
-#if PLATFORM(MAC)
-#define ENABLE_MONOSPACE_FONT_EXCEPTION (__MAC_OS_X_VERSION_MIN_REQUIRED < 101500)
-#elif PLATFORM(IOS_FAMILY)
-#define ENABLE_MONOSPACE_FONT_EXCEPTION (__IPHONE_OS_VERSION_MIN_REQUIRED < 130000)
-#endif
-
 #if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400) || PLATFORM(IOS_FAMILY)
 #define HAVE_DISALLOWABLE_USER_INSTALLED_FONTS 1
 #endif
@@ -1179,8 +926,10 @@
 #endif
 
 #if PLATFORM(MACCATALYST)
-#define ENABLE_PLATFORM_DRIVEN_TEXT_CHECKING 1
 #define HAVE_HOVER_GESTURE_RECOGNIZER 1
+#endif
+
+#if PLATFORM(MACCATALYST)
 #define HAVE_UI_PARALLAX_TRANSITION_GESTURE_RECOGNIZER 1
 #endif
 
@@ -1282,4 +1031,138 @@
 
 #if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400) || PLATFORM(IOS_FAMILY)
 #define HAVE_OS_SIGNPOST 1
+#endif
+
+
+
+#if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/AdditionalPlatform.h>)
+#include <WebKitAdditions/AdditionalPlatform.h>
+#endif
+
+#if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/AdditionalFeatureDefines.h>)
+#include <WebKitAdditions/AdditionalFeatureDefines.h>
+#endif
+
+/* __PLATFORM_INDIRECT__ ensures that users #include <wtf/Platform.h> rather than wtf/FeatureDefines.h directly. */
+#define __PLATFORM_INDIRECT__
+
+/* Include feature macros */
+#include <wtf/FeatureDefines.h>
+
+#undef __PLATFORM_INDIRECT__
+
+
+
+/* FIXME: The following are currenly positioned at the bottom of this file as they are currently dependent on ENABLE macros. */
+
+/* FIXME: Remove dependence on ENABLE(WEB_RTC). */
+#if PLATFORM(COCOA) && ENABLE(WEB_RTC)
+#define USE_LIBWEBRTC 1
+#endif
+
+/* FIXME: This is used to "turn on a specific feature of WebKit", so should be converted to an ENABLE macro. */
+/* This feature works by embedding the OpcodeID in the 32 bit just before the generated LLint code
+   that executes each opcode. It cannot be supported by the CLoop since there's no way to embed the
+   OpcodeID word in the CLoop's switch statement cases. It is also currently not implemented for MSVC.
+*/
+#if !defined(USE_LLINT_EMBEDDED_OPCODE_ID) && !ENABLE(C_LOOP) && !COMPILER(MSVC) && \
+    (CPU(X86) || CPU(X86_64) || CPU(ARM64) || (CPU(ARM_THUMB2) && OS(DARWIN)))
+#define USE_LLINT_EMBEDDED_OPCODE_ID 1
+#endif
+
+
+#if PLATFORM(COCOA)
+#if ENABLE(WEBGL)
+
+/* USE_ANGLE=1 uses ANGLE for the WebGL backend.
+   It replaces USE_OPENGL, USE_OPENGL_ES and USE_EGL. */
+#if PLATFORM(MAC) || (PLATFORM(MACCATALYST) && __has_include(<OpenGL/OpenGL.h>))
+#define USE_OPENGL 1
+#define USE_OPENGL_ES 0
+#define USE_ANGLE 0
+#else
+#define USE_OPENGL 0
+#define USE_OPENGL_ES 1
+#define USE_ANGLE 0
+#endif
+
+#ifndef GL_SILENCE_DEPRECATION
+#define GL_SILENCE_DEPRECATION 1
+#endif
+
+#if USE(OPENGL) && !defined(HAVE_OPENGL_4)
+#define HAVE_OPENGL_4 1
+#endif
+
+#if USE(OPENGL_ES) && !defined(HAVE_OPENGL_ES_3)
+#define HAVE_OPENGL_ES_3 1
+#endif
+
+#if USE_ANGLE && (USE_OPENGL || USE_OPENGL_ES)
+#error USE_ANGLE is incompatible with USE_OPENGL and USE_OPENGL_ES
+#endif
+
+#endif /* ENABLE(WEBGL) */
+#endif /* PLATFORM(COCOA) */
+
+#if ENABLE(WEBGL)
+#if !defined(USE_ANGLE)
+#define USE_ANGLE 0
+#endif
+
+#if (USE_ANGLE && (USE_OPENGL || USE_OPENGL_ES || (defined(USE_EGL) && USE_EGL))) && !USE(TEXTURE_MAPPER)
+#error USE_ANGLE is incompatible with USE_OPENGL, USE_OPENGL_ES and USE_EGL
+#endif
+#endif
+
+#if USE(TEXTURE_MAPPER) && ENABLE(GRAPHICS_CONTEXT_GL) && !defined(USE_TEXTURE_MAPPER_GL)
+#define USE_TEXTURE_MAPPER_GL 1
+#endif
+
+/* FIXME: This is used to "turn on a specific feature of WebKit", so should be converted to an ENABLE macro. */
+#if PLATFORM(COCOA) && ENABLE(ACCESSIBILITY)
+#define USE_ACCESSIBILITY_CONTEXT_MENUS 1
+#endif
+
+
+/* FIXME: These calling convention macros should move to their own file. They are at the bottom currently because they depend on FeatureDefines.h */
+
+#if CPU(X86) && COMPILER(MSVC)
+#define JSC_HOST_CALL __fastcall
+#elif CPU(X86) && COMPILER(GCC_COMPATIBLE)
+#define JSC_HOST_CALL __attribute__ ((fastcall))
+#else
+#define JSC_HOST_CALL
+#endif
+
+#if CPU(X86) && OS(WINDOWS)
+#define CALLING_CONVENTION_IS_STDCALL 1
+#ifndef CDECL
+#if COMPILER(MSVC)
+#define CDECL __cdecl
+#else
+#define CDECL __attribute__ ((__cdecl))
+#endif
+#endif
+#else
+#define CALLING_CONVENTION_IS_STDCALL 0
+#endif
+
+#if CPU(X86)
+#define WTF_COMPILER_SUPPORTS_FASTCALL_CALLING_CONVENTION 1
+#ifndef FASTCALL
+#if COMPILER(MSVC)
+#define FASTCALL __fastcall
+#else
+#define FASTCALL  __attribute__ ((fastcall))
+#endif
+#endif
+#else
+#define WTF_COMPILER_SUPPORTS_FASTCALL_CALLING_CONVENTION 0
+#endif
+
+#if ENABLE(JIT) && CALLING_CONVENTION_IS_STDCALL
+#define JIT_OPERATION CDECL
+#else
+#define JIT_OPERATION
 #endif

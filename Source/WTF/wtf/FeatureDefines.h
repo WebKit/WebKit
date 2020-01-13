@@ -28,6 +28,10 @@
 
 #pragma once
 
+#ifndef __PLATFORM_INDIRECT__
+#error "Please #include <wtf/Platform.h> instead of this file directly."
+#endif
+
 /* Use this file to list _all_ ENABLE() macros. Define the macros to be one of the following values:
  *  - "0" disables the feature by default. The feature can still be enabled for a specific port or environment.
  *  - "1" enables the feature by default. The feature can still be disabled for a specific port or environment.
@@ -183,42 +187,8 @@ the public iOS SDK. See <https://webkit.org/b/179167>. */
 #endif
 #endif
 
-#if !defined(HAVE_PDFHOSTVIEWCONTROLLER_SNAPSHOTTING)
-#if PLATFORM(IOS)
-#define HAVE_PDFHOSTVIEWCONTROLLER_SNAPSHOTTING 1
-#endif
-#endif
-
-#if PLATFORM(MACCATALYST) || PLATFORM(IOS)
-#if !defined(USE_UIKIT_KEYBOARD_ADDITIONS)
-#define USE_UIKIT_KEYBOARD_ADDITIONS 1
-#endif
-#endif
-
-#if !defined(HAVE_VISIBILITY_PROPAGATION_VIEW)
-#define HAVE_VISIBILITY_PROPAGATION_VIEW 1
-#endif
-
-#if !defined(HAVE_UISCENE)
-#define HAVE_UISCENE 1
-#endif
-
-#if !defined(HAVE_AVSTREAMSESSION)
-#define HAVE_AVSTREAMSESSION 0
-#endif
-
 #if !defined(ENABLE_MEDIA_SOURCE)
 #define ENABLE_MEDIA_SOURCE 0
-#endif
-
-#if !defined(HAVE_PASSKIT_API_TYPE)
-#define HAVE_PASSKIT_API_TYPE 1
-#endif
-
-#if !defined(HAVE_PASSKIT_BOUND_INTERFACE_IDENTIFIER)
-#if PLATFORM(IOS)
-#define HAVE_PASSKIT_BOUND_INTERFACE_IDENTIFIER 1
-#endif
 #endif
 
 #if !defined(ENABLE_PREVIEW_CONVERTER)
@@ -229,6 +199,11 @@ the public iOS SDK. See <https://webkit.org/b/179167>. */
 
 #if !defined(ENABLE_META_VIEWPORT)
 #define ENABLE_META_VIEWPORT 1
+#endif
+
+/* FIXME: This seems unused. If so, it should be removed. */
+#if CPU(ARM64)
+#define ENABLE_JIT_CONSTANT_BLINDING 0
 #endif
 
 #endif /* PLATFORM(IOS_FAMILY) */
@@ -299,22 +274,8 @@ the public iOS SDK. See <https://webkit.org/b/179167>. */
 #define ENABLE_WEBPROCESS_WINDOWSERVER_BLOCKING ENABLE_WEBPROCESS_NSRUNLOOP
 #endif
 
-#if !defined(HAVE_AVSTREAMSESSION)
-#define HAVE_AVSTREAMSESSION 1
-#endif
-
 #if !defined(ENABLE_MEDIA_SOURCE)
 #define ENABLE_MEDIA_SOURCE 1
-#endif
-
-#if !defined(HAVE_PASSKIT_API_TYPE)
-#define HAVE_PASSKIT_API_TYPE 1
-#endif
-
-#if !defined(HAVE_PASSKIT_BOUND_INTERFACE_IDENTIFIER)
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400
-#define HAVE_PASSKIT_BOUND_INTERFACE_IDENTIFIER 1
-#endif
 #endif
 
 #endif /* PLATFORM(MAC) */
@@ -751,6 +712,313 @@ the public iOS SDK. See <https://webkit.org/b/179167>. */
 #if !defined(ENABLE_SERVICE_WORKER)
 #define ENABLE_SERVICE_WORKER 1
 #endif
+
+
+/* JIT Features */
+
+/* The JIT is enabled by default on all x86-64 & ARM64 platforms. */
+#if !defined(ENABLE_JIT) &&  (CPU(X86_64) || CPU(ARM64)) && !CPU(APPLE_ARMV7K)
+#define ENABLE_JIT 1
+#endif
+
+#if USE(JSVALUE32_64)
+#if (CPU(ARM_THUMB2) || CPU(MIPS)) && OS(LINUX)
+/* On ARMv7 and MIPS on Linux the JIT is enabled unless explicitly disabled. */
+#if !defined(ENABLE_JIT)
+#define ENABLE_JIT 1
+#endif
+#else
+/* Disable JIT and force C_LOOP on all other 32bit architectures. */
+#undef ENABLE_JIT
+#define ENABLE_JIT 0
+#undef ENABLE_C_LOOP
+#define ENABLE_C_LOOP 1
+#endif
+#endif
+
+#if !defined(ENABLE_C_LOOP)
+#if ENABLE(JIT) || CPU(X86_64) || (CPU(ARM64) && !defined(__ILP32__))
+#define ENABLE_C_LOOP 0
+#else
+#define ENABLE_C_LOOP 1
+#endif
+#endif
+
+/* FIXME: This should be turned into an #error invariant */
+/* The FTL *does not* work on 32-bit platforms. Disable it even if someone asked us to enable it. */
+#if USE(JSVALUE32_64)
+#undef ENABLE_FTL_JIT
+#define ENABLE_FTL_JIT 0
+#endif
+
+/* FIXME: This should be turned into an #error invariant */
+/* The FTL is disabled on the iOS simulator, mostly for simplicity. */
+#if PLATFORM(IOS_FAMILY_SIMULATOR)
+#undef ENABLE_FTL_JIT
+#define ENABLE_FTL_JIT 0
+#endif
+
+/* FIXME: This is used to "turn on a specific feature of WebKit", so should be converted to an ENABLE macro. */
+/* If possible, try to enable a disassembler. This is optional. We proceed in two
+   steps: first we try to find some disassembler that we can use, and then we
+   decide if the high-level disassembler API can be enabled. */
+#if !defined(USE_UDIS86) && ENABLE(JIT) && CPU(X86_64) && !USE(CAPSTONE)
+#define USE_UDIS86 1
+#endif
+
+/* FIXME: This is used to "turn on a specific feature of WebKit", so should be converted to an ENABLE macro. */
+#if !defined(USE_ARM64_DISASSEMBLER) && ENABLE(JIT) && CPU(ARM64) && !USE(CAPSTONE)
+#define USE_ARM64_DISASSEMBLER 1
+#endif
+
+#if !defined(ENABLE_DISASSEMBLER) && (USE(UDIS86) || USE(ARM64_DISASSEMBLER) || (ENABLE(JIT) && USE(CAPSTONE)))
+#define ENABLE_DISASSEMBLER 1
+#endif
+
+#if !defined(ENABLE_DFG_JIT) && ENABLE(JIT)
+
+/* Enable the DFG JIT on X86 and X86_64. */
+#if CPU(X86_64) && (OS(DARWIN) || OS(LINUX) || OS(FREEBSD) || OS(HURD) || OS(WINDOWS))
+#define ENABLE_DFG_JIT 1
+#endif
+
+/* Enable the DFG JIT on ARMv7.  Only tested on iOS, Linux, and FreeBSD. */
+#if (CPU(ARM_THUMB2) || CPU(ARM64)) && (PLATFORM(IOS_FAMILY) || OS(LINUX) || OS(FREEBSD))
+#define ENABLE_DFG_JIT 1
+#endif
+/* Enable the DFG JIT on MIPS. */
+#if CPU(MIPS)
+#define ENABLE_DFG_JIT 1
+#endif
+
+#endif /* !defined(ENABLE_DFG_JIT) && ENABLE(JIT) */
+
+/* Concurrent JS only works on 64-bit platforms because it requires that
+   values get stored to atomically. This is trivially true on 64-bit platforms,
+   but not true at all on 32-bit platforms where values are composed of two
+   separate sub-values. */
+#if ENABLE(JIT) && USE(JSVALUE64)
+#define ENABLE_CONCURRENT_JS 1
+#endif
+
+#if (CPU(X86_64) || CPU(ARM64)) && HAVE(FAST_TLS)
+#define ENABLE_FAST_TLS_JIT 1
+#endif
+
+#if ENABLE(JIT) && (CPU(X86) || CPU(X86_64) || CPU(ARM_THUMB2) || CPU(ARM64) || CPU(MIPS))
+#define ENABLE_MASM_PROBE 1
+#endif
+
+/* FIXME: This should be turned into an #error invariant */
+/* If the baseline jit is not available, then disable upper tiers as well.
+   The MacroAssembler::probe() is also required for supporting the upper tiers. */
+#if !ENABLE(JIT) || !ENABLE(MASM_PROBE)
+#undef ENABLE_DFG_JIT
+#undef ENABLE_FTL_JIT
+#define ENABLE_DFG_JIT 0
+#define ENABLE_FTL_JIT 0
+#endif
+
+/* FIXME: This should be turned into an #error invariant */
+/* If the DFG jit is not available, then disable upper tiers as well: */
+#if !ENABLE(DFG_JIT)
+#undef ENABLE_FTL_JIT
+#define ENABLE_FTL_JIT 0
+#endif
+
+/* This controls whether B3 is built. B3 is needed for FTL JIT and WebAssembly */
+#if ENABLE(FTL_JIT)
+#define ENABLE_B3_JIT 1
+#endif
+
+#if !defined(ENABLE_WEBASSEMBLY) && (ENABLE(B3_JIT) && PLATFORM(COCOA) && CPU(ADDRESS64))
+#define ENABLE_WEBASSEMBLY 1
+#endif
+
+/* The SamplingProfiler is the probabilistic and low-overhead profiler used by
+ * JSC to measure where time is spent inside a JavaScript program.
+ * In configurations other than Windows and Darwin, because layout of mcontext_t depends on standard libraries (like glibc),
+ * sampling profiler is enabled if WebKit uses pthreads and glibc. */
+#if !defined(ENABLE_SAMPLING_PROFILER) && (!ENABLE(C_LOOP) && (OS(WINDOWS) || HAVE(MACHINE_CONTEXT)))
+#define ENABLE_SAMPLING_PROFILER 1
+#endif
+
+#if ENABLE(WEBASSEMBLY) && HAVE(MACHINE_CONTEXT)
+#define ENABLE_WEBASSEMBLY_FAST_MEMORY 1
+#endif
+
+/* Counts uses of write barriers using sampling counters. Be sure to also
+   set ENABLE_SAMPLING_COUNTERS to 1. */
+#if !defined(ENABLE_WRITE_BARRIER_PROFILING)
+#define ENABLE_WRITE_BARRIER_PROFILING 0
+#endif
+
+/* Logs all allocation-related activity that goes through fastMalloc or the
+   JSC GC (both cells and butterflies). Also logs marking. Note that this
+   isn't a completely accurate view of the heap since it doesn't include all
+   butterfly resize operations, doesn't tell you what is going on with weak
+   references (other than to tell you when they're marked), and doesn't
+   track direct mmap() allocations or things like JIT allocation. */
+#if !defined(ENABLE_ALLOCATION_LOGGING)
+#define ENABLE_ALLOCATION_LOGGING 0
+#endif
+
+/* Enable verification that that register allocations are not made within generated control flow.
+   Turned on for debug builds. */
+#if !defined(ENABLE_DFG_REGISTER_ALLOCATION_VALIDATION) && ENABLE(DFG_JIT) && !defined(NDEBUG)
+#define ENABLE_DFG_REGISTER_ALLOCATION_VALIDATION 1
+#endif
+
+#if !defined(ENABLE_SEPARATED_WX_HEAP) && PLATFORM(IOS_FAMILY) && CPU(ARM64) && (!ENABLE(FAST_JIT_PERMISSIONS) || !CPU(ARM64E))
+#define ENABLE_SEPARATED_WX_HEAP 1
+#endif
+
+/* Determine if we need to enable Computed Goto Opcodes or not: */
+#if HAVE(COMPUTED_GOTO) || !ENABLE(C_LOOP)
+#define ENABLE_COMPUTED_GOTO_OPCODES 1
+#endif
+
+/* Regular Expression Tracing - Set to 1 to trace RegExp's in jsc.  Results dumped at exit */
+#if !defined(ENABLE_REGEXP_TRACING)
+#define ENABLE_REGEXP_TRACING 0
+#endif
+
+/* Yet Another Regex Runtime - turned on by default for JIT enabled ports. */
+#if !defined(ENABLE_YARR_JIT) && ENABLE(JIT)
+#define ENABLE_YARR_JIT 1
+#endif
+
+/* Setting this flag compares JIT results with interpreter results. */
+#if !defined(ENABLE_YARR_JIT) && ENABLE(JIT)
+#define ENABLE_YARR_JIT_DEBUG 0
+#endif
+
+/* Enable JIT'ing Regular Expressions that have nested parenthesis . */
+#if ENABLE(YARR_JIT) && (CPU(ARM64) || (CPU(X86_64) && !OS(WINDOWS)))
+#define ENABLE_YARR_JIT_ALL_PARENS_EXPRESSIONS 1
+#endif
+
+/* Enable JIT'ing Regular Expressions that have nested back references. */
+#if ENABLE(YARR_JIT) && (CPU(ARM64) || (CPU(X86_64) && !OS(WINDOWS)))
+#define ENABLE_YARR_JIT_BACKREFERENCES 1
+#endif
+
+/* If either the JIT or the RegExp JIT is enabled, then the Assembler must be
+   enabled as well: */
+#if ENABLE(JIT) || ENABLE(YARR_JIT) || !ENABLE(C_LOOP)
+#if defined(ENABLE_ASSEMBLER) && !ENABLE_ASSEMBLER
+#error "Cannot enable the JIT or RegExp JIT without enabling the Assembler"
+#else
+#undef ENABLE_ASSEMBLER
+#define ENABLE_ASSEMBLER 1
+#endif
+#endif
+
+/* If the Disassembler is enabled, then the Assembler must be enabled as well: */
+#if ENABLE(DISASSEMBLER)
+#if defined(ENABLE_ASSEMBLER) && !ENABLE_ASSEMBLER
+#error "Cannot enable the Disassembler without enabling the Assembler"
+#else
+#undef ENABLE_ASSEMBLER
+#define ENABLE_ASSEMBLER 1
+#endif
+#endif
+
+#if !defined(ENABLE_EXCEPTION_SCOPE_VERIFICATION)
+#define ENABLE_EXCEPTION_SCOPE_VERIFICATION ASSERT_ENABLED
+#endif
+
+#if ENABLE(DFG_JIT) && HAVE(MACHINE_CONTEXT) && (CPU(X86_64) || CPU(ARM64))
+#define ENABLE_SIGNAL_BASED_VM_TRAPS 1
+#endif
+
+/* CSS Selector JIT Compiler */
+#if !defined(ENABLE_CSS_SELECTOR_JIT) && ((CPU(X86_64) || CPU(ARM64) || (CPU(ARM_THUMB2) && PLATFORM(IOS_FAMILY))) && ENABLE(JIT) && (OS(DARWIN) || PLATFORM(GTK) || PLATFORM(WPE)))
+#define ENABLE_CSS_SELECTOR_JIT 1
+#endif
+
+#if PLATFORM(COCOA) && !PLATFORM(WATCHOS) && !PLATFORM(APPLETV) && !PLATFORM(MACCATALYST)
+#define ENABLE_DATA_DETECTION 1
+#endif
+
+#if CPU(ARM_THUMB2) || CPU(ARM64)
+#define ENABLE_BRANCH_COMPACTION 1
+#endif
+
+#if !defined(ENABLE_THREADING_LIBDISPATCH) && HAVE(DISPATCH_H)
+#define ENABLE_THREADING_LIBDISPATCH 1
+#elif !defined(ENABLE_THREADING_OPENMP) && defined(_OPENMP)
+#define ENABLE_THREADING_OPENMP 1
+#elif !defined(THREADING_GENERIC)
+#define ENABLE_THREADING_GENERIC 1
+#endif
+
+#if !defined(ENABLE_GC_VALIDATION) && !defined(NDEBUG)
+#define ENABLE_GC_VALIDATION 1
+#endif
+
+#if !defined(ENABLE_BINDING_INTEGRITY) && !OS(WINDOWS)
+#define ENABLE_BINDING_INTEGRITY 1
+#endif
+
+#if !defined(ENABLE_TREE_DEBUGGING) && !defined(NDEBUG)
+#define ENABLE_TREE_DEBUGGING 1
+#endif
+
+#if PLATFORM(COCOA)
+#define ENABLE_RESOURCE_USAGE 1
+#endif
+
+/* FIXME: Document or remove explicit undef. */
+#if PLATFORM(GTK) || PLATFORM(WPE)
+#undef ENABLE_OPENTYPE_VERTICAL
+#define ENABLE_OPENTYPE_VERTICAL 1
+#endif
+
+/* FIXME: Document or remove explicit undef. */
+#if (OS(DARWIN) && USE(CG)) || (USE(FREETYPE) && !PLATFORM(GTK)) || (PLATFORM(WIN) && (USE(CG) || USE(CAIRO)))
+#undef ENABLE_OPENTYPE_MATH
+#define ENABLE_OPENTYPE_MATH 1
+#endif
+
+/*
+ * Enable this to put each IsoHeap and other allocation categories into their own malloc heaps, so that tools like vmmap can show how big each heap is.
+ * Turn BENABLE_MALLOC_HEAP_BREAKDOWN on in bmalloc together when using this.
+ */
+#if !defined(ENABLE_MALLOC_HEAP_BREAKDOWN)
+#define ENABLE_MALLOC_HEAP_BREAKDOWN 0
+#endif
+
+/* Disable SharedArrayBuffers until Spectre security concerns are mitigated. */
+#define ENABLE_SHARED_ARRAY_BUFFER 0
+
+/* FIXME: __LP64__ can probably be removed now that 32-bit macOS is no longer supported. */
+#if PLATFORM(MAC) && defined(__LP64__)
+#define ENABLE_WEB_PLAYBACK_CONTROLS_MANAGER 1
+#endif
+
+#if PLATFORM(COCOA)
+/* FIXME: This is a USE style macro, as it triggers the use of CFURLConnection framework stubs. */
+/* FIXME: Is this still necessary? CFURLConnection isn't used on Cocoa platforms any more. */
+#define ENABLE_SEC_ITEM_SHIM 1
+#endif
+
+#if PLATFORM(MAC)
+#define ENABLE_FULL_KEYBOARD_ACCESS 1
+#endif
+
+#if ((PLATFORM(COCOA) || PLATFORM(PLAYSTATION) || PLATFORM(WPE)) && ENABLE(ASYNC_SCROLLING)) || PLATFORM(GTK)
+#define ENABLE_KINETIC_SCROLLING 1
+#endif
+
+#if !defined(ENABLE_MONOSPACE_FONT_EXCEPTION) && ((PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED < 101500) || (PLATFORM(IOS_FAMILY) && __IPHONE_OS_VERSION_MIN_REQUIRED < 130000))
+#define ENABLE_MONOSPACE_FONT_EXCEPTION 1
+#endif
+
+#if !defined(ENABLE_PLATFORM_DRIVEN_TEXT_CHECKING) && PLATFORM(MACCATALYST)
+#define ENABLE_PLATFORM_DRIVEN_TEXT_CHECKING 1
+#endif
+
 
 /* Asserts, invariants for macro definitions */
 

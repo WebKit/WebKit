@@ -1,3 +1,29 @@
+2020-01-13  Sam Weinig  <weinig@apple.com>
+
+        Platform.h is out of control Part 3: Move all ENABLE_* macros definitions in FeatureDefines.h
+        https://bugs.webkit.org/show_bug.cgi?id=206139
+
+        Reviewed by Anders Carlsson.
+
+        - Moves all remaining ENABLE_* defines out of Platform.h and into FeatureDefines.h
+        - Moves most, USE_UDIS86 and USE_ARM64_DISASSEMBLER are tangled up in the JIT definitions
+          still, HAVE_* and USE_* defines out of FeatureDefines.h and into Platform.h
+        - Where straigthforward, convert macro definitions into a canonical 3 line entry of the 
+          form:
+          
+              #if !defined(MACRO_NAME) && (<CONDITIONS HERE>)
+              #define MACRO_NAME 1
+              #endif
+
+          There is rarely (if ever) a resone to undefine or define one of these platform related
+          macros to 0 as the usage macros (e.g. HAVE(...), ENABLE(...), etc.) handle undefined as 0.
+        - Added a guard so that FeatureDefines.h can't be included directly, and must be included via
+          Platform.h. This is necessary as it depends heavily on macros defined in Platform.h
+        - Added numerous FIXMEs detailing follow up cleaning.
+
+        * wtf/FeatureDefines.h:
+        * wtf/Platform.h:
+
 2020-01-12  Sam Weinig  <weinig@apple.com>
 
         Platform.h is out of control Part 2: Split WTF_OS_* macro definitions out of Platform.h and into a new OS.h
