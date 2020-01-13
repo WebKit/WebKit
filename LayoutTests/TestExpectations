@@ -3223,4 +3223,5 @@ webkit.org/b/197673 http/wpt/mediarecorder/MediaRecorder-AV-audio-video-dataavai
 # Re-enable as each chunk of tests are verified with ANGLE backend.
 webgl/2.0.0 [ Skip ]
 
+# pre-wrap progression. Other rendering engines agree with the result.
 webkit.org/b/206168 [ Debug ] fast/dom/insert-span-into-long-text-bug-28245.html [ Skip ]

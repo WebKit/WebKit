@@ -1,5 +1,11 @@
 2020-01-13  Zalan Bujtas  <zalan@apple.com>
 
+        Explain why we started skipping "insert-span-into-long-text-bug-28245.html" in debug.
+
+        * TestExpectations:
+
+2020-01-13  Zalan Bujtas  <zalan@apple.com>
+
         [LFC][Integration] Turn off trailing letter-space trimming for the LineBreaker content
         https://bugs.webkit.org/show_bug.cgi?id=206181
         <rdar://problem/58532931>
