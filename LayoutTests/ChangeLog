@@ -1,3 +1,9 @@
+2020-01-13  Antti Koivisto  <antti@apple.com>
+
+        [iOS] Unreviewed test gardening after r254428.
+
+        * platform/ios/css1/text_properties/letter_spacing-expected.txt:
+
 2020-01-13  Zalan Bujtas  <zalan@apple.com>
 
         [Win] Unreviewed test gardening after r254421.
