@@ -29,6 +29,7 @@
 #include "Capabilities.h"
 #include <wtf/Forward.h>
 #include <wtf/Function.h>
+#include <wtf/HashSet.h>
 #include <wtf/JSONValues.h>
 #include <wtf/OptionSet.h>
 #include <wtf/RefCounted.h>
@@ -202,7 +203,7 @@ private:
         String subtype;
         Optional<MouseButton> pressedButton;
         Optional<String> pressedKey;
-        Optional<String> pressedVirtualKey;
+        HashSet<String> pressedVirtualKeys;
     };
     InputSourceState& inputSourceState(const String& id);
 

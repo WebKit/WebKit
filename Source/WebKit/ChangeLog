@@ -1,5 +1,17 @@
 2020-01-13  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        WebDriver: pressed virtual keys not correctly handled in action sequences
+        https://bugs.webkit.org/show_bug.cgi?id=205997
+
+        Reviewed by Brian Burg.
+
+        When modifiers are present we need to translate the keys that might be affected by the modifiers.
+
+        * UIProcess/Automation/gtk/WebAutomationSessionGtk.cpp:
+        (WebKit::doKeyStrokeEvent):
+
+2020-01-13  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         Unreviewed. [GTK][WPE] Add missing autocleanup definition for WebKitInputMethodContext
 
         I forgot to add it in r253749.

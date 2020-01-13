@@ -2576,17 +2576,20 @@ void Session::performActions(Vector<Vector<Action>>&& actionsByTick, Function<vo
                 }
                 case Action::Type::Key:
                     switch (action.subtype) {
-                    case Action::Subtype::KeyUp:
-                        if (currentState.pressedVirtualKey)
-                            currentState.pressedVirtualKey = WTF::nullopt;
+                    case Action::Subtype::KeyUp: {
+                        KeyModifier modifier;
+                        auto virtualKey = virtualKeyForKey(action.key.value()[0], modifier);
+                        if (!virtualKey.isNull())
+                            currentState.pressedVirtualKeys.remove(virtualKey);
                         else
                             currentState.pressedKey = WTF::nullopt;
                         break;
+                    }
                     case Action::Subtype::KeyDown: {
                         KeyModifier modifier;
                         auto virtualKey = virtualKeyForKey(action.key.value()[0], modifier);
                         if (!virtualKey.isNull())
-                            currentState.pressedVirtualKey = virtualKey;
+                            currentState.pressedVirtualKeys.add(virtualKey);
                         else
                             currentState.pressedKey = action.key.value();
                         break;
@@ -2603,10 +2606,11 @@ void Session::performActions(Vector<Vector<Action>>&& actionsByTick, Function<vo
                     }
                     if (currentState.pressedKey)
                         state->setString("pressedCharKey"_s, currentState.pressedKey.value());
-                    if (currentState.pressedVirtualKey) {
+                    if (!currentState.pressedVirtualKeys.isEmpty()) {
                         // FIXME: support parsing and tracking multiple virtual keys.
                         Ref<JSON::Array> virtualKeys = JSON::Array::create();
-                        virtualKeys->pushString(currentState.pressedVirtualKey.value());
+                        for (const auto& virtualKey : currentState.pressedVirtualKeys)
+                            virtualKeys->pushString(virtualKey);
                         state->setArray("pressedVirtualKeys"_s, WTFMove(virtualKeys));
                     }
                     break;

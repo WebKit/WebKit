@@ -155,6 +155,11 @@ static void doKeyStrokeEvent(GdkEventType type, GtkWidget* widget, unsigned keyV
     if (gdk_keymap_get_entries_for_keyval(gdk_keymap_get_default(), keyVal, &keys.outPtr(), &keysCount) && keysCount)
         event->key.hardware_keycode = keys.get()[0].keycode;
 
+    if (state) {
+        gdk_keymap_translate_keyboard_state(gdk_keymap_get_default(), event->key.hardware_keycode, static_cast<GdkModifierType>(state),
+            0, &event->key.keyval, nullptr, nullptr, nullptr);
+    }
+
     gtk_main_do_event(event.get());
     if (doReleaseAfterPress) {
         ASSERT(type == GDK_KEY_PRESS);

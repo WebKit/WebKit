@@ -1,3 +1,20 @@
+2020-01-13  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        WebDriver: pressed virtual keys not correctly handled in action sequences
+        https://bugs.webkit.org/show_bug.cgi?id=205997
+
+        Reviewed by Brian Burg.
+
+        We are assuming that only one virtual key can be pressed and that a key up always releases the pressed virtual
+        key if any. We should keep a list of pressed keys and remove them from the list when key up happens for them.
+
+        Fixes: imported/w3c/webdriver/tests/perform_actions/key_modifiers.py::test_shift_modifier_generates_capital_letters[\ue008]
+               imported/w3c/webdriver/tests/perform_actions/key_modifiers.py::test_shift_modifier_generates_capital_letters[\ue050]
+
+        * Session.cpp:
+        (WebDriver::Session::performActions):
+        * Session.h:
+
 2020-01-10  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Automation: evaluateJavaScriptFunction should use Promises
