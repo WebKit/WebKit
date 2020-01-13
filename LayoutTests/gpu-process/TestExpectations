@@ -218,6 +218,8 @@ media/restricted-audio-playback-with-document-gesture.html [ Pass ]
 media/restricted-audio-playback-with-multiple-settimeouts.html [ Pass ]
 media/video-controls-visible-audio-only.html [ Pass ]
 media/video-play-audio-require-user-gesture.html [ Pass ]
+media/track/audio-track.html [ Pass ]
+media/audio-track-add-remove.html [ Pass ]
 
 accessibility/media-element.html [ Skip ]
 fast/block/float/list-marker-is-float-crash.html [ Skip ]

@@ -45,7 +45,7 @@ public:
     virtual void willRemove() = 0;
 };
 
-class TrackPrivateBase
+class WEBCORE_EXPORT TrackPrivateBase
     : public ThreadSafeRefCounted<TrackPrivateBase, WTF::DestructionThread::Main>
 #if !RELEASE_LOG_DISABLED
     , public LoggerHelper

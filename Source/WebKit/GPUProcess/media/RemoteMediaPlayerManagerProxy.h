@@ -31,6 +31,7 @@
 #include "MediaPlayerPrivateRemoteIdentifier.h"
 #include "MessageReceiver.h"
 #include "SandboxExtension.h"
+#include "TrackPrivateRemoteIdentifier.h"
 #include <WebCore/MediaPlayer.h>
 #include <wtf/LoggerHelper.h>
 
@@ -109,7 +110,9 @@ private:
     void setVideoFullscreenGravity(MediaPlayerPrivateRemoteIdentifier, WebCore::MediaPlayerEnums::VideoGravity);
     void acceleratedRenderingStateChanged(MediaPlayerPrivateRemoteIdentifier, bool);
     void setShouldDisableSleep(MediaPlayerPrivateRemoteIdentifier, bool);
-    void setRate(WebKit::MediaPlayerPrivateRemoteIdentifier, double);
+    void setRate(MediaPlayerPrivateRemoteIdentifier, double);
+
+    void audioTrackSetEnabled(MediaPlayerPrivateRemoteIdentifier, TrackPrivateRemoteIdentifier, bool);
 
     HashMap<MediaPlayerPrivateRemoteIdentifier, std::unique_ptr<RemoteMediaPlayerProxy>> m_proxies;
     GPUConnectionToWebProcess& m_gpuConnectionToWebProcess;

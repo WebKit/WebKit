@@ -28,9 +28,9 @@
 
 #if USE(LIBWEBRTC) && PLATFORM(COCOA) && ENABLE(GPU_PROCESS)
 
+#include "DataReference.h"
 #include "GPUProcessConnection.h"
 #include "LibWebRTCCodecsProxyMessages.h"
-#include "SharedBufferDataReference.h"
 #include "WebProcess.h"
 #include <WebCore/LibWebRTCMacros.h>
 #include <WebCore/RealtimeVideoUtilities.h>
@@ -41,6 +41,7 @@
 #include <wtf/MainThread.h>
 
 namespace WebKit {
+using namespace WebCore;
 
 static webrtc::WebKitVideoDecoder createVideoDecoder(const webrtc::SdpVideoFormat& format)
 {

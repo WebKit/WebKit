@@ -29,6 +29,7 @@
 #if USE(QUICK_LOOK)
 
 #include "Logging.h"
+#include "WebPage.h"
 #include "WebPageProxyMessages.h"
 #include "WebProcess.h"
 #include <WebCore/SharedBuffer.h>

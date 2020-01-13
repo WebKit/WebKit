@@ -364,6 +364,29 @@ bool RemoteMediaPlayerProxy::mediaPlayerRenderingCanBeAccelerated()
     return m_renderingCanBeAccelerated;
 }
 
+void RemoteMediaPlayerProxy::mediaPlayerDidAddAudioTrack(WebCore::AudioTrackPrivate& track)
+{
+    m_audioTracks.set(&track, RemoteAudioTrackProxy::create(*this, TrackPrivateRemoteIdentifier::generate(), m_webProcessConnection.copyRef(), track));
+}
+
+void RemoteMediaPlayerProxy::mediaPlayerDidRemoveAudioTrack(WebCore::AudioTrackPrivate& track)
+{
+    ASSERT(m_audioTracks.contains(&track));
+    m_audioTracks.remove(&track);
+}
+
+void RemoteMediaPlayerProxy::audioTrackSetEnabled(TrackPrivateRemoteIdentifier trackID, bool enabled)
+{
+    for (auto& track : m_audioTracks.values()) {
+        if (track->identifier() == trackID) {
+            track->setEnabled(enabled);
+            return;
+        }
+    }
+
+    ASSERT_NOT_REACHED();
+}
+
 // FIXME: Unimplemented
 void RemoteMediaPlayerProxy::mediaPlayerResourceNotSupported()
 {
@@ -492,22 +515,12 @@ bool RemoteMediaPlayerProxy::doesHaveAttribute(const AtomString&, AtomString*) c
 }
 
 #if ENABLE(VIDEO_TRACK)
-void RemoteMediaPlayerProxy::mediaPlayerDidAddAudioTrack(AudioTrackPrivate&)
-{
-    notImplemented();
-}
-
 void RemoteMediaPlayerProxy::mediaPlayerDidAddTextTrack(InbandTextTrackPrivate&)
 {
     notImplemented();
 }
 
 void RemoteMediaPlayerProxy::mediaPlayerDidAddVideoTrack(VideoTrackPrivate&)
-{
-    notImplemented();
-}
-
-void RemoteMediaPlayerProxy::mediaPlayerDidRemoveAudioTrack(AudioTrackPrivate&)
 {
     notImplemented();
 }

@@ -76,4 +76,21 @@ private:
 
 } // namespace WebCore
 
+namespace WTF {
+
+template<> struct EnumTraits<WebCore::AudioTrackPrivate::Kind> {
+    using values = EnumValues<
+        WebCore::AudioTrackPrivate::Kind,
+        WebCore::AudioTrackPrivate::Kind::Alternative,
+        WebCore::AudioTrackPrivate::Kind::Description,
+        WebCore::AudioTrackPrivate::Kind::Main,
+        WebCore::AudioTrackPrivate::Kind::MainDesc,
+        WebCore::AudioTrackPrivate::Kind::Translation,
+        WebCore::AudioTrackPrivate::Kind::Commentary,
+        WebCore::AudioTrackPrivate::Kind::None
+    >;
+};
+
+} // namespace WTF
+
 #endif

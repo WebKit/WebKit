@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -261,13 +261,13 @@ void RemoteMediaPlayerManager::muteChanged(MediaPlayerPrivateRemoteIdentifier id
         player->muteChanged(mute);
 }
 
-void RemoteMediaPlayerManager::timeChanged(WebKit::MediaPlayerPrivateRemoteIdentifier id, RemoteMediaPlayerState&& state)
+void RemoteMediaPlayerManager::timeChanged(MediaPlayerPrivateRemoteIdentifier id, RemoteMediaPlayerState&& state)
 {
     if (const auto& player = m_players.get(id))
         player->timeChanged(WTFMove(state));
 }
 
-void RemoteMediaPlayerManager::durationChanged(WebKit::MediaPlayerPrivateRemoteIdentifier id, RemoteMediaPlayerState&& state)
+void RemoteMediaPlayerManager::durationChanged(MediaPlayerPrivateRemoteIdentifier id, RemoteMediaPlayerState&& state)
 {
     if (const auto& player = m_players.get(id))
         player->durationChanged(WTFMove(state));
@@ -285,22 +285,40 @@ void RemoteMediaPlayerManager::playbackStateChanged(MediaPlayerPrivateRemoteIden
         player->playbackStateChanged(paused);
 }
 
-void RemoteMediaPlayerManager::engineFailedToLoad(WebKit::MediaPlayerPrivateRemoteIdentifier id, long platformErrorCode)
+void RemoteMediaPlayerManager::engineFailedToLoad(MediaPlayerPrivateRemoteIdentifier id, long platformErrorCode)
 {
     if (const auto& player = m_players.get(id))
         player->engineFailedToLoad(platformErrorCode);
 }
 
-void RemoteMediaPlayerManager::characteristicChanged(WebKit::MediaPlayerPrivateRemoteIdentifier id, bool hasAudio, bool hasVideo, WebCore::MediaPlayerEnums::MovieLoadType loadType)
+void RemoteMediaPlayerManager::characteristicChanged(MediaPlayerPrivateRemoteIdentifier id, bool hasAudio, bool hasVideo, WebCore::MediaPlayerEnums::MovieLoadType loadType)
 {
     if (auto player = m_players.get(id))
         player->characteristicChanged(hasAudio, hasVideo, loadType);
 }
 
-void RemoteMediaPlayerManager::sizeChanged(WebKit::MediaPlayerPrivateRemoteIdentifier id, WebCore::FloatSize naturalSize)
+void RemoteMediaPlayerManager::sizeChanged(MediaPlayerPrivateRemoteIdentifier id, WebCore::FloatSize naturalSize)
 {
     if (auto player = m_players.get(id))
         player->sizeChanged(naturalSize);
+}
+
+void RemoteMediaPlayerManager::addRemoteAudioTrack(MediaPlayerPrivateRemoteIdentifier playerID, TrackPrivateRemoteIdentifier trackID, TrackPrivateRemoteConfiguration&& configuration)
+{
+    if (const auto& player = m_players.get(playerID))
+        player->addRemoteAudioTrack(trackID, WTFMove(configuration));
+}
+
+void RemoteMediaPlayerManager::removeRemoteAudioTrack(MediaPlayerPrivateRemoteIdentifier playerID, TrackPrivateRemoteIdentifier trackID)
+{
+    if (const auto& player = m_players.get(playerID))
+        player->removeRemoteAudioTrack(trackID);
+}
+
+void RemoteMediaPlayerManager::remoteAudioTrackConfigurationChanged(MediaPlayerPrivateRemoteIdentifier playerID, TrackPrivateRemoteIdentifier trackID, TrackPrivateRemoteConfiguration&& configuration)
+{
+    if (const auto& player = m_players.get(playerID))
+        player->remoteAudioTrackConfigurationChanged(trackID, WTFMove(configuration));
 }
 
 void RemoteMediaPlayerManager::requestResource(MediaPlayerPrivateRemoteIdentifier id, RemoteMediaResourceIdentifier remoteMediaResourceIdentifier, ResourceRequest&& request, PlatformMediaResourceLoader::LoadOptions options, CompletionHandler<void()>&& completionHandler)
@@ -326,7 +344,7 @@ void RemoteMediaPlayerManager::updatePreferences(const Settings& settings)
     RemoteMediaPlayerSupport::setRegisterRemotePlayerCallback(settings.useGPUProcessForMedia() ? WTFMove(registerEngine) : RemoteMediaPlayerSupport::RegisterRemotePlayerCallback());
 }
 
-void RemoteMediaPlayerManager::updateCachedState(WebKit::MediaPlayerPrivateRemoteIdentifier id, RemoteMediaPlayerState&& state)
+void RemoteMediaPlayerManager::updateCachedState(MediaPlayerPrivateRemoteIdentifier id, RemoteMediaPlayerState&& state)
 {
     if (auto player = m_players.get(id))
         player->updateCachedState(WTFMove(state));

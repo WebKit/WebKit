@@ -43,6 +43,10 @@
 #include <wtf/Vector.h>
 #include <wtf/WeakPtr.h>
 
+namespace WebCore {
+class AudioTrackPrivate;
+}
+
 namespace WebKit {
 
 class RemoteMediaPlayerManagerProxy;
@@ -55,6 +59,7 @@ public:
     RemoteMediaPlayerProxy(RemoteMediaPlayerManagerProxy&, MediaPlayerPrivateRemoteIdentifier, Ref<IPC::Connection>&&, WebCore::MediaPlayerEnums::MediaEngineIdentifier, RemoteMediaPlayerProxyConfiguration&&);
     ~RemoteMediaPlayerProxy();
 
+    MediaPlayerPrivateRemoteIdentifier idendifier() const { return m_id; }
     void invalidate();
 
     void getConfiguration(RemoteMediaPlayerConfiguration&);
@@ -89,6 +94,8 @@ public:
     void setShouldDisableSleep(bool);
     void setRate(double);
 
+    void audioTrackSetEnabled(TrackPrivateRemoteIdentifier, bool);
+
     Ref<WebCore::PlatformMediaResource> requestResource(WebCore::ResourceRequest&&, WebCore::PlatformMediaResourceLoader::LoadOptions);
     void removeResource(RemoteMediaResourceIdentifier);
 
@@ -106,6 +113,9 @@ private:
     void mediaPlayerBufferedTimeRangesChanged() final;
     void mediaPlayerSeekableTimeRangesChanged() final;
     bool mediaPlayerRenderingCanBeAccelerated() final;
+
+    void mediaPlayerDidAddAudioTrack(WebCore::AudioTrackPrivate&) final;
+    void mediaPlayerDidRemoveAudioTrack(WebCore::AudioTrackPrivate&) final;
 
     // Not implemented
     void mediaPlayerResourceNotSupported() final;
@@ -147,10 +157,8 @@ private:
     bool mediaPlayerShouldUsePersistentCache() const final;
     const String& mediaPlayerMediaCacheDirectory() const final;
 
-    void mediaPlayerDidAddAudioTrack(WebCore::AudioTrackPrivate&) final;
     void mediaPlayerDidAddTextTrack(WebCore::InbandTextTrackPrivate&) final;
     void mediaPlayerDidAddVideoTrack(WebCore::VideoTrackPrivate&) final;
-    void mediaPlayerDidRemoveAudioTrack(WebCore::AudioTrackPrivate&) final;
     void mediaPlayerDidRemoveTextTrack(WebCore::InbandTextTrackPrivate&) final;
     void mediaPlayerDidRemoveVideoTrack(WebCore::VideoTrackPrivate&) final;
 
@@ -186,6 +194,7 @@ private:
     const void* mediaPlayerLogIdentifier() { return reinterpret_cast<const void*>(m_configuration.logIdentifier); }
 #endif
 
+    HashMap<AudioTrackPrivate*, Ref<RemoteAudioTrackProxy>> m_audioTracks;
     MediaPlayerPrivateRemoteIdentifier m_id;
     RefPtr<SandboxExtension> m_sandboxExtension;
     Ref<IPC::Connection> m_webProcessConnection;

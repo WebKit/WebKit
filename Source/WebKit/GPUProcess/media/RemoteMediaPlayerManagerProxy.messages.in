@@ -64,6 +64,8 @@ messages -> RemoteMediaPlayerManagerProxy NotRefCounted {
     AcceleratedRenderingStateChanged(WebKit::MediaPlayerPrivateRemoteIdentifier id, bool canBeAccelerated)
     SetShouldDisableSleep(WebKit::MediaPlayerPrivateRemoteIdentifier id, bool disable)
     SetRate(WebKit::MediaPlayerPrivateRemoteIdentifier id, double rate)
+
+    AudioTrackSetEnabled(WebKit::MediaPlayerPrivateRemoteIdentifier playerID, WebKit::TrackPrivateRemoteIdentifier trackID, bool enabled)
 }
 
 #endif

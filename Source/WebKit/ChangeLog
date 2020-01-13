@@ -1,3 +1,63 @@
+2020-01-13  Eric Carlson  <eric.carlson@apple.com>
+
+        Expose audio tracks for media files in the GPUProcess
+        https://bugs.webkit.org/show_bug.cgi?id=206152
+        <rdar://problem/58513227>
+
+        Reviewed by youenn fablet.
+
+        * GPUProcess/media/RemoteAudioTrackProxy.cpp: Added.
+        (WebKit::RemoteAudioTrackProxy::RemoteAudioTrackProxy):
+        (WebKit::RemoteAudioTrackProxy::configuration):
+        (WebKit::RemoteAudioTrackProxy::configurationChanged):
+        (WebKit::RemoteAudioTrackProxy::willRemove):
+        (WebKit::RemoteAudioTrackProxy::enabledChanged):
+        (WebKit::RemoteAudioTrackProxy::idChanged):
+        (WebKit::RemoteAudioTrackProxy::labelChanged):
+        (WebKit::RemoteAudioTrackProxy::languageChanged):
+        * GPUProcess/media/RemoteAudioTrackProxy.h: Added.
+        * GPUProcess/media/RemoteMediaPlayerManagerProxy.cpp:
+        (WebKit::RemoteMediaPlayerManagerProxy::setRate):
+        (WebKit::RemoteMediaPlayerManagerProxy::audioTrackSetEnabled):
+        * GPUProcess/media/RemoteMediaPlayerManagerProxy.h:
+        * GPUProcess/media/RemoteMediaPlayerManagerProxy.messages.in:
+        * GPUProcess/media/RemoteMediaPlayerProxy.cpp:
+        (WebKit::RemoteMediaPlayerProxy::mediaPlayerDidAddAudioTrack):
+        (WebKit::RemoteMediaPlayerProxy::mediaPlayerDidRemoveAudioTrack):
+        (WebKit::RemoteMediaPlayerProxy::audioTrackSetEnabled):
+        * GPUProcess/media/RemoteMediaPlayerProxy.h:
+        * GPUProcess/media/TrackPrivateRemoteConfiguration.h: Added.
+        (WebKit::TrackPrivateRemoteConfiguration::encode const):
+        (WebKit::TrackPrivateRemoteConfiguration::decode):
+        * GPUProcess/media/TrackPrivateRemoteIdentifier.h: Added.
+        * Scripts/webkit/messages.py:
+        * Sources.txt:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/GPU/media/AudioTrackPrivateRemote.cpp: Added.
+        (WebKit::AudioTrackPrivateRemote::AudioTrackPrivateRemote):
+        (WebKit::AudioTrackPrivateRemote::setEnabled):
+        (WebKit::AudioTrackPrivateRemote::updateConfiguration):
+        * WebProcess/GPU/media/AudioTrackPrivateRemote.h: Added.
+        (WebKit::AudioTrackPrivateRemote::create):
+        * WebProcess/GPU/media/MediaPlayerPrivateRemote.cpp:
+        (WebKit::MediaPlayerPrivateRemote::addRemoteAudioTrack):
+        (WebKit::MediaPlayerPrivateRemote::removeRemoteAudioTrack):
+        (WebKit::MediaPlayerPrivateRemote::remoteAudioTrackConfigurationChanged):
+        * WebProcess/GPU/media/MediaPlayerPrivateRemote.h:
+        * WebProcess/GPU/media/RemoteMediaPlayerManager.cpp:
+        (WebKit::RemoteMediaPlayerManager::timeChanged):
+        (WebKit::RemoteMediaPlayerManager::durationChanged):
+        (WebKit::RemoteMediaPlayerManager::engineFailedToLoad):
+        (WebKit::RemoteMediaPlayerManager::characteristicChanged):
+        (WebKit::RemoteMediaPlayerManager::sizeChanged):
+        (WebKit::RemoteMediaPlayerManager::addRemoteAudioTrack):
+        (WebKit::RemoteMediaPlayerManager::removeRemoteAudioTrack):
+        (WebKit::RemoteMediaPlayerManager::remoteAudioTrackConfigurationChanged):
+        (WebKit::RemoteMediaPlayerManager::updateCachedState):
+        * WebProcess/GPU/media/RemoteMediaPlayerManager.h:
+        * WebProcess/GPU/media/RemoteMediaPlayerManager.messages.in:
+        * WebProcess/GPU/webrtc/LibWebRTCCodecs.cpp:
+
 2020-01-06  Jiewen Tan  <jiewen_tan@apple.com>
 
         [WebAuthn] Support CTAP Client Pin

@@ -32,12 +32,16 @@
 #include "RemoteMediaPlayerState.h"
 #include "RemoteMediaResourceIdentifier.h"
 #include "RemoteMediaResourceProxy.h"
+#include "TrackPrivateRemoteIdentifier.h"
 #include <WebCore/MediaPlayerPrivate.h>
 #include <wtf/LoggerHelper.h>
 #include <wtf/MediaTime.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebKit {
+
+class AudioTrackPrivateRemote;
+struct TrackPrivateRemoteConfiguration;
 
 class MediaPlayerPrivateRemote final
     : public CanMakeWeakPtr<MediaPlayerPrivateRemote>
@@ -58,7 +62,8 @@ public:
 
     void invalidate() { m_invalid = true; }
     WebCore::MediaPlayerEnums::MediaEngineIdentifier remoteEngineIdentifier() const { return m_remoteEngineIdentifier; }
-    MediaPlayerPrivateRemoteIdentifier playerItentifier() const { return m_id; }
+    MediaPlayerPrivateRemoteIdentifier itentifier() const { return m_id; }
+    IPC::Connection& connection() const { return m_manager.gpuProcessConnection().connection(); }
 
     void networkStateChanged(RemoteMediaPlayerState&&);
     void readyStateChanged(RemoteMediaPlayerState&&);
@@ -72,6 +77,10 @@ public:
     void updateCachedState(RemoteMediaPlayerState&&);
     void characteristicChanged(bool hasAudio, bool hasVideo, WebCore::MediaPlayerEnums::MovieLoadType);
     void sizeChanged(WebCore::FloatSize);
+
+    void addRemoteAudioTrack(TrackPrivateRemoteIdentifier, TrackPrivateRemoteConfiguration&&);
+    void removeRemoteAudioTrack(TrackPrivateRemoteIdentifier);
+    void remoteAudioTrackConfigurationChanged(TrackPrivateRemoteIdentifier, TrackPrivateRemoteConfiguration&&);
 
     void requestResource(RemoteMediaResourceIdentifier, WebCore::ResourceRequest&&, WebCore::PlatformMediaResourceLoader::LoadOptions);
     void removeResource(RemoteMediaResourceIdentifier);
@@ -311,6 +320,7 @@ private:
     std::unique_ptr<WebCore::PlatformTimeRanges> m_cachedBufferedTimeRanges;
 
     HashMap<RemoteMediaResourceIdentifier, RefPtr<WebCore::PlatformMediaResource>> m_mediaResources;
+    HashMap<TrackPrivateRemoteIdentifier, Ref<AudioTrackPrivateRemote>> m_audioTracks;
 
     double m_volume { 1 };
     double m_rate { 1 };

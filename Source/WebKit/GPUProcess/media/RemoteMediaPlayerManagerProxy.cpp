@@ -323,10 +323,16 @@ void RemoteMediaPlayerManagerProxy::setShouldDisableSleep(MediaPlayerPrivateRemo
         player->setShouldDisableSleep(disable);
 }
 
-void RemoteMediaPlayerManagerProxy::setRate(WebKit::MediaPlayerPrivateRemoteIdentifier id, double rate)
+void RemoteMediaPlayerManagerProxy::setRate(MediaPlayerPrivateRemoteIdentifier id, double rate)
 {
     if (auto player = m_proxies.get(id))
         player->setRate(rate);
+}
+
+void RemoteMediaPlayerManagerProxy::audioTrackSetEnabled(MediaPlayerPrivateRemoteIdentifier playerID, TrackPrivateRemoteIdentifier trackID, bool enabled)
+{
+    if (auto player = m_proxies.get(playerID))
+        player->audioTrackSetEnabled(trackID, enabled);
 }
 
 #if !RELEASE_LOG_DISABLED
