@@ -84,7 +84,7 @@ public:
         if (isLast())
             return true;
         auto& next = runs()[m_runIndex + 1];
-        return run().lineIndex() == next.lineIndex();
+        return run().lineIndex() != next.lineIndex();
     }
     bool isLast() const
     {

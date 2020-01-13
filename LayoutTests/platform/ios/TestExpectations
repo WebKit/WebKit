@@ -3462,5 +3462,3 @@ webkit.org/b/204757 imported/w3c/web-platform-tests/fetch/api/request/destinatio
 webkit.org/b/205309 scrollingcoordinator/ios/scroll-position-after-reattach.html [ ImageOnlyFailure ]
 
 webkit.org/b/200043 fast/text/international/system-language/navigator-language [ Pass Failure ]
-
-webkit.org/b/206164 editing/text-iterator/findString.html [ Failure ]
