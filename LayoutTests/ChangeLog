@@ -1,3 +1,29 @@
+2020-01-13  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] editing/selection/ios/clear-selection-after-tap-in-large-selected-non-editable-text.html times out
+        https://bugs.webkit.org/show_bug.cgi?id=206126
+        <rdar://problem/58060387>
+
+        Reviewed by Tim Horton.
+
+        This test is intended to verify that when ranged selection UI covers up most of the view, tapping the selection
+        will clear the selection instead of toggling the callout bar. However, there are a couple of issues that make
+        this test fail:
+
+        - The long press that is intended to select text ends up under the "Sel" in select and above the "ect" that
+        wraps to the next line, which causes the word to not be selected. To fix this, I changed the tap location from
+        the center of the view to somewhere in the top half of the view, near the middle of "Sel".
+
+        - The callout bar appears in the center of the screen with the "Look up" action in the middle, so tapping the
+        center of the view again causes a view controller to be presented when looking up the selected word ("Select").
+        We can avoid this by also moving the tap location away from the center of the view.
+
+        - On iPad, the word "Select" isn't big enough to encompass most of the screen even at 250px, so the test fails.
+        We fix this by making the "Select" text much bigger (500px), and then make the body `overflow: hidden` so that
+        selecting the word on iPhone's smaller screen doesn't cause scrolling.
+
+        * editing/selection/ios/clear-selection-after-tap-in-large-selected-non-editable-text.html:
+
 2020-01-13  Truitt Savell  <tsavell@apple.com>
 
         Correct test expectations after r254428
