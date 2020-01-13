@@ -1,3 +1,14 @@
+2020-01-13  Eric Carlson  <eric.carlson@apple.com>
+
+        Don't softlink AVCapture classes on watchOS or tvOS
+        https://bugs.webkit.org/show_bug.cgi?id=205974
+        <rdar://problem/58427281>
+
+        Unreviewed test fix after r254257.
+
+        * TestWebKitAPI/Tests/WebCore/cocoa/AVFoundationSoftLinkTest.mm:
+        (TestWebKitAPI::TEST):
+
 2020-01-06  Jiewen Tan  <jiewen_tan@apple.com>
 
         [WebAuthn] Support CTAP Client Pin
