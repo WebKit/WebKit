@@ -1,3 +1,10 @@
+2020-01-13  Zalan Bujtas  <zalan@apple.com>
+
+        [Win] Unreviewed test gardening after r254421.
+
+        * platform/win/css1/text_properties/text_indent-expected.txt:
+        * platform/win/css2.1/t1601-c547-indent-01-d-expected.txt:
+
 2020-01-13  Antti Koivisto  <antti@apple.com>
 
         [LFC][Integration] Enable LFC integration
