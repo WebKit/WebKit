@@ -1,3 +1,10 @@
+2020-01-13  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GTK] Unreviewed gardening after r254409
+        https://bugs.webkit.org/show_bug.cgi?id=206150
+
+        * platform/gtk/TestExpectations:
+
 2020-01-13  Antti Koivisto  <antti@apple.com>
 
         [LFC][Integration] editing/text-iterator/findString.html fails on iOS

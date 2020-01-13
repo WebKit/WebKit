@@ -455,6 +455,10 @@ webkit.org/b/169917 webgl/1.0.3/conformance/extensions/webgl-compressed-texture-
 webkit.org/b/169917 webgl/1.0.3/conformance/glsl/misc/shaders-with-invariance.html [ Failure ]
 webkit.org/b/169917 webgl/1.0.3/conformance/renderbuffers/feedback-loop.html [ Failure ]
 webkit.org/b/169917 webgl/webgl-vertex-array-object-defined.html [ Failure ]
+webkit.org/b/169917 webgl/1.0.3/conformance/more/functions/readPixelsBadArgs.html [ Failure ]
+webkit.org/b/169917 webgl/1.0.3/conformance/more/functions/texImage2DHTML.html [ Failure ]
+webkit.org/b/169917 webgl/1.0.3/conformance/more/functions/texSubImage2DHTML.html [ Failure ]
+webkit.org/b/169917 webgl/1.0.3/conformance/glsl/misc/shader-struct-scope.html [ Failure ]
 # WebGL flaky tests
 webkit.org/b/169917 webgl/1.0.3/conformance/canvas/drawingbuffer-test.html [ Failure Pass ]
 webkit.org/b/169917 webgl/1.0.3/conformance/extensions/oes-vertex-array-object.html [ Failure Pass ]
@@ -462,11 +466,12 @@ webkit.org/b/169917 webgl/1.0.3/conformance/textures/texture-formats-test.html [
 webkit.org/b/169917 webgl/1.0.3/conformance/context/context-hidden-alpha.html [ Failure Pass ]
 webkit.org/b/169917 compositing/overlap-blending/children-opacity-huge.html [ ImageOnlyFailure Pass ]
 webkit.org/b/169917 compositing/video/video-border-radius.html [ ImageOnlyFailure Pass ]
+webkit.org/b/169917 webgl/1.0.3/conformance/textures/texture-size.html [ Timeout Pass ]
 # WebGL timeouts or slow tests.
 webkit.org/b/169917 fast/canvas/webgl/oes-texture-half-float.html [ Slow ]
 webkit.org/b/169917 webgl/1.0.3/conformance/context/context-creation-and-destruction.html [ Pass Timeout ]
 webkit.org/b/169917 webgl/1.0.3/conformance/extensions/oes-texture-float-with-video.html [ Timeout ]
-webkit.org/b/169917 webgl/1.0.3/conformance/glsl/misc/shader-uniform-packing-restrictions.html [ Slow ]
+webkit.org/b/169917 webgl/1.0.3/conformance/glsl/misc/shader-uniform-packing-restrictions.html [ Timeout ]
 webkit.org/b/169917 webgl/1.0.3/conformance/rendering/many-draw-calls.html [ Slow ]
 webkit.org/b/169917 webgl/1.0.3/conformance/textures/tex-image-and-sub-image-2d-with-video-rgb565.html [ Timeout ]
 webkit.org/b/169917 webgl/1.0.3/conformance/textures/tex-image-and-sub-image-2d-with-video-rgba4444.html [ Timeout ]
@@ -488,7 +493,7 @@ webkit.org/b/169917 webgl/1.0.3/conformance/ogles/GL/swizzlers/swizzlers_097_to_
 webkit.org/b/169917 webgl/1.0.3/conformance/ogles/GL/log/log_001_to_008.html [ Slow ]
 webkit.org/b/169917 webgl/1.0.3/conformance/uniforms/uniform-values-per-program.html [ Slow ]
 webkit.org/b/169917 webgl/1.0.3/conformance/context/context-eviction-with-garbage-collection.html [ Slow ]
-webkit.org/b/169917 webgl/1.0.3/conformance/glsl/misc/struct-nesting-of-variable-names.html [ Slow ]
+webkit.org/b/169917 webgl/1.0.3/conformance/glsl/misc/struct-nesting-of-variable-names.html [ Timeout ]
 webkit.org/b/169917 webgl/1.0.3/conformance/glsl/bugs/long-expressions-should-not-crash.html [ Slow ]
 webkit.org/b/169917 webgl/1.0.3/conformance/glsl/constructors/glsl-construct-bvec2.html [ Slow ]
 webkit.org/b/169917 webgl/1.0.3/conformance/glsl/constructors/glsl-construct-ivec2.html [ Slow ]
@@ -1034,7 +1039,7 @@ fast/forms/range/input-appearance-range-rtl.html [ ImageOnlyFailure ]
 
 # Service-workers tests that fail, time out or crash.
 webkit.org/b/175419 http/tests/workers/service/controller-change.html [ Skip ]
-webkit.org/b/175419 http/wpt/service-workers/persistent-importScripts.html [ Pass Failure ]
+webkit.org/b/175419 http/wpt/service-workers/persistent-importScripts.html [ Pass Failure Timeout ]
 webkit.org/b/175419 imported/w3c/web-platform-tests/service-workers/service-worker/activation.https.html [ Skip ]
 webkit.org/b/175419 imported/w3c/web-platform-tests/service-workers/service-worker/claim-with-redirect.https.html [ Skip ]
 webkit.org/b/175419 imported/w3c/web-platform-tests/service-workers/service-worker/fetch-event-within-sw.https.html [ Skip ]
@@ -1047,6 +1052,8 @@ webkit.org/b/175419 imported/w3c/web-platform-tests/service-workers/cache-storag
 webkit.org/b/175419 imported/w3c/web-platform-tests/service-workers/cache-storage/worker/cache-storage-match.https.html [ Skip ]
 webkit.org/b/175419 imported/w3c/web-platform-tests/service-workers/cache-storage/serviceworker/cache-storage-match.https.html [ Skip ]
 webkit.org/b/175419 imported/w3c/web-platform-tests/service-workers/cache-storage/serviceworker/credentials.https.html [ Skip ]
+webkit.org/b/175419 http/tests/workers/service/postmessage-after-terminate.https.html [ Pass Failure Timeout ]
+webkit.org/b/175419 http/wpt/service-workers/service-worker-networkprocess-crash.html [ Timeout ]
 
 # Skip anything related to WebAuthN
 http/wpt/credential-management/ [ Skip ]
@@ -1633,8 +1640,9 @@ webkit.org/b/136066 animations/missing-keyframe-properties.html [ Crash Pass ]
 webkit.org/b/136066 legacy-animation-engine/animations/missing-keyframe-properties.html [ Crash Pass ]
 webkit.org/b/136066 animations/missing-values-first-keyframe.html [ Crash Pass ]
 webkit.org/b/136066 legacy-animation-engine/animations/missing-values-first-keyframe.html [ Crash Pass ]
-webkit.org/b/136066 animations/state-at-end-event.html [ Crash Pass ]
+webkit.org/b/136066 animations/state-at-end-event.html [ Crash Timeout Pass ]
 webkit.org/b/136066 legacy-animation-engine/animations/state-at-end-event.html [ Crash Pass ]
+webkit.org/b/136066 animations/fill-mode-iteration-count-non-integer.html [ Timeout Pass ]
 
 webkit.org/b/136070 fast/forms/label/label-becomes-visible-while-clicking-on-label.html [ Failure Pass ]
 
@@ -2258,6 +2266,8 @@ webkit.org/b/198830 userscripts/user-script-audio-document.html [ Crash Pass ]
 webkit.org/b/205110 imported/w3c/web-platform-tests/media-source/mediasource-changetype-play.html [ Crash Pass ]
 webkit.org/b/205110 media/media-source/media-source-canplaythrough.html [ Crash Pass ]
 
+webkit.org/b/206146 http/tests/cache-storage/cache-persistency.https.html [ Failure Pass ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Flaky tests
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -2586,6 +2596,12 @@ webkit.org/b/205112 media/remoteplayback-cancel-invalid.html [ Timeout ]
 webkit.org/b/205112 media/remoteplayback-prompt.html [ Timeout ]
 webkit.org/b/205112 media/remoteplayback-target-availability.html [ Timeout ]
 webkit.org/b/205112 media/remoteplayback-watch-disableremoteplayback.html [ Timeout ]
+
+webkit.org/b/206147 inspector/dom-debugger/dom-breakpoints.html [ Timeout ]
+
+webkit.org/b/206148 http/tests/local/file-url-host.html [ Timeout ]
+
+webkit.org/b/206149 webrtc/peer-connection-remote-audio-mute.html [ Timeout ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests timing out
@@ -3852,7 +3868,7 @@ webkit.org/b/202245 http/wpt/service-workers/fetchEvent.https.html [ Failure ]
 webkit.org/b/202245 http/wpt/service-workers/navigation-redirect.https.html [ Failure ]
 webkit.org/b/202245 http/wpt/service-workers/online.https.html [ Failure Pass ]
 webkit.org/b/202245 imported/w3c/web-platform-tests/service-workers/service-worker/installing.https.html [ Failure ]
-webkit.org/b/204636 http/wpt/service-workers/header-filtering.https.html [ Failure Pass ]
+webkit.org/b/204636 http/wpt/service-workers/header-filtering.https.html [ Failure Timeout Pass ]
 
 webkit.org/b/202457 imported/w3c/web-platform-tests/2dcontext/drawing-images-to-the-canvas/drawimage_canvas.html [ Failure ]
 
