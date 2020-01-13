@@ -1,3 +1,12 @@
+2020-01-13  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. [GTK][WPE] Add missing autocleanup definition for WebKitInputMethodContext
+
+        I forgot to add it in r253749.
+
+        * UIProcess/API/gtk/WebKitAutocleanups.h:
+        * UIProcess/API/wpe/WebKitAutocleanups.h:
+
 2020-01-12  Tim Horton  <timothy_horton@apple.com>
 
         Remove CorePDF linkage in WebKit
