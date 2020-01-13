@@ -848,7 +848,7 @@ webkit.org/b/206071 editing/spelling/markers.html [ Skip ]
 webkit.org/b/206071 editing/spelling/retro-correction-spelling-markers.html [ Failure ]
 
 # These simple line layout specific tests disable LFC in test header. This is not supported in DRT.
-webkit.org/b/206167 fast/text/embed-at-end-of-pre-wrap-line-simple-lines.html [ Failure ]
-webkit.org/b/206167 fast/text/simple-line-layout-leading-whitespace-with-soft-hard-linebreak.html [ Failure ]
-webkit.org/b/206167 fast/text/simple-lines-float.html [ Failure ]
-webkit.org/b/206167 fast/text/whitespace/pre-wrap-long-word-simple-lines.html [ Failure ]
+webkit.org/b/206167 fast/text/embed-at-end-of-pre-wrap-line-simple-lines.html [ ImageOnlyFailure ]
+webkit.org/b/206167 fast/text/simple-line-layout-leading-whitespace-with-soft-hard-linebreak.html [ ImageOnlyFailure ]
+webkit.org/b/206167 fast/text/simple-lines-float.html [ ImageOnlyFailure ]
+webkit.org/b/206167 fast/text/whitespace/pre-wrap-long-word-simple-lines.html [ ImageOnlyFailure ]
