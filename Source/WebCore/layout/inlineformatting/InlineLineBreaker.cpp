@@ -32,6 +32,7 @@
 #include "Hyphenation.h"
 #include "InlineItem.h"
 #include "InlineTextItem.h"
+#include "RuntimeEnabledFeatures.h"
 #include "TextUtil.h"
 
 namespace WebCore {
@@ -360,9 +361,12 @@ ContinuousContent::ContinuousContent(const LineBreaker::RunList& runs)
                 // Let's see if we've got more trailing whitespace content.
                 continue;
             }
-            if (auto collapsibleWidth = inlineTextItem.style().letterSpacing()) {
-                m_trailingCollapsibleContent.width += collapsibleWidth;
-                m_trailingCollapsibleContent.isFullyCollapsible = false;
+            if (!RuntimeEnabledFeatures::sharedFeatures().layoutFormattingContextIntegrationEnabled()) {
+                // A run with trailing letter spacing is partially collapsible.
+                if (auto collapsibleWidth = inlineTextItem.style().letterSpacing()) {
+                    m_trailingCollapsibleContent.width += collapsibleWidth;
+                    m_trailingCollapsibleContent.isFullyCollapsible = false;
+                }
             }
             // End of whitespace content.
             break;
