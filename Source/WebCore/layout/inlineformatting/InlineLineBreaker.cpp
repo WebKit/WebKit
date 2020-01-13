@@ -130,6 +130,13 @@ LineBreaker::Result LineBreaker::tryWrappingInlineContent(const ContinuousConten
 {
     if (candidateContent.width() <= lineStatus.availableWidth)
         return { Result::Action::Keep };
+
+#if USE_FLOAT_AS_INLINE_LAYOUT_UNIT
+    // Preferred width computation sums up floats while line breaker substracts them. This can lead to epsilon-scale differences.
+    if (WTF::areEssentiallyEqual(candidateContent.width(), lineStatus.availableWidth))
+        return { Result::Action::Keep };
+#endif
+
     if (candidateContent.hasTrailingCollapsibleContent()) {
         ASSERT(candidateContent.hasTextContentOnly());
         auto IsEndOfLine = isContentWrappingAllowed(candidateContent) ? IsEndOfLine::Yes : IsEndOfLine::No;
