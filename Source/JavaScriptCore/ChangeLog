@@ -1,3 +1,295 @@
+2020-01-13  Mark Lam  <mark.lam@apple.com>
+
+        Replace uses of Box<Identifier> with a new CacheableIdentifier class.
+        https://bugs.webkit.org/show_bug.cgi?id=205544
+        <rdar://problem/58041800>
+
+        Reviewed by Saam Barati.
+
+        The introduction of the use of Box<Identifier> was to get around having to
+        ref/deref the underlying UniqedStringImpl in Identifiers from the compiler
+        and GC threads.  However, it proves to be difficult to control when these
+        Box<Identifier>s get destructed, and requires that we find all the places in
+        the compier and GC threads where this can happen, and apply keep alive tactics
+        there to defer destruction of the Box<Identifier> to the mutator thread.
+
+        This patch fixes this by replacing uses of Box<Identifier> with
+        CacheableIdentifier, which is effectively a tagged union of a JSCell* or a
+        UniquedStringImpl*.  The JSCell*, in this case, can be either a Symbol* or a
+        JSString* that is backed by an atom string.  The VM runtime ensures that we'll
+        never try to cache an identifier from a JSCell that is not one of these.  This
+        CacheableIdentifier can be destructed from the compiler or GC thread.  Since it
+        doesn't hold a ref of the underlying UniquedStringImpl, it won't try to deref
+        it on destruction.
+
+        Instead, we'll need to visit CacheableIdentifiers during GC scans to keep the
+        JSCell in it alive, and that JSCell will, in turn, keep the underlying
+        UniquedStringImpl alive.
+
+        This patch also does the following:
+
+        1. Add a visitAggregate() method to StructureStubInfo, PolymorphicAccess, and
+           AccessCase to visit the CacheableIdentifier's JSCell identifier.  This
+           visitAggregate() is called from CodeBlock::stronglyVisitStrongReferences().
+
+           When we write barrier a CodeBlock, it guarantees that its visitAggregate()
+           methods is called.  However, it does not guarantee that its propagateTransitions()
+           method will be called.  Since the CacheableIdentifier's reference to a cell
+           should be a strong reference, visiting it via a StructureStubInfo::visitAggregate()
+           method is the right thing to do.
+           See https://bugs.webkit.org/show_bug.cgi?id=205544#c7 for an example of why
+           propagateTransitions() doesn't always do the job.
+
+           StructureStubInfo::visitWeakReferences() is also inappropriate for this
+           because it is only called after all marking is done.  It is also not meant
+           to keep cells alive but merely for clearing weak references to dead cells.
+
+        2. Also add to visitAggregate() for ModuleNamespaceData's m_identifier in
+           GetByStatus::markIfCheap().
+
+        3. Remove previously applied keep alive tactics to work around Box<Identifier>
+           destruction.  This also retores the allowance to destruct DFG::Plans on a
+           compiler thread.
+
+        4. Added a JSString:getValueImpl() helper.
+
+        5. Added a write barrier in DFG and FTL JITFinalizer's finalizeCommon() to ensure
+           that frozen values are scanned by the GC.
+
+           During compilation, the frozen values were previously protected by the Plan.
+           After finalization, they should be protected by the CodeBlock.  Hence, we
+           should barrier the CodeBlock since the last GC scan of the CodeBlock may have
+           happened before the frozen values were registered with the CodeBlock.
+
+        GC considerations:
+        ==================
+        The following also addresses Yusuke's concerns in https://bugs.webkit.org/show_bug.cgi?id=205544#c10.
+
+        CacheableIdentifier is only stored as fields in 4 classes/structs:
+
+        1. AccessCase::m_identifier
+        2. GetByIdVariant::m_identifier
+        3. ModuleNamespaceData::m_identifier
+        4. StructureStubInfo::m_getByIdSelfIdentifier
+
+        AccessCase::m_identifier
+        ========================
+        While the access case is being created and added in tryCacheGetBy(), the
+        CacheableIdentifier is still on the stack and protected from the GC.  At the
+        bottom of tryCacheGetBy(), StructureStubInfo::addAccessCase() is called to add
+        the access case.
+
+        StructureStubInfo::addAccessCase() will barrier the owner CodeBlock at its end,
+        and CodeBlock::stronglyVisitStrongReferences() will visit the StructureStubInfo,
+        which in turn visits the AccessCase.  StructureStubInfo::visitAggregate() has
+        been added for this purpose.
+
+        GetByIdVariant::m_identifier
+        ============================
+        GetByIdVariant is only stored in GetByStatus.  Both GetByIdVariant and GetByStatus
+        are only created and handled in the DFG/FTL compiler threads.  While the compiler
+        thread is working with them, they are safe from the GC because the GC won't collect
+        objects until the compiler thread is at a SafePoint.
+
+        At compiler SafePoints, any GetByStatus that needs to be persisted is stored in
+        DFG::Plan::m_recordedStatuses.  The Plan will visit the m_recordedStatuses in
+        Plan::checkLivenessAndVisitChildren().
+
+        At the end of compilation, Plan::m_recordedStatuses is transferred over to the owner
+        CodeBlock's DFG::CommonData in Plan::finalizeWithoutNotifyingCallback().
+        Plan::finalizeWithoutNotifyingCallback() will also barrier the owner CodeBlock at
+        its end.
+
+        Thereafter, CodeBlock::stronglyVisitStrongReferences() will visit the recordedStatuses.
+
+        ModuleNamespaceData::m_identifier
+        =================================
+        ModuleNamespaceData is only stored in a GetByStatus, and is therefore protected
+        similarly as the GetByIdVariant::m_identifier case above.
+
+        StructureStubInfo::m_getByIdSelfIdentifier
+        ==========================================
+        StructureStubInfo::initGetByIdSelf() is called from inside tryCacheGetBy().
+        StructureStubInfo::initGetByIdSelf() will barrier the owner CodeBlock.  The
+        CacheableIdentifier here is protected in the same way as the AccessCase::m_identifier
+        case above.
+
+        DesiredIdentifiers
+        ==================
+        The compiler thread may also stash a CacheableIdentifier's uid in its
+        DesiredIdentifiers.  Normally, the identifiers stashed in DesiredIdentifiers are
+        from identifiers that the CodeBlock already knows abut and manages (e.g. from
+        GetByIds).  For uids from a cell-based CacheableIdentifier variable is passed to
+        a GetByVal, we need kep the cell alive in order to keep the uid alive.  This is
+        achieved by freezing the cell with freezeStrong() in the op_get_by_val case in
+        the DFG BytecodeParser.
+
+        Reseting a StructureStubInfo while its IC code is still executing on the stack
+        ==============================================================================
+        The concern is that IC code may call slow path / getter functions that may in turn:
+
+        1. reset the IC, and
+        2. run the GC.
+
+        This can be a problem if:
+
+        1. there is a scenario where we return from the slow path / getter function
+           and run IC code that uses the cell / uid from the CacheableIdentifier.
+
+           This is because the StructureStubInfo is what visits the that cell, which
+           in turn its uid alive.  Once the StructureStubInfo is reset, it will no
+           longer be associated with any AccessCase or the m_getByIdSelfIdentifier.
+           As such they will not be visited, and the CacheableIdentifier may be collected
+           by the GC.
+
+           In practice, the generated IC code never uses the cell / uid after it calls
+           any slow path / getter function.  I've verified this by auditing the code
+           generation in InlineAccess::generateSelfInAccess() and PolymorphicAccess::regenerate().
+           Hence, there's no issue with using a collected cell / uid.
+
+        2. there is a scenario where a slow path / getter function makes use of the cell / uid
+           from the CacheableIdentifier but does not protect it.
+
+           The only 2 slow path functions:
+               operationGetByValGeneric()
+               operationGetByValOptimize()
+
+           operationGetByValGeneric() does not use any CacheableIdentifier from the StructureStubInfo.
+
+           operationGetByValOptimize() modifies the StructureStubInfo in tryCacheGetBy()
+           under the protection of a GCSafeConcurrentJSLocker, and can reset the
+           StructureStubInfo.  However, it does not use any CacheableIdentifier after
+           that.
+
+           Hence, there's also no GC issue here.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Sources.txt:
+        * bytecode/AccessCase.cpp:
+        (JSC::AccessCase::AccessCase):
+        (JSC::AccessCase::create):
+        (JSC::AccessCase::fromStructureStubInfo):
+        (JSC::AccessCase::commit):
+        (JSC::AccessCase::canReplace const):
+        (JSC::AccessCase::dump const):
+        (JSC::AccessCase::visitAggregate const):
+        (JSC::AccessCase::generateWithGuard):
+        (JSC::AccessCase::generateImpl):
+        * bytecode/AccessCase.h:
+        (JSC::AccessCase::uid const):
+        (JSC::AccessCase::identifier const):
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::propagateTransitions):
+        (JSC::CodeBlock::stronglyVisitStrongReferences):
+        * bytecode/GetByIdVariant.cpp:
+        (JSC::GetByIdVariant::GetByIdVariant):
+        (JSC::GetByIdVariant::attemptToMerge):
+        (JSC::GetByIdVariant::visitAggregate):
+        (JSC::GetByIdVariant::dumpInContext const):
+        * bytecode/GetByIdVariant.h:
+        (JSC::GetByIdVariant::identifier const):
+        (JSC::GetByIdVariant::overlaps):
+        * bytecode/GetByStatus.cpp:
+        (JSC::GetByStatus::computeFromLLInt):
+        (JSC::GetByStatus::computeFor):
+        (JSC::GetByStatus::computeForStubInfoWithoutExitSiteFeedback):
+        (JSC::GetByStatus::visitAggregate):
+        (JSC::GetByStatus::singleIdentifier const):
+        * bytecode/GetByStatus.h:
+        * bytecode/GetterSetterAccessCase.cpp:
+        (JSC::GetterSetterAccessCase::GetterSetterAccessCase):
+        (JSC::GetterSetterAccessCase::create):
+        * bytecode/GetterSetterAccessCase.h:
+        * bytecode/InstanceOfAccessCase.cpp:
+        (JSC::InstanceOfAccessCase::InstanceOfAccessCase):
+        * bytecode/IntrinsicGetterAccessCase.cpp:
+        (JSC::IntrinsicGetterAccessCase::IntrinsicGetterAccessCase):
+        (JSC::IntrinsicGetterAccessCase::create):
+        * bytecode/IntrinsicGetterAccessCase.h:
+        * bytecode/ModuleNamespaceAccessCase.cpp:
+        (JSC::ModuleNamespaceAccessCase::ModuleNamespaceAccessCase):
+        (JSC::ModuleNamespaceAccessCase::create):
+        * bytecode/ModuleNamespaceAccessCase.h:
+        * bytecode/PolymorphicAccess.cpp:
+        (JSC::PolymorphicAccess::visitAggregate):
+        (JSC::PolymorphicAccess::regenerate):
+        * bytecode/PolymorphicAccess.h:
+        * bytecode/ProxyableAccessCase.cpp:
+        (JSC::ProxyableAccessCase::ProxyableAccessCase):
+        (JSC::ProxyableAccessCase::create):
+        * bytecode/ProxyableAccessCase.h:
+        * bytecode/RecordedStatuses.cpp:
+        (JSC::RecordedStatuses::visitAggregate):
+        * bytecode/RecordedStatuses.h:
+        * bytecode/StructureStubInfo.cpp:
+        (JSC::StructureStubInfo::initGetByIdSelf):
+        (JSC::StructureStubInfo::addAccessCase):
+        (JSC::StructureStubInfo::visitAggregate):
+        * bytecode/StructureStubInfo.h:
+        (JSC::StructureStubInfo::getByIdSelfIdentifier):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseGetById):
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGDesiredIdentifiers.cpp:
+        (JSC::DFG::DesiredIdentifiers::ensure):
+        (JSC::DFG::DesiredIdentifiers::at const):
+        (JSC::DFG::DesiredIdentifiers::reallyAdd):
+        (JSC::DFG::DesiredIdentifiers::processCodeBlockIdentifiersIfNeeded): Deleted.
+        * dfg/DFGDesiredIdentifiers.h:
+        * dfg/DFGJITFinalizer.cpp:
+        (JSC::DFG::JITFinalizer::finalizeCommon):
+        * dfg/DFGPlan.cpp:
+        (JSC::DFG::Plan::~Plan):
+        (JSC::DFG::Plan::checkLivenessAndVisitChildren):
+        (JSC::DFG::Plan::cancel):
+        * dfg/DFGPlan.h:
+        (JSC::DFG::Plan::keepAliveIdentifier): Deleted.
+        * dfg/DFGWorklist.cpp:
+        (JSC::DFG::Worklist::removeAllReadyPlansForVM):
+        (JSC::DFG::Worklist::removeDeadPlans):
+        (JSC::DFG::Worklist::removeNonCompilingPlansForVM):
+        (JSC::DFG::Worklist::deleteCancelledPlansForVM): Deleted.
+        * dfg/DFGWorklist.h:
+        * ftl/FTLJITFinalizer.cpp:
+        (JSC::FTL::JITFinalizer::finalizeCommon):
+        * jit/JITOperations.cpp:
+        * jit/Repatch.cpp:
+        (JSC::tryCacheGetBy):
+        (JSC::repatchGetBy):
+        (JSC::tryCacheArrayGetByVal):
+        (JSC::tryCacheInstanceOf):
+        * jit/Repatch.h:
+        * runtime/CacheableIdentifier.cpp: Added.
+        (JSC::CacheableIdentifier::dump const):
+        * runtime/CacheableIdentifier.h: Added.
+        (JSC::CacheableIdentifier::CacheableIdentifier):
+        (JSC::CacheableIdentifier::isUid const):
+        (JSC::CacheableIdentifier::isCell const):
+        (JSC::CacheableIdentifier::isSymbol const):
+        (JSC::CacheableIdentifier::operator bool const):
+        * runtime/CacheableIdentifierInlines.h: Added.
+        (JSC::CacheableIdentifier::CacheableIdentifier):
+        (JSC::CacheableIdentifier::cell const):
+        (JSC::CacheableIdentifier::uid const):
+        (JSC::CacheableIdentifier::isCacheableIdentifierCell):
+        (JSC::CacheableIdentifier::isSymbolCell const):
+        (JSC::CacheableIdentifier::isStringCell const):
+        (JSC::CacheableIdentifier::setCellBits):
+        (JSC::CacheableIdentifier::setUidBits):
+        (JSC::CacheableIdentifier::visitAggregate const):
+        (JSC::CacheableIdentifier::operator== const):
+        (JSC::CacheableIdentifier::operator!= const):
+        * runtime/ExceptionHelpers.cpp:
+        (JSC::functionCallBase):
+        * runtime/JSString.h:
+        (JSC::JSString::getValueImpl const):
+        * runtime/VM.cpp:
+        (JSC::VM::ensureWatchpointSetForImpureProperty):
+        (JSC::VM::addImpureProperty):
+        (JSC::VM::registerWatchpointForImpureProperty): Deleted.
+        * runtime/VM.h:
+
 2020-01-13  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Put JSProxy in IsoSubspace

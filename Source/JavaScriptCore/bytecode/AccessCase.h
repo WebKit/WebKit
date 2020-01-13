@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,10 +27,10 @@
 
 #if ENABLE(JIT)
 
+#include "CacheableIdentifier.h"
 #include "JSFunctionInlines.h"
 #include "ObjectPropertyConditionSet.h"
 #include "PolyProtoAccessChain.h"
-#include <wtf/Box.h>
 #include <wtf/CommaPrinter.h>
 
 namespace JSC {
@@ -142,14 +142,14 @@ public:
         return std::unique_ptr<AccessCaseType>(new AccessCaseType(arguments...));
     }
 
-    static std::unique_ptr<AccessCase> create(VM&, JSCell* owner, AccessType, const Identifier&, PropertyOffset = invalidOffset,
+    static std::unique_ptr<AccessCase> create(VM&, JSCell* owner, AccessType, CacheableIdentifier, PropertyOffset = invalidOffset,
         Structure* = nullptr, const ObjectPropertyConditionSet& = ObjectPropertyConditionSet(), std::unique_ptr<PolyProtoAccessChain> = nullptr);
 
     // This create method should be used for transitions.
-    static std::unique_ptr<AccessCase> create(VM&, JSCell* owner, const Identifier&, PropertyOffset, Structure* oldStructure,
+    static std::unique_ptr<AccessCase> create(VM&, JSCell* owner, CacheableIdentifier, PropertyOffset, Structure* oldStructure,
         Structure* newStructure, const ObjectPropertyConditionSet&, std::unique_ptr<PolyProtoAccessChain>);
     
-    static std::unique_ptr<AccessCase> fromStructureStubInfo(VM&, JSCell* owner, const Identifier&, StructureStubInfo&);
+    static std::unique_ptr<AccessCase> fromStructureStubInfo(VM&, JSCell* owner, CacheableIdentifier, StructureStubInfo&);
 
     AccessType type() const { return m_type; }
     State state() const { return m_state; }
@@ -235,9 +235,8 @@ public:
 
     static TypedArrayType toTypedArrayType(AccessType);
 
-    UniquedStringImpl* uid() const { return m_identifier->impl(); }
-    Box<Identifier> identifier() const { return m_identifier; }
-
+    UniquedStringImpl* uid() const { return m_identifier.uid(); }
+    CacheableIdentifier identifier() const { return m_identifier; }
 
 #if ASSERT_ENABLED
     void checkConsistency(StructureStubInfo&);
@@ -246,7 +245,7 @@ public:
 #endif
     
 protected:
-    AccessCase(VM&, JSCell* owner, AccessType, const Identifier&, PropertyOffset, Structure*, const ObjectPropertyConditionSet&, std::unique_ptr<PolyProtoAccessChain>);
+    AccessCase(VM&, JSCell* owner, AccessType, CacheableIdentifier, PropertyOffset, Structure*, const ObjectPropertyConditionSet&, std::unique_ptr<PolyProtoAccessChain>);
     AccessCase(AccessCase&&) = default;
     AccessCase(const AccessCase& other)
         : m_type(other.m_type)
@@ -271,6 +270,7 @@ private:
     template<typename Functor>
     void forEachDependentCell(const Functor&) const;
 
+    void visitAggregate(SlotVisitor&) const;
     bool visitWeak(VM&) const;
     bool propagateTransitions(SlotVisitor&) const;
 
@@ -313,7 +313,7 @@ private:
 
     std::unique_ptr<PolyProtoAccessChain> m_polyProtoAccessChain;
 
-    Box<Identifier> m_identifier; // We use this indirection so the concurrent compiler can concurrently ref this Box.
+    CacheableIdentifier m_identifier;
 };
 
 } // namespace JSC

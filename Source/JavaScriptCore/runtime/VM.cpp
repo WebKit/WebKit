@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -1152,20 +1152,15 @@ void VM::dumpRegExpTrace()
 }
 #endif
 
-WatchpointSet* VM::ensureWatchpointSetForImpureProperty(const Identifier& propertyName)
+WatchpointSet* VM::ensureWatchpointSetForImpureProperty(UniquedStringImpl* propertyName)
 {
-    auto result = m_impurePropertyWatchpointSets.add(propertyName.string(), nullptr);
+    auto result = m_impurePropertyWatchpointSets.add(propertyName, nullptr);
     if (result.isNewEntry)
         result.iterator->value = adoptRef(new WatchpointSet(IsWatched));
     return result.iterator->value.get();
 }
 
-void VM::registerWatchpointForImpureProperty(const Identifier& propertyName, Watchpoint* watchpoint)
-{
-    ensureWatchpointSetForImpureProperty(propertyName)->add(watchpoint);
-}
-
-void VM::addImpureProperty(const String& propertyName)
+void VM::addImpureProperty(UniquedStringImpl* propertyName)
 {
     if (RefPtr<WatchpointSet> watchpointSet = m_impurePropertyWatchpointSets.take(propertyName))
         watchpointSet->fireAll(*this, "Impure property added");

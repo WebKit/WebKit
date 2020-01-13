@@ -1,3 +1,13 @@
+2020-01-13  Mark Lam  <mark.lam@apple.com>
+
+        Replace uses of Box<Identifier> with a new CacheableIdentifier class.
+        https://bugs.webkit.org/show_bug.cgi?id=205544
+        <rdar://problem/58041800>
+
+        Reviewed by Saam Barati.
+
+        * stress/racy-gc-cleanup-of-identifier-after-mutator-stops-running.js: Added.
+
 2020-01-11  Keith Miller  <keith_miller@apple.com>
 
         CheckNeutered needs to claim it reads JSType in clobberize.

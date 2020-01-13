@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,6 +34,7 @@
 #include "BuiltinNames.h"
 #include "BytecodeGenerator.h"
 #include "BytecodeUseDef.h"
+#include "CacheableIdentifierInlines.h"
 #include "CallLinkStatus.h"
 #include "CodeBlock.h"
 #include "CodeBlockWithJITType.h"
@@ -4831,13 +4832,10 @@ void ByteCodeParser::parseGetById(const Instruction* currentInstruction)
     else if (Op::opcodeID == op_get_by_id_direct)
         type = AccessType::GetByIdDirect;
     
-    GetByStatus::IdentifierKeepAlive keepAlive = [&] (Box<Identifier> identifier) {
-        m_graph.m_plan.keepAliveIdentifier(WTFMove(identifier));
-    };
     GetByStatus getByStatus = GetByStatus::computeFor(
         m_inlineStackTop->m_profiledBlock,
         m_inlineStackTop->m_baselineMap, m_icContextStack,
-        currentCodeOrigin(), GetByStatus::TrackIdentifiers::No, keepAlive);
+        currentCodeOrigin());
 
     handleGetById(
         bytecode.m_dst, prediction, base, identifierNumber, getByStatus, type, opcodeLength);
@@ -5738,10 +5736,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
             Node* base = get(bytecode.m_base);
             Node* property = get(bytecode.m_property);
             bool shouldCompileAsGetById = false;
-            GetByStatus::IdentifierKeepAlive keepAlive = [&] (Box<Identifier> identifier) {
-                m_graph.m_plan.keepAliveIdentifier(WTFMove(identifier));
-            };
-            GetByStatus getByStatus = GetByStatus::computeFor(m_inlineStackTop->m_profiledBlock, m_inlineStackTop->m_baselineMap, m_icContextStack, currentCodeOrigin(), GetByStatus::TrackIdentifiers::Yes, keepAlive);
+            GetByStatus getByStatus = GetByStatus::computeFor(m_inlineStackTop->m_profiledBlock, m_inlineStackTop->m_baselineMap, m_icContextStack, currentCodeOrigin());
 
             unsigned identifierNumber = 0;
 
@@ -5752,10 +5747,18 @@ void ByteCodeParser::parseBlock(unsigned limit)
                 // FIXME: In the future, we should be able to do something like MultiGetByOffset in a multi identifier mode.
                 // That way, we could both switch on multiple structures and multiple identifiers (or int 32 properties).
                 // https://bugs.webkit.org/show_bug.cgi?id=204216
-                if (Box<Identifier> impl = getByStatus.singleIdentifier()) {
-                    identifierNumber = m_graph.identifiers().ensure(impl);
+                if (CacheableIdentifier identifier = getByStatus.singleIdentifier()) {
+                    UniquedStringImpl* uid = identifier.uid();
+                    identifierNumber = m_graph.identifiers().ensure(identifier.uid());
+                    if (identifier.isCell()) {
+                        FrozenValue* frozen = m_graph.freezeStrong(identifier.cell());
+                        if (identifier.isSymbolCell())
+                            addToGraph(CheckCell, OpInfo(frozen), property);
+                        else
+                            addToGraph(CheckIdent, OpInfo(uid), property);
+                    } else
+                        addToGraph(CheckIdent, OpInfo(uid), property);
                     shouldCompileAsGetById = true;
-                    addToGraph(CheckIdent, OpInfo(impl->impl()), property);
                 }
             }
 

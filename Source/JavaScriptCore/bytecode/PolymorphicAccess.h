@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -150,6 +150,8 @@ public:
     unsigned size() const { return m_list.size(); }
     const AccessCase& at(unsigned i) const { return *m_list[i]; }
     const AccessCase& operator[](unsigned i) const { return *m_list[i]; }
+
+    void visitAggregate(SlotVisitor&);
 
     // If this returns false then we are requesting a reset of the owning StructureStubInfo.
     bool visitWeak(VM&) const;

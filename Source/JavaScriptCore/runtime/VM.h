@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -1030,11 +1030,10 @@ public:
 
     void shrinkFootprintWhenIdle();
 
-    WatchpointSet* ensureWatchpointSetForImpureProperty(const Identifier&);
-    void registerWatchpointForImpureProperty(const Identifier&, Watchpoint*);
+    WatchpointSet* ensureWatchpointSetForImpureProperty(UniquedStringImpl*);
     
     // FIXME: Use AtomString once it got merged with Identifier.
-    JS_EXPORT_PRIVATE void addImpureProperty(const String&);
+    JS_EXPORT_PRIVATE void addImpureProperty(UniquedStringImpl*);
     
     InlineWatchpointSet& primitiveGigacageEnabled() { return m_primitiveGigacageEnabled; }
 
@@ -1208,7 +1207,7 @@ private:
     bool m_shouldBuildPCToCodeOriginMapping { false };
     std::unique_ptr<CodeCache> m_codeCache;
     std::unique_ptr<BuiltinExecutables> m_builtinExecutables;
-    HashMap<String, RefPtr<WatchpointSet>> m_impurePropertyWatchpointSets;
+    HashMap<RefPtr<UniquedStringImpl>, RefPtr<WatchpointSet>> m_impurePropertyWatchpointSets;
     std::unique_ptr<TypeProfiler> m_typeProfiler;
     std::unique_ptr<TypeProfilerLog> m_typeProfilerLog;
     unsigned m_typeProfilerEnabledCount;
