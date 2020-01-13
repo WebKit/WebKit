@@ -668,9 +668,6 @@
 (allow ipc-posix-shm-read*
        (ipc-posix-name "apple.shm.notification_center"))
 
-(allow mach-lookup (with report) (with telemetry)
-    (global-name "com.apple.diagnosticd"))
-
 (logd-diagnostic-client)
 
 (managed-configuration-read-public)
