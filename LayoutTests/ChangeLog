@@ -1,3 +1,19 @@
+2020-01-13  Antti Koivisto  <antti@apple.com>
+
+        [LFC][Integration] Ensure that simple line layout tests stays don't turn into LFC tests
+        https://bugs.webkit.org/show_bug.cgi?id=206153
+
+        Reviewed by Zalan Bujtas.
+
+        We have a handful of SLL tests that document non-standard behaviors. Keep these SLL only with LFC enabled.
+
+        * fast/text/embed-at-end-of-pre-wrap-line-simple-lines-expected.html:
+        * fast/text/embed-at-end-of-pre-wrap-line-simple-lines.html:
+        * fast/text/simple-line-layout-leading-whitespace-with-soft-hard-linebreak-expected.html:
+        * fast/text/simple-line-layout-leading-whitespace-with-soft-hard-linebreak.html:
+        * fast/text/whitespace/pre-wrap-long-word-simple-lines-expected.html:
+        * fast/text/whitespace/pre-wrap-long-word-simple-lines.html:
+
 2020-01-12  Zalan Bujtas  <zalan@apple.com>
 
         Text-indent with percentage value should resolve against the available width
