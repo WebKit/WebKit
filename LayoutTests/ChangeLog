@@ -1,3 +1,14 @@
+2020-01-13  Zalan Bujtas  <zalan@apple.com>
+
+        Add a simple trailing letter-spacing test case
+        https://bugs.webkit.org/show_bug.cgi?id=206185
+        <rdar://problem/58535841>
+
+        Reviewed by Antti Koivisto.
+
+        * fast/text/trailing-letter-spacing-long-expected.html: Added.
+        * fast/text/trailing-letter-spacing-long.html: Added.
+
 2020-01-13  Truitt Savell  <tsavell@apple.com>
 
         Flaky Test: imported/w3c/web-platform-tests/svg/import/struct-dom-06-b-manual.svg
