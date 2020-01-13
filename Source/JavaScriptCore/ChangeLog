@@ -1,3 +1,18 @@
+2020-01-11  Keith Miller  <keith_miller@apple.com>
+
+        CheckNeutered needs to claim it reads JSType in clobberize.
+        https://bugs.webkit.org/show_bug.cgi?id=206136
+
+        Reviewed by Yusuke Suzuki.
+
+        CheckNeutered needs to read JSType otherwise it can get hoisted
+        past the TypedArray check guarding it.
+
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+
 2020-01-12  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Use internal object field mechanism to implement JSStringIterator

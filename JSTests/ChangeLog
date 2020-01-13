@@ -1,3 +1,13 @@
+2020-01-11  Keith Miller  <keith_miller@apple.com>
+
+        CheckNeutered needs to claim it reads JSType in clobberize.
+        https://bugs.webkit.org/show_bug.cgi?id=206136
+
+        Reviewed by Yusuke Suzuki.
+
+        * stress/check-neutered-clobberize-reads-jstype.js: Added.
+        (foo):
+
 2020-01-12  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Use internal object field mechanism to implement JSStringIterator

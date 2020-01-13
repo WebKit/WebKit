@@ -3361,6 +3361,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
     }
 
     case CheckNeutered: {
+        DFG_ASSERT(m_graph, node, speculationChecked(forNode(node->child1()).m_type, SpecTypedArrayView));
         break;
     }
 
