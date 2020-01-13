@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,26 +23,19 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef MediaPlayerPrivateMediaStreamAVFObjC_h
-#define MediaPlayerPrivateMediaStreamAVFObjC_h
+#pragma once
 
 #if ENABLE(MEDIA_STREAM) && USE(AVFOUNDATION)
 
 #include "MediaPlayerPrivate.h"
 #include "MediaSample.h"
 #include "MediaStreamPrivate.h"
-#include <CoreGraphics/CGAffineTransform.h>
 #include <wtf/Deque.h>
-#include <wtf/Function.h>
+#include <wtf/Forward.h>
 #include <wtf/LoggerHelper.h>
-#include <wtf/MediaTime.h>
 #include <wtf/WeakPtr.h>
 
-OBJC_CLASS AVSampleBufferAudioRenderer;
 OBJC_CLASS AVSampleBufferDisplayLayer;
-OBJC_CLASS AVSampleBufferRenderSynchronizer;
-OBJC_CLASS AVStreamSession;
-OBJC_CLASS NSNumber;
 OBJC_CLASS WebAVSampleBufferStatusChangeListener;
 
 namespace PAL {
@@ -283,5 +276,3 @@ private:
 }
 
 #endif // ENABLE(MEDIA_STREAM) && USE(AVFOUNDATION)
-
-#endif // MediaPlayerPrivateMediaStreamAVFObjC_h
