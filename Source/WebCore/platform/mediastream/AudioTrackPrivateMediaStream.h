@@ -32,19 +32,16 @@
 
 namespace WebCore {
 
-class AudioTrackPrivateMediaStream : public AudioTrackPrivate {
+class AudioMediaStreamTrackRenderer;
+
+class AudioTrackPrivateMediaStream final : public AudioTrackPrivate, private MediaStreamTrackPrivate::Observer {
     WTF_MAKE_NONCOPYABLE(AudioTrackPrivateMediaStream)
 public:
     static RefPtr<AudioTrackPrivateMediaStream> create(MediaStreamTrackPrivate& streamTrack)
     {
         return adoptRef(*new AudioTrackPrivateMediaStream(streamTrack));
     }
-
-    Kind kind() const override { return Kind::Main; }
-    AtomString id() const override { return m_id; }
-    AtomString label() const override { return m_label; }
-    AtomString language() const override { return emptyAtom(); }
-    int trackIndex() const override { return m_index; }
+    ~AudioTrackPrivateMediaStream();
 
     void setTrackIndex(int index) { m_index = index; }
 
@@ -53,20 +50,57 @@ public:
     MediaTime timelineOffset() const { return m_timelineOffset; }
     void setTimelineOffset(const MediaTime& offset) { m_timelineOffset = offset; }
 
+    void clear();
+
+    void play();
+    void pause();
+    bool isPlaying() { return m_isPlaying; }
+
+    void setVolume(float);
+    float volume() const;
+
+    void setMuted(bool muted) { m_muted = muted; }
+    bool muted() const { return m_muted; }
+
+#if !RELEASE_LOG_DISABLED
+    void setLogger(const Logger&, const void*) final;
+    const char* logClassName() const final { return "AudioTrackPrivateMediaStream"; }
+#endif
+
 protected:
-    AudioTrackPrivateMediaStream(MediaStreamTrackPrivate& track)
-        : m_streamTrack(track)
-        , m_id(track.id())
-        , m_label(track.label())
-        , m_timelineOffset(MediaTime::invalidTime())
-    {
-    }
+    explicit AudioTrackPrivateMediaStream(MediaStreamTrackPrivate&);
+
+    // AudioTrackPrivate
+    Kind kind() const final { return Kind::Main; }
+    AtomString id() const final { return m_id; }
+    AtomString label() const final { return m_label; }
+    int trackIndex() const final { return m_index; }
+
+    // MediaStreamTrackPrivate::Observer
+    void audioSamplesAvailable(MediaStreamTrackPrivate&, const MediaTime&, const PlatformAudioData&, const AudioStreamDescription&, size_t) final;
+    void trackEnded(MediaStreamTrackPrivate&) final;
+    void trackMutedChanged(MediaStreamTrackPrivate&)  final;
+    void trackEnabledChanged(MediaStreamTrackPrivate&)  final;
+    void trackSettingsChanged(MediaStreamTrackPrivate&) final { }
+
+    void playInternal();
+    void updateRendererMutedState();
+
+    // Main thread writable members
+    bool m_isPlaying { false };
+    bool m_autoPlay { false };
+    bool m_muted { false };
+    bool m_isCleared { false };
 
     Ref<MediaStreamTrackPrivate> m_streamTrack;
     AtomString m_id;
     AtomString m_label;
     int m_index { 0 };
     MediaTime m_timelineOffset;
+
+    // Audio thread members
+    std::unique_ptr<AudioMediaStreamTrackRenderer> m_renderer;
+    bool m_hasStartedAutoplay { false };
 };
 
 }

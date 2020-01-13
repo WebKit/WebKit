@@ -42,7 +42,6 @@ namespace WebCore {
 
 class CAAudioStreamDescription;
 class CARingBuffer;
-class MediaStreamTrackPrivate;
 
 class AudioSampleDataSource : public ThreadSafeRefCounted<AudioSampleDataSource, WTF::DestructionThread::MainRunLoop>
 #if !RELEASE_LOG_DISABLED
@@ -50,7 +49,7 @@ class AudioSampleDataSource : public ThreadSafeRefCounted<AudioSampleDataSource,
 #endif
     {
 public:
-    static Ref<AudioSampleDataSource> create(size_t, MediaStreamTrackPrivate&);
+    static Ref<AudioSampleDataSource> create(size_t, WTF::LoggerHelper&);
 
     ~AudioSampleDataSource();
 
@@ -81,7 +80,7 @@ public:
 #endif
 
 private:
-    AudioSampleDataSource(size_t, MediaStreamTrackPrivate&);
+    AudioSampleDataSource(size_t, LoggerHelper&);
 
     OSStatus setupConverter();
     bool pullSamplesInternal(AudioBufferList&, size_t&, uint64_t, double, PullMode);

@@ -28,7 +28,7 @@
 
 #if ENABLE(MEDIA_STREAM) && USE(AVFOUNDATION)
 
-#import "AudioTrackPrivateMediaStreamCocoa.h"
+#import "AudioTrackPrivateMediaStream.h"
 #import "GraphicsContextCG.h"
 #import "Logging.h"
 #import "MediaStreamPrivate.h"
@@ -1033,7 +1033,7 @@ void MediaPlayerPrivateMediaStreamAVFObjC::updateTracks()
 {
     MediaStreamTrackPrivateVector currentTracks = m_mediaStreamPrivate->tracks();
 
-    auto setAudioTrackState = [this](AudioTrackPrivateMediaStreamCocoa& track, int index, TrackState state)
+    auto setAudioTrackState = [this](AudioTrackPrivateMediaStream& track, int index, TrackState state)
     {
         switch (state) {
         case TrackState::Remove:
@@ -1052,7 +1052,7 @@ void MediaPlayerPrivateMediaStreamAVFObjC::updateTracks()
             break;
         }
     };
-    updateTracksOfType(m_audioTrackMap, RealtimeMediaSource::Type::Audio, currentTracks, &AudioTrackPrivateMediaStreamCocoa::create, WTFMove(setAudioTrackState));
+    updateTracksOfType(m_audioTrackMap, RealtimeMediaSource::Type::Audio, currentTracks, &AudioTrackPrivateMediaStream::create, WTFMove(setAudioTrackState));
 
     auto setVideoTrackState = [this](VideoTrackPrivateMediaStream& track, int index, TrackState state)
     {

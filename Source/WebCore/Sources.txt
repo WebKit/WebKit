@@ -1970,6 +1970,8 @@ platform/mediacapabilities/MediaCapabilitiesLogging.cpp
 
 platform/mediarecorder/MediaRecorderPrivateMock.cpp
 
+platform/mediastream/AudioMediaStreamTrackRenderer.cpp
+platform/mediastream/AudioTrackPrivateMediaStream.cpp
 platform/mediastream/CaptureDeviceManager.cpp
 platform/mediastream/MediaConstraints.cpp
 platform/mediastream/MediaEndpointConfiguration.cpp

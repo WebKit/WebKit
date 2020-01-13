@@ -46,19 +46,22 @@ namespace WebCore {
 using namespace PAL;
 using namespace JSC;
 
-Ref<AudioSampleDataSource> AudioSampleDataSource::create(size_t maximumSampleCount, MediaStreamTrackPrivate& track)
+Ref<AudioSampleDataSource> AudioSampleDataSource::create(size_t maximumSampleCount, LoggerHelper& loggerHelper)
 {
-    return adoptRef(*new AudioSampleDataSource(maximumSampleCount, track));
+    return adoptRef(*new AudioSampleDataSource(maximumSampleCount, loggerHelper));
 }
 
-AudioSampleDataSource::AudioSampleDataSource(size_t maximumSampleCount, MediaStreamTrackPrivate& track)
+AudioSampleDataSource::AudioSampleDataSource(size_t maximumSampleCount, LoggerHelper& loggerHelper)
     : m_inputSampleOffset(MediaTime::invalidTime())
     , m_maximumSampleCount(maximumSampleCount)
 #if !RELEASE_LOG_DISABLED
-    , m_logger(track.logger())
-    , m_logIdentifier(track.logIdentifier())
+    , m_logger(loggerHelper.logger())
+    , m_logIdentifier(loggerHelper.logIdentifier())
 #endif
 {
+#if RELEASE_LOG_DISABLED
+    UNUSED_PARAM(loggerHelper);
+#endif
 }
 
 AudioSampleDataSource::~AudioSampleDataSource()

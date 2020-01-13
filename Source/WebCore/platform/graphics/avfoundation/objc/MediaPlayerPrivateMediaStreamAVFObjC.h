@@ -51,7 +51,7 @@ class Clock;
 
 namespace WebCore {
 
-class AudioTrackPrivateMediaStreamCocoa;
+class AudioTrackPrivateMediaStream;
 class AVVideoCaptureSource;
 class MediaSourcePrivateClient;
 class PixelBufferConformerCV;
@@ -249,7 +249,7 @@ private:
     };
     CurrentFramePainter m_imagePainter;
 
-    HashMap<String, RefPtr<AudioTrackPrivateMediaStreamCocoa>> m_audioTrackMap;
+    HashMap<String, RefPtr<AudioTrackPrivateMediaStream>> m_audioTrackMap;
     HashMap<String, RefPtr<VideoTrackPrivateMediaStream>> m_videoTrackMap;
     PendingSampleQueue m_pendingVideoSampleQueue;
 

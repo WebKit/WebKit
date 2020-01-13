@@ -48,7 +48,7 @@ public:
 class TrackPrivateBase
     : public ThreadSafeRefCounted<TrackPrivateBase, WTF::DestructionThread::Main>
 #if !RELEASE_LOG_DISABLED
-    , private LoggerHelper
+    , public LoggerHelper
 #endif
 {
     WTF_MAKE_NONCOPYABLE(TrackPrivateBase);
@@ -73,7 +73,7 @@ public:
     }
 
 #if !RELEASE_LOG_DISABLED
-    void setLogger(const Logger&, const void*);
+    virtual void setLogger(const Logger&, const void*);
     const Logger& logger() const final { ASSERT(m_logger); return *m_logger.get(); }
     const void* logIdentifier() const final { return m_logIdentifier; }
     WTFLogChannel& logChannel() const final;

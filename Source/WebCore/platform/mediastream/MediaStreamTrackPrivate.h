@@ -47,7 +47,7 @@ class MediaStreamTrackPrivate final
     , public CanMakeWeakPtr<MediaStreamTrackPrivate, WeakPtrFactoryInitialization::Eager>
     , public RealtimeMediaSource::Observer
 #if !RELEASE_LOG_DISABLED
-    , private LoggerHelper
+    , public LoggerHelper
 #endif
 {
 public:
