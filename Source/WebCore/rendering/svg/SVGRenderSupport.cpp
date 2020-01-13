@@ -64,6 +64,12 @@ LayoutRect SVGRenderSupport::clippedOverflowRectForRepaint(const RenderElement& 
 
 Optional<FloatRect> SVGRenderSupport::computeFloatVisibleRectInContainer(const RenderElement& renderer, const FloatRect& rect, const RenderLayerModelObject* container, RenderObject::VisibleRectContext context)
 {
+    // Ensure our parent is an SVG object.
+    ASSERT(renderer.parent());
+    auto& parent = *renderer.parent();
+    if (!is<SVGElement>(parent.element()))
+        return FloatRect();
+
     FloatRect adjustedRect = rect;
     const SVGRenderStyle& svgStyle = renderer.style().svgStyle();
     if (const ShadowData* shadow = svgStyle.shadow())
@@ -72,7 +78,8 @@ Optional<FloatRect> SVGRenderSupport::computeFloatVisibleRectInContainer(const R
 
     // Translate to coords in our parent renderer, and then call computeFloatVisibleRectInContainer() on our parent.
     adjustedRect = renderer.localToParentTransform().mapRect(adjustedRect);
-    return renderer.parent()->computeFloatVisibleRectInContainer(adjustedRect, container, context);
+
+    return parent.computeFloatVisibleRectInContainer(adjustedRect, container, context);
 }
 
 const RenderElement& SVGRenderSupport::localToParentTransform(const RenderElement& renderer, AffineTransform &transform)
