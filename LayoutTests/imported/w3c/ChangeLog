@@ -1,3 +1,21 @@
+2020-01-13  Cathie Chen  <cathiechen@igalia.com>
+
+        Import the update of img-aspect-ratio.html.
+        https://bugs.webkit.org/show_bug.cgi?id=206160
+
+        Reviewed by Frédéric Wang
+
+        Use parseFloat() instead of parseInt() in img-aspect-ratio.html.
+        The resource location was changed to relative in bug 205678. To keep them consistent with others, restore them.
+
+        * web-platform-tests/html/rendering/replaced-elements/attributes-for-embedded-content-and-images/align.html:
+        * web-platform-tests/html/rendering/replaced-elements/attributes-for-embedded-content-and-images/canvas-aspect-ratio.html:
+        * web-platform-tests/html/rendering/replaced-elements/attributes-for-embedded-content-and-images/content-aspect-ratio.html:
+        * web-platform-tests/html/rendering/replaced-elements/attributes-for-embedded-content-and-images/img-aspect-ratio.html:
+        * web-platform-tests/html/rendering/replaced-elements/attributes-for-embedded-content-and-images/img-no-alt-replaced.html:
+        * web-platform-tests/html/rendering/replaced-elements/attributes-for-embedded-content-and-images/img-replaced-box-while-loading.html:
+        * web-platform-tests/html/rendering/replaced-elements/attributes-for-embedded-content-and-images/video-aspect-ratio.html:
+
 2020-01-10  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [WebCore] Fix crash in module loader due to change in fragment reservation
