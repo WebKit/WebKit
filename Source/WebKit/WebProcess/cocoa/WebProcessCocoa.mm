@@ -819,7 +819,7 @@ void WebProcess::displayWasRefreshed(CGDirectDisplayID displayID)
 }
 #endif
 
-#if PLATFORM(IOS_FAMILY)
+#if PLATFORM(IOS_FAMILY) && !PLATFORM(MACCATALYST)
 static float currentBacklightLevel()
 {
     return WebProcess::singleton().backlightLevel();
