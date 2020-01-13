@@ -195,6 +195,7 @@ std::unique_ptr<Box> TreeBuilder::createLayoutBox(const Container& parentContain
 
         if (is<RenderLineBreak>(renderer)) {
             clonedStyle.setDisplay(DisplayType::Inline);
+            clonedStyle.setFloating(Float::No);
             childLayoutBox = makeUnique<Box>(elementAttributes(renderer), WTFMove(clonedStyle));
         } else if (is<RenderTable>(renderer)) {
             // Construct the principal table wrapper box (and not the table box itself).
