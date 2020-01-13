@@ -563,6 +563,18 @@ static WebCore::Color scrollViewBackgroundColor(WKWebView *webView)
     return _obscuredInsetEdgesAffectedBySafeArea;
 }
 
+- (UIEdgeInsets)_computedObscuredInsetForSafeBrowsingWarning
+{
+    if (_haveSetObscuredInsets)
+        return _obscuredInsets;
+
+#if PLATFORM(IOS)
+    return UIEdgeInsetsAdd(UIEdgeInsetsZero, self._scrollViewSystemContentInset, self._effectiveObscuredInsetEdgesAffectedBySafeArea);
+#else
+    return UIEdgeInsetsZero;
+#endif
+}
+
 - (UIEdgeInsets)_computedObscuredInset
 {
     if (!linkedOnOrAfter(WebKit::SDKVersion::FirstWhereScrollViewContentInsetsAreNotObscuringInsets)) {
@@ -1784,6 +1796,7 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
     [super safeAreaInsetsDidChange];
 
     [self _scheduleVisibleContentRectUpdate];
+    [_safeBrowsingWarning setContentInset:[self _computedObscuredInsetForSafeBrowsingWarning]];
 }
 #endif
 
@@ -2428,6 +2441,7 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISe
     _obscuredInsets = obscuredInsets;
 
     [self _scheduleVisibleContentRectUpdate];
+    [_safeBrowsingWarning setContentInset:[self _computedObscuredInsetForSafeBrowsingWarning]];
 }
 
 - (UIRectEdge)_obscuredInsetEdgesAffectedBySafeArea

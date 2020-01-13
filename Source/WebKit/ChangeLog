@@ -1,3 +1,18 @@
+2020-01-13  Alex Christensen  <achristensen@webkit.org>
+
+        Propogate UIEdgeInsets from WKWebView to WKSafeBrowsingWarning on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=206201
+        <rdar://problem/57135847>
+
+        Reviewed by Tim Horton.
+
+        Manually verified this fixes the radar.
+
+        * UIProcess/API/ios/WKWebViewIOS.mm:
+        (-[WKWebView _computedObscuredInsetForSafeBrowsingWarning]):
+        (-[WKWebView safeAreaInsetsDidChange]):
+        (-[WKWebView _setObscuredInsets:]):
+
 2020-01-13  Eric Carlson  <eric.carlson@apple.com>
 
         Expose audio tracks for media files in the GPUProcess
