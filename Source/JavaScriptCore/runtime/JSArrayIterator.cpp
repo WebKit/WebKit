@@ -62,10 +62,10 @@ JSArrayIterator::JSArrayIterator(VM& vm, Structure* structure)
 
 void JSArrayIterator::finishCreation(VM& vm)
 {
+    Base::finishCreation(vm);
     auto values = initialValues();
     for (unsigned index = 0; index < values.size(); ++index)
         Base::internalField(index).set(vm, this, values[index]);
-    Base::finishCreation(vm);
 }
 
 void JSArrayIterator::visitChildren(JSCell* cell, SlotVisitor& visitor)

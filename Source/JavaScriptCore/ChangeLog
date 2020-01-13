@@ -1,5 +1,39 @@
 2020-01-12  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        [JSC] Remove IsDone from JSArrayIterator
+        https://bugs.webkit.org/show_bug.cgi?id=206140
+
+        Reviewed by Keith Miller.
+
+        We can store `-1` in Index field to represent whether the iterator is closed.
+        While this patch does not change the allocation size of JSArrayIterator, this style can
+        shrink the size of JSStringIterator when we implement it in the same style.
+
+        We also rename iterationKindKeyValue to iterationKindEntries.
+
+        * builtins/ArrayIteratorPrototype.js:
+        (globalPrivate.arrayIteratorNextHelper):
+        * builtins/MapIteratorPrototype.js:
+        (globalPrivate.mapIteratorNext):
+        * builtins/MapPrototype.js:
+        (entries):
+        * builtins/SetIteratorPrototype.js:
+        (globalPrivate.setIteratorNext):
+        * builtins/SetPrototype.js:
+        (entries):
+        * bytecode/BytecodeIntrinsicRegistry.cpp:
+        (JSC::BytecodeIntrinsicRegistry::BytecodeIntrinsicRegistry):
+        * bytecode/BytecodeIntrinsicRegistry.h:
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::arrayIteratorInternalFieldIndex):
+        * inspector/JSInjectedScriptHost.cpp:
+        (Inspector::cloneArrayIteratorObject):
+        * runtime/JSArrayIterator.cpp:
+        (JSC::JSArrayIterator::finishCreation):
+        * runtime/JSArrayIterator.h:
+
+2020-01-12  Yusuke Suzuki  <ysuzuki@apple.com>
+
         [JSC] Consistently use "var" in builtin JS
         https://bugs.webkit.org/show_bug.cgi?id=206157
 

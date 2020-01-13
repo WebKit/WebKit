@@ -62,7 +62,7 @@ function entries()
     if (!@isMap(this))
         @throwTypeError("Map.prototype.entries requires that |this| be Map");
 
-    return new @MapIterator(this, @iterationKindKeyValue);
+    return new @MapIterator(this, @iterationKindEntries);
 }
 
 function forEach(callback /*, thisArg */)

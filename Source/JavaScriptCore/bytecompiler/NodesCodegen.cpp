@@ -1069,8 +1069,6 @@ static JSArrayIterator::Field arrayIteratorInternalFieldIndex(BytecodeIntrinsicN
     ASSERT(node->entry().type() == BytecodeIntrinsicRegistry::Type::Emitter);
     if (node->entry().emitter() == &BytecodeIntrinsicNode::emit_intrinsic_arrayIteratorFieldIndex)
         return JSArrayIterator::Field::Index;
-    if (node->entry().emitter() == &BytecodeIntrinsicNode::emit_intrinsic_arrayIteratorFieldIsDone)
-        return JSArrayIterator::Field::IsDone;
     if (node->entry().emitter() == &BytecodeIntrinsicNode::emit_intrinsic_arrayIteratorFieldIteratedObject)
         return JSArrayIterator::Field::IteratedObject;
     if (node->entry().emitter() == &BytecodeIntrinsicNode::emit_intrinsic_arrayIteratorFieldKind)

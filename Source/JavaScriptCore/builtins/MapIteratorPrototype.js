@@ -36,7 +36,7 @@ function mapIteratorNext(bucket, kind)
     if (!done) {
         var key = @mapBucketKey(bucket);
         value = @mapBucketValue(bucket);
-        if (kind === @iterationKindKeyValue)
+        if (kind === @iterationKindEntries)
             value = [ key, value ]
         else if (kind === @iterationKindKey)
             value = key;

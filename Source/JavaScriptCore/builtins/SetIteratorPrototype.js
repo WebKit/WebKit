@@ -35,7 +35,7 @@ function setIteratorNext(bucket, kind)
     var done = bucket === @sentinelSetBucket;
     if (!done) {
         value = @setBucketKey(bucket);
-        if (kind === @iterationKindKeyValue)
+        if (kind === @iterationKindEntries)
             value = [ value, value ]
     }
     return { value, done };

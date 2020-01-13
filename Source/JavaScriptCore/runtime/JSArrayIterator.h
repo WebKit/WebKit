@@ -35,12 +35,10 @@ public:
 
     enum class Field : uint8_t { 
         Index = 0,
-        IsDone,
         IteratedObject,
         Kind,
     };
 
-    // JSArrayIterator has one inline storage slot, which is pointing internalField(0).
     static size_t allocationSize(Checked<size_t> inlineCapacity)
     {
         ASSERT_UNUSED(inlineCapacity, inlineCapacity == 0U);
@@ -57,7 +55,6 @@ public:
     {
         return { {
             jsNumber(0),
-            jsBoolean(false),
             jsNull(),
             jsNumber(0),
         } };

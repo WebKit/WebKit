@@ -52,7 +52,7 @@ function entries()
     if (!@isSet(this))
         @throwTypeError("Set.prototype.entries requires that |this| be Set");
 
-    return new @SetIterator(this, @iterationKindKeyValue);
+    return new @SetIterator(this, @iterationKindEntries);
 }
 
 function forEach(callback /*, thisArg */)

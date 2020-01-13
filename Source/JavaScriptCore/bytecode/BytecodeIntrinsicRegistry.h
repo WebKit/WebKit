@@ -89,7 +89,7 @@ enum class LinkTimeConstant : int32_t;
     macro(Infinity) \
     macro(iterationKindKey) \
     macro(iterationKindValue) \
-    macro(iterationKindKeyValue) \
+    macro(iterationKindEntries) \
     macro(MAX_ARRAY_INDEX) \
     macro(MAX_STRING_LENGTH) \
     macro(MAX_SAFE_INTEGER) \

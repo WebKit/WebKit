@@ -45,21 +45,22 @@ function arrayIteratorNextHelper(array, kind)
     var done = true;
     var value;
 
-    if (!@getArrayIteratorInternalField(this, @arrayIteratorFieldIsDone)) {
-        var index = @getArrayIteratorInternalField(this, @arrayIteratorFieldIndex);
+    var index = @getArrayIteratorInternalField(this, @arrayIteratorFieldIndex);
+    if (index !== -1) {
         var length = array.length >>> 0;
         if (index < length) {
             @putArrayIteratorInternalField(this, @arrayIteratorFieldIndex, index + 1);
             done = false;
             if (kind === @iterationKindKey)
                 value = index;
-            else { 
+            else {
                 value = array[index];
-                value = kind === @iterationKindValue ? value : [index, value];
+                if (kind === @iterationKindEntries)
+                    value = [index, value];
             }
-        }
+        } else
+            @putArrayIteratorInternalField(this, @arrayIteratorFieldIndex, -1);
     }
-    @putArrayIteratorInternalField(this, @arrayIteratorFieldIsDone, done);
 
     return { value, done };
 }
