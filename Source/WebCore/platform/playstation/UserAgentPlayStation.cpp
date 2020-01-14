@@ -33,4 +33,9 @@ String standardUserAgent(const String&, const String&)
     return emptyString();
 }
 
+String standardUserAgentForURL(const URL&)
+{
+    return emptyString();
+}
+
 } // namespace WebCore
