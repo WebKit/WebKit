@@ -102,7 +102,7 @@ static NSString * const WebKitSuppressMemoryPressureHandlerDefaultsKey = @"WebKi
 static NSString * const WebKitLogCookieInformationDefaultsKey = @"WebKitLogCookieInformation";
 #endif
 
-#if PLATFORM(IOS_FAMILY)
+#if PLATFORM(IOS_FAMILY) && !PLATFORM(MACCATALYST)
 SOFT_LINK_PRIVATE_FRAMEWORK(BackBoardServices)
 SOFT_LINK(BackBoardServices, BKSDisplayBrightnessGetCurrent, float, (), ());
 #endif
@@ -491,7 +491,7 @@ bool WebProcessPool::networkProcessHasEntitlementForTesting(const String& entitl
     return WTF::hasEntitlement(ensureNetworkProcess().connection()->xpcConnection(), entitlement.utf8().data());
 }
 
-#if PLATFORM(IOS_FAMILY)
+#if PLATFORM(IOS_FAMILY) && !PLATFORM(MACCATALYST)
 float WebProcessPool::displayBrightness()
 {
     return BKSDisplayBrightnessGetCurrent();
@@ -550,7 +550,7 @@ void WebProcessPool::registerNotificationObservers()
     m_deactivationObserver = [[NSNotificationCenter defaultCenter] addObserverForName:NSApplicationDidResignActiveNotification object:NSApp queue:[NSOperationQueue currentQueue] usingBlock:^(NSNotification *notification) {
         setApplicationIsActive(false);
     }];
-#else
+#elif !PLATFORM(MACCATALYST)
     CFNotificationCenterAddObserver(CFNotificationCenterGetDarwinNotifyCenter(), this, backlightLevelDidChangeCallback, static_cast<CFStringRef>(UIBacklightLevelChangedNotification), nullptr, CFNotificationSuspensionBehaviorCoalesce);
 #if PLATFORM(IOS)
     m_accessibilityEnabledObserver = [[NSNotificationCenter defaultCenter] addObserverForName:(__bridge id)kAXSApplicationAccessibilityEnabledNotification object:nil queue:[NSOperationQueue currentQueue] usingBlock:^(NSNotification *) {

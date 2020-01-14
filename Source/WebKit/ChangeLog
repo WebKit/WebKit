@@ -1,5 +1,51 @@
 2020-01-14  Kocsen Chung  <kocsen_chung@apple.com>
 
+        Cherry-pick r254433. rdar://problem/58554516
+
+    [macCatalyst] UI process crashes on launch after r254101
+    https://bugs.webkit.org/show_bug.cgi?id=206156
+    <rdar://problem/58514942>
+    
+    Reviewed by Brent Fulgham.
+    
+    Fixes the crash by not soft-linking BackBoardServices in an attempt to invoke BKSDisplayBrightnessGetCurrent on
+    macCatalyst. Prior to r254101, this was only defined on iOS and not watchOS or tvOS; after this change, it
+    should be defined only on iOS, watchOS and tvOS.
+    
+    * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+    (WebKit::WebProcessPool::registerNotificationObservers):
+    * UIProcess/WebProcessPool.cpp:
+    (WebKit::WebProcessPool::initializeNewWebProcess):
+    * UIProcess/WebProcessPool.h:
+    * WebProcess/WebProcess.h:
+    * WebProcess/WebProcess.messages.in:
+    * WebProcess/cocoa/WebProcessCocoa.mm:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@254433 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-01-12  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+            [macCatalyst] UI process crashes on launch after r254101
+            https://bugs.webkit.org/show_bug.cgi?id=206156
+            <rdar://problem/58514942>
+
+            Reviewed by Brent Fulgham.
+
+            Fixes the crash by not soft-linking BackBoardServices in an attempt to invoke BKSDisplayBrightnessGetCurrent on
+            macCatalyst. Prior to r254101, this was only defined on iOS and not watchOS or tvOS; after this change, it
+            should be defined only on iOS, watchOS and tvOS.
+
+            * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+            (WebKit::WebProcessPool::registerNotificationObservers):
+            * UIProcess/WebProcessPool.cpp:
+            (WebKit::WebProcessPool::initializeNewWebProcess):
+            * UIProcess/WebProcessPool.h:
+            * WebProcess/WebProcess.h:
+            * WebProcess/WebProcess.messages.in:
+            * WebProcess/cocoa/WebProcessCocoa.mm:
+
+2020-01-14  Kocsen Chung  <kocsen_chung@apple.com>
+
         Revert r254392. rdar://problem/58542040
 
 2020-01-11  Alex Christensen  <achristensen@webkit.org>
