@@ -1,3 +1,46 @@
+2020-01-13  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r254101. rdar://problem/58535157
+
+    [iOS] Get display level in the UI process for all iOS platforms
+    https://bugs.webkit.org/show_bug.cgi?id=205835
+    <rdar://problem/58116883>
+    
+    Reviewed by Brent Fulgham.
+    
+    This was previously only done for iOS, but should be done for all iOS platforms.
+    
+    * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+    (WebKit::WebProcessPool::registerNotificationObservers):
+    * UIProcess/WebProcessPool.cpp:
+    (WebKit::WebProcessPool::initializeNewWebProcess):
+    * UIProcess/WebProcessPool.h:
+    * WebProcess/WebProcess.h:
+    * WebProcess/WebProcess.messages.in:
+    * WebProcess/cocoa/WebProcessCocoa.mm:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@254101 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-01-06  Per Arne Vollan  <pvollan@apple.com>
+
+            [iOS] Get display level in the UI process for all iOS platforms
+            https://bugs.webkit.org/show_bug.cgi?id=205835
+            <rdar://problem/58116883>
+
+            Reviewed by Brent Fulgham.
+
+            This was previously only done for iOS, but should be done for all iOS platforms.
+
+            * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+            (WebKit::WebProcessPool::registerNotificationObservers):
+            * UIProcess/WebProcessPool.cpp:
+            (WebKit::WebProcessPool::initializeNewWebProcess):
+            * UIProcess/WebProcessPool.h:
+            * WebProcess/WebProcess.h:
+            * WebProcess/WebProcess.messages.in:
+            * WebProcess/cocoa/WebProcessCocoa.mm:
+
 2020-01-03  Garrett Davidson  <garrett_davidson@apple.com>
 
         IconLoadingClient::getLoadDecisionForIcon() leaks an Objective-C block
