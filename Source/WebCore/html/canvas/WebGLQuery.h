@@ -36,9 +36,16 @@ public:
     static Ref<WebGLQuery> create(WebGLRenderingContextBase&);
     virtual ~WebGLQuery();
 
+    bool isResultAvailable() const { return m_isResultAvailable; }
+
+    void makeResultAvailable() { m_isResultAvailable = true; }
+
 protected:
     explicit WebGLQuery(WebGLRenderingContextBase&);
     void deleteObjectImpl(GraphicsContextGLOpenGL*, PlatformGLObject) override;
+
+private:
+    bool m_isResultAvailable { false };
 };
 
 } // namespace WebCore

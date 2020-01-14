@@ -58,6 +58,7 @@
 #include "JSWebGLProgram.h"
 #include "JSWebGLRenderbuffer.h"
 #include "JSWebGLTexture.h"
+#include "JSWebGLTransformFeedback.h"
 #include "JSWebGLVertexArrayObject.h"
 #include "JSWebGLVertexArrayObjectOES.h"
 #include <JavaScriptCore/JSCInlines.h>
@@ -138,6 +139,9 @@ JSValue convertToJSValue(JSGlobalObject& lexicalGlobalObject, JSDOMGlobalObject&
         ,
         [&] (const RefPtr<WebGLVertexArrayObject>& array) {
             return toJS(&lexicalGlobalObject, &globalObject, array.get());
+        },
+        [&] (const RefPtr<WebGLTransformFeedback>& transformFeedback) {
+            return toJS(&lexicalGlobalObject, &globalObject, transformFeedback.get());
         }
 #endif
     );

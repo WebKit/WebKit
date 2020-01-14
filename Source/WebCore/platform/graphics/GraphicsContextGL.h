@@ -464,6 +464,7 @@ public:
         UNSIGNED_INT_10F_11F_11F_REV = 0x8C3B,
         RGB9_E5 = 0x8C3D,
         UNSIGNED_INT_5_9_9_9_REV = 0x8C3E,
+        TRANSFORM_FEEDBACK_VARYING_MAX_LENGTH = 0x8C76,
         TRANSFORM_FEEDBACK_BUFFER_MODE = 0x8C7F,
         MAX_TRANSFORM_FEEDBACK_SEPARATE_COMPONENTS = 0x8C80,
         TRANSFORM_FEEDBACK_VARYINGS = 0x8C83,
@@ -1133,7 +1134,7 @@ public:
     virtual void endQuery(GCGLenum target) = 0;
     virtual PlatformGLObject getQuery(GCGLenum target, GCGLenum pname) = 0;
     // getQueryParameter
-    virtual void glGetQueryObjectuiv(PlatformGLObject query, GCGLenum pname, GCGLuint* value) = 0;
+    virtual void getQueryObjectuiv(PlatformGLObject query, GCGLenum pname, GCGLuint* value) = 0;
 
     virtual PlatformGLObject createSampler() = 0;
     virtual void deleteSampler(PlatformGLObject sampler) = 0;
@@ -1160,7 +1161,7 @@ public:
     virtual void beginTransformFeedback(GCGLenum primitiveMode) = 0;
     virtual void endTransformFeedback() = 0;
     virtual void transformFeedbackVaryings(PlatformGLObject program, const Vector<String>& varyings, GCGLenum bufferMode) = 0;
-    virtual PlatformGLObject getTransformFeedbackVarying(PlatformGLObject program, GCGLuint index) = 0;
+    virtual void getTransformFeedbackVarying(PlatformGLObject program, GCGLuint index, ActiveInfo&) = 0;
     virtual void pauseTransformFeedback() = 0;
     virtual void resumeTransformFeedback() = 0;
 

@@ -457,6 +457,8 @@ protected:
 
     bool enableSupportedExtension(ASCIILiteral extensionNameLiteral);
 
+    virtual void uncacheDeletedBuffer(WebGLBuffer*);
+
     RefPtr<GraphicsContextGLOpenGL> m_context;
     RefPtr<WebGLContextGroup> m_contextGroup;
 
@@ -815,6 +817,8 @@ protected:
     // If the object has already been deleted, set deleted to true upon return.
     // Return false if caller should return without further processing.
     bool checkObjectToBeBound(const char* functionName, WebGLObject*, bool& deleted);
+
+    bool validateAndCacheBufferBinding(const char* functionName, GCGLenum target, WebGLBuffer*);
 
     // Helpers for simulating vertexAttrib0.
     void initVertexAttrib0();

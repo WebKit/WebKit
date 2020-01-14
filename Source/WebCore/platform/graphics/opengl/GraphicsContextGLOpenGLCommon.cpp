@@ -2567,7 +2567,7 @@ PlatformGLObject GraphicsContextGLOpenGL::getQuery(GCGLenum target, GCGLenum pna
     return 0;
 }
 
-void GraphicsContextGLOpenGL::glGetQueryObjectuiv(PlatformGLObject query, GCGLenum pname, GCGLuint* value)
+void GraphicsContextGLOpenGL::getQueryObjectuiv(PlatformGLObject query, GCGLenum pname, GCGLuint* value)
 {
     UNUSED_PARAM(query);
     UNUSED_PARAM(pname);
@@ -2708,12 +2708,10 @@ void GraphicsContextGLOpenGL::transformFeedbackVaryings(PlatformGLObject program
     UNUSED_PARAM(bufferMode);
 }
 
-PlatformGLObject GraphicsContextGLOpenGL::getTransformFeedbackVarying(PlatformGLObject program, GCGLuint index)
+void GraphicsContextGLOpenGL::getTransformFeedbackVarying(PlatformGLObject program, GCGLuint index, ActiveInfo&)
 {
     UNUSED_PARAM(program);
     UNUSED_PARAM(index);
-
-    return 0;
 }
 
 void GraphicsContextGLOpenGL::pauseTransformFeedback()

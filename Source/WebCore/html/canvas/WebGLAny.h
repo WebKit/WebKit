@@ -45,6 +45,7 @@ class WebGLFramebuffer;
 class WebGLProgram;
 class WebGLRenderbuffer;
 class WebGLTexture;
+class WebGLTransformFeedback;
 class WebGLVertexArrayObject;
 class WebGLVertexArrayObjectOES;
 
@@ -70,6 +71,7 @@ using WebGLAny = Variant<
     RefPtr<WebGLVertexArrayObjectOES>
 #if ENABLE(WEBGL2)
     , RefPtr<WebGLVertexArrayObject>
+    , RefPtr<WebGLTransformFeedback>
 #endif
 >;
 

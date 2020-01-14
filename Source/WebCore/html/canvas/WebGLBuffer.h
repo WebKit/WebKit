@@ -60,7 +60,9 @@ public:
     void setCachedMaxIndex(GCGLenum type, unsigned value);
 
     GCGLenum getTarget() const { return m_target; }
-    void setTarget(GCGLenum, bool forWebGL2);
+    void setTarget(GCGLenum);
+
+    GCGLenum arrayBufferOrElementArrayBuffer() const { return m_arrayBufferOrElementArrayBuffer; }
 
     bool hasEverBeenBound() const { return object() && m_target; }
 
@@ -74,6 +76,8 @@ private:
 
     RefPtr<JSC::ArrayBuffer> m_elementArrayBuffer;
     GCGLsizeiptr m_byteLength { 0 };
+
+    GCGLenum m_arrayBufferOrElementArrayBuffer { 0 };
 
     // Optimization for index validation. For each type of index
     // (i.e., UNSIGNED_SHORT), cache the maximum index in the

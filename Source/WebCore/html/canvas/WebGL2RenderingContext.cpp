@@ -30,6 +30,7 @@
 
 #include "CachedImage.h"
 #include "EXTTextureFilterAnisotropic.h"
+#include "EventLoop.h"
 #include "ExtensionsGL.h"
 #include "HTMLCanvasElement.h"
 #include "HTMLImageElement.h"
@@ -95,6 +96,16 @@ WebGL2RenderingContext::WebGL2RenderingContext(CanvasBase& canvas, Ref<GraphicsC
 {
     initializeShaderExtensions();
     initializeVertexArrayObjects();
+    initializeTransformFeedbackBufferCache();
+}
+
+WebGL2RenderingContext::~WebGL2RenderingContext()
+{
+    // Remove all references to WebGLObjects so if they are the last reference
+    // they will be freed before the last context is removed from the context group.
+    m_boundTransformFeedback = nullptr;
+    m_boundTransformFeedbackBuffers.clear();
+    m_activeQueries.clear();
 }
 
 void WebGL2RenderingContext::initializeVertexArrayObjects()
@@ -116,6 +127,14 @@ void WebGL2RenderingContext::initializeShaderExtensions()
     m_context->getExtensions().ensureEnabled("GL_EXT_draw_buffers");
     m_context->getExtensions().ensureEnabled("GL_EXT_shader_texture_lod");
     m_context->getExtensions().ensureEnabled("GL_EXT_frag_depth");
+}
+
+void WebGL2RenderingContext::initializeTransformFeedbackBufferCache()
+{
+    int maxTransformFeedbackAttribs = getIntParameter(GraphicsContextGL::MAX_TRANSFORM_FEEDBACK_SEPARATE_ATTRIBS);
+    ASSERT(maxTransformFeedbackAttribs >= 4);
+
+    m_boundTransformFeedbackBuffers.resize(maxTransformFeedbackAttribs);
 }
 
 inline static Optional<unsigned> arrayBufferViewElementSize(const ArrayBufferView& data)
@@ -307,7 +326,9 @@ void WebGL2RenderingContext::getBufferSubData(GCGLenum target, long long srcByte
 #if PLATFORM(COCOA)
     // FIXME: Coalesce multiple getBufferSubData() calls to use a single map() call
     void* ptr = m_context->mapBufferRange(target, checkedSrcByteOffset.unsafeGet(), static_cast<GCGLsizeiptr>(checkedCopyLengthPtr.unsafeGet() * checkedElementSize.unsafeGet()), GraphicsContextGL::MAP_READ_BIT);
-    memcpy(static_cast<char*>(dstData->baseAddress()) + dstData->byteOffset() + dstOffset * elementSize, ptr, copyLength * elementSize);
+    if (ptr)
+        memcpy(static_cast<char*>(dstData->baseAddress()) + dstData->byteOffset() + dstOffset * elementSize, ptr, copyLength * elementSize);
+
     if (!m_context->unmapBuffer(target))
         synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, "getBufferSubData", "Failed while unmapping buffer");
 #endif
@@ -862,9 +883,12 @@ void WebGL2RenderingContext::vertexAttribI4uiv(GCGLuint, Uint32List&&)
     LOG(WebGL, "[[ NOT IMPLEMENTED ]] vertexAttribI4uiv()");
 }
 
-void WebGL2RenderingContext::vertexAttribIPointer(GCGLuint, GCGLint, GCGLenum, GCGLsizei, GCGLint64)
+void WebGL2RenderingContext::vertexAttribIPointer(GCGLuint index, GCGLint size, GCGLenum type, GCGLsizei stride, GCGLint64 offset)
 {
-    LOG(WebGL, "[[ NOT IMPLEMENTED ]] vertexAttribIPointer()");
+    if (isContextLostOrPending())
+        return;
+
+    m_context->vertexAttribIPointer(index, size, type, stride, offset);
 }
 
 void WebGL2RenderingContext::clear(GCGLbitfield mask)
@@ -1042,8 +1066,12 @@ void WebGL2RenderingContext::clearBufferfi(GCGLenum buffer, GCGLint drawbuffer, 
 
 RefPtr<WebGLQuery> WebGL2RenderingContext::createQuery()
 {
-    LOG(WebGL, "[[ NOT IMPLEMENTED ]] createQuery()");
-    return nullptr;
+    if (isContextLostOrPending())
+        return nullptr;
+
+    auto query = WebGLQuery::create(*this);
+    addSharedObject(query.get());
+    return query;
 }
 
 void WebGL2RenderingContext::deleteQuery(WebGLQuery*)
@@ -1057,14 +1085,45 @@ GCGLboolean WebGL2RenderingContext::isQuery(WebGLQuery*)
     return false;
 }
 
-void WebGL2RenderingContext::beginQuery(GCGLenum, WebGLQuery&)
+void WebGL2RenderingContext::beginQuery(GCGLenum target, WebGLQuery& query)
 {
-    LOG(WebGL, "[[ NOT IMPLEMENTED ]] beginQuery()");
+    if (isContextLostOrPending())
+        return;
+
+    // FIXME: Add validation to prevent bad caching.
+
+    // Only one query object can be active per target.
+    auto targetKey = (target == GraphicsContextGL::ANY_SAMPLES_PASSED_CONSERVATIVE) ? GraphicsContextGL::ANY_SAMPLES_PASSED : target;
+
+    auto addResult = m_activeQueries.add(targetKey, makeRefPtr(&query));
+
+    if (!addResult.isNewEntry) {
+        synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, "beginQuery", "Query object of target is already active");
+        return;
+    }
+
+    m_context->beginQuery(target, query.object());
 }
 
-void WebGL2RenderingContext::endQuery(GCGLenum)
+void WebGL2RenderingContext::endQuery(GCGLenum target)
 {
-    LOG(WebGL, "[[ NOT IMPLEMENTED ]] endQuery()");
+    if (isContextLostOrPending() || !scriptExecutionContext())
+        return;
+
+    auto targetKey = (target == GraphicsContextGL::ANY_SAMPLES_PASSED_CONSERVATIVE) ? GraphicsContextGL::ANY_SAMPLES_PASSED : target;
+
+    auto query = m_activeQueries.take(targetKey);
+    if (!query) {
+        synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, "endQuery", "Query object of target is not active");
+        return;
+    }
+
+    m_context->endQuery(target);
+
+    // A query's result must not be made available until control has returned to the user agent's main loop.
+    scriptExecutionContext()->eventLoop().queueMicrotask([query] {
+        query->makeResultAvailable();
+    });
 }
 
 RefPtr<WebGLQuery> WebGL2RenderingContext::getQuery(GCGLenum, GCGLenum)
@@ -1073,10 +1132,25 @@ RefPtr<WebGLQuery> WebGL2RenderingContext::getQuery(GCGLenum, GCGLenum)
     return nullptr;
 }
 
-WebGLAny WebGL2RenderingContext::getQueryParameter(WebGLQuery&, GCGLenum)
+WebGLAny WebGL2RenderingContext::getQueryParameter(WebGLQuery& query, GCGLenum pname)
 {
-    LOG(WebGL, "[[ NOT IMPLEMENTED ]] getQueryParameter)");
-    return nullptr;
+    if (isContextLostOrPending())
+        return nullptr;
+
+    switch (pname) {
+    case GraphicsContextGL::QUERY_RESULT:
+    case GraphicsContextGL::QUERY_RESULT_AVAILABLE:
+        if (!query.isResultAvailable())
+            return 0;
+        break;
+    default:
+        synthesizeGLError(GraphicsContextGL::INVALID_ENUM, "getQueryParameter", "Invalid pname");
+        return nullptr;
+    }
+
+    unsigned result = 0;
+    m_context->getQueryObjectuiv(query.object(), pname, &result);
+    return result;
 }
 
 RefPtr<WebGLSampler> WebGL2RenderingContext::createSampler()
@@ -1157,45 +1231,88 @@ WebGLAny WebGL2RenderingContext::getSyncParameter(WebGLSync&, GCGLenum)
 
 RefPtr<WebGLTransformFeedback> WebGL2RenderingContext::createTransformFeedback()
 {
-    LOG(WebGL, "[[ NOT IMPLEMENTED ]] createTransformFeedback()");
-    return nullptr;
+    if (isContextLostOrPending())
+        return nullptr;
+
+    auto transformFeedback = WebGLTransformFeedback::create(*this);
+    addSharedObject(transformFeedback.get());
+    return transformFeedback;
 }
 
-void WebGL2RenderingContext::deleteTransformFeedback(WebGLTransformFeedback*)
+void WebGL2RenderingContext::deleteTransformFeedback(WebGLTransformFeedback* feedbackObject)
 {
-    LOG(WebGL, "[[ NOT IMPLEMENTED ]] deleteTransformFeedback()");
+    if (isContextLostOrPending())
+        return;
+
+    if (m_boundTransformFeedback == feedbackObject)
+        m_boundTransformFeedback = nullptr;
+
+    deleteObject(feedbackObject);
 }
 
-GCGLboolean WebGL2RenderingContext::isTransformFeedback(WebGLTransformFeedback*)
+GCGLboolean WebGL2RenderingContext::isTransformFeedback(WebGLTransformFeedback* feedbackObject)
 {
-    LOG(WebGL, "[[ NOT IMPLEMENTED ]] isTransformFeedback()");
-    return false;
+    if (isContextLostOrPending() || !feedbackObject || feedbackObject->isDeleted() || !validateWebGLObject("isTransformFeedback", feedbackObject))
+        return false;
+
+    return m_context->isTransformFeedback(feedbackObject->object());
 }
 
-void WebGL2RenderingContext::bindTransformFeedback(GCGLenum, WebGLTransformFeedback*)
+void WebGL2RenderingContext::bindTransformFeedback(GCGLenum target, WebGLTransformFeedback* feedbackObject)
 {
-    LOG(WebGL, "[[ NOT IMPLEMENTED ]] bindTransformFeedback()");
+    if (isContextLostOrPending())
+        return;
+
+    if (feedbackObject) {
+        if (feedbackObject->isDeleted()) {
+            synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, "bindTransformFeedback", "cannot bind a deleted Transform Feedback object");
+            return;
+        }
+
+        if (!validateWebGLObject("isTransformFeedback", feedbackObject))
+            return;
+    }
+
+    m_context->bindTransformFeedback(target, objectOrZero(feedbackObject));
+    m_boundTransformFeedback = feedbackObject;
 }
 
-void WebGL2RenderingContext::beginTransformFeedback(GCGLenum)
+void WebGL2RenderingContext::beginTransformFeedback(GCGLenum primitiveMode)
 {
-    LOG(WebGL, "[[ NOT IMPLEMENTED ]] beginTransformFeedback()");
+    if (isContextLostOrPending())
+        return;
+
+    m_context->beginTransformFeedback(primitiveMode);
 }
 
 void WebGL2RenderingContext::endTransformFeedback()
 {
-    LOG(WebGL, "[[ NOT IMPLEMENTED ]] endTransformFeedback()");
+    if (isContextLostOrPending())
+        return;
+
+    m_context->endTransformFeedback();
 }
 
-void WebGL2RenderingContext::transformFeedbackVaryings(WebGLProgram&, const Vector<String>&, GCGLenum)
+void WebGL2RenderingContext::transformFeedbackVaryings(WebGLProgram& program, const Vector<String>& varyings, GCGLenum bufferMode)
 {
-    LOG(WebGL, "[[ NOT IMPLEMENTED ]] transformFeedbackVaryings()");
+    if (isContextLostOrPending() || varyings.isEmpty() || !validateWebGLObject("transformFeedbackVaryings", &program))
+        return;
+
+    m_context->transformFeedbackVaryings(program.object(), varyings, bufferMode);
 }
 
-RefPtr<WebGLActiveInfo> WebGL2RenderingContext::getTransformFeedbackVarying(WebGLProgram&, GCGLuint)
+RefPtr<WebGLActiveInfo> WebGL2RenderingContext::getTransformFeedbackVarying(WebGLProgram& program, GCGLuint index)
 {
-    LOG(WebGL, "[[ NOT IMPLEMENTED ]] getTransformFeedbackVarying()");
-    return nullptr;
+    if (isContextLostOrPending() || !validateWebGLObject("getTransformFeedbackVarying", &program))
+        return nullptr;
+
+    GraphicsContextGL::ActiveInfo info;
+    m_context->getTransformFeedbackVarying(program.object(), index, info);
+
+    if (!info.name || !info.type || !info.size)
+        return nullptr;
+
+    return WebGLActiveInfo::create(info.name, info.type, info.size);
 }
 
 void WebGL2RenderingContext::pauseTransformFeedback()
@@ -1208,9 +1325,30 @@ void WebGL2RenderingContext::resumeTransformFeedback()
     LOG(WebGL, "[[ NOT IMPLEMENTED ]] resumeTransformFeedback()");
 }
 
-void WebGL2RenderingContext::bindBufferBase(GCGLenum, GCGLuint, WebGLBuffer*)
+void WebGL2RenderingContext::bindBufferBase(GCGLenum target, GCGLuint index, WebGLBuffer* buffer)
 {
-    LOG(WebGL, "[[ NOT IMPLEMENTED ]] bindBufferBase()");
+    if (isContextLostOrPending())
+        return;
+
+    switch (target) {
+    case GraphicsContextGL::TRANSFORM_FEEDBACK_BUFFER:
+        if (index >= m_boundTransformFeedbackBuffers.size()) {
+            synthesizeGLError(GraphicsContextGL::INVALID_VALUE, "bindBufferBase", "index out of range");
+            return;
+        }
+        break;
+    case GraphicsContextGL::UNIFORM_BUFFER:
+        synthesizeGLError(GraphicsContextGL::INVALID_ENUM, "bindBufferBase", "target not yet supported");
+        return;
+    default:
+        synthesizeGLError(GraphicsContextGL::INVALID_ENUM, "bindBufferBase", "invalid target");
+        return;
+    }
+
+    if (!validateAndCacheBufferBinding("bindBufferBase", target, buffer))
+        return;
+
+    m_context->bindBufferBase(target, index, objectOrZero(buffer));
 }
 
 void WebGL2RenderingContext::bindBufferRange(GCGLenum, GCGLuint, WebGLBuffer*, GCGLint64, GCGLint64)
@@ -1218,10 +1356,18 @@ void WebGL2RenderingContext::bindBufferRange(GCGLenum, GCGLuint, WebGLBuffer*, G
     LOG(WebGL, "[[ NOT IMPLEMENTED ]] bindBufferRange()");
 }
 
-WebGLAny WebGL2RenderingContext::getIndexedParameter(GCGLenum target, GCGLuint)
+WebGLAny WebGL2RenderingContext::getIndexedParameter(GCGLenum target, GCGLuint index)
 {
+    if (isContextLostOrPending())
+        return nullptr;
+
     switch (target) {
     case GraphicsContextGL::TRANSFORM_FEEDBACK_BUFFER_BINDING:
+        if (index >= m_boundTransformFeedbackBuffers.size()) {
+            synthesizeGLError(GraphicsContextGL::INVALID_VALUE, "getIndexedParameter", "index out of range");
+            return nullptr;
+        }
+        return m_boundTransformFeedbackBuffers[index];
     case GraphicsContextGL::TRANSFORM_FEEDBACK_BUFFER_SIZE:
     case GraphicsContextGL::TRANSFORM_FEEDBACK_BUFFER_START:
     case GraphicsContextGL::UNIFORM_BUFFER_BINDING:
@@ -2074,6 +2220,10 @@ WebGLAny WebGL2RenderingContext::getParameter(GCGLenum pname)
         return m_backDrawBuffer; // emulated backbuffer
     case GraphicsContextGL::READ_FRAMEBUFFER_BINDING:
         return m_readFramebufferBinding;
+    case GraphicsContextGL::TRANSFORM_FEEDBACK_BINDING:
+        return m_boundTransformFeedback;
+    case GraphicsContextGL::TRANSFORM_FEEDBACK_BUFFER_BINDING:
+        return m_boundTransformFeedbackBuffer;
     case GraphicsContextGL::COPY_READ_BUFFER:
     case GraphicsContextGL::COPY_WRITE_BUFFER:
     case GraphicsContextGL::PIXEL_PACK_BUFFER_BINDING:   
@@ -2082,7 +2232,6 @@ WebGLAny WebGL2RenderingContext::getParameter(GCGLenum pname)
     case GraphicsContextGL::SAMPLER_BINDING:
     case GraphicsContextGL::TEXTURE_BINDING_2D_ARRAY:
     case GraphicsContextGL::TEXTURE_BINDING_3D:
-    case GraphicsContextGL::TRANSFORM_FEEDBACK_BUFFER_BINDING:
     case GraphicsContextGL::UNIFORM_BUFFER_BINDING:
         synthesizeGLError(GraphicsContextGL::INVALID_ENUM, "getParameter", "parameter name not yet supported");
         return nullptr;
@@ -2379,6 +2528,17 @@ void WebGL2RenderingContext::readPixels(GLint x, GLint y, GLsizei width, GLsizei
     UNUSED_PARAM(dstOffset);
 
     LOG(WebGL, "[[ NOT IMPLEMENTED ]] readPixels()");
+}
+
+void WebGL2RenderingContext::uncacheDeletedBuffer(WebGLBuffer* buffer)
+{
+    ASSERT(buffer);
+
+    WebGLRenderingContextBase::uncacheDeletedBuffer(buffer);
+
+    size_t index = m_boundTransformFeedbackBuffers.find(buffer);
+    if (index < m_boundTransformFeedbackBuffers.size())
+        m_boundTransformFeedbackBuffers[index] = nullptr;
 }
 
 } // namespace WebCore

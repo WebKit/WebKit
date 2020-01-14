@@ -436,7 +436,7 @@ public:
     void endQuery(GCGLenum target) final;
     PlatformGLObject getQuery(GCGLenum target, GCGLenum pname) final;
     // getQueryParameter
-    void glGetQueryObjectuiv(PlatformGLObject query, GCGLenum pname, GCGLuint* value) final;
+    void getQueryObjectuiv(PlatformGLObject query, GCGLenum pname, GCGLuint* value) final;
 
     PlatformGLObject createSampler() final;
     void deleteSampler(PlatformGLObject sampler) final;
@@ -464,7 +464,7 @@ public:
     void beginTransformFeedback(GCGLenum primitiveMode) final;
     void endTransformFeedback() final;
     void transformFeedbackVaryings(PlatformGLObject program, const Vector<String>& varyings, GCGLenum bufferMode) final;
-    PlatformGLObject getTransformFeedbackVarying(PlatformGLObject program, GCGLuint index) final;
+    void getTransformFeedbackVarying(PlatformGLObject program, GCGLuint index, ActiveInfo&) final;
     void pauseTransformFeedback() final;
     void resumeTransformFeedback() final;
 

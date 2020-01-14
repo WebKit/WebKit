@@ -44,6 +44,8 @@ public:
     static std::unique_ptr<WebGL2RenderingContext> create(CanvasBase&, GraphicsContextGLAttributes);
     static std::unique_ptr<WebGL2RenderingContext> create(CanvasBase&, Ref<GraphicsContextGLOpenGL>&&, GraphicsContextGLAttributes);
 
+    ~WebGL2RenderingContext();
+
     // Buffer objects
     using WebGLRenderingContextBase::bufferData;
     using WebGLRenderingContextBase::bufferSubData;
@@ -258,8 +260,17 @@ private:
     GCGLenum baseInternalFormatFromInternalFormat(GCGLenum internalformat);
     bool isIntegerFormat(GCGLenum internalformat);
     void initializeShaderExtensions();
+    void initializeTransformFeedbackBufferCache();
 
     bool validateTexStorageFuncParameters(GCGLenum target, GCGLsizei levels, GCGLenum internalFormat, GCGLsizei width, GCGLsizei height, const char* functionName);
+
+    void uncacheDeletedBuffer(WebGLBuffer*) final;
+
+    RefPtr<WebGLTransformFeedback> m_boundTransformFeedback;
+    Vector<RefPtr<WebGLBuffer>> m_boundTransformFeedbackBuffers;
+
+    // Queries
+    HashMap<GCGLenum, RefPtr<WebGLQuery>> m_activeQueries;
 };
 
 } // namespace WebCore

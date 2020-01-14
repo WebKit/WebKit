@@ -1,3 +1,15 @@
+2020-01-13  Justin Fan  <justin_fan@apple.com>
+
+        [WebGL 2] Implement transform feedback and pass transform feedback conformance tests
+        https://bugs.webkit.org/show_bug.cgi?id=205823
+
+        Reviewed by Dean Jackson.
+
+        Add passing results for transform_feedback, as expected when ANGLE is enabled.
+
+        * webgl/2.0.0/conformance2/transform_feedback/two-unreferenced-varyings-expected.txt:
+        * webgl/2.0.0/conformance2/transform_feedback/unwritten-output-defaults-to-zero-expected.txt:
+
 2020-01-13  Chris Lord  <clord@igalia.com>
 
         REGRESSION(r253683): [GTK][WPE] Lots of offscreen-canvas WPT tests failing

@@ -253,25 +253,13 @@ void WebGLBuffer::setCachedMaxIndex(GCGLenum type, unsigned value)
     m_nextAvailableCacheEntry = (m_nextAvailableCacheEntry + 1) % WTF_ARRAY_LENGTH(m_maxIndexCache);
 }
 
-void WebGLBuffer::setTarget(GCGLenum target, bool forWebGL2)
+void WebGLBuffer::setTarget(GCGLenum target)
 {
-    // In WebGL, a buffer is bound to one target in its lifetime
-    if (m_target)
-        return;
-    if (target == GraphicsContextGL::ARRAY_BUFFER || target == GraphicsContextGL::ELEMENT_ARRAY_BUFFER)
-        m_target = target;
-    else if (forWebGL2) {
-#if ENABLE(WEBGL2)
-        switch (target) {
-        case GraphicsContextGL::COPY_READ_BUFFER:
-        case GraphicsContextGL::COPY_WRITE_BUFFER:
-        case GraphicsContextGL::PIXEL_PACK_BUFFER:
-        case GraphicsContextGL::PIXEL_UNPACK_BUFFER:
-        case GraphicsContextGL::TRANSFORM_FEEDBACK_BUFFER:
-        case GraphicsContextGL::UNIFORM_BUFFER:
-            m_target = target;
-        }
-#endif
+    m_target = target;
+
+    if (target == GraphicsContextGL::ARRAY_BUFFER || target == GraphicsContextGL::ELEMENT_ARRAY_BUFFER) {
+        ASSERT(!m_arrayBufferOrElementArrayBuffer || target == m_arrayBufferOrElementArrayBuffer);
+        m_arrayBufferOrElementArrayBuffer = target;
     }
 }
 

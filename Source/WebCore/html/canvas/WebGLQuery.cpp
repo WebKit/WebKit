@@ -46,7 +46,7 @@ WebGLQuery::~WebGLQuery()
 WebGLQuery::WebGLQuery(WebGLRenderingContextBase& ctx)
     : WebGLSharedObject(ctx)
 {
-    // FIXME: Call createQuery from GraphicsContextGLOpenGL.
+    setObject(ctx.graphicsContextGL()->createQuery());
 }
 
 void WebGLQuery::deleteObjectImpl(GraphicsContextGLOpenGL* context3d, PlatformGLObject object)
