@@ -1993,19 +1993,9 @@ static void handleVarargsCheckpoint(VM& vm, CallFrame* callFrame, JSGlobalObject
 inline SlowPathReturnType dispatchToNextInstruction(CodeBlock* codeBlock, InstructionStream::Ref pc)
 {
     RELEASE_ASSERT(!codeBlock->vm().exceptionForInspection());
-    if (Options::forceOSRExitToLLInt() || codeBlock->jitType() == JITType::InterpreterThunk) {
-        const Instruction* nextPC = pc.next().ptr();
-        auto nextBytecode = LLInt::getCodePtr<JSEntryPtrTag>(*pc.next().ptr());
-        return encodeResult(nextPC, nextBytecode.executableAddress());
-    }
-
-#if ENABLE(JIT)
-    ASSERT(codeBlock->jitType() == JITType::BaselineJIT);
-    BytecodeIndex nextBytecodeIndex = pc.next().index();
-    auto nextBytecode = codeBlock->jitCodeMap().find(nextBytecodeIndex);
-    return encodeResult(nullptr, nextBytecode.executableAddress());
-#endif
-    RELEASE_ASSERT_NOT_REACHED();
+    const Instruction* nextPC = pc.next().ptr();
+    auto nextBytecode = LLInt::getCodePtr<JSEntryPtrTag>(*pc.next().ptr());
+    return encodeResult(nextPC, nextBytecode.executableAddress());
 }
 
 extern "C" SlowPathReturnType slow_path_checkpoint_osr_exit_from_inlined_call(CallFrame* callFrame, EncodedJSValue result)

@@ -1,3 +1,12 @@
+2020-01-13  Saam Barati  <sbarati@apple.com>
+
+        Throw away baseline code if there is an optimized replacement
+        https://bugs.webkit.org/show_bug.cgi?id=202503
+
+        Reviewed by Yusuke Suzuki.
+
+        * Scripts/run-jsc-stress-tests:
+
 2020-01-13  Yoshiaki Jitsukawa  <yoshiaki.jitsukawa@sony.com>
 
         Fix path-specific filters on Windows

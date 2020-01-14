@@ -258,6 +258,11 @@ public:
 
     Optional<BytecodeIndex> bytecodeIndexFromCallSiteIndex(CallSiteIndex);
 
+    // Because we might throw out baseline JIT code and all its baseline JIT data (m_jitData),
+    // you need to be careful about the lifetime of when you use the return value of this function.
+    // The return value may have raw pointers into this data structure that gets thrown away.
+    // Specifically, you need to ensure that no GC can be finalized (typically that means no
+    // allocations) between calling this and the last use of it.
     void getICStatusMap(const ConcurrentJSLocker&, ICStatusMap& result);
     void getICStatusMap(ICStatusMap& result);
     
@@ -277,6 +282,10 @@ public:
         SegmentedVector<RareCaseProfile, 8> m_rareCaseProfiles;
         std::unique_ptr<PCToCodeOriginMap> m_pcToCodeOriginMap;
         std::unique_ptr<RegisterAtOffsetList> m_calleeSaveRegisters;
+        // FIXME: Now that we unconditionally OSR exit to the LLInt, we might be able to prune
+        // the number of entries we have in this to contain entries only for opcodes we use
+        // it for. Today, that's only for loop OSR entry.
+        // https://bugs.webkit.org/show_bug.cgi?id=206207
         JITCodeMap m_jitCodeMap;
     };
 
@@ -307,18 +316,9 @@ public:
 
     StructureStubInfo* addStubInfo(AccessType);
 
-    // O(n) operation. Use getStubInfoMap() unless you really only intend to get one
-    // stub info.
-    StructureStubInfo* findStubInfo(CodeOrigin);
-
     ByValInfo* addByValInfo();
 
     CallLinkInfo* addCallLinkInfo();
-
-    // This is a slow function call used primarily for compiling OSR exits in the case
-    // that there had been inlining. Chances are if you want to use this, you're really
-    // looking for a CallLinkInfoMap to amortize the cost of calling this.
-    CallLinkInfo* getCallLinkInfoForBytecodeIndex(BytecodeIndex);
     
     void setJITCodeMap(JITCodeMap&& jitCodeMap)
     {
@@ -412,7 +412,6 @@ public:
     
     void setJITCode(Ref<JITCode>&& code)
     {
-        ASSERT(heap()->isDeferred());
         if (!code->isShared())
             heap()->reportExtraMemoryAllocated(code->size());
 
@@ -444,6 +443,8 @@ public:
     DFG::CapabilityLevel capabilityLevel();
     DFG::CapabilityLevel capabilityLevelState() { return static_cast<DFG::CapabilityLevel>(m_capabilityLevelState); }
 
+    CodeBlock* optimizedReplacement(JITType typeToReplace);
+    CodeBlock* optimizedReplacement(); // the typeToReplace is my JITType
     bool hasOptimizedReplacement(JITType typeToReplace);
     bool hasOptimizedReplacement(); // the typeToReplace is my JITType
 #endif

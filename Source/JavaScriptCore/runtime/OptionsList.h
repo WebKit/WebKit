@@ -81,7 +81,7 @@ constexpr bool enableWebAssemblyStreamingApi = false;
     v(Unsigned, dumpOptions, 0, Normal, "dumps JSC options (0 = None, 1 = Overridden only, 2 = All, 3 = Verbose)") \
     v(OptionString, configFile, nullptr, Normal, "file to configure JSC options and logging location") \
     \
-    v(Bool, useLLInt,  true, Normal, "allows the LLINT to be used if true") \
+    v(Bool, forceBaseline, false, Normal, "If true, we'll start running code in the baseline JIT and skip starting in the LLInt") \
     v(Bool, useJIT, jitEnabledByDefault(), Normal, "allows the executable pages to be allocated for JIT and thunks if true") \
     v(Bool, useBaselineJIT, true, Normal, "allows the baseline JIT to be used if true") \
     v(Bool, useDFGJIT, true, Normal, "allows the DFG JIT to be used if true") \
@@ -494,7 +494,6 @@ constexpr bool enableWebAssemblyStreamingApi = false;
     v(OptionString, dumpJITMemoryPath, nullptr, Restricted, nullptr) \
     v(Double, dumpJITMemoryFlushInterval, 10, Restricted, "Maximum time in between flushes of the JIT memory dump in seconds.") \
     v(Bool, useUnlinkedCodeBlockJettisoning, false, Normal, "If true, UnlinkedCodeBlock can be jettisoned.") \
-    v(Bool, forceOSRExitToLLInt, false, Normal, "If true, we always exit to the LLInt. If false, we exit to whatever is most convenient.") \
     v(Unsigned, getByValICMaxNumberOfIdentifiers, 4, Normal, "Number of identifiers we see in the LLInt that could cause us to bail on generating an IC for get_by_val.") \
 
 enum OptionEquivalence {

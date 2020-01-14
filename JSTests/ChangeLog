@@ -1,3 +1,18 @@
+2020-01-13  Saam Barati  <sbarati@apple.com>
+
+        Throw away baseline code if there is an optimized replacement
+        https://bugs.webkit.org/show_bug.cgi?id=202503
+
+        Reviewed by Yusuke Suzuki.
+
+        * stress/dfg-compare-eq-via-nonSpeculativeNonPeepholeCompareNullOrUndefined.js:
+        * stress/getter-setter-inlining-should-emit-movhint.js:
+        * stress/make-dictionary-repatch.js:
+        * stress/merging-ic-variants-should-bail-if-structures-overlap.js:
+        * stress/proxy-getter-stack-overflow.js:
+        * stress/regress-192717.js:
+        * stress/retry-cache-later.js:
+
 2020-01-13  Mark Lam  <mark.lam@apple.com>
 
         Replace uses of Box<Identifier> with a new CacheableIdentifier class.

@@ -1,4 +1,4 @@
-//@ runNoCJIT("--useLLInt=false", "--useDFGJIT=false")
+//@ runNoCJIT("--forceBaseline=true", "--useDFGJIT=false")
 
 function foo(o) {
     return o.i7;

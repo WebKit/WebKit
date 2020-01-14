@@ -1,4 +1,4 @@
-//@ runDefault("--useRandomizingFuzzerAgent=1", "--usePolymorphicCallInliningForNonStubStatus=1", "--seedOfRandomizingFuzzerAgent=2896922505", "--useLLInt=0", "--useConcurrentJIT=0")
+//@ runDefault("--useRandomizingFuzzerAgent=1", "--usePolymorphicCallInliningForNonStubStatus=1", "--seedOfRandomizingFuzzerAgent=2896922505", "--forceBaseline=1", "--useConcurrentJIT=0")
 function foo(o) {
     o.f = 0;
     return o.f;

@@ -613,11 +613,11 @@ void Heap::finalizeUnconditionalFinalizers()
     vm().builtinExecutables()->finalizeUnconditionally();
     finalizeMarkedUnconditionalFinalizers<FunctionExecutable>(vm().functionExecutableSpace.space);
     finalizeMarkedUnconditionalFinalizers<SymbolTable>(vm().symbolTableSpace);
+    finalizeMarkedUnconditionalFinalizers<ExecutableToCodeBlockEdge>(vm().executableToCodeBlockEdgesWithFinalizers); // We run this before CodeBlock's unconditional finalizer since CodeBlock looks at the owner executable's installed CodeBlock in its finalizeUnconditionally.
     vm().forEachCodeBlockSpace(
         [&] (auto& space) {
             this->finalizeMarkedUnconditionalFinalizers<CodeBlock>(space.set);
         });
-    finalizeMarkedUnconditionalFinalizers<ExecutableToCodeBlockEdge>(vm().executableToCodeBlockEdgesWithFinalizers);
     finalizeMarkedUnconditionalFinalizers<StructureRareData>(vm().structureRareDataSpace);
     finalizeMarkedUnconditionalFinalizers<UnlinkedFunctionExecutable>(vm().unlinkedFunctionExecutableSpace.set);
     if (vm().m_weakSetSpace)
@@ -1522,7 +1522,7 @@ NEVER_INLINE bool Heap::runEndPhase(GCConductor conn)
     pruneStaleEntriesFromWeakGCMaps();
     sweepArrayBuffers();
     snapshotUnswept();
-    finalizeUnconditionalFinalizers();
+    finalizeUnconditionalFinalizers(); // We rely on these unconditional finalizers running before clearCurrentlyExecuting since CodeBlock's finalizer relies on querying currently executing.
     removeDeadCompilerWorklistEntries();
     notifyIncrementalSweeper();
     

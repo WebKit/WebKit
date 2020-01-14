@@ -1,3 +1,64 @@
+2020-01-13  Saam Barati  <sbarati@apple.com>
+
+        Throw away baseline code if there is an optimized replacement
+        https://bugs.webkit.org/show_bug.cgi?id=202503
+
+        Reviewed by Yusuke Suzuki.
+
+        This patch's goal is to help us save JIT executable memory by throwing
+        away baseline code when it has an optimized replacement. To make it
+        easy to reason about, we do this when finalizing a GC, and when the
+        CodeBlock is not on the stack. When we do this, we throw away all JIT
+        data and unlink all incoming calls.
+        
+        This patch also paves the way for the LOL tier by making it so we always
+        exit to the LLInt. This allows the code in CodeBlock finalization to not
+        have to consider whether or not an an OSR exit is wired to baseline
+        JIT code, since all exits are now to the LLInt. Because of this, this
+        patch removes the forceOSRExitToLLInt option. Also, this patch renames
+        the useLLInt option to forceBaseline and inverts its meaning.
+        Options::forceBaseline=true implies that code will start off executing in
+        the baseline JIT instead of the LLInt. However, it won't prevent us from
+        emitting an OSR exit which jumps to LLInt code.
+
+        * API/tests/ExecutionTimeLimitTest.cpp:
+        (testExecutionTimeLimit):
+        * API/tests/PingPongStackOverflowTest.cpp:
+        (testPingPongStackOverflow):
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::finishCreation):
+        (JSC::CodeBlock::finalizeUnconditionally):
+        (JSC::CodeBlock::resetJITData):
+        (JSC::CodeBlock::optimizedReplacement):
+        (JSC::CodeBlock::hasOptimizedReplacement):
+        (JSC::CodeBlock::tallyFrequentExitSites):
+        (JSC::CodeBlock::findStubInfo): Deleted.
+        (JSC::CodeBlock::getCallLinkInfoForBytecodeIndex): Deleted.
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::setJITCode):
+        * dfg/DFGDriver.cpp:
+        (JSC::DFG::compileImpl):
+        * dfg/DFGOSRExitCompilerCommon.cpp:
+        (JSC::DFG::callerReturnPC):
+        (JSC::DFG::reifyInlinedCallFrames):
+        (JSC::DFG::adjustAndJumpToTarget):
+        * dfg/DFGOSRExitCompilerCommon.h:
+        * heap/CodeBlockSet.cpp:
+        (JSC::CodeBlockSet::isCurrentlyExecuting):
+        * heap/CodeBlockSet.h:
+        * heap/Heap.cpp:
+        (JSC::Heap::finalizeUnconditionalFinalizers):
+        (JSC::Heap::runEndPhase):
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::dispatchToNextInstruction):
+        * runtime/Options.cpp:
+        (JSC::recomputeDependentOptions):
+        (JSC::Options::initialize):
+        (JSC::Options::ensureOptionsAreCoherent):
+        * runtime/OptionsList.h:
+        * runtime/ScriptExecutable.cpp:
+        (JSC::ScriptExecutable::prepareForExecutionImpl):
+
 2020-01-13  Mark Lam  <mark.lam@apple.com>
 
         Replace uses of Box<Identifier> with a new CacheableIdentifier class.
