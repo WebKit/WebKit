@@ -69,7 +69,7 @@ bool GraphicsContextGLOpenGL::ImageExtractor::extractImage(bool premultiplyAlpha
         if (m_imageSurface && cairo_surface_get_type(m_imageSurface.get()) != CAIRO_SURFACE_TYPE_IMAGE) {
             IntSize surfaceSize = cairoSurfaceSize(m_imageSurface.get());
             auto tmpSurface = adoptRef(cairo_image_surface_create(CAIRO_FORMAT_ARGB32, surfaceSize.width(), surfaceSize.height()));
-            copyRectFromOneSurfaceToAnother(m_imageSurface.get(), tmpSurface.get(), IntSize(), IntRect(IntPoint(), surfaceSize), IntSize(), CAIRO_OPERATOR_SOURCE);
+            copyRectFromOneSurfaceToAnother(m_imageSurface.get(), tmpSurface.get(), IntSize(), IntRect(IntPoint(), surfaceSize), IntSize());
             m_imageSurface = WTFMove(tmpSurface);
         }
     }

@@ -299,11 +299,11 @@ void copyRectFromCairoSurfaceToContext(cairo_surface_t* from, cairo_t* to, const
     cairo_fill(to);
 }
 
-void copyRectFromOneSurfaceToAnother(cairo_surface_t* from, cairo_surface_t* to, const IntSize& sourceOffset, const IntRect& rect, const IntSize& destOffset, cairo_operator_t cairoOperator)
+void copyRectFromOneSurfaceToAnother(cairo_surface_t* from, cairo_surface_t* to, const IntSize& sourceOffset, const IntRect& rect, const IntSize& destOffset)
 {
     RefPtr<cairo_t> context = adoptRef(cairo_create(to));
     cairo_translate(context.get(), destOffset.width(), destOffset.height());
-    cairo_set_operator(context.get(), cairoOperator);
+    cairo_set_operator(context.get(), CAIRO_OPERATOR_SOURCE);
     copyRectFromCairoSurfaceToContext(from, context.get(), sourceOffset, rect);
 }
 
