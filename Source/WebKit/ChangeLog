@@ -1,3 +1,18 @@
+2020-01-14  youenn fablet  <youenn@apple.com>
+
+        CacheStorage::Engine::clearCachesForOriginFromDisk ASSERT is buggy
+        https://bugs.webkit.org/show_bug.cgi?id=206057
+        <rdar://problem/57762994>
+
+        Reviewed by John Wilander.
+
+        The ASSERT is only valid if the engine is initialized.
+        It is not needed to initialize it if the plan is to remove all disk files.
+        Instead, update ASSERT to check that either m_salt is not there or the salt is there and the path is as expected.
+
+        * NetworkProcess/cache/CacheStorageEngine.cpp:
+        (WebKit::CacheStorage::Engine::clearCachesForOriginFromDirectories):
+
 2020-01-14  Eric Carlson  <eric.carlson@apple.com>
 
         Expose video tracks for media files in the GPUProcess
