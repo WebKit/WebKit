@@ -1,3 +1,16 @@
+2020-01-13  David Kilzer  <ddkilzer@apple.com>
+
+        WTR::TestController::decidePolicyForPluginLoad() should output bundle identifier on release assert
+        <https://webkit.org/b/206105>
+
+        Reviewed by Brent Fulgham.
+
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::decidePolicyForPluginLoad): Change
+        RELEASE_ASSERT_NOT_REACHED() to
+        RELEASE_ASSERT_NOT_REACHED_WITH_MESSAGE() with bundle
+        identifier.
+
 2020-01-13  Aakash Jain  <aakash_jain@apple.com>
 
         [EWS] Add unit tests for factories
