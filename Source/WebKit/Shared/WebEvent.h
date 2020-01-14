@@ -190,7 +190,6 @@ public:
         ScrollByPixelWheelEvent
     };
 
-#if PLATFORM(COCOA) || PLATFORM(GTK) || PLATFORM(WPE)
     enum Phase {
         PhaseNone        = 0,
         PhaseBegan       = 1 << 0,
@@ -200,7 +199,6 @@ public:
         PhaseCancelled   = 1 << 4,
         PhaseMayBegin    = 1 << 5,
     };
-#endif
 
     WebWheelEvent() { }
 
@@ -217,10 +215,8 @@ public:
     const WebCore::FloatSize wheelTicks() const { return m_wheelTicks; }
     Granularity granularity() const { return static_cast<Granularity>(m_granularity); }
     bool directionInvertedFromDevice() const { return m_directionInvertedFromDevice; }
-#if PLATFORM(COCOA) || PLATFORM(GTK) || PLATFORM(WPE)
     Phase phase() const { return static_cast<Phase>(m_phase); }
     Phase momentumPhase() const { return static_cast<Phase>(m_momentumPhase); }
-#endif
 #if PLATFORM(COCOA)
     bool hasPreciseScrollingDeltas() const { return m_hasPreciseScrollingDeltas; }
     uint32_t scrollCount() const { return m_scrollCount; }
@@ -239,10 +235,8 @@ private:
     WebCore::FloatSize m_wheelTicks;
     uint32_t m_granularity; // Granularity
     bool m_directionInvertedFromDevice;
-#if PLATFORM(COCOA) || PLATFORM(GTK) || PLATFORM(WPE)
     uint32_t m_phase { Phase::PhaseNone };
     uint32_t m_momentumPhase { Phase::PhaseNone };
-#endif
 #if PLATFORM(COCOA)
     bool m_hasPreciseScrollingDeltas;
     uint32_t m_scrollCount;

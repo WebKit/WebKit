@@ -41,7 +41,6 @@ WebWheelEvent::WebWheelEvent(Type type, const IntPoint& position, const IntPoint
     , m_granularity(granularity)
     , m_directionInvertedFromDevice(false)
 #if PLATFORM(COCOA)
-    , m_phase(PhaseNone)
     , m_hasPreciseScrollingDeltas(false)
     , m_scrollCount(0)
 #endif

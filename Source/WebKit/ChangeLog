@@ -1,3 +1,18 @@
+2020-01-13  Ross Kirsling  <ross.kirsling@sony.com>
+
+        Expose Phase on all WebWheelEvent implementations
+        https://bugs.webkit.org/show_bug.cgi?id=206195
+
+        Reviewed by Don Olmstead.
+
+        No change to behavior; just unhide what needn't be hidden.
+
+        * Shared/WebEvent.h:
+        (WebKit::WebWheelEvent::directionInvertedFromDevice const):
+        (WebKit::WebWheelEvent::momentumPhase const):
+        * Shared/WebWheelEvent.cpp:
+        (WebKit::WebWheelEvent::WebWheelEvent):
+
 2020-01-13  Don Olmstead  <don.olmstead@sony.com>
 
         Share WebPreferences stub for ports without an implementation
