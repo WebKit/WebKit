@@ -817,6 +817,9 @@ static bool scrolledToEdgeInDominantDirection(const ContainerNode& container, co
     if (!container.renderer())
         return true;
 
+    if (!area.canHaveScrollbars())
+        return true;
+
     const RenderStyle& style = container.renderer()->style();
 
     if (!deltaIsPredominantlyVertical(deltaX, deltaY) && deltaX) {

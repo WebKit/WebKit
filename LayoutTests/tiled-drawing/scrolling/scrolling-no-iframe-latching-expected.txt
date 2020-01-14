@@ -1,0 +1,11 @@
+
+Tests that an inner frame with scrolling=no doesn't prevent scrolling a parent frame
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS Outer frame scrolled.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

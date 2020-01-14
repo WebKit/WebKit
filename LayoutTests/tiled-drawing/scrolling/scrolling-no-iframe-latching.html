@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+    window.jsTestIsAsync = true;
+
+    function checkForScroll()
+    {
+        // The first-level iframe should have scrolled.
+        let testFrame = document.getElementById('target');
+        var frameScrollPosition = testFrame.contentDocument.scrollingElement.scrollTop;
+
+        if (!frameScrollPosition)
+            testFailed("Outer frame did not scroll.");
+        else
+            testPassed("Outer frame scrolled.");
+
+        finishJSTest();
+    }
+
+    function scrollTest()
+    {
+        // Send a scroll while over the inner iframe.
+        var startPosX = 150;
+        var startPosY = 150;
+        eventSender.monitorWheelEvents();
+        eventSender.mouseMoveTo(startPosX, startPosY);
+        eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'began', 'none');
+        eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'changed', 'none');
+        eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'changed', 'none');
+        eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, 'ended', 'none');
+        eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'none', 'begin');
+        eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'none', 'continue');
+        eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, 'none', 'end');
+        eventSender.callAfterScrollingCompletes(checkForScroll);
+    }
+
+    function setupTopLevel()
+    {
+        if (window.eventSender) {
+            testRunner.dumpAsText();
+            setTimeout(scrollTest, 0);
+        }
+    
+        setTimeout(checkForScroll, 1000);
+    }
+</script>
+    <iframe id="target" scrolling="yes" style="height: 400px; width: 500px;" 
+     srcdoc= "
+     <style>body { height: 1000px; }</style>
+     <p>This frame is scrollable.</p>
+     
+     <iframe scrolling='no' height=200 width=350 srcdoc='
+     <style>body { height: 1000px; }</style>
+     <p>This frame is not scrollable.</p>
+     '>
+     "
+     onload="setupTopLevel();"
+     >
+    </iframe>
+    <div id="console"></div>
+<script>
+description("Tests that an inner frame with scrolling=no doesn't prevent scrolling a parent frame");
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>
