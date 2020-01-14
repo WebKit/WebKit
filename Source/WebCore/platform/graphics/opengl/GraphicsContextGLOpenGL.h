@@ -879,6 +879,10 @@ private:
 #if PLATFORM(COCOA) && (USE(OPENGL) || USE(ANGLE))
     bool m_hasSwitchedToHighPerformanceGPU { false };
 #endif
+
+#if PLATFORM(MAC) && USE(OPENGL)
+    bool m_needsFlushBeforeDeleteTextures { false };
+#endif
 };
 
 } // namespace WebCore

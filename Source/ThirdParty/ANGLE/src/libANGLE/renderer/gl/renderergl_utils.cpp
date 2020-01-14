@@ -1603,9 +1603,6 @@ void InitializeFeatures(const FunctionsGL *functions, angle::FeaturesGL *feature
 
     // Ported from gpu_driver_bug_list.json (#184)
     ANGLE_FEATURE_CONDITION(features, preAddTexelFetchOffsets, IsApple() && isIntel);
-
-    // anglebug.com/4267
-    ANGLE_FEATURE_CONDITION(features, flushBeforeAndAfterBindFramebuffer, IsApple() && isIntel);
 }
 
 void InitializeFrontendFeatures(const FunctionsGL *functions, angle::FrontendFeatures *features)

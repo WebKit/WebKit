@@ -1,3 +1,20 @@
+2020-01-14  Kenneth Russell  <kbr@chromium.org>
+
+        Need workaround for crash in Intel OpenGL driver related to texture copying feedback loops
+        https://bugs.webkit.org/show_bug.cgi?id=205843
+
+        Remove ANGLE workaround introduced in bug 205707, as it was
+        discovered to be incomplete, and was never upstreamed. The correct
+        workaround will be integrated in the next ANGLE roll.
+
+        Reviewed by Dean Jackson.
+
+        * include/platform/FeaturesGL.h:
+        * src/libANGLE/renderer/gl/StateManagerGL.cpp:
+        (rx::StateManagerGL::bindFramebuffer):
+        * src/libANGLE/renderer/gl/renderergl_utils.cpp:
+        (rx::nativegl_gl::InitializeFeatures):
+
 2020-01-08  Kenneth Russell  <kbr@chromium.org>
 
         Remove some #ifdefs related to iOS port of ANGLE

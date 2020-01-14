@@ -698,6 +698,11 @@ void GraphicsContextGLOpenGL::copyTexImage2D(GCGLenum target, GCGLint level, GCG
     ::glCopyTexImage2D(target, level, internalformat, x, y, width, height, border);
     if (attrs.antialias && m_state.boundFBO == m_multisampleFBO)
         ::glBindFramebufferEXT(GraphicsContextGL::FRAMEBUFFER, m_multisampleFBO);
+
+#if PLATFORM(MAC) && USE(OPENGL)
+    if (getExtensions().isIntel())
+        m_needsFlushBeforeDeleteTextures = true;
+#endif
 }
 
 void GraphicsContextGLOpenGL::copyTexSubImage2D(GCGLenum target, GCGLint level, GCGLint xoffset, GCGLint yoffset, GCGLint x, GCGLint y, GCGLsizei width, GCGLsizei height)
@@ -712,6 +717,11 @@ void GraphicsContextGLOpenGL::copyTexSubImage2D(GCGLenum target, GCGLint level, 
     ::glCopyTexSubImage2D(target, level, xoffset, yoffset, x, y, width, height);
     if (attrs.antialias && m_state.boundFBO == m_multisampleFBO)
         ::glBindFramebufferEXT(GraphicsContextGL::FRAMEBUFFER, m_multisampleFBO);
+
+#if PLATFORM(MAC) && USE(OPENGL)
+    if (getExtensions().isIntel())
+        m_needsFlushBeforeDeleteTextures = true;
+#endif
 }
 
 void GraphicsContextGLOpenGL::cullFace(GCGLenum mode)
@@ -783,12 +793,18 @@ void GraphicsContextGLOpenGL::finish()
 {
     makeContextCurrent();
     ::glFinish();
+#if PLATFORM(MAC) && USE(OPENGL)
+    m_needsFlushBeforeDeleteTextures = false;
+#endif
 }
 
 void GraphicsContextGLOpenGL::flush()
 {
     makeContextCurrent();
     ::glFlush();
+#if PLATFORM(MAC) && USE(OPENGL)
+    m_needsFlushBeforeDeleteTextures = false;
+#endif
 }
 
 void GraphicsContextGLOpenGL::framebufferRenderbuffer(GCGLenum target, GCGLenum attachment, GCGLenum renderbuffertarget, PlatformGLObject buffer)
@@ -1933,6 +1949,10 @@ void GraphicsContextGLOpenGL::deleteShader(PlatformGLObject shader)
 void GraphicsContextGLOpenGL::deleteTexture(PlatformGLObject texture)
 {
     makeContextCurrent();
+#if PLATFORM(MAC) && USE(OPENGL)
+    if (m_needsFlushBeforeDeleteTextures)
+        flush();
+#endif
     m_state.boundTextureMap.removeIf([texture] (auto& keyValue) {
         return keyValue.value.first == texture;
     });

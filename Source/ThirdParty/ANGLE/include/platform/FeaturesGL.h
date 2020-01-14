@@ -386,16 +386,6 @@ struct FeaturesGL : FeatureSetBase
         "All Mac drivers do not handle struct scopes correctly. This workaround overwrites a struct"
         "name with a unique prefix.",
         &members, "http://crbug.com/403957"};
-
-    // Intel drivers on Mac - apparently for both older and current GPUs - have
-    // bugs where certain operations can be reordered across glBindFramebuffer
-    // calls. Flushing before and after glBindFramebuffer works around these.
-    // These bugs may exist on other platforms.
-    Feature flushBeforeAndAfterBindFramebuffer = {
-        "flush_before_and_after_bindframebuffer", FeatureCategory::OpenGLWorkarounds,
-        "Intel drivers (on Mac, possibly other platforms) incorrectly reorder some operations"
-        " across glBindFramebuffer calls. Flush before and after as a workaround.",
-        &members, "http://anglebug.com/4267"};
 };
 
 inline FeaturesGL::FeaturesGL()  = default;
