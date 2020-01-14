@@ -1,3 +1,13 @@
+2020-01-14  Lauro Moura  <lmoura@igalia.com>
+
+        Gardening after r251750
+        https://bugs.webkit.org/show_bug.cgi?id=206249
+
+        Reviewed by Žan Doberšek.
+
+        * platform/gtk/fast/css/hsl-color-expected.txt:
+        * platform/gtk/fast/css/hsla-color-expected.txt:
+
 2020-01-14  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [iOS] fast/forms/contenteditable-font-optical-size.html landed flaky

@@ -15,13 +15,13 @@ layer at (0,0) size 785x1352
       RenderBlock {H1} at (0,175) size 769x38 [color=#0000FF]
         RenderText {#text} at (0,0) size 570x36
           text run at (0,0) width 570: "This should be blue: hsl(240, 100%, 50%)"
-      RenderBlock {H1} at (0,233) size 769x38 [color=#7FFF7F]
+      RenderBlock {H1} at (0,233) size 769x38 [color=#80FF80]
         RenderText {#text} at (0,0) size 658x36
           text run at (0,0) width 658: "This should be light green: hsl(120, 100%, 75%)"
-      RenderBlock {H1} at (0,292) size 769x38 [color=#007F00]
+      RenderBlock {H1} at (0,292) size 769x38 [color=#008000]
         RenderText {#text} at (0,0) size 661x36
           text run at (0,0) width 661: "This should be dark green: hsl(120, 100%, 25%)"
-      RenderBlock {H1} at (0,350) size 769x38 [color=#3FBF3F]
+      RenderBlock {H1} at (0,350) size 769x38 [color=#40BF40]
         RenderText {#text} at (0,0) size 659x36
           text run at (0,0) width 659: "This should be pastel green: hsl(120, 50%, 50%)"
       RenderBlock (anonymous) at (0,409) size 769x37
@@ -40,32 +40,32 @@ layer at (0,0) size 785x1352
       RenderBlock (anonymous) at (0,583) size 769x19
         RenderText {#text} at (0,0) size 470x17
           text run at (0,0) width 470: "Check percentages less than 0% (negative values), should be limited to 0%"
-      RenderBlock {H1} at (0,622) size 769x38 [color=#7F7F7F]
+      RenderBlock {H1} at (0,622) size 769x38 [color=#808080]
         RenderText {#text} at (0,0) size 539x36
           text run at (0,0) width 539: "This should be grey: hsl(120, 0%, 50%)"
-      RenderBlock {H1} at (0,681) size 769x38 [color=#7F7F7F]
+      RenderBlock {H1} at (0,681) size 769x38 [color=#808080]
         RenderText {#text} at (0,0) size 639x36
           text run at (0,0) width 639: "This should be grey, too: hsl(120, -100%, 50%)"
       RenderBlock (anonymous) at (0,739) size 769x37
         RenderText {#text} at (0,0) size 755x35
           text run at (0,0) width 755: "Check Hue values that are larger than 360, should be normalized back to a value between 0 and 360. As Hue values are"
           text run at (0,18) width 451: "in degrees, there is no maximum like percentages, they are loop around."
-      RenderBlock {H1} at (0,797) size 769x38 [color=#007F00]
+      RenderBlock {H1} at (0,797) size 769x38 [color=#008000]
         RenderText {#text} at (0,0) size 661x36
           text run at (0,0) width 661: "This should be dark green: hsl(120, 100%, 25%)"
-      RenderBlock {H1} at (0,855) size 769x38 [color=#007F00]
+      RenderBlock {H1} at (0,855) size 769x38 [color=#008000]
         RenderText {#text} at (0,0) size 720x36
           text run at (0,0) width 720: "This should be dark green, too: hsl(480, 100%, 25%)"
       RenderBlock (anonymous) at (0,914) size 769x18
         RenderText {#text} at (0,0) size 258x17
           text run at (0,0) width 258: "Check Hue values with a negative angle."
-      RenderBlock {H1} at (0,953) size 769x38 [color=#7FFF7F]
+      RenderBlock {H1} at (0,953) size 769x38 [color=#80FF80]
         RenderText {#text} at (0,0) size 658x36
           text run at (0,0) width 658: "This should be light green: hsl(120, 100%, 75%)"
-      RenderBlock {H1} at (0,1011) size 769x38 [color=#7FFF7F]
+      RenderBlock {H1} at (0,1011) size 769x38 [color=#80FF80]
         RenderText {#text} at (0,0) size 728x36
           text run at (0,0) width 728: "This should be light green, too: hsl(-240, 100%, 75%)"
-      RenderBlock {H1} at (0,1070) size 769x38 [color=#7FFF7F]
+      RenderBlock {H1} at (0,1070) size 769x38 [color=#80FF80]
         RenderText {#text} at (0,0) size 728x36
           text run at (0,0) width 728: "This should be light green, too: hsl(-600, 100%, 75%)"
       RenderBlock (anonymous) at (0,1128) size 769x19
