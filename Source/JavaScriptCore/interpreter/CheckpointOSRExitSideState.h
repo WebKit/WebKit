@@ -35,7 +35,7 @@ struct CheckpointOSRExitSideState {
 public:
 
     BytecodeIndex bytecodeIndex;
-    JSValue tmps[maxNumCheckpointTmps];
+    JSValue tmps[maxNumCheckpointTmps] { };
 };
 
 }

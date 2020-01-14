@@ -1,3 +1,18 @@
+2020-01-13  Keith Miller  <keith_miller@apple.com>
+
+        scanSideState scans too much side state
+        https://bugs.webkit.org/show_bug.cgi?id=206166
+
+        Reviewed by Tadeu Zagallo.
+
+        The old code would would scan tmps + sizeof(tmps) but sizeof(tmps)
+        is not the length of the array. instead we should scan tmps +
+        maxNumCheckpointTmps.
+
+        * interpreter/CheckpointOSRExitSideState.h:
+        * runtime/VM.cpp:
+        (JSC::VM::scanSideState const):
+
 2020-01-13  Saam Barati  <sbarati@apple.com>
 
         Throw away baseline code if there is an optimized replacement
