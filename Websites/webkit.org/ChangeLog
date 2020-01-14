@@ -1,3 +1,14 @@
+2020-01-13  Jon Davis  <jond@apple.com>
+
+        Add support for Web Inspector pages and topic taxonomy
+        https://bugs.webkit.org/show_bug.cgi?id=206034
+
+        Reviewed by Devin Rousso.
+
+        * wp-content/plugins/web-inspector-pages.php: Added.
+        * wp-content/themes/webkit/archive-web_inspector_page.php: Added.
+        * wp-content/themes/webkit/single-web_inspector_page.php: Added.
+
 2020-01-09  Jon Davis  <jond@apple.com>
 
         Add styles to support Web Inspector reference articles
