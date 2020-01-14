@@ -99,6 +99,8 @@ WI.LocalResourceOverrideTreeElement = class LocalResourceOverrideTreeElement ext
 
     populateContextMenu(contextMenu, event)
     {
+        contextMenu.__localOverrideItemsAdded = true;
+
         contextMenu.appendItem(WI.UIString("Edit Local Override\u2026"), (event) => {
             let popover = new WI.LocalResourceOverridePopover(this);
             popover.show(this._localResourceOverride, this.status, [WI.RectEdge.MAX_X, WI.RectEdge.MIN_X]);
