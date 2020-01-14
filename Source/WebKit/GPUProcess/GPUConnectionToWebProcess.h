@@ -40,7 +40,6 @@ namespace WebKit {
 
 class GPUProcess;
 class LibWebRTCCodecsProxy;
-class RemoteAudioMediaStreamTrackRendererManager;
 class RemoteMediaPlayerManagerProxy;
 class RemoteMediaRecorderManager;
 class RemoteMediaResourceManager;
@@ -74,9 +73,6 @@ private:
 #if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
     UserMediaCaptureManagerProxy& userMediaCaptureManagerProxy();
     RemoteMediaRecorderManager& mediaRecorderManager();
-#if ENABLE(VIDEO_TRACK)
-    RemoteAudioMediaStreamTrackRendererManager& audioTrackRendererManager();
-#endif
 #endif
 
     // IPC::Connection::Client
@@ -96,9 +92,6 @@ private:
 #if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
     std::unique_ptr<UserMediaCaptureManagerProxy> m_userMediaCaptureManagerProxy;
     std::unique_ptr<RemoteMediaRecorderManager> m_remoteMediaRecorderManager;
-#if ENABLE(VIDEO_TRACK)
-    std::unique_ptr<RemoteAudioMediaStreamTrackRendererManager> m_audioTrackRendererManager;
-#endif
 #endif
 #if PLATFORM(COCOA) && USE(LIBWEBRTC)
     std::unique_ptr<LibWebRTCCodecsProxy> m_libWebRTCCodecsProxy;

@@ -48,9 +48,9 @@ public:
 private:
     // AudioMediaStreamTrackRenderer
     void pushSamples(const WTF::MediaTime&, const PlatformAudioData&, const AudioStreamDescription&, size_t) final;
-    void start() final;
     void stop() final;
     void clear() final;
+    void setPaused(bool) final;
 
     static OSStatus inputProc(void*, AudioUnitRenderActionFlags*, const AudioTimeStamp*, UInt32 inBusNumber, UInt32 numberOfFrames, AudioBufferList*);
     OSStatus render(UInt32 sampleCount, AudioBufferList&, UInt32 inBusNumber, const AudioTimeStamp&, AudioUnitRenderActionFlags&);
@@ -65,6 +65,7 @@ private:
     // Cross thread members
     RefPtr<AudioSampleDataSource> m_dataSource;
     bool m_isAudioUnitStarted { false };
+    bool m_paused { false };
 };
 
 }

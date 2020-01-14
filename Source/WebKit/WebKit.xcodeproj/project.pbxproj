@@ -3380,12 +3380,6 @@
 		41D129D91F3D101400D15E47 /* WebCacheStorageProvider.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebCacheStorageProvider.h; sourceTree = "<group>"; };
 		41D5C6D8238EB20D00B9B3CB /* ServiceWorkerSoftUpdateLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ServiceWorkerSoftUpdateLoader.h; sourceTree = "<group>"; };
 		41D5C6D9238EB20E00B9B3CB /* ServiceWorkerSoftUpdateLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ServiceWorkerSoftUpdateLoader.cpp; sourceTree = "<group>"; };
-		41D6455223CCB92100486E0E /* RemoteAudioMediaStreamTrackRenderer.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; name = RemoteAudioMediaStreamTrackRenderer.messages.in; path = GPUProcess/webrtc/RemoteAudioMediaStreamTrackRenderer.messages.in; sourceTree = SOURCE_ROOT; };
-		41D6455323CCB92100486E0E /* RemoteAudioMediaStreamTrackRenderer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = RemoteAudioMediaStreamTrackRenderer.h; path = GPUProcess/webrtc/RemoteAudioMediaStreamTrackRenderer.h; sourceTree = SOURCE_ROOT; };
-		41D6455423CCB92200486E0E /* RemoteAudioMediaStreamTrackRenderer.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = RemoteAudioMediaStreamTrackRenderer.cpp; path = GPUProcess/webrtc/RemoteAudioMediaStreamTrackRenderer.cpp; sourceTree = SOURCE_ROOT; };
-		41D6455523CCB96900486E0E /* RemoteAudioMediaStreamTrackRendererManager.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = RemoteAudioMediaStreamTrackRendererManager.messages.in; sourceTree = "<group>"; };
-		41D6455623CCB96900486E0E /* RemoteAudioMediaStreamTrackRendererManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteAudioMediaStreamTrackRendererManager.cpp; sourceTree = "<group>"; };
-		41D6455723CCB96900486E0E /* RemoteAudioMediaStreamTrackRendererManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RemoteAudioMediaStreamTrackRendererManager.h; sourceTree = "<group>"; };
 		41DC45941E3D6E1E00B11F51 /* NetworkRTCProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetworkRTCProvider.h; sourceTree = "<group>"; };
 		41DC45951E3D6E1E00B11F51 /* NetworkRTCProvider.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NetworkRTCProvider.cpp; sourceTree = "<group>"; };
 		41DC45981E3D6ED600B11F51 /* NetworkRTCProvider.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = NetworkRTCProvider.messages.in; sourceTree = "<group>"; };
@@ -3406,9 +3400,6 @@
 		41FBE822206DA79C000F0741 /* NetworkContentRuleListManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetworkContentRuleListManager.h; sourceTree = "<group>"; };
 		41FBE823206DA79C000F0741 /* NetworkContentRuleListManager.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = NetworkContentRuleListManager.messages.in; sourceTree = "<group>"; };
 		41FBE824206DA79C000F0741 /* NetworkContentRuleListManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NetworkContentRuleListManager.cpp; sourceTree = "<group>"; };
-		41FCD6AD23CCC26000C62567 /* AudioMediaStreamTrackRenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AudioMediaStreamTrackRenderer.h; sourceTree = "<group>"; };
-		41FCD6AE23CCC26100C62567 /* AudioMediaStreamTrackRenderer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AudioMediaStreamTrackRenderer.cpp; sourceTree = "<group>"; };
-		41FCD6AF23CCC26100C62567 /* AudioMediaStreamTrackRendererIdentifier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AudioMediaStreamTrackRendererIdentifier.h; sourceTree = "<group>"; };
 		4450AEBF1DC3FAE5009943F2 /* SharedMemoryCocoa.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SharedMemoryCocoa.cpp; sourceTree = "<group>"; };
 		4459984122833E6000E61373 /* SyntheticEditingCommandType.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SyntheticEditingCommandType.h; sourceTree = "<group>"; };
 		449D90D821FD63FE00F677C0 /* LocalAuthenticationSoftLink.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = LocalAuthenticationSoftLink.mm; sourceTree = "<group>"; };
@@ -7185,9 +7176,6 @@
 		4172198823B6126100AE5686 /* webrtc */ = {
 			isa = PBXGroup;
 			children = (
-				41FCD6AE23CCC26100C62567 /* AudioMediaStreamTrackRenderer.cpp */,
-				41FCD6AD23CCC26000C62567 /* AudioMediaStreamTrackRenderer.h */,
-				41FCD6AF23CCC26100C62567 /* AudioMediaStreamTrackRendererIdentifier.h */,
 				4172198A23B6128200AE5686 /* LibWebRTCCodecs.cpp */,
 				4172198923B6128200AE5686 /* LibWebRTCCodecs.h */,
 				4172198D23B62C7C00AE5686 /* LibWebRTCCodecs.messages.in */,
@@ -7208,12 +7196,6 @@
 				41E0A7C623B6397800561060 /* LibWebRTCCodecsProxy.h */,
 				41E0A7C723B6397900561060 /* LibWebRTCCodecsProxy.messages.in */,
 				41E0A7C823B6397900561060 /* LibWebRTCCodecsProxy.mm */,
-				41D6455423CCB92200486E0E /* RemoteAudioMediaStreamTrackRenderer.cpp */,
-				41D6455323CCB92100486E0E /* RemoteAudioMediaStreamTrackRenderer.h */,
-				41D6455223CCB92100486E0E /* RemoteAudioMediaStreamTrackRenderer.messages.in */,
-				41D6455623CCB96900486E0E /* RemoteAudioMediaStreamTrackRendererManager.cpp */,
-				41D6455723CCB96900486E0E /* RemoteAudioMediaStreamTrackRendererManager.h */,
-				41D6455523CCB96900486E0E /* RemoteAudioMediaStreamTrackRendererManager.messages.in */,
 				4176E89D23C376D5003E83FE /* RemoteMediaRecorder.cpp */,
 				4176E89823C36677003E83FE /* RemoteMediaRecorder.h */,
 				4176E89C23C37479003E83FE /* RemoteMediaRecorder.messages.in */,
