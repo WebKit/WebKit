@@ -1039,11 +1039,11 @@ Vector<MarkedText> InlineTextBox::collectMarkedTextsForHighlights(TextPaintPhase
     Vector<MarkedText> markedTexts;
     auto& parentRenderer = parent()->renderer();
     auto& parentStyle = parentRenderer.style();
-    for (auto& [highlightKey, highlightGroup] : renderer().document().highlightMap().map()) {
-        auto renderStyle = parentRenderer.getUncachedPseudoStyle({ PseudoId::Highlight, highlightKey }, &parentStyle);
+    for (auto& highlight : renderer().document().highlightMap().map()) {
+        auto renderStyle = parentRenderer.getUncachedPseudoStyle({ PseudoId::Highlight, highlight.key }, &parentStyle);
         if (!renderStyle)
             continue;
-        for (auto& staticRange : highlightGroup->ranges()) {
+        for (auto& staticRange : highlight.value->ranges()) {
             Position startPos = createLegacyEditingPosition(staticRange->startContainer(), staticRange->startOffset());
             Position endPos = createLegacyEditingPosition(staticRange->endContainer(), staticRange->endOffset());
 
@@ -1059,7 +1059,7 @@ Vector<MarkedText> InlineTextBox::collectMarkedTextsForHighlights(TextPaintPhase
                 highlightData.setContext({startRenderer, endRenderer, static_cast<unsigned>(startOffset), static_cast<unsigned>(endOffset)});
                 auto [highlightStart, highlightEnd] = highlightStartEnd(highlightData);
                 if (highlightStart < highlightEnd)
-                    markedTexts.append({ highlightStart, highlightEnd, MarkedText::Highlight, nullptr, highlightKey });
+                    markedTexts.append({ highlightStart, highlightEnd, MarkedText::Highlight, nullptr, highlight.key });
             }
         }
     }
