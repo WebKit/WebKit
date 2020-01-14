@@ -1,0 +1,3 @@
+
+FAIL Video should seek to time specified in media fragment syntax assert_equals: expected 4 but got 0
+
