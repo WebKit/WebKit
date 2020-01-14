@@ -1,3 +1,17 @@
+2020-01-13  Chris Lord  <clord@igalia.com>
+
+        REGRESSION(r253683): [GTK][WPE] Lots of offscreen-canvas WPT tests failing
+        https://bugs.webkit.org/show_bug.cgi?id=205445
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        Bug 205445 - Update and re-enable OffscreenCanvas tests
+
+        * resources/import-expectations.json:
+        * web-platform-tests/fetch/nosniff/image-expected.txt: Newly passing test, presumable due to previously missing resource.
+        * web-platform-tests/images/*: Updated.
+        * web-platform-tests/offscreen-canvas/*: Updated.
+
 2020-01-13  Cathie Chen  <cathiechen@igalia.com>
 
         Import the update of img-aspect-ratio.html.

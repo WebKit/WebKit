@@ -6,7 +6,7 @@ PASS URL query: x/x
 PASS URL query: image/gif 
 PASS URL query: image/png 
 PASS URL query: image/png;blah 
-FAIL URL query: image/svg+xml assert_unreached: Unexpected error event Reached unreachable code
+PASS URL query: image/svg+xml 
 PASS URL query: text/html 
 PASS URL query: application/xml 
 PASS URL query: application/blah+xml 

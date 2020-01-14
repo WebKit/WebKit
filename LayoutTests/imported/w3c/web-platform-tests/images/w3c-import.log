@@ -1,7 +1,7 @@
 The tests in this directory were imported from the W3C repository.
 Do NOT modify these tests directly in WebKit.
 Instead, create a pull request on the WPT github:
-	https://github.com/w3c/web-platform-tests
+	https://github.com/web-platform-tests/wpt
 
 Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
 
@@ -14,7 +14,7 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
-/LayoutTests/imported/w3c/web-platform-tests/images/OWNERS
+/LayoutTests/imported/w3c/web-platform-tests/images/META.yml
 /LayoutTests/imported/w3c/web-platform-tests/images/anim-gr.gif
 /LayoutTests/imported/w3c/web-platform-tests/images/anim-gr.png
 /LayoutTests/imported/w3c/web-platform-tests/images/anim-poster-gr.png
@@ -23,10 +23,12 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/images/black-rectangle.png
 /LayoutTests/imported/w3c/web-platform-tests/images/blue-area.png
 /LayoutTests/imported/w3c/web-platform-tests/images/blue-border.png
+/LayoutTests/imported/w3c/web-platform-tests/images/blue-png-cachable.py
 /LayoutTests/imported/w3c/web-platform-tests/images/blue.png
 /LayoutTests/imported/w3c/web-platform-tests/images/blue96x96.png
 /LayoutTests/imported/w3c/web-platform-tests/images/broken.png
-/LayoutTests/imported/w3c/web-platform-tests/images/canvas-line.png
+/LayoutTests/imported/w3c/web-platform-tests/images/clear-100x50.png
+/LayoutTests/imported/w3c/web-platform-tests/images/colors.svg
 /LayoutTests/imported/w3c/web-platform-tests/images/fail.gif
 /LayoutTests/imported/w3c/web-platform-tests/images/ggrr-256x256.png
 /LayoutTests/imported/w3c/web-platform-tests/images/green-100x50.png
@@ -34,6 +36,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/images/green-1x1.png
 /LayoutTests/imported/w3c/web-platform-tests/images/green-256x256.png
 /LayoutTests/imported/w3c/web-platform-tests/images/green-2x2.png
+/LayoutTests/imported/w3c/web-platform-tests/images/green-96x96.svg
 /LayoutTests/imported/w3c/web-platform-tests/images/green.png
 /LayoutTests/imported/w3c/web-platform-tests/images/green.svg
 /LayoutTests/imported/w3c/web-platform-tests/images/grgr-256x256.png

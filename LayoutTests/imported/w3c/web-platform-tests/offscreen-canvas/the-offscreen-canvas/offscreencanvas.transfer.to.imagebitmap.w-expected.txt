@@ -1,6 +1,4 @@
 
-Harness Error (FAIL), message = DataCloneError: The object can not be cloned.
-
 PASS Test that transferToImageBitmap returns an ImageBitmap with correct width and height in a worker 
 PASS Test that transferToImageBitmap returns an ImageBitmap with correct color in a worker 
 PASS Test that call transferToImageBitmap twice returns an ImageBitmap with correct color in a worker 

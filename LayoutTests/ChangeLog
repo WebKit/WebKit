@@ -1,3 +1,15 @@
+2020-01-13  Chris Lord  <clord@igalia.com>
+
+        REGRESSION(r253683): [GTK][WPE] Lots of offscreen-canvas WPT tests failing
+        https://bugs.webkit.org/show_bug.cgi?id=205445
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        Bug 205445 - Update and re-enable OffscreenCanvas tests
+
+        * platform/gtk/TestExpectations:
+        * platform/wpe/TestExpectations:
+
 2020-01-13  Sunny He  <sunny_he@apple.com>
 
         Fix computeFloatVisibleRectInContainer to handle non-SVG object parent
