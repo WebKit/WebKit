@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2010 Google Inc. All rights reserved.
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -39,17 +39,6 @@
 // In debug mode, printing of the data contained in the tree is
 // enabled. This makes use of WTF::TextStream.
 //
-// Note that when complex types are stored in this red/black tree, it
-// is possible that single invocations of the "<" and "==" operators
-// will be insufficient to describe the ordering of elements in the
-// tree during queries. As a concrete example, consider the case where
-// intervals are stored in the tree sorted by low endpoint. The "<"
-// operator on the Interval class only compares the low endpoint, but
-// the "==" operator takes into account the high endpoint as well.
-// This makes the necessary logic for querying and deletion somewhat
-// more complex. In order to properly handle such situations, the
-// template argument "needsFullOrderingComparisons" must be true.
-//
 // This red-black tree is designed to be _augmented_; subclasses can
 // add additional and summary information to each node to efficiently
 // store and index more complex data structures. A concrete example is
@@ -70,13 +59,11 @@
 #endif
 
 // FIXME: The prefix "POD" here isn't correct; this tree works with non-POD types too.
-// FIXME: Remove the unusual needsFullOrderingComparisons feature by changing the interval tree to use full ordering, sorting based on low, high, and data.
-// FIXME: Would be worthwhile to implement this on top of WTF::RedBlackTree rather than keeping two separate class templates around.
+// FIXME: Extend WTF::RedBlackTree and implement this on top of it rather than keeping two quite similar class templates around.
 
 namespace WebCore {
 
-template<typename T, typename NodeUpdaterType, bool needsFullOrderingComparisons>
-class PODRedBlackTree {
+template<typename T, typename NodeUpdaterType> class PODRedBlackTree {
     WTF_MAKE_NONCOPYABLE(PODRedBlackTree);
 public:
     PODRedBlackTree() = default;
@@ -86,7 +73,6 @@ public:
         clear();
     }
 
-    // Clearing will delete the contents of the tree.
     void clear()
     {
         if (!m_root)
@@ -101,7 +87,7 @@ public:
 
     void add(const T& data)
     {
-        insertNode(new Node(T { data }));
+        add(T { data });
     }
 
     void add(T&& data)
@@ -135,14 +121,13 @@ public:
     bool checkInvariants() const
     {
         int blackCount;
-        return checkInvariantsFromNode(m_root, &blackCount);
+        return checkInvariantsFromNode(m_root, blackCount);
     }
 
-    // Dumps the tree's contents to the logging info stream for
-    // debugging purposes.
+    // Dumps the tree's contents to the logging info stream for debugging purposes.
     void dump() const
     {
-        dumpFromNode(m_root, 0);
+        dumpSubtree(m_root, 0);
     }
 
     // Turns on or off verbose debugging of the tree, causing many
@@ -158,14 +143,10 @@ public:
 protected:
     enum Color { Red, Black };
 
-    // The base Node class which is stored in the tree. Nodes are only
-    // an internal concept; users of the tree deal only with the data
-    // they store in it.
     class Node {
         WTF_MAKE_FAST_ALLOCATED;
         WTF_MAKE_NONCOPYABLE(Node);
     public:
-        // Constructor. Newly-created nodes are colored red.
         explicit Node(T&& data)
             : m_data(WTFMove(data))
         {
@@ -176,7 +157,7 @@ protected:
 
         T& data() { return m_data; }
 
-        void moveDataFrom(Node* src) { m_data = WTFMove(src->m_data); }
+        void moveDataFrom(Node& src) { m_data = WTFMove(src.m_data); }
 
         Node* left() const { return m_left; }
         void setLeft(Node* node) { m_left = node; }
@@ -199,38 +180,23 @@ protected:
     Node* root() const { return m_root; }
 
 private:
-    // This is the hook that subclasses should use when
+    // The update function is the hook that subclasses should use when
     // augmenting the red-black tree with additional per-node summary
     // information. For example, in the case of an interval tree, this
     // is used to compute the maximum endpoint of the subtree below the
     // given node based on the values in the left and right children. It
     // is guaranteed that this will be called in the correct order to
     // properly update such summary information based only on the values
-    // in the left and right children. This method should return true if
+    // in the left and right children. The function should return true if
     // the node's summary information changed.
-    bool updateNode(Node* node)
+    static bool updateNode(Node& node)
     {
-        return NodeUpdaterType::update(*node);
+        return NodeUpdaterType::update(node);
     }
 
-    //----------------------------------------------------------------------
-    // Generic binary search tree operations
-    //
-
-    // Searches the tree for the given datum.
     Node* treeSearch(const T& data) const
     {
-        if (needsFullOrderingComparisons)
-            return treeSearchFullComparisons(m_root, data);
-
-        return treeSearchNormal(m_root, data);
-    }
-
-    // Searches the tree using the normal comparison operations,
-    // suitable for simple data types such as numbers.
-    Node* treeSearchNormal(Node* current, const T& data) const
-    {
-        while (current) {
+        for (auto* current = m_root; current; ) {
             if (current->data() == data)
                 return current;
             if (data < current->data())
@@ -238,32 +204,12 @@ private:
             else
                 current = current->right();
         }
-        return 0;
-    }
-
-    // Searches the tree using multiple comparison operations, required
-    // for data types with more complex behavior such as intervals.
-    Node* treeSearchFullComparisons(Node* current, const T& data) const
-    {
-        if (!current)
-            return 0;
-        if (data < current->data())
-            return treeSearchFullComparisons(current->left(), data);
-        if (current->data() < data)
-            return treeSearchFullComparisons(current->right(), data);
-        if (data == current->data())
-            return current;
-
-        // We may need to traverse both the left and right subtrees.
-        Node* result = treeSearchFullComparisons(current->left(), data);
-        if (!result)
-            result = treeSearchFullComparisons(current->right(), data);
-        return result;
+        return nullptr;
     }
 
     void treeInsert(Node* z)
     {
-        Node* y = 0;
+        Node* y = nullptr;
         Node* x = m_root;
         while (x) {
             y = x;
@@ -297,8 +243,7 @@ private:
         return y;
     }
 
-    // Finds the minimum element in the sub-tree rooted at the given
-    // node.
+    // Finds the minimum element in the sub-tree rooted at the given node.
     static Node* treeMinimum(Node* x)
     {
         while (x->left())
@@ -312,16 +257,6 @@ private:
         if (y && x == y->left() && y->right())
             return treeMinimum(y->right());
         return y;
-    }
-
-    // Helper for maintaining the augmented red-black tree.
-    void propagateUpdates(Node* start)
-    {
-        bool shouldContinue = true;
-        while (start && shouldContinue) {
-            shouldContinue = updateNode(start);
-            start = start->parent();
-        }
     }
 
     //----------------------------------------------------------------------
@@ -356,9 +291,15 @@ private:
         x->setParent(y);
 
         // Update nodes lowest to highest.
-        updateNode(x);
-        updateNode(y);
+        updateNode(*x);
+        updateNode(*y);
         return y;
+    }
+
+    static void propagateUpdates(Node* start)
+    {
+        while (start && updateNode(*start))
+            start = start->parent();
     }
 
     // Right-rotates the subtree rooted at y.
@@ -389,8 +330,8 @@ private:
         y->setParent(x);
 
         // Update nodes lowest to highest.
-        updateNode(y);
-        updateNode(x);
+        updateNode(*y);
+        updateNode(*x);
         return x;
     }
 
@@ -399,7 +340,7 @@ private:
     {
         treeInsert(x);
         x->setColor(Red);
-        updateNode(x);
+        updateNode(*x);
 
         logIfVerbose("  PODRedBlackTree::InsertNode");
 
@@ -415,9 +356,9 @@ private:
                     x->parent()->setColor(Black);
                     y->setColor(Black);
                     x->parent()->parent()->setColor(Red);
-                    updateNode(x->parent());
+                    updateNode(*x->parent());
                     x = x->parent()->parent();
-                    updateNode(x);
+                    updateNode(*x);
                     updateStart = x->parent();
                 } else {
                     if (x == x->parent()->right()) {
@@ -442,9 +383,9 @@ private:
                     x->parent()->setColor(Black);
                     y->setColor(Black);
                     x->parent()->parent()->setColor(Red);
-                    updateNode(x->parent());
+                    updateNode(*x->parent());
                     x = x->parent()->parent();
-                    updateNode(x);
+                    updateNode(*x);
                     updateStart = x->parent();
                 } else {
                     if (x == x->parent()->left()) {
@@ -469,8 +410,7 @@ private:
     }
 
     // Restores the red-black property to the tree after splicing out
-    // a node. Note that x may be null, which is why xParent must be
-    // supplied.
+    // a node. Note that x may be null, which is why xParent must be supplied.
     void deleteFixup(Node* x, Node* xParent)
     {
         while (x != m_root && (!x || x->color() == Black)) {
@@ -594,9 +534,9 @@ private:
                 y->parent()->setRight(x);
         }
         if (y != z) {
-            z->moveDataFrom(y);
+            z->moveDataFrom(*y);
             // This node has changed location in the tree and must be updated.
-            updateNode(z);
+            updateNode(*z);
             // The parent and its parents may now be out of date.
             propagateUpdates(z->parent());
         }
@@ -618,11 +558,11 @@ private:
 
     // Returns in the "blackCount" parameter the number of black
     // children along all paths to all leaves of the given node.
-    bool checkInvariantsFromNode(Node* node, int* blackCount) const
+    bool checkInvariantsFromNode(Node* node, int& blackCount) const
     {
         // Base case is a leaf node.
         if (!node) {
-            *blackCount = 1;
+            blackCount = 1;
             return true;
         }
 
@@ -640,14 +580,13 @@ private:
                 return false;
         }
 
-        // Every simple path to a leaf node contains the same number of
-        // black nodes.
+        // Every simple path to a leaf node contains the same number of black nodes.
         int leftCount = 0, rightCount = 0;
-        bool leftValid = checkInvariantsFromNode(node->left(), &leftCount);
-        bool rightValid = checkInvariantsFromNode(node->right(), &rightCount);
+        bool leftValid = checkInvariantsFromNode(node->left(), leftCount);
+        bool rightValid = checkInvariantsFromNode(node->right(), rightCount);
         if (!leftValid || !rightValid)
             return false;
-        *blackCount = leftCount + (node->color() == Black ? 1 : 0);
+        blackCount = leftCount + (node->color() == Black ? 1 : 0);
         return leftCount == rightCount;
     }
 
@@ -665,8 +604,7 @@ private:
 
 #ifndef NDEBUG
 
-    // Dumps the subtree rooted at the given node.
-    void dumpFromNode(Node* node, int indentation) const
+    void dumpSubtree(Node* node, int indentation) const
     {
         StringBuilder builder;
         for (int i = 0; i < indentation; i++)
@@ -681,15 +619,12 @@ private:
         }
         LOG_ERROR("%s", builder.toString().utf8().data());
         if (node) {
-            dumpFromNode(node->left(), indentation + 2);
-            dumpFromNode(node->right(), indentation + 2);
+            dumpSubtree(node->left(), indentation + 2);
+            dumpSubtree(node->right(), indentation + 2);
         }
     }
 
 #endif
-
-    //----------------------------------------------------------------------
-    // Data members
 
     Node* m_root { nullptr };
 #ifndef NDEBUG

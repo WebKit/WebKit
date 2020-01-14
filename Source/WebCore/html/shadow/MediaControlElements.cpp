@@ -48,6 +48,7 @@
 #include "Logging.h"
 #include "MediaControls.h"
 #include "MouseEvent.h"
+#include "PODInterval.h"
 #include "Page.h"
 #include "PageGroup.h"
 #include "RenderLayer.h"

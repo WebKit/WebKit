@@ -23,7 +23,6 @@
 
 #pragma once
 
-#include "PODInterval.h"
 #include "RootInlineBox.h"
 #include <wtf/ListHashSet.h>
 #include <wtf/WeakPtr.h>
@@ -33,6 +32,7 @@ namespace WebCore {
 class RenderBlockFlow;
 class RenderBox;
 
+template<typename, typename> class PODInterval;
 template<typename, typename> class PODIntervalTree;
 
 class FloatingObject {

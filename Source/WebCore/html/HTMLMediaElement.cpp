@@ -1635,9 +1635,8 @@ void HTMLMediaElement::updateActiveTextTrackCues(const MediaTime& movieTime)
 
     // The user agent must synchronously unset [the text track cue active] flag
     // whenever ... the media element's readyState is changed back to HAVE_NOTHING.
-    auto movieTimeInterval = m_cueData->cueTree.createInterval(movieTime, movieTime);
     if (m_readyState != HAVE_NOTHING && m_player) {
-        currentCues = m_cueData->cueTree.allOverlaps(movieTimeInterval);
+        currentCues = m_cueData->cueTree.allOverlaps({ movieTime, movieTime });
         if (currentCues.size() > 1)
             std::sort(currentCues.begin(), currentCues.end(), &compareCueInterval);
     }
@@ -1707,7 +1706,7 @@ void HTMLMediaElement::updateActiveTextTrackCues(const MediaTime& movieTime)
     if (auto nearestEndingCue = std::min_element(currentCues.begin(), currentCues.end(), compareCueIntervalEndTime))
         nextInterestingTime = nearestEndingCue->data()->endMediaTime();
 
-    Optional<CueInterval> nextCue = m_cueData->cueTree.nextIntervalAfter(movieTimeInterval.high());
+    Optional<CueInterval> nextCue = m_cueData->cueTree.nextIntervalAfter(movieTime);
     if (nextCue)
         nextInterestingTime = std::min(nextInterestingTime, nextCue->low());
 
@@ -1996,7 +1995,7 @@ void HTMLMediaElement::textTrackAddCue(TextTrack& track, TextTrackCue& cue)
     // zero-length cues.
     MediaTime endTime = std::max(cue.startMediaTime(), cue.endMediaTime());
 
-    CueInterval interval = m_cueData->cueTree.createInterval(cue.startMediaTime(), endTime, &cue);
+    CueInterval interval(cue.startMediaTime(), endTime, &cue);
     if (!m_cueData->cueTree.contains(interval))
         m_cueData->cueTree.add(interval);
     updateActiveTextTrackCues(currentMediaTime());
@@ -2011,7 +2010,7 @@ void HTMLMediaElement::textTrackRemoveCue(TextTrack&, TextTrackCue& cue)
     // zero-length cues.
     MediaTime endTime = std::max(cue.startMediaTime(), cue.endMediaTime());
 
-    CueInterval interval = m_cueData->cueTree.createInterval(cue.startMediaTime(), endTime, &cue);
+    CueInterval interval(cue.startMediaTime(), endTime, &cue);
     m_cueData->cueTree.remove(interval);
 
     // Since the cue will be removed from the media element and likely the

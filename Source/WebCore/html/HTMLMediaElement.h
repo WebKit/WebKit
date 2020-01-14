@@ -46,7 +46,6 @@
 #if ENABLE(VIDEO_TRACK)
 #include "AudioTrack.h"
 #include "CaptionUserPreferences.h"
-#include "PODInterval.h"
 #include "TextTrack.h"
 #include "TextTrackCue.h"
 #include "VTTCue.h"
@@ -105,6 +104,7 @@ class VideoTrackPrivate;
 class WebKitMediaKeys;
 
 template<typename> class DOMPromiseDeferred;
+template<typename, typename> class PODInterval;
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
 class RemotePlayback;

@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2010 Google Inc. All rights reserved.
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,69 +35,29 @@
 
 namespace WebCore {
 
-template <class T, class UserData>
-class PODIntervalSearchAdapter {
-public:
-    typedef PODInterval<T, UserData> IntervalType;
-    
-    PODIntervalSearchAdapter(Vector<IntervalType>& result, const T& lowValue, const T& highValue)
-        : m_result(result)
-        , m_lowValue(lowValue)
-        , m_highValue(highValue)
-    {
-    }
-    
-    const T& lowValue() const { return m_lowValue; }
-    const T& highValue() const { return m_highValue; }
-    void collectIfNeeded(const IntervalType& data) const
-    {
-        if (data.overlaps(m_lowValue, m_highValue))
-            m_result.append(data);
-    }
-
-private:
-    Vector<IntervalType>& m_result;
-    T m_lowValue;
-    T m_highValue;
-};
-
 struct PODIntervalNodeUpdater;
 
 // An interval tree, which is a form of augmented red-black tree. It
 // supports efficient (O(lg n)) insertion, removal and querying of
 // intervals in the tree.
-template<class T, class UserData>
-class PODIntervalTree final : public PODRedBlackTree<PODInterval<T, UserData>, PODIntervalNodeUpdater, true> {
+template<typename T, typename UserData> class PODIntervalTree final : public PODRedBlackTree<PODInterval<T, UserData>, PODIntervalNodeUpdater> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    // Typedef to reduce typing when declaring intervals to be stored in
-    // this tree.
-    typedef PODInterval<T, UserData> IntervalType;
-    typedef PODIntervalSearchAdapter<T, UserData> IntervalSearchAdapterType;
+    using IntervalType = PODInterval<T, UserData>;
+    class OverlapsSearchAdapter;
 
-    // Returns all intervals in the tree which overlap the given query
-    // interval. The returned intervals are sorted by increasing low
-    // endpoint.
+    // Returns all intervals in the tree which overlap the given query interval, sorted by the < operator.
     Vector<IntervalType> allOverlaps(const IntervalType& interval) const
     {
         Vector<IntervalType> result;
-        IntervalSearchAdapterType adapter(result, interval.low(), interval.high());
-        allOverlapsWithAdapter<IntervalSearchAdapterType>(adapter);
+        OverlapsSearchAdapter adapter(result, interval);
+        allOverlapsWithAdapter(adapter);
         return result;
     }
 
-    template <class AdapterType>
-    void allOverlapsWithAdapter(AdapterType& adapter) const
+    template<typename AdapterType> void allOverlapsWithAdapter(AdapterType& adapter) const
     {
-        // Explicit dereference of "this" required because of
-        // inheritance rules in template classes.
-        searchForOverlapsFrom<AdapterType>(this->root(), adapter);
-    }
-
-    // Helper to create interval objects.
-    static IntervalType createInterval(const T& low, const T& high, UserData&& data = { })
-    {
-        return IntervalType(low, high, WTFMove(data));
+        searchForOverlapsFrom(this->root(), adapter);
     }
 
     Optional<IntervalType> nextIntervalAfter(const T& point)
@@ -116,20 +76,19 @@ public:
             return false;
         if (!this->root())
             return true;
-        return checkInvariantsFromNode(this->root(), 0);
+        return checkInvariantsFromNode(this->root(), nullptr);
     }
 
 #endif
 
 private:
-    using Base = PODRedBlackTree<PODInterval<T, UserData>, PODIntervalNodeUpdater, true>;
-    typedef typename Base::Node IntervalNode;
+    using Base = PODRedBlackTree<PODInterval<T, UserData>, PODIntervalNodeUpdater>;
+    using IntervalNode = typename Base::Node;
 
     // Starting from the given node, adds all overlaps with the given
     // interval to the result vector. The intervals are sorted by
     // increasing low endpoint.
-    template <class AdapterType>
-    void searchForOverlapsFrom(IntervalNode* node, AdapterType& adapter) const
+    template<typename AdapterType> void searchForOverlapsFrom(IntervalNode* node, AdapterType& adapter) const
     {
         if (!node)
             return;
@@ -217,6 +176,29 @@ private:
 
 #endif
 
+};
+
+template<typename T, typename UserData> class PODIntervalTree<T, UserData>::OverlapsSearchAdapter {
+public:
+    using IntervalType = PODInterval<T, UserData>;
+
+    OverlapsSearchAdapter(Vector<IntervalType>& result, const IntervalType& interval)
+        : m_result(result)
+        , m_interval(interval)
+    {
+    }
+
+    const T& lowValue() const { return m_interval.low(); }
+    const T& highValue() const { return m_interval.high(); }
+    void collectIfNeeded(const IntervalType& data) const
+    {
+        if (data.overlaps(m_interval))
+            m_result.append(data);
+    }
+
+private:
+    Vector<IntervalType>& m_result;
+    const IntervalType& m_interval;
 };
 
 struct PODIntervalNodeUpdater {
