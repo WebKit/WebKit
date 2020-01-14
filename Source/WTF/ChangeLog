@@ -1,3 +1,41 @@
+2020-01-14  Alicia Boya García  <aboya@igalia.com>
+
+        [WTF] Make MediaTime constructor constexpr
+        https://bugs.webkit.org/show_bug.cgi?id=206036
+
+        Reviewed by Adrian Perez de Castro.
+
+        https://bugs.webkit.org/show_bug.cgi?id=205723 allowed to declare
+        MediaTime variables as static inside functions without needing a
+        global destructor.
+
+        It did not eliminate the call to the MediaTime constructor on runtime
+        though. This wasn't a problem for static variables inside functions,
+        as the compiler adds a guard variable to call the constructor the
+        first time the function is called.
+
+        On the other hand, for variables defined outside of the scope of the
+        function, for them to be initialized the MediaTime constructor would
+        have to be called at runtime from a global constructor, something
+        we're trying to avoid and which generates an error in clang.
+
+        But again, MediaTime is a simple class with only integral values, we
+        shouldn't need a runtime function call to initialize it!
+
+        This patch makes the MediaTime constructor constexpr so that we don't
+        need runtime initialization for static MediaTime variables. This
+        allows us to declare them outside functions and enables the compiler
+        to generate code without guard variables when static MediaTime
+        variables are declared inside functions.
+
+        A test has been added accessing a global const static MediaTime. The
+        build should not produce any error stating the need for a global
+        constructor.
+
+        * wtf/MediaTime.cpp:
+        * wtf/MediaTime.h:
+        (WTF::MediaTime::MediaTime):
+
 2020-01-14  David Kilzer  <ddkilzer@apple.com>
 
         Enable -Wconditional-uninitialized in bmalloc, WTF, JavaScriptCore

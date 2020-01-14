@@ -72,24 +72,6 @@ static int64_t signum(int64_t val)
 
 const uint32_t MediaTime::MaximumTimeScale = 1000000000;
 
-MediaTime::MediaTime()
-    : m_timeValue(0)
-    , m_timeScale(DefaultTimeScale)
-    , m_timeFlags(Valid)
-{
-}
-
-MediaTime::MediaTime(int64_t value, uint32_t scale, uint8_t flags)
-    : m_timeValue(value)
-    , m_timeScale(scale)
-    , m_timeFlags(flags)
-{
-    if (scale || isInvalid())
-        return;
-
-    *this = value < 0 ? negativeInfiniteTime() : positiveInfiniteTime();
-}
-
 MediaTime::MediaTime(const MediaTime& rhs)
 {
     *this = rhs;
