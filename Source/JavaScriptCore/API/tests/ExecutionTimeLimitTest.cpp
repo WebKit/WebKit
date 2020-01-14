@@ -198,12 +198,18 @@ int testExecutionTimeLimit()
         {
             Seconds timeAfterWatchdogShouldHaveFired = 300_ms + tierAdjustment;
 
-            StringBuilder scriptBuilder;
-            scriptBuilder.appendLiteral("function foo() { var startTime = currentCPUTime(); while (true) { for (var i = 0; i < 1000; i++); if (currentCPUTime() - startTime > ");
-            scriptBuilder.append(FormattedNumber::fixedPrecision(timeAfterWatchdogShouldHaveFired.seconds()));
-            scriptBuilder.appendLiteral(") break; } } foo();");
+            CString scriptText = makeString(
+                "function foo() {"
+                    "var startTime = currentCPUTime();"
+                    "while (true) {"
+                        "for (var i = 0; i < 1000; i++);"
+                        "if (currentCPUTime() - startTime > ", timeAfterWatchdogShouldHaveFired.seconds(), ") break;"
+                    "}"
+                "}"
+                "foo();"
+            ).utf8();
 
-            JSStringRef script = JSStringCreateWithUTF8CString(scriptBuilder.toString().utf8().data());
+            JSStringRef script = JSStringCreateWithUTF8CString(scriptText.data());
             exception = nullptr;
             shouldTerminateCallbackWasCalled = false;
             auto startTime = CPUTime::forCurrentThread();
@@ -235,19 +241,18 @@ int testExecutionTimeLimit()
         {
             Seconds timeAfterWatchdogShouldHaveFired = 300_ms + tierAdjustment;
 
-            StringBuilder scriptBuilder;
-            scriptBuilder.appendLiteral("var startTime = currentCPUTime();"
-                                 "function recurse(i) {"
-                                     "'use strict';"
-                                     "if (i % 1000 === 0) {"
-                                        "if (currentCPUTime() - startTime >");
-            scriptBuilder.append(FormattedNumber::fixedPrecision(timeAfterWatchdogShouldHaveFired.seconds()));
-            scriptBuilder.appendLiteral("       ) { return; }");
-            scriptBuilder.appendLiteral("    }");
-            scriptBuilder.appendLiteral("    return recurse(i + 1); }");
-            scriptBuilder.appendLiteral("recurse(0);");
+            CString scriptText = makeString(
+                "var startTime = currentCPUTime();"
+                "function recurse(i) {"
+                    "'use strict';"
+                    "if (i % 1000 === 0) {"
+                        "if (currentCPUTime() - startTime >", timeAfterWatchdogShouldHaveFired.seconds(), ") { return; }"
+                    "}"
+                "return recurse(i + 1); }"
+                "recurse(0);"
+            ).utf8();
 
-            JSStringRef script = JSStringCreateWithUTF8CString(scriptBuilder.toString().utf8().data());
+            JSStringRef script = JSStringCreateWithUTF8CString(scriptText.data());
             exception = nullptr;
             shouldTerminateCallbackWasCalled = false;
             auto startTime = CPUTime::forCurrentThread();
@@ -279,12 +284,20 @@ int testExecutionTimeLimit()
         {
             Seconds timeAfterWatchdogShouldHaveFired = 300_ms + tierAdjustment;
             
-            StringBuilder scriptBuilder;
-            scriptBuilder.appendLiteral("function foo() { var startTime = currentCPUTime(); try { while (true) { for (var i = 0; i < 1000; i++); if (currentCPUTime() - startTime > ");
-            scriptBuilder.append(FormattedNumber::fixedPrecision(timeAfterWatchdogShouldHaveFired.seconds()));
-            scriptBuilder.appendLiteral(") break; } } catch(e) { } } foo();");
+            CString scriptText = makeString(
+                "function foo() {"
+                    "var startTime = currentCPUTime();"
+                    "try {"
+                        "while (true) {"
+                            "for (var i = 0; i < 1000; i++);"
+                                "if (currentCPUTime() - startTime > ", timeAfterWatchdogShouldHaveFired.seconds(), ") break;"
+                        "}"
+                    "} catch(e) { }"
+                "}"
+                "foo();"
+            ).utf8();
 
-            JSStringRef script = JSStringCreateWithUTF8CString(scriptBuilder.toString().utf8().data());
+            JSStringRef script = JSStringCreateWithUTF8CString(scriptText.data());
             exception = nullptr;
             shouldTerminateCallbackWasCalled = false;
 
@@ -318,12 +331,18 @@ int testExecutionTimeLimit()
         {
             Seconds timeAfterWatchdogShouldHaveFired = 300_ms + tierAdjustment;
             
-            StringBuilder scriptBuilder;
-            scriptBuilder.appendLiteral("function foo() { var startTime = currentCPUTime(); while (true) { for (var i = 0; i < 1000; i++); if (currentCPUTime() - startTime > ");
-            scriptBuilder.append(FormattedNumber::fixedPrecision(timeAfterWatchdogShouldHaveFired.seconds()));
-            scriptBuilder.appendLiteral(") break; } } foo();");
+            CString scriptText = makeString(
+                "function foo() {"
+                    "var startTime = currentCPUTime();"
+                    "while (true) {"
+                        "for (var i = 0; i < 1000; i++);"
+                            "if (currentCPUTime() - startTime > ", timeAfterWatchdogShouldHaveFired.seconds(), ") break;"
+                    "}"
+                "}"
+                "foo();"
+            ).utf8();
             
-            JSStringRef script = JSStringCreateWithUTF8CString(scriptBuilder.toString().utf8().data());
+            JSStringRef script = JSStringCreateWithUTF8CString(scriptText.data());
             exception = nullptr;
             shouldTerminateCallbackWasCalled = false;
 
@@ -357,12 +376,18 @@ int testExecutionTimeLimit()
         {
             Seconds timeAfterWatchdogShouldHaveFired = 300_ms + tierAdjustment;
             
-            StringBuilder scriptBuilder;
-            scriptBuilder.appendLiteral("function foo() { var startTime = currentCPUTime(); while (true) { for (var i = 0; i < 1000; i++); if (currentCPUTime() - startTime > ");
-            scriptBuilder.append(FormattedNumber::fixedPrecision(timeAfterWatchdogShouldHaveFired.seconds()));
-            scriptBuilder.appendLiteral(") break; } } foo();");
+            CString scriptText = makeString(
+                "function foo() {"
+                    "var startTime = currentCPUTime();"
+                    "while (true) {"
+                        "for (var i = 0; i < 1000; i++);"
+                            "if (currentCPUTime() - startTime > ", timeAfterWatchdogShouldHaveFired.seconds(), ") break;"
+                    "}"
+                "}"
+                "foo();"
+            ).utf8();
 
-            JSStringRef script = JSStringCreateWithUTF8CString(scriptBuilder.toString().utf8().data());
+            JSStringRef script = JSStringCreateWithUTF8CString(scriptText.data());
             exception = nullptr;
             cancelTerminateCallbackWasCalled = false;
 
@@ -396,12 +421,18 @@ int testExecutionTimeLimit()
             Seconds timeAfterExtendedDeadline = 600_ms + tierAdjustment;
             Seconds maxBusyLoopTime = 750_ms + tierAdjustment;
 
-            StringBuilder scriptBuilder;
-            scriptBuilder.appendLiteral("function foo() { var startTime = currentCPUTime(); while (true) { for (var i = 0; i < 1000; i++); if (currentCPUTime() - startTime > ");
-            scriptBuilder.append(FormattedNumber::fixedPrecision(maxBusyLoopTime.seconds())); // in seconds.
-            scriptBuilder.appendLiteral(") break; } } foo();");
+            CString scriptText = makeString(
+                "function foo() {"
+                    "var startTime = currentCPUTime();"
+                    "while (true) {"
+                        "for (var i = 0; i < 1000; i++);"
+                            "if (currentCPUTime() - startTime > ", maxBusyLoopTime.seconds(), ") break;"
+                    "}"
+                "}"
+                "foo();"
+            ).utf8();
 
-            JSStringRef script = JSStringCreateWithUTF8CString(scriptBuilder.toString().utf8().data());
+            JSStringRef script = JSStringCreateWithUTF8CString(scriptText.data());
             exception = nullptr;
             extendTerminateCallbackCalled = 0;
 
@@ -439,12 +470,18 @@ int testExecutionTimeLimit()
         {
             Seconds timeAfterWatchdogShouldHaveFired = 300_ms + tierAdjustment;
 
-            StringBuilder scriptBuilder;
-            scriptBuilder.appendLiteral("function foo() { var startTime = currentCPUTime(); while (true) { for (var i = 0; i < 1000; i++); if (currentCPUTime() - startTime > ");
-            scriptBuilder.append(FormattedNumber::fixedPrecision(timeAfterWatchdogShouldHaveFired.seconds()));
-            scriptBuilder.appendLiteral(") break; } } foo();");
+            CString scriptText = makeString(
+                "function foo() {"
+                    "var startTime = currentCPUTime();"
+                    "while (true) {"
+                        "for (var i = 0; i < 1000; i++);"
+                            "if (currentCPUTime() - startTime > ", timeAfterWatchdogShouldHaveFired.seconds(), ") break;"
+                    "}"
+                "}"
+                "foo();"
+            ).utf8();
 
-            JSStringRef script = JSStringCreateWithUTF8CString(scriptBuilder.toString().utf8().data());
+            JSStringRef script = JSStringCreateWithUTF8CString(scriptText.data());
             exception = nullptr;
             dispatchTerminateCallbackCalled = false;
 

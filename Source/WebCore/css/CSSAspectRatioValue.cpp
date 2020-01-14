@@ -35,7 +35,7 @@ namespace WebCore {
 
 String CSSAspectRatioValue::customCSSText() const
 {
-    return makeString(FormattedNumber::fixedPrecision(m_numeratorValue), '/', FormattedNumber::fixedPrecision(m_denominatorValue));
+    return makeString(m_numeratorValue, '/', m_denominatorValue);
 }
 
 bool CSSAspectRatioValue::equals(const CSSAspectRatioValue& other) const

@@ -1691,19 +1691,11 @@ ExceptionOr<String> Internals::dumpMarkerRects(const String& markerTypeString)
     contextDocument()->markers().updateRectsForInvalidatedMarkersOfType(markerType);
     auto rects = contextDocument()->markers().renderedRectsForMarkers(markerType);
 
+    // FIXME: Using fixed precision here for width because of test results that contain numbers with specific precision. Would be nice to update the test results and move to default formatting.
     StringBuilder rectString;
     rectString.appendLiteral("marker rects: ");
-    for (const auto& rect : rects) {
-        rectString.append('(');
-        rectString.append(FormattedNumber::fixedPrecision(rect.x()));
-        rectString.appendLiteral(", ");
-        rectString.append(FormattedNumber::fixedPrecision(rect.y()));
-        rectString.appendLiteral(", ");
-        rectString.append(FormattedNumber::fixedPrecision(rect.width()));
-        rectString.appendLiteral(", ");
-        rectString.append(FormattedNumber::fixedPrecision(rect.height()));
-        rectString.appendLiteral(") ");
-    }
+    for (const auto& rect : rects)
+        rectString.append('(', rect.x(), ", ", rect.y(), ", ", FormattedNumber::fixedPrecision(rect.width()), ", ", rect.height(), ") ");
     return rectString.toString();
 }
 
@@ -1884,6 +1876,7 @@ ExceptionOr<String> Internals::configurationForViewport(float devicePixelRatio, 
     restrictMinimumScaleFactorToViewportSize(attributes, IntSize(availableWidth, availableHeight), devicePixelRatio);
     restrictScaleFactorToInitialScaleIfNotUserScalable(attributes);
 
+    // FIXME: Using fixed precision here because of test results that contain numbers with specific precision. Would be nice to update the test results and move to default formatting.
     return makeString("viewport size ", FormattedNumber::fixedPrecision(attributes.layoutSize.width()), 'x', FormattedNumber::fixedPrecision(attributes.layoutSize.height()), " scale ", FormattedNumber::fixedPrecision(attributes.initialScale), " with limits [", FormattedNumber::fixedPrecision(attributes.minimumScale), ", ", FormattedNumber::fixedPrecision(attributes.maximumScale), "] and userScalable ", (attributes.userScalable ? "true" : "false"));
 }
 
@@ -3446,24 +3439,14 @@ ExceptionOr<String> Internals::getCurrentCursorInfo()
     Cursor cursor = document->frame()->eventHandler().currentMouseCursor();
 
     StringBuilder result;
-    result.appendLiteral("type=");
-    result.append(cursorTypeToString(cursor.type()));
-    result.appendLiteral(" hotSpot=");
-    result.appendNumber(cursor.hotSpot().x());
-    result.append(',');
-    result.appendNumber(cursor.hotSpot().y());
+    result.append("type=", cursorTypeToString(cursor.type()), " hotSpot=", cursor.hotSpot().x(), ',', cursor.hotSpot().y());
     if (cursor.image()) {
         FloatSize size = cursor.image()->size();
-        result.appendLiteral(" image=");
-        result.append(FormattedNumber::fixedPrecision(size.width()));
-        result.append('x');
-        result.append(FormattedNumber::fixedPrecision(size.height()));
+        result.append(" image=", size.width(), 'x', size.height());
     }
 #if ENABLE(MOUSE_CURSOR_SCALE)
-    if (cursor.imageScaleFactor() != 1) {
-        result.appendLiteral(" scale=");
-        result.append(FormattedNumber::fixedPrecision(cursor.imageScaleFactor(), 8));
-    }
+    if (cursor.imageScaleFactor() != 1)
+        result.append(" scale=", cursor.imageScaleFactor());
 #endif
     return result.toString();
 #else

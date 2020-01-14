@@ -27,6 +27,7 @@
 
 #include "SVGLength.h"
 #include "SVGValuePropertyList.h"
+#include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 

@@ -26,10 +26,7 @@
 #include "config.h"
 #include "ExtendedColor.h"
 
-#include "ColorSpace.h"
 #include <wtf/MathExtras.h>
-#include <wtf/dtoa.h>
-#include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 
@@ -40,36 +37,22 @@ Ref<ExtendedColor> ExtendedColor::create(float red, float green, float blue, flo
 
 String ExtendedColor::cssText() const
 {
-    StringBuilder builder;
-    builder.reserveCapacity(40);
-    builder.appendLiteral("color(");
-
+    const char* colorSpace;
     switch (m_colorSpace) {
     case ColorSpace::SRGB:
-        builder.appendLiteral("srgb ");
+        colorSpace = "srgb";
         break;
     case ColorSpace::DisplayP3:
-        builder.appendLiteral("display-p3 ");
+        colorSpace = "display-p3";
         break;
     default:
         ASSERT_NOT_REACHED();
         return WTF::emptyString();
     }
 
-    builder.append(FormattedNumber::fixedPrecision(red()));
-    builder.append(' ');
-
-    builder.append(FormattedNumber::fixedPrecision(green()));
-    builder.append(' ');
-
-    builder.append(FormattedNumber::fixedPrecision(blue()));
-    if (!WTF::areEssentiallyEqual(alpha(), 1.0f)) {
-        builder.appendLiteral(" / ");
-        builder.append(FormattedNumber::fixedPrecision(alpha()));
-    }
-    builder.append(')');
-
-    return builder.toString();
+    if (WTF::areEssentiallyEqual(alpha(), 1.0f))
+        return makeString("color(", colorSpace, ' ', red(), ' ', green(), ' ', blue(), ')');
+    return makeString("color(", colorSpace, ' ', red(), ' ', green(), ' ', blue(), " / ", alpha(), ')');
 }
 
 }

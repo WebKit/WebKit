@@ -320,38 +320,36 @@ String Color::serialized() const
     return cssText();
 }
 
+static char decimalDigit(unsigned number)
+{
+    ASSERT(number < 10);
+    return '0' + number;
+}
+
+static std::array<char, 4> serializedFractionDigitsForFractionalAlphaValue(uint8_t alpha)
+{
+    ASSERT(alpha > 0);
+    ASSERT(alpha < 0xFF);
+    if (((alpha * 100 + 0x7F) / 0xFF * 0xFF + 50) / 100 != alpha)
+        return { { decimalDigit(alpha * 10 / 0xFF % 10), decimalDigit(alpha * 100 / 0xFF % 10), decimalDigit((alpha * 1000 + 0x7F) / 0xFF % 10), '\0' } };
+    if (int thirdDigit = (alpha * 100 + 0x7F) / 0xFF % 10)
+        return { { decimalDigit(alpha * 10 / 0xFF), decimalDigit(thirdDigit), '\0', '\0' } };
+    return { { decimalDigit((alpha * 10 + 0x7F) / 0xFF), '\0', '\0', '\0' } };
+}
+
 String Color::cssText() const
 {
     if (isExtended())
         return asExtended().cssText();
-
-    StringBuilder builder;
-    builder.reserveCapacity(28);
-    bool colorHasAlpha = !isOpaque();
-    if (colorHasAlpha)
-        builder.appendLiteral("rgba(");
-    else
-        builder.appendLiteral("rgb(");
-
-    builder.appendNumber(static_cast<unsigned char>(red()));
-    builder.appendLiteral(", ");
-
-    builder.appendNumber(static_cast<unsigned char>(green()));
-    builder.appendLiteral(", ");
-
-    builder.appendNumber(static_cast<unsigned char>(blue()));
-    if (colorHasAlpha) {
-        // https://drafts.csswg.org/cssom/#serializing-css-values
-        builder.appendLiteral(", ");
-        int alpha = this->alpha();
-        float rounded = round(alpha * 100 / 255.0f) / 100;
-        if (round(rounded * 255) != alpha)
-            rounded = round(alpha * 1000 / 255.0f) / 1000;
-        builder.append(FormattedNumber::fixedPrecision(rounded));
+    uint8_t alpha = this->alpha();
+    switch (alpha) {
+    case 0:
+        return makeString("rgba(", red(), ", ", green(), ", ", blue(), ", 0)");
+    case 0xFF:
+        return makeString("rgb(", red(), ", ", green(), ", ", blue(), ')');
+    default:
+        return makeString("rgba(", red(), ", ", green(), ", ", blue(), ", 0.", serializedFractionDigitsForFractionalAlphaValue(alpha).data(), ')');
     }
-        
-    builder.append(')');
-    return builder.toString();
 }
 
 String Color::nameForRenderTreeAsText() const

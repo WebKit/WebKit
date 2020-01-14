@@ -584,16 +584,10 @@ String HTMLImageElement::completeURLsInAttributeValue(const URL& base, const Att
             if (&candidate != &imageCandidates[0])
                 result.appendLiteral(", ");
             result.append(URL(base, candidate.string.toString()).string());
-            if (candidate.density != UninitializedDescriptor) {
-                result.append(' ');
-                result.append(FormattedNumber::fixedPrecision(candidate.density));
-                result.append('x');
-            }
-            if (candidate.resourceWidth != UninitializedDescriptor) {
-                result.append(' ');
-                result.appendNumber(candidate.resourceWidth);
-                result.append('w');
-            }
+            if (candidate.density != UninitializedDescriptor)
+                result.append(' ', candidate.density, 'x');
+            if (candidate.resourceWidth != UninitializedDescriptor)
+                result.append(' ', candidate.resourceWidth, 'w');
         }
         return result.toString();
     }

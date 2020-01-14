@@ -1104,7 +1104,7 @@ void AccessibilityNodeObject::changeValueByStep(bool increase)
 
     value += increase ? step : -step;
 
-    setValue(String::numberToStringFixedPrecision(value));
+    setValue(String::number(value));
 
     auto objectCache = axObjectCache();
     if (objectCache)
@@ -1122,7 +1122,7 @@ void AccessibilityNodeObject::changeValueByPercent(float percentChange)
         step = std::abs(percentChange) * (1 / percentChange);
 
     value += step;
-    setValue(String::numberToStringFixedPrecision(value));
+    setValue(String::number(value));
 
     auto objectCache = axObjectCache();
     if (objectCache)

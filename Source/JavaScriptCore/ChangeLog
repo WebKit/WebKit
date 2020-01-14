@@ -1,3 +1,18 @@
+2020-01-13  Darin Adler  <darin@apple.com>
+
+        Use even more "shortest form" formatting, and less "fixed precision" and "fixed width"
+        https://bugs.webkit.org/show_bug.cgi?id=198918
+
+        Reviewed by Sam Weinig.
+
+        * API/tests/ExecutionTimeLimitTest.cpp:
+        (testExecutionTimeLimit): Rewrote the string creation code to use makeString instead
+        of StringBuilder and no longer use any fixed precision.
+
+        * runtime/Options.cpp:
+        (JSC::OptionReader::Option::dump const): Dump doubles with shortest form instead of
+        fixed precision.
+
 2020-01-14  David Kilzer  <ddkilzer@apple.com>
 
         Enable -Wconditional-uninitialized in bmalloc, WTF, JavaScriptCore

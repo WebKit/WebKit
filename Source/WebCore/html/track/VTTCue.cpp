@@ -169,8 +169,10 @@ void VTTCueBox::applyCSSProperties(const IntSize& videoSize)
     // the 'left' property must be set to left
     if (cue->vertical() == horizontalKeyword())
         setInlineStyleProperty(CSSPropertyLeft, position.first, CSSUnitType::CSS_PERCENTAGE);
-    else if (cue->vertical() == verticalGrowingRightKeyword())
-        setInlineStyleProperty(CSSPropertyLeft, makeString("calc(-", FormattedNumber::fixedWidth(videoSize.width(), 2), "px - ", FormattedNumber::fixedWidth(cue->getCSSSize(), 2), "px)"));
+    else if (cue->vertical() == verticalGrowingRightKeyword()) {
+        // FIXME: Why use calc to do the math instead of doing the subtraction here?
+        setInlineStyleProperty(CSSPropertyLeft, makeString("calc(-", videoSize.width(), "px - ", cue->getCSSSize(), "px)"));
+    }
 
     double authorFontSize = std::min(videoSize.width(), videoSize.height()) * DEFAULTCAPTIONFONTSIZEPERCENTAGE / 100.0;
     double multiplier = 1.0;
@@ -220,8 +222,7 @@ void VTTCueBox::applyCSSProperties(const IntSize& videoSize)
         // of the way across the height of the video's rendering area, while
         // maintaining the relative positions of the boxes in boxes to each
         // other.
-        setInlineStyleProperty(CSSPropertyTransform,
-            makeString("translate(", FormattedNumber::fixedWidth(-position.first, 2), "%, ", FormattedNumber::fixedWidth(-position.second, 2), "%)"));
+        setInlineStyleProperty(CSSPropertyTransform, makeString("translate(", -position.first, "%, ", -position.second, "%)"));
 
         setInlineStyleProperty(CSSPropertyWhiteSpace, CSSValuePre);
     }

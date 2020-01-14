@@ -1,3 +1,17 @@
+2020-01-13  Darin Adler  <darin@apple.com>
+
+        Use even more "shortest form" formatting, and less "fixed precision" and "fixed width"
+        https://bugs.webkit.org/show_bug.cgi?id=198918
+
+        Reviewed by Sam Weinig.
+
+        * platform/mac/svg/dom/length-list-parser-expected.png: Removed. Not sure how many other pixel
+        results we have like this, but this included an ancient style Aqua scrollbar so hasn't matched
+        anything for years and would clearly not have any value for regression testing.
+
+        * svg/dom/length-list-parser-expected.txt: Updated to expect logging of a 7 digit length as an
+        integer rather than rounded as "d.ddddd+6".
+
 2020-01-14  Chris Lord  <clord@igalia.com>
 
         [GTK][WPE] Failures in imported/w3c/web-platform-tests/2dcontext/imagebitmap due to missing OffscreenCanvas.copiedImage

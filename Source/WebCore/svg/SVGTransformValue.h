@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2004, 2005, 2008 Nikolas Zimmermann <zimmermann@kde.org>
  * Copyright (C) 2004, 2005 Rob Buis <buis@kde.org>
- * Copyright (C) 2019 Apple Inc.  All rights reserved.
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -206,26 +206,26 @@ public:
         return builder.toString();
     }
 
-    static String prefixForTransfromType(SVGTransformType type)
+    static const char* prefixForTransfromType(SVGTransformType type)
     {
         switch (type) {
         case SVG_TRANSFORM_UNKNOWN:
-            return emptyString();
+            return "";
         case SVG_TRANSFORM_MATRIX:
-            return "matrix("_s;
+            return "matrix(";
         case SVG_TRANSFORM_TRANSLATE:
-            return "translate("_s;
+            return "translate(";
         case SVG_TRANSFORM_SCALE:
-            return "scale("_s;
+            return "scale(";
         case SVG_TRANSFORM_ROTATE:
-            return "rotate("_s;
+            return "rotate(";
         case SVG_TRANSFORM_SKEWX:
-            return "skewX("_s;
+            return "skewX(";
         case SVG_TRANSFORM_SKEWY:
-            return "skewY("_s;
+            return "skewY(";
         }
         ASSERT_NOT_REACHED();
-        return emptyString();
+        return "";
     }
 
 private:
@@ -239,6 +239,7 @@ private:
     {
         if (builder.length() && builder[builder.length() - 1] != '(')
             builder.append(' ');
+        // FIXME: Shortest form would be better, but fixed precision is required for now to smooth over precision errors caused by converting float to double and back since we use AffineTransform to store transforms.
         builder.append(FormattedNumber::fixedPrecision(number));
         appendFixedPrecisionNumbers(builder, numbers...);
     }

@@ -66,14 +66,14 @@ String SVGAngleValue::valueAsString() const
 {
     switch (m_unitType) {
     case SVG_ANGLETYPE_DEG:
-        return makeString(FormattedNumber::fixedPrecision(m_valueInSpecifiedUnits), "deg");
+        return makeString(m_valueInSpecifiedUnits, "deg");
     case SVG_ANGLETYPE_RAD:
-        return makeString(FormattedNumber::fixedPrecision(m_valueInSpecifiedUnits), "rad");
+        return makeString(m_valueInSpecifiedUnits, "rad");
     case SVG_ANGLETYPE_GRAD:
-        return makeString(FormattedNumber::fixedPrecision(m_valueInSpecifiedUnits), "grad");
+        return makeString(m_valueInSpecifiedUnits, "grad");
     case SVG_ANGLETYPE_UNSPECIFIED:
     case SVG_ANGLETYPE_UNKNOWN:
-        return String::numberToStringFixedPrecision(m_valueInSpecifiedUnits);
+        return String::number(m_valueInSpecifiedUnits);
     }
 
     ASSERT_NOT_REACHED();

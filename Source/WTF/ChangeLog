@@ -1,3 +1,17 @@
+2020-01-13  Darin Adler  <darin@apple.com>
+
+        Use even more "shortest form" formatting, and less "fixed precision" and "fixed width"
+        https://bugs.webkit.org/show_bug.cgi?id=198918
+
+        Reviewed by Sam Weinig.
+
+        * wtf/Logger.h:
+        (WTF::LogArgument::toString): Log floating point numbers as shortest form instead of fixed precision.
+
+        * wtf/MediaTime.cpp:
+        (WTF::MediaTime::toString const): Convert time to string as shortest form instead of fixed precision.
+        Also use multiple-argument append for great simplicity and clarity.
+
 2020-01-14  Alicia Boya García  <aboya@igalia.com>
 
         [WTF] Make MediaTime constructor constexpr

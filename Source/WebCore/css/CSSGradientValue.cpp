@@ -700,7 +700,7 @@ static void appendGradientStops(StringBuilder& builder, const Vector<CSSGradient
         else if (position == 1)
             builder.append(", to(", stop.m_color->cssText(), ')');
         else
-            builder.append(", color-stop(", FormattedNumber::fixedPrecision(position), ", ", stop.m_color->cssText(), ')');
+            builder.append(", color-stop(", position, ", ", stop.m_color->cssText(), ')');
     }
 }
 

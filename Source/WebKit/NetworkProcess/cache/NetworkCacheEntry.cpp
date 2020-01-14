@@ -211,32 +211,24 @@ void Entry::setNeedsValidation(bool value)
 
 void Entry::asJSON(StringBuilder& json, const Storage::RecordInfo& info) const
 {
-    json.appendLiteral("{\n");
-    json.appendLiteral("\"hash\": ");
+    json.appendLiteral("{\n"
+        "\"hash\": ");
     json.appendQuotedJSONString(m_key.hashAsString());
-    json.appendLiteral(",\n");
-    json.appendLiteral("\"bodySize\": ");
-    json.appendNumber(info.bodySize);
-    json.appendLiteral(",\n");
-    json.appendLiteral("\"worth\": ");
-    json.append(FormattedNumber::fixedPrecision(info.worth));
-    json.appendLiteral(",\n");
-    json.appendLiteral("\"partition\": ");
+    json.append(",\n"
+        "\"bodySize\": ", info.bodySize, ",\n"
+        "\"worth\": ", info.worth, ",\n"
+        "\"partition\": ");
     json.appendQuotedJSONString(m_key.partition());
-    json.appendLiteral(",\n");
-    json.appendLiteral("\"timestamp\": ");
-    json.append(FormattedNumber::fixedPrecision(m_timeStamp.secondsSinceEpoch().milliseconds()));
-    json.appendLiteral(",\n");
-    json.appendLiteral("\"URL\": ");
+    json.append(",\n"
+        "\"timestamp\": ", m_timeStamp.secondsSinceEpoch().milliseconds(), ",\n"
+        "\"URL\": ");
     json.appendQuotedJSONString(m_response.url().string());
-    json.appendLiteral(",\n");
-    json.appendLiteral("\"bodyHash\": ");
+    json.appendLiteral(",\n"
+        "\"bodyHash\": ");
     json.appendQuotedJSONString(info.bodyHash);
-    json.appendLiteral(",\n");
-    json.appendLiteral("\"bodyShareCount\": ");
-    json.appendNumber(info.bodyShareCount);
-    json.appendLiteral(",\n");
-    json.appendLiteral("\"headers\": {\n");
+    json.append(",\n"
+        "\"bodyShareCount\": ", info.bodyShareCount, ",\n"
+        "\"headers\": {\n");
     bool firstHeader = true;
     for (auto& header : m_response.httpHeaderFields()) {
         if (!firstHeader)
@@ -247,8 +239,9 @@ void Entry::asJSON(StringBuilder& json, const Storage::RecordInfo& info) const
         json.appendLiteral(": ");
         json.appendQuotedJSONString(header.value);
     }
-    json.appendLiteral("\n}\n");
-    json.appendLiteral("}");
+    json.appendLiteral("\n"
+        "}\n"
+        "}");
 }
 
 }

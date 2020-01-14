@@ -51,22 +51,19 @@ bool SVGPathStringBuilder::continueConsuming()
 
 static void appendFlag(StringBuilder& stringBuilder, bool flag)
 {
-    stringBuilder.append(flag ? '1' : '0');
-    stringBuilder.append(' ');
+    stringBuilder.append(flag ? '1' : '0', ' ');
 }
 
 static void appendNumber(StringBuilder& stringBuilder, float number)
 {
-    stringBuilder.append(FormattedNumber::fixedPrecision(number));
-    stringBuilder.append(' ');
+    // FIXME: Shortest form would be better, but fixed precision is required for now to smooth over precision errors caused by converting float to double and back in CGPath on Cocoa platforms.
+    stringBuilder.append(FormattedNumber::fixedPrecision(number), ' ');
 }
 
 static void appendPoint(StringBuilder& stringBuilder, const FloatPoint& point)
 {
-    stringBuilder.append(FormattedNumber::fixedPrecision(point.x()));
-    stringBuilder.append(' ');
-    stringBuilder.append(FormattedNumber::fixedPrecision(point.y()));
-    stringBuilder.append(' ');
+    appendNumber(stringBuilder, point.x());
+    appendNumber(stringBuilder, point.y());
 }
 
 void SVGPathStringBuilder::moveTo(const FloatPoint& targetPoint, bool, PathCoordinateMode mode)

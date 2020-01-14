@@ -32,17 +32,7 @@ namespace WebCore {
 
 String CSSCubicBezierTimingFunctionValue::customCSSText() const
 {
-    StringBuilder builder;
-    builder.appendLiteral("cubic-bezier(");
-    builder.append(FormattedNumber::fixedPrecision(m_x1));
-    builder.appendLiteral(", ");
-    builder.append(FormattedNumber::fixedPrecision(m_y1));
-    builder.appendLiteral(", ");
-    builder.append(FormattedNumber::fixedPrecision(m_x2));
-    builder.appendLiteral(", ");
-    builder.append(FormattedNumber::fixedPrecision(m_y2));
-    builder.append(')');    
-    return builder.toString();
+    return makeString("cubic-bezier(", m_x1, ", ", m_y1, ", ", m_x2, ", ", m_y2, ')');
 }
 
 bool CSSCubicBezierTimingFunctionValue::equals(const CSSCubicBezierTimingFunctionValue& other) const

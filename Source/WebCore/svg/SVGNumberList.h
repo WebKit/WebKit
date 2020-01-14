@@ -78,7 +78,7 @@ public:
             if (builder.length())
                 builder.append(' ');
 
-            builder.append(FormattedNumber::fixedPrecision(number->value()));
+            builder.append(number->value());
         }
 
         return builder.toString();

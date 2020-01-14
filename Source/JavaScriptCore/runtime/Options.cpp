@@ -1005,7 +1005,7 @@ void OptionReader::Option::dump(StringBuilder& builder) const
         builder.appendNumber(m_size);
         break;
     case Options::Type::Double:
-        builder.append(FormattedNumber::fixedPrecision(m_double));
+        builder.append(m_double);
         break;
     case Options::Type::Int32:
         builder.appendNumber(m_int32);

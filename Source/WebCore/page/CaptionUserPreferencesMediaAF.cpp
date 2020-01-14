@@ -351,7 +351,7 @@ String CaptionUserPreferencesMediaAF::windowRoundedCornerRadiusCSS() const
         return emptyString();
 
     StringBuilder builder;
-    appendCSS(builder, CSSPropertyBorderRadius, makeString(FormattedNumber::fixedWidth(radius, 2), "px"), behavior == kMACaptionAppearanceBehaviorUseValue);
+    appendCSS(builder, CSSPropertyBorderRadius, makeString(radius, "px"), behavior == kMACaptionAppearanceBehaviorUseValue);
     return builder.toString();
 }
 

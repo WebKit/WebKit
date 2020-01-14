@@ -575,23 +575,16 @@ void Cache::dumpContentsToFile()
     size_t capacity = m_storage->capacity();
     m_storage->traverse(resourceType(), flags, [fd, totals, capacity](const Storage::Record* record, const Storage::RecordInfo& info) mutable {
         if (!record) {
-            StringBuilder epilogue;
-            epilogue.appendLiteral("{}\n],\n");
-            epilogue.appendLiteral("\"totals\": {\n");
-            epilogue.appendLiteral("\"capacity\": ");
-            epilogue.appendNumber(capacity);
-            epilogue.appendLiteral(",\n");
-            epilogue.appendLiteral("\"count\": ");
-            epilogue.appendNumber(totals.count);
-            epilogue.appendLiteral(",\n");
-            epilogue.appendLiteral("\"bodySize\": ");
-            epilogue.appendNumber(totals.bodySize);
-            epilogue.appendLiteral(",\n");
-            epilogue.appendLiteral("\"averageWorth\": ");
-            epilogue.append(FormattedNumber::fixedPrecision(totals.count ? totals.worth / totals.count : 0));
-            epilogue.appendLiteral("\n");
-            epilogue.appendLiteral("}\n}\n");
-            auto writeData = epilogue.toString().utf8();
+            CString writeData = makeString(
+                "{}\n"
+                "],\n"
+                "\"totals\": {\n"
+                "\"capacity\": ", capacity, ",\n"
+                "\"count\": ", totals.count, ",\n"
+                "\"bodySize\": ", totals.bodySize, ",\n"
+                "\"averageWorth\": ", totals.count ? totals.worth / totals.count : 0, "\n"
+                "}\n}\n"
+            ).utf8();
             writeToFile(fd, writeData.data(), writeData.length());
             closeFile(fd);
             return;

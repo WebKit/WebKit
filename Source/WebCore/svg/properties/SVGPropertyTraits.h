@@ -27,8 +27,6 @@
 #include "FloatRect.h"
 #include "QualifiedName.h"
 #include "SVGParserUtilities.h"
-#include <wtf/text/StringBuilder.h>
-#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
@@ -103,7 +101,7 @@ struct SVGPropertyTraits<float> {
             return WTF::nullopt;
         return number;
     }
-    static String toString(float type) { return String::numberToStringFixedPrecision(type); }
+    static String toString(float type) { return String::number(type); }
 };
 
 template<>
@@ -139,11 +137,7 @@ struct SVGPropertyTraits<FloatPoint> {
     }
     static String toString(const FloatPoint& type)
     {
-        StringBuilder builder;
-        builder.append(FormattedNumber::fixedPrecision(type.x()));
-        builder.append(' ');
-        builder.append(FormattedNumber::fixedPrecision(type.y()));
-        return builder.toString();
+        return makeString(type.x(), ' ', type.y());
     }
 };
 
@@ -166,15 +160,7 @@ struct SVGPropertyTraits<FloatRect> {
     }
     static String toString(const FloatRect& type)
     {
-        StringBuilder builder;
-        builder.append(FormattedNumber::fixedPrecision(type.x()));
-        builder.append(' ');
-        builder.append(FormattedNumber::fixedPrecision(type.y()));
-        builder.append(' ');
-        builder.append(FormattedNumber::fixedPrecision(type.width()));
-        builder.append(' ');
-        builder.append(FormattedNumber::fixedPrecision(type.height()));
-        return builder.toString();
+        return makeString(type.x(), ' ', type.y(), ' ', type.width(), ' ', type.height());
     }
 };
 

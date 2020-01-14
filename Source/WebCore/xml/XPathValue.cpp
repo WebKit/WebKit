@@ -126,7 +126,7 @@ String Value::toString() const
                 return "0"_s;
             if (std::isinf(m_number))
                 return std::signbit(m_number) ? "-Infinity"_s : "Infinity"_s;
-            return String::numberToStringFixedPrecision(m_number);
+            return String::number(m_number);
         case BooleanValue:
             return m_bool ? "true"_s : "false"_s;
     }

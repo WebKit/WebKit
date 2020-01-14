@@ -791,7 +791,7 @@ void InspectorOverlay::drawRulers(GraphicsContext& context, const InspectorOverl
 
                 GraphicsContextStateSaver verticalLabelStateSaver(context);
                 context.translate(zoom(x) + 0.5f, scrollY);
-                context.drawText(font, TextRun(String::numberToStringFixedPrecision(x)), { 2, drawTopEdge ? rulerLabelSize : rulerLabelSize - rulerSize + font.fontMetrics().height() - 1.0f });
+                context.drawText(font, TextRun(String::number(x)), { 2, drawTopEdge ? rulerLabelSize : rulerLabelSize - rulerSize + font.fontMetrics().height() - 1.0f });
             }
         }
 
@@ -829,7 +829,7 @@ void InspectorOverlay::drawRulers(GraphicsContext& context, const InspectorOverl
                 GraphicsContextStateSaver horizontalLabelStateSaver(context);
                 context.translate(scrollX, zoom(y) + 0.5f);
                 context.rotate(drawLeftEdge ? -piOverTwoFloat : piOverTwoFloat);
-                context.drawText(font, TextRun(String::numberToStringFixedPrecision(y)), { 2, drawLeftEdge ? rulerLabelSize : rulerLabelSize - rulerSize });
+                context.drawText(font, TextRun(String::number(y)), { 2, drawLeftEdge ? rulerLabelSize : rulerLabelSize - rulerSize });
             }
         }
     }
@@ -844,9 +844,7 @@ void InspectorOverlay::drawRulers(GraphicsContext& context, const InspectorOverl
         font.update(nullptr);
 
         auto viewportRect = pageView->visualViewportRect();
-        auto viewportWidthText = String::numberToStringFixedPrecision(viewportRect.width() / pageZoomFactor);
-        auto viewportHeightText = String::numberToStringFixedPrecision(viewportRect.height() / pageZoomFactor);
-        TextRun viewportTextRun(makeString(viewportWidthText, "px", ' ', multiplicationSign, ' ', viewportHeightText, "px"));
+        TextRun viewportTextRun(makeString(viewportRect.width() / pageZoomFactor, "px", ' ', multiplicationSign, ' ', viewportRect.height() / pageZoomFactor, "px"));
 
         const float margin = 4;
         const float padding = 2;

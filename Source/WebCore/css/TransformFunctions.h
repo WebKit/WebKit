@@ -36,9 +36,6 @@ namespace WebCore {
 class CSSPrimitiveValue;
 class CSSToLengthConversionData;
 class CSSValue;
-class RenderStyle;
-
-struct Length;
 
 bool transformsForValue(const CSSValue&, const CSSToLengthConversionData&, TransformOperations&);
 Length convertToFloatLength(const CSSPrimitiveValue*, const CSSToLengthConversionData&);

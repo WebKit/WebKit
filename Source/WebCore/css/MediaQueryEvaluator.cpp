@@ -240,7 +240,7 @@ static String aspectRatioValueAsString(CSSValue* value)
         return emptyString();
 
     auto& aspectRatio = downcast<CSSAspectRatioValue>(*value);
-    return makeString(FormattedNumber::fixedWidth(aspectRatio.numeratorValue(), 6), '/', FormattedNumber::fixedWidth(aspectRatio.denominatorValue(), 6));
+    return makeString(aspectRatio.numeratorValue(), '/', aspectRatio.denominatorValue());
 }
 
 #endif

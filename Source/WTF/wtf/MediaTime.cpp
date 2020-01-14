@@ -566,15 +566,10 @@ void MediaTime::dump(PrintStream& out) const
 String MediaTime::toString() const
 {
     StringBuilder builder;
-
     builder.append('{');
-    if (!hasDoubleValue()) {
-        builder.appendNumber(m_timeValue);
-        builder.append('/');
-        builder.appendNumber(m_timeScale);
-        builder.appendLiteral(" = ");
-    }
-    builder.append(FormattedNumber::fixedPrecision(toDouble()));
+    if (!hasDoubleValue())
+        builder.append(m_timeValue, '/', m_timeScale, " = ");
+    builder.append(toDouble());
     if (isInvalid())
         builder.appendLiteral(", invalid");
     builder.append('}');

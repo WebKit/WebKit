@@ -87,32 +87,24 @@ Optional<GamepadData> GamepadData::decode(IPC::Decoder& decoder)
 }
 
 #if !LOG_DISABLED
+
 String GamepadData::loggingString() const
 {
     StringBuilder builder;
 
-    builder.appendNumber(m_axisValues.size());
-    builder.appendLiteral(" axes, ");
-    builder.appendNumber(m_buttonValues.size());
-    builder.appendLiteral(" buttons\n");
+    builder.append(m_axisValues.size(), " axes, ", m_buttonValues.size(), " buttons\n");
 
-    for (size_t i = 0; i < m_axisValues.size(); ++i) {
-        builder.appendLiteral(" Axis ");
-        builder.appendNumber(i);
-        builder.appendLiteral(": ");
-        builder.append(FormattedNumber::fixedPrecision(m_axisValues[i]));
-    }
+    for (size_t i = 0; i < m_axisValues.size(); ++i)
+        builder.append(" Axis ", i, ": ", m_axisValues[i]);
 
     builder.append('\n');
-    for (size_t i = 0; i < m_buttonValues.size(); ++i) {
-        builder.appendLiteral(" Button ");
-        builder.appendNumber(i);
-        builder.appendLiteral(": ");
-        builder.append(FormattedNumber::fixedPrecision(m_buttonValues[i]));
-    }
+
+    for (size_t i = 0; i < m_buttonValues.size(); ++i)
+        builder.append(" Button ", i, ": ", FormattedNumber::fixedPrecision(m_buttonValues[i]));
 
     return builder.toString();
 }
+
 #endif
 
 } // namespace WebKit

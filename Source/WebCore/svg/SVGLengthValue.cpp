@@ -257,7 +257,7 @@ float SVGLengthValue::value(const SVGLengthContext& context) const
 
 String SVGLengthValue::valueAsString() const
 {
-    return makeString(FormattedNumber::fixedPrecision(m_valueInSpecifiedUnits), lengthTypeToString(m_lengthType));
+    return makeString(m_valueInSpecifiedUnits, lengthTypeToString(m_lengthType));
 }
 
 ExceptionOr<float> SVGLengthValue::valueForBindings(const SVGLengthContext& context) const
