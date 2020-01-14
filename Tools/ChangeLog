@@ -1,3 +1,17 @@
+2020-01-13  Yoshiaki Jitsukawa  <yoshiaki.jitsukawa@sony.com>
+
+        Fix path-specific filters on Windows
+        https://bugs.webkit.org/show_bug.cgi?id=205786
+
+        Reviewed by David Kilzer.
+
+        * Scripts/webkitpy/style/filter.py:
+        (FilterConfiguration._path_rules_from_path):
+        Convert forward slashes to backward slashes on Windows by using
+        os.path.normcase(). Nothing changed on other OSs.
+        * Scripts/webkitpy/style/filter_unittest.py:
+        (FilterConfigurationTest.test_path_with_different_case):
+
 2020-01-13  David Kilzer  <ddkilzer@apple.com>
 
         WTR::TestController::decidePolicyForPluginLoad() should output bundle identifier on release assert

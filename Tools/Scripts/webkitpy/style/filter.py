@@ -22,6 +22,7 @@
 
 """Contains filter-related code."""
 
+import os.path
 
 def validate_filter_rules(filter_rules, all_categories):
     """Validate the given filter rules, and raise a ValueError if not valid.
@@ -209,6 +210,7 @@ class FilterConfiguration(object):
 
         """
         path = path.lower()
+        path = os.path.normcase(path)
         for (sub_paths, path_rules) in self._get_path_specific_lower():
             for sub_path in sub_paths:
                 if path.find(sub_path) > -1:
