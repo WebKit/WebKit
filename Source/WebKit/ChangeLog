@@ -1,5 +1,9 @@
 2020-01-14  Kocsen Chung  <kocsen_chung@apple.com>
 
+        Revert r254521. rdar://problem/58542040
+
+2020-01-14  Kocsen Chung  <kocsen_chung@apple.com>
+
         Cherry-pick r254433. rdar://problem/58554516
 
     [macCatalyst] UI process crashes on launch after r254101

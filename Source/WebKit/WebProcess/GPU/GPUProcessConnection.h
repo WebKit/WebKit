@@ -47,6 +47,11 @@ public:
     
     IPC::Connection& connection() { return m_connection.get(); }
 
+#if HAVE(AUDIT_TOKEN)
+    void setAuditToken(Optional<audit_token_t> auditToken) { m_auditToken = auditToken; }
+    Optional<audit_token_t> auditToken() const { return m_auditToken; }
+#endif
+
 private:
     GPUProcessConnection(IPC::Connection::Identifier);
 
@@ -57,6 +62,10 @@ private:
 
     // The connection from the web process to the GPU process.
     Ref<IPC::Connection> m_connection;
+
+#if HAVE(AUDIT_TOKEN)
+    Optional<audit_token_t> m_auditToken;
+#endif
 };
 
 } // namespace WebKit

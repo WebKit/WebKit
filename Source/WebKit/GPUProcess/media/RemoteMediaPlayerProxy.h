@@ -33,6 +33,7 @@
 #include "RemoteMediaPlayerProxyConfiguration.h"
 #include "RemoteMediaPlayerState.h"
 #include "RemoteMediaResourceIdentifier.h"
+#include "SandboxExtension.h"
 #include <WebCore/Cookie.h>
 #include <WebCore/MediaPlayer.h>
 #include <WebCore/PlatformMediaResourceLoader.h>
@@ -60,7 +61,7 @@ public:
 
     void prepareForPlayback(bool privateMode, WebCore::MediaPlayerEnums::Preload, bool preservesPitch, bool prepareForRendering);
 
-    void load(const URL&, const WebCore::ContentType&, const String&, CompletionHandler<void(RemoteMediaPlayerConfiguration&&)>&&);
+    void load(const URL&, Optional<SandboxExtension::Handle>&&, const WebCore::ContentType&, const String&, CompletionHandler<void(RemoteMediaPlayerConfiguration&&)>&&);
     void cancelLoad();
 
     void prepareToPlay();
@@ -186,6 +187,7 @@ private:
 #endif
 
     MediaPlayerPrivateRemoteIdentifier m_id;
+    RefPtr<SandboxExtension> m_sandboxExtension;
     Ref<IPC::Connection> m_webProcessConnection;
     RefPtr<WebCore::MediaPlayer> m_player;
     RemoteMediaPlayerManagerProxy& m_manager;

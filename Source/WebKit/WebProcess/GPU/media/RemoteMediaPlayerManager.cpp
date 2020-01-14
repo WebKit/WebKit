@@ -28,7 +28,6 @@
 
 #if ENABLE(GPU_PROCESS)
 
-#include "GPUProcessConnection.h"
 #include "MediaPlayerPrivateRemote.h"
 #include "RemoteMediaPlayerConfiguration.h"
 #include "RemoteMediaPlayerMIMETypeCache.h"
@@ -164,7 +163,7 @@ std::unique_ptr<MediaPlayerPrivateInterface> RemoteMediaPlayerManager::createRem
     proxyConfiguration.isVideo = player->isVideoPlayer();
 
     RemoteMediaPlayerConfiguration playerConfiguration;
-    bool sendSucceeded = gpuProcessConnection().sendSync(Messages::RemoteMediaPlayerManagerProxy::CreateMediaPlayer(id, remoteEngineIdentifier, proxyConfiguration), Messages::RemoteMediaPlayerManagerProxy::CreateMediaPlayer::Reply(playerConfiguration), 0);
+    bool sendSucceeded = gpuProcessConnection().connection().sendSync(Messages::RemoteMediaPlayerManagerProxy::CreateMediaPlayer(id, remoteEngineIdentifier, proxyConfiguration), Messages::RemoteMediaPlayerManagerProxy::CreateMediaPlayer::Reply(playerConfiguration), 0);
     if (!sendSucceeded) {
         WTFLogAlways("Failed to create remote media player.");
         return nullptr;
@@ -178,7 +177,7 @@ std::unique_ptr<MediaPlayerPrivateInterface> RemoteMediaPlayerManager::createRem
 void RemoteMediaPlayerManager::deleteRemoteMediaPlayer(MediaPlayerPrivateRemoteIdentifier id)
 {
     m_players.take(id);
-    gpuProcessConnection().send(Messages::RemoteMediaPlayerManagerProxy::DeleteMediaPlayer(id), 0);
+    gpuProcessConnection().connection().send(Messages::RemoteMediaPlayerManagerProxy::DeleteMediaPlayer(id), 0);
 }
 
 void RemoteMediaPlayerManager::getSupportedTypes(MediaPlayerEnums::MediaEngineIdentifier remoteEngineIdentifier, HashSet<String, ASCIICaseInsensitiveHash>& result)
@@ -192,7 +191,7 @@ void RemoteMediaPlayerManager::getSupportedTypes(MediaPlayerEnums::MediaEngineId
     }
 
     Vector<String> types;
-    if (!gpuProcessConnection().sendSync(Messages::RemoteMediaPlayerManagerProxy::GetSupportedTypes(remoteEngineIdentifier), Messages::RemoteMediaPlayerManagerProxy::GetSupportedTypes::Reply(types), 0))
+    if (!gpuProcessConnection().connection().sendSync(Messages::RemoteMediaPlayerManagerProxy::GetSupportedTypes(remoteEngineIdentifier), Messages::RemoteMediaPlayerManagerProxy::GetSupportedTypes::Reply(types), 0))
         return;
 
     result = HashSet<String, ASCIICaseInsensitiveHash>();
@@ -214,7 +213,7 @@ bool RemoteMediaPlayerManager::supportsKeySystem(MediaPlayerEnums::MediaEngineId
 HashSet<RefPtr<SecurityOrigin>> RemoteMediaPlayerManager::originsInMediaCache(MediaPlayerEnums::MediaEngineIdentifier remoteEngineIdentifier, const String& path)
 {
     Vector<SecurityOriginData> originData;
-    if (!gpuProcessConnection().sendSync(Messages::RemoteMediaPlayerManagerProxy::OriginsInMediaCache(remoteEngineIdentifier, path), Messages::RemoteMediaPlayerManagerProxy::OriginsInMediaCache::Reply(originData), 0))
+    if (!gpuProcessConnection().connection().sendSync(Messages::RemoteMediaPlayerManagerProxy::OriginsInMediaCache(remoteEngineIdentifier, path), Messages::RemoteMediaPlayerManagerProxy::OriginsInMediaCache::Reply(originData), 0))
         return { };
 
     HashSet<RefPtr<SecurityOrigin>> origins;
@@ -226,7 +225,7 @@ HashSet<RefPtr<SecurityOrigin>> RemoteMediaPlayerManager::originsInMediaCache(Me
 
 void RemoteMediaPlayerManager::clearMediaCache(MediaPlayerEnums::MediaEngineIdentifier remoteEngineIdentifier, const String& path, WallTime modifiedSince)
 {
-    gpuProcessConnection().send(Messages::RemoteMediaPlayerManagerProxy::ClearMediaCache(remoteEngineIdentifier, path, modifiedSince), 0);
+    gpuProcessConnection().connection().send(Messages::RemoteMediaPlayerManagerProxy::ClearMediaCache(remoteEngineIdentifier, path, modifiedSince), 0);
 }
 
 void RemoteMediaPlayerManager::clearMediaCacheForOrigins(MediaPlayerEnums::MediaEngineIdentifier remoteEngineIdentifier, const String& path, const HashSet<RefPtr<SecurityOrigin>>& origins)
@@ -235,7 +234,7 @@ void RemoteMediaPlayerManager::clearMediaCacheForOrigins(MediaPlayerEnums::Media
         return origin->data();
     });
 
-    gpuProcessConnection().send(Messages::RemoteMediaPlayerManagerProxy::ClearMediaCacheForOrigins(remoteEngineIdentifier, path, originData), 0);
+    gpuProcessConnection().connection().send(Messages::RemoteMediaPlayerManagerProxy::ClearMediaCacheForOrigins(remoteEngineIdentifier, path, originData), 0);
 }
 
 void RemoteMediaPlayerManager::networkStateChanged(MediaPlayerPrivateRemoteIdentifier id, RemoteMediaPlayerState&& state)
@@ -333,9 +332,12 @@ void RemoteMediaPlayerManager::updateCachedState(WebKit::MediaPlayerPrivateRemot
         player->updateCachedState(WTFMove(state));
 }
 
-IPC::Connection& RemoteMediaPlayerManager::gpuProcessConnection() const
+GPUProcessConnection& RemoteMediaPlayerManager::gpuProcessConnection() const
 {
-    return WebProcess::singleton().ensureGPUProcessConnection().connection();
+    if (!m_gpuProcessConnection)
+        m_gpuProcessConnection = &WebProcess::singleton().ensureGPUProcessConnection();
+
+    return *m_gpuProcessConnection;
 }
 
 } // namespace WebKit

@@ -31,6 +31,7 @@
 #include "APIWebsiteDataRecord.h"
 #include "AuthenticatorManager.h"
 #include "DeviceIdHashSaltStorage.h"
+#include "GPUProcessProxy.h"
 #include "MockAuthenticatorManager.h"
 #include "NetworkProcessMessages.h"
 #include "ShouldGrandfatherStatistics.h"

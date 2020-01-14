@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2009-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -1299,6 +1299,10 @@ GPUProcessConnection& WebProcess::ensureGPUProcessConnection()
             CRASH();
 
         m_gpuProcessConnection = GPUProcessConnection::create(connectionInfo.releaseIdentifier());
+#if HAVE(AUDIT_TOKEN)
+        ASSERT(connectionInfo.auditToken);
+        m_gpuProcessConnection->setAuditToken(WTFMove(connectionInfo.auditToken));
+#endif
     }
     
     return *m_gpuProcessConnection;

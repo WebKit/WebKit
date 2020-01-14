@@ -87,7 +87,7 @@ bool RemoteMediaPlayerMIMETypeCache::isUnsupportedContainerType(const String& ty
 bool RemoteMediaPlayerMIMETypeCache::canDecodeExtendedType(const WebCore::ContentType& type)
 {
     bool result;
-    if (!m_manager.gpuProcessConnection().sendSync(Messages::RemoteMediaPlayerManagerProxy::CanDecodeExtendedType(m_engineIdentifier, type.raw()), Messages::RemoteMediaPlayerManagerProxy::CanDecodeExtendedType::Reply(result), 0))
+    if (!m_manager.gpuProcessConnection().connection().sendSync(Messages::RemoteMediaPlayerManagerProxy::CanDecodeExtendedType(m_engineIdentifier, type.raw()), Messages::RemoteMediaPlayerManagerProxy::CanDecodeExtendedType::Reply(result), 0))
         return false;
 
     return result;
@@ -108,7 +108,7 @@ WebCore::MediaPlayerEnums::SupportsType RemoteMediaPlayerMIMETypeCache::supports
     }
 
     MediaPlayer::SupportsType result;
-    if (!m_manager.gpuProcessConnection().sendSync(Messages::RemoteMediaPlayerManagerProxy::SupportsTypeAndCodecs(m_engineIdentifier, parameters), Messages::RemoteMediaPlayerManagerProxy::SupportsTypeAndCodecs::Reply(result), 0))
+    if (!m_manager.gpuProcessConnection().connection().sendSync(Messages::RemoteMediaPlayerManagerProxy::SupportsTypeAndCodecs(m_engineIdentifier, parameters), Messages::RemoteMediaPlayerManagerProxy::SupportsTypeAndCodecs::Reply(result), 0))
         return MediaPlayer::SupportsType::IsNotSupported;
 
     if (!m_supportsTypeAndCodecsCache)
@@ -125,7 +125,7 @@ void RemoteMediaPlayerMIMETypeCache::initializeCache(HashSet<String, ASCIICaseIn
         return;
 
     Vector<String> types;
-    if (!m_manager.gpuProcessConnection().sendSync(Messages::RemoteMediaPlayerManagerProxy::GetSupportedTypes(m_engineIdentifier), Messages::RemoteMediaPlayerManagerProxy::GetSupportedTypes::Reply(types), 0))
+    if (!m_manager.gpuProcessConnection().connection().sendSync(Messages::RemoteMediaPlayerManagerProxy::GetSupportedTypes(m_engineIdentifier), Messages::RemoteMediaPlayerManagerProxy::GetSupportedTypes::Reply(types), 0))
         return;
 
     for (auto& type : types)
