@@ -35,7 +35,7 @@ import re
 import time
 
 from webkitpy.port import server_process
-from webkitpy.common.unicode_compatibility import decode_for
+from webkitpy.common.unicode_compatibility import BytesIO, decode_for, encode_if_necessary
 
 
 _log = logging.getLogger(__name__)
@@ -58,10 +58,12 @@ class ImageDiffer(object):
             if not self._process:
                 self._start(tolerance)
             # Note that although we are handed 'old', 'new', ImageDiff wants 'new', 'old'.
-            self._process.write('Content-Length: {}\n'.format(len(actual_contents)))
-            self._process.write(actual_contents)
-            self._process.write('Content-Length: {}\n'.format(len(expected_contents)))
-            self._process.write(expected_contents)
+            buffer = BytesIO()
+            buffer.write(encode_if_necessary('Content-Length: {}\n'.format(len(actual_contents))))
+            buffer.write(actual_contents)
+            buffer.write(encode_if_necessary('Content-Length: {}\n'.format(len(expected_contents))))
+            buffer.write(expected_contents)
+            self._process.write(buffer.getvalue())
             return self._read()
         except IOError as exception:
             return (None, 0, "Failed to compute an image diff: %s" % str(exception))

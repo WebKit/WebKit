@@ -1,3 +1,25 @@
+2020-01-14  Jonathan Bedard  <jbedard@apple.com>
+
+        webkitpy: Pass ImageDiff commands in a single write
+        https://bugs.webkit.org/show_bug.cgi?id=206194
+        <rdar://problem/58578775>
+
+        Reviewed by Stephanie Lewis.
+
+        ImageDiff can encounter race conditions if it is fed content in multiple writes,
+        instead of in a single block.
+
+        * Scripts/webkitpy/port/image_diff.py:
+        (ImageDiffer.diff_image): Pass ImageDiff data in a single write command.
+        * Scripts/webkitpy/port/port_testcase.py:
+        (PortTestCase.test_diff_image__missing_both): diff_image only accepts byte arrays.
+        (PortTestCase.test_diff_image__missing_actual): Ditto.
+        (PortTestCase.test_diff_image__missing_expected): Ditto.
+        (PortTestCase.test_diff_image): Ditto.
+        (PortTestCase.test_diff_image_passed): Ditto.
+        (PortTestCase.test_diff_image_failed): Ditto.
+        (PortTestCase.test_diff_image_crashed): Ditto.
+
 2020-01-14  Antti Koivisto  <antti@apple.com>
 
         [LFC][Integration] Support the feature flag in DumpRenderTree
