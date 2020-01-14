@@ -1,3 +1,19 @@
+2020-01-14  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [Cocoa] Glyph lookup should be language-sensitive (specifically between Yiddish and Hebrew)
+        https://bugs.webkit.org/show_bug.cgi?id=77568
+        <rdar://problem/14649193>
+
+        Reviewed by Simon Fraser.
+
+        * fast/text/locale-shaping-complex-expected-mismatch.html: Added.
+        * fast/text/locale-shaping-complex.html: Added.
+        * fast/text/locale-shaping-expected-mismatch.html: Added.
+        * fast/text/locale-shaping.html: Added.
+        * platform/gtk/TestExpectations:
+        * platform/mac/TestExpectations:
+        * platform/win/TestExpectations:
+
 2020-01-14  Lauro Moura  <lmoura@igalia.com>
 
         Gardening after r251750

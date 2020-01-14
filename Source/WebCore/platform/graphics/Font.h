@@ -35,10 +35,12 @@
 #include "OpenTypeVerticalData.h"
 #endif
 #include <wtf/BitVector.h>
+#include <wtf/Hasher.h>
 #include <wtf/Optional.h>
 #include <wtf/text/StringHash.h>
 
 #if PLATFORM(COCOA)
+#include <CoreFoundation/CoreFoundation.h>
 #include <wtf/RetainPtr.h>
 #endif
 
@@ -196,7 +198,7 @@ public:
 #endif
 #if PLATFORM(COCOA)
     CTFontRef getCTFont() const { return m_platformData.font(); }
-    CFDictionaryRef getCFStringAttributes(bool enableKerning, FontOrientation) const;
+    RetainPtr<CFDictionaryRef> getCFStringAttributes(bool enableKerning, FontOrientation, const AtomString& locale) const;
     const BitVector& glyphsSupportedBySmallCaps() const;
     const BitVector& glyphsSupportedByAllSmallCaps() const;
     const BitVector& glyphsSupportedByPetiteCaps() const;
@@ -208,7 +210,7 @@ public:
 #endif
 
     bool canRenderCombiningCharacterSequence(const UChar*, size_t) const;
-    bool applyTransforms(GlyphBufferGlyph*, GlyphBufferAdvance*, size_t glyphCount, bool enableKerning, bool requiresShaping) const;
+    void applyTransforms(GlyphBuffer&, unsigned beginningIndex, bool enableKerning, bool requiresShaping, const AtomString& locale) const;
 
 #if PLATFORM(WIN)
     SCRIPT_FONTPROPERTIES* scriptFontProperties() const;
@@ -281,8 +283,6 @@ private:
     mutable std::unique_ptr<DerivedFonts> m_derivedFontData;
 
 #if PLATFORM(COCOA)
-    mutable RetainPtr<CFMutableDictionaryRef> m_nonKernedCFStringAttributes;
-    mutable RetainPtr<CFMutableDictionaryRef> m_kernedCFStringAttributes;
     mutable Optional<BitVector> m_glyphsSupportedBySmallCaps;
     mutable Optional<BitVector> m_glyphsSupportedByAllSmallCaps;
     mutable Optional<BitVector> m_glyphsSupportedByPetiteCaps;

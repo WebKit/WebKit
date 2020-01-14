@@ -1206,6 +1206,10 @@ webkit.org/b/205187 fast/text/font-antialiasing-save-restore.html [ ImageOnlyFai
 
 webkit.org/b/206223 imported/mozilla/svg/svg-integration/clipPath-html-02.xhtml
 
+# locale-specific shaping isn't implemented on any non-Cocoa port yet.
+webkit.org/b/77568 fast/text/locale-shaping.html [ ImageOnlyFailure ]
+webkit.org/b/77568 fast/text/locale-shaping-complex.html [ ImageOnlyFailure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Expected failures.
 #

@@ -689,6 +689,10 @@ imported/w3c/web-platform-tests/credential-management/ [ Skip ]
 fast/visual-viewport/client-coordinates-relative-to-layout-viewport.html [ Failure ]
 fast/visual-viewport/zoomed-fixed-scroll-down-then-up.html [ Failure ]
 
+# locale-specific shaping isn't implemented on any non-Cocoa port yet.
+webkit.org/b/77568 fast/text/locale-shaping.html [ ImageOnlyFailure ]
+webkit.org/b/77568 fast/text/locale-shaping-complex.html [ ImageOnlyFailure ]
+
 ################################################################################
 ###########    End Missing Functionality Prevents Testing         ##############
 ################################################################################

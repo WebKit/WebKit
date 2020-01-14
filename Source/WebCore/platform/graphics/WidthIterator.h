@@ -35,7 +35,7 @@ class TextRun;
 struct GlyphData;
 struct OriginalAdvancesForCharacterTreatedAsSpace;
 
-typedef Vector<std::pair<int, OriginalAdvancesForCharacterTreatedAsSpace>, 64> CharactersTreatedAsSpace;
+typedef Vector<std::pair<unsigned, OriginalAdvancesForCharacterTreatedAsSpace>, 64> CharactersTreatedAsSpace;
 
 struct WidthIterator {
     WTF_MAKE_FAST_ALLOCATED;

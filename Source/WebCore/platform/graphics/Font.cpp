@@ -499,20 +499,11 @@ RefPtr<Font> Font::createScaledFont(const FontDescription& fontDescription, floa
     return platformCreateScaledFont(fontDescription, scaleFactor);
 }
 
-bool Font::applyTransforms(GlyphBufferGlyph* glyphs, GlyphBufferAdvance* advances, size_t glyphCount, bool enableKerning, bool requiresShaping) const
+#if !PLATFORM(COCOA)
+void Font::applyTransforms(GlyphBuffer&, unsigned, bool, bool, const AtomString&) const
 {
-#if PLATFORM(COCOA)
-    CTFontTransformOptions options = (enableKerning ? kCTFontTransformApplyPositioning : 0) | (requiresShaping ? kCTFontTransformApplyShaping : 0);
-    return CTFontTransformGlyphs(m_platformData.ctFont(), glyphs, reinterpret_cast<CGSize*>(advances), glyphCount, options);
-#else
-    UNUSED_PARAM(glyphs);
-    UNUSED_PARAM(advances);
-    UNUSED_PARAM(glyphCount);
-    UNUSED_PARAM(enableKerning);
-    UNUSED_PARAM(requiresShaping);
-    return false;
-#endif
 }
+#endif
 
 class CharacterFallbackMapKey {
 public:

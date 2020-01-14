@@ -92,6 +92,7 @@ extern const CFStringRef kCTFontCSSFamilyMonospace;
 extern const CFStringRef kCTFontCSSFamilySystemUI;
 
 bool CTFontTransformGlyphs(CTFontRef, CGGlyph glyphs[], CGSize advances[], CFIndex count, CTFontTransformOptions);
+CGSize CTFontTransformGlyphsWithLanguage(CTFontRef, CGGlyph[], CGSize[], CFIndex count, CTFontTransformOptions, CFStringRef language, void (^handler)(CFRange, CGGlyph**, CGSize**));
 
 CGSize CTRunGetInitialAdvance(CTRunRef);
 CTLineRef CTLineCreateWithUniCharProvider(CTUniCharProviderCallback, CTUniCharDisposeCallback, void* refCon);

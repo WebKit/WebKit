@@ -416,6 +416,7 @@ float FontCascade::widthForSimpleText(StringView text) const
     if (cacheEntry && !std::isnan(*cacheEntry))
         return *cacheEntry;
 
+    GlyphBuffer glyphBuffer;
     Vector<GlyphBufferGlyph, 16> glyphs;
     Vector<GlyphBufferAdvance, 16> advances;
     bool hasKerningOrLigatures = enableKerning() || requiresShaping();
@@ -427,16 +428,15 @@ float FontCascade::widthForSimpleText(StringView text) const
         runWidth += glyphWidth;
         if (!hasKerningOrLigatures)
             continue;
-        glyphs.append(glyph);
-        advances.append(FloatSize(glyphWidth, 0));
+        glyphBuffer.add(glyph, &font, glyphWidth);
     }
     if (hasKerningOrLigatures) {
-        font.applyTransforms(&glyphs[0], &advances[0], glyphs.size(), enableKerning(), requiresShaping());
+        font.applyTransforms(glyphBuffer, 0, enableKerning(), requiresShaping(), fontDescription().locale());
         // This is needed only to match the result of the slow path. Same glyph widths but different floating point arithmentics can
         // produce different run width.
         float runWidthDifferenceWithTransformApplied = -runWidth;
-        for (auto& advance : advances)
-            runWidthDifferenceWithTransformApplied += advance.width();
+        for (size_t i = 0; i < glyphBuffer.size(); ++i)
+            runWidthDifferenceWithTransformApplied += glyphBuffer.advanceAt(i).width();
         runWidth += runWidthDifferenceWithTransformApplied;
     }
 

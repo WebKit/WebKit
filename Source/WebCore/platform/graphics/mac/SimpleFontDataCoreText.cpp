@@ -32,15 +32,17 @@
 
 namespace WebCore {
 
-CFDictionaryRef Font::getCFStringAttributes(bool enableKerning, FontOrientation orientation) const
+RetainPtr<CFDictionaryRef> Font::getCFStringAttributes(bool enableKerning, FontOrientation orientation, const AtomString& locale) const
 {
-    auto& attributesDictionary = enableKerning ? m_kernedCFStringAttributes : m_nonKernedCFStringAttributes;
-    if (attributesDictionary)
-        return attributesDictionary.get();
-
-    attributesDictionary = adoptCF(CFDictionaryCreateMutable(kCFAllocatorDefault, 4, &kCFCopyStringDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
+    auto attributesDictionary = adoptCF(CFDictionaryCreateMutable(kCFAllocatorDefault, 4, &kCFCopyStringDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
 
     CFDictionarySetValue(attributesDictionary.get(), kCTFontAttributeName, platformData().ctFont());
+#if HAVE(CTFONTTRANSFORMGLYPHSWITHLANGUAGE)
+    if (!locale.isEmpty())
+        CFDictionarySetValue(attributesDictionary.get(), kCTLanguageAttributeName, locale.string().createCFString().get());
+#else
+    UNUSED_PARAM(locale);
+#endif
     auto paragraphStyle = adoptCF(CTParagraphStyleCreate(nullptr, 0));
     CTParagraphStyleSetCompositionLanguage(paragraphStyle.get(), kCTCompositionLanguageNone);
     CFDictionarySetValue(attributesDictionary.get(), kCTParagraphStyleAttributeName, paragraphStyle.get());
@@ -54,7 +56,7 @@ CFDictionaryRef Font::getCFStringAttributes(bool enableKerning, FontOrientation 
     if (orientation == FontOrientation::Vertical)
         CFDictionarySetValue(attributesDictionary.get(), kCTVerticalFormsAttributeName, kCFBooleanTrue);
 
-    return attributesDictionary.get();
+    return attributesDictionary;
 }
 
 #if HAVE(DISALLOWABLE_USER_INSTALLED_FONTS)
