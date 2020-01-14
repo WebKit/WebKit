@@ -162,4 +162,6 @@ add_action('init', function () {
         'show_in_nav_menus'          => true,
         'show_tagcloud'              => true
     ));
+
+    add_post_type_support('web_inspector_page', 'wpcom-markdown');
 });
