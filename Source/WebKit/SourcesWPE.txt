@@ -206,6 +206,8 @@ UIProcess/WebsiteData/unix/WebsiteDataStoreUnix.cpp
 UIProcess/gstreamer/InstallMissingMediaPluginsPermissionRequest.cpp
 UIProcess/gstreamer/WebPageProxyGStreamer.cpp
 
+UIProcess/libwpe/WebPasteboardProxyLibWPE.cpp
+
 UIProcess/linux/MemoryPressureMonitor.cpp
 
 UIProcess/soup/WebCookieManagerProxySoup.cpp
@@ -213,7 +215,6 @@ UIProcess/soup/WebProcessPoolSoup.cpp
 
 UIProcess/wpe/WebInspectorProxyWPE.cpp
 UIProcess/wpe/WebPageProxyWPE.cpp
-UIProcess/wpe/WebPasteboardProxyWPE.cpp
 
 WebProcess/InjectedBundle/API/glib/DOM/DOMObjectCache.cpp @no-unify
 WebProcess/InjectedBundle/API/glib/DOM/WebKitDOMDocument.cpp @no-unify

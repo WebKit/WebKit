@@ -1,3 +1,16 @@
+2020-01-14  Ross Kirsling  <ross.kirsling@sony.com>
+
+        WebPasteboardProxyWPE should be WebPasteboardProxyLibWPE
+        https://bugs.webkit.org/show_bug.cgi?id=206243
+
+        Reviewed by Adrian Perez de Castro.
+
+        WebPasteboardProxy.h already has USE(LIBWPE) so we basically just need to move the file.
+
+        * SourcesWPE.txt:
+        * UIProcess/WebPasteboardProxy.cpp:
+        * UIProcess/libwpe/WebPasteboardProxyLibWPE.cpp: Renamed from Source/WebKit/UIProcess/wpe/WebPasteboardProxyWPE.cpp.
+
 2020-01-14  Eric Carlson  <eric.carlson@apple.com>
 
         Nake MediaPlayerPrivateRemoteProxy a message receiver

@@ -105,14 +105,14 @@ void WebPasteboardProxy::readBufferFromPasteboard(size_t, const String&, const S
     completionHandler({ }, 0);
 }
 
-#if !PLATFORM(WPE)
+#if !USE(LIBWPE)
 
 void WebPasteboardProxy::readStringFromPasteboard(size_t, const String&, const String&, CompletionHandler<void(String&&)>&& completionHandler)
 {
     completionHandler({ });
 }
 
-#endif // !PLATFORM(WPE)
+#endif // !USE(LIBWPE)
 
 #endif // !PLATFORM(COCOA)
 
