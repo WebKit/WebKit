@@ -49,7 +49,7 @@
 namespace WebCore {
 
 void FontCascade::drawGlyphs(GraphicsContext& context, const Font& font, const GlyphBuffer& glyphBuffer,
-    unsigned from, unsigned numGlyphs, const FloatPoint& point, FontSmoothingMode)
+    unsigned from, unsigned numGlyphs, const FloatPoint& point, FontSmoothingMode fontSmoothingMode)
 {
     if (!font.platformData().size())
         return;
@@ -76,7 +76,8 @@ void FontCascade::drawGlyphs(GraphicsContext& context, const Font& font, const G
     auto& state = context.state();
     Cairo::drawGlyphs(*context.platformContext(), Cairo::FillSource(state), Cairo::StrokeSource(state),
         Cairo::ShadowState(state), point, scaledFont, syntheticBoldOffset, glyphs, xOffset,
-        state.textDrawingMode, state.strokeThickness, state.shadowOffset, state.shadowColor);
+        state.textDrawingMode, state.strokeThickness, state.shadowOffset, state.shadowColor,
+        fontSmoothingMode);
 }
 
 Path Font::platformPathForGlyph(Glyph glyph) const

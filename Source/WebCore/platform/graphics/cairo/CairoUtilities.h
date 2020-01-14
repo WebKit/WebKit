@@ -70,7 +70,9 @@ private:
     cairo_scaled_font_t* m_scaledFont { nullptr };
     FT_Face m_ftFace { nullptr };
 };
+#endif
 
+#if USE(CAIRO)
 const cairo_font_options_t* getDefaultCairoFontOptions();
 #endif
 

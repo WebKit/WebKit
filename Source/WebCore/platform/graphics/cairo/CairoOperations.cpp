@@ -35,6 +35,7 @@
 
 #if USE(CAIRO)
 
+#include "CairoUniquePtr.h"
 #include "CairoUtilities.h"
 #include "DrawErrorUnderline.h"
 #include "FloatConversion.h"
@@ -306,13 +307,33 @@ static inline StrokeStyle focusRingStrokeStyle()
 #endif
 }
 
-static void drawGlyphsToContext(cairo_t* context, cairo_scaled_font_t* scaledFont, double syntheticBoldOffset, const Vector<cairo_glyph_t>& glyphs)
+static void drawGlyphsToContext(cairo_t* context, cairo_scaled_font_t* scaledFont, double syntheticBoldOffset, const Vector<cairo_glyph_t>& glyphs, FontSmoothingMode fontSmoothingMode)
 {
     cairo_matrix_t originalTransform;
     if (syntheticBoldOffset)
         cairo_get_matrix(context, &originalTransform);
 
     cairo_set_scaled_font(context, scaledFont);
+
+    // The scaled font defaults to FontSmoothingMode::AutoSmoothing. Only override antialiasing settings if its not auto.
+    if (fontSmoothingMode != FontSmoothingMode::AutoSmoothing) {
+        CairoUniquePtr<cairo_font_options_t> fontOptionsSmoothing(cairo_font_options_copy(getDefaultCairoFontOptions()));
+        switch (fontSmoothingMode) {
+        case FontSmoothingMode::Antialiased:
+            cairo_font_options_set_antialias(fontOptionsSmoothing.get(), CAIRO_ANTIALIAS_GRAY);
+            break;
+        case FontSmoothingMode::SubpixelAntialiased:
+            cairo_font_options_set_antialias(fontOptionsSmoothing.get(), CAIRO_ANTIALIAS_SUBPIXEL);
+            break;
+        case FontSmoothingMode::NoSmoothing:
+            cairo_font_options_set_antialias(fontOptionsSmoothing.get(), CAIRO_ANTIALIAS_NONE);
+            break;
+        default:
+            ASSERT_NOT_REACHED();
+        }
+        cairo_set_font_options(context, fontOptionsSmoothing.get());
+    }
+
     cairo_show_glyphs(context, glyphs.data(), glyphs.size());
 
     if (syntheticBoldOffset) {
@@ -323,7 +344,7 @@ static void drawGlyphsToContext(cairo_t* context, cairo_scaled_font_t* scaledFon
     }
 }
 
-static void drawGlyphsShadow(PlatformContextCairo& platformContext, const ShadowState& shadowState, TextDrawingModeFlags textDrawingMode, const FloatSize& shadowOffset, const Color& shadowColor, const FloatPoint& point, cairo_scaled_font_t* scaledFont, double syntheticBoldOffset, const Vector<cairo_glyph_t>& glyphs)
+static void drawGlyphsShadow(PlatformContextCairo& platformContext, const ShadowState& shadowState, TextDrawingModeFlags textDrawingMode, const FloatSize& shadowOffset, const Color& shadowColor, const FloatPoint& point, cairo_scaled_font_t* scaledFont, double syntheticBoldOffset, const Vector<cairo_glyph_t>& glyphs, FontSmoothingMode fontSmoothingMode)
 {
     ShadowBlur shadow({ shadowState.blur, shadowState.blur }, shadowState.offset, shadowState.color, shadowState.ignoreTransforms);
     if (!(textDrawingMode & TextModeFill) || shadow.type() == ShadowBlur::NoShadow)
@@ -336,7 +357,7 @@ static void drawGlyphsShadow(PlatformContextCairo& platformContext, const Shadow
 
         cairo_translate(context, shadowOffset.width(), shadowOffset.height());
         setSourceRGBAFromColor(context, shadowColor);
-        drawGlyphsToContext(context, scaledFont, syntheticBoldOffset, glyphs);
+        drawGlyphsToContext(context, scaledFont, syntheticBoldOffset, glyphs, fontSmoothingMode);
 
         cairo_restore(context);
         return;
@@ -347,9 +368,9 @@ static void drawGlyphsShadow(PlatformContextCairo& platformContext, const Shadow
     FloatRect fontExtentsRect(point.x() + extents.x_bearing, point.y() + extents.y_bearing, extents.width, extents.height);
 
     shadow.drawShadowLayer(State::getCTM(platformContext), State::getClipBounds(platformContext), fontExtentsRect,
-        [scaledFont, syntheticBoldOffset, &glyphs](GraphicsContext& shadowContext)
+        [scaledFont, syntheticBoldOffset, &glyphs, fontSmoothingMode](GraphicsContext& shadowContext)
         {
-            drawGlyphsToContext(shadowContext.platformContext()->cr(), scaledFont, syntheticBoldOffset, glyphs);
+            drawGlyphsToContext(shadowContext.platformContext()->cr(), scaledFont, syntheticBoldOffset, glyphs, fontSmoothingMode);
         },
         [&platformContext, &shadowState](ImageBuffer& layerImage, const FloatPoint& layerOrigin, const FloatSize& layerSize)
         {
@@ -836,16 +857,16 @@ void clearRect(PlatformContextCairo& platformContext, const FloatRect& rect)
     cairo_restore(cr);
 }
 
-void drawGlyphs(PlatformContextCairo& platformContext, const FillSource& fillSource, const StrokeSource& strokeSource, const ShadowState& shadowState, const FloatPoint& point, cairo_scaled_font_t* scaledFont, double syntheticBoldOffset, const Vector<cairo_glyph_t>& glyphs, float xOffset, TextDrawingModeFlags textDrawingMode, float strokeThickness, const FloatSize& shadowOffset, const Color& shadowColor)
+void drawGlyphs(PlatformContextCairo& platformContext, const FillSource& fillSource, const StrokeSource& strokeSource, const ShadowState& shadowState, const FloatPoint& point, cairo_scaled_font_t* scaledFont, double syntheticBoldOffset, const Vector<cairo_glyph_t>& glyphs, float xOffset, TextDrawingModeFlags textDrawingMode, float strokeThickness, const FloatSize& shadowOffset, const Color& shadowColor, FontSmoothingMode fontSmoothingMode)
 {
-    drawGlyphsShadow(platformContext, shadowState, textDrawingMode, shadowOffset, shadowColor, point, scaledFont, syntheticBoldOffset, glyphs);
+    drawGlyphsShadow(platformContext, shadowState, textDrawingMode, shadowOffset, shadowColor, point, scaledFont, syntheticBoldOffset, glyphs, fontSmoothingMode);
 
     cairo_t* cr = platformContext.cr();
     cairo_save(cr);
 
     if (textDrawingMode & TextModeFill) {
         prepareForFilling(cr, fillSource, AdjustPatternForGlobalAlpha);
-        drawGlyphsToContext(cr, scaledFont, syntheticBoldOffset, glyphs);
+        drawGlyphsToContext(cr, scaledFont, syntheticBoldOffset, glyphs, fontSmoothingMode);
     }
 
     // Prevent running into a long computation within cairo. If the stroke width is

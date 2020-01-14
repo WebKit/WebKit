@@ -233,7 +233,6 @@ void GraphicsContextImplCairo::clearRect(const FloatRect& rect)
 
 void GraphicsContextImplCairo::drawGlyphs(const Font& font, const GlyphBuffer& glyphBuffer, unsigned from, unsigned numGlyphs, const FloatPoint& point, FontSmoothingMode fontSmoothing)
 {
-    UNUSED_PARAM(fontSmoothing);
     if (!font.platformData().size())
         return;
 
@@ -258,7 +257,8 @@ void GraphicsContextImplCairo::drawGlyphs(const Font& font, const GlyphBuffer& g
     auto& state = graphicsContext().state();
     Cairo::drawGlyphs(m_platformContext, Cairo::FillSource(state), Cairo::StrokeSource(state),
         Cairo::ShadowState(state), point, scaledFont, syntheticBoldOffset, glyphs, xOffset,
-        state.textDrawingMode, state.strokeThickness, state.shadowOffset, state.shadowColor);
+        state.textDrawingMode, state.strokeThickness, state.shadowOffset, state.shadowColor,
+        fontSmoothing);
 }
 
 ImageDrawResult GraphicsContextImplCairo::drawImage(Image& image, const FloatRect& destination, const FloatRect& source, const ImagePaintingOptions& imagePaintingOptions)

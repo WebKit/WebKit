@@ -56,7 +56,7 @@
 
 namespace WebCore {
 
-#if USE(FREETYPE) && !PLATFORM(GTK)
+#if USE(CAIRO) && !PLATFORM(GTK)
 const cairo_font_options_t* getDefaultCairoFontOptions()
 {
     static NeverDestroyed<cairo_font_options_t*> options = cairo_font_options_create();

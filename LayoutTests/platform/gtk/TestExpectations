@@ -814,8 +814,6 @@ webkit.org/b/142268 editing/pasteboard/copy-paste-attachment.html [ Failure ]
 webkit.org/b/142269 fast/attachment/attachment-dom.html [ Failure ]
 webkit.org/b/142270 fast/canvas/canvas-ellipse-zero-lineto.html [ Failure ]
 
-webkit.org/b/142819 fast/text/baseline-inline-block.html [ ImageOnlyFailure ]
-
 # This feature is only enabled on Mac and iOS right now
 contentfiltering [ Skip ]
 http/tests/contentfiltering [ Skip ]
@@ -1205,6 +1203,9 @@ webkit.org/b/206001 imported/w3c/web-platform-tests/css/css-values/ch-unit-017.h
 
 webkit.org/b/206002 http/wpt/css/css-highlight-api/highlight-text-replace.html [ ImageOnlyFailure ]
 webkit.org/b/206002 http/wpt/css/css-highlight-api/highlight-text.html [ ImageOnlyFailure ]
+
+webkit.org/b/205186 compositing/contents-format/subpixel-antialiased-text.html [ ImageOnlyFailure ]
+webkit.org/b/205187 fast/text/font-antialiasing-save-restore.html [ ImageOnlyFailure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Expected failures.

@@ -1,3 +1,21 @@
+2020-01-14  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [Freetype] Support for the -webkit-font-smoothing CSS property
+        https://bugs.webkit.org/show_bug.cgi?id=54763
+
+        Reviewed by Simon Fraser.
+
+        Add a regression test. This test is specific for platform gtk because
+        it depends on the custom fonts.conf file that its used for GTK layout
+        tests.
+
+        * platform/gtk/TestExpectations:
+        * platform/gtk/fast/css/font-smoothing-expected.png:
+        * platform/gtk/fonts/webkit-font-smoothing-expected.html: Added.
+        * platform/gtk/fonts/webkit-font-smoothing.html: Added.
+        * platform/wpe/TestExpectations:
+        * platform/wpe/fast/css/font-smoothing-expected.png: Added.
+
 2020-01-14  youenn fablet  <youenn@apple.com>
 
         Add support for MediaStream audio track rendering in GPUProcess
