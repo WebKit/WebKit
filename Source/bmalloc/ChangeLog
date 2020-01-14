@@ -1,3 +1,41 @@
+2020-01-14  Basuke Suzuki  <basuke.suzuki@sony.com>
+
+        [bmalloc] Calculate LineMetadata for specific VM page size in compile time
+        https://bugs.webkit.org/show_bug.cgi?id=206044
+
+        Reviewed by Yusuke Suzuki.
+
+        LineMetadata is dependent only on VM page size. This patch enables the pre-calculation for
+        specific VM page sizes by compiler flags. The benefit is both runtime initialization speed
+        up and avoiding extra VM allocation on runtime.
+
+        First targets are 4k (Mac) and 16k (some iOS, PlayStation) VM page sizes.
+
+        * bmalloc/Algorithm.h:
+        (bmalloc::divideRoundingUp):
+        * bmalloc/BPlatform.h:
+        * bmalloc/HeapConstants.cpp:
+        (bmalloc::fillLineMetadata):
+        (bmalloc::computeLineMetadata):
+        (bmalloc::HeapConstants::initializeLineMetadata):
+        * bmalloc/HeapConstants.h:
+        (bmalloc::HeapConstants::smallLineCount const):
+        (bmalloc::HeapConstants::startOffset const):
+        (bmalloc::HeapConstants::objectCount const):
+        (bmalloc::HeapConstants::lineMetadata const):
+        (bmalloc::HeapConstants::startOffset): Deleted.
+        (bmalloc::HeapConstants::objectCount): Deleted.
+        (bmalloc::HeapConstants::lineMetadata): Deleted.
+        * bmalloc/LineMetadata.h:
+        * bmalloc/Sizes.h:
+        (bmalloc::Sizes::maskObjectSize):
+        (bmalloc::Sizes::logSizeClass):
+        (bmalloc::Sizes::logObjectSize):
+        (bmalloc::Sizes::sizeClass):
+        (bmalloc::Sizes::objectSize):
+        (bmalloc::Sizes::pageSize):
+        (bmalloc::Sizes::smallLineCount):
+
 2020-01-14  David Kilzer  <ddkilzer@apple.com>
 
         Enable -Wconditional-uninitialized in bmalloc, WTF, JavaScriptCore
