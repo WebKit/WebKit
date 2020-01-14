@@ -1,3 +1,14 @@
+2020-01-13  Zalan Bujtas  <zalan@apple.com>
+
+        RenderTreeBuilder::Block::attachIgnoringContinuation should handle inline-block anonymous containers.
+        https://bugs.webkit.org/show_bug.cgi?id=202913
+        <rdar://problem/56233694>
+
+        Reviewed by Simon Fraser.
+
+        * fast/ruby/before-child-is-block-after-expected.txt: Added.
+        * fast/ruby/before-child-is-block-after.html: Added.
+
 2020-01-13  John Wilander  <wilander@apple.com>
 
         Remove calls to testRunner.installStatisticsDidModifyDataRecordsCallback() in http/tests/resourceLoadStatistics/classify-as-non-prevalent-based-on-sub-frame-under-top-frame-origins*
