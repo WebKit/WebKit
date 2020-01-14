@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,37 +23,43 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#import "config.h"
+#import "_WKWebAuthenticationAssertionResponseInternal.h"
+
+#import "WKNSData.h"
+
+@implementation _WKWebAuthenticationAssertionResponse
 
 #if ENABLE(WEB_AUTHN)
 
-#include <wtf/CompletionHandler.h>
-#include <wtf/HashSet.h>
-#include <wtf/RefCounted.h>
-#include <wtf/text/WTFString.h>
+- (void)dealloc
+{
+    _response->~WebAuthenticationAssertionResponse();
 
-namespace WebCore {
-class AuthenticatorAssertionResponse;
+    [super dealloc];
 }
 
-namespace WebKit {
-enum class WebAuthenticationStatus : bool;
-enum class WebAuthenticationResult : bool;
+- (NSString *)name
+{
+    return _response->name();
 }
 
-namespace API {
+- (NSString *)displayName
+{
+    return _response->displayName();
+}
 
-class WebAuthenticationPanelClient {
-    WTF_MAKE_FAST_ALLOCATED;
-public:
-    virtual ~WebAuthenticationPanelClient() = default;
+- (NSData *)userHandle
+{
+    return wrapper(_response->userHandle());
+}
 
-    virtual void updatePanel(WebKit::WebAuthenticationStatus) const { }
-    virtual void dismissPanel(WebKit::WebAuthenticationResult) const { }
-    virtual void requestPin(uint64_t, CompletionHandler<void(const WTF::String&)>&& completionHandler) const { completionHandler(emptyString()); }
-    virtual void selectAssertionResponse(const HashSet<Ref<WebCore::AuthenticatorAssertionResponse>>& responses, CompletionHandler<void(const WebCore::AuthenticatorAssertionResponse&)>&& completionHandler) const { ASSERT(!responses.isEmpty()); completionHandler(*responses.begin()); }
-};
+#pragma mark WKObject protocol implementation
 
-} // namespace API
+- (API::Object&)_apiObject
+{
+    return *_response;
+}
+#endif
 
-#endif // ENABLE(WEB_AUTHN)
+@end

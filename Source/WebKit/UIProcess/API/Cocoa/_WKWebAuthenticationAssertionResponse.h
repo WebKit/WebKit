@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,35 +25,19 @@
 
 #pragma once
 
-#if ENABLE(WEB_AUTHN)
+#import <WebKit/WKFoundation.h>
 
-#include <wtf/CompletionHandler.h>
-#include <wtf/HashSet.h>
-#include <wtf/RefCounted.h>
-#include <wtf/text/WTFString.h>
+#import <Foundation/Foundation.h>
 
-namespace WebCore {
-class AuthenticatorAssertionResponse;
-}
+NS_ASSUME_NONNULL_BEGIN
 
-namespace WebKit {
-enum class WebAuthenticationStatus : bool;
-enum class WebAuthenticationResult : bool;
-}
+WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA))
+@interface _WKWebAuthenticationAssertionResponse : NSObject
 
-namespace API {
+@property (nonatomic, readonly, copy) NSString *name;
+@property (nonatomic, readonly, copy) NSString *displayName;
+@property (nonatomic, readonly, copy) NSData *userHandle;
 
-class WebAuthenticationPanelClient {
-    WTF_MAKE_FAST_ALLOCATED;
-public:
-    virtual ~WebAuthenticationPanelClient() = default;
+@end
 
-    virtual void updatePanel(WebKit::WebAuthenticationStatus) const { }
-    virtual void dismissPanel(WebKit::WebAuthenticationResult) const { }
-    virtual void requestPin(uint64_t, CompletionHandler<void(const WTF::String&)>&& completionHandler) const { completionHandler(emptyString()); }
-    virtual void selectAssertionResponse(const HashSet<Ref<WebCore::AuthenticatorAssertionResponse>>& responses, CompletionHandler<void(const WebCore::AuthenticatorAssertionResponse&)>&& completionHandler) const { ASSERT(!responses.isEmpty()); completionHandler(*responses.begin()); }
-};
-
-} // namespace API
-
-#endif // ENABLE(WEB_AUTHN)
+NS_ASSUME_NONNULL_END

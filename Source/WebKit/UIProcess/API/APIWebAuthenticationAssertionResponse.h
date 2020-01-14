@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,31 +27,28 @@
 
 #if ENABLE(WEB_AUTHN)
 
-#include <wtf/CompletionHandler.h>
-#include <wtf/HashSet.h>
-#include <wtf/RefCounted.h>
-#include <wtf/text/WTFString.h>
-
-namespace WebCore {
-class AuthenticatorAssertionResponse;
-}
-
-namespace WebKit {
-enum class WebAuthenticationStatus : bool;
-enum class WebAuthenticationResult : bool;
-}
+#include "APIObject.h"
+#include <WebCore/AuthenticatorAssertionResponse.h>
 
 namespace API {
 
-class WebAuthenticationPanelClient {
-    WTF_MAKE_FAST_ALLOCATED;
-public:
-    virtual ~WebAuthenticationPanelClient() = default;
+class Data;
 
-    virtual void updatePanel(WebKit::WebAuthenticationStatus) const { }
-    virtual void dismissPanel(WebKit::WebAuthenticationResult) const { }
-    virtual void requestPin(uint64_t, CompletionHandler<void(const WTF::String&)>&& completionHandler) const { completionHandler(emptyString()); }
-    virtual void selectAssertionResponse(const HashSet<Ref<WebCore::AuthenticatorAssertionResponse>>& responses, CompletionHandler<void(const WebCore::AuthenticatorAssertionResponse&)>&& completionHandler) const { ASSERT(!responses.isEmpty()); completionHandler(*responses.begin()); }
+class WebAuthenticationAssertionResponse final : public ObjectImpl<Object::Type::WebAuthenticationAssertionResponse> {
+public:
+    static Ref<WebAuthenticationAssertionResponse> create(Ref<WebCore::AuthenticatorAssertionResponse>&&);
+    ~WebAuthenticationAssertionResponse();
+
+    const WTF::String& name() const { return m_response->name(); }
+    const WTF::String& displayName() const { return m_response->displayName(); }
+    RefPtr<Data> userHandle() const;
+
+    const WebCore::AuthenticatorAssertionResponse& response() { return m_response.get(); }
+
+private:
+    WebAuthenticationAssertionResponse(Ref<WebCore::AuthenticatorAssertionResponse>&&);
+
+    Ref<WebCore::AuthenticatorAssertionResponse> m_response;
 };
 
 } // namespace API
