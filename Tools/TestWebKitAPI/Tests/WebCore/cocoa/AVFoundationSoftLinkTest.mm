@@ -48,16 +48,19 @@ TEST(AVFoundationSoftLink, Classes)
     EXPECT_NE(PAL::getAVAssetReaderClass(), nullptr);
     EXPECT_NE(PAL::getAVAssetWriterClass(), nullptr);
     EXPECT_NE(PAL::getAVAssetWriterInputClass(), nullptr);
-    EXPECT_NE(PAL::getAVCaptureSessionClass(), nullptr);
+    EXPECT_NE(PAL::getAVMutableAudioMixClass(), nullptr);
+    EXPECT_NE(PAL::getAVMutableAudioMixInputParametersClass(), nullptr);
+
+#if !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)
     EXPECT_NE(PAL::getAVCaptureConnectionClass(), nullptr);
     EXPECT_NE(PAL::getAVCaptureDeviceClass(), nullptr);
     EXPECT_NE(PAL::getAVCaptureDeviceFormatClass(), nullptr);
     EXPECT_NE(PAL::getAVCaptureDeviceInputClass(), nullptr);
     EXPECT_NE(PAL::getAVCaptureOutputClass(), nullptr);
+    EXPECT_NE(PAL::getAVCaptureSessionClass(), nullptr);
     EXPECT_NE(PAL::getAVCaptureVideoDataOutputClass(), nullptr);
     EXPECT_NE(PAL::getAVFrameRateRangeClass(), nullptr);
-    EXPECT_NE(PAL::getAVMutableAudioMixClass(), nullptr);
-    EXPECT_NE(PAL::getAVMutableAudioMixInputParametersClass(), nullptr);
+#endif
 
 #if HAVE(AVSTREAMSESSION) && ENABLE(LEGACY_ENCRYPTED_MEDIA)
     EXPECT_NE(PAL::getAVStreamSessionClass(), nullptr);
@@ -170,11 +173,6 @@ TEST(AVFoundationSoftLink, Constants)
 #if PLATFORM(IOS_FAMILY)
     EXPECT_TRUE([AVURLAssetBoundNetworkInterfaceName isEqualToString:@"AVURLAssetBoundNetworkInterfaceName"]);
     EXPECT_TRUE([AVURLAssetClientBundleIdentifierKey isEqualToString:@"AVURLAssetClientBundleIdentifierKey"]);
-    EXPECT_TRUE([AVCaptureSessionRuntimeErrorNotification isEqualToString:@"AVCaptureSessionRuntimeErrorNotification"]);
-    EXPECT_TRUE([AVCaptureSessionWasInterruptedNotification isEqualToString:@"AVCaptureSessionWasInterruptedNotification"]);
-    EXPECT_TRUE([AVCaptureSessionInterruptionEndedNotification isEqualToString:@"AVCaptureSessionInterruptionEndedNotification"]);
-    EXPECT_TRUE([AVCaptureSessionInterruptionReasonKey isEqualToString:@"AVCaptureSessionInterruptionReasonKey"]);
-    EXPECT_TRUE([AVCaptureSessionErrorKey isEqualToString:@"AVCaptureSessionErrorKey"]);
     EXPECT_TRUE([AVAudioSessionCategoryAmbient isEqualToString:@"AVAudioSessionCategoryAmbient"]);
     EXPECT_TRUE([AVAudioSessionCategorySoloAmbient isEqualToString:@"AVAudioSessionCategorySoloAmbient"]);
     EXPECT_TRUE([AVAudioSessionCategoryPlayback isEqualToString:@"AVAudioSessionCategoryPlayback"]);
@@ -187,6 +185,14 @@ TEST(AVFoundationSoftLink, Constants)
     EXPECT_TRUE([AVAudioSessionInterruptionTypeKey isEqualToString:@"AVAudioSessionInterruptionTypeKey"]);
     EXPECT_TRUE([AVAudioSessionInterruptionOptionKey isEqualToString:@"AVAudioSessionInterruptionOptionKey"]);
     EXPECT_TRUE([AVRouteDetectorMultipleRoutesDetectedDidChangeNotification isEqualToString:@"AVRouteDetectorMultipleRoutesDetectedDidChangeNotification"]);
+#if !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)
+    EXPECT_TRUE([AVCaptureSessionErrorKey isEqualToString:@"AVCaptureSessionErrorKey"]);
+    EXPECT_TRUE([AVCaptureSessionRuntimeErrorNotification isEqualToString:@"AVCaptureSessionRuntimeErrorNotification"]);
+    EXPECT_TRUE([AVCaptureSessionWasInterruptedNotification isEqualToString:@"AVCaptureSessionWasInterruptedNotification"]);
+    EXPECT_TRUE([AVCaptureSessionInterruptionEndedNotification isEqualToString:@"AVCaptureSessionInterruptionEndedNotification"]);
+    EXPECT_TRUE([AVCaptureSessionInterruptionReasonKey isEqualToString:@"AVCaptureSessionInterruptionReasonKey"]);
+#endif
+
 #endif
 }
 
