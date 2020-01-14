@@ -3502,28 +3502,27 @@ GstElement* MediaPlayerPrivateGStreamer::createVideoSink()
     }
 
     GstElement* videoSink = nullptr;
-#if ENABLE(MEDIA_STATISTICS)
-    m_fpsSink = gst_element_factory_make("fpsdisplaysink", "sink");
-    if (m_fpsSink) {
-        g_object_set(m_fpsSink.get(), "silent", TRUE , nullptr);
+    if (!webkitGstCheckVersion(1, 17, 0)) {
+        m_fpsSink = gst_element_factory_make("fpsdisplaysink", "sink");
+        if (m_fpsSink) {
+            g_object_set(m_fpsSink.get(), "silent", TRUE , nullptr);
 
-        // Turn off text overlay unless tracing is enabled.
-        if (gst_debug_category_get_threshold(webkit_media_player_debug) < GST_LEVEL_TRACE)
-            g_object_set(m_fpsSink.get(), "text-overlay", FALSE , nullptr);
+            // Turn off text overlay unless tracing is enabled.
+            if (gst_debug_category_get_threshold(webkit_media_player_debug) < GST_LEVEL_TRACE)
+                g_object_set(m_fpsSink.get(), "text-overlay", FALSE , nullptr);
 
-        if (g_object_class_find_property(G_OBJECT_GET_CLASS(m_fpsSink.get()), "video-sink")) {
-            g_object_set(m_fpsSink.get(), "video-sink", m_videoSink.get(), nullptr);
-            videoSink = m_fpsSink.get();
-        } else
-            m_fpsSink = nullptr;
+            if (g_object_class_find_property(G_OBJECT_GET_CLASS(m_fpsSink.get()), "video-sink")) {
+                g_object_set(m_fpsSink.get(), "video-sink", m_videoSink.get(), nullptr);
+                videoSink = m_fpsSink.get();
+            } else
+                m_fpsSink = nullptr;
+        }
     }
-#endif
 
     if (!m_fpsSink)
         videoSink = m_videoSink.get();
 
     ASSERT(videoSink);
-
     return videoSink;
 }
 
@@ -3547,44 +3546,39 @@ void MediaPlayerPrivateGStreamer::setStreamVolumeElement(GstStreamVolume* volume
     g_signal_connect_swapped(m_volumeElement.get(), "notify::mute", G_CALLBACK(muteChangedCallback), this);
 }
 
-unsigned MediaPlayerPrivateGStreamer::decodedFrameCount() const
+Optional<VideoPlaybackQualityMetrics> MediaPlayerPrivateGStreamer::videoPlaybackQualityMetrics()
 {
-    uint64_t decodedFrames = 0;
-    if (m_fpsSink)
-        g_object_get(m_fpsSink.get(), "frames-rendered", &decodedFrames, nullptr);
-    return static_cast<unsigned>(decodedFrames);
-}
+    if (!webkitGstCheckVersion(1, 17, 0) && !m_fpsSink)
+        return WTF::nullopt;
 
-unsigned MediaPlayerPrivateGStreamer::droppedFrameCount() const
-{
-    uint64_t framesDropped = 0;
-    if (m_fpsSink)
-        g_object_get(m_fpsSink.get(), "frames-dropped", &framesDropped, nullptr);
-    return static_cast<unsigned>(framesDropped);
-}
+    uint64_t totalVideoFrames = 0;
+    uint64_t droppedVideoFrames = 0;
+    if (webkitGstCheckVersion(1, 17, 0)) {
+        GUniqueOutPtr<GstStructure> stats;
+        g_object_get(m_videoSink.get(), "stats", &stats.outPtr(), nullptr);
 
-unsigned MediaPlayerPrivateGStreamer::audioDecodedByteCount() const
-{
-    GstQuery* query = gst_query_new_position(GST_FORMAT_BYTES);
-    gint64 position = 0;
+        if (!gst_structure_get_uint64(stats.get(), "rendered", &totalVideoFrames))
+            return WTF::nullopt;
 
-    if (audioSink() && gst_element_query(audioSink(), query))
-        gst_query_parse_position(query, 0, &position);
+        if (!gst_structure_get_uint64(stats.get(), "dropped", &droppedVideoFrames))
+            return WTF::nullopt;
+    } else if (m_fpsSink) {
+        unsigned renderedFrames, droppedFrames;
+        g_object_get(m_fpsSink.get(), "frames-rendered", &renderedFrames, "frames-dropped", &droppedFrames, nullptr);
+        totalVideoFrames = renderedFrames;
+        droppedVideoFrames = droppedFrames;
+    }
 
-    gst_query_unref(query);
-    return static_cast<unsigned>(position);
-}
-
-unsigned MediaPlayerPrivateGStreamer::videoDecodedByteCount() const
-{
-    GstQuery* query = gst_query_new_position(GST_FORMAT_BYTES);
-    gint64 position = 0;
-
-    if (gst_element_query(m_videoSink.get(), query))
-        gst_query_parse_position(query, 0, &position);
-
-    gst_query_unref(query);
-    return static_cast<unsigned>(position);
+    uint32_t corruptedVideoFrames = 0;
+    double totalFrameDelay = 0;
+    uint32_t displayCompositedVideoFrames = 0;
+    return VideoPlaybackQualityMetrics {
+        static_cast<uint32_t>(totalVideoFrames),
+        static_cast<uint32_t>(droppedVideoFrames),
+        corruptedVideoFrames,
+        totalFrameDelay,
+        displayCompositedVideoFrames,
+    };
 }
 
 #if ENABLE(ENCRYPTED_MEDIA)

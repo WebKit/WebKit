@@ -181,11 +181,7 @@ public:
     bool supportsFullscreen() const final;
     MediaPlayer::MovieLoadType movieLoadType() const final;
 
-    unsigned decodedFrameCount() const final;
-    unsigned droppedFrameCount() const final;
-    unsigned audioDecodedByteCount() const final;
-    unsigned videoDecodedByteCount() const final;
-
+    Optional<VideoPlaybackQualityMetrics> videoPlaybackQualityMetrics() final;
     void acceleratedRenderingStateChanged() final;
 
 #if USE(TEXTURE_MAPPER_GL)
