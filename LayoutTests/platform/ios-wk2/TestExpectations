@@ -1339,9 +1339,6 @@ webkit.org/b/203264 [ Release ] editing/pasteboard/smart-paste-paragraph-002.htm
 webkit.org/b/203264 [ Release ] editing/pasteboard/smart-paste-paragraph-003.html [ Pass Failure ]
 webkit.org/b/203264 [ Release ] editing/pasteboard/smart-paste-paragraph-004.html [ Pass Failure ]
 
-# <rdar://problem/56590026> [iOS] fast/forms/contenteditable- font-optical-size.html landed flaky (203371)
-webkit.org/b/203371 fast/forms/contenteditable-font-optical-size.html [ Pass Failure ]
-
 # <rdar://problem/56714139> (r251242) [ iOS ]: fast/scrolling/ios/touch-scroll-visibility-hidden.html is a Flaky Timeout (203577)
 webkit.org/b/203577 fast/scrolling/ios/touch-scroll-visibility-hidden.html [ Pass Timeout ]
 
