@@ -747,6 +747,7 @@ imported/w3c/web-platform-tests/html/browsers/windows/browsing-context-names/002
 imported/w3c/web-platform-tests/html/browsers/windows/browsing-context-names/choose-_blank-003.html [ Pass ]
 
 imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/the-fieldset-and-legend-elements/fieldset-vertical.html [ Pass ]
+imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/sizes/sizes-dynamic-002.html [ Pass ]
 imported/w3c/web-platform-tests/html/semantics/forms/form-submission-0/url-encoded.html [ Pass ]
 
 fast/history/page-cache-indexed-closed-db.html [ Pass ]
@@ -919,6 +920,7 @@ webkit.org/b/195714 fast/canvas/webgl/texImage2D-video-flipY-true.html [ Pass Ti
 Bug(WPE) webgl/2.0.0/conformance/ogles/GL/swizzlers/swizzlers_049_to_056.html [ Timeout Pass ]
 Bug(WPE) webgl/2.0.0/conformance2/renderbuffers/multisampled-renderbuffer-initialization.html [ Failure Pass ]
 
+webkit.org/b/195466 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/error-codes/error.html [ Pass Failure ]
 webkit.org/b/195466 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/ready-states/autoplay.html [ Failure Pass ]
 
 webkit.org/b/200304 svg/as-image/svg-image-with-data-uri-background.html [ ImageOnlyFailure Pass ]

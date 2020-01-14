@@ -2067,6 +2067,7 @@ webkit.org/b/195714 fast/canvas/webgl/texImage2D-video-flipY-true.html [ Pass Ti
 webkit.org/b/194044 imported/w3c/web-platform-tests/media-source/mediasource-addsourcebuffer.html [ Crash Failure ]
 webkit.org/b/194044 imported/w3c/web-platform-tests/media-source/mediasource-addsourcebuffer-mode.html [ Crash Pass ]
 
+webkit.org/b/195466 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/error-codes/error.html [ Pass Failure ]
 webkit.org/b/195466 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/ready-states/autoplay.html [ Failure Pass ]
 
 webkit.org/b/197245 animations/remove-syncing-animation.html [ Failure Pass ]
@@ -3492,6 +3493,8 @@ webkit.org/b/184504 imported/w3c/web-platform-tests/fetch/api/request/request-ke
 
 webkit.org/b/184775 imported/w3c/web-platform-tests/mediacapture-streams/MediaStreamTrack-MediaElement-disabled-audio-is-silence.https.html [ Failure ]
 
+webkit.org/b/180645 imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/type-change-state.html [ Failure ]
+
 webkit.org/b/184776 imported/w3c/web-platform-tests/html/semantics/forms/textfieldselection/selection-not-application.html [ Failure ]
 webkit.org/b/184776 imported/w3c/web-platform-tests/streams/readable-byte-streams/general.html [ Failure ]
 
@@ -4015,8 +4018,10 @@ imported/w3c/web-platform-tests/css/selectors/selector-placeholder-shown-type-ch
 imported/w3c/web-platform-tests/css/selectors/selector-placeholder-shown-type-change-003.html [ Pass ]
 imported/w3c/web-platform-tests/css/selectors/selector-read-write-type-change-002.html [ Pass ]
 imported/w3c/web-platform-tests/css/selectors/selector-required-type-change-002.html [ Pass ]
+imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/the-fieldset-and-legend-elements/fieldset-vertical.html [ Pass ]
 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-embed-element/embed-represent-nothing-02.html [ Pass ]
 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-area-element/area-coords.html [ Pass ]
+imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/sizes/sizes-dynamic-002.html [ Pass ]
 
 fast/history/page-cache-indexed-closed-db.html [ Pass ]
 

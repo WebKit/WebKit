@@ -1,3 +1,12 @@
+2020-01-13  Pablo Saavedra  <psaavedra@igalia.com>
+
+        [GTK] Many imported/w3c/web-platform-tests/html/ tests failing after r253791
+        https://bugs.webkit.org/show_bug.cgi?id=206127
+
+        Reviewed by Philippe Normand.
+
+        * web-platform-tests/html/semantics/embedded-content/media-elements/ready-states/autoplay-with-slow-text-tracks-expected.txt:
+
 2020-01-13  Chris Lord  <clord@igalia.com>
 
         REGRESSION(r253683): [GTK][WPE] Lots of offscreen-canvas WPT tests failing

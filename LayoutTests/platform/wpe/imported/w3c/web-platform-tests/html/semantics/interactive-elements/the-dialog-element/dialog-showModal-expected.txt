@@ -1,34 +1,20 @@
 
-FAIL dialog element: showModal() assert_true: expected true got false
-FAIL showModal() on a <dialog> that already has an open attribute throws an InvalidStateError exception assert_throws: function "function () {
-      d2.showModal();
-      this.add_cleanup(function() { d2.close(); });
-    }" threw object "TypeError: this.add_cleanup is not a function. (In 'this.add_cleanup(function() { d2.close(); })', 'this.add_cleanup' is undefined)" that is not a DOMException INVALID_STATE_ERR: property "code" is equal to undefined, expected 11
-FAIL showModal() on a <dialog> after initial showModal() and removing the open attribute assert_true: expected true got false
-FAIL showModal() on a <dialog> not in a Document throws an InvalidStateError exception assert_throws: function "function () {
-      d.showModal();
-      this.add_cleanup(function() { d.close(); });
-    }" threw object "TypeError: this.add_cleanup is not a function. (In 'this.add_cleanup(function() { d.close(); })', 'this.add_cleanup' is undefined)" that is not a DOMException INVALID_STATE_ERR: property "code" is equal to undefined, expected 11
-FAIL when opening multiple dialogs, only the newest one is non-inert assert_true: expected true got false
-FAIL opening dialog without focusable children assert_true: expected true got false
-FAIL opening dialog with multiple focusable children assert_true: expected true got false
-FAIL opening dialog with multiple focusable children, one having the autofocus attribute assert_true: expected true got false
-FAIL when opening multiple dialogs, the most recently opened is rendered on top assert_equals: expected Element node <dialog id="d11"></dialog> but got Element node <body><div id="log"></div>
+FAIL dialog element: showModal() assert_equals: expected Element node <button id="b1">OK</button> but got Element node <body><div id="log"></div>
 <button id="b0">OK</button>
 <d...
+PASS showModal() on a <dialog> that already has an open attribute throws an InvalidStateError exception 
+PASS showModal() on a <dialog> after initial showModal() and removing the open attribute 
+PASS showModal() on a <dialog> not in a Document throws an InvalidStateError exception 
+PASS when opening multiple dialogs, only the newest one is non-inert 
+FAIL opening dialog without focusable children assert_equals: expected Element node <dialog id="d6" open=""></dialog> but got Element node <body><div id="log"></div>
+<button id="b0">OK</button>
+<d...
+FAIL opening dialog with multiple focusable children assert_equals: expected Element node <input id="i71" value="foobar"></input> but got Element node <body><div id="log"></div>
+<button id="b0">OK</button>
+<d...
+FAIL opening dialog with multiple focusable children, one having the autofocus attribute assert_equals: expected Element node <input id="i82" value="foobar" autofocus=""></input> but got Element node <body><div id="log"></div>
+<button id="b0">OK</button>
+<d...
+FAIL when opening multiple dialogs, the most recently opened is rendered on top assert_equals: expected Element node <dialog id="d11" open=""></dialog> but got Element node <html><head><meta charset="utf-8">
+<title>dialog element:...
 OK
-foobar
-
-OK
-foobar
-
-OK
-foobar
-
-OK
-foobar
-
-OK
-foobar
-
-OK      OK     OK
