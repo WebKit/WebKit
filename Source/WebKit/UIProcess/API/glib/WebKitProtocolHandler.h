@@ -33,8 +33,6 @@ public:
 private:
     void handleRequest(WebKitURISchemeRequest*);
     void handleGPU(WebKitURISchemeRequest*);
-
-    WebKitWebContext* m_context { nullptr };
 };
 
 } // namespace WebKit

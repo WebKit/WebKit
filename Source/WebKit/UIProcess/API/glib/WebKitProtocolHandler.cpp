@@ -75,7 +75,6 @@ namespace WebKit {
 using namespace WebCore;
 
 WebKitProtocolHandler::WebKitProtocolHandler(WebKitWebContext* context)
-    : m_context(context)
 {
     webkit_web_context_register_uri_scheme(context, "webkit", [](WebKitURISchemeRequest* request, gpointer userData) {
         static_cast<WebKitProtocolHandler*>(userData)->handleRequest(request);

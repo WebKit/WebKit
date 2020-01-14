@@ -1,3 +1,18 @@
+2020-01-14  Víctor Manuel Jáquez Leal  <vjaquez@igalia.com>
+
+        [GLib] Remove unused private variable
+        https://bugs.webkit.org/show_bug.cgi?id=206232
+
+        Reviewed by Carlos Garcia Campos.
+
+        Remove m_context which is not used.
+
+        No functional changes.
+
+        * UIProcess/API/glib/WebKitProtocolHandler.cpp:
+        (WebKit::WebKitProtocolHandler::WebKitProtocolHandler):
+        * UIProcess/API/glib/WebKitProtocolHandler.h:
+
 2020-01-14  youenn fablet  <youenn@apple.com>
 
         Add support for MediaStream audio track rendering in GPUProcess
