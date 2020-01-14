@@ -1,3 +1,9 @@
+2020-01-14  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Unreviewed, a build fix after r254533
+
+        * UIProcess/WebAuthentication/fido/FidoAuthenticator.cpp:
+
 2020-01-10  Jiewen Tan  <jiewen_tan@apple.com>
 
         [WebAuthn] Implement SPI to tell UI clients to select assertion responses
