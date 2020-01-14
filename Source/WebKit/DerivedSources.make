@@ -140,6 +140,8 @@ MESSAGE_RECEIVERS = \
     PluginProcessConnectionManager \
     PluginProcessProxy \
     PluginProxy \
+    RemoteAudioMediaStreamTrackRendererManager \
+    RemoteAudioMediaStreamTrackRenderer \
     RemoteLayerTreeDrawingAreaProxy \
     RemoteMediaPlayerManager \
     RemoteMediaPlayerManagerProxy \

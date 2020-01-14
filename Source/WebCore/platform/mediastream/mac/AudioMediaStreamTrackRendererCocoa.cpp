@@ -43,11 +43,30 @@ AudioMediaStreamTrackRendererCocoa::AudioMediaStreamTrackRendererCocoa() = defau
 
 AudioMediaStreamTrackRendererCocoa::~AudioMediaStreamTrackRendererCocoa() = default;
 
+void AudioMediaStreamTrackRendererCocoa::start()
+{
+    if (m_dataSource)
+        m_dataSource->setPaused(false);
+
+    if (m_isAudioUnitStarted)
+        return;
+
+    if (auto error = AudioOutputUnitStart(m_remoteIOUnit)) {
+        ERROR_LOG(LOGIDENTIFIER, "AudioOutputUnitStart failed, error = ", error, " (", (const char*)&error, ")");
+        return;
+    }
+    m_isAudioUnitStarted = true;
+}
+
 void AudioMediaStreamTrackRendererCocoa::stop()
 {
+    if (m_dataSource)
+        m_dataSource->setPaused(true);
+
     if (!m_isAudioUnitStarted)
         return;
 
+    m_isAudioUnitStarted = false;
     if (m_remoteIOUnit)
         AudioOutputUnitStop(m_remoteIOUnit);
 }
@@ -66,13 +85,7 @@ void AudioMediaStreamTrackRendererCocoa::clear()
     m_dataSource = nullptr;
     m_inputDescription = nullptr;
     m_outputDescription = nullptr;
-}
-
-void AudioMediaStreamTrackRendererCocoa::setPaused(bool value)
-{
-    m_paused = value;
-    if (m_dataSource)
-        m_dataSource->setPaused(value);
+    m_isAudioUnitStarted = false;
 }
 
 AudioComponentInstance AudioMediaStreamTrackRendererCocoa::createAudioUnit(CAAudioStreamDescription& outputDescription)
@@ -187,19 +200,11 @@ void AudioMediaStreamTrackRendererCocoa::pushSamples(const MediaTime& sampleTime
     }
 
     m_dataSource->pushSamples(sampleTime, audioData, sampleCount);
-
-    if (!m_isAudioUnitStarted) {
-        if (auto error = AudioOutputUnitStart(m_remoteIOUnit)) {
-            ERROR_LOG(LOGIDENTIFIER, "AudioOutputUnitStart failed, error = ", error, " (", (const char*)&error, ")");
-            return;
-        }
-        m_isAudioUnitStarted = true;
-    }
 }
 
 OSStatus AudioMediaStreamTrackRendererCocoa::render(UInt32 sampleCount, AudioBufferList& ioData, UInt32 /*inBusNumber*/, const AudioTimeStamp& timeStamp, AudioUnitRenderActionFlags& actionFlags)
 {
-    if (isMuted() || m_paused || !m_dataSource) {
+    if (isMuted() || !m_dataSource) {
         AudioSampleBufferList::zeroABL(ioData, static_cast<size_t>(sampleCount * m_outputDescription->bytesPerFrame()));
         actionFlags = kAudioUnitRenderAction_OutputIsSilence;
         return 0;

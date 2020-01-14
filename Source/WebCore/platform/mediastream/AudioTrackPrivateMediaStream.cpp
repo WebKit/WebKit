@@ -77,7 +77,7 @@ void AudioTrackPrivateMediaStream::playInternal()
     m_isPlaying = true;
     m_autoPlay = false;
 
-    m_renderer->setPaused(false);
+    m_renderer->start();
 }
 
 void AudioTrackPrivateMediaStream::play()
@@ -95,7 +95,7 @@ void AudioTrackPrivateMediaStream::pause()
     m_isPlaying = false;
     m_autoPlay = false;
 
-    m_renderer->setPaused(true);
+    m_renderer->stop();
 }
 
 void AudioTrackPrivateMediaStream::setVolume(float volume)
@@ -111,11 +111,6 @@ float AudioTrackPrivateMediaStream::volume() const
 // May get called on a background thread.
 void AudioTrackPrivateMediaStream::audioSamplesAvailable(MediaStreamTrackPrivate&, const MediaTime& sampleTime, const PlatformAudioData& audioData, const AudioStreamDescription& description, size_t sampleCount)
 {
-    if (!m_isPlaying) {
-        m_renderer->stop();
-        return;
-    }
-
     m_renderer->pushSamples(sampleTime, audioData, description, sampleCount);
 
     if (m_autoPlay && !m_hasStartedAutoplay) {
@@ -139,7 +134,7 @@ void AudioTrackPrivateMediaStream::trackEnabledChanged(MediaStreamTrackPrivate&)
 
 void AudioTrackPrivateMediaStream::updateRendererMutedState()
 {
-    m_renderer->setMuted(m_isPlaying && !streamTrack().muted() && !streamTrack().ended() && streamTrack().enabled());
+    m_renderer->setMuted(streamTrack().muted() || streamTrack().ended() || !streamTrack().enabled());
 }
 
 void AudioTrackPrivateMediaStream::trackEnded(MediaStreamTrackPrivate&)
