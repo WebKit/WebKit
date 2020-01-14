@@ -1,3 +1,16 @@
+2020-01-14  Víctor Manuel Jáquez Leal  <vjaquez@igalia.com>
+
+        Suppress compiler warnings
+        https://bugs.webkit.org/show_bug.cgi?id=206235
+
+        Reviewed by Youenn Fablet.
+
+        Use PRIu64 formatter for uint64_t instead of %llu.
+
+        No functional changes.
+
+        * UIProcess/WebPageProxy.cpp:
+
 2020-01-13  Darin Adler  <darin@apple.com>
 
         Use even more "shortest form" formatting, and less "fixed precision" and "fixed width"
