@@ -41,6 +41,7 @@
 namespace WebKit {
 
 class AudioTrackPrivateRemote;
+class VideoTrackPrivateRemote;
 struct TrackPrivateRemoteConfiguration;
 
 class MediaPlayerPrivateRemote final
@@ -81,6 +82,10 @@ public:
     void addRemoteAudioTrack(TrackPrivateRemoteIdentifier, TrackPrivateRemoteConfiguration&&);
     void removeRemoteAudioTrack(TrackPrivateRemoteIdentifier);
     void remoteAudioTrackConfigurationChanged(TrackPrivateRemoteIdentifier, TrackPrivateRemoteConfiguration&&);
+
+    void addRemoteVideoTrack(TrackPrivateRemoteIdentifier, TrackPrivateRemoteConfiguration&&);
+    void removeRemoteVideoTrack(TrackPrivateRemoteIdentifier);
+    void remoteVideoTrackConfigurationChanged(TrackPrivateRemoteIdentifier, TrackPrivateRemoteConfiguration&&);
 
     void requestResource(RemoteMediaResourceIdentifier, WebCore::ResourceRequest&&, WebCore::PlatformMediaResourceLoader::LoadOptions);
     void removeResource(RemoteMediaResourceIdentifier);
@@ -321,6 +326,7 @@ private:
 
     HashMap<RemoteMediaResourceIdentifier, RefPtr<WebCore::PlatformMediaResource>> m_mediaResources;
     HashMap<TrackPrivateRemoteIdentifier, Ref<AudioTrackPrivateRemote>> m_audioTracks;
+    HashMap<TrackPrivateRemoteIdentifier, Ref<VideoTrackPrivateRemote>> m_videoTracks;
 
     double m_volume { 1 };
     double m_rate { 1 };

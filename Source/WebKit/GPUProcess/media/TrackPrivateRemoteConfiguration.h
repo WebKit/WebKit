@@ -27,6 +27,8 @@
 
 #if ENABLE(GPU_PROCESS)
 
+#include <WebCore/AudioTrackPrivate.h>
+#include <WebCore/VideoTrackPrivate.h>
 #include <wtf/MediaTime.h>
 
 namespace WebKit {
@@ -37,8 +39,12 @@ struct TrackPrivateRemoteConfiguration {
     AtomString language;
     MediaTime startTimeVariance { MediaTime::zeroTime() };
     int trackIndex;
+
     bool enabled;
-    WebCore::AudioTrackPrivate::Kind kind { WebCore::AudioTrackPrivate::Kind::None };
+    WebCore::AudioTrackPrivate::Kind audioKind { WebCore::AudioTrackPrivate::Kind::None };
+
+    bool selected;
+    WebCore::VideoTrackPrivate::Kind videoKind { WebCore::VideoTrackPrivate::Kind::None };
 
     template<class Encoder>
     void encode(Encoder& encoder) const
@@ -49,7 +55,9 @@ struct TrackPrivateRemoteConfiguration {
         encoder << startTimeVariance;
         encoder << trackIndex;
         encoder << enabled;
-        encoder.encodeEnum(kind);
+        encoder.encodeEnum(audioKind);
+        encoder << selected;
+        encoder.encodeEnum(videoKind);
     }
 
     template <class Decoder>
@@ -85,9 +93,19 @@ struct TrackPrivateRemoteConfiguration {
         if (!enabled)
             return WTF::nullopt;
 
-        Optional<WebCore::AudioTrackPrivate::Kind> kind;
-        decoder >> kind;
-        if (!kind)
+        Optional<WebCore::AudioTrackPrivate::Kind> audioKind;
+        decoder >> audioKind;
+        if (!audioKind)
+            return WTF::nullopt;
+
+        Optional<bool> selected;
+        decoder >> selected;
+        if (!selected)
+            return WTF::nullopt;
+
+        Optional<WebCore::VideoTrackPrivate::Kind> videoKind;
+        decoder >> videoKind;
+        if (!videoKind)
             return WTF::nullopt;
 
         return {{
@@ -97,7 +115,9 @@ struct TrackPrivateRemoteConfiguration {
             WTFMove(*startTimeVariance),
             *trackIndex,
             *enabled,
-            *kind,
+            *audioKind,
+            *selected,
+            *videoKind,
         }};
     }
 };

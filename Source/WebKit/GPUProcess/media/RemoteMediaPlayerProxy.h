@@ -49,7 +49,9 @@ class AudioTrackPrivate;
 
 namespace WebKit {
 
+class RemoteAudioTrackProxy;
 class RemoteMediaPlayerManagerProxy;
+class RemoteVideoTrackProxy;
 
 class RemoteMediaPlayerProxy final
     : public CanMakeWeakPtr<RemoteMediaPlayerProxy>
@@ -95,6 +97,7 @@ public:
     void setRate(double);
 
     void audioTrackSetEnabled(TrackPrivateRemoteIdentifier, bool);
+    void videoTrackSetSelected(TrackPrivateRemoteIdentifier, bool);
 
     Ref<WebCore::PlatformMediaResource> requestResource(WebCore::ResourceRequest&&, WebCore::PlatformMediaResourceLoader::LoadOptions);
     void removeResource(RemoteMediaResourceIdentifier);
@@ -116,6 +119,8 @@ private:
 
     void mediaPlayerDidAddAudioTrack(WebCore::AudioTrackPrivate&) final;
     void mediaPlayerDidRemoveAudioTrack(WebCore::AudioTrackPrivate&) final;
+    void mediaPlayerDidAddVideoTrack(WebCore::VideoTrackPrivate&) final;
+    void mediaPlayerDidRemoveVideoTrack(WebCore::VideoTrackPrivate&) final;
 
     // Not implemented
     void mediaPlayerResourceNotSupported() final;
@@ -158,9 +163,7 @@ private:
     const String& mediaPlayerMediaCacheDirectory() const final;
 
     void mediaPlayerDidAddTextTrack(WebCore::InbandTextTrackPrivate&) final;
-    void mediaPlayerDidAddVideoTrack(WebCore::VideoTrackPrivate&) final;
     void mediaPlayerDidRemoveTextTrack(WebCore::InbandTextTrackPrivate&) final;
-    void mediaPlayerDidRemoveVideoTrack(WebCore::VideoTrackPrivate&) final;
 
     void textTrackRepresentationBoundsChanged(const WebCore::IntRect&) final;
 
@@ -195,6 +198,7 @@ private:
 #endif
 
     HashMap<AudioTrackPrivate*, Ref<RemoteAudioTrackProxy>> m_audioTracks;
+    HashMap<VideoTrackPrivate*, Ref<RemoteVideoTrackProxy>> m_videoTracks;
     MediaPlayerPrivateRemoteIdentifier m_id;
     RefPtr<SandboxExtension> m_sandboxExtension;
     Ref<IPC::Connection> m_webProcessConnection;

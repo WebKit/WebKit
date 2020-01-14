@@ -113,6 +113,7 @@ private:
     void setRate(MediaPlayerPrivateRemoteIdentifier, double);
 
     void audioTrackSetEnabled(MediaPlayerPrivateRemoteIdentifier, TrackPrivateRemoteIdentifier, bool);
+    void videoTrackSetSelected(MediaPlayerPrivateRemoteIdentifier, TrackPrivateRemoteIdentifier, bool);
 
     HashMap<MediaPlayerPrivateRemoteIdentifier, std::unique_ptr<RemoteMediaPlayerProxy>> m_proxies;
     GPUConnectionToWebProcess& m_gpuConnectionToWebProcess;

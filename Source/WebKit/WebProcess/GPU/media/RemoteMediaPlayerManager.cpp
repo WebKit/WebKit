@@ -321,6 +321,24 @@ void RemoteMediaPlayerManager::remoteAudioTrackConfigurationChanged(MediaPlayerP
         player->remoteAudioTrackConfigurationChanged(trackID, WTFMove(configuration));
 }
 
+void RemoteMediaPlayerManager::addRemoteVideoTrack(MediaPlayerPrivateRemoteIdentifier playerID, TrackPrivateRemoteIdentifier trackID, TrackPrivateRemoteConfiguration&& configuration)
+{
+    if (auto player = m_players.get(playerID))
+        player->addRemoteVideoTrack(trackID, WTFMove(configuration));
+}
+
+void RemoteMediaPlayerManager::removeRemoteVideoTrack(MediaPlayerPrivateRemoteIdentifier playerID, TrackPrivateRemoteIdentifier trackID)
+{
+    if (auto player = m_players.get(playerID))
+        player->removeRemoteVideoTrack(trackID);
+}
+
+void RemoteMediaPlayerManager::remoteVideoTrackConfigurationChanged(MediaPlayerPrivateRemoteIdentifier playerID, TrackPrivateRemoteIdentifier trackID, TrackPrivateRemoteConfiguration&& configuration)
+{
+    if (auto player = m_players.get(playerID))
+        player->remoteVideoTrackConfigurationChanged(trackID, WTFMove(configuration));
+}
+
 void RemoteMediaPlayerManager::requestResource(MediaPlayerPrivateRemoteIdentifier id, RemoteMediaResourceIdentifier remoteMediaResourceIdentifier, ResourceRequest&& request, PlatformMediaResourceLoader::LoadOptions options, CompletionHandler<void()>&& completionHandler)
 {
     if (const auto& player = m_players.get(id))

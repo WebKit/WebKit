@@ -32,6 +32,7 @@ GPUProcess/media/RemoteMediaPlayerProxy.cpp
 GPUProcess/media/RemoteMediaResource.cpp
 GPUProcess/media/RemoteMediaResourceLoader.cpp
 GPUProcess/media/RemoteMediaResourceManager.cpp
+GPUProcess/media/RemoteVideoTrackProxy.cpp
 
 NetworkProcess/AdClickAttributionManager.cpp
 NetworkProcess/NetworkActivityTracker.cpp
@@ -516,6 +517,7 @@ WebProcess/GPU/media/MediaPlayerPrivateRemote.cpp
 WebProcess/GPU/media/RemoteMediaPlayerManager.cpp
 WebProcess/GPU/media/RemoteMediaPlayerMIMETypeCache.cpp @no-unify
 WebProcess/GPU/media/RemoteMediaResourceProxy.cpp
+WebProcess/GPU/media/VideoTrackPrivateRemote.cpp
 WebProcess/GPU/webrtc/LibWebRTCCodecs.cpp
 WebProcess/GPU/webrtc/MediaRecorderPrivate.cpp
 WebProcess/GPU/webrtc/MediaRecorderProvider.cpp

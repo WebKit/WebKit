@@ -29,6 +29,7 @@
 #if ENABLE(GPU_PROCESS)
 
 #include "GPUConnectionToWebProcess.h"
+#include "RemoteAudioTrackProxy.h"
 #include "RemoteMediaPlayerManagerMessages.h"
 #include "RemoteMediaPlayerManagerProxy.h"
 #include "RemoteMediaPlayerProxyConfiguration.h"
@@ -37,6 +38,7 @@
 #include "RemoteMediaResourceIdentifier.h"
 #include "RemoteMediaResourceLoader.h"
 #include "RemoteMediaResourceManager.h"
+#include "RemoteVideoTrackProxy.h"
 #include "WebCoreArgumentCoders.h"
 #include <WebCore/MediaPlayer.h>
 #include <WebCore/MediaPlayerPrivate.h>
@@ -387,6 +389,29 @@ void RemoteMediaPlayerProxy::audioTrackSetEnabled(TrackPrivateRemoteIdentifier t
     ASSERT_NOT_REACHED();
 }
 
+void RemoteMediaPlayerProxy::mediaPlayerDidAddVideoTrack(WebCore::VideoTrackPrivate& track)
+{
+    m_videoTracks.set(&track, RemoteVideoTrackProxy::create(*this, TrackPrivateRemoteIdentifier::generate(), m_webProcessConnection.copyRef(), track));
+}
+
+void RemoteMediaPlayerProxy::mediaPlayerDidRemoveVideoTrack(WebCore::VideoTrackPrivate& track)
+{
+    ASSERT(m_videoTracks.contains(&track));
+    m_videoTracks.remove(&track);
+}
+
+void RemoteMediaPlayerProxy::videoTrackSetSelected(TrackPrivateRemoteIdentifier trackID, bool selected)
+{
+    for (auto& track : m_videoTracks.values()) {
+        if (track->identifier() == trackID) {
+            track->setSelected(selected);
+            return;
+        }
+    }
+
+    ASSERT_NOT_REACHED();
+}
+
 // FIXME: Unimplemented
 void RemoteMediaPlayerProxy::mediaPlayerResourceNotSupported()
 {
@@ -520,17 +545,7 @@ void RemoteMediaPlayerProxy::mediaPlayerDidAddTextTrack(InbandTextTrackPrivate&)
     notImplemented();
 }
 
-void RemoteMediaPlayerProxy::mediaPlayerDidAddVideoTrack(VideoTrackPrivate&)
-{
-    notImplemented();
-}
-
 void RemoteMediaPlayerProxy::mediaPlayerDidRemoveTextTrack(InbandTextTrackPrivate&)
-{
-    notImplemented();
-}
-
-void RemoteMediaPlayerProxy::mediaPlayerDidRemoveVideoTrack(VideoTrackPrivate&)
 {
     notImplemented();
 }

@@ -63,19 +63,19 @@ void AudioTrackPrivateRemote::updateConfiguration(TrackPrivateRemoteConfiguratio
         auto changed = !m_label.isEmpty();
         m_label = configuration.label;
         if (changed && client())
-            client()->idChanged(m_label);
+            client()->labelChanged(m_label);
     }
 
     if (configuration.language != m_language) {
         auto changed = !m_language.isEmpty();
         m_language = configuration.language;
         if (changed && client())
-            client()->idChanged(m_language);
+            client()->languageChanged(m_language);
     }
 
     m_trackIndex = configuration.trackIndex;
     m_startTimeVariance = configuration.startTimeVariance;
-    m_kind = configuration.kind;
+    m_kind = configuration.audioKind;
     setEnabled(configuration.enabled);
 }
 

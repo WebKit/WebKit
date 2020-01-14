@@ -55,7 +55,7 @@ TrackPrivateRemoteConfiguration& RemoteAudioTrackProxy::configuration()
     configuration->trackIndex = m_trackPrivate->trackIndex();
     configuration->startTimeVariance = m_trackPrivate->startTimeVariance();
     configuration->enabled = m_trackPrivate->enabled();
-    configuration->kind = m_trackPrivate->kind();
+    configuration->audioKind = m_trackPrivate->kind();
 
     return configuration.get();
 }

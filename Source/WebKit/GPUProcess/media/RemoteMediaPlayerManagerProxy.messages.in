@@ -66,6 +66,7 @@ messages -> RemoteMediaPlayerManagerProxy NotRefCounted {
     SetRate(WebKit::MediaPlayerPrivateRemoteIdentifier id, double rate)
 
     AudioTrackSetEnabled(WebKit::MediaPlayerPrivateRemoteIdentifier playerID, WebKit::TrackPrivateRemoteIdentifier trackID, bool enabled)
+    VideoTrackSetSelected(WebKit::MediaPlayerPrivateRemoteIdentifier playerID, WebKit::TrackPrivateRemoteIdentifier trackID, bool enabled)
 }
 
 #endif

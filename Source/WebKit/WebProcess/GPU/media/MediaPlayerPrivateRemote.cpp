@@ -32,6 +32,7 @@
 #include "Logging.h"
 #include "RemoteMediaPlayerManagerProxyMessages.h"
 #include "SandboxExtension.h"
+#include "VideoTrackPrivateRemote.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebProcess.h"
 #include <WebCore/MediaPlayer.h>
@@ -386,12 +387,15 @@ FloatSize MediaPlayerPrivateRemote::naturalSize() const
 
 void MediaPlayerPrivateRemote::addRemoteAudioTrack(TrackPrivateRemoteIdentifier identifier, TrackPrivateRemoteConfiguration&& configuration)
 {
-    ASSERT(!m_audioTracks.contains(identifier));
-    if (m_audioTracks.contains(identifier))
+    auto addResult = m_audioTracks.ensure(identifier, [&] {
+        return AudioTrackPrivateRemote::create(*this, identifier, WTFMove(configuration));
+    });
+    ASSERT(addResult.isNewEntry);
+
+    if (!addResult.isNewEntry)
         return;
 
-    auto track = AudioTrackPrivateRemote::create(*this, identifier, WTFMove(configuration));
-    m_player->addAudioTrack(m_audioTracks.add(identifier, WTFMove(track)).iterator->value);
+    m_player->addAudioTrack(addResult.iterator->value);
 }
 
 void MediaPlayerPrivateRemote::removeRemoteAudioTrack(TrackPrivateRemoteIdentifier id)
@@ -409,6 +413,37 @@ void MediaPlayerPrivateRemote::remoteAudioTrackConfigurationChanged(TrackPrivate
     ASSERT(m_audioTracks.contains(id));
 
     if (const auto& track = m_audioTracks.get(id))
+        track->updateConfiguration(WTFMove(configuration));
+}
+
+void MediaPlayerPrivateRemote::addRemoteVideoTrack(TrackPrivateRemoteIdentifier identifier, TrackPrivateRemoteConfiguration&& configuration)
+{
+    auto addResult = m_videoTracks.ensure(identifier, [&] {
+        return VideoTrackPrivateRemote::create(*this, identifier, WTFMove(configuration));
+    });
+    ASSERT(addResult.isNewEntry);
+
+    if (!addResult.isNewEntry)
+        return;
+
+    m_player->addVideoTrack(addResult.iterator->value);
+}
+
+void MediaPlayerPrivateRemote::removeRemoteVideoTrack(TrackPrivateRemoteIdentifier id)
+{
+    ASSERT(m_videoTracks.contains(id));
+
+    if (auto* track = m_videoTracks.get(id)) {
+        m_player->removeVideoTrack(*track);
+        m_videoTracks.remove(id);
+    }
+}
+
+void MediaPlayerPrivateRemote::remoteVideoTrackConfigurationChanged(TrackPrivateRemoteIdentifier id, TrackPrivateRemoteConfiguration&& configuration)
+{
+    ASSERT(m_videoTracks.contains(id));
+
+    if (const auto& track = m_videoTracks.get(id))
         track->updateConfiguration(WTFMove(configuration));
 }
 

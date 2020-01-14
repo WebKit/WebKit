@@ -335,6 +335,12 @@ void RemoteMediaPlayerManagerProxy::audioTrackSetEnabled(MediaPlayerPrivateRemot
         player->audioTrackSetEnabled(trackID, enabled);
 }
 
+void RemoteMediaPlayerManagerProxy::videoTrackSetSelected(MediaPlayerPrivateRemoteIdentifier playerID, TrackPrivateRemoteIdentifier trackID, bool selected)
+{
+    if (auto player = m_proxies.get(playerID))
+        player->videoTrackSetSelected(trackID, selected);
+}
+
 #if !RELEASE_LOG_DISABLED
 const Logger& RemoteMediaPlayerManagerProxy::logger() const
 {

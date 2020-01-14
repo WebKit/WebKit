@@ -1,3 +1,13 @@
+2020-01-14  Eric Carlson  <eric.carlson@apple.com>
+
+        Expose video tracks for media files in the GPUProcess
+        https://bugs.webkit.org/show_bug.cgi?id=206209
+        <rdar://problem/58553026>
+
+        Reviewed by Jer Noble.
+
+        * gpu-process/TestExpectations:
+
 2020-01-13  Simon Fraser  <simon.fraser@apple.com>
 
         REGRESSION (Catalina) non-scrolling iframe prevents document scrolling

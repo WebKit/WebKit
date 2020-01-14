@@ -68,4 +68,21 @@ private:
 
 } // namespace WebCore
 
+namespace WTF {
+
+template<> struct EnumTraits<WebCore::VideoTrackPrivate::Kind> {
+    using values = EnumValues<
+        WebCore::VideoTrackPrivate::Kind,
+        WebCore::VideoTrackPrivate::Kind::Alternative,
+        WebCore::VideoTrackPrivate::Kind::Captions,
+        WebCore::VideoTrackPrivate::Kind::Main,
+        WebCore::VideoTrackPrivate::Kind::Sign,
+        WebCore::VideoTrackPrivate::Kind::Subtitles,
+        WebCore::VideoTrackPrivate::Kind::Commentary,
+        WebCore::VideoTrackPrivate::Kind::None
+    >;
+};
+
+} // namespace WTF
+
 #endif

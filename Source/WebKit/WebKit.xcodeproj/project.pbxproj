@@ -2057,6 +2057,10 @@
 		071BC57D23CA56D200680D7C /* TrackPrivateRemoteIdentifier.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TrackPrivateRemoteIdentifier.h; sourceTree = "<group>"; };
 		071BC57E23CA5DB100680D7C /* RemoteAudioTrackProxy.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteAudioTrackProxy.cpp; sourceTree = "<group>"; };
 		071BC57F23CA5DB100680D7C /* RemoteAudioTrackProxy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteAudioTrackProxy.h; sourceTree = "<group>"; };
+		071BC58223CC2BD300680D7C /* VideoTrackPrivateRemote.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VideoTrackPrivateRemote.h; sourceTree = "<group>"; };
+		071BC58323CC2BD500680D7C /* VideoTrackPrivateRemote.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = VideoTrackPrivateRemote.cpp; sourceTree = "<group>"; };
+		071BC58423CC2C0900680D7C /* RemoteVideoTrackProxy.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteVideoTrackProxy.cpp; sourceTree = "<group>"; };
+		071BC58523CC2C0900680D7C /* RemoteVideoTrackProxy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteVideoTrackProxy.h; sourceTree = "<group>"; };
 		0725EFAB239AE38400A538A9 /* RemoteMediaPlayerManagerProxy.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = RemoteMediaPlayerManagerProxy.messages.in; sourceTree = "<group>"; };
 		0725EFAC239AE38500A538A9 /* RemoteMediaPlayerManagerProxy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteMediaPlayerManagerProxy.h; sourceTree = "<group>"; };
 		0725EFAD239B024500A538A9 /* RemoteMediaPlayerManagerProxy.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteMediaPlayerManagerProxy.cpp; sourceTree = "<group>"; };
@@ -5189,6 +5193,8 @@
 				07B3B46F23AB2CB300BA5B12 /* RemoteMediaPlayerState.h */,
 				1D32F89D23A84C5B00B1EA6A /* RemoteMediaResourceProxy.cpp */,
 				1D32F89B23A84BA600B1EA6A /* RemoteMediaResourceProxy.h */,
+				071BC58323CC2BD500680D7C /* VideoTrackPrivateRemote.cpp */,
+				071BC58223CC2BD300680D7C /* VideoTrackPrivateRemote.h */,
 			);
 			path = media;
 			sourceTree = "<group>";
@@ -5212,6 +5218,8 @@
 				1DA4089E23A827780058C950 /* RemoteMediaResourceManager.cpp */,
 				1DA4089423A80A3E0058C950 /* RemoteMediaResourceManager.h */,
 				1D32F8A623A8601900B1EA6A /* RemoteMediaResourceManager.messages.in */,
+				071BC58423CC2C0900680D7C /* RemoteVideoTrackProxy.cpp */,
+				071BC58523CC2C0900680D7C /* RemoteVideoTrackProxy.h */,
 				071BC57B23CA532400680D7C /* TrackPrivateRemoteConfiguration.h */,
 				071BC57D23CA56D200680D7C /* TrackPrivateRemoteIdentifier.h */,
 			);

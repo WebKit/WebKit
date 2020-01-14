@@ -1,3 +1,69 @@
+2020-01-14  Eric Carlson  <eric.carlson@apple.com>
+
+        Expose video tracks for media files in the GPUProcess
+        https://bugs.webkit.org/show_bug.cgi?id=206209
+        <rdar://problem/58553026>
+
+        Reviewed by Jer Noble.
+
+        * GPUProcess/media/RemoteAudioTrackProxy.cpp:
+        (WebKit::RemoteAudioTrackProxy::configuration):
+        * GPUProcess/media/RemoteMediaPlayerManagerProxy.cpp:
+        (WebKit::RemoteMediaPlayerManagerProxy::videoTrackSetSelected):
+        * GPUProcess/media/RemoteMediaPlayerManagerProxy.h:
+        * GPUProcess/media/RemoteMediaPlayerManagerProxy.messages.in:
+        * GPUProcess/media/RemoteMediaPlayerProxy.cpp:
+        (WebKit::RemoteMediaPlayerProxy::mediaPlayerDidAddVideoTrack):
+        (WebKit::RemoteMediaPlayerProxy::mediaPlayerDidRemoveVideoTrack):
+        (WebKit::RemoteMediaPlayerProxy::videoTrackSetSelected):
+        * GPUProcess/media/RemoteMediaPlayerProxy.h:
+        * GPUProcess/media/RemoteVideoTrackProxy.cpp: Copied from Source/WebKit/GPUProcess/media/RemoteAudioTrackProxy.cpp.
+        (WebKit::RemoteVideoTrackProxy::RemoteVideoTrackProxy):
+        (WebKit::RemoteVideoTrackProxy::configuration):
+        (WebKit::RemoteVideoTrackProxy::configurationChanged):
+        (WebKit::RemoteVideoTrackProxy::willRemove):
+        (WebKit::RemoteVideoTrackProxy::selectedChanged):
+        (WebKit::RemoteVideoTrackProxy::idChanged):
+        (WebKit::RemoteVideoTrackProxy::labelChanged):
+        (WebKit::RemoteVideoTrackProxy::languageChanged):
+        * GPUProcess/media/RemoteVideoTrackProxy.h: Added.
+        * GPUProcess/media/TrackPrivateRemoteConfiguration.h:
+        (WebKit::TrackPrivateRemoteConfiguration::encode const):
+        (WebKit::TrackPrivateRemoteConfiguration::decode):
+        * NetworkProcess/cache/CacheStorageEngine.cpp:
+        (WebKit::CacheStorage::Engine::clearCachesForOriginFromDirectories):
+        * Sources.txt:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/GPU/media/AudioTrackPrivateRemote.cpp:
+        (WebKit::AudioTrackPrivateRemote::updateConfiguration):
+        * WebProcess/GPU/media/MediaPlayerPrivateRemote.cpp:
+        (WebKit::MediaPlayerPrivateRemote::addRemoteVideoTrack):
+        (WebKit::MediaPlayerPrivateRemote::removeRemoteVideoTrack):
+        (WebKit::MediaPlayerPrivateRemote::remoteVideoTrackConfigurationChanged):
+        * WebProcess/GPU/media/MediaPlayerPrivateRemote.h:
+        * WebProcess/GPU/media/RemoteMediaPlayerManager.cpp:
+        (WebKit::RemoteMediaPlayerManager::addRemoteVideoTrack):
+        (WebKit::RemoteMediaPlayerManager::removeRemoteVideoTrack):
+        (WebKit::RemoteMediaPlayerManager::remoteVideoTrackConfigurationChanged):
+        * WebProcess/GPU/media/RemoteMediaPlayerManager.h:
+        * WebProcess/GPU/media/RemoteMediaPlayerManager.messages.in:
+        * WebProcess/GPU/media/RemoteVideoTrackProxy.cpp: Copied from Source/WebKit/GPUProcess/media/RemoteAudioTrackProxy.cpp.
+        (WebKit::RemoteVideoTrackProxy::RemoteVideoTrackProxy):
+        (WebKit::RemoteVideoTrackProxy::configuration):
+        (WebKit::RemoteVideoTrackProxy::configurationChanged):
+        (WebKit::RemoteVideoTrackProxy::willRemove):
+        (WebKit::RemoteVideoTrackProxy::selectedChanged):
+        (WebKit::RemoteVideoTrackProxy::idChanged):
+        (WebKit::RemoteVideoTrackProxy::labelChanged):
+        (WebKit::RemoteVideoTrackProxy::languageChanged):
+        * WebProcess/GPU/media/RemoteVideoTrackProxy.h: Added.
+        * WebProcess/GPU/media/VideoTrackPrivateRemote.cpp: Copied from Source/WebKit/WebProcess/GPU/media/AudioTrackPrivateRemote.cpp.
+        (WebKit::VideoTrackPrivateRemote::VideoTrackPrivateRemote):
+        (WebKit::VideoTrackPrivateRemote::setSelected):
+        (WebKit::VideoTrackPrivateRemote::updateConfiguration):
+        * WebProcess/GPU/media/VideoTrackPrivateRemote.h: Added.
+        (WebKit::VideoTrackPrivateRemote::create):
+
 2020-01-13  Don Olmstead  <don.olmstead@sony.com>
 
         [WebAuthn] Support CTAP Client Pin

@@ -89,9 +89,14 @@ private:
     void updateCachedState(MediaPlayerPrivateRemoteIdentifier, RemoteMediaPlayerState&&);
     void characteristicChanged(MediaPlayerPrivateRemoteIdentifier, bool hasAudio, bool hasVideo, WebCore::MediaPlayerEnums::MovieLoadType);
     void sizeChanged(MediaPlayerPrivateRemoteIdentifier, WebCore::FloatSize);
+
     void addRemoteAudioTrack(MediaPlayerPrivateRemoteIdentifier, TrackPrivateRemoteIdentifier, TrackPrivateRemoteConfiguration&&);
     void removeRemoteAudioTrack(MediaPlayerPrivateRemoteIdentifier, TrackPrivateRemoteIdentifier);
     void remoteAudioTrackConfigurationChanged(MediaPlayerPrivateRemoteIdentifier, TrackPrivateRemoteIdentifier, TrackPrivateRemoteConfiguration&&);
+
+    void addRemoteVideoTrack(MediaPlayerPrivateRemoteIdentifier, TrackPrivateRemoteIdentifier, TrackPrivateRemoteConfiguration&&);
+    void removeRemoteVideoTrack(MediaPlayerPrivateRemoteIdentifier, TrackPrivateRemoteIdentifier);
+    void remoteVideoTrackConfigurationChanged(MediaPlayerPrivateRemoteIdentifier, TrackPrivateRemoteIdentifier, TrackPrivateRemoteConfiguration&&);
 
     void requestResource(MediaPlayerPrivateRemoteIdentifier, RemoteMediaResourceIdentifier, WebCore::ResourceRequest&&, WebCore::PlatformMediaResourceLoader::LoadOptions, CompletionHandler<void()>&&);
     void removeResource(MediaPlayerPrivateRemoteIdentifier, RemoteMediaResourceIdentifier);
