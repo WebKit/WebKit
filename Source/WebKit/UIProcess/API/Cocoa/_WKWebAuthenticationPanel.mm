@@ -24,10 +24,10 @@
  */
 
 #import "config.h"
-#import "_WKWebAuthenticationPanelInternal.h"
-
 #import "WebAuthenticationPanelClient.h"
+#import "_WKWebAuthenticationPanelInternal.h"
 #import <WebCore/WebAuthenticationConstants.h>
+
 #import <wtf/RetainPtr.h>
 
 @implementation _WKWebAuthenticationPanel {

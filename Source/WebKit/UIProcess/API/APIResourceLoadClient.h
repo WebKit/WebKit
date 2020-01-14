@@ -25,10 +25,6 @@
 
 #pragma once
 
-#include <WebCore/ResourceError.h>
-#include <WebCore/ResourceRequest.h>
-#include <WebCore/ResourceResponse.h>
-
 namespace WebKit {
 class AuthenticationChallengeProxy;
 struct ResourceLoadInfo;

@@ -35,10 +35,8 @@
 #import <WebKit/WKPreferencesPrivate.h>
 #import <WebKit/WKUIDelegatePrivate.h>
 #import <WebKit/_WKExperimentalFeature.h>
-#import <WebKit/_WKWebAuthenticationAssertionResponse.h>
 #import <WebKit/_WKWebAuthenticationPanel.h>
 #import <wtf/BlockPtr.h>
-#import <wtf/RandomNumber.h>
 #import <wtf/text/StringConcatenateNumbers.h>
 
 static bool webAuthenticationPanelRan = false;
@@ -48,7 +46,6 @@ static bool webAuthenticationPanelUpdateMultipleNFCTagsPresent = false;
 static bool webAuthenticationPanelUpdateNoCredentialsFound = false;
 static bool webAuthenticationPanelCancelImmediately = false;
 static String webAuthenticationPanelPin;
-static BOOL webAuthenticationPanelNullUserHandle = NO;
 
 @interface TestWebAuthenticationPanelDelegate : NSObject <_WKWebAuthenticationPanelDelegate>
 @end
@@ -92,20 +89,6 @@ static BOOL webAuthenticationPanelNullUserHandle = NO;
     ASSERT_NE(panel, nil);
     EXPECT_EQ(retries, 8ul);
     completionHandler(webAuthenticationPanelPin);
-}
-
-- (void)panel:(_WKWebAuthenticationPanel *)panel selectAssertionResponse:(NSArray < _WKWebAuthenticationAssertionResponse *> *)responses completionHandler:(void (^)(_WKWebAuthenticationAssertionResponse *))completionHandler
-{
-    EXPECT_EQ(responses.count, 2ul);
-    for (_WKWebAuthenticationAssertionResponse *response in responses) {
-        EXPECT_TRUE([response.name isEqual:@"johnpsmith@example.com"] || [response.name isEqual:@""]);
-        EXPECT_TRUE([response.displayName isEqual:@"John P. Smith"] || [response.displayName isEqual:@""]);
-        EXPECT_TRUE([[response.userHandle base64EncodedStringWithOptions:0] isEqual:@"MIIBkzCCATigAwIBAjCCAZMwggE4oAMCAQIwggGTMII="] || !response.userHandle);
-    }
-
-    auto index = weakRandomUint32() % 2;
-    webAuthenticationPanelNullUserHandle = responses[index].userHandle ? NO : YES;
-    completionHandler(responses[index]);
 }
 
 @end
@@ -887,40 +870,6 @@ TEST(WebAuthenticationPanel, GetAssertionPin)
     webAuthenticationPanelPin = "1234";
     [webView loadRequest:[NSURLRequest requestWithURL:testURL.get()]];
     [webView waitForMessage:@"Succeeded!"];
-}
-
-TEST(WebAuthenticationPanel, MultipleAccountsNullDelegate)
-{
-    reset();
-    RetainPtr<NSURL> testURL = [[NSBundle mainBundle] URLForResource:@"web-authentication-get-assertion-hid-multiple-accounts" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
-
-    auto *configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
-    [[configuration preferences] _setEnabled:YES forExperimentalFeature:webAuthenticationExperimentalFeature()];
-
-    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSZeroRect configuration:configuration]);
-    auto delegate = adoptNS([[TestWebAuthenticationPanelUIDelegate alloc] init]);
-    [delegate setIsNull:true];
-    [webView setUIDelegate:delegate.get()];
-
-    [webView loadRequest:[NSURLRequest requestWithURL:testURL.get()]];
-    [webView waitForMessage:@"Succeeded!"];
-}
-
-TEST(WebAuthenticationPanel, MultipleAccounts)
-{
-    reset();
-    RetainPtr<NSURL> testURL = [[NSBundle mainBundle] URLForResource:@"web-authentication-get-assertion-hid-multiple-accounts" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
-
-    auto *configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
-    [[configuration preferences] _setEnabled:YES forExperimentalFeature:webAuthenticationExperimentalFeature()];
-
-    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSZeroRect configuration:configuration]);
-    auto delegate = adoptNS([[TestWebAuthenticationPanelUIDelegate alloc] init]);
-    [webView setUIDelegate:delegate.get()];
-
-    [webView loadRequest:[NSURLRequest requestWithURL:testURL.get()]];
-    [webView waitForMessage:@"Succeeded!"];
-    EXPECT_EQ([[webView stringByEvaluatingJavaScript:@"userHandle"] isEqualToString:@"<null>"], webAuthenticationPanelNullUserHandle);
 }
 
 } // namespace TestWebKitAPI

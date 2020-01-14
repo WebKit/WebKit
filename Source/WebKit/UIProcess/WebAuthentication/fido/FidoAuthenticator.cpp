@@ -28,8 +28,6 @@
 
 #if ENABLE(WEB_AUTHN)
 
-#include "CtapDriver.h"
-
 namespace WebKit {
 
 FidoAuthenticator::FidoAuthenticator(std::unique_ptr<CtapDriver>&& driver)

@@ -28,10 +28,8 @@
 
 #if ENABLE(WEB_AUTHN)
 
-#import "APIWebAuthenticationAssertionResponse.h"
 #import "CompletionHandlerCallChecker.h"
 #import "WebAuthenticationFlags.h"
-#import "_WKWebAuthenticationAssertionResponseInternal.h"
 #import "_WKWebAuthenticationPanel.h"
 #import <wtf/BlockPtr.h>
 #import <wtf/RunLoop.h>
@@ -45,7 +43,6 @@ WebAuthenticationPanelClient::WebAuthenticationPanelClient(_WKWebAuthenticationP
     m_delegateMethods.panelUpdateWebAuthenticationPanel = [delegate respondsToSelector:@selector(panel:updateWebAuthenticationPanel:)];
     m_delegateMethods.panelDismissWebAuthenticationPanelWithResult = [delegate respondsToSelector:@selector(panel:dismissWebAuthenticationPanelWithResult:)];
     m_delegateMethods.panelRequestPinWithRemainingRetriesCompletionHandler = [delegate respondsToSelector:@selector(panel:requestPINWithRemainingRetries:completionHandler:)];
-    m_delegateMethods.panelselectAssertionResponseCompletionHandler = [delegate respondsToSelector:@selector(panel:selectAssertionResponse:completionHandler:)];
 }
 
 RetainPtr<id <_WKWebAuthenticationPanelDelegate> > WebAuthenticationPanelClient::delegate()
@@ -65,7 +62,6 @@ static _WKWebAuthenticationPanelUpdate wkWebAuthenticationPanelUpdate(WebAuthent
 
 void WebAuthenticationPanelClient::updatePanel(WebAuthenticationStatus status) const
 {
-    // FIXME(206248)
     // Call delegates in the next run loop to prevent clients' reentrance that would potentially modify the state
     // of the current run loop in unexpected ways.
     RunLoop::main().dispatch([weakThis = makeWeakPtr(*this), this, status] {
@@ -97,7 +93,6 @@ static _WKWebAuthenticationResult wkWebAuthenticationResult(WebAuthenticationRes
 
 void WebAuthenticationPanelClient::dismissPanel(WebAuthenticationResult result) const
 {
-    // FIXME(206248)
     // Call delegates in the next run loop to prevent clients' reentrance that would potentially modify the state
     // of the current run loop in unexpected ways.
     RunLoop::main().dispatch([weakThis = makeWeakPtr(*this), this, result] {
@@ -117,7 +112,6 @@ void WebAuthenticationPanelClient::dismissPanel(WebAuthenticationResult result) 
 
 void WebAuthenticationPanelClient::requestPin(uint64_t retries, CompletionHandler<void(const WTF::String&)>&& completionHandler) const
 {
-    // FIXME(206248)
     // Call delegates in the next run loop to prevent clients' reentrance that would potentially modify the state
     // of the current run loop in unexpected ways.
     RunLoop::main().dispatch([weakThis = makeWeakPtr(*this), this, retries, completionHandler = WTFMove(completionHandler)] () mutable {
@@ -143,43 +137,6 @@ void WebAuthenticationPanelClient::requestPin(uint64_t retries, CompletionHandle
                 return;
             checker->didCallCompletionHandler();
             completionHandler(pin);
-        }).get()];
-    });
-}
-
-void WebAuthenticationPanelClient::selectAssertionResponse(const HashSet<Ref<WebCore::AuthenticatorAssertionResponse>>& responses, CompletionHandler<void(const WebCore::AuthenticatorAssertionResponse&)>&& completionHandler) const
-{
-    ASSERT(!responses.isEmpty());
-    auto nsResponses = adoptNS([[NSMutableArray alloc] initWithCapacity:responses.size()]);
-    for (auto& response : responses)
-        [nsResponses addObject:wrapper(API::WebAuthenticationAssertionResponse::create(response.copyRef()))];
-
-    // FIXME(206248)
-    // Call delegates in the next run loop to prevent clients' reentrance that would potentially modify the state
-    // of the current run loop in unexpected ways.
-    RunLoop::main().dispatch([weakThis = makeWeakPtr(*this), this, nsResponses = WTFMove(nsResponses), completionHandler = WTFMove(completionHandler)] () mutable {
-        if (!weakThis) {
-            completionHandler(static_cast<API::WebAuthenticationAssertionResponse&>([[nsResponses firstObject] _apiObject]).response());
-            return;
-        }
-
-        if (!m_delegateMethods.panelselectAssertionResponseCompletionHandler) {
-            completionHandler(static_cast<API::WebAuthenticationAssertionResponse&>([[nsResponses firstObject] _apiObject]).response());
-            return;
-        }
-
-        auto delegate = m_delegate.get();
-        if (!delegate) {
-            completionHandler(static_cast<API::WebAuthenticationAssertionResponse&>([[nsResponses firstObject] _apiObject]).response());
-            return;
-        }
-
-        auto checker = CompletionHandlerCallChecker::create(delegate.get(), @selector(panel:selectAssertionResponse:completionHandler:));
-        [delegate panel:m_panel selectAssertionResponse:nsResponses.get() completionHandler:makeBlockPtr([completionHandler = WTFMove(completionHandler), checker = WTFMove(checker)](_WKWebAuthenticationAssertionResponse *response) mutable {
-            if (checker->completionHandlerHasBeenCalled())
-                return;
-            checker->didCallCompletionHandler();
-            completionHandler(static_cast<API::WebAuthenticationAssertionResponse&>([response _apiObject]).response());
         }).get()];
     });
 }

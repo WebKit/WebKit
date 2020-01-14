@@ -42,9 +42,9 @@ public:
     ArrayBuffer* userHandle() const { return m_userHandle.get(); }
 
     void setName(const String& name) { m_name = name; }
-    const String& name() const { return m_name; }
+    String name() const { return m_name; }
     void setDisplayName(const String& displayName) { m_displayName = displayName; }
-    const String& displayName() const { return m_displayName; }
+    String displayName() const { return m_displayName; }
     void setNumberOfCredentials(size_t numberOfCredentials) { m_numberOfCredentials = numberOfCredentials; }
     size_t numberOfCredentials() const { return m_numberOfCredentials; }
 

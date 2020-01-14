@@ -183,7 +183,6 @@ public:
 #endif
 
 #if ENABLE(WEB_AUTHN)
-        WebAuthenticationAssertionResponse,
         WebAuthenticationPanel,
 #endif
 

@@ -273,16 +273,16 @@ void AuthenticatorManager::authenticatorStatusUpdated(WebAuthenticationStatus st
         panel->client().updatePanel(status);
 }
 
+void AuthenticatorManager::selectAssertionResponses(const HashSet<Ref<WebCore::AuthenticatorAssertionResponse>>& responses, CompletionHandler<void(const Ref<WebCore::AuthenticatorAssertionResponse>&)>&& completionHandler)
+{
+    if (auto* panel = m_pendingRequestData.panel.get())
+        panel->client().selectAssertionResponses(responses, WTFMove(completionHandler));
+}
+
 void AuthenticatorManager::requestPin(uint64_t retries, CompletionHandler<void(const WTF::String&)>&& completionHandler)
 {
     if (auto* panel = m_pendingRequestData.panel.get())
         panel->client().requestPin(retries, WTFMove(completionHandler));
-}
-
-void AuthenticatorManager::selectAssertionResponse(const HashSet<Ref<WebCore::AuthenticatorAssertionResponse>>& responses, CompletionHandler<void(const WebCore::AuthenticatorAssertionResponse&)>&& completionHandler)
-{
-    if (auto* panel = m_pendingRequestData.panel.get())
-        panel->client().selectAssertionResponse(responses, WTFMove(completionHandler));
 }
 
 UniqueRef<AuthenticatorTransportService> AuthenticatorManager::createService(AuthenticatorTransport transport, AuthenticatorTransportService::Observer& observer) const
