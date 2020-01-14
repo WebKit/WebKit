@@ -23,9 +23,11 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "_WKResourceLoadStatisticsFirstParty.h"
+#import <WebKit/WKFoundation.h>
 
 NS_ASSUME_NONNULL_BEGIN
+
+@class _WKResourceLoadStatisticsFirstParty;
 
 WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA))
 @interface _WKResourceLoadStatisticsThirdParty : NSObject

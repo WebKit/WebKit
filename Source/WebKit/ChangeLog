@@ -1,5 +1,20 @@
 2020-01-13  Kate Cheney  <katherine_cheney@apple.com>
 
+        _WKResourceLoadStatisticsFirstParty should be forward declared not imported in _WKResourceLoadStatisticsThirdParty
+        https://bugs.webkit.org/show_bug.cgi?id=206183
+        <rdar://problem/58535245>
+
+        Reviewed by Alex Christensen.
+
+        * UIProcess/API/Cocoa/_WKResourceLoadStatisticsFirstParty.h:
+        * UIProcess/API/Cocoa/_WKResourceLoadStatisticsThirdParty.h:
+        * UIProcess/API/Cocoa/_WKResourceLoadStatisticsThirdParty.mm:
+        The additional import statement here was unnecessary because
+        this file imports _WKResourceLoadStatisticsThirdPartyInternal.h
+        which forward declares the _WKResourceLoadStatisticsFirstParty class.
+
+2020-01-13  Kate Cheney  <katherine_cheney@apple.com>
+
         Unreviewed followup fix to: https://bugs.webkit.org/show_bug.cgi?id=205288.
         This flag should be off-by-default.
 

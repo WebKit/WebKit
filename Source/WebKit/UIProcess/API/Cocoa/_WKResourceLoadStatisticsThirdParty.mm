@@ -27,7 +27,6 @@
 #import "_WKResourceLoadStatisticsThirdPartyInternal.h"
 
 #import "APIArray.h"
-#import "_WKResourceLoadStatisticsFirstParty.h"
 
 @implementation _WKResourceLoadStatisticsThirdParty
 
