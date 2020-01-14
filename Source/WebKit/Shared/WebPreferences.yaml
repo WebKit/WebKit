@@ -1890,7 +1890,7 @@ UseGPUProcessForMedia:
 
 IsInAppBrowserPrivacyEnabled:
     type: bool
-    defaultValue: true
+    defaultValue: false
     humanReadableName: "In-App Browser Privacy"
     humanReadableDescription: "Enable In-App Browser Privacy"
     webcoreBinding: RuntimeEnabledFeatures

@@ -1,3 +1,10 @@
+2020-01-13  Kate Cheney  <katherine_cheney@apple.com>
+
+        Unreviewed followup fix to: https://bugs.webkit.org/show_bug.cgi?id=205288.
+        This flag should be off-by-default.
+
+        * Shared/WebPreferences.yaml:
+
 2020-01-13  Alex Christensen  <achristensen@webkit.org>
 
         Propogate UIEdgeInsets from WKWebView to WKSafeBrowsingWarning on iOS
