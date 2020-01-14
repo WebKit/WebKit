@@ -1,3 +1,11 @@
+2020-01-14  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GTK] Unreviewed test gardening
+        https://bugs.webkit.org/show_bug.cgi?id=206224
+
+        * platform/gtk/TestExpectations:
+        * platform/gtk/imported/w3c/web-platform-tests/css/css-sizing/button-min-width-expected.txt: Added.
+
 2020-01-14  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r254505.

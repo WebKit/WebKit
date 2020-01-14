@@ -435,10 +435,8 @@ webkit.org/b/169918 compositing/video/video-background-color.html [ Missing Cras
 
 # WebGL related failures
 webkit.org/b/169917 fast/canvas/webgl/antialiasing-enabled.html [ Failure Pass ]
-webkit.org/b/169917 fast/canvas/webgl/context-attributes-alpha-depth-stencil-antialias.html [ Failure ]
 webkit.org/b/169917 fast/canvas/webgl/copyBufferSubData.html [ Failure ]
 webkit.org/b/169917 fast/canvas/webgl/getBufferSubData-webgl1.html [ Failure ]
-webkit.org/b/169917 fast/canvas/webgl/glsl-conformance.html [ Failure ]
 webkit.org/b/169917 fast/canvas/webgl/premultiplyalpha-test.html [ Failure ]
 webkit.org/b/169917 fast/canvas/webgl/read-pixels-test.html [ Failure Pass ]
 webkit.org/b/169917 fast/canvas/webgl/oes-vertex-array-object.html [ Failure Pass ]
@@ -470,7 +468,6 @@ webkit.org/b/169917 compositing/overlap-blending/children-opacity-huge.html [ Im
 webkit.org/b/169917 compositing/video/video-border-radius.html [ ImageOnlyFailure Pass ]
 webkit.org/b/169917 webgl/1.0.3/conformance/textures/texture-size.html [ Timeout Pass ]
 # WebGL timeouts or slow tests.
-webkit.org/b/169917 fast/canvas/webgl/oes-texture-half-float.html [ Slow ]
 webkit.org/b/169917 webgl/1.0.3/conformance/context/context-creation-and-destruction.html [ Pass Timeout ]
 webkit.org/b/169917 webgl/1.0.3/conformance/extensions/oes-texture-float-with-video.html [ Timeout ]
 webkit.org/b/169917 webgl/1.0.3/conformance/glsl/misc/shader-uniform-packing-restrictions.html [ Timeout ]
@@ -1206,6 +1203,8 @@ webkit.org/b/206002 http/wpt/css/css-highlight-api/highlight-text.html [ ImageOn
 
 webkit.org/b/205186 compositing/contents-format/subpixel-antialiased-text.html [ ImageOnlyFailure ]
 webkit.org/b/205187 fast/text/font-antialiasing-save-restore.html [ ImageOnlyFailure ]
+
+webkit.org/b/206223 imported/mozilla/svg/svg-integration/clipPath-html-02.xhtml
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Expected failures.
@@ -2272,6 +2271,8 @@ webkit.org/b/205110 media/media-source/media-source-canplaythrough.html [ Crash 
 
 webkit.org/b/206146 http/tests/cache-storage/cache-persistency.https.html [ Failure Pass ]
 
+webkit.org/b/179611 imported/w3c/web-platform-tests/xhr/send-entity-body-document.htm [ Pass Failure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Flaky tests
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -2606,6 +2607,9 @@ webkit.org/b/206147 inspector/dom-debugger/dom-breakpoints.html [ Timeout ]
 webkit.org/b/206148 http/tests/local/file-url-host.html [ Timeout ]
 
 webkit.org/b/206149 webrtc/peer-connection-remote-audio-mute.html [ Timeout ]
+
+webkit.org/b/202736 http/tests/appcache/remove-cache.html [ Failure Timeout Pass ]
+webkit.org/b/202736 http/wpt/cache-storage/quota-third-party.https.html [ Failure Timeout Pass ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests timing out
@@ -3816,6 +3820,14 @@ webkit.org/b/201266 media/audio-playback-restriction-play-muted.html [ Failure P
 webkit.org/b/201266 media/audio-playback-restriction-play.html [ Failure Pass ]
 
 webkit.org/b/201267 webrtc/video-h264.html [ Failure ]
+
+webkit.org/b/201981 imported/w3c/web-platform-tests/service-workers/service-worker/controller-on-disconnect.https.html [ Failure Pass ]
+webkit.org/b/201981 imported/w3c/web-platform-tests/service-workers/service-worker/controller-on-load.https.html [ Failure Pass ]
+webkit.org/b/201981 imported/w3c/web-platform-tests/service-workers/service-worker/detached-context.https.html [ Failure Pass ]
+webkit.org/b/201981 imported/w3c/web-platform-tests/service-workers/service-worker/fetch-event-respond-with-custom-response.https.html [ Failure Pass ]
+webkit.org/b/201981 imported/w3c/web-platform-tests/service-workers/service-worker/fetch-event-respond-with-readable-stream.https.html [ Failure Pass ]
+webkit.org/b/201981 imported/w3c/web-platform-tests/service-workers/service-worker/fetch-event.https.html [ Failure Pass ]
+webkit.org/b/201981 http/wpt/resource-timing/rt-resources-per-worker.html [ Failure Pass ]
 
 webkit.org/b/201982 fast/images/exif-orientation-background.html [ ImageOnlyFailure ]
 webkit.org/b/201982 fast/images/exif-orientation-canvas.html [ ImageOnlyFailure ]
