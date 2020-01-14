@@ -446,9 +446,10 @@ std::unique_ptr<MIMETypeRegistryThreadGlobalData> MIMETypeRegistry::createMIMETy
     CFIndex count = CFArrayGetCount(supportedTypes.get());
     for (CFIndex i = 0; i < count; i++) {
         CFStringRef supportedType = reinterpret_cast<CFStringRef>(CFArrayGetValueAtIndex(supportedTypes.get(), i));
-        String mimeType = MIMETypeForImageType(supportedType);
-        if (!mimeType.isEmpty())
+        if (isSupportedImageType(supportedType)) {
+            String mimeType = MIMETypeForImageType(supportedType);
             supportedImageMIMETypesForEncoding.add(mimeType);
+        }
     }
 #else
     HashSet<String, ASCIICaseInsensitiveHash> supportedImageMIMETypesForEncoding = std::initializer_list<String> {
