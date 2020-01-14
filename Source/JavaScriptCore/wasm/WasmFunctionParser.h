@@ -214,7 +214,7 @@ template<typename Context>
 auto FunctionParser<Context>::parseBody() -> PartialResult
 {
     m_controlStack.append({ { }, { }, m_context.addTopLevel(&m_signature) });
-    uint8_t op;
+    uint8_t op = 0;
     while (m_controlStack.size()) {
         m_currentOpcodeStartingOffset = m_offset;
         WASM_PARSER_FAIL_IF(!parseUInt8(op), "can't decode opcode");

@@ -3407,11 +3407,10 @@ private:
 
         LValue cell = lowCell(m_node->child1());
         bool maySeeEmptyValue = m_interpreter.forNode(m_node->child1()).m_type & SpecEmpty;
-        LBasicBlock notEmpty;
-        LBasicBlock continuation;
-        LBasicBlock lastNext;
+        LBasicBlock continuation = nullptr;
+        LBasicBlock lastNext = nullptr;
         if (maySeeEmptyValue) {
-            notEmpty = m_out.newBlock();
+            LBasicBlock notEmpty = m_out.newBlock();
             continuation = m_out.newBlock();
             m_out.branch(m_out.isZero64(cell), unsure(continuation), unsure(notEmpty));
             lastNext = m_out.appendTo(notEmpty, continuation);
@@ -13285,7 +13284,7 @@ private:
         LValue base = lowCell(baseEdge);
         JSValue baseConstant = m_state.forNode(baseEdge).value();
 
-        LValue globalObject;
+        LValue globalObject = nullptr;
         JSValue globalObjectConstant;
         if (domJIT->requireGlobalObject) {
             Edge& globalObjectEdge = m_node->child2();

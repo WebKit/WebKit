@@ -847,8 +847,8 @@ void testLoadAddrShift(unsigned shift)
     int slots[2];
 
     // Figure out which slot to use while having proper alignment for the shift.
-    int* slot;
-    uintptr_t arg;
+    int* slot = nullptr;
+    uintptr_t arg = 0;
     for (unsigned i = sizeof(slots)/sizeof(slots[0]); i--;) {
         slot = slots + i;
         arg = bitwise_cast<uintptr_t>(slot) >> shift;

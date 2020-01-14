@@ -1,3 +1,14 @@
+2020-01-14  David Kilzer  <ddkilzer@apple.com>
+
+        Enable -Wconditional-uninitialized in bmalloc, WTF, JavaScriptCore
+        <https://webkit.org/b/206190>
+        <rdar://problem/58540387>
+
+        Reviewed by Mark Lam.
+
+        * Configurations/Base.xcconfig:
+        (WARNING_CFLAGS): Add -Wconditional-uninitialized.
+
 2020-01-13  Sam Weinig  <weinig@apple.com>
 
         Platform.h is out of control Part 3: Move all ENABLE_* macros definitions in FeatureDefines.h

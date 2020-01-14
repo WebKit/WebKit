@@ -1,3 +1,32 @@
+2020-01-14  David Kilzer  <ddkilzer@apple.com>
+
+        Enable -Wconditional-uninitialized in bmalloc, WTF, JavaScriptCore
+        <https://webkit.org/b/206190>
+        <rdar://problem/58540387>
+
+        Reviewed by Mark Lam.
+
+        Initialize stack variables to fix warnings.
+
+        * Configurations/Base.xcconfig:
+        (WARNING_CFLAGS): Add -Wconditional-uninitialized.
+        * b3/B3LowerToAir.cpp:
+        (LowerToAir::appendCAS):
+        * b3/testb3_4.cpp:
+        (testLoadAddrShift):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileCheckStructureOrEmpty):
+        Move declaration of `notEmpty` into if block since it's not used
+        outside that scope.
+        (JSC::FTL::DFG::LowerDFGToB3::compileCallDOMGetter):
+        * ftl/FTLThunks.cpp:
+        (JSC::FTL::registerClobberCheck):
+        * wasm/js/WebAssemblyTablePrototype.cpp:
+        (JSC::webAssemblyTableProtoFuncSet):
+        variables.
+        * wasm/WasmFunctionParser.h:
+        (JSC::Wasm::FunctionParser<Context>::parseBody):
+
 2020-01-13  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         Unreviewed sort-Xcode-project-file

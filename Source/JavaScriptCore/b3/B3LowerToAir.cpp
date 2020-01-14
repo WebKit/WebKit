@@ -2288,7 +2288,7 @@ private:
             failBlock = newBlock();
             failure = failBlock;
         }
-        Air::BasicBlock* strongFailBlock;
+        Air::BasicBlock* strongFailBlock = nullptr;
         if (isStrong && hasFence)
             strongFailBlock = newBlock();
         Air::FrequentedBlock comparisonFail = failure;

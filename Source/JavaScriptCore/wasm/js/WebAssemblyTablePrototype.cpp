@@ -129,8 +129,8 @@ static EncodedJSValue JSC_HOST_CALL webAssemblyTableProtoFuncSet(JSGlobalObject*
         return JSValue::encode(throwException(globalObject, throwScope, createRangeError(globalObject, "WebAssembly.Table.prototype.set expects an integer less than the length of the table"_s)));
 
     if (table->table()->asFuncrefTable()) {
-        WebAssemblyFunction* wasmFunction;
-        WebAssemblyWrapperFunction* wasmWrapperFunction;
+        WebAssemblyFunction* wasmFunction = nullptr;
+        WebAssemblyWrapperFunction* wasmWrapperFunction = nullptr;
         if (!value.isNull() && !isWebAssemblyHostFunction(vm, value, wasmFunction, wasmWrapperFunction))
             return JSValue::encode(throwException(globalObject, throwScope, createTypeError(globalObject, "WebAssembly.Table.prototype.set expects the second argument to be null or an instance of WebAssembly.Function"_s)));
 
