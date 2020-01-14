@@ -39,6 +39,8 @@
 #include "RemoteLayerTreeDrawingAreaProxyMessages.h"
 #include "RemoteMediaPlayerManagerProxy.h"
 #include "RemoteMediaPlayerManagerProxyMessages.h"
+#include "RemoteMediaPlayerProxy.h"
+#include "RemoteMediaPlayerProxyMessages.h"
 #include "RemoteMediaRecorderManager.h"
 #include "RemoteMediaRecorderManagerMessages.h"
 #include "RemoteMediaRecorderMessages.h"
@@ -164,6 +166,9 @@ void GPUConnectionToWebProcess::didReceiveMessage(IPC::Connection& connection, I
 {
     if (decoder.messageReceiverName() == Messages::RemoteMediaPlayerManagerProxy::messageReceiverName()) {
         remoteMediaPlayerManagerProxy().didReceiveMessageFromWebProcess(connection, decoder);
+        return;
+    } else if (decoder.messageReceiverName() == Messages::RemoteMediaPlayerProxy::messageReceiverName()) {
+        remoteMediaPlayerManagerProxy().didReceivePlayerMessage(connection, decoder);
         return;
     } else if (decoder.messageReceiverName() == Messages::RemoteMediaResourceManager::messageReceiverName()) {
         remoteMediaResourceManager().didReceiveMessage(connection, decoder);

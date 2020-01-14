@@ -29,11 +29,13 @@
 
 #include "Connection.h"
 #include "MediaPlayerPrivateRemoteIdentifier.h"
+#include "MessageReceiver.h"
 #include "RemoteMediaPlayerConfiguration.h"
 #include "RemoteMediaPlayerProxyConfiguration.h"
 #include "RemoteMediaPlayerState.h"
 #include "RemoteMediaResourceIdentifier.h"
 #include "SandboxExtension.h"
+#include "TrackPrivateRemoteIdentifier.h"
 #include <WebCore/Cookie.h>
 #include <WebCore/MediaPlayer.h>
 #include <WebCore/PlatformMediaResourceLoader.h>
@@ -45,6 +47,7 @@
 
 namespace WebCore {
 class AudioTrackPrivate;
+class VideoTrackPrivate;
 }
 
 namespace WebKit {
@@ -55,7 +58,8 @@ class RemoteVideoTrackProxy;
 
 class RemoteMediaPlayerProxy final
     : public CanMakeWeakPtr<RemoteMediaPlayerProxy>
-    , public WebCore::MediaPlayerClient {
+    , public WebCore::MediaPlayerClient
+    , private IPC::MessageReceiver {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     RemoteMediaPlayerProxy(RemoteMediaPlayerManagerProxy&, MediaPlayerPrivateRemoteIdentifier, Ref<IPC::Connection>&&, WebCore::MediaPlayerEnums::MediaEngineIdentifier, RemoteMediaPlayerProxyConfiguration&&);
@@ -63,6 +67,8 @@ public:
 
     MediaPlayerPrivateRemoteIdentifier idendifier() const { return m_id; }
     void invalidate();
+
+    void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
 
     void getConfiguration(RemoteMediaPlayerConfiguration&);
 
@@ -197,8 +203,8 @@ private:
     const void* mediaPlayerLogIdentifier() { return reinterpret_cast<const void*>(m_configuration.logIdentifier); }
 #endif
 
-    HashMap<AudioTrackPrivate*, Ref<RemoteAudioTrackProxy>> m_audioTracks;
-    HashMap<VideoTrackPrivate*, Ref<RemoteVideoTrackProxy>> m_videoTracks;
+    HashMap<WebCore::AudioTrackPrivate*, Ref<RemoteAudioTrackProxy>> m_audioTracks;
+    HashMap<WebCore::VideoTrackPrivate*, Ref<RemoteVideoTrackProxy>> m_videoTracks;
     MediaPlayerPrivateRemoteIdentifier m_id;
     RefPtr<SandboxExtension> m_sandboxExtension;
     Ref<IPC::Connection> m_webProcessConnection;

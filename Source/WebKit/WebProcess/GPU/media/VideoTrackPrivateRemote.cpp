@@ -30,7 +30,7 @@
 #if ENABLE(GPU_PROCESS)
 
 #include "MediaPlayerPrivateRemote.h"
-#include "RemoteMediaPlayerManagerProxyMessages.h"
+#include "RemoteMediaPlayerProxyMessages.h"
 
 namespace WebKit {
 
@@ -44,7 +44,7 @@ VideoTrackPrivateRemote::VideoTrackPrivateRemote(MediaPlayerPrivateRemote& playe
 void VideoTrackPrivateRemote::setSelected(bool selected)
 {
     if (selected != this->selected())
-        m_player.connection().send(Messages::RemoteMediaPlayerManagerProxy::VideoTrackSetSelected(m_player.itentifier(), m_idendifier, selected), 0);
+        m_player.connection().send(Messages::RemoteMediaPlayerProxy::VideoTrackSetSelected(m_idendifier, selected), m_player.itentifier());
 
     VideoTrackPrivate::setSelected(selected);
 }

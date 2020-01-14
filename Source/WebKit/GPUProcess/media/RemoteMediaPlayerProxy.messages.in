@@ -1,0 +1,61 @@
+# Copyright (C) 2020 Apple Inc. All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+# 1. Redistributions of source code must retain the above copyright
+#    notice, this list of conditions and the following disclaimer.
+# 2. Redistributions in binary form must reproduce the above copyright
+#    notice, this list of conditions and the following disclaimer in the
+#    documentation and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+# THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+# PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+# BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+# SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+# INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+# CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+# ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+# THE POSSIBILITY OF SUCH DAMAGE.
+
+#if ENABLE(VIDEO)
+
+messages -> RemoteMediaPlayerProxy NotRefCounted {
+    PrepareForPlayback(bool privateMode, enum:uint8_t WebCore::MediaPlayerEnums::Preload preload, bool preservesPitch, bool prepareForRendering)
+
+    Load(URL url, Optional<WebKit::SandboxExtension::Handle> sandboxExtension, WebCore::ContentType contentType, String keySystem) -> (struct WebKit::RemoteMediaPlayerConfiguration playerConfiguration) Async
+    CancelLoad()
+
+    PrepareToPlay()
+
+    Play()
+    Pause()
+
+    SetVolume(double volume)
+    SetMuted(bool muted)
+
+    Seek(MediaTime time)
+    SeekWithTolerance(MediaTime time, MediaTime negativeTolerance, MediaTime positiveTolerance)
+
+    SetPreload(enum:uint8_t WebCore::MediaPlayerEnums::Preload preload)
+    SetPrivateBrowsingMode(bool privateMode)
+    SetPreservesPitch(bool preservesPitch)
+
+    PrepareForRendering()
+    SetSize(WebCore::IntSize size)
+    SetVisible(bool visible)
+    SetShouldMaintainAspectRatio(bool maintainAspectRatio)
+    SetVideoFullscreenFrame(WebCore::FloatRect rect)
+    SetVideoFullscreenGravity(enum:uint8_t WebCore::MediaPlayerEnums::VideoGravity gravity)
+    AcceleratedRenderingStateChanged(bool canBeAccelerated)
+    SetShouldDisableSleep(bool disable)
+    SetRate(double rate)
+
+    AudioTrackSetEnabled(WebKit::TrackPrivateRemoteIdentifier trackID, bool enabled)
+    VideoTrackSetSelected(WebKit::TrackPrivateRemoteIdentifier trackID, bool enabled)
+}
+
+#endif

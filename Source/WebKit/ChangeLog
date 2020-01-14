@@ -1,3 +1,78 @@
+2020-01-14  Eric Carlson  <eric.carlson@apple.com>
+
+        Nake MediaPlayerPrivateRemoteProxy a message receiver
+        https://bugs.webkit.org/show_bug.cgi?id=206237
+        <rdar://problem/58569057>
+
+        Reviewed by Youenn Fablet.
+
+        No new tests, no functional change.
+
+        Make MediaPlayerPrivateRemoteProxy a message receiver so we don't need a trampoline
+        for every method in the MediaPlayerPrivateRemoteManagerProxy.
+
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources-output.xcfilelist:
+        * DerivedSources.make:
+        * GPUProcess/GPUConnectionToWebProcess.cpp:
+        (WebKit::GPUConnectionToWebProcess::didReceiveMessage):
+        * GPUProcess/media/RemoteMediaPlayerManagerProxy.cpp:
+        (WebKit::RemoteMediaPlayerManagerProxy::didReceivePlayerMessage):
+        (WebKit::RemoteMediaPlayerManagerProxy::prepareForPlayback): Deleted.
+        (WebKit::RemoteMediaPlayerManagerProxy::load): Deleted.
+        (WebKit::RemoteMediaPlayerManagerProxy::cancelLoad): Deleted.
+        (WebKit::RemoteMediaPlayerManagerProxy::prepareToPlay): Deleted.
+        (WebKit::RemoteMediaPlayerManagerProxy::play): Deleted.
+        (WebKit::RemoteMediaPlayerManagerProxy::pause): Deleted.
+        (WebKit::RemoteMediaPlayerManagerProxy::seek): Deleted.
+        (WebKit::RemoteMediaPlayerManagerProxy::seekWithTolerance): Deleted.
+        (WebKit::RemoteMediaPlayerManagerProxy::setVolume): Deleted.
+        (WebKit::RemoteMediaPlayerManagerProxy::setMuted): Deleted.
+        (WebKit::RemoteMediaPlayerManagerProxy::setPreload): Deleted.
+        (WebKit::RemoteMediaPlayerManagerProxy::setPrivateBrowsingMode): Deleted.
+        (WebKit::RemoteMediaPlayerManagerProxy::setPreservesPitch): Deleted.
+        (WebKit::RemoteMediaPlayerManagerProxy::prepareForRendering): Deleted.
+        (WebKit::RemoteMediaPlayerManagerProxy::setSize): Deleted.
+        (WebKit::RemoteMediaPlayerManagerProxy::setVisible): Deleted.
+        (WebKit::RemoteMediaPlayerManagerProxy::setShouldMaintainAspectRatio): Deleted.
+        (WebKit::RemoteMediaPlayerManagerProxy::setVideoFullscreenFrame): Deleted.
+        (WebKit::RemoteMediaPlayerManagerProxy::setVideoFullscreenGravity): Deleted.
+        (WebKit::RemoteMediaPlayerManagerProxy::acceleratedRenderingStateChanged): Deleted.
+        (WebKit::RemoteMediaPlayerManagerProxy::setShouldDisableSleep): Deleted.
+        (WebKit::RemoteMediaPlayerManagerProxy::setRate): Deleted.
+        (WebKit::RemoteMediaPlayerManagerProxy::audioTrackSetEnabled): Deleted.
+        (WebKit::RemoteMediaPlayerManagerProxy::videoTrackSetSelected): Deleted.
+        * GPUProcess/media/RemoteMediaPlayerManagerProxy.h:
+        * GPUProcess/media/RemoteMediaPlayerManagerProxy.messages.in:
+        * GPUProcess/media/RemoteMediaPlayerProxy.h:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/GPU/media/AudioTrackPrivateRemote.cpp:
+        (WebKit::AudioTrackPrivateRemote::setEnabled):
+        * WebProcess/GPU/media/MediaPlayerPrivateRemote.cpp:
+        (WebKit::MediaPlayerPrivateRemote::prepareForPlayback):
+        (WebKit::MediaPlayerPrivateRemote::MediaPlayerPrivateRemote::load):
+        (WebKit::MediaPlayerPrivateRemote::cancelLoad):
+        (WebKit::MediaPlayerPrivateRemote::prepareToPlay):
+        (WebKit::MediaPlayerPrivateRemote::play):
+        (WebKit::MediaPlayerPrivateRemote::pause):
+        (WebKit::MediaPlayerPrivateRemote::setPreservesPitch):
+        (WebKit::MediaPlayerPrivateRemote::setVolumeDouble):
+        (WebKit::MediaPlayerPrivateRemote::setMuted):
+        (WebKit::MediaPlayerPrivateRemote::setPreload):
+        (WebKit::MediaPlayerPrivateRemote::setPrivateBrowsingMode):
+        (WebKit::MediaPlayerPrivateRemote::seek):
+        (WebKit::MediaPlayerPrivateRemote::seekWithTolerance):
+        (WebKit::MediaPlayerPrivateRemote::prepareForRendering):
+        (WebKit::MediaPlayerPrivateRemote::setSize):
+        (WebKit::MediaPlayerPrivateRemote::setVisible):
+        (WebKit::MediaPlayerPrivateRemote::setShouldMaintainAspectRatio):
+        (WebKit::MediaPlayerPrivateRemote::setVideoFullscreenFrame):
+        (WebKit::MediaPlayerPrivateRemote::setVideoFullscreenGravity):
+        (WebKit::MediaPlayerPrivateRemote::acceleratedRenderingStateChanged):
+        (WebKit::MediaPlayerPrivateRemote::setShouldDisableSleep):
+        * WebProcess/GPU/media/VideoTrackPrivateRemote.cpp:
+        (WebKit::VideoTrackPrivateRemote::setSelected):
+
 2020-01-14  Don Olmstead  <don.olmstead@sony.com>
 
         Share TextChecker stub for ports without text checking
