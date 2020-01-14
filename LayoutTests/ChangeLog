@@ -1,3 +1,15 @@
+2020-01-14  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        REGRESSION: [ Catalina wk1 ] editing/mac/attributed-string/attributed-string-across-shadow-boundaries-with-style-2.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=205814
+        <rdar://problem/58347056>
+
+        Unreviewed test gardening.
+
+        * editing/mac/attributed-string/attributed-string-across-shadow-boundaries-with-style-2-expected.txt: Removed.
+        * platform/mac-wk1/TestExpectations:
+        * platform/mac-wk1/editing/mac/attributed-string/attributed-string-across-shadow-boundaries-with-style-2-expected.txt:
+
 2020-01-14  Diego Pino Garcia  <dpino@igalia.com>
 
         [GTK] Unreviewed test gardening

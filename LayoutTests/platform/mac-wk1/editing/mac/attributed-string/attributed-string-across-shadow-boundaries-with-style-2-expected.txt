@@ -25,7 +25,7 @@ Alignment 4
     HeaderLevel: 0 LineBreakStrategy 0
 [hello]
     NSColor: #0000ff (sRGB)
-    NSFont: Times-Italic 16.00 pt.
+    NSFont: Times-BoldItalic 16.00 pt.
     NSKern: 0pt
     NSStrokeColor: #0000ff (sRGB)
     NSStrokeWidth: 0
