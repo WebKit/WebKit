@@ -1386,6 +1386,21 @@ typedef NS_ENUM(NSInteger, EndEditingReason) {
     if (superDidResign) {
         [self _handleDOMPasteRequestWithResult:WebCore::DOMPasteAccessResponse::DeniedForGesture];
         _page->activityStateDidChange(WebCore::ActivityState::IsFocused);
+
+        if (_keyWebEventHandler) {
+            dispatch_async(dispatch_get_main_queue(), [weakHandler = WeakObjCPtr<id>(_keyWebEventHandler.get()), weakSelf = WeakObjCPtr<WKContentView>(self)] {
+                if (!weakSelf || !weakHandler)
+                    return;
+
+                auto strongSelf = weakSelf.get();
+                if ([strongSelf isFirstResponder] || weakHandler.get().get() != strongSelf->_keyWebEventHandler.get())
+                    return;
+
+                auto keyEventHandler = std::exchange(strongSelf->_keyWebEventHandler, nil);
+                ASSERT(strongSelf->_page->hasQueuedKeyEvent());
+                keyEventHandler(strongSelf->_page->firstQueuedKeyEvent().nativeEvent(), YES);
+            });
+        }
     }
 
     return superDidResign;

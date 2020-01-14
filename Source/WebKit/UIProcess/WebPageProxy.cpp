@@ -2627,6 +2627,16 @@ bool WebPageProxy::shouldProcessWheelEventNow(const WebWheelEvent& event) const
     return false;
 }
 
+bool WebPageProxy::hasQueuedKeyEvent() const
+{
+    return !m_keyEventQueue.isEmpty();
+}
+
+const NativeWebKeyboardEvent& WebPageProxy::firstQueuedKeyEvent() const
+{
+    return m_keyEventQueue.first();
+}
+
 void WebPageProxy::handleKeyboardEvent(const NativeWebKeyboardEvent& event)
 {
     if (!hasRunningProcess())

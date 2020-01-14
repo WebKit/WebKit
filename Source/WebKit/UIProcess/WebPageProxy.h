@@ -1663,6 +1663,9 @@ public:
 
     bool isHandlingPreventableTouchStart() const { return m_handlingPreventableTouchStartCount; }
 
+    bool hasQueuedKeyEvent() const;
+    const NativeWebKeyboardEvent& firstQueuedKeyEvent() const;
+
 private:
     WebPageProxy(PageClient&, WebProcessProxy&, Ref<API::PageConfiguration>&&);
     void platformInitialize();

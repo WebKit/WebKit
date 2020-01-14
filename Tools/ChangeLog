@@ -1,3 +1,17 @@
+2020-01-14  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Keyboard input is severely delayed after switching away from unresponsive tab
+        https://bugs.webkit.org/show_bug.cgi?id=206242
+        <rdar://problem/57132891>
+
+        Reviewed by Tim Horton.
+
+        Add a couple of new API tests: (1) verify that the key event completion handler can still be invoked in an
+        unresponsive web view after resigning first responder, and (2) verify that we'll try to wait for the current
+        key event to be processed in a web view, if it remains the first responder.
+
+        * TestWebKitAPI/Tests/ios/KeyboardInputTestsIOS.mm:
+
 2020-01-10  Jiewen Tan  <jiewen_tan@apple.com>
 
         [WebAuthn] Implement SPI to tell UI clients to select assertion responses

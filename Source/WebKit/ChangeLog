@@ -1,3 +1,45 @@
+2020-01-14  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Keyboard input is severely delayed after switching away from unresponsive tab
+        https://bugs.webkit.org/show_bug.cgi?id=206242
+        <rdar://problem/57132891>
+
+        Reviewed by Tim Horton.
+
+        UIKit delivers key events to WKWebView using asynchronous SPI (-handleKeyWebEvent:withCompletionHandler:). The
+        completion handler is invoked when the web page has processed the event, and determines whether to proceed with
+        default behavior via the `BOOL handled` argument. Using UIKeyboardImpl's UIKeyboardTaskQueue, UIKit appends
+        subsequent key events to a queue, to be processed by the current first responder after the current key event
+        has been handled.
+
+        In the scenario where the web page is completely unresponsive, this means key events that come after an event
+        that has been dispatched to the unresponsive page will be stuck in the task queue; this manifests in behaviors
+        similar to the one in this bug:
+
+        - Using a hardware keyboard, press any key in an unresponsive page in Safari.
+        - Press CMD+T (to create a new tab and focus the unified field) or CMT+L (to just focus the unified field).
+        - Try to type in the unified field.
+
+        The result is that no characters are inserted in the unified field, because the hardware key events are stuck in
+        UIKeyboardTaskQueue waiting for the unresponsive page to finish handling the current key event. To fix this, we
+        introduce a mechanism for invoking the key event handler on WKContentView before the web page has actually
+        finished processing the event, but only in the case where the web view has resigned first responder (and
+        therefore won't receive subsequent key events anyways).
+
+        Tests:  KeyboardInputTests.ResigningFirstResponderCancelsKeyEvents
+                KeyboardInputTests.WaitForKeyEventHandlerInFirstResponder
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::hasQueuedKeyEvent const):
+        (WebKit::WebPageProxy::firstQueuedKeyEvent const):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView resignFirstResponderForWebView]):
+
+        After the content view has resigned first responder with a pending key event handler (and if it did not
+        immediately become first responder again in the same runloop), then invoke the key event handler early, passing
+        in `YES` for `handled` to prevent any default actions such as text insertion from being dispatched to the view.
+
 2020-01-14  Jiewen Tan  <jiewen_tan@apple.com>
 
         Unreviewed, a build fix after r254533

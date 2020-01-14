@@ -323,6 +323,46 @@ TEST(KeyboardInputTests, CanHandleKeyEventInCompletionHandler)
     EXPECT_WK_STREQ("a", [webView stringByEvaluatingJavaScript:@"document.querySelector('input').value"]);
 }
 
+TEST(KeyboardInputTests, ResigningFirstResponderCancelsKeyEvents)
+{
+    auto webView = webViewWithAutofocusedInput();
+    auto contentView = [webView textInputContentView];
+    auto keyDownEvent = adoptNS([[WebEvent alloc] initWithKeyEventType:WebEventKeyDown timeStamp:CFAbsoluteTimeGetCurrent() characters:@"a" charactersIgnoringModifiers:@"a" modifiers:0 isRepeating:NO withFlags:0 withInputManagerHint:nil keyCode:0 isTabKey:NO]);
+
+    [webView becomeFirstResponder];
+    [webView evaluateJavaScript:@"while(1);" completionHandler:nil];
+
+    bool doneWaiting = false;
+    [contentView handleKeyWebEvent:keyDownEvent.get() withCompletionHandler:[&] (WebEvent *event, BOOL handled) {
+        EXPECT_TRUE([event isEqual:keyDownEvent.get()]);
+        EXPECT_TRUE(handled);
+        doneWaiting = true;
+    }];
+
+    EXPECT_TRUE([webView resignFirstResponder]);
+    TestWebKitAPI::Util::run(&doneWaiting);
+}
+
+TEST(KeyboardInputTests, WaitForKeyEventHandlerInFirstResponder)
+{
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
+    auto contentView = [webView textInputContentView];
+    auto keyDownEvent = adoptNS([[WebEvent alloc] initWithKeyEventType:WebEventKeyDown timeStamp:CFAbsoluteTimeGetCurrent() characters:@"a" charactersIgnoringModifiers:@"a" modifiers:0 isRepeating:NO withFlags:0 withInputManagerHint:nil keyCode:0 isTabKey:NO]);
+
+    [webView becomeFirstResponder];
+    [webView synchronouslyLoadHTMLString:@"<body></body>"];
+    [webView evaluateJavaScript:@"start = Date.now(); while(Date.now() - start < 500);" completionHandler:nil];
+
+    bool doneWaiting = false;
+    [contentView handleKeyWebEvent:keyDownEvent.get() withCompletionHandler:[&] (WebEvent *event, BOOL handled) {
+        EXPECT_TRUE([event isEqual:keyDownEvent.get()]);
+        EXPECT_FALSE(handled);
+        doneWaiting = true;
+    }];
+
+    TestWebKitAPI::Util::run(&doneWaiting);
+}
+
 TEST(KeyboardInputTests, CaretSelectionRectAfterRestoringFirstResponderWithRetainActiveFocusedState)
 {
     // This difference in caret width is due to the fact that we don't zoom in to the input field on iPad, but do on iPhone.
