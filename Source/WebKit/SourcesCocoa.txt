@@ -386,6 +386,7 @@ UIProcess/Cocoa/VersionChecks.mm
 UIProcess/Cocoa/VideoFullscreenManagerProxy.mm
 UIProcess/Cocoa/WebPageProxyCocoa.mm
 UIProcess/Cocoa/WebPasteboardProxyCocoa.mm
+UIProcess/Cocoa/WebPreferencesCocoa.mm
 UIProcess/Cocoa/WebProcessCacheCocoa.mm
 UIProcess/Cocoa/WebProcessPoolCocoa.mm
 UIProcess/Cocoa/WebProcessProxyCocoa.mm
@@ -483,7 +484,6 @@ UIProcess/mac/WebDataListSuggestionsDropdownMac.mm
 UIProcess/mac/WebInspectorProxyMac.mm
 UIProcess/mac/WebPageProxyMac.mm
 UIProcess/mac/WebPopupMenuProxyMac.mm
-UIProcess/mac/WebPreferencesMac.mm
 UIProcess/mac/WebProcessProxyMac.mm
 UIProcess/mac/WindowServerConnection.mm
 UIProcess/mac/WKFullScreenWindowController.mm

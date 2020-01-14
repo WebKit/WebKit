@@ -60,7 +60,6 @@ list(APPEND WebKit_SOURCES
     UIProcess/win/WebInspectorProxyWin.cpp
     UIProcess/win/WebPageProxyWin.cpp
     UIProcess/win/WebPopupMenuProxyWin.cpp
-    UIProcess/win/WebPreferencesWin.cpp
     UIProcess/win/WebProcessPoolWin.cpp
     UIProcess/win/WebView.cpp
 

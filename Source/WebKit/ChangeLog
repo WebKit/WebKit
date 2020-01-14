@@ -1,3 +1,51 @@
+2020-01-13  Don Olmstead  <don.olmstead@sony.com>
+
+        Share WebPreferences stub for ports without an implementation
+        https://bugs.webkit.org/show_bug.cgi?id=206186
+
+        Reviewed by Alex Christensen.
+
+        No new tests. No change in behavior.
+
+        Moved the platform agnostic stubs that were common in the GTK, WPE and Windows ports
+        into WebPreferences.cpp. Only Cocoa ports are implementing the platform specific parts
+        of WebPreferences.
+
+        Also moving WebPreferencesMac.mm to WebPreferencesCocoa.mm. There were no platform guards
+        for iOS family code and there was no iOS specific implementation.
+
+        * PlatformFTW.cmake:
+        * PlatformWin.cmake:
+        * SourcesCocoa.txt:
+        * SourcesWPE.txt:
+        * UIProcess/Cocoa/WebPreferencesCocoa.mm: Renamed from Source/WebKit/UIProcess/mac/WebPreferencesMac.mm.
+        * UIProcess/WebPreferences.cpp:
+        (WebKit::WebPreferences::platformInitializeStore):
+        (WebKit::WebPreferences::platformUpdateStringValueForKey):
+        (WebKit::WebPreferences::platformUpdateBoolValueForKey):
+        (WebKit::WebPreferences::platformUpdateUInt32ValueForKey):
+        (WebKit::WebPreferences::platformUpdateDoubleValueForKey):
+        (WebKit::WebPreferences::platformUpdateFloatValueForKey):
+        (WebKit::WebPreferences::platformDeleteKey):
+        (WebKit::WebPreferences::platformGetStringUserValueForKey):
+        (WebKit::WebPreferences::platformGetBoolUserValueForKey):
+        (WebKit::WebPreferences::platformGetUInt32UserValueForKey):
+        (WebKit::WebPreferences::platformGetDoubleUserValueForKey):
+        * UIProcess/gtk/WebPreferencesGtk.cpp:
+        (WebKit::WebPreferences::platformUpdateStringValueForKey): Deleted.
+        (WebKit::WebPreferences::platformUpdateBoolValueForKey): Deleted.
+        (WebKit::WebPreferences::platformUpdateUInt32ValueForKey): Deleted.
+        (WebKit::WebPreferences::platformUpdateDoubleValueForKey): Deleted.
+        (WebKit::WebPreferences::platformUpdateFloatValueForKey): Deleted.
+        (WebKit::WebPreferences::platformDeleteKey): Deleted.
+        (WebKit::WebPreferences::platformGetStringUserValueForKey): Deleted.
+        (WebKit::WebPreferences::platformGetBoolUserValueForKey): Deleted.
+        (WebKit::WebPreferences::platformGetUInt32UserValueForKey): Deleted.
+        (WebKit::WebPreferences::platformGetDoubleUserValueForKey): Deleted.
+        * UIProcess/win/WebPreferencesWin.cpp: Removed.
+        * UIProcess/wpe/WebPreferencesWPE.cpp: Removed.
+        * WebKit.xcodeproj/project.pbxproj:
+
 2020-01-13  Keith Rollin  <krollin@apple.com>
 
         Reformat WebProcessPool logging

@@ -215,7 +215,6 @@ UIProcess/wpe/TextCheckerWPE.cpp
 UIProcess/wpe/WebInspectorProxyWPE.cpp
 UIProcess/wpe/WebPageProxyWPE.cpp
 UIProcess/wpe/WebPasteboardProxyWPE.cpp
-UIProcess/wpe/WebPreferencesWPE.cpp
 
 WebProcess/InjectedBundle/API/glib/DOM/DOMObjectCache.cpp @no-unify
 WebProcess/InjectedBundle/API/glib/DOM/WebKitDOMDocument.cpp @no-unify
