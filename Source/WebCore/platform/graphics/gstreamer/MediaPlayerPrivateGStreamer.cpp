@@ -2574,6 +2574,7 @@ void MediaPlayerPrivateGStreamer::updateStates()
             m_networkState = MediaPlayer::NetworkState::Empty;
             break;
         case GST_STATE_PAUSED:
+            FALLTHROUGH;
         case GST_STATE_PLAYING:
             if (m_isBuffering) {
                 if (m_bufferingPercentage == 100) {
@@ -2614,7 +2615,7 @@ void MediaPlayerPrivateGStreamer::updateStates()
         } else if (m_currentState == GST_STATE_PLAYING) {
             m_isPaused = false;
 
-            if ((m_isBuffering && m_isLiveStream) || !m_playbackRate) {
+            if ((m_isBuffering && !m_isLiveStream) || !m_playbackRate) {
                 GST_DEBUG_OBJECT(pipeline(), "[Buffering] Pausing stream for buffering.");
                 changePipelineState(GST_STATE_PAUSED);
             }
