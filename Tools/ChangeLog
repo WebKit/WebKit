@@ -1,3 +1,31 @@
+2020-01-13  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r254440. rdar://problem/58530962
+
+    Don't softlink AVCapture classes on watchOS or tvOS
+    https://bugs.webkit.org/show_bug.cgi?id=205974
+    <rdar://problem/58427281>
+    
+    Unreviewed test fix after r254257.
+    
+    
+    * TestWebKitAPI/Tests/WebCore/cocoa/AVFoundationSoftLinkTest.mm:
+    (TestWebKitAPI::TEST):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@254440 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-01-13  Eric Carlson  <eric.carlson@apple.com>
+
+            Don't softlink AVCapture classes on watchOS or tvOS
+            https://bugs.webkit.org/show_bug.cgi?id=205974
+            <rdar://problem/58427281>
+
+            Unreviewed test fix after r254257.
+
+            * TestWebKitAPI/Tests/WebCore/cocoa/AVFoundationSoftLinkTest.mm:
+            (TestWebKitAPI::TEST):
+
 2020-01-03  Tim Horton  <timothy_horton@apple.com>
 
         REGRESSION: 150+ flaky failures on some bots (color mismatches)
