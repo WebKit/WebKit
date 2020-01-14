@@ -1,3 +1,19 @@
+2020-01-14  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: crash in DumpRenderTree at com.apple.JavaScriptCore: WTF::RefCountedBase::hasOneRef const
+        https://bugs.webkit.org/show_bug.cgi?id=206191
+        <rdar://problem/58415623>
+
+        Reviewed by Joseph Pecoraro.
+
+        * debugger/Debugger.cpp:
+        (JSC::Debugger::attach):
+        (GatherSourceProviders::GatherSourceProviders): Deleted.
+        (GatherSourceProviders::operator()): Deleted.
+        Use `RefPtr<SourceProvider>` instead of `SourceProvider*` in case the `FunctionExecutable`
+        is destroyed after the `SourceProvider*` is saved, which would destroy the `SourceProvider`
+        as well.
+
 2020-01-14  Saam Barati  <sbarati@apple.com>
 
         Add an option that enables/disables throwing away baseline JIT code
