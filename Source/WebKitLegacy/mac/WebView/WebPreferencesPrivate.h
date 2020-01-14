@@ -630,6 +630,9 @@ extern NSString *WebPreferencesCacheModelChangedInternalNotification WEBKIT_DEPR
 - (void)setCSSShadowPartsEnabled:(BOOL)flag;
 - (BOOL)cssShadowPartsEnabled;
 
+- (void)setLayoutFormattingContextIntegrationEnabled:(BOOL)flag;
+- (BOOL)layoutFormattingContextIntegrationEnabled;
+
 - (BOOL)isInAppBrowserPrivacyEnabled;
 - (void)setInAppBrowserPrivacyEnabled:(BOOL)flag;
 

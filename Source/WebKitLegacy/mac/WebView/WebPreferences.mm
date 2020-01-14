@@ -634,6 +634,7 @@ public:
         @NO, WebKitHighlightAPIEnabledPreferenceKey,
         @YES, WebKitModernMediaControlsEnabledPreferenceKey,
         @YES, WebKitWebAnimationsCSSIntegrationEnabledPreferenceKey,
+        @YES, WebKitLayoutFormattingContextIntegrationEnabledPreferenceKey,
 
 #if ENABLE(WEBGL2)
         @NO, WebKitWebGL2EnabledPreferenceKey,
@@ -3591,6 +3592,16 @@ static NSString *classIBCreatorID = nil;
 - (void)setCSSShadowPartsEnabled:(BOOL)flag
 {
     [self _setBoolValue:flag forKey:WebKitCSSShadowPartsEnabledPreferenceKey];
+}
+
+- (BOOL)layoutFormattingContextIntegrationEnabled
+{
+    return [self _boolValueForKey:WebKitLayoutFormattingContextIntegrationEnabledPreferenceKey];
+}
+
+- (void)setLayoutFormattingContextIntegrationEnabled:(BOOL)flag
+{
+    [self _setBoolValue:flag forKey:WebKitLayoutFormattingContextIntegrationEnabledPreferenceKey];
 }
 
 - (BOOL)remotePlaybackEnabled

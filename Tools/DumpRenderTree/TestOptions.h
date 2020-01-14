@@ -53,6 +53,7 @@ struct TestOptions {
     bool enableCoreMathML { false };
     bool enableRequestIdleCallback { false };
     bool enableAsyncClipboardAPI { false };
+    bool layoutFormattingContextIntegrationEnabled { true };
     std::string jscOptions;
     std::string additionalSupportedImageTypes;
 

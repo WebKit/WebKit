@@ -1,3 +1,18 @@
+2020-01-14  Antti Koivisto  <antti@apple.com>
+
+        [LFC][Integration] Support the feature flag in DumpRenderTree
+        https://bugs.webkit.org/show_bug.cgi?id=206218
+
+        Reviewed by Zalan Bujtas.
+
+        This allows tests to turn off the feature in WK1 if needed.
+
+        * DumpRenderTree/TestOptions.cpp:
+        (TestOptions::TestOptions):
+        * DumpRenderTree/TestOptions.h:
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (setWebPreferencesForTestOptions):
+
 2020-01-14  Alicia Boya García  <aboya@igalia.com>
 
         [WTF] Make MediaTime constructor constexpr

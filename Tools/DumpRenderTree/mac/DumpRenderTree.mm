@@ -1035,6 +1035,7 @@ static void setWebPreferencesForTestOptions(const TestOptions& options)
     preferences.asyncClipboardAPIEnabled = options.enableAsyncClipboardAPI;
     preferences.privateBrowsingEnabled = options.useEphemeralSession;
     preferences.usesPageCache = options.enableBackForwardCache;
+    preferences.layoutFormattingContextIntegrationEnabled = options.layoutFormattingContextIntegrationEnabled;
 }
 
 // Called once on DumpRenderTree startup.

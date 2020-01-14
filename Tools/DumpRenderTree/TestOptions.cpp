@@ -148,6 +148,8 @@ TestOptions::TestOptions(const std::string& pathOrURL, const std::string& absolu
             enableRequestIdleCallback = parseBooleanTestHeaderValue(value);
         else if (key == "experimental:AsyncClipboardAPIEnabled")
             enableAsyncClipboardAPI = parseBooleanTestHeaderValue(value);
+        else if (key == "internal:LayoutFormattingContextIntegrationEnabled")
+            layoutFormattingContextIntegrationEnabled = parseBooleanTestHeaderValue(value);
         pairStart = pairEnd + 1;
     }
 }
