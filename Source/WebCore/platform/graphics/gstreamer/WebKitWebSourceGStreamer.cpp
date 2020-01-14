@@ -1155,7 +1155,7 @@ void CachedResourceStreamingClient::dataReceived(PlatformMediaResource&, const c
     if (!isnan(priv->downloadStartTime)) {
         priv->totalDownloadedBytes += length;
         double timeSinceStart = (WallTime::now() - priv->downloadStartTime).seconds();
-        GST_TRACE_OBJECT(src, "downloaded %u bytes in %f seconds =~ %1.0f bytes/second", priv->totalDownloadedBytes, timeSinceStart
+        GST_TRACE_OBJECT(src, "downloaded %" G_GUINT64_FORMAT " bytes in %f seconds =~ %1.0f bytes/second", priv->totalDownloadedBytes, timeSinceStart
             , timeSinceStart ? priv->totalDownloadedBytes / timeSinceStart : 0);
     } else {
         priv->downloadStartTime = WallTime::now();
