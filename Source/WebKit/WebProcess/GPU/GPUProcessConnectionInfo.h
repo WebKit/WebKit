@@ -31,9 +31,6 @@ namespace WebKit {
 
 struct GPUProcessConnectionInfo {
     IPC::Attachment connection;
-#if HAVE(AUDIT_TOKEN)
-    Optional<audit_token_t> auditToken;
-#endif
 
     IPC::Connection::Identifier identifier()
     {
@@ -63,19 +60,12 @@ struct GPUProcessConnectionInfo {
     void encode(IPC::Encoder& encoder) const
     {
         encoder << connection;
-#if HAVE(AUDIT_TOKEN)
-        encoder << auditToken;
-#endif
     }
     
     static bool decode(IPC::Decoder& decoder, GPUProcessConnectionInfo& info)
     {
         if (!decoder.decode(info.connection))
             return false;
-#if HAVE(AUDIT_TOKEN)
-        if (!decoder.decode(info.auditToken))
-            return false;
-#endif
         return true;
     }
 };

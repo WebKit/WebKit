@@ -35,7 +35,6 @@
 #include "GPUConnectionToWebProcess.h"
 #include "GPUProcessCreationParameters.h"
 #include "Logging.h"
-#include "SandboxExtension.h"
 #include "WebPageProxyMessages.h"
 #include "WebProcessPoolMessages.h"
 #include <WebCore/LogInitialization.h>

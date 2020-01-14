@@ -1,3 +1,7 @@
+2020-01-14  Kocsen Chung  <kocsen_chung@apple.com>
+
+        Revert r254392. rdar://problem/58542040
+
 2020-01-11  Alex Christensen  <achristensen@webkit.org>
 
         Expose frame information on _WKResourceLoadInfo
