@@ -1,5 +1,7 @@
 /*
+ * Copyright (C) 2010 Apple Inc. All rights reserved.
  * Copyright (C) 2014 Igalia S.L.
+ * Copyright (C) 2017 Sony Interactive Entertainment Inc.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,17 +28,22 @@
 #include "config.h"
 #include "TextChecker.h"
 
+#if !PLATFORM(COCOA) && !PLATFORM(GTK)
 #include "TextCheckerState.h"
 #include <WebCore/NotImplemented.h>
 
 namespace WebKit {
 using namespace WebCore;
 
-static TextCheckerState textCheckerState;
+static TextCheckerState& checkerState()
+{
+    static TextCheckerState textCheckerState;
+    return textCheckerState;
+}
 
 const TextCheckerState& TextChecker::state()
 {
-    return textCheckerState;
+    return checkerState();
 }
 
 void TextChecker::setTestingMode(bool)
@@ -138,4 +145,14 @@ void TextChecker::requestCheckingOfString(Ref<TextCheckerCompletion>&&, int32_t)
     notImplemented();
 }
 
-} // namespace WebKit
+#if USE(UNIFIED_TEXT_CHECKING)
+Vector<TextCheckingResult> TextChecker::checkTextOfParagraph(SpellDocumentTag, StringView, int32_t, OptionSet<TextCheckingType>, bool)
+{
+    notImplemented();
+    return { };
+}
+#endif
+
+} // namespace WebKit 
+
+#endif // !PLATFORM(COCOA) && !PLATFORM(GTK)

@@ -55,7 +55,6 @@ list(APPEND WebKit_SOURCES
     UIProcess/WebsiteData/win/WebsiteDataStoreWin.cpp
 
     UIProcess/win/PageClientImpl.cpp
-    UIProcess/win/TextCheckerWin.cpp
     UIProcess/win/WebContextMenuProxyWin.cpp
     UIProcess/win/WebInspectorProxyWin.cpp
     UIProcess/win/WebPageProxyWin.cpp

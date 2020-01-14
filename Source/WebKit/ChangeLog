@@ -1,3 +1,26 @@
+2020-01-14  Don Olmstead  <don.olmstead@sony.com>
+
+        Share TextChecker stub for ports without text checking
+        https://bugs.webkit.org/show_bug.cgi?id=205964
+
+        Reviewed by Ross Kirsling.
+
+        No new tests. No change in behavior.
+
+        The Windows and WPE ports have the same stub for text checking. Combine those
+        two for non-Cocoa and non-GTK ports.
+
+        * PlatformFTW.cmake:
+        * PlatformWin.cmake:
+        * Sources.txt:
+        * SourcesWPE.txt:
+        * UIProcess/TextChecker.cpp: Renamed from Source/WebKit/UIProcess/wpe/TextCheckerWPE.cpp.
+        (WebKit::checkerState):
+        (WebKit::TextChecker::state):
+        (WebKit::TextChecker::checkTextOfParagraph):
+        * UIProcess/win/TextCheckerWin.cpp: Removed.
+        * WebKit.xcodeproj/project.pbxproj:
+
 2020-01-14  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r254505.
