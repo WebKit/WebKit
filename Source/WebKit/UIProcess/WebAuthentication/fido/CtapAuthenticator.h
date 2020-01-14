@@ -63,7 +63,7 @@ private:
     void getRetries();
     void continueGetKeyAgreementAfterGetRetries(Vector<uint8_t>&&);
     void continueRequestPinAfterGetKeyAgreement(Vector<uint8_t>&&, uint64_t retries);
-    void continueGetPinTokenAfterRequestPin(const String& pin, const CryptoKeyEC&);
+    void continueGetPinTokenAfterRequestPin(const String& pin, const WebCore::CryptoKeyEC&);
     void continueRequestAfterGetPinToken(Vector<uint8_t>&&, const fido::pin::TokenRequest&);
 
     bool tryDowngrade();
