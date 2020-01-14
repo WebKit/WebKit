@@ -495,6 +495,7 @@ constexpr bool enableWebAssemblyStreamingApi = false;
     v(Double, dumpJITMemoryFlushInterval, 10, Restricted, "Maximum time in between flushes of the JIT memory dump in seconds.") \
     v(Bool, useUnlinkedCodeBlockJettisoning, false, Normal, "If true, UnlinkedCodeBlock can be jettisoned.") \
     v(Unsigned, getByValICMaxNumberOfIdentifiers, 4, Normal, "Number of identifiers we see in the LLInt that could cause us to bail on generating an IC for get_by_val.") \
+    v(Bool, enableThrowingAwayBaselineCode, false, Normal, nullptr) \
 
 enum OptionEquivalence {
     SameOption,

@@ -1386,7 +1386,7 @@ void CodeBlock::finalizeUnconditionally(VM& vm)
 #if ENABLE(JIT)
     // If BaselineJIT code is not executing, and an optimized replacement exists, we attempt
     // to discard baseline JIT code and reinstall LLInt code to save JIT memory.
-    if (!Options::forceBaseline() && jitType() == JITType::BaselineJIT && !m_vm->heap.codeBlockSet().isCurrentlyExecuting(this)) {
+    if (!Options::forceBaseline() && Options::enableThrowingAwayBaselineCode() && jitType() == JITType::BaselineJIT && !m_vm->heap.codeBlockSet().isCurrentlyExecuting(this)) {
         if (CodeBlock* optimizedCodeBlock = optimizedReplacement()) {
             if (!optimizedCodeBlock->m_osrExitCounter) {
                 m_jitCode = nullptr;
