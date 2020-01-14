@@ -104,9 +104,14 @@ void HTMLFrameElementBase::openURL(LockHistory lockHistory, LockBackForwardList 
 
 void HTMLFrameElementBase::parseAttribute(const QualifiedName& name, const AtomString& value)
 {
-    if (name == srcdocAttr)
-        setLocation("about:srcdoc");
-    else if (name == srcAttr && !hasAttributeWithoutSynchronization(srcdocAttr))
+    if (name == srcdocAttr) {
+        if (value.isNull()) {
+            const AtomString& srcValue = attributeWithoutSynchronization(srcAttr);
+            if (!srcValue.isNull())
+                setLocation(stripLeadingAndTrailingHTMLSpaces(srcValue));
+        } else
+            setLocation("about:srcdoc");
+    } else if (name == srcAttr && !hasAttributeWithoutSynchronization(srcdocAttr))
         setLocation(stripLeadingAndTrailingHTMLSpaces(value));
     else
         HTMLFrameOwnerElement::parseAttribute(name, value);

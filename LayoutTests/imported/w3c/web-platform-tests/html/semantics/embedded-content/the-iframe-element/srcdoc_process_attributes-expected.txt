@@ -2,5 +2,5 @@
 
 PASS Adding `srcdoc` attribute triggers attributes processing 
 PASS Setting `srcdoc` (via property) triggers attributes processing 
-FAIL Removing `srcdoc` attribute triggers attributes processing assert_equals: expected "blob:" but got "about:"
+PASS Removing `srcdoc` attribute triggers attributes processing 
 
