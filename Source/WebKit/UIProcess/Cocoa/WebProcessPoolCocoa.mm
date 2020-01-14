@@ -107,6 +107,8 @@ SOFT_LINK_PRIVATE_FRAMEWORK(BackBoardServices)
 SOFT_LINK(BackBoardServices, BKSDisplayBrightnessGetCurrent, float, (), ());
 #endif
 
+#define WEBPROCESSPOOL_RELEASE_LOG(channel, fmt, ...) RELEASE_LOG(channel, "%p - WebProcessPool::" fmt, this, ##__VA_ARGS__)
+
 namespace WebKit {
 using namespace WebCore;
 
@@ -688,7 +690,7 @@ int webProcessThroughputQOS()
 #if PLATFORM(IOS_FAMILY)
 void WebProcessPool::applicationIsAboutToSuspend()
 {
-    RELEASE_LOG(ProcessSuspension, "WebProcessPool::applicationIsAboutToSuspend() Terminating non-critical processes");
+    WEBPROCESSPOOL_RELEASE_LOG(ProcessSuspension, "applicationIsAboutToSuspend: Terminating non-critical processes");
 
     m_backForwardCache->pruneToSize(1);
     m_webProcessCache->clear();

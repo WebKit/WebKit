@@ -136,6 +136,10 @@
 #include <wtf/RefCountedLeakCounter.h>
 #endif
 
+#define WEBPROCESSPOOL_RELEASE_LOG(channel, fmt, ...) RELEASE_LOG(channel, "%p - WebProcessPool::" fmt, this, ##__VA_ARGS__)
+#define WEBPROCESSPOOL_RELEASE_LOG_ERROR(channel, fmt, ...) RELEASE_LOG_ERROR(channel, "%p - WebProcessPool::" fmt, this, ##__VA_ARGS__)
+#define WEBPROCESSPOOL_RELEASE_LOG_IF_ALLOWED(channel, fmt, ...) RELEASE_LOG_IF(sessionID.isAlwaysOnLoggingAllowed(), channel, "%p - WebProcessPool::" fmt, this, ##__VA_ARGS__)
+
 namespace WebKit {
 using namespace WebCore;
 
@@ -739,7 +743,7 @@ void WebProcessPool::establishWorkerContextConnectionToNetworkProcess(NetworkPro
 
     RegistrableDomainWithSessionID registrableDomainWithSessionID { RegistrableDomain { registrableDomain }, sessionID };
     if (m_serviceWorkerProcesses.contains(registrableDomainWithSessionID)) {
-        RELEASE_LOG_IF(sessionID.isAlwaysOnLoggingAllowed(), ServiceWorker, "WebProcessPool::establishWorkerContextConnectionToNetworkProcess process already created");
+        WEBPROCESSPOOL_RELEASE_LOG_IF_ALLOWED(ServiceWorker, "establishWorkerContextConnectionToNetworkProcess process already created");
         return;
     }
 
@@ -759,7 +763,7 @@ void WebProcessPool::establishWorkerContextConnectionToNetworkProcess(NetworkPro
             serviceWorkerProcessProxy = process.get();
             serviceWorkerProcessProxy->enableServiceWorkers(userContentControllerIdentifierForServiceWorkers());
 
-            RELEASE_LOG_IF(sessionID.isAlwaysOnLoggingAllowed(), ServiceWorker, "WebProcessPool::establishWorkerContextConnectionToNetworkProcess reusing an existing web process %p, process identifier %d", serviceWorkerProcessProxy, serviceWorkerProcessProxy->processIdentifier());
+            WEBPROCESSPOOL_RELEASE_LOG_IF_ALLOWED(ServiceWorker, "establishWorkerContextConnectionToNetworkProcess reusing an existing web process (process=%p, PID=%d)", serviceWorkerProcessProxy, serviceWorkerProcessProxy->processIdentifier());
             break;
         }
     }
@@ -768,7 +772,7 @@ void WebProcessPool::establishWorkerContextConnectionToNetworkProcess(NetworkPro
         auto newProcessProxy = WebProcessProxy::createForServiceWorkers(*this, WTFMove(registrableDomain), *websiteDataStore);
         serviceWorkerProcessProxy = newProcessProxy.ptr();
 
-        RELEASE_LOG_IF(sessionID.isAlwaysOnLoggingAllowed(), ServiceWorker, "WebProcessPool::establishWorkerContextConnectionToNetworkProcess creating a new service worker process %p, process identifier %d", serviceWorkerProcessProxy, serviceWorkerProcessProxy->processIdentifier());
+        WEBPROCESSPOOL_RELEASE_LOG_IF_ALLOWED(ServiceWorker, "establishWorkerContextConnectionToNetworkProcess creating a new service worker process (proces=%p, PID=%d)", serviceWorkerProcessProxy, serviceWorkerProcessProxy->processIdentifier());
 
         initializeNewWebProcess(newProcessProxy, websiteDataStore);
         m_processes.append(WTFMove(newProcessProxy));
@@ -847,7 +851,7 @@ RefPtr<WebProcessProxy> WebProcessPool::tryTakePrewarmedProcess(WebsiteDataStore
     // There is sometimes a delay until we get notified that a prewarmed process has been terminated (e.g. after resuming
     // from suspension) so make sure the process is still running here before deciding to use it.
     if (m_prewarmedProcess->wasTerminated()) {
-        RELEASE_LOG_ERROR(Process, "Not using prewarmed process %d because it has been terminated", m_prewarmedProcess->processIdentifier());
+        WEBPROCESSPOOL_RELEASE_LOG_ERROR(Process, "tryTakePrewarmedProcess: Not using prewarmed process because it has been terminated (process=%p, PID=%d)", m_prewarmedProcess, m_prewarmedProcess->processIdentifier());
         m_prewarmedProcess = nullptr;
         return nullptr;
     }
@@ -1074,7 +1078,7 @@ void WebProcessPool::prewarmProcess()
     if (m_prewarmedProcess)
         return;
 
-    RELEASE_LOG(PerformanceLogging, "Prewarming a WebProcess for performance");
+    WEBPROCESSPOOL_RELEASE_LOG(PerformanceLogging, "prewarmProcess: Prewarming a WebProcess for performance");
     createNewWebProcess(nullptr, WebProcessProxy::IsPrewarmed::Yes);
 }
 
@@ -1177,13 +1181,13 @@ WebProcessProxy& WebProcessPool::processForRegistrableDomain(WebsiteDataStore& w
 
         // Check if we have a suspended page for the given registrable domain and use its process if we do, for performance reasons.
         if (auto process = SuspendedPageProxy::findReusableSuspendedPageProcess(*this, registrableDomain, websiteDataStore)) {
-            RELEASE_LOG(ProcessSwapping, "Using WebProcess %i from a SuspendedPage", process->processIdentifier());
+            WEBPROCESSPOOL_RELEASE_LOG(ProcessSwapping, "processForRegistrableDomain: Using WebProcess from a SuspendedPage (process=%p, PID=%i)", process.get(), process->processIdentifier());
             return *process;
         }
     }
 
     if (auto process = tryTakePrewarmedProcess(websiteDataStore)) {
-        RELEASE_LOG(ProcessSwapping, "Using prewarmed process %i", process->processIdentifier());
+        WEBPROCESSPOOL_RELEASE_LOG(ProcessSwapping, "processForRegistrableDomain: Using prewarmed process (process=%p, PID=%i)", process.get(), process->processIdentifier());
         if (!registrableDomain.isEmpty())
             tryPrewarmWithDomainInformation(*process, registrableDomain);
         return *process;
@@ -1397,7 +1401,7 @@ void WebProcessPool::didReachGoodTimeToPrewarm()
 
     if (MemoryPressureHandler::singleton().isUnderMemoryPressure()) {
         if (!m_prewarmedProcess)
-            RELEASE_LOG(PerformanceLogging, "Not automatically prewarming a WebProcess due to memory pressure");
+            WEBPROCESSPOOL_RELEASE_LOG(PerformanceLogging, "didReachGoodTimeToPrewarm: Not automatically prewarming a WebProcess due to memory pressure");
         return;
     }
 
@@ -1418,7 +1422,7 @@ WebProcessPool::Statistics& WebProcessPool::statistics()
 
 void WebProcessPool::handleMemoryPressureWarning(Critical)
 {
-    RELEASE_LOG(PerformanceLogging, "%p - WebProcessPool::handleMemoryPressureWarning", this);
+    WEBPROCESSPOOL_RELEASE_LOG(PerformanceLogging, "handleMemoryPressureWarning:");
 
     // Clear back/forward cache first as processes removed from the back/forward cache will likely
     // be added to the WebProcess cache.
@@ -2136,7 +2140,7 @@ void WebProcessPool::processForNavigation(WebPageProxy& page, const API::Navigat
         // We are process-swapping so automatic process prewarming would be beneficial if the client has not explicitly enabled / disabled it.
         bool doingAnAutomaticProcessSwap = processSwapRequestedByClient == ProcessSwapRequestedByClient::No && process.ptr() != sourceProcess.ptr();
         if (doingAnAutomaticProcessSwap && !configuration().wasAutomaticProcessWarmingSetByClient() && !configuration().clientWouldBenefitFromAutomaticProcessPrewarming()) {
-            RELEASE_LOG(PerformanceLogging, "Automatically turning on process prewarming because the client would benefit from it");
+            WEBPROCESSPOOL_RELEASE_LOG(PerformanceLogging, "processForNavigation: Automatically turning on process prewarming because the client would benefit from it");
             configuration().setClientWouldBenefitFromAutomaticProcessPrewarming(true);
         }
 
@@ -2224,7 +2228,7 @@ void WebProcessPool::processForNavigationInternal(WebPageProxy& page, const API:
 
     if (sourceURL.isEmpty() && page.configuration().relatedPage()) {
         sourceURL = URL { { }, page.configuration().relatedPage()->pageLoadState().url() };
-        RELEASE_LOG(ProcessSwapping, "Using related page %p's URL as source URL for process swap decision", page.configuration().relatedPage());
+        WEBPROCESSPOOL_RELEASE_LOG(ProcessSwapping, "processForNavigationInternal: Using related page's URL as source URL for process swap decision (page=%p)", page.configuration().relatedPage());
     }
 
     if (!sourceURL.isValid() || !targetURL.isValid() || sourceURL.isEmpty() || sourceURL.protocolIsAbout() || targetRegistrableDomain.matches(sourceURL))
@@ -2344,10 +2348,10 @@ void WebProcessPool::setWebProcessHasUploads(ProcessIdentifier processID)
     if (!process)
         return;
 
-    RELEASE_LOG(ProcessSuspension, "Web process pid %u now has uploads in progress", (unsigned)process->processIdentifier());
+    WEBPROCESSPOOL_RELEASE_LOG(ProcessSuspension, "setWebProcessHasUploads: Web process now has uploads in progress (process=%p, PID=%i)", process, process->processIdentifier());
 
     if (m_processesWithUploads.isEmpty()) {
-        RELEASE_LOG(ProcessSuspension, "The number of uploads in progress is now one. Taking Networking and UI process assertions.");
+        WEBPROCESSPOOL_RELEASE_LOG(ProcessSuspension, "setWebProcessHasUploads: The number of uploads in progress is now one. Taking Networking and UI process assertions.");
 
         ASSERT(m_networkProcess);
         m_networkProcess->takeUploadAssertion();
@@ -2370,10 +2374,10 @@ void WebProcessPool::clearWebProcessHasUploads(ProcessIdentifier processID)
 
     auto* process = WebProcessProxy::processForIdentifier(processID);
     ASSERT_UNUSED(process, process);
-    RELEASE_LOG(ProcessSuspension, "Web process pid %u no longer has uploads in progress", (unsigned)process->processIdentifier());
+    WEBPROCESSPOOL_RELEASE_LOG(ProcessSuspension, "clearWebProcessHasUploads: Web process no longer has uploads in progress (process=%p, PID=%i)", process, process->processIdentifier());
 
     if (m_processesWithUploads.isEmpty()) {
-        RELEASE_LOG(ProcessSuspension, "The number of uploads in progress is now zero. Releasing Networking and UI process assertions.");
+        WEBPROCESSPOOL_RELEASE_LOG(ProcessSuspension, "clearWebProcessHasUploads: The number of uploads in progress is now zero. Releasing Networking and UI process assertions.");
 
         if (m_networkProcess)
             m_networkProcess->clearUploadAssertion();
@@ -2389,10 +2393,10 @@ void WebProcessPool::setWebProcessIsPlayingAudibleMedia(WebCore::ProcessIdentifi
     auto* process = WebProcessProxy::processForIdentifier(processID);
     ASSERT(process);
 
-    RELEASE_LOG(ProcessSuspension, "Web process pid %u is now playing audible media", (unsigned)process->processIdentifier());
+    WEBPROCESSPOOL_RELEASE_LOG(ProcessSuspension, "setWebProcessIsPlayingAudibleMedia: Web process is now playing audible media (process=%p, PID=%i)", process, process->processIdentifier());
 
     if (m_processesPlayingAudibleMedia.isEmpty()) {
-        RELEASE_LOG(ProcessSuspension, "The number of processes playing audible media is now one. Taking UI process assertion.");
+        WEBPROCESSPOOL_RELEASE_LOG(ProcessSuspension, "setWebProcessIsPlayingAudibleMedia: The number of processes playing audible media is now one. Taking UI process assertion.");
 
         ASSERT(!m_uiProcessMediaPlaybackAssertion);
         m_uiProcessMediaPlaybackAssertion = makeUnique<ProcessAssertion>(getCurrentProcessID(), "WebKit Media Playback"_s, AssertionState::Foreground, AssertionReason::MediaPlayback);
@@ -2411,10 +2415,10 @@ void WebProcessPool::clearWebProcessIsPlayingAudibleMedia(WebCore::ProcessIdenti
     auto* process = WebProcessProxy::processForIdentifier(processID);
     ASSERT_UNUSED(process, process);
 
-    RELEASE_LOG(ProcessSuspension, "Web process pid %u is no longer playing audible media", (unsigned)process->processIdentifier());
+    WEBPROCESSPOOL_RELEASE_LOG(ProcessSuspension, "clearWebProcessIsPlayingAudibleMedia: Web process is no longer playing audible media (process=%p, PID=%i)", process, process->processIdentifier());
 
     if (m_processesPlayingAudibleMedia.isEmpty()) {
-        RELEASE_LOG(ProcessSuspension, "The number of processes playing audible media now zero. Releasing UI process assertion.");
+        WEBPROCESSPOOL_RELEASE_LOG(ProcessSuspension, "clearWebProcessIsPlayingAudibleMedia: The number of processes playing audible media now zero. Releasing UI process assertion.");
 
         ASSERT(m_uiProcessMediaPlaybackAssertion);
         m_uiProcessMediaPlaybackAssertion = nullptr;
@@ -2426,7 +2430,7 @@ void WebProcessPool::setUseSeparateServiceWorkerProcess(bool useSeparateServiceW
     if (m_useSeparateServiceWorkerProcess == useSeparateServiceWorkerProcess)
         return;
 
-    RELEASE_LOG(ServiceWorker, "WebProcessPool::setUseSeparateServiceWorkerProcess %d", useSeparateServiceWorkerProcess);
+    WEBPROCESSPOOL_RELEASE_LOG(ServiceWorker, "setUseSeparateServiceWorkerProcess: (useSeparateServiceWorkerProcess=%d)", useSeparateServiceWorkerProcess);
 
     m_useSeparateServiceWorkerProcess = useSeparateServiceWorkerProcess;
 #if ENABLE(SERVICE_WORKER)
