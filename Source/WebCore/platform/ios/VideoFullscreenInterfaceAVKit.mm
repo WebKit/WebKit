@@ -1078,6 +1078,9 @@ void VideoFullscreenInterfaceAVKit::didStopPictureInPicture()
 
         if (m_exitFullscreenNeedsExitPictureInPicture)
             doExitFullscreen();
+
+        if (m_enterFullscreenNeedsExitPictureInPicture)
+            doEnterFullscreen();
         return;
     }
 
@@ -1325,6 +1328,7 @@ void VideoFullscreenInterfaceAVKit::doEnterFullscreen()
     [[m_playerViewController view] layoutIfNeeded];
     if (m_targetMode.hasFullscreen() && !m_currentMode.hasFullscreen()) {
         m_enterFullscreenNeedsEnterFullscreen = true;
+        [m_window setHidden:NO];
         [m_playerViewController enterFullScreenAnimated:YES completionHandler:[this, protectedThis = makeRefPtr(this)] (BOOL success, NSError *error) {
             enterFullscreenHandler(success, error);
         }];
@@ -1476,8 +1480,10 @@ void VideoFullscreenInterfaceAVKit::setMode(HTMLMediaElementEnums::VideoFullscre
         return;
 
     m_currentMode.setMode(mode);
+    // Mode::mode() can be 3 (VideoFullscreenModeStandard | VideoFullscreenModePictureInPicture).
+    // HTMLVideoElement does not expect such a value in the fullscreenModeChanged() callback.
     if (m_videoFullscreenModel)
-        m_videoFullscreenModel->fullscreenModeChanged(m_currentMode.mode());
+        m_videoFullscreenModel->fullscreenModeChanged(mode);
 }
 
 void VideoFullscreenInterfaceAVKit::clearMode(HTMLMediaElementEnums::VideoFullscreenMode mode)
