@@ -1389,6 +1389,10 @@ article::after {
     display: table;
 }
 
+main h1 {
+    text-align: left;
+}
+
 main h1,
 article h1,
 article h1 a {
@@ -1401,10 +1405,6 @@ article h1 a {
     text-decoration: none;
     color: hsl(0, 0%, 26.7%);
     color: var(--text-color-heading);
-}
-
-main h1 {
-    text-align: left;
 }
 
 article h2 {

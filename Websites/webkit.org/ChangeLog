@@ -1,3 +1,13 @@
+2020-01-14  Jon Davis  <jond@apple.com>
+
+        Fix blog post article title justification
+        https://bugs.webkit.org/show_bug.cgi?id=206245
+
+        Reviewed by Devin Rousso.
+
+        * wp-content/themes/webkit/style.css:
+        (main h1):
+
 2020-01-13  Jon Davis  <jond@apple.com>
 
         Add support for Web Inspector pages and topic taxonomy
