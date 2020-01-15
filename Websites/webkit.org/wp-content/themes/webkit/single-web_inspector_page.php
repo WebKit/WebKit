@@ -14,7 +14,8 @@ if (have_posts()) : while (have_posts()) : the_post(); ?>
         </div>
 
         <div class="meta">
-            <p class="updated">Written by <?php the_author() ?>. Last updated <?php the_modified_date(); ?> by <?php the_modified_author(); ?></p>
+            <p class="written">Written <?php the_date(); ?> by <?php the_author() ?></p>
+            <p class="updated">Last updated <?php the_modified_date(); ?> by <?php the_modified_author(); ?></p>
         </div>
     </article>
 <?php 

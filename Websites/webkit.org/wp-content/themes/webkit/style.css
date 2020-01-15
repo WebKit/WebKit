@@ -1603,6 +1603,11 @@ article .foreword {
     font-style: italic;
 }
 
+article .meta .written {
+    margin-bottom: 1em;
+}
+
+article .meta .written,
 article .meta .updated {
     text-align: right;
     font-size: 1.2rem;
