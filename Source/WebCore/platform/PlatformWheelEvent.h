@@ -34,11 +34,9 @@
 typedef struct _GdkEventScroll GdkEventScroll;
 #endif
 
-#if ENABLE(KINETIC_SCROLLING)
 namespace WTF {
 class TextStream;
 }
-#endif
 
 namespace WebCore {
 
