@@ -447,6 +447,7 @@
 		7C42307123CE2D8A006E54D0 /* PlatformEnable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlatformEnable.h; sourceTree = "<group>"; };
 		7C42307223CE2D8A006E54D0 /* PlatformCPU.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlatformCPU.h; sourceTree = "<group>"; };
 		7C42307323CE2D8B006E54D0 /* PlatformOS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlatformOS.h; sourceTree = "<group>"; };
+		7C42307423CEB187006E54D0 /* PlatformLegacy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlatformLegacy.h; sourceTree = "<group>"; };
 		7C9692941F66306E00267A9E /* KeyValuePair.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KeyValuePair.h; sourceTree = "<group>"; };
 		7CBBA07319BB7FDC00BBF025 /* OSObjectPtr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OSObjectPtr.h; sourceTree = "<group>"; };
 		7CD0D5A71D55322A000CC9E1 /* Variant.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Variant.h; sourceTree = "<group>"; };
@@ -1127,6 +1128,7 @@
 				A876DBD7151816E500DADB95 /* Platform.h */,
 				7C42307223CE2D8A006E54D0 /* PlatformCPU.h */,
 				7C42307123CE2D8A006E54D0 /* PlatformEnable.h */,
+				7C42307423CEB187006E54D0 /* PlatformLegacy.h */,
 				7C42307323CE2D8B006E54D0 /* PlatformOS.h */,
 				FE1E2C41224187C600F6B729 /* PlatformRegisters.cpp */,
 				E3200AB41E9A536D003B59D2 /* PlatformRegisters.h */,

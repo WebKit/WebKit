@@ -30,19 +30,19 @@
 /* Include compiler specific macros */
 #include <wtf/Compiler.h>
 
-/* Include CPU specific macros */
+/* ==== Platform adaptation macros: these describe properties of the target environment. ==== */
+
+/* CPU() - the target CPU architecture */
 #include <wtf/PlatformCPU.h>
 
-/* Include underlying operating system specific macros */
+/* OS() - underlying operating system; only to be used for mandated low-level services like
+   virtual memory, not to choose a GUI toolkit */
 #include <wtf/PlatformOS.h>
 
-/* ==== PLATFORM handles OS, operating environment, graphics API, and
+/* PLATFORM() - handles OS, operating environment, graphics API, and
    CPU. This macro will be phased out in favor of platform adaptation
-   macros, policy decision macros, and top-level port definitions. ==== */
-#define PLATFORM(WTF_FEATURE) (defined WTF_PLATFORM_##WTF_FEATURE  && WTF_PLATFORM_##WTF_FEATURE)
-
-
-/* ==== Platform adaptation macros: these describe properties of the target environment. ==== */
+   macros, policy decision macros, and top-level port definitions. */
+#include <wtf/PlatformLegacy.h>
 
 /* HAVE() - specific system features (headers, functions or similar) that are present or not */
 #define HAVE(WTF_FEATURE) (defined HAVE_##WTF_FEATURE  && HAVE_##WTF_FEATURE)
@@ -55,6 +55,12 @@
 /* ENABLE() - turn on a specific feature of WebKit */
 #define ENABLE(WTF_FEATURE) (defined ENABLE_##WTF_FEATURE  && ENABLE_##WTF_FEATURE)
 
+
+#if PLATFORM(COCOA)
+#if defined __has_include && __has_include(<CoreFoundation/CFPriv.h>)
+#define USE_APPLE_INTERNAL_SDK 1
+#endif
+#endif
 
 /* MIPS requires allocators to use aligned memory */
 #if CPU(MIPS) || CPU(MIPS64)
@@ -115,61 +121,6 @@
 #if defined(HAVE_FEATURES_H) && HAVE_FEATURES_H
 /* If the included features.h is glibc's one, __GLIBC__ is defined. */
 #include <features.h>
-#endif
-
-/* FIXME: these are all mixes of OS, operating environment and policy choices. */
-/* PLATFORM(GTK) */
-/* PLATFORM(MAC) */
-/* PLATFORM(IOS) */
-/* PLATFORM(IOS_FAMILY) */
-/* PLATFORM(IOS_SIMULATOR) */
-/* PLATFORM(IOS_FAMILY_SIMULATOR) */
-/* PLATFORM(WIN) */
-#if defined(BUILDING_GTK__)
-#define WTF_PLATFORM_GTK 1
-#elif defined(BUILDING_WPE__)
-#define WTF_PLATFORM_WPE 1
-#elif defined(BUILDING_JSCONLY__)
-/* JSCOnly does not provide PLATFORM() macro */
-#elif OS(MAC_OS_X)
-#define WTF_PLATFORM_MAC 1
-#elif OS(IOS_FAMILY)
-#if OS(IOS)
-#define WTF_PLATFORM_IOS 1
-#endif
-#define WTF_PLATFORM_IOS_FAMILY 1
-#if TARGET_OS_SIMULATOR
-#if OS(IOS)
-#define WTF_PLATFORM_IOS_SIMULATOR 1
-#endif
-#define WTF_PLATFORM_IOS_FAMILY_SIMULATOR 1
-#endif
-#if defined(TARGET_OS_MACCATALYST) && TARGET_OS_MACCATALYST
-#define WTF_PLATFORM_MACCATALYST 1
-#endif
-#elif OS(WINDOWS)
-#define WTF_PLATFORM_WIN 1
-#endif
-
-/* PLATFORM(COCOA) */
-#if PLATFORM(MAC) || PLATFORM(IOS_FAMILY)
-#define WTF_PLATFORM_COCOA 1
-#endif
-
-#if PLATFORM(COCOA)
-#if defined __has_include && __has_include(<CoreFoundation/CFPriv.h>)
-#define USE_APPLE_INTERNAL_SDK 1
-#endif
-#endif
-
-/* PLATFORM(APPLETV) */
-#if defined(TARGET_OS_TV) && TARGET_OS_TV
-#define WTF_PLATFORM_APPLETV 1
-#endif
-
-/* PLATFORM(WATCHOS) */
-#if defined(TARGET_OS_WATCH) && TARGET_OS_WATCH
-#define WTF_PLATFORM_WATCHOS 1
 #endif
 
 /* FIXME: ASSERT_ENABLED should defined in different, perhaps its own, file. */

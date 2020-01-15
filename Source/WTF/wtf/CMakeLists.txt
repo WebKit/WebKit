@@ -173,6 +173,7 @@ set(WTF_PUBLIC_HEADERS
     Platform.h
     PlatformCPU.h
     PlatformEnable.h
+    PlatformLegacy.h
     PlatformOS.h
     PlatformRegisters.h
     PointerComparison.h
