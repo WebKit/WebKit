@@ -298,14 +298,15 @@ JSContextGroupRef getGroupFromVirtualMachine(JSVirtualMachine *virtualMachine)
 
 #endif // ENABLE(DFG_JIT)
 
-- (JSC::VM&)vm
+- (JSContextGroupRef)JSContextGroupRef
 {
-    return *toJS(m_group);
+    return m_group;
 }
 
 - (BOOL)isWebThreadAware
 {
-    return [self vm].apiLock().isWebThreadAware();
+    JSC::VM* vm = toJS(m_group);
+    return vm->apiLock().isWebThreadAware();
 }
 
 + (void)setCrashOnVMCreation:(BOOL)shouldCrash
