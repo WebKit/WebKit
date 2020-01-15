@@ -1,5 +1,25 @@
 2020-01-14  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r254247. rdar://problem/58553146
+
+    Unreviewed follow up on r254188. I accidentally included the same test
+    twice instead of including the two different variants.
+    
+    * stress/ai-value-mod-should-result-in-constant-int-where-possible.js:
+    
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@254247 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-01-08  Saam Barati  <sbarati@apple.com>
+
+            Unreviewed follow up on r254188. I accidentally included the same test
+            twice instead of including the two different variants.
+
+            * stress/ai-value-mod-should-result-in-constant-int-where-possible.js:
+
+2020-01-14  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r254188. rdar://problem/58553146
 
     AI rule for ValueMod/ValueDiv produce constants with the wrong format when the result can be an int32

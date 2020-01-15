@@ -11,7 +11,7 @@ function foo() {
                 const y = typeof x === a0;
                 [a0, 0.1];
                 const z = 0 + y;
-                const c = z / 1.0 + 0;
+                const c = z % 1.0 + 0;
             } while (!x);
         }
         bar(0);
