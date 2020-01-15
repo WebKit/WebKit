@@ -394,4 +394,18 @@ String WebInspectorUI::targetProductVersion() const
     return m_debuggableInfo.targetProductVersion;
 }
 
+#if !PLATFORM(MAC) && !PLATFORM(GTK) && !PLATFORM(WIN)
+bool WebInspectorUI::canSave()
+{
+    notImplemented();
+    return false;
+}
+
+String WebInspectorUI::localizedStringsURL() const
+{
+    notImplemented();
+    return emptyString();
+}
+#endif // !PLATFORM(MAC) && !PLATFORM(GTK) && !PLATFORM(WIN)
+
 } // namespace WebKit

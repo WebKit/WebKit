@@ -26,7 +26,7 @@
 #import "config.h"
 #import "RemoteWebInspectorProxy.h"
 
-#if PLATFORM(MAC)
+#if PLATFORM(MAC) && ENABLE(REMOTE_INSPECTOR)
 
 #import "RemoteWebInspectorProxyMessages.h"
 #import "RemoteWebInspectorUIMessages.h"

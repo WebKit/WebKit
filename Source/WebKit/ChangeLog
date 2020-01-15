@@ -1,3 +1,30 @@
+2020-01-15  Don Olmstead  <don.olmstead@sony.com>
+
+        Share WebInspector stubs for ports without local inspection
+        https://bugs.webkit.org/show_bug.cgi?id=206267
+
+        Reviewed by Alex Christensen.
+
+        No new tests. No change in behavior.
+
+        Ports that do no allow local inspection of a web page can share a number of stubs
+        around the Web Inspector. This is the case for iOS, WPE and the PlayStation port.
+        Make the platform guards specific to actual implementations.
+
+        * SourcesWPE.txt:
+        * UIProcess/RemoteWebInspectorProxy.cpp:
+        * UIProcess/WebInspectorProxy.cpp:
+        * UIProcess/mac/RemoteWebInspectorProxyMac.mm:
+        * UIProcess/wpe/WebInspectorProxyWPE.cpp: Removed.
+        * WebProcess/WebPage/RemoteWebInspectorUI.cpp:
+        (WebKit::RemoteWebInspectorUI::localizedStringsURL const):
+        * WebProcess/WebPage/WebInspectorUI.cpp:
+        (WebKit::WebInspectorUI::canSave):
+        (WebKit::WebInspectorUI::localizedStringsURL const):
+        * WebProcess/WebPage/mac/WebInspectorUIMac.mm:
+        * WebProcess/WebPage/wpe/WebInspectorUIWPE.cpp: Removed.
+        * WebProcess/WebPage/wpe/WebInspectorWPE.cpp: Removed.
+
 2020-01-15  David Kilzer  <ddkilzer@apple.com>
 
         [Cocoa] Create a simulated crash log when the UI Process receives an invalid CoreIPC message

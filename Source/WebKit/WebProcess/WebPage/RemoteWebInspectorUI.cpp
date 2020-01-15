@@ -38,6 +38,10 @@
 #include <WebCore/InspectorController.h>
 #include <WebCore/Settings.h>
 
+#if !PLATFORM(MAC) && !PLATFORM(GTK) && !PLATFORM(WIN)
+#include <WebCore/NotImplemented.h>
+#endif
+
 namespace WebKit {
 using namespace WebCore;
 
@@ -215,5 +219,13 @@ void RemoteWebInspectorUI::setDiagnosticLoggingAvailable(bool available)
     m_frontendAPIDispatcher.dispatchCommand("setDiagnosticLoggingAvailable"_s, m_diagnosticLoggingAvailable);
 }
 #endif
+
+#if !PLATFORM(MAC) && !PLATFORM(GTK) && !PLATFORM(WIN)
+String RemoteWebInspectorUI::localizedStringsURL() const
+{
+    notImplemented();
+    return emptyString();
+}
+#endif // !PLATFORM(MAC) && !PLATFORM(GTK) && !PLATFORM(WIN)
 
 } // namespace WebKit

@@ -636,7 +636,7 @@ bool WebInspectorProxy::shouldOpenAttached()
 
 // Unsupported configurations can use the stubs provided here.
 
-#if PLATFORM(IOS_FAMILY)
+#if !PLATFORM(MAC) && !PLATFORM(GTK) && !PLATFORM(WIN)
 
 WebPageProxy* WebInspectorProxy::platformCreateFrontendPage()
 {
@@ -781,6 +781,6 @@ void WebInspectorProxy::platformAttachAvailabilityChanged(bool)
     notImplemented();
 }
 
-#endif // PLATFORM(IOS_FAMILY)
+#endif // !PLATFORM(MAC) && !PLATFORM(GTK) && !PLATFORM(WIN)
 
 } // namespace WebKit

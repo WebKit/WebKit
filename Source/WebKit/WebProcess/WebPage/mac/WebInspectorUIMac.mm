@@ -27,6 +27,8 @@
 #import "WebInspectorUI.h"
 #import "RemoteWebInspectorUI.h"
 
+#if PLATFORM(MAC)
+
 namespace WebKit {
 
 bool WebInspectorUI::canSave()
@@ -58,3 +60,5 @@ String RemoteWebInspectorUI::localizedStringsURL() const
 }
 
 } // namespace WebKit
+
+#endif // PLATFORM(MAC)
