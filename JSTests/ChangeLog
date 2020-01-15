@@ -1,3 +1,43 @@
+2020-01-15  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r254393. rdar://problem/58553158
+
+    [JSC] Flush old tables in End phase
+    https://bugs.webkit.org/show_bug.cgi?id=206120
+    <rdar://problem/58039989>
+    
+    Reviewed by Mark Lam.
+    
+    JSTests:
+    
+    * stress/create-many-realms.js: Added.
+    (foo):
+    
+    Source/JavaScriptCore:
+    
+    stopThePeriphery is stopping compiler threads and main thread (mutator), which means making m_worldIsStopped = true.
+    It is not for stopping all heap threads including a concurrent marker. The concurrent collector can work while executing
+    stopThePeriphery. This means that concurrent collectors can access to the old StructureIDTable while it is destroyed
+    in stopThePeriphery. Destroying old StructureIDTable in GC End phase, this is appropriate phase that we can ensure no
+    other threads (accessing to heap) are working including concurrent markers, mutator, and compiler threads.
+    
+    * heap/Heap.cpp:
+    (JSC::Heap::runEndPhase):
+    (JSC::Heap::stopThePeriphery):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@254393 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-01-10  Yusuke Suzuki  <ysuzuki@apple.com>
+
+            [JSC] Flush old tables in End phase
+            https://bugs.webkit.org/show_bug.cgi?id=206120
+            <rdar://problem/58039989>
+
+            Reviewed by Mark Lam.
+
+            * stress/create-many-realms.js: Added.
+            (foo):
+
 2020-01-14  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r254247. rdar://problem/58553146
