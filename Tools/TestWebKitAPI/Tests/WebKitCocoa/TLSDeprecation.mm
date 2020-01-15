@@ -33,7 +33,9 @@
 #import "TestWKWebView.h"
 #import "WebCoreTestSupport.h"
 #import <WebKit/WKProcessPoolPrivate.h>
+#import <WebKit/WKWebsiteDataStorePrivate.h>
 #import <WebKit/WebKit.h>
+#import <WebKit/_WKWebsiteDataStoreConfiguration.h>
 #import <wtf/RetainPtr.h>
 
 #if PLATFORM(IOS_FAMILY)
@@ -194,6 +196,15 @@ TEST(WebKit, TLSVersionNetworkSession)
         auto webView = makeWebViewWith([WKWebsiteDataStore nonPersistentDataStore]);
         [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"https://127.0.0.1:%d/", server.port()]]]];
         [delegate waitForDidFailProvisionalNavigation];
+    }
+    {
+        TCPServer server(TCPServer::Protocol::HTTPS, TCPServer::respondWithOK, tls1_1);
+        auto configuration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] initNonPersistentConfiguration]);
+        [configuration setLegacyTLSEnabled:YES];
+        auto dataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:configuration.get()]);
+        auto webView = makeWebViewWith(dataStore.get());
+        [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"https://127.0.0.1:%d/", server.port()]]]];
+        [delegate waitForDidFinishNavigation];
     }
     [[NSUserDefaults standardUserDefaults] setBool:YES forKey:defaultsKey];
     {
