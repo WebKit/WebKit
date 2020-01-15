@@ -809,6 +809,7 @@ webkit.org/b/199242 [ Debug ] http/tests/performance/performance-resource-timing
 
 # No support for reftest-wait in DRT.
 imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/range-setattribute-value.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-display/display-none-inline-img.html [ ImageOnlyFailure ]
 
 # <rdar://problem/42625657> REGRESSION (Mojave): 12 fast/images tests timing out on WK1
 [ Mojave+ ] fast/images/animated-heics-draw.html [ Skip ]

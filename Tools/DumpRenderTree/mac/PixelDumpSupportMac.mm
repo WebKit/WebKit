@@ -37,6 +37,7 @@
 #import <CoreGraphics/CGBitmapContext.h>
 #import <QuartzCore/QuartzCore.h>
 #import <pal/spi/cg/CoreGraphicsSPI.h>
+#import <pal/spi/cocoa/QuartzCoreSPI.h>
 #import <wtf/Assertions.h>
 #import <wtf/RefPtr.h>
 
@@ -45,10 +46,6 @@
 #import <WebKit/WebHTMLViewPrivate.h>
 #import <WebKit/WebKit.h>
 #import <WebKit/WebViewPrivate.h>
-
-@interface CATransaction ()
-+ (void)synchronize;
-@end
 
 @interface WebView ()
 - (BOOL)_flushCompositingChanges;

@@ -89,6 +89,7 @@
 #import <WebKit/WebPreferencesPrivate.h>
 #import <WebKit/WebResourceLoadDelegate.h>
 #import <WebKit/WebStorageManagerPrivate.h>
+#import <WebKit/WebView.h>
 #import <WebKit/WebViewPrivate.h>
 #import <getopt.h>
 #import <wtf/Assertions.h>
@@ -1721,6 +1722,7 @@ static void updateDisplay()
     [gDrtWindow layoutTilesNow];
     [webView _flushCompositingChanges];
 #else
+    [webView _forceRepaintForTesting];
     if ([webView _isUsingAcceleratedCompositing])
         [webView display];
     else
