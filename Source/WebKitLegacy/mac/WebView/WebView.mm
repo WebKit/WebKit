@@ -232,6 +232,7 @@
 #import <pal/spi/cocoa/NSTouchBarSPI.h>
 #import <pal/spi/cocoa/NSURLDownloadSPI.h>
 #import <pal/spi/cocoa/NSURLFileTypeMappingsSPI.h>
+#import <pal/spi/cocoa/QuartzCoreSPI.h>
 #import <pal/spi/mac/NSResponderSPI.h>
 #import <pal/spi/mac/NSSpellCheckerSPI.h>
 #import <pal/spi/mac/NSViewSPI.h>
@@ -4766,6 +4767,19 @@ static Vector<String> toStringVector(NSArray* patterns)
         return;
 
     viewGroup->userContentController().removeAllUserContent();
+}
+
+- (void)_forceRepaintForTesting
+{
+#if PLATFORM(IOS_FAMILY)
+    // Ensure fixed positions layers are where they should be.
+    [self _synchronizeCustomFixedPositionLayoutRect];
+#endif
+
+    [self _viewWillDrawInternal];
+    [self _flushCompositingChanges];
+    [CATransaction flush];
+    [CATransaction synchronize];
 }
 
 - (BOOL)allowsNewCSSAnimationsWhileSuspended

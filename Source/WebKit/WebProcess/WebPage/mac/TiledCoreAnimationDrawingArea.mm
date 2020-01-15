@@ -66,10 +66,6 @@
 #import <WebCore/ScrollingTree.h>
 #endif
 
-@interface CATransaction (Details)
-+ (void)synchronize;
-@end
-
 namespace WebKit {
 using namespace WebCore;
 

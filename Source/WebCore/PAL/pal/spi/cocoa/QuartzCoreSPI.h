@@ -141,6 +141,7 @@ typedef enum {
 @interface CATransaction ()
 + (void)addCommitHandler:(void(^)(void))block forPhase:(CATransactionPhase)phase;
 + (CATransactionPhase)currentPhase;
++ (void)synchronize;
 @end
 
 @interface CALayerHost : CALayer
