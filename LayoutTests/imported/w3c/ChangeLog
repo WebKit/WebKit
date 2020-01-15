@@ -1,5 +1,66 @@
 2020-01-15  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r254229. rdar://problem/58605950
+
+    <img>.naturalWidth should return the density-corrected intrinsic width
+    https://bugs.webkit.org/show_bug.cgi?id=150443
+    
+    Patch by Noam Rosenthal <noam@webkit.org> on 2020-01-08
+    Reviewed by Simon Fraser.
+    
+    LayoutTests/imported/w3c:
+    
+    Updated expected results.
+    
+    * web-platform-tests/html/semantics/embedded-content/the-img-element/current-pixel-density/basic-expected.txt:
+            All tests now pass.
+    
+    * web-platform-tests/html/semantics/embedded-content/the-img-element/intrinsicsize/intrinsicsize-with-responsive-images.tentative-expected.txt:
+            Still fails but failure values are different.
+    
+    Source/WebCore:
+    
+    Take image's density into account when requesting naturalWidth/naturalHeight, not in SVG.
+    
+    This now complies with the standard (https://html.spec.whatwg.org/multipage/embedded-content.html#dom-img-naturalwidth)
+    It also matches the behavior on Chrome and on Firefox.
+    
+    Test: imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/current-pixel-density/basic.html
+            Updaded expected results
+    
+    * html/HTMLImageElement.cpp:
+    (WebCore::HTMLImageElement::effectiveImageDevicePixelRatio const):
+    (WebCore::HTMLImageElement::naturalWidth const):
+    (WebCore::HTMLImageElement::naturalHeight const):
+    * html/HTMLImageElement.h:
+            Use effective image devicePixelRatio for naturalWidth/height calculation
+    
+    * loader/cache/CachedImage.cpp:
+    (WebCore::CachedImage::unclampedImageSizeForRenderer const):
+    (WebCore::CachedImage::imageSizeForRenderer const):
+    * loader/cache/CachedImage.h:
+            Don't clamp to 1 when calculating naturalWidth/naturalHeight, as this has
+            nothing to do with zoomed images. Zoomed images behavior remains the same.
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@254229 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-01-08  Noam Rosenthal  <noam@webkit.org>
+
+            <img>.naturalWidth should return the density-corrected intrinsic width
+            https://bugs.webkit.org/show_bug.cgi?id=150443
+
+            Reviewed by Simon Fraser.
+
+            Updated expected results.
+
+            * web-platform-tests/html/semantics/embedded-content/the-img-element/current-pixel-density/basic-expected.txt:
+                    All tests now pass.
+
+            * web-platform-tests/html/semantics/embedded-content/the-img-element/intrinsicsize/intrinsicsize-with-responsive-images.tentative-expected.txt:
+                    Still fails but failure values are different.
+
+2020-01-15  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r254187. rdar://problem/58605950
 
     Implement css3-images image-orientation
