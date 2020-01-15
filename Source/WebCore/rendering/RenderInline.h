@@ -109,6 +109,8 @@ private:
     InlineBox* culledInlineFirstLineBox() const;
     InlineBox* culledInlineLastLineBox() const;
 
+    void absoluteQuadsIgnoringContinuation(const FloatRect&, Vector<FloatQuad>&, bool* wasFixed) const override;
+
     template<typename GeneratorContext>
     void generateLineBoxRects(GeneratorContext& yield) const;
     template<typename GeneratorContext>

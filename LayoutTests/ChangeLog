@@ -1,3 +1,13 @@
+2020-01-14  Zalan Bujtas  <zalan@apple.com>
+
+        Long continuation chain could lead to stack exhaustion
+        https://bugs.webkit.org/show_bug.cgi?id=206271
+        <rdar://problem/41189798>
+
+        Reviewed by Simon Fraser.
+
+        * fast/inline/long-continuation-crash.html: Added.
+
 2020-01-14  Peng Liu  <peng.liu6@apple.com>
 
         [Media in GPU process] Implement the remote video layer support
