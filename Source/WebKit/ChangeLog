@@ -1,5 +1,55 @@
 2020-01-14  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r254254. rdar://problem/58548978
+
+    WebKitTestRunner leaks objects in a top-level autoreleasePool that's never cleared
+    <https://webkit.org/b/205950>
+    <rdar://problem/50987831>
+    
+    Reviewed by Joseph Pecoraro.
+    
+    Source/WebKit:
+    
+    * UIProcess/mac/WebPreferencesMac.mm:
+    (WebKit::WebPreferences::platformInitializeStore):
+    - Add an @autoreleasepool block around the contents of
+      this method since it generates numerous autoreleased
+      objects when run.
+    
+    Tools:
+    
+    * WebKitTestRunner/ios/mainIOS.mm:
+    (main):
+    - Add an @autoreleasepool block around a line of code
+      that generates autoreleased objects.  These objects
+      would never be released for the life of the process
+      prior to this change.
+    * WebKitTestRunner/mac/main.mm:
+    (main):
+    - Move instantiation of WTR::TestController outside of
+      @autoreleasepool block so the pool can be drained
+      while running tests.  Prior to this change, this
+      autoreleasePool would never be drained.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@254254 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-01-09  David Kilzer  <ddkilzer@apple.com>
+
+            WebKitTestRunner leaks objects in a top-level autoreleasePool that's never cleared
+            <https://webkit.org/b/205950>
+            <rdar://problem/50987831>
+
+            Reviewed by Joseph Pecoraro.
+
+            * UIProcess/mac/WebPreferencesMac.mm:
+            (WebKit::WebPreferences::platformInitializeStore):
+            - Add an @autoreleasepool block around the contents of
+              this method since it generates numerous autoreleased
+              objects when run.
+
+2020-01-14  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r254239. rdar://problem/58549100
 
     Resource Load Statistics: Flip experimental cookie blocking setting from an enable to a disable
