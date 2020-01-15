@@ -134,7 +134,8 @@ class TestTestsFactory(TestCase):
             _BuildStepFactory(steps.CheckOutSource),
             _BuildStepFactory(steps.CheckOutSpecificRevision),
             _BuildStepFactory(steps.ApplyPatch),
-            _BuildStepFactory(steps.RunWebKitPyTests),
+            _BuildStepFactory(steps.RunWebKitPyPython2Tests),
+            _BuildStepFactory(steps.RunWebKitPyPython3Tests),
         ])
 
     def test_services_factory(self):

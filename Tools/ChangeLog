@@ -1,3 +1,24 @@
+2020-01-14  Jonathan Bedard  <jbedard@apple.com>
+
+        EWS: Run webkitpy tests with Python 2 and 3
+        https://bugs.webkit.org/show_bug.cgi?id=206113
+
+        Reviewed by Aakash Jain.
+
+        * BuildSlaveSupport/ews-build/factories.py:
+        (WebKitPyFactory.__init__): Run webkitpy tests in Python 2 and Python 3.
+        * BuildSlaveSupport/ews-build/factories_unittest.py:
+        (TestTestsFactory.test_webkitpy_factory):
+        * BuildSlaveSupport/ews-build/steps.py:
+        (WebKitPyTest): Renamed from RunWebKitPyTests.
+        (RunWebKitPyPython2Tests):
+        (RunWebKitPyPython3Tests):
+        (RunWebKitPyTests): Renamed to WebKitPyTest.
+        * BuildSlaveSupport/ews-build/steps_unittest.py:
+        (TestWebKitPyPython2Tests): Moved from TestWebKitPyTests.
+        (TestWebKitPyTests): Moved to TestWebKitPyPython2Tests.
+        (TestWebKitPyPython3Tests): Copied from TestWebKitPyPython2Tests.
+
 2020-01-14  Aakash Jain  <aakash_jain@apple.com>
 
         [EWS] Status bubble tooltip might display success message sometimes on a failed build

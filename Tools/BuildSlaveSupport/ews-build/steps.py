@@ -693,17 +693,13 @@ class RunEWSBuildbotCheckConfig(shell.ShellCommand):
         return {u'step': u'Failed buildbot checkconfig'}
 
 
-class RunWebKitPyTests(shell.ShellCommand):
-    name = 'webkitpy-tests'
-    description = ['webkitpy-tests running']
+class WebKitPyTest(shell.ShellCommand):
+    language = 'python'
     descriptionDone = ['webkitpy-tests']
     flunkOnFailure = True
-    jsonFileName = 'webkitpy_test_results.json'
-    logfiles = {'json': jsonFileName}
-    command = ['python', 'Tools/Scripts/test-webkitpy', '--json-output={0}'.format(jsonFileName)]
 
     def __init__(self, **kwargs):
-        super(RunWebKitPyTests, self).__init__(timeout=2 * 60, logEnviron=False, **kwargs)
+        super(WebKitPyTest, self).__init__(timeout=2 * 60, logEnviron=False, **kwargs)
 
     def start(self):
         self.log_observer = logobserver.BufferLogObserver()
@@ -712,8 +708,7 @@ class RunWebKitPyTests(shell.ShellCommand):
 
     def getResultSummary(self):
         if self.results == SUCCESS:
-            message = 'Passed webkitpy tests'
-            self.build.buildFinished([message], SUCCESS)
+            message = 'Passed webkitpy {} tests'.format(self.language)
             return {u'step': unicode(message)}
 
         logLines = self.log_observer.getStdout()
@@ -722,15 +717,14 @@ class RunWebKitPyTests(shell.ShellCommand):
             webkitpy_results = json.loads(json_text)
         except Exception as ex:
             self._addToLog('stderr', 'ERROR: unable to parse data, exception: {}'.format(ex))
-            return super(RunWebKitPyTests, self).getResultSummary()
+            return super(WebKitPyTest, self).getResultSummary()
 
         failures = webkitpy_results.get('failures') + webkitpy_results.get('errors')
         if not failures:
-            return super(RunWebKitPyTests, self).getResultSummary()
+            return super(WebKitPyTest, self).getResultSummary()
         pluralSuffix = 's' if len(failures) > 1 else ''
         failures_string = ', '.join([failure.get('name').replace('webkitpy.', '') for failure in failures])
         message = 'Found {} WebKitPy test failure{}: {}'.format(len(failures), pluralSuffix, failures_string)
-        self.build.buildFinished([message], FAILURE)
         return {u'step': unicode(message)}
 
     @defer.inlineCallbacks
@@ -740,6 +734,24 @@ class RunWebKitPyTests(shell.ShellCommand):
         except KeyError:
             log = yield self.addLog(logName)
         log.addStdout(message)
+
+
+class RunWebKitPyPython2Tests(WebKitPyTest):
+    language = 'python2'
+    name = 'webkitpy-tests-{}'.format(language)
+    description = ['webkitpy-tests running ({})'.format(language)]
+    jsonFileName = 'webkitpy_test_{}_results.json'.format(language)
+    logfiles = {'json': jsonFileName}
+    command = ['python', 'Tools/Scripts/test-webkitpy', '--json-output={0}'.format(jsonFileName)]
+
+
+class RunWebKitPyPython3Tests(WebKitPyTest):
+    language = 'python3'
+    name = 'webkitpy-tests-{}'.format(language)
+    description = ['webkitpy-tests running ({})'.format(language)]
+    jsonFileName = 'webkitpy_test_{}_results.json'.format(language)
+    logfiles = {'json': jsonFileName}
+    command = ['python3', 'Tools/Scripts/test-webkitpy', '--json-output={0}'.format(jsonFileName)]
 
 
 class InstallGtkDependencies(shell.ShellCommand):
