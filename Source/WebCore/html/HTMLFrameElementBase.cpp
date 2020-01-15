@@ -93,6 +93,8 @@ void HTMLFrameElementBase::openURL(LockHistory lockHistory, LockBackForwardList 
     if (!parentFrame)
         return;
 
+    document().willLoadFrameElement(parentFrame->document()->completeURL(m_URL));
+
     String frameName = getNameAttribute();
     if (frameName.isNull() && UNLIKELY(document().settings().needsFrameNameFallbackToIdQuirk()))
         frameName = getIdAttribute();
