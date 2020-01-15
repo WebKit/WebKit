@@ -1,3 +1,20 @@
+2020-01-15  Chris Dumez  <cdumez@apple.com>
+
+        Regression(r253213) Load hang and high CPU usage when trying to load myuhc.com
+        https://bugs.webkit.org/show_bug.cgi?id=206315
+        <rdar://problem/58139842>
+
+        Reviewed by Geoffrey Garen.
+
+        Add layout test coverage.
+
+        * fast/xmlhttprequest/resources/xmlhttprequest-multiple-sync-xhr-during-unload-iframe.html: Added.
+        * fast/xmlhttprequest/resources/xmlhttprequest-sync-xhr-failure-loop-during-unload-iframe.html: Added.
+        * fast/xmlhttprequest/xmlhttprequest-multiple-sync-xhr-during-unload-expected.txt: Added.
+        * fast/xmlhttprequest/xmlhttprequest-multiple-sync-xhr-during-unload.html: Added.
+        * fast/xmlhttprequest/xmlhttprequest-sync-xhr-failure-loop-during-unload-expected.txt: Added.
+        * fast/xmlhttprequest/xmlhttprequest-sync-xhr-failure-loop-during-unload.html: Added.
+
 2020-01-15  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r254576.

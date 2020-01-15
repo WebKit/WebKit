@@ -1,0 +1,18 @@
+frame "<!--frame1-->" - has 1 onunload handler(s)
+CONSOLE MESSAGE: line 7: XMLHttpRequest cannot load xmlhttprequest-responsetype-json.json.
+CONSOLE MESSAGE: line 7: XMLHttpRequest cannot load xmlhttprequest-responsetype-json.json.
+CONSOLE MESSAGE: line 7: XMLHttpRequest cannot load xmlhttprequest-responsetype-json.json.
+CONSOLE MESSAGE: line 7: XMLHttpRequest cannot load xmlhttprequest-responsetype-json.json.
+CONSOLE MESSAGE: line 7: XMLHttpRequest cannot load xmlhttprequest-responsetype-json.json.
+CONSOLE MESSAGE: line 7: XMLHttpRequest cannot load xmlhttprequest-responsetype-json.json.
+CONSOLE MESSAGE: line 7: Ignoring XMLHttpRequest.send() call for 'xmlhttprequest-responsetype-json.json' because the maximum number of synchronous failures was reached.
+Makes sure that retrying failed sync XHRs in a loop during unload does not cause a hang.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS No hang while unloading the iframe
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

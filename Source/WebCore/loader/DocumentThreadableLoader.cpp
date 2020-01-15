@@ -133,6 +133,7 @@ DocumentThreadableLoader::DocumentThreadableLoader(Document& document, Threadabl
     ASSERT(m_async || m_referrer.isEmpty());
 
     if (document.settings().disallowSyncXHRDuringPageDismissalEnabled() && !m_async && (!document.page() || !document.page()->areSynchronousLoadsAllowed())) {
+        document.didRejectSyncXHRDuringPageDismissal();
         logErrorAndFail(ResourceError(errorDomainWebKitInternal, 0, request.url(), "Synchronous loads are not allowed at this time"));
         return;
     }

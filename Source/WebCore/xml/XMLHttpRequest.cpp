@@ -413,6 +413,11 @@ Optional<ExceptionOr<void>> XMLHttpRequest::prepareToSend()
 
     auto& context = *scriptExecutionContext();
 
+    if (is<Document>(context) && downcast<Document>(context).shouldIgnoreSyncXHRs()) {
+        logConsoleError(scriptExecutionContext(), makeString("Ignoring XMLHttpRequest.send() call for '", m_url.string(), "' because the maximum number of synchronous failures was reached."));
+        return ExceptionOr<void> { };
+    }
+
     if (readyState() != OPENED || m_sendFlag)
         return ExceptionOr<void> { Exception { InvalidStateError } };
     ASSERT(!m_loader);
