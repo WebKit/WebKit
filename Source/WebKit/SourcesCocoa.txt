@@ -69,6 +69,7 @@ Platform/cg/CGUtilities.cpp
 Platform/classifier/cocoa/ResourceLoadStatisticsClassifierCocoa.cpp
 Platform/classifier/ResourceLoadStatisticsClassifier.cpp
 
+Platform/cocoa/LayerHostingContext.mm
 Platform/cocoa/PaymentAuthorizationPresenter.mm
 Platform/cocoa/PaymentAuthorizationViewController.mm
 Platform/cocoa/SharedMemoryCocoa.cpp
@@ -84,7 +85,6 @@ Platform/ios/PaymentAuthorizationController.mm
 Platform/IPC/cocoa/ConnectionCocoa.mm
 Platform/IPC/cocoa/MachMessage.cpp
 
-Platform/mac/LayerHostingContext.mm
 Platform/mac/MachUtilities.cpp
 Platform/mac/MenuUtilities.mm
 Platform/mac/StringUtilities.mm

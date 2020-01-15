@@ -29,6 +29,7 @@
 #if ENABLE(NETSCAPE_PLUGIN_API)
 
 #import "LayerHostingContext.h"
+#import "LayerTreeContext.h"
 #import "PluginCreationParameters.h"
 #import "PluginProcess.h"
 #import "PluginProcessProxyMessages.h"

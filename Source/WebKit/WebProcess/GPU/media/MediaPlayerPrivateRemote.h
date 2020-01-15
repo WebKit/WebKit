@@ -78,6 +78,7 @@ public:
     void updateCachedState(RemoteMediaPlayerState&&);
     void characteristicChanged(bool hasAudio, bool hasVideo, WebCore::MediaPlayerEnums::MovieLoadType);
     void sizeChanged(WebCore::FloatSize);
+    void firstVideoFrameAvailable();
 
     void addRemoteAudioTrack(TrackPrivateRemoteIdentifier, TrackPrivateRemoteConfiguration&&);
     void removeRemoteAudioTrack(TrackPrivateRemoteIdentifier);
@@ -123,7 +124,6 @@ private:
 
     bool shouldIgnoreIntrinsicSize() final;
 
-    // Unimplemented
     PlatformLayer* platformLayer() const final;
 
 #if PLATFORM(IOS_FAMILY) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
@@ -196,7 +196,10 @@ private:
     unsigned long long totalBytes() const final;
     bool didLoadingProgress() const final;
 
-    void setSize(const WebCore::IntSize&) final;
+    // In the Cocoa WebKit port, MediaPlayerPrivateAVFoundationObjC::setSize() does nothing,
+    // so the Web process does not need to send IPC messages to call it in the GPU process.
+    // Other WebKit ports may need to do that.
+    void setSize(const WebCore::IntSize&) final { }
 
     void paint(WebCore::GraphicsContext&, const WebCore::FloatRect&) final;
 
@@ -316,6 +319,7 @@ private:
 
     WebCore::MediaPlayer* m_player { nullptr };
     RefPtr<WebCore::PlatformMediaResourceLoader> m_mediaResourceLoader;
+    RetainPtr<PlatformLayer> m_videoLayer;
     RemoteMediaPlayerManager& m_manager;
     WebCore::MediaPlayerEnums::MediaEngineIdentifier m_remoteEngineIdentifier;
     MediaPlayerPrivateRemoteIdentifier m_id;

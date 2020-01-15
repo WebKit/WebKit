@@ -48,6 +48,7 @@
 
 #if PLATFORM(COCOA)
 #include "LayerHostingContext.h"
+#include "LayerTreeContext.h"
 #endif
 
 namespace WebKit {

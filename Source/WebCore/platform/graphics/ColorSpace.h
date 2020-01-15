@@ -32,6 +32,5 @@ enum class ColorSpace : uint8_t {
     LinearRGB,
     DisplayP3
 };
-    
-} // namespace WebCore
 
+} // namespace WebCore

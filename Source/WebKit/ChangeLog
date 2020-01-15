@@ -1,3 +1,54 @@
+2020-01-14  Peng Liu  <peng.liu6@apple.com>
+
+        [Media in GPU process] Implement the remote video layer support
+        https://bugs.webkit.org/show_bug.cgi?id=206043
+
+        Reviewed by Youenn Fablet.
+
+        RemoteMediaPlayerProxy in the GPU process creates a LayerHostingContext with createForExternalHostingProcess()
+        and share the context ID with the MediaPlayerPrivateRemote in the Web process.
+        Then the MediaPlayerPrivateRemote creates a hosting layer with the context ID for rendering.
+
+        This patch updates RemoteMediaPlayerProxy::PrepareForPlayback to provide the initial video content box and scale
+        for the VideoFullscreenLayerManagerObjC on the GPU process to create WebVideoContainerLayer.
+        It adds XPC message RemoteMediaPlayerManager::FirstVideoFrameAvailable to notify the renderer on the Web process that the video layer is ready.
+        RemoteMediaPlayerManagerProxy::SetSize message is removed to avoid the unnecessary XPC message
+        because MediaPlayerPrivateAVFoundationObjC::setSize() does nothing.
+
+        * GPUProcess/media/RemoteMediaPlayerProxy.cpp:
+        (WebKit::RemoteMediaPlayerProxy::prepareForPlayback):
+        (WebKit::RemoteMediaPlayerProxy::mediaPlayerFirstVideoFrameAvailable):
+        (WebKit::RemoteMediaPlayerProxy::mediaPlayerRenderingModeChanged):
+        (WebKit::RemoteMediaPlayerProxy::mediaPlayerContentBoxRect const):
+        (WebKit::RemoteMediaPlayerProxy::mediaPlayerContentsScale const):
+        (WebKit::RemoteMediaPlayerProxy::setSize): Deleted.
+        * GPUProcess/media/RemoteMediaPlayerProxy.h:
+        * GPUProcess/media/RemoteMediaPlayerProxy.messages.in:
+        * Platform/cocoa/LayerHostingContext.h: Renamed from Source/WebKit/Platform/mac/LayerHostingContext.h.
+        * Platform/cocoa/LayerHostingContext.mm: Renamed from Source/WebKit/Platform/mac/LayerHostingContext.mm.
+        (WebKit::LayerHostingContext::createPlatformLayerForHostingContext):
+        * Platform/ios/PaymentAuthorizationController.mm:
+        * PluginProcess/mac/PluginControllerProxyMac.mm:
+        * SourcesCocoa.txt:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/GPU/media/MediaPlayerPrivateRemote.cpp:
+        (WebKit::MediaPlayerPrivateRemote::prepareForPlayback):
+        (WebKit::MediaPlayerPrivateRemote::MediaPlayerPrivateRemote::load):
+        (WebKit::MediaPlayerPrivateRemote::firstVideoFrameAvailable):
+        (WebKit::MediaPlayerPrivateRemote::platformLayer const):
+        (WebKit::MediaPlayerPrivateRemote::setSize): Deleted.
+        * WebProcess/GPU/media/MediaPlayerPrivateRemote.h:
+        * WebProcess/GPU/media/RemoteMediaPlayerManager.cpp:
+        (WebKit::RemoteMediaPlayerManager::characteristicChanged):
+        (WebKit::RemoteMediaPlayerManager::sizeChanged):
+        (WebKit::RemoteMediaPlayerManager::addRemoteVideoTrack):
+        (WebKit::RemoteMediaPlayerManager::removeRemoteVideoTrack):
+        (WebKit::RemoteMediaPlayerManager::remoteVideoTrackConfigurationChanged):
+        (WebKit::RemoteMediaPlayerManager::firstVideoFrameAvailable):
+        * WebProcess/GPU/media/RemoteMediaPlayerManager.h:
+        * WebProcess/GPU/media/RemoteMediaPlayerManager.messages.in:
+        * WebProcess/Plugins/Netscape/NetscapePlugin.cpp:
+
 2020-01-10  Jiewen Tan  <jiewen_tan@apple.com>
 
         [WebAuthn] Implement SPI to tell UI clients to select assertion responses

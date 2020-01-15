@@ -57,7 +57,29 @@ public:
     LayoutRect(const IntRect& rect) : m_location(rect.location()), m_size(rect.size()) { }
     
     WEBCORE_EXPORT explicit LayoutRect(const FloatRect&); // don't do this implicitly since it's lossy
-        
+
+    template<class Encoder>
+    void encode(Encoder& encoder) const
+    {
+        encoder << m_location << m_size;
+    }
+
+    template<class Decoder>
+    static Optional<LayoutRect> decode(Decoder& decoder)
+    {
+        Optional<LayoutPoint> layoutPoint;
+        decoder >> layoutPoint;
+        if (!layoutPoint)
+            return WTF::nullopt;
+
+        Optional<LayoutSize> layoutSize;
+        decoder >> layoutSize;
+        if (!layoutSize)
+            return WTF::nullopt;
+
+        return {{ *layoutPoint, *layoutSize }};
+    }
+
     LayoutPoint location() const { return m_location; }
     LayoutSize size() const { return m_size; }
 

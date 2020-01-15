@@ -30,6 +30,7 @@
 
 #import "WKPaymentAuthorizationDelegate.h"
 #import <pal/cocoa/PassKitSoftLink.h>
+#import <wtf/CompletionHandler.h>
 
 @interface WKPaymentAuthorizationControllerDelegate : WKPaymentAuthorizationDelegate <PKPaymentAuthorizationControllerDelegate, PKPaymentAuthorizationControllerPrivateDelegate>
 

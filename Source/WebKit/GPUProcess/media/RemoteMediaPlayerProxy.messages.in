@@ -24,7 +24,7 @@
 #if ENABLE(VIDEO)
 
 messages -> RemoteMediaPlayerProxy NotRefCounted {
-    PrepareForPlayback(bool privateMode, enum:uint8_t WebCore::MediaPlayerEnums::Preload preload, bool preservesPitch, bool prepareForRendering)
+    PrepareForPlayback(bool privateMode, enum:uint8_t WebCore::MediaPlayerEnums::Preload preload, bool preservesPitch, bool prepareForRendering, WebCore::LayoutRect layoutRect, float videoContentScale) -> (Optional<WebKit::LayerHostingContextID> layerHostingContextId) Async
 
     Load(URL url, Optional<WebKit::SandboxExtension::Handle> sandboxExtension, WebCore::ContentType contentType, String keySystem) -> (struct WebKit::RemoteMediaPlayerConfiguration playerConfiguration) Async
     CancelLoad()
@@ -45,7 +45,6 @@ messages -> RemoteMediaPlayerProxy NotRefCounted {
     SetPreservesPitch(bool preservesPitch)
 
     PrepareForRendering()
-    SetSize(WebCore::IntSize size)
     SetVisible(bool visible)
     SetShouldMaintainAspectRatio(bool maintainAspectRatio)
     SetVideoFullscreenFrame(WebCore::FloatRect rect)

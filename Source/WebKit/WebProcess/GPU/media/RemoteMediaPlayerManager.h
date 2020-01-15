@@ -93,6 +93,7 @@ private:
     void addRemoteAudioTrack(MediaPlayerPrivateRemoteIdentifier, TrackPrivateRemoteIdentifier, TrackPrivateRemoteConfiguration&&);
     void removeRemoteAudioTrack(MediaPlayerPrivateRemoteIdentifier, TrackPrivateRemoteIdentifier);
     void remoteAudioTrackConfigurationChanged(MediaPlayerPrivateRemoteIdentifier, TrackPrivateRemoteIdentifier, TrackPrivateRemoteConfiguration&&);
+    void firstVideoFrameAvailable(WebKit::MediaPlayerPrivateRemoteIdentifier);
 
     void addRemoteVideoTrack(MediaPlayerPrivateRemoteIdentifier, TrackPrivateRemoteIdentifier, TrackPrivateRemoteConfiguration&&);
     void removeRemoteVideoTrack(MediaPlayerPrivateRemoteIdentifier, TrackPrivateRemoteIdentifier);

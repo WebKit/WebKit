@@ -26,6 +26,8 @@
 #import "config.h"
 #import "LayerHostingContext.h"
 
+#import "LayerTreeContext.h"
+#import <WebCore/WebCoreCALayerExtras.h>
 #import <pal/spi/cg/CoreGraphicsSPI.h>
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
 #import <wtf/MachSendRight.h>
@@ -88,6 +90,12 @@ std::unique_ptr<LayerHostingContext> LayerHostingContext::createForExternalPlugi
     return layerHostingContext;
 }
 #endif
+
+RetainPtr<CALayer> LayerHostingContext::createPlatformLayerForHostingContext(LayerHostingContextID contextID)
+{
+    return [CALayer _web_renderLayerWithContextID:contextID];
+}
+
 #endif // HAVE(OUT_OF_PROCESS_LAYER_HOSTING)
 
 LayerHostingContext::LayerHostingContext()

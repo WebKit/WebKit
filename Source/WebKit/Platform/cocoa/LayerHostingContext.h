@@ -25,7 +25,6 @@
 
 #pragma once
 
-#include "LayerTreeContext.h"
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/RetainPtr.h>
@@ -40,7 +39,8 @@ class MachSendRight;
 namespace WebKit {
 
 using LayerHostingContextID = uint32_t;
-    
+enum class LayerHostingMode : uint8_t;
+
 struct LayerHostingContextOptions {
 #if PLATFORM(IOS_FAMILY)
     bool canShowWhileLocked { false };
@@ -58,7 +58,9 @@ public:
 #if PLATFORM(MAC)
     static std::unique_ptr<LayerHostingContext> createForExternalPluginHostingProcess();
 #endif
-    
+
+    static RetainPtr<CALayer> createPlatformLayerForHostingContext(LayerHostingContextID);
+
 #endif // HAVE(OUT_OF_PROCESS_LAYER_HOSTING)
 
     LayerHostingContext();

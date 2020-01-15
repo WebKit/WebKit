@@ -1,3 +1,12 @@
+2020-01-14  Peng Liu  <peng.liu6@apple.com>
+
+        [Media in GPU process] Implement the remote video layer support
+        https://bugs.webkit.org/show_bug.cgi?id=206043
+
+        Reviewed by Youenn Fablet.
+
+        * gpu-process/TestExpectations:
+
 2020-01-14  Ryosuke Niwa  <rniwa@webkit.org>
 
         REGRESSION: fast/shadow-dom/link-element-in-shadow-tree.html is flaky

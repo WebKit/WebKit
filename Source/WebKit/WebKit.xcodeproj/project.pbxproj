@@ -5551,8 +5551,6 @@
 		1A7E814E1152D2240003695B /* mac */ = {
 			isa = PBXGroup;
 			children = (
-				BCE0937614FB128B001138D9 /* LayerHostingContext.h */,
-				BCE0937514FB128B001138D9 /* LayerHostingContext.mm */,
 				1A24B5F011F531E800C38269 /* MachUtilities.cpp */,
 				1A24B5F111F531E800C38269 /* MachUtilities.h */,
 				51933DEB1965EB24008AC3EA /* MenuUtilities.h */,
@@ -7243,6 +7241,8 @@
 		4450AEBE1DC3FAAC009943F2 /* cocoa */ = {
 			isa = PBXGroup;
 			children = (
+				BCE0937614FB128B001138D9 /* LayerHostingContext.h */,
+				BCE0937514FB128B001138D9 /* LayerHostingContext.mm */,
 				A1798B3D222D97A2000764BD /* PaymentAuthorizationPresenter.h */,
 				A1798B4A222F133A000764BD /* PaymentAuthorizationPresenter.mm */,
 				A1798B3F222D98B6000764BD /* PaymentAuthorizationViewController.h */,

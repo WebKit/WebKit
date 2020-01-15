@@ -40,6 +40,7 @@
 #include "RemoteMediaResourceManager.h"
 #include "RemoteVideoTrackProxy.h"
 #include "WebCoreArgumentCoders.h"
+#include <WebCore/LayoutRect.h>
 #include <WebCore/MediaPlayer.h>
 #include <WebCore/MediaPlayerPrivate.h>
 #include <WebCore/NotImplemented.h>
@@ -105,12 +106,16 @@ void RemoteMediaPlayerProxy::load(const URL& url, Optional<SandboxExtension::Han
     completionHandler(WTFMove(configuration));
 }
 
-void RemoteMediaPlayerProxy::prepareForPlayback(bool privateMode, WebCore::MediaPlayerEnums::Preload preload, bool preservesPitch, bool prepareForRendering)
+void RemoteMediaPlayerProxy::prepareForPlayback(bool privateMode, WebCore::MediaPlayerEnums::Preload preload, bool preservesPitch, bool prepareForRendering, LayoutRect layoutRect, float videoContentScale, CompletionHandler<void(Optional<LayerHostingContextID>&& contextId)>&& completionHandler)
 {
     m_player->setPrivateBrowsingMode(privateMode);
     m_player->setPreload(preload);
     m_player->setPreservesPitch(preservesPitch);
     m_player->prepareForRendering();
+    m_videoContentBoxRect = layoutRect;
+    m_videoContentScale = videoContentScale;
+    m_layerHostingContext = LayerHostingContext::createForExternalHostingProcess();
+    completionHandler(m_layerHostingContext->contextID());
 }
 
 void RemoteMediaPlayerProxy::cancelLoad()
@@ -177,11 +182,6 @@ void RemoteMediaPlayerProxy::setPreservesPitch(bool preservesPitch)
 void RemoteMediaPlayerProxy::prepareForRendering()
 {
     m_player->prepareForRendering();
-}
-
-void RemoteMediaPlayerProxy::setSize(const WebCore::IntSize& size)
-{
-    m_player->setSize(size);
 }
 
 void RemoteMediaPlayerProxy::setVisible(bool visible)
@@ -430,12 +430,13 @@ void RemoteMediaPlayerProxy::mediaPlayerEngineUpdated()
 
 void RemoteMediaPlayerProxy::mediaPlayerFirstVideoFrameAvailable()
 {
-    notImplemented();
+    m_layerHostingContext->setRootLayer(m_player->platformLayer());
+    m_webProcessConnection->send(Messages::RemoteMediaPlayerManager::FirstVideoFrameAvailable(m_id), 0);
 }
 
 void RemoteMediaPlayerProxy::mediaPlayerRenderingModeChanged()
 {
-    notImplemented();
+    m_layerHostingContext->setRootLayer(m_player->platformLayer());
 }
 
 void RemoteMediaPlayerProxy::mediaPlayerActiveSourceBuffersChanged()
@@ -496,14 +497,12 @@ bool RemoteMediaPlayerProxy::mediaPlayerIsFullscreenPermitted() const
 
 LayoutRect RemoteMediaPlayerProxy::mediaPlayerContentBoxRect() const
 {
-    notImplemented();
-    return LayoutRect();
+    return m_videoContentBoxRect;
 }
 
 float RemoteMediaPlayerProxy::mediaPlayerContentsScale() const
 {
-    notImplemented();
-    return 1;
+    return m_videoContentScale;
 }
 
 void RemoteMediaPlayerProxy::mediaPlayerPause()

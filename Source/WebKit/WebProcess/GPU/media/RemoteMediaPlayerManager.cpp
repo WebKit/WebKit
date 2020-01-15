@@ -293,13 +293,13 @@ void RemoteMediaPlayerManager::engineFailedToLoad(MediaPlayerPrivateRemoteIdenti
 
 void RemoteMediaPlayerManager::characteristicChanged(MediaPlayerPrivateRemoteIdentifier id, bool hasAudio, bool hasVideo, WebCore::MediaPlayerEnums::MovieLoadType loadType)
 {
-    if (auto player = m_players.get(id))
+    if (const auto& player = m_players.get(id))
         player->characteristicChanged(hasAudio, hasVideo, loadType);
 }
 
 void RemoteMediaPlayerManager::sizeChanged(MediaPlayerPrivateRemoteIdentifier id, WebCore::FloatSize naturalSize)
 {
-    if (auto player = m_players.get(id))
+    if (const auto& player = m_players.get(id))
         player->sizeChanged(naturalSize);
 }
 
@@ -323,20 +323,26 @@ void RemoteMediaPlayerManager::remoteAudioTrackConfigurationChanged(MediaPlayerP
 
 void RemoteMediaPlayerManager::addRemoteVideoTrack(MediaPlayerPrivateRemoteIdentifier playerID, TrackPrivateRemoteIdentifier trackID, TrackPrivateRemoteConfiguration&& configuration)
 {
-    if (auto player = m_players.get(playerID))
+    if (const auto& player = m_players.get(playerID))
         player->addRemoteVideoTrack(trackID, WTFMove(configuration));
 }
 
 void RemoteMediaPlayerManager::removeRemoteVideoTrack(MediaPlayerPrivateRemoteIdentifier playerID, TrackPrivateRemoteIdentifier trackID)
 {
-    if (auto player = m_players.get(playerID))
+    if (const auto& player = m_players.get(playerID))
         player->removeRemoteVideoTrack(trackID);
 }
 
 void RemoteMediaPlayerManager::remoteVideoTrackConfigurationChanged(MediaPlayerPrivateRemoteIdentifier playerID, TrackPrivateRemoteIdentifier trackID, TrackPrivateRemoteConfiguration&& configuration)
 {
-    if (auto player = m_players.get(playerID))
+    if (const auto& player = m_players.get(playerID))
         player->remoteVideoTrackConfigurationChanged(trackID, WTFMove(configuration));
+}
+
+void RemoteMediaPlayerManager::firstVideoFrameAvailable(WebKit::MediaPlayerPrivateRemoteIdentifier id)
+{
+    if (const auto& player = m_players.get(id))
+        player->firstVideoFrameAvailable();
 }
 
 void RemoteMediaPlayerManager::requestResource(MediaPlayerPrivateRemoteIdentifier id, RemoteMediaResourceIdentifier remoteMediaResourceIdentifier, ResourceRequest&& request, PlatformMediaResourceLoader::LoadOptions options, CompletionHandler<void()>&& completionHandler)
@@ -364,7 +370,7 @@ void RemoteMediaPlayerManager::updatePreferences(const Settings& settings)
 
 void RemoteMediaPlayerManager::updateCachedState(MediaPlayerPrivateRemoteIdentifier id, RemoteMediaPlayerState&& state)
 {
-    if (auto player = m_players.get(id))
+    if (const auto& player = m_players.get(id))
         player->updateCachedState(WTFMove(state));
 }
 

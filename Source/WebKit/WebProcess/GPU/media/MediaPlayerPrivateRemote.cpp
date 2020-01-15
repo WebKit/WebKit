@@ -46,11 +46,11 @@
 #include <wtf/URL.h>
 #include <wtf/text/CString.h>
 
-#if !RELEASE_LOG_DISABLED
 namespace WebCore {
+#if !RELEASE_LOG_DISABLED
 extern WTFLogChannel LogMedia;
-}
 #endif
+}
 
 namespace WebKit {
 using namespace WebCore;
@@ -89,7 +89,18 @@ MediaPlayerPrivateRemote::~MediaPlayerPrivateRemote()
 
 void MediaPlayerPrivateRemote::prepareForPlayback(bool privateMode, MediaPlayer::Preload preload, bool preservesPitch, bool prepare)
 {
-    connection().send(Messages::RemoteMediaPlayerProxy::PrepareForPlayback(privateMode, preload, preservesPitch, prepare), m_id);
+    auto layoutRect = m_player->playerContentBoxRect();
+    auto scale = m_player->playerContentsScale();
+
+    connection().sendWithAsyncReply(Messages::RemoteMediaPlayerProxy::PrepareForPlayback(privateMode, preload, preservesPitch, prepare, layoutRect, scale), [weakThis = makeWeakPtr(*this), this](auto contextId) mutable {
+        if (!weakThis)
+            return;
+
+        if (!contextId)
+            return;
+
+        m_videoLayer = LayerHostingContext::createPlatformLayerForHostingContext(contextId.value());
+    }, m_id);
 }
 
 void MediaPlayerPrivateRemote::MediaPlayerPrivateRemote::load(const URL& url, const ContentType& contentType, const String& keySystem)
@@ -121,7 +132,7 @@ void MediaPlayerPrivateRemote::MediaPlayerPrivateRemote::load(const URL& url, co
 
     connection().sendWithAsyncReply(Messages::RemoteMediaPlayerProxy::Load(url, sandboxExtensionHandle, contentType, keySystem), [weakThis = makeWeakPtr(*this)](auto&& configuration) {
         if (weakThis)
-            weakThis->m_configuration = configuration;
+            weakThis->m_configuration = WTFMove(configuration);
     }, m_id);
 }
 
@@ -291,6 +302,11 @@ void MediaPlayerPrivateRemote::sizeChanged(WebCore::FloatSize naturalSize)
     m_player->sizeChanged();
 }
 
+void MediaPlayerPrivateRemote::firstVideoFrameAvailable()
+{
+    m_player->firstVideoFrameAvailable();
+}
+
 String MediaPlayerPrivateRemote::engineDescription() const
 {
     return m_configuration.engineDescription;
@@ -344,11 +360,6 @@ bool MediaPlayerPrivateRemote::shouldIgnoreIntrinsicSize()
 void MediaPlayerPrivateRemote::prepareForRendering()
 {
     connection().send(Messages::RemoteMediaPlayerProxy::PrepareForRendering(), m_id);
-}
-
-void MediaPlayerPrivateRemote::setSize(const WebCore::IntSize& size)
-{
-    connection().send(Messages::RemoteMediaPlayerProxy::SetSize(size), m_id);
 }
 
 void MediaPlayerPrivateRemote::setVisible(bool visible)
@@ -480,8 +491,7 @@ void MediaPlayerPrivateRemote::load(MediaStreamPrivate&)
 
 PlatformLayer* MediaPlayerPrivateRemote::platformLayer() const
 {
-    notImplemented();
-    return nullptr;
+    return m_videoLayer.get();
 }
 
 #if PLATFORM(IOS_FAMILY) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))

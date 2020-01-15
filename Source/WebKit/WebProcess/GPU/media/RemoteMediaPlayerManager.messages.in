@@ -26,6 +26,7 @@
 messages -> RemoteMediaPlayerManager NotRefCounted {
     NetworkStateChanged(WebKit::MediaPlayerPrivateRemoteIdentifier id, struct WebKit::RemoteMediaPlayerState state)
     ReadyStateChanged(WebKit::MediaPlayerPrivateRemoteIdentifier id, struct WebKit::RemoteMediaPlayerState state)
+    FirstVideoFrameAvailable(WebKit::MediaPlayerPrivateRemoteIdentifier id)
     VolumeChanged(WebKit::MediaPlayerPrivateRemoteIdentifier id, double volume)
     MuteChanged(WebKit::MediaPlayerPrivateRemoteIdentifier id, bool mute)
     TimeChanged(WebKit::MediaPlayerPrivateRemoteIdentifier id, struct WebKit::RemoteMediaPlayerState state)

@@ -52,6 +52,8 @@ class VideoTrackPrivate;
 
 namespace WebKit {
 
+using LayerHostingContextID = uint32_t;
+class LayerHostingContext;
 class RemoteAudioTrackProxy;
 class RemoteMediaPlayerManagerProxy;
 class RemoteVideoTrackProxy;
@@ -72,7 +74,8 @@ public:
 
     void getConfiguration(RemoteMediaPlayerConfiguration&);
 
-    void prepareForPlayback(bool privateMode, WebCore::MediaPlayerEnums::Preload, bool preservesPitch, bool prepareForRendering);
+    void prepareForPlayback(bool privateMode, WebCore::MediaPlayerEnums::Preload, bool preservesPitch, bool prepareForRendering, WebCore::LayoutRect, float videoContentScale, CompletionHandler<void(Optional<LayerHostingContextID>&&)>&&);
+    void prepareForRendering();
 
     void load(const URL&, Optional<SandboxExtension::Handle>&&, const WebCore::ContentType&, const String&, CompletionHandler<void(RemoteMediaPlayerConfiguration&&)>&&);
     void cancelLoad();
@@ -92,8 +95,6 @@ public:
     void setPrivateBrowsingMode(bool);
     void setPreservesPitch(bool);
 
-    void prepareForRendering();
-    void setSize(const WebCore::IntSize&);
     void setVisible(bool);
     void setShouldMaintainAspectRatio(bool);
     void setVideoFullscreenFrame(WebCore::FloatRect);
@@ -209,6 +210,7 @@ private:
     RefPtr<SandboxExtension> m_sandboxExtension;
     Ref<IPC::Connection> m_webProcessConnection;
     RefPtr<WebCore::MediaPlayer> m_player;
+    std::unique_ptr<LayerHostingContext> m_layerHostingContext;
     RemoteMediaPlayerManagerProxy& m_manager;
     WebCore::MediaPlayerEnums::MediaEngineIdentifier m_engineIdentifier;
     Vector<WebCore::ContentType> m_typesRequiringHardwareSupport;
@@ -218,6 +220,8 @@ private:
     bool m_seekableChanged { true };
     bool m_bufferedChanged { true };
     bool m_renderingCanBeAccelerated { true };
+    WebCore::LayoutRect m_videoContentBoxRect;
+    float m_videoContentScale { 1.0 };
 
 #if !RELEASE_LOG_DISABLED
     const Logger& m_logger;

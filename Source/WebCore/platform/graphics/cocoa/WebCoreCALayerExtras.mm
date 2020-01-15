@@ -81,6 +81,9 @@
 + (CALayer *)_web_renderLayerWithContextID:(uint32_t)contextID
 {
     CALayerHost *layerHost = [CALayerHost layer];
+#ifndef NDEBUG
+    [layerHost setName:@"WebVideoHostingLayer"];
+#endif
     layerHost.contextId = contextID;
     return layerHost;
 }
