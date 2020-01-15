@@ -1694,8 +1694,10 @@ void FontCache::prewarmGlobally()
         return;
 
     Vector<String> families = std::initializer_list<String> {
+#if PLATFORM(MAC) || PLATFORM(MACCATALYST)
         ".SF NS Text"_s,
         ".SF NS Display"_s,
+#endif
         "Arial"_s,
         "Helvetica"_s,
         "Helvetica Neue"_s,
