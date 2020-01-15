@@ -1,5 +1,33 @@
 2020-01-14  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r254244. rdar://problem/58553148
+
+    Instruction.h: Multiplication result converted to larger type
+    https://bugs.webkit.org/show_bug.cgi?id=205945
+    
+    Reviewed by Mark Lam.
+    
+    * bytecode/Instruction.h:
+    (JSC::BaseInstruction::size const):
+    Changed the types to size_t so that the computation is computed accordingly.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@254244 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-01-08  Michael Saboff  <msaboff@apple.com>
+
+            Instruction.h: Multiplication result converted to larger type
+            https://bugs.webkit.org/show_bug.cgi?id=205945
+
+            Reviewed by Mark Lam.
+
+            * bytecode/Instruction.h:
+            (JSC::BaseInstruction::size const):
+            Changed the types to size_t so that the computation is computed accordingly.
+
+
+2020-01-14  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r254218. rdar://problem/58553153
 
     JSArrayBufferView.h: Multiplication result converted to larger type
