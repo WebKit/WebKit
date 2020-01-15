@@ -1967,4 +1967,3 @@ webkit.org/b/202064 webaudio/silent-audio-interrupted-in-background.html [ Pass 
 
 webkit.org/b/205757 webgl/1.0.3/conformance/textures/texture-upload-size.html [ Pass Timeout ]
 
-webkit.org/b/205807 [ Debug ] inspector/page/setBootstrapScript-main-frame.html [ Pass Failure ]
