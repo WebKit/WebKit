@@ -2495,11 +2495,8 @@
         "image-orientation": {
             "inherited": true,
             "codegen-properties": {
-                "enable-if": "ENABLE_CSS_IMAGE_ORIENTATION"
-            },
-            "status": {
-                "status": "under consideration",
-                "enabled-by-default": false
+                "initial": "initialImageOrientation",
+                "converter": "ImageOrientation"
             },
             "specification": {
                 "category": "css-images",

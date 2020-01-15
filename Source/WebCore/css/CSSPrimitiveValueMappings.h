@@ -47,10 +47,6 @@
 #include <wtf/MathExtras.h>
 #include <wtf/OptionSet.h>
 
-#if ENABLE(CSS_IMAGE_ORIENTATION)
-#include "ImageOrientation.h"
-#endif
-
 namespace WebCore {
 
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(short i)
@@ -4882,56 +4878,6 @@ template<> inline CSSPrimitiveValue::operator MaskType() const
     ASSERT_NOT_REACHED();
     return MaskType::Luminance;
 }
-
-#if ENABLE(CSS_IMAGE_ORIENTATION)
-
-template<> inline CSSPrimitiveValue::CSSPrimitiveValue(ImageOrientation e)
-    : CSSValue(PrimitiveClass)
-{
-    setPrimitiveUnitType(CSSUnitType::CSS_DEG);
-    switch (e) {
-    case ImageOrientation::OriginTopLeft:
-        m_value.num = 0;
-        break;
-    case ImageOrientation::OriginRightTop:
-        m_value.num = 90;
-        break;
-    case ImageOrientation::OriginBottomRight:
-        m_value.num = 180;
-        break;
-    case ImageOrientation::OriginLeftBottom:
-        m_value.num = 270;
-        break;
-    case ImageOrientation::FromImage:
-    case ImageOrientation::OriginTopRight:
-    case ImageOrientation::OriginLeftTop:
-    case ImageOrientation::OriginBottomLeft:
-    case ImageOrientation::OriginRightBottom:
-        ASSERT_NOT_REACHED();
-    }
-}
-
-template<> inline CSSPrimitiveValue::operator ImageOrientation() const
-{
-    ASSERT(isAngle());
-    double quarters = 4 * doubleValue(CSSUnitType::CSS_TURN);
-    int orientation = 3 & static_cast<int>(quarters < 0 ? floor(quarters) : ceil(quarters));
-    switch (orientation) {
-    case 0:
-        return ImageOrientation::OriginTopLeft;
-    case 1:
-        return ImageOrientation::OriginRightTop;
-    case 2:
-        return ImageOrientation::OriginBottomRight;
-    case 3:
-        return ImageOrientation::OriginLeftBottom;
-    }
-
-    ASSERT_NOT_REACHED();
-    return ImageOrientation::None;
-}
-
-#endif // ENABLE(CSS_IMAGE_ORIENTATION)
 
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(CSSBoxType cssBox)
     : CSSValue(PrimitiveClass)

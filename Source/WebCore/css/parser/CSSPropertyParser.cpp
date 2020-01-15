@@ -2901,17 +2901,12 @@ static RefPtr<CSSValue> consumeReflect(CSSParserTokenRange& range, const CSSPars
     return CSSReflectValue::create(direction.releaseNonNull(), offset.releaseNonNull(), WTFMove(mask));
 }
 
-#if ENABLE(CSS_IMAGE_ORIENTATION)
-static RefPtr<CSSValue> consumeImageOrientation(CSSParserTokenRange& range, CSSParserMode cssParserMode, UnitlessQuirk unitless = UnitlessQuirk::Forbid)
+static RefPtr<CSSValue> consumeImageOrientation(CSSParserTokenRange& range)
 {
-    if (range.peek().type() != NumberToken) {
-        RefPtr<CSSPrimitiveValue> angle = consumeAngle(range, cssParserMode, unitless);
-        if (angle && angle->doubleValue() == 0)
-            return angle;
-    }
+    if (range.peek().id() == CSSValueNone || range.peek().id() == CSSValueFromImage)
+        return consumeIdent(range);
     return nullptr;
 }
-#endif
 
 static RefPtr<CSSPrimitiveValue> consumeBackgroundBlendMode(CSSParserTokenRange& range)
 {
@@ -4173,10 +4168,8 @@ RefPtr<CSSValue> CSSPropertyParser::parseSingleValue(CSSPropertyID property, CSS
         return consumeReflect(m_range, m_context);
     case CSSPropertyWebkitLineBoxContain:
         return consumeLineBoxContain(m_range);
-#if ENABLE(CSS_IMAGE_ORIENTATION)
     case CSSPropertyImageOrientation:
-        return consumeImageOrientation(m_range, m_context.mode);
-#endif
+        return consumeImageOrientation(m_range);
     case CSSPropertyBackgroundAttachment:
     case CSSPropertyBackgroundBlendMode:
     case CSSPropertyBackgroundClip:
