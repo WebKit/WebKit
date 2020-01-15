@@ -34,7 +34,7 @@ namespace WTF {
 bool canMinimizeLanguages()
 {
     static bool result = [NSLocale respondsToSelector:@selector(minimizedLanguagesFromLanguages:)];
-    return result.get();
+    return result;
 }
 
 RetainPtr<CFArrayRef> minimizedLanguagesFromLanguages(CFArrayRef languages)
