@@ -836,11 +836,16 @@ EncodedJSValue JSC_HOST_CALL objectConstructorFreeze(JSGlobalObject* globalObjec
 EncodedJSValue JSC_HOST_CALL objectConstructorPreventExtensions(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
     VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     JSValue argument = callFrame->argument(0);
     if (!argument.isObject())
         return JSValue::encode(argument);
     JSObject* object = asObject(argument);
-    object->methodTable(vm)->preventExtensions(object, globalObject);
+    bool status = object->methodTable(vm)->preventExtensions(object, globalObject);
+    RETURN_IF_EXCEPTION(scope, { });
+    if (UNLIKELY(!status))
+        return throwVMTypeError(globalObject, scope, "Unable to prevent extension in Object.preventExtensions"_s);
     return JSValue::encode(object);
 }
 

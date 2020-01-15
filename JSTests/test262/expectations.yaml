@@ -1165,9 +1165,6 @@ test/built-ins/Object/internals/DefineOwnProperty/consistent-value-function-call
 test/built-ins/Object/internals/DefineOwnProperty/consistent-value-regexp-dollar1.js:
   default: 'Test262Error: Expected SameValue(«», «x») to be true'
   strict mode: 'Test262Error: Expected SameValue(«», «x») to be true'
-test/built-ins/Object/preventExtensions/throws-when-false.js:
-  default: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
 test/built-ins/Object/proto-from-ctor-realm.js:
   default: 'Test262Error: Expected SameValue(«[object Object]», «[object Object]») to be true'
   strict mode: 'Test262Error: Expected SameValue(«[object Object]», «[object Object]») to be true'
