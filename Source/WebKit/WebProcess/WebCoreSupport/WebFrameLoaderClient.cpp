@@ -96,6 +96,16 @@
 #include <wtf/ProcessID.h>
 #include <wtf/ProcessPrivilege.h>
 
+#define PREFIX_PARAMETERS "%p - [webFrame=%p, webFrameID=%" PRIu64 ", webPage=%p, webPageID=%" PRIu64 "] WebFrameLoaderClient::"
+#define WEBFRAME (webFrame())
+#define WEBFRAMEID (WEBFRAME ? WEBFRAME->frameID().toUInt64() : 0)
+#define WEBPAGE (WEBFRAME ? WEBFRAME->page() : nullptr)
+#define WEBPAGEID (WEBPAGE ? WEBPAGE->identifier().toUInt64() : 0)
+
+#define WEBFRAMELOADERCLIENT_RELEASE_LOG(channel, fmt, ...) RELEASE_LOG(channel, PREFIX_PARAMETERS fmt, this, WEBFRAME, WEBFRAMEID, WEBPAGE, WEBPAGEID, ##__VA_ARGS__)
+#define WEBFRAMELOADERCLIENT_RELEASE_LOG_ERROR(channel, fmt, ...) RELEASE_LOG_ERROR(channel, PREFIX_PARAMETERS fmt, this, WEBFRAME, WEBFRAMEID, WEBPAGE, WEBPAGEID, ##__VA_ARGS__)
+#define WEBFRAMELOADERCLIENT_RELEASE_LOG_FAULT(channel, fmt, ...) RELEASE_LOG_FAULT(channel, PREFIX_PARAMETERS fmt, this, WEBFRAME, WEBFRAMEID, WEBPAGE, WEBPAGEID, ##__VA_ARGS__)
+
 namespace WebKit {
 using namespace WebCore;
 
@@ -326,7 +336,7 @@ void WebFrameLoaderClient::dispatchDidReceiveServerRedirectForProvisionalLoad()
 
     WebDocumentLoader* documentLoader = static_cast<WebDocumentLoader*>(m_frame->coreFrame()->loader().provisionalDocumentLoader());
     if (!documentLoader) {
-        RELEASE_LOG_FAULT(Loading, "WebFrameLoaderClient::dispatchDidReceiveServerRedirectForProvisionalLoad called with no provisional DocumentLoader. FrameState is %i. FrameLoaderStateMachine stateForDebugging - %i", m_frame->coreFrame()->loader().state(), m_frame->coreFrame()->loader().stateMachine().stateForDebugging());
+        WEBFRAMELOADERCLIENT_RELEASE_LOG_FAULT(Loading, "dispatchDidReceiveServerRedirectForProvisionalLoad: Called with no provisional DocumentLoader (frameState=%i, stateForDebugging=%i)", m_frame->coreFrame()->loader().state(), m_frame->coreFrame()->loader().stateMachine().stateForDebugging());
         return;
     }
 
@@ -560,7 +570,7 @@ void WebFrameLoaderClient::dispatchDidFailProvisionalLoad(const ResourceError& e
     if (!webPage)
         return;
 
-    RELEASE_LOG(Network, "%p - WebFrameLoaderClient::dispatchDidFailProvisionalLoad: (webPageID=%" PRIu64 ", frameID=%" PRIu64 ")", this, webPage->identifier().toUInt64(), m_frame->frameID().toUInt64());
+    WEBFRAMELOADERCLIENT_RELEASE_LOG(Network, "dispatchDidFailProvisionalLoad:");
 
     RefPtr<API::Object> userData;
 
@@ -596,7 +606,7 @@ void WebFrameLoaderClient::dispatchDidFailLoad(const ResourceError& error)
     if (!webPage)
         return;
 
-    RELEASE_LOG(Network, "%p - WebFrameLoaderClient::dispatchDidFailLoad: (webPageID=%" PRIu64 ", frameID=%" PRIu64 ")", this, webPage->identifier().toUInt64(), m_frame->frameID().toUInt64());
+    WEBFRAMELOADERCLIENT_RELEASE_LOG(Network, "dispatchDidFailLoad:");
 
     RefPtr<API::Object> userData;
 
@@ -677,7 +687,7 @@ void WebFrameLoaderClient::dispatchDidReachLayoutMilestone(OptionSet<WebCore::La
     RefPtr<API::Object> userData;
 
     if (milestones & DidFirstLayout) {
-        RELEASE_LOG(Layout, "%p - WebFrameLoaderClient::dispatchDidReachLayoutMilestone: dispatching DidFirstLayoutForFrame, page = %p", this, webPage);
+        WEBFRAMELOADERCLIENT_RELEASE_LOG(Layout, "dispatchDidReachLayoutMilestone: dispatching DidFirstLayoutForFrame");
 
         // FIXME: We should consider removing the old didFirstLayout API since this is doing double duty with the
         // new didLayout API.
@@ -687,7 +697,7 @@ void WebFrameLoaderClient::dispatchDidReachLayoutMilestone(OptionSet<WebCore::La
 #if PLATFORM(MAC)
         // FIXME: Do this on DidFirstVisuallyNonEmptyLayout when Mac Safari is able to handle it (<rdar://problem/17580021>)
         if (m_frame->isMainFrame() && !m_didCompletePageTransition && !webPage->corePage()->settings().suppressesIncrementalRendering()) {
-            RELEASE_LOG(Layout, "%p - WebFrameLoaderClient::dispatchDidReachLayoutMilestone: dispatching didCompletePageTransition, page = %p", this, webPage);
+            WEBFRAMELOADERCLIENT_RELEASE_LOG(Layout, "dispatchDidReachLayoutMilestone: dispatching didCompletePageTransition");
             webPage->didCompletePageTransition();
             m_didCompletePageTransition = true;
         }
@@ -719,7 +729,7 @@ void WebFrameLoaderClient::dispatchDidReachLayoutMilestone(OptionSet<WebCore::La
     addIfSet(DidRenderSignificantAmountOfText, "DidRenderSignificantAmountOfText"_s);
     addIfSet(DidFirstMeaningfulPaint, "DidFirstMeaningfulPaint"_s);
 
-    RELEASE_LOG(Layout, "%p - WebFrameLoaderClient::dispatchDidReachLayoutMilestone: dispatching DidReachLayoutMilestone, page = %p, milestones = %{public}s", this, webPage, builder.toString().utf8().data());
+    WEBFRAMELOADERCLIENT_RELEASE_LOG(Layout, "dispatchDidReachLayoutMilestone: dispatching DidReachLayoutMilestone (milestones=%{public}s)", builder.toString().utf8().data());
 #endif
 
     // Send this after DidFirstLayout-specific calls since some clients expect to get those messages first.
@@ -727,14 +737,14 @@ void WebFrameLoaderClient::dispatchDidReachLayoutMilestone(OptionSet<WebCore::La
 
     if (milestones & DidFirstVisuallyNonEmptyLayout) {
         if (m_frame->isMainFrame() && !m_didCompletePageTransition && !webPage->corePage()->settings().suppressesIncrementalRendering()) {
-            RELEASE_LOG(Layout, "%p - WebFrameLoaderClient::dispatchDidReachLayoutMilestone: dispatching didCompletePageTransition, page = %p", this, webPage);
+            WEBFRAMELOADERCLIENT_RELEASE_LOG(Layout, "dispatchDidReachLayoutMilestone: dispatching didCompletePageTransition");
             webPage->didCompletePageTransition();
             m_didCompletePageTransition = true;
         }
 
         // FIXME: We should consider removing the old didFirstVisuallyNonEmptyLayoutForFrame API since this is doing
         // double duty with the new didLayout API.
-        RELEASE_LOG(Layout, "%p - WebFrameLoaderClient::dispatchDidReachLayoutMilestone: dispatching DidFirstVisuallyNonEmptyLayoutForFrame, page = %p", this, webPage);
+        WEBFRAMELOADERCLIENT_RELEASE_LOG(Layout, "dispatchDidReachLayoutMilestone: dispatching DidFirstVisuallyNonEmptyLayoutForFrame");
         webPage->injectedBundleLoaderClient().didFirstVisuallyNonEmptyLayoutForFrame(*webPage, *m_frame, userData);
         webPage->send(Messages::WebPageProxy::DidFirstVisuallyNonEmptyLayoutForFrame(m_frame->frameID(), UserData(WebProcess::singleton().transformObjectsToHandles(userData.get()).get())));
     }
@@ -1923,3 +1933,9 @@ void WebFrameLoaderClient::finishedLoadingApplicationManifest(uint64_t callbackI
 #endif // ENABLE(APPLICATION_MANIFEST)
 
 } // namespace WebKit
+
+#undef PREFIX_PARAMETERS
+#undef WEBFRAME
+#undef WEBFRAMEID
+#undef WEBPAGE
+#undef WEBPAGEID
