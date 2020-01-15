@@ -498,6 +498,7 @@ WI.CanvasSidebarPanel = class CanvasSidebarPanel extends WI.NavigationSidebarPan
 
         let hasRecordings = this._recording || (this._canvas && this._canvas.recordingCollection.size);
         this.element.classList.toggle("has-recordings", hasRecordings);
+        this.element.classList.toggle("showing-recording", !!this._recording);
         if (!hasRecordings)
             return;
 
