@@ -102,12 +102,17 @@ promise_test(async (test) => {
     let removedVideo2 = video2;
     removedVideo2.remove();
 
+    let cptr = 0;
+    while (++cptr < 20 && !removedVideo2.paused)
+        await new Promise(resolve => setTimeout(resolve, 50));
+    assert_true(removedVideo2.paused, "out of DOM video should get paused");
+
     video4.srcObject = await navigator.mediaDevices.getUserMedia({ video : true });
 
     while (video4.paused)
         await new Promise(resolve => setTimeout(resolve, 50));
 
-    assert_true(removedVideo2.paused, "out of DOM video");
+    assert_true(removedVideo2.paused, "out of DOM video should not restart after getUserMedia call");
 }, "Granting getUserMedia should not start paused media 2");
 
 promise_test(async (test) => {
