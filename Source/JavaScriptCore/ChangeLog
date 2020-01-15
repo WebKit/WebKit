@@ -1,3 +1,16 @@
+2020-01-15  Adrian Perez de Castro  <aperez@igalia.com>
+
+        Offlineasm warnings with newer Ruby versions
+        https://bugs.webkit.org/show_bug.cgi?id=206233
+
+        Reviewed by Yusuke Suzuki.
+
+        Avoid a warning about using Object#=~ on Annotation instances, which
+        has been deprecated in Ruby 2.7.
+
+        * offlineasm/parser.rb: Swap checks to prevent applying the =~ operator
+        to Annotation instances, which do not define it.
+
 2020-01-15  Keith Miller  <keith_miller@apple.com>
 
         Revert bytecode checkpoints since it breaks watch
