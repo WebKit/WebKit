@@ -198,6 +198,9 @@ ElementUpdates TreeResolver::resolveElement(Element& element)
         return { };
     }
 
+    if (!element.rendererIsEverNeeded())
+        return { };
+
     auto newStyle = styleForElement(element, parent().style);
 
     if (!affectsRenderedSubtree(element, *newStyle))
