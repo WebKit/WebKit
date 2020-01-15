@@ -1,5 +1,36 @@
 2020-01-14  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r254292. rdar://problem/58552868
+
+    Set the title for images so it will be correctly displayed in UIContextMenus
+    https://bugs.webkit.org/show_bug.cgi?id=205980
+    <rdar://problem/57701988>
+    
+    Reviewed by Dean Jackson.
+    
+    Need to set the title text for images.
+    
+    * UIProcess/ios/WKContentViewInteraction.mm:
+    (-[WKContentView continueContextMenuInteraction:]):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@254292 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-01-09  Megan Gardner  <megan_gardner@apple.com>
+
+            Set the title for images so it will be correctly displayed in UIContextMenus
+            https://bugs.webkit.org/show_bug.cgi?id=205980
+            <rdar://problem/57701988>
+
+            Reviewed by Dean Jackson.
+
+            Need to set the title text for images.
+
+            * UIProcess/ios/WKContentViewInteraction.mm:
+            (-[WKContentView continueContextMenuInteraction:]):
+
+2020-01-14  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r254287. rdar://problem/58552886
 
     Fullscreen videos do not enter PiP in first tap
