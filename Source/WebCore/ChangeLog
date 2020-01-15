@@ -1,5 +1,72 @@
 2020-01-14  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r254322. rdar://problem/58549088
+
+    Block cross-site top-frame navigations from untrusted iframes
+    https://bugs.webkit.org/show_bug.cgi?id=206027
+    <rdar://problem/58320516>
+    
+    Reviewed by Geoffrey Garen.
+    
+    Source/WebCore:
+    
+    Block cross-site top-frame navigations from untrusted iframes, unless they have a user gesture.
+    We already consider third-party iframes as untrusted, we now also treat first-party iframes
+    as untrusted if they are loaded both third-party scripts & iframes.
+    
+    Test: http/tests/security/block-top-level-navigations-by-untrusted-first-party-iframes.html
+    
+    * dom/Document.cpp:
+    (WebCore::Document::canNavigate):
+    (WebCore::Document::willLoadScriptElement):
+    (WebCore::Document::willLoadFrameElement):
+    (WebCore::Document::isNavigationBlockedByThirdPartyIFrameRedirectBlocking):
+    * dom/Document.h:
+    * dom/ScriptElement.cpp:
+    (WebCore::ScriptElement::requestClassicScript):
+    * html/HTMLFrameElementBase.cpp:
+    (WebCore::HTMLFrameElementBase::openURL):
+    
+    LayoutTests:
+    
+    Add layout test coverage.
+    
+    * http/tests/security/block-top-level-navigations-by-third-party-iframes-expected.txt:
+    * http/tests/security/block-top-level-navigations-by-untrusted-first-party-iframes-expected.txt: Added.
+    * http/tests/security/block-top-level-navigations-by-untrusted-first-party-iframes.html: Added.
+    * http/tests/security/resources/navigate-top-level-frame-to-failure-page-untrusted-iframe.html: Added.
+    * http/tests/security/resources/navigate-top-to-error-page.js: Added.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@254322 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-01-09  Chris Dumez  <cdumez@apple.com>
+
+            Block cross-site top-frame navigations from untrusted iframes
+            https://bugs.webkit.org/show_bug.cgi?id=206027
+            <rdar://problem/58320516>
+
+            Reviewed by Geoffrey Garen.
+
+            Block cross-site top-frame navigations from untrusted iframes, unless they have a user gesture.
+            We already consider third-party iframes as untrusted, we now also treat first-party iframes
+            as untrusted if they are loaded both third-party scripts & iframes.
+
+            Test: http/tests/security/block-top-level-navigations-by-untrusted-first-party-iframes.html
+
+            * dom/Document.cpp:
+            (WebCore::Document::canNavigate):
+            (WebCore::Document::willLoadScriptElement):
+            (WebCore::Document::willLoadFrameElement):
+            (WebCore::Document::isNavigationBlockedByThirdPartyIFrameRedirectBlocking):
+            * dom/Document.h:
+            * dom/ScriptElement.cpp:
+            (WebCore::ScriptElement::requestClassicScript):
+            * html/HTMLFrameElementBase.cpp:
+            (WebCore::HTMLFrameElementBase::openURL):
+
+2020-01-14  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r254293. rdar://problem/58549084
 
     Resource Load Statistics: Flip experimental website data removal setting from an enable to a disable
