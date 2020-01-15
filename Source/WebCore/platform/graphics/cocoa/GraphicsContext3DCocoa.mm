@@ -187,10 +187,6 @@ GraphicsContext3D::GraphicsContext3D(GraphicsContext3DAttributes attrs, HostWind
     : GraphicsContext3DBase(attrs, destination, sharedContext)
     , m_private(makeUnique<GraphicsContext3DPrivate>(this))
 {
-    ASSERT(ANGLEWebKitBridge::angleAvailable());
-    if (!ANGLEWebKitBridge::angleAvailable())
-        return;
-
     m_isForWebGL2 = attrs.isWebGL2;
 
 #if HAVE(APPLE_GRAPHICS_CONTROL)
