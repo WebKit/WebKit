@@ -341,6 +341,7 @@ UIProcess/API/APIURLSchemeTask.cpp
 UIProcess/API/APIUserContentWorld.cpp
 UIProcess/API/APIUserScript.cpp
 UIProcess/API/APIUserStyleSheet.cpp
+UIProcess/API/APIWebAuthenticationAssertionResponse.cpp
 UIProcess/API/APIWebAuthenticationPanel.cpp
 UIProcess/API/APIWebsitePolicies.cpp
 UIProcess/API/APIWindowFeatures.cpp
@@ -403,8 +404,9 @@ UIProcess/Authentication/AuthenticationDecisionListener.cpp
 UIProcess/Authentication/WebCredential.cpp
 UIProcess/Authentication/WebProtectionSpace.cpp
 
-UIProcess/Automation/SimulatedInputDispatcher.cpp
-UIProcess/Automation/WebAutomationSession.cpp
+// FIXME(206266): AutomationProtocolObjects.h's "namespace Protocol" conflicts with objc/runtime.h's "typedef struct objc_object Protocol"
+UIProcess/Automation/SimulatedInputDispatcher.cpp @no-unify
+UIProcess/Automation/WebAutomationSession.cpp @no-unify
 
 UIProcess/Downloads/DownloadProxy.cpp
 UIProcess/Downloads/DownloadProxyMap.cpp
@@ -456,7 +458,8 @@ UIProcess/WebsiteData/WebsiteDataStoreConfiguration.cpp
 WebProcess/WebConnectionToUIProcess.cpp
 WebProcess/WebProcess.cpp
 
-WebProcess/Automation/WebAutomationSessionProxy.cpp
+// FIXME(206266): AutomationProtocolObjects.h's "namespace Protocol" conflicts with objc/runtime.h's "typedef struct objc_object Protocol"
+WebProcess/Automation/WebAutomationSessionProxy.cpp @no-unify
 
 WebProcess/Cache/WebCacheStorageConnection.cpp
 WebProcess/Cache/WebCacheStorageProvider.cpp

@@ -29,6 +29,8 @@
 #import "WKFoundation.h"
 #import <wtf/WeakObjCPtr.h>
 
+@class WKWebView;
+
 @protocol _WKResourceLoadDelegate;
 
 namespace API {

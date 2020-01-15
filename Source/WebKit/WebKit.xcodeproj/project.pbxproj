@@ -1093,11 +1093,17 @@
 		574728D4234570AE001700AF /* _WKWebAuthenticationPanelInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 574728D3234570AE001700AF /* _WKWebAuthenticationPanelInternal.h */; };
 		57597EB921811D9A0037F924 /* CtapHidDriver.h in Headers */ = {isa = PBXBuildFile; fileRef = 57597EB721811D9A0037F924 /* CtapHidDriver.h */; };
 		57597EBD218184900037F924 /* CtapAuthenticator.h in Headers */ = {isa = PBXBuildFile; fileRef = 57597EBB2181848F0037F924 /* CtapAuthenticator.h */; };
+		575B1BB823CE9BFC0020639A /* WebAutomationSessionProxy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1C0A19441C8FF1A800FE0EBB /* WebAutomationSessionProxy.cpp */; };
+		575B1BB923CE9C0B0020639A /* SimulatedInputDispatcher.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 995226D5207D184600F78420 /* SimulatedInputDispatcher.cpp */; };
+		575B1BBA23CE9C130020639A /* WebAutomationSession.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9955A6EA1C7980BB00EB6A93 /* WebAutomationSession.cpp */; };
 		576CA9D722B862180030143C /* SOAuthorizationNSURLExtras.h in Headers */ = {isa = PBXBuildFile; fileRef = 57FD317322B35148008D0E8B /* SOAuthorizationNSURLExtras.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5772F206217DBD6A0056BF2C /* HidService.h in Headers */ = {isa = PBXBuildFile; fileRef = 5772F204217DBD6A0056BF2C /* HidService.h */; };
 		577FF7822346E81C004EDFB9 /* APIWebAuthenticationPanelClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 577FF7812346E81C004EDFB9 /* APIWebAuthenticationPanelClient.h */; };
 		577FF7852346ECAA004EDFB9 /* WebAuthenticationPanelClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 577FF7832346ECAA004EDFB9 /* WebAuthenticationPanelClient.h */; };
 		578DC2982155A0020074E815 /* LocalAuthenticationSoftLink.h in Headers */ = {isa = PBXBuildFile; fileRef = 578DC2972155A0010074E815 /* LocalAuthenticationSoftLink.h */; };
+		579F1BF623C80DB600C7D4B4 /* _WKWebAuthenticationAssertionResponse.h in Headers */ = {isa = PBXBuildFile; fileRef = 579F1BF423C80DB600C7D4B4 /* _WKWebAuthenticationAssertionResponse.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		579F1BF923C80EC600C7D4B4 /* _WKWebAuthenticationAssertionResponseInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 579F1BF823C80EC600C7D4B4 /* _WKWebAuthenticationAssertionResponseInternal.h */; };
+		579F1BFC23C811CF00C7D4B4 /* APIWebAuthenticationAssertionResponse.h in Headers */ = {isa = PBXBuildFile; fileRef = 579F1BFA23C811CF00C7D4B4 /* APIWebAuthenticationAssertionResponse.h */; };
 		57AC8F50217FEED90055438C /* HidConnection.h in Headers */ = {isa = PBXBuildFile; fileRef = 57AC8F4E217FEED90055438C /* HidConnection.h */; };
 		57B4B46020B504AC00D4AD79 /* ClientCertificateAuthenticationXPCConstants.h in Headers */ = {isa = PBXBuildFile; fileRef = 57B4B45E20B504AB00D4AD79 /* ClientCertificateAuthenticationXPCConstants.h */; };
 		57B826412304EB3E00B72EB0 /* NearFieldSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 57B826402304EB3E00B72EB0 /* NearFieldSPI.h */; };
@@ -1421,7 +1427,6 @@
 		A1EA02381DABFF7E0096021F /* WKContextMenuListener.h in Headers */ = {isa = PBXBuildFile; fileRef = A1EA02361DABFF7E0096021F /* WKContextMenuListener.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A1EA02401DAC31DB0096021F /* WebContextMenuListenerProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = A1EA023E1DAC31DB0096021F /* WebContextMenuListenerProxy.h */; };
 		A1FB68241F6E518200C43F9F /* WKCrashReporter.h in Headers */ = {isa = PBXBuildFile; fileRef = A1FB68221F6E518200C43F9F /* WKCrashReporter.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		A38A12E123C93AC700FABFA9 /* TextChecker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TextChecker.cpp; sourceTree = "<group>"; };
 		A513F5402154A5D700662841 /* WebPageInspectorController.h in Headers */ = {isa = PBXBuildFile; fileRef = A513F53E2154A5CC00662841 /* WebPageInspectorController.h */; };
 		A518B5D21FE1D55B00F9FA28 /* WKInspectorWKWebView.h in Headers */ = {isa = PBXBuildFile; fileRef = A518B5D01FE1D55B00F9FA28 /* WKInspectorWKWebView.h */; };
 		A54293A4195A43DA002782C7 /* WKInspectorNodeSearchGestureRecognizer.h in Headers */ = {isa = PBXBuildFile; fileRef = A54293A2195A43C6002782C7 /* WKInspectorNodeSearchGestureRecognizer.h */; };
@@ -2066,9 +2071,9 @@
 		071BC58423CC2C0900680D7C /* RemoteVideoTrackProxy.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteVideoTrackProxy.cpp; sourceTree = "<group>"; };
 		071BC58523CC2C0900680D7C /* RemoteVideoTrackProxy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteVideoTrackProxy.h; sourceTree = "<group>"; };
 		071BC58B23CDFE7500680D7C /* RemoteMediaPlayerProxy.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = RemoteMediaPlayerProxy.messages.in; sourceTree = "<group>"; };
-		071BC58C23CE1EA900680D7C /* RemoteMediaPlayerProxyMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = RemoteMediaPlayerProxyMessageReceiver.cpp; path = RemoteMediaPlayerProxyMessageReceiver.cpp; sourceTree = "<group>"; };
-		071BC58D23CE1EAA00680D7C /* RemoteMediaPlayerProxyMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RemoteMediaPlayerProxyMessages.h; path = RemoteMediaPlayerProxyMessages.h; sourceTree = "<group>"; };
-		071BC58E23CE1EAA00680D7C /* RemoteMediaPlayerProxyMessagesReplies.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RemoteMediaPlayerProxyMessagesReplies.h; path = RemoteMediaPlayerProxyMessagesReplies.h; sourceTree = "<group>"; };
+		071BC58C23CE1EA900680D7C /* RemoteMediaPlayerProxyMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteMediaPlayerProxyMessageReceiver.cpp; sourceTree = "<group>"; };
+		071BC58D23CE1EAA00680D7C /* RemoteMediaPlayerProxyMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RemoteMediaPlayerProxyMessages.h; sourceTree = "<group>"; };
+		071BC58E23CE1EAA00680D7C /* RemoteMediaPlayerProxyMessagesReplies.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RemoteMediaPlayerProxyMessagesReplies.h; sourceTree = "<group>"; };
 		0725EFAB239AE38400A538A9 /* RemoteMediaPlayerManagerProxy.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = RemoteMediaPlayerManagerProxy.messages.in; sourceTree = "<group>"; };
 		0725EFAC239AE38500A538A9 /* RemoteMediaPlayerManagerProxy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteMediaPlayerManagerProxy.h; sourceTree = "<group>"; };
 		0725EFAD239B024500A538A9 /* RemoteMediaPlayerManagerProxy.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteMediaPlayerManagerProxy.cpp; sourceTree = "<group>"; };
@@ -3773,6 +3778,11 @@
 		577FF7832346ECAA004EDFB9 /* WebAuthenticationPanelClient.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebAuthenticationPanelClient.h; sourceTree = "<group>"; };
 		577FF7842346ECAA004EDFB9 /* WebAuthenticationPanelClient.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WebAuthenticationPanelClient.mm; sourceTree = "<group>"; };
 		578DC2972155A0010074E815 /* LocalAuthenticationSoftLink.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LocalAuthenticationSoftLink.h; sourceTree = "<group>"; };
+		579F1BF423C80DB600C7D4B4 /* _WKWebAuthenticationAssertionResponse.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = _WKWebAuthenticationAssertionResponse.h; sourceTree = "<group>"; };
+		579F1BF523C80DB600C7D4B4 /* _WKWebAuthenticationAssertionResponse.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = _WKWebAuthenticationAssertionResponse.mm; sourceTree = "<group>"; };
+		579F1BF823C80EC600C7D4B4 /* _WKWebAuthenticationAssertionResponseInternal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = _WKWebAuthenticationAssertionResponseInternal.h; sourceTree = "<group>"; };
+		579F1BFA23C811CF00C7D4B4 /* APIWebAuthenticationAssertionResponse.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = APIWebAuthenticationAssertionResponse.h; sourceTree = "<group>"; };
+		579F1BFB23C811CF00C7D4B4 /* APIWebAuthenticationAssertionResponse.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = APIWebAuthenticationAssertionResponse.cpp; sourceTree = "<group>"; };
 		57AC8F4E217FEED90055438C /* HidConnection.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HidConnection.h; sourceTree = "<group>"; };
 		57AC8F4F217FEED90055438C /* HidConnection.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = HidConnection.mm; sourceTree = "<group>"; };
 		57B4B45D20B504AB00D4AD79 /* AuthenticationManagerCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AuthenticationManagerCocoa.mm; sourceTree = "<group>"; };
@@ -4373,6 +4383,7 @@
 		A1EDD2DC1884B9B500BBFE98 /* SecItemShim.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = SecItemShim.xcconfig; sourceTree = "<group>"; };
 		A1FB68221F6E518200C43F9F /* WKCrashReporter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WKCrashReporter.h; sourceTree = "<group>"; };
 		A1FB68231F6E518200C43F9F /* WKCrashReporter.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WKCrashReporter.mm; sourceTree = "<group>"; };
+		A38A12E123C93AC700FABFA9 /* TextChecker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TextChecker.cpp; sourceTree = "<group>"; };
 		A3937B6123CD1B9B005B2A2E /* WebPreferencesCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebPreferencesCocoa.mm; sourceTree = "<group>"; };
 		A513F53E2154A5CC00662841 /* WebPageInspectorController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebPageInspectorController.h; sourceTree = "<group>"; };
 		A513F53F2154A5CD00662841 /* WebPageInspectorController.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebPageInspectorController.cpp; sourceTree = "<group>"; };
@@ -6875,6 +6886,9 @@
 				1A81B37F18BD66AD0007FDAC /* _WKVisitedLinkStore.h */,
 				1A81B37E18BD66AD0007FDAC /* _WKVisitedLinkStore.mm */,
 				1A81B38418BD673A0007FDAC /* _WKVisitedLinkStoreInternal.h */,
+				579F1BF423C80DB600C7D4B4 /* _WKWebAuthenticationAssertionResponse.h */,
+				579F1BF523C80DB600C7D4B4 /* _WKWebAuthenticationAssertionResponse.mm */,
+				579F1BF823C80EC600C7D4B4 /* _WKWebAuthenticationAssertionResponseInternal.h */,
 				574728CF23456E98001700AF /* _WKWebAuthenticationPanel.h */,
 				574728D023456E98001700AF /* _WKWebAuthenticationPanel.mm */,
 				574728D3234570AE001700AF /* _WKWebAuthenticationPanelInternal.h */,
@@ -8557,6 +8571,8 @@
 				7C89D2921A67122F003A5FDE /* APIUserScript.h */,
 				2D8786211BDB58FF00D02ABB /* APIUserStyleSheet.cpp */,
 				2D8786221BDB58FF00D02ABB /* APIUserStyleSheet.h */,
+				579F1BFB23C811CF00C7D4B4 /* APIWebAuthenticationAssertionResponse.cpp */,
+				579F1BFA23C811CF00C7D4B4 /* APIWebAuthenticationAssertionResponse.h */,
 				57EBE269234676C5008D8AF9 /* APIWebAuthenticationPanel.cpp */,
 				57EBE268234676C5008D8AF9 /* APIWebAuthenticationPanel.h */,
 				577FF7812346E81C004EDFB9 /* APIWebAuthenticationPanelClient.h */,
@@ -9929,6 +9945,8 @@
 				2D8786201BDB57F500D02ABB /* _WKUserStyleSheetInternal.h in Headers */,
 				1A81B38118BD66AD0007FDAC /* _WKVisitedLinkStore.h in Headers */,
 				1A81B38518BD673A0007FDAC /* _WKVisitedLinkStoreInternal.h in Headers */,
+				579F1BF623C80DB600C7D4B4 /* _WKWebAuthenticationAssertionResponse.h in Headers */,
+				579F1BF923C80EC600C7D4B4 /* _WKWebAuthenticationAssertionResponseInternal.h in Headers */,
 				574728D123456E98001700AF /* _WKWebAuthenticationPanel.h in Headers */,
 				574728D4234570AE001700AF /* _WKWebAuthenticationPanelInternal.h in Headers */,
 				1AE286781C7E76510069AC4F /* _WKWebsiteDataSize.h in Headers */,
@@ -10011,6 +10029,7 @@
 				2D8786241BDB58FF00D02ABB /* APIUserStyleSheet.h in Headers */,
 				C5E1AFED16B21017006CC1F2 /* APIWebArchive.h in Headers */,
 				C5E1AFEF16B21029006CC1F2 /* APIWebArchiveResource.h in Headers */,
+				579F1BFC23C811CF00C7D4B4 /* APIWebAuthenticationAssertionResponse.h in Headers */,
 				57EBE26A234676C5008D8AF9 /* APIWebAuthenticationPanel.h in Headers */,
 				577FF7822346E81C004EDFB9 /* APIWebAuthenticationPanelClient.h in Headers */,
 				1AE286841C7F93860069AC4F /* APIWebsiteDataRecord.h in Headers */,
@@ -12180,6 +12199,7 @@
 				2D11B7D52126A283006F8878 /* UnifiedSource72.cpp in Sources */,
 				2D54C311212F3B330049C174 /* UnifiedSource72-mm.mm in Sources */,
 				2D54C310212F3B330049C174 /* UnifiedSource73-mm.mm in Sources */,
+				575B1BBA23CE9C130020639A /* WebAutomationSession.cpp in Sources */,
 				2D11B7D62126A283006F8878 /* UnifiedSource73.cpp in Sources */,
 				2D54C315212F3B330049C174 /* UnifiedSource74-mm.mm in Sources */,
 				2D11B7D72126A283006F8878 /* UnifiedSource74.cpp in Sources */,
@@ -12242,6 +12262,7 @@
 				BC0E606112D6BA910012A72A /* WebGeolocationManagerMessageReceiver.cpp in Sources */,
 				BC0E618212D6CB1D0012A72A /* WebGeolocationManagerProxyMessageReceiver.cpp in Sources */,
 				510523751C73D38F007993CB /* WebIDBConnectionToServerMessageReceiver.cpp in Sources */,
+				575B1BB923CE9C0B0020639A /* SimulatedInputDispatcher.cpp in Sources */,
 				933E835B23A1B75000DEF289 /* WebIDBServerMessageReceiver.cpp in Sources */,
 				FEDBDCD61E68D20000A59F8F /* WebInspectorInterruptDispatcherMessageReceiver.cpp in Sources */,
 				1C8E2A351277852400BC7BD0 /* WebInspectorMessageReceiver.cpp in Sources */,
@@ -12297,6 +12318,7 @@
 				637281A321ADC744009E0DE6 /* WKDownloadProgress.mm in Sources */,
 				5CE9120D2293C219005BEC78 /* WKMain.mm in Sources */,
 				4657D88A22664A2F005DE823 /* WKOrientationAccessAlert.mm in Sources */,
+				575B1BB823CE9BFC0020639A /* WebAutomationSessionProxy.cpp in Sources */,
 				5CA26D83217AD1B800F97A35 /* WKSafeBrowsingWarning.mm in Sources */,
 				1DB01944211CF005009FB3E8 /* WKShareSheet.mm in Sources */,
 				7A78FF332241919B0096483E /* WKStorageAccessAlert.mm in Sources */,

@@ -1,3 +1,55 @@
+2020-01-10  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [WebAuthn] Implement SPI to tell UI clients to select assertion responses
+        https://bugs.webkit.org/show_bug.cgi?id=206112
+        <rdar://problem/58495733>
+
+        Reviewed by Alex Christensen.
+
+        Covered by API tests.
+
+        This patch adds a new delegate method in _WKWebAuthenticationPanelDelegate to tell UI clients to
+        select an assertion response when multiple are returned from an authenticator. Here is the SPI:
+        @protocol _WKWebAuthenticationPanelDelegate <NSObject>
+        @optional
+        ...
+        - (void)panel:(_WKWebAuthenticationPanel *)panel selectAssertionResponse:(NSArray < _WKWebAuthenticationAssertionResponse *> *)responses completionHandler:(void (^)(_WKWebAuthenticationAssertionResponse *))completionHandler;
+        ...
+        @end
+
+        A new interface is introduced to represent an authenticator assertion response:
+        @interface _WKWebAuthenticationAssertionResponse : NSObject
+        @property (nonatomic, readonly, copy) NSString *name;
+        @property (nonatomic, readonly, copy) NSString *displayName;
+        @property (nonatomic, readonly, copy) NSData *userHandle;
+        @end
+        Only members that can assist users to make a decision are exposed to UI clients.
+
+        * Shared/API/APIObject.h:
+        * Shared/Cocoa/APIObject.mm:
+        (API::Object::newObject):
+        * Sources.txt:
+        * SourcesCocoa.txt:
+        * UIProcess/API/APIWebAuthenticationAssertionResponse.cpp: Copied from Source/WebKit/UIProcess/WebAuthentication/Cocoa/WebAuthenticationPanelClient.h.
+        (API::WebAuthenticationAssertionResponse::create):
+        (API::WebAuthenticationAssertionResponse::WebAuthenticationAssertionResponse):
+        * UIProcess/API/APIWebAuthenticationAssertionResponse.h: Copied from Source/WebKit/UIProcess/WebAuthentication/Cocoa/WebAuthenticationPanelClient.h.
+        * UIProcess/API/Cocoa/_WKWebAuthenticationAssertionResponse.h: Copied from Source/WebKit/UIProcess/WebAuthentication/Cocoa/WebAuthenticationPanelClient.h.
+        * UIProcess/API/Cocoa/_WKWebAuthenticationAssertionResponse.mm: Copied from Source/WebKit/UIProcess/WebAuthentication/Cocoa/WebAuthenticationPanelClient.h.
+        (-[_WKWebAuthenticationAssertionResponse dealloc]):
+        (-[_WKWebAuthenticationAssertionResponse name]):
+        (-[_WKWebAuthenticationAssertionResponse displayName]):
+        (-[_WKWebAuthenticationAssertionResponse userHandle]):
+        (-[_WKWebAuthenticationAssertionResponse _apiObject]):
+        * UIProcess/API/Cocoa/_WKWebAuthenticationAssertionResponseInternal.h: Copied from Source/WebKit/UIProcess/WebAuthentication/Cocoa/WebAuthenticationPanelClient.h.
+        * UIProcess/API/Cocoa/_WKWebAuthenticationPanel.h:
+        * UIProcess/API/Cocoa/_WKWebAuthenticationPanel.mm:
+        * UIProcess/WebAuthentication/Cocoa/WebAuthenticationPanelClient.h:
+        * UIProcess/WebAuthentication/Cocoa/WebAuthenticationPanelClient.mm:
+        (WebKit::WebAuthenticationPanelClient::WebAuthenticationPanelClient):
+        (WebKit::WebAuthenticationPanelClient::selectAssertionResponses const):
+        * WebKit.xcodeproj/project.pbxproj:
+
 2020-01-14  Luming Yin  <luming_yin@apple.com>
 
         Update API availability for autoplay event

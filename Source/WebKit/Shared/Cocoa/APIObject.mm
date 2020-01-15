@@ -88,6 +88,7 @@
 #import "_WKUserInitiatedActionInternal.h"
 #import "_WKUserStyleSheetInternal.h"
 #import "_WKVisitedLinkStoreInternal.h"
+#import "_WKWebAuthenticationAssertionResponseInternal.h"
 #import "_WKWebAuthenticationPanelInternal.h"
 #import "_WKWebsiteDataStoreConfigurationInternal.h"
 
@@ -388,6 +389,9 @@ void* Object::newObject(size_t size, Type type)
 #if ENABLE(WEB_AUTHN)
     case Type::WebAuthenticationPanel:
         wrapper = [_WKWebAuthenticationPanel alloc];
+        break;
+    case Type::WebAuthenticationAssertionResponse:
+        wrapper = [_WKWebAuthenticationAssertionResponse alloc];
         break;
 #endif
 

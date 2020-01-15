@@ -244,7 +244,7 @@ void WebAutomationSessionProxy::setScriptObject(JSGlobalContextRef context, JSOb
     JSC::VM& vm = globalObject->vm();
     JSC::JSLockHolder locker(vm);
     auto scriptObjectID = JSC::Identifier::fromUid(m_scriptObjectIdentifier);
-    PutPropertySlot slot(globalObject);
+    JSC::PutPropertySlot slot(globalObject);
     globalObject->methodTable(vm)->put(globalObject, globalObject, scriptObjectID, toJS(globalObject, object), slot);
 }
 

@@ -151,11 +151,11 @@ void CtapAuthenticator::continueGetNextAssertionAfterResponseReceived(Vector<uin
 
     if (!m_remainingAssertionResponses) {
         if (auto* observer = this->observer()) {
-            observer->selectAssertionResponses(m_assertionResponses, [this, weakThis = makeWeakPtr(*this)] (const Ref<AuthenticatorAssertionResponse>& response) {
+            observer->selectAssertionResponse(m_assertionResponses, [this, weakThis = makeWeakPtr(*this)] (const AuthenticatorAssertionResponse& response) {
                 ASSERT(RunLoop::isMain());
                 if (!weakThis)
                     return;
-                auto returnResponse = m_assertionResponses.take(response);
+                auto returnResponse = m_assertionResponses.take(const_cast<AuthenticatorAssertionResponse*>(&response));
                 if (!returnResponse)
                     return;
                 receiveRespond(WTFMove(*returnResponse));

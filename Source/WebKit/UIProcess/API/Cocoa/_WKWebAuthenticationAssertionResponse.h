@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,39 +23,21 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "FidoAuthenticator.h"
+#pragma once
 
-#if ENABLE(WEB_AUTHN)
+#import <WebKit/WKFoundation.h>
 
-#include "CtapDriver.h"
+#import <Foundation/Foundation.h>
 
-namespace WebKit {
+NS_ASSUME_NONNULL_BEGIN
 
-FidoAuthenticator::FidoAuthenticator(std::unique_ptr<CtapDriver>&& driver)
-    : m_driver(WTFMove(driver))
-{
-    ASSERT(m_driver);
-}
+WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA))
+@interface _WKWebAuthenticationAssertionResponse : NSObject
 
-FidoAuthenticator::~FidoAuthenticator()
-{
-    if (m_driver)
-        m_driver->cancel();
-}
+@property (nonatomic, readonly, copy) NSString *name;
+@property (nonatomic, readonly, copy) NSString *displayName;
+@property (nonatomic, readonly, copy) NSData *userHandle;
 
-CtapDriver& FidoAuthenticator::driver() const
-{
-    ASSERT(m_driver);
-    return *m_driver;
-}
+@end
 
-std::unique_ptr<CtapDriver> FidoAuthenticator::releaseDriver()
-{
-    ASSERT(m_driver);
-    return WTFMove(m_driver);
-}
-
-} // namespace WebKit
-
-#endif // ENABLE(WEB_AUTHN)
+NS_ASSUME_NONNULL_END

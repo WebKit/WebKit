@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,39 +23,43 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "FidoAuthenticator.h"
+#import "config.h"
+#import "_WKWebAuthenticationAssertionResponseInternal.h"
+
+#import "WKNSData.h"
+
+@implementation _WKWebAuthenticationAssertionResponse
 
 #if ENABLE(WEB_AUTHN)
 
-#include "CtapDriver.h"
-
-namespace WebKit {
-
-FidoAuthenticator::FidoAuthenticator(std::unique_ptr<CtapDriver>&& driver)
-    : m_driver(WTFMove(driver))
+- (void)dealloc
 {
-    ASSERT(m_driver);
+    _response->~WebAuthenticationAssertionResponse();
+
+    [super dealloc];
 }
 
-FidoAuthenticator::~FidoAuthenticator()
+- (NSString *)name
 {
-    if (m_driver)
-        m_driver->cancel();
+    return _response->name();
 }
 
-CtapDriver& FidoAuthenticator::driver() const
+- (NSString *)displayName
 {
-    ASSERT(m_driver);
-    return *m_driver;
+    return _response->displayName();
 }
 
-std::unique_ptr<CtapDriver> FidoAuthenticator::releaseDriver()
+- (NSData *)userHandle
 {
-    ASSERT(m_driver);
-    return WTFMove(m_driver);
+    return wrapper(_response->userHandle());
 }
 
-} // namespace WebKit
+#pragma mark WKObject protocol implementation
 
-#endif // ENABLE(WEB_AUTHN)
+- (API::Object&)_apiObject
+{
+    return *_response;
+}
+#endif
+
+@end

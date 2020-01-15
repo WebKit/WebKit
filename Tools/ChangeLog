@@ -1,3 +1,18 @@
+2020-01-10  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [WebAuthn] Implement SPI to tell UI clients to select assertion responses
+        https://bugs.webkit.org/show_bug.cgi?id=206112
+        <rdar://problem/58495733>
+
+        Reviewed by Alex Christensen.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKitCocoa/_WKWebAuthenticationPanel.mm:
+        (-[TestWebAuthenticationPanelDelegate panel:selectAssertionResponses:completionHandler:]):
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/web-authentication-get-assertion-hid-multiple-accounts.html: Added.
+        * TestWebKitAPI/Tests/WebKitCocoa/web-authentication-make-credential-hid.html:
+
 2020-01-14  Luming Yin  <luming_yin@apple.com>
 
         Update API availability for autoplay event

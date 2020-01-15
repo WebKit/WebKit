@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,38 +24,39 @@
  */
 
 #include "config.h"
-#include "FidoAuthenticator.h"
+#include "APIWebAuthenticationAssertionResponse.h"
 
 #if ENABLE(WEB_AUTHN)
 
-#include "CtapDriver.h"
+#include "APIData.h"
 
-namespace WebKit {
+namespace API {
+using namespace WebCore;
 
-FidoAuthenticator::FidoAuthenticator(std::unique_ptr<CtapDriver>&& driver)
-    : m_driver(WTFMove(driver))
+Ref<WebAuthenticationAssertionResponse> WebAuthenticationAssertionResponse::create(Ref<WebCore::AuthenticatorAssertionResponse>&& response)
 {
-    ASSERT(m_driver);
+    return adoptRef(*new WebAuthenticationAssertionResponse(WTFMove(response)));
 }
 
-FidoAuthenticator::~FidoAuthenticator()
+WebAuthenticationAssertionResponse::WebAuthenticationAssertionResponse(Ref<WebCore::AuthenticatorAssertionResponse>&& response)
+    : m_response(WTFMove(response))
 {
-    if (m_driver)
-        m_driver->cancel();
 }
 
-CtapDriver& FidoAuthenticator::driver() const
+WebAuthenticationAssertionResponse::~WebAuthenticationAssertionResponse() = default;
+
+RefPtr<Data> WebAuthenticationAssertionResponse::userHandle() const
 {
-    ASSERT(m_driver);
-    return *m_driver;
+    RefPtr<API::Data> data;
+    if (auto* userHandle = m_response->userHandle()) {
+        userHandle->ref();
+        data = API::Data::createWithoutCopying(reinterpret_cast<unsigned char*>(userHandle->data()), userHandle->byteLength(), [] (unsigned char*, const void* data) {
+            static_cast<ArrayBuffer*>(const_cast<void*>(data))->deref();
+        }, userHandle);
+    }
+    return data;
 }
 
-std::unique_ptr<CtapDriver> FidoAuthenticator::releaseDriver()
-{
-    ASSERT(m_driver);
-    return WTFMove(m_driver);
-}
-
-} // namespace WebKit
+} // namespace API
 
 #endif // ENABLE(WEB_AUTHN)

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,39 +23,34 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "FidoAuthenticator.h"
+#pragma once
 
 #if ENABLE(WEB_AUTHN)
 
-#include "CtapDriver.h"
+#include "APIObject.h"
+#include <WebCore/AuthenticatorAssertionResponse.h>
 
-namespace WebKit {
+namespace API {
 
-FidoAuthenticator::FidoAuthenticator(std::unique_ptr<CtapDriver>&& driver)
-    : m_driver(WTFMove(driver))
-{
-    ASSERT(m_driver);
-}
+class Data;
 
-FidoAuthenticator::~FidoAuthenticator()
-{
-    if (m_driver)
-        m_driver->cancel();
-}
+class WebAuthenticationAssertionResponse final : public ObjectImpl<Object::Type::WebAuthenticationAssertionResponse> {
+public:
+    static Ref<WebAuthenticationAssertionResponse> create(Ref<WebCore::AuthenticatorAssertionResponse>&&);
+    ~WebAuthenticationAssertionResponse();
 
-CtapDriver& FidoAuthenticator::driver() const
-{
-    ASSERT(m_driver);
-    return *m_driver;
-}
+    const WTF::String& name() const { return m_response->name(); }
+    const WTF::String& displayName() const { return m_response->displayName(); }
+    RefPtr<Data> userHandle() const;
 
-std::unique_ptr<CtapDriver> FidoAuthenticator::releaseDriver()
-{
-    ASSERT(m_driver);
-    return WTFMove(m_driver);
-}
+    const WebCore::AuthenticatorAssertionResponse& response() { return m_response.get(); }
 
-} // namespace WebKit
+private:
+    WebAuthenticationAssertionResponse(Ref<WebCore::AuthenticatorAssertionResponse>&&);
+
+    Ref<WebCore::AuthenticatorAssertionResponse> m_response;
+};
+
+} // namespace API
 
 #endif // ENABLE(WEB_AUTHN)

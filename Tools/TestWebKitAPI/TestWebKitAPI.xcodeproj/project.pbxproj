@@ -368,6 +368,7 @@
 		5797FE331EB15AB100B2F4A0 /* navigation-client-default-crypto.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 5797FE321EB15A8900B2F4A0 /* navigation-client-default-crypto.html */; };
 		5798337E236019A4008E5547 /* web-authentication-make-credential-hid.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 5798337D2360196D008E5547 /* web-authentication-make-credential-hid.html */; };
 		579833922368FA37008E5547 /* web-authentication-get-assertion-nfc-multiple-tags.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 5798337B235EB65C008E5547 /* web-authentication-get-assertion-nfc-multiple-tags.html */; };
+		579F1C0123C93AF500C7D4B4 /* web-authentication-get-assertion-hid-multiple-accounts.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 579F1BFF23C92FD300C7D4B4 /* web-authentication-get-assertion-hid-multiple-accounts.html */; };
 		57A79857224AB34E00A7F6F1 /* WebCryptoMasterKey.mm in Sources */ = {isa = PBXBuildFile; fileRef = 57A79856224AB34E00A7F6F1 /* WebCryptoMasterKey.mm */; };
 		57C3FA661F7C248F009D4B80 /* WeakPtr.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1CB9BC371A67482300FE5678 /* WeakPtr.cpp */; };
 		57C6244E2346BCFA00383FE7 /* _WKWebAuthenticationPanel.mm in Sources */ = {isa = PBXBuildFile; fileRef = 57C6244D2346BCFA00383FE7 /* _WKWebAuthenticationPanel.mm */; };
@@ -1484,6 +1485,7 @@
 				2EBD9D0A2134730D002DA758 /* video.html in Copy Resources */,
 				CD577799211CE0E4001B371E /* web-audio-only.html in Copy Resources */,
 				57663DF32357E48900E85E09 /* web-authentication-get-assertion-hid-cancel.html in Copy Resources */,
+				579F1C0123C93AF500C7D4B4 /* web-authentication-get-assertion-hid-multiple-accounts.html in Copy Resources */,
 				577454D02359B378008E1ED7 /* web-authentication-get-assertion-hid-no-credentials.html in Copy Resources */,
 				570D26FC23C3F87000D5CF67 /* web-authentication-get-assertion-hid-pin.html in Copy Resources */,
 				57663DEC234F1F9300E85E09 /* web-authentication-get-assertion-hid.html in Copy Resources */,
@@ -1949,6 +1951,7 @@
 		5798337B235EB65C008E5547 /* web-authentication-get-assertion-nfc-multiple-tags.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "web-authentication-get-assertion-nfc-multiple-tags.html"; sourceTree = "<group>"; };
 		5798337D2360196D008E5547 /* web-authentication-make-credential-hid.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "web-authentication-make-credential-hid.html"; sourceTree = "<group>"; };
 		5798E2AF1CAF5C2800C5CBA0 /* ProvisionalURLNotChange.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ProvisionalURLNotChange.mm; sourceTree = "<group>"; };
+		579F1BFF23C92FD300C7D4B4 /* web-authentication-get-assertion-hid-multiple-accounts.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = "web-authentication-get-assertion-hid-multiple-accounts.html"; sourceTree = "<group>"; };
 		57A79856224AB34E00A7F6F1 /* WebCryptoMasterKey.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WebCryptoMasterKey.mm; sourceTree = "<group>"; };
 		57C6244D2346BCFA00383FE7 /* _WKWebAuthenticationPanel.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = _WKWebAuthenticationPanel.mm; sourceTree = "<group>"; };
 		57C6244F2346C1EC00383FE7 /* web-authentication-get-assertion.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "web-authentication-get-assertion.html"; sourceTree = "<group>"; };
@@ -3501,6 +3504,7 @@
 				CD57779B211CE6CE001B371E /* video-with-audio-and-web-audio.html */,
 				CD577798211CDE8F001B371E /* web-audio-only.html */,
 				57663DF22357E45D00E85E09 /* web-authentication-get-assertion-hid-cancel.html */,
+				579F1BFF23C92FD300C7D4B4 /* web-authentication-get-assertion-hid-multiple-accounts.html */,
 				577454CF2359B338008E1ED7 /* web-authentication-get-assertion-hid-no-credentials.html */,
 				570D26FB23C3F86500D5CF67 /* web-authentication-get-assertion-hid-pin.html */,
 				57663DEB234F1F8000E85E09 /* web-authentication-get-assertion-hid.html */,

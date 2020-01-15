@@ -31,6 +31,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+@class _WKWebAuthenticationAssertionResponse;
 @class _WKWebAuthenticationPanel;
 
 typedef NS_ENUM(NSInteger, _WKWebAuthenticationPanelResult) {
@@ -69,6 +70,7 @@ typedef NS_ENUM(NSInteger, _WKWebAuthenticationType) {
 - (void)panel:(_WKWebAuthenticationPanel *)panel updateWebAuthenticationPanel:(_WKWebAuthenticationPanelUpdate)update WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 - (void)panel:(_WKWebAuthenticationPanel *)panel dismissWebAuthenticationPanelWithResult:(_WKWebAuthenticationResult)result WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 - (void)panel:(_WKWebAuthenticationPanel *)panel requestPINWithRemainingRetries:(NSUInteger)retries completionHandler:(void (^)(NSString *))completionHandler WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+- (void)panel:(_WKWebAuthenticationPanel *)panel selectAssertionResponse:(NSArray < _WKWebAuthenticationAssertionResponse *> *)responses completionHandler:(void (^)(_WKWebAuthenticationAssertionResponse *))completionHandler WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 
 @end
 

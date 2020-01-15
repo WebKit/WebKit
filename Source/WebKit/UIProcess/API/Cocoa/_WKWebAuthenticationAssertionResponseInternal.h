@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,39 +23,27 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "FidoAuthenticator.h"
+#pragma once
+
+#import "_WKWebAuthenticationAssertionResponse.h"
 
 #if ENABLE(WEB_AUTHN)
 
-#include "CtapDriver.h"
+#import "APIWebAuthenticationAssertionResponse.h"
+#import "WKObject.h"
 
 namespace WebKit {
 
-FidoAuthenticator::FidoAuthenticator(std::unique_ptr<CtapDriver>&& driver)
-    : m_driver(WTFMove(driver))
-{
-    ASSERT(m_driver);
+template<> struct WrapperTraits<API::WebAuthenticationAssertionResponse> {
+    using WrapperClass = _WKWebAuthenticationAssertionResponse;
+};
+
 }
 
-FidoAuthenticator::~FidoAuthenticator()
-{
-    if (m_driver)
-        m_driver->cancel();
+@interface _WKWebAuthenticationAssertionResponse () <WKObject> {
+@package
+    API::ObjectStorage<API::WebAuthenticationAssertionResponse> _response;
 }
-
-CtapDriver& FidoAuthenticator::driver() const
-{
-    ASSERT(m_driver);
-    return *m_driver;
-}
-
-std::unique_ptr<CtapDriver> FidoAuthenticator::releaseDriver()
-{
-    ASSERT(m_driver);
-    return WTFMove(m_driver);
-}
-
-} // namespace WebKit
+@end
 
 #endif // ENABLE(WEB_AUTHN)
