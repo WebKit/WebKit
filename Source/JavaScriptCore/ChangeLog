@@ -1,5 +1,34 @@
 2020-01-14  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r254218. rdar://problem/58553153
+
+    JSArrayBufferView.h: Multiplication result converted to larger type
+    https://bugs.webkit.org/show_bug.cgi?id=205943
+    
+    Reviewed by Saam Barati.
+    
+    Added cast to size_t to make the whole calculation size_t.
+    
+    * runtime/JSArrayBufferView.h:
+    (JSC::JSArrayBufferView::sizeOf):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@254218 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-01-08  Michael Saboff  <msaboff@apple.com>
+
+            JSArrayBufferView.h: Multiplication result converted to larger type
+            https://bugs.webkit.org/show_bug.cgi?id=205943
+
+            Reviewed by Saam Barati.
+
+            Added cast to size_t to make the whole calculation size_t.
+
+            * runtime/JSArrayBufferView.h:
+            (JSC::JSArrayBufferView::sizeOf):
+
+2020-01-14  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r254188. rdar://problem/58553146
 
     AI rule for ValueMod/ValueDiv produce constants with the wrong format when the result can be an int32
