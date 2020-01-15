@@ -26,8 +26,10 @@
 #pragma once
 
 #include "Position.h"
+#include "TextIteratorBehavior.h"
 #include <wtf/Forward.h>
 #include <wtf/HashSet.h>
+#include <wtf/OptionSet.h>
 #include <wtf/unicode/CharacterNames.h>
 
 namespace WebCore {
@@ -149,7 +151,7 @@ bool lineBreakExistsAtVisiblePosition(const VisiblePosition&);
 WEBCORE_EXPORT int comparePositions(const VisiblePosition&, const VisiblePosition&);
 
 WEBCORE_EXPORT int indexForVisiblePosition(const VisiblePosition&, RefPtr<ContainerNode>& scope);
-int indexForVisiblePosition(Node&, const VisiblePosition&, bool forSelectionPreservation);
+int indexForVisiblePosition(Node&, const VisiblePosition&, OptionSet<TextIteratorLengthOption> = { });
 WEBCORE_EXPORT VisiblePosition visiblePositionForPositionWithOffset(const VisiblePosition&, int offset);
 WEBCORE_EXPORT VisiblePosition visiblePositionForIndex(int index, ContainerNode* scope);
 VisiblePosition visiblePositionForIndexUsingCharacterIterator(Node&, int index); // FIXME: Why do we need this version?

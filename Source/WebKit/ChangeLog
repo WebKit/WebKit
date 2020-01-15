@@ -1,3 +1,13 @@
+2020-01-14  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Enable the offset assertion in HTMLTextFormControlElement::indexForPosition
+        https://bugs.webkit.org/show_bug.cgi?id=205706
+
+        Reviewed by Darin Adler.
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::rangeNearPositionMatchesText):
+
 2020-01-14  Chris Dumez  <cdumez@apple.com>
 
         document.cookie should not do a sync IPC to the network process for iframes that do not have storage access

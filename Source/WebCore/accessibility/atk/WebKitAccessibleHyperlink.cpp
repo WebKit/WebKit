@@ -154,7 +154,7 @@ static AtkObject* webkitAccessibleHyperlinkGetObject(AtkHyperlink* link, gint in
 static gint rangeLengthForObject(AccessibilityObject& obj, Range* range)
 {
     // This is going to be the actual length in most of the cases
-    int baseLength = TextIterator::rangeLength(range, true);
+    int baseLength = TextIterator::rangeLength(range, { TextIteratorLengthOption::GenerateSpacesForReplacedElements });
 
     // Check whether the current hyperlink belongs to a list item.
     // If so, we need to consider the length of the item's marker

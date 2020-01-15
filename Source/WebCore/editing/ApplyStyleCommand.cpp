@@ -252,8 +252,8 @@ void ApplyStyleCommand::applyBlockStyle(EditingStyle& style)
 
     auto startRange = Range::create(document(), firstPositionInNode(scope), visibleStart.deepEquivalent().parentAnchoredEquivalent());
     auto endRange = Range::create(document(), firstPositionInNode(scope), visibleEnd.deepEquivalent().parentAnchoredEquivalent());
-    int startIndex = TextIterator::rangeLength(startRange.ptr(), true);
-    int endIndex = TextIterator::rangeLength(endRange.ptr(), true);
+    int startIndex = TextIterator::rangeLength(startRange.ptr(), { TextIteratorLengthOption::GenerateSpacesForReplacedElements });
+    int endIndex = TextIterator::rangeLength(endRange.ptr(), { TextIteratorLengthOption::GenerateSpacesForReplacedElements });
 
     VisiblePosition paragraphStart(startOfParagraph(visibleStart));
     VisiblePosition nextParagraphStart(endOfParagraph(paragraphStart).next());
@@ -285,8 +285,8 @@ void ApplyStyleCommand::applyBlockStyle(EditingStyle& style)
     }
     
     {
-        auto startRange = TextIterator::rangeFromLocationAndLength(scope, startIndex, 0, true);
-        auto endRange = TextIterator::rangeFromLocationAndLength(scope, endIndex, 0, true);
+        auto startRange = TextIterator::rangeFromLocationAndLength(scope, startIndex, 0, { TextIteratorLengthOption::GenerateSpacesForReplacedElements });
+        auto endRange = TextIterator::rangeFromLocationAndLength(scope, endIndex, 0, { TextIteratorLengthOption::GenerateSpacesForReplacedElements });
         if (startRange && endRange)
             updateStartEnd(startRange->startPosition(), endRange->startPosition());
     }

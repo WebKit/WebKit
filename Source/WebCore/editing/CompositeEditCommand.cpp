@@ -1433,13 +1433,13 @@ void CompositeEditCommand::moveParagraphs(const VisiblePosition& startOfParagrap
             startIndex = 0;
             if (startInParagraph) {
                 auto startRange = Range::create(document(), startOfParagraphToMove.deepEquivalent().parentAnchoredEquivalent(), visibleStart.deepEquivalent().parentAnchoredEquivalent());
-                startIndex = TextIterator::rangeLength(startRange.ptr(), true);
+                startIndex = TextIterator::rangeLength(startRange.ptr(), { TextIteratorLengthOption::GenerateSpacesForReplacedElements });
             }
 
             endIndex = 0;
             if (endInParagraph) {
                 auto endRange = Range::create(document(), startOfParagraphToMove.deepEquivalent().parentAnchoredEquivalent(), visibleEnd.deepEquivalent().parentAnchoredEquivalent());
-                endIndex = TextIterator::rangeLength(endRange.ptr(), true);
+                endIndex = TextIterator::rangeLength(endRange.ptr(), { TextIteratorLengthOption::GenerateSpacesForReplacedElements });
             }
         }
     }
@@ -1510,7 +1510,7 @@ void CompositeEditCommand::moveParagraphs(const VisiblePosition& startOfParagrap
         editableRoot = &document();
 
     auto startToDestinationRange = Range::create(document(), firstPositionInNode(editableRoot.get()), destination.deepEquivalent().parentAnchoredEquivalent());
-    destinationIndex = TextIterator::rangeLength(startToDestinationRange.ptr(), true);
+    destinationIndex = TextIterator::rangeLength(startToDestinationRange.ptr(), { TextIteratorLengthOption::GenerateSpacesForReplacedElements });
 
     setEndingSelection(VisibleSelection(destination, originalIsDirectional));
     ASSERT(endingSelection().isCaretOrRange());
@@ -1532,8 +1532,10 @@ void CompositeEditCommand::moveParagraphs(const VisiblePosition& startOfParagrap
         // causes spaces to be collapsed during the move operation.  This results
         // in a call to rangeFromLocationAndLength with a location past the end
         // of the document (which will return null).
-        RefPtr<Range> start = TextIterator::rangeFromLocationAndLength(editableRoot.get(), destinationIndex + startIndex, 0, true);
-        RefPtr<Range> end = TextIterator::rangeFromLocationAndLength(editableRoot.get(), destinationIndex + endIndex, 0, true);
+        RefPtr<Range> start = TextIterator::rangeFromLocationAndLength(editableRoot.get(), destinationIndex + startIndex, 0,
+            { TextIteratorLengthOption::GenerateSpacesForReplacedElements });
+        RefPtr<Range> end = TextIterator::rangeFromLocationAndLength(editableRoot.get(), destinationIndex + endIndex, 0,
+            { TextIteratorLengthOption::GenerateSpacesForReplacedElements });
         if (start && end)
             setEndingSelection(VisibleSelection(start->startPosition(), end->startPosition(), DOWNSTREAM, originalIsDirectional));
     }

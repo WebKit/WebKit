@@ -1084,14 +1084,14 @@ int indexForVisiblePosition(const VisiblePosition& visiblePosition, RefPtr<Conta
     }
 
     auto range = Range::create(document, firstPositionInNode(scope.get()), position.parentAnchoredEquivalent());
-    return TextIterator::rangeLength(range.ptr(), true);
+    return TextIterator::rangeLength(range.ptr(), { TextIteratorLengthOption::GenerateSpacesForReplacedElements });
 }
 
 // FIXME: Merge this function with the one above.
-int indexForVisiblePosition(Node& node, const VisiblePosition& visiblePosition, bool forSelectionPreservation)
+int indexForVisiblePosition(Node& node, const VisiblePosition& visiblePosition, OptionSet<TextIteratorLengthOption> options)
 {
     auto range = Range::create(node.document(), firstPositionInNode(&node), visiblePosition.deepEquivalent().parentAnchoredEquivalent());
-    return TextIterator::rangeLength(range.ptr(), forSelectionPreservation);
+    return TextIterator::rangeLength(range.ptr(), options);
 }
 
 VisiblePosition visiblePositionForPositionWithOffset(const VisiblePosition& position, int offset)
@@ -1106,7 +1106,7 @@ VisiblePosition visiblePositionForPositionWithOffset(const VisiblePosition& posi
 
 VisiblePosition visiblePositionForIndex(int index, ContainerNode* scope)
 {
-    auto range = TextIterator::rangeFromLocationAndLength(scope, index, 0, true);
+    auto range = TextIterator::rangeFromLocationAndLength(scope, index, 0, { TextIteratorLengthOption::GenerateSpacesForReplacedElements });
     // Check for an invalid index. Certain editing operations invalidate indices because 
     // of problems with TextIteratorEmitsCharactersBetweenAllVisiblePositions.
     if (!range)

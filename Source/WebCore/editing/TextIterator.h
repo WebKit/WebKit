@@ -31,6 +31,7 @@
 #include "LineLayoutTraversal.h"
 #include "Range.h"
 #include "TextIteratorBehavior.h"
+#include <wtf/OptionSet.h>
 #include <wtf/Vector.h>
 #include <wtf/text/StringView.h>
 
@@ -121,8 +122,8 @@ public:
     const TextIteratorCopyableText& copyableText() const { ASSERT(!atEnd()); return m_copyableText; }
     void appendTextToStringBuilder(StringBuilder& builder) const { copyableText().appendToStringBuilder(builder); }
 
-    WEBCORE_EXPORT static int rangeLength(const Range*, bool spacesForReplacedElements = false);
-    WEBCORE_EXPORT static RefPtr<Range> rangeFromLocationAndLength(ContainerNode* scope, int rangeLocation, int rangeLength, bool spacesForReplacedElements = false);
+    WEBCORE_EXPORT static int rangeLength(const Range*, OptionSet<TextIteratorLengthOption> = { });
+    WEBCORE_EXPORT static RefPtr<Range> rangeFromLocationAndLength(ContainerNode* scope, int rangeLocation, int rangeLength, OptionSet<TextIteratorLengthOption> = { });
     WEBCORE_EXPORT static bool getLocationAndLengthFromRange(Node* scope, const Range*, size_t& location, size_t& length);
     WEBCORE_EXPORT static Ref<Range> subrange(Range& entireRange, int characterOffset, int characterCount);
 

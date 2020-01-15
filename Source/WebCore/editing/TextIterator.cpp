@@ -2396,10 +2396,20 @@ size_t SearchBuffer::length() const
 
 // --------
 
-int TextIterator::rangeLength(const Range* range, bool forSelectionPreservation)
+static TextIteratorBehavior behaviorFromLegnthOptions(OptionSet<TextIteratorLengthOption> options)
+{
+    TextIteratorBehavior behavior = TextIteratorDefaultBehavior;
+    if (options.contains(TextIteratorLengthOption::GenerateSpacesForReplacedElements))
+        behavior |= TextIteratorEmitsCharactersBetweenAllVisiblePositions;
+    if (options.contains(TextIteratorLengthOption::IgnoreVisibility))
+        behavior |= TextIteratorIgnoresStyleVisibility;
+    return behavior;
+}
+
+int TextIterator::rangeLength(const Range* range, OptionSet<TextIteratorLengthOption> options)
 {
     unsigned length = 0;
-    for (TextIterator it(range, forSelectionPreservation ? TextIteratorEmitsCharactersBetweenAllVisiblePositions : TextIteratorDefaultBehavior); !it.atEnd(); it.advance())
+    for (TextIterator it(range, behaviorFromLegnthOptions(options)); !it.atEnd(); it.advance())
         length += it.text().length();
     return length;
 }
@@ -2418,7 +2428,7 @@ static inline bool isInsideReplacedElement(TextIterator& iterator)
     return node && isRendererReplacedElement(node->renderer());
 }
 
-RefPtr<Range> TextIterator::rangeFromLocationAndLength(ContainerNode* scope, int rangeLocation, int rangeLength, bool forSelectionPreservation)
+RefPtr<Range> TextIterator::rangeFromLocationAndLength(ContainerNode* scope, int rangeLocation, int rangeLength, OptionSet<TextIteratorLengthOption> options)
 {
     Ref<Range> resultRange = scope->document().createRange();
 
@@ -2428,7 +2438,7 @@ RefPtr<Range> TextIterator::rangeFromLocationAndLength(ContainerNode* scope, int
 
     Ref<Range> textRunRange = rangeOfContents(*scope);
 
-    TextIterator it(textRunRange.ptr(), forSelectionPreservation ? TextIteratorEmitsCharactersBetweenAllVisiblePositions : TextIteratorDefaultBehavior);
+    TextIterator it(textRunRange.ptr(), behaviorFromLegnthOptions(options));
     
     // FIXME: the atEnd() check shouldn't be necessary, workaround for <http://bugs.webkit.org/show_bug.cgi?id=6289>.
     if (!rangeLocation && !rangeLength && it.atEnd()) {

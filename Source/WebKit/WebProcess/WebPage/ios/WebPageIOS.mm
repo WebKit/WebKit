@@ -1957,7 +1957,7 @@ void WebPage::storeSelectionForAccessibility(bool shouldStore)
 static RefPtr<Range> rangeNearPositionMatchesText(const VisiblePosition& position, RefPtr<Range> originalRange, const String& matchText, RefPtr<Range> selectionRange)
 {
     auto range = Range::create(selectionRange->ownerDocument(), selectionRange->startPosition(), position.deepEquivalent().parentAnchoredEquivalent());
-    unsigned targetOffset = TextIterator::rangeLength(range.ptr(), true);
+    unsigned targetOffset = TextIterator::rangeLength(range.ptr(), { TextIteratorLengthOption::GenerateSpacesForReplacedElements });
     return findClosestPlainText(*selectionRange.get(), matchText, { }, targetOffset);
 }
 

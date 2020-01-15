@@ -410,9 +410,9 @@ static void getSelectionOffsetsForObject(AccessibilityObject* coreObject, Visibl
 
     // Set values for start offsets and calculate initial range length.
     // These values might be adjusted later to cover special cases.
-    startOffset = webCoreOffsetToAtkOffset(coreObject, TextIterator::rangeLength(rangeInParent.ptr(), true));
+    startOffset = webCoreOffsetToAtkOffset(coreObject, TextIterator::rangeLength(rangeInParent.ptr(), { TextIteratorLengthOption::GenerateSpacesForReplacedElements }));
     auto nodeRange = Range::create(node->document(), nodeRangeStart, nodeRangeEnd);
-    int rangeLength = TextIterator::rangeLength(nodeRange.ptr(), true);
+    int rangeLength = TextIterator::rangeLength(nodeRange.ptr(), { TextIteratorLengthOption::GenerateSpacesForReplacedElements });
 
     // Special cases that are only relevant when working with *_END boundaries.
     if (selection.affinity() == UPSTREAM) {
