@@ -1,5 +1,41 @@
 2020-01-15  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r254007. rdar://problem/58605939
+
+    REGRESSION: [iOS 13] webrtc/datachannel/mdns-ice-candidates.html is failing
+    https://bugs.webkit.org/show_bug.cgi?id=201900
+    <rdar://problem/55466061>
+    
+    Reviewed by Eric Carlson.
+    
+    Source/WebCore:
+    
+    No change of behavior.
+    
+    * Modules/mediastream/PeerConnectionBackend.cpp:
+    (WebCore::PeerConnectionBackend::registerMDNSName):
+    Fix message typo (missing space).
+    
+    LayoutTests:
+    
+    * platform/ios/TestExpectations:
+    Reenable test.
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@254007 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-01-03  youenn fablet  <youenn@apple.com>
+
+            REGRESSION: [iOS 13] webrtc/datachannel/mdns-ice-candidates.html is failing
+            https://bugs.webkit.org/show_bug.cgi?id=201900
+            <rdar://problem/55466061>
+
+            Reviewed by Eric Carlson.
+
+            * platform/ios/TestExpectations:
+            Reenable test.
+
+2020-01-15  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r250024. rdar://problem/58605939
 
     Unreviewed iOS 13 test gardening, update test expectations.
