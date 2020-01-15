@@ -1645,6 +1645,7 @@ article .byline {
 
 article .bodycopy,
 article .meta {
+    clear: both;
     width: 66%;
     margin: 0 auto;
     position: relative;
