@@ -1,5 +1,21 @@
 2020-01-15  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r250024. rdar://problem/58605939
+
+    Unreviewed iOS 13 test gardening, update test expectations.
+    
+    * platform/ios/TestExpectations:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@250024 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-09-17  Ryan Haddad  <ryanhaddad@apple.com>
+
+            Unreviewed iOS 13 test gardening, update test expectations.
+
+            * platform/ios/TestExpectations:
+
+2020-01-15  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r254415. rdar://problem/58548648
 
     REGRESSION(r185816): In the Hong Kong locale, navigator.language reports it's in the Taiwan locale

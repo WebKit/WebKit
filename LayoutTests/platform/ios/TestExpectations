@@ -3351,6 +3351,7 @@ fast/scrolling/ios/touch-scroll-visibility-hidden.html [ Failure ]
 # <rdar://problem/52962272> fast/scrolling/ios/body-overflow-hidden.html is an Image failure
 fast/scrolling/ios/body-overflow-hidden.html [ Pass ImageOnlyFailure ]
 
+<<<<<<< HEAD
 webkit.org/b/201901 svg/custom/glyph-selection-arabic-forms.svg [ Failure ]
 
 webkit.org/b/202328 fast/images/async-image-multiple-clients-repaint.html [ Pass Failure ]
@@ -3461,3 +3462,11 @@ webkit.org/b/204757 imported/w3c/web-platform-tests/fetch/api/request/destinatio
 webkit.org/b/205309 scrollingcoordinator/ios/scroll-position-after-reattach.html [ ImageOnlyFailure ]
 
 webkit.org/b/200043 fast/text/international/system-language/navigator-language [ Pass Failure ]
+
+webkit.org/b/201898 editing/pasteboard/ios/dom-paste-same-origin.html [ Failure ]
+
+webkit.org/b/201899 editing/pasteboard/paste-does-not-fire-promises-while-sanitizing-web-content.html [ Failure ]
+
+webkit.org/b/201900 webrtc/datachannel/mdns-ice-candidates.html [ Failure ]
+
+webkit.org/b/201901 svg/custom/glyph-selection-arabic-forms.svg [ Failure ]
