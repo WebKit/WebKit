@@ -70,7 +70,7 @@ struct ContinuousContent {
     Optional<size_t> lastContentRunIndex() const;
 
 private:
-    LineBreaker::RunList m_runs;
+    const LineBreaker::RunList& m_runs;
     struct TrailingCollapsibleContent {
         void reset();
 
