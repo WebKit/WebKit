@@ -194,6 +194,7 @@ public:
     void setResourceLoadStatisticsShouldDowngradeReferrerForTesting(bool, CompletionHandler<void()>&&);
     void setResourceLoadStatisticsShouldBlockThirdPartyCookiesForTesting(bool enabled, bool onlyOnSitesWithoutUserInteraction, CompletionHandler<void()>&&);
     void setResourceLoadStatisticsFirstPartyWebsiteDataRemovalModeForTesting(bool enabled, CompletionHandler<void()>&&);
+    WebCore::ThirdPartyCookieBlockingMode thirdPartyCookieBlockingMode() const;
 #endif
     void setCacheMaxAgeCapForPrevalentResources(Seconds, CompletionHandler<void()>&&);
     void resetCacheMaxAgeCapForPrevalentResources(CompletionHandler<void()>&&);
@@ -372,6 +373,9 @@ private:
 
 #if HAVE(APP_SSO)
     UniqueRef<SOAuthorizationCoordinator> m_soAuthorizationCoordinator;
+#endif
+#if ENABLE(RESOURCE_LOAD_STATISTICS)
+    mutable Optional<WebCore::ThirdPartyCookieBlockingMode> m_thirdPartyCookieBlockingMode; // Lazily computed.
 #endif
 };
 

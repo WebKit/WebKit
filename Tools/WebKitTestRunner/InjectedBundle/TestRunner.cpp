@@ -2235,7 +2235,7 @@ void TestRunner::setStatisticsShouldBlockThirdPartyCookies(bool value, JSValueRe
     if (onlyOnSitesWithoutUserInteraction)
         messageName = adoptWK(WKStringCreateWithUTF8CString("SetStatisticsShouldBlockThirdPartyCookiesOnSitesWithoutUserInteraction"));
     WKRetainPtr<WKBooleanRef> messageBody = adoptWK(WKBooleanCreate(value));
-    WKBundlePostSynchronousMessage(InjectedBundle::singleton().bundle(), messageName.get(), messageBody.get(), nullptr);
+    WKBundlePostMessage(InjectedBundle::singleton().bundle(), messageName.get(), messageBody.get());
     m_hasSetBlockThirdPartyCookiesCallback = true;
 }
 

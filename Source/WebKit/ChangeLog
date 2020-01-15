@@ -1,3 +1,69 @@
+2020-01-14  Chris Dumez  <cdumez@apple.com>
+
+        document.cookie should not do a sync IPC to the network process for iframes that do not have storage access
+        https://bugs.webkit.org/show_bug.cgi?id=206108
+
+        Reviewed by Geoff Garen and John Wilander.
+
+        When ITP is enabled and ThirdPartyCookieBlockingMode::All mode is used (default in Safari), we can now detect
+        that a third-party iframe does not have cookie access completely on the WebContent process side, instead of
+        doing the check on the Network process side. The benefit is that this avoids doing a synchronous IPC every
+        time a third-party iframe which does not have storage access tries to access document.cookie in JavaScript.
+        Given that this should apply to a lot of iframes, this change is very beneficial to performance.
+
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        (WebKit::NetworkConnectionToWebProcess::cookiesForDOM):
+        (WebKit::NetworkConnectionToWebProcess::setCookiesFromDOM):
+        (WebKit::NetworkConnectionToWebProcess::cookieRequestHeaderFieldValue):
+        (WebKit::NetworkConnectionToWebProcess::getRawCookies):
+        * NetworkProcess/NetworkConnectionToWebProcess.h:
+        * NetworkProcess/NetworkConnectionToWebProcess.messages.in:
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::logCookieInformationInternal):
+        * NetworkProcess/NetworkSessionCreationParameters.cpp:
+        (WebKit::NetworkSessionCreationParameters::encode const):
+        (WebKit::NetworkSessionCreationParameters::decode):
+        * NetworkProcess/NetworkSessionCreationParameters.h:
+        * Scripts/webkit/messages.py:
+        * Shared/WebProcessDataStoreParameters.h:
+        (WebKit::WebProcessDataStoreParameters::encode const):
+        (WebKit::WebProcessDataStoreParameters::decode):
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::setShouldBlockThirdPartyCookiesForTesting):
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::ensureNetworkProcess):
+        (WebKit::WebProcessPool::webProcessDataStoreParameters):
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::setShouldBlockThirdPartyCookiesForTesting):
+        * UIProcess/WebProcessProxy.h:
+        * UIProcess/WebsiteData/Cocoa/WebsiteDataStoreCocoa.mm:
+        (WebKit::WebsiteDataStore::thirdPartyCookieBlockingMode const):
+        (WebKit::WebsiteDataStore::parameters):
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::thirdPartyCookieBlockingMode const):
+        (WebKit::WebsiteDataStore::setResourceLoadStatisticsShouldBlockThirdPartyCookiesForTesting):
+        * UIProcess/WebsiteData/WebsiteDataStore.h:
+        * WebProcess/WebCoreSupport/WebResourceLoadObserver.cpp:
+        (WebKit::WebResourceLoadObserver::requestStorageAccessUnderOpener):
+        (WebKit::WebResourceLoadObserver::logUserInteractionWithReducedTimeResolution):
+        * WebProcess/WebCoreSupport/WebResourceLoadObserver.h:
+        * WebProcess/WebPage/WebCookieJar.cpp:
+        (WebKit::shouldBlockCookies):
+        (WebKit::WebCookieJar::cookies const):
+        (WebKit::WebCookieJar::setCookies):
+        (WebKit::WebCookieJar::cookieRequestHeaderFieldValue const):
+        (WebKit::WebCookieJar::getRawCookies const):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::addDomainWithPageLevelStorageAccess):
+        (WebKit::WebPage::hasPageLevelStorageAccess const):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::setWebsiteDataStoreParameters):
+        (WebKit::WebProcess::setShouldBlockThirdPartyCookiesForTesting):
+        * WebProcess/WebProcess.h:
+        (WebKit::WebProcess::thirdPartyCookieBlockingMode const):
+        * WebProcess/WebProcess.messages.in:
+
 2020-01-14  Peng Liu  <peng.liu6@apple.com>
 
         [Media in GPU process] Implement the remote video layer support

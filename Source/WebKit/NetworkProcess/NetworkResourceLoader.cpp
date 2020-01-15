@@ -1225,7 +1225,7 @@ static void logCookieInformationInternal(NetworkConnectionToWebProcess& connecti
     ASSERT(NetworkResourceLoader::shouldLogCookieInformation(connection, networkStorageSession.sessionID()));
 
     Vector<WebCore::Cookie> cookies;
-    if (!networkStorageSession.getRawCookies(firstParty, sameSiteInfo, url, frameID, pageID, cookies))
+    if (!networkStorageSession.getRawCookies(firstParty, sameSiteInfo, url, frameID, pageID, ShouldAskITP::Yes, cookies))
         return;
 
     auto escapedURL = escapeForJSON(url.string());

@@ -66,6 +66,7 @@ class ResourceRequest;
 struct PluginInfo;
 struct PrewarmInformation;
 struct SecurityOriginData;
+enum class ThirdPartyCookieBlockingMode : uint8_t;
 }
 
 namespace WebKit {
@@ -206,6 +207,8 @@ public:
 
     static void notifyWebsiteDataDeletionForRegistrableDomainsFinished();
     static void notifyWebsiteDataScanForRegistrableDomainsFinished();
+
+    void setShouldBlockThirdPartyCookiesForTesting(WebCore::ThirdPartyCookieBlockingMode, CompletionHandler<void()>&&);
 #endif
 
     void enableSuddenTermination();

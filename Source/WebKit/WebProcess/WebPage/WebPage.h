@@ -1168,6 +1168,8 @@ public:
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
     void hasStorageAccess(WebCore::RegistrableDomain&& subFrameDomain, WebCore::RegistrableDomain&& topFrameDomain, WebFrame&, CompletionHandler<void(bool)>&&);
     void requestStorageAccess(WebCore::RegistrableDomain&& subFrameDomain, WebCore::RegistrableDomain&& topFrameDomain, WebFrame&, CompletionHandler<void(WebCore::StorageAccessWasGranted, WebCore::StorageAccessPromptWasShown)>&&);
+    bool hasPageLevelStorageAccess(const WebCore::RegistrableDomain& topLevelDomain, const WebCore::RegistrableDomain& resourceDomain) const;
+    void addDomainWithPageLevelStorageAccess(const WebCore::RegistrableDomain& topLevelDomain, const WebCore::RegistrableDomain& resourceDomain);
     void wasLoadedWithDataTransferFromPrevalentResource();
 #endif
 
@@ -2034,6 +2036,10 @@ private:
 #endif
 #if ENABLE(TEXT_AUTOSIZING)
     WebCore::Timer m_textAutoSizingAdjustmentTimer;
+#endif
+
+#if ENABLE(RESOURCE_LOAD_STATISTICS)
+    HashMap<WebCore::RegistrableDomain, WebCore::RegistrableDomain> m_domainsWithPageLevelStorageAccess;
 #endif
 
     String m_overriddenMediaType;

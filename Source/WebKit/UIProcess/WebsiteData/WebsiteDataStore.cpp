@@ -1799,12 +1799,27 @@ void WebsiteDataStore::setResourceLoadStatisticsShouldDowngradeReferrerForTestin
     ASSERT(!completionHandler);
 }
 
+#if !PLATFORM(COCOA)
+WebCore::ThirdPartyCookieBlockingMode WebsiteDataStore::thirdPartyCookieBlockingMode() const
+{
+    if (!m_thirdPartyCookieBlockingMode)
+        m_thirdPartyCookieBlockingMode = WebCore::ThirdPartyCookieBlockingMode::All;
+    return *m_thirdPartyCookieBlockingMode;
+}
+#endif
+
 void WebsiteDataStore::setResourceLoadStatisticsShouldBlockThirdPartyCookiesForTesting(bool enabled, bool onlyOnSitesWithoutUserInteraction, CompletionHandler<void()>&& completionHandler)
 {
     auto callbackAggregator = CallbackAggregator::create(WTFMove(completionHandler));
     WebCore::ThirdPartyCookieBlockingMode blockingMode = WebCore::ThirdPartyCookieBlockingMode::OnlyAccordingToPerDomainPolicy;
     if (enabled)
         blockingMode = onlyOnSitesWithoutUserInteraction ? WebCore::ThirdPartyCookieBlockingMode::AllOnSitesWithoutUserInteraction : WebCore::ThirdPartyCookieBlockingMode::All;
+
+    if (thirdPartyCookieBlockingMode() != blockingMode) {
+        m_thirdPartyCookieBlockingMode = blockingMode;
+        for (auto& webProcess : processes())
+            webProcess.setShouldBlockThirdPartyCookiesForTesting(blockingMode, [callbackAggregator = callbackAggregator.copyRef()] { });
+    }
 
     for (auto& processPool : processPools()) {
         if (auto* networkProcess = processPool->networkProcess()) {

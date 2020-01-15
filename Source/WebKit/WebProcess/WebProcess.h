@@ -44,6 +44,7 @@
 #include "WebSocketChannelManager.h"
 #include <WebCore/ActivityState.h>
 #include <WebCore/FrameIdentifier.h>
+#include <WebCore/NetworkStorageSession.h>
 #include <WebCore/PageIdentifier.h>
 #include <WebCore/RegistrableDomain.h>
 #if PLATFORM(MAC)
@@ -164,6 +165,10 @@ public:
     InjectedBundle* injectedBundle() const { return m_injectedBundle.get(); }
     
     PAL::SessionID sessionID() const { ASSERT(m_sessionID); return *m_sessionID; }
+
+#if ENABLE(RESOURCE_LOAD_STATISTICS)
+    WebCore::ThirdPartyCookieBlockingMode thirdPartyCookieBlockingMode() const { return m_thirdPartyCookieBlockingMode; }
+#endif
 
 #if PLATFORM(COCOA)
     const WTF::MachSendRight& compositingRenderServerPort() const { return m_compositingRenderServerPort; }
@@ -437,6 +442,10 @@ private:
 
 #endif
 
+#if ENABLE(RESOURCE_LOAD_STATISTICS)
+    void setShouldBlockThirdPartyCookiesForTesting(WebCore::ThirdPartyCookieBlockingMode, CompletionHandler<void()>&&);
+#endif
+
     void platformInitializeProcess(const AuxiliaryProcessInitializationParameters&);
 
     // IPC::Connection::Client
@@ -604,6 +613,10 @@ private:
     // Prewarmed WebProcesses do not have an associated sessionID yet, which is why this is an optional.
     // By the time the WebProcess gets a WebPage, it is guaranteed to have a sessionID.
     Optional<PAL::SessionID> m_sessionID;
+
+#if ENABLE(RESOURCE_LOAD_STATISTICS)
+    WebCore::ThirdPartyCookieBlockingMode m_thirdPartyCookieBlockingMode { WebCore::ThirdPartyCookieBlockingMode::All };
+#endif
 };
 
 } // namespace WebKit

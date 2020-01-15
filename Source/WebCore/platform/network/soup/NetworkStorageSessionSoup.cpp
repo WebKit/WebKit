@@ -261,7 +261,7 @@ static inline bool httpOnlyCookieExists(const GSList* cookies, const gchar* name
     return false;
 }
 
-void NetworkStorageSession::setCookiesFromDOM(const URL& firstParty, const SameSiteInfo&, const URL& url, Optional<FrameIdentifier> frameID, Optional<PageIdentifier> pageID, const String& value) const
+void NetworkStorageSession::setCookiesFromDOM(const URL& firstParty, const SameSiteInfo&, const URL& url, Optional<FrameIdentifier> frameID, Optional<PageIdentifier> pageID, ShouldAskITP, const String& value) const
 {
     UNUSED_PARAM(frameID);
     UNUSED_PARAM(pageID);
@@ -432,7 +432,7 @@ void NetworkStorageSession::hasCookies(const RegistrableDomain&, CompletionHandl
     completionHandler(false);
 }
 
-bool NetworkStorageSession::getRawCookies(const URL& firstParty, const SameSiteInfo&, const URL& url, Optional<FrameIdentifier> frameID, Optional<PageIdentifier> pageID, Vector<Cookie>& rawCookies) const
+bool NetworkStorageSession::getRawCookies(const URL& firstParty, const SameSiteInfo&, const URL& url, Optional<FrameIdentifier> frameID, Optional<PageIdentifier> pageID, ShouldAskITP, Vector<Cookie>& rawCookies) const
 {
     UNUSED_PARAM(firstParty);
     UNUSED_PARAM(frameID);
@@ -502,7 +502,7 @@ static std::pair<String, bool> cookiesForSession(const NetworkStorageSession& se
     return { String::fromUTF8(cookieHeader.get()), didAccessSecureCookies };
 }
 
-std::pair<String, bool> NetworkStorageSession::cookiesForDOM(const URL& firstParty, const SameSiteInfo&, const URL& url, Optional<FrameIdentifier> frameID, Optional<PageIdentifier> pageID, IncludeSecureCookies includeSecureCookies) const
+std::pair<String, bool> NetworkStorageSession::cookiesForDOM(const URL& firstParty, const SameSiteInfo&, const URL& url, Optional<FrameIdentifier> frameID, Optional<PageIdentifier> pageID, IncludeSecureCookies includeSecureCookies, ShouldAskITP) const
 {
     UNUSED_PARAM(firstParty);
     UNUSED_PARAM(frameID);
@@ -510,7 +510,7 @@ std::pair<String, bool> NetworkStorageSession::cookiesForDOM(const URL& firstPar
     return cookiesForSession(*this, url, false, includeSecureCookies);
 }
 
-std::pair<String, bool> NetworkStorageSession::cookieRequestHeaderFieldValue(const URL& firstParty, const SameSiteInfo&, const URL& url, Optional<FrameIdentifier> frameID, Optional<PageIdentifier> pageID, IncludeSecureCookies includeSecureCookies) const
+std::pair<String, bool> NetworkStorageSession::cookieRequestHeaderFieldValue(const URL& firstParty, const SameSiteInfo&, const URL& url, Optional<FrameIdentifier> frameID, Optional<PageIdentifier> pageID, IncludeSecureCookies includeSecureCookies, ShouldAskITP) const
 {
     UNUSED_PARAM(firstParty);
     UNUSED_PARAM(frameID);
@@ -521,7 +521,7 @@ std::pair<String, bool> NetworkStorageSession::cookieRequestHeaderFieldValue(con
 
 std::pair<String, bool> NetworkStorageSession::cookieRequestHeaderFieldValue(const CookieRequestHeaderFieldProxy& headerFieldProxy) const
 {
-    return cookieRequestHeaderFieldValue(headerFieldProxy.firstParty, headerFieldProxy.sameSiteInfo, headerFieldProxy.url, headerFieldProxy.frameID, headerFieldProxy.pageID, headerFieldProxy.includeSecureCookies);
+    return cookieRequestHeaderFieldValue(headerFieldProxy.firstParty, headerFieldProxy.sameSiteInfo, headerFieldProxy.url, headerFieldProxy.frameID, headerFieldProxy.pageID, headerFieldProxy.includeSecureCookies, ShouldAskITP::Yes);
 }
 
 void NetworkStorageSession::flushCookieStore()

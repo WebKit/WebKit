@@ -162,5 +162,6 @@ messages -> WebProcess LegacyReceiver NotRefCounted {
 
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
     SeedResourceLoadStatisticsForTesting(WebCore::RegistrableDomain firstPartyDomain, WebCore::RegistrableDomain thirdPartyDomain, bool shouldScheduleNotification) -> () Async
+    SetShouldBlockThirdPartyCookiesForTesting(enum:uint8_t WebCore::ThirdPartyCookieBlockingMode blockingMode) -> () Async
 #endif
 }

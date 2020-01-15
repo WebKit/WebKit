@@ -1,3 +1,19 @@
+2020-01-14  Chris Dumez  <cdumez@apple.com>
+
+        document.cookie should not do a sync IPC to the network process for iframes that do not have storage access
+        https://bugs.webkit.org/show_bug.cgi?id=206108
+
+        Reviewed by Geoff Garen and John Wilander.
+
+        Make setStatisticsShouldBlockThirdPartyCookies IPC from the WebProcess to the UIProcess asynchronous
+        since this ends up sending an IPC back to the WebProcess now (which would deadlock).
+
+        * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+        (WTR::TestRunner::setStatisticsShouldBlockThirdPartyCookies):
+        * WebKitTestRunner/TestInvocation.cpp:
+        (WTR::TestInvocation::didReceiveMessageFromInjectedBundle):
+        (WTR::TestInvocation::didReceiveSynchronousMessageFromInjectedBundle):
+
 2020-01-10  Jiewen Tan  <jiewen_tan@apple.com>
 
         [WebAuthn] Implement SPI to tell UI clients to select assertion responses

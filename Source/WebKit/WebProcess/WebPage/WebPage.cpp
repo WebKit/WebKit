@@ -6605,6 +6605,17 @@ void WebPage::requestStorageAccess(RegistrableDomain&& subFrameDomain, Registrab
     });
 }
 
+void WebPage::addDomainWithPageLevelStorageAccess(const RegistrableDomain& topLevelDomain, const RegistrableDomain& resourceDomain)
+{
+    m_domainsWithPageLevelStorageAccess.add(topLevelDomain, resourceDomain);
+}
+
+bool WebPage::hasPageLevelStorageAccess(const RegistrableDomain& topLevelDomain, const RegistrableDomain& resourceDomain) const
+{
+    auto it = m_domainsWithPageLevelStorageAccess.find(topLevelDomain);
+    return it != m_domainsWithPageLevelStorageAccess.end() && it->value == resourceDomain;
+}
+
 void WebPage::wasLoadedWithDataTransferFromPrevalentResource()
 {
     auto* frame = mainFrame();

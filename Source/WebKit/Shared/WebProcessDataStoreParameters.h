@@ -26,6 +26,7 @@
 #pragma once
 
 #include "SandboxExtension.h"
+#include <WebCore/NetworkStorageSession.h>
 #include <pal/SessionID.h>
 #include <wtf/HashMap.h>
 
@@ -45,6 +46,9 @@ struct WebProcessDataStoreParameters {
     String javaScriptConfigurationDirectory;
     SandboxExtension::Handle javaScriptConfigurationDirectoryExtensionHandle;
     HashMap<unsigned, WallTime> plugInAutoStartOriginHashes;
+#if ENABLE(RESOURCE_LOAD_STATISTICS)
+    WebCore::ThirdPartyCookieBlockingMode thirdPartyCookieBlockingMode { WebCore::ThirdPartyCookieBlockingMode::All };
+#endif
     bool resourceLoadStatisticsEnabled { false };
 
     template<class Encoder> void encode(Encoder&) const;
@@ -67,6 +71,9 @@ void WebProcessDataStoreParameters::encode(Encoder& encoder) const
     encoder << javaScriptConfigurationDirectory;
     encoder << javaScriptConfigurationDirectoryExtensionHandle;
     encoder << plugInAutoStartOriginHashes;
+#if ENABLE(RESOURCE_LOAD_STATISTICS)
+    encoder << thirdPartyCookieBlockingMode;
+#endif
     encoder << resourceLoadStatisticsEnabled;
 }
 
@@ -132,6 +139,13 @@ Optional<WebProcessDataStoreParameters> WebProcessDataStoreParameters::decode(De
     if (!plugInAutoStartOriginHashes)
         return WTF::nullopt;
 
+#if ENABLE(RESOURCE_LOAD_STATISTICS)
+    Optional<WebCore::ThirdPartyCookieBlockingMode> thirdPartyCookieBlockingMode;
+    decoder >> thirdPartyCookieBlockingMode;
+    if (!thirdPartyCookieBlockingMode)
+        return WTF::nullopt;
+#endif
+
     bool resourceLoadStatisticsEnabled = false;
     if (!decoder.decode(resourceLoadStatisticsEnabled))
         return WTF::nullopt;
@@ -150,6 +164,9 @@ Optional<WebProcessDataStoreParameters> WebProcessDataStoreParameters::decode(De
         WTFMove(javaScriptConfigurationDirectory),
         WTFMove(*javaScriptConfigurationDirectoryExtensionHandle),
         WTFMove(*plugInAutoStartOriginHashes),
+#if ENABLE(RESOURCE_LOAD_STATISTICS)
+        *thirdPartyCookieBlockingMode,
+#endif
         resourceLoadStatisticsEnabled
     };
 }

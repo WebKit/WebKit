@@ -34,6 +34,8 @@
 
 namespace WebKit {
 
+class WebPage;
+
 class WebResourceLoadObserver final : public WebCore::ResourceLoadObserver {
 public:
     WebResourceLoadObserver();
@@ -64,7 +66,7 @@ private:
     void scheduleNotificationIfNeeded();
 
     Vector<WebCore::ResourceLoadStatistics> takeStatistics();
-    void requestStorageAccessUnderOpener(const WebCore::RegistrableDomain& domainInNeedOfStorageAccess, WebCore::PageIdentifier openerPageID, WebCore::Document& openerDocument);
+    void requestStorageAccessUnderOpener(const WebCore::RegistrableDomain& domainInNeedOfStorageAccess, WebPage& openerPage, WebCore::Document& openerDocument);
 
     HashMap<WebCore::RegistrableDomain, WebCore::ResourceLoadStatistics> m_resourceStatisticsMap;
     HashMap<WebCore::RegistrableDomain, WTF::WallTime> m_lastReportedUserInteractionMap;

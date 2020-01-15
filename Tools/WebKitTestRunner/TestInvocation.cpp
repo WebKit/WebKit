@@ -747,6 +747,20 @@ void TestInvocation::didReceiveMessageFromInjectedBundle(WKStringRef messageName
         return;
     }
 
+    if (WKStringIsEqualToUTF8CString(messageName, "SetStatisticsShouldBlockThirdPartyCookiesOnSitesWithoutUserInteraction")) {
+        ASSERT(WKGetTypeID(messageBody) == WKBooleanGetTypeID());
+        WKBooleanRef value = static_cast<WKBooleanRef>(messageBody);
+        TestController::singleton().setStatisticsShouldBlockThirdPartyCookies(WKBooleanGetValue(value), true);
+        return;
+    }
+
+    if (WKStringIsEqualToUTF8CString(messageName, "SetStatisticsShouldBlockThirdPartyCookies")) {
+        ASSERT(WKGetTypeID(messageBody) == WKBooleanGetTypeID());
+        WKBooleanRef value = static_cast<WKBooleanRef>(messageBody);
+        TestController::singleton().setStatisticsShouldBlockThirdPartyCookies(WKBooleanGetValue(value), false);
+        return;
+    }
+
     if (WKStringIsEqualToUTF8CString(messageName, "RunUIProcessScript")) {
         WKDictionaryRef messageBodyDictionary = static_cast<WKDictionaryRef>(messageBody);
         WKRetainPtr<WKStringRef> scriptKey = adoptWK(WKStringCreateWithUTF8CString("Script"));
@@ -1556,20 +1570,6 @@ WKRetainPtr<WKTypeRef> TestInvocation::didReceiveSynchronousMessageFromInjectedB
         ASSERT(WKGetTypeID(messageBody) == WKBooleanGetTypeID());
         WKBooleanRef value = static_cast<WKBooleanRef>(messageBody);
         TestController::singleton().setStatisticsShouldDowngradeReferrer(WKBooleanGetValue(value));
-        return nullptr;
-    }
-    
-    if (WKStringIsEqualToUTF8CString(messageName, "SetStatisticsShouldBlockThirdPartyCookiesOnSitesWithoutUserInteraction")) {
-        ASSERT(WKGetTypeID(messageBody) == WKBooleanGetTypeID());
-        WKBooleanRef value = static_cast<WKBooleanRef>(messageBody);
-        TestController::singleton().setStatisticsShouldBlockThirdPartyCookies(WKBooleanGetValue(value), true);
-        return nullptr;
-    }
-    
-    if (WKStringIsEqualToUTF8CString(messageName, "SetStatisticsShouldBlockThirdPartyCookies")) {
-        ASSERT(WKGetTypeID(messageBody) == WKBooleanGetTypeID());
-        WKBooleanRef value = static_cast<WKBooleanRef>(messageBody);
-        TestController::singleton().setStatisticsShouldBlockThirdPartyCookies(WKBooleanGetValue(value), false);
         return nullptr;
     }
     

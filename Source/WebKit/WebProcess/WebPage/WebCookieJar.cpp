@@ -28,8 +28,11 @@
 
 #include "NetworkConnectionToWebProcessMessages.h"
 #include "NetworkProcessConnection.h"
+#include "WebFrame.h"
+#include "WebPage.h"
 #include "WebProcess.h"
 #include <WebCore/CookieRequestHeaderFieldProxy.h>
+#include <WebCore/DeprecatedGlobalSettings.h>
 #include <WebCore/Document.h>
 #include <WebCore/Frame.h>
 #include <WebCore/FrameLoader.h>
@@ -48,18 +51,61 @@ class WebStorageSessionProvider : public WebCore::StorageSessionProvider {
 WebCookieJar::WebCookieJar()
     : WebCore::CookieJar(adoptRef(*new WebStorageSessionProvider)) { }
 
+#if ENABLE(RESOURCE_LOAD_STATISTICS)
+static bool shouldBlockCookies(WebFrame* frame, const URL& firstPartyForCookies, const URL& resourceURL, ShouldAskITP& shouldAskITPInNetworkProcess)
+{
+    if (!WebCore::DeprecatedGlobalSettings::resourceLoadStatisticsEnabled())
+        return false;
+
+    if (frame && frame->isMainFrame())
+        return false;
+
+    RegistrableDomain firstPartyDomain { firstPartyForCookies };
+    if (firstPartyDomain.isEmpty())
+        return false;
+
+    RegistrableDomain resourceDomain { resourceURL };
+    if (resourceDomain.isEmpty())
+        return false;
+
+    if (firstPartyDomain == resourceDomain)
+        return false;
+
+    if (frame && frame->frameLoaderClient()->hasFrameSpecificStorageAccess())
+        return false;
+
+    if (frame && frame->page() && frame->page()->hasPageLevelStorageAccess(firstPartyDomain, resourceDomain))
+        return false;
+
+    // The WebContent process does not have enough information to deal with other policies than ThirdPartyCookieBlockingMode::All so we have to go to the NetworkProcess for all
+    // other policies and the request may end up getting blocked on NetworkProcess side.
+    if (WebProcess::singleton().thirdPartyCookieBlockingMode() != ThirdPartyCookieBlockingMode::All) {
+        shouldAskITPInNetworkProcess = ShouldAskITP::Yes;
+        return false;
+    }
+
+    return true;
+}
+#endif
+
 String WebCookieJar::cookies(WebCore::Document& document, const URL& url) const
 {
-    Optional<FrameIdentifier> frameID;
-    Optional<PageIdentifier> pageID;
-    if (auto* frame = document.frame()) {
-        frameID = frame->loader().client().frameID();
-        pageID = frame->loader().client().pageID();
-    }
+    auto* webFrame = document.frame() ? WebFrame::fromCoreFrame(*document.frame()) : nullptr;
+    if (!webFrame || !webFrame->page())
+        return { };
+
+    ShouldAskITP shouldAskITPInNetworkProcess = ShouldAskITP::No;
+#if ENABLE(RESOURCE_LOAD_STATISTICS)
+    if (shouldBlockCookies(webFrame, document.firstPartyForCookies(), url, shouldAskITPInNetworkProcess))
+        return { };
+#endif
+
+    auto frameID = webFrame->frameID();
+    auto pageID = webFrame->page()->identifier();
 
     String cookieString;
     bool secureCookiesAccessed = false;
-    if (!WebProcess::singleton().ensureNetworkProcessConnection().connection().sendSync(Messages::NetworkConnectionToWebProcess::CookiesForDOM(document.firstPartyForCookies(), sameSiteInfo(document), url, frameID, pageID, shouldIncludeSecureCookies(document, url)), Messages::NetworkConnectionToWebProcess::CookiesForDOM::Reply(cookieString, secureCookiesAccessed), 0))
+    if (!WebProcess::singleton().ensureNetworkProcessConnection().connection().sendSync(Messages::NetworkConnectionToWebProcess::CookiesForDOM(document.firstPartyForCookies(), sameSiteInfo(document), url, frameID, pageID, shouldIncludeSecureCookies(document, url), shouldAskITPInNetworkProcess), Messages::NetworkConnectionToWebProcess::CookiesForDOM::Reply(cookieString, secureCookiesAccessed), 0))
         return { };
 
     return cookieString;
@@ -67,14 +113,20 @@ String WebCookieJar::cookies(WebCore::Document& document, const URL& url) const
 
 void WebCookieJar::setCookies(WebCore::Document& document, const URL& url, const String& cookieString)
 {
-    Optional<FrameIdentifier> frameID;
-    Optional<PageIdentifier> pageID;
-    if (auto* frame = document.frame()) {
-        frameID = frame->loader().client().frameID();
-        pageID = frame->loader().client().pageID();
-    }
+    auto* webFrame = document.frame() ? WebFrame::fromCoreFrame(*document.frame()) : nullptr;
+    if (!webFrame || !webFrame->page())
+        return;
 
-    WebProcess::singleton().ensureNetworkProcessConnection().connection().send(Messages::NetworkConnectionToWebProcess::SetCookiesFromDOM(document.firstPartyForCookies(), sameSiteInfo(document), url, frameID, pageID, cookieString), 0);
+    ShouldAskITP shouldAskITPInNetworkProcess = ShouldAskITP::No;
+#if ENABLE(RESOURCE_LOAD_STATISTICS)
+    if (shouldBlockCookies(webFrame, document.firstPartyForCookies(), url, shouldAskITPInNetworkProcess))
+        return;
+#endif
+
+    auto frameID = webFrame->frameID();
+    auto pageID = webFrame->page()->identifier();
+
+    WebProcess::singleton().ensureNetworkProcessConnection().connection().send(Messages::NetworkConnectionToWebProcess::SetCookiesFromDOM(document.firstPartyForCookies(), sameSiteInfo(document), url, frameID, pageID, shouldAskITPInNetworkProcess, cookieString), 0);
 }
 
 bool WebCookieJar::cookiesEnabled(const WebCore::Document& document) const
@@ -87,23 +139,32 @@ bool WebCookieJar::cookiesEnabled(const WebCore::Document& document) const
 
 std::pair<String, WebCore::SecureCookiesAccessed> WebCookieJar::cookieRequestHeaderFieldValue(const URL& firstParty, const WebCore::SameSiteInfo& sameSiteInfo, const URL& url, Optional<FrameIdentifier> frameID, Optional<PageIdentifier> pageID, WebCore::IncludeSecureCookies includeSecureCookies) const
 {
+    ShouldAskITP shouldAskITPInNetworkProcess = ShouldAskITP::No;
+#if ENABLE(RESOURCE_LOAD_STATISTICS)
+    auto* webFrame = frameID ? WebProcess::singleton().webFrame(*frameID) : nullptr;
+    if (shouldBlockCookies(webFrame, firstParty, url, shouldAskITPInNetworkProcess))
+        return { };
+#endif
+
     String cookieString;
     bool secureCookiesAccessed = false;
-    if (!WebProcess::singleton().ensureNetworkProcessConnection().connection().sendSync(Messages::NetworkConnectionToWebProcess::CookieRequestHeaderFieldValue(firstParty, sameSiteInfo, url, frameID, pageID, includeSecureCookies), Messages::NetworkConnectionToWebProcess::CookieRequestHeaderFieldValue::Reply(cookieString, secureCookiesAccessed), 0))
+    if (!WebProcess::singleton().ensureNetworkProcessConnection().connection().sendSync(Messages::NetworkConnectionToWebProcess::CookieRequestHeaderFieldValue(firstParty, sameSiteInfo, url, frameID, pageID, includeSecureCookies, shouldAskITPInNetworkProcess), Messages::NetworkConnectionToWebProcess::CookieRequestHeaderFieldValue::Reply(cookieString, secureCookiesAccessed), 0))
         return { };
     return { cookieString, secureCookiesAccessed ? WebCore::SecureCookiesAccessed::Yes : WebCore::SecureCookiesAccessed::No };
 }
 
 bool WebCookieJar::getRawCookies(const WebCore::Document& document, const URL& url, Vector<WebCore::Cookie>& rawCookies) const
 {
-    Optional<FrameIdentifier> frameID;
-    Optional<PageIdentifier> pageID;
-    if (auto* frame = document.frame()) {
-        frameID = frame->loader().client().frameID();
-        pageID = frame->loader().client().pageID();
-    }
+    auto* webFrame = document.frame() ? WebFrame::fromCoreFrame(*document.frame()) : nullptr;
+    ShouldAskITP shouldAskITPInNetworkProcess = ShouldAskITP::No;
+#if ENABLE(RESOURCE_LOAD_STATISTICS)
+    if (shouldBlockCookies(webFrame, document.firstPartyForCookies(), url, shouldAskITPInNetworkProcess))
+        return { };
+#endif
 
-    if (!WebProcess::singleton().ensureNetworkProcessConnection().connection().sendSync(Messages::NetworkConnectionToWebProcess::GetRawCookies(document.firstPartyForCookies(), sameSiteInfo(document), url, frameID, pageID), Messages::NetworkConnectionToWebProcess::GetRawCookies::Reply(rawCookies), 0))
+    Optional<FrameIdentifier> frameID = webFrame ? makeOptional(webFrame->frameID()) : WTF::nullopt;
+    Optional<PageIdentifier> pageID = webFrame && webFrame->page() ? makeOptional(webFrame->page()->identifier()) : WTF::nullopt;
+    if (!WebProcess::singleton().ensureNetworkProcessConnection().connection().sendSync(Messages::NetworkConnectionToWebProcess::GetRawCookies(document.firstPartyForCookies(), sameSiteInfo(document), url, frameID, pageID, shouldAskITPInNetworkProcess), Messages::NetworkConnectionToWebProcess::GetRawCookies::Reply(rawCookies), 0))
         return false;
     return true;
 }

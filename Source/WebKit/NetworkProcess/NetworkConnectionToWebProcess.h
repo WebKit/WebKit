@@ -58,6 +58,7 @@ class ResourceError;
 class ResourceRequest;
 enum class StorageAccessPromptWasShown : bool;
 enum class StorageAccessWasGranted : bool;
+enum class ShouldAskITP : bool;
 struct SameSiteInfo;
 
 enum class IncludeSecureCookies : bool;
@@ -197,11 +198,11 @@ private:
 
     void registerURLSchemesAsCORSEnabled(Vector<String>&& schemes);
 
-    void cookiesForDOM(const URL& firstParty, const WebCore::SameSiteInfo&, const URL&, Optional<WebCore::FrameIdentifier>, Optional<WebCore::PageIdentifier>, WebCore::IncludeSecureCookies, CompletionHandler<void(String cookieString, bool secureCookiesAccessed)>&&);
-    void setCookiesFromDOM(const URL& firstParty, const WebCore::SameSiteInfo&, const URL&, Optional<WebCore::FrameIdentifier>, Optional<WebCore::PageIdentifier>, const String&);
+    void cookiesForDOM(const URL& firstParty, const WebCore::SameSiteInfo&, const URL&, WebCore::FrameIdentifier, WebCore::PageIdentifier, WebCore::IncludeSecureCookies, WebCore::ShouldAskITP, CompletionHandler<void(String cookieString, bool secureCookiesAccessed)>&&);
+    void setCookiesFromDOM(const URL& firstParty, const WebCore::SameSiteInfo&, const URL&, WebCore::FrameIdentifier, WebCore::PageIdentifier, WebCore::ShouldAskITP, const String&);
     void cookiesEnabled(CompletionHandler<void(bool)>&&);
-    void cookieRequestHeaderFieldValue(const URL& firstParty, const WebCore::SameSiteInfo&, const URL&, Optional<WebCore::FrameIdentifier>, Optional<WebCore::PageIdentifier>, WebCore::IncludeSecureCookies, CompletionHandler<void(String cookieString, bool secureCookiesAccessed)>&&);
-    void getRawCookies(const URL& firstParty, const WebCore::SameSiteInfo&, const URL&, Optional<WebCore::FrameIdentifier>, Optional<WebCore::PageIdentifier>, CompletionHandler<void(Vector<WebCore::Cookie>&&)>&&);
+    void cookieRequestHeaderFieldValue(const URL& firstParty, const WebCore::SameSiteInfo&, const URL&, Optional<WebCore::FrameIdentifier>, Optional<WebCore::PageIdentifier>, WebCore::IncludeSecureCookies, WebCore::ShouldAskITP, CompletionHandler<void(String cookieString, bool secureCookiesAccessed)>&&);
+    void getRawCookies(const URL& firstParty, const WebCore::SameSiteInfo&, const URL&, Optional<WebCore::FrameIdentifier>, Optional<WebCore::PageIdentifier>, WebCore::ShouldAskITP, CompletionHandler<void(Vector<WebCore::Cookie>&&)>&&);
     void deleteCookie(const URL&, const String& cookieName);
 
     void registerFileBlobURL(const URL&, const String& path, SandboxExtension::Handle&&, const String& contentType);

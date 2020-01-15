@@ -477,6 +477,7 @@ void WebProcess::setWebsiteDataStoreParameters(WebProcessDataStoreParameters&& p
     setResourceLoadStatisticsEnabled(parameters.resourceLoadStatisticsEnabled);
 
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
+    m_thirdPartyCookieBlockingMode = parameters.thirdPartyCookieBlockingMode;
     if (parameters.resourceLoadStatisticsEnabled && !parameters.sessionID.isEphemeral() && !ResourceLoadObserver::sharedIfExists())
         ResourceLoadObserver::setShared(*new WebResourceLoadObserver);
 #endif
@@ -1976,6 +1977,14 @@ bool WebProcess::areAllPagesThrottleable() const
         return page->isThrottleable();
     });
 }
+
+#if ENABLE(RESOURCE_LOAD_STATISTICS)
+void WebProcess::setShouldBlockThirdPartyCookiesForTesting(ThirdPartyCookieBlockingMode thirdPartyCookieBlockingMode, CompletionHandler<void()>&& completionHandler)
+{
+    m_thirdPartyCookieBlockingMode = thirdPartyCookieBlockingMode;
+    completionHandler();
+}
+#endif
 
 } // namespace WebKit
 

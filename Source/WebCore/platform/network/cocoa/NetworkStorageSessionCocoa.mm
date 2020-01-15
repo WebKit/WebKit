@@ -308,26 +308,27 @@ static RetainPtr<NSArray> filterCookies(NSArray *unfilteredCookies, Optional<Sec
     return filteredCookies;
 }
 
-static NSArray *cookiesForURL(const NetworkStorageSession& session, const URL& firstParty, const SameSiteInfo& sameSiteInfo, const URL& url, Optional<FrameIdentifier> frameID, Optional<PageIdentifier> pageID)
+static NSArray *cookiesForURL(const NetworkStorageSession& session, const URL& firstParty, const SameSiteInfo& sameSiteInfo, const URL& url, Optional<FrameIdentifier> frameID, Optional<PageIdentifier> pageID, ShouldAskITP shouldAskITP)
 {
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
-    if (session.shouldBlockCookies(firstParty, url, frameID, pageID))
+    if (shouldAskITP == ShouldAskITP::Yes && session.shouldBlockCookies(firstParty, url, frameID, pageID))
         return nil;
 #else
     UNUSED_PARAM(frameID);
     UNUSED_PARAM(pageID);
+    UNUSED_PARAM(shouldAskITP);
 #endif
     return httpCookiesForURL(session.cookieStorage().get(), firstParty, sameSiteInfo, url);
 }
 
 enum IncludeHTTPOnlyOrNot { DoNotIncludeHTTPOnly, IncludeHTTPOnly };
-static std::pair<String, bool> cookiesForSession(const NetworkStorageSession& session, const URL& firstParty, const SameSiteInfo& sameSiteInfo, const URL& url, Optional<FrameIdentifier> frameID, Optional<PageIdentifier> pageID, IncludeHTTPOnlyOrNot includeHTTPOnly, IncludeSecureCookies includeSecureCookies)
+static std::pair<String, bool> cookiesForSession(const NetworkStorageSession& session, const URL& firstParty, const SameSiteInfo& sameSiteInfo, const URL& url, Optional<FrameIdentifier> frameID, Optional<PageIdentifier> pageID, IncludeHTTPOnlyOrNot includeHTTPOnly, IncludeSecureCookies includeSecureCookies, ShouldAskITP shouldAskITP = ShouldAskITP::Yes)
 {
     ASSERT(hasProcessPrivilege(ProcessPrivilege::CanAccessRawCookies));
 
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
 
-    NSArray *cookies = cookiesForURL(session, firstParty, sameSiteInfo, url, frameID, pageID);
+    NSArray *cookies = cookiesForURL(session, firstParty, sameSiteInfo, url, frameID, pageID, shouldAskITP);
     if (![cookies count])
         return { String(), false }; // Return a null string, not an empty one that StringBuilder would create below.
 
@@ -377,14 +378,14 @@ static void deleteAllHTTPCookies(CFHTTPCookieStorageRef cookieStorage)
     CFHTTPCookieStorageDeleteAllCookies(cookieStorage);
 }
 
-std::pair<String, bool> NetworkStorageSession::cookiesForDOM(const URL& firstParty, const SameSiteInfo& sameSiteInfo, const URL& url, Optional<FrameIdentifier> frameID, Optional<PageIdentifier> pageID, IncludeSecureCookies includeSecureCookies) const
+std::pair<String, bool> NetworkStorageSession::cookiesForDOM(const URL& firstParty, const SameSiteInfo& sameSiteInfo, const URL& url, Optional<FrameIdentifier> frameID, Optional<PageIdentifier> pageID, IncludeSecureCookies includeSecureCookies, ShouldAskITP shouldAskITP) const
 {
-    return cookiesForSession(*this, firstParty, sameSiteInfo, url, frameID, pageID, DoNotIncludeHTTPOnly, includeSecureCookies);
+    return cookiesForSession(*this, firstParty, sameSiteInfo, url, frameID, pageID, DoNotIncludeHTTPOnly, includeSecureCookies, shouldAskITP);
 }
 
-std::pair<String, bool> NetworkStorageSession::cookieRequestHeaderFieldValue(const URL& firstParty, const SameSiteInfo& sameSiteInfo, const URL& url, Optional<FrameIdentifier> frameID, Optional<PageIdentifier> pageID, IncludeSecureCookies includeSecureCookies) const
+std::pair<String, bool> NetworkStorageSession::cookieRequestHeaderFieldValue(const URL& firstParty, const SameSiteInfo& sameSiteInfo, const URL& url, Optional<FrameIdentifier> frameID, Optional<PageIdentifier> pageID, IncludeSecureCookies includeSecureCookies, ShouldAskITP shouldAskITP) const
 {
-    return cookiesForSession(*this, firstParty, sameSiteInfo, url, frameID, pageID, IncludeHTTPOnly, includeSecureCookies);
+    return cookiesForSession(*this, firstParty, sameSiteInfo, url, frameID, pageID, IncludeHTTPOnly, includeSecureCookies, shouldAskITP);
 }
 
 std::pair<String, bool> NetworkStorageSession::cookieRequestHeaderFieldValue(const CookieRequestHeaderFieldProxy& headerFieldProxy) const
@@ -392,11 +393,20 @@ std::pair<String, bool> NetworkStorageSession::cookieRequestHeaderFieldValue(con
     return cookiesForSession(*this, headerFieldProxy.firstParty, headerFieldProxy.sameSiteInfo, headerFieldProxy.url, headerFieldProxy.frameID, headerFieldProxy.pageID, IncludeHTTPOnly, headerFieldProxy.includeSecureCookies);
 }
 
-void NetworkStorageSession::setCookiesFromDOM(const URL& firstParty, const SameSiteInfo& sameSiteInfo, const URL& url, Optional<FrameIdentifier> frameID, Optional<PageIdentifier> pageID, const String& cookieStr) const
+void NetworkStorageSession::setCookiesFromDOM(const URL& firstParty, const SameSiteInfo& sameSiteInfo, const URL& url, Optional<FrameIdentifier> frameID, Optional<PageIdentifier> pageID, ShouldAskITP shouldAskITP, const String& cookieStr) const
 {
     ASSERT(hasProcessPrivilege(ProcessPrivilege::CanAccessRawCookies));
 
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
+
+#if ENABLE(RESOURCE_LOAD_STATISTICS)
+    if (shouldAskITP == ShouldAskITP::Yes && shouldBlockCookies(firstParty, url, frameID, pageID))
+        return;
+#else
+    UNUSED_PARAM(frameID);
+    UNUSED_PARAM(pageID);
+    UNUSED_PARAM(shouldAskITP);
+#endif
 
     // <rdar://problem/5632883> On 10.5, NSHTTPCookieStorage would store an empty cookie,
     // which would be sent as "Cookie: =".
@@ -422,14 +432,6 @@ void NetworkStorageSession::setCookiesFromDOM(const URL& firstParty, const SameS
     RetainPtr<NSArray> filteredCookies = filterCookies(unfilteredCookies, WTF::nullopt);
 #endif
     ASSERT([filteredCookies.get() count] <= 1);
-
-#if ENABLE(RESOURCE_LOAD_STATISTICS)
-    if (shouldBlockCookies(firstParty, url, frameID, pageID))
-        return;
-#else
-    UNUSED_PARAM(frameID);
-    UNUSED_PARAM(pageID);
-#endif
 
     setHTTPCookiesForURL(cookieStorage().get(), filteredCookies.get(), cookieURL, firstParty, sameSiteInfo);
 
@@ -457,12 +459,12 @@ bool NetworkStorageSession::cookiesEnabled() const
     return false;
 }
 
-bool NetworkStorageSession::getRawCookies(const URL& firstParty, const SameSiteInfo& sameSiteInfo, const URL& url, Optional<FrameIdentifier> frameID, Optional<PageIdentifier> pageID, Vector<Cookie>& rawCookies) const
+bool NetworkStorageSession::getRawCookies(const URL& firstParty, const SameSiteInfo& sameSiteInfo, const URL& url, Optional<FrameIdentifier> frameID, Optional<PageIdentifier> pageID, ShouldAskITP shouldAskITP, Vector<Cookie>& rawCookies) const
 {
     rawCookies.clear();
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
 
-    NSArray *cookies = cookiesForURL(*this, firstParty, sameSiteInfo, url, frameID, pageID);
+    NSArray *cookies = cookiesForURL(*this, firstParty, sameSiteInfo, url, frameID, pageID, shouldAskITP);
     NSUInteger count = [cookies count];
     rawCookies.reserveCapacity(count);
     for (NSUInteger i = 0; i < count; ++i) {

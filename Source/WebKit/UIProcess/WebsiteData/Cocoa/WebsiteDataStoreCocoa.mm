@@ -61,6 +61,20 @@ static HashSet<WebsiteDataStore*>& dataStores()
 
 static NSString * const WebKitNetworkLoadThrottleLatencyMillisecondsDefaultsKey = @"WebKitNetworkLoadThrottleLatencyMilliseconds";
 
+#if ENABLE(RESOURCE_LOAD_STATISTICS)
+WebCore::ThirdPartyCookieBlockingMode WebsiteDataStore::thirdPartyCookieBlockingMode() const
+{
+    if (!m_thirdPartyCookieBlockingMode) {
+        NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+        if ([defaults boolForKey:[NSString stringWithFormat:@"Experimental%@", WebPreferencesKey::isThirdPartyCookieBlockingDisabledKey().createCFString().get()]])
+            m_thirdPartyCookieBlockingMode = WebCore::ThirdPartyCookieBlockingMode::AllOnSitesWithoutUserInteraction;
+        else
+            m_thirdPartyCookieBlockingMode = WebCore::ThirdPartyCookieBlockingMode::All;
+    }
+    return *m_thirdPartyCookieBlockingMode;
+}
+#endif
+
 WebsiteDataStoreParameters WebsiteDataStore::parameters()
 {
     ASSERT(hasProcessPrivilege(ProcessPrivilege::CanAccessRawCookies));
@@ -70,7 +84,6 @@ WebsiteDataStoreParameters WebsiteDataStore::parameters()
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     bool shouldLogCookieInformation = false;
     bool enableResourceLoadStatisticsDebugMode = false;
-    auto thirdPartyCookieBlockingMode = WebCore::ThirdPartyCookieBlockingMode::All;
     auto firstPartyWebsiteDataRemovalMode = WebCore::FirstPartyWebsiteDataRemovalMode::AllButCookies;
     bool enableLegacyTLS = configuration().legacyTLSEnabled();
     if (id value = [defaults objectForKey:@"WebKitEnableLegacyTLS"])
@@ -85,10 +98,6 @@ WebsiteDataStoreParameters WebsiteDataStore::parameters()
     WebCore::RegistrableDomain resourceLoadStatisticsManualPrevalentResource { };
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
     enableResourceLoadStatisticsDebugMode = [defaults boolForKey:@"ITPDebugMode"];
-    if ([defaults boolForKey:[NSString stringWithFormat:@"Experimental%@", WebPreferencesKey::isThirdPartyCookieBlockingDisabledKey().createCFString().get()]])
-        thirdPartyCookieBlockingMode = WebCore::ThirdPartyCookieBlockingMode::AllOnSitesWithoutUserInteraction;
-    else
-        thirdPartyCookieBlockingMode = WebCore::ThirdPartyCookieBlockingMode::All;
     if ([defaults boolForKey:[NSString stringWithFormat:@"Experimental%@", WebPreferencesKey::isFirstPartyWebsiteDataRemovalDisabledKey().createCFString().get()]])
         firstPartyWebsiteDataRemovalMode = WebCore::FirstPartyWebsiteDataRemovalMode::None;
     else {
@@ -162,7 +171,7 @@ WebsiteDataStoreParameters WebsiteDataStore::parameters()
         hasStatisticsTestingCallback(),
         shouldIncludeLocalhostInResourceLoadStatistics,
         enableResourceLoadStatisticsDebugMode,
-        thirdPartyCookieBlockingMode,
+        thirdPartyCookieBlockingMode(),
         firstPartyWebsiteDataRemovalMode,
         m_configuration->deviceManagementRestrictionsEnabled(),
         m_configuration->allLoadsBlockedByDeviceManagementRestrictionsForTesting(),

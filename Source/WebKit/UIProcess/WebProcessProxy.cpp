@@ -433,6 +433,11 @@ void WebProcessProxy::notifyPageStatisticsTelemetryFinished(API::Object* message
     for (auto& page : globalPageMap())
         page.value->postMessageToInjectedBundle("ResourceLoadStatisticsTelemetryFinished", messageBody);
 }
+
+void WebProcessProxy::setShouldBlockThirdPartyCookiesForTesting(ThirdPartyCookieBlockingMode thirdPartyCookieBlockingMode, CompletionHandler<void()>&& completionHandler)
+{
+    sendWithAsyncReply(Messages::WebProcess::SetShouldBlockThirdPartyCookiesForTesting(thirdPartyCookieBlockingMode), WTFMove(completionHandler));
+}
 #endif
 
 Ref<WebPageProxy> WebProcessProxy::createWebPage(PageClient& pageClient, Ref<API::PageConfiguration>&& pageConfiguration)

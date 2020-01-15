@@ -580,7 +580,9 @@ NetworkProcessProxy& WebProcessPool::ensureNetworkProcess(WebsiteDataStore* with
     bool enableResourceLoadStatisticsLogTestingEvent = false;
     bool shouldIncludeLocalhost = true;
     bool enableResourceLoadStatisticsDebugMode = false;
+#if ENABLE(RESOURCE_LOAD_STATISTICS)
     WebCore::ThirdPartyCookieBlockingMode thirdPartyCookieBlockingMode = WebCore::ThirdPartyCookieBlockingMode::All;
+#endif
     WebCore::FirstPartyWebsiteDataRemovalMode firstPartyWebsiteDataRemovalMode = WebCore::FirstPartyWebsiteDataRemovalMode::AllButCookies;
     WebCore::RegistrableDomain manualPrevalentResource { };
     if (withWebsiteDataStore) {
@@ -592,7 +594,9 @@ NetworkProcessProxy& WebProcessPool::ensureNetworkProcess(WebsiteDataStore* with
             auto networkSessionParameters = withWebsiteDataStore->parameters().networkSessionParameters;
             shouldIncludeLocalhost = networkSessionParameters.shouldIncludeLocalhostInResourceLoadStatistics;
             enableResourceLoadStatisticsDebugMode = networkSessionParameters.enableResourceLoadStatisticsDebugMode;
+#if ENABLE(RESOURCE_LOAD_STATISTICS)
             thirdPartyCookieBlockingMode = networkSessionParameters.thirdPartyCookieBlockingMode;
+#endif
             firstPartyWebsiteDataRemovalMode = networkSessionParameters.firstPartyWebsiteDataRemovalMode;
             manualPrevalentResource = networkSessionParameters.resourceLoadStatisticsManualPrevalentResource;
         }
@@ -614,7 +618,9 @@ NetworkProcessProxy& WebProcessPool::ensureNetworkProcess(WebsiteDataStore* with
             auto networkSessionParameters = m_websiteDataStore->parameters().networkSessionParameters;
             shouldIncludeLocalhost = networkSessionParameters.shouldIncludeLocalhostInResourceLoadStatistics;
             enableResourceLoadStatisticsDebugMode = networkSessionParameters.enableResourceLoadStatisticsDebugMode;
+#if ENABLE(RESOURCE_LOAD_STATISTICS)
             thirdPartyCookieBlockingMode = networkSessionParameters.thirdPartyCookieBlockingMode;
+#endif
             firstPartyWebsiteDataRemovalMode = networkSessionParameters.firstPartyWebsiteDataRemovalMode;
             manualPrevalentResource = networkSessionParameters.resourceLoadStatisticsManualPrevalentResource;
         }
@@ -639,7 +645,9 @@ NetworkProcessProxy& WebProcessPool::ensureNetworkProcess(WebsiteDataStore* with
     parameters.defaultDataStoreParameters.networkSessionParameters.enableResourceLoadStatisticsLogTestingEvent = enableResourceLoadStatisticsLogTestingEvent;
     parameters.defaultDataStoreParameters.networkSessionParameters.shouldIncludeLocalhostInResourceLoadStatistics = shouldIncludeLocalhost;
     parameters.defaultDataStoreParameters.networkSessionParameters.enableResourceLoadStatisticsDebugMode = enableResourceLoadStatisticsDebugMode;
+#if ENABLE(RESOURCE_LOAD_STATISTICS)
     parameters.defaultDataStoreParameters.networkSessionParameters.thirdPartyCookieBlockingMode = thirdPartyCookieBlockingMode;
+#endif
     parameters.defaultDataStoreParameters.networkSessionParameters.firstPartyWebsiteDataRemovalMode = firstPartyWebsiteDataRemovalMode;
 
     parameters.defaultDataStoreParameters.networkSessionParameters.resourceLoadStatisticsManualPrevalentResource = manualPrevalentResource;
@@ -945,6 +953,9 @@ WebProcessDataStoreParameters WebProcessPool::webProcessDataStoreParameters(WebP
         WTFMove(javaScriptConfigurationDirectory),
         WTFMove(javaScriptConfigurationDirectoryExtensionHandle),
         WTFMove(plugInAutoStartOriginHashes),
+#if ENABLE(RESOURCE_LOAD_STATISTICS)
+        websiteDataStore.thirdPartyCookieBlockingMode(),
+#endif
         websiteDataStore.resourceLoadStatisticsEnabled()
     };
 }

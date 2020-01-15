@@ -1115,11 +1115,6 @@ void NetworkProcessProxy::setShouldDowngradeReferrerForTesting(bool enabled, Com
 
 void NetworkProcessProxy::setShouldBlockThirdPartyCookiesForTesting(PAL::SessionID sessionID, ThirdPartyCookieBlockingMode blockingMode, CompletionHandler<void()>&& completionHandler)
 {
-    if (!canSendMessage()) {
-        completionHandler();
-        return;
-    }
-    
     sendWithAsyncReply(Messages::NetworkProcess::SetShouldBlockThirdPartyCookiesForTesting(sessionID, blockingMode), WTFMove(completionHandler));
 }
 

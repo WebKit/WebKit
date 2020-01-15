@@ -76,6 +76,7 @@ enum class IncludeSecureCookies : bool;
 enum class IncludeHttpOnlyCookies : bool;
 enum class ThirdPartyCookieBlockingMode : uint8_t { All, AllOnSitesWithoutUserInteraction, OnlyAccordingToPerDomainPolicy };
 enum class FirstPartyWebsiteDataRemovalMode : uint8_t { AllButCookies, None, AllButCookiesLiveOnTestingTimeout, AllButCookiesReproTestingTimeout };
+enum class ShouldAskITP : bool { No, Yes };
 
 class NetworkStorageSession {
     WTF_MAKE_NONCOPYABLE(NetworkStorageSession); WTF_MAKE_FAST_ALLOCATED;
@@ -127,7 +128,7 @@ public:
     WEBCORE_EXPORT bool cookiesEnabled() const;
     WEBCORE_EXPORT void setCookie(const Cookie&);
     WEBCORE_EXPORT void setCookies(const Vector<Cookie>&, const URL&, const URL& mainDocumentURL);
-    WEBCORE_EXPORT void setCookiesFromDOM(const URL& firstParty, const SameSiteInfo&, const URL&, Optional<FrameIdentifier>, Optional<PageIdentifier>, const String&) const;
+    WEBCORE_EXPORT void setCookiesFromDOM(const URL& firstParty, const SameSiteInfo&, const URL&, Optional<FrameIdentifier>, Optional<PageIdentifier>, ShouldAskITP, const String&) const;
     WEBCORE_EXPORT void deleteCookie(const Cookie&);
     WEBCORE_EXPORT void deleteCookie(const URL&, const String&) const;
     WEBCORE_EXPORT void deleteAllCookies();
@@ -137,11 +138,11 @@ public:
     WEBCORE_EXPORT Vector<Cookie> getAllCookies();
     WEBCORE_EXPORT Vector<Cookie> getCookies(const URL&);
     WEBCORE_EXPORT void hasCookies(const RegistrableDomain&, CompletionHandler<void(bool)>&&) const;
-    WEBCORE_EXPORT bool getRawCookies(const URL& firstParty, const SameSiteInfo&, const URL&, Optional<FrameIdentifier>, Optional<PageIdentifier>, Vector<Cookie>&) const;
+    WEBCORE_EXPORT bool getRawCookies(const URL& firstParty, const SameSiteInfo&, const URL&, Optional<FrameIdentifier>, Optional<PageIdentifier>, ShouldAskITP, Vector<Cookie>&) const;
     WEBCORE_EXPORT void flushCookieStore();
     WEBCORE_EXPORT void getHostnamesWithCookies(HashSet<String>& hostnames);
-    WEBCORE_EXPORT std::pair<String, bool> cookiesForDOM(const URL& firstParty, const SameSiteInfo&, const URL&, Optional<FrameIdentifier>, Optional<PageIdentifier>, IncludeSecureCookies) const;
-    WEBCORE_EXPORT std::pair<String, bool> cookieRequestHeaderFieldValue(const URL& firstParty, const SameSiteInfo&, const URL&, Optional<FrameIdentifier>, Optional<PageIdentifier>, IncludeSecureCookies) const;
+    WEBCORE_EXPORT std::pair<String, bool> cookiesForDOM(const URL& firstParty, const SameSiteInfo&, const URL&, Optional<FrameIdentifier>, Optional<PageIdentifier>, IncludeSecureCookies, ShouldAskITP) const;
+    WEBCORE_EXPORT std::pair<String, bool> cookieRequestHeaderFieldValue(const URL& firstParty, const SameSiteInfo&, const URL&, Optional<FrameIdentifier>, Optional<PageIdentifier>, IncludeSecureCookies, ShouldAskITP) const;
     WEBCORE_EXPORT std::pair<String, bool> cookieRequestHeaderFieldValue(const CookieRequestHeaderFieldProxy&) const;
 
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
