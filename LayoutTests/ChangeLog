@@ -1,5 +1,31 @@
 2020-01-15  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r254391. rdar://problem/58548648
+
+    REGRESSION(r185816): In the Hong Kong locale, navigator.language reports it's in the Taiwan locale
+    https://bugs.webkit.org/show_bug.cgi?id=200043
+    
+    Temporarily mark the navigator-language tests as flakey until I can figure out what to do with them.
+    
+    Unreviewed.
+    
+    * platform/mac/TestExpectations:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@254391 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-01-10  Myles C. Maxfield  <mmaxfield@apple.com>
+
+            REGRESSION(r185816): In the Hong Kong locale, navigator.language reports it's in the Taiwan locale
+            https://bugs.webkit.org/show_bug.cgi?id=200043
+
+            Temporarily mark the navigator-language tests as flakey until I can figure out what to do with them.
+
+            Unreviewed.
+
+            * platform/mac/TestExpectations:
+
+2020-01-15  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r254389. rdar://problem/58548648
 
     REGRESSION(r185816): In the Hong Kong locale, navigator.language reports it's in the Taiwan locale
