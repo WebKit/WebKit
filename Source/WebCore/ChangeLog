@@ -1,5 +1,30 @@
 2020-01-14  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r254155. rdar://problem/58552864
+
+    Add a move constructor to IDBResultData
+    https://bugs.webkit.org/show_bug.cgi?id=205833
+    <rdar://problem/58146233>
+    
+    Reviewed by Youenn Fablet.
+    
+    * Modules/indexeddb/shared/IDBResultData.h:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@254155 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-01-07  Sihui Liu  <sihui_liu@apple.com>
+
+            Add a move constructor to IDBResultData
+            https://bugs.webkit.org/show_bug.cgi?id=205833
+            <rdar://problem/58146233>
+
+            Reviewed by Youenn Fablet.
+
+            * Modules/indexeddb/shared/IDBResultData.h:
+
+2020-01-14  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r254099. rdar://problem/58552889
 
     [iOS] Only prewarm fonts with valid font names
