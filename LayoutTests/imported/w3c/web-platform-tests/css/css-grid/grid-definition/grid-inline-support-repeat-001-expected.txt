@@ -3,8 +3,8 @@ PASS 'emptyGrid' with: grid-template-columns: repeat(1, auto); and grid-template
 PASS 'grid' with: grid-template-columns: repeat(1, auto); and grid-template-rows: repeat(1, auto); 
 PASS 'emptyGrid' with: grid-template-columns: repeat(2, auto); and grid-template-rows: repeat(2, auto); 
 PASS 'grid' with: grid-template-columns: repeat(2, auto); and grid-template-rows: repeat(2, auto); 
-PASS 'emptyGrid' with: grid-template-columns: repeat(2, minmax(50px, calc(50px + 50%)); and grid-template-rows: repeat(2, minmax(50px, calc(50px + 50%)); 
-PASS 'grid' with: grid-template-columns: repeat(2, minmax(50px, calc(50px + 50%)); and grid-template-rows: repeat(2, minmax(50px, calc(50px + 50%)); 
+PASS 'emptyGrid' with: grid-template-columns: repeat(2, minmax(50px, calc(50px + 50%))); and grid-template-rows: repeat(2, minmax(50px, calc(50px + 50%))); 
+PASS 'grid' with: grid-template-columns: repeat(2, minmax(50px, calc(50px + 50%))); and grid-template-rows: repeat(2, minmax(50px, calc(50px + 50%))); 
 PASS 'emptyGrid' with: grid-template-columns: repeat(5, 10%); and grid-template-rows: repeat(5, 10%); 
 PASS 'grid' with: grid-template-columns: repeat(5, 10%); and grid-template-rows: repeat(5, 10%); 
 PASS 'emptyGrid' with: grid-template-columns: max-content repeat(2, 25%) 1fr; and grid-template-rows: 100px repeat(2, 25%) 1fr; 

@@ -1,3 +1,34 @@
+2020-01-15  Oriol Brufau  <obrufau@igalia.com>
+
+        [css-grid] Exclude implicit grid tracks from the resolved value
+        https://bugs.webkit.org/show_bug.cgi?id=204588
+
+        Reviewed by Manuel Rego Casasnovas.
+
+        Import WPT tests.
+
+        * web-platform-tests/css/css-grid/grid-definition/grid-inline-support-flexible-lengths-001.html:
+        * web-platform-tests/css/css-grid/grid-definition/grid-inline-support-grid-template-columns-rows-001.html:
+        * web-platform-tests/css/css-grid/grid-definition/grid-inline-support-named-grid-lines-001.html:
+        * web-platform-tests/css/css-grid/grid-definition/grid-inline-support-repeat-001-expected.txt:
+        * web-platform-tests/css/css-grid/grid-definition/grid-inline-support-repeat-001.html:
+        * web-platform-tests/css/css-grid/grid-definition/grid-inline-template-columns-rows-resolved-values-001-expected.txt:
+        * web-platform-tests/css/css-grid/grid-definition/grid-inline-template-columns-rows-resolved-values-001.html:
+        * web-platform-tests/css/css-grid/grid-definition/grid-support-flexible-lengths-001.html:
+        * web-platform-tests/css/css-grid/grid-definition/grid-support-grid-template-columns-rows-001.html:
+        * web-platform-tests/css/css-grid/grid-definition/grid-support-named-grid-lines-001.html:
+        * web-platform-tests/css/css-grid/grid-definition/grid-support-repeat-001-expected.txt:
+        * web-platform-tests/css/css-grid/grid-definition/grid-support-repeat-001.html:
+        * web-platform-tests/css/css-grid/grid-definition/grid-template-columns-rows-resolved-values-001-expected.txt:
+        * web-platform-tests/css/css-grid/grid-definition/grid-template-columns-rows-resolved-values-001.html:
+        * web-platform-tests/css/css-grid/grid-items/grid-minimum-size-grid-items-021.html:
+        * web-platform-tests/css/css-grid/grid-layout-properties-expected.txt:
+        * web-platform-tests/css/css-grid/grid-layout-properties.html:
+        * web-platform-tests/css/css-grid/parsing/grid-template-columns-computed-withcontent-expected.txt:
+        * web-platform-tests/css/css-grid/parsing/grid-template-columns-computed-withcontent.html:
+        * web-platform-tests/css/css-grid/parsing/grid-template-rows-computed-withcontent-expected.txt:
+        * web-platform-tests/css/css-grid/parsing/grid-template-rows-computed-withcontent.html:
+
 2020-01-13  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         <iframe> attributes should be processed on "srcdoc" attribute removal

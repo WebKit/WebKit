@@ -1,3 +1,22 @@
+2020-01-15  Oriol Brufau  <obrufau@igalia.com>
+
+        [css-grid] Exclude implicit grid tracks from the resolved value
+        https://bugs.webkit.org/show_bug.cgi?id=204588
+
+        Reviewed by Manuel Rego Casasnovas.
+
+        Update tests.
+
+        * fast/css-grid-layout/grid-auto-columns-rows-get-set-expected.txt:
+        * fast/css-grid-layout/grid-auto-columns-rows-get-set.html:
+        * fast/css-grid-layout/grid-columns-rows-get-set.html:
+        * fast/css-grid-layout/grid-template-shorthand-get-set-expected.txt:
+        * fast/css-grid-layout/grid-template-shorthand-get-set.html:
+        * fast/css-grid-layout/mark-as-infinitely-growable.html:
+        * fast/css-grid-layout/named-grid-lines-computed-style-implicit-tracks-expected.txt:
+        * fast/css-grid-layout/named-grid-lines-computed-style-implicit-tracks.html:
+        * fast/css-grid-layout/negative-growth-share-as-infinity-crash.html:
+
 2020-01-14  Zalan Bujtas  <zalan@apple.com>
 
         Long continuation chain could lead to stack exhaustion
