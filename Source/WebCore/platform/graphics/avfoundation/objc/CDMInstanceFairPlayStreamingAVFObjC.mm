@@ -159,19 +159,18 @@ static NSString * const ContentKeyReportGroupKey = @"ContentKeyReportGroup";
 
 namespace WebCore {
 
-CDMInstanceFairPlayStreamingAVFObjC::CDMInstanceFairPlayStreamingAVFObjC()
-{
-    if (PAL::getAVContentKeyReportGroupClass())
-        ensureSession();
-}
+CDMInstanceFairPlayStreamingAVFObjC::CDMInstanceFairPlayStreamingAVFObjC() = default;
 
-void CDMInstanceFairPlayStreamingAVFObjC::ensureSession()
+AVContentKeySession* CDMInstanceFairPlayStreamingAVFObjC::contentKeySession()
 {
     if (m_session)
-        return;
+        return m_session.get();
 
     if (!PAL::canLoad_AVFoundation_AVContentKeySystemFairPlayStreaming())
-        return;
+        return nullptr;
+
+    if (!PAL::getAVContentKeyReportGroupClass())
+        return nullptr;
 
     auto storageURL = this->storageURL();
     if (!persistentStateAllowed() || !storageURL)
@@ -180,12 +179,13 @@ void CDMInstanceFairPlayStreamingAVFObjC::ensureSession()
         m_session = [PAL::getAVContentKeySessionClass() contentKeySessionWithKeySystem:AVContentKeySystemFairPlayStreaming storageDirectoryAtURL:storageURL];
 
     if (!m_session)
-        return;
+        return nullptr;
 
     if (!m_delegate)
         m_delegate = adoptNS([[WebCoreFPSContentKeySessionDelegate alloc] initWithParent:this]);
 
     [m_session setDelegate:m_delegate.get() queue:dispatch_get_main_queue()];
+    return m_session.get();
 }
 
 class CDMInstanceSessionFairPlayStreamingAVFObjC::UpdateResponseCollector {
@@ -814,6 +814,11 @@ void CDMInstanceSessionFairPlayStreamingAVFObjC::removeSessionData(const String&
                 m_expiredSessions.append(expiredSessionData);
                 [expiredSessionsArray addObject:expiredSession];
             }
+        }
+
+        if (!expiredSessionsArray.get().count) {
+            callback(WTFMove(changedKeys), WTF::nullopt, Succeeded);
+            return;
         }
 
         RetainPtr<NSData> expiredSessionsData = [NSPropertyListSerialization dataWithPropertyList:expiredSessionsArray.get() format:NSPropertyListBinaryFormat_v1_0 options:kCFPropertyListImmutable error:nullptr];
