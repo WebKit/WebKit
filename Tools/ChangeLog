@@ -1,3 +1,19 @@
+2020-01-15  David Kilzer  <ddkilzer@apple.com>
+
+        Enable -Wconditional-uninitialized in DumpRenderTree, WebKitTestRunner
+        <https://webkit.org/b/206269>
+        <rdar://problem/58589158>
+
+        Reviewed by Brent Fulgham.
+
+        * DumpRenderTree/mac/Configurations/Base.xcconfig:
+        (WARNING_CFLAGS): Add -Wconditional-uninitialized switch.
+        * DumpRenderTree/mac/UIDelegate.mm:
+        (-[UIDelegate webView:runOpenPanelForFileButtonWithResultListener:allowMultipleFiles:]):
+        Initialize `imageRef` stack variable to `nullptr`.
+        * WebKitTestRunner/Configurations/Base.xcconfig:
+        (WARNING_CFLAGS): Add -Wconditional-uninitialized switch.
+
 2020-01-15  Keith Miller  <keith_miller@apple.com>
 
         Revert bytecode checkpoints since it breaks watch

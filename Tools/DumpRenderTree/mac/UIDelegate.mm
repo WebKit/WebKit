@@ -389,7 +389,7 @@ DumpRenderTreeDraggingInfo *draggingInfo = nil;
     NSURL *firstURL = [NSURL fileURLWithPath:[NSString stringWithUTF8String:openPanelFiles[0].c_str()] relativeToURL:baseURL];
     NSString *displayString = firstURL.lastPathComponent;
     const std::vector<char>& iconData = gTestRunner->openPanelFilesMediaIcon();
-    CGImageRef imageRef;
+    CGImageRef imageRef = nullptr;
     if (!iconData.empty()) {
         RetainPtr<CFDataRef> dataRef = adoptCF(CFDataCreate(nullptr, (unsigned char *)iconData.data(), iconData.size()));
         RetainPtr<CGDataProviderRef> imageProviderRef = adoptCF(CGDataProviderCreateWithCFData(dataRef.get()));
