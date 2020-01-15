@@ -50,6 +50,7 @@
 #include "RenderElement.h"
 #include "RenderStyle.h"
 #include "RuntimeEnabledFeatures.h"
+#include "StyleAdjuster.h"
 #include "StylePendingResources.h"
 #include "StyleResolver.h"
 #include "TimingFunction.h"
@@ -1090,12 +1091,6 @@ void KeyframeEffect::apply(RenderStyle& targetStyle)
         return;
 
     setAnimatedPropertiesInStyle(targetStyle, computedTiming.progress.value());
-
-    // https://w3c.github.io/web-animations/#side-effects-section
-    // For every property targeted by at least one animation effect that is current or in effect, the user agent
-    // must act as if the will-change property ([css-will-change-1]) on the target element includes the property.
-    if (m_triggersStackingContext && targetStyle.hasAutoUsedZIndex())
-        targetStyle.setUsedZIndex(0);
 }
 
 void KeyframeEffect::invalidate()

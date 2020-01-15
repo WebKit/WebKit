@@ -3724,19 +3724,22 @@ bool Element::hasKeyframeEffects() const
     return keyframeEffectStack && keyframeEffectStack->hasEffects();
 }
 
-bool Element::applyKeyframeEffects(RenderStyle& targetStyle)
+OptionSet<AnimationImpact> Element::applyKeyframeEffects(RenderStyle& targetStyle)
 {
-    bool hasNonAcceleratedAnimationProperty = false;
+    OptionSet<AnimationImpact> impact;
 
     for (const auto& effect : ensureKeyframeEffectStack().sortedEffects()) {
         ASSERT(effect->animation());
         effect->animation()->resolve(targetStyle);
 
-        if (!hasNonAcceleratedAnimationProperty && !effect->isAccelerated())
-            hasNonAcceleratedAnimationProperty = true;
+        if (effect->isAccelerated())
+            impact.add(AnimationImpact::RequiresRecomposite);
+
+        if (effect->triggersStackingContext())
+            impact.add(AnimationImpact::ForcesStackingContext);
     }
 
-    return !hasNonAcceleratedAnimationProperty;
+    return impact;
 }
 
 #if ENABLE(RESIZE_OBSERVER)

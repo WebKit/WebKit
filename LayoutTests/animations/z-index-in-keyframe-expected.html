@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        .container {
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            border: 1px solid black;
+        }
+        
+        .box {
+            position: absolute;
+            width: 200px;
+            height: 200px;
+        }
+        
+        .bottom {
+            left: 0px;
+            top: 0px;
+            background-color: orange;
+        }
+
+        .top {
+            left: 100px;
+            top: 100px;
+            background-color: green;
+            z-index: -1;
+            opacity: 0.8;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="bottom box"></div>
+        <div class="top box"></div>
+    </div>
+</body>
+</html>

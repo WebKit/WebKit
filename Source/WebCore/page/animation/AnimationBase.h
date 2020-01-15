@@ -49,6 +49,11 @@ enum class AnimateChange {
     RunningStateChange      = 1 << 2, // Animation "running or paused" changed.
 };
 
+enum class AnimationImpact {
+    RequiresRecomposite     = 1 << 0,
+    ForcesStackingContext   = 1 << 1
+};
+
 class AnimationBase : public RefCounted<AnimationBase>
     , public CSSPropertyBlendingClient {
     friend class CompositeAnimation;

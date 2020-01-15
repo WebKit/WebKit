@@ -73,6 +73,8 @@ namespace Style {
 struct ElementStyle;
 }
 
+enum class AnimationImpact;
+
 class Element : public ContainerNode {
     WTF_MAKE_ISO_ALLOCATED(Element);
 public:
@@ -480,7 +482,7 @@ public:
 
     KeyframeEffectStack& ensureKeyframeEffectStack();
     bool hasKeyframeEffects() const;
-    bool applyKeyframeEffects(RenderStyle&);
+    OptionSet<AnimationImpact> applyKeyframeEffects(RenderStyle&);
 
 #if ENABLE(FULLSCREEN_API)
     WEBCORE_EXPORT bool containsFullScreenElement() const;
