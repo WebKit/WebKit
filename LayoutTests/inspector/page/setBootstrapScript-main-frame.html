@@ -11,18 +11,20 @@ function test()
         name: "Page.setBootstrapScript.MainFrame",
         description: "Test that the bootstrap script is executed in the main frame.",
         async test() {
+            InspectorTest.assert(!WI.networkManager.bootstrapScript, "Should not already have a bootstrap script.");
+
             let valueBeforeBootstrapScript = await InspectorTest.evaluateInPage(`window.valueFromBootstrapScript`);
             InspectorTest.expectEqual(valueBeforeBootstrapScript, undefined, "'valueFromBootstrapScript' should be 'undefined'.");
 
             InspectorTest.log("Setting bootstrap script...");
-            await WI.networkManager.createBootstrapScript();
+            await WI.networkManager.createBootstrapScript(`window.valueFromBootstrapScript = 42;`);
             WI.networkManager.bootstrapScriptEnabled = true;
-            WI.networkManager.bootstrapScript.currentRevision.updateRevisionContent(`window.valueFromBootstrapScript = 42;`);
 
             InspectorTest.log("Reloading page...");
-            await InspectorTest.reloadPage();
-
-            await Promise.delay(10);
+            await Promise.all([
+                InspectorTest.awaitEvent(FrontendTestHarness.Event.TestPageDidLoad),
+                InspectorTest.reloadPage(),
+            ]);
 
             let valueAfterBootstrapScript = await InspectorTest.evaluateInPage(`window.valueFromBootstrapScript`);
             InspectorTest.expectEqual(valueAfterBootstrapScript, 42, "'valueFromBootstrapScript' should be '42'.");
