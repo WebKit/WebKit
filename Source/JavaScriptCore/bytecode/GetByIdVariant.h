@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "CacheableIdentifier.h"
 #include "CallLinkStatus.h"
 #include "ObjectPropertyConditionSet.h"
 #include "PropertyOffset.h"
@@ -44,7 +45,7 @@ class GetByIdVariant {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     GetByIdVariant(
-        Box<Identifier>,
+        CacheableIdentifier,
         const StructureSet& structureSet = StructureSet(), PropertyOffset offset = invalidOffset,
         const ObjectPropertyConditionSet& = ObjectPropertyConditionSet(),
         std::unique_ptr<CallLinkStatus> = nullptr,
@@ -76,20 +77,21 @@ public:
 
     bool attemptToMerge(const GetByIdVariant& other);
     
+    void visitAggregate(SlotVisitor&);
     void markIfCheap(SlotVisitor&);
     bool finalize(VM&);
     
     void dump(PrintStream&) const;
     void dumpInContext(PrintStream&, DumpContext*) const;
 
-    Box<Identifier> identifier() const { return m_identifier; }
+    CacheableIdentifier identifier() const { return m_identifier; }
 
     bool overlaps(const GetByIdVariant& other)
     {
         if (!!m_identifier != !!other.m_identifier)
             return true;
         if (m_identifier) {
-            if (m_identifier->impl() != other.m_identifier->impl())
+            if (m_identifier != other.m_identifier)
                 return false;
         }
         return structureSet().overlaps(other.structureSet());
@@ -107,7 +109,7 @@ private:
     JSFunction* m_intrinsicFunction;
     FunctionPtr<OperationPtrTag> m_customAccessorGetter;
     std::unique_ptr<DOMAttributeAnnotation> m_domAttribute;
-    Box<Identifier> m_identifier; // We use this indirection to allow ref/deref in the concurrent compiler.
+    CacheableIdentifier m_identifier;
 };
 
 } // namespace JSC

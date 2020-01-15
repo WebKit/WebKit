@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,6 +29,7 @@
 #if ENABLE(JIT)
 
 #include "CCallHelpers.h"
+#include "CacheableIdentifierInlines.h"
 #include "CallLinkInfo.h"
 #include "DOMJITGetterSetter.h"
 #include "DirectArguments.h"
@@ -56,18 +57,18 @@ static constexpr bool verbose = false;
 
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(AccessCase);
 
-AccessCase::AccessCase(VM& vm, JSCell* owner, AccessType type, const Identifier& identifier, PropertyOffset offset, Structure* structure, const ObjectPropertyConditionSet& conditionSet, std::unique_ptr<PolyProtoAccessChain> prototypeAccessChain)
+AccessCase::AccessCase(VM& vm, JSCell* owner, AccessType type, CacheableIdentifier identifier, PropertyOffset offset, Structure* structure, const ObjectPropertyConditionSet& conditionSet, std::unique_ptr<PolyProtoAccessChain> prototypeAccessChain)
     : m_type(type)
     , m_offset(offset)
     , m_polyProtoAccessChain(WTFMove(prototypeAccessChain))
-    , m_identifier(Box<Identifier>::create(identifier))
+    , m_identifier(identifier)
 {
     m_structure.setMayBeNull(vm, owner, structure);
     m_conditionSet = conditionSet;
     RELEASE_ASSERT(m_conditionSet.isValid());
 }
 
-std::unique_ptr<AccessCase> AccessCase::create(VM& vm, JSCell* owner, AccessType type, const Identifier& identifier, PropertyOffset offset, Structure* structure, const ObjectPropertyConditionSet& conditionSet, std::unique_ptr<PolyProtoAccessChain> prototypeAccessChain)
+std::unique_ptr<AccessCase> AccessCase::create(VM& vm, JSCell* owner, AccessType type, CacheableIdentifier identifier, PropertyOffset offset, Structure* structure, const ObjectPropertyConditionSet& conditionSet, std::unique_ptr<PolyProtoAccessChain> prototypeAccessChain)
 {
     switch (type) {
     case InHit:
@@ -106,7 +107,7 @@ std::unique_ptr<AccessCase> AccessCase::create(VM& vm, JSCell* owner, AccessType
 }
 
 std::unique_ptr<AccessCase> AccessCase::create(
-    VM& vm, JSCell* owner, const Identifier& identifier, PropertyOffset offset, Structure* oldStructure, Structure* newStructure,
+    VM& vm, JSCell* owner, CacheableIdentifier identifier, PropertyOffset offset, Structure* oldStructure, Structure* newStructure,
     const ObjectPropertyConditionSet& conditionSet, std::unique_ptr<PolyProtoAccessChain> prototypeAccessChain)
 {
     RELEASE_ASSERT(oldStructure == newStructure->previousID());
@@ -127,7 +128,7 @@ AccessCase::~AccessCase()
 }
 
 std::unique_ptr<AccessCase> AccessCase::fromStructureStubInfo(
-    VM& vm, JSCell* owner, const Identifier& identifier, StructureStubInfo& stubInfo)
+    VM& vm, JSCell* owner, CacheableIdentifier identifier, StructureStubInfo& stubInfo)
 {
     switch (stubInfo.cacheType()) {
     case CacheType::GetByIdSelf:
@@ -136,18 +137,22 @@ std::unique_ptr<AccessCase> AccessCase::fromStructureStubInfo(
 
     case CacheType::PutByIdReplace:
         RELEASE_ASSERT(stubInfo.hasConstantIdentifier);
+        ASSERT(!identifier.isCell());
         return AccessCase::create(vm, owner, Replace, identifier, stubInfo.u.byIdSelf.offset, stubInfo.u.byIdSelf.baseObjectStructure.get());
 
     case CacheType::InByIdSelf:
         RELEASE_ASSERT(stubInfo.hasConstantIdentifier);
+        ASSERT(!identifier.isCell());
         return AccessCase::create(vm, owner, InHit, identifier, stubInfo.u.byIdSelf.offset, stubInfo.u.byIdSelf.baseObjectStructure.get());
 
     case CacheType::ArrayLength:
         RELEASE_ASSERT(stubInfo.hasConstantIdentifier);
+        ASSERT(!identifier.isCell());
         return AccessCase::create(vm, owner, AccessCase::ArrayLength, identifier);
 
     case CacheType::StringLength:
         RELEASE_ASSERT(stubInfo.hasConstantIdentifier);
+        ASSERT(!identifier.isCell());
         return AccessCase::create(vm, owner, AccessCase::StringLength, identifier);
 
     default:
@@ -182,11 +187,11 @@ Vector<WatchpointSet*, 2> AccessCase::commit(VM& vm)
     Vector<WatchpointSet*, 2> result;
     Structure* structure = this->structure();
 
-    if (!m_identifier->isNull()) {
+    if (m_identifier) {
         if ((structure && structure->needImpurePropertyWatchpoint())
             || m_conditionSet.needImpurePropertyWatchpoint()
             || (m_polyProtoAccessChain && m_polyProtoAccessChain->needImpurePropertyWatchpoint()))
-            result.append(vm.ensureWatchpointSetForImpureProperty(*m_identifier));
+            result.append(vm.ensureWatchpointSetForImpureProperty(m_identifier.uid()));
     }
 
     if (additionalSet())
@@ -552,7 +557,7 @@ bool AccessCase::canReplace(const AccessCase& other) const
     // Note that if A->guardedByStructureCheck() && B->guardedByStructureCheck() then
     // A->canReplace(B) == B->canReplace(A).
 
-    if (*m_identifier != *other.m_identifier)
+    if (m_identifier != other.m_identifier)
         return false;
     
     switch (type()) {
@@ -650,7 +655,7 @@ void AccessCase::dump(PrintStream& out) const
 
     out.print(comma, m_state);
 
-    out.print(comma, "ident = '", *m_identifier, "'");
+    out.print(comma, "ident = '", m_identifier, "'");
     if (isValidOffset(m_offset))
         out.print(comma, "offset = ", m_offset);
 
@@ -712,6 +717,11 @@ bool AccessCase::propagateTransitions(SlotVisitor& visitor) const
     return result;
 }
 
+void AccessCase::visitAggregate(SlotVisitor& visitor) const
+{
+    m_identifier.visitAggregate(visitor);
+}
+
 void AccessCase::generateWithGuard(
     AccessGenerationState& state, CCallHelpers::JumpList& fallThrough)
 {
@@ -730,7 +740,7 @@ void AccessCase::generateWithGuard(
     GPRReg scratchGPR = state.scratchGPR;
 
     if (requiresIdentifierNameMatch() && !stubInfo.hasConstantIdentifier) {
-        RELEASE_ASSERT(!m_identifier->isNull());
+        RELEASE_ASSERT(m_identifier);
         GPRReg propertyGPR = state.u.propertyGPR;
         // non-rope string check done inside polymorphic access.
 
@@ -1668,7 +1678,7 @@ void AccessCase::generateImpl(AccessGenerationState& state)
             // FIXME: Revisit JSGlobalObject.
             // https://bugs.webkit.org/show_bug.cgi?id=203204
             if (m_type == CustomValueGetter || m_type == CustomAccessorGetter) {
-                RELEASE_ASSERT(!m_identifier->isNull());
+                RELEASE_ASSERT(m_identifier);
                 jit.setupArguments<PropertySlot::GetValueFunc>(
                     CCallHelpers::TrustedImmPtr(codeBlock->globalObject()),
                     CCallHelpers::CellValue(baseForCustom),

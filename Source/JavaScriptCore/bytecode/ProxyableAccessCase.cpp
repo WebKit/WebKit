@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,7 +30,7 @@
 
 namespace JSC {
 
-ProxyableAccessCase::ProxyableAccessCase(VM& vm, JSCell* owner, AccessType accessType, const Identifier& identifier, PropertyOffset offset, Structure* structure,
+ProxyableAccessCase::ProxyableAccessCase(VM& vm, JSCell* owner, AccessType accessType, CacheableIdentifier identifier, PropertyOffset offset, Structure* structure,
     const ObjectPropertyConditionSet& conditionSet, bool viaProxy, WatchpointSet* additionalSet, std::unique_ptr<PolyProtoAccessChain> prototypeAccessChain)
     : Base(vm, owner, accessType, identifier, offset, structure, conditionSet, WTFMove(prototypeAccessChain))
     , m_additionalSet(additionalSet)
@@ -38,7 +38,7 @@ ProxyableAccessCase::ProxyableAccessCase(VM& vm, JSCell* owner, AccessType acces
     m_viaProxy = viaProxy;
 }
 
-std::unique_ptr<AccessCase> ProxyableAccessCase::create(VM& vm, JSCell* owner, AccessType type, const Identifier& identifier, PropertyOffset offset, Structure* structure, const ObjectPropertyConditionSet& conditionSet, bool viaProxy, WatchpointSet* additionalSet, std::unique_ptr<PolyProtoAccessChain> prototypeAccessChain)
+std::unique_ptr<AccessCase> ProxyableAccessCase::create(VM& vm, JSCell* owner, AccessType type, CacheableIdentifier identifier, PropertyOffset offset, Structure* structure, const ObjectPropertyConditionSet& conditionSet, bool viaProxy, WatchpointSet* additionalSet, std::unique_ptr<PolyProtoAccessChain> prototypeAccessChain)
 {
     ASSERT(type == Load || type == Miss || type == GetGetter);
     return std::unique_ptr<AccessCase>(new ProxyableAccessCase(vm, owner, type, identifier, offset, structure, conditionSet, viaProxy, additionalSet, WTFMove(prototypeAccessChain)));

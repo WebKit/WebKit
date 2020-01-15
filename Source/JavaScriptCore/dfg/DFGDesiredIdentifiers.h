@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,7 +29,6 @@
 
 #include "Identifier.h"
 #include <wtf/HashMap.h>
-#include <wtf/Variant.h>
 #include <wtf/text/UniquedStringImpl.h>
 
 namespace JSC {
@@ -49,7 +48,6 @@ public:
     
     unsigned numberOfIdentifiers();
     unsigned ensure(UniquedStringImpl*);
-    unsigned ensure(Box<Identifier>);
     
     UniquedStringImpl* at(unsigned index) const;
     
@@ -61,7 +59,7 @@ private:
     void processCodeBlockIdentifiersIfNeeded();
 
     CodeBlock* m_codeBlock;
-    Vector<Variant<UniquedStringImpl*, Box<Identifier>>> m_addedIdentifiers;
+    Vector<UniquedStringImpl*> m_addedIdentifiers;
     HashMap<UniquedStringImpl*, unsigned> m_identifierNumberForName;
     bool m_didProcessIdentifiers;
 };

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -38,7 +38,6 @@
 #include "Operands.h"
 #include "ProfilerCompilation.h"
 #include "RecordedStatuses.h"
-#include <wtf/Box.h>
 #include <wtf/HashMap.h>
 #include <wtf/ThreadSafeRefCounted.h>
 
@@ -117,12 +116,6 @@ public:
     DeferredCompilationCallback* callback() const { return m_callback.get(); }
     void setCallback(Ref<DeferredCompilationCallback>&& callback) { m_callback = WTFMove(callback); }
 
-    void keepAliveIdentifier(Box<Identifier> identifier)
-    {
-        if (identifier)
-            m_identifiersKeptAliveForCleanUp.append(WTFMove(identifier));
-    }
-
 private:
     bool computeCompileTimes() const;
     bool reportCompileTimes() const;
@@ -181,7 +174,6 @@ private:
     Stage m_stage;
 
     RefPtr<DeferredCompilationCallback> m_callback;
-    Vector<Box<Identifier>, 16> m_identifiersKeptAliveForCleanUp;
 
     MonotonicTime m_timeBeforeFTL;
 };

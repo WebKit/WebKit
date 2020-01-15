@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -130,7 +130,7 @@ static String functionCallBase(const String& sourceText)
     if (sourceLength < 2 || sourceText[idx] != ')') {
         // For function calls that have many new lines in between their open parenthesis
         // and their closing parenthesis, the text range passed into the message appender 
-        // will not inlcude the text in between these parentheses, it will just be the desired
+        // will not include the text in between these parentheses, it will just be the desired
         // text that precedes the parentheses.
         return String();
     }

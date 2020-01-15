@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -55,7 +55,7 @@ unsigned DesiredIdentifiers::numberOfIdentifiers()
     return m_codeBlock->numberOfIdentifiers() + m_addedIdentifiers.size();
 }
 
-void DesiredIdentifiers::processCodeBlockIdentifiersIfNeeded()
+unsigned DesiredIdentifiers::ensure(UniquedStringImpl* rep)
 {
     if (!m_didProcessIdentifiers) {
         // Do this now instead of the constructor so that we don't pay the price on the main
@@ -64,11 +64,6 @@ void DesiredIdentifiers::processCodeBlockIdentifiersIfNeeded()
             m_identifierNumberForName.add(m_codeBlock->identifier(index).impl(), index);
         m_didProcessIdentifiers = true;
     }
-}
-
-unsigned DesiredIdentifiers::ensure(UniquedStringImpl* rep)
-{
-    processCodeBlockIdentifiersIfNeeded();
 
     auto addResult = m_identifierNumberForName.add(rep, numberOfIdentifiers());
     unsigned result = addResult.iterator->value;
@@ -79,45 +74,20 @@ unsigned DesiredIdentifiers::ensure(UniquedStringImpl* rep)
     return result;
 }
 
-unsigned DesiredIdentifiers::ensure(Box<Identifier> rep)
-{
-    processCodeBlockIdentifiersIfNeeded();
-
-    UniquedStringImpl* impl = rep->impl();
-    auto addResult = m_identifierNumberForName.add(impl, numberOfIdentifiers());
-    unsigned result = addResult.iterator->value;
-    if (addResult.isNewEntry) {
-        m_addedIdentifiers.append(WTFMove(rep));
-        ASSERT(at(result) == impl);
-    }
-    return result;
-}
-
 UniquedStringImpl* DesiredIdentifiers::at(unsigned index) const
 {
     UniquedStringImpl* result;
     if (index < m_codeBlock->numberOfIdentifiers())
         result = m_codeBlock->identifier(index).impl();
-    else {
-        const auto& variant = m_addedIdentifiers[index - m_codeBlock->numberOfIdentifiers()];
-        if (WTF::holds_alternative<UniquedStringImpl*>(variant))
-            result = WTF::get<UniquedStringImpl*>(variant);
-        else
-            result = WTF::get<Box<Identifier>>(variant)->impl();
-    }
+    else
+        result = m_addedIdentifiers[index - m_codeBlock->numberOfIdentifiers()];
     ASSERT(result->hasAtLeastOneRef());
     return result;
 }
 
 void DesiredIdentifiers::reallyAdd(VM& vm, CommonData* commonData)
 {
-    for (const auto& variant : m_addedIdentifiers) {
-        UniquedStringImpl* rep;
-        if (WTF::holds_alternative<UniquedStringImpl*>(variant))
-            rep = WTF::get<UniquedStringImpl*>(variant);
-        else
-            rep = WTF::get<Box<Identifier>>(variant)->impl();
-
+    for (auto rep : m_addedIdentifiers) {
         ASSERT(rep->hasAtLeastOneRef());
         Identifier uid = Identifier::fromUid(vm, rep);
         {

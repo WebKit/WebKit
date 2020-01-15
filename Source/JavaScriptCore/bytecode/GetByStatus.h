@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "CacheableIdentifier.h"
 #include "CallLinkStatus.h"
 #include "CodeOrigin.h"
 #include "ConcurrentJSLock.h"
@@ -66,11 +67,6 @@ public:
         ObservedSlowPathAndMakesCalls ,
     };
 
-    enum class TrackIdentifiers : uint8_t {
-        No,  // Used for get_by_id
-        Yes, // Used for get_by_val
-    };
-
     GetByStatus()
         : m_state(NoInformation)
     {
@@ -91,13 +87,7 @@ public:
     {
     }
 
-    // If we use a Box<Identifier> in the compiler thread, we need to keep the
-    // Identifier alive and only deref it in the mutator thread later. This
-    // ensures that the compiler thread doesn't race against the mutator in
-    // adjusting the Identifier's refCount.
-    using IdentifierKeepAlive = std::function<void(Box<Identifier>)>;
-
-    static GetByStatus computeFor(CodeBlock* baselineBlock, ICStatusMap& baselineMap, ICStatusContextStack& dfgContextStack, CodeOrigin, TrackIdentifiers, IdentifierKeepAlive&);
+    static GetByStatus computeFor(CodeBlock* baselineBlock, ICStatusMap& baselineMap, ICStatusContextStack& dfgContextStack, CodeOrigin);
     static GetByStatus computeFor(const StructureSet&, UniquedStringImpl*);
 
     State state() const { return m_state; }
@@ -128,6 +118,7 @@ public:
     JSModuleEnvironment* moduleEnvironment() const { return m_moduleNamespaceData->m_moduleEnvironment; }
     ScopeOffset scopeOffset() const { return m_moduleNamespaceData->m_scopeOffset; }
     
+    void visitAggregate(SlotVisitor&);
     void markIfCheap(SlotVisitor&);
     bool finalize(VM&); // Return true if this gets to live.
 
@@ -135,7 +126,7 @@ public:
 
     void dump(PrintStream&) const;
 
-    Box<Identifier> singleIdentifier() const;
+    CacheableIdentifier singleIdentifier() const;
     
 private:
     void merge(const GetByStatus&);
@@ -143,16 +134,16 @@ private:
 #if ENABLE(JIT)
     GetByStatus(const ModuleNamespaceAccessCase&);
     static GetByStatus computeForStubInfoWithoutExitSiteFeedback(
-        const ConcurrentJSLocker&, CodeBlock* profiledBlock, StructureStubInfo*, CallLinkStatus::ExitSiteData, TrackIdentifiers, IdentifierKeepAlive&);
+        const ConcurrentJSLocker&, CodeBlock* profiledBlock, StructureStubInfo*, CallLinkStatus::ExitSiteData);
 #endif
-    static GetByStatus computeFromLLInt(CodeBlock*, BytecodeIndex, TrackIdentifiers);
-    static GetByStatus computeFor(CodeBlock*, ICStatusMap&, BytecodeIndex, ExitFlag, CallLinkStatus::ExitSiteData, TrackIdentifiers, IdentifierKeepAlive&);
+    static GetByStatus computeFromLLInt(CodeBlock*, BytecodeIndex);
+    static GetByStatus computeFor(CodeBlock*, ICStatusMap&, BytecodeIndex, ExitFlag, CallLinkStatus::ExitSiteData);
 
     struct ModuleNamespaceData {
         JSModuleNamespaceObject* m_moduleNamespaceObject { nullptr };
         JSModuleEnvironment* m_moduleEnvironment { nullptr };
         ScopeOffset m_scopeOffset { };
-        Box<Identifier> m_identifier;
+        CacheableIdentifier m_identifier;
     };
 
     Vector<GetByIdVariant, 1> m_variants;

@@ -1,7 +1,7 @@
 /*
  *  Copyright (C) 1999-2001 Harri Porten (porten@kde.org)
  *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
- *  Copyright (C) 2003-2019 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003-2020 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -189,6 +189,7 @@ public:
     inline bool equal(JSGlobalObject*, JSString* other) const;
     const String& value(JSGlobalObject*) const;
     inline const String& tryGetValue(bool allocationAllowed = true) const;
+    const StringImpl* getValueImpl() const;
     const StringImpl* tryGetValueImpl() const;
     ALWAYS_INLINE unsigned length() const;
 
@@ -701,6 +702,12 @@ ALWAYS_INLINE unsigned JSString::length() const
     if (pointer & isRopeInPointer)
         return jsCast<const JSRopeString*>(this)->length();
     return bitwise_cast<StringImpl*>(pointer)->length();
+}
+
+inline const StringImpl* JSString::getValueImpl() const
+{
+    ASSERT(!isRope());
+    return bitwise_cast<StringImpl*>(m_fiber);
 }
 
 inline const StringImpl* JSString::tryGetValueImpl() const

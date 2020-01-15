@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,6 +27,7 @@
 #include "GetByStatus.h"
 
 #include "BytecodeStructs.h"
+#include "CacheableIdentifierInlines.h"
 #include "CodeBlock.h"
 #include "ComplexGetStatus.h"
 #include "GetterSetterAccessCase.h"
@@ -52,7 +53,7 @@ bool GetByStatus::appendVariant(const GetByIdVariant& variant)
     return appendICStatusVariant(m_variants, variant);
 }
 
-GetByStatus GetByStatus::computeFromLLInt(CodeBlock* profiledBlock, BytecodeIndex bytecodeIndex, TrackIdentifiers trackIdentifiers)
+GetByStatus GetByStatus::computeFromLLInt(CodeBlock* profiledBlock, BytecodeIndex bytecodeIndex)
 {
     VM& vm = profiledBlock->vm();
     
@@ -91,8 +92,6 @@ GetByStatus GetByStatus::computeFromLLInt(CodeBlock* profiledBlock, BytecodeInde
     }
     }
 
-    ASSERT_UNUSED(trackIdentifiers, trackIdentifiers == TrackIdentifiers::No); // We could make this work in the future, but nobody needs it right now.
-
     if (!structureID)
         return GetByStatus(NoInformation, false);
 
@@ -113,7 +112,7 @@ GetByStatus GetByStatus::computeFromLLInt(CodeBlock* profiledBlock, BytecodeInde
     return result;
 }
 
-GetByStatus GetByStatus::computeFor(CodeBlock* profiledBlock, ICStatusMap& map, BytecodeIndex bytecodeIndex, ExitFlag didExit, CallLinkStatus::ExitSiteData callExitSiteData, TrackIdentifiers trackIdentifiers, IdentifierKeepAlive& keepAlive)
+GetByStatus GetByStatus::computeFor(CodeBlock* profiledBlock, ICStatusMap& map, BytecodeIndex bytecodeIndex, ExitFlag didExit, CallLinkStatus::ExitSiteData callExitSiteData)
 {
     ConcurrentJSLocker locker(profiledBlock->m_lock);
 
@@ -121,7 +120,7 @@ GetByStatus GetByStatus::computeFor(CodeBlock* profiledBlock, ICStatusMap& map, 
 
 #if ENABLE(DFG_JIT)
     result = computeForStubInfoWithoutExitSiteFeedback(
-        locker, profiledBlock, map.get(CodeOrigin(bytecodeIndex)).stubInfo, callExitSiteData, trackIdentifiers, keepAlive);
+        locker, profiledBlock, map.get(CodeOrigin(bytecodeIndex)).stubInfo, callExitSiteData);
     
     if (didExit)
         return result.slowVersion();
@@ -129,11 +128,10 @@ GetByStatus GetByStatus::computeFor(CodeBlock* profiledBlock, ICStatusMap& map, 
     UNUSED_PARAM(map);
     UNUSED_PARAM(didExit);
     UNUSED_PARAM(callExitSiteData);
-    UNUSED_PARAM(keepAlive);
 #endif
 
     if (!result)
-        return computeFromLLInt(profiledBlock, bytecodeIndex, trackIdentifiers);
+        return computeFromLLInt(profiledBlock, bytecodeIndex);
     
     return result;
 }
@@ -168,7 +166,7 @@ GetByStatus::GetByStatus(const ModuleNamespaceAccessCase& accessCase)
 }
 
 GetByStatus GetByStatus::computeForStubInfoWithoutExitSiteFeedback(
-    const ConcurrentJSLocker& locker, CodeBlock* profiledBlock, StructureStubInfo* stubInfo, CallLinkStatus::ExitSiteData callExitSiteData, TrackIdentifiers trackIdentifiers, IdentifierKeepAlive& keepAlive)
+    const ConcurrentJSLocker& locker, CodeBlock* profiledBlock, StructureStubInfo* stubInfo, CallLinkStatus::ExitSiteData callExitSiteData)
 {
     StubInfoSummary summary = StructureStubInfo::summary(stubInfo);
     if (!isInlineable(summary))
@@ -186,12 +184,9 @@ GetByStatus GetByStatus::computeForStubInfoWithoutExitSiteFeedback(
         Structure* structure = stubInfo->u.byIdSelf.baseObjectStructure.get();
         if (structure->takesSlowPathInDFGForImpureProperty())
             return GetByStatus(JSC::slowVersion(summary), *stubInfo);
-        Box<Identifier> identifier = stubInfo->getByIdSelfIdentifier();
-        keepAlive(identifier);
-        UniquedStringImpl* uid = identifier->impl();
+        CacheableIdentifier identifier = stubInfo->getByIdSelfIdentifier();
+        UniquedStringImpl* uid = identifier.uid();
         RELEASE_ASSERT(uid);
-        if (trackIdentifiers == TrackIdentifiers::No)
-            identifier = nullptr;
         GetByIdVariant variant(WTFMove(identifier));
         unsigned attributes;
         variant.m_offset = structure->getConcurrently(uid, attributes);
@@ -212,7 +207,6 @@ GetByStatus GetByStatus::computeForStubInfoWithoutExitSiteFeedback(
             const AccessCase& access = list->at(0);
             switch (access.type()) {
             case AccessCase::ModuleNamespaceLoad:
-                keepAlive(access.identifier());
                 return GetByStatus(access.as<ModuleNamespaceAccessCase>());
             default:
                 break;
@@ -296,12 +290,7 @@ GetByStatus GetByStatus::computeForStubInfoWithoutExitSiteFeedback(
                 } }
 
                 ASSERT((AccessCase::Miss == access.type() || access.isCustom()) == (access.offset() == invalidOffset));
-                Box<Identifier> identifier;
-                if (trackIdentifiers == TrackIdentifiers::Yes) {
-                    identifier = access.identifier();
-                    keepAlive(identifier);
-                }
-                GetByIdVariant variant(identifier, StructureSet(structure), complexGetStatus.offset(),
+                GetByIdVariant variant(access.identifier(), StructureSet(structure), complexGetStatus.offset(),
                     complexGetStatus.conditionSet(), WTFMove(callLinkStatus),
                     intrinsicFunction,
                     customAccessorGetter,
@@ -336,7 +325,7 @@ GetByStatus GetByStatus::computeForStubInfoWithoutExitSiteFeedback(
 
 GetByStatus GetByStatus::computeFor(
     CodeBlock* profiledBlock, ICStatusMap& baselineMap,
-    ICStatusContextStack& icContextStack, CodeOrigin codeOrigin, TrackIdentifiers trackIdentifiers, IdentifierKeepAlive& keepAlive)
+    ICStatusContextStack& icContextStack, CodeOrigin codeOrigin)
 {
     BytecodeIndex bytecodeIndex = codeOrigin.bytecodeIndex();
     CallLinkStatus::ExitSiteData callExitSiteData = CallLinkStatus::computeExitSiteData(profiledBlock, bytecodeIndex);
@@ -351,7 +340,7 @@ GetByStatus GetByStatus::computeFor(
                 // inlined and not-inlined.
                 GetByStatus baselineResult = computeFor(
                     profiledBlock, baselineMap, bytecodeIndex, didExit,
-                    callExitSiteData, trackIdentifiers, keepAlive);
+                    callExitSiteData);
                 baselineResult.merge(result);
                 return baselineResult;
             }
@@ -365,7 +354,7 @@ GetByStatus GetByStatus::computeFor(
             {
                 ConcurrentJSLocker locker(context->optimizedCodeBlock->m_lock);
                 result = computeForStubInfoWithoutExitSiteFeedback(
-                    locker, context->optimizedCodeBlock, status.stubInfo, callExitSiteData, trackIdentifiers, keepAlive);
+                    locker, context->optimizedCodeBlock, status.stubInfo, callExitSiteData);
             }
             if (result.isSet())
                 return bless(result);
@@ -375,7 +364,7 @@ GetByStatus GetByStatus::computeFor(
             return bless(*status.getStatus);
     }
     
-    return computeFor(profiledBlock, baselineMap, bytecodeIndex, didExit, callExitSiteData, trackIdentifiers, keepAlive);
+    return computeFor(profiledBlock, baselineMap, bytecodeIndex, didExit, callExitSiteData);
 }
 
 GetByStatus GetByStatus::computeFor(const StructureSet& set, UniquedStringImpl* uid)
@@ -514,6 +503,14 @@ void GetByStatus::filter(const StructureSet& set)
         m_state = NoInformation;
 }
 
+void GetByStatus::visitAggregate(SlotVisitor& visitor)
+{
+    if (isModuleNamespace())
+        m_moduleNamespaceData->m_identifier.visitAggregate(visitor);
+    for (GetByIdVariant& variant : m_variants)
+        variant.visitAggregate(visitor);
+}
+
 void GetByStatus::markIfCheap(SlotVisitor& visitor)
 {
     for (GetByIdVariant& variant : m_variants)
@@ -535,28 +532,22 @@ bool GetByStatus::finalize(VM& vm)
     return true;
 }
 
-Box<Identifier> GetByStatus::singleIdentifier() const
+CacheableIdentifier GetByStatus::singleIdentifier() const
 {
-    if (isModuleNamespace()) {
-        Box<Identifier> result = m_moduleNamespaceData->m_identifier;
-        if (!result || result->isNull())
-            return nullptr;
-        return result;
-    }
+    if (isModuleNamespace())
+        return m_moduleNamespaceData->m_identifier;
 
     if (m_variants.isEmpty())
         return nullptr;
 
-    Box<Identifier> result = m_variants.first().identifier();
+    CacheableIdentifier result = m_variants.first().identifier();
     if (!result)
         return nullptr;
-    if (result->isNull())
-        return nullptr;
     for (size_t i = 1; i < m_variants.size(); ++i) {
-        Box<Identifier> uid = m_variants[i].identifier();
-        if (!uid)
+        CacheableIdentifier identifier = m_variants[i].identifier();
+        if (!identifier)
             return nullptr;
-        if (*uid != *result)
+        if (identifier != result)
             return nullptr;
     }
     return result;

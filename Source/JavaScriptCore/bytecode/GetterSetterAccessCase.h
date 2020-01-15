@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -54,11 +54,11 @@ public:
     void emitDOMJITGetter(AccessGenerationState&, const DOMJIT::GetterSetter*, GPRReg baseForGetGPR);
 
     static std::unique_ptr<AccessCase> create(
-        VM&, JSCell* owner, AccessType, const Identifier&, PropertyOffset, Structure*,
+        VM&, JSCell* owner, AccessType, CacheableIdentifier, PropertyOffset, Structure*,
         const ObjectPropertyConditionSet&, bool viaProxy, WatchpointSet* additionalSet, FunctionPtr<OperationPtrTag> customGetter,
         JSObject* customSlotBase, Optional<DOMAttributeAnnotation>, std::unique_ptr<PolyProtoAccessChain>);
 
-    static std::unique_ptr<AccessCase> create(VM&, JSCell* owner, AccessType, Structure*, const Identifier&, PropertyOffset,
+    static std::unique_ptr<AccessCase> create(VM&, JSCell* owner, AccessType, Structure*, CacheableIdentifier, PropertyOffset,
         const ObjectPropertyConditionSet&, std::unique_ptr<PolyProtoAccessChain>,
         FunctionPtr<OperationPtrTag> customSetter = nullptr, JSObject* customSlotBase = nullptr);
 
@@ -70,7 +70,7 @@ public:
     FunctionPtr<OperationPtrTag> customAccessor() const { return m_customAccessor; }
 
 private:
-    GetterSetterAccessCase(VM&, JSCell*, AccessType, const Identifier&, PropertyOffset, Structure*, const ObjectPropertyConditionSet&, bool viaProxy, WatchpointSet* additionalSet, JSObject* customSlotBase, std::unique_ptr<PolyProtoAccessChain>);
+    GetterSetterAccessCase(VM&, JSCell*, AccessType, CacheableIdentifier, PropertyOffset, Structure*, const ObjectPropertyConditionSet&, bool viaProxy, WatchpointSet* additionalSet, JSObject* customSlotBase, std::unique_ptr<PolyProtoAccessChain>);
 
     GetterSetterAccessCase(const GetterSetterAccessCase&);
 

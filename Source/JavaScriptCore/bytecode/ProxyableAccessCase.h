@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -37,7 +37,7 @@ public:
 
     WatchpointSet* additionalSet() const override { return m_additionalSet.get(); }
 
-    static std::unique_ptr<AccessCase> create(VM&, JSCell*, AccessType, const Identifier&, PropertyOffset, Structure*, const ObjectPropertyConditionSet& = ObjectPropertyConditionSet(),
+    static std::unique_ptr<AccessCase> create(VM&, JSCell*, AccessType, CacheableIdentifier, PropertyOffset, Structure*, const ObjectPropertyConditionSet& = ObjectPropertyConditionSet(),
         bool viaProxy = false, WatchpointSet* additionalSet = nullptr, std::unique_ptr<PolyProtoAccessChain> = nullptr);
 
     void dumpImpl(PrintStream&, CommaPrinter&) const override;
@@ -46,7 +46,7 @@ public:
     ~ProxyableAccessCase();
 
 protected:
-    ProxyableAccessCase(VM&, JSCell*, AccessType, const Identifier&, PropertyOffset, Structure*, const ObjectPropertyConditionSet&, bool viaProxy, WatchpointSet* additionalSet, std::unique_ptr<PolyProtoAccessChain>);
+    ProxyableAccessCase(VM&, JSCell*, AccessType, CacheableIdentifier, PropertyOffset, Structure*, const ObjectPropertyConditionSet&, bool viaProxy, WatchpointSet* additionalSet, std::unique_ptr<PolyProtoAccessChain>);
 
 private:
     RefPtr<WatchpointSet> m_additionalSet;
