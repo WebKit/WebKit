@@ -380,6 +380,16 @@ static void checkURLArgument(NSURL *url)
     _configuration->setAllowsCellularAccess(allows);
 }
 
+- (BOOL)legacyTLSEnabled
+{
+    return _configuration->legacyTLSEnabled();
+}
+
+- (void)setLegacyTLSEnabled:(BOOL)enable
+{
+    _configuration->setLegacyTLSEnabled(enable);
+}
+
 - (NSDictionary *)proxyConfiguration
 {
     return (__bridge NSDictionary *)_configuration->proxyConfiguration();
