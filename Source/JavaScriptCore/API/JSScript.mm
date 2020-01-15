@@ -167,7 +167,7 @@ static bool validateBytecodeCachePath(NSURL* cachePath, NSError** error)
 
     Ref<JSC::CachedBytecode> cachedBytecode = JSC::CachedBytecode::create(WTFMove(mappedFile));
 
-    JSC::VM& vm = [m_virtualMachine vm];
+    JSC::VM& vm = *toJS([m_virtualMachine JSContextGroupRef]);
     JSC::SourceCode sourceCode = [self sourceCode];
     JSC::SourceCodeKey key = m_type == kJSScriptTypeProgram ? sourceCodeKeyForSerializedProgram(vm, sourceCode) : sourceCodeKeyForSerializedModule(vm, sourceCode);
     if (isCachedBytecodeStillValid(vm, cachedBytecode.copyRef(), key, m_type == kJSScriptTypeProgram ? JSC::SourceCodeType::ProgramType : JSC::SourceCodeType::ModuleType))
@@ -235,7 +235,7 @@ static bool validateBytecodeCachePath(NSURL* cachePath, NSError** error)
 
 - (JSC::SourceCode)sourceCode
 {
-    JSC::VM& vm = [m_virtualMachine vm];
+    JSC::VM& vm = *toJS([m_virtualMachine JSContextGroupRef]);
     JSC::JSLockHolder locker(vm);
 
     TextPosition startPosition { };
@@ -248,7 +248,7 @@ static bool validateBytecodeCachePath(NSURL* cachePath, NSError** error)
 
 - (JSC::JSSourceCode*)jsSourceCode
 {
-    JSC::VM& vm = [m_virtualMachine vm];
+    JSC::VM& vm = *toJS([m_virtualMachine JSContextGroupRef]);
     JSC::JSLockHolder locker(vm);
     JSC::JSSourceCode* jsSourceCode = JSC::JSSourceCode::create(vm, [self sourceCode]);
     return jsSourceCode;
@@ -277,12 +277,13 @@ static bool validateBytecodeCachePath(NSURL* cachePath, NSError** error)
 
     JSC::BytecodeCacheError cacheError;
     JSC::SourceCode sourceCode = [self sourceCode];
+    JSC::VM& vm = *toJS([m_virtualMachine JSContextGroupRef]);
     switch (m_type) {
     case kJSScriptTypeModule:
-        m_cachedBytecode = JSC::generateModuleBytecode([m_virtualMachine vm], sourceCode, fd, cacheError);
+        m_cachedBytecode = JSC::generateModuleBytecode(vm, sourceCode, fd, cacheError);
         break;
     case kJSScriptTypeProgram:
-        m_cachedBytecode = JSC::generateProgramBytecode([m_virtualMachine vm], sourceCode, fd, cacheError);
+        m_cachedBytecode = JSC::generateProgramBytecode(vm, sourceCode, fd, cacheError);
         break;
     }
 
