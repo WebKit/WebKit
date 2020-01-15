@@ -254,6 +254,9 @@ void GraphicsContextImplCairo::drawGlyphs(const Font& font, const GlyphBuffer& g
     cairo_scaled_font_t* scaledFont = font.platformData().scaledFont();
     double syntheticBoldOffset = font.syntheticBoldOffset();
 
+    if (!font.allowsAntialiasing())
+        fontSmoothing = FontSmoothingMode::NoSmoothing;
+
     auto& state = graphicsContext().state();
     Cairo::drawGlyphs(m_platformContext, Cairo::FillSource(state), Cairo::StrokeSource(state),
         Cairo::ShadowState(state), point, scaledFont, syntheticBoldOffset, glyphs, xOffset,

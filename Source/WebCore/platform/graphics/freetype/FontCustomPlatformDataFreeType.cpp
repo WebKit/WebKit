@@ -79,11 +79,11 @@ FontPlatformData FontCustomPlatformData::fontPlatformData(const FontDescription&
 {
     auto* freeTypeFace = static_cast<FT_Face>(cairo_font_face_get_user_data(m_fontFace.get(), &freeTypeFaceKey));
     ASSERT(freeTypeFace);
-    RefPtr<FcPattern> pattern = defaultFontconfigOptions();
+    RefPtr<FcPattern> pattern = FcPatternDuplicate(defaultFontconfigOptions());
+    FcPatternAddString(pattern.get(), FC_FAMILY, reinterpret_cast<const FcChar8*>(freeTypeFace->family_name));
 #if ENABLE(VARIATION_FONTS)
     auto variants = buildVariationSettings(freeTypeFace, description);
     if (!variants.isEmpty()) {
-        pattern = adoptRef(FcPatternDuplicate(pattern.get()));
         FcPatternAddString(pattern.get(), FC_FONT_VARIATIONS, reinterpret_cast<const FcChar8*>(variants.utf8().data()));
     }
 #endif

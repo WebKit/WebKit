@@ -130,6 +130,14 @@ void Font::platformInit()
     }
 
     m_syntheticBoldOffset = m_platformData.syntheticBold() ? 1.0f : 0.f;
+
+    FcChar8* fontConfigFamilyName;
+    if (FcPatternGetString(m_platformData.fcPattern(), FC_FAMILY, 0, &fontConfigFamilyName) == FcResultMatch) {
+        String familyName = String::fromUTF8(reinterpret_cast<char*>(fontConfigFamilyName));
+        // Disable antialiasing for the Ahem font because many tests require this.
+        if (equalIgnoringASCIICase(familyName, "Ahem"))
+            m_allowsAntialiasing = false;
+    }
 }
 
 void Font::platformCharWidthInit()
