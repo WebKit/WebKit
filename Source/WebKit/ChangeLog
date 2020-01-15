@@ -1,3 +1,48 @@
+2020-01-15  David Kilzer  <ddkilzer@apple.com>
+
+        [Cocoa] Create a simulated crash log when the UI Process receives an invalid CoreIPC message
+        <https://webkit.org/b/205368>
+        <rdar://problem/58024593>
+
+        Reviewed by Chris Dumez.
+
+        * UIProcess/AuxiliaryProcessProxy.cpp:
+        (WebKit::AuxiliaryProcessProxy::logInvalidMessage):
+        - Extract common logging code to new method that calls
+          RELEASE_LOG_FAULT().
+        * UIProcess/AuxiliaryProcessProxy.h:
+        (WebKit::AuxiliaryProcessProxy::logInvalidMessage):
+        (WebKit::AuxiliaryProcessProxy::processName):
+        - Add method declarations.
+
+        * UIProcess/GPU/GPUProcessProxy.cpp:
+        (WebKit::GPUProcessProxy::didReceiveInvalidMessage):
+        - Use new AuxiliaryProcessProxy::logInvalidMessage().
+        * UIProcess/GPU/GPUProcessProxy.h:
+        (WebKit::GPUProcessProxy::processName const):
+        - Add implementation.
+
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::didReceiveInvalidMessage):
+        - Use new AuxiliaryProcessProxy::logInvalidMessage().
+        * UIProcess/Network/NetworkProcessProxy.h:
+        (WebKit::NetworkProcessProxy::processName const):
+        - Add implementation.
+
+        * UIProcess/Plugins/PluginProcessProxy.cpp:
+        (WebKit::PluginProcessProxy::didReceiveInvalidMessage):
+        - Use new AuxiliaryProcessProxy::logInvalidMessage().
+        * UIProcess/Plugins/PluginProcessProxy.h:
+        (WebKit::PluginProcessProxy::processName const):
+        - Add implementation.
+
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::didReceiveInvalidMessage):
+        - Use new AuxiliaryProcessProxy::logInvalidMessage().
+        * UIProcess/WebProcessProxy.h:
+        (WebKit::WebProcessProxy::processName const):
+        - Add implementation.
+
 2020-01-15  youenn fablet  <youenn@apple.com>
 
         Add support for MediaStream audio track rendering in GPUProcess

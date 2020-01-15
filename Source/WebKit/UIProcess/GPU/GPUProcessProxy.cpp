@@ -165,7 +165,7 @@ void GPUProcessProxy::didClose(IPC::Connection&)
 
 void GPUProcessProxy::didReceiveInvalidMessage(IPC::Connection& connection, IPC::StringReference messageReceiverName, IPC::StringReference messageName)
 {
-    WTFLogAlways("Received an invalid message \"%s.%s\" from the GPU process.\n", messageReceiverName.toString().data(), messageName.toString().data());
+    logInvalidMessage(connection, messageReceiverName, messageName);
 
     WebProcessPool::didReceiveInvalidMessage(messageReceiverName, messageName);
 

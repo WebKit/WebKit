@@ -212,6 +212,8 @@ public:
 
 private:
     // AuxiliaryProcessProxy
+    ASCIILiteral processName() const final { return "Networking"_s; }
+
     void getLaunchOptions(ProcessLauncher::LaunchOptions&) override;
     void connectionWillOpen(IPC::Connection&) override;
     void processWillShutDown(IPC::Connection&) override;

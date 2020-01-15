@@ -65,6 +65,8 @@ private:
     ~GPUProcessProxy();
 
     // AuxiliaryProcessProxy
+    ASCIILiteral processName() const final { return "GPU"_s; }
+
     void getLaunchOptions(ProcessLauncher::LaunchOptions&) override;
     void connectionWillOpen(IPC::Connection&) override;
     void processWillShutDown(IPC::Connection&) override;

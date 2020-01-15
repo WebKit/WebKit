@@ -271,4 +271,9 @@ void AuxiliaryProcessProxy::connectionWillOpen(IPC::Connection&)
 {
 }
 
+void AuxiliaryProcessProxy::logInvalidMessage(IPC::Connection& connection, IPC::StringReference messageReceiverName, IPC::StringReference messageName)
+{
+    RELEASE_LOG_FAULT(IPC, "Received an invalid message '%{public}s::%{public}s' from the %{public}s process.", messageReceiverName.toString().data(), messageName.toString().data(), processName().characters());
+}
+
 } // namespace WebKit

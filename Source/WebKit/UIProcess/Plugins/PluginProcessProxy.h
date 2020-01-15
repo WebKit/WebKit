@@ -90,6 +90,9 @@ public:
 private:
     PluginProcessProxy(PluginProcessManager*, const PluginProcessAttributes&, uint64_t pluginProcessToken);
 
+    // AuxiliaryProcessProxy
+    ASCIILiteral processName() const final { return "Plugin"_s; }
+
     void getLaunchOptions(ProcessLauncher::LaunchOptions&) override;
     void platformGetLaunchOptionsWithAttributes(ProcessLauncher::LaunchOptions&, const PluginProcessAttributes&);
     void processWillShutDown(IPC::Connection&) override;

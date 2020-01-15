@@ -311,8 +311,9 @@ void NetworkProcessProxy::didClose(IPC::Connection&)
     networkProcessCrashed();
 }
 
-void NetworkProcessProxy::didReceiveInvalidMessage(IPC::Connection&, IPC::StringReference, IPC::StringReference)
+void NetworkProcessProxy::didReceiveInvalidMessage(IPC::Connection& connection, IPC::StringReference messageReceiverName, IPC::StringReference messageName)
 {
+    logInvalidMessage(connection, messageReceiverName, messageName);
 }
 
 void NetworkProcessProxy::processAuthenticationChallenge(PAL::SessionID sessionID, Ref<AuthenticationChallengeProxy>&& authenticationChallenge)

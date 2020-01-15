@@ -118,7 +118,10 @@ protected:
 
     bool dispatchMessage(IPC::Connection&, IPC::Decoder&);
     bool dispatchSyncMessage(IPC::Connection&, IPC::Decoder&, std::unique_ptr<IPC::Encoder>&);
-    
+
+    void logInvalidMessage(IPC::Connection&, IPC::StringReference messageReceiverName, IPC::StringReference messageName);
+    virtual ASCIILiteral processName() const = 0;
+
     virtual void getLaunchOptions(ProcessLauncher::LaunchOptions&);
     virtual void platformGetLaunchOptions(ProcessLauncher::LaunchOptions&) { };
 

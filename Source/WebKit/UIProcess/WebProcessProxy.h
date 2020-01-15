@@ -354,6 +354,8 @@ protected:
     WebProcessProxy(WebProcessPool&, WebsiteDataStore*, IsPrewarmed);
 
     // AuxiliaryProcessProxy
+    ASCIILiteral processName() const final { return "WebContent"_s; }
+
     void getLaunchOptions(ProcessLauncher::LaunchOptions&) override;
     void platformGetLaunchOptions(ProcessLauncher::LaunchOptions&) override;
     void connectionWillOpen(IPC::Connection&) override;
