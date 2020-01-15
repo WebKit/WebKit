@@ -36,6 +36,9 @@ async function doTest() {
     let randomId = await getRandomIdFromWorker(worker);
 
     if (!window.location.hash.length) {
+        if (window.internals)
+            await internals.storeRegistrationsOnDisk();
+
         if (window.testRunner)
             testRunner.terminateNetworkProcess();
         await waitFor(100);
