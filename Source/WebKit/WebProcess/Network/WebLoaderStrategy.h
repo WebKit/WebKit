@@ -93,7 +93,7 @@ private:
     void scheduleInternallyFailedLoad(WebCore::ResourceLoader&);
     void internallyFailedLoadTimerFired();
     void startLocalLoad(WebCore::ResourceLoader&);
-    bool tryLoadingUsingURLSchemeHandler(WebCore::ResourceLoader&);
+    bool tryLoadingUsingURLSchemeHandler(WebCore::ResourceLoader&, const WebResourceLoader::TrackingParameters&);
     
     struct SyncLoadResult {
         WebCore::ResourceResponse response;
