@@ -105,9 +105,7 @@ StyleRareInheritedData::StyleRareInheritedData()
     , textIndentType(RenderStyle::initialTextIndentType())
 #endif
     , lineBoxContain(static_cast<unsigned>(RenderStyle::initialLineBoxContain().toRaw()))
-#if ENABLE(CSS_IMAGE_ORIENTATION)
     , imageOrientation(RenderStyle::initialImageOrientation())
-#endif
     , imageRendering(static_cast<unsigned>(RenderStyle::initialImageRendering()))
     , lineSnap(static_cast<unsigned>(RenderStyle::initialLineSnap()))
     , lineAlign(static_cast<unsigned>(RenderStyle::initialLineAlign()))
@@ -203,9 +201,7 @@ inline StyleRareInheritedData::StyleRareInheritedData(const StyleRareInheritedDa
     , textIndentType(o.textIndentType)
 #endif
     , lineBoxContain(o.lineBoxContain)
-#if ENABLE(CSS_IMAGE_ORIENTATION)
     , imageOrientation(o.imageOrientation)
-#endif
     , imageRendering(o.imageRendering)
     , lineSnap(o.lineSnap)
     , lineAlign(o.lineAlign)
@@ -333,9 +329,7 @@ bool StyleRareInheritedData::operator==(const StyleRareInheritedData& o) const
         && appleColorFilter == o.appleColorFilter
         && tabSize == o.tabSize
         && lineGrid == o.lineGrid
-#if ENABLE(CSS_IMAGE_ORIENTATION)
         && imageOrientation == o.imageOrientation
-#endif
         && imageRendering == o.imageRendering
 #if ENABLE(CSS_IMAGE_RESOLUTION)
         && imageResolutionSource == o.imageResolutionSource

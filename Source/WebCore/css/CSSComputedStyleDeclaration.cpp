@@ -2895,10 +2895,10 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
             if (style.borderFit() == BorderFit::Border)
                 return cssValuePool.createIdentifierValue(CSSValueBorder);
             return cssValuePool.createIdentifierValue(CSSValueLines);
-#if ENABLE(CSS_IMAGE_ORIENTATION)
         case CSSPropertyImageOrientation:
-            return cssValuePool.createValue(style.imageOrientation());
-#endif
+            if (style.imageOrientation() == ImageOrientation::FromImage)
+                return cssValuePool.createIdentifierValue(CSSValueFromImage);
+            return cssValuePool.createIdentifierValue(CSSValueNone);
         case CSSPropertyImageRendering:
             return CSSPrimitiveValue::create(style.imageRendering());
 #if ENABLE(CSS_IMAGE_RESOLUTION)

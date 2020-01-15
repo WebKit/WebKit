@@ -245,10 +245,8 @@ void RenderImage::styleDidChange(StyleDifference diff, const RenderStyle* oldSty
             repaintOrMarkForLayout(ImageSizeChangeForAltText);
         m_needsToSetSizeForAltText = false;
     }
-#if ENABLE(CSS_IMAGE_ORIENTATION)
     if (diff == StyleDifference::Layout && oldStyle->imageOrientation() != style().imageOrientation())
         return repaintOrMarkForLayout(ImageSizeChangeNone);
-#endif
 
 #if ENABLE(CSS_IMAGE_RESOLUTION)
     if (diff == StyleDifference::Layout

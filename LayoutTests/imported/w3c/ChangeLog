@@ -1,3 +1,124 @@
+2020-01-15  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r254187. rdar://problem/58605950
+
+    Implement css3-images image-orientation
+    https://bugs.webkit.org/show_bug.cgi?id=89052
+    
+    Patch by Said Abou-Hallawa <sabouhallawa@apple.com> on 2020-01-07
+    Reviewed by Simon Fraser.
+    
+    LayoutTests/imported/w3c:
+    
+    * web-platform-tests/css/css-images/inheritance-expected.txt:
+    * web-platform-tests/css/css-images/inheritance.html:
+    This test is re-synced from upstream
+    
+    * web-platform-tests/css/css-images/parsing/image-orientation-computed-expected.txt:
+    * web-platform-tests/css/css-images/parsing/image-orientation-valid-expected.txt:
+    
+    Source/JavaScriptCore:
+    
+    Remove the ENABLE_CSS_IMAGE_ORIENTATION feature flag.
+    
+    * Configurations/FeatureDefines.xcconfig:
+    
+    Source/WebCore:
+    
+    Implement the CSS image-orientation property for content images. The valid
+    values are "from-image" or "none". The default value is "from-image".
+    
+    Specification: https://drafts.csswg.org/css-images-3/#the-image-orientation
+    GitHub issue: https://github.com/w3c/csswg-drafts/issues/4164
+    
+    Tests: fast/images/image-orientation-dynamic-from-image.html
+           fast/images/image-orientation-dynamic-none.html
+           fast/images/image-orientation-none.html
+    
+    * Configurations/FeatureDefines.xcconfig:
+    * css/CSSComputedStyleDeclaration.cpp:
+    (WebCore::ComputedStyleExtractor::valueForPropertyInStyle):
+    * css/CSSPrimitiveValueMappings.h:
+    (WebCore::CSSPrimitiveValue::operator ImageOrientation const): Deleted.
+    * css/CSSProperties.json:
+    * css/CSSValueKeywords.in:
+    * css/parser/CSSPropertyParser.cpp:
+    (WebCore::consumeImageOrientation):
+    (WebCore::CSSPropertyParser::parseSingleValue):
+    * rendering/RenderElement.cpp:
+    (WebCore::RenderElement::imageOrientation const):
+    * rendering/RenderImage.cpp:
+    (WebCore::RenderImage::styleDidChange):
+    * rendering/style/RenderStyle.cpp:
+    (WebCore::rareInheritedDataChangeRequiresLayout):
+    * rendering/style/RenderStyle.h:
+    (WebCore::RenderStyle::setImageOrientation):
+    (WebCore::RenderStyle::initialImageOrientation):
+    (WebCore::RenderStyle::imageOrientation const):
+    * rendering/style/StyleRareInheritedData.cpp:
+    (WebCore::StyleRareInheritedData::StyleRareInheritedData):
+    (WebCore::StyleRareInheritedData::operator== const):
+    * rendering/style/StyleRareInheritedData.h:
+    * style/StyleBuilderConverter.h:
+    (WebCore::Style::BuilderConverter::convertImageOrientation):
+    
+    Source/WebCore/PAL:
+    
+    Remove the ENABLE_CSS_IMAGE_ORIENTATION feature flag.
+    
+    * Configurations/FeatureDefines.xcconfig:
+    
+    Source/WebKit:
+    
+    Remove the ENABLE_CSS_IMAGE_ORIENTATION feature flag.
+    
+    * Configurations/FeatureDefines.xcconfig:
+    
+    Source/WebKitLegacy/mac:
+    
+    Remove the ENABLE_CSS_IMAGE_ORIENTATION feature flag.
+    
+    * Configurations/FeatureDefines.xcconfig:
+    
+    Source/WTF:
+    
+    Remove the ENABLE_CSS_IMAGE_ORIENTATION feature flag.
+    
+    * wtf/FeatureDefines.h:
+    
+    Tools:
+    
+    Remove the ENABLE_CSS_IMAGE_ORIENTATION feature flag.
+    
+    * TestWebKitAPI/Configurations/FeatureDefines.xcconfig:
+    
+    LayoutTests:
+    
+    Test the css image-orientation property.
+    
+    * fast/images/image-orientation-dynamic-from-image-expected.html: Added.
+    * fast/images/image-orientation-dynamic-from-image.html: Added.
+    * fast/images/image-orientation-dynamic-none-expected.html: Added.
+    * fast/images/image-orientation-dynamic-none.html: Added.
+    * fast/images/image-orientation-none-expected.html: Added.
+    * fast/images/image-orientation-none.html: Added.
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@254187 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-01-07  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+            Implement css3-images image-orientation
+            https://bugs.webkit.org/show_bug.cgi?id=89052
+
+            Reviewed by Simon Fraser.
+
+            * web-platform-tests/css/css-images/inheritance-expected.txt:
+            * web-platform-tests/css/css-images/inheritance.html:
+            This test is re-synced from upstream
+
+            * web-platform-tests/css/css-images/parsing/image-orientation-computed-expected.txt:
+            * web-platform-tests/css/css-images/parsing/image-orientation-valid-expected.txt:
+
 2020-01-03  Chris Dumez  <cdumez@apple.com>
 
         dom/nodes/Document-createElement-namespace.html WPT test is failing
