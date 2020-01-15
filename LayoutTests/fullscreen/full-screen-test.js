@@ -144,6 +144,16 @@ function waitForEventAndTest(element, eventName, testFuncString, endit)
     element.addEventListener(eventName, _eventCallback);
 }
 
+function waitFor(element, type, silent) {
+    return new Promise(resolve => {
+        element.addEventListener(type, event => {
+            if (!silent)
+                consoleWrite(`EVENT(${event.type})`);
+            resolve(event);
+        }, { once: true });
+    });
+}
+
 function waitForEventTestAndEnd(element, eventName, testFuncString)
 {
     waitForEventAndTest(element, eventName, testFuncString, true);
@@ -173,3 +183,5 @@ function consoleWrite(text)
         return;
     logConsole().innerHTML += text + "<br>";
 }
+
+

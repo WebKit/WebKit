@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>fullscreen-user-agent-style</title>
+    <script src="full-screen-test.js"></script>
+    <script>
+        window.addEventListener('load', async event => {
+            window.span = document.querySelector('span');
+
+            testExpected("document.defaultView.getComputedStyle(span, null).getPropertyValue('width')", "auto");
+            testExpected("document.defaultView.getComputedStyle(span, null).getPropertyValue('height')", "auto");
+
+            runWithKeyDown(() => { run("span.webkitRequestFullscreen()") });
+            await waitFor(span, 'webkitfullscreenchange');
+
+            testExpected("document.defaultView.getComputedStyle(span, null).getPropertyValue('width')", "100%");
+            testExpected("document.defaultView.getComputedStyle(span, null).getPropertyValue('height')", "100%");
+
+            runWithKeyDown(() => { run("document.webkitExitFullscreen()") });
+            await waitFor(span, 'webkitfullscreenchange');
+
+            testExpected("document.defaultView.getComputedStyle(span, null).getPropertyValue('width')", "auto");
+            testExpected("document.defaultView.getComputedStyle(span, null).getPropertyValue('height')", "auto");
+
+            endTest();
+        });
+    </script>
+</head>
+<body>
+    <span></span>
+</body>
+</html>

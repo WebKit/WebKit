@@ -1,3 +1,15 @@
+2020-01-15  Jer Noble  <jer.noble@apple.com>
+
+        Revert fullscreen CSS quirk for reddit.com; add width and height style to fullscreen.css.
+        https://bugs.webkit.org/show_bug.cgi?id=206206
+
+        Reviewed by Eric Carlson.
+
+        * fullscreen/full-screen-test.js:
+        (waitFor):
+        * fullscreen/fullscreen-user-agent-style-expected.txt: Added.
+        * fullscreen/fullscreen-user-agent-style.html: Added.
+
 2020-01-15  Truitt Savell  <tsavell@apple.com>
 
         REGRESSION: [ Mac iOS ] storage/websql/statement-error-callback.html is timing out flakily

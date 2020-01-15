@@ -80,7 +80,6 @@ public:
     bool shouldOpenAsAboutBlank(const String&) const;
 
     bool needsPreloadAutoQuirk() const;
-    bool needsFullWidthHeightFullscreenStyleQuirk() const;
 
     bool shouldBypassBackForwardCache() const;
 

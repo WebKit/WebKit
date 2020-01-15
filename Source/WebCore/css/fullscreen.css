@@ -1,6 +1,8 @@
 :-webkit-full-screen {
     background-color: white;
     z-index: 2147483647 !important;
+    width: 100%;
+    height: 100%;
 }
 
 :root:-webkit-full-screen-document:not(:-webkit-full-screen), :root:-webkit-full-screen-ancestor {
