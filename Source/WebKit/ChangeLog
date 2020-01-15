@@ -1,5 +1,34 @@
 2020-01-14  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r254208. rdar://problem/58559193
+
+    IPC::Connection::sendMessage() should use CRASH_WITH_INFO()
+    <https://webkit.org/b/205419>
+    <rdar://problem/58058661>
+    
+    Reviewed by Mark Lam.
+    
+    * Platform/IPC/cocoa/ConnectionCocoa.mm:
+    (IPC::Connection::sendMessage):
+    - Switch from CRASH() to CRASH_WITH_INFO().
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@254208 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-01-08  David Kilzer  <ddkilzer@apple.com>
+
+            IPC::Connection::sendMessage() should use CRASH_WITH_INFO()
+            <https://webkit.org/b/205419>
+            <rdar://problem/58058661>
+
+            Reviewed by Mark Lam.
+
+            * Platform/IPC/cocoa/ConnectionCocoa.mm:
+            (IPC::Connection::sendMessage):
+            - Switch from CRASH() to CRASH_WITH_INFO().
+
+2020-01-14  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r254147. rdar://problem/58549096
 
     Reformat WebFrameLoaderClient logging
