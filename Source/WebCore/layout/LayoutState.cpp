@@ -60,20 +60,22 @@ LayoutState::~LayoutState() = default;
 
 Display::Box& LayoutState::displayBoxForRootLayoutBox()
 {
-    return displayBoxForLayoutBox(m_layoutTreeContent->rootLayoutBox());
+    return ensureDisplayBoxForLayoutBox(m_layoutTreeContent->rootLayoutBox());
 }
 
-Display::Box& LayoutState::displayBoxForLayoutBox(const Box& layoutBox)
+Display::Box& LayoutState::ensureDisplayBoxForLayoutBoxSlow(const Box& layoutBox)
 {
+    if (layoutBox.canCacheForLayoutState(*this)) {
+        ASSERT(!layoutBox.cachedDisplayBoxForLayoutState(*this));
+        auto newBox = makeUnique<Display::Box>();
+        auto& newBoxPtr = *newBox;
+        layoutBox.setCachedDisplayBoxForLayoutState(*this, WTFMove(newBox));
+        return newBoxPtr;
+    }
+
     return *m_layoutToDisplayBox.ensure(&layoutBox, [] {
         return makeUnique<Display::Box>();
     }).iterator->value;
-}
-
-const Display::Box& LayoutState::displayBoxForLayoutBox(const Box& layoutBox) const
-{
-    ASSERT(hasDisplayBox(layoutBox));
-    return *m_layoutToDisplayBox.get(&layoutBox);
 }
 
 FormattingState& LayoutState::formattingStateForBox(const Box& layoutBox) const

@@ -42,11 +42,10 @@ class Box;
 
 namespace Layout {
 
-class Box;
 class FormattingContext;
 class FormattingState;
 
-class LayoutState {
+class LayoutState : public CanMakeWeakPtr<LayoutState> {
     WTF_MAKE_ISO_ALLOCATED(LayoutState);
 public:
     LayoutState(const LayoutTreeContent&);
@@ -63,9 +62,10 @@ public:
 #endif
 
     Display::Box& displayBoxForRootLayoutBox();
-    Display::Box& displayBoxForLayoutBox(const Box& layoutBox);
-    const Display::Box& displayBoxForLayoutBox(const Box& layoutBox) const;
-    bool hasDisplayBox(const Box& layoutBox) const { return m_layoutToDisplayBox.contains(&layoutBox); }
+    Display::Box& ensureDisplayBoxForLayoutBox(const Box&);
+    const Display::Box& displayBoxForLayoutBox(const Box&) const;
+
+    bool hasDisplayBox(const Box&) const;
 
     enum class QuirksMode { No, Limited, Yes };
     bool inQuirksMode() const { return m_quirksMode == QuirksMode::Yes; }
@@ -84,6 +84,7 @@ public:
 
 private:
     void setQuirksMode(QuirksMode quirksMode) { m_quirksMode = quirksMode; }
+    Display::Box& ensureDisplayBoxForLayoutBoxSlow(const Box&);
 
     HashMap<const Container*, std::unique_ptr<FormattingState>> m_formattingStates;
 #ifndef NDEBUG
@@ -97,6 +98,28 @@ private:
     LayoutSize m_viewportSize;
 };
 
+inline bool LayoutState::hasDisplayBox(const Box& layoutBox) const
+{
+    if (layoutBox.cachedDisplayBoxForLayoutState(*this))
+        return true;
+    return m_layoutToDisplayBox.contains(&layoutBox);
+}
+
+inline Display::Box& LayoutState::ensureDisplayBoxForLayoutBox(const Box& layoutBox)
+{
+    if (auto* displayBox = layoutBox.cachedDisplayBoxForLayoutState(*this))
+        return *displayBox;
+    return ensureDisplayBoxForLayoutBoxSlow(layoutBox);
+}
+
+inline const Display::Box& LayoutState::displayBoxForLayoutBox(const Box& layoutBox) const
+{
+    if (auto* displayBox = layoutBox.cachedDisplayBoxForLayoutState(*this))
+        return *displayBox;
+    ASSERT(m_layoutToDisplayBox.contains(&layoutBox));
+    return *m_layoutToDisplayBox.get(&layoutBox);
+}
+
 #ifndef NDEBUG
 inline void LayoutState::registerFormattingContext(const FormattingContext& formattingContext)
 {
@@ -105,6 +128,19 @@ inline void LayoutState::registerFormattingContext(const FormattingContext& form
     m_formattingContextList.add(&formattingContext);
 }
 #endif
+
+// These Layout::Box function are here to allow inlining.
+inline bool Box::canCacheForLayoutState(const LayoutState& layoutState) const
+{
+    return !m_cachedLayoutState || m_cachedLayoutState.get() == &layoutState;
+}
+
+inline Display::Box* Box::cachedDisplayBoxForLayoutState(const LayoutState& layoutState) const
+{
+    if (m_cachedLayoutState.get() != &layoutState)
+        return nullptr;
+    return m_cachedDisplayBoxForLayoutState.get();
+}
 
 }
 }
