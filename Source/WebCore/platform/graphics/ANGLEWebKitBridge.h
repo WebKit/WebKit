@@ -90,8 +90,6 @@ public:
     
     bool compileShaderSource(const char* shaderSource, ANGLEShaderType, String& translatedShaderSource, String& shaderValidationLog, Vector<std::pair<ANGLEShaderSymbolType, sh::ShaderVariable>>& symbols, uint64_t extraCompileOptions = 0);
 
-    static bool angleAvailable();
-
 private:
 
     void cleanupCompilers();

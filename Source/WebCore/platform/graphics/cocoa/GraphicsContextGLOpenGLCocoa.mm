@@ -186,10 +186,6 @@ static void setGPUByRegistryID(CGLContextObj contextObj, CGLPixelFormatObj pixel
 GraphicsContextGLOpenGL::GraphicsContextGLOpenGL(GraphicsContextGLAttributes attrs, HostWindow* hostWindow, GraphicsContextGL::Destination destination, GraphicsContextGLOpenGL* sharedContext)
     : GraphicsContextGL(attrs, destination, sharedContext)
 {
-    ASSERT(ANGLEWebKitBridge::angleAvailable());
-    if (!ANGLEWebKitBridge::angleAvailable())
-        return;
-
     m_isForWebGL2 = attrs.isWebGL2;
 
 #if HAVE(APPLE_GRAPHICS_CONTROL)
