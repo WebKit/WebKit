@@ -100,6 +100,7 @@ private:
         void reachedApplicationCacheOriginQuota(WebPageProxy*, const WebCore::SecurityOrigin&, uint64_t currentQuota, uint64_t totalBytesNeeded, Function<void(unsigned long long)>&& completionHandler) final;
         void didResignInputElementStrongPasswordAppearance(WebPageProxy&, API::Object*) final;
         bool takeFocus(WebPageProxy*, WKFocusDirection) final;
+        void handleAutoplayEvent(WebPageProxy&, WebCore::AutoplayEvent, OptionSet<WebCore::AutoplayEventFlags>) final;
 #if PLATFORM(MAC)
         void showPage(WebPageProxy*) final;
         void focus(WebPageProxy*) final;
@@ -116,7 +117,6 @@ private:
         void drawHeader(WebPageProxy&, WebFrameProxy&, WebCore::FloatRect&&) final;
         void drawFooter(WebPageProxy&, WebFrameProxy&, WebCore::FloatRect&&) final;
         void decidePolicyForNotificationPermissionRequest(WebPageProxy&, API::SecurityOrigin&, Function<void(bool)>&&) final;
-        void handleAutoplayEvent(WebPageProxy&, WebCore::AutoplayEvent, OptionSet<WebCore::AutoplayEventFlags>) final;
         void unavailablePluginButtonClicked(WebPageProxy&, WKPluginUnavailabilityReason, API::Dictionary&) final;
         void mouseDidMoveOverElement(WebPageProxy&, const WebHitTestResultData&, OptionSet<WebEvent::Modifier>, API::Object*);
         void didClickAutoFillButton(WebPageProxy&, API::Object*) final;
@@ -176,6 +176,7 @@ private:
         bool webViewRequestGeolocationPermissionForFrameDecisionHandler : 1;
         bool webViewDidResignInputElementStrongPasswordAppearanceWithUserInfo : 1;
         bool webViewTakeFocus : 1;
+        bool webViewHandleAutoplayEventWithFlags : 1;
 #if PLATFORM(MAC)
         bool showWebView : 1;
         bool focusWebView : 1;
@@ -187,7 +188,6 @@ private:
         bool webViewSetResizable : 1;
         bool webViewSetWindowFrame : 1;
         bool webViewDidNotHandleWheelEvent : 1;
-        bool webViewHandleAutoplayEventWithFlags : 1;
         bool webViewUnavailablePlugInButtonClicked : 1;
         bool webViewDidClickAutoFillButtonWithUserInfo : 1;
         bool webViewDrawHeaderInRectForPageWithTitleURL : 1;

@@ -1,3 +1,27 @@
+2020-01-14  Luming Yin  <luming_yin@apple.com>
+
+        Update API availability for autoplay event
+        https://bugs.webkit.org/show_bug.cgi?id=202214
+        <rdar://problem/55710395>
+
+        Reviewed by Tim Horton.
+
+        * TestWebKitAPI/Tests/WebKit/js-play-with-controls.html:
+        * TestWebKitAPI/Tests/WebKitCocoa/audio-with-play-button.html:
+        * TestWebKitAPI/Tests/WebKitCocoa/video-with-play-button.html:
+        Provide an id for each play button on various testing pages so that they can be triggered on iOS.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/WebsitePolicies.mm:
+        (-[AutoplayPoliciesDelegate _webView:handleAutoplayEvent:withFlags:]):
+        (-[AsyncAutoplayPoliciesDelegate _webView:handleAutoplayEvent:withFlags:]):
+        (TEST):
+        Enable tests related to autoplay policy on iOS.
+
+        * TestWebKitAPI/cocoa/TestWKWebView.h:
+        * TestWebKitAPI/cocoa/TestWKWebView.mm:
+        (-[TestWKWebView clickOnElementID:]):
+        Helper method that performs a click on a given element ID.
+
 2020-01-14  Jonathan Bedard  <jbedard@apple.com>
 
         EWS: Run webkitpy tests with Python 2 and 3

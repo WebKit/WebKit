@@ -34,8 +34,8 @@
         </script>
     </head>
     <body onload="pageLoaded()">
-        <button onclick="play()">Play</button>
-        <button onclick="mute()">Mute</button>
+        <button id="playButton" onclick="play()">Play</button>
+        <button id="muteButton" onclick="mute()">Mute</button>
         <video id="video" onplaying=beganPlaying() onended=endedPlaying() src="test.mp4" />
     </body>
 </html>

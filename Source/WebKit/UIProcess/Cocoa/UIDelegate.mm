@@ -109,6 +109,7 @@ void UIDelegate::setDelegate(id <WKUIDelegate> delegate)
     m_delegateMethods.webViewRequestGeolocationPermissionForFrameDecisionHandler = [delegate respondsToSelector:@selector(_webView:requestGeolocationPermissionForFrame:decisionHandler:)];
     m_delegateMethods.webViewDidResignInputElementStrongPasswordAppearanceWithUserInfo = [delegate respondsToSelector:@selector(_webView:didResignInputElementStrongPasswordAppearanceWithUserInfo:)];
     m_delegateMethods.webViewTakeFocus = [delegate respondsToSelector:@selector(_webView:takeFocus:)];
+    m_delegateMethods.webViewHandleAutoplayEventWithFlags = [delegate respondsToSelector:@selector(_webView:handleAutoplayEvent:withFlags:)];
 
 #if PLATFORM(MAC)
     m_delegateMethods.showWebView = [delegate respondsToSelector:@selector(_showWebView:)];
@@ -122,7 +123,6 @@ void UIDelegate::setDelegate(id <WKUIDelegate> delegate)
     m_delegateMethods.webViewGetWindowFrameWithCompletionHandler = [delegate respondsToSelector:@selector(_webView:getWindowFrameWithCompletionHandler:)];
     m_delegateMethods.webViewSetWindowFrame = [delegate respondsToSelector:@selector(_webView:setWindowFrame:)];
     m_delegateMethods.webViewUnavailablePlugInButtonClicked = [delegate respondsToSelector:@selector(_webView:unavailablePlugInButtonClickedWithReason:plugInInfo:)];
-    m_delegateMethods.webViewHandleAutoplayEventWithFlags = [delegate respondsToSelector:@selector(_webView:handleAutoplayEvent:withFlags:)];
     m_delegateMethods.webViewDidClickAutoFillButtonWithUserInfo = [delegate respondsToSelector:@selector(_webView:didClickAutoFillButtonWithUserInfo:)];
     m_delegateMethods.webViewDrawHeaderInRectForPageWithTitleURL = [delegate respondsToSelector:@selector(_webView:drawHeaderInRect:forPageWithTitle:URL:)];
     m_delegateMethods.webViewDrawFooterInRectForPageWithTitleURL = [delegate respondsToSelector:@selector(_webView:drawFooterInRect:forPageWithTitle:URL:)];
@@ -486,6 +486,47 @@ bool UIDelegate::UIClient::takeFocus(WebPageProxy*, WKFocusDirection direction)
     return true;
 }
 
+static _WKAutoplayEventFlags toWKAutoplayEventFlags(OptionSet<WebCore::AutoplayEventFlags> flags)
+{
+    _WKAutoplayEventFlags wkFlags = _WKAutoplayEventFlagsNone;
+    if (flags.contains(WebCore::AutoplayEventFlags::HasAudio))
+        wkFlags |= _WKAutoplayEventFlagsHasAudio;
+    if (flags.contains(WebCore::AutoplayEventFlags::PlaybackWasPrevented))
+        wkFlags |= _WKAutoplayEventFlagsPlaybackWasPrevented;
+    if (flags.contains(WebCore::AutoplayEventFlags::MediaIsMainContent))
+        wkFlags |= _WKAutoplayEventFlagsMediaIsMainContent;
+    
+    return wkFlags;
+}
+
+static _WKAutoplayEvent toWKAutoplayEvent(WebCore::AutoplayEvent event)
+{
+    switch (event) {
+    case WebCore::AutoplayEvent::DidPreventMediaFromPlaying:
+        return _WKAutoplayEventDidPreventFromAutoplaying;
+    case WebCore::AutoplayEvent::DidPlayMediaWithUserGesture:
+        return _WKAutoplayEventDidPlayMediaWithUserGesture;
+    case WebCore::AutoplayEvent::DidAutoplayMediaPastThresholdWithoutUserInterference:
+        return _WKAutoplayEventDidAutoplayMediaPastThresholdWithoutUserInterference;
+    case WebCore::AutoplayEvent::UserDidInterfereWithPlayback:
+        return _WKAutoplayEventUserDidInterfereWithPlayback;
+    }
+    ASSERT_NOT_REACHED();
+    return _WKAutoplayEventDidPlayMediaWithUserGesture;
+}
+
+void UIDelegate::UIClient::handleAutoplayEvent(WebPageProxy&, WebCore::AutoplayEvent event, OptionSet<WebCore::AutoplayEventFlags> flags)
+{
+    if (!m_uiDelegate.m_delegateMethods.webViewHandleAutoplayEventWithFlags)
+        return;
+    
+    auto delegate = m_uiDelegate.m_delegate.get();
+    if (!delegate)
+        return;
+    
+    [(id <WKUIDelegatePrivate>)delegate _webView:m_uiDelegate.m_webView handleAutoplayEvent:toWKAutoplayEvent(event) withFlags:toWKAutoplayEventFlags(flags)];
+}
+
 #if PLATFORM(MAC)
 bool UIDelegate::UIClient::canRunModal() const
 {
@@ -704,35 +745,6 @@ void UIDelegate::UIClient::mouseDidMoveOverElement(WebPageProxy&, const WebHitTe
     [(id <WKUIDelegatePrivate>)delegate _webView:m_uiDelegate.m_webView mouseDidMoveOverElement:wrapper(apiHitTestResult.get()) withFlags:WebEventFactory::toNSEventModifierFlags(modifiers) userInfo:userInfo ? static_cast<id <NSSecureCoding>>(userInfo->wrapper()) : nil];
 }
 
-static _WKAutoplayEventFlags toWKAutoplayEventFlags(OptionSet<WebCore::AutoplayEventFlags> flags)
-{
-    _WKAutoplayEventFlags wkFlags = _WKAutoplayEventFlagsNone;
-    if (flags.contains(WebCore::AutoplayEventFlags::HasAudio))
-        wkFlags |= _WKAutoplayEventFlagsHasAudio;
-    if (flags.contains(WebCore::AutoplayEventFlags::PlaybackWasPrevented))
-        wkFlags |= _WKAutoplayEventFlagsPlaybackWasPrevented;
-    if (flags.contains(WebCore::AutoplayEventFlags::MediaIsMainContent))
-        wkFlags |= _WKAutoplayEventFlagsMediaIsMainContent;
-    
-    return wkFlags;
-}
-
-static _WKAutoplayEvent toWKAutoplayEvent(WebCore::AutoplayEvent event)
-{
-    switch (event) {
-    case WebCore::AutoplayEvent::DidPreventMediaFromPlaying:
-        return _WKAutoplayEventDidPreventFromAutoplaying;
-    case WebCore::AutoplayEvent::DidPlayMediaWithUserGesture:
-        return _WKAutoplayEventDidPlayMediaWithUserGesture;
-    case WebCore::AutoplayEvent::DidAutoplayMediaPastThresholdWithoutUserInterference:
-        return _WKAutoplayEventDidAutoplayMediaPastThresholdWithoutUserInterference;
-    case WebCore::AutoplayEvent::UserDidInterfereWithPlayback:
-        return _WKAutoplayEventUserDidInterfereWithPlayback;
-    }
-    ASSERT_NOT_REACHED();
-    return _WKAutoplayEventDidPlayMediaWithUserGesture;
-}
-
 void UIDelegate::UIClient::toolbarsAreVisible(WebPageProxy&, Function<void(bool)>&& completionHandler)
 {
     if (!m_uiDelegate.m_delegateMethods.webViewGetToolbarsAreVisibleWithCompletionHandler)
@@ -760,18 +772,6 @@ void UIDelegate::UIClient::didClickAutoFillButton(WebPageProxy&, API::Object* us
         return;
     
     [(id <WKUIDelegatePrivate>)delegate _webView:m_uiDelegate.m_webView didClickAutoFillButtonWithUserInfo:userInfo ? static_cast<id <NSSecureCoding>>(userInfo->wrapper()) : nil];
-}
-
-void UIDelegate::UIClient::handleAutoplayEvent(WebPageProxy&, WebCore::AutoplayEvent event, OptionSet<WebCore::AutoplayEventFlags> flags)
-{
-    if (!m_uiDelegate.m_delegateMethods.webViewHandleAutoplayEventWithFlags)
-        return;
-    
-    auto delegate = m_uiDelegate.m_delegate.get();
-    if (!delegate)
-        return;
-    
-    [(id <WKUIDelegatePrivate>)delegate _webView:m_uiDelegate.m_webView handleAutoplayEvent:toWKAutoplayEvent(event) withFlags:toWKAutoplayEventFlags(flags)];
 }
 
 void UIDelegate::UIClient::showPage(WebPageProxy*)

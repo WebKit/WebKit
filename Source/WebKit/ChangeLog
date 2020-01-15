@@ -1,3 +1,22 @@
+2020-01-14  Luming Yin  <luming_yin@apple.com>
+
+        Update API availability for autoplay event
+        https://bugs.webkit.org/show_bug.cgi?id=202214
+        <rdar://problem/55710395>
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/API/Cocoa/WKUIDelegatePrivate.h:
+        Make enums and WKUIDelegate method related to autoplay event available on iOS.
+
+        * UIProcess/Cocoa/UIDelegate.h:
+        * UIProcess/Cocoa/UIDelegate.mm:
+        (WebKit::UIDelegate::setDelegate):
+        (WebKit::toWKAutoplayEventFlags):
+        (WebKit::toWKAutoplayEvent):
+        (WebKit::UIDelegate::UIClient::handleAutoplayEvent):
+        Make delegate methods related to autoplay events available on iOS.
+
 2020-01-14  Tim Horton  <timothy_horton@apple.com>
 
         REGRESSION (r253394): After swiping back during a navigation, WKWebView gets stuck with the forward content, stops repainting

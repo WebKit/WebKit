@@ -86,6 +86,7 @@
 - (void)collapseToEnd;
 - (void)addToTestWindow;
 - (BOOL)selectionRangeHasStartOffset:(int)start endOffset:(int)end;
+- (void)clickOnElementID:(NSString *)elementID;
 @end
 
 #if PLATFORM(IOS_FAMILY)

@@ -515,6 +515,11 @@ static UICalloutBar *suppressUICalloutBar()
     return matches;
 }
 
+- (void)clickOnElementID:(NSString *)elementID
+{
+    [self evaluateJavaScript:[NSString stringWithFormat:@"document.getElementById('%@').click();", elementID] completionHandler:nil];
+}
+
 #if PLATFORM(IOS_FAMILY)
 
 - (void)didStartFormControlInteraction
