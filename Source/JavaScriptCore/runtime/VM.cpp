@@ -1066,7 +1066,7 @@ void VM::gatherScratchBufferRoots(ConservativeRoots& conservativeRoots)
 
 void VM::scanSideState(ConservativeRoots& roots) const
 {
-    ASSERT(heap.mutatorState() != MutatorState::Running);
+    ASSERT(heap.worldIsStopped());
     for (const auto& iter : m_checkpointSideState) {
         static_assert(sizeof(iter.value->tmps) / sizeof(JSValue) == maxNumCheckpointTmps);
         roots.add(iter.value->tmps, iter.value->tmps + maxNumCheckpointTmps);

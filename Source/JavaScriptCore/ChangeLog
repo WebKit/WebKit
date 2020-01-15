@@ -1,3 +1,13 @@
+2020-01-14  Keith Miller  <keith_miller@apple.com>
+
+        Fix scanSideState assertion
+        https://bugs.webkit.org/show_bug.cgi?id=206257
+
+        Reviewed by Yusuke Suzuki.
+
+        * runtime/VM.cpp:
+        (JSC::VM::scanSideState const):
+
 2020-01-14  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: crash in DumpRenderTree at com.apple.JavaScriptCore: WTF::RefCountedBase::hasOneRef const
