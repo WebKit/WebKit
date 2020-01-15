@@ -669,12 +669,14 @@ void RenderBlockFlow::layoutBlockChildren(bool relayoutChildren, LayoutUnit& max
 void RenderBlockFlow::layoutInlineChildren(bool relayoutChildren, LayoutUnit& repaintLogicalTop, LayoutUnit& repaintLogicalBottom)
 {
     auto computeLineLayoutPath = [&] {
+        bool canUseSimpleLines = SimpleLineLayout::canUseFor(*this);
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
-        if (LayoutIntegration::LineLayout::canUseFor(*this))
+        if (LayoutIntegration::LineLayout::canUseFor(*this, canUseSimpleLines))
             return LayoutFormattingContextPath;
 #endif
-        if (SimpleLineLayout::canUseFor(*this))
+        if (canUseSimpleLines)
             return SimpleLinesPath;
+
         return LineBoxesPath;
     };
 

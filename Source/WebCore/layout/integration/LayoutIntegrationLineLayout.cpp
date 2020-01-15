@@ -58,13 +58,17 @@ LineLayout::LineLayout(const RenderBlockFlow& flow)
 
 LineLayout::~LineLayout() = default;
 
-bool LineLayout::canUseFor(const RenderBlockFlow& flow)
+bool LineLayout::canUseFor(const RenderBlockFlow& flow, Optional<bool> couldUseSimpleLineLayout)
 {
     if (!RuntimeEnabledFeatures::sharedFeatures().layoutFormattingContextIntegrationEnabled())
         return false;
 
     // Initially only a subset of SLL features is supported.
-    if (!SimpleLineLayout::canUseFor(flow))
+    auto passesSimpleLineLayoutTest = valueOrCompute(couldUseSimpleLineLayout, [&] {
+        return SimpleLineLayout::canUseFor(flow);
+    });
+
+    if (!passesSimpleLineLayoutTest)
         return false;
 
     if (flow.containsFloats())

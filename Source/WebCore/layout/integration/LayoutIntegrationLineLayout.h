@@ -58,7 +58,7 @@ public:
     LineLayout(const RenderBlockFlow&);
     ~LineLayout();
 
-    static bool canUseFor(const RenderBlockFlow&);
+    static bool canUseFor(const RenderBlockFlow&, Optional<bool> couldUseSimpleLineLayout = { });
 
     void updateStyle();
     void layout();
