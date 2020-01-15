@@ -1,3 +1,53 @@
+2020-01-14  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r254188. rdar://problem/58553146
+
+    AI rule for ValueMod/ValueDiv produce constants with the wrong format when the result can be an int32
+    https://bugs.webkit.org/show_bug.cgi?id=205906
+    <rdar://problem/56108519>
+    
+    Reviewed by Yusuke Suzuki.
+    
+    JSTests:
+    
+    * stress/ai-value-div-should-result-in-constant-int-where-possible.js: Added.
+    (foo.bar.f):
+    (foo.):
+    (foo):
+    * stress/ai-value-mod-should-result-in-constant-int-where-possible.js: Added.
+    (foo.bar.f):
+    (foo.):
+    (foo):
+    
+    Source/JavaScriptCore:
+    
+    The runtime code for ValueMod and ValueDiv produces an int32 when the result
+    is of int32 value. However, the AI was saying the result is in double format.
+    This patch fixes AI to produce a JSValue in the right format.
+    
+    * dfg/DFGAbstractInterpreterInlines.h:
+    (JSC::DFG::AbstractInterpreter<AbstractStateType>::handleConstantDivOp):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@254188 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-01-07  Saam Barati  <sbarati@apple.com>
+
+            AI rule for ValueMod/ValueDiv produce constants with the wrong format when the result can be an int32
+            https://bugs.webkit.org/show_bug.cgi?id=205906
+            <rdar://problem/56108519>
+
+            Reviewed by Yusuke Suzuki.
+
+            * stress/ai-value-div-should-result-in-constant-int-where-possible.js: Added.
+            (foo.bar.f):
+            (foo.):
+            (foo):
+            * stress/ai-value-mod-should-result-in-constant-int-where-possible.js: Added.
+            (foo.bar.f):
+            (foo.):
+            (foo):
+
 2020-01-13  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r254349. rdar://problem/58529720
