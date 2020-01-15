@@ -1,5 +1,27 @@
 2020-01-14  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r254157. rdar://problem/58549081
+
+    REGRESSION: [ Mac wk2 ] http/wpt/service-workers/persistent-importScripts.html is a flaky failure
+    https://bugs.webkit.org/show_bug.cgi?id=205886
+    
+    Unreviewed test gardening.
+    
+    * platform/mac-wk2/TestExpectations:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@254157 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-01-07  Truitt Savell  <tsavell@apple.com>
+
+            REGRESSION: [ Mac wk2 ] http/wpt/service-workers/persistent-importScripts.html is a flaky failure
+            https://bugs.webkit.org/show_bug.cgi?id=205886
+
+            Unreviewed test gardening.
+
+            * platform/mac-wk2/TestExpectations:
+
+2020-01-14  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r254145. rdar://problem/58552861
 
     REGRESSION: [ Mac Debug ] inspector/page/setBootstrapScript-main-frame.html is a flaky failure
