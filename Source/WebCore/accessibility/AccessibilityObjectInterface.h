@@ -1079,8 +1079,8 @@ public:
     AccessibilityObjectWrapper* wrapper() const { return m_wrapper.get(); }
     void setWrapper(AccessibilityObjectWrapper* wrapper) { m_wrapper = wrapper; }
 #else
-    AccessibilityObjectWrapper* wrapper() const override { return nullptr; }
-    void setWrapper(AccessibilityObjectWrapper*) override { }
+    AccessibilityObjectWrapper* wrapper() const { return nullptr; }
+    void setWrapper(AccessibilityObjectWrapper*) { }
 #endif
 
     virtual void overrideAttachmentParent(AXCoreObject* parent) = 0;
