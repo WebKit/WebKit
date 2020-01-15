@@ -1,0 +1,20 @@
+<html>
+<script>
+function load() {
+    document.body.innerHTML = 'The test is declared pass if there is no crash observed.';
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+    }
+}
+
+function eventhandler3() {
+    iframe1.srcdoc = "x";
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+
+</script>
+<body onload="load()">
+<iframe id="iframe1" src="data:text/html,foo">a</iframe>
+<iframe id="iframe2" onload="eventhandler3()" srcdoc="y">

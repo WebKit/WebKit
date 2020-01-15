@@ -1,3 +1,16 @@
+2020-01-15  Pinki Gyanchandani  <pgyanchandani@apple.com>
+
+        Null Ptr Deref @ WebCore::DocumentLoader::clearMainResourceLoader
+        https://bugs.webkit.org/show_bug.cgi?id=206204
+
+        Added a NULL pointer check for FrameLoader. If FramLoader is NULL then return instead of
+        accessing activeDocumentLoader.
+
+        Reviewed by Alex Christensen.
+
+        * loader/change-src-during-iframe-load-crash-expected.txt: Added.
+        * loader/change-src-during-iframe-load-crash.html: Added.
+
 2020-01-15  Jer Noble  <jer.noble@apple.com>
 
         Revert fullscreen CSS quirk for reddit.com; add width and height style to fullscreen.css.
