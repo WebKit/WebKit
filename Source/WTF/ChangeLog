@@ -1,3 +1,129 @@
+2020-01-15  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r254389. rdar://problem/58548648
+
+    REGRESSION(r185816): In the Hong Kong locale, navigator.language reports it's in the Taiwan locale
+    https://bugs.webkit.org/show_bug.cgi?id=200043
+    Source/WTF:
+    
+    <rdar://problem/44119496>
+    
+    Reviewed by Dean Jackson.
+    
+    We ask the system for the current locale using CFLocaleCopyPreferredLanguages(), and then round-trip
+    it through CFBundleGetLocalizationInfoForLocalization() / CFBundleCopyLocalizationForLocalizationInfo().
+    This was to work around the fact that CFLocaleCopyPreferredLanguages() previously didn't report BCP47
+    language codes. However, that round-tripping was introducing errors, such as "zh-Hant-HK" was getting
+    turned into "zh-Hant-TW" which is clearly wrong. The CFBundle functions were never supposed to be used
+    in this way.
+    
+    Instead, we can use CFLocaleCreateCanonicalLanguageIdentifierFromString() which is intended to
+    canonicalize locale identifiers, and does return BCP47 language codes. However, this function preserves
+    more fingerprinting entropy than the old code path, so we pass the input through new NSLocale SPI to
+    minimize the entropy revealed.
+    
+    * WTF.xcodeproj/project.pbxproj:
+    * wtf/Language.h:
+    * wtf/Platform.h:
+    * wtf/PlatformMac.cmake:
+    * wtf/cf/LanguageCF.cpp:
+    (WTF::httpStyleLanguageCode):
+    (WTF::platformUserPreferredLanguages):
+    * wtf/cocoa/LanguageCocoa.mm: Added.
+    (WTF::minimizedLanguagesFromLanguages):
+    * wtf/spi/cocoa/NSLocaleSPI.h: Added.
+    
+    Tools:
+    
+    Reviewed by Dean Jackson.
+    
+    Migrate system language tests to LayoutTests, to match the rest of our system language tests.
+    
+    * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+    * TestWebKitAPI/Tests/mac/NavigatorLanguage.mm: Removed.
+    
+    LayoutTests:
+    
+    <rdar://problem/44119496>
+    
+    Reviewed by Dean Jackson.
+    
+    Migrate and update tests from TestWebKitAPI to LayoutTests, to match the rest of our system language tests.
+    
+    * platform/mac/TestExpectations: Mark these tests as possibly failing on older versions of macOS.
+    * fast/text/international/system-language/navigator-language/navigator-language-en-GB-expected.txt: Added.
+    * fast/text/international/system-language/navigator-language/navigator-language-en-GB.html: Added.
+    * fast/text/international/system-language/navigator-language/navigator-language-en-US-expected.txt: Added.
+    * fast/text/international/system-language/navigator-language/navigator-language-en-US.html: Added.
+    * fast/text/international/system-language/navigator-language/navigator-language-en-expected.txt: Added.
+    * fast/text/international/system-language/navigator-language/navigator-language-en.html: Added.
+    * fast/text/international/system-language/navigator-language/navigator-language-es-419-expected.txt: Added.
+    * fast/text/international/system-language/navigator-language/navigator-language-es-419.html: Added.
+    * fast/text/international/system-language/navigator-language/navigator-language-es-ES-expected.txt: Added.
+    * fast/text/international/system-language/navigator-language/navigator-language-es-ES.html: Added.
+    * fast/text/international/system-language/navigator-language/navigator-language-es-MX-expected.txt: Added.
+    * fast/text/international/system-language/navigator-language/navigator-language-es-MX.html: Added.
+    * fast/text/international/system-language/navigator-language/navigator-language-es-expected.txt: Added.
+    * fast/text/international/system-language/navigator-language/navigator-language-es.html: Added.
+    * fast/text/international/system-language/navigator-language/navigator-language-fr-CA-expected.txt: Added.
+    * fast/text/international/system-language/navigator-language/navigator-language-fr-CA.html: Added.
+    * fast/text/international/system-language/navigator-language/navigator-language-fr-expected.txt: Added.
+    * fast/text/international/system-language/navigator-language/navigator-language-fr.html: Added.
+    * fast/text/international/system-language/navigator-language/navigator-language-hi-expected.txt: Added.
+    * fast/text/international/system-language/navigator-language/navigator-language-hi.html: Added.
+    * fast/text/international/system-language/navigator-language/navigator-language-ja-expected.txt: Added.
+    * fast/text/international/system-language/navigator-language/navigator-language-ja.html: Added.
+    * fast/text/international/system-language/navigator-language/navigator-language-pt-BR-expected.txt: Added.
+    * fast/text/international/system-language/navigator-language/navigator-language-pt-BR.html: Added.
+    * fast/text/international/system-language/navigator-language/navigator-language-pt-PT-expected.txt: Added.
+    * fast/text/international/system-language/navigator-language/navigator-language-pt-PT.html: Added.
+    * fast/text/international/system-language/navigator-language/navigator-language-ru-expected.txt: Added.
+    * fast/text/international/system-language/navigator-language/navigator-language-ru.html: Added.
+    * fast/text/international/system-language/navigator-language/navigator-language-zh-HK-expected.txt: Added.
+    * fast/text/international/system-language/navigator-language/navigator-language-zh-HK.html: Added.
+    * fast/text/international/system-language/navigator-language/navigator-language-zh-Hans-expected.txt: Added.
+    * fast/text/international/system-language/navigator-language/navigator-language-zh-Hans.html: Added.
+    * fast/text/international/system-language/navigator-language/navigator-language-zh-Hant-HK-expected.txt: Added.
+    * fast/text/international/system-language/navigator-language/navigator-language-zh-Hant-HK.html: Added.
+    * fast/text/international/system-language/navigator-language/navigator-language-zh-Hant-expected.txt: Added.
+    * fast/text/international/system-language/navigator-language/navigator-language-zh-Hant.html: Added.
+    * fast/text/international/system-language/navigator-language/navigator-language-zh-TW-expected.txt: Added.
+    * fast/text/international/system-language/navigator-language/navigator-language-zh-TW.html: Added.
+    * js/dom/navigator-language-expected.txt:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@254389 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-01-10  Myles C. Maxfield  <mmaxfield@apple.com>
+
+            REGRESSION(r185816): In the Hong Kong locale, navigator.language reports it's in the Taiwan locale
+            https://bugs.webkit.org/show_bug.cgi?id=200043
+            <rdar://problem/44119496>
+
+            Reviewed by Dean Jackson.
+
+            We ask the system for the current locale using CFLocaleCopyPreferredLanguages(), and then round-trip
+            it through CFBundleGetLocalizationInfoForLocalization() / CFBundleCopyLocalizationForLocalizationInfo().
+            This was to work around the fact that CFLocaleCopyPreferredLanguages() previously didn't report BCP47
+            language codes. However, that round-tripping was introducing errors, such as "zh-Hant-HK" was getting
+            turned into "zh-Hant-TW" which is clearly wrong. The CFBundle functions were never supposed to be used
+            in this way.
+
+            Instead, we can use CFLocaleCreateCanonicalLanguageIdentifierFromString() which is intended to
+            canonicalize locale identifiers, and does return BCP47 language codes. However, this function preserves
+            more fingerprinting entropy than the old code path, so we pass the input through new NSLocale SPI to
+            minimize the entropy revealed.
+
+            * WTF.xcodeproj/project.pbxproj:
+            * wtf/Language.h:
+            * wtf/Platform.h:
+            * wtf/PlatformMac.cmake:
+            * wtf/cf/LanguageCF.cpp:
+            (WTF::httpStyleLanguageCode):
+            (WTF::platformUserPreferredLanguages):
+            * wtf/cocoa/LanguageCocoa.mm: Added.
+            (WTF::minimizedLanguagesFromLanguages):
+            * wtf/spi/cocoa/NSLocaleSPI.h: Added.
+
 2020-01-03  Dean Jackson  <dino@apple.com>
 
         [WebGL] Enable ANGLE by default for Cocoa platforms (except simulator)

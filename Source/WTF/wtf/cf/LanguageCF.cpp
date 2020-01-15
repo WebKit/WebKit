@@ -48,28 +48,35 @@ static Vector<String>& preferredLanguages()
 
 static String httpStyleLanguageCode(CFStringRef language)
 {
-    SInt32 languageCode;
-    SInt32 regionCode;
-    SInt32 scriptCode;
-    CFStringEncoding stringEncoding;
+    RetainPtr<CFStringRef> preferredLanguageCode;
+    // If we can minimize the language list to reduce fingerprinting, we can afford to be more lossless when canonicalizing the locale list.
+    if (canMinimizeLanguages())
+        preferredLanguageCode = adoptCF(CFLocaleCreateCanonicalLanguageIdentifierFromString(kCFAllocatorDefault, language));
+    else {
+        SInt32 languageCode;
+        SInt32 regionCode;
+        SInt32 scriptCode;
+        CFStringEncoding stringEncoding;
 
-    // FIXME: This transformation is very wrong:
-    // 1. There is no reason why CFBundle localization names would be at all related to language names as used on the Web.
-    // 2. Script Manager codes cannot represent all languages that are now supported by the platform, so the conversion is lossy.
-    // 3. This should probably match what is sent by the network layer as Accept-Language, but currently, that's implemented separately.
-    CFBundleGetLocalizationInfoForLocalization(language, &languageCode, &regionCode, &scriptCode, &stringEncoding);
-    RetainPtr<CFStringRef> preferredLanguageCode = adoptCF(CFBundleCopyLocalizationForLocalizationInfo(languageCode, regionCode, scriptCode, stringEncoding));
-    if (preferredLanguageCode)
-        language = preferredLanguageCode.get();
-
-    // Turn a '_' into a '-' if it appears after a 2-letter language code
-    if (CFStringGetLength(language) >= 3 && CFStringGetCharacterAtIndex(language, 2) == '_') {
-        auto mutableLanguageCode = adoptCF(CFStringCreateMutableCopy(kCFAllocatorDefault, 0, language));
-        CFStringReplace(mutableLanguageCode.get(), CFRangeMake(2, 1), CFSTR("-"));
-        return mutableLanguageCode.get();
+        // FIXME: This transformation is very wrong:
+        // 1. There is no reason why CFBundle localization names would be at all related to language names as used on the Web.
+        // 2. Script Manager codes cannot represent all languages that are now supported by the platform, so the conversion is lossy.
+        // 3. This should probably match what is sent by the network layer as Accept-Language, but currently, that's implemented separately.
+        CFBundleGetLocalizationInfoForLocalization(language, &languageCode, &regionCode, &scriptCode, &stringEncoding);
+        preferredLanguageCode = adoptCF(CFBundleCopyLocalizationForLocalizationInfo(languageCode, regionCode, scriptCode, stringEncoding));
     }
 
-    return language;
+    if (!preferredLanguageCode)
+        preferredLanguageCode = language;
+    auto mutableLanguageCode = adoptCF(CFStringCreateMutableCopy(kCFAllocatorDefault, 0, preferredLanguageCode.get()));
+
+    // Turn a '_' into a '-' if it appears after a 2-letter language code
+    if (CFStringGetLength(mutableLanguageCode.get()) >= 3 && CFStringGetCharacterAtIndex(mutableLanguageCode.get(), 2) == '_')
+        CFStringReplace(mutableLanguageCode.get(), CFRangeMake(2, 1), CFSTR("-"));
+
+    CFStringLowercase(mutableLanguageCode.get(), nullptr);
+    return mutableLanguageCode.get();
+
 }
 
 #if PLATFORM(MAC)
@@ -98,6 +105,7 @@ Vector<String> platformUserPreferredLanguages()
 
     if (userPreferredLanguages.isEmpty()) {
         RetainPtr<CFArrayRef> languages = adoptCF(CFLocaleCopyPreferredLanguages());
+        languages = minimizedLanguagesFromLanguages(languages.get());
         CFIndex languageCount = CFArrayGetCount(languages.get());
         if (!languageCount)
             userPreferredLanguages.append("en");
