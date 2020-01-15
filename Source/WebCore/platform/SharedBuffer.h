@@ -198,6 +198,8 @@ public:
     // begin and end take O(1) time, this takes O(log(N)) time.
     SharedBufferDataView getSomeData(size_t position) const;
 
+    String toHexString() const;
+
     void hintMemoryNotNeededSoon() const;
 
     WTF::Persistence::Decoder decoder() const;

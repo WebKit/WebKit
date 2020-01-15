@@ -217,4 +217,15 @@ TEST_F(SharedBufferTest, isEqualTo)
     EXPECT_NE(makeBuffer({{'a'}, {'b'}}), makeBuffer({{'a'}, {'a'}}));
 }
 
+TEST_F(SharedBufferTest, toHexString)
+{
+    Vector<char> t1 = {0x11, 0x5, 0x12};
+    auto buffer = SharedBuffer::create();
+    buffer->append(WTFMove(t1));
+    String result = buffer->toHexString();
+    EXPECT_EQ(result, "110512");
+    buffer->clear();
+    EXPECT_EQ(buffer->toHexString(), "");
+}
+
 }

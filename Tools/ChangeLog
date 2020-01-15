@@ -1,3 +1,7 @@
+2020-01-15  Kocsen Chung  <kocsen_chung@apple.com>
+
+        Revert r254537. rdar://problem/58542040
+
 2020-01-14  Kocsen Chung  <kocsen_chung@apple.com>
 
         Revert r254334. rdar://problem/58542040
