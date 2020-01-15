@@ -1,4 +1,4 @@
-//@ if $jitTests then runDefault("--forceBaseline=1") else skip end
+//@ if $jitTests then runDefault("--useLLInt=0") else skip end
 
 const o = {};
 const handler = {

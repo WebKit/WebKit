@@ -1,4 +1,4 @@
-//@ runDefault("--numberOfGCMarkers=1", "--useDFGJIT=false", "--forceBaseline=true")
+//@ runDefault("--numberOfGCMarkers=1", "--useDFGJIT=false", "--useLLInt=false")
 
 function foo() {
     gc();

@@ -426,10 +426,10 @@ Exception* ScriptExecutable::prepareForExecutionImpl(
     if (Options::validateBytecode())
         codeBlock->validate();
     
-    if (Options::forceBaseline())
-        setupJIT(vm, codeBlock);
-    else
+    if (Options::useLLInt())
         setupLLInt(codeBlock);
+    else
+        setupJIT(vm, codeBlock);
     
     installCode(vm, codeBlock, codeBlock->codeType(), codeBlock->specializationKind());
     return nullptr;

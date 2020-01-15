@@ -81,7 +81,7 @@ static CompilationResult compileImpl(
     
     ASSERT(codeBlock);
     ASSERT(codeBlock->alternative());
-    ASSERT(JITCode::isBaselineCode(codeBlock->alternative()->jitType()));
+    ASSERT(codeBlock->alternative()->jitType() == JITType::BaselineJIT);
     ASSERT(!profiledDFGCodeBlock || profiledDFGCodeBlock->jitType() == JITType::DFGJIT);
     
     if (logCompilationChanges(mode))

@@ -122,7 +122,7 @@ int testPingPongStackOverflow()
 
     auto origSoftReservedZoneSize = Options::softReservedZoneSize();
     auto origReservedZoneSize = Options::reservedZoneSize();
-    auto origForceBaseline = Options::forceBaseline();
+    auto origUseLLInt = Options::useLLInt();
     auto origMaxPerThreadStackUsage = Options::maxPerThreadStackUsage();
 
     Options::softReservedZoneSize() = 128 * KB;
@@ -131,7 +131,7 @@ int testPingPongStackOverflow()
     // Normally, we want to disable the LLINT to force the use of JITted code which is necessary for
     // reproducing the regression in https://bugs.webkit.org/show_bug.cgi?id=148749. However, we only
     // want to do this if the LLINT isn't the only available execution engine.
-    Options::forceBaseline() = true;
+    Options::useLLInt() = false;
 #endif
 
     const char* scriptString =
@@ -178,7 +178,7 @@ int testPingPongStackOverflow()
 
     Options::softReservedZoneSize() = origSoftReservedZoneSize;
     Options::reservedZoneSize() = origReservedZoneSize;
-    Options::forceBaseline() = origForceBaseline;
+    Options::useLLInt() = origUseLLInt;
     Options::maxPerThreadStackUsage() = origMaxPerThreadStackUsage;
 
     return failed;

@@ -387,7 +387,7 @@ static void recomputeDependentOptions()
     Options::validateDFGExceptionHandling() = true;
 #endif
 #if !ENABLE(JIT)
-    Options::forceBaseline() = false;
+    Options::useLLInt() = true;
     Options::useJIT() = false;
     Options::useBaselineJIT() = false;
     Options::useDFGJIT() = false;
@@ -419,7 +419,7 @@ static void recomputeDependentOptions()
     }
 
     if (!jitEnabledByDefault() && !Options::useJIT())
-        Options::forceBaseline() = false;
+        Options::useLLInt() = true;
 
     if (!Options::useWebAssembly())
         Options::useFastTLSForWasmContext() = false;
@@ -546,6 +546,8 @@ void Options::initialize()
             RELEASE_ASSERT(Options::addressOfOptionDefault(useKernTCSMID) ==  &Options::useKernTCSMDefault());
             RELEASE_ASSERT(Options::addressOfOption(gcMaxHeapSizeID) ==  &Options::gcMaxHeapSize());
             RELEASE_ASSERT(Options::addressOfOptionDefault(gcMaxHeapSizeID) ==  &Options::gcMaxHeapSizeDefault());
+            RELEASE_ASSERT(Options::addressOfOption(forceOSRExitToLLIntID) ==  &Options::forceOSRExitToLLInt());
+            RELEASE_ASSERT(Options::addressOfOptionDefault(forceOSRExitToLLIntID) ==  &Options::forceOSRExitToLLIntDefault());
 
 #ifndef NDEBUG
             Config::enableRestrictedOptions();
@@ -943,9 +945,9 @@ void Options::dumpOption(StringBuilder& builder, DumpLevel level, Options::ID id
 void Options::ensureOptionsAreCoherent()
 {
     bool coherent = true;
-    if (forceBaseline() && !useJIT()) {
+    if (!(useLLInt() || useJIT())) {
         coherent = false;
-        dataLog("INCOHERENT OPTIONS: forceBaseline can't be true if useJIT is false\n");
+        dataLog("INCOHERENT OPTIONS: at least one of useLLInt or useJIT must be true\n");
     }
     if (!coherent)
         CRASH();

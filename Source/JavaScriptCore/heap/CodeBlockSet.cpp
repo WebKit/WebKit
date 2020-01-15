@@ -55,11 +55,6 @@ void CodeBlockSet::clearCurrentlyExecuting()
     m_currentlyExecuting.clear();
 }
 
-bool CodeBlockSet::isCurrentlyExecuting(CodeBlock* codeBlock)
-{
-    return m_currentlyExecuting.contains(codeBlock);
-}
-
 void CodeBlockSet::dump(PrintStream& out) const
 {
     CommaPrinter comma;

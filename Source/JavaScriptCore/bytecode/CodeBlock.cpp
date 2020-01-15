@@ -442,8 +442,14 @@ bool CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, Unlink
                 const UnlinkedHandlerInfo& unlinkedHandler = unlinkedCodeBlock->exceptionHandler(i);
                 HandlerInfo& handler = m_rareData->m_exceptionHandlers[i];
 #if ENABLE(JIT)
-                auto& instruction = *instructions().at(unlinkedHandler.target).ptr();
-                MacroAssemblerCodePtr<BytecodePtrTag> codePtr = LLInt::getCodePtr<BytecodePtrTag>(instruction);
+                auto instruction = instructions().at(unlinkedHandler.target);
+                MacroAssemblerCodePtr<BytecodePtrTag> codePtr;
+                if (instruction->isWide32())
+                    codePtr = LLInt::getWide32CodePtr<BytecodePtrTag>(op_catch);
+                else if (instruction->isWide16())
+                    codePtr = LLInt::getWide16CodePtr<BytecodePtrTag>(op_catch);
+                else
+                    codePtr = LLInt::getCodePtr<BytecodePtrTag>(op_catch);
                 handler.initialize(unlinkedHandler, CodeLocationLabel<ExceptionHandlerPtrTag>(codePtr.retagged<ExceptionHandlerPtrTag>()));
 #else
                 handler.initialize(unlinkedHandler);
@@ -1382,36 +1388,6 @@ void CodeBlock::finalizeUnconditionally(VM& vm)
     UNUSED_PARAM(vm);
 
     updateAllPredictions();
-
-#if ENABLE(JIT)
-    // If BaselineJIT code is not executing, and an optimized replacement exists, we attempt
-    // to discard baseline JIT code and reinstall LLInt code to save JIT memory.
-    if (!Options::forceBaseline() && Options::enableThrowingAwayBaselineCode() && jitType() == JITType::BaselineJIT && !m_vm->heap.codeBlockSet().isCurrentlyExecuting(this)) {
-        if (CodeBlock* optimizedCodeBlock = optimizedReplacement()) {
-            if (!optimizedCodeBlock->m_osrExitCounter) {
-                m_jitCode = nullptr;
-                LLInt::setEntrypoint(this);
-                RELEASE_ASSERT(jitType() == JITType::InterpreterThunk);
-
-                for (size_t i = 0; i < m_unlinkedCode->numberOfExceptionHandlers(); i++) {
-                    const UnlinkedHandlerInfo& unlinkedHandler = m_unlinkedCode->exceptionHandler(i);
-                    HandlerInfo& handler = m_rareData->m_exceptionHandlers[i];
-                    auto& instruction = *instructions().at(unlinkedHandler.target).ptr();
-                    MacroAssemblerCodePtr<BytecodePtrTag> codePtr = LLInt::getCodePtr<BytecodePtrTag>(instruction);
-                    handler.initialize(unlinkedHandler, CodeLocationLabel<ExceptionHandlerPtrTag>(codePtr.retagged<ExceptionHandlerPtrTag>()));
-                }
-
-                unlinkIncomingCalls();
-
-                // It's safe to clear these out here because in finalizeUnconditionally all compiler threads
-                // are safepointed, meaning they're running either before or after bytecode parser, and bytecode
-                // parser is the only data structure pointing into the various *infos.
-                resetJITData();
-            }
-        }
-    }
-
-#endif
     
     if (JITCode::couldBeInterpreted(jitType()))
         finalizeLLIntInlineCaches();
@@ -1539,6 +1515,18 @@ JITNegIC* CodeBlock::addJITNegIC(UnaryArithProfile* arithProfile)
     return ensureJITData(locker).m_negICs.add(arithProfile);
 }
 
+StructureStubInfo* CodeBlock::findStubInfo(CodeOrigin codeOrigin)
+{
+    ConcurrentJSLocker locker(m_lock);
+    if (auto* jitData = m_jitData.get()) {
+        for (StructureStubInfo* stubInfo : jitData->m_stubInfos) {
+            if (stubInfo->codeOrigin == codeOrigin)
+                return stubInfo;
+        }
+    }
+    return nullptr;
+}
+
 ByValInfo* CodeBlock::addByValInfo()
 {
     ConcurrentJSLocker locker(m_lock);
@@ -1549,6 +1537,18 @@ CallLinkInfo* CodeBlock::addCallLinkInfo()
 {
     ConcurrentJSLocker locker(m_lock);
     return ensureJITData(locker).m_callLinkInfos.add();
+}
+
+CallLinkInfo* CodeBlock::getCallLinkInfoForBytecodeIndex(BytecodeIndex index)
+{
+    ConcurrentJSLocker locker(m_lock);
+    if (auto* jitData = m_jitData.get()) {
+        for (CallLinkInfo* callLinkInfo : jitData->m_callLinkInfos) {
+            if (callLinkInfo->codeOrigin() == CodeOrigin(index))
+                return callLinkInfo;
+        }
+    }
+    return nullptr;
 }
 
 RareCaseProfile* CodeBlock::addRareCaseProfile(BytecodeIndex bytecodeIndex)
@@ -1598,22 +1598,13 @@ void CodeBlock::resetJITData()
         // We can clear these because no other thread will have references to any stub infos, call
         // link infos, or by val infos if we don't have JIT code. Attempts to query these data
         // structures using the concurrent API (getICStatusMap and friends) will return nothing if we
-        // don't have JIT code. So it's safe to call this if we fail a baseline JIT compile.
-        //
-        // We also call this from finalizeUnconditionally when we degrade from baseline JIT to LLInt
-        // code. This is safe to do since all compiler threads are safepointed in finalizeUnconditionally,
-        // which means we've made it past bytecode parsing. Only the bytecode parser will hold onto
-        // references to these various *infos via its use of ICStatusMap.
-
-        for (StructureStubInfo* stubInfo : jitData->m_stubInfos) {
-            stubInfo->aboutToDie();
-            stubInfo->deref();
-        }
-
+        // don't have JIT code.
+        jitData->m_stubInfos.clear();
+        jitData->m_callLinkInfos.clear();
+        jitData->m_byValInfos.clear();
         // We can clear this because the DFG's queries to these data structures are guarded by whether
         // there is JIT code.
-
-        m_jitData = nullptr;
+        jitData->m_rareCaseProfiles.clear();
     }
 }
 #endif
@@ -1745,24 +1736,10 @@ CodeBlock* CodeBlock::baselineVersion()
 }
 
 #if ENABLE(JIT)
-CodeBlock* CodeBlock::optimizedReplacement(JITType typeToReplace)
-{
-    CodeBlock* replacement = this->replacement();
-    if (!replacement)
-        return nullptr;
-    if (JITCode::isHigherTier(replacement->jitType(), typeToReplace))
-        return replacement;
-    return nullptr;
-}
-
-CodeBlock* CodeBlock::optimizedReplacement()
-{
-    return optimizedReplacement(jitType());
-}
-
 bool CodeBlock::hasOptimizedReplacement(JITType typeToReplace)
 {
-    return !!optimizedReplacement(typeToReplace);
+    CodeBlock* replacement = this->replacement();
+    return replacement && JITCode::isHigherTier(replacement->jitType(), typeToReplace);
 }
 
 bool CodeBlock::hasOptimizedReplacement()
@@ -2824,7 +2801,7 @@ bool CodeBlock::shouldOptimizeNow()
 void CodeBlock::tallyFrequentExitSites()
 {
     ASSERT(JITCode::isOptimizingJIT(jitType()));
-    ASSERT(JITCode::isBaselineCode(alternative()->jitType()));
+    ASSERT(alternative()->jitType() == JITType::BaselineJIT);
     
     CodeBlock* profiledBlock = alternative();
     

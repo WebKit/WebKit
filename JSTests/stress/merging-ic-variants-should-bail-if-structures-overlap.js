@@ -1,4 +1,4 @@
-//@ runDefault("--validateGraphAtEachPhase=1", "--forceBaseline=1")
+//@ runDefault("--validateGraphAtEachPhase=1", "--useLLInt=0")
 
 let items = [];
 for (let i = 0; i < 8; ++i) {
