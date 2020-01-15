@@ -21,12 +21,29 @@ function wait_for_onload(element, callback = null) {
 }
 
 let test_iframe;
-function create_iframe() {
+let stylesheet_ready = null;
+async function create_iframe() {
+    if (!stylesheet_ready) { // Cache the stylesheet first to avoid timeout in the very first test case.
+        stylesheet_ready = new Promise((resolve) => {
+            const link = document.createElement('link');
+            link.rel = 'stylesheet';
+            link.href = 'resources/green-host.css';
+            link.addEventListener('load', () => {
+                link.remove();
+                resolve();
+            });
+            document.body.appendChild(link);
+        });
+    }
+    await create_iframe;
+
     if (test_iframe)
         test_iframe.remove();
 
     test_iframe = document.createElement('iframe');
-    return wait_for_onload().then(() => test_iframe.contentWindow, () => {
+    return stylesheet_ready.then(() => {
+        return wait_for_onload();
+    }).then(() => test_iframe.contentWindow, () => {
         document.body.appendChild(test_iframe);
     }).then(function () {
         const doc = test_iframe.contentWindow.document;

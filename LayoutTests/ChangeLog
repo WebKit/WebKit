@@ -1,3 +1,17 @@
+2020-01-14  Ryosuke Niwa  <rniwa@webkit.org>
+
+        REGRESSION: fast/shadow-dom/link-element-in-shadow-tree.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=171784
+        <rdar://problem/58123584>
+
+        Reviewed by Antti Koivisto.
+
+        The timeout is likely caused by the stylesheet not loading within 100ms timeout in the very first test case.
+        Load and cache the stylesheet before any test cases run to avoid this timeout.
+
+        * fast/shadow-dom/link-element-in-shadow-tree.html:
+        * platform/mac-wk2/TestExpectations: Removed the flaky test expectation.
+
 2020-01-14  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Supported mime types for encoding should be supported mime types for loading
