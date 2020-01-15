@@ -30,7 +30,37 @@
 #import <AVFoundation/AVFoundation.h>
 #import <wtf/SoftLinking.h>
 
+#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101500) || (PLATFORM(IOS_FAMILY) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 130000)
 SOFT_LINK_FRAMEWORK_FOR_SOURCE_WITH_EXPORT(PAL, AVFoundation, PAL_EXPORT)
+#else
+@interface AVPlayerItem (DisableKVOOnSupressesVideoLayers)
++ (BOOL)automaticallyNotifiesObserversOfSuppressesVideoLayers;
+@end
+
+namespace PAL {
+
+static BOOL justReturnsNO()
+{
+    return NO;
+}
+
+PAL_EXPORT void* AVFoundationLibrary(bool isOptional = false);
+void* AVFoundationLibrary(bool isOptional)
+{
+    static void* frameworkLibrary;
+    static dispatch_once_t once;
+    dispatch_once(&once, ^{
+        frameworkLibrary = dlopen("/System/Library/Frameworks/AVFoundation.framework/AVFoundation", RTLD_NOW);
+        if (!isOptional)
+            RELEASE_ASSERT_WITH_MESSAGE(frameworkLibrary, "%s", dlerror());
+
+        class_addMethod(objc_getClass("AVPlayerItem"), @selector(automaticallyNotifiesObserversOfSuppressesVideoLayers), (IMP)justReturnsNO, "B@:");
+    });
+    return frameworkLibrary;
+}
+
+}
+#endif
 
 SOFT_LINK_CLASS_FOR_SOURCE_WITH_EXPORT(PAL, AVFoundation, AVAssetCache, PAL_EXPORT)
 SOFT_LINK_CLASS_FOR_SOURCE_WITH_EXPORT(PAL, AVFoundation, AVAssetImageGenerator, PAL_EXPORT)
