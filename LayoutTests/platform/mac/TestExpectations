@@ -1933,3 +1933,5 @@ webkit.org/b/204312 imported/w3c/web-platform-tests/svg/import/struct-dom-06-b-m
 # Locale-specific shaping is only enabled on certain OSes.
 webkit.org/b/77568 [ Sierra HighSierra Mojave ] fast/text/locale-shaping.html [ ImageOnlyFailure ]
 webkit.org/b/77568 [ Sierra HighSierra Mojave ] fast/text/locale-shaping-complex.html [ ImageOnlyFailure ]
+
+webkit.org/b/206291 storage/websql/statement-error-callback.html [ Pass Timeout ]
