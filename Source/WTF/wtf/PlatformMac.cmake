@@ -26,6 +26,7 @@ list(APPEND WTF_PUBLIC_HEADERS
     spi/cocoa/CFXPCBridgeSPI.h
     spi/cocoa/CrashReporterClientSPI.h
     spi/cocoa/MachVMSPI.h
+    spi/cocoa/NSLocaleSPI.h
     spi/cocoa/SecuritySPI.h
     spi/cocoa/objcSPI.h
 
@@ -56,6 +57,7 @@ list(APPEND WTF_SOURCES
     cocoa/CrashReporter.cpp
     cocoa/Entitlements.mm
     cocoa/FileSystemCocoa.mm
+    cocoa/LanguageCocoa.mm
     cocoa/MachSendRight.cpp
     cocoa/MainThreadCocoa.mm
     cocoa/MemoryFootprintCocoa.cpp

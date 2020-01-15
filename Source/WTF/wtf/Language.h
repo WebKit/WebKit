@@ -28,6 +28,11 @@
 #include <wtf/Forward.h>
 #include <wtf/Vector.h>
 
+#if PLATFORM(COCOA)
+#import <CoreFoundation/CoreFoundation.h>
+#import <wtf/RetainPtr.h>
+#endif
+
 namespace WTF {
 
 WTF_EXPORT String defaultLanguage(); // Thread-safe.
@@ -43,8 +48,13 @@ void languageDidChange();
 typedef void (*LanguageChangeObserverFunction)(void* context);
 WTF_EXPORT void addLanguageChangeObserver(void* context, LanguageChangeObserverFunction);
 WTF_EXPORT void removeLanguageChangeObserver(void* context);
-
 WTF_EXPORT String displayNameForLanguageLocale(const String&);
+
+#if PLATFORM(COCOA)
+bool canMinimizeLanguages();
+RetainPtr<CFArrayRef> minimizedLanguagesFromLanguages(CFArrayRef);
+#endif
+
 }
 
 using WTF::defaultLanguage;

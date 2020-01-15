@@ -15,10 +15,10 @@ if (window.testRunner) {
 }
 
 var language = navigator.language;
-if (language.length == 2)
-    shouldBe("language", "'en'");
+if (language == "en" || language == "en-us" || language == "en-US")
+    testPassed("");
 else
-    shouldBe("language", "'en-US'");
+    testFailed("");
 </script>
 <script src="../../resources/js-test-post.js"></script>
 </body>
