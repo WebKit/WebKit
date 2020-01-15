@@ -785,6 +785,8 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     runtime/BytecodeCacheError.h
     runtime/CachePayload.h
     runtime/CacheUpdate.h
+    runtime/CacheableIdentifier.h
+    runtime/CacheableIdentifierInlines.h
     runtime/CachedBytecode.h
     runtime/CachedTypes.h
     runtime/CagedBarrierPtr.h

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -42,14 +42,14 @@ public:
     static bool canEmitIntrinsicGetter(JSFunction*, Structure*);
     void emitIntrinsicGetter(AccessGenerationState&);
 
-    static std::unique_ptr<AccessCase> create(VM&, JSCell*, const Identifier&, PropertyOffset, Structure*, const ObjectPropertyConditionSet&, JSFunction* intrinsicFunction, std::unique_ptr<PolyProtoAccessChain>);
+    static std::unique_ptr<AccessCase> create(VM&, JSCell*, CacheableIdentifier, PropertyOffset, Structure*, const ObjectPropertyConditionSet&, JSFunction* intrinsicFunction, std::unique_ptr<PolyProtoAccessChain>);
 
     std::unique_ptr<AccessCase> clone() const override;
 
     ~IntrinsicGetterAccessCase();
 
 private:
-    IntrinsicGetterAccessCase(VM&, JSCell*, const Identifier&, PropertyOffset, Structure*, const ObjectPropertyConditionSet&, JSFunction* intrinsicFunction, std::unique_ptr<PolyProtoAccessChain>);
+    IntrinsicGetterAccessCase(VM&, JSCell*, CacheableIdentifier, PropertyOffset, Structure*, const ObjectPropertyConditionSet&, JSFunction* intrinsicFunction, std::unique_ptr<PolyProtoAccessChain>);
 
     WriteBarrier<JSFunction> m_intrinsicFunction;
 };

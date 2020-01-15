@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "CacheableIdentifier.h"
 #include "CodeBlock.h"
 #include "CodeOrigin.h"
 #include "Instruction.h"
@@ -74,18 +75,20 @@ public:
     StructureStubInfo(AccessType);
     ~StructureStubInfo();
 
-    void initGetByIdSelf(CodeBlock*, Structure* baseObjectStructure, PropertyOffset, const Identifier&);
+    void initGetByIdSelf(CodeBlock*, Structure* baseObjectStructure, PropertyOffset, CacheableIdentifier);
     void initArrayLength();
     void initStringLength();
     void initPutByIdReplace(CodeBlock*, Structure* baseObjectStructure, PropertyOffset);
     void initInByIdSelf(CodeBlock*, Structure* baseObjectStructure, PropertyOffset);
 
-    AccessGenerationResult addAccessCase(const GCSafeConcurrentJSLocker&, CodeBlock*, const Identifier&, std::unique_ptr<AccessCase>);
+    AccessGenerationResult addAccessCase(const GCSafeConcurrentJSLocker&, CodeBlock*, CacheableIdentifier, std::unique_ptr<AccessCase>);
 
     void reset(CodeBlock*);
 
     void deref();
     void aboutToDie();
+
+    void visitAggregate(SlotVisitor&);
 
     // Check if the stub has weak references that are dead. If it does, then it resets itself,
     // either entirely or just enough to ensure that those dead pointers don't get used anymore.
@@ -171,7 +174,7 @@ public:
 
     CodeOrigin codeOrigin;
 private:
-    Box<Identifier> m_getByIdSelfIdentifier;
+    CacheableIdentifier m_getByIdSelfIdentifier;
 public:
 
     union {
@@ -182,7 +185,7 @@ public:
         PolymorphicAccess* stub;
     } u;
 
-    Box<Identifier> getByIdSelfIdentifier()
+    CacheableIdentifier getByIdSelfIdentifier()
     {
         RELEASE_ASSERT(m_cacheType == CacheType::GetByIdSelf);
         return m_getByIdSelfIdentifier;

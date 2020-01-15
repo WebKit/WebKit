@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -93,7 +93,6 @@ private:
     static void threadFunction(void* argument);
     
     void removeAllReadyPlansForVM(VM&, Vector<RefPtr<Plan>, 8>&);
-    void deleteCancelledPlansForVM(LockHolder&, VM&);
 
     void dump(const AbstractLocker&, PrintStream&) const;
     
@@ -114,7 +113,6 @@ private:
     // Used to quickly find which plans have been compiled and are ready to
     // be completed.
     Vector<RefPtr<Plan>, 16> m_readyPlans;
-    Vector<RefPtr<Plan>, 4> m_cancelledPlansPendingDestruction;
     Ref<AutomaticThreadCondition> m_planEnqueued;
     Condition m_planCompiled;
 

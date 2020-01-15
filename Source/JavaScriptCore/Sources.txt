@@ -729,6 +729,7 @@ runtime/BytecodeCacheError.cpp
 runtime/CallData.cpp
 runtime/CachePayload.cpp
 runtime/CacheUpdate.cpp
+runtime/CacheableIdentifier.cpp
 runtime/CachedBytecode.cpp
 runtime/CachedTypes.cpp
 runtime/CatchScope.cpp
