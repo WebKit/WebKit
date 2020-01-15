@@ -47,10 +47,10 @@ using namespace DFG;
 
 OSRExitDescriptor::OSRExitDescriptor(
     DataFormat profileDataFormat, MethodOfGettingAValueProfile valueProfile,
-    unsigned numberOfArguments, unsigned numberOfLocals, unsigned numberOfTmps)
+    unsigned numberOfArguments, unsigned numberOfLocals)
     : m_profileDataFormat(profileDataFormat)
     , m_valueProfile(valueProfile)
-    , m_values(numberOfArguments, numberOfLocals, numberOfTmps)
+    , m_values(numberOfArguments, numberOfLocals)
 {
 }
 
@@ -117,3 +117,5 @@ CodeLocationJump<JSInternalPtrTag> OSRExit::codeLocationForRepatch(CodeBlock* ft
 } } // namespace JSC::FTL
 
 #endif // ENABLE(FTL_JIT)
+
+

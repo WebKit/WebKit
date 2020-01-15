@@ -90,22 +90,22 @@ bool CallFrame::callSiteBitsAreCodeOriginIndex() const
 
 unsigned CallFrame::callSiteAsRawBits() const
 {
-    return this[static_cast<int>(CallFrameSlot::argumentCountIncludingThis)].tag();
+    return this[CallFrameSlot::argumentCountIncludingThis].tag();
 }
 
 SUPPRESS_ASAN unsigned CallFrame::unsafeCallSiteAsRawBits() const
 {
-    return this[static_cast<int>(CallFrameSlot::argumentCountIncludingThis)].unsafeTag();
+    return this[CallFrameSlot::argumentCountIncludingThis].unsafeTag();
 }
 
 CallSiteIndex CallFrame::callSiteIndex() const
 {
-    return CallSiteIndex::fromBits(callSiteAsRawBits());
+    return CallSiteIndex(BytecodeIndex(callSiteAsRawBits()));
 }
 
 SUPPRESS_ASAN CallSiteIndex CallFrame::unsafeCallSiteIndex() const
 {
-    return CallSiteIndex::fromBits(unsafeCallSiteAsRawBits());
+    return CallSiteIndex(BytecodeIndex(unsafeCallSiteAsRawBits()));
 }
 
 #if USE(JSVALUE32_64)
@@ -116,8 +116,8 @@ const Instruction* CallFrame::currentVPC() const
 
 void CallFrame::setCurrentVPC(const Instruction* vpc)
 {
-    CallSiteIndex callSite(*vpc);
-    this[static_cast<int>(CallFrameSlot::argumentCountIncludingThis)].tag() = callSite.bits();
+    CallSiteIndex callSite(BytecodeIndex(bitwise_cast<uint32_t>(vpc)));
+    this[CallFrameSlot::argumentCountIncludingThis].tag() = callSite.bits();
 }
 
 unsigned CallFrame::callSiteBitsAsBytecodeOffset() const
@@ -137,8 +137,7 @@ const Instruction* CallFrame::currentVPC() const
 void CallFrame::setCurrentVPC(const Instruction* vpc)
 {
     CallSiteIndex callSite(codeBlock()->bytecodeIndex(vpc));
-    this[static_cast<int>(CallFrameSlot::argumentCountIncludingThis)].tag() = callSite.bits();
-    ASSERT(currentVPC() == vpc);
+    this[CallFrameSlot::argumentCountIncludingThis].tag() = static_cast<int32_t>(callSite.bits());
 }
 
 unsigned CallFrame::callSiteBitsAsBytecodeOffset() const
@@ -167,7 +166,7 @@ BytecodeIndex CallFrame::bytecodeIndex()
     }
 #endif
     ASSERT(callSiteBitsAreBytecodeOffset());
-    return callSiteIndex().bytecodeIndex();
+    return BytecodeIndex(callSiteBitsAsBytecodeOffset());
 }
 
 CodeOrigin CallFrame::codeOrigin()
@@ -181,7 +180,7 @@ CodeOrigin CallFrame::codeOrigin()
         return codeBlock()->codeOrigin(index);
     }
 #endif
-    return CodeOrigin(callSiteIndex().bytecodeIndex());
+    return CodeOrigin(BytecodeIndex(callSiteBitsAsBytecodeOffset()));
 }
 
 Register* CallFrame::topOfFrameInternal()

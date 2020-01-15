@@ -56,7 +56,6 @@ set(WTF_PUBLIC_HEADERS
     DoublyLinkedList.h
     DumbPtrTraits.h
     DumbValueTraits.h
-    EnumClassOperatorOverloads.h
     EnumTraits.h
     Expected.h
     ExportMacros.h

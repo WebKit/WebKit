@@ -509,9 +509,11 @@ static void recomputeDependentOptions()
     if (Options::softReservedZoneSize() < Options::reservedZoneSize() + minimumReservedZoneSize)
         Options::softReservedZoneSize() = Options::reservedZoneSize() + minimumReservedZoneSize;
 
+#if USE(JSVALUE32_64)
     // FIXME: Make probe OSR exit work on 32-bit:
     // https://bugs.webkit.org/show_bug.cgi?id=177956
     Options::useProbeOSRExit() = false;
+#endif
 
     if (!Options::useCodeCache())
         Options::diskCachePath() = nullptr;

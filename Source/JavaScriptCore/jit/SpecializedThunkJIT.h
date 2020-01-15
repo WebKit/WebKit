@@ -55,13 +55,13 @@ namespace JSC {
         
         void loadDoubleArgument(int argument, FPRegisterID dst, RegisterID scratch)
         {
-            VirtualRegister src = virtualRegisterForArgument(argument);
+            unsigned src = CallFrame::argumentOffset(argument);
             m_failures.append(emitLoadDouble(src, dst, scratch));
         }
         
         void loadCellArgument(int argument, RegisterID dst)
         {
-            VirtualRegister src = virtualRegisterForArgument(argument);
+            unsigned src = CallFrame::argumentOffset(argument);
             m_failures.append(emitLoadJSCell(src, dst));
         }
         
@@ -73,7 +73,7 @@ namespace JSC {
         
         void loadInt32Argument(int argument, RegisterID dst, Jump& failTarget)
         {
-            VirtualRegister src = virtualRegisterForArgument(argument);
+            unsigned src = CallFrame::argumentOffset(argument);
             failTarget = emitLoadInt32(src, dst);
         }
         

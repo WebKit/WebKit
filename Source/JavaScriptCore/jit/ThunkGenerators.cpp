@@ -1036,8 +1036,8 @@ MacroAssemblerCodeRef<JITThunkPtrTag> absThunkGenerator(VM& vm)
         return MacroAssemblerCodeRef<JITThunkPtrTag>::createSelfManagedCodeRef(vm.jitStubs->ctiNativeCall(vm));
 
 #if USE(JSVALUE64)
-    VirtualRegister virtualRegister = virtualRegisterForArgument(0);
-    jit.load64(AssemblyHelpers::addressFor(virtualRegister), GPRInfo::regT0);
+    unsigned virtualRegisterIndex = CallFrame::argumentOffset(0);
+    jit.load64(AssemblyHelpers::addressFor(virtualRegisterIndex), GPRInfo::regT0);
     auto notInteger = jit.branchIfNotInt32(GPRInfo::regT0);
 
     // Abs Int32.

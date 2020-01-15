@@ -1,3 +1,10 @@
+2020-01-15  Keith Miller  <keith_miller@apple.com>
+
+        Revert bytecode checkpoints since it breaks watch
+        https://bugs.webkit.org/show_bug.cgi?id=206301
+
+        Unreviewed, revert.
+
 2020-01-15  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         Object.preventExtensions should throw if not successful

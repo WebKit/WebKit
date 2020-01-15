@@ -1095,7 +1095,7 @@ macro getterSetterOSRExitReturnPoint(opName, size)
     defineOSRExitReturnLabel(opName, size)
 
     restoreStackPointerAfterCall()
-    loadi LLIntReturnPC[cfr], PC
+    loadi ArgumentCountIncludingThis + TagOffset[cfr], PC
 end
 
 macro arrayProfile(offset, cellAndIndexingType, metadata, scratch)
@@ -1850,17 +1850,13 @@ end)
 callOp(construct, OpConstruct, prepareForRegularCall, macro (getu, metadata) end)
 
 
-macro branchIfException(exceptionTarget)
+macro doCallVarargs(opcodeName, size, opcodeStruct, dispatch, frameSlowPath, slowPath, prepareCall)
+    callSlowPath(frameSlowPath)
     loadp CodeBlock[cfr], t3
     loadp CodeBlock::m_vm[t3], t3
     btpz VM::m_exception[t3], .noException
-    jmp exceptionTarget
-.noException:    
-end
-
-macro doCallVarargs(opcodeName, size, opcodeStruct, dispatch, frameSlowPath, slowPath, prepareCall)
-    callSlowPath(frameSlowPath)
-    branchIfException(_llint_throw_from_slow_path_trampoline)
+    jmp _llint_throw_from_slow_path_trampoline
+.noException:
     # calleeFrame in r1
     if JSVALUE64
         move r1, sp
@@ -2014,40 +2010,6 @@ op(llint_internal_function_construct_trampoline, macro ()
     internalFunctionCallTrampoline(InternalFunction::m_functionForConstruct)
 end)
 
-
-op(checkpoint_osr_exit_from_inlined_call_trampoline, macro ()
-    if JSVALUE64 and not (C_LOOP or C_LOOP_WIN)
-        restoreStackPointerAfterCall()
-
-        # Make sure we move r0 to a1 first since r0 might be the same as a0, for instance, on arm.
-        move r0, a1
-        move cfr, a0
-        # We don't call saveStateForCCall() because we are going to use the bytecodeIndex from our side state.
-        cCall2(_slow_path_checkpoint_osr_exit_from_inlined_call)
-        restoreStateAfterCCall()
-        branchIfException(_llint_throw_from_slow_path_trampoline)
-        jmp r1, JSEntryPtrTag
-    else
-        notSupported()
-    end
-end)
-
-op(checkpoint_osr_exit_trampoline, macro ()
-    # FIXME: We can probably dispatch to the checkpoint handler directly but this was easier 
-    # and probably doesn't matter for performance.
-    if JSVALUE64 and not (C_LOOP or C_LOOP_WIN)
-        restoreStackPointerAfterCall()
-
-        move cfr, a0
-        # We don't call saveStateForCCall() because we are going to use the bytecodeIndex from our side state.
-        cCall2(_slow_path_checkpoint_osr_exit)
-        restoreStateAfterCCall()
-        branchIfException(_llint_throw_from_slow_path_trampoline)
-        jmp r1, JSEntryPtrTag
-    else
-        notSupported()
-    end
-end)
 
 # Lastly, make sure that we can link even though we don't support all opcodes.
 # These opcodes should never arise when using LLInt or either JIT. We assert

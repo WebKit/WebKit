@@ -297,7 +297,7 @@ bool GenericArguments<Type>::isModifiedArgumentDescriptor(unsigned index, unsign
 }
 
 template<typename Type>
-void GenericArguments<Type>::copyToArguments(JSGlobalObject* globalObject, JSValue* firstElementDest, unsigned offset, unsigned length)
+void GenericArguments<Type>::copyToArguments(JSGlobalObject* globalObject, CallFrame* callFrame, VirtualRegister firstElementDest, unsigned offset, unsigned length)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -305,9 +305,9 @@ void GenericArguments<Type>::copyToArguments(JSGlobalObject* globalObject, JSVal
     Type* thisObject = static_cast<Type*>(this);
     for (unsigned i = 0; i < length; ++i) {
         if (thisObject->isMappedArgument(i + offset))
-            firstElementDest[i] = thisObject->getIndexQuickly(i + offset);
+            callFrame->r(firstElementDest + i) = thisObject->getIndexQuickly(i + offset);
         else {
-            firstElementDest[i] = get(globalObject, i + offset);
+            callFrame->r(firstElementDest + i) = get(globalObject, i + offset);
             RETURN_IF_EXCEPTION(scope, void());
         }
     }

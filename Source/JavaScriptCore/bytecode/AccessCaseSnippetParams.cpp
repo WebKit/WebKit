@@ -55,7 +55,7 @@ public:
 
         jit.store32(
             CCallHelpers::TrustedImm32(state.callSiteIndexForExceptionHandlingOrOriginal().bits()),
-            CCallHelpers::tagFor(CallFrameSlot::argumentCountIncludingThis));
+            CCallHelpers::tagFor(static_cast<VirtualRegister>(CallFrameSlot::argumentCountIncludingThis)));
 
         jit.makeSpaceOnStackForCCall();
 

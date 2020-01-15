@@ -34,7 +34,6 @@
 #include "BooleanObject.h"
 #include "BuiltinExecutables.h"
 #include "BytecodeIntrinsicRegistry.h"
-#include "CheckpointOSRExitSideState.h"
 #include "ClonedArguments.h"
 #include "CodeBlock.h"
 #include "CodeCache.h"
@@ -1063,30 +1062,7 @@ void VM::gatherScratchBufferRoots(ConservativeRoots& conservativeRoots)
         }
     }
 }
-
-void VM::scanSideState(ConservativeRoots& roots) const
-{
-    ASSERT(heap.worldIsStopped());
-    for (const auto& iter : m_checkpointSideState) {
-        static_assert(sizeof(iter.value->tmps) / sizeof(JSValue) == maxNumCheckpointTmps);
-        roots.add(iter.value->tmps, iter.value->tmps + maxNumCheckpointTmps);
-    }
-}
 #endif
-
-void VM::addCheckpointOSRSideState(CallFrame* callFrame, std::unique_ptr<CheckpointOSRExitSideState>&& payload)
-{
-    ASSERT(currentThreadIsHoldingAPILock());
-    auto addResult = m_checkpointSideState.add(callFrame, WTFMove(payload));
-    ASSERT_UNUSED(addResult, addResult.isNewEntry);
-}
-
-std::unique_ptr<CheckpointOSRExitSideState> VM::findCheckpointOSRSideState(CallFrame* callFrame)
-{
-    ASSERT(currentThreadIsHoldingAPILock());
-    auto sideState = m_checkpointSideState.take(callFrame);
-    return sideState;
-}
 
 void logSanitizeStack(VM& vm)
 {
