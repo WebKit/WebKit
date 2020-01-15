@@ -249,8 +249,6 @@ void VideoFullscreenManager::enterVideoFullscreenForVideoElement(HTMLVideoElemen
 
     auto [model, interface] = ensureModelAndInterface(contextId);
     HTMLMediaElementEnums::VideoFullscreenMode oldMode = interface->fullscreenMode();
-    if (oldMode == mode)
-        return;
 
     addClientForContext(contextId);
     if (!interface->layerHostingContext())
@@ -299,14 +297,10 @@ void VideoFullscreenManager::exitVideoFullscreenForVideoElement(WebCore::HTMLVid
 
     uint64_t contextId = m_videoElements.get(&videoElement);
     auto& interface = ensureInterface(contextId);
-    HTMLMediaElementEnums::VideoFullscreenMode oldMode = interface.fullscreenMode();
-    if (oldMode == HTMLMediaElementEnums::VideoFullscreenModeNone)
-        return;
-
     interface.setTargetIsFullscreen(false);
-
     if (interface.animationState() != VideoFullscreenInterfaceContext::AnimationType::None)
         return;
+
     interface.setAnimationState(VideoFullscreenInterfaceContext::AnimationType::FromFullscreen);
     m_page->send(Messages::VideoFullscreenManagerProxy::ExitFullscreen(contextId, inlineVideoFrame(videoElement)));
 }
