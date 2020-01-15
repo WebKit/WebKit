@@ -31,10 +31,6 @@
 #include "Logging.h"
 #include <wtf/StdLibExtras.h>
 
-#if PLATFORM(COCOA)
-#include <wtf/darwin/WeakLinking.h>
-#endif
-
 namespace WebCore {
 
 // FIXME: This is awful. Get rid of ANGLEWebKitBridge completely and call the libANGLE API directly to validate shaders.
@@ -135,10 +131,6 @@ ANGLEWebKitBridge::ANGLEWebKitBridge(ShShaderOutput shaderOutput, ShShaderSpec s
     , m_shaderOutput(shaderOutput)
     , m_shaderSpec(shaderSpec)
 {
-    ASSERT(angleAvailable());
-    if (!angleAvailable())
-        return;
-
     // This is a no-op if it's already initialized.
     sh::Initialize();
 }
@@ -150,10 +142,6 @@ ANGLEWebKitBridge::~ANGLEWebKitBridge()
 
 void ANGLEWebKitBridge::cleanupCompilers()
 {
-    ASSERT(ANGLEWebKitBridge::angleAvailable());
-    if (!ANGLEWebKitBridge::angleAvailable())
-        return;
-
     if (m_fragmentCompiler)
         sh::Destruct(m_fragmentCompiler);
     m_fragmentCompiler = nullptr;
@@ -174,10 +162,6 @@ void ANGLEWebKitBridge::setResources(const ShBuiltInResources& resources)
 
 bool ANGLEWebKitBridge::compileShaderSource(const char* shaderSource, ANGLEShaderType shaderType, String& translatedShaderSource, String& shaderValidationLog, Vector<std::pair<ANGLEShaderSymbolType, sh::ShaderVariable>>& symbols, uint64_t extraCompileOptions)
 {
-    ASSERT(ANGLEWebKitBridge::angleAvailable());
-    if (!ANGLEWebKitBridge::angleAvailable())
-        return false;
-
     if (!builtCompilers) {
         m_fragmentCompiler = sh::ConstructCompiler(GL_FRAGMENT_SHADER, m_shaderSpec, m_shaderOutput, &m_resources);
         m_vertexCompiler = sh::ConstructCompiler(GL_VERTEX_SHADER, m_shaderSpec, m_shaderOutput, &m_resources);
@@ -218,15 +202,6 @@ bool ANGLEWebKitBridge::compileShaderSource(const char* shaderSource, ANGLEShade
         return false;
 
     return true;
-}
-
-bool ANGLEWebKitBridge::angleAvailable()
-{
-#if PLATFORM(COCOA)
-    return !isNullFunctionPointer(sh::Compile);
-#else
-    return true;
-#endif
 }
 
 }

@@ -1,3 +1,91 @@
+2020-01-15  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r254551. rdar://problem/58508705
+
+    Build ANGLE as a dynamic library
+    https://bugs.webkit.org/show_bug.cgi?id=204708
+    rdar://57349384
+    
+    Rolling this out for the 2nd time.
+    
+    Source/ThirdParty/ANGLE:
+    
+    - it caused issues with the shared dyld cache, because the
+    cache doesn't know to include the libary until it already
+    exists in the build
+    - probably related to the above, we saw some performance
+    regressions directly related to this change
+    
+    * ANGLE.xcodeproj/project.pbxproj:
+    * Configurations/ANGLE.xcconfig:
+    * Configurations/Base.xcconfig:
+    * Configurations/DebugRelease.xcconfig:
+    * include/CMakeLists.txt:
+    * include/GLSLANG/ShaderLang.h:
+    * include/GLSLANG/ShaderVars.h:
+    * src/libANGLE/renderer/gl/cgl/DisplayCGL.mm:
+    (rx::DisplayCGL::isValidNativeWindow const):
+    * src/libANGLE/renderer/gl/cgl/WindowSurfaceCGL.mm:
+    (rx::WindowSurfaceCGL::WindowSurfaceCGL):
+    (rx::WindowSurfaceCGL::~WindowSurfaceCGL):
+    * src/libANGLE/renderer/gl/eagl/DisplayEAGL.mm:
+    (rx::DisplayEAGL::terminate):
+    (rx::DisplayEAGL::isValidNativeWindow const):
+    (rx::WorkerContextEAGL::~WorkerContextEAGL):
+    * src/libANGLE/renderer/gl/eagl/WindowSurfaceEAGL.mm:
+    (rx::WindowSurfaceEAGL::WindowSurfaceEAGL):
+    (rx::WindowSurfaceEAGL::~WindowSurfaceEAGL):
+    
+    Source/WebCore:
+    
+    * Configurations/WebCore.xcconfig:
+    * Configurations/WebCoreTestSupport.xcconfig:
+    * WebCore.xcodeproj/project.pbxproj:
+    * platform/graphics/ANGLEWebKitBridge.cpp:
+    (WebCore::ANGLEWebKitBridge::ANGLEWebKitBridge):
+    (WebCore::ANGLEWebKitBridge::cleanupCompilers):
+    (WebCore::ANGLEWebKitBridge::compileShaderSource):
+    (WebCore::ANGLEWebKitBridge::angleAvailable): Deleted.
+    * platform/graphics/ANGLEWebKitBridge.h:
+    * platform/graphics/cocoa/GraphicsContextGLOpenGLCocoa.mm:
+    (WebCore::GraphicsContextGLOpenGL::GraphicsContextGLOpenGL):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@254551 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-01-14  Dean Jackson  <dino@apple.com>
+
+            Build ANGLE as a dynamic library
+            https://bugs.webkit.org/show_bug.cgi?id=204708
+            rdar://57349384
+
+            Rolling this out for the 2nd time.
+
+            - it caused issues with the shared dyld cache, because the
+            cache doesn't know to include the libary until it already
+            exists in the build
+            - probably related to the above, we saw some performance
+            regressions directly related to this change
+
+            * ANGLE.xcodeproj/project.pbxproj:
+            * Configurations/ANGLE.xcconfig:
+            * Configurations/Base.xcconfig:
+            * Configurations/DebugRelease.xcconfig:
+            * include/CMakeLists.txt:
+            * include/GLSLANG/ShaderLang.h:
+            * include/GLSLANG/ShaderVars.h:
+            * src/libANGLE/renderer/gl/cgl/DisplayCGL.mm:
+            (rx::DisplayCGL::isValidNativeWindow const):
+            * src/libANGLE/renderer/gl/cgl/WindowSurfaceCGL.mm:
+            (rx::WindowSurfaceCGL::WindowSurfaceCGL):
+            (rx::WindowSurfaceCGL::~WindowSurfaceCGL):
+            * src/libANGLE/renderer/gl/eagl/DisplayEAGL.mm:
+            (rx::DisplayEAGL::terminate):
+            (rx::DisplayEAGL::isValidNativeWindow const):
+            (rx::WorkerContextEAGL::~WorkerContextEAGL):
+            * src/libANGLE/renderer/gl/eagl/WindowSurfaceEAGL.mm:
+            (rx::WindowSurfaceEAGL::WindowSurfaceEAGL):
+            (rx::WindowSurfaceEAGL::~WindowSurfaceEAGL):
+
 2019-12-25  Dean Jackson  <dino@apple.com>
 
         [WebGL] Enable ANGLE by default for Cocoa platforms (except simulator)

@@ -16,7 +16,6 @@ set(khr_headers ${includes})
 list(FILTER khr_headers INCLUDE REGEX "KHR/.*")
 
 set(glslang_headers
-    export.h
     GLSLANG/ShaderLang.h
     GLSLANG/ShaderVars.h
 )
