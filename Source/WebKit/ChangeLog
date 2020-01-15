@@ -1,5 +1,64 @@
 2020-01-14  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r254239. rdar://problem/58549100
+
+    Resource Load Statistics: Flip experimental cookie blocking setting from an enable to a disable
+    https://bugs.webkit.org/show_bug.cgi?id=205963
+    <rdar://problem/58424136>
+    
+    Reviewed by Brent Fulgham.
+    
+    To get default on behavior, experimental features in the network process need to be
+    turned from enable flags to disable flags. This patch does that for the experimental
+    cookie blocking flag.
+    
+    Source/WebCore:
+    
+    No new tests. This change just reverses the interpretation of a flag.
+    
+    * page/Settings.yaml:
+    
+    Source/WebKit:
+    
+    This change also aligns the init values of the setting to match the default.
+    
+    * NetworkProcess/Classifier/ResourceLoadStatisticsStore.h:
+    * NetworkProcess/NetworkSession.h:
+    * NetworkProcess/NetworkSessionCreationParameters.h:
+    * Shared/WebPreferences.yaml:
+    * UIProcess/WebProcessPool.cpp:
+    (WebKit::WebProcessPool::ensureNetworkProcess):
+    * UIProcess/WebsiteData/Cocoa/WebsiteDataStoreCocoa.mm:
+    (WebKit::WebsiteDataStore::parameters):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@254239 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-01-08  John Wilander  <wilander@apple.com>
+
+            Resource Load Statistics: Flip experimental cookie blocking setting from an enable to a disable
+            https://bugs.webkit.org/show_bug.cgi?id=205963
+            <rdar://problem/58424136>
+
+            Reviewed by Brent Fulgham.
+
+            To get default on behavior, experimental features in the network process need to be
+            turned from enable flags to disable flags. This patch does that for the experimental
+            cookie blocking flag.
+
+            This change also aligns the init values of the setting to match the default.
+
+            * NetworkProcess/Classifier/ResourceLoadStatisticsStore.h:
+            * NetworkProcess/NetworkSession.h:
+            * NetworkProcess/NetworkSessionCreationParameters.h:
+            * Shared/WebPreferences.yaml:
+            * UIProcess/WebProcessPool.cpp:
+            (WebKit::WebProcessPool::ensureNetworkProcess):
+            * UIProcess/WebsiteData/Cocoa/WebsiteDataStoreCocoa.mm:
+            (WebKit::WebsiteDataStore::parameters):
+
+2020-01-14  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r254208. rdar://problem/58559193
 
     IPC::Connection::sendMessage() should use CRASH_WITH_INFO()
