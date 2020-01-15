@@ -1272,11 +1272,7 @@ void DocumentLoader::clearMainResourceLoader()
 {
     m_loadingMainResource = false;
 
-    auto* frameLoader = this->frameLoader();
-    if (!frameLoader)
-        return;
-
-    if (this == frameLoader->activeDocumentLoader())
+    if (this == frameLoader()->activeDocumentLoader())
         checkLoadComplete();
 }
 

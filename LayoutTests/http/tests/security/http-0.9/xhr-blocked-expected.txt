@@ -1,3 +1,2 @@
-asdf
 ALERT: PASS
 
