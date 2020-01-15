@@ -54,7 +54,7 @@ public:
     using FloatList = Vector<WeakPtr<InlineItem>>;
 
 private:
-    LineCandidateContent nextContentForLine(unsigned inlineItemIndex, Optional<unsigned> overflowLength, InlineLayoutUnit currentLogicalRight);
+    void nextContentForLine(LineCandidateContent&, unsigned inlineItemIndex, Optional<unsigned> overflowLength, InlineLayoutUnit currentLogicalRight);
     struct Result {
         LineBreaker::IsEndOfLine isEndOfLine { LineBreaker::IsEndOfLine::No };
         size_t committedCount { 0 };

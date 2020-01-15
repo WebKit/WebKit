@@ -185,6 +185,8 @@ struct LineCandidateContent {
 
     const InlineItem* trailingLineBreak() const { return m_trailingLineBreak; }
 
+    void reset();
+
 private:
     void setTrailingLineBreak(const InlineItem& lineBreakItem) { m_trailingLineBreak = &lineBreakItem; }
 
@@ -201,6 +203,13 @@ void LineCandidateContent::append(const InlineItem& inlineItem, Optional<InlineL
     if (inlineItem.isFloat())
         return m_floats.append(makeWeakPtr(inlineItem));
     m_inlineRuns.append({ inlineItem, *logicalWidth });
+}
+
+void LineCandidateContent::reset()
+{
+    m_inlineRuns.clear();
+    m_floats.clear();
+    m_trailingLineBreak = nullptr;
 }
 
 static InlineLayoutUnit inlineItemWidth(const FormattingContext& formattingContext, const InlineItem& inlineItem, InlineLayoutUnit contentLogicalLeft)
@@ -258,12 +267,13 @@ LineLayoutContext::LineContent LineLayoutContext::layoutLine(LineBuilder& line, 
     auto lineBreaker = LineBreaker { };
     auto currentItemIndex = leadingInlineItemIndex;
     unsigned committedInlineItemCount = 0;
+    auto candidateContent = LineCandidateContent { };
     while (currentItemIndex < m_inlineItems.size()) {
         // 1. Collect the set of runs that we can commit to the line as one entity e.g. <span>text_and_span_start_span_end</span>.
         // 2. Apply floats and shrink the available horizontal space e.g. <span>intru_<div style="float: left"></div>sive_float</span>.
         // 3. Check if the content fits the line and commit the content accordingly (full, partial or not commit at all).
         // 4. Return if we are at the end of the line either by not being able to fit more content or because of an explicit line break.
-        auto candidateContent = nextContentForLine(currentItemIndex, partialLeadingContentLength, line.lineBox().logicalWidth());
+        nextContentForLine(candidateContent, currentItemIndex, partialLeadingContentLength, line.lineBox().logicalWidth());
         if (candidateContent.hasIntrusiveFloats()) {
             // Add floats first because they shrink the available horizontal space for the rest of the content.
             auto result = tryAddingFloatItems(line, candidateContent.floats());
@@ -328,9 +338,10 @@ LineLayoutContext::LineContent LineLayoutContext::close(LineBuilder& line, unsig
     return LineContent { trailingInlineItemIndex, partialContent, WTFMove(m_floats), line.close(isLastLineWithInlineContent), line.lineBox() };
 }
 
-LineCandidateContent LineLayoutContext::nextContentForLine(unsigned inlineItemIndex, Optional<unsigned> partialLeadingContentLength, InlineLayoutUnit currentLogicalRight)
+void LineLayoutContext::nextContentForLine(LineCandidateContent& candidateContent, unsigned inlineItemIndex, Optional<unsigned> partialLeadingContentLength, InlineLayoutUnit currentLogicalRight)
 {
     ASSERT(inlineItemIndex < m_inlineItems.size());
+    candidateContent.reset();
     // 1. Simply add any overflow content from the previous line to the candidate content. It's always a text content.
     // 2. Find the next soft wrap position or explicit line break.
     // 3. Collect floats between the inline content.
@@ -338,7 +349,6 @@ LineCandidateContent LineLayoutContext::nextContentForLine(unsigned inlineItemIn
     // softWrapOpportunityIndex == m_inlineItems.size() means we don't have any wrap opportunity in this content.
     ASSERT(softWrapOpportunityIndex <= m_inlineItems.size());
 
-    auto candidateContent = LineCandidateContent { };
     if (partialLeadingContentLength) {
         // Handle leading partial content first (split text from the previous line).
         // Construct a partial leading inline item.
@@ -361,7 +371,6 @@ LineCandidateContent LineLayoutContext::nextContentForLine(unsigned inlineItemIn
         candidateContent.append(inlineItem, inlineItenmWidth);
         currentLogicalRight += inlineItenmWidth;
     }
-    return candidateContent;
 }
 
 LineLayoutContext::Result LineLayoutContext::tryAddingFloatItems(LineBuilder& line, const FloatList& floats)
