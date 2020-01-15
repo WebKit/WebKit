@@ -1,5 +1,35 @@
 2020-01-14  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r254374. rdar://problem/58549092
+
+    Resource Load Statistics: Align WebCore::NetworkStorageSession's m_thirdPartyCookieBlockingMode init value with r254239
+    https://bugs.webkit.org/show_bug.cgi?id=206082
+    <rdar://problem/58487498>
+    
+    Unreviewed minor, follow-up fix.
+    
+    
+    * platform/network/NetworkStorageSession.h:
+        The init value of m_thirdPartyCookieBlockingMode was changed to
+        ThirdPartyCookieBlockingMode::All to align it with r254239.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@254374 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-01-10  John Wilander  <wilander@apple.com>
+
+            Resource Load Statistics: Align WebCore::NetworkStorageSession's m_thirdPartyCookieBlockingMode init value with r254239
+            https://bugs.webkit.org/show_bug.cgi?id=206082
+            <rdar://problem/58487498>
+
+            Unreviewed minor, follow-up fix.
+
+            * platform/network/NetworkStorageSession.h:
+                The init value of m_thirdPartyCookieBlockingMode was changed to
+                ThirdPartyCookieBlockingMode::All to align it with r254239.
+
+2020-01-14  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r254322. rdar://problem/58549088
 
     Block cross-site top-frame navigations from untrusted iframes
