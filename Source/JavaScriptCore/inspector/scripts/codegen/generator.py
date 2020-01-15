@@ -295,7 +295,6 @@ class Generator:
 
     @staticmethod
     def js_name_for_parameter_type(_type):
-        _type = _type
         if isinstance(_type, AliasedType):
             _type = _type.aliased_type  # Fall through.
         if isinstance(_type, EnumType):
