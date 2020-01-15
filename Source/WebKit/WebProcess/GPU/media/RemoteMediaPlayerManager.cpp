@@ -28,7 +28,9 @@
 
 #if ENABLE(GPU_PROCESS)
 
+#include "AudioMediaStreamTrackRenderer.h"
 #include "MediaPlayerPrivateRemote.h"
+#include "RemoteAudioMediaStreamTrackRenderer.h"
 #include "RemoteMediaPlayerConfiguration.h"
 #include "RemoteMediaPlayerMIMETypeCache.h"
 #include "RemoteMediaPlayerManagerMessages.h"
@@ -366,6 +368,11 @@ void RemoteMediaPlayerManager::updatePreferences(const Settings& settings)
     };
 
     RemoteMediaPlayerSupport::setRegisterRemotePlayerCallback(settings.useGPUProcessForMedia() ? WTFMove(registerEngine) : RemoteMediaPlayerSupport::RegisterRemotePlayerCallback());
+
+#if PLATFORM(COCOA) && ENABLE(VIDEO_TRACK) && ENABLE(MEDIA_STREAM)
+    if (settings.useGPUProcessForMedia())
+        WebCore::AudioMediaStreamTrackRenderer::setCreator(WebKit::AudioMediaStreamTrackRenderer::create);
+#endif
 }
 
 void RemoteMediaPlayerManager::updateCachedState(MediaPlayerPrivateRemoteIdentifier id, RemoteMediaPlayerState&& state)

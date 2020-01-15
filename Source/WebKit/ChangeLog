@@ -1,3 +1,67 @@
+2020-01-15  youenn fablet  <youenn@apple.com>
+
+        Add support for MediaStream audio track rendering in GPUProcess
+        https://bugs.webkit.org/show_bug.cgi?id=206175
+
+        Reviewed by Eric Carlson.
+
+        Implement an AudioMediaStreamTrackRenderer at WebKit level by creating a remote renderer in GPUProcess and sending IPC to pass
+        audio data as well as orders (start/stop/setMuted).
+
+        Implement the remote renderer using WebCore audio track renderer.
+
+        Enable WebKit remote renderer F GPU process for media is enabled.
+
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources-output.xcfilelist:
+        * DerivedSources.make:
+        * GPUProcess/GPUConnectionToWebProcess.cpp:
+        (WebKit::GPUConnectionToWebProcess::audioTrackRendererManager):
+        (WebKit::GPUConnectionToWebProcess::didReceiveMessage):
+        * GPUProcess/GPUConnectionToWebProcess.h:
+        * GPUProcess/webrtc/RemoteAudioMediaStreamTrackRenderer.cpp: Added.
+        (WebKit::nextLogIdentifier):
+        (WebKit::nullLogger):
+        (WebKit::RemoteAudioMediaStreamTrackRenderer::RemoteAudioMediaStreamTrackRenderer):
+        (WebKit::RemoteAudioMediaStreamTrackRenderer::~RemoteAudioMediaStreamTrackRenderer):
+        (WebKit::RemoteAudioMediaStreamTrackRenderer::storage):
+        (WebKit::RemoteAudioMediaStreamTrackRenderer::start):
+        (WebKit::RemoteAudioMediaStreamTrackRenderer::stop):
+        (WebKit::RemoteAudioMediaStreamTrackRenderer::clear):
+        (WebKit::RemoteAudioMediaStreamTrackRenderer::setMuted):
+        (WebKit::RemoteAudioMediaStreamTrackRenderer::setVolume):
+        (WebKit::RemoteAudioMediaStreamTrackRenderer::audioSamplesStorageChanged):
+        (WebKit::RemoteAudioMediaStreamTrackRenderer::audioSamplesAvailable):
+        * GPUProcess/webrtc/RemoteAudioMediaStreamTrackRenderer.h: Added.
+        * GPUProcess/webrtc/RemoteAudioMediaStreamTrackRenderer.messages.in: Added.
+        * GPUProcess/webrtc/RemoteAudioMediaStreamTrackRendererManager.cpp: Added.
+        (WebKit::RemoteAudioMediaStreamTrackRendererManager::didReceiveRendererMessage):
+        (WebKit::RemoteAudioMediaStreamTrackRendererManager::createRenderer):
+        (WebKit::RemoteAudioMediaStreamTrackRendererManager::releaseRenderer):
+        * GPUProcess/webrtc/RemoteAudioMediaStreamTrackRendererManager.h: Added.
+        (WebKit::RemoteAudioMediaStreamTrackRendererManager::didReceiveMessageFromWebProcess):
+        * GPUProcess/webrtc/RemoteAudioMediaStreamTrackRendererManager.messages.in: Added.
+        * Scripts/webkit/messages.py:
+        * Sources.txt:
+        * SourcesCocoa.txt:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/GPU/media/RemoteMediaPlayerManager.cpp:
+        (WebKit::RemoteMediaPlayerManager::updatePreferences):
+        * WebProcess/GPU/webrtc/AudioMediaStreamTrackRenderer.cpp: Added.
+        (WebKit::AudioMediaStreamTrackRenderer::create):
+        (WebKit::AudioMediaStreamTrackRenderer::AudioMediaStreamTrackRenderer):
+        (WebKit::AudioMediaStreamTrackRenderer::~AudioMediaStreamTrackRenderer):
+        (WebKit::AudioMediaStreamTrackRenderer::start):
+        (WebKit::AudioMediaStreamTrackRenderer::stop):
+        (WebKit::AudioMediaStreamTrackRenderer::clear):
+        (WebKit::AudioMediaStreamTrackRenderer::setMuted):
+        (WebKit::AudioMediaStreamTrackRenderer::setVolume):
+        (WebKit::AudioMediaStreamTrackRenderer::pushSamples):
+        (WebKit::AudioMediaStreamTrackRenderer::storageChanged):
+        * WebProcess/GPU/webrtc/AudioMediaStreamTrackRenderer.h: Added.
+        (WebKit::AudioMediaStreamTrackRenderer::identifier const):
+        * WebProcess/GPU/webrtc/AudioMediaStreamTrackRendererIdentifier.h: Added.
+
 2020-01-14  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r254548.

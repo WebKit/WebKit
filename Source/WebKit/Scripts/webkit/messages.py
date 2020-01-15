@@ -218,6 +218,7 @@ def types_that_cannot_be_forward_declared():
         'WebCore::ServiceWorkerRegistrationIdentifier',
         'WebCore::SWServerConnectionIdentifier',
         'WebKit::ActivityStateChangeID',
+        'WebKit::AudioMediaStreamTrackRendererIdentifier',
         'WebKit::LayerHostingContextID',
         'WebKit::MediaPlayerPrivateRemoteIdentifier',
         'WebKit::MediaRecorderIdentifier',

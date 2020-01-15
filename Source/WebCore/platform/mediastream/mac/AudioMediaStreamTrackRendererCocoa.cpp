@@ -43,17 +43,26 @@ AudioMediaStreamTrackRendererCocoa::AudioMediaStreamTrackRendererCocoa() = defau
 
 AudioMediaStreamTrackRendererCocoa::~AudioMediaStreamTrackRendererCocoa() = default;
 
+void AudioMediaStreamTrackRendererCocoa::start()
+{
+    m_shouldPlay = true;
+
+    if (m_dataSource)
+        m_dataSource->setPaused(false);
+}
+
 void AudioMediaStreamTrackRendererCocoa::stop()
 {
-    if (!m_isAudioUnitStarted)
-        return;
+    m_shouldPlay = false;
 
-    if (m_remoteIOUnit)
-        AudioOutputUnitStop(m_remoteIOUnit);
+    if (m_dataSource)
+        m_dataSource->setPaused(true);
 }
 
 void AudioMediaStreamTrackRendererCocoa::clear()
 {
+    m_shouldPlay = false;
+
     if (m_dataSource)
         m_dataSource->setPaused(true);
 
@@ -66,13 +75,7 @@ void AudioMediaStreamTrackRendererCocoa::clear()
     m_dataSource = nullptr;
     m_inputDescription = nullptr;
     m_outputDescription = nullptr;
-}
-
-void AudioMediaStreamTrackRendererCocoa::setPaused(bool value)
-{
-    m_paused = value;
-    if (m_dataSource)
-        m_dataSource->setPaused(value);
+    m_isAudioUnitStarted = false;
 }
 
 AudioComponentInstance AudioMediaStreamTrackRendererCocoa::createAudioUnit(CAAudioStreamDescription& outputDescription)
@@ -143,6 +146,14 @@ AudioComponentInstance AudioMediaStreamTrackRendererCocoa::createAudioUnit(CAAud
 void AudioMediaStreamTrackRendererCocoa::pushSamples(const MediaTime& sampleTime, const PlatformAudioData& audioData, const AudioStreamDescription& description, size_t sampleCount)
 {
     ASSERT(description.platformDescription().type == PlatformDescription::CAAudioStreamBasicType);
+    if (!m_shouldPlay) {
+        if (m_isAudioUnitStarted) {
+            if (m_remoteIOUnit)
+                AudioOutputUnitStop(m_remoteIOUnit);
+            m_isAudioUnitStarted = false;
+        }
+        return;
+    }
 
     if (!m_inputDescription || *m_inputDescription != description) {
         m_isAudioUnitStarted = false;
@@ -199,7 +210,7 @@ void AudioMediaStreamTrackRendererCocoa::pushSamples(const MediaTime& sampleTime
 
 OSStatus AudioMediaStreamTrackRendererCocoa::render(UInt32 sampleCount, AudioBufferList& ioData, UInt32 /*inBusNumber*/, const AudioTimeStamp& timeStamp, AudioUnitRenderActionFlags& actionFlags)
 {
-    if (isMuted() || m_paused || !m_dataSource) {
+    if (isMuted() || !m_shouldPlay || !m_dataSource) {
         AudioSampleBufferList::zeroABL(ioData, static_cast<size_t>(sampleCount * m_outputDescription->bytesPerFrame()));
         actionFlags = kAudioUnitRenderAction_OutputIsSilence;
         return 0;

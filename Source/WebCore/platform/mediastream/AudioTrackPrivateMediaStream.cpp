@@ -77,7 +77,7 @@ void AudioTrackPrivateMediaStream::playInternal()
     m_isPlaying = true;
     m_autoPlay = false;
 
-    m_renderer->setPaused(false);
+    m_renderer->start();
 }
 
 void AudioTrackPrivateMediaStream::play()
@@ -95,7 +95,7 @@ void AudioTrackPrivateMediaStream::pause()
     m_isPlaying = false;
     m_autoPlay = false;
 
-    m_renderer->setPaused(true);
+    m_renderer->stop();
 }
 
 void AudioTrackPrivateMediaStream::setVolume(float volume)
@@ -139,7 +139,7 @@ void AudioTrackPrivateMediaStream::trackEnabledChanged(MediaStreamTrackPrivate&)
 
 void AudioTrackPrivateMediaStream::updateRendererMutedState()
 {
-    m_renderer->setMuted(m_isPlaying && !streamTrack().muted() && !streamTrack().ended() && streamTrack().enabled());
+    m_renderer->setMuted(streamTrack().muted() || streamTrack().ended() || !streamTrack().enabled());
 }
 
 void AudioTrackPrivateMediaStream::trackEnded(MediaStreamTrackPrivate&)

@@ -36,6 +36,9 @@
 #include "LibWebRTCCodecsProxy.h"
 #include "LibWebRTCCodecsProxyMessages.h"
 #include "Logging.h"
+#include "RemoteAudioMediaStreamTrackRendererManager.h"
+#include "RemoteAudioMediaStreamTrackRendererManagerMessages.h"
+#include "RemoteAudioMediaStreamTrackRendererMessages.h"
 #include "RemoteLayerTreeDrawingAreaProxyMessages.h"
 #include "RemoteMediaPlayerManagerProxy.h"
 #include "RemoteMediaPlayerManagerProxyMessages.h"
@@ -150,6 +153,16 @@ RemoteMediaRecorderManager& GPUConnectionToWebProcess::mediaRecorderManager()
 
     return *m_remoteMediaRecorderManager;
 }
+
+#if ENABLE(VIDEO_TRACK)
+RemoteAudioMediaStreamTrackRendererManager& GPUConnectionToWebProcess::audioTrackRendererManager()
+{
+    if (!m_audioTrackRendererManager)
+        m_audioTrackRendererManager = makeUnique<RemoteAudioMediaStreamTrackRendererManager>();
+
+    return *m_audioTrackRendererManager;
+}
+#endif
 #endif
 
 #if PLATFORM(COCOA) && USE(LIBWEBRTC)
@@ -187,6 +200,16 @@ void GPUConnectionToWebProcess::didReceiveMessage(IPC::Connection& connection, I
         mediaRecorderManager().didReceiveRemoteMediaRecorderMessage(connection, decoder);
         return;
     }
+#if PLATFORM(COCOA) && ENABLE(VIDEO_TRACK)
+    if (decoder.messageReceiverName() == Messages::RemoteAudioMediaStreamTrackRendererManager::messageReceiverName()) {
+        audioTrackRendererManager().didReceiveMessageFromWebProcess(connection, decoder);
+        return;
+    }
+    if (decoder.messageReceiverName() == Messages::RemoteAudioMediaStreamTrackRenderer::messageReceiverName()) {
+        audioTrackRendererManager().didReceiveRendererMessage(connection, decoder);
+        return;
+    }
+#endif
 #endif
 #if PLATFORM(COCOA) && USE(LIBWEBRTC)
     if (decoder.messageReceiverName() == Messages::LibWebRTCCodecsProxy::messageReceiverName()) {
