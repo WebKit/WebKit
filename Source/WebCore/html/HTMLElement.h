@@ -70,8 +70,8 @@ public:
 
     void accessKeyAction(bool sendMouseEvents) override;
 
-    bool rendererIsNeeded(const RenderStyle&) override;
     RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) override;
+    bool rendererIsEverNeeded() final;
 
     WEBCORE_EXPORT virtual HTMLFormElement* form() const;
 

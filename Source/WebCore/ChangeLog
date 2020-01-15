@@ -1,5 +1,78 @@
 2020-01-14  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r254201. rdar://problem/58552859
+
+    [Web Animations] Stop creating CSS Animations for <noscript> elements
+    https://bugs.webkit.org/show_bug.cgi?id=205925
+    <rdar://problem/58158479>
+    
+    Reviewed by Antti Koivisto.
+    
+    Source/WebCore:
+    
+    Test: webanimations/no-css-animation-on-noscript.html
+    
+    It makes no sense to create CSS Animations for a <noscript> element and it has the side effect of potential crashes.
+    Indeed, AnimationTimeline::updateCSSAnimationsForElement() may be called without a currentStyle and so we never have
+    a list of previously-applied animations to compare to the list of animations in afterChangeStyle. So on each call we
+    end up creating a new CSSAnimation and the previous animation for the same name is never explicitly removed from the
+    effect stack and is eventually destroyed and the WeakPtr for it in the stack ends up being null, which would cause a
+    crash under KeyframeEffectStack::ensureEffectsAreSorted().
+    
+    We now prevent elements such as <noscript> from being considered for CSS Animations in TreeResolver::resolveElement().
+    
+    * dom/Element.cpp:
+    (WebCore::Element::rendererIsNeeded):
+    * dom/Element.h:
+    (WebCore::Element::rendererIsEverNeeded):
+    * html/HTMLElement.cpp:
+    (WebCore::HTMLElement::rendererIsEverNeeded):
+    (WebCore::HTMLElement::rendererIsNeeded): Deleted.
+    * html/HTMLElement.h:
+    * style/StyleTreeResolver.cpp:
+    (WebCore::Style::TreeResolver::resolveElement):
+    
+    LayoutTests:
+    
+    Add a new test that checks that setting the `animation` property on a <noscript> element does not yield the creation of a CSSAnimation object.
+    
+    * webanimations/no-css-animation-on-noscript-expected.txt: Added.
+    * webanimations/no-css-animation-on-noscript.html: Added.
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@254201 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-01-08  Antoine Quint  <graouts@apple.com>
+
+            [Web Animations] Stop creating CSS Animations for <noscript> elements
+            https://bugs.webkit.org/show_bug.cgi?id=205925
+            <rdar://problem/58158479>
+
+            Reviewed by Antti Koivisto.
+
+            Test: webanimations/no-css-animation-on-noscript.html
+
+            It makes no sense to create CSS Animations for a <noscript> element and it has the side effect of potential crashes.
+            Indeed, AnimationTimeline::updateCSSAnimationsForElement() may be called without a currentStyle and so we never have
+            a list of previously-applied animations to compare to the list of animations in afterChangeStyle. So on each call we
+            end up creating a new CSSAnimation and the previous animation for the same name is never explicitly removed from the
+            effect stack and is eventually destroyed and the WeakPtr for it in the stack ends up being null, which would cause a
+            crash under KeyframeEffectStack::ensureEffectsAreSorted().
+
+            We now prevent elements such as <noscript> from being considered for CSS Animations in TreeResolver::resolveElement().
+
+            * dom/Element.cpp:
+            (WebCore::Element::rendererIsNeeded):
+            * dom/Element.h:
+            (WebCore::Element::rendererIsEverNeeded):
+            * html/HTMLElement.cpp:
+            (WebCore::HTMLElement::rendererIsEverNeeded):
+            (WebCore::HTMLElement::rendererIsNeeded): Deleted.
+            * html/HTMLElement.h:
+            * style/StyleTreeResolver.cpp:
+            (WebCore::Style::TreeResolver::resolveElement):
+
+2020-01-14  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r254155. rdar://problem/58552864
 
     Add a move constructor to IDBResultData
