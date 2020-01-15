@@ -21,7 +21,6 @@ set(WTF_PUBLIC_HEADERS
     BubbleSort.h
     BumpPointerAllocator.h
     ByteOrder.h
-    CPU.h
     CPUTime.h
     CagedPtr.h
     CagedUniquePtr.h
@@ -64,7 +63,6 @@ set(WTF_PUBLIC_HEADERS
     FastBitVector.h
     FastMalloc.h
     FastTLS.h
-    FeatureDefines.h
     FileMetadata.h
     FilePrintStream.h
     FileSystem.h
@@ -149,7 +147,6 @@ set(WTF_PUBLIC_HEADERS
     Nonmovable.h
     NotFound.h
     NumberOfCores.h
-    OS.h
     OSAllocator.h
     OSObjectPtr.h
     OSRandomSource.h
@@ -174,6 +171,9 @@ set(WTF_PUBLIC_HEADERS
     ParallelVectorIterator.h
     ParkingLot.h
     Platform.h
+    PlatformCPU.h
+    PlatformEnable.h
+    PlatformOS.h
     PlatformRegisters.h
     PointerComparison.h
     PointerPreparations.h

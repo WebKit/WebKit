@@ -48,7 +48,7 @@
  *
  * Below are a few potential commands to take advantage of this file running from the Source/WTF directory
  *
- * Get the list of feature defines: grep -o "ENABLE_\(\w\+\)" wtf/FeatureDefines.h | sort | uniq
+ * Get the list of feature defines: grep -o "ENABLE_\(\w\+\)" wtf/PlatformEnable.h | sort | uniq
  * Get the list of features enabled by default for a PLATFORM(XXX): gcc -E -dM -I. -DWTF_PLATFORM_XXX "wtf/Platform.h" | grep "ENABLE_\w\+ 1" | cut -d' ' -f2 | sort
  */
 

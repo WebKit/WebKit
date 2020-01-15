@@ -31,10 +31,10 @@
 #include <wtf/Compiler.h>
 
 /* Include CPU specific macros */
-#include <wtf/CPU.h>
+#include <wtf/PlatformCPU.h>
 
 /* Include underlying operating system specific macros */
-#include <wtf/OS.h>
+#include <wtf/PlatformOS.h>
 
 /* ==== PLATFORM handles OS, operating environment, graphics API, and
    CPU. This macro will be phased out in favor of platform adaptation
@@ -1051,7 +1051,7 @@
 #define __PLATFORM_INDIRECT__
 
 /* Include feature macros */
-#include <wtf/FeatureDefines.h>
+#include <wtf/PlatformEnable.h>
 
 #undef __PLATFORM_INDIRECT__
 
