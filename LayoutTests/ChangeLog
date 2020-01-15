@@ -1,5 +1,31 @@
 2020-01-15  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r254415. rdar://problem/58548648
+
+    REGRESSION(r185816): In the Hong Kong locale, navigator.language reports it's in the Taiwan locale
+    https://bugs.webkit.org/show_bug.cgi?id=200043
+    
+    Make iOS bots green until they can be updated.
+    
+    Unreviewed.
+    
+    * platform/ios/TestExpectations:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@254415 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-01-12  Myles C. Maxfield  <mmaxfield@apple.com>
+
+            REGRESSION(r185816): In the Hong Kong locale, navigator.language reports it's in the Taiwan locale
+            https://bugs.webkit.org/show_bug.cgi?id=200043
+
+            Make iOS bots green until they can be updated.
+
+            Unreviewed.
+
+            * platform/ios/TestExpectations:
+
+2020-01-15  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r254412. rdar://problem/58548648
 
     REGRESSION(r185816): In the Hong Kong locale, navigator.language reports it's in the Taiwan locale
