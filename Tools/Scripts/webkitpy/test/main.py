@@ -92,8 +92,8 @@ def _print_results_as_json(stream, all_test_names, failures, errors):
         return {'name': result_tuple[0], 'result': result_tuple[1]}
 
     results = {}
-    results['failures'] = map(result_dict_from_tuple, sorted(failures, key=operator.itemgetter(0)))
-    results['errors'] = map(result_dict_from_tuple, sorted(errors, key=operator.itemgetter(0)))
+    results['failures'] = list(map(result_dict_from_tuple, sorted(failures, key=operator.itemgetter(0))))
+    results['errors'] = list(map(result_dict_from_tuple, sorted(errors, key=operator.itemgetter(0))))
     results['passes'] = sorted(set(all_test_names) - set(map(operator.itemgetter(0), failures)) - set(map(operator.itemgetter(0), errors)))
 
     json.dump(results, stream, separators=(',', ':'))
