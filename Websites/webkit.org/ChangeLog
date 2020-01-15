@@ -1,3 +1,12 @@
+2020-01-15  Jon Davis  <jond@apple.com>
+
+        Ensure UAs update the stylesheet
+        https://bugs.webkit.org/show_bug.cgi?id=206292
+
+        Reviewed by Devin Rousso.
+
+        * wp-content/themes/webkit/header.php:
+
 2020-01-14  Jon Davis  <jond@apple.com>
 
         Display authors of a Web Inspector reference article
