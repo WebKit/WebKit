@@ -1,5 +1,28 @@
 2020-01-15  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r254411. rdar://problem/58548648
+
+    Fix internal Apple builds after r254389
+    https://bugs.webkit.org/show_bug.cgi?id=206135
+    
+    Rubber stamped by Zalan Bujtas.
+    
+    * wtf/spi/cocoa/NSLocaleSPI.h:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@254411 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-01-11  Myles C. Maxfield  <mmaxfield@apple.com>
+
+            Fix internal Apple builds after r254389
+            https://bugs.webkit.org/show_bug.cgi?id=206135
+
+            Rubber stamped by Zalan Bujtas.
+
+            * wtf/spi/cocoa/NSLocaleSPI.h:
+
+2020-01-15  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r254389. rdar://problem/58548648
 
     REGRESSION(r185816): In the Hong Kong locale, navigator.language reports it's in the Taiwan locale
