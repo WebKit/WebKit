@@ -1,4 +1,4 @@
-# Copyright (C) 2018-2019 Apple Inc. All rights reserved.
+# Copyright (C) 2018-2020 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -116,7 +116,7 @@ class StatusBubble(View):
             bubble['details_message'] = 'Warning' + self._steps_messages_from_multiple_builds(builds)
         elif build.result == Buildbot.FAILURE:
             bubble['state'] = 'fail'
-            bubble['details_message'] = self._most_recent_step_message(build)
+            bubble['details_message'] = self._most_recent_failure_message(build)
         elif build.result == Buildbot.SKIPPED:
             bubble['state'] = 'none'
             bubble['details_message'] = 'The patch is no longer eligible for processing.'
@@ -203,11 +203,11 @@ class StatusBubble(View):
                 return True
         return False
 
-    def _most_recent_step_message(self, build):
-        recent_step = build.step_set.last()
-        if not recent_step:
-            return ''
-        return recent_step.state_string
+    def _most_recent_failure_message(self, build):
+        for step in build.step_set.all().order_by('-uid'):
+            if step.result == Buildbot.FAILURE:
+                return step.state_string
+        return ''
 
     def get_latest_build_for_queue(self, patch, queue, parent_queue=None):
         builds, is_parent_build = self.get_all_builds_for_queue(patch, queue, parent_queue)
