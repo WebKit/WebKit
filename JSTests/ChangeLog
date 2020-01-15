@@ -1,5 +1,23 @@
 2020-01-15  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r254496. rdar://problem/58553161
+
+    Unreviewed. Change useLLInt=0 to forceBaseline=1
+    
+    * stress/racy-gc-cleanup-of-identifier-after-mutator-stops-running.js:
+    
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@254496 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-01-13  Saam Barati  <sbarati@apple.com>
+
+            Unreviewed. Change useLLInt=0 to forceBaseline=1
+
+            * stress/racy-gc-cleanup-of-identifier-after-mutator-stops-running.js:
+
+2020-01-15  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r254464. rdar://problem/58553161
 
     Replace uses of Box<Identifier> with a new CacheableIdentifier class.
