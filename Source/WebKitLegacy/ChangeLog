@@ -1,3 +1,44 @@
+2020-01-14  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r254169. rdar://problem/58552876
+
+    REGRESSION (r248734): different threads write m_storageMap of StorageAreaImpl at the same time
+    https://bugs.webkit.org/show_bug.cgi?id=205764
+    <rdar://problem/58179425>
+    
+    Reviewed by Maciej Stachowiak.
+    
+    In StorageAreaImpl, we avoid modifying m_storageMap from different threads at the same time by blocking main
+    thread access to it until the writes(importing items) of storage thread is done.
+    
+    In r248734 we introduced a new case where the main thread could modify m_storageMap for session change, but we
+    didn't add the wait there.
+    
+    * Storage/StorageAreaImpl.cpp:
+    (WebKit::StorageAreaImpl::importItems):
+    (WebKit::StorageAreaImpl::sessionChanged):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@254169 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-01-07  Sihui Liu  <sihui_liu@apple.com>
+
+            REGRESSION (r248734): different threads write m_storageMap of StorageAreaImpl at the same time
+            https://bugs.webkit.org/show_bug.cgi?id=205764
+            <rdar://problem/58179425>
+
+            Reviewed by Maciej Stachowiak.
+
+            In StorageAreaImpl, we avoid modifying m_storageMap from different threads at the same time by blocking main
+            thread access to it until the writes(importing items) of storage thread is done.
+
+            In r248734 we introduced a new case where the main thread could modify m_storageMap for session change, but we
+            didn't add the wait there.
+
+            * Storage/StorageAreaImpl.cpp:
+            (WebKit::StorageAreaImpl::importItems):
+            (WebKit::StorageAreaImpl::sessionChanged):
+
 2020-01-03  Simon Fraser  <simon.fraser@apple.com>
 
         Add some shared schemes to the WebKit.xcworkspace

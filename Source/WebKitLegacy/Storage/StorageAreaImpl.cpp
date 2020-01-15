@@ -197,6 +197,7 @@ bool StorageAreaImpl::contains(const String& key)
 void StorageAreaImpl::importItems(HashMap<String, String>&& items)
 {
     ASSERT(!m_isShutdown);
+    ASSERT(!isMainThread());
 
     m_storageMap->importItems(WTFMove(items));
 }
@@ -295,6 +296,9 @@ void StorageAreaImpl::dispatchStorageEvent(const String& key, const String& oldV
 void StorageAreaImpl::sessionChanged(bool isNewSessionPersistent)
 {
     ASSERT(isMainThread());
+
+    // If import is not completed, background storage thread may be modifying m_storageMap.
+    blockUntilImportComplete();
 
     unsigned quota = m_storageMap->quota();
     m_storageMap = StorageMap::create(quota);
