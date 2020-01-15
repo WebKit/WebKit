@@ -623,6 +623,12 @@ window.onload = function()
     }
     {
         var xhr = new XMLHttpRequest();
+        xhr.open('POST', '/string-upload');
+        var upload = xhr.upload;
+        xhr.send('foo=bar2');
+    }
+    {
+        var xhr = new XMLHttpRequest();
         xhr.open('POST', '/document');
         xhr.send(window.document);
     }
@@ -665,6 +671,21 @@ TEST(URLSchemeHandler, XHRPost)
             reached = true;
             EXPECT_EQ(task.request.HTTPBody.length, 7u);
             EXPECT_STREQ(static_cast<const char*>(task.request.HTTPBody.bytes), "foo=bar");
+        } else if ([task.request.URL.absoluteString isEqualToString:@"xhrpost://example/string-upload"]) {
+            static bool reached;
+            EXPECT_FALSE(reached);
+            reached = true;
+            auto stream = task.request.HTTPBodyStream;
+            EXPECT_TRUE(!!stream);
+            [stream open];
+            EXPECT_TRUE(stream.hasBytesAvailable);
+            uint8_t buffer[9];
+            memset(buffer, 0, 9);
+            auto length = [stream read:buffer maxLength:9];
+            EXPECT_EQ(length, 8);
+            EXPECT_STREQ(reinterpret_cast<const char*>(buffer), "foo=bar2");
+            EXPECT_FALSE(stream.hasBytesAvailable);
+            [stream close];
         } else if ([task.request.URL.absoluteString isEqualToString:@"xhrpost://example/arraybuffer"]) {
             static bool reached;
             EXPECT_FALSE(reached);
@@ -704,7 +725,7 @@ TEST(URLSchemeHandler, XHRPost)
         [task didReceiveResponse:response.get()];
         [task didFinish];
         
-        if (++seenTasks == 4)
+        if (++seenTasks == 5)
             done = true;
     }];
     
