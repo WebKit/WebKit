@@ -41,7 +41,7 @@ public:
     void clear();
 
     Element* wheelEventElement() { return m_wheelEventElement.get(); }
-    void setWheelEventElement(Element*);
+    void setWheelEventElement(RefPtr<Element>&&);
     Frame* frame() { return m_frame; }
     void setFrame(Frame* frame) { m_frame = frame; }
 
@@ -49,10 +49,10 @@ public:
     void setWidgetIsLatched(bool isOverWidget);
 
     Element* previousWheelScrolledElement() { return m_previousWheelScrolledElement.get(); }
-    void setPreviousWheelScrolledElement(Element*);
+    void setPreviousWheelScrolledElement(RefPtr<Element>&&);
     
     ContainerNode* scrollableContainer() { return m_scrollableContainer.get(); }
-    void setScrollableContainer(ContainerNode*);
+    void setScrollableContainer(RefPtr<ContainerNode>&&);
     bool startedGestureAtScrollLimit() const { return m_startedGestureAtScrollLimit; }
     void setStartedGestureAtScrollLimit(bool startedAtLimit) { m_startedGestureAtScrollLimit = startedAtLimit; }
 

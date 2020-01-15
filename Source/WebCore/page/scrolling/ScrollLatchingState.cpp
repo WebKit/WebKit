@@ -43,9 +43,9 @@ void ScrollLatchingState::clear()
     m_previousWheelScrolledElement = nullptr;
 }
 
-void ScrollLatchingState::setWheelEventElement(Element* element)
+void ScrollLatchingState::setWheelEventElement(RefPtr<Element>&& element)
 {
-    m_wheelEventElement = element;
+    m_wheelEventElement = WTFMove(element);
 }
 
 void ScrollLatchingState::setWidgetIsLatched(bool isOverWidget)
@@ -53,14 +53,14 @@ void ScrollLatchingState::setWidgetIsLatched(bool isOverWidget)
     m_widgetIsLatched = isOverWidget;
 }
 
-void ScrollLatchingState::setPreviousWheelScrolledElement(Element* element)
+void ScrollLatchingState::setPreviousWheelScrolledElement(RefPtr<Element>&& element)
 {
-    m_previousWheelScrolledElement = element;
+    m_previousWheelScrolledElement = WTFMove(element);
 }
 
-void ScrollLatchingState::setScrollableContainer(ContainerNode* container)
+void ScrollLatchingState::setScrollableContainer(RefPtr<ContainerNode>&& container)
 {
-    m_scrollableContainer = container;
+    m_scrollableContainer = WTFMove(container);
 }
 
 }

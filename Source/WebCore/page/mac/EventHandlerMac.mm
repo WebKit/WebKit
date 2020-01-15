@@ -45,6 +45,7 @@
 #include "HTMLHtmlElement.h"
 #include "HTMLIFrameElement.h"
 #include "KeyboardEvent.h"
+#include "Logging.h"
 #include "MouseEventWithHitTestResults.h"
 #include "Page.h"
 #include "Pasteboard.h"
@@ -977,8 +978,7 @@ void EventHandler::platformPrepareForWheelEvents(const PlatformWheelEvent& wheel
                 latchingState->setStartedGestureAtScrollLimit(false);
                 latchingState->setWheelEventElement(wheelEventTarget.get());
                 latchingState->setFrame(&m_frame);
-                // FIXME: What prevents us from deleting this scrollable container while still holding a pointer to it?
-                latchingState->setScrollableContainer(scrollableContainer.get());
+                latchingState->setScrollableContainer(scrollableContainer.copyRef());
                 latchingState->setWidgetIsLatched(result.isOverWidget());
                 isOverWidget = latchingState->widgetIsLatched();
                 page->wheelEventDeltaFilter()->beginFilteringDeltas();
@@ -1034,6 +1034,8 @@ static FrameView* frameViewForLatchingState(Frame& frame, ScrollLatchingState* l
 
 bool EventHandler::platformCompleteWheelEvent(const PlatformWheelEvent& wheelEvent, ContainerNode* scrollableContainer, const WeakPtr<ScrollableArea>& scrollableArea)
 {
+    LOG_WITH_STREAM(Scrolling, stream << "EventHandler::platformCompleteWheelEvent " << wheelEvent << " - scrollableContainer " << scrollableContainer << " scrollableArea " << scrollableArea.get() << " use latched element " << wheelEvent.useLatchedEventElement());
+
     Ref<Frame> protectedFrame(m_frame);
 
     FrameView* view = m_frame.view();
@@ -1043,12 +1045,12 @@ bool EventHandler::platformCompleteWheelEvent(const PlatformWheelEvent& wheelEve
 
     ScrollLatchingState* latchingState = m_frame.page() ? m_frame.page()->latchingState() : nullptr;
     if (wheelEvent.useLatchedEventElement() && !latchingIsLockedToAncestorOfThisFrame(m_frame) && latchingState && latchingState->scrollableContainer()) {
-
         m_isHandlingWheelEvent = false;
 
         // WebKit2 code path
         if (!frameHasPlatformWidget(m_frame) && !latchingState->startedGestureAtScrollLimit() && scrollableContainer == latchingState->scrollableContainer() && scrollableArea && view != scrollableArea) {
             // If we did not start at the scroll limit, do not pass the event on to be handled by enclosing scrollable regions.
+            LOG_WITH_STREAM(Scrolling, stream << "EventHandler " << this << " platformCompleteWheelEvent - latched to " << scrollableArea.get() << " and not propagating");
             return true;
         }
 
