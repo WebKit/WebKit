@@ -1,5 +1,38 @@
 2020-01-14  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r254310. rdar://problem/58552856
+
+    Check the existence of the optional m_sessionID before using it in WebProcess::setResourceLoadStatisticsEnabled()
+    https://bugs.webkit.org/show_bug.cgi?id=206035
+    <rdar://problem/58455306>
+    
+    Reviewed by Brent Fulgham.
+    
+    No new tests.
+    
+    * WebProcess/WebProcess.cpp:
+    (WebKit::WebProcess::setResourceLoadStatisticsEnabled):
+        Added a check that m_sessionID exists.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@254310 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-01-09  John Wilander  <wilander@apple.com>
+
+            Check the existence of the optional m_sessionID before using it in WebProcess::setResourceLoadStatisticsEnabled()
+            https://bugs.webkit.org/show_bug.cgi?id=206035
+            <rdar://problem/58455306>
+
+            Reviewed by Brent Fulgham.
+
+            No new tests.
+
+            * WebProcess/WebProcess.cpp:
+            (WebKit::WebProcess::setResourceLoadStatisticsEnabled):
+                Added a check that m_sessionID exists.
+
+2020-01-14  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r254293. rdar://problem/58549084
 
     Resource Load Statistics: Flip experimental website data removal setting from an enable to a disable
