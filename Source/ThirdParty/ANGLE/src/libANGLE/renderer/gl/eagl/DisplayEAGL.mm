@@ -137,6 +137,7 @@ void DisplayEAGL::terminate()
     if (mContext != nullptr)
     {
         [EAGLContext setCurrentContext:nil];
+        [mContext release];
         mContext = nullptr;
     }
 }
@@ -267,7 +268,7 @@ egl::Error DisplayEAGL::restoreLostDevice(const egl::Display *display)
 
 bool DisplayEAGL::isValidNativeWindow(EGLNativeWindowType window) const
 {
-    NSObject *layer = (__bridge NSObject *)window;
+    NSObject *layer = reinterpret_cast<NSObject *>(window);
     return [layer isKindOfClass:[CALayer class]];
 }
 
@@ -358,6 +359,7 @@ WorkerContextEAGL::WorkerContextEAGL(EAGLContextObj context) : mContext(context)
 WorkerContextEAGL::~WorkerContextEAGL()
 {
     [EAGLContext setCurrentContext:nil];
+    [mContext release];
     mContext = nullptr;
 }
 
