@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,147 +31,22 @@
 #import "AudioTrackPrivateMediaStream.h"
 #import "GraphicsContextCG.h"
 #import "Logging.h"
+#import "LocalSampleBufferDisplayLayer.h"
 #import "MediaStreamPrivate.h"
 #import "PixelBufferConformerCV.h"
 #import "VideoFullscreenLayerManagerObjC.h"
 #import "VideoTrackPrivateMediaStream.h"
-#import <AVFoundation/AVSampleBufferDisplayLayer.h>
 #import <CoreGraphics/CGAffineTransform.h>
-#import <QuartzCore/CALayer.h>
-#import <QuartzCore/CATransaction.h>
 #import <objc_runtime.h>
 #import <pal/avfoundation/MediaTimeAVFoundation.h>
 #import <pal/spi/mac/AVFoundationSPI.h>
 #import <pal/system/Clock.h>
-#import <wtf/Deque.h>
-#import <wtf/Function.h>
 #import <wtf/MainThread.h>
 #import <wtf/NeverDestroyed.h>
 
 #import "CoreVideoSoftLink.h"
 #import <pal/cf/CoreMediaSoftLink.h>
 #import <pal/cocoa/AVFoundationSoftLink.h>
-
-using namespace WebCore;
-
-@interface WebAVSampleBufferStatusChangeListener : NSObject {
-    MediaPlayerPrivateMediaStreamAVFObjC* _parent;
-}
-
-- (id)initWithParent:(MediaPlayerPrivateMediaStreamAVFObjC*)callback;
-- (void)invalidate;
-- (void)beginObservingLayers;
-- (void)stopObservingLayers;
-@end
-
-@implementation WebAVSampleBufferStatusChangeListener
-
-- (id)initWithParent:(MediaPlayerPrivateMediaStreamAVFObjC*)parent
-{
-    if (!(self = [super init]))
-        return nil;
-
-    _parent = parent;
-
-    return self;
-}
-
-- (void)dealloc
-{
-    [self invalidate];
-    [super dealloc];
-}
-
-- (void)invalidate
-{
-    [self stopObservingLayers];
-    _parent = nullptr;
-}
-
-- (void)beginObservingLayers
-{
-    ASSERT(_parent);
-    ASSERT(_parent->displayLayer());
-    ASSERT(_parent->backgroundLayer());
-
-    [_parent->displayLayer() addObserver:self forKeyPath:@"status" options:NSKeyValueObservingOptionNew context:nil];
-    [_parent->displayLayer() addObserver:self forKeyPath:@"error" options:NSKeyValueObservingOptionNew context:nil];
-    [_parent->backgroundLayer() addObserver:self forKeyPath:@"bounds" options:NSKeyValueObservingOptionNew context:nil];
-}
-
-- (void)stopObservingLayers
-{
-    if (!_parent)
-        return;
-
-    if (_parent->displayLayer()) {
-        [_parent->displayLayer() removeObserver:self forKeyPath:@"status"];
-        [_parent->displayLayer() removeObserver:self forKeyPath:@"error"];
-    }
-    if (_parent->backgroundLayer())
-        [_parent->backgroundLayer() removeObserver:self forKeyPath:@"bounds"];
-}
-
-- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
-{
-    UNUSED_PARAM(context);
-    UNUSED_PARAM(keyPath);
-    ASSERT(_parent);
-
-    if (!_parent)
-        return;
-
-    if ([object isKindOfClass:PAL::getAVSampleBufferDisplayLayerClass()]) {
-        RetainPtr<AVSampleBufferDisplayLayer> layer = (AVSampleBufferDisplayLayer *)object;
-        ASSERT(layer.get() == _parent->displayLayer());
-
-        if ([keyPath isEqualToString:@"status"]) {
-            RetainPtr<NSNumber> status = [change valueForKey:NSKeyValueChangeNewKey];
-            callOnMainThread([protectedSelf = RetainPtr<WebAVSampleBufferStatusChangeListener>(self), layer = WTFMove(layer), status = WTFMove(status)] {
-                if (!protectedSelf->_parent)
-                    return;
-
-                protectedSelf->_parent->layerStatusDidChange(layer.get());
-            });
-            return;
-        }
-
-        if ([keyPath isEqualToString:@"error"]) {
-            RetainPtr<NSNumber> status = [change valueForKey:NSKeyValueChangeNewKey];
-            callOnMainThread([protectedSelf = RetainPtr<WebAVSampleBufferStatusChangeListener>(self), layer = WTFMove(layer), status = WTFMove(status)] {
-                if (!protectedSelf->_parent)
-                    return;
-
-                protectedSelf->_parent->layerErrorDidChange(layer.get());
-            });
-            return;
-        }
-    }
-
-    if ([[change valueForKey:NSKeyValueChangeNotificationIsPriorKey] boolValue])
-        return;
-
-    if ((CALayer *)object == _parent->backgroundLayer()) {
-        if ([keyPath isEqualToString:@"bounds"]) {
-            if (!_parent)
-                return;
-
-            if (isMainThread()) {
-                _parent->backgroundLayerBoundsChanged();
-                return;
-            }
-
-            callOnMainThread([protectedSelf = RetainPtr<WebAVSampleBufferStatusChangeListener>(self)] {
-                if (!protectedSelf->_parent)
-                    return;
-
-                protectedSelf->_parent->backgroundLayerBoundsChanged();
-            });
-        }
-    }
-
-}
-@end
 
 namespace WebCore {
 using namespace PAL;
@@ -183,7 +58,6 @@ static const double rendererLatency = 0.02;
 
 MediaPlayerPrivateMediaStreamAVFObjC::MediaPlayerPrivateMediaStreamAVFObjC(MediaPlayer* player)
     : m_player(player)
-    , m_statusChangeListener(adoptNS([[WebAVSampleBufferStatusChangeListener alloc] initWithParent:this]))
     , m_clock(PAL::Clock::create())
     , m_videoFullscreenLayerManager(makeUnique<VideoFullscreenLayerManagerObjC>())
 #if !RELEASE_LOG_DISABLED
@@ -197,8 +71,6 @@ MediaPlayerPrivateMediaStreamAVFObjC::MediaPlayerPrivateMediaStreamAVFObjC(Media
 MediaPlayerPrivateMediaStreamAVFObjC::~MediaPlayerPrivateMediaStreamAVFObjC()
 {
     INFO_LOG(LOGIDENTIFIER);
-
-    [m_statusChangeListener invalidate];
 
     for (const auto& track : m_audioTrackMap.values())
         track->pause();
@@ -269,33 +141,6 @@ MediaPlayer::SupportsType MediaPlayerPrivateMediaStreamAVFObjC::supportsType(con
 #pragma mark -
 #pragma mark AVSampleBuffer Methods
 
-void MediaPlayerPrivateMediaStreamAVFObjC::removeOldSamplesFromPendingQueue(PendingSampleQueue& queue)
-{
-    if (queue.isEmpty())
-        return;
-
-    auto decodeTime = queue.first()->decodeTime();
-    if (!decodeTime.isValid() || decodeTime < MediaTime::zeroTime()) {
-        while (queue.size() > 5)
-            queue.removeFirst();
-
-        return;
-    }
-
-    MediaTime now = streamTime();
-    while (!queue.isEmpty()) {
-        if (queue.first()->decodeTime() > now)
-            break;
-        queue.removeFirst();
-    }
-}
-
-void MediaPlayerPrivateMediaStreamAVFObjC::addSampleToPendingQueue(PendingSampleQueue& queue, MediaSample& sample)
-{
-    removeOldSamplesFromPendingQueue(queue);
-    queue.append(sample);
-}
-
 MediaTime MediaPlayerPrivateMediaStreamAVFObjC::calculateTimelineOffset(const MediaSample& sample, double latency)
 {
     MediaTime sampleTime = sample.outputPresentationTime();
@@ -330,37 +175,19 @@ CGAffineTransform MediaPlayerPrivateMediaStreamAVFObjC::videoTransformationMatri
     return m_videoTransform;
 }
 
-static void runWithoutAnimations(const WTF::Function<void()>& function)
-{
-    [CATransaction begin];
-    [CATransaction setAnimationDuration:0];
-    [CATransaction setDisableActions:YES];
-    function();
-    [CATransaction commit];
-}
-
 void MediaPlayerPrivateMediaStreamAVFObjC::enqueueCorrectedVideoSample(MediaSample& sample)
 {
     if (m_sampleBufferDisplayLayer) {
-        if ([m_sampleBufferDisplayLayer status] == AVQueuedSampleBufferRenderingStatusFailed)
+        if (m_sampleBufferDisplayLayer->didFail())
             return;
 
         if (sample.videoRotation() != m_videoRotation || sample.videoMirrored() != m_videoMirrored) {
             m_videoRotation = sample.videoRotation();
             m_videoMirrored = sample.videoMirrored();
-            runWithoutAnimations([this, &sample] {
-                m_sampleBufferDisplayLayer.get().affineTransform = videoTransformationMatrix(sample, true);
-                updateDisplayLayer();
-            });
+            m_sampleBufferDisplayLayer->updateAffineTransform(videoTransformationMatrix(sample, true));
+            updateDisplayLayer();
         }
-
-        if (![m_sampleBufferDisplayLayer isReadyForMoreMediaData]) {
-            addSampleToPendingQueue(m_pendingVideoSampleQueue, sample);
-            requestNotificationWhenReadyForVideoData();
-            return;
-        }
-
-        [m_sampleBufferDisplayLayer enqueueSampleBuffer:sample.platformSample().sample.cmSampleBuffer];
+        m_sampleBufferDisplayLayer->enqueueSample(sample);
     }
 
     if (!m_hasEverEnqueuedVideoFrame) {
@@ -415,61 +242,26 @@ void MediaPlayerPrivateMediaStreamAVFObjC::enqueueVideoSample(MediaStreamTrackPr
     }
 }
 
-void MediaPlayerPrivateMediaStreamAVFObjC::requestNotificationWhenReadyForVideoData()
-{
-    auto weakThis = makeWeakPtr(*this);
-    [m_sampleBufferDisplayLayer requestMediaDataWhenReadyOnQueue:dispatch_get_main_queue() usingBlock:^ {
-        if (!weakThis)
-            return;
-
-        [m_sampleBufferDisplayLayer stopRequestingMediaData];
-
-        if (!m_activeVideoTrack) {
-            m_pendingVideoSampleQueue.clear();
-            return;
-        }
-
-        while (!m_pendingVideoSampleQueue.isEmpty()) {
-            if (![m_sampleBufferDisplayLayer isReadyForMoreMediaData]) {
-                requestNotificationWhenReadyForVideoData();
-                return;
-            }
-
-            auto sample = m_pendingVideoSampleQueue.takeFirst();
-            enqueueVideoSample(*m_activeVideoTrack.get(), sample.get());
-        }
-    }];
-}
-
 AudioSourceProvider* MediaPlayerPrivateMediaStreamAVFObjC::audioSourceProvider()
 {
     // FIXME: This should return a mix of all audio tracks - https://bugs.webkit.org/show_bug.cgi?id=160305
     return nullptr;
 }
 
-void MediaPlayerPrivateMediaStreamAVFObjC::layerErrorDidChange(AVSampleBufferDisplayLayer* layer)
+void MediaPlayerPrivateMediaStreamAVFObjC::sampleBufferDisplayLayerStatusDidChange(SampleBufferDisplayLayer& layer)
 {
+    ASSERT(&layer == m_sampleBufferDisplayLayer.get());
     UNUSED_PARAM(layer);
-    ERROR_LOG(LOGIDENTIFIER, "error = ", [[layer.error localizedDescription] UTF8String]);
-}
-
-void MediaPlayerPrivateMediaStreamAVFObjC::layerStatusDidChange(AVSampleBufferDisplayLayer* layer)
-{
-    ALWAYS_LOG(LOGIDENTIFIER, "status = ", (int)layer.status);
-
-    if (layer.status != AVQueuedSampleBufferRenderingStatusRendering)
-        return;
-    if (!m_sampleBufferDisplayLayer || !m_activeVideoTrack || layer != m_sampleBufferDisplayLayer)
+    if (!m_activeVideoTrack)
         return;
 
-    auto track = m_videoTrackMap.get(m_activeVideoTrack->id());
-    if (track)
+    if (auto track = m_videoTrackMap.get(m_activeVideoTrack->id()))
         track->setTimelineOffset(MediaTime::invalidTime());
 }
 
 void MediaPlayerPrivateMediaStreamAVFObjC::applicationDidBecomeActive()
 {
-    if (m_sampleBufferDisplayLayer && [m_sampleBufferDisplayLayer status] == AVQueuedSampleBufferRenderingStatusFailed) {
+    if (m_sampleBufferDisplayLayer && m_sampleBufferDisplayLayer->didFail()) {
         flushRenderers();
         if (m_imagePainter.mediaSample)
             enqueueCorrectedVideoSample(*m_imagePainter.mediaSample);
@@ -480,7 +272,7 @@ void MediaPlayerPrivateMediaStreamAVFObjC::applicationDidBecomeActive()
 void MediaPlayerPrivateMediaStreamAVFObjC::flushRenderers()
 {
     if (m_sampleBufferDisplayLayer)
-        [m_sampleBufferDisplayLayer flush];
+        m_sampleBufferDisplayLayer->flush();
 }
 
 void MediaPlayerPrivateMediaStreamAVFObjC::ensureLayers()
@@ -491,51 +283,24 @@ void MediaPlayerPrivateMediaStreamAVFObjC::ensureLayers()
     if (!m_mediaStreamPrivate || !m_mediaStreamPrivate->activeVideoTrack() || !m_mediaStreamPrivate->activeVideoTrack()->enabled())
         return;
 
-    m_sampleBufferDisplayLayer = adoptNS([PAL::allocAVSampleBufferDisplayLayerInstance() init]);
+    auto size = snappedIntRect(m_player->playerContentBoxRect()).size();
+    m_sampleBufferDisplayLayer = LocalSampleBufferDisplayLayer::create(*this, hideRootLayer(), size);
+
     if (!m_sampleBufferDisplayLayer) {
-        ERROR_LOG(LOGIDENTIFIER, "+[AVSampleBufferDisplayLayer alloc] failed.");
+        ERROR_LOG(LOGIDENTIFIER, "Creating the SampleBufferDisplayLayer failed.");
         return;
     }
-
-    m_sampleBufferDisplayLayer.get().backgroundColor = cachedCGColor(Color::black);
-    m_sampleBufferDisplayLayer.get().anchorPoint = { .5, .5 };
-    m_sampleBufferDisplayLayer.get().needsDisplayOnBoundsChange = YES;
-    m_sampleBufferDisplayLayer.get().videoGravity = AVLayerVideoGravityResizeAspectFill;
-
-    m_backgroundLayer = adoptNS([[CALayer alloc] init]);
-    m_backgroundLayer.get().hidden = hideBackgroundLayer();
-
-    m_backgroundLayer.get().backgroundColor = cachedCGColor(Color::black);
-    m_backgroundLayer.get().needsDisplayOnBoundsChange = YES;
-
-    auto size = snappedIntRect(m_player->playerContentBoxRect()).size();
-    m_backgroundLayer.get().bounds = CGRectMake(0, 0, size.width(), size.height());
-
-    [m_statusChangeListener beginObservingLayers];
-
-    [m_backgroundLayer addSublayer:m_sampleBufferDisplayLayer.get()];
-
-#ifndef NDEBUG
-    [m_sampleBufferDisplayLayer setName:@"MediaPlayerPrivateMediaStreamAVFObjC AVSampleBufferDisplayLayer"];
-    [m_backgroundLayer setName:@"MediaPlayerPrivateMediaStreamAVFObjC AVSampleBufferDisplayLayer parent"];
-#endif
 
     updateRenderingMode();
     updateDisplayLayer();
 
-    m_videoFullscreenLayerManager->setVideoLayer(m_backgroundLayer.get(), size);
+    m_videoFullscreenLayerManager->setVideoLayer(m_sampleBufferDisplayLayer->rootLayer(), size);
 }
 
 void MediaPlayerPrivateMediaStreamAVFObjC::destroyLayers()
 {
-    [m_statusChangeListener stopObservingLayers];
-    if (m_sampleBufferDisplayLayer) {
-        m_pendingVideoSampleQueue.clear();
-        [m_sampleBufferDisplayLayer stopRequestingMediaData];
-        [m_sampleBufferDisplayLayer flush];
+    if (m_sampleBufferDisplayLayer)
         m_sampleBufferDisplayLayer = nullptr;
-    }
-    m_backgroundLayer = nullptr;
 
     updateRenderingMode();
     
@@ -602,20 +367,10 @@ void MediaPlayerPrivateMediaStreamAVFObjC::prepareToPlay()
 
 PlatformLayer* MediaPlayerPrivateMediaStreamAVFObjC::platformLayer() const
 {
-    if (!m_backgroundLayer || m_displayMode == None)
+    if (!m_sampleBufferDisplayLayer || !m_sampleBufferDisplayLayer->rootLayer() || m_displayMode == None)
         return nullptr;
 
     return m_videoFullscreenLayerManager->videoInlineLayer();
-}
-
-PlatformLayer* MediaPlayerPrivateMediaStreamAVFObjC::displayLayer()
-{
-    return m_sampleBufferDisplayLayer.get();
-}
-
-PlatformLayer* MediaPlayerPrivateMediaStreamAVFObjC::backgroundLayer()
-{
-    return m_backgroundLayer.get();
 }
 
 MediaPlayerPrivateMediaStreamAVFObjC::DisplayMode MediaPlayerPrivateMediaStreamAVFObjC::currentDisplayMode() const
@@ -653,18 +408,8 @@ bool MediaPlayerPrivateMediaStreamAVFObjC::updateDisplayMode()
     INFO_LOG(LOGIDENTIFIER, "updated to ", static_cast<int>(displayMode));
     m_displayMode = displayMode;
 
-    auto hidden = m_displayMode < PausedImage;
-    if (m_sampleBufferDisplayLayer && m_sampleBufferDisplayLayer.get().hidden != hidden) {
-        runWithoutAnimations([this, hidden] {
-            m_sampleBufferDisplayLayer.get().hidden = hidden;
-        });
-    }
-    hidden = hideBackgroundLayer();
-    if (m_backgroundLayer && m_backgroundLayer.get().hidden != hidden) {
-        runWithoutAnimations([this, hidden] {
-            m_backgroundLayer.get().hidden = hidden;
-        });
-    }
+    if (m_sampleBufferDisplayLayer)
+        m_sampleBufferDisplayLayer->updateDisplayMode(m_displayMode < PausedImage, hideRootLayer());
 
     return true;
 }
@@ -1023,8 +768,11 @@ void MediaPlayerPrivateMediaStreamAVFObjC::checkSelectedVideoTrack()
                 m_waitingForFirstImage = true;
         }
         ensureLayers();
-        m_sampleBufferDisplayLayer.get().hidden = hideVideoLayer || m_displayMode < PausedImage;
-        m_backgroundLayer.get().hidden = hideBackgroundLayer();
+        if (m_sampleBufferDisplayLayer) {
+            if (!m_activeVideoTrack)
+                m_sampleBufferDisplayLayer->clearEnqueuedSamples();
+            m_sampleBufferDisplayLayer->updateDisplayMode(hideVideoLayer || m_displayMode < PausedImage, hideRootLayer());
+        }
 
         m_pendingSelectedTrackCheck = false;
         updateDisplayMode();
@@ -1173,8 +921,8 @@ void MediaPlayerPrivateMediaStreamAVFObjC::setNetworkState(MediaPlayer::NetworkS
 
 void MediaPlayerPrivateMediaStreamAVFObjC::setBufferingPolicy(MediaPlayer::BufferingPolicy policy)
 {
-    if (policy != MediaPlayer::BufferingPolicy::Default)
-        [m_sampleBufferDisplayLayer flushAndRemoveImage];
+    if (policy != MediaPlayer::BufferingPolicy::Default && m_sampleBufferDisplayLayer)
+        m_sampleBufferDisplayLayer->flushAndRemoveImage();
 }
 
 void MediaPlayerPrivateMediaStreamAVFObjC::scheduleDeferredTask(Function<void ()>&& function)
@@ -1197,23 +945,20 @@ void MediaPlayerPrivateMediaStreamAVFObjC::CurrentFramePainter::reset()
 
 void MediaPlayerPrivateMediaStreamAVFObjC::updateDisplayLayer()
 {
-    if (!m_backgroundLayer || !m_sampleBufferDisplayLayer)
+    if (!m_sampleBufferDisplayLayer)
         return;
 
-    auto backgroundBounds = m_backgroundLayer.get().bounds;
-    auto videoBounds = backgroundBounds;
+    auto bounds = m_sampleBufferDisplayLayer->bounds();
+    auto videoBounds = bounds;
     if (m_videoRotation == MediaSample::VideoRotation::Right || m_videoRotation == MediaSample::VideoRotation::Left)
         std::swap(videoBounds.size.width, videoBounds.size.height);
 
-    m_sampleBufferDisplayLayer.get().bounds = videoBounds;
-    m_sampleBufferDisplayLayer.get().position = { backgroundBounds.size.width / 2, backgroundBounds.size.height / 2};
+    m_sampleBufferDisplayLayer->updateBoundsAndPosition(videoBounds, { bounds.size.width / 2, bounds.size.height / 2});
 }
 
-void MediaPlayerPrivateMediaStreamAVFObjC::backgroundLayerBoundsChanged()
+void MediaPlayerPrivateMediaStreamAVFObjC::sampleBufferDisplayLayerBoundsDidChange(SampleBufferDisplayLayer&)
 {
-    runWithoutAnimations([this] {
-        updateDisplayLayer();
-    });
+    updateDisplayLayer();
 }
 
 #if !RELEASE_LOG_DISABLED
