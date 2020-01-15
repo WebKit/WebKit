@@ -44,7 +44,9 @@ public:
     static Ref<AXIsolatedTree> create();
     virtual ~AXIsolatedTree();
 
-    WEBCORE_EXPORT static Ref<AXIsolatedTree> createTreeForPageID(PageIdentifier);
+    static Ref<AXIsolatedTree> createTreeForPageID(PageIdentifier);
+    static void removeTreeForPageID(PageIdentifier);
+
     WEBCORE_EXPORT static RefPtr<AXIsolatedTree> treeForPageID(PageIdentifier);
     WEBCORE_EXPORT static RefPtr<AXIsolatedTree> treeForID(AXIsolatedTreeID);
     AXObjectCache* axObjectCache() const { return m_axObjectCache; }

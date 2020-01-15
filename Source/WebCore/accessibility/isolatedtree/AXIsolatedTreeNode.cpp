@@ -404,10 +404,32 @@ void AXIsolatedObject::setParent(AXID parent)
     m_parent = parent;
 }
 
+void AXIsolatedObject::detach(AccessibilityDetachmentType, AXObjectCache*)
+{
+    ASSERT(isMainThread());
+    for (const auto& childID : m_childrenIDs)
+        tree()->nodeForID(childID)->detachFromParent();
+
+    m_childrenIDs.clear();
+}
+
 bool AXIsolatedObject::isDetached() const
 {
     ASSERT_NOT_REACHED();
     return false;
+}
+
+void AXIsolatedObject::detachFromParent()
+{
+    m_parent = InvalidAXID;
+}
+
+void AXIsolatedObject::disconnect()
+{
+    ASSERT(isMainThread());
+    tree()->axObjectCache()->detachWrapper(this, AccessibilityDetachmentType::ElementDestroyed);
+    detach(AccessibilityDetachmentType::ElementDestroyed);
+    setObjectID(InvalidAXID);
 }
 
 void AXIsolatedObject::setTreeIdentifier(AXIsolatedTreeID treeIdentifier)
@@ -419,7 +441,6 @@ void AXIsolatedObject::setTreeIdentifier(AXIsolatedTreeID treeIdentifier)
 
 const AXCoreObject::AccessibilityChildrenVector& AXIsolatedObject::children(bool)
 {
-    ASSERT(!isMainThread());
     if (!isMainThread()) {
         m_children.clear();
         m_children.reserveInitialCapacity(m_childrenIDs.size());
@@ -432,7 +453,13 @@ const AXCoreObject::AccessibilityChildrenVector& AXIsolatedObject::children(bool
 
 bool AXIsolatedObject::isDetachedFromParent()
 {
-    return parent() == InvalidAXID && tree()->rootNode()->objectID() != m_id;
+    if (parent() != InvalidAXID)
+        return false;
+
+    // Check whether this is the root node, in which case we should return false.
+    if (auto root = tree()->rootNode())
+        return root->objectID() != m_id;
+    return false;
 }
 
 void AXIsolatedObject::accessibilityText(Vector<AccessibilityText>& texts) const
@@ -527,7 +554,7 @@ template<typename U>
 void AXIsolatedObject::performFunctionOnMainThread(U&& lambda)
 {
     Accessibility::performFunctionOnMainThread([&lambda, this] () {
-        if (auto object = associatedAXObject())
+        if (auto* object = associatedAXObject())
             lambda(object);
     });
 }
@@ -790,7 +817,7 @@ void AXIsolatedObject::updateBackingStore()
 Vector<RefPtr<Range>> AXIsolatedObject::findTextRanges(AccessibilitySearchTextCriteria const& criteria) const
 {
     return Accessibility::retrieveValueFromMainThread<Vector<RefPtr<Range>>>([&criteria, this] () -> Vector<RefPtr<Range>> {
-        if (auto object = associatedAXObject())
+        if (auto* object = associatedAXObject())
             return object->findTextRanges(criteria);
         return Vector<RefPtr<Range>>();
     });
@@ -799,7 +826,7 @@ Vector<RefPtr<Range>> AXIsolatedObject::findTextRanges(AccessibilitySearchTextCr
 Vector<String> AXIsolatedObject::performTextOperation(AccessibilityTextOperation const& textOperation)
 {
     return Accessibility::retrieveValueFromMainThread<Vector<String>>([&textOperation, this] () -> Vector<String> {
-        if (auto object = associatedAXObject())
+        if (auto* object = associatedAXObject())
             return object->performTextOperation(textOperation);
         return Vector<String>();
     });
@@ -829,7 +856,8 @@ bool AXIsolatedObject::insertText(const String&)
 
 bool AXIsolatedObject::press()
 {
-    ASSERT_NOT_REACHED();
+    if (auto* object = associatedAXObject())
+        return object->press();
     return false;
 }
 
@@ -1467,7 +1495,7 @@ TextIteratorBehavior AXIsolatedObject::textIteratorBehaviorForTextRange() const
 
 Widget* AXIsolatedObject::widget() const
 {
-    if (auto object = associatedAXObject())
+    if (auto* object = associatedAXObject())
         return object->widget();
     return nullptr;
 }
@@ -1480,20 +1508,23 @@ Widget* AXIsolatedObject::widgetForAttachmentView() const
 
 Page* AXIsolatedObject::page() const
 {
+    if (auto* object = associatedAXObject())
+        return object->page();
     ASSERT_NOT_REACHED();
     return nullptr;
 }
 
 Document* AXIsolatedObject::document() const
 {
-    if (auto object = associatedAXObject())
+    if (auto* object = associatedAXObject())
         return object->document();
+    ASSERT_NOT_REACHED();
     return nullptr;
 }
 
 FrameView* AXIsolatedObject::documentFrameView() const
 {
-    if (auto object = associatedAXObject())
+    if (auto* object = associatedAXObject())
         return object->documentFrameView();
     return nullptr;
 }
@@ -1589,11 +1620,6 @@ bool AXIsolatedObject::needsToUpdateChildren() const
 {
     ASSERT_NOT_REACHED();
     return false;
-}
-
-void AXIsolatedObject::detachFromParent()
-{
-    ASSERT_NOT_REACHED();
 }
 
 bool AXIsolatedObject::shouldFocusActiveDescendant() const

@@ -80,11 +80,30 @@ RefPtr<AXIsolatedTree> AXIsolatedTree::treeForID(AXIsolatedTreeID treeID)
 Ref<AXIsolatedTree> AXIsolatedTree::createTreeForPageID(PageIdentifier pageID)
 {
     LockHolder locker(s_cacheLock);
+    ASSERT(!treePageCache().contains(pageID));
 
     auto newTree = AXIsolatedTree::create();
     treePageCache().set(pageID, newTree.copyRef());
     treeIDCache().set(newTree->treeIdentifier(), newTree.copyRef());
     return newTree;
+}
+
+void AXIsolatedTree::removeTreeForPageID(PageIdentifier pageID)
+{
+    LockHolder locker(s_cacheLock);
+
+    if (auto optionalTree = treePageCache().take(pageID)) {
+        auto& tree { *optionalTree };
+        LockHolder treeLocker { tree->m_changeLogLock };
+        for (const auto& axID : tree->m_readerThreadNodeMap.keys()) {
+            if (auto object = tree->nodeForID(axID))
+                object->disconnect();
+        }
+        tree->m_readerThreadNodeMap.clear();
+        treeLocker.unlockEarly();
+
+        treeIDCache().remove(tree->treeIdentifier());
+    }
 }
 
 RefPtr<AXIsolatedTree> AXIsolatedTree::treeForPageID(PageIdentifier pageID)
@@ -157,8 +176,11 @@ void AXIsolatedTree::applyPendingChanges()
     for (auto& item : appendCopy)
         m_readerThreadNodeMap.add(item->objectID(), WTFMove(item));
 
-    for (auto item : removeCopy)
+    for (auto item : removeCopy) {
+        if (auto object = nodeForID(item))
+            object->disconnect();
         m_readerThreadNodeMap.remove(item);
+    }
 }
     
 } // namespace WebCore

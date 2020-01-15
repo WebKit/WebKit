@@ -48,7 +48,7 @@ static AtkObject* wrapperParent(WebKitAccessible* wrapper)
     return WEBKIT_IS_ACCESSIBLE(atkParent) ? atkParent : nullptr;
 }
 
-void AXObjectCache::detachWrapper(AccessibilityObject* obj, AccessibilityDetachmentType detachmentType)
+void AXObjectCache::detachWrapper(AXCoreObject* obj, AccessibilityDetachmentType detachmentType)
 {
     auto* wrapper = obj->wrapper();
     ASSERT(wrapper);

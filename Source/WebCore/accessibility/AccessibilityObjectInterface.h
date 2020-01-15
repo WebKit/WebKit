@@ -1075,8 +1075,13 @@ public:
     virtual bool isDOMHidden() const = 0;
     virtual bool isHidden() const = 0;
 
-    virtual AccessibilityObjectWrapper* wrapper() const = 0;
-    virtual void setWrapper(AccessibilityObjectWrapper*) = 0;
+#if ENABLE(ACCESSIBILITY)
+    AccessibilityObjectWrapper* wrapper() const { return m_wrapper.get(); }
+    void setWrapper(AccessibilityObjectWrapper* wrapper) { m_wrapper = wrapper; }
+#else
+    AccessibilityObjectWrapper* wrapper() const override { return nullptr; }
+    void setWrapper(AccessibilityObjectWrapper*) override { }
+#endif
 
     virtual void overrideAttachmentParent(AXCoreObject* parent) = 0;
 
@@ -1124,6 +1129,14 @@ public:
     virtual uint64_t sessionID() const = 0;
     virtual String documentURI() const = 0;
     virtual String documentEncoding() const = 0;
+protected:
+#if PLATFORM(COCOA)
+    RetainPtr<WebAccessibilityObjectWrapper> m_wrapper;
+#elif PLATFORM(WIN)
+    COMPtr<AccessibilityObjectWrapper> m_wrapper;
+#elif USE(ATK)
+    GRefPtr<WebKitAccessible> m_wrapper;
+#endif
 };
 
 namespace Accessibility {

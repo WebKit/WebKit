@@ -54,9 +54,9 @@ public:
     AXID objectID() const override { return m_id; }
     void init() override { }
 
-    AccessibilityObjectWrapper* wrapper() const override { return m_wrapper.get(); }
-    void detach(AccessibilityDetachmentType, AXObjectCache* = nullptr) override { }
+    void detach(AccessibilityDetachmentType, AXObjectCache* = nullptr) override;
     bool isDetached() const override;
+    void disconnect();
 
     void setTreeIdentifier(AXIsolatedTreeID);
     void setParent(AXID);
@@ -72,7 +72,11 @@ private:
     AXIsolatedObject() = default;
     AXIsolatedObject(AXCoreObject&, bool isRoot);
     void initializeAttributeData(AXCoreObject&, bool isRoot);
-    AXCoreObject* associatedAXObject() const { return axObjectCache()->objectFromAXID(objectID()); }
+    AXCoreObject* associatedAXObject() const
+    {
+        ASSERT(isMainThread());
+        return axObjectCache()->objectFromAXID(objectID());
+    }
 
     enum class AXPropertyName : uint8_t {
         None = 0,
@@ -816,8 +820,7 @@ private:
     void setIsIgnoredFromParentDataForChild(AXCoreObject*) override;
 
     void updateBackingStore() override;
-    void setWrapper(AccessibilityObjectWrapper* wrapper) override { m_wrapper = wrapper; }
-    
+
     AXID m_parent { InvalidAXID };
     AXID m_id { InvalidAXID };
     bool m_initialized { false };
@@ -826,11 +829,8 @@ private:
     Vector<AXID> m_childrenIDs;
     Vector<RefPtr<AXCoreObject>> m_children;
 
-#if PLATFORM(COCOA)
-    RetainPtr<WebAccessibilityObjectWrapper> m_wrapper;
-#endif
-
     HashMap<AXPropertyName, AttributeValueVariant, WTF::IntHash<AXPropertyName>, WTF::StrongEnumHashTraits<AXPropertyName>> m_attributeMap;
+    Lock m_attributeMapLock;
 };
 
 } // namespace WebCore

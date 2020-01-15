@@ -233,6 +233,12 @@ AXObjectCache::~AXObjectCache()
     m_focusModalNodeTimer.stop();
     m_performCacheUpdateTimer.stop();
 
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+    // Destroy the IsolatedTree before destroying the live tree.
+    if (m_pageID)
+        AXIsolatedTree::removeTreeForPageID(*m_pageID);
+#endif
+
     for (const auto& object : m_objects.values()) {
         detachWrapper(object.get(), AccessibilityDetachmentType::CacheDestroyed);
         object->detach(AccessibilityDetachmentType::CacheDestroyed);
@@ -743,8 +749,11 @@ AXCoreObject* AXObjectCache::isolatedTreeRootObject()
         return nullptr;
 
     auto tree = AXIsolatedTree::treeForPageID(*m_pageID);
-    if (!tree && isMainThread()) {
-        tree = generateIsolatedTree(*m_pageID, m_document);
+    if (!tree) {
+        tree = Accessibility::retrieveValueFromMainThread<RefPtr<AXIsolatedTree>>([this] () -> RefPtr<AXIsolatedTree> {
+            return generateIsolatedTree(*m_pageID, m_document);
+        });
+
         // Now that we have created our tree, initialize the secondary thread,
         // so future requests come in on the other thread.
         _AXUIElementUseSecondaryAXThread(true);
@@ -837,6 +846,13 @@ void AXObjectCache::remove(AXID axID)
     if (!axID)
         return;
 
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+    if (m_pageID) {
+        if (auto tree = AXIsolatedTree::treeForPageID(*m_pageID))
+            tree->removeNode(axID);
+    }
+#endif
+
     auto object = m_objects.take(axID);
     if (!object)
         return;
@@ -846,13 +862,6 @@ void AXObjectCache::remove(AXID axID)
     object->setObjectID(0);
 
     m_idsInUse.remove(axID);
-#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
-    if (m_pageID) {
-        if (auto tree = AXIsolatedTree::treeForPageID(*m_pageID))
-            tree->removeNode(axID);
-    }
-#endif
-
     ASSERT(m_objects.size() >= m_idsInUse.size());
 }
     
@@ -3071,6 +3080,7 @@ Ref<AXIsolatedObject> AXObjectCache::createIsolatedTreeHierarchy(AXCoreObject& o
 
     isolatedTreeNode->setTreeIdentifier(tree.treeIdentifier());
     isolatedTreeNode->setParent(parentID);
+    axObjectCache->detachWrapper(&object, AccessibilityDetachmentType::ElementChange);
     axObjectCache->attachWrapper(&isolatedTreeNode.get());
 
     for (const auto& child : object.children()) {
@@ -3085,9 +3095,7 @@ Ref<AXIsolatedTree> AXObjectCache::generateIsolatedTree(PageIdentifier pageID, D
 {
     RELEASE_ASSERT(isMainThread());
 
-    auto tree = AXIsolatedTree::treeForPageID(pageID);
-    if (!tree)
-        tree = AXIsolatedTree::createTreeForPageID(pageID);
+    RefPtr<AXIsolatedTree> tree(AXIsolatedTree::createTreeForPageID(pageID));
 
     // Set the root and focused objects in the isolated tree. For that, we need
     // the root and the focused object in the AXObject tree.

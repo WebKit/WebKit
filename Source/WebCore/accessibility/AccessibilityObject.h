@@ -681,14 +681,6 @@ public:
     bool isDOMHidden() const override;
     bool isHidden() const override { return isAXHidden() || isDOMHidden(); }
 
-#if ENABLE(ACCESSIBILITY)
-    AccessibilityObjectWrapper* wrapper() const override { return m_wrapper.get(); }
-    void setWrapper(AccessibilityObjectWrapper* wrapper) override { m_wrapper = wrapper; }
-#else
-    AccessibilityObjectWrapper* wrapper() const override { return nullptr; }
-    void setWrapper(AccessibilityObjectWrapper*) override { }
-#endif
-
 #if PLATFORM(COCOA)
     void overrideAttachmentParent(AXCoreObject* parent) override;
 #else
@@ -784,14 +776,6 @@ protected:
 #else
     bool allowsTextRanges() const { return isTextControl(); }
     unsigned getLengthForTextRange() const { return text().length(); }
-#endif
-
-#if PLATFORM(COCOA)
-    RetainPtr<WebAccessibilityObjectWrapper> m_wrapper;
-#elif PLATFORM(WIN)
-    COMPtr<AccessibilityObjectWrapper> m_wrapper;
-#elif USE(ATK)
-    GRefPtr<WebKitAccessible> m_wrapper;
 #endif
 };
 
