@@ -1,3 +1,12 @@
+2020-01-15  Jon Davis  <jond@apple.com>
+
+        Add Web Inspector Reference notice to Web Inspector blog posts
+        https://bugs.webkit.org/show_bug.cgi?id=206308
+
+        Reviewed by Devin Rousso.
+
+        * wp-content/themes/webkit/functions.php:
+
 2020-01-15  Devin Rousso  <drousso@apple.com>
 
         Web Inspector Reference: the meta info at the end of the article should always be on its own line

@@ -141,6 +141,22 @@ add_filter('the_content', function($content) {
     return $content;
 });
 
+// Add Web Inspector Reference notice to Web Inspector blog posts
+add_filter('the_content', function($content) {
+    if (!has_term('web-inspector', 'category', get_post()))
+        return $content;
+
+    $note = '<div class="note">Note: Learn more about Web Inspector from the <a href="/web-inspector/">Web Inspector Reference</a> documentation.</div>';
+    $position = get_post_meta(get_the_ID(), 'web-inspector-reference-note', true);
+
+    if ($position === 'before')
+        $content = $note . $content;
+    else
+        $content .= $note;
+
+    return $content;
+});
+
 add_action('wp_head', function () {
     if (!is_single()) return;
 
