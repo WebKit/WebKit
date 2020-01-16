@@ -1,3 +1,24 @@
+2020-01-16  Brady Eidson  <beidson@apple.com>
+
+        REGRESSION: (r254668) [Mac Debug wk2] 21 http/tests/navigation/* tests are crashing with ASSERTION FAILED: world.first != 1.
+        https://bugs.webkit.org/show_bug.cgi?id=206357
+
+        Unreviewed followup to r254668 to fix tests.
+
+        ASSERT is no longer valid.
+        Also, having the magic constant "1" in code is mysterious. Make it properly named everywhere.
+        
+        * Shared/ContentWorldShared.h: Copied from Source/WebKit/UIProcess/API/APIUserContentWorld.cpp.
+        * UIProcess/API/APIContentWorld.cpp:
+        (API::ContentWorld::pageContentWorld):
+        * UIProcess/API/APIUserContentWorld.cpp:
+        (API::UserContentWorld::generateIdentifier):
+        (API::UserContentWorld::UserContentWorld):
+        * UIProcess/API/APIUserContentWorld.h:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/UserContent/WebUserContentController.cpp:
+        (WebKit::WebUserContentController::addUserContentWorld):
+
 2020-01-16  youenn fablet  <youenn@apple.com>
 
         Add support for MediaStream video track rendering in GPUProcess

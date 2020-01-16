@@ -43,8 +43,6 @@ public:
     const WTF::String& name() const { return m_name; }
     uint64_t identifier() const { return m_identifier; }
 
-    static uint64_t normalWorldIdentifer() { return 1; };
-
 private:
     friend class ContentWorld;
 

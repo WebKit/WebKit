@@ -26,6 +26,7 @@
 #include "config.h"
 #include "WebUserContentController.h"
 
+#include "ContentWorldShared.h"
 #include "DataReference.h"
 #include "FrameInfoData.h"
 #include "InjectUserScriptImmediately.h"
@@ -103,7 +104,8 @@ InjectedBundleScriptWorld* WebUserContentController::worldForIdentifier(uint64_t
 void WebUserContentController::addUserContentWorld(const std::pair<uint64_t, String>& world)
 {
     ASSERT(world.first);
-    ASSERT(world.first != 1);
+    if (world.first == pageContentWorldIdentifier)
+        return;
 
     worldMap().ensure(world.first, [&] {
 #if PLATFORM(GTK) || PLATFORM(WPE)
@@ -111,9 +113,9 @@ void WebUserContentController::addUserContentWorld(const std::pair<uint64_t, Str
         // use the existing world created by the web extension if any. The world name is used
         // as the identifier.
         if (auto* existingWorld = InjectedBundleScriptWorld::find(world.second))
-            return std::make_pair(Ref<InjectedBundleScriptWorld>(*existingWorld), 1);
+            return std::make_pair(Ref<InjectedBundleScriptWorld>(*existingWorld), pageContentWorldIdentifier);
 #endif
-        return std::make_pair(InjectedBundleScriptWorld::create(world.second), 1);
+        return std::make_pair(InjectedBundleScriptWorld::create(world.second), pageContentWorldIdentifier);
     });
 }
 

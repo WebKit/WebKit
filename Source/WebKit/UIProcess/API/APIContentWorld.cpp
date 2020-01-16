@@ -27,6 +27,7 @@
 #include "APIContentWorld.h"
 
 #include "APIUserContentWorld.h"
+#include "ContentWorldShared.h"
 
 namespace API {
 
@@ -49,7 +50,7 @@ Ref<ContentWorld> ContentWorld::sharedWorldWithName(const WTF::String& name)
 
 ContentWorld& ContentWorld::pageContentWorld()
 {
-    static NeverDestroyed<RefPtr<ContentWorld>> world(adoptRef(new ContentWorld(API::UserContentWorld::normalWorldIdentifer())));
+    static NeverDestroyed<RefPtr<ContentWorld>> world(adoptRef(new ContentWorld(WebKit::pageContentWorldIdentifier)));
     return *world.get();
 }
 
