@@ -30,6 +30,7 @@ messages -> NetworkProcessProxy LegacyReceiver NotRefCounted {
     DidSyncAllCookies()
 
     TestProcessIncomingSyncMessagesWhenWaitingForSyncReply(WebKit::WebPageProxyIdentifier pageID) -> (bool handled) Synchronous
+    TerminateUnresponsiveServiceWorkerProcesses(WebCore::RegistrableDomain domain, PAL::SessionID sessionId)
 
     SetIsHoldingLockedFiles(bool isHoldingLockedFiles)
 

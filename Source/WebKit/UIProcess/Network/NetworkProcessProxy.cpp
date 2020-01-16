@@ -425,6 +425,12 @@ void NetworkProcessProxy::logDiagnosticMessage(WebPageProxyIdentifier pageID, co
     page->logDiagnosticMessage(message, description, shouldSample);
 }
 
+void NetworkProcessProxy::terminateUnresponsiveServiceWorkerProcesses(WebCore::RegistrableDomain&& domain, PAL::SessionID sessionID)
+{
+    for (auto* processPool : WebProcessPool::allProcessPools())
+        processPool->terminateServiceWorkerProcess(domain, sessionID);
+}
+
 void NetworkProcessProxy::logDiagnosticMessageWithResult(WebPageProxyIdentifier pageID, const String& message, const String& description, uint32_t result, WebCore::ShouldSample shouldSample)
 {
     WebPageProxy* page = WebProcessProxy::webPage(pageID);

@@ -1,3 +1,19 @@
+2020-01-16  Alex Christensen  <achristensen@webkit.org>
+
+        Add finite timeout when synchronously terminating a service worker
+        https://bugs.webkit.org/show_bug.cgi?id=206325
+        <rdar://problem/58183380>
+
+        Reviewed by Youenn Fablet.
+
+        When this message reply is never received, it hangs everything.
+        If we haven't received verification that a service worker was terminated in 10 seconds, unhang everything
+        and tell the UI process to terminate the hanging service worker process. Continue handling messages during
+        these 10 seconds to hopefully turn a bad hang into no perceptible hang.
+
+        * NetworkProcess/ServiceWorker/WebSWServerToContextConnection.cpp:
+        (WebKit::WebSWServerToContextConnection::syncTerminateWorker):
+
 2020-01-16  Brady Eidson  <beidson@apple.com>
 
         Make the callAsyncJavaScriptFunction function actually be async (so await works).
