@@ -36,9 +36,11 @@
 
 namespace WebCore {
 
+class SynchronousLoaderMessageQueue;
+
 class ResourceHandleCFURLConnectionDelegateWithOperationQueue final : public ResourceHandleCFURLConnectionDelegate {
 public:
-    ResourceHandleCFURLConnectionDelegateWithOperationQueue(ResourceHandle*, MessageQueue<Function<void()>>*);
+    ResourceHandleCFURLConnectionDelegateWithOperationQueue(ResourceHandle*, RefPtr<SynchronousLoaderMessageQueue>&&);
     virtual ~ResourceHandleCFURLConnectionDelegateWithOperationQueue();
 
 private:
@@ -63,7 +65,7 @@ private:
 #endif
 
     BinarySemaphore m_semaphore;
-    MessageQueue<Function<void()>>* m_messageQueue { nullptr };
+    RefPtr<SynchronousLoaderMessageQueue> m_messageQueue;
 
     RetainPtr<CFURLRequestRef> m_requestResult;
     RetainPtr<CFCachedURLResponseRef> m_cachedResponseResult;

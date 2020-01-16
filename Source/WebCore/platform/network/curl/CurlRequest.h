@@ -43,6 +43,7 @@ class CurlRequestClient;
 class NetworkLoadMetrics;
 class ResourceError;
 class SharedBuffer;
+class SynchronousLoaderMessageQueue;
 
 class CurlRequest : public ThreadSafeRefCounted<CurlRequest>, public CurlRequestSchedulerClient, public CurlMultipartHandleClient {
     WTF_MAKE_NONCOPYABLE(CurlRequest);
@@ -63,9 +64,9 @@ public:
         Extended
     };
 
-    static Ref<CurlRequest> create(const ResourceRequest& request, CurlRequestClient& client, ShouldSuspend shouldSuspend = ShouldSuspend::No, EnableMultipart enableMultipart = EnableMultipart::No, CaptureNetworkLoadMetrics captureMetrics = CaptureNetworkLoadMetrics::Basic, MessageQueue<Function<void()>>* messageQueue = nullptr)
+    static Ref<CurlRequest> create(const ResourceRequest& request, CurlRequestClient& client, ShouldSuspend shouldSuspend = ShouldSuspend::No, EnableMultipart enableMultipart = EnableMultipart::No, CaptureNetworkLoadMetrics captureMetrics = CaptureNetworkLoadMetrics::Basic, RefPtr<SynchronousLoaderMessageQueue>&& messageQueue = nullptr)
     {
-        return adoptRef(*new CurlRequest(request, &client, shouldSuspend, enableMultipart, captureMetrics, messageQueue));
+        return adoptRef(*new CurlRequest(request, &client, shouldSuspend, enableMultipart, captureMetrics, WTFMove(messageQueue)));
     }
 
     virtual ~CurlRequest() = default;
@@ -105,7 +106,7 @@ private:
         FinishTransfer
     };
 
-    CurlRequest(const ResourceRequest&, CurlRequestClient*, ShouldSuspend, EnableMultipart, CaptureNetworkLoadMetrics, MessageQueue<Function<void()>>*);
+    CurlRequest(const ResourceRequest&, CurlRequestClient*, ShouldSuspend, EnableMultipart, CaptureNetworkLoadMetrics, RefPtr<SynchronousLoaderMessageQueue>&&);
 
     void retain() override { ref(); }
     void release() override { deref(); }
@@ -168,7 +169,7 @@ private:
     Lock m_statusMutex;
     bool m_cancelled { false };
     bool m_completed { false };
-    MessageQueue<Function<void()>>* m_messageQueue { };
+    RefPtr<SynchronousLoaderMessageQueue> m_messageQueue;
 
     ResourceRequest m_request;
     String m_user;

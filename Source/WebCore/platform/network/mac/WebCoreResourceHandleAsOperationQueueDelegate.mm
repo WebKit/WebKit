@@ -79,7 +79,7 @@ static bool scheduledWithCustomRunLoopMode(const Optional<SchedulePairHashSet>& 
         CFRunLoopPerformBlock(pair->runLoop(), pair->mode(), block.get());
 }
 
-- (id)initWithHandle:(ResourceHandle*)handle messageQueue:(MessageQueue<Function<void()>>*)messageQueue
+- (id)initWithHandle:(WebCore::ResourceHandle*)handle messageQueue:(RefPtr<WebCore::SynchronousLoaderMessageQueue>&&)messageQueue
 {
     self = [self init];
     if (!self)
@@ -90,7 +90,7 @@ static bool scheduledWithCustomRunLoopMode(const Optional<SchedulePairHashSet>& 
         if (auto* pairs = m_handle->context()->scheduledRunLoopPairs())
             m_scheduledPairs = *pairs;
     }
-    m_messageQueue = messageQueue;
+    m_messageQueue = WTFMove(messageQueue);
 
     return self;
 }
