@@ -1,3 +1,14 @@
+2020-01-16  Rob Buis  <rbuis@igalia.com>
+
+        Fetch: URL parser not always using UTF-8
+        https://bugs.webkit.org/show_bug.cgi?id=178008
+
+        Reviewed by Youenn Fablet.
+
+        Update improved test result.
+
+        * web-platform-tests/fetch/api/request/url-encoding-expected.txt:
+
 2020-01-16  Cathie Chen  <cathiechen@igalia.com>
 
         Mapping HTML attributes width/height to the default aspect ratio of <img>

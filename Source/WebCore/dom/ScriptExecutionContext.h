@@ -94,7 +94,8 @@ public:
     virtual EventLoopTaskGroup& eventLoop() = 0;
 
     virtual const URL& url() const = 0;
-    virtual URL completeURL(const String& url) const = 0;
+    enum class ForceUTF8 { No, Yes };
+    virtual URL completeURL(const String& url, ForceUTF8 = ForceUTF8::No) const = 0;
 
     virtual String userAgent(const URL&) const = 0;
 

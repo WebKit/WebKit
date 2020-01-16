@@ -167,7 +167,7 @@ void WorkerGlobalScope::applyContentSecurityPolicyResponseHeaders(const ContentS
     contentSecurityPolicy()->didReceiveHeaders(contentSecurityPolicyResponseHeaders, String { });
 }
 
-URL WorkerGlobalScope::completeURL(const String& url) const
+URL WorkerGlobalScope::completeURL(const String& url, ForceUTF8) const
 {
     // Always return a null URL when passed a null string.
     // FIXME: Should we change the URL constructor to have this behavior?
