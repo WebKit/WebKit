@@ -1,3 +1,19 @@
+2020-01-16  Diego Pino Garcia  <dpino@igalia.com>
+
+        [WPE] Rebaseline of several tests
+        https://bugs.webkit.org/show_bug.cgi?id=206351
+
+        Unreviewed gardening.
+
+        * platform/wpe/fast/history/page-cache-webdatabase-pending-transaction-expected.txt: Removed.
+        * platform/wpe/fast/visual-viewport/rubberbanding-viewport-rects-extended-background-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/service-workers/service-worker/fetch-frame-resource.https-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/websockets/closing-handshake/003-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/xhr/send-redirect-infinite-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/xhr/send-redirect-infinite-sync-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/xhr/xmlhttprequest-network-error-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/xhr/xmlhttprequest-network-error-sync-expected.txt: Removed.
+
 2020-01-16  Alicia Boya García  <aboya@igalia.com>
 
         [MSE] Don't enqueue samples that start at a big discontinuity
