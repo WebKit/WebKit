@@ -20,38 +20,38 @@ layer at (0,0) size 785x704
       RenderBlock {DIV} at (0,88) size 170x600
         RenderBlock {DIV} at (0,0) size 170x175 [border: (1px solid #008000)]
           RenderInline {SPAN} at (0,0) size 40x173
-            RenderText {#text} at (2,1) size 40x173
-              text run at (2,1) width 173: "Hello world"
-          RenderBR {BR} at (10,174) size 0x0
+            RenderText {#text} at (1,1) size 40x173
+              text run at (1,1) width 173: "Hello world"
+          RenderBR {BR} at (9,174) size 0x0
           RenderInline {SPAN} at (0,0) size 40x173
-            RenderText {#text} at (44,1) size 40x173
-              text run at (44,1) width 173: "Hello world"
-          RenderBR {BR} at (52,174) size 0x0
+            RenderText {#text} at (43,1) size 40x173
+              text run at (43,1) width 173: "Hello world"
+          RenderBR {BR} at (51,174) size 0x0
           RenderInline {SPAN} at (0,0) size 40x173
-            RenderText {#text} at (86,1) size 40x173
-              text run at (86,1) width 173: "Hello world"
-          RenderBR {BR} at (94,174) size 0x0
+            RenderText {#text} at (85,1) size 40x173
+              text run at (85,1) width 173: "Hello world"
+          RenderBR {BR} at (93,174) size 0x0
           RenderInline {SPAN} at (0,0) size 40x173
-            RenderText {#text} at (128,1) size 40x173
-              text run at (128,1) width 173: "Hello world"
-          RenderBR {BR} at (136,174) size 0x0
-        RenderText {#text} at (128,175) size 40x9
-          text run at (128,175) width 9: " "
+            RenderText {#text} at (127,1) size 40x173
+              text run at (127,1) width 173: "Hello world"
+          RenderBR {BR} at (135,174) size 0x0
+        RenderText {#text} at (127,175) size 40x9
+          text run at (127,175) width 9: " "
         RenderBlock {DIV} at (0,184) size 170x175 [border: (1px solid #008000)]
           RenderInline {SPAN} at (0,0) size 40x173
-            RenderText {#text} at (2,1) size 40x173
-              text run at (2,1) width 173: "Hello world"
-          RenderBR {BR} at (10,174) size 0x0
+            RenderText {#text} at (1,1) size 40x173
+              text run at (1,1) width 173: "Hello world"
+          RenderBR {BR} at (9,174) size 0x0
           RenderInline {SPAN} at (0,0) size 40x173
-            RenderText {#text} at (44,1) size 40x173
-              text run at (44,1) width 173: "Hello world"
-          RenderBR {BR} at (52,174) size 0x0
+            RenderText {#text} at (43,1) size 40x173
+              text run at (43,1) width 173: "Hello world"
+          RenderBR {BR} at (51,174) size 0x0
           RenderInline {SPAN} at (0,0) size 40x173
-            RenderText {#text} at (86,1) size 40x173
-              text run at (86,1) width 173: "Hello world"
-          RenderBR {BR} at (94,174) size 0x0
+            RenderText {#text} at (85,1) size 40x173
+              text run at (85,1) width 173: "Hello world"
+          RenderBR {BR} at (93,174) size 0x0
           RenderInline {SPAN} at (0,0) size 40x173
-            RenderText {#text} at (128,1) size 40x173
-              text run at (128,1) width 173: "Hello world"
-          RenderBR {BR} at (136,174) size 0x0
+            RenderText {#text} at (127,1) size 40x173
+              text run at (127,1) width 173: "Hello world"
+          RenderBR {BR} at (135,174) size 0x0
         RenderText {#text} at (0,0) size 0x0

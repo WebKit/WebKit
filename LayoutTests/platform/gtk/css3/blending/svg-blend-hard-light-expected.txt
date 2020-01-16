@@ -1,27 +1,27 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x573
-  RenderBlock {html} at (0,0) size 800x573
-    RenderBlock {parsererror} at (16,16) size 768x137 [bgcolor=#FFDDDD] [border: (2px solid #CC7777)]
-      RenderBlock {h3} at (18,20) size 732x23
-        RenderText {#text} at (0,0) size 324x21
-          text run at (0,0) width 324: "This page contains the following errors:"
-      RenderBlock {div} at (18,61) size 732x15
-        RenderText {#text} at (0,0) size 588x14
-          text run at (0,0) width 588: "error on line 15 at column 62: Namespace prefix xlink for href on use is not defined"
-          text run at (588,0) width 0: " "
-      RenderBlock {h3} at (18,94) size 732x23
-        RenderText {#text} at (0,0) size 427x21
-          text run at (0,0) width 427: "Below is a rendering of the page up to the first error."
-    RenderBlock (anonymous) at (0,168) size 800x405
-      RenderInline {body} at (0,0) size 400x17
-        RenderText {#text} at (0,0) size 0x0
-        RenderSVGRoot {svg} at (0,168) size 0x0
-          RenderSVGHiddenContainer {defs} at (0,0) size 0x0
-            RenderSVGContainer {g} at (0,168) size 40x41
-              RenderSVGRect {rect} at (0,168) size 10x41 [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=10.00] [height=40.00]
-              RenderSVGRect {rect} at (10,168) size 10x41 [fill={[type=SOLID] [color=#00FF00]}] [x=10.00] [y=0.00] [width=10.00] [height=40.00]
-              RenderSVGRect {rect} at (20,168) size 10x41 [fill={[type=SOLID] [color=#0000FF]}] [x=20.00] [y=0.00] [width=10.00] [height=40.00]
-              RenderSVGRect {rect} at (30,168) size 10x41 [fill={[type=SOLID] [color=#7F7F00]}] [x=30.00] [y=0.00] [width=10.00] [height=40.00]
-            RenderSVGRect {rect} at (0,168) size 10x11 [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=10.00] [height=10.00]
-          RenderSVGContainer {g} at (0,168) size 0x0 [transform={m=((4.00,0.00)(0.00,4.00)) t=(0.00,0.00)}]
+layer at (0,0) size 800x420
+  RenderBlock {HTML} at (0,0) size 800x420
+    RenderBody {BODY} at (8,8) size 784x404
+      RenderSVGRoot {svg} at (8,8) size 160x160
+        RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+          RenderSVGContainer {g} at (8,8) size 40x40
+            RenderSVGRect {rect} at (8,8) size 10x40 [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=10.00] [height=40.00]
+            RenderSVGRect {rect} at (18,8) size 10x40 [fill={[type=SOLID] [color=#00FF00]}] [x=10.00] [y=0.00] [width=10.00] [height=40.00]
+            RenderSVGRect {rect} at (28,8) size 10x40 [fill={[type=SOLID] [color=#0000FF]}] [x=20.00] [y=0.00] [width=10.00] [height=40.00]
+            RenderSVGRect {rect} at (38,8) size 10x40 [fill={[type=SOLID] [color=#7F7F00]}] [x=30.00] [y=0.00] [width=10.00] [height=40.00]
+          RenderSVGRect {rect} at (8,8) size 10x10 [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=10.00] [height=10.00]
+        RenderSVGContainer {g} at (8,8) size 160x160 [transform={m=((4.00,0.00)(0.00,4.00)) t=(0.00,0.00)}]
+          RenderSVGContainer {use} at (8,8) size 160x160
+            RenderSVGContainer {g} at (8,8) size 160x160
+              RenderSVGRect {rect} at (8,8) size 40x160 [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=10.00] [height=40.00]
+              RenderSVGRect {rect} at (48,8) size 40x160 [fill={[type=SOLID] [color=#00FF00]}] [x=10.00] [y=0.00] [width=10.00] [height=40.00]
+              RenderSVGRect {rect} at (88,8) size 40x160 [fill={[type=SOLID] [color=#0000FF]}] [x=20.00] [y=0.00] [width=10.00] [height=40.00]
+              RenderSVGRect {rect} at (128,8) size 40x160 [fill={[type=SOLID] [color=#7F7F00]}] [x=30.00] [y=0.00] [width=10.00] [height=40.00]
+          RenderSVGContainer {use} at (8,8) size 160x160 [transform={m=((0.00,1.00)(-1.00,0.00)) t=(40.00,0.00)}]
+            RenderSVGContainer {g} at (8,8) size 160x160
+              RenderSVGRect {rect} at (8,8) size 160x40 [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=10.00] [height=40.00]
+              RenderSVGRect {rect} at (8,48) size 160x40 [fill={[type=SOLID] [color=#00FF00]}] [x=10.00] [y=0.00] [width=10.00] [height=40.00]
+              RenderSVGRect {rect} at (8,88) size 160x40 [fill={[type=SOLID] [color=#0000FF]}] [x=20.00] [y=0.00] [width=10.00] [height=40.00]
+              RenderSVGRect {rect} at (8,128) size 160x40 [fill={[type=SOLID] [color=#7F7F00]}] [x=30.00] [y=0.00] [width=10.00] [height=40.00]
+      RenderText {#text} at (0,0) size 0x0

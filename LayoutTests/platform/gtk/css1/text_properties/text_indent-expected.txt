@@ -72,10 +72,10 @@ layer at (0,0) size 785x1246
         RenderText {#text} at (197,36) size 147x17
           text run at (197,36) width 147: " which may be present."
       RenderBlock {BLOCKQUOTE} at (40,642) size 689x54 [bgcolor=#00FFFF]
-        RenderText {#text} at (384,0) size 646x53
-          text run at (384,0) width 222: "In the first half of the test page, this"
-          text run at (0,18) width 646: "BLOCKQUOTE element should have a text indent equal to 50% of the BODY element's width, since"
-          text run at (0,36) width 511: "BLOCKQUOTE is a child of BODY; in the second half, it is a child of TABLE."
+        RenderText {#text} at (344,0) size 682x53
+          text run at (344,0) width 338: "In the first half of the test page, this BLOCKQUOTE"
+          text run at (0,18) width 671: "element should have a text indent equal to 50% of the BODY element's width, since BLOCKQUOTE is a"
+          text run at (0,36) width 370: "child of BODY; in the second half, it is a child of TABLE."
       RenderTable {TABLE} at (0,712) size 769x518 [border: (1px outset #808080)]
         RenderTableSection {TBODY} at (1,1) size 767x516
           RenderTableRow {TR} at (0,0) size 767x26
@@ -130,7 +130,7 @@ layer at (0,0) size 785x1246
                 RenderText {#text} at (197,36) size 147x17
                   text run at (197,36) width 147: " which may be present."
               RenderBlock {BLOCKQUOTE} at (44,416) size 667x54 [bgcolor=#00FFFF]
-                RenderText {#text} at (373,0) size 646x53
-                  text run at (373,0) width 222: "In the first half of the test page, this"
+                RenderText {#text} at (333,0) size 646x53
+                  text run at (333,0) width 222: "In the first half of the test page, this"
                   text run at (0,18) width 646: "BLOCKQUOTE element should have a text indent equal to 50% of the BODY element's width, since"
                   text run at (0,36) width 511: "BLOCKQUOTE is a child of BODY; in the second half, it is a child of TABLE."
