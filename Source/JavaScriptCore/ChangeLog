@@ -1,5 +1,145 @@
 2020-01-16  Robin Morisset  <rmorisset@apple.com>
 
+        Use dataLogIf more regularly
+        https://bugs.webkit.org/show_bug.cgi?id=206332
+
+        Reviewed by Keith Miller.
+
+        There is lots of code that reads
+          if (Options::foobar())
+            dataLogLn("...")
+
+        There are a couple of benefits to replacing those by dataLogLnIf(Options::foobar(), "..."):
+        - Readability, by reducing the number of lines taken by logging
+        - Less lines appearing as not-taken in test coverage wrongly (wrongly because we probably don't care for the coverage of logging code)
+        - possibly a tiny perf benefit since dataLogIf correctly uses UNLIKELY.
+
+        This patch is a fairly trivial refactoring where I looked for that pattern and replaced it everywhere it appeared in JSC.
+
+        * bytecode/BytecodeGeneratorification.cpp:
+        (JSC::performGeneratorification):
+        * bytecode/BytecodeLivenessAnalysis.cpp:
+        (JSC::BytecodeLivenessAnalysis::BytecodeLivenessAnalysis):
+        * bytecode/CallLinkInfo.cpp:
+        (JSC::CallLinkInfo::visitWeak):
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::finalizeLLIntInlineCaches):
+        (JSC::CodeBlock::noticeIncomingCall):
+        (JSC::CodeBlock::optimizationThresholdScalingFactor):
+        (JSC::CodeBlock::optimizeNextInvocation):
+        (JSC::CodeBlock::dontOptimizeAnytimeSoon):
+        (JSC::CodeBlock::optimizeAfterWarmUp):
+        (JSC::CodeBlock::optimizeAfterLongWarmUp):
+        (JSC::CodeBlock::optimizeSoon):
+        (JSC::CodeBlock::forceOptimizationSlowPathConcurrently):
+        (JSC::CodeBlock::setOptimizationThresholdBasedOnCompilationResult):
+        (JSC::CodeBlock::shouldOptimizeNow):
+        * bytecode/DFGExitProfile.cpp:
+        (JSC::DFG::ExitProfile::add):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseCodeBlock):
+        * dfg/DFGCFAPhase.cpp:
+        * dfg/DFGJITCode.cpp:
+        (JSC::DFG::JITCode::optimizeNextInvocation):
+        (JSC::DFG::JITCode::dontOptimizeAnytimeSoon):
+        (JSC::DFG::JITCode::optimizeAfterWarmUp):
+        (JSC::DFG::JITCode::optimizeSoon):
+        (JSC::DFG::JITCode::forceOptimizationSlowPathConcurrently):
+        (JSC::DFG::JITCode::setOSREntryBlock):
+        * dfg/DFGJumpReplacement.cpp:
+        (JSC::DFG::JumpReplacement::fire):
+        * dfg/DFGOSREntry.cpp:
+        (JSC::DFG::prepareOSREntry):
+        * dfg/DFGOSRExit.cpp:
+        (JSC::DFG::OSRExit::compileExit):
+        * dfg/DFGObjectAllocationSinkingPhase.cpp:
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGPlan.cpp:
+        (JSC::DFG::Plan::compileInThreadImpl):
+        * dfg/DFGToFTLDeferredCompilationCallback.cpp:
+        (JSC::DFG::ToFTLDeferredCompilationCallback::compilationDidBecomeReadyAsynchronously):
+        (JSC::DFG::ToFTLDeferredCompilationCallback::compilationDidComplete):
+        * dfg/DFGToFTLForOSREntryDeferredCompilationCallback.cpp:
+        (JSC::DFG::ToFTLForOSREntryDeferredCompilationCallback::compilationDidBecomeReadyAsynchronously):
+        (JSC::DFG::ToFTLForOSREntryDeferredCompilationCallback::compilationDidComplete):
+        * dfg/DFGWorklist.cpp:
+        (JSC::DFG::Worklist::completeAllReadyPlansForVM):
+        * ftl/FTLOSREntry.cpp:
+        (JSC::FTL::prepareOSREntry):
+        * heap/Heap.cpp:
+        (JSC::Heap::lastChanceToFinalize):
+        (JSC::Heap::sweepSynchronously):
+        (JSC::Heap::collectNow):
+        (JSC::Heap::runBeginPhase):
+        (JSC::Heap::runFixpointPhase):
+        (JSC::Heap::runReloopPhase):
+        (JSC::Heap::runEndPhase):
+        (JSC::Heap::finalize):
+        (JSC::Heap::willStartCollection):
+        (JSC::Heap::updateAllocationLimits):
+        (JSC::Heap::notifyIsSafeToCollect):
+        * heap/MarkStackMergingConstraint.cpp:
+        (JSC::MarkStackMergingConstraint::prepareToExecuteImpl):
+        * heap/MarkedSpace.cpp:
+        * heap/MarkingConstraint.cpp:
+        (JSC::MarkingConstraint::prepareToExecute):
+        * heap/MarkingConstraintSet.cpp:
+        (JSC::MarkingConstraintSet::executeConvergence):
+        (JSC::MarkingConstraintSet::executeConvergenceImpl):
+        (JSC::MarkingConstraintSet::executeAll):
+        * heap/MarkingConstraintSolver.cpp:
+        (JSC::MarkingConstraintSolver::execute):
+        * heap/SlotVisitor.cpp:
+        (JSC::SlotVisitor::appendToMarkStack):
+        (JSC::SlotVisitor::visitChildren):
+        (JSC::SlotVisitor::didRace):
+        * heap/StochasticSpaceTimeMutatorScheduler.cpp:
+        (JSC::StochasticSpaceTimeMutatorScheduler::beginCollection):
+        (JSC::StochasticSpaceTimeMutatorScheduler::didExecuteConstraints):
+        * jit/JIT.cpp:
+        (JSC::JIT::link):
+        * jit/JITExceptions.cpp:
+        (JSC::genericUnwind):
+        * jit/JITOperations.cpp:
+        * jit/JITToDFGDeferredCompilationCallback.cpp:
+        (JSC::JITToDFGDeferredCompilationCallback::compilationDidBecomeReadyAsynchronously):
+        (JSC::JITToDFGDeferredCompilationCallback::compilationDidComplete):
+        * jit/JITWorklist.cpp:
+        (JSC::JITWorklist::Plan::finalize):
+        * jit/PolymorphicCallStubRoutine.cpp:
+        (JSC::PolymorphicCallNode::unlink):
+        * jit/Repatch.cpp:
+        (JSC::unlinkFor):
+        (JSC::linkVirtualFor):
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::jitCompileAndSetHeuristics):
+        (JSC::LLInt::entryOSR):
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        * parser/ModuleAnalyzer.cpp:
+        (JSC::ModuleAnalyzer::analyze):
+        * runtime/JSModuleLoader.cpp:
+        (JSC::JSModuleLoader::importModule):
+        (JSC::JSModuleLoader::resolveSync):
+        (JSC::JSModuleLoader::fetch):
+        (JSC::JSModuleLoader::evaluate):
+        (JSC::moduleLoaderModuleDeclarationInstantiation):
+        * runtime/ScriptExecutable.cpp:
+        (JSC::ScriptExecutable::installCode):
+        * runtime/VM.cpp:
+        (JSC::VM::throwException):
+        * tools/CompilerTimingScope.cpp:
+        (JSC::CompilerTimingScope::CompilerTimingScope):
+        (JSC::CompilerTimingScope::~CompilerTimingScope):
+        * wasm/WasmMemory.cpp:
+        * wasm/js/JSWebAssembly.cpp:
+        (JSC::resolve):
+        * yarr/YarrJIT.cpp:
+        (JSC::Yarr::jitCompile):
+        * yarr/YarrPattern.cpp:
+        (JSC::Yarr::YarrPattern::compile):
+
+2020-01-16  Robin Morisset  <rmorisset@apple.com>
+
         Reduce the code generated by DFGSlowPathGenerator.h
         https://bugs.webkit.org/show_bug.cgi?id=206330
 

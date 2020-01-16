@@ -50,8 +50,7 @@ bool ExitProfile::add(CodeBlock* owner, const FrequentExitSite& site)
 
     CODEBLOCK_LOG_EVENT(owner, "frequentExit", (site));
     
-    if (Options::verboseExitProfile())
-        dataLog(pointerDump(owner), ": Adding exit site: ", site, "\n");
+    dataLogLnIf(Options::verboseExitProfile(), pointerDump(owner), ": Adding exit site: ", site);
 
     ExitProfile& profile = owner->unlinkedCodeBlock()->exitProfile();
     

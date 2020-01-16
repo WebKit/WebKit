@@ -1038,8 +1038,7 @@ static void revertCall(VM& vm, CallLinkInfo& callLinkInfo, MacroAssemblerCodeRef
 
 void unlinkFor(VM& vm, CallLinkInfo& callLinkInfo)
 {
-    if (Options::dumpDisassembly())
-        dataLog("Unlinking call at ", callLinkInfo.hotPathOther(), "\n");
+    dataLogLnIf(Options::dumpDisassembly(), "Unlinking call at ", callLinkInfo.hotPathOther());
     
     revertCall(vm, callLinkInfo, vm.getCTIStub(linkCallThunkGenerator).retagged<JITStubRoutinePtrTag>());
 }
@@ -1049,8 +1048,8 @@ static void linkVirtualFor(VM& vm, CallFrame* callFrame, CallLinkInfo& callLinkI
     CallFrame* callerFrame = callFrame->callerFrame();
     CodeBlock* callerCodeBlock = callerFrame->codeBlock();
 
-    if (shouldDumpDisassemblyFor(callerCodeBlock))
-        dataLog("Linking virtual call at ", FullCodeOrigin(callerCodeBlock, callerFrame->codeOrigin()), "\n");
+    dataLogLnIf(shouldDumpDisassemblyFor(callerCodeBlock),
+        "Linking virtual call at ", FullCodeOrigin(callerCodeBlock, callerFrame->codeOrigin()));
 
     MacroAssemblerCodeRef<JITStubRoutinePtrTag> virtualThunk = virtualThunkFor(vm, callLinkInfo);
     revertCall(vm, callLinkInfo, virtualThunk);

@@ -45,15 +45,14 @@ const Vector<size_t>& sizeClasses()
         [] {
             result = new Vector<size_t>();
             
-            if (Options::dumpSizeClasses()) {
+            if (UNLIKELY(Options::dumpSizeClasses())) {
                 dataLog("Block size: ", MarkedBlock::blockSize, "\n");
                 dataLog("Footer size: ", sizeof(MarkedBlock::Footer), "\n");
             }
             
             auto add = [&] (size_t sizeClass) {
                 sizeClass = WTF::roundUpToMultipleOf<MarkedBlock::atomSize>(sizeClass);
-                if (Options::dumpSizeClasses())
-                    dataLog("Adding JSC MarkedSpace size class: ", sizeClass, "\n");
+                dataLogLnIf(Options::dumpSizeClasses(), "Adding JSC MarkedSpace size class: ", sizeClass);
                 // Perform some validation as we go.
                 RELEASE_ASSERT(!(sizeClass % MarkedSpace::sizeStep));
                 if (result->isEmpty())
@@ -73,19 +72,14 @@ const Vector<size_t>& sizeClasses()
             // the wasted space at the tail end of a MarkedBlock) while proceeding roughly in an exponential
             // way starting at just above the precise size classes to four cells per block.
             
-            if (Options::dumpSizeClasses())
-                dataLog("    Marked block payload size: ", static_cast<size_t>(MarkedSpace::blockPayload), "\n");
+            dataLogLnIf(Options::dumpSizeClasses(), "    Marked block payload size: ", static_cast<size_t>(MarkedSpace::blockPayload));
             
             for (unsigned i = 0; ; ++i) {
                 double approximateSize = MarkedSpace::preciseCutoff * pow(Options::sizeClassProgression(), i);
-                
-                if (Options::dumpSizeClasses())
-                    dataLog("    Next size class as a double: ", approximateSize, "\n");
+                dataLogLnIf(Options::dumpSizeClasses(), "    Next size class as a double: ", approximateSize);
         
                 size_t approximateSizeInBytes = static_cast<size_t>(approximateSize);
-        
-                if (Options::dumpSizeClasses())
-                    dataLog("    Next size class as bytes: ", approximateSizeInBytes, "\n");
+                dataLogLnIf(Options::dumpSizeClasses(), "    Next size class as bytes: ", approximateSizeInBytes);
         
                 // Make sure that the computer did the math correctly.
                 RELEASE_ASSERT(approximateSizeInBytes >= MarkedSpace::preciseCutoff);
@@ -95,25 +89,19 @@ const Vector<size_t>& sizeClasses()
                 
                 size_t sizeClass =
                     WTF::roundUpToMultipleOf<MarkedSpace::sizeStep>(approximateSizeInBytes);
-                
-                if (Options::dumpSizeClasses())
-                    dataLog("    Size class: ", sizeClass, "\n");
+                dataLogLnIf(Options::dumpSizeClasses(), "    Size class: ", sizeClass);
                 
                 // Optimize the size class so that there isn't any slop at the end of the block's
                 // payload.
                 unsigned cellsPerBlock = MarkedSpace::blockPayload / sizeClass;
                 size_t possiblyBetterSizeClass = (MarkedSpace::blockPayload / cellsPerBlock) & ~(MarkedSpace::sizeStep - 1);
-                
-                if (Options::dumpSizeClasses())
-                    dataLog("    Possibly better size class: ", possiblyBetterSizeClass, "\n");
+                dataLogLnIf(Options::dumpSizeClasses(), "    Possibly better size class: ", possiblyBetterSizeClass);
 
                 // The size class we just came up with is better than the other one if it reduces
                 // total wastage assuming we only allocate cells of that size.
                 size_t originalWastage = MarkedSpace::blockPayload - cellsPerBlock * sizeClass;
                 size_t newWastage = (possiblyBetterSizeClass - sizeClass) * cellsPerBlock;
-                
-                if (Options::dumpSizeClasses())
-                    dataLog("    Original wastage: ", originalWastage, ", new wastage: ", newWastage, "\n");
+                dataLogLnIf(Options::dumpSizeClasses(), "    Original wastage: ", originalWastage, ", new wastage: ", newWastage);
                 
                 size_t betterSizeClass;
                 if (newWastage > originalWastage)
@@ -121,8 +109,7 @@ const Vector<size_t>& sizeClasses()
                 else
                     betterSizeClass = possiblyBetterSizeClass;
                 
-                if (Options::dumpSizeClasses())
-                    dataLog("    Choosing size class: ", betterSizeClass, "\n");
+                dataLogLnIf(Options::dumpSizeClasses(), "    Choosing size class: ", betterSizeClass);
                 
                 if (betterSizeClass == result->last()) {
                     // Defense for when expStep is small.
@@ -149,8 +136,7 @@ const Vector<size_t>& sizeClasses()
                 result->shrinkCapacity(it - result->begin());
             }
 
-            if (Options::dumpSizeClasses())
-                dataLog("JSC Heap MarkedSpace size class dump: ", listDump(*result), "\n");
+            dataLogLnIf(Options::dumpSizeClasses(), "JSC Heap MarkedSpace size class dump: ", listDump(*result));
 
             // We have an optimiation in MarkedSpace::optimalSizeFor() that assumes things about
             // the size class table. This checks our results against that function's assumptions.

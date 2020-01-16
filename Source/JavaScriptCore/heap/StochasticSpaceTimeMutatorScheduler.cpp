@@ -77,8 +77,7 @@ void StochasticSpaceTimeMutatorScheduler::beginCollection()
         Options::concurrentGCMaxHeadroom() *
         std::max<double>(m_bytesAllocatedThisCycleAtTheBeginning, m_heap.m_maxEdenSize);
     
-    if (Options::logGC())
-        dataLog("ca=", m_bytesAllocatedThisCycleAtTheBeginning / 1024, "kb h=", (m_bytesAllocatedThisCycleAtTheEnd - m_bytesAllocatedThisCycleAtTheBeginning) / 1024, "kb ");
+    dataLogIf(Options::logGC(), "ca=", m_bytesAllocatedThisCycleAtTheBeginning / 1024, "kb h=", (m_bytesAllocatedThisCycleAtTheEnd - m_bytesAllocatedThisCycleAtTheBeginning) / 1024, "kb ");
     
     m_beforeConstraints = MonotonicTime::now();
 }
@@ -110,8 +109,7 @@ void StochasticSpaceTimeMutatorScheduler::didExecuteConstraints()
         constraintExecutionDuration * m_pauseScale,
         m_minimumPause);
     
-    if (Options::logGC())
-        dataLog("tp=", m_targetPause.milliseconds(), "ms ");
+    dataLogIf(Options::logGC(), "tp=", m_targetPause.milliseconds(), "ms ");
     
     m_plannedResumeTime = snapshot.now() + m_targetPause;
 }

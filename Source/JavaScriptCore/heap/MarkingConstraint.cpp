@@ -72,8 +72,7 @@ double MarkingConstraint::workEstimate(SlotVisitor& visitor)
 
 void MarkingConstraint::prepareToExecute(const AbstractLocker& constraintSolvingLocker, SlotVisitor& visitor)
 {
-    if (Options::logGC())
-        dataLog(abbreviatedName());
+    dataLogIf(Options::logGC(), abbreviatedName());
     VisitCounter visitCounter(visitor);
     prepareToExecuteImpl(constraintSolvingLocker, visitor);
     m_lastVisitCount = visitCounter.visitCount();

@@ -1177,7 +1177,7 @@ ErrorCode YarrPattern::compile(const String& patternString, void* stackLimit)
             return error;
     }
 
-    if (Options::dumpCompiledRegExpPatterns())
+    if (UNLIKELY(Options::dumpCompiledRegExpPatterns()))
         dumpPattern(patternString);
 
     return ErrorCode::NoError;

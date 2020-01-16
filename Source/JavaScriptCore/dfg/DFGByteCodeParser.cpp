@@ -7421,7 +7421,7 @@ void ByteCodeParser::parseCodeBlock()
             deferredSourceDump.append(DeferredSourceDump(codeBlock->baselineVersion()));
     }
 
-    if (Options::dumpBytecodeAtDFGTime()) {
+    if (UNLIKELY(Options::dumpBytecodeAtDFGTime())) {
         dataLog("Parsing ", *codeBlock);
         if (inlineCallFrame()) {
             dataLog(
@@ -7435,7 +7435,7 @@ void ByteCodeParser::parseCodeBlock()
     
     Vector<InstructionStream::Offset, 32> jumpTargets;
     computePreciseJumpTargets(codeBlock, jumpTargets);
-    if (Options::dumpBytecodeAtDFGTime()) {
+    if (UNLIKELY(Options::dumpBytecodeAtDFGTime())) {
         dataLog("Jump targets: ");
         CommaPrinter comma;
         for (unsigned i = 0; i < jumpTargets.size(); ++i)

@@ -83,8 +83,7 @@ void MarkingConstraintSet::add(
 bool MarkingConstraintSet::executeConvergence(SlotVisitor& visitor)
 {
     bool result = executeConvergenceImpl(visitor);
-    if (Options::logGC())
-        dataLog(" ");
+    dataLogIf(Options::logGC(), " ");
     return result;
 }
 
@@ -104,8 +103,7 @@ bool MarkingConstraintSet::executeConvergenceImpl(SlotVisitor& visitor)
     
     unsigned iteration = m_iteration++;
     
-    if (Options::logGC())
-        dataLog("i#", iteration, ":");
+    dataLogIf(Options::logGC(), "i#", iteration, ":");
 
     if (iteration == 1) {
         // First iteration is before any visitor draining, so it's unlikely to trigger any constraints
@@ -174,8 +172,7 @@ void MarkingConstraintSet::executeAll(SlotVisitor& visitor)
 {
     for (auto& constraint : m_set)
         constraint->execute(visitor);
-    if (Options::logGC())
-        dataLog(" ");
+    dataLogIf(Options::logGC(), " ");
 }
 
 } // namespace JSC

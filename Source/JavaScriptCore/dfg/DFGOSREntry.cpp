@@ -103,11 +103,9 @@ void* prepareOSREntry(VM& vm, CallFrame* callFrame, CodeBlock* codeBlock, Byteco
     if (!Options::useOSREntryToDFG())
         return nullptr;
 
-    if (Options::verboseOSR()) {
-        dataLog(
-            "DFG OSR in ", *codeBlock->alternative(), " -> ", *codeBlock,
-            " from ", bytecodeIndex, "\n");
-    }
+    dataLogLnIf(Options::verboseOSR(),
+        "DFG OSR in ", *codeBlock->alternative(), " -> ", *codeBlock,
+        " from ", bytecodeIndex);
     
     sanitizeStackForVM(vm);
     
@@ -134,8 +132,7 @@ void* prepareOSREntry(VM& vm, CallFrame* callFrame, CodeBlock* codeBlock, Byteco
         //   be super rare. For now, if it does happen, it'll cause some compilation
         //   thrashing.
         
-        if (Options::verboseOSR())
-            dataLog("    OSR failed because the target code block is not DFG.\n");
+        dataLogLnIf(Options::verboseOSR(), "    OSR failed because the target code block is not DFG.");
         return nullptr;
     }
     
@@ -143,8 +140,7 @@ void* prepareOSREntry(VM& vm, CallFrame* callFrame, CodeBlock* codeBlock, Byteco
     OSREntryData* entry = jitCode->osrEntryDataForBytecodeIndex(bytecodeIndex);
     
     if (!entry) {
-        if (Options::verboseOSR())
-            dataLogF("    OSR failed because the entrypoint was optimized out.\n");
+        dataLogLnIf(Options::verboseOSR(), "    OSR failed because the entrypoint was optimized out.");
         return nullptr;
     }
     
@@ -182,11 +178,9 @@ void* prepareOSREntry(VM& vm, CallFrame* callFrame, CodeBlock* codeBlock, Byteco
             value = callFrame->argument(argument - 1);
         
         if (!entry->m_expectedValues.argument(argument).validateOSREntryValue(value, FlushedJSValue)) {
-            if (Options::verboseOSR()) {
-                dataLog(
-                    "    OSR failed because argument ", argument, " is ", value,
-                    ", expected ", entry->m_expectedValues.argument(argument), ".\n");
-            }
+            dataLogLnIf(Options::verboseOSR(),
+                "    OSR failed because argument ", argument, " is ", value,
+                ", expected ", entry->m_expectedValues.argument(argument));
             return nullptr;
         }
     }
@@ -237,13 +231,11 @@ void* prepareOSREntry(VM& vm, CallFrame* callFrame, CodeBlock* codeBlock, Byteco
     
     unsigned frameSizeForCheck = jitCode->common.requiredRegisterCountForExecutionAndExit();
     if (UNLIKELY(!vm.ensureStackCapacityFor(&callFrame->registers()[virtualRegisterForLocal(frameSizeForCheck - 1).offset()]))) {
-        if (Options::verboseOSR())
-            dataLogF("    OSR failed because stack growth failed.\n");
+        dataLogLnIf(Options::verboseOSR(), "    OSR failed because stack growth failed.");
         return nullptr;
     }
     
-    if (Options::verboseOSR())
-        dataLogF("    OSR should succeed.\n");
+    dataLogLnIf(Options::verboseOSR(), "    OSR should succeed.");
 
     // At this point we're committed to entering. We will do some work to set things up,
     // but we also rely on our caller recognizing that when we return a non-null pointer,
@@ -262,8 +254,7 @@ void* prepareOSREntry(VM& vm, CallFrame* callFrame, CodeBlock* codeBlock, Byteco
     
     void* targetPC = entry->m_machineCode.executableAddress();
     RELEASE_ASSERT(codeBlock->jitCode()->contains(entry->m_machineCode.untaggedExecutableAddress()));
-    if (Options::verboseOSR())
-        dataLogF("    OSR using target PC %p.\n", targetPC);
+    dataLogLnIf(Options::verboseOSR(), "    OSR using target PC ", RawPointer(targetPC));
     RELEASE_ASSERT(targetPC);
     *bitwise_cast<void**>(scratch + 1) = retagCodePtr(targetPC, OSREntryPtrTag, bitwise_cast<PtrTag>(callFrame));
 
@@ -324,8 +315,7 @@ void* prepareOSREntry(VM& vm, CallFrame* callFrame, CodeBlock* codeBlock, Byteco
     
     *bitwise_cast<CodeBlock**>(pivot - 1 - CallFrameSlot::codeBlock) = codeBlock;
     
-    if (Options::verboseOSR())
-        dataLogF("    OSR returning data buffer %p.\n", scratch);
+    dataLogLnIf(Options::verboseOSR(), "    OSR returning data buffer ", RawPointer(scratch));
     return scratch;
 }
 

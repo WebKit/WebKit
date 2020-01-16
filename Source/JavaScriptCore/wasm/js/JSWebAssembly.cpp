@@ -190,7 +190,7 @@ static void resolve(VM& vm, JSGlobalObject* globalObject, JSPromise* promise, JS
         promise->resolve(globalObject, instance);
     else if (resolveKind == Resolve::WithModuleRecord) {
         auto* moduleRecord = instance->moduleNamespaceObject()->moduleRecord();
-        if (Options::dumpModuleRecord())
+        if (UNLIKELY(Options::dumpModuleRecord()))
             moduleRecord->dump();
         promise->resolve(globalObject, moduleRecord);
     } else {

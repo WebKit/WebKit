@@ -496,7 +496,7 @@ Plan::CompilationPath Plan::compileInThreadImpl()
         if (UNLIKELY(computeCompileTimes()))
             m_timeBeforeFTL = MonotonicTime::now();
         
-        if (Options::b3AlwaysFailsBeforeCompile()) {
+        if (UNLIKELY(Options::b3AlwaysFailsBeforeCompile())) {
             FTL::fail(state);
             return FTLPath;
         }
@@ -505,7 +505,7 @@ Plan::CompilationPath Plan::compileInThreadImpl()
         if (safepointResult.didGetCancelled())
             return CancelPath;
         
-        if (Options::b3AlwaysFailsBeforeLink()) {
+        if (UNLIKELY(Options::b3AlwaysFailsBeforeLink())) {
             FTL::fail(state);
             return FTLPath;
         }

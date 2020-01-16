@@ -36,8 +36,9 @@ namespace JSC { namespace DFG {
 
 void JumpReplacement::fire()
 {
-    if (Options::dumpDisassembly())
-        dataLogF("Firing jump replacement watchpoint from %p, to %p.\n", m_source.dataLocation(), m_destination.dataLocation());
+    dataLogLnIf(Options::dumpDisassembly(),
+        "Firing jump replacement watchpoint from ", RawPointer(m_source.dataLocation()),
+        " to ", RawPointer(m_destination.dataLocation()));
     MacroAssembler::replaceWithJump(m_source, m_destination);
 }
 

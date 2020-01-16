@@ -48,11 +48,9 @@ Ref<ToFTLDeferredCompilationCallback> ToFTLDeferredCompilationCallback::create()
 void ToFTLDeferredCompilationCallback::compilationDidBecomeReadyAsynchronously(
     CodeBlock* codeBlock, CodeBlock* profiledDFGCodeBlock)
 {
-    if (Options::verboseOSR()) {
-        dataLog(
-            "Optimizing compilation of ", codeBlock, " (for ", profiledDFGCodeBlock,
-            ") did become ready.\n");
-    }
+    dataLogLnIf(Options::verboseOSR(),
+        "Optimizing compilation of ", codeBlock, " (for ", profiledDFGCodeBlock,
+        ") did become ready.");
     
     profiledDFGCodeBlock->jitCode()->dfg()->forceOptimizationSlowPathConcurrently(
         profiledDFGCodeBlock);
@@ -61,18 +59,14 @@ void ToFTLDeferredCompilationCallback::compilationDidBecomeReadyAsynchronously(
 void ToFTLDeferredCompilationCallback::compilationDidComplete(
     CodeBlock* codeBlock, CodeBlock* profiledDFGCodeBlock, CompilationResult result)
 {
-    if (Options::verboseOSR()) {
-        dataLog(
-            "Optimizing compilation of ", codeBlock, " (for ", profiledDFGCodeBlock,
-            ") result: ", result, "\n");
-    }
+    dataLogLnIf(Options::verboseOSR(),
+        "Optimizing compilation of ", codeBlock, " (for ", profiledDFGCodeBlock,
+        ") result: ", result);
     
     if (profiledDFGCodeBlock->replacement() != profiledDFGCodeBlock) {
-        if (Options::verboseOSR()) {
-            dataLog(
-                "Dropping FTL code block ", codeBlock, " on the floor because the "
-                "DFG code block ", profiledDFGCodeBlock, " was jettisoned.\n");
-        }
+        dataLogLnIf(Options::verboseOSR(),
+            "Dropping FTL code block ", codeBlock, " on the floor because the "
+            "DFG code block ", profiledDFGCodeBlock, " was jettisoned.");
         return;
     }
     

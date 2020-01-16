@@ -4243,7 +4243,7 @@ void jitCompile(YarrPattern& pattern, String& patternString, YarrCharSize charSi
         YarrGenerator<IncludeSubpatterns>(vm, pattern, patternString, codeBlock, charSize).compile();
 
     if (auto failureReason = codeBlock.failureReason()) {
-        if (Options::dumpCompiledRegExpPatterns()) {
+        if (UNLIKELY(Options::dumpCompiledRegExpPatterns())) {
             pattern.dumpPatternString(WTF::dataFile(), patternString);
             dataLog(" : ");
             dumpCompileFailure(*failureReason);

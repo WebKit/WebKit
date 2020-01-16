@@ -140,7 +140,7 @@ JSModuleRecord* ModuleAnalyzer::analyze(ModuleProgramNode& moduleProgramNode)
     for (const auto& pair : m_moduleRecord->lexicalVariables())
         exportVariable(moduleProgramNode, pair.key, pair.value);
 
-    if (Options::dumpModuleRecord())
+    if (UNLIKELY(Options::dumpModuleRecord()))
         m_moduleRecord->dump();
 
     return m_moduleRecord.get();

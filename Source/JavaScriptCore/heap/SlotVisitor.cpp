@@ -292,7 +292,7 @@ ALWAYS_INLINE void SlotVisitor::appendToMarkStack(ContainerType& container, JSCe
 {
     ASSERT(m_heap.isMarked(cell));
 #if CPU(X86_64)
-    if (Options::dumpZappedCellCrashData()) {
+    if (UNLIKELY(Options::dumpZappedCellCrashData())) {
         if (UNLIKELY(cell->isZapped()))
             reportZappedCellAndCrash(cell);
     }
@@ -397,7 +397,7 @@ ALWAYS_INLINE void SlotVisitor::visitChildren(const JSCell* cell)
         // FIXME: This could be so much better.
         // https://bugs.webkit.org/show_bug.cgi?id=162462
 #if CPU(X86_64)
-        if (Options::dumpZappedCellCrashData()) {
+        if (UNLIKELY(Options::dumpZappedCellCrashData())) {
             Structure* structure = cell->structure(vm());
             if (LIKELY(structure)) {
                 const MethodTable* methodTable = &structure->classInfo()->methodTable;
@@ -795,8 +795,7 @@ void SlotVisitor::donateAndDrain(MonotonicTime timeout)
 
 void SlotVisitor::didRace(const VisitRaceKey& race)
 {
-    if (Options::verboseVisitRace())
-        dataLog(toCString("GC visit race: ", race, "\n"));
+    dataLogLnIf(Options::verboseVisitRace(), toCString("GC visit race: ", race));
     
     auto locker = holdLock(heap()->m_raceMarkStackLock);
     JSCell* cell = race.cell();

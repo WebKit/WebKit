@@ -196,8 +196,7 @@ void ScriptExecutable::installCode(VM& vm, CodeBlock* genericCodeBlock, CodeType
         RELEASE_ASSERT(genericCodeBlock->ownerExecutable() == this);
         RELEASE_ASSERT(JITCode::isExecutableScript(genericCodeBlock->jitType()));
         
-        if (UNLIKELY(Options::verboseOSR()))
-            dataLog("Installing ", *genericCodeBlock, "\n");
+        dataLogLnIf(Options::verboseOSR(), "Installing ", *genericCodeBlock);
         
         if (UNLIKELY(vm.m_perBytecodeProfiler))
             vm.m_perBytecodeProfiler->ensureBytecodesFor(genericCodeBlock);

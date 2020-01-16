@@ -61,14 +61,12 @@ void MarkingConstraintSolver::execute(SchedulerPreference preference, ScopedLamb
     RELEASE_ASSERT(!m_numThreadsThatMayProduceWork);
     
     if (Options::useParallelMarkingConstraintSolver()) {
-        if (Options::logGC())
-            dataLog(preference == ParallelWorkFirst ? "P" : "N", "<");
+        dataLogIf(Options::logGC(), preference == ParallelWorkFirst ? "P" : "N", "<");
         
         m_heap.runFunctionInParallel(
             [&] (SlotVisitor& visitor) { runExecutionThread(visitor, preference, pickNext); });
         
-        if (Options::logGC())
-            dataLog(">");
+        dataLogIf(Options::logGC(), ">");
     } else
         runExecutionThread(m_mainVisitor, preference, pickNext);
     

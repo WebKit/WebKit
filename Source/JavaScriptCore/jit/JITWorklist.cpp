@@ -57,14 +57,12 @@ public:
         switch (result) {
         case CompilationFailed:
             CODEBLOCK_LOG_EVENT(m_codeBlock, "delayJITCompile", ("compilation failed"));
-            if (Options::verboseOSR())
-                dataLogF("    JIT compilation failed.\n");
+            dataLogLnIf(Options::verboseOSR(), "    JIT compilation failed.");
             m_codeBlock->dontJITAnytimeSoon();
             m_codeBlock->m_didFailJITCompilation = true;
             return;
         case CompilationSuccessful:
-            if (Options::verboseOSR())
-                dataLogF("    JIT compilation successful.\n");
+            dataLogLnIf(Options::verboseOSR(), "    JIT compilation successful.");
             m_codeBlock->ownerExecutable()->installCode(m_codeBlock);
             m_codeBlock->jitSoon();
             return;

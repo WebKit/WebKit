@@ -105,8 +105,7 @@ protected:
             m_plan->notifyCompiling();
         }
         
-        if (Options::verboseCompilationQueue())
-            dataLog(m_worklist, ": Compiling ", m_plan->key(), " asynchronously\n");
+        dataLogLnIf(Options::verboseCompilationQueue(), m_worklist, ": Compiling ", m_plan->key(), " asynchronously");
         
         // There's no way for the GC to be safepointing since we own rightToRun.
         if (m_plan->vm()->heap.worldIsStopped()) {
@@ -143,8 +142,7 @@ protected:
     
     void threadDidStart() override
     {
-        if (Options::verboseCompilationQueue())
-            dataLog(m_worklist, ": Thread started\n");
+        dataLogLnIf(Options::verboseCompilationQueue(), m_worklist, ": Thread started");
         
         if (m_relativePriority)
             Thread::current().changePriority(m_relativePriority);
@@ -156,8 +154,7 @@ protected:
     {
         // We're holding the Worklist::m_lock, so we should be careful not to deadlock.
         
-        if (Options::verboseCompilationQueue())
-            dataLog(m_worklist, ": Thread will stop\n");
+        dataLogLnIf(Options::verboseCompilationQueue(), m_worklist, ": Thread will stop");
         
         ASSERT(!m_plan);
         
@@ -336,8 +333,7 @@ Worklist::State Worklist::completeAllReadyPlansForVM(VM& vm, CompilationKey requ
         RefPtr<Plan> plan = myReadyPlans.takeLast();
         CompilationKey currentKey = plan->key();
         
-        if (Options::verboseCompilationQueue())
-            dataLog(*this, ": Completing ", currentKey, "\n");
+        dataLogLnIf(Options::verboseCompilationQueue(), *this, ": Completing ", currentKey);
 
         RELEASE_ASSERT(plan->stage() == Plan::Ready);
 

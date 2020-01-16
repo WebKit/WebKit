@@ -53,8 +53,7 @@ void MarkStackMergingConstraint::prepareToExecuteImpl(const AbstractLocker&, Slo
     size_t size = m_heap.m_mutatorMarkStack->size() + m_heap.m_raceMarkStack->size();
     visitor.addToVisitCount(size);
     
-    if (Options::logGC())
-        dataLog("(", size, ")");
+    dataLogIf(Options::logGC(), "(", size, ")");
 }
 
 void MarkStackMergingConstraint::executeImpl(SlotVisitor& visitor)

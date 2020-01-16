@@ -268,7 +268,7 @@ private:
     AbstractInterpreter<InPlaceAbstractState> m_interpreter;
     BlockSet m_blocksWithOSR;
     
-    bool m_verbose;
+    const bool m_verbose;
     
     bool m_changed;
     unsigned m_count;

@@ -40,7 +40,7 @@ WTF_EXPORT_PRIVATE void dataLogF(const char* format, ...) WTF_ATTRIBUTE_PRINTF(1
 WTF_EXPORT_PRIVATE void dataLogFString(const char*);
 
 template<typename... Types>
-void dataLog(const Types&... values)
+NEVER_INLINE void dataLog(const Types&... values)
 {
     dataFile().print(values...);
 }

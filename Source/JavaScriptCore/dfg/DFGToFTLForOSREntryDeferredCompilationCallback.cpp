@@ -52,11 +52,9 @@ Ref<ToFTLForOSREntryDeferredCompilationCallback>ToFTLForOSREntryDeferredCompilat
 void ToFTLForOSREntryDeferredCompilationCallback::compilationDidBecomeReadyAsynchronously(
     CodeBlock* codeBlock, CodeBlock* profiledDFGCodeBlock)
 {
-    if (Options::verboseOSR()) {
-        dataLog(
-            "Optimizing compilation of ", *codeBlock, " (for ", *profiledDFGCodeBlock,
-            ") did become ready.\n");
-    }
+    dataLogLnIf(Options::verboseOSR(),
+        "Optimizing compilation of ", *codeBlock, " (for ", *profiledDFGCodeBlock,
+        ") did become ready.");
 
     *m_forcedOSREntryTrigger = JITCode::TriggerReason::CompilationDone;
 }
@@ -64,11 +62,9 @@ void ToFTLForOSREntryDeferredCompilationCallback::compilationDidBecomeReadyAsync
 void ToFTLForOSREntryDeferredCompilationCallback::compilationDidComplete(
     CodeBlock* codeBlock, CodeBlock* profiledDFGCodeBlock, CompilationResult result)
 {
-    if (Options::verboseOSR()) {
-        dataLog(
-            "Optimizing compilation of ", *codeBlock, " (for ", *profiledDFGCodeBlock,
-            ") result: ", result, "\n");
-    }
+    dataLogLnIf(Options::verboseOSR(),
+        "Optimizing compilation of ", *codeBlock, " (for ", *profiledDFGCodeBlock,
+        ") result: ", result);
     
     JITCode* jitCode = profiledDFGCodeBlock->jitCode()->dfg();
         

@@ -1110,7 +1110,7 @@ void OSRExit::compileExit(CCallHelpers& jit, VM& vm, const OSRExit& exit, const 
     jit.jitAssertTagsInPlace();
 
     // Pro-forma stuff.
-    if (Options::printEachOSRExit()) {
+    if (UNLIKELY(Options::printEachOSRExit())) {
         SpeculationFailureDebugInfo* debugInfo = new SpeculationFailureDebugInfo;
         debugInfo->codeBlock = jit.codeBlock();
         debugInfo->kind = exit.m_kind;

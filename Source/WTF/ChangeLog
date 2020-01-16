@@ -1,3 +1,14 @@
+2020-01-16  Robin Morisset  <rmorisset@apple.com>
+
+        Use dataLogIf more regularly
+        https://bugs.webkit.org/show_bug.cgi?id=206332
+
+        Reviewed by Keith Miller.
+
+        * wtf/DataLog.h:
+        (WTF::dataLog): Marked NEVER_INLINE, since it should never be perf-sensitive
+
+
 2020-01-16  Sam Weinig  <weinig@apple.com>
 
         Platform.h is out of control Part 6: Split USE_* macro definitions out of Platform.h and into a new PlatformUse.h

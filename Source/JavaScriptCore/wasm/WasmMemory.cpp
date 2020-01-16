@@ -120,8 +120,7 @@ public:
                 m_fastMemories.size() >= m_maxFastMemoryCount / 2 ? MemoryResult::SuccessAndNotifyMemoryPressure : MemoryResult::Success);
         }();
         
-        if (Options::logWebAssemblyMemory())
-            dataLog("Allocated virtual: ", result, "; state: ", *this, "\n");
+        dataLogLnIf(Options::logWebAssemblyMemory(), "Allocated virtual: ", result, "; state: ", *this);
         
         return result;
     }
@@ -134,8 +133,7 @@ public:
             m_fastMemories.removeFirst(basePtr);
         }
         
-        if (Options::logWebAssemblyMemory())
-            dataLog("Freed virtual; state: ", *this, "\n");
+        dataLogLnIf(Options::logWebAssemblyMemory(), "Freed virtual; state: ", *this);
     }
     
     bool isAddressInFastMemory(void* address)
@@ -172,8 +170,7 @@ public:
             return MemoryResult::Success;
         }();
         
-        if (Options::logWebAssemblyMemory())
-            dataLog("Allocated physical: ", bytes, ", ", MemoryResult::toString(result), "; state: ", *this, "\n");
+        dataLogLnIf(Options::logWebAssemblyMemory(), "Allocated physical: ", bytes, ", ", MemoryResult::toString(result), "; state: ", *this);
         
         return result;
     }
@@ -185,8 +182,7 @@ public:
             m_physicalBytes -= bytes;
         }
         
-        if (Options::logWebAssemblyMemory())
-            dataLog("Freed physical: ", bytes, "; state: ", *this, "\n");
+        dataLogLnIf(Options::logWebAssemblyMemory(), "Freed physical: ", bytes, "; state: ", *this);
     }
     
     void dump(PrintStream& out) const

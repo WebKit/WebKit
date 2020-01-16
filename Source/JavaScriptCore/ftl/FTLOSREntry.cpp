@@ -52,27 +52,23 @@ void* prepareOSREntry(
         dfgCode->clearOSREntryBlockAndResetThresholds(dfgCodeBlock);
         return 0;
     }
-    
-    if (Options::verboseOSR()) {
-        dataLog(
-            "FTL OSR from ", *dfgCodeBlock, " to ", *entryCodeBlock, " at ",
-            bytecodeIndex, ".\n");
-    }
+
+    dataLogLnIf(Options::verboseOSR(),
+        "FTL OSR from ", *dfgCodeBlock, " to ", *entryCodeBlock, " at ",
+        bytecodeIndex);
     
     if (bytecodeIndex)
         jsCast<ScriptExecutable*>(executable)->setDidTryToEnterInLoop(true);
 
     if (bytecodeIndex != entryCode->bytecodeIndex()) {
-        if (Options::verboseOSR())
-            dataLog("    OSR failed because we don't have an entrypoint for ", bytecodeIndex, "; ours is for ", entryCode->bytecodeIndex(), "\n");
+        dataLogLnIf(Options::verboseOSR(), "    OSR failed because we don't have an entrypoint for ", bytecodeIndex, "; ours is for ", entryCode->bytecodeIndex());
         return 0;
     }
     
     Operands<Optional<JSValue>> values;
     dfgCode->reconstruct(callFrame, dfgCodeBlock, CodeOrigin(bytecodeIndex), streamIndex, values);
     
-    if (Options::verboseOSR())
-        dataLog("    Values at entry: ", values, "\n");
+    dataLogLnIf(Options::verboseOSR(), "    Values at entry: ", values);
     
     for (int argument = values.numberOfArguments(); argument--;) {
         JSValue valueOnStack = callFrame->r(virtualRegisterForArgument(argument).offset()).asanUnsafeJSValue();
@@ -101,16 +97,14 @@ void* prepareOSREntry(
     
     int stackFrameSize = entryCode->common.requiredRegisterCountForExecutionAndExit();
     if (UNLIKELY(!vm.ensureStackCapacityFor(&callFrame->registers()[virtualRegisterForLocal(stackFrameSize - 1).offset()]))) {
-        if (Options::verboseOSR())
-            dataLog("    OSR failed because stack growth failed.\n");
+        dataLogLnIf(Options::verboseOSR(), "    OSR failed because stack growth failed.");
         return 0;
     }
     
     callFrame->setCodeBlock(entryCodeBlock);
     
     void* result = entryCode->addressForCall(ArityCheckNotRequired).executableAddress();
-    if (Options::verboseOSR())
-        dataLog("    Entry will succeed, going to address ", RawPointer(result), "\n");
+    dataLogLnIf(Options::verboseOSR(), "    Entry will succeed, going to address ", RawPointer(result));
     
     return result;
 }

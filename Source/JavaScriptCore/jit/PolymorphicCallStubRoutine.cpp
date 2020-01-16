@@ -45,9 +45,7 @@ PolymorphicCallNode::~PolymorphicCallNode()
 void PolymorphicCallNode::unlink(VM& vm)
 {
     if (m_callLinkInfo) {
-        if (Options::dumpDisassembly())
-            dataLog("Unlinking polymorphic call at ", m_callLinkInfo->callReturnLocation(), ", ", m_callLinkInfo->codeOrigin(), "\n");
-
+        dataLogLnIf(Options::dumpDisassembly(), "Unlinking polymorphic call at ", m_callLinkInfo->callReturnLocation(), ", ", m_callLinkInfo->codeOrigin());
         m_callLinkInfo->unlink(vm);
     }
 

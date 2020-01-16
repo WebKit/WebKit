@@ -128,24 +128,21 @@ bool JITCode::checkIfOptimizationThresholdReached(CodeBlock* codeBlock)
 void JITCode::optimizeNextInvocation(CodeBlock* codeBlock)
 {
     ASSERT(codeBlock->jitType() == JITType::DFGJIT);
-    if (Options::verboseOSR())
-        dataLog(*codeBlock, ": FTL-optimizing next invocation.\n");
+    dataLogLnIf(Options::verboseOSR(), *codeBlock, ": FTL-optimizing next invocation.");
     tierUpCounter.setNewThreshold(0, codeBlock);
 }
 
 void JITCode::dontOptimizeAnytimeSoon(CodeBlock* codeBlock)
 {
     ASSERT(codeBlock->jitType() == JITType::DFGJIT);
-    if (Options::verboseOSR())
-        dataLog(*codeBlock, ": Not FTL-optimizing anytime soon.\n");
+    dataLogLnIf(Options::verboseOSR(), *codeBlock, ": Not FTL-optimizing anytime soon.");
     tierUpCounter.deferIndefinitely();
 }
 
 void JITCode::optimizeAfterWarmUp(CodeBlock* codeBlock)
 {
     ASSERT(codeBlock->jitType() == JITType::DFGJIT);
-    if (Options::verboseOSR())
-        dataLog(*codeBlock, ": FTL-optimizing after warm-up.\n");
+    dataLogLnIf(Options::verboseOSR(), *codeBlock, ": FTL-optimizing after warm-up.");
     CodeBlock* baseline = codeBlock->baselineVersion();
     tierUpCounter.setNewThreshold(
         baseline->adjustedCounterValue(Options::thresholdForFTLOptimizeAfterWarmUp()),
@@ -155,8 +152,7 @@ void JITCode::optimizeAfterWarmUp(CodeBlock* codeBlock)
 void JITCode::optimizeSoon(CodeBlock* codeBlock)
 {
     ASSERT(codeBlock->jitType() == JITType::DFGJIT);
-    if (Options::verboseOSR())
-        dataLog(*codeBlock, ": FTL-optimizing soon.\n");
+    dataLogLnIf(Options::verboseOSR(), *codeBlock, ": FTL-optimizing soon.");
     CodeBlock* baseline = codeBlock->baselineVersion();
     tierUpCounter.setNewThreshold(
         baseline->adjustedCounterValue(Options::thresholdForFTLOptimizeSoon()),
@@ -166,8 +162,7 @@ void JITCode::optimizeSoon(CodeBlock* codeBlock)
 void JITCode::forceOptimizationSlowPathConcurrently(CodeBlock* codeBlock)
 {
     ASSERT(codeBlock->jitType() == JITType::DFGJIT);
-    if (Options::verboseOSR())
-        dataLog(*codeBlock, ": Forcing slow path concurrently for FTL entry.\n");
+    dataLogLnIf(Options::verboseOSR(), *codeBlock, ": Forcing slow path concurrently for FTL entry.");
     tierUpCounter.forceSlowPathConcurrently();
 }
 
@@ -204,8 +199,8 @@ void JITCode::setOptimizationThresholdBasedOnCompilationResult(
 void JITCode::setOSREntryBlock(VM& vm, const JSCell* owner, CodeBlock* osrEntryBlock)
 {
     if (Options::verboseOSR()) {
-        dataLog(RawPointer(this), ": Setting OSR entry block to ", RawPointer(osrEntryBlock), "\n");
-        dataLog("OSR entries will go to ", osrEntryBlock->jitCode()->ftlForOSREntry()->addressForCall(ArityCheckNotRequired), "\n");
+        dataLogLn(RawPointer(this), ": Setting OSR entry block to ", RawPointer(osrEntryBlock));
+        dataLogLn("OSR entries will go to ", osrEntryBlock->jitCode()->ftlForOSREntry()->addressForCall(ArityCheckNotRequired));
     }
     m_osrEntryBlock.set(vm, owner, osrEntryBlock);
 }

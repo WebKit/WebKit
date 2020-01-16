@@ -64,13 +64,13 @@ CompilerTimingScope::CompilerTimingScope(const char* compilerName, const char* n
     : m_compilerName(compilerName)
     , m_name(name)
 {
-    if (Options::logPhaseTimes())
+    if (UNLIKELY(Options::logPhaseTimes()))
         m_before = MonotonicTime::now();
 }
 
 CompilerTimingScope::~CompilerTimingScope()
 {
-    if (Options::logPhaseTimes()) {
+    if (UNLIKELY(Options::logPhaseTimes())) {
         Seconds duration = MonotonicTime::now() - m_before;
         dataLog(
             "[", m_compilerName, "] ", m_name, " took: ", duration.milliseconds(), " ms ",

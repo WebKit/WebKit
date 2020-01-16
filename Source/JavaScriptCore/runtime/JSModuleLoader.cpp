@@ -252,8 +252,7 @@ JSInternalPromise* JSModuleLoader::requestImportModule(JSGlobalObject* globalObj
 
 JSInternalPromise* JSModuleLoader::importModule(JSGlobalObject* globalObject, JSString* moduleName, JSValue parameters, const SourceOrigin& referrer)
 {
-    if (Options::dumpModuleLoadingState())
-        dataLog("Loader [import] ", printableModuleKey(globalObject, moduleName), "\n");
+    dataLogLnIf(Options::dumpModuleLoadingState(), "Loader [import] ", printableModuleKey(globalObject, moduleName));
 
     VM& vm = globalObject->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -279,8 +278,7 @@ JSInternalPromise* JSModuleLoader::importModule(JSGlobalObject* globalObject, JS
 
 Identifier JSModuleLoader::resolveSync(JSGlobalObject* globalObject, JSValue name, JSValue referrer, JSValue scriptFetcher)
 {
-    if (Options::dumpModuleLoadingState())
-        dataLog("Loader [resolve] ", printableModuleKey(globalObject, name), "\n");
+    dataLogLnIf(Options::dumpModuleLoadingState(), "Loader [resolve] ", printableModuleKey(globalObject, name));
 
     if (globalObject->globalObjectMethodTable()->moduleLoaderResolve)
         return globalObject->globalObjectMethodTable()->moduleLoaderResolve(globalObject, this, name, referrer, scriptFetcher);
@@ -310,8 +308,7 @@ JSInternalPromise* JSModuleLoader::resolve(JSGlobalObject* globalObject, JSValue
 
 JSInternalPromise* JSModuleLoader::fetch(JSGlobalObject* globalObject, JSValue key, JSValue parameters, JSValue scriptFetcher)
 {
-    if (Options::dumpModuleLoadingState())
-        dataLog("Loader [fetch] ", printableModuleKey(globalObject, key), "\n");
+    dataLogLnIf(Options::dumpModuleLoadingState(), "Loader [fetch] ", printableModuleKey(globalObject, key));
 
     VM& vm = globalObject->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -345,8 +342,7 @@ JSObject* JSModuleLoader::createImportMetaProperties(JSGlobalObject* globalObjec
 
 JSValue JSModuleLoader::evaluate(JSGlobalObject* globalObject, JSValue key, JSValue moduleRecordValue, JSValue scriptFetcher)
 {
-    if (Options::dumpModuleLoadingState())
-        dataLog("Loader [evaluate] ", printableModuleKey(globalObject, key), "\n");
+    dataLogLnIf(Options::dumpModuleLoadingState(), "Loader [evaluate] ", printableModuleKey(globalObject, key));
 
     if (globalObject->globalObjectMethodTable()->moduleLoaderEvaluate)
         return globalObject->globalObjectMethodTable()->moduleLoaderEvaluate(globalObject, this, key, moduleRecordValue, scriptFetcher);
@@ -449,8 +445,7 @@ EncodedJSValue JSC_HOST_CALL moduleLoaderModuleDeclarationInstantiation(JSGlobal
     if (!moduleRecord)
         return JSValue::encode(jsUndefined());
 
-    if (Options::dumpModuleLoadingState())
-        dataLog("Loader [link] ", moduleRecord->moduleKey(), "\n");
+    dataLogLnIf(Options::dumpModuleLoadingState(), "Loader [link] ", moduleRecord->moduleKey());
 
     moduleRecord->link(globalObject, callFrame->argument(1));
     RETURN_IF_EXCEPTION(scope, encodedJSValue());

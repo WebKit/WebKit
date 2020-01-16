@@ -807,7 +807,7 @@ private:
         m_combinedLiveness = CombinedLiveness(m_graph);
 
         CString graphBeforeSinking;
-        if (Options::verboseValidationFailure() && Options::validateGraphAtEachPhase()) {
+        if (UNLIKELY(Options::verboseValidationFailure() && Options::validateGraphAtEachPhase())) {
             StringPrintStream out;
             m_graph.dump(out);
             graphBeforeSinking = out.toCString();

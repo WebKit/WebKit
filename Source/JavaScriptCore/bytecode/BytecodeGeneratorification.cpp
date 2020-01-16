@@ -300,7 +300,7 @@ void BytecodeGeneratorification::run()
 
 void performGeneratorification(BytecodeGenerator& bytecodeGenerator, UnlinkedCodeBlock* codeBlock, InstructionStreamWriter& instructions, SymbolTable* generatorFrameSymbolTable, int generatorFrameSymbolTableIndex)
 {
-    if (Options::dumpBytecodesBeforeGeneratorification())
+    if (UNLIKELY(Options::dumpBytecodesBeforeGeneratorification()))
         CodeBlockBytecodeDumper<UnlinkedCodeBlock>::dumpBlock(codeBlock, instructions, WTF::dataFile());
 
     BytecodeGeneratorification pass(bytecodeGenerator, codeBlock, instructions, generatorFrameSymbolTable, generatorFrameSymbolTableIndex);
