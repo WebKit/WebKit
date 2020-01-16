@@ -40,7 +40,7 @@ namespace WebCore {
 class WEBCORE_EXPORT LocalSampleBufferDisplayLayer final : public SampleBufferDisplayLayer, public CanMakeWeakPtr<LocalSampleBufferDisplayLayer> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static std::unique_ptr<SampleBufferDisplayLayer> create(Client&, bool hideRootLayer, IntSize);
+    static std::unique_ptr<LocalSampleBufferDisplayLayer> create(Client&, bool hideRootLayer, IntSize);
 
     LocalSampleBufferDisplayLayer(RetainPtr<AVSampleBufferDisplayLayer>&&, Client&, bool hideRootLayer, IntSize);
     ~LocalSampleBufferDisplayLayer();
@@ -54,7 +54,8 @@ public:
 
     PlatformLayer* rootLayer() final;
 
-private:
+    void updateRootLayerBoundsAndPosition(CGRect, CGPoint);
+
     bool didFail() const final;
 
     void updateDisplayMode(bool hideDisplayLayer, bool hideRootLayer) final;
@@ -69,8 +70,7 @@ private:
     void enqueueSample(MediaSample&) final;
     void clearEnqueuedSamples() final;
 
-    void ensureLayers();
-
+private:
     void removeOldSamplesFromPendingQueue();
     void addSampleToPendingQueue(MediaSample&);
     void requestNotificationWhenReadyForVideoData();

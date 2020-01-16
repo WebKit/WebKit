@@ -48,6 +48,91 @@
 #import <pal/cf/CoreMediaSoftLink.h>
 #import <pal/cocoa/AVFoundationSoftLink.h>
 
+@interface WebRootSampleBufferBoundsChangeListener : NSObject {
+    WebCore::MediaPlayerPrivateMediaStreamAVFObjC* _parent;
+}
+
+- (id)initWithParent:(WebCore::MediaPlayerPrivateMediaStreamAVFObjC*)callback;
+- (void)invalidate;
+- (void)start;
+- (void)stop;
+@end
+
+@implementation WebRootSampleBufferBoundsChangeListener
+
+- (id)initWithParent:(WebCore::MediaPlayerPrivateMediaStreamAVFObjC*)parent
+{
+    if (!(self = [super init]))
+        return nil;
+
+    _parent = parent;
+
+    return self;
+}
+
+- (void)dealloc
+{
+    [self invalidate];
+    [super dealloc];
+}
+
+- (void)invalidate
+{
+    [self stop];
+    _parent = nullptr;
+}
+
+- (void)start
+{
+    ASSERT(_parent);
+    ASSERT(_parent->rootLayer());
+
+    [_parent->rootLayer() addObserver:self forKeyPath:@"bounds" options:NSKeyValueObservingOptionNew context:nil];
+}
+
+- (void)stop
+{
+    if (!_parent)
+        return;
+
+    if (_parent->rootLayer())
+        [_parent->rootLayer() removeObserver:self forKeyPath:@"bounds"];
+}
+
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
+{
+    UNUSED_PARAM(context);
+    UNUSED_PARAM(keyPath);
+    ASSERT(_parent);
+
+    if (!_parent)
+        return;
+
+    if ([[change valueForKey:NSKeyValueChangeNotificationIsPriorKey] boolValue])
+        return;
+
+    if ((CALayer *)object == _parent->rootLayer()) {
+        if ([keyPath isEqualToString:@"bounds"]) {
+            if (!_parent)
+                return;
+
+            if (isMainThread()) {
+                _parent->rootLayerBoundsDidChange();
+                return;
+            }
+
+            callOnMainThread([protectedSelf = RetainPtr<WebRootSampleBufferBoundsChangeListener>(self)] {
+                if (!protectedSelf->_parent)
+                    return;
+
+                protectedSelf->_parent->rootLayerBoundsDidChange();
+            });
+        }
+    }
+
+}
+@end
+
 namespace WebCore {
 using namespace PAL;
 
@@ -64,6 +149,7 @@ MediaPlayerPrivateMediaStreamAVFObjC::MediaPlayerPrivateMediaStreamAVFObjC(Media
     , m_logger(player->mediaPlayerLogger())
     , m_logIdentifier(player->mediaPlayerLogIdentifier())
 #endif
+    , m_boundsChangeListener(adoptNS([[WebRootSampleBufferBoundsChangeListener alloc] initWithParent:this]))
 {
     INFO_LOG(LOGIDENTIFIER);
 }
@@ -81,6 +167,8 @@ MediaPlayerPrivateMediaStreamAVFObjC::~MediaPlayerPrivateMediaStreamAVFObjC()
         for (auto& track : m_mediaStreamPrivate->tracks())
             track->removeObserver(*this);
     }
+
+    [m_boundsChangeListener stop];
 
     destroyLayers();
 
@@ -284,7 +372,7 @@ void MediaPlayerPrivateMediaStreamAVFObjC::ensureLayers()
         return;
 
     auto size = snappedIntRect(m_player->playerContentBoxRect()).size();
-    m_sampleBufferDisplayLayer = LocalSampleBufferDisplayLayer::create(*this, hideRootLayer(), size);
+    m_sampleBufferDisplayLayer = SampleBufferDisplayLayer::create(*this, hideRootLayer(), size);
 
     if (!m_sampleBufferDisplayLayer) {
         ERROR_LOG(LOGIDENTIFIER, "Creating the SampleBufferDisplayLayer failed.");
@@ -295,6 +383,8 @@ void MediaPlayerPrivateMediaStreamAVFObjC::ensureLayers()
     updateDisplayLayer();
 
     m_videoFullscreenLayerManager->setVideoLayer(m_sampleBufferDisplayLayer->rootLayer(), size);
+
+    [m_boundsChangeListener start];
 }
 
 void MediaPlayerPrivateMediaStreamAVFObjC::destroyLayers()
@@ -363,6 +453,11 @@ void MediaPlayerPrivateMediaStreamAVFObjC::cancelLoad()
 void MediaPlayerPrivateMediaStreamAVFObjC::prepareToPlay()
 {
     INFO_LOG(LOGIDENTIFIER);
+}
+
+PlatformLayer* MediaPlayerPrivateMediaStreamAVFObjC::rootLayer() const
+{
+    return m_sampleBufferDisplayLayer ? m_sampleBufferDisplayLayer->rootLayer() : nullptr;
 }
 
 PlatformLayer* MediaPlayerPrivateMediaStreamAVFObjC::platformLayer() const
@@ -948,7 +1043,7 @@ void MediaPlayerPrivateMediaStreamAVFObjC::updateDisplayLayer()
     if (!m_sampleBufferDisplayLayer)
         return;
 
-    auto bounds = m_sampleBufferDisplayLayer->bounds();
+    auto bounds = rootLayer().bounds;
     auto videoBounds = bounds;
     if (m_videoRotation == MediaSample::VideoRotation::Right || m_videoRotation == MediaSample::VideoRotation::Left)
         std::swap(videoBounds.size.width, videoBounds.size.height);
@@ -956,7 +1051,7 @@ void MediaPlayerPrivateMediaStreamAVFObjC::updateDisplayLayer()
     m_sampleBufferDisplayLayer->updateBoundsAndPosition(videoBounds, { bounds.size.width / 2, bounds.size.height / 2});
 }
 
-void MediaPlayerPrivateMediaStreamAVFObjC::sampleBufferDisplayLayerBoundsDidChange(SampleBufferDisplayLayer&)
+void MediaPlayerPrivateMediaStreamAVFObjC::rootLayerBoundsDidChange()
 {
     updateDisplayLayer();
 }

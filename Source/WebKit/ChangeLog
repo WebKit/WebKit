@@ -1,3 +1,98 @@
+2020-01-16  youenn fablet  <youenn@apple.com>
+
+        Add support for MediaStream video track rendering in GPUProcess
+        https://bugs.webkit.org/show_bug.cgi?id=206286
+
+        Reviewed by Eric Carlson.
+
+        Implement WebProcess SampleBufferDisplayLayer and GPUProcess RemoteSampleBufferDisplayLayer.
+        RemoteSampleBufferDisplayLayer is a wrapper around LocalSampleBufferDisplayLayer.
+
+        A synchronous IPC is used at creation time of the layer to make sure we have a shared layer synchronously.
+        Future refactoring should allow to remove that constraint as done in regular video playing.
+
+        Override SampleBufferDisplayLayer create function pointer when rendering is to be done in GPUProcess.
+
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources-output.xcfilelist:
+        * DerivedSources.make:
+        * GPUProcess/GPUConnectionToWebProcess.cpp:
+        (WebKit::GPUConnectionToWebProcess::sampleBufferDisplayLayerManager):
+        (WebKit::GPUConnectionToWebProcess::didReceiveMessage):
+        (WebKit::GPUConnectionToWebProcess::didReceiveSyncMessage):
+        * GPUProcess/GPUConnectionToWebProcess.h:
+        * GPUProcess/webrtc/RemoteSampleBufferDisplayLayer.cpp: Added.
+        (WebKit::RemoteSampleBufferDisplayLayer::create):
+        (WebKit::RemoteSampleBufferDisplayLayer::RemoteSampleBufferDisplayLayer):
+        (WebKit::RemoteSampleBufferDisplayLayer::~RemoteSampleBufferDisplayLayer):
+        (WebKit::RemoteSampleBufferDisplayLayer::contextID):
+        (WebKit::RemoteSampleBufferDisplayLayer::bounds const):
+        (WebKit::RemoteSampleBufferDisplayLayer::updateDisplayMode):
+        (WebKit::RemoteSampleBufferDisplayLayer::updateAffineTransform):
+        (WebKit::RemoteSampleBufferDisplayLayer::updateBoundsAndPosition):
+        (WebKit::RemoteSampleBufferDisplayLayer::flush):
+        (WebKit::RemoteSampleBufferDisplayLayer::flushAndRemoveImage):
+        (WebKit::RemoteSampleBufferDisplayLayer::enqueueSample):
+        (WebKit::RemoteSampleBufferDisplayLayer::clearEnqueuedSamples):
+        (WebKit::RemoteSampleBufferDisplayLayer::messageSenderConnection const):
+        (WebKit::RemoteSampleBufferDisplayLayer::sampleBufferDisplayLayerStatusDidChange):
+        (WebKit::RemoteSampleBufferDisplayLayer::streamTime const):
+        * GPUProcess/webrtc/RemoteSampleBufferDisplayLayer.h: Added.
+        * GPUProcess/webrtc/RemoteSampleBufferDisplayLayer.messages.in: Added.
+        * GPUProcess/webrtc/RemoteSampleBufferDisplayLayerManager.cpp: Added.
+        (WebKit::RemoteSampleBufferDisplayLayerManager::RemoteSampleBufferDisplayLayerManager):
+        (WebKit::RemoteSampleBufferDisplayLayerManager::didReceiveLayerMessage):
+        (WebKit::RemoteSampleBufferDisplayLayerManager::createLayer):
+        (WebKit::RemoteSampleBufferDisplayLayerManager::releaseLayer):
+        * GPUProcess/webrtc/RemoteSampleBufferDisplayLayerManager.h: Added.
+        * GPUProcess/webrtc/RemoteSampleBufferDisplayLayerManager.messages.in: Added.
+        * Scripts/webkit/messages.py:
+        * Shared/WebCoreArgumentCoders.h:
+        * Shared/mac/WebCoreArgumentCodersMac.mm:
+        (IPC::ArgumentCoder<CGRect>::encode):
+        (IPC::ArgumentCoder<CGRect>::decode):
+        (IPC::ArgumentCoder<CGSize>::encode):
+        (IPC::ArgumentCoder<CGSize>::decode):
+        (IPC::ArgumentCoder<CGPoint>::encode):
+        (IPC::ArgumentCoder<CGPoint>::decode):
+        (IPC::ArgumentCoder<CGAffineTransform>::encode):
+        (IPC::ArgumentCoder<CGAffineTransform>::decode):
+        * Sources.txt:
+        * SourcesCocoa.txt:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/GPU/GPUProcessConnection.cpp:
+        (WebKit::GPUProcessConnection::sampleBufferDisplayLayerManager):
+        (WebKit::GPUProcessConnection::didReceiveMessage):
+        * WebProcess/GPU/GPUProcessConnection.h:
+        * WebProcess/GPU/media/RemoteMediaPlayerManager.cpp:
+        (WebKit::RemoteMediaPlayerManager::updatePreferences):
+        * WebProcess/GPU/webrtc/SampleBufferDisplayLayer.cpp: Added.
+        (WebKit::SampleBufferDisplayLayer::create):
+        (WebKit::SampleBufferDisplayLayer::SampleBufferDisplayLayer):
+        (WebKit::SampleBufferDisplayLayer::~SampleBufferDisplayLayer):
+        (WebKit::SampleBufferDisplayLayer::didFail const):
+        (WebKit::SampleBufferDisplayLayer::updateDisplayMode):
+        (WebKit::SampleBufferDisplayLayer::bounds const):
+        (WebKit::SampleBufferDisplayLayer::updateAffineTransform):
+        (WebKit::SampleBufferDisplayLayer::updateBoundsAndPosition):
+        (WebKit::SampleBufferDisplayLayer::flush):
+        (WebKit::SampleBufferDisplayLayer::flushAndRemoveImage):
+        (WebKit::SampleBufferDisplayLayer::enqueueSample):
+        (WebKit::SampleBufferDisplayLayer::clearEnqueuedSamples):
+        (WebKit::SampleBufferDisplayLayer::rootLayer):
+        (WebKit::SampleBufferDisplayLayer::setDidFail):
+        (WebKit::SampleBufferDisplayLayer::boundsChanged):
+        * WebProcess/GPU/webrtc/SampleBufferDisplayLayer.h: Added.
+        * WebProcess/GPU/webrtc/SampleBufferDisplayLayer.messages.in: Added.
+        * WebProcess/GPU/webrtc/SampleBufferDisplayLayerIdentifier.h: Added.
+        * WebProcess/GPU/webrtc/SampleBufferDisplayLayerManager.cpp: Added.
+        (WebKit::SampleBufferDisplayLayerManager::didReceiveLayerMessage):
+        (WebKit::SampleBufferDisplayLayerManager::createLayer):
+        (WebKit::SampleBufferDisplayLayerManager::addLayer):
+        (WebKit::SampleBufferDisplayLayerManager::removeLayer):
+        * WebProcess/GPU/webrtc/SampleBufferDisplayLayerManager.h: Added.
+        * WebProcess/WebProcess.h:
+
 2020-01-16  David Kilzer  <ddkilzer@apple.com>
 
         Enable -Wconditional-uninitialized in WebInspectorUI, WebKitLegacy, WebKit projects

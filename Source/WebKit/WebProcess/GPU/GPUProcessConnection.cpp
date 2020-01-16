@@ -34,6 +34,7 @@
 #include "LibWebRTCCodecsMessages.h"
 #include "RemoteMediaPlayerManager.h"
 #include "RemoteMediaPlayerManagerMessages.h"
+#include "SampleBufferDisplayLayerMessages.h"
 #include "UserMediaCaptureManager.h"
 #include "UserMediaCaptureManagerMessages.h"
 #include "WebCoreArgumentCoders.h"
@@ -64,6 +65,15 @@ void GPUProcessConnection::didReceiveInvalidMessage(IPC::Connection&, IPC::Strin
 {
 }
 
+#if PLATFORM(COCOA) && ENABLE(VIDEO_TRACK) && ENABLE(MEDIA_STREAM)
+SampleBufferDisplayLayerManager& GPUProcessConnection::sampleBufferDisplayLayerManager()
+{
+    if (!m_sampleBufferDisplayLayerManager)
+        m_sampleBufferDisplayLayerManager = makeUnique<SampleBufferDisplayLayerManager>();
+    return *m_sampleBufferDisplayLayerManager;
+}
+#endif
+
 void GPUProcessConnection::didReceiveMessage(IPC::Connection& connection, IPC::Decoder& decoder)
 {
     if (decoder.messageReceiverName() == Messages::RemoteMediaPlayerManager::messageReceiverName()) {
@@ -76,7 +86,13 @@ void GPUProcessConnection::didReceiveMessage(IPC::Connection& connection, IPC::D
             captureManager->didReceiveMessageFromGPUProcess(connection, decoder);
         return;
     }
-#endif
+#if PLATFORM(COCOA) && ENABLE(VIDEO_TRACK)
+    if (decoder.messageReceiverName() == Messages::SampleBufferDisplayLayer::messageReceiverName()) {
+        sampleBufferDisplayLayerManager().didReceiveLayerMessage(connection, decoder);
+        return;
+    }
+#endif // PLATFORM(COCOA) && ENABLE(VIDEO_TRACK)
+#endif // ENABLE(MEDIA_STREAM)
 #if USE(LIBWEBRTC) && PLATFORM(COCOA)
     if (decoder.messageReceiverName() == Messages::LibWebRTCCodecs::messageReceiverName()) {
         WebProcess::singleton().libWebRTCCodecs().didReceiveMessage(connection, decoder);
