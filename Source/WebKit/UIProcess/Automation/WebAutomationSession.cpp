@@ -1932,7 +1932,7 @@ void WebAutomationSession::performInteractionSequence(const String& handle, cons
 
             RefPtr<JSON::Object> locationObject;
             if (stateObject->getObject("location"_s, locationObject)) {
-                int x, y;
+                int x = 0, y = 0;
                 if (locationObject->getInteger("x"_s, x) && locationObject->getInteger("y"_s, y))
                     sourceState.location = WebCore::IntPoint(x, y);
             }

@@ -1656,7 +1656,7 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
     if (!timers)
         timers = makeUnique<HashMap<uint32_t, std::unique_ptr<PluginTimer>>>();
 
-    std::unique_ptr<PluginTimer>* slot;
+    std::unique_ptr<PluginTimer>* slot = nullptr;
     uint32_t timerID;
     do
         timerID = ++currentTimerID;

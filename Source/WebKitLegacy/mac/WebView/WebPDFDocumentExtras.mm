@@ -99,8 +99,8 @@ NSArray *allScriptsInPDFDocument(CGPDFDocumentRef pdfDocument)
         if (!CGPDFDictionaryGetName(javaScriptAction, "S", &actionType) || strcmp(actionType, "JavaScript"))
             continue;
 
-        const UInt8* bytes = 0;
-        CFIndex length;
+        const UInt8* bytes = nullptr;
+        CFIndex length = 0;
         CGPDFStreamRef stream;
         CGPDFStringRef string;
         RetainPtr<CFDataRef> data;
@@ -115,7 +115,7 @@ NSArray *allScriptsInPDFDocument(CGPDFDocumentRef pdfDocument)
             bytes = CGPDFStringGetBytePtr(string);
             length = CGPDFStringGetLength(string);
         }
-        if (!bytes)
+        if (!bytes || !length)
             continue;
 
         NSStringEncoding encoding = (length > 1 && bytes[0] == 0xFE && bytes[1] == 0xFF) ? NSUnicodeStringEncoding : NSUTF8StringEncoding;

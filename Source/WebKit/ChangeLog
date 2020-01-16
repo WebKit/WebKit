@@ -1,3 +1,21 @@
+2020-01-16  David Kilzer  <ddkilzer@apple.com>
+
+        Enable -Wconditional-uninitialized in WebInspectorUI, WebKitLegacy, WebKit projects
+        <https://webkit.org/b/206270>
+        <rdar://problem/58589767>
+
+        Reviewed by Tim Horton.
+
+        * Configurations/Base.xcconfig:
+        (WARNING_CFLAGS): Add -Wconditional-uninitialized switch.
+        * UIProcess/Automation/WebAutomationSession.cpp:
+        (WebKit::WebAutomationSession::performInteractionSequence):
+        Initialize `x`, `y` stack variables since the compiler can't
+        reason about the behavior of JSON::Object::getInteger().
+        * WebProcess/Plugins/PDF/PDFPlugin.mm:
+        (WebKit::getAllScriptsInPDFDocument): Initialize `length` stack
+        variable.  Also add check that `length` is non-zero.
+
 2020-01-16  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK][WPE] Web process crash when IM tries to delete surrounding text

@@ -532,8 +532,8 @@ static void getAllScriptsInPDFDocument(CGPDFDocumentRef pdfDocument, Vector<Reta
         if (!CGPDFDictionaryGetName(javaScriptAction, "S", &actionType) || strcmp(actionType, "JavaScript"))
             continue;
 
-        const UInt8* bytes = 0;
-        CFIndex length;
+        const UInt8* bytes = nullptr;
+        CFIndex length = 0;
         CGPDFStreamRef stream;
         CGPDFStringRef string;
         RetainPtr<CFDataRef> data;
@@ -548,7 +548,7 @@ static void getAllScriptsInPDFDocument(CGPDFDocumentRef pdfDocument, Vector<Reta
             bytes = CGPDFStringGetBytePtr(string);
             length = CGPDFStringGetLength(string);
         }
-        if (!bytes)
+        if (!bytes || !length)
             continue;
 
         CFStringEncoding encoding = (length > 1 && bytes[0] == 0xFE && bytes[1] == 0xFF) ? kCFStringEncodingUnicode : kCFStringEncodingUTF8;

@@ -1,3 +1,20 @@
+2020-01-16  David Kilzer  <ddkilzer@apple.com>
+
+        Enable -Wconditional-uninitialized in WebInspectorUI, WebKitLegacy, WebKit projects
+        <https://webkit.org/b/206270>
+        <rdar://problem/58589767>
+
+        Reviewed by Tim Horton.
+
+        * Configurations/Base.xcconfig:
+        (WARNING_CFLAGS): Add -Wconditional-uninitialized switch.
+        * Plugins/WebNetscapePluginView.mm:
+        (-[WebNetscapePluginView scheduleTimerWithInterval:repeat:timerFunc:]):
+        Initialize `slot` stack variable.
+        * WebView/WebPDFDocumentExtras.mm:
+        (allScriptsInPDFDocument): Initialize `length` stack variable.
+        Also add check that `length` is non-zero.
+
 2020-01-16  Cathie Chen  <cathiechen@igalia.com>
 
         Mapping HTML attributes width/height to the default aspect ratio of <img>
