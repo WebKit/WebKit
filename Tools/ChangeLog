@@ -1,3 +1,22 @@
+2020-01-16  Takashi Komori  <Takashi.Komori@sony.com>
+
+        KeyedDecoderGeneric crashes when it accesses data with non-existing key
+        https://bugs.webkit.org/show_bug.cgi?id=205902
+
+        Reviewed by Fujii Hironori.
+
+        * TestWebKitAPI/CMakeLists.txt:
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebCore/KeyedCoding.cpp: Added.
+        (TestWebKitAPI::checkDecodedBytes):
+        (TestWebKitAPI::TEST):
+        (TestWebKitAPI::testSimpleValue):
+        (TestWebKitAPI::KeyedCodingTestObject::encode):
+        (TestWebKitAPI::KeyedCodingTestObject::decode):
+        (TestWebKitAPI::KeyedCodingTestObject::KeyedCodingTestObject):
+        (TestWebKitAPI::KeyedCodingTestObject::equals const):
+        (TestWebKitAPI::operator==):
+
 2020-01-16  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK][WPE] Password field doesn't get input method
