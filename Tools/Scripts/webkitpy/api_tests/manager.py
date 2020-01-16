@@ -22,6 +22,7 @@
 
 import json
 import logging
+import re
 import time
 
 from webkitpy.api_tests.runner import Runner
@@ -73,19 +74,28 @@ class Manager(object):
     def _find_test_subset(superset, arg_filter):
         result = []
         for arg in arg_filter:
-            split_arg = arg.split('.')
+            # Might match <binary>.<suite>.<test> or just <suite>.<test>
+            arg_re = re.compile('^{}$'.format(arg.replace('*', '.*')))
             for test in superset:
-                # Might match <binary>.<suite>.<test> or just <suite>.<test>
+                if arg_re.match(test):
+                    result.append(test)
+                    continue
+
                 split_test = test.split('.')
-                if len(split_arg) == 1:
-                    if test not in result and (arg == split_test[0] or arg == split_test[1]):
-                        result.append(test)
-                elif len(split_arg) == 2:
-                    if test not in result and (split_arg == split_test[0:2] or split_arg == split_test[1:3]):
-                        result.append(test)
-                else:
-                    if arg == test and test not in result:
-                        result.append(test)
+                if len(split_test) == 1:
+                    continue
+                if arg_re.match('.'.join(split_test[1:])):
+                    result.append(test)
+                    continue
+                if arg_re.match('.'.join(split_test[:-1])):
+                    result.append(test)
+                    continue
+
+                if len(split_test) == 2:
+                    continue
+                if arg_re.match('.'.join(split_test[1:-1])):
+                    result.append(test)
+                    continue
         return result
 
     def _collect_tests(self, args):
