@@ -62,7 +62,7 @@ typedef HashMap<uint64_t, std::pair<RefPtr<InjectedBundleScriptWorld>, unsigned>
 
 static WorldMap& worldMap()
 {
-    static NeverDestroyed<WorldMap> map(std::initializer_list<WorldMap::KeyValuePairType> { { 1, std::make_pair(&InjectedBundleScriptWorld::normalWorld(), 1) } });
+    static NeverDestroyed<WorldMap> map(std::initializer_list<WorldMap::KeyValuePairType> { { WebUserContentController::identifierForNormalWorld(), std::make_pair(&InjectedBundleScriptWorld::normalWorld(), 1) } });
 
     return map;
 }
@@ -94,23 +94,33 @@ WebUserContentController::~WebUserContentController()
     userContentControllers().remove(m_identifier);
 }
 
+InjectedBundleScriptWorld* WebUserContentController::worldForIdentifier(uint64_t identifier)
+{
+    auto iterator = worldMap().find(identifier);
+    return iterator == worldMap().end() ? nullptr : iterator->value.first.get();
+}
+
+void WebUserContentController::addUserContentWorld(const std::pair<uint64_t, String>& world)
+{
+    ASSERT(world.first);
+    ASSERT(world.first != 1);
+
+    worldMap().ensure(world.first, [&] {
+#if PLATFORM(GTK) || PLATFORM(WPE)
+        // The GLib API doesn't allow to create script worlds from the UI process. We need to
+        // use the existing world created by the web extension if any. The world name is used
+        // as the identifier.
+        if (auto* existingWorld = InjectedBundleScriptWorld::find(world.second))
+            return std::make_pair(Ref<InjectedBundleScriptWorld>(*existingWorld), 1);
+#endif
+        return std::make_pair(InjectedBundleScriptWorld::create(world.second), 1);
+    });
+}
+
 void WebUserContentController::addUserContentWorlds(const Vector<std::pair<uint64_t, String>>& worlds)
 {
-    for (auto& world : worlds) {
-        ASSERT(world.first);
-        ASSERT(world.first != 1);
-
-        worldMap().ensure(world.first, [&] {
-#if PLATFORM(GTK) || PLATFORM(WPE)
-            // The GLib API doesn't allow to create script worlds from the UI process. We need to
-            // use the existing world created by the web extension if any. The world name is used
-            // as the identifier.
-            if (auto* existingWorld = InjectedBundleScriptWorld::find(world.second))
-                return std::make_pair(Ref<InjectedBundleScriptWorld>(*existingWorld), 1);
-#endif
-            return std::make_pair(InjectedBundleScriptWorld::create(world.second), 1);
-        });
-    }
+    for (auto& world : worlds)
+        addUserContentWorld(world);
 }
 
 void WebUserContentController::removeUserContentWorlds(const Vector<uint64_t>& worldIdentifiers)

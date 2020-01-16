@@ -110,6 +110,7 @@ public:
         ContentRuleList,
         ContentRuleListAction,
         ContentRuleListStore,
+        ContentWorld,
 #if PLATFORM(IOS_FAMILY)
         ContextMenuElementInfo,
 #endif

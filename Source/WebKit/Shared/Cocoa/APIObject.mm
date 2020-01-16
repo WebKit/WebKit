@@ -71,6 +71,7 @@
 #import "_WKAttachmentInternal.h"
 #import "_WKAutomationSessionInternal.h"
 #import "_WKContentRuleListActionInternal.h"
+#import "_WKContentWorldInternal.h"
 #import "_WKCustomHeaderFieldsInternal.h"
 #import "_WKDownloadInternal.h"
 #import "_WKExperimentalFeatureInternal.h"
@@ -344,6 +345,10 @@ void* Object::newObject(size_t size, Type type)
 
     case Type::ResourceLoadStatisticsThirdParty:
         wrapper = [_WKResourceLoadStatisticsThirdParty alloc];
+        break;
+
+    case Type::ContentWorld:
+        wrapper = [_WKContentWorld alloc];
         break;
 
     case Type::UserContentWorld:

@@ -1461,8 +1461,8 @@ private:
     void getSelectionAsWebArchiveData(CallbackID);
     void getSourceForFrame(WebCore::FrameIdentifier, CallbackID);
     void getWebArchiveOfFrame(WebCore::FrameIdentifier, CallbackID);
-    void runJavaScript(WebFrame*, WebCore::RunJavaScriptParameters&&, const Optional<String>& worldName, CallbackID);
-    void runJavaScriptInMainFrameScriptWorld(WebCore::RunJavaScriptParameters&&, const Optional<String>& worldName, CallbackID);
+    void runJavaScript(WebFrame*, WebCore::RunJavaScriptParameters&&, uint64_t worldIdentifier, CallbackID);
+    void runJavaScriptInMainFrameScriptWorld(WebCore::RunJavaScriptParameters&&, const std::pair<uint64_t, String>& worldData, CallbackID);
     void runJavaScriptInFrame(WebCore::FrameIdentifier, const String&, bool forceUserGesture, CallbackID);
     void forceRepaint(CallbackID);
     void takeSnapshot(WebCore::IntRect snapshotRect, WebCore::IntSize bitmapSize, uint32_t options, CallbackID);

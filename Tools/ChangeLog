@@ -1,3 +1,21 @@
+2020-01-15  Brady Eidson  <beidson@apple.com>
+
+        Add WKContentWorld SPI, and use it in JavaScript execution.
+        https://bugs.webkit.org/show_bug.cgi?id=206310
+
+        Reviewed by Alex Christensen.
+        
+        Update previous callAsyncFunction calls with the new signature.
+        Add tests for new _WKContentWorld class and its behavior with regard to executing JavaScript.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/AsyncFunction.mm:
+        (TestWebKitAPI::tryGCPromise):
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/WKWebViewEvaluateJavaScript.mm:
+        (TEST):
+        * TestWebKitAPI/cocoa/TestWKWebView.mm:
+        (-[WKWebView objectByCallingAsyncFunction:withArguments:error:]):
+
 2020-01-15  Jonathan Bedard  <jbedard@apple.com>
 
         run-api-tests no longer supports wildcards in test names

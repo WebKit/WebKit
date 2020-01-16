@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,41 +24,59 @@
  */
 
 #include "config.h"
+#include "APIContentWorld.h"
+
 #include "APIUserContentWorld.h"
 
 namespace API {
 
-uint64_t UserContentWorld::generateIdentifier()
+static HashMap<WTF::String, ContentWorld*>& sharedWorldMap()
 {
-    static uint64_t identifier = normalWorldIdentifer();
-
-    return ++identifier;
+    static HashMap<WTF::String, ContentWorld*>* sharedMap = new HashMap<WTF::String, ContentWorld*>;
+    return *sharedMap;
 }
 
-Ref<UserContentWorld> UserContentWorld::worldWithName(const WTF::String& name)
+Ref<ContentWorld> ContentWorld::sharedWorldWithName(const WTF::String& name)
 {
-    return adoptRef(*new UserContentWorld(name));
+    auto result = sharedWorldMap().add(name, nullptr);
+    if (result.isNewEntry) {
+        result.iterator->value = new ContentWorld(name);
+        return adoptRef(*result.iterator->value);
+    }
+
+    return makeRef(*result.iterator->value);
 }
 
-UserContentWorld& UserContentWorld::normalWorld()
+ContentWorld& ContentWorld::pageContentWorld()
 {
-    static UserContentWorld* world = new UserContentWorld(ForNormalWorldOnly::NormalWorld);
-    return *world;
+    static NeverDestroyed<RefPtr<ContentWorld>> world(adoptRef(new ContentWorld(API::UserContentWorld::normalWorldIdentifer())));
+    return *world.get();
 }
 
-UserContentWorld::UserContentWorld(const WTF::String& name)
-    : m_identifier(generateIdentifier())
+ContentWorld& ContentWorld::defaultClientWorld()
+{
+    static NeverDestroyed<RefPtr<ContentWorld>> world(adoptRef(new ContentWorld(API::UserContentWorld::generateIdentifier())));
+    return *world.get();
+}
+
+ContentWorld::ContentWorld(const WTF::String& name)
+    : m_identifier(API::UserContentWorld::generateIdentifier())
     , m_name(name)
 {
 }
 
-UserContentWorld::UserContentWorld(ForNormalWorldOnly)
-    : m_identifier(normalWorldIdentifer())
+ContentWorld::ContentWorld(uint64_t identifier)
+    : m_identifier(identifier)
 {
 }
 
-UserContentWorld::~UserContentWorld()
+ContentWorld::~ContentWorld()
 {
+    if (m_name.isNull())
+        return;
+
+    auto taken = sharedWorldMap().take(m_name);
+    ASSERT_UNUSED(taken, taken == this);
 }
 
 } // namespace API

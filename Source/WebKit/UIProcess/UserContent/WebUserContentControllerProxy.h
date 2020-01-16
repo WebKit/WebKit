@@ -41,6 +41,7 @@
 namespace API {
 class Array;
 class ContentRuleList;
+class ContentWorld;
 class UserContentWorld;
 class UserScript;
 class UserStyleSheet;

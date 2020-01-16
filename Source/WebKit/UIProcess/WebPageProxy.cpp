@@ -29,6 +29,7 @@
 
 #include "APIArray.h"
 #include "APIAttachment.h"
+#include "APIContentWorld.h"
 #include "APIContextMenuClient.h"
 #include "APIFindClient.h"
 #include "APIFindMatchesClient.h"
@@ -3874,10 +3875,10 @@ void WebPageProxy::launchInitialProcessIfNecessary()
 
 void WebPageProxy::runJavaScriptInMainFrame(RunJavaScriptParameters&& parameters, WTF::Function<void (API::SerializedScriptValue*, Optional<WebCore::ExceptionDetails>, CallbackBase::Error)>&& callbackFunction)
 {
-    runJavaScriptInMainFrameScriptWorld(WTFMove(parameters), WTF::nullopt, WTFMove(callbackFunction));
+    runJavaScriptInMainFrameScriptWorld(WTFMove(parameters), API::ContentWorld::pageContentWorld(), WTFMove(callbackFunction));
 }
 
-void WebPageProxy::runJavaScriptInMainFrameScriptWorld(RunJavaScriptParameters&& parameters, const Optional<String>& worldName, WTF::Function<void(API::SerializedScriptValue*, Optional<ExceptionDetails>, CallbackBase::Error)>&& callbackFunction)
+void WebPageProxy::runJavaScriptInMainFrameScriptWorld(RunJavaScriptParameters&& parameters, API::ContentWorld& world, WTF::Function<void(API::SerializedScriptValue*, Optional<ExceptionDetails>, CallbackBase::Error)>&& callbackFunction)
 {
     // For backward-compatibility support running script in a WebView which has not done any loads yets.
     launchInitialProcessIfNecessary();
@@ -3888,7 +3889,7 @@ void WebPageProxy::runJavaScriptInMainFrameScriptWorld(RunJavaScriptParameters&&
     }
 
     auto callbackID = m_callbacks.put(WTFMove(callbackFunction), m_process->throttler().backgroundActivity("WebPageProxy::runJavaScriptInMainFrameScriptWorld"_s));
-    send(Messages::WebPage::RunJavaScriptInMainFrameScriptWorld(parameters, worldName, callbackID));
+    send(Messages::WebPage::RunJavaScriptInMainFrameScriptWorld(parameters, world.worldData(), callbackID));
 }
 
 void WebPageProxy::runJavaScriptInFrame(FrameIdentifier frameID, const String& script, bool forceUserGesture, WTF::Function<void(API::SerializedScriptValue*, Optional<ExceptionDetails>, CallbackBase::Error)>&& callbackFunction)

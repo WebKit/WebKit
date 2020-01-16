@@ -106,6 +106,7 @@ typedef NS_OPTIONS(NSUInteger, _WKRectEdge) {
 @class WKBrowsingContextHandle;
 @class WKWebpagePreferences;
 @class _WKApplicationManifest;
+@class _WKContentWorld;
 @class _WKFrameHandle;
 @class _WKHitTestResult;
 @class _WKInspector;
@@ -318,7 +319,58 @@ typedef NS_OPTIONS(NSUInteger, _WKRectEdge) {
 
 - (void)_takePDFSnapshotWithConfiguration:(WKSnapshotConfiguration *)snapshotConfiguration completionHandler:(void (^)(NSData *pdfSnapshotData, NSError *error))completionHandler WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 
-- (void)_callAsyncFunction:(NSString *)javaScriptString withArguments:(NSDictionary<NSString *, id> *)arguments completionHandler:(void (^)(id, NSError *error))completionHandler;
+/* @abstract Calls the given JavaScript string as a function, passing the given named arguments to that function.
+ @param javaScriptString The JavaScript string to call as a function.
+ @param arguments A dictionary representing the arguments to be passed to the function call.
+ @param contentWorld The WKContentWorld in which to call the JavaScript function.
+ @param completionHandler A block to invoke with the return value of the function call, or with the asynchronous resolution of the function's return value.
+ @discussion The JavaScript string is treated as an anonymous JavaScript function that can be called with named arguments.
+ Pass in JavaScript string formatted for evaluation, not as one of the variants of function call available in JavaScript.
+ For example:
+     return x ? y : z;
+
+ The arguments dictionary supplies the values for those arguments which are serialized into JavaScript equivalents.
+ For example:
+     @{ @"x" : @YES, @"y" : @1, @"z" : @2 };
+
+ Combining the above arguments dictionary with the above JavaScript string, a function with the arguments "x", "y", and "z" is called with values YES, 1, and 2 respectively.
+
+ Allowed argument types are:
+ NSNumber, NSString, NSDate, NSArray, NSDictionary, and NSNull.
+ Any NSArray or NSDictionary containers can only contain objects of those types.
+
+ No matter which WKContentWorld you use to call your JavaScript function, you can make changes to the underlying web content. (e.g. the Document and its DOM structure)
+ Such changes will be visible to script executing in all WKContentWorlds.
+ Calling your JavaScript function can leave behind other changes to global state visibile to JavaScript. (e.g. `window.myVariable = 1;`)
+ Those changes will only be visibile to scripts executed in the same WKContentWorld.
+
+ Your completion handler will be called with the return value of your JavaScript function.
+ If your JavaScript does not explicitly return any value, that undefined result manifests as nil being passed to your completion handler.
+ If your JavaScript returns null, that result manifests as NSNull being passed to your completion handler.
+
+ JavaScript has the concept of a "thenable" object, which is any JavaScript object that has a callable "then" property.
+ The most well known example of a "thenable" object is a JavaScript promise.
+ If your JavaScript returns a "thenable" object WebKit will call "then" on the resulting object and wait for it to be resolved.
+
+ If the object calls "fulfill", your completion handler will be called with the result.
+ If the object calls "reject", your completion handler will be called with a WKErrorJavaScriptAsyncFunctionResultRejected error containing the reject reason in the userInfo dictionary.
+ If the object is garbage collected before it is resolved, your completion handler will be called with an error indicating that it will never be resolved.
+*/
+- (void)_callAsyncJavaScriptFunction:(NSString *)javaScriptString withArguments:(NSDictionary<NSString *, id> *)arguments inWorld:(_WKContentWorld *)contentWorld completionHandler:(void (^)(id, NSError *error))completionHandler;
+
+/* @abstract Evaluates the given JavaScript string.
+ @param javaScriptString The JavaScript string to evaluate.
+ @param contentWorld The WKContentWorld in which to evaluate the JavaScript string.
+ @param completionHandler A block to invoke when script evaluation completes or fails.
+ @discussion The completionHandler is passed the result of the script evaluation or an error.
+ No matter which WKContentWorld you use to evaluate your JavaScript string, you can make changes to the underlying web content. (e.g. the Document and its DOM structure)
+ Such changes will be visible to script executing in all WKContentWorlds.
+ Evaluating your JavaScript string can leave behind other changes to global state visibile to JavaScript. (e.g. `window.myVariable = 1;`)
+ Those changes will only be visibile to scripts executed in the same WKContentWorld.
+ evaluateJavaScript: is the best way to set up global state for future JavaScript execution in a given world. (e.g. Importing libraries/utilities that future JavaScript execution will rely on)
+ Once your global state is set up, consider using callAsyncJavaScriptFunction: for more flexible interaction with the JavaScript programming model.
+*/
+- (void)_evaluateJavaScript:(NSString *)javaScriptString inWorld:(_WKContentWorld *)contentWorld completionHandler:(void (^)(id, NSError *error))completionHandler;
 
 @end
 

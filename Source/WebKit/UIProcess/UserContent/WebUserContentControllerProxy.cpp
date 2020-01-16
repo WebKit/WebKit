@@ -27,6 +27,7 @@
 #include "WebUserContentControllerProxy.h"
 
 #include "APIArray.h"
+#include "APIContentWorld.h"
 #include "APIUserContentWorld.h"
 #include "APIUserScript.h"
 #include "APIUserStyleSheet.h"

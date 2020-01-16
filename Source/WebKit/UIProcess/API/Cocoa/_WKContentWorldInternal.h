@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,42 +23,22 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "APIUserContentWorld.h"
+#import "_WKContentWorld.h"
 
-namespace API {
+#import "APIContentWorld.h"
+#import "WKObject.h"
+#import <wtf/text/WTFString.h>
 
-uint64_t UserContentWorld::generateIdentifier()
-{
-    static uint64_t identifier = normalWorldIdentifer();
+namespace WebKit {
 
-    return ++identifier;
+template<> struct WrapperTraits<API::ContentWorld> {
+    using WrapperClass = _WKContentWorld;
+};
+
 }
 
-Ref<UserContentWorld> UserContentWorld::worldWithName(const WTF::String& name)
-{
-    return adoptRef(*new UserContentWorld(name));
+@interface _WKContentWorld () <WKObject> {
+@package
+    API::ObjectStorage<API::ContentWorld> _contentWorld;
 }
-
-UserContentWorld& UserContentWorld::normalWorld()
-{
-    static UserContentWorld* world = new UserContentWorld(ForNormalWorldOnly::NormalWorld);
-    return *world;
-}
-
-UserContentWorld::UserContentWorld(const WTF::String& name)
-    : m_identifier(generateIdentifier())
-    , m_name(name)
-{
-}
-
-UserContentWorld::UserContentWorld(ForNormalWorldOnly)
-    : m_identifier(normalWorldIdentifer())
-{
-}
-
-UserContentWorld::~UserContentWorld()
-{
-}
-
-} // namespace API
+@end

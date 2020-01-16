@@ -31,6 +31,8 @@
 
 namespace API {
 
+class ContentWorld;
+
 class UserContentWorld final : public API::ObjectImpl<API::Object::Type::UserContentWorld> {
 public:
     static Ref<UserContentWorld> worldWithName(const WTF::String&);
@@ -41,11 +43,17 @@ public:
     const WTF::String& name() const { return m_name; }
     uint64_t identifier() const { return m_identifier; }
 
+    static uint64_t normalWorldIdentifer() { return 1; };
+
 private:
+    friend class ContentWorld;
+
     UserContentWorld(const WTF::String&);
 
     enum class ForNormalWorldOnly { NormalWorld };
     UserContentWorld(ForNormalWorldOnly);
+
+    static uint64_t generateIdentifier();
 
     uint64_t m_identifier;
     WTF::String m_name;

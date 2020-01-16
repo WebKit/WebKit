@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,42 +23,33 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "APIUserContentWorld.h"
+#pragma once
+
+#include "APIObject.h"
+#include <wtf/text/WTFString.h>
 
 namespace API {
 
-uint64_t UserContentWorld::generateIdentifier()
-{
-    static uint64_t identifier = normalWorldIdentifer();
+class ContentWorld final : public API::ObjectImpl<API::Object::Type::ContentWorld> {
+public:
+    static Ref<ContentWorld> sharedWorldWithName(const WTF::String&);
+    static ContentWorld& pageContentWorld();
+    static ContentWorld& defaultClientWorld();
 
-    return ++identifier;
-}
+    virtual ~ContentWorld();
 
-Ref<UserContentWorld> UserContentWorld::worldWithName(const WTF::String& name)
-{
-    return adoptRef(*new UserContentWorld(name));
-}
+    const WTF::String& name() const { return m_name; }
+    uint64_t identifier() const { return m_identifier; }
 
-UserContentWorld& UserContentWorld::normalWorld()
-{
-    static UserContentWorld* world = new UserContentWorld(ForNormalWorldOnly::NormalWorld);
-    return *world;
-}
+    std::pair<uint64_t, WTF::String> worldData() { return { m_identifier, m_name }; }
 
-UserContentWorld::UserContentWorld(const WTF::String& name)
-    : m_identifier(generateIdentifier())
-    , m_name(name)
-{
-}
+private:
+    ContentWorld(const WTF::String&);
+    ContentWorld(uint64_t identifier);
 
-UserContentWorld::UserContentWorld(ForNormalWorldOnly)
-    : m_identifier(normalWorldIdentifer())
-{
-}
-
-UserContentWorld::~UserContentWorld()
-{
-}
+    // FIXME: This should be an ObjectIdentifier once we can get all ScriptWorld related classes to use ObjectIdentifier.
+    uint64_t m_identifier;
+    WTF::String m_name;
+};
 
 } // namespace API

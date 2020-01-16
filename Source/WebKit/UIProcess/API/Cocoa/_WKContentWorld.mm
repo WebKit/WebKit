@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,42 +23,46 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "APIUserContentWorld.h"
+#import "config.h"
+#import "_WKContentWorldInternal.h"
 
-namespace API {
+@implementation _WKContentWorld
 
-uint64_t UserContentWorld::generateIdentifier()
++ (_WKContentWorld *)pageContentWorld
 {
-    static uint64_t identifier = normalWorldIdentifer();
-
-    return ++identifier;
+    return wrapper(API::ContentWorld::pageContentWorld());
 }
 
-Ref<UserContentWorld> UserContentWorld::worldWithName(const WTF::String& name)
++ (_WKContentWorld *)defaultClientWorld
 {
-    return adoptRef(*new UserContentWorld(name));
+    return wrapper(API::ContentWorld::defaultClientWorld());
 }
 
-UserContentWorld& UserContentWorld::normalWorld()
++ (_WKContentWorld *)worldWithName:(NSString *)name
 {
-    static UserContentWorld* world = new UserContentWorld(ForNormalWorldOnly::NormalWorld);
-    return *world;
+    return wrapper(API::ContentWorld::sharedWorldWithName(name));
 }
 
-UserContentWorld::UserContentWorld(const WTF::String& name)
-    : m_identifier(generateIdentifier())
-    , m_name(name)
+- (void)dealloc
 {
+    _contentWorld->~ContentWorld();
+
+    [super dealloc];
 }
 
-UserContentWorld::UserContentWorld(ForNormalWorldOnly)
-    : m_identifier(normalWorldIdentifer())
+- (NSString *)name
 {
+    if (_contentWorld->name().isNull())
+        return nil;
+
+    return _contentWorld->name();
 }
 
-UserContentWorld::~UserContentWorld()
+#pragma mark WKObject protocol implementation
+
+- (API::Object&)_apiObject
 {
+    return *_contentWorld;
 }
 
-} // namespace API
+@end

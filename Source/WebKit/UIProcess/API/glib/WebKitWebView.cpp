@@ -23,6 +23,7 @@
 #include "config.h"
 #include "WebKitWebView.h"
 
+#include "APIContentWorld.h"
 #include "APIData.h"
 #include "APINavigation.h"
 #include "APISerializedScriptValue.h"
@@ -3742,7 +3743,8 @@ void webkit_web_view_run_javascript_in_world(WebKitWebView* webView, const gchar
     g_return_if_fail(worldName);
 
     GRefPtr<GTask> task = adoptGRef(g_task_new(webView, cancellable, callback, userData));
-    getPage(webView).runJavaScriptInMainFrameScriptWorld({ String::fromUTF8(script), false, WTF::nullopt, true }, String::fromUTF8(worldName), [task = WTFMove(task)](API::SerializedScriptValue* serializedScriptValue, Optional<ExceptionDetails> details, WebKit::CallbackBase::Error) {
+    auto world = API::ContentWorld::sharedWorldWithName(String::fromUTF8(worldName));
+    getPage(webView).runJavaScriptInMainFrameScriptWorld({ String::fromUTF8(script), false, WTF::nullopt, true }, world.get(), [task = WTFMove(task)](API::SerializedScriptValue* serializedScriptValue, Optional<ExceptionDetails> details, WebKit::CallbackBase::Error) {
         ExceptionDetails exceptionDetails;
         if (details)
             exceptionDetails = *details;

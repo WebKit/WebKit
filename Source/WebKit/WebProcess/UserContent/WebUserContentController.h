@@ -64,7 +64,11 @@ public:
     void removeUserStyleSheets(InjectedBundleScriptWorld&);
     void removeAllUserContent();
 
+    static uint64_t identifierForNormalWorld() { return 1; }
+    InjectedBundleScriptWorld* worldForIdentifier(uint64_t);
+
     void addUserContentWorlds(const Vector<std::pair<uint64_t, String>>&);
+    void addUserContentWorld(const std::pair<uint64_t, String>&);
     void addUserScripts(Vector<WebUserScriptData>&&, InjectUserScriptImmediately);
     void addUserStyleSheets(const Vector<WebUserStyleSheetData>&);
     void addUserScriptMessageHandlers(const Vector<WebScriptMessageHandlerData>&);
