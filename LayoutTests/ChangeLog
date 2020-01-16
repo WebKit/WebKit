@@ -1,3 +1,12 @@
+2020-01-16  Truitt Savell  <tsavell@apple.com>
+
+        REGRESSION: WK1 Accessibility: ASSERTION FAILED: FontCache::singleton().generation() == m_generation
+        https://bugs.webkit.org/show_bug.cgi?id=206241
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk1/TestExpectations:
+
 2020-01-16  Diego Pino Garcia  <dpino@igalia.com>
 
         [WPE] Rebaseline of several tests

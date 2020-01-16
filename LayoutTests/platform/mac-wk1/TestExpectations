@@ -844,3 +844,5 @@ webkit.org/b/205410 [ Debug ] accessibility/mac/expanded-notification.html [ Fai
 webkit.org/b/206071 editing/spelling/grammar.html [ Skip ]
 webkit.org/b/206071 editing/spelling/markers.html [ Skip ]
 webkit.org/b/206071 editing/spelling/retro-correction-spelling-markers.html [ Failure ]
+
+webkit.org/b/206241 [ Mojave Debug ] accessibility/mac/search-text/search-text.html [ Skip ]
