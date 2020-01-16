@@ -3,6 +3,7 @@
 flags:
   BigInt: useBigInt
   WeakRef: useWeakRefs
+  class-fields-public: useClassFields
 skip:
   features:
     - SharedArrayBuffer
@@ -10,7 +11,6 @@ skip:
     # https://bugs.webkit.org/show_bug.cgi?id=174931
     - regexp-lookbehind
 
-    - class-fields-public
     - class-fields-private
     - class-methods-private
     - class-static-fields-public

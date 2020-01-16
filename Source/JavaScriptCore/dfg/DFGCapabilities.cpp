@@ -293,6 +293,7 @@ CapabilityLevel capabilityLevel(OpcodeID opcodeID, CodeBlock* codeBlock, const I
 
     case op_yield:
     case op_create_generator_frame_environment:
+    case op_to_property_key: // FIXME: op_to_property_key will need DFG/FTL support to ship class fields.
     case llint_program_prologue:
     case llint_eval_prologue:
     case llint_module_program_prologue:

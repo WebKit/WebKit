@@ -34,6 +34,7 @@
 #include "Intrinsic.h"
 #include "JSCast.h"
 #include "ParserModes.h"
+#include "ParserTokens.h"
 #include "RegExp.h"
 #include "SourceCode.h"
 #include "VariableEnvironment.h"
@@ -69,10 +70,10 @@ public:
         return &vm.unlinkedFunctionExecutableSpace.space;
     }
 
-    static UnlinkedFunctionExecutable* create(VM& vm, const SourceCode& source, FunctionMetadataNode* node, UnlinkedFunctionKind unlinkedFunctionKind, ConstructAbility constructAbility, JSParserScriptMode scriptMode, Optional<CompactVariableMap::Handle> parentScopeTDZVariables, DerivedContextType derivedContextType, bool isBuiltinDefaultClassConstructor = false)
+    static UnlinkedFunctionExecutable* create(VM& vm, const SourceCode& source, FunctionMetadataNode* node, UnlinkedFunctionKind unlinkedFunctionKind, ConstructAbility constructAbility, JSParserScriptMode scriptMode, Optional<CompactVariableMap::Handle> parentScopeTDZVariables, DerivedContextType derivedContextType, NeedsClassFieldInitializer needsClassFieldInitializer, bool isBuiltinDefaultClassConstructor = false)
     {
         UnlinkedFunctionExecutable* instance = new (NotNull, allocateCell<UnlinkedFunctionExecutable>(vm.heap))
-            UnlinkedFunctionExecutable(vm, vm.unlinkedFunctionExecutableStructure.get(), source, node, unlinkedFunctionKind, constructAbility, scriptMode, WTFMove(parentScopeTDZVariables), derivedContextType, isBuiltinDefaultClassConstructor);
+            UnlinkedFunctionExecutable(vm, vm.unlinkedFunctionExecutableStructure.get(), source, node, unlinkedFunctionKind, constructAbility, scriptMode, WTFMove(parentScopeTDZVariables), derivedContextType, needsClassFieldInitializer, isBuiltinDefaultClassConstructor);
         instance->finishCreation(vm);
         return instance;
     }
@@ -208,10 +209,27 @@ public:
         String m_sourceURLDirective;
         String m_sourceMappingURLDirective;
         CompactVariableMap::Handle m_parentScopeTDZVariables;
+        Vector<JSTextPosition> m_instanceFieldLocations;
     };
 
+    NeedsClassFieldInitializer needsClassFieldInitializer() const { return static_cast<NeedsClassFieldInitializer>(m_needsClassFieldInitializer); }
+
+    Vector<JSTextPosition>* instanceFieldLocations() const
+    {
+        if (m_rareData)
+            return &m_rareData->m_instanceFieldLocations;
+        return nullptr;
+    }
+
+    void setInstanceFieldLocations(Vector<JSTextPosition>&& instanceFieldLocations)
+    {
+        if (instanceFieldLocations.isEmpty())
+            return;
+        ensureRareData().m_instanceFieldLocations = WTFMove(instanceFieldLocations);
+    }
+
 private:
-    UnlinkedFunctionExecutable(VM&, Structure*, const SourceCode&, FunctionMetadataNode*, UnlinkedFunctionKind, ConstructAbility, JSParserScriptMode, Optional<CompactVariableMap::Handle>,  JSC::DerivedContextType, bool isBuiltinDefaultClassConstructor);
+    UnlinkedFunctionExecutable(VM&, Structure*, const SourceCode&, FunctionMetadataNode*, UnlinkedFunctionKind, ConstructAbility, JSParserScriptMode, Optional<CompactVariableMap::Handle>,  JSC::DerivedContextType, JSC::NeedsClassFieldInitializer, bool isBuiltinDefaultClassConstructor);
     UnlinkedFunctionExecutable(Decoder&, const CachedFunctionExecutable&);
 
     void decodeCachedCodeBlocks(VM&);
@@ -248,6 +266,7 @@ private:
     unsigned m_functionMode : 2; // FunctionMode
     unsigned m_derivedContextType: 2;
     unsigned m_isGeneratedFromCache : 1;
+    unsigned m_needsClassFieldInitializer : 1;
 
     union {
         WriteBarrier<UnlinkedFunctionCodeBlock> m_unlinkedCodeBlockForCall;

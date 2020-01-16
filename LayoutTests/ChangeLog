@@ -1,3 +1,26 @@
+2020-01-15  Caitlin Potter <caitp@igalia.com>
+
+        [JSC] Add support for public class fields
+        https://bugs.webkit.org/show_bug.cgi?id=174212
+
+        Reviewed by Yusuke Suzuki.
+
+        New syntax invalidates some test expectations:
+
+        "async <linefeed> MethodDefinition" is no longer an unexpected "async"
+        token. It is now an instance field named "async" with no initializer,
+        and an automatic semicolon, followed by MethodDefinition.
+
+        "get|set GeneratorMethodDefinition"'s error message has changed, due to "get"
+        being valid class field names.
+
+        Many class-syntax tests relating to automatic semicolon insertion are
+        no longer valid, as a line containing nothing but an identifier is now
+        a valid class element.
+
+        * js/class-syntax-semicolon-expected.txt:
+        * js/script-tests/class-syntax-semicolon.js:
+
 2020-01-15  Chris Dumez  <cdumez@apple.com>
 
         Regression(r253213) Load hang and high CPU usage when trying to load myuhc.com

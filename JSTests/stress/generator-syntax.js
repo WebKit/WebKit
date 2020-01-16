@@ -1,3 +1,5 @@
+//@ requireOptions("--useClassFields=1")
+
 function testSyntax(script) {
     try {
         eval(script);
@@ -26,7 +28,7 @@ class Hello {
     get *gen() {
     }
 }
-`, `SyntaxError: Unexpected token '*'. Expected an opening '(' before a method's parameter list.`);
+`, `SyntaxError: Unexpected token '*'. Expected a ';' following a class field.`);
 
 
 testSyntaxError(`
@@ -34,7 +36,7 @@ class Hello {
     set *gen(value) {
     }
 }
-`, `SyntaxError: Unexpected token '*'. Expected an opening '(' before a method's parameter list.`);
+`, `SyntaxError: Unexpected token '*'. Expected a ';' following a class field.`);
 
 testSyntaxError(`
 function ** gen() { }

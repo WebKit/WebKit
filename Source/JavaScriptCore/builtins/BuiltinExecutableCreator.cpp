@@ -32,7 +32,7 @@ namespace JSC {
 
 UnlinkedFunctionExecutable* createBuiltinExecutable(VM& vm, const SourceCode& source, const Identifier& ident, ConstructorKind kind, ConstructAbility ability)
 {
-    return BuiltinExecutables::createExecutable(vm, source, ident, kind, ability);
+    return BuiltinExecutables::createExecutable(vm, source, ident, kind, ability, NeedsClassFieldInitializer::No);
 }
     
 } // namespace JSC

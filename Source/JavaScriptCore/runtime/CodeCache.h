@@ -279,7 +279,10 @@ UnlinkedCodeBlockType* generateUnlinkedCodeBlockImpl(VM& vm, const SourceCode& s
 
     bool usesEval = rootNode->features() & EvalFeature;
     bool isStrictMode = rootNode->features() & StrictModeFeature;
-    ExecutableInfo executableInfo(usesEval, isStrictMode, false, false, ConstructorKind::None, scriptMode, SuperBinding::NotNeeded, CacheTypes<UnlinkedCodeBlockType>::parseMode, derivedContextType, isArrowFunctionContext, false, evalContextType);
+    NeedsClassFieldInitializer needsClassFieldInitializer = NeedsClassFieldInitializer::No;
+    if constexpr (std::is_same_v<ExecutableType, DirectEvalExecutable>)
+        needsClassFieldInitializer = executable->needsClassFieldInitializer();
+    ExecutableInfo executableInfo(usesEval, isStrictMode, false, false, ConstructorKind::None, scriptMode, SuperBinding::NotNeeded, CacheTypes<UnlinkedCodeBlockType>::parseMode, derivedContextType, needsClassFieldInitializer, isArrowFunctionContext, false, evalContextType);
 
     UnlinkedCodeBlockType* unlinkedCodeBlock = UnlinkedCodeBlockType::create(vm, executableInfo, codeGenerationMode);
     unlinkedCodeBlock->recordParse(rootNode->features(), rootNode->hasCapturedVariables(), lineCount, unlinkedEndColumn);

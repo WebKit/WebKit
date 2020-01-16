@@ -937,6 +937,7 @@ public:
         m_opProfileControlFlowBytecodeOffsets.encode(encoder, rareData.m_opProfileControlFlowBytecodeOffsets);
         m_bitVectors.encode(encoder, rareData.m_bitVectors);
         m_constantIdentifierSets.encode(encoder, rareData.m_constantIdentifierSets);
+        m_needsClassFieldInitializer = rareData.m_needsClassFieldInitializer;
     }
 
     UnlinkedCodeBlock::RareData* decode(Decoder& decoder) const
@@ -950,6 +951,7 @@ public:
         m_opProfileControlFlowBytecodeOffsets.decode(decoder, rareData->m_opProfileControlFlowBytecodeOffsets);
         m_bitVectors.decode(decoder, rareData->m_bitVectors);
         m_constantIdentifierSets.decode(decoder, rareData->m_constantIdentifierSets);
+        rareData->m_needsClassFieldInitializer = m_needsClassFieldInitializer;
         return rareData;
     }
 
@@ -962,6 +964,7 @@ private:
     CachedVector<InstructionStream::Offset> m_opProfileControlFlowBytecodeOffsets;
     CachedVector<CachedBitVector> m_bitVectors;
     CachedVector<CachedConstantIdentifierSetEntry> m_constantIdentifierSets;
+    unsigned m_needsClassFieldInitializer : 1;
 };
 
 class CachedVariableEnvironment : public CachedObject<VariableEnvironment> {
@@ -1701,6 +1704,7 @@ public:
     unsigned scriptMode() const { return m_scriptMode; }
     unsigned superBinding() const { return m_superBinding; }
     unsigned derivedContextType() const { return m_derivedContextType; }
+    unsigned needsClassFieldInitializer() const { return m_needsClassFieldInitializer; }
 
     Identifier name(Decoder& decoder) const { return m_name.decode(decoder); }
     Identifier ecmaName(Decoder& decoder) const { return m_ecmaName.decode(decoder); }
@@ -1734,6 +1738,7 @@ private:
     unsigned m_constructorKind : 2;
     unsigned m_functionMode : 2; // FunctionMode
     unsigned m_derivedContextType: 2;
+    unsigned m_needsClassFieldInitializer : 1;
 
     CachedPtr<CachedFunctionExecutableRareData> m_rareData;
 
@@ -1786,6 +1791,7 @@ public:
     unsigned isClassContext() const { return m_isClassContext; }
     unsigned constructorKind() const { return m_constructorKind; }
     unsigned derivedContextType() const { return m_derivedContextType; }
+    unsigned needsClassFieldInitializer() const { return m_needsClassFieldInitializer; }
     unsigned evalContextType() const { return m_evalContextType; }
     unsigned hasTailCalls() const { return m_hasTailCalls; }
     unsigned lineCount() const { return m_lineCount; }
@@ -1817,6 +1823,7 @@ private:
     unsigned m_isClassContext : 1;
     unsigned m_constructorKind : 2;
     unsigned m_derivedContextType : 2;
+    unsigned m_needsClassFieldInitializer : 1;
     unsigned m_evalContextType : 2;
     unsigned m_hasTailCalls : 1;
     unsigned m_codeType : 2;
@@ -2095,6 +2102,7 @@ ALWAYS_INLINE void CachedFunctionExecutable::encode(Encoder& encoder, const Unli
     m_scriptMode = executable.m_scriptMode;
     m_superBinding = executable.m_superBinding;
     m_derivedContextType = executable.m_derivedContextType;
+    m_needsClassFieldInitializer = executable.m_needsClassFieldInitializer;
 
     m_rareData.encode(encoder, executable.m_rareData.get());
 
@@ -2142,6 +2150,7 @@ ALWAYS_INLINE UnlinkedFunctionExecutable::UnlinkedFunctionExecutable(Decoder& de
     , m_functionMode(cachedExecutable.functionMode())
     , m_derivedContextType(cachedExecutable.derivedContextType())
     , m_isGeneratedFromCache(true)
+    , m_needsClassFieldInitializer(cachedExecutable.needsClassFieldInitializer())
     , m_unlinkedCodeBlockForCall()
     , m_unlinkedCodeBlockForConstruct()
 

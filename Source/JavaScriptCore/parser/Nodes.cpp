@@ -200,6 +200,7 @@ FunctionMetadataNode::FunctionMetadataNode(
         , m_isInStrictContext(isInStrictContext)
         , m_superBinding(static_cast<unsigned>(superBinding))
         , m_constructorKind(static_cast<unsigned>(constructorKind))
+        , m_needsClassFieldInitializer(static_cast<unsigned>(NeedsClassFieldInitializer::No))
         , m_isArrowFunctionBodyExpression(isArrowFunctionBodyExpression)
         , m_parseMode(mode)
         , m_startColumn(startColumn)
@@ -223,6 +224,7 @@ FunctionMetadataNode::FunctionMetadataNode(
         , m_isInStrictContext(isInStrictContext)
         , m_superBinding(static_cast<unsigned>(superBinding))
         , m_constructorKind(static_cast<unsigned>(constructorKind))
+        , m_needsClassFieldInitializer(static_cast<unsigned>(NeedsClassFieldInitializer::No))
         , m_isArrowFunctionBodyExpression(isArrowFunctionBodyExpression)
         , m_parseMode(mode)
         , m_startColumn(startColumn)
@@ -324,6 +326,31 @@ bool PropertyListNode::hasStaticallyNamedProperty(const Identifier& propName)
                 return true;
         }
         list = list->m_next;
+    }
+    return false;
+}
+
+// FIXME: calculate this feature once when parsing the property list.
+// https://bugs.webkit.org/show_bug.cgi?id=206174
+bool PropertyListNode::shouldCreateLexicalScopeForClass(PropertyListNode* list)
+{
+    while (list) {
+        if (list->m_node->isComputedClassField())
+            return true;
+        list = list->m_next;
+    }
+    return false;
+}
+
+// ------------------------------ ClassExprNode -----------------------------
+
+// FIXME: calculate this feature once when parsing the property list.
+// https://bugs.webkit.org/show_bug.cgi?id=206174
+bool PropertyListNode::hasInstanceFields() const
+{
+    for (auto list = this; list; list = list->m_next) {
+        if (list->m_node->isInstanceClassField())
+            return true;
     }
     return false;
 }

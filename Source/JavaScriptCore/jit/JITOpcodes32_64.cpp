@@ -343,6 +343,23 @@ void JIT::emit_op_to_primitive(const Instruction* currentInstruction)
         emitStore(dst, regT1, regT0);
 }
 
+void JIT::emit_op_to_property_key(const Instruction* currentInstruction)
+{
+    auto bytecode = currentInstruction->as<OpToPropertyKey>();
+    VirtualRegister dst = bytecode.m_dst;
+    VirtualRegister src = bytecode.m_src;
+
+    emitLoad(src, regT1, regT0);
+
+    addSlowCase(branchIfNotCell(regT1));
+    Jump done = branchIfSymbol(regT0);
+    addSlowCase(branchIfNotString(regT0));
+
+    done.link(this);
+    if (src != dst)
+        emitStore(dst, regT1, regT0);
+}
+
 void JIT::emit_op_set_function_name(const Instruction* currentInstruction)
 {
     auto bytecode = currentInstruction->as<OpSetFunctionName>();

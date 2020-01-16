@@ -1959,6 +1959,22 @@ llintOpWithReturn(op_to_primitive, OpToPrimitive, macro (size, get, dispatch, re
 end)
 
 
+llintOpWithReturn(op_to_property_key, OpToPropertyKey, macro (size, get, dispatch, return)
+    get(m_src, t2)
+    loadConstantOrVariable(size, t2, t1, t0)
+    bineq t1, CellTag, .opToPropertyKeySlow
+    bbeq JSCell::m_type[t0], SymbolType, .done
+    bbneq JSCell::m_type[t0], StringType, .opToPropertyKeySlow
+
+.done:
+    return(t1, t0)
+
+.opToPropertyKeySlow:
+    callSlowPath(_slow_path_to_property_key)
+    dispatch()
+end)
+
+
 commonOp(llint_op_catch, macro() end, macro (size)
     # This is where we end up from the JIT's throw trampoline (because the
     # machine code return address will be set to _llint_op_catch), and from

@@ -376,7 +376,7 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionNode* functionNode, Unlinke
     bool shouldCaptureSomeOfTheThings = shouldEmitDebugHooks() || functionNode->needsActivation() || containsArrowOrEvalButNotInArrowBlock;
 
     bool shouldCaptureAllOfTheThings = shouldEmitDebugHooks() || codeBlock->usesEval();
-    bool needsArguments = ((functionNode->usesArguments() && !codeBlock->isArrowFunction()) || codeBlock->usesEval() || (functionNode->usesArrowFunction() && !codeBlock->isArrowFunction() && isArgumentsUsedInInnerArrowFunction()));
+    bool needsArguments = ((functionNode->usesArguments() && !codeBlock->isArrowFunction()) || codeBlock->usesEval() || (functionNode->usesArrowFunction() && !codeBlock->isArrowFunction() && isArgumentsUsedInInnerArrowFunction())) && parseMode != SourceParseMode::InstanceFieldInitializerMode;
 
     if (isGeneratorOrAsyncFunctionBodyParseMode(parseMode)) {
         // Generator and AsyncFunction never provides "arguments". "arguments" reference will be resolved in an upper generator function scope.
@@ -600,7 +600,7 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionNode* functionNode, Unlinke
         }
 
         bool shouldCreateArgumensVariable = !haveParameterNamedArguments
-            && !SourceParseModeSet(SourceParseMode::ArrowFunctionMode, SourceParseMode::AsyncArrowFunctionMode).contains(m_codeBlock->parseMode());
+            && !SourceParseModeSet(SourceParseMode::ArrowFunctionMode, SourceParseMode::AsyncArrowFunctionMode, SourceParseMode::InstanceFieldInitializerMode).contains(m_codeBlock->parseMode());
         shouldCreateArgumentsVariableInParameterScope = shouldCreateArgumensVariable && !isSimpleParameterList;
         // Do not create arguments variable in case of Arrow function. Value will be loaded from parent scope
         if (shouldCreateArgumensVariable && !shouldCreateArgumentsVariableInParameterScope) {
@@ -695,6 +695,8 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionNode* functionNode, Unlinke
                 case ConstructorKind::None:
                 case ConstructorKind::Base:
                     emitCreateThis(&m_thisRegister);
+                    if (Options::useClassFields())
+                        emitInstanceFieldInitializationIfNeeded(&m_thisRegister, &m_calleeRegister, m_scopeNode->position(), m_scopeNode->position(), m_scopeNode->position());
                     break;
                 case ConstructorKind::Extends:
                     moveEmptyValue(&m_thisRegister);
@@ -2732,6 +2734,19 @@ RegisterID* BytecodeGenerator::emitCreateArgumentsButterfly(RegisterID* dst)
     return dst;
 }
 
+RegisterID* BytecodeGenerator::emitInstanceFieldInitializationIfNeeded(RegisterID* dst, RegisterID* constructor, const JSTextPosition& divot, const JSTextPosition& divotStart, const JSTextPosition& divotEnd)
+{
+    if (!(isConstructor() || isDerivedConstructorContext()) || needsClassFieldInitializer() == NeedsClassFieldInitializer::No)
+        return dst;
+
+    RefPtr<RegisterID> initializer = emitDirectGetById(newTemporary(), constructor, propertyNames().builtinNames().instanceFieldInitializerPrivateName());
+    CallArguments args(*this, nullptr);
+    emitMove(args.thisRegister(), dst);
+    emitCall(newTemporary(), initializer.get(), NoExpectedFunction, args, divot, divotStart, divotEnd, DebuggableCall::No);
+
+    return dst;
+}
+
 void BytecodeGenerator::emitTDZCheck(RegisterID* target)
 {
     OpCheckTdz::emit(this, target);
@@ -3013,15 +3028,42 @@ RegisterID* BytecodeGenerator::emitNewMethodDefinition(RegisterID* dst, MethodDe
 }
 
 RegisterID* BytecodeGenerator::emitNewDefaultConstructor(RegisterID* dst, ConstructorKind constructorKind, const Identifier& name,
-    const Identifier& ecmaName, const SourceCode& classSource)
+    const Identifier& ecmaName, const SourceCode& classSource, NeedsClassFieldInitializer needsClassFieldInitializer)
 {
-    UnlinkedFunctionExecutable* executable = m_vm.builtinExecutables()->createDefaultConstructor(constructorKind, name);
+    UnlinkedFunctionExecutable* executable = m_vm.builtinExecutables()->createDefaultConstructor(constructorKind, name, needsClassFieldInitializer);
     executable->setInvalidTypeProfilingOffsets();
     executable->setEcmaName(ecmaName);
     executable->setClassSource(classSource);
 
     unsigned index = m_codeBlock->addFunctionExpr(executable);
 
+    OpNewFuncExp::emit(this, dst, scopeRegister(), index);
+    return dst;
+}
+
+RegisterID* BytecodeGenerator::emitNewInstanceFieldInitializerFunction(RegisterID* dst, Vector<JSTextPosition>&& instanceFieldLocations, bool isDerived)
+{
+    DerivedContextType newDerivedContextType;
+    SuperBinding superBinding;
+    if (!isDerived) {
+        newDerivedContextType = DerivedContextType::None;
+        superBinding = SuperBinding::NotNeeded;
+    } else {
+        newDerivedContextType = DerivedContextType::DerivedMethodContext;
+        superBinding = SuperBinding::Needed;
+    }
+
+    Optional<CompactVariableMap::Handle> variablesUnderTDZ = getVariablesUnderTDZ();
+    SourceParseMode parseMode = SourceParseMode::InstanceFieldInitializerMode;
+    ConstructAbility constructAbility = ConstructAbility::CannotConstruct;
+
+    const bool alwaysStrictInClass = true;
+    FunctionMetadataNode metadata(parserArena(), JSTokenLocation(), JSTokenLocation(), 0, 0, 0, 0, 0, alwaysStrictInClass, ConstructorKind::None, superBinding, 0, parseMode, false);
+    metadata.finishParsing(m_scopeNode->source(), Identifier(), FunctionMode::MethodDefinition);
+    auto initializer = UnlinkedFunctionExecutable::create(m_vm, m_scopeNode->source(), &metadata, isBuiltinFunction() ? UnlinkedBuiltinFunction : UnlinkedNormalFunction, constructAbility, scriptMode(), WTFMove(variablesUnderTDZ), newDerivedContextType, NeedsClassFieldInitializer::No);
+    initializer->setInstanceFieldLocations(WTFMove(instanceFieldLocations));
+
+    unsigned index = m_codeBlock->addFunctionExpr(initializer);
     OpNewFuncExp::emit(this, dst, scopeRegister(), index);
     return dst;
 }
@@ -3040,7 +3082,8 @@ RegisterID* BytecodeGenerator::emitNewFunction(RegisterID* dst, FunctionMetadata
     return dst;
 }
 
-void BytecodeGenerator::emitSetFunctionNameIfNeeded(ExpressionNode* valueNode, RegisterID* value, RegisterID* name)
+template<typename LazyNameRegisterFn>
+void BytecodeGenerator::emitSetFunctionNameIfNeededImpl(ExpressionNode* valueNode, RegisterID* value, const LazyNameRegisterFn& lazyNameFn)
 {
     if (valueNode->isBaseFuncExprNode()) {
         FunctionMetadataNode* metadata = static_cast<BaseFuncExprNode*>(valueNode)->metadata();
@@ -3055,9 +3098,21 @@ void BytecodeGenerator::emitSetFunctionNameIfNeeded(ExpressionNode* valueNode, R
     } else
         return;
 
+    RegisterID* name = lazyNameFn();
+
     // FIXME: We should use an op_call to an internal function here instead.
     // https://bugs.webkit.org/show_bug.cgi?id=155547
     OpSetFunctionName::emit(this, value, name);
+}
+
+void BytecodeGenerator::emitSetFunctionNameIfNeeded(ExpressionNode* valueNode, RegisterID* value, const Identifier& ident)
+{
+    emitSetFunctionNameIfNeededImpl(valueNode, value, [=]() { return emitLoad(newTemporary(), ident); });
+}
+
+void BytecodeGenerator::emitSetFunctionNameIfNeeded(ExpressionNode* valueNode, RegisterID* value, RegisterID* name)
+{
+    emitSetFunctionNameIfNeededImpl(valueNode, value, [=]() { return name; });
 }
 
 RegisterID* BytecodeGenerator::emitCall(RegisterID* dst, RegisterID* func, ExpectedFunction expectedFunction, CallArguments& callArguments, const JSTextPosition& divot, const JSTextPosition& divotStart, const JSTextPosition& divotEnd, DebuggableCall debuggableCall)
@@ -3401,6 +3456,12 @@ RegisterID* BytecodeGenerator::emitStrcat(RegisterID* dst, RegisterID* src, int 
 void BytecodeGenerator::emitToPrimitive(RegisterID* dst, RegisterID* src)
 {
     OpToPrimitive::emit(this, dst, src);
+}
+
+RegisterID* BytecodeGenerator::emitToPropertyKey(RegisterID* dst, RegisterID* src)
+{
+    OpToPropertyKey::emit(this, dst, src);
+    return dst;
 }
 
 void BytecodeGenerator::emitGetScope()
@@ -4233,7 +4294,7 @@ void BytecodeGenerator::popIndexedForInScope(RegisterID* localRegister)
 
 RegisterID* BytecodeGenerator::emitLoadArrowFunctionLexicalEnvironment(const Identifier& identifier)
 {
-    ASSERT(m_codeBlock->isArrowFunction() || m_codeBlock->isArrowFunctionContext() || constructorKind() == ConstructorKind::Extends || m_codeType == EvalCode);
+    ASSERT(m_codeBlock->isArrowFunction() || m_codeBlock->isArrowFunctionContext() || constructorKind() == ConstructorKind::Extends || m_codeType == EvalCode || m_codeBlock->parseMode() == SourceParseMode::InstanceFieldInitializerMode);
 
     return emitResolveScope(nullptr, variable(identifier, ThisResolutionType::Scoped));
 }
@@ -4255,6 +4316,14 @@ RegisterID* BytecodeGenerator::emitLoadDerivedConstructorFromArrowFunctionLexica
 {
     Variable protoScopeVar = variable(propertyNames().builtinNames().derivedConstructorPrivateName());
     return emitGetFromScope(newTemporary(), emitLoadArrowFunctionLexicalEnvironment(propertyNames().builtinNames().derivedConstructorPrivateName()), protoScopeVar, ThrowIfNotFound);
+}
+
+RegisterID* BytecodeGenerator::emitLoadDerivedConstructor()
+{
+    ASSERT(constructorKind() == ConstructorKind::Extends || isDerivedConstructorContext());
+    if (constructorKind() == ConstructorKind::Extends)
+        return &m_calleeRegister;
+    return emitLoadDerivedConstructorFromArrowFunctionLexicalEnvironment();
 }
 
 RegisterID* BytecodeGenerator::ensureThis()

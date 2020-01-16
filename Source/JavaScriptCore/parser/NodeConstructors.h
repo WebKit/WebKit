@@ -248,6 +248,7 @@ namespace JSC {
 
     inline PropertyNode::PropertyNode(const Identifier& name, ExpressionNode* assign, Type type, PutType putType, SuperBinding superBinding, ClassElementTag tag)
         : m_name(&name)
+        , m_expression(nullptr)
         , m_assign(assign)
         , m_type(type)
         , m_needsSuperBinding(superBinding == SuperBinding::Needed)
@@ -259,6 +260,7 @@ namespace JSC {
     
     inline PropertyNode::PropertyNode(ExpressionNode* assign, Type type, PutType putType, SuperBinding superBinding, ClassElementTag tag)
         : m_name(nullptr)
+        , m_expression(nullptr)
         , m_assign(assign)
         , m_type(type)
         , m_needsSuperBinding(superBinding == SuperBinding::Needed)
@@ -270,6 +272,18 @@ namespace JSC {
 
     inline PropertyNode::PropertyNode(ExpressionNode* name, ExpressionNode* assign, Type type, PutType putType, SuperBinding superBinding, ClassElementTag tag)
         : m_name(nullptr)
+        , m_expression(name)
+        , m_assign(assign)
+        , m_type(type)
+        , m_needsSuperBinding(superBinding == SuperBinding::Needed)
+        , m_putType(putType)
+        , m_classElementTag(static_cast<unsigned>(tag))
+        , m_isOverriddenByDuplicate(false)
+    {
+    }
+
+    inline PropertyNode::PropertyNode(const Identifier& ident, ExpressionNode* name, ExpressionNode* assign, Type type, PutType putType, SuperBinding superBinding, ClassElementTag tag)
+        : m_name(&ident)
         , m_expression(name)
         , m_assign(assign)
         , m_type(type)
@@ -998,6 +1012,14 @@ namespace JSC {
     {
     }
 
+    inline DefineFieldNode::DefineFieldNode(const JSTokenLocation& location, const Identifier* ident, ExpressionNode* assign, Type type)
+        : StatementNode(location)
+        , m_ident(ident)
+        , m_assign(assign)
+        , m_type(type)
+    {
+    }
+
     inline ClassDeclNode::ClassDeclNode(const JSTokenLocation& location, ExpressionNode* classDeclaration)
         : StatementNode(location)
         , m_classDeclaration(classDeclaration)
@@ -1013,6 +1035,7 @@ namespace JSC {
         , m_constructorExpression(constructorExpression)
         , m_classHeritage(classHeritage)
         , m_classElements(classElements)
+        , m_needsLexicalScope(!name.isNull() || PropertyListNode::shouldCreateLexicalScopeForClass(classElements))
     {
     }
 

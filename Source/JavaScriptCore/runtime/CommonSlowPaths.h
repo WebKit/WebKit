@@ -367,6 +367,7 @@ SLOW_PATH_HIDDEN_DECL(slow_path_in_by_val);
 SLOW_PATH_HIDDEN_DECL(slow_path_del_by_val);
 SLOW_PATH_HIDDEN_DECL(slow_path_strcat);
 SLOW_PATH_HIDDEN_DECL(slow_path_to_primitive);
+SLOW_PATH_HIDDEN_DECL(slow_path_to_property_key);
 SLOW_PATH_HIDDEN_DECL(slow_path_get_enumerable_length);
 SLOW_PATH_HIDDEN_DECL(slow_path_has_generic_property);
 SLOW_PATH_HIDDEN_DECL(slow_path_has_structure_property);

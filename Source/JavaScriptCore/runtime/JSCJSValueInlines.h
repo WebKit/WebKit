@@ -691,6 +691,22 @@ ALWAYS_INLINE Identifier JSValue::toPropertyKey(JSGlobalObject* globalObject) co
     RELEASE_AND_RETURN(scope, string->toIdentifier(globalObject));
 }
 
+ALWAYS_INLINE JSValue JSValue::toPropertyKeyValue(JSGlobalObject* globalObject) const
+{
+    VM& vm = getVM(globalObject);
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    if (isString() || isSymbol())
+        return *this;
+
+    JSValue primitive = toPrimitive(globalObject, PreferString);
+    RETURN_IF_EXCEPTION(scope, JSValue());
+    if (primitive.isSymbol())
+        return primitive;
+
+    RELEASE_AND_RETURN(scope, primitive.toString(globalObject));
+}
+
 inline JSValue JSValue::toPrimitive(JSGlobalObject* globalObject, PreferredPrimitiveType preferredType) const
 {
     return isCell() ? asCell()->toPrimitive(globalObject, preferredType) : asValue();

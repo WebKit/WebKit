@@ -113,6 +113,7 @@ EncodedJSValue JSC_HOST_CALL functionProtoFuncToString(JSGlobalObject* globalObj
             break;
 
         case SourceParseMode::ArrowFunctionMode:
+        case SourceParseMode::InstanceFieldInitializerMode:
             functionHeader = "";
             break;
 

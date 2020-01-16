@@ -208,7 +208,7 @@ Parser<LexerType>::~Parser()
 }
 
 template <typename LexerType>
-String Parser<LexerType>::parseInner(const Identifier& calleeName, SourceParseMode parseMode, ParsingContext parsingContext, Optional<int> functionConstructorParametersEndPosition)
+String Parser<LexerType>::parseInner(const Identifier& calleeName, SourceParseMode parseMode, ParsingContext parsingContext, Optional<int> functionConstructorParametersEndPosition, const Vector<JSTextPosition>* instanceFieldLocations)
 {
     String parseError = String();
 
@@ -222,6 +222,8 @@ String Parser<LexerType>::parseInner(const Identifier& calleeName, SourceParseMo
         ParserFunctionInfo<ASTBuilder> functionInfo;
         if (isGeneratorOrAsyncFunctionBodyParseMode(parseMode))
             m_parameters = createGeneratorParameters(context, functionInfo.parameterCount);
+        else if (parseMode == SourceParseMode::InstanceFieldInitializerMode)
+            m_parameters = context.createFormalParameterList();
         else
             m_parameters = parseFunctionParameters(context, parseMode, functionInfo);
 
@@ -254,7 +256,10 @@ String Parser<LexerType>::parseInner(const Identifier& calleeName, SourceParseMo
             sourceElements = parseAsyncGeneratorFunctionSourceElements(context, parseMode, isArrowFunctionBodyExpression, CheckForStrictMode);
         else if (parsingContext == ParsingContext::FunctionConstructor)
             sourceElements = parseSingleFunction(context, functionConstructorParametersEndPosition);
-        else
+        else if (parseMode == SourceParseMode::InstanceFieldInitializerMode) {
+            ASSERT(instanceFieldLocations && !instanceFieldLocations->isEmpty());
+            sourceElements = parseInstanceFieldInitializerSourceElements(context, *instanceFieldLocations);
+        } else
             sourceElements = parseSourceElements(context, CheckForStrictMode);
     }
 
@@ -2113,6 +2118,7 @@ template <class TreeBuilder> TreeFunctionBody Parser<LexerType>::parseFunctionBo
     TreeBuilder& context, SyntaxChecker& syntaxChecker, const JSTokenLocation& startLocation, int startColumn, int functionKeywordStart, int functionNameStart, int parametersStart,
     ConstructorKind constructorKind, SuperBinding superBinding, FunctionBodyType bodyType, unsigned parameterCount, SourceParseMode parseMode)
 {
+    SetForScope<bool> overrideParsingClassFieldInitializer(m_parserState.isParsingClassFieldInitializer, bodyType == StandardFunctionBodyBlock ? false : m_parserState.isParsingClassFieldInitializer);
     bool isArrowFunctionBodyExpression = bodyType == ArrowFunctionBodyExpression;
     if (!isArrowFunctionBodyExpression) {
         next();
@@ -2165,6 +2171,7 @@ static const char* stringArticleForFunctionMode(SourceParseMode mode)
     case SourceParseMode::ProgramMode:
     case SourceParseMode::ModuleAnalyzeMode:
     case SourceParseMode::ModuleEvaluateMode:
+    case SourceParseMode::InstanceFieldInitializerMode:
         RELEASE_ASSERT_NOT_REACHED();
         return "";
     }
@@ -2206,6 +2213,7 @@ static const char* stringForFunctionMode(SourceParseMode mode)
     case SourceParseMode::ProgramMode:
     case SourceParseMode::ModuleAnalyzeMode:
     case SourceParseMode::ModuleEvaluateMode:
+    case SourceParseMode::InstanceFieldInitializerMode:
         RELEASE_ASSERT_NOT_REACHED();
         return "";
     }
@@ -2853,6 +2861,7 @@ template <class TreeBuilder> TreeClassExpression Parser<LexerType>::parseClass(T
         parentClass = parseMemberExpression(context);
         failIfFalse(parentClass, "Cannot parse the parent class name");
     }
+    classScope->setIsClassScope();
     const ConstructorKind constructorKind = parentClass ? ConstructorKind::Extends : ConstructorKind::Base;
 
     consumeOrFail(OPENBRACE, "Expected opening '{' at the start of a class body");
@@ -2860,6 +2869,7 @@ template <class TreeBuilder> TreeClassExpression Parser<LexerType>::parseClass(T
     TreeExpression constructor = 0;
     TreePropertyList classElements = 0;
     TreePropertyList classElementsTail = 0;
+    unsigned numComputedFields = 0;
     while (!match(CLOSEBRACE)) {
         if (match(SEMICOLON)) {
             next();
@@ -2871,6 +2881,7 @@ template <class TreeBuilder> TreeClassExpression Parser<LexerType>::parseClass(T
 
         // For backwards compatibility, "static" is a non-reserved keyword in non-strict mode.
         ClassElementTag tag = ClassElementTag::Instance;
+        auto type = PropertyNode::Constant;
         if (match(RESERVED_IF_STRICT) && *m_token.m_data.ident == m_vm.propertyNames->staticKeyword) {
             SavePoint savePoint = createSavePoint();
             next();
@@ -2904,7 +2915,8 @@ parseMethod:
                 if (!isGeneratorMethodParseMode(parseMode) && !isAsyncMethodParseMode(parseMode)) {
                     ident = m_token.m_data.ident;
                     next();
-                    if (match(OPENPAREN) || match(COLON) || match(EQUAL) || m_lexer->hasLineTerminatorBeforeToken())
+                    // We match SEMICOLON as a special case for a field called 'async' without initializer.
+                    if (match(OPENPAREN) || match(COLON) || match(SEMICOLON) || match(EQUAL) || m_lexer->hasLineTerminatorBeforeToken())
                         break;
                     if (UNLIKELY(consume(TIMES)))
                         parseMode = SourceParseMode::AsyncGeneratorWrapperMethodMode;
@@ -2932,6 +2944,7 @@ parseMethod:
         case OPENBRACKET:
             next();
             computedPropertyName = parseAssignmentExpression(context);
+            type = static_cast<PropertyNode::Type>(type | PropertyNode::Computed);
             failIfFalse(computedPropertyName, "Cannot parse computed property name");
             handleProductionOrFail(CLOSEBRACKET, "]", "end", "computed property name");
             break;
@@ -2944,9 +2957,38 @@ parseMethod:
         TreeProperty property;
         const bool alwaysStrictInsideClass = true;
         if (isGetter || isSetter) {
-            property = parseGetterSetter(context, alwaysStrictInsideClass, isGetter ? PropertyNode::Getter : PropertyNode::Setter,
-                methodStart, ConstructorKind::None, tag);
+            type = static_cast<PropertyNode::Type>(type & ~PropertyNode::Constant);
+            type = static_cast<PropertyNode::Type>(type | (isGetter ? PropertyNode::Getter : PropertyNode::Setter));
+            property = parseGetterSetter(context, alwaysStrictInsideClass, type, methodStart, ConstructorKind::None, tag);
             failIfFalse(property, "Cannot parse this method");
+        } else if (Options::useClassFields() && !match(OPENPAREN) && tag == ClassElementTag::Instance && parseMode == SourceParseMode::MethodMode) {
+            ASSERT(!isGetter && !isSetter);
+            if (ident)
+                semanticFailIfTrue(*ident == propertyNames.constructor, "Cannot declare class field named 'constructor'");
+
+            if (computedPropertyName) {
+                ident = &m_parserArena.identifierArena().makeNumericIdentifier(m_vm, numComputedFields++);
+                DeclarationResultMask declarationResult = classScope->declareLexicalVariable(ident, true);
+                ASSERT_UNUSED(declarationResult, declarationResult == DeclarationResult::Valid);
+                classScope->useVariable(ident, false);
+                classScope->addClosedVariableCandidateUnconditionally(ident->impl());
+            }
+
+            TreeExpression initializer = 0;
+            if (consume(EQUAL)) {
+                SetForScope<bool> overrideParsingClassFieldInitializer(m_parserState.isParsingClassFieldInitializer, true);
+                classScope->setExpectedSuperBinding(SuperBinding::Needed);
+                initializer = parseAssignmentExpression(context);
+                classScope->setExpectedSuperBinding(SuperBinding::NotNeeded);
+                failIfFalse(initializer, "Cannot parse initializer for class field");
+                classScope->markLastUsedVariablesSetAsCaptured();
+            }
+            failIfFalse(autoSemiColon(), "Expected a ';' following a class field");
+            auto inferName = initializer ? InferName::Allowed : InferName::Disallowed;
+            if (computedPropertyName)
+                property = context.createProperty(ident, computedPropertyName, initializer, type, PropertyNode::Unknown, alwaysStrictInsideClass, SuperBinding::NotNeeded, tag);
+            else
+                property = context.createProperty(ident, initializer, type, PropertyNode::Unknown, alwaysStrictInsideClass, SuperBinding::NotNeeded, inferName, tag);
         } else {
             ParserFunctionInfo<TreeBuilder> methodInfo;
             bool isConstructor = tag == ClassElementTag::Instance && *ident == propertyNames.constructor;
@@ -2971,11 +3013,9 @@ parseMethod:
                 "Cannot declare a static method named 'prototype'");
 
             if (computedPropertyName) {
-                property = context.createProperty(computedPropertyName, method, static_cast<PropertyNode::Type>(PropertyNode::Constant | PropertyNode::Computed),
-                    PropertyNode::Unknown, alwaysStrictInsideClass, SuperBinding::Needed, tag);
+                property = context.createProperty(computedPropertyName, method, type, PropertyNode::Unknown, alwaysStrictInsideClass, SuperBinding::Needed, tag);
             } else {
-                property = context.createProperty(methodInfo.name, method, PropertyNode::Constant,
-                    PropertyNode::Unknown, alwaysStrictInsideClass, SuperBinding::Needed, InferName::Allowed, tag);
+                property = context.createProperty(methodInfo.name, method, type, PropertyNode::Unknown, alwaysStrictInsideClass, SuperBinding::Needed, InferName::Allowed, tag);
             }
         }
 
@@ -2991,6 +3031,68 @@ parseMethod:
     auto classExpression = context.createClassExpr(location, info, classScope->finalizeLexicalEnvironment(), constructor, parentClass, classElements);
     popScope(classScope, TreeBuilder::NeedsFreeVariableInfo);
     return classExpression;
+}
+
+template <typename LexerType>
+template <class TreeBuilder> TreeSourceElements Parser<LexerType>::parseInstanceFieldInitializerSourceElements(TreeBuilder& context, const Vector<JSTextPosition>& instanceFieldLocations)
+{
+    TreeSourceElements sourceElements = context.createSourceElements();
+    currentScope()->setIsClassScope();
+
+    unsigned numComputedFields = 0;
+    for (auto location : instanceFieldLocations) {
+        // We don't need to worry about hasLineTerminatorBeforeToken
+        // on class fields, so we set this value to false.
+        LexerState lexerState { location.offset, static_cast<unsigned>(location.lineStartOffset), static_cast<unsigned>(location.line), static_cast<unsigned>(location.line), false };
+        restoreLexerState(lexerState);
+
+        JSTokenLocation fieldLocation = tokenLocation();
+        const Identifier* ident = nullptr;
+        TreeExpression computedPropertyName = 0;
+        DefineFieldNode::Type type = DefineFieldNode::Type::Name;
+        switch (m_token.m_type) {
+        case STRING:
+        case IDENT:
+        namedKeyword:
+            ident = m_token.m_data.ident;
+            ASSERT(ident);
+            next();
+            break;
+        case DOUBLE:
+        case INTEGER:
+            ident = &m_parserArena.identifierArena().makeNumericIdentifier(const_cast<VM&>(m_vm), m_token.m_data.doubleValue);
+            ASSERT(ident);
+            next();
+            break;
+        case OPENBRACKET:
+            next();
+            computedPropertyName = parseAssignmentExpression(context);
+            failIfFalse(computedPropertyName, "Cannot parse computed property name");
+            handleProductionOrFail(CLOSEBRACKET, "]", "end", "computed property name");
+            ident = &m_parserArena.identifierArena().makeNumericIdentifier(m_vm, numComputedFields++);
+            type = DefineFieldNode::Type::ComputedName;
+            break;
+        default:
+            if (m_token.m_type & KeywordTokenFlag)
+                goto namedKeyword;
+            failDueToUnexpectedToken();
+        }
+
+        // Only valid class fields are handled in this function.
+        ASSERT(match(EQUAL) || match(SEMICOLON) || match(CLOSEBRACE) || m_lexer->hasLineTerminatorBeforeToken());
+
+        TreeExpression initializer = 0;
+        if (consume(EQUAL))
+            initializer = parseAssignmentExpression(context);
+
+        TreeStatement defineField = context.createDefineField(fieldLocation, ident, initializer, type);
+        context.appendStatement(sourceElements, defineField);
+    }
+
+    ASSERT(!hasError());
+    // Trick parseInner() into believing we've parsed the entire SourceCode, in order to prevent it from producing an error.
+    m_token.m_type = EOFTOK;
+    return sourceElements;
 }
 
 struct LabelInfo {
@@ -4484,9 +4586,13 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parsePrimaryExpre
             const bool isEval = false;
             return createResolveAndUseVariable(context, ident, isEval, start, location);
         }
+        if (UNLIKELY(m_parserState.isParsingClassFieldInitializer))
+            failIfTrue(*m_token.m_data.ident == m_vm.propertyNames->arguments, "Cannot reference 'arguments' in class field initializer");
     identifierExpression:
         JSTextPosition start = tokenStartPosition();
         const Identifier* ident = m_token.m_data.ident;
+        if (UNLIKELY(currentScope()->evalContextType() == EvalContextType::InstanceFieldEvalContext))
+            failIfTrue(*ident == m_vm.propertyNames->arguments, "arguments is not valid in this context");
         JSTokenLocation location(tokenLocation());
         next();
 
@@ -4681,10 +4787,13 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseMemberExpres
         next();
         if (matchContextualKeyword(m_vm.propertyNames->target)) {
             ScopeRef closestOrdinaryFunctionScope = closestParentOrdinaryFunctionNonLexicalScope();
-            semanticFailIfFalse(currentScope()->isFunction() || closestOrdinaryFunctionScope->evalContextType() == EvalContextType::FunctionEvalContext, "new.target is only valid inside functions");
+            ScopeRef classScope = closestClassScopeOrTopLevelScope();
+            bool isClassFieldInitializer = classScope.index() > closestOrdinaryFunctionScope.index();
+            bool isFunctionEvalContextType = closestOrdinaryFunctionScope->evalContextType() == EvalContextType::FunctionEvalContext || closestOrdinaryFunctionScope->evalContextType() == EvalContextType::InstanceFieldEvalContext;
+            semanticFailIfFalse(currentScope()->isFunction() || isFunctionEvalContextType || isClassFieldInitializer, "new.target is only valid inside functions");
             baseIsNewTarget = true;
             if (currentScope()->isArrowFunction()) {
-                semanticFailIfFalse(!closestOrdinaryFunctionScope->isGlobalCodeScope() || closestOrdinaryFunctionScope->evalContextType() == EvalContextType::FunctionEvalContext, "new.target is not valid inside arrow functions in global code");
+                semanticFailIfFalse(!closestOrdinaryFunctionScope->isGlobalCodeScope() || isFunctionEvalContextType || isClassFieldInitializer, "new.target is not valid inside arrow functions in global code");
                 currentScope()->setInnerArrowFunctionUsesNewTarget();
             }
             ASSERT(lastNewTokenLocation.line);
@@ -4701,9 +4810,12 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseMemberExpres
 
     if (baseIsSuper) {
         ScopeRef closestOrdinaryFunctionScope = closestParentOrdinaryFunctionNonLexicalScope();
-        semanticFailIfFalse(currentScope()->isFunction() || (closestOrdinaryFunctionScope->isEvalContext() && closestOrdinaryFunctionScope->expectedSuperBinding() == SuperBinding::Needed), "super is not valid in this context");
+        ScopeRef classScope = closestClassScopeOrTopLevelScope();
+        bool isClassFieldInitializer = classScope.index() > closestOrdinaryFunctionScope.index();
+        semanticFailIfFalse(currentScope()->isFunction() || isClassFieldInitializer || (closestOrdinaryFunctionScope->isEvalContext() && closestOrdinaryFunctionScope->expectedSuperBinding() == SuperBinding::Needed), "super is not valid in this context");
         base = context.createSuperExpr(location);
         next();
+        failIfTrue(match(OPENPAREN) && currentScope()->evalContextType() == EvalContextType::InstanceFieldEvalContext, "super call is not valid in this context");
         ScopeRef functionScope = currentFunctionScope();
         if (!functionScope->setNeedsSuperBinding()) {
             // It unnecessary to check of using super during reparsing one more time. Also it can lead to syntax error
@@ -4713,7 +4825,7 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseMemberExpres
                 SuperBinding functionSuperBinding = !functionScope->isArrowFunction() && !closestOrdinaryFunctionScope->isEvalContext()
                     ? functionScope->expectedSuperBinding()
                     : closestOrdinaryFunctionScope->expectedSuperBinding();
-                semanticFailIfTrue(functionSuperBinding == SuperBinding::NotNeeded, "super is not valid in this context");
+                semanticFailIfTrue(functionSuperBinding == SuperBinding::NotNeeded && !isClassFieldInitializer, "super is not valid in this context");
             }
         }
     } else if (baseIsImport) {
@@ -4794,6 +4906,8 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseMemberExpres
                 break;
             }
             case OPENPAREN: {
+                if (baseIsSuper)
+                    failIfTrue(m_parserState.isParsingClassFieldInitializer, "super call is not valid in class field initializer context");
                 m_parserState.nonTrivialExpressionCount++;
                 int nonLHSCount = m_parserState.nonLHSCount;
                 if (newCount) {

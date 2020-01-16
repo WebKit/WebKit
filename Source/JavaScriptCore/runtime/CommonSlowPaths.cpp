@@ -1015,6 +1015,13 @@ SLOW_PATH_DECL(slow_path_enter)
     END();
 }
 
+SLOW_PATH_DECL(slow_path_to_property_key)
+{
+    BEGIN();
+    auto bytecode = pc->as<OpToPropertyKey>();
+    RETURN(GET_C(bytecode.m_src).jsValue().toPropertyKeyValue(globalObject));
+}
+
 SLOW_PATH_DECL(slow_path_get_enumerable_length)
 {
     BEGIN();

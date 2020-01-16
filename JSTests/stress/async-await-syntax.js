@@ -560,9 +560,6 @@ async function fn(b) {
         // ObjectLiteral AsyncMethodDefinition
         { prefix: "({ async", suffix: "method() {} }).method" },
 
-        // ClassLiteral AsyncMethodDefinition
-        { prefix: "(class { async", suffix: "method() {} }).prototype.method" },
-
         // AsyncArrowFunctions
         { prefix: "(async", suffix: "param => 1)" },
         { prefix: "(async", suffix: "(param) => 1)" },
@@ -576,6 +573,18 @@ async function fn(b) {
         shouldBe("function", typeof eval(`${prefix} ${suffix}`));
         shouldBe("function", typeof eval(`"use strict";${prefix} ${suffix}`));
         testLineFeedErrors(prefix, suffix);
+    }
+
+    let testsClass = [
+        // ClassLiteral AsyncMethodDefinition
+        { prefix: "(class { async", suffix: "method() {} }).prototype.method" },
+    ];
+
+    for (let { prefix, suffix } of testsClass) {
+        testSyntax(`${prefix} ${suffix}`);
+        testSyntax(`"use strict";${prefix} ${suffix}`);
+        shouldBe("function", typeof eval(`${prefix} ${suffix}`));
+        shouldBe("function", typeof eval(`"use strict";${prefix} ${suffix}`));
     }
 
     // AsyncFunctionDeclaration

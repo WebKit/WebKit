@@ -273,6 +273,7 @@ public:
     JSString* toString(JSGlobalObject*) const; // On exception, this returns the empty string.
     JSString* toStringOrNull(JSGlobalObject*) const; // On exception, this returns null, to make exception checks faster.
     Identifier toPropertyKey(JSGlobalObject*) const;
+    JSValue toPropertyKeyValue(JSGlobalObject*) const;
     WTF::String toWTFString(JSGlobalObject*) const;
     JSObject* toObject(JSGlobalObject*) const;
 

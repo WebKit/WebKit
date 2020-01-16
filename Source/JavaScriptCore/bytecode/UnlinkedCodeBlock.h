@@ -331,6 +331,13 @@ public:
     unsigned age() const { return m_age; }
     void resetAge() { m_age = 0; }
 
+    NeedsClassFieldInitializer needsClassFieldInitializer() const
+    {
+        if (m_rareData)
+            return static_cast<NeedsClassFieldInitializer>(m_rareData->m_needsClassFieldInitializer);
+        return NeedsClassFieldInitializer::No;
+    }
+
     void dump(PrintStream&) const;
 
     BytecodeLivenessAnalysis& livenessAnalysis(CodeBlock* codeBlock)
@@ -474,6 +481,8 @@ public:
         Vector<InstructionStream::Offset> m_opProfileControlFlowBytecodeOffsets;
         Vector<BitVector> m_bitVectors;
         Vector<ConstantIdentifierSetEntry> m_constantIdentifierSets;
+
+        unsigned m_needsClassFieldInitializer : 1;
     };
 
     void addOutOfLineJumpTarget(InstructionStream::Offset, int target);

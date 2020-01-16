@@ -870,6 +870,12 @@ op :to_primitive,
         src: VirtualRegister,
     }
 
+op :to_property_key,
+    args: {
+        dst: VirtualRegister,
+        src: VirtualRegister,
+    }
+
 op :resolve_scope,
     args: {
         dst: VirtualRegister, # offset 1

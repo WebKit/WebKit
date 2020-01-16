@@ -621,6 +621,7 @@ namespace JSC {
         void emit_op_put_internal_field(const Instruction*);
         void emit_op_log_shadow_chicken_prologue(const Instruction*);
         void emit_op_log_shadow_chicken_tail(const Instruction*);
+        void emit_op_to_property_key(const Instruction*);
 
         void emitSlow_op_add(const Instruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_call(const Instruction*, Vector<SlowCaseEntry>::iterator&);

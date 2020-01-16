@@ -251,6 +251,7 @@ namespace JSC {
         virtual bool isFuncDeclNode() const { return false; }
         virtual bool isModuleDeclarationNode() const { return false; }
         virtual bool isForOfNode() const { return false; }
+        virtual bool isDefineFieldNode() const { return false; }
 
     protected:
         int m_lastLine { -1 };
@@ -718,6 +719,7 @@ namespace JSC {
         PropertyNode(const Identifier&, ExpressionNode*, Type, PutType, SuperBinding, ClassElementTag);
         PropertyNode(ExpressionNode*, Type, PutType, SuperBinding, ClassElementTag);
         PropertyNode(ExpressionNode* propertyName, ExpressionNode*, Type, PutType, SuperBinding, ClassElementTag);
+        PropertyNode(const Identifier&, ExpressionNode* propertyName, ExpressionNode*, Type, PutType, SuperBinding, ClassElementTag);
 
         ExpressionNode* expressionName() const { return m_expression; }
         const Identifier* name() const { return m_name; }
@@ -727,7 +729,11 @@ namespace JSC {
         bool isClassProperty() const { return static_cast<ClassElementTag>(m_classElementTag) != ClassElementTag::No; }
         bool isStaticClassProperty() const { return static_cast<ClassElementTag>(m_classElementTag) == ClassElementTag::Static; }
         bool isInstanceClassProperty() const { return static_cast<ClassElementTag>(m_classElementTag) == ClassElementTag::Instance; }
+        bool isClassField() const { return isClassProperty() && !needsSuperBinding(); }
+        bool isInstanceClassField() const { return isInstanceClassProperty() && !needsSuperBinding(); }
         bool isOverriddenByDuplicate() const { return m_isOverriddenByDuplicate; }
+        bool hasComputedName() const { return m_expression; }
+        bool isComputedClassField() const { return isClassField() && hasComputedName(); }
         void setIsOverriddenByDuplicate() { m_isOverriddenByDuplicate = true; }
         PutType putType() const { return static_cast<PutType>(m_putType); }
 
@@ -741,7 +747,7 @@ namespace JSC {
         unsigned m_putType : 1;
         static_assert(1 << 2 > static_cast<unsigned>(ClassElementTag::LastTag), "ClassElementTag shouldn't use more than two bits");
         unsigned m_classElementTag : 2;
-        unsigned m_isOverriddenByDuplicate: 1;
+        unsigned m_isOverriddenByDuplicate : 1;
     };
 
     class PropertyListNode final : public ExpressionNode {
@@ -750,15 +756,27 @@ namespace JSC {
         PropertyListNode(const JSTokenLocation&, PropertyNode*, PropertyListNode*);
 
         bool hasStaticallyNamedProperty(const Identifier& propName);
+        bool isComputedClassField() const
+        {
+            return m_node->isComputedClassField();
+        }
+        bool isInstanceClassField() const
+        {
+            return m_node->isInstanceClassField();
+        }
+        bool hasInstanceFields() const;
 
-        RegisterID* emitBytecode(BytecodeGenerator&, RegisterID*, RegisterID*);
+        static bool shouldCreateLexicalScopeForClass(PropertyListNode*);
+
+        RegisterID* emitBytecode(BytecodeGenerator&, RegisterID*, RegisterID*, Vector<JSTextPosition>*);
 
     private:
         RegisterID* emitBytecode(BytecodeGenerator& generator, RegisterID* dst = nullptr) override
         {
-            return emitBytecode(generator, dst, nullptr);
+            return emitBytecode(generator, dst, nullptr, nullptr);
         }
         void emitPutConstantProperty(BytecodeGenerator&, RegisterID*, PropertyNode&);
+        void emitSaveComputedFieldName(BytecodeGenerator&, PropertyNode&);
 
         PropertyNode* m_node;
         PropertyListNode* m_next { nullptr };
@@ -2074,6 +2092,12 @@ namespace JSC {
         bool isInStrictContext() const { return m_isInStrictContext; }
         SuperBinding superBinding() { return static_cast<SuperBinding>(m_superBinding); }
         ConstructorKind constructorKind() { return static_cast<ConstructorKind>(m_constructorKind); }
+        bool isConstructorAndNeedsClassFieldInitializer() const { return m_needsClassFieldInitializer; }
+        void setNeedsClassFieldInitializer(bool value)
+        {
+            ASSERT(!value || constructorKind() != ConstructorKind::None);
+            m_needsClassFieldInitializer = value;
+        }
         bool isArrowFunctionBodyExpression() const { return m_isArrowFunctionBodyExpression; }
 
         void setLoc(unsigned firstLine, unsigned lastLine, int startOffset, int lineStartOffset)
@@ -2094,6 +2118,7 @@ namespace JSC {
         unsigned m_isInStrictContext : 1;
         unsigned m_superBinding : 1;
         unsigned m_constructorKind : 2;
+        unsigned m_needsClassFieldInitializer : 1;
         unsigned m_isArrowFunctionBodyExpression : 1;
         SourceParseMode m_parseMode;
         FunctionMode m_functionMode;
@@ -2210,6 +2235,21 @@ namespace JSC {
         ExpressionNode* m_argument;
     };
 
+    class DefineFieldNode final : public StatementNode {
+    public:
+        enum class Type { Name, ComputedName };
+        DefineFieldNode(const JSTokenLocation&, const Identifier*, ExpressionNode*, Type);
+
+    private:
+        void emitBytecode(BytecodeGenerator&, RegisterID* destination = nullptr) override;
+
+        bool isDefineFieldNode() const override { return true; }
+
+        const Identifier* m_ident;
+        ExpressionNode* m_assign;
+        Type m_type;
+    };
+
     class ClassExprNode final : public ExpressionNode, public VariableEnvironmentNode {
         JSC_MAKE_PARSER_ARENA_DELETABLE_ALLOCATED(ClassExprNode);
     public:
@@ -2222,6 +2262,7 @@ namespace JSC {
         void setEcmaName(const Identifier& name) { m_ecmaName = m_name.isNull() ? &name : &m_name; }
 
         bool hasStaticProperty(const Identifier& propName) { return m_classElements ? m_classElements->hasStaticallyNamedProperty(propName) : false; }
+        bool hasInstanceFields() const { return m_classElements ? m_classElements->hasInstanceFields() : false; }
 
     private:
         RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) override;
@@ -2234,6 +2275,7 @@ namespace JSC {
         ExpressionNode* m_constructorExpression;
         ExpressionNode* m_classHeritage;
         PropertyListNode* m_classElements;
+        bool m_needsLexicalScope;
     };
 
     class DestructuringPatternNode : public ParserArenaFreeable {

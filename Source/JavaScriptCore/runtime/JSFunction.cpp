@@ -429,6 +429,7 @@ EncodedJSValue JSFunction::callerGetter(JSGlobalObject* globalObject, EncodedJSV
     case SourceParseMode::AsyncGeneratorWrapperFunctionMode:
     case SourceParseMode::AsyncGeneratorWrapperMethodMode:
     case SourceParseMode::GeneratorWrapperMethodMode:
+    case SourceParseMode::InstanceFieldInitializerMode:
         if (!function->jsExecutable()->isStrictMode())
             return JSValue::encode(caller);
         return JSValue::encode(throwTypeError(globalObject, scope, "Function.caller used to retrieve strict caller"_s));

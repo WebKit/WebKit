@@ -59,7 +59,7 @@ SourceCode BuiltinExecutables::defaultConstructorSourceCode(ConstructorKind cons
     return SourceCode();
 }
 
-UnlinkedFunctionExecutable* BuiltinExecutables::createDefaultConstructor(ConstructorKind constructorKind, const Identifier& name)
+UnlinkedFunctionExecutable* BuiltinExecutables::createDefaultConstructor(ConstructorKind constructorKind, const Identifier& name, NeedsClassFieldInitializer needsClassFieldInitializer)
 {
     switch (constructorKind) {
     case ConstructorKind::None:
@@ -67,7 +67,7 @@ UnlinkedFunctionExecutable* BuiltinExecutables::createDefaultConstructor(Constru
         break;
     case ConstructorKind::Base:
     case ConstructorKind::Extends:
-        return createExecutable(m_vm, defaultConstructorSourceCode(constructorKind), name, constructorKind, ConstructAbility::CanConstruct);
+        return createExecutable(m_vm, defaultConstructorSourceCode(constructorKind), name, constructorKind, ConstructAbility::CanConstruct, needsClassFieldInitializer);
     }
     ASSERT_NOT_REACHED();
     return nullptr;
@@ -75,10 +75,10 @@ UnlinkedFunctionExecutable* BuiltinExecutables::createDefaultConstructor(Constru
 
 UnlinkedFunctionExecutable* BuiltinExecutables::createBuiltinExecutable(const SourceCode& code, const Identifier& name, ConstructorKind constructorKind, ConstructAbility constructAbility)
 {
-    return createExecutable(m_vm, code, name, constructorKind, constructAbility);
+    return createExecutable(m_vm, code, name, constructorKind, constructAbility, NeedsClassFieldInitializer::No);
 }
 
-UnlinkedFunctionExecutable* BuiltinExecutables::createExecutable(VM& vm, const SourceCode& source, const Identifier& name, ConstructorKind constructorKind, ConstructAbility constructAbility)
+UnlinkedFunctionExecutable* BuiltinExecutables::createExecutable(VM& vm, const SourceCode& source, const Identifier& name, ConstructorKind constructorKind, ConstructAbility constructAbility, NeedsClassFieldInitializer needsClassFieldInitializer)
 {
     // FIXME: Can we just make MetaData computation be constexpr and have the compiler do this for us?
     // https://bugs.webkit.org/show_bug.cgi?id=193272
@@ -251,7 +251,7 @@ UnlinkedFunctionExecutable* BuiltinExecutables::createExecutable(VM& vm, const S
         }
     }
 
-    UnlinkedFunctionExecutable* functionExecutable = UnlinkedFunctionExecutable::create(vm, source, &metadata, kind, constructAbility, JSParserScriptMode::Classic, WTF::nullopt, DerivedContextType::None, isBuiltinDefaultClassConstructor);
+    UnlinkedFunctionExecutable* functionExecutable = UnlinkedFunctionExecutable::create(vm, source, &metadata, kind, constructAbility, JSParserScriptMode::Classic, WTF::nullopt, DerivedContextType::None, needsClassFieldInitializer, isBuiltinDefaultClassConstructor);
     return functionExecutable;
 }
 

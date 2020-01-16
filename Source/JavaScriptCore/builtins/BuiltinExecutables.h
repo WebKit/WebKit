@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "ExecutableInfo.h"
 #include "JSCBuiltins.h"
 #include "ParserModes.h"
 #include "SourceCode.h"
@@ -57,9 +58,9 @@ SourceCode name##Source();
 #undef EXPOSE_BUILTIN_EXECUTABLES
 
     static SourceCode defaultConstructorSourceCode(ConstructorKind);
-    UnlinkedFunctionExecutable* createDefaultConstructor(ConstructorKind, const Identifier& name);
+    UnlinkedFunctionExecutable* createDefaultConstructor(ConstructorKind, const Identifier& name, NeedsClassFieldInitializer);
 
-    static UnlinkedFunctionExecutable* createExecutable(VM&, const SourceCode&, const Identifier&, ConstructorKind, ConstructAbility);
+    static UnlinkedFunctionExecutable* createExecutable(VM&, const SourceCode&, const Identifier&, ConstructorKind, ConstructAbility, NeedsClassFieldInitializer);
 
     void finalizeUnconditionally();
 

@@ -79,6 +79,10 @@ UnlinkedCodeBlock::UnlinkedCodeBlock(VM& vm, Structure* structure, CodeType code
     ASSERT(m_constructorKind == static_cast<unsigned>(info.constructorKind()));
     ASSERT(m_codeType == static_cast<unsigned>(codeType));
     ASSERT(m_didOptimize == static_cast<unsigned>(MixedTriState));
+    if (info.needsClassFieldInitializer() == NeedsClassFieldInitializer::Yes) {
+        createRareDataIfNecessary();
+        m_rareData->m_needsClassFieldInitializer = static_cast<unsigned>(NeedsClassFieldInitializer::Yes);
+    }
 }
 
 void UnlinkedCodeBlock::visitChildren(JSCell* cell, SlotVisitor& visitor)

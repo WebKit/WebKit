@@ -1,3 +1,46 @@
+2020-01-15  Caitlin Potter <caitp@igalia.com>
+
+        [JSC] Add support for public class fields
+        https://bugs.webkit.org/show_bug.cgi?id=174212
+
+        Reviewed by Yusuke Suzuki.
+
+        Implements the instance class fields proposal (https://tc39.es/proposal-class-fields/),
+        minus support for private fields (split into a separate patch).
+
+        In summary, class fields are initialized by a synthetic JSFunction. In its unlinked state,
+        the UnlinkedFunctionExecutable for the function includes an ordered list of JSTokenLocations
+        pointing to the start of each class field in the class. Each of these fields are parsed and
+        included as DefineFieldNodes, which implement the appropriate DefineField behaviour in the
+        proposal. This synthetic function is only created, and only loaded, if there are class fields
+        present. The decision to use a synthetic function was for simplicity. There are a number of
+        factors which make inlining the initialization complicated, though we may opt to do this in
+        the future. For reference, the complexities are: instance fields and constructor in different
+        currently in different parsing arenas, distinct scopes between the 2 which require work to manage,
+        and complexity in doing to this work for child classes, where the location of initialization can
+        depend, and in some cases occur more than once.
+
+        Computed property fields require a new bytecode, op_to_property_key, as an implementation
+        detail. It is necessary in the proposal to convert computed properties to property keys
+        during class evaluation, rather than during field initialization. Additionally, we allocate
+        the class lexical scope when computed class fields are used (previously, only when there was
+        a class name), as a location to keep the computed property keys. They can be loaded from the
+        scope via indexed keys.
+
+        To illustrate computed field names in action, consider the following pseudocode:
+
+            <during class evaluation>
+            1) fieldName = emitNode({expr})
+            2) fieldName = emitToPropertyKey(fieldName)
+            3) classScope[numComputedNames++] = fieldName
+
+            <during class field initialization>
+            1) fieldName = emitGetFromScope(classScope, computedFieldNameIndex++)
+            2) value = emitNode({initializer})
+            3) instance[fieldName] = value
+
+        The feature is currently hidden behind the feature flag JSC::Options::useClassFields.
+
 2020-01-15  Adrian Perez de Castro  <aperez@igalia.com>
 
         Offlineasm warnings with newer Ruby versions
