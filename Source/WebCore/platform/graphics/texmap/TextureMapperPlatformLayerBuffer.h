@@ -102,7 +102,6 @@ private:
     MonotonicTime m_timeLastUsed;
 
     TextureVariant m_variant;
-    GLuint m_textureID;
     IntSize m_size;
     GLint m_internalFormat;
     TextureMapperGL::Flags m_extraFlags;
