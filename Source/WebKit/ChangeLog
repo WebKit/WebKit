@@ -1,3 +1,30 @@
+2020-01-16  Chris Dumez  <cdumez@apple.com>
+
+        Regression(r253224) No longer able to prevent a tab from closing via the beforeunload prompt
+        https://bugs.webkit.org/show_bug.cgi?id=206366
+        <rdar://problem/58537467>
+
+        Reviewed by Geoffrey Garen.
+
+        Change is covered by new API test.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _tryClose]):
+        (-[WKWebView _isClosed]):
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+        Add new _tryClose / _isClosed SPI on WKWebView in order to write an API test to cover
+        the change.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::runBeforeUnloadConfirmPanel):
+        In WebPageProxy::tryClose(), we start a timer before sending the TryClose async IPC to the
+        WebProcess. We would then stop the timer when receiving the response to the TryClose IPC.
+        If the timer fires, we would forcefully close the page. The issue was that before answering
+        the TryClose IPC, the WebContent process would send a sync RunBeforeUnloadConfirmPanel IPC
+        to the UIProcess to show the confirmation prompt, and this would fail to stop the timer.
+        WebPageProxy::runBeforeUnloadConfirmPanel() would spin a nested run loop to show the prompt
+        and we would time out while showing the prompt.
+
 2020-01-16  Alex Christensen  <achristensen@webkit.org>
 
         Add finite timeout when synchronously terminating a service worker

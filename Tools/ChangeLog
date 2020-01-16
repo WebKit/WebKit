@@ -1,3 +1,20 @@
+2020-01-16  Chris Dumez  <cdumez@apple.com>
+
+        Regression(r253224) No longer able to prevent a tab from closing via the beforeunload prompt
+        https://bugs.webkit.org/show_bug.cgi?id=206366
+        <rdar://problem/58537467>
+
+        Reviewed by Geoffrey Garen.
+
+        tryClose_timeout_fix
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKit/beforeunload.html: Added.
+        * TestWebKitAPI/Tests/WebKitCocoa/ModalAlerts.mm:
+        (-[SlowBeforeUnloadPromptUIDelegate _webView:runBeforeUnloadConfirmPanelWithMessage:initiatedByFrame:completionHandler:]):
+        (-[SlowBeforeUnloadPromptUIDelegate webViewDidClose:]):
+        (TEST):
+
 2020-01-16  Jiewen Tan  <jiewen_tan@apple.com>
 
         [WebAuthn] User Verification (UV) option present on a CTAP2 authenticatorMakeCredential while the authenticator has not advertised support for it

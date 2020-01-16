@@ -2041,6 +2041,16 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(FORWARD_ACTION_TO_WKCONTENTVIEW)
     _page->close();
 }
 
+- (void)_tryClose
+{
+    _page->tryClose();
+}
+
+- (BOOL)_isClosed
+{
+    return _page->isClosed();
+}
+
 - (_WKAttachment *)_insertAttachmentWithFilename:(NSString *)filename contentType:(NSString *)contentType data:(NSData *)data options:(_WKAttachmentDisplayOptions *)options completion:(void(^)(BOOL success))completionHandler
 {
     UNUSED_PARAM(options);

@@ -5628,8 +5628,9 @@ void WebPageProxy::runBeforeUnloadConfirmPanel(FrameIdentifier frameID, Security
         }
     }
 
-    // Since runBeforeUnloadConfirmPanel() can spin a nested run loop we need to turn off the responsiveness timer.
+    // Since runBeforeUnloadConfirmPanel() can spin a nested run loop we need to turn off the responsiveness timer and the tryClose timer.
     m_process->responsivenessTimer().stop();
+    m_tryCloseTimeoutTimer.stop();
     m_uiClient->runBeforeUnloadConfirmPanel(*this, message, frame, WTFMove(securityOrigin), WTFMove(reply));
 }
 
