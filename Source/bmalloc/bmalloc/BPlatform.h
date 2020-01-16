@@ -230,6 +230,45 @@
 
 #endif /* ARM */
 
+
+#if BCOMPILER(GCC_COMPATIBLE)
+/* __LP64__ is not defined on 64bit Windows since it uses LLP64. Using __SIZEOF_POINTER__ is simpler. */
+#if __SIZEOF_POINTER__ == 8
+#define BCPU_ADDRESS64 1
+#elif __SIZEOF_POINTER__ == 4
+#define BCPU_ADDRESS32 1
+#else
+#error "Unsupported pointer width"
+#endif
+#else
+#error "Unsupported compiler for bmalloc"
+#endif
+
+#if BCOMPILER(GCC_COMPATIBLE)
+#if __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__
+#define BCPU_BIG_ENDIAN 1
+#elif __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
+#define BCPU_LITTLE_ENDIAN 1
+#elif __BYTE_ORDER__ == __ORDER_PDP_ENDIAN__
+#define BCPU_MIDDLE_ENDIAN 1
+#else
+#error "Unknown endian"
+#endif
+#else
+#error "Unsupported compiler for bmalloc"
+#endif
+
+#if BCPU(ADDRESS64)
+#if BOS(DARWIN) && BCPU(ARM64)
+#define BOS_EFFECTIVE_ADDRESS_WIDTH 36
+#else
+/* We strongly assume that effective address width is <= 48 in 64bit architectures (e.g. NaN boxing). */
+#define BOS_EFFECTIVE_ADDRESS_WIDTH 48
+#endif
+#else
+#define BOS_EFFECTIVE_ADDRESS_WIDTH 32
+#endif
+
 #define BATTRIBUTE_PRINTF(formatStringArgument, extraArguments) __attribute__((__format__(printf, formatStringArgument, extraArguments)))
 
 #if BPLATFORM(MAC) || BPLATFORM(IOS_FAMILY)

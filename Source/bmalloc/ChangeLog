@@ -1,3 +1,152 @@
+2020-01-16  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [bmalloc] IsoHeap's initial setup should be small
+        https://bugs.webkit.org/show_bug.cgi?id=206214
+
+        Reviewed by Michael Saboff.
+
+        Keep IsoHeap related data structures small by using Packed technique. We start using IsoHeap for many classes,
+        then it is important that we keep metadata for IsoHeap small because these data persistently exists.
+
+        1. We pass IsoHeapImpl<> as a parameter instead of holding it unnecessarily.
+        2. We make some of pointers Packed so that we can keep sizeof(IsoHeapImpl<Config>) small.
+        3. One of the drawback of PackedPtr is that loading and storing are not atomic. And we pass `const std::lock_guard<Mutex>&`
+           to functions if functions need to be called with lock so that we ensure that PackedPtr are accessed only when lock is
+           held correctly.
+
+        * CMakeLists.txt:
+        * bmalloc.xcodeproj/project.pbxproj:
+        * bmalloc/Algorithm.h:
+        (bmalloc::ctzConstexpr):
+        (bmalloc::getLSBSetNonZeroConstexpr):
+        * bmalloc/BPlatform.h:
+        * bmalloc/DebugHeap.cpp:
+        (bmalloc::DebugHeap::DebugHeap):
+        * bmalloc/DebugHeap.h:
+        * bmalloc/DeferredTrigger.h:
+        * bmalloc/DeferredTriggerInlines.h:
+        (bmalloc::DeferredTrigger<trigger>::didBecome):
+        (bmalloc::DeferredTrigger<trigger>::handleDeferral):
+        * bmalloc/Environment.cpp:
+        (bmalloc::Environment::Environment):
+        * bmalloc/Environment.h:
+        * bmalloc/Gigacage.cpp:
+        (bmalloc::PrimitiveDisableCallbacks::PrimitiveDisableCallbacks):
+        * bmalloc/Heap.cpp:
+        (bmalloc::Heap::freeableMemory):
+        (bmalloc::Heap::markAllLargeAsEligibile):
+        (bmalloc::Heap::decommitLargeRange):
+        (bmalloc::Heap::scavenge):
+        (bmalloc::Heap::scavengeToHighWatermark):
+        * bmalloc/Heap.h:
+        * bmalloc/HeapConstants.cpp:
+        (bmalloc::HeapConstants::HeapConstants):
+        * bmalloc/HeapConstants.h:
+        * bmalloc/IsoAllocator.h:
+        * bmalloc/IsoAllocatorInlines.h:
+        (bmalloc::IsoAllocator<Config>::IsoAllocator):
+        (bmalloc::IsoAllocator<Config>::allocate):
+        (bmalloc::IsoAllocator<Config>::allocateSlow):
+        (bmalloc::IsoAllocator<Config>::scavenge):
+        * bmalloc/IsoDeallocatorInlines.h:
+        (bmalloc::IsoDeallocator<Config>::scavenge):
+        * bmalloc/IsoDirectory.h:
+        * bmalloc/IsoDirectoryInlines.h:
+        (bmalloc::passedNumPages>::IsoDirectory):
+        (bmalloc::passedNumPages>::takeFirstEligible):
+        (bmalloc::passedNumPages>::didBecome):
+        (bmalloc::passedNumPages>::didDecommit):
+        (bmalloc::passedNumPages>::scavengePage):
+        (bmalloc::passedNumPages>::scavenge):
+        (bmalloc::passedNumPages>::scavengeToHighWatermark):
+        (bmalloc::passedNumPages>::forEachCommittedPage):
+        * bmalloc/IsoHeapImpl.cpp:
+        (bmalloc::IsoHeapImplBase::IsoHeapImplBase):
+        * bmalloc/IsoHeapImpl.h:
+        * bmalloc/IsoHeapImplInlines.h:
+        (bmalloc::IsoHeapImpl<Config>::IsoHeapImpl):
+        (bmalloc::IsoHeapImpl<Config>::takeFirstEligible):
+        (bmalloc::IsoHeapImpl<Config>::didBecomeEligibleOrDecommited):
+        (bmalloc::IsoHeapImpl<Config>::scavenge):
+        (bmalloc::IsoHeapImpl<Config>::scavengeToHighWatermark):
+        (bmalloc::IsoHeapImplBase::freeableMemory):
+        (bmalloc::IsoHeapImpl<Config>::numLiveObjects):
+        (bmalloc::IsoHeapImpl<Config>::numCommittedPages):
+        (bmalloc::IsoHeapImpl<Config>::forEachDirectory):
+        (bmalloc::IsoHeapImpl<Config>::forEachCommittedPage):
+        (bmalloc::IsoHeapImpl<Config>::forEachLiveObject):
+        (bmalloc::IsoHeapImplBase::footprint):
+        (bmalloc::IsoHeapImplBase::didCommit):
+        (bmalloc::IsoHeapImplBase::didDecommit):
+        (bmalloc::IsoHeapImplBase::isNowFreeable):
+        (bmalloc::IsoHeapImplBase::isNoLongerFreeable):
+        (bmalloc::IsoHeapImpl<Config>::allocateFromShared):
+        (bmalloc::IsoHeapImpl<Config>::freeableMemory): Deleted.
+        (bmalloc::IsoHeapImpl<Config>::footprint): Deleted.
+        (bmalloc::IsoHeapImpl<Config>::didCommit): Deleted.
+        (bmalloc::IsoHeapImpl<Config>::didDecommit): Deleted.
+        (bmalloc::IsoHeapImpl<Config>::isNowFreeable): Deleted.
+        (bmalloc::IsoHeapImpl<Config>::isNoLongerFreeable): Deleted.
+        * bmalloc/IsoPage.h:
+        (bmalloc::IsoPageBase::IsoPageBase):
+        * bmalloc/IsoPageInlines.h:
+        (bmalloc::IsoPage<Config>::IsoPage):
+        (bmalloc::IsoPage<Config>::free):
+        (bmalloc::IsoPage<Config>::startAllocating):
+        (bmalloc::IsoPage<Config>::stopAllocating):
+        (bmalloc::IsoPage<Config>::forEachLiveObject):
+        * bmalloc/IsoSharedHeap.h:
+        (bmalloc::IsoSharedHeap::IsoSharedHeap):
+        * bmalloc/IsoSharedHeapInlines.h:
+        (bmalloc::IsoSharedHeap::allocateNew):
+        (bmalloc::IsoSharedHeap::allocateSlow):
+        * bmalloc/IsoSharedPage.h:
+        * bmalloc/IsoSharedPageInlines.h:
+        (bmalloc::IsoSharedPage::free):
+        (bmalloc::IsoSharedPage::startAllocating):
+        (bmalloc::IsoSharedPage::stopAllocating):
+        * bmalloc/IsoTLS.h:
+        * bmalloc/IsoTLSAllocatorEntry.h:
+        * bmalloc/IsoTLSAllocatorEntryInlines.h:
+        (bmalloc::IsoTLSAllocatorEntry<Config>::scavenge):
+        * bmalloc/IsoTLSDeallocatorEntry.h:
+        * bmalloc/IsoTLSDeallocatorEntryInlines.h:
+        (bmalloc::IsoTLSDeallocatorEntry<Config>::scavenge):
+        * bmalloc/IsoTLSEntry.cpp:
+        (bmalloc::IsoTLSEntry::IsoTLSEntry):
+        * bmalloc/IsoTLSEntry.h:
+        * bmalloc/IsoTLSEntryInlines.h:
+        (bmalloc::DefaultIsoTLSEntry<EntryType>::DefaultIsoTLSEntry):
+        (bmalloc::DefaultIsoTLSEntry<EntryType>::~DefaultIsoTLSEntry): Deleted.
+        (bmalloc::DefaultIsoTLSEntry<EntryType>::scavenge): Deleted.
+        * bmalloc/IsoTLSInlines.h:
+        (bmalloc::IsoTLS::scavenge):
+        (bmalloc::IsoTLS::allocateImpl):
+        (bmalloc::IsoTLS::allocateFast):
+        (bmalloc::IsoTLS::allocateSlow):
+        * bmalloc/IsoTLSLayout.cpp:
+        (bmalloc::IsoTLSLayout::add):
+        * bmalloc/Packed.h: Added.
+        (bmalloc::Packed::Packed):
+        (bmalloc::Packed::get const):
+        (bmalloc::Packed::set):
+        (bmalloc::Packed::operator=):
+        (bmalloc::Packed::exchange):
+        (bmalloc::Packed::swap):
+        (bmalloc::alignof):
+        (bmalloc::PackedPtrTraits::exchange):
+        (bmalloc::PackedPtrTraits::swap):
+        (bmalloc::PackedPtrTraits::unwrap):
+        * bmalloc/Scavenger.cpp:
+        (bmalloc::Scavenger::Scavenger):
+        * bmalloc/Scavenger.h:
+        * bmalloc/VMHeap.cpp:
+        (bmalloc::VMHeap::VMHeap):
+        * bmalloc/VMHeap.h:
+        * bmalloc/Zone.cpp:
+        (bmalloc::Zone::Zone):
+        * bmalloc/Zone.h:
+
 2020-01-14  Basuke Suzuki  <basuke.suzuki@sony.com>
 
         [bmalloc] Calculate LineMetadata for specific VM page size in compile time

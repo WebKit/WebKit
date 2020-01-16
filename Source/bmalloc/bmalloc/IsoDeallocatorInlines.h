@@ -76,7 +76,7 @@ BNO_INLINE void IsoDeallocator<Config>::scavenge()
     std::lock_guard<Mutex> locker(*m_lock);
     
     for (void* ptr : m_objectLog)
-        IsoPage<Config>::pageFor(ptr)->free(ptr);
+        IsoPage<Config>::pageFor(ptr)->free(locker, ptr);
     m_objectLog.clear();
 }
 

@@ -28,6 +28,7 @@
 #include "Bits.h"
 #include "EligibilityResult.h"
 #include "IsoPage.h"
+#include "Packed.h"
 #include "Vector.h"
 
 namespace bmalloc {
@@ -49,7 +50,7 @@ public:
     
     IsoHeapImpl<Config>& heap() { return m_heap; }
     
-    virtual void didBecome(IsoPage<Config>*, IsoPageTrigger) = 0;
+    virtual void didBecome(const std::lock_guard<Mutex>&, IsoPage<Config>*, IsoPageTrigger) = 0;
     
 protected:
     IsoHeapImpl<Config>& m_heap;
@@ -64,9 +65,9 @@ public:
     
     // Find the first page that is eligible for allocation and return it. May return null if there is no
     // such thing. May allocate a new page if we have an uncommitted page.
-    EligibilityResult<Config> takeFirstEligible();
+    EligibilityResult<Config> takeFirstEligible(const std::lock_guard<Mutex>&);
     
-    void didBecome(IsoPage<Config>*, IsoPageTrigger) override;
+    void didBecome(const std::lock_guard<Mutex>&, IsoPage<Config>*, IsoPageTrigger) override;
     
     // This gets called from a bulk decommit function in the Scavenger, so no locks are held. This function
     // needs to get the heap lock.
@@ -74,23 +75,23 @@ public:
     
     // Iterate over all empty and committed pages, and put them into the vector. This also records the
     // pages as being decommitted. It's the caller's job to do the actual decommitting.
-    void scavenge(Vector<DeferredDecommit>&);
+    void scavenge(const std::lock_guard<Mutex>&, Vector<DeferredDecommit>&);
 #if BUSE(PARTIAL_SCAVENGE)
-    void scavengeToHighWatermark(Vector<DeferredDecommit>&);
+    void scavengeToHighWatermark(const std::lock_guard<Mutex>&, Vector<DeferredDecommit>&);
 #endif
 
     template<typename Func>
-    void forEachCommittedPage(const Func&);
+    void forEachCommittedPage(const std::lock_guard<Mutex>&, const Func&);
     
 private:
-    void scavengePage(size_t, Vector<DeferredDecommit>&);
+    void scavengePage(const std::lock_guard<Mutex>&, size_t, Vector<DeferredDecommit>&);
 
+    std::array<PackedAlignedPtr<IsoPage<Config>, IsoPage<Config>::pageSize>, numPages> m_pages { };
     // NOTE: I suppose that this could be two bitvectors. But from working on the GC, I found that the
     // number of bitvectors does not matter as much as whether or not they make intuitive sense.
     Bits<numPages> m_eligible;
     Bits<numPages> m_empty;
     Bits<numPages> m_committed;
-    std::array<IsoPage<Config>*, numPages> m_pages;
     unsigned m_firstEligibleOrDecommitted { 0 };
 #if BUSE(PARTIAL_SCAVENGE)
     unsigned m_highWatermark { 0 };
