@@ -516,13 +516,15 @@ namespace JSC {
     {
     }
 
+    // UnaryPlus is guaranteed to always return a number, never a BigInt.
+    // See https://tc39.es/ecma262/#sec-unary-plus-operator-runtime-semantics-evaluation
     inline UnaryPlusNode::UnaryPlusNode(const JSTokenLocation& location, ExpressionNode* expr)
         : UnaryOpNode(location, ResultType::numberType(), expr, op_to_number)
     {
     }
 
     inline NegateNode::NegateNode(const JSTokenLocation& location, ExpressionNode* expr)
-        : UnaryOpNode(location, ResultType::numberType(), expr, op_negate)
+        : UnaryOpNode(location, ResultType::forUnaryArith(expr->resultDescriptor()), expr, op_negate)
     {
     }
 
@@ -555,23 +557,23 @@ namespace JSC {
     }
 
     inline PowNode::PowNode(const JSTokenLocation& location, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments)
-        : BinaryOpNode(location, ResultType::numberType(), expr1, expr2, op_pow, rightHasAssignments)
+        : BinaryOpNode(location, ResultType::forNonAddArith(expr1->resultDescriptor(), expr2->resultDescriptor()), expr1, expr2, op_pow, rightHasAssignments)
     {
     }
 
     inline MultNode::MultNode(const JSTokenLocation& location, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments)
-        : BinaryOpNode(location, ResultType::numberType(), expr1, expr2, op_mul, rightHasAssignments)
+        : BinaryOpNode(location, ResultType::forNonAddArith(expr1->resultDescriptor(), expr2->resultDescriptor()), expr1, expr2, op_mul, rightHasAssignments)
     {
     }
 
     inline DivNode::DivNode(const JSTokenLocation& location, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments)
-        : BinaryOpNode(location, ResultType::numberType(), expr1, expr2, op_div, rightHasAssignments)
+        : BinaryOpNode(location, ResultType::forNonAddArith(expr1->resultDescriptor(), expr2->resultDescriptor()), expr1, expr2, op_div, rightHasAssignments)
     {
     }
 
 
     inline ModNode::ModNode(const JSTokenLocation& location, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments)
-        : BinaryOpNode(location, ResultType::numberType(), expr1, expr2, op_mod, rightHasAssignments)
+        : BinaryOpNode(location, ResultType::forNonAddArith(expr1->resultDescriptor(), expr2->resultDescriptor()), expr1, expr2, op_mod, rightHasAssignments)
     {
     }
 
@@ -581,7 +583,7 @@ namespace JSC {
     }
 
     inline SubNode::SubNode(const JSTokenLocation& location, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments)
-        : BinaryOpNode(location, ResultType::numberType(), expr1, expr2, op_sub, rightHasAssignments)
+        : BinaryOpNode(location, ResultType::forNonAddArith(expr1->resultDescriptor(), expr2->resultDescriptor()), expr1, expr2, op_sub, rightHasAssignments)
     {
     }
 

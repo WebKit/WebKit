@@ -1,5 +1,28 @@
 2020-01-16  Robin Morisset  <rmorisset@apple.com>
 
+        Teach the bytecode that arithmetic operations can return bigints
+        https://bugs.webkit.org/show_bug.cgi?id=205416
+
+        Reviewed by Yusuke Suzuki.
+
+        Add already has the correct ResultType, but previously Sub/Mult/Div/Mod/Pow/Negate were always claimed to return Number,
+        and when BigInt is enabled they can also return BigInt.
+        UnaryPlus is left unchanged as it is invalid on a BigInt (to keep asm.js working as intended).
+
+        * parser/NodeConstructors.h:
+        (JSC::NegateNode::NegateNode):
+        (JSC::PowNode::PowNode):
+        (JSC::MultNode::MultNode):
+        (JSC::DivNode::DivNode):
+        (JSC::ModNode::ModNode):
+        (JSC::SubNode::SubNode):
+        * parser/ResultType.h:
+        (JSC::ResultType::bigIntOrNumberType): Added.
+        (JSC::ResultType::forNonAddArith):
+        (JSC::ResultType::forUnaryArith):
+
+2020-01-16  Robin Morisset  <rmorisset@apple.com>
+
         Use dataLogIf more regularly
         https://bugs.webkit.org/show_bug.cgi?id=206332
 
