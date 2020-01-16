@@ -181,6 +181,7 @@ struct LineCandidateContent {
 
     bool hasIntrusiveFloats() const { return !m_floats.isEmpty(); }
     const LineBreaker::RunList& inlineRuns() const { return m_inlineRuns; }
+    InlineLayoutUnit inlineContentLogicalWidth() const { return m_inlineContentLogicalWidth; }
     const LineLayoutContext::FloatList& floats() const { return m_floats; }
 
     const InlineItem* trailingLineBreak() const { return m_trailingLineBreak; }
@@ -190,6 +191,7 @@ struct LineCandidateContent {
 private:
     void setTrailingLineBreak(const InlineItem& lineBreakItem) { m_trailingLineBreak = &lineBreakItem; }
 
+    InlineLayoutUnit m_inlineContentLogicalWidth { 0 };
     LineBreaker::RunList m_inlineRuns;
     LineLayoutContext::FloatList m_floats;
     const InlineItem* m_trailingLineBreak { nullptr };
@@ -202,11 +204,13 @@ void LineCandidateContent::append(const InlineItem& inlineItem, Optional<InlineL
         return setTrailingLineBreak(inlineItem);
     if (inlineItem.isFloat())
         return m_floats.append(makeWeakPtr(inlineItem));
+    m_inlineContentLogicalWidth += *logicalWidth;
     m_inlineRuns.append({ inlineItem, *logicalWidth });
 }
 
 void LineCandidateContent::reset()
 {
+    m_inlineContentLogicalWidth = 0;
     m_inlineRuns.clear();
     m_floats.clear();
     m_trailingLineBreak = nullptr;
@@ -410,7 +414,7 @@ LineLayoutContext::Result LineLayoutContext::tryAddingInlineItems(LineBreaker& l
         lineBreaker.setHyphenationDisabled();
 
     auto& candidateRuns = candidateContent.inlineRuns();
-    auto result = lineBreaker.shouldWrapInlineContent(candidateRuns, lineStatus);
+    auto result = lineBreaker.shouldWrapInlineContent(candidateRuns, candidateContent.inlineContentLogicalWidth(), lineStatus);
     if (result.action == LineBreaker::Result::Action::Keep) {
         // This continuous content can be fully placed on the current line.
         commitContent(line, candidateRuns, { });

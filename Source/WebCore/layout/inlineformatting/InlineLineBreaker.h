@@ -79,7 +79,7 @@ public:
         bool lineHasFullyCollapsibleTrailingRun { false };
         bool lineIsEmpty { true };
     };
-    Result shouldWrapInlineContent(const RunList& candidateRuns, const LineStatus&);
+    Result shouldWrapInlineContent(const RunList& candidateRuns, InlineLayoutUnit candidateContentLogicalWidth, const LineStatus&);
     bool shouldWrapFloatBox(InlineLayoutUnit floatLogicalWidth, InlineLayoutUnit availableWidth, bool lineIsEmpty);
 
     void setHyphenationDisabled() { n_hyphenationIsDisabled = true; }
@@ -95,7 +95,7 @@ private:
     // [container start][span1][container end][between][container start][span2][container end]
     // see https://drafts.csswg.org/css-text-3/#line-break-details
     Optional<WrappedTextContent> wrapTextContent(const RunList&, const LineStatus&) const;
-    Result tryWrappingInlineContent(const ContinuousContent&, const LineStatus&) const;
+    Result tryWrappingInlineContent(const RunList&, InlineLayoutUnit candidateContentLogicalWidth, const LineStatus&) const;
     Optional<PartialRun> tryBreakingTextRun(const Run& overflowRun, InlineLayoutUnit availableWidth) const;
 
     enum class WordBreakRule {

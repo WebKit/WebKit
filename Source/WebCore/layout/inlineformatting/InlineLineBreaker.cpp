@@ -50,8 +50,20 @@ static inline bool shouldKeepBeginningOfLineWhitespace(const RenderStyle& style)
     return whitespace == WhiteSpace::Pre || whitespace == WhiteSpace::PreWrap || whitespace == WhiteSpace::BreakSpaces;
 }
 
+static inline Optional<size_t> lastWrapOpportunityIndex(const LineBreaker::RunList& runList)
+{
+    // <span style="white-space: pre">no_wrap</span><span>yes wrap</span><span style="white-space: pre">no_wrap</span>.
+    // [container start][no_wrap][container end][container start][yes] <- continuous content
+    // [ ] <- continuous content
+    // [wrap][container end][container start][no_wrap][container end] <- continuous content
+    // Return #0 as the index where the second continuous content can wrap at.
+    ASSERT(!runList.isEmpty());
+    auto lastItemIndex = runList.size() - 1;
+    return isWrappingAllowed(runList[lastItemIndex].inlineItem.style()) ? makeOptional(lastItemIndex) : WTF::nullopt;
+}
+
 struct ContinuousContent {
-    ContinuousContent(const LineBreaker::RunList&);
+    ContinuousContent(const LineBreaker::RunList&, InlineLayoutUnit contentLogicalWidth);
 
     const LineBreaker::RunList& runs() const { return m_runs; }
     bool isEmpty() const { return m_runs.isEmpty(); }
@@ -64,7 +76,6 @@ struct ContinuousContent {
 
     bool hasTrailingCollapsibleContent() const { return !!m_trailingCollapsibleContent.width; }
     bool isTrailingContentFullyCollapsible() const { return m_trailingCollapsibleContent.isFullyCollapsible; }
-    Optional<size_t> lastWrapOpportunityIndex() const;
 
     Optional<size_t> firstTextRunIndex() const;
     Optional<size_t> lastContentRunIndex() const;
@@ -104,40 +115,44 @@ bool LineBreaker::shouldKeepEndOfLineWhitespace(const ContinuousContent& candida
     return whitespace == WhiteSpace::Normal || whitespace == WhiteSpace::NoWrap || whitespace == WhiteSpace::PreWrap || whitespace == WhiteSpace::PreLine;
 }
 
-LineBreaker::Result LineBreaker::shouldWrapInlineContent(const RunList& candidateRuns, const LineStatus& lineStatus)
+LineBreaker::Result LineBreaker::shouldWrapInlineContent(const RunList& candidateRuns, InlineLayoutUnit candidateContentLogicalWidth, const LineStatus& lineStatus)
 {
-    auto candidateContent = ContinuousContent { candidateRuns };
-    ASSERT(!candidateContent.isEmpty());
-    auto result = tryWrappingInlineContent(candidateContent, lineStatus);
-    // If this is not the end of the line, hold on to the last eligible line wrap opportunity so that we could revert back
-    // to this position if no other line breaking opportunity exists in this content.
-    if (result.isEndOfLine == IsEndOfLine::Yes)
-        return result;
-    if (auto lastLineWrapOpportunityIndex = candidateContent.lastWrapOpportunityIndex()) {
-        auto isEligibleLineWrapOpportunity = [&] (auto& candidateItem) {
-            // Just check for leading collapsible whitespace for now.
-            if (!lineStatus.lineIsEmpty || !candidateItem.isText() || !downcast<InlineTextItem>(candidateItem).isWhitespace())
-                return true;
-            return shouldKeepBeginningOfLineWhitespace(candidateItem.style());
-        };
-        auto& inlineItem = candidateContent.runs()[*lastLineWrapOpportunityIndex].inlineItem;
-        if (isEligibleLineWrapOpportunity(inlineItem))
-            m_lastWrapOpportunity = &inlineItem;
+    auto inlineContentWrapping = [&] {
+        if (candidateContentLogicalWidth <= lineStatus.availableWidth)
+            return Result { Result::Action::Keep };
+#if USE_FLOAT_AS_INLINE_LAYOUT_UNIT
+        // Preferred width computation sums up floats while line breaker substracts them. This can lead to epsilon-scale differences.
+        if (WTF::areEssentiallyEqual(candidateContentLogicalWidth, lineStatus.availableWidth))
+            return Result { Result::Action::Keep };
+#endif
+        return tryWrappingInlineContent(candidateRuns, candidateContentLogicalWidth, lineStatus);
+    };
+
+    auto result = inlineContentWrapping();
+    if (result.action == Result::Action::Keep) {
+        // If this is not the end of the line, hold on to the last eligible line wrap opportunity so that we could revert back
+        // to this position if no other line breaking opportunity exists in this content.
+        if (auto lastLineWrapOpportunityIndex = lastWrapOpportunityIndex(candidateRuns)) {
+            auto isEligibleLineWrapOpportunity = [&] (auto& candidateItem) {
+                // Just check for leading collapsible whitespace for now.
+                if (!lineStatus.lineIsEmpty || !candidateItem.isText() || !downcast<InlineTextItem>(candidateItem).isWhitespace())
+                    return true;
+                return shouldKeepBeginningOfLineWhitespace(candidateItem.style());
+            };
+            auto& inlineItem = candidateRuns[*lastLineWrapOpportunityIndex].inlineItem;
+            if (isEligibleLineWrapOpportunity(inlineItem))
+                m_lastWrapOpportunity = &inlineItem;
+        }
     }
     return result;
 }
 
-LineBreaker::Result LineBreaker::tryWrappingInlineContent(const ContinuousContent& candidateContent, const LineStatus& lineStatus) const
+LineBreaker::Result LineBreaker::tryWrappingInlineContent(const RunList& candidateRuns, InlineLayoutUnit candidateContentLogicalWidth, const LineStatus& lineStatus) const
 {
-    if (candidateContent.width() <= lineStatus.availableWidth)
-        return { Result::Action::Keep };
+    auto candidateContent = ContinuousContent { candidateRuns, candidateContentLogicalWidth };
+    ASSERT(!candidateContent.isEmpty());
 
-#if USE_FLOAT_AS_INLINE_LAYOUT_UNIT
-    // Preferred width computation sums up floats while line breaker substracts them. This can lead to epsilon-scale differences.
-    if (WTF::areEssentiallyEqual(candidateContent.width(), lineStatus.availableWidth))
-        return { Result::Action::Keep };
-#endif
-
+    ASSERT(candidateContent.width() > lineStatus.availableWidth);
     if (candidateContent.hasTrailingCollapsibleContent()) {
         ASSERT(candidateContent.hasTextContentOnly());
         auto IsEndOfLine = isContentWrappingAllowed(candidateContent) ? IsEndOfLine::Yes : IsEndOfLine::No;
@@ -340,8 +355,9 @@ Optional<LineBreaker::PartialRun> LineBreaker::tryBreakingTextRun(const Run& ove
     return { };
 }
 
-ContinuousContent::ContinuousContent(const LineBreaker::RunList& runs)
+ContinuousContent::ContinuousContent(const LineBreaker::RunList& runs, InlineLayoutUnit contentLogicalWidth)
     : m_runs(runs)
+    , m_width(contentLogicalWidth)
 {
     // Figure out the trailing collapsible state.
     for (auto& run : WTF::makeReversedRange(m_runs)) {
@@ -371,13 +387,6 @@ ContinuousContent::ContinuousContent(const LineBreaker::RunList& runs)
             // End of whitespace content.
             break;
         }
-    }
-    // The trailing whitespace loop above is mostly about inspecting the last entry, so while it
-    // looks like we are looping through the m_runs twice, it's really just one full loop in addition to checking the last run.
-    for (auto& run : m_runs) {
-        // Line break is not considered an inline content.
-        ASSERT(!run.inlineItem.isLineBreak());
-        m_width += run.logicalWidth;
     }
 }
 
@@ -437,17 +446,6 @@ bool ContinuousContent::hasNonContentRunsOnly() const
         return false;
     }
     return true;
-}
-
-Optional<size_t> ContinuousContent::lastWrapOpportunityIndex() const
-{
-    // <span style="white-space: pre">no_wrap</span><span>yes wrap</span><span style="white-space: pre">no_wrap</span>.
-    // [container start][no_wrap][container end][container start][yes] <- continuous content
-    // [ ] <- continuous content
-    // [wrap][container end][container start][no_wrap][container end] <- continuous content
-    // Return #0 as the index where the second continuous content can wrap at.
-    auto lastItemIndex = m_runs.size() - 1;
-    return isWrappingAllowed(m_runs[lastItemIndex].inlineItem.style()) ? makeOptional(lastItemIndex) : WTF::nullopt;
 }
 
 void ContinuousContent::TrailingCollapsibleContent::reset()
