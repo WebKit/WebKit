@@ -360,7 +360,7 @@ WebCore::DOMPasteAccessResponse WebEditorClient::requestDOMPasteAccess(const Str
     return m_page->requestDOMPasteAccess(originIdentifier);
 }
 
-#if PLATFORM(WIN)
+#if !PLATFORM(COCOA) && !USE(GLIB)
 void WebEditorClient::handleKeyboardEvent(KeyboardEvent& event)
 {
     if (m_page->handleEditingKeyboardEvent(event))
@@ -371,7 +371,7 @@ void WebEditorClient::handleInputMethodKeydown(KeyboardEvent&)
 {
     notImplemented();
 }
-#endif // PLATFORM(WIN)
+#endif // !PLATFORM(COCOA) && !USE(GLIB)
 
 void WebEditorClient::textFieldDidBeginEditing(Element* element)
 {
