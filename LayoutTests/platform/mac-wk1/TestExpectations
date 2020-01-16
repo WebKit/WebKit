@@ -848,3 +848,5 @@ webkit.org/b/206071 editing/spelling/retro-correction-spelling-markers.html [ Fa
 webkit.org/b/206241 [ Mojave Debug ] accessibility/mac/search-text/search-text.html [ Skip ]
 
 webkit.org/b/199117 [ Debug ] storage/indexeddb/modern/objectstore-autoincrement-types.html [ Timeout ]
+
+webkit.org/b/206362 [ Debug ] inspector/page/overrideSetting-ICECandidateFilteringEnabled.html [ Failure Pass ]
