@@ -1,3 +1,32 @@
+2020-01-16  Simon Fraser  <simon.fraser@apple.com>
+
+        fast/forms/ios/zoom-after-input-tap-wide-input.html is timing out
+        https://bugs.webkit.org/show_bug.cgi?id=206313
+
+        Reviewed by Wenson Hsieh.
+        
+        The timeout was caused by the previous test, fast/forms/ios/validation-bubble-dismiss-on-tap.html, 
+        which puts up a validation bubble whose implementation involves showing a modal UIViewController.
+        That view controller disappears with an animation, which happened after we're proceeded to the next
+        test, and the overlay view could intercept touches thus breaking any subsequent touch-based test.
+
+        Fix by having platformResetStateToConsistentValues() wait for the presentedViewController to
+        go to nil, which requires spinning the runloop.
+
+        platformResetStateToConsistentValues() will return false if we fail to remove the presented view controller,
+        which will trigger a timeout with a log.
+
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::resetStateToConsistentValues):
+        (WTR::TestController::platformResetStateToConsistentValues):
+        * WebKitTestRunner/TestController.h:
+        * WebKitTestRunner/cocoa/TestControllerCocoa.mm:
+        (WTR::TestController::cocoaResetStateToConsistentValues):
+        * WebKitTestRunner/ios/TestControllerIOS.mm:
+        (WTR::TestController::platformResetStateToConsistentValues):
+        * WebKitTestRunner/mac/TestControllerMac.mm:
+        (WTR::TestController::platformResetStateToConsistentValues):
+
 2020-01-16  Philippe Normand  <philn@igalia.com>
 
         [GStreamer][WPE] Client-side video rendering support

@@ -1086,7 +1086,8 @@ bool TestController::resetStateToConsistentValues(const TestOptions& options, Re
 
     setHidden(false);
 
-    platformResetStateToConsistentValues(options);
+    if (!platformResetStateToConsistentValues(options))
+        return false;
 
     m_shouldDecideNavigationPolicyAfterDelay = false;
     m_shouldDecideResponsePolicyAfterDelay = false;
@@ -3086,8 +3087,9 @@ WKContextRef TestController::platformAdjustContext(WKContextRef context, WKConte
     return context;
 }
 
-void TestController::platformResetStateToConsistentValues(const TestOptions&)
+bool TestController::platformResetStateToConsistentValues(const TestOptions&)
 {
+    return true;
 }
 
 unsigned TestController::imageCountInGeneralPasteboard() const

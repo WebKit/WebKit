@@ -262,7 +262,7 @@ void TestController::cocoaResetStateToConsistentValues(const TestOptions& option
         [platformView resetInteractionCallbacks];
     }
 
-    [globalWebsiteDataStoreDelegateClient setAllowRaisingQuota: true];
+    [globalWebsiteDataStoreDelegateClient setAllowRaisingQuota:YES];
 }
 
 void TestController::platformWillRunTest(const TestInvocation& testInvocation)
