@@ -110,7 +110,7 @@ bool TextureMapperPlatformLayerProxy::isActive()
     return !!m_targetLayer && !!m_compositor;
 }
 
-void TextureMapperPlatformLayerProxy::pushNextBuffer(std::unique_ptr<TextureMapperPlatformLayerBuffer> newBuffer)
+void TextureMapperPlatformLayerProxy::pushNextBuffer(std::unique_ptr<TextureMapperPlatformLayerBuffer>&& newBuffer)
 {
     ASSERT(m_lock.isHeld());
 #if USE(ANGLE)

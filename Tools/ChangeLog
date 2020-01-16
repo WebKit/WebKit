@@ -1,3 +1,13 @@
+2020-01-16  Philippe Normand  <philn@igalia.com>
+
+        [GStreamer][WPE] Client-side video rendering support
+        https://bugs.webkit.org/show_bug.cgi?id=206289
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        * wpe/jhbuild.modules: Bump to libwpe and wpebackend-fdo git
+        snapshots, until 1.5.x releases are published.
+
 2020-01-16  Takashi Komori  <Takashi.Komori@sony.com>
 
         KeyedDecoderGeneric crashes when it accesses data with non-existing key

@@ -1,3 +1,23 @@
+2020-01-16  Philippe Normand  <philn@igalia.com>
+
+        [GStreamer][WPE] Client-side video rendering support
+        https://bugs.webkit.org/show_bug.cgi?id=206289
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        Add a new compile-time option to enable client-side video
+        rendering support. With this feature enabled the UIProcess will be
+        in charge of positioning and rendering video surfaces, thanks to
+        the WPEBackend-FDO video-plane-display-dmabuf protocol.
+
+        * Source/cmake/GStreamerDefinitions.cmake: Add
+        USE_WPE_VIDEO_PLANE_DISPLAY_DMABUF CMake option, disabled by
+        default.
+        * Source/cmake/GStreamerDependencies.cmake: This new option
+        depends on GStreamer-GL.
+        * Source/cmake/OptionsWPE.cmake: It depends also on the presence
+        of the WPEBackend-FDO library.
+
 2020-01-16  Per Arne Vollan  <pvollan@apple.com>
 
         [Win] Fix AppleWin build

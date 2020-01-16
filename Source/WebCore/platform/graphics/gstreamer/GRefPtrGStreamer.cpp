@@ -23,6 +23,10 @@
 #if USE(GSTREAMER)
 #include <gst/gst.h>
 
+#if USE(GSTREAMER_GL)
+#include <gst/gl/egl/gsteglimage.h>
+#endif
+
 namespace WTF {
 
 template <> GRefPtr<GstElement> adoptGRef(GstElement* ptr)
@@ -502,6 +506,24 @@ template<> void derefGPtr<GstGLContext>(GstGLContext* ptr)
 {
     if (ptr)
         gst_object_unref(GST_OBJECT(ptr));
+}
+
+template <> GRefPtr<GstEGLImage> adoptGRef(GstEGLImage* ptr)
+{
+    return GRefPtr<GstEGLImage>(ptr, GRefPtrAdopt);
+}
+
+template <> GstEGLImage* refGPtr<GstEGLImage>(GstEGLImage* ptr)
+{
+    if (ptr)
+        gst_egl_image_ref(ptr);
+    return ptr;
+}
+
+template <> void derefGPtr<GstEGLImage>(GstEGLImage* ptr)
+{
+    if (ptr)
+        gst_egl_image_unref(ptr);
 }
 
 #endif // USE(GSTREAMER_GL)

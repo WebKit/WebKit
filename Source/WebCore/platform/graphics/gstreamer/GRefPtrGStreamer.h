@@ -30,6 +30,7 @@ typedef struct _WebKitWebSrc WebKitWebSrc;
 #if USE(GSTREAMER_GL)
 typedef struct _GstGLDisplay GstGLDisplay;
 typedef struct _GstGLContext GstGLContext;
+typedef struct _GstEGLImage GstEGLImage;
 #endif
 
 namespace WTF {
@@ -131,6 +132,10 @@ template<> void derefGPtr<GstGLDisplay>(GstGLDisplay* ptr);
 template<> GRefPtr<GstGLContext> adoptGRef(GstGLContext* ptr);
 template<> GstGLContext* refGPtr<GstGLContext>(GstGLContext* ptr);
 template<> void derefGPtr<GstGLContext>(GstGLContext* ptr);
+
+template<> GRefPtr<GstEGLImage> adoptGRef(GstEGLImage* ptr);
+template<> GstEGLImage* refGPtr<GstEGLImage>(GstEGLImage* ptr);
+template<> void derefGPtr<GstEGLImage>(GstEGLImage* ptr);
 #endif
 
 } // namespace WTF

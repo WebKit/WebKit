@@ -62,7 +62,7 @@ public:
     // aquire / release the lock explicitly to use below methods.
     Lock& lock() { return m_lock; }
     std::unique_ptr<TextureMapperPlatformLayerBuffer> getAvailableBuffer(const IntSize&, GLint internalFormat);
-    void pushNextBuffer(std::unique_ptr<TextureMapperPlatformLayerBuffer>);
+    void pushNextBuffer(std::unique_ptr<TextureMapperPlatformLayerBuffer>&&);
     bool isActive();
 
     WEBCORE_EXPORT void activateOnCompositingThread(Compositor*, TextureMapperLayer*);

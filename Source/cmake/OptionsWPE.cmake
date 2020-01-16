@@ -166,8 +166,10 @@ endif ()
 if (ENABLE_WPE_QT_API)
     find_package(Qt5 REQUIRED COMPONENTS Core Quick Gui)
     find_package(Qt5Test REQUIRED)
-    find_package(PkgConfig)
-    find_package(WPEBackend-fdo 1.3.0 REQUIRED)
+endif ()
+
+if (ENABLE_WPE_QT_API OR USE_WPE_VIDEO_PLANE_DISPLAY_DMABUF)
+    find_package(WPEBackend-fdo 1.5.0 REQUIRED)
 endif ()
 
 add_definitions(-DBUILDING_WPE__=1)

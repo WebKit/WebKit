@@ -17,8 +17,8 @@
  *  Boston, MA 02110-1301, USA.
  */
 
-#ifndef GUniquePtrGStreamer_h
-#define GUniquePtrGStreamer_h
+#pragma once
+
 #if USE(GSTREAMER)
 
 #include <gst/audio/audio.h>
@@ -29,6 +29,10 @@
 #include <gst/pbutils/install-plugins.h>
 #include <gst/video/video.h>
 #include <wtf/glib/GUniquePtr.h>
+
+#if USE(WPE_VIDEO_PLANE_DISPLAY_DMABUF)
+#include <wpe/extensions/video-plane-display-dmabuf.h>
+#endif
 
 namespace WTF {
 
@@ -41,7 +45,11 @@ WTF_DEFINE_GPTR_DELETER(GstByteReader, gst_byte_reader_free)
 WTF_DEFINE_GPTR_DELETER(GstVideoConverter, gst_video_converter_free)
 WTF_DEFINE_GPTR_DELETER(GstAudioConverter, gst_audio_converter_free)
 
+#if USE(WPE_VIDEO_PLANE_DISPLAY_DMABUF)
+WTF_DEFINE_GPTR_DELETER(struct wpe_video_plane_display_dmabuf_source, wpe_video_plane_display_dmabuf_source_destroy)
+#endif
+
 }
 
 #endif // USE(GSTREAMER)
-#endif
+

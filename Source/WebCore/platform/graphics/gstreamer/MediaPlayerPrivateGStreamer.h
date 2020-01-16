@@ -81,6 +81,10 @@ typedef struct _GstVideoInfo GstVideoInfo;
 typedef struct _GstGLContext GstGLContext;
 typedef struct _GstGLDisplay GstGLDisplay;
 
+#if USE(WPE_VIDEO_PLANE_DISPLAY_DMABUF)
+struct wpe_video_plane_display_dmabuf_source;
+#endif
+
 namespace WebCore {
 
 class BitmapTextureGL;
@@ -517,6 +521,11 @@ private:
     Optional<bool> m_hasTaintedOrigin { WTF::nullopt };
 
     GRefPtr<GstElement> m_fpsSink { nullptr };
+
+private:
+#if USE(WPE_VIDEO_PLANE_DISPLAY_DMABUF)
+    GUniquePtr<struct wpe_video_plane_display_dmabuf_source> m_wpeVideoPlaneDisplayDmaBuf;
+#endif
 };
 
 }
