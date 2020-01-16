@@ -853,6 +853,25 @@ webkit.org/b/152379 editing/pasteboard/emacs-killring-backward-delete-prepend.ht
 
 # The GTK+ test harness doesn't have support for overriding preferred languages.
 webkit.org/b/152618 fast/text/international/system-language/declarative-language.html [ Failure ]
+webkit.org/b/152618 fast/text/international/system-language/navigator-language/navigator-language-en-GB.html [ Failure ]
+webkit.org/b/152618 fast/text/international/system-language/navigator-language/navigator-language-en-US.html [ Failure ]
+webkit.org/b/152618 fast/text/international/system-language/navigator-language/navigator-language-en.html [ Failure ]
+webkit.org/b/152618 fast/text/international/system-language/navigator-language/navigator-language-es-419.html [ Failure ]
+webkit.org/b/152618 fast/text/international/system-language/navigator-language/navigator-language-es-ES.html [ Failure ]
+webkit.org/b/152618 fast/text/international/system-language/navigator-language/navigator-language-es-MX.html [ Failure ]
+webkit.org/b/152618 fast/text/international/system-language/navigator-language/navigator-language-es.html [ Failure ]
+webkit.org/b/152618 fast/text/international/system-language/navigator-language/navigator-language-fr-CA.html [ Failure ]
+webkit.org/b/152618 fast/text/international/system-language/navigator-language/navigator-language-fr.html [ Failure ]
+webkit.org/b/152618 fast/text/international/system-language/navigator-language/navigator-language-hi.html [ Failure ]
+webkit.org/b/152618 fast/text/international/system-language/navigator-language/navigator-language-ja.html [ Failure ]
+webkit.org/b/152618 fast/text/international/system-language/navigator-language/navigator-language-pt-BR.html [ Failure ]
+webkit.org/b/152618 fast/text/international/system-language/navigator-language/navigator-language-pt-PT.html [ Failure ]
+webkit.org/b/152618 fast/text/international/system-language/navigator-language/navigator-language-ru.html [ Failure ]
+webkit.org/b/152618 fast/text/international/system-language/navigator-language/navigator-language-zh-HK.html [ Failure ]
+webkit.org/b/152618 fast/text/international/system-language/navigator-language/navigator-language-zh-Hans.html [ Failure ]
+webkit.org/b/152618 fast/text/international/system-language/navigator-language/navigator-language-zh-Hant-HK.html [ Failure ]
+webkit.org/b/152618 fast/text/international/system-language/navigator-language/navigator-language-zh-Hant.html [ Failure ]
+webkit.org/b/152618 fast/text/international/system-language/navigator-language/navigator-language-zh-TW.html [ Failure ]
 
 # This port doesn't support small-caps synthesis.
 webkit.org/b/152620 css3/font-variant-all.html [ ImageOnlyFailure ]
