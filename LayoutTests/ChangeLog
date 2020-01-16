@@ -1,3 +1,14 @@
+2020-01-16  Alicia Boya García  <aboya@igalia.com>
+
+        [MSE] Don't enqueue samples that start at a big discontinuity
+        https://bugs.webkit.org/show_bug.cgi?id=201323
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        * media/media-source/media-source-append-presentation-durations.html: Added.
+        * media/media-source/media-source-first-append-not-starting-at-zero.html: Added.
+        * media/media-source/media-source-remove-b-frame.html: Added.
+
 2020-01-15  Lauro Moura  <lmoura@igalia.com>
 
         [GTK] Gardening tests using language override

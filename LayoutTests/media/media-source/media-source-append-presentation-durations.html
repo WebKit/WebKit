@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>media-source-append-acb-no-frame-lost</title>
+    <script src="mock-media-source.js"></script>
+    <script src="../video-test.js"></script>
+    <script>
+    var source;
+    var sourceBuffer;
+    var initSegment;
+
+    if (window.internals)
+        internals.initializeMockMediaSource();
+
+    function doubleIbpSampleRun() {
+        // IBP in presentation order, IPB in decode order.
+        // Some MP4 files do a trick where they play with the decode durations to have B-frames with the presentation
+        // timeline starting at zero without using edit lists.
+        // This test checks these kind of files are handled correctly.
+        return concatenateSamples([
+            makeASample( 0,  0,  5, 10, 1, SAMPLE_FLAG.SYNC), // I
+            makeASample(20,  5,  5, 10, 1, SAMPLE_FLAG.NONE), // P
+            makeASample(10, 10, 20, 10, 1, SAMPLE_FLAG.NONE), // B
+            makeASample(30, 30,  5, 10, 1, SAMPLE_FLAG.SYNC), // I
+            makeASample(50, 35,  5, 10, 1, SAMPLE_FLAG.NONE), // P
+            makeASample(40, 40, 20, 10, 1, SAMPLE_FLAG.NONE), // B
+        ]);
+    }
+
+    window.addEventListener('load', async () => {
+        findMediaElement();
+        source = new MediaSource();
+        testExpected('source.readyState', 'closed');
+        const sourceOpened = waitFor(source, 'sourceopen');
+
+        const videoSource = document.createElement('source');
+        videoSource.type = 'video/mock; codecs=mock';
+        videoSource.src = URL.createObjectURL(source);
+        video.appendChild(videoSource);
+
+        await sourceOpened;
+        run('sourceBuffer = source.addSourceBuffer("video/mock; codecs=mock")');
+
+        initSegment = makeAInit(20, [makeATrack(1, 'mock', TRACK_KIND.VIDEO)]);
+
+        run('sourceBuffer.appendBuffer(initSegment)');
+        await waitFor(sourceBuffer, 'updateend');
+
+        run('sourceBuffer.appendBuffer(doubleIbpSampleRun())');
+        await waitFor(sourceBuffer, 'updateend');
+
+        consoleWrite("Buffered:");
+        internals.bufferedSamplesForTrackID(sourceBuffer, 1).forEach(consoleWrite);
+        consoleWrite("Enqueued:");
+        internals.enqueuedSamplesForTrackID(sourceBuffer, 1).forEach(consoleWrite);
+
+        endTest();
+    });
+    </script>
+</head>
+<body>
+    <video controls></video>
+</body>
+</html>

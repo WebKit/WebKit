@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>media-source-append-remove-b-frame</title>
+    <script src="mock-media-source.js"></script>
+    <script src="../video-test.js"></script>
+    <script>
+    var source;
+    var sourceBuffer;
+    var initSegment;
+
+    if (window.internals)
+        internals.initializeMockMediaSource();
+
+    function ibpSampleRun() {
+        // IBP in presentation order, IPB in decode order.
+        return concatenateSamples([
+            makeASample(0, -1, 1, 1, 1, SAMPLE_FLAG.SYNC), // I
+            makeASample(2,  0, 1, 1, 1, SAMPLE_FLAG.NONE), // P
+            makeASample(1,  1, 1, 1, 1, SAMPLE_FLAG.NONE), // B
+        ]);
+    }
+
+    window.addEventListener('load', async () => {
+        findMediaElement();
+        source = new MediaSource();
+        testExpected('source.readyState', 'closed');
+        const sourceOpened = waitFor(source, 'sourceopen');
+
+        const videoSource = document.createElement('source');
+        videoSource.type = 'video/mock; codecs=mock';
+        videoSource.src = URL.createObjectURL(source);
+        video.appendChild(videoSource);
+
+        await sourceOpened;
+        run('sourceBuffer = source.addSourceBuffer("video/mock; codecs=mock")');
+
+        initSegment = makeAInit(10, [makeATrack(1, 'mock', TRACK_KIND.VIDEO)]);
+
+        run('sourceBuffer.appendBuffer(initSegment)');
+        await waitFor(sourceBuffer, 'updateend');
+
+        run('sourceBuffer.appendBuffer(ibpSampleRun())');
+        await waitFor(sourceBuffer, 'updateend');
+        internals.enqueuedSamplesForTrackID(sourceBuffer, 1).forEach(consoleWrite);
+
+        run('sourceBuffer.remove(1, 2)');
+        await waitFor(sourceBuffer, 'updateend');
+
+        // Even if .remove() sets trackBuffer.needsReenqueueing to true, reenqueueing will only happen after an append.
+        // So let's make an empty append.
+        run('sourceBuffer.appendBuffer(new Uint8Array())');
+        await waitFor(sourceBuffer, 'updateend');
+
+        consoleWrite("The frame with presentation time [1, 2) should have been deleted from the buffered samples and " +
+            "a reenqueue must have happened. That frame should not have been enqueued.");
+        consoleWrite("Buffered:");
+        internals.bufferedSamplesForTrackID(sourceBuffer, 1).forEach(consoleWrite);
+        consoleWrite("Enqueued:");
+        internals.enqueuedSamplesForTrackID(sourceBuffer, 1).forEach(consoleWrite);
+
+        endTest();
+    });
+    </script>
+</head>
+<body>
+    <video controls></video>
+</body>
+</html>
