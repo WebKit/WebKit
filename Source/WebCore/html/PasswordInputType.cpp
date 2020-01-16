@@ -64,9 +64,16 @@ void PasswordInputType::restoreFormControlState(const FormControlState&)
 
 bool PasswordInputType::shouldUseInputMethod() const
 {
+#if PLATFORM(GTK) || PLATFORM(WPE)
+    // Input methods are enabled for the password field in GTK and WPE ports
+    // because the input methods are notified that the active editable element
+    // is a password field.
+    return true;
+#else
     // Input methods are disabled for the password field because otherwise
     // anyone can access the underlying password and display it in clear text.
     return false;
+#endif
 }
 
 bool PasswordInputType::shouldResetOnDocumentActivation()

@@ -1,3 +1,15 @@
+2020-01-16  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK][WPE] Password field doesn't get input method
+        https://bugs.webkit.org/show_bug.cgi?id=34285
+
+        Reviewed by Žan Doberšek.
+
+        Enable the test case for password field.
+
+        * TestWebKitAPI/Tests/WebKitGLib/TestInputMethodContext.cpp:
+        (testWebKitInputMethodContextContentType):
+
 2020-01-16  Cathie Chen  <cathiechen@igalia.com>
 
         Mapping HTML attributes width/height to the default aspect ratio of <img>

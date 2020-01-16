@@ -898,15 +898,12 @@ static void testWebKitInputMethodContextContentType(InputMethodTest* test, gcons
     g_assert_cmpuint(test->hints(), ==, WEBKIT_INPUT_HINT_NONE);
     test->unfocusEditableAndWaitUntilInputMethodDisabled();
 
-#if 0
-    // FIXME: We should enable input methods in password fields too.
-    test->loadHtml("<input id='editable' type='password'>", nullptr);
+    test->loadHtml("<input id='editable' type='password' spellcheck='false'>", nullptr);
     test->waitUntilLoadFinished();
     test->focusEditableAndWaitUntilInputMethodEnabled();
     g_assert_cmpuint(test->purpose(), ==, WEBKIT_INPUT_PURPOSE_PASSWORD);
     g_assert_cmpuint(test->hints(), ==, WEBKIT_INPUT_HINT_NONE);
     test->unfocusEditableAndWaitUntilInputMethodDisabled();
-#endif
 
     test->loadHtml("<div contenteditable id='editable' inputmode='text' spellcheck='false'></div>", nullptr);
     test->waitUntilLoadFinished();
