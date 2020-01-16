@@ -1,3 +1,15 @@
+2020-01-15  Sam Weinig  <weinig@apple.com>
+
+        Platform.h is out of control Part 5: Split HAVE_* macro definitions out of Platform.h and into a new PlatformHave.h
+        https://bugs.webkit.org/show_bug.cgi?id=206307
+
+        Reviewed by Anders Carlsson.
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/CMakeLists.txt:
+        * wtf/Platform.h:
+        * wtf/PlatformHave.h: Copied from Source/WTF/wtf/Platform.h.
+
 2020-01-15  Keith Miller  <keith_miller@apple.com>
 
         Revert bytecode checkpoints since it breaks watch

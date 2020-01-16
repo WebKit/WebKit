@@ -172,6 +172,7 @@ set(WTF_PUBLIC_HEADERS
     Platform.h
     PlatformCPU.h
     PlatformEnable.h
+    PlatformHave.h
     PlatformLegacy.h
     PlatformOS.h
     PlatformRegisters.h
