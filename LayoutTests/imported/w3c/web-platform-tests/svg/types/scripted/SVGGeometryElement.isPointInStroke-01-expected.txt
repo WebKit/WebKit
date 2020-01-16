@@ -7,7 +7,7 @@ PASS SVGGeometryElement.prototype.isPointInStroke, 'stroke-dashoffset'.
 PASS SVGGeometryElement.prototype.isPointInStroke, 'stroke-miterlimit'. 
 PASS SVGGeometryElement.prototype.isPointInStroke, 'stroke-linejoin'. 
 PASS SVGGeometryElement.prototype.isPointInStroke, 'stroke-linecap'. 
-FAIL SVGGeometryElement.prototype.isPointInStroke, 'pathLength'. assert_false: expected false got true
+PASS SVGGeometryElement.prototype.isPointInStroke, 'pathLength'. 
 FAIL SVGGeometryElement.prototype.isPointInStroke, 'vector-effect'. assert_false: expected false got true
 PASS SVGGeometryElement.prototype.isPointInStroke, 'visibility' and 'pointer-events' have no effect. 
 

@@ -22,6 +22,7 @@
 
 #include "FloatQuad.h"
 #include "RenderBlock.h"
+#include "SVGGeometryElement.h"
 #include "SVGInlineTextBox.h"
 #include "SVGNames.h"
 #include "SVGPathData.h"
@@ -44,28 +45,35 @@ SVGTextPathElement& RenderSVGTextPath::textPathElement() const
     return downcast<SVGTextPathElement>(RenderSVGInline::graphicsElement());
 }
 
-Path RenderSVGTextPath::layoutPath() const
+SVGGeometryElement* RenderSVGTextPath::targetElement() const
 {
     auto target = SVGURIReference::targetElementFromIRIString(textPathElement().href(), textPathElement().treeScope());
-    if (!is<SVGPathElement>(target.element))
+    if (!is<SVGGeometryElement>(target.element))
+        return nullptr;
+
+    return downcast<SVGGeometryElement>(target.element.get());
+}
+
+Path RenderSVGTextPath::layoutPath() const
+{
+    auto element = targetElement();
+    if (!is<SVGGeometryElement>(element))
         return Path();
 
-    SVGPathElement& pathElement = downcast<SVGPathElement>(*target.element);
-
-    Path path = pathFromGraphicsElement(&pathElement);
+    Path path = pathFromGraphicsElement(element);
 
     // Spec:  The transform attribute on the referenced 'path' element represents a
     // supplemental transformation relative to the current user coordinate system for
     // the current 'text' element, including any adjustments to the current user coordinate
     // system due to a possible transform attribute on the current 'text' element.
     // http://www.w3.org/TR/SVG/text.html#TextPathElement
-    path.transform(pathElement.animatedLocalTransform());
+    path.transform(element->animatedLocalTransform());
     return path;
 }
 
-float RenderSVGTextPath::startOffset() const
+const SVGLengthValue& RenderSVGTextPath::startOffset() const
 {
-    return textPathElement().startOffset().valueAsPercentage();
+    return textPathElement().startOffset();
 }
 
 bool RenderSVGTextPath::exactAlignment() const

@@ -1,3 +1,57 @@
+2020-01-15  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        [SVG2]: Implement support for the 'pathLength' attribute
+        https://bugs.webkit.org/show_bug.cgi?id=72401
+
+        Reviewed by Simon Fraser.
+
+        * TestExpectations:
+
+        * platform/gtk/imported/w3c/web-platform-tests/svg/path/distance/pathLength-positive-expected.txt:
+        * platform/gtk/imported/w3c/web-platform-tests/svg/path/distance/pathLength-positive-percentage-expected.txt:
+        * platform/gtk/imported/w3c/web-platform-tests/svg/shapes/line-dasharray-expected.txt:
+        * platform/gtk/imported/w3c/web-platform-tests/svg/shapes/reftests/pathlength-001-expected.txt:
+        * platform/gtk/imported/w3c/web-platform-tests/svg/shapes/reftests/pathlength-002-expected.txt:
+        * platform/gtk/imported/w3c/web-platform-tests/svg/shapes/reftests/pathlength-003-expected.txt:
+        'pathLength' is now included in the DRT of the stroke. Other tests will
+        need to be rebaselined.
+
+        * platform/ios-simulator/imported/w3c/web-platform-tests/svg/import/paths-dom-01-f-manual-expected.txt:
+        * platform/ios-simulator/imported/w3c/web-platform-tests/svg/path/distance/pathLength-positive-expected.txt:
+        * platform/ios-simulator/imported/w3c/web-platform-tests/svg/path/distance/pathLength-positive-percentage-expected.txt:
+        * platform/ios-simulator/imported/w3c/web-platform-tests/svg/path/distance/pathLength-zero-expected.txt:
+        * platform/ios-simulator/imported/w3c/web-platform-tests/svg/path/distance/pathLength-zero-percentage-expected.txt:
+        * platform/ios-simulator/imported/w3c/web-platform-tests/svg/shapes/line-dasharray-expected.txt:
+        * platform/ios-simulator/imported/w3c/web-platform-tests/svg/shapes/reftests/pathlength-001-expected.txt:
+        * platform/ios-simulator/imported/w3c/web-platform-tests/svg/shapes/reftests/pathlength-002-expected.txt:
+        * platform/ios-simulator/imported/w3c/web-platform-tests/svg/shapes/reftests/pathlength-003-expected.txt:
+        * platform/ios-simulator/imported/w3c/web-platform-tests/svg/text/reftests/textpath-shape-001-expected.txt:
+        * platform/mac/imported/w3c/web-platform-tests/svg/import/paths-dom-01-f-manual-expected.txt:
+        * platform/mac/imported/w3c/web-platform-tests/svg/path/distance/pathLength-positive-expected.txt:
+        * platform/mac/imported/w3c/web-platform-tests/svg/path/distance/pathLength-positive-percentage-expected.txt:
+        * platform/mac/imported/w3c/web-platform-tests/svg/path/distance/pathLength-zero-expected.txt:
+        * platform/mac/imported/w3c/web-platform-tests/svg/path/distance/pathLength-zero-percentage-expected.txt:
+        * platform/mac/imported/w3c/web-platform-tests/svg/shapes/line-dasharray-expected.txt:
+        * platform/mac/imported/w3c/web-platform-tests/svg/shapes/reftests/pathlength-001-expected.txt:
+        * platform/mac/imported/w3c/web-platform-tests/svg/shapes/reftests/pathlength-002-expected.txt:
+        * platform/mac/imported/w3c/web-platform-tests/svg/shapes/reftests/pathlength-003-expected.txt:
+        * platform/mac/imported/w3c/web-platform-tests/svg/text/reftests/textpath-shape-001-expected.txt:
+        'pathLength' is now included in the DRT of the stroke. These tests were
+        rendering incorrectly. With this patch, the rendering matches the rendering
+        of other browsers.
+
+        * platform/wpe/imported/w3c/web-platform-tests/svg/path/distance/pathLength-positive-expected.txt:
+        * platform/wpe/imported/w3c/web-platform-tests/svg/path/distance/pathLength-positive-percentage-expected.txt:
+        * platform/wpe/imported/w3c/web-platform-tests/svg/shapes/line-dasharray-expected.txt:
+        * platform/wpe/imported/w3c/web-platform-tests/svg/shapes/reftests/pathlength-001-expected.txt:
+        * platform/wpe/imported/w3c/web-platform-tests/svg/shapes/reftests/pathlength-002-expected.txt:
+        * platform/wpe/imported/w3c/web-platform-tests/svg/shapes/reftests/pathlength-003-expected.txt:
+        'pathLength' is now included in the DRT of the stroke. Other tests will
+        need to be rebaselined.
+
+        * svg/custom/stroke-dash-array-pathLength-expected.svg: Added.
+        * svg/custom/stroke-dash-array-pathLength.svg: Added.
+
 2020-01-15  Caitlin Potter <caitp@igalia.com>
 
         [JSC] Add support for public class fields

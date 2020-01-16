@@ -202,6 +202,11 @@ static void writeStyle(TextStream& ts, const RenderElement& renderer)
             if (!dashArray.isEmpty())
                 writeNameValuePair(ts, "dash array", dashArray);
 
+            if (is<SVGGeometryElement>(shape.graphicsElement())) {
+                double pathLength = downcast<SVGGeometryElement>(shape.graphicsElement()).pathLength();
+                writeIfNotDefault(ts, "path length", pathLength, 0.0);
+            }
+
             ts << "}]";
         }
 

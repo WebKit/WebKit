@@ -23,6 +23,7 @@
 #include "PathTraversalState.h"
 #include "RenderSVGTextPath.h"
 #include "SVGElement.h"
+#include "SVGGeometryElement.h"
 #include "SVGInlineTextBox.h"
 #include "SVGLengthContext.h"
 #include "SVGTextContentElement.h"
@@ -170,10 +171,19 @@ void SVGTextLayoutEngine::beginTextPathLayout(RenderSVGTextPath& textPath, SVGTe
     if (m_textPath.isEmpty())
         return;
 
-    m_textPathStartOffset = textPath.startOffset();
+    const auto& startOffset = textPath.startOffset();
     m_textPathLength = m_textPath.length();
-    if (m_textPathStartOffset > 0 && m_textPathStartOffset <= 1)
-        m_textPathStartOffset *= m_textPathLength;
+    
+    if (textPath.startOffset().lengthType() == SVGLengthType::Percentage)
+        m_textPathStartOffset = startOffset.valueAsPercentage() * m_textPathLength;
+    else {
+        m_textPathStartOffset = startOffset.valueInSpecifiedUnits();
+        if (auto* tragetElement = textPath.targetElement()) {
+            // FIXME: A value of zero is valid. Need to differentiate this case from being unspecified.
+            if (float pathLength = tragetElement->pathLength())
+                m_textPathStartOffset *= m_textPathLength / pathLength;
+        }
+    }
 
     lineLayout.m_chunkLayoutBuilder.buildTextChunks(lineLayout.m_lineLayoutBoxes);
 

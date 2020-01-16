@@ -1,3 +1,12 @@
+2020-01-15  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        [SVG2]: Implement support for the 'pathLength' attribute
+        https://bugs.webkit.org/show_bug.cgi?id=72401
+
+        Reviewed by Simon Fraser.
+
+        * web-platform-tests/svg/types/scripted/SVGGeometryElement.isPointInStroke-01-expected.txt:
+
 2020-01-15  Oriol Brufau  <obrufau@igalia.com>
 
         [css-grid] Exclude implicit grid tracks from the resolved value

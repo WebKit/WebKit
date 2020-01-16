@@ -1572,7 +1572,6 @@ webkit.org/b/5968 imported/mozilla/svg/linearGradient-basic-03.svg [ ImageOnlyFa
 webkit.org/b/32177 imported/mozilla/svg/as-image/background-image-rect-1png.html [ ImageOnlyFailure ]
 webkit.org/b/32177 imported/mozilla/svg/as-image/background-image-rect-2.html [ ImageOnlyFailure ]
 webkit.org/b/32177 imported/mozilla/svg/text-white-space-01.svg [ ImageOnlyFailure ]
-webkit.org/b/72401 imported/mozilla/svg/pathLength-01.svg [ ImageOnlyFailure ]
 webkit.org/b/112032 imported/mozilla/svg/text-layout-01.svg [ ImageOnlyFailure ]
 webkit.org/b/139107 imported/mozilla/svg/clip-02a.svg [ ImageOnlyFailure ]
 webkit.org/b/139107 imported/mozilla/svg/clip-02b.svg [ ImageOnlyFailure ]

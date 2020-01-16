@@ -24,15 +24,18 @@
 
 namespace WebCore {
 
+class SVGGeometryElement;
+
 class RenderSVGTextPath final : public RenderSVGInline {
     WTF_MAKE_ISO_ALLOCATED(RenderSVGTextPath);
 public:
     RenderSVGTextPath(SVGTextPathElement&, RenderStyle&&);
 
     SVGTextPathElement& textPathElement() const;
+    SVGGeometryElement* targetElement() const;
 
     Path layoutPath() const;
-    float startOffset() const;
+    const SVGLengthValue& startOffset() const;
     bool exactAlignment() const;
     bool stretchMethod() const;
 
