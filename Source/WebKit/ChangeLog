@@ -1,3 +1,15 @@
+2020-01-16  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK][WPE] Web process crash when IM tries to delete surrounding text
+        https://bugs.webkit.org/show_bug.cgi?id=206352
+
+        Reviewed by Adrian Perez de Castro.
+
+        TextIterator::rangeFromLocationAndLength() can return nullptr when the start of the range can't be found.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::deleteSurrounding): Return early if selectionRange is nullptr.
+
 2020-01-16  Cathie Chen  <cathiechen@igalia.com>
 
         Mapping HTML attributes width/height to the default aspect ratio of <img>
