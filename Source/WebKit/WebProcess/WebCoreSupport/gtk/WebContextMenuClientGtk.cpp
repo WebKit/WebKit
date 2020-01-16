@@ -30,31 +30,8 @@
 #if ENABLE(CONTEXT_MENUS)
 
 #include "WebPage.h"
-#include <WebCore/NotImplemented.h>
 
 namespace WebKit {
-using namespace WebCore;
-
-void WebContextMenuClient::lookUpInDictionary(Frame*)
-{
-    notImplemented();
-}
-
-bool WebContextMenuClient::isSpeaking()
-{
-    notImplemented();
-    return false;
-}
-
-void WebContextMenuClient::speak(const String&)
-{
-    notImplemented();
-}
-
-void WebContextMenuClient::stopSpeaking()
-{
-    notImplemented();
-}
 
 void WebContextMenuClient::insertEmoji(Frame& frame)
 {

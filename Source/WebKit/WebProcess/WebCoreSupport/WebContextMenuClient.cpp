@@ -70,6 +70,27 @@ void WebContextMenuClient::searchWithGoogle(const Frame* frame)
         page->mainFrame().loader().urlSelected(URL { URL { }, url }, { }, nullptr, LockHistory::No, LockBackForwardList::No, MaybeSendReferrer, ShouldOpenExternalURLsPolicy::ShouldNotAllow);
     }
 }
+
+void WebContextMenuClient::lookUpInDictionary(WebCore::Frame*)
+{
+    notImplemented();
+}
+
+bool WebContextMenuClient::isSpeaking()
+{
+    notImplemented();
+    return false;
+}
+
+void WebContextMenuClient::speak(const String&)
+{
+    notImplemented();
+}
+
+void WebContextMenuClient::stopSpeaking()
+{
+    notImplemented();
+}
 #endif
 
 #if USE(ACCESSIBILITY_CONTEXT_MENUS)
