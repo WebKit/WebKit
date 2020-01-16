@@ -325,8 +325,11 @@ typedef NS_OPTIONS(NSUInteger, _WKRectEdge) {
  @param contentWorld The WKContentWorld in which to call the JavaScript function.
  @param completionHandler A block to invoke with the return value of the function call, or with the asynchronous resolution of the function's return value.
  @discussion The JavaScript string is treated as an anonymous JavaScript function that can be called with named arguments.
- Pass in JavaScript string formatted for evaluation, not as one of the variants of function call available in JavaScript.
- For example:
+ Do not format your string as one of the variants of function call available in JavaScript.
+ Instead pass in a JavaScript string representing the function text, formatted for evaluation.
+ For example do not pass in the string:
+     function(x, y, z) { return x ? y : z; }
+ Instead pass in the string:
      return x ? y : z;
 
  The arguments dictionary supplies the values for those arguments which are serialized into JavaScript equivalents.
@@ -355,6 +358,16 @@ typedef NS_OPTIONS(NSUInteger, _WKRectEdge) {
  If the object calls "fulfill", your completion handler will be called with the result.
  If the object calls "reject", your completion handler will be called with a WKErrorJavaScriptAsyncFunctionResultRejected error containing the reject reason in the userInfo dictionary.
  If the object is garbage collected before it is resolved, your completion handler will be called with an error indicating that it will never be resolved.
+
+ Since the function is a JavaScript "async" function you can use JavaScript "await" on those objects inside your function text.
+ For example:
+     var p = new Promise(function (r) {
+         r(42);
+     });
+     await p;
+     return p;
+
+ The above function text will create a promise that will fulfull with the value 42, wait for it to resolve, then return the fulfillment value of 42.
 */
 - (void)_callAsyncJavaScriptFunction:(NSString *)javaScriptString withArguments:(NSDictionary<NSString *, id> *)arguments inWorld:(_WKContentWorld *)contentWorld completionHandler:(void (^)(id, NSError *error))completionHandler;
 

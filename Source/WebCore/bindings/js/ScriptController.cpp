@@ -604,7 +604,7 @@ ValueOrException ScriptController::callInWorld(RunJavaScriptParameters&& paramet
     String errorMessage;
 
     // Build up a new script string that is an async function with arguments, and deserialize those arguments.
-    functionStringBuilder.append("(function(");
+    functionStringBuilder.append("(async function(");
     for (auto argument = parameters.arguments->begin(); argument != parameters.arguments->end();) {
         functionStringBuilder.append(argument->key);
         auto serializedArgument = SerializedScriptValue::createFromWireBytes(WTFMove(argument->value));

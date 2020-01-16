@@ -243,6 +243,42 @@ TEST(AsyncFunction, Promise)
     }];
     TestWebKitAPI::Util::run(&done);
 
+    // Verify we can await for a promise to be resolved before returning.
+    functionBody = @"var r = 0; var p = new Promise(function(fulfill, reject) { setTimeout(function(){ r = 42; fulfill(); }, 5);}); await p; return r;";
+
+    done = false;
+    [webView _callAsyncJavaScriptFunction:functionBody withArguments:nil inWorld:_WKContentWorld.pageContentWorld completionHandler:[&] (id result, NSError *error) {
+        EXPECT_NULL(error);
+        EXPECT_TRUE([result isKindOfClass:[NSNumber class]]);
+        EXPECT_TRUE([result isEqualToNumber:@42]);
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+
+    // Returning an already resolved promise gives the value it was resolved with.
+    functionBody = @"var p = new Promise(function(fulfill, reject) { setTimeout(function(){ fulfill('Fulfilled!') }, 5);}); await p; return p;";
+
+    done = false;
+    [webView _callAsyncJavaScriptFunction:functionBody withArguments:nil inWorld:_WKContentWorld.pageContentWorld completionHandler:[&] (id result, NSError *error) {
+        EXPECT_NULL(error);
+        EXPECT_TRUE([result isKindOfClass:[NSString class]]);
+        EXPECT_TRUE([result isEqualToString:@"Fulfilled!"]);
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+
+    // Chaining thenables should work.
+    functionBody = @"var p = new Promise(function (r) { r(new Promise(function (r) { r(42); })); }); await p; return 'Done';";
+
+    done = false;
+    [webView _callAsyncJavaScriptFunction:functionBody withArguments:nil inWorld:_WKContentWorld.pageContentWorld completionHandler:[&] (id result, NSError *error) {
+        EXPECT_NULL(error);
+        EXPECT_TRUE([result isKindOfClass:[NSString class]]);
+        EXPECT_TRUE([result isEqualToString:@"Done"]);
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+
     done = false;
     tryGCPromise(webView.get(), done);
     TestWebKitAPI::Util::run(&done);
