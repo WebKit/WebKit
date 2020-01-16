@@ -1,5 +1,14 @@
 2020-01-16  Truitt Savell  <tsavell@apple.com>
 
+        REGRESSION (r250655?): [ Mac Debug ] inspector/runtime/promise-native-getter.html is a flaky timeout
+        https://bugs.webkit.org/show_bug.cgi?id=206303
+
+        Unreviewed test gardening.
+
+        * platform/mac/TestExpectations:
+
+2020-01-16  Truitt Savell  <tsavell@apple.com>
+
         Marking storage/indexeddb/modern/objectstore-autoincrement-types.html as flaky on Debug WK1
         https://bugs.webkit.org/show_bug.cgi?id=199117
 
