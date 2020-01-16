@@ -37,7 +37,7 @@ require "risc"
 #  x7 => cfr
 #  x8 => t4         (callee-save)
 #  x9 => t5         (callee-save)
-# x10 =>            (callee-save scratch)
+# x10 => csr1       (callee-save, PB)
 # x11 => cfr, csr0  (callee-save, metadataTable)
 # x12 =>            (callee-save scratch)
 #  lr => lr
@@ -69,7 +69,7 @@ class SpecialRegister
     end
 end
 
-ARM_EXTRA_GPRS = [SpecialRegister.new("r6"), SpecialRegister.new("r10"), SpecialRegister.new("r12")]
+ARM_EXTRA_GPRS = [SpecialRegister.new("r6"), SpecialRegister.new("r4"), SpecialRegister.new("r12")]
 ARM_EXTRA_FPRS = [SpecialRegister.new("d7")]
 ARM_SCRATCH_FPR = SpecialRegister.new("d6")
 OS_DARWIN = ((RUBY_PLATFORM =~ /darwin/i) != nil)
@@ -102,7 +102,7 @@ class RegisterID
         when "a3"
             "r3"
         when "t3"
-            "r4"
+            "r3"
         when "t4"
             "r8"
         when "t5"
@@ -111,6 +111,8 @@ class RegisterID
             "r7"
         when "csr0"
             "r11"
+        when "csr1"
+            "r10"
         when "lr"
             "lr"
         when "sp"

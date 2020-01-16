@@ -1,3 +1,39 @@
+2020-01-16  Caio Lima  <ticaiolima@gmail.com>
+
+        [JSC] 32-bit platforms should use a PC base register
+        https://bugs.webkit.org/show_bug.cgi?id=203563
+
+        Reviewed by Keith Miller.
+
+        We are moving 32-bits LLInt implementation to follow the model useb by
+        64-bits architectures. It means that we now use PC and PB registers to
+        represent current Instruction. This patch will reduce the changes
+        we have from those architectures and mainly allow the usage of new
+        version of BytecodeIndex::m_packedBits. This also allow us remove
+        divergences on CallSiteIndex.
+        The change required the inclusion of a new callee-save register on
+        ARMv7 (r10), MIPS($s1) and CLOOP. Further changes necessary for
+        Baseline and DFG will come in a following patch.
+
+        * assembler/MIPSRegisters.h:
+        * interpreter/CallFrame.cpp:
+        * jit/GPRInfo.h:
+        (JSC::GPRInfo::toRegister):
+        (JSC::GPRInfo::toIndex):
+        * jit/RegisterSet.cpp:
+        (JSC::RegisterSet::vmCalleeSaveRegisters):
+        (JSC::RegisterSet::llintBaselineCalleeSaveRegisters):
+        * llint/LLIntData.h:
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        * llint/LowLevelInterpreter.asm:
+        * llint/LowLevelInterpreter.cpp:
+        (JSC::CLoop::execute):
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+        * offlineasm/arm.rb:
+        * offlineasm/mips.rb:
+
 2020-01-15  Caitlin Potter <caitp@igalia.com>
 
         [JSC] Add support for public class fields

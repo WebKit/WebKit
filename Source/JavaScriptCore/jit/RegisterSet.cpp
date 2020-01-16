@@ -156,6 +156,7 @@ RegisterSet RegisterSet::vmCalleeSaveRegisters()
     result.set(FPRInfo::fpRegCS7);
 #elif CPU(ARM_THUMB2) || CPU(MIPS)
     result.set(GPRInfo::regCS0);
+    result.set(GPRInfo::regCS1);
 #endif
     return result;
 }
@@ -192,6 +193,7 @@ RegisterSet RegisterSet::llintBaselineCalleeSaveRegisters()
 #endif
 #elif CPU(ARM_THUMB2)
     result.set(GPRInfo::regCS0);
+    result.set(GPRInfo::regCS1);
 #elif CPU(ARM64)
     result.set(GPRInfo::regCS6);
     result.set(GPRInfo::regCS7);
@@ -201,6 +203,7 @@ RegisterSet RegisterSet::llintBaselineCalleeSaveRegisters()
     result.set(GPRInfo::regCS9);
 #elif CPU(MIPS)
     result.set(GPRInfo::regCS0);
+    result.set(GPRInfo::regCS1);
 #else
     UNREACHABLE_FOR_PLATFORM();
 #endif

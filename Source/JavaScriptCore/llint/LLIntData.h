@@ -217,6 +217,7 @@ struct Registers {
     static constexpr GPRReg pbGPR = GPRInfo::regCS7;
 #elif CPU(MIPS) || CPU(ARM_THUMB2)
     static constexpr GPRReg metadataTableGPR = GPRInfo::regCS0;
+    static constexpr GPRReg pbGPR = GPRInfo::regCS1;
 #endif
 };
 #endif

@@ -43,6 +43,8 @@ require 'risc'
 # $t8 =>            (scratch)
 # $t9 =>            (stores the callee of a call opcode)
 # $gp =>            (globals)
+# $s0 => csr0       (callee-save, metadataTable)
+# $s1 => csr1       (callee-save, PB)
 # $s4 =>            (callee-save used to preserve $gp across calls)
 # $ra => lr
 # $sp => sp
@@ -138,6 +140,8 @@ class RegisterID
             "$fp"
         when "csr0"
             "$s0"
+        when "csr1"
+            "$s1"
         when "lr"
             "$ra"
         when "sp"

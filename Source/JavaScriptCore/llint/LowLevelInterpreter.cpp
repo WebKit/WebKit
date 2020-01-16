@@ -315,8 +315,9 @@ JSValue CLoop::execute(OpcodeID entryOpcodeID, void* executableAddress, VM* vm, 
 
     CLoopRegister t0, t1, t2, t3, t5, sp, cfr, lr, pc;
 #if USE(JSVALUE64)
-    CLoopRegister pcBase, numberTag, notCellMask;
+    CLoopRegister numberTag, notCellMask;
 #endif
+    CLoopRegister pcBase;
     CLoopRegister metadataTable;
     CLoopDoubleRegister d0, d1;
 

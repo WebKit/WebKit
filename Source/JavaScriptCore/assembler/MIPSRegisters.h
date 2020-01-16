@@ -50,7 +50,7 @@
     macro(r14, "t6",   0, 0)                    \
     macro(r15, "t7",   0, 0)                    \
     macro(r16, "s0",   0, 1)                    \
-    macro(r17, "s1",   0, 0)                    \
+    macro(r17, "s1",   0, 1)                    \
     macro(r18, "s2",   0, 0)                    \
     macro(r19, "s3",   0, 0)                    \
     macro(r20, "s4",   0, 0)                    \

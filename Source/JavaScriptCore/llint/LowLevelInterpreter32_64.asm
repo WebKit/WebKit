@@ -23,46 +23,31 @@
 
 
 # Utilities
-macro nextInstruction()
-    loadb [PC], t0
-    leap _g_opcodeMap, t1
-    jmp [t1, t0, 4], BytecodePtrTag
-end
-
-macro nextInstructionWide16()
-    loadb OpcodeIDNarrowSize[PC], t0
-    leap _g_opcodeMapWide16, t1
-    jmp [t1, t0, 4], BytecodePtrTag
-end
-
-macro nextInstructionWide32()
-    loadb OpcodeIDNarrowSize[PC], t0
-    leap _g_opcodeMapWide32, t1
-    jmp [t1, t0, 4], BytecodePtrTag
-end
+# FIXME:  Merge "getOperand" macros on 32 and 64 bits LLInt
+# https://bugs.webkit.org/show_bug.cgi?id=206342
 
 macro getuOperandNarrow(opcodeStruct, fieldName, dst)
-    loadb constexpr %opcodeStruct%_%fieldName%_index + OpcodeIDNarrowSize[PC], dst
+    loadb constexpr %opcodeStruct%_%fieldName%_index + OpcodeIDNarrowSize[PB, PC, 1], dst
 end
 
 macro getOperandNarrow(opcodeStruct, fieldName, dst)
-    loadbsi constexpr %opcodeStruct%_%fieldName%_index + OpcodeIDNarrowSize[PC], dst
+    loadbsi constexpr %opcodeStruct%_%fieldName%_index + OpcodeIDNarrowSize[PB, PC, 1], dst
 end
 
 macro getuOperandWide16(opcodeStruct, fieldName, dst)
-    loadh constexpr %opcodeStruct%_%fieldName%_index * 2 + OpcodeIDWide16Size[PC], dst
+    loadh constexpr %opcodeStruct%_%fieldName%_index * 2 + OpcodeIDWide16Size[PB, PC, 1], dst
 end
 
 macro getOperandWide16(opcodeStruct, fieldName, dst)
-    loadhsi constexpr %opcodeStruct%_%fieldName%_index * 2 + OpcodeIDWide16Size[PC], dst
+    loadhsi constexpr %opcodeStruct%_%fieldName%_index * 2 + OpcodeIDWide16Size[PB, PC, 1], dst
 end
 
 macro getuOperandWide32(opcodeStruct, fieldName, dst)
-    loadi constexpr %opcodeStruct%_%fieldName%_index * 4 + OpcodeIDWide32Size[PC], dst
+    loadi constexpr %opcodeStruct%_%fieldName%_index * 4 + OpcodeIDWide32Size[PB, PC, 1], dst
 end
 
 macro getOperandWide32(opcodeStruct, fieldName, dst)
-    loadis constexpr %opcodeStruct%_%fieldName%_index * 4 + OpcodeIDWide32Size[PC], dst
+    loadis constexpr %opcodeStruct%_%fieldName%_index * 4 + OpcodeIDWide32Size[PB, PC, 1], dst
 end
 
 macro makeReturn(get, dispatch, fn)
@@ -94,6 +79,8 @@ end
 # After calling, calling bytecode is claiming input registers are not used.
 macro dispatchAfterCall(size, opcodeStruct, dispatch)
     loadi ArgumentCountIncludingThis + TagOffset[cfr], PC
+    loadp CodeBlock[cfr], PB
+    loadp CodeBlock::m_instructionsRawPointer[PB], PB
     get(size, opcodeStruct, m_dst, t3)
     storei r1, TagOffset[cfr, t3, 8]
     storei r0, PayloadOffset[cfr, t3, 8]
@@ -143,11 +130,21 @@ macro cCall4(function)
     end
 end
 
+macro prepareStateForCCall()
+    addp PB, PC
+end
+
+macro restoreStateAfterCCall()
+    move r0, PC
+    subp PB, PC
+end
+
 macro callSlowPath(slowPath)
+    prepareStateForCCall()
     move cfr, a0
     move PC, a1
     cCall2(slowPath)
-    move r0, PC
+    restoreStateAfterCCall()
 end
 
 macro doVMEntry(makeCall)
@@ -409,12 +406,13 @@ end
 # debugging from. operand should likewise be an immediate, and should identify the operand
 # in the instruction stream you'd like to print out.
 macro traceOperand(fromWhere, operand)
+    prepareStateForCCall()
     move fromWhere, a2
     move operand, a3
     move cfr, a0
     move PC, a1
     cCall4(_llint_trace_operand)
-    move r0, PC
+    restoreStateAfterCCall()
     move r1, cfr
 end
 
@@ -422,18 +420,20 @@ end
 # stream. Same as traceOperand(), but assumes that the operand is a register, and prints its
 # value.
 macro traceValue(fromWhere, operand)
+    prepareStateForCCall()
     move fromWhere, a2
     move operand, a3
     move cfr, a0
     move PC, a1
     cCall4(_llint_trace_value)
-    move r0, PC
+    restoreStateAfterCCall()
     move r1, cfr
 end
 
 # Call a slowPath for call opcodes.
 macro callCallSlowPath(slowPath, action)
     storep PC, ArgumentCountIncludingThis + TagOffset[cfr]
+    prepareStateForCCall()
     move cfr, a0
     move PC, a1
     cCall2(slowPath)
@@ -442,6 +442,7 @@ end
 
 macro callTrapHandler(throwHandler)
     storei PC, ArgumentCountIncludingThis + TagOffset[cfr]
+    prepareStateForCCall()
     move cfr, a0
     move PC, a1
     cCall2(_llint_slow_path_handle_traps)
@@ -454,6 +455,7 @@ macro checkSwitchToJITForLoop()
         1,
         macro ()
             storei PC, ArgumentCountIncludingThis + TagOffset[cfr]
+            prepareStateForCCall()
             move cfr, a0
             move PC, a1
             cCall2(_llint_loop_osr)
@@ -571,14 +573,14 @@ macro writeBarrierOnCellWithReload(cell, reloadAfterSlowPath)
     skipIfIsRememberedOrInEden(
         cell,
         macro()
-            push cfr, PC
+            push PB, PC
             # We make two extra slots because cCall2 will poke.
             subp 8, sp
             move cell, a1 # cell can be a0
             move cfr, a0
             cCall2Void(_llint_write_barrier_slow)
             addp 8, sp
-            pop PC, cfr
+            pop PC, PB
             reloadAfterSlowPath()
         end)
 end
@@ -639,6 +641,7 @@ end
 macro functionArityCheck(doneLabel, slowPath)
     loadi PayloadOffset + ArgumentCountIncludingThis[cfr], t0
     biaeq t0, CodeBlock::m_numParameters[t1], doneLabel
+    prepareStateForCCall()
     move cfr, a0
     move PC, a1
     cCall2(slowPath)   # This slowPath has a simple protocol: t0 = 0 => no error, t0 != 0 => error
@@ -703,7 +706,8 @@ macro functionArityCheck(doneLabel, slowPath)
 .continue:
     # Reload CodeBlock and PC, since the slow_path clobbered it.
     loadp CodeBlock[cfr], t1
-    loadp CodeBlock::m_instructionsRawPointer[t1], PC
+    loadp CodeBlock::m_instructionsRawPointer[t1], PB
+    move 0, PC
     jmp doneLabel
 end
 
@@ -1991,8 +1995,10 @@ commonOp(llint_op_catch, macro() end, macro (size)
     # restore metadataTable since we don't restore callee saves for CLoop during unwinding
     loadp CodeBlock[cfr], t1
     loadp CodeBlock::m_metadata[t1], metadataTable
+    loadp CodeBlock::m_instructionsRawPointer[t1], PB
 
-    loadi VM::targetInterpreterPCForThrow[t3], PC
+    loadp VM::targetInterpreterPCForThrow[t3], PC
+    subp PB, PC
 
     callSlowPath(_llint_slow_path_check_if_exception_is_uncatchable_and_notify_profiler)
     bpeq r1, 0, .isCatchableException
