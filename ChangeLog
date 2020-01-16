@@ -1,3 +1,18 @@
+2020-01-16  Per Arne Vollan  <pvollan@apple.com>
+
+        [Win] Fix AppleWin build
+        https://bugs.webkit.org/show_bug.cgi?id=206299
+
+        Reviewed by Brent Fulgham.
+
+        This patch has been created by don.olmstead@sony.com and pvollan@apple.com. Add target files for WTF and
+        JavaScriptCore. Also, to make sure headers are copied to the forwarding headers directory, add the CMake
+        keywork ALL when adding custom target for copying files.
+
+        * Source/cmake/TargetJavaScriptCore.cmake: Added.
+        * Source/cmake/TargetWTF.cmake: Added.
+        * Source/cmake/WebKitMacros.cmake:
+
 2020-01-10  Dean Jackson  <dino@apple.com>
 
         [WebGL] Clarify USE_OPENGL_ES_3

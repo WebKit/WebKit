@@ -1,3 +1,14 @@
+2020-01-16  Per Arne Vollan  <pvollan@apple.com>
+
+        [Win] Fix AppleWin build
+        https://bugs.webkit.org/show_bug.cgi?id=206299
+
+        Reviewed by Brent Fulgham.
+
+        Build internal builds with VS2019.
+
+        * WTF.vcxproj/WTF.proj:
+
 2020-01-15  Sam Weinig  <weinig@apple.com>
 
         Platform.h is out of control Part 5: Split HAVE_* macro definitions out of Platform.h and into a new PlatformHave.h
