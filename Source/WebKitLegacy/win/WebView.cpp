@@ -5640,6 +5640,11 @@ HRESULT WebView::notifyPreferencesChanged(IWebNotification* notification)
         return hr;
     settings.setAsyncClipboardAPIEnabled(!!enabled);
 
+    hr = prefsPrivate->aspectRatioOfImgFromWidthAndHeightEnabled(&enabled);
+    if (FAILED(hr))
+        return hr;
+    settings.setAspectRatioOfImgFromWidthAndHeightEnabled(!!enabled);
+
     return S_OK;
 }
 

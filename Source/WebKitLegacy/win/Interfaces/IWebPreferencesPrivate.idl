@@ -250,4 +250,6 @@ interface IWebPreferencesPrivate7 : IWebPreferencesPrivate6
     HRESULT setAsyncClipboardAPIEnabled([in] BOOL enabled);
     HRESULT webAnimationsCompositeOperationsEnabled([out, retval] BOOL*);
     HRESULT setWebAnimationsCompositeOperationsEnabled([in] BOOL enabled);
+    HRESULT aspectRatioOfImgFromWidthAndHeightEnabled([out, retval] BOOL*);
+    HRESULT setAspectRatioOfImgFromWidthAndHeightEnabled([in] BOOL enabled);
 }

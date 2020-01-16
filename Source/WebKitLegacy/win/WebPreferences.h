@@ -295,6 +295,8 @@ public:
     virtual HRESULT STDMETHODCALLTYPE setAsyncClipboardAPIEnabled(BOOL);
     virtual HRESULT STDMETHODCALLTYPE webAnimationsCompositeOperationsEnabled(_Out_ BOOL*);
     virtual HRESULT STDMETHODCALLTYPE setWebAnimationsCompositeOperationsEnabled(BOOL);
+    virtual HRESULT STDMETHODCALLTYPE aspectRatioOfImgFromWidthAndHeightEnabled(_Out_ BOOL*);
+    virtual HRESULT STDMETHODCALLTYPE setAspectRatioOfImgFromWidthAndHeightEnabled(BOOL);
 
     // WebPreferences
 

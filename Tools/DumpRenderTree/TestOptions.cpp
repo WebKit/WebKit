@@ -150,6 +150,8 @@ TestOptions::TestOptions(const std::string& pathOrURL, const std::string& absolu
             enableAsyncClipboardAPI = parseBooleanTestHeaderValue(value);
         else if (key == "internal:LayoutFormattingContextIntegrationEnabled")
             layoutFormattingContextIntegrationEnabled = parseBooleanTestHeaderValue(value);
+        else if (key == "experimental:AspectRatioOfImgFromWidthAndHeightEnabled")
+            enableAspectRatioOfImgFromWidthAndHeight = parseBooleanTestHeaderValue(value);
         pairStart = pairEnd + 1;
     }
 }

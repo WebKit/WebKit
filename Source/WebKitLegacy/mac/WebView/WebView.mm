@@ -3279,6 +3279,7 @@ static bool needsSelfRetainWhileLoadingQuirk()
 #if ENABLE(RESIZE_OBSERVER)
     settings.setResizeObserverEnabled([preferences resizeObserverEnabled]);
 #endif
+    settings.setAspectRatioOfImgFromWidthAndHeightEnabled([preferences aspectRatioOfImgFromWidthAndHeightEnabled]);
 }
 
 static inline IMP getMethod(id o, SEL s)

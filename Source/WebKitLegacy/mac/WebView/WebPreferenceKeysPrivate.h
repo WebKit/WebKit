@@ -282,4 +282,5 @@
 #define WebKitAsyncClipboardAPIEnabledPreferenceKey @"WebKitAsyncClipboardAPIEnabled"
 #define WebKitLinkPreloadResponsiveImagesEnabledPreferenceKey @"WebKitLinkPreloadResponsiveImagesEnabled"
 #define WebKitInAppBrowserPrivacyEnabledPreferenceKey @"WebKitInAppBrowserPrivacyEnabled"
+#define WebKitAspectRatioOfImgFromWidthAndHeightEnabledPreferenceKey @"AspectRatioOfImgFromWidthAndHeightEnabled"
 

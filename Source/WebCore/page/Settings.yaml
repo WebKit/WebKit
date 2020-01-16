@@ -914,6 +914,9 @@ isInAppBrowserPrivacyEnabled:
 isAccessibilityIsolatedTreeEnabled:
   initial: false
 
+aspectRatioOfImgFromWidthAndHeightEnabled:
+  initial: false
+
 # Deprecated
 
 iceCandidateFilteringEnabled:

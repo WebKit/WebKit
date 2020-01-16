@@ -1,3 +1,21 @@
+2020-01-16  Cathie Chen  <cathiechen@igalia.com>
+
+        Mapping HTML attributes width/height to the default aspect ratio of <img>
+        https://bugs.webkit.org/show_bug.cgi?id=201641
+
+        Reviewed by Frédéric Wang
+
+        Add experimental flag: AspectRatioOfImgFromWidthAndHeightEnabled.
+
+        * WebView/WebPreferenceKeysPrivate.h:
+        * WebView/WebPreferences.mm:
+        ([WebPreferences initialize]):
+        (-[WebPreferences aspectRatioOfImgFromWidthAndHeightEnabled]):
+        (-[WebPreferences setAspectRatioOfImgFromWidthAndHeightEnabled:]):
+        * WebView/WebPreferencesPrivate.h:
+        * WebView/WebView.mm:
+        (-[WebView _preferencesChanged:]):
+
 2020-01-14  Antti Koivisto  <antti@apple.com>
 
         [LFC][Integration] Support the feature flag in DumpRenderTree

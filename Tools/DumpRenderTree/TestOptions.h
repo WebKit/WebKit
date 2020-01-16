@@ -54,6 +54,7 @@ struct TestOptions {
     bool enableRequestIdleCallback { false };
     bool enableAsyncClipboardAPI { false };
     bool layoutFormattingContextIntegrationEnabled { true };
+    bool enableAspectRatioOfImgFromWidthAndHeight { false };
     std::string jscOptions;
     std::string additionalSupportedImageTypes;
 

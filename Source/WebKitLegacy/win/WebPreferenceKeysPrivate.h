@@ -217,3 +217,5 @@
 #define WebKitRequestIdleCallbackEnabledPreferenceKey "WebKitRequestIdleCallbackEnabled"
 
 #define WebKitAsyncClipboardAPIEnabledPreferenceKey "WebKitAsyncClipboardAPIEnabled"
+
+#define WebKitAspectRatioOfImgFromWidthAndHeightEnabledPreferenceKey "WebKitAspectRatioOfImgFromWidthAndHeightEnabled"

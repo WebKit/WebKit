@@ -1511,6 +1511,12 @@ CaptureVideoInGPUProcessEnabled:
   webcoreBinding: none
   condition: ENABLE(MEDIA_STREAM)
 
+AspectRatioOfImgFromWidthAndHeightEnabled:
+  type: bool
+  defaultValue: false
+  humanReadableName: "Aspect ratio of <img> from width and height"
+  humanReadableDescription: "Map HTML attributes width/height to the default aspect ratio of <img>"
+  category: experimental
 
 # For internal features:
 # The type should be boolean.

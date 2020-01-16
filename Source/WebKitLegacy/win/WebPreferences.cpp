@@ -345,6 +345,8 @@ void WebPreferences::initializeDefaultSettings()
 
     CFDictionaryAddValue(defaults, CFSTR(WebKitAsyncClipboardAPIEnabledPreferenceKey), kCFBooleanFalse);
 
+    CFDictionaryAddValue(defaults, CFSTR(WebKitAspectRatioOfImgFromWidthAndHeightEnabledPreferenceKey), kCFBooleanFalse);
+
     defaultSettings = defaults;
 #endif
 }
@@ -2400,5 +2402,19 @@ HRESULT WebPreferences::resizeObserverEnabled(_Out_ BOOL* enabled)
 HRESULT WebPreferences::setResizeObserverEnabled(BOOL enabled)
 {
     setBoolValue(WebKitResizeObserverEnabledPreferenceKey, enabled);
+    return S_OK;
+}
+
+HRESULT WebPreferences::aspectRatioOfImgFromWidthAndHeightEnabled(_Out_ BOOL* enabled)
+{
+    if (!enabled)
+        return E_POINTER;
+    *enabled = boolValueForKey(WebKitAspectRatioOfImgFromWidthAndHeightEnabledPreferenceKey);
+    return S_OK;
+}
+
+HRESULT WebPreferences::setAspectRatioOfImgFromWidthAndHeightEnabled(BOOL enabled)
+{
+    setBoolValue(WebKitAspectRatioOfImgFromWidthAndHeightEnabledPreferenceKey, enabled);
     return S_OK;
 }

@@ -708,6 +708,7 @@ public:
         @NO, WebKitLinkPreloadResponsiveImagesEnabledPreferenceKey,
         @YES, WebKitCSSShadowPartsEnabledPreferenceKey,
         @NO, WebKitInAppBrowserPrivacyEnabledPreferenceKey,
+        @NO, WebKitAspectRatioOfImgFromWidthAndHeightEnabledPreferenceKey,
         nil];
 
 #if !PLATFORM(IOS_FAMILY)
@@ -3622,6 +3623,16 @@ static NSString *classIBCreatorID = nil;
 - (void)setInAppBrowserPrivacyEnabled:(BOOL)flag
 {
     [self _setBoolValue:flag forKey:WebKitInAppBrowserPrivacyEnabledPreferenceKey];
+}
+
+- (BOOL)aspectRatioOfImgFromWidthAndHeightEnabled
+{
+    return [self _boolValueForKey:WebKitAspectRatioOfImgFromWidthAndHeightEnabledPreferenceKey];
+}
+
+- (void)setAspectRatioOfImgFromWidthAndHeightEnabled:(BOOL)flag
+{
+    [self _setBoolValue:flag forKey:WebKitAspectRatioOfImgFromWidthAndHeightEnabledPreferenceKey];
 }
 
 @end

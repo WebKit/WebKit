@@ -29,6 +29,8 @@
 #include "Frame.h"
 #include "GraphicsContext.h"
 #include "HTMLElement.h"
+#include "HTMLImageElement.h"
+#include "HTMLParserIdioms.h"
 #include "InlineElementBox.h"
 #include "LayoutRepainter.h"
 #include "RenderBlock.h"
@@ -38,6 +40,7 @@
 #include "RenderTheme.h"
 #include "RenderView.h"
 #include "RenderedDocumentMarker.h"
+#include "Settings.h"
 #include "VisiblePosition.h"
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/StackStats.h>
@@ -437,8 +440,27 @@ void RenderReplaced::computeIntrinsicRatioInformation(FloatSize& intrinsicSize, 
     intrinsicSize = FloatSize(intrinsicLogicalWidth(), intrinsicLogicalHeight());
 
     // Figure out if we need to compute an intrinsic ratio.
-    if (intrinsicSize.isEmpty() || !hasAspectRatio())
+    if (!hasAspectRatio())
         return;
+
+    if (intrinsicSize.isEmpty()) {
+        if (!settings().aspectRatioOfImgFromWidthAndHeightEnabled())
+            return;
+
+        auto* node = element();
+        // The aspectRatioOfImgFromWidthAndHeight only applies to <img>.
+        if (!node || !is<HTMLImageElement>(*node) || !node->hasAttribute(HTMLNames::widthAttr) || !node->hasAttribute(HTMLNames::heightAttr))
+            return;
+
+        // We shouldn't override the aspect-ratio when the <img> element has an empty src attribute.
+        if (!is<RenderImage>(*this) || !downcast<RenderImage>(*this).cachedImage())
+            return;
+
+        intrinsicSize.setWidth(parseValidHTMLFloatingPointNumber(node->getAttribute(HTMLNames::widthAttr)).valueOr(0));
+        intrinsicSize.setHeight(parseValidHTMLFloatingPointNumber(node->getAttribute(HTMLNames::heightAttr)).valueOr(0));
+        if (intrinsicSize.isEmpty())
+            return;
+    }
 
     intrinsicRatio = intrinsicSize.width() / intrinsicSize.height();
 }
