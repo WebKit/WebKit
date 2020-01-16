@@ -102,17 +102,16 @@ enum class ExceptionCheckRequirement : uint8_t {
     CheckNotNeeded
 };
 
-template<typename JumpType, typename FunctionType, typename ResultType>
+template<typename JumpType, typename ResultType>
 class CallSlowPathGenerator : public JumpingSlowPathGenerator<JumpType> {
 public:
     CallSlowPathGenerator(
-        JumpType from, SpeculativeJIT* jit, FunctionType function,
+        JumpType from, SpeculativeJIT* jit,
         SpillRegistersMode spillMode, ExceptionCheckRequirement requirement, ResultType result)
         : JumpingSlowPathGenerator<JumpType>(from, jit)
         , m_spillMode(spillMode)
         , m_exceptionCheckRequirement(requirement)
         , m_result(result)
-        , m_function(function)
     {
         if (m_spillMode == NeedToSpill)
             jit->silentSpillAllRegistersImpl(false, m_plans, extractResult(result));
@@ -153,19 +152,18 @@ protected:
     SpillRegistersMode m_spillMode;
     ExceptionCheckRequirement m_exceptionCheckRequirement;
     ResultType m_result;
-    FunctionType m_function;
     Vector<SilentRegisterSavePlan, 2> m_plans;
 };
 
 template<typename JumpType, typename FunctionType, typename ResultType, typename... Arguments>
 class CallResultAndArgumentsSlowPathGenerator
-    : public CallSlowPathGenerator<JumpType, FunctionType, ResultType> {
+    : public CallSlowPathGenerator<JumpType, ResultType> {
 public:
     CallResultAndArgumentsSlowPathGenerator(
         JumpType from, SpeculativeJIT* jit, FunctionType function,
         SpillRegistersMode spillMode, ExceptionCheckRequirement requirement, ResultType result, Arguments... arguments)
-        : CallSlowPathGenerator<JumpType, FunctionType, ResultType>(
-            from, jit, function, spillMode, requirement, result)
+        : CallSlowPathGenerator<JumpType, ResultType>(from, jit, spillMode, requirement, result)
+        , m_function(function)
         , m_arguments(std::forward<Arguments>(arguments)...)
     {
     }
@@ -184,6 +182,7 @@ protected:
         unpackAndGenerate(jit, std::make_index_sequence<std::tuple_size<std::tuple<Arguments...>>::value>());
     }
 
+    FunctionType m_function;
     std::tuple<Arguments...> m_arguments;
 };
 
