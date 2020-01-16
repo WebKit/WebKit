@@ -28,6 +28,7 @@
 #include "WebPageProxyMessages.h"
 #include "WebProcess.h"
 #include <WebCore/FrameView.h>
+#include <WebCore/NotImplemented.h>
 #include <WebCore/PopupMenuClient.h>
 
 namespace WebKit {
@@ -135,5 +136,12 @@ void WebPopupMenu::hide()
 void WebPopupMenu::updateFromElement()
 {
 }
+
+#if !PLATFORM(COCOA) && !PLATFORM(WIN)
+void WebPopupMenu::setUpPlatformData(const WebCore::IntRect&, PlatformPopupMenuData&)
+{
+    notImplemented();
+}
+#endif
 
 } // namespace WebKit

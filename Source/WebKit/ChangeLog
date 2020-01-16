@@ -1,5 +1,20 @@
 2020-01-15  Ross Kirsling  <ross.kirsling@sony.com>
 
+        [PlayStation] Add stub for WebPopupMenu::setUpPlatformData
+        https://bugs.webkit.org/show_bug.cgi?id=206323
+
+        Reviewed by Don Olmstead.
+
+        * SourcesGTK.txt:
+        * SourcesWPE.txt:
+        * WebProcess/WebCoreSupport/WebPopupMenu.cpp:
+        (WebKit::WebPopupMenu::setUpPlatformData):
+        * WebProcess/WebCoreSupport/gtk/WebPopupMenuGtk.cpp: Removed.
+        * WebProcess/WebCoreSupport/wpe/WebPopupMenuWPE.cpp: Removed.
+        Bring GTK/WPE stub down for broader use.
+
+2020-01-15  Ross Kirsling  <ross.kirsling@sony.com>
+
         [PlayStation] Add stubs for WebEditorClient
         https://bugs.webkit.org/show_bug.cgi?id=206320
 

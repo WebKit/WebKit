@@ -243,7 +243,6 @@ WebProcess/WebCoreSupport/soup/WebFrameNetworkingContext.cpp
 
 WebProcess/WebCoreSupport/wpe/WebContextMenuClientWPE.cpp
 WebProcess/WebCoreSupport/wpe/WebEditorClientWPE.cpp
-WebProcess/WebCoreSupport/wpe/WebPopupMenuWPE.cpp
 
 WebProcess/WebPage/AcceleratedSurface.cpp
 
