@@ -28,9 +28,11 @@
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
+#include "BlockFormattingState.h"
 #include "FormattingContext.h"
 #include "InlineFormattingState.h"
 #include "LayoutChildIterator.h"
+#include "LayoutContext.h"
 #include "Logging.h"
 #include <wtf/text/TextStream.h>
 

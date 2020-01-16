@@ -30,6 +30,8 @@
 
 #include "FloatingState.h"
 #include "InlineFormattingState.h"
+#include "LayoutContext.h"
+#include "Logging.h"
 #include "TableFormattingState.h"
 
 namespace WebCore {

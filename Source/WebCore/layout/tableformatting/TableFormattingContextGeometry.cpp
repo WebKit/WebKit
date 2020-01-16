@@ -29,6 +29,7 @@
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
 #include "LayoutBox.h"
+#include "TableFormattingState.h"
 
 namespace WebCore {
 namespace Layout {

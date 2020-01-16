@@ -28,6 +28,7 @@
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
+#include "DisplayBox.h"
 #include "LayoutContainer.h"
 #include "LayoutPhase.h"
 #include "LayoutState.h"

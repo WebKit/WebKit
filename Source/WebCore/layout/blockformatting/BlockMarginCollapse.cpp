@@ -28,6 +28,8 @@
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
+#include "BlockFormattingState.h"
+#include "FloatingState.h"
 #include "InlineFormattingState.h"
 #include "LayoutBox.h"
 #include "LayoutContainer.h"

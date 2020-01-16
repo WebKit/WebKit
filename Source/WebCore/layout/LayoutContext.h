@@ -34,6 +34,7 @@ namespace WebCore {
 
 class GraphicsContext;
 class IntRect;
+class LayoutSize;
 class RenderView;
 
 namespace Layout {

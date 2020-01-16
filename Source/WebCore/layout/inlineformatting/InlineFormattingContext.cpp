@@ -28,6 +28,8 @@
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
+#include "FloatingContext.h"
+#include "FontCascade.h"
 #include "InlineFormattingState.h"
 #include "InlineTextItem.h"
 #include "InvalidationState.h"

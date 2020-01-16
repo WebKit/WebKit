@@ -33,6 +33,7 @@
 namespace WebCore {
 
 class RenderBlockFlow;
+class RenderBox;
 class RenderElement;
 class RenderObject;
 class RenderTable;

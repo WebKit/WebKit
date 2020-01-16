@@ -673,6 +673,20 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
 
     inspector/agents/InspectorPageAgent.h
 
+    layout/LayoutUnits.h
+    layout/MarginTypes.h
+
+    layout/displaytree/DisplayBox.h
+    layout/displaytree/DisplayInlineContent.h
+    layout/displaytree/DisplayInlineRect.h
+    layout/displaytree/DisplayLineBox.h
+    layout/displaytree/DisplayRect.h
+    layout/displaytree/DisplayRun.h
+
+    layout/layouttree/LayoutBox.h
+    layout/layouttree/LayoutReplaced.h
+    layout/layouttree/TextContext.h
+
     loader/AdClickAttribution.h
     loader/CanvasActivityRecord.h
     loader/CookieJar.h

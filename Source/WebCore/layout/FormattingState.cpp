@@ -29,6 +29,7 @@
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
 #include "DisplayBox.h"
+#include "FloatingState.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {

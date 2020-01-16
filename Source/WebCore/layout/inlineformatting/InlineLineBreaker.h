@@ -30,6 +30,9 @@
 #include "LayoutUnits.h"
 
 namespace WebCore {
+
+class RenderStyle;
+
 namespace Layout {
 
 class InlineItem;

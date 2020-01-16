@@ -28,6 +28,7 @@
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
+#include "FontCascade.h"
 #include "InlineSoftLineBreakItem.h"
 #include "TextUtil.h"
 #include <wtf/unicode/CharacterNames.h>

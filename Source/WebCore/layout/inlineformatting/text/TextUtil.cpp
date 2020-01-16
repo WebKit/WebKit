@@ -31,6 +31,7 @@
 #include "BreakLines.h"
 #include "FontCascade.h"
 #include "InlineTextItem.h"
+#include "RenderBox.h"
 #include "RenderStyle.h"
 
 namespace WebCore {

@@ -29,6 +29,7 @@
 
 #include "LayoutUnit.h"
 #include "LayoutPoint.h"
+#include "LayoutRect.h"
 #include "MarginTypes.h"
 #include <wtf/Optional.h>
 

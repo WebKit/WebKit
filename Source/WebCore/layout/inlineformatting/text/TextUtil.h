@@ -28,6 +28,7 @@
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
 #include "InlineItem.h"
+#include "LayoutUnits.h"
 #include <wtf/text/TextBreakIterator.h>
 
 namespace WebCore {
@@ -35,6 +36,8 @@ namespace WebCore {
 class RenderStyle;
 
 namespace Layout {
+
+class InlineTextItem;
 
 class TextUtil {
 public:

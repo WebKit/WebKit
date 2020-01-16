@@ -28,6 +28,7 @@
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
+#include "InlineFormattingContext.h"
 #include "LayoutBox.h"
 #include "TextUtil.h"
 
