@@ -32,6 +32,8 @@
 #error "Please #include <wtf/Platform.h> instead of this file directly."
 #endif
 
+#define ENABLE(WTF_FEATURE) (defined ENABLE_##WTF_FEATURE && ENABLE_##WTF_FEATURE)
+
 /* Use this file to list _all_ ENABLE() macros. Define the macros to be one of the following values:
  *  - "0" disables the feature by default. The feature can still be enabled for a specific port or environment.
  *  - "1" enables the feature by default. The feature can still be disabled for a specific port or environment.
@@ -51,6 +53,20 @@
  * Get the list of feature defines: grep -o "ENABLE_\(\w\+\)" wtf/PlatformEnable.h | sort | uniq
  * Get the list of features enabled by default for a PLATFORM(XXX): gcc -E -dM -I. -DWTF_PLATFORM_XXX "wtf/Platform.h" | grep "ENABLE_\w\+ 1" | cut -d' ' -f2 | sort
  */
+
+
+/* FIXME: This should be renamed to ENABLE_ASSERTS for consistency and so it can be used as ENABLE(ASSERTS). */
+/* ASSERT_ENABLED should be true if we want the current compilation unit to
+   do debug assertion checks unconditionally (e.g. treat a debug ASSERT
+   like a RELEASE_ASSERT.
+*/
+#ifndef ASSERT_ENABLED
+#ifdef NDEBUG
+#define ASSERT_ENABLED 0
+#else
+#define ASSERT_ENABLED 1
+#endif
+#endif
 
 /* FIXME: Move out the PLATFORM specific rules into platform specific files. */
 

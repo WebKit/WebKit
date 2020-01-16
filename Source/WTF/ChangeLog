@@ -1,3 +1,26 @@
+2020-01-16  Sam Weinig  <weinig@apple.com>
+
+        Platform.h is out of control Part 6: Split USE_* macro definitions out of Platform.h and into a new PlatformUse.h
+        https://bugs.webkit.org/show_bug.cgi?id=206354
+
+        Reviewed by Dan Bernstein.
+
+        As a another step towards cleaning up Platform.h, split out all the legacy platform
+        macros into their own file.
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/CMakeLists.txt:
+        Add new file.
+
+        * wtf/Platform.h: In addition to removing all the USE_* macros, consolidate
+        all the sub-includes at the top.
+
+        * wtf/PlatformEnable.h: Moved ASSERT_ENABLED here from Platform.h, 
+        as it makes more sense here. Eventually should be renamed ro ENABLE_ASSERT 
+        for consistency.
+
+        * wtf/PlatformUse.h: Copied from Source/WTF/wtf/Platform.h.
+
 2020-01-16  Per Arne Vollan  <pvollan@apple.com>
 
         [Win] Fix AppleWin build

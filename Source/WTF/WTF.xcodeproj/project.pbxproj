@@ -455,6 +455,7 @@
 		7CDD7FF7186D291E007433CD /* IteratorAdaptors.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IteratorAdaptors.h; sourceTree = "<group>"; };
 		7CDD7FF9186D2A54007433CD /* IteratorRange.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IteratorRange.h; sourceTree = "<group>"; };
 		7CEAE5AC1EA6E10F00DB6890 /* NotFound.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NotFound.h; sourceTree = "<group>"; };
+		7CFAF3C923D0AF1500D21BDD /* PlatformUse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlatformUse.h; sourceTree = "<group>"; };
 		7E29C33D15FFD79B00516D61 /* ObjCRuntimeExtras.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ObjCRuntimeExtras.h; sourceTree = "<group>"; };
 		8134013615B092FD001FF0B8 /* Base64.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Base64.cpp; sourceTree = "<group>"; };
 		8134013715B092FD001FF0B8 /* Base64.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Base64.h; sourceTree = "<group>"; };
@@ -1132,6 +1133,7 @@
 				7C42307323CE2D8B006E54D0 /* PlatformOS.h */,
 				FE1E2C41224187C600F6B729 /* PlatformRegisters.cpp */,
 				E3200AB41E9A536D003B59D2 /* PlatformRegisters.h */,
+				7CFAF3C923D0AF1500D21BDD /* PlatformUse.h */,
 				0FF860941BCCBD740045127F /* PointerComparison.h */,
 				FEB6B035201BE0B600B958C1 /* PointerPreparations.h */,
 				0F9D335D165DBA73005AD387 /* PrintStream.cpp */,
