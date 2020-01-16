@@ -1,3 +1,16 @@
+2020-01-15  Pinki Gyanchandani  <pgyanchandani@apple.com>
+
+        Nullptr crash in DocumentLoader::clearMainResourceLoader
+        https://bugs.webkit.org/show_bug.cgi?id=206204
+
+        Added a NULL pointer check for FrameLoader. If FramLoader is NULL then return instead of
+        accessing activeDocumentLoader.
+
+        Reviewed by Ryosuke Niwa.
+
+        * loader/change-src-during-iframe-load-crash-expected.txt: Added.
+        * loader/change-src-during-iframe-load-crash.html: Added.
+
 2020-01-15  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         [SVG2]: Implement support for the 'pathLength' attribute
