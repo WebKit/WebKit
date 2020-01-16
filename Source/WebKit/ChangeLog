@@ -1,3 +1,70 @@
+2020-01-16  Don Olmstead  <don.olmstead@sony.com>
+
+        [PlayStation] Enable WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=205965
+
+        Reviewed by Ross Kirsling.
+
+        Add the CMake platform for PlayStation. Add stubs for platform specific bits.
+        This gets us to linking through WebKit.
+
+        * Platform/unix/ModuleUnix.cpp: Added.
+        (WebKit::Module::load):
+        (WebKit::Module::unload):
+        (WebKit::Module::platformFunctionPointer const):
+        * PlatformPlayStation.cmake: Added.
+        * UIProcess/Launcher/playstation/ProcessLauncherPlayStation.cpp: Added.
+        (WebKit::ProcessLauncher::launchProcess):
+        (WebKit::ProcessLauncher::terminateProcess):
+        (WebKit::ProcessLauncher::platformInvalidate):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebsiteData/playstation/WebsiteDataStorePlayStation.cpp: Added.
+        (WebKit::WebsiteDataStore::platformInitialize):
+        (WebKit::WebsiteDataStore::platformDestroy):
+        (WebKit::WebsiteDataStore::platformRemoveRecentSearches):
+        (WebKit::WebsiteDataStore::defaultApplicationCacheDirectory):
+        (WebKit::WebsiteDataStore::defaultCacheStorageDirectory):
+        (WebKit::WebsiteDataStore::defaultNetworkCacheDirectory):
+        (WebKit::WebsiteDataStore::defaultIndexedDBDatabaseDirectory):
+        (WebKit::WebsiteDataStore::defaultServiceWorkerRegistrationDirectory):
+        (WebKit::WebsiteDataStore::defaultLocalStorageDirectory):
+        (WebKit::WebsiteDataStore::defaultMediaKeysStorageDirectory):
+        (WebKit::WebsiteDataStore::defaultWebSQLDatabaseDirectory):
+        (WebKit::WebsiteDataStore::defaultResourceLoadStatisticsDirectory):
+        (WebKit::WebsiteDataStore::cacheDirectoryFileSystemRepresentation):
+        (WebKit::WebsiteDataStore::websiteDataDirectoryFileSystemRepresentation):
+        * UIProcess/playstation/WebPageProxyPlayStation.cpp: Added.
+        (WebKit::WebPageProxy::platformInitialize):
+        (WebKit::WebPageProxy::viewBackend):
+        (WebKit::WebPageProxy::standardUserAgent):
+        (WebKit::WebPageProxy::saveRecentSearches):
+        (WebKit::WebPageProxy::loadRecentSearches):
+        (WebKit::WebPageProxy::updateEditorState):
+        * UIProcess/playstation/WebProcessPoolPlayStation.cpp: Added.
+        (WebKit::WebProcessPool::platformInitialize):
+        (WebKit::WebProcessPool::platformInitializeNetworkProcess):
+        (WebKit::WebProcessPool::platformInitializeWebProcess):
+        (WebKit::WebProcessPool::platformInvalidateContext):
+        (WebKit::WebProcessPool::platformResolvePathsForSandboxExtensions):
+        * WebProcess/InjectedBundle/playstation/InjectedBundlePlayStation.cpp: Added.
+        (WebKit::InjectedBundle::initialize):
+        (WebKit::InjectedBundle::setBundleParameter):
+        (WebKit::InjectedBundle::setBundleParameters):
+        * WebProcess/WebPage/playstation/WebPagePlayStation.cpp: Added.
+        (WebKit::WebPage::platformInitialize):
+        (WebKit::WebPage::platformReinitialize):
+        (WebKit::WebPage::platformDetach):
+        (WebKit::WebPage::performDefaultBehaviorForKeyEvent):
+        (WebKit::WebPage::platformCanHandleRequest):
+        (WebKit::WebPage::platformUserAgent const):
+        (WebKit::WebPage::handleEditingKeyboardEvent):
+        (WebKit::WebPage::platformEditorState const):
+        * WebProcess/playstation/WebProcessPlayStation.cpp: Added.
+        (WebKit::WebProcess::platformInitializeWebProcess):
+        (WebKit::WebProcess::platformSetWebsiteDataStoreParameters):
+        (WebKit::WebProcess::platformTerminate):
+        (WebKit::WebProcess::platformSetCacheModel):
+
 2020-01-16  Chris Dumez  <cdumez@apple.com>
 
         Regression(r253224) No longer able to prevent a tab from closing via the beforeunload prompt

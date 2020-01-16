@@ -248,7 +248,7 @@ using FloatBoxExtent = RectEdges<float>;
 typedef GtkWidget* PlatformViewWidget;
 #endif
 
-#if PLATFORM(WPE)
+#if USE(LIBWPE)
 struct wpe_view_backend;
 #endif
 
@@ -877,7 +877,7 @@ public:
     void setDevice(ID3D11Device1*);
 #endif
 #endif
-#if PLATFORM(WPE)
+#if USE(LIBWPE)
     struct wpe_view_backend* viewBackend();
 #endif
 

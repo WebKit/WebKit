@@ -1,3 +1,15 @@
+2020-01-16  Don Olmstead  <don.olmstead@sony.com>
+
+        [PlayStation] Enable WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=205965
+
+        Reviewed by Ross Kirsling.
+
+        Turn on build WebKit for the PlayStation port. Temporarily turn off API tests
+        until the WebKit tests are added.
+
+        * Source/cmake/OptionsPlayStation.cmake:
+
 2020-01-16  Philippe Normand  <philn@igalia.com>
 
         [GStreamer][WPE] Client-side video rendering support
