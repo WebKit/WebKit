@@ -66,10 +66,10 @@ InlineLayoutUnit TextUtil::width(const Box& inlineBox, unsigned from, unsigned t
         if (font.isFixedPitch())
             width = fixedPitchWidth(text, style, from, to, contentLogicalLeft);
         else
-            width = font.widthForSimpleText(text.substring(from, to - from));
+            width = font.widthForSimpleText(StringView(text).substring(from, to - from));
     } else {
         auto tabWidth = style.collapseWhiteSpace() ? TabSize(0) : style.tabSize();
-        WebCore::TextRun run(text.substring(from, to - from), contentLogicalLeft);
+        WebCore::TextRun run(StringView(text).substring(from, to - from), contentLogicalLeft);
         if (tabWidth)
             run.setTabSize(true, tabWidth);
         width = font.width(run);
