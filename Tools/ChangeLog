@@ -1,3 +1,15 @@
+2020-01-16  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [WebAuthn] User Verification (UV) option present on a CTAP2 authenticatorMakeCredential while the authenticator has not advertised support for it
+        https://bugs.webkit.org/show_bug.cgi?id=204111
+        <rdar://problem/57019604>
+
+        Reviewed by Brent Fulgham.
+
+        * TestWebKitAPI/Tests/WebCore/CtapRequestTest.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebCore/FidoTestData.h:
+
 2020-01-16  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [bmalloc] IsoHeap's initial setup should be small

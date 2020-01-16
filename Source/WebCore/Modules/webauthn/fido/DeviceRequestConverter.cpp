@@ -119,7 +119,8 @@ Vector<uint8_t> encodeMakeCredenitalRequestAsCBOR(const Vector<uint8_t>& hash, c
         case UserVerificationRequirement::Discouraged:
             requireUserVerification = false;
         }
-        optionMap[CBORValue(kUserVerificationMapKey)] = CBORValue(requireUserVerification);
+        if (requireUserVerification)
+            optionMap[CBORValue(kUserVerificationMapKey)] = CBORValue(requireUserVerification);
     }
     if (!optionMap.empty())
         cborMap[CBORValue(7)] = CBORValue(WTFMove(optionMap));
@@ -164,7 +165,8 @@ Vector<uint8_t> encodeGetAssertionRequestAsCBOR(const Vector<uint8_t>& hash, con
     case UserVerificationRequirement::Discouraged:
         requireUserVerification = false;
     }
-    optionMap[CBORValue(kUserVerificationMapKey)] = CBORValue(requireUserVerification);
+    if (requireUserVerification)
+        optionMap[CBORValue(kUserVerificationMapKey)] = CBORValue(requireUserVerification);
     optionMap[CBORValue(kUserPresenceMapKey)] = CBORValue(true);
 
     if (!optionMap.empty())
