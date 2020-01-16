@@ -1,3 +1,12 @@
+2020-01-16  Lauro Moura  <lmoura@igalia.com>
+
+        [GTK] Gardening indexeddb tests
+        https://bugs.webkit.org/show_bug.cgi?id=206370
+
+        Unreviewed gardening.
+
+        * platform/gtk/TestExpectations:
+
 2020-01-16  Doug Kelly  <dougk@apple.com>
 
         REGRESSION: [ Mac WK2 ] fast/text/international/unicode-bidi-other-neutrals.html is a flaky failure

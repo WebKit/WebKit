@@ -2633,6 +2633,8 @@ webkit.org/b/206149 webrtc/peer-connection-remote-audio-mute.html [ Timeout ]
 
 webkit.org/b/202736 http/tests/appcache/remove-cache.html [ Failure Timeout Pass ]
 webkit.org/b/202736 http/wpt/cache-storage/quota-third-party.https.html [ Failure Timeout Pass ]
+webkit.org/b/202736 storage/indexeddb/modern/handle-user-delete.html [ Timeout ]
+webkit.org/b/202736 storage/indexeddb/modern/new-database-after-user-delete.html [ Timeout ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests timing out
@@ -3869,6 +3871,16 @@ webkit.org/b/202229 css-dark-mode/older-syntax/supported-color-schemes-meta.html
 webkit.org/b/202234 http/tests/IndexedDB/storage-limit-1.https.html [ Failure ]
 webkit.org/b/202234 http/tests/IndexedDB/storage-limit-2.https.html [ Failure ]
 webkit.org/b/202234 http/tests/IndexedDB/storage-limit.https.html [ Failure ]
+webkit.org/b/202234 storage/indexeddb/storage-limit.html [ Failure ]
+webkit.org/b/202234 storage/indexeddb/request-size-estimate.html [ Failure ]
+
+webkit.org/b/205856 storage/indexeddb/IDBTransaction-page-cache.html [ Pass Timeout ]
+
+# These indexeddb tests below started failing in the same range 251425-251429
+webkit.org/b/206367 storage/indexeddb/cursor-request-cycle.html [ Failure ]
+webkit.org/b/206367 storage/indexeddb/cursor-request-cycle-private.html [ Failure ]
+webkit.org/b/206367 storage/indexeddb/result-request-cycle.html [ Failure ]
+webkit.org/b/206367 storage/indexeddb/value-cursor-cycle.html [ Failure ]
 
 webkit.org/b/202235 http/tests/adClickAttribution/clear-through-website-data-removal.html [ Failure ]
 webkit.org/b/202236 http/tests/adClickAttribution/conversion-disabled-in-ephemeral-session.html [ Failure ]
