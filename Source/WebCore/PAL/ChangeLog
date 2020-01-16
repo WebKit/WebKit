@@ -1,3 +1,14 @@
+2020-01-16  David Kilzer  <ddkilzer@apple.com>
+
+        Attempt to fix internal iOS Debug builds
+
+            Source/WebCore/platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:2723:46: error: multiple methods named 'name' found [-Werror,-Wobjc-multiple-method-names]
+                        auto outputDeviceName = adoptNS([[outputDevice name] copy]);
+                                                         ^~~~~~~~~~~~~~~~~~~
+
+        * pal/spi/mac/AVFoundationSPI.h: Import header that defines
+        -[AVOutputDevice name].
+
 2020-01-14  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [Cocoa] Glyph lookup should be language-sensitive (specifically between Yiddish and Hebrew)
