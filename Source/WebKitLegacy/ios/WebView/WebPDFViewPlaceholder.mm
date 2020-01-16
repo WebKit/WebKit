@@ -71,7 +71,7 @@ static const float PAGE_HEIGHT_INSET = 4.0f * 2.0f;
     return [NSValue valueWithBytes:&rect objCType:@encode(CGRect)];
 }
 
-- (CGRect)CGRectValue
+- (CGRect)_web_CGRectValue
 {
     CGRect result;
     [self getValue:&result];
@@ -458,7 +458,7 @@ static const float PAGE_HEIGHT_INSET = 4.0f * 2.0f;
     if ((!pageNumber) || (pageNumber > [_pageRects count]))
         return CGRectNull;
 
-    return [[_pageRects objectAtIndex:pageNumber - 1] CGRectValue];
+    return [[_pageRects objectAtIndex:pageNumber - 1] _web_CGRectValue];
 }
 
 - (void)simulateClickOnLinkToURL:(NSURL *)URL

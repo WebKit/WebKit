@@ -1,3 +1,14 @@
+2020-01-15  Tim Horton  <timothy_horton@apple.com>
+
+        WebKit should not expose a unprefixed CGRectValue category method on NSValue
+        https://bugs.webkit.org/show_bug.cgi?id=206297
+        <rdar://problem/58592554>
+
+        Reviewed by Wenson Hsieh.
+
+        * WebView/WebPDFViewPlaceholder.mm:
+        (-[NSValue CGRectValue]): Deleted.
+
 2020-01-03  Chris Dumez  <cdumez@apple.com>
 
         Add support for DragEvent
