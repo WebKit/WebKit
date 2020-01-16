@@ -1,3 +1,14 @@
+2020-01-16  Jon Davis  <jond@apple.com>
+
+        Add support for categories and custom post types to the social meta plugin
+        https://bugs.webkit.org/show_bug.cgi?id=206327
+
+        Reviewed by Devin Rousso.
+
+        * wp-content/plugins/social-meta.php:
+        * wp-content/plugins/web-inspector-pages.php:
+        * wp-content/themes/webkit/archive-web_inspector_page.php:
+
 2020-01-15  Jon Davis  <jond@apple.com>
 
         Add Web Inspector Reference notice to Web Inspector blog posts

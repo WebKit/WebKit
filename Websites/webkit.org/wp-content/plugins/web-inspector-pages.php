@@ -18,7 +18,7 @@ register_activation_hook(__FILE__, function () {
         'delete_web_inspector_page' => true,
         'delete_web_inspector_pages' => true,
         'publish_web_inspector_pages' => true,
-        
+
         // Standard Editor Capabilities
         'delete_others_pages' => true,
         'delete_others_posts' => true,
@@ -68,10 +68,10 @@ register_activation_hook(__FILE__, function () {
 add_action('init', function () {    
     register_post_type('web_inspector_page', array(
         'label'                 => 'Web Inspector Page',
-        'description'           => 'Reference pages for Web Inspector',
+        'description'           => 'Reference documentation for Web Inspector.',
         'menu_icon'             => 'dashicons-media-document',
         'labels'                => array(
-            'name'                  => 'Web Inspector Pages',
+            'name'                  => 'Web Inspector Reference',
             'singular_name'         => 'Web Inspector Page',
             'menu_name'             => 'Web Inspector Pages',
             'name_admin_bar'        => 'Web Inspector Page',
@@ -131,7 +131,7 @@ add_action('init', function () {
         'map_meta_cap'          => true,
         'show_in_rest'          => true
     ));
- 
+
     register_taxonomy('web_inspector_topics', array('web_inspector_page'), array(
         'labels'                     => array(
             'name'                       => _x('Web Inspector Topics', 'Taxonomy General Name'),
