@@ -1,3 +1,17 @@
+2020-01-16  Doug Kelly  <dougk@apple.com>
+
+        REGRESSION: [ Mac WK2 ] fast/text/international/unicode-bidi-other-neutrals.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=205808
+
+        Reviewed by Maciej Stachowiak.
+
+        Update the testcase for bidi text runs ending with other neutrals to dumpAsText, instead of trying
+        to compare visual content.
+
+        * fast/text/international/unicode-bidi-other-neutrals-expected.html: Removed.
+        * fast/text/international/unicode-bidi-other-neutrals-expected.txt: Added.
+        * fast/text/international/unicode-bidi-other-neutrals.html:
+
 2020-01-16  Diego Pino Garcia  <dpino@igalia.com>
 
         [GTK] Rebaseline several tests
