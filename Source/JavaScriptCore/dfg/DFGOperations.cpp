@@ -455,7 +455,7 @@ JSCell* JIT_OPERATION operationToObject(JSGlobalObject* globalObject, EncodedJSV
     ASSERT(!value.isObject());
 
     if (UNLIKELY(value.isUndefinedOrNull())) {
-        if (errorMessage->length()) {
+        if (errorMessage && errorMessage->length()) {
             throwVMTypeError(globalObject, scope, errorMessage);
             return nullptr;
         }

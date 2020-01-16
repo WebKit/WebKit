@@ -1,3 +1,13 @@
+2020-01-16  Mark Lam  <mark.lam@apple.com>
+
+        operationToObject() should check for a null errorMessage.
+        https://bugs.webkit.org/show_bug.cgi?id=206339
+        <rdar://problem/58449666>
+
+        Reviewed by Yusuke Suzuki.
+
+        * stress/operationToObject-should-check-for-null-errorMessage.js: Added.
+
 2020-01-15  Caitlin Potter <caitp@igalia.com>
 
         [JSC] Add support for public class fields
