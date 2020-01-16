@@ -30,6 +30,7 @@
 #include "CSSPrimitiveValueMappings.h"
 #include "CSSValueKeywords.h"
 #include "CSSValueList.h"
+#include <wtf/text/StringConcatenateNumbers.h>
 
 namespace WebCore {
 

@@ -23,6 +23,7 @@
 
 #include "SVGPathSeg.h"
 #include "SVGPathStringSource.h"
+#include <wtf/text/StringConcatenateNumbers.h>
 
 namespace WebCore {
 

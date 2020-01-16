@@ -19,6 +19,7 @@
 
 #include "config.h"
 #include "SVGPathByteStreamSource.h"
+#include <wtf/text/StringConcatenateNumbers.h>
 
 namespace WebCore {
 

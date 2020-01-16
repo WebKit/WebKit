@@ -28,6 +28,8 @@
 
 #include "APIUserContentWorld.h"
 #include "ContentWorldShared.h"
+#include <wtf/HashMap.h>
+#include <wtf/text/StringHash.h>
 
 namespace API {
 

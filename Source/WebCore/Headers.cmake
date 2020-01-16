@@ -1245,6 +1245,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/network/SocketStreamHandleClient.h
     platform/network/StorageSessionProvider.h
     platform/network/StoredCredentialsPolicy.h
+    platform/network/SynchronousLoaderClient.h
 
     platform/sql/SQLValue.h
     platform/sql/SQLiteDatabase.h

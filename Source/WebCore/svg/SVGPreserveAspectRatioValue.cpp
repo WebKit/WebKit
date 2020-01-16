@@ -25,6 +25,7 @@
 #include "AffineTransform.h"
 #include "FloatRect.h"
 #include "SVGParserUtilities.h"
+#include <wtf/text/StringConcatenateNumbers.h>
 #include <wtf/text/StringView.h>
 
 namespace WebCore {

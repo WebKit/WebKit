@@ -28,6 +28,7 @@
 #if ENABLE(VARIATION_FONTS)
 
 #include "CSSFontVariationValue.h"
+#include <wtf/text/StringConcatenateNumbers.h>
 
 namespace WebCore {
 

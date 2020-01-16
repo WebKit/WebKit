@@ -25,6 +25,7 @@
 #include "SVGPoint.h"
 #include "SVGRect.h"
 #include <wtf/IsoMallocInlines.h>
+#include <wtf/text/StringConcatenateNumbers.h>
 
 namespace WebCore {
 

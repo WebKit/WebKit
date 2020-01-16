@@ -58,6 +58,7 @@
 #include "RuleSet.h"
 #include "RuntimeEnabledFeatures.h"
 #include "SVGDocumentExtensions.h"
+#include "SVGElement.h"
 #include "SVGFontFaceElement.h"
 #include "Settings.h"
 #include "ShadowRoot.h"

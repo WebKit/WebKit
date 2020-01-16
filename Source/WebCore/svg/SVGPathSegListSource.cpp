@@ -24,6 +24,7 @@
 #include "SVGPathSeg.h"
 #include "SVGPathSegList.h"
 #include "SVGPathSegValue.h"
+#include <wtf/text/StringConcatenateNumbers.h>
 
 namespace WebCore {
 

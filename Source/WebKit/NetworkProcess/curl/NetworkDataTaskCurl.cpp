@@ -37,6 +37,7 @@
 #include <WebCore/NotImplemented.h>
 #include <WebCore/ResourceError.h>
 #include <WebCore/SameSiteInfo.h>
+#include <WebCore/SynchronousLoaderClient.h>
 
 namespace WebKit {
 

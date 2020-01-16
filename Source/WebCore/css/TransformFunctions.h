@@ -29,6 +29,7 @@
 
 #pragma once
 
+#include "Length.h"
 #include "TransformOperations.h"
 
 namespace WebCore {

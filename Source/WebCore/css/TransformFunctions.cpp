@@ -42,6 +42,7 @@
 #include "ScaleTransformOperation.h"
 #include "SkewTransformOperation.h"
 #include "TranslateTransformOperation.h"
+#include <wtf/text/StringConcatenateNumbers.h>
 
 namespace WebCore {
 

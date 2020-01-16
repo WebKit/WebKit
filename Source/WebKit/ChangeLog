@@ -1,3 +1,19 @@
+2020-01-16  Don Olmstead  <don.olmstead@sony.com>
+
+        Non-unified build fixes mid January 2020 edition
+        https://bugs.webkit.org/show_bug.cgi?id=206363
+
+        Unreviewed build fix.
+
+        * NetworkProcess/cache/NetworkCacheBlobStorage.cpp:
+        * NetworkProcess/curl/NetworkDataTaskCurl.cpp:
+        * PlatformFTW.cmake:
+        * PlatformWin.cmake:
+        * UIProcess/API/APIContentWorld.cpp:
+        * UIProcess/Automation/WebAutomationSession.cpp:
+        * WebProcess/WebCoreSupport/WebResourceLoadObserver.cpp:
+        * WebProcess/WebCoreSupport/win/WebContextMenuClientWin.cpp: Removed.
+
 2020-01-16  Brady Eidson  <beidson@apple.com>
 
         REGRESSION: (r254668) [Mac Debug wk2] 21 http/tests/navigation/* tests are crashing with ASSERTION FAILED: world.first != 1.

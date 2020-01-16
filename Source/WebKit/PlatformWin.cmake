@@ -69,7 +69,6 @@ list(APPEND WebKit_SOURCES
     WebProcess/Plugins/Netscape/NetscapePluginNone.cpp
     WebProcess/Plugins/Netscape/win/PluginProxyWin.cpp
 
-    WebProcess/WebCoreSupport/win/WebContextMenuClientWin.cpp
     WebProcess/WebCoreSupport/win/WebPopupMenuWin.cpp
 
     WebProcess/WebPage/AcceleratedSurface.cpp

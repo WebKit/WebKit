@@ -22,6 +22,8 @@
 #include "config.h"
 #include "SVGZoomAndPan.h"
 
+#include <wtf/text/StringConcatenateNumbers.h>
+
 namespace WebCore {
 
 bool SVGZoomAndPan::parseZoomAndPan(const UChar*& start, const UChar* end)

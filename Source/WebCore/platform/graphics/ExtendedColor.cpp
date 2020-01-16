@@ -27,6 +27,7 @@
 #include "ExtendedColor.h"
 
 #include <wtf/MathExtras.h>
+#include <wtf/text/StringConcatenateNumbers.h>
 
 namespace WebCore {
 

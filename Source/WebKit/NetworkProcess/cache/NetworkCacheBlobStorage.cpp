@@ -35,6 +35,7 @@
 
 #if !OS(WINDOWS)
 #include <sys/stat.h>
+#include <unistd.h>
 #endif
 
 namespace WebKit {

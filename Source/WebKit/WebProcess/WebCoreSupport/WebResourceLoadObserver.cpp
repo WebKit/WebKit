@@ -32,6 +32,7 @@
 #include "NetworkConnectionToWebProcessMessages.h"
 #include "NetworkProcessConnection.h"
 #include "WebCoreArgumentCoders.h"
+#include "WebPage.h"
 #include "WebProcess.h"
 #include <WebCore/DeprecatedGlobalSettings.h>
 #include <WebCore/Frame.h>
