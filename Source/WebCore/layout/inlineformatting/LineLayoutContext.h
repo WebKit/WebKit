@@ -46,12 +46,12 @@ public:
         };
         Optional<unsigned> trailingInlineItemIndex;
         Optional<PartialContent> partialContent;
-        Vector<WeakPtr<InlineItem>> floats;
+        Vector<const InlineItem*> floats;
         const LineBuilder::RunList runList;
         const Display::LineBox lineBox;
     };
     LineContent layoutLine(LineBuilder&, unsigned leadingInlineItemIndex, Optional<unsigned> partialLeadingContentLength);
-    using FloatList = Vector<WeakPtr<InlineItem>>;
+    using FloatList = Vector<const InlineItem*>;
 
 private:
     void nextContentForLine(LineCandidateContent&, unsigned inlineItemIndex, Optional<unsigned> overflowLength, InlineLayoutUnit currentLogicalRight);

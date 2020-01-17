@@ -345,7 +345,7 @@ void InlineFormattingContext::collectInlineContentIfNeeded()
             if (!treatAsInlineContainer(layoutBox))
                 break;
             // This is the start of an inline container (e.g. <span>).
-            formattingState.addInlineItem(makeUnique<InlineItem>(layoutBox, InlineItem::Type::ContainerStart));
+            formattingState.addInlineItem({ layoutBox, InlineItem::Type::ContainerStart });
             auto& container = downcast<Container>(layoutBox);
             if (!container.hasInFlowOrFloatingChild())
                 break;
@@ -356,17 +356,17 @@ void InlineFormattingContext::collectInlineContentIfNeeded()
             auto& layoutBox = *layoutQueue.takeLast();
             // This is the end of an inline container (e.g. </span>).
             if (treatAsInlineContainer(layoutBox))
-                formattingState.addInlineItem(makeUnique<InlineItem>(layoutBox, InlineItem::Type::ContainerEnd));
+                formattingState.addInlineItem({ layoutBox, InlineItem::Type::ContainerEnd });
             else if (layoutBox.isLineBreakBox())
-                formattingState.addInlineItem(makeUnique<InlineItem>(layoutBox, InlineItem::Type::HardLineBreak));
+                formattingState.addInlineItem({ layoutBox, InlineItem::Type::HardLineBreak });
             else if (layoutBox.isFloatingPositioned())
-                formattingState.addInlineItem(makeUnique<InlineItem>(layoutBox, InlineItem::Type::Float));
+                formattingState.addInlineItem({ layoutBox, InlineItem::Type::Float });
             else {
                 ASSERT(layoutBox.isInlineLevelBox());
                 if (layoutBox.hasTextContent())
                     InlineTextItem::createAndAppendTextItems(formattingState.inlineItems(), layoutBox);
                 else
-                    formattingState.addInlineItem(makeUnique<InlineItem>(layoutBox, InlineItem::Type::Box));
+                    formattingState.addInlineItem({ layoutBox, InlineItem::Type::Box });
             }
 
             if (auto* nextSibling = layoutBox.nextInFlowOrFloatingSibling()) {

@@ -37,32 +37,57 @@ class InlineTextItem : public InlineItem {
 public:
     static void createAndAppendTextItems(InlineItems&, const Box&);
 
-    static std::unique_ptr<InlineTextItem> createWhitespaceItem(const Box&, unsigned start, unsigned length, Optional<InlineLayoutUnit> width);
-    static std::unique_ptr<InlineTextItem> createNonWhitespaceItem(const Box&, unsigned start, unsigned length, Optional<InlineLayoutUnit> width);
-    static std::unique_ptr<InlineTextItem> createEmptyItem(const Box&);
+    static InlineTextItem createWhitespaceItem(const Box&, unsigned start, unsigned length, Optional<InlineLayoutUnit> width);
+    static InlineTextItem createNonWhitespaceItem(const Box&, unsigned start, unsigned length, Optional<InlineLayoutUnit> width);
+    static InlineTextItem createEmptyItem(const Box&);
 
-    unsigned start() const { return m_start; }
+    unsigned start() const { return m_startOrPosition; }
     unsigned end() const { return start() + length(); }
     unsigned length() const { return m_length; }
 
     bool isWhitespace() const { return m_textItemType == TextItemType::Whitespace; }
     bool isCollapsible() const { return isWhitespace() && style().collapseWhiteSpace(); }
-    Optional<InlineLayoutUnit> width() const { return m_width; }
+    Optional<InlineLayoutUnit> width() const { return m_hasWidth ? makeOptional(m_width) : Optional<InlineLayoutUnit> { }; }
     bool isEmptyContent() const;
 
     std::unique_ptr<InlineTextItem> left(unsigned length) const;
     std::unique_ptr<InlineTextItem> right(unsigned length) const;
 
-    enum class TextItemType { Undefined, Whitespace, NonWhitespace };
+    using InlineItem::TextItemType;
+
     InlineTextItem(const Box&, unsigned start, unsigned length, Optional<InlineLayoutUnit> width, TextItemType);
     InlineTextItem(const Box&);
-
-private:
-    unsigned m_start { 0 };
-    unsigned m_length { 0 };
-    Optional<InlineLayoutUnit> m_width;
-    TextItemType m_textItemType { TextItemType::Undefined };
 };
+
+inline InlineTextItem InlineTextItem::createWhitespaceItem(const Box& inlineBox, unsigned start, unsigned length, Optional<InlineLayoutUnit> width)
+{
+    return { inlineBox, start, length, width, TextItemType::Whitespace };
+}
+
+inline InlineTextItem InlineTextItem::createNonWhitespaceItem(const Box& inlineBox, unsigned start, unsigned length, Optional<InlineLayoutUnit> width)
+{
+    return { inlineBox, start, length, width, TextItemType::NonWhitespace };
+}
+
+inline InlineTextItem InlineTextItem::createEmptyItem(const Box& inlineBox)
+{
+    return { inlineBox };
+}
+
+inline InlineTextItem::InlineTextItem(const Box& inlineBox, unsigned start, unsigned length, Optional<InlineLayoutUnit> width, TextItemType textItemType)
+    : InlineItem(inlineBox, Type::Text)
+{
+    m_startOrPosition = start;
+    m_length = length;
+    m_hasWidth = !!width;
+    m_width = width.valueOr(0);
+    m_textItemType = textItemType;
+}
+
+inline InlineTextItem::InlineTextItem(const Box& inlineBox)
+    : InlineItem(inlineBox, Type::Text)
+{
+}
 
 }
 }

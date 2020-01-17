@@ -28,20 +28,19 @@
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
 #include "LayoutBox.h"
-#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 namespace Layout {
 
-class InlineItem : public CanMakeWeakPtr<InlineItem> {
+class InlineItem {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    enum class Type { Text, HardLineBreak, SoftLineBreak, Box, Float, ContainerStart, ContainerEnd };
+    enum class Type : uint8_t { Text, HardLineBreak, SoftLineBreak, Box, Float, ContainerStart, ContainerEnd };
     InlineItem(const Box& layoutBox, Type);
 
     Type type() const { return m_type; }
-    const Box& layoutBox() const { return m_layoutBox; }
-    const RenderStyle& style() const { return m_layoutBox.style(); }
+    const Box& layoutBox() const { return *m_layoutBox; }
+    const RenderStyle& style() const { return layoutBox().style(); }
 
     bool isText() const { return type() == Type::Text; }
     bool isBox() const { return type() == Type::Box; }
@@ -53,9 +52,26 @@ public:
     bool isContainerEnd() const { return type() == Type::ContainerEnd; }
 
 private:
-    const Box& m_layoutBox;
-    const Type m_type;
+    const Box* m_layoutBox { nullptr };
+    Type m_type { };
+
+protected:
+    // For InlineTextItem
+    enum class TextItemType  : uint8_t { Undefined, Whitespace, NonWhitespace };
+    TextItemType m_textItemType { TextItemType::Undefined };
+    bool m_hasWidth { false };
+    InlineLayoutUnit m_width { };
+    unsigned m_length { 0 };
+
+    // For InlineTextItem and InlineSoftLineBreakItem
+    unsigned m_startOrPosition { 0 };
 };
+
+inline InlineItem::InlineItem(const Box& layoutBox, Type type)
+    : m_layoutBox(&layoutBox)
+    , m_type(type)
+{
+}
 
 #define SPECIALIZE_TYPE_TRAITS_INLINE_ITEM(ToValueTypeName, predicate) \
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::Layout::ToValueTypeName) \

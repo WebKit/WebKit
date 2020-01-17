@@ -35,7 +35,7 @@
 namespace WebCore {
 namespace Layout {
 
-using InlineItems = Vector<std::unique_ptr<InlineItem>, 30>;
+using InlineItems = Vector<InlineItem, 30>;
 
 // InlineFormattingState holds the state for a particular inline formatting context tree.
 class InlineFormattingState : public FormattingState {
@@ -46,7 +46,7 @@ public:
 
     InlineItems& inlineItems() { return m_inlineItems; }
     const InlineItems& inlineItems() const { return m_inlineItems; }
-    void addInlineItem(std::unique_ptr<InlineItem>&& inlineItem) { m_inlineItems.append(WTFMove(inlineItem)); }
+    void addInlineItem(InlineItem&& inlineItem) { m_inlineItems.append(WTFMove(inlineItem)); }
 
     const Display::InlineContent* displayInlineContent() const { return m_displayInlineContent.get(); }
     Display::InlineContent& ensureDisplayInlineContent();

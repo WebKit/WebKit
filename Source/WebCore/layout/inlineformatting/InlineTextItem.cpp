@@ -36,6 +36,8 @@
 namespace WebCore {
 namespace Layout {
 
+static_assert(sizeof(InlineItem) == sizeof(InlineTextItem), "");
+
 static inline bool isWhitespaceCharacter(UChar character, bool preserveNewline)
 {
     return character == ' ' || character == '\t' || (character == '\n' && !preserveNewline);
@@ -117,35 +119,6 @@ void InlineTextItem::createAndAppendTextItems(InlineItems& inlineContent, const 
         inlineContent.append(InlineTextItem::createNonWhitespaceItem(inlineBox, currentPosition, length, inlineItemWidth(currentPosition, length)));
         currentPosition += length;
     }
-}
-
-std::unique_ptr<InlineTextItem> InlineTextItem::createWhitespaceItem(const Box& inlineBox, unsigned start, unsigned length, Optional<InlineLayoutUnit> width)
-{
-    return makeUnique<InlineTextItem>(inlineBox, start, length, width, TextItemType::Whitespace);
-}
-
-std::unique_ptr<InlineTextItem> InlineTextItem::createNonWhitespaceItem(const Box& inlineBox, unsigned start, unsigned length, Optional<InlineLayoutUnit> width)
-{
-    return makeUnique<InlineTextItem>(inlineBox, start, length, width, TextItemType::NonWhitespace);
-}
-
-std::unique_ptr<InlineTextItem> InlineTextItem::createEmptyItem(const Box& inlineBox)
-{
-    return makeUnique<InlineTextItem>(inlineBox);
-}
-
-InlineTextItem::InlineTextItem(const Box& inlineBox, unsigned start, unsigned length, Optional<InlineLayoutUnit> width, TextItemType textItemType)
-    : InlineItem(inlineBox, Type::Text)
-    , m_start(start)
-    , m_length(length)
-    , m_width(width)
-    , m_textItemType(textItemType)
-{
-}
-
-InlineTextItem::InlineTextItem(const Box& inlineBox)
-    : InlineItem(inlineBox, Type::Text)
-{
 }
 
 bool InlineTextItem::isEmptyContent() const

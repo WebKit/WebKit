@@ -121,7 +121,7 @@ static inline size_t nextWrapOpportunity(const InlineItems& inlineContent, unsig
     auto inlineItemIndexWithContent = [&] (auto index) {
         // Break at the first text/box/line break inline item.
         for (; index < inlineItemCount; ++index) {
-            auto& inlineItem = *inlineContent[index];
+            auto& inlineItem = inlineContent[index];
             if (inlineItem.isText() || inlineItem.isBox())
                 return index;
             if (inlineItem.isLineBreak()) {
@@ -150,13 +150,13 @@ static inline size_t nextWrapOpportunity(const InlineItems& inlineContent, unsig
             // We always stop at line breaks. The wrap position is after the line break.
             return nextContentIndex + 1;
         }
-        if (isAtSoftWrapOpportunity(*inlineContent[startContentIndex], *inlineContent[nextContentIndex])) {
+        if (isAtSoftWrapOpportunity(inlineContent[startContentIndex], inlineContent[nextContentIndex])) {
             // There's a soft wrap opportunity between the start and the nextContent.
             // Now forward-find from the start position to see where we can actually wrap.
             // [ex-][ample] vs. [ex-][container start][container end][ample]
             // where [ex-] is startContent and [ample] is the nextContent.
             for (auto candidateIndex = startContentIndex + 1; candidateIndex < nextContentIndex; ++candidateIndex) {
-                if (inlineContent[candidateIndex]->isContainerStart()) {
+                if (inlineContent[candidateIndex].isContainerStart()) {
                     // inline content and [container start] and [container end] form unbreakable content.
                     // ex-<span></span>ample  : wrap opportunity is after "ex-".
                     // ex-</span></span>ample : wrap opportunity is after "ex-</span></span>".
@@ -175,7 +175,7 @@ static inline size_t nextWrapOpportunity(const InlineItems& inlineContent, unsig
 struct LineCandidateContent {
     void appendInlineContent(const InlineItem&, InlineLayoutUnit logicalWidth);
     void appendLineBreak(const InlineItem& inlineItem) { setTrailingLineBreak(inlineItem); }
-    void appendFloat(const InlineItem& inlineItem) { m_floats.append(makeWeakPtr(inlineItem)); }
+    void appendFloat(const InlineItem& inlineItem) { m_floats.append(&inlineItem); }
 
     bool hasIntrusiveFloats() const { return !m_floats.isEmpty(); }
     const LineBreaker::RunList& inlineRuns() const { return m_inlineRuns; }
@@ -325,7 +325,7 @@ LineLayoutContext::LineContent LineLayoutContext::close(LineBuilder& line, unsig
             return LineBuilder::IsLastLineWithInlineContent::No;
         // Omit floats to see if this is the last line with inline content.
         for (auto i = m_inlineItems.size(); i--;) {
-            if (!m_inlineItems[i]->isFloat())
+            if (!m_inlineItems[i].isFloat())
                 return i == trailingInlineItemIndex ? LineBuilder::IsLastLineWithInlineContent::Yes : LineBuilder::IsLastLineWithInlineContent::No;
         }
         // There has to be at least one non-float item.
@@ -349,7 +349,7 @@ void LineLayoutContext::nextContentForLine(LineCandidateContent& candidateConten
     if (partialLeadingContentLength) {
         // Handle leading partial content first (split text from the previous line).
         // Construct a partial leading inline item.
-        m_partialLeadingTextItem = downcast<InlineTextItem>(*m_inlineItems[inlineItemIndex]).right(*partialLeadingContentLength);
+        m_partialLeadingTextItem = downcast<InlineTextItem>(m_inlineItems[inlineItemIndex]).right(*partialLeadingContentLength);
         auto itemWidth = inlineItemWidth(*m_partialLeadingTextItem, currentLogicalRight);
         candidateContent.appendInlineContent(*m_partialLeadingTextItem, itemWidth);
         currentLogicalRight += itemWidth;
@@ -357,7 +357,7 @@ void LineLayoutContext::nextContentForLine(LineCandidateContent& candidateConten
     }
 
     for (auto index = inlineItemIndex; index < softWrapOpportunityIndex; ++index) {
-        auto& inlineItem = *m_inlineItems[index];
+        auto& inlineItem = m_inlineItems[index];
         if (inlineItem.isText() || inlineItem.isContainerStart() || inlineItem.isContainerEnd()) {
             auto inlineItenmWidth = inlineItemWidth(inlineItem, currentLogicalRight);
             candidateContent.appendInlineContent(inlineItem, inlineItenmWidth);
