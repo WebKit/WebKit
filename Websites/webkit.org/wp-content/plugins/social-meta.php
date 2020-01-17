@@ -73,6 +73,9 @@ add_action('wp_head', function() {
         $published_time = get_the_time('c');
         $modified_time = get_the_modified_date('c');
     }
+
+    if ($image_url[0] === '/')
+        $image_url = get_home_url(null, $image_url);
 ?>
 
     <!-- Schema.org markup -->
