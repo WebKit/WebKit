@@ -75,8 +75,8 @@ private:
     const Container& m_formattingContextRoot;
     const InlineItems& m_inlineItems;
     FloatList m_floats;
-    std::unique_ptr<InlineTextItem> m_partialLeadingTextItem;
-    std::unique_ptr<InlineTextItem> m_partialTrailingTextItem;
+    Optional<InlineTextItem> m_partialLeadingTextItem;
+    Optional<InlineTextItem> m_partialTrailingTextItem;
     unsigned m_successiveHyphenatedLineCount { 0 };
 };
 

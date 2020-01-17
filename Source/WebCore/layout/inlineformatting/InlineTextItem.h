@@ -37,10 +37,6 @@ class InlineTextItem : public InlineItem {
 public:
     static void createAndAppendTextItems(InlineItems&, const Box&);
 
-    static InlineTextItem createWhitespaceItem(const Box&, unsigned start, unsigned length, Optional<InlineLayoutUnit> width);
-    static InlineTextItem createNonWhitespaceItem(const Box&, unsigned start, unsigned length, Optional<InlineLayoutUnit> width);
-    static InlineTextItem createEmptyItem(const Box&);
-
     unsigned start() const { return m_startOrPosition; }
     unsigned end() const { return start() + length(); }
     unsigned length() const { return m_length; }
@@ -50,13 +46,18 @@ public:
     Optional<InlineLayoutUnit> width() const { return m_hasWidth ? makeOptional(m_width) : Optional<InlineLayoutUnit> { }; }
     bool isEmptyContent() const;
 
-    std::unique_ptr<InlineTextItem> left(unsigned length) const;
-    std::unique_ptr<InlineTextItem> right(unsigned length) const;
+    InlineTextItem left(unsigned length) const;
+    InlineTextItem right(unsigned length) const;
 
+private:
     using InlineItem::TextItemType;
 
     InlineTextItem(const Box&, unsigned start, unsigned length, Optional<InlineLayoutUnit> width, TextItemType);
     InlineTextItem(const Box&);
+
+    static InlineTextItem createWhitespaceItem(const Box&, unsigned start, unsigned length, Optional<InlineLayoutUnit> width);
+    static InlineTextItem createNonWhitespaceItem(const Box&, unsigned start, unsigned length, Optional<InlineLayoutUnit> width);
+    static InlineTextItem createEmptyItem(const Box&);
 };
 
 inline InlineTextItem InlineTextItem::createWhitespaceItem(const Box& inlineBox, unsigned start, unsigned length, Optional<InlineLayoutUnit> width)
@@ -88,6 +89,22 @@ inline InlineTextItem::InlineTextItem(const Box& inlineBox, unsigned start, unsi
 inline InlineTextItem::InlineTextItem(const Box& inlineBox)
     : InlineItem(inlineBox, Type::Text)
 {
+}
+
+inline InlineTextItem InlineTextItem::left(unsigned length) const
+{
+    RELEASE_ASSERT(length <= this->length());
+    ASSERT(m_textItemType != TextItemType::Undefined);
+    ASSERT(length);
+    return { layoutBox(), start(), length, WTF::nullopt, m_textItemType };
+}
+
+inline InlineTextItem InlineTextItem::right(unsigned length) const
+{
+    RELEASE_ASSERT(length <= this->length());
+    ASSERT(m_textItemType != TextItemType::Undefined);
+    ASSERT(length);
+    return { layoutBox(), end() - length, length, WTF::nullopt, m_textItemType };
 }
 
 }

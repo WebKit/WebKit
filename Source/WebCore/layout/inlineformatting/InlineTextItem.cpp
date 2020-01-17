@@ -127,22 +127,6 @@ bool InlineTextItem::isEmptyContent() const
     return !m_length || (m_length == 1 && layoutBox().textContext()->content[start()] == zeroWidthSpace); 
 }
 
-std::unique_ptr<InlineTextItem> InlineTextItem::left(unsigned length) const
-{
-    RELEASE_ASSERT(length <= this->length());
-    ASSERT(m_textItemType != TextItemType::Undefined);
-    ASSERT(length);
-    return makeUnique<InlineTextItem>(layoutBox(), start(), length, WTF::nullopt, m_textItemType);
-}
-
-std::unique_ptr<InlineTextItem> InlineTextItem::right(unsigned length) const
-{
-    RELEASE_ASSERT(length <= this->length());
-    ASSERT(m_textItemType != TextItemType::Undefined);
-    ASSERT(length);
-    return makeUnique<InlineTextItem>(layoutBox(), end() - length, length, WTF::nullopt, m_textItemType);
-}
-
 }
 }
 #endif

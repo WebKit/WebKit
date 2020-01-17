@@ -33,7 +33,6 @@ namespace WebCore {
 namespace Layout {
 
 class InlineItem {
-    WTF_MAKE_FAST_ALLOCATED;
 public:
     enum class Type : uint8_t { Text, HardLineBreak, SoftLineBreak, Box, Float, ContainerStart, ContainerEnd };
     InlineItem(const Box& layoutBox, Type);
