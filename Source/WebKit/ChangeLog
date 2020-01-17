@@ -1,3 +1,16 @@
+2020-01-17  Chris Dumez  <cdumez@apple.com>
+
+        IPC hardening for WebPasteboardProxy::SetPasteboardBufferForType message
+        https://bugs.webkit.org/show_bug.cgi?id=206381
+
+        Reviewed by Anders Carlsson.
+
+        IPC hardening for WebPasteboardProxy::SetPasteboardBufferForType message. Make sure that the Strings passed over IPC are not
+        null and that the SharedBuffer returned by SharedBuffer::map() is not null.
+
+        * UIProcess/Cocoa/WebPasteboardProxyCocoa.mm:
+        (WebKit::WebPasteboardProxy::setPasteboardBufferForType):
+
 2020-01-17  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK][WPE] Composition underline color is not applied

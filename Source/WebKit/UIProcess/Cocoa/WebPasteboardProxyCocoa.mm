@@ -158,9 +158,13 @@ void WebPasteboardProxy::setPasteboardStringForType(const String& pasteboardName
 
 void WebPasteboardProxy::setPasteboardBufferForType(const String& pasteboardName, const String& pasteboardType, const SharedMemory::Handle& handle, uint64_t size, CompletionHandler<void(int64_t)>&& completionHandler)
 {
+    if (pasteboardName.isNull() || pasteboardType.isNull())
+        return completionHandler(0);
     if (handle.isNull())
         return completionHandler(PlatformPasteboard(pasteboardName).setBufferForType(0, pasteboardType));
     RefPtr<SharedMemory> sharedMemoryBuffer = SharedMemory::map(handle, SharedMemory::Protection::ReadOnly);
+    if (!sharedMemoryBuffer)
+        return completionHandler(0);
     auto buffer = SharedBuffer::create(static_cast<unsigned char *>(sharedMemoryBuffer->data()), size);
     completionHandler(PlatformPasteboard(pasteboardName).setBufferForType(buffer.ptr(), pasteboardType));
 }
