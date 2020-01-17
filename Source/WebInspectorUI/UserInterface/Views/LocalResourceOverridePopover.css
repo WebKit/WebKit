@@ -98,6 +98,18 @@
     margin-top: 8px;
 }
 
+.popover .local-resource-override-popover-content .reference-page-link-container {
+    margin-top: 6px;
+}
+
+body[dir=ltr] .popover .local-resource-override-popover-content .reference-page-link-container {
+    float: right;
+}
+
+body[dir=rtl] .popover .local-resource-override-popover-content .reference-page-link-container {
+    float: left;
+}
+
 @media (prefers-color-scheme: dark) {
     .popover .local-resource-override-popover-content > table > tr > th {
         color: var(--text-color-secondary);

@@ -68,9 +68,14 @@
     text-align: start;
 }
 
+.settings-view.blackbox > table > tbody td.url {
+    background-color: var(--background-color-content);
+}
+
 .settings-view.blackbox > table > tbody td.url > .CodeMirror {
     min-width: 110px;
     height: auto;
+    background-color: transparent;
 }
 
 .settings-view.blackbox > table :matches(th, td):matches(.case-sensitive, .remove-blackbox) {

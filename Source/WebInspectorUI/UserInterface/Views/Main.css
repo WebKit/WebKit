@@ -433,13 +433,59 @@ body[dir=rtl] [dir=ltr] .go-to-arrow {
     --checkerboard-dark-square: hsl(0, 0%, 95%);
 }
 
+.reference-page-link {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    width: 20px;
+    height: 20px;
+    font-size: 14px;
+    line-height: 18px;
+    color: var(--text-color);
+    text-decoration: none;
+    background-color: var(--button-background-color);
+    border: var(--stroke-width) solid var(--border-color);
+    border-radius: 50%;
+    box-shadow: 0 var(--stroke-width) 1px var(--border-color);
+    cursor: default;
+
+    --stroke-width: 0.5px;
+}
+
+.reference-page-link:active {
+    background-color: var(--button-background-color-active);
+}
+
+@media (-webkit-device-pixel-ratio: 1) {
+    .reference-page-link {
+        -webkit-padding-start: 1px;
+
+        --stroke-width: 1px;
+    }
+}
+
+@media (prefers-color-scheme: dark) {
+    .reference-page-link {
+        border: var(--stroke-width) solid hsl(0, 0%, 20%);
+        box-shadow: 0 var(--stroke-width) 1px hsl(0, 0%, 20%);
+    }
+
+    .reference-page-link:active {
+        background-color: hsl(0, 0%, 50%);
+    }
+}
+
 .device-settings-content {
+    position: relative;
     padding: 0 4px;
+}
+
+.device-settings-content > table {
     border-collapse: separate;
     border-spacing: 4px 8px;
 }
 
-.device-settings-content > tr > td:first-child {
+.device-settings-content > table > tr > td:first-child {
     text-align: end;
     vertical-align: top;
 }
@@ -477,6 +523,19 @@ body[dir=rtl] [dir=ltr] .go-to-arrow {
     margin: 0;
     -webkit-margin-start: 0.5px;
     -webkit-margin-end: 4px;
+}
+
+.device-settings-content > .reference-page-link-container {
+    position: absolute;
+    bottom: 0.5em;
+}
+
+body[dir=ltr] .device-settings-content > .reference-page-link-container {
+    right: 0.5em;
+}
+
+body[dir=rtl] .device-settings-content > .reference-page-link-container {
+    left: 0.5em;
 }
 
 @media (prefers-color-scheme: dark) {

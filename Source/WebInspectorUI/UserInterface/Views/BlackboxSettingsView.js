@@ -53,10 +53,10 @@ WI.BlackboxSettingsView = class BlackboxSettingsView extends WI.SettingsView
     {
         super.initialLayout();
 
-        let patternBlackboxExplanationElement = this.element.appendChild(document.createElement("p"));
+        let patternBlackboxExplanationElement = this.element.insertBefore(document.createElement("p"), this.element.lastChild);
         patternBlackboxExplanationElement.textContent = WI.UIString("If the URL of any script matches one of the regular expression patterns below, any pauses that would have happened in that script will be deferred until execution has continued to outside of that script.");
 
-        let table = this.element.appendChild(document.createElement("table"));
+        let table = this.element.insertBefore(document.createElement("table"), this.element.lastChild);
 
         let tableHead = table.appendChild(document.createElement("thead"));
 
@@ -100,7 +100,7 @@ WI.BlackboxSettingsView = class BlackboxSettingsView extends WI.SettingsView
             this._addRow(null);
         });
 
-        let individualBlackboxExplanationElement = this.element.appendChild(document.createElement("p"));
+        let individualBlackboxExplanationElement = this.element.insertBefore(document.createElement("p"), this.element.lastChild);
         let blackboxIconElement = WI.ImageUtilities.useSVGSymbol("Images/Hide.svg#currentColor", "toggle-script-blackbox", WI.UIString("Ignore script when debugging"));
         String.format(WI.UIString("Scripts can also be individually blackboxed by clicking on the %s icon that is shown on hover."), [blackboxIconElement], String.standardFormatters, individualBlackboxExplanationElement, (a, b) => {
             a.append(b);

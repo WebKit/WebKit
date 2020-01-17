@@ -37,3 +37,8 @@
 .popover .event-breakpoint-content > input::placeholder {
     font-family: system-ui;
 }
+
+.popover .event-breakpoint-content .reference-page-link-container {
+    -webkit-margin-start: 0.5em;
+    vertical-align: -1px;
+}

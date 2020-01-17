@@ -288,6 +288,8 @@ WI.LocalResourceOverridePopover = class LocalResourceOverridePopover extends WI.
             this._headersDataGrid.startEditingNode(newNode);
         });
 
+        headersData.appendChild(WI.createReferencePageLink("local-overrides", "configuring-local-overrides"));
+
         let incrementStatusCode = () => {
             let x = parseInt(this._statusCodeCodeMirror.getValue());
             if (isNaN(x))

@@ -209,8 +209,12 @@ WI.BreakpointPopoverController = class BreakpointPopoverController extends WI.Ob
         let optionsRow = this._popoverOptionsRowElement = table.appendChild(document.createElement("tr"));
         if (!this._breakpoint.actions.length)
             optionsRow.classList.add(WI.BreakpointPopoverController.HiddenStyleClassName);
+
         let optionsHeader = optionsRow.appendChild(document.createElement("th"));
+
         let optionsData = optionsRow.appendChild(document.createElement("td"));
+        optionsData.className = "options";
+
         let optionsLabel = optionsHeader.appendChild(document.createElement("label"));
         let optionsCheckbox = this._popoverOptionsCheckboxElement = optionsData.appendChild(document.createElement("input"));
         let optionsCheckboxLabel = optionsData.appendChild(document.createElement("label"));
@@ -221,6 +225,8 @@ WI.BreakpointPopoverController = class BreakpointPopoverController extends WI.Ob
         optionsLabel.textContent = WI.UIString("Options");
         optionsCheckboxLabel.setAttribute("for", optionsCheckbox.id);
         optionsCheckboxLabel.textContent = WI.UIString("Automatically continue after evaluating");
+
+        optionsData.appendChild(WI.createReferencePageLink("javascript-breakpoints", "configuration"));
 
         this._popoverContentElement.appendChild(checkboxLabel);
         this._popoverContentElement.appendChild(table);
@@ -282,6 +288,8 @@ WI.BreakpointPopoverController = class BreakpointPopoverController extends WI.Ob
         let addActionButton = this._actionsContainer.appendChild(document.createElement("button"));
         addActionButton.textContent = WI.UIString("Add Action");
         addActionButton.addEventListener("click", this._popoverActionsAddActionButtonClicked.bind(this));
+
+        this._actionsContainer.appendChild(WI.createReferencePageLink("javascript-breakpoints", "configuration"));
     }
 
     _popoverActionsAddActionButtonClicked(event)

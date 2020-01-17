@@ -1,5 +1,121 @@
 2020-01-16  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: add links to reference pages
+        https://bugs.webkit.org/show_bug.cgi?id=206309
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Base/Main.js:
+        (WI._handleDeviceSettingsToolbarButtonClicked):
+        (WI.createReferencePageLink): Added.
+        * UserInterface/Views/Main.css:
+        (.reference-page-link): Added.
+        (.reference-page-link:active): Added.
+        (@media (-webkit-device-pixel-ratio: 1) .reference-page-link): Added.
+        (@media (prefers-color-scheme: dark) .reference-page-link): Added.
+        (@media (prefers-color-scheme: dark) .reference-page-link:active): Added.
+        (.device-settings-content):
+        (.device-settings-content > table): Added.
+        (.device-settings-content > table > tr > td:first-child): Added.
+        (.device-settings-content > .reference-page-link-container): Added.
+        (body[dir=ltr] .device-settings-content > .reference-page-link-container): Added.
+        (body[dir=rtl] .device-settings-content > .reference-page-link-container): Added.
+        (.device-settings-content > tr > td:first-child): Deleted.
+
+        * UserInterface/Controllers/NetworkManager.js:
+        (WI.NetworkManager.prototype.async createBootstrapScript):
+
+        * UserInterface/Controllers/BreakpointPopoverController.js:
+        (WI.BreakpointPopoverController.prototype._createPopoverContent):
+        (WI.BreakpointPopoverController.prototype._popoverActionsCreateAddActionButton):
+        * UserInterface/Views/BreakpointPopoverController.css:
+        (.popover .edit-breakpoint-popover-content > table > tr > td.options): Added.
+        (.popover .edit-breakpoint-popover-content > table > tr > td.options > .reference-page-link-container): Added.
+        (body[dir=ltr] .popover .edit-breakpoint-popover-content > table > tr > td.options > .reference-page-link-container): Added.
+        (body[dir=rtl] .popover .edit-breakpoint-popover-content > table > tr > td.options > .reference-page-link-container): Added.
+        (body[dir=ltr] .popover .edit-breakpoint-popover-content .reference-page-link-container): Added.
+        (body[dir=rtl] .popover .edit-breakpoint-popover-content .reference-page-link-container): Added.
+        * UserInterface/Views/EventBreakpointPopover.js:
+        (WI.EventBreakpointPopover.prototype.show):
+        * UserInterface/Views/EventBreakpointPopover.css:
+        (.popover .event-breakpoint-content .reference-page-link-container): Added.
+        * UserInterface/Views/URLBreakpointPopover.js:
+        (WI.URLBreakpointPopover.prototype.show):
+        * UserInterface/Views/URLBreakpointPopover.css:
+        (.popover .url-breakpoint-content .reference-page-link-container): Added.
+
+        * UserInterface/Views/LocalResourceOverridePopover.js:
+        (WI.LocalResourceOverridePopover.prototype.show):
+        * UserInterface/Views/LocalResourceOverridePopover.css:
+        (.popover .local-resource-override-popover-content .reference-page-link-container): Added.
+        (body[dir=ltr] .popover .local-resource-override-popover-content .reference-page-link-container): Added.
+        (body[dir=rtl] .popover .local-resource-override-popover-content .reference-page-link-container): Added.
+
+        * UserInterface/Views/SettingsTabContentView.js:
+        (WI.SettingsTabContentView.prototype.initialLayout):
+        (WI.SettingsTabContentView.prototype._createGeneralSettingsView):
+        (WI.SettingsTabContentView.prototype._createElementsSettingsView):
+        (WI.SettingsTabContentView.prototype._createSourcesSettingsView):
+        (WI.SettingsTabContentView.prototype._createConsoleSettingsView):
+        (WI.SettingsTabContentView.prototype._createExperimentalSettingsView):
+        (WI.SettingsTabContentView.prototype._createReferenceLink): Added.
+        * UserInterface/Views/SettingsTabContentView.css:
+        (.content-view.tab.settings): Added.
+        (.content-view.tab.settings .navigation-bar): Added.
+        (.content-view.tab.settings .navigation-bar.invisible): Added.
+        (.content-view.tab.settings .navigation-bar .item.radio.button.text-only): Added.
+        (.content-view.tab.settings .navigation-bar .item.radio.button.text-only:before): Added.
+        (.content-view.tab.settings .navigation-bar .item.radio.button.text-only.selected): Added.
+        (.content-view.tab.settings > .settings-view): Added.
+        (.content-view.tab.settings > .settings-view > .separator): Added.
+        (.content-view.tab.settings > .settings-view > .container): Added.
+        (.content-view.tab.settings > .settings-view > .container.hidden): Added.
+        (.content-view.tab.settings > .settings-view > .container-centered): Added.
+        (.content-view.tab.settings > .settings-view > .container button): Added.
+        (.content-view.tab.settings > .settings-view > .container > .title): Added.
+        (.content-view.tab.settings > .settings-view > .container > .editor-group): Added.
+        (.content-view.tab.settings > .settings-view > .container > .editor-group > .editor): Added.
+        (.content-view.tab.settings > .settings-view > .container > .editor-group > .editor:first-child > *): Added.
+        (.content-view.tab.settings > .settings-view > .container > .editor-group > .editor input): Added.
+        (.content-view.tab.settings > .settings-view > .container > .editor-group > .editor input[type="checkbox"]): Added.
+        (.content-view.tab.settings > .settings-view > .container > .editor-group > .editor select): Added.
+        (.content-view.tab.settings > .settings-view > .container > .editor-group > .editor input[type="number"]): Added.
+        (.content-view.tab.settings > .settings-view > .container > .editor-group > .editor input[type="text"]): Added.
+        (.content-view.tab.settings > .settings-view > .container.reference): Added.
+        (.content-view.tab.settings > .settings-view > .container.reference > .reference-page-link): Added.
+        (.content-view.tab.settings > .settings-view > .container.reference > .reference-page-link > .go-to-arrow): Added.
+        (.content-view.settings .navigation-bar): Deleted.
+        (.content-view.settings .navigation-bar.invisible): Deleted.
+        (.content-view.settings .navigation-bar .item.radio.button.text-only): Deleted.
+        (.content-view.settings .navigation-bar .item.radio.button.text-only:before): Deleted.
+        (.content-view.settings .navigation-bar .item.radio.button.text-only.selected): Deleted.
+        (.content-view.settings > .settings-view): Deleted.
+        (.content-view.settings > .settings-view > .separator): Deleted.
+        (.content-view.settings > .settings-view > .container): Deleted.
+        (.content-view.settings > .settings-view > .container.hidden): Deleted.
+        (.content-view.settings > .settings-view > .container-centered): Deleted.
+        (.content-view.settings > .settings-view > .container button): Deleted.
+        (.content-view.settings > .settings-view > .container > .title): Deleted.
+        (.content-view.settings > .settings-view > .container > .editor-group): Deleted.
+        (.content-view.settings > .settings-view > .container > .editor-group > .editor): Deleted.
+        (.content-view.settings > .settings-view > .container > .editor-group > .editor:first-child > *): Deleted.
+        (.content-view.settings > .settings-view > .container > .editor-group > .editor input): Deleted.
+        (.content-view.settings > .settings-view > .container > .editor-group > .editor input[type="checkbox"]): Deleted.
+        (.content-view.settings > .settings-view > .container > .editor-group > .editor select): Deleted.
+        (.content-view.settings > .settings-view > .container > .editor-group > .editor input[type="number"]): Deleted.
+        (.content-view.settings > .settings-view > .container > .editor-group > .editor input[type="text"]): Deleted.
+        (@media (prefers-color-scheme: dark) .content-view.settings .navigation-bar): Deleted.
+        (@media (prefers-color-scheme: dark) .content-view.settings .navigation-bar .item.radio.button.text-only.selected): Deleted.
+        * UserInterface/Views/BlackboxSettingsView.js:
+        (WI.BlackboxSettingsView.prototype.initialLayout):
+        * UserInterface/Views/BlackboxSettingsView.css:
+        (.settings-view.blackbox > table > tbody td.url): Added.
+        (.settings-view.blackbox > table > tbody td.url > .CodeMirror):
+
+        * Localizations/en.lproj/localizedStrings.js:
+
+2020-01-16  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: show the device settings menu when Web Inspector's debug mode is enabled
         https://bugs.webkit.org/show_bug.cgi?id=206311
 

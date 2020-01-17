@@ -74,7 +74,7 @@ WI.URLBreakpointPopover = class URLBreakpointPopover extends WI.Popover
             this._codeMirror.focus();
         });
 
-        editorWrapper.append(this._typeSelectElement, this._createEditor());
+        editorWrapper.append(this._typeSelectElement, this._createEditor(), WI.createReferencePageLink("url-breakpoints", "configuration"));
         contentElement.append(label, editorWrapper);
 
         this.content = contentElement;

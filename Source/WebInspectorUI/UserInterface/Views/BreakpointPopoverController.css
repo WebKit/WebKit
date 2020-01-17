@@ -55,6 +55,30 @@
     padding-left: 5px;
 }
 
+.popover .edit-breakpoint-popover-content > table > tr > td.options {
+    position: relative;
+}
+
+.popover .edit-breakpoint-popover-content > table > tr > td.options > .reference-page-link-container {
+    position: absolute;
+}
+
+body[dir=ltr] .popover .edit-breakpoint-popover-content > table > tr > td.options > .reference-page-link-container {
+    right: 0;
+}
+
+body[dir=rtl] .popover .edit-breakpoint-popover-content > table > tr > td.options > .reference-page-link-container {
+    left: 0;
+}
+
+body[dir=ltr] .popover .edit-breakpoint-popover-content .reference-page-link-container {
+    float: right;
+}
+
+body[dir=rtl] .popover .edit-breakpoint-popover-content .reference-page-link-container {
+    float: left;
+}
+
 .edit-breakpoint-popover-condition {
     width: 100%;
     padding: 4px 0 2px;

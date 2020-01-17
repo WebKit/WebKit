@@ -2101,10 +2101,12 @@ WI._handleDeviceSettingsToolbarButtonClicked = function(event)
         WI._deviceSettingsPopover.present(calculateTargetFrame(), preferredEdges);
     };
 
-    let contentElement = document.createElement("table");
+    let contentElement = document.createElement("div");
     contentElement.classList.add("device-settings-content");
 
-    let userAgentRow = contentElement.appendChild(document.createElement("tr"));
+    let table = contentElement.appendChild(document.createElement("table"));
+
+    let userAgentRow = table.appendChild(document.createElement("tr"));
 
     let userAgentTitle = userAgentRow.appendChild(document.createElement("td"));
     userAgentTitle.textContent = WI.UIString("User Agent:");
@@ -2232,7 +2234,7 @@ WI._handleDeviceSettingsToolbarButtonClicked = function(event)
         if (!group.columns.some((column) => column.some((item) => item.setting)))
             continue;
 
-        let settingsGroupRow = contentElement.appendChild(document.createElement("tr"));
+        let settingsGroupRow = table.appendChild(document.createElement("tr"));
 
         let settingsGroupTitle = settingsGroupRow.appendChild(document.createElement("td"));
         settingsGroupTitle.textContent = group.name;
@@ -2250,6 +2252,8 @@ WI._handleDeviceSettingsToolbarButtonClicked = function(event)
                 createCheckbox(columnElement, item.name, item.setting, item.value);
         }
     }
+
+    contentElement.appendChild(WI.createReferencePageLink("device-settings"));
 
     WI._deviceSettingsPopover.presentNewContentWithFrame(contentElement, calculateTargetFrame(), preferredEdges);
 };
@@ -2821,6 +2825,23 @@ WI.createNavigationItemHelp = function(formatString, navigationItem)
 
     String.format(formatString, [wrapperElement], String.standardFormatters, containerElement, append);
     return containerElement;
+};
+
+WI.createReferencePageLink = function(page, fragment)
+{
+    let url = "https://webkit.org/web-inspector/" + page + "/";
+    if (fragment)
+        url += "#" + fragment;
+
+    let wrapper = document.createElement("span");
+    wrapper.className = "reference-page-link-container";
+
+    let link = wrapper.appendChild(document.createElement("a"));
+    link.className = "reference-page-link";
+    link.href = link.title = url;
+    link.textContent = "?";
+
+    return wrapper;
 };
 
 WI.createGoToArrowButton = function()

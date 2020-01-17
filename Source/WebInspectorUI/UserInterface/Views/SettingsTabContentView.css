@@ -24,87 +24,97 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-.content-view.settings .navigation-bar {
-    background-color: white;
+.content-view.tab.settings {
+    overflow-y: auto;
 }
 
-.content-view.settings .navigation-bar.invisible {
+.content-view.tab.settings .navigation-bar {
+    position: sticky;
+    top: 0;
+    z-index: var(--z-index-header);
+    background-color: var(--background-color-content);
+}
+
+.content-view.tab.settings .navigation-bar.invisible {
     visibility: hidden;
 }
 
-.content-view.settings .navigation-bar .item.radio.button.text-only {
+.content-view.tab.settings .navigation-bar .item.radio.button.text-only {
     color: inherit;
     background-color: inherit;
 }
 
-.content-view.settings .navigation-bar .item.radio.button.text-only:before {
+.content-view.tab.settings .navigation-bar .item.radio.button.text-only:before {
     display: none;
 }
 
-.content-view.settings .navigation-bar .item.radio.button.text-only.selected {
-    color: var(--selected-background-color)
+.content-view.tab.settings .navigation-bar .item.radio.button.text-only.selected {
+    color: var(--glyph-color-active);
 }
 
-.content-view.settings > .settings-view {
-    height: 100%;
+.content-view.tab.settings > .settings-view {
+    display: flex;
+    flex-direction: column;
+    min-height: calc(100% - var(--navigation-bar-height));
+    padding-bottom: 1em;
+    background-color: var(--background-color-alternate);
     overflow-y: auto;
-    padding-bottom: calc(var(--console-prompt-min-height) + 10px);
 }
 
-.content-view.settings > .settings-view > .separator {
+.content-view.tab.settings > .settings-view > .separator {
     height: 1em;
 }
 
-.content-view.settings > .settings-view > .container {
+.content-view.tab.settings > .settings-view > .container {
     display: flex;
     margin-top: 1em;
     font-size: 13px;
 }
 
-.content-view.settings > .settings-view > .container.hidden {
+.content-view.tab.settings > .settings-view > .container.hidden {
     display: none;
 }
 
-.content-view.settings > .settings-view > .container-centered {
+.content-view.tab.settings > .settings-view > .container-centered {
     display: block;
     text-align: center;
 }
 
-.content-view.settings > .settings-view > .container button {
+.content-view.tab.settings > .settings-view > .container button {
     -webkit-margin-end: 4px;
     font-size: inherit;
 }
 
-.content-view.settings > .settings-view > .container > .title {
+.content-view.tab.settings > .settings-view > .container > .title {
     width: 50%;
     -webkit-margin-end: 6px;
     text-align: end;
 }
 
-.content-view.settings > .settings-view > .container > .editor-group {
+.content-view.tab.settings > .settings-view > .container > .editor-group {
     display: flex;
     flex-direction: column;
 }
 
-.content-view.settings > .settings-view > .container > .editor-group > .editor {
+.content-view.tab.settings > .settings-view > .container > .editor-group > .editor {
     --settings-editor-child-margin-top: 0;
 }
 
-.content-view.settings > .settings-view > .container > .editor-group > .editor:first-child > * {
+.content-view.tab.settings > .settings-view > .container > .editor-group > .editor:first-child > * {
     margin-top: var(--settings-editor-child-margin-top);
 }
 
-.content-view.settings > .settings-view > .container > .editor-group > .editor input {
+.content-view.tab.settings > .settings-view > .container > .editor-group > .editor input {
     font-size: inherit;
 }
 
-.content-view.settings > .settings-view > .container > .editor-group > .editor input[type="checkbox"] {
+.content-view.tab.settings > .settings-view > .container > .editor-group > .editor input[type="checkbox"] {
     -webkit-margin-end: 4px;
     /* Vertically align <select> with the group title text. */
     font-size: 16px;
 }
 
-.content-view.settings > .settings-view > .container > .editor-group > .editor select {
+.content-view.tab.settings > .settings-view > .container > .editor-group > .editor select {
     /*
     To set the font-size of <select> to be exactly 13px, it needs to be set to 16px.
     Setting the font-size to 13px actually sets it to 11px.
@@ -115,7 +125,7 @@
     --settings-editor-child-margin-top: -2px;
 }
 
-.content-view.settings > .settings-view > .container > .editor-group > .editor input[type="number"] {
+.content-view.tab.settings > .settings-view > .container > .editor-group > .editor input[type="number"] {
     max-width: 48px;
     -webkit-margin-start: 2px;
     -webkit-margin-end: 5px;
@@ -128,7 +138,7 @@
     --settings-editor-child-margin-top: -2px;
 }
 
-.content-view.settings > .settings-view > .container > .editor-group > .editor input[type="text"] {
+.content-view.tab.settings > .settings-view > .container > .editor-group > .editor input[type="text"] {
     padding-top: 0;
     padding-bottom: 0;
     vertical-align: 1px;
@@ -137,12 +147,19 @@
     --settings-editor-child-margin-top: -2px;
 }
 
-@media (prefers-color-scheme: dark) {
-    .content-view.settings .navigation-bar {
-        background-color: var(--background-color-content);
-    }
+.content-view.tab.settings > .settings-view > .container.reference {
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    flex-grow: 1;
+}
 
-    .content-view.settings .navigation-bar .item.radio.button.text-only.selected {
-        color: var(--glyph-color-active);
-    }
+.content-view.tab.settings > .settings-view > .container.reference > a {
+    -webkit-margin-start: 16px; /* Balance the size of `.go-to-arrow` so that the text is visually centered. */
+    color: var(--text-color-secondary);
+}
+
+.content-view.tab.settings > .settings-view > .container.reference > a > .go-to-arrow {
+    margin: 0;
+    vertical-align: -0.25em;
 }

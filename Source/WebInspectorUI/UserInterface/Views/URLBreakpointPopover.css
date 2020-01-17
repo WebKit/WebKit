@@ -53,6 +53,11 @@
     overflow: hidden;
 }
 
+.popover .url-breakpoint-content .reference-page-link-container {
+    -webkit-margin-start: 0.5em;
+    vertical-align: -1px;
+}
+
 @media (prefers-color-scheme: dark) {
     .popover .url-breakpoint-content > .editor-wrapper > .editor {
         -webkit-appearance: unset;

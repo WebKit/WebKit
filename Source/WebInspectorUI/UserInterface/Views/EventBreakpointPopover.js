@@ -96,6 +96,8 @@ WI.EventBreakpointPopover = class EventBreakpointPopover extends WI.Popover
             });
         });
 
+        contentElement.appendChild(WI.createReferencePageLink("event-breakpoints", "global-event-breakpoints"));
+
         this.content = contentElement;
 
         this._presentOverTargetElement();
