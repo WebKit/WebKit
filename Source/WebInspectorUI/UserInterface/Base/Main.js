@@ -400,7 +400,7 @@ WI.contentLoaded = function()
     WI._inspectModeToolbarButton.addEventListener(WI.ButtonNavigationItem.Event.Clicked, WI._toggleInspectMode);
 
     // COMPATIBILITY (iOS 12.2): Page.overrideSetting did not exist.
-    if (InspectorFrontendHost.isRemote && InspectorBackend.hasCommand("Page.overrideUserAgent") && InspectorBackend.hasCommand("Page.overrideSetting")) {
+    if ((InspectorFrontendHost.isRemote || WI.isDebugUIEnabled()) && InspectorBackend.hasCommand("Page.overrideUserAgent") && InspectorBackend.hasCommand("Page.overrideSetting")) {
         const deviceSettingsTooltip = WI.UIString("Device Settings");
         WI._deviceSettingsToolbarButton = new WI.ActivateButtonToolbarItem("device-settings", deviceSettingsTooltip, deviceSettingsTooltip, "Images/Device.svg");
         WI._deviceSettingsToolbarButton.addEventListener(WI.ButtonNavigationItem.Event.Clicked, WI._handleDeviceSettingsToolbarButtonClicked);
