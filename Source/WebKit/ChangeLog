@@ -1,3 +1,16 @@
+2020-01-16  Daniel Chen  <thedanielchen@apple.com>
+
+        Call AtomString::init in WebKit2Initialize.
+        <https://webkit.org/b/206375>
+        <rdar://problem/58646578>
+
+        Reviewed by Timothy Hatcher.
+
+        * Shared/Cocoa/WebKit2InitializeCocoa.mm:
+        (WebKit::runInitializationCode):
+        * Shared/WebKit2Initialize.cpp:
+        (WebKit::InitializeWebKit2):
+
 2020-01-16  Chris Dumez  <cdumez@apple.com>
 
         IPC hardening for WebPageProxy::savePDFToTemporaryFolder* / WebPageProxy::openPDFFromTemporaryFolder* messages
