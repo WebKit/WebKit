@@ -56,7 +56,7 @@ FontCustomPlatformData::FontCustomPlatformData(FT_Face freeTypeFace, SharedBuffe
         reinterpret_cast<cairo_destroy_func_t>(reinterpret_cast<void(*)(void)>(FT_Done_Face)));
 }
 
-static FcPattern* defaultFontconfigOptions()
+static RefPtr<FcPattern> defaultFontconfigOptions()
 {
     // Get some generic default settings from fontconfig for web fonts. Strategy
     // from Behdad Esfahbod in https://code.google.com/p/chromium/issues/detail?id=173207#c35
@@ -72,14 +72,14 @@ static FcPattern* defaultFontconfigOptions()
         FcPatternDel(pattern, FC_FAMILY);
         FcConfigSubstitute(nullptr, pattern, FcMatchFont);
     }, pattern);
-    return pattern;
+    return adoptRef(FcPatternDuplicate(pattern));
 }
 
 FontPlatformData FontCustomPlatformData::fontPlatformData(const FontDescription& description, bool bold, bool italic, const FontFeatureSettings&, FontSelectionSpecifiedCapabilities)
 {
     auto* freeTypeFace = static_cast<FT_Face>(cairo_font_face_get_user_data(m_fontFace.get(), &freeTypeFaceKey));
     ASSERT(freeTypeFace);
-    RefPtr<FcPattern> pattern = FcPatternDuplicate(defaultFontconfigOptions());
+    RefPtr<FcPattern> pattern = defaultFontconfigOptions();
     FcPatternAddString(pattern.get(), FC_FAMILY, reinterpret_cast<const FcChar8*>(freeTypeFace->family_name));
 #if ENABLE(VARIATION_FONTS)
     auto variants = buildVariationSettings(freeTypeFace, description);
@@ -87,7 +87,7 @@ FontPlatformData FontCustomPlatformData::fontPlatformData(const FontDescription&
         FcPatternAddString(pattern.get(), FC_FONT_VARIATIONS, reinterpret_cast<const FcChar8*>(variants.utf8().data()));
     }
 #endif
-    return FontPlatformData(m_fontFace.get(), pattern.get(), description.computedPixelSize(), freeTypeFace->face_flags & FT_FACE_FLAG_FIXED_WIDTH, bold, italic, description.orientation());
+    return FontPlatformData(m_fontFace.get(), WTFMove(pattern), description.computedPixelSize(), freeTypeFace->face_flags & FT_FACE_FLAG_FIXED_WIDTH, bold, italic, description.orientation());
 }
 
 static bool initializeFreeTypeLibrary(FT_Library& library)

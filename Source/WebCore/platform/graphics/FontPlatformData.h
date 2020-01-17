@@ -111,7 +111,7 @@ public:
 #endif
 
 #if USE(FREETYPE)
-    FontPlatformData(cairo_font_face_t*, FcPattern*, float size, bool fixedWidth, bool syntheticBold, bool syntheticOblique, FontOrientation);
+    FontPlatformData(cairo_font_face_t*, RefPtr<FcPattern>&&, float size, bool fixedWidth, bool syntheticBold, bool syntheticOblique, FontOrientation);
 #endif
 
 #if PLATFORM(WIN)

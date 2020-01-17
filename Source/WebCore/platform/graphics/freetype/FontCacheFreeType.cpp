@@ -272,7 +272,7 @@ RefPtr<Font> FontCache::systemFallbackForCharacters(const FontDescription& descr
     getFontPropertiesFromPattern(resultPattern.get(), description, fixedWidth, syntheticBold, syntheticOblique);
 
     RefPtr<cairo_font_face_t> fontFace = adoptRef(cairo_ft_font_face_create_for_pattern(resultPattern.get()));
-    FontPlatformData alternateFontData(fontFace.get(), resultPattern.get(), description.computedPixelSize(), fixedWidth, syntheticBold, syntheticOblique, description.orientation());
+    FontPlatformData alternateFontData(fontFace.get(), WTFMove(resultPattern), description.computedPixelSize(), fixedWidth, syntheticBold, syntheticOblique, description.orientation());
     return fontForPlatformData(alternateFontData);
 }
 
@@ -579,7 +579,7 @@ std::unique_ptr<FontPlatformData> FontCache::createFontPlatformData(const FontDe
             FcPatternAddString(resultPattern.get(), FC_FONT_VARIATIONS, reinterpret_cast<const FcChar8*>(variants.utf8().data()));
     }
 #endif
-    auto platformData = makeUnique<FontPlatformData>(fontFace.get(), resultPattern.get(), fontDescription.computedPixelSize(), fixedWidth, syntheticBold, syntheticOblique, fontDescription.orientation());
+    auto platformData = makeUnique<FontPlatformData>(fontFace.get(), WTFMove(resultPattern), fontDescription.computedPixelSize(), fixedWidth, syntheticBold, syntheticOblique, fontDescription.orientation());
     // Verify that this font has an encoding compatible with Fontconfig. Fontconfig currently
     // supports three encodings in FcFreeTypeCharIndex: Unicode, Symbol and AppleRoman.
     // If this font doesn't have one of these three encodings, don't select it.
