@@ -1092,9 +1092,6 @@ void DocumentLoader::commitData(const char* bytes, size_t length)
         if (!isLoading())
             return;
 
-        if (auto* window = m_frame->document()->domWindow())
-            window->prewarmLocalStorageIfNecessary();
-
         bool userChosen;
         String encoding;
         if (overrideEncoding().isNull()) {
