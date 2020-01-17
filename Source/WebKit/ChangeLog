@@ -1,3 +1,17 @@
+2020-01-16  Brent Fulgham  <bfulgham@apple.com>
+
+        [iOS] Add telemetry for IOKIt classes not seen in test runs
+        https://bugs.webkit.org/show_bug.cgi?id=206386
+        <rdar://problem/58663519>
+
+        Reviewed by Per Arne Vollan.
+
+        Capture telemetry to show which IOKit classes are acitvely used in WebKit.
+
+        No new tests because this does not change behavior.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+
 2020-01-16  Chris Dumez  <cdumez@apple.com>
 
         IPC hardening for WebPageProxy::SetPromisedDataForImage message

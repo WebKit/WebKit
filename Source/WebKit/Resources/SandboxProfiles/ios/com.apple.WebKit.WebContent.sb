@@ -265,12 +265,12 @@
 ;;; Declare that the application uses the OpenGL, Metal, and CoreML hardware & frameworks.
 ;;;
 (define-once (opengl)
-    (allow iokit-open
+    ;; Items not seen in testing
+    (allow iokit-open (with report) (with telemetry)
            (iokit-connection "IOGPU")
            (iokit-user-client-class
                 "AGXCommandQueue"
                 "AGXDevice"
-                "AGXDeviceUserClient"
                 "AGXSharedUserClient"
                 "IOAccelContext"
                 "IOAccelDevice"
@@ -279,6 +279,13 @@
                 "IOAccelContext2"
                 "IOAccelDevice2"
                 "IOAccelSharedUserClient2"))
+
+    ;; Items with known uses
+    (allow iokit-open
+        (iokit-connection "IOGPU")
+        (iokit-user-client-class
+            "AGXDeviceUserClient" ;; Used by WebGL
+    ))
 
     (allow iokit-get-properties
         (iokit-property "IOGLBundleName")
@@ -448,10 +455,14 @@
     )
 
     ; UIKit-required IOKit nodes.
-    (allow iokit-open
+    (allow iokit-open  (with report) (with telemetry)
         (iokit-user-client-class "AppleJPEGDriverUserClient")
-        (iokit-user-client-class "IOSurfaceAcceleratorClient")
         (iokit-user-client-class "IOSurfaceSendRight")
+    )
+
+    ; WebKit-required IOKit classes
+    (allow iokit-open
+        (iokit-user-client-class "IOSurfaceAcceleratorClient") ;; Media rendering into pixel buffers
         (iokit-user-client-class "IOSurfaceRootUserClient") ;; Needed by Tiled Grid code.
     )
 
