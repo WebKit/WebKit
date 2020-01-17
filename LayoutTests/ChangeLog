@@ -1,3 +1,20 @@
+2020-01-17  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GTK] Update baselines for SVG tests
+        https://bugs.webkit.org/show_bug.cgi?id=206406
+
+        Unreviewed gardening.
+
+        * platform/gtk/imported/w3c/web-platform-tests/svg/geometry/parsing/height-computed-expected.txt: Added.
+        * platform/gtk/imported/w3c/web-platform-tests/svg/geometry/parsing/width-computed-expected.txt: Added.
+        * platform/gtk/imported/w3c/web-platform-tests/svg/path/distance/pathLength-positive-expected.txt:
+        * platform/gtk/imported/w3c/web-platform-tests/svg/path/distance/pathLength-positive-percentage-expected.txt:
+        * platform/gtk/imported/w3c/web-platform-tests/svg/path/distance/pathLength-zero-expected.txt:
+        * platform/gtk/imported/w3c/web-platform-tests/svg/path/distance/pathLength-zero-percentage-expected.txt:
+        * platform/gtk/imported/w3c/web-platform-tests/svg/shapes/reftests/pathlength-003-expected.txt:
+        * platform/gtk/imported/w3c/web-platform-tests/svg/shapes/scripted/disabled-shapes-not-hit-expected.txt: Added.
+        * platform/gtk/imported/w3c/web-platform-tests/svg/text/reftests/textpath-shape-001-expected.txt:
+
 2020-01-17  Lauro Moura  <lmoura@igalia.com>
 
         [GTK] Gardening websockets close-on-x tests
