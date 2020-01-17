@@ -1,3 +1,14 @@
+2020-01-17  Jer Noble  <jer.noble@apple.com>
+
+        [MSE] Decode glitches when watching videos on CNN.com
+        https://bugs.webkit.org/show_bug.cgi?id=206412
+        <rdar://problem/55685630>
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        * media/media-source/media-source-samples-out-of-order-expected.txt: Added.
+        * media/media-source/media-source-samples-out-of-order.html: Added.
+
 2020-01-17  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         REGRESSION: [iOS 13] svg/custom/glyph-selection-arabic-forms.svg is failing

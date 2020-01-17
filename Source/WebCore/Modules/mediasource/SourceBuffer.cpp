@@ -1683,6 +1683,29 @@ void SourceBuffer::sourceBufferPrivateDidReceiveSample(MediaSample& sample)
                 erasedSamples.addRange(iter_pair.first, iter_pair.second);
         }
 
+        // When appending media containing B-frames (media whose samples' presentation timestamps
+        // do not increase monotonically, the prior erase steps could leave a sample in the trackBuffer
+        // which will be disconnected from its previous I-frame. If the incoming frame is an I-frame,
+        // remove all samples in decode order between the incoming I-frame's decode timestamp and the
+        // next I-frame. See <https://github.com/w3c/media-source/issues/187> for a discussion of what
+        // the how the MSE specification should handlie this secnario.
+        do {
+            if (!sample.isSync())
+                break;
+
+            DecodeOrderSampleMap::KeyType decodeKey(sample.decodeTime(), sample.presentationTime());
+            auto nextSampleInDecodeOrder = trackBuffer.samples.decodeOrder().findSampleAfterDecodeKey(decodeKey);
+            if (nextSampleInDecodeOrder == trackBuffer.samples.decodeOrder().end())
+                break;
+
+            if (nextSampleInDecodeOrder->second->isSync())
+                break;
+
+            auto nextSyncSample = trackBuffer.samples.decodeOrder().findSyncSampleAfterDecodeIterator(nextSampleInDecodeOrder);
+            INFO_LOG(LOGIDENTIFIER, "Discovered out-of-order frames, from: ", *nextSampleInDecodeOrder->second, " to: ", (nextSyncSample == trackBuffer.samples.decodeOrder().end() ? "[end]"_s : toString(*nextSyncSample->second)));
+            erasedSamples.addRange(nextSampleInDecodeOrder, nextSyncSample);
+        } while (false);
+
         // There are many files out there where the frame times are not perfectly contiguous and may have small overlaps
         // between the beginning of a frame and the end of the previous one; therefore a tolerance is needed whenever
         // durations are considered.
