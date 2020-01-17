@@ -189,6 +189,7 @@ LineBuilder::LineBuilder(const InlineFormattingContext& inlineFormattingContext,
     , m_collapsibleContent(m_inlineItemRuns)
     , m_horizontalAlignment(horizontalAlignment)
     , m_isIntrinsicSizing(intrinsicSizing == IntrinsicSizing::Yes)
+    , m_shouldIgnoreTrailingLetterSpacing(RuntimeEnabledFeatures::sharedFeatures().layoutFormattingContextIntegrationEnabled())
 {
 }
 
@@ -220,7 +221,7 @@ void LineBuilder::initialize(const Constraints& constraints)
     m_lineIsVisuallyEmptyBeforeCollapsibleContent = { };
 }
 
-static bool shouldPreserveLeadingContent(const InlineTextItem& inlineTextItem)
+static inline bool shouldPreserveLeadingContent(const InlineTextItem& inlineTextItem)
 {
     if (!inlineTextItem.isWhitespace())
         return true;
@@ -635,15 +636,12 @@ void LineBuilder::appendInlineContainerEnd(const InlineItem& inlineItem, InlineL
 
 void LineBuilder::appendTextContent(const InlineTextItem& inlineItem, InlineLayoutUnit logicalWidth)
 {
+    auto isCollapsible = inlineItem.isCollapsible();
     auto willCollapseCompletely = [&] {
-        if (!inlineItem.isCollapsible())
+        if (!isCollapsible)
             return false;
-        // Leading whitespace.
-        if (m_inlineItemRuns.isEmpty())
-            return !shouldPreserveLeadingContent(inlineItem);
         // Check if the last item is collapsed as well.
-        for (auto i = m_inlineItemRuns.size(); i--;) {
-            auto& run = m_inlineItemRuns[i];
+        for (auto& run : WTF::makeReversedRange(m_inlineItemRuns)) {
             if (run.isBox())
                 return false;
             // https://drafts.csswg.org/css-text-3/#white-space-phase-1
@@ -655,34 +653,27 @@ void LineBuilder::appendTextContent(const InlineTextItem& inlineItem, InlineLayo
                 return run.isCollapsible();
             ASSERT(run.isContainerStart() || run.isContainerEnd());
         }
-        return true;
+        // Leading whitespace.
+        return !shouldPreserveLeadingContent(inlineItem);
     };
 
     auto collapsesToZeroAdvanceWidth = willCollapseCompletely();
-    auto collapsedRun = inlineItem.isCollapsible() && inlineItem.length() > 1;
-    auto contentStart = inlineItem.start();
+    logicalWidth = collapsesToZeroAdvanceWidth ? 0 : logicalWidth;
+    auto collapsedRun = isCollapsible && inlineItem.length() > 1;
     auto contentLength =  collapsedRun ? 1 : inlineItem.length();
-    m_inlineItemRuns.append({ inlineItem, contentLogicalWidth(), logicalWidth, Display::Run::TextContext { contentStart, contentLength, inlineItem.layoutBox().textContext()->content } });
-    auto& lineRun = m_inlineItemRuns.last();
+    m_inlineItemRuns.append({ inlineItem, contentLogicalWidth(), logicalWidth, collapsedRun, collapsesToZeroAdvanceWidth, Display::Run::TextContext { inlineItem.start(), contentLength, inlineItem.layoutBox().textContext()->content } });
+    m_lineBox.expandHorizontally(logicalWidth);
 
-    if (collapsesToZeroAdvanceWidth)
-        lineRun.setCollapsesToZeroAdvanceWidth();
-
-    if (collapsedRun)
-        lineRun.setIsCollapsed();
-
-    m_lineBox.expandHorizontally(lineRun.logicalWidth());
-
-    // Existing trailing collapsible content can only be expanded if the current run is fully collapsible.
-    auto collapsibleListNeedsReset = !m_collapsibleContent.isEmpty() && !lineRun.isCollapsibleWhitespace();
-    if (collapsibleListNeedsReset)
-        m_collapsibleContent.reset();
-    auto isCollapsible = lineRun.isCollapsibleWhitespace() || lineRun.hasTrailingLetterSpacing();
-    if (isCollapsible) {
+    if (isCollapsible && !TextUtil::shouldPreserveTrailingWhitespace(inlineItem.style())) {
         // If we ever collapse this content, we need to know if the line visibility state needs to be recomputed.
         if (m_collapsibleContent.isEmpty())
             m_lineIsVisuallyEmptyBeforeCollapsibleContent = isVisuallyEmpty();
         m_collapsibleContent.append(m_inlineItemRuns.size() - 1);
+    } else {
+        // Existing trailing collapsible content can only be expanded if the current run is fully collapsible.
+        m_collapsibleContent.reset();
+        if (!m_shouldIgnoreTrailingLetterSpacing && !inlineItem.isWhitespace() && inlineItem.style().letterSpacing() > 0)
+            m_collapsibleContent.append(m_inlineItemRuns.size() - 1);
     }
 }
 
@@ -710,7 +701,7 @@ void LineBuilder::appendLineBreak(const InlineItem& inlineItem)
     // Soft line breaks (preserved new line characters) require inline text boxes for compatibility reasons.
     ASSERT(inlineItem.isSoftLineBreak());
     auto& softLineBreakItem = downcast<InlineSoftLineBreakItem>(inlineItem);
-    m_inlineItemRuns.append({ softLineBreakItem, contentLogicalWidth(), 0_lu, Display::Run::TextContext { softLineBreakItem.position(), 1, softLineBreakItem.layoutBox().textContext()->content } });
+    m_inlineItemRuns.append({ softLineBreakItem, contentLogicalWidth(), 0_lu, false, false, Display::Run::TextContext { softLineBreakItem.position(), 1, softLineBreakItem.layoutBox().textContext()->content } });
 }
 
 void LineBuilder::adjustBaselineAndLineHeight(const Run& run)
@@ -964,11 +955,20 @@ InlineLayoutUnit LineBuilder::CollapsibleContent::collapseTrailingRun()
     return 0_lu;
 }
 
-LineBuilder::InlineItemRun::InlineItemRun(const InlineItem& inlineItem, InlineLayoutUnit logicalLeft, InlineLayoutUnit logicalWidth, WTF::Optional<Display::Run::TextContext> textContext)
+LineBuilder::InlineItemRun::InlineItemRun(const InlineItem& inlineItem, InlineLayoutUnit logicalLeft, InlineLayoutUnit logicalWidth)
     : m_inlineItem(inlineItem)
     , m_logicalLeft(logicalLeft)
     , m_logicalWidth(logicalWidth)
-    , m_textContext(textContext)
+{
+}
+
+LineBuilder::InlineItemRun::InlineItemRun(const InlineItem& inlineItem, InlineLayoutUnit logicalLeft, InlineLayoutUnit logicalWidth, bool isCollapsed, bool isCollapsedToZeroAdvanceWidth, Display::Run::TextContext&& textContext)
+    : m_inlineItem(inlineItem)
+    , m_logicalLeft(logicalLeft)
+    , m_logicalWidth(logicalWidth)
+    , m_textContext(WTFMove(textContext))
+    , m_isCollapsed(isCollapsed)
+    , m_collapsedToZeroAdvanceWidth(isCollapsedToZeroAdvanceWidth)
 {
 }
 

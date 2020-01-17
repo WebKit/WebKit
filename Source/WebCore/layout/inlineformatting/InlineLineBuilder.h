@@ -161,7 +161,8 @@ private:
 
     class InlineItemRun {
     public:
-        InlineItemRun(const InlineItem&, InlineLayoutUnit logicalLeft, InlineLayoutUnit logicalWidth, WTF::Optional<Display::Run::TextContext> = WTF::nullopt);
+        InlineItemRun(const InlineItem&, InlineLayoutUnit logicalLeft, InlineLayoutUnit logicalWidth, bool isCollapsed, bool isCollapsedToZeroAdvanceWidth, Display::Run::TextContext&&);
+        InlineItemRun(const InlineItem&, InlineLayoutUnit logicalLeft, InlineLayoutUnit logicalWidth);
 
         const Box& layoutBox() const { return m_inlineItem.layoutBox(); }
         const RenderStyle& style() const { return layoutBox().style(); }
@@ -176,7 +177,6 @@ private:
         bool isLineBreak() const { return m_inlineItem.isLineBreak(); }
         InlineItem::Type type() const { return m_inlineItem.type(); }
 
-        void setIsCollapsed() { m_isCollapsed = true; }
         bool isCollapsed() const { return m_isCollapsed; }
 
         void moveHorizontally(InlineLayoutUnit offset) { m_logicalLeft += offset; }
@@ -242,6 +242,7 @@ private:
     bool m_hasIntrusiveFloat { false };
     Display::LineBox m_lineBox;
     Optional<bool> m_lineIsVisuallyEmptyBeforeCollapsibleContent;
+    bool m_shouldIgnoreTrailingLetterSpacing { false };
 };
 
 inline void LineBuilder::CollapsibleContent::reset()

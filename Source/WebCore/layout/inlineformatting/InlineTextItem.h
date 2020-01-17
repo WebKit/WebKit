@@ -46,7 +46,7 @@ public:
     unsigned length() const { return m_length; }
 
     bool isWhitespace() const { return m_textItemType == TextItemType::Whitespace; }
-    bool isCollapsible() const { return isWhitespace() && style().collapseWhiteSpace(); }
+    bool isCollapsible() const { return m_isCollapsible; }
     Optional<InlineLayoutUnit> width() const { return m_hasWidth ? makeOptional(m_width) : Optional<InlineLayoutUnit> { }; }
     bool isEmptyContent() const;
 
@@ -80,6 +80,7 @@ inline InlineTextItem::InlineTextItem(const Box& inlineBox, unsigned start, unsi
     m_startOrPosition = start;
     m_length = length;
     m_hasWidth = !!width;
+    m_isCollapsible = textItemType == TextItemType::Whitespace && inlineBox.style().collapseWhiteSpace();
     m_width = width.valueOr(0);
     m_textItemType = textItemType;
 }
