@@ -1,3 +1,18 @@
+2020-01-17  Brady Eidson  <beidson@apple.com>
+
+        TestWebKitAPI.AsyncFunction.Promise times out on slower machines in debug builds.
+        <rdar://problem/58445164> and https://bugs.webkit.org/show_bug.cgi?id=206012
+
+        Reviewed by Keith Miller.
+
+        Previously, to force GC, over 30,000 function calls would be made.
+        This was too slow on slower machines in debug builds. It eventually would've worked given enough time, but...
+        It turns just a few hundred function calls with an API call to force GC seems reliable and is much faster.
+        
+        * TestWebKitAPI/Tests/WebKitCocoa/AsyncFunction.mm:
+        (TestWebKitAPI::TEST):
+        (TestWebKitAPI::tryGCPromise): Deleted.
+
 2020-01-16  Keith Miller  <keith_miller@apple.com>
 
         Reland bytecode checkpoints since bugs have been fixed

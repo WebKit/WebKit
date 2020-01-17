@@ -28,6 +28,7 @@
 #import "PlatformUtilities.h"
 #import "Test.h"
 #import "TestWKWebView.h"
+#import <WebKit/WKProcessPoolPrivate.h>
 #import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/_WKContentWorld.h>
 
@@ -178,22 +179,6 @@ TEST(AsyncFunction, RoundTrip)
     EXPECT_TRUE([value isEqual:result]);
 }
 
-static void tryGCPromise(WKWebView *webView, bool& done)
-{
-    if (done)
-        return;
-
-    NSString *functionBody = @"return new Promise(function(resolve, reject) { })";
-    [webView _callAsyncJavaScriptFunction:functionBody withArguments:nil inWorld:_WKContentWorld.pageContentWorld completionHandler:[&] (id result, NSError *error) {
-        EXPECT_NULL(result);
-        EXPECT_TRUE(error != nil);
-        EXPECT_TRUE([[error description] containsString:@"no longer reachable"]);
-        done = true;
-    }];
-
-    dispatch_async(dispatch_get_main_queue(), ^{ tryGCPromise(webView, done); });
-}
-
 TEST(AsyncFunction, Promise)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
@@ -279,8 +264,19 @@ TEST(AsyncFunction, Promise)
     }];
     TestWebKitAPI::Util::run(&done);
 
+    // Promises known to become unreachable (e.g. via garbage collection) should call back with an error.
     done = false;
-    tryGCPromise(webView.get(), done);
+    functionBody = @"return new Promise(function(resolve, reject) { })";
+    for (int i = 0; i < 500; ++i) {
+        [webView _callAsyncJavaScriptFunction:functionBody withArguments:nil inWorld:_WKContentWorld.pageContentWorld completionHandler:[&] (id result, NSError *error) {
+            EXPECT_NULL(result);
+            EXPECT_TRUE(error != nil);
+            EXPECT_TRUE([[error description] containsString:@"no longer reachable"]);
+            done = true;
+        }];
+    }
+
+    [webView.get().configuration.processPool _garbageCollectJavaScriptObjectsForTesting];
     TestWebKitAPI::Util::run(&done);
 }
 

@@ -673,4 +673,9 @@ static NSDictionary *policiesHashMapToDictionary(const HashMap<String, HashMap<S
 #endif
 }
 
+- (void)_garbageCollectJavaScriptObjectsForTesting
+{
+    _processPool->garbageCollectJavaScriptObjects();
+}
+
 @end
