@@ -314,7 +314,12 @@ void WebPageProxy::setPromisedDataForImage(const String& pasteboardName, const S
 {
     MESSAGE_CHECK_URL(url);
     MESSAGE_CHECK_URL(visibleURL);
+    MESSAGE_CHECK(!imageHandle.isNull());
+
     RefPtr<SharedMemory> sharedMemoryImage = SharedMemory::map(imageHandle, SharedMemory::Protection::ReadOnly);
+    if (!sharedMemoryImage)
+        return;
+
     auto imageBuffer = SharedBuffer::create(static_cast<unsigned char*>(sharedMemoryImage->data()), imageSize);
     RefPtr<SharedBuffer> archiveBuffer;
     
