@@ -35,7 +35,7 @@
 namespace WebCore {
 namespace Layout {
 
-static bool endsWithSoftWrapOpportunity(const InlineTextItem& currentTextItem, const InlineTextItem& nextInlineTextItem)
+static inline bool endsWithSoftWrapOpportunity(const InlineTextItem& currentTextItem, const InlineTextItem& nextInlineTextItem)
 {
     ASSERT(!nextInlineTextItem.isWhitespace());
     // We are at the position after a whitespace.
@@ -61,7 +61,7 @@ static bool endsWithSoftWrapOpportunity(const InlineTextItem& currentTextItem, c
     return !TextUtil::findNextBreakablePosition(lineBreakIterator, 0, nextInlineTextItem.style());
 }
 
-static bool isAtSoftWrapOpportunity(const InlineItem& current, const InlineItem& next)
+static inline bool isAtSoftWrapOpportunity(const InlineItem& current, const InlineItem& next)
 {
     // "is at" simple means that there's a soft wrap opportunity right after the [current].
     // [text][ ][text][container start]... (<div>text content<span>..</div>)
@@ -101,7 +101,7 @@ static bool isAtSoftWrapOpportunity(const InlineItem& current, const InlineItem&
     return endsWithSoftWrapOpportunity(currentInlineTextItem, nextInlineTextItem);
 }
 
-static size_t nextWrapOpportunity(const InlineItems& inlineContent, unsigned startIndex)
+static inline size_t nextWrapOpportunity(const InlineItems& inlineContent, unsigned startIndex)
 {
     // 1. Find the start candidate by skipping leading non-content items e.g <span><span>start : skip "<span><span>"
     // 2. Find the end candidate by skipping non-content items inbetween e.g. <span><span>start</span>end: skip "</span>"
@@ -200,13 +200,13 @@ private:
     const InlineItem* m_trailingLineBreak { nullptr };
 };
 
-void LineCandidateContent::appendInlineContent(const InlineItem& inlineItem, InlineLayoutUnit logicalWidth)
+inline void LineCandidateContent::appendInlineContent(const InlineItem& inlineItem, InlineLayoutUnit logicalWidth)
 {
     m_inlineContentLogicalWidth += logicalWidth;
     m_inlineRuns.append({ inlineItem, logicalWidth });
 }
 
-void LineCandidateContent::reset()
+inline void LineCandidateContent::reset()
 {
     m_inlineContentLogicalWidth = 0;
     m_inlineRuns.clear();
@@ -423,7 +423,8 @@ LineLayoutContext::Result LineLayoutContext::tryAddingInlineItems(LineBreaker& l
     auto result = lineBreaker.shouldWrapInlineContent(candidateRuns, candidateContent.inlineContentLogicalWidth(), lineStatus);
     if (result.action == LineBreaker::Result::Action::Keep) {
         // This continuous content can be fully placed on the current line.
-        commitContent(line, candidateRuns, { });
+        for (auto& run : candidateRuns)
+            line.append(run.inlineItem, run.logicalWidth);
         // Consume trailing line break as well.
         if (auto* lineBreakItem = candidateContent.trailingLineBreak()) {
             line.append(*lineBreakItem, 0);
@@ -442,7 +443,7 @@ LineLayoutContext::Result LineLayoutContext::tryAddingInlineItems(LineBreaker& l
     if (result.action == LineBreaker::Result::Action::Split) {
         // Commit the combination of full and partial content on the current line.
         ASSERT(result.partialTrailingContent);
-        commitContent(line, candidateRuns, result.partialTrailingContent);
+        commitPartialContent(line, candidateRuns, *result.partialTrailingContent);
         // When splitting multiple runs <span style="word-break: break-all">text</span><span>content</span>, we might end up splitting them at run boundary.
         // It simply means we don't really have a partial run. Partial content yes, but not partial run.
         auto trailingRunIndex = result.partialTrailingContent->trailingRunIndex;
@@ -459,15 +460,15 @@ LineLayoutContext::Result LineLayoutContext::tryAddingInlineItems(LineBreaker& l
     return { LineBreaker::IsEndOfLine::No };
 }
 
-void LineLayoutContext::commitContent(LineBuilder& line, const LineBreaker::RunList& runs, Optional<LineBreaker::Result::PartialTrailingContent> partialTrailingContent)
+void LineLayoutContext::commitPartialContent(LineBuilder& line, const LineBreaker::RunList& runs, const LineBreaker::Result::PartialTrailingContent& partialTrailingContent)
 {
     for (size_t index = 0; index < runs.size(); ++index) {
         auto& run = runs[index];
-        if (partialTrailingContent && partialTrailingContent->trailingRunIndex == index) {
+        if (partialTrailingContent.trailingRunIndex == index) {
             ASSERT(run.inlineItem.isText());
             // Create and commit partial trailing item.
-            if (auto partialRun = partialTrailingContent->partialRun) {
-                auto& trailingInlineTextItem = downcast<InlineTextItem>(runs[partialTrailingContent->trailingRunIndex].inlineItem);
+            if (auto partialRun = partialTrailingContent.partialRun) {
+                auto& trailingInlineTextItem = downcast<InlineTextItem>(runs[partialTrailingContent.trailingRunIndex].inlineItem);
                 // FIXME: LineBuilder should not hold on to the InlineItem.
                 ASSERT(!m_partialTrailingTextItem);
                 m_partialTrailingTextItem = trailingInlineTextItem.left(partialRun->length);

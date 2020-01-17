@@ -63,7 +63,7 @@ private:
     };
     Result tryAddingFloatItems(LineBuilder&, const FloatList&);
     Result tryAddingInlineItems(LineBreaker&, LineBuilder&, const LineCandidateContent&);
-    void commitContent(LineBuilder&, const LineBreaker::RunList&, Optional<LineBreaker::Result::PartialTrailingContent>);
+    void commitPartialContent(LineBuilder&, const LineBreaker::RunList&, const LineBreaker::Result::PartialTrailingContent&);
     LineContent close(LineBuilder&, unsigned leadingInlineItemIndex, unsigned committedInlineItemCount, Optional<LineContent::PartialContent>);
 
     InlineLayoutUnit inlineItemWidth(const InlineItem&, InlineLayoutUnit contentLogicalLeft) const;
