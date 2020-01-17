@@ -27,7 +27,6 @@
 
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
 
-#include "AXIsolatedTreeNode.h"
 #include "PageIdentifier.h"
 #include <wtf/HashMap.h>
 #include <wtf/RefPtr.h>

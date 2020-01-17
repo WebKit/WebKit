@@ -710,7 +710,7 @@
 		29A812490FBB9CA900510293 /* WebAccessibilityObjectWrapperBase.h in Headers */ = {isa = PBXBuildFile; fileRef = 29A812450FBB9CA900510293 /* WebAccessibilityObjectWrapperBase.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		29ACB212143E7128006BCA5F /* AccessibilityMockObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 29ACB211143E7128006BCA5F /* AccessibilityMockObject.h */; };
 		29AE212D21AB9EEB00869283 /* AXIsolatedTree.h in Headers */ = {isa = PBXBuildFile; fileRef = 29AE212B21AB9EEB00869283 /* AXIsolatedTree.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		29AE213521ABA48A00869283 /* AXIsolatedTreeNode.h in Headers */ = {isa = PBXBuildFile; fileRef = 29AE213321ABA48A00869283 /* AXIsolatedTreeNode.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		29AE213521ABA48A00869283 /* AXIsolatedObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 29AE213321ABA48A00869283 /* AXIsolatedObject.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		29D7BCFA1444AF7D0070619C /* AccessibilitySpinButton.h in Headers */ = {isa = PBXBuildFile; fileRef = 29D7BCF91444AF7D0070619C /* AccessibilitySpinButton.h */; };
 		29FAF4B6195AB08900A522DC /* TextUndoInsertionMarkupMac.h in Headers */ = {isa = PBXBuildFile; fileRef = 29FAF4B5195AB08900A522DC /* TextUndoInsertionMarkupMac.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		2B365C841525119E0091D27B /* RenderSVGEllipse.h in Headers */ = {isa = PBXBuildFile; fileRef = 2B4235A015250F6000DBBCD8 /* RenderSVGEllipse.h */; };
@@ -6681,8 +6681,8 @@
 		29ACB213143E7498006BCA5F /* AccessibilityMockObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AccessibilityMockObject.cpp; sourceTree = "<group>"; };
 		29AE212B21AB9EEB00869283 /* AXIsolatedTree.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AXIsolatedTree.h; sourceTree = "<group>"; };
 		29AE212C21AB9EEB00869283 /* AXIsolatedTree.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = AXIsolatedTree.cpp; sourceTree = "<group>"; };
-		29AE213321ABA48A00869283 /* AXIsolatedTreeNode.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AXIsolatedTreeNode.h; sourceTree = "<group>"; };
-		29AE213421ABA48A00869283 /* AXIsolatedTreeNode.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = AXIsolatedTreeNode.cpp; sourceTree = "<group>"; };
+		29AE213321ABA48A00869283 /* AXIsolatedObject.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AXIsolatedObject.h; sourceTree = "<group>"; };
+		29AE213421ABA48A00869283 /* AXIsolatedObject.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = AXIsolatedObject.cpp; sourceTree = "<group>"; };
 		29D7BCF51444AF580070619C /* AccessibilitySpinButton.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AccessibilitySpinButton.cpp; sourceTree = "<group>"; };
 		29D7BCF91444AF7D0070619C /* AccessibilitySpinButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AccessibilitySpinButton.h; sourceTree = "<group>"; };
 		29E04A27BED2F81F98E9022B /* JSBeforeUnloadEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSBeforeUnloadEvent.h; sourceTree = "<group>"; };
@@ -17800,10 +17800,10 @@
 		29AE212921AB9ECB00869283 /* isolatedtree */ = {
 			isa = PBXGroup;
 			children = (
+				29AE213421ABA48A00869283 /* AXIsolatedObject.cpp */,
+				29AE213321ABA48A00869283 /* AXIsolatedObject.h */,
 				29AE212C21AB9EEB00869283 /* AXIsolatedTree.cpp */,
 				29AE212B21AB9EEB00869283 /* AXIsolatedTree.h */,
-				29AE213421ABA48A00869283 /* AXIsolatedTreeNode.cpp */,
-				29AE213321ABA48A00869283 /* AXIsolatedTreeNode.h */,
 			);
 			path = isolatedtree;
 			sourceTree = "<group>";
@@ -29161,8 +29161,8 @@
 				070363E2181A1CDC00C074A5 /* AVCaptureDeviceManager.h in Headers */,
 				CD336F6217F9F64700DDDCD0 /* AVTrackPrivateAVFObjCImpl.h in Headers */,
 				070363E6181A1CDC00C074A5 /* AVVideoCaptureSource.h in Headers */,
+				29AE213521ABA48A00869283 /* AXIsolatedObject.h in Headers */,
 				29AE212D21AB9EEB00869283 /* AXIsolatedTree.h in Headers */,
-				29AE213521ABA48A00869283 /* AXIsolatedTreeNode.h in Headers */,
 				F45C231E1995B73B00A6E2E3 /* AxisScrollSnapOffsets.h in Headers */,
 				29A812380FBB9C1D00510293 /* AXObjectCache.h in Headers */,
 				91C9F2F91AE3BEB00095B61C /* AXTextStateChangeIntent.h in Headers */,

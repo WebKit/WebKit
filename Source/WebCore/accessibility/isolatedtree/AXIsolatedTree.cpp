@@ -28,7 +28,7 @@
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
 #include "AXIsolatedTree.h"
 
-#include "AXIsolatedTreeNode.h"
+#include "AXIsolatedObject.h"
 #include "Page.h"
 #include <wtf/NeverDestroyed.h>
 

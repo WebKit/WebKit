@@ -171,8 +171,8 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     accessibility/AccessibilityRenderObject.h
     accessibility/AccessibilityScrollView.h
 
+    accessibility/isolatedtree/AXIsolatedObject.h
     accessibility/isolatedtree/AXIsolatedTree.h
-    accessibility/isolatedtree/AXIsolatedTreeNode.h
 
     animation/CSSPropertyBlendingClient.h
     animation/CompositeOperation.h

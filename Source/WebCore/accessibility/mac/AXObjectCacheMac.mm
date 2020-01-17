@@ -28,7 +28,7 @@
 
 #if ENABLE(ACCESSIBILITY) && PLATFORM(MAC)
 
-#import "AXIsolatedTreeNode.h"
+#import "AXIsolatedObject.h"
 #import "AccessibilityObject.h"
 #import "AccessibilityTable.h"
 #import "RenderObject.h"

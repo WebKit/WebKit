@@ -26,7 +26,9 @@
 #include "config.h"
 
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
-#include "AXIsolatedTreeNode.h"
+#include "AXIsolatedObject.h"
+
+#include "AXIsolatedTree.h"
 
 namespace WebCore {
 

@@ -32,8 +32,8 @@
 
 #include "AXObjectCache.h"
 
+#include "AXIsolatedObject.h"
 #include "AXIsolatedTree.h"
-#include "AXIsolatedTreeNode.h"
 #include "AccessibilityARIAGrid.h"
 #include "AccessibilityARIAGridCell.h"
 #include "AccessibilityARIAGridRow.h"
