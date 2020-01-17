@@ -58,6 +58,8 @@ void StructureRareData::destroy(JSCell* cell)
 StructureRareData::StructureRareData(VM& vm, Structure* previous)
     : JSCell(vm, vm.structureRareDataStructure.get())
     , m_giveUpOnObjectToStringValueCache(false)
+    , m_maxOffset(invalidOffset)
+    , m_transitionOffset(invalidOffset)
 {
     if (previous)
         m_previous.set(vm, this, previous);

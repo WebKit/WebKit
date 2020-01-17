@@ -114,6 +114,9 @@ private:
     std::unique_ptr<ObjectToStringAdaptiveInferredPropertyValueWatchpoint> m_objectToStringAdaptiveInferredValueWatchpoint;
     Box<InlineWatchpointSet> m_polyProtoWatchpoint;
     bool m_giveUpOnObjectToStringValueCache;
+
+    PropertyOffset m_maxOffset;
+    PropertyOffset m_transitionOffset;
 };
 
 } // namespace JSC

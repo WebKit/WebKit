@@ -180,10 +180,10 @@ void Structure::forEachPropertyConcurrently(const Functor& functor)
     
     for (unsigned i = structures.size(); i--;) {
         structure = structures[i];
-        if (!structure->m_nameInPrevious)
+        if (!structure->m_transitionPropertyName)
             continue;
         
-        if (!functor(PropertyMapEntry(structure->m_nameInPrevious.get(), structure->m_offset, structure->attributesInPrevious())))
+        if (!functor(PropertyMapEntry(structure->m_transitionPropertyName.get(), structure->transitionOffset(), structure->transitionPropertyAttributes())))
             return;
     }
 }
@@ -364,21 +364,22 @@ ALWAYS_INLINE bool Structure::checkOffsetConsistency(PropertyTable* propertyTabl
     auto fail = [&] (const char* description) {
         dataLog("Detected offset inconsistency: ", description, "!\n");
         dataLog("this = ", RawPointer(this), "\n");
-        dataLog("m_offset = ", m_offset, "\n");
+        dataLog("transitionOffset = ", transitionOffset(), "\n");
+        dataLog("maxOffset = ", maxOffset(), "\n");
         dataLog("m_inlineCapacity = ", m_inlineCapacity, "\n");
         dataLog("propertyTable = ", RawPointer(propertyTable), "\n");
-        dataLog("numberOfSlotsForLastOffset = ", numberOfSlotsForLastOffset(m_offset, m_inlineCapacity), "\n");
+        dataLog("numberOfSlotsForMaxOffset = ", numberOfSlotsForMaxOffset(maxOffset(), m_inlineCapacity), "\n");
         dataLog("totalSize = ", totalSize, "\n");
         dataLog("inlineOverflowAccordingToTotalSize = ", inlineOverflowAccordingToTotalSize, "\n");
-        dataLog("numberOfOutOfLineSlotsForLastOffset = ", numberOfOutOfLineSlotsForLastOffset(m_offset), "\n");
+        dataLog("numberOfOutOfLineSlotsForMaxOffset = ", numberOfOutOfLineSlotsForMaxOffset(maxOffset()), "\n");
         detailsFunc();
         UNREACHABLE_FOR_PLATFORM();
     };
     
-    if (numberOfSlotsForLastOffset(m_offset, m_inlineCapacity) != totalSize)
-        fail("numberOfSlotsForLastOffset doesn't match totalSize");
-    if (inlineOverflowAccordingToTotalSize != numberOfOutOfLineSlotsForLastOffset(m_offset))
-        fail("inlineOverflowAccordingToTotalSize doesn't match numberOfOutOfLineSlotsForLastOffset");
+    if (numberOfSlotsForMaxOffset(maxOffset(), m_inlineCapacity) != totalSize)
+        fail("numberOfSlotsForMaxOffset doesn't match totalSize");
+    if (inlineOverflowAccordingToTotalSize != numberOfOutOfLineSlotsForMaxOffset(maxOffset()))
+        fail("inlineOverflowAccordingToTotalSize doesn't match numberOfOutOfLineSlotsForMaxOffset");
 
     return true;
 }
@@ -453,12 +454,12 @@ inline PropertyOffset Structure::add(VM& vm, PropertyName propertyName, unsigned
 
     m_seenProperties.add(bitwise_cast<uintptr_t>(rep));
     
-    PropertyOffset newLastOffset = m_offset;
-    table->add(PropertyMapEntry(rep, newOffset, attributes), newLastOffset, PropertyTable::PropertyOffsetMayChange);
+    PropertyOffset newMaxOffset = maxOffset();
+    table->add(PropertyMapEntry(rep, newOffset, attributes), newMaxOffset, PropertyTable::PropertyOffsetMayChange);
     
-    func(locker, newOffset, newLastOffset);
+    func(locker, newOffset, newMaxOffset);
     
-    ASSERT(m_offset == newLastOffset);
+    ASSERT(maxOffset() == newMaxOffset);
 
     checkConsistency();
     return newOffset;

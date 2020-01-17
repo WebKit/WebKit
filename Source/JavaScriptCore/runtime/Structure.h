@@ -352,14 +352,52 @@ public:
         return static_cast<Structure*>(cell);
     }
     bool transitivelyTransitionedFrom(Structure* structureToFind);
-    
-    PropertyOffset lastOffset() const { return m_offset; }
-    
-    void setLastOffset(PropertyOffset offset) { m_offset = offset; }
 
-    static unsigned outOfLineCapacity(PropertyOffset lastOffset)
+    PropertyOffset maxOffset() const
     {
-        unsigned outOfLineSize = Structure::outOfLineSize(lastOffset);
+        if (m_maxOffset == shortInvalidOffset)
+            return invalidOffset;
+        if (m_maxOffset == useRareDataFlag)
+            return rareData()->m_maxOffset;
+        return m_maxOffset;
+    }
+    
+    void setMaxOffset(VM& vm, PropertyOffset offset)
+    {
+        if (offset == invalidOffset)
+            m_maxOffset = shortInvalidOffset;
+        else if (offset < useRareDataFlag && offset < shortInvalidOffset)
+            m_maxOffset = offset;
+        else {
+            m_maxOffset = useRareDataFlag;
+            ensureRareData(vm)->m_maxOffset = offset;
+        }
+    }
+
+    PropertyOffset transitionOffset() const
+    {
+        if (m_transitionOffset == shortInvalidOffset)
+            return invalidOffset;
+        if (m_transitionOffset == useRareDataFlag)
+            return rareData()->m_transitionOffset;
+        return m_transitionOffset;
+    }
+
+    void setTransitionOffset(VM& vm, PropertyOffset offset)
+    {
+        if (offset == invalidOffset)
+            m_transitionOffset = shortInvalidOffset;
+        else if (offset < useRareDataFlag && offset < shortInvalidOffset)
+            m_transitionOffset = offset;
+        else {
+            m_transitionOffset = useRareDataFlag;
+            ensureRareData(vm)->m_transitionOffset = offset;
+        }
+    }
+
+    static unsigned outOfLineCapacity(PropertyOffset maxOffset)
+    {
+        unsigned outOfLineSize = Structure::outOfLineSize(maxOffset);
 
         // This algorithm completely determines the out-of-line property storage growth algorithm.
         // The JSObject code will only trigger a resize if the value returned by this algorithm
@@ -377,18 +415,18 @@ public:
         return WTF::roundUpToPowerOfTwo(outOfLineSize);
     }
     
-    static unsigned outOfLineSize(PropertyOffset lastOffset)
+    static unsigned outOfLineSize(PropertyOffset maxOffset)
     {
-        return numberOfOutOfLineSlotsForLastOffset(lastOffset);
+        return numberOfOutOfLineSlotsForMaxOffset(maxOffset);
     }
 
     unsigned outOfLineCapacity() const
     {
-        return outOfLineCapacity(m_offset);
+        return outOfLineCapacity(maxOffset());
     }
     unsigned outOfLineSize() const
     {
-        return outOfLineSize(m_offset);
+        return outOfLineSize(maxOffset());
     }
     bool hasInlineStorage() const
     {
@@ -400,11 +438,11 @@ public:
     }
     unsigned inlineSize() const
     {
-        return std::min<unsigned>(m_offset + 1, m_inlineCapacity);
+        return std::min<unsigned>(maxOffset() + 1, m_inlineCapacity);
     }
     unsigned totalStorageSize() const
     {
-        return numberOfSlotsForLastOffset(m_offset, m_inlineCapacity);
+        return numberOfSlotsForMaxOffset(maxOffset(), m_inlineCapacity);
     }
     unsigned totalStorageCapacity() const
     {
@@ -415,7 +453,7 @@ public:
     bool isValidOffset(PropertyOffset offset) const
     {
         return JSC::isValidOffset(offset)
-            && offset <= m_offset
+            && offset <= maxOffset()
             && (offset < m_inlineCapacity || offset >= firstOutOfLineOffset);
     }
 
@@ -466,12 +504,6 @@ public:
         setHasCustomGetterSetterProperties(true);
         if (!is__proto__)
             setHasReadOnlyOrGetterSetterPropertiesExcludingProto(true);
-    }
-    
-    bool isEmpty() const
-    {
-        ASSERT(checkOffsetConsistency());
-        return !JSC::isValidOffset(m_offset);
     }
 
     void setCachedPropertyNameEnumerator(VM&, JSPropertyNameEnumerator*);
@@ -650,7 +682,7 @@ public:
     DEFINE_BITFIELD(bool, hasGetterSetterProperties, HasGetterSetterProperties, 1, 3);
     DEFINE_BITFIELD(bool, hasReadOnlyOrGetterSetterPropertiesExcludingProto, HasReadOnlyOrGetterSetterPropertiesExcludingProto, 1, 4);
     DEFINE_BITFIELD(bool, isQuickPropertyAccessAllowedForEnumeration, IsQuickPropertyAccessAllowedForEnumeration, 1, 5);
-    DEFINE_BITFIELD(unsigned, attributesInPrevious, AttributesInPrevious, 14, 6);
+    DEFINE_BITFIELD(unsigned, transitionPropertyAttributes, TransitionPropertyAttributes, 14, 6);
     DEFINE_BITFIELD(bool, didPreventExtensions, DidPreventExtensions, 1, 20);
     DEFINE_BITFIELD(bool, didTransition, DidTransition, 1, 21);
     DEFINE_BITFIELD(bool, staticPropertiesReified, StaticPropertiesReified, 1, 22);
@@ -732,10 +764,11 @@ private:
             m_previousOrRareData.clear();
     }
 
-    int transitionCount() const
+    int transitionCountEstimate() const
     {
-        // Since the number of transitions is always the same as m_offset, we keep the size of Structure down by not storing both.
-        return numberOfSlotsForLastOffset(m_offset, m_inlineCapacity);
+        // Since the number of transitions is often the same as the last offset (except if there are deletes)
+        // we keep the size of Structure down by not storing both.
+        return numberOfSlotsForMaxOffset(maxOffset(), m_inlineCapacity);
     }
 
     bool isValid(JSGlobalObject*, StructureChain* cachedPrototypeChain, JSObject* base) const;
@@ -777,7 +810,7 @@ private:
 
     WriteBarrier<JSCell> m_previousOrRareData;
 
-    RefPtr<UniquedStringImpl> m_nameInPrevious;
+    RefPtr<UniquedStringImpl> m_transitionPropertyName;
 
     const ClassInfo* m_classInfo;
 
@@ -791,8 +824,11 @@ private:
 
     COMPILE_ASSERT(firstOutOfLineOffset < 256, firstOutOfLineOffset_fits);
 
-    // m_offset does not account for anonymous slots
-    PropertyOffset m_offset;
+    static constexpr uint16_t shortInvalidOffset = std::numeric_limits<uint16_t>::max();
+    static constexpr uint16_t useRareDataFlag = std::numeric_limits<uint16_t>::max() - 1;
+
+    uint16_t m_transitionOffset;
+    uint16_t m_maxOffset;
 
     uint32_t m_propertyHash;
     TinyBloomFilter m_seenProperties;

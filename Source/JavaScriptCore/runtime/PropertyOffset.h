@@ -47,8 +47,8 @@ inline bool isOutOfLineOffset(PropertyOffset);
 inline size_t offsetInInlineStorage(PropertyOffset);
 inline size_t offsetInOutOfLineStorage(PropertyOffset);
 inline size_t offsetInRespectiveStorage(PropertyOffset);
-inline size_t numberOfOutOfLineSlotsForLastOffset(PropertyOffset);
-inline size_t numberOfSlotsForLastOffset(PropertyOffset, int inlineCapacity);
+inline size_t numberOfOutOfLineSlotsForMaxOffset(PropertyOffset);
+inline size_t numberOfSlotsForMaxOffset(PropertyOffset, int inlineCapacity);
 
 inline void checkOffset(PropertyOffset offset)
 {
@@ -117,7 +117,7 @@ inline size_t offsetInRespectiveStorage(PropertyOffset offset)
     return offsetInOutOfLineStorage(offset);
 }
 
-inline size_t numberOfOutOfLineSlotsForLastOffset(PropertyOffset offset)
+inline size_t numberOfOutOfLineSlotsForMaxOffset(PropertyOffset offset)
 {
     checkOffset(offset);
     if (offset < firstOutOfLineOffset)
@@ -125,12 +125,12 @@ inline size_t numberOfOutOfLineSlotsForLastOffset(PropertyOffset offset)
     return offset - firstOutOfLineOffset + 1;
 }
 
-inline size_t numberOfSlotsForLastOffset(PropertyOffset offset, int inlineCapacity)
+inline size_t numberOfSlotsForMaxOffset(PropertyOffset offset, int inlineCapacity)
 {
     checkOffset(offset, inlineCapacity);
     if (offset < inlineCapacity)
         return offset + 1;
-    return inlineCapacity + numberOfOutOfLineSlotsForLastOffset(offset);
+    return inlineCapacity + numberOfOutOfLineSlotsForMaxOffset(offset);
 }
 
 inline PropertyOffset offsetForPropertyNumber(int propertyNumber, int inlineCapacity)
