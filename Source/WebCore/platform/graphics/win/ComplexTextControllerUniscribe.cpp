@@ -171,10 +171,6 @@ void ComplexTextController::collectComplexTextRunsForCharacters(const UChar* cp,
                 offsetY = roundf(offsetY);
             }
 
-            // FIXME: We need to take the GOFFSETS for combining glyphs and store them in the glyph buffer
-            // as well, so that when the time comes to draw those glyphs, we can apply the appropriate
-            // translation.
-
             baseAdvances.uncheckedAppend({ advance, 0 });
             origins.uncheckedAppend({ offsetX, offsetY });
         }
