@@ -142,7 +142,7 @@ end
 macro callSlowPath(slowPath)
     prepareStateForCCall()
     move cfr, a0
-    prepareStateForCCall()
+    move PC, a1
     cCall2(slowPath)
     restoreStateAfterCCall()
 end
