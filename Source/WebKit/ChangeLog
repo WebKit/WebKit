@@ -1,3 +1,17 @@
+2020-01-16  Chris Dumez  <cdumez@apple.com>
+
+        IPC hardening for WebPageProxy::RegisterAttachmentIdentifier*
+        https://bugs.webkit.org/show_bug.cgi?id=206376
+        <rdar://problem/58622645>
+
+        Reviewed by David Kilzer.
+
+        IPC hardening for WebPageProxy::RegisterAttachmentIdentifier*, validate identifiers sent over
+        IPC to make sure they are valid keys in our HashMap.
+
+        * UIProcess/WebPageProxy.cpp:
+        * UIProcess/WebPageProxy.h:
+
 2020-01-16  Don Olmstead  <don.olmstead@sony.com>
 
         [PlayStation] Enable WebKit

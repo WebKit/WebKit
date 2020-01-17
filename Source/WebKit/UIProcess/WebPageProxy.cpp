@@ -9172,6 +9172,8 @@ void WebPageProxy::updateAttachmentAttributes(const API::Attachment& attachment,
 
 void WebPageProxy::registerAttachmentIdentifierFromData(const String& identifier, const String& contentType, const String& preferredFileName, const IPC::DataReference& data)
 {
+    MESSAGE_CHECK(m_process, IdentifierToAttachmentMap::isValidKey(identifier));
+
     if (attachmentForIdentifier(identifier))
         return;
 
@@ -9184,6 +9186,8 @@ void WebPageProxy::registerAttachmentIdentifierFromData(const String& identifier
 
 void WebPageProxy::registerAttachmentIdentifierFromFilePath(const String& identifier, const String& contentType, const String& filePath)
 {
+    MESSAGE_CHECK(m_process, IdentifierToAttachmentMap::isValidKey(identifier));
+
     if (attachmentForIdentifier(identifier))
         return;
 
@@ -9197,6 +9201,8 @@ void WebPageProxy::registerAttachmentIdentifierFromFilePath(const String& identi
 
 void WebPageProxy::registerAttachmentIdentifier(const String& identifier)
 {
+    MESSAGE_CHECK(m_process, IdentifierToAttachmentMap::isValidKey(identifier));
+
     if (!attachmentForIdentifier(identifier))
         m_attachmentIdentifierToAttachmentMap.set(identifier, ensureAttachment(identifier));
 }
@@ -9212,6 +9218,9 @@ void WebPageProxy::registerAttachmentsFromSerializedData(Vector<WebCore::Seriali
 
 void WebPageProxy::cloneAttachmentData(const String& fromIdentifier, const String& toIdentifier)
 {
+    MESSAGE_CHECK(m_process, IdentifierToAttachmentMap::isValidKey(fromIdentifier));
+    MESSAGE_CHECK(m_process, IdentifierToAttachmentMap::isValidKey(toIdentifier));
+
     auto newAttachment = ensureAttachment(toIdentifier);
     auto existingAttachment = attachmentForIdentifier(fromIdentifier);
     if (!existingAttachment) {

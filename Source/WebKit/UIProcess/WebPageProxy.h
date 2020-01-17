@@ -2631,7 +2631,8 @@ private:
     HashMap<uint64_t, Ref<WebURLSchemeHandler>> m_urlSchemeHandlersByIdentifier;
 
 #if ENABLE(ATTACHMENT_ELEMENT)
-    HashMap<String, Ref<API::Attachment>> m_attachmentIdentifierToAttachmentMap;
+    using IdentifierToAttachmentMap = HashMap<String, Ref<API::Attachment>>;
+    IdentifierToAttachmentMap m_attachmentIdentifierToAttachmentMap;
 #endif
 
     const std::unique_ptr<WebPageInspectorController> m_inspectorController;
