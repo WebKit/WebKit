@@ -170,6 +170,7 @@ set(WTF_PUBLIC_HEADERS
     ParallelVectorIterator.h
     ParkingLot.h
     Platform.h
+    PlatformCallingConventions.h
     PlatformCPU.h
     PlatformEnable.h
     PlatformHave.h

@@ -25,8 +25,9 @@
 
 #pragma once
 
-/* Include compiler specific macros */
-#include <wtf/Compiler.h>
+#ifndef WTF_PLATFORM_GUARD_AGAINST_INDIRECT_INCLUSION
+#error "Please #include <wtf/Platform.h> instead of this file directly."
+#endif
 
 /* CPU() - the target CPU architecture */
 #define CPU(WTF_FEATURE) (defined WTF_CPU_##WTF_FEATURE  && WTF_CPU_##WTF_FEATURE)

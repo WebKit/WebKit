@@ -27,8 +27,10 @@
 
 #pragma once
 
-/* Include compiler specific macros */
-#include <wtf/Compiler.h>
+#ifndef WTF_PLATFORM_GUARD_AGAINST_INDIRECT_INCLUSION
+#error "Please #include <wtf/Platform.h> instead of this file directly."
+#endif
+
 
 #if defined(__APPLE__)
 #include <Availability.h>
@@ -63,6 +65,16 @@
 /* OS(IOS) - iOS only, not including macCatalyst */
 #if OS(DARWIN) && (TARGET_OS_IOS && !(defined(TARGET_OS_MACCATALYST) && TARGET_OS_MACCATALYST))
 #define WTF_OS_IOS 1
+#endif
+
+/* OS(TVOS) - tvOS */
+#if OS(DARWIN) && TARGET_OS_TV
+#define WTF_OS_TVOS 1
+#endif
+
+/* OS(WATCHOS) - watchOS */
+#if OS(DARWIN) && TARGET_OS_WATCH
+#define WTF_OS_WATCHOS 1
 #endif
 
 /* FIXME: Rename this to drop the X, as that is no longer the name of the operating system. */

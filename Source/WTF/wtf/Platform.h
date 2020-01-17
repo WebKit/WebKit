@@ -30,8 +30,9 @@
 /* Include compiler specific macros */
 #include <wtf/Compiler.h>
 
-/* __PLATFORM_INDIRECT__ ensures that users #include <wtf/Platform.h> rather than one of the helper files files directly. */
-#define __PLATFORM_INDIRECT__
+/* This ensures that users #include <wtf/Platform.h> rather than one of the helper files files directly. */
+#define WTF_PLATFORM_GUARD_AGAINST_INDIRECT_INCLUSION
+
 
 /* ==== Platform adaptation macros: these describe properties of the target environment. ==== */
 
@@ -50,6 +51,7 @@
 /* HAVE() - specific system features (headers, functions or similar) that are present or not */
 #include <wtf/PlatformHave.h>
 
+
 /* ==== Policy decision macros: these define policy choices for a particular port. ==== */
 
 /* USE() - use a particular third-party library or optional OS service */
@@ -58,7 +60,14 @@
 /* ENABLE() - turn on a specific feature of WebKit */
 #include <wtf/PlatformEnable.h>
 
-#undef __PLATFORM_INDIRECT__
+
+/* ==== Helper macros ==== */
+
+/* Macros for specifing specific calling conventions. */
+#include <wtf/PlatformCallingConventions.h>
+
+
+/* ==== Platform additions: additions to Platform.h from outside the main repository ==== */
 
 #if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/AdditionalPlatform.h>)
 #include <WebKitAdditions/AdditionalPlatform.h>
@@ -69,6 +78,8 @@
 #endif
 
 
+#undef WTF_PLATFORM_GUARD_AGAINST_INDIRECT_INCLUSION
+
 
 /* FIXME: The following are currenly positioned at the bottom of this file as they either
    are currently dependent on macros they should not be and need to be refined or do not
@@ -78,7 +89,7 @@
 
 /* FIXME: Rename WTF_CPU_EFFECTIVE_ADDRESS_WIDTH to WTF_OS_EFFECTIVE_ADDRESS_WIDTH, as it is an OS feature, not a CPU feature. */
 #if CPU(ADDRESS64)
-#if OS(DARWIN) && CPU(ARM64)
+#if (OS(IOS) || OS(TVOS) || OS(WATCHOS)) && CPU(ARM64)
 #define WTF_CPU_EFFECTIVE_ADDRESS_WIDTH 36
 #else
 /* We strongly assume that effective address width is <= 48 in 64bit architectures (e.g. NaN boxing). */
@@ -206,47 +217,4 @@
 /* FIXME: This is used to "turn on a specific feature of WebKit", so should be converted to an ENABLE macro. */
 #if PLATFORM(COCOA) && ENABLE(ACCESSIBILITY)
 #define USE_ACCESSIBILITY_CONTEXT_MENUS 1
-#endif
-
-
-/* FIXME: These calling convention macros should move to their own file. They are at the bottom currently because they depend on FeatureDefines.h */
-
-#if CPU(X86) && COMPILER(MSVC)
-#define JSC_HOST_CALL __fastcall
-#elif CPU(X86) && COMPILER(GCC_COMPATIBLE)
-#define JSC_HOST_CALL __attribute__ ((fastcall))
-#else
-#define JSC_HOST_CALL
-#endif
-
-#if CPU(X86) && OS(WINDOWS)
-#define CALLING_CONVENTION_IS_STDCALL 1
-#ifndef CDECL
-#if COMPILER(MSVC)
-#define CDECL __cdecl
-#else
-#define CDECL __attribute__ ((__cdecl))
-#endif
-#endif
-#else
-#define CALLING_CONVENTION_IS_STDCALL 0
-#endif
-
-#if CPU(X86)
-#define WTF_COMPILER_SUPPORTS_FASTCALL_CALLING_CONVENTION 1
-#ifndef FASTCALL
-#if COMPILER(MSVC)
-#define FASTCALL __fastcall
-#else
-#define FASTCALL  __attribute__ ((fastcall))
-#endif
-#endif
-#else
-#define WTF_COMPILER_SUPPORTS_FASTCALL_CALLING_CONVENTION 0
-#endif
-
-#if ENABLE(JIT) && CALLING_CONVENTION_IS_STDCALL
-#define JIT_OPERATION CDECL
-#else
-#define JIT_OPERATION
 #endif

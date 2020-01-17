@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2020 Apple Inc. All rights reserved.
  * Copyright (C) 2007-2009 Torch Mobile, Inc.
  * Copyright (C) 2010, 2011 Research In Motion Limited. All rights reserved.
  *
@@ -31,58 +31,45 @@
 #error "Please #include <wtf/Platform.h> instead of this file directly."
 #endif
 
-
-/* PLATFORM() - handles OS, operating environment, graphics API, and
-   CPU. This macro will be phased out in favor of platform adaptation
-   macros, policy decision macros, and top-level port definitions. */
-#define PLATFORM(WTF_FEATURE) (defined WTF_PLATFORM_##WTF_FEATURE && WTF_PLATFORM_##WTF_FEATURE)
+/* Macros for specifing specific calling conventions. */
 
 
-/* FIXME: these are all mixes of OS, operating environment and policy choices. */
-/* PLATFORM(GTK) */
-/* PLATFORM(MAC) */
-/* PLATFORM(IOS) */
-/* PLATFORM(IOS_FAMILY) */
-/* PLATFORM(IOS_SIMULATOR) */
-/* PLATFORM(IOS_FAMILY_SIMULATOR) */
-/* PLATFORM(WIN) */
-#if defined(BUILDING_GTK__)
-#define WTF_PLATFORM_GTK 1
-#elif defined(BUILDING_WPE__)
-#define WTF_PLATFORM_WPE 1
-#elif defined(BUILDING_JSCONLY__)
-/* JSCOnly does not provide PLATFORM() macro */
-#elif OS(MAC_OS_X)
-#define WTF_PLATFORM_MAC 1
-#elif OS(IOS_FAMILY)
-#if OS(IOS)
-#define WTF_PLATFORM_IOS 1
-#endif
-#define WTF_PLATFORM_IOS_FAMILY 1
-#if TARGET_OS_SIMULATOR
-#if OS(IOS)
-#define WTF_PLATFORM_IOS_SIMULATOR 1
-#endif
-#define WTF_PLATFORM_IOS_FAMILY_SIMULATOR 1
-#endif
-#if defined(TARGET_OS_MACCATALYST) && TARGET_OS_MACCATALYST
-#define WTF_PLATFORM_MACCATALYST 1
-#endif
-#elif OS(WINDOWS)
-#define WTF_PLATFORM_WIN 1
+#if CPU(X86) && COMPILER(MSVC)
+#define JSC_HOST_CALL __fastcall
+#elif CPU(X86) && COMPILER(GCC_COMPATIBLE)
+#define JSC_HOST_CALL __attribute__ ((fastcall))
+#else
+#define JSC_HOST_CALL
 #endif
 
-/* PLATFORM(COCOA) */
-#if PLATFORM(MAC) || PLATFORM(IOS_FAMILY)
-#define WTF_PLATFORM_COCOA 1
+#if CPU(X86) && OS(WINDOWS)
+#define CALLING_CONVENTION_IS_STDCALL 1
+#ifndef CDECL
+#if COMPILER(MSVC)
+#define CDECL __cdecl
+#else
+#define CDECL __attribute__ ((__cdecl))
+#endif
+#endif
+#else
+#define CALLING_CONVENTION_IS_STDCALL 0
 #endif
 
-/* PLATFORM(APPLETV) */
-#if defined(TARGET_OS_TV) && TARGET_OS_TV
-#define WTF_PLATFORM_APPLETV 1
+#if CPU(X86)
+#define WTF_COMPILER_SUPPORTS_FASTCALL_CALLING_CONVENTION 1
+#ifndef FASTCALL
+#if COMPILER(MSVC)
+#define FASTCALL __fastcall
+#else
+#define FASTCALL  __attribute__ ((fastcall))
+#endif
+#endif
+#else
+#define WTF_COMPILER_SUPPORTS_FASTCALL_CALLING_CONVENTION 0
 #endif
 
-/* PLATFORM(WATCHOS) */
-#if defined(TARGET_OS_WATCH) && TARGET_OS_WATCH
-#define WTF_PLATFORM_WATCHOS 1
+#if ENABLE(JIT) && CALLING_CONVENTION_IS_STDCALL
+#define JIT_OPERATION CDECL
+#else
+#define JIT_OPERATION
 #endif

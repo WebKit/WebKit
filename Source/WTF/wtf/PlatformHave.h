@@ -27,6 +27,11 @@
 
 #pragma once
 
+#ifndef WTF_PLATFORM_GUARD_AGAINST_INDIRECT_INCLUSION
+#error "Please #include <wtf/Platform.h> instead of this file directly."
+#endif
+
+
 /* HAVE() - specific system features (headers, functions or similar) that are present or not */
 #define HAVE(WTF_FEATURE) (defined HAVE_##WTF_FEATURE && HAVE_##WTF_FEATURE)
 

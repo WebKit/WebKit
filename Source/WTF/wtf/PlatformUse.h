@@ -27,7 +27,7 @@
 
 #pragma once
 
-#ifndef __PLATFORM_INDIRECT__
+#ifndef WTF_PLATFORM_GUARD_AGAINST_INDIRECT_INCLUSION
 #error "Please #include <wtf/Platform.h> instead of this file directly."
 #endif
 
