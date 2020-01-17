@@ -1,5 +1,28 @@
 2020-01-17  Diego Pino Garcia  <dpino@igalia.com>
 
+        [GTK][WPE] Update baselines for several CSS tests
+        https://bugs.webkit.org/show_bug.cgi?id=206410
+
+        Unreviewed gardening.
+
+        * platform/gtk/TestExpectations:
+        * platform/gtk/imported/w3c/web-platform-tests/css/css-position/position-absolute-in-inline-002-expected.txt: Added.
+        * platform/gtk/imported/w3c/web-platform-tests/css/css-values/line-break-ch-unit-expected.txt: Added.
+        * platform/gtk/imported/w3c/web-platform-tests/css/css-values/minmax-angle-computed-expected.txt: Added.
+        * platform/gtk/imported/w3c/web-platform-tests/css/css-values/minmax-length-computed-expected.txt: Added.
+        * platform/gtk/imported/w3c/web-platform-tests/css/css-values/minmax-length-percent-computed-expected.txt: Added.
+        * platform/wpe/TestExpectations:
+        * platform/wpe/imported/w3c/web-platform-tests/css/css-position/position-absolute-in-inline-002-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/css/css-sizing/button-min-width-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/css/css-transitions/before-load-001-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/css/css-transitions/properties-value-auto-001-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/css/css-values/line-break-ch-unit-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/css/css-values/minmax-angle-computed-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/css/css-values/minmax-length-computed-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/css/css-values/minmax-length-percent-computed-expected.txt: Added.
+
+2020-01-17  Diego Pino Garcia  <dpino@igalia.com>
+
         [GTK] Update baselines for SVG tests
         https://bugs.webkit.org/show_bug.cgi?id=206406
 
