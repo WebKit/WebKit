@@ -32,50 +32,39 @@
 
 namespace JSC {
 
-inline Register& CallFrame::r(int index)
-{
-    CodeBlock* codeBlock = this->codeBlock();
-    if (codeBlock->isConstantRegisterIndex(index))
-        return *reinterpret_cast<Register*>(&codeBlock->constantRegister(index));
-    return this[index];
-}
-
 inline Register& CallFrame::r(VirtualRegister reg)
 {
-    return r(reg.offset());
-}
-
-inline Register& CallFrame::uncheckedR(int index)
-{
-    RELEASE_ASSERT(index < FirstConstantRegisterIndex);
-    return this[index];
+    if (reg.isConstant())
+        return *reinterpret_cast<Register*>(&this->codeBlock()->constantRegister(reg));
+    return this[reg.offset()];
 }
 
 inline Register& CallFrame::uncheckedR(VirtualRegister reg)
 {
-    return uncheckedR(reg.offset());
+    ASSERT(!reg.isConstant());
+    return this[reg.offset()];
 }
 
 inline JSValue CallFrame::guaranteedJSValueCallee() const
 {
     ASSERT(!callee().isWasm());
-    return this[CallFrameSlot::callee].jsValue();
+    return this[static_cast<int>(CallFrameSlot::callee)].jsValue();
 }
 
 inline JSObject* CallFrame::jsCallee() const
 {
     ASSERT(!callee().isWasm());
-    return this[CallFrameSlot::callee].object();
+    return this[static_cast<int>(CallFrameSlot::callee)].object();
 }
 
 inline CodeBlock* CallFrame::codeBlock() const
 {
-    return this[CallFrameSlot::codeBlock].Register::codeBlock();
+    return this[static_cast<int>(CallFrameSlot::codeBlock)].Register::codeBlock();
 }
 
 inline SUPPRESS_ASAN CodeBlock* CallFrame::unsafeCodeBlock() const
 {
-    return this[CallFrameSlot::codeBlock].Register::asanUnsafeCodeBlock();
+    return this[static_cast<int>(CallFrameSlot::codeBlock)].Register::asanUnsafeCodeBlock();
 }
 
 inline JSGlobalObject* CallFrame::lexicalGlobalObject(VM& vm) const
@@ -102,12 +91,12 @@ inline bool CallFrame::isWasmFrame() const
 
 inline void CallFrame::setCallee(JSObject* callee)
 {
-    static_cast<Register*>(this)[CallFrameSlot::callee] = callee;
+    static_cast<Register*>(this)[static_cast<int>(CallFrameSlot::callee)] = callee;
 }
 
 inline void CallFrame::setCodeBlock(CodeBlock* codeBlock)
 {
-    static_cast<Register*>(this)[CallFrameSlot::codeBlock] = codeBlock;
+    static_cast<Register*>(this)[static_cast<int>(CallFrameSlot::codeBlock)] = codeBlock;
 }
 
 inline void CallFrame::setScope(int scopeRegisterOffset, JSScope* scope)

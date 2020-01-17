@@ -526,6 +526,7 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     bytecode/ObjectPropertyCondition.h
     bytecode/Opcode.h
     bytecode/OpcodeSize.h
+    bytecode/Operands.h
     bytecode/PropertyCondition.h
     bytecode/PutByIdFlags.h
     bytecode/SpeculatedType.h

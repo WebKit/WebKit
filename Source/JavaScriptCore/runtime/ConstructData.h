@@ -60,6 +60,8 @@ struct ConstructData {
 
 // Convenience wrapper so you don't need to deal with CallData and CallType unless you are going to use them.
 JS_EXPORT_PRIVATE JSObject* construct(JSGlobalObject*, JSValue functionObject, const ArgList&, const char* errorMessage);
+JS_EXPORT_PRIVATE JSObject* construct(JSGlobalObject*, JSValue functionObject, JSValue newTarget, const ArgList&, const char* errorMessage);
+
 JS_EXPORT_PRIVATE JSObject* construct(JSGlobalObject*, JSValue constructor, ConstructType, const ConstructData&, const ArgList&, JSValue newTarget);
 
 ALWAYS_INLINE JSObject* construct(JSGlobalObject* globalObject, JSValue constructorObject, ConstructType constructType, const ConstructData& constructData, const ArgList& args)

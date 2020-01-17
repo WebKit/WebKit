@@ -40,14 +40,6 @@
 
 namespace JSC { namespace DFG {
 
-MacroAssemblerCodeRef<JITThunkPtrTag> osrExitThunkGenerator(VM& vm)
-{
-    CCallHelpers jit(nullptr);
-    jit.probe(OSRExit::executeOSRExit, &vm);
-    LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID);
-    return FINALIZE_CODE(patchBuffer, JITThunkPtrTag, "DFG OSR exit thunk");
-}
-
 MacroAssemblerCodeRef<JITThunkPtrTag> osrExitGenerationThunkGenerator(VM& vm)
 {
     CCallHelpers jit(nullptr);

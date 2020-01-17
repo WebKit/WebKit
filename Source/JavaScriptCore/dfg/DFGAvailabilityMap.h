@@ -66,9 +66,9 @@ struct AvailabilityMap {
     }
     
     template<typename HasFunctor, typename AddFunctor>
-    void closeStartingWithLocal(VirtualRegister reg, const HasFunctor& has, const AddFunctor& add)
+    void closeStartingWithLocal(Operand op, const HasFunctor& has, const AddFunctor& add)
     {
-        Availability availability = m_locals.operand(reg);
+        Availability availability = m_locals.operand(op);
         if (!availability.hasNode())
             return;
         

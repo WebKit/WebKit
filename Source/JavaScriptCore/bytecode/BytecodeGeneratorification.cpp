@@ -224,7 +224,7 @@ void BytecodeGeneratorification::run()
     {
         auto nextToEnterPoint = enterPoint().next();
         unsigned switchTableIndex = m_codeBlock->numberOfSwitchJumpTables();
-        VirtualRegister state = virtualRegisterForArgument(static_cast<int32_t>(JSGenerator::GeneratorArgument::State));
+        VirtualRegister state = virtualRegisterForArgumentIncludingThis(static_cast<int32_t>(JSGenerator::GeneratorArgument::State));
         auto& jumpTable = m_codeBlock->addSwitchJumpTable();
         jumpTable.min = 0;
         jumpTable.branchOffsets.resize(m_yields.size() + 1);
@@ -239,7 +239,7 @@ void BytecodeGeneratorification::run()
     }
 
     for (const YieldData& data : m_yields) {
-        VirtualRegister scope = virtualRegisterForArgument(static_cast<int32_t>(JSGenerator::GeneratorArgument::Frame));
+        VirtualRegister scope = virtualRegisterForArgumentIncludingThis(static_cast<int32_t>(JSGenerator::GeneratorArgument::Frame));
 
         auto instruction = m_instructions.at(data.point);
         // Emit save sequence.

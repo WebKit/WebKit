@@ -71,7 +71,7 @@ void* prepareOSREntry(
     dataLogLnIf(Options::verboseOSR(), "    Values at entry: ", values);
     
     for (int argument = values.numberOfArguments(); argument--;) {
-        JSValue valueOnStack = callFrame->r(virtualRegisterForArgument(argument).offset()).asanUnsafeJSValue();
+        JSValue valueOnStack = callFrame->r(virtualRegisterForArgumentIncludingThis(argument)).asanUnsafeJSValue();
         Optional<JSValue> reconstructedValue = values.argument(argument);
         if ((reconstructedValue && valueOnStack == reconstructedValue.value()) || !argument)
             continue;

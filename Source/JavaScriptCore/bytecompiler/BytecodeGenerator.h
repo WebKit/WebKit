@@ -1019,6 +1019,7 @@ namespace JSC {
         bool shouldEmitControlFlowProfilerHooks() const { return m_codeGenerationMode.contains(CodeGenerationMode::ControlFlowProfiler); }
         
         bool isStrictMode() const { return m_codeBlock->isStrictMode(); }
+        void setUsesCheckpoints() { m_codeBlock->setHasCheckpoints(); }
 
         SourceParseMode parseMode() const { return m_codeBlock->parseMode(); }
         

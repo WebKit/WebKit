@@ -54,8 +54,9 @@ public:
         m_graph.clearReplacements();
         canonicalizeLocalsInBlocks();
         specialCaseArguments();
-        propagatePhis<LocalOperand>();
-        propagatePhis<ArgumentOperand>();
+        propagatePhis<OperandKind::Local>();
+        propagatePhis<OperandKind::Argument>();
+        propagatePhis<OperandKind::Tmp>();
         computeIsFlushed();
         
         m_graph.m_form = ThreadedCPS;
@@ -211,10 +212,20 @@ private:
     void canonicalizeGetLocal(Node* node)
     {
         VariableAccessData* variable = node->variableAccessData();
-        if (variable->local().isArgument())
-            canonicalizeGetLocalFor<ArgumentOperand>(node, variable, variable->local().toArgument());
-        else
-            canonicalizeGetLocalFor<LocalOperand>(node, variable, variable->local().toLocal());
+        switch (variable->operand().kind()) {
+        case OperandKind::Argument: {
+            canonicalizeGetLocalFor<OperandKind::Argument>(node, variable, variable->operand().toArgument());
+            break;
+        }
+        case OperandKind::Local: {
+            canonicalizeGetLocalFor<OperandKind::Local>(node, variable, variable->operand().toLocal());
+            break;
+        }
+        case OperandKind::Tmp: {
+            canonicalizeGetLocalFor<OperandKind::Tmp>(node, variable, variable->operand().value());
+            break;
+        }
+        }
     }
     
     template<NodeType nodeType, OperandKind operandKind>
@@ -229,6 +240,7 @@ private:
             case Flush:
             case PhantomLocal:
             case GetLocal:
+                ASSERT(otherNode->child1().node());
                 otherNode = otherNode->child1().node();
                 break;
             default:
@@ -270,15 +282,25 @@ private:
     void canonicalizeFlushOrPhantomLocal(Node* node)
     {
         VariableAccessData* variable = node->variableAccessData();
-        if (variable->local().isArgument())
-            canonicalizeFlushOrPhantomLocalFor<nodeType, ArgumentOperand>(node, variable, variable->local().toArgument());
-        else
-            canonicalizeFlushOrPhantomLocalFor<nodeType, LocalOperand>(node, variable, variable->local().toLocal());
+        switch (variable->operand().kind()) {
+        case OperandKind::Argument: {
+            canonicalizeFlushOrPhantomLocalFor<nodeType, OperandKind::Argument>(node, variable, variable->operand().toArgument());
+            break;
+        }
+        case OperandKind::Local: {
+            canonicalizeFlushOrPhantomLocalFor<nodeType, OperandKind::Local>(node, variable, variable->operand().toLocal());
+            break;
+        }
+        case OperandKind::Tmp: {
+            canonicalizeFlushOrPhantomLocalFor<nodeType, OperandKind::Tmp>(node, variable, variable->operand().value());
+            break;
+        }
+        }
     }
     
     void canonicalizeSet(Node* node)
     {
-        m_block->variablesAtTail.setOperand(node->local(), node);
+        m_block->variablesAtTail.setOperand(node->operand(), node);
     }
     
     void canonicalizeLocalsInBlock()
@@ -287,8 +309,9 @@ private:
             return;
         ASSERT(m_block->isReachable);
         
-        clearVariables<ArgumentOperand>();
-        clearVariables<LocalOperand>();
+        clearVariables<OperandKind::Argument>();
+        clearVariables<OperandKind::Local>();
+        clearVariables<OperandKind::Tmp>();
         
         // Assumes that all phi references have been removed. Assumes that things that
         // should be live have a non-zero ref count, but doesn't assume that the ref
@@ -388,7 +411,7 @@ private:
     template<OperandKind operandKind>
     void propagatePhis()
     {
-        Vector<PhiStackEntry, 128>& phiStack = operandKind == ArgumentOperand ? m_argumentPhiStack : m_localPhiStack;
+        Vector<PhiStackEntry, 128>& phiStack = phiStackFor<operandKind>();
         
         // Ensure that attempts to use this fail instantly.
         m_block = 0;
@@ -466,9 +489,12 @@ private:
     template<OperandKind operandKind>
     Vector<PhiStackEntry, 128>& phiStackFor()
     {
-        if (operandKind == ArgumentOperand)
-            return m_argumentPhiStack;
-        return m_localPhiStack;
+        switch (operandKind) {
+        case OperandKind::Argument: return m_argumentPhiStack;
+        case OperandKind::Local: return m_localPhiStack;
+        case OperandKind::Tmp: return m_tmpPhiStack;
+        }
+        RELEASE_ASSERT_NOT_REACHED();
     }
     
     void computeIsFlushed()
@@ -521,6 +547,7 @@ private:
     BasicBlock* m_block;
     Vector<PhiStackEntry, 128> m_argumentPhiStack;
     Vector<PhiStackEntry, 128> m_localPhiStack;
+    Vector<PhiStackEntry, 128> m_tmpPhiStack;
     Vector<Node*, 128> m_flushedLocalOpWorklist;
 };
 

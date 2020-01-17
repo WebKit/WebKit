@@ -239,13 +239,6 @@ public:
         ASSERT_VALID_CODE_POINTER(m_value);
     }
 
-    template<PtrTag tag>
-    explicit ReturnAddressPtr(FunctionPtr<tag> function)
-        : m_value(untagCodePtr<tag>(function.executableAddress()))
-    {
-        ASSERT_VALID_CODE_POINTER(m_value);
-    }
-
     const void* value() const
     {
         return m_value;

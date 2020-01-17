@@ -147,7 +147,7 @@ public:
 
     static void visitChildren(JSCell*, SlotVisitor&);
 
-    void copyToArguments(JSGlobalObject*, CallFrame*, VirtualRegister firstElementDest, unsigned offset, unsigned length);
+    void copyToArguments(JSGlobalObject*, JSValue* firstElementDest, unsigned offset, unsigned length);
 
     template<typename, SubspaceAccess>
     static CompleteSubspace* subspaceFor(VM& vm)

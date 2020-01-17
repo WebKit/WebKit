@@ -1794,6 +1794,7 @@ public:
     unsigned needsClassFieldInitializer() const { return m_needsClassFieldInitializer; }
     unsigned evalContextType() const { return m_evalContextType; }
     unsigned hasTailCalls() const { return m_hasTailCalls; }
+    unsigned hasCheckpoints() const { return m_hasCheckpoints; }
     unsigned lineCount() const { return m_lineCount; }
     unsigned endColumn() const { return m_endColumn; }
 
@@ -1827,6 +1828,7 @@ private:
     unsigned m_evalContextType : 2;
     unsigned m_hasTailCalls : 1;
     unsigned m_codeType : 2;
+    unsigned m_hasCheckpoints : 1;
 
     CodeFeatures m_features;
     SourceParseMode m_parseMode;
@@ -2025,6 +2027,7 @@ ALWAYS_INLINE UnlinkedCodeBlock::UnlinkedCodeBlock(Decoder& decoder, Structure* 
 
     , m_didOptimize(static_cast<unsigned>(MixedTriState))
     , m_age(0)
+    , m_hasCheckpoints(cachedCodeBlock.hasCheckpoints())
 
     , m_features(cachedCodeBlock.features())
     , m_parseMode(cachedCodeBlock.parseMode())
@@ -2215,6 +2218,7 @@ ALWAYS_INLINE void CachedCodeBlock<CodeBlockType>::encode(Encoder& encoder, cons
     m_parseMode = codeBlock.m_parseMode;
     m_codeGenerationMode = codeBlock.m_codeGenerationMode;
     m_codeType = codeBlock.m_codeType;
+    m_hasCheckpoints = codeBlock.m_hasCheckpoints;
 
     m_metadata.encode(encoder, codeBlock.m_metadata.get());
     m_rareData.encode(encoder, codeBlock.m_rareData.get());

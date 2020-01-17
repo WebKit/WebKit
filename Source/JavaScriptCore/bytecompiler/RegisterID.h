@@ -69,12 +69,12 @@ namespace JSC {
         {
         }
 
-        void setIndex(int index)
+        void setIndex(VirtualRegister index)
         {
 #if ASSERT_ENABLED
             m_didSetIndex = true;
 #endif
-            m_virtualRegister = VirtualRegister(index);
+            m_virtualRegister = index;
         }
 
         void setTemporary()

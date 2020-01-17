@@ -167,12 +167,10 @@ public:
         return fastForward(m_variables[index]);
     }
 
-    AbstractValue& operand(int operand)
+    AbstractValue& operand(Operand operand)
     {
         return variableAt(m_variables.operandIndex(operand));
     }
-    
-    AbstractValue& operand(VirtualRegister operand) { return this->operand(operand.offset()); }
     
     AbstractValue& local(size_t index)
     {

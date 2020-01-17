@@ -48,12 +48,12 @@ class VariableAccessData : public UnionFind<VariableAccessData> {
     WTF_MAKE_NONCOPYABLE(VariableAccessData);
 public:
     VariableAccessData();
-    VariableAccessData(VirtualRegister local);
+    VariableAccessData(Operand);
     
-    VirtualRegister local()
+    Operand operand()
     {
-        ASSERT(m_local == find()->m_local);
-        return m_local;
+        ASSERT(m_operand == find()->m_operand);
+        return m_operand;
     }
     
     VirtualRegister& machineLocal()
@@ -208,10 +208,10 @@ private:
     // putting them here simplifies the code, and we don't expect DFG space
     // usage for variable access nodes do be significant.
 
-    VirtualRegister m_local;
-    VirtualRegister m_machineLocal;
     SpeculatedType m_prediction;
     SpeculatedType m_argumentAwarePrediction;
+    Operand m_operand;
+    VirtualRegister m_machineLocal;
     NodeFlags m_flags;
 
     bool m_shouldNeverUnbox;

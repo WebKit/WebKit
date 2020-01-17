@@ -31,11 +31,11 @@
 
 namespace JSC { namespace DFG {
 
-bool argumentsInvolveStackSlot(InlineCallFrame*, VirtualRegister);
-bool argumentsInvolveStackSlot(Node* candidate, VirtualRegister);
+bool argumentsInvolveStackSlot(InlineCallFrame*, Operand);
+bool argumentsInvolveStackSlot(Node* candidate, Operand);
 
 Node* emitCodeToGetArgumentsArrayLength(
-    InsertionSet&, Node* arguments, unsigned nodeIndex, NodeOrigin);
+    InsertionSet&, Node* arguments, unsigned nodeIndex, NodeOrigin, bool addThis = false);
 
 } } // namespace JSC::DFG
 

@@ -512,7 +512,7 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionNode* functionNode, Unlinke
                     entry.disableWatching(m_vm);
                     functionSymbolTable->set(NoLockingNecessary, name, entry);
                 }
-                OpPutToScope::emit(this, m_lexicalEnvironmentRegister, UINT_MAX, virtualRegisterForArgument(1 + i), GetPutInfo(ThrowIfNotFound, LocalClosureVar, InitializationMode::NotInitialization), SymbolTableOrScopeDepth::symbolTable(VirtualRegister { symbolTableConstantIndex }), offset.offset());
+                OpPutToScope::emit(this, m_lexicalEnvironmentRegister, UINT_MAX, virtualRegisterForArgumentIncludingThis(1 + i), GetPutInfo(ThrowIfNotFound, LocalClosureVar, InitializationMode::NotInitialization), SymbolTableOrScopeDepth::symbolTable(VirtualRegister { symbolTableConstantIndex }), offset.offset());
             }
             
             // This creates a scoped arguments object and copies the overflow arguments into the
@@ -541,7 +541,7 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionNode* functionNode, Unlinke
             if (!captures(name)) {
                 // This is the easy case - just tell the symbol table about the argument. It will
                 // be accessed directly.
-                functionSymbolTable->set(NoLockingNecessary, name, SymbolTableEntry(VarOffset(virtualRegisterForArgument(1 + i))));
+                functionSymbolTable->set(NoLockingNecessary, name, SymbolTableEntry(VarOffset(virtualRegisterForArgumentIncludingThis(1 + i))));
                 continue;
             }
             
@@ -550,7 +550,7 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionNode* functionNode, Unlinke
                 static_cast<const BindingNode*>(parameters.at(i).first)->boundProperty();
             functionSymbolTable->set(NoLockingNecessary, name, SymbolTableEntry(VarOffset(offset)));
             
-            OpPutToScope::emit(this, m_lexicalEnvironmentRegister, addConstant(ident), virtualRegisterForArgument(1 + i), GetPutInfo(ThrowIfNotFound, LocalClosureVar, InitializationMode::NotInitialization), SymbolTableOrScopeDepth::symbolTable(VirtualRegister { symbolTableConstantIndex }), offset.offset());
+            OpPutToScope::emit(this, m_lexicalEnvironmentRegister, addConstant(ident), virtualRegisterForArgumentIncludingThis(1 + i), GetPutInfo(ThrowIfNotFound, LocalClosureVar, InitializationMode::NotInitialization), SymbolTableOrScopeDepth::symbolTable(VirtualRegister { symbolTableConstantIndex }), offset.offset());
         }
     }
     
@@ -1186,10 +1186,10 @@ void BytecodeGenerator::initializeArrowFunctionContextScopeIfNeeded(SymbolTable*
 
 RegisterID* BytecodeGenerator::initializeNextParameter()
 {
-    VirtualRegister reg = virtualRegisterForArgument(m_codeBlock->numParameters());
+    VirtualRegister reg = virtualRegisterForArgumentIncludingThis(m_codeBlock->numParameters());
     m_parameters.grow(m_parameters.size() + 1);
     auto& parameter = registerFor(reg);
-    parameter.setIndex(reg.offset());
+    parameter.setIndex(reg);
     m_codeBlock->addParameter();
     return &parameter;
 }
@@ -1198,7 +1198,7 @@ void BytecodeGenerator::initializeParameters(FunctionParameters& parameters)
 {
     // Make sure the code block knows about all of our parameters, and make sure that parameters
     // needing destructuring are noted.
-    m_thisRegister.setIndex(initializeNextParameter()->index()); // this
+    m_thisRegister.setIndex(VirtualRegister(initializeNextParameter()->index())); // this
 
     bool nonSimpleArguments = false;
     for (unsigned i = 0; i < parameters.size(); ++i) {
@@ -1639,11 +1639,11 @@ bool BytecodeGenerator::emitEqualityOpImpl(RegisterID* dst, RegisterID* src1, Re
 
     if (m_lastInstruction->is<OpTypeof>()) {
         auto op = m_lastInstruction->as<OpTypeof>();
-        if (src1->index() == op.m_dst.offset()
+        if (src1->virtualRegister() == op.m_dst
             && src1->isTemporary()
-            && m_codeBlock->isConstantRegisterIndex(src2->index())
-            && m_codeBlock->constantRegister(src2->index()).get().isString()) {
-            const String& value = asString(m_codeBlock->constantRegister(src2->index()).get())->tryGetValue();
+            && src2->virtualRegister().isConstant()
+            && m_codeBlock->constantRegister(src2->virtualRegister()).get().isString()) {
+            const String& value = asString(m_codeBlock->constantRegister(src2->virtualRegister()).get())->tryGetValue();
             if (value == "undefined") {
                 rewind();
                 OpIsUndefined::emit(this, dst, op.m_value);
@@ -3290,6 +3290,8 @@ RegisterID* BytecodeGenerator::emitCallVarargs(RegisterID* dst, RegisterID* func
     // Emit call.
     ASSERT(dst != ignoredResult());
     VarargsOp::emit(this, dst, func, thisRegister, arguments ? arguments : VirtualRegister(0), firstFreeRegister, firstVarArgOffset);
+    if (VarargsOp::opcodeID != op_tail_call_forward_arguments)
+        ASSERT(m_codeBlock->hasCheckpoints());
     return dst;
 }
 

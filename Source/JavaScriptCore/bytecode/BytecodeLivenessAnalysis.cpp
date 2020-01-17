@@ -201,4 +201,39 @@ void BytecodeLivenessAnalysis::dumpResults(CodeBlock* codeBlock)
     }
 }
 
+template<typename EnumType1, typename EnumType2>
+constexpr bool enumValuesEqualAsIntegral(EnumType1 v1, EnumType2 v2)
+{
+    using IntType1 = typename std::underlying_type<EnumType1>::type;
+    using IntType2 = typename std::underlying_type<EnumType2>::type;
+    if constexpr (sizeof(IntType1) > sizeof(IntType2))
+        return static_cast<IntType1>(v1) == static_cast<IntType1>(v2);
+    else
+        return static_cast<IntType2>(v1) == static_cast<IntType2>(v2);
+}
+
+Bitmap<maxNumCheckpointTmps> tmpLivenessForCheckpoint(const CodeBlock& codeBlock, BytecodeIndex bytecodeIndex)
+{
+    Bitmap<maxNumCheckpointTmps> result;
+    uint8_t checkpoint = bytecodeIndex.checkpoint();
+
+    if (!checkpoint)
+        return result;
+
+    switch (codeBlock.instructions().at(bytecodeIndex)->opcodeID()) {
+    case op_call_varargs:
+    case op_tail_call_varargs:
+    case op_construct_varargs: {
+        static_assert(enumValuesEqualAsIntegral(OpCallVarargs::makeCall, OpTailCallVarargs::makeCall) && enumValuesEqualAsIntegral(OpCallVarargs::argCountIncludingThis, OpTailCallVarargs::argCountIncludingThis));
+        static_assert(enumValuesEqualAsIntegral(OpCallVarargs::makeCall, OpConstructVarargs::makeCall) && enumValuesEqualAsIntegral(OpCallVarargs::argCountIncludingThis, OpConstructVarargs::argCountIncludingThis));
+        if (checkpoint == OpCallVarargs::makeCall)
+            result.set(OpCallVarargs::argCountIncludingThis);
+        return result;
+    }
+    default:
+        break;
+    }
+    RELEASE_ASSERT_NOT_REACHED();
+}
+
 } // namespace JSC

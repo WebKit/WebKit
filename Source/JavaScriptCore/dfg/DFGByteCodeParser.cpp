@@ -113,6 +113,7 @@ public:
         , m_constantOne(graph.freeze(jsNumber(1)))
         , m_numArguments(m_codeBlock->numParameters())
         , m_numLocals(m_codeBlock->numCalleeLocals())
+        , m_numTmps(m_codeBlock->numTmps())
         , m_parameterSlots(0)
         , m_numPassedVarArgs(0)
         , m_inlineStackTop(0)
@@ -140,6 +141,17 @@ private:
         for (size_t i = 0; i < m_graph.numBlocks(); ++i)
             m_graph.block(i)->ensureLocals(newNumLocals);
     }
+
+    void ensureTmps(unsigned newNumTmps)
+    {
+        VERBOSE_LOG("   ensureTmps: trying to raise m_numTmps from ", m_numTmps, " to ", newNumTmps, "\n");
+        if (newNumTmps <= m_numTmps)
+            return;
+        m_numTmps = newNumTmps;
+        for (size_t i = 0; i < m_graph.numBlocks(); ++i)
+            m_graph.block(i)->ensureTmps(newNumTmps);
+    }
+
 
     // Helper for min and max.
     template<typename ChecksFunctor>
@@ -272,7 +284,17 @@ private:
     void linkBlock(BasicBlock*, Vector<BasicBlock*>& possibleTargets);
     void linkBlocks(Vector<BasicBlock*>& unlinkedBlocks, Vector<BasicBlock*>& possibleTargets);
     
-    VariableAccessData* newVariableAccessData(VirtualRegister operand)
+    void progressToNextCheckpoint()
+    {
+        m_currentIndex = BytecodeIndex(m_currentIndex.offset(), m_currentIndex.checkpoint() + 1);
+        // At this point, it's again OK to OSR exit.
+        m_exitOK = true;
+        addToGraph(ExitOK);
+
+        processSetLocalQueue();
+    }
+
+    VariableAccessData* newVariableAccessData(Operand operand)
     {
         ASSERT(!operand.isConstant());
         
@@ -281,16 +303,14 @@ private:
     }
     
     // Get/Set the operands/result of a bytecode instruction.
-    Node* getDirect(VirtualRegister operand)
+    Node* getDirect(Operand operand)
     {
         ASSERT(!operand.isConstant());
 
-        // Is this an argument?
         if (operand.isArgument())
-            return getArgument(operand);
+            return getArgument(operand.virtualRegister());
 
-        // Must be a local.
-        return getLocal(operand);
+        return getLocalOrTmp(operand);
     }
 
     Node* get(VirtualRegister operand)
@@ -300,8 +320,8 @@ private:
             unsigned oldSize = m_constants.size();
             if (constantIndex >= oldSize || !m_constants[constantIndex]) {
                 const CodeBlock& codeBlock = *m_inlineStackTop->m_codeBlock;
-                JSValue value = codeBlock.getConstant(operand.offset());
-                SourceCodeRepresentation sourceCodeRepresentation = codeBlock.constantSourceCodeRepresentation(operand.offset());
+                JSValue value = codeBlock.getConstant(operand);
+                SourceCodeRepresentation sourceCodeRepresentation = codeBlock.constantSourceCodeRepresentation(operand);
                 if (constantIndex >= oldSize) {
                     m_constants.grow(constantIndex + 1);
                     for (unsigned i = oldSize; i < m_constants.size(); ++i)
@@ -360,9 +380,10 @@ private:
         // initializing locals at the top of a function.
         ImmediateNakedSet
     };
-    Node* setDirect(VirtualRegister operand, Node* value, SetMode setMode = NormalSet)
+
+    Node* setDirect(Operand operand, Node* value, SetMode setMode = NormalSet)
     {
-        addToGraph(MovHint, OpInfo(operand.offset()), value);
+        addToGraph(MovHint, OpInfo(operand), value);
 
         // We can't exit anymore because our OSR exit state has changed.
         m_exitOK = false;
@@ -376,7 +397,7 @@ private:
         
         return delayed.execute(this);
     }
-    
+
     void processSetLocalQueue()
     {
         for (unsigned i = 0; i < m_setLocalQueue.size(); ++i)
@@ -394,18 +415,17 @@ private:
         ASSERT(node->op() == GetLocal);
         ASSERT(node->origin.semantic.bytecodeIndex() == m_currentIndex);
         ConcurrentJSLocker locker(m_inlineStackTop->m_profiledBlock->m_lock);
-        LazyOperandValueProfileKey key(m_currentIndex, node->local());
+        LazyOperandValueProfileKey key(m_currentIndex, node->operand());
         SpeculatedType prediction = m_inlineStackTop->m_lazyOperands.prediction(locker, key);
         node->variableAccessData()->predict(prediction);
         return node;
     }
 
     // Used in implementing get/set, above, where the operand is a local variable.
-    Node* getLocal(VirtualRegister operand)
+    Node* getLocalOrTmp(Operand operand)
     {
-        unsigned local = operand.toLocal();
-
-        Node* node = m_currentBlock->variablesAtTail.local(local);
+        ASSERT(operand.isTmp() || operand.isLocal());
+        Node*& node = m_currentBlock->variablesAtTail.operand(operand);
         
         // This has two goals: 1) link together variable access datas, and 2)
         // try to avoid creating redundant GetLocals. (1) is required for
@@ -430,20 +450,26 @@ private:
             variable = newVariableAccessData(operand);
         
         node = injectLazyOperandSpeculation(addToGraph(GetLocal, OpInfo(variable)));
-        m_currentBlock->variablesAtTail.local(local) = node;
         return node;
     }
-    Node* setLocal(const CodeOrigin& semanticOrigin, VirtualRegister operand, Node* value, SetMode setMode = NormalSet)
+    Node* setLocalOrTmp(const CodeOrigin& semanticOrigin, Operand operand, Node* value, SetMode setMode = NormalSet)
     {
+        ASSERT(operand.isTmp() || operand.isLocal());
         SetForScope<CodeOrigin> originChange(m_currentSemanticOrigin, semanticOrigin);
 
-        unsigned local = operand.toLocal();
-        
-        if (setMode != ImmediateNakedSet) {
-            ArgumentPosition* argumentPosition = findArgumentPositionForLocal(operand);
+        if (operand.isTmp() && static_cast<unsigned>(operand.value()) >= m_numTmps) {
+            if (inlineCallFrame())
+                dataLogLn(*inlineCallFrame());
+            dataLogLn("Bad operand: ", operand, " but current number of tmps is: ", m_numTmps, " code block has: ", m_profiledBlock->numTmps(), " tmps.");
+            CRASH();
+        }
+
+        if (setMode != ImmediateNakedSet && !operand.isTmp()) {
+            VirtualRegister reg = operand.virtualRegister();
+            ArgumentPosition* argumentPosition = findArgumentPositionForLocal(reg);
             if (argumentPosition)
                 flushDirect(operand, argumentPosition);
-            else if (m_graph.needsScopeRegister() && operand == m_codeBlock->scopeRegister())
+            else if (m_graph.needsScopeRegister() && reg == m_codeBlock->scopeRegister())
                 flush(operand);
         }
 
@@ -453,7 +479,7 @@ private:
         variableAccessData->mergeCheckArrayHoistingFailed(
             m_inlineStackTop->m_exitProfile.hasExitSite(semanticOrigin.bytecodeIndex(), BadIndexingType));
         Node* node = addToGraph(SetLocal, OpInfo(variableAccessData), value);
-        m_currentBlock->variablesAtTail.local(local) = node;
+        m_currentBlock->variablesAtTail.operand(operand) = node;
         return node;
     }
 
@@ -485,20 +511,21 @@ private:
         m_currentBlock->variablesAtTail.argument(argument) = node;
         return node;
     }
-    Node* setArgument(const CodeOrigin& semanticOrigin, VirtualRegister operand, Node* value, SetMode setMode = NormalSet)
+    Node* setArgument(const CodeOrigin& semanticOrigin, Operand operand, Node* value, SetMode setMode = NormalSet)
     {
         SetForScope<CodeOrigin> originChange(m_currentSemanticOrigin, semanticOrigin);
 
-        unsigned argument = operand.toArgument();
+        VirtualRegister reg = operand.virtualRegister();
+        unsigned argument = reg.toArgument();
         ASSERT(argument < m_numArguments);
         
-        VariableAccessData* variableAccessData = newVariableAccessData(operand);
+        VariableAccessData* variableAccessData = newVariableAccessData(reg);
 
         // Always flush arguments, except for 'this'. If 'this' is created by us,
         // then make sure that it's never unboxed.
         if (argument || m_graph.needsFlushedThis()) {
             if (setMode != ImmediateNakedSet)
-                flushDirect(operand);
+                flushDirect(reg);
         }
         
         if (!argument && m_codeBlock->specializationKind() == CodeForConstruct)
@@ -534,14 +561,16 @@ private:
             int argument = VirtualRegister(operand.offset() - inlineCallFrame->stackOffset).toArgument();
             return stack->m_argumentPositions[argument];
         }
-        return 0;
+        return nullptr;
     }
     
-    ArgumentPosition* findArgumentPosition(VirtualRegister operand)
+    ArgumentPosition* findArgumentPosition(Operand operand)
     {
+        if (operand.isTmp())
+            return nullptr;
         if (operand.isArgument())
             return findArgumentPositionForArgument(operand.toArgument());
-        return findArgumentPositionForLocal(operand);
+        return findArgumentPositionForLocal(operand.virtualRegister());
     }
 
     template<typename AddFlushDirectFunc>
@@ -552,14 +581,14 @@ private:
             ASSERT(!m_graph.hasDebuggerEnabled());
             numArguments = inlineCallFrame->argumentsWithFixup.size();
             if (inlineCallFrame->isClosureCall)
-                addFlushDirect(inlineCallFrame, remapOperand(inlineCallFrame, VirtualRegister(CallFrameSlot::callee)));
+                addFlushDirect(inlineCallFrame, remapOperand(inlineCallFrame, CallFrameSlot::callee));
             if (inlineCallFrame->isVarargs())
-                addFlushDirect(inlineCallFrame, remapOperand(inlineCallFrame, VirtualRegister(CallFrameSlot::argumentCountIncludingThis)));
+                addFlushDirect(inlineCallFrame, remapOperand(inlineCallFrame, CallFrameSlot::argumentCountIncludingThis));
         } else
             numArguments = m_graph.baselineCodeBlockFor(inlineCallFrame)->numParameters();
 
         for (unsigned argument = numArguments; argument--;)
-            addFlushDirect(inlineCallFrame, remapOperand(inlineCallFrame, virtualRegisterForArgument(argument)));
+            addFlushDirect(inlineCallFrame, remapOperand(inlineCallFrame, virtualRegisterForArgumentIncludingThis(argument)));
 
         if (m_graph.needsScopeRegister())
             addFlushDirect(nullptr, m_graph.m_codeBlock->scopeRegister());
@@ -577,6 +606,7 @@ private:
 
                 CodeBlock* codeBlock = m_graph.baselineCodeBlockFor(inlineCallFrame);
                 FullBytecodeLiveness& fullLiveness = m_graph.livenessFor(codeBlock);
+                // Note: We don't need to handle tmps here because tmps are not required to be flushed to the stack.
                 const auto& livenessAtBytecode = fullLiveness.getLiveness(bytecodeIndex, m_graph.appropriateLivenessCalculationPoint(origin, isCallerOrigin));
                 for (unsigned local = codeBlock->numCalleeLocals(); local--;) {
                     if (livenessAtBytecode[local])
@@ -586,27 +616,27 @@ private:
             });
     }
 
-    void flush(VirtualRegister operand)
+    void flush(Operand operand)
     {
         flushDirect(m_inlineStackTop->remapOperand(operand));
     }
     
-    void flushDirect(VirtualRegister operand)
+    void flushDirect(Operand operand)
     {
         flushDirect(operand, findArgumentPosition(operand));
     }
 
-    void flushDirect(VirtualRegister operand, ArgumentPosition* argumentPosition)
+    void flushDirect(Operand operand, ArgumentPosition* argumentPosition)
     {
         addFlushOrPhantomLocal<Flush>(operand, argumentPosition);
     }
 
     template<NodeType nodeType>
-    void addFlushOrPhantomLocal(VirtualRegister operand, ArgumentPosition* argumentPosition)
+    void addFlushOrPhantomLocal(Operand operand, ArgumentPosition* argumentPosition)
     {
         ASSERT(!operand.isConstant());
         
-        Node* node = m_currentBlock->variablesAtTail.operand(operand);
+        Node*& node = m_currentBlock->variablesAtTail.operand(operand);
         
         VariableAccessData* variable;
         
@@ -616,26 +646,25 @@ private:
             variable = newVariableAccessData(operand);
         
         node = addToGraph(nodeType, OpInfo(variable));
-        m_currentBlock->variablesAtTail.operand(operand) = node;
         if (argumentPosition)
             argumentPosition->addVariable(variable);
     }
 
-    void phantomLocalDirect(VirtualRegister operand)
+    void phantomLocalDirect(Operand operand)
     {
         addFlushOrPhantomLocal<PhantomLocal>(operand, findArgumentPosition(operand));
     }
 
     void flush(InlineStackEntry* inlineStackEntry)
     {
-        auto addFlushDirect = [&] (InlineCallFrame*, VirtualRegister reg) { flushDirect(reg); };
+        auto addFlushDirect = [&] (InlineCallFrame*, Operand operand) { flushDirect(operand); };
         flushImpl(inlineStackEntry->m_inlineCallFrame, addFlushDirect);
     }
 
     void flushForTerminal()
     {
-        auto addFlushDirect = [&] (InlineCallFrame*, VirtualRegister reg) { flushDirect(reg); };
-        auto addPhantomLocalDirect = [&] (InlineCallFrame*, VirtualRegister reg) { phantomLocalDirect(reg); };
+        auto addFlushDirect = [&] (InlineCallFrame*, Operand operand) { flushDirect(operand); };
+        auto addPhantomLocalDirect = [&] (InlineCallFrame*, Operand operand) { phantomLocalDirect(operand); };
         flushForTerminalImpl(currentCodeOrigin(), addFlushDirect, addPhantomLocalDirect);
     }
 
@@ -763,6 +792,11 @@ private:
             Edge(child1), Edge(child2), Edge(child3));
         return addToGraph(result);
     }
+    Node* addToGraph(NodeType op, Operand operand, Node* child1)
+    {
+        ASSERT(op == MovHint);
+        return addToGraph(op, OpInfo(operand.kind()), OpInfo(operand.value()), child1);
+    }
     Node* addToGraph(NodeType op, OpInfo info1, OpInfo info2, Edge child1, Edge child2 = Edge(), Edge child3 = Edge())
     {
         Node* result = m_graph.addNode(
@@ -805,7 +839,7 @@ private:
             m_parameterSlots = parameterSlots;
 
         for (int i = 0; i < argCount; ++i)
-            addVarArgChild(get(virtualRegisterForArgument(i, registerOffset)));
+            addVarArgChild(get(virtualRegisterForArgumentIncludingThis(i, registerOffset)));
 
         return addToGraph(Node::VarArg, op, opInfo, prediction);
     }
@@ -1093,8 +1127,10 @@ private:
 
     // The number of arguments passed to the function.
     unsigned m_numArguments;
-    // The number of locals (vars + temporaries) used in the function.
+    // The number of locals (vars + temporaries) used by the bytecode for the function.
     unsigned m_numLocals;
+    // The max number of temps used for forwarding data to an OSR exit checkpoint.
+    unsigned m_numTmps;
     // The number of slots (in units of sizeof(Register)) that we need to
     // preallocate for arguments to outgoing calls from this frame. This
     // number includes the CallFrame slots that we initialize for the callee
@@ -1161,14 +1197,17 @@ private:
         
         ~InlineStackEntry();
         
-        VirtualRegister remapOperand(VirtualRegister operand) const
+        Operand remapOperand(Operand operand) const
         {
             if (!m_inlineCallFrame)
                 return operand;
-            
-            ASSERT(!operand.isConstant());
 
-            return VirtualRegister(operand.offset() + m_inlineCallFrame->stackOffset);
+            if (operand.isTmp())
+                return Operand::tmp(operand.value() + m_inlineCallFrame->tmpOffset);
+            
+            ASSERT(!operand.virtualRegister().isConstant());
+
+            return operand.virtualRegister() + m_inlineCallFrame->stackOffset;
         }
     };
     
@@ -1177,13 +1216,8 @@ private:
     ICStatusContextStack m_icContextStack;
     
     struct DelayedSetLocal {
-        CodeOrigin m_origin;
-        VirtualRegister m_operand;
-        Node* m_value;
-        SetMode m_setMode;
-        
         DelayedSetLocal() { }
-        DelayedSetLocal(const CodeOrigin& origin, VirtualRegister operand, Node* value, SetMode setMode)
+        DelayedSetLocal(const CodeOrigin& origin, Operand operand, Node* value, SetMode setMode)
             : m_origin(origin)
             , m_operand(operand)
             , m_value(value)
@@ -1196,8 +1230,13 @@ private:
         {
             if (m_operand.isArgument())
                 return parser->setArgument(m_origin, m_operand, m_value, m_setMode);
-            return parser->setLocal(m_origin, m_operand, m_value, m_setMode);
+            return parser->setLocalOrTmp(m_origin, m_operand, m_value, m_setMode);
         }
+
+        CodeOrigin m_origin;
+        Operand m_operand;
+        Node* m_value { nullptr };
+        SetMode m_setMode;
     };
     
     Vector<DelayedSetLocal, 2> m_setLocalQueue;
@@ -1210,7 +1249,7 @@ private:
 BasicBlock* ByteCodeParser::allocateTargetableBlock(BytecodeIndex bytecodeIndex)
 {
     ASSERT(bytecodeIndex);
-    Ref<BasicBlock> block = adoptRef(*new BasicBlock(bytecodeIndex, m_numArguments, m_numLocals, 1));
+    Ref<BasicBlock> block = adoptRef(*new BasicBlock(bytecodeIndex, m_numArguments, m_numLocals, m_numTmps, 1));
     BasicBlock* blockPtr = block.ptr();
     // m_blockLinkingTargets must always be sorted in increasing order of bytecodeBegin
     if (m_inlineStackTop->m_blockLinkingTargets.size())
@@ -1222,7 +1261,7 @@ BasicBlock* ByteCodeParser::allocateTargetableBlock(BytecodeIndex bytecodeIndex)
 
 BasicBlock* ByteCodeParser::allocateUntargetableBlock()
 {
-    Ref<BasicBlock> block = adoptRef(*new BasicBlock(BytecodeIndex(), m_numArguments, m_numLocals, 1));
+    Ref<BasicBlock> block = adoptRef(*new BasicBlock(BytecodeIndex(), m_numArguments, m_numLocals, m_numTmps, 1));
     BasicBlock* blockPtr = block.ptr();
     m_graph.appendBlock(WTFMove(block));
     return blockPtr;
@@ -1292,7 +1331,7 @@ ByteCodeParser::Terminality ByteCodeParser::handleCall(
     if (callLinkStatus.canOptimize()) {
         addToGraph(FilterCallLinkStatus, OpInfo(m_graph.m_plan.recordedStatuses().addCallLinkStatus(currentCodeOrigin(), callLinkStatus)), callTarget);
 
-        VirtualRegister thisArgument = virtualRegisterForArgument(0, registerOffset);
+        VirtualRegister thisArgument = virtualRegisterForArgumentIncludingThis(0, registerOffset);
         auto optimizationResult = handleInlining(callTarget, result, callLinkStatus, registerOffset, thisArgument,
             argumentCountIncludingThis, BytecodeIndex(m_currentIndex.offset() + instructionSize), op, kind, prediction);
         if (optimizationResult == CallOptimizationResult::OptimizedToJump)
@@ -1399,7 +1438,7 @@ Node* ByteCodeParser::getArgumentCount()
 void ByteCodeParser::emitArgumentPhantoms(int registerOffset, int argumentCountIncludingThis)
 {
     for (int i = 0; i < argumentCountIncludingThis; ++i)
-        addToGraph(Phantom, get(virtualRegisterForArgument(i, registerOffset)));
+        addToGraph(Phantom, get(virtualRegisterForArgumentIncludingThis(i, registerOffset)));
 }
 
 template<typename ChecksFunctor>
@@ -1425,7 +1464,7 @@ bool ByteCodeParser::handleRecursiveTailCall(Node* callTargetNode, CallVariant c
             if (argumentCountIncludingThis != static_cast<int>(callFrame->argumentCountIncludingThis))
                 continue;
             // If the target InlineCallFrame is Varargs, we do not know how many arguments are actually filled by LoadVarargs. Varargs InlineCallFrame's
-            // argumentCountIncludingThis is maximum number of potentially filled arguments by LoadVarargs. We "continue" to the upper frame which may be
+            // argumentCountIncludingThis is maximum number of potentially filled arguments by xkLoadVarargs. We "continue" to the upper frame which may be
             // a good target to jump into.
             if (callFrame->isVarargs())
                 continue;
@@ -1451,7 +1490,7 @@ bool ByteCodeParser::handleRecursiveTailCall(Node* callTargetNode, CallVariant c
         // We must set the callee to the right value
         if (stackEntry->m_inlineCallFrame) {
             if (stackEntry->m_inlineCallFrame->isClosureCall)
-                setDirect(stackEntry->remapOperand(VirtualRegister(CallFrameSlot::callee)), callTargetNode, NormalSet);
+                setDirect(remapOperand(stackEntry->m_inlineCallFrame, CallFrameSlot::callee), callTargetNode, NormalSet);
         } else
             addToGraph(SetCallee, callTargetNode);
 
@@ -1460,12 +1499,12 @@ bool ByteCodeParser::handleRecursiveTailCall(Node* callTargetNode, CallVariant c
             addToGraph(SetArgumentCountIncludingThis, OpInfo(argumentCountIncludingThis));
         int argIndex = 0;
         for (; argIndex < argumentCountIncludingThis; ++argIndex) {
-            Node* value = get(virtualRegisterForArgument(argIndex, registerOffset));
-            setDirect(stackEntry->remapOperand(virtualRegisterForArgument(argIndex)), value, NormalSet);
+            Node* value = get(virtualRegisterForArgumentIncludingThis(argIndex, registerOffset));
+            setDirect(stackEntry->remapOperand(virtualRegisterForArgumentIncludingThis(argIndex)), value, NormalSet);
         }
         Node* undefined = addToGraph(JSConstant, OpInfo(m_constantUndefined));
         for (; argIndex < stackEntry->m_codeBlock->numParameters(); ++argIndex)
-            setDirect(stackEntry->remapOperand(virtualRegisterForArgument(argIndex)), undefined, NormalSet);
+            setDirect(stackEntry->remapOperand(virtualRegisterForArgumentIncludingThis(argIndex)), undefined, NormalSet);
 
         // We must repeat the work of op_enter here as we will jump right after it.
         // We jump right after it and not before it, because of some invariant saying that a CFG root cannot have predecessors in the IR.
@@ -1616,16 +1655,18 @@ void ByteCodeParser::inlineCall(Node* callTargetNode, VirtualRegister result, Ca
     ASSERT(!(numberOfStackPaddingSlots % stackAlignmentRegisters()));
     int registerOffsetAfterFixup = registerOffset - numberOfStackPaddingSlots;
     
-    int inlineCallFrameStart = m_inlineStackTop->remapOperand(VirtualRegister(registerOffsetAfterFixup)).offset() + CallFrame::headerSizeInRegisters;
+    Operand inlineCallFrameStart = VirtualRegister(m_inlineStackTop->remapOperand(VirtualRegister(registerOffsetAfterFixup)).value() + CallFrame::headerSizeInRegisters);
     
     ensureLocals(
-        VirtualRegister(inlineCallFrameStart).toLocal() + 1 +
+        inlineCallFrameStart.toLocal() + 1 +
         CallFrame::headerSizeInRegisters + codeBlock->numCalleeLocals());
     
+    ensureTmps((m_inlineStackTop->m_inlineCallFrame ? m_inlineStackTop->m_inlineCallFrame->tmpOffset : 0) + m_inlineStackTop->m_codeBlock->numTmps() + codeBlock->numTmps());
+
     size_t argumentPositionStart = m_graph.m_argumentPositions.size();
 
     if (result.isValid())
-        result = m_inlineStackTop->remapOperand(result);
+        result = m_inlineStackTop->remapOperand(result).virtualRegister();
 
     VariableAccessData* calleeVariable = nullptr;
     if (callee.isClosureCall()) {
@@ -1638,7 +1679,7 @@ void ByteCodeParser::inlineCall(Node* callTargetNode, VirtualRegister result, Ca
 
     InlineStackEntry* callerStackTop = m_inlineStackTop;
     InlineStackEntry inlineStackEntry(this, codeBlock, codeBlock, callee.function(), result,
-        (VirtualRegister)inlineCallFrameStart, argumentCountIncludingThis, kind, continuationBlock);
+        inlineCallFrameStart.virtualRegister(), argumentCountIncludingThis, kind, continuationBlock);
 
     // This is where the actual inlining really happens.
     BytecodeIndex oldIndex = m_currentIndex;
@@ -1673,9 +1714,9 @@ void ByteCodeParser::inlineCall(Node* callTargetNode, VirtualRegister result, Ca
         // However, when we begin executing the callee, we need OSR exit to be aware of where it can recover the arguments to the setter, loc9 and loc10. The MovHints in the inlined
         // callee make it so that if we exit at <HERE>, we can recover loc9 and loc10.
         for (int index = 0; index < argumentCountIncludingThis; ++index) {
-            VirtualRegister argumentToGet = callerStackTop->remapOperand(virtualRegisterForArgument(index, registerOffset));
+            Operand argumentToGet = callerStackTop->remapOperand(virtualRegisterForArgumentIncludingThis(index, registerOffset));
             Node* value = getDirect(argumentToGet);
-            addToGraph(MovHint, OpInfo(argumentToGet.offset()), value);
+            addToGraph(MovHint, OpInfo(argumentToGet), value);
             m_setLocalQueue.append(DelayedSetLocal { currentCodeOrigin(), argumentToGet, value, ImmediateNakedSet });
         }
         break;
@@ -1719,16 +1760,16 @@ void ByteCodeParser::inlineCall(Node* callTargetNode, VirtualRegister result, Ca
         // In such cases, we do not need to move frames.
         if (registerOffsetAfterFixup != registerOffset) {
             for (int index = 0; index < argumentCountIncludingThis; ++index) {
-                VirtualRegister argumentToGet = callerStackTop->remapOperand(virtualRegisterForArgument(index, registerOffset));
+                Operand argumentToGet = callerStackTop->remapOperand(virtualRegisterForArgumentIncludingThis(index, registerOffset));
                 Node* value = getDirect(argumentToGet);
-                VirtualRegister argumentToSet = m_inlineStackTop->remapOperand(virtualRegisterForArgument(index));
-                addToGraph(MovHint, OpInfo(argumentToSet.offset()), value);
+                Operand argumentToSet = m_inlineStackTop->remapOperand(virtualRegisterForArgumentIncludingThis(index));
+                addToGraph(MovHint, OpInfo(argumentToSet), value);
                 m_setLocalQueue.append(DelayedSetLocal { currentCodeOrigin(), argumentToSet, value, ImmediateNakedSet });
             }
         }
         for (int index = 0; index < arityFixupCount; ++index) {
-            VirtualRegister argumentToSet = m_inlineStackTop->remapOperand(virtualRegisterForArgument(argumentCountIncludingThis + index));
-            addToGraph(MovHint, OpInfo(argumentToSet.offset()), undefined);
+            Operand argumentToSet = m_inlineStackTop->remapOperand(virtualRegisterForArgumentIncludingThis(argumentCountIncludingThis + index));
+            addToGraph(MovHint, OpInfo(argumentToSet), undefined);
             m_setLocalQueue.append(DelayedSetLocal { currentCodeOrigin(), argumentToSet, undefined, ImmediateNakedSet });
         }
 
@@ -1895,12 +1936,12 @@ bool ByteCodeParser::handleVarargsInlining(Node* callTargetNode, VirtualRegister
         emitFunctionChecks(callVariant, callTargetNode, thisArgument);
         
         int remappedRegisterOffset =
-        m_inlineStackTop->remapOperand(VirtualRegister(registerOffset)).offset();
+        m_inlineStackTop->remapOperand(VirtualRegister(registerOffset)).virtualRegister().offset();
         
         ensureLocals(VirtualRegister(remappedRegisterOffset).toLocal());
         
         int argumentStart = registerOffset + CallFrame::headerSizeInRegisters;
-        int remappedArgumentStart = m_inlineStackTop->remapOperand(VirtualRegister(argumentStart)).offset();
+        int remappedArgumentStart = m_inlineStackTop->remapOperand(VirtualRegister(argumentStart)).virtualRegister().offset();
         
         LoadVarargsData* data = m_graph.m_loadVarargsData.add();
         data->start = VirtualRegister(remappedArgumentStart + 1);
@@ -1908,11 +1949,24 @@ bool ByteCodeParser::handleVarargsInlining(Node* callTargetNode, VirtualRegister
         data->offset = argumentsOffset;
         data->limit = maxArgumentCountIncludingThis;
         data->mandatoryMinimum = mandatoryMinimum;
-        
-        if (callOp == TailCallForwardVarargs)
-            addToGraph(ForwardVarargs, OpInfo(data));
-        else
-            addToGraph(LoadVarargs, OpInfo(data), get(argumentsArgument));
+
+        if (callOp == TailCallForwardVarargs) {
+            Node* argumentCount;
+            if (!inlineCallFrame())
+                argumentCount = addToGraph(GetArgumentCountIncludingThis);
+            else if (inlineCallFrame()->isVarargs())
+                argumentCount = getDirect(remapOperand(inlineCallFrame(), CallFrameSlot::argumentCountIncludingThis));
+            else 
+                argumentCount = addToGraph(JSConstant, OpInfo(m_graph.freeze(jsNumber(inlineCallFrame()->argumentCountIncludingThis))));
+            addToGraph(ForwardVarargs, OpInfo(data), argumentCount);
+        } else {
+            Node* arguments = get(argumentsArgument);
+            auto argCountTmp = m_inlineStackTop->remapOperand(Operand::tmp(OpCallVarargs::argCountIncludingThis));
+            setDirect(argCountTmp, addToGraph(VarargsLength, OpInfo(data), arguments));
+            progressToNextCheckpoint();
+
+            addToGraph(LoadVarargs, OpInfo(data), getLocalOrTmp(argCountTmp), arguments);
+        }
         
         // LoadVarargs may OSR exit. Hence, we need to keep alive callTargetNode, thisArgument
         // and argumentsArgument for the baseline JIT. However, we only need a Phantom for
@@ -1924,14 +1978,14 @@ bool ByteCodeParser::handleVarargsInlining(Node* callTargetNode, VirtualRegister
         // SSA. Fortunately, we also have other reasons for not inserting control flow
         // before SSA.
         
-        VariableAccessData* countVariable = newVariableAccessData(VirtualRegister(remappedRegisterOffset + CallFrameSlot::argumentCountIncludingThis));
+        VariableAccessData* countVariable = newVariableAccessData(data->count);
         // This is pretty lame, but it will force the count to be flushed as an int. This doesn't
         // matter very much, since our use of a SetArgumentDefinitely and Flushes for this local slot is
         // mostly just a formality.
         countVariable->predict(SpecInt32Only);
         countVariable->mergeIsProfitableToUnbox(true);
         Node* setArgumentCount = addToGraph(SetArgumentDefinitely, OpInfo(countVariable));
-        m_currentBlock->variablesAtTail.setOperand(countVariable->local(), setArgumentCount);
+        m_currentBlock->variablesAtTail.setOperand(countVariable->operand(), setArgumentCount);
         
         set(VirtualRegister(argumentStart), get(thisArgument), ImmediateNakedSet);
         unsigned numSetArguments = 0;
@@ -1955,7 +2009,7 @@ bool ByteCodeParser::handleVarargsInlining(Node* callTargetNode, VirtualRegister
             }
             
             Node* setArgument = addToGraph(numSetArguments >= mandatoryMinimum ? SetArgumentMaybe : SetArgumentDefinitely, OpInfo(variable));
-            m_currentBlock->variablesAtTail.setOperand(variable->local(), setArgument);
+            m_currentBlock->variablesAtTail.setOperand(variable->operand(), setArgument);
             ++numSetArguments;
         }
     };
@@ -2055,7 +2109,7 @@ ByteCodeParser::CallOptimizationResult ByteCodeParser::handleInlining(
     // yet.
     VERBOSE_LOG("Register offset: ", registerOffset);
     VirtualRegister calleeReg(registerOffset + CallFrameSlot::callee);
-    calleeReg = m_inlineStackTop->remapOperand(calleeReg);
+    calleeReg = m_inlineStackTop->remapOperand(calleeReg).virtualRegister();
     VERBOSE_LOG("Callee is going to be ", calleeReg, "\n");
     setDirect(calleeReg, callTargetNode, ImmediateSetWithFlush);
 
@@ -2174,7 +2228,7 @@ bool ByteCodeParser::handleMinMax(VirtualRegister result, NodeType op, int regis
      
     if (argumentCountIncludingThis == 2) {
         insertChecks();
-        Node* resultNode = get(VirtualRegister(virtualRegisterForArgument(1, registerOffset)));
+        Node* resultNode = get(VirtualRegister(virtualRegisterForArgumentIncludingThis(1, registerOffset)));
         addToGraph(Phantom, Edge(resultNode, NumberUse));
         set(result, resultNode);
         return true;
@@ -2182,7 +2236,7 @@ bool ByteCodeParser::handleMinMax(VirtualRegister result, NodeType op, int regis
     
     if (argumentCountIncludingThis == 3) {
         insertChecks();
-        set(result, addToGraph(op, get(virtualRegisterForArgument(1, registerOffset)), get(virtualRegisterForArgument(2, registerOffset))));
+        set(result, addToGraph(op, get(virtualRegisterForArgumentIncludingThis(1, registerOffset)), get(virtualRegisterForArgumentIncludingThis(2, registerOffset))));
         return true;
     }
     
@@ -2230,7 +2284,7 @@ bool ByteCodeParser::handleIntrinsicCall(Node* callee, VirtualRegister result, I
                 return false;
 
             insertChecks();
-            Node* node = addToGraph(ArithAbs, get(virtualRegisterForArgument(1, registerOffset)));
+            Node* node = addToGraph(ArithAbs, get(virtualRegisterForArgumentIncludingThis(1, registerOffset)));
             if (m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, Overflow))
                 node->mergeFlags(NodeMayOverflowInt32InDFG);
             setResult(node);
@@ -2267,7 +2321,7 @@ bool ByteCodeParser::handleIntrinsicCall(Node* callee, VirtualRegister result, I
                 RELEASE_ASSERT_NOT_REACHED();
             }
             insertChecks();
-            setResult(addToGraph(ArithUnary, OpInfo(static_cast<std::underlying_type<Arith::UnaryType>::type>(type)), get(virtualRegisterForArgument(1, registerOffset))));
+            setResult(addToGraph(ArithUnary, OpInfo(static_cast<std::underlying_type<Arith::UnaryType>::type>(type)), get(virtualRegisterForArgumentIncludingThis(1, registerOffset))));
             return true;
         }
 
@@ -2291,7 +2345,7 @@ bool ByteCodeParser::handleIntrinsicCall(Node* callee, VirtualRegister result, I
                 RELEASE_ASSERT_NOT_REACHED();
             }
             insertChecks();
-            setResult(addToGraph(nodeType, get(virtualRegisterForArgument(1, registerOffset))));
+            setResult(addToGraph(nodeType, get(virtualRegisterForArgumentIncludingThis(1, registerOffset))));
             return true;
         }
 
@@ -2303,8 +2357,8 @@ bool ByteCodeParser::handleIntrinsicCall(Node* callee, VirtualRegister result, I
                 return true;
             }
             insertChecks();
-            VirtualRegister xOperand = virtualRegisterForArgument(1, registerOffset);
-            VirtualRegister yOperand = virtualRegisterForArgument(2, registerOffset);
+            VirtualRegister xOperand = virtualRegisterForArgumentIncludingThis(1, registerOffset);
+            VirtualRegister yOperand = virtualRegisterForArgumentIncludingThis(2, registerOffset);
             setResult(addToGraph(ArithPow, get(xOperand), get(yOperand)));
             return true;
         }
@@ -2320,8 +2374,8 @@ bool ByteCodeParser::handleIntrinsicCall(Node* callee, VirtualRegister result, I
             if (!mode.isSomeTypedArrayView())
                 return false;
 
-            addToGraph(CheckArray, OpInfo(mode.asWord()), get(virtualRegisterForArgument(0, registerOffset)));
-            addToGraph(CheckNeutered, get(virtualRegisterForArgument(0, registerOffset)));
+            addToGraph(CheckArray, OpInfo(mode.asWord()), get(virtualRegisterForArgumentIncludingThis(0, registerOffset)));
+            addToGraph(CheckNeutered, get(virtualRegisterForArgumentIncludingThis(0, registerOffset)));
             FALLTHROUGH;
         }
 
@@ -2354,7 +2408,7 @@ bool ByteCodeParser::handleIntrinsicCall(Node* callee, VirtualRegister result, I
 
             // We don't have an existing error string.
             unsigned errorStringIndex = UINT32_MAX;
-            Node* object = addToGraph(ToObject, OpInfo(errorStringIndex), OpInfo(SpecNone), get(virtualRegisterForArgument(0, registerOffset)));
+            Node* object = addToGraph(ToObject, OpInfo(errorStringIndex), OpInfo(SpecNone), get(virtualRegisterForArgumentIncludingThis(0, registerOffset)));
 
             JSGlobalObject* globalObject = m_graph.globalObjectFor(currentNodeOrigin().semantic);
             Node* iterator = addToGraph(NewArrayIterator, OpInfo(m_graph.registerStructure(globalObject->arrayIteratorStructure())));
@@ -2382,7 +2436,7 @@ bool ByteCodeParser::handleIntrinsicCall(Node* callee, VirtualRegister result, I
 
                 addVarArgChild(nullptr); // For storage.
                 for (int i = 0; i < argumentCountIncludingThis; ++i)
-                    addVarArgChild(get(virtualRegisterForArgument(i, registerOffset)));
+                    addVarArgChild(get(virtualRegisterForArgumentIncludingThis(i, registerOffset)));
                 Node* arrayPush = addToGraph(Node::VarArg, ArrayPush, OpInfo(arrayMode.asWord()), OpInfo(prediction));
                 setResult(arrayPush);
                 return true;
@@ -2432,7 +2486,7 @@ bool ByteCodeParser::handleIntrinsicCall(Node* callee, VirtualRegister result, I
 
                     insertChecks();
 
-                    Node* array = get(virtualRegisterForArgument(0, registerOffset));
+                    Node* array = get(virtualRegisterForArgumentIncludingThis(0, registerOffset));
                     // We do a few things here to prove that we aren't skipping doing side-effects in an observable way:
                     // 1. We ensure that the "constructor" property hasn't been changed (because the observable
                     // effects of slice require that we perform a Get(array, "constructor") and we can skip
@@ -2460,9 +2514,9 @@ bool ByteCodeParser::handleIntrinsicCall(Node* callee, VirtualRegister result, I
 
                     addVarArgChild(array);
                     if (argumentCountIncludingThis >= 2)
-                        addVarArgChild(get(virtualRegisterForArgument(1, registerOffset))); // Start index.
+                        addVarArgChild(get(virtualRegisterForArgumentIncludingThis(1, registerOffset))); // Start index.
                     if (argumentCountIncludingThis >= 3)
-                        addVarArgChild(get(virtualRegisterForArgument(2, registerOffset))); // End index.
+                        addVarArgChild(get(virtualRegisterForArgumentIncludingThis(2, registerOffset))); // End index.
                     addVarArgChild(addToGraph(GetButterfly, array));
 
                     Node* arraySlice = addToGraph(Node::VarArg, ArraySlice, OpInfo(), OpInfo());
@@ -2521,11 +2575,11 @@ bool ByteCodeParser::handleIntrinsicCall(Node* callee, VirtualRegister result, I
 
                     insertChecks();
 
-                    Node* array = get(virtualRegisterForArgument(0, registerOffset));
+                    Node* array = get(virtualRegisterForArgumentIncludingThis(0, registerOffset));
                     addVarArgChild(array);
-                    addVarArgChild(get(virtualRegisterForArgument(1, registerOffset))); // Search element.
+                    addVarArgChild(get(virtualRegisterForArgumentIncludingThis(1, registerOffset))); // Search element.
                     if (argumentCountIncludingThis >= 3)
-                        addVarArgChild(get(virtualRegisterForArgument(2, registerOffset))); // Start index.
+                        addVarArgChild(get(virtualRegisterForArgumentIncludingThis(2, registerOffset))); // Start index.
                     addVarArgChild(nullptr);
 
                     Node* node = addToGraph(Node::VarArg, ArrayIndexOf, OpInfo(arrayMode.asWord()), OpInfo());
@@ -2554,7 +2608,7 @@ bool ByteCodeParser::handleIntrinsicCall(Node* callee, VirtualRegister result, I
             case Array::Contiguous:
             case Array::ArrayStorage: {
                 insertChecks();
-                Node* arrayPop = addToGraph(ArrayPop, OpInfo(arrayMode.asWord()), OpInfo(prediction), get(virtualRegisterForArgument(0, registerOffset)));
+                Node* arrayPop = addToGraph(ArrayPop, OpInfo(arrayMode.asWord()), OpInfo(prediction), get(virtualRegisterForArgumentIncludingThis(0, registerOffset)));
                 setResult(arrayPop);
                 return true;
             }
@@ -2636,7 +2690,7 @@ bool ByteCodeParser::handleIntrinsicCall(Node* callee, VirtualRegister result, I
             
             Vector<Node*, 3> args;
             for (unsigned i = 0; i < numArgs; ++i)
-                args.append(get(virtualRegisterForArgument(1 + i, registerOffset)));
+                args.append(get(virtualRegisterForArgumentIncludingThis(1 + i, registerOffset)));
             
             Node* resultNode;
             if (numArgs + 1 <= 3) {
@@ -2662,13 +2716,13 @@ bool ByteCodeParser::handleIntrinsicCall(Node* callee, VirtualRegister result, I
                 return false;
 
             insertChecks();
-            VirtualRegister valueOperand = virtualRegisterForArgument(1, registerOffset);
+            VirtualRegister valueOperand = virtualRegisterForArgumentIncludingThis(1, registerOffset);
             Node* parseInt;
             if (argumentCountIncludingThis == 2)
                 parseInt = addToGraph(ParseInt, OpInfo(), OpInfo(prediction), get(valueOperand));
             else {
                 ASSERT(argumentCountIncludingThis > 2);
-                VirtualRegister radixOperand = virtualRegisterForArgument(2, registerOffset);
+                VirtualRegister radixOperand = virtualRegisterForArgumentIncludingThis(2, registerOffset);
                 parseInt = addToGraph(ParseInt, OpInfo(), OpInfo(prediction), get(valueOperand), get(radixOperand));
             }
             setResult(parseInt);
@@ -2683,8 +2737,8 @@ bool ByteCodeParser::handleIntrinsicCall(Node* callee, VirtualRegister result, I
                 return false;
 
             insertChecks();
-            VirtualRegister thisOperand = virtualRegisterForArgument(0, registerOffset);
-            VirtualRegister indexOperand = virtualRegisterForArgument(1, registerOffset);
+            VirtualRegister thisOperand = virtualRegisterForArgumentIncludingThis(0, registerOffset);
+            VirtualRegister indexOperand = virtualRegisterForArgumentIncludingThis(1, registerOffset);
             Node* charCode = addToGraph(StringCharCodeAt, OpInfo(ArrayMode(Array::String, Array::Read).asWord()), get(thisOperand), get(indexOperand));
 
             setResult(charCode);
@@ -2702,8 +2756,8 @@ bool ByteCodeParser::handleIntrinsicCall(Node* callee, VirtualRegister result, I
                 return false;
 
             insertChecks();
-            VirtualRegister thisOperand = virtualRegisterForArgument(0, registerOffset);
-            VirtualRegister indexOperand = virtualRegisterForArgument(1, registerOffset);
+            VirtualRegister thisOperand = virtualRegisterForArgumentIncludingThis(0, registerOffset);
+            VirtualRegister indexOperand = virtualRegisterForArgumentIncludingThis(1, registerOffset);
             Node* result = addToGraph(StringCodePointAt, OpInfo(ArrayMode(Array::String, Array::Read).asWord()), get(thisOperand), get(indexOperand));
 
             setResult(result);
@@ -2722,8 +2776,8 @@ bool ByteCodeParser::handleIntrinsicCall(Node* callee, VirtualRegister result, I
             // https://bugs.webkit.org/show_bug.cgi?id=201678
 
             insertChecks();
-            VirtualRegister thisOperand = virtualRegisterForArgument(0, registerOffset);
-            VirtualRegister indexOperand = virtualRegisterForArgument(1, registerOffset);
+            VirtualRegister thisOperand = virtualRegisterForArgumentIncludingThis(0, registerOffset);
+            VirtualRegister indexOperand = virtualRegisterForArgumentIncludingThis(1, registerOffset);
             Node* charCode = addToGraph(StringCharAt, OpInfo(ArrayMode(Array::String, Array::Read).asWord()), get(thisOperand), get(indexOperand));
 
             setResult(charCode);
@@ -2734,7 +2788,7 @@ bool ByteCodeParser::handleIntrinsicCall(Node* callee, VirtualRegister result, I
             if (argumentCountIncludingThis == 1)
                 setResult(addToGraph(JSConstant, OpInfo(m_graph.freeze(jsNumber(32)))));
             else {
-                Node* operand = get(virtualRegisterForArgument(1, registerOffset));
+                Node* operand = get(virtualRegisterForArgumentIncludingThis(1, registerOffset));
                 setResult(addToGraph(ArithClz32, operand));
             }
             return true;
@@ -2744,7 +2798,7 @@ bool ByteCodeParser::handleIntrinsicCall(Node* callee, VirtualRegister result, I
                 return false;
 
             insertChecks();
-            VirtualRegister indexOperand = virtualRegisterForArgument(1, registerOffset);
+            VirtualRegister indexOperand = virtualRegisterForArgumentIncludingThis(1, registerOffset);
             Node* charCode = addToGraph(StringFromCharCode, get(indexOperand));
 
             setResult(charCode);
@@ -2757,7 +2811,7 @@ bool ByteCodeParser::handleIntrinsicCall(Node* callee, VirtualRegister result, I
                 return false;
             
             insertChecks();
-            Node* regExpExec = addToGraph(RegExpExec, OpInfo(0), OpInfo(prediction), addToGraph(GetGlobalObject, callee), get(virtualRegisterForArgument(0, registerOffset)), get(virtualRegisterForArgument(1, registerOffset)));
+            Node* regExpExec = addToGraph(RegExpExec, OpInfo(0), OpInfo(prediction), addToGraph(GetGlobalObject, callee), get(virtualRegisterForArgumentIncludingThis(0, registerOffset)), get(virtualRegisterForArgumentIncludingThis(1, registerOffset)));
             setResult(regExpExec);
             
             return true;
@@ -2795,7 +2849,7 @@ bool ByteCodeParser::handleIntrinsicCall(Node* callee, VirtualRegister result, I
                     return false;
 
                 // Check that regExpObject is actually a RegExp object.
-                Node* regExpObject = get(virtualRegisterForArgument(0, registerOffset));
+                Node* regExpObject = get(virtualRegisterForArgumentIncludingThis(0, registerOffset));
                 addToGraph(Check, Edge(regExpObject, RegExpObjectUse));
 
                 // Check that regExpObject's exec is actually the primodial RegExp.prototype.exec.
@@ -2807,8 +2861,8 @@ bool ByteCodeParser::handleIntrinsicCall(Node* callee, VirtualRegister result, I
             }
 
             insertChecks();
-            Node* regExpObject = get(virtualRegisterForArgument(0, registerOffset));
-            Node* regExpExec = addToGraph(RegExpTest, OpInfo(0), OpInfo(prediction), addToGraph(GetGlobalObject, callee), regExpObject, get(virtualRegisterForArgument(1, registerOffset)));
+            Node* regExpObject = get(virtualRegisterForArgumentIncludingThis(0, registerOffset));
+            Node* regExpExec = addToGraph(RegExpTest, OpInfo(0), OpInfo(prediction), addToGraph(GetGlobalObject, callee), regExpObject, get(virtualRegisterForArgumentIncludingThis(1, registerOffset)));
             setResult(regExpExec);
             
             return true;
@@ -2818,7 +2872,7 @@ bool ByteCodeParser::handleIntrinsicCall(Node* callee, VirtualRegister result, I
             RELEASE_ASSERT(argumentCountIncludingThis == 2);
 
             insertChecks();
-            Node* regExpMatch = addToGraph(RegExpMatchFast, OpInfo(0), OpInfo(prediction), addToGraph(GetGlobalObject, callee), get(virtualRegisterForArgument(0, registerOffset)), get(virtualRegisterForArgument(1, registerOffset)));
+            Node* regExpMatch = addToGraph(RegExpMatchFast, OpInfo(0), OpInfo(prediction), addToGraph(GetGlobalObject, callee), get(virtualRegisterForArgumentIncludingThis(0, registerOffset)), get(virtualRegisterForArgumentIncludingThis(1, registerOffset)));
             setResult(regExpMatch);
             return true;
         }
@@ -2828,7 +2882,7 @@ bool ByteCodeParser::handleIntrinsicCall(Node* callee, VirtualRegister result, I
                 return false;
 
             insertChecks();
-            setResult(addToGraph(ObjectCreate, get(virtualRegisterForArgument(1, registerOffset))));
+            setResult(addToGraph(ObjectCreate, get(virtualRegisterForArgumentIncludingThis(1, registerOffset))));
             return true;
         }
 
@@ -2837,7 +2891,7 @@ bool ByteCodeParser::handleIntrinsicCall(Node* callee, VirtualRegister result, I
                 return false;
 
             insertChecks();
-            setResult(addToGraph(GetPrototypeOf, OpInfo(0), OpInfo(prediction), get(virtualRegisterForArgument(1, registerOffset))));
+            setResult(addToGraph(GetPrototypeOf, OpInfo(0), OpInfo(prediction), get(virtualRegisterForArgumentIncludingThis(1, registerOffset))));
             return true;
         }
 
@@ -2846,7 +2900,7 @@ bool ByteCodeParser::handleIntrinsicCall(Node* callee, VirtualRegister result, I
                 return false;
 
             insertChecks();
-            setResult(addToGraph(SameValue, get(virtualRegisterForArgument(1, registerOffset)), get(virtualRegisterForArgument(2, registerOffset))));
+            setResult(addToGraph(SameValue, get(virtualRegisterForArgumentIncludingThis(1, registerOffset)), get(virtualRegisterForArgumentIncludingThis(2, registerOffset))));
             return true;
         }
 
@@ -2855,7 +2909,7 @@ bool ByteCodeParser::handleIntrinsicCall(Node* callee, VirtualRegister result, I
                 return false;
 
             insertChecks();
-            setResult(addToGraph(ObjectKeys, get(virtualRegisterForArgument(1, registerOffset))));
+            setResult(addToGraph(ObjectKeys, get(virtualRegisterForArgumentIncludingThis(1, registerOffset))));
             return true;
         }
 
@@ -2864,7 +2918,7 @@ bool ByteCodeParser::handleIntrinsicCall(Node* callee, VirtualRegister result, I
                 return false;
 
             insertChecks();
-            setResult(addToGraph(GetPrototypeOf, OpInfo(0), OpInfo(prediction), Edge(get(virtualRegisterForArgument(1, registerOffset)), ObjectUse)));
+            setResult(addToGraph(GetPrototypeOf, OpInfo(0), OpInfo(prediction), Edge(get(virtualRegisterForArgumentIncludingThis(1, registerOffset)), ObjectUse)));
             return true;
         }
 
@@ -2872,13 +2926,13 @@ bool ByteCodeParser::handleIntrinsicCall(Node* callee, VirtualRegister result, I
             ASSERT(argumentCountIncludingThis == 2);
 
             insertChecks();
-            setResult(addToGraph(IsTypedArrayView, OpInfo(prediction), get(virtualRegisterForArgument(1, registerOffset))));
+            setResult(addToGraph(IsTypedArrayView, OpInfo(prediction), get(virtualRegisterForArgumentIncludingThis(1, registerOffset))));
             return true;
         }
 
         case StringPrototypeValueOfIntrinsic: {
             insertChecks();
-            Node* value = get(virtualRegisterForArgument(0, registerOffset));
+            Node* value = get(virtualRegisterForArgumentIncludingThis(0, registerOffset));
             setResult(addToGraph(StringValueOf, value));
             return true;
         }
@@ -2930,7 +2984,7 @@ bool ByteCodeParser::handleIntrinsicCall(Node* callee, VirtualRegister result, I
 
             insertChecks();
 
-            Node* resultNode = addToGraph(StringReplace, OpInfo(0), OpInfo(prediction), get(virtualRegisterForArgument(0, registerOffset)), get(virtualRegisterForArgument(1, registerOffset)), get(virtualRegisterForArgument(2, registerOffset)));
+            Node* resultNode = addToGraph(StringReplace, OpInfo(0), OpInfo(prediction), get(virtualRegisterForArgumentIncludingThis(0, registerOffset)), get(virtualRegisterForArgumentIncludingThis(1, registerOffset)), get(virtualRegisterForArgumentIncludingThis(2, registerOffset)));
             setResult(resultNode);
             return true;
         }
@@ -2940,7 +2994,7 @@ bool ByteCodeParser::handleIntrinsicCall(Node* callee, VirtualRegister result, I
                 return false;
             
             insertChecks();
-            Node* resultNode = addToGraph(StringReplaceRegExp, OpInfo(0), OpInfo(prediction), get(virtualRegisterForArgument(0, registerOffset)), get(virtualRegisterForArgument(1, registerOffset)), get(virtualRegisterForArgument(2, registerOffset)));
+            Node* resultNode = addToGraph(StringReplaceRegExp, OpInfo(0), OpInfo(prediction), get(virtualRegisterForArgumentIncludingThis(0, registerOffset)), get(virtualRegisterForArgumentIncludingThis(1, registerOffset)), get(virtualRegisterForArgumentIncludingThis(2, registerOffset)));
             setResult(resultNode);
             return true;
         }
@@ -2955,7 +3009,7 @@ bool ByteCodeParser::handleIntrinsicCall(Node* callee, VirtualRegister result, I
                 return true;
             }
             insertChecks();
-            Node* operand = get(virtualRegisterForArgument(1, registerOffset));
+            Node* operand = get(virtualRegisterForArgumentIncludingThis(1, registerOffset));
             NodeType op;
             if (intrinsic == RoundIntrinsic)
                 op = ArithRound;
@@ -2975,8 +3029,8 @@ bool ByteCodeParser::handleIntrinsicCall(Node* callee, VirtualRegister result, I
             if (argumentCountIncludingThis < 3)
                 return false;
             insertChecks();
-            VirtualRegister leftOperand = virtualRegisterForArgument(1, registerOffset);
-            VirtualRegister rightOperand = virtualRegisterForArgument(2, registerOffset);
+            VirtualRegister leftOperand = virtualRegisterForArgumentIncludingThis(1, registerOffset);
+            VirtualRegister rightOperand = virtualRegisterForArgumentIncludingThis(2, registerOffset);
             Node* left = get(leftOperand);
             Node* right = get(rightOperand);
             setResult(addToGraph(ArithIMul, left, right));
@@ -3017,7 +3071,7 @@ bool ByteCodeParser::handleIntrinsicCall(Node* callee, VirtualRegister result, I
         case SetInt32HeapPredictionIntrinsic: {
             insertChecks();
             for (int i = 1; i < argumentCountIncludingThis; ++i) {
-                Node* node = get(virtualRegisterForArgument(i, registerOffset));
+                Node* node = get(virtualRegisterForArgumentIncludingThis(i, registerOffset));
                 if (node->hasHeapPrediction())
                     node->setHeapPrediction(SpecInt32Only);
             }
@@ -3028,7 +3082,7 @@ bool ByteCodeParser::handleIntrinsicCall(Node* callee, VirtualRegister result, I
         case CheckInt32Intrinsic: {
             insertChecks();
             for (int i = 1; i < argumentCountIncludingThis; ++i) {
-                Node* node = get(virtualRegisterForArgument(i, registerOffset));
+                Node* node = get(virtualRegisterForArgumentIncludingThis(i, registerOffset));
                 addToGraph(Phantom, Edge(node, Int32Use));
             }
             setResult(jsConstant(jsBoolean(true)));
@@ -3039,7 +3093,7 @@ bool ByteCodeParser::handleIntrinsicCall(Node* callee, VirtualRegister result, I
             if (argumentCountIncludingThis < 2)
                 return false;
             insertChecks();
-            VirtualRegister operand = virtualRegisterForArgument(1, registerOffset);
+            VirtualRegister operand = virtualRegisterForArgumentIncludingThis(1, registerOffset);
             if (enableInt52())
                 setResult(addToGraph(FiatInt52, get(operand)));
             else
@@ -3052,8 +3106,8 @@ bool ByteCodeParser::handleIntrinsicCall(Node* callee, VirtualRegister result, I
                 return false;
 
             insertChecks();
-            Node* map = get(virtualRegisterForArgument(0, registerOffset));
-            Node* key = get(virtualRegisterForArgument(1, registerOffset));
+            Node* map = get(virtualRegisterForArgumentIncludingThis(0, registerOffset));
+            Node* key = get(virtualRegisterForArgumentIncludingThis(1, registerOffset));
             Node* normalizedKey = addToGraph(NormalizeMapKey, key);
             Node* hash = addToGraph(MapHash, normalizedKey);
             Node* bucket = addToGraph(GetMapBucket, Edge(map, MapObjectUse), Edge(normalizedKey), Edge(hash));
@@ -3068,8 +3122,8 @@ bool ByteCodeParser::handleIntrinsicCall(Node* callee, VirtualRegister result, I
                 return false;
 
             insertChecks();
-            Node* mapOrSet = get(virtualRegisterForArgument(0, registerOffset));
-            Node* key = get(virtualRegisterForArgument(1, registerOffset));
+            Node* mapOrSet = get(virtualRegisterForArgumentIncludingThis(0, registerOffset));
+            Node* key = get(virtualRegisterForArgumentIncludingThis(1, registerOffset));
             Node* normalizedKey = addToGraph(NormalizeMapKey, key);
             Node* hash = addToGraph(MapHash, normalizedKey);
             UseKind useKind = intrinsic == JSSetHasIntrinsic ? SetObjectUse : MapObjectUse;
@@ -3092,8 +3146,8 @@ bool ByteCodeParser::handleIntrinsicCall(Node* callee, VirtualRegister result, I
                 return false;
 
             insertChecks();
-            Node* base = get(virtualRegisterForArgument(0, registerOffset));
-            Node* key = get(virtualRegisterForArgument(1, registerOffset));
+            Node* base = get(virtualRegisterForArgumentIncludingThis(0, registerOffset));
+            Node* key = get(virtualRegisterForArgumentIncludingThis(1, registerOffset));
             Node* normalizedKey = addToGraph(NormalizeMapKey, key);
             Node* hash = addToGraph(MapHash, normalizedKey);
             addToGraph(SetAdd, base, normalizedKey, hash);
@@ -3106,9 +3160,9 @@ bool ByteCodeParser::handleIntrinsicCall(Node* callee, VirtualRegister result, I
                 return false;
 
             insertChecks();
-            Node* base = get(virtualRegisterForArgument(0, registerOffset));
-            Node* key = get(virtualRegisterForArgument(1, registerOffset));
-            Node* value = get(virtualRegisterForArgument(2, registerOffset));
+            Node* base = get(virtualRegisterForArgumentIncludingThis(0, registerOffset));
+            Node* key = get(virtualRegisterForArgumentIncludingThis(1, registerOffset));
+            Node* value = get(virtualRegisterForArgumentIncludingThis(2, registerOffset));
 
             Node* normalizedKey = addToGraph(NormalizeMapKey, key);
             Node* hash = addToGraph(MapHash, normalizedKey);
@@ -3127,7 +3181,7 @@ bool ByteCodeParser::handleIntrinsicCall(Node* callee, VirtualRegister result, I
             ASSERT(argumentCountIncludingThis == 2);
 
             insertChecks();
-            Node* map = get(virtualRegisterForArgument(1, registerOffset));
+            Node* map = get(virtualRegisterForArgumentIncludingThis(1, registerOffset));
             UseKind useKind = intrinsic == JSSetBucketHeadIntrinsic ? SetObjectUse : MapObjectUse;
             Node* resultNode = addToGraph(GetMapBucketHead, Edge(map, useKind));
             setResult(resultNode);
@@ -3139,7 +3193,7 @@ bool ByteCodeParser::handleIntrinsicCall(Node* callee, VirtualRegister result, I
             ASSERT(argumentCountIncludingThis == 2);
 
             insertChecks();
-            Node* bucket = get(virtualRegisterForArgument(1, registerOffset));
+            Node* bucket = get(virtualRegisterForArgumentIncludingThis(1, registerOffset));
             BucketOwnerType type = intrinsic == JSSetBucketNextIntrinsic ? BucketOwnerType::Set : BucketOwnerType::Map;
             Node* resultNode = addToGraph(GetMapBucketNext, OpInfo(type), bucket);
             setResult(resultNode);
@@ -3151,7 +3205,7 @@ bool ByteCodeParser::handleIntrinsicCall(Node* callee, VirtualRegister result, I
             ASSERT(argumentCountIncludingThis == 2);
 
             insertChecks();
-            Node* bucket = get(virtualRegisterForArgument(1, registerOffset));
+            Node* bucket = get(virtualRegisterForArgumentIncludingThis(1, registerOffset));
             BucketOwnerType type = intrinsic == JSSetBucketKeyIntrinsic ? BucketOwnerType::Set : BucketOwnerType::Map;
             Node* resultNode = addToGraph(LoadKeyFromMapBucket, OpInfo(type), OpInfo(prediction), bucket);
             setResult(resultNode);
@@ -3162,7 +3216,7 @@ bool ByteCodeParser::handleIntrinsicCall(Node* callee, VirtualRegister result, I
             ASSERT(argumentCountIncludingThis == 2);
 
             insertChecks();
-            Node* bucket = get(virtualRegisterForArgument(1, registerOffset));
+            Node* bucket = get(virtualRegisterForArgumentIncludingThis(1, registerOffset));
             Node* resultNode = addToGraph(LoadValueFromMapBucket, OpInfo(BucketOwnerType::Map), OpInfo(prediction), bucket);
             setResult(resultNode);
             return true;
@@ -3176,8 +3230,8 @@ bool ByteCodeParser::handleIntrinsicCall(Node* callee, VirtualRegister result, I
                 return false;
 
             insertChecks();
-            Node* map = get(virtualRegisterForArgument(0, registerOffset));
-            Node* key = get(virtualRegisterForArgument(1, registerOffset));
+            Node* map = get(virtualRegisterForArgumentIncludingThis(0, registerOffset));
+            Node* key = get(virtualRegisterForArgumentIncludingThis(1, registerOffset));
             addToGraph(Check, Edge(key, ObjectUse));
             Node* hash = addToGraph(MapHash, key);
             Node* holder = addToGraph(WeakMapGet, Edge(map, WeakMapObjectUse), Edge(key, ObjectUse), Edge(hash, Int32Use));
@@ -3195,8 +3249,8 @@ bool ByteCodeParser::handleIntrinsicCall(Node* callee, VirtualRegister result, I
                 return false;
 
             insertChecks();
-            Node* map = get(virtualRegisterForArgument(0, registerOffset));
-            Node* key = get(virtualRegisterForArgument(1, registerOffset));
+            Node* map = get(virtualRegisterForArgumentIncludingThis(0, registerOffset));
+            Node* key = get(virtualRegisterForArgumentIncludingThis(1, registerOffset));
             addToGraph(Check, Edge(key, ObjectUse));
             Node* hash = addToGraph(MapHash, key);
             Node* holder = addToGraph(WeakMapGet, Edge(map, WeakMapObjectUse), Edge(key, ObjectUse), Edge(hash, Int32Use));
@@ -3215,8 +3269,8 @@ bool ByteCodeParser::handleIntrinsicCall(Node* callee, VirtualRegister result, I
                 return false;
 
             insertChecks();
-            Node* map = get(virtualRegisterForArgument(0, registerOffset));
-            Node* key = get(virtualRegisterForArgument(1, registerOffset));
+            Node* map = get(virtualRegisterForArgumentIncludingThis(0, registerOffset));
+            Node* key = get(virtualRegisterForArgumentIncludingThis(1, registerOffset));
             addToGraph(Check, Edge(key, ObjectUse));
             Node* hash = addToGraph(MapHash, key);
             Node* holder = addToGraph(WeakMapGet, Edge(map, WeakSetObjectUse), Edge(key, ObjectUse), Edge(hash, Int32Use));
@@ -3235,8 +3289,8 @@ bool ByteCodeParser::handleIntrinsicCall(Node* callee, VirtualRegister result, I
                 return false;
 
             insertChecks();
-            Node* base = get(virtualRegisterForArgument(0, registerOffset));
-            Node* key = get(virtualRegisterForArgument(1, registerOffset));
+            Node* base = get(virtualRegisterForArgumentIncludingThis(0, registerOffset));
+            Node* key = get(virtualRegisterForArgumentIncludingThis(1, registerOffset));
             addToGraph(Check, Edge(key, ObjectUse));
             Node* hash = addToGraph(MapHash, key);
             addToGraph(WeakSetAdd, Edge(base, WeakSetObjectUse), Edge(key, ObjectUse), Edge(hash, Int32Use));
@@ -3252,9 +3306,9 @@ bool ByteCodeParser::handleIntrinsicCall(Node* callee, VirtualRegister result, I
                 return false;
 
             insertChecks();
-            Node* base = get(virtualRegisterForArgument(0, registerOffset));
-            Node* key = get(virtualRegisterForArgument(1, registerOffset));
-            Node* value = get(virtualRegisterForArgument(2, registerOffset));
+            Node* base = get(virtualRegisterForArgumentIncludingThis(0, registerOffset));
+            Node* key = get(virtualRegisterForArgumentIncludingThis(1, registerOffset));
+            Node* value = get(virtualRegisterForArgumentIncludingThis(2, registerOffset));
 
             addToGraph(Check, Edge(key, ObjectUse));
             Node* hash = addToGraph(MapHash, key);
@@ -3272,7 +3326,7 @@ bool ByteCodeParser::handleIntrinsicCall(Node* callee, VirtualRegister result, I
             if (!is64Bit())
                 return false;
             insertChecks();
-            Node* base = get(virtualRegisterForArgument(0, registerOffset));
+            Node* base = get(virtualRegisterForArgumentIncludingThis(0, registerOffset));
             setResult(addToGraph(DateGetTime, OpInfo(intrinsic), OpInfo(), base));
             return true;
         }
@@ -3298,7 +3352,7 @@ bool ByteCodeParser::handleIntrinsicCall(Node* callee, VirtualRegister result, I
             if (!is64Bit())
                 return false;
             insertChecks();
-            Node* base = get(virtualRegisterForArgument(0, registerOffset));
+            Node* base = get(virtualRegisterForArgumentIncludingThis(0, registerOffset));
             setResult(addToGraph(DateGetInt32OrNaN, OpInfo(intrinsic), OpInfo(prediction), base));
             return true;
         }
@@ -3368,7 +3422,7 @@ bool ByteCodeParser::handleIntrinsicCall(Node* callee, VirtualRegister result, I
                 if (argumentCountIncludingThis < 3)
                     isLittleEndian = FalseTriState;
                 else {
-                    littleEndianChild = get(virtualRegisterForArgument(2, registerOffset));
+                    littleEndianChild = get(virtualRegisterForArgumentIncludingThis(2, registerOffset));
                     if (littleEndianChild->hasConstant()) {
                         JSValue constant = littleEndianChild->constant()->value();
                         if (constant) {
@@ -3387,7 +3441,7 @@ bool ByteCodeParser::handleIntrinsicCall(Node* callee, VirtualRegister result, I
             data.byteSize = byteSize;
 
             setResult(
-                addToGraph(op, OpInfo(data.asQuadWord), OpInfo(prediction), get(virtualRegisterForArgument(0, registerOffset)), get(virtualRegisterForArgument(1, registerOffset)), littleEndianChild));
+                addToGraph(op, OpInfo(data.asQuadWord), OpInfo(prediction), get(virtualRegisterForArgumentIncludingThis(0, registerOffset)), get(virtualRegisterForArgumentIncludingThis(1, registerOffset)), littleEndianChild));
             return true;
         }
 
@@ -3453,7 +3507,7 @@ bool ByteCodeParser::handleIntrinsicCall(Node* callee, VirtualRegister result, I
                 if (argumentCountIncludingThis < 4)
                     isLittleEndian = FalseTriState;
                 else {
-                    littleEndianChild = get(virtualRegisterForArgument(3, registerOffset));
+                    littleEndianChild = get(virtualRegisterForArgumentIncludingThis(3, registerOffset));
                     if (littleEndianChild->hasConstant()) {
                         JSValue constant = littleEndianChild->constant()->value();
                         if (constant) {
@@ -3472,9 +3526,9 @@ bool ByteCodeParser::handleIntrinsicCall(Node* callee, VirtualRegister result, I
             data.byteSize = byteSize;
             data.isFloatingPoint = isFloatingPoint;
 
-            addVarArgChild(get(virtualRegisterForArgument(0, registerOffset)));
-            addVarArgChild(get(virtualRegisterForArgument(1, registerOffset)));
-            addVarArgChild(get(virtualRegisterForArgument(2, registerOffset)));
+            addVarArgChild(get(virtualRegisterForArgumentIncludingThis(0, registerOffset)));
+            addVarArgChild(get(virtualRegisterForArgumentIncludingThis(1, registerOffset)));
+            addVarArgChild(get(virtualRegisterForArgumentIncludingThis(2, registerOffset)));
             addVarArgChild(littleEndianChild);
 
             addToGraph(Node::VarArg, DataViewSet, OpInfo(data.asQuadWord), OpInfo());
@@ -3495,8 +3549,8 @@ bool ByteCodeParser::handleIntrinsicCall(Node* callee, VirtualRegister result, I
                 return false;
 
             insertChecks();
-            Node* object = get(virtualRegisterForArgument(0, registerOffset));
-            Node* key = get(virtualRegisterForArgument(1, registerOffset));
+            Node* object = get(virtualRegisterForArgumentIncludingThis(0, registerOffset));
+            Node* key = get(virtualRegisterForArgumentIncludingThis(1, registerOffset));
             Node* resultNode = addToGraph(HasOwnProperty, object, key);
             setResult(resultNode);
             return true;
@@ -3510,11 +3564,11 @@ bool ByteCodeParser::handleIntrinsicCall(Node* callee, VirtualRegister result, I
                 return false;
 
             insertChecks();
-            Node* thisString = get(virtualRegisterForArgument(0, registerOffset));
-            Node* start = get(virtualRegisterForArgument(1, registerOffset));
+            Node* thisString = get(virtualRegisterForArgumentIncludingThis(0, registerOffset));
+            Node* start = get(virtualRegisterForArgumentIncludingThis(1, registerOffset));
             Node* end = nullptr;
             if (argumentCountIncludingThis > 2)
-                end = get(virtualRegisterForArgument(2, registerOffset));
+                end = get(virtualRegisterForArgumentIncludingThis(2, registerOffset));
             Node* resultNode = addToGraph(StringSlice, thisString, start, end);
             setResult(resultNode);
             return true;
@@ -3525,7 +3579,7 @@ bool ByteCodeParser::handleIntrinsicCall(Node* callee, VirtualRegister result, I
                 return false;
 
             insertChecks();
-            Node* thisString = get(virtualRegisterForArgument(0, registerOffset));
+            Node* thisString = get(virtualRegisterForArgumentIncludingThis(0, registerOffset));
             Node* resultNode = addToGraph(ToLowerCase, thisString);
             setResult(resultNode);
             return true;
@@ -3536,12 +3590,12 @@ bool ByteCodeParser::handleIntrinsicCall(Node* callee, VirtualRegister result, I
                 return false;
 
             insertChecks();
-            Node* thisNumber = get(virtualRegisterForArgument(0, registerOffset));
+            Node* thisNumber = get(virtualRegisterForArgumentIncludingThis(0, registerOffset));
             if (argumentCountIncludingThis == 1) {
                 Node* resultNode = addToGraph(ToString, thisNumber);
                 setResult(resultNode);
             } else {
-                Node* radix = get(virtualRegisterForArgument(1, registerOffset));
+                Node* radix = get(virtualRegisterForArgumentIncludingThis(1, registerOffset));
                 Node* resultNode = addToGraph(NumberToStringWithRadix, thisNumber, radix);
                 setResult(resultNode);
             }
@@ -3553,7 +3607,7 @@ bool ByteCodeParser::handleIntrinsicCall(Node* callee, VirtualRegister result, I
                 return false;
 
             insertChecks();
-            Node* input = get(virtualRegisterForArgument(1, registerOffset));
+            Node* input = get(virtualRegisterForArgumentIncludingThis(1, registerOffset));
             Node* resultNode = addToGraph(NumberIsInteger, input);
             setResult(resultNode);
             return true;
@@ -3851,7 +3905,7 @@ bool ByteCodeParser::handleTypedArrayConstructor(
 
     insertChecks();
     set(result,
-        addToGraph(NewTypedArray, OpInfo(type), get(virtualRegisterForArgument(1, registerOffset))));
+        addToGraph(NewTypedArray, OpInfo(type), get(virtualRegisterForArgumentIncludingThis(1, registerOffset))));
     return true;
 }
 
@@ -3868,7 +3922,7 @@ bool ByteCodeParser::handleConstantInternalFunction(
         return false;
 
     if (kind == CodeForConstruct) {
-        Node* newTargetNode = get(virtualRegisterForArgument(0, registerOffset));
+        Node* newTargetNode = get(virtualRegisterForArgumentIncludingThis(0, registerOffset));
         // We cannot handle the case where new.target != callee (i.e. a construct from a super call) because we
         // don't know what the prototype of the constructed object will be.
         // FIXME: If we have inlined super calls up to the call site, however, we should be able to figure out the structure. https://bugs.webkit.org/show_bug.cgi?id=152700
@@ -3883,12 +3937,12 @@ bool ByteCodeParser::handleConstantInternalFunction(
         insertChecks();
         if (argumentCountIncludingThis == 2) {
             set(result,
-                addToGraph(NewArrayWithSize, OpInfo(ArrayWithUndecided), get(virtualRegisterForArgument(1, registerOffset))));
+                addToGraph(NewArrayWithSize, OpInfo(ArrayWithUndecided), get(virtualRegisterForArgumentIncludingThis(1, registerOffset))));
             return true;
         }
         
         for (int i = 1; i < argumentCountIncludingThis; ++i)
-            addVarArgChild(get(virtualRegisterForArgument(i, registerOffset)));
+            addVarArgChild(get(virtualRegisterForArgumentIncludingThis(i, registerOffset)));
         set(result,
             addToGraph(Node::VarArg, NewArray, OpInfo(ArrayWithUndecided), OpInfo(argumentCountIncludingThis - 1)));
         return true;
@@ -3902,7 +3956,7 @@ bool ByteCodeParser::handleConstantInternalFunction(
         if (argumentCountIncludingThis <= 1)
             set(result, jsConstant(jsNumber(0)));
         else
-            set(result, addToGraph(ToNumber, OpInfo(0), OpInfo(prediction), get(virtualRegisterForArgument(1, registerOffset))));
+            set(result, addToGraph(ToNumber, OpInfo(0), OpInfo(prediction), get(virtualRegisterForArgumentIncludingThis(1, registerOffset))));
 
         return true;
     }
@@ -3915,7 +3969,7 @@ bool ByteCodeParser::handleConstantInternalFunction(
         if (argumentCountIncludingThis <= 1)
             resultNode = jsConstant(m_vm->smallStrings.emptyString());
         else
-            resultNode = addToGraph(CallStringConstructor, get(virtualRegisterForArgument(1, registerOffset)));
+            resultNode = addToGraph(CallStringConstructor, get(virtualRegisterForArgumentIncludingThis(1, registerOffset)));
         
         if (kind == CodeForConstruct)
             resultNode = addToGraph(NewStringObject, OpInfo(m_graph.registerStructure(function->globalObject()->stringObjectStructure())), resultNode);
@@ -3932,7 +3986,7 @@ bool ByteCodeParser::handleConstantInternalFunction(
         if (argumentCountIncludingThis <= 1)
             resultNode = addToGraph(NewSymbol);
         else
-            resultNode = addToGraph(NewSymbol, addToGraph(ToString, get(virtualRegisterForArgument(1, registerOffset))));
+            resultNode = addToGraph(NewSymbol, addToGraph(ToString, get(virtualRegisterForArgumentIncludingThis(1, registerOffset))));
 
         set(result, resultNode);
         return true;
@@ -3946,7 +4000,7 @@ bool ByteCodeParser::handleConstantInternalFunction(
         if (argumentCountIncludingThis <= 1)
             resultNode = addToGraph(NewObject, OpInfo(m_graph.registerStructure(function->globalObject()->objectStructureForObjectConstructor())));
         else
-            resultNode = addToGraph(CallObjectConstructor, OpInfo(m_graph.freeze(function->globalObject())), OpInfo(prediction), get(virtualRegisterForArgument(1, registerOffset)));
+            resultNode = addToGraph(CallObjectConstructor, OpInfo(m_graph.freeze(function->globalObject())), OpInfo(prediction), get(virtualRegisterForArgumentIncludingThis(1, registerOffset)));
         set(result, resultNode);
         return true;
     }
@@ -4548,7 +4602,7 @@ void ByteCodeParser::handleGetById(
     //    the dreaded arguments object on the getter, the right things happen. Well, sort of -
     //    since we only really care about 'this' in this case. But we're not going to take that
     //    shortcut.
-    set(virtualRegisterForArgument(0, registerOffset), base, ImmediateNakedSet);
+    set(virtualRegisterForArgumentIncludingThis(0, registerOffset), base, ImmediateNakedSet);
 
     // We've set some locals, but they are not user-visible. It's still OK to exit from here.
     m_exitOK = true;
@@ -4731,8 +4785,8 @@ void ByteCodeParser::handlePutById(
             m_inlineStackTop->remapOperand(
                 VirtualRegister(registerOffset)).toLocal());
     
-        set(virtualRegisterForArgument(0, registerOffset), base, ImmediateNakedSet);
-        set(virtualRegisterForArgument(1, registerOffset), value, ImmediateNakedSet);
+        set(virtualRegisterForArgumentIncludingThis(0, registerOffset), base, ImmediateNakedSet);
+        set(virtualRegisterForArgumentIncludingThis(1, registerOffset), value, ImmediateNakedSet);
 
         // We've set some locals, but they are not user-visible. It's still OK to exit from here.
         m_exitOK = true;
@@ -4849,7 +4903,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
         m_exitOK = true;
         for (unsigned argument = 0; argument < m_numArguments; ++argument) {
             VariableAccessData* variable = newVariableAccessData(
-                virtualRegisterForArgument(argument));
+                virtualRegisterForArgumentIncludingThis(argument));
             variable->mergeStructureCheckHoistingFailed(
                 m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadCache));
             variable->mergeCheckArrayHoistingFailed(
@@ -5158,7 +5212,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
         case op_new_regexp: {
             auto bytecode = currentInstruction->as<OpNewRegexp>();
             ASSERT(bytecode.m_regexp.isConstant());
-            FrozenValue* frozenRegExp = m_graph.freezeStrong(m_inlineStackTop->m_codeBlock->getConstant(bytecode.m_regexp.offset()));
+            FrozenValue* frozenRegExp = m_graph.freezeStrong(m_inlineStackTop->m_codeBlock->getConstant(bytecode.m_regexp));
             set(bytecode.m_dst, addToGraph(NewRegexp, OpInfo(frozenRegExp), jsConstant(jsNumber(0))));
             NEXT_OPCODE(op_new_regexp);
         }
@@ -6239,7 +6293,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
 
             RELEASE_ASSERT(!m_currentBlock->size() || (m_graph.compilation() && m_currentBlock->size() == 1 && m_currentBlock->at(0)->op() == CountExecution));
 
-            ValueProfileAndOperandBuffer* buffer = bytecode.metadata(codeBlock).m_buffer;
+            ValueProfileAndVirtualRegisterBuffer* buffer = bytecode.metadata(codeBlock).m_buffer;
 
             if (!buffer) {
                 NEXT_OPCODE(op_catch); // This catch has yet to execute. Note: this load can be racy with the main thread.
@@ -6256,7 +6310,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
             {
                 ConcurrentJSLocker locker(m_inlineStackTop->m_profiledBlock->m_lock);
 
-                buffer->forEach([&] (ValueProfileAndOperand& profile) {
+                buffer->forEach([&] (ValueProfileAndVirtualRegister& profile) {
                     VirtualRegister operand(profile.m_operand);
                     SpeculatedType prediction = profile.computeUpdatedPrediction(locker);
                     if (operand.isLocal())
@@ -6284,14 +6338,14 @@ void ByteCodeParser::parseBlock(unsigned limit)
             m_exitOK = false; 
 
             unsigned numberOfLocals = 0;
-            buffer->forEach([&] (ValueProfileAndOperand& profile) {
+            buffer->forEach([&] (ValueProfileAndVirtualRegister& profile) {
                 VirtualRegister operand(profile.m_operand);
                 if (operand.isArgument())
                     return;
                 ASSERT(operand.isLocal());
                 Node* value = addToGraph(ExtractCatchLocal, OpInfo(numberOfLocals), OpInfo(localPredictions[numberOfLocals]));
                 ++numberOfLocals;
-                addToGraph(MovHint, OpInfo(profile.m_operand), value);
+                addToGraph(MovHint, OpInfo(operand), value);
                 localsToSet.uncheckedAppend(std::make_pair(operand, value));
             });
             if (numberOfLocals)
@@ -6322,7 +6376,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
                 BytecodeIndex exitBytecodeIndex = BytecodeIndex(m_currentIndex.offset() + currentInstruction->size());
 
                 for (unsigned argument = 0; argument < argumentPredictions.size(); ++argument) {
-                    VariableAccessData* variable = newVariableAccessData(virtualRegisterForArgument(argument));
+                    VariableAccessData* variable = newVariableAccessData(virtualRegisterForArgumentIncludingThis(argument));
                     variable->predict(argumentPredictions[argument]);
 
                     variable->mergeStructureCheckHoistingFailed(
@@ -6419,7 +6473,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
             
         case op_jneq_ptr: {
             auto bytecode = currentInstruction->as<OpJneqPtr>();
-            FrozenValue* frozenPointer = m_graph.freezeStrong(m_inlineStackTop->m_codeBlock->getConstant(bytecode.m_specialPointer.offset()));
+            FrozenValue* frozenPointer = m_graph.freezeStrong(m_inlineStackTop->m_codeBlock->getConstant(bytecode.m_specialPointer));
             unsigned relativeOffset = jumpTarget(bytecode.m_targetLabel);
             Node* child = get(bytecode.m_value);
             if (bytecode.metadata(codeBlock).m_hasJumped) {
@@ -6887,8 +6941,8 @@ void ByteCodeParser::parseBlock(unsigned limit)
         case op_create_lexical_environment: {
             auto bytecode = currentInstruction->as<OpCreateLexicalEnvironment>();
             ASSERT(bytecode.m_symbolTable.isConstant() && bytecode.m_initialValue.isConstant());
-            FrozenValue* symbolTable = m_graph.freezeStrong(m_inlineStackTop->m_codeBlock->getConstant(bytecode.m_symbolTable.offset()));
-            FrozenValue* initialValue = m_graph.freezeStrong(m_inlineStackTop->m_codeBlock->getConstant(bytecode.m_initialValue.offset()));
+            FrozenValue* symbolTable = m_graph.freezeStrong(m_inlineStackTop->m_codeBlock->getConstant(bytecode.m_symbolTable));
+            FrozenValue* initialValue = m_graph.freezeStrong(m_inlineStackTop->m_codeBlock->getConstant(bytecode.m_initialValue));
             Node* scope = get(bytecode.m_scope);
             Node* lexicalEnvironment = addToGraph(CreateActivation, OpInfo(symbolTable), OpInfo(initialValue), scope);
             set(bytecode.m_dst, lexicalEnvironment);
@@ -6918,7 +6972,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
             // loads from the scope register later, as that would prevent the DFG from tracking the
             // bytecode-level liveness of the scope register.
             auto bytecode = currentInstruction->as<OpGetScope>();
-            Node* callee = get(VirtualRegister(CallFrameSlot::callee));
+            Node* callee = get(CallFrameSlot::callee);
             Node* result;
             if (JSFunction* function = callee->dynamicCastConstant<JSFunction*>(*m_vm))
                 result = weakJSConstant(function->scope());
@@ -6995,7 +7049,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
             if (inlineCallFrame && !inlineCallFrame->isVarargs()) {
                 int32_t argumentCountIncludingThisWithFixup = inlineCallFrame->argumentsWithFixup.size();
                 if (argumentIndexIncludingThis < argumentCountIncludingThisWithFixup)
-                    argument = get(virtualRegisterForArgument(argumentIndexIncludingThis));
+                    argument = get(virtualRegisterForArgumentIncludingThis(argumentIndexIncludingThis));
                 else
                     argument = addToGraph(JSConstant, OpInfo(m_constantUndefined));
             } else
@@ -7343,8 +7397,10 @@ ByteCodeParser::InlineStackEntry::InlineStackEntry(
         // The owner is the machine code block, and we already have a barrier on that when the
         // plan finishes.
         m_inlineCallFrame->baselineCodeBlock.setWithoutWriteBarrier(codeBlock->baselineVersion());
+        m_inlineCallFrame->setTmpOffset((m_caller->m_inlineCallFrame ? m_caller->m_inlineCallFrame->tmpOffset : 0) + m_caller->m_codeBlock->numTmps());
         m_inlineCallFrame->setStackOffset(inlineCallFrameStart.offset() - CallFrame::headerSizeInRegisters);
         m_inlineCallFrame->argumentCountIncludingThis = argumentCountIncludingThis;
+        RELEASE_ASSERT(m_inlineCallFrame->argumentCountIncludingThis == argumentCountIncludingThis);
         if (callee) {
             m_inlineCallFrame->calleeRecovery = ValueRecovery::constant(callee);
             m_inlineCallFrame->isClosureCall = false;
@@ -7706,7 +7762,7 @@ void ByteCodeParser::parse()
                     Node* node = block->at(nodeIndex);
 
                     if (node->hasVariableAccessData(m_graph))
-                        mapping.operand(node->local()) = node->variableAccessData();
+                        mapping.operand(node->operand()) = node->variableAccessData();
 
                     if (node->op() != ForceOSRExit)
                         continue;
@@ -7726,24 +7782,24 @@ void ByteCodeParser::parse()
                             RELEASE_ASSERT(successor->predecessors.isEmpty());
                     }
 
-                    auto insertLivenessPreservingOp = [&] (InlineCallFrame* inlineCallFrame, NodeType op, VirtualRegister operand) {
+                    auto insertLivenessPreservingOp = [&] (InlineCallFrame* inlineCallFrame, NodeType op, Operand operand) {
                         VariableAccessData* variable = mapping.operand(operand);
                         if (!variable) {
                             variable = newVariableAccessData(operand);
                             mapping.operand(operand) = variable;
                         }
 
-                        VirtualRegister argument = operand - (inlineCallFrame ? inlineCallFrame->stackOffset : 0);
+                        Operand argument = unmapOperand(inlineCallFrame, operand);
                         if (argument.isArgument() && !argument.isHeader()) {
                             const Vector<ArgumentPosition*>& arguments = m_inlineCallFrameToArgumentPositions.get(inlineCallFrame);
                             arguments[argument.toArgument()]->addVariable(variable);
                         }
                         insertionSet.insertNode(nodeIndex, SpecNone, op, origin, OpInfo(variable));
                     };
-                    auto addFlushDirect = [&] (InlineCallFrame* inlineCallFrame, VirtualRegister operand) {
+                    auto addFlushDirect = [&] (InlineCallFrame* inlineCallFrame, Operand operand) {
                         insertLivenessPreservingOp(inlineCallFrame, Flush, operand);
                     };
-                    auto addPhantomLocalDirect = [&] (InlineCallFrame* inlineCallFrame, VirtualRegister operand) {
+                    auto addPhantomLocalDirect = [&] (InlineCallFrame* inlineCallFrame, Operand operand) {
                         insertLivenessPreservingOp(inlineCallFrame, PhantomLocal, operand);
                     };
                     flushForTerminalImpl(origin.semantic, addFlushDirect, addPhantomLocalDirect);
@@ -7808,6 +7864,7 @@ void ByteCodeParser::parse()
         ASSERT(block->variablesAtTail.numberOfArguments() == m_graph.block(0)->variablesAtHead.numberOfArguments());
     }
 
+    m_graph.m_tmps = m_numTmps;
     m_graph.m_localVars = m_numLocals;
     m_graph.m_parameterSlots = m_parameterSlots;
 }

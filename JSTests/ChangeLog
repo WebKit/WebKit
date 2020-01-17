@@ -1,5 +1,31 @@
 2020-01-16  Keith Miller  <keith_miller@apple.com>
 
+        Reland bytecode checkpoints since bugs have been fixed
+        https://bugs.webkit.org/show_bug.cgi?id=206361
+
+        Unreviewed, reland.
+
+        The watch bugs have been fixed by https://trac.webkit.org/changeset/254674
+
+        * stress/apply-osr-exit-should-get-length-once-exceptions-occasionally.js: Added.
+        (expectedArgCount):
+        (callee):
+        (test):
+        (let.array.get length):
+        * stress/apply-osr-exit-should-get-length-once.js: Added.
+        (expectedArgCount):
+        (callee):
+        (test):
+        (let.array.get length):
+        * stress/load-varargs-then-inlined-call-and-exit-strict.js:
+        (checkEqual):
+        * stress/recursive-tail-call-with-different-argument-count.js:
+        * stress/rest-varargs-osr-exit-to-checkpoint.js: Added.
+        (foo):
+        (bar):
+
+2020-01-16  Keith Miller  <keith_miller@apple.com>
+
         Revert 254725 since it breaks tests
         https://bugs.webkit.org/show_bug.cgi?id=206391
 

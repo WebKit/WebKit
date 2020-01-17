@@ -46,13 +46,13 @@ void JSImmutableButterfly::visitChildren(JSCell* cell, SlotVisitor& visitor)
     visitor.appendValuesHidden(butterfly->contiguous().data(), butterfly->publicLength());
 }
 
-void JSImmutableButterfly::copyToArguments(JSGlobalObject*, CallFrame* callFrame, VirtualRegister firstElementDest, unsigned offset, unsigned length)
+void JSImmutableButterfly::copyToArguments(JSGlobalObject*, JSValue* firstElementDest, unsigned offset, unsigned length)
 {
     for (unsigned i = 0; i < length; ++i) {
         if ((i + offset) < publicLength())
-            callFrame->r(firstElementDest + i) = get(i + offset);
+            firstElementDest[i] = get(i + offset);
         else
-            callFrame->r(firstElementDest + i) = jsUndefined();
+            firstElementDest[i] = jsUndefined();
     }
 }
 

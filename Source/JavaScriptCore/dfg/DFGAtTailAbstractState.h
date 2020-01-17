@@ -139,8 +139,7 @@ public:
     
     unsigned numberOfArguments() const { return m_block->valuesAtTail.numberOfArguments(); }
     unsigned numberOfLocals() const { return m_block->valuesAtTail.numberOfLocals(); }
-    AbstractValue& operand(int operand) { return m_block->valuesAtTail.operand(operand); }
-    AbstractValue& operand(VirtualRegister operand) { return m_block->valuesAtTail.operand(operand); }
+    AbstractValue& operand(Operand operand) { return m_block->valuesAtTail.operand(operand); }
     AbstractValue& local(size_t index) { return m_block->valuesAtTail.local(index); }
     AbstractValue& argument(size_t index) { return m_block->valuesAtTail.argument(index); }
     

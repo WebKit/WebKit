@@ -42,11 +42,8 @@ namespace JSC { namespace DFG {
 
 namespace {
 
-namespace DFGPutStackSinkingPhaseInternal {
-static constexpr bool verbose = false;
-}
-
 class PutStackSinkingPhase : public Phase {
+    static constexpr bool verbose = false;
 public:
     PutStackSinkingPhase(Graph& graph)
         : Phase(graph, "PutStack sinking")
@@ -73,7 +70,7 @@ public:
         // the stack. It's not clear to me if this is important or not.
         // https://bugs.webkit.org/show_bug.cgi?id=145296
         
-        if (DFGPutStackSinkingPhaseInternal::verbose) {
+        if (verbose) {
             dataLog("Graph before PutStack sinking:\n");
             m_graph.dump();
         }
@@ -88,11 +85,8 @@ public:
         BlockMap<Operands<bool>> liveAtTail(m_graph);
         
         for (BasicBlock* block : m_graph.blocksInNaturalOrder()) {
-            liveAtHead[block] = Operands<bool>(OperandsLike, block->variablesAtHead);
-            liveAtTail[block] = Operands<bool>(OperandsLike, block->variablesAtHead);
-            
-            liveAtHead[block].fill(false);
-            liveAtTail[block].fill(false);
+            liveAtHead[block] = Operands<bool>(OperandsLike, block->variablesAtHead, false);
+            liveAtTail[block] = Operands<bool>(OperandsLike, block->variablesAtHead, false);
         }
         
         bool changed;
@@ -107,33 +101,34 @@ public:
                 Operands<bool> live = liveAtTail[block];
                 for (unsigned nodeIndex = block->size(); nodeIndex--;) {
                     Node* node = block->at(nodeIndex);
-                    if (DFGPutStackSinkingPhaseInternal::verbose)
+                    if (verbose)
                         dataLog("Live at ", node, ": ", live, "\n");
                     
-                    Vector<VirtualRegister, 4> reads;
-                    Vector<VirtualRegister, 4> writes;
-                    auto escapeHandler = [&] (VirtualRegister operand) {
+                    Vector<Operand, 4> reads;
+                    Vector<Operand, 4> writes;
+                    auto escapeHandler = [&] (Operand operand) {
                         if (operand.isHeader())
                             return;
-                        if (DFGPutStackSinkingPhaseInternal::verbose)
+                        if (verbose)
                             dataLog("    ", operand, " is live at ", node, "\n");
                         reads.append(operand);
                     };
 
-                    auto writeHandler = [&] (VirtualRegister operand) {
+                    auto writeHandler = [&] (Operand operand) {
                         if (operand.isHeader())
                             return;
-                        RELEASE_ASSERT(node->op() == PutStack || node->op() == LoadVarargs || node->op() == ForwardVarargs || node->op() == KillStack);
+                        auto op = node->op();
+                        RELEASE_ASSERT(op == PutStack || op == LoadVarargs || op == ForwardVarargs || op == KillStack);
                         writes.append(operand);
                     };
 
                     preciseLocalClobberize(
                         m_graph, node, escapeHandler, writeHandler,
-                        [&] (VirtualRegister, LazyNode) { });
+                        [&] (Operand, LazyNode) { });
 
-                    for (VirtualRegister operand : writes)
+                    for (Operand operand : writes)
                         live.operand(operand) = false;
-                    for (VirtualRegister operand : reads)
+                    for (Operand operand : reads)
                         live.operand(operand) = true;
                 }
                 
@@ -234,7 +229,7 @@ public:
                 Operands<FlushFormat> deferred = deferredAtHead[block];
                 
                 for (Node* node : *block) {
-                    if (DFGPutStackSinkingPhaseInternal::verbose)
+                    if (verbose)
                         dataLog("Deferred at ", node, ":", deferred, "\n");
                     
                     if (node->op() == GetStack) {
@@ -261,7 +256,7 @@ public:
                         // https://bugs.webkit.org/show_bug.cgi?id=150398
 
                         bool isConflicting =
-                            deferred.operand(node->stackAccessData()->local) == ConflictingFlush;
+                            deferred.operand(node->stackAccessData()->operand) == ConflictingFlush;
                         
                         if (validationEnabled())
                             DFG_ASSERT(m_graph, node, !isConflicting);
@@ -275,17 +270,20 @@ public:
                         // from.
                         continue;
                     } else if (node->op() == PutStack) {
-                        VirtualRegister operand = node->stackAccessData()->local;
+                        Operand operand = node->stackAccessData()->operand;
+                        dataLogLnIf(verbose, "Setting flush format for ", node, " at operand ", operand);
                         deferred.operand(operand) = node->stackAccessData()->format;
                         continue;
                     } else if (node->op() == KillStack) {
                         // We don't want to sink a PutStack past a KillStack.
-                        deferred.operand(node->unlinkedLocal()) = ConflictingFlush;
+                        if (verbose)
+                            dataLogLn("Killing stack for ", node->unlinkedOperand());
+                        deferred.operand(node->unlinkedOperand()) = ConflictingFlush;
                         continue;
                     }
                     
-                    auto escapeHandler = [&] (VirtualRegister operand) {
-                        if (DFGPutStackSinkingPhaseInternal::verbose)
+                    auto escapeHandler = [&] (Operand operand) {
+                        if (verbose)
                             dataLog("For ", node, " escaping ", operand, "\n");
                         if (operand.isHeader())
                             return;
@@ -293,16 +291,18 @@ public:
                         deferred.operand(operand) = DeadFlush;
                     };
 
-                    auto writeHandler = [&] (VirtualRegister operand) {
+                    auto writeHandler = [&] (Operand operand) {
+                        ASSERT(!operand.isTmp());
                         if (operand.isHeader())
                             return;
-                        RELEASE_ASSERT(node->op() == LoadVarargs || node->op() == ForwardVarargs);
+                        RELEASE_ASSERT(node->op() == VarargsLength || node->op() == LoadVarargs || node->op() == ForwardVarargs);
+                        dataLogLnIf(verbose, "Writing dead flush for ", node, " at operand ", operand);
                         deferred.operand(operand) = DeadFlush;
                     };
                     
                     preciseLocalClobberize(
                         m_graph, node, escapeHandler, writeHandler,
-                        [&] (VirtualRegister, LazyNode) { });
+                        [&] (Operand, LazyNode) { });
                 }
                 
                 if (deferred == deferredAtTail[block])
@@ -313,13 +313,13 @@ public:
                 
                 for (BasicBlock* successor : block->successors()) {
                     for (size_t i = deferred.size(); i--;) {
-                        if (DFGPutStackSinkingPhaseInternal::verbose)
-                            dataLog("Considering ", VirtualRegister(deferred.operandForIndex(i)), " at ", pointerDump(block), "->", pointerDump(successor), ": ", deferred[i], " and ", deferredAtHead[successor][i], " merges to ");
+                        if (verbose)
+                            dataLog("Considering ", deferred.operandForIndex(i), " at ", pointerDump(block), "->", pointerDump(successor), ": ", deferred[i], " and ", deferredAtHead[successor][i], " merges to ");
 
                         deferredAtHead[successor][i] =
                             merge(deferredAtHead[successor][i], deferred[i]);
                         
-                        if (DFGPutStackSinkingPhaseInternal::verbose)
+                        if (verbose)
                             dataLog(deferredAtHead[successor][i], "\n");
                     }
                 }
@@ -352,10 +352,10 @@ public:
         
         Operands<SSACalculator::Variable*> operandToVariable(
             OperandsLike, m_graph.block(0)->variablesAtHead);
-        Vector<VirtualRegister> indexToOperand;
+        Vector<Operand> indexToOperand;
         for (size_t i = m_graph.block(0)->variablesAtHead.size(); i--;) {
-            VirtualRegister operand(m_graph.block(0)->variablesAtHead.operandForIndex(i));
-            
+            Operand operand = m_graph.block(0)->variablesAtHead.operandForIndex(i);
+
             SSACalculator::Variable* variable = ssaCalculator.newVariable();
             operandToVariable.operand(operand) = variable;
             ASSERT(indexToOperand.size() == variable->index());
@@ -370,12 +370,12 @@ public:
                 case PutStack:
                     putStacksToSink.add(node);
                     ssaCalculator.newDef(
-                        operandToVariable.operand(node->stackAccessData()->local),
+                        operandToVariable.operand(node->stackAccessData()->operand),
                         block, node->child1().node());
                     break;
                 case GetStack:
                     ssaCalculator.newDef(
-                        operandToVariable.operand(node->stackAccessData()->local),
+                        operandToVariable.operand(node->stackAccessData()->operand),
                         block, node);
                     break;
                 default:
@@ -386,7 +386,7 @@ public:
         
         ssaCalculator.computePhis(
             [&] (SSACalculator::Variable* variable, BasicBlock* block) -> Node* {
-                VirtualRegister operand = indexToOperand[variable->index()];
+                Operand operand = indexToOperand[variable->index()];
                 
                 if (!liveAtHead[block].operand(operand))
                     return nullptr;
@@ -397,7 +397,7 @@ public:
                 if (!isConcrete(format))
                     return nullptr;
 
-                if (DFGPutStackSinkingPhaseInternal::verbose)
+                if (verbose)
                     dataLog("Adding Phi for ", operand, " at ", pointerDump(block), "\n");
                 
                 Node* phiNode = m_graph.addNode(SpecHeapTop, Phi, block->at(0)->origin.withInvalidExit());
@@ -411,7 +411,7 @@ public:
             mapping.fill(nullptr);
             
             for (size_t i = mapping.size(); i--;) {
-                VirtualRegister operand(mapping.operandForIndex(i));
+                Operand operand(mapping.operandForIndex(i));
                 
                 SSACalculator::Variable* variable = operandToVariable.operand(operand);
                 SSACalculator::Def* def = ssaCalculator.reachingDefAtHead(block, variable);
@@ -421,15 +421,15 @@ public:
                 mapping.operand(operand) = def->value();
             }
             
-            if (DFGPutStackSinkingPhaseInternal::verbose)
+            if (verbose)
                 dataLog("Mapping at top of ", pointerDump(block), ": ", mapping, "\n");
             
             for (SSACalculator::Def* phiDef : ssaCalculator.phisForBlock(block)) {
-                VirtualRegister operand = indexToOperand[phiDef->variable()->index()];
+                Operand operand = indexToOperand[phiDef->variable()->index()];
                 
                 insertionSet.insert(0, phiDef->value());
                 
-                if (DFGPutStackSinkingPhaseInternal::verbose)
+                if (verbose)
                     dataLog("   Mapping ", operand, " to ", phiDef->value(), "\n");
                 mapping.operand(operand) = phiDef->value();
             }
@@ -437,15 +437,15 @@ public:
             deferred = deferredAtHead[block];
             for (unsigned nodeIndex = 0; nodeIndex < block->size(); ++nodeIndex) {
                 Node* node = block->at(nodeIndex);
-                if (DFGPutStackSinkingPhaseInternal::verbose)
+                if (verbose)
                     dataLog("Deferred at ", node, ":", deferred, "\n");
                 
                 switch (node->op()) {
                 case PutStack: {
                     StackAccessData* data = node->stackAccessData();
-                    VirtualRegister operand = data->local;
+                    Operand operand = data->operand;
                     deferred.operand(operand) = data->format;
-                    if (DFGPutStackSinkingPhaseInternal::verbose)
+                    if (verbose)
                         dataLog("   Mapping ", operand, " to ", node->child1().node(), " at ", node, "\n");
                     mapping.operand(operand) = node->child1().node();
                     break;
@@ -453,16 +453,16 @@ public:
                     
                 case GetStack: {
                     StackAccessData* data = node->stackAccessData();
-                    FlushFormat format = deferred.operand(data->local);
+                    FlushFormat format = deferred.operand(data->operand);
                     if (!isConcrete(format)) {
                         DFG_ASSERT(
                             m_graph, node,
-                            deferred.operand(data->local) != ConflictingFlush, deferred.operand(data->local));
+                            deferred.operand(data->operand) != ConflictingFlush, deferred.operand(data->operand));
                         
                         // This means there is no deferral. No deferral means that the most
                         // authoritative value for this stack slot is what is stored in the stack. So,
                         // keep the GetStack.
-                        mapping.operand(data->local) = node;
+                        mapping.operand(data->operand) = node;
                         break;
                     }
                     
@@ -472,20 +472,20 @@ public:
                     // have stored and get rid of the GetStack.
                     DFG_ASSERT(m_graph, node, format == data->format, format, data->format);
                     
-                    Node* incoming = mapping.operand(data->local);
+                    Node* incoming = mapping.operand(data->operand);
                     node->child1() = incoming->defaultEdge();
                     node->convertToIdentity();
                     break;
                 }
 
                 case KillStack: {
-                    deferred.operand(node->unlinkedLocal()) = ConflictingFlush;
+                    deferred.operand(node->unlinkedOperand()) = ConflictingFlush;
                     break;
                 }
                 
                 default: {
-                    auto escapeHandler = [&] (VirtualRegister operand) {
-                        if (DFGPutStackSinkingPhaseInternal::verbose)
+                    auto escapeHandler = [&] (Operand operand) {
+                        if (verbose)
                             dataLog("For ", node, " escaping ", operand, "\n");
 
                         if (operand.isHeader())
@@ -499,7 +499,7 @@ public:
                         }
                     
                         // Gotta insert a PutStack.
-                        if (DFGPutStackSinkingPhaseInternal::verbose)
+                        if (verbose)
                             dataLog("Inserting a PutStack for ", operand, " at ", node, "\n");
 
                         Node* incoming = mapping.operand(operand);
@@ -513,7 +513,7 @@ public:
                         deferred.operand(operand) = DeadFlush;
                     };
 
-                    auto writeHandler = [&] (VirtualRegister operand) {
+                    auto writeHandler = [&] (Operand operand) {
                         if (operand.isHeader())
                             return;
                         // LoadVarargs and ForwardVarargs are unconditional writes to the stack
@@ -521,13 +521,13 @@ public:
                         // locations they write to. This makes those stack locations dead right 
                         // before a LoadVarargs/ForwardVarargs. This means we should never sink
                         // PutStacks right to this point.
-                        RELEASE_ASSERT(node->op() == LoadVarargs || node->op() == ForwardVarargs);
+                        RELEASE_ASSERT(node->op() == VarargsLength || node->op() == LoadVarargs || node->op() == ForwardVarargs);
                         deferred.operand(operand) = DeadFlush;
                     };
 
                     preciseLocalClobberize(
                         m_graph, node, escapeHandler, writeHandler,
-                        [&] (VirtualRegister, LazyNode) { });
+                        [&] (Operand, LazyNode) { });
                     break;
                 } }
             }
@@ -539,8 +539,8 @@ public:
                 for (SSACalculator::Def* phiDef : ssaCalculator.phisForBlock(successorBlock)) {
                     Node* phiNode = phiDef->value();
                     SSACalculator::Variable* variable = phiDef->variable();
-                    VirtualRegister operand = indexToOperand[variable->index()];
-                    if (DFGPutStackSinkingPhaseInternal::verbose)
+                    Operand operand = indexToOperand[variable->index()];
+                    if (verbose)
                         dataLog("Creating Upsilon for ", operand, " at ", pointerDump(block), "->", pointerDump(successorBlock), "\n");
                     FlushFormat format = deferredAtHead[successorBlock].operand(operand);
                     DFG_ASSERT(m_graph, nullptr, isConcrete(format), format);
@@ -585,7 +585,7 @@ public:
             }
         }
         
-        if (DFGPutStackSinkingPhaseInternal::verbose) {
+        if (verbose) {
             dataLog("Graph after PutStack sinking:\n");
             m_graph.dump();
         }

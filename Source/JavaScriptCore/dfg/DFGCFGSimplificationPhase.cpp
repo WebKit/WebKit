@@ -303,7 +303,7 @@ private:
     void jettisonBlock(BasicBlock* block, BasicBlock* jettisonedBlock, NodeOrigin boundaryNodeOrigin)
     {
         for (size_t i = 0; i < jettisonedBlock->variablesAtHead.numberOfArguments(); ++i)
-            keepOperandAlive(block, jettisonedBlock, boundaryNodeOrigin, virtualRegisterForArgument(i));
+            keepOperandAlive(block, jettisonedBlock, boundaryNodeOrigin, virtualRegisterForArgumentIncludingThis(i));
         for (size_t i = 0; i < jettisonedBlock->variablesAtHead.numberOfLocals(); ++i)
             keepOperandAlive(block, jettisonedBlock, boundaryNodeOrigin, virtualRegisterForLocal(i));
         
@@ -354,7 +354,7 @@ private:
             // different path than secondBlock.
             
             for (size_t i = 0; i < jettisonedBlock->variablesAtHead.numberOfArguments(); ++i)
-                keepOperandAlive(firstBlock, jettisonedBlock, boundaryNodeOrigin, virtualRegisterForArgument(i));
+                keepOperandAlive(firstBlock, jettisonedBlock, boundaryNodeOrigin, virtualRegisterForArgumentIncludingThis(i));
             for (size_t i = 0; i < jettisonedBlock->variablesAtHead.numberOfLocals(); ++i)
                 keepOperandAlive(firstBlock, jettisonedBlock, boundaryNodeOrigin, virtualRegisterForLocal(i));
         }

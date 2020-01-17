@@ -70,6 +70,11 @@ struct OSRExitBase {
         return m_kind == GenericUnwind;
     }
 
+    ALWAYS_INLINE bool isExitingToCheckpointHandler() const
+    {
+        return m_codeOrigin.bytecodeIndex().checkpoint();
+    }
+
 protected:
     void considerAddingAsFrequentExitSite(CodeBlock* profiledCodeBlock, ExitingJITType jitType)
     {

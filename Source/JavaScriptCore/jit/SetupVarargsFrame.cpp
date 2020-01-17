@@ -128,7 +128,7 @@ void emitSetupVarargsFrameFastCase(VM& vm, CCallHelpers& jit, GPRReg numUsedSlot
             firstArgumentReg = VirtualRegister(0);
     } else {
         argumentCountRecovery = ValueRecovery::displacedInJSStack(
-            VirtualRegister(CallFrameSlot::argumentCountIncludingThis), DataFormatInt32);
+            CallFrameSlot::argumentCountIncludingThis, DataFormatInt32);
         firstArgumentReg = VirtualRegister(CallFrame::argumentOffset(0));
     }
     emitSetupVarargsFrameFastCase(vm, jit, numUsedSlotsGPR, scratchGPR1, scratchGPR2, scratchGPR3, argumentCountRecovery, firstArgumentReg, firstVarArgOffset, slowCase);

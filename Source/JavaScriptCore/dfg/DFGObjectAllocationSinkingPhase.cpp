@@ -2242,7 +2242,7 @@ private:
             if (m_heap.follow(availability.m_locals[i].node()) != escapee)
                 continue;
 
-            int operand = availability.m_locals.operandForIndex(i);
+            Operand operand = availability.m_locals.operandForIndex(i);
             m_insertionSet.insertNode(
                 nodeIndex, SpecNone, MovHint, origin.takeValidExit(canExit), OpInfo(operand),
                 materialization->defaultEdge());

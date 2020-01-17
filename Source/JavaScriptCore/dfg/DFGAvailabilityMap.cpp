@@ -65,10 +65,10 @@ void AvailabilityMap::pruneHeap()
 
 void AvailabilityMap::pruneByLiveness(Graph& graph, CodeOrigin where)
 {
-    Operands<Availability> localsCopy(m_locals.numberOfArguments(), m_locals.numberOfLocals(), Availability::unavailable());
+    Operands<Availability> localsCopy(OperandsLike, m_locals, Availability::unavailable());
     graph.forAllLiveInBytecode(
         where,
-        [&] (VirtualRegister reg) {
+        [&] (Operand reg) {
             localsCopy.operand(reg) = m_locals.operand(reg);
         });
     m_locals = WTFMove(localsCopy);

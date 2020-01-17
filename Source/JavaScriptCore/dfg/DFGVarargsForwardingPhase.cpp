@@ -41,11 +41,9 @@ namespace JSC { namespace DFG {
 
 namespace {
 
-namespace DFGVarargsForwardingPhaseInternal {
-static constexpr bool verbose = false;
-}
 
 class VarargsForwardingPhase : public Phase {
+    static constexpr bool verbose = false;
 public:
     VarargsForwardingPhase(Graph& graph)
         : Phase(graph, "varargs forwarding")
@@ -56,7 +54,7 @@ public:
     {
         DFG_ASSERT(m_graph, nullptr, m_graph.m_form != SSA);
         
-        if (DFGVarargsForwardingPhaseInternal::verbose) {
+        if (verbose) {
             dataLog("Graph before varargs forwarding:\n");
             m_graph.dump();
         }
@@ -88,7 +86,7 @@ private:
         // We expect calls into this function to be rare. So, this is written in a simple O(n) manner.
         
         Node* candidate = block->at(candidateNodeIndex);
-        if (DFGVarargsForwardingPhaseInternal::verbose)
+        if (verbose)
             dataLog("Handling candidate ", candidate, "\n");
         
         // We eliminate GetButterfly over CreateClonedArguments if the butterfly is only
@@ -105,7 +103,7 @@ private:
 
             auto defaultEscape = [&] {
                 if (m_graph.uses(node, candidate)) {
-                    if (DFGVarargsForwardingPhaseInternal::verbose)
+                    if (verbose)
                         dataLog("    Escape at ", node, "\n");
                     return true;
                 }
@@ -117,9 +115,10 @@ private:
             case MovHint:
                 if (node->child1() != candidate)
                     break;
+                ASSERT_WITH_MESSAGE(!node->unlinkedOperand().isTmp(), "We don't currently support a tmp referring to an arguments object.");
                 lastUserIndex = nodeIndex;
-                if (!relevantLocals.contains(node->unlinkedLocal()))
-                    relevantLocals.append(node->unlinkedLocal());
+                if (!relevantLocals.contains(node->unlinkedOperand().virtualRegister()))
+                    relevantLocals.append(node->unlinkedOperand().virtualRegister());
                 break;
                 
             case CheckVarargs:
@@ -140,13 +139,14 @@ private:
                         sawEscape = true;
                     });
                 if (sawEscape) {
-                    if (DFGVarargsForwardingPhaseInternal::verbose)
+                    if (verbose)
                         dataLog("    Escape at ", node, "\n");
                     return;
                 }
                 break;
             }
                 
+            case VarargsLength:
             case LoadVarargs:
                 if (m_graph.uses(node, candidate))
                     lastUserIndex = nodeIndex;
@@ -157,7 +157,7 @@ private:
             case TailCallVarargs:
             case TailCallVarargsInlinedCaller:
                 if (node->child1() == candidate || node->child2() == candidate) {
-                    if (DFGVarargsForwardingPhaseInternal::verbose)
+                    if (verbose)
                         dataLog("    Escape at ", node, "\n");
                     return;
                 }
@@ -167,7 +167,7 @@ private:
                 
             case SetLocal:
                 if (node->child1() == candidate && node->variableAccessData()->isLoadedFrom()) {
-                    if (DFGVarargsForwardingPhaseInternal::verbose)
+                    if (verbose)
                         dataLog("    Escape at ", node, "\n");
                     return;
                 }
@@ -226,7 +226,7 @@ private:
             if (!validGetByOffset) {
                 for (Node* butterfly : candidateButterflies) {
                     if (m_graph.uses(node, butterfly)) {
-                        if (DFGVarargsForwardingPhaseInternal::verbose)
+                        if (verbose)
                             dataLog("    Butterfly escaped at ", node, "\n");
                         return;
                     }
@@ -235,11 +235,11 @@ private:
 
             forAllKilledOperands(
                 m_graph, node, block->tryAt(nodeIndex + 1),
-                [&] (VirtualRegister reg) {
-                    if (DFGVarargsForwardingPhaseInternal::verbose)
-                        dataLog("    Killing ", reg, " while we are interested in ", listDump(relevantLocals), "\n");
+                [&] (Operand operand) {
+                    if (verbose)
+                        dataLog("    Killing ", operand, " while we are interested in ", listDump(relevantLocals), "\n");
                     for (unsigned i = 0; i < relevantLocals.size(); ++i) {
-                        if (relevantLocals[i] == reg) {
+                        if (operand == relevantLocals[i]) {
                             relevantLocals[i--] = relevantLocals.last();
                             relevantLocals.removeLast();
                             lastUserIndex = nodeIndex;
@@ -247,7 +247,7 @@ private:
                     }
                 });
         }
-        if (DFGVarargsForwardingPhaseInternal::verbose)
+        if (verbose)
             dataLog("Selected lastUserIndex = ", lastUserIndex, ", ", block->at(lastUserIndex), "\n");
         
         // We're still in business. Determine if between the candidate and the last user there is any
@@ -263,16 +263,16 @@ private:
             case MovHint:
             case ZombieHint:
             case KillStack:
-                if (argumentsInvolveStackSlot(candidate, node->unlinkedLocal())) {
-                    if (DFGVarargsForwardingPhaseInternal::verbose)
+                if (argumentsInvolveStackSlot(candidate, node->unlinkedOperand())) {
+                    if (verbose)
                         dataLog("    Interference at ", node, "\n");
                     return;
                 }
                 break;
                 
             case PutStack:
-                if (argumentsInvolveStackSlot(candidate, node->stackAccessData()->local)) {
-                    if (DFGVarargsForwardingPhaseInternal::verbose)
+                if (argumentsInvolveStackSlot(candidate, node->stackAccessData()->operand)) {
+                    if (verbose)
                         dataLog("    Interference at ", node, "\n");
                     return;
                 }
@@ -280,8 +280,8 @@ private:
                 
             case SetLocal:
             case Flush:
-                if (argumentsInvolveStackSlot(candidate, node->local())) {
-                    if (DFGVarargsForwardingPhaseInternal::verbose)
+                if (argumentsInvolveStackSlot(candidate, node->operand())) {
+                    if (verbose)
                         dataLog("    Interference at ", node, "\n");
                     return;
                 }
@@ -297,13 +297,12 @@ private:
                             return;
                         }
                         ASSERT(!heap.payload().isTop());
-                        VirtualRegister reg(heap.payload().value32());
-                        if (argumentsInvolveStackSlot(candidate, reg))
+                        if (argumentsInvolveStackSlot(candidate, heap.operand()))
                             doesInterfere = true;
                     },
                     NoOpClobberize());
                 if (doesInterfere) {
-                    if (DFGVarargsForwardingPhaseInternal::verbose)
+                    if (verbose)
                         dataLog("    Interference at ", node, "\n");
                     return;
                 }
@@ -311,7 +310,7 @@ private:
         }
         
         // We can make this work.
-        if (DFGVarargsForwardingPhaseInternal::verbose)
+        if (verbose)
             dataLog("    Will do forwarding!\n");
         m_changed = true;
         
@@ -341,8 +340,16 @@ private:
                 // We don't need to change anything with these.
                 break;
                 
+            case VarargsLength: {
+                if (node->argumentsChild() != candidate)
+                    break;
+
+                node->convertToIdentityOn(emitCodeToGetArgumentsArrayLength(insertionSet, candidate, nodeIndex, node->origin, /* addThis = */ true));
+                break;
+            }
+
             case LoadVarargs:
-                if (node->child1() != candidate)
+                if (node->argumentsChild() != candidate)
                     break;
                 node->setOpAndDefaultFlags(ForwardVarargs);
                 break;

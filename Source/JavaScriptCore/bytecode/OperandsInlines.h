@@ -30,6 +30,14 @@
 
 namespace JSC {
 
+inline void Operand::dump(PrintStream& out) const
+{
+    if (isTmp())
+        out.print("tmp", value());
+    else
+        out.print(virtualRegister());
+}
+
 template<typename T>
 void Operands<T>::dumpInContext(PrintStream& out, DumpContext* context) const
 {
@@ -43,6 +51,11 @@ void Operands<T>::dumpInContext(PrintStream& out, DumpContext* context) const
         if (!local(localIndex))
             continue;
         out.print(comma, "loc", localIndex, ":", inContext(local(localIndex), context));
+    }
+    for (size_t tmpIndex = 0; tmpIndex < numberOfTmps(); ++tmpIndex) {
+        if (!tmp(tmpIndex))
+            continue;
+        out.print(comma, "tmp", tmpIndex, ":", inContext(tmp(tmpIndex), context));
     }
 }
 
@@ -59,6 +72,11 @@ void Operands<T>::dump(PrintStream& out) const
         if (!local(localIndex))
             continue;
         out.print(comma, "loc", localIndex, ":", local(localIndex));
+    }
+    for (size_t tmpIndex = 0; tmpIndex < numberOfTmps(); ++tmpIndex) {
+        if (!tmp(tmpIndex))
+            continue;
+        out.print(comma, "tmp", tmpIndex, ":", tmp(tmpIndex));
     }
 }
 

@@ -297,6 +297,7 @@ bool doesGC(Graph& graph, Node* node)
     case InByVal:
     case InstanceOf:
     case InstanceOfCustom:
+    case VarargsLength:
     case LoadVarargs:
     case NumberToStringWithRadix:
     case NumberToStringWithValidRadixConstant:

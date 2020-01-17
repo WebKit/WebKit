@@ -61,11 +61,11 @@ CallFrameShuffler::CallFrameShuffler(CCallHelpers& jit, const CallFrameShuffleDa
 #endif
 
     ASSERT(!data.callee.isInJSStack() || data.callee.virtualRegister().isLocal());
-    addNew(VirtualRegister(CallFrameSlot::callee), data.callee);
+    addNew(CallFrameSlot::callee, data.callee);
 
     for (size_t i = 0; i < data.args.size(); ++i) {
         ASSERT(!data.args[i].isInJSStack() || data.args[i].virtualRegister().isLocal());
-        addNew(virtualRegisterForArgument(i), data.args[i]);
+        addNew(virtualRegisterForArgumentIncludingThis(i), data.args[i]);
     }
 
 #if USE(JSVALUE64)

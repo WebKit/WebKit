@@ -1370,6 +1370,7 @@ public:
     void compileSetFunctionName(Node*);
     void compileNewRegexp(Node*);
     void compileForwardVarargs(Node*);
+    void compileVarargsLength(Node*);
     void compileLoadVarargs(Node*);
     void compileCreateActivation(Node*);
     void compileCreateDirectArguments(Node*);
@@ -1648,15 +1649,16 @@ public:
     void cageTypedArrayStorage(GPRReg, GPRReg);
     
     void recordSetLocal(
-        VirtualRegister bytecodeReg, VirtualRegister machineReg, DataFormat format)
+        Operand bytecodeReg, VirtualRegister machineReg, DataFormat format)
     {
+        ASSERT(!bytecodeReg.isArgument() || bytecodeReg.virtualRegister().toArgument() >= 0);
         m_stream->appendAndLog(VariableEvent::setLocal(bytecodeReg, machineReg, format));
     }
     
     void recordSetLocal(DataFormat format)
     {
         VariableAccessData* variable = m_currentNode->variableAccessData();
-        recordSetLocal(variable->local(), variable->machineLocal(), format);
+        recordSetLocal(variable->operand(), variable->machineLocal(), format);
     }
 
     GenerationInfo& generationInfoFromVirtualRegister(VirtualRegister virtualRegister)

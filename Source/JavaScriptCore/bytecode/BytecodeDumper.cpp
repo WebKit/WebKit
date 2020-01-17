@@ -63,7 +63,7 @@ void BytecodeDumperBase::printLocationAndOp(InstructionStream::Offset location, 
 
 void BytecodeDumperBase::dumpValue(VirtualRegister reg)
 {
-    m_out.printf("%s", registerName(reg.offset()).data());
+    m_out.printf("%s", registerName(reg).data());
 }
 
 template<typename Traits>
@@ -83,12 +83,12 @@ template void BytecodeDumperBase::dumpValue(GenericBoundLabel<Wasm::GeneratorTra
 #endif // ENABLE(WEBASSEMBLY)
 
 template<class Block>
-CString BytecodeDumper<Block>::registerName(int r) const
+CString BytecodeDumper<Block>::registerName(VirtualRegister r) const
 {
-    if (isConstantRegisterIndex(r))
+    if (r.isConstant())
         return constantName(r);
 
-    return toCString(VirtualRegister(r));
+    return toCString(r);
 }
 
 template <class Block>
@@ -98,10 +98,10 @@ int BytecodeDumper<Block>::outOfLineJumpOffset(InstructionStream::Offset offset)
 }
 
 template<class Block>
-CString BytecodeDumper<Block>::constantName(int index) const
+CString BytecodeDumper<Block>::constantName(VirtualRegister reg) const
 {
-    auto value = block()->getConstant(index);
-    return toCString(value, "(", VirtualRegister(index), ")");
+    auto value = block()->getConstant(reg);
+    return toCString(value, "(", reg, ")");
 }
 
 template<class Block>
@@ -335,7 +335,7 @@ void BytecodeDumper::dumpConstants()
     }
 }
 
-CString BytecodeDumper::constantName(int index) const
+CString BytecodeDumper::constantName(VirtualRegister index) const
 {
     FunctionCodeBlock* block = this->block();
     auto value = formatConstant(block->getConstantType(index), block->getConstant(index));

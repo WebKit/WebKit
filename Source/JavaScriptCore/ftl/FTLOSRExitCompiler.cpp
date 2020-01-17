@@ -29,6 +29,7 @@
 #if ENABLE(FTL_JIT)
 
 #include "BytecodeStructs.h"
+#include "CheckpointOSRExitSideState.h"
 #include "DFGOSRExitCompilerCommon.h"
 #include "FTLExitArgumentForOperand.h"
 #include "FTLJITCode.h"
@@ -37,10 +38,11 @@
 #include "FTLOperations.h"
 #include "FTLState.h"
 #include "FTLSaveRestore.h"
+#include "JSCInlines.h"
 #include "LinkBuffer.h"
 #include "MaxFrameExtentForSlowPathCall.h"
 #include "OperandsInlines.h"
-#include "JSCInlines.h"
+#include "ProbeContext.h"
 
 namespace JSC { namespace FTL {
 
@@ -474,16 +476,52 @@ static void compileStub(VM& vm, unsigned exitID, JITCode* jitCode, OSRExit& exit
 
     size_t baselineVirtualRegistersForCalleeSaves = baselineCodeBlock->calleeSaveSpaceAsVirtualRegisters();
 
+    if (exit.m_codeOrigin.inlineStackContainsActiveCheckpoint()) {
+        JSValue* tmpScratch = reinterpret_cast<JSValue*>(scratch + exit.m_descriptor->m_values.tmpIndex(0));
+        VM* vmPtr = &vm;
+        jit.probe([=] (Probe::Context& context) {
+            auto addSideState = [&] (CallFrame* frame, BytecodeIndex index, size_t tmpOffset) {
+                std::unique_ptr<CheckpointOSRExitSideState> sideState = WTF::makeUnique<CheckpointOSRExitSideState>();
+
+                sideState->bytecodeIndex = index;
+                for (size_t i = 0; i < maxNumCheckpointTmps; ++i)
+                    sideState->tmps[i] = tmpScratch[i + tmpOffset];
+
+                vmPtr->addCheckpointOSRSideState(frame, WTFMove(sideState));
+            };
+
+            const CodeOrigin* codeOrigin;
+            CallFrame* callFrame = context.gpr<CallFrame*>(GPRInfo::callFrameRegister);
+            for (codeOrigin = &exit.m_codeOrigin; codeOrigin && codeOrigin->inlineCallFrame(); codeOrigin = codeOrigin->inlineCallFrame()->getCallerSkippingTailCalls()) {
+                BytecodeIndex callBytecodeIndex = codeOrigin->bytecodeIndex();
+                if (!callBytecodeIndex.checkpoint())
+                    continue;
+
+                auto* inlineCallFrame = codeOrigin->inlineCallFrame();
+                addSideState(reinterpret_cast<CallFrame*>(reinterpret_cast<char*>(callFrame) + inlineCallFrame->returnPCOffset() - sizeof(CPURegister)), callBytecodeIndex, inlineCallFrame->tmpOffset);
+            }
+
+            if (!codeOrigin)
+                return;
+
+            if (BytecodeIndex bytecodeIndex = codeOrigin->bytecodeIndex(); bytecodeIndex.checkpoint())
+                addSideState(callFrame, bytecodeIndex, 0);
+        });
+    }
+
     // Now get state out of the scratch buffer and place it back into the stack. The values are
     // already reboxed so we just move them.
     for (unsigned index = exit.m_descriptor->m_values.size(); index--;) {
-        VirtualRegister reg = exit.m_descriptor->m_values.virtualRegisterForIndex(index);
+        Operand operand = exit.m_descriptor->m_values.operandForIndex(index);
 
-        if (reg.isLocal() && reg.toLocal() < static_cast<int>(baselineVirtualRegistersForCalleeSaves))
+        if (operand.isTmp())
+            continue;
+
+        if (operand.isLocal() && operand.toLocal() < static_cast<int>(baselineVirtualRegistersForCalleeSaves))
             continue;
 
         jit.load64(scratch + index, GPRInfo::regT0);
-        jit.store64(GPRInfo::regT0, AssemblyHelpers::addressFor(reg));
+        jit.store64(GPRInfo::regT0, AssemblyHelpers::addressFor(operand.virtualRegister()));
     }
     
     handleExitCounts(vm, jit, exit);

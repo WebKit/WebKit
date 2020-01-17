@@ -102,10 +102,10 @@ public:
             VariableAccessData* variable = previousHead->variableAccessData();
             locals[local] = newRoot->appendNode(
                 m_graph, variable->prediction(), ExtractOSREntryLocal, origin,
-                OpInfo(variable->local().offset()));
+                OpInfo(variable->operand().virtualRegister()));
             
             newRoot->appendNode(
-                m_graph, SpecNone, MovHint, origin, OpInfo(variable->local().offset()),
+                m_graph, SpecNone, MovHint, origin, OpInfo(variable->operand().virtualRegister()),
                 Edge(locals[local]));
         }
 

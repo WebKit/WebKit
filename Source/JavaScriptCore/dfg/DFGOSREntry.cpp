@@ -76,7 +76,7 @@ void OSREntryData::dumpInContext(PrintStream& out, DumpContext* context) const
     CommaPrinter comma;
     for (size_t argumentIndex = m_expectedValues.numberOfArguments(); argumentIndex--;) {
         out.print(comma, "arg", argumentIndex, ":");
-        printOperand(virtualRegisterForArgument(argumentIndex));
+        printOperand(virtualRegisterForArgumentIncludingThis(argumentIndex));
     }
     for (size_t localIndex = 0; localIndex < m_expectedValues.numberOfLocals(); ++localIndex) {
         out.print(comma, "loc", localIndex, ":");
@@ -313,7 +313,7 @@ void* prepareOSREntry(VM& vm, CallFrame* callFrame, CodeBlock* codeBlock, Byteco
     
     // 7) Fix the call frame to have the right code block.
     
-    *bitwise_cast<CodeBlock**>(pivot - 1 - CallFrameSlot::codeBlock) = codeBlock;
+    *bitwise_cast<CodeBlock**>(pivot - (CallFrameSlot::codeBlock + 1)) = codeBlock;
     
     dataLogLnIf(Options::verboseOSR(), "    OSR returning data buffer ", RawPointer(scratch));
     return scratch;
@@ -341,7 +341,7 @@ MacroAssemblerCodePtr<ExceptionHandlerPtrTag> prepareCatchOSREntry(VM& vm, CallF
 
     // We're only allowed to OSR enter if we've proven we have compatible argument types.
     for (unsigned argument = 0; argument < catchEntrypoint->argumentFormats.size(); ++argument) {
-        JSValue value = callFrame->uncheckedR(virtualRegisterForArgument(argument)).jsValue();
+        JSValue value = callFrame->uncheckedR(virtualRegisterForArgumentIncludingThis(argument)).jsValue();
         switch (catchEntrypoint->argumentFormats[argument]) {
         case DFG::FlushedInt32:
             if (!value.isInt32())
@@ -372,10 +372,10 @@ MacroAssemblerCodePtr<ExceptionHandlerPtrTag> prepareCatchOSREntry(VM& vm, CallF
 
     auto instruction = baselineCodeBlock->instructions().at(callFrame->bytecodeIndex());
     ASSERT(instruction->is<OpCatch>());
-    ValueProfileAndOperandBuffer* buffer = instruction->as<OpCatch>().metadata(baselineCodeBlock).m_buffer;
+    ValueProfileAndVirtualRegisterBuffer* buffer = instruction->as<OpCatch>().metadata(baselineCodeBlock).m_buffer;
     JSValue* dataBuffer = reinterpret_cast<JSValue*>(dfgCommon->catchOSREntryBuffer->dataBuffer());
     unsigned index = 0;
-    buffer->forEach([&] (ValueProfileAndOperand& profile) {
+    buffer->forEach([&] (ValueProfileAndVirtualRegister& profile) {
         if (!VirtualRegister(profile.m_operand).isLocal())
             return;
         dataBuffer[index] = callFrame->uncheckedR(profile.m_operand).jsValue();

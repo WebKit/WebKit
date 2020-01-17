@@ -103,10 +103,12 @@ namespace JSC {
 class BuiltinExecutables;
 class BytecodeIntrinsicRegistry;
 class CallFrame;
+struct CheckpointOSRExitSideState;
 class CodeBlock;
 class CodeCache;
 class CommonIdentifiers;
 class CompactVariableMap;
+class ConservativeRoots;
 class CustomGetterSetter;
 class DOMAttributeGetterSetter;
 class DateInstance;
@@ -958,6 +960,11 @@ public:
 
     void gatherScratchBufferRoots(ConservativeRoots&);
 
+    void addCheckpointOSRSideState(CallFrame*, std::unique_ptr<CheckpointOSRExitSideState>&&);
+    std::unique_ptr<CheckpointOSRExitSideState> findCheckpointOSRSideState(CallFrame*);
+    bool hasCheckpointOSRSideState() const { return m_checkpointSideState.size(); }
+    void scanSideState(ConservativeRoots&) const;
+
     VMEntryScope* entryScope;
 
     JSObject* stringRecursionCheckFirstObject { nullptr };
@@ -1208,6 +1215,7 @@ private:
     Lock m_scratchBufferLock;
     Vector<ScratchBuffer*> m_scratchBuffers;
     size_t m_sizeOfLastScratchBuffer { 0 };
+    HashMap<CallFrame*, std::unique_ptr<CheckpointOSRExitSideState>> m_checkpointSideState;
     InlineWatchpointSet m_primitiveGigacageEnabled;
     FunctionHasExecutedCache m_functionHasExecutedCache;
     std::unique_ptr<ControlFlowProfiler> m_controlFlowProfiler;

@@ -323,6 +323,7 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node, bool igno
     case TailCallVarargsInlinedCaller:
     case TailCallForwardVarargsInlinedCaller:
     case ConstructVarargs:
+    case VarargsLength:
     case LoadVarargs:
     case CallForwardVarargs:
     case ConstructForwardVarargs:

@@ -107,7 +107,7 @@ private:
         struct {
             CodeBlock* codeBlock;
             BytecodeIndex bytecodeOffset;
-            int operand;
+            Operand operand;
         } lazyOperand;
     } u;
 };

@@ -39,7 +39,7 @@ static void addBytecodeLiveness(Graph& graph, AvailabilityMap& availabilityMap, 
 {
     graph.forAllLiveInBytecode(
         node->origin.forExit,
-        [&] (VirtualRegister reg) {
+        [&] (Operand reg) {
             availabilityMap.closeStartingWithLocal(
                 reg,
                 [&] (Node* node) -> bool {

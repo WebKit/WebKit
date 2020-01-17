@@ -1036,8 +1036,8 @@ MacroAssemblerCodeRef<JITThunkPtrTag> absThunkGenerator(VM& vm)
         return MacroAssemblerCodeRef<JITThunkPtrTag>::createSelfManagedCodeRef(vm.jitStubs->ctiNativeCall(vm));
 
 #if USE(JSVALUE64)
-    unsigned virtualRegisterIndex = CallFrame::argumentOffset(0);
-    jit.load64(AssemblyHelpers::addressFor(virtualRegisterIndex), GPRInfo::regT0);
+    VirtualRegister virtualRegister = CallFrameSlot::firstArgument;
+    jit.load64(AssemblyHelpers::addressFor(virtualRegister), GPRInfo::regT0);
     auto notInteger = jit.branchIfNotInt32(GPRInfo::regT0);
 
     // Abs Int32.
@@ -1217,7 +1217,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> boundFunctionCallGenerator(VM& vm)
     CCallHelpers::Label loop = jit.label();
     jit.sub32(CCallHelpers::TrustedImm32(1), GPRInfo::regT3);
     jit.sub32(CCallHelpers::TrustedImm32(1), GPRInfo::regT1);
-    jit.loadValue(CCallHelpers::addressFor(virtualRegisterForArgument(1)).indexedBy(GPRInfo::regT3, CCallHelpers::TimesEight), valueRegs);
+    jit.loadValue(CCallHelpers::addressFor(virtualRegisterForArgumentIncludingThis(1)).indexedBy(GPRInfo::regT3, CCallHelpers::TimesEight), valueRegs);
     jit.storeValue(valueRegs, CCallHelpers::calleeArgumentSlot(1).indexedBy(GPRInfo::regT1, CCallHelpers::TimesEight));
     jit.branchTest32(CCallHelpers::NonZero, GPRInfo::regT3).linkTo(loop, &jit);
     

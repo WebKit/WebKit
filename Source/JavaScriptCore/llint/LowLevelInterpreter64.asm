@@ -23,6 +23,13 @@
 
 
 # Utilities.
+macro storePC()
+    storei PC, LLIntReturnPC[cfr]
+end
+
+macro loadPC()
+    loadi LLIntReturnPC[cfr], PC
+end
 
 macro getuOperandNarrow(opcodeStruct, fieldName, dst)
     loadb constexpr %opcodeStruct%_%fieldName%_index + OpcodeIDNarrowSize[PB, PC, 1], dst
@@ -74,7 +81,7 @@ end
 
 # After calling, calling bytecode is claiming input registers are not used.
 macro dispatchAfterCall(size, opcodeStruct, dispatch)
-    loadi ArgumentCountIncludingThis + TagOffset[cfr], PC
+    loadPC()
     loadp CodeBlock[cfr], PB
     loadp CodeBlock::m_instructionsRawPointer[PB], PB
     get(size, opcodeStruct, m_dst, t1)
@@ -372,7 +379,7 @@ end
 
 # Call a slow path for call opcodes.
 macro callCallSlowPath(slowPath, action)
-    storei PC, ArgumentCountIncludingThis + TagOffset[cfr]
+    storePC()
     prepareStateForCCall()
     move cfr, a0
     move PC, a1
@@ -381,20 +388,20 @@ macro callCallSlowPath(slowPath, action)
 end
 
 macro callTrapHandler(throwHandler)
-    storei PC, ArgumentCountIncludingThis + TagOffset[cfr]
+    storePC()
     prepareStateForCCall()
     move cfr, a0
     move PC, a1
     cCall2(_llint_slow_path_handle_traps)
     btpnz r0, throwHandler
-    loadi ArgumentCountIncludingThis + TagOffset[cfr], PC
+    loadi LLIntReturnPC[cfr], PC
 end
 
 macro checkSwitchToJITForLoop()
     checkSwitchToJIT(
         1,
         macro()
-            storei PC, ArgumentCountIncludingThis + TagOffset[cfr]
+            storePC()
             prepareStateForCCall()
             move cfr, a0
             move PC, a1
@@ -403,7 +410,7 @@ macro checkSwitchToJITForLoop()
             move r1, sp
             jmp r0, JSEntryPtrTag
         .recover:
-            loadi ArgumentCountIncludingThis + TagOffset[cfr], PC
+            loadPC()
         end)
 end
 
@@ -2047,7 +2054,7 @@ macro commonCallOp(opcodeName, slowPath, opcodeStruct, prepareCall, prologue)
         addp cfr, t3
         storeq t2, Callee[t3]
         getu(size, opcodeStruct, m_argc, t2)
-        storei PC, ArgumentCountIncludingThis + TagOffset[cfr]
+        storePC()
         storei t2, ArgumentCountIncludingThis + PayloadOffset[t3]
         move t3, sp
         prepareCall(%opcodeStruct%::Metadata::m_callLinkInfo.m_machineCodeTarget[t5], t2, t3, t4, JSEntryPtrTag)

@@ -1230,7 +1230,7 @@ void JSArray::fillArgList(JSGlobalObject* globalObject, MarkedArgumentBuffer& ar
         args.append(get(globalObject, i));
 }
 
-void JSArray::copyToArguments(JSGlobalObject* globalObject, CallFrame* callFrame, VirtualRegister firstElementDest, unsigned offset, unsigned length)
+void JSArray::copyToArguments(JSGlobalObject* globalObject, JSValue* firstElementDest, unsigned offset, unsigned length)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -1269,7 +1269,7 @@ void JSArray::copyToArguments(JSGlobalObject* globalObject, CallFrame* callFrame
             double v = butterfly->contiguousDouble().at(this, i);
             if (v != v)
                 break;
-            callFrame->r(firstElementDest + i - offset) = JSValue(JSValue::EncodeAsDouble, v);
+            firstElementDest[i - offset] = JSValue(JSValue::EncodeAsDouble, v);
         }
         break;
     }
@@ -1294,11 +1294,11 @@ void JSArray::copyToArguments(JSGlobalObject* globalObject, CallFrame* callFrame
         WriteBarrier<Unknown>& v = vector[i];
         if (!v)
             break;
-        callFrame->r(firstElementDest + i - offset) = v.get();
+        firstElementDest[i - offset] = v.get();
     }
     
     for (; i < length; ++i) {
-        callFrame->r(firstElementDest + i - offset) = get(globalObject, i);
+        firstElementDest[i - offset] = get(globalObject, i);
         RETURN_IF_EXCEPTION(scope, void());
     }
 }

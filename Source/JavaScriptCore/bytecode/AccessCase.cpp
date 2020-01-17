@@ -1520,7 +1520,7 @@ void AccessCase::generateImpl(AccessGenerationState& state)
 
         jit.store32(
             CCallHelpers::TrustedImm32(state.callSiteIndexForExceptionHandlingOrOriginal().bits()),
-            CCallHelpers::tagFor(static_cast<VirtualRegister>(CallFrameSlot::argumentCountIncludingThis)));
+            CCallHelpers::tagFor(CallFrameSlot::argumentCountIncludingThis));
 
         if (m_type == Getter || m_type == Setter) {
             auto& access = this->as<GetterSetterAccessCase>();
@@ -1604,13 +1604,13 @@ void AccessCase::generateImpl(AccessGenerationState& state)
 
             jit.storeCell(
                 thisGPR,
-                calleeFrame.withOffset(virtualRegisterForArgument(0).offset() * sizeof(Register)));
+                calleeFrame.withOffset(virtualRegisterForArgumentIncludingThis(0).offset() * sizeof(Register)));
 
             if (m_type == Setter) {
                 jit.storeValue(
                     valueRegs,
                     calleeFrame.withOffset(
-                        virtualRegisterForArgument(1).offset() * sizeof(Register)));
+                        virtualRegisterForArgumentIncludingThis(1).offset() * sizeof(Register)));
             }
 
             CCallHelpers::Jump slowCase = jit.branchPtrWithPatch(
@@ -1809,7 +1809,7 @@ void AccessCase::generateImpl(AccessGenerationState& state)
                 jit.store32(
                     CCallHelpers::TrustedImm32(
                         state.callSiteIndexForExceptionHandlingOrOriginal().bits()),
-                    CCallHelpers::tagFor(static_cast<VirtualRegister>(CallFrameSlot::argumentCountIncludingThis)));
+                    CCallHelpers::tagFor(CallFrameSlot::argumentCountIncludingThis));
                 
                 jit.makeSpaceOnStackForCCall();
                 
