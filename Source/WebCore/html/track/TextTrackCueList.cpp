@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2011 Google Inc. All rights reserved.
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,19 +34,22 @@
 #undef CHECK_SORTING
 
 #ifdef CHECK_SORTING
-#define ASSERT_SORTED(begin, end) ASSERT(std::is_sorted(begin, end, compareCues))
+#define ASSERT_SORTED(begin, end) ASSERT(std::is_sorted(begin, end, cueSortsBefore))
 #else
 #define ASSERT_SORTED(begin, end) ((void)0)
 #endif
 
 namespace WebCore {
 
-static inline bool compareCues(const RefPtr<TextTrackCue>& a, const RefPtr<TextTrackCue>& b)
+static inline bool cueSortsBefore(const RefPtr<TextTrackCue>& a, const RefPtr<TextTrackCue>& b)
 {
-    return a->isOrderedBefore(b.get());
+    if (a->startMediaTime() < b->startMediaTime())
+        return true;
+
+    return a->startMediaTime() == b->startMediaTime() && a->endMediaTime() > b->endMediaTime();
 }
 
-unsigned TextTrackCueList::cueIndex(TextTrackCue& cue) const
+unsigned TextTrackCueList::cueIndex(const TextTrackCue& cue) const
 {
     ASSERT(m_vector.contains(&cue));
     return m_vector.find(&cue);
@@ -93,7 +96,7 @@ void TextTrackCueList::add(Ref<TextTrackCue>&& cue)
     ASSERT(cue->endMediaTime() >= MediaTime::zeroTime());
 
     RefPtr<TextTrackCue> cueRefPtr { WTFMove(cue) };
-    unsigned insertionPosition = std::upper_bound(m_vector.begin(), m_vector.end(), cueRefPtr, compareCues) - m_vector.begin();
+    unsigned insertionPosition = std::upper_bound(m_vector.begin(), m_vector.end(), cueRefPtr, cueSortsBefore) - m_vector.begin();
     ASSERT_SORTED(m_vector.begin(), m_vector.end());
     m_vector.insert(insertionPosition, WTFMove(cueRefPtr));
     ASSERT_SORTED(m_vector.begin(), m_vector.end());
@@ -113,7 +116,7 @@ void TextTrackCueList::clear()
         m_activeCues->m_vector.clear();
 }
 
-void TextTrackCueList::updateCueIndex(TextTrackCue& cue)
+void TextTrackCueList::updateCueIndex(const TextTrackCue& cue)
 {
     auto cuePosition = m_vector.begin() + cueIndex(cue);
     auto afterCuePosition = cuePosition + 1;
@@ -121,11 +124,11 @@ void TextTrackCueList::updateCueIndex(TextTrackCue& cue)
     ASSERT_SORTED(m_vector.begin(), cuePosition);
     ASSERT_SORTED(afterCuePosition, m_vector.end());
 
-    auto reinsertionPosition = std::upper_bound(m_vector.begin(), cuePosition, *cuePosition, compareCues);
+    auto reinsertionPosition = std::upper_bound(m_vector.begin(), cuePosition, *cuePosition, cueSortsBefore);
     if (reinsertionPosition != cuePosition)
         std::rotate(reinsertionPosition, cuePosition, afterCuePosition);
     else {
-        reinsertionPosition = std::upper_bound(afterCuePosition, m_vector.end(), *cuePosition, compareCues);
+        reinsertionPosition = std::upper_bound(afterCuePosition, m_vector.end(), *cuePosition, cueSortsBefore);
         if (reinsertionPosition != afterCuePosition)
             std::rotate(cuePosition, afterCuePosition, reinsertionPosition);
     }

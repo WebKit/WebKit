@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2011 Google Inc. All rights reserved.
- * Copyright (C) 2012-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -126,6 +126,8 @@ public:
     virtual void recalculateStyles() { m_displayTreeNeedsUpdate = true; }
     virtual void setFontSize(int, const IntSize&, bool important);
     virtual void updateDisplayTree(const MediaTime&) { };
+
+    unsigned cueIndex() const;
 
 protected:
     TextTrackCue(ScriptExecutionContext&, const MediaTime& start, const MediaTime& end, DocumentFragment&&);

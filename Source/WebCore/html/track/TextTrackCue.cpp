@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2011, 2013 Google Inc.  All rights reserved.
- * Copyright (C) 2011-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -50,6 +50,7 @@
 #include "TextTrackCueList.h"
 #include "VTTCue.h"
 #include "VTTRegionList.h"
+#include <limits.h>
 #include <wtf/HexNumber.h>
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/MathExtras.h>
@@ -338,9 +339,29 @@ void TextTrackCue::setIsActive(bool active)
     m_displayTree->remove();
 }
 
+unsigned TextTrackCue::cueIndex() const
+{
+    ASSERT(m_track && m_track->cues());
+    if (!m_track || !m_track->cues())
+        return std::numeric_limits<unsigned>::max();
+
+    return m_track->cues()->cueIndex(*this);
+}
+
 bool TextTrackCue::isOrderedBefore(const TextTrackCue* other) const
 {
-    return startMediaTime() < other->startMediaTime() || (startMediaTime() == other->startMediaTime() && endMediaTime() > other->endMediaTime());
+    // ... cues must be sorted by their start time, earliest first;
+    if (startMediaTime() != other->startMediaTime())
+        return startMediaTime() < other->startMediaTime();
+
+    // then, any cues with the same start time must be sorted by their end time, latest first;
+    if (endMediaTime() != other->endMediaTime())
+        return endMediaTime() > other->endMediaTime();
+
+    // and finally, any cues with identical end times must be sorted in the order they were last added to
+    // their respective text track list of cues, oldest first (so e.g. for cues from a WebVTT file, that
+    // would initially be the order in which the cues were listed in the file)
+    return cueIndex() < other->cueIndex();
 }
 
 bool TextTrackCue::cueContentsMatch(const TextTrackCue& cue) const
