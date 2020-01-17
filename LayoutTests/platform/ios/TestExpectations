@@ -3352,8 +3352,6 @@ fast/scrolling/ios/touch-scroll-visibility-hidden.html [ Failure ]
 # <rdar://problem/52962272> fast/scrolling/ios/body-overflow-hidden.html is an Image failure
 fast/scrolling/ios/body-overflow-hidden.html [ Pass ImageOnlyFailure ]
 
-webkit.org/b/201901 svg/custom/glyph-selection-arabic-forms.svg [ Failure ]
-
 webkit.org/b/202328 fast/images/async-image-multiple-clients-repaint.html [ Pass Failure ]
 
 # drawFocusRing without keyboard enabled does nothing
