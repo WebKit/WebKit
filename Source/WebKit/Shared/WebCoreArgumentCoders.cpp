@@ -1603,6 +1603,7 @@ void ArgumentCoder<CompositionUnderline>::encode(Encoder& encoder, const Composi
     encoder << underline.startOffset;
     encoder << underline.endOffset;
     encoder << underline.thick;
+    encoder.encodeEnum(underline.compositionUnderlineColor);
     encoder << underline.color;
 }
 
@@ -1615,6 +1616,8 @@ Optional<CompositionUnderline> ArgumentCoder<CompositionUnderline>::decode(Decod
     if (!decoder.decode(underline.endOffset))
         return WTF::nullopt;
     if (!decoder.decode(underline.thick))
+        return WTF::nullopt;
+    if (!decoder.decodeEnum(underline.compositionUnderlineColor))
         return WTF::nullopt;
     if (!decoder.decode(underline.color))
         return WTF::nullopt;
