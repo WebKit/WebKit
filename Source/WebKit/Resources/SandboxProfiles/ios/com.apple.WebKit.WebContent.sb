@@ -409,29 +409,6 @@
         (home-subpath "/Library/Assets/com_apple_MobileAsset_VoiceServicesVocalizerVoice"))
 )
 
-(define-once (core-motion)
-    ;; CoreMotion
-    (mobile-preferences-read "com.apple.CoreMotion")
-
-    ;; CoreMotion’s deviceMotion API
-    (with-filter
-        (require-any
-            (iokit-registry-entry-class "AppleOscarNub")
-            (iokit-registry-entry-class "AppleSPUHIDInterface"))
-        (allow iokit-get-properties
-            (iokit-property "gyro-interrupt-calibration")))
-    (with-filter
-        (iokit-registry-entry-class "IOHIDEventServiceFastPathUserClient")
-        (allow iokit-open (with report) (with telemetry))
-        (allow iokit-get-properties iokit-set-properties
-            (iokit-property "interval"
-                            "mode"
-                            "QueueSize"
-                            "useMag"))
-        (allow iokit-get-properties
-            (iokit-property "client")))
-)
-
 ;; Things required by UIKit
 (define-once (uikit-requirements)
     (mobile-preferences-read
@@ -774,8 +751,6 @@
     (global-name "com.apple.iconservices"))
 
 (allow-preferences-common)
-
-(core-motion)
 
 ;; Home Button
 (with-filter (iokit-registry-entry-class "IOPlatformDevice")
