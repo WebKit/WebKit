@@ -1,3 +1,18 @@
+2020-01-16  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed. Move the common WebKitOptionMenu GLib API implementation
+        parts out from the GTK-specific directory and under UIProcess/API/glib/.
+
+        * SourcesGTK.txt:
+        * UIProcess/API/glib/WebKitOptionMenu.cpp: Copied from Source/WebKit/UIProcess/API/gtk/WebKitOptionMenu.cpp.
+        * UIProcess/API/glib/WebKitOptionMenuItem.cpp: Copied from Source/WebKit/UIProcess/API/gtk/WebKitOptionMenuItem.cpp.
+        * UIProcess/API/glib/WebKitOptionMenuItemPrivate.h: Copied from Source/WebKit/UIProcess/API/gtk/WebKitOptionMenuItemPrivate.h.
+        * UIProcess/API/glib/WebKitOptionMenuPrivate.h: Copied from Source/WebKit/UIProcess/API/gtk/WebKitOptionMenuPrivate.h.
+        * UIProcess/API/gtk/WebKitOptionMenu.cpp: Removed.
+        * UIProcess/API/gtk/WebKitOptionMenuItem.cpp: Removed.
+        * UIProcess/API/gtk/WebKitOptionMenuItemPrivate.h: Removed.
+        * UIProcess/API/gtk/WebKitOptionMenuPrivate.h: Removed.
+
 2020-01-16  Brent Fulgham  <bfulgham@apple.com>
 
         [iOS] Add telemetry for IOKIt classes not seen in test runs
