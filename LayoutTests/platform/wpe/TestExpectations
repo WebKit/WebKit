@@ -510,6 +510,15 @@ webkit.org/b/205187 fast/text/font-antialiasing-save-restore.html [ ImageOnlyFai
 
 webkit.org/b/206409 imported/w3c/web-platform-tests/css/css-overflow/overflow-padding.html [ Failure ]
 
+# WPT fetch tests.
+webkit.org/b/206416 imported/w3c/web-platform-tests/fetch/content-encoding/bad-gzip-body.any.worker.html [ Failure ]
+webkit.org/b/206416 imported/w3c/web-platform-tests/fetch/range/sw.https.window.html [ Failure ]
+webkit.org/b/206416 imported/w3c/web-platform-tests/fetch/stale-while-revalidate/fetch-sw.https.html [ Failure ]
+webkit.org/b/206416 imported/w3c/web-platform-tests/fetch/stale-while-revalidate/fetch.html [ Failure ] 
+webkit.org/b/206416 imported/w3c/web-platform-tests/fetch/stale-while-revalidate/stale-css.html [ Failure ]
+webkit.org/b/206416 imported/w3c/web-platform-tests/fetch/stale-while-revalidate/stale-image.html [ Failure ]
+webkit.org/b/206416 imported/w3c/web-platform-tests/fetch/stale-while-revalidate/stale-script.html [ Failure ] 
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # 3. UNRESOLVED TESTS
 #////////////////////////////////////////////////////////////////////////////////////////
