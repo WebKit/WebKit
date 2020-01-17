@@ -38,18 +38,18 @@
 namespace WebCore {
 
 class Document;
-enum class LinkIconType;
+enum class LinkIconType : uint8_t;
 
 struct LinkRelAttribute {
-    bool isStyleSheet { false };
-    Optional<LinkIconType> iconType;
-    bool isAlternate { false };
-    bool isDNSPrefetch { false };
-    bool isLinkPreload { false };
-    bool isLinkPreconnect { false };
-    bool isLinkPrefetch { false };
+    Markable<LinkIconType, EnumMarkableTraits<LinkIconType>> iconType;
+    bool isStyleSheet : 1;
+    bool isAlternate : 1;
+    bool isDNSPrefetch : 1;
+    bool isLinkPreload : 1;
+    bool isLinkPreconnect : 1;
+    bool isLinkPrefetch : 1;
 #if ENABLE(APPLICATION_MANIFEST)
-    bool isApplicationManifest { false };
+    bool isApplicationManifest : 1;
 #endif
 
     LinkRelAttribute();

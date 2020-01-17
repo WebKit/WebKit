@@ -62,7 +62,7 @@
 #include "SubresourceIntegrity.h"
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/Ref.h>
-#include <wtf/SetForScope.h>
+#include <wtf/Scope.h>
 #include <wtf/StdLibExtras.h>
 
 namespace WebCore {
@@ -91,6 +91,8 @@ inline HTMLLinkElement::HTMLLinkElement(const QualifiedName& tagName, Document& 
     , m_createdByParser(createdByParser)
     , m_firedLoad(false)
     , m_loadedResource(false)
+    , m_isHandlingBeforeLoad(false)
+    , m_allowPrefetchLoadAndErrorForTesting(false)
     , m_pendingSheetType(Unknown)
 {
     ASSERT(hasTagName(linkTag));
@@ -298,9 +300,11 @@ void HTMLLinkElement::process()
         }
 
         {
-        SetForScope<bool> change(m_isHandlingBeforeLoad, true);
-        if (!shouldLoadLink())
-            return;
+            bool previous = m_isHandlingBeforeLoad;
+            m_isHandlingBeforeLoad = true;
+            makeScopeExit([&] { m_isHandlingBeforeLoad = previous; });
+            if (!shouldLoadLink())
+                return;
         }
 
         m_loading = true;

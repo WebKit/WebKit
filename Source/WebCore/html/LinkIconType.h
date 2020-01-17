@@ -28,8 +28,9 @@
 namespace WebCore {
 
 // These values are arranged so that they can be used with WTF::OptionSet.
+// And using it with Markable via EnumMarkableTraits.
 
-enum class LinkIconType {
+enum class LinkIconType : uint8_t {
     Favicon = 1 << 0,
     TouchIcon = 1 << 1,
     TouchPrecomposedIcon = 1 <<2

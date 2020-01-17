@@ -42,11 +42,22 @@
 namespace WebCore {
 
 LinkRelAttribute::LinkRelAttribute()
+    : iconType()
+    , isStyleSheet(false)
+    , isAlternate(false)
+    , isDNSPrefetch(false)
+    , isLinkPreload(false)
+    , isLinkPreconnect(false)
+    , isLinkPrefetch(false)
+#if ENABLE(APPLICATION_MANIFEST)
+    , isApplicationManifest(false)
+#endif
 {
 }
 
 // Keep LinkRelAttribute::isSupported() in sync when updating this constructor.
 LinkRelAttribute::LinkRelAttribute(Document& document, const String& rel)
+    : LinkRelAttribute()
 {
     if (equalLettersIgnoringASCIICase(rel, "stylesheet"))
         isStyleSheet = true;

@@ -31,7 +31,7 @@
 namespace WebCore {
 
 class Document;
-enum class LinkIconType;
+enum class LinkIconType : uint8_t;
 
 class LinkIconCollector {
 public:

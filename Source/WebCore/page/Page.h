@@ -147,7 +147,7 @@ class VisitedLinkStore;
 class WebGLStateTracker;
 class WheelEventDeltaFilter;
 
-using SharedStringHash = uint64_t;
+using SharedStringHash = uint32_t;
 
 enum class CanWrap : bool;
 enum class DidWrap : bool;
