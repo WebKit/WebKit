@@ -1,3 +1,20 @@
+2020-01-16  Robin Morisset  <rmorisset@apple.com>
+
+        [ESNext] Enables a way to throw an error on ByteCodeGenerator step
+        https://bugs.webkit.org/show_bug.cgi?id=180139
+
+        Reviewed by Mark Lam.
+
+        This is a minimal fix that only deals with overly huge BigInts.
+        A more thorough solution is rather low priority (since it has neither securities nor performance impact).
+
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::addBigIntConstant):
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::ConstantNode::emitBytecode):
+        * runtime/JSBigInt.cpp:
+        (JSC::JSBigInt::parseInt):
+
 2020-01-16  Keith Miller  <keith_miller@apple.com>
 
         Reland bytecode checkpoints since bugs have been fixed

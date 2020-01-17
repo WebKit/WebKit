@@ -2880,10 +2880,7 @@ JSValue BytecodeGenerator::addBigIntConstant(const Identifier& identifier, uint8
         auto scope = DECLARE_CATCH_SCOPE(vm());
         auto parseIntSign = sign ? JSBigInt::ParseIntSign::Signed : JSBigInt::ParseIntSign::Unsigned;
         JSBigInt* bigIntInMap = JSBigInt::parseInt(nullptr, vm(), identifier.string(), radix, JSBigInt::ErrorParseMode::ThrowExceptions, parseIntSign);
-        // FIXME: [ESNext] Enables a way to throw an error on ByteCodeGenerator step
-        // https://bugs.webkit.org/show_bug.cgi?id=180139
         scope.assertNoException();
-        RELEASE_ASSERT(bigIntInMap);
         addConstantValue(bigIntInMap);
 
         return bigIntInMap;

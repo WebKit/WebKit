@@ -119,7 +119,12 @@ RegisterID* ConstantNode::emitBytecode(BytecodeGenerator& generator, RegisterID*
 {
     if (dst == generator.ignoredResult())
         return 0;
-    return generator.emitLoad(dst, jsValue(generator));
+    JSValue constant = jsValue(generator);
+    if (UNLIKELY(!constant)) {
+        // This can happen if we try to parse a string or BigInt so enormous that we OOM.
+        return generator.emitThrowExpressionTooDeepException();
+    }
+    return generator.emitLoad(dst, constant);
 }
 
 JSValue StringNode::jsValue(BytecodeGenerator& generator) const

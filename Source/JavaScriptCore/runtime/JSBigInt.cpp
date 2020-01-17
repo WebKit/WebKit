@@ -1875,6 +1875,9 @@ JSBigInt* JSBigInt::parseInt(JSGlobalObject* globalObject, VM& vm, CharType* dat
 
     JSBigInt* result = allocateFor(globalObject, vm, radix, length - p);
     RETURN_IF_EXCEPTION(scope, nullptr);
+    // result can still be null if we don't have access to global object, as allocateFor cannot throw an exception in that case.
+    if (!result)
+        return nullptr;
 
     result->initialize(InitializationType::WithZero);
 
