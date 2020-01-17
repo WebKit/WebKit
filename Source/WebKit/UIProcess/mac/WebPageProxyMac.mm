@@ -495,6 +495,8 @@ static NSString *pathToPDFOnDisk(const String& suggestedFilename)
 
 void WebPageProxy::savePDFToTemporaryFolderAndOpenWithNativeApplication(const String& suggestedFilename, const String& originatingURLString, const IPC::DataReference& data, const String& pdfUUID)
 {
+    MESSAGE_CHECK(TemporaryPDFFileMap::isValidKey(pdfUUID));
+
     // FIXME: Write originatingURLString to the file's originating URL metadata (perhaps FileSystem::setMetadataURL()?).
     UNUSED_PARAM(originatingURLString);
 
@@ -532,6 +534,8 @@ void WebPageProxy::savePDFToTemporaryFolderAndOpenWithNativeApplication(const St
 
 void WebPageProxy::openPDFFromTemporaryFolderWithNativeApplication(const String& pdfUUID)
 {
+    MESSAGE_CHECK(TemporaryPDFFileMap::isValidKey(pdfUUID));
+
     String pdfFilename = m_temporaryPDFFiles.get(pdfUUID);
 
     if (!pdfFilename.endsWithIgnoringASCIICase(".pdf"))

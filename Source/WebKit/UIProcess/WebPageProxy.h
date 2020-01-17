@@ -2561,7 +2561,8 @@ private:
     bool m_shouldSuppressNextAutomaticNavigationSnapshot { false };
 
 #if PLATFORM(COCOA)
-    HashMap<String, String> m_temporaryPDFFiles;
+    using TemporaryPDFFileMap = HashMap<String, String>;
+    TemporaryPDFFileMap m_temporaryPDFFiles;
     std::unique_ptr<WebCore::RunLoopObserver> m_activityStateChangeDispatcher;
 
     std::unique_ptr<RemoteLayerTreeScrollingPerformanceData> m_scrollingPerformanceData;
