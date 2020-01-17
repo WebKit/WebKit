@@ -3858,19 +3858,15 @@ static inline WebCore::SelectionDirection toWKSelectionDirection(UITextDirection
 
 static void selectionChangedWithGesture(WKContentView *view, const WebCore::IntPoint& point, uint32_t gestureType, uint32_t gestureState, uint32_t flags, WebKit::CallbackBase::Error error)
 {
-    if (error != WebKit::CallbackBase::Error::None) {
-        ASSERT_NOT_REACHED();
+    if (error != WebKit::CallbackBase::Error::None)
         return;
-    }
     [(UIWKTextInteractionAssistant *)[view interactionAssistant] selectionChangedWithGestureAt:(CGPoint)point withGesture:toUIWKGestureType((WebKit::GestureType)gestureType) withState:toUIGestureRecognizerState(static_cast<WebKit::GestureRecognizerState>(gestureState)) withFlags:(toUIWKSelectionFlags((WebKit::SelectionFlags)flags))];
 }
 
 static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoint& point, uint32_t touch, uint32_t flags, WebKit::CallbackBase::Error error)
 {
-    if (error != WebKit::CallbackBase::Error::None) {
-        ASSERT_NOT_REACHED();
+    if (error != WebKit::CallbackBase::Error::None)
         return;
-    }
     [(UIWKTextInteractionAssistant *)[view interactionAssistant] selectionChangedWithTouchAt:(CGPoint)point withSelectionTouch:toUIWKSelectionTouch((WebKit::SelectionTouch)touch) withFlags:static_cast<UIWKSelectionFlags>(flags)];
 }
 
