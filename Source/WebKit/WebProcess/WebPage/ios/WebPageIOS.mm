@@ -2008,6 +2008,8 @@ VisiblePosition WebPage::visiblePositionInFocusedNodeForPoint(const Frame& frame
 
 void WebPage::selectPositionAtPoint(const WebCore::IntPoint& point, bool isInteractingWithFocusedElement, CallbackID callbackID)
 {
+    SetForScope<bool> userIsInteractingChange { m_userIsInteracting, true };
+
     auto& frame = m_page->focusController().focusedOrMainFrame();
     VisiblePosition position = visiblePositionInFocusedNodeForPoint(frame, point, isInteractingWithFocusedElement);
     

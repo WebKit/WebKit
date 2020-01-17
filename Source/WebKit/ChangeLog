@@ -1,3 +1,24 @@
+2020-01-17  Daniel Bates  <dabates@apple.com>
+
+        [iOS] Focusing editable element with WebPage::selectPositionAtPoint() does not bring up keyboard
+        https://bugs.webkit.org/show_bug.cgi?id=206385
+        <rdar://problem/57414380>
+
+        Reviewed by Wenson Hsieh.
+
+        Update the view's state to indicate that the user is performing an interaction for the scope of
+        WebPage::selectPositionAtPoint(). This permits WebKit to show the keyboard if selecting the
+        position causes a change in focus (say, the point is inside an unfocused text field).
+
+        We likely should do a similar change for all other WebKit IPIs that perform a WebCore::EUserTriggered::UserTriggered
+        tagged selection change though the callers should be audited to ensure they weren't accidentally
+        depending on the existing behavior that prevents such selections from bringing up the keyboard.
+        For now, I only fix WebPage::selectPositionAtPoint() as I've audited that all callers expect it
+        to bring up the keyboard, if needed.
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::selectPositionAtPoint): 
+
 2020-01-17  Adrian Perez de Castro  <aperez@igalia.com>
 
         Fix various non-unified build issues introduced since r254327
