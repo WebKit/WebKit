@@ -11247,7 +11247,7 @@ void SpeculativeJIT::compilePutAccessorById(Node* node)
     GPRReg accessorGPR = accessor.gpr();
 
     flushRegisters();
-    callOperation(node->op() == PutGetterById ? operationPutGetterById : operationPutSetterById, NoResult, TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(node->origin.semantic)), baseGPR, identifierUID(node->identifierNumber()), node->accessorAttributes(), accessorGPR);
+    callOperation(node->op() == PutGetterById ? operationPutGetterById : operationPutSetterById, TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(node->origin.semantic)), baseGPR, identifierUID(node->identifierNumber()), node->accessorAttributes(), accessorGPR);
     m_jit.exceptionCheck();
 
     noResult(node);
@@ -11265,7 +11265,7 @@ void SpeculativeJIT::compilePutGetterSetterById(Node* node)
     GPRReg setterGPR = setter.gpr();
 
     flushRegisters();
-    callOperation(operationPutGetterSetter, NoResult, TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(node->origin.semantic)), baseGPR, identifierUID(node->identifierNumber()), node->accessorAttributes(), getterGPR, setterGPR);
+    callOperation(operationPutGetterSetter, TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(node->origin.semantic)), baseGPR, identifierUID(node->identifierNumber()), node->accessorAttributes(), getterGPR, setterGPR);
 #else
     // These JSValues may be JSUndefined OR JSFunction*.
     // At that time,
@@ -11277,7 +11277,7 @@ void SpeculativeJIT::compilePutGetterSetterById(Node* node)
     JSValueRegs setterRegs = setter.jsValueRegs();
 
     flushRegisters();
-    callOperation(operationPutGetterSetter, NoResult, TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(node->origin.semantic)), baseGPR, identifierUID(node->identifierNumber()), node->accessorAttributes(), getterRegs.payloadGPR(), setterRegs.payloadGPR());
+    callOperation(operationPutGetterSetter, TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(node->origin.semantic)), baseGPR, identifierUID(node->identifierNumber()), node->accessorAttributes(), getterRegs.payloadGPR(), setterRegs.payloadGPR());
 #endif
     m_jit.exceptionCheck();
 
@@ -11345,7 +11345,7 @@ void SpeculativeJIT::compilePutDynamicVar(Node* node)
     JSValueRegs valueRegs = value.jsValueRegs();
 
     flushRegisters();
-    callOperation(m_jit.isStrictModeFor(node->origin.semantic) ? operationPutDynamicVarStrict : operationPutDynamicVarNonStrict, NoResult, TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(node->origin.semantic)), scopeGPR, valueRegs, identifierUID(node->identifierNumber()), node->getPutInfo());
+    callOperation(m_jit.isStrictModeFor(node->origin.semantic) ? operationPutDynamicVarStrict : operationPutDynamicVarNonStrict, TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(node->origin.semantic)), scopeGPR, valueRegs, identifierUID(node->identifierNumber()), node->getPutInfo());
     m_jit.exceptionCheck();
     noResult(node);
 }
@@ -11411,7 +11411,7 @@ void SpeculativeJIT::compilePutAccessorByVal(Node* node)
     GPRReg accessorGPR = accessor.gpr();
 
     flushRegisters();
-    callOperation(operation, NoResult, TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(node->origin.semantic)), baseGPR, subscriptRegs, node->accessorAttributes(), accessorGPR);
+    callOperation(operation, TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(node->origin.semantic)), baseGPR, subscriptRegs, node->accessorAttributes(), accessorGPR);
     m_jit.exceptionCheck();
 
     noResult(node);
@@ -11854,7 +11854,7 @@ void SpeculativeJIT::compileDefineDataProperty(Node* node)
         useChildren(node);
 
         flushRegisters();
-        callOperation(operationDefineDataPropertyString, NoResult, TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(node->origin.semantic)), baseGPR, propertyGPR, valueRegs, attributesGPR);
+        callOperation(operationDefineDataPropertyString, TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(node->origin.semantic)), baseGPR, propertyGPR, valueRegs, attributesGPR);
         m_jit.exceptionCheck();
         break;
     }
@@ -11871,7 +11871,7 @@ void SpeculativeJIT::compileDefineDataProperty(Node* node)
         useChildren(node);
 
         flushRegisters();
-        callOperation(operationDefineDataPropertyStringIdent, NoResult, TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(node->origin.semantic)), baseGPR, identGPR, valueRegs, attributesGPR);
+        callOperation(operationDefineDataPropertyStringIdent, TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(node->origin.semantic)), baseGPR, identGPR, valueRegs, attributesGPR);
         m_jit.exceptionCheck();
         break;
     }
@@ -11883,7 +11883,7 @@ void SpeculativeJIT::compileDefineDataProperty(Node* node)
         useChildren(node);
 
         flushRegisters();
-        callOperation(operationDefineDataPropertySymbol, NoResult, TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(node->origin.semantic)), baseGPR, propertyGPR, valueRegs, attributesGPR);
+        callOperation(operationDefineDataPropertySymbol, TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(node->origin.semantic)), baseGPR, propertyGPR, valueRegs, attributesGPR);
         m_jit.exceptionCheck();
         break;
     }
@@ -11894,7 +11894,7 @@ void SpeculativeJIT::compileDefineDataProperty(Node* node)
         useChildren(node);
 
         flushRegisters();
-        callOperation(operationDefineDataProperty, NoResult, TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(node->origin.semantic)), baseGPR, propertyRegs, valueRegs, attributesGPR);
+        callOperation(operationDefineDataProperty, TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(node->origin.semantic)), baseGPR, propertyRegs, valueRegs, attributesGPR);
         m_jit.exceptionCheck();
         break;
     }
@@ -11935,7 +11935,7 @@ void SpeculativeJIT::compileDefineAccessorProperty(Node* node)
         useChildren(node);
 
         flushRegisters();
-        callOperation(operationDefineAccessorPropertyString, NoResult, TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(node->origin.semantic)), baseGPR, propertyGPR, getterGPR, setterGPR, attributesGPR);
+        callOperation(operationDefineAccessorPropertyString, TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(node->origin.semantic)), baseGPR, propertyGPR, getterGPR, setterGPR, attributesGPR);
         m_jit.exceptionCheck();
         break;
     }
@@ -11952,7 +11952,7 @@ void SpeculativeJIT::compileDefineAccessorProperty(Node* node)
         useChildren(node);
 
         flushRegisters();
-        callOperation(operationDefineAccessorPropertyStringIdent, NoResult, TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(node->origin.semantic)), baseGPR, identGPR, getterGPR, setterGPR, attributesGPR);
+        callOperation(operationDefineAccessorPropertyStringIdent, TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(node->origin.semantic)), baseGPR, identGPR, getterGPR, setterGPR, attributesGPR);
         m_jit.exceptionCheck();
         break;
     }
@@ -11964,7 +11964,7 @@ void SpeculativeJIT::compileDefineAccessorProperty(Node* node)
         useChildren(node);
 
         flushRegisters();
-        callOperation(operationDefineAccessorPropertySymbol, NoResult, TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(node->origin.semantic)), baseGPR, propertyGPR, getterGPR, setterGPR, attributesGPR);
+        callOperation(operationDefineAccessorPropertySymbol, TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(node->origin.semantic)), baseGPR, propertyGPR, getterGPR, setterGPR, attributesGPR);
         m_jit.exceptionCheck();
         break;
     }
@@ -11975,7 +11975,7 @@ void SpeculativeJIT::compileDefineAccessorProperty(Node* node)
         useChildren(node);
 
         flushRegisters();
-        callOperation(operationDefineAccessorProperty, NoResult, TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(node->origin.semantic)), baseGPR, propertyRegs, getterGPR, setterGPR, attributesGPR);
+        callOperation(operationDefineAccessorProperty, TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(node->origin.semantic)), baseGPR, propertyRegs, getterGPR, setterGPR, attributesGPR);
         m_jit.exceptionCheck();
         break;
     }
@@ -12277,7 +12277,7 @@ void SpeculativeJIT::compilePutByIdWithThis(Node* node)
 
     flushRegisters();
     callOperation(m_jit.isStrictModeFor(node->origin.semantic) ? operationPutByIdWithThisStrict : operationPutByIdWithThis,
-        NoResult, TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(node->origin.semantic)), baseRegs, thisRegs, valueRegs, identifierUID(node->identifierNumber()));
+        TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(node->origin.semantic)), baseRegs, thisRegs, valueRegs, identifierUID(node->identifierNumber()));
     m_jit.exceptionCheck();
 
     noResult(node);

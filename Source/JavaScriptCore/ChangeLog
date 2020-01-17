@@ -1,5 +1,31 @@
 2020-01-16  Robin Morisset  <rmorisset@apple.com>
 
+        Try to simplify the template deduction used by callOperation in DFGSpeculativeJIT
+        https://bugs.webkit.org/show_bug.cgi?id=206329
+
+        Reviewed by Keith Miller.
+
+        The change is very simple: stop using NoResultTag in callOperation, since it is redundant with !FunctionTraits<OperationType>::hasResult
+
+        * dfg/DFGSlowPathGenerator.h:
+        (JSC::DFG::CallResultAndArgumentsSlowPathGenerator::unpackAndGenerate):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compilePutAccessorById):
+        (JSC::DFG::SpeculativeJIT::compilePutGetterSetterById):
+        (JSC::DFG::SpeculativeJIT::compilePutDynamicVar):
+        (JSC::DFG::SpeculativeJIT::compilePutAccessorByVal):
+        (JSC::DFG::SpeculativeJIT::compileDefineDataProperty):
+        (JSC::DFG::SpeculativeJIT::compileDefineAccessorProperty):
+        (JSC::DFG::SpeculativeJIT::compilePutByIdWithThis):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::callOperation):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+
+2020-01-16  Robin Morisset  <rmorisset@apple.com>
+
         Teach the bytecode that arithmetic operations can return bigints
         https://bugs.webkit.org/show_bug.cgi?id=205416
 

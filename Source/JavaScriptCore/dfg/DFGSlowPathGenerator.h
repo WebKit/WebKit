@@ -173,7 +173,10 @@ protected:
     void unpackAndGenerate(SpeculativeJIT* jit, std::index_sequence<ArgumentsIndex...>)
     {
         this->setUp(jit);
-        this->recordCall(jit->callOperation(this->m_function, extractResult(this->m_result), std::get<ArgumentsIndex>(m_arguments)...));
+        if constexpr (std::is_same<ResultType, NoResultTag>::value)
+            this->recordCall(jit->callOperation(this->m_function, std::get<ArgumentsIndex>(m_arguments)...));
+        else
+            this->recordCall(jit->callOperation(this->m_function, extractResult(this->m_result), std::get<ArgumentsIndex>(m_arguments)...));
         this->tearDown(jit);
     }
 

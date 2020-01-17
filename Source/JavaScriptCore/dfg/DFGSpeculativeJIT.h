@@ -924,8 +924,6 @@ public:
         generationInfo(node).initConstant(node, node->refCount());
     }
 
-#define FIRST_ARGUMENT_TYPE typename FunctionTraits<OperationType>::template ArgumentType<0>
-
     template<typename OperationType, typename ResultRegType, typename... Args>
     std::enable_if_t<
         FunctionTraits<OperationType>::hasResult,
@@ -936,38 +934,15 @@ public:
         return appendCallSetResult(operation, result);
     }
 
-    template<typename OperationType, typename Arg, typename... Args>
-    std::enable_if_t<
-        !FunctionTraits<OperationType>::hasResult
-        && !std::is_same<Arg, NoResultTag>::value,
-    JITCompiler::Call>
-    callOperation(OperationType operation, Arg arg, Args... args)
-    {
-        m_jit.setupArguments<OperationType>(arg, args...);
-        return appendCall(operation);
-    }
-
     template<typename OperationType, typename... Args>
     std::enable_if_t<
         !FunctionTraits<OperationType>::hasResult,
     JITCompiler::Call>
-    callOperation(OperationType operation, NoResultTag, Args... args)
+    callOperation(OperationType operation, Args... args)
     {
         m_jit.setupArguments<OperationType>(args...);
         return appendCall(operation);
     }
-
-    template<typename OperationType>
-    std::enable_if_t<
-        !FunctionTraits<OperationType>::hasResult,
-    JITCompiler::Call>
-    callOperation(OperationType operation)
-    {
-        m_jit.setupArguments<OperationType>();
-        return appendCall(operation);
-    }
-
-#undef FIRST_ARGUMENT_TYPE
 
     JITCompiler::Call callOperationWithCallFrameRollbackOnException(V_JITOperation_Cb operation, CodeBlock* codeBlock)
     {
