@@ -58,6 +58,8 @@ def decode_if_necessary(value, encoding='utf-8', errors='strict'):
 
 
 def decode_for(value, target_type):
+    if value is None:
+        return None
     if type(value) == target_type:
         return value
     if target_type == unicode:
