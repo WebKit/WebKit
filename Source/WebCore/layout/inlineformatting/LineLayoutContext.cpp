@@ -178,7 +178,9 @@ static size_t nextWrapOpportunity(const InlineItems& inlineContent, unsigned sta
 }
 
 struct LineCandidateContent {
-    void append(const InlineItem&, Optional<InlineLayoutUnit> logicalWidth = WTF::nullopt);
+    void appendInlineContent(const InlineItem&, InlineLayoutUnit logicalWidth);
+    void appendLineBreak(const InlineItem& inlineItem) { setTrailingLineBreak(inlineItem); }
+    void appendFloat(const InlineItem& inlineItem) { m_floats.append(makeWeakPtr(inlineItem)); }
 
     bool hasIntrusiveFloats() const { return !m_floats.isEmpty(); }
     const LineBreaker::RunList& inlineRuns() const { return m_inlineRuns; }
@@ -198,15 +200,10 @@ private:
     const InlineItem* m_trailingLineBreak { nullptr };
 };
 
-void LineCandidateContent::append(const InlineItem& inlineItem, Optional<InlineLayoutUnit> logicalWidth)
+void LineCandidateContent::appendInlineContent(const InlineItem& inlineItem, InlineLayoutUnit logicalWidth)
 {
-    ASSERT(!trailingLineBreak());
-    if (inlineItem.isLineBreak())
-        return setTrailingLineBreak(inlineItem);
-    if (inlineItem.isFloat())
-        return m_floats.append(makeWeakPtr(inlineItem));
-    m_inlineContentLogicalWidth += *logicalWidth;
-    m_inlineRuns.append({ inlineItem, *logicalWidth });
+    m_inlineContentLogicalWidth += logicalWidth;
+    m_inlineRuns.append({ inlineItem, logicalWidth });
 }
 
 void LineCandidateContent::reset()
@@ -217,11 +214,8 @@ void LineCandidateContent::reset()
     m_trailingLineBreak = nullptr;
 }
 
-static InlineLayoutUnit inlineItemWidth(const FormattingContext& formattingContext, const InlineItem& inlineItem, InlineLayoutUnit contentLogicalLeft)
+InlineLayoutUnit LineLayoutContext::inlineItemWidth(const InlineItem& inlineItem, InlineLayoutUnit contentLogicalLeft) const
 {
-    if (inlineItem.isLineBreak())
-        return 0;
-
     if (is<InlineTextItem>(inlineItem)) {
         auto& inlineTextItem = downcast<InlineTextItem>(inlineItem);
         if (auto contentWidth = inlineTextItem.width())
@@ -230,8 +224,11 @@ static InlineLayoutUnit inlineItemWidth(const FormattingContext& formattingConte
         return TextUtil::width(inlineTextItem, inlineTextItem.start(), end, contentLogicalLeft);
     }
 
+    if (inlineItem.isLineBreak())
+        return 0;
+
     auto& layoutBox = inlineItem.layoutBox();
-    auto& boxGeometry = formattingContext.geometryForBox(layoutBox);
+    auto& boxGeometry = m_inlineFormattingContext.geometryForBox(layoutBox);
 
     if (layoutBox.isFloatingPositioned())
         return boxGeometry.marginBoxWidth();
@@ -358,23 +355,31 @@ void LineLayoutContext::nextContentForLine(LineCandidateContent& candidateConten
         // Handle leading partial content first (split text from the previous line).
         // Construct a partial leading inline item.
         m_partialLeadingTextItem = downcast<InlineTextItem>(*m_inlineItems[inlineItemIndex]).right(*partialLeadingContentLength);
-        auto itemWidth = inlineItemWidth(formattingContext(), *m_partialLeadingTextItem, currentLogicalRight);
-        candidateContent.append(*m_partialLeadingTextItem, itemWidth);
+        auto itemWidth = inlineItemWidth(*m_partialLeadingTextItem, currentLogicalRight);
+        candidateContent.appendInlineContent(*m_partialLeadingTextItem, itemWidth);
         currentLogicalRight += itemWidth;
         ++inlineItemIndex;
     }
 
     for (auto index = inlineItemIndex; index < softWrapOpportunityIndex; ++index) {
         auto& inlineItem = *m_inlineItems[index];
+        if (inlineItem.isText() || inlineItem.isContainerStart() || inlineItem.isContainerEnd()) {
+            auto inlineItenmWidth = inlineItemWidth(inlineItem, currentLogicalRight);
+            candidateContent.appendInlineContent(inlineItem, inlineItenmWidth);
+            currentLogicalRight += inlineItenmWidth;
+            continue;
+        }
         if (inlineItem.isFloat()) {
             // Floats are not part of the line context.
             // FIXME: Check if their width should be added to currentLogicalRight.
-            candidateContent.append(inlineItem);
+            candidateContent.appendFloat(inlineItem);
             continue;
         }
-        auto inlineItenmWidth = inlineItemWidth(formattingContext(), inlineItem, currentLogicalRight);
-        candidateContent.append(inlineItem, inlineItenmWidth);
-        currentLogicalRight += inlineItenmWidth;
+        if (inlineItem.isLineBreak()) {
+            candidateContent.appendLineBreak(inlineItem);
+            continue;
+        }
+        ASSERT_NOT_REACHED();
     }
 }
 
@@ -382,7 +387,7 @@ LineLayoutContext::Result LineLayoutContext::tryAddingFloatItems(LineBuilder& li
 {
     size_t committedFloatItemCount = 0;
     for (auto& floatItem : floats) {
-        auto logicalWidth = inlineItemWidth(formattingContext(), *floatItem, { });
+        auto logicalWidth = inlineItemWidth(*floatItem, { });
 
         auto lineIsConsideredEmpty = line.isVisuallyEmpty() && !line.hasIntrusiveFloat();
         if (LineBreaker().shouldWrapFloatBox(logicalWidth, line.availableWidth() + line.trailingCollapsibleWidth(), lineIsConsideredEmpty))

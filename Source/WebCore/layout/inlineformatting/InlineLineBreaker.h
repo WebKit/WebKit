@@ -74,7 +74,7 @@ public:
         const InlineItem& inlineItem;
         InlineLayoutUnit logicalWidth { 0 };
     };
-    using RunList = Vector<Run, 30>;
+    using RunList = Vector<Run, 3>;
 
     struct LineStatus {
         InlineLayoutUnit availableWidth { 0 };

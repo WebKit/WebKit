@@ -66,6 +66,8 @@ private:
     void commitContent(LineBuilder&, const LineBreaker::RunList&, Optional<LineBreaker::Result::PartialTrailingContent>);
     LineContent close(LineBuilder&, unsigned leadingInlineItemIndex, unsigned committedInlineItemCount, Optional<LineContent::PartialContent>);
 
+    InlineLayoutUnit inlineItemWidth(const InlineItem&, InlineLayoutUnit contentLogicalLeft) const;
+
     const InlineFormattingContext& formattingContext() const { return m_inlineFormattingContext; }
     const Container& root() const { return m_formattingContextRoot; }
 
