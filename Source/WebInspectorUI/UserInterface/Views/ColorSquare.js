@@ -106,29 +106,14 @@ WI.ColorSquare = class ColorSquare
 
         this._gamut = tintedColor.gamut;
 
-        if (tintedColor.format === WI.Color.Format.ColorFunction) {
-            // CSS color function only supports RGB. It doesn't support HSL.
-            let hsv = WI.Color.rgb2hsv(...tintedColor.normalizedRGB);
-            let x = hsv[1] / 100 * this._dimension;
-            let y = (1 - (hsv[2] / 100)) * this._dimension;
-            this._setCrosshairPosition(new WI.Point(x, y));
-            if (this._gamut === WI.Color.Gamut.DisplayP3)
-                this._drawSRGBOutline();
-        } else {
-            let hsl = tintedColor.hsl;
-            let saturation = Number.constrain(hsl[1], 0, 100);
-            let x = saturation / 100 * this._dimension;
+        let [hue, saturation, value] = WI.Color.rgb2hsv(...tintedColor.normalizedRGB);
+        let x = saturation / 100 * this._dimension;
+        let y = (1 - (value / 100)) * this._dimension;
 
-            let lightness = hsl[2];
+        if (this._gamut === WI.Color.Gamut.DisplayP3)
+            this._drawSRGBOutline();
 
-            // The color picker is HSV-based. (HSV is also known as HSB.)
-            // Derive lightness by using HSV to HSL equation.
-            let y = 2 * lightness / (200 - saturation);
-            y = -1 * (y - 1) * this._dimension;
-
-            this._setCrosshairPosition(new WI.Point(x, y));
-        }
-
+        this._setCrosshairPosition(new WI.Point(x, y));
         this._updateBaseColor();
     }
 
