@@ -1,3 +1,20 @@
+2020-01-17  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        JSON.parse should lookup prototype chains during revival
+        https://bugs.webkit.org/show_bug.cgi?id=205769
+
+        Reviewed by Saam Barati.
+
+        This patch makes JSON.parse use [[Get]] instead of [[GetOwnProperty]] during revival,
+        aligning JSC with the spec (step 1 of https://tc39.es/ecma262/#sec-internalizejsonproperty),
+        SpiderMonkey, and V8.
+
+        User-provided `reviver` can delete properties that are not yet inspected by itself,
+        making usage [[GetOwnProperty]] non-compliant to the spec.
+
+        * runtime/JSONObject.cpp:
+        (JSC::Walker::walk):
+
 2020-01-17  Caio Lima  <ticaiolima@gmail.com>
 
         Bytecode checkpoints break 32bit tests

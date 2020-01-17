@@ -692,14 +692,10 @@ NEVER_INLINE JSValue Walker::walk(JSValue unfiltered)
                 if (isJSArray(array) && array->canGetIndexQuickly(index))
                     inValue = array->getIndexQuickly(index);
                 else {
-                    PropertySlot slot(array, PropertySlot::InternalMethodType::Get);
-                    if (array->methodTable(vm)->getOwnPropertySlotByIndex(array, m_globalObject, index, slot))
-                        inValue = slot.getValue(m_globalObject, index);
-                    else
-                        inValue = jsUndefined();
+                    inValue = array->get(m_globalObject, index);
                     RETURN_IF_EXCEPTION(scope, { });
                 }
-                    
+
                 if (inValue.isObject()) {
                     stateStack.append(ArrayEndVisitMember);
                     goto stateUnknown;
@@ -746,12 +742,7 @@ NEVER_INLINE JSValue Walker::walk(JSValue unfiltered)
                     propertyStack.removeLast();
                     break;
                 }
-                PropertySlot slot(object, PropertySlot::InternalMethodType::Get);
-                if (object->methodTable(vm)->getOwnPropertySlot(object, m_globalObject, properties[index], slot))
-                    inValue = slot.getValue(m_globalObject, properties[index]);
-                else
-                    inValue = jsUndefined();
-
+                inValue = object->get(m_globalObject, properties[index]);
                 // The holder may be modified by the reviver function so any lookup may throw
                 RETURN_IF_EXCEPTION(scope, { });
 

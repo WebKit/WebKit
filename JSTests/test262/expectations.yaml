@@ -1119,15 +1119,9 @@ test/built-ins/Function/prototype/toString/unicode.js:
 test/built-ins/GeneratorFunction/proto-from-ctor-realm.js:
   default: 'Test262Error: Expected SameValue(«[object GeneratorFunction]», «[object GeneratorFunction]») to be true'
   strict mode: 'Test262Error: Expected SameValue(«[object GeneratorFunction]», «[object GeneratorFunction]») to be true'
-test/built-ins/JSON/parse/reviver-array-get-prop-from-prototype.js:
-  default: 'Test262Error: Expected true but got false'
-  strict mode: 'Test262Error: Expected true but got false'
 test/built-ins/JSON/parse/reviver-array-non-configurable-prop-create.js:
   default: 'Test262Error: Expected SameValue(«22», «2») to be true'
   strict mode: 'Test262Error: Expected SameValue(«22», «2») to be true'
-test/built-ins/JSON/parse/reviver-object-get-prop-from-prototype.js:
-  default: 'Test262Error: Expected true but got false'
-  strict mode: 'Test262Error: Expected true but got false'
 test/built-ins/JSON/parse/reviver-object-non-configurable-prop-create.js:
   default: 'Test262Error: Expected SameValue(«22», «2») to be true'
   strict mode: 'Test262Error: Expected SameValue(«22», «2») to be true'
