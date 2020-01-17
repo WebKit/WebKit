@@ -409,10 +409,8 @@ public:
     Node* follow(PromotedHeapLocation location) const
     {
         const Allocation& base = m_allocations.find(location.base())->value;
-        if (base.isEscapedAllocation())
-            return nullptr;
-
         auto iter = base.fields().find(location.descriptor());
+
         if (iter == base.fields().end())
             return nullptr;
 
@@ -1948,7 +1946,7 @@ private:
                     availabilityCalculator.m_availability, identifier, phiDef->value());
 
                 for (PromotedHeapLocation location : hintsForPhi[variable->index()]) {
-                    if (m_heap.onlyLocalAllocation(location)) {
+                    if (m_heap.onlyLocalAllocation(location.base())) {
                         m_insertionSet.insert(0,
                             location.createHint(m_graph, block->at(0)->origin.withInvalidExit(), phiDef->value()));
                         m_localMapping.set(location, phiDef->value());
