@@ -33,6 +33,7 @@
 #pragma once
 
 #include <wtf/Forward.h>
+#include <wtf/Markable.h>
 #include <wtf/Optional.h>
 
 namespace WebCore {
