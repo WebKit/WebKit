@@ -288,7 +288,7 @@ public:
     void unblockAccessibilityServer(const SandboxExtension::Handle&);
 #endif
 
-#if PLATFORM(IOS_FAMILY)
+#if PLATFORM(IOS_FAMILY) && !PLATFORM(MACCATALYST)
     float backlightLevel() const { return m_backlightLevel; }
 #endif
 
@@ -461,9 +461,11 @@ private:
     void updateProcessName();
 #endif
 
-#if PLATFORM(IOS_FAMILY)
+#if PLATFORM(IOS_FAMILY) && !PLATFORM(MACCATALYST)
     void backlightLevelDidChange(float backlightLevel);
+#endif
 
+#if PLATFORM(IOS_FAMILY)
     bool shouldFreezeOnSuspension() const;
     void updateFreezerStatus();
 #endif
@@ -591,7 +593,7 @@ private:
     HashMap<String, RefPtr<SandboxExtension>> m_mediaCaptureSandboxExtensions;
 #endif
 
-#if PLATFORM(IOS_FAMILY)
+#if PLATFORM(IOS_FAMILY) && !PLATFORM(MACCATALYST)
     float m_backlightLevel { 0 };
 #endif
 
