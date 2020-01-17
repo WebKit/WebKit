@@ -133,6 +133,9 @@ static CGRect viewRectForWindowRect(CGRect, PlatformWebView::WebViewSizingMode);
 
     TestRunnerWKWebView *webView = WTR::TestController::singleton().mainWebView()->platformView();
 
+    if (CGSizeEqualToSize([webView frame].size, toSize))
+        return;
+
     if (webView.usesSafariLikeRotation)
         [webView _setInterfaceOrientationOverride:[[UIApplication sharedApplication] statusBarOrientation]];
 
