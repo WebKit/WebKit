@@ -55,12 +55,6 @@ private:
     void endArrayElement() override;
     void endArray() override;
 
-    template<typename T>
-    const T* getPointerFromDictionaryStack(const String& key);
-
-    template<typename T>
-    bool decodeSimpleValue(const String& key, T& result);
-
     std::unique_ptr<Dictionary> m_rootDictionary;
     Vector<Dictionary*, 16> m_dictionaryStack;
     Vector<Array*, 16> m_arrayStack;
