@@ -73,10 +73,6 @@
 #include <WebKitAdditions/AdditionalPlatform.h>
 #endif
 
-#if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/AdditionalFeatureDefines.h>)
-#include <WebKitAdditions/AdditionalFeatureDefines.h>
-#endif
-
 
 #undef WTF_PLATFORM_GUARD_AGAINST_INDIRECT_INCLUSION
 

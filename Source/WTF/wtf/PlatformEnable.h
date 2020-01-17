@@ -69,6 +69,12 @@
 #endif
 #endif
 
+/* ==== Platform additions: additions to PlatformEnable.h from outside the main repository ==== */
+
+#if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/AdditionalFeatureDefines.h>)
+#include <WebKitAdditions/AdditionalFeatureDefines.h>
+#endif
+
 /* FIXME: Move out the PLATFORM specific rules into platform specific files. */
 
 /* --------- Apple iOS (but not macOS) port --------- */

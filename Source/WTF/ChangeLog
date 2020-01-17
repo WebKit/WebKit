@@ -1,3 +1,12 @@
+2020-01-16  Tim Horton  <timothy_horton@apple.com>
+
+        Fix the build after r254701
+        <rdar://problem/58667355>
+
+        * wtf/Platform.h:
+        * wtf/PlatformEnable.h:
+        AdditionalFeatureDefines has to come first.
+
 2020-01-16  Sam Weinig  <weinig@apple.com>
 
         Platform.h is out of control Part 7: Split calling convention macro definitions out of Platform.h and into a new PlatformCallingConventions.h
