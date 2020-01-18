@@ -731,6 +731,9 @@ scriptEnabled:
   initial: false
   getter: isScriptEnabled
   inspectorOverride: true
+parserScriptingFlagPolicy:
+  type: ParserScriptingFlagPolicy
+  initial: ParserScriptingFlagPolicy::OnlyIfScriptIsEnabled
 pluginsEnabled:
   initial: false
   getter: arePluginsEnabled

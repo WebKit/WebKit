@@ -36,7 +36,7 @@
 namespace WebCore {
 
 HTMLParserOptions::HTMLParserOptions()
-    : scriptEnabled(false)
+    : scriptingFlag(false)
     , usePreHTML5ParserQuirks(false)
     , maximumDOMTreeDepth(Settings::defaultMaximumHTMLParserDOMTreeDepth)
 {
@@ -45,7 +45,10 @@ HTMLParserOptions::HTMLParserOptions()
 HTMLParserOptions::HTMLParserOptions(Document& document)
 {
     RefPtr<Frame> frame = document.frame();
-    scriptEnabled = frame && frame->script().canExecuteScripts(NotAboutToExecuteScript);
+    if (document.settings().parserScriptingFlagPolicy() == SettingsBase::ParserScriptingFlagPolicy::Enabled)
+        scriptingFlag = true;
+    else
+        scriptingFlag = frame && frame->script().canExecuteScripts(NotAboutToExecuteScript);
 
     usePreHTML5ParserQuirks = document.settings().usePreHTML5ParserQuirks();
     maximumDOMTreeDepth = document.settings().maximumHTMLParserDOMTreeDepth();
