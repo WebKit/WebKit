@@ -2531,6 +2531,20 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         break;
     }
 
+    case ToPropertyKey: {
+        if (!(forNode(node->child1()).m_type & ~(SpecString | SpecSymbol))) {
+            m_state.setShouldTryConstantFolding(true);
+            didFoldClobberWorld();
+            setForNode(node, forNode(node->child1()));
+            break;
+        }
+
+        clobberWorld();
+
+        setTypeForNode(node, SpecString | SpecSymbol);
+        break;
+    }
+
     case ToNumber: {
         JSValue childConst = forNode(node->child1()).value();
         if (childConst && childConst.isNumber()) {

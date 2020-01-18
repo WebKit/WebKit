@@ -1464,6 +1464,7 @@ public:
     void compileNewAsyncGenerator(Node*);
     void compileNewArrayIterator(Node*);
     void compileToPrimitive(Node*);
+    void compileToPropertyKey(Node*);
     void compileToNumeric(Node*);
     void compileLogShadowChickenPrologue(Node*);
     void compileLogShadowChickenTail(Node*);

@@ -233,6 +233,7 @@ inline CapabilityLevel canCompile(Node* node)
     case MultiGetByOffset:
     case MultiPutByOffset:
     case ToPrimitive:
+    case ToPropertyKey:
     case Throw:
     case ThrowStaticError:
     case Unreachable:

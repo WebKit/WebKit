@@ -3431,6 +3431,11 @@ void SpeculativeJIT::compile(Node* node)
         break;
     }
 
+    case ToPropertyKey: {
+        compileToPropertyKey(node);
+        break;
+    }
+
     case ToNumber: {
         JSValueOperand argument(this, node->child1());
         GPRTemporary result(this, Reuse, argument);

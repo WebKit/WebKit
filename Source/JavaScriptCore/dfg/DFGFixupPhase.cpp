@@ -1391,6 +1391,38 @@ private:
             break;
         }
 
+        case ToPropertyKey: {
+            if (node->child1()->shouldSpeculateString()) {
+                fixEdge<StringUse>(node->child1());
+                node->convertToIdentity();
+
+                return;
+            }
+
+            if (node->child1()->shouldSpeculateSymbol()) {
+                fixEdge<SymbolUse>(node->child1());
+                node->convertToIdentity();
+                return;
+            }
+
+            if (node->child1()->shouldSpeculateStringObject()
+                && m_graph.canOptimizeStringObjectAccess(node->origin.semantic)) {
+                addCheckStructureForOriginalStringObjectUse(StringObjectUse, node->origin, node->child1().node());
+                fixEdge<StringObjectUse>(node->child1());
+                node->convertToToString();
+                return;
+            }
+
+            if (node->child1()->shouldSpeculateStringOrStringObject()
+                && m_graph.canOptimizeStringObjectAccess(node->origin.semantic)) {
+                addCheckStructureForOriginalStringObjectUse(StringOrStringObjectUse, node->origin, node->child1().node());
+                fixEdge<StringOrStringObjectUse>(node->child1());
+                node->convertToToString();
+                return;
+            }
+            break;
+        }
+
         case ToNumber: {
             fixupToNumber(node);
             break;

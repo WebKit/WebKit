@@ -717,6 +717,15 @@ private:
                 break;
             }
 
+            case ToPropertyKey: {
+                if (m_state.forNode(node->child1()).m_type & ~(SpecString | SpecSymbol))
+                    break;
+
+                node->convertToIdentity();
+                changed = true;
+                break;
+            }
+
             case ToThis: {
                 ToThisResult result = isToThisAnIdentity(m_graph.m_vm, m_graph.isStrictModeFor(node->origin.semantic), m_state.forNode(node->child1()));
                 if (result == ToThisResult::Identity) {

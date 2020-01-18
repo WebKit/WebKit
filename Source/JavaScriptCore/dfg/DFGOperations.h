@@ -91,6 +91,7 @@ EncodedJSValue JIT_OPERATION operationGetByValStringInt(JSGlobalObject*, JSStrin
 EncodedJSValue JIT_OPERATION operationGetByValObjectString(JSGlobalObject*, JSCell*, JSCell* string) WTF_INTERNAL;
 EncodedJSValue JIT_OPERATION operationGetByValObjectSymbol(JSGlobalObject*, JSCell*, JSCell* symbol) WTF_INTERNAL;
 EncodedJSValue JIT_OPERATION operationToPrimitive(JSGlobalObject*, EncodedJSValue) WTF_INTERNAL;
+EncodedJSValue JIT_OPERATION operationToPropertyKey(JSGlobalObject*, EncodedJSValue) WTF_INTERNAL;
 EncodedJSValue JIT_OPERATION operationToNumber(JSGlobalObject*, EncodedJSValue) WTF_INTERNAL;
 EncodedJSValue JIT_OPERATION operationToNumeric(JSGlobalObject*, EncodedJSValue) WTF_INTERNAL;
 EncodedJSValue JIT_OPERATION operationGetByValWithThis(JSGlobalObject*, EncodedJSValue, EncodedJSValue, EncodedJSValue) WTF_INTERNAL;

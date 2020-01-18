@@ -13053,6 +13053,30 @@ void SpeculativeJIT::compileToPrimitive(Node* node)
     jsValueResult(resultRegs, node, DataFormatJS, UseChildrenCalledExplicitly);
 }
 
+void SpeculativeJIT::compileToPropertyKey(Node* node)
+{
+    DFG_ASSERT(m_jit.graph(), node, node->child1().useKind() == UntypedUse, node->child1().useKind());
+    JSValueOperand argument(this, node->child1());
+    JSValueRegsTemporary result(this, Reuse, argument);
+
+    JSValueRegs argumentRegs = argument.jsValueRegs();
+    JSValueRegs resultRegs = result.regs();
+
+    argument.use();
+
+    MacroAssembler::JumpList slowCases;
+    slowCases.append(m_jit.branchIfNotCell(argumentRegs));
+    MacroAssembler::Jump alreadyPropertyKey = m_jit.branchIfSymbol(argumentRegs.payloadGPR());
+    slowCases.append(m_jit.branchIfNotString(argumentRegs.payloadGPR()));
+
+    alreadyPropertyKey.link(&m_jit);
+    m_jit.moveValueRegs(argumentRegs, resultRegs);
+
+    addSlowPathGenerator(slowPathCall(slowCases, this, operationToPropertyKey, resultRegs, TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(node->origin.semantic)), argumentRegs));
+
+    jsValueResult(resultRegs, node, DataFormatJSCell, UseChildrenCalledExplicitly);
+}
+
 void SpeculativeJIT::compileToNumeric(Node* node)
 {
     DFG_ASSERT(m_jit.graph(), node, node->child1().useKind() == UntypedUse, node->child1().useKind());

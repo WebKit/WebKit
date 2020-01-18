@@ -1649,6 +1649,15 @@ EncodedJSValue JIT_OPERATION operationToPrimitive(JSGlobalObject* globalObject, 
     return JSValue::encode(JSValue::decode(value).toPrimitive(globalObject));
 }
 
+EncodedJSValue JIT_OPERATION operationToPropertyKey(JSGlobalObject* globalObject, EncodedJSValue value)
+{
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
+
+    return JSValue::encode(JSValue::decode(value).toPropertyKeyValue(globalObject));
+}
+
 EncodedJSValue JIT_OPERATION operationToNumber(JSGlobalObject* globalObject, EncodedJSValue value)
 {
     VM& vm = globalObject->vm();

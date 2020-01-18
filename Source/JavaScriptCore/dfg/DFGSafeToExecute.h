@@ -361,6 +361,7 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node, bool igno
     case LogicalNot:
     case CallObjectConstructor:
     case ToPrimitive:
+    case ToPropertyKey:
     case ToString:
     case ToNumber:
     case ToNumeric:
