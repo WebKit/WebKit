@@ -1,3 +1,15 @@
+2020-01-17  Simon Fraser  <simon.fraser@apple.com>
+
+        Some iOS tests using UIHelper.dragFromPointToPoint() are flakey
+        https://bugs.webkit.org/show_bug.cgi?id=206441
+
+        Reviewed by Wenson Hsieh.
+
+        Unskip tests.
+
+        * platform/ios-wk2/TestExpectations:
+        * platform/ios/TestExpectations:
+
 2020-01-17  Megan Gardner  <megan_gardner@apple.com>
 
         Use Visible Position to calculate Positions for highlights
