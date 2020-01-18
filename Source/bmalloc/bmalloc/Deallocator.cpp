@@ -50,13 +50,13 @@ Deallocator::~Deallocator()
     
 void Deallocator::scavenge()
 {
-    std::unique_lock<Mutex> lock(Heap::mutex());
+    UniqueLockHolder lock(Heap::mutex());
 
     processObjectLog(lock);
     m_heap.deallocateLineCache(lock, lineCache(lock));
 }
 
-void Deallocator::processObjectLog(std::unique_lock<Mutex>& lock)
+void Deallocator::processObjectLog(UniqueLockHolder& lock)
 {
     for (Object object : m_objectLog)
         m_heap.derefSmallLine(lock, object, lineCache(lock));
@@ -68,7 +68,7 @@ void Deallocator::deallocateSlowCase(void* object)
     if (!object)
         return;
 
-    std::unique_lock<Mutex> lock(Heap::mutex());
+    UniqueLockHolder lock(Heap::mutex());
     if (m_heap.isLarge(lock, object)) {
         m_heap.deallocateLarge(lock, object);
         return;

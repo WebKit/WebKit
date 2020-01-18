@@ -1,3 +1,171 @@
+2020-01-17  Basuke Suzuki  <basuke.suzuki@sony.com>
+
+        [bmalloc] Define alias for std::lock_guard and std::unique_lock for better readability
+        https://bugs.webkit.org/show_bug.cgi?id=206443
+
+        Reviewed by Yusuke Suzuki.
+
+        There are two types of lock holder in bmalloc: std::lock_guard and std::unique_lock. Their names are relatively long
+        and a bit harder to distinguish them each other. Define simple type name for them, LockHolder and UniqueLockHolder.
+
+        * bmalloc/AllIsoHeaps.cpp:
+        (bmalloc::AllIsoHeaps::AllIsoHeaps):
+        (bmalloc::AllIsoHeaps::add):
+        (bmalloc::AllIsoHeaps::head):
+        * bmalloc/AllIsoHeaps.h:
+        * bmalloc/Allocator.cpp:
+        (bmalloc::Allocator::reallocateImpl):
+        (bmalloc::Allocator::refillAllocatorSlowCase):
+        (bmalloc::Allocator::allocateLarge):
+        * bmalloc/CryptoRandom.cpp:
+        (bmalloc::ARC4RandomNumberGenerator::ARC4RandomNumberGenerator):
+        (bmalloc::ARC4RandomNumberGenerator::randomValues):
+        * bmalloc/Deallocator.cpp:
+        (bmalloc::Deallocator::scavenge):
+        (bmalloc::Deallocator::processObjectLog):
+        (bmalloc::Deallocator::deallocateSlowCase):
+        * bmalloc/Deallocator.h:
+        (bmalloc::Deallocator::lineCache):
+        * bmalloc/DebugHeap.cpp:
+        (bmalloc::DebugHeap::DebugHeap):
+        (bmalloc::DebugHeap::memalignLarge):
+        (bmalloc::DebugHeap::freeLarge):
+        * bmalloc/DebugHeap.h:
+        * bmalloc/DeferredTrigger.h:
+        * bmalloc/DeferredTriggerInlines.h:
+        (bmalloc::DeferredTrigger<trigger>::didBecome):
+        (bmalloc::DeferredTrigger<trigger>::handleDeferral):
+        * bmalloc/Environment.cpp:
+        (bmalloc::Environment::Environment):
+        * bmalloc/Environment.h:
+        * bmalloc/Gigacage.cpp:
+        (bmalloc::PrimitiveDisableCallbacks::PrimitiveDisableCallbacks):
+        (Gigacage::disablePrimitiveGigacage):
+        (Gigacage::addPrimitiveDisableCallback):
+        (Gigacage::removePrimitiveDisableCallback):
+        * bmalloc/Heap.cpp:
+        (bmalloc::Heap::Heap):
+        (bmalloc::Heap::freeableMemory):
+        (bmalloc::Heap::markAllLargeAsEligibile):
+        (bmalloc::Heap::decommitLargeRange):
+        (bmalloc::Heap::scavenge):
+        (bmalloc::Heap::scavengeToHighWatermark):
+        (bmalloc::Heap::deallocateLineCache):
+        (bmalloc::Heap::allocateSmallChunk):
+        (bmalloc::Heap::allocateSmallPage):
+        (bmalloc::Heap::deallocateSmallLine):
+        (bmalloc::Heap::allocateSmallBumpRangesByMetadata):
+        (bmalloc::Heap::allocateSmallBumpRangesByObject):
+        (bmalloc::Heap::splitAndAllocate):
+        (bmalloc::Heap::allocateLarge):
+        (bmalloc::Heap::isLarge):
+        (bmalloc::Heap::largeSize):
+        (bmalloc::Heap::shrinkLarge):
+        (bmalloc::Heap::deallocateLarge):
+        (bmalloc::Heap::externalCommit):
+        (bmalloc::Heap::externalDecommit):
+        * bmalloc/Heap.h:
+        (bmalloc::Heap::allocateSmallBumpRanges):
+        (bmalloc::Heap::derefSmallLine):
+        * bmalloc/HeapConstants.cpp:
+        (bmalloc::HeapConstants::HeapConstants):
+        * bmalloc/HeapConstants.h:
+        * bmalloc/IsoAllocatorInlines.h:
+        (bmalloc::IsoAllocator<Config>::allocateSlow):
+        (bmalloc::IsoAllocator<Config>::scavenge):
+        * bmalloc/IsoDeallocatorInlines.h:
+        (bmalloc::IsoDeallocator<Config>::deallocate):
+        (bmalloc::IsoDeallocator<Config>::scavenge):
+        * bmalloc/IsoDirectory.h:
+        * bmalloc/IsoDirectoryInlines.h:
+        (bmalloc::passedNumPages>::takeFirstEligible):
+        (bmalloc::passedNumPages>::didBecome):
+        (bmalloc::passedNumPages>::didDecommit):
+        (bmalloc::passedNumPages>::scavengePage):
+        (bmalloc::passedNumPages>::scavenge):
+        (bmalloc::passedNumPages>::scavengeToHighWatermark):
+        (bmalloc::passedNumPages>::forEachCommittedPage):
+        * bmalloc/IsoHeapImpl.h:
+        * bmalloc/IsoHeapImplInlines.h:
+        (bmalloc::IsoHeapImpl<Config>::takeFirstEligible):
+        (bmalloc::IsoHeapImpl<Config>::didBecomeEligibleOrDecommited):
+        (bmalloc::IsoHeapImpl<Config>::scavenge):
+        (bmalloc::IsoHeapImpl<Config>::scavengeToHighWatermark):
+        (bmalloc::IsoHeapImpl<Config>::numLiveObjects):
+        (bmalloc::IsoHeapImpl<Config>::numCommittedPages):
+        (bmalloc::IsoHeapImpl<Config>::forEachDirectory):
+        (bmalloc::IsoHeapImpl<Config>::forEachCommittedPage):
+        (bmalloc::IsoHeapImpl<Config>::forEachLiveObject):
+        (bmalloc::IsoHeapImpl<Config>::allocateFromShared):
+        * bmalloc/IsoPage.h:
+        * bmalloc/IsoPageInlines.h:
+        (bmalloc::IsoPage<Config>::free):
+        (bmalloc::IsoPage<Config>::startAllocating):
+        (bmalloc::IsoPage<Config>::stopAllocating):
+        (bmalloc::IsoPage<Config>::forEachLiveObject):
+        * bmalloc/IsoSharedHeap.h:
+        (bmalloc::IsoSharedHeap::IsoSharedHeap):
+        * bmalloc/IsoSharedHeapInlines.h:
+        (bmalloc::IsoSharedHeap::allocateNew):
+        (bmalloc::IsoSharedHeap::allocateSlow):
+        * bmalloc/IsoSharedPage.h:
+        * bmalloc/IsoSharedPageInlines.h:
+        (bmalloc::IsoSharedPage::free):
+        (bmalloc::IsoSharedPage::startAllocating):
+        (bmalloc::IsoSharedPage::stopAllocating):
+        * bmalloc/IsoTLSDeallocatorEntry.h:
+        * bmalloc/IsoTLSDeallocatorEntryInlines.h:
+        (bmalloc::IsoTLSDeallocatorEntry<Config>::IsoTLSDeallocatorEntry):
+        * bmalloc/IsoTLSInlines.h:
+        (bmalloc::IsoTLS::ensureHeap):
+        * bmalloc/IsoTLSLayout.cpp:
+        (bmalloc::IsoTLSLayout::IsoTLSLayout):
+        (bmalloc::IsoTLSLayout::add):
+        * bmalloc/IsoTLSLayout.h:
+        * bmalloc/Mutex.h:
+        (bmalloc::sleep):
+        (bmalloc::waitUntilFalse):
+        * bmalloc/ObjectType.cpp:
+        (bmalloc::objectType):
+        * bmalloc/PerProcess.cpp:
+        (bmalloc::getPerProcessData):
+        * bmalloc/PerProcess.h:
+        (bmalloc::PerProcess::getSlowCase):
+        * bmalloc/Scavenger.cpp:
+        (bmalloc::Scavenger::Scavenger):
+        (bmalloc::Scavenger::run):
+        (bmalloc::Scavenger::runSoon):
+        (bmalloc::Scavenger::scheduleIfUnderMemoryPressure):
+        (bmalloc::Scavenger::schedule):
+        (bmalloc::Scavenger::timeSinceLastFullScavenge):
+        (bmalloc::Scavenger::timeSinceLastPartialScavenge):
+        (bmalloc::Scavenger::scavenge):
+        (bmalloc::Scavenger::partialScavenge):
+        (bmalloc::Scavenger::freeableMemory):
+        (bmalloc::Scavenger::threadRunLoop):
+        * bmalloc/Scavenger.h:
+        * bmalloc/SmallLine.h:
+        (bmalloc::SmallLine::refCount):
+        (bmalloc::SmallLine::ref):
+        (bmalloc::SmallLine::deref):
+        * bmalloc/SmallPage.h:
+        (bmalloc::SmallPage::refCount):
+        (bmalloc::SmallPage::hasFreeLines const):
+        (bmalloc::SmallPage::setHasFreeLines):
+        (bmalloc::SmallPage::ref):
+        (bmalloc::SmallPage::deref):
+        * bmalloc/StaticPerProcess.h:
+        * bmalloc/VMHeap.cpp:
+        (bmalloc::VMHeap::VMHeap):
+        * bmalloc/VMHeap.h:
+        * bmalloc/Zone.cpp:
+        (bmalloc::Zone::Zone):
+        * bmalloc/Zone.h:
+        * bmalloc/bmalloc.cpp:
+        (bmalloc::api::tryLargeZeroedMemalignVirtual):
+        (bmalloc::api::freeLargeVirtual):
+        (bmalloc::api::setScavengerThreadQOSClass):
+
 2020-01-17  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [bmalloc] Fix IsoHeapImpl's assertion introduced in r254708

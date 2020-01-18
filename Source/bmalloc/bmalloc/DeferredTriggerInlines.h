@@ -32,7 +32,7 @@ namespace bmalloc {
 
 template<IsoPageTrigger trigger>
 template<typename Config>
-void DeferredTrigger<trigger>::didBecome(const std::lock_guard<Mutex>& locker, IsoPage<Config>& page)
+void DeferredTrigger<trigger>::didBecome(const LockHolder& locker, IsoPage<Config>& page)
 {
     if (page.isInUseForAllocation())
         m_hasBeenDeferred = true;
@@ -42,7 +42,7 @@ void DeferredTrigger<trigger>::didBecome(const std::lock_guard<Mutex>& locker, I
 
 template<IsoPageTrigger trigger>
 template<typename Config>
-void DeferredTrigger<trigger>::handleDeferral(const std::lock_guard<Mutex>& locker, IsoPage<Config>& page)
+void DeferredTrigger<trigger>::handleDeferral(const LockHolder& locker, IsoPage<Config>& page)
 {
     RELEASE_BASSERT(!page.isInUseForAllocation());
     

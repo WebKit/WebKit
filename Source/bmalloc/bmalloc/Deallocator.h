@@ -46,9 +46,9 @@ public:
     void deallocate(void*);
     void scavenge();
     
-    void processObjectLog(std::unique_lock<Mutex>&);
+    void processObjectLog(UniqueLockHolder&);
     
-    LineCache& lineCache(std::unique_lock<Mutex>&) { return m_lineCache; }
+    LineCache& lineCache(UniqueLockHolder&) { return m_lineCache; }
 
 private:
     bool deallocateFastCase(void*);

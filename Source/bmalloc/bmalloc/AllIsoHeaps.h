@@ -33,7 +33,7 @@ namespace bmalloc {
 
 class BEXPORT AllIsoHeaps : public StaticPerProcess<AllIsoHeaps> {
 public:
-    AllIsoHeaps(const std::lock_guard<Mutex>&);
+    AllIsoHeaps(const LockHolder&);
     
     void add(IsoHeapImplBase*);
     IsoHeapImplBase* head();

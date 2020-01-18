@@ -42,7 +42,7 @@ public:
     // Enough capacity to track a 64GB heap, so probably enough for anything.
     static constexpr size_t capacity = 2048;
 
-    Zone(const std::lock_guard<Mutex>&);
+    Zone(const LockHolder&);
     Zone(task_t, memory_reader_t, vm_address_t);
 
     void addRange(Range);

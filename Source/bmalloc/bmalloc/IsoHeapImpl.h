@@ -105,11 +105,11 @@ class IsoHeapImpl final : public IsoHeapImplBase {
 public:
     IsoHeapImpl();
     
-    EligibilityResult<Config> takeFirstEligible(const std::lock_guard<Mutex>&);
+    EligibilityResult<Config> takeFirstEligible(const LockHolder&);
     
     // Callbacks from directory.
-    void didBecomeEligibleOrDecommited(const std::lock_guard<Mutex>&, IsoDirectory<Config, numPagesInInlineDirectory>*);
-    void didBecomeEligibleOrDecommited(const std::lock_guard<Mutex>&, IsoDirectory<Config, IsoDirectoryPage<Config>::numPages>*);
+    void didBecomeEligibleOrDecommited(const LockHolder&, IsoDirectory<Config, numPagesInInlineDirectory>*);
+    void didBecomeEligibleOrDecommited(const LockHolder&, IsoDirectory<Config, IsoDirectoryPage<Config>::numPages>*);
     
     void scavenge(Vector<DeferredDecommit>&) override;
 #if BUSE(PARTIAL_SCAVENGE)
@@ -124,17 +124,17 @@ public:
     unsigned numCommittedPages();
     
     template<typename Func>
-    void forEachDirectory(const std::lock_guard<Mutex>&, const Func&);
+    void forEachDirectory(const LockHolder&, const Func&);
     
     template<typename Func>
-    void forEachCommittedPage(const std::lock_guard<Mutex>&, const Func&);
+    void forEachCommittedPage(const LockHolder&, const Func&);
     
     // This is only accurate when all threads are scavenged. Otherwise it will overestimate.
     template<typename Func>
-    void forEachLiveObject(const std::lock_guard<Mutex>&, const Func&);
+    void forEachLiveObject(const LockHolder&, const Func&);
 
     AllocationMode updateAllocationMode();
-    void* allocateFromShared(const std::lock_guard<Mutex>&, bool abortOnFailure);
+    void* allocateFromShared(const LockHolder&, bool abortOnFailure);
 
 private:
     PackedPtr<IsoDirectoryPage<Config>> m_headDirectory { nullptr };

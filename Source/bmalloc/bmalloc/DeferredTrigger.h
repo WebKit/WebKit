@@ -39,10 +39,10 @@ public:
     DeferredTrigger() { }
     
     template<typename Config>
-    void didBecome(const std::lock_guard<Mutex>&, IsoPage<Config>&);
+    void didBecome(const LockHolder&, IsoPage<Config>&);
     
     template<typename Config>
-    void handleDeferral(const std::lock_guard<Mutex>&, IsoPage<Config>&);
+    void handleDeferral(const LockHolder&, IsoPage<Config>&);
     
 private:
     bool m_hasBeenDeferred { false };

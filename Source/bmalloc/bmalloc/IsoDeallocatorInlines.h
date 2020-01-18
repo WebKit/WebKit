@@ -59,7 +59,7 @@ void IsoDeallocator<Config>::deallocate(api::IsoHeap<Type>& handle, void* ptr)
     // should be rarely taken. If we see frequent malloc-and-free pattern, we tier up the allocator from shared mode to fast mode.
     IsoPageBase* page = IsoPageBase::pageFor(ptr);
     if (page->isShared()) {
-        std::lock_guard<Mutex> locker(*m_lock);
+        LockHolder locker(*m_lock);
         static_cast<IsoSharedPage*>(page)->free<Config>(locker, handle, ptr);
         return;
     }
@@ -73,7 +73,7 @@ void IsoDeallocator<Config>::deallocate(api::IsoHeap<Type>& handle, void* ptr)
 template<typename Config>
 BNO_INLINE void IsoDeallocator<Config>::scavenge()
 {
-    std::lock_guard<Mutex> locker(*m_lock);
+    LockHolder locker(*m_lock);
     
     for (void* ptr : m_objectLog)
         IsoPage<Config>::pageFor(ptr)->free(locker, ptr);

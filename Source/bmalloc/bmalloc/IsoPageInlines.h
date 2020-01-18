@@ -65,7 +65,7 @@ IsoPage<Config>* IsoPage<Config>::pageFor(void* ptr)
 }
 
 template<typename Config>
-void IsoPage<Config>::free(const std::lock_guard<Mutex>& locker, void* passedPtr)
+void IsoPage<Config>::free(const LockHolder& locker, void* passedPtr)
 {
     BASSERT(!m_isShared);
     unsigned offset = static_cast<char*>(passedPtr) - reinterpret_cast<char*>(this);
@@ -87,7 +87,7 @@ void IsoPage<Config>::free(const std::lock_guard<Mutex>& locker, void* passedPtr
 }
 
 template<typename Config>
-FreeList IsoPage<Config>::startAllocating(const std::lock_guard<Mutex>&)
+FreeList IsoPage<Config>::startAllocating(const LockHolder&)
 {
     static constexpr bool verbose = false;
     
@@ -208,7 +208,7 @@ FreeList IsoPage<Config>::startAllocating(const std::lock_guard<Mutex>&)
 }
 
 template<typename Config>
-void IsoPage<Config>::stopAllocating(const std::lock_guard<Mutex>& locker, FreeList freeList)
+void IsoPage<Config>::stopAllocating(const LockHolder& locker, FreeList freeList)
 {
     static constexpr bool verbose = false;
     
@@ -229,7 +229,7 @@ void IsoPage<Config>::stopAllocating(const std::lock_guard<Mutex>& locker, FreeL
 
 template<typename Config>
 template<typename Func>
-void IsoPage<Config>::forEachLiveObject(const std::lock_guard<Mutex>&, const Func& func)
+void IsoPage<Config>::forEachLiveObject(const LockHolder&, const Func& func)
 {
     for (unsigned wordIndex = 0; wordIndex < bitsArrayLength(numObjects); ++wordIndex) {
         unsigned word = m_allocBits[wordIndex];

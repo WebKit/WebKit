@@ -50,7 +50,7 @@ public:
     
     IsoHeapImpl<Config>& heap() { return m_heap; }
     
-    virtual void didBecome(const std::lock_guard<Mutex>&, IsoPage<Config>*, IsoPageTrigger) = 0;
+    virtual void didBecome(const LockHolder&, IsoPage<Config>*, IsoPageTrigger) = 0;
     
 protected:
     IsoHeapImpl<Config>& m_heap;
@@ -65,9 +65,9 @@ public:
     
     // Find the first page that is eligible for allocation and return it. May return null if there is no
     // such thing. May allocate a new page if we have an uncommitted page.
-    EligibilityResult<Config> takeFirstEligible(const std::lock_guard<Mutex>&);
+    EligibilityResult<Config> takeFirstEligible(const LockHolder&);
     
-    void didBecome(const std::lock_guard<Mutex>&, IsoPage<Config>*, IsoPageTrigger) override;
+    void didBecome(const LockHolder&, IsoPage<Config>*, IsoPageTrigger) override;
     
     // This gets called from a bulk decommit function in the Scavenger, so no locks are held. This function
     // needs to get the heap lock.
@@ -75,16 +75,16 @@ public:
     
     // Iterate over all empty and committed pages, and put them into the vector. This also records the
     // pages as being decommitted. It's the caller's job to do the actual decommitting.
-    void scavenge(const std::lock_guard<Mutex>&, Vector<DeferredDecommit>&);
+    void scavenge(const LockHolder&, Vector<DeferredDecommit>&);
 #if BUSE(PARTIAL_SCAVENGE)
-    void scavengeToHighWatermark(const std::lock_guard<Mutex>&, Vector<DeferredDecommit>&);
+    void scavengeToHighWatermark(const LockHolder&, Vector<DeferredDecommit>&);
 #endif
 
     template<typename Func>
-    void forEachCommittedPage(const std::lock_guard<Mutex>&, const Func&);
+    void forEachCommittedPage(const LockHolder&, const Func&);
     
 private:
-    void scavengePage(const std::lock_guard<Mutex>&, size_t, Vector<DeferredDecommit>&);
+    void scavengePage(const LockHolder&, size_t, Vector<DeferredDecommit>&);
 
     std::array<PackedAlignedPtr<IsoPage<Config>, IsoPage<Config>::pageSize>, numPages> m_pages { };
     // NOTE: I suppose that this could be two bitvectors. But from working on the GC, I found that the

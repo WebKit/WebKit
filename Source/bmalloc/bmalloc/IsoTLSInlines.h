@@ -184,7 +184,7 @@ template<typename Type>
 void IsoTLS::ensureHeap(api::IsoHeap<Type>& handle)
 {
     if (!handle.isInitialized()) {
-        std::lock_guard<Mutex> locker(handle.m_initializationLock);
+        LockHolder locker(handle.m_initializationLock);
         if (!handle.isInitialized())
             handle.initialize();
     }

@@ -58,7 +58,7 @@ void* tryLargeZeroedMemalignVirtual(size_t requiredAlignment, size_t requestedSi
         kind = mapToActiveHeapKind(kind);
         Heap& heap = PerProcess<PerHeapKind<Heap>>::get()->at(kind);
 
-        std::unique_lock<Mutex> lock(Heap::mutex());
+        UniqueLockHolder lock(Heap::mutex());
         result = heap.allocateLarge(lock, alignment, size, FailureAction::ReturnNull);
         if (result) {
             // Don't track this as dirty memory that dictates how we drive the scavenger.
@@ -82,7 +82,7 @@ void freeLargeVirtual(void* object, size_t size, HeapKind kind)
     }
     kind = mapToActiveHeapKind(kind);
     Heap& heap = PerProcess<PerHeapKind<Heap>>::get()->at(kind);
-    std::unique_lock<Mutex> lock(Heap::mutex());
+    UniqueLockHolder lock(Heap::mutex());
     // Balance out the externalDecommit when we allocated the zeroed virtual memory.
     heap.externalCommit(lock, object, size);
     heap.deallocateLarge(lock, object);
@@ -108,7 +108,7 @@ void setScavengerThreadQOSClass(qos_class_t overrideClass)
 {
     if (DebugHeap::tryGet())
         return;
-    std::unique_lock<Mutex> lock(Heap::mutex());
+    UniqueLockHolder lock(Heap::mutex());
     Scavenger::get()->setScavengerThreadQOSClass(overrideClass);
 }
 #endif

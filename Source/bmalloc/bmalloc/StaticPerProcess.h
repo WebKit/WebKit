@@ -79,7 +79,7 @@ private:
     BNO_INLINE static T* getSlowCase()
     {
         using Storage = typename StaticPerProcessStorageTraits<T>::Storage;
-        std::lock_guard<Mutex> lock(Storage::s_mutex);
+        LockHolder lock(Storage::s_mutex);
         if (!Storage::s_object.load(std::memory_order_consume)) {
             T* t = new (&Storage::s_memory) T(lock);
             Storage::s_object.store(t, std::memory_order_release);

@@ -38,7 +38,7 @@ ObjectType objectType(Heap& heap, void* object)
         if (!object)
             return ObjectType::Small;
 
-        std::unique_lock<Mutex> lock(Heap::mutex());
+        UniqueLockHolder lock(Heap::mutex());
         if (heap.isLarge(lock, object))
             return ObjectType::Large;
     }

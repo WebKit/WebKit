@@ -46,7 +46,7 @@ namespace bmalloc {
 // x = object->m_field; // OK
 // if (globalFlag) { ... } // Undefined behavior.
 //
-// std::lock_guard<Mutex> lock(PerProcess<Object>::mutex());
+// LockHolder lock(PerProcess<Object>::mutex());
 // Object* object = PerProcess<Object>::get(lock);
 // if (globalFlag) { ... } // OK.
 
@@ -105,7 +105,7 @@ private:
     
     BNO_INLINE static T* getSlowCase()
     {
-        std::lock_guard<Mutex> lock(mutex());
+        LockHolder lock(mutex());
         if (!s_object.load()) {
             if (s_data->isInitialized)
                 s_object.store(static_cast<T*>(s_data->memory));

@@ -60,7 +60,7 @@ static void* allocate(size_t size, size_t alignment)
 
 PerProcessData* getPerProcessData(unsigned hash, const char* disambiguator, size_t size, size_t alignment)
 {
-    std::lock_guard<Mutex> lock(s_mutex);
+    LockHolder lock(s_mutex);
 
     PerProcessData*& bucket = s_table[hash % tableSize];
     

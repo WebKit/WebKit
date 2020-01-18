@@ -41,7 +41,7 @@ IsoHeapImpl<Config>::IsoHeapImpl()
 }
 
 template<typename Config>
-EligibilityResult<Config> IsoHeapImpl<Config>::takeFirstEligible(const std::lock_guard<Mutex>& locker)
+EligibilityResult<Config> IsoHeapImpl<Config>::takeFirstEligible(const LockHolder& locker)
 {
     if (m_isInlineDirectoryEligibleOrDecommitted) {
         EligibilityResult<Config> result = m_inlineDirectory.takeFirstEligible(locker);
@@ -94,14 +94,14 @@ EligibilityResult<Config> IsoHeapImpl<Config>::takeFirstEligible(const std::lock
 }
 
 template<typename Config>
-void IsoHeapImpl<Config>::didBecomeEligibleOrDecommited(const std::lock_guard<Mutex>&, IsoDirectory<Config, numPagesInInlineDirectory>* directory)
+void IsoHeapImpl<Config>::didBecomeEligibleOrDecommited(const LockHolder&, IsoDirectory<Config, numPagesInInlineDirectory>* directory)
 {
     RELEASE_BASSERT(directory == &m_inlineDirectory);
     m_isInlineDirectoryEligibleOrDecommitted = true;
 }
 
 template<typename Config>
-void IsoHeapImpl<Config>::didBecomeEligibleOrDecommited(const std::lock_guard<Mutex>&, IsoDirectory<Config, IsoDirectoryPage<Config>::numPages>* directory)
+void IsoHeapImpl<Config>::didBecomeEligibleOrDecommited(const LockHolder&, IsoDirectory<Config, IsoDirectoryPage<Config>::numPages>* directory)
 {
     RELEASE_BASSERT(m_firstEligibleOrDecommitedDirectory);
     auto* directoryPage = IsoDirectoryPage<Config>::pageFor(directory);
@@ -112,7 +112,7 @@ void IsoHeapImpl<Config>::didBecomeEligibleOrDecommited(const std::lock_guard<Mu
 template<typename Config>
 void IsoHeapImpl<Config>::scavenge(Vector<DeferredDecommit>& decommits)
 {
-    std::lock_guard<Mutex> locker(this->lock);
+    LockHolder locker(this->lock);
     forEachDirectory(
         locker,
         [&] (auto& directory) {
@@ -125,7 +125,7 @@ void IsoHeapImpl<Config>::scavenge(Vector<DeferredDecommit>& decommits)
 template<typename Config>
 void IsoHeapImpl<Config>::scavengeToHighWatermark(Vector<DeferredDecommit>& decommits)
 {
-    std::lock_guard<Mutex> locker(this->lock);
+    LockHolder locker(this->lock);
     if (!m_directoryHighWatermark)
         m_inlineDirectory.scavengeToHighWatermark(locker, decommits);
     for (IsoDirectoryPage<Config>* page = m_headDirectory.get(); page; page = page->next) {
@@ -156,7 +156,7 @@ unsigned IsoHeapImpl<Config>::deallocatorOffset()
 template<typename Config>
 unsigned IsoHeapImpl<Config>::numLiveObjects()
 {
-    std::lock_guard<Mutex> locker(this->lock);
+    LockHolder locker(this->lock);
     unsigned result = 0;
     forEachLiveObject(
         locker,
@@ -169,7 +169,7 @@ unsigned IsoHeapImpl<Config>::numLiveObjects()
 template<typename Config>
 unsigned IsoHeapImpl<Config>::numCommittedPages()
 {
-    std::lock_guard<Mutex> locker(this->lock);
+    LockHolder locker(this->lock);
     unsigned result = 0;
     forEachCommittedPage(
         locker,
@@ -181,7 +181,7 @@ unsigned IsoHeapImpl<Config>::numCommittedPages()
 
 template<typename Config>
 template<typename Func>
-void IsoHeapImpl<Config>::forEachDirectory(const std::lock_guard<Mutex>&, const Func& func)
+void IsoHeapImpl<Config>::forEachDirectory(const LockHolder&, const Func& func)
 {
     func(m_inlineDirectory);
     for (IsoDirectoryPage<Config>* page = m_headDirectory.get(); page; page = page->next)
@@ -190,7 +190,7 @@ void IsoHeapImpl<Config>::forEachDirectory(const std::lock_guard<Mutex>&, const 
 
 template<typename Config>
 template<typename Func>
-void IsoHeapImpl<Config>::forEachCommittedPage(const std::lock_guard<Mutex>& locker, const Func& func)
+void IsoHeapImpl<Config>::forEachCommittedPage(const LockHolder& locker, const Func& func)
 {
     forEachDirectory(
         locker,
@@ -201,7 +201,7 @@ void IsoHeapImpl<Config>::forEachCommittedPage(const std::lock_guard<Mutex>& loc
 
 template<typename Config>
 template<typename Func>
-void IsoHeapImpl<Config>::forEachLiveObject(const std::lock_guard<Mutex>& locker, const Func& func)
+void IsoHeapImpl<Config>::forEachLiveObject(const LockHolder& locker, const Func& func)
 {
     forEachCommittedPage(
         locker,
@@ -305,7 +305,7 @@ AllocationMode IsoHeapImpl<Config>::updateAllocationMode()
 }
 
 template<typename Config>
-void* IsoHeapImpl<Config>::allocateFromShared(const std::lock_guard<Mutex>&, bool abortOnFailure)
+void* IsoHeapImpl<Config>::allocateFromShared(const LockHolder&, bool abortOnFailure)
 {
     static constexpr bool verbose = false;
 

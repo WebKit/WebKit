@@ -40,7 +40,7 @@ namespace bmalloc {
     
 class DebugHeap : private StaticPerProcess<DebugHeap> {
 public:
-    DebugHeap(const std::lock_guard<Mutex>&);
+    DebugHeap(const LockHolder&);
     
     void* malloc(size_t, FailureAction);
     void* memalign(size_t alignment, size_t, FailureAction);

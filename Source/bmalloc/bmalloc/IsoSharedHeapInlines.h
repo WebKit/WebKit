@@ -51,7 +51,7 @@ inline constexpr unsigned computeObjectSizeForSharedCell(unsigned objectSize)
 template<unsigned passedObjectSize>
 void* IsoSharedHeap::allocateNew(bool abortOnFailure)
 {
-    std::lock_guard<Mutex> locker(mutex());
+    LockHolder locker(mutex());
     constexpr unsigned objectSize = computeObjectSizeForSharedCell(passedObjectSize);
     return m_allocator.template allocate<objectSize>(
         [&] () -> void* {
@@ -60,7 +60,7 @@ void* IsoSharedHeap::allocateNew(bool abortOnFailure)
 }
 
 template<unsigned passedObjectSize>
-BNO_INLINE void* IsoSharedHeap::allocateSlow(const std::lock_guard<Mutex>& locker, bool abortOnFailure)
+BNO_INLINE void* IsoSharedHeap::allocateSlow(const LockHolder& locker, bool abortOnFailure)
 {
     Scavenger& scavenger = *Scavenger::get();
     scavenger.didStartGrowing();

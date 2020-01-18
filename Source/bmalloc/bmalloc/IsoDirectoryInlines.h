@@ -42,7 +42,7 @@ IsoDirectory<Config, passedNumPages>::IsoDirectory(IsoHeapImpl<Config>& heap)
 }
 
 template<typename Config, unsigned passedNumPages>
-EligibilityResult<Config> IsoDirectory<Config, passedNumPages>::takeFirstEligible(const std::lock_guard<Mutex>&)
+EligibilityResult<Config> IsoDirectory<Config, passedNumPages>::takeFirstEligible(const LockHolder&)
 {
     unsigned pageIndex = (m_eligible | ~m_committed).findBit(m_firstEligibleOrDecommitted, true);
     m_firstEligibleOrDecommitted = pageIndex;
@@ -91,7 +91,7 @@ EligibilityResult<Config> IsoDirectory<Config, passedNumPages>::takeFirstEligibl
 }
 
 template<typename Config, unsigned passedNumPages>
-void IsoDirectory<Config, passedNumPages>::didBecome(const std::lock_guard<Mutex>& locker, IsoPage<Config>* page, IsoPageTrigger trigger)
+void IsoDirectory<Config, passedNumPages>::didBecome(const LockHolder& locker, IsoPage<Config>* page, IsoPageTrigger trigger)
 {
     static constexpr bool verbose = false;
     unsigned pageIndex = page->index();
@@ -121,7 +121,7 @@ void IsoDirectory<Config, passedNumPages>::didDecommit(unsigned index)
     // FIXME: We could do this without grabbing the lock. I just doubt that it matters. This is not going
     // to be a frequently executed path, in the sense that decommitting perf will be dominated by the
     // syscall itself (which has to do many hard things).
-    std::lock_guard<Mutex> locker(this->m_heap.lock);
+    LockHolder locker(this->m_heap.lock);
     BASSERT(!!m_committed[index]);
     this->m_heap.isNoLongerFreeable(m_pages[index].get(), IsoPageBase::pageSize);
     m_committed[index] = false;
@@ -131,7 +131,7 @@ void IsoDirectory<Config, passedNumPages>::didDecommit(unsigned index)
 }
 
 template<typename Config, unsigned passedNumPages>
-void IsoDirectory<Config, passedNumPages>::scavengePage(const std::lock_guard<Mutex>&, size_t index, Vector<DeferredDecommit>& decommits)
+void IsoDirectory<Config, passedNumPages>::scavengePage(const LockHolder&, size_t index, Vector<DeferredDecommit>& decommits)
 {
     // Make sure that this page is now off limits.
     m_empty[index] = false;
@@ -140,7 +140,7 @@ void IsoDirectory<Config, passedNumPages>::scavengePage(const std::lock_guard<Mu
 }
 
 template<typename Config, unsigned passedNumPages>
-void IsoDirectory<Config, passedNumPages>::scavenge(const std::lock_guard<Mutex>& locker, Vector<DeferredDecommit>& decommits)
+void IsoDirectory<Config, passedNumPages>::scavenge(const LockHolder& locker, Vector<DeferredDecommit>& decommits)
 {
     (m_empty & m_committed).forEachSetBit(
         [&] (size_t index) {
@@ -153,7 +153,7 @@ void IsoDirectory<Config, passedNumPages>::scavenge(const std::lock_guard<Mutex>
 
 #if BUSE(PARTIAL_SCAVENGE)
 template<typename Config, unsigned passedNumPages>
-void IsoDirectory<Config, passedNumPages>::scavengeToHighWatermark(const std::lock_guard<Mutex>& locker, Vector<DeferredDecommit>& decommits)
+void IsoDirectory<Config, passedNumPages>::scavengeToHighWatermark(const LockHolder& locker, Vector<DeferredDecommit>& decommits)
 {
     (m_empty & m_committed).forEachSetBit(
         [&] (size_t index) {
@@ -166,7 +166,7 @@ void IsoDirectory<Config, passedNumPages>::scavengeToHighWatermark(const std::lo
 
 template<typename Config, unsigned passedNumPages>
 template<typename Func>
-void IsoDirectory<Config, passedNumPages>::forEachCommittedPage(const std::lock_guard<Mutex>&, const Func& func)
+void IsoDirectory<Config, passedNumPages>::forEachCommittedPage(const LockHolder&, const Func& func)
 {
     m_committed.forEachSetBit(
         [&] (size_t index) {

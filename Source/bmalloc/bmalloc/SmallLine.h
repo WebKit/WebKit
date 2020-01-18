@@ -35,9 +35,9 @@ namespace bmalloc {
 
 class SmallLine {
 public:
-    void ref(std::unique_lock<Mutex>&, unsigned char = 1);
-    bool deref(std::unique_lock<Mutex>&);
-    unsigned refCount(std::unique_lock<Mutex>&) { return m_refCount; }
+    void ref(UniqueLockHolder&, unsigned char = 1);
+    bool deref(UniqueLockHolder&);
+    unsigned refCount(UniqueLockHolder&) { return m_refCount; }
     
     char* begin();
     char* end();
@@ -51,13 +51,13 @@ static_assert(
 
 };
 
-inline void SmallLine::ref(std::unique_lock<Mutex>&, unsigned char refCount)
+inline void SmallLine::ref(UniqueLockHolder&, unsigned char refCount)
 {
     BASSERT(!m_refCount);
     m_refCount = refCount;
 }
 
-inline bool SmallLine::deref(std::unique_lock<Mutex>&)
+inline bool SmallLine::deref(UniqueLockHolder&)
 {
     BASSERT(m_refCount);
     --m_refCount;

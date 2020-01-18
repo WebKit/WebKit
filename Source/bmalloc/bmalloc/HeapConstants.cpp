@@ -30,7 +30,7 @@ namespace bmalloc {
 
 DEFINE_STATIC_PER_PROCESS_STORAGE(HeapConstants);
 
-HeapConstants::HeapConstants(const std::lock_guard<Mutex>&)
+HeapConstants::HeapConstants(const LockHolder&)
     : m_vmPageSizePhysical { vmPageSizePhysical() }
 {
     RELEASE_BASSERT(m_vmPageSizePhysical >= smallPageSize);

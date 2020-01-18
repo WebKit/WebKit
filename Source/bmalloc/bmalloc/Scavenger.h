@@ -42,7 +42,7 @@ namespace bmalloc {
 
 class Scavenger : public StaticPerProcess<Scavenger> {
 public:
-    BEXPORT Scavenger(const std::lock_guard<Mutex>&);
+    BEXPORT Scavenger(const LockHolder&);
     
     ~Scavenger() = delete;
     

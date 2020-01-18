@@ -28,7 +28,7 @@
 namespace bmalloc {
 
 template<typename Config>
-IsoTLSDeallocatorEntry<Config>::IsoTLSDeallocatorEntry(const std::lock_guard<Mutex>&)
+IsoTLSDeallocatorEntry<Config>::IsoTLSDeallocatorEntry(const LockHolder&)
 {
 }
 

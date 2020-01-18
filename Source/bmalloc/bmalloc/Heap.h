@@ -57,44 +57,44 @@ class Scavenger;
 
 class Heap {
 public:
-    Heap(HeapKind, std::lock_guard<Mutex>&);
+    Heap(HeapKind, LockHolder&);
     
     static Mutex& mutex() { return PerProcess<PerHeapKind<Heap>>::mutex(); }
     
     HeapKind kind() const { return m_kind; }
     
-    void allocateSmallBumpRanges(std::unique_lock<Mutex>&, size_t sizeClass,
+    void allocateSmallBumpRanges(UniqueLockHolder&, size_t sizeClass,
         BumpAllocator&, BumpRangeCache&, LineCache&, FailureAction);
-    void derefSmallLine(std::unique_lock<Mutex>&, Object, LineCache&);
-    void deallocateLineCache(std::unique_lock<Mutex>&, LineCache&);
+    void derefSmallLine(UniqueLockHolder&, Object, LineCache&);
+    void deallocateLineCache(UniqueLockHolder&, LineCache&);
 
-    void* allocateLarge(std::unique_lock<Mutex>&, size_t alignment, size_t, FailureAction);
-    void deallocateLarge(std::unique_lock<Mutex>&, void*);
+    void* allocateLarge(UniqueLockHolder&, size_t alignment, size_t, FailureAction);
+    void deallocateLarge(UniqueLockHolder&, void*);
 
-    bool isLarge(std::unique_lock<Mutex>&, void*);
-    size_t largeSize(std::unique_lock<Mutex>&, void*);
-    void shrinkLarge(std::unique_lock<Mutex>&, const Range&, size_t);
+    bool isLarge(UniqueLockHolder&, void*);
+    size_t largeSize(UniqueLockHolder&, void*);
+    void shrinkLarge(UniqueLockHolder&, const Range&, size_t);
 
 #if BUSE(PARTIAL_SCAVENGE)
-    void scavengeToHighWatermark(const std::lock_guard<Mutex>&, BulkDecommit&);
-    void scavenge(const std::lock_guard<Mutex>&, BulkDecommit&);
+    void scavengeToHighWatermark(const LockHolder&, BulkDecommit&);
+    void scavenge(const LockHolder&, BulkDecommit&);
 #else
-    void scavenge(const std::lock_guard<Mutex>&, BulkDecommit&, size_t& deferredDecommits);
+    void scavenge(const LockHolder&, BulkDecommit&, size_t& deferredDecommits);
 #endif
-    void scavenge(const std::lock_guard<Mutex>&, BulkDecommit&, size_t& freed, size_t goal);
+    void scavenge(const LockHolder&, BulkDecommit&, size_t& freed, size_t goal);
 
-    size_t freeableMemory(const std::lock_guard<Mutex>&);
+    size_t freeableMemory(const LockHolder&);
     size_t footprint();
 
     void externalDecommit(void* ptr, size_t);
-    void externalDecommit(std::unique_lock<Mutex>&, void* ptr, size_t);
+    void externalDecommit(UniqueLockHolder&, void* ptr, size_t);
     void externalCommit(void* ptr, size_t);
-    void externalCommit(std::unique_lock<Mutex>&, void* ptr, size_t);
+    void externalCommit(UniqueLockHolder&, void* ptr, size_t);
 
-    void markAllLargeAsEligibile(const std::lock_guard<Mutex>&);
+    void markAllLargeAsEligibile(const LockHolder&);
 
 private:
-    void decommitLargeRange(const std::lock_guard<Mutex>&, LargeRange&, BulkDecommit&);
+    void decommitLargeRange(const LockHolder&, LargeRange&, BulkDecommit&);
 
     struct LargeObjectHash {
         static unsigned hash(void* key)
@@ -110,22 +110,22 @@ private:
     void* gigacageBasePtr(); // May crash if !usingGigacage().
     size_t gigacageSize();
 
-    void allocateSmallBumpRangesByMetadata(std::unique_lock<Mutex>&,
+    void allocateSmallBumpRangesByMetadata(UniqueLockHolder&,
         size_t sizeClass, BumpAllocator&, BumpRangeCache&, LineCache&, FailureAction);
-    void allocateSmallBumpRangesByObject(std::unique_lock<Mutex>&,
+    void allocateSmallBumpRangesByObject(UniqueLockHolder&,
         size_t sizeClass, BumpAllocator&, BumpRangeCache&, LineCache&, FailureAction);
 
-    SmallPage* allocateSmallPage(std::unique_lock<Mutex>&, size_t sizeClass, LineCache&, FailureAction);
-    void deallocateSmallLine(std::unique_lock<Mutex>&, Object, LineCache&);
+    SmallPage* allocateSmallPage(UniqueLockHolder&, size_t sizeClass, LineCache&, FailureAction);
+    void deallocateSmallLine(UniqueLockHolder&, Object, LineCache&);
 
-    void allocateSmallChunk(std::unique_lock<Mutex>&, size_t pageClass, FailureAction);
+    void allocateSmallChunk(UniqueLockHolder&, size_t pageClass, FailureAction);
     void deallocateSmallChunk(Chunk*, size_t pageClass);
 
     void mergeLarge(BeginTag*&, EndTag*&, Range&);
     void mergeLargeLeft(EndTag*&, BeginTag*&, Range&, bool& inVMHeap);
     void mergeLargeRight(EndTag*&, BeginTag*&, Range&, bool& inVMHeap);
 
-    LargeRange splitAndAllocate(std::unique_lock<Mutex>&, LargeRange&, size_t alignment, size_t);
+    LargeRange splitAndAllocate(UniqueLockHolder&, LargeRange&, size_t alignment, size_t);
 
     HeapKind m_kind;
     HeapConstants& m_constants;
@@ -157,7 +157,7 @@ private:
 };
 
 inline void Heap::allocateSmallBumpRanges(
-    std::unique_lock<Mutex>& lock, size_t sizeClass,
+    UniqueLockHolder& lock, size_t sizeClass,
     BumpAllocator& allocator, BumpRangeCache& rangeCache,
     LineCache& lineCache, FailureAction action)
 {
@@ -166,7 +166,7 @@ inline void Heap::allocateSmallBumpRanges(
     return allocateSmallBumpRangesByObject(lock, sizeClass, allocator, rangeCache, lineCache, action);
 }
 
-inline void Heap::derefSmallLine(std::unique_lock<Mutex>& lock, Object object, LineCache& lineCache)
+inline void Heap::derefSmallLine(UniqueLockHolder& lock, Object object, LineCache& lineCache)
 {
     if (!object.line()->deref(lock))
         return;

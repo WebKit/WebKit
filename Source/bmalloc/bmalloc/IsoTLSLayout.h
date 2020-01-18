@@ -35,7 +35,7 @@ class IsoTLSEntry;
 
 class IsoTLSLayout : public StaticPerProcess<IsoTLSLayout> {
 public:
-    BEXPORT IsoTLSLayout(const std::lock_guard<Mutex>&);
+    BEXPORT IsoTLSLayout(const LockHolder&);
     
     BEXPORT void add(IsoTLSEntry*);
     

@@ -77,19 +77,19 @@ public:
 
     unsigned index() const { return m_index; }
     
-    void free(const std::lock_guard<Mutex>&, void*);
+    void free(const LockHolder&, void*);
 
     // Called after this page is already selected for allocation.
-    FreeList startAllocating(const std::lock_guard<Mutex>&);
+    FreeList startAllocating(const LockHolder&);
     
     // Called after the allocator picks another page to replace this one.
-    void stopAllocating(const std::lock_guard<Mutex>&, FreeList);
+    void stopAllocating(const LockHolder&, FreeList);
 
     IsoDirectoryBase<Config>& directory() { return m_directory; }
     bool isInUseForAllocation() const { return m_isInUseForAllocation; }
     
     template<typename Func>
-    void forEachLiveObject(const std::lock_guard<Mutex>&, const Func&);
+    void forEachLiveObject(const LockHolder&, const Func&);
     
     IsoHeapImpl<Config>& heap();
     

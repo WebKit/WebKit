@@ -31,7 +31,7 @@ namespace bmalloc {
 
 DEFINE_STATIC_PER_PROCESS_STORAGE(IsoTLSLayout);
 
-IsoTLSLayout::IsoTLSLayout(const std::lock_guard<Mutex>&)
+IsoTLSLayout::IsoTLSLayout(const LockHolder&)
 {
 }
 
@@ -41,7 +41,7 @@ void IsoTLSLayout::add(IsoTLSEntry* entry)
     RELEASE_BASSERT(!entry->m_next);
     // IsoTLSLayout::head() does not take a lock. So we should emit memory fence to make sure that newly added entry is initialized when it is chained to this linked-list.
     // Emitting memory fence here is OK since this function is not frequently called.
-    std::lock_guard<Mutex> locking(addingMutex);
+    LockHolder locking(addingMutex);
     if (m_head) {
         RELEASE_BASSERT(m_tail);
         size_t offset = roundUpToMultipleOf(entry->alignment(), m_tail->extent());

@@ -61,7 +61,7 @@ struct Callback {
 namespace bmalloc {
 
 struct PrimitiveDisableCallbacks : public StaticPerProcess<PrimitiveDisableCallbacks> {
-    PrimitiveDisableCallbacks(const std::lock_guard<Mutex>&) { }
+    PrimitiveDisableCallbacks(const LockHolder&) { }
     
     Vector<Gigacage::Callback> callbacks;
 };
@@ -257,7 +257,7 @@ void disablePrimitiveGigacage()
     }
     
     PrimitiveDisableCallbacks& callbacks = *PrimitiveDisableCallbacks::get();
-    std::unique_lock<Mutex> lock(PrimitiveDisableCallbacks::mutex());
+    UniqueLockHolder lock(PrimitiveDisableCallbacks::mutex());
     for (Callback& callback : callbacks.callbacks)
         callback.function(callback.argument);
     callbacks.callbacks.shrink(0);
@@ -275,14 +275,14 @@ void addPrimitiveDisableCallback(void (*function)(void*), void* argument)
     }
     
     PrimitiveDisableCallbacks& callbacks = *PrimitiveDisableCallbacks::get();
-    std::unique_lock<Mutex> lock(PrimitiveDisableCallbacks::mutex());
+    UniqueLockHolder lock(PrimitiveDisableCallbacks::mutex());
     callbacks.callbacks.push(Callback(function, argument));
 }
 
 void removePrimitiveDisableCallback(void (*function)(void*), void* argument)
 {
     PrimitiveDisableCallbacks& callbacks = *PrimitiveDisableCallbacks::get();
-    std::unique_lock<Mutex> lock(PrimitiveDisableCallbacks::mutex());
+    UniqueLockHolder lock(PrimitiveDisableCallbacks::mutex());
     for (size_t i = 0; i < callbacks.callbacks.size(); ++i) {
         if (callbacks.callbacks[i].function == function
             && callbacks.callbacks[i].argument == argument) {

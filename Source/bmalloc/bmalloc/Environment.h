@@ -33,7 +33,7 @@ namespace bmalloc {
 
 class Environment : public StaticPerProcess<Environment> {
 public:
-    BEXPORT Environment(const std::lock_guard<Mutex>&);
+    BEXPORT Environment(const LockHolder&);
     
     bool isDebugHeapEnabled() { return m_isDebugHeapEnabled; }
 

@@ -40,7 +40,7 @@ DEFINE_STATIC_PER_PROCESS_STORAGE(DebugHeap);
 
 #if BOS(DARWIN)
 
-DebugHeap::DebugHeap(const std::lock_guard<Mutex>&)
+DebugHeap::DebugHeap(const LockHolder&)
     : m_zone(malloc_create_zone(0, 0))
     , m_pageSize(vmPageSize())
 {
@@ -88,7 +88,7 @@ void DebugHeap::dump()
 
 #else
 
-DebugHeap::DebugHeap(const std::lock_guard<Mutex>&)
+DebugHeap::DebugHeap(const LockHolder&)
     : m_pageSize(vmPageSize())
 {
 }
@@ -141,7 +141,7 @@ void* DebugHeap::memalignLarge(size_t alignment, size_t size)
     if (!result)
         return nullptr;
     {
-        std::lock_guard<Mutex> locker(mutex());
+        LockHolder locker(mutex());
         m_sizeMap[result] = size;
     }
     return result;
@@ -154,7 +154,7 @@ void DebugHeap::freeLarge(void* base)
     
     size_t size;
     {
-        std::lock_guard<Mutex> locker(mutex());
+        LockHolder locker(mutex());
         size = m_sizeMap[base];
         size_t numErased = m_sizeMap.erase(base);
         RELEASE_BASSERT(numErased == 1);

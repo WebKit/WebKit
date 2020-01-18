@@ -38,15 +38,15 @@ class SmallLine;
 
 class SmallPage : public ListNode<SmallPage> {
 public:
-    void ref(std::unique_lock<Mutex>&);
-    bool deref(std::unique_lock<Mutex>&);
-    unsigned refCount(std::unique_lock<Mutex>&) { return m_refCount; }
+    void ref(UniqueLockHolder&);
+    bool deref(UniqueLockHolder&);
+    unsigned refCount(UniqueLockHolder&) { return m_refCount; }
     
     size_t sizeClass() { return m_sizeClass; }
     void setSizeClass(size_t sizeClass) { m_sizeClass = sizeClass; }
     
-    bool hasFreeLines(std::unique_lock<Mutex>&) const { return m_hasFreeLines; }
-    void setHasFreeLines(std::unique_lock<Mutex>&, bool hasFreeLines) { m_hasFreeLines = hasFreeLines; }
+    bool hasFreeLines(UniqueLockHolder&) const { return m_hasFreeLines; }
+    void setHasFreeLines(UniqueLockHolder&, bool hasFreeLines) { m_hasFreeLines = hasFreeLines; }
     
     bool hasPhysicalPages() { return m_hasPhysicalPages; }
     void setHasPhysicalPages(bool hasPhysicalPages) { m_hasPhysicalPages = hasPhysicalPages; }
@@ -79,14 +79,14 @@ static_assert(
 
 using LineCache = std::array<List<SmallPage>, sizeClassCount>;
 
-inline void SmallPage::ref(std::unique_lock<Mutex>&)
+inline void SmallPage::ref(UniqueLockHolder&)
 {
     BASSERT(!m_slide);
     ++m_refCount;
     BASSERT(m_refCount);
 }
 
-inline bool SmallPage::deref(std::unique_lock<Mutex>&)
+inline bool SmallPage::deref(UniqueLockHolder&)
 {
     BASSERT(!m_slide);
     BASSERT(m_refCount);

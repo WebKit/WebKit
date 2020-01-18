@@ -35,6 +35,11 @@
 
 namespace bmalloc {
 
+class Mutex;
+
+using UniqueLockHolder = std::unique_lock<Mutex>;
+using LockHolder = std::lock_guard<Mutex>;
+
 class Mutex {
 public:
     constexpr Mutex() = default;
@@ -51,7 +56,7 @@ private:
 };
 
 static inline void sleep(
-    std::unique_lock<Mutex>& lock, std::chrono::milliseconds duration)
+    UniqueLockHolder& lock, std::chrono::milliseconds duration)
 {
     if (duration == std::chrono::milliseconds(0))
         return;
@@ -62,7 +67,7 @@ static inline void sleep(
 }
 
 static inline void waitUntilFalse(
-    std::unique_lock<Mutex>& lock, std::chrono::milliseconds sleepDuration,
+    UniqueLockHolder& lock, std::chrono::milliseconds sleepDuration,
     bool& condition)
 {
     while (condition) {

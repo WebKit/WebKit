@@ -59,7 +59,7 @@ void* IsoAllocator<Config>::allocate(IsoHeapImpl<Config>& heap, bool abortOnFail
 template<typename Config>
 BNO_INLINE void* IsoAllocator<Config>::allocateSlow(IsoHeapImpl<Config>& heap, bool abortOnFailure)
 {
-    std::lock_guard<Mutex> locker(heap.lock);
+    LockHolder locker(heap.lock);
 
     AllocationMode allocationMode = heap.updateAllocationMode();
     if (allocationMode == AllocationMode::Shared) {
@@ -93,7 +93,7 @@ template<typename Config>
 void IsoAllocator<Config>::scavenge(IsoHeapImpl<Config>& heap)
 {
     if (m_currentPage) {
-        std::lock_guard<Mutex> locker(heap.lock);
+        LockHolder locker(heap.lock);
         m_currentPage->stopAllocating(locker, m_freeList);
         m_currentPage = nullptr;
         m_freeList.clear();
