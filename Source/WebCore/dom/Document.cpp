@@ -2740,6 +2740,39 @@ HighlightMap& Document::highlightMap()
     return *m_highlightMap;
 }
 
+void Document::updateHighlightPositions()
+{
+    Vector<WeakPtr<HighlightRangeData>> rangesData;
+    if (m_highlightMap) {
+        for (auto& highlight : m_highlightMap->map()) {
+            for (auto& rangeData : highlight.value->rangesData()) {
+                if (rangeData->startPosition && rangeData->endPosition)
+                    continue;
+                if (&rangeData->range->startContainer()->treeScope() != &rangeData->range->endContainer()->treeScope())
+                    continue;
+                rangesData.append(makeWeakPtr(rangeData.ptr()));
+            }
+        }
+    }
+    
+    for (auto& weakRangeData : rangesData) {
+        if (auto* rangeData = weakRangeData.get()) {
+            VisibleSelection visibleSelection(rangeData->range);
+            Position startPosition;
+            Position endPosition;
+            if (!rangeData->startPosition.hasValue())
+                startPosition = visibleSelection.visibleStart().deepEquivalent();
+            if (!rangeData->endPosition.hasValue())
+                endPosition = visibleSelection.visibleEnd().deepEquivalent(); // <MMG> switch to END
+            if (!weakRangeData.get())
+                continue;
+            
+            rangeData->startPosition = startPosition;
+            rangeData->endPosition = endPosition;
+        }
+    }
+}
+
 ScriptableDocumentParser* Document::scriptableDocumentParser() const
 {
     return parser() ? parser()->asScriptableDocumentParser() : nullptr;

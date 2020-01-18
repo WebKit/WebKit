@@ -167,13 +167,13 @@ RenderObject::SelectionState SelectionRangeData::selectionStateForRenderer(Rende
     // Planned fix in a followup: <rdar://problem/58095923>
     // https://bugs.webkit.org/show_bug.cgi?id=205529
     
-    if (&renderer == m_selectionContext.start() || renderer.isDescendantOf(m_selectionContext.start())) {
+    if (&renderer == m_selectionContext.start()) {
         if (m_selectionContext.start() && m_selectionContext.end() && m_selectionContext.start() == m_selectionContext.end())
             return RenderObject::SelectionBoth;
         if (m_selectionContext.start())
             return RenderObject::SelectionStart;
     }
-    if (&renderer == m_selectionContext.end() || renderer.isDescendantOf(m_selectionContext.end()))
+    if (&renderer == m_selectionContext.end())
         return RenderObject::SelectionEnd;
 
     RenderObject* selectionEnd = nullptr;

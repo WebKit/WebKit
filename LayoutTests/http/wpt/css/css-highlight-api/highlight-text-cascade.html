@@ -26,8 +26,8 @@
         let textElement1 = document.getElementById('text1');
         let textElement2 = document.getElementById('text2');
         let textElement3 = document.getElementById('text3');
-        let highlightRangeGroup = new HighlightRangeGroup(new StaticRange({startContainer: textElement1, startOffset: 0, endContainer: textElement1, endOffset: 3}));
-        highlightRangeGroup.add(new StaticRange({startContainer: textElement2, startOffset: 5, endContainer: textElement2, endOffset: 9}));
+        let highlightRangeGroup = new HighlightRangeGroup(new StaticRange({startContainer: textElement1.childNodes[0], startOffset: 0, endContainer: textElement1.childNodes[0], endOffset: 3}));
+        highlightRangeGroup.add(new StaticRange({startContainer: textElement2.childNodes[0], startOffset: 5, endContainer: textElement2.childNodes[0], endOffset: 9}));
 
         CSS.highlights.set("example-highlight", highlightRangeGroup);
     </script>

@@ -1043,11 +1043,10 @@ Vector<MarkedText> InlineTextBox::collectMarkedTextsForHighlights(TextPaintPhase
         auto renderStyle = parentRenderer.getUncachedPseudoStyle({ PseudoId::Highlight, highlight.key }, &parentStyle);
         if (!renderStyle)
             continue;
-        for (auto& staticRange : highlight.value->ranges()) {
-            Position startPos = createLegacyEditingPosition(staticRange->startContainer(), staticRange->startOffset());
-            Position endPos = createLegacyEditingPosition(staticRange->endContainer(), staticRange->endOffset());
-
-            if (startPos.isNotNull() && endPos.isNotNull()) {
+        for (auto& rangeData : highlight.value->rangesData()) {
+            if (rangeData->startPosition && rangeData->endPosition) {
+                Position startPos = rangeData->startPosition.value();
+                Position endPos = rangeData->endPosition.value();
                 RenderObject* startRenderer = startPos.deprecatedNode()->renderer();
                 int startOffset = startPos.deprecatedEditingOffset();
                 RenderObject* endRenderer = endPos.deprecatedNode()->renderer();

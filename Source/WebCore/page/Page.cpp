@@ -1351,6 +1351,10 @@ void Page::updateRendering()
 #endif
 
     layoutIfNeeded();
+    
+    forEachDocument([] (Document& document) {
+        document.updateHighlightPositions();
+    });
 }
 
 void Page::suspendScriptedAnimations()

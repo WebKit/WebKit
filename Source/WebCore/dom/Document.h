@@ -1550,6 +1550,7 @@ public:
     TextManipulationController* textManipulationControllerIfExists() { return m_textManipulationController.get(); }
         
     HighlightMap& highlightMap();
+    void updateHighlightPositions();
 
 protected:
     enum ConstructionFlags { Synthesized = 1, NonRenderedPlaceholder = 1 << 1 };

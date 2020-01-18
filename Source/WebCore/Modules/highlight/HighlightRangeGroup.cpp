@@ -32,12 +32,14 @@
 #include "PropertySetCSSStyleDeclaration.h"
 #include "StaticRange.h"
 #include "StyleProperties.h"
+#include <wtf/Ref.h>
 
 namespace WebCore {
 
 HighlightRangeGroup::HighlightRangeGroup(Ref<StaticRange>&& range)
 {
-    m_ranges.append(WTFMove(range));
+    auto myRange = WTFMove(range);
+    addToSetLike(myRange.get());
 }
 
 Ref<HighlightRangeGroup> HighlightRangeGroup::create(StaticRange& range)
@@ -47,27 +49,28 @@ Ref<HighlightRangeGroup> HighlightRangeGroup::create(StaticRange& range)
 
 void HighlightRangeGroup::initializeSetLike(DOMSetAdapter& set)
 {
-    for (auto& range : m_ranges)
-        set.add<IDLInterface<StaticRange>>(range);
+    for (auto& rangeData : m_rangesData)
+        set.add<IDLInterface<StaticRange>>(rangeData->range);
 }
 
 bool HighlightRangeGroup::removeFromSetLike(const StaticRange& range)
 {
-    return m_ranges.removeFirstMatching([&range](const Ref<StaticRange>& current) {
-        return current.get() == range;
+    return m_rangesData.removeFirstMatching([&range](const Ref<HighlightRangeData>& current) {
+        return current.get().range.get() == range;
     });
 }
 
 void HighlightRangeGroup::clearFromSetLike()
 {
-    m_ranges.clear();
+    m_rangesData.clear();
 }
 
 bool HighlightRangeGroup::addToSetLike(StaticRange& range)
 {
-    if (notFound != m_ranges.findMatching([&range](const Ref<StaticRange>& current) { return current.get() == range; }))
+    if (notFound != m_rangesData.findMatching([&range](const Ref<HighlightRangeData>& current) { return current.get().range.get() == range; }))
         return false;
-    m_ranges.append(makeRef(range));
+    m_rangesData.append(HighlightRangeData::create(range));
+    
     return true;
 }
 

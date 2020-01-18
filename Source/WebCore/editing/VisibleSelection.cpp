@@ -32,6 +32,7 @@
 #include "HTMLInputElement.h"
 #include "Settings.h"
 #include "ShadowRoot.h"
+#include "StaticRange.h"
 #include "TextIterator.h"
 #include "VisibleUnits.h"
 #include <stdio.h>
@@ -93,6 +94,16 @@ VisibleSelection::VisibleSelection(const Range& range, EAffinity affinity, bool 
     , m_affinity(affinity)
     , m_isDirectional(isDirectional)
 {
+    validate();
+}
+
+VisibleSelection::VisibleSelection(const StaticRange& staticRange, EAffinity affinity, bool isDirectional)
+    : m_base(createLegacyEditingPosition(staticRange.startContainer(), staticRange.startOffset()))
+    , m_extent(createLegacyEditingPosition(staticRange.endContainer(), staticRange.endOffset()))
+    , m_affinity(affinity)
+    , m_isDirectional(isDirectional)
+{
+    ASSERT(&staticRange.startContainer()->treeScope() == &staticRange.endContainer()->treeScope());
     validate();
 }
 

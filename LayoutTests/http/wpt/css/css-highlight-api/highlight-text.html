@@ -26,14 +26,14 @@
 
     <script>
         let textElement = document.getElementById('text1');
-        let highlightRangeGroup1 = new HighlightRangeGroup(new StaticRange({startContainer: textElement, startOffset: 1, endContainer: textElement, endOffset: 2}));
+        let highlightRangeGroup1 = new HighlightRangeGroup(new StaticRange({startContainer: textElement.childNodes[0], startOffset: 1, endContainer: textElement.childNodes[0], endOffset: 2}));
 
-        let highlightRangeGroup2 = new HighlightRangeGroup(new StaticRange({startContainer: textElement, startOffset: 3, endContainer: textElement, endOffset: 4}));
-        highlightRangeGroup2.add(new StaticRange({startContainer: textElement, startOffset: 5, endContainer: textElement, endOffset: 6}));
+        let highlightRangeGroup2 = new HighlightRangeGroup(new StaticRange({startContainer: textElement.childNodes[0], startOffset: 3, endContainer: textElement.childNodes[0], endOffset: 4}));
+        highlightRangeGroup2.add(new StaticRange({startContainer: textElement.childNodes[0], startOffset: 5, endContainer: textElement.childNodes[0], endOffset: 6}));
 
-        let highlightRangeGroup3 = new HighlightRangeGroup(new StaticRange({startContainer: textElement, startOffset: 7, endContainer: textElement, endOffset: 8}));
-        highlightRangeGroup3.add(new StaticRange({startContainer: textElement, startOffset: 9, endContainer: textElement, endOffset: 10}));
-        highlightRangeGroup3.add(new StaticRange({startContainer: textElement, startOffset: 12, endContainer: textElement, endOffset: 13}));
+        let highlightRangeGroup3 = new HighlightRangeGroup(new StaticRange({startContainer: textElement.childNodes[0], startOffset: 7, endContainer: textElement.childNodes[0], endOffset: 8}));
+        highlightRangeGroup3.add(new StaticRange({startContainer: textElement.childNodes[0], startOffset: 9, endContainer: textElement.childNodes[0], endOffset: 10}));
+        highlightRangeGroup3.add(new StaticRange({startContainer: textElement.childNodes[0], startOffset: 12, endContainer: textElement.childNodes[0], endOffset: 13}));
         
 
         CSS.highlights.set("example-highlight1", highlightRangeGroup1);

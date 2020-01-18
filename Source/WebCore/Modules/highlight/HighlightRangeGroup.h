@@ -26,6 +26,7 @@
 #pragma once
 
 #include "ExceptionOr.h"
+#include "Position.h"
 #include "StaticRange.h"
 #include <wtf/RefCounted.h>
 
@@ -36,6 +37,23 @@ class DOMSetAdapter;
 class StaticRange;
 class PropertySetCSSStyleDeclaration;
 
+struct HighlightRangeData : RefCounted<HighlightRangeData>, public CanMakeWeakPtr<HighlightRangeData> {
+    
+    HighlightRangeData(Ref<StaticRange>&& range)
+        : range(WTFMove(range))
+    {
+    }
+    
+    static Ref<HighlightRangeData> create(Ref<StaticRange>&& range)
+    {
+        return adoptRef(*new HighlightRangeData(WTFMove(range)));
+    }
+    
+    Ref<StaticRange> range;
+    Optional<Position> startPosition;
+    Optional<Position> endPosition;
+};
+
 class HighlightRangeGroup : public RefCounted<HighlightRangeGroup> {
 public:
     static Ref<HighlightRangeGroup> create(StaticRange&);
@@ -45,12 +63,12 @@ public:
     bool removeFromSetLike(const StaticRange&);
     void initializeSetLike(DOMSetAdapter&);
     
-    const Vector<Ref<StaticRange>>& ranges() const { return m_ranges; }
+    const Vector<Ref<HighlightRangeData>>& rangesData() const { return m_rangesData; }
 
     // FIXME: Add WEBCORE_EXPORT CSSStyleDeclaration& style();
     
 private:
-    Vector<Ref<StaticRange>> m_ranges; // TODO: use a HashSet instead of a Vector <rdar://problem/57760614>
+    Vector<Ref<HighlightRangeData>> m_rangesData; // FIXME: use a HashSet instead of a Vector <rdar://problem/57760614>
     explicit HighlightRangeGroup(Ref<StaticRange>&&);
 };
 
