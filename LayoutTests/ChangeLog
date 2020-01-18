@@ -1,5 +1,14 @@
 2020-01-17  Lauro Moura  <lmoura@igalia.com>
 
+        [GTK] Gardening mouse cursor style change tests
+        https://bugs.webkit.org/show_bug.cgi?id=206455
+
+        Unreviewed gardening.
+
+        * platform/gtk/TestExpectations:
+
+2020-01-17  Lauro Moura  <lmoura@igalia.com>
+
         [GTK] Garden webrtc b/f cache tests
         https://bugs.webkit.org/show_bug.cgi?id=206465
 

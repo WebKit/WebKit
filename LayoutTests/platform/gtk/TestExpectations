@@ -124,6 +124,9 @@ webkit.org/b/98925 fast/viewport/viewport-legacy-xhtmlmp.html [ Skip ]
 # WebKitGTK+ uses different keyboard accelerators than Safari (via Chromium).
 fast/events/option-tab.html [ WontFix Failure ]
 
+webkit.org/b/206454 fast/events/mouse-cursor-change.html [ Failure ]
+webkit.org/b/206454 fast/events/mouse-cursor-no-mousemove.html [ Failure ]
+
 # These tests expect a TIFF decoder (via Chromium).
 # These pass while they're marked as WontFix - check it.
 fast/images/embed-image.html [ WontFix Pass ]
