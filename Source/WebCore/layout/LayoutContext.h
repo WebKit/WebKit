@@ -63,7 +63,7 @@ public:
     static void paint(const LayoutState&, GraphicsContext&, const IntRect& dirtyRect);
 #ifndef NDEBUG
     // For testing purposes only
-    static void verifyAndOutputMismatchingLayoutTree(const LayoutState&);
+    static void verifyAndOutputMismatchingLayoutTree(const LayoutState&, const RenderView&);
 #endif
 
 private:

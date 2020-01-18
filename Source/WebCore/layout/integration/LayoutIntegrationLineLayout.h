@@ -28,6 +28,7 @@
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
 #include "LayoutPoint.h"
+#include "LayoutState.h"
 #include "LineLayoutTraversal.h"
 #include "RenderObjectEnums.h"
 
@@ -47,7 +48,6 @@ struct InlineContent;
 
 namespace Layout {
 class LayoutTreeContent;
-class LayoutState;
 }
 
 namespace LayoutIntegration {
@@ -87,7 +87,7 @@ private:
 
     const RenderBlockFlow& m_flow;
     std::unique_ptr<Layout::LayoutTreeContent> m_treeContent;
-    std::unique_ptr<Layout::LayoutState> m_layoutState;
+    Optional<Layout::LayoutState> m_layoutState;
     LayoutUnit m_contentLogicalHeight;
 };
 

@@ -44,14 +44,13 @@ namespace Layout {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(LayoutState);
 
-LayoutState::LayoutState(const LayoutTreeContent& layoutTreeContent)
-    : m_layoutTreeContent(makeWeakPtr(layoutTreeContent))
+LayoutState::LayoutState(const Document& document, const Container& rootContainer)
+    : m_rootContainer(makeWeakPtr(rootContainer))
 {
     // It makes absolutely no sense to construct a dedicated layout state for a non-formatting context root (layout would be a no-op).
-    ASSERT(m_layoutTreeContent->rootLayoutBox().establishesFormattingContext());
+    ASSERT(root().establishesFormattingContext());
 
     auto quirksMode = [&] {
-        auto& document = m_layoutTreeContent->rootRenderer().document();
         if (document.inLimitedQuirksMode())
             return LayoutState::QuirksMode::Limited;
         if (document.inQuirksMode())
@@ -65,7 +64,7 @@ LayoutState::~LayoutState() = default;
 
 Display::Box& LayoutState::displayBoxForRootLayoutBox()
 {
-    return ensureDisplayBoxForLayoutBox(m_layoutTreeContent->rootLayoutBox());
+    return ensureDisplayBoxForLayoutBox(root());
 }
 
 Display::Box& LayoutState::ensureDisplayBoxForLayoutBoxSlow(const Box& layoutBox)
@@ -139,30 +138,20 @@ FormattingState& LayoutState::createFormattingStateForFormattingRootIfNeeded(con
 
 void LayoutState::setViewportSize(const LayoutSize& viewportSize)
 {
-    if (RuntimeEnabledFeatures::sharedFeatures().layoutFormattingContextIntegrationEnabled()) {
-        m_viewportSize = viewportSize;
-        return;
-    }
-    ASSERT_NOT_REACHED();
+    ASSERT(RuntimeEnabledFeatures::sharedFeatures().layoutFormattingContextIntegrationEnabled());
+    m_viewportSize = viewportSize;
 }
 
 LayoutSize LayoutState::viewportSize() const
 {
-    if (RuntimeEnabledFeatures::sharedFeatures().layoutFormattingContextIntegrationEnabled())
-        return m_viewportSize;
-    ASSERT_NOT_REACHED();
-    return { };
+    ASSERT(RuntimeEnabledFeatures::sharedFeatures().layoutFormattingContextIntegrationEnabled());
+    return m_viewportSize;
 }
 
-bool LayoutState::isIntegratedRootBoxFirstChild() const
+void LayoutState::setIsIntegratedRootBoxFirstChild(bool value)
 {
-    if (RuntimeEnabledFeatures::sharedFeatures().layoutFormattingContextIntegrationEnabled()) {
-        auto& rootRenderer = m_layoutTreeContent->rootRenderer();
-        ASSERT(rootRenderer.parent());
-        return rootRenderer.parent()->firstChild() == &rootRenderer;
-    }
-    ASSERT_NOT_REACHED();
-    return false;
+    ASSERT(RuntimeEnabledFeatures::sharedFeatures().layoutFormattingContextIntegrationEnabled());
+    m_isIntegratedRootBoxFirstChild = value;
 }
 
 }

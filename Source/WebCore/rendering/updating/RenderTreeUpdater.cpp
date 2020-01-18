@@ -56,6 +56,7 @@
 #include "FrameView.h"
 #include "FrameViewLayoutContext.h"
 #include "LayoutState.h"
+#include "LayoutTreeBuilder.h"
 #endif
 
 #if PLATFORM(IOS_FAMILY)

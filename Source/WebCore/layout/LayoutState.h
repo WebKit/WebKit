@@ -28,7 +28,6 @@
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
 #include "LayoutContainer.h"
-#include "LayoutTreeBuilder.h"
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/IsoMalloc.h>
@@ -48,7 +47,7 @@ class FormattingState;
 class LayoutState : public CanMakeWeakPtr<LayoutState> {
     WTF_MAKE_ISO_ALLOCATED(LayoutState);
 public:
-    LayoutState(const LayoutTreeContent&);
+    LayoutState(const Document&, const Container& rootContainer);
     ~LayoutState();
 
     FormattingState& createFormattingStateForFormattingRootIfNeeded(const Container& formattingContextRoot);
@@ -72,15 +71,13 @@ public:
     bool inLimitedQuirksMode() const { return m_quirksMode == QuirksMode::Limited; }
     bool inNoQuirksMode() const { return m_quirksMode == QuirksMode::No; }
 
-    const Container& root() const { return m_layoutTreeContent->rootLayoutBox(); }
-#ifndef NDEBUG
-    const RenderBox& rootRenderer() const { return m_layoutTreeContent->rootRenderer(); }
-#endif
+    const Container& root() const { return *m_rootContainer; }
 
     // LFC integration only. Full LFC has proper ICB access.
     void setViewportSize(const LayoutSize&);
     LayoutSize viewportSize() const;
-    bool isIntegratedRootBoxFirstChild() const;
+    bool isIntegratedRootBoxFirstChild() const { return m_isIntegratedRootBoxFirstChild; }
+    void setIsIntegratedRootBoxFirstChild(bool);
 
 private:
     void setQuirksMode(QuirksMode quirksMode) { m_quirksMode = quirksMode; }
@@ -93,9 +90,11 @@ private:
     HashMap<const Box*, std::unique_ptr<Display::Box>> m_layoutToDisplayBox;
     QuirksMode m_quirksMode { QuirksMode::No };
 
-    WeakPtr<const LayoutTreeContent> m_layoutTreeContent;
+    WeakPtr<const Container> m_rootContainer;
+
     // LFC integration only.
     LayoutSize m_viewportSize;
+    bool m_isIntegratedRootBoxFirstChild { false };
 };
 
 inline bool LayoutState::hasDisplayBox(const Box& layoutBox) const

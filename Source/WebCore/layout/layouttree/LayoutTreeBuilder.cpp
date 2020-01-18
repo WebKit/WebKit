@@ -452,7 +452,7 @@ void printLayoutTreeForLiveDocuments()
         // FIXME: Need to find a way to output geometry without layout context.
         auto& renderView = *document->renderView();
         auto layoutTreeContent = TreeBuilder::buildLayoutTree(renderView);
-        auto layoutState = LayoutState { *layoutTreeContent };
+        auto layoutState = LayoutState { *document, layoutTreeContent->rootLayoutBox() };
 
         auto& layoutRoot = layoutState.root();
         auto invalidationState = InvalidationState { };

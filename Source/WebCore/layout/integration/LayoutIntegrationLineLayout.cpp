@@ -95,8 +95,10 @@ void LineLayout::updateStyle()
 
 void LineLayout::layout()
 {
-    if (!m_layoutState)
-        m_layoutState = makeUnique<Layout::LayoutState>(*m_treeContent);
+    if (!m_layoutState) {
+        m_layoutState.emplace(m_flow.document(), m_treeContent->rootLayoutBox());
+        m_layoutState->setIsIntegratedRootBoxFirstChild(m_flow.parent()->firstChild() == &m_flow);
+    }
 
     prepareRootGeometryForLayout();
 
