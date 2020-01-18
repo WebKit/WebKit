@@ -1885,7 +1885,7 @@ class PrintConfiguration(steps.ShellSequence):
     command_list_generic = [['hostname']]
     command_list_apple = [['df', '-hl'], ['date'], ['sw_vers'], ['xcodebuild', '-sdk', '-version'], ['uptime']]
     command_list_linux = [['df', '-hl'], ['date'], ['uname', '-a'], ['uptime']]
-    command_list_win = [[]]  # TODO: add windows specific commands here
+    command_list_win = [['df', '-hl']]
 
     def __init__(self, **kwargs):
         super(PrintConfiguration, self).__init__(timeout=60, **kwargs)
@@ -1902,7 +1902,7 @@ class PrintConfiguration(steps.ShellSequence):
             command_list.extend(self.command_list_apple)
         elif platform in ('gtk', 'wpe', 'jsc-only'):
             command_list.extend(self.command_list_linux)
-        elif platform in ('win', 'wincairo'):
+        elif platform in ('win'):
             command_list.extend(self.command_list_win)
 
         for command in command_list:
