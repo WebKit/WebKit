@@ -42,7 +42,6 @@
 #include "SharedBuffer.h"
 #include <CoreGraphics/CGContext.h>
 #include <CoreGraphics/CGPDFDocument.h>
-#include <pal/spi/cg/CoreGraphicsSPI.h>
 #include <wtf/MathExtras.h>
 #include <wtf/RAMSize.h>
 #include <wtf/RetainPtr.h>

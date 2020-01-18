@@ -7280,7 +7280,6 @@
 		3FFFF9A7159D9A550020BBD5 /* WebKitCSSViewportRule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebKitCSSViewportRule.h; sourceTree = "<group>"; };
 		3FFFF9AB159D9B060020BBD5 /* ViewportStyleResolver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ViewportStyleResolver.cpp; sourceTree = "<group>"; };
 		3FFFF9AC159D9B060020BBD5 /* ViewportStyleResolver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ViewportStyleResolver.h; sourceTree = "<group>"; };
-		41024FC823CF254F00FDF98E /* SampleBufferDisplayLayer.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SampleBufferDisplayLayer.cpp; sourceTree = "<group>"; };
 		410626A72280A22A006D1B59 /* JSAudioNodeCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSAudioNodeCustom.cpp; sourceTree = "<group>"; };
 		4107908A1FC3E4F20061B27A /* ClientOrigin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ClientOrigin.h; sourceTree = "<group>"; };
 		410938282347799A009428BA /* JSAbortControllerCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSAbortControllerCustom.cpp; sourceTree = "<group>"; };
@@ -16333,7 +16332,6 @@
 				076F0D0A12B8192700C26AA4 /* MediaPlayerPrivateAVFoundation.h */,
 				CDBEAEAB19D92B6C00BEBA88 /* MediaSelectionGroupAVFObjC.h */,
 				CDBEAEAA19D92B6C00BEBA88 /* MediaSelectionGroupAVFObjC.mm */,
-				41024FC823CF254F00FDF98E /* SampleBufferDisplayLayer.cpp */,
 				414598BE23C8AAB8002B9CC8 /* SampleBufferDisplayLayer.h */,
 				CD336F6317FA0A4D00DDDCD0 /* VideoTrackPrivateAVF.h */,
 				0709D7901AE5557E004E42F8 /* WebMediaSessionManagerMac.cpp */,

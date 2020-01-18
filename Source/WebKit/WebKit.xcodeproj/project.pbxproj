@@ -3296,8 +3296,6 @@
 		3F915C0E1F564DED00183CE9 /* WKFullScreenWindowControllerIOS.mm */ = {isa = PBXFileReference; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WKFullScreenWindowControllerIOS.mm; path = ios/fullscreen/WKFullScreenWindowControllerIOS.mm; sourceTree = "<group>"; };
 		3F915C0F1F564DED00183CE9 /* WKFullScreenWindowControllerIOS.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = WKFullScreenWindowControllerIOS.h; path = ios/fullscreen/WKFullScreenWindowControllerIOS.h; sourceTree = "<group>"; };
 		3FB08E421F60B240005E5312 /* iOS.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = iOS.xcassets; sourceTree = "<group>"; };
-		41024FC023CF104500FDF98E /* SampleBufferDisplayLayerManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SampleBufferDisplayLayerManager.h; sourceTree = "<group>"; };
-		41024FC123CF104500FDF98E /* SampleBufferDisplayLayerManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SampleBufferDisplayLayerManager.cpp; sourceTree = "<group>"; };
 		4103FBA12061BDB700C2EAF8 /* NetworkLoadChecker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetworkLoadChecker.h; sourceTree = "<group>"; };
 		4103FBA22061BDB800C2EAF8 /* NetworkLoadChecker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NetworkLoadChecker.cpp; sourceTree = "<group>"; };
 		410482CB1DDD2FB500F006D0 /* RTCNetwork.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RTCNetwork.cpp; sourceTree = "<group>"; };
@@ -3429,16 +3427,6 @@
 		41FCD6AD23CCC26000C62567 /* AudioMediaStreamTrackRenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AudioMediaStreamTrackRenderer.h; sourceTree = "<group>"; };
 		41FCD6AE23CCC26100C62567 /* AudioMediaStreamTrackRenderer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AudioMediaStreamTrackRenderer.cpp; sourceTree = "<group>"; };
 		41FCD6AF23CCC26100C62567 /* AudioMediaStreamTrackRendererIdentifier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AudioMediaStreamTrackRendererIdentifier.h; sourceTree = "<group>"; };
-		41FCD6B323CDC60400C62567 /* SampleBufferDisplayLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SampleBufferDisplayLayer.h; sourceTree = "<group>"; };
-		41FCD6B423CDCAC200C62567 /* RemoteSampleBufferDisplayLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RemoteSampleBufferDisplayLayer.h; sourceTree = "<group>"; };
-		41FCD6B523CDE1C600C62567 /* RemoteSampleBufferDisplayLayer.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteSampleBufferDisplayLayer.cpp; sourceTree = "<group>"; };
-		41FCD6B623CDE1C600C62567 /* RemoteSampleBufferDisplayLayer.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = RemoteSampleBufferDisplayLayer.messages.in; sourceTree = "<group>"; };
-		41FCD6B723CDE53D00C62567 /* SampleBufferDisplayLayer.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SampleBufferDisplayLayer.cpp; sourceTree = "<group>"; };
-		41FCD6B823CDE53E00C62567 /* SampleBufferDisplayLayer.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = SampleBufferDisplayLayer.messages.in; sourceTree = "<group>"; };
-		41FCD6BC23CE031800C62567 /* SampleBufferDisplayLayerIdentifier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SampleBufferDisplayLayerIdentifier.h; sourceTree = "<group>"; };
-		41FCD6BD23CE043F00C62567 /* RemoteSampleBufferDisplayLayerManager.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = RemoteSampleBufferDisplayLayerManager.messages.in; sourceTree = "<group>"; };
-		41FCD6BE23CE044000C62567 /* RemoteSampleBufferDisplayLayerManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteSampleBufferDisplayLayerManager.cpp; sourceTree = "<group>"; };
-		41FCD6BF23CE044000C62567 /* RemoteSampleBufferDisplayLayerManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RemoteSampleBufferDisplayLayerManager.h; sourceTree = "<group>"; };
 		4450AEBF1DC3FAE5009943F2 /* SharedMemoryCocoa.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SharedMemoryCocoa.cpp; sourceTree = "<group>"; };
 		4459984122833E6000E61373 /* SyntheticEditingCommandType.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SyntheticEditingCommandType.h; sourceTree = "<group>"; };
 		449D90D821FD63FE00F677C0 /* LocalAuthenticationSoftLink.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = LocalAuthenticationSoftLink.mm; sourceTree = "<group>"; };
@@ -7246,12 +7234,6 @@
 				4176E89223C34D6E003E83FE /* MediaRecorderProvider.h */,
 				4172198C23B612E800AE5686 /* RTCDecoderIdentifier.h */,
 				4158649A23BE092400A0A61E /* RTCEncoderIdentifier.h */,
-				41FCD6B723CDE53D00C62567 /* SampleBufferDisplayLayer.cpp */,
-				41FCD6B323CDC60400C62567 /* SampleBufferDisplayLayer.h */,
-				41FCD6B823CDE53E00C62567 /* SampleBufferDisplayLayer.messages.in */,
-				41FCD6BC23CE031800C62567 /* SampleBufferDisplayLayerIdentifier.h */,
-				41024FC123CF104500FDF98E /* SampleBufferDisplayLayerManager.cpp */,
-				41024FC023CF104500FDF98E /* SampleBufferDisplayLayerManager.h */,
 			);
 			path = webrtc;
 			sourceTree = "<group>";
@@ -7274,12 +7256,6 @@
 				4176E89A23C36F71003E83FE /* RemoteMediaRecorderManager.cpp */,
 				4176E89923C36D8E003E83FE /* RemoteMediaRecorderManager.h */,
 				4176E89B23C37222003E83FE /* RemoteMediaRecorderManager.messages.in */,
-				41FCD6B523CDE1C600C62567 /* RemoteSampleBufferDisplayLayer.cpp */,
-				41FCD6B423CDCAC200C62567 /* RemoteSampleBufferDisplayLayer.h */,
-				41FCD6B623CDE1C600C62567 /* RemoteSampleBufferDisplayLayer.messages.in */,
-				41FCD6BE23CE044000C62567 /* RemoteSampleBufferDisplayLayerManager.cpp */,
-				41FCD6BF23CE044000C62567 /* RemoteSampleBufferDisplayLayerManager.h */,
-				41FCD6BD23CE043F00C62567 /* RemoteSampleBufferDisplayLayerManager.messages.in */,
 			);
 			path = webrtc;
 			sourceTree = "<group>";
@@ -12114,7 +12090,6 @@
 				41DE7C6C22278F1E00532B65 /* ServiceWorkerFetchTask.cpp in Sources */,
 				2D92A787212B6AB100F493FD /* ShareableBitmap.cpp in Sources */,
 				A1ADAFB62368E6A8009CB776 /* SharedMemory.cpp in Sources */,
-				575B1BB923CE9C0B0020639A /* SimulatedInputDispatcher.cpp in Sources */,
 				2DE6943D18BD2A68005C15E5 /* SmartMagnificationControllerMessageReceiver.cpp in Sources */,
 				1A334DED16DE8F88006A8E38 /* StorageAreaMapMessageReceiver.cpp in Sources */,
 				9368EEDE2303A90200BDB11A /* StorageManagerSetMessageReceiver.cpp in Sources */,
@@ -12264,6 +12239,7 @@
 				2D11B7D52126A283006F8878 /* UnifiedSource72.cpp in Sources */,
 				2D54C311212F3B330049C174 /* UnifiedSource72-mm.mm in Sources */,
 				2D54C310212F3B330049C174 /* UnifiedSource73-mm.mm in Sources */,
+				575B1BBA23CE9C130020639A /* WebAutomationSession.cpp in Sources */,
 				2D11B7D62126A283006F8878 /* UnifiedSource73.cpp in Sources */,
 				2D54C315212F3B330049C174 /* UnifiedSource74-mm.mm in Sources */,
 				2D11B7D72126A283006F8878 /* UnifiedSource74.cpp in Sources */,
@@ -12310,9 +12286,7 @@
 				1A60224C18C16B9F00C3E8C9 /* VisitedLinkStoreMessageReceiver.cpp in Sources */,
 				1A8E7D3C18C15149005A702A /* VisitedLinkTableControllerMessageReceiver.cpp in Sources */,
 				57DCED702142EE680016B847 /* WebAuthenticatorCoordinatorProxyMessageReceiver.cpp in Sources */,
-				575B1BBA23CE9C130020639A /* WebAutomationSession.cpp in Sources */,
 				1C0A19571C90068F00FE0EBB /* WebAutomationSessionMessageReceiver.cpp in Sources */,
-				575B1BB823CE9BFC0020639A /* WebAutomationSessionProxy.cpp in Sources */,
 				1C0A19531C8FFDFB00FE0EBB /* WebAutomationSessionProxyMessageReceiver.cpp in Sources */,
 				1A1FEC1C1627B45700700F6D /* WebConnectionMessageReceiver.cpp in Sources */,
 				330934471315B9220097A7BC /* WebCookieManagerMessageReceiver.cpp in Sources */,
@@ -12328,6 +12302,7 @@
 				BC0E606112D6BA910012A72A /* WebGeolocationManagerMessageReceiver.cpp in Sources */,
 				BC0E618212D6CB1D0012A72A /* WebGeolocationManagerProxyMessageReceiver.cpp in Sources */,
 				510523751C73D38F007993CB /* WebIDBConnectionToServerMessageReceiver.cpp in Sources */,
+				575B1BB923CE9C0B0020639A /* SimulatedInputDispatcher.cpp in Sources */,
 				933E835B23A1B75000DEF289 /* WebIDBServerMessageReceiver.cpp in Sources */,
 				FEDBDCD61E68D20000A59F8F /* WebInspectorInterruptDispatcherMessageReceiver.cpp in Sources */,
 				1C8E2A351277852400BC7BD0 /* WebInspectorMessageReceiver.cpp in Sources */,
@@ -12383,6 +12358,7 @@
 				637281A321ADC744009E0DE6 /* WKDownloadProgress.mm in Sources */,
 				5CE9120D2293C219005BEC78 /* WKMain.mm in Sources */,
 				4657D88A22664A2F005DE823 /* WKOrientationAccessAlert.mm in Sources */,
+				575B1BB823CE9BFC0020639A /* WebAutomationSessionProxy.cpp in Sources */,
 				5CA26D83217AD1B800F97A35 /* WKSafeBrowsingWarning.mm in Sources */,
 				1DB01944211CF005009FB3E8 /* WKShareSheet.mm in Sources */,
 				7A78FF332241919B0096483E /* WKStorageAccessAlert.mm in Sources */,

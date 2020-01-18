@@ -37,7 +37,6 @@
 #import <QuartzCore/CATransaction.h>
 
 #import <wtf/MainThread.h>
-#import <wtf/cf/TypeCastsCF.h>
 
 #import <pal/cocoa/AVFoundationSoftLink.h>
 
@@ -49,8 +48,8 @@ using namespace WebCore;
 
 - (id)initWithParent:(LocalSampleBufferDisplayLayer*)callback;
 - (void)invalidate;
-- (void)start;
-- (void)stop;
+- (void)beginObservingLayers;
+- (void)stopObservingLayers;
 @end
 
 @implementation WebAVSampleBufferStatusChangeListener
@@ -73,33 +72,38 @@ using namespace WebCore;
 
 - (void)invalidate
 {
-    [self stop];
+    [self stopObservingLayers];
     _parent = nullptr;
 }
 
-- (void)start
+- (void)beginObservingLayers
 {
     ASSERT(_parent);
     ASSERT(_parent->displayLayer());
+    ASSERT(_parent->rootLayer());
 
     [_parent->displayLayer() addObserver:self forKeyPath:@"status" options:NSKeyValueObservingOptionNew context:nil];
     [_parent->displayLayer() addObserver:self forKeyPath:@"error" options:NSKeyValueObservingOptionNew context:nil];
+    [_parent->rootLayer() addObserver:self forKeyPath:@"bounds" options:NSKeyValueObservingOptionNew context:nil];
 }
 
-- (void)stop
+- (void)stopObservingLayers
 {
-    if (!_parent || !_parent->displayLayer())
+    if (!_parent)
         return;
 
-    [_parent->displayLayer() removeObserver:self forKeyPath:@"status"];
-    [_parent->displayLayer() removeObserver:self forKeyPath:@"error"];
+    if (_parent->displayLayer()) {
+        [_parent->displayLayer() removeObserver:self forKeyPath:@"status"];
+        [_parent->displayLayer() removeObserver:self forKeyPath:@"error"];
+    }
+    if (_parent->rootLayer())
+        [_parent->rootLayer() removeObserver:self forKeyPath:@"bounds"];
 }
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
 {
     UNUSED_PARAM(context);
     UNUSED_PARAM(keyPath);
-    UNUSED_PARAM(change);
     ASSERT(_parent);
 
     if (!_parent)
@@ -128,6 +132,29 @@ using namespace WebCore;
             return;
         }
     }
+
+    if ([[change valueForKey:NSKeyValueChangeNotificationIsPriorKey] boolValue])
+        return;
+
+    if ((CALayer *)object == _parent->rootLayer()) {
+        if ([keyPath isEqualToString:@"bounds"]) {
+            if (!_parent)
+                return;
+
+            if (isMainThread()) {
+                _parent->rootLayerBoundsDidChange();
+                return;
+            }
+
+            callOnMainThread([protectedSelf = RetainPtr<WebAVSampleBufferStatusChangeListener>(self)] {
+                if (!protectedSelf->_parent)
+                    return;
+
+                protectedSelf->_parent->rootLayerBoundsDidChange();
+            });
+        }
+    }
+
 }
 @end
 
@@ -142,7 +169,7 @@ static void runWithoutAnimations(const WTF::Function<void()>& function)
     [CATransaction commit];
 }
 
-std::unique_ptr<LocalSampleBufferDisplayLayer> LocalSampleBufferDisplayLayer::create(Client& client, bool hideRootLayer, IntSize size)
+std::unique_ptr<SampleBufferDisplayLayer> LocalSampleBufferDisplayLayer::create(Client& client, bool hideRootLayer, IntSize size)
 {
     auto sampleBufferDisplayLayer = adoptNS([PAL::allocAVSampleBufferDisplayLayerInstance() init]);
     if (!sampleBufferDisplayLayer)
@@ -169,7 +196,7 @@ LocalSampleBufferDisplayLayer::LocalSampleBufferDisplayLayer(RetainPtr<AVSampleB
 
     m_rootLayer.get().bounds = CGRectMake(0, 0, size.width(), size.height());
 
-    [m_statusChangeListener start];
+    [m_statusChangeListener beginObservingLayers];
 
     [m_rootLayer addSublayer:m_sampleBufferDisplayLayer.get()];
 
@@ -181,7 +208,7 @@ LocalSampleBufferDisplayLayer::LocalSampleBufferDisplayLayer(RetainPtr<AVSampleB
 
 LocalSampleBufferDisplayLayer::~LocalSampleBufferDisplayLayer()
 {
-    m_statusChangeListener = nullptr;
+    [m_statusChangeListener stopObservingLayers];
 
     m_pendingVideoSampleQueue.clear();
 
@@ -206,6 +233,14 @@ void LocalSampleBufferDisplayLayer::layerErrorDidChange()
 {
     ASSERT(isMainThread());
     // FIXME: Log error.
+}
+
+void LocalSampleBufferDisplayLayer::rootLayerBoundsDidChange()
+{
+    ASSERT(isMainThread());
+    if (!m_client)
+        return;
+    m_client->sampleBufferDisplayLayerBoundsDidChange(*this);
 }
 
 PlatformLayer* LocalSampleBufferDisplayLayer::displayLayer()
@@ -249,16 +284,6 @@ void LocalSampleBufferDisplayLayer::updateAffineTransform(CGAffineTransform tran
 void LocalSampleBufferDisplayLayer::updateBoundsAndPosition(CGRect videoBounds, CGPoint position)
 {
     runWithoutAnimations([&] {
-        m_sampleBufferDisplayLayer.get().bounds = videoBounds;
-        m_sampleBufferDisplayLayer.get().position = position;
-    });
-}
-
-void LocalSampleBufferDisplayLayer::updateRootLayerBoundsAndPosition(CGRect videoBounds, CGPoint position)
-{
-    runWithoutAnimations([&] {
-        m_rootLayer.get().bounds = videoBounds;
-        m_rootLayer.get().position = position;
         m_sampleBufferDisplayLayer.get().bounds = videoBounds;
         m_sampleBufferDisplayLayer.get().position = position;
     });

@@ -230,7 +230,6 @@ platform/graphics/angle/ExtensionsGLANGLE.cpp @no-unify
 platform/graphics/angle/GraphicsContextGLANGLE.cpp @no-unify
 platform/graphics/angle/TemporaryANGLESetting.cpp @no-unify
 
-platform/graphics/avfoundation/SampleBufferDisplayLayer.cpp
 platform/graphics/avfoundation/AVTrackPrivateAVFObjCImpl.mm @no-unify
 platform/graphics/avfoundation/AudioSourceProviderAVFObjC.mm @no-unify
 platform/graphics/avfoundation/CDMPrivateMediaSourceAVFObjC.mm @no-unify

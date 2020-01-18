@@ -1,3 +1,16 @@
+2020-01-17  Matt Lewis  <jlewis3@apple.com>
+
+        Unreviewed, rolling out r254688.
+
+        This caused internal test crashes.
+
+        Reverted changeset:
+
+        "Add support for MediaStream video track rendering in
+        GPUProcess"
+        https://bugs.webkit.org/show_bug.cgi?id=206286
+        https://trac.webkit.org/changeset/254688
+
 2020-01-17  Daniel Bates  <dabates@apple.com>
 
         [iOS] ASSERTION FAILED: ASSERT_NOT_REACHED() in selectionChangedWithTouch(WKContentView*, WebCore::IntPoint const&, unsigned int, unsigned int, WebKit::CallbackBase::Error)

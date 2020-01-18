@@ -49,9 +49,6 @@
 #include "RemoteMediaRecorderMessages.h"
 #include "RemoteMediaResourceManager.h"
 #include "RemoteMediaResourceManagerMessages.h"
-#include "RemoteSampleBufferDisplayLayerManager.h"
-#include "RemoteSampleBufferDisplayLayerManagerMessages.h"
-#include "RemoteSampleBufferDisplayLayerMessages.h"
 #include "RemoteScrollingCoordinatorTransaction.h"
 #include "UserMediaCaptureManagerProxy.h"
 #include "UserMediaCaptureManagerProxyMessages.h"
@@ -165,14 +162,6 @@ RemoteAudioMediaStreamTrackRendererManager& GPUConnectionToWebProcess::audioTrac
 
     return *m_audioTrackRendererManager;
 }
-
-RemoteSampleBufferDisplayLayerManager& GPUConnectionToWebProcess::sampleBufferDisplayLayerManager()
-{
-    if (!m_sampleBufferDisplayLayerManager)
-        m_sampleBufferDisplayLayerManager = makeUnique<RemoteSampleBufferDisplayLayerManager>(m_connection.copyRef());
-
-    return *m_sampleBufferDisplayLayerManager;
-}
 #endif
 #endif
 
@@ -220,14 +209,6 @@ void GPUConnectionToWebProcess::didReceiveMessage(IPC::Connection& connection, I
         audioTrackRendererManager().didReceiveRendererMessage(connection, decoder);
         return;
     }
-    if (decoder.messageReceiverName() == Messages::RemoteSampleBufferDisplayLayerManager::messageReceiverName()) {
-        sampleBufferDisplayLayerManager().didReceiveMessageFromWebProcess(connection, decoder);
-        return;
-    }
-    if (decoder.messageReceiverName() == Messages::RemoteSampleBufferDisplayLayer::messageReceiverName()) {
-        sampleBufferDisplayLayerManager().didReceiveLayerMessage(connection, decoder);
-        return;
-    }
 #endif
 #endif
 #if PLATFORM(COCOA) && USE(LIBWEBRTC)
@@ -250,12 +231,6 @@ void GPUConnectionToWebProcess::didReceiveSyncMessage(IPC::Connection& connectio
         userMediaCaptureManagerProxy().didReceiveSyncMessageFromGPUProcess(connection, decoder, replyEncoder);
         return;
     }
-#if PLATFORM(COCOA) && ENABLE(VIDEO_TRACK)
-    if (decoder.messageReceiverName() == Messages::RemoteSampleBufferDisplayLayerManager::messageReceiverName()) {
-        sampleBufferDisplayLayerManager().didReceiveSyncMessageFromWebProcess(connection, decoder, replyEncoder);
-        return;
-    }
-#endif
 #endif
 
     ASSERT_NOT_REACHED();

@@ -36,7 +36,7 @@
 #include <wtf/LoggerHelper.h>
 
 OBJC_CLASS AVSampleBufferDisplayLayer;
-OBJC_CLASS WebRootSampleBufferBoundsChangeListener;
+OBJC_CLASS WebAVSampleBufferStatusChangeListener;
 
 namespace PAL {
 class Clock;
@@ -81,9 +81,6 @@ public:
     const void* logIdentifier() const final { return reinterpret_cast<const void*>(m_logIdentifier); }
     WTFLogChannel& logChannel() const final;
 #endif
-
-    PlatformLayer* rootLayer() const;
-    void rootLayerBoundsDidChange();
 
 private:
     // MediaPlayerPrivateInterface
@@ -247,13 +244,12 @@ private:
 
     // SampleBufferDisplayLayer::Client
     void sampleBufferDisplayLayerStatusDidChange(SampleBufferDisplayLayer&) final;
+    void sampleBufferDisplayLayerBoundsDidChange(SampleBufferDisplayLayer&) final;
 
 #if !RELEASE_LOG_DISABLED
     Ref<const Logger> m_logger;
     const void* m_logIdentifier;
 #endif
-
-    RetainPtr<WebRootSampleBufferBoundsChangeListener> m_boundsChangeListener;
 
     bool m_videoMirrored { false };
     bool m_playing { false };

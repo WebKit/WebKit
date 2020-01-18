@@ -150,12 +150,9 @@ MESSAGE_RECEIVERS = \
     RemoteMediaRecorderManager \
     RemoteMediaResourceManager \
     RemoteObjectRegistry \
-    RemoteSampleBufferDisplayLayer \
-    RemoteSampleBufferDisplayLayerManager \
     RemoteScrollingCoordinator \
     RemoteWebInspectorProxy \
     RemoteWebInspectorUI \
-    SampleBufferDisplayLayer \
     SecItemShimProxy \
     ServiceWorkerFetchTask \
     SmartMagnificationController \

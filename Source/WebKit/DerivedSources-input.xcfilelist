@@ -24,8 +24,6 @@ $(PROJECT_DIR)/GPUProcess/webrtc/RemoteAudioMediaStreamTrackRenderer.messages.in
 $(PROJECT_DIR)/GPUProcess/webrtc/RemoteAudioMediaStreamTrackRendererManager.messages.in
 $(PROJECT_DIR)/GPUProcess/webrtc/RemoteMediaRecorder.messages.in
 $(PROJECT_DIR)/GPUProcess/webrtc/RemoteMediaRecorderManager.messages.in
-$(PROJECT_DIR)/GPUProcess/webrtc/RemoteSampleBufferDisplayLayer.messages.in
-$(PROJECT_DIR)/GPUProcess/webrtc/RemoteSampleBufferDisplayLayerManager.messages.in
 $(PROJECT_DIR)/NetworkProcess/Cookies/WebCookieManager.messages.in
 $(PROJECT_DIR)/NetworkProcess/CustomProtocols/LegacyCustomProtocolManager.messages.in
 $(PROJECT_DIR)/NetworkProcess/IndexedDB/WebIDBServer.messages.in
@@ -110,7 +108,6 @@ $(PROJECT_DIR)/WebProcess/GPU/GPUProcessConnection.messages.in
 $(PROJECT_DIR)/WebProcess/GPU/media/RemoteMediaPlayerManager.messages.in
 $(PROJECT_DIR)/WebProcess/GPU/webrtc/LibWebRTCCodecs.messages.in
 $(PROJECT_DIR)/WebProcess/GPU/webrtc/LibWebRTCRemoteCodecs.messages.in
-$(PROJECT_DIR)/WebProcess/GPU/webrtc/SampleBufferDisplayLayer.messages.in
 $(PROJECT_DIR)/WebProcess/Geolocation/WebGeolocationManager.messages.in
 $(PROJECT_DIR)/WebProcess/Network/NetworkProcessConnection.messages.in
 $(PROJECT_DIR)/WebProcess/Network/WebResourceLoader.messages.in

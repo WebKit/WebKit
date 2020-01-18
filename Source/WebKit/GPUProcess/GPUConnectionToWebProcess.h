@@ -44,7 +44,6 @@ class RemoteAudioMediaStreamTrackRendererManager;
 class RemoteMediaPlayerManagerProxy;
 class RemoteMediaRecorderManager;
 class RemoteMediaResourceManager;
-class RemoteSampleBufferDisplayLayerManager;
 class UserMediaCaptureManagerProxy;
 
 class GPUConnectionToWebProcess
@@ -77,7 +76,6 @@ private:
     RemoteMediaRecorderManager& mediaRecorderManager();
 #if ENABLE(VIDEO_TRACK)
     RemoteAudioMediaStreamTrackRendererManager& audioTrackRendererManager();
-    RemoteSampleBufferDisplayLayerManager& sampleBufferDisplayLayerManager();
 #endif
 #endif
 
@@ -100,7 +98,6 @@ private:
     std::unique_ptr<RemoteMediaRecorderManager> m_remoteMediaRecorderManager;
 #if ENABLE(VIDEO_TRACK)
     std::unique_ptr<RemoteAudioMediaStreamTrackRendererManager> m_audioTrackRendererManager;
-    std::unique_ptr<RemoteSampleBufferDisplayLayerManager> m_sampleBufferDisplayLayerManager;
 #endif
 #endif
 #if PLATFORM(COCOA) && USE(LIBWEBRTC)

@@ -42,13 +42,11 @@ public:
     public:
         virtual ~Client() = default;
         virtual void sampleBufferDisplayLayerStatusDidChange(SampleBufferDisplayLayer&) = 0;
+        virtual void sampleBufferDisplayLayerBoundsDidChange(SampleBufferDisplayLayer&) = 0;
         virtual WTF::MediaTime streamTime() const = 0;
     };
 
-    WEBCORE_EXPORT static std::unique_ptr<SampleBufferDisplayLayer> create(Client&, bool hideRootLayer, IntSize);
-    using LayerCreator = std::unique_ptr<SampleBufferDisplayLayer> (*)(Client&, bool hideRootLayer, IntSize);
-    WEBCORE_EXPORT static void setCreator(LayerCreator);
-
+    explicit SampleBufferDisplayLayer(Client&);
     virtual ~SampleBufferDisplayLayer() = default;
 
     virtual bool didFail() const = 0;
@@ -68,12 +66,7 @@ public:
     virtual PlatformLayer* rootLayer() = 0;
 
 protected:
-    explicit SampleBufferDisplayLayer(Client&);
-
     WeakPtr<Client> m_client;
-
-private:
-    static LayerCreator m_layerCreator;
 };
 
 inline SampleBufferDisplayLayer::SampleBufferDisplayLayer(Client& client)

@@ -311,15 +311,6 @@ RefPtr<JSC::Uint8ClampedArray> MediaSampleAVFObjC::getRGBAImageData() const
 #endif
 }
 
-void MediaSampleAVFObjC::setAsDisplayImmediately(MediaSample& sample)
-{
-    CFArrayRef attachmentsArray = CMSampleBufferGetSampleAttachmentsArray(sample.platformSample().sample.cmSampleBuffer, true);
-    for (CFIndex i = 0; i < CFArrayGetCount(attachmentsArray); ++i) {
-        CFMutableDictionaryRef attachments = checked_cf_cast<CFMutableDictionaryRef>(CFArrayGetValueAtIndex(attachmentsArray, i));
-        CFDictionarySetValue(attachments, kCMSampleAttachmentKey_DisplayImmediately, kCFBooleanTrue);
-    }
-}
-
 String MediaSampleAVFObjC::toJSONString() const
 {
     auto object = JSON::Object::create();

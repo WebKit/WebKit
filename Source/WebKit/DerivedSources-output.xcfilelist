@@ -151,12 +151,6 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/RemoteMediaResourceManagerMessagesR
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/RemoteObjectRegistryMessageReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/RemoteObjectRegistryMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/RemoteObjectRegistryMessagesReplies.h
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/RemoteSampleBufferDisplayLayerManagerMessageReceiver.cpp
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/RemoteSampleBufferDisplayLayerManagerMessages.h
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/RemoteSampleBufferDisplayLayerManagerMessagesReplies.h
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/RemoteSampleBufferDisplayLayerMessageReceiver.cpp
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/RemoteSampleBufferDisplayLayerMessages.h
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/RemoteSampleBufferDisplayLayerMessagesReplies.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/RemoteScrollingCoordinatorMessageReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/RemoteScrollingCoordinatorMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/RemoteScrollingCoordinatorMessagesReplies.h
@@ -166,9 +160,6 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/RemoteWebInspectorProxyMessagesRepl
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/RemoteWebInspectorUIMessageReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/RemoteWebInspectorUIMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/RemoteWebInspectorUIMessagesReplies.h
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/SampleBufferDisplayLayerMessageReceiver.cpp
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/SampleBufferDisplayLayerMessages.h
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/SampleBufferDisplayLayerMessagesReplies.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/SecItemShimProxyMessageReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/SecItemShimProxyMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/SecItemShimProxyMessagesReplies.h
