@@ -1,3 +1,19 @@
+2020-01-17  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Unchecking Enable Preview Features on Engineering and Preview builds does not affect WI.arePreviewFeaturesEnabled()
+        https://bugs.webkit.org/show_bug.cgi?id=204026
+
+        Reviewed by Brian Burg.
+
+        Make `WI.arePreviewFeaturesEnabled()` return false when Enable Preview Features is unchecked.
+
+        * UserInterface/Base/Setting.js:
+        (WI.canShowPreviewFeatures):
+        (WI.arePreviewFeaturesEnabled):
+        (WI.isTechnologyPreviewBuild): Deleted.
+        (WI.canShowPreviewFeatures): Added.
+        * UserInterface/Views/SettingsTabContentView.js:
+
 2020-01-16  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: add links to reference pages

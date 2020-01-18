@@ -216,7 +216,7 @@ WI.settings = {
     zoomFactor: new WI.Setting("zoom-factor", 1),
 
     // Experimental
-    experimentalEnablePreviewFeatures: new WI.Setting("experimental-enable-preview-features", false),
+    experimentalEnablePreviewFeatures: new WI.Setting("experimental-enable-preview-features", true),
     experimentalEnableNewTabBar: new WI.Setting("experimental-enable-new-tab-bar", false),
     experimentalEnableStylesJumpToEffective: new WI.Setting("experimental-styles-jump-to-effective", false),
 
@@ -245,18 +245,15 @@ WI.settings = {
 
 WI.previewFeatures = [];
 
-WI.isTechnologyPreviewBuild = function()
+// WebKit may by default enable certain features in a Technology Preview that are not enabled in trunk.
+// Provide a switch that will make non-preview builds behave like an experimental build, for those preview features.
+WI.canShowPreviewFeatures = function()
 {
-    return WI.isExperimentalBuild && !WI.isEngineeringBuild;
+    let hasPreviewFeatures = WI.previewFeatures.length > 0;
+    return hasPreviewFeatures && WI.isExperimentalBuild;
 };
 
 WI.arePreviewFeaturesEnabled = function()
 {
-    if (WI.isExperimentalBuild)
-        return true;
-
-    if (WI.settings.experimentalEnablePreviewFeatures.value)
-        return true;
-
-    return false;
+    return WI.canShowPreviewFeatures() && WI.settings.experimentalEnablePreviewFeatures.value;
 };

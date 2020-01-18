@@ -355,10 +355,7 @@ WI.SettingsTabContentView = class SettingsTabContentView extends WI.TabContentVi
 
         let initialValues = new Map;
 
-        // WebKit may by default enable certain features in a Technology Preview that are not enabled in trunk.
-        // Provide a switch that will make non-preview builds behave like an experimental build, for those preview features.
-        let hasPreviewFeatures = WI.previewFeatures.length > 0;
-        if (hasPreviewFeatures && (WI.isTechnologyPreviewBuild() || WI.isEngineeringBuild)) {
+        if (WI.canShowPreviewFeatures()) {
             experimentalSettingsView.addSetting(WI.UIString("Staging:"), WI.settings.experimentalEnablePreviewFeatures, WI.UIString("Enable Preview Features"));
             experimentalSettingsView.addSeparator();
         }
