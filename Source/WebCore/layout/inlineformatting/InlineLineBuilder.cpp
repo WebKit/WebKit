@@ -69,7 +69,7 @@ public:
     ContinuousContent(const InlineItemRun&, bool textIsAlignJustify);
 
     bool isEligible(const InlineItemRun&) const;
-    void expand(const InlineItemRun&);
+    void append(const InlineItemRun&);
     LineBuilder::Run close();
 
     static bool canInlineItemRunBeExpanded(const InlineItemRun& run) { return run.isText() && !run.isCollapsed() && !run.isCollapsedToZeroAdvanceWidth(); }
@@ -96,18 +96,18 @@ bool LineBuilder::ContinuousContent::isEligible(const InlineItemRun& inlineItemR
 {
     if (!m_trailingRunCanBeExpanded)
         return false;
-    return inlineItemRun.isText() && &m_initialInlineRun.layoutBox() == &inlineItemRun.layoutBox();
+    // Only non-collapsed text runs with the same layout box can be added as continuous content.
+    return inlineItemRun.isText() && !inlineItemRun.isCollapsedToZeroAdvanceWidth() && &m_initialInlineRun.layoutBox() == &inlineItemRun.layoutBox();
 }
 
-void LineBuilder::ContinuousContent::expand(const InlineItemRun& inlineItemRun)
+void LineBuilder::ContinuousContent::append(const InlineItemRun& inlineItemRun)
 {
     // Merged content needs to be continuous.
     ASSERT(isEligible(inlineItemRun));
     m_trailingRunCanBeExpanded = canInlineItemRunBeExpanded(inlineItemRun);
 
     ASSERT(inlineItemRun.isText());
-    if (!inlineItemRun.isCollapsedToZeroAdvanceWidth())
-        m_expandedLength += inlineItemRun.textContext()->length();
+    m_expandedLength += inlineItemRun.textContext()->length();
     m_expandedWidth += inlineItemRun.logicalWidth();
 
     if (m_collectExpansionOpportunities) {
@@ -238,7 +238,8 @@ LineBuilder::RunList LineBuilder::close(IsLastLineWithInlineContent isLastLineWi
     visuallyCollapsePreWrapOverflowContent();
     auto hangingContent = collectHangingContent(isLastLineWithInlineContent);
 
-    auto mergedInlineItemRuns = [&] (auto& runList) {
+    auto mergedInlineItemRuns = [&] {
+        RunList runList;
         unsigned runIndex = 0;
         while (runIndex < m_inlineItemRuns.size()) {
             // Merge eligible runs.
@@ -250,13 +251,13 @@ LineBuilder::RunList LineBuilder::close(IsLastLineWithInlineContent isLastLineWi
             }
             auto mergedRuns = ContinuousContent { inlineItemRun, isTextAlignJustify() };
             for (runIndex = runIndex + 1; runIndex < m_inlineItemRuns.size() && mergedRuns.isEligible(m_inlineItemRuns[runIndex]); ++runIndex)
-                mergedRuns.expand(m_inlineItemRuns[runIndex]);
+                mergedRuns.append(m_inlineItemRuns[runIndex]);
             runList.append(mergedRuns.close());
         }
+        return runList;
     };
 
-    RunList runList;
-    mergedInlineItemRuns(runList);
+    auto runList = mergedInlineItemRuns();
     if (!m_isIntrinsicSizing) {
         for (auto& run : runList) {
             adjustBaselineAndLineHeight(run);
@@ -345,7 +346,7 @@ void LineBuilder::alignContentVertically(RunList& runList)
 
         switch (verticalAlign) {
         case VerticalAlign::Baseline:
-            if (run.isText() || run.isLineBreak())
+            if (run.isLineBreak() || run.isText())
                 logicalTop = baselineOffset() - ascent;
             else if (run.isContainerStart()) {
                 auto& boxGeometry = formattingContext().geometryForBox(layoutBox);
@@ -790,7 +791,7 @@ void LineBuilder::adjustBaselineAndLineHeight(const Run& run)
     ASSERT_NOT_REACHED();
 }
 
-inline InlineLayoutUnit LineBuilder::runContentHeight(const Run& run) const
+InlineLayoutUnit LineBuilder::runContentHeight(const Run& run) const
 {
     ASSERT(!m_isIntrinsicSizing);
     auto& fontMetrics = run.style().fontMetrics();
@@ -900,10 +901,14 @@ InlineLayoutUnit LineBuilder::CollapsibleContent::collapse()
     for (auto index = *m_firstRunIndex; index < m_inlineitemRunList.size(); ++index) {
         auto& run = m_inlineitemRunList[index];
         run.moveHorizontally(-accumulatedCollapsedWidth);
+        if (!run.isText()) {
+            ASSERT(run.isContainerStart() || run.isContainerEnd() || run.isLineBreak());
+            continue;
+        }
         if (run.isWhitespace()) {
             accumulatedCollapsedWidth += run.logicalWidth();
             run.setCollapsesToZeroAdvanceWidth();
-        } else if (run.isText()) {
+        } else {
             ASSERT(!hasSeenNonWhitespaceTextContent);
 #if ASSERT_ENABLED
             hasSeenNonWhitespaceTextContent = true;
@@ -913,7 +918,6 @@ InlineLayoutUnit LineBuilder::CollapsibleContent::collapse()
             accumulatedCollapsedWidth += run.trailingLetterSpacing();
             run.removeTrailingLetterSpacing();
         }
-        ASSERT(run.isContainerStart() || run.isContainerEnd() || run.isLineBreak());
     }
     ASSERT(accumulatedCollapsedWidth == width());
     reset();
