@@ -116,7 +116,7 @@ void JSModuleLoader::finishCreation(JSGlobalObject* globalObject, VM& vm)
 static String printableModuleKey(JSGlobalObject* globalObject, JSValue key)
 {
     VM& vm = globalObject->vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
+    auto scope = DECLARE_CATCH_SCOPE(vm);
     if (key.isString() || key.isSymbol()) {
         auto propertyName = key.toPropertyKey(globalObject);
         scope.assertNoException(); // This is OK since this function is just for debugging purpose.
