@@ -1,3 +1,16 @@
+2020-01-17  Canhai Chen  <canhai_chen@apple.com>
+
+        AX: Unable to use AccessibilityObject::replaceTextInRange to insert text at first time when the text fields are empty
+        https://bugs.webkit.org/show_bug.cgi?id=206093
+        <rdar://problem/58491448>
+
+        Reviewed by Chris Fleizach.
+
+        Test text replacement with empty range in editable div, text input, and textarea.
+
+        * accessibility/mac/replace-text-with-empty-range-expected.txt: Added.
+        * accessibility/mac/replace-text-with-empty-range.html: Added.
+
 2020-01-17  Jer Noble  <jer.noble@apple.com>
 
         [MSE] Decode glitches when watching videos on CNN.com

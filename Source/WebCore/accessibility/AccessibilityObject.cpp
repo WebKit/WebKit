@@ -1189,6 +1189,9 @@ RefPtr<Range> AccessibilityObject::rangeForPlainTextRange(const PlainTextRange& 
     unsigned textLength = getLengthForTextRange();
     if (range.start + range.length > textLength)
         return nullptr;
+    // Avoid setting selection to uneditable parent node in FrameSelection::setSelectedRange. See webkit.org/b/206093.
+    if (range.isNull() && !textLength)
+        return nullptr;
     
     if (AXObjectCache* cache = axObjectCache()) {
         CharacterOffset start = cache->characterOffsetForIndex(range.start, this);
