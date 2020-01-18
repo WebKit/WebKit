@@ -555,6 +555,9 @@ webkit.org/b/187064 webrtc/datachannel/mdns-ice-candidates.html
 webkit.org/b/187064 webrtc/libwebrtc/descriptionGetters.html
 webkit.org/b/177533 webrtc/video-interruption.html
 
+webkit.org/b/206464 webrtc/peerconnection-page-cache-long.html [ Failure ]
+webkit.org/b/206464 webrtc/peerconnection-page-cache.html [ Failure ]
+
 webkit.org/b/186933 webrtc/peer-connection-createMediaStreamDestination.html
 
 webkit.org/b/205930 webrtc/audio-peer-connection-webaudio.html [ Failure ]
