@@ -17,8 +17,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-// FIXME(webkit.org/b/188043): Support ScrollBehavior.
-dictionary ScrollIntoViewOptions {
+dictionary ScrollIntoViewOptions : ScrollOptions {
     [ImplementedAs=blockPosition] ScrollLogicalPosition block = "start";
     [ImplementedAs=inlinePosition] ScrollLogicalPosition inline = "nearest";
 };

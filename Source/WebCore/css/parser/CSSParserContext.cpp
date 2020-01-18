@@ -75,6 +75,7 @@ CSSParserContext::CSSParserContext(const Document& document, const URL& sheetBas
     attachmentEnabled = RuntimeEnabledFeatures::sharedFeatures().attachmentElementEnabled();
 #endif
     deferredCSSParserEnabled = document.settings().deferredCSSParserEnabled();
+    scrollBehaviorEnabled = document.settings().CSSOMViewSmoothScrollingEnabled();
     useSystemAppearance = document.page() ? document.page()->useSystemAppearance() : false;
 }
 
@@ -99,6 +100,7 @@ bool operator==(const CSSParserContext& a, const CSSParserContext& b)
         && a.attachmentEnabled == b.attachmentEnabled
 #endif
         && a.deferredCSSParserEnabled == b.deferredCSSParserEnabled
+        && a.scrollBehaviorEnabled == b.scrollBehaviorEnabled
         && a.hasDocumentSecurityOrigin == b.hasDocumentSecurityOrigin
         && a.useSystemAppearance == b.useSystemAppearance;
 }

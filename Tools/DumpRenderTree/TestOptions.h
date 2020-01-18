@@ -50,6 +50,7 @@ struct TestOptions {
     bool enableCSSLogical { false };
     bool adClickAttributionEnabled { false };
     bool enableResizeObserver { false };
+    bool enableCSSOMViewSmoothScrolling { false };
     bool enableCoreMathML { false };
     bool enableRequestIdleCallback { false };
     bool enableAsyncClipboardAPI { false };

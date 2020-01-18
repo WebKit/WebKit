@@ -3005,6 +3005,7 @@ static bool needsSelfRetainWhileLoadingQuirk()
     settings.setVisualViewportAPIEnabled([preferences visualViewportAPIEnabled]);
     settings.setSyntheticEditingCommandsEnabled([preferences syntheticEditingCommandsEnabled]);
     settings.setCSSOMViewScrollingAPIEnabled([preferences CSSOMViewScrollingAPIEnabled]);
+    settings.setCSSOMViewSmoothScrollingEnabled([preferences CSSOMViewSmoothScrollingEnabled]);
     settings.setMediaContentTypesRequiringHardwareSupport([preferences mediaContentTypesRequiringHardwareSupport]);
 
     switch ([preferences storageBlockingPolicy]) {

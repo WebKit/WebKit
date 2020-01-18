@@ -26,8 +26,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// FIXME(webkit.org/b/188043): Support ScrollBehavior.
-dictionary ScrollToOptions {
+dictionary ScrollToOptions : ScrollOptions {
     unrestricted double left;
     unrestricted double top;
 };

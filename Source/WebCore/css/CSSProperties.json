@@ -3554,6 +3554,16 @@
                 "url": "https://www.w3.org/TR/SVG/shapes.html"
             }
         },
+        "scroll-behavior": {
+            "values": [
+                "auto",
+                "smooth"
+            ],
+            "specification": {
+                "category": "cssom-view",
+                "url": "https://drafts.csswg.org/cssom-view/#propdef-scroll-behavior"
+            }
+        },
         "shape-rendering": {
             "inherited": true,
             "values": [
@@ -6479,6 +6489,22 @@
             "specification": {
                 "category": "css-ui",
                 "url": "https://www.w3.org/TR/css-ui-4/#propdef-user-select"
+            }
+        },
+        "scroll-behavior": {
+            "values": [
+                "auto",
+                "smooth"
+            ],
+            "codegen-properties": {
+                "converter": "SmoothScrolling",
+                "name-for-methods": "UseSmoothScrolling"
+            },
+            "status": {
+                "status": "experimental"
+            },
+            "specification": {
+                "url": "https://drafts.csswg.org/cssom-view/#propdef-scroll-behavior"
             }
         },
         "scroll-padding": {

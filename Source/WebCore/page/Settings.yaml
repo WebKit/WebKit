@@ -621,6 +621,9 @@ syntheticEditingCommandsEnabled:
 CSSOMViewScrollingAPIEnabled:
   initial: false
 
+CSSOMViewSmoothScrollingEnabled:
+  initial: false
+
 inputEventsEnabled:
   initial: true
 

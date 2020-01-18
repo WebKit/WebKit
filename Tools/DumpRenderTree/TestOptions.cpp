@@ -142,6 +142,8 @@ TestOptions::TestOptions(const std::string& pathOrURL, const std::string& absolu
             adClickAttributionEnabled = parseBooleanTestHeaderValue(value);
         else if (key == "experimental:ResizeObserverEnabled")
             enableResizeObserver = parseBooleanTestHeaderValue(value);
+        else if (key == "experimental:CSSOMViewSmoothScrollingEnabled")
+            enableCSSOMViewSmoothScrolling = parseBooleanTestHeaderValue(value);
         else if (key == "experimental:CoreMathMLEnabled")
             enableCoreMathML = parseBooleanTestHeaderValue(value);
         else if (key == "experimental:RequestIdleCallbackEnabled")

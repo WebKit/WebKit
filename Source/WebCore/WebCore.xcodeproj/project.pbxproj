@@ -2412,6 +2412,8 @@
 		83407FC11E8D9C1700E048D3 /* VisibilityChangeClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 83407FC01E8D9C1200E048D3 /* VisibilityChangeClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		834476EF1DA5BC5E002B5EB0 /* JSScrollLogicalPosition.h in Headers */ = {isa = PBXBuildFile; fileRef = 83E9B3011DA5A51E00FFD8D4 /* JSScrollLogicalPosition.h */; };
 		834476EF1DA5BC5E002B5EC1 /* JSScrollIntoViewOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = 83E9B3011DA5A51E00FFD8E5 /* JSScrollIntoViewOptions.h */; };
+		834476EF1DA5BC5E002B6EB0 /* JSScrollBehavior.h in Headers */ = {isa = PBXBuildFile; fileRef = 83E9B3011DA5A51E00FFE8D4 /* JSScrollBehavior.h */; };
+		834476EF1DA5BC5E002B6EC1 /* JSScrollOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = 83E9B3011DA5A51E00FFE8E5 /* JSScrollOptions.h */; };
 		834476EF1DA5BC5E002B6ED2 /* JSScrollToOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = 83E9B3011DA5A51E00FFE8F6 /* JSScrollToOptions.h */; };
 		8348BFAC1B85729800912F36 /* ClassCollection.h in Headers */ = {isa = PBXBuildFile; fileRef = 8348BFAA1B85729500912F36 /* ClassCollection.h */; };
 		834DFAD01F7DAE5D00C2725B /* SharedStringHash.h in Headers */ = {isa = PBXBuildFile; fileRef = 834DFACC1F7DAE5600C2725B /* SharedStringHash.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -2466,6 +2468,8 @@
 		83C45B8E1DC2B68A008871BA /* ValidationBubble.h in Headers */ = {isa = PBXBuildFile; fileRef = 83C45B8D1DC2B67C008871BA /* ValidationBubble.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		83C5795D1DA5C301006F9C86 /* ScrollLogicalPosition.h in Headers */ = {isa = PBXBuildFile; fileRef = 8350C3E71DA59B6200355424 /* ScrollLogicalPosition.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		83C5795D1DA5C301006F9C97 /* ScrollIntoViewOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = 8350C3E71DA59B6200355435 /* ScrollIntoViewOptions.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		83C5795D1DA5C301006FAC86 /* ScrollBehavior.h in Headers */ = {isa = PBXBuildFile; fileRef = 8350C3E71DA59B6200356424 /* ScrollBehavior.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		83C5795D1DA5C301006FAC97 /* ScrollOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = 8350C3E71DA59B6200356435 /* ScrollOptions.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		83C5795D1DA5C301006FACA8 /* ScrollToOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = 8350C3E71DA59B6200356446 /* ScrollToOptions.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		83D35AEC1C7187FA00F70D5A /* XMLHttpRequestEventTarget.h in Headers */ = {isa = PBXBuildFile; fileRef = 83D35AEA1C7187ED00F70D5A /* XMLHttpRequestEventTarget.h */; };
 		83D35AF21C718D9000F70D5A /* JSXMLHttpRequestEventTarget.h in Headers */ = {isa = PBXBuildFile; fileRef = 83D35AF01C718D8400F70D5A /* JSXMLHttpRequestEventTarget.h */; };
@@ -10212,9 +10216,14 @@
 		834DFACE1F7DAE5700C2725B /* SharedStringHash.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SharedStringHash.cpp; sourceTree = "<group>"; };
 		8350C3E71DA59B6200355424 /* ScrollLogicalPosition.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScrollLogicalPosition.h; sourceTree = "<group>"; };
 		8350C3E71DA59B6200355435 /* ScrollIntoViewOptions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScrollIntoViewOptions.h; sourceTree = "<group>"; };
+		8350C3E71DA59B6200356424 /* ScrollBehavior.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScrollBehavior.h; sourceTree = "<group>"; };
+		8350C3E71DA59B6200356434 /* ScrollBehavior.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScrollBehavior.cpp; sourceTree = "<group>"; };
+		8350C3E71DA59B6200356435 /* ScrollOptions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScrollOptions.h; sourceTree = "<group>"; };
 		8350C3E71DA59B6200356446 /* ScrollToOptions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScrollToOptions.h; sourceTree = "<group>"; };
 		8350C3E81DA59B6200355424 /* ScrollLogicalPosition.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ScrollLogicalPosition.idl; sourceTree = "<group>"; };
 		8350C3E81DA59B6200355435 /* ScrollIntoViewOptions.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ScrollIntoViewOptions.idl; sourceTree = "<group>"; };
+		8350C3E81DA59B6200356424 /* ScrollBehavior.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ScrollBehavior.idl; sourceTree = "<group>"; };
+		8350C3E81DA59B6200356435 /* ScrollOptions.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ScrollOptions.idl; sourceTree = "<group>"; };
 		8350C3E81DA59B6200356446 /* ScrollToOptions.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ScrollToOptions.idl; sourceTree = "<group>"; };
 		83520C7D1A71BFCC006BD2AA /* CSSFontFamily.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CSSFontFamily.h; sourceTree = "<group>"; };
 		835657C61ECAB0E800CDE72D /* JSDOMMatrixInit.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSDOMMatrixInit.cpp; sourceTree = "<group>"; };
@@ -10336,9 +10345,13 @@
 		83E959E11B8BC22B004D9385 /* NativeNodeFilter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NativeNodeFilter.h; sourceTree = "<group>"; };
 		83E9B3001DA5A51E00FFD8D4 /* JSScrollLogicalPosition.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSScrollLogicalPosition.cpp; sourceTree = "<group>"; };
 		83E9B3001DA5A51E00FFD8E5 /* JSScrollIntoViewOptions.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSScrollIntoViewOptions.cpp; sourceTree = "<group>"; };
+		83E9B3001DA5A51E00FFE8D4 /* JSScrollBehavior.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSScrollBehavior.cpp; sourceTree = "<group>"; };
+		83E9B3001DA5A51E00FFE8E5 /* JSScrollOptions.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSScrollOptions.cpp; sourceTree = "<group>"; };
 		83E9B3001DA5A51E00FFE8F6 /* JSScrollToOptions.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSScrollToOptions.cpp; sourceTree = "<group>"; };
 		83E9B3011DA5A51E00FFD8D4 /* JSScrollLogicalPosition.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSScrollLogicalPosition.h; sourceTree = "<group>"; };
 		83E9B3011DA5A51E00FFD8E5 /* JSScrollIntoViewOptions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSScrollIntoViewOptions.h; sourceTree = "<group>"; };
+		83E9B3011DA5A51E00FFE8D4 /* JSScrollBehavior.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSScrollBehavior.h; sourceTree = "<group>"; };
+		83E9B3011DA5A51E00FFE8E5 /* JSScrollOptions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSScrollOptions.h; sourceTree = "<group>"; };
 		83E9B3011DA5A51E00FFE8F6 /* JSScrollToOptions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSScrollToOptions.h; sourceTree = "<group>"; };
 		83EE598B1F50958B003E8B30 /* JSErrorCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSErrorCallback.h; sourceTree = "<group>"; };
 		83EE598C1F50958B003E8B30 /* JSErrorCallback.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSErrorCallback.cpp; sourceTree = "<group>"; };
@@ -20838,10 +20851,15 @@
 				BCEC01BA0C274DAC009F4EC9 /* Screen.cpp */,
 				BCEC01BB0C274DAC009F4EC9 /* Screen.h */,
 				BCEC01BC0C274DAC009F4EC9 /* Screen.idl */,
+				8350C3E71DA59B6200356434 /* ScrollBehavior.cpp */,
+				8350C3E71DA59B6200356424 /* ScrollBehavior.h */,
+				8350C3E81DA59B6200356424 /* ScrollBehavior.idl */,
 				8350C3E71DA59B6200355435 /* ScrollIntoViewOptions.h */,
 				8350C3E81DA59B6200355435 /* ScrollIntoViewOptions.idl */,
 				8350C3E71DA59B6200355424 /* ScrollLogicalPosition.h */,
 				8350C3E81DA59B6200355424 /* ScrollLogicalPosition.idl */,
+				8350C3E71DA59B6200356435 /* ScrollOptions.h */,
+				8350C3E81DA59B6200356435 /* ScrollOptions.idl */,
 				8350C3E71DA59B6200356446 /* ScrollToOptions.h */,
 				8350C3E81DA59B6200356446 /* ScrollToOptions.idl */,
 				BCD0E0F70E972C3500265DEA /* SecurityOrigin.cpp */,
@@ -25635,10 +25653,14 @@
 				58B2FA022232D60A00938D63 /* JSResizeObserverEntry.h */,
 				BCEC01C00C274DDD009F4EC9 /* JSScreen.cpp */,
 				BCEC01C10C274DDD009F4EC9 /* JSScreen.h */,
+				83E9B3001DA5A51E00FFE8D4 /* JSScrollBehavior.cpp */,
+				83E9B3011DA5A51E00FFE8D4 /* JSScrollBehavior.h */,
 				83E9B3001DA5A51E00FFD8E5 /* JSScrollIntoViewOptions.cpp */,
 				83E9B3011DA5A51E00FFD8E5 /* JSScrollIntoViewOptions.h */,
 				83E9B3001DA5A51E00FFD8D4 /* JSScrollLogicalPosition.cpp */,
 				83E9B3011DA5A51E00FFD8D4 /* JSScrollLogicalPosition.h */,
+				83E9B3001DA5A51E00FFE8E5 /* JSScrollOptions.cpp */,
+				83E9B3011DA5A51E00FFE8E5 /* JSScrollOptions.h */,
 				83E9B3001DA5A51E00FFE8F6 /* JSScrollToOptions.cpp */,
 				83E9B3011DA5A51E00FFE8F6 /* JSScrollToOptions.h */,
 				7C73FB0F191EF6F4007DE061 /* JSUserMessageHandler.cpp */,
@@ -31003,8 +31025,10 @@
 				5E2C436C1BCF071E0001E2BC /* JSRTCTrackEvent.h in Headers */,
 				BCEC01C30C274DDD009F4EC9 /* JSScreen.h in Headers */,
 				FDA15ECE12B03F61003A583A /* JSScriptProcessorNode.h in Headers */,
+				834476EF1DA5BC5E002B6EB0 /* JSScrollBehavior.h in Headers */,
 				834476EF1DA5BC5E002B5EC1 /* JSScrollIntoViewOptions.h in Headers */,
 				834476EF1DA5BC5E002B5EB0 /* JSScrollLogicalPosition.h in Headers */,
+				834476EF1DA5BC5E002B6EC1 /* JSScrollOptions.h in Headers */,
 				834476EF1DA5BC5E002B6ED2 /* JSScrollToOptions.h in Headers */,
 				CED06AD11C77754800FDFAF1 /* JSSecurityPolicyViolationEvent.h in Headers */,
 				5182C2561F3143CD0059BA7C /* JSServiceWorker.h in Headers */,
@@ -32216,6 +32240,7 @@
 				44C991860F3D1EBE00586670 /* ScrollbarThemeIOS.h in Headers */,
 				BC8B853E0E7C7F1100AB6984 /* ScrollbarThemeMac.h in Headers */,
 				0FE71406142170B800DB33BA /* ScrollbarThemeMock.h in Headers */,
+				83C5795D1DA5C301006FAC86 /* ScrollBehavior.h in Headers */,
 				1AA84F05143BA7BD0051D153 /* ScrollController.h in Headers */,
 				0F605AED15F94848004DF0C0 /* ScrollingConstraints.h in Headers */,
 				1AF62EE814DA22A70041556C /* ScrollingCoordinator.h in Headers */,
@@ -32252,6 +32277,7 @@
 				83C5795D1DA5C301006F9C97 /* ScrollIntoViewOptions.h in Headers */,
 				7AAFE8D019CB8672000F56D8 /* ScrollLatchingState.h in Headers */,
 				83C5795D1DA5C301006F9C86 /* ScrollLogicalPosition.h in Headers */,
+				83C5795D1DA5C301006FAC97 /* ScrollOptions.h in Headers */,
 				F478755419983AFF0024A287 /* ScrollSnapAnimatorState.h in Headers */,
 				F46729281E0DE68500ACC3D8 /* ScrollSnapOffsetsInfo.h in Headers */,
 				83C5795D1DA5C301006FACA8 /* ScrollToOptions.h in Headers */,

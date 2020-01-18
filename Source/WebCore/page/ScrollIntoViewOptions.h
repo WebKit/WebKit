@@ -20,12 +20,11 @@
 #pragma once
 
 #include "ScrollLogicalPosition.h"
+#include "ScrollOptions.h"
 
 namespace WebCore {
 
-class Element;
-
-struct ScrollIntoViewOptions {
+struct ScrollIntoViewOptions : ScrollOptions {
     Optional<ScrollLogicalPosition> blockPosition { ScrollLogicalPosition::Start };
     Optional<ScrollLogicalPosition> inlinePosition { ScrollLogicalPosition::Nearest };
 };

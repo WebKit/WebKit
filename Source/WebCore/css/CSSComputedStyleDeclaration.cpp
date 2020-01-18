@@ -3374,6 +3374,10 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
                 return cssValuePool.createIdentifierValue(CSSValueAuto);
             return cssValuePool.createIdentifierValue(CSSValueTouch);
 #endif
+        case CSSPropertyScrollBehavior:
+            if (!style.useSmoothScrolling())
+                return cssValuePool.createIdentifierValue(CSSValueAuto);
+            return cssValuePool.createIdentifierValue(CSSValueSmooth);
         case CSSPropertyPerspective:
             if (!style.hasPerspective())
                 return cssValuePool.createIdentifierValue(CSSValueNone);

@@ -972,8 +972,10 @@ set(WebCore_NON_SVG_IDL_FILES
     page/ResizeObserverCallback.idl
     page/ResizeObserverEntry.idl
     page/Screen.idl
+    page/ScrollBehavior.idl
     page/ScrollIntoViewOptions.idl
     page/ScrollLogicalPosition.idl
+    page/ScrollOptions.idl
     page/ScrollToOptions.idl
     page/ShareData.idl
     page/UndoItem.idl

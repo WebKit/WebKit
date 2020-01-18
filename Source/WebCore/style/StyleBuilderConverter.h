@@ -130,6 +130,7 @@ public:
     static bool convertOverflowScrolling(BuilderState&, const CSSValue&);
 #endif
     static FontFeatureSettings convertFontFeatureSettings(BuilderState&, const CSSValue&);
+    static bool convertSmoothScrolling(BuilderState&, const CSSValue&);
     static FontSelectionValue convertFontWeightFromValue(const CSSValue&);
     static FontSelectionValue convertFontStretchFromValue(const CSSValue&);
     static Optional<FontSelectionValue> convertFontStyleFromValue(const CSSValue&);
@@ -1374,6 +1375,11 @@ inline bool BuilderConverter::convertOverflowScrolling(BuilderState&, const CSSV
     return downcast<CSSPrimitiveValue>(value).valueID() == CSSValueTouch;
 }
 #endif
+
+inline bool BuilderConverter::convertSmoothScrolling(BuilderState&, const CSSValue& value)
+{
+    return downcast<CSSPrimitiveValue>(value).valueID() == CSSValueSmooth;
+}
 
 inline SVGLengthValue BuilderConverter::convertSVGLengthValue(BuilderState&, const CSSValue& value)
 {

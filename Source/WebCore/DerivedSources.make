@@ -919,8 +919,10 @@ JS_BINDING_IDLS = \
     $(WebCore)/page/ResizeObserverCallback.idl \
     $(WebCore)/page/ResizeObserverEntry.idl \
     $(WebCore)/page/Screen.idl \
+    $(WebCore)/page/ScrollBehavior.idl \
     $(WebCore)/page/ScrollIntoViewOptions.idl \
     $(WebCore)/page/ScrollLogicalPosition.idl \
+    $(WebCore)/page/ScrollOptions.idl \
     $(WebCore)/page/ScrollToOptions.idl \
     $(WebCore)/page/ShareData.idl \
     $(WebCore)/page/UndoItem.idl \

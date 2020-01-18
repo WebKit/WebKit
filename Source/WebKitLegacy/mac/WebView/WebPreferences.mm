@@ -664,6 +664,7 @@ public:
 #endif
 
         @YES, WebKitCSSOMViewScrollingAPIEnabledPreferenceKey,
+        @NO, WebKitCSSOMViewSmoothScrollingEnabledPreferenceKey,
         @YES, WebKitNeedsStorageAccessFromFileURLsQuirkKey,
         @NO, WebKitAllowCrossOriginSubresourcesToAskForCredentialsKey,
 #if ENABLE(MEDIA_STREAM)
@@ -3181,6 +3182,16 @@ static NSString *classIBCreatorID = nil;
 - (void)setCSSOMViewScrollingAPIEnabled:(BOOL)flag
 {
     [self _setBoolValue:flag forKey:WebKitCSSOMViewScrollingAPIEnabledPreferenceKey];
+}
+
+- (BOOL)CSSOMViewSmoothScrollingEnabled
+{
+    return [self _boolValueForKey:WebKitCSSOMViewSmoothScrollingEnabledPreferenceKey];
+}
+
+- (void)setCSSOMViewSmoothScrollingEnabled:(BOOL)flag
+{
+    [self _setBoolValue:flag forKey:WebKitCSSOMViewSmoothScrollingEnabledPreferenceKey];
 }
 
 - (BOOL)webAnimationsEnabled

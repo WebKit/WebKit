@@ -1388,6 +1388,10 @@ pan-y
 pinch-zoom
 #endif
 
+// scroll-behavior
+// auto
+smooth
+
 // hanging-punctuation
 allow-end
 first

@@ -1,3 +1,23 @@
+2020-01-17  Cathie Chen  <cathiechen@igalia.com>
+
+        Add support for scroll behavior parsing
+        https://bugs.webkit.org/show_bug.cgi?id=205009
+
+        Reviewed by Frédéric Wang.
+
+        Based on the patch by Frédéric Wang.
+
+        Add run time flag for CSSOMViewSmoothScrolling.
+
+        * WebView/WebPreferenceKeysPrivate.h: Handle CSSOMViewSmoothScrolling by.
+        * WebView/WebPreferences.mm:
+        ([WebPreferences initialize]): Disable CSSOMViewSmoothScrolling by default.
+        (-[WebPreferences CSSOMViewSmoothScrollingEnabled]): Getter.
+        (-[WebPreferences setCSSOMViewSmoothScrollingEnabled:]): Setter.
+        * WebView/WebPreferencesPrivate.h:
+        * WebView/WebView.mm:
+        (-[WebView _preferencesChanged:]):
+
 2020-01-16  David Kilzer  <ddkilzer@apple.com>
 
         Enable -Wconditional-uninitialized in WebInspectorUI, WebKitLegacy, WebKit projects

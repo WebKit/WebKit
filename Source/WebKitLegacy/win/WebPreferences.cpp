@@ -339,6 +339,8 @@ void WebPreferences::initializeDefaultSettings()
 
     CFDictionaryAddValue(defaults, CFSTR(WebKitResizeObserverEnabledPreferenceKey), kCFBooleanFalse);
 
+    CFDictionaryAddValue(defaults, CFSTR(WebKitCSSOMViewSmoothScrollingEnabledPreferenceKey), kCFBooleanFalse);
+
     CFDictionaryAddValue(defaults, CFSTR(WebKitCoreMathMLEnabledPreferenceKey), kCFBooleanFalse);
 
     CFDictionaryAddValue(defaults, CFSTR(WebKitRequestIdleCallbackEnabledPreferenceKey), kCFBooleanFalse);
@@ -2282,6 +2284,20 @@ HRESULT WebPreferences::coreMathMLEnabled(_Out_ BOOL* enabled)
 HRESULT WebPreferences::setCoreMathMLEnabled(BOOL enabled)
 {
     setBoolValue(WebKitCoreMathMLEnabledPreferenceKey, enabled);
+    return S_OK;
+}
+
+HRESULT WebPreferences::CSSOMViewSmoothScrollingEnabled(_Out_ BOOL* enabled)
+{
+    if (!enabled)
+        return E_POINTER;
+    *enabled = boolValueForKey(WebKitCSSOMViewSmoothScrollingEnabledPreferenceKey);
+    return S_OK;
+}
+
+HRESULT WebPreferences::setCSSOMViewSmoothScrollingEnabled(BOOL enabled)
+{
+    setBoolValue(WebKitCSSOMViewSmoothScrollingEnabledPreferenceKey, enabled);
     return S_OK;
 }
 

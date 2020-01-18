@@ -1319,6 +1319,13 @@ BlockingOfSmallPluginsEnabled:
   humanReadableDescription: "Stop plugins smaller than a certain threshold from loading."
   category: internal
 
+CSSOMViewSmoothScrollingEnabled:
+  type: bool
+  defaultValue: false
+  humanReadableName: "CSSOM View Smooth Scrolling"
+  humanReadableDescription: "Enable DOM API and CSS property for 'smooth' scroll behavior"
+  category: experimental
+
 WebAnimationsEnabled:
   type: bool
   defaultValue: true
