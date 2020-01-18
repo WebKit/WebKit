@@ -84,6 +84,7 @@ void GenerateAndAllocateRegisters::buildLiveRanges(UnifiedTmpLiveness& liveness)
             if (!tmp.isReg())
                 m_liveRangeEnd[tmp] = m_globalInstIndex;
         }
+        ++m_globalInstIndex;
         for (Inst& inst : *block) {
             inst.forEachTmpFast([&] (Tmp tmp) {
                 if (!tmp.isReg())
@@ -95,6 +96,7 @@ void GenerateAndAllocateRegisters::buildLiveRanges(UnifiedTmpLiveness& liveness)
             if (!tmp.isReg())
                 m_liveRangeEnd[tmp] = m_globalInstIndex;
         }
+        ++m_globalInstIndex;
     }
 }
 
@@ -280,21 +282,74 @@ void GenerateAndAllocateRegisters::prepareForGeneration()
     handleCalleeSaves(m_code, RegisterSet::calleeSaveRegisters());
     allocateEscapedStackSlots(m_code);
 
-    // Each Tmp gets its own stack slot.
-    auto createStackSlot = [&] (const Tmp& tmp) {
-        TmpData data;
-        data.spillSlot = m_code.addStackSlot(8, StackSlotKind::Spill);
-        data.reg = Reg();
-        m_map[tmp] = data;
-#if ASSERT_ENABLED
-        m_allTmps[tmp.bank()].append(tmp);
-#endif
-    };
+    insertBlocksForFlushAfterTerminalPatchpoints();
 
+#if ASSERT_ENABLED
     m_code.forEachTmp([&] (Tmp tmp) {
         ASSERT(!tmp.isReg());
-        createStackSlot(tmp);
+        m_allTmps[tmp.bank()].append(tmp);
     });
+#endif
+
+    m_liveness = makeUnique<UnifiedTmpLiveness>(m_code);
+
+    {
+        buildLiveRanges(*m_liveness);
+
+        Vector<StackSlot*, 16> freeSlots;
+        Vector<StackSlot*, 4> toFree;
+        m_globalInstIndex = 0;
+        for (BasicBlock* block : m_code) {
+            auto assignStackSlotToTmp = [&] (Tmp tmp) {
+                if (tmp.isReg())
+                    return;
+
+                TmpData& data = m_map[tmp];
+                if (data.spillSlot) {
+                    if (m_liveRangeEnd[tmp] == m_globalInstIndex)
+                        toFree.append(data.spillSlot);
+                    return;
+                }
+
+                if (freeSlots.size())
+                    data.spillSlot = freeSlots.takeLast();
+                else
+                    data.spillSlot = m_code.addStackSlot(8, StackSlotKind::Spill);
+                data.reg = Reg();
+            };
+
+            auto flushToFreeList = [&] {
+                for (auto* stackSlot : toFree)
+                    freeSlots.append(stackSlot);
+                toFree.clear();
+            };
+
+            for (Tmp tmp : m_liveness->liveAtHead(block))
+                assignStackSlotToTmp(tmp);
+            flushToFreeList();
+
+            ++m_globalInstIndex;
+
+            for (Inst& inst : *block) {
+                Vector<Tmp, 4> seenTmps;
+                inst.forEachTmpFast([&] (Tmp tmp) {
+                    if (seenTmps.contains(tmp))
+                        return;
+                    seenTmps.append(tmp);
+                    assignStackSlotToTmp(tmp);
+                });
+
+                flushToFreeList();
+                ++m_globalInstIndex;
+            }
+
+            for (Tmp tmp : m_liveness->liveAtTail(block))
+                assignStackSlotToTmp(tmp);
+            flushToFreeList();
+
+            ++m_globalInstIndex;
+        }
+    } 
 
     m_allowedRegisters = RegisterSet();
 
@@ -303,7 +358,9 @@ void GenerateAndAllocateRegisters::prepareForGeneration()
 
         for (Reg reg : m_registers[bank]) {
             m_allowedRegisters.set(reg);
-            createStackSlot(Tmp(reg));
+            TmpData& data = m_map[Tmp(reg)];
+            data.spillSlot = m_code.addStackSlot(8, StackSlotKind::Spill);
+            data.reg = Reg();
         }
     });
 
@@ -323,11 +380,37 @@ void GenerateAndAllocateRegisters::prepareForGeneration()
 
     lowerStackArgs(m_code);
 
-    // Verify none of these passes add any tmps.
 #if ASSERT_ENABLED
+    // Verify none of these passes add any tmps.
     forEachBank([&] (Bank bank) {
-        ASSERT(m_allTmps[bank].size() - m_registers[bank].size() == m_code.numTmps(bank));
+        ASSERT(m_allTmps[bank].size() == m_code.numTmps(bank));
     });
+
+    {
+        // Verify that lowerStackArgs didn't change Tmp liveness at the boundaries for the Tmps and Registers we model.
+        UnifiedTmpLiveness liveness(m_code);
+        for (BasicBlock* block : m_code) {
+            auto assertLivenessAreEqual = [&] (auto a, auto b) {
+                HashSet<Tmp> livenessA;
+                HashSet<Tmp> livenessB;
+                for (Tmp tmp : a) {
+                    if (tmp.isReg() && isDisallowedRegister(tmp.reg()))
+                        continue;
+                    livenessA.add(tmp);
+                }
+                for (Tmp tmp : b) {
+                    if (tmp.isReg() && isDisallowedRegister(tmp.reg()))
+                        continue;
+                    livenessB.add(tmp);
+                }
+
+                ASSERT(livenessA == livenessB);
+            };
+
+            assertLivenessAreEqual(m_liveness->liveAtHead(block), liveness.liveAtHead(block));
+            assertLivenessAreEqual(m_liveness->liveAtTail(block), liveness.liveAtTail(block));
+        }
+    }
 #endif
 }
 
@@ -337,12 +420,9 @@ void GenerateAndAllocateRegisters::generate(CCallHelpers& jit)
 
     TimingScope timingScope("Air::generateAndAllocateRegisters");
 
-    insertBlocksForFlushAfterTerminalPatchpoints();
-
     DisallowMacroScratchRegisterUsage disallowScratch(*m_jit);
 
-    UnifiedTmpLiveness liveness(m_code);
-    buildLiveRanges(liveness);
+    buildLiveRanges(*m_liveness);
 
     IndexMap<BasicBlock*, IndexMap<Reg, Tmp>> currentAllocationMap(m_code.size());
     {
@@ -355,7 +435,7 @@ void GenerateAndAllocateRegisters::generate(CCallHelpers& jit)
 
         for (unsigned i = m_code.numEntrypoints(); i--;) {
             BasicBlock* entrypoint = m_code.entrypoint(i).block();
-            for (Tmp tmp : liveness.liveAtHead(entrypoint)) {
+            for (Tmp tmp : m_liveness->liveAtHead(entrypoint)) {
                 if (tmp.isReg())
                     currentAllocationMap[entrypoint][tmp.reg()] = tmp;
             }
@@ -442,6 +522,8 @@ void GenerateAndAllocateRegisters::generate(CCallHelpers& jit)
             m_map[tmp].reg = reg;
             m_availableRegs[tmp.bank()].clear(reg);
         }
+
+        ++m_globalInstIndex;
 
         bool isReplayingSameInst = false;
         for (size_t instIndex = 0; instIndex < block->size(); ++instIndex) {
@@ -673,7 +755,7 @@ void GenerateAndAllocateRegisters::generate(CCallHelpers& jit)
                         everySuccessorGetsOurRegisterState = false;
                 }
                 if (!everySuccessorGetsOurRegisterState) {
-                    for (Tmp tmp : liveness.liveAtTail(block)) {
+                    for (Tmp tmp : m_liveness->liveAtTail(block)) {
                         if (tmp.isReg() && isDisallowedRegister(tmp.reg()))
                             continue;
                         if (Reg reg = m_map[tmp].reg)
@@ -752,6 +834,8 @@ void GenerateAndAllocateRegisters::generate(CCallHelpers& jit)
             if (Tmp tmp = currentAllocation[i])
                 m_map[tmp].reg = Reg();
         }
+
+        ++m_globalInstIndex;
     }
 
     for (auto& entry : m_blocksAfterTerminalPatchForSpilling) {
