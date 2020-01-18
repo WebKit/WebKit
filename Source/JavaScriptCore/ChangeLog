@@ -1,3 +1,14 @@
+2020-01-17  David Kilzer  <ddkilzer@apple.com>
+
+        [JSC] Add missing header guards
+        <https://webkit.org/b/206448>
+
+        Reviewed by Mark Lam.
+
+        * heap/IsoHeapCellType.h:
+        * wasm/WasmFaultSignalHandler.h:
+        - Add #pragma once header guard.
+
 2020-01-17  Mark Lam  <mark.lam@apple.com>
 
         JSModuleLoader's printableModuleKey() should never throw.
