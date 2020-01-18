@@ -220,6 +220,7 @@ public:
 #if ENABLE(IOS_TOUCH_EVENTS) || ENABLE(IOS_GESTURE_EVENTS)
     using TouchArray = Vector<RefPtr<Touch>>;
     using EventTargetTouchMap = HashMap<EventTarget*, TouchArray*>;
+    using EventTargetTouchArrayMap = HashMap<Ref<EventTarget>, std::unique_ptr<TouchArray>>;
 #endif
 
 #if ENABLE(IOS_TOUCH_EVENTS) || ENABLE(IOS_GESTURE_EVENTS) || ENABLE(MAC_GESTURE_EVENTS)
@@ -228,6 +229,7 @@ public:
 
 #if ENABLE(IOS_TOUCH_EVENTS)
     bool dispatchTouchEvent(const PlatformTouchEvent&, const AtomString&, const EventTargetTouchMap&, float, float);
+    bool dispatchTouchEvent(const PlatformTouchEvent&, const AtomString&, const EventTargetTouchArrayMap&, float, float);
     bool dispatchSimulatedTouchEvent(IntPoint location);
     Frame* touchEventTargetSubframe() const { return m_touchEventTargetSubframe.get(); }
     const TouchArray& touches() const { return m_touches; }
