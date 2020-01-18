@@ -385,7 +385,7 @@ LineLayoutContext::Result LineLayoutContext::tryAddingFloatItems(LineBuilder& li
         auto logicalWidth = inlineItemWidth(*floatItem, { });
 
         auto lineIsConsideredEmpty = line.isVisuallyEmpty() && !line.hasIntrusiveFloat();
-        if (LineBreaker().shouldWrapFloatBox(logicalWidth, line.availableWidth() + line.trailingCollapsibleWidth(), lineIsConsideredEmpty))
+        if (LineBreaker().shouldWrapFloatBox(logicalWidth, line.availableWidth() + line.trimmableTrailingWidth(), lineIsConsideredEmpty))
             return { LineBreaker::IsEndOfLine::Yes, committedFloatItemCount };
         // This float can sit on the current line.
         ++committedFloatItemCount;
@@ -409,7 +409,7 @@ LineLayoutContext::Result LineLayoutContext::tryAddingInlineItems(LineBreaker& l
         return m_successiveHyphenatedLineCount >= limitLines;
     };
     // Check if this new content fits.
-    auto lineStatus = LineBreaker::LineStatus { line.availableWidth(), line.trailingCollapsibleWidth(), line.isTrailingRunFullyCollapsible(), isLineConsideredEmpty(line) };
+    auto lineStatus = LineBreaker::LineStatus { line.availableWidth(), line.trimmableTrailingWidth(), line.isTrailingRunFullyTrimmable(), isLineConsideredEmpty(line) };
 
     if (shouldDisableHyphenation())
         lineBreaker.setHyphenationDisabled();
