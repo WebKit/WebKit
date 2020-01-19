@@ -110,9 +110,7 @@ public:
             // by the WTR do not and we must calculate a time manually. This time
             // is not calculated in the WTR, because GTK+ does not work well with
             // anything other than GDK_CURRENT_TIME on synthesized events.
-            GTimeVal timeValue;
-            g_get_current_time(&timeValue);
-            eventTime = (timeValue.tv_sec * 1000) + (timeValue.tv_usec / 1000);
+            eventTime = g_get_monotonic_time() / 1000;
         }
 
         GdkEventType type;

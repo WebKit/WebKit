@@ -1,3 +1,15 @@
+2020-01-19  Claudio Saavedra  <csaavedra@igalia.com>
+
+        [GTK] Remove usage of deprecated GTimeVal
+        https://bugs.webkit.org/show_bug.cgi?id=206358
+
+        Reviewed by Žan Doberšek.
+
+        Use g_get_real_time() directly instead of deprecated and unsafe API.
+
+        * wtf/CurrentTime.cpp:
+        (WTF::currentTime):
+
 2020-01-16  Keith Miller  <keith_miller@apple.com>
 
         Reland bytecode checkpoints since bugs have been fixed
