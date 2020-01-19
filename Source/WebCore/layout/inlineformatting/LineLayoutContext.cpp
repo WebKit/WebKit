@@ -287,7 +287,7 @@ LineLayoutContext::LineContent LineLayoutContext::layoutLine(LineBuilder& line, 
                 ASSERT(!result.committedCount);
                 ASSERT(result.isEndOfLine == LineBreaker::IsEndOfLine::Yes);
                 // An earlier line wrapping opportunity turned out to be the final breaking position.
-                committedInlineItemCount -= line.revert(*result.revertTo);
+                ASSERT_NOT_IMPLEMENTED_YET();
             }
             committedInlineItemCount += result.committedCount;
             if (result.isEndOfLine == LineBreaker::IsEndOfLine::Yes) {

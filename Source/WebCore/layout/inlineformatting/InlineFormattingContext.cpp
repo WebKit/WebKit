@@ -485,7 +485,7 @@ void InlineFormattingContext::setDisplayBoxesForLine(const LineLayoutContext::Li
 
         // Add final display runs to state first.
         // Inline level containers (<span>) don't generate display runs and neither do completely collapsed runs.
-        auto initiatesInlineRun = !lineRun.isContainerStart() && !lineRun.isContainerEnd() && !lineRun.isCollapsedToVisuallyEmpty();
+        auto initiatesInlineRun = !lineRun.isContainerStart() && !lineRun.isContainerEnd();
         if (initiatesInlineRun) {
             auto computedInkOverflow = [&] {
                 // FIXME: Add support for non-text ink overflow.

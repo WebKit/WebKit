@@ -49,11 +49,8 @@ bool InlineFormattingContext::Quirks::lineDescentNeedsCollapsing(const LineBuild
 
         if (run.isLineBreak())
             return false;
-        if (run.isText()) {
-            if (!run.isCollapsedToVisuallyEmpty())
-                return false;
-            continue;
-        }
+        if (run.isText())
+            return false;
         if (run.isContainerStart()) {
             auto& boxGeometry = formattingContext().geometryForBox(layoutBox);
             if (boxGeometry.horizontalBorder() || (boxGeometry.horizontalPadding() && boxGeometry.horizontalPadding().value()))

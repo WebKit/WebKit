@@ -52,7 +52,7 @@ struct Run {
         StringView content() const { return StringView(m_contentString).substring(m_start, m_length); }
 
         struct ExpansionContext {
-            ExpansionBehavior behavior;
+            ExpansionBehavior behavior { DefaultExpansion };
             InlineLayoutUnit horizontalExpansion { 0 };
         };
         void setExpansion(ExpansionContext expansionContext) { m_expansionContext = expansionContext; }
@@ -60,7 +60,7 @@ struct Run {
 
         bool needsHyphen() const { return m_needsHyphen; }
 
-        void expand(unsigned expandedLength);
+        void expand(unsigned delta) { m_length += delta; }
         void setNeedsHyphen() { m_needsHyphen = true; }
 
     private:
@@ -131,11 +131,6 @@ inline Run::TextContext::TextContext(unsigned start, unsigned length, const Stri
     , m_length(length)
     , m_contentString(contentString)
 {
-}
-
-inline void Run::TextContext::expand(unsigned expandedLength)
-{
-    m_length = expandedLength;
 }
 
 }
