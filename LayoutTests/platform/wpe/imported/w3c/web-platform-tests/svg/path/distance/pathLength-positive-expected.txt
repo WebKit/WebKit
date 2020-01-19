@@ -3,10 +3,10 @@ layer at (0,0) size 800x600
 layer at (0,0) size 300x200
   RenderSVGRoot {svg} at (49,24) size 209x132
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
-      RenderSVGPath {path} at (50,49) size 200x2 [stroke={[type=SOLID] [color=#ADD8E6] [path length=2.00]}] [data="M 50 50 L 250 50"]
+      RenderSVGPath {path} at (50,49) size 200x2 [stroke={[type=SOLID] [color=#ADD8E6]}] [data="M 50 50 L 250 50"]
     RenderSVGContainer {g} at (50,24) size 208x32
       RenderSVGContainer {use} at (50,49) size 200x2
-        RenderSVGPath {path} at (50,49) size 200x2 [stroke={[type=SOLID] [color=#ADD8E6] [path length=2.00]}] [data="M 50 50 L 250 50"]
+        RenderSVGPath {path} at (50,49) size 200x2 [stroke={[type=SOLID] [color=#ADD8E6]}] [data="M 50 50 L 250 50"]
       RenderSVGText {text} at (50,24) size 208x32 contains 1 chunk(s)
         RenderSVGTextPath {textPath} at (0,0) size 208x32
           RenderSVGInlineText {#text} at (0,0) size 208x32
@@ -28,14 +28,14 @@ layer at (0,0) size 300x200
         RenderSVGInlineText {#text} at (0,0) size 0x0
     RenderSVGContainer {g} at (50,99) size 200x2 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,50.00)}]
       RenderSVGContainer {use} at (50,99) size 200x2
-        RenderSVGPath {path} at (50,99) size 200x2 [stroke={[type=SOLID] [color=#ADD8E6] [path length=2.00]}] [data="M 50 50 L 250 50"]
+        RenderSVGPath {path} at (50,99) size 200x2 [stroke={[type=SOLID] [color=#ADD8E6]}] [data="M 50 50 L 250 50"]
       RenderSVGText {text} at (0,0) size 0x0 contains 1 chunk(s)
         RenderSVGTextPath {textPath} at (0,0) size 0x0
           RenderSVGInlineText {#text} at (0,0) size 0x0
         RenderSVGInlineText {#text} at (0,0) size 0x0
     RenderSVGContainer {g} at (49,124) size 208x32 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,100.00)}]
       RenderSVGContainer {use} at (50,149) size 200x2
-        RenderSVGPath {path} at (50,149) size 200x2 [stroke={[type=SOLID] [color=#ADD8E6] [path length=2.00]}] [data="M 50 50 L 250 50"]
+        RenderSVGPath {path} at (50,149) size 200x2 [stroke={[type=SOLID] [color=#ADD8E6]}] [data="M 50 50 L 250 50"]
       RenderSVGText {text} at (49,24) size 208x32 contains 1 chunk(s)
         RenderSVGTextPath {textPath} at (0,0) size 208x32
           RenderSVGInlineText {#text} at (0,0) size 208x32

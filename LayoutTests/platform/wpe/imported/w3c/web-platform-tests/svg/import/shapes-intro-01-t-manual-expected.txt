@@ -47,9 +47,9 @@ layer at (0,0) size 800x600
       RenderSVGRect {rect} at (0,0) size 0x0 [fill={[type=SOLID] [color=#00FF00]}] [x=135.00] [y=160.00] [width=25.00] [height=0.00]
       RenderSVGEllipse {circle} at (0,0) size 0x0 [stroke={[type=SOLID] [color=#000000]}] [cx=240.00] [cy=80.00] [r=0.00]
       RenderSVGEllipse {circle} at (0,0) size 0x0 [fill={[type=SOLID] [color=#FF0000]}] [cx=240.00] [cy=185.00] [r=0.00]
-      RenderSVGEllipse {ellipse} at (0,0) size 3x86 [stroke={[type=SOLID] [color=#0000FF]}] [fill={[type=SOLID] [color=#00FF00]}] [cx=332.00] [cy=80.00] [rx=0.00] [ry=25.00]
+      RenderSVGEllipse {ellipse} at (0,0) size 0x0 [stroke={[type=SOLID] [color=#0000FF]}] [fill={[type=SOLID] [color=#00FF00]}] [cx=332.00] [cy=80.00] [rx=0.00] [ry=25.00]
       RenderSVGEllipse {ellipse} at (0,0) size 0x0 [fill={[type=SOLID] [color=#00FF00]}] [cx=332.00] [cy=185.00] [rx=0.00] [ry=25.00]
-      RenderSVGEllipse {ellipse} at (0,0) size 42x3 [stroke={[type=SOLID] [color=#000000]}] [cx=411.00] [cy=80.00] [rx=12.00] [ry=0.00]
+      RenderSVGEllipse {ellipse} at (0,0) size 0x0 [stroke={[type=SOLID] [color=#000000]}] [cx=411.00] [cy=80.00] [rx=12.00] [ry=0.00]
       RenderSVGEllipse {ellipse} at (0,0) size 0x0 [fill={[type=SOLID] [color=#FF0000]}] [cx=411.00] [cy=185.00] [rx=12.00] [ry=0.00]
       RenderSVGPath {line} at (0,0) size 0x0 [stroke={[type=SOLID] [color=#0000FF]}] [fill={[type=SOLID] [color=#000000]}] [x1=240.00] [y1=265.00] [x2=240.00] [y2=265.00]
     RenderSVGContainer {g} at (16,518) size 380x60

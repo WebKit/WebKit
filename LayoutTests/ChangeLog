@@ -1,3 +1,26 @@
+2020-01-19  Diego Pino Garcia  <dpino@igalia.com>
+
+        [WPE] Gardening, rebase lines and lint TestExpectations
+        https://bugs.webkit.org/show_bug.cgi?id=206482
+
+        Unreviewed gardening.
+
+        * platform/wpe/TestExpectations: Removed duplicated entries and
+        references to non-existing files
+        * platform/wpe/imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-events.https-expected.txt:
+        * platform/wpe/imported/w3c/web-platform-tests/encrypted-media/idlharness.https-expected.txt:
+        * platform/wpe/imported/w3c/web-platform-tests/fetch/api/basic/request-headers.any.worker-expected.txt:
+        * platform/wpe/imported/w3c/web-platform-tests/fetch/api/redirect/redirect-mode.any-expected.txt:
+        * platform/wpe/imported/w3c/web-platform-tests/fetch/api/redirect/redirect-mode.any.worker-expected.txt:
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/color-prop-02-f-manual-expected.txt:
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/color-prop-03-t-manual-expected.txt:
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/shapes-intro-01-t-manual-expected.txt:
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/types-dom-08-f-manual-expected.txt:
+        * platform/wpe/imported/w3c/web-platform-tests/svg/path/distance/pathLength-positive-expected.txt:
+        * platform/wpe/imported/w3c/web-platform-tests/svg/path/distance/pathLength-positive-percentage-expected.txt:
+        * platform/wpe/imported/w3c/web-platform-tests/svg/shapes/reftests/pathlength-003-expected.txt:
+        * platform/wpe/imported/w3c/web-platform-tests/svg/shapes/scripted/disabled-shapes-not-hit-expected.txt:
+
 2020-01-18  Diego Pino Garcia  <dpino@igalia.com>
 
         [WPE] Gardening, synchronize with GTK TestExpectations

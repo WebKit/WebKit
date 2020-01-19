@@ -63,7 +63,6 @@ webkit.org/b/206055 imported/w3c/web-platform-tests/offscreen-canvas/drawing-ima
 
 # The webrtc implementation is not fully completed yet
 webkit.org/b/191009 webrtc/video-mute-vp8.html [ Failure ]
-webkit.org/b/189567 webrtc/video-addLegacyTransceiver.html [ Failure ]
 webkit.org/b/187064 webrtc/audio-peer-connection-g722.html
 webkit.org/b/187064 webrtc/captureCanvas-webrtc.html
 webkit.org/b/187064 webrtc/video-remote-mute.html
@@ -128,9 +127,6 @@ webkit.org/b/169811 fast/mediastream/captureStream/canvas2d.html [ Crash Timeout
 webkit.org/b/169811 fast/mediastream/captureStream/canvas3d.html [ Crash Timeout ]
 
 webkit.org/b/190576 fast/mediastream/get-user-media-device-id.html [ Failure ]
-
-# No support for GPUProcess yet
-fast/mediastream/captureAudioInGPUProcess.html [ Skip ]
 
 # MediaRecorder is not currently implemented
 http/wpt/mediarecorder [ Skip ]
@@ -523,9 +519,6 @@ webkit.org/b/39160 security/block-test-no-port.html [ Failure ]
 
 webkit.org/b/153707 imported/w3c/web-platform-tests/dom/events/EventTarget-dispatchEvent.html [ Failure ]
 
-webkit.org/b/177633 editing/async-clipboard/clipboard-change-data-while-writing.html [ Failure ]
-webkit.org/b/177633 editing/async-clipboard/clipboard-read-text-from-platform.html [ Failure ]
-
 webkit.org/b/184504 imported/w3c/web-platform-tests/fetch/api/request/request-keepalive-quota.html [ Failure ]
 
 webkit.org/b/190991 fast/dom/navigator-detached-no-crash.html [ Failure ]
@@ -735,8 +728,6 @@ webkit.org/b/138676 imported/w3c/canvas/2d.line.cap.round.html [ Pass ]
 
 webkit.org/b/136754 css3/flexbox/csswg/flexbox_flex-natural-mixed-basis-auto.html [ Pass ]
 
-imported/w3c/web-platform-tests/cors/preflight-failure.htm [ Pass ]
-
 imported/w3c/web-platform-tests/css/css-pseudo/first-letter-002.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-pseudo/first-letter-003.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-ui/text-overflow-005.html [ Pass ]
@@ -788,7 +779,6 @@ imported/w3c/web-platform-tests/css/css-text/text-align/text-align-start-015.htm
 imported/w3c/web-platform-tests/css/css-text/text-align/text-align-start-016.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-text/text-align/text-align-start-017.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-text/white-space/pre-wrap-012.html [ Pass ]
-imported/w3c/web-platform-tests/css/css-text/white-space/pre-wrap-013.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-text/white-space/trailing-space-before-br-001.html [ Pass ]
 
 # Font variations
@@ -868,6 +858,7 @@ webkit.org/b/204112 editing/async-clipboard/clipboard-change-data-while-reading.
 webkit.org/b/204112 editing/async-clipboard/clipboard-get-type-with-old-items.html [ Crash ]
 webkit.org/b/204112 editing/async-clipboard/clipboard-read-text-from-platform.html [ Crash ]
 webkit.org/b/204112 editing/async-clipboard/clipboard-change-data-while-writing.html [ Crash ]
+
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # 6. FLAKY TESTS
@@ -972,8 +963,6 @@ webkit.org/b/188055 svg/filters/hidpi/fePointLight-coordinates.svg [ Timeout Pas
 webkit.org/b/180932 [ Debug ] imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements [ Pass Crash ]
 
 webkit.org/b/179611 imported/w3c/web-platform-tests/xhr/send-entity-body-document.htm [ Pass Failure ]
-webkit.org/b/179607 imported/w3c/web-platform-tests/xhr/access-control-and-redirects-async.htm [ Pass Failure ]
-webkit.org/b/179607 imported/w3c/web-platform-tests/xhr/access-control-and-redirects-async-same-origin.htm [ Pass Failure ]
 
 Bug(WPE) fast/doctypes/xhtml-with-xhtmlmp-doctype.xhtml [ Pass Failure ]
 Bug(WPE) fast/doctypes/xhtml-with-xhtmlmp12-doctype.xhtml [ Pass Failure ]
@@ -1148,7 +1137,6 @@ webkit.org/b/202736 http/tests/cache-storage/cache-persistency.https.html [ Fail
 webkit.org/b/202736 http/wpt/cache-storage/quota-third-party.https.html [ Failure Timeout Pass ]
 
 # Console log lines may appear in a different order so we silence them.
-imported/w3c/web-platform-tests/offscreen-canvas/convert-to-blob/offscreencanvas.convert.to.blob.w.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/offscreen-canvas/the-offscreen-canvas/offscreencanvas.transfer.to.imagebitmap.w.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/offscreen-canvas/the-offscreen-canvas/offscreencanvas.transferrable.w.html [ DumpJSConsoleLogInStdErr ]
 
@@ -1174,7 +1162,6 @@ webkit.org/b/205856 storage/indexeddb/IDBTransaction-page-cache.html [ Pass Time
 # This test is so slow that a Slow expectation is not enough to avoid flakiness.
 webkit.org/b/159754 workers/bomb.html [ Skip ]
 
-webkit.org/b/169917 webgl/1.0.3/conformance/glsl/misc/shader-uniform-packing-restrictions.html [ Slow ]
 webkit.org/b/169917 webgl/1.0.3/conformance/uniforms/gl-uniform-arrays.html [ Slow ]
 webkit.org/b/169917 webgl/1.0.3/conformance/uniforms/out-of-bounds-uniform-array-access.html [ Slow ]
 webkit.org/b/169917 webgl/1.0.3/conformance/glsl/bugs/temp-expressions-should-not-crash.html [ Slow ]
@@ -1218,13 +1205,7 @@ webkit.org/b/202736 storage/indexeddb/modern/new-database-after-user-delete.html
 
 webkit.org/b/175419 http/wpt/service-workers/service-worker-networkprocess-crash.html [ Timeout ]
 
-webkit.org/b/177633 editing/async-clipboard/clipboard-change-data-while-getting-type.html [ Timeout ]
-webkit.org/b/177633 editing/async-clipboard/clipboard-change-data-while-reading.html [ Timeout ]
-webkit.org/b/177633 editing/async-clipboard/clipboard-get-type-with-old-items.html [ Timeout ]
-
 webkit.org/b/191008 webanimations/accelerated-animation-suspension.html [ Timeout ]
-
-webkit.org/b/191009 webrtc/video-mute-vp8.html [ Timeout ]
 
 webkit.org/b/201268 accessibility/insert-newline.html [ Timeout ]
 
@@ -1628,7 +1609,6 @@ Bug(WPE) fast/dom/Element/getClientRects.html [ Failure ]
 Bug(WPE) fast/dom/HTMLDocument/hasFocus.html [ Failure ]
 webkit.org/b/78290 fast/dom/MutationObserver/end-of-task-delivery.html [ Failure ]
 Bug(WPE) fast/dom/Range/getClientRects.html [ Failure ]
-fast/dom/navigator-detached-no-crash.html [ DumpJSConsoleLogInStdErr ]
 webkit.org/b/189664 fast/events/dblclick-event-getModifierState.html [ Timeout ]
 
 Bug(WPE) storage/indexeddb/modern/date-basic-private.html [ Failure ]
@@ -1955,7 +1935,6 @@ webkit.org/b/192883 fast/cookies/cookie-averse-document.html [ Failure ]
 webkit.org/b/192883 fast/cookies/local-file-can-set-cookies.html [ Failure ]
 
 webkit.org/b/192886 fast/mediastream/media-stream-renders-first-frame.html [ Failure ]
-webkit.org/b/192888 fast/mediastream/resize-letterbox.html [ Failure ]
 webkit.org/b/192888 fast/mediastream/resize-trim.html [ Failure ]
 
 # No support for screen capture
@@ -2016,9 +1995,6 @@ webkit.org/b/195670 imported/w3c/web-platform-tests/html/semantics/embedded-cont
 webkit.org/b/195670 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/loading-the-media-resource/resource-selection-pointer-remove-source-after.html [ Failure ]
 webkit.org/b/195670 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/loading-the-media-resource/resource-selection-pointer-remove-source.html [ Failure ]
 webkit.org/b/195670 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/loading-the-media-resource/resource-selection-pointer-remove-text.html [ Failure ]
-
-webkit.org/b/195671 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe_sandbox_navigation_download_allow_downloads_without_user_activation.sub.tentative.html [ Failure ]
-webkit.org/b/195671 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe_sandbox_navigation_download_block_downloads_without_user_activation.sub.tentative.html [ Failure ]
 
 webkit.org/b/196195 inspector/console/console-screenshot.html [ Failure ]
 
