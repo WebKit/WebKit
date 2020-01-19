@@ -38,7 +38,7 @@ class BlockFormattingState : public FormattingState {
     WTF_MAKE_ISO_ALLOCATED(BlockFormattingState);
 public:
     BlockFormattingState(Ref<FloatingState>&&, LayoutState&);
-    virtual ~BlockFormattingState();
+    ~BlockFormattingState();
 
     void setPositiveAndNegativeVerticalMargin(const Box& layoutBox, PositiveAndNegativeVerticalMargin verticalMargin) { m_positiveAndNegativeVerticalMargin.set(&layoutBox, verticalMargin); }
     bool hasPositiveAndNegativeVerticalMargin(const Box& layoutBox) const { return m_positiveAndNegativeVerticalMargin.contains(&layoutBox); }

@@ -43,6 +43,9 @@ namespace Layout {
 
 class FormattingContext;
 class FormattingState;
+class BlockFormattingState;
+class InlineFormattingState;
+class TableFormattingState;
 
 class LayoutState : public CanMakeWeakPtr<LayoutState> {
     WTF_MAKE_ISO_ALLOCATED(LayoutState);
@@ -83,7 +86,11 @@ private:
     void setQuirksMode(QuirksMode quirksMode) { m_quirksMode = quirksMode; }
     Display::Box& ensureDisplayBoxForLayoutBoxSlow(const Box&);
 
-    HashMap<const Container*, std::unique_ptr<FormattingState>> m_formattingStates;
+    Vector<std::unique_ptr<InlineFormattingState>, 1> m_inlineFormattingStates;
+    Vector<std::unique_ptr<BlockFormattingState>, 1> m_blockFormattingStates;
+    Vector<std::unique_ptr<TableFormattingState>> m_tableFormattingStates;
+
+    HashMap<const Container*, FormattingState*> m_formattingStates;
 #ifndef NDEBUG
     HashSet<const FormattingContext*> m_formattingContextList;
 #endif

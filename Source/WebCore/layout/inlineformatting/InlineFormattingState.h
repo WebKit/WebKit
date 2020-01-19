@@ -42,7 +42,7 @@ class InlineFormattingState : public FormattingState {
     WTF_MAKE_ISO_ALLOCATED(InlineFormattingState);
 public:
     InlineFormattingState(Ref<FloatingState>&&, LayoutState&);
-    virtual ~InlineFormattingState();
+    ~InlineFormattingState();
 
     InlineItems& inlineItems() { return m_inlineItems; }
     const InlineItems& inlineItems() const { return m_inlineItems; }

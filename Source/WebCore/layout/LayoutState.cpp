@@ -106,14 +106,19 @@ FormattingState& LayoutState::createFormattingStateForFormattingRootIfNeeded(con
             // If the block container box that initiates this inline formatting context also establishes a block context, the floats outside of the formatting root
             // should not interfere with the content inside.
             // <div style="float: left"></div><div style="overflow: hidden"> <- is a non-intrusive float, because overflow: hidden triggers new block formatting context.</div>
-            if (formattingContextRoot.establishesBlockFormattingContext())
-                return makeUnique<InlineFormattingState>(FloatingState::create(*this, formattingContextRoot), *this);
+            if (formattingContextRoot.establishesBlockFormattingContext()) {
+                auto formattingState = makeUnique<InlineFormattingState>(FloatingState::create(*this, formattingContextRoot), *this);
+                m_inlineFormattingStates.append(WTFMove(formattingState));
+                return m_inlineFormattingStates.last().get();
+            }
 
             // Otherwise, the formatting context inherits the floats from the parent formatting context.
             // Find the formatting state in which this formatting root lives, not the one it creates and use its floating state.
             auto& parentFormattingState = createFormattingStateForFormattingRootIfNeeded(formattingContextRoot.formattingContextRoot()); 
             auto& parentFloatingState = parentFormattingState.floatingState();
-            return makeUnique<InlineFormattingState>(parentFloatingState, *this);
+            auto formattingState = makeUnique<InlineFormattingState>(parentFloatingState, *this);
+            m_inlineFormattingStates.append(WTFMove(formattingState));
+            return m_inlineFormattingStates.last().get();
         }).iterator->value;
     }
 
@@ -121,7 +126,9 @@ FormattingState& LayoutState::createFormattingStateForFormattingRootIfNeeded(con
         return *m_formattingStates.ensure(&formattingContextRoot, [&] {
 
             // Block formatting context always establishes a new floating state.
-            return makeUnique<BlockFormattingState>(FloatingState::create(*this, formattingContextRoot), *this);
+            auto formattingState = makeUnique<BlockFormattingState>(FloatingState::create(*this, formattingContextRoot), *this);
+            m_blockFormattingStates.append(WTFMove(formattingState));
+            return m_blockFormattingStates.last().get();
         }).iterator->value;
     }
 
@@ -129,7 +136,9 @@ FormattingState& LayoutState::createFormattingStateForFormattingRootIfNeeded(con
         return *m_formattingStates.ensure(&formattingContextRoot, [&] {
 
             // Table formatting context always establishes a new floating state -and it stays empty.
-            return makeUnique<TableFormattingState>(FloatingState::create(*this, formattingContextRoot), *this);
+            auto formattingState = makeUnique<TableFormattingState>(FloatingState::create(*this, formattingContextRoot), *this);
+            m_tableFormattingStates.append(WTFMove(formattingState));
+            return m_tableFormattingStates.last().get();
         }).iterator->value;
     }
 

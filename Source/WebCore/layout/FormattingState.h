@@ -42,8 +42,6 @@ enum class StyleDiff;
 class FormattingState {
     WTF_MAKE_ISO_ALLOCATED(FormattingState);
 public:
-    virtual ~FormattingState();
-
     FloatingState& floatingState() const { return m_floatingState; }
 
     void markNeedsLayout(const Box&, StyleDiff);
@@ -72,6 +70,7 @@ public:
 protected:
     enum class Type { Block, Inline, Table };
     FormattingState(Ref<FloatingState>&&, Type, LayoutState&);
+    ~FormattingState();
 
 private:
     LayoutState& m_layoutState;

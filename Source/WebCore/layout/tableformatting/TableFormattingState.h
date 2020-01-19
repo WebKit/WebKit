@@ -39,7 +39,7 @@ class TableFormattingState : public FormattingState {
     WTF_MAKE_ISO_ALLOCATED(TableFormattingState);
 public:
     TableFormattingState(Ref<FloatingState>&&, LayoutState&);
-    virtual ~TableFormattingState();
+    ~TableFormattingState();
 
     TableGrid& tableGrid() { return m_tableGrid; }
 
