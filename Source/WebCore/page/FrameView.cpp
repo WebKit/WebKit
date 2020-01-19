@@ -2279,7 +2279,7 @@ void FrameView::scrollElementToRect(const Element& element, const IntRect& rect)
     setScrollPosition(IntPoint(bounds.x() - centeringOffsetX - rect.x(), bounds.y() - centeringOffsetY - rect.y()));
 }
 
-void FrameView::setScrollPosition(const ScrollPosition& scrollPosition)
+void FrameView::setScrollPosition(const ScrollPosition& scrollPosition, bool animated)
 {
     LOG_WITH_STREAM(Scrolling, stream << "FrameView::setScrollPosition " << scrollPosition << " , clearing anchor");
 
@@ -2292,7 +2292,10 @@ void FrameView::setScrollPosition(const ScrollPosition& scrollPosition)
     Page* page = frame().page();
     if (page && page->isMonitoringWheelEvents())
         scrollAnimator().setWheelEventTestMonitor(page->wheelEventTestMonitor());
-    ScrollView::setScrollPosition(scrollPosition);
+    if (animated)
+        scrollToOffsetWithAnimation(scrollOffsetFromPosition(scrollPosition), currentScrollType());
+    else
+        ScrollView::setScrollPosition(scrollPosition);
 
     setCurrentScrollType(oldScrollType);
 }
@@ -3656,6 +3659,18 @@ void FrameView::scrollTo(const ScrollPosition& newPosition)
         scrollPositionChanged(oldPosition, scrollPosition());
 
     didChangeScrollOffset();
+}
+
+void FrameView::scrollToOffsetWithAnimation(const ScrollOffset& offset, ScrollType scrollType, ScrollClamping)
+{
+    auto previousScrollType = currentScrollType();
+    setCurrentScrollType(scrollType);
+
+    if (currentScrollBehaviorStatus() == ScrollBehaviorStatus::InNonNativeAnimation)
+        scrollAnimator().cancelAnimations();
+    if (offset != this->scrollOffset())
+        ScrollableArea::scrollToOffsetWithAnimation(offset);
+    setCurrentScrollType(previousScrollType);
 }
 
 float FrameView::adjustScrollStepForFixedContent(float step, ScrollbarOrientation orientation, ScrollGranularity granularity)

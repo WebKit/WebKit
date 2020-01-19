@@ -1650,7 +1650,7 @@ double DOMWindow::devicePixelRatio() const
 
 void DOMWindow::scrollBy(double x, double y) const
 {
-    scrollBy({ x, y });
+    scrollBy(ScrollToOptions(x, y));
 }
 
 void DOMWindow::scrollBy(const ScrollToOptions& options) const
@@ -1672,10 +1672,10 @@ void DOMWindow::scrollBy(const ScrollToOptions& options) const
 
 void DOMWindow::scrollTo(double x, double y, ScrollClamping clamping) const
 {
-    scrollTo({ x, y }, clamping);
+    scrollTo(ScrollToOptions(x, y), clamping);
 }
 
-void DOMWindow::scrollTo(const ScrollToOptions& options, ScrollClamping) const
+void DOMWindow::scrollTo(const ScrollToOptions& options, ScrollClamping clamping) const
 {
     if (!isCurrentlyDisplayedInFrame())
         return;
@@ -1688,12 +1688,22 @@ void DOMWindow::scrollTo(const ScrollToOptions& options, ScrollClamping) const
         view->contentsScrollPosition().x(), view->contentsScrollPosition().y()
     );
 
-    if (!scrollToOptions.left.value() && !scrollToOptions.top.value() && view->contentsScrollPosition() == IntPoint(0, 0))
+    // This is an optimization for the common case of scrolling to (0, 0) when the scroller is already at the origin.
+    // If an animated scroll is in progress, this optimization is skipped to ensure that the animated scroll is really stopped.
+    if (view->currentScrollBehaviorStatus() == ScrollBehaviorStatus::NotInAnimation && !scrollToOptions.left.value() && !scrollToOptions.top.value() && view->contentsScrollPosition() == IntPoint(0, 0))
         return;
 
     document()->updateLayoutIgnorePendingStylesheets();
 
     IntPoint layoutPos(view->mapFromCSSToLayoutUnits(scrollToOptions.left.value()), view->mapFromCSSToLayoutUnits(scrollToOptions.top.value()));
+
+    // FIXME: Should we use document()->scrollingElement()?
+    // See https://bugs.webkit.org/show_bug.cgi?id=205059
+    if (document()->documentElement() && useSmoothScrolling(scrollToOptions.behavior.valueOr(ScrollBehavior::Auto), *document()->documentElement())) {
+        view->scrollToOffsetWithAnimation(layoutPos, ScrollType::Programmatic, clamping);
+        return;
+    }
+
     view->setContentsScrollPosition(layoutPos);
 }
 
