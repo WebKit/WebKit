@@ -923,8 +923,10 @@ $(PROJECT_DIR)/page/ResizeObserver.idl
 $(PROJECT_DIR)/page/ResizeObserverCallback.idl
 $(PROJECT_DIR)/page/ResizeObserverEntry.idl
 $(PROJECT_DIR)/page/Screen.idl
+$(PROJECT_DIR)/page/ScrollBehavior.idl
 $(PROJECT_DIR)/page/ScrollIntoViewOptions.idl
 $(PROJECT_DIR)/page/ScrollLogicalPosition.idl
+$(PROJECT_DIR)/page/ScrollOptions.idl
 $(PROJECT_DIR)/page/ScrollToOptions.idl
 $(PROJECT_DIR)/page/Settings.yaml
 $(PROJECT_DIR)/page/ShareData.idl

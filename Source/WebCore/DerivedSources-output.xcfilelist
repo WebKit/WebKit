@@ -1737,10 +1737,14 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSScreen.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSScreen.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSScriptProcessorNode.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSScriptProcessorNode.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSScrollBehavior.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSScrollBehavior.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSScrollIntoViewOptions.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSScrollIntoViewOptions.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSScrollLogicalPosition.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSScrollLogicalPosition.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSScrollOptions.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSScrollOptions.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSScrollToOptions.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSScrollToOptions.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSSecurityPolicyViolationEvent.cpp
