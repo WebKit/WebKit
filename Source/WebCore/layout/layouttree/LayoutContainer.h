@@ -57,6 +57,7 @@ public:
 
     void setFirstChild(Box&);
     void setLastChild(Box&);
+    void appendChild(Box&);
 
 private:
     Box* m_firstChild { nullptr };

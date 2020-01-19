@@ -4814,6 +4814,7 @@
 		E3FA38641D71812D00AA5950 /* PendingScriptClient.h in Headers */ = {isa = PBXBuildFile; fileRef = E3FA38611D716E7600AA5950 /* PendingScriptClient.h */; };
 		E401C27517CE53EC00C41A35 /* ElementIteratorAssertions.h in Headers */ = {isa = PBXBuildFile; fileRef = E401C27417CE53EC00C41A35 /* ElementIteratorAssertions.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E401E0A41C3C0B8300F34D10 /* StyleChange.h in Headers */ = {isa = PBXBuildFile; fileRef = E401E0A31C3C0B8300F34D10 /* StyleChange.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		E418025523D4549B00FFB071 /* LayoutIntegrationBoxTree.h in Headers */ = {isa = PBXBuildFile; fileRef = E418025323D4549A00FFB071 /* LayoutIntegrationBoxTree.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E419041F1CC6486B00C35F5D /* FontSelectorClient.h in Headers */ = {isa = PBXBuildFile; fileRef = E419041E1CC6486B00C35F5D /* FontSelectorClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E42050172141901B0066EF3B /* ProcessWarming.h in Headers */ = {isa = PBXBuildFile; fileRef = E42050142141901A0066EF3B /* ProcessWarming.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E424A39E1330DF0100CF6DC9 /* LegacyTileGridTile.h in Headers */ = {isa = PBXBuildFile; fileRef = E424A39D1330DF0100CF6DC9 /* LegacyTileGridTile.h */; };
@@ -15188,6 +15189,8 @@
 		E401E0A31C3C0B8300F34D10 /* StyleChange.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StyleChange.h; sourceTree = "<group>"; };
 		E401E0A51C3C0CF700F34D10 /* StyleChange.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StyleChange.cpp; sourceTree = "<group>"; };
 		E406F3FB1198307D009D59D6 /* ColorData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ColorData.cpp; path = DerivedSources/WebCore/ColorData.cpp; sourceTree = BUILT_PRODUCTS_DIR; };
+		E418025323D4549A00FFB071 /* LayoutIntegrationBoxTree.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LayoutIntegrationBoxTree.h; sourceTree = "<group>"; };
+		E418025623D454B500FFB071 /* LayoutIntegrationBoxTree.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = LayoutIntegrationBoxTree.cpp; sourceTree = "<group>"; };
 		E419041E1CC6486B00C35F5D /* FontSelectorClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FontSelectorClient.h; sourceTree = "<group>"; };
 		E41EA038119836DB00710BC5 /* CSSPropertyNames.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CSSPropertyNames.cpp; path = DerivedSources/WebCore/CSSPropertyNames.cpp; sourceTree = BUILT_PRODUCTS_DIR; };
 		E41EA0391198374900710BC5 /* CSSValueKeywords.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CSSValueKeywords.cpp; path = DerivedSources/WebCore/CSSValueKeywords.cpp; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -27306,6 +27309,8 @@
 		E4FB4B1E2395356F003C336A /* integration */ = {
 			isa = PBXGroup;
 			children = (
+				E418025623D454B500FFB071 /* LayoutIntegrationBoxTree.cpp */,
+				E418025323D4549A00FFB071 /* LayoutIntegrationBoxTree.h */,
 				E4ABABDE2360893D00FA4345 /* LayoutIntegrationLineLayout.cpp */,
 				E4ABABDB236088FD00FA4345 /* LayoutIntegrationLineLayout.h */,
 			);
@@ -32045,6 +32050,7 @@
 				458FE40A1589DF0B005609E6 /* RenderSearchField.h in Headers */,
 				0F11A54F0F39233100C37884 /* RenderSelectionInfo.h in Headers */,
 				AB247A6D0AFD6383003FA5FD /* RenderSlider.h in Headers */,
+				E418025523D4549B00FFB071 /* LayoutIntegrationBoxTree.h in Headers */,
 				31955A88160D199200858025 /* RenderSnapshottedPlugIn.h in Headers */,
 				BC8C8FAE0DDCD31B00B592F4 /* RenderStyle.h in Headers */,
 				BC5EB6680E81CB7100B25965 /* RenderStyleConstants.h in Headers */,

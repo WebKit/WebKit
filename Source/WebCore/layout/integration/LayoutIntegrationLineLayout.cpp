@@ -52,8 +52,8 @@ namespace LayoutIntegration {
 
 LineLayout::LineLayout(const RenderBlockFlow& flow)
     : m_flow(flow)
+    , m_boxTree(flow)
 {
-    m_treeContent = Layout::TreeBuilder::buildLayoutTreeForIntegration(flow);
 }
 
 LineLayout::~LineLayout() = default;
@@ -96,7 +96,7 @@ void LineLayout::updateStyle()
 void LineLayout::layout()
 {
     if (!m_layoutState) {
-        m_layoutState.emplace(m_flow.document(), m_treeContent->rootLayoutBox());
+        m_layoutState.emplace(m_flow.document(), m_boxTree.rootLayoutBox());
         m_layoutState->setIsIntegratedRootBoxFirstChild(m_flow.parent()->firstChild() == &m_flow);
     }
 
@@ -176,7 +176,7 @@ LineLayoutTraversal::TextBoxIterator LineLayout::textBoxesFor(const RenderText& 
     auto* inlineContent = displayInlineContent();
     if (!inlineContent)
         return { };
-    auto* layoutBox = m_treeContent->layoutBoxForRenderer(renderText);
+    auto* layoutBox = m_boxTree.layoutBoxForRenderer(renderText);
     ASSERT(layoutBox);
 
     Optional<size_t> firstIndex;
@@ -201,7 +201,7 @@ LineLayoutTraversal::ElementBoxIterator LineLayout::elementBoxFor(const RenderLi
     auto* inlineContent = displayInlineContent();
     if (!inlineContent)
         return { };
-    auto* layoutBox = m_treeContent->layoutBoxForRenderer(renderLineBreak);
+    auto* layoutBox = m_boxTree.layoutBoxForRenderer(renderLineBreak);
     ASSERT(layoutBox);
 
     for (size_t i = 0; i < inlineContent->runs.size(); ++i) {
@@ -215,12 +215,12 @@ LineLayoutTraversal::ElementBoxIterator LineLayout::elementBoxFor(const RenderLi
 
 const Layout::Container& LineLayout::rootLayoutBox() const
 {
-    return m_treeContent->rootLayoutBox();
+    return m_boxTree.rootLayoutBox();
 }
 
 Layout::Container& LineLayout::rootLayoutBox()
 {
-    return m_treeContent->rootLayoutBox();
+    return m_boxTree.rootLayoutBox();
 }
 
 void LineLayout::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
@@ -314,7 +314,7 @@ bool LineLayout::hitTest(const HitTestRequest& request, HitTestResult& result, c
         if (style.visibility() != Visibility::Visible || style.pointerEvents() == PointerEvents::None)
             continue;
 
-        auto& renderer = const_cast<RenderObject&>(*m_treeContent->rendererForLayoutBox(run.layoutBox()));
+        auto& renderer = const_cast<RenderObject&>(*m_boxTree.rendererForLayoutBox(run.layoutBox()));
 
         renderer.updateHitTestResult(result, locationInContainer.point() - toLayoutSize(accumulatedOffset));
         if (result.addNodeToListBasedTestResult(renderer.node(), request, locationInContainer, runRect) == HitTestProgress::Stop)

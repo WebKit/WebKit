@@ -71,7 +71,7 @@ public:
 
     Box(Optional<ElementAttributes>, RenderStyle&&);
     Box(TextContext&&, RenderStyle&&);
-    virtual ~Box();
+    ~Box();
 
     bool establishesFormattingContext() const;
     bool establishesBlockFormattingContext() const;

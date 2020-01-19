@@ -27,6 +27,7 @@
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
+#include "LayoutContainer.h"
 #include <wtf/IsoMalloc.h>
 #include <wtf/WeakPtr.h>
 
@@ -41,8 +42,6 @@ class RenderView;
 
 namespace Layout {
 
-class Box;
-class Container;
 class LayoutState;
 
 class LayoutTreeContent : public CanMakeWeakPtr<LayoutTreeContent> {
@@ -55,7 +54,12 @@ public:
     Container& rootLayoutBox() { return *m_rootLayoutBox; }
     const RenderBox& rootRenderer() const { return m_rootRenderer; }
 
-    void addBox(std::unique_ptr<Box> box) { m_boxes.add(WTFMove(box)); }
+    void addBox(std::unique_ptr<Box> box)
+    {
+        ASSERT(!box->isContainer());
+        m_boxes.add(WTFMove(box));
+    }
+    void addContainer(std::unique_ptr<Container> container) { m_containers.add(WTFMove(container)); }
 
     Box* layoutBoxForRenderer(const RenderObject& renderer) { return m_renderObjectToLayoutBox.get(&renderer); }
     const Box* layoutBoxForRenderer(const RenderObject& renderer) const { return m_renderObjectToLayoutBox.get(&renderer); }
@@ -68,6 +72,7 @@ private:
     const RenderBox& m_rootRenderer;
     std::unique_ptr<Container> m_rootLayoutBox;
     HashSet<std::unique_ptr<Box>> m_boxes;
+    HashSet<std::unique_ptr<Container>> m_containers;
 
     HashMap<const RenderObject*, Box*> m_renderObjectToLayoutBox;
     HashMap<const Box*, const RenderObject*> m_layoutBoxToRenderObject;
@@ -76,7 +81,6 @@ private:
 class TreeBuilder {
 public:
     static std::unique_ptr<Layout::LayoutTreeContent> buildLayoutTree(const RenderView&);
-    static std::unique_ptr<Layout::LayoutTreeContent> buildLayoutTreeForIntegration(const RenderBlockFlow&);
 
 private:
     TreeBuilder(LayoutTreeContent&);
@@ -84,7 +88,11 @@ private:
     void buildTree();
     void buildSubTree(const RenderElement& parentRenderer, Container& parentContainer);
     void buildTableStructure(const RenderTable& tableRenderer, Container& tableWrapperBox);
-    std::unique_ptr<Box> createLayoutBox(const Container& parentContainer, const RenderObject& childRenderer);
+    Box* createLayoutBox(const Container& parentContainer, const RenderObject& childRenderer);
+
+    Box& createBox(Optional<Box::ElementAttributes>, RenderStyle&&);
+    Box& createTextBox(TextContext&&, RenderStyle&&);
+    Container& createContainer(Optional<Box::ElementAttributes>, RenderStyle&&);
 
     LayoutTreeContent& m_layoutTreeContent;
 };

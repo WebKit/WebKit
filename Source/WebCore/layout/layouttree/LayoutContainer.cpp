@@ -91,6 +91,19 @@ void Container::setLastChild(Box& childBox)
     m_lastChild = &childBox;
 }
 
+void Container::appendChild(Box& childBox)
+{
+    childBox.setParent(*this);
+
+    if (m_lastChild) {
+        m_lastChild->setNextSibling(childBox);
+        childBox.setPreviousSibling(*m_lastChild);
+    } else
+        m_firstChild = &childBox;
+
+    m_lastChild = &childBox;
+}
+
 }
 }
 #endif

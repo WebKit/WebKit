@@ -27,6 +27,7 @@
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
+#include "LayoutIntegrationBoxTree.h"
 #include "LayoutPoint.h"
 #include "LayoutState.h"
 #include "LineLayoutTraversal.h"
@@ -86,7 +87,7 @@ private:
     ShadowData* debugTextShadow();
 
     const RenderBlockFlow& m_flow;
-    std::unique_ptr<Layout::LayoutTreeContent> m_treeContent;
+    BoxTree m_boxTree;
     Optional<Layout::LayoutState> m_layoutState;
     LayoutUnit m_contentLogicalHeight;
 };

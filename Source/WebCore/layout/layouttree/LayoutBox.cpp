@@ -65,7 +65,8 @@ Box::Box(TextContext&& textContext, RenderStyle&& style)
 
 Box::~Box()
 {
-    removeRareData();
+    if (UNLIKELY(m_hasRareData))
+        removeRareData();
 }
 
 void Box::updateStyle(const RenderStyle& newStyle)

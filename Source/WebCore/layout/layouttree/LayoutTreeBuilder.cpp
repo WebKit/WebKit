@@ -132,22 +132,6 @@ std::unique_ptr<Layout::LayoutTreeContent> TreeBuilder::buildLayoutTree(const Re
     return layoutTreeContent;
 }
 
-std::unique_ptr<Layout::LayoutTreeContent> TreeBuilder::buildLayoutTreeForIntegration(const RenderBlockFlow& renderBlockFlow)
-{
-    PhaseScope scope(Phase::Type::TreeBuilding);
-
-    auto clonedStyle = RenderStyle::clone(renderBlockFlow.style());
-    clonedStyle.setDisplay(DisplayType::Block);
-
-    auto rootLayoutContainer = makeUnique<Container>(Box::ElementAttributes { Box::ElementType::GenericElement }, WTFMove(clonedStyle));
-    if (renderBlockFlow.isAnonymous())
-        rootLayoutContainer->setIsAnonymous();
-
-    auto layoutTreeContent = makeUnique<LayoutTreeContent>(renderBlockFlow, WTFMove(rootLayoutContainer));
-    TreeBuilder(*layoutTreeContent).buildTree();
-    return layoutTreeContent;
-}
-
 TreeBuilder::TreeBuilder(LayoutTreeContent& layoutTreeContent)
     : m_layoutTreeContent(layoutTreeContent)
 {
@@ -158,7 +142,31 @@ void TreeBuilder::buildTree()
     buildSubTree(m_layoutTreeContent.rootRenderer(), m_layoutTreeContent.rootLayoutBox());
 }
 
-std::unique_ptr<Box> TreeBuilder::createLayoutBox(const Container& parentContainer, const RenderObject& childRenderer)
+Box& TreeBuilder::createBox(Optional<Box::ElementAttributes> elementAttributes, RenderStyle&& style)
+{
+    auto newBox = makeUnique<Box>(elementAttributes, WTFMove(style));
+    auto& box = *newBox;
+    m_layoutTreeContent.addBox(WTFMove(newBox));
+    return box;
+}
+
+Box& TreeBuilder::createTextBox(TextContext&& textContent, RenderStyle&& style)
+{
+    auto newBox = makeUnique<Box>(WTFMove(textContent), WTFMove(style));
+    auto& box = *newBox;
+    m_layoutTreeContent.addBox(WTFMove(newBox));
+    return box;
+}
+
+Container& TreeBuilder::createContainer(Optional<Box::ElementAttributes> elementAttributes, RenderStyle&& style)
+{
+    auto newContainer = makeUnique<Container>(elementAttributes, WTFMove(style));
+    auto& container = *newContainer;
+    m_layoutTreeContent.addContainer(WTFMove(newContainer));
+    return container;
+}
+
+Box* TreeBuilder::createLayoutBox(const Container& parentContainer, const RenderObject& childRenderer)
 {
     auto elementAttributes = [] (const RenderElement& renderer) -> Optional<Box::ElementAttributes> {
         if (renderer.isDocumentElementRenderer())
@@ -178,16 +186,16 @@ std::unique_ptr<Box> TreeBuilder::createLayoutBox(const Container& parentContain
         return WTF::nullopt;
     };
 
-    std::unique_ptr<Box> childLayoutBox;
+    Box* childLayoutBox = nullptr;
     if (is<RenderText>(childRenderer)) {
         auto& textRenderer = downcast<RenderText>(childRenderer);
         // RenderText::text() has already applied text-transform and text-security properties.
         String text = textRenderer.text();
         auto textContent = TextContext { text, canUseSimplifiedTextMeasuring(text, parentContainer.style().fontCascade(), parentContainer.style().collapseWhiteSpace()) };
         if (parentContainer.style().display() == DisplayType::Inline)
-            childLayoutBox = makeUnique<Box>(WTFMove(textContent), RenderStyle::clone(parentContainer.style()));
+            childLayoutBox = &createTextBox(WTFMove(textContent), RenderStyle::clone(parentContainer.style()));
         else
-            childLayoutBox = makeUnique<Box>(WTFMove(textContent), RenderStyle::createAnonymousStyleWithDisplay(parentContainer.style(), DisplayType::Inline));
+            childLayoutBox = &createTextBox(WTFMove(textContent), RenderStyle::createAnonymousStyleWithDisplay(parentContainer.style(), DisplayType::Inline));
         childLayoutBox->setIsAnonymous();
     } else {
         auto& renderer = downcast<RenderElement>(childRenderer);
@@ -198,16 +206,16 @@ std::unique_ptr<Box> TreeBuilder::createLayoutBox(const Container& parentContain
         if (is<RenderLineBreak>(renderer)) {
             clonedStyle.setDisplay(DisplayType::Inline);
             clonedStyle.setFloating(Float::No);
-            childLayoutBox = makeUnique<Box>(elementAttributes(renderer), WTFMove(clonedStyle));
+            childLayoutBox = &createBox(elementAttributes(renderer), WTFMove(clonedStyle));
         } else if (is<RenderTable>(renderer)) {
             // Construct the principal table wrapper box (and not the table box itself).
-            childLayoutBox = makeUnique<Container>(Box::ElementAttributes { Box::ElementType::TableWrapperBox }, WTFMove(clonedStyle));
+            childLayoutBox = &createContainer(Box::ElementAttributes { Box::ElementType::TableWrapperBox }, WTFMove(clonedStyle));
             childLayoutBox->setIsAnonymous();
         } else if (is<RenderReplaced>(renderer)) {
             if (displayType == DisplayType::Block)
-                childLayoutBox = makeUnique<Box>(elementAttributes(renderer), WTFMove(clonedStyle));
+                childLayoutBox = &createBox(elementAttributes(renderer), WTFMove(clonedStyle));
             else
-                childLayoutBox = makeUnique<Box>(elementAttributes(renderer), WTFMove(clonedStyle));
+                childLayoutBox = &createBox(elementAttributes(renderer), WTFMove(clonedStyle));
             // FIXME: We don't yet support all replaced elements and this is temporary anyway.
             if (childLayoutBox->replaced())
                 childLayoutBox->replaced()->setIntrinsicSize(downcast<RenderReplaced>(renderer).intrinsicSize());
@@ -223,20 +231,20 @@ std::unique_ptr<Box> TreeBuilder::createLayoutBox(const Container& parentContain
                 if (auto offset = accumulatedOffsetForInFlowPositionedContinuation(downcast<RenderBox>(renderer))) {
                     clonedStyle.setTop({ offset->height(), Fixed });
                     clonedStyle.setLeft({ offset->width(), Fixed });
-                    childLayoutBox = makeUnique<Container>(elementAttributes(renderer), WTFMove(clonedStyle));
+                    childLayoutBox = &createContainer(elementAttributes(renderer), WTFMove(clonedStyle));
                 } else
-                    childLayoutBox = makeUnique<Container>(elementAttributes(renderer), WTFMove(clonedStyle));
+                    childLayoutBox = &createContainer(elementAttributes(renderer), WTFMove(clonedStyle));
             } else if (displayType == DisplayType::Inline)
-                childLayoutBox = makeUnique<Container>(elementAttributes(renderer), WTFMove(clonedStyle));
+                childLayoutBox = &createContainer(elementAttributes(renderer), WTFMove(clonedStyle));
             else if (displayType == DisplayType::InlineBlock)
-                childLayoutBox = makeUnique<Container>(elementAttributes(renderer), WTFMove(clonedStyle));
+                childLayoutBox = &createContainer(elementAttributes(renderer), WTFMove(clonedStyle));
             else if (displayType == DisplayType::TableCaption || displayType == DisplayType::TableCell) {
-                childLayoutBox = makeUnique<Container>(elementAttributes(renderer), WTFMove(clonedStyle));
+                childLayoutBox = &createContainer(elementAttributes(renderer), WTFMove(clonedStyle));
             } else if (displayType == DisplayType::TableRowGroup || displayType == DisplayType::TableHeaderGroup || displayType == DisplayType::TableFooterGroup
                 || displayType == DisplayType::TableRow || displayType == DisplayType::TableColumnGroup) {
-                childLayoutBox = makeUnique<Container>(elementAttributes(renderer), WTFMove(clonedStyle));
+                childLayoutBox = &createContainer(elementAttributes(renderer), WTFMove(clonedStyle));
             } else if (displayType == DisplayType::TableColumn) {
-                childLayoutBox = makeUnique<Container>(elementAttributes(renderer), WTFMove(clonedStyle));
+                childLayoutBox = &createContainer(elementAttributes(renderer), WTFMove(clonedStyle));
                 auto& tableColElement = static_cast<HTMLTableColElement&>(*renderer.element());
                 auto columnWidth = tableColElement.width();
                 if (!columnWidth.isEmpty())
@@ -245,7 +253,7 @@ std::unique_ptr<Box> TreeBuilder::createLayoutBox(const Container& parentContain
                     childLayoutBox->setColumnSpan(tableColElement.span());
             } else {
                 ASSERT_NOT_IMPLEMENTED_YET();
-                return { };
+                return nullptr;
             }
         }
 
@@ -273,39 +281,34 @@ void TreeBuilder::buildTableStructure(const RenderTable& tableRenderer, Containe
     auto* tableChild = tableRenderer.firstChild();
     while (is<RenderTableCaption>(tableChild)) {
         auto& captionRenderer = *tableChild;
-        auto captionBox = createLayoutBox(tableWrapperBox, captionRenderer);
+        auto* captionBox = createLayoutBox(tableWrapperBox, captionRenderer);
         appendChild(tableWrapperBox, *captionBox);
         auto& captionContainer = downcast<Container>(*captionBox);
         buildSubTree(downcast<RenderElement>(captionRenderer), captionContainer);
-        m_layoutTreeContent.addBox(WTFMove(captionBox));
         tableChild = tableChild->nextSibling();
     }
 
-    auto tableBox = makeUnique<Container>(Box::ElementAttributes { Box::ElementType::TableBox }, RenderStyle::clone(tableRenderer.style()));
-    appendChild(tableWrapperBox, *tableBox);
+    auto& tableBox = createContainer(Box::ElementAttributes { Box::ElementType::TableBox }, RenderStyle::clone(tableRenderer.style()));
+    appendChild(tableWrapperBox, tableBox);
     auto* sectionRenderer = tableChild;
     while (sectionRenderer) {
-        auto sectionBox = createLayoutBox(*tableBox, *sectionRenderer);
-        appendChild(*tableBox, *sectionBox);
+        auto* sectionBox = createLayoutBox(tableBox, *sectionRenderer);
+        appendChild(tableBox, *sectionBox);
         auto& sectionContainer = downcast<Container>(*sectionBox);
         buildSubTree(downcast<RenderElement>(*sectionRenderer), sectionContainer);
-        m_layoutTreeContent.addBox(WTFMove(sectionBox));
         sectionRenderer = sectionRenderer->nextSibling();
     }
-    m_layoutTreeContent.addBox(WTFMove(tableBox));
 }
 
 void TreeBuilder::buildSubTree(const RenderElement& parentRenderer, Container& parentContainer)
 {
     for (auto& childRenderer : childrenOfType<RenderObject>(parentRenderer)) {
-        auto childLayoutBox = createLayoutBox(parentContainer, childRenderer);
+        auto* childLayoutBox = createLayoutBox(parentContainer, childRenderer);
         appendChild(parentContainer, *childLayoutBox);
         if (childLayoutBox->isTableWrapperBox())
             buildTableStructure(downcast<RenderTable>(childRenderer), downcast<Container>(*childLayoutBox));
         else if (is<Container>(*childLayoutBox))
             buildSubTree(downcast<RenderElement>(childRenderer), downcast<Container>(*childLayoutBox));
-
-        m_layoutTreeContent.addBox(WTFMove(childLayoutBox));
     }
 }
 
