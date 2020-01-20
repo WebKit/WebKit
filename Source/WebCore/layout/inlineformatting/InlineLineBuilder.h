@@ -61,6 +61,7 @@ public:
 
     void initialize(const Constraints&);
     void append(const InlineItem&, InlineLayoutUnit logicalWidth);
+    void resetContent();
     bool isVisuallyEmpty() const { return m_lineBox.isConsideredEmpty(); }
     bool hasIntrusiveFloat() const { return m_hasIntrusiveFloat; }
     InlineLayoutUnit availableWidth() const { return logicalWidth() - contentLogicalWidth(); }

@@ -96,6 +96,13 @@ void LineBuilder::initialize(const Constraints& constraints)
     m_lineLogicalWidth = constraints.availableLogicalWidth;
     m_hasIntrusiveFloat = constraints.lineIsConstrainedByFloat;
 
+    resetContent();
+}
+
+void LineBuilder::resetContent()
+{
+    m_lineBox.setLogicalWidth({ });
+    m_lineBox.setIsConsideredEmpty();
     m_runs.clear();
     m_trimmableTrailingContent.reset();
     m_lineIsVisuallyEmptyBeforeTrimmableTrailingContent = { };
@@ -755,7 +762,7 @@ LineBuilder::Run::Run(const InlineTextItem& inlineTextItem, InlineLayoutUnit log
     , m_textContext({ inlineTextItem.start(), m_trailingWhitespaceType == TrailingWhitespace::Collapsed ? 1 : inlineTextItem.length(), inlineTextItem.layoutBox().textContext()->content })
 {
     if (m_trailingWhitespaceType != TrailingWhitespace::None) {
-        m_trailingWhitespaceWidth = logicalWidth; 
+        m_trailingWhitespaceWidth = logicalWidth;
         m_textContext->setExpansion({ ExpansionBehavior(DefaultExpansion), { } });
         if (!isWhitespacePreserved(inlineTextItem.style()))
             m_expansionOpportunityCount = 1;

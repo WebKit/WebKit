@@ -287,7 +287,7 @@ LineLayoutContext::LineContent LineLayoutContext::layoutLine(LineBuilder& line, 
                 ASSERT(!result.committedCount);
                 ASSERT(result.isEndOfLine == LineBreaker::IsEndOfLine::Yes);
                 // An earlier line wrapping opportunity turned out to be the final breaking position.
-                ASSERT_NOT_IMPLEMENTED_YET();
+                rebuildLineForRevert(line, *result.revertTo, leadingInlineItemIndex);
             }
             committedInlineItemCount += result.committedCount;
             if (result.isEndOfLine == LineBreaker::IsEndOfLine::Yes) {
@@ -475,6 +475,31 @@ void LineLayoutContext::commitPartialContent(LineBuilder& line, const LineBreake
             return;
         }
         line.append(run.inlineItem, run.logicalWidth);
+    }
+}
+
+void LineLayoutContext::rebuildLineForRevert(LineBuilder& line, const InlineItem& revertTo, unsigned leadingInlineItemIndex)
+{
+    // This is the rare case when the line needs to be reverted to an earlier position.
+    line.resetContent();
+    auto inlineItemIndex = leadingInlineItemIndex;
+    InlineLayoutUnit logicalRight = { };
+    if (m_partialLeadingTextItem) {
+        auto logicalWidth = inlineItemWidth(*m_partialLeadingTextItem, logicalRight);
+        line.append(*m_partialLeadingTextItem, logicalWidth);
+        logicalRight += logicalWidth;
+        if (&revertTo == &m_partialLeadingTextItem.value())
+            return;
+        ++inlineItemIndex;
+    }
+
+    for (; inlineItemIndex < m_inlineItems.size(); ++inlineItemIndex) {
+        auto& inlineItem = m_inlineItems[inlineItemIndex];
+        auto logicalWidth = inlineItemWidth(inlineItem, logicalRight);
+        line.append(inlineItem, logicalWidth);
+        logicalRight += logicalWidth;
+        if (&inlineItem == &revertTo)
+            break;
     }
 }
 
