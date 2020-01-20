@@ -145,6 +145,8 @@ UIProcess/API/glib/WebKitNetworkProxySettings.cpp @no-unify
 UIProcess/API/glib/WebKitNotification.cpp @no-unify
 UIProcess/API/glib/WebKitNotificationPermissionRequest.cpp @no-unify
 UIProcess/API/glib/WebKitNotificationProvider.cpp @no-unify
+UIProcess/API/glib/WebKitOptionMenu.cpp @no-unify
+UIProcess/API/glib/WebKitOptionMenuItem.cpp @no-unify
 UIProcess/API/glib/WebKitPermissionRequest.cpp @no-unify
 UIProcess/API/glib/WebKitPlugin.cpp @no-unify
 UIProcess/API/glib/WebKitPolicyDecision.cpp @no-unify
@@ -177,6 +179,7 @@ UIProcess/API/wpe/PageClientImpl.cpp @no-unify
 UIProcess/API/wpe/ScrollGestureController.cpp @no-unify
 UIProcess/API/wpe/WebKitColor.cpp @no-unify
 UIProcess/API/wpe/WebKitInputMethodContextWPE.cpp @no-unify
+UIProcess/API/wpe/WebKitPopupMenu.cpp @no-unify
 UIProcess/API/wpe/WebKitScriptDialogWPE.cpp @no-unify
 UIProcess/API/wpe/WebKitWebViewBackend.cpp @no-unify
 UIProcess/API/wpe/WebKitWebViewWPE.cpp @no-unify

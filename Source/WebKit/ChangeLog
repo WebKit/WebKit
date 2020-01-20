@@ -1,3 +1,63 @@
+2020-01-20  Zan Dobersek  <zdobersek@igalia.com>
+
+        [WPE] Expose the WebKitOptionMenu APIs
+        https://bugs.webkit.org/show_bug.cgi?id=206287
+
+        Reviewed by Carlos Garcia Campos.
+
+        Enable the GLib-based API covering option menu functionality for WPE.
+
+        Most of this can be shared with the GTK port. The only difference is in
+        the two additional parameters emitted on the WebKitWebView's "show-menu"
+        signal (GdkEvent and GdkRectangle) that WPE doesn't support at the
+        moment. The rectangle information will be possible to emit in the near
+        future once a usable API type is available for this information.
+
+        The WebKitPopupMenu implementation for WPE would only work with the
+        GLib-based API. To avoid using it with other APIs, this is implemented
+        only on the WebKitWebViewClient interface (renamed from 'WebViewClient'
+        and its declaration moved into a separate header file) inheriting from
+        API::ViewClient.
+
+        The relevant API test is enabled for WPE.
+
+        * PlatformWPE.cmake:
+        * SourcesWPE.txt:
+        * UIProcess/API/glib/WebKitWebView.cpp:
+        (WebKitWebViewClient::WebKitWebViewClient):
+        (WebKitWebViewClient::showOptionMenu):
+        (WebKitWebViewClient::handleDownloadRequest):
+        (WebKitWebViewClient::frameDisplayed):
+        (WebKitWebViewClient::willStartLoad):
+        (WebKitWebViewClient::didChangePageID):
+        (WebKitWebViewClient::didReceiveUserMessage):
+        (webkitWebViewConstructed):
+        (webkit_web_view_class_init):
+        (webkitWebViewShowOptionMenu):
+        * UIProcess/API/glib/WebKitWebViewPrivate.h:
+        * UIProcess/API/wpe/APIViewClient.h:
+        (API::ViewClient::isGLibBasedAPI):
+        * UIProcess/API/wpe/PageClientImpl.cpp:
+        (WebKit::PageClientImpl::createPopupMenuProxy):
+        * UIProcess/API/wpe/WPEView.h:
+        (WKWPE::View::client const):
+        * UIProcess/API/wpe/WebKitOptionMenu.h: Added.
+        * UIProcess/API/wpe/WebKitOptionMenuItem.h: Added.
+        * UIProcess/API/wpe/WebKitPopupMenu.cpp: Added.
+        (WebKit::WebKitPopupMenu::create):
+        (WebKit::WebKitPopupMenu::WebKitPopupMenu):
+        (WebKit::menuCloseCallback):
+        (WebKit::WebKitPopupMenu::showPopupMenu):
+        (WebKit::WebKitPopupMenu::hidePopupMenu):
+        (WebKit::WebKitPopupMenu::cancelTracking):
+        (WebKit::WebKitPopupMenu::selectItem):
+        (WebKit::WebKitPopupMenu::activateItem):
+        * UIProcess/API/wpe/WebKitPopupMenu.h: Added.
+        * UIProcess/API/wpe/WebKitWebView.h:
+        * UIProcess/API/wpe/WebKitWebViewClient.h: Added.
+        * UIProcess/API/wpe/docs/wpe-1.0-sections.txt:
+        * UIProcess/API/wpe/webkit.h:
+
 2020-01-20  youenn fablet  <youenn@apple.com>
 
         Add support for MediaStream video track rendering in GPUProcess

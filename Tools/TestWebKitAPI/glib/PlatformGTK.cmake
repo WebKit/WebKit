@@ -41,7 +41,6 @@ ADD_WK2_TEST(TestDOMNodeFilter ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKitGtk/TestDO
 ADD_WK2_TEST(TestDOMXPathNSResolver ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKitGtk/TestDOMXPathNSResolver.cpp)
 ADD_WK2_TEST(TestInspector ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKitGtk/TestInspector.cpp)
 ADD_WK2_TEST(TestInspectorServer ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKitGtk/TestInspectorServer.cpp)
-ADD_WK2_TEST(TestOptionMenu ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKitGtk/TestOptionMenu.cpp)
 ADD_WK2_TEST(TestPrinting ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKitGtk/TestPrinting.cpp)
 ADD_WK2_TEST(TestWebKitFaviconDatabase ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKitGLib/TestWebKitFaviconDatabase.cpp)
 ADD_WK2_TEST(TestWebKitVersion ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKitGtk/TestWebKitVersion.cpp)

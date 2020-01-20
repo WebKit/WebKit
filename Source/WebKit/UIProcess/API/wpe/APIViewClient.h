@@ -45,6 +45,8 @@ class ViewClient {
 public:
     virtual ~ViewClient() = default;
 
+    virtual bool isGLibBasedAPI() { return false; }
+
     virtual void frameDisplayed(WKWPE::View&) { }
     virtual void handleDownloadRequest(WKWPE::View&, WebKit::DownloadProxy&) { }
     virtual void willStartLoad(WKWPE::View&) { }

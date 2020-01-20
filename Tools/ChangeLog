@@ -1,3 +1,31 @@
+2020-01-20  Zan Dobersek  <zdobersek@igalia.com>
+
+        [WPE] Expose the WebKitOptionMenu APIs
+        https://bugs.webkit.org/show_bug.cgi?id=206287
+
+        Move TestOptionMenu under the WebKitGLib directory, adding the
+        appropriate adjustments for the WPE variant of the API
+
+        * TestWebKitAPI/Tests/WebKitGLib/TestOptionMenu.cpp: Renamed from Tools/TestWebKitAPI/Tests/WebKitGtk/TestOptionMenu.cpp.
+        (OptionMenuTest::OptionMenuTest):
+        (OptionMenuTest::~OptionMenuTest):
+        (OptionMenuTest::destroyMenu):
+        (OptionMenuTest::showOptionMenuCallback):
+        (OptionMenuTest::menuCloseCallback):
+        (OptionMenuTest::showOptionMenu):
+        (OptionMenuTest::clickAtPositionAndWaitUntilOptionMenuShown):
+        (OptionMenuTest::close):
+        (OptionMenuTest::activateItem):
+        (OptionMenuTest::selectItem):
+        (testOptionMenuSimple):
+        (testOptionMenuGroups):
+        (testOptionMenuActivate):
+        (testOptionMenuSelect):
+        (beforeAll):
+        (afterAll):
+        * TestWebKitAPI/glib/CMakeLists.txt:
+        * TestWebKitAPI/glib/PlatformGTK.cmake:
+
 2020-01-20  Rob Buis  <rbuis@igalia.com>
 
         Make isValidUserAgentHeaderValue GLib only

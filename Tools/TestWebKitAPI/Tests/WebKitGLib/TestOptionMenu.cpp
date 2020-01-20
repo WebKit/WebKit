@@ -47,6 +47,7 @@ public:
         m_menu = nullptr;
     }
 
+#if PLATFORM(GTK)
     static gboolean showOptionMenuCallback(WebKitWebView* webView, WebKitOptionMenu* menu, GdkEvent* event, GdkRectangle* rect, OptionMenuTest* test)
     {
         g_assert_true(test->m_webView == webView);
@@ -56,6 +57,16 @@ public:
         test->showOptionMenu(menu, rect);
         return TRUE;
     }
+#elif PLATFORM(WPE)
+    static gboolean showOptionMenuCallback(WebKitWebView* webView, WebKitOptionMenu* menu, gpointer*, OptionMenuTest* test)
+    {
+        g_assert_true(test->m_webView == webView);
+        g_assert_true(WEBKIT_IS_OPTION_MENU(menu));
+        test->assertObjectIsDeletedWhenTestFinishes(G_OBJECT(menu));
+        test->showOptionMenu(menu);
+        return TRUE;
+    }
+#endif
 
     static void menuCloseCallback(WebKitOptionMenu* menu, OptionMenuTest* test)
     {
@@ -63,6 +74,7 @@ public:
         test->destroyMenu();
     }
 
+#if PLATFORM(GTK)
     void showOptionMenu(WebKitOptionMenu* menu, GdkRectangle* rect)
     {
         m_rectangle = *rect;
@@ -70,6 +82,14 @@ public:
         g_signal_connect(m_menu.get(), "close", G_CALLBACK(menuCloseCallback), this);
         g_main_loop_quit(m_mainLoop);
     }
+#elif PLATFORM(WPE)
+    void showOptionMenu(WebKitOptionMenu* menu)
+    {
+        m_menu = menu;
+        g_signal_connect(m_menu.get(), "close", G_CALLBACK(menuCloseCallback), this);
+        g_main_loop_quit(m_mainLoop);
+    }
+#endif
 
     void clickAtPositionAndWaitUntilOptionMenuShown(int x, int y)
     {
@@ -100,7 +120,9 @@ public:
     }
 
     GRefPtr<WebKitOptionMenu> m_menu;
+#if PLATFORM(GTK)
     GdkRectangle m_rectangle;
+#endif
 };
 
 static void testOptionMenuSimple(OptionMenuTest* test, gconstpointer)

@@ -41,6 +41,7 @@
 #include <wpe/WebKitJavascriptResult.h>
 #include <wpe/WebKitNavigationAction.h>
 #include <wpe/WebKitNotification.h>
+#include <wpe/WebKitOptionMenu.h>
 #include <wpe/WebKitPermissionRequest.h>
 #include <wpe/WebKitPolicyDecision.h>
 #include <wpe/WebKitScriptDialog.h>
@@ -245,7 +246,9 @@ struct _WebKitWebViewClass {
                                                     WebKitWebProcessTerminationReason reason);
     gboolean       (* user_message_received)       (WebKitWebView               *web_view,
                                                     WebKitUserMessage           *message);
-
+    gboolean       (* show_option_menu)            (WebKitWebView               *web_view,
+                                                    WebKitOptionMenu            *menu,
+                                                    gpointer                    *rectangle);
 
     void (*_webkit_reserved0) (void);
     void (*_webkit_reserved1) (void);
@@ -253,7 +256,6 @@ struct _WebKitWebViewClass {
     void (*_webkit_reserved3) (void);
     void (*_webkit_reserved4) (void);
     void (*_webkit_reserved5) (void);
-    void (*_webkit_reserved6) (void);
 };
 
 WEBKIT_API GType

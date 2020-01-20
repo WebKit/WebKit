@@ -100,6 +100,10 @@ bool webkitWebViewEmitRunColorChooser(WebKitWebView*, WebKitColorChooserRequest*
 bool webkitWebViewShowOptionMenu(WebKitWebView*, const WebCore::IntRect&, WebKitOptionMenu*, const GdkEvent*);
 #endif
 
+#if PLATFORM(WPE)
+bool webkitWebViewShowOptionMenu(WebKitWebView*, WebKitOptionMenu*);
+#endif
+
 gboolean webkitWebViewAuthenticate(WebKitWebView*, WebKitAuthenticationRequest*);
 gboolean webkitWebViewScriptDialog(WebKitWebView*, WebKitScriptDialog*);
 gboolean webkitWebViewRunFileChooser(WebKitWebView*, WebKitFileChooserRequest*);
