@@ -57,6 +57,9 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/LibWebRTCCodecsProxyMessagesReplies
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/LibWebRTCRemoteCodecsMessageReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/LibWebRTCRemoteCodecsMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/LibWebRTCRemoteCodecsMessagesReplies.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/MediaPlayerPrivateRemoteMessageReceiver.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/MediaPlayerPrivateRemoteMessages.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/MediaPlayerPrivateRemoteMessagesReplies.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/NPObjectMessageReceiverMessageReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/NPObjectMessageReceiverMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/NPObjectMessageReceiverMessagesReplies.h

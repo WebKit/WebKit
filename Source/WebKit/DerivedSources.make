@@ -119,6 +119,7 @@ MESSAGE_RECEIVERS = \
     LegacyCustomProtocolManagerProxy \
     LibWebRTCCodecs \
     LibWebRTCCodecsProxy \
+    MediaPlayerPrivateRemote \
     NPObjectMessageReceiver \
     NetworkConnectionToWebProcess \
     NetworkContentRuleListManager \

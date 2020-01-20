@@ -910,13 +910,16 @@ bool MediaPlayerPrivateRemote::performTaskAtMediaTime(WTF::Function<void()>&&, M
     return false;
 }
 
-void MediaPlayerPrivateRemote::requestResource(RemoteMediaResourceIdentifier remoteMediaResourceIdentifier, WebCore::ResourceRequest&& request, WebCore::PlatformMediaResourceLoader::LoadOptions options)
+void MediaPlayerPrivateRemote::requestResource(RemoteMediaResourceIdentifier remoteMediaResourceIdentifier, WebCore::ResourceRequest&& request, WebCore::PlatformMediaResourceLoader::LoadOptions options, CompletionHandler<void()>&& completionHandler)
 {
     ASSERT(!m_mediaResources.contains(remoteMediaResourceIdentifier));
     auto resource = m_mediaResourceLoader->requestResource(WTFMove(request), options);
+
     // PlatformMediaResource owns the PlatformMediaResourceClient
     resource->setClient(makeUnique<RemoteMediaResourceProxy>(connection(), *resource, remoteMediaResourceIdentifier));
     m_mediaResources.add(remoteMediaResourceIdentifier, WTFMove(resource));
+
+    completionHandler();
 }
 
 void MediaPlayerPrivateRemote::removeResource(RemoteMediaResourceIdentifier remoteMediaResourceIdentifier)

@@ -33,7 +33,6 @@
 #include "RemoteAudioMediaStreamTrackRenderer.h"
 #include "RemoteMediaPlayerConfiguration.h"
 #include "RemoteMediaPlayerMIMETypeCache.h"
-#include "RemoteMediaPlayerManagerMessages.h"
 #include "RemoteMediaPlayerManagerProxyMessages.h"
 #include "RemoteMediaPlayerProxyConfiguration.h"
 #include "WebCoreArgumentCoders.h"
@@ -239,126 +238,10 @@ void RemoteMediaPlayerManager::clearMediaCacheForOrigins(MediaPlayerEnums::Media
     gpuProcessConnection().connection().send(Messages::RemoteMediaPlayerManagerProxy::ClearMediaCacheForOrigins(remoteEngineIdentifier, path, originData), 0);
 }
 
-void RemoteMediaPlayerManager::networkStateChanged(MediaPlayerPrivateRemoteIdentifier id, RemoteMediaPlayerState&& state)
+void RemoteMediaPlayerManager::didReceivePlayerMessage(IPC::Connection& connection, IPC::Decoder& decoder)
 {
-    if (const auto& player = m_players.get(id))
-        player->networkStateChanged(WTFMove(state));
-}
-
-void RemoteMediaPlayerManager::readyStateChanged(MediaPlayerPrivateRemoteIdentifier id, RemoteMediaPlayerState&& state)
-{
-    if (const auto& player = m_players.get(id))
-        player->readyStateChanged(WTFMove(state));
-}
-
-void RemoteMediaPlayerManager::volumeChanged(MediaPlayerPrivateRemoteIdentifier id, double volume)
-{
-    if (const auto& player = m_players.get(id))
-        player->volumeChanged(volume);
-}
-
-void RemoteMediaPlayerManager::muteChanged(MediaPlayerPrivateRemoteIdentifier id, bool mute)
-{
-    if (const auto& player = m_players.get(id))
-        player->muteChanged(mute);
-}
-
-void RemoteMediaPlayerManager::timeChanged(MediaPlayerPrivateRemoteIdentifier id, RemoteMediaPlayerState&& state)
-{
-    if (const auto& player = m_players.get(id))
-        player->timeChanged(WTFMove(state));
-}
-
-void RemoteMediaPlayerManager::durationChanged(MediaPlayerPrivateRemoteIdentifier id, RemoteMediaPlayerState&& state)
-{
-    if (const auto& player = m_players.get(id))
-        player->durationChanged(WTFMove(state));
-}
-
-void RemoteMediaPlayerManager::rateChanged(MediaPlayerPrivateRemoteIdentifier id, double rate)
-{
-    if (const auto& player = m_players.get(id))
-        player->rateChanged(rate);
-}
-
-void RemoteMediaPlayerManager::playbackStateChanged(MediaPlayerPrivateRemoteIdentifier id, bool paused)
-{
-    if (const auto& player = m_players.get(id))
-        player->playbackStateChanged(paused);
-}
-
-void RemoteMediaPlayerManager::engineFailedToLoad(MediaPlayerPrivateRemoteIdentifier id, long platformErrorCode)
-{
-    if (const auto& player = m_players.get(id))
-        player->engineFailedToLoad(platformErrorCode);
-}
-
-void RemoteMediaPlayerManager::characteristicChanged(MediaPlayerPrivateRemoteIdentifier id, bool hasAudio, bool hasVideo, WebCore::MediaPlayerEnums::MovieLoadType loadType)
-{
-    if (const auto& player = m_players.get(id))
-        player->characteristicChanged(hasAudio, hasVideo, loadType);
-}
-
-void RemoteMediaPlayerManager::sizeChanged(MediaPlayerPrivateRemoteIdentifier id, WebCore::FloatSize naturalSize)
-{
-    if (const auto& player = m_players.get(id))
-        player->sizeChanged(naturalSize);
-}
-
-void RemoteMediaPlayerManager::addRemoteAudioTrack(MediaPlayerPrivateRemoteIdentifier playerID, TrackPrivateRemoteIdentifier trackID, TrackPrivateRemoteConfiguration&& configuration)
-{
-    if (const auto& player = m_players.get(playerID))
-        player->addRemoteAudioTrack(trackID, WTFMove(configuration));
-}
-
-void RemoteMediaPlayerManager::removeRemoteAudioTrack(MediaPlayerPrivateRemoteIdentifier playerID, TrackPrivateRemoteIdentifier trackID)
-{
-    if (const auto& player = m_players.get(playerID))
-        player->removeRemoteAudioTrack(trackID);
-}
-
-void RemoteMediaPlayerManager::remoteAudioTrackConfigurationChanged(MediaPlayerPrivateRemoteIdentifier playerID, TrackPrivateRemoteIdentifier trackID, TrackPrivateRemoteConfiguration&& configuration)
-{
-    if (const auto& player = m_players.get(playerID))
-        player->remoteAudioTrackConfigurationChanged(trackID, WTFMove(configuration));
-}
-
-void RemoteMediaPlayerManager::addRemoteVideoTrack(MediaPlayerPrivateRemoteIdentifier playerID, TrackPrivateRemoteIdentifier trackID, TrackPrivateRemoteConfiguration&& configuration)
-{
-    if (const auto& player = m_players.get(playerID))
-        player->addRemoteVideoTrack(trackID, WTFMove(configuration));
-}
-
-void RemoteMediaPlayerManager::removeRemoteVideoTrack(MediaPlayerPrivateRemoteIdentifier playerID, TrackPrivateRemoteIdentifier trackID)
-{
-    if (const auto& player = m_players.get(playerID))
-        player->removeRemoteVideoTrack(trackID);
-}
-
-void RemoteMediaPlayerManager::remoteVideoTrackConfigurationChanged(MediaPlayerPrivateRemoteIdentifier playerID, TrackPrivateRemoteIdentifier trackID, TrackPrivateRemoteConfiguration&& configuration)
-{
-    if (const auto& player = m_players.get(playerID))
-        player->remoteVideoTrackConfigurationChanged(trackID, WTFMove(configuration));
-}
-
-void RemoteMediaPlayerManager::firstVideoFrameAvailable(WebKit::MediaPlayerPrivateRemoteIdentifier id)
-{
-    if (const auto& player = m_players.get(id))
-        player->firstVideoFrameAvailable();
-}
-
-void RemoteMediaPlayerManager::requestResource(MediaPlayerPrivateRemoteIdentifier id, RemoteMediaResourceIdentifier remoteMediaResourceIdentifier, ResourceRequest&& request, PlatformMediaResourceLoader::LoadOptions options, CompletionHandler<void()>&& completionHandler)
-{
-    if (const auto& player = m_players.get(id))
-        player->requestResource(remoteMediaResourceIdentifier, WTFMove(request), options);
-
-    completionHandler();
-}
-
-void RemoteMediaPlayerManager::removeResource(MediaPlayerPrivateRemoteIdentifier id, RemoteMediaResourceIdentifier remoteMediaResourceIdentifier)
-{
-    if (const auto& player = m_players.get(id))
-        player->removeResource(remoteMediaResourceIdentifier);
+    if (const auto& player = m_players.get(makeObjectIdentifier<MediaPlayerPrivateRemoteIdentifierType>(decoder.destinationID())))
+        player->didReceiveMessage(connection, decoder);
 }
 
 void RemoteMediaPlayerManager::updatePreferences(const Settings& settings)
@@ -373,12 +256,6 @@ void RemoteMediaPlayerManager::updatePreferences(const Settings& settings)
     if (settings.useGPUProcessForMedia())
         WebCore::AudioMediaStreamTrackRenderer::setCreator(WebKit::AudioMediaStreamTrackRenderer::create);
 #endif
-}
-
-void RemoteMediaPlayerManager::updateCachedState(MediaPlayerPrivateRemoteIdentifier id, RemoteMediaPlayerState&& state)
-{
-    if (const auto& player = m_players.get(id))
-        player->updateCachedState(WTFMove(state));
 }
 
 GPUProcessConnection& RemoteMediaPlayerManager::gpuProcessConnection() const

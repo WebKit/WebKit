@@ -30,7 +30,6 @@
 
 #include "Connection.h"
 #include "DataReference.h"
-#include "RemoteMediaPlayerManagerMessages.h"
 #include "RemoteMediaResource.h"
 #include "RemoteMediaResourceIdentifier.h"
 #include "WebCoreArgumentCoders.h"

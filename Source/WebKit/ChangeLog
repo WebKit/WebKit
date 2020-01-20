@@ -1,3 +1,78 @@
+2020-01-19  Eric Carlson  <eric.carlson@apple.com>
+
+        Make MediaPlayerPrivateRemote a message receiver
+        https://bugs.webkit.org/show_bug.cgi?id=206487
+        <rdar://problem/58721559>
+
+        Reviewed by Dean Jackson.
+
+        Make MediaPlayerPrivateRemote a message receiver so we don't need a trampoline
+        for every method in the MediaPlayerPrivateRemoteManager.
+        
+        No new tests, no change of behavior.
+
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources-output.xcfilelist:
+        * DerivedSources.make:
+        * GPUProcess/media/RemoteAudioTrackProxy.cpp:
+        (WebKit::RemoteAudioTrackProxy::RemoteAudioTrackProxy):
+        (WebKit::RemoteAudioTrackProxy::configurationChanged):
+        (WebKit::RemoteAudioTrackProxy::willRemove):
+        * GPUProcess/media/RemoteMediaPlayerManagerProxy.cpp:
+        * GPUProcess/media/RemoteMediaPlayerProxy.cpp:
+        (WebKit::RemoteMediaPlayerProxy::requestResource):
+        (WebKit::RemoteMediaPlayerProxy::removeResource):
+        (WebKit::RemoteMediaPlayerProxy::mediaPlayerNetworkStateChanged):
+        (WebKit::RemoteMediaPlayerProxy::mediaPlayerReadyStateChanged):
+        (WebKit::RemoteMediaPlayerProxy::mediaPlayerVolumeChanged):
+        (WebKit::RemoteMediaPlayerProxy::mediaPlayerMuteChanged):
+        (WebKit::RemoteMediaPlayerProxy::mediaPlayerTimeChanged):
+        (WebKit::RemoteMediaPlayerProxy::mediaPlayerDurationChanged):
+        (WebKit::RemoteMediaPlayerProxy::mediaPlayerRateChanged):
+        (WebKit::RemoteMediaPlayerProxy::mediaPlayerEngineFailedToLoad const):
+        (WebKit::RemoteMediaPlayerProxy::mediaPlayerPlaybackStateChanged):
+        (WebKit::RemoteMediaPlayerProxy::mediaPlayerCharacteristicChanged):
+        (WebKit::RemoteMediaPlayerProxy::mediaPlayerFirstVideoFrameAvailable):
+        (WebKit::RemoteMediaPlayerProxy::sendCachedState):
+        * GPUProcess/media/RemoteMediaResourceManager.cpp:
+        * GPUProcess/media/RemoteVideoTrackProxy.cpp:
+        (WebKit::RemoteVideoTrackProxy::RemoteVideoTrackProxy):
+        (WebKit::RemoteVideoTrackProxy::configurationChanged):
+        (WebKit::RemoteVideoTrackProxy::willRemove):
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/GPU/GPUProcessConnection.cpp:
+        (WebKit::GPUProcessConnection::didReceiveMessage):
+        * WebProcess/GPU/media/MediaPlayerPrivateRemote.cpp:
+        (WebKit::MediaPlayerPrivateRemote::requestResource):
+        * WebProcess/GPU/media/MediaPlayerPrivateRemote.h:
+        * WebProcess/GPU/media/MediaPlayerPrivateRemote.messages.in: Added.
+        * WebProcess/GPU/media/RemoteMediaPlayerManager.cpp:
+        (WebKit::RemoteMediaPlayerManager::didReceivePlayerMessage):
+        (WebKit::RemoteMediaPlayerManager::networkStateChanged): Deleted.
+        (WebKit::RemoteMediaPlayerManager::readyStateChanged): Deleted.
+        (WebKit::RemoteMediaPlayerManager::volumeChanged): Deleted.
+        (WebKit::RemoteMediaPlayerManager::muteChanged): Deleted.
+        (WebKit::RemoteMediaPlayerManager::timeChanged): Deleted.
+        (WebKit::RemoteMediaPlayerManager::durationChanged): Deleted.
+        (WebKit::RemoteMediaPlayerManager::rateChanged): Deleted.
+        (WebKit::RemoteMediaPlayerManager::playbackStateChanged): Deleted.
+        (WebKit::RemoteMediaPlayerManager::engineFailedToLoad): Deleted.
+        (WebKit::RemoteMediaPlayerManager::characteristicChanged): Deleted.
+        (WebKit::RemoteMediaPlayerManager::sizeChanged): Deleted.
+        (WebKit::RemoteMediaPlayerManager::addRemoteAudioTrack): Deleted.
+        (WebKit::RemoteMediaPlayerManager::removeRemoteAudioTrack): Deleted.
+        (WebKit::RemoteMediaPlayerManager::remoteAudioTrackConfigurationChanged): Deleted.
+        (WebKit::RemoteMediaPlayerManager::addRemoteVideoTrack): Deleted.
+        (WebKit::RemoteMediaPlayerManager::removeRemoteVideoTrack): Deleted.
+        (WebKit::RemoteMediaPlayerManager::remoteVideoTrackConfigurationChanged): Deleted.
+        (WebKit::RemoteMediaPlayerManager::firstVideoFrameAvailable): Deleted.
+        (WebKit::RemoteMediaPlayerManager::requestResource): Deleted.
+        (WebKit::RemoteMediaPlayerManager::removeResource): Deleted.
+        (WebKit::RemoteMediaPlayerManager::updateCachedState): Deleted.
+        * WebProcess/GPU/media/RemoteMediaPlayerManager.h:
+        (WebKit::RemoteMediaPlayerManager::didReceiveMessageFromGPUProcess): Deleted.
+        * WebProcess/GPU/media/RemoteMediaPlayerManager.messages.in:
+
 2020-01-19  Claudio Saavedra  <csaavedra@igalia.com>
 
         [GTK] Remove usage of deprecated GTimeVal
@@ -1214,7 +1289,7 @@
 
 2020-01-14  Eric Carlson  <eric.carlson@apple.com>
 
-        Nake MediaPlayerPrivateRemoteProxy a message receiver
+        Make MediaPlayerPrivateRemoteProxy a message receiver
         https://bugs.webkit.org/show_bug.cgi?id=206237
         <rdar://problem/58569057>
 

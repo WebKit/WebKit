@@ -29,7 +29,7 @@
 
 #if ENABLE(GPU_PROCESS)
 
-#include "RemoteMediaPlayerManagerMessages.h"
+#include "MediaPlayerPrivateRemoteMessages.h"
 #include "RemoteMediaPlayerProxy.h"
 #include "TrackPrivateRemoteConfiguration.h"
 
@@ -42,7 +42,7 @@ RemoteAudioTrackProxy::RemoteAudioTrackProxy(RemoteMediaPlayerProxy& player, Tra
     , m_trackPrivate(trackPrivate)
 {
     m_trackPrivate->setClient(this);
-    m_webProcessConnection->send(Messages::RemoteMediaPlayerManager::AddRemoteAudioTrack(m_player.idendifier(), m_identifier, configuration()), 0);
+    m_webProcessConnection->send(Messages::MediaPlayerPrivateRemote::AddRemoteAudioTrack(m_identifier, configuration()), m_player.idendifier());
 }
 
 TrackPrivateRemoteConfiguration& RemoteAudioTrackProxy::configuration()
@@ -62,12 +62,12 @@ TrackPrivateRemoteConfiguration& RemoteAudioTrackProxy::configuration()
 
 void RemoteAudioTrackProxy::configurationChanged()
 {
-    m_webProcessConnection->send(Messages::RemoteMediaPlayerManager::RemoteAudioTrackConfigurationChanged(m_player.idendifier(), m_identifier, configuration()), 0);
+    m_webProcessConnection->send(Messages::MediaPlayerPrivateRemote::RemoteAudioTrackConfigurationChanged(m_identifier, configuration()), m_player.idendifier());
 }
 
 void RemoteAudioTrackProxy::willRemove()
 {
-    m_webProcessConnection->send(Messages::RemoteMediaPlayerManager::RemoveRemoteAudioTrack(m_player.idendifier(), m_identifier), 0);
+    m_webProcessConnection->send(Messages::MediaPlayerPrivateRemote::RemoveRemoteAudioTrack(m_identifier), m_player.idendifier());
 }
 
 void RemoteAudioTrackProxy::enabledChanged(bool)

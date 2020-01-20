@@ -29,7 +29,7 @@
 
 #if ENABLE(GPU_PROCESS)
 
-#include "RemoteMediaPlayerManagerMessages.h"
+#include "MediaPlayerPrivateRemoteMessages.h"
 #include "RemoteMediaPlayerProxy.h"
 #include "TrackPrivateRemoteConfiguration.h"
 
@@ -42,7 +42,7 @@ RemoteVideoTrackProxy::RemoteVideoTrackProxy(RemoteMediaPlayerProxy& player, Tra
     , m_trackPrivate(trackPrivate)
 {
     m_trackPrivate->setClient(this);
-    m_webProcessConnection->send(Messages::RemoteMediaPlayerManager::AddRemoteVideoTrack(m_player.idendifier(), m_identifier, configuration()), 0);
+    m_webProcessConnection->send(Messages::MediaPlayerPrivateRemote::AddRemoteVideoTrack(m_identifier, configuration()), m_player.idendifier());
 }
 
 TrackPrivateRemoteConfiguration& RemoteVideoTrackProxy::configuration()
@@ -62,12 +62,12 @@ TrackPrivateRemoteConfiguration& RemoteVideoTrackProxy::configuration()
 
 void RemoteVideoTrackProxy::configurationChanged()
 {
-    m_webProcessConnection->send(Messages::RemoteMediaPlayerManager::RemoteVideoTrackConfigurationChanged(m_player.idendifier(), m_identifier, configuration()), 0);
+    m_webProcessConnection->send(Messages::MediaPlayerPrivateRemote::RemoteVideoTrackConfigurationChanged(m_identifier, configuration()), m_player.idendifier());
 }
 
 void RemoteVideoTrackProxy::willRemove()
 {
-    m_webProcessConnection->send(Messages::RemoteMediaPlayerManager::RemoveRemoteVideoTrack(m_player.idendifier(), m_identifier), 0);
+    m_webProcessConnection->send(Messages::MediaPlayerPrivateRemote::RemoveRemoteVideoTrack(m_identifier), m_player.idendifier());
 }
 
 void RemoteVideoTrackProxy::selectedChanged(bool)

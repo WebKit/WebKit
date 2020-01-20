@@ -29,8 +29,8 @@
 #if ENABLE(GPU_PROCESS)
 
 #include "GPUConnectionToWebProcess.h"
+#include "MediaPlayerPrivateRemoteMessages.h"
 #include "RemoteAudioTrackProxy.h"
-#include "RemoteMediaPlayerManagerMessages.h"
 #include "RemoteMediaPlayerManagerProxy.h"
 #include "RemoteMediaPlayerProxyConfiguration.h"
 #include "RemoteMediaPlayerState.h"
@@ -227,63 +227,63 @@ Ref<PlatformMediaResource> RemoteMediaPlayerProxy::requestResource(ResourceReque
     auto remoteMediaResource = RemoteMediaResource::create(remoteMediaResourceManager, *this, remoteMediaResourceIdentifier);
     remoteMediaResourceManager.addMediaResource(remoteMediaResourceIdentifier, remoteMediaResource);
 
-    m_webProcessConnection->sendWithAsyncReply(Messages::RemoteMediaPlayerManager::RequestResource(m_id, remoteMediaResourceIdentifier, request, options), [remoteMediaResource = remoteMediaResource.copyRef()]() {
+    m_webProcessConnection->sendWithAsyncReply(Messages::MediaPlayerPrivateRemote::RequestResource(remoteMediaResourceIdentifier, request, options), [remoteMediaResource = remoteMediaResource.copyRef()]() {
         remoteMediaResource->setReady(true);
-    });
+    }, m_id);
 
     return remoteMediaResource;
 }
 
 void RemoteMediaPlayerProxy::removeResource(RemoteMediaResourceIdentifier remoteMediaResourceIdentifier)
 {
-    m_webProcessConnection->send(Messages::RemoteMediaPlayerManager::RemoveResource(m_id, remoteMediaResourceIdentifier), 0);
+    m_webProcessConnection->send(Messages::MediaPlayerPrivateRemote::RemoveResource(remoteMediaResourceIdentifier), m_id);
 }
 
 // MediaPlayerClient
 void RemoteMediaPlayerProxy::mediaPlayerNetworkStateChanged()
 {
     updateCachedState();
-    m_webProcessConnection->send(Messages::RemoteMediaPlayerManager::NetworkStateChanged(m_id, m_cachedState), 0);
+    m_webProcessConnection->send(Messages::MediaPlayerPrivateRemote::NetworkStateChanged(m_cachedState), m_id);
 }
 
 void RemoteMediaPlayerProxy::mediaPlayerReadyStateChanged()
 {
     updateCachedState();
     m_cachedState.naturalSize = m_player->naturalSize();
-    m_webProcessConnection->send(Messages::RemoteMediaPlayerManager::ReadyStateChanged(m_id, m_cachedState), 0);
+    m_webProcessConnection->send(Messages::MediaPlayerPrivateRemote::ReadyStateChanged(m_cachedState), m_id);
 }
 
 void RemoteMediaPlayerProxy::mediaPlayerVolumeChanged()
 {
-    m_webProcessConnection->send(Messages::RemoteMediaPlayerManager::VolumeChanged(m_id, m_player->volume()), 0);
+    m_webProcessConnection->send(Messages::MediaPlayerPrivateRemote::VolumeChanged(m_player->volume()), m_id);
 }
 
 void RemoteMediaPlayerProxy::mediaPlayerMuteChanged()
 {
-    m_webProcessConnection->send(Messages::RemoteMediaPlayerManager::MuteChanged(m_id, m_player->muted()), 0);
+    m_webProcessConnection->send(Messages::MediaPlayerPrivateRemote::MuteChanged(m_player->muted()), m_id);
 }
 
 void RemoteMediaPlayerProxy::mediaPlayerTimeChanged()
 {
     updateCachedState();
-    m_webProcessConnection->send(Messages::RemoteMediaPlayerManager::TimeChanged(m_id, m_cachedState), 0);
+    m_webProcessConnection->send(Messages::MediaPlayerPrivateRemote::TimeChanged(m_cachedState), m_id);
 }
 
 void RemoteMediaPlayerProxy::mediaPlayerDurationChanged()
 {
     updateCachedState();
-    m_webProcessConnection->send(Messages::RemoteMediaPlayerManager::DurationChanged(m_id, m_cachedState), 0);
+    m_webProcessConnection->send(Messages::MediaPlayerPrivateRemote::DurationChanged(m_cachedState), m_id);
 }
 
 void RemoteMediaPlayerProxy::mediaPlayerRateChanged()
 {
     sendCachedState();
-    m_webProcessConnection->send(Messages::RemoteMediaPlayerManager::RateChanged(m_id, m_player->rate()), 0);
+    m_webProcessConnection->send(Messages::MediaPlayerPrivateRemote::RateChanged(m_player->rate()), m_id);
 }
 
 void RemoteMediaPlayerProxy::mediaPlayerEngineFailedToLoad() const
 {
-    m_webProcessConnection->send(Messages::RemoteMediaPlayerManager::EngineFailedToLoad(m_id, m_player->platformErrorCode()), 0);
+    m_webProcessConnection->send(Messages::MediaPlayerPrivateRemote::EngineFailedToLoad(m_player->platformErrorCode()), m_id);
 }
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
@@ -343,7 +343,7 @@ bool RemoteMediaPlayerProxy::mediaPlayerIsVideo() const
 // FIXME: Unimplemented
 void RemoteMediaPlayerProxy::mediaPlayerPlaybackStateChanged()
 {
-    m_webProcessConnection->send(Messages::RemoteMediaPlayerManager::PlaybackStateChanged(m_id, m_player->paused()), 0);
+    m_webProcessConnection->send(Messages::MediaPlayerPrivateRemote::PlaybackStateChanged(m_player->paused()), m_id);
 }
 
 void RemoteMediaPlayerProxy::mediaPlayerBufferedTimeRangesChanged()
@@ -358,7 +358,7 @@ void RemoteMediaPlayerProxy::mediaPlayerSeekableTimeRangesChanged()
 
 void RemoteMediaPlayerProxy::mediaPlayerCharacteristicChanged()
 {
-    m_webProcessConnection->send(Messages::RemoteMediaPlayerManager::CharacteristicChanged(m_id, m_player->hasAudio(), m_player->hasVideo(), m_player->movieLoadType()), 0);
+    m_webProcessConnection->send(Messages::MediaPlayerPrivateRemote::CharacteristicChanged(m_player->hasAudio(), m_player->hasVideo(), m_player->movieLoadType()), m_id);
 }
 
 bool RemoteMediaPlayerProxy::mediaPlayerRenderingCanBeAccelerated()
@@ -431,7 +431,7 @@ void RemoteMediaPlayerProxy::mediaPlayerEngineUpdated()
 void RemoteMediaPlayerProxy::mediaPlayerFirstVideoFrameAvailable()
 {
     m_layerHostingContext->setRootLayer(m_player->platformLayer());
-    m_webProcessConnection->send(Messages::RemoteMediaPlayerManager::FirstVideoFrameAvailable(m_id), 0);
+    m_webProcessConnection->send(Messages::MediaPlayerPrivateRemote::FirstVideoFrameAvailable(), m_id);
 }
 
 void RemoteMediaPlayerProxy::mediaPlayerRenderingModeChanged()
@@ -642,7 +642,7 @@ void RemoteMediaPlayerProxy::updateCachedState()
 void RemoteMediaPlayerProxy::sendCachedState()
 {
     updateCachedState();
-    m_webProcessConnection->send(Messages::RemoteMediaPlayerManager::UpdateCachedState(m_id, m_cachedState), 0);
+    m_webProcessConnection->send(Messages::MediaPlayerPrivateRemote::UpdateCachedState(m_cachedState), m_id);
     m_cachedState.bufferedRanges.clear();
 }
 

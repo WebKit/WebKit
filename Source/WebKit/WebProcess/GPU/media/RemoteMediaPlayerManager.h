@@ -50,7 +50,8 @@ class RemoteMediaPlayerMIMETypeCache;
 class WebProcess;
 struct TrackPrivateRemoteConfiguration;
 
-class RemoteMediaPlayerManager : public WebProcessSupplement, public IPC::MessageReceiver {
+class RemoteMediaPlayerManager
+    : public WebProcessSupplement {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit RemoteMediaPlayerManager(WebProcess&);
@@ -63,7 +64,7 @@ public:
 
     GPUProcessConnection& gpuProcessConnection() const;
 
-    void didReceiveMessageFromGPUProcess(IPC::Connection& connection, IPC::Decoder& decoder) { didReceiveMessage(connection, decoder); }
+    void didReceivePlayerMessage(IPC::Connection&, IPC::Decoder&);
 
     void deleteRemoteMediaPlayer(MediaPlayerPrivateRemoteIdentifier);
 
@@ -72,35 +73,6 @@ private:
 
     // WebProcessSupplement
     void initialize(const WebProcessCreationParameters&) final;
-
-    // IPC::MessageReceiver
-    void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
-
-    // Messages::RemoteMediaPlayerManager
-    void networkStateChanged(MediaPlayerPrivateRemoteIdentifier, RemoteMediaPlayerState&&);
-    void readyStateChanged(MediaPlayerPrivateRemoteIdentifier, RemoteMediaPlayerState&&);
-    void volumeChanged(MediaPlayerPrivateRemoteIdentifier, double);
-    void muteChanged(MediaPlayerPrivateRemoteIdentifier, bool);
-    void timeChanged(MediaPlayerPrivateRemoteIdentifier, RemoteMediaPlayerState&&);
-    void durationChanged(MediaPlayerPrivateRemoteIdentifier, RemoteMediaPlayerState&&);
-    void rateChanged(MediaPlayerPrivateRemoteIdentifier, double);
-    void playbackStateChanged(MediaPlayerPrivateRemoteIdentifier, bool);
-    void engineFailedToLoad(MediaPlayerPrivateRemoteIdentifier, long);
-    void updateCachedState(MediaPlayerPrivateRemoteIdentifier, RemoteMediaPlayerState&&);
-    void characteristicChanged(MediaPlayerPrivateRemoteIdentifier, bool hasAudio, bool hasVideo, WebCore::MediaPlayerEnums::MovieLoadType);
-    void sizeChanged(MediaPlayerPrivateRemoteIdentifier, WebCore::FloatSize);
-
-    void addRemoteAudioTrack(MediaPlayerPrivateRemoteIdentifier, TrackPrivateRemoteIdentifier, TrackPrivateRemoteConfiguration&&);
-    void removeRemoteAudioTrack(MediaPlayerPrivateRemoteIdentifier, TrackPrivateRemoteIdentifier);
-    void remoteAudioTrackConfigurationChanged(MediaPlayerPrivateRemoteIdentifier, TrackPrivateRemoteIdentifier, TrackPrivateRemoteConfiguration&&);
-    void firstVideoFrameAvailable(WebKit::MediaPlayerPrivateRemoteIdentifier);
-
-    void addRemoteVideoTrack(MediaPlayerPrivateRemoteIdentifier, TrackPrivateRemoteIdentifier, TrackPrivateRemoteConfiguration&&);
-    void removeRemoteVideoTrack(MediaPlayerPrivateRemoteIdentifier, TrackPrivateRemoteIdentifier);
-    void remoteVideoTrackConfigurationChanged(MediaPlayerPrivateRemoteIdentifier, TrackPrivateRemoteIdentifier, TrackPrivateRemoteConfiguration&&);
-
-    void requestResource(MediaPlayerPrivateRemoteIdentifier, RemoteMediaResourceIdentifier, WebCore::ResourceRequest&&, WebCore::PlatformMediaResourceLoader::LoadOptions, CompletionHandler<void()>&&);
-    void removeResource(MediaPlayerPrivateRemoteIdentifier, RemoteMediaResourceIdentifier);
 
     friend class MediaPlayerRemoteFactory;
     void getSupportedTypes(WebCore::MediaPlayerEnums::MediaEngineIdentifier, HashSet<String, ASCIICaseInsensitiveHash>&);

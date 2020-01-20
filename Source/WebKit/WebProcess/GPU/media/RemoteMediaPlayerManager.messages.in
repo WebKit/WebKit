@@ -1,4 +1,4 @@
-# Copyright (C) 2019 Apple Inc. All rights reserved.
+# Copyright (C) 2019-2020 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -24,30 +24,7 @@
 #if ENABLE(GPU_PROCESS)
 
 messages -> RemoteMediaPlayerManager NotRefCounted {
-    NetworkStateChanged(WebKit::MediaPlayerPrivateRemoteIdentifier id, struct WebKit::RemoteMediaPlayerState state)
-    ReadyStateChanged(WebKit::MediaPlayerPrivateRemoteIdentifier id, struct WebKit::RemoteMediaPlayerState state)
-    FirstVideoFrameAvailable(WebKit::MediaPlayerPrivateRemoteIdentifier id)
-    VolumeChanged(WebKit::MediaPlayerPrivateRemoteIdentifier id, double volume)
-    MuteChanged(WebKit::MediaPlayerPrivateRemoteIdentifier id, bool mute)
-    TimeChanged(WebKit::MediaPlayerPrivateRemoteIdentifier id, struct WebKit::RemoteMediaPlayerState state)
-    DurationChanged(WebKit::MediaPlayerPrivateRemoteIdentifier id, struct WebKit::RemoteMediaPlayerState state)
-    RateChanged(WebKit::MediaPlayerPrivateRemoteIdentifier id, double rate)
-    PlaybackStateChanged(WebKit::MediaPlayerPrivateRemoteIdentifier id, bool paused)
-    EngineFailedToLoad(WebKit::MediaPlayerPrivateRemoteIdentifier id, int platformErrorCode)
-    UpdateCachedState(WebKit::MediaPlayerPrivateRemoteIdentifier id, struct WebKit::RemoteMediaPlayerState state)
-    CharacteristicChanged(WebKit::MediaPlayerPrivateRemoteIdentifier id, bool hasAudio, bool hasVideo, enum:uint8_t WebCore::MediaPlayerEnums::MovieLoadType movieLoadType)
-    SizeChanged(WebKit::MediaPlayerPrivateRemoteIdentifier id, WebCore::FloatSize naturalSize)
 
-    AddRemoteAudioTrack(WebKit::MediaPlayerPrivateRemoteIdentifier playerID, WebKit::TrackPrivateRemoteIdentifier trackID, struct WebKit::TrackPrivateRemoteConfiguration configuration)
-    RemoveRemoteAudioTrack(WebKit::MediaPlayerPrivateRemoteIdentifier playerID, WebKit::TrackPrivateRemoteIdentifier trackID)
-    RemoteAudioTrackConfigurationChanged(WebKit::MediaPlayerPrivateRemoteIdentifier playerID, WebKit::TrackPrivateRemoteIdentifier trackID, struct WebKit::TrackPrivateRemoteConfiguration configuration)
-
-    AddRemoteVideoTrack(WebKit::MediaPlayerPrivateRemoteIdentifier playerID, WebKit::TrackPrivateRemoteIdentifier trackID, struct WebKit::TrackPrivateRemoteConfiguration configuration)
-    RemoveRemoteVideoTrack(WebKit::MediaPlayerPrivateRemoteIdentifier playerID, WebKit::TrackPrivateRemoteIdentifier trackID)
-    RemoteVideoTrackConfigurationChanged(WebKit::MediaPlayerPrivateRemoteIdentifier playerID, WebKit::TrackPrivateRemoteIdentifier trackID, struct WebKit::TrackPrivateRemoteConfiguration configuration)
-
-    RequestResource(WebKit::MediaPlayerPrivateRemoteIdentifier mediaPlayerPrivateRemoteIdentifier, WebKit::RemoteMediaResourceIdentifier remoteMediaResourceIdentifier, WebCore::ResourceRequest request, enum:uint8_t WebCore::PlatformMediaResourceLoader::LoadOptions options) -> () Async
-    RemoveResource(WebKit::MediaPlayerPrivateRemoteIdentifier mediaPlayerPrivateRemoteIdentifier, WebKit::RemoteMediaResourceIdentifier remoteMediaResourceIdentifier)
 }
 
 #endif

@@ -47,6 +47,7 @@ struct TrackPrivateRemoteConfiguration;
 class MediaPlayerPrivateRemote final
     : public CanMakeWeakPtr<MediaPlayerPrivateRemote>
     , public WebCore::MediaPlayerPrivateInterface
+    , private IPC::MessageReceiver
 #if !RELEASE_LOG_DISABLED
     , private LoggerHelper
 #endif
@@ -58,8 +59,9 @@ public:
     }
 
     MediaPlayerPrivateRemote(WebCore::MediaPlayer*, WebCore::MediaPlayerEnums::MediaEngineIdentifier, MediaPlayerPrivateRemoteIdentifier, RemoteMediaPlayerManager&, const RemoteMediaPlayerConfiguration&);
-
     ~MediaPlayerPrivateRemote();
+
+    void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
 
     void invalidate() { m_invalid = true; }
     WebCore::MediaPlayerEnums::MediaEngineIdentifier remoteEngineIdentifier() const { return m_remoteEngineIdentifier; }
@@ -88,7 +90,7 @@ public:
     void removeRemoteVideoTrack(TrackPrivateRemoteIdentifier);
     void remoteVideoTrackConfigurationChanged(TrackPrivateRemoteIdentifier, TrackPrivateRemoteConfiguration&&);
 
-    void requestResource(RemoteMediaResourceIdentifier, WebCore::ResourceRequest&&, WebCore::PlatformMediaResourceLoader::LoadOptions);
+    void requestResource(RemoteMediaResourceIdentifier, WebCore::ResourceRequest&&, WebCore::PlatformMediaResourceLoader::LoadOptions, CompletionHandler<void()>&&);
     void removeResource(RemoteMediaResourceIdentifier);
 
 #if !RELEASE_LOG_DISABLED
