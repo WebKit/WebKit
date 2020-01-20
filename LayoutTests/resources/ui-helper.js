@@ -975,8 +975,10 @@ window.UIHelper = class UIHelper {
     {
         return new Promise(resolve => {
             testRunner.runUIScript(`
-                const rect = uiController.rectForMenuAction("${action}");
-                uiController.uiScriptComplete(rect ? JSON.stringify(rect) : "");
+                (() => {
+                    const rect = uiController.rectForMenuAction("${action}");
+                    uiController.uiScriptComplete(rect ? JSON.stringify(rect) : "");
+                })();
             `, stringResult => {
                 resolve(stringResult.length ? JSON.parse(stringResult) : null);
             });

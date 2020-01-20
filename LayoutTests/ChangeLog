@@ -1,3 +1,21 @@
+2020-01-20  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Add a test to verify that the callout bar appears after selecting a word
+        https://bugs.webkit.org/show_bug.cgi?id=206488
+        <rdar://problem/58661768>
+
+        Reviewed by Darin Adler.
+
+        * editing/selection/ios/show-callout-bar-after-selecting-word-expected.txt: Added.
+        * editing/selection/ios/show-callout-bar-after-selecting-word.html: Added.
+
+        Add the new layout test.
+
+        * resources/ui-helper.js:
+        (window.UIHelper.rectForMenuAction):
+
+        Wrap this UI script in its own function scope, such that it can be used multiple times in the same layout test.
+
 2020-01-20  Diego Pino Garcia  <dpino@igalia.com>
 
         [GTK] Gardening, remove expected to fail but pass
