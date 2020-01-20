@@ -138,6 +138,7 @@ if (ENABLE_WEBCORE)
         Tests/WebCore/IntPoint.cpp
         Tests/WebCore/IntRect.cpp
         Tests/WebCore/IntSize.cpp
+        Tests/WebCore/KeyedCoding.cpp
         Tests/WebCore/LayoutUnit.cpp
         Tests/WebCore/MIMETypeRegistry.cpp
         Tests/WebCore/ParsedContentRange.cpp
