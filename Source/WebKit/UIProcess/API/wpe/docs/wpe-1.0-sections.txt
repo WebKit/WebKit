@@ -328,6 +328,15 @@ webkit_color_get_type
 </SECTION>
 
 <SECTION>
+<FILE>WebKitRectangle</FILE>
+WEBKIT_TYPE_RECTANGLE
+WebKitRectangle
+
+<SUBSECTION Private>
+webkit_rectangle_get_type
+</SECTION>
+
+<SECTION>
 <FILE>WebKitAuthenticationRequest</FILE>
 WebKitAuthenticationRequest
 WebKitAuthenticationScheme

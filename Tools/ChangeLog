@@ -1,3 +1,17 @@
+2020-01-20  Zan Dobersek  <zdobersek@igalia.com>
+
+        [WPE] Add WebKitRectangle, use it for WebKitWebView's SHOW_MENU signal
+        https://bugs.webkit.org/show_bug.cgi?id=206495
+
+        Reviewed by Carlos Garcia Campos.
+
+        Update the TestOptionMenu test case for WPE now that a rectangle object
+        is also passed through to the signal handler.
+
+        * TestWebKitAPI/Tests/WebKitGLib/TestOptionMenu.cpp:
+        (OptionMenuTest::showOptionMenuCallback):
+        (OptionMenuTest::showOptionMenu):
+
 2020-01-20  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK][WPE] Also include the selection index in webkit_input_method_context_notify_surrounding()

@@ -101,7 +101,7 @@ bool webkitWebViewShowOptionMenu(WebKitWebView*, const WebCore::IntRect&, WebKit
 #endif
 
 #if PLATFORM(WPE)
-bool webkitWebViewShowOptionMenu(WebKitWebView*, WebKitOptionMenu*);
+bool webkitWebViewShowOptionMenu(WebKitWebView*, const WebCore::IntRect&, WebKitOptionMenu*);
 #endif
 
 gboolean webkitWebViewAuthenticate(WebKitWebView*, WebKitAuthenticationRequest*);

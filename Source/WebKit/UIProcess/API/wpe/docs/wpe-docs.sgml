@@ -59,6 +59,7 @@
     <xi:include href="xml/WebKitGeolocationManager.xml"/>
     <xi:include href="xml/WebKitUserMessage.xml"/>
     <xi:include href="xml/WebKitInputMethodContext.xml"/>
+    <xi:include href="xml/WebKitRectangle.xml"/>
   </chapter>
 
   <chapter>

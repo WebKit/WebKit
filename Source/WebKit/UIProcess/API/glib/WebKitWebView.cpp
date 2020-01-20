@@ -416,10 +416,10 @@ WebKitWebViewClient::WebKitWebViewClient(WebKitWebView* webView)
     : m_webView(webView)
 { }
 
-GRefPtr<WebKitOptionMenu> WebKitWebViewClient::showOptionMenu(WebKitPopupMenu& popupMenu, const Vector<WebPopupItem>& items, int32_t selectedIndex)
+GRefPtr<WebKitOptionMenu> WebKitWebViewClient::showOptionMenu(WebKitPopupMenu& popupMenu, const WebCore::IntRect& rect, const Vector<WebPopupItem>& items, int32_t selectedIndex)
 {
     GRefPtr<WebKitOptionMenu> menu = adoptGRef(webkitOptionMenuCreate(popupMenu, items, selectedIndex));
-    if (webkitWebViewShowOptionMenu(WEBKIT_WEB_VIEW(m_webView), menu.get()))
+    if (webkitWebViewShowOptionMenu(WEBKIT_WEB_VIEW(m_webView), rect, menu.get()))
         return menu;
     return nullptr;
 }
@@ -2161,7 +2161,7 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
         g_cclosure_marshal_generic,
         G_TYPE_BOOLEAN, 2,
         WEBKIT_TYPE_OPTION_MENU,
-        G_TYPE_POINTER);
+        WEBKIT_TYPE_RECTANGLE | G_SIGNAL_TYPE_STATIC_SCOPE);
 #endif
 
     /**
@@ -2753,10 +2753,12 @@ void webkitWebViewDeleteSurrounding(WebKitWebView* webView, int offset, unsigned
 }
 
 #if PLATFORM(WPE)
-bool webkitWebViewShowOptionMenu(WebKitWebView* webView, WebKitOptionMenu* menu)
+bool webkitWebViewShowOptionMenu(WebKitWebView* webView, const IntRect& rect, WebKitOptionMenu* menu)
 {
+    WebKitRectangle rectangle { rect.x(), rect.y(), rect.width(), rect.height() };
+
     gboolean handled;
-    g_signal_emit(webView, signals[SHOW_OPTION_MENU], 0, menu, nullptr, &handled);
+    g_signal_emit(webView, signals[SHOW_OPTION_MENU], 0, menu, &rectangle, &handled);
     return handled;
 }
 #endif

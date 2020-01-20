@@ -30,6 +30,7 @@
 
 #include <wpe/WebKitAuthenticationRequest.h>
 #include <wpe/WebKitBackForwardList.h>
+#include <wpe/WebKitColor.h>
 #include <wpe/WebKitContextMenu.h>
 #include <wpe/WebKitDefines.h>
 #include <wpe/WebKitEditorState.h>
@@ -44,6 +45,7 @@
 #include <wpe/WebKitOptionMenu.h>
 #include <wpe/WebKitPermissionRequest.h>
 #include <wpe/WebKitPolicyDecision.h>
+#include <wpe/WebKitRectangle.h>
 #include <wpe/WebKitScriptDialog.h>
 #include <wpe/WebKitSettings.h>
 #include <wpe/WebKitURIRequest.h>
@@ -52,7 +54,6 @@
 #include <wpe/WebKitWebContext.h>
 #include <wpe/WebKitWebResource.h>
 #include <wpe/WebKitWebViewBackend.h>
-#include <wpe/WebKitColor.h>
 #include <wpe/WebKitWebViewSessionState.h>
 #include <wpe/WebKitWindowProperties.h>
 
@@ -248,7 +249,7 @@ struct _WebKitWebViewClass {
                                                     WebKitUserMessage           *message);
     gboolean       (* show_option_menu)            (WebKitWebView               *web_view,
                                                     WebKitOptionMenu            *menu,
-                                                    gpointer                    *rectangle);
+                                                    WebKitRectangle             *rectangle);
 
     void (*_webkit_reserved0) (void);
     void (*_webkit_reserved1) (void);
