@@ -33,6 +33,7 @@
 // This include order is necessary to enforce the GBM EGL platform.
 #include <gbm.h>
 #include <epoxy/egl.h>
+#include <wayland-server.h>
 #include <wpe/fdo-egl.h>
 
 #ifndef EGL_WL_bind_wayland_display
@@ -104,22 +105,37 @@ HeadlessViewBackend::~HeadlessViewBackend()
         g_source_unref(m_updateSource);
     }
 
-    if (m_lockedImage)
-        wpe_view_backend_exportable_fdo_egl_dispatch_release_exported_image(m_exportable, m_lockedImage);
-    if (m_pendingImage)
-        wpe_view_backend_exportable_fdo_egl_dispatch_release_exported_image(m_exportable, m_pendingImage);
+    if (m_egl.lockedImage)
+        wpe_view_backend_exportable_fdo_egl_dispatch_release_exported_image(m_exportable, m_egl.lockedImage);
+    if (m_egl.pendingImage)
+        wpe_view_backend_exportable_fdo_egl_dispatch_release_exported_image(m_exportable, m_egl.pendingImage);
+
+#if WPE_FDO_CHECK_VERSION(1, 5, 0)
+    if (m_shm.lockedBuffer)
+        wpe_view_backend_exportable_fdo_egl_dispatch_release_shm_exported_buffer(m_exportable, m_shm.lockedBuffer);
+    if (m_shm.pendingBuffer)
+        wpe_view_backend_exportable_fdo_egl_dispatch_release_shm_exported_buffer(m_exportable, m_shm.pendingBuffer);
+#endif
 
     deinitialize(HeadlessEGLConnection::singleton().eglDisplay);
 }
 
 cairo_surface_t* HeadlessViewBackend::createSnapshot()
 {
-    if (!m_eglContext)
-        return nullptr;
-
     performUpdate();
 
-    if (!m_lockedImage)
+    if (m_egl.lockedImage)
+        return createEGLSnapshot();
+#if WPE_FDO_CHECK_VERSION(1, 5, 0)
+    if (m_shm.lockedBuffer)
+        return createSHMSnapshot();
+#endif
+    return nullptr;
+}
+
+cairo_surface_t* HeadlessViewBackend::createEGLSnapshot()
+{
+    if (!m_eglContext)
         return nullptr;
 
     uint8_t* buffer = new uint8_t[4 * m_width * m_height];
@@ -137,7 +153,7 @@ cairo_surface_t* HeadlessViewBackend::createSnapshot()
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_BGRA_EXT, m_width, m_height, 0, GL_BGRA_EXT, GL_UNSIGNED_BYTE, nullptr);
 
-    imageTargetTexture2DOES(GL_TEXTURE_2D, wpe_fdo_egl_exported_image_get_egl_image(m_lockedImage));
+    imageTargetTexture2DOES(GL_TEXTURE_2D, wpe_fdo_egl_exported_image_get_egl_image(m_egl.lockedImage));
     glBindTexture(GL_TEXTURE_2D, 0);
 
     GLuint imageFramebuffer;
@@ -174,25 +190,98 @@ cairo_surface_t* HeadlessViewBackend::createSnapshot()
     return imageSurface;
 }
 
+#if WPE_FDO_CHECK_VERSION(1, 5, 0)
+cairo_surface_t* HeadlessViewBackend::createSHMSnapshot()
+{
+    struct wl_shm_buffer* shmBuffer = wpe_fdo_shm_exported_buffer_get_shm_buffer(m_shm.lockedBuffer);
+    {
+        auto format = wl_shm_buffer_get_format(shmBuffer);
+        if (format != WL_SHM_FORMAT_ARGB8888 && format != WL_SHM_FORMAT_XRGB8888)
+            return nullptr;
+    }
+
+    uint32_t bufferStride = 4 * m_width;
+    uint8_t* buffer = new uint8_t[bufferStride * m_height];
+    memset(buffer, 0, bufferStride * m_height);
+
+    {
+        uint32_t width = std::min<uint32_t>(m_width, std::max(0, wl_shm_buffer_get_width(shmBuffer)));
+        uint32_t height = std::min<uint32_t>(m_height, std::max(0, wl_shm_buffer_get_height(shmBuffer)));
+        uint32_t stride = std::max(0, wl_shm_buffer_get_stride(shmBuffer));
+
+        wl_shm_buffer_begin_access(shmBuffer);
+        auto* data = static_cast<uint8_t*>(wl_shm_buffer_get_data(shmBuffer));
+
+        for (uint32_t y = 0; y < height; ++y) {
+            for (uint32_t x = 0; x < width; ++x) {
+                buffer[bufferStride * y + 4 * x + 0] = data[stride * y + 4 * x + 0];
+                buffer[bufferStride * y + 4 * x + 1] = data[stride * y + 4 * x + 1];
+                buffer[bufferStride * y + 4 * x + 2] = data[stride * y + 4 * x + 2];
+                buffer[bufferStride * y + 4 * x + 3] = data[stride * y + 4 * x + 3];
+            }
+        }
+
+        wl_shm_buffer_end_access(shmBuffer);
+    }
+
+    cairo_surface_t* imageSurface = cairo_image_surface_create_for_data(buffer,
+        CAIRO_FORMAT_ARGB32, m_width, m_height, cairo_format_stride_for_width(CAIRO_FORMAT_ARGB32, m_width));
+    cairo_surface_mark_dirty(imageSurface);
+
+    static cairo_user_data_key_t bufferKey;
+    cairo_surface_set_user_data(imageSurface, &bufferKey, buffer,
+        [](void* data) {
+            auto* buffer = static_cast<uint8_t*>(data);
+            delete[] buffer;
+        });
+
+    return imageSurface;
+}
+#endif
+
 void HeadlessViewBackend::performUpdate()
 {
-    if (!m_pendingImage)
+    if (m_egl.pendingImage) {
+        wpe_view_backend_exportable_fdo_dispatch_frame_complete(m_exportable);
+
+        if (m_egl.lockedImage)
+            wpe_view_backend_exportable_fdo_egl_dispatch_release_exported_image(m_exportable, m_egl.lockedImage);
+
+        m_egl.lockedImage = m_egl.pendingImage;
+        m_egl.pendingImage = nullptr;
         return;
+    }
 
-    wpe_view_backend_exportable_fdo_dispatch_frame_complete(m_exportable);
-    if (m_lockedImage)
-        wpe_view_backend_exportable_fdo_egl_dispatch_release_exported_image(m_exportable, m_lockedImage);
+#if WPE_FDO_CHECK_VERSION(1, 5, 0)
+    if (m_shm.pendingBuffer) {
+        wpe_view_backend_exportable_fdo_dispatch_frame_complete(m_exportable);
 
-    m_lockedImage = m_pendingImage;
-    m_pendingImage = nullptr;
+        if (m_shm.lockedBuffer)
+            wpe_view_backend_exportable_fdo_egl_dispatch_release_shm_exported_buffer(m_exportable, m_shm.lockedBuffer);
+
+        m_shm.lockedBuffer = m_shm.pendingBuffer;
+        m_shm.pendingBuffer = nullptr;
+        return;
+    }
+#endif
 }
 
 void HeadlessViewBackend::displayBuffer(struct wpe_fdo_egl_exported_image* image)
 {
-    if (m_pendingImage)
+    if (m_egl.pendingImage)
         std::abort();
 
-    m_pendingImage = image;
+    m_egl.pendingImage = image;
 }
+
+#if WPE_FDO_CHECK_VERSION(1, 5, 0)
+void HeadlessViewBackend::displayBuffer(struct wpe_fdo_shm_exported_buffer* buffer)
+{
+    if (m_shm.pendingBuffer)
+        std::abort();
+
+    m_shm.pendingBuffer = buffer;
+}
+#endif
 
 } // namespace WPEToolingBackends

@@ -45,6 +45,9 @@ private:
     void resize(uint32_t width, uint32_t height);
 
     void displayBuffer(struct wpe_fdo_egl_exported_image*) override;
+#if WPE_FDO_CHECK_VERSION(1, 5, 0)
+    void displayBuffer(struct wpe_fdo_shm_exported_buffer*) override;
+#endif
 
     static const struct wl_registry_listener s_registryListener;
     static const struct zxdg_shell_v6_listener s_xdgWmBaseListener;

@@ -40,12 +40,29 @@ public:
     cairo_surface_t* createSnapshot();
 
 private:
+    cairo_surface_t* createEGLSnapshot();
+#if WPE_FDO_CHECK_VERSION(1, 5, 0)
+    cairo_surface_t* createSHMSnapshot();
+#endif
+
     void displayBuffer(struct wpe_fdo_egl_exported_image*) override;
+#if WPE_FDO_CHECK_VERSION(1, 5, 0)
+    void displayBuffer(struct wpe_fdo_shm_exported_buffer*) override;
+#endif
 
     void performUpdate();
 
-    struct wpe_fdo_egl_exported_image* m_pendingImage { nullptr };
-    struct wpe_fdo_egl_exported_image* m_lockedImage { nullptr };
+    struct {
+        struct wpe_fdo_egl_exported_image* pendingImage { nullptr };
+        struct wpe_fdo_egl_exported_image* lockedImage { nullptr };
+    } m_egl;
+
+#if WPE_FDO_CHECK_VERSION(1, 5, 0)
+    struct {
+        struct wpe_fdo_shm_exported_buffer* pendingBuffer { nullptr };
+        struct wpe_fdo_shm_exported_buffer* lockedBuffer { nullptr };
+    } m_shm;
+#endif
 
     GSource* m_updateSource { nullptr };
     gint64 m_frameRate { G_USEC_PER_SEC / 60 };

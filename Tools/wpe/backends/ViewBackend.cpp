@@ -179,8 +179,19 @@ bool ViewBackend::initialize(EGLDisplay eglDisplay)
         {
             static_cast<ViewBackend*>(data)->displayBuffer(image);
         },
+#if WPE_FDO_CHECK_VERSION(1, 5, 0)
+        // export_shm_buffer
+        [](void* data, struct wpe_fdo_shm_exported_buffer* buffer)
+        {
+            static_cast<ViewBackend*>(data)->displayBuffer(buffer);
+        },
+        // padding
+        nullptr, nullptr
+#else
         // padding
         nullptr, nullptr, nullptr
+#endif
+
     };
     m_exportable = wpe_view_backend_exportable_fdo_egl_create(&exportableClient, this, m_width, m_height);
 

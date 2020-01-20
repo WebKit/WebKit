@@ -749,6 +749,13 @@ void WindowViewBackend::displayBuffer(struct wpe_fdo_egl_exported_image* image)
     eglSwapBuffers(connection.eglDisplay, m_eglSurface);
 }
 
+#if WPE_FDO_CHECK_VERSION(1, 5, 0)
+void WindowViewBackend::displayBuffer(struct wpe_fdo_shm_exported_buffer*)
+{
+    g_warning("WindowViewBackend: cannot yet handle wpe_fdo_shm_exported_buffer.");
+}
+#endif
+
 void WindowViewBackend::handleKeyEvent(uint32_t key, uint32_t state, uint32_t time)
 {
     uint32_t keysym = wpe_input_xkb_context_get_key_code(wpe_input_xkb_context_get_default(), key, state == WL_KEYBOARD_KEY_STATE_PRESSED);

@@ -1,3 +1,44 @@
+2020-01-19  Zan Dobersek  <zdobersek@igalia.com>
+
+        [WPE] HeadlessViewBackend should hande SHM-based buffer exports
+        https://bugs.webkit.org/show_bug.cgi?id=206283
+
+        Reviewed by Adrian Perez de Castro.
+
+        The ViewBackend class should also handle any SHM-based exports from
+        the wpe_view_backend_exportable_fdo_egl instance. In case of such an
+        export, the buffer is transported down into the implementing object.
+
+        For WindowViewBackend, we do nothing with this yet, except emit a
+        warning. For HeadlessViewBackend, we repeat what's currently done with
+        EGL exports, storing pending updates until the update timer is fired
+        and we move the buffer into the locked position, clearing up any
+        previous locked buffer.
+
+        Upon creating a snapshot of the current contents, we add additional
+        separation in how EGL and SHM exports are handled. Nothing changes
+        for the former, while for the latter we simply retrieve the
+        wl_shm_buffer object, map it, copy data from it into the pixel data
+        storage that's basis for the returned Cairo surface, and unmap it.
+
+        * Scripts/webkitpy/port/wpe.py:
+        (WPEPort.setup_environ_for_server): Copy the LIBGL_ALWAYS_SOFTWARE
+        environment variable, if present. This variable is normally used to
+        force Mesa into software rasterizing mode.
+        * wpe/backends/HeadlessViewBackend.cpp:
+        (WPEToolingBackends::HeadlessViewBackend::~HeadlessViewBackend):
+        (WPEToolingBackends::HeadlessViewBackend::createSnapshot):
+        (WPEToolingBackends::HeadlessViewBackend::createEGLSnapshot):
+        (WPEToolingBackends::HeadlessViewBackend::createSHMSnapshot):
+        (WPEToolingBackends::HeadlessViewBackend::performUpdate):
+        (WPEToolingBackends::HeadlessViewBackend::displayBuffer):
+        * wpe/backends/HeadlessViewBackend.h:
+        * wpe/backends/ViewBackend.cpp:
+        (WPEToolingBackends::ViewBackend::initialize):
+        * wpe/backends/ViewBackend.h:
+        * wpe/backends/WindowViewBackend.cpp:
+        * wpe/backends/WindowViewBackend.h:
+
 2020-01-17  Cathie Chen  <cathiechen@igalia.com>
 
         Add support for scroll behavior parsing

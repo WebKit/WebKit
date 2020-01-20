@@ -34,6 +34,10 @@ typedef void* EGLDisplay;
 typedef struct _AtkObject AtkObject;
 struct wpe_fdo_egl_exported_image;
 
+#if WPE_FDO_CHECK_VERSION(1, 5, 0)
+struct wpe_fdo_shm_exported_buffer;
+#endif
+
 // Manually provide the EGL_CAST C++ definition in case eglplatform.h doesn't provide it.
 #ifndef EGL_CAST
 #define EGL_CAST(type, value) (static_cast<type>(value))
@@ -78,6 +82,9 @@ protected:
     void dispatchInputTouchEvent(struct wpe_input_touch_event*);
 
     virtual void displayBuffer(struct wpe_fdo_egl_exported_image*) = 0;
+#if WPE_FDO_CHECK_VERSION(1, 5, 0)
+    virtual void displayBuffer(struct wpe_fdo_shm_exported_buffer*) = 0;
+#endif
 
     uint32_t m_width { 0 };
     uint32_t m_height { 0 };
