@@ -200,6 +200,7 @@ bool isValidHTTPToken(const String& value)
     return true;
 }
 
+#if USE(GLIB)
 // True if the character at the given position satisifies a predicate, incrementing "pos" by one.
 // Note: Might return pos == str.length()
 static inline bool skipCharacter(const String& value, unsigned& pos, WTF::Function<bool(const UChar)>&& predicate)
@@ -306,6 +307,7 @@ bool isValidUserAgentHeaderValue(const String& value)
 
     return pos == value.length();
 }
+#endif
 
 static const size_t maxInputSampleSize = 128;
 static String trimInputSample(const char* p, size_t length)

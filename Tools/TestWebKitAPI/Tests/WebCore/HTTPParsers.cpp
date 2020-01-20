@@ -56,6 +56,7 @@ TEST(HTTPParsers, ParseCrossOriginResourcePolicyHeader)
     EXPECT_TRUE(parseCrossOriginResourcePolicyHeader("") == CrossOriginResourcePolicy::Invalid);
 }
 
+#if USE(GLIB)
 TEST(HTTPParsers, ValidateUserAgentValues)
 {
     EXPECT_TRUE(isValidUserAgentHeaderValue("Safari"));
@@ -85,5 +86,6 @@ TEST(HTTPParsers, ValidateUserAgentValues)
     EXPECT_FALSE(isValidUserAgentHeaderValue("WPE\\ WebKit (quoted pair in token)"));
     EXPECT_FALSE(isValidUserAgentHeaderValue("/123 (missing product token)"));
 }
+#endif
 
 } // namespace TestWebKitAPI

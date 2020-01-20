@@ -1,3 +1,15 @@
+2020-01-20  Rob Buis  <rbuis@igalia.com>
+
+        Make isValidUserAgentHeaderValue GLib only
+        https://bugs.webkit.org/show_bug.cgi?id=206475
+
+        Reviewed by Youenn Fablet.
+
+        Make the unit test that tests isValidUserAgentHeaderValue
+        depend on USE(GLIB) as well.
+
+        * TestWebKitAPI/Tests/WebCore/HTTPParsers.cpp:
+
 2020-01-20  Takashi Komori  <Takashi.Komori@sony.com>
 
         KeyedDecoderGeneric crashes when it accesses data with non-existing key
