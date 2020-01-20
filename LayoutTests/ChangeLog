@@ -1,3 +1,17 @@
+2020-01-20  Devin Rousso  <drousso@apple.com>
+
+        REGRESSION (r250655?): [ Mac Debug ] inspector/runtime/promise-native-getter.html is a flaky timeout
+        https://bugs.webkit.org/show_bug.cgi?id=206303
+        <rdar://problem/58612520>
+
+        Reviewed by Darin Adler.
+
+        Rework the test to not be reliant on real world timing.
+
+        * inspector/runtime/promise-native-getter.html:
+        * inspector/runtime/promise-native-getter-expected.txt:
+        * platform/mac/TestExpectations:
+
 2020-01-20  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Add a test to verify that the callout bar appears after selecting a word
