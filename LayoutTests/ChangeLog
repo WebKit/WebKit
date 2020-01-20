@@ -1,3 +1,12 @@
+2020-01-20  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GTK] Gardening, remove expected to fail but pass
+        https://bugs.webkit.org/show_bug.cgi?id=206493
+
+        Unreviewed gardening.
+
+        * platform/gtk/TestExpectations:
+
 2020-01-20  Rossana Monteriso  <rmonteriso@igalia.com>
 
         [css-grid] Import grid-align-content-distribution tests to WebKit

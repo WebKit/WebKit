@@ -1346,8 +1346,6 @@ webkit.org/b/199014 fast/canvas/webgl/tex-image-and-sub-image-2d-with-video-rgba
 
 webkit.org/b/199440 fast/mediastream/mediastreamtrack-video-clone.html [ Failure Timeout Crash ]
 
-webkit.org/b/201275 fast/events/focus-anchor-with-tabindex-hang.html [ Crash ]
-
 # Known issues that were fixed by the WebKitMediaSrc rework that is now reverted.
 webkit.org/b/203078 imported/w3c/web-platform-tests/media-source/mediasource-seek-beyond-duration.html [ Failure Crash ]
 webkit.org/b/203078 imported/w3c/web-platform-tests/media-source/mediasource-remove.html [ Pass Crash ]
@@ -2553,8 +2551,6 @@ webkit.org/b/168373 media/media-source/only-bcp47-language-tags-accepted-as-vali
 
 webkit.org/b/172284 svg/animations/animated-svg-image-outside-viewport-paused.html [ Timeout ]
 
-webkit.org/b/172816 media/media-source/media-source-paint-to-canvas.html [ Failure Timeout ]
-
 webkit.org/b/174242 media/media-fullscreen-pause-inline.html [ Skip ]
 
 webkit.org/b/174459 fast/images/async-image-background-image-repeated.html [ Timeout ]
@@ -2582,9 +2578,6 @@ webkit.org/b/183181 inspector/heap/getPreview.html [ Pass Timeout ]
 webkit.org/b/156077 inspector/heap/getRemoteObject.html [ Skip ]
 
 webkit.org/b/183186 imported/w3c/web-platform-tests/html/semantics/scripting-1/the-template-element/additions-to-the-css-user-agent-style-sheet/css-user-agent-style-sheet-test-001.html [ Pass Timeout ]
-
-webkit.org/b/186253 [ Release ] http/tests/media/remove-while-loading.html [ Timeout ]
-webkit.org/b/186253 [ Release ] http/tests/security/contentSecurityPolicy/media-src-allowed.html [ Timeout ]
 
 webkit.org/b/186341 fast/animation/css-animation-resuming-when-visible-with-style-change.html [ Timeout Failure Pass ]
 webkit.org/b/186341 fast/animation/css-animation-resuming-when-visible-with-style-change2.html [ Failure Pass ]
@@ -3527,8 +3520,6 @@ webkit.org/b/184086 imported/w3c/web-platform-tests/web-animations/animation-mod
 
 webkit.org/b/184504 imported/w3c/web-platform-tests/fetch/api/request/request-keepalive-quota.html [ Failure ]
 
-webkit.org/b/184775 imported/w3c/web-platform-tests/mediacapture-streams/MediaStreamTrack-MediaElement-disabled-audio-is-silence.https.html [ Failure ]
-
 webkit.org/b/180645 imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/type-change-state.html [ Failure ]
 
 webkit.org/b/184776 imported/w3c/web-platform-tests/html/semantics/forms/textfieldselection/selection-not-application.html [ Failure ]
@@ -3613,7 +3604,7 @@ webkit.org/b/187268 compositing/backing/backing-store-attachment-outside-viewpor
 
 webkit.org/b/187271 fast/text/emoji-with-joiner.html [ Failure ]
 
-webkit.org/b/187770 media/no-fullscreen-when-hidden.html [ Failure Crash ]
+webkit.org/b/187770 media/no-fullscreen-when-hidden.html [ Pass Failure Crash ]
 webkit.org/b/187994 compositing/backing/backing-store-attachment-fill-forwards-animation.html [ Failure ]
 
 webkit.org/b/188098 webanimations/accelerated-animation-with-delay.html [ ImageOnlyFailure Pass ]
@@ -3803,7 +3794,7 @@ webkit.org/b/196541 editing/pasteboard/paste-content-with-overflow-auto-parent-a
 webkit.org/b/197248 fast/events/autoscroll-when-input-is-offscreen.html [ Failure Crash ]
 webkit.org/b/197248 fast/events/autoscroll-with-software-keyboard.html [ Failure Crash ]
 
-webkit.org/b/203240 css3/shapes/shape-outside/shape-image/shape-image-025.html [ ImageOnlyFailure ]
+webkit.org/b/203240 css3/shapes/shape-outside/shape-image/shape-image-025.html [ Pass ImageOnlyFailure ]
 webkit.org/b/203240 imported/w3c/web-platform-tests/css/css-shapes/shape-outside/shape-image/shape-image-025.html [ ImageOnlyFailure ]
 
 webkit.org/b/197252 http/tests/adClickAttribution/send-attribution-conversion-request.html [ Failure ]
@@ -3954,8 +3945,6 @@ webkit.org/b/202745 fast/css/invalidation-errors.html [ Failure ]
 webkit.org/b/202745 fast/css/invalidation-errors-2.html [ Failure ]
 
 webkit.org/b/202746 http/tests/blink/sendbeacon/beacon-cross-origin.html [ Failure ]
-
-webkit.org/b/202747 http/tests/cache-storage/cache-records-persistency.https.html [ Failure ]
 
 webkit.org/b/202750 http/tests/download/anchor-download-attribute-content-disposition-no-extension-text-plain.html [ Failure ]
 
