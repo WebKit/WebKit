@@ -1,3 +1,13 @@
+2020-01-20  David Kilzer  <ddkilzer@apple.com>
+
+        Fix missing header guards and clean up empty files in WebCore, WebKitLegacy, WebKit, Tools
+        <https://webkit.org/b/206505>
+
+        Reviewed by Eric Carlson.
+
+        * WebCoreSupport/WebViewGroup.h:
+        - Add #pragma once statement.
+
 2020-01-16  Per Arne Vollan  <pvollan@apple.com>
 
         [Win] Fix AppleWin build

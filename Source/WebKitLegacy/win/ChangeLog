@@ -1,3 +1,19 @@
+2020-01-20  David Kilzer  <ddkilzer@apple.com>
+
+        Fix missing header guards and clean up empty files in WebCore, WebKitLegacy, WebKit, Tools
+        <https://webkit.org/b/206505>
+
+        Reviewed by Eric Carlson.
+
+        * WebCoreSupport/WebChromeClient.h:
+        * WebCoreSupport/WebContextMenuClient.h:
+        * WebCoreSupport/WebDesktopNotificationsDelegate.h:
+        * WebCoreSupport/WebDragClient.h:
+        * WebDocumentLoader.h:
+        * WebKitStatisticsPrivate.h:
+        * WebPreferenceKeysPrivate.h:
+        - Add #pragma once statement.
+
 2020-01-17  Cathie Chen  <cathiechen@igalia.com>
 
         Add support for scroll behavior parsing

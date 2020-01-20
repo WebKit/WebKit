@@ -1,3 +1,23 @@
+2020-01-20  David Kilzer  <ddkilzer@apple.com>
+
+        Fix missing header guards and clean up empty files in WebCore, WebKitLegacy, WebKit, Tools
+        <https://webkit.org/b/206505>
+
+        Reviewed by Eric Carlson.
+
+        * Platform/IPC/Attachment.h:
+        - Fix "# pragma" formatting. (It functioned, but WebKit style
+          doesn't indent macros like this.)
+
+        * Platform/ios/AccessibilityIOS.h:
+        * Shared/ShareSheetCallbackID.h:
+        * Shared/mac/SecItemShim.h:
+        * UIProcess/API/C/WKPageRenderingProgressEventsInternal.h:
+        * UIProcess/API/Cocoa/WKNavigationData.h:
+        * UIProcess/API/Cocoa/WKPreferencesPrivate.h:
+        * UIProcess/API/Cocoa/WKWebArchive.h:
+        - Add #pragma once statement.
+
 2020-01-20  Adrian Perez de Castro  <aperez@igalia.com>
 
         Unreviewed. Update OptionsWPE.cmake and NEWS for the 2.27.4 release

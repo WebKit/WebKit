@@ -22,6 +22,8 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+@class NSString;
+
 namespace WebCore {
 
 WEBCORE_EXPORT NSString *systemMarketingVersion();

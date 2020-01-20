@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2007-2008 Collabora Ltd.  All rights reserved.
+ * Copyright (C) 2020 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -24,6 +25,8 @@
  * If you need to include npapi.h or npruntime.h when building on X11,
  * include this file instead of the actual npapi.h or npruntime.h
  */
+
+#pragma once
 
 #include "npapi.h"
 #include "npfunctions.h"

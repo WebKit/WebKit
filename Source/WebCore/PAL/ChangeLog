@@ -1,3 +1,14 @@
+2020-01-20  David Kilzer  <ddkilzer@apple.com>
+
+        Fix missing header guards and clean up empty files in WebCore, WebKitLegacy, WebKit, Tools
+        <https://webkit.org/b/206505>
+
+        Reviewed by Eric Carlson.
+
+        * pal/ios/QuickLookSoftLink.h:
+        * pal/spi/ios/SQLite3SPI.h:
+        - Add #pragma once statement.
+
 2020-01-16  David Kilzer  <ddkilzer@apple.com>
 
         Attempt to fix internal iOS Debug builds

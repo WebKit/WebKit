@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005, 2006 Apple Inc.  All rights reserved.
+ * Copyright (C) 2005-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,11 +26,13 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if __OBJC__
+#pragma once
+
+#ifdef __OBJC__
 @class NSBundle;
 typedef NSString *WebLocalizedStringType;
 #else
-#if __cplusplus
+#ifdef __cplusplus
 class NSBundle;
 #else
 typedef struct NSBundle NSBundle;
