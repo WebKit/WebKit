@@ -9,8 +9,6 @@ PASS: No heap snapshot
 -- Running test case: GetRemoteObjectForWindow
 PASS: Should not have an error creating a snapshot.
 PASS: Should should include at least one 'Window' instance.
-PASS: Should not have an error getting remote object.
-Window
 
 -- Running test case: GetRemoteObjectBadIdentifier
 PASS: Should not have an error creating a snapshot.

@@ -1,5 +1,21 @@
 2020-01-20  Devin Rousso  <drousso@apple.com>
 
+        inspector/heap/getRemoteObject.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=156077
+        <rdar://problem/25469998>
+
+        Reviewed by Darin Adler.
+
+        Instead of blindly assuming that the first object is the `window` global object, iterate all
+        the objects found by `WI.HeapSnapshotProxy.prototype.instancesWithClassName` and check that
+        we see at least one `window` global object.
+
+        * inspector/heap/getRemoteObject.html:
+        * inspector/heap/getRemoteObject-expected.txt:
+        * platform/mac-wk2/TestExpectations:
+
+2020-01-20  Devin Rousso  <drousso@apple.com>
+
         REGRESSION (r250655?): [ Mac Debug ] inspector/runtime/promise-native-getter.html is a flaky timeout
         https://bugs.webkit.org/show_bug.cgi?id=206303
         <rdar://problem/58612520>

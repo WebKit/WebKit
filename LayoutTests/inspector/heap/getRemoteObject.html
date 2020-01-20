@@ -36,16 +36,25 @@ function test()
                 let workerProxy = WI.HeapSnapshotWorkerProxy.singleton();
                 workerProxy.createSnapshot(snapshotStringData, ({objectId, snapshot: serializedSnapshot}) => {
                     let snapshot = WI.HeapSnapshotProxy.deserialize(objectId, serializedSnapshot);
-                    snapshot.instancesWithClassName("Window", (windows) => {
-                        let heapSnapshotNode = windows[0];
-                        InspectorTest.expectThat(heapSnapshotNode, "Should should include at least one 'Window' instance.");
+                    snapshot.instancesWithClassName("Window", (windowHeapSnapshotNodes) => {
+                        if (!windowHeapSnapshotNodes.length) {
+                            reject("Should should include at least one 'Window' instance.");
+                            return;
+                        }
 
-                        HeapAgent.getRemoteObject(heapSnapshotNode.id, "test", (error, remoteObjectPayload) => {
-                            InspectorTest.expectThat(!error, "Should not have an error getting remote object.");
-                            let remoteObject = WI.RemoteObject.fromPayload(remoteObjectPayload);
-                            InspectorTest.log(remoteObject.description);
+                        Promise.all(windowHeapSnapshotNodes.map((windowHeapSnapshotNode) => HeapAgent.getRemoteObject(windowHeapSnapshotNode.id, "test")))
+                        .then((remoteObjectPayloads) => {
+                            let sawWindowGlobalObject = false;
+
+                            for (let {result} of remoteObjectPayloads) {
+                                let remoteObject = WI.RemoteObject.fromPayload(result);
+                                if (remoteObject.type === "object" && remoteObject.description === "Window")
+                                    sawWindowGlobalObject = true;
+                            }
+
+                            InspectorTest.expectTrue(sawWindowGlobalObject, "Should should include at least one 'Window' instance.");
                             resolve();
-                        });
+                        }, reject);
                     });
                 });
             });
