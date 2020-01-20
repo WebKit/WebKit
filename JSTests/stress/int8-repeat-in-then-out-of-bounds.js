@@ -1,4 +1,4 @@
-//@ defaultNoEagerRun(*NO_CJIT_OPTIONS)
+//@ if $jitTests then defaultNoEagerRun(*NO_CJIT_OPTIONS) else skip end
 
 function foo(a, inBounds) {
     a[0] = 1;
