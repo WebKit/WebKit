@@ -151,6 +151,10 @@ void MediaRecorderPrivateWriter::clear()
     }
     if (m_writer)
         m_writer.clear();
+
+    m_data = nullptr;
+    if (auto completionHandler = WTFMove(m_fetchDataCompletionHandler))
+        completionHandler(nullptr);
 }
 
 bool MediaRecorderPrivateWriter::setVideoInput(int width, int height)
@@ -355,27 +359,37 @@ void MediaRecorderPrivateWriter::stopRecording()
     if (m_audioInput)
         m_finishWritingAudioSemaphore.wait();
 
+    m_isStopping = true;
     [m_writer finishWritingWithCompletionHandler:[this, weakPtr = makeWeakPtr(*this)]() mutable {
-        m_finishWritingSemaphore.signal();
-        callOnMainThread([this, weakPtr = WTFMove(weakPtr)] {
+        callOnMainThread([this, weakPtr = WTFMove(weakPtr), buffer = SharedBuffer::createWithContentsOfFile(m_path)]() mutable {
             if (!weakPtr)
                 return;
+
+            m_isStopping = false;
+            if (m_fetchDataCompletionHandler)
+                m_fetchDataCompletionHandler(WTFMove(buffer));
+            else
+                m_data = WTFMove(buffer);
+
             m_isStopped = false;
             m_hasStartedWriting = false;
             m_isFirstAudioSample = true;
             clear();
         });
+        m_finishWritingSemaphore.signal();
     }];
     m_finishWritingSemaphore.wait();
 }
 
 void MediaRecorderPrivateWriter::fetchData(CompletionHandler<void(RefPtr<SharedBuffer>&&)>&& completionHandler)
 {
-    if ((m_path.isEmpty() && !m_isStopped) || !m_hasStartedWriting)
-        return completionHandler(nullptr);
+    if (m_isStopping) {
+        m_fetchDataCompletionHandler = WTFMove(completionHandler);
+        return;
+    }
 
-    // FIXME: We should read in a background thread.
-    completionHandler(SharedBuffer::createWithContentsOfFile(m_path));
+    auto buffer = WTFMove(m_data);
+    completionHandler(WTFMove(buffer));
 }
 
 } // namespace WebCore

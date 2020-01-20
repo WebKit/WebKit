@@ -27,6 +27,7 @@
 #if ENABLE(MEDIA_STREAM)
 
 #include "SharedBuffer.h"
+#include <wtf/CompletionHandler.h>
 #include <wtf/Deque.h>
 #include <wtf/Lock.h>
 #include <wtf/RetainPtr.h>
@@ -84,6 +85,10 @@ private:
     dispatch_queue_t m_videoPullQueue;
     Deque<RetainPtr<CMSampleBufferRef>> m_videoBufferPool;
     Deque<RetainPtr<CMSampleBufferRef>> m_audioBufferPool;
+
+    bool m_isStopping { false };
+    RefPtr<SharedBuffer> m_data;
+    CompletionHandler<void(RefPtr<SharedBuffer>&&)> m_fetchDataCompletionHandler;
 };
 
 } // namespace WebCore
