@@ -5464,6 +5464,12 @@ void HTMLMediaElement::setPausedInternal(bool b)
     scheduleUpdatePlayState();
 }
 
+void HTMLMediaElement::pauseAndUpdatePlayStateImmediately()
+{
+    m_pausedInternal = true;
+    updatePlayState();
+}
+
 void HTMLMediaElement::stopPeriodicTimers()
 {
     m_progressEventTimer.stop();
@@ -5619,7 +5625,7 @@ void HTMLMediaElement::stopWithoutDestroyingMediaPlayer()
 
     // Stop the playback without generating events
     setPlaying(false);
-    setPausedInternal(true);
+    pauseAndUpdatePlayStateImmediately();
     m_mediaSession->stopSession();
 
     setAutoplayEventPlaybackState(AutoplayEventPlaybackState::None);

@@ -838,6 +838,7 @@ private:
 
     // Pauses playback without changing any states or generating events
     void setPausedInternal(bool);
+    void pauseAndUpdatePlayStateImmediately();
 
     void setPlaybackRateInternal(double);
 

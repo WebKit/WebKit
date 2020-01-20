@@ -1,3 +1,17 @@
+2020-01-20  youenn fablet  <youenn@apple.com>
+
+        Video sound sometimes keeps playing in page cache
+        https://bugs.webkit.org/show_bug.cgi?id=206408
+        <rdar://problem/58654047>
+
+        Reviewed by Eric Carlson.
+
+        * http/tests/media/resources/sound_5.mp3: Added.
+        File comes from WPT and is 5 seconds long.
+        * http/tests/navigation/page-cache-video-expected.txt: Added.
+        * http/tests/navigation/page-cache-video.html: Added.
+        * http/tests/navigation/resources/page-cache-video-helper.html: Added.
+
 2020-01-19  Cathie Chen  <cathiechen@igalia.com>
 
         Add support for scroll behavior relies on ScrollAnimation of the Web process
