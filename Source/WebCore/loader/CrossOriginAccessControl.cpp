@@ -137,7 +137,16 @@ CachedResourceRequest createPotentialAccessControlRequest(ResourceRequest&& requ
         ? FetchOptions::Credentials::Omit : equalLettersIgnoringASCIICase(crossOriginAttribute, "use-credentials")
         ? FetchOptions::Credentials::Include : FetchOptions::Credentials::SameOrigin;
     options.credentials = credentials;
-    options.storedCredentialsPolicy = credentials == FetchOptions::Credentials::Include ? StoredCredentialsPolicy::Use : StoredCredentialsPolicy::DoNotUse;
+    switch (credentials) {
+    case FetchOptions::Credentials::Include:
+        options.storedCredentialsPolicy = StoredCredentialsPolicy::Use;
+        break;
+    case FetchOptions::Credentials::SameOrigin:
+        options.storedCredentialsPolicy = document.securityOrigin().canRequest(request.url()) ? StoredCredentialsPolicy::Use : StoredCredentialsPolicy::DoNotUse;
+        break;
+    case FetchOptions::Credentials::Omit:
+        options.storedCredentialsPolicy = StoredCredentialsPolicy::DoNotUse;
+    }
 
     CachedResourceRequest cachedRequest { WTFMove(request), WTFMove(options) };
     updateRequestForAccessControl(cachedRequest.resourceRequest(), document.securityOrigin(), options.storedCredentialsPolicy);
