@@ -43,6 +43,7 @@ typedef struct _WebKitInputMethodContextMock {
     bool commitNextCharacter;
     char* surroundingText;
     unsigned surroundingCursorIndex;
+    unsigned surroundingSelectionIndex;
 } WebKitInputMethodContextMock;
 
 typedef struct _WebKitInputMethodContextMockClass {
@@ -174,7 +175,7 @@ static void webkitInputMethodContextMockNotifyFocusOut(WebKitInputMethodContext*
     reinterpret_cast<WebKitInputMethodContextMock*>(context)->enabled = false;
 }
 
-static void webkitInputMethodContextMockNotifySurrounding(WebKitInputMethodContext* context, const gchar *text, unsigned length, unsigned cursorIndex)
+static void webkitInputMethodContextMockNotifySurrounding(WebKitInputMethodContext* context, const gchar *text, unsigned length, unsigned cursorIndex, unsigned selectionIndex)
 {
     auto* mock = reinterpret_cast<WebKitInputMethodContextMock*>(context);
     g_clear_pointer(&mock->surroundingText, g_free);
@@ -185,6 +186,7 @@ static void webkitInputMethodContextMockNotifySurrounding(WebKitInputMethodConte
     }
     mock->surroundingText = g_strndup(text, length);
     mock->surroundingCursorIndex = cursorIndex;
+    mock->surroundingSelectionIndex = selectionIndex;
 }
 
 static void webkitInputMethodContextMockReset(WebKitInputMethodContext* context)
@@ -197,6 +199,7 @@ static void webkitInputMethodContextMockReset(WebKitInputMethodContext* context)
     mock->preedit = nullptr;
     g_clear_pointer(&mock->surroundingText, g_free);
     mock->surroundingCursorIndex = 0;
+    mock->surroundingSelectionIndex = 0;
 
     g_signal_emit_by_name(context, "preedit-changed", nullptr);
     g_signal_emit_by_name(context, "preedit-finished", nullptr);
@@ -430,6 +433,11 @@ public:
     unsigned surroundingCursorIndex() const
     {
         return m_context->surroundingCursorIndex;
+    }
+
+    unsigned surroundingSelectionIndex() const
+    {
+        return m_context->surroundingSelectionIndex;
     }
 
     void waitForSurroundingText(const char* text)
@@ -745,12 +753,14 @@ static void testWebKitInputMethodContextSurrounding(InputMethodTest* test, gcons
 
     g_assert_null(test->surroundingText());
     g_assert_cmpuint(test->surroundingCursorIndex(), ==, 0);
+    g_assert_cmpuint(test->surroundingSelectionIndex(), ==, test->surroundingCursorIndex());
 
     test->keyStrokeAndWaitForEvents(KEY(a), 3);
     test->keyStrokeAndWaitForEvents(KEY(b), 6);
     test->keyStrokeAndWaitForEvents(KEY(c), 9);
     g_assert_cmpstr(test->surroundingText(), ==, "abc");
     g_assert_cmpuint(test->surroundingCursorIndex(), ==, 3);
+    g_assert_cmpuint(test->surroundingSelectionIndex(), ==, test->surroundingCursorIndex());
     test->m_events.clear();
 
     // Check preedit string is not included in surrounding.
@@ -760,31 +770,38 @@ static void testWebKitInputMethodContextSurrounding(InputMethodTest* test, gcons
     test->keyStrokeAndWaitForEvents(KEY(Left), 6);
     g_assert_cmpstr(test->surroundingText(), ==, "abc");
     g_assert_cmpuint(test->surroundingCursorIndex(), ==, 0);
+    g_assert_cmpuint(test->surroundingSelectionIndex(), ==, test->surroundingCursorIndex());
     test->m_events.clear();
     test->keyStrokeAndWaitForEvents(KEY(w), 4, CONTROL_MASK | SHIFT_MASK);
     g_assert_cmpstr(test->surroundingText(), ==, "abc");
     g_assert_cmpuint(test->surroundingCursorIndex(), ==, 0);
+    g_assert_cmpuint(test->surroundingSelectionIndex(), ==, test->surroundingCursorIndex());
     test->keyStrokeAndWaitForEvents(KEY(g), 7);
     test->keyStrokeAndWaitForEvents(KEY(t), 10);
     test->keyStrokeAndWaitForEvents(KEY(k), 13);
     g_assert_cmpstr(test->surroundingText(), ==, "abc");
     g_assert_cmpuint(test->surroundingCursorIndex(), ==, 0);
+    g_assert_cmpuint(test->surroundingSelectionIndex(), ==, test->surroundingCursorIndex());
     test->keyStrokeAndWaitForEvents(KEY(ISO_Enter), 16);
     g_assert_cmpstr(test->surroundingText(), ==, "WebKitGTKabc");
     g_assert_cmpuint(test->surroundingCursorIndex(), ==, 9);
+    g_assert_cmpuint(test->surroundingSelectionIndex(), ==, test->surroundingCursorIndex());
     test->m_events.clear();
     // 2. Preedit string in the middle of context.
     test->keyStrokeAndWaitForEvents(KEY(w), 4, CONTROL_MASK | SHIFT_MASK);
     g_assert_cmpstr(test->surroundingText(), ==, "WebKitGTKabc");
     g_assert_cmpuint(test->surroundingCursorIndex(), ==, 9);
+    g_assert_cmpuint(test->surroundingSelectionIndex(), ==, test->surroundingCursorIndex());
     test->keyStrokeAndWaitForEvents(KEY(w), 7);
     test->keyStrokeAndWaitForEvents(KEY(p), 10);
     test->keyStrokeAndWaitForEvents(KEY(e), 13);
     g_assert_cmpstr(test->surroundingText(), ==, "WebKitGTKabc");
     g_assert_cmpuint(test->surroundingCursorIndex(), ==, 9);
+    g_assert_cmpuint(test->surroundingSelectionIndex(), ==, test->surroundingCursorIndex());
     test->keyStrokeAndWaitForEvents(KEY(space), 16);
     g_assert_cmpstr(test->surroundingText(), ==, "WebKitGTKWPEWebKitabc");
     g_assert_cmpuint(test->surroundingCursorIndex(), ==, 18);
+    g_assert_cmpuint(test->surroundingSelectionIndex(), ==, test->surroundingCursorIndex());
     test->m_events.clear();
     // 3. Preedit string at the end of context.
     test->keyStrokeAndWaitForEvents(KEY(Right), 2);
@@ -792,18 +809,47 @@ static void testWebKitInputMethodContextSurrounding(InputMethodTest* test, gcons
     test->keyStrokeAndWaitForEvents(KEY(Right), 6);
     g_assert_cmpstr(test->surroundingText(), ==, "WebKitGTKWPEWebKitabc");
     g_assert_cmpuint(test->surroundingCursorIndex(), ==, 21);
+    g_assert_cmpuint(test->surroundingSelectionIndex(), ==, test->surroundingCursorIndex());
     test->m_events.clear();
     test->keyStrokeAndWaitForEvents(KEY(w), 4, CONTROL_MASK | SHIFT_MASK);
     g_assert_cmpstr(test->surroundingText(), ==, "WebKitGTKWPEWebKitabc");
     g_assert_cmpuint(test->surroundingCursorIndex(), ==, 21);
+    g_assert_cmpuint(test->surroundingSelectionIndex(), ==, test->surroundingCursorIndex());
     test->keyStrokeAndWaitForEvents(KEY(g), 7);
     test->keyStrokeAndWaitForEvents(KEY(t), 10);
     test->keyStrokeAndWaitForEvents(KEY(k), 13);
     g_assert_cmpstr(test->surroundingText(), ==, "WebKitGTKWPEWebKitabc");
     g_assert_cmpuint(test->surroundingCursorIndex(), ==, 21);
+    g_assert_cmpuint(test->surroundingSelectionIndex(), ==, test->surroundingCursorIndex());
     test->keyStrokeAndWaitForEvents(KEY(ISO_Enter), 16);
     g_assert_cmpstr(test->surroundingText(), ==, "WebKitGTKWPEWebKitabcWebKitGTK");
     g_assert_cmpuint(test->surroundingCursorIndex(), ==, 30);
+    g_assert_cmpuint(test->surroundingSelectionIndex(), ==, test->surroundingCursorIndex());
+    test->m_events.clear();
+
+    // Check selection cursor.
+    test->keyStrokeAndWaitForEvents(KEY(Left), 2, SHIFT_MASK);
+    g_assert_cmpstr(test->surroundingText(), ==, "WebKitGTKWPEWebKitabcWebKitGTK");
+    g_assert_cmpuint(test->surroundingCursorIndex(), ==, 29);
+    g_assert_cmpuint(test->surroundingSelectionIndex(), ==, 30);
+    test->keyStrokeAndWaitForEvents(KEY(Home), 4, SHIFT_MASK);
+    g_assert_cmpuint(test->surroundingCursorIndex(), ==, 0);
+    g_assert_cmpuint(test->surroundingSelectionIndex(), ==, 30);
+    test->keyStrokeAndWaitForEvents(KEY(Left), 6);
+    g_assert_cmpuint(test->surroundingCursorIndex(), ==, 0);
+    g_assert_cmpuint(test->surroundingSelectionIndex(), ==, test->surroundingCursorIndex());
+    test->m_events.clear();
+    test->keyStrokeAndWaitForEvents(KEY(Right), 2, SHIFT_MASK);
+    g_assert_cmpstr(test->surroundingText(), ==, "WebKitGTKWPEWebKitabcWebKitGTK");
+    g_assert_cmpuint(test->surroundingCursorIndex(), ==, 0);
+    g_assert_cmpuint(test->surroundingSelectionIndex(), ==, 1);
+    test->keyStrokeAndWaitForEvents(KEY(End), 4, SHIFT_MASK);
+    g_assert_cmpuint(test->surroundingCursorIndex(), ==, 0);
+    g_assert_cmpuint(test->surroundingSelectionIndex(), ==, 30);
+    test->keyStrokeAndWaitForEvents(KEY(Right), 6);
+    g_assert_cmpstr(test->surroundingText(), ==, "WebKitGTKWPEWebKitabcWebKitGTK");
+    g_assert_cmpuint(test->surroundingCursorIndex(), ==, 30);
+    g_assert_cmpuint(test->surroundingSelectionIndex(), ==, test->surroundingCursorIndex());
     test->m_events.clear();
 
     // Check text replacements (get surrounding + delete surrounding).
@@ -813,6 +859,7 @@ static void testWebKitInputMethodContextSurrounding(InputMethodTest* test, gcons
     test->waitForSurroundingText("WebKitGTKWPEWebKitabcWebKitGTK😀️");
     g_assert_cmpstr(test->surroundingText(), ==, "WebKitGTKWPEWebKitabcWebKitGTK😀️");
     g_assert_cmpuint(test->surroundingCursorIndex(), ==, 37);
+    g_assert_cmpuint(test->surroundingSelectionIndex(), ==, test->surroundingCursorIndex());
 }
 
 static void testWebKitInputMethodContextReset(InputMethodTest* test, gconstpointer)

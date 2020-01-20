@@ -459,12 +459,14 @@ void webkit_input_method_context_notify_cursor_area(WebKitInputMethodContext* co
  * @text: text surrounding the insertion point
  * @length: the length of @text, or -1 if @text is nul-terminated
  * @cursor_index: the byte index of the insertion cursor within @text.
+ * @selection_index: the byte index of the selection cursor within @text.
  *
  * Notify @context that the context surrounding the cursor has changed.
+ * If there's no selection @selection_index is the same as @cursor_index.
  *
  * Since: 2.28
  */
-void webkit_input_method_context_notify_surrounding(WebKitInputMethodContext* context, const char* text, int length, unsigned cursorIndex)
+void webkit_input_method_context_notify_surrounding(WebKitInputMethodContext* context, const char* text, int length, unsigned cursorIndex, unsigned selectionIndex)
 {
     g_return_if_fail(WEBKIT_IS_INPUT_METHOD_CONTEXT(context));
     g_return_if_fail(text || !length);
@@ -477,7 +479,7 @@ void webkit_input_method_context_notify_surrounding(WebKitInputMethodContext* co
 
     auto* imClass = WEBKIT_INPUT_METHOD_CONTEXT_GET_CLASS(context);
     if (imClass->notify_surrounding)
-        imClass->notify_surrounding(context, text, length, cursorIndex);
+        imClass->notify_surrounding(context, text, length, cursorIndex, selectionIndex);
 }
 
 /**

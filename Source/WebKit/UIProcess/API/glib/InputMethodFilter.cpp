@@ -210,20 +210,24 @@ void InputMethodFilter::notifyCursorRect(const IntRect& cursorRect)
     webkit_input_method_context_notify_cursor_area(m_context.get(), translatedRect.x(), translatedRect.y(), translatedRect.width(), translatedRect.height());
 }
 
-void InputMethodFilter::notifySurrounding(const String& text, uint64_t cursorPosition)
+void InputMethodFilter::notifySurrounding(const String& text, uint64_t cursorPosition, uint64_t selectionPosition)
 {
     if (!isEnabled() || !m_context)
         return;
 
-    if (m_surrounding.text == text && m_surrounding.cursorPosition == cursorPosition)
+    if (m_surrounding.text == text && m_surrounding.cursorPosition == cursorPosition && m_surrounding.selectionPosition == selectionPosition)
         return;
 
     m_surrounding.text = text;
     m_surrounding.cursorPosition = cursorPosition;
+    m_surrounding.selectionPosition = selectionPosition;
 
     auto textUTF8 = m_surrounding.text.utf8();
     auto cursorPositionUTF8 = cursorPosition != text.length() ? text.substring(0, cursorPosition).utf8().length() : textUTF8.length();
-    webkit_input_method_context_notify_surrounding(m_context.get(), textUTF8.data(), textUTF8.length(), cursorPositionUTF8);
+    auto selectionPositionUTF8 = cursorPositionUTF8;
+    if (cursorPosition != selectionPosition)
+        selectionPositionUTF8 = selectionPosition != text.length() ? text.substring(0, selectionPosition).utf8().length() : textUTF8.length();
+    webkit_input_method_context_notify_surrounding(m_context.get(), textUTF8.data(), textUTF8.length(), cursorPositionUTF8, selectionPositionUTF8);
 }
 
 void InputMethodFilter::preeditStarted()

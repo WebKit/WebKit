@@ -117,9 +117,11 @@ void WebPage::platformEditorState(Frame& frame, EditorState& result, IncludePost
             clonedRange->setStart(compositionRange->endPosition());
             postLayoutData.paragraphContext = plainText(paragraphRange.get()) + plainText(clonedRange.ptr());
             postLayoutData.paragraphContextCursorPosition = TextIterator::rangeLength(paragraphRange.get());
+            postLayoutData.paragraphContextSelectionPosition = postLayoutData.paragraphContextCursorPosition;
         } else {
             postLayoutData.paragraphContext = plainText(paragraphRange.get());
             postLayoutData.paragraphContextCursorPosition = TextIterator::rangeLength(makeRange(paragraphStart, selectionStart).get());
+            postLayoutData.paragraphContextSelectionPosition = TextIterator::rangeLength(makeRange(paragraphStart, selection.visibleEnd()).get());
         }
     }
 }

@@ -145,6 +145,7 @@ void EditorState::PostLayoutData::encode(IPC::Encoder& encoder) const
 #if PLATFORM(GTK) || PLATFORM(WPE)
     encoder << paragraphContext;
     encoder << paragraphContextCursorPosition;
+    encoder << paragraphContextSelectionPosition;
 #endif
     encoder << fontAttributes;
     encoder << canCut;
@@ -222,6 +223,8 @@ bool EditorState::PostLayoutData::decode(IPC::Decoder& decoder, PostLayoutData& 
     if (!decoder.decode(result.paragraphContext))
         return false;
     if (!decoder.decode(result.paragraphContextCursorPosition))
+        return false;
+    if (!decoder.decode(result.paragraphContextSelectionPosition))
         return false;
 #endif
 

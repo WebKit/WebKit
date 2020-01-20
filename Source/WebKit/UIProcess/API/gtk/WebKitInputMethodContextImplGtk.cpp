@@ -193,7 +193,7 @@ static void webkitInputMethodContextImplGtkNotifyCursorArea(WebKitInputMethodCon
     gtk_im_context_set_cursor_location(priv->context.get(), &cursorRect);
 }
 
-static void webkitInputMethodContextImplGtkNotifySurrounding(WebKitInputMethodContext* context, const gchar* text, unsigned length, unsigned cursorIndex)
+static void webkitInputMethodContextImplGtkNotifySurrounding(WebKitInputMethodContext* context, const gchar* text, unsigned length, unsigned cursorIndex, unsigned)
 {
     auto* priv = WEBKIT_INPUT_METHOD_CONTEXT_IMPL_GTK(context)->priv;
     priv->surroundingText = { text, length };

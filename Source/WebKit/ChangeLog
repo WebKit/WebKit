@@ -1,3 +1,33 @@
+2020-01-20  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK][WPE] Also include the selection index in webkit_input_method_context_notify_surrounding()
+        https://bugs.webkit.org/show_bug.cgi?id=206497
+
+        Reviewed by Adrian Perez de Castro.
+
+        Input methods also want to know the selection.
+
+        * Shared/EditorState.cpp:
+        (WebKit::EditorState::PostLayoutData::encode const): Encode paragraphContextSelectionPosition.
+        (WebKit::EditorState::PostLayoutData::decode): Decode paragraphContextSelectionPosition.
+        * Shared/EditorState.h: Add paragraphContextSelectionPosition.
+        * UIProcess/API/glib/InputMethodFilter.cpp:
+        (WebKit::InputMethodFilter::notifySurrounding): Also include the selection index.
+        * UIProcess/API/glib/InputMethodFilter.h:
+        * UIProcess/API/glib/WebKitInputMethodContext.cpp:
+        (webkit_input_method_context_notify_surrounding):
+        * UIProcess/API/gtk/WebKitInputMethodContext.h:
+        * UIProcess/API/gtk/WebKitInputMethodContextImplGtk.cpp:
+        (webkitInputMethodContextImplGtkNotifySurrounding): Ignore the selection index, since GtkIMContext doesn't
+        support it.
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (webkitWebViewBaseUpdateTextInputState): Pass paragraphContextSelectionPosition to InputMethodFilter::notifySurrounding().
+        * UIProcess/API/wpe/WPEView.cpp:
+        (WKWPE::View::selectionDidChange): Ditto.
+        * UIProcess/API/wpe/WebKitInputMethodContext.h:
+        * WebProcess/WebPage/glib/WebPageGLib.cpp:
+        (WebKit::WebPage::platformEditorState const): Get the selection index too.
+
 2020-01-20  Zan Dobersek  <zdobersek@igalia.com>
 
         [WPE] Expose the WebKitOptionMenu APIs

@@ -241,7 +241,8 @@ void View::selectionDidChange()
     const auto& editorState = m_pageProxy->editorState();
     if (!editorState.isMissingPostLayoutData) {
         m_inputMethodFilter.notifyCursorRect(editorState.postLayoutData().caretRectAtStart);
-        m_inputMethodFilter.notifySurrounding(editorState.postLayoutData().paragraphContext, editorState.postLayoutData().paragraphContextCursorPosition);
+        m_inputMethodFilter.notifySurrounding(editorState.postLayoutData().paragraphContext, editorState.postLayoutData().paragraphContextCursorPosition,
+            editorState.postLayoutData().paragraphContextSelectionPosition);
     }
 }
 

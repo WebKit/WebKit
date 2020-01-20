@@ -1,3 +1,17 @@
+2020-01-20  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK][WPE] Also include the selection index in webkit_input_method_context_notify_surrounding()
+        https://bugs.webkit.org/show_bug.cgi?id=206497
+
+        Reviewed by Adrian Perez de Castro.
+
+        Add new test case to check the selection index when there's a selection.
+
+        * TestWebKitAPI/Tests/WebKitGLib/TestInputMethodContext.cpp:
+        (webkitInputMethodContextMockNotifySurrounding):
+        (webkitInputMethodContextMockReset):
+        (testWebKitInputMethodContextSurrounding):
+
 2020-01-20  Zan Dobersek  <zdobersek@igalia.com>
 
         [WPE] Expose the WebKitOptionMenu APIs

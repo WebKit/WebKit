@@ -131,7 +131,8 @@ struct _WebKitInputMethodContextClass {
     void     (* notify_surrounding) (WebKitInputMethodContext *context,
                                      const gchar              *text,
                                      guint                     length,
-                                     guint                     cursor_index);
+                                     guint                     cursor_index,
+                                     guint                     selection_index);
     void     (* reset)              (WebKitInputMethodContext *context);
 
     void (*_webkit_reserved0) (void);
@@ -178,7 +179,8 @@ WEBKIT_API void
 webkit_input_method_context_notify_surrounding (WebKitInputMethodContext   *context,
                                                 const gchar                *text,
                                                 int                         length,
-                                                guint                       cursor_index);
+                                                guint                       cursor_index,
+                                                guint                       selection_index);
 
 WEBKIT_API void
 webkit_input_method_context_reset              (WebKitInputMethodContext   *context);
