@@ -1652,6 +1652,7 @@ def handleCollectionFile(collection)
                     $benchmarkDirectory = path.dirname
                     
                     $runCommandOptions = {}
+                    $testSpecificRequiredOptions = []
                     eval entry["cmd"]
                 }
             }

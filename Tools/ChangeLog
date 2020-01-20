@@ -1,3 +1,18 @@
+2020-01-20  Saam Barati  <sbarati@apple.com>
+
+        REGRESSION(r254788): mozilla-tests.yaml/js1_5/Regress/regress-191633.js.mozilla fails
+        https://bugs.webkit.org/show_bug.cgi?id=206477
+        <rdar://problem/58714886>
+
+        Unreviewed.
+
+        In r232603 when we added test specific options, the implementation did not
+        clear the test specific options before parsing each test inside a yaml
+        file. It only worked for tests where we ran each js file inside a directory.
+        This patch makes it also work for yaml files.
+
+        * Scripts/run-jsc-stress-tests:
+
 2020-01-20  David Kilzer  <ddkilzer@apple.com>
 
         Fix missing header guards and clean up empty files in WebCore, WebKitLegacy, WebKit, Tools
