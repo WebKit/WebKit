@@ -1,3 +1,21 @@
+2020-01-20  Rossana Monteriso  <rmonteriso@igalia.com>
+
+        [css-grid] Import grid-align-content-distribution tests to WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=205926
+
+        Reviewed by Javier Fernandez.
+
+        Remove align-content-distribution tests that are being replaced by newer tests, adapted to the WPT project and imported
+        to the corresponding css-grid folder inside WebKit.
+
+        * fast/css-grid-layout/grid-align-content-distribution-expected.txt: Removed.
+        * fast/css-grid-layout/grid-align-content-distribution-vertical-lr-expected.txt: Removed.
+        * fast/css-grid-layout/grid-align-content-distribution-vertical-rl-expected.txt: Removed.
+        * fast/css-grid-layout/grid-align-content-distribution.html: Removed.
+        * fast/css-grid-layout/grid-align-content-distribution-vertical-lr.html: Removed.
+        * fast/css-grid-layout/grid-align-content-distribution-vertical-rl.html: Removed.
+
+
 2020-01-20  youenn fablet  <youenn@apple.com>
 
         Video sound sometimes keeps playing in page cache
