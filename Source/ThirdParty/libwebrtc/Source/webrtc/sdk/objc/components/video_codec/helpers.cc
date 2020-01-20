@@ -116,3 +116,23 @@ void SetVTSessionProperty(VTCompressionSessionRef vtSession, VCPCompressionSessi
                       << " to " << val_string << ": " << status;
   }
 }
+
+// Convenience function for setting a VT property.
+void SetVTSessionProperty(VTCompressionSessionRef vtSession, VCPCompressionSessionRef vcpSession,
+                          CFStringRef key,
+                          CFArrayRef value) {
+  RTC_DCHECK(vtSession || vcpSession);
+  OSStatus status = noErr;
+  if (vtSession)
+    status = VTSessionSetProperty(vtSession, key, value);
+#if ENABLE_VCP_ENCODER
+  else
+    status = webrtc::VCPCompressionSessionSetProperty(vcpSession, key, value);
+#endif
+
+  if (status != noErr) {
+    std::string key_string = CFStringToString(key);
+    RTC_LOG(LS_ERROR) << "VTSessionSetProperty failed to set: " << key_string
+                      << " to array value: " << status << ", vcpSession: " << vcpSession;
+  }
+}

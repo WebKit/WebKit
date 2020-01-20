@@ -46,4 +46,9 @@ void SetVTSessionProperty(VTCompressionSessionRef session, VCPCompressionSession
                           CFStringRef key,
                           CFStringRef value);
 
+// Convenience function for setting a VT property.
+void SetVTSessionProperty(VTCompressionSessionRef session, VCPCompressionSessionRef vcpSession,
+                          CFStringRef key,
+                          CFArrayRef value);
+
 #endif  // SDK_OBJC_FRAMEWORK_CLASSES_VIDEOTOOLBOX_HELPERS_H_
