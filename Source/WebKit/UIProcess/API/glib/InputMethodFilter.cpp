@@ -77,17 +77,22 @@ void InputMethodFilter::setContext(WebKitInputMethodContext* context)
     g_signal_connect_swapped(m_context.get(), "committed", G_CALLBACK(committedCallback), this);
     g_signal_connect_swapped(m_context.get(), "delete-surrounding", G_CALLBACK(deleteSurroundingCallback), this);
 
+    notifyContentType();
+
     if (isEnabled() && isViewFocused())
         notifyFocusedIn();
 }
 
 void InputMethodFilter::setState(Optional<InputMethodState>&& state)
 {
-    if (!state)
+    bool focusChanged = state.hasValue() != m_state.hasValue();
+    if (focusChanged && !state)
         notifyFocusedOut();
 
     m_state = WTFMove(state);
-    if (isEnabled() && isViewFocused())
+    notifyContentType();
+
+    if (focusChanged && isEnabled() && isViewFocused())
         notifyFocusedIn();
 }
 
@@ -172,7 +177,8 @@ static WebKitInputHints toWebKitHints(const OptionSet<InputMethodState::Hint>& h
         wkHints |= WEBKIT_INPUT_HINT_INHIBIT_OSK;
     return static_cast<WebKitInputHints>(wkHints);
 }
-void InputMethodFilter::notifyFocusedIn()
+
+void InputMethodFilter::notifyContentType()
 {
     if (!isEnabled() || !m_context)
         return;
@@ -181,6 +187,13 @@ void InputMethodFilter::notifyFocusedIn()
     webkit_input_method_context_set_input_purpose(m_context.get(), toWebKitPurpose(m_state->purpose));
     webkit_input_method_context_set_input_hints(m_context.get(), toWebKitHints(m_state->hints));
     g_object_thaw_notify(G_OBJECT(m_context.get()));
+}
+
+void InputMethodFilter::notifyFocusedIn()
+{
+    if (!isEnabled() || !m_context)
+        return;
+
     webkit_input_method_context_notify_focus_in(m_context.get());
 }
 

@@ -87,6 +87,8 @@ private:
     bool isEnabled() const { return !!m_state; }
     bool isViewFocused() const;
 
+    void notifyContentType();
+
     WebCore::IntRect platformTransformCursorRectToViewCoordinates(const WebCore::IntRect&);
     bool platformEventKeyIsKeyPress(PlatformEventKey*) const;
 
