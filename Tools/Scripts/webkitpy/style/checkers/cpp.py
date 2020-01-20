@@ -2,7 +2,7 @@
 #
 # Copyright (C) 2009, 2010, 2012 Google Inc. All rights reserved.
 # Copyright (C) 2009 Torch Mobile Inc.
-# Copyright (C) 2009-2019 Apple Inc. All rights reserved.
+# Copyright (C) 2009-2020 Apple Inc. All rights reserved.
 # Copyright (C) 2010 Chris Jerdonek (cjerdonek@webkit.org)
 #
 # Redistribution and use in source and binary forms, with or without
@@ -37,6 +37,7 @@
 """Support for check-webkit-style."""
 
 import codecs
+import functools
 import math  # for log
 import os
 import os.path
@@ -930,30 +931,59 @@ def check_for_copyright(lines, error):
               'You should have a line: "Copyright [year] <Copyright Owner>"')
 
 
-def check_for_header_guard(lines, error):
+def check_for_header_guard(file_path, lines, error):
     """Checks that the file contains a header guard.
 
     Logs an error if there was an #ifndef guard in a header
-    that should be a #pragma once guard.
+    that should be a #pragma once guard, or if there is a missing
+    #pragma once guard.
 
     Args:
+      file_path: Path to the header file that is being processed.
       lines: An array of strings, each representing a line of the file.
       error: The function to call with any errors found.
     """
 
+    filename = os.path.split(file_path)[-1]
+    if filename == 'config.h' or filename.endswith('Prefix.h'):
+        return
+
+    first_blank_line_number = 0
+    has_import_statement = False
+    has_objc_check = False
+    has_objc_keywords = False
     for line_number, line in enumerate(lines):
+        if line == '' and first_blank_line_number == 0:
+            first_blank_line_number = line_number
         if line.startswith('#pragma once'):
             return
+        if line.startswith('#import '):
+            has_import_statement = True
+        if '__OBJC__' in line:
+            has_objc_check = True
+        if functools.reduce(lambda x, y: x or y, map(lambda x: x in line, ['@class', '@interface', '@protocol'])):
+            has_objc_keywords = True
+
+    if (has_import_statement or has_objc_keywords) and not has_objc_check:
+        return  # Objective-C-only headers don't need guards.
 
     # If there is no #pragma once, but there is an #ifndef, warn only if it was modified.
     ifndef_line_number = 0
+    previous_line = None
     for line_number, line in enumerate(lines):
-        line_split = line.split()
-        if len(line_split) >= 2:
-            if line_split[0] == '#ifndef' and line_split[1].endswith('_h'):
-                error(line_number, 'build/header_guard', 5,
-                    'Use #pragma once instead of #ifndef for header guard.')
-                return
+        if previous_line is not None:
+            previous_line_split = previous_line.split()
+            line_split = line.split()
+            if len(previous_line_split) >= 2 and len(line_split) >= 2:
+                if previous_line_split[0] == '#ifndef' and line_split[0] == '#define' \
+                        and previous_line_split[1] == line_split[1]:
+                    error(line_number, 'build/header_guard', 5,
+                          'Use #pragma once instead of #ifndef for header guard.')
+                    return
+        previous_line = line
+
+    error(first_blank_line_number + 1, 'build/header_guard_missing', 5,
+          'Missing #pragma once for header guard.')
 
 
 def check_for_unicode_replacement_characters(lines, error):
@@ -4079,7 +4109,7 @@ def _process_lines(filename, file_extension, lines, error, min_confidence):
     check_for_copyright(lines, error)
 
     if file_extension == 'h':
-        check_for_header_guard(lines, error)
+        check_for_header_guard(filename, lines, error)
         if filename == 'Source/WTF/wtf/Platform.h':
             check_platformh_comments(lines, error)
 
@@ -4120,6 +4150,7 @@ class CppChecker(object):
         'build/endif_comment',
         'build/forward_decl',
         'build/header_guard',
+        'build/header_guard_missing',
         'build/include',
         'build/include_order',
         'build/include_what_you_use',

@@ -2,7 +2,7 @@
 #
 # Copyright (C) 2011 Google Inc. All rights reserved.
 # Copyright (C) 2009 Torch Mobile Inc.
-# Copyright (C) 2009-2019 Apple Inc. All rights reserved.
+# Copyright (C) 2009-2020 Apple Inc. All rights reserved.
 # Copyright (C) 2010 Chris Jerdonek (cjerdonek@webkit.org)
 #
 # Redistribution and use in source and binary forms, with or without
@@ -309,7 +309,7 @@ class CppStyleTestBase(unittest.TestCase):
         return self.perform_lint(code, filename, basic_error_rules, unit_test_config)
 
     # Only include header guard errors.
-    def perform_header_guard_check(self, code, filename='foo.h'):
+    def perform_header_guard_check(self, code, filename):
         basic_error_rules = ('-', '+build/header_guard')
         return self.perform_lint(code, filename, basic_error_rules)
 
@@ -343,9 +343,9 @@ class CppStyleTestBase(unittest.TestCase):
         self.assertEqual(expected_message,
                           self.perform_include_what_you_use(code))
 
-    def assert_header_guard(self, code, expected_message):
+    def assert_header_guard(self, code, expected_message, filename='foo.h'):
         self.assertEqual(expected_message,
-                          self.perform_header_guard_check(code))
+                         self.perform_header_guard_check(code, filename))
 
     def assert_blank_lines_check(self, lines, start_errors, end_errors):
         error_collector = ErrorCollector(self.assertTrue)
@@ -2676,16 +2676,82 @@ class CppStyleTest(CppStyleTestBase):
     def test_build_header_guard(self):
         rules = ('-', '+build/header_guard')
 
-        # Old header guard.
-        self.assert_header_guard('#ifndef Foo_h',
+        # No warning for config.h and *Prefix.h headers.
+        self.assert_header_guard('', '', 'config.h')
+        self.assert_header_guard('', '', 'FooPrefix.h')
+
+        # No warning for valid header guard.
+        self.assert_header_guard('#pragma once', '')
+
+        # Warning for old header guard.
+        self.assert_header_guard(
+            '#ifndef Foo_h\n'
+            '#define Foo_h\n'
+            '#endif /* Foo_h */\n',
             'Use #pragma once instead of #ifndef for header guard.'
             '  [build/header_guard] [5]')
 
-        # No header guard. Okay, since this could be an ObjC header.
-        self.assert_header_guard('', '')
+        # Warning for missing header guard.
+        self.assert_header_guard(
+            '',
+            'Missing #pragma once for header guard.'
+            '  [build/header_guard_missing] [5]')
 
-        # Valid header guard.
-        self.assert_header_guard('#pragma once', '')
+        # No warning for Obj-C header with #import statement.
+        self.assert_header_guard(
+            '#import <Foundation/Foundation.h>',
+            '')
+
+        # No warning for Obj-C header with @class keyword.
+        self.assert_header_guard(
+            '@class NSString;',
+            '')
+
+        # No warning for Obj-C header with @interface keyword.
+        self.assert_header_guard(
+            '@interface NSString (MyCategory)\n'
+            '@end\n',
+            '')
+
+        # No warning for Obj-C header with @protocol keyword.
+        self.assert_header_guard(
+            '@protocol MyProtocol : NSObject\n'
+            '@end\n',
+            '')
+
+        # Warning for Obj-C header with #import statement and __OBJC__ check.
+        self.assert_header_guard(
+            '#ifdef __OBJC__\n'
+            '#import <Foundation/Foundation.h>\n'
+            '#endif /* __OBJC__ */\n',
+            'Missing #pragma once for header guard.'
+            '  [build/header_guard_missing] [5]')
+
+        # Warning for Obj-C header with @class keyword and __OBJC__ check.
+        self.assert_header_guard(
+            '#ifdef __OBJC__\n'
+            '@class NSString;\n'
+            '#endif /* __OBJC__ */\n',
+            'Missing #pragma once for header guard.'
+            '  [build/header_guard_missing] [5]')
+
+        # Warning for Obj-C header with @interface keyword and __OBJC__ check.
+        self.assert_header_guard(
+            '#ifdef __OBJC__\n'
+            '@interface NSString (MyCategory)\n'
+            '@end\n'
+            '#endif /* __OBJC__ */\n',
+            'Missing #pragma once for header guard.'
+            '  [build/header_guard_missing] [5]')
+
+        # Warning for Obj-C header with @protocol keyword and __OBJC__ check.
+        self.assert_header_guard(
+            '#ifdef __OBJC__\n'
+            '@protocol MyProtocol : NSObject\n'
+            '@end\n'
+            '#endif /* __OBJC__ */\n',
+            'Missing #pragma once for header guard.'
+            '  [build/header_guard_missing] [5]')
 
     def test_build_printf_format(self):
         self.assert_lint(

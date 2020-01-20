@@ -1,3 +1,39 @@
+2020-01-20  David Kilzer  <ddkilzer@apple.com>
+
+        check-webkit-style: Improve header guard checks
+        <https://webkit.org/b/206480>
+
+        Reviewed by Darin Adler.
+
+        * Scripts/webkitpy/style/checkers/cpp.py:
+        (check_for_header_guard):
+        - Add `file_path` (filename) argument to check for config.h and
+          *Prefix.h headers.
+        - Use hints in header file to determine if this is a header file
+          only used by Objective-C or not.
+        - Change #ifndef/#define check to use both lines instead of
+          assuming a format for the macro.
+        - Emit new 'build/header_guard_missing' error.
+        (_process_lines):
+        - Pass `filename` argument to check_for_header_guard().
+        (CppChecker):
+        - Enable new 'build/header_guard_missing' check.
+
+        * Scripts/webkitpy/style/checkers/cpp_unittest.py:
+        (CppStyleTestBase.perform_header_guard_check):
+        (CppStyleTestBase.assert_header_guard):
+        - Move default `filename` argument from
+          perform_header_guard_check() to assert_header_guard() so tests
+          may pass in different values for header paths.
+        (CppStyleTest):
+        - Add tests for config.h, *Prefix.h headers.
+        - Update test for `build/header_guard' (legacy header guard)
+          error.
+        - Update test for missing header guard so that it now expects a
+          'build/header_guard_missing' error message.
+        - Add tests for Objective-C headers with and without __OBJC__
+          checks.
+
 2020-01-20  Zan Dobersek  <zdobersek@igalia.com>
 
         [WPE] Add WebKitRectangle, use it for WebKitWebView's SHOW_MENU signal
