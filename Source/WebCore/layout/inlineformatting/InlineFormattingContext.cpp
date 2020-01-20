@@ -85,22 +85,22 @@ void InlineFormattingContext::layoutInFlowContent(InvalidationState& invalidatio
     }
 
     collectInlineContentIfNeeded();
-    lineLayout(horizontalConstraints, verticalConstraints);
+
+    auto& inlineItems = formattingState().inlineItems();
+    lineLayout(inlineItems, { 0, inlineItems.size() }, horizontalConstraints, verticalConstraints);
     LOG_WITH_STREAM(FormattingContextLayout, stream << "[End] -> inline formatting context -> formatting root(" << &root() << ")");
 }
 
-void InlineFormattingContext::lineLayout(const HorizontalConstraints& horizontalConstraints, const VerticalConstraints& verticalConstraints)
+void InlineFormattingContext::lineLayout(InlineItems& inlineItems, LineLayoutContext::InlineItemRange layoutRange, const HorizontalConstraints& horizontalConstraints, const VerticalConstraints& verticalConstraints)
 {
-    auto& inlineItems = formattingState().inlineItems();
     auto lineLogicalTop = verticalConstraints.logicalTop;
-    unsigned leadingInlineItemIndex = 0;
     Optional<unsigned> partialLeadingContentLength;
     auto lineBuilder = LineBuilder { *this, root().style().textAlign(), LineBuilder::IntrinsicSizing::No };
     auto lineLayoutContext = LineLayoutContext { *this, root(), inlineItems };
 
-    while (leadingInlineItemIndex < inlineItems.size()) {
+    while (!layoutRange.isEmpty()) {
         lineBuilder.initialize(constraintsForLine(horizontalConstraints, lineLogicalTop));
-        auto lineContent = lineLayoutContext.layoutLine(lineBuilder, leadingInlineItemIndex, partialLeadingContentLength);
+        auto lineContent = lineLayoutContext.layoutLine(lineBuilder, layoutRange, partialLeadingContentLength);
         setDisplayBoxesForLine(lineContent, horizontalConstraints);
 
         partialLeadingContentLength = { };
@@ -108,12 +108,12 @@ void InlineFormattingContext::lineLayout(const HorizontalConstraints& horizontal
             lineLogicalTop = lineContent.lineBox.logicalBottom();
             // When the trailing content is partial, we need to reuse the last InlinItem.
             if (lineContent.partialContent) {
-                leadingInlineItemIndex = *lineContent.trailingInlineItemIndex;
+                layoutRange.start = *lineContent.trailingInlineItemIndex;
                 // Turn previous line's overflow content length into the next line's leading content partial length.
                 // "sp<->litcontent" -> overflow length: 10 -> leading partial content length: 10. 
                 partialLeadingContentLength = lineContent.partialContent->overflowContentLength;
             } else
-                leadingInlineItemIndex = *lineContent.trailingInlineItemIndex + 1;
+                layoutRange.start = *lineContent.trailingInlineItemIndex + 1;
             continue;
         }
         // Floats prevented us placing any content on the line.
@@ -233,16 +233,16 @@ FormattingContext::IntrinsicWidthConstraints InlineFormattingContext::computedIn
 InlineLayoutUnit InlineFormattingContext::computedIntrinsicWidthForConstraint(const HorizontalConstraints& horizontalConstraints) const
 {
     auto& inlineItems = formattingState().inlineItems();
-    InlineLayoutUnit maximumLineWidth = 0;
-    unsigned leadingInlineItemIndex = 0;
+    auto maximumLineWidth = InlineLayoutUnit { };
     auto lineBuilder = LineBuilder { *this, root().style().textAlign(), LineBuilder::IntrinsicSizing::Yes };
     auto lineLayoutContext = LineLayoutContext { *this, root(), inlineItems };
-    while (leadingInlineItemIndex < inlineItems.size()) {
+    auto layoutRange = LineLayoutContext::InlineItemRange { 0 , inlineItems.size() };
+    while (!layoutRange.isEmpty()) {
         // Only the horiztonal available width is constrained when computing intrinsic width.
         lineBuilder.initialize(LineBuilder::Constraints { { }, horizontalConstraints.logicalWidth, false, { } });
-        auto lineContent = lineLayoutContext.layoutLine(lineBuilder, leadingInlineItemIndex, { });
+        auto lineContent = lineLayoutContext.layoutLine(lineBuilder, layoutRange , { });
 
-        leadingInlineItemIndex = *lineContent.trailingInlineItemIndex + 1;
+        layoutRange.start = *lineContent.trailingInlineItemIndex + 1;
         InlineLayoutUnit floatsWidth = 0;
         for (auto& floatItem : lineContent.floats)
             floatsWidth += geometryForBox(floatItem->layoutBox()).marginBoxWidth();

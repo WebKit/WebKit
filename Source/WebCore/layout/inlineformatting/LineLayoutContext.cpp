@@ -105,7 +105,7 @@ static inline bool isAtSoftWrapOpportunity(const InlineItem& current, const Inli
     return true;
 }
 
-static inline size_t nextWrapOpportunity(const InlineItems& inlineContent, unsigned startIndex)
+static inline size_t nextWrapOpportunity(const InlineItems& inlineContent, size_t startIndex, const LineLayoutContext::InlineItemRange layoutRange)
 {
     // 1. Find the start candidate by skipping leading non-content items e.g <span><span>start : skip "<span><span>"
     // 2. Find the end candidate by skipping non-content items inbetween e.g. <span><span>start</span>end: skip "</span>"
@@ -115,12 +115,11 @@ static inline size_t nextWrapOpportunity(const InlineItems& inlineContent, unsig
     // [ex-][container start][container end][float][ample] (ex-<span></span><div style="float:left"></div>ample) : wrap index is at [ex-].
     // [ex][container start][amp-][container start][le] (ex<span>amp-<span>ample) : wrap index is at [amp-].
     // [ex-][container start][line break][ample] (ex-<span><br>ample) : wrap index is after [br].
-    unsigned inlineItemCount = inlineContent.size();
     auto isAtLineBreak = false;
 
     auto inlineItemIndexWithContent = [&] (auto index) {
         // Break at the first text/box/line break inline item.
-        for (; index < inlineItemCount; ++index) {
+        for (; index < layoutRange.end; ++index) {
             auto& inlineItem = inlineContent[index];
             if (inlineItem.isText() || inlineItem.isBox())
                 return index;
@@ -129,7 +128,7 @@ static inline size_t nextWrapOpportunity(const InlineItems& inlineContent, unsig
                 return index;
             }
         }
-        return inlineItemCount;
+        return layoutRange.end;
     };
 
     // Start at the first inline item with content.
@@ -140,11 +139,11 @@ static inline size_t nextWrapOpportunity(const InlineItems& inlineContent, unsig
         return startContentIndex + 1;
     }
 
-    while (startContentIndex < inlineItemCount) {
+    while (startContentIndex < layoutRange.end) {
         // 1. Find the next inline item with content.
         // 2. Check if there's a soft wrap opportunity between the start and the next inline item.
         auto nextContentIndex = inlineItemIndexWithContent(startContentIndex + 1);
-        if (nextContentIndex == inlineItemCount)
+        if (nextContentIndex == layoutRange.end)
             return nextContentIndex;
         if (isAtLineBreak) {
             // We always stop at line breaks. The wrap position is after the line break.
@@ -169,7 +168,7 @@ static inline size_t nextWrapOpportunity(const InlineItems& inlineContent, unsig
         }
         startContentIndex = nextContentIndex;
     }
-    return inlineItemCount;
+    return layoutRange.end;
 }
 
 struct LineCandidateContent {
@@ -253,7 +252,7 @@ LineLayoutContext::LineLayoutContext(const InlineFormattingContext& inlineFormat
 {
 }
 
-LineLayoutContext::LineContent LineLayoutContext::layoutLine(LineBuilder& line, unsigned leadingInlineItemIndex, Optional<unsigned> partialLeadingContentLength)
+LineLayoutContext::LineContent LineLayoutContext::layoutLine(LineBuilder& line, const InlineItemRange layoutRange, Optional<unsigned> partialLeadingContentLength)
 {
     auto reset = [&] {
         ASSERT(m_floats.isEmpty());
@@ -262,22 +261,22 @@ LineLayoutContext::LineContent LineLayoutContext::layoutLine(LineBuilder& line, 
     };
     reset();
     auto lineBreaker = LineBreaker { };
-    auto currentItemIndex = leadingInlineItemIndex;
+    auto currentItemIndex = layoutRange.start;
     unsigned committedInlineItemCount = 0;
     auto candidateContent = LineCandidateContent { };
-    while (currentItemIndex < m_inlineItems.size()) {
+    while (currentItemIndex < layoutRange.end) {
         // 1. Collect the set of runs that we can commit to the line as one entity e.g. <span>text_and_span_start_span_end</span>.
         // 2. Apply floats and shrink the available horizontal space e.g. <span>intru_<div style="float: left"></div>sive_float</span>.
         // 3. Check if the content fits the line and commit the content accordingly (full, partial or not commit at all).
         // 4. Return if we are at the end of the line either by not being able to fit more content or because of an explicit line break.
-        nextContentForLine(candidateContent, currentItemIndex, partialLeadingContentLength, line.lineBox().logicalWidth());
+        nextContentForLine(candidateContent, currentItemIndex, layoutRange, partialLeadingContentLength, line.lineBox().logicalWidth());
         if (candidateContent.hasIntrusiveFloats()) {
             // Add floats first because they shrink the available horizontal space for the rest of the content.
             auto result = tryAddingFloatItems(line, candidateContent.floats());
             committedInlineItemCount += result.committedCount;
             if (result.isEndOfLine == LineBreaker::IsEndOfLine::Yes) {
                 // Floats take up all the horizontal space.
-                return close(line, leadingInlineItemIndex, committedInlineItemCount, { });
+                return close(line, layoutRange, committedInlineItemCount, { });
             }
         }
         if (!candidateContent.inlineRuns().isEmpty()) {
@@ -287,25 +286,25 @@ LineLayoutContext::LineContent LineLayoutContext::layoutLine(LineBuilder& line, 
                 ASSERT(!result.committedCount);
                 ASSERT(result.isEndOfLine == LineBreaker::IsEndOfLine::Yes);
                 // An earlier line wrapping opportunity turned out to be the final breaking position.
-                rebuildLineForRevert(line, *result.revertTo, leadingInlineItemIndex);
+                rebuildLineForRevert(line, *result.revertTo, layoutRange);
             }
             committedInlineItemCount += result.committedCount;
             if (result.isEndOfLine == LineBreaker::IsEndOfLine::Yes) {
                 // We can't place any more items on the current line.
-                return close(line, leadingInlineItemIndex, committedInlineItemCount, result.partialContent);
+                return close(line, layoutRange, committedInlineItemCount, result.partialContent);
             }
         } else if (auto* trailingLineBreak = candidateContent.trailingLineBreak()) {
             line.append(*trailingLineBreak, 0);
-            return close(line, leadingInlineItemIndex, ++committedInlineItemCount, { });
+            return close(line, layoutRange, ++committedInlineItemCount, { });
         }
-        currentItemIndex = leadingInlineItemIndex + committedInlineItemCount;
+        currentItemIndex = layoutRange.start + committedInlineItemCount;
         partialLeadingContentLength = { };
     }
     // Looks like we've run out of runs.
-    return close(line, leadingInlineItemIndex, committedInlineItemCount, { });
+    return close(line, layoutRange, committedInlineItemCount, { });
 }
 
-LineLayoutContext::LineContent LineLayoutContext::close(LineBuilder& line, unsigned leadingInlineItemIndex, unsigned committedInlineItemCount, Optional<LineContent::PartialContent> partialContent)
+LineLayoutContext::LineContent LineLayoutContext::close(LineBuilder& line, const InlineItemRange layoutRange, unsigned committedInlineItemCount, Optional<LineContent::PartialContent> partialContent)
 {
     ASSERT(committedInlineItemCount || line.hasIntrusiveFloat());
     if (!committedInlineItemCount)
@@ -317,14 +316,15 @@ LineLayoutContext::LineContent LineLayoutContext::close(LineBuilder& line, unsig
     else
         m_successiveHyphenatedLineCount = 0;
 
-    auto trailingInlineItemIndex = leadingInlineItemIndex + committedInlineItemCount - 1;
+    auto trailingInlineItemIndex = layoutRange.start + committedInlineItemCount - 1;
+    ASSERT(trailingInlineItemIndex < layoutRange.end);
     auto isLastLineWithInlineContent = [&] {
-        if (trailingInlineItemIndex == m_inlineItems.size() - 1)
+        if (trailingInlineItemIndex == layoutRange.end - 1)
             return LineBuilder::IsLastLineWithInlineContent::Yes;
         if (partialContent)
             return LineBuilder::IsLastLineWithInlineContent::No;
         // Omit floats to see if this is the last line with inline content.
-        for (auto i = m_inlineItems.size(); i--;) {
+        for (auto i = layoutRange.end; i--;) {
             if (!m_inlineItems[i].isFloat())
                 return i == trailingInlineItemIndex ? LineBuilder::IsLastLineWithInlineContent::Yes : LineBuilder::IsLastLineWithInlineContent::No;
         }
@@ -335,28 +335,28 @@ LineLayoutContext::LineContent LineLayoutContext::close(LineBuilder& line, unsig
     return LineContent { trailingInlineItemIndex, partialContent, WTFMove(m_floats), line.close(isLastLineWithInlineContent), line.lineBox() };
 }
 
-void LineLayoutContext::nextContentForLine(LineCandidateContent& candidateContent, unsigned inlineItemIndex, Optional<unsigned> partialLeadingContentLength, InlineLayoutUnit currentLogicalRight)
+void LineLayoutContext::nextContentForLine(LineCandidateContent& candidateContent, unsigned currentInlineItemIndex, const InlineItemRange layoutRange, Optional<unsigned> partialLeadingContentLength, InlineLayoutUnit currentLogicalRight)
 {
-    ASSERT(inlineItemIndex < m_inlineItems.size());
+    ASSERT(currentInlineItemIndex < layoutRange.end);
     candidateContent.reset();
     // 1. Simply add any overflow content from the previous line to the candidate content. It's always a text content.
     // 2. Find the next soft wrap position or explicit line break.
     // 3. Collect floats between the inline content.
-    auto softWrapOpportunityIndex = nextWrapOpportunity(m_inlineItems, inlineItemIndex);
-    // softWrapOpportunityIndex == m_inlineItems.size() means we don't have any wrap opportunity in this content.
-    ASSERT(softWrapOpportunityIndex <= m_inlineItems.size());
+    auto softWrapOpportunityIndex = nextWrapOpportunity(m_inlineItems, currentInlineItemIndex, layoutRange);
+    // softWrapOpportunityIndex == layoutRange.end means we don't have any wrap opportunity in this content.
+    ASSERT(softWrapOpportunityIndex <= layoutRange.end);
 
     if (partialLeadingContentLength) {
         // Handle leading partial content first (split text from the previous line).
         // Construct a partial leading inline item.
-        m_partialLeadingTextItem = downcast<InlineTextItem>(m_inlineItems[inlineItemIndex]).right(*partialLeadingContentLength);
+        m_partialLeadingTextItem = downcast<InlineTextItem>(m_inlineItems[currentInlineItemIndex]).right(*partialLeadingContentLength);
         auto itemWidth = inlineItemWidth(*m_partialLeadingTextItem, currentLogicalRight);
         candidateContent.appendInlineContent(*m_partialLeadingTextItem, itemWidth);
         currentLogicalRight += itemWidth;
-        ++inlineItemIndex;
+        ++currentInlineItemIndex;
     }
 
-    for (auto index = inlineItemIndex; index < softWrapOpportunityIndex; ++index) {
+    for (auto index = currentInlineItemIndex; index < softWrapOpportunityIndex; ++index) {
         auto& inlineItem = m_inlineItems[index];
         if (inlineItem.isText() || inlineItem.isContainerStart() || inlineItem.isContainerEnd()) {
             auto inlineItenmWidth = inlineItemWidth(inlineItem, currentLogicalRight);
@@ -478,11 +478,11 @@ void LineLayoutContext::commitPartialContent(LineBuilder& line, const LineBreake
     }
 }
 
-void LineLayoutContext::rebuildLineForRevert(LineBuilder& line, const InlineItem& revertTo, unsigned leadingInlineItemIndex)
+void LineLayoutContext::rebuildLineForRevert(LineBuilder& line, const InlineItem& revertTo, const InlineItemRange layoutRange)
 {
     // This is the rare case when the line needs to be reverted to an earlier position.
     line.resetContent();
-    auto inlineItemIndex = leadingInlineItemIndex;
+    auto inlineItemIndex = layoutRange.start;
     InlineLayoutUnit logicalRight = { };
     if (m_partialLeadingTextItem) {
         auto logicalWidth = inlineItemWidth(*m_partialLeadingTextItem, logicalRight);
@@ -493,7 +493,7 @@ void LineLayoutContext::rebuildLineForRevert(LineBuilder& line, const InlineItem
         ++inlineItemIndex;
     }
 
-    for (; inlineItemIndex < m_inlineItems.size(); ++inlineItemIndex) {
+    for (; inlineItemIndex < layoutRange.end; ++inlineItemIndex) {
         auto& inlineItem = m_inlineItems[inlineItemIndex];
         auto logicalWidth = inlineItemWidth(inlineItem, logicalRight);
         line.append(inlineItem, logicalWidth);

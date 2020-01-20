@@ -50,11 +50,16 @@ public:
         const LineBuilder::RunList runList;
         const Display::LineBox lineBox;
     };
-    LineContent layoutLine(LineBuilder&, unsigned leadingInlineItemIndex, Optional<unsigned> partialLeadingContentLength);
+    struct InlineItemRange {
+        bool isEmpty() const { return start == end; }
+        size_t start { 0 };
+        size_t end { 0 };
+    };
+    LineContent layoutLine(LineBuilder&, const InlineItemRange, Optional<unsigned> partialLeadingContentLength);
     using FloatList = Vector<const InlineItem*>;
 
 private:
-    void nextContentForLine(LineCandidateContent&, unsigned inlineItemIndex, Optional<unsigned> overflowLength, InlineLayoutUnit currentLogicalRight);
+    void nextContentForLine(LineCandidateContent&, unsigned inlineItemIndex, const InlineItemRange layoutRange, Optional<unsigned> overflowLength, InlineLayoutUnit currentLogicalRight);
     struct Result {
         LineBreaker::IsEndOfLine isEndOfLine { LineBreaker::IsEndOfLine::No };
         size_t committedCount { 0 };
@@ -63,9 +68,9 @@ private:
     };
     Result tryAddingFloatItems(LineBuilder&, const FloatList&);
     Result tryAddingInlineItems(LineBreaker&, LineBuilder&, const LineCandidateContent&);
-    void rebuildLineForRevert(LineBuilder&, const InlineItem& revertTo, unsigned leadingInlineItemIndex);
+    void rebuildLineForRevert(LineBuilder&, const InlineItem& revertTo, const InlineItemRange layoutRange);
     void commitPartialContent(LineBuilder&, const LineBreaker::RunList&, const LineBreaker::Result::PartialTrailingContent&);
-    LineContent close(LineBuilder&, unsigned leadingInlineItemIndex, unsigned committedInlineItemCount, Optional<LineContent::PartialContent>);
+    LineContent close(LineBuilder&, const InlineItemRange layoutRange, unsigned committedInlineItemCount, Optional<LineContent::PartialContent>);
 
     InlineLayoutUnit inlineItemWidth(const InlineItem&, InlineLayoutUnit contentLogicalLeft) const;
 
