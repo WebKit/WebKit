@@ -446,6 +446,26 @@ template<> struct ArgumentCoder<WebCore::KeypressCommand> {
     static void encode(Encoder&, const WebCore::KeypressCommand&);
     static Optional<WebCore::KeypressCommand> decode(Decoder&);
 };
+
+template<> struct ArgumentCoder<CGPoint> {
+    static void encode(Encoder&, CGPoint);
+    static Optional<CGPoint> decode(Decoder&);
+};
+
+template<> struct ArgumentCoder<CGSize> {
+    static void encode(Encoder&, CGSize);
+    static Optional<CGSize> decode(Decoder&);
+};
+
+template<> struct ArgumentCoder<CGRect> {
+    static void encode(Encoder&, CGRect);
+    static Optional<CGRect> decode(Decoder&);
+};
+
+template<> struct ArgumentCoder<CGAffineTransform> {
+    static void encode(Encoder&, CGAffineTransform);
+    static Optional<CGAffineTransform> decode(Decoder&);
+};
 #endif
 
 #if PLATFORM(IOS_FAMILY)
