@@ -1,3 +1,20 @@
+2020-01-20  David Kilzer  <ddkilzer@apple.com>
+
+        Fix missing header guards and clean up empty files in bmalloc, WTF, JavaScriptCore
+        <https://webkit.org/b/206481>
+
+        Reviewed by Darin Adler.
+
+        * dfg/DFGPrePostNumbering.cpp: Remove empty file.
+        * dfg/DFGPrePostNumbering.h: Remove empty file.
+        * runtime/OptionEntry.h: Remove empty file.
+
+        * API/JSCallbackObjectFunctions.h:
+        * b3/testb3.h:
+        * heap/IsoInlinedHeapCellType.h:
+        * wasm/WasmGeneratorTraits.h:
+        - Add #pragma once.
+
 2020-01-18  Caitlin Potter  <caitp@igalia.com>
 
         [JSC] add DFG/FTL support for op_to_property_key

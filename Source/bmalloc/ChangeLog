@@ -1,3 +1,13 @@
+2020-01-20  David Kilzer  <ddkilzer@apple.com>
+
+        Fix missing header guards and clean up empty files in bmalloc, WTF, JavaScriptCore
+        <https://webkit.org/b/206481>
+
+        Reviewed by Darin Adler.
+
+        * bmalloc/PerThread.cpp: Remove empty file.
+        * bmalloc/ScopeExit.h: Add #pragma once.
+
 2020-01-17  Basuke Suzuki  <basuke.suzuki@sony.com>
 
         [bmalloc] Define alias for std::lock_guard and std::unique_lock for better readability

@@ -1,3 +1,14 @@
+2020-01-20  David Kilzer  <ddkilzer@apple.com>
+
+        Fix missing header guards and clean up empty files in bmalloc, WTF, JavaScriptCore
+        <https://webkit.org/b/206481>
+
+        Reviewed by Darin Adler.
+
+        * wtf/cocoa/Entitlements.h:
+        * wtf/win/PathWalker.h:
+        - Add #pragma once.
+
 2020-01-19  Claudio Saavedra  <csaavedra@igalia.com>
 
         [GTK] Remove usage of deprecated GTimeVal
