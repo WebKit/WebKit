@@ -30,10 +30,10 @@
 #include "MediaPlayerPrivate.h"
 #include "MediaSample.h"
 #include "MediaStreamPrivate.h"
+#include "SampleBufferDisplayLayer.h"
 #include <wtf/Deque.h>
 #include <wtf/Forward.h>
 #include <wtf/LoggerHelper.h>
-#include <wtf/WeakPtr.h>
 
 OBJC_CLASS AVSampleBufferDisplayLayer;
 OBJC_CLASS WebAVSampleBufferStatusChangeListener;
@@ -51,7 +51,7 @@ class PixelBufferConformerCV;
 class VideoFullscreenLayerManagerObjC;
 class VideoTrackPrivateMediaStream;
 
-class MediaPlayerPrivateMediaStreamAVFObjC final : public CanMakeWeakPtr<MediaPlayerPrivateMediaStreamAVFObjC>, public MediaPlayerPrivateInterface, private MediaStreamPrivate::Observer, private MediaStreamTrackPrivate::Observer
+class MediaPlayerPrivateMediaStreamAVFObjC final : public MediaPlayerPrivateInterface, private MediaStreamPrivate::Observer, private MediaStreamTrackPrivate::Observer, public SampleBufferDisplayLayer::Client
 #if !RELEASE_LOG_DISABLED
     , private LoggerHelper
 #endif
@@ -74,13 +74,6 @@ public:
 
     void ensureLayers();
     void destroyLayers();
-
-    void layerStatusDidChange(AVSampleBufferDisplayLayer*);
-    void layerErrorDidChange(AVSampleBufferDisplayLayer*);
-    void backgroundLayerBoundsChanged();
-
-    PlatformLayer* displayLayer();
-    PlatformLayer* backgroundLayer();
 
 #if !RELEASE_LOG_DISABLED
     const Logger& logger() const final { return m_logger.get(); }
@@ -136,10 +129,6 @@ private:
     bool didLoadingProgress() const override { return m_playing; }
 
     void flushRenderers();
-
-    using PendingSampleQueue = Deque<Ref<MediaSample>>;
-    void addSampleToPendingQueue(PendingSampleQueue&, MediaSample&);
-    void removeOldSamplesFromPendingQueue(PendingSampleQueue&);
 
     MediaTime calculateTimelineOffset(const MediaSample&, double);
     
@@ -212,7 +201,7 @@ private:
     void setVideoFullscreenLayer(PlatformLayer*, WTF::Function<void()>&& completionHandler) override;
     void setVideoFullscreenFrame(FloatRect) override;
 
-    MediaTime streamTime() const;
+    MediaTime streamTime() const final;
 
     AudioSourceProvider* audioSourceProvider() final;
 
@@ -220,14 +209,11 @@ private:
 
     void applicationDidBecomeActive() final;
 
-    bool hideBackgroundLayer() const { return (!m_activeVideoTrack || m_waitingForFirstImage) && m_displayMode != PaintItBlack; }
+    bool hideRootLayer() const { return (!m_activeVideoTrack || m_waitingForFirstImage) && m_displayMode != PaintItBlack; }
 
     MediaPlayer* m_player { nullptr };
     RefPtr<MediaStreamPrivate> m_mediaStreamPrivate;
     RefPtr<MediaStreamTrackPrivate> m_activeVideoTrack;
-    RetainPtr<WebAVSampleBufferStatusChangeListener> m_statusChangeListener;
-    RetainPtr<AVSampleBufferDisplayLayer> m_sampleBufferDisplayLayer;
-    RetainPtr<PlatformLayer> m_backgroundLayer;
     std::unique_ptr<PAL::Clock> m_clock;
 
     MediaTime m_pausedTime;
@@ -244,7 +230,6 @@ private:
 
     HashMap<String, RefPtr<AudioTrackPrivateMediaStream>> m_audioTrackMap;
     HashMap<String, RefPtr<VideoTrackPrivateMediaStream>> m_videoTrackMap;
-    PendingSampleQueue m_pendingVideoSampleQueue;
 
     MediaPlayer::NetworkState m_networkState { MediaPlayer::NetworkState::Empty };
     MediaPlayer::ReadyState m_readyState { MediaPlayer::ReadyState::HaveNothing };
@@ -254,7 +239,12 @@ private:
     PlaybackState m_playbackState { PlaybackState::None };
     MediaSample::VideoRotation m_videoRotation { MediaSample::VideoRotation::None };
     CGAffineTransform m_videoTransform;
+    std::unique_ptr<SampleBufferDisplayLayer> m_sampleBufferDisplayLayer;
     std::unique_ptr<VideoFullscreenLayerManagerObjC> m_videoFullscreenLayerManager;
+
+    // SampleBufferDisplayLayer::Client
+    void sampleBufferDisplayLayerStatusDidChange(SampleBufferDisplayLayer&) final;
+    void sampleBufferDisplayLayerBoundsDidChange(SampleBufferDisplayLayer&) final;
 
 #if !RELEASE_LOG_DISABLED
     Ref<const Logger> m_logger;

@@ -253,6 +253,7 @@ platform/graphics/avfoundation/objc/CDMSessionMediaSourceAVFObjC.mm @no-unify
 platform/graphics/avfoundation/objc/ImageDecoderAVFObjC.mm @no-unify
 platform/graphics/avfoundation/objc/InbandTextTrackPrivateAVFObjC.mm @no-unify
 platform/graphics/avfoundation/objc/InbandTextTrackPrivateLegacyAVFObjC.mm @no-unify
+platform/graphics/avfoundation/objc/LocalSampleBufferDisplayLayer.mm @no-unify
 platform/graphics/avfoundation/objc/MediaPlaybackTargetPickerMac.mm @no-unify
 platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm @no-unify
 platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.mm @no-unify
