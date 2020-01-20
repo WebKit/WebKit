@@ -23,10 +23,10 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
-
 #include "config.h"
 #include "LayoutIntegrationBoxTree.h"
+
+#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
 #include "RenderBlockFlow.h"
 #include "RenderChildIterator.h"
