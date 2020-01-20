@@ -1,3 +1,9 @@
+2020-01-20  Adrian Perez de Castro  <aperez@igalia.com>
+
+        Unreviewed. Update OptionsWPE.cmake and NEWS for the 2.27.4 release
+
+        * Source/cmake/OptionsWPE.cmake: Bump version numbers.
+
 2020-01-16  Don Olmstead  <don.olmstead@sony.com>
 
         [PlayStation] Enable WebKit

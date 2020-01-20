@@ -1,8 +1,27 @@
-================
-WebKitGTK 2.27.3
-================
+=================
+WPE WebKit 2.27.4
+=================
 
-What's new in WebKitGTK 2.27.3?
+What's new in WPE WebKit 2.27.3?
+
+  - Add API for input methods.
+  - Add API to serialize/deserialize a JSCValue to/from a JSON string.
+  - Add WebKitOptionMenu API.
+  - Add support for strict secure cookies.
+  - Add support for saving data from remote inspector.
+  - Support client-side video rendering using DMA-BUF to share frames across processes.
+  - Fix rendering of conic gradients in high resolution displays.
+  - Fix special combination characters not respecting the keystroke order when high CPU load.
+  - Honor the IndexedDB directory set in WebsiteDataManager.
+  - Fix rendering of text when there's an initial advance in the text run.
+  - Fix web process crash when displaying a KaTeX formula.
+  - Fix several crashes and rendering issues.
+
+=================
+WPE WebKit 2.27.3
+=================
+
+What's new in WPE WebKit 2.27.3?
 
   - Improve performance when falling back to system fonts.
   - Stop using DBus for the remote inspector implementation to improve the performance of both
