@@ -33,7 +33,7 @@
     [SameObject] readonly attribute SVGAnimatedLength width;
     [SameObject] readonly attribute SVGAnimatedLength height;
 
-    attribute unrestricted float currentScale;
+    attribute float currentScale;
     [SameObject] readonly attribute SVGPoint currentTranslate;
     
     readonly attribute boolean useCurrentView;
