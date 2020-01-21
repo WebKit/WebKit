@@ -307,6 +307,8 @@ enum CompositingPolicy {
     AutoFillButtonType autoFillButtonType(HTMLInputElement inputElement);
     AutoFillButtonType lastAutoFillButtonType(HTMLInputElement inputElement);
 
+    void setCanShowPlaceholder(Element element, boolean canShowPlaceholder);
+
     [MayThrowException] Range? rangeOfString(DOMString text, Range? referenceRange, sequence<DOMString> findOptions);
     [MayThrowException] unsigned long countMatchesForText(DOMString text, sequence<DOMString> findOptions, DOMString markMatches);
     [MayThrowException] unsigned long countFindMatches(DOMString text, sequence<DOMString> findOptions);

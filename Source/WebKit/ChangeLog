@@ -1,3 +1,24 @@
+2020-01-21  Daniel Bates  <dabates@apple.com>
+
+        Add Legacy WebKit SPI and WebKit IPI to show and hide placeholder
+        https://bugs.webkit.org/show_bug.cgi?id=206459
+        <rdar://problem/58700534>
+
+        Reviewed by Wenson Hsieh.
+
+        Add Modern WebKit IPI to control whether the placeholder can be shown or not when a form
+        control is empty. This is for aesthetics.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::setCanShowPlaceholder): Added.
+        * UIProcess/WebPageProxy.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::setCanShowPlaceholder): Added. Maps the input text to its element. If it's
+        a HTML text form control element then calls through to HTMLTextFormControlElement::setCanShowPlaceholder().
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+        Added new message.
+
 2020-01-21  Jiewen Tan  <jiewen_tan@apple.com>
 
         ProvisionalPageProxy::loadData should pass last navigation's shouldOpenExternalURLsPolicy flag to WebPageProxy

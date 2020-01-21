@@ -53,6 +53,7 @@
 @property (copy) NSString *selectionDirection;
 @property BOOL incremental;
 @property BOOL capture;
+@property (nonatomic) BOOL canShowPlaceholder;
 
 - (void)stepUp:(int)n;
 - (void)stepDown:(int)n;

@@ -6827,6 +6827,13 @@ void WebPage::focusTextInputContext(const WebCore::ElementContext& textInputCont
     completionHandler(element);
 }
 
+void WebPage::setCanShowPlaceholder(const WebCore::ElementContext& elementContext, bool canShowPlaceholder)
+{
+    RefPtr<Element> element = elementForContext(elementContext);
+    if (is<HTMLTextFormControlElement>(element))
+        downcast<HTMLTextFormControlElement>(*element).setCanShowPlaceholder(canShowPlaceholder);
+}
+
 Element* WebPage::elementForContext(const WebCore::ElementContext& elementContext) const
 {
     if (elementContext.webPageIdentifier != m_identifier)

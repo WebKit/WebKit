@@ -62,6 +62,9 @@ public:
     virtual HTMLElement* placeholderElement() const = 0;
     void updatePlaceholderVisibility();
 
+    WEBCORE_EXPORT void setCanShowPlaceholder(bool);
+    bool canShowPlaceholder() const { return m_canShowPlaceholder; }
+
     int indexForVisiblePosition(const VisiblePosition&) const;
     WEBCORE_EXPORT VisiblePosition visiblePositionForIndex(int index) const;
     WEBCORE_EXPORT int selectionStart() const;
@@ -160,6 +163,7 @@ private:
     unsigned m_cachedSelectionDirection : 2;
     unsigned m_lastChangeWasUserEdit : 1;
     unsigned m_isPlaceholderVisible : 1;
+    unsigned m_canShowPlaceholder : 1;
 
     String m_textAsOfLastFormControlChangeEvent;
 

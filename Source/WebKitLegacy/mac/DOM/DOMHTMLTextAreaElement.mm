@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2016, 2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -321,6 +321,18 @@ DOMHTMLTextAreaElement *kit(WebCore::HTMLTextAreaElement* value)
 {
     WebCore::JSMainThreadNullState state;
     unwrap(*self).setSelectionRange(start, end);
+}
+
+- (BOOL)canShowPlaceholder
+{
+    WebCore::JSMainThreadNullState state;
+    return unwrap(*self).canShowPlaceholder();
+}
+
+- (void)setCanShowPlaceholder:(BOOL)canShowPlaceholder
+{
+    WebCore::JSMainThreadNullState state;
+    unwrap(*self).setCanShowPlaceholder(canShowPlaceholder);
 }
 
 @end

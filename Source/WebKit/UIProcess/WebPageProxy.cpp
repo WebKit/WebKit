@@ -9664,6 +9664,12 @@ void WebPageProxy::focusTextInputContext(const WebCore::ElementContext& context,
     sendWithAsyncReply(Messages::WebPage::FocusTextInputContext(context), WTFMove(completionHandler));
 }
 
+void WebPageProxy::setCanShowPlaceholder(const WebCore::ElementContext& context, bool canShowPlaceholder)
+{
+    if (hasRunningProcess())
+        send(Messages::WebPage::SetCanShowPlaceholder(context, canShowPlaceholder));
+}
+
 Logger& WebPageProxy::logger()
 {
     if (!m_logger) {

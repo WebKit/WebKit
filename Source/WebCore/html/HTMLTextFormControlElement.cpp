@@ -65,6 +65,7 @@ HTMLTextFormControlElement::HTMLTextFormControlElement(const QualifiedName& tagN
     , m_cachedSelectionDirection(SelectionHasNoDirection)
     , m_lastChangeWasUserEdit(false)
     , m_isPlaceholderVisible(false)
+    , m_canShowPlaceholder(true)
     , m_cachedSelectionStart(-1)
     , m_cachedSelectionEnd(-1)
 {
@@ -158,7 +159,7 @@ bool HTMLTextFormControlElement::placeholderShouldBeVisible() const
 {
     // This function is used by the style resolver to match the :placeholder-shown pseudo class.
     // Since it is used for styling, it must not use any value depending on the style.
-    return supportsPlaceholder() && isEmptyValue() && !isPlaceholderEmpty();
+    return supportsPlaceholder() && isEmptyValue() && !isPlaceholderEmpty() && m_canShowPlaceholder;
 }
 
 void HTMLTextFormControlElement::updatePlaceholderVisibility()
@@ -170,6 +171,12 @@ void HTMLTextFormControlElement::updatePlaceholderVisibility()
         return;
 
     invalidateStyleForSubtree();
+}
+
+void HTMLTextFormControlElement::setCanShowPlaceholder(bool canShowPlaceholder)
+{
+    m_canShowPlaceholder = canShowPlaceholder;
+    updatePlaceholderVisibility();
 }
 
 void HTMLTextFormControlElement::setSelectionStart(int start)

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -709,6 +709,18 @@
     }
 }
 #endif // TARGET_OS_IPHONE
+
+- (BOOL)canShowPlaceholder
+{
+    WebCore::JSMainThreadNullState state;
+    return IMPL->canShowPlaceholder();
+}
+
+- (void)setCanShowPlaceholder:(BOOL)canShowPlaceholder
+{
+    WebCore::JSMainThreadNullState state;
+    IMPL->setCanShowPlaceholder(canShowPlaceholder);
+}
 
 @end
 

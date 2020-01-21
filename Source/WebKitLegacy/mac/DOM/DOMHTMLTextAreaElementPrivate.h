@@ -39,6 +39,7 @@
 @property (readonly, strong) DOMNodeList *labels;
 @property (copy) NSString *selectionDirection;
 @property (copy) NSString *autocomplete;
+@property (nonatomic) BOOL canShowPlaceholder;
 - (void)setRangeText:(NSString *)replacement;
 - (void)setRangeText:(NSString *)replacement start:(unsigned)start end:(unsigned)end selectionMode:(NSString *)selectionMode;
 @end

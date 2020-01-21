@@ -1,0 +1,16 @@
+Tests that the placeholder can be hidden and shown for empty fields via setCanShowPlaceholder().
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Disallow showing of placeholder:
+PASS internals.visiblePlaceholder(document.querySelector("input")) is ""
+PASS internals.visiblePlaceholder(document.querySelector("textarea")) is ""
+
+Allow showing of placeholder:
+PASS internals.visiblePlaceholder(document.querySelector("input")) is "first"
+PASS internals.visiblePlaceholder(document.querySelector("textarea")) is "second"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+ 

@@ -1,3 +1,16 @@
+2020-01-21  Daniel Bates  <dabates@apple.com>
+
+        Add Legacy WebKit SPI and WebKit IPI to show and hide placeholder
+        https://bugs.webkit.org/show_bug.cgi?id=206459
+        <rdar://problem/58700534>
+
+        Reviewed by Wenson Hsieh.
+
+        Adds a new test to ensure that HTMLTextFormControlElement::setCanShowPlaceholder() works.
+
+        * fast/forms/placeholder-show-and-hide-via-setCanShowPlaceholder-expected.txt: Added.
+        * fast/forms/placeholder-show-and-hide-via-setCanShowPlaceholder.html: Added.
+
 2020-01-21  Justin Fan  <justin_fan@apple.com>
 
         [WebGL2] Sampler objects
