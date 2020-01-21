@@ -1,3 +1,15 @@
+2020-01-21  Tadeu Zagallo  <tzagallo@apple.com>
+
+        Object allocation sinking is missing PutHint for allocations unreachable in the graph
+        https://bugs.webkit.org/show_bug.cgi?id=203799
+        <rdar://problem/56852162>
+
+        Reviewed by Saam Barati.
+
+        * stress/allocation-sinking-puthint-control-flow-2.js: Added.
+        (f.handler.construct):
+        (f):
+
 2020-01-20  Gus Caplan  <me@gus.host>
 
         Remove own toString from NativeError prototype
