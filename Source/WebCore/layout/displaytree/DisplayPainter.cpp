@@ -183,7 +183,7 @@ static void paintSubtree(GraphicsContext& context, const Layout::LayoutState& la
         // Only inline content for now.
         if (layoutBox.establishesInlineFormattingContext()) {
             auto& container = downcast<Layout::Container>(layoutBox);
-            paintInlineContent(context, absoluteDisplayBox.topLeft(), downcast<Layout::InlineFormattingState>(layoutState.establishedFormattingState(container)));
+            paintInlineContent(context, absoluteDisplayBox.topLeft(), layoutState.establishedInlineFormattingState(container));
         }
     };
 
@@ -292,7 +292,7 @@ void Painter::paintInlineFlow(const Layout::LayoutState& layoutState, GraphicsCo
 
     ASSERT(layoutRoot.establishesInlineFormattingContext());
 
-    paintInlineContent(context, { }, downcast<Layout::InlineFormattingState>(layoutState.establishedFormattingState(layoutRoot)));
+    paintInlineContent(context, { }, layoutState.establishedInlineFormattingState(layoutRoot));
 }
 
 }

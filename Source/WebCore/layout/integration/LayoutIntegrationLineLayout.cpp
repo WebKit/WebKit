@@ -55,7 +55,7 @@ LineLayout::LineLayout(const RenderBlockFlow& flow)
     : m_flow(flow)
     , m_boxTree(flow)
     , m_layoutState(m_flow.document(), rootLayoutBox())
-    , m_inlineFormattingState(downcast<Layout::InlineFormattingState>(m_layoutState.createFormattingStateForFormattingRootIfNeeded(rootLayoutBox())))
+    , m_inlineFormattingState(m_layoutState.ensureInlineFormattingState(rootLayoutBox()))
 {
     m_layoutState.setIsIntegratedRootBoxFirstChild(m_flow.parent()->firstChild() == &m_flow);
 }

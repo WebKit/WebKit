@@ -84,65 +84,111 @@ Display::Box& LayoutState::ensureDisplayBoxForLayoutBoxSlow(const Box& layoutBox
 
 FormattingState& LayoutState::formattingStateForBox(const Box& layoutBox) const
 {
-    auto& root = layoutBox.formattingContextRoot();
-    RELEASE_ASSERT(m_formattingStates.contains(&root));
-    return *m_formattingStates.get(&root);
+    return establishedFormattingState(layoutBox.formattingContextRoot());
 }
 
-FormattingState& LayoutState::establishedFormattingState(const Container& formattingRoot) const
+FormattingState& LayoutState::establishedFormattingState(const Container& formattingContextRoot) const
 {
-    ASSERT(formattingRoot.establishesFormattingContext());
-    RELEASE_ASSERT(m_formattingStates.contains(&formattingRoot));
-    return *m_formattingStates.get(&formattingRoot);
+    if (RuntimeEnabledFeatures::sharedFeatures().layoutFormattingContextIntegrationEnabled()) {
+        ASSERT(&formattingContextRoot == m_rootContainer.get());
+        return *m_rootInlineFormattingStateForIntegration;
+    }
+
+    if (auto* formattingState = m_inlineFormattingStates.get(&formattingContextRoot))
+        return *formattingState;
+
+    if (auto* formattingState = m_blockFormattingStates.get(&formattingContextRoot))
+        return *formattingState;
+
+    ASSERT(m_tableFormattingStates.contains(&formattingContextRoot));
+    return *m_tableFormattingStates.get(&formattingContextRoot);
 }
 
-FormattingState& LayoutState::createFormattingStateForFormattingRootIfNeeded(const Container& formattingContextRoot)
+InlineFormattingState& LayoutState::establishedInlineFormattingState(const Container& formattingContextRoot) const
 {
-    ASSERT(formattingContextRoot.establishesFormattingContext());
+    ASSERT(formattingContextRoot.establishesInlineFormattingContext());
 
-    if (formattingContextRoot.establishesInlineFormattingContext()) {
-        return *m_formattingStates.ensure(&formattingContextRoot, [&] {
-
-            // If the block container box that initiates this inline formatting context also establishes a block context, the floats outside of the formatting root
-            // should not interfere with the content inside.
-            // <div style="float: left"></div><div style="overflow: hidden"> <- is a non-intrusive float, because overflow: hidden triggers new block formatting context.</div>
-            if (formattingContextRoot.establishesBlockFormattingContext()) {
-                auto formattingState = makeUnique<InlineFormattingState>(FloatingState::create(*this, formattingContextRoot), *this);
-                m_inlineFormattingStates.append(WTFMove(formattingState));
-                return m_inlineFormattingStates.last().get();
-            }
-
-            // Otherwise, the formatting context inherits the floats from the parent formatting context.
-            // Find the formatting state in which this formatting root lives, not the one it creates and use its floating state.
-            auto& parentFormattingState = createFormattingStateForFormattingRootIfNeeded(formattingContextRoot.formattingContextRoot()); 
-            auto& parentFloatingState = parentFormattingState.floatingState();
-            auto formattingState = makeUnique<InlineFormattingState>(parentFloatingState, *this);
-            m_inlineFormattingStates.append(WTFMove(formattingState));
-            return m_inlineFormattingStates.last().get();
-        }).iterator->value;
+    if (RuntimeEnabledFeatures::sharedFeatures().layoutFormattingContextIntegrationEnabled()) {
+        ASSERT(&formattingContextRoot == m_rootContainer.get());
+        return *m_rootInlineFormattingStateForIntegration;
     }
 
-    if (formattingContextRoot.establishesBlockFormattingContext()) {
-        return *m_formattingStates.ensure(&formattingContextRoot, [&] {
+    return *m_inlineFormattingStates.get(&formattingContextRoot);
+}
 
-            // Block formatting context always establishes a new floating state.
-            auto formattingState = makeUnique<BlockFormattingState>(FloatingState::create(*this, formattingContextRoot), *this);
-            m_blockFormattingStates.append(WTFMove(formattingState));
-            return m_blockFormattingStates.last().get();
-        }).iterator->value;
+BlockFormattingState& LayoutState::establishedBlockFormattingState(const Container& formattingContextRoot) const
+{
+    ASSERT(formattingContextRoot.establishesBlockFormattingContext());
+    return *m_blockFormattingStates.get(&formattingContextRoot);
+}
+
+TableFormattingState& LayoutState::establishedTableFormattingState(const Container& formattingContextRoot) const
+{
+    ASSERT(formattingContextRoot.establishesTableFormattingContext());
+    return *m_tableFormattingStates.get(&formattingContextRoot);
+}
+
+FormattingState& LayoutState::ensureFormattingState(const Container& formattingContextRoot)
+{
+    if (formattingContextRoot.establishesInlineFormattingContext())
+        return ensureInlineFormattingState(formattingContextRoot);
+
+    if (formattingContextRoot.establishesBlockFormattingContext())
+        return ensureBlockFormattingState(formattingContextRoot);
+
+    return ensureTableFormattingState(formattingContextRoot);
+}
+
+InlineFormattingState& LayoutState::ensureInlineFormattingState(const Container& formattingContextRoot)
+{
+    ASSERT(formattingContextRoot.establishesInlineFormattingContext());
+
+    auto create = [&] {
+        // If the block container box that initiates this inline formatting context also establishes a block context, the floats outside of the formatting root
+        // should not interfere with the content inside.
+        // <div style="float: left"></div><div style="overflow: hidden"> <- is a non-intrusive float, because overflow: hidden triggers new block formatting context.</div>
+        if (formattingContextRoot.establishesBlockFormattingContext())
+            return makeUnique<InlineFormattingState>(FloatingState::create(*this, formattingContextRoot), *this);
+
+        // Otherwise, the formatting context inherits the floats from the parent formatting context.
+        // Find the formatting state in which this formatting root lives, not the one it creates and use its floating state.
+        auto& parentFormattingState = ensureFormattingState(formattingContextRoot.formattingContextRoot());
+        auto& parentFloatingState = parentFormattingState.floatingState();
+        return makeUnique<InlineFormattingState>(parentFloatingState, *this);
+    };
+
+    if (RuntimeEnabledFeatures::sharedFeatures().layoutFormattingContextIntegrationEnabled()) {
+        if (!m_rootInlineFormattingStateForIntegration) {
+            ASSERT(&formattingContextRoot == m_rootContainer.get());
+            m_rootInlineFormattingStateForIntegration = create();
+        }
+        return *m_rootInlineFormattingStateForIntegration;
     }
 
-    if (formattingContextRoot.establishesTableFormattingContext()) {
-        return *m_formattingStates.ensure(&formattingContextRoot, [&] {
+    return *m_inlineFormattingStates.ensure(&formattingContextRoot, create).iterator->value;
+}
 
-            // Table formatting context always establishes a new floating state -and it stays empty.
-            auto formattingState = makeUnique<TableFormattingState>(FloatingState::create(*this, formattingContextRoot), *this);
-            m_tableFormattingStates.append(WTFMove(formattingState));
-            return m_tableFormattingStates.last().get();
-        }).iterator->value;
-    }
+BlockFormattingState& LayoutState::ensureBlockFormattingState(const Container& formattingContextRoot)
+{
+    ASSERT(formattingContextRoot.establishesBlockFormattingContext());
 
-    CRASH();
+    auto create = [&] {
+        return makeUnique<BlockFormattingState>(FloatingState::create(*this, formattingContextRoot), *this);
+    };
+
+    return *m_blockFormattingStates.ensure(&formattingContextRoot, create).iterator->value;
+}
+
+TableFormattingState& LayoutState::ensureTableFormattingState(const Container& formattingContextRoot)
+{
+    ASSERT(formattingContextRoot.establishesTableFormattingContext());
+
+    auto create = [&] {
+        // Table formatting context always establishes a new floating state -and it stays empty.
+        return makeUnique<TableFormattingState>(FloatingState::create(*this, formattingContextRoot), *this);
+    };
+
+    return *m_tableFormattingStates.ensure(&formattingContextRoot, create).iterator->value;
 }
 
 void LayoutState::setViewportSize(const LayoutSize& viewportSize)

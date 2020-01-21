@@ -74,7 +74,7 @@ ContentHeightAndMargin BlockFormattingContext::Geometry::inFlowNonReplacedHeight
         // 1. the bottom edge of the last line box, if the box establishes a inline formatting context with one or more lines
         auto& layoutContainer = downcast<Container>(layoutBox);
         if (layoutContainer.establishesInlineFormattingContext()) {
-            auto& lineBoxes = downcast<InlineFormattingState>(layoutState().establishedFormattingState(layoutContainer)).displayInlineContent()->lineBoxes;
+            auto& lineBoxes = layoutState().establishedInlineFormattingState(layoutContainer).displayInlineContent()->lineBoxes;
             // Even empty containers generate one line. 
             ASSERT(!lineBoxes.isEmpty());
             return { toLayoutUnit(lineBoxes.last().logicalBottom()) - borderAndPaddingTop, nonCollapsedMargin };

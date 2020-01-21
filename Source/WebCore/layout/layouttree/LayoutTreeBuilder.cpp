@@ -315,7 +315,7 @@ void TreeBuilder::buildSubTree(const RenderElement& parentRenderer, Container& p
 #if ENABLE(TREE_DEBUGGING)
 static void outputInlineRuns(TextStream& stream, const LayoutState& layoutState, const Container& inlineFormattingRoot, unsigned depth)
 {
-    auto& inlineFormattingState = downcast<InlineFormattingState>(layoutState.establishedFormattingState(inlineFormattingRoot));
+    auto& inlineFormattingState = layoutState.establishedInlineFormattingState(inlineFormattingRoot);
     auto* displayInlineContent = inlineFormattingState.displayInlineContent();
     if (!displayInlineContent)
         return;

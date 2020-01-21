@@ -392,11 +392,11 @@ bool BlockFormattingContext::MarginCollapse::marginsCollapseThrough(const Box& l
             // If we get here through margin estimation, we don't necessarily have an actual state for this layout box since
             // we haven't started laying it out yet.
             auto& layoutContainer = downcast<Container>(layoutBox);
-            if (!layoutState.hasFormattingState(layoutContainer))
+            if (!layoutState.hasInlineFormattingState(layoutContainer))
                 return false;
 
             auto isConsideredEmpty = [&] {
-                auto& formattingState = downcast<InlineFormattingState>(layoutState.establishedFormattingState(layoutContainer));
+                auto& formattingState = layoutState.establishedInlineFormattingState(layoutContainer);
                 if (auto* inlineContent = formattingState.displayInlineContent()) {
                     for (auto& lineBox : inlineContent->lineBoxes) {
                         if (!lineBox.isConsideredEmpty())

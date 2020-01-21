@@ -53,10 +53,18 @@ public:
     LayoutState(const Document&, const Container& rootContainer);
     ~LayoutState();
 
-    FormattingState& createFormattingStateForFormattingRootIfNeeded(const Container& formattingContextRoot);
+    FormattingState& ensureFormattingState(const Container& formattingContextRoot);
+    InlineFormattingState& ensureInlineFormattingState(const Container& formattingContextRoot);
+    BlockFormattingState& ensureBlockFormattingState(const Container& formattingContextRoot);
+    TableFormattingState& ensureTableFormattingState(const Container& formattingContextRoot);
+
     FormattingState& establishedFormattingState(const Container& formattingRoot) const;
+    InlineFormattingState& establishedInlineFormattingState(const Container& formattingContextRoot) const;
+    BlockFormattingState& establishedBlockFormattingState(const Container& formattingContextRoot) const;
+    TableFormattingState& establishedTableFormattingState(const Container& formattingContextRoot) const;
+
     FormattingState& formattingStateForBox(const Box&) const;
-    bool hasFormattingState(const Container& formattingRoot) const { return m_formattingStates.contains(&formattingRoot); }
+    bool hasInlineFormattingState(const Container& formattingRoot) const { return m_inlineFormattingStates.contains(&formattingRoot); }
 
 #ifndef NDEBUG
     void registerFormattingContext(const FormattingContext&);
@@ -86,11 +94,12 @@ private:
     void setQuirksMode(QuirksMode quirksMode) { m_quirksMode = quirksMode; }
     Display::Box& ensureDisplayBoxForLayoutBoxSlow(const Box&);
 
-    Vector<std::unique_ptr<InlineFormattingState>, 1> m_inlineFormattingStates;
-    Vector<std::unique_ptr<BlockFormattingState>, 1> m_blockFormattingStates;
-    Vector<std::unique_ptr<TableFormattingState>> m_tableFormattingStates;
+    HashMap<const Container*, std::unique_ptr<InlineFormattingState>> m_inlineFormattingStates;
+    HashMap<const Container*, std::unique_ptr<BlockFormattingState>> m_blockFormattingStates;
+    HashMap<const Container*, std::unique_ptr<TableFormattingState>> m_tableFormattingStates;
 
-    HashMap<const Container*, FormattingState*> m_formattingStates;
+    std::unique_ptr<InlineFormattingState> m_rootInlineFormattingStateForIntegration;
+
 #ifndef NDEBUG
     HashSet<const FormattingContext*> m_formattingContextList;
 #endif

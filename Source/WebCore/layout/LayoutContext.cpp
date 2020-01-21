@@ -113,18 +113,18 @@ std::unique_ptr<FormattingContext> LayoutContext::createFormattingContext(const 
 {
     ASSERT(formattingContextRoot.establishesFormattingContext());
     if (formattingContextRoot.establishesInlineFormattingContext()) {
-        auto& inlineFormattingState = downcast<InlineFormattingState>(layoutState.createFormattingStateForFormattingRootIfNeeded(formattingContextRoot));
+        auto& inlineFormattingState = layoutState.ensureInlineFormattingState(formattingContextRoot);
         return makeUnique<InlineFormattingContext>(formattingContextRoot, inlineFormattingState);
     }
 
     if (formattingContextRoot.establishesBlockFormattingContext()) {
         ASSERT(formattingContextRoot.establishesBlockFormattingContextOnly());
-        auto& blockFormattingState = downcast<BlockFormattingState>(layoutState.createFormattingStateForFormattingRootIfNeeded(formattingContextRoot));
+        auto& blockFormattingState = layoutState.ensureBlockFormattingState(formattingContextRoot);
         return makeUnique<BlockFormattingContext>(formattingContextRoot, blockFormattingState);
     }
 
     if (formattingContextRoot.establishesTableFormattingContext()) {
-        auto& tableFormattingState = downcast<TableFormattingState>(layoutState.createFormattingStateForFormattingRootIfNeeded(formattingContextRoot));
+        auto& tableFormattingState = layoutState.ensureTableFormattingState(formattingContextRoot);
         return makeUnique<TableFormattingContext>(formattingContextRoot, tableFormattingState);
     }
 

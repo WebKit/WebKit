@@ -155,7 +155,7 @@ void LineBuilder::alignContentVertically()
                 auto& boxGeometry = formattingContext().geometryForBox(layoutBox);
                 logicalTop = baselineOffset() - ascent - boxGeometry.borderTop() - boxGeometry.paddingTop().valueOr(0);
             } else if (layoutBox.isInlineBlockBox() && layoutBox.establishesInlineFormattingContext()) {
-                auto& formattingState = downcast<InlineFormattingState>(layoutState().establishedFormattingState(downcast<Container>(layoutBox)));
+                auto& formattingState = layoutState().establishedInlineFormattingState(downcast<Container>(layoutBox));
                 // Spec makes us generate at least one line -even if it is empty.
                 auto inlineBlockBaselineOffset = formattingState.displayInlineContent()->lineBoxes.last().baselineOffset();
                 // The inline-block's baseline offset is relative to its content box. Let's convert it relative to the margin box.
@@ -565,7 +565,7 @@ void LineBuilder::adjustBaselineAndLineHeight(const Run& run)
         case VerticalAlign::Baseline: {
             if (layoutBox.isInlineBlockBox() && layoutBox.establishesInlineFormattingContext()) {
                 // Inline-blocks with inline content always have baselines.
-                auto& formattingState = downcast<InlineFormattingState>(layoutState().establishedFormattingState(downcast<Container>(layoutBox)));
+                auto& formattingState = layoutState().establishedInlineFormattingState(downcast<Container>(layoutBox));
                 // Spec makes us generate at least one line -even if it is empty.
                 auto& lastLineBox = formattingState.displayInlineContent()->lineBoxes.last();
                 auto inlineBlockBaseline = lastLineBox.baseline();
