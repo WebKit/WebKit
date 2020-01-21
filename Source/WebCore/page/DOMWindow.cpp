@@ -450,6 +450,7 @@ void DOMWindow::prewarmLocalStorageIfNecessary()
     if (!page->mainFrame().mayPrewarmLocalStorage())
         return;
 
+    // This eagerly constructs the StorageArea, which will load items from disk.
     auto localStorageResult = this->localStorage();
     if (localStorageResult.hasException())
         return;
