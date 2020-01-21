@@ -77,7 +77,7 @@ namespace JSC { namespace DFG {
     macro(JSSetFields) \
     macro(JSWeakMapFields) \
     macro(JSWeakSetFields) \
-    macro(JSPromiseFields) \
+    macro(JSInternalFields) \
     macro(InternalState) \
     macro(CatchLocals) \
     macro(Absolute) \

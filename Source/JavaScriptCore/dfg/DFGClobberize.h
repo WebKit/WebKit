@@ -1353,14 +1353,14 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
         return;
 
     case GetInternalField: {
-        AbstractHeap heap(JSPromiseFields, node->internalFieldIndex());
+        AbstractHeap heap(JSInternalFields, node->internalFieldIndex());
         read(heap);
         def(HeapLocation(InternalFieldObjectLoc, heap, node->child1()), LazyNode(node));
         return;
     }
 
     case PutInternalField: {
-        AbstractHeap heap(JSPromiseFields, node->internalFieldIndex());
+        AbstractHeap heap(JSInternalFields, node->internalFieldIndex());
         write(heap);
         def(HeapLocation(InternalFieldObjectLoc, heap, node->child1()), LazyNode(node->child2().node()));
         return;

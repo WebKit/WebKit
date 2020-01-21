@@ -1,3 +1,17 @@
+2020-01-21  Mark Lam  <mark.lam@apple.com>
+
+        Rename JSPromiseFields abstract heap to JSInternalFields.
+        https://bugs.webkit.org/show_bug.cgi?id=206518
+        <rdar://problem/58751778>
+
+        Reviewed by Yusuke Suzuki.
+
+        This is because it is used for all internal fields, not just the ones in JSPromise.
+
+        * dfg/DFGAbstractHeap.h:
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+
 2020-01-17  Sam Weinig  <weinig@apple.com>
 
         Platform.h is out of control Part 8: Macros are used inconsistently
