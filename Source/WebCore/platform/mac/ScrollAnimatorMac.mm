@@ -1156,7 +1156,6 @@ void ScrollAnimatorMac::notifyContentAreaScrolled(const FloatSize& delta)
 
 void ScrollAnimatorMac::cancelAnimations()
 {
-    ScrollAnimator::cancelAnimations();
     m_haveScrolledSincePageLoad = false;
 
     if (scrollbarPaintTimerIsActive())

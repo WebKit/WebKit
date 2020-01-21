@@ -63,6 +63,7 @@ page/scrolling/nicosia/ScrollingTreeStickyNode.cpp
 page/scrolling/generic/ScrollingThreadGeneric.cpp
 
 platform/ScrollAnimationKinetic.cpp
+platform/ScrollAnimationSmooth.cpp
 platform/UserAgentQuirks.cpp
 
 platform/generic/ScrollAnimatorGeneric.cpp

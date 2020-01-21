@@ -28,6 +28,8 @@
 #include "config.h"
 #include "ScrollAnimationSmooth.h"
 
+#if ENABLE(SMOOTH_SCROLLING)
+
 #include "FloatPoint.h"
 #include "ScrollableArea.h"
 
@@ -36,7 +38,6 @@ namespace WebCore {
 static const double frameRate = 60;
 static const Seconds tickTime = 1_s / frameRate;
 static const Seconds minimumTimerInterval { 1_ms };
-static const double smoothFactorForProgrammaticScroll = 5;
 
 ScrollAnimationSmooth::ScrollAnimationSmooth(ScrollableArea& scrollableArea, const FloatPoint& position, WTF::Function<void (FloatPoint&&)>&& notifyPositionChangedFunction)
     : ScrollAnimation(scrollableArea)
@@ -66,22 +67,9 @@ bool ScrollAnimationSmooth::scroll(ScrollbarOrientation orientation, ScrollGranu
     return needToScroll;
 }
 
-void ScrollAnimationSmooth::scroll(const FloatPoint& position)
-{
-    ScrollGranularity granularity = ScrollByPage;
-    bool needToScroll = updatePerAxisData(m_horizontalData, granularity, position.x() - m_horizontalData.currentPosition, m_scrollableArea.minimumScrollPosition().x(), m_scrollableArea.maximumScrollPosition().x(), smoothFactorForProgrammaticScroll);
-    needToScroll |=
-        updatePerAxisData(m_verticalData, granularity, position.y() - m_verticalData.currentPosition, m_scrollableArea.minimumScrollPosition().y(), m_scrollableArea.maximumScrollPosition().y(), smoothFactorForProgrammaticScroll);
-    if (needToScroll && !animationTimerActive()) {
-        m_startTime = m_horizontalData.startTime;
-        animationTimerFired();
-    }
-};
-
 void ScrollAnimationSmooth::stop()
 {
     m_animationTimer.stop();
-    m_scrollableArea.setScrollBehaviorStatus(ScrollBehaviorStatus::NotInAnimation);
 }
 
 void ScrollAnimationSmooth::updateVisibleLengths()
@@ -259,7 +247,7 @@ static inline void getAnimationParametersForGranularity(ScrollGranularity granul
     }
 }
 
-bool ScrollAnimationSmooth::updatePerAxisData(PerAxisData& data, ScrollGranularity granularity, float delta, float minScrollPosition, float maxScrollPosition, double smoothFactor)
+bool ScrollAnimationSmooth::updatePerAxisData(PerAxisData& data, ScrollGranularity granularity, float delta, float minScrollPosition, float maxScrollPosition)
 {
     if (!data.startTime || !delta || (delta < 0) != (data.desiredPosition - data.currentPosition < 0)) {
         data.desiredPosition = data.currentPosition;
@@ -275,12 +263,6 @@ bool ScrollAnimationSmooth::updatePerAxisData(PerAxisData& data, ScrollGranulari
     Seconds animationTime, repeatMinimumSustainTime, attackTime, releaseTime, maximumCoastTime;
     Curve coastTimeCurve;
     getAnimationParametersForGranularity(granularity, animationTime, repeatMinimumSustainTime, attackTime, releaseTime, coastTimeCurve, maximumCoastTime);
-
-    animationTime *= smoothFactor;
-    repeatMinimumSustainTime *= smoothFactor;
-    attackTime *= smoothFactor;
-    releaseTime *= smoothFactor;
-    maximumCoastTime *= smoothFactor;
 
     data.desiredPosition = newPosition;
     if (!data.startTime)
@@ -410,8 +392,6 @@ void ScrollAnimationSmooth::animationTimerFired()
 
     if (continueAnimation)
         startNextTimer(std::max(minimumTimerInterval, deltaToNextFrame));
-    else
-        m_scrollableArea.setScrollBehaviorStatus(ScrollBehaviorStatus::NotInAnimation);
 
     m_notifyPositionChangedFunction(FloatPoint(m_horizontalData.currentPosition, m_verticalData.currentPosition));
 }
@@ -427,3 +407,5 @@ bool ScrollAnimationSmooth::animationTimerActive() const
 }
 
 } // namespace WebCore
+
+#endif // ENABLE(SMOOTH_SCROLLING)

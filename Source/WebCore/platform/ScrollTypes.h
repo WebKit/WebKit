@@ -54,13 +54,6 @@ enum class ScrollPositionClamp : uint8_t {
     ToContentEdges,
 };
 
-// FIXME: Add another status InNativeAnimation to indicate native scrolling is in progress.
-// See: https://bugs.webkit.org/show_bug.cgi?id=204936
-enum class ScrollBehaviorStatus : uint8_t {
-    NotInAnimation,
-    InNonNativeAnimation,
-};
-
 inline ScrollDirection logicalToPhysical(ScrollLogicalDirection direction, bool isVertical, bool isFlipped)
 {
     switch (direction) {

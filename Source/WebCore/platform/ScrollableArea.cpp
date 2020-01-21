@@ -71,7 +71,6 @@ ScrollableArea::ScrollableArea()
     , m_scrollOriginChanged(false)
     , m_currentScrollType(static_cast<unsigned>(ScrollType::User))
     , m_scrollShouldClearLatchedState(false)
-    , m_currentScrollBehaviorStatus(static_cast<unsigned>(ScrollBehaviorStatus::NotInAnimation))
 {
 }
 
@@ -141,12 +140,6 @@ bool ScrollableArea::scroll(ScrollDirection direction, ScrollGranularity granula
 
     step = adjustScrollStepForFixedContent(step, orientation, granularity);
     return scrollAnimator().scroll(orientation, granularity, step, multiplier);
-}
-
-void ScrollableArea::scrollToOffsetWithAnimation(const FloatPoint& offset, ScrollClamping)
-{
-    LOG_WITH_STREAM(Scrolling, stream << "ScrollableArea " << this << " scrollToOffsetWithAnimation " << offset);
-    scrollAnimator().scrollToOffset(offset);
 }
 
 void ScrollableArea::scrollToOffsetWithoutAnimation(const FloatPoint& offset, ScrollClamping clamping)
@@ -228,15 +221,16 @@ bool ScrollableArea::handleTouchEvent(const PlatformTouchEvent& touchEvent)
 // NOTE: Only called from Internals for testing.
 void ScrollableArea::setScrollOffsetFromInternals(const ScrollOffset& offset)
 {
-    if (requestScrollPositionUpdate(scrollPositionFromOffset(offset)))
-        return;
-
     setScrollOffsetFromAnimation(offset);
 }
 
 void ScrollableArea::setScrollOffsetFromAnimation(const ScrollOffset& offset)
 {
-    scrollPositionChanged(scrollPositionFromOffset(offset));
+    ScrollPosition position = scrollPositionFromOffset(offset);
+    if (requestScrollPositionUpdate(position))
+        return;
+
+    scrollPositionChanged(position);
 }
 
 void ScrollableArea::willStartLiveResize()
