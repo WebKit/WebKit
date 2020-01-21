@@ -1246,6 +1246,15 @@ webkit.org/b/206416 imported/w3c/web-platform-tests/fetch/stale-while-revalidate
 webkit.org/b/206416 imported/w3c/web-platform-tests/fetch/stale-while-revalidate/stale-image.html [ Failure ]
 webkit.org/b/206416 imported/w3c/web-platform-tests/fetch/stale-while-revalidate/stale-script.html [ Failure ] 
 
+webkit.org/b/206498 compositing/contents-format/deep-color-backing-store.html [ Failure ]
+webkit.org/b/206498 compositing/geometry/layer-due-to-layer-children-switch.html [ Failure ]
+webkit.org/b/206498 compositing/geometry/layer-due-to-layer-children-deep-switch.html [ Failure ]
+webkit.org/b/206498 compositing/iframes/leave-compositing-iframe.html [ Failure ]
+webkit.org/b/206498 compositing/layer-creation/fixed-position-change-out-of-view-in-view.html [ Failure ]
+webkit.org/b/206498 legacy-animation-engine/compositing/animation/layer-for-filling-animation.html [ Failure ]
+
+webkit.org/b/206499 compositing/visibility/visibility-change-in-subframe.html [ Failure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Expected failures.
 #
@@ -4067,7 +4076,7 @@ fast/scrolling/rtl-scrollbars-alternate-body-dir-attr-does-not-update-scrollbar-
 fast/scrolling/rtl-scrollbars-alternate-body-dir-attr-does-not-update-scrollbar-placement-2.html [ Pass ]
 webkit.org/b/156437 fast/scrolling/rtl-scrollbars-listbox-scroll.html [ ImageOnlyFailure Pass ]
 
-transitions/svg-text-shadow-transition.html [ Pass ]
+transitions/svg-text-shadow-transition.html [ DumpJSConsoleLogInStdErr ]
 legacy-animation-engine/transitions/svg-text-shadow-transition.html [ DumpJSConsoleLogInStdErr ]
 
 webkit.org/b/155132 http/tests/security/contentSecurityPolicy/video-with-https-url-allowed-by-csp-media-src-star.html [ Pass ]

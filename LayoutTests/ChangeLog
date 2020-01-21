@@ -1,3 +1,20 @@
+2020-01-20  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GTK] Gardening, update TestExpectations and baselines
+        https://bugs.webkit.org/show_bug.cgi?id=206501
+
+        Unreviewed gardening.
+
+        * platform/gtk/TestExpectations:
+        * platform/gtk/compositing/visibility/visibility-change-in-subframe-expected.txt: Added.
+        * platform/gtk/editing/input/scroll-to-edge-if-line-break-at-end-of-document-contenteditable-expected.txt: Added.
+        * platform/gtk/fast/block/basic/fieldset-stretch-to-legend-expected.txt: Added.
+        * platform/gtk/js/dom/navigator-maxtouchpoints-expected.txt: Added.
+        * platform/gtk/svg/W3C-SVG-1.1/color-prop-02-f-expected.txt: Added.
+        * platform/gtk/svg/W3C-SVG-1.1/color-prop-03-t-expected.txt: Added.
+        * platform/gtk/svg/W3C-SVG-1.1/shapes-circle-02-t-expected.txt: Added.
+        * platform/gtk/svg/W3C-SVG-1.1/shapes-ellipse-02-t-expected.txt: Added.
+
 2020-01-20  Gus Caplan  <me@gus.host>
 
         Remove own toString from NativeError prototype
