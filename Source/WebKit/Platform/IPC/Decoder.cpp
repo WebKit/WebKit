@@ -137,7 +137,7 @@ static inline const uint8_t* roundUpToAlignment(const uint8_t* ptr, unsigned ali
 
 static inline bool alignedBufferIsLargeEnoughToContain(const uint8_t* alignedPosition, const uint8_t* bufferStart, const uint8_t* bufferEnd, size_t size)
 {
-    // When size == 0 for the last argument and it's a variable length byte arrray,
+    // When size == 0 for the last argument and it's a variable length byte array,
     // bufferStart == alignedPosition == bufferEnd, so checking (bufferEnd >= alignedPosition)
     // is not an off-by-one error since (static_cast<size_t>(bufferEnd - alignedPosition) >= size)
     // will catch issues when size != 0.

@@ -1,3 +1,14 @@
+2020-01-21  David Kilzer  <ddkilzer@apple.com>
+
+        IPC::Decoder should use nullptr as invalid value
+        <https://webkit.org/b/203880>
+        <rdar://problem/53159906>
+
+        Follow-up fix noticed by Chris Dumez.
+
+        * Platform/IPC/Decoder.cpp:
+        (IPC::alignedBufferIsLargeEnoughToContain): Fix typo in comment.
+
 2020-01-21  Chris Dumez  <cdumez@apple.com>
 
         [macOS] Add managed preference to allow synchronous XHR during page dismissal
