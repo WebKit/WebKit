@@ -23,40 +23,29 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef APIUserContentWorld_h
-#define APIUserContentWorld_h
+#pragma once
 
-#include "APIObject.h"
+#include "APIContentWorld.h"
 #include <wtf/text/WTFString.h>
 
 namespace API {
 
-class ContentWorld;
-
-class UserContentWorld final : public API::ObjectImpl<API::Object::Type::UserContentWorld> {
+class UserContentWorld final : public API::ObjectImpl<API::Object::Type::UserContentWorld>, public ContentWorldBase {
 public:
     static Ref<UserContentWorld> worldWithName(const WTF::String&);
     static UserContentWorld& normalWorld();
 
     virtual ~UserContentWorld();
 
-    const WTF::String& name() const { return m_name; }
-    uint64_t identifier() const { return m_identifier; }
+    void ref() const final { ObjectImpl::ref(); }
+    void deref() const final { ObjectImpl::deref(); }
 
 private:
-    friend class ContentWorld;
-
-    UserContentWorld(const WTF::String&);
+    explicit UserContentWorld(const WTF::String&);
 
     enum class ForNormalWorldOnly { NormalWorld };
-    UserContentWorld(ForNormalWorldOnly);
+    explicit UserContentWorld(ForNormalWorldOnly);
 
-    static uint64_t generateIdentifier();
-
-    uint64_t m_identifier;
-    WTF::String m_name;
 };
 
 } // namespace API
-
-#endif // APIUserContentWorld_h

@@ -30,13 +30,6 @@
 
 namespace API {
 
-uint64_t UserContentWorld::generateIdentifier()
-{
-    static uint64_t identifier = WebKit::pageContentWorldIdentifier;
-
-    return ++identifier;
-}
-
 Ref<UserContentWorld> UserContentWorld::worldWithName(const WTF::String& name)
 {
     return adoptRef(*new UserContentWorld(name));
@@ -49,13 +42,12 @@ UserContentWorld& UserContentWorld::normalWorld()
 }
 
 UserContentWorld::UserContentWorld(const WTF::String& name)
-    : m_identifier(generateIdentifier())
-    , m_name(name)
+    : ContentWorldBase(name)
 {
 }
 
 UserContentWorld::UserContentWorld(ForNormalWorldOnly)
-    : m_identifier(WebKit::pageContentWorldIdentifier)
+    : ContentWorldBase(WebKit::pageContentWorldIdentifier)
 {
 }
 

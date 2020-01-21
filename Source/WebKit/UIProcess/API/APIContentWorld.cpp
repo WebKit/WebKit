@@ -33,6 +33,13 @@
 
 namespace API {
 
+uint64_t ContentWorldBase::generateIdentifier()
+{
+    static uint64_t identifier = WebKit::pageContentWorldIdentifier;
+
+    return ++identifier;
+}
+
 static HashMap<WTF::String, ContentWorld*>& sharedWorldMap()
 {
     static HashMap<WTF::String, ContentWorld*>* sharedMap = new HashMap<WTF::String, ContentWorld*>;
@@ -58,27 +65,26 @@ ContentWorld& ContentWorld::pageContentWorld()
 
 ContentWorld& ContentWorld::defaultClientWorld()
 {
-    static NeverDestroyed<RefPtr<ContentWorld>> world(adoptRef(new ContentWorld(API::UserContentWorld::generateIdentifier())));
+    static NeverDestroyed<RefPtr<ContentWorld>> world(adoptRef(new ContentWorld(generateIdentifier())));
     return *world.get();
 }
 
 ContentWorld::ContentWorld(const WTF::String& name)
-    : m_identifier(API::UserContentWorld::generateIdentifier())
-    , m_name(name)
+    : ContentWorldBase(name)
 {
 }
 
 ContentWorld::ContentWorld(uint64_t identifier)
-    : m_identifier(identifier)
+    : ContentWorldBase(identifier)
 {
 }
 
 ContentWorld::~ContentWorld()
 {
-    if (m_name.isNull())
+    if (name().isNull())
         return;
 
-    auto taken = sharedWorldMap().take(m_name);
+    auto taken = sharedWorldMap().take(name());
     ASSERT_UNUSED(taken, taken == this);
 }
 

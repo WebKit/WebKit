@@ -41,7 +41,7 @@
 namespace API {
 class Array;
 class ContentRuleList;
-class ContentWorld;
+class ContentWorldBase;
 class UserContentWorld;
 class UserScript;
 class UserStyleSheet;
@@ -117,7 +117,7 @@ private:
 
     void didPostMessage(IPC::Connection&, WebPageProxyIdentifier, FrameInfoData&&, uint64_t messageHandlerID, const IPC::DataReference&);
 
-    void addUserContentWorldUse(API::UserContentWorld&);
+    void addUserContentWorldUse(API::ContentWorldBase&);
     void removeUserContentWorldUses(API::UserContentWorld&, unsigned numberOfUsesToRemove);
     void removeUserContentWorldUses(HashCountedSet<RefPtr<API::UserContentWorld>>&);
     bool shouldSendRemoveUserContentWorldsMessage(API::UserContentWorld&, unsigned numberOfUsesToRemove);
@@ -127,7 +127,7 @@ private:
     Ref<API::Array> m_userScripts;
     Ref<API::Array> m_userStyleSheets;
     HashMap<uint64_t, RefPtr<WebScriptMessageHandler>> m_scriptMessageHandlers;
-    HashCountedSet<RefPtr<API::UserContentWorld>> m_userContentWorlds;
+    HashCountedSet<RefPtr<API::ContentWorldBase>> m_contentWorlds;
 
 #if ENABLE(CONTENT_EXTENSIONS)
     WeakHashSet<NetworkProcessProxy> m_networkProcesses;

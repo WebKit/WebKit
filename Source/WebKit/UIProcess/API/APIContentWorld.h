@@ -30,7 +30,38 @@
 
 namespace API {
 
-class ContentWorld final : public API::ObjectImpl<API::Object::Type::ContentWorld> {
+class ContentWorldBase {
+public:
+    virtual ~ContentWorldBase() = default;
+
+    uint64_t identifier() const { return m_identifier; }
+    const WTF::String& name() const { return m_name; }
+    std::pair<uint64_t, WTF::String> worldData() const { return { identifier(), name() }; }
+
+    virtual void ref() const = 0;
+    virtual void deref() const = 0;
+
+    static uint64_t generateIdentifier();
+
+protected:
+    ContentWorldBase(const WTF::String& name)
+        : m_identifier(generateIdentifier())
+        , m_name(name)
+    {
+    }
+
+    ContentWorldBase(uint64_t identifier)
+        : m_identifier(identifier)
+    {
+    }
+
+private:
+    // FIXME: This should be an ObjectIdentifier once we can get all ScriptWorld related classes to use ObjectIdentifier.
+    uint64_t m_identifier;
+    WTF::String m_name;
+};
+
+class ContentWorld final : public API::ObjectImpl<API::Object::Type::ContentWorld>, public ContentWorldBase {
 public:
     static Ref<ContentWorld> sharedWorldWithName(const WTF::String&);
     static ContentWorld& pageContentWorld();
@@ -38,18 +69,12 @@ public:
 
     virtual ~ContentWorld();
 
-    const WTF::String& name() const { return m_name; }
-    uint64_t identifier() const { return m_identifier; }
-
-    std::pair<uint64_t, WTF::String> worldData() { return { m_identifier, m_name }; }
+    void ref() const final { ObjectImpl::ref(); }
+    void deref() const final { ObjectImpl::deref(); }
 
 private:
-    ContentWorld(const WTF::String&);
-    ContentWorld(uint64_t identifier);
-
-    // FIXME: This should be an ObjectIdentifier once we can get all ScriptWorld related classes to use ObjectIdentifier.
-    uint64_t m_identifier;
-    WTF::String m_name;
+    explicit ContentWorld(const WTF::String&);
+    explicit ContentWorld(uint64_t identifier);
 };
 
 } // namespace API

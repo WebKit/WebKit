@@ -1,3 +1,42 @@
+2020-01-21  Brady Eidson  <beidson@apple.com>
+
+        API::(User)ContentWorld cleanup
+        https://bugs.webkit.org/show_bug.cgi?id=206509
+
+        Reviewed by Darin Adler.
+
+        No behavior change.
+        
+        - Give (User)ContentWorld a shared base class for upcoming work.
+        - Reference them by identifier instead of object instance whenever possible.
+        - Other shared class cleanup.
+
+        * UIProcess/API/APIContentWorld.cpp:
+        (API::ContentWorldBase::generateIdentifier):
+        (API::ContentWorld::ContentWorld):
+        (API::ContentWorld::~ContentWorld):
+        * UIProcess/API/APIContentWorld.h:
+        (API::ContentWorldBase::identifier const):
+        (API::ContentWorldBase::name const):
+        (API::ContentWorldBase::worldData const):
+        (API::ContentWorldBase::ContentWorldBase):
+        * UIProcess/API/APIUserContentWorld.cpp:
+        (API::UserContentWorld::UserContentWorld):
+        (API::UserContentWorld::generateIdentifier): Deleted.
+        * UIProcess/API/APIUserContentWorld.h:
+        * UIProcess/UserContent/WebScriptMessageHandler.h:
+        (WebKit::WebScriptMessageHandler::world):
+        (WebKit::WebScriptMessageHandler::userContentWorld const): Deleted.
+        (WebKit::WebScriptMessageHandler::userContentWorld): Deleted.
+        * UIProcess/UserContent/WebUserContentControllerProxy.cpp:
+        (WebKit::WebUserContentControllerProxy::addProcess):
+        (WebKit::WebUserContentControllerProxy::addUserContentWorldUse):
+        (WebKit::WebUserContentControllerProxy::shouldSendRemoveUserContentWorldsMessage):
+        (WebKit::WebUserContentControllerProxy::addUserScriptMessageHandler):
+        (WebKit::WebUserContentControllerProxy::removeUserMessageHandlerForName):
+        (WebKit::WebUserContentControllerProxy::removeAllUserMessageHandlers):
+        * UIProcess/UserContent/WebUserContentControllerProxy.h:
+
 2020-01-21  Chris Dumez  <cdumez@apple.com>
 
         Minor improvements to StorageAreaMap

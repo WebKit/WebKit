@@ -23,9 +23,9 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebScriptMessageHandler_h
-#define WebScriptMessageHandler_h
+#pragma once
 
+#include "APIUserContentWorld.h"
 #include "WebUserContentControllerDataTypes.h"
 #include <wtf/Identified.h>
 #include <wtf/Ref.h>
@@ -60,8 +60,7 @@ public:
 
     String name() const { return m_name; }
 
-    const API::UserContentWorld& userContentWorld() const { return m_world; }
-    API::UserContentWorld& userContentWorld() { return m_world; }
+    API::ContentWorldBase& world() { return m_world.get(); }
 
     Client& client() const { return *m_client; }
 
@@ -74,5 +73,3 @@ private:
 };
 
 } // namespace API
-    
-#endif // WebScriptMessageHandler_h
