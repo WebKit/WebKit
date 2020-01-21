@@ -4525,3 +4525,5 @@ webkit.org/b/205855 http/wpt/css/css-highlight-api/highlight-text.html [ ImageOn
 webkit.org/b/205856 storage/indexeddb/IDBTransaction-page-cache.html [ Pass Timeout ]
 
 webkit.org/b/206165 fast/dom/Range/getBoundingClientRect.html [ Failure ]
+
+webkit.org/b/206515 fast/xmlhttprequest/xmlhttprequest-multiple-sync-xhr-during-unload.html [ Failure ]
