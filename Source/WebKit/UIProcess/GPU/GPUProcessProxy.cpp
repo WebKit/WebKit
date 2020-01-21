@@ -41,6 +41,7 @@
 #include "WebProcessProxy.h"
 #include "WebProcessProxyMessages.h"
 #include <WebCore/MockRealtimeMediaSourceCenter.h>
+#include <WebCore/RuntimeApplicationChecks.h>
 #include <wtf/CompletionHandler.h>
 
 #if PLATFORM(IOS_FAMILY)
@@ -51,6 +52,35 @@
 
 namespace WebKit {
 using namespace WebCore;
+
+static inline bool isSafari()
+{
+    bool isSafari = false;
+#if PLATFORM(IOS_FAMILY)
+    if (IOSApplication::isMobileSafari())
+        isSafari = true;
+#elif PLATFORM(MAC)
+    if (MacApplication::isSafari())
+        isSafari = true;
+#endif
+    return isSafari;
+}
+
+static inline bool shouldCreateCameraSandboxExtension()
+{
+    // FIXME: We should check for "com.apple.security.device.camera" entitlement.
+    if (!isSafari())
+        return false;
+    return true;
+}
+
+static inline bool shouldCreateMicrophoneSandboxExtension()
+{
+    // FIXME: We should check for "com.apple.security.device.microphone" entitlement.
+    if (!isSafari())
+        return false;
+    return true;
+}
 
 GPUProcessProxy& GPUProcessProxy::singleton()
 {
@@ -65,6 +95,17 @@ GPUProcessProxy& GPUProcessProxy::singleton()
         GPUProcessCreationParameters parameters;
 #if ENABLE(MEDIA_STREAM)
         parameters.useMockCaptureDevices = gpuProcess->m_useMockCaptureDevices;
+
+        bool needsCameraSandboxExtension = shouldCreateCameraSandboxExtension();
+        bool needsMicrophoneSandboxExtension = shouldCreateMicrophoneSandboxExtension();
+        if (needsCameraSandboxExtension)
+            SandboxExtension::createHandleForGenericExtension("com.apple.webkit.camera", parameters.cameraSandboxExtensionHandle);
+        if (needsMicrophoneSandboxExtension)
+            SandboxExtension::createHandleForGenericExtension("com.apple.webkit.microphone", parameters.microphoneSandboxExtensionHandle);
+#if PLATFORM(IOS)
+        if (needsCameraSandboxExtension || needsMicrophoneSandboxExtension)
+            SandboxExtension::createHandleForGenericExtension("com.apple.tccd", parameters.tccSandboxExtensionHandle);
+#endif
 #endif
         // Initialize the GPU process.
         gpuProcess->send(Messages::GPUProcess::InitializeGPUProcess(parameters), 0);

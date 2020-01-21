@@ -41,13 +41,30 @@ GPUProcessCreationParameters::GPUProcessCreationParameters() = default;
 
 void GPUProcessCreationParameters::encode(IPC::Encoder& encoder) const
 {
+#if ENABLE(MEDIA_STREAM)
     encoder << useMockCaptureDevices;
+    encoder << cameraSandboxExtensionHandle;
+    encoder << microphoneSandboxExtensionHandle;
+#if PLATFORM(IOS)
+    encoder << tccSandboxExtensionHandle;
+#endif
+#endif
 }
 
 bool GPUProcessCreationParameters::decode(IPC::Decoder& decoder, GPUProcessCreationParameters& result)
 {
+#if ENABLE(MEDIA_STREAM)
     if (!decoder.decode(result.useMockCaptureDevices))
         return false;
+    if (!decoder.decode(result.cameraSandboxExtensionHandle))
+        return false;
+    if (!decoder.decode(result.microphoneSandboxExtensionHandle))
+        return false;
+#if PLATFORM(IOS)
+    if (!decoder.decode(result.tccSandboxExtensionHandle))
+        return false;
+#endif
+#endif
     return true;
 }
 

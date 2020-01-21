@@ -107,7 +107,14 @@ void GPUProcess::initializeGPUProcess(GPUProcessCreationParameters&& parameters)
     WTF::Thread::setCurrentThreadIsUserInitiated();
     AtomString::init();
 
+#if ENABLE(MEDIA_STREAM)
     setMockCaptureDevicesEnabled(parameters.useMockCaptureDevices);
+    SandboxExtension::consumePermanently(parameters.cameraSandboxExtensionHandle);
+    SandboxExtension::consumePermanently(parameters.microphoneSandboxExtensionHandle);
+#if PLATFORM(IOS)
+    SandboxExtension::consumePermanently(parameters.tccSandboxExtensionHandle);
+#endif
+#endif
 }
 
 void GPUProcess::prepareToSuspend(bool isSuspensionImminent, CompletionHandler<void()>&& completionHandler)

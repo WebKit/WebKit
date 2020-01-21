@@ -1,3 +1,34 @@
+2020-01-21  youenn fablet  <youenn@apple.com>
+
+        Provide camera/microphone sandbox extensions to GPUProcess
+        https://bugs.webkit.org/show_bug.cgi?id=206531
+
+        Reviewed by Eric Carlson.
+
+        Send at creation of GPUProcess sandbox extensions to camera and microphone.
+        This is currently gated by the UIProcess application being Safari.
+        This should be changed to checks based on camera/microphone entitlements.
+
+        Extensions are provided at creation of the GPUProcess as it is as trusted as the UIProcess.
+        We do not make it conditional to getUserMedia being enabled as GPUProcess may be created for more than one configuration.
+
+        Relax the GPUProcess sandbox on MacOS to allow microphone access until we can use microphone sandbox extension for that purpose.
+
+        Manually tested by capturing audio/video with real devices.
+
+        * GPUProcess/GPUProcess.cpp:
+        (WebKit::GPUProcess::initializeGPUProcess):
+        * GPUProcess/GPUProcessCreationParameters.cpp:
+        (WebKit::GPUProcessCreationParameters::encode const):
+        (WebKit::GPUProcessCreationParameters::decode):
+        * GPUProcess/GPUProcessCreationParameters.h:
+        * GPUProcess/mac/com.apple.WebKit.GPUProcess.sb.in:
+        * UIProcess/GPU/GPUProcessProxy.cpp:
+        (WebKit::isSafari):
+        (WebKit::shouldCreateCameraSandboxExtension):
+        (WebKit::shouldCreateMicrophoneSandboxExtension):
+        (WebKit::GPUProcessProxy::singleton):
+
 2020-01-21  Brady Eidson  <beidson@apple.com>
 
         API::(User)ContentWorld cleanup
