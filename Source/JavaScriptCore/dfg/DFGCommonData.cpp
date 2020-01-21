@@ -56,7 +56,7 @@ CallSiteIndex CommonData::addCodeOrigin(CodeOrigin codeOrigin)
         codeOrigins.append(codeOrigin);
     unsigned index = codeOrigins.size() - 1;
     ASSERT(codeOrigins[index] == codeOrigin);
-    return CallSiteIndex(index);
+    return CallSiteIndex(BytecodeIndex(index));
 }
 
 CallSiteIndex CommonData::addUniqueCallSiteIndex(CodeOrigin codeOrigin)
@@ -64,13 +64,13 @@ CallSiteIndex CommonData::addUniqueCallSiteIndex(CodeOrigin codeOrigin)
     codeOrigins.append(codeOrigin);
     unsigned index = codeOrigins.size() - 1;
     ASSERT(codeOrigins[index] == codeOrigin);
-    return CallSiteIndex(index);
+    return CallSiteIndex(BytecodeIndex(index));
 }
 
 CallSiteIndex CommonData::lastCallSite() const
 {
     RELEASE_ASSERT(codeOrigins.size());
-    return CallSiteIndex(codeOrigins.size() - 1);
+    return CallSiteIndex(BytecodeIndex(codeOrigins.size() - 1));
 }
 
 DisposableCallSiteIndex CommonData::addDisposableCallSiteIndex(CodeOrigin codeOrigin)

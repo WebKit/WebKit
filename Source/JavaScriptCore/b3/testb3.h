@@ -263,20 +263,20 @@ inline void checkDoesNotUseInstruction(Compilation& compilation, const char* tex
 }
 
 template<typename Type>
-struct B3Operand {
+struct Operand {
     const char* name;
     Type value;
 };
 
-typedef B3Operand<int64_t> Int64Operand;
-typedef B3Operand<int32_t> Int32Operand;
-typedef B3Operand<int16_t> Int16Operand;
-typedef B3Operand<int8_t> Int8Operand;
+typedef Operand<int64_t> Int64Operand;
+typedef Operand<int32_t> Int32Operand;
+typedef Operand<int16_t> Int16Operand;
+typedef Operand<int8_t> Int8Operand;
 
-#define MAKE_OPERAND(value) B3Operand<decltype(value)> { #value, value }
+#define MAKE_OPERAND(value) Operand<decltype(value)> { #value, value }
 
 template<typename FloatType>
-void populateWithInterestingValues(Vector<B3Operand<FloatType>>& operands)
+void populateWithInterestingValues(Vector<Operand<FloatType>>& operands)
 {
     operands.append({ "0.", static_cast<FloatType>(0.) });
     operands.append({ "-0.", static_cast<FloatType>(-0.) });
@@ -302,9 +302,9 @@ void populateWithInterestingValues(Vector<B3Operand<FloatType>>& operands)
 }
 
 template<typename FloatType>
-Vector<B3Operand<FloatType>> floatingPointOperands()
+Vector<Operand<FloatType>> floatingPointOperands()
 {
-    Vector<B3Operand<FloatType>> operands;
+    Vector<Operand<FloatType>> operands;
     populateWithInterestingValues(operands);
     return operands;
 };

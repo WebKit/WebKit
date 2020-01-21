@@ -76,7 +76,7 @@ namespace JSC { namespace LLInt {
 
 #define READ(virtualRegister) \
     (virtualRegister.isConstant() \
-        ? JSValue::decode(CODE_BLOCK()->getConstant(virtualRegister)) \
+        ? JSValue::decode(CODE_BLOCK()->getConstant(virtualRegister.offset())) \
         : callFrame->r(virtualRegister))
 
 inline bool jitCompileAndSetHeuristics(Wasm::LLIntCallee* callee, Wasm::FunctionCodeBlock* codeBlock, Wasm::Instance* instance)

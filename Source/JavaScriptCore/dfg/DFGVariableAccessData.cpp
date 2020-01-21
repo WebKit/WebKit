@@ -31,7 +31,8 @@
 namespace JSC { namespace DFG {
 
 VariableAccessData::VariableAccessData()
-    : m_prediction(SpecNone)
+    : m_local(static_cast<VirtualRegister>(std::numeric_limits<int>::min()))
+    , m_prediction(SpecNone)
     , m_argumentAwarePrediction(SpecNone)
     , m_flags(0)
     , m_shouldNeverUnbox(false)
@@ -44,10 +45,10 @@ VariableAccessData::VariableAccessData()
     clearVotes();
 }
 
-VariableAccessData::VariableAccessData(Operand operand)
-    : m_prediction(SpecNone)
+VariableAccessData::VariableAccessData(VirtualRegister local)
+    : m_local(local)
+    , m_prediction(SpecNone)
     , m_argumentAwarePrediction(SpecNone)
-    , m_operand(operand)
     , m_flags(0)
     , m_shouldNeverUnbox(false)
     , m_structureCheckHoistingFailed(false)
@@ -86,7 +87,7 @@ bool VariableAccessData::shouldUseDoubleFormatAccordingToVote()
 {
     // We don't support this facility for arguments, yet.
     // FIXME: make this work for arguments.
-    if (operand().isArgument())
+    if (local().isArgument())
         return false;
         
     // If the variable is not a number prediction, then this doesn't
@@ -120,7 +121,7 @@ bool VariableAccessData::tallyVotesForShouldUseDoubleFormat()
 {
     ASSERT(isRoot());
         
-    if (operand().isArgument() || shouldNeverUnbox()
+    if (local().isArgument() || shouldNeverUnbox()
         || (flags() & NodeBytecodeUsesAsArrayIndex))
         return DFG::mergeDoubleFormatState(m_doubleFormatState, NotUsingDoubleFormat);
     
@@ -175,7 +176,7 @@ bool VariableAccessData::couldRepresentInt52Impl()
         return false;
     
     // We punt for machine arguments.
-    if (operand().isArgument())
+    if (m_local.isArgument())
         return false;
     
     // The argument-aware prediction -- which merges all of an (inlined or machine)

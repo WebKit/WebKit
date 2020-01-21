@@ -29,7 +29,6 @@
 #include "ArrayConstructor.h"
 #include "BytecodeGenerator.h"
 #include "CallFrame.h"
-#include "CheckpointOSRExitSideState.h"
 #include "CommonSlowPaths.h"
 #include "Error.h"
 #include "ErrorHandlingScope.h"
@@ -99,8 +98,8 @@ namespace JSC { namespace LLInt {
     LLINT_BEGIN_NO_SET_PC();                    \
     LLINT_SET_PC_FOR_STUBS()
 
-inline JSValue getNonConstantOperand(CallFrame* callFrame, VirtualRegister operand) { return callFrame->uncheckedR(operand).jsValue(); }
-inline JSValue getOperand(CallFrame* callFrame, VirtualRegister operand) { return callFrame->r(operand).jsValue(); }
+inline JSValue getNonConstantOperand(CallFrame* callFrame, const VirtualRegister& operand) { return callFrame->uncheckedR(operand.offset()).jsValue(); }
+inline JSValue getOperand(CallFrame* callFrame, const VirtualRegister& operand) { return callFrame->r(operand.offset()).jsValue(); }
 
 #define LLINT_RETURN_TWO(first, second) do {       \
         return encodeResult(first, second);        \
@@ -1572,7 +1571,7 @@ inline SlowPathReturnType genericCall(CodeBlock* codeBlock, CallFrame* callFrame
     CallFrame* calleeFrame = callFrame - bytecode.m_argv;
     
     calleeFrame->setArgumentCountIncludingThis(bytecode.m_argc);
-    calleeFrame->uncheckedR(VirtualRegister(CallFrameSlot::callee)) = calleeAsValue;
+    calleeFrame->uncheckedR(CallFrameSlot::callee) = calleeAsValue;
     calleeFrame->setCallerFrame(callFrame);
     
     auto& metadata = bytecode.metadata(codeBlock);
@@ -1690,7 +1689,7 @@ inline SlowPathReturnType varargsSetup(CallFrame* callFrame, const Instruction* 
         setupForwardArgumentsFrameAndSetThis(globalObject, callFrame, calleeFrame, getOperand(callFrame, bytecode.m_thisValue), vm.varargsLength);
 
     calleeFrame->setCallerFrame(callFrame);
-    calleeFrame->uncheckedR(VirtualRegister(CallFrameSlot::callee)) = calleeAsValue;
+    calleeFrame->uncheckedR(CallFrameSlot::callee) = calleeAsValue;
     callFrame->setCurrentVPC(pc);
 
     RELEASE_AND_RETURN(throwScope, setUpCall(calleeFrame, kind, calleeAsValue));
@@ -1726,7 +1725,7 @@ inline SlowPathReturnType commonCallEval(CallFrame* callFrame, const Instruction
     
     calleeFrame->setArgumentCountIncludingThis(bytecode.m_argc);
     calleeFrame->setCallerFrame(callFrame);
-    calleeFrame->uncheckedR(VirtualRegister(CallFrameSlot::callee)) = calleeAsValue;
+    calleeFrame->uncheckedR(CallFrameSlot::callee) = calleeAsValue;
     calleeFrame->setReturnPC(returnPoint.executableAddress());
     calleeFrame->setCodeBlock(nullptr);
     callFrame->setCurrentVPC(pc);
@@ -1913,7 +1912,7 @@ LLINT_SLOW_PATH_DECL(slow_path_log_shadow_chicken_tail)
 #if USE(JSVALUE64)
     CallSiteIndex callSiteIndex(BytecodeIndex(codeBlock->bytecodeOffset(pc)));
 #else
-    CallSiteIndex callSiteIndex(*pc);
+    CallSiteIndex callSiteIndex(BytecodeIndex(bitwise_cast<uint32_t>(pc)));
 #endif
 
     ShadowChicken* shadowChicken = vm.shadowChicken();
@@ -1931,7 +1930,7 @@ LLINT_SLOW_PATH_DECL(slow_path_profile_catch)
 
     auto bytecode = pc->as<OpCatch>();
     auto& metadata = bytecode.metadata(codeBlock);
-    metadata.m_buffer->forEach([&] (ValueProfileAndVirtualRegister& profile) {
+    metadata.m_buffer->forEach([&] (ValueProfileAndOperand& profile) {
         profile.m_buckets[0] = JSValue::encode(callFrame->uncheckedR(profile.m_operand).jsValue());
     });
 
@@ -1962,124 +1961,11 @@ LLINT_SLOW_PATH_DECL(slow_path_out_of_line_jump_target)
     LLINT_END_IMPL();
 }
 
-template<typename Opcode>
-static void handleVarargsCheckpoint(VM& vm, CallFrame* callFrame, JSGlobalObject* globalObject, const Opcode& bytecode, CheckpointOSRExitSideState& sideState)
-{
-    auto scope = DECLARE_THROW_SCOPE(vm);
-    unsigned argumentCountIncludingThis = sideState.tmps[Opcode::argCountIncludingThis].asUInt32();
-    unsigned firstVarArg = bytecode.m_firstVarArg;
-
-    MarkedArgumentBuffer args;
-    args.fill(argumentCountIncludingThis - 1, [&] (JSValue* buffer) {
-        loadVarargs(globalObject, buffer, callFrame->r(bytecode.m_arguments).jsValue(), firstVarArg, argumentCountIncludingThis - 1);
-    });
-    if (args.hasOverflowed()) {
-        throwStackOverflowError(globalObject, scope);
-        return;
-    }
-    
-    RETURN_IF_EXCEPTION(scope, void());
-
-    JSValue result;
-    if (Opcode::opcodeID != op_construct_varargs)
-        result = call(globalObject, getOperand(callFrame, bytecode.m_callee), getOperand(callFrame, bytecode.m_thisValue), args, "");
-    else
-        result = construct(globalObject, getOperand(callFrame, bytecode.m_callee), getOperand(callFrame, bytecode.m_thisValue), args, "");
-
-    RETURN_IF_EXCEPTION(scope, void());
-    callFrame->uncheckedR(bytecode.m_dst) = result;
-}
-
-inline SlowPathReturnType dispatchToNextInstruction(CodeBlock* codeBlock, InstructionStream::Ref pc)
-{
-    RELEASE_ASSERT(!codeBlock->vm().exceptionForInspection());
-    if (Options::forceOSRExitToLLInt() || codeBlock->jitType() == JITType::InterpreterThunk) {
-        const Instruction* nextPC = pc.next().ptr();
-        auto nextBytecode = LLInt::getCodePtr<JSEntryPtrTag>(*pc.next().ptr());
-        return encodeResult(nextPC, nextBytecode.executableAddress());
-    }
-
-#if ENABLE(JIT)
-    ASSERT(codeBlock->jitType() == JITType::BaselineJIT);
-    BytecodeIndex nextBytecodeIndex = pc.next().index();
-    auto nextBytecode = codeBlock->jitCodeMap().find(nextBytecodeIndex);
-    return encodeResult(nullptr, nextBytecode.executableAddress());
-#endif
-    RELEASE_ASSERT_NOT_REACHED();
-}
-
-extern "C" SlowPathReturnType slow_path_checkpoint_osr_exit_from_inlined_call(CallFrame* callFrame, EncodedJSValue result)
-{
-    // Since all our calling checkpoints do right now is move result into our dest we can just do that here and return.
-    CodeBlock* codeBlock = callFrame->codeBlock();
-    VM& vm = codeBlock->vm();
-    SlowPathFrameTracer tracer(vm, callFrame);
-
-    std::unique_ptr<CheckpointOSRExitSideState> sideState = vm.findCheckpointOSRSideState(callFrame);
-    BytecodeIndex bytecodeIndex = sideState->bytecodeIndex;
-    auto pc = codeBlock->instructions().at(bytecodeIndex);
-
-    auto opcode = pc->opcodeID();
-    switch (opcode) {
-    case op_call_varargs: {
-        callFrame->uncheckedR(pc->as<OpCallVarargs>().m_dst) = JSValue::decode(result);
-        break;
-    }
-    case op_construct_varargs: {
-        callFrame->uncheckedR(pc->as<OpConstructVarargs>().m_dst) = JSValue::decode(result);
-        break;
-    }
-    // op_tail_call_varargs should never return if the thing it was calling was inlined.
-    default:
-        RELEASE_ASSERT_NOT_REACHED();
-        break;
-    }
-
-    return dispatchToNextInstruction(codeBlock, pc);
-}
-
-extern "C" SlowPathReturnType slow_path_checkpoint_osr_exit(CallFrame* callFrame, EncodedJSValue /* needed for cCall2 in CLoop */)
-{
-    CodeBlock* codeBlock = callFrame->codeBlock();
-    VM& vm = codeBlock->vm();
-    SlowPathFrameTracer tracer(vm, callFrame);
-    auto scope = DECLARE_THROW_SCOPE(vm);
-
-    JSGlobalObject* globalObject = codeBlock->globalObject();
-
-    std::unique_ptr<CheckpointOSRExitSideState> sideState = vm.findCheckpointOSRSideState(callFrame);
-    BytecodeIndex bytecodeIndex = sideState->bytecodeIndex;
-    ASSERT(bytecodeIndex.checkpoint());
-
-    auto pc = codeBlock->instructions().at(bytecodeIndex);
-
-    auto opcode = pc->opcodeID();
-    switch (opcode) {
-    case op_call_varargs:
-        handleVarargsCheckpoint(vm, callFrame, globalObject, pc->as<OpCallVarargs>(), *sideState.get());
-        break;
-    case op_construct_varargs:
-        handleVarargsCheckpoint(vm, callFrame, globalObject, pc->as<OpConstructVarargs>(), *sideState.get());
-        break;
-    case op_tail_call_varargs:
-        ASSERT_WITH_MESSAGE(pc.next()->opcodeID() == op_ret || pc.next()->opcodeID() == op_jmp, "We strongly assume all tail calls are followed by an op_ret (or sometimes a jmp to a ret).");
-        handleVarargsCheckpoint(vm, callFrame, globalObject, pc->as<OpTailCallVarargs>(), *sideState.get());
-        break;
-
-    default:
-        RELEASE_ASSERT_NOT_REACHED();
-        break;
-    }
-    if (UNLIKELY(scope.exception()))
-        return encodeResult(returnToThrow(vm), 0);
-
-    return dispatchToNextInstruction(codeBlock, pc);
-}
-
 extern "C" SlowPathReturnType llint_throw_stack_overflow_error(VM* vm, ProtoCallFrame* protoFrame)
 {
     CallFrame* callFrame = vm->topCallFrame;
     auto scope = DECLARE_THROW_SCOPE(*vm);
+
     JSGlobalObject* globalObject = nullptr;
     if (callFrame)
         globalObject = callFrame->lexicalGlobalObject(*vm);

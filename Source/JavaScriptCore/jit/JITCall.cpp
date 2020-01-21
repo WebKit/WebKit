@@ -51,7 +51,7 @@ template<typename Op>
 void JIT::emitPutCallResult(const Op& bytecode)
 {
     emitValueProfilingSite(bytecode.metadata(m_codeBlock));
-    emitPutVirtualRegister(bytecode.m_dst);
+    emitPutVirtualRegister(bytecode.m_dst.offset());
 }
 
 template<typename Op>
@@ -66,7 +66,7 @@ JIT::compileSetupFrame(const Op& bytecode, CallLinkInfo*)
     int registerOffset = -static_cast<int>(bytecode.m_argv);
 
     if (Op::opcodeID == op_call && shouldEmitProfiling()) {
-        emitGetVirtualRegister(VirtualRegister(registerOffset + CallFrame::argumentOffsetIncludingThis(0)), regT0);
+        emitGetVirtualRegister(registerOffset + CallFrame::argumentOffsetIncludingThis(0), regT0);
         Jump done = branchIfNotCell(regT0);
         load32(Address(regT0, JSCell::structureIDOffset()), regT0);
         store32(regT0, metadata.m_callLinkInfo.m_arrayProfile.addressOfLastSeenStructureID());
@@ -85,9 +85,9 @@ std::enable_if_t<
 , void>
 JIT::compileSetupFrame(const Op& bytecode, CallLinkInfo* info)
 {
-    VirtualRegister thisValue = bytecode.m_thisValue;
-    VirtualRegister arguments = bytecode.m_arguments;
-    int firstFreeRegister = bytecode.m_firstFree.offset(); // FIXME: Why is this a virtual register if we never use it as one...
+    int thisValue = bytecode.m_thisValue.offset();
+    int arguments = bytecode.m_arguments.offset();
+    int firstFreeRegister = bytecode.m_firstFree.offset();
     int firstVarArgOffset = bytecode.m_firstVarArg;
 
     emitGetVirtualRegister(arguments, regT1);
@@ -206,7 +206,7 @@ void JIT::compileOpCall(const Instruction* instruction, unsigned callLinkInfoInd
 {
     OpcodeID opcodeID = Op::opcodeID;
     auto bytecode = instruction->as<Op>();
-    VirtualRegister callee = bytecode.m_callee;
+    int callee = bytecode.m_callee.offset();
 
     /* Caller always:
         - Updates callFrameRegister to callee callFrame.

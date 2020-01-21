@@ -31,12 +31,12 @@
 
 namespace JSC {
 
-inline bool virtualRegisterIsLocal(int operand)
+inline bool operandIsLocal(int operand)
 {
     return operand < 0;
 }
 
-inline bool virtualRegisterIsArgument(int operand)
+inline bool operandIsArgument(int operand)
 {
     return operand >= 0;
 }
@@ -49,32 +49,25 @@ public:
     friend VirtualRegister virtualRegisterForLocal(int);
     friend VirtualRegister virtualRegisterForArgument(int, int);
 
-    static constexpr int invalidVirtualRegister = 0x3fffffff;
-    static constexpr int firstConstantRegisterIndex = FirstConstantRegisterIndex;
-
     VirtualRegister(RegisterID*);
     VirtualRegister(RefPtr<RegisterID>);
 
     VirtualRegister()
-        : m_virtualRegister(invalidVirtualRegister)
+        : m_virtualRegister(s_invalidVirtualRegister)
     { }
 
     explicit VirtualRegister(int virtualRegister)
         : m_virtualRegister(virtualRegister)
     { }
 
-    VirtualRegister(CallFrameSlot slot)
-        : m_virtualRegister(static_cast<int>(slot))
-    { }
-
-    bool isValid() const { return (m_virtualRegister != invalidVirtualRegister); }
-    bool isLocal() const { return virtualRegisterIsLocal(m_virtualRegister); }
-    bool isArgument() const { return virtualRegisterIsArgument(m_virtualRegister); }
+    bool isValid() const { return (m_virtualRegister != s_invalidVirtualRegister); }
+    bool isLocal() const { return operandIsLocal(m_virtualRegister); }
+    bool isArgument() const { return operandIsArgument(m_virtualRegister); }
     bool isHeader() const { return m_virtualRegister >= 0 && m_virtualRegister < CallFrameSlot::thisArgument; }
-    bool isConstant() const { return m_virtualRegister >= firstConstantRegisterIndex; }
+    bool isConstant() const { return m_virtualRegister >= s_firstConstantRegisterIndex; }
     int toLocal() const { ASSERT(isLocal()); return operandToLocal(m_virtualRegister); }
     int toArgument() const { ASSERT(isArgument()); return operandToArgument(m_virtualRegister); }
-    int toConstantIndex() const { ASSERT(isConstant()); return m_virtualRegister - firstConstantRegisterIndex; }
+    int toConstantIndex() const { ASSERT(isConstant()); return m_virtualRegister - s_firstConstantRegisterIndex; }
     int offset() const { return m_virtualRegister; }
     int offsetInBytes() const { return m_virtualRegister * sizeof(Register); }
 
@@ -113,6 +106,9 @@ public:
     void dump(PrintStream& out) const;
 
 private:
+    static constexpr int s_invalidVirtualRegister = 0x3fffffff;
+    static constexpr int s_firstConstantRegisterIndex = FirstConstantRegisterIndex;
+
     static int localToOperand(int local) { return -1 - local; }
     static int operandToLocal(int operand) { return -1 - operand; }
     static int operandToArgument(int operand) { return operand - CallFrame::thisArgumentOffset(); }

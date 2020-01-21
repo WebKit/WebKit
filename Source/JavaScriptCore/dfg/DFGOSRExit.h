@@ -150,6 +150,8 @@ struct OSRExit : public OSRExitBase {
 
     friend void JIT_OPERATION operationCompileOSRExit(CallFrame*);
 
+    static void executeOSRExit(Probe::Context&);
+
     CodeLocationLabel<JSInternalPtrTag> m_patchableJumpLocation;
     MacroAssemblerCodeRef<OSRExitPtrTag> m_code;
 

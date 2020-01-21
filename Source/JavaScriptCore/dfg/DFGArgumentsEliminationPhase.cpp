@@ -358,12 +358,9 @@ private:
                 case NewArrayBuffer:
                     break;
                     
-                case VarargsLength:
-                    break;
-
                 case LoadVarargs:
-                    if (node->loadVarargsData()->offset && (node->argumentsChild()->op() == NewArrayWithSpread || node->argumentsChild()->op() == Spread || node->argumentsChild()->op() == NewArrayBuffer))
-                        escape(node->argumentsChild(), node);
+                    if (node->loadVarargsData()->offset && (node->child1()->op() == NewArrayWithSpread || node->child1()->op() == Spread || node->child1()->op() == NewArrayBuffer))
+                        escape(node->child1(), node);
                     break;
                     
                 case CallVarargs:
@@ -496,10 +493,10 @@ private:
                             return;
                         }
                         ASSERT(!heap.payload().isTop());
-                        Operand operand = heap.operand();
+                        VirtualRegister reg(heap.payload().value32());
                         // The register may not point to an argument or local, for example if we are looking at SetArgumentCountIncludingThis.
-                        if (!operand.isHeader())
-                            clobberedByThisBlock.operand(operand) = true;
+                        if (!reg.isHeader())
+                            clobberedByThisBlock.operand(reg) = true;
                     },
                     NoOpClobberize());
             }
@@ -563,16 +560,16 @@ private:
                         if (inlineCallFrame) {
                             if (inlineCallFrame->isVarargs()) {
                                 isClobberedByBlock |= clobberedByThisBlock.operand(
-                                    VirtualRegister(inlineCallFrame->stackOffset + CallFrameSlot::argumentCountIncludingThis));
+                                    inlineCallFrame->stackOffset + CallFrameSlot::argumentCountIncludingThis);
                             }
 
                             if (!isClobberedByBlock || inlineCallFrame->isClosureCall) {
                                 isClobberedByBlock |= clobberedByThisBlock.operand(
-                                    VirtualRegister(inlineCallFrame->stackOffset + CallFrameSlot::callee));
+                                    inlineCallFrame->stackOffset + CallFrameSlot::callee);
                             }
 
                             if (!isClobberedByBlock) {
-                                for (unsigned i = 0; i < static_cast<unsigned>(inlineCallFrame->argumentCountIncludingThis - 1); ++i) {
+                                for (unsigned i = 0; i < inlineCallFrame->argumentCountIncludingThis - 1; ++i) {
                                     VirtualRegister reg =
                                         VirtualRegister(inlineCallFrame->stackOffset) +
                                         CallFrame::argumentOffset(i);
@@ -630,7 +627,7 @@ private:
                                 m_graph, node, NoOpClobberize(),
                                 [&] (AbstractHeap heap) {
                                     if (heap.kind() == Stack && !heap.payload().isTop()) {
-                                        if (argumentsInvolveStackSlot(inlineCallFrame, heap.operand()))
+                                        if (argumentsInvolveStackSlot(inlineCallFrame, VirtualRegister(heap.payload().value32())))
                                             found = true;
                                         return;
                                     }
@@ -809,7 +806,7 @@ private:
                         
                         bool safeToGetStack = index >= numberOfArgumentsToSkip;
                         if (inlineCallFrame)
-                            safeToGetStack &= index < static_cast<unsigned>(inlineCallFrame->argumentCountIncludingThis - 1);
+                            safeToGetStack &= index < inlineCallFrame->argumentCountIncludingThis - 1;
                         else {
                             safeToGetStack &=
                                 index < static_cast<unsigned>(codeBlock()->numParameters()) - 1;
@@ -848,23 +845,9 @@ private:
                     node->convertToIdentityOn(result);
                     break;
                 }
-                
-                case VarargsLength: {
-                    Node* candidate = node->argumentsChild().node();
-                    if (!isEliminatedAllocation(candidate))
-                        break;
-
-                    // VarargsLength can exit, so it better be exitOK.
-                    DFG_ASSERT(m_graph, node, node->origin.exitOK);
-                    NodeOrigin origin = node->origin.withExitOK(true);
-
-
-                    node->convertToIdentityOn(emitCodeToGetArgumentsArrayLength(insertionSet, candidate, nodeIndex, origin, /* addThis = */ true));
-                    break;
-                }
-
+                    
                 case LoadVarargs: {
-                    Node* candidate = node->argumentsChild().node();
+                    Node* candidate = node->child1().node();
                     if (!isEliminatedAllocation(candidate))
                         break;
                     
@@ -879,10 +862,10 @@ private:
                             jsNumber(argumentCountIncludingThis));
                         insertionSet.insertNode(
                             nodeIndex, SpecNone, KillStack, node->origin.takeValidExit(canExit),
-                            OpInfo(varargsData->count));
+                            OpInfo(varargsData->count.offset()));
                         insertionSet.insertNode(
                             nodeIndex, SpecNone, MovHint, node->origin.takeValidExit(canExit),
-                            OpInfo(varargsData->count), Edge(argumentCountIncludingThisNode));
+                            OpInfo(varargsData->count.offset()), Edge(argumentCountIncludingThisNode));
                         insertionSet.insertNode(
                             nodeIndex, SpecNone, PutStack, node->origin.withExitOK(canExit),
                             OpInfo(m_graph.m_stackAccessData.add(varargsData->count, FlushedInt32)),
@@ -891,15 +874,14 @@ private:
 
                     auto storeValue = [&] (Node* value, unsigned storeIndex) {
                         VirtualRegister reg = varargsData->start + storeIndex;
-                        ASSERT(reg.isLocal());
                         StackAccessData* data =
                             m_graph.m_stackAccessData.add(reg, FlushedJSValue);
                         
                         insertionSet.insertNode(
-                            nodeIndex, SpecNone, KillStack, node->origin.takeValidExit(canExit), OpInfo(reg));
+                            nodeIndex, SpecNone, KillStack, node->origin.takeValidExit(canExit), OpInfo(reg.offset()));
                         insertionSet.insertNode(
                             nodeIndex, SpecNone, MovHint, node->origin.takeValidExit(canExit),
-                            OpInfo(reg), Edge(value));
+                            OpInfo(reg.offset()), Edge(value));
                         insertionSet.insertNode(
                             nodeIndex, SpecNone, PutStack, node->origin.withExitOK(canExit),
                             OpInfo(data), Edge(value));
@@ -953,7 +935,7 @@ private:
                                 ASSERT(candidate->op() == PhantomCreateRest);
                                 unsigned numberOfArgumentsToSkip = candidate->numberOfArgumentsToSkip();
                                 InlineCallFrame* inlineCallFrame = candidate->origin.semantic.inlineCallFrame();
-                                unsigned frameArgumentCount = static_cast<unsigned>(inlineCallFrame->argumentCountIncludingThis - 1);
+                                unsigned frameArgumentCount = inlineCallFrame->argumentCountIncludingThis - 1;
                                 if (frameArgumentCount >= numberOfArgumentsToSkip)
                                     return frameArgumentCount - numberOfArgumentsToSkip;
                                 return 0;
@@ -1001,7 +983,7 @@ private:
                                     ASSERT(candidate->op() == PhantomCreateRest);
                                     unsigned numberOfArgumentsToSkip = candidate->numberOfArgumentsToSkip();
                                     InlineCallFrame* inlineCallFrame = candidate->origin.semantic.inlineCallFrame();
-                                    unsigned frameArgumentCount = static_cast<unsigned>(inlineCallFrame->argumentCountIncludingThis - 1);
+                                    unsigned frameArgumentCount = inlineCallFrame->argumentCountIncludingThis - 1;
                                     for (unsigned loadIndex = numberOfArgumentsToSkip; loadIndex < frameArgumentCount; ++loadIndex) {
                                         VirtualRegister reg = virtualRegisterForArgument(loadIndex + 1) + inlineCallFrame->stackOffset;
                                         StackAccessData* data = m_graph.m_stackAccessData.add(reg, FlushedJSValue);
@@ -1037,7 +1019,9 @@ private:
 
                         InlineCallFrame* inlineCallFrame = candidate->origin.semantic.inlineCallFrame();
 
-                        if (inlineCallFrame && !inlineCallFrame->isVarargs()) {
+                        if (inlineCallFrame
+                            && !inlineCallFrame->isVarargs()) {
+
                             unsigned argumentCountIncludingThis = inlineCallFrame->argumentCountIncludingThis;
                             if (argumentCountIncludingThis > varargsData->offset)
                                 argumentCountIncludingThis -= varargsData->offset;
@@ -1046,6 +1030,7 @@ private:
                             RELEASE_ASSERT(argumentCountIncludingThis >= 1);
 
                             if (argumentCountIncludingThis <= varargsData->limit) {
+                                
                                 storeArgumentCountIncludingThis(argumentCountIncludingThis);
 
                                 DFG_ASSERT(m_graph, node, varargsData->limit - 1 >= varargsData->mandatoryMinimum, varargsData->limit, varargsData->mandatoryMinimum);

@@ -72,7 +72,6 @@ UnlinkedCodeBlock::UnlinkedCodeBlock(VM& vm, Structure* structure, CodeType code
     , m_codeType(static_cast<unsigned>(codeType))
     , m_didOptimize(static_cast<unsigned>(MixedTriState))
     , m_age(0)
-    , m_hasCheckpoints(false)
     , m_parseMode(info.parseMode())
     , m_codeGenerationMode(codeGenerationMode)
     , m_metadata(UnlinkedMetadataTable::create())

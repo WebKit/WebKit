@@ -2432,13 +2432,6 @@ private:
             break;
         }
 
-        case ForwardVarargs:
-        case LoadVarargs: {
-            fixEdge<KnownInt32Use>(node->child1());
-            break;
-        }
-
-
 
 #if !ASSERT_DISABLED
         // Have these no-op cases here to ensure that nobody forgets to add handlers for new opcodes.
@@ -2472,7 +2465,8 @@ private:
         case ConstructForwardVarargs:
         case TailCallForwardVarargs:
         case TailCallForwardVarargsInlinedCaller:
-        case VarargsLength:
+        case LoadVarargs:
+        case ForwardVarargs:
         case ProfileControlFlow:
         case NewObject:
         case NewPromise:

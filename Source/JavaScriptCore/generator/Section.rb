@@ -43,7 +43,7 @@ class Section
   end
 
   def create_opcode(name, config)
-      Opcode.new(self, name, config[:extras], config[:args], config[:metadata], config[:metadata_initializers], config[:tmps], config[:checkpoints])
+      Opcode.new(self, name, config[:extras], config[:args], config[:metadata], config[:metadata_initializers])
   end
 
   def add_opcode_group(name, opcodes, config)

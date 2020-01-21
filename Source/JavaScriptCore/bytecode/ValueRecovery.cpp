@@ -35,22 +35,22 @@ JSValue ValueRecovery::recover(CallFrame* callFrame) const
 {
     switch (technique()) {
     case DisplacedInJSStack:
-        return callFrame->r(virtualRegister()).jsValue();
+        return callFrame->r(virtualRegister().offset()).jsValue();
     case Int32DisplacedInJSStack:
-        return jsNumber(callFrame->r(virtualRegister()).unboxedInt32());
+        return jsNumber(callFrame->r(virtualRegister().offset()).unboxedInt32());
     case Int52DisplacedInJSStack:
-        return jsNumber(callFrame->r(virtualRegister()).unboxedInt52());
+        return jsNumber(callFrame->r(virtualRegister().offset()).unboxedInt52());
     case StrictInt52DisplacedInJSStack:
-        return jsNumber(callFrame->r(virtualRegister()).unboxedStrictInt52());
+        return jsNumber(callFrame->r(virtualRegister().offset()).unboxedStrictInt52());
     case DoubleDisplacedInJSStack:
-        return jsNumber(purifyNaN(callFrame->r(virtualRegister()).unboxedDouble()));
+        return jsNumber(purifyNaN(callFrame->r(virtualRegister().offset()).unboxedDouble()));
     case CellDisplacedInJSStack:
-        return callFrame->r(virtualRegister()).unboxedCell();
+        return callFrame->r(virtualRegister().offset()).unboxedCell();
     case BooleanDisplacedInJSStack:
 #if USE(JSVALUE64)
-        return callFrame->r(virtualRegister()).jsValue();
+        return callFrame->r(virtualRegister().offset()).jsValue();
 #else
-        return jsBoolean(callFrame->r(virtualRegister()).unboxedBoolean());
+        return jsBoolean(callFrame->r(virtualRegister().offset()).unboxedBoolean());
 #endif
     case Constant:
         return constant();
