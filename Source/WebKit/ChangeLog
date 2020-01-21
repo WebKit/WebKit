@@ -1,3 +1,20 @@
+2020-01-21  Alejandro G. Castro  <alex@igalia.com>
+
+        [GTK][WPE] TestWebKitUserContentFilterStore is crashing
+        https://bugs.webkit.org/show_bug.cgi?id=206527
+
+        Reviewed by Adrian Perez de Castro.
+
+        We are asserting looking for a category of error when converting
+        in the toGError function, but depending on the function called the
+        category can be different.
+
+        * UIProcess/API/glib/WebKitUserContentFilterStore.cpp:
+        (toGError):
+        (webkitUserContentFilterStoreSaveBytes): Moved the ASSERT to the
+        function that uses this category, the other functions calling
+        toGError were already ASSERTing the correct category.
+
 2020-01-21  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK][WPE] Enable WebGL by default

@@ -70,7 +70,6 @@ enum {
 static inline GError* toGError(WebKitUserContentFilterError code, const std::error_code error)
 {
     ASSERT(error);
-    ASSERT(error.category() == WebCore::ContentExtensions::contentExtensionErrorCategory());
     return g_error_new_literal(WEBKIT_USER_CONTENT_FILTER_ERROR, code, error.message().c_str());
 }
 
@@ -187,9 +186,10 @@ static void webkitUserContentFilterStoreSaveBytes(GRefPtr<GTask>&& task, String&
         if (g_task_return_error_if_cancelled(task.get()))
             return;
 
-        if (error)
+        if (error) {
+            ASSERT(error.category() == WebCore::ContentExtensions::contentExtensionErrorCategory());
             g_task_return_error(task.get(), toGError(WEBKIT_USER_CONTENT_FILTER_ERROR_INVALID_SOURCE, error));
-        else
+        } else
             g_task_return_pointer(task.get(), webkitUserContentFilterCreate(WTFMove(contentRuleList)), reinterpret_cast<GDestroyNotify>(webkit_user_content_filter_unref));
     });
 }
