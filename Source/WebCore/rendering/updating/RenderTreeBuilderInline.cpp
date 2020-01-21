@@ -27,6 +27,7 @@
 #include "RenderTreeBuilderInline.h"
 
 #include "FullscreenManager.h"
+#include "RenderBlockFlow.h"
 #include "RenderChildIterator.h"
 #include "RenderFullScreen.h"
 #include "RenderInline.h"
