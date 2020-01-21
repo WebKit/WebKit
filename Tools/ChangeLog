@@ -1,3 +1,22 @@
+2020-01-21  Keith Rollin  <krollin@apple.com>
+
+        Fix tvOS values in SUPPORTED_PLATFORMS
+        https://bugs.webkit.org/show_bug.cgi?id=206435
+        <rdar://problem/58674587>
+
+        Reviewed by Alexey Proskuryakov.
+
+        A number of targets in WebKit have 'tvos' and 'tvsimulator' in
+        SUPPORTED_PLATFORMS. The correct values are 'appletvos' and
+        'appletvsimulator'. These should be updated to the correct ones as the
+        wrong values prevent the tvOS run destination from being usable in the
+        UI to build for tvOS.
+
+        * DumpRenderTree/mac/Configurations/Base.xcconfig:
+        * ImageDiff/cg/Configurations/Base.xcconfig:
+        * MiniBrowser/Configurations/Base.xcconfig:
+        * WebKitTestRunner/Configurations/Base.xcconfig:
+
 2020-01-21  Sihui Liu  <sihui_liu@apple.com>
 
         Disable WebSQL everywhere by default except in tests
