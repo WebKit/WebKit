@@ -355,7 +355,7 @@ bool SandboxExtension::createHandleForReadByAuditToken(const String& path, audit
 
     handle.m_sandboxExtension = SandboxExtensionImpl::create(path.utf8().data(), Type::ReadByProcess, auditToken);
     if (!handle.m_sandboxExtension) {
-        WTFLogAlways("Could not create sandbox extension");
+        LOG_ERROR("Could not create a sandbox extension for '%s'", path.utf8().data());
         return false;
     }
     

@@ -1,3 +1,16 @@
+2020-01-21  Brent Fulgham  <bfulgham@apple.com>
+
+        Performance tests fail if stderr logging is encountered
+        https://bugs.webkit.org/show_bug.cgi?id=206544
+        <rdar://problem/58714766>
+
+        Reviewed by Per Arne Vollan.
+
+        Switch to LOG_ERROR, rather than WTFLogAlways, to avoid confusing the PerformanceTests system.
+
+        * Shared/Cocoa/SandboxExtensionCocoa.mm:
+        (WebKit::SandboxExtension::createHandleForReadByAuditToken):
+
 2020-01-21  youenn fablet  <youenn@apple.com>
 
         Provide camera/microphone sandbox extensions to GPUProcess
