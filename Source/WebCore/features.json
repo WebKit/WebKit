@@ -1222,7 +1222,7 @@
     {
         "name": "Resize Observer",
         "status": {
-            "status": "In Development",
+            "status": "Supported In Preview",
             "enabled-by-default": false
         },
         "url": "https://drafts.csswg.org/resize-observer/",
