@@ -1,3 +1,12 @@
+2020-01-20  Aakash Jain  <aakash_jain@apple.com>
+
+        [ews] Add build and layout-test steps for commit-queue in new ews
+        https://bugs.webkit.org/show_bug.cgi?id=206510
+
+        Reviewed by Jonathan Bedard.
+
+        * BuildSlaveSupport/ews-build/factories.py:
+
 2020-01-21  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK][WPE] Enable WebGL by default

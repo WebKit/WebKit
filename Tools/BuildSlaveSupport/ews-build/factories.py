@@ -190,5 +190,10 @@ class ServicesFactory(Factory):
 
 
 class CommitQueueFactory(Factory):
-    pass
-    # TODO: add appropriate build-steps for commit-queue
+    def __init__(self, platform, configuration=None, architectures=None, triggers=None, additionalArguments=None, **kwargs):
+        Factory.__init__(self, platform=platform, configuration=configuration, architectures=architectures, buildOnly=False, triggers=triggers, additionalArguments=additionalArguments)
+        self.addStep(KillOldProcesses())
+        self.addStep(CompileWebKit(skipUpload=True))
+        self.addStep(KillOldProcesses())
+        self.addStep(ValidatePatch(addURLs=False))
+        self.addStep(RunWebKit1Tests())
