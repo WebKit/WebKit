@@ -1,3 +1,19 @@
+2020-01-21  Chris Dumez  <cdumez@apple.com>
+
+        [macOS] Add managed preference to allow synchronous XHR during page dismissal
+        https://bugs.webkit.org/show_bug.cgi?id=206540
+        <rdar://problem/58644447>
+
+        Reviewed by Alex Christensen.
+
+        Add managed preference to allow synchronous XHR during page dismissal. This is temporarily needed by some
+        enterprise products until they can update their code.
+
+        * Shared/WebPreferences.yaml:
+        * Shared/WebPreferencesDefaultValues.cpp:
+        (WebKit::defaultDisallowSyncXHRDuringPageDismissalEnabled):
+        * Shared/WebPreferencesDefaultValues.h:
+
 2020-01-21  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r254876.
