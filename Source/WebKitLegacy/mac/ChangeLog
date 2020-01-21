@@ -1,3 +1,12 @@
+2020-01-21  Rob Buis  <rbuis@igalia.com>
+
+        Add build flag for stale-while-revalidate
+        https://bugs.webkit.org/show_bug.cgi?id=204169
+
+        Reviewed by Youenn Fablet.
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2020-01-21  Sihui Liu  <sihui_liu@apple.com>
 
         Disable WebSQL everywhere by default except in tests

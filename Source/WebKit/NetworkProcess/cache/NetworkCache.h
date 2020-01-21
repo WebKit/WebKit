@@ -169,7 +169,9 @@ public:
 
 #if ENABLE(NETWORK_CACHE_SPECULATIVE_REVALIDATION)
     SpeculativeLoadManager* speculativeLoadManager() { return m_speculativeLoadManager.get(); }
+#endif
 
+#if ENABLE(NETWORK_CACHE_STALE_WHILE_REVALIDATE)
     void startAsyncRevalidationIfNeeded(const WebCore::ResourceRequest&, const NetworkCache::Key&, std::unique_ptr<Entry>&&, const GlobalFrameID&);
 #endif
 
@@ -197,7 +199,9 @@ private:
 #if ENABLE(NETWORK_CACHE_SPECULATIVE_REVALIDATION)
     std::unique_ptr<WebCore::LowPowerModeNotifier> m_lowPowerModeNotifier;
     std::unique_ptr<SpeculativeLoadManager> m_speculativeLoadManager;
+#endif
 
+#if ENABLE(NETWORK_CACHE_STALE_WHILE_REVALIDATE)
     HashMap<Key, std::unique_ptr<AsyncRevalidation>> m_pendingAsyncRevalidations;
 #endif
 
