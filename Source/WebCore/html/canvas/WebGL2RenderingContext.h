@@ -261,6 +261,7 @@ private:
     bool isIntegerFormat(GCGLenum internalformat);
     void initializeShaderExtensions();
     void initializeTransformFeedbackBufferCache();
+    void initializeSamplerCache();
 
     bool validateTexStorageFuncParameters(GCGLenum target, GCGLsizei levels, GCGLenum internalFormat, GCGLsizei width, GCGLsizei height, const char* functionName);
 
@@ -269,8 +270,9 @@ private:
     RefPtr<WebGLTransformFeedback> m_boundTransformFeedback;
     Vector<RefPtr<WebGLBuffer>> m_boundTransformFeedbackBuffers;
 
-    // Queries
     HashMap<GCGLenum, RefPtr<WebGLQuery>> m_activeQueries;
+
+    Vector<RefPtr<WebGLSampler>> m_boundSamplers;
 };
 
 } // namespace WebCore

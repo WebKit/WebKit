@@ -97,6 +97,7 @@ WebGL2RenderingContext::WebGL2RenderingContext(CanvasBase& canvas, Ref<GraphicsC
     initializeShaderExtensions();
     initializeVertexArrayObjects();
     initializeTransformFeedbackBufferCache();
+    initializeSamplerCache();
 }
 
 WebGL2RenderingContext::~WebGL2RenderingContext()
@@ -135,6 +136,12 @@ void WebGL2RenderingContext::initializeTransformFeedbackBufferCache()
     ASSERT(maxTransformFeedbackAttribs >= 4);
 
     m_boundTransformFeedbackBuffers.resize(maxTransformFeedbackAttribs);
+}
+
+void WebGL2RenderingContext::initializeSamplerCache()
+{
+    ASSERT(m_textureUnits.size() >= 8);
+    m_boundSamplers.resize(m_textureUnits.size());
 }
 
 inline static Optional<unsigned> arrayBufferViewElementSize(const ArrayBufferView& data)
@@ -1155,40 +1162,95 @@ WebGLAny WebGL2RenderingContext::getQueryParameter(WebGLQuery& query, GCGLenum p
 
 RefPtr<WebGLSampler> WebGL2RenderingContext::createSampler()
 {
-    LOG(WebGL, "[[ NOT IMPLEMENTED ]] createSampler()");
-    return nullptr;
+    if (isContextLostOrPending())
+        return nullptr;
+
+    auto sampler = WebGLSampler::create(*this);
+    addSharedObject(sampler.get());
+    return sampler;
 }
 
-void WebGL2RenderingContext::deleteSampler(WebGLSampler*)
+void WebGL2RenderingContext::deleteSampler(WebGLSampler* sampler)
 {
-    LOG(WebGL, "[[ NOT IMPLEMENTED ]] deleteSampler()");
+    if (isContextLostOrPending())
+        return;
+
+    // One sampler can be bound to multiple texture units.
+    if (sampler) {
+        for (auto& samplerSlot : m_boundSamplers) {
+            if (samplerSlot == sampler)
+                samplerSlot = nullptr;
+        }
+    }
+
+    deleteObject(sampler);
 }
 
-GCGLboolean WebGL2RenderingContext::isSampler(WebGLSampler*)
+GCGLboolean WebGL2RenderingContext::isSampler(WebGLSampler* sampler)
 {
-    LOG(WebGL, "[[ NOT IMPLEMENTED ]] isSampler()");
-    return false;
+    if (isContextLostOrPending() || !sampler || sampler->isDeleted() || !validateWebGLObject("isSampler", sampler))
+        return false;
+
+    return m_context->isSampler(sampler->object());
 }
 
-void WebGL2RenderingContext::bindSampler(GCGLuint, WebGLSampler*)
+void WebGL2RenderingContext::bindSampler(GCGLuint unit, WebGLSampler* sampler)
 {
-    LOG(WebGL, "[[ NOT IMPLEMENTED ]] bindSampler()");
+    if (isContextLostOrPending() || m_boundSamplers[unit] == sampler)
+        return;
+
+    if (sampler && sampler->isDeleted()) {
+        synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, "bindSampler", "cannot bind a deleted Sampler object");
+        return;
+    }
+
+    m_context->bindSampler(unit, objectOrZero(sampler));
+    m_boundSamplers[unit] = sampler;
 }
 
-void WebGL2RenderingContext::samplerParameteri(WebGLSampler&, GCGLenum, GCGLint)
+void WebGL2RenderingContext::samplerParameteri(WebGLSampler& sampler, GCGLenum pname, GCGLint value)
 {
-    LOG(WebGL, "[[ NOT IMPLEMENTED ]] samplerParameteri()");
+    if (isContextLostOrPending())
+        return;
+
+    m_context->samplerParameteri(sampler.object(), pname, value);
 }
 
-void WebGL2RenderingContext::samplerParameterf(WebGLSampler&, GCGLenum, GCGLfloat)
+void WebGL2RenderingContext::samplerParameterf(WebGLSampler& sampler, GCGLenum pname, GCGLfloat value)
 {
-    LOG(WebGL, "[[ NOT IMPLEMENTED ]] samplerParameterf()");
+    if (isContextLostOrPending())
+        return;
+
+    m_context->samplerParameterf(sampler.object(), pname, value);
 }
 
-WebGLAny WebGL2RenderingContext::getSamplerParameter(WebGLSampler&, GCGLenum)
+WebGLAny WebGL2RenderingContext::getSamplerParameter(WebGLSampler& sampler, GCGLenum pname)
 {
-    LOG(WebGL, "[[ NOT IMPLEMENTED ]] getSamplerParameter()");
-    return nullptr;
+    if (isContextLostOrPending())
+        return nullptr;
+
+    switch (pname) {
+    case GraphicsContextGL::TEXTURE_COMPARE_FUNC:
+    case GraphicsContextGL::TEXTURE_COMPARE_MODE:
+    case GraphicsContextGL::TEXTURE_MAG_FILTER:
+    case GraphicsContextGL::TEXTURE_MIN_FILTER:
+    case GraphicsContextGL::TEXTURE_WRAP_R:
+    case GraphicsContextGL::TEXTURE_WRAP_S:
+    case GraphicsContextGL::TEXTURE_WRAP_T: {
+        int value = 0;
+        m_context->getSamplerParameteriv(sampler.object(), pname, &value);
+        return value;
+    }
+    case GraphicsContextGL::TEXTURE_MAX_LOD:
+    case GraphicsContextGL::TEXTURE_MIN_LOD: {
+        float value = 0;
+        m_context->getSamplerParameterfv(sampler.object(), pname, &value);
+        return value;
+    }
+    default:
+        synthesizeGLError(GraphicsContextGL::INVALID_ENUM, "getSamplerParameter", "Invalid pname");
+        return nullptr;
+    }
 }
 
 RefPtr<WebGLSync> WebGL2RenderingContext::fenceSync(GCGLenum, GCGLbitfield)
@@ -1269,7 +1331,7 @@ void WebGL2RenderingContext::bindTransformFeedback(GCGLenum target, WebGLTransfo
             return;
         }
 
-        if (!validateWebGLObject("isTransformFeedback", feedbackObject))
+        if (!validateWebGLObject("bindTransformFeedback", feedbackObject))
             return;
     }
 
@@ -2224,12 +2286,13 @@ WebGLAny WebGL2RenderingContext::getParameter(GCGLenum pname)
         return m_boundTransformFeedback;
     case GraphicsContextGL::TRANSFORM_FEEDBACK_BUFFER_BINDING:
         return m_boundTransformFeedbackBuffer;
+    case GraphicsContextGL::SAMPLER_BINDING:
+        return m_boundSamplers[m_activeTextureUnit];
     case GraphicsContextGL::COPY_READ_BUFFER:
     case GraphicsContextGL::COPY_WRITE_BUFFER:
     case GraphicsContextGL::PIXEL_PACK_BUFFER_BINDING:   
     case GraphicsContextGL::PIXEL_UNPACK_BUFFER_BINDING:
     case GraphicsContextGL::READ_BUFFER:
-    case GraphicsContextGL::SAMPLER_BINDING:
     case GraphicsContextGL::TEXTURE_BINDING_2D_ARRAY:
     case GraphicsContextGL::TEXTURE_BINDING_3D:
     case GraphicsContextGL::UNIFORM_BUFFER_BINDING:

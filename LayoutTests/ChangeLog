@@ -1,3 +1,16 @@
+2020-01-21  Justin Fan  <justin_fan@apple.com>
+
+        [WebGL2] Sampler objects
+        https://bugs.webkit.org/show_bug.cgi?id=126941
+        <rdar://problem/15002402>
+
+        Reviewed by Dean Jackson.
+
+        Update to passing expectations, though these tests remain skipped until ANGLE backend is enabled.
+
+        * webgl/2.0.0/conformance2/samplers/sampler-drawing-test-expected.txt:
+        * webgl/2.0.0/conformance2/samplers/samplers-expected.txt:
+
 2020-01-21  Sunny He  <sunny_he@apple.com>
 
         Disallow setting SVGElement currentScale to non-finite values
