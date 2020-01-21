@@ -1,3 +1,16 @@
+2020-01-20  Gus Caplan  <me@gus.host>
+
+        Remove own toString from NativeError prototype
+        https://bugs.webkit.org/show_bug.cgi?id=204629
+
+        Reviewed by Ross Kirsling.
+
+        NativeError prototypes are expected to inherit toString from
+        Error.prototype. See https://github.com/tc39/ecma262/issues/1794
+        for additional details.
+
+        * stress/nativeerror-prototype-tostring.js:
+
 2020-01-20  Caio Lima  <ticaiolima@gmail.com>
 
         Skip tests when there is no JIT build on ARMv7 and MIPS

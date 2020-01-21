@@ -1,3 +1,17 @@
+2020-01-20  Gus Caplan  <me@gus.host>
+
+        Remove own toString from NativeError prototype
+        https://bugs.webkit.org/show_bug.cgi?id=204629
+
+        Reviewed by Ross Kirsling.
+
+        NativeError prototypes are expected to inherit toString from
+        Error.prototype. See https://github.com/tc39/ecma262/issues/1794
+        for additional details.
+
+        * http/tests/security/regress-52192-expected.txt:
+        * http/tests/security/regress-52192.html:
+
 2020-01-20  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         EXIF orientation is ignored for some CSS images

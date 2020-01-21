@@ -30,6 +30,7 @@
 
 namespace JSC {
 
+STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(ErrorPrototypeBase);
 STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(ErrorPrototype);
 
 static EncodedJSValue JSC_HOST_CALL errorProtoFuncToString(JSGlobalObject*, CallFrame*);
@@ -48,24 +49,22 @@ const ClassInfo ErrorPrototype::s_info = { "Object", &Base::s_info, &errorProtot
 @end
 */
 
-ErrorPrototype::ErrorPrototype(VM& vm, Structure* structure)
-    : JSNonFinalObject(vm, structure)
+ErrorPrototypeBase::ErrorPrototypeBase(VM& vm, Structure* structure)
+    : Base(vm, structure)
 {
 }
 
-ErrorPrototype* ErrorPrototype::create(VM& vm, JSGlobalObject*, Structure* structure)
-{
-    ErrorPrototype* prototype = new (NotNull, allocateCell<ErrorPrototype>(vm.heap)) ErrorPrototype(vm, structure);
-    prototype->finishCreation(vm, "Error"_s);
-    return prototype;
-}
-
-void ErrorPrototype::finishCreation(VM& vm, const String& name)
+void ErrorPrototypeBase::finishCreation(VM& vm, const String& name)
 {
     Base::finishCreation(vm);
     ASSERT(inherits(vm, info()));
     putDirectWithoutTransition(vm, vm.propertyNames->name, jsString(vm, name), static_cast<unsigned>(PropertyAttribute::DontEnum));
     putDirectWithoutTransition(vm, vm.propertyNames->message, jsEmptyString(vm), static_cast<unsigned>(PropertyAttribute::DontEnum));
+}
+
+ErrorPrototype::ErrorPrototype(VM& vm, Structure* structure)
+    : Base(vm, structure)
+{
 }
 
 // ------------------------------ Functions ---------------------------

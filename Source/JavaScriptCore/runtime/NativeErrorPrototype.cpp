@@ -29,7 +29,7 @@
 namespace JSC {
 
 NativeErrorPrototype::NativeErrorPrototype(VM& vm, Structure* structure)
-    : ErrorPrototype(vm, structure)
+    : Base(vm, structure)
 {
 }
 

@@ -83,33 +83,31 @@
         nameGettersInstalled = false;
     }
 
-    let savedToStringDescriptors = [];
+    assert('errorTypes.every((errorType) => errorType.prototype.toString === Error.prototype.toString)');
+    let originalToStringDescriptor = Object.getOwnPropertyDescriptor(Error.prototype, 'toString');
+    let replacementToStringDescriptor = {
+        get: function() {
+            var getterEntry = timesInErrorGetter++;
+            var error = this;
+            console.log("   " + caseStr + " in 'toString' getter[" + getterEntry + "]: error.message = '" + error.message + "'");
+
+            shouldContainNoSecrets(error.message, inMainScript);
+
+            return function() {
+                return "GetterErrorToString: getter[" + getterEntry + "] " + error.message;
+            }
+        }
+    };
+
     function installToStringGettersToCheckErrorMessageForSecrets() {
         assert("toStringGettersInstalled == false");
-        for (var i in errorTypes) {
-            let errorType = errorTypes[i];
-            savedToStringDescriptors[i] = Object.getOwnPropertyDescriptor(errorType.prototype, 'toString');
-            errorType.prototype.__defineGetter__('toString', function() {
-                var getterEntry = timesInErrorGetter++;
-                var error = this;
-                console.log("   " + caseStr + " in 'toString' getter[" + getterEntry + "]: error.message = '" + error.message + "'");
-
-                shouldContainNoSecrets(error.message, inMainScript);
-
-                return function() {
-                    return "GetterErrorToString: getter[" + getterEntry + "] " + error.message;
-                }
-            });
-        }
+        Object.defineProperty(Error.prototype, 'toString', replacementToStringDescriptor);
         toStringGettersInstalled = true;
     }
 
     function resetToStringGetters() {
         assert("toStringGettersInstalled == true");
-        for (var i in errorTypes) {
-            let errorType = errorTypes[i];
-            Object.defineProperty(errorType.prototype, 'toString', savedToStringDescriptors[i]);
-        }
+        Object.defineProperty(Error.prototype, 'toString', originalToStringDescriptor);
         toStringGettersInstalled = false;
     }
 
