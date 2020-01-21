@@ -3209,7 +3209,7 @@ void WebPageProxy::continueNavigationInNewProcess(API::Navigation& navigation, s
         if (auto& substituteData = navigation->substituteData())
             m_provisionalPage->loadData(navigation, { substituteData->content.data(), substituteData->content.size() }, substituteData->MIMEType, substituteData->encoding, substituteData->baseURL, substituteData->userData.get(), WTFMove(websitePolicies));
         else
-            m_provisionalPage->loadRequest(navigation, ResourceRequest { navigation->currentRequest() }, WebCore::ShouldOpenExternalURLsPolicy::ShouldAllowExternalSchemes, nullptr, WTFMove(websitePolicies));
+            m_provisionalPage->loadRequest(navigation, ResourceRequest { navigation->currentRequest() }, nullptr, WTFMove(websitePolicies));
     };
     if (m_inspectorController->shouldPauseLoading(*m_provisionalPage))
         m_inspectorController->setContinueLoadingCallback(*m_provisionalPage, WTFMove(continuation));

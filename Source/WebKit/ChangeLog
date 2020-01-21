@@ -1,3 +1,22 @@
+2020-01-21  Jiewen Tan  <jiewen_tan@apple.com>
+
+        ProvisionalPageProxy::loadData should pass last navigation's shouldOpenExternalURLsPolicy flag to WebPageProxy
+        https://bugs.webkit.org/show_bug.cgi?id=206462
+        <rdar://problem/57468718>
+
+        Reviewed by Chris Dumez.
+
+        Covered by API tests.
+
+        This patch also does it for ProvisionalPageProxy::loadRequest.
+
+        * UIProcess/ProvisionalPageProxy.cpp:
+        (WebKit::ProvisionalPageProxy::loadData):
+        (WebKit::ProvisionalPageProxy::loadRequest):
+        * UIProcess/ProvisionalPageProxy.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::continueNavigationInNewProcess):
+
 2020-01-21  Rob Buis  <rbuis@igalia.com>
 
         Add build flag for stale-while-revalidate

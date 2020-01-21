@@ -92,7 +92,7 @@ public:
 #endif
 
     void loadData(API::Navigation&, const IPC::DataReference&, const String& MIMEType, const String& encoding, const String& baseURL, API::Object* userData, Optional<WebsitePoliciesData>&& = WTF::nullopt);
-    void loadRequest(API::Navigation&, WebCore::ResourceRequest&&, WebCore::ShouldOpenExternalURLsPolicy, API::Object* userData, Optional<WebsitePoliciesData>&& = WTF::nullopt);
+    void loadRequest(API::Navigation&, WebCore::ResourceRequest&&, API::Object* userData, Optional<WebsitePoliciesData>&& = WTF::nullopt);
     void goToBackForwardItem(API::Navigation&, WebBackForwardListItem&, Optional<WebsitePoliciesData>&&);
     void cancel();
 
