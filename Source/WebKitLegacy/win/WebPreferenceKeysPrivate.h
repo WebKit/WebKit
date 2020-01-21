@@ -222,3 +222,5 @@
 #define WebKitAsyncClipboardAPIEnabledPreferenceKey "WebKitAsyncClipboardAPIEnabled"
 
 #define WebKitAspectRatioOfImgFromWidthAndHeightEnabledPreferenceKey "WebKitAspectRatioOfImgFromWidthAndHeightEnabled"
+
+#define WebKitWebSQLEnabledPreferenceKey "WebKitWebSQLEnabled"

@@ -349,6 +349,8 @@ void WebPreferences::initializeDefaultSettings()
 
     CFDictionaryAddValue(defaults, CFSTR(WebKitAspectRatioOfImgFromWidthAndHeightEnabledPreferenceKey), kCFBooleanFalse);
 
+    CFDictionaryAddValue(defaults, CFSTR(WebKitWebSQLEnabledPreferenceKey), kCFBooleanFalse);
+
     defaultSettings = defaults;
 #endif
 }
@@ -2432,5 +2434,19 @@ HRESULT WebPreferences::aspectRatioOfImgFromWidthAndHeightEnabled(_Out_ BOOL* en
 HRESULT WebPreferences::setAspectRatioOfImgFromWidthAndHeightEnabled(BOOL enabled)
 {
     setBoolValue(WebKitAspectRatioOfImgFromWidthAndHeightEnabledPreferenceKey, enabled);
+    return S_OK;
+}
+
+HRESULT WebPreferences::webSQLEnabled(_Out_ BOOL* enabled)
+{
+    if (!enabled)
+        return E_POINTER;
+    *enabled = boolValueForKey(WebKitWebSQLEnabledPreferenceKey);
+    return S_OK;
+}
+
+HRESULT WebPreferences::setWebSQLEnabled(BOOL enabled)
+{
+    setBoolValue(WebKitWebSQLEnabledPreferenceKey, enabled);
     return S_OK;
 }

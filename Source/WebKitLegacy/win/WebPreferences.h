@@ -299,6 +299,8 @@ public:
     virtual HRESULT STDMETHODCALLTYPE setWebAnimationsCompositeOperationsEnabled(BOOL);
     virtual HRESULT STDMETHODCALLTYPE aspectRatioOfImgFromWidthAndHeightEnabled(_Out_ BOOL*);
     virtual HRESULT STDMETHODCALLTYPE setAspectRatioOfImgFromWidthAndHeightEnabled(BOOL);
+    virtual HRESULT STDMETHODCALLTYPE webSQLEnabled(_Out_ BOOL*);
+    virtual HRESULT STDMETHODCALLTYPE setWebSQLEnabled(BOOL);
 
     // WebPreferences
 

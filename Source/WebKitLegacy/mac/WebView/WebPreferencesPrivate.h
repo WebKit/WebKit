@@ -636,6 +636,9 @@ extern NSString *WebPreferencesCacheModelChangedInternalNotification WEBKIT_DEPR
 - (BOOL)isInAppBrowserPrivacyEnabled;
 - (void)setInAppBrowserPrivacyEnabled:(BOOL)flag;
 
+- (void)setWebSQLEnabled:(BOOL)flag;
+- (BOOL)webSQLEnabled;
+
 @property (nonatomic) BOOL visualViewportAPIEnabled;
 @property (nonatomic) BOOL CSSOMViewScrollingAPIEnabled;
 @property (nonatomic) BOOL CSSOMViewSmoothScrollingEnabled;

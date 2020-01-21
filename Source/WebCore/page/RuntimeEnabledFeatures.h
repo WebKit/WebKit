@@ -447,7 +447,7 @@ private:
     bool m_pointerEventsEnabled { true };
     bool m_syntheticEditingCommandsEnabled { true };
     bool m_dialogElementEnabled { false };
-    bool m_webSQLEnabled { true };
+    bool m_webSQLEnabled { false };
     bool m_keygenElementEnabled { false };
     bool m_pageAtRuleSupportEnabled { false };
     bool m_highlightAPIEnabled { false };

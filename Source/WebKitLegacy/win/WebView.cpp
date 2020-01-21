@@ -5310,6 +5310,11 @@ HRESULT WebView::notifyPreferencesChanged(IWebNotification* notification)
         return hr;
     RuntimeEnabledFeatures::sharedFeatures().setInspectorAdditionsEnabled(!!enabled);
 
+    hr = prefsPrivate->webSQLEnabled(&enabled);
+    if (FAILED(hr))
+        return hr;
+    RuntimeEnabledFeatures::sharedFeatures().setWebSQLDisabled(!enabled);
+
     hr = prefsPrivate->visualViewportAPIEnabled(&enabled);
     if (FAILED(hr))
         return hr;

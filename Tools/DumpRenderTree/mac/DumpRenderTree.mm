@@ -1009,6 +1009,8 @@ static void resetWebPreferencesToConsistentValues()
 
     preferences.selectionAcrossShadowBoundariesEnabled = YES;
 
+    [preferences setWebSQLEnabled:YES];
+
     [WebPreferences _clearNetworkLoaderSession];
     [WebPreferences _setCurrentNetworkLoaderSessionCookieAcceptPolicy:NSHTTPCookieAcceptPolicyOnlyFromMainDocumentDomain];
 }

@@ -1,3 +1,20 @@
+2020-01-21  Sihui Liu  <sihui_liu@apple.com>
+
+        Disable WebSQL everywhere by default except in tests
+        https://bugs.webkit.org/show_bug.cgi?id=204907
+
+        Reviewed by Ryosuke Niwa.
+
+        * Interfaces/IWebPreferencesPrivate.idl:
+        * WebPreferenceKeysPrivate.h:
+        * WebPreferences.cpp:
+        (WebPreferences::initializeDefaultSettings):
+        (WebPreferences::webSQLEnabled):
+        (WebPreferences::setWebSQLEnabled):
+        * WebPreferences.h:
+        * WebView.cpp:
+        (WebView::notifyPreferencesChanged):
+
 2020-01-20  David Kilzer  <ddkilzer@apple.com>
 
         Fix missing header guards and clean up empty files in WebCore, WebKitLegacy, WebKit, Tools

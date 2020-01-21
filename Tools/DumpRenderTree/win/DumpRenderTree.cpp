@@ -915,6 +915,7 @@ static void setWebPreferencesForTestOptions(IWebPreferences* preferences, const 
     prefsPrivate->setInspectorAdditionsEnabled(options.enableInspectorAdditions);
     prefsPrivate->setRequestIdleCallbackEnabled(options.enableRequestIdleCallback);
     prefsPrivate->setAsyncClipboardAPIEnabled(options.enableAsyncClipboardAPI);
+    prefsPrivate->setWebSQLEnabled(options.enableWebSQL);
     preferences->setPrivateBrowsingEnabled(options.useEphemeralSession);
     preferences->setUsesPageCache(options.enableBackForwardCache);
 }
