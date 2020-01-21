@@ -26,6 +26,9 @@
 #pragma once
 
 #include <array>
+#include <wtf/Forward.h>
+#include <wtf/GetPtr.h>
+#include <wtf/HashFunctions.h>
 #include <wtf/MathExtras.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/UnalignedAccess.h>
@@ -100,11 +103,12 @@ private:
 // PackedAlignedPtr can take alignment parameter too. PackedAlignedPtr only uses this alignment information if it is profitable: we use
 // alignment information only when we can reduce the size of the storage. Since the pointer width is 36 bits and JSCells are aligned to 16 bytes,
 // we can use 4 bits in Darwin ARM64, we can compact cell pointer into 4 bytes (32 bits).
-template<typename T, size_t alignment = alignof(T)>
+template<typename T, size_t passedAlignment>
 class PackedAlignedPtr {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static_assert(hasOneBitSet(alignment), "Alignment needs to be power-of-two");
+    static_assert(hasOneBitSet(passedAlignment), "Alignment needs to be power-of-two");
+    static constexpr size_t alignment = passedAlignment;
     static constexpr bool isPackedType = true;
     static constexpr unsigned alignmentShiftSizeIfProfitable = getLSBSetConstexpr(alignment);
     static constexpr unsigned storageSizeWithoutAlignmentShift = roundUpToMultipleOf<8>(OS_CONSTANT(EFFECTIVE_ADDRESS_WIDTH)) / 8;
@@ -215,10 +219,25 @@ class Packed<T*> : public PackedAlignedPtr<T, 1> {
 public:
     using Base = PackedAlignedPtr<T, 1>;
     using Base::Base;
+
+    // Hash table deleted values, which are only constructed and never copied or destroyed.
+    Packed(HashTableDeletedValueType) : Base(bitwise_cast<T*>(static_cast<uintptr_t>(Base::alignment))) { }
+    bool isHashTableDeletedValue() const { return Base::get() == bitwise_cast<T*>(static_cast<uintptr_t>(Base::alignment)); }
 };
 
 template<typename T>
 using PackedPtr = Packed<T*>;
+
+template <typename T>
+struct GetPtrHelper<PackedPtr<T>> {
+    using PtrType = T*;
+    static T* getPtr(const PackedPtr<T>& p) { return const_cast<T*>(p.get()); }
+};
+
+template <typename T>
+struct IsSmartPtr<PackedPtr<T>> {
+    static constexpr bool value = true;
+};
 
 template<typename T>
 struct PackedPtrTraits {
@@ -231,7 +250,15 @@ struct PackedPtrTraits {
     template<typename Other> static ALWAYS_INLINE void swap(PackedPtr<T>& a, Other& b) { a.swap(b); }
 
     static ALWAYS_INLINE T* unwrap(const StorageType& ptr) { return ptr.get(); }
+
+    // We assume that,
+    // 1. The alignment is < 4KB. (It is tested by HashTraits).
+    // 2. The first page (including nullptr) is never mapped.
+    static StorageType hashTableDeletedValue() { return StorageType { bitwise_cast<T*>(static_cast<uintptr_t>(StorageType::alignment)) }; }
+    static ALWAYS_INLINE bool isHashTableDeletedValue(const StorageType& ptr) { return ptr.get() == bitwise_cast<T*>(static_cast<uintptr_t>(StorageType::alignment)); }
 };
+
+template<typename P> struct DefaultHash<PackedPtr<P>> { using Hash = PtrHash<PackedPtr<P>>; };
 
 } // namespace WTF
 

@@ -74,7 +74,7 @@ public:
 
     // Hash table deleted values, which are only constructed and never copied or destroyed.
     GCReachableRef(WTF::HashTableDeletedValueType)
-        : m_ptr(RefPtr<T>::hashTableDeletedValue())
+        : m_ptr(RefPtr<T>::PtrTraits::hashTableDeletedValue())
     { }
     bool isHashTableDeletedValue() const { return m_ptr.isHashTableDeletedValue(); }
 

@@ -31,7 +31,7 @@ namespace WTF {
 
 AtomStringTable::~AtomStringTable()
 {
-    for (auto* string : m_table)
+    for (const PackedPtr<StringImpl>& string : m_table)
         string->setIsAtom(false);
 }
 

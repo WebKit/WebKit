@@ -45,9 +45,10 @@ inline void adopted(const void*) { }
 template<typename T, typename PtrTraits> class Ref;
 template<typename T, typename PtrTraits = DumbPtrTraits<T>> Ref<T, PtrTraits> adoptRef(T&);
 
-template<typename T, typename PtrTraits>
+template<typename T, typename Traits>
 class Ref {
 public:
+    using PtrTraits = Traits;
     static constexpr bool isRef = true;
 
     ~Ref()
@@ -94,9 +95,8 @@ public:
     template<typename X, typename Y> void swap(Ref<X, Y>&);
 
     // Hash table deleted values, which are only constructed and never copied or destroyed.
-    Ref(HashTableDeletedValueType) : m_ptr(hashTableDeletedValue()) { }
-    bool isHashTableDeletedValue() const { return m_ptr == hashTableDeletedValue(); }
-    static T* hashTableDeletedValue() { return reinterpret_cast<T*>(-1); }
+    Ref(HashTableDeletedValueType) : m_ptr(PtrTraits::hashTableDeletedValue()) { }
+    bool isHashTableDeletedValue() const { return PtrTraits::isHashTableDeletedValue(m_ptr); }
 
     Ref(HashTableEmptyValueType) : m_ptr(hashTableEmptyValue()) { }
     bool isHashTableEmptyValue() const { return m_ptr == hashTableEmptyValue(); }

@@ -29,6 +29,7 @@
 #include <wtf/DebugHeap.h>
 #include <wtf/Expected.h>
 #include <wtf/MathExtras.h>
+#include <wtf/Packed.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/Vector.h>
 #include <wtf/text/ASCIIFastPath.h>
@@ -597,6 +598,9 @@ template<> struct DefaultHash<StringImpl*> {
 };
 template<> struct DefaultHash<RefPtr<StringImpl>> {
     typedef StringHash Hash;
+};
+template<> struct DefaultHash<PackedPtr<StringImpl>> {
+    using Hash = StringHash;
 };
 
 #define MAKE_STATIC_STRING_IMPL(characters) ([] { \

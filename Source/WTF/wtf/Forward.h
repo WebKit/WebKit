@@ -62,6 +62,8 @@ template<typename> class LazyNeverDestroyed;
 template<typename> class NeverDestroyed;
 template<typename> class OptionSet;
 template<typename> class Optional;
+template<typename T> class Packed;
+template<typename T, size_t = alignof(T)> class PackedAlignedPtr;
 template<typename T, typename = DumbPtrTraits<T>> class Ref;
 template<typename T, typename = DumbPtrTraits<T>> class RefPtr;
 template<typename> class StringBuffer;

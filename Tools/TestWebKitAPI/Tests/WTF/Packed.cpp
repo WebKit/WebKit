@@ -26,6 +26,8 @@
 #include "config.h"
 
 #include <wtf/Packed.h>
+#include <wtf/HashMap.h>
+#include <wtf/Vector.h>
 
 namespace TestWebKitAPI {
 
@@ -81,5 +83,26 @@ TEST(WTF_Packed, PackedAlignedPtr)
 #endif
     }
 }
+
+struct PackingTarget {
+    unsigned m_value { 0 };
+};
+TEST(WTF_Packed, HashMap)
+{
+    Vector<PackingTarget> vector;
+    HashMap<PackedPtr<PackingTarget>, unsigned> map;
+    vector.reserveCapacity(10000);
+    for (unsigned i = 0; i < 10000; ++i)
+        vector.uncheckedAppend(PackingTarget { i });
+
+    for (auto& target : vector)
+        map.add(&target, target.m_value);
+
+    for (auto& target : vector) {
+        EXPECT_TRUE(map.contains(&target));
+        EXPECT_EQ(map.get(&target), target.m_value);
+    }
+}
+
 
 } // namespace TestWebKitAPI

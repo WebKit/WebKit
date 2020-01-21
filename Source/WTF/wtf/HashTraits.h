@@ -220,6 +220,19 @@ template<typename P> struct RefHashTraits : SimpleClassHashTraits<Ref<P>> {
 
 template<typename P> struct HashTraits<Ref<P>> : RefHashTraits<P> { };
 
+template<typename P> struct HashTraits<Packed<P*>> : SimpleClassHashTraits<Packed<P*>> {
+    static constexpr bool hasIsEmptyValueFunction = true;
+    using TargetType = Packed<P*>;
+    static_assert(TargetType::alignment < 4 * KB, "The first page is always unmapped since it includes nullptr.");
+
+    static Packed<P*> emptyValue() { return nullptr; }
+    static bool isEmptyValue(const TargetType& value) { return value.get() == nullptr; }
+
+    using PeekType = P*;
+    static PeekType peek(const TargetType& value) { return value.get(); }
+    static PeekType peek(P* value) { return value; }
+};
+
 template<> struct HashTraits<String> : SimpleClassHashTraits<String> {
     static constexpr bool hasIsEmptyValueFunction = true;
     static bool isEmptyValue(const String&);

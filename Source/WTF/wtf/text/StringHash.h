@@ -56,6 +56,7 @@ namespace WTF {
         }
 
         static unsigned hash(const RefPtr<StringImpl>& key) { return key->hash(); }
+        static unsigned hash(const PackedPtr<StringImpl>& key) { return key->hash(); }
         static bool equal(const RefPtr<StringImpl>& a, const RefPtr<StringImpl>& b)
         {
             return equal(a.get(), b.get());
@@ -65,6 +66,19 @@ namespace WTF {
             return equal(a.get(), b);
         }
         static bool equal(const StringImpl* a, const RefPtr<StringImpl>& b)
+        {
+            return equal(a, b.get());
+        }
+
+        static bool equal(const PackedPtr<StringImpl>& a, const PackedPtr<StringImpl>& b)
+        {
+            return equal(a.get(), b.get());
+        }
+        static bool equal(const PackedPtr<StringImpl>& a, const StringImpl* b)
+        {
+            return equal(a.get(), b);
+        }
+        static bool equal(const StringImpl* a, const PackedPtr<StringImpl>& b)
         {
             return equal(a, b.get());
         }
@@ -131,6 +145,16 @@ namespace WTF {
         }
 
         static bool equal(const RefPtr<StringImpl>& a, const RefPtr<StringImpl>& b)
+        {
+            return equal(a.get(), b.get());
+        }
+
+        static unsigned hash(const PackedPtr<StringImpl>& key) 
+        {
+            return hash(key.get());
+        }
+
+        static bool equal(const PackedPtr<StringImpl>& a, const PackedPtr<StringImpl>& b)
         {
             return equal(a.get(), b.get());
         }

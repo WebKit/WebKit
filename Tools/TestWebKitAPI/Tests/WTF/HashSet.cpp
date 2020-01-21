@@ -315,7 +315,7 @@ TEST(WTF_HashSet, RefPtrNotZeroedBeforeDeref)
     // value.
     // A zero would be a incorrect outcome as it would mean we nulled the bucket before an opaque
     // call.
-    EXPECT_TRUE(observer->observedBucket == observer.get() || observer->observedBucket == RefPtr<DerefObserver>::hashTableDeletedValue());
+    EXPECT_TRUE(observer->observedBucket == observer.get() || observer->observedBucket == RefPtr<DerefObserver>::PtrTraits::hashTableDeletedValue());
     EXPECT_EQ(observer->count, 0u);
 }
 

@@ -1,3 +1,72 @@
+2020-01-21  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [WTF] AtomStringTable should be small
+        https://bugs.webkit.org/show_bug.cgi?id=206400
+
+        Reviewed by Sam Weinig.
+
+        AtomStringTable is the largest hashtable typically. It takes more
+        than 256KB per WebProcess (sometimes, it took 1MB or more).
+        This patch leverages PackedPtr to compact it from 8 bytes per entry
+        to 6 bytes per entry.
+
+        While this is still large, we should investigate how to compact C++
+        pointers in 4 bytes[1] to shrink memory footprint, since WebKit
+        memory is used by Vector and HashTable fulfilled with pointers.
+
+        [1]: https://bugs.webkit.org/show_bug.cgi?id=206469
+
+        * wtf/DumbPtrTraits.h:
+        (WTF::DumbPtrTraits::hashTableDeletedValue):
+        (WTF::DumbPtrTraits::isHashTableDeletedValue):
+        * wtf/Forward.h:
+        * wtf/HashTraits.h:
+        * wtf/Packed.h:
+        (WTF::Packed<T::Packed):
+        (WTF::Packed<T::isHashTableDeletedValue const):
+        (WTF::GetPtrHelper<PackedPtr<T>>::getPtr):
+        (WTF::PackedPtrTraits::hashTableDeletedValue):
+        (WTF::PackedPtrTraits::isHashTableDeletedValue):
+        (WTF::alignof): Deleted.
+        * wtf/Ref.h:
+        (WTF::Ref::Ref):
+        (WTF::Ref::isHashTableDeletedValue const):
+        (WTF::Ref::hashTableDeletedValue): Deleted.
+        * wtf/RefPtr.h:
+        (WTF::RefPtr::RefPtr):
+        (WTF::RefPtr::isHashTableDeletedValue const):
+        (WTF::RefPtr::hashTableDeletedValue): Deleted.
+        * wtf/text/AtomStringImpl.cpp:
+        (WTF::addToStringTable):
+        (WTF::CStringTranslator::equal):
+        (WTF::CStringTranslator::translate):
+        (WTF::UCharBufferTranslator::equal):
+        (WTF::UCharBufferTranslator::translate):
+        (WTF::HashAndUTF8CharactersTranslator::equal):
+        (WTF::HashAndUTF8CharactersTranslator::translate):
+        (WTF::SubstringTranslator::translate):
+        (WTF::SubstringTranslator8::equal):
+        (WTF::SubstringTranslator16::equal):
+        (WTF::LCharBufferTranslator::equal):
+        (WTF::LCharBufferTranslator::translate):
+        (WTF::BufferFromStaticDataTranslator::equal):
+        (WTF::BufferFromStaticDataTranslator::translate):
+        (WTF::AtomStringImpl::addSlowCase):
+        (WTF::AtomStringImpl::remove):
+        (WTF::AtomStringImpl::lookUpSlowCase):
+        (WTF::AtomStringImpl::lookUp):
+        * wtf/text/AtomStringTable.cpp:
+        (WTF::AtomStringTable::~AtomStringTable):
+        * wtf/text/AtomStringTable.h:
+        (WTF::AtomStringTable::table):
+        (): Deleted.
+        * wtf/text/StringHash.h:
+        (WTF::StringHash::hash):
+        (WTF::StringHash::equal):
+        (WTF::ASCIICaseInsensitiveHash::hash):
+        (WTF::ASCIICaseInsensitiveHash::equal):
+        * wtf/text/StringImpl.h:
+
 2020-01-17  Sam Weinig  <weinig@apple.com>
 
         Platform.h is out of control Part 8: Macros are used inconsistently

@@ -23,6 +23,7 @@
 #pragma once
 
 #include <wtf/HashSet.h>
+#include <wtf/Packed.h>
 #include <wtf/text/StringImpl.h>
 
 namespace WTF {
@@ -34,10 +35,10 @@ class AtomStringTable {
 public:
     WTF_EXPORT_PRIVATE ~AtomStringTable();
 
-    HashSet<StringImpl*>& table() { return m_table; }
+    HashSet<PackedPtr<StringImpl>>& table() { return m_table; }
 
 private:
-    HashSet<StringImpl*> m_table;
+    HashSet<PackedPtr<StringImpl>> m_table;
 };
 
 }
