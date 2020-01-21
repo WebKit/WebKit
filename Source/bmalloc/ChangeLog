@@ -1,3 +1,25 @@
+2020-01-21  Basuke Suzuki  <basuke.suzuki@sony.com>
+
+        [bmalloc] Make use of LockHolder strict in some methods of Scavenger
+        https://bugs.webkit.org/show_bug.cgi?id=206460
+
+        Reviewed by Darin Adler.
+
+        For instance, Scavenger::runHoldingLock() assume the caller has lock and express that by its function name. This rule can be
+        strict by passing LockHolder and that's the way as other code do.
+
+        Same change to runSoonHoldingLock and scheduleIfUnderMemoryPressureHoldingLock.
+
+        * bmalloc/Scavenger.cpp:
+        (bmalloc::Scavenger::run):
+        (bmalloc::Scavenger::runSoon):
+        (bmalloc::Scavenger::scheduleIfUnderMemoryPressure):
+        (bmalloc::Scavenger::schedule):
+        (bmalloc::Scavenger::runHoldingLock): Renamed.
+        (bmalloc::Scavenger::runSoonHoldingLock): Renamed.
+        (bmalloc::Scavenger::scheduleIfUnderMemoryPressureHoldingLock): Renamed.
+        * bmalloc/Scavenger.h:
+
 2020-01-17  Sam Weinig  <weinig@apple.com>
 
         Platform.h is out of control Part 8: Macros are used inconsistently

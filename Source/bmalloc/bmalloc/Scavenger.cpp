@@ -93,10 +93,10 @@ Scavenger::Scavenger(const LockHolder&)
 void Scavenger::run()
 {
     LockHolder lock(mutex());
-    runHoldingLock();
+    run(lock);
 }
 
-void Scavenger::runHoldingLock()
+void Scavenger::run(const LockHolder&)
 {
     m_state = State::Run;
     m_condition.notify_all();
@@ -105,10 +105,10 @@ void Scavenger::runHoldingLock()
 void Scavenger::runSoon()
 {
     LockHolder lock(mutex());
-    runSoonHoldingLock();
+    runSoon(lock);
 }
 
-void Scavenger::runSoonHoldingLock()
+void Scavenger::runSoon(const LockHolder&)
 {
     if (willRunSoon())
         return;
@@ -125,10 +125,10 @@ void Scavenger::didStartGrowing()
 void Scavenger::scheduleIfUnderMemoryPressure(size_t bytes)
 {
     LockHolder lock(mutex());
-    scheduleIfUnderMemoryPressureHoldingLock(bytes);
+    scheduleIfUnderMemoryPressure(lock, bytes);
 }
 
-void Scavenger::scheduleIfUnderMemoryPressureHoldingLock(size_t bytes)
+void Scavenger::scheduleIfUnderMemoryPressure(const LockHolder& lock, size_t bytes)
 {
     m_scavengerBytes += bytes;
     if (m_scavengerBytes < scavengerBytesPerMemoryPressureCheck)
@@ -143,19 +143,19 @@ void Scavenger::scheduleIfUnderMemoryPressureHoldingLock(size_t bytes)
         return;
 
     m_isProbablyGrowing = false;
-    runHoldingLock();
+    run(lock);
 }
 
 void Scavenger::schedule(size_t bytes)
 {
     LockHolder lock(mutex());
-    scheduleIfUnderMemoryPressureHoldingLock(bytes);
+    scheduleIfUnderMemoryPressure(lock, bytes);
     
     if (willRunSoon())
         return;
     
     m_isProbablyGrowing = false;
-    runSoonHoldingLock();
+    runSoon(lock);
 }
 
 inline void dumpStats()

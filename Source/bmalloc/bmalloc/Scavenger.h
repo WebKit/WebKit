@@ -77,10 +77,10 @@ public:
 private:
     enum class State { Sleep, Run, RunSoon };
     
-    void runHoldingLock();
-    void runSoonHoldingLock();
+    void run(const LockHolder&);
+    void runSoon(const LockHolder&);
 
-    void scheduleIfUnderMemoryPressureHoldingLock(size_t bytes);
+    void scheduleIfUnderMemoryPressure(const LockHolder&, size_t bytes);
 
     BNO_RETURN static void threadEntryPoint(Scavenger*);
     BNO_RETURN void threadRunLoop();
