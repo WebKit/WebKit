@@ -1,3 +1,16 @@
+2020-01-21  Aakash Jain  <aakash_jain@apple.com>
+
+        [ews] commit-queue should check cq+ flag
+        https://bugs.webkit.org/show_bug.cgi?id=206530
+
+        Reviewed by Jonathan Bedard.
+
+        * BuildSlaveSupport/ews-build/steps.py:
+        ValidatePatch._is_patch_cq_plus): Method to check cq+ flag on patch.
+        (ValidatePatch.start):
+        * BuildSlaveSupport/ews-build/factories.py:
+        * BuildSlaveSupport/ews-build/factories_unittest.py: Updated unit-tests.
+
 2020-01-21  Keith Rollin  <krollin@apple.com>
 
         Fix tvOS values in SUPPORTED_PLATFORMS

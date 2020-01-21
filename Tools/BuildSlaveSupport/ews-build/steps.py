@@ -1,4 +1,4 @@
-# Copyright (C) 2018-2019 Apple Inc. All rights reserved.
+# Copyright (C) 2018-2020 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -329,10 +329,11 @@ class ValidatePatch(buildstep.BuildStep):
     bug_open_statuses = ['UNCONFIRMED', 'NEW', 'ASSIGNED', 'REOPENED']
     bug_closed_statuses = ['RESOLVED', 'VERIFIED', 'CLOSED']
 
-    def __init__(self, verifyObsolete=True, verifyBugClosed=True, verifyReviewDenied=True, addURLs=True, **kwargs):
+    def __init__(self, verifyObsolete=True, verifyBugClosed=True, verifyReviewDenied=True, addURLs=True, verifycqplus=False):
         self.verifyObsolete = verifyObsolete
         self.verifyBugClosed = verifyBugClosed
         self.verifyReviewDenied = verifyReviewDenied
+        self.verifycqplus = verifycqplus
         self.addURLs = addURLs
         buildstep.BuildStep.__init__(self)
 
@@ -412,6 +413,17 @@ class ValidatePatch(buildstep.BuildStep):
                 return 1
         return 0
 
+    def _is_patch_cq_plus(self, patch_id):
+        patch_json = self.get_patch_json(patch_id)
+        if not patch_json:
+            self._addToLog('stdio', 'Unable to fetch patch {}.\n'.format(patch_id))
+            return -1
+
+        for flag in patch_json.get('flags', []):
+            if flag.get('name') == 'commit-queue' and flag.get('status') == '+':
+                return 1
+        return 0
+
     def _is_bug_closed(self, bug_id):
         if not bug_id:
             self._addToLog('stdio', 'Skipping bug status validation since bug id is None.\n')
@@ -466,6 +478,11 @@ class ValidatePatch(buildstep.BuildStep):
             self.skip_build('Patch {} is marked r-'.format(patch_id))
             return None
 
+        cq_plus = self._is_patch_cq_plus(patch_id) if self.verifycqplus else 1
+        if cq_plus != 1:
+            self.skip_build('Patch {} is not marked cq+.'.format(patch_id))
+            return None
+
         if obsolete == -1 or review_denied == -1 or bug_closed == -1:
             self.finished(WARNINGS)
             self.setProperty('validated', False)
@@ -477,6 +494,8 @@ class ValidatePatch(buildstep.BuildStep):
             self._addToLog('stdio', 'Patch is not obsolete.\n')
         if self.verifyReviewDenied:
             self._addToLog('stdio', 'Patch is not marked r-.\n')
+        if self.verifycqplus:
+            self._addToLog('stdio', 'Patch is marked cq+.\n')
         self.finished(SUCCESS)
         return None
 

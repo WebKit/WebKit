@@ -51,7 +51,7 @@ class TestGenericFactory(TestCase):
         factory = factories.Factory(platform='ios-simulator-13', configuration='release', architectures='arm64')
         self.assertBuildSteps(factory.steps, [
             _BuildStepFactory(steps.ConfigureBuild, platform='ios-simulator-13', configuration='release', architectures='arm64', buildOnly=True, triggers=None, remotes=None, additionalArguments=None),
-            _BuildStepFactory(steps.ValidatePatch),
+            _BuildStepFactory(steps.ValidatePatch, verifycqplus=False),
             _BuildStepFactory(steps.PrintConfiguration),
             _BuildStepFactory(steps.CheckOutSource),
             _BuildStepFactory(steps.CheckOutSpecificRevision),
@@ -63,7 +63,7 @@ class TestGenericFactory(TestCase):
         self.assertBuildSteps(factory.steps, [
             _BuildStepFactory(steps.ConfigureBuild, platform='ios-simulator-13', configuration='release', architectures='arm64', buildOnly=True, triggers=None, remotes=None, additionalArguments=None),
             _BuildStepFactory(steps.CheckPatchRelevance),
-            _BuildStepFactory(steps.ValidatePatch),
+            _BuildStepFactory(steps.ValidatePatch, verifycqplus=False),
             _BuildStepFactory(steps.PrintConfiguration),
             _BuildStepFactory(steps.CheckOutSource),
             _BuildStepFactory(steps.CheckOutSpecificRevision),
@@ -104,7 +104,7 @@ class TestTestsFactory(TestCase):
         self.assertBuildSteps(factory.steps, [
             _BuildStepFactory(steps.ConfigureBuild, platform='*', configuration=None, architectures=None, buildOnly=False, triggers=None, remotes=None, additionalArguments=None),
             _BuildStepFactory(steps.CheckPatchRelevance),
-            _BuildStepFactory(steps.ValidatePatch),
+            _BuildStepFactory(steps.ValidatePatch, verifycqplus=False),
             _BuildStepFactory(steps.PrintConfiguration),
             _BuildStepFactory(steps.CheckOutSource),
             _BuildStepFactory(steps.CheckOutSpecificRevision),
@@ -116,7 +116,7 @@ class TestTestsFactory(TestCase):
         factory = factories.WebKitPerlFactory(platform='*', configuration=None, architectures=None)
         self.assertBuildSteps(factory.steps, [
             _BuildStepFactory(steps.ConfigureBuild, platform='*', configuration=None, architectures=None, buildOnly=False, triggers=None, remotes=None, additionalArguments=None),
-            _BuildStepFactory(steps.ValidatePatch),
+            _BuildStepFactory(steps.ValidatePatch, verifycqplus=False),
             _BuildStepFactory(steps.PrintConfiguration),
             _BuildStepFactory(steps.CheckOutSource),
             _BuildStepFactory(steps.CheckOutSpecificRevision),
@@ -129,7 +129,7 @@ class TestTestsFactory(TestCase):
         self.assertBuildSteps(factory.steps, [
             _BuildStepFactory(steps.ConfigureBuild, platform='*', configuration=None, architectures=None, buildOnly=False, triggers=None, remotes=None, additionalArguments=None),
             _BuildStepFactory(steps.CheckPatchRelevance),
-            _BuildStepFactory(steps.ValidatePatch),
+            _BuildStepFactory(steps.ValidatePatch, verifycqplus=False),
             _BuildStepFactory(steps.PrintConfiguration),
             _BuildStepFactory(steps.CheckOutSource),
             _BuildStepFactory(steps.CheckOutSpecificRevision),
@@ -143,7 +143,7 @@ class TestTestsFactory(TestCase):
         self.assertBuildSteps(factory.steps, [
             _BuildStepFactory(steps.ConfigureBuild, platform='*', configuration=None, architectures=None, buildOnly=False, triggers=None, remotes=None, additionalArguments=None),
             _BuildStepFactory(steps.CheckPatchRelevance),
-            _BuildStepFactory(steps.ValidatePatch),
+            _BuildStepFactory(steps.ValidatePatch, verifycqplus=False),
             _BuildStepFactory(steps.PrintConfiguration),
             _BuildStepFactory(steps.CheckOutSource),
             _BuildStepFactory(steps.CheckOutSpecificRevision),
