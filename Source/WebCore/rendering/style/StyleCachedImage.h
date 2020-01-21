@@ -29,13 +29,14 @@
 namespace WebCore {
 
 class CSSValue;
+class CSSImageValue;
 class CachedImage;
 class Document;
 
 class StyleCachedImage final : public StyleImage {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<StyleCachedImage> create(CSSValue& cssValue) { return adoptRef(*new StyleCachedImage(cssValue)); }
+    static Ref<StyleCachedImage> create(CSSImageValue& cssValue, float scaleFactor = 1);
     virtual ~StyleCachedImage();
 
     bool operator==(const StyleImage& other) const final;
@@ -64,10 +65,10 @@ public:
     bool knownToBeOpaque(const RenderElement*) const final;
 
 private:
-    StyleCachedImage(CSSValue&);
+    StyleCachedImage(CSSImageValue&, float);
     URL imageURL();
 
-    Ref<CSSValue> m_cssValue;
+    Ref<CSSImageValue> m_cssValue;
     bool m_isPending { true };
     mutable float m_scaleFactor { 1 };
     mutable CachedResourceHandle<CachedImage> m_cachedImage;

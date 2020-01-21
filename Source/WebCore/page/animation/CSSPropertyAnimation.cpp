@@ -333,6 +333,12 @@ static inline RefPtr<StyleImage> blendFunc(const CSSPropertyBlendingClient* anim
     if (!from || !to)
         return to;
 
+    from = from->selectedImage();
+    to = to->selectedImage();
+
+    if (!from || !to)
+        return to;    
+
     // Animation between two generated images. Cross fade for all other cases.
     if (is<StyleGeneratedImage>(*from) && is<StyleGeneratedImage>(*to)) {
         CSSImageGeneratorValue& fromGenerated = downcast<StyleGeneratedImage>(*from).imageValue();

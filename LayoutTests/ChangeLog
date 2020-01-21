@@ -1,3 +1,31 @@
+2020-01-21  Noam Rosenthal  <noam@webkit.org>
+
+        -webkit-image-set should support all the image functions WebKit supports, not just url()
+        https://bugs.webkit.org/show_bug.cgi?id=81941
+
+        Reviewed by Darin Adler.
+
+        * fast/css/cursor-parsing-expected.txt:
+        * fast/css/cursor-parsing.html:
+                Added parsing test to ensure arrow image-sets disable generated images
+
+        * fast/css/image-set-parsing-generated-expected.txt: Added.
+        * fast/css/image-set-parsing-generated.html: Added.
+        * fast/css/image-set-parsing-invalid-expected.txt:
+        * fast/css/image-set-parsing-invalid.html:
+                Added parsing tests for new generated-inside-image-set use cases
+                Test that image-set inside image-set is not supported
+
+        * fast/hidpi/image-set-cross-fade-expected.html: Added.
+        * fast/hidpi/image-set-cross-fade.html: Added.
+        * fast/hidpi/image-set-gradient-expected.html: Added.
+        * fast/hidpi/image-set-gradient-multi-expected.html: Added.
+        * fast/hidpi/image-set-gradient-multi.html: Added.
+        * fast/hidpi/image-set-gradient-single-expected.html: Added.
+        * fast/hidpi/image-set-gradient-single.html: Added.
+        * fast/hidpi/image-set-gradient.html: Added.
+                Added ref-tests for several generated-inside-image-set use-cases
+
 2020-01-21  Chris Dumez  <cdumez@apple.com>
 
         Regression r254652: fast/xmlhttprequest/xmlhttprequest-multiple-sync-xhr-during-unload.html fails on windows

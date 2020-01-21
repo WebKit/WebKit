@@ -105,6 +105,11 @@ testInvalidCursorRule('url(file:///foo.png) 12 3 5');
 testInvalidCursorRule('url(file:///foo.png) x y');
 testInvalidCursorRule('url(file:///foo.png) auto');
 
+debug('');
+debug('Test a bunch of cursor rules with generated images.');
+testInvalidCursorRule('linear-gradient(red, white) -1 -1, pointer');
+testInvalidCursorRule('image-set(linear-gradient(red, white) 1x) -1 -1, pointer');
+
 successfullyParsed = true;
 </script>
 <script src="../../resources/js-test-post.js"></script>

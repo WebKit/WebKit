@@ -2151,7 +2151,7 @@ static RefPtr<CSSPrimitiveValue> consumeRxOrRy(CSSParserTokenRange& range, CSSPa
 static RefPtr<CSSValue> consumeCursor(CSSParserTokenRange& range, const CSSParserContext& context, bool inQuirksMode)
 {
     RefPtr<CSSValueList> list;
-    while (RefPtr<CSSValue> image = consumeImage(range, context, ConsumeGeneratedImage::Forbid)) {
+    while (RefPtr<CSSValue> image = consumeImage(range, context, { AllowedImageType::URLFunction, AllowedImageType::ImageSet })) {
         double num;
         IntPoint hotSpot(-1, -1);
         bool hotSpotSpecified = false;

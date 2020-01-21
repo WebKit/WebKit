@@ -36,6 +36,7 @@
 #include "CSSShadowValue.h"
 #include "CSSValuePool.h"
 #include "Length.h" // For ValueRange
+#include <wtf/OptionSet.h>
 
 namespace WebCore {
 
@@ -89,12 +90,15 @@ RefPtr<CSSPrimitiveValue> consumePosition(CSSParserTokenRange&, CSSParserMode, U
 bool consumePosition(CSSParserTokenRange&, CSSParserMode, UnitlessQuirk, PositionSyntax, RefPtr<CSSPrimitiveValue>& resultX, RefPtr<CSSPrimitiveValue>& resultY);
 bool consumeOneOrTwoValuedPosition(CSSParserTokenRange&, CSSParserMode, UnitlessQuirk, RefPtr<CSSPrimitiveValue>& resultX, RefPtr<CSSPrimitiveValue>& resultY);
 
-enum class ConsumeGeneratedImage {
-    Allow,
-    Forbid
+enum class AllowedImageType : uint8_t {
+    URLFunction = 1 << 0,
+    RawStringAsURL = 1 << 1,
+    ImageSet = 1 << 2,
+    GeneratedImage = 1 << 3
 };
 
-RefPtr<CSSValue> consumeImage(CSSParserTokenRange&, CSSParserContext, ConsumeGeneratedImage = ConsumeGeneratedImage::Allow);
+RefPtr<CSSValue> consumeImage(CSSParserTokenRange&, CSSParserContext, OptionSet<AllowedImageType> = { AllowedImageType::URLFunction, AllowedImageType::ImageSet, AllowedImageType::GeneratedImage });
+
 RefPtr<CSSValue> consumeImageOrNone(CSSParserTokenRange&, CSSParserContext);
 
 enum class AllowedFilterFunctions {

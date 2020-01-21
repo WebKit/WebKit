@@ -82,6 +82,7 @@ public:
     bool useSVGZoomRulesForLength() const;
     ScopeOrdinal styleScopeOrdinal() const { return m_styleScopeOrdinal; }
 
+    Ref<CSSValue> resolveImageStyles(CSSValue&);
     RefPtr<StyleImage> createStyleImage(CSSValue&);
     bool createFilterOperations(const CSSValue&, FilterOperations& outOperations);
 

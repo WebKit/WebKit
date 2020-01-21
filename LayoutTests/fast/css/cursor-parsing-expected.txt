@@ -62,6 +62,10 @@ PASS roundtripCssRule("cursor: url(file:///foo.png) 12;").cssText is ""
 PASS roundtripCssRule("cursor: url(file:///foo.png) 12 3 5;").cssText is ""
 PASS roundtripCssRule("cursor: url(file:///foo.png) x y;").cssText is ""
 PASS roundtripCssRule("cursor: url(file:///foo.png) auto;").cssText is ""
+
+Test a bunch of cursor rules with generated images.
+PASS roundtripCssRule("cursor: linear-gradient(red, white) -1 -1, pointer;").cssText is ""
+PASS roundtripCssRule("cursor: image-set(linear-gradient(red, white) 1x) -1 -1, pointer;").cssText is ""
 PASS successfullyParsed is true
 
 TEST COMPLETE

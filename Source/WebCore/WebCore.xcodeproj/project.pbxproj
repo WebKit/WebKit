@@ -13722,9 +13722,15 @@
 		C9DADBC91B1D3B25001F17D8 /* JSMediaSession.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSMediaSession.cpp; sourceTree = "<group>"; };
 		C9DADBCA1B1D3B25001F17D8 /* JSMediaSession.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSMediaSession.h; sourceTree = "<group>"; };
 		C9F87CFD1B28E5F600979B83 /* MediaSessionEvents.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; path = MediaSessionEvents.h; sourceTree = "<group>"; };
+		CA091D8623CF907800AD4346 /* StyleImageSet.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = StyleImageSet.cpp; sourceTree = "<group>"; };
+		CA091D8923CF908800AD4346 /* StyleImageSet.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StyleImageSet.h; sourceTree = "<group>"; };
 		CA1635DC2072E76900E7D2CE /* ReferrerPolicy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ReferrerPolicy.cpp; sourceTree = "<group>"; };
 		CA3BF67B10D99BAE00E6CE53 /* ScrollAnimator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScrollAnimator.cpp; sourceTree = "<group>"; };
 		CA3BF67D10D99BAE00E6CE53 /* ScrollAnimator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScrollAnimator.h; sourceTree = "<group>"; };
+		CA52BAE523D0AF1600DE0B84 /* StyleCursorImage.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = StyleCursorImage.cpp; sourceTree = "<group>"; };
+		CA52BAE723D0AF1700DE0B84 /* StyleMultiImage.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = StyleMultiImage.cpp; sourceTree = "<group>"; };
+		CA52BAE823D0AF1800DE0B84 /* StyleMultiImage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StyleMultiImage.h; sourceTree = "<group>"; };
+		CA52BAE923D0AF1900DE0B84 /* StyleCursorImage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StyleCursorImage.h; sourceTree = "<group>"; };
 		CA6C152F220B4A550055CBFC /* JSIDBRequestCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSIDBRequestCustom.cpp; sourceTree = "<group>"; };
 		CA6C1537220D1EB30055CBFC /* JSIDBCursorCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSIDBCursorCustom.cpp; sourceTree = "<group>"; };
 		CA6C1538220D1EB30055CBFC /* JSIDBCursorWithValueCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSIDBCursorWithValueCustom.cpp; sourceTree = "<group>"; };
@@ -25562,6 +25568,8 @@
 				BCEF444C0E674628001C1287 /* StyleCachedImage.h */,
 				1C0AA16A21940DC700896829 /* StyleColorScheme.h */,
 				9DAC7C561AF2CB6400437C44 /* StyleContentAlignmentData.h */,
+				CA52BAE523D0AF1600DE0B84 /* StyleCursorImage.cpp */,
+				CA52BAE923D0AF1900DE0B84 /* StyleCursorImage.h */,
 				BC779E151BB226A200CAA8BF /* StyleCustomPropertyData.h */,
 				BC5EB8B60E8201BD00B25965 /* StyleDeprecatedFlexibleBoxData.cpp */,
 				BC5EB8B70E8201BD00B25965 /* StyleDeprecatedFlexibleBoxData.h */,
@@ -25576,12 +25584,16 @@
 				A110DB9C14F5DF8700A03B93 /* StyleGridItemData.cpp */,
 				A110DB9A14F5DF7700A03B93 /* StyleGridItemData.h */,
 				BCEF43CE0E673DA1001C1287 /* StyleImage.h */,
+				CA091D8623CF907800AD4346 /* StyleImageSet.cpp */,
+				CA091D8923CF908800AD4346 /* StyleImageSet.h */,
 				BC2273010E82F1E600E7F975 /* StyleInheritedData.cpp */,
 				BC2273020E82F1E600E7F975 /* StyleInheritedData.h */,
 				BC5EB7270E81DE8100B25965 /* StyleMarqueeData.cpp */,
 				BC5EB7280E81DE8100B25965 /* StyleMarqueeData.h */,
 				BC5EB74B0E81E06700B25965 /* StyleMultiColData.cpp */,
 				BC5EB74C0E81E06700B25965 /* StyleMultiColData.h */,
+				CA52BAE723D0AF1700DE0B84 /* StyleMultiImage.cpp */,
+				CA52BAE823D0AF1800DE0B84 /* StyleMultiImage.h */,
 				BC2272E10E82EE9B00E7F975 /* StyleRareInheritedData.cpp */,
 				BC2272E20E82EE9B00E7F975 /* StyleRareInheritedData.h */,
 				BC2272BA0E82EAAE00E7F975 /* StyleRareNonInheritedData.cpp */,
@@ -31368,6 +31380,7 @@
 				1199FA46208E35A3002358CC /* LayoutContainer.h in Headers */,
 				6F26BB6C23343E6F002F2BEA /* LayoutContext.h in Headers */,
 				11310CF520BA4A4C0065A8D0 /* LayoutDescendantIterator.h in Headers */,
+				E418025523D4549B00FFB071 /* LayoutIntegrationBoxTree.h in Headers */,
 				E4ABABDD236088FE00FA4345 /* LayoutIntegrationLineLayout.h in Headers */,
 				11310CF420BA4A3D0065A8D0 /* LayoutIterator.h in Headers */,
 				931D72F615FE695300C4C07E /* LayoutMilestone.h in Headers */,
@@ -32062,7 +32075,6 @@
 				458FE40A1589DF0B005609E6 /* RenderSearchField.h in Headers */,
 				0F11A54F0F39233100C37884 /* RenderSelectionInfo.h in Headers */,
 				AB247A6D0AFD6383003FA5FD /* RenderSlider.h in Headers */,
-				E418025523D4549B00FFB071 /* LayoutIntegrationBoxTree.h in Headers */,
 				31955A88160D199200858025 /* RenderSnapshottedPlugIn.h in Headers */,
 				BC8C8FAE0DDCD31B00B592F4 /* RenderStyle.h in Headers */,
 				BC5EB6680E81CB7100B25965 /* RenderStyleConstants.h in Headers */,

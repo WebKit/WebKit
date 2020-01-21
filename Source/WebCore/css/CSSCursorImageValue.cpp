@@ -95,17 +95,17 @@ void CSSCursorImageValue::cursorElementChanged(SVGCursorElement& cursorElement)
     m_hotSpot.setY(static_cast<int>(y));
 }
 
-std::pair<CachedImage*, float> CSSCursorImageValue::loadImage(CachedResourceLoader& loader, const ResourceLoaderOptions& options)
+ImageWithScale CSSCursorImageValue::selectBestFitImage(const Document& document)
 {
     if (is<CSSImageSetValue>(m_imageValue.get()))
-        return downcast<CSSImageSetValue>(m_imageValue.get()).loadBestFitImage(loader, options);
+        return downcast<CSSImageSetValue>(m_imageValue.get()).selectBestFitImage(document);
 
-    if (auto* cursorElement = updateCursorElement(*loader.document())) {
+    if (auto* cursorElement = updateCursorElement(document)) {
         if (cursorElement->href() != downcast<CSSImageValue>(m_imageValue.get()).url())
-            m_imageValue = CSSImageValue::create(loader.document()->completeURL(cursorElement->href()), m_loadedFromOpaqueSource);
+            m_imageValue = CSSImageValue::create(document.completeURL(cursorElement->href()), m_loadedFromOpaqueSource);
     }
 
-    return { downcast<CSSImageValue>(m_imageValue.get()).loadImage(loader, options), 1 };
+    return { m_imageValue.ptr() , 1 };
 }
 
 bool CSSCursorImageValue::equals(const CSSCursorImageValue& other) const
