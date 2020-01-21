@@ -1,3 +1,13 @@
+2020-01-21  Chris Dumez  <cdumez@apple.com>
+
+        Regression r254652: fast/xmlhttprequest/xmlhttprequest-multiple-sync-xhr-during-unload.html fails on windows
+        https://bugs.webkit.org/show_bug.cgi?id=206474
+
+        Unreviewed, land Windows-specific baseline and unskip the test.
+
+        * platform/win/TestExpectations:
+        * platform/win/fast/xmlhttprequest/xmlhttprequest-multiple-sync-xhr-during-unload-expected.txt: Added.
+
 2020-01-21  Diego Pino Garcia  <dpino@igalia.com>
 
         [GTK][WPE] Gardening, mark remote-playback tests as failure
