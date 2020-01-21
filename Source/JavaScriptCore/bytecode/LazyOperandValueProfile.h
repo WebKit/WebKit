@@ -26,7 +26,6 @@
 #pragma once
 
 #include "ConcurrentJSLock.h"
-#include "Operands.h"
 #include "ValueProfile.h"
 #include "VirtualRegister.h"
 #include <wtf/HashMap.h>
@@ -50,7 +49,7 @@ public:
     {
     }
     
-    LazyOperandValueProfileKey(BytecodeIndex bytecodeIndex, Operand operand)
+    LazyOperandValueProfileKey(BytecodeIndex bytecodeIndex, VirtualRegister operand)
         : m_bytecodeIndex(bytecodeIndex)
         , m_operand(operand)
     {
@@ -70,7 +69,7 @@ public:
     
     unsigned hash() const
     {
-        return m_bytecodeIndex.hash() + m_operand.value() + static_cast<unsigned>(m_operand.kind());
+        return m_bytecodeIndex.hash() + m_operand.offset();
     }
     
     BytecodeIndex bytecodeIndex() const
@@ -79,7 +78,7 @@ public:
         return m_bytecodeIndex;
     }
 
-    Operand operand() const
+    VirtualRegister operand() const
     {
         ASSERT(!!*this);
         return m_operand;
@@ -91,7 +90,7 @@ public:
     }
 private: 
     BytecodeIndex m_bytecodeIndex;
-    Operand m_operand;
+    VirtualRegister m_operand;
 };
 
 struct LazyOperandValueProfileKeyHash {

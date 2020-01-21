@@ -85,7 +85,7 @@ private:
         m_state.fill(Epoch());
         m_graph.forAllLiveInBytecode(
             block->terminal()->origin.forExit,
-            [&] (Operand reg) {
+            [&] (VirtualRegister reg) {
                 m_state.operand(reg) = currentEpoch;
             });
         
@@ -99,7 +99,7 @@ private:
             Node* node = block->at(nodeIndex);
             
             if (node->op() == MovHint) {
-                Epoch localEpoch = m_state.operand(node->unlinkedOperand());
+                Epoch localEpoch = m_state.operand(node->unlinkedLocal());
                 if (DFGMovHintRemovalPhaseInternal::verbose)
                     dataLog("    At ", node, ": current = ", currentEpoch, ", local = ", localEpoch, "\n");
                 if (!localEpoch || localEpoch == currentEpoch) {
@@ -107,7 +107,7 @@ private:
                     node->child1() = Edge();
                     m_changed = true;
                 }
-                m_state.operand(node->unlinkedOperand()) = Epoch();
+                m_state.operand(node->unlinkedLocal()) = Epoch();
             }
             
             if (mayExit(m_graph, node) != DoesNotExit)
@@ -116,15 +116,15 @@ private:
             if (nodeIndex) {
                 forAllKilledOperands(
                     m_graph, block->at(nodeIndex - 1), node,
-                    [&] (Operand operand) {
+                    [&] (VirtualRegister reg) {
                         // This function is a bit sloppy - it might claim to kill a local even if
                         // it's still live after. We need to protect against that.
-                        if (!!m_state.operand(operand))
+                        if (!!m_state.operand(reg))
                             return;
                         
                         if (DFGMovHintRemovalPhaseInternal::verbose)
-                            dataLog("    Killed operand at ", node, ": ", operand, "\n");
-                        m_state.operand(operand) = currentEpoch;
+                            dataLog("    Killed operand at ", node, ": ", reg, "\n");
+                        m_state.operand(reg) = currentEpoch;
                     });
             }
         }

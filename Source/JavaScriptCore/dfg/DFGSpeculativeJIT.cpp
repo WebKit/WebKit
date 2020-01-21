@@ -1777,7 +1777,7 @@ void SpeculativeJIT::compileMovHint(Node* node)
     Node* child = node->child1().node();
     noticeOSRBirth(child);
     
-    m_stream->appendAndLog(VariableEvent::movHint(MinifiedID(child), node->unlinkedOperand()));
+    m_stream->appendAndLog(VariableEvent::movHint(MinifiedID(child), node->unlinkedLocal()));
 }
 
 void SpeculativeJIT::bail(AbortReason reason)
@@ -1827,7 +1827,7 @@ void SpeculativeJIT::compileCurrentBlock()
     m_state.beginBasicBlock(m_block);
     
     for (size_t i = m_block->variablesAtHead.size(); i--;) {
-        Operand operand = m_block->variablesAtHead.operandForIndex(i);
+        int operand = m_block->variablesAtHead.operandForIndex(i);
         Node* node = m_block->variablesAtHead[i];
         if (!node)
             continue; // No need to record dead SetLocal's.
@@ -1837,8 +1837,11 @@ void SpeculativeJIT::compileCurrentBlock()
         if (!node->refCount())
             continue; // No need to record dead SetLocal's.
         format = dataFormatFor(variable->flushFormat());
-        DFG_ASSERT(m_jit.graph(), node, !operand.isArgument() || operand.virtualRegister().toArgument() >= 0);
-        m_stream->appendAndLog(VariableEvent::setLocal(operand, variable->machineLocal(), format));
+        m_stream->appendAndLog(
+            VariableEvent::setLocal(
+                VirtualRegister(operand),
+                variable->machineLocal(),
+                format));
     }
 
     m_origin = NodeOrigin();
@@ -1918,8 +1921,7 @@ void SpeculativeJIT::checkArgumentTypes()
         if (format == FlushedJSValue)
             continue;
         
-        VirtualRegister virtualRegister = variableAccessData->operand().virtualRegister();
-        ASSERT(virtualRegister.isArgument());
+        VirtualRegister virtualRegister = variableAccessData->local();
 
         JSValueSource valueSource = JSValueSource(JITCompiler::addressFor(virtualRegister));
         
@@ -7339,55 +7341,54 @@ void SpeculativeJIT::compileSetFunctionName(Node* node)
     noResult(node);
 }
 
-void SpeculativeJIT::compileVarargsLength(Node* node)
+void SpeculativeJIT::compileLoadVarargs(Node* node)
 {
     LoadVarargsData* data = node->loadVarargsData();
 
     JSValueRegs argumentsRegs;
-    lock(GPRInfo::returnValueGPR);
-    JSValueOperand arguments(this, node->argumentsChild());
-    argumentsRegs = arguments.jsValueRegs();
-    flushRegisters();
-    unlock(GPRInfo::returnValueGPR);
+    {
+        JSValueOperand arguments(this, node->child1());
+        argumentsRegs = arguments.jsValueRegs();
+        flushRegisters();
+    }
 
     callOperation(operationSizeOfVarargs, GPRInfo::returnValueGPR, TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(node->origin.semantic)), argumentsRegs, data->offset);
     m_jit.exceptionCheck();
 
     lock(GPRInfo::returnValueGPR);
-    GPRTemporary argCountIncludingThis(this);
-    GPRReg argCountIncludingThisGPR = argCountIncludingThis.gpr();
+    {
+        JSValueOperand arguments(this, node->child1());
+        argumentsRegs = arguments.jsValueRegs();
+        flushRegisters();
+    }
     unlock(GPRInfo::returnValueGPR);
 
+    // FIXME: There is a chance that we will call an effectful length property twice. This is safe
+    // from the standpoint of the VM's integrity, but it's subtly wrong from a spec compliance
+    // standpoint. The best solution would be one where we can exit *into* the op_call_varargs right
+    // past the sizing.
+    // https://bugs.webkit.org/show_bug.cgi?id=141448
+
+    GPRReg argCountIncludingThisGPR =
+        JITCompiler::selectScratchGPR(GPRInfo::returnValueGPR, argumentsRegs);
+
     m_jit.add32(TrustedImm32(1), GPRInfo::returnValueGPR, argCountIncludingThisGPR);
-
-    int32Result(argCountIncludingThisGPR, node);  
-}
-
-void SpeculativeJIT::compileLoadVarargs(Node* node)
-{
-    LoadVarargsData* data = node->loadVarargsData();
-
-    SpeculateStrictInt32Operand argumentCount(this, node->child1());    
-    JSValueOperand arguments(this, node->argumentsChild());
-    GPRReg argumentCountIncludingThis = argumentCount.gpr();
-    JSValueRegs argumentsRegs = arguments.jsValueRegs();
-
-    speculationCheck(
-        VarargsOverflow, JSValueSource(), Edge(), m_jit.branchTest32(
-            MacroAssembler::Zero,
-            argumentCountIncludingThis));
 
     speculationCheck(
         VarargsOverflow, JSValueSource(), Edge(), m_jit.branch32(
             MacroAssembler::Above,
-            argumentCountIncludingThis,
+            GPRInfo::returnValueGPR,
+            argCountIncludingThisGPR));
+
+    speculationCheck(
+        VarargsOverflow, JSValueSource(), Edge(), m_jit.branch32(
+            MacroAssembler::Above,
+            argCountIncludingThisGPR,
             TrustedImm32(data->limit)));
 
-    flushRegisters();
+    m_jit.store32(argCountIncludingThisGPR, JITCompiler::payloadFor(data->machineCount));
 
-    m_jit.store32(argumentCountIncludingThis, JITCompiler::payloadFor(data->machineCount));
-
-    callOperation(operationLoadVarargs, TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(node->origin.semantic)), data->machineStart.offset(), argumentsRegs, data->offset, argumentCountIncludingThis, data->mandatoryMinimum);
+    callOperation(operationLoadVarargs, TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(node->origin.semantic)), data->machineStart.offset(), argumentsRegs, data->offset, GPRInfo::returnValueGPR, data->mandatoryMinimum);
     m_jit.exceptionCheck();
 
     noResult(node);
@@ -7397,19 +7398,17 @@ void SpeculativeJIT::compileForwardVarargs(Node* node)
 {
     LoadVarargsData* data = node->loadVarargsData();
     InlineCallFrame* inlineCallFrame;
-    if (node->argumentsChild())
-        inlineCallFrame = node->argumentsChild()->origin.semantic.inlineCallFrame();
+    if (node->child1())
+        inlineCallFrame = node->child1()->origin.semantic.inlineCallFrame();
     else
         inlineCallFrame = node->origin.semantic.inlineCallFrame();
 
-    SpeculateStrictInt32Operand argumentCount(this, node->child1());
     GPRTemporary length(this);
     JSValueRegsTemporary temp(this);
-    GPRReg argumentCountIncludingThis = argumentCount.gpr();
-    GPRReg lengthGPR = argumentCount.gpr();
+    GPRReg lengthGPR = length.gpr();
     JSValueRegs tempRegs = temp.regs();
-    
-    m_jit.move(argumentCountIncludingThis, lengthGPR);
+        
+    emitGetLength(inlineCallFrame, lengthGPR, /* includeThis = */ true);
     if (data->offset)
         m_jit.sub32(TrustedImm32(data->offset), lengthGPR);
         
@@ -7568,7 +7567,7 @@ void SpeculativeJIT::compileCreateDirectArguments(Node* node)
     auto* inlineCallFrame = node->origin.semantic.inlineCallFrame();
     if (inlineCallFrame
         && !inlineCallFrame->isVarargs()) {
-        knownLength = static_cast<unsigned>(inlineCallFrame->argumentCountIncludingThis - 1);
+        knownLength = inlineCallFrame->argumentCountIncludingThis - 1;
         lengthIsKnown = true;
     } else {
         knownLength = UINT_MAX;
@@ -12473,7 +12472,7 @@ void SpeculativeJIT::compileGetArgumentCountIncludingThis(Node* node)
     if (InlineCallFrame* inlineCallFrame = node->argumentsInlineCallFrame())
         argumentCountRegister = inlineCallFrame->argumentCountRegister;
     else
-        argumentCountRegister = CallFrameSlot::argumentCountIncludingThis;
+        argumentCountRegister = VirtualRegister(CallFrameSlot::argumentCountIncludingThis);
     m_jit.load32(JITCompiler::payloadFor(argumentCountRegister), result.gpr());
     int32Result(result.gpr(), node);
 }

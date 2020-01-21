@@ -72,11 +72,11 @@ public:
     const Vector<uint64_t>& constants() const { return m_constants; }
     const InstructionStream& instructions() const { return *m_instructions; }
 
-    ALWAYS_INLINE uint64_t getConstant(VirtualRegister reg) const { return m_constants[reg.toConstantIndex()]; }
-    ALWAYS_INLINE Type getConstantType(VirtualRegister reg) const
+    ALWAYS_INLINE uint64_t getConstant(int index) const { return m_constants[index - FirstConstantRegisterIndex]; }
+    ALWAYS_INLINE Type getConstantType(int index) const
     {
         ASSERT(Options::dumpGeneratedWasmBytecodes());
-        return m_constantTypes[reg.toConstantIndex()];
+        return m_constantTypes[index - FirstConstantRegisterIndex];
     }
 
     void setInstructions(std::unique_ptr<InstructionStream>);

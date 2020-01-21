@@ -33,22 +33,22 @@
 
 namespace JSC {
 
-inline bool virtualRegisterIsAlwaysLive(VirtualRegister reg)
+inline bool operandIsAlwaysLive(int operand)
 {
-    return !reg.isLocal();
+    return !VirtualRegister(operand).isLocal();
 }
 
-inline bool virtualRegisterThatIsNotAlwaysLiveIsLive(const FastBitVector& out, VirtualRegister reg)
+inline bool operandThatIsNotAlwaysLiveIsLive(const FastBitVector& out, int operand)
 {
-    unsigned local = reg.toLocal();
+    unsigned local = VirtualRegister(operand).toLocal();
     if (local >= out.numBits())
         return false;
     return out[local];
 }
 
-inline bool virtualRegisterIsLive(const FastBitVector& out, VirtualRegister operand)
+inline bool operandIsLive(const FastBitVector& out, int operand)
 {
-    return virtualRegisterIsAlwaysLive(operand) || virtualRegisterThatIsNotAlwaysLiveIsLive(out, operand);
+    return operandIsAlwaysLive(operand) || operandThatIsNotAlwaysLiveIsLive(out, operand);
 }
 
 inline bool isValidRegisterForLiveness(VirtualRegister operand)

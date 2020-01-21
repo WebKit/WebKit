@@ -51,7 +51,6 @@ public:
     size_t nextPossiblyUnset(size_t) const;
     void clear(size_t);
     void clearAll();
-    void invert();
     int64_t findRunOfZeros(size_t runLength) const;
     size_t count(size_t start = 0) const;
     size_t isEmpty() const;
@@ -103,12 +102,6 @@ public:
             return !(*this == other);
         }
 
-        iterator& operator=(bool value)
-        {
-            m_bitmap->set(m_index, value);
-            return *this;
-        }
-
     private:
         const Bitmap* m_bitmap;
         size_t m_index;
@@ -118,9 +111,6 @@ public:
     iterator begin() const { return iterator(*this, findBit(0, true)); }
     iterator end() const { return iterator(*this, bitmapSize); }
     
-    iterator operator[](size_t);
-    const iterator operator[](size_t) const;
-
     void mergeAndClear(Bitmap&);
     void setAndClear(Bitmap&);
     
@@ -232,13 +222,6 @@ template<size_t bitmapSize, typename WordType>
 inline void Bitmap<bitmapSize, WordType>::clearAll()
 {
     memset(bits.data(), 0, sizeof(bits));
-}
-
-template<size_t bitmapSize, typename WordType>
-inline void Bitmap<bitmapSize, WordType>::invert()
-{
-    for (size_t i = 0; i < words; ++i)
-        bits[i] = ~bits[i];
 }
 
 template<size_t bitmapSize, typename WordType>
@@ -424,19 +407,6 @@ template<size_t bitmapSize, typename WordType>
 inline bool Bitmap<bitmapSize, WordType>::operator!=(const Bitmap& other) const
 {
     return !(*this == other);
-}
-
-template<size_t bitmapSize, typename WordType>
-inline auto Bitmap<bitmapSize, WordType>::operator[](size_t index) -> iterator
-{
-    ASSERT(index < size());
-    return iterator(*this, index);
-}
-
-template<size_t bitmapSize, typename WordType>
-inline auto Bitmap<bitmapSize, WordType>::operator[](size_t index) const -> const iterator
-{
-    return (*const_cast<Bitmap<bitmapSize, WordType>*>(this))[index];
 }
 
 template<size_t bitmapSize, typename WordType>

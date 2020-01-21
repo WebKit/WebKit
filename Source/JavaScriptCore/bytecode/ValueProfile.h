@@ -176,28 +176,28 @@ inline BytecodeIndex getRareCaseProfileBytecodeIndex(RareCaseProfile* rareCasePr
     return rareCaseProfile->m_bytecodeIndex;
 }
 
-struct ValueProfileAndVirtualRegister : public ValueProfile {
-    VirtualRegister m_operand;
+struct ValueProfileAndOperand : public ValueProfile {
+    int m_operand;
 };
 
-struct ValueProfileAndVirtualRegisterBuffer {
+struct ValueProfileAndOperandBuffer {
     WTF_MAKE_STRUCT_FAST_ALLOCATED;
 
-    ValueProfileAndVirtualRegisterBuffer(unsigned size)
+    ValueProfileAndOperandBuffer(unsigned size)
         : m_size(size)
     {
         // FIXME: ValueProfile has more stuff than we need. We could optimize these value profiles
         // to be more space efficient.
         // https://bugs.webkit.org/show_bug.cgi?id=175413
-        m_buffer = MallocPtr<ValueProfileAndVirtualRegister, VMMalloc>::malloc(m_size * sizeof(ValueProfileAndVirtualRegister));
+        m_buffer = MallocPtr<ValueProfileAndOperand, VMMalloc>::malloc(m_size * sizeof(ValueProfileAndOperand));
         for (unsigned i = 0; i < m_size; ++i)
-            new (&m_buffer.get()[i]) ValueProfileAndVirtualRegister();
+            new (&m_buffer.get()[i]) ValueProfileAndOperand();
     }
 
-    ~ValueProfileAndVirtualRegisterBuffer()
+    ~ValueProfileAndOperandBuffer()
     {
         for (unsigned i = 0; i < m_size; ++i)
-            m_buffer.get()[i].~ValueProfileAndVirtualRegister();
+            m_buffer.get()[i].~ValueProfileAndOperand();
     }
 
     template <typename Function>
@@ -208,7 +208,7 @@ struct ValueProfileAndVirtualRegisterBuffer {
     }
 
     unsigned m_size;
-    MallocPtr<ValueProfileAndVirtualRegister, VMMalloc> m_buffer;
+    MallocPtr<ValueProfileAndOperand, VMMalloc> m_buffer;
 };
 
 } // namespace JSC

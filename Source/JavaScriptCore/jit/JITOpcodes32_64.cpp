@@ -933,7 +933,7 @@ void JIT::emit_op_catch(const Instruction* currentInstruction)
     // https://bugs.webkit.org/show_bug.cgi?id=175598
 
     auto& metadata = bytecode.metadata(m_codeBlock);
-    ValueProfileAndVirtualRegisterBuffer* buffer = metadata.m_buffer;
+    ValueProfileAndOperandBuffer* buffer = metadata.m_buffer;
     if (buffer || !shouldEmitProfiling())
         callOperation(operationTryOSREnterAtCatch, &vm(), m_bytecodeIndex.asBits());
     else
@@ -943,7 +943,7 @@ void JIT::emit_op_catch(const Instruction* currentInstruction)
     farJump(returnValueGPR, NoPtrTag);
     skipOSREntry.link(this);
     if (buffer && shouldEmitProfiling()) {
-        buffer->forEach([&] (ValueProfileAndVirtualRegister& profile) {
+        buffer->forEach([&] (ValueProfileAndOperand& profile) {
             JSValueRegs regs(regT1, regT0);
             emitGetVirtualRegister(profile.m_operand, regs);
             emitValueProfilingSite(static_cast<ValueProfile&>(profile));

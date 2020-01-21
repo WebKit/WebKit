@@ -49,12 +49,11 @@ DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(BasicBlock);
 struct BasicBlock : RefCounted<BasicBlock> {
     WTF_MAKE_STRUCT_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(BasicBlock);
     BasicBlock(
-        BytecodeIndex bytecodeBegin, unsigned numArguments, unsigned numLocals, unsigned numTmps,
+        BytecodeIndex bytecodeBegin, unsigned numArguments, unsigned numLocals,
         float executionCount);
     ~BasicBlock();
     
     void ensureLocals(unsigned newNumLocals);
-    void ensureTmps(unsigned newNumTmps);
     
     size_t size() const { return m_nodes.size(); }
     bool isEmpty() const { return !size(); }

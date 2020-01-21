@@ -721,7 +721,6 @@ void Heap::gatherScratchBufferRoots(ConservativeRoots& roots)
     if (!VM::canUseJIT())
         return;
     m_vm.gatherScratchBufferRoots(roots);
-    m_vm.scanSideState(roots);
 #else
     UNUSED_PARAM(roots);
 #endif

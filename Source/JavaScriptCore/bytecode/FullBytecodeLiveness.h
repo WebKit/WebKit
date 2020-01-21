@@ -26,16 +26,12 @@
 #pragma once
 
 #include "BytecodeLivenessAnalysis.h"
-#include "Operands.h"
 #include <wtf/FastBitVector.h>
 
 namespace JSC {
 
 class BytecodeLivenessAnalysis;
-class CodeBlock;
 
-// Note: Full bytecode liveness does not track any information about the liveness of temps.
-// If you want tmp liveness for a checkpoint ask tmpLivenessForCheckpoint.
 class FullBytecodeLiveness {
     WTF_MAKE_FAST_ALLOCATED;
 public:
@@ -51,15 +47,15 @@ public:
         RELEASE_ASSERT_NOT_REACHED();
     }
     
-    bool virtualRegisterIsLive(VirtualRegister reg, BytecodeIndex bytecodeIndex, LivenessCalculationPoint point) const
+    bool operandIsLive(int operand, BytecodeIndex bytecodeIndex, LivenessCalculationPoint point) const
     {
-        return virtualRegisterIsAlwaysLive(reg) || virtualRegisterThatIsNotAlwaysLiveIsLive(getLiveness(bytecodeIndex, point), reg);
+        return operandIsAlwaysLive(operand) || operandThatIsNotAlwaysLiveIsLive(getLiveness(bytecodeIndex, point), operand);
     }
     
 private:
     friend class BytecodeLivenessAnalysis;
     
-    // FIXME: Use FastBitVector's view mechanism to make them compact.
+    // FIXME: Use FastBitVector's view mechansim to make them compact.
     // https://bugs.webkit.org/show_bug.cgi?id=204427<Paste>
     Vector<FastBitVector, 0, UnsafeVectorOverflow> m_beforeUseVector;
     Vector<FastBitVector, 0, UnsafeVectorOverflow> m_afterUseVector;

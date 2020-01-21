@@ -147,7 +147,8 @@ public:
             break;
         case Stack: {
             ASSERT(!heap.payload().isTop());
-            m_abstractHeapStackMap.remove(heap.payload().value());
+            ASSERT(heap.payload().value() == heap.payload().value32());
+            m_abstractHeapStackMap.remove(heap.payload().value32());
             if (clobberConservatively)
                 m_fallbackStackMap.clear();
             else
@@ -171,7 +172,7 @@ public:
                 if (!clobberConservatively)
                     break;
                 if (pair.key.heap().kind() == Stack) {
-                    auto iterator = m_abstractHeapStackMap.find(pair.key.heap().payload().value());
+                    auto iterator = m_abstractHeapStackMap.find(pair.key.heap().payload().value32());
                     if (iterator != m_abstractHeapStackMap.end() && iterator->value->key == pair.key)
                         return false;
                     return true;
@@ -225,7 +226,8 @@ private:
             AbstractHeap abstractHeap = location.heap();
             if (abstractHeap.payload().isTop())
                 return add(m_fallbackStackMap, location, node);
-            auto addResult = m_abstractHeapStackMap.add(abstractHeap.payload().value(), nullptr);
+            ASSERT(abstractHeap.payload().value() == abstractHeap.payload().value32());
+            auto addResult = m_abstractHeapStackMap.add(abstractHeap.payload().value32(), nullptr);
             if (addResult.isNewEntry) {
                 addResult.iterator->value.reset(new ImpureDataSlot {location, node, 0});
                 return nullptr;
@@ -247,7 +249,8 @@ private:
         case SideState:
             RELEASE_ASSERT_NOT_REACHED();
         case Stack: {
-            auto iterator = m_abstractHeapStackMap.find(location.heap().payload().value());
+            ASSERT(location.heap().payload().value() == location.heap().payload().value32());
+            auto iterator = m_abstractHeapStackMap.find(location.heap().payload().value32());
             if (iterator != m_abstractHeapStackMap.end()
                 && iterator->value->key == location)
                 return iterator->value->value;
@@ -295,7 +298,7 @@ private:
     // a duplicate in the past and now only live in m_fallbackStackMap.
     //
     // Obviously, TOP always goes into m_fallbackStackMap since it does not have a unique value.
-    HashMap<int64_t, std::unique_ptr<ImpureDataSlot>, DefaultHash<int64_t>::Hash, WTF::SignedWithZeroKeyHashTraits<int64_t>> m_abstractHeapStackMap;
+    HashMap<int32_t, std::unique_ptr<ImpureDataSlot>, DefaultHash<int32_t>::Hash, WTF::SignedWithZeroKeyHashTraits<int32_t>> m_abstractHeapStackMap;
     Map m_fallbackStackMap;
 
     Map m_heapMap;

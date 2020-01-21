@@ -1,3 +1,21 @@
+2020-01-21  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r254632. rdar://problem/58764714
+
+    Revert bytecode checkpoints since it breaks watch
+    https://bugs.webkit.org/show_bug.cgi?id=206301
+    
+    Unreviewed, revert.
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@254632 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-01-15  Keith Miller  <keith_miller@apple.com>
+
+            Revert bytecode checkpoints since it breaks watch
+            https://bugs.webkit.org/show_bug.cgi?id=206301
+
+            Unreviewed, revert.
+
 2020-01-15  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r254496. rdar://problem/58553161

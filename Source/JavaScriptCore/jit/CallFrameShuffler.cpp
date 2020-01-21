@@ -61,7 +61,7 @@ CallFrameShuffler::CallFrameShuffler(CCallHelpers& jit, const CallFrameShuffleDa
 #endif
 
     ASSERT(!data.callee.isInJSStack() || data.callee.virtualRegister().isLocal());
-    addNew(CallFrameSlot::callee, data.callee);
+    addNew(VirtualRegister(CallFrameSlot::callee), data.callee);
 
     for (size_t i = 0; i < data.args.size(); ++i) {
         ASSERT(!data.args[i].isInJSStack() || data.args[i].virtualRegister().isLocal());

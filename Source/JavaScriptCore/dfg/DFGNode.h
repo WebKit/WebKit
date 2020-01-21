@@ -251,13 +251,13 @@ struct StackAccessData {
     {
     }
     
-    StackAccessData(Operand operand, FlushFormat format)
-        : operand(operand)
+    StackAccessData(VirtualRegister local, FlushFormat format)
+        : local(local)
         , format(format)
     {
     }
     
-    Operand operand;
+    VirtualRegister local;
     VirtualRegister machineLocal;
     FlushFormat format;
     
@@ -904,7 +904,6 @@ public:
         switch (op()) {
         case GetMyArgumentByVal:
         case GetMyArgumentByValOutOfBounds:
-        case VarargsLength:
         case LoadVarargs:
         case ForwardVarargs:
         case CallVarargs:
@@ -926,11 +925,9 @@ public:
         switch (op()) {
         case GetMyArgumentByVal:
         case GetMyArgumentByValOutOfBounds:
-        case VarargsLength:
-            return child1();
         case LoadVarargs:
         case ForwardVarargs:
-            return child2();
+            return child1();
         case CallVarargs:
         case CallForwardVarargs:
         case ConstructVarargs:
@@ -978,9 +975,9 @@ public:
         return m_opInfo.as<VariableAccessData*>()->find();
     }
     
-    Operand operand()
+    VirtualRegister local()
     {
-        return variableAccessData()->operand();
+        return variableAccessData()->local();
     }
     
     VirtualRegister machineLocal()
@@ -988,7 +985,7 @@ public:
         return variableAccessData()->machineLocal();
     }
     
-    bool hasUnlinkedOperand()
+    bool hasUnlinkedLocal()
     {
         switch (op()) {
         case ExtractOSREntryLocal:
@@ -1001,10 +998,10 @@ public:
         }
     }
     
-    Operand unlinkedOperand()
+    VirtualRegister unlinkedLocal()
     {
-        ASSERT(hasUnlinkedOperand());
-        return Operand::fromBits(m_opInfo.as<uint64_t>());
+        ASSERT(hasUnlinkedLocal());
+        return VirtualRegister(m_opInfo.as<int32_t>());
     }
     
     bool hasStackAccessData()
@@ -1355,7 +1352,7 @@ public:
     
     bool hasLoadVarargsData()
     {
-        return op() == LoadVarargs || op() == ForwardVarargs || op() == VarargsLength;
+        return op() == LoadVarargs || op() == ForwardVarargs;
     }
     
     LoadVarargsData* loadVarargsData()
