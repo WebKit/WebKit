@@ -56,7 +56,7 @@ struct TestOptions {
     bool enableAsyncClipboardAPI { false };
     bool layoutFormattingContextIntegrationEnabled { true };
     bool enableAspectRatioOfImgFromWidthAndHeight { false };
-    bool enableWebSQL { false };
+    bool enableWebSQL { true };
     std::string jscOptions;
     std::string additionalSupportedImageTypes;
 

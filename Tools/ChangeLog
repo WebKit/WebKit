@@ -1,3 +1,12 @@
+2020-01-21  Sihui Liu  <sihui_liu@apple.com>
+
+        REGRESSION (r254856?): [Win] http/tests/security/same-origin-websql-blocked.html and 2 fast/dom/Window/window-function-* tests failing
+        https://bugs.webkit.org/show_bug.cgi?id=206552
+
+        Unreviewed fix after r254856. r254856 wanted to enable WebSQL on layout tests but enableWebSQL was set to false.
+
+        * DumpRenderTree/TestOptions.h:
+
 2020-01-21  Jiewen Tan  <jiewen_tan@apple.com>
 
         ProvisionalPageProxy::loadData should pass last navigation's shouldOpenExternalURLsPolicy flag to WebPageProxy
