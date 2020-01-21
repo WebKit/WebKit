@@ -1,3 +1,31 @@
+2020-01-21  Alex Christensen  <achristensen@webkit.org>
+
+        Revert suppressesConnectionTerminationOnSystemChange part of r254081
+        https://bugs.webkit.org/show_bug.cgi?id=205751
+        <rdar://problem/58725096>
+
+        There was an API client that still hadn't migrated to the replacement SPI.
+
+        * NetworkProcess/NetworkProcess.h:
+        (WebKit::NetworkProcess::suppressesConnectionTerminationOnSystemChange const):
+        * NetworkProcess/NetworkProcessCreationParameters.cpp:
+        (WebKit::NetworkProcessCreationParameters::encode const):
+        (WebKit::NetworkProcessCreationParameters::decode):
+        * NetworkProcess/NetworkProcessCreationParameters.h:
+        * NetworkProcess/cocoa/NetworkProcessCocoa.mm:
+        (WebKit::NetworkProcess::platformInitializeNetworkProcessCocoa):
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (WebKit::NetworkSessionCocoa::NetworkSessionCocoa):
+        * UIProcess/API/APIProcessPoolConfiguration.cpp:
+        (API::ProcessPoolConfiguration::copy):
+        * UIProcess/API/APIProcessPoolConfiguration.h:
+        * UIProcess/API/Cocoa/_WKProcessPoolConfiguration.h:
+        * UIProcess/API/Cocoa/_WKProcessPoolConfiguration.mm:
+        (-[_WKProcessPoolConfiguration suppressesConnectionTerminationOnSystemChange]):
+        (-[_WKProcessPoolConfiguration setSuppressesConnectionTerminationOnSystemChange:]):
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::WebProcessPool::platformInitializeNetworkProcess):
+
 2020-01-21  Brent Fulgham  <bfulgham@apple.com>
 
         Performance tests fail if stderr logging is encountered

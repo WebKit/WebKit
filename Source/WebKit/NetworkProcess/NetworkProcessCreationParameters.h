@@ -70,6 +70,7 @@ struct NetworkProcessCreationParameters {
     uint32_t uiProcessSDKVersion { 0 };
     RetainPtr<CFDataRef> networkATSContext;
     bool storageAccessAPIEnabled;
+    bool suppressesConnectionTerminationOnSystemChange;
 #endif
 
     WebsiteDataStoreParameters defaultDataStoreParameters;

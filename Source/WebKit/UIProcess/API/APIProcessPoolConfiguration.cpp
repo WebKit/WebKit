@@ -67,6 +67,9 @@ Ref<ProcessPoolConfiguration> ProcessPoolConfiguration::copy()
     copy->m_isAutomaticProcessWarmingEnabledByClient = this->m_isAutomaticProcessWarmingEnabledByClient;
     copy->m_usesWebProcessCache = this->m_usesWebProcessCache;
     copy->m_usesBackForwardCache = this->m_usesBackForwardCache;
+#if PLATFORM(COCOA)
+    copy->m_suppressesConnectionTerminationOnSystemChange = this->m_suppressesConnectionTerminationOnSystemChange;
+#endif
     copy->m_customWebContentServiceBundleIdentifier = this->m_customWebContentServiceBundleIdentifier;
     copy->m_usesSingleWebProcess = m_usesSingleWebProcess;
 

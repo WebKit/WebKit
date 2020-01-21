@@ -331,6 +331,16 @@
     _processPoolConfiguration->setUsesSingleWebProcess(enabled);
 }
 
+- (BOOL)suppressesConnectionTerminationOnSystemChange
+{
+    return _processPoolConfiguration->suppressesConnectionTerminationOnSystemChange();
+}
+
+- (void)setSuppressesConnectionTerminationOnSystemChange:(BOOL)suppressesConnectionTerminationOnSystemChange
+{
+    _processPoolConfiguration->setSuppressesConnectionTerminationOnSystemChange(suppressesConnectionTerminationOnSystemChange);
+}
+
 - (BOOL)isJITEnabled
 {
     return _processPoolConfiguration->isJITEnabled();

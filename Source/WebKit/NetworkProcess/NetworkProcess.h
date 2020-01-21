@@ -185,6 +185,7 @@ public:
     void logDiagnosticMessageWithValue(WebPageProxyIdentifier, const String& message, const String& description, double value, unsigned significantFigures, WebCore::ShouldSample);
 
 #if PLATFORM(COCOA)
+    bool suppressesConnectionTerminationOnSystemChange() const { return m_suppressesConnectionTerminationOnSystemChange; }
     RetainPtr<CFDataRef> sourceApplicationAuditData() const;
 #endif
 #if PLATFORM(COCOA) || USE(SOUP)
@@ -534,6 +535,7 @@ private:
     // multiple requests to clear the cache can come in before previous requests complete, and we need to wait for all of them.
     // In the future using WorkQueue and a counting semaphore would work, as would WorkQueue supporting the libdispatch concept of "work groups".
     dispatch_group_t m_clearCacheDispatchGroup { nullptr };
+    bool m_suppressesConnectionTerminationOnSystemChange { false };
 #endif
 
 #if ENABLE(CONTENT_EXTENSIONS)
