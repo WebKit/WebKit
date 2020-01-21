@@ -234,8 +234,8 @@ private:
     }
 
 #if CPU(ADDRESS64)
-    static constexpr unsigned s_freeBitsAtTop = 64 - WTF_CPU_EFFECTIVE_ADDRESS_WIDTH;
-    static constexpr uintptr_t s_maskCompositeValueForPointer = ((1ULL << WTF_CPU_EFFECTIVE_ADDRESS_WIDTH) - 1) & ~(8ULL - 1);
+    static constexpr unsigned s_freeBitsAtTop = 64 - OS_CONSTANT(EFFECTIVE_ADDRESS_WIDTH);
+    static constexpr uintptr_t s_maskCompositeValueForPointer = ((1ULL << OS_CONSTANT(EFFECTIVE_ADDRESS_WIDTH)) - 1) & ~(8ULL - 1);
     static uintptr_t buildCompositeValue(InlineCallFrame* inlineCallFrame, BytecodeIndex bytecodeIndex)
     {
         if (!bytecodeIndex)

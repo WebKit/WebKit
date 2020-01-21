@@ -45,7 +45,7 @@ Arg marshallCCallArgumentImpl(unsigned& argumentCount, unsigned& stackOffset, Va
         return Tmp(BankInfo::toArgumentRegister(argumentIndex));
 
     unsigned slotSize;
-    if (isARM64() && isIOS()) {
+    if (isARM64() && isDarwin()) {
         // Arguments are packed.
         slotSize = sizeofType(child->type());
     } else {

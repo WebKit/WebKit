@@ -37,11 +37,8 @@
 #include <wtf/MetaAllocatorHandle.h>
 #include <wtf/MetaAllocator.h>
 
-#if OS(IOS_FAMILY)
+#if OS(DARWIN)
 #include <libkern/OSCacheControl.h>
-#endif
-
-#if OS(IOS_FAMILY)
 #include <sys/mman.h>
 #endif
 

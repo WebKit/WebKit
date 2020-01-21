@@ -1,3 +1,13 @@
+2020-01-17  Sam Weinig  <weinig@apple.com>
+
+        Platform.h is out of control Part 8: Macros are used inconsistently
+        https://bugs.webkit.org/show_bug.cgi?id=206425
+
+        Reviewed by Darin Adler.
+
+        * bmalloc/BPlatform.h:
+        Update OS_EFFECTIVE_ADDRESS_WIDTH to match WTF definition, add needed OS macros.
+
 2020-01-20  David Kilzer  <ddkilzer@apple.com>
 
         Fix missing header guards and clean up empty files in bmalloc, WTF, JavaScriptCore

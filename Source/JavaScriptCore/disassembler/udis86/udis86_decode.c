@@ -26,7 +26,7 @@
 
 #include "config.h"
 
-#if USE(UDIS86)
+#if ENABLE(UDIS86)
 
 #include "udis86_udint.h"
 #include "udis86_types.h"
@@ -1266,7 +1266,7 @@ ud_decode(struct ud *u)
   return u->inp_ctr;
 }
 
-#endif // USE(UDIS86)
+#endif // ENABLE(UDIS86)
 
 /*
 vim: set ts=2 sw=2 expandtab

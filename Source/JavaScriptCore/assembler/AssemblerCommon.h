@@ -27,6 +27,15 @@
 
 namespace JSC {
 
+ALWAYS_INLINE constexpr bool isDarwin()
+{
+#if OS(DARWIN)
+    return true;
+#else
+    return false;
+#endif
+}
+
 ALWAYS_INLINE constexpr bool isIOS()
 {
 #if PLATFORM(IOS_FAMILY)

@@ -25,7 +25,7 @@
 
 #include "config.h"
 
-#if USE(ARM64_DISASSEMBLER)
+#if ENABLE(ARM64_DISASSEMBLER)
 
 #include "A64DOpcode.h"
 
@@ -1560,4 +1560,4 @@ const char* A64DOpcodeUnconditionalBranchRegister::format()
 
 } } // namespace JSC::ARM64Disassembler
 
-#endif // USE(ARM64_DISASSEMBLER)
+#endif // ENABLE(ARM64_DISASSEMBLER)

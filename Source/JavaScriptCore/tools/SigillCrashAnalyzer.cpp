@@ -33,7 +33,7 @@
 #include <mutex>
 #include <wtf/StdLibExtras.h>
 
-#if USE(ARM64_DISASSEMBLER)
+#if ENABLE(ARM64_DISASSEMBLER)
 #include "A64DOpcode.h"
 #endif
 
@@ -60,7 +60,7 @@ private:
     SigillCrashAnalyzer() { }
     void dumpCodeBlock(CodeBlock*, void* machinePC);
 
-#if USE(ARM64_DISASSEMBLER)
+#if ENABLE(ARM64_DISASSEMBLER)
     A64DOpcode m_arm64Opcode;
 #endif
 };

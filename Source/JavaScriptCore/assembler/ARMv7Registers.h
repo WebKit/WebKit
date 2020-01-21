@@ -36,7 +36,7 @@
 #define FOR_EACH_FP_REGISTER(macro)             \
     FOR_EACH_FP_DOUBLE_REGISTER(macro)
 
-#if !PLATFORM(IOS_FAMILY)
+#if !OS(DARWIN)
 #define FOR_EACH_GP_REGISTER(macro)             \
     macro(r0,  "r0",  0, 0)                     \
     macro(r1,  "r1",  0, 0)                     \

@@ -46,7 +46,7 @@ inline OpcodeID Interpreter::getOpcodeID(Opcode opcode)
 {
 #if ENABLE(COMPUTED_GOTO_OPCODES)
     ASSERT(isOpcode(opcode));
-#if USE(LLINT_EMBEDDED_OPCODE_ID)
+#if ENABLE(LLINT_EMBEDDED_OPCODE_ID)
     // The OpcodeID is embedded in the int32_t word preceding the location of
     // the LLInt code for the opcode (see the EMBED_OPCODE_ID_IF_NEEDED macro
     // in LowLevelInterpreter.cpp).
@@ -57,7 +57,7 @@ inline OpcodeID Interpreter::getOpcodeID(Opcode opcode)
     return opcodeID;
 #else
     return opcodeIDTable().get(opcode);
-#endif // USE(LLINT_EMBEDDED_OPCODE_ID)
+#endif // ENABLE(LLINT_EMBEDDED_OPCODE_ID)
     
 #else // not ENABLE(COMPUTED_GOTO_OPCODES)
     return opcode;

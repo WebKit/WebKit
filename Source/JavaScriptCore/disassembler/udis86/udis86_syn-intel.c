@@ -26,7 +26,7 @@
 
 #include "config.h"
 
-#if USE(UDIS86)
+#if ENABLE(UDIS86)
 
 #include "udis86_types.h"
 #include "udis86_extern.h"
@@ -224,7 +224,7 @@ ud_translate_intel(struct ud* u)
   }
 }
 
-#endif // USE(UDIS86)
+#endif // ENABLE(UDIS86)
 
 /*
 vim: set ts=2 sw=2 expandtab

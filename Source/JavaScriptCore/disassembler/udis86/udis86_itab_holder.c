@@ -25,7 +25,7 @@
 
 #include "config.h"
 
-#if USE(UDIS86)
+#if ENABLE(UDIS86)
 
 #include "udis86_itab.c"
 

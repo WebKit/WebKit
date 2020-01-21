@@ -29,14 +29,14 @@
 
 namespace JSC {
 
-#if USE(UDIS86)
+#if ENABLE(UDIS86)
 
 bool tryToDisassembleWithUDis86(const MacroAssemblerCodePtr<DisassemblyPtrTag>&, size_t, const char* prefix, PrintStream& out);
 
-#else // USE(UDIS86)
+#else // ENABLE(UDIS86)
 
 inline bool tryToDisassembleWithUDis86(const MacroAssemblerCodePtr<DisassemblyPtrTag>&, size_t, const char*, PrintStream&) { return false; }
 
-#endif // USE(UDIS86)
+#endif // ENABLE(UDIS86)
 
 } // namespace JSC

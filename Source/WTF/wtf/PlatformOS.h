@@ -41,7 +41,8 @@
 
 /* OS() - underlying operating system; only to be used for mandated low-level services like
    virtual memory, not to choose a GUI toolkit */
-#define OS(WTF_FEATURE) (defined WTF_OS_##WTF_FEATURE  && WTF_OS_##WTF_FEATURE)
+#define OS(WTF_FEATURE) (defined WTF_OS_##WTF_FEATURE && WTF_OS_##WTF_FEATURE)
+#define OS_CONSTANT(WTF_FEATURE) (WTF_OS_CONSTANT_##WTF_FEATURE)
 
 
 /* ==== OS() - underlying operating system; only to be used for mandated low-level services like
@@ -132,6 +133,18 @@
     || defined(__unix)      \
     || defined(__unix__)
 #define WTF_OS_UNIX 1
+#endif
+
+
+#if CPU(ADDRESS64)
+#if (OS(IOS) || OS(TVOS) || OS(WATCHOS)) && CPU(ARM64)
+#define WTF_OS_CONSTANT_EFFECTIVE_ADDRESS_WIDTH 36
+#else
+/* We strongly assume that effective address width is <= 48 in 64bit architectures (e.g. NaN boxing). */
+#define WTF_OS_CONSTANT_EFFECTIVE_ADDRESS_WIDTH 48
+#endif
+#else
+#define WTF_OS_CONSTANT_EFFECTIVE_ADDRESS_WIDTH 32
 #endif
 
 

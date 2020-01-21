@@ -1,3 +1,50 @@
+2020-01-17  Sam Weinig  <weinig@apple.com>
+
+        Platform.h is out of control Part 8: Macros are used inconsistently
+        https://bugs.webkit.org/show_bug.cgi?id=206425
+
+        Reviewed by Darin Adler.
+
+        * assembler/ARM64Assembler.h:
+        (JSC::ARM64Assembler::cacheFlush):
+        (JSC::ARM64Assembler::xOrSp):
+        (JSC::ARM64Assembler::xOrZr):
+        * assembler/ARM64Registers.h:
+        * assembler/ARMv7Assembler.h:
+        (JSC::ARMv7Assembler::cacheFlush):
+        * assembler/ARMv7Registers.h:
+        * assembler/AssemblerCommon.h:
+        (JSC::isDarwin):
+        * b3/air/AirCCallingConvention.cpp:
+        * jit/ExecutableAllocator.h:
+        * jit/ThunkGenerators.cpp:
+        * jsc.cpp:
+        * runtime/MathCommon.cpp:
+        Use OS(DARWIN) more consistently for darwin level functionality.
+
+        * bytecode/CodeOrigin.h:
+        * runtime/JSString.h:
+        Update to use OS_CONSTANT.
+
+        * disassembler/ARM64/A64DOpcode.cpp:
+        * disassembler/ARM64Disassembler.cpp:
+        * disassembler/UDis86Disassembler.cpp:
+        * disassembler/UDis86Disassembler.h:
+        * disassembler/X86Disassembler.cpp:
+        * disassembler/udis86/udis86.c:
+        * disassembler/udis86/udis86_decode.c:
+        * disassembler/udis86/udis86_itab_holder.c:
+        * disassembler/udis86/udis86_syn-att.c:
+        * disassembler/udis86/udis86_syn-intel.c:
+        * disassembler/udis86/udis86_syn.c:
+        * interpreter/Interpreter.cpp:
+        * interpreter/Interpreter.h:
+        * interpreter/InterpreterInlines.h:
+        (JSC::Interpreter::getOpcodeID):
+        * llint/LowLevelInterpreter.cpp:
+        * tools/SigillCrashAnalyzer.cpp:
+        Switch to using ENABLE rather than USE for features internal to WebKit 
+
 2020-01-20  Gus Caplan  <me@gus.host>
 
         Remove own toString from NativeError prototype

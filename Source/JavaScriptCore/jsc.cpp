@@ -135,7 +135,7 @@
 #include <windows.h>
 #endif
 
-#if PLATFORM(IOS_FAMILY) && CPU(ARM_THUMB2)
+#if OS(DARWIN) && CPU(ARM_THUMB2)
 #include <fenv.h>
 #include <arm/arch.h>
 #endif
@@ -2484,7 +2484,7 @@ static void startTimeoutThreadIfNeeded(VM& vm)
 
 int main(int argc, char** argv)
 {
-#if PLATFORM(IOS_FAMILY) && CPU(ARM_THUMB2)
+#if OS(DARWIN) && CPU(ARM_THUMB2)
     // Enabled IEEE754 denormal support.
     fenv_t env;
     fegetenv( &env );

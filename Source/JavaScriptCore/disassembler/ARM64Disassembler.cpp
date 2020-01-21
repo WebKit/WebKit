@@ -26,7 +26,7 @@
 #include "config.h"
 #include "Disassembler.h"
 
-#if USE(ARM64_DISASSEMBLER)
+#if ENABLE(ARM64_DISASSEMBLER)
 
 #include "A64DOpcode.h"
 #include "MacroAssemblerCodeRef.h"
@@ -53,5 +53,5 @@ bool tryToDisassemble(const MacroAssemblerCodePtr<DisassemblyPtrTag>& codePtr, s
 
 } // namespace JSC
 
-#endif // USE(ARM64_DISASSEMBLER)
+#endif // ENABLE(ARM64_DISASSEMBLER)
 

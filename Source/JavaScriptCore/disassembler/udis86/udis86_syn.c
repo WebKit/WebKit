@@ -26,7 +26,7 @@
 
 #include "config.h"
 
-#if USE(UDIS86)
+#if ENABLE(UDIS86)
 
 #include "udis86_types.h"
 #include "udis86_decode.h"
@@ -212,7 +212,7 @@ ud_syn_print_mem_disp(struct ud* u, const struct ud_operand *op, int sign)
   }
 }
 
-#endif // USE(UDIS86)
+#endif // ENABLE(UDIS86)
 
 /*
 vim: set ts=2 sw=2 expandtab

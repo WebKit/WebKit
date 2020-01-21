@@ -82,19 +82,6 @@
    belong as part of Platform.h at all. */
 
 
-
-/* FIXME: Rename WTF_CPU_EFFECTIVE_ADDRESS_WIDTH to WTF_OS_EFFECTIVE_ADDRESS_WIDTH, as it is an OS feature, not a CPU feature. */
-#if CPU(ADDRESS64)
-#if (OS(IOS) || OS(TVOS) || OS(WATCHOS)) && CPU(ARM64)
-#define WTF_CPU_EFFECTIVE_ADDRESS_WIDTH 36
-#else
-/* We strongly assume that effective address width is <= 48 in 64bit architectures (e.g. NaN boxing). */
-#define WTF_CPU_EFFECTIVE_ADDRESS_WIDTH 48
-#endif
-#else
-#define WTF_CPU_EFFECTIVE_ADDRESS_WIDTH 32
-#endif
-
 #if PLATFORM(GTK)
 #define GLIB_VERSION_MIN_REQUIRED GLIB_VERSION_2_36
 #define GDK_VERSION_MIN_REQUIRED GDK_VERSION_3_6
@@ -149,16 +136,6 @@
 /* FIXME: Remove dependence on ENABLE(WEB_RTC). */
 #if PLATFORM(COCOA) && ENABLE(WEB_RTC)
 #define USE_LIBWEBRTC 1
-#endif
-
-/* FIXME: This is used to "turn on a specific feature of WebKit", so should be converted to an ENABLE macro. */
-/* This feature works by embedding the OpcodeID in the 32 bit just before the generated LLint code
-   that executes each opcode. It cannot be supported by the CLoop since there's no way to embed the
-   OpcodeID word in the CLoop's switch statement cases. It is also currently not implemented for MSVC.
-*/
-#if !defined(USE_LLINT_EMBEDDED_OPCODE_ID) && !ENABLE(C_LOOP) && !COMPILER(MSVC) && \
-    (CPU(X86) || CPU(X86_64) || CPU(ARM64) || (CPU(ARM_THUMB2) && OS(DARWIN)))
-#define USE_LLINT_EMBEDDED_OPCODE_ID 1
 #endif
 
 

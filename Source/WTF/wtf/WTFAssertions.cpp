@@ -50,8 +50,8 @@ static_assert(sizeof(RefPtr<DummyStruct>) == sizeof(DummyStruct*), "");
 static_assert(sizeof(RefCountedArray<DummyStruct>) == sizeof(void*), "");
 
 #if OS(DARWIN) && CPU(ADDRESS64)
-static_assert(MACH_VM_MAX_ADDRESS <= ((1ULL << WTF_CPU_EFFECTIVE_ADDRESS_WIDTH) - 1));
+static_assert(MACH_VM_MAX_ADDRESS <= ((1ULL << OS_CONSTANT(EFFECTIVE_ADDRESS_WIDTH)) - 1));
 #endif
-    
+
 } // namespace WTF
 

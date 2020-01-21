@@ -505,7 +505,7 @@ JSValue CLoop::execute(OpcodeID entryOpcodeID, void* executableAddress, VM* vm, 
 #define OFFLINE_ASM_BEGIN   asm (
 #define OFFLINE_ASM_END     );
 
-#if USE(LLINT_EMBEDDED_OPCODE_ID)
+#if ENABLE(LLINT_EMBEDDED_OPCODE_ID)
 #define EMBED_OPCODE_ID_IF_NEEDED(__opcode) ".int " __opcode##_value_string "\n"
 #else
 #define EMBED_OPCODE_ID_IF_NEEDED(__opcode)

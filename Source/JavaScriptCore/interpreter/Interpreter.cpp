@@ -353,7 +353,7 @@ Interpreter::~Interpreter()
 }
 
 #if ENABLE(COMPUTED_GOTO_OPCODES)
-#if !USE(LLINT_EMBEDDED_OPCODE_ID) || ASSERT_ENABLED
+#if !ENABLE(LLINT_EMBEDDED_OPCODE_ID) || ASSERT_ENABLED
 HashMap<Opcode, OpcodeID>& Interpreter::opcodeIDTable()
 {
     static NeverDestroyed<HashMap<Opcode, OpcodeID>> opcodeIDTable;
@@ -367,7 +367,7 @@ HashMap<Opcode, OpcodeID>& Interpreter::opcodeIDTable()
 
     return opcodeIDTable;
 }
-#endif // !USE(LLINT_EMBEDDED_OPCODE_ID) || ASSERT_ENABLED
+#endif // !ENABLE(LLINT_EMBEDDED_OPCODE_ID) || ASSERT_ENABLED
 #endif // ENABLE(COMPUTED_GOTO_OPCODES)
 
 #if ASSERT_ENABLED

@@ -26,7 +26,7 @@
 #include "config.h"
 #include "UDis86Disassembler.h"
 
-#if USE(UDIS86)
+#if ENABLE(UDIS86)
 
 #include "MacroAssemblerCodeRef.h"
 #include "udis86.h"
@@ -59,5 +59,5 @@ bool tryToDisassembleWithUDis86(const MacroAssemblerCodePtr<DisassemblyPtrTag>& 
 
 } // namespace JSC
 
-#endif // USE(UDIS86)
+#endif // ENABLE(UDIS86)
 

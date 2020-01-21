@@ -276,7 +276,7 @@ public:
     static_assert(sizeof(uintptr_t) == sizeof(uint64_t), "");
     class CompactFibers {
     public:
-        static constexpr uintptr_t addressMask = (1ULL << WTF_CPU_EFFECTIVE_ADDRESS_WIDTH) - 1;
+        static constexpr uintptr_t addressMask = (1ULL << OS_CONSTANT(EFFECTIVE_ADDRESS_WIDTH)) - 1;
         JSString* fiber1() const
         {
 #if CPU(LITTLE_ENDIAN)

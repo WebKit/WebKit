@@ -58,6 +58,7 @@
 
 #if BOS(DARWIN) && !defined(BUILDING_WITH_CMAKE)
 #if TARGET_OS_IOS
+#define BOS_IOS 1
 #define BPLATFORM_IOS 1
 #if TARGET_OS_SIMULATOR
 #define BPLATFORM_IOS_SIMULATOR 1
@@ -69,6 +70,7 @@
 #define BPLATFORM_IOS_FAMILY_SIMULATOR 1
 #endif
 #elif TARGET_OS_MAC
+#define BOS_MAC 1
 #define BPLATFORM_MAC 1
 #endif
 #endif
@@ -78,10 +80,12 @@
 #endif
 
 #if defined(TARGET_OS_WATCH) && TARGET_OS_WATCH
+#define BOS_WATCHOS 1
 #define BPLATFORM_WATCHOS 1
 #endif
 
 #if defined(TARGET_OS_TV) && TARGET_OS_TV
+#define BOS_APPLETV 1
 #define BPLATFORM_APPLETV 1
 #endif
 
@@ -259,7 +263,7 @@
 #endif
 
 #if BCPU(ADDRESS64)
-#if BOS(DARWIN) && BCPU(ARM64)
+#if (BOS(IOS) || BOS(TVOS) || BOS(WATCHOS)) && BCPU(ARM64)
 #define BOS_EFFECTIVE_ADDRESS_WIDTH 36
 #else
 /* We strongly assume that effective address width is <= 48 in 64bit architectures (e.g. NaN boxing). */

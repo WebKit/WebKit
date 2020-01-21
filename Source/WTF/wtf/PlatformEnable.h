@@ -619,10 +619,6 @@ the public iOS SDK. See <https://webkit.org/b/179167>. */
 #define ENABLE_OFFSCREEN_CANVAS 0
 #endif
 
-#if !defined(ENABLE_OPENTYPE_VERTICAL)
-#define ENABLE_OPENTYPE_VERTICAL 0
-#endif
-
 #if !defined(ENABLE_ORIENTATION_EVENTS)
 #define ENABLE_ORIENTATION_EVENTS 0
 #endif
@@ -740,7 +736,7 @@ the public iOS SDK. See <https://webkit.org/b/179167>. */
 /* JIT Features */
 
 /* The JIT is enabled by default on all x86-64 & ARM64 platforms. */
-#if !defined(ENABLE_JIT) &&  (CPU(X86_64) || CPU(ARM64)) && !CPU(APPLE_ARMV7K)
+#if !defined(ENABLE_JIT) && (CPU(X86_64) || CPU(ARM64)) && !CPU(APPLE_ARMV7K)
 #define ENABLE_JIT 1
 #endif
 
@@ -781,20 +777,18 @@ the public iOS SDK. See <https://webkit.org/b/179167>. */
 #define ENABLE_FTL_JIT 0
 #endif
 
-/* FIXME: This is used to "turn on a specific feature of WebKit", so should be converted to an ENABLE macro. */
 /* If possible, try to enable a disassembler. This is optional. We proceed in two
    steps: first we try to find some disassembler that we can use, and then we
    decide if the high-level disassembler API can be enabled. */
-#if !defined(USE_UDIS86) && ENABLE(JIT) && CPU(X86_64) && !USE(CAPSTONE)
-#define USE_UDIS86 1
+#if !defined(ENABLE_UDIS86) && ENABLE(JIT) && CPU(X86_64) && !USE(CAPSTONE)
+#define ENABLE_UDIS86 1
 #endif
 
-/* FIXME: This is used to "turn on a specific feature of WebKit", so should be converted to an ENABLE macro. */
-#if !defined(USE_ARM64_DISASSEMBLER) && ENABLE(JIT) && CPU(ARM64) && !USE(CAPSTONE)
-#define USE_ARM64_DISASSEMBLER 1
+#if !defined(ENABLE_ARM64_DISASSEMBLER) && ENABLE(JIT) && CPU(ARM64) && !USE(CAPSTONE)
+#define ENABLE_ARM64_DISASSEMBLER 1
 #endif
 
-#if !defined(ENABLE_DISASSEMBLER) && (USE(UDIS86) || USE(ARM64_DISASSEMBLER) || (ENABLE(JIT) && USE(CAPSTONE)))
+#if !defined(ENABLE_DISASSEMBLER) && (ENABLE(UDIS86) || ENABLE(ARM64_DISASSEMBLER) || (ENABLE(JIT) && USE(CAPSTONE)))
 #define ENABLE_DISASSEMBLER 1
 #endif
 
@@ -806,9 +800,10 @@ the public iOS SDK. See <https://webkit.org/b/179167>. */
 #endif
 
 /* Enable the DFG JIT on ARMv7.  Only tested on iOS, Linux, and FreeBSD. */
-#if (CPU(ARM_THUMB2) || CPU(ARM64)) && (PLATFORM(IOS_FAMILY) || OS(LINUX) || OS(FREEBSD))
+#if (CPU(ARM_THUMB2) || CPU(ARM64)) && (OS(DARWIN) || OS(LINUX) || OS(FREEBSD))
 #define ENABLE_DFG_JIT 1
 #endif
+
 /* Enable the DFG JIT on MIPS. */
 #if CPU(MIPS)
 #define ENABLE_DFG_JIT 1
@@ -956,7 +951,7 @@ the public iOS SDK. See <https://webkit.org/b/179167>. */
 #endif
 
 /* CSS Selector JIT Compiler */
-#if !defined(ENABLE_CSS_SELECTOR_JIT) && ((CPU(X86_64) || CPU(ARM64) || (CPU(ARM_THUMB2) && PLATFORM(IOS_FAMILY))) && ENABLE(JIT) && (OS(DARWIN) || PLATFORM(GTK) || PLATFORM(WPE)))
+#if !defined(ENABLE_CSS_SELECTOR_JIT) && ((CPU(X86_64) || CPU(ARM64) || (CPU(ARM_THUMB2) && OS(DARWIN))) && ENABLE(JIT) && (OS(DARWIN) || PLATFORM(GTK) || PLATFORM(WPE)))
 #define ENABLE_CSS_SELECTOR_JIT 1
 #endif
 
@@ -992,15 +987,11 @@ the public iOS SDK. See <https://webkit.org/b/179167>. */
 #define ENABLE_RESOURCE_USAGE 1
 #endif
 
-/* FIXME: Document or remove explicit undef. */
-#if PLATFORM(GTK) || PLATFORM(WPE)
-#undef ENABLE_OPENTYPE_VERTICAL
+#if !defined(ENABLE_OPENTYPE_VERTICAL) && PLATFORM(GTK) || PLATFORM(WPE)
 #define ENABLE_OPENTYPE_VERTICAL 1
 #endif
 
-/* FIXME: Document or remove explicit undef. */
-#if (OS(DARWIN) && USE(CG)) || (USE(FREETYPE) && !PLATFORM(GTK)) || (PLATFORM(WIN) && (USE(CG) || USE(CAIRO)))
-#undef ENABLE_OPENTYPE_MATH
+#if !defined(ENABLE_OPENTYPE_MATH) && (OS(DARWIN) && USE(CG)) || (USE(FREETYPE) && !PLATFORM(GTK)) || (PLATFORM(WIN) && (USE(CG) || USE(CAIRO)))
 #define ENABLE_OPENTYPE_MATH 1
 #endif
 
@@ -1015,8 +1006,7 @@ the public iOS SDK. See <https://webkit.org/b/179167>. */
 /* Disable SharedArrayBuffers until Spectre security concerns are mitigated. */
 #define ENABLE_SHARED_ARRAY_BUFFER 0
 
-/* FIXME: __LP64__ can probably be removed now that 32-bit macOS is no longer supported. */
-#if PLATFORM(MAC) && defined(__LP64__)
+#if PLATFORM(MAC)
 #define ENABLE_WEB_PLAYBACK_CONTROLS_MANAGER 1
 #endif
 
@@ -1040,6 +1030,14 @@ the public iOS SDK. See <https://webkit.org/b/179167>. */
 
 #if !defined(ENABLE_PLATFORM_DRIVEN_TEXT_CHECKING) && PLATFORM(MACCATALYST)
 #define ENABLE_PLATFORM_DRIVEN_TEXT_CHECKING 1
+#endif
+
+/* This feature works by embedding the OpcodeID in the 32 bit just before the generated LLint code
+   that executes each opcode. It cannot be supported by the CLoop since there's no way to embed the
+   OpcodeID word in the CLoop's switch statement cases. It is also currently not implemented for MSVC.
+*/
+#if !defined(ENABLE_LLINT_EMBEDDED_OPCODE_ID) && !ENABLE(C_LOOP) && !COMPILER(MSVC) && (CPU(X86) || CPU(X86_64) || CPU(ARM64) || (CPU(ARM_THUMB2) && OS(DARWIN)))
+#define ENABLE_LLINT_EMBEDDED_OPCODE_ID 1
 #endif
 
 

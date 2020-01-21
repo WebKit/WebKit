@@ -172,7 +172,7 @@ ALWAYS_INLINE bool equal(const UChar* aUChar, const UChar* bUChar, unsigned leng
 
     return true;
 }
-#elif PLATFORM(IOS_FAMILY) && WTF_ARM_ARCH_AT_LEAST(7) && !ASAN_ENABLED
+#elif OS(DARWIN) && WTF_ARM_ARCH_AT_LEAST(7) && !ASAN_ENABLED
 ALWAYS_INLINE bool equal(const LChar* a, const LChar* b, unsigned length)
 {
     bool isEqual = false;
