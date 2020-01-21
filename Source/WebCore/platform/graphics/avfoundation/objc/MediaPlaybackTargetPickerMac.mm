@@ -30,7 +30,7 @@
 
 #import "Logging.h"
 #import <WebCore/FloatRect.h>
-#import <WebCore/MediaPlaybackTargetMac.h>
+#import <WebCore/MediaPlaybackTargetCocoa.h>
 #import <objc/runtime.h>
 #import <pal/cf/CoreMediaSoftLink.h>
 #import <pal/spi/cocoa/AVKitSPI.h>
@@ -79,7 +79,7 @@ Ref<MediaPlaybackTarget> MediaPlaybackTargetPickerMac::playbackTarget()
 {
     AVOutputContext* context = m_outputDeviceMenuController ? [m_outputDeviceMenuController.get() outputContext] : nullptr;
 
-    return WebCore::MediaPlaybackTargetMac::create(context);
+    return WebCore::MediaPlaybackTargetCocoa::create(context);
 }
 
 AVOutputDeviceMenuController *MediaPlaybackTargetPickerMac::devicePicker()

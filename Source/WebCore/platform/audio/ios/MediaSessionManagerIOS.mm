@@ -29,6 +29,7 @@
 #if PLATFORM(IOS_FAMILY)
 
 #import "Logging.h"
+#import "MediaPlaybackTargetCocoa.h"
 #import "MediaPlayer.h"
 #import "PlatformMediaSession.h"
 #import "RuntimeApplicationChecks.h"
@@ -40,6 +41,7 @@
 #import <pal/ios/UIKitSoftLink.h>
 #import <pal/spi/ios/CelestialSPI.h>
 #import <pal/spi/ios/UIKitSPI.h>
+#import <pal/spi/mac/AVFoundationSPI.h>
 #import <wtf/BlockObjCExceptions.h>
 #import <wtf/MainThread.h>
 #import <wtf/RAMSize.h>
@@ -62,6 +64,8 @@ SOFT_LINK_CONSTANT_MAY_FAIL(Celestial, AVSystemController_CarPlayIsConnectedNoti
 SOFT_LINK_CONSTANT_MAY_FAIL(Celestial, AVSystemController_ServerConnectionDiedNotification, NSString *)
 SOFT_LINK_CONSTANT_MAY_FAIL(Celestial, AVSystemController_ActiveAudioRouteDidChangeNotification, NSString *)
 SOFT_LINK_CONSTANT_MAY_FAIL(Celestial, AVSystemController_ActiveAudioRouteDidChangeNotificationParameter_ShouldPause, NSString *)
+SOFT_LINK_CONSTANT_MAY_FAIL(Celestial, AVSystemController_PickedRouteAttribute, NSString *)
+SOFT_LINK_CONSTANT_MAY_FAIL(Celestial, AVSystemController_RouteDescriptionKey_RouteSupportsAirPlayVideo, NSString *)
 #endif
 
 using namespace WebCore;
@@ -245,6 +249,18 @@ void MediaSessionManageriOS::activeAudioRouteDidChange(Optional<bool>&& shouldPa
         if (session.canProduceAudio() && !session.shouldOverridePauseDuringRouteChange())
             session.pauseSession();
     });
+}
+
+void MediaSessionManageriOS::activeVideoRouteDidChange(Optional<bool>&& supportsAirPlayVideo)
+{
+    auto nowPlayingSession = nowPlayingEligibleSession();
+    if (!nowPlayingSession)
+        return;
+
+    auto shouldPlayToPlaybackTarget = supportsAirPlayVideo.valueOr(false);
+    auto playbackTarget = MediaPlaybackTargetCocoa::create([PAL::getAVOutputContextClass() sharedAudioPresentationOutputContext]);
+    nowPlayingSession->setShouldPlayToPlaybackTarget(shouldPlayToPlaybackTarget);
+    nowPlayingSession->setPlaybackTarget(WTFMove(playbackTarget));
 }
 #endif
 
@@ -523,9 +539,21 @@ void MediaSessionManageriOS::activeAudioRouteDidChange(Optional<bool>&& shouldPa
             shouldPause = nsShouldPause.boolValue;
     }
 
-    callOnWebThreadOrDispatchAsyncOnMainThread([protectedSelf = retainPtr(self), shouldPause = WTFMove(shouldPause)]() mutable {
-        if (auto* callback = protectedSelf->_callback)
+    Optional<bool> supportsAirPlayVideo;
+    if (canLoadAVSystemController_PickedRouteAttribute() && canLoadAVSystemController_RouteDescriptionKey_RouteSupportsAirPlayVideo()) {
+        NSDictionary* pickedRoute = [[getAVSystemControllerClass() sharedAVSystemController] attributeForKey:getAVSystemController_PickedRouteAttribute()];
+        if ([pickedRoute isKindOfClass:NSDictionary.class]) {
+            NSNumber* nsSupportsAirPlayVideo = [pickedRoute valueForKey:getAVSystemController_RouteDescriptionKey_RouteSupportsAirPlayVideo()];
+            if (nsSupportsAirPlayVideo)
+                supportsAirPlayVideo = nsSupportsAirPlayVideo.boolValue;
+        }
+    }
+
+    callOnWebThreadOrDispatchAsyncOnMainThread([protectedSelf = retainPtr(self), shouldPause = WTFMove(shouldPause), supportsAirPlayVideo = WTFMove(supportsAirPlayVideo)]() mutable {
+        if (auto* callback = protectedSelf->_callback) {
             callback->activeAudioRouteDidChange(WTFMove(shouldPause));
+            callback->activeVideoRouteDidChange(WTFMove(supportsAirPlayVideo));
+        }
     });
 
 }

@@ -33,11 +33,11 @@
 
 namespace WebCore {
 
-class MediaPlaybackTargetMac : public MediaPlaybackTarget {
+class MediaPlaybackTargetCocoa : public MediaPlaybackTarget {
 public:
     WEBCORE_EXPORT static Ref<MediaPlaybackTarget> create(AVOutputContext *);
 
-    virtual ~MediaPlaybackTargetMac();
+    virtual ~MediaPlaybackTargetCocoa();
 
     TargetType targetType() const override { return AVFoundation; }
 
@@ -49,15 +49,15 @@ public:
     AVOutputContext *outputContext() const { return m_outputContext.get(); }
 
 protected:
-    MediaPlaybackTargetMac(AVOutputContext *);
+    MediaPlaybackTargetCocoa(AVOutputContext *);
 
     RetainPtr<AVOutputContext> m_outputContext;
     mutable MediaPlaybackTargetContext m_context;
     String m_deviceName;
 };
 
-MediaPlaybackTargetMac* toMediaPlaybackTargetMac(MediaPlaybackTarget*);
-const MediaPlaybackTargetMac* toMediaPlaybackTargetMac(const MediaPlaybackTarget*);
+MediaPlaybackTargetCocoa* toMediaPlaybackTargetCocoa(MediaPlaybackTarget*);
+const MediaPlaybackTargetCocoa* toMediaPlaybackTargetCocoa(const MediaPlaybackTarget*);
 
 }
 

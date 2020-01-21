@@ -24,9 +24,9 @@
  */
 
 #import "config.h"
-#import "MediaPlaybackTargetMac.h"
+#import "MediaPlaybackTargetCocoa.h"
 
-#if ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS_FAMILY)
+#if ENABLE(WIRELESS_PLAYBACK_TARGET)
 
 #import <objc/runtime.h>
 #import <pal/spi/mac/AVFoundationSPI.h>
@@ -35,33 +35,33 @@
 
 namespace WebCore {
 
-Ref<MediaPlaybackTarget> MediaPlaybackTargetMac::create(AVOutputContext *context)
+Ref<MediaPlaybackTarget> MediaPlaybackTargetCocoa::create(AVOutputContext *context)
 {
-    return adoptRef(*new MediaPlaybackTargetMac(context));
+    return adoptRef(*new MediaPlaybackTargetCocoa(context));
 }
 
-MediaPlaybackTargetMac::MediaPlaybackTargetMac(AVOutputContext *context)
+MediaPlaybackTargetCocoa::MediaPlaybackTargetCocoa(AVOutputContext *context)
     : MediaPlaybackTarget()
     , m_outputContext(context)
 {
 }
 
-MediaPlaybackTargetMac::~MediaPlaybackTargetMac()
+MediaPlaybackTargetCocoa::~MediaPlaybackTargetCocoa()
 {
 }
 
-const MediaPlaybackTargetContext& MediaPlaybackTargetMac::targetContext() const
+const MediaPlaybackTargetContext& MediaPlaybackTargetCocoa::targetContext() const
 {
     m_context = MediaPlaybackTargetContext(m_outputContext.get());
     return m_context;
 }
 
-bool MediaPlaybackTargetMac::hasActiveRoute() const
+bool MediaPlaybackTargetCocoa::hasActiveRoute() const
 {
     return m_outputContext && m_outputContext.get().deviceName;
 }
 
-String MediaPlaybackTargetMac::deviceName() const
+String MediaPlaybackTargetCocoa::deviceName() const
 {
     if (m_outputContext)
         return m_outputContext.get().deviceName;
@@ -69,17 +69,17 @@ String MediaPlaybackTargetMac::deviceName() const
     return emptyString();
 }
 
-MediaPlaybackTargetMac* toMediaPlaybackTargetMac(MediaPlaybackTarget* rep)
+MediaPlaybackTargetCocoa* toMediaPlaybackTargetCocoa(MediaPlaybackTarget* rep)
 {
-    return const_cast<MediaPlaybackTargetMac*>(toMediaPlaybackTargetMac(const_cast<const MediaPlaybackTarget*>(rep)));
+    return const_cast<MediaPlaybackTargetCocoa*>(toMediaPlaybackTargetCocoa(const_cast<const MediaPlaybackTarget*>(rep)));
 }
 
-const MediaPlaybackTargetMac* toMediaPlaybackTargetMac(const MediaPlaybackTarget* rep)
+const MediaPlaybackTargetCocoa* toMediaPlaybackTargetCocoa(const MediaPlaybackTarget* rep)
 {
     ASSERT_WITH_SECURITY_IMPLICATION(rep->targetType() == MediaPlaybackTarget::AVFoundation);
-    return static_cast<const MediaPlaybackTargetMac*>(rep);
+    return static_cast<const MediaPlaybackTargetCocoa*>(rep);
 }
 
 } // namespace WebCore
 
-#endif // ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS_FAMILY)
+#endif // ENABLE(WIRELESS_PLAYBACK_TARGET)

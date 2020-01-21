@@ -242,7 +242,7 @@ list(APPEND WebCore_SOURCES
     platform/graphics/avfoundation/CDMPrivateMediaSourceAVFObjC.mm
     platform/graphics/avfoundation/InbandMetadataTextTrackPrivateAVF.cpp
     platform/graphics/avfoundation/InbandTextTrackPrivateAVF.cpp
-    platform/graphics/avfoundation/MediaPlaybackTargetMac.mm
+    platform/graphics/avfoundation/MediaPlaybackTargetCocoa.mm
     platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.cpp
     platform/graphics/avfoundation/MediaSelectionGroupAVFObjC.mm
 
@@ -507,7 +507,7 @@ list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/gamepad/mac/HIDGamepad.h
     platform/gamepad/mac/HIDGamepadProvider.h
 
-    platform/graphics/avfoundation/MediaPlaybackTargetMac.h
+    platform/graphics/avfoundation/MediaPlaybackTargetCocoa.h
     platform/graphics/avfoundation/WebMediaSessionManagerMac.h
 
     platform/graphics/avfoundation/objc/AVAssetMIMETypeCache.h

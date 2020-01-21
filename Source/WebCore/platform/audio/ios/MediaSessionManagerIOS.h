@@ -51,6 +51,7 @@ public:
     void carPlayServerDied();
     void updateCarPlayIsConnected(Optional<bool>&&);
     void activeAudioRouteDidChange(Optional<bool>&&);
+    void activeVideoRouteDidChange(Optional<bool>&&);
 #endif
 
 private:
