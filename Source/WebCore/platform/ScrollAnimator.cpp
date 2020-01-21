@@ -35,6 +35,7 @@
 #include "FloatPoint.h"
 #include "LayoutSize.h"
 #include "PlatformWheelEvent.h"
+#include "ScrollAnimationSmooth.h"
 #include "ScrollableArea.h"
 #include <algorithm>
 
@@ -52,6 +53,18 @@ ScrollAnimator::ScrollAnimator(ScrollableArea& scrollableArea)
 #if ENABLE(CSS_SCROLL_SNAP) || ENABLE(RUBBER_BANDING)
     , m_scrollController(*this)
 #endif
+    , m_animationProgrammaticScroll(makeUnique<ScrollAnimationSmooth>(scrollableArea, m_currentPosition, [this](FloatPoint&& position) {
+        auto previousScrollType = m_scrollableArea.currentScrollType();
+        m_scrollableArea.setCurrentScrollType(ScrollType::Programmatic);
+        bool updated = m_scrollableArea.requestScrollPositionUpdate(roundedIntPoint(position));
+        m_scrollableArea.setCurrentScrollType(previousScrollType);
+        if (updated)
+            return;
+
+        FloatSize delta = position - m_currentPosition;
+        m_currentPosition = WTFMove(position);
+        notifyPositionChanged(delta);
+    }))
 {
 }
 
@@ -73,6 +86,14 @@ bool ScrollAnimator::scroll(ScrollbarOrientation orientation, ScrollGranularity,
     m_currentPosition = newPosition;
     notifyPositionChanged(newPosition - currentPosition);
     return true;
+}
+
+void ScrollAnimator::scrollToOffset(const FloatPoint& offset)
+{
+    m_animationProgrammaticScroll->setCurrentPosition(m_currentPosition);
+    auto newPosition = ScrollableArea::scrollPositionFromOffset(offset, toFloatSize(m_scrollableArea.scrollOrigin()));
+    m_animationProgrammaticScroll->scroll(newPosition);
+    m_scrollableArea.setScrollBehaviorStatus(ScrollBehaviorStatus::InNonNativeAnimation);
 }
 
 void ScrollAnimator::scrollToOffsetWithoutAnimation(const FloatPoint& offset, ScrollClamping)
@@ -244,5 +265,34 @@ void ScrollAnimator::removeWheelEventTestCompletionDeferralForReason(WheelEventT
     m_wheelEventTestMonitor->removeDeferralForReason(identifier, reason);
 }
 #endif
+
+void ScrollAnimator::cancelAnimations()
+{
+#if !USE(REQUEST_ANIMATION_FRAME_TIMER)
+    m_animationProgrammaticScroll->stop();
+#endif
+}
+
+void ScrollAnimator::serviceScrollAnimations()
+{
+#if !USE(REQUEST_ANIMATION_FRAME_TIMER)
+    m_animationProgrammaticScroll->serviceAnimation();
+#endif
+}
+
+void ScrollAnimator::willEndLiveResize()
+{
+    m_animationProgrammaticScroll->updateVisibleLengths();
+}
+
+void ScrollAnimator::didAddVerticalScrollbar(Scrollbar*)
+{
+    m_animationProgrammaticScroll->updateVisibleLengths();
+}
+
+void ScrollAnimator::didAddHorizontalScrollbar(Scrollbar*)
+{
+    m_animationProgrammaticScroll->updateVisibleLengths();
+}
 
 } // namespace WebCore

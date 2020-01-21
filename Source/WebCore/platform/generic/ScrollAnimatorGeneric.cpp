@@ -162,6 +162,8 @@ void ScrollAnimatorGeneric::willEndLiveResize()
 
 void ScrollAnimatorGeneric::updatePosition(FloatPoint&& position)
 {
+    if (m_scrollableArea.requestScrollPositionUpdate(roundedIntPoint(position)))
+        return;
     FloatSize delta = position - m_currentPosition;
     m_currentPosition = WTFMove(position);
     notifyPositionChanged(delta);

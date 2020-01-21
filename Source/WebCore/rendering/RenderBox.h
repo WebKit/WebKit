@@ -247,8 +247,9 @@ public:
     virtual int scrollTop() const;
     virtual int scrollWidth() const;
     virtual int scrollHeight() const;
-    virtual void setScrollLeft(int, ScrollType, ScrollClamping = ScrollClamping::Clamped);
-    virtual void setScrollTop(int, ScrollType, ScrollClamping = ScrollClamping::Clamped);
+    virtual void setScrollLeft(int, ScrollType, bool animated = false, ScrollClamping = ScrollClamping::Clamped);
+    virtual void setScrollTop(int, ScrollType, bool animated = false, ScrollClamping = ScrollClamping::Clamped);
+    void setScrollPosition(const ScrollPosition&, ScrollType, bool animated = false, ScrollClamping = ScrollClamping::Clamped);
 
     LayoutUnit marginTop() const override { return m_marginBox.top(); }
     LayoutUnit marginBottom() const override { return m_marginBox.bottom(); }
