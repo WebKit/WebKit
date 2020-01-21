@@ -1,5 +1,17 @@
 2020-01-21  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK][WPE] Enable WebGL by default
+        https://bugs.webkit.org/show_bug.cgi?id=205335
+
+        Reviewed by Adrian Perez de Castro.
+
+        Update the unit test.
+
+        * TestWebKitAPI/Tests/WebKitGLib/TestWebKitSettings.cpp:
+        (testWebKitSettings):
+
+2020-01-21  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK][WPE] Enable WebAudio by default
         https://bugs.webkit.org/show_bug.cgi?id=205334
 

@@ -1062,17 +1062,18 @@ static void webkit_settings_class_init(WebKitSettingsClass* klass)
     /**
     * WebKitSettings:enable-webgl:
     *
-    * Enable or disable support for WebGL on pages. WebGL is an experimental
-    * proposal for allowing web pages to use OpenGL ES-like calls directly. The
-    * standard is currently a work-in-progress by the Khronos Group.
+    * Enable or disable support for WebGL on pages. WebGL enables web
+    * content to use an API based on OpenGL ES 2.0.
     */
-    g_object_class_install_property(gObjectClass,
-                                    PROP_ENABLE_WEBGL,
-                                    g_param_spec_boolean("enable-webgl",
-                                                         _("Enable WebGL"),
-                                                         _("Whether WebGL content should be rendered"),
-                                                         FALSE,
-                                                         readWriteConstructParamFlags));
+    g_object_class_install_property(
+        gObjectClass,
+        PROP_ENABLE_WEBGL,
+        g_param_spec_boolean(
+            "enable-webgl",
+            _("Enable WebGL"),
+            _("Whether WebGL content should be rendered"),
+            TRUE,
+            readWriteConstructParamFlags));
 
     /**
      * WebKitSettings:allow-modal-dialogs:

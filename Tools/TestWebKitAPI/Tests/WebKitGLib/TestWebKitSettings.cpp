@@ -236,10 +236,10 @@ static void testWebKitSettings(Test*, gconstpointer)
     webkit_settings_set_enable_webaudio(settings, FALSE);
     g_assert_false(webkit_settings_get_enable_webaudio(settings));
 
-    // WebGL is disabled by default.
-    g_assert_false(webkit_settings_get_enable_webgl(settings));
-    webkit_settings_set_enable_webgl(settings, TRUE);
+    // WebGL is enabled by default.
     g_assert_true(webkit_settings_get_enable_webgl(settings));
+    webkit_settings_set_enable_webgl(settings, FALSE);
+    g_assert_false(webkit_settings_get_enable_webgl(settings));
 
     // Allow Modal Dialogs is disabled by default.
     g_assert_false(webkit_settings_get_allow_modal_dialogs(settings));
