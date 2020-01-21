@@ -1,3 +1,21 @@
+2020-01-21  Tim Horton  <timothy_horton@apple.com>
+
+        macCatalyst: Two-finger click is dispatched to DOM as left click
+        https://bugs.webkit.org/show_bug.cgi?id=206549
+
+        Reviewed by Simon Fraser.
+
+        * UIProcess/ios/WKMouseGestureRecognizer.mm:
+        (-[WKMouseGestureRecognizer createMouseEventWithType:forEvent:]):
+        (-[WKMouseGestureRecognizer touchesBegan:withEvent:]):
+        (-[WKMouseGestureRecognizer touchesMoved:withEvent:]):
+        (-[WKMouseGestureRecognizer touchesEnded:withEvent:]):
+        (-[WKMouseGestureRecognizer _hoverEntered:withEvent:]):
+        (-[WKMouseGestureRecognizer _hoverMoved:withEvent:]):
+        (-[WKMouseGestureRecognizer _hoverExited:withEvent:]):
+        (-[WKMouseGestureRecognizer createMouseEventWithType:]): Deleted.
+        We correctly say button=2 for ctrl-click, but not for secondary-button click.
+
 2020-01-21  Alex Christensen  <achristensen@webkit.org>
 
         Revert suppressesConnectionTerminationOnSystemChange part of r254081
