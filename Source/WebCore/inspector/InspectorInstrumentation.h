@@ -108,7 +108,7 @@ class WebGPUDevice;
 class WebGPUSwapChain;
 #endif
 
-enum class StorageType;
+enum class StorageType : uint8_t;
 
 struct ComputedEffectTiming;
 struct WebSocketFrame;

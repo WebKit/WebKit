@@ -35,7 +35,7 @@ class Frame;
 class SecurityOrigin;
 class StorageSyncManager;
 
-enum class StorageType;
+enum class StorageType : uint8_t;
 
 struct SecurityOriginData;
 
