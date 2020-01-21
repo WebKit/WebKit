@@ -231,10 +231,10 @@ static void testWebKitSettings(Test*, gconstpointer)
     webkit_settings_set_print_backgrounds(settings, FALSE);
     g_assert_false(webkit_settings_get_print_backgrounds(settings));
 
-    // WebAudio is disabled by default.
-    g_assert_false(webkit_settings_get_enable_webaudio(settings));
-    webkit_settings_set_enable_webaudio(settings, TRUE);
+    // WebAudio is enabled by default.
     g_assert_true(webkit_settings_get_enable_webaudio(settings));
+    webkit_settings_set_enable_webaudio(settings, FALSE);
+    g_assert_false(webkit_settings_get_enable_webaudio(settings));
 
     // WebGL is disabled by default.
     g_assert_false(webkit_settings_get_enable_webgl(settings));

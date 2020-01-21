@@ -1045,19 +1045,19 @@ static void webkit_settings_class_init(WebKitSettingsClass* klass)
      *
      *
      * Enable or disable support for WebAudio on pages. WebAudio is an
-     * experimental proposal for allowing web pages to generate Audio
-     * WAVE data from JavaScript. The standard is currently a
-     * work-in-progress by the W3C Audio Working Group.
+     * API for processing and synthesizing audio in web applications
      *
-     * See also https://dvcs.w3.org/hg/audio/raw-file/tip/webaudio/specification.html
+     * See also https://webaudio.github.io/web-audio-api
      */
-    g_object_class_install_property(gObjectClass,
-                                    PROP_ENABLE_WEBAUDIO,
-                                    g_param_spec_boolean("enable-webaudio",
-                                                         _("Enable WebAudio"),
-                                                         _("Whether WebAudio content should be handled"),
-                                                         FALSE,
-                                                         readWriteConstructParamFlags));
+    g_object_class_install_property(
+        gObjectClass,
+        PROP_ENABLE_WEBAUDIO,
+        g_param_spec_boolean(
+            "enable-webaudio",
+            _("Enable WebAudio"),
+            _("Whether WebAudio content should be handled"),
+            TRUE,
+            readWriteConstructParamFlags));
 
     /**
     * WebKitSettings:enable-webgl:
