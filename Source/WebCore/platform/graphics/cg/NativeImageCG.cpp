@@ -73,6 +73,8 @@ void drawNativeImage(const NativeImagePtr& image, GraphicsContext& context, cons
 {
     // Subsampling may have given us an image that is smaller than size().
     IntSize subsampledImageSize = nativeImageSize(image);
+    if (options.orientation().usesWidthAsHeight())
+        subsampledImageSize = subsampledImageSize.transposedSize();
 
     // srcRect is in the coordinates of the unsubsampled image, so we have to map it to the subsampled image.
     FloatRect adjustedSrcRect = srcRect;

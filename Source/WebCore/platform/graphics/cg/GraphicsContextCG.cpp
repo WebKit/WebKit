@@ -330,6 +330,13 @@ void GraphicsContext::drawNativeImage(const RetainPtr<CGImageRef>& image, const 
             subimageRect.setHeight(ceilf(subimageRect.height() + topPadding));
             adjustedDestRect.setHeight(subimageRect.height() / yScale);
 
+            // subimageRect is in logical coordinates. getSubimage() deals with none-oriented
+            // image. We need to convert subimageRect to physical image coordinates.
+            if (options.orientation() != ImageOrientation::None) {
+                if (auto transform = options.orientation().transformFromDefault(imageSize).inverse())
+                    subimageRect = transform.value().mapRect(subimageRect);
+            }
+
 #if CACHE_SUBIMAGES
             subImage = SubimageCacheWithTimer::getSubimage(subImage.get(), subimageRect);
 #else
@@ -440,7 +447,12 @@ void GraphicsContext::drawPattern(Image& image, const FloatRect& destRect, const
     float adjustedX = phase.x() - destRect.x() + tileRect.x() * narrowPrecisionToFloat(patternTransform.a()); // We translated the context so that destRect.x() is the origin, so subtract it out.
     float adjustedY = destRect.height() - (phase.y() - destRect.y() + tileRect.y() * narrowPrecisionToFloat(patternTransform.d()) + scaledTileHeight);
 
-    auto tileImage = image.nativeImageForCurrentFrame();
+    NativeImagePtr tileImage;
+    if (options.orientation() == ImageOrientation::FromImage)
+        tileImage = image.nativeImageForCurrentFrameRespectingOrientation();
+    else
+        tileImage = image.nativeImageForCurrentFrame();
+
     float h = CGImageGetHeight(tileImage.get());
 
     RetainPtr<CGImageRef> subImage;
