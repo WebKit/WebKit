@@ -567,6 +567,14 @@ webkit.org/b/206454 fast/events/mouse-cursor-no-mousemove.html [ Failure ]
 webkit.org/b/206464 webrtc/peerconnection-page-cache-long.html [ Failure ]
 webkit.org/b/206464 webrtc/peerconnection-page-cache.html [ Failure ]
 
+# Remote-playback tests.
+webkit.org/b/206528 imported/w3c/web-platform-tests/remote-playback/cancel-watch-availability.html [ Failure ]
+webkit.org/b/206528 imported/w3c/web-platform-tests/remote-playback/disable-remote-playback-cancel-watch-availability-throws.html [ Failure ]
+webkit.org/b/206528 imported/w3c/web-platform-tests/remote-playback/disable-remote-playback-prompt-throws.html [ Failure ]
+webkit.org/b/206528 imported/w3c/web-platform-tests/remote-playback/disable-remote-playback-watch-availability-throws.html [ Failure ]
+webkit.org/b/206528 imported/w3c/web-platform-tests/remote-playback/idlharness.window.html [ Failure ]
+webkit.org/b/206528 imported/w3c/web-platform-tests/remote-playback/watch-availability-initial-callback.html [ Failure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # 3. UNRESOLVED TESTS
 #////////////////////////////////////////////////////////////////////////////////////////

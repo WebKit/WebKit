@@ -1255,6 +1255,14 @@ webkit.org/b/206498 legacy-animation-engine/compositing/animation/layer-for-fill
 
 webkit.org/b/206499 compositing/visibility/visibility-change-in-subframe.html [ Failure ]
 
+# Remote-playback tests.
+webkit.org/b/206528 imported/w3c/web-platform-tests/remote-playback/cancel-watch-availability.html [ Failure ]
+webkit.org/b/206528 imported/w3c/web-platform-tests/remote-playback/disable-remote-playback-cancel-watch-availability-throws.html [ Failure ]
+webkit.org/b/206528 imported/w3c/web-platform-tests/remote-playback/disable-remote-playback-prompt-throws.html [ Failure ]
+webkit.org/b/206528 imported/w3c/web-platform-tests/remote-playback/disable-remote-playback-watch-availability-throws.html [ Failure ]
+webkit.org/b/206528 imported/w3c/web-platform-tests/remote-playback/idlharness.window.html [ Failure ]
+webkit.org/b/206528 imported/w3c/web-platform-tests/remote-playback/watch-availability-initial-callback.html [ Failure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Expected failures.
 #
