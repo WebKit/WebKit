@@ -379,10 +379,10 @@ NO_RETURN_DUE_TO_ASSERT void UserMediaCaptureManager::remoteVideoSampleAvailable
 IPC::Connection* UserMediaCaptureManager::Source::connection()
 {
 #if ENABLE(GPU_PROCESS)
-    return m_shouldCaptureInGPUProcess ? &WebProcess::singleton().ensureGPUProcessConnection().connection() : WebProcess::singleton().parentProcessConnection();
-#else
-    return m_process.parentProcessConnection();
+    if (m_shouldCaptureInGPUProcess)
+        return &m_manager.m_process.ensureGPUProcessConnection().connection();
 #endif
+    return m_manager.m_process.parentProcessConnection();
 }
 
 void UserMediaCaptureManager::Source::startProducingData()
