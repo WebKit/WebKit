@@ -1,3 +1,15 @@
+2020-01-21  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed, rolling out r254876.
+
+        Broke Catalina builds.
+
+        Reverted changeset:
+
+        "Fix SDK availability macros"
+        https://bugs.webkit.org/show_bug.cgi?id=206463
+        https://trac.webkit.org/changeset/254876
+
 2020-01-21  Jer Noble  <jer.noble@apple.com>
 
         [iPad] YouTube does not automatically AirPlay when a route is selected from Control Center
