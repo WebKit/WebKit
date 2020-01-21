@@ -64,7 +64,7 @@ public:
     void updateStyle();
     void layout();
 
-    LayoutUnit contentLogicalHeight() const { return m_contentLogicalHeight; }
+    LayoutUnit contentLogicalHeight() const;
     size_t lineCount() const;
 
     LayoutUnit firstLineBaseline() const;
@@ -83,13 +83,12 @@ public:
 private:
     const Layout::Container& rootLayoutBox() const;
     Layout::Container& rootLayoutBox();
-    void prepareRootGeometryForLayout();
     ShadowData* debugTextShadow();
 
     const RenderBlockFlow& m_flow;
     BoxTree m_boxTree;
-    Optional<Layout::LayoutState> m_layoutState;
-    LayoutUnit m_contentLogicalHeight;
+    Layout::LayoutState m_layoutState;
+    Layout::InlineFormattingState& m_inlineFormattingState;
 };
 
 }

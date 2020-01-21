@@ -38,7 +38,7 @@ class InvalidationState;
 class TableFormattingState;
 // This class implements the layout logic for table formatting contexts.
 // https://www.w3.org/TR/CSS22/tables.html
-class TableFormattingContext : public FormattingContext {
+class TableFormattingContext final : public FormattingContext {
     WTF_MAKE_ISO_ALLOCATED(TableFormattingContext);
 public:
     TableFormattingContext(const Container& formattingContextRoot, TableFormattingState&);

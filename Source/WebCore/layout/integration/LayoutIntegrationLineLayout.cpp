@@ -30,12 +30,13 @@
 
 #include "DisplayBox.h"
 #include "EventRegion.h"
+#include "FloatingState.h"
 #include "HitTestLocation.h"
 #include "HitTestRequest.h"
 #include "HitTestResult.h"
+#include "InlineFormattingContext.h"
 #include "InlineFormattingState.h"
 #include "InvalidationState.h"
-#include "LayoutContext.h"
 #include "LayoutTreeBuilder.h"
 #include "PaintInfo.h"
 #include "RenderBlockFlow.h"
@@ -53,7 +54,10 @@ namespace LayoutIntegration {
 LineLayout::LineLayout(const RenderBlockFlow& flow)
     : m_flow(flow)
     , m_boxTree(flow)
+    , m_layoutState(m_flow.document(), rootLayoutBox())
+    , m_inlineFormattingState(downcast<Layout::InlineFormattingState>(m_layoutState.createFormattingStateForFormattingRootIfNeeded(rootLayoutBox())))
 {
+    m_layoutState.setIsIntegratedRootBoxFirstChild(m_flow.parent()->firstChild() == &m_flow);
 }
 
 LineLayout::~LineLayout() = default;
@@ -95,30 +99,21 @@ void LineLayout::updateStyle()
 
 void LineLayout::layout()
 {
-    if (!m_layoutState) {
-        m_layoutState.emplace(m_flow.document(), m_boxTree.rootLayoutBox());
-        m_layoutState->setIsIntegratedRootBoxFirstChild(m_flow.parent()->firstChild() == &m_flow);
-    }
+    auto inlineFormattingContext = Layout::InlineFormattingContext { rootLayoutBox(), m_inlineFormattingState };
 
-    prepareRootGeometryForLayout();
+    m_layoutState.setViewportSize(m_flow.frame().view()->size());
 
-    auto layoutContext = Layout::LayoutContext { *m_layoutState };
     auto invalidationState = Layout::InvalidationState { };
+    auto horizontalConstraints = Layout::HorizontalConstraints { m_flow.borderAndPaddingStart(), m_flow.contentSize().width() };
+    auto verticalConstraints = Layout::VerticalConstraints { m_flow.borderAndPaddingBefore(), { } };
 
-    layoutContext.layoutWithPreparedRootGeometry(invalidationState);
-
-    auto& lineBoxes = downcast<Layout::InlineFormattingState>(m_layoutState->establishedFormattingState(rootLayoutBox())).displayInlineContent()->lineBoxes;
-    m_contentLogicalHeight = lineBoxes.last().logicalBottom() - lineBoxes.first().logicalTop();
+    inlineFormattingContext.layoutInFlowContent(invalidationState, horizontalConstraints, verticalConstraints);
 }
 
-void LineLayout::prepareRootGeometryForLayout()
+LayoutUnit LineLayout::contentLogicalHeight() const
 {
-    auto& displayBox = m_layoutState->displayBoxForRootLayoutBox();
-    m_layoutState->setViewportSize(m_flow.frame().view()->size());
-    // Don't set marging properties or height. These should not be be accessed by inline layout.
-    displayBox.setBorder(Layout::Edges { { m_flow.borderStart(), m_flow.borderEnd() }, { m_flow.borderBefore(), m_flow.borderAfter() } });
-    displayBox.setPadding(Layout::Edges { { m_flow.paddingStart(), m_flow.paddingEnd() }, { m_flow.paddingBefore(), m_flow.paddingAfter() } });
-    displayBox.setContentBoxWidth(m_flow.contentSize().width());
+    auto& lineBoxes = displayInlineContent()->lineBoxes;
+    return LayoutUnit { lineBoxes.last().logicalBottom() - lineBoxes.first().logicalTop() };
 }
 
 size_t LineLayout::lineCount() const
@@ -168,7 +163,7 @@ void LineLayout::collectOverflow(RenderBlockFlow& flow)
 
 const Display::InlineContent* LineLayout::displayInlineContent() const
 {
-    return downcast<Layout::InlineFormattingState>(m_layoutState->establishedFormattingState(rootLayoutBox())).displayInlineContent();
+    return m_inlineFormattingState.displayInlineContent();
 }
 
 LineLayoutTraversal::TextBoxIterator LineLayout::textBoxesFor(const RenderText& renderText) const
