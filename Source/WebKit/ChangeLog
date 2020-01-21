@@ -1,3 +1,13 @@
+2020-01-21  youenn fablet  <youenn@apple.com>
+
+        Log the destination of a load when hitting network process
+        https://bugs.webkit.org/show_bug.cgi?id=206422
+
+        Reviewed by Darin Adler.
+
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        No change of behavior, adding more precise logging.
+
 2020-01-20  David Kilzer  <ddkilzer@apple.com>
 
         Fix missing header guards and clean up empty files in WebCore, WebKitLegacy, WebKit, Tools
