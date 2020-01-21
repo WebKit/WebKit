@@ -1,3 +1,17 @@
+2020-01-21  Rob Buis  <rbuis@igalia.com>
+
+        Fix fetch/api/policies/referrer-origin-worker.html
+        https://bugs.webkit.org/show_bug.cgi?id=206520
+
+        Reviewed by Youenn Fablet.
+
+        Fix fetch/api/policies/referrer-origin-worker.html by adding
+        referrer-origin-worker.html.headers, which got lost in the
+        automated import process.
+
+        * web-platform-tests/fetch/api/policies/referrer-origin-worker-expected.txt:
+        * web-platform-tests/fetch/api/policies/referrer-origin-worker.html.headers: Added.
+
 2020-01-21  Cathie Chen  <cathiechen@igalia.com>
 
         Add support for scroll behavior relies on ScrollAnimation of the Web process
