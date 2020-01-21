@@ -1,3 +1,23 @@
+2020-01-21  Keith Rollin  <krollin@apple.com>
+
+        Fix SDK availability macros
+        https://bugs.webkit.org/show_bug.cgi?id=206463
+        <rdar://problem/58581906>
+
+        Reviewed by Timothy Hatcher.
+
+        Bug 197841 updated WebKit.xcconfig with regards to when it runs a
+        header post-processing script. This post-processing script grovels
+        over our exported headers, changing macros like WK_API_AVAILABLE to
+        the standard API_AVAILABLE. Because of the change in Bug 197841, the
+        script was no longer being run when preparing macOS 10.15 SDKs, which
+        was breaking those SDKs. Fix this by reverting the change, allowing
+        the macros to be replaced for macOS 10.15.
+
+        No new tests - no added or changed functionality.
+
+        * Configurations/WebKit.xcconfig:
+
 2020-01-21  Tim Horton  <timothy_horton@apple.com>
 
         macCatalyst: Two-finger click is dispatched to DOM as left click
