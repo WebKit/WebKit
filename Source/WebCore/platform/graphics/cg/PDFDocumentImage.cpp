@@ -49,9 +49,7 @@
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/TextStream.h>
 
-#if PLATFORM(COCOA)
-#import <pal/spi/cg/CoreGraphicsSPI.h>
-#else
+#if !PLATFORM(COCOA)
 #include "ImageSourceCG.h"
 #endif
 

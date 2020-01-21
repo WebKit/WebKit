@@ -518,7 +518,7 @@ void ScrollView::completeUpdatesAfterScrollTo(const IntSize& scrollDelta)
     updateCompositingLayersAfterScrolling();
 }
 
-void ScrollView::setScrollPosition(const ScrollPosition& scrollPosition, bool/* animated*/)
+void ScrollView::setScrollPosition(const ScrollPosition& scrollPosition)
 {
     LOG_WITH_STREAM(Scrolling, stream << "ScrollView::setScrollPosition " << scrollPosition);
 
@@ -532,19 +532,13 @@ void ScrollView::setScrollPosition(const ScrollPosition& scrollPosition, bool/* 
 
     ScrollPosition newScrollPosition = !delegatesScrolling() ? adjustScrollPositionWithinRange(scrollPosition) : scrollPosition;
 
-    if ((!delegatesScrolling() || currentScrollType() == ScrollType::User) && currentScrollBehaviorStatus() == ScrollBehaviorStatus::NotInAnimation && newScrollPosition == this->scrollPosition())
+    if ((!delegatesScrolling() || currentScrollType() == ScrollType::User) && newScrollPosition == this->scrollPosition())
         return;
 
-    if (currentScrollBehaviorStatus() == ScrollBehaviorStatus::InNonNativeAnimation)
-        scrollAnimator().cancelAnimations();
-
-    if (requestScrollPositionUpdate(newScrollPosition)) {
-        setScrollBehaviorStatus(ScrollBehaviorStatus::NotInAnimation);
+    if (requestScrollPositionUpdate(newScrollPosition))
         return;
-    }
 
     updateScrollbars(newScrollPosition);
-    setScrollBehaviorStatus(ScrollBehaviorStatus::NotInAnimation);
 }
 
 bool ScrollView::scroll(ScrollDirection direction, ScrollGranularity granularity)
@@ -601,8 +595,7 @@ void ScrollView::updateScrollbars(const ScrollPosition& desiredPosition)
     
     if (!managesScrollbars()) {
         if (scrollOriginChanged()) {
-            if (!requestScrollPositionUpdate(desiredPosition))
-                ScrollableArea::scrollToOffsetWithoutAnimation(scrollOffsetFromPosition(desiredPosition));
+            ScrollableArea::scrollToOffsetWithoutAnimation(scrollOffsetFromPosition(desiredPosition));
             resetScrollOriginChanged();
         }
         return;

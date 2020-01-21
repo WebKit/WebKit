@@ -1,3 +1,16 @@
+2020-01-20  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        Unreviewed, rolling out r254807.
+
+        Breaks Apple internal builds.
+
+        Reverted changeset:
+
+        "Add support for scroll behavior relies on ScrollAnimation of
+        the Web process"
+        https://bugs.webkit.org/show_bug.cgi?id=204882
+        https://trac.webkit.org/changeset/254807
+
 2020-01-20  Rob Buis  <rbuis@igalia.com>
 
         Implement "create a potential-CORS request"
