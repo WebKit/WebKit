@@ -1,3 +1,17 @@
+2020-01-21  Alex Christensen  <achristensen@webkit.org>
+
+        Add SPI on WKURLSchemeTask to access WKFrameInfo of originating frame
+        https://bugs.webkit.org/show_bug.cgi?id=204265
+        <rdar://57193883>
+
+        Reviewed by Brady Eidson.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/WKURLSchemeHandler-1.mm:
+        (-[FrameSchemeHandler waitForAllRequests]):
+        (-[FrameSchemeHandler setExpectedWebView:]):
+        (-[FrameSchemeHandler webView:startURLSchemeTask:]):
+        (-[FrameSchemeHandler webView:stopURLSchemeTask:]):
+
 2020-01-21  Aakash Jain  <aakash_jain@apple.com>
 
         [ews] commit-queue should check cq+ flag

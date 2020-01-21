@@ -37,13 +37,14 @@ class ResourceResponse;
 
 namespace WebKit {
 
+class WebFrame;
 class WebURLSchemeHandlerProxy;
 
 class WebURLSchemeTaskProxy : public RefCounted<WebURLSchemeTaskProxy> {
 public:
-    static Ref<WebURLSchemeTaskProxy> create(WebURLSchemeHandlerProxy& handler, WebCore::ResourceLoader& loader)
+    static Ref<WebURLSchemeTaskProxy> create(WebURLSchemeHandlerProxy& handler, WebCore::ResourceLoader& loader, WebFrame& webFrame)
     {
-        return adoptRef(*new WebURLSchemeTaskProxy(handler, loader));
+        return adoptRef(*new WebURLSchemeTaskProxy(handler, loader, webFrame));
     }
     
     const WebCore::ResourceRequest& request() const { return m_request; }
@@ -59,7 +60,7 @@ public:
     unsigned long identifier() const { return m_identifier; }
 
 private:
-    WebURLSchemeTaskProxy(WebURLSchemeHandlerProxy&, WebCore::ResourceLoader&);
+    WebURLSchemeTaskProxy(WebURLSchemeHandlerProxy&, WebCore::ResourceLoader&, WebFrame&);
     bool hasLoader();
 
     void queueTask(Function<void()>&& task) { m_queuedTasks.append(WTFMove(task)); }
@@ -67,6 +68,7 @@ private:
 
     WebURLSchemeHandlerProxy& m_urlSchemeHandler;
     RefPtr<WebCore::ResourceLoader> m_coreLoader;
+    RefPtr<WebFrame> m_frame;
     WebCore::ResourceRequest m_request;
     unsigned long m_identifier;
     bool m_waitingForCompletionHandler { false };

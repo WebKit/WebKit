@@ -9063,7 +9063,7 @@ void WebPageProxy::startURLSchemeTaskShared(Ref<WebProcessProxy>&& process, Page
     auto iterator = m_urlSchemeHandlersByIdentifier.find(parameters.handlerIdentifier);
     MESSAGE_CHECK(process, iterator != m_urlSchemeHandlersByIdentifier.end());
 
-    iterator->value->startTask(*this, process, webPageID, parameters.taskIdentifier, WTFMove(parameters.request), nullptr);
+    iterator->value->startTask(*this, process, webPageID, WTFMove(parameters), nullptr);
 }
 
 void WebPageProxy::stopURLSchemeTask(uint64_t handlerIdentifier, uint64_t taskIdentifier)
@@ -9079,7 +9079,7 @@ void WebPageProxy::loadSynchronousURLSchemeTask(URLSchemeTaskParameters&& parame
     auto iterator = m_urlSchemeHandlersByIdentifier.find(parameters.handlerIdentifier);
     MESSAGE_CHECK(m_process, iterator != m_urlSchemeHandlersByIdentifier.end());
 
-    iterator->value->startTask(*this, m_process, m_webPageID, parameters.taskIdentifier, WTFMove(parameters.request), WTFMove(reply));
+    iterator->value->startTask(*this, m_process, m_webPageID, WTFMove(parameters), WTFMove(reply));
 }
 
 #if ENABLE(RESOURCE_LOAD_STATISTICS)

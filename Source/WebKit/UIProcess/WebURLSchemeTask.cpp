@@ -26,8 +26,10 @@
 #include "config.h"
 #include "WebURLSchemeTask.h"
 
+#include "APIFrameInfo.h"
 #include "DataReference.h"
 #include "SharedBufferDataReference.h"
+#include "URLSchemeTaskParameters.h"
 #include "WebErrors.h"
 #include "WebPageMessages.h"
 #include "WebPageProxy.h"
@@ -36,18 +38,19 @@
 namespace WebKit {
 using namespace WebCore;
 
-Ref<WebURLSchemeTask> WebURLSchemeTask::create(WebURLSchemeHandler& handler, WebPageProxy& page, WebProcessProxy& process, PageIdentifier webPageID, uint64_t resourceIdentifier, ResourceRequest&& request, SyncLoadCompletionHandler&& syncCompletionHandler)
+Ref<WebURLSchemeTask> WebURLSchemeTask::create(WebURLSchemeHandler& handler, WebPageProxy& page, WebProcessProxy& process, PageIdentifier webPageID, URLSchemeTaskParameters&& parameters, SyncLoadCompletionHandler&& syncCompletionHandler)
 {
-    return adoptRef(*new WebURLSchemeTask(handler, page, process, webPageID, resourceIdentifier, WTFMove(request), WTFMove(syncCompletionHandler)));
+    return adoptRef(*new WebURLSchemeTask(handler, page, process, webPageID, WTFMove(parameters), WTFMove(syncCompletionHandler)));
 }
 
-WebURLSchemeTask::WebURLSchemeTask(WebURLSchemeHandler& handler, WebPageProxy& page, WebProcessProxy& process, PageIdentifier webPageID, uint64_t resourceIdentifier, ResourceRequest&& request, SyncLoadCompletionHandler&& syncCompletionHandler)
+WebURLSchemeTask::WebURLSchemeTask(WebURLSchemeHandler& handler, WebPageProxy& page, WebProcessProxy& process, PageIdentifier webPageID, URLSchemeTaskParameters&& parameters, SyncLoadCompletionHandler&& syncCompletionHandler)
     : m_urlSchemeHandler(handler)
     , m_process(makeRef(process))
-    , m_identifier(resourceIdentifier)
+    , m_identifier(parameters.taskIdentifier)
     , m_pageProxyID(page.identifier())
     , m_webPageID(webPageID)
-    , m_request(WTFMove(request))
+    , m_request(WTFMove(parameters.request))
+    , m_frameInfo(API::FrameInfo::create(WTFMove(parameters.frameInfo), &page))
     , m_syncCompletionHandler(WTFMove(syncCompletionHandler))
 {
     ASSERT(RunLoop::isMain());

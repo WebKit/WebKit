@@ -42,6 +42,7 @@ void URLSchemeTaskParameters::encode(IPC::Encoder& encoder) const
         request.httpBody()->encode(encoder);
     } else
         encoder << false;
+    encoder << frameInfo;
 }
 
 Optional<URLSchemeTaskParameters> URLSchemeTaskParameters::decode(IPC::Decoder& decoder)
@@ -70,8 +71,18 @@ Optional<URLSchemeTaskParameters> URLSchemeTaskParameters::decode(IPC::Decoder& 
             return WTF::nullopt;
         request.setHTTPBody(WTFMove(formData));
     }
+    
+    Optional<FrameInfoData> frameInfo;
+    decoder >> frameInfo;
+    if (!frameInfo)
+        return WTF::nullopt;
 
-    return {{ WTFMove(*handlerIdentifier), WTFMove(*taskIdentifier), WTFMove(request) }};
+    return {{
+        WTFMove(*handlerIdentifier),
+        WTFMove(*taskIdentifier),
+        WTFMove(request),
+        WTFMove(*frameInfo),
+    }};
 }
     
 } // namespace WebKit

@@ -240,18 +240,26 @@ void WebLoaderStrategy::scheduleLoad(ResourceLoader& resourceLoader, CachedResou
 bool WebLoaderStrategy::tryLoadingUsingURLSchemeHandler(ResourceLoader& resourceLoader, const WebResourceLoader::TrackingParameters& trackingParameters)
 {
     auto* webFrameLoaderClient = toWebFrameLoaderClient(resourceLoader.frameLoader()->client());
-    auto* webFrame = webFrameLoaderClient ? webFrameLoaderClient->webFrame() : nullptr;
-    auto* webPage = webFrame ? webFrame->page() : nullptr;
-    if (webPage) {
-        if (auto* handler = webPage->urlSchemeHandlerForScheme(resourceLoader.request().url().protocol().toStringWithoutCopying())) {
-            LOG(NetworkScheduling, "(WebProcess) WebLoaderStrategy::scheduleLoad, URL '%s' will be handled by a UIProcess URL scheme handler.", resourceLoader.url().string().utf8().data());
-            WEBLOADERSTRATEGY_RELEASE_LOG_IF_ALLOWED("tryLoadingUsingURLSchemeHandler: URL will be handled by a UIProcess URL scheme handler");
+    if (!webFrameLoaderClient)
+        return false;
 
-            handler->startNewTask(resourceLoader);
-            return true;
-        }
-    }
-    return false;
+    auto* webFrame = webFrameLoaderClient->webFrame();
+    if (!webFrame)
+        return false;
+
+    auto* webPage = webFrame->page();
+    if (!webPage)
+        return false;
+
+    auto* handler = webPage->urlSchemeHandlerForScheme(resourceLoader.request().url().protocol().toStringWithoutCopying());
+    if (!handler)
+        return false;
+
+    LOG(NetworkScheduling, "(WebProcess) WebLoaderStrategy::scheduleLoad, URL '%s' will be handled by a UIProcess URL scheme handler.", resourceLoader.url().string().utf8().data());
+    WEBLOADERSTRATEGY_RELEASE_LOG_IF_ALLOWED("tryLoadingUsingURLSchemeHandler: URL will be handled by a UIProcess URL scheme handler");
+
+    handler->startNewTask(resourceLoader, *webFrame);
+    return true;
 }
 
 static void addParametersFromFrame(const Frame* frame, NetworkResourceLoadParameters& parameters)
@@ -532,7 +540,7 @@ Optional<WebLoaderStrategy::SyncLoadResult> WebLoaderStrategy::tryLoadingSynchro
     LOG(NetworkScheduling, "(WebProcess) WebLoaderStrategy::scheduleLoad, sync load to URL '%s' will be handled by a UIProcess URL scheme handler.", request.url().string().utf8().data());
 
     SyncLoadResult result;
-    handler->loadSynchronously(identifier, request, result.response, result.error, result.data);
+    handler->loadSynchronously(identifier, *webFrame, request, result.response, result.error, result.data);
 
     return result;
 }

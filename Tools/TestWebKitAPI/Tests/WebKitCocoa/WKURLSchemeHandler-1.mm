@@ -42,6 +42,7 @@
 #import <wtf/RunLoop.h>
 #import <wtf/Threading.h>
 #import <wtf/Vector.h>
+#import <wtf/WeakObjCPtr.h>
 #import <wtf/text/StringHash.h>
 #import <wtf/text/WTFString.h>
 
@@ -882,3 +883,78 @@ TEST(URLSchemeHandler, DisableCORS)
 }
 
 #endif // HAVE(NETWORK_FRAMEWORK)
+
+@interface FrameSchemeHandler : NSObject <WKURLSchemeHandler>
+- (void)waitForAllRequests;
+- (void)setExpectedWebView:(WKWebView *)webView;
+@end
+
+@implementation FrameSchemeHandler {
+    size_t _requestCount;
+    WeakObjCPtr<WKWebView> _webView;
+}
+
+- (void)waitForAllRequests
+{
+    while (_requestCount < 3)
+        TestWebKitAPI::Util::spinRunLoop();
+}
+
+- (void)setExpectedWebView:(WKWebView *)webView
+{
+    _webView = webView;
+}
+
+- (void)webView:(WKWebView *)webView startURLSchemeTask:(id <WKURLSchemeTask>)task
+{
+    auto check = [&] (id<WKURLSchemeTask> task, const char* url, bool mainFrame, const char* request, const char* originProtocol, const char* originHost, NSInteger originPort) {
+        EXPECT_WK_STREQ(task.request.URL.absoluteString, url);
+        WKFrameInfo *info = ((id<WKURLSchemeTaskPrivate>)task)._frame;
+        EXPECT_EQ(info.isMainFrame, mainFrame);
+        EXPECT_WK_STREQ(info.request.URL.absoluteString, request);
+        EXPECT_WK_STREQ(info.securityOrigin.protocol, originProtocol);
+        EXPECT_WK_STREQ(info.securityOrigin.host, originHost);
+        EXPECT_EQ(info.securityOrigin.port, originPort);
+        EXPECT_EQ(info.webView, _webView.get().get());
+    };
+
+    auto respond = [] (id<WKURLSchemeTask> task, const char* bytes) {
+        [task didReceiveResponse:[[[NSURLResponse alloc] initWithURL:task.request.URL MIMEType:@"text/html" expectedContentLength:strlen(bytes) textEncodingName:nil] autorelease]];
+        [task didReceiveData:[NSData dataWithBytes:bytes length:strlen(bytes)]];
+        [task didFinish];
+    };
+
+    switch (++_requestCount) {
+    case 1:
+        check(task, "frame://host1/main", true, "", "", "", 0);
+        respond(task, "<iframe src='//host2:123/iframe'></iframe>");
+        return;
+    case 2:
+        check(task, "frame://host2:123/iframe", false, "", "frame", "host1", 0);
+        respond(task, "<script>fetch('subresource')</script>");
+        return;
+    case 3:
+        check(task, "frame://host2:123/subresource", false, "frame://host2:123/iframe", "frame", "host2", 123);
+        respond(task, "done!");
+        return;
+    }
+    ASSERT_NOT_REACHED();
+}
+
+- (void)webView:(WKWebView *)webView stopURLSchemeTask:(id <WKURLSchemeTask>)task
+{
+    ASSERT_NOT_REACHED();
+}
+
+@end
+
+TEST(URLSchemeHandler, Frame)
+{
+    auto configuration = adoptNS([WKWebViewConfiguration new]);
+    auto handler = adoptNS([FrameSchemeHandler new]);
+    [configuration setURLSchemeHandler:handler.get() forURLScheme:@"frame"];
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    [handler setExpectedWebView:webView.get()];
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"frame://host1/main"]]];
+    [handler waitForAllRequests];
+}

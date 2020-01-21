@@ -49,10 +49,10 @@ public:
     }
     ~WebURLSchemeHandlerProxy();
 
-    void startNewTask(WebCore::ResourceLoader&);
+    void startNewTask(WebCore::ResourceLoader&, WebFrame&);
     void stopAllTasks();
 
-    void loadSynchronously(ResourceLoadIdentifier, const WebCore::ResourceRequest&, WebCore::ResourceResponse&, WebCore::ResourceError&, Vector<char>&);
+    void loadSynchronously(ResourceLoadIdentifier, WebFrame&, const WebCore::ResourceRequest&, WebCore::ResourceResponse&, WebCore::ResourceError&, Vector<char>&);
 
     uint64_t identifier() const { return m_identifier; }
     WebPage& page() { return m_webPage; }

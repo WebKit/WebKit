@@ -41,6 +41,7 @@ class ResourceRequest;
 
 namespace WebKit {
 
+struct URLSchemeTaskParameters;
 class WebPageProxy;
 class WebProcessProxy;
 
@@ -53,7 +54,7 @@ public:
 
     uint64_t identifier() const { return m_identifier; }
 
-    void startTask(WebPageProxy&, WebProcessProxy&, WebCore::PageIdentifier, uint64_t taskIdentifier, WebCore::ResourceRequest&&, SyncLoadCompletionHandler&&);
+    void startTask(WebPageProxy&, WebProcessProxy&, WebCore::PageIdentifier, URLSchemeTaskParameters&&, SyncLoadCompletionHandler&&);
     void stopTask(WebPageProxy&, uint64_t taskIdentifier);
     void stopAllTasksForPage(WebPageProxy&, WebProcessProxy*);
     void taskCompleted(WebURLSchemeTask&);

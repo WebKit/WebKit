@@ -24,8 +24,10 @@
  */
 
 #import "config.h"
-#import "WKURLSchemeTaskInternal.h"
+#import "WKURLSchemeTask.h"
 
+#import "WKFrameInfoInternal.h"
+#import "WKURLSchemeTaskInternal.h"
 #import "WebURLSchemeHandler.h"
 #import "WebURLSchemeTask.h"
 #import <WebCore/ResourceError.h>
@@ -144,6 +146,11 @@ static void raiseExceptionIfNecessary(WebKit::WebURLSchemeTask::ExceptionType ex
 
     auto result = getExceptionTypeFromMainRunLoop(WTFMove(function));
     raiseExceptionIfNecessary(result);
+}
+
+- (WKFrameInfo *)_frame
+{
+    return wrapper(_urlSchemeTask->task().frameInfo());
 }
 
 #pragma mark WKObject protocol implementation

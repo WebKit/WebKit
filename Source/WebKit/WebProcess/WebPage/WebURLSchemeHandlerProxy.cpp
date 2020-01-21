@@ -53,19 +53,19 @@ WebURLSchemeHandlerProxy::~WebURLSchemeHandlerProxy()
     ASSERT(m_tasks.isEmpty());
 }
 
-void WebURLSchemeHandlerProxy::startNewTask(ResourceLoader& loader)
+void WebURLSchemeHandlerProxy::startNewTask(ResourceLoader& loader, WebFrame& webFrame)
 {
-    auto result = m_tasks.add(loader.identifier(), WebURLSchemeTaskProxy::create(*this, loader));
+    auto result = m_tasks.add(loader.identifier(), WebURLSchemeTaskProxy::create(*this, loader, webFrame));
     ASSERT(result.isNewEntry);
 
     WebProcess::singleton().webLoaderStrategy().addURLSchemeTaskProxy(*result.iterator->value);
     result.iterator->value->startLoading();
 }
 
-void WebURLSchemeHandlerProxy::loadSynchronously(ResourceLoadIdentifier loadIdentifier, const ResourceRequest& request, ResourceResponse& response, ResourceError& error, Vector<char>& data)
+void WebURLSchemeHandlerProxy::loadSynchronously(ResourceLoadIdentifier loadIdentifier, WebFrame& webFrame, const ResourceRequest& request, ResourceResponse& response, ResourceError& error, Vector<char>& data)
 {
     data.shrink(0);
-    if (!m_webPage.sendSync(Messages::WebPageProxy::LoadSynchronousURLSchemeTask(URLSchemeTaskParameters { m_identifier, loadIdentifier, request }), Messages::WebPageProxy::LoadSynchronousURLSchemeTask::Reply(response, error, data))) {
+    if (!m_webPage.sendSync(Messages::WebPageProxy::LoadSynchronousURLSchemeTask(URLSchemeTaskParameters { m_identifier, loadIdentifier, request, webFrame.info() }), Messages::WebPageProxy::LoadSynchronousURLSchemeTask::Reply(response, error, data))) {
         error = failedCustomProtocolSyncLoad(request);
         return;
     }

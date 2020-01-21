@@ -29,6 +29,7 @@
 #include "Logging.h"
 #include "URLSchemeTaskParameters.h"
 #include "WebCoreArgumentCoders.h"
+#include "WebFrame.h"
 #include "WebPage.h"
 #include "WebPageProxyMessages.h"
 #include "WebURLSchemeHandlerProxy.h"
@@ -40,9 +41,10 @@
 namespace WebKit {
 using namespace WebCore;
 
-WebURLSchemeTaskProxy::WebURLSchemeTaskProxy(WebURLSchemeHandlerProxy& handler, ResourceLoader& loader)
+WebURLSchemeTaskProxy::WebURLSchemeTaskProxy(WebURLSchemeHandlerProxy& handler, ResourceLoader& loader, WebFrame& frame)
     : m_urlSchemeHandler(handler)
     , m_coreLoader(&loader)
+    , m_frame(&frame)
     , m_request(loader.request())
     , m_identifier(loader.identifier())
 {
@@ -51,7 +53,8 @@ WebURLSchemeTaskProxy::WebURLSchemeTaskProxy(WebURLSchemeHandlerProxy& handler, 
 void WebURLSchemeTaskProxy::startLoading()
 {
     ASSERT(m_coreLoader);
-    m_urlSchemeHandler.page().send(Messages::WebPageProxy::StartURLSchemeTask({m_urlSchemeHandler.identifier(), m_coreLoader->identifier(), m_request}));
+    ASSERT(m_frame);
+    m_urlSchemeHandler.page().send(Messages::WebPageProxy::StartURLSchemeTask(URLSchemeTaskParameters { m_urlSchemeHandler.identifier(), m_coreLoader->identifier(), m_request, m_frame->info() }));
 }
 
 void WebURLSchemeTaskProxy::stopLoading()
@@ -59,6 +62,7 @@ void WebURLSchemeTaskProxy::stopLoading()
     ASSERT(m_coreLoader);
     m_urlSchemeHandler.page().send(Messages::WebPageProxy::StopURLSchemeTask(m_urlSchemeHandler.identifier(), m_coreLoader->identifier()));
     m_coreLoader = nullptr;
+    m_frame = nullptr;
 
     // This line will result in this being deleted.
     m_urlSchemeHandler.taskDidStopLoading(*this);
@@ -149,12 +153,15 @@ void WebURLSchemeTaskProxy::didComplete(const ResourceError& error)
         m_coreLoader->didFail(error);
 
     m_coreLoader = nullptr;
+    m_frame = nullptr;
 }
 
 bool WebURLSchemeTaskProxy::hasLoader()
 {
-    if (m_coreLoader && m_coreLoader->reachedTerminalState())
+    if (m_coreLoader && m_coreLoader->reachedTerminalState()) {
         m_coreLoader = nullptr;
+        m_frame = nullptr;
+    }
 
     return m_coreLoader;
 }

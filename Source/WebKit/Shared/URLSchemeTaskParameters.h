@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "FrameInfoData.h"
 #include <WebCore/ResourceRequest.h>
 
 namespace IPC {
@@ -38,6 +39,7 @@ struct URLSchemeTaskParameters {
     uint64_t handlerIdentifier { 0 };
     uint64_t taskIdentifier { 0 };
     WebCore::ResourceRequest request;
+    FrameInfoData frameInfo;
     
     void encode(IPC::Encoder&) const;
     static Optional<URLSchemeTaskParameters> decode(IPC::Decoder&);
