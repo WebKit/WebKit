@@ -454,7 +454,7 @@ private:
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
     bool m_layoutFormattingContextEnabled { false };
-    bool m_layoutFormattingContextIntegrationEnabled { true };
+    bool m_layoutFormattingContextIntegrationEnabled { false };
 #endif
 
 #if ENABLE(CSS_PAINTING_API)
