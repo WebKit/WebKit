@@ -1,3 +1,18 @@
+2020-01-22  Caio Lima  <ticaiolima@gmail.com>
+
+        [ARMv7] Assembler is generating wrong instruction for ldr r2, [r3, #7]
+        https://bugs.webkit.org/show_bug.cgi?id=206231
+
+        Reviewed by Mark Lam.
+
+        When generating code for `ldr` on ARMv7, we were encoding immediates not
+        multiple of 4 using Encoding T1, which only accepts multiple of 4 as
+        immediates. This patch fixes such issue and allow us generate proper
+        code when offset imemdiates are not multiple of 4.
+
+        * assembler/ARMv7Assembler.h:
+        (JSC::ARMv7Assembler::ldr):
+
 2020-01-22  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Add CheckArrayOrEmpty to handle the case when hoisting CheckArray for places where input can be empty
