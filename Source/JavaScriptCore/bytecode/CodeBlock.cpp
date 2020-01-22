@@ -3305,14 +3305,9 @@ Optional<BytecodeIndex> CodeBlock::bytecodeIndexFromCallSiteIndex(CallSiteIndex 
 {
     Optional<BytecodeIndex> bytecodeIndex;
     JITType jitType = this->jitType();
-    if (jitType == JITType::InterpreterThunk || jitType == JITType::BaselineJIT) {
-#if USE(JSVALUE64)
+    if (jitType == JITType::InterpreterThunk || jitType == JITType::BaselineJIT)
         bytecodeIndex = callSiteIndex.bytecodeIndex();
-#else
-        Instruction* instruction = bitwise_cast<Instruction*>(callSiteIndex.bits());
-        bytecodeIndex = this->bytecodeIndex(instruction);
-#endif
-    } else if (jitType == JITType::DFGJIT || jitType == JITType::FTLJIT) {
+    else if (jitType == JITType::DFGJIT || jitType == JITType::FTLJIT) {
 #if ENABLE(DFG_JIT)
         RELEASE_ASSERT(canGetCodeOrigin(callSiteIndex));
         CodeOrigin origin = codeOrigin(callSiteIndex);

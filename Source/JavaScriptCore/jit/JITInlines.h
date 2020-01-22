@@ -104,12 +104,7 @@ ALWAYS_INLINE JIT::Call JIT::emitNakedTailCall(CodePtr<NoPtrTag> target)
 
 ALWAYS_INLINE void JIT::updateTopCallFrame()
 {
-#if USE(JSVALUE32_64)
-    const Instruction* instruction = m_codeBlock->instructions().at(m_bytecodeIndex.offset()).ptr();
-    uint32_t locationBits = CallSiteIndex(BytecodeIndex(bitwise_cast<uint32_t>(instruction))).bits();
-#else
     uint32_t locationBits = CallSiteIndex(m_bytecodeIndex).bits();
-#endif
     store32(TrustedImm32(locationBits), tagFor(CallFrameSlot::argumentCountIncludingThis));
     
     // FIXME: It's not clear that this is needed. JITOperations tend to update the top call frame on

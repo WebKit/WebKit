@@ -455,18 +455,10 @@ static ALWAYS_INLINE BytecodeIndex tryGetBytecodeIndex(unsigned llintPC, CodeBlo
     RELEASE_ASSERT(!codeBlock->hasCodeOrigins());
 #endif
 
-#if USE(JSVALUE64)
     unsigned bytecodeOffset = llintPC;
     if (bytecodeOffset < codeBlock->instructionsSize())
         return BytecodeIndex(bytecodeOffset);
     return BytecodeIndex();
-#else
-    Instruction* instruction = bitwise_cast<Instruction*>(llintPC);
-
-    if (codeBlock->instructions().contains(instruction))
-        return BytecodeIndex(codeBlock->bytecodeOffset(instruction));
-    return BytecodeIndex();
-#endif
 }
 
 void SamplingProfiler::processUnverifiedStackTraces(const AbstractLocker&)
@@ -613,12 +605,7 @@ void SamplingProfiler::processUnverifiedStackTraces(const AbstractLocker&)
                 // by ignoring it.
                 BytecodeIndex bytecodeIndex = BytecodeIndex(0);
                 if (topCodeBlock->jitType() == JITType::InterpreterThunk || topCodeBlock->jitType() == JITType::BaselineJIT) {
-                    unsigned bits;
-#if USE(JSVALUE64)
-                    bits = static_cast<unsigned>(bitwise_cast<uintptr_t>(unprocessedStackTrace.llintPC));
-#else
-                    bits = bitwise_cast<unsigned>(unprocessedStackTrace.llintPC);
-#endif
+                    unsigned bits = static_cast<unsigned>(bitwise_cast<uintptr_t>(unprocessedStackTrace.llintPC));
                     bytecodeIndex = tryGetBytecodeIndex(bits, topCodeBlock);
 
                     UNUSED_PARAM(bytecodeIndex); // FIXME: do something with this info for the web inspector: https://bugs.webkit.org/show_bug.cgi?id=153455

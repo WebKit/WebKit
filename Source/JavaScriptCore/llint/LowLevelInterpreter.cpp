@@ -383,18 +383,6 @@ JSValue CLoop::execute(OpcodeID entryOpcodeID, void* executableAddress, VM* vm, 
 #define RECORD_OPCODE_STATS(__opcode)
 #endif
 
-#if USE(JSVALUE32_64)
-#define FETCH_OPCODE() *pc.i8p
-#else // USE(JSVALUE64)
-#define FETCH_OPCODE() *bitwise_cast<OpcodeID*>(pcBase.i8p + pc.i)
-#endif // USE(JSVALUE64)
-
-#define NEXT_INSTRUCTION() \
-    do {                         \
-        opcode = FETCH_OPCODE(); \
-        DISPATCH_OPCODE();       \
-    } while (false)
-
 #if ENABLE(COMPUTED_GOTO_OPCODES)
 
     //========================================================================
@@ -485,7 +473,6 @@ JSValue CLoop::execute(OpcodeID entryOpcodeID, void* executableAddress, VM* vm, 
     #undef LLINT_OPCODE_ENTRY
 #endif
 
-    #undef NEXT_INSTRUCTION
     #undef DEFINE_OPCODE
     #undef CHECK_FOR_TIMEOUT
     #undef CAST

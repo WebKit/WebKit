@@ -288,7 +288,8 @@ void JIT::compileOpCall(const Instruction* instruction, unsigned callLinkInfoInd
     compileSetupFrame(bytecode, info);
     // SP holds newCallFrame + sizeof(CallerFrameAndPC), with ArgumentCount initialized.
     
-    uint32_t locationBits = CallSiteIndex(BytecodeIndex(bitwise_cast<uint32_t>(instruction))).bits();
+    auto bytecodeIndex = m_codeBlock->bytecodeIndex(instruction);
+    uint32_t locationBits = CallSiteIndex(bytecodeIndex).bits();
     store32(TrustedImm32(locationBits), tagFor(CallFrameSlot::argumentCountIncludingThis));
     emitLoad(callee, regT1, regT0); // regT1, regT0 holds callee.
 

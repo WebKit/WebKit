@@ -793,6 +793,7 @@ macro preserveCalleeSavesUsedByLLInt()
         storep metadataTable, -PtrSize[cfr]
     elsif ARMv7 or MIPS
         storep metadataTable, -4[cfr]
+        storep PB, -8[cfr]
     elsif ARM64 or ARM64E
         emit "stp x27, x28, [x29, #-16]"
         emit "stp x25, x26, [x29, #-32]"
@@ -816,6 +817,7 @@ macro restoreCalleeSavesUsedByLLInt()
         loadp -PtrSize[cfr], metadataTable
     elsif ARMv7 or MIPS
         loadp -4[cfr], metadataTable
+        loadp -8[cfr], PB
     elsif ARM64 or ARM64E
         emit "ldp x25, x26, [x29, #-32]"
         emit "ldp x27, x28, [x29, #-16]"
