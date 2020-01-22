@@ -628,9 +628,7 @@ class Parser
         firstCodeOrigin = @tokens[@idx].codeOrigin
         list = []
         loop {
-            if (@idx == @tokens.length and not final) or (final and @tokens[@idx] =~ final)
-                break
-            elsif @tokens[@idx].is_a? Annotation
+            if @tokens[@idx].is_a? Annotation
                 # This is the only place where we can encounter a global
                 # annotation, and hence need to be able to distinguish between
                 # them.
@@ -644,6 +642,8 @@ class Parser
                 list << Instruction.new(codeOrigin, annotationOpcode, [], @tokens[@idx].string)
                 @annotation = nil
                 @idx += 2 # Consume the newline as well.
+            elsif (@idx == @tokens.length and not final) or (final and @tokens[@idx] =~ final)
+                break
             elsif @tokens[@idx] == "\n"
                 # ignore
                 @idx += 1
