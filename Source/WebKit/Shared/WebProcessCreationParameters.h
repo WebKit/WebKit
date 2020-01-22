@@ -47,7 +47,7 @@
 #endif
 
 #if USE(SOUP)
-#include "HTTPCookieAcceptPolicy.h"
+#include <WebCore/HTTPCookieAcceptPolicy.h>
 #include <WebCore/SoupNetworkProxySettings.h>
 #endif
 

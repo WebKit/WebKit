@@ -1,5 +1,79 @@
 2020-01-22  Chris Dumez  <cdumez@apple.com>
 
+        Frequent NetworkConnectionToWebProcess::CookiesEnabled sync IPC when browsing reddit.com
+        https://bugs.webkit.org/show_bug.cgi?id=206450
+
+        Reviewed by Darin Adler.
+
+        Frequent NetworkConnectionToWebProcess::CookiesEnabled sync IPC when browsing reddit.com. This
+        happens every time the page script calls navigator.cookieEnabled. To address the issue, we now
+        store the "cookie accept policy" on the WebContent process side. This allows us to know
+        synchronously on the WebContent process if cookies are enabled or not and without any IPC to
+        the network process. To achieve this, I added a new cookieAcceptPolicy member to
+        NetworkProcessConnectionInfo so that the WebContent process is aware of the initial policy when
+        it connects to the network process. The policy on the WebContent process side is then kept up
+        to date via IPCs from the network process to the WebContent processes whenever the cookie
+        accept policy changes.
+
+        * NetworkProcess/Cookies/WebCookieManager.cpp:
+        (WebKit::WebCookieManager::setHTTPCookieAcceptPolicy):
+        (WebKit::WebCookieManager::getHTTPCookieAcceptPolicy):
+        * NetworkProcess/Cookies/WebCookieManager.h:
+        * NetworkProcess/Cookies/WebCookieManager.messages.in:
+        * NetworkProcess/Cookies/curl/WebCookieManagerCurl.cpp:
+        * NetworkProcess/Cookies/mac/WebCookieManagerMac.mm:
+        * NetworkProcess/Cookies/soup/WebCookieManagerSoup.cpp:
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        (WebKit::NetworkConnectionToWebProcess::cookieAcceptPolicyChanged):
+        * NetworkProcess/NetworkConnectionToWebProcess.h:
+        * NetworkProcess/NetworkConnectionToWebProcess.messages.in:
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::createNetworkConnectionToWebProcess):
+        (WebKit::NetworkProcess::cookieAcceptPolicyChanged):
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/NetworkProcess.messages.in:
+        * NetworkProcess/NetworkProcessCreationParameters.h:
+        * Shared/WebProcessCreationParameters.h:
+        * UIProcess/API/APIHTTPCookieStore.cpp:
+        (API::HTTPCookieStore::setHTTPCookieAcceptPolicy):
+        (API::HTTPCookieStore::setHTTPCookieAcceptPolicyInDefaultUIProcessCookieStore):
+        * UIProcess/API/APIHTTPCookieStore.h:
+        * UIProcess/API/C/WKAPICast.h:
+        (WebKit::toHTTPCookieAcceptPolicy):
+        (WebKit::toAPI):
+        * UIProcess/API/Cocoa/APIHTTPCookieStoreCocoa.mm:
+        (API::toNSHTTPCookieAcceptPolicy):
+        (API::HTTPCookieStore::setHTTPCookieAcceptPolicyInDefaultUIProcessCookieStore):
+        * UIProcess/API/Cocoa/WKHTTPCookieStore.mm:
+        * UIProcess/API/Cocoa/WKProcessPool.mm:
+        (toHTTPCookieAcceptPolicy):
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::openNetworkProcessConnection):
+        * UIProcess/WebCookieManagerProxy.h:
+        * UIProcess/WebProcessPool.h:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/Network/NetworkProcessConnection.cpp:
+        (WebKit::NetworkProcessConnection::NetworkProcessConnection):
+        (WebKit::NetworkProcessConnection::writeBlobsToTemporaryFiles):
+        (WebKit::NetworkProcessConnection::cookiesEnabled):
+        (WebKit::NetworkProcessConnection::cookieAcceptPolicyChanged):
+        * WebProcess/Network/NetworkProcessConnection.h:
+        (WebKit::NetworkProcessConnection::create):
+        * WebProcess/Network/NetworkProcessConnection.messages.in:
+        * WebProcess/Network/NetworkProcessConnectionInfo.h:
+        (WebKit::NetworkProcessConnectionInfo::encode const):
+        (WebKit::NetworkProcessConnectionInfo::decode):
+        * WebProcess/WebPage/WebCookieJar.cpp:
+        (WebKit::WebCookieJar::cookiesEnabled const):
+        - Return false early if the document has no frame / page (cookie-averse as per spec)
+        - Return false early if ITP is enabled and it is a third-party iframe without storage
+          access. This bypasses the sync IPC call completely for such iframes.
+
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::ensureNetworkProcessConnection):
+
+2020-01-22  Chris Dumez  <cdumez@apple.com>
+
         [IPC Hardening] Only process Messages::NetworkProcess messages when sent by the UIProcess
         https://bugs.webkit.org/show_bug.cgi?id=206558
 

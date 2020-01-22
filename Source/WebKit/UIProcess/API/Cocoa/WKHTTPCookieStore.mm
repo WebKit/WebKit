@@ -26,8 +26,8 @@
 #import "config.h"
 #import "WKHTTPCookieStoreInternal.h"
 
-#import "HTTPCookieAcceptPolicy.h"
 #import <WebCore/Cookie.h>
+#import <WebCore/HTTPCookieAcceptPolicy.h>
 #import <pal/spi/cf/CFNetworkSPI.h>
 #import <wtf/HashMap.h>
 #import <wtf/RetainPtr.h>

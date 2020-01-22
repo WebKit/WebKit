@@ -39,12 +39,12 @@
 
 namespace WebCore {
 struct Cookie;
+enum class HTTPCookieAcceptPolicy : uint8_t;
 }
 
 namespace WebKit {
 
 class NetworkProcess;
-enum class HTTPCookieAcceptPolicy : uint8_t;
 
 class WebCookieManager : public NetworkProcessSupplement, public IPC::MessageReceiver {
     WTF_MAKE_FAST_ALLOCATED;
@@ -55,7 +55,7 @@ public:
 
     static const char* supplementName();
 
-    void setHTTPCookieAcceptPolicy(HTTPCookieAcceptPolicy, CompletionHandler<void()>&&);
+    void setHTTPCookieAcceptPolicy(WebCore::HTTPCookieAcceptPolicy, CompletionHandler<void()>&&);
 
 #if USE(SOUP)
     void setCookiePersistentStorage(PAL::SessionID, const String& storagePath, SoupCookiePersistentStorageType);
@@ -79,9 +79,8 @@ private:
     void getAllCookies(PAL::SessionID, CompletionHandler<void(Vector<WebCore::Cookie>&&)>&&);
     void getCookies(PAL::SessionID, const URL&, CompletionHandler<void(Vector<WebCore::Cookie>&&)>&&);
 
-    void platformSetHTTPCookieAcceptPolicy(HTTPCookieAcceptPolicy);
-    void getHTTPCookieAcceptPolicy(CompletionHandler<void(HTTPCookieAcceptPolicy)>&&);
-    HTTPCookieAcceptPolicy platformGetHTTPCookieAcceptPolicy();
+    void platformSetHTTPCookieAcceptPolicy(WebCore::HTTPCookieAcceptPolicy);
+    void getHTTPCookieAcceptPolicy(CompletionHandler<void(WebCore::HTTPCookieAcceptPolicy)>&&);
 
     void startObservingCookieChanges(PAL::SessionID);
     void stopObservingCookieChanges(PAL::SessionID);

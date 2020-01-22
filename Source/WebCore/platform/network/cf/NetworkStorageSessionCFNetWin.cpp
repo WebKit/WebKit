@@ -28,6 +28,7 @@
 
 #include "Cookie.h"
 #include "CookieRequestHeaderFieldProxy.h"
+#include "HTTPCookieAcceptPolicy.h"
 #include "NotImplemented.h"
 #include <CFNetwork/CFHTTPCookiesPriv.h>
 #include <CoreFoundation/CoreFoundation.h>
@@ -258,10 +259,18 @@ std::pair<String, bool> NetworkStorageSession::cookieRequestHeaderFieldValue(con
     return cookieRequestHeaderFieldValue(headerFieldProxy.firstParty, headerFieldProxy.sameSiteInfo, headerFieldProxy.url, headerFieldProxy.frameID, headerFieldProxy.pageID, headerFieldProxy.includeSecureCookies, ShouldAskITP::Yes);
 }
 
-bool NetworkStorageSession::cookiesEnabled() const
+HTTPCookieAcceptPolicy NetworkStorageSession::cookieAcceptPolicy() const
 {
-    CFHTTPCookieStorageAcceptPolicy policy = CFHTTPCookieStorageGetCookieAcceptPolicy(cookieStorage().get());
-    return policy == CFHTTPCookieStorageAcceptPolicyOnlyFromMainDocumentDomain || policy == CFHTTPCookieStorageAcceptPolicyExclusivelyFromMainDocumentDomain || policy == CFHTTPCookieStorageAcceptPolicyAlways;
+    switch (CFHTTPCookieStorageGetCookieAcceptPolicy(cookieStorage().get())) {
+    case CFHTTPCookieStorageAcceptPolicyAlways:
+        return HTTPCookieAcceptPolicy::AlwaysAccept;
+    case CFHTTPCookieStorageAcceptPolicyOnlyFromMainDocumentDomain:
+        return HTTPCookieAcceptPolicy::OnlyFromMainDocumentDomain;
+    case CFHTTPCookieStorageAcceptPolicyExclusivelyFromMainDocumentDomain:
+        return HTTPCookieAcceptPolicy::ExclusivelyFromMainDocumentDomain;
+    default:
+        return HTTPCookieAcceptPolicy::Never;
+    }
 }
 
 bool NetworkStorageSession::getRawCookies(const URL& firstParty, const SameSiteInfo&, const URL& url, Optional<FrameIdentifier> frameID, Optional<PageIdentifier> pageID, ShouldAskITP, Vector<Cookie>& rawCookies) const

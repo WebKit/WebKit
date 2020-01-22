@@ -26,9 +26,9 @@
 #import "config.h"
 #import "WebCookieManager.h"
 
-#import "HTTPCookieAcceptPolicy.h"
 #import "NetworkProcess.h"
 #import "NetworkSession.h"
+#import <WebCore/HTTPCookieAcceptPolicy.h>
 #import <WebCore/NetworkStorageSession.h>
 #import <pal/spi/cf/CFNetworkSPI.h>
 #import <wtf/ProcessPrivilege.h>
@@ -63,25 +63,6 @@ void WebCookieManager::platformSetHTTPCookieAcceptPolicy(HTTPCookieAcceptPolicy 
         if (auto cookieStorage = networkStorageSession.cookieStorage())
             CFHTTPCookieStorageSetCookieAcceptPolicy(cookieStorage.get(), toCFHTTPCookieStorageAcceptPolicy(policy));
     });
-}
-
-HTTPCookieAcceptPolicy WebCookieManager::platformGetHTTPCookieAcceptPolicy()
-{
-    ASSERT(hasProcessPrivilege(ProcessPrivilege::CanAccessRawCookies));
-
-    switch ([[NSHTTPCookieStorage sharedHTTPCookieStorage] cookieAcceptPolicy]) {
-    case NSHTTPCookieAcceptPolicyAlways:
-        return HTTPCookieAcceptPolicy::AlwaysAccept;
-    case NSHTTPCookieAcceptPolicyOnlyFromMainDocumentDomain:
-        return HTTPCookieAcceptPolicy::OnlyFromMainDocumentDomain;
-    case NSHTTPCookieAcceptPolicyExclusivelyFromMainDocumentDomain:
-        return HTTPCookieAcceptPolicy::ExclusivelyFromMainDocumentDomain;
-    case NSHTTPCookieAcceptPolicyNever:
-        return HTTPCookieAcceptPolicy::Never;
-    }
-
-    ASSERT_NOT_REACHED();
-    return HTTPCookieAcceptPolicy::AlwaysAccept;
 }
 
 } // namespace WebKit

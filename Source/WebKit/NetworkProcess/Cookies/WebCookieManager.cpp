@@ -144,13 +144,14 @@ void WebCookieManager::stopObservingCookieChanges(PAL::SessionID sessionID)
 void WebCookieManager::setHTTPCookieAcceptPolicy(HTTPCookieAcceptPolicy policy, CompletionHandler<void()>&& completionHandler)
 {
     platformSetHTTPCookieAcceptPolicy(policy);
+    m_process.cookieAcceptPolicyChanged(policy);
 
     completionHandler();
 }
 
 void WebCookieManager::getHTTPCookieAcceptPolicy(CompletionHandler<void(HTTPCookieAcceptPolicy)>&& completionHandler)
 {
-    completionHandler(platformGetHTTPCookieAcceptPolicy());
+    completionHandler(m_process.defaultStorageSession().cookieAcceptPolicy());
 }
 
 } // namespace WebKit

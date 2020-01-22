@@ -28,6 +28,7 @@
 #include "WebKitWebsiteDataManagerPrivate.h"
 #include "WebKitWebsiteDataPrivate.h"
 #include "WebsiteDataRecord.h"
+#include <WebCore/HTTPCookieAcceptPolicy.h>
 #include <glib/gi18n-lib.h>
 #include <pal/SessionID.h>
 #include <wtf/glib/GRefPtr.h>
@@ -87,14 +88,14 @@ static inline SoupCookiePersistentStorageType toSoupCookiePersistentStorageType(
     }
 }
 
-static inline WebKitCookieAcceptPolicy toWebKitCookieAcceptPolicy(HTTPCookieAcceptPolicy httpPolicy)
+static inline WebKitCookieAcceptPolicy toWebKitCookieAcceptPolicy(WebCore::HTTPCookieAcceptPolicy httpPolicy)
 {
     switch (httpPolicy) {
-    case HTTPCookieAcceptPolicy::AlwaysAccept:
+    case WebCore::HTTPCookieAcceptPolicy::AlwaysAccept:
         return WEBKIT_COOKIE_POLICY_ACCEPT_ALWAYS;
-    case HTTPCookieAcceptPolicy::Never:
+    case WebCore::HTTPCookieAcceptPolicy::Never:
         return WEBKIT_COOKIE_POLICY_ACCEPT_NEVER;
-    case HTTPCookieAcceptPolicy::OnlyFromMainDocumentDomain:
+    case WebCore::HTTPCookieAcceptPolicy::OnlyFromMainDocumentDomain:
         return WEBKIT_COOKIE_POLICY_ACCEPT_NO_THIRD_PARTY;
     default:
         ASSERT_NOT_REACHED();
@@ -102,18 +103,18 @@ static inline WebKitCookieAcceptPolicy toWebKitCookieAcceptPolicy(HTTPCookieAcce
     }
 }
 
-static inline HTTPCookieAcceptPolicy toHTTPCookieAcceptPolicy(WebKitCookieAcceptPolicy kitPolicy)
+static inline WebCore::HTTPCookieAcceptPolicy toHTTPCookieAcceptPolicy(WebKitCookieAcceptPolicy kitPolicy)
 {
     switch (kitPolicy) {
     case WEBKIT_COOKIE_POLICY_ACCEPT_ALWAYS:
-        return HTTPCookieAcceptPolicy::AlwaysAccept;
+        return WebCore::HTTPCookieAcceptPolicy::AlwaysAccept;
     case WEBKIT_COOKIE_POLICY_ACCEPT_NEVER:
-        return HTTPCookieAcceptPolicy::Never;
+        return WebCore::HTTPCookieAcceptPolicy::Never;
     case WEBKIT_COOKIE_POLICY_ACCEPT_NO_THIRD_PARTY:
-        return HTTPCookieAcceptPolicy::OnlyFromMainDocumentDomain;
+        return WebCore::HTTPCookieAcceptPolicy::OnlyFromMainDocumentDomain;
     default:
         ASSERT_NOT_REACHED();
-        return HTTPCookieAcceptPolicy::AlwaysAccept;
+        return WebCore::HTTPCookieAcceptPolicy::AlwaysAccept;
     }
 }
 
@@ -218,7 +219,7 @@ void webkit_cookie_manager_get_accept_policy(WebKitCookieManager* manager, GCanc
         return;
     }
 
-    processPools[0]->supplement<WebCookieManagerProxy>()->getHTTPCookieAcceptPolicy(manager->priv->sessionID(), [task = WTFMove(task)](HTTPCookieAcceptPolicy policy) {
+    processPools[0]->supplement<WebCookieManagerProxy>()->getHTTPCookieAcceptPolicy(manager->priv->sessionID(), [task = WTFMove(task)](WebCore::HTTPCookieAcceptPolicy policy) {
         g_task_return_int(task.get(), toWebKitCookieAcceptPolicy(policy));
     });
 }

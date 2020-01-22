@@ -34,7 +34,7 @@
 #include <wtf/text/WTFString.h>
 
 #if USE(SOUP)
-#include "HTTPCookieAcceptPolicy.h"
+#include <WebCore/HTTPCookieAcceptPolicy.h>
 #include <WebCore/SoupNetworkProxySettings.h>
 #endif
 
@@ -76,7 +76,7 @@ struct NetworkProcessCreationParameters {
     WebsiteDataStoreParameters defaultDataStoreParameters;
     
 #if USE(SOUP)
-    HTTPCookieAcceptPolicy cookieAcceptPolicy { HTTPCookieAcceptPolicy::AlwaysAccept };
+    WebCore::HTTPCookieAcceptPolicy cookieAcceptPolicy { WebCore::HTTPCookieAcceptPolicy::AlwaysAccept };
     bool ignoreTLSErrors { false };
     Vector<String> languages;
     WebCore::SoupNetworkProxySettings proxySettings;

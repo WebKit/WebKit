@@ -129,12 +129,19 @@ void WebCookieJar::setCookies(WebCore::Document& document, const URL& url, const
     WebProcess::singleton().ensureNetworkProcessConnection().connection().send(Messages::NetworkConnectionToWebProcess::SetCookiesFromDOM(document.firstPartyForCookies(), sameSiteInfo(document), url, frameID, pageID, shouldAskITPInNetworkProcess, cookieString), 0);
 }
 
-bool WebCookieJar::cookiesEnabled(const WebCore::Document& document) const
+bool WebCookieJar::cookiesEnabled(const Document& document) const
 {
-    bool result = false;
-    if (!WebProcess::singleton().ensureNetworkProcessConnection().connection().sendSync(Messages::NetworkConnectionToWebProcess::CookiesEnabled(), Messages::NetworkConnectionToWebProcess::CookiesEnabled::Reply(result), 0))
+    auto* webFrame = document.frame() ? WebFrame::fromCoreFrame(*document.frame()) : nullptr;
+    if (!webFrame || !webFrame->page())
         return false;
-    return result;
+
+#if ENABLE(RESOURCE_LOAD_STATISTICS)
+    ShouldAskITP dummy;
+    if (shouldBlockCookies(webFrame, document.firstPartyForCookies(), document.cookieURL(), dummy))
+        return false;
+#endif
+
+    return WebProcess::singleton().ensureNetworkProcessConnection().cookiesEnabled();
 }
 
 std::pair<String, WebCore::SecureCookiesAccessed> WebCookieJar::cookieRequestHeaderFieldValue(const URL& firstParty, const WebCore::SameSiteInfo& sameSiteInfo, const URL& url, Optional<FrameIdentifier> frameID, Optional<PageIdentifier> pageID, WebCore::IncludeSecureCookies includeSecureCookies) const

@@ -1224,6 +1224,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/network/DNS.h
     platform/network/DNSResolveQueue.h
     platform/network/FormData.h
+    platform/network/HTTPCookieAcceptPolicy.h
     platform/network/HTTPHeaderMap.h
     platform/network/HTTPParsers.h
     platform/network/NetworkLoadInformation.h

@@ -28,7 +28,6 @@
 #define WKAPICast_h
 
 #include "CacheModel.h"
-#include "HTTPCookieAcceptPolicy.h"
 #include "InjectedBundleHitTestResultMediaType.h"
 #include "PluginModuleInfo.h"
 #include "ProcessTerminationReason.h"
@@ -46,6 +45,7 @@
 #include "WKSharedAPICast.h"
 #include <WebCore/Credential.h>
 #include <WebCore/FrameLoaderTypes.h>
+#include <WebCore/HTTPCookieAcceptPolicy.h>
 #include <WebCore/PluginData.h>
 #include <WebCore/ProtectionSpace.h>
 #include <WebCore/Settings.h>
@@ -369,33 +369,33 @@ inline ResourceCachesToClear toResourceCachesToClear(WKResourceCachesToClear wkR
     return AllResourceCaches;
 }
 
-inline HTTPCookieAcceptPolicy toHTTPCookieAcceptPolicy(WKHTTPCookieAcceptPolicy policy)
+inline WebCore::HTTPCookieAcceptPolicy toHTTPCookieAcceptPolicy(WKHTTPCookieAcceptPolicy policy)
 {
     switch (policy) {
     case kWKHTTPCookieAcceptPolicyAlways:
-        return HTTPCookieAcceptPolicy::AlwaysAccept;
+        return WebCore::HTTPCookieAcceptPolicy::AlwaysAccept;
     case kWKHTTPCookieAcceptPolicyNever:
-        return HTTPCookieAcceptPolicy::Never;
+        return WebCore::HTTPCookieAcceptPolicy::Never;
     case kWKHTTPCookieAcceptPolicyOnlyFromMainDocumentDomain:
-        return HTTPCookieAcceptPolicy::OnlyFromMainDocumentDomain;
+        return WebCore::HTTPCookieAcceptPolicy::OnlyFromMainDocumentDomain;
     case kWKHTTPCookieAcceptPolicyExclusivelyFromMainDocumentDomain:
-        return HTTPCookieAcceptPolicy::ExclusivelyFromMainDocumentDomain;
+        return WebCore::HTTPCookieAcceptPolicy::ExclusivelyFromMainDocumentDomain;
     }
 
     ASSERT_NOT_REACHED();
-    return HTTPCookieAcceptPolicy::AlwaysAccept;
+    return WebCore::HTTPCookieAcceptPolicy::AlwaysAccept;
 }
 
-inline WKHTTPCookieAcceptPolicy toAPI(HTTPCookieAcceptPolicy policy)
+inline WKHTTPCookieAcceptPolicy toAPI(WebCore::HTTPCookieAcceptPolicy policy)
 {
     switch (policy) {
-    case HTTPCookieAcceptPolicy::AlwaysAccept:
+    case WebCore::HTTPCookieAcceptPolicy::AlwaysAccept:
         return kWKHTTPCookieAcceptPolicyAlways;
-    case HTTPCookieAcceptPolicy::Never:
+    case WebCore::HTTPCookieAcceptPolicy::Never:
         return kWKHTTPCookieAcceptPolicyNever;
-    case HTTPCookieAcceptPolicy::OnlyFromMainDocumentDomain:
+    case WebCore::HTTPCookieAcceptPolicy::OnlyFromMainDocumentDomain:
         return kWKHTTPCookieAcceptPolicyOnlyFromMainDocumentDomain;
-    case HTTPCookieAcceptPolicy::ExclusivelyFromMainDocumentDomain:
+    case WebCore::HTTPCookieAcceptPolicy::ExclusivelyFromMainDocumentDomain:
         return kWKHTTPCookieAcceptPolicyExclusivelyFromMainDocumentDomain;
     }
 

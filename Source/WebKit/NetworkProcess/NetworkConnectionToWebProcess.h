@@ -61,6 +61,7 @@ enum class StorageAccessWasGranted : bool;
 enum class ShouldAskITP : bool;
 struct SameSiteInfo;
 
+enum class HTTPCookieAcceptPolicy : uint8_t;
 enum class IncludeSecureCookies : bool;
 }
 
@@ -167,6 +168,8 @@ public:
 
     NetworkSchemeRegistry& schemeRegistry() { return m_schemeRegistry.get(); }
 
+    void cookieAcceptPolicyChanged(WebCore::HTTPCookieAcceptPolicy);
+
 private:
     NetworkConnectionToWebProcess(NetworkProcess&, WebCore::ProcessIdentifier, PAL::SessionID, IPC::Connection::Identifier);
 
@@ -200,7 +203,6 @@ private:
 
     void cookiesForDOM(const URL& firstParty, const WebCore::SameSiteInfo&, const URL&, WebCore::FrameIdentifier, WebCore::PageIdentifier, WebCore::IncludeSecureCookies, WebCore::ShouldAskITP, CompletionHandler<void(String cookieString, bool secureCookiesAccessed)>&&);
     void setCookiesFromDOM(const URL& firstParty, const WebCore::SameSiteInfo&, const URL&, WebCore::FrameIdentifier, WebCore::PageIdentifier, WebCore::ShouldAskITP, const String&);
-    void cookiesEnabled(CompletionHandler<void(bool)>&&);
     void cookieRequestHeaderFieldValue(const URL& firstParty, const WebCore::SameSiteInfo&, const URL&, Optional<WebCore::FrameIdentifier>, Optional<WebCore::PageIdentifier>, WebCore::IncludeSecureCookies, WebCore::ShouldAskITP, CompletionHandler<void(String cookieString, bool secureCookiesAccessed)>&&);
     void getRawCookies(const URL& firstParty, const WebCore::SameSiteInfo&, const URL&, Optional<WebCore::FrameIdentifier>, Optional<WebCore::PageIdentifier>, WebCore::ShouldAskITP, CompletionHandler<void(Vector<WebCore::Cookie>&&)>&&);
     void deleteCookie(const URL&, const String& cookieName);

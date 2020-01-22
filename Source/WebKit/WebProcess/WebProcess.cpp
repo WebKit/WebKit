@@ -1191,7 +1191,7 @@ NetworkProcessConnection& WebProcess::ensureNetworkProcessConnection()
         if (!IPC::Connection::identifierIsValid(connectionInfo.identifier()))
             CRASH();
 
-        m_networkProcessConnection = NetworkProcessConnection::create(connectionInfo.releaseIdentifier());
+        m_networkProcessConnection = NetworkProcessConnection::create(connectionInfo.releaseIdentifier(), connectionInfo.cookieAcceptPolicy);
 #if HAVE(AUDIT_TOKEN)
         m_networkProcessConnection->setNetworkProcessAuditToken(WTFMove(connectionInfo.auditToken));
 #endif

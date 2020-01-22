@@ -1252,6 +1252,7 @@
 		46B9519A207D635400A7D2DD /* RemoteFrame.h in Headers */ = {isa = PBXBuildFile; fileRef = 46B95192207D632E00A7D2DD /* RemoteFrame.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		46B95BF52231CFD60053A504 /* DeviceOrientationAndMotionAccessController.h in Headers */ = {isa = PBXBuildFile; fileRef = 46B95BF42231CFB80053A504 /* DeviceOrientationAndMotionAccessController.h */; };
 		46BCBBC22085008F00710638 /* JSRemoteDOMWindowBase.h in Headers */ = {isa = PBXBuildFile; fileRef = 46BCBBC02085007F00710638 /* JSRemoteDOMWindowBase.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		46C0962123D78DD600657C09 /* HTTPCookieAcceptPolicy.h in Headers */ = {isa = PBXBuildFile; fileRef = 46C0962023D78DD600657C09 /* HTTPCookieAcceptPolicy.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		46C376622085177D00C73829 /* JSRemoteDOMWindow.h in Headers */ = {isa = PBXBuildFile; fileRef = 46C376612085176D00C73829 /* JSRemoteDOMWindow.h */; };
 		46C696CB1E7205F700597937 /* CPUMonitor.h in Headers */ = {isa = PBXBuildFile; fileRef = 46C696C91E7205E400597937 /* CPUMonitor.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		46C696CC1E7205FC00597937 /* CPUMonitor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 46C696CA1E7205E400597937 /* CPUMonitor.cpp */; };
@@ -1261,6 +1262,7 @@
 		46DFF4981DC2603100B80B48 /* ShadowRootMode.h in Headers */ = {isa = PBXBuildFile; fileRef = 46DFF4961DC2601300B80B48 /* ShadowRootMode.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		46DFF49C1DC2620B00B80B48 /* JSShadowRootMode.h in Headers */ = {isa = PBXBuildFile; fileRef = 46DFF49A1DC261F900B80B48 /* JSShadowRootMode.h */; };
 		46E0C0DE23C006E9005E47AE /* DragEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 46E0C0DA23C006B3005E47AE /* DragEvent.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		46E139F823D8B8EB0075848E /* HTTPCookieAcceptPolicyCocoa.h in Headers */ = {isa = PBXBuildFile; fileRef = 46E139F623D8B8E70075848E /* HTTPCookieAcceptPolicyCocoa.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		46E1666E1FCC86A200C9710B /* DocumentIdentifier.h in Headers */ = {isa = PBXBuildFile; fileRef = 46E1666C1FCC868700C9710B /* DocumentIdentifier.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		46E791491F97E01A00199739 /* JSVisibilityState.h in Headers */ = {isa = PBXBuildFile; fileRef = 46E791461F97E01700199739 /* JSVisibilityState.h */; };
 		46EB37CA1F97CCD200B65523 /* JSServiceWorkerClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 46EB37C31F97CCCB00B65523 /* JSServiceWorkerClient.h */; };
@@ -7785,6 +7787,7 @@
 		46BCBBC02085007F00710638 /* JSRemoteDOMWindowBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSRemoteDOMWindowBase.h; sourceTree = "<group>"; };
 		46BCBBC12085008000710638 /* JSRemoteDOMWindowBase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSRemoteDOMWindowBase.cpp; sourceTree = "<group>"; };
 		46BCBBC3208500A700710638 /* RemoteDOMWindow.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = RemoteDOMWindow.idl; sourceTree = "<group>"; };
+		46C0962023D78DD600657C09 /* HTTPCookieAcceptPolicy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HTTPCookieAcceptPolicy.h; sourceTree = "<group>"; };
 		46C3765F2085176C00C73829 /* JSRemoteDOMWindow.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSRemoteDOMWindow.cpp; sourceTree = "<group>"; };
 		46C376612085176D00C73829 /* JSRemoteDOMWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSRemoteDOMWindow.h; sourceTree = "<group>"; };
 		46C696C91E7205E400597937 /* CPUMonitor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPUMonitor.h; sourceTree = "<group>"; };
@@ -7802,6 +7805,7 @@
 		46E0C0DA23C006B3005E47AE /* DragEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DragEvent.h; sourceTree = "<group>"; };
 		46E0C0DC23C006B4005E47AE /* DragEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DragEvent.cpp; sourceTree = "<group>"; };
 		46E0C0DD23C006B4005E47AE /* DragEvent.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = DragEvent.idl; sourceTree = "<group>"; };
+		46E139F623D8B8E70075848E /* HTTPCookieAcceptPolicyCocoa.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTTPCookieAcceptPolicyCocoa.h; sourceTree = "<group>"; };
 		46E1666C1FCC868700C9710B /* DocumentIdentifier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DocumentIdentifier.h; sourceTree = "<group>"; };
 		46E791451F97E01700199739 /* JSVisibilityState.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSVisibilityState.cpp; sourceTree = "<group>"; };
 		46E791461F97E01700199739 /* JSVisibilityState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSVisibilityState.h; sourceTree = "<group>"; };
@@ -20465,6 +20469,7 @@
 				514C765B0CE923A1007EF3CD /* FormData.h */,
 				085B92B80EFDE73D00E6123C /* FormDataBuilder.cpp */,
 				085B92B90EFDE73D00E6123C /* FormDataBuilder.h */,
+				46C0962023D78DD600657C09 /* HTTPCookieAcceptPolicy.h */,
 				0B8C56D30F28627F000502E1 /* HTTPHeaderMap.cpp */,
 				514C765C0CE923A1007EF3CD /* HTTPHeaderMap.h */,
 				1AC900BF1943AF3D008625B5 /* HTTPHeaderNames.in */,
@@ -21449,6 +21454,7 @@
 				5120BBAC1F1CE77000EFEBF1 /* CookieStorageObserver.mm */,
 				3792917C1987678F00F4B661 /* CredentialCocoa.h */,
 				3792917B1987678F00F4B661 /* CredentialCocoa.mm */,
+				46E139F623D8B8E70075848E /* HTTPCookieAcceptPolicyCocoa.h */,
 				5C9B860B1C21E3C600110F36 /* NetworkLoadMetrics.mm */,
 				51D1248A1E73625C002B2820 /* NetworkStorageSessionCocoa.mm */,
 				372ADA37197F47B900FC501E /* ProtectionSpaceCocoa.h */,
@@ -30285,6 +30291,8 @@
 				E44613AB0CD6331000FADA75 /* HTMLVideoElement.h in Headers */,
 				1D2F8E052344751D00993B68 /* HTMLVideoElementPictureInPicture.h in Headers */,
 				839AAFED1A0C0C8D00605F99 /* HTMLWBRElement.h in Headers */,
+				46C0962123D78DD600657C09 /* HTTPCookieAcceptPolicy.h in Headers */,
+				46E139F823D8B8EB0075848E /* HTTPCookieAcceptPolicyCocoa.h in Headers */,
 				5CA1DEC61F71F1C700E71BD3 /* HTTPHeaderField.h in Headers */,
 				514C76710CE923A1007EF3CD /* HTTPHeaderMap.h in Headers */,
 				1AB5EBD2194A50F30059AC70 /* HTTPHeaderNames.h in Headers */,

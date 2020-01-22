@@ -31,6 +31,7 @@
 #include "WebsiteDataStore.h"
 #include <WebCore/Cookie.h>
 #include <WebCore/CookieStorage.h>
+#include <WebCore/HTTPCookieAcceptPolicy.h>
 #include <WebCore/NetworkStorageSession.h>
 
 using namespace WebKit;
@@ -133,7 +134,7 @@ void HTTPCookieStore::deleteAllCookies(CompletionHandler<void()>&& completionHan
     RunLoop::main().dispatch(WTFMove(completionHandler));
 }
 
-void HTTPCookieStore::setHTTPCookieAcceptPolicy(WebKit::HTTPCookieAcceptPolicy policy, CompletionHandler<void()>&& completionHandler)
+void HTTPCookieStore::setHTTPCookieAcceptPolicy(WebCore::HTTPCookieAcceptPolicy policy, CompletionHandler<void()>&& completionHandler)
 {
     auto* pool = m_owningDataStore->processPoolForCookieStorageOperations();
     if (!pool) {
@@ -279,7 +280,7 @@ void HTTPCookieStore::deleteCookieFromDefaultUIProcessCookieStore(const WebCore:
 void HTTPCookieStore::startObservingChangesToDefaultUIProcessCookieStore(Function<void()>&&) { }
 void HTTPCookieStore::stopObservingChangesToDefaultUIProcessCookieStore() { }
 void HTTPCookieStore::deleteCookiesInDefaultUIProcessCookieStore() { }
-void HTTPCookieStore::setHTTPCookieAcceptPolicyInDefaultUIProcessCookieStore(WebKit::HTTPCookieAcceptPolicy) { }
+void HTTPCookieStore::setHTTPCookieAcceptPolicyInDefaultUIProcessCookieStore(WebCore::HTTPCookieAcceptPolicy) { }
 #endif
     
 } // namespace API

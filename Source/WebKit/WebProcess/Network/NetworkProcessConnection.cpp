@@ -56,6 +56,7 @@
 #include "WebSocketStream.h"
 #include "WebSocketStreamMessages.h"
 #include <WebCore/CachedResource.h>
+#include <WebCore/HTTPCookieAcceptPolicy.h>
 #include <WebCore/MemoryCache.h>
 #include <WebCore/MessagePort.h>
 #include <WebCore/SharedBuffer.h>
@@ -68,8 +69,9 @@
 namespace WebKit {
 using namespace WebCore;
 
-NetworkProcessConnection::NetworkProcessConnection(IPC::Connection::Identifier connectionIdentifier)
+NetworkProcessConnection::NetworkProcessConnection(IPC::Connection::Identifier connectionIdentifier, HTTPCookieAcceptPolicy cookieAcceptPolicy)
     : m_connection(IPC::Connection::createClientConnection(connectionIdentifier, *this))
+    , m_cookieAcceptPolicy(cookieAcceptPolicy)
 {
     m_connection->open();
 }
@@ -204,7 +206,7 @@ void NetworkProcessConnection::didReceiveInvalidMessage(IPC::Connection&, IPC::S
 
 void NetworkProcessConnection::writeBlobsToTemporaryFiles(const Vector<String>& blobURLs, CompletionHandler<void(Vector<String>&& filePaths)>&& completionHandler)
 {
-    WebProcess::singleton().ensureNetworkProcessConnection().connection().sendWithAsyncReply(Messages::NetworkConnectionToWebProcess::WriteBlobsToTemporaryFiles(blobURLs), WTFMove(completionHandler));
+    connection().sendWithAsyncReply(Messages::NetworkConnectionToWebProcess::WriteBlobsToTemporaryFiles(blobURLs), WTFMove(completionHandler));
 }
 
 void NetworkProcessConnection::didFinishPingLoad(uint64_t pingLoadIdentifier, ResourceError&& error, ResourceResponse&& response)
@@ -220,6 +222,16 @@ void NetworkProcessConnection::didFinishPreconnection(uint64_t preconnectionIden
 void NetworkProcessConnection::setOnLineState(bool isOnLine)
 {
     WebProcess::singleton().webLoaderStrategy().setOnLineState(isOnLine);
+}
+
+bool NetworkProcessConnection::cookiesEnabled() const
+{
+    return m_cookieAcceptPolicy != HTTPCookieAcceptPolicy::Never;
+}
+
+void NetworkProcessConnection::cookieAcceptPolicyChanged(HTTPCookieAcceptPolicy newPolicy)
+{
+    m_cookieAcceptPolicy = newPolicy;
 }
 
 #if ENABLE(SHAREABLE_RESOURCE)

@@ -72,6 +72,7 @@ struct Cookie;
 struct CookieRequestHeaderFieldProxy;
 struct SameSiteInfo;
 
+enum class HTTPCookieAcceptPolicy : uint8_t;
 enum class IncludeSecureCookies : bool;
 enum class IncludeHttpOnlyCookies : bool;
 enum class ThirdPartyCookieBlockingMode : uint8_t { All, AllOnSitesWithoutUserInteraction, OnlyAccordingToPerDomainPolicy };
@@ -125,7 +126,7 @@ public:
     NetworkingContext* context() const;
 #endif
 
-    WEBCORE_EXPORT bool cookiesEnabled() const;
+    WEBCORE_EXPORT HTTPCookieAcceptPolicy cookieAcceptPolicy() const;
     WEBCORE_EXPORT void setCookie(const Cookie&);
     WEBCORE_EXPORT void setCookies(const Vector<Cookie>&, const URL&, const URL& mainDocumentURL);
     WEBCORE_EXPORT void setCookiesFromDOM(const URL& firstParty, const SameSiteInfo&, const URL&, Optional<FrameIdentifier>, Optional<PageIdentifier>, ShouldAskITP, const String&) const;

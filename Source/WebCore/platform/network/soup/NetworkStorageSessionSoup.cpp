@@ -34,6 +34,7 @@
 #include "Cookie.h"
 #include "CookieRequestHeaderFieldProxy.h"
 #include "GUniquePtrSoup.h"
+#include "HTTPCookieAcceptPolicy.h"
 #include "ResourceHandle.h"
 #include "SoupNetworkSession.h"
 #include "URLSoup.h"
@@ -241,10 +242,16 @@ void NetworkStorageSession::saveCredentialToPersistentStorage(const ProtectionSp
 #endif
 }
 
-bool NetworkStorageSession::cookiesEnabled() const
+HTTPCookieAcceptPolicy NetworkStorageSession::cookieAcceptPolicy() const
 {
-    auto policy = soup_cookie_jar_get_accept_policy(cookieStorage());
-    return policy == SOUP_COOKIE_JAR_ACCEPT_ALWAYS || policy == SOUP_COOKIE_JAR_ACCEPT_NO_THIRD_PARTY;
+    switch (soup_cookie_jar_get_accept_policy(cookieStorage())) {
+    case SOUP_COOKIE_JAR_ACCEPT_ALWAYS:
+        return HTTPCookieAcceptPolicy::AlwaysAccept;
+    case SOUP_COOKIE_JAR_ACCEPT_NO_THIRD_PARTY:
+        return HTTPCookieAcceptPolicy::OnlyFromMainDocumentDomain;
+    default:
+        return HTTPCookieAcceptPolicy::Never;
+    }
 }
 
 static inline bool httpOnlyCookieExists(const GSList* cookies, const gchar* name, const gchar* path)

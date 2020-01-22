@@ -48,6 +48,7 @@
 #import "_WKDownloadInternal.h"
 #import "_WKProcessPoolConfigurationInternal.h"
 #import <WebCore/CertificateInfo.h>
+#import <WebCore/HTTPCookieAcceptPolicyCocoa.h>
 #import <WebCore/PluginData.h>
 #import <WebCore/RegistrableDomain.h>
 #import <pal/spi/cf/CFNetworkSPI.h>
@@ -200,26 +201,9 @@ static WKProcessPool *sharedProcessPool;
 {
 }
 
-static WebKit::HTTPCookieAcceptPolicy toHTTPCookieAcceptPolicy(NSHTTPCookieAcceptPolicy policy)
-{
-    switch (static_cast<NSUInteger>(policy)) {
-    case NSHTTPCookieAcceptPolicyAlways:
-        return WebKit::HTTPCookieAcceptPolicy::AlwaysAccept;
-    case NSHTTPCookieAcceptPolicyNever:
-        return WebKit::HTTPCookieAcceptPolicy::Never;
-    case NSHTTPCookieAcceptPolicyOnlyFromMainDocumentDomain:
-        return WebKit::HTTPCookieAcceptPolicy::OnlyFromMainDocumentDomain;
-    case NSHTTPCookieAcceptPolicyExclusivelyFromMainDocumentDomain:
-        return WebKit::HTTPCookieAcceptPolicy::ExclusivelyFromMainDocumentDomain;
-    }
-
-    ASSERT_NOT_REACHED();
-    return WebKit::HTTPCookieAcceptPolicy::AlwaysAccept;
-}
-
 - (void)_setCookieAcceptPolicy:(NSHTTPCookieAcceptPolicy)policy
 {
-    _processPool->supplement<WebKit::WebCookieManagerProxy>()->setHTTPCookieAcceptPolicy(PAL::SessionID::defaultSessionID(), toHTTPCookieAcceptPolicy(policy), []() { });
+    _processPool->supplement<WebKit::WebCookieManagerProxy>()->setHTTPCookieAcceptPolicy(PAL::SessionID::defaultSessionID(), WebCore::toHTTPCookieAcceptPolicy(policy), []() { });
 }
 
 - (id)_objectForBundleParameter:(NSString *)parameter

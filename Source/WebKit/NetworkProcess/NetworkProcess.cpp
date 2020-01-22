@@ -70,6 +70,7 @@
 #include <WebCore/DNS.h>
 #include <WebCore/DeprecatedGlobalSettings.h>
 #include <WebCore/DiagnosticLoggingClient.h>
+#include <WebCore/HTTPCookieAcceptPolicy.h>
 #include <WebCore/LegacySchemeRegistry.h>
 #include <WebCore/LogInitialization.h>
 #include <WebCore/MIMETypeRegistry.h>
@@ -382,11 +383,11 @@ void NetworkProcess::initializeConnection(IPC::Connection* connection)
         supplement->initializeConnection(connection);
 }
 
-void NetworkProcess::createNetworkConnectionToWebProcess(ProcessIdentifier identifier, PAL::SessionID sessionID, CompletionHandler<void(Optional<IPC::Attachment>&&)>&& completionHandler)
+void NetworkProcess::createNetworkConnectionToWebProcess(ProcessIdentifier identifier, PAL::SessionID sessionID, CompletionHandler<void(Optional<IPC::Attachment>&&, HTTPCookieAcceptPolicy)>&& completionHandler)
 {
     auto ipcConnection = createIPCConnectionPair();
     if (!ipcConnection) {
-        completionHandler({ });
+        completionHandler({ }, HTTPCookieAcceptPolicy::Never);
         return;
     }
 
@@ -396,7 +397,8 @@ void NetworkProcess::createNetworkConnectionToWebProcess(ProcessIdentifier ident
     ASSERT(!m_webProcessConnections.contains(identifier));
     m_webProcessConnections.add(identifier, WTFMove(newConnection));
 
-    completionHandler(WTFMove(ipcConnection->second));
+    auto* storage = storageSession(sessionID);
+    completionHandler(WTFMove(ipcConnection->second), storage ? storage->cookieAcceptPolicy() : HTTPCookieAcceptPolicy::Never);
 
     connection.setOnLineState(NetworkStateNotifier::singleton().onLine());
 
@@ -519,6 +521,12 @@ void NetworkProcess::ensureSession(const PAL::SessionID& sessionID, bool shouldU
 #elif USE(CURL) || USE(SOUP)
     addResult.iterator->value = makeUnique<NetworkStorageSession>(sessionID);
 #endif
+}
+
+void NetworkProcess::cookieAcceptPolicyChanged(HTTPCookieAcceptPolicy newPolicy)
+{
+    for (auto& connection : m_webProcessConnections.values())
+        connection->cookieAcceptPolicyChanged(newPolicy);
 }
 
 WebCore::NetworkStorageSession* NetworkProcess::storageSession(const PAL::SessionID& sessionID) const

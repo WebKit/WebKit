@@ -43,6 +43,7 @@ class ResourceRequest;
 class ResourceResponse;
 struct MessagePortIdentifier;
 struct MessageWithMessagePorts;
+enum class HTTPCookieAcceptPolicy : uint8_t;
 }
 
 namespace WebKit {
@@ -54,9 +55,9 @@ typedef uint64_t ResourceLoadIdentifier;
 
 class NetworkProcessConnection : public RefCounted<NetworkProcessConnection>, IPC::Connection::Client {
 public:
-    static Ref<NetworkProcessConnection> create(IPC::Connection::Identifier connectionIdentifier)
+    static Ref<NetworkProcessConnection> create(IPC::Connection::Identifier connectionIdentifier, WebCore::HTTPCookieAcceptPolicy httpCookieAcceptPolicy)
     {
-        return adoptRef(*new NetworkProcessConnection(connectionIdentifier));
+        return adoptRef(*new NetworkProcessConnection(connectionIdentifier, httpCookieAcceptPolicy));
     }
     ~NetworkProcessConnection();
     
@@ -80,8 +81,10 @@ public:
     Optional<audit_token_t> networkProcessAuditToken() const { return m_networkProcessAuditToken; }
 #endif
 
+    bool cookiesEnabled() const;
+
 private:
-    NetworkProcessConnection(IPC::Connection::Identifier);
+    NetworkProcessConnection(IPC::Connection::Identifier, WebCore::HTTPCookieAcceptPolicy);
 
     // IPC::Connection::Client
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
@@ -92,6 +95,7 @@ private:
     void didFinishPingLoad(uint64_t pingLoadIdentifier, WebCore::ResourceError&&, WebCore::ResourceResponse&&);
     void didFinishPreconnection(uint64_t preconnectionIdentifier, WebCore::ResourceError&&);
     void setOnLineState(bool isOnLine);
+    void cookieAcceptPolicyChanged(WebCore::HTTPCookieAcceptPolicy);
 
     void checkProcessLocalPortForActivity(const WebCore::MessagePortIdentifier&, CompletionHandler<void(WebCore::MessagePortChannelProvider::HasActivity)>&&);
     void messagesAvailableForPort(const WebCore::MessagePortIdentifier&);
@@ -114,6 +118,7 @@ private:
 #if ENABLE(SERVICE_WORKER)
     RefPtr<WebSWClientConnection> m_swConnection;
 #endif
+    WebCore::HTTPCookieAcceptPolicy m_cookieAcceptPolicy;
 };
 
 } // namespace WebKit

@@ -26,6 +26,7 @@
 #include "config.h"
 #include "NetworkStorageSession.h"
 
+#include "HTTPCookieAcceptPolicy.h"
 #include "RuntimeApplicationChecks.h"
 #include <wtf/NeverDestroyed.h>
 #include <wtf/ProcessPrivilege.h>

@@ -28,6 +28,7 @@
 
 #include <WebCore/Cookie.h>
 #include <WebCore/CookieStorageObserver.h>
+#include <WebCore/HTTPCookieAcceptPolicy.h>
 #include <pal/spi/cf/CFNetworkSPI.h>
 
 namespace API {
@@ -75,23 +76,23 @@ void HTTPCookieStore::deleteCookiesInDefaultUIProcessCookieStore()
     [[NSHTTPCookieStorage sharedHTTPCookieStorage] removeCookiesSinceDate:[NSDate distantPast]];
 }
 
-static NSHTTPCookieAcceptPolicy toNSHTTPCookieAcceptPolicy(WebKit::HTTPCookieAcceptPolicy policy)
+static NSHTTPCookieAcceptPolicy toNSHTTPCookieAcceptPolicy(WebCore::HTTPCookieAcceptPolicy policy)
 {
     switch (policy) {
-    case WebKit::HTTPCookieAcceptPolicy::AlwaysAccept:
+    case WebCore::HTTPCookieAcceptPolicy::AlwaysAccept:
         return NSHTTPCookieAcceptPolicyAlways;
-    case WebKit::HTTPCookieAcceptPolicy::Never:
+    case WebCore::HTTPCookieAcceptPolicy::Never:
         return NSHTTPCookieAcceptPolicyNever;
-    case WebKit::HTTPCookieAcceptPolicy::OnlyFromMainDocumentDomain:
+    case WebCore::HTTPCookieAcceptPolicy::OnlyFromMainDocumentDomain:
         return NSHTTPCookieAcceptPolicyOnlyFromMainDocumentDomain;
-    case WebKit::HTTPCookieAcceptPolicy::ExclusivelyFromMainDocumentDomain:
+    case WebCore::HTTPCookieAcceptPolicy::ExclusivelyFromMainDocumentDomain:
         return (NSHTTPCookieAcceptPolicy)NSHTTPCookieAcceptPolicyExclusivelyFromMainDocumentDomain;
     }
     ASSERT_NOT_REACHED();
     return NSHTTPCookieAcceptPolicyAlways;
 }
 
-void HTTPCookieStore::setHTTPCookieAcceptPolicyInDefaultUIProcessCookieStore(WebKit::HTTPCookieAcceptPolicy policy)
+void HTTPCookieStore::setHTTPCookieAcceptPolicyInDefaultUIProcessCookieStore(WebCore::HTTPCookieAcceptPolicy policy)
 {
     [[NSHTTPCookieStorage sharedHTTPCookieStorage] setCookieAcceptPolicy:toNSHTTPCookieAcceptPolicy(policy)];
 }

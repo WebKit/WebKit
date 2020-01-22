@@ -29,6 +29,7 @@
 #import "Cookie.h"
 #import "CookieRequestHeaderFieldProxy.h"
 #import "CookieStorageObserver.h"
+#import "HTTPCookieAcceptPolicyCocoa.h"
 #import "SameSiteInfo.h"
 #import <pal/spi/cf/CFNetworkSPI.h>
 #import <wtf/BlockObjCExceptions.h>
@@ -441,15 +442,14 @@ static NSHTTPCookieAcceptPolicy httpCookieAcceptPolicy(CFHTTPCookieStorageRef co
     return static_cast<NSHTTPCookieAcceptPolicy>(CFHTTPCookieStorageGetCookieAcceptPolicy(cookieStorage));
 }
 
-bool NetworkStorageSession::cookiesEnabled() const
+HTTPCookieAcceptPolicy NetworkStorageSession::cookieAcceptPolicy() const
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
-
-    NSHTTPCookieAcceptPolicy cookieAcceptPolicy = httpCookieAcceptPolicy(cookieStorage().get());
-    return cookieAcceptPolicy == NSHTTPCookieAcceptPolicyAlways || cookieAcceptPolicy == NSHTTPCookieAcceptPolicyOnlyFromMainDocumentDomain || cookieAcceptPolicy == NSHTTPCookieAcceptPolicyExclusivelyFromMainDocumentDomain;
-
+    auto policy = httpCookieAcceptPolicy(cookieStorage().get());
+    return toHTTPCookieAcceptPolicy(policy);
     END_BLOCK_OBJC_EXCEPTIONS;
-    return false;
+
+    return HTTPCookieAcceptPolicy::Never;
 }
 
 bool NetworkStorageSession::getRawCookies(const URL& firstParty, const SameSiteInfo& sameSiteInfo, const URL& url, Optional<FrameIdentifier> frameID, Optional<PageIdentifier> pageID, ShouldAskITP shouldAskITP, Vector<Cookie>& rawCookies) const

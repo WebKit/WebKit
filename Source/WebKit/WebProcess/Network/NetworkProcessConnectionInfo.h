@@ -25,10 +25,13 @@
 
 #pragma once
 
+#include <WebCore/HTTPCookieAcceptPolicy.h>
+
 namespace WebKit {
 
 struct NetworkProcessConnectionInfo {
     IPC::Attachment connection;
+    WebCore::HTTPCookieAcceptPolicy cookieAcceptPolicy;
 #if HAVE(AUDIT_TOKEN)
     Optional<audit_token_t> auditToken;
 #endif
@@ -61,6 +64,7 @@ struct NetworkProcessConnectionInfo {
     void encode(IPC::Encoder& encoder) const
     {
         encoder << connection;
+        encoder << cookieAcceptPolicy;
 #if HAVE(AUDIT_TOKEN)
         encoder << auditToken;
 #endif
@@ -69,6 +73,8 @@ struct NetworkProcessConnectionInfo {
     static bool decode(IPC::Decoder& decoder, NetworkProcessConnectionInfo& info)
     {
         if (!decoder.decode(info.connection))
+            return false;
+        if (!decoder.decodeEnum(info.cookieAcceptPolicy))
             return false;
 #if HAVE(AUDIT_TOKEN)
         if (!decoder.decode(info.auditToken))

@@ -33,6 +33,7 @@
 #include "CookieJarDB.h"
 #include "CookieRequestHeaderFieldProxy.h"
 #include "CurlContext.h"
+#include "HTTPCookieAcceptPolicy.h"
 #include "NetworkingContext.h"
 #include "ResourceHandle.h"
 #include <wtf/FileSystem.h>
@@ -85,9 +86,21 @@ void NetworkStorageSession::setCookiesFromDOM(const URL& firstParty, const SameS
     cookieStorage().setCookiesFromDOM(*this, firstParty, sameSiteInfo, url, frameID, pageID, value);
 }
 
-bool NetworkStorageSession::cookiesEnabled() const
+HTTPCookieAcceptPolicy NetworkStorageSession::cookieAcceptPolicy() const
 {
-    return cookieStorage().cookiesEnabled(*this);
+    switch (cookieStorage().cookieAcceptPolicy(*this)) {
+    case CookieAcceptPolicy::Always:
+        return HTTPCookieAcceptPolicy::AlwaysAccept;
+    case CookieAcceptPolicy::Never:
+        return HTTPCookieAcceptPolicy::Never;
+    case CookieAcceptPolicy::OnlyFromMainDocumentDomain:
+        return HTTPCookieAcceptPolicy::OnlyFromMainDocumentDomain;
+    case CookieAcceptPolicy::ExclusivelyFromMainDocumentDomain:
+        return HTTPCookieAcceptPolicy::ExclusivelyFromMainDocumentDomain;
+    }
+
+    ASSERT_NOT_REACHED();
+    return HTTPCookieAcceptPolicy::OnlyFromMainDocumentDomain;
 }
 
 std::pair<String, bool> NetworkStorageSession::cookiesForDOM(const URL& firstParty, const SameSiteInfo& sameSiteInfo, const URL& url, Optional<FrameIdentifier> frameID, Optional<PageIdentifier> pageID, IncludeSecureCookies includeSecureCookies, ShouldAskITP) const

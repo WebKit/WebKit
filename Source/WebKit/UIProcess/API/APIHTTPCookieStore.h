@@ -26,7 +26,6 @@
 #pragma once
 
 #include "APIObject.h"
-#include "HTTPCookieAcceptPolicy.h"
 #include <WebCore/Cookie.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/Forward.h>
@@ -37,12 +36,12 @@ struct Cookie;
 #if PLATFORM(COCOA)
 class CookieStorageObserver;
 #endif
+enum class HTTPCookieAcceptPolicy : uint8_t;
 }
 
 namespace WebKit {
 class WebCookieManagerProxy;
 class WebsiteDataStore;
-enum class HTTPCookieAcceptPolicy : uint8_t;
 }
 
 namespace API {
@@ -63,7 +62,7 @@ public:
     void deleteCookie(const WebCore::Cookie&, CompletionHandler<void()>&&);
     
     void deleteAllCookies(CompletionHandler<void()>&&);
-    void setHTTPCookieAcceptPolicy(WebKit::HTTPCookieAcceptPolicy, CompletionHandler<void()>&&);
+    void setHTTPCookieAcceptPolicy(WebCore::HTTPCookieAcceptPolicy, CompletionHandler<void()>&&);
 
     class Observer {
     public:
@@ -90,7 +89,7 @@ private:
     void startObservingChangesToDefaultUIProcessCookieStore(Function<void()>&&);
     void stopObservingChangesToDefaultUIProcessCookieStore();
     void deleteCookiesInDefaultUIProcessCookieStore();
-    void setHTTPCookieAcceptPolicyInDefaultUIProcessCookieStore(WebKit::HTTPCookieAcceptPolicy);
+    void setHTTPCookieAcceptPolicyInDefaultUIProcessCookieStore(WebCore::HTTPCookieAcceptPolicy);
     
     // FIXME: This is a reference cycle.
     Ref<WebKit::WebsiteDataStore> m_owningDataStore;

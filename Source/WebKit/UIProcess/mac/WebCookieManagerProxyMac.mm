@@ -31,7 +31,7 @@
 
 namespace WebKit {
 
-void WebCookieManagerProxy::persistHTTPCookieAcceptPolicy(HTTPCookieAcceptPolicy policy)
+void WebCookieManagerProxy::persistHTTPCookieAcceptPolicy(WebCore::HTTPCookieAcceptPolicy policy)
 {
     ASSERT(hasProcessPrivilege(ProcessPrivilege::CanAccessRawCookies));
 

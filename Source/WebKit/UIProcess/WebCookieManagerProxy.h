@@ -53,7 +53,7 @@ class WebProcessPool;
 class WebProcessProxy;
 
 typedef GenericCallback<API::Array*> ArrayCallback;
-typedef GenericCallback<HTTPCookieAcceptPolicy> HTTPCookieAcceptPolicyCallback;
+typedef GenericCallback<WebCore::HTTPCookieAcceptPolicy> HTTPCookieAcceptPolicyCallback;
 typedef GenericCallback<const Vector<WebCore::Cookie>&> GetCookiesCallback;
 
 class WebCookieManagerProxy : public API::ObjectImpl<API::Object::Type::CookieManager>, public WebContextSupplement, private IPC::MessageReceiver {
@@ -77,8 +77,8 @@ public:
     void getAllCookies(PAL::SessionID, CompletionHandler<void(Vector<WebCore::Cookie>&&)>&&);
     void getCookies(PAL::SessionID, const URL&, CompletionHandler<void(Vector<WebCore::Cookie>&&)>&&);
 
-    void setHTTPCookieAcceptPolicy(PAL::SessionID, HTTPCookieAcceptPolicy, CompletionHandler<void()>&&);
-    void getHTTPCookieAcceptPolicy(PAL::SessionID, CompletionHandler<void(HTTPCookieAcceptPolicy)>&&);
+    void setHTTPCookieAcceptPolicy(PAL::SessionID, WebCore::HTTPCookieAcceptPolicy, CompletionHandler<void()>&&);
+    void getHTTPCookieAcceptPolicy(PAL::SessionID, CompletionHandler<void(WebCore::HTTPCookieAcceptPolicy)>&&);
 
     void startObservingCookieChanges(PAL::SessionID);
     void stopObservingCookieChanges(PAL::SessionID);
@@ -119,7 +119,7 @@ private:
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
 
 #if PLATFORM(COCOA)
-    void persistHTTPCookieAcceptPolicy(HTTPCookieAcceptPolicy);
+    void persistHTTPCookieAcceptPolicy(WebCore::HTTPCookieAcceptPolicy);
 #endif
 
     HashMap<PAL::SessionID, WTF::Function<void ()>> m_legacyCookieObservers;

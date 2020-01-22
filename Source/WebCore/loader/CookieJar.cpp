@@ -32,6 +32,7 @@
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "FrameLoaderClient.h"
+#include "HTTPCookieAcceptPolicy.h"
 #include "NetworkStorageSession.h"
 #include "NetworkingContext.h"
 #include "PlatformStrategies.h"
@@ -122,7 +123,7 @@ void CookieJar::setCookies(Document& document, const URL& url, const String& coo
 bool CookieJar::cookiesEnabled(const Document&) const
 {
     if (auto* session = m_storageSessionProvider->storageSession())
-        return session->cookiesEnabled();
+        return session->cookieAcceptPolicy() != HTTPCookieAcceptPolicy::Never;
 
     ASSERT_NOT_REACHED();
     return false;

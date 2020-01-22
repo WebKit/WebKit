@@ -36,7 +36,6 @@ messages -> NetworkConnectionToWebProcess LegacyReceiver {
 
     CookiesForDOM(URL firstParty, struct WebCore::SameSiteInfo sameSiteInfo, URL url, WebCore::FrameIdentifier frameID, WebCore::PageIdentifier pageID, enum:bool WebCore::IncludeSecureCookies includeSecureCookies, enum:bool WebCore::ShouldAskITP shouldAskITP) -> (String cookieString, bool didAccessSecureCookies) Synchronous
     SetCookiesFromDOM(URL firstParty, struct WebCore::SameSiteInfo sameSiteInfo, URL url, WebCore::FrameIdentifier frameID, WebCore::PageIdentifier pageID, enum:bool WebCore::ShouldAskITP shouldAskITP, String cookieString)
-    CookiesEnabled() -> (bool enabled) Synchronous
     CookieRequestHeaderFieldValue(URL firstParty, struct WebCore::SameSiteInfo sameSiteInfo, URL url, Optional<WebCore::FrameIdentifier> frameID, Optional<WebCore::PageIdentifier> pageID, enum:bool WebCore::IncludeSecureCookies includeSecureCookies, enum:bool WebCore::ShouldAskITP shouldAskITP) -> (String cookieString, bool didAccessSecureCookies) Synchronous
     GetRawCookies(URL firstParty, struct WebCore::SameSiteInfo sameSiteInfo, URL url, Optional<WebCore::FrameIdentifier> frameID, Optional<WebCore::PageIdentifier> pageID, enum:bool WebCore::ShouldAskITP shouldAskITP) -> (Vector<WebCore::Cookie> cookies) Synchronous
     DeleteCookie(URL url, String cookieName)
