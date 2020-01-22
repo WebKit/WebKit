@@ -1,5 +1,8 @@
 webgl [ Pass Slow ]
 
+# Currently skipped due to fetching external resources.
+webgl/1.0.3/conformance/more/functions [ Skip ]
+
 # Tests crashing
 webgl/2.0.0/conformance2/renderbuffers/framebuffer-object-attachment.html [ Skip ]
 webgl/2.0.0/conformance2/rendering/draw-buffers.html [ Skip ]

@@ -1,3 +1,14 @@
+2020-01-22  Dean Jackson  <dino@apple.com>
+
+        [WebGL] Skip tests on WebGL bot that are skipped on trunk/master
+        https://bugs.webkit.org/show_bug.cgi?id=206609
+
+        Reviewed by Antoine Quint.
+
+        These three tests fail when trying to get external resources.
+
+        * webgl/TestExpectations:
+
 2020-01-22  Ryan Haddad  <ryanhaddad@apple.com>
 
         Flaky Test: svg/wicd/rightsizing-grid.xhtml
