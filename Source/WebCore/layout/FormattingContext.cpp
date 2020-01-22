@@ -49,6 +49,7 @@ FormattingContext::FormattingContext(const Container& formattingContextRoot, For
     : m_root(makeWeakPtr(formattingContextRoot))
     , m_formattingState(formattingState)
 {
+    ASSERT(formattingContextRoot.hasChild());
 #ifndef NDEBUG
     layoutState().registerFormattingContext(*this);
 #endif
