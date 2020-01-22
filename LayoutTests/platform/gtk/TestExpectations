@@ -1263,6 +1263,20 @@ webkit.org/b/206528 imported/w3c/web-platform-tests/remote-playback/disable-remo
 webkit.org/b/206528 imported/w3c/web-platform-tests/remote-playback/idlharness.window.html [ Failure ]
 webkit.org/b/206528 imported/w3c/web-platform-tests/remote-playback/watch-availability-initial-callback.html [ Failure ]
 
+webkit.org/b/206583 webrtc/video-gpuProcess.html [ Failure ]
+
+webkit.org/b/206584 media/video-set-presentation-mode-to-inline.html [ Failure ]
+
+webkit.org/b/206585 imported/w3c/web-platform-tests/html/browsers/browsing-the-web/scroll-to-fragid/scroll-position-vertical-lr.html [ Failure ]
+webkit.org/b/206585 imported/w3c/web-platform-tests/html/browsers/browsing-the-web/scroll-to-fragid/scroll-position-vertical-rl.html [ Failure ]
+
+webkit.org/b/206586 imported/w3c/web-platform-tests/content-security-policy/frame-ancestors/frame-ancestors-from-serviceworker.https.html [ Failure ]
+webkit.org/b/206586 imported/w3c/web-platform-tests/content-security-policy/frame-src/frame-src-same-document-meta.html [ Failure ]
+
+webkit.org/b/206587 imported/w3c/web-platform-tests/2dcontext/shadows/shadowBlur_gaussian_tolerance.1.html [ Failure ]
+
+webkit.org/b/206588 fast/history/page-cache-media-recorder.html [ Failure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Expected failures.
 #
@@ -3132,6 +3146,7 @@ webkit.org/b/129113 fast/multicol/newmulticol/clipping.html [ Pass ]
 webkit.org/b/124349 fast/hidpi/image-srcset-relative-svg-canvas.html [ Pass ]
 
 webkit.org/b/131498 fast/css/cascade/box-shadow-and-webkit-box-shadow-cascade-order.html [ ImageOnlyFailure ]
+webkit.org/b/206589 fast/box-shadow/inset-box-shadow.html [ ImageOnlyFailure ]
 
 webkit.org/b/132056 webaudio/codec-tests/mp3/128kbps-44khz.html  [ Failure ]
 
@@ -3879,6 +3894,10 @@ webkit.org/b/201982 fast/images/exif-orientation-image-object.html [ ImageOnlyFa
 webkit.org/b/201982 fast/images/exif-orientation-svg-feimage.html [ ImageOnlyFailure ]
 webkit.org/b/201982 fast/images/exif-orientation-svg-image.html [ ImageOnlyFailure ]
 webkit.org/b/201982 fast/images/exif-orientation-webgl-texture.html [ ImageOnlyFailure ]
+webkit.org/b/201982 fast/images/exif-orientation-background-image-no-repeat.html [ ImageOnlyFailure ]
+webkit.org/b/201982 fast/images/exif-orientation-background-image-repeat.html [ ImageOnlyFailure ]
+webkit.org/b/201982 fast/images/exif-orientation-border-image.html [ ImageOnlyFailure ]
+
 webkit.org/b/201982 fast/images/image-orientation-dynamic-from-image.html [ ImageOnlyFailure ]
 webkit.org/b/201982 fast/images/image-orientation-dynamic-none.html [ ImageOnlyFailure ]
 webkit.org/b/201982 fast/images/image-orientation-none.html [ ImageOnlyFailure ]
