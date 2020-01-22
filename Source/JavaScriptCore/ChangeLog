@@ -1,3 +1,9 @@
+2020-01-22  Adrian Perez de Castro  <aperez@igalia.com>
+
+        Unreviewed. Fix non-unified build
+
+        * runtime/NativeErrorConstructor.h: Add missing inclusion of JSGlobalObject.h.
+
 2020-01-15  Adrian Perez de Castro  <aperez@igalia.com>
 
         Offlineasm warnings with newer Ruby versions

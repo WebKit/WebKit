@@ -22,6 +22,7 @@
 
 #include "Error.h"
 #include "InternalFunction.h"
+#include "JSGlobalObject.h"
 #include "NativeErrorPrototype.h"
 
 namespace JSC {
