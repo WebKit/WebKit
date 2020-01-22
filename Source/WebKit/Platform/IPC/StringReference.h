@@ -63,22 +63,12 @@ public:
 
     CString toString() const;
 
-    friend bool operator==(const StringReference& a, const StringReference& b)
-    {
-        return a.m_size == b.m_size && !memcmp(a.m_data, b.m_data, a.m_size);
-    }
-
-    friend bool operator!=(const StringReference& a, const StringReference& b)
-    {
-        return !(a == b);
-    }
-
     void encode(Encoder&) const;
     static bool decode(Decoder&, StringReference&);
 
     struct Hash {
         static unsigned hash(const StringReference& a);
-        static bool equal(const StringReference& a, const StringReference& b) { return a == b; }
+        static bool equal(const StringReference&, const StringReference&);
         static const bool safeToCompareToEmptyOrDeleted = true;
     };
 
@@ -86,6 +76,21 @@ private:
     const char* m_data;
     size_t m_size;
 };
+
+inline bool operator==(const StringReference& a, const StringReference& b)
+{
+    return a.size() == b.size() && !memcmp(a.data(), b.data(), a.size());
+}
+
+inline bool operator!=(const StringReference& a, const StringReference& b)
+{
+    return !(a == b);
+}
+
+inline bool StringReference::Hash::equal(const StringReference& a, const StringReference& b)
+{
+    return a == b;
+}
 
 } // namespace IPC
 

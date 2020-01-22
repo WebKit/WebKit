@@ -1,3 +1,17 @@
+2020-01-22  Chris Dumez  <cdumez@apple.com>
+
+        [IPC Hardening] Only process Messages::NetworkProcess messages when sent by the UIProcess
+        https://bugs.webkit.org/show_bug.cgi?id=206558
+
+        Unreviewed post-landing review comments from Darin Adler after r254892.
+
+        * Platform/IPC/StringReference.h:
+        (IPC::operator==):
+        (IPC::operator!=):
+        (IPC::StringReference::Hash::equal):
+        (IPC::StringReference::operator==): Deleted.
+        (IPC::StringReference::operator!=): Deleted.
+
 2020-01-22  Antti Koivisto  <antti@apple.com>
 
         [LFC][Integration] Disable integration to see performance impact
