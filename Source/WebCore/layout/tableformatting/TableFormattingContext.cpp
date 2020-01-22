@@ -111,7 +111,7 @@ void TableFormattingContext::layoutTableCellBox(const Box& cellLayoutBox, const 
     cellDisplayBox.setContentBoxWidth(column.logicalWidth() - cellDisplayBox.horizontalMarginBorderAndPadding());
 
     ASSERT(cellLayoutBox.establishesBlockFormattingContext());
-    if (is<Container>(cellLayoutBox))
+    if (is<Container>(cellLayoutBox) && downcast<Container>(cellLayoutBox).hasInFlowOrFloatingChild())
         LayoutContext::createFormattingContext(downcast<Container>(cellLayoutBox), layoutState())->layoutInFlowContent(invalidationState, Geometry::horizontalConstraintsForInFlow(cellDisplayBox), Geometry::verticalConstraintsForInFlow(cellDisplayBox));
     cellDisplayBox.setVerticalMargin({ { }, { } });
     cellDisplayBox.setContentBoxHeight(geometry().tableCellHeightAndMargin(cellLayoutBox).contentHeight);

@@ -59,6 +59,7 @@ void BlockFormattingContext::layoutInFlowContent(InvalidationState& invalidation
     // Vertical margins between adjacent block-level boxes in a block formatting context collapse.
     LOG_WITH_STREAM(FormattingContextLayout, stream << "[Start] -> block formatting context -> formatting root(" << &root() << ")");
     auto& formattingRoot = root();
+    ASSERT(formattingRoot.hasInFlowOrFloatingChild());
     auto floatingContext = FloatingContext { formattingRoot, *this, formattingState().floatingState() };
 
     LayoutQueue layoutQueue;
@@ -148,7 +149,7 @@ void BlockFormattingContext::layoutInFlowContent(InvalidationState& invalidation
 
             if (layoutBox.establishesFormattingContext()) {
                 // Now that we computed the root's height, we can layout the out-of-flow descendants.
-                if (is<Container>(layoutBox)) {
+                if (is<Container>(layoutBox) && downcast<Container>(layoutBox).hasChild()) {
                     auto& rootDisplayBox = geometryForBox(layoutBox);
                     auto horizontalConstraintsForOutOfFlow =  Geometry::horizontalConstraintsForOutOfFlow(rootDisplayBox);
                     auto verticalConstraintsForOutOfFlow = Geometry::verticalConstraintsForOutOfFlow(rootDisplayBox);

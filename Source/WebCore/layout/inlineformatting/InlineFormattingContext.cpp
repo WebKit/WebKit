@@ -68,11 +68,10 @@ static inline const Box* nextInPreOrder(const Box& layoutBox, const Container& s
 
 void InlineFormattingContext::layoutInFlowContent(InvalidationState& invalidationState, const HorizontalConstraints& horizontalConstraints, const VerticalConstraints& verticalConstraints)
 {
-    if (!root().hasInFlowOrFloatingChild())
-        return;
+    LOG_WITH_STREAM(FormattingContextLayout, stream << "[Start] -> inline formatting context -> formatting root(" << &root() << ")");
+    ASSERT(root().hasInFlowOrFloatingChild());
 
     invalidateFormattingState(invalidationState);
-    LOG_WITH_STREAM(FormattingContextLayout, stream << "[Start] -> inline formatting context -> formatting root(" << &root() << ")");
     auto* layoutBox = root().firstInFlowOrFloatingChild();
     // 1. Visit each inline box and partially compute their geometry (margins, paddings and borders).
     // 2. Collect the inline items (flatten the the layout tree) and place them on lines in bidirectional order. 
@@ -135,20 +134,24 @@ void InlineFormattingContext::layoutFormattingContextRoot(const Box& formattingC
 
     computeBorderAndPadding(formattingContextRoot, horizontalConstraints);
     computeWidthAndMargin(formattingContextRoot, horizontalConstraints);
+    if (!is<Container>(formattingContextRoot) || !downcast<Container>(formattingContextRoot).hasChild()) {
+        computeHeightAndMargin(formattingContextRoot, horizontalConstraints);
+        return;
+    }
     // Swich over to the new formatting context (the one that the root creates).
-    if (is<Container>(formattingContextRoot)) {
-        auto& rootContainer = downcast<Container>(formattingContextRoot);
-        auto formattingContext = LayoutContext::createFormattingContext(rootContainer, layoutState());
+    auto& rootContainer = downcast<Container>(formattingContextRoot);
+    auto formattingContext = LayoutContext::createFormattingContext(rootContainer, layoutState());
+    if (rootContainer.hasInFlowOrFloatingChild())
         formattingContext->layoutInFlowContent(invalidationState, horizontalConstraints, verticalConstraints);
-        // Come back and finalize the root's height and margin.
-        computeHeightAndMargin(rootContainer, horizontalConstraints);
-        // Now that we computed the root's height, we can go back and layout the out-of-flow content.
+    // Come back and finalize the root's height and margin.
+    computeHeightAndMargin(rootContainer, horizontalConstraints);
+    // Now that we computed the root's height, we can go back and layout the out-of-flow content.
+    if (rootContainer.hasChild()) {
         auto& rootContainerDisplayBox = geometryForBox(rootContainer);
         auto horizontalConstraintsForOutOfFlow = Geometry::horizontalConstraintsForOutOfFlow(rootContainerDisplayBox);
         auto verticalConstraintsForOutOfFlow = Geometry::verticalConstraintsForOutOfFlow(rootContainerDisplayBox);
         formattingContext->layoutOutOfFlowContent(invalidationState, horizontalConstraintsForOutOfFlow, verticalConstraintsForOutOfFlow);
-    } else
-        computeHeightAndMargin(formattingContextRoot, horizontalConstraints);
+    }
 }
 
 void InlineFormattingContext::computeHorizontalAndVerticalGeometry(const Box& layoutBox, const HorizontalConstraints& horizontalConstraints)
