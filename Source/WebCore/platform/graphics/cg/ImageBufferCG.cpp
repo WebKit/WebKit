@@ -127,7 +127,7 @@ ImageBuffer::ImageBuffer(const FloatSize& size, float resolutionScale, CGColorSp
     m_size = IntSize(scaledWidth, scaledHeight);
     m_data.backingStoreSize = m_size;
 
-    bool accelerateRendering = renderingMode == Accelerated;
+    bool accelerateRendering = renderingMode == RenderingMode::Accelerated;
     if (m_size.width() <= 0 || m_size.height() <= 0)
         return;
 

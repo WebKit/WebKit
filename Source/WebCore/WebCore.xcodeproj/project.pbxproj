@@ -2141,6 +2141,8 @@
 		724ED3321A3A8B2300F5F13C /* JSEXTBlendMinMax.h in Headers */ = {isa = PBXBuildFile; fileRef = 724ED3301A3A8B2300F5F13C /* JSEXTBlendMinMax.h */; };
 		724EE5501DC80D7F00A91FFB /* ActivityState.h in Headers */ = {isa = PBXBuildFile; fileRef = 724EE54E1DC7F25B00A91FFB /* ActivityState.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		724EE5511DC80D8400A91FFB /* ActivityStateChangeObserver.h in Headers */ = {isa = PBXBuildFile; fileRef = 724EE54F1DC7F25B00A91FFB /* ActivityStateChangeObserver.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		7299BC6723D6A53200CC6883 /* AlphaPremultiplication.h in Headers */ = {isa = PBXBuildFile; fileRef = 7299BC6423D686A600CC6883 /* AlphaPremultiplication.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		7299BC6823D6A53E00CC6883 /* RenderingMode.h in Headers */ = {isa = PBXBuildFile; fileRef = 7299BC6623D686C600CC6883 /* RenderingMode.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7553CFE8108F473F00EA281E /* TimelineRecordFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = 7553CFE6108F473F00EA281E /* TimelineRecordFactory.h */; };
 		75793E840D0CE0B3007FC0AC /* MessageEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 75793E810D0CE0B3007FC0AC /* MessageEvent.h */; };
 		75793EC90D0CE72D007FC0AC /* JSMessageEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 75793EC70D0CE72D007FC0AC /* JSMessageEvent.h */; };
@@ -9640,6 +9642,8 @@
 		727AFED11A2EA6A0000442E8 /* EXTsRGB.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EXTsRGB.cpp; sourceTree = "<group>"; };
 		727AFED21A2EA6A0000442E8 /* EXTsRGB.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EXTsRGB.h; sourceTree = "<group>"; };
 		727AFED31A2EA6A0000442E8 /* EXTsRGB.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = EXTsRGB.idl; sourceTree = "<group>"; };
+		7299BC6423D686A600CC6883 /* AlphaPremultiplication.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AlphaPremultiplication.h; sourceTree = "<group>"; };
+		7299BC6623D686C600CC6883 /* RenderingMode.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RenderingMode.h; sourceTree = "<group>"; };
 		72C18A3F230B04B7006847C7 /* ImagePaintingOptions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ImagePaintingOptions.h; sourceTree = "<group>"; };
 		72E417611A2E8D2F004C562A /* JSEXTsRGB.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSEXTsRGB.cpp; sourceTree = "<group>"; };
 		72E417621A2E8D2F004C562A /* JSEXTsRGB.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSEXTsRGB.h; sourceTree = "<group>"; };
@@ -25018,6 +25022,7 @@
 				FBC220DD1237FBEB00BCF788 /* opengl */,
 				3721493318F0B6D600156EDC /* opentype */,
 				49E911B20EF86D27009D0CAF /* transforms */,
+				7299BC6423D686A600CC6883 /* AlphaPremultiplication.h */,
 				490707E41219C04300D90E51 /* ANGLEWebKitBridge.cpp */,
 				490707E51219C04300D90E51 /* ANGLEWebKitBridge.h */,
 				BEF29EE91715DD0900C4B4C9 /* AudioTrackPrivate.h */,
@@ -25194,6 +25199,7 @@
 				BCAB418013E356E800D8AAF3 /* Region.h */,
 				073A15512177A39800EA08F2 /* RemoteVideoSample.cpp */,
 				073A15532177A39A00EA08F2 /* RemoteVideoSample.h */,
+				7299BC6623D686C600CC6883 /* RenderingMode.h */,
 				A73F95FC12C97BFE0031AAF9 /* RoundedRect.cpp */,
 				A73F95FD12C97BFE0031AAF9 /* RoundedRect.h */,
 				0F3DD44D12F5EA1B000D9190 /* ShadowBlur.cpp */,
@@ -29051,6 +29057,7 @@
 				BCF7E491137CD7C7001DDAE7 /* AdjustViewSizeOrNot.h in Headers */,
 				84D0C4061115F1EA0018AA34 /* AffineTransform.h in Headers */,
 				83BB5C881D5D6F45005A71F4 /* AllDescendantsCollection.h in Headers */,
+				7299BC6723D6A53200CC6883 /* AlphaPremultiplication.h in Headers */,
 				CEDA12D7152CA1CB00D9E08D /* AlternativeTextClient.h in Headers */,
 				CE08C3D2152B599A0021B8C2 /* AlternativeTextController.h in Headers */,
 				CE7B2DB31586ABAD0098B3FA /* AlternativeTextUIController.h in Headers */,
@@ -32025,6 +32032,7 @@
 				BCEA4876097D93020094C9E4 /* RenderImage.h in Headers */,
 				08F2F00A1213E61700DCEC48 /* RenderImageResource.h in Headers */,
 				08641D4812142F7D008DE9F6 /* RenderImageResourceStyleImage.h in Headers */,
+				7299BC6823D6A53E00CC6883 /* RenderingMode.h in Headers */,
 				556C7C4B22123997009B06CA /* RenderingUpdateScheduler.h in Headers */,
 				BCEA4878097D93020094C9E4 /* RenderInline.h in Headers */,
 				B595FF471824CEE300FF51CD /* RenderIterator.h in Headers */,

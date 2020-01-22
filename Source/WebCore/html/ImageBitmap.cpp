@@ -61,9 +61,9 @@ namespace WebCore {
 WTF_MAKE_ISO_ALLOCATED_IMPL(ImageBitmap);
 
 #if USE(IOSURFACE_CANVAS_BACKING_STORE) || ENABLE(ACCELERATED_2D_CANVAS)
-static RenderingMode bufferRenderingMode = Accelerated;
+static RenderingMode bufferRenderingMode = RenderingMode::Accelerated;
 #else
-static RenderingMode bufferRenderingMode = Unaccelerated;
+static RenderingMode bufferRenderingMode = RenderingMode::Unaccelerated;
 #endif
 
 Ref<ImageBitmap> ImageBitmap::create(IntSize size)

@@ -122,17 +122,6 @@ enum TextAlign {
     RightTextAlign
 };
 
-enum RenderingMode {
-    Unaccelerated,
-    UnacceleratedNonPlatformBuffer, // Use plain memory allocation rather than platform API to allocate backing store.
-    Accelerated
-};
-
-enum class AlphaPremultiplication {
-    Premultiplied,
-    Unpremultiplied
-};
-
 String compositeOperatorName(WebCore::CompositeOperator, WebCore::BlendMode);
 String blendModeName(WebCore::BlendMode);
 bool parseBlendMode(const String&, WebCore::BlendMode&);
@@ -143,7 +132,6 @@ WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, WebCore::CompositeO
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, WindRule);
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, LineCap);
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, LineJoin);
-WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, AlphaPremultiplication);
 
 } // namespace WebCore
 

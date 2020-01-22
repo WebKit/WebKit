@@ -191,7 +191,7 @@ bool RenderSVGResourceFilter::applyResource(RenderElement& renderer, const Rende
     effectiveTransform.scale(scale.width(), scale.height());
     effectiveTransform.multiply(filterData->shearFreeAbsoluteTransform);
 
-    RenderingMode renderingMode = renderer.settings().acceleratedFiltersEnabled() ? Accelerated : Unaccelerated;
+    RenderingMode renderingMode = renderer.settings().acceleratedFiltersEnabled() ? RenderingMode::Accelerated : RenderingMode::Unaccelerated;
     auto sourceGraphic = SVGRenderingContext::createImageBuffer(filterData->drawingRegion, effectiveTransform, ColorSpace::LinearRGB, renderingMode, context);
     if (!sourceGraphic) {
         ASSERT(!m_rendererFilterDataMap.contains(&renderer));

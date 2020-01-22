@@ -6905,7 +6905,7 @@ void RenderLayer::updateFilterPaintingStrategy()
     }
     
     ensureLayerFilters();
-    m_filters->buildFilter(renderer(), page().deviceScaleFactor(), renderer().settings().acceleratedFiltersEnabled() ? Accelerated : Unaccelerated);
+    m_filters->buildFilter(renderer(), page().deviceScaleFactor(), renderer().settings().acceleratedFiltersEnabled() ? RenderingMode::Accelerated : RenderingMode::Unaccelerated);
 }
 
 void RenderLayer::filterNeedsRepaint()

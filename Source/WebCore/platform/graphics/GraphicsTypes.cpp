@@ -28,6 +28,7 @@
 #include "config.h"
 #include "GraphicsTypes.h"
 
+#include "AlphaPremultiplication.h"
 #include <wtf/Assertions.h>
 #include <wtf/text/TextStream.h>
 #include <wtf/text/WTFString.h>

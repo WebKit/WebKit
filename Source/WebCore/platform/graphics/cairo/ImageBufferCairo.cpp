@@ -103,7 +103,7 @@ ImageBufferData::ImageBufferData(const IntSize& size, RenderingMode renderingMod
 
 ImageBufferData::~ImageBufferData()
 {
-    if (m_renderingMode != Accelerated)
+    if (m_renderingMode != RenderingMode::Accelerated)
         return;
 
 #if ENABLE(ACCELERATED_2D_CANVAS)
@@ -292,14 +292,14 @@ ImageBuffer::ImageBuffer(const FloatSize& size, float resolutionScale, ColorSpac
         return;
 
 #if ENABLE(ACCELERATED_2D_CANVAS)
-    if (m_data.m_renderingMode == Accelerated) {
+    if (m_data.m_renderingMode == RenderingMode::Accelerated) {
         m_data.createCairoGLSurface();
         if (!m_data.m_surface || cairo_surface_status(m_data.m_surface.get()) != CAIRO_STATUS_SUCCESS)
-            m_data.m_renderingMode = Unaccelerated; // If allocation fails, fall back to non-accelerated path.
+            m_data.m_renderingMode = RenderingMode::Unaccelerated; // If allocation fails, fall back to non-accelerated path.
     }
-    if (m_data.m_renderingMode == Unaccelerated)
+    if (m_data.m_renderingMode == RenderingMode::Unaccelerated)
 #else
-    ASSERT(m_data.m_renderingMode != Accelerated);
+    ASSERT(m_data.m_renderingMode != RenderingMode::Accelerated);
 #endif
     {
         static cairo_user_data_key_t s_surfaceDataKey;

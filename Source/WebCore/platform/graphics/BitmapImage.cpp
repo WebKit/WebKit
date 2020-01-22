@@ -160,7 +160,7 @@ NativeImagePtr BitmapImage::nativeImageForCurrentFrameRespectingOrientation(cons
         return image;
 
     FloatRect rect = { FloatPoint(), size() };
-    auto buffer = ImageBuffer::create(rect.size(), Unaccelerated);
+    auto buffer = ImageBuffer::create(rect.size(), RenderingMode::Unaccelerated);
     if (!buffer)
         return image;
 

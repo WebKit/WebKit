@@ -36,9 +36,9 @@ namespace WebCore {
 WTF_MAKE_ISO_ALLOCATED_IMPL(ImageBitmapRenderingContext);
 
 #if USE(IOSURFACE_CANVAS_BACKING_STORE) || ENABLE(ACCELERATED_2D_CANVAS)
-static RenderingMode bufferRenderingMode = Accelerated;
+static RenderingMode bufferRenderingMode = RenderingMode::Accelerated;
 #else
-static RenderingMode bufferRenderingMode = Unaccelerated;
+static RenderingMode bufferRenderingMode = RenderingMode::Unaccelerated;
 #endif
 
 std::unique_ptr<ImageBitmapRenderingContext> ImageBitmapRenderingContext::create(CanvasBase& canvas, ImageBitmapRenderingContextSettings&& settings)
@@ -69,7 +69,7 @@ HTMLCanvasElement* ImageBitmapRenderingContext::canvas() const
 
 bool ImageBitmapRenderingContext::isAccelerated() const
 {
-    return bufferRenderingMode == Accelerated;
+    return bufferRenderingMode == RenderingMode::Accelerated;
 }
 
 void ImageBitmapRenderingContext::setOutputBitmap(RefPtr<ImageBitmap> imageBitmap)

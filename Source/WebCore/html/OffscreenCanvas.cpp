@@ -126,7 +126,7 @@ ExceptionOr<RefPtr<ImageBitmap>> OffscreenCanvas::transferToImageBitmap()
             return { RefPtr<ImageBitmap> { nullptr } };
 
         if (!m_hasCreatedImageBuffer)
-            return { ImageBitmap::create({ ImageBuffer::create(size(), Unaccelerated), true }) };
+            return { ImageBitmap::create({ ImageBuffer::create(size(), RenderingMode::Unaccelerated), true }) };
 
         auto buffer = takeImageBuffer();
         if (!buffer)
@@ -243,7 +243,7 @@ void OffscreenCanvas::createImageBuffer() const
     if (!width() || !height())
         return;
 
-    setImageBuffer(ImageBuffer::create(size(), Unaccelerated));
+    setImageBuffer(ImageBuffer::create(size(), RenderingMode::Unaccelerated));
 }
 
 std::unique_ptr<ImageBuffer> OffscreenCanvas::takeImageBuffer() const
@@ -257,7 +257,7 @@ std::unique_ptr<ImageBuffer> OffscreenCanvas::takeImageBuffer() const
     if (size().isEmpty())
         return nullptr;
 
-    return setImageBuffer(ImageBuffer::create(size(), Unaccelerated));
+    return setImageBuffer(ImageBuffer::create(size(), RenderingMode::Unaccelerated));
 }
 
 void OffscreenCanvas::reset()

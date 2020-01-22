@@ -116,7 +116,7 @@ RefPtr<Image> CSSFilterImageValue::image(RenderElement& renderer, const FloatSiz
 
     // Transform Image into ImageBuffer.
     // FIXME (149424): This buffer should not be unconditionally unaccelerated.
-    auto texture = ImageBuffer::create(size, Unaccelerated);
+    auto texture = ImageBuffer::create(size, RenderingMode::Unaccelerated);
     if (!texture)
         return &Image::nullImage();
 

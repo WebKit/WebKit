@@ -71,7 +71,7 @@ private:
     std::unique_ptr<ImageBuffer> m_sourceImage;
     FloatSize m_filterResolution;
     AffineTransform m_absoluteTransform;
-    RenderingMode m_renderingMode { Unaccelerated };
+    RenderingMode m_renderingMode { RenderingMode::Unaccelerated };
     float m_filterScale { 1 };
 };
 

@@ -26,6 +26,7 @@
 
 #pragma once
 
+#include "AlphaPremultiplication.h"
 #include "Image.h"
 #include <JavaScriptCore/Uint8ClampedArray.h>
 #include <wtf/CheckedArithmetic.h>

@@ -35,6 +35,7 @@
 #include "ImageOrientation.h"
 #include "ImagePaintingOptions.h"
 #include "Pattern.h"
+#include "RenderingMode.h"
 #include <wtf/Function.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/OptionSet.h>
@@ -350,7 +351,7 @@ public:
     WEBCORE_EXPORT void setIsAcceleratedContext(bool);
 #endif
     bool isAcceleratedContext() const;
-    RenderingMode renderingMode() const { return isAcceleratedContext() ? Accelerated : Unaccelerated; }
+    RenderingMode renderingMode() const { return isAcceleratedContext() ? RenderingMode::Accelerated : RenderingMode::Unaccelerated; }
 
     WEBCORE_EXPORT void save();
     WEBCORE_EXPORT void restore();

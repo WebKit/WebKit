@@ -28,6 +28,7 @@
 #pragma once
 
 #include "AffineTransform.h"
+#include "AlphaPremultiplication.h"
 #include "ColorSpace.h"
 #include "GraphicsTypes.h"
 #include "GraphicsTypesGL.h"
@@ -35,6 +36,7 @@
 #include "ImagePaintingOptions.h"
 #include "IntSize.h"
 #include "PlatformLayer.h"
+#include "RenderingMode.h"
 #include <JavaScriptCore/Uint8ClampedArray.h>
 #include <memory>
 #include <wtf/Forward.h>
@@ -194,4 +196,3 @@ Vector<uint8_t> data(const ImageData&, const String& mimeType, Optional<double> 
 #endif
 
 } // namespace WebCore
-

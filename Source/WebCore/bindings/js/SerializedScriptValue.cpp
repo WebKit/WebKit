@@ -2785,7 +2785,7 @@ private:
             return JSValue();
         }
 
-        auto buffer = ImageBuffer::create(FloatSize(logicalWidth, logicalHeight), Unaccelerated, resolutionScale);
+        auto buffer = ImageBuffer::create(FloatSize(logicalWidth, logicalHeight), RenderingMode::Unaccelerated, resolutionScale);
         if (!buffer) {
             fail();
             return JSValue();

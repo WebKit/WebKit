@@ -1031,6 +1031,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/gamepad/GamepadProviderClient.h
     platform/gamepad/PlatformGamepad.h
 
+    platform/graphics/AlphaPremultiplication.h
     platform/graphics/ANGLEWebKitBridge.h
     platform/graphics/AudioTrackPrivate.h
     platform/graphics/BitmapImage.h
@@ -1128,6 +1129,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/PlatformTimeRanges.h
     platform/graphics/Region.h
     platform/graphics/RemoteVideoSample.h
+    platform/graphics/RenderingMode.h
     platform/graphics/RoundedRect.h
     platform/graphics/StringTruncator.h
     platform/graphics/TabSize.h

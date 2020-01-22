@@ -458,7 +458,7 @@ ImageBuffer* MockRealtimeVideoSource::imageBuffer() const
     if (m_imageBuffer)
         return m_imageBuffer.get();
 
-    m_imageBuffer = ImageBuffer::create(captureSize(), Unaccelerated);
+    m_imageBuffer = ImageBuffer::create(captureSize(), RenderingMode::Unaccelerated);
     if (!m_imageBuffer)
         return nullptr;
 
