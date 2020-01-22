@@ -301,7 +301,7 @@ static bool allCharactersInIDNScriptWhiteList(const UChar* buffer, int32_t lengt
     Optional<UChar32> previousCodePoint;
     while (i < length) {
         UChar32 c;
-        U16_NEXT(buffer, i, length, c)
+        U16_NEXT(buffer, i, length, c);
         UErrorCode error = U_ZERO_ERROR;
         UScriptCode script = uscript_getScript(c, &error);
         if (error != U_ZERO_ERROR) {
