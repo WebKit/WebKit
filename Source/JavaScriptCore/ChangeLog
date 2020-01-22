@@ -1,3 +1,18 @@
+2020-01-21  Ross Kirsling  <ross.kirsling@sony.com>
+
+        [JSC] Date parse logic should be less redundant
+        https://bugs.webkit.org/show_bug.cgi?id=206560
+
+        Reviewed by Darin Adler.
+
+        Our date parsing logic is doing an excessive amount of NaN-checking;
+        let's streamline this by having one JSC-side helper function instead of two.
+
+        * runtime/JSDateMath.cpp:
+        (JSC::parseDate):
+        (JSC::parseDateFromNullTerminatedCharacters): Deleted.
+        (JSC::parseES5DateFromNullTerminatedCharacters): Deleted.
+
 2020-01-21  Rob Buis  <rbuis@igalia.com>
 
         Add build flag for stale-while-revalidate

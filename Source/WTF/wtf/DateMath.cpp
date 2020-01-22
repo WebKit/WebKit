@@ -682,10 +682,10 @@ double parseES5DateFromNullTerminatedCharacters(const char* dateString, bool& is
 }
 
 // Odd case where 'exec' is allowed to be 0, to accomodate a caller in WebCore.
-double parseDateFromNullTerminatedCharacters(const char* dateString, bool& haveTZ, int& offset)
+double parseDateFromNullTerminatedCharacters(const char* dateString, bool& isLocalTime)
 {
-    haveTZ = false;
-    offset = 0;
+    isLocalTime = true;
+    int offset = 0;
 
     // This parses a date in the form:
     //     Tuesday, 09-Nov-99 23:12:40 GMT
@@ -903,7 +903,7 @@ double parseDateFromNullTerminatedCharacters(const char* dateString, bool& haveT
     if (*dateString) {
         if (startsWithLettersIgnoringASCIICase(dateString, "gmt") || startsWithLettersIgnoringASCIICase(dateString, "utc")) {
             dateString += 3;
-            haveTZ = true;
+            isLocalTime = false;
         }
 
         if (*dateString == '+' || *dateString == '-') {
@@ -930,7 +930,7 @@ double parseDateFromNullTerminatedCharacters(const char* dateString, bool& haveT
                 dateString = newPosStr;
                 offset = (o * 60 + o2) * sgn;
             }
-            haveTZ = true;
+            isLocalTime = false;
         } else {
             for (auto& knownZone : knownZones) {
                 // Since the passed-in length is used for both strings, the following checks that
@@ -939,7 +939,7 @@ double parseDateFromNullTerminatedCharacters(const char* dateString, bool& haveT
                 if (equalLettersIgnoringASCIICase(dateString, knownZone.tzName, length)) {
                     offset = knownZone.tzOffset;
                     dateString += length;
-                    haveTZ = true;
+                    isLocalTime = false;
                     break;
                 }
             }
@@ -982,23 +982,20 @@ double parseDateFromNullTerminatedCharacters(const char* dateString, bool& haveT
         year = 2000;
     }
     ASSERT(year);
-    
-    return ymdhmsToSeconds(year.value(), month + 1, day, hour, minute, second) * msPerSecond;
+
+    double dateSeconds = ymdhmsToSeconds(year.value(), month + 1, day, hour, minute, second) - offset * secondsPerMinute;
+    return dateSeconds * msPerSecond;
 }
 
 double parseDateFromNullTerminatedCharacters(const char* dateString)
 {
-    bool haveTZ;
-    int offset;
-    double ms = parseDateFromNullTerminatedCharacters(dateString, haveTZ, offset);
-    if (std::isnan(ms))
-        return std::numeric_limits<double>::quiet_NaN();
+    bool isLocalTime;
+    double value = parseDateFromNullTerminatedCharacters(dateString, isLocalTime);
 
-    // fall back to local timezone
-    if (!haveTZ)
-        offset = calculateLocalTimeOffset(ms, LocalTime).offset / msPerMinute; // ms value is in local time milliseconds.
+    if (isLocalTime)
+        value -= calculateLocalTimeOffset(value, LocalTime).offset;
 
-    return ms - (offset * msPerMinute);
+    return value;
 }
 
 // See http://tools.ietf.org/html/rfc2822#section-3.3 for more information.

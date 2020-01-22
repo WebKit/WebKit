@@ -1,3 +1,16 @@
+2020-01-21  Ross Kirsling  <ross.kirsling@sony.com>
+
+        [JSC] Date parse logic should be less redundant
+        https://bugs.webkit.org/show_bug.cgi?id=206560
+
+        Reviewed by Darin Adler.
+
+        * wtf/DateMath.cpp:
+        (WTF::parseDateFromNullTerminatedCharacters):
+        * wtf/DateMath.h:
+        Align function signature with parseES5DateFromNullTerminatedCharacters.
+        Namely, drop the integer out param and flip the boolean one.
+
 2020-01-21  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [WTF] AtomStringTable should be small
