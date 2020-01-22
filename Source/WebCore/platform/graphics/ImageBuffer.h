@@ -190,9 +190,4 @@ private:
 #endif
 };
 
-#if USE(CG)
-String dataURL(const ImageData&, const String& mimeType, Optional<double> quality);
-Vector<uint8_t> data(const ImageData&, const String& mimeType, Optional<double> quality);
-#endif
-
 } // namespace WebCore

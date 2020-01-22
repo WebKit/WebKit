@@ -83,6 +83,10 @@
 #include <pal/cf/CoreMediaSoftLink.h>
 #endif
 
+#if USE(CG)
+#include "ImageBufferUtilitiesCG.h"
+#endif
+
 namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(HTMLCanvasElement);

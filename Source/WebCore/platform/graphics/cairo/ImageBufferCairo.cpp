@@ -37,6 +37,7 @@
 #include "Color.h"
 #include "GraphicsContext.h"
 #include "GraphicsContextImplCairo.h"
+#include "ImageBufferUtilitiesCairo.h"
 #include "MIMETypeRegistry.h"
 #include "NotImplemented.h"
 #include "Pattern.h"
@@ -75,7 +76,6 @@
 #include "TextureMapperPlatformLayerProxy.h"
 #endif
 #endif
-
 
 namespace WebCore {
 
@@ -654,21 +654,6 @@ void ImageBuffer::putByteArray(const Uint8ClampedArray& source, AlphaPremultipli
     }
 }
 
-#if !PLATFORM(GTK)
-static cairo_status_t writeFunction(void* output, const unsigned char* data, unsigned int length)
-{
-    if (!reinterpret_cast<Vector<uint8_t>*>(output)->tryAppend(data, length))
-        return CAIRO_STATUS_WRITE_ERROR;
-    return CAIRO_STATUS_SUCCESS;
-}
-
-static bool encodeImage(cairo_surface_t* image, const String& mimeType, Vector<uint8_t>* output)
-{
-    ASSERT_UNUSED(mimeType, mimeType == "image/png"); // Only PNG output is supported for now.
-
-    return cairo_surface_write_to_png_stream(image, writeFunction, output) == CAIRO_STATUS_SUCCESS;
-}
-
 String ImageBuffer::toDataURL(const String& mimeType, Optional<double> quality, PreserveResolution) const
 {
     Vector<uint8_t> encodedImage = toData(mimeType, quality);
@@ -681,20 +666,12 @@ String ImageBuffer::toDataURL(const String& mimeType, Optional<double> quality, 
     return "data:" + mimeType + ";base64," + base64Data;
 }
 
-Vector<uint8_t> ImageBuffer::toData(const String& mimeType, Optional<double>) const
+Vector<uint8_t> ImageBuffer::toData(const String& mimeType, Optional<double> quality) const
 {
     ASSERT(MIMETypeRegistry::isSupportedImageMIMETypeForEncoding(mimeType));
-
     cairo_surface_t* image = cairo_get_target(context().platformContext()->cr());
-
-    Vector<uint8_t> encodedImage;
-    if (!image || !encodeImage(image, mimeType, &encodedImage))
-        return { };
-
-    return encodedImage;
+    return data(image, mimeType, quality);
 }
-
-#endif
 
 #if ENABLE(ACCELERATED_2D_CANVAS) && !USE(COORDINATED_GRAPHICS)
 void ImageBufferData::paintToTextureMapper(TextureMapper& textureMapper, const FloatRect& targetRect, const TransformationMatrix& matrix, float opacity)
