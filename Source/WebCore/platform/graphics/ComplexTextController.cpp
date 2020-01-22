@@ -163,7 +163,7 @@ void ComplexTextController::finishConstruction()
 
 unsigned ComplexTextController::offsetForPosition(float h, bool includePartialGlyphs)
 {
-    if (h >= m_totalWidth)
+    if (h >= m_totalAdvance.width())
         return m_run.ltr() ? m_end : 0;
 
     if (h < 0)
@@ -733,7 +733,7 @@ void ComplexTextController::adjustGlyphsAndAdvances()
             FloatSize advance = treatAsSpace ? FloatSize(spaceWidth, advances[i].height()) : advances[i];
 
             if (ch == '\t' && m_run.allowTabs())
-                advance.setWidth(m_font.tabWidth(font, m_run.tabSize(), m_run.xPos() + m_totalWidth));
+                advance.setWidth(m_font.tabWidth(font, m_run.tabSize(), m_run.xPos() + m_totalAdvance.width()));
             else if (FontCascade::treatAsZeroWidthSpace(ch) && !treatAsSpace) {
                 advance.setWidth(0);
                 glyph = font.spaceGlyph();
@@ -784,7 +784,7 @@ void ComplexTextController::adjustGlyphsAndAdvances()
                                 complexTextRun.growInitialAdvanceHorizontally(m_expansionPerOpportunity);
                             } else {
                                 m_adjustedBaseAdvances.last().expand(m_expansionPerOpportunity, 0);
-                                m_totalWidth += m_expansionPerOpportunity;
+                                m_totalAdvance.expand(m_expansionPerOpportunity, 0);
                             }
                         }
                         if (expandRight) {
@@ -802,7 +802,7 @@ void ComplexTextController::adjustGlyphsAndAdvances()
                     afterExpansion = false;
             }
 
-            m_totalWidth += advance.width();
+            m_totalAdvance += advance;
 
             // FIXME: Combining marks should receive a text emphasis mark if they are combine with a space.
             if (m_forTextEmphasis && (!FontCascade::canReceiveTextEmphasis(ch) || (U_GET_GC_MASK(ch) & U_GC_M_MASK)))

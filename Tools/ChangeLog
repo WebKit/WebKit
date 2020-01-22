@@ -1,3 +1,13 @@
+2020-01-21  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        A partially selected RTL text is placed at a wrong vertical position if it has a vertical initial advance
+        https://bugs.webkit.org/show_bug.cgi?id=205990
+
+        Reviewed by Darin Adler.
+
+        * TestWebKitAPI/Tests/WebCore/ComplexTextController.cpp:
+        Replaced all "controller.totalWidth()" with "controller.totalAdvance().width()".
+
 2020-01-21  Sihui Liu  <sihui_liu@apple.com>
 
         REGRESSION (r254856?): [Win] http/tests/security/same-origin-websql-blocked.html and 2 fast/dom/Window/window-function-* tests failing

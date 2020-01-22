@@ -1,3 +1,13 @@
+2020-01-21  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        A partially selected RTL text is placed at a wrong vertical position if it has a vertical initial advance
+        https://bugs.webkit.org/show_bug.cgi?id=205990
+
+        Reviewed by Darin Adler.
+
+        * fast/text/initial-advance-selected-text-expected.html: Added.
+        * fast/text/initial-advance-selected-text.html: Added.
+
 2020-01-21  Jiewen Tan  <jiewen_tan@apple.com>
 
         [WebAuthn] Incorporate more detailed UnknownError messages for LocalAuthenticator

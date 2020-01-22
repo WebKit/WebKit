@@ -98,6 +98,11 @@ Optional<GlyphBufferAdvance> GlyphBufferAdvance::decode(Decoder& decoder)
 typedef FloatSize GlyphBufferAdvance;
 #endif
 
+inline FloatSize toFloatSize(const GlyphBufferAdvance& a)
+{
+    return FloatSize(a.width(), a.height());
+}
+
 class GlyphBuffer {
 public:
     bool isEmpty() const { return m_fonts.isEmpty(); }

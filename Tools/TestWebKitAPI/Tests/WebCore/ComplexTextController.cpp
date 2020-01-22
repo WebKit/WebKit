@@ -71,7 +71,7 @@ TEST_F(ComplexTextControllerTest, InitialAdvanceWithLeftRunInRTL)
     float totalWidth = 0;
     for (size_t i = 1; i < advances.size(); ++i)
         totalWidth += advances[i].width();
-    EXPECT_NEAR(controller.totalWidth(), spaceWidth + totalWidth, 0.0001);
+    EXPECT_NEAR(controller.totalAdvance().width(), spaceWidth + totalWidth, 0.0001);
     GlyphBuffer glyphBuffer;
     EXPECT_NEAR(controller.runWidthSoFar(), 0, 0.0001);
     controller.advance(0, &glyphBuffer);
@@ -115,7 +115,7 @@ TEST_F(ComplexTextControllerTest, InitialAdvanceInRTL)
     float totalWidth = 0;
     for (size_t i = 1; i < advances.size(); ++i)
         totalWidth += advances[i].width();
-    EXPECT_NEAR(controller.totalWidth(), totalWidth, 0.0001);
+    EXPECT_NEAR(controller.totalAdvance().width(), totalWidth, 0.0001);
     GlyphBuffer glyphBuffer;
     EXPECT_NEAR(controller.runWidthSoFar(), 0, 0.0001);
     controller.advance(0, &glyphBuffer);
@@ -159,7 +159,7 @@ TEST_F(ComplexTextControllerTest, InitialAdvanceWithLeftRunInLTR)
     runs.append(WTFMove(run2));
     ComplexTextController controller(font, textRun, runs);
 
-    EXPECT_NEAR(controller.totalWidth(), spaceWidth + 76.347656 + initialAdvance.width(), 0.0001);
+    EXPECT_NEAR(controller.totalAdvance().width(), spaceWidth + 76.347656 + initialAdvance.width(), 0.0001);
     GlyphBuffer glyphBuffer;
     EXPECT_NEAR(controller.runWidthSoFar(), 0, 0.0001);
     controller.advance(0, &glyphBuffer);
@@ -199,7 +199,7 @@ TEST_F(ComplexTextControllerTest, InitialAdvanceInLTR)
     runs.append(WTFMove(run));
     ComplexTextController controller(font, textRun, runs);
 
-    EXPECT_NEAR(controller.totalWidth(), 76.347656 + initialAdvance.width(), 0.0001);
+    EXPECT_NEAR(controller.totalAdvance().width(), 76.347656 + initialAdvance.width(), 0.0001);
     GlyphBuffer glyphBuffer;
     EXPECT_NEAR(controller.runWidthSoFar(), 0, 0.0001);
     controller.advance(0, &glyphBuffer);
@@ -238,7 +238,7 @@ TEST_F(ComplexTextControllerTest, InitialAdvanceInRTLNoOrigins)
     ComplexTextController controller(font, textRun, runs);
 
     float totalWidth = 14.0397830018083 + 12.0 + 43.8119349005425;
-    EXPECT_NEAR(controller.totalWidth(), totalWidth, 0.0001);
+    EXPECT_NEAR(controller.totalAdvance().width(), totalWidth, 0.0001);
     GlyphBuffer glyphBuffer;
     EXPECT_NEAR(controller.runWidthSoFar(), 0, 0.0001);
     controller.advance(0, &glyphBuffer);
@@ -278,7 +278,7 @@ TEST_F(ComplexTextControllerTest, LeadingExpansion)
     ComplexTextController controller(font, textRun, runs);
 
     float totalWidth = 100 + 24;
-    EXPECT_NEAR(controller.totalWidth(), totalWidth, 0.0001);
+    EXPECT_NEAR(controller.totalAdvance().width(), totalWidth, 0.0001);
     GlyphBuffer glyphBuffer;
     EXPECT_NEAR(controller.runWidthSoFar(), 0, 0.0001);
     controller.advance(0, &glyphBuffer);
@@ -309,7 +309,7 @@ TEST_F(ComplexTextControllerTest, VerticalAdvances)
     runs.append(WTFMove(run2));
     ComplexTextController controller(font, textRun, runs);
 
-    EXPECT_NEAR(controller.totalWidth(), 0, 0.0001);
+    EXPECT_NEAR(controller.totalAdvance().width(), 0, 0.0001);
     GlyphBuffer glyphBuffer;
     EXPECT_NEAR(controller.runWidthSoFar(), 0, 0.0001);
     controller.advance(0, &glyphBuffer);
@@ -356,12 +356,12 @@ TEST_F(ComplexTextControllerTest, TotalWidthWithJustification)
     runs.append(WTFMove(run));
     ComplexTextController controller(font, textRun, runs);
 
-    EXPECT_NEAR(controller.totalWidth(), 1 + 20 + 7 + 4 + 20 + 7 + 16, 0.0001);
+    EXPECT_NEAR(controller.totalAdvance().width(), 1 + 20 + 7 + 4 + 20 + 7 + 16, 0.0001);
     GlyphBuffer glyphBuffer;
     EXPECT_NEAR(controller.runWidthSoFar(), 0, 0.0001);
     controller.advance(5, &glyphBuffer);
     EXPECT_EQ(glyphBuffer.size(), 5U);
-    EXPECT_NEAR(glyphBuffer.advanceAt(0).width() + glyphBuffer.advanceAt(1).width() + glyphBuffer.advanceAt(2).width() + glyphBuffer.advanceAt(3).width() + glyphBuffer.advanceAt(4).width(), controller.totalWidth(), 0.0001);
+    EXPECT_NEAR(glyphBuffer.advanceAt(0).width() + glyphBuffer.advanceAt(1).width() + glyphBuffer.advanceAt(2).width() + glyphBuffer.advanceAt(3).width() + glyphBuffer.advanceAt(4).width(), controller.totalAdvance().width(), 0.0001);
 }
 
 }

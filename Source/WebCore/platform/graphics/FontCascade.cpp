@@ -273,10 +273,10 @@ void FontCascade::update(RefPtr<FontSelector>&& fontSelector) const
     m_requiresShaping = computeRequiresShaping();
 }
 
-float FontCascade::glyphBufferForTextRun(CodePath codePathToUse, const TextRun& run, unsigned from, unsigned to, GlyphBuffer& glyphBuffer) const
+FloatSize FontCascade::glyphBufferForTextRun(CodePath codePathToUse, const TextRun& run, unsigned from, unsigned to, GlyphBuffer& glyphBuffer) const
 {
     if (codePathToUse != Complex)
-        return getGlyphsAndAdvancesForSimpleText(run, from, to, glyphBuffer);
+        return { getGlyphsAndAdvancesForSimpleText(run, from, to, glyphBuffer), 0 };
     return getGlyphsAndAdvancesForComplexText(run, from, to, glyphBuffer);
 }
 
@@ -284,14 +284,14 @@ float FontCascade::drawText(GraphicsContext& context, const TextRun& run, const 
 {
     unsigned destination = to.valueOr(run.length());
     GlyphBuffer glyphBuffer;
-    float startX = point.x() + glyphBufferForTextRun(codePath(run, from, to), run, from, destination, glyphBuffer);
+    FloatPoint startPoint = point + glyphBufferForTextRun(codePath(run, from, to), run, from, destination, glyphBuffer);
     // We couldn't generate any glyphs for the run. Give up.
     if (glyphBuffer.isEmpty())
         return 0;
     // Draw the glyph buffer now at the starting point returned in startX.
-    FloatPoint startPoint(startX, point.y());
+    float oldStartX = startPoint.x();
     drawGlyphBuffer(context, glyphBuffer, startPoint, customFontNotReadyAction);
-    return startPoint.x() - startX;
+    return startPoint.x() - oldStartX;
 }
 
 void FontCascade::drawEmphasisMarks(GraphicsContext& context, const TextRun& run, const AtomString& mark, const FloatPoint& point, unsigned from, Optional<unsigned> to) const
@@ -317,7 +317,7 @@ std::unique_ptr<DisplayList::DisplayList> FontCascade::displayListForTextRun(Gra
         codePathToUse = Complex;
     
     GlyphBuffer glyphBuffer;
-    float startX = glyphBufferForTextRun(codePathToUse, run, from, destination, glyphBuffer);
+    FloatPoint startPoint = toFloatPoint(glyphBufferForTextRun(codePathToUse, run, from, destination, glyphBuffer));
     // We couldn't generate any glyphs for the run. Give up.
     if (glyphBuffer.isEmpty())
         return nullptr;
@@ -327,7 +327,6 @@ std::unique_ptr<DisplayList::DisplayList> FontCascade::displayListForTextRun(Gra
         return makeUnique<DisplayList::Recorder>(displayListContext, *displayList, context.state(), FloatRect(), AffineTransform());
     });
     
-    FloatPoint startPoint(startX, 0);
     drawGlyphBuffer(recordingContext, glyphBuffer, startPoint, customFontNotReadyAction);
     return displayList;
 }
@@ -1383,9 +1382,9 @@ float FontCascade::getGlyphsAndAdvancesForSimpleText(const TextRun& run, unsigne
     return initialAdvance;
 }
 
-float FontCascade::getGlyphsAndAdvancesForComplexText(const TextRun& run, unsigned from, unsigned to, GlyphBuffer& glyphBuffer, ForTextEmphasisOrNot forTextEmphasis) const
+FloatSize FontCascade::getGlyphsAndAdvancesForComplexText(const TextRun& run, unsigned from, unsigned to, GlyphBuffer& glyphBuffer, ForTextEmphasisOrNot forTextEmphasis) const
 {
-    float initialAdvance;
+    FloatSize initialAdvance;
 
     ComplexTextController controller(*this, run, false, 0, forTextEmphasis);
     GlyphBuffer dummyGlyphBuffer;
@@ -1393,21 +1392,21 @@ float FontCascade::getGlyphsAndAdvancesForComplexText(const TextRun& run, unsign
     controller.advance(to, &glyphBuffer);
 
     if (glyphBuffer.isEmpty())
-        return 0;
+        return { };
 
     if (run.rtl()) {
         // Exploit the fact that the sum of the paint advances is equal to
         // the sum of the layout advances.
-        initialAdvance = controller.totalWidth();
+        initialAdvance = controller.totalAdvance();
         for (unsigned i = 0; i < dummyGlyphBuffer.size(); ++i)
-            initialAdvance -= dummyGlyphBuffer.advanceAt(i).width();
+            initialAdvance -= toFloatSize(dummyGlyphBuffer.advanceAt(i));
         for (unsigned i = 0; i < glyphBuffer.size(); ++i)
-            initialAdvance -= glyphBuffer.advanceAt(i).width();
+            initialAdvance -= toFloatSize(glyphBuffer.advanceAt(i));
         glyphBuffer.reverse(0, glyphBuffer.size());
     } else {
-        initialAdvance = dummyGlyphBuffer.initialAdvance().width();
+        initialAdvance = toFloatSize(dummyGlyphBuffer.initialAdvance());
         for (unsigned i = 0; i < dummyGlyphBuffer.size(); ++i)
-            initialAdvance += dummyGlyphBuffer.advanceAt(i).width();
+            initialAdvance += toFloatSize(dummyGlyphBuffer.advanceAt(i));
     }
 
     return initialAdvance;
@@ -1436,7 +1435,7 @@ void FontCascade::drawGlyphBuffer(GraphicsContext& context, const GlyphBuffer& g
 {
     // Draw each contiguous run of glyphs that use the same font data.
     const Font* fontData = glyphBuffer.fontAt(0);
-    FloatPoint startPoint(point.x(), point.y() - glyphBuffer.initialAdvance().height());
+    FloatPoint startPoint = point;
     float nextX = startPoint.x() + glyphBuffer.advanceAt(0).width();
     float nextY = startPoint.y() + glyphBuffer.advanceAt(0).height();
     unsigned lastFrom = 0;
@@ -1530,9 +1529,9 @@ float FontCascade::floatWidthForComplexText(const TextRun& run, HashSet<const Fo
         glyphOverflow->top = std::max<int>(glyphOverflow->top, ceilf(-controller.minGlyphBoundingBoxY()) - (glyphOverflow->computeBounds ? 0 : fontMetrics().ascent()));
         glyphOverflow->bottom = std::max<int>(glyphOverflow->bottom, ceilf(controller.maxGlyphBoundingBoxY()) - (glyphOverflow->computeBounds ? 0 : fontMetrics().descent()));
         glyphOverflow->left = std::max<int>(0, ceilf(-controller.minGlyphBoundingBoxX()));
-        glyphOverflow->right = std::max<int>(0, ceilf(controller.maxGlyphBoundingBoxX() - controller.totalWidth()));
+        glyphOverflow->right = std::max<int>(0, ceilf(controller.maxGlyphBoundingBoxX() - controller.totalAdvance().width()));
     }
-    return controller.totalWidth();
+    return controller.totalAdvance().width();
 }
 
 void FontCascade::adjustSelectionRectForSimpleText(const TextRun& run, LayoutRect& selectionRect, unsigned from, unsigned to) const
@@ -1563,7 +1562,7 @@ void FontCascade::adjustSelectionRectForComplexText(const TextRun& run, LayoutRe
     float afterWidth = controller.runWidthSoFar();
 
     if (run.rtl())
-        selectionRect.move(controller.totalWidth() - afterWidth, 0);
+        selectionRect.move(controller.totalAdvance().width() - afterWidth, 0);
     else
         selectionRect.move(beforeWidth, 0);
     selectionRect.setWidth(LayoutUnit::fromFloatCeil(afterWidth - beforeWidth));
@@ -1636,12 +1635,12 @@ const Font* FontCascade::fontForCombiningCharacterSequence(const UChar* characte
 void FontCascade::drawEmphasisMarksForComplexText(GraphicsContext& context, const TextRun& run, const AtomString& mark, const FloatPoint& point, unsigned from, unsigned to) const
 {
     GlyphBuffer glyphBuffer;
-    float initialAdvance = getGlyphsAndAdvancesForComplexText(run, from, to, glyphBuffer, ForTextEmphasis);
+    auto initialAdvance = getGlyphsAndAdvancesForComplexText(run, from, to, glyphBuffer, ForTextEmphasis);
 
     if (glyphBuffer.isEmpty())
         return;
 
-    drawEmphasisMarks(context, glyphBuffer, mark, FloatPoint(point.x() + initialAdvance, point.y()));
+    drawEmphasisMarks(context, glyphBuffer, mark, point + initialAdvance);
 }
 
 struct GlyphIterationState {
@@ -1779,7 +1778,7 @@ DashArray FontCascade::dashesForIntersectionsWithRect(const TextRun& run, const 
     if (codePath(run) != FontCascade::Complex)
         deltaX = getGlyphsAndAdvancesForSimpleText(run, 0, run.length(), glyphBuffer);
     else
-        deltaX = getGlyphsAndAdvancesForComplexText(run, 0, run.length(), glyphBuffer);
+        deltaX = getGlyphsAndAdvancesForComplexText(run, 0, run.length(), glyphBuffer).width();
 
     if (!glyphBuffer.size())
         return DashArray();
