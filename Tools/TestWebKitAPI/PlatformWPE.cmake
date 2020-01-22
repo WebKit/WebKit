@@ -84,7 +84,6 @@ target_include_directories(TestWebKitAPIBase PRIVATE
 target_sources(TestWebKitAPIInjectedBundle PRIVATE
     glib/UtilitiesGLib.cpp
 
-    wpe/InjectedBundleControllerWPE.cpp
     wpe/PlatformUtilitiesWPE.cpp
 )
 target_include_directories(TestWebKitAPIInjectedBundle PRIVATE

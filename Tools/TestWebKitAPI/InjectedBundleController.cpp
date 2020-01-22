@@ -140,6 +140,12 @@ void InjectedBundleController::registerCreateInjectedBundleTestFunction(const st
     m_createInjectedBundleTestFunctions[identifier] = function;
 }
 
+#if !PLATFORM(COCOA)
+void InjectedBundleController::platformInitialize()
+{
+}
+#endif
+
 } // namespace TestWebKitAPI
 
 #endif

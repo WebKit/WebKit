@@ -1,3 +1,22 @@
+2020-01-22  Don Olmstead  <don.olmstead@sony.com>
+
+        Share InjectedBundleController::platformInitialize
+        https://bugs.webkit.org/show_bug.cgi?id=206598
+
+        Reviewed by Konstantin Tokarev.
+
+        Add a stub for platformInitialize in InjectedBundleController.cpp which is
+        used for non-Cocoa ports. Remove the platform specific stubs.
+
+        * TestWebKitAPI/InjectedBundleController.cpp:
+        (TestWebKitAPI::InjectedBundleController::platformInitialize):
+        * TestWebKitAPI/PlatformGTK.cmake:
+        * TestWebKitAPI/PlatformWPE.cmake:
+        * TestWebKitAPI/PlatformWin.cmake:
+        * TestWebKitAPI/gtk/InjectedBundleControllerGtk.cpp: Removed.
+        * TestWebKitAPI/win/InjectedBundleControllerWin.cpp: Removed.
+        * TestWebKitAPI/wpe/InjectedBundleControllerWPE.cpp: Removed.
+
 2020-01-22  Jonathan Bedard  <jbedard@apple.com>
 
         webkitpy: Make logging during ImageDiff crashes accurate

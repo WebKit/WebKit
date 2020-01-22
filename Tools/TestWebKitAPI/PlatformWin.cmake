@@ -128,7 +128,6 @@ if (ENABLE_WEBKIT)
     add_dependencies(TestWebKitAPIInjectedBundle WebKitFrameworkHeaders)
 
     target_sources(TestWebKitAPIInjectedBundle PRIVATE
-        win/InjectedBundleControllerWin.cpp
         win/PlatformUtilitiesWin.cpp
         win/UtilitiesWin.cpp
     )

@@ -82,7 +82,6 @@ target_include_directories(TestWebKitAPIBase PRIVATE "${CMAKE_SOURCE_DIR}/Source
 target_sources(TestWebKitAPIInjectedBundle PRIVATE
     glib/UtilitiesGLib.cpp
 
-    gtk/InjectedBundleControllerGtk.cpp
     gtk/PlatformUtilitiesGtk.cpp
 )
 target_include_directories(TestWebKitAPIInjectedBundle PRIVATE
