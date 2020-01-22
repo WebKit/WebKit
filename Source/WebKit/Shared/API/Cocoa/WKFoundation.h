@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,7 +34,7 @@
 
 #ifndef WK_FRAMEWORK_HEADER_POSTPROCESSING_ENABLED
 
-#define WK_API_AVAILABLE(...) 
+#define WK_API_AVAILABLE(...)
 #define WK_CLASS_AVAILABLE(...) __attribute__((visibility("default"))) WK_API_AVAILABLE(__VA_ARGS__)
 #define WK_API_DEPRECATED(_message, ...) __attribute__((deprecated(_message)))
 #define WK_API_DEPRECATED_WITH_REPLACEMENT(_replacement, ...) __attribute__((deprecated("use " #_replacement)))
