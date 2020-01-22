@@ -525,17 +525,15 @@ void RenderFrameSet::positionFrames()
             int width = m_cols.m_sizes[c];
 
             // has to be resized and itself resize its contents
-            if (width != child->width() || height != child->height()) {
-                child->setWidth(width);
-                child->setHeight(height);
+            child->setWidth(width);
+            child->setHeight(height);
 #if PLATFORM(IOS_FAMILY)
-                // FIXME: Is this iOS-specific?
-                child->setNeedsLayout(MarkOnlyThis);
+            // FIXME: Is this iOS-specific?
+            child->setNeedsLayout(MarkOnlyThis);
 #else
-                child->setNeedsLayout();
+            child->setNeedsLayout();
 #endif
-                child->layout();
-            }
+            child->layout();
 
             xPos += width + borderThickness;
 
