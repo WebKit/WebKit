@@ -1,3 +1,29 @@
+2020-01-21  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [Win][WK2] Pressing space key on text input form scrolls the page
+        https://bugs.webkit.org/show_bug.cgi?id=201632
+
+        Reviewed by Ross Kirsling.
+
+        r223262 was add WebPage::performDefaultBehaviorForKeyEvent for
+        Windows port by copying GTK port's implementation. But, Windows
+        port is using unique key event processing. It dispatches
+        WebEvent::RawKeyDown and WebEvent::Char separately even though
+        other ports dispatch only WebEvent::KeyDown by unifying them.
+
+        Because WebPage::performDefaultBehaviorForKeyEvent handled
+        WebEvent::RawKeyDown of space key to scroll page, and consumed the
+        event, the keypress event of space key wasn't dispatched.
+
+        The keypress event of a space key is handled in
+        EventHandler::defaultSpaceEventHandler.
+        performDefaultBehaviorForKeyEvent don't need to do it.
+
+        Tests: Coverted by fast/events/space-scroll-event.html
+
+        * WebProcess/WebPage/win/WebPageWin.cpp:
+        (WebKit::WebPage::performDefaultBehaviorForKeyEvent): Don't handle VK_SPACE.
+
 2020-01-21  Jiewen Tan  <jiewen_tan@apple.com>
 
         [WebAuthn] Incorporate more detailed UnknownError messages for LocalAuthenticator
