@@ -967,6 +967,9 @@ private:
         case CheckArray:
             compileCheckArray();
             break;
+        case CheckArrayOrEmpty:
+            compileCheckArrayOrEmpty();
+            break;
         case CheckNeutered:
             compileCheckNeutered();
             break;
@@ -4065,6 +4068,37 @@ private:
         speculate(
             BadIndexingType, jsValueValue(cell), 0,
             m_out.logicalNot(isArrayTypeForCheckArray(cell, m_node->arrayMode())));
+    }
+
+    void compileCheckArrayOrEmpty()
+    {
+        Edge edge = m_node->child1();
+        LValue cell = lowCell(edge);
+
+        if (m_node->arrayMode().alreadyChecked(m_graph, m_node, abstractValue(edge))) {
+            // We can purge Empty check of CheckArrayOrEmpty completely in this case since CellUse only accepts SpecCell | SpecEmpty.
+            ASSERT(typeFilterFor(m_node->child1().useKind()) & SpecEmpty);
+            return;
+        }
+
+        bool maySeeEmptyValue = m_interpreter.forNode(m_node->child1()).m_type & SpecEmpty;
+        LBasicBlock continuation = nullptr;
+        LBasicBlock lastNext = nullptr;
+        if (maySeeEmptyValue) {
+            LBasicBlock notEmpty = m_out.newBlock();
+            continuation = m_out.newBlock();
+            m_out.branch(m_out.isZero64(cell), unsure(continuation), unsure(notEmpty));
+            lastNext = m_out.appendTo(notEmpty, continuation);
+        }
+
+        speculate(
+            BadIndexingType, jsValueValue(cell), 0,
+            m_out.logicalNot(isArrayTypeForCheckArray(cell, m_node->arrayMode())));
+
+        if (maySeeEmptyValue) {
+            m_out.jump(continuation);
+            m_out.appendTo(continuation, lastNext);
+        }
     }
 
     void compileCheckNeutered()

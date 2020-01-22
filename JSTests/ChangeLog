@@ -1,3 +1,14 @@
+2020-01-22  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Add CheckArrayOrEmpty to handle the case when hoisting CheckArray for places where input can be empty
+        https://bugs.webkit.org/show_bug.cgi?id=206571
+        <rdar://problem/58757016>
+
+        Reviewed by Saam Barati.
+
+        * stress/check-array-or-empty.js: Added.
+        (C):
+
 2020-01-21  Tadeu Zagallo  <tzagallo@apple.com>
 
         Object allocation sinking is missing PutHint for allocations unreachable in the graph

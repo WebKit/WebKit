@@ -1945,6 +1945,7 @@ private:
         case PutHint:
         case CheckStructureImmediate:
         case CheckStructureOrEmpty:
+        case CheckArrayOrEmpty:
         case MaterializeNewObject:
         case MaterializeCreateActivation:
         case MaterializeNewInternalFieldObject:

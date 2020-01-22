@@ -266,14 +266,15 @@ FiltrationResult AbstractValue::changeStructure(Graph& graph, const RegisteredSt
     return normalizeClarity(graph);
 }
 
-FiltrationResult AbstractValue::filterArrayModes(ArrayModes arrayModes)
+FiltrationResult AbstractValue::filterArrayModes(ArrayModes arrayModes, SpeculatedType admittedTypes)
 {
     ASSERT(arrayModes);
+    ASSERT(!(admittedTypes & SpecCell));
     
     if (isClear())
         return FiltrationOK;
     
-    m_type &= SpecCell;
+    m_type &= SpecCell | admittedTypes;
     m_arrayModes &= arrayModes;
     return normalizeClarity();
 }

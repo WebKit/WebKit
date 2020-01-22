@@ -336,7 +336,7 @@ struct AbstractValue {
     // with SpecCell.
     FiltrationResult filter(Graph&, const RegisteredStructureSet&, SpeculatedType admittedTypes = SpecNone);
     
-    FiltrationResult filterArrayModes(ArrayModes);
+    FiltrationResult filterArrayModes(ArrayModes, SpeculatedType admittedTypes = SpecNone);
 
     ALWAYS_INLINE FiltrationResult filter(SpeculatedType type)
     {

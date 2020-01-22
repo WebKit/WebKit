@@ -275,7 +275,20 @@ private:
                 }
                 break;
             }
-                
+
+            case CheckArrayOrEmpty: {
+                const AbstractValue& value = m_state.forNode(node->child1());
+                if (!(value.m_type & SpecEmpty)) {
+                    node->convertCheckArrayOrEmptyToCheckArray();
+                    changed = true;
+                }
+                // Even if the input includes SpecEmpty, we can fall through to CheckArray and remove the node.
+                // CheckArrayOrEmpty can be removed when arrayMode meets the requirement. In that case, CellUse's
+                // check just remains, and it works as CheckArrayOrEmpty without ArrayMode checking.
+                ASSERT(typeFilterFor(node->child1().useKind()) & SpecEmpty);
+                FALLTHROUGH;
+            }
+
             case CheckArray:
             case Arrayify: {
                 if (!node->arrayMode().alreadyChecked(m_graph, node, m_state.forNode(node->child1())))

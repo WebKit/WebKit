@@ -409,6 +409,7 @@ private:
                 case FilterInByIdStatus:
                     break;
 
+                case CheckArrayOrEmpty:
                 case CheckArray:
                     escapeBasedOnArrayMode(node->arrayMode(), node->child1(), node);
                     break;
@@ -1259,6 +1260,7 @@ private:
                     break;
                 }
                     
+                case CheckArrayOrEmpty:
                 case CheckArray:
                 case GetButterfly:
                 case FilterGetByStatus:

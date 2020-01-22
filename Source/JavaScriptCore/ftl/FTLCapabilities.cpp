@@ -203,6 +203,7 @@ inline CapabilityLevel canCompile(Node* node)
     case Check:
     case CheckVarargs:
     case CheckArray:
+    case CheckArrayOrEmpty:
     case CheckNeutered:
     case CountExecution:
     case SuperSamplerBegin:

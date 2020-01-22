@@ -161,6 +161,7 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node, bool igno
         switch (node->op()) {
         case CheckNotEmpty:
         case CheckStructureOrEmpty:
+        case CheckArrayOrEmpty:
             break;
         default:
             return false;
@@ -278,6 +279,7 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node, bool igno
     case CallDOM:
     case CheckSubClass:
     case CheckArray:
+    case CheckArrayOrEmpty:
     case CheckNeutered:
     case Arrayify:
     case ArrayifyToStructure:

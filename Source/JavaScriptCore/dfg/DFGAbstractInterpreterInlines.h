@@ -3379,14 +3379,27 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         break;
     }
 
+    case CheckArrayOrEmpty:
     case CheckArray: {
-        if (node->arrayMode().alreadyChecked(m_graph, node, forNode(node->child1()))) {
+        AbstractValue& value = forNode(node->child1());
+
+        SpeculatedType admittedTypes = SpecNone;
+        if (node->op() == CheckArrayOrEmpty) {
+            bool mayBeEmpty = value.m_type & SpecEmpty;
+            if (!mayBeEmpty)
+                m_state.setShouldTryConstantFolding(true);
+            else
+                admittedTypes = SpecEmpty;
+        }
+
+        if (node->arrayMode().alreadyChecked(m_graph, node, value)) {
             m_state.setShouldTryConstantFolding(true);
             break;
         }
+
         switch (node->arrayMode().type()) {
         case Array::String:
-            filter(node->child1(), SpecString);
+            filter(node->child1(), SpecString | admittedTypes);
             break;
         case Array::Int32:
         case Array::Double:
@@ -3396,46 +3409,46 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         case Array::SlowPutArrayStorage:
             break;
         case Array::DirectArguments:
-            filter(node->child1(), SpecDirectArguments);
+            filter(node->child1(), SpecDirectArguments | admittedTypes);
             break;
         case Array::ScopedArguments:
-            filter(node->child1(), SpecScopedArguments);
+            filter(node->child1(), SpecScopedArguments | admittedTypes);
             break;
         case Array::Int8Array:
-            filter(node->child1(), SpecInt8Array);
+            filter(node->child1(), SpecInt8Array | admittedTypes);
             break;
         case Array::Int16Array:
-            filter(node->child1(), SpecInt16Array);
+            filter(node->child1(), SpecInt16Array | admittedTypes);
             break;
         case Array::Int32Array:
-            filter(node->child1(), SpecInt32Array);
+            filter(node->child1(), SpecInt32Array | admittedTypes);
             break;
         case Array::Uint8Array:
-            filter(node->child1(), SpecUint8Array);
+            filter(node->child1(), SpecUint8Array | admittedTypes);
             break;
         case Array::Uint8ClampedArray:
-            filter(node->child1(), SpecUint8ClampedArray);
+            filter(node->child1(), SpecUint8ClampedArray | admittedTypes);
             break;
         case Array::Uint16Array:
-            filter(node->child1(), SpecUint16Array);
+            filter(node->child1(), SpecUint16Array | admittedTypes);
             break;
         case Array::Uint32Array:
-            filter(node->child1(), SpecUint32Array);
+            filter(node->child1(), SpecUint32Array | admittedTypes);
             break;
         case Array::Float32Array:
-            filter(node->child1(), SpecFloat32Array);
+            filter(node->child1(), SpecFloat32Array | admittedTypes);
             break;
         case Array::Float64Array:
-            filter(node->child1(), SpecFloat64Array);
+            filter(node->child1(), SpecFloat64Array | admittedTypes);
             break;
         case Array::AnyTypedArray:
-            filter(node->child1(), SpecTypedArrayView);
+            filter(node->child1(), SpecTypedArrayView | admittedTypes);
             break;
         default:
             RELEASE_ASSERT_NOT_REACHED();
             break;
         }
-        filterArrayModes(node->child1(), node->arrayMode().arrayModesThatPassFiltering());
+        filterArrayModes(node->child1(), node->arrayMode().arrayModesThatPassFiltering(), admittedTypes);
         break;
     }
 
@@ -4464,9 +4477,9 @@ FiltrationResult AbstractInterpreter<AbstractStateType>::filter(
 
 template<typename AbstractStateType>
 FiltrationResult AbstractInterpreter<AbstractStateType>::filterArrayModes(
-    AbstractValue& value, ArrayModes arrayModes)
+    AbstractValue& value, ArrayModes arrayModes, SpeculatedType admittedTypes)
 {
-    if (value.filterArrayModes(arrayModes) == FiltrationOK)
+    if (value.filterArrayModes(arrayModes, admittedTypes) == FiltrationOK)
         return FiltrationOK;
     m_state.setIsValid(false);
     return Contradiction;

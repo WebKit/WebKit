@@ -182,9 +182,9 @@ public:
     }
     
     template<typename T>
-    FiltrationResult filterArrayModes(T node, ArrayModes arrayModes)
+    FiltrationResult filterArrayModes(T node, ArrayModes arrayModes, SpeculatedType admittedTypes = SpecNone)
     {
-        return filterArrayModes(forNode(node), arrayModes);
+        return filterArrayModes(forNode(node), arrayModes, admittedTypes);
     }
     
     template<typename T>
@@ -206,7 +206,7 @@ public:
     }
 
     FiltrationResult filter(AbstractValue&, const RegisteredStructureSet&, SpeculatedType admittedTypes = SpecNone);
-    FiltrationResult filterArrayModes(AbstractValue&, ArrayModes);
+    FiltrationResult filterArrayModes(AbstractValue&, ArrayModes, SpeculatedType admittedTypes = SpecNone);
     FiltrationResult filter(AbstractValue&, SpeculatedType);
     FiltrationResult filterByValue(AbstractValue&, FrozenValue);
     FiltrationResult filterClassInfo(AbstractValue&, const ClassInfo*);

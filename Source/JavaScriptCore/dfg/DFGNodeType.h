@@ -238,6 +238,7 @@ namespace JSC { namespace DFG {
     macro(GetButterfly, NodeResultStorage) \
     macro(NukeStructureAndSetButterfly, NodeMustGenerate) \
     macro(CheckArray, NodeMustGenerate) \
+    macro(CheckArrayOrEmpty, NodeMustGenerate) \
     /* This checks if the edge is a typed array and if it is neutered. */ \
     macro(CheckNeutered, NodeMustGenerate) \
     macro(Arrayify, NodeMustGenerate) \

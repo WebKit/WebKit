@@ -2375,7 +2375,8 @@ void SpeculativeJIT::compile(Node* node)
         compileCheckNeutered(node);
         break;
     }
-        
+
+    case CheckArrayOrEmpty:
     case CheckArray: {
         checkArray(node);
         break;

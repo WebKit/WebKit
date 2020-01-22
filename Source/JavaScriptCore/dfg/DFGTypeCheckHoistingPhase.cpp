@@ -143,26 +143,35 @@ public:
                     Node* getLocal = insertionSet.insertNode(
                         indexInBlock + 1, variable->prediction(), GetLocal, origin,
                         OpInfo(variable), Edge(node));
+
+                    auto needsEmptyCheck = [](Node* node) -> bool {
+                        if (!(SpecCellCheck & SpecEmpty))
+                            return false;
+                        VirtualRegister local = node->variableAccessData()->operand().virtualRegister();
+                        auto* inlineCallFrame = node->origin.semantic.inlineCallFrame();
+                        if ((local - (inlineCallFrame ? inlineCallFrame->stackOffset : 0)) == virtualRegisterForArgumentIncludingThis(0)) {
+                            // |this| can be the TDZ value. The call entrypoint won't have |this| as TDZ,
+                            // but a catch or a loop OSR entry may have |this| be TDZ.
+                            return true;
+                        }
+                        return false;
+                    };
+
                     if (iter->value.m_structure) {
                         auto checkOp = CheckStructure;
-                        if (SpecCellCheck & SpecEmpty) {
-                            VirtualRegister local = node->variableAccessData()->operand().virtualRegister();
-                            auto* inlineCallFrame = node->origin.semantic.inlineCallFrame();
-                            if ((local - (inlineCallFrame ? inlineCallFrame->stackOffset : 0)) == virtualRegisterForArgumentIncludingThis(0)) {
-                                // |this| can be the TDZ value. The call entrypoint won't have |this| as TDZ,
-                                // but a catch or a loop OSR entry may have |this| be TDZ.
-                                checkOp = CheckStructureOrEmpty;
-                            }
-                        }
-
+                        if (needsEmptyCheck(node))
+                            checkOp = CheckStructureOrEmpty;
                         insertionSet.insertNode(
                             indexInBlock + 1, SpecNone, checkOp, origin,
                             OpInfo(m_graph.addStructureSet(iter->value.m_structure)),
                             Edge(getLocal, CellUse));
                     } else if (iter->value.m_arrayModeIsValid) {
                         ASSERT(iter->value.m_arrayModeHoistingOkay);
+                        auto checkOp = CheckArray;
+                        if (needsEmptyCheck(node))
+                            checkOp = CheckArrayOrEmpty;
                         insertionSet.insertNode(
-                            indexInBlock + 1, SpecNone, CheckArray, origin,
+                            indexInBlock + 1, SpecNone, checkOp, origin,
                             OpInfo(iter->value.m_arrayMode.asWord()),
                             Edge(getLocal, CellUse));
                     } else
@@ -188,12 +197,12 @@ public:
                     NodeOrigin origin = node->origin;
                     Edge child1 = node->child1();
                     
+                    // Note: On 64-bit platforms, cell checks allow the empty value to flow through.
+                    // This means that this structure/array check may see the empty value as input. We need
+                    // to emit a node that explicitly handles the empty value. Most of the time, CheckStructureOrEmpty/CheckArrayOrEmpty
+                    // will be folded to CheckStructure/CheckArray because AI proves that the incoming value is
+                    // definitely not empty.
                     if (iter->value.m_structure) {
-                        // Note: On 64-bit platforms, cell checks allow the empty value to flow through.
-                        // This means that this structure check may see the empty value as input. We need
-                        // to emit a node that explicitly handles the empty value. Most of the time, CheckStructureOrEmpty
-                        // will be folded to CheckStructure because AI proves that the incoming value is
-                        // definitely not empty.
                         insertionSet.insertNode(
                             indexForChecks, SpecNone, (SpecCellCheck & SpecEmpty) ? CheckStructureOrEmpty : CheckStructure,
                             originForChecks.withSemantic(origin.semantic),
@@ -202,7 +211,7 @@ public:
                     } else if (iter->value.m_arrayModeIsValid) {
                         ASSERT(iter->value.m_arrayModeHoistingOkay);
                         insertionSet.insertNode(
-                            indexForChecks, SpecNone, CheckArray,
+                            indexForChecks, SpecNone, (SpecCellCheck & SpecEmpty) ? CheckArrayOrEmpty : CheckArray,
                             originForChecks.withSemantic(origin.semantic),
                             OpInfo(iter->value.m_arrayMode.asWord()),
                             Edge(child1.node(), CellUse));

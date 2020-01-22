@@ -1,5 +1,56 @@
 2020-01-22  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        [JSC] Add CheckArrayOrEmpty to handle the case when hoisting CheckArray for places where input can be empty
+        https://bugs.webkit.org/show_bug.cgi?id=206571
+        <rdar://problem/58757016>
+
+        Reviewed by Saam Barati.
+
+        Since we hoist CheckArray too in DFGTypeCheckHoistingPhase, we have the same problem to CheckStructureOrEmpty: we
+        could insert CheckArray where the input can include Empty. We should have CheckArrayOrEmpty as we have CheckStructureOrEmpty
+        for CheckStructure: CheckArrayOrEmpty accepts empty or cell with specified array-modes.
+
+        * dfg/DFGAbstractInterpreter.h:
+        (JSC::DFG::AbstractInterpreter::filterArrayModes):
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::filterArrayModes):
+        * dfg/DFGAbstractValue.cpp:
+        (JSC::DFG::AbstractValue::filterArrayModes):
+        * dfg/DFGAbstractValue.h:
+        * dfg/DFGArgumentsEliminationPhase.cpp:
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGConstantFoldingPhase.cpp:
+        (JSC::DFG::ConstantFoldingPhase::foldConstants):
+        * dfg/DFGDoesGC.cpp:
+        (JSC::DFG::doesGC):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::convertCheckArrayOrEmptyToCheckArray):
+        (JSC::DFG::Node::hasArrayMode):
+        * dfg/DFGNodeType.h:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::checkArray):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGTypeCheckHoistingPhase.cpp:
+        (JSC::DFG::TypeCheckHoistingPhase::run):
+        * dfg/DFGValidate.cpp:
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileNode):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCheckArrayOrEmpty):
+
+2020-01-22  Yusuke Suzuki  <ysuzuki@apple.com>
+
         [JSC] Attempt to fix BytecodeIndex handling in 32bit
         https://bugs.webkit.org/show_bug.cgi?id=206577
 

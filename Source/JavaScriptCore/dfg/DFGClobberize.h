@@ -1096,6 +1096,7 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
         read(JSCell_structureID);
         return;
 
+    case CheckArrayOrEmpty:
     case CheckArray:
         read(JSCell_indexingType);
         read(JSCell_typeInfoType);
