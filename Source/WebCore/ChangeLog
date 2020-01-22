@@ -1,3 +1,36 @@
+2020-01-08  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [HarfBuzz][GTK] fast/text/complex-first-glyph-with-initial-advance.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=118221
+
+        Reviewed by Carlos Garcia Campos.
+
+        Arabic diacritics made glyphs vertically unaligned if the first
+        glyph had a vertical offset.
+
+        The initial advance should be same with the first glyph origin for
+        HarfBuzz. See the diagram in ComplexTextController.h for details.
+        <https://trac.webkit.org/browser/webkit/trunk/Source/WebCore/platform/graphics/ComplexTextController.h?rev=224007#L109>
+
+        drawGlyphs of Cairo port was assuming upward y-axis for glyph
+        advances even though those of Mac and AppleWin port are assuming
+        downward y-axis. This is a problem for Windows ports because
+        AppleWin and WinCairo port are sharing the code calculating
+        advances.
+
+        Covered by existing tests.
+
+        * platform/graphics/cairo/FontCairo.cpp:
+        (WebCore::FontCascade::drawGlyphs):
+        * platform/graphics/cairo/GraphicsContextImplCairo.cpp:
+        (WebCore::GraphicsContextImplCairo::drawGlyphs):
+        Sum up the height of advances into yOffset instead of subtraction.
+
+        * platform/graphics/harfbuzz/ComplexTextControllerHarfBuzz.cpp:
+        (WebCore::ComplexTextController::ComplexTextRun::ComplexTextRun):
+        Don't negate offsetY. Set m_initialAdvance as the first item of
+        m_glyphOrigins.
+
 2019-12-13  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [HarfBuzz] WebKitWebProcess crashes when displaying a KaTeX formula
