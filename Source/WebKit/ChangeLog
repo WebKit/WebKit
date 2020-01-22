@@ -1,3 +1,10 @@
+2019-10-04  Ross Kirsling  <ross.kirsling@sony.com>
+
+        Unreviewed WinCairo build fix for r250717.
+
+        * WebProcess/WebPage/CoordinatedGraphics/LayerTreeHost.h:
+        (WebKit::LayerTreeHost::invalidate): Deleted.
+
 2019-11-07  Adrian Perez de Castro  <aperez@igalia.com>
 
         Unreviewed. Update OptionsWPE.cmake and NEWS for the 2.26.2 release
