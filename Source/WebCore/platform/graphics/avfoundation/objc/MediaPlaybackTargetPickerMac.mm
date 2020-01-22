@@ -72,7 +72,9 @@ MediaPlaybackTargetPickerMac::~MediaPlaybackTargetPickerMac()
 
 bool MediaPlaybackTargetPickerMac::externalOutputDeviceAvailable()
 {
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     return devicePicker().externalOutputDeviceAvailable;
+ALLOW_DEPRECATED_DECLARATIONS_END
 }
 
 Ref<MediaPlaybackTarget> MediaPlaybackTargetPickerMac::playbackTarget()
@@ -98,8 +100,10 @@ AVOutputDeviceMenuController *MediaPlaybackTargetPickerMac::devicePicker()
 
         LOG(Media, "MediaPlaybackTargetPickerMac::devicePicker - allocated menu controller %p", m_outputDeviceMenuController.get());
 
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         if (m_outputDeviceMenuController.get().externalOutputDeviceAvailable)
             availableDevicesDidChange();
+ALLOW_DEPRECATED_DECLARATIONS_END
     }
 
     return m_outputDeviceMenuController.get();
@@ -114,7 +118,9 @@ void MediaPlaybackTargetPickerMac::showPlaybackTargetPicker(const FloatRect& loc
 
     m_showingMenu = true;
 
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     bool targetSelected = [devicePicker() showMenuForRect:location appearanceName:(useDarkAppearance ? NSAppearanceNameVibrantDark : NSAppearanceNameVibrantLight) allowReselectionOfSelectedOutputDevice:!hasActiveRoute];
+ALLOW_DEPRECATED_DECLARATIONS_END
 
     if (targetSelected != hasActiveRoute)
         currentDeviceDidChange();
