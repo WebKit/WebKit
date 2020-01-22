@@ -1,3 +1,14 @@
+2020-01-22  Basuke Suzuki  <basuke.suzuki@sony.com>
+
+        [build-webkit] Add option for toggling unified build
+        https://bugs.webkit.org/show_bug.cgi?id=206597
+
+        Reviewed by Adrian Perez de Castro.
+
+        Added command line option for build-webkit script to toggle unified build.
+
+        * Scripts/webkitperl/FeatureList.pm:
+
 2020-01-22  Don Olmstead  <don.olmstead@sony.com>
 
         Share InjectedBundleController::platformInitialize

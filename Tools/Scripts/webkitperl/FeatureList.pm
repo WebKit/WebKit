@@ -163,6 +163,7 @@ my (
     $threeDTransformsSupport,
     $touchEventsSupport,
     $touchSliderSupport,
+    $unifiedBuildSupport,
     $userMessageHandlersSupport,
     $userselectAllSupport,
     $variationFontsSupport,
@@ -570,6 +571,9 @@ my @features = (
 
     { option => "system-malloc", desc => "Toggle system allocator instead of bmalloc",
       define => "USE_SYSTEM_MALLOC", value => \$systemMallocSupport },
+
+    { option => "unified-builds", desc => "Toggle unified builds",
+      define => "ENABLE_UNIFIED_BUILDS", value => \$unifiedBuildSupport },
 );
 
 sub getFeatureOptionList()
