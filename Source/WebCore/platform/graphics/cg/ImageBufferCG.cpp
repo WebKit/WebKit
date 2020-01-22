@@ -147,7 +147,7 @@ ImageBuffer::ImageBuffer(const FloatSize& size, float resolutionScale, CGColorSp
     if (width.unsafeGet() > maxSize.width() || height.unsafeGet() > maxSize.height())
         accelerateRendering = false;
 #else
-    ASSERT(renderingMode == Unaccelerated);
+    ASSERT(renderingMode == RenderingMode::Unaccelerated);
 #endif
 
     m_data.colorSpace = colorSpace;
