@@ -411,7 +411,7 @@ namespace JSC {
         double getOperandConstantDouble(VirtualRegister src);
 
 #if USE(JSVALUE32_64)
-        bool getOperandConstantInt(VirtualRegister op1, VirtualRegister op2, int& op, int32_t& constant);
+        bool getOperandConstantInt(VirtualRegister op1, VirtualRegister op2, VirtualRegister& op, int32_t& constant);
 
         void emitLoadTag(VirtualRegister, RegisterID tag);
         void emitLoadPayload(VirtualRegister, RegisterID payload);

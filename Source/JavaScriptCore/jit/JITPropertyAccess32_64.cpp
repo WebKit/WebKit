@@ -50,10 +50,10 @@ namespace JSC {
 void JIT::emit_op_put_getter_by_id(const Instruction* currentInstruction)
 {
     auto bytecode = currentInstruction->as<OpPutGetterById>();
-    int base = bytecode.m_base.offset();
+    VirtualRegister base = bytecode.m_base;
     int property = bytecode.m_property;
     int options = bytecode.m_attributes;
-    int getter = bytecode.m_accessor.offset();
+    VirtualRegister getter = bytecode.m_accessor;
 
     emitLoadPayload(base, regT1);
     emitLoadPayload(getter, regT3);
@@ -63,10 +63,10 @@ void JIT::emit_op_put_getter_by_id(const Instruction* currentInstruction)
 void JIT::emit_op_put_setter_by_id(const Instruction* currentInstruction)
 {
     auto bytecode = currentInstruction->as<OpPutSetterById>();
-    int base = bytecode.m_base.offset();
+    VirtualRegister base = bytecode.m_base;
     int property = bytecode.m_property;
     int options = bytecode.m_attributes;
-    int setter = bytecode.m_accessor.offset();
+    VirtualRegister setter = bytecode.m_accessor;
 
     emitLoadPayload(base, regT1);
     emitLoadPayload(setter, regT3);
@@ -76,11 +76,11 @@ void JIT::emit_op_put_setter_by_id(const Instruction* currentInstruction)
 void JIT::emit_op_put_getter_setter_by_id(const Instruction* currentInstruction)
 {
     auto bytecode = currentInstruction->as<OpPutGetterSetterById>();
-    int base = bytecode.m_base.offset();
+    VirtualRegister base = bytecode.m_base;
     int property = bytecode.m_property;
     int attributes = bytecode.m_attributes;
-    int getter = bytecode.m_getter.offset();
-    int setter = bytecode.m_setter.offset();
+    VirtualRegister getter = bytecode.m_getter;
+    VirtualRegister setter = bytecode.m_setter;
 
     emitLoadPayload(base, regT1);
     emitLoadPayload(getter, regT3);
@@ -91,10 +91,10 @@ void JIT::emit_op_put_getter_setter_by_id(const Instruction* currentInstruction)
 void JIT::emit_op_put_getter_by_val(const Instruction* currentInstruction)
 {
     auto bytecode = currentInstruction->as<OpPutGetterByVal>();
-    int base = bytecode.m_base.offset();
-    int property = bytecode.m_property.offset();
+    VirtualRegister base = bytecode.m_base;
+    VirtualRegister property = bytecode.m_property;
     int32_t attributes = bytecode.m_attributes;
-    int getter = bytecode.m_accessor.offset();
+    VirtualRegister getter = bytecode.m_accessor;
 
     emitLoadPayload(base, regT2);
     emitLoad(property, regT1, regT0);
@@ -105,10 +105,10 @@ void JIT::emit_op_put_getter_by_val(const Instruction* currentInstruction)
 void JIT::emit_op_put_setter_by_val(const Instruction* currentInstruction)
 {
     auto bytecode = currentInstruction->as<OpPutSetterByVal>();
-    int base = bytecode.m_base.offset();
-    int property = bytecode.m_property.offset();
+    VirtualRegister base = bytecode.m_base;
+    VirtualRegister property = bytecode.m_property;
     int32_t attributes = bytecode.m_attributes;
-    int setter = bytecode.m_accessor.offset();
+    VirtualRegister setter = bytecode.m_accessor;
 
     emitLoadPayload(base, regT2);
     emitLoad(property, regT1, regT0);
@@ -119,8 +119,8 @@ void JIT::emit_op_put_setter_by_val(const Instruction* currentInstruction)
 void JIT::emit_op_del_by_id(const Instruction* currentInstruction)
 {
     auto bytecode = currentInstruction->as<OpDelById>();
-    int dst = bytecode.m_dst.offset();
-    int base = bytecode.m_base.offset();
+    VirtualRegister dst = bytecode.m_dst;
+    VirtualRegister base = bytecode.m_base;
     int property = bytecode.m_property;
     emitLoad(base, regT1, regT0);
     callOperation(operationDeleteByIdJSResult, dst, m_codeBlock->globalObject(), JSValueRegs(regT1, regT0), m_codeBlock->identifier(property).impl());
@@ -129,9 +129,9 @@ void JIT::emit_op_del_by_id(const Instruction* currentInstruction)
 void JIT::emit_op_del_by_val(const Instruction* currentInstruction)
 {
     auto bytecode = currentInstruction->as<OpDelByVal>();
-    int dst = bytecode.m_dst.offset();
-    int base = bytecode.m_base.offset();
-    int property = bytecode.m_property.offset();
+    VirtualRegister dst = bytecode.m_dst;
+    VirtualRegister base = bytecode.m_base;
+    VirtualRegister property = bytecode.m_property;
     emitLoad2(base, regT1, regT0, property, regT3, regT2);
     callOperation(operationDeleteByValJSResult, dst, m_codeBlock->globalObject(), JSValueRegs(regT1, regT0), JSValueRegs(regT3, regT2));
 }
@@ -140,9 +140,9 @@ void JIT::emit_op_get_by_val(const Instruction* currentInstruction)
 {
     auto bytecode = currentInstruction->as<OpGetByVal>();
     auto& metadata = bytecode.metadata(m_codeBlock);
-    int dst = bytecode.m_dst.offset();
-    int base = bytecode.m_base.offset();
-    int property = bytecode.m_property.offset();
+    VirtualRegister dst = bytecode.m_dst;
+    VirtualRegister base = bytecode.m_base;
+    VirtualRegister property = bytecode.m_property;
     ArrayProfile* profile = &metadata.m_arrayProfile;
 
     emitLoad2(base, regT1, regT0, property, regT3, regT2);
@@ -174,7 +174,7 @@ void JIT::emitSlow_op_get_by_val(const Instruction* currentInstruction, Vector<S
 {
     if (hasAnySlowCases(iter)) {
         auto bytecode = currentInstruction->as<OpGetByVal>();
-        int dst = bytecode.m_dst.offset();
+        VirtualRegister dst = bytecode.m_dst;
         auto& metadata = bytecode.metadata(m_codeBlock);
         ArrayProfile* profile = &metadata.m_arrayProfile;
 
@@ -199,8 +199,8 @@ void JIT::emit_op_put_by_val(const Instruction* currentInstruction)
 {
     auto bytecode = currentInstruction->as<Op>();
     auto& metadata = bytecode.metadata(m_codeBlock);
-    int base = bytecode.m_base.offset();
-    int property = bytecode.m_property.offset();
+    VirtualRegister base = bytecode.m_base;
+    VirtualRegister property = bytecode.m_property;
     ArrayProfile* profile = &metadata.m_arrayProfile;
     ByValInfo* byValInfo = m_codeBlock->addByValInfo();
     
@@ -249,8 +249,8 @@ template <typename Op>
 JIT::JumpList JIT::emitGenericContiguousPutByVal(Op bytecode, PatchableJump& badType, IndexingType indexingShape)
 {
     auto& metadata = bytecode.metadata(m_codeBlock);
-    int base = bytecode.m_base.offset();
-    int value = bytecode.m_value.offset();
+    VirtualRegister base = bytecode.m_base;
+    VirtualRegister value = bytecode.m_value;
     ArrayProfile* profile = &metadata.m_arrayProfile;
 
     JumpList slowCases;
@@ -310,8 +310,8 @@ template <typename Op>
 JIT::JumpList JIT::emitArrayStoragePutByVal(Op bytecode, PatchableJump& badType)
 {
     auto& metadata = bytecode.metadata(m_codeBlock);
-    int base = bytecode.m_base.offset();
-    int value = bytecode.m_value.offset();
+    VirtualRegister base = bytecode.m_base;
+    VirtualRegister value = bytecode.m_value;
     ArrayProfile* profile = &metadata.m_arrayProfile;
 
     JumpList slowCases;
@@ -351,8 +351,8 @@ JITPutByIdGenerator JIT::emitPutByValWithCachedId(ByValInfo* byValInfo, Op bytec
     // base: tag(regT1), payload(regT0)
     // property: tag(regT3), payload(regT2)
 
-    int base = bytecode.m_base.offset();
-    int value = bytecode.m_value.offset();
+    VirtualRegister base = bytecode.m_base;
+    VirtualRegister value = bytecode.m_value;
 
     slowCases.append(branchIfNotCell(regT3));
     emitByValIdentifierCheck(byValInfo, regT2, regT2, propertyName, slowCases);
@@ -386,14 +386,14 @@ JITPutByIdGenerator JIT::emitPutByValWithCachedId(ByValInfo* byValInfo, Op bytec
 void JIT::emitSlow_op_put_by_val(const Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
 {
     bool isDirect = currentInstruction->opcodeID() == op_put_by_val_direct;
-    int base;
-    int property;
-    int value;
+    VirtualRegister base;
+    VirtualRegister property;
+    VirtualRegister value;
 
     auto load = [&](auto bytecode) {
-        base = bytecode.m_base.offset();
-        property = bytecode.m_property.offset();
-        value = bytecode.m_value.offset();
+        base = bytecode.m_base;
+        property = bytecode.m_property;
+        value = bytecode.m_value;
     };
 
     if (isDirect)
@@ -421,8 +421,8 @@ void JIT::emitSlow_op_put_by_val(const Instruction* currentInstruction, Vector<S
 void JIT::emit_op_try_get_by_id(const Instruction* currentInstruction)
 {
     auto bytecode = currentInstruction->as<OpTryGetById>();
-    int dst = bytecode.m_dst.offset();
-    int base = bytecode.m_base.offset();
+    VirtualRegister dst = bytecode.m_dst;
+    VirtualRegister base = bytecode.m_base;
     const Identifier* ident = &(m_codeBlock->identifier(bytecode.m_property));
 
     emitLoad(base, regT1, regT0);
@@ -444,7 +444,7 @@ void JIT::emitSlow_op_try_get_by_id(const Instruction* currentInstruction, Vecto
     linkAllSlowCases(iter);
 
     auto bytecode = currentInstruction->as<OpTryGetById>();
-    int resultVReg = bytecode.m_dst.offset();
+    VirtualRegister resultVReg = bytecode.m_dst;
     const Identifier* ident = &(m_codeBlock->identifier(bytecode.m_property));
 
     JITGetByIdGenerator& gen = m_getByIds[m_getByIdIndex++];
@@ -460,8 +460,8 @@ void JIT::emitSlow_op_try_get_by_id(const Instruction* currentInstruction, Vecto
 void JIT::emit_op_get_by_id_direct(const Instruction* currentInstruction)
 {
     auto bytecode = currentInstruction->as<OpGetByIdDirect>();
-    int dst = bytecode.m_dst.offset();
-    int base = bytecode.m_base.offset();
+    VirtualRegister dst = bytecode.m_dst;
+    VirtualRegister base = bytecode.m_base;
     const Identifier* ident = &(m_codeBlock->identifier(bytecode.m_property));
 
     emitLoad(base, regT1, regT0);
@@ -483,7 +483,7 @@ void JIT::emitSlow_op_get_by_id_direct(const Instruction* currentInstruction, Ve
     linkAllSlowCases(iter);
 
     auto bytecode = currentInstruction->as<OpGetByIdDirect>();
-    int resultVReg = bytecode.m_dst.offset();
+    VirtualRegister resultVReg = bytecode.m_dst;
     const Identifier* ident = &(m_codeBlock->identifier(bytecode.m_property));
 
     JITGetByIdGenerator& gen = m_getByIds[m_getByIdIndex++];
@@ -500,8 +500,8 @@ void JIT::emit_op_get_by_id(const Instruction* currentInstruction)
 {
     auto bytecode = currentInstruction->as<OpGetById>();
     auto& metadata = bytecode.metadata(m_codeBlock);
-    int dst = bytecode.m_dst.offset();
-    int base = bytecode.m_base.offset();
+    VirtualRegister dst = bytecode.m_dst;
+    VirtualRegister base = bytecode.m_base;
     const Identifier* ident = &(m_codeBlock->identifier(bytecode.m_property));
     
     emitLoad(base, regT1, regT0);
@@ -529,7 +529,7 @@ void JIT::emitSlow_op_get_by_id(const Instruction* currentInstruction, Vector<Sl
     linkAllSlowCases(iter);
 
     auto bytecode = currentInstruction->as<OpGetById>();
-    int resultVReg = bytecode.m_dst.offset();
+    VirtualRegister resultVReg = bytecode.m_dst;
     const Identifier* ident = &(m_codeBlock->identifier(bytecode.m_property));
 
     JITGetByIdGenerator& gen = m_getByIds[m_getByIdIndex++];
@@ -544,9 +544,9 @@ void JIT::emitSlow_op_get_by_id(const Instruction* currentInstruction, Vector<Sl
 void JIT::emit_op_get_by_id_with_this(const Instruction* currentInstruction)
 {
     auto bytecode = currentInstruction->as<OpGetByIdWithThis>();
-    int dst = bytecode.m_dst.offset();
-    int base = bytecode.m_base.offset();
-    int thisVReg = bytecode.m_thisValue.offset();
+    VirtualRegister dst = bytecode.m_dst;
+    VirtualRegister base = bytecode.m_base;
+    VirtualRegister thisVReg = bytecode.m_thisValue;
     const Identifier* ident = &(m_codeBlock->identifier(bytecode.m_property));
     
     emitLoad(base, regT1, regT0);
@@ -570,7 +570,7 @@ void JIT::emitSlow_op_get_by_id_with_this(const Instruction* currentInstruction,
     linkAllSlowCases(iter);
 
     auto bytecode = currentInstruction->as<OpGetByIdWithThis>();
-    int resultVReg = bytecode.m_dst.offset();
+    VirtualRegister resultVReg = bytecode.m_dst;
     const Identifier* ident = &(m_codeBlock->identifier(bytecode.m_property));
 
     JITGetByIdWithThisGenerator& gen = m_getByIdsWithThis[m_getByIdWithThisIndex++];
@@ -589,8 +589,8 @@ void JIT::emit_op_put_by_id(const Instruction* currentInstruction)
     // such that the Structure & offset are always at the same distance from this.
     
     auto bytecode = currentInstruction->as<OpPutById>();
-    int base = bytecode.m_base.offset();
-    int value = bytecode.m_value.offset();
+    VirtualRegister base = bytecode.m_base;
+    VirtualRegister value = bytecode.m_value;
     bool direct = !!(bytecode.m_flags & PutByIdIsDirect);
     
     emitLoad2(base, regT1, regT0, value, regT3, regT2);
@@ -615,7 +615,7 @@ void JIT::emitSlow_op_put_by_id(const Instruction* currentInstruction, Vector<Sl
     linkAllSlowCases(iter);
 
     auto bytecode = currentInstruction->as<OpPutById>();
-    int base = bytecode.m_base.offset();
+    VirtualRegister base = bytecode.m_base;
     const Identifier* ident = &(m_codeBlock->identifier(bytecode.m_property));
 
     Label coldPathBegin(this);
@@ -634,8 +634,8 @@ void JIT::emitSlow_op_put_by_id(const Instruction* currentInstruction, Vector<Sl
 void JIT::emit_op_in_by_id(const Instruction* currentInstruction)
 {
     auto bytecode = currentInstruction->as<OpInById>();
-    int dst = bytecode.m_dst.offset();
-    int base = bytecode.m_base.offset();
+    VirtualRegister dst = bytecode.m_dst;
+    VirtualRegister base = bytecode.m_base;
     const Identifier* ident = &(m_codeBlock->identifier(bytecode.m_property));
 
     emitLoad(base, regT1, regT0);
@@ -656,7 +656,7 @@ void JIT::emitSlow_op_in_by_id(const Instruction* currentInstruction, Vector<Slo
     linkAllSlowCases(iter);
 
     auto bytecode = currentInstruction->as<OpInById>();
-    int resultVReg = bytecode.m_dst.offset();
+    VirtualRegister resultVReg = bytecode.m_dst;
     const Identifier* ident = &(m_codeBlock->identifier(bytecode.m_property));
 
     JITInByIdGenerator& gen = m_inByIds[m_inByIdIndex++];
@@ -675,7 +675,7 @@ void JIT::emitVarInjectionCheck(bool needsVarInjectionChecks)
     addSlowCase(branch8(Equal, AbsoluteAddress(m_codeBlock->globalObject()->varInjectionWatchpoint()->addressOfState()), TrustedImm32(IsInvalidated)));
 }
 
-void JIT::emitResolveClosure(int dst, int scope, bool needsVarInjectionChecks, unsigned depth)
+void JIT::emitResolveClosure(VirtualRegister dst, VirtualRegister scope, bool needsVarInjectionChecks, unsigned depth)
 {
     emitVarInjectionCheck(needsVarInjectionChecks);
     move(TrustedImm32(JSValue::CellTag), regT1);
@@ -689,8 +689,8 @@ void JIT::emit_op_resolve_scope(const Instruction* currentInstruction)
 {
     auto bytecode = currentInstruction->as<OpResolveScope>();
     auto& metadata = bytecode.metadata(m_codeBlock);
-    int dst = bytecode.m_dst.offset();
-    int scope = bytecode.m_scope.offset();
+    VirtualRegister dst = bytecode.m_dst;
+    VirtualRegister scope = bytecode.m_scope;
     ResolveType resolveType = metadata.m_resolveType;
     unsigned depth = metadata.m_localScopeDepth;
 
@@ -791,7 +791,7 @@ void JIT::emit_op_resolve_scope(const Instruction* currentInstruction)
     }
 }
 
-void JIT::emitLoadWithStructureCheck(int scope, Structure** structureSlot)
+void JIT::emitLoadWithStructureCheck(VirtualRegister scope, Structure** structureSlot)
 {
     emitLoad(scope, regT1, regT0);
     loadPtr(structureSlot, regT2);
@@ -811,7 +811,7 @@ void JIT::emitGetVarFromIndirectPointer(JSValue** operand, GPRReg tag, GPRReg pa
     load32(Address(payload, PayloadOffset), payload);
 }
 
-void JIT::emitGetClosureVar(int scope, uintptr_t operand)
+void JIT::emitGetClosureVar(VirtualRegister scope, uintptr_t operand)
 {
     emitLoad(scope, regT1, regT0);
     load32(Address(regT0, JSLexicalEnvironment::offsetOfVariables() + operand * sizeof(Register) + TagOffset), regT1);
@@ -822,8 +822,8 @@ void JIT::emit_op_get_from_scope(const Instruction* currentInstruction)
 {
     auto bytecode = currentInstruction->as<OpGetFromScope>();
     auto& metadata = bytecode.metadata(m_codeBlock);
-    int dst = bytecode.m_dst.offset();
-    int scope = bytecode.m_scope.offset();
+    VirtualRegister dst = bytecode.m_dst;
+    VirtualRegister scope = bytecode.m_scope;
     ResolveType resolveType = metadata.m_getPutInfo.resolveType();
     Structure** structureSlot = metadata.m_structure.slot();
     uintptr_t* operandSlot = reinterpret_cast<uintptr_t*>(&metadata.m_operand);
@@ -937,11 +937,11 @@ void JIT::emitSlow_op_get_from_scope(const Instruction* currentInstruction, Vect
     linkAllSlowCases(iter);
 
     auto bytecode = currentInstruction->as<OpGetFromScope>();
-    int dst = bytecode.m_dst.offset();
+    VirtualRegister dst = bytecode.m_dst;
     callOperationWithProfile(bytecode.metadata(m_codeBlock), operationGetFromScope, dst, m_codeBlock->globalObject(), currentInstruction);
 }
 
-void JIT::emitPutGlobalVariable(JSValue* operand, int value, WatchpointSet* set)
+void JIT::emitPutGlobalVariable(JSValue* operand, VirtualRegister value, WatchpointSet* set)
 {
     emitLoad(value, regT1, regT0);
     emitNotifyWrite(set);
@@ -950,7 +950,7 @@ void JIT::emitPutGlobalVariable(JSValue* operand, int value, WatchpointSet* set)
     store32(regT0, bitwise_cast<void*>(rawAddress + PayloadOffset));
 }
 
-void JIT::emitPutGlobalVariableIndirect(JSValue** addressOfOperand, int value, WatchpointSet** indirectWatchpointSet)
+void JIT::emitPutGlobalVariableIndirect(JSValue** addressOfOperand, VirtualRegister value, WatchpointSet** indirectWatchpointSet)
 {
     emitLoad(value, regT1, regT0);
     loadPtr(indirectWatchpointSet, regT2);
@@ -960,7 +960,7 @@ void JIT::emitPutGlobalVariableIndirect(JSValue** addressOfOperand, int value, W
     store32(regT0, Address(regT2, PayloadOffset));
 }
 
-void JIT::emitPutClosureVar(int scope, uintptr_t operand, int value, WatchpointSet* set)
+void JIT::emitPutClosureVar(VirtualRegister scope, uintptr_t operand, VirtualRegister value, WatchpointSet* set)
 {
     emitLoad(value, regT3, regT2);
     emitLoad(scope, regT1, regT0);
@@ -973,8 +973,8 @@ void JIT::emit_op_put_to_scope(const Instruction* currentInstruction)
 {
     auto bytecode = currentInstruction->as<OpPutToScope>();
     auto& metadata = bytecode.metadata(m_codeBlock);
-    int scope = bytecode.m_scope.offset();
-    int value = bytecode.m_value.offset();
+    VirtualRegister scope = bytecode.m_scope;
+    VirtualRegister value = bytecode.m_value;
     GetPutInfo getPutInfo = copiedGetPutInfo(bytecode);
     ResolveType resolveType = getPutInfo.resolveType();
     Structure** structureSlot = metadata.m_structure.slot();
@@ -1105,8 +1105,8 @@ void JIT::emitSlow_op_put_to_scope(const Instruction* currentInstruction, Vector
 void JIT::emit_op_get_from_arguments(const Instruction* currentInstruction)
 {
     auto bytecode = currentInstruction->as<OpGetFromArguments>();
-    int dst = bytecode.m_dst.offset();
-    int arguments = bytecode.m_arguments.offset();
+    VirtualRegister dst = bytecode.m_dst;
+    VirtualRegister arguments = bytecode.m_arguments;
     int index = bytecode.m_index;
     
     emitLoadPayload(arguments, regT0);
@@ -1119,9 +1119,9 @@ void JIT::emit_op_get_from_arguments(const Instruction* currentInstruction)
 void JIT::emit_op_put_to_arguments(const Instruction* currentInstruction)
 {
     auto bytecode = currentInstruction->as<OpPutToArguments>();
-    int arguments = bytecode.m_arguments.offset();
+    VirtualRegister arguments = bytecode.m_arguments;
     int index = bytecode.m_index;
-    int value = bytecode.m_value.offset();
+    VirtualRegister value = bytecode.m_value;
     
     emitWriteBarrier(arguments, value, ShouldFilterValue);
     
@@ -1135,8 +1135,8 @@ void JIT::emit_op_get_internal_field(const Instruction* currentInstruction)
 {
     auto bytecode = currentInstruction->as<OpGetInternalField>();
     auto& metadata = bytecode.metadata(m_codeBlock);
-    int dst = bytecode.m_dst.offset();
-    int base = bytecode.m_base.offset();
+    VirtualRegister dst = bytecode.m_dst;
+    VirtualRegister base = bytecode.m_base;
     unsigned index = bytecode.m_index;
     ASSERT(index < JSPromise::numberOfInternalFields);
 
@@ -1150,8 +1150,8 @@ void JIT::emit_op_get_internal_field(const Instruction* currentInstruction)
 void JIT::emit_op_put_internal_field(const Instruction* currentInstruction)
 {
     auto bytecode = currentInstruction->as<OpPutInternalField>();
-    int base = bytecode.m_base.offset();
-    int value = bytecode.m_value.offset();
+    VirtualRegister base = bytecode.m_base;
+    VirtualRegister value = bytecode.m_value;
     unsigned index = bytecode.m_index;
     ASSERT(index < JSPromise::numberOfInternalFields);
 

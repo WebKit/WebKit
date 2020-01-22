@@ -72,20 +72,20 @@ namespace JSC {
 
     inline JSInterfaceJIT::Jump JSInterfaceJIT::emitJumpIfNotJSCell(VirtualRegister virtualRegister)
     {
-        ASSERT(virtualRegister < FirstConstantRegisterIndex);
+        ASSERT(virtualRegister < VirtualRegister(FirstConstantRegisterIndex));
         return branch32(NotEqual, tagFor(virtualRegister), TrustedImm32(JSValue::CellTag));
     }
     
     inline JSInterfaceJIT::Jump JSInterfaceJIT::emitLoadInt32(VirtualRegister virtualRegister, RegisterID dst)
     {
-        ASSERT(virtualRegister < FirstConstantRegisterIndex);
+        ASSERT(virtualRegister < VirtualRegister(FirstConstantRegisterIndex));
         loadPtr(payloadFor(virtualRegister), dst);
         return branch32(NotEqual, tagFor(virtualRegister), TrustedImm32(JSValue::Int32Tag));
     }
 
     inline JSInterfaceJIT::Jump JSInterfaceJIT::emitLoadDouble(VirtualRegister virtualRegister, FPRegisterID dst, RegisterID scratch)
     {
-        ASSERT(virtualRegister < FirstConstantRegisterIndex);
+        ASSERT(virtualRegister < VirtualRegister(FirstConstantRegisterIndex));
         loadPtr(tagFor(virtualRegister), scratch);
         Jump isDouble = branch32(Below, scratch, TrustedImm32(JSValue::LowestTag));
         Jump notInt = branch32(NotEqual, scratch, TrustedImm32(JSValue::Int32Tag));

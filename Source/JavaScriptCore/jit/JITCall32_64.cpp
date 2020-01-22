@@ -49,13 +49,13 @@ template<typename Op>
 void JIT::emitPutCallResult(const Op& bytecode)
 {
     emitValueProfilingSite(bytecode.metadata(m_codeBlock));
-    emitStore(bytecode.m_dst.offset(), regT1, regT0);
+    emitStore(bytecode.m_dst, regT1, regT0);
 }
 
 void JIT::emit_op_ret(const Instruction* currentInstruction)
 {
     auto bytecode = currentInstruction->as<OpRet>();
-    int value = bytecode.m_value.offset();
+    VirtualRegister value = bytecode.m_value;
 
     emitLoad(value, regT1, regT0);
 
@@ -157,7 +157,7 @@ JIT::compileSetupFrame(const Op& bytecode, CallLinkInfo*)
     int registerOffset = -static_cast<int>(bytecode.m_argv);
 
     if (Op::opcodeID == op_call && shouldEmitProfiling()) {
-        emitLoad(registerOffset + CallFrame::argumentOffsetIncludingThis(0), regT0, regT1);
+        emitLoad(VirtualRegister(registerOffset + CallFrame::argumentOffsetIncludingThis(0)), regT0, regT1);
         Jump done = branchIfNotCell(regT0);
         load32(Address(regT1, JSCell::structureIDOffset()), regT1);
         store32(regT1, metadata.m_callLinkInfo.m_arrayProfile.addressOfLastSeenStructureID());
@@ -176,8 +176,8 @@ std::enable_if_t<
 JIT::compileSetupFrame(const Op& bytecode, CallLinkInfo* info)
 {
     OpcodeID opcodeID = Op::opcodeID;
-    int thisValue = bytecode.m_thisValue.offset();
-    int arguments = bytecode.m_arguments.offset();
+    VirtualRegister thisValue = bytecode.m_thisValue;
+    VirtualRegister arguments = bytecode.m_arguments;
     int firstFreeRegister = bytecode.m_firstFree.offset();
     int firstVarArgOffset = bytecode.m_firstVarArg;
 
@@ -249,7 +249,7 @@ void JIT::compileCallEvalSlowCase(const Instruction* instruction, Vector<SlowCas
     info->setUpCall(CallLinkInfo::Call, CodeOrigin(m_bytecodeIndex), regT0);
 
     int registerOffset = -bytecode.m_argv;
-    int callee = bytecode.m_callee.offset();
+    VirtualRegister callee = bytecode.m_callee;
 
     addPtr(TrustedImm32(registerOffset * sizeof(Register) + sizeof(CallerFrameAndPC)), callFrameRegister, stackPointerRegister);
 
@@ -268,7 +268,7 @@ void JIT::compileOpCall(const Instruction* instruction, unsigned callLinkInfoInd
 {
     OpcodeID opcodeID = Op::opcodeID;
     auto bytecode = instruction->as<Op>();
-    int callee = bytecode.m_callee.offset();
+    VirtualRegister callee = bytecode.m_callee;
 
     /* Caller always:
         - Updates callFrameRegister to callee callFrame.
