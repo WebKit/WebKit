@@ -57,7 +57,6 @@ private:
         const T root;
         const T containingBlock;
     };
-    void layoutFormattingContextRoot(const Box&, FloatingContext&, InvalidationState&, const ConstraintsPair<HorizontalConstraints>&, const ConstraintsPair<VerticalConstraints>&);
     void placeInFlowPositionedChildren(const Box&, const ConstraintsPair<HorizontalConstraints>&);
 
     void computeWidthAndMargin(const FloatingContext&, const Box&, const ConstraintsPair<HorizontalConstraints>&);
