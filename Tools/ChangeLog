@@ -1,3 +1,32 @@
+2020-01-22  Jonathan Bedard  <jbedard@apple.com>
+
+        webkitpy: Make logging during ImageDiff crashes accurate
+        https://bugs.webkit.org/show_bug.cgi?id=206542
+
+        Reviewed by Aakash Jain.
+
+        When ImageDiff crashes, the generated logs are not accurate, they
+        reference a crash in test output when the test will actually fail
+        with an Image failure. The owner of a ServerProcess should be able
+        to customize this error message.
+
+        * Scripts/webkitpy/port/image_diff.py:
+        (ImageDiffer._start): Pass ImageDiff specific crash message.
+        * Scripts/webkitpy/port/port_testcase.py:
+        (PortTestCase.test_diff_image.make_proc): Match ImageDiff calcite.
+        (PortTestCase.test_diff_image_passed): Ditto.
+        (PortTestCase.test_diff_image_failed): Ditto.
+        (PortTestCase.test_diff_image_crashed.make_proc): Ditto.
+        * Scripts/webkitpy/port/server_process.py:
+        (ServerProcess.__init__): Support a custom message when the process crashes.
+        (ServerProcess.write): Ditto.
+        (ServerProcess._wait_for_data_and_update_buffers_using_select): Ditto.
+        (ServerProcess.has_crashed): Ditto.
+        * Scripts/webkitpy/port/server_process_mock.py:
+        (MockServerProcess.__init__): Match the ServerProcess constructor.
+        * Scripts/webkitpy/port/simulator_process.py:
+        (SimulatorProcess.__init__): Support a custom message when the process crashes.
+
 2020-01-21  Matt Lewis  <jlewis3@apple.com>
 
         Test history links on the dashboard should go to the new results database

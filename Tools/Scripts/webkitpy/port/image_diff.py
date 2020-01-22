@@ -73,7 +73,7 @@ class ImageDiffer(object):
         if self._port._should_use_jhbuild():
             command = self._port._jhbuild_wrapper + command
         environment = self._port.setup_environ_for_server('ImageDiff')
-        self._process = self._port._server_process_constructor(self._port, 'ImageDiff', command, environment)
+        self._process = self._port._server_process_constructor(self._port, 'ImageDiff', command, environment, crash_message='Test marked as failed, ImageDiff crashed')
         self._process.start()
         self._tolerance = tolerance
 

@@ -30,7 +30,7 @@ from webkitpy.common.unicode_compatibility import encode_if_necessary
 
 
 class MockServerProcess(object):
-    def __init__(self, port_obj=None, name=None, cmd=None, env=None, universal_newlines=False, lines=None, crashed=False, target_host=None):
+    def __init__(self, port_obj=None, name=None, cmd=None, env=None, universal_newlines=False, lines=None, crashed=False, target_host=None, crash_message=None):
         self.timed_out = False
         self.lines = [encode_if_necessary(line) for line in (lines or [])]
         self.crashed = crashed
