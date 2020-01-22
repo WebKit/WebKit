@@ -102,7 +102,7 @@ Image* CustomPaintCanvas::copiedImage() const
         m_context->paintRenderingResultsToCanvas();
     m_destinationGraphicsContext = nullptr;
 
-    m_copiedImage = m_copiedBuffer->copyImage(m_copiedBuffer->fastCopyImageMode(), PreserveResolution::Yes);
+    m_copiedImage = m_copiedBuffer->copyImage(DontCopyBackingStore, PreserveResolution::Yes);
     return m_copiedImage.get();
 }
 

@@ -512,7 +512,7 @@ void GraphicsContext::clipToImageBuffer(ImageBuffer& buffer, const FloatRect& de
     if (paintingDisabled())
         return;
 
-    FloatSize bufferDestinationSize = buffer.sizeForDestinationSize(destRect.size());
+    FloatSize bufferDestinationSize = destRect.size();
     RetainPtr<CGImageRef> image = buffer.copyNativeImage(DontCopyBackingStore);
 
     CGContextRef context = platformContext();

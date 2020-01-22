@@ -114,12 +114,6 @@ Vector<uint8_t> ImageBuffer::toBGRAData() const
 #endif
 
 #if !(USE(CG) || USE(DIRECT2D))
-
-FloatSize ImageBuffer::sizeForDestinationSize(FloatSize size) const
-{
-    return size;
-}
-
 void ImageBuffer::transformColorSpace(ColorSpace srcColorSpace, ColorSpace dstColorSpace)
 {
     if (srcColorSpace == dstColorSpace)
@@ -242,11 +236,6 @@ IntSize ImageBuffer::compatibleBufferSize(const FloatSize& size, const GraphicsC
     // Enlarge the buffer size if the context's transform is scaling it so we need a higher
     // resolution than one pixel per unit.
     return expandedIntSize(size * context.scaleFactor());
-}
-
-bool ImageBuffer::isCompatibleWithContext(const GraphicsContext& context) const
-{
-    return areEssentiallyEqual(context.scaleFactor(), this->context().scaleFactor());
 }
 
 #if !USE(IOSURFACE_CANVAS_BACKING_STORE)

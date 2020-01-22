@@ -351,11 +351,6 @@ RefPtr<Image> ImageBuffer::copyImage(BackingStoreCopy copyBehavior, PreserveReso
     return BitmapImage::create(RefPtr<cairo_surface_t>(m_data.m_surface));
 }
 
-BackingStoreCopy ImageBuffer::fastCopyImageMode()
-{
-    return DontCopyBackingStore;
-}
-
 void ImageBuffer::drawConsuming(std::unique_ptr<ImageBuffer> imageBuffer, GraphicsContext& destContext, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions& options)
 {
     imageBuffer->draw(destContext, destRect, srcRect, options);

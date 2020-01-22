@@ -3982,7 +3982,7 @@ ExceptionOr<void> WebGLRenderingContextBase::texSubImage2D(GCGLenum target, GCGL
         if (!buffer)
             return { };
 
-        RefPtr<Image> image = buffer->copyImage(ImageBuffer::fastCopyImageMode());
+        RefPtr<Image> image = buffer->copyImage(DontCopyBackingStore);
         if (image)
             texSubImage2DImpl(target, level, xoffset, yoffset, format, type, image.get(), GraphicsContextGL::DOMSource::Image, m_unpackFlipY, m_unpackPremultiplyAlpha);
         return { };
@@ -4104,7 +4104,7 @@ ExceptionOr<void> WebGLRenderingContextBase::texSubImage2D(GCGLenum target, GCGL
         if (!validateTexFunc("texSubImage2D", TexSubImage, SourceHTMLVideoElement, target, level, internalFormat, video->videoWidth(), video->videoHeight(), 0, format, type, xoffset, yoffset))
             return { };
 
-        RefPtr<Image> image = videoFrameToImage(video.get(), ImageBuffer::fastCopyImageMode());
+        RefPtr<Image> image = videoFrameToImage(video.get(), DontCopyBackingStore);
         if (!image)
             return { };
         texSubImage2DImpl(target, level, xoffset, yoffset, format, type, image.get(), GraphicsContextGL::DOMSource::Video, m_unpackFlipY, m_unpackPremultiplyAlpha);
@@ -4551,7 +4551,7 @@ ExceptionOr<void> WebGLRenderingContextBase::texImage2D(GCGLenum target, GCGLint
         }
 
         // Normal pure SW path.
-        RefPtr<Image> image = buffer->copyImage(ImageBuffer::fastCopyImageMode());
+        RefPtr<Image> image = buffer->copyImage(DontCopyBackingStore);
         if (image)
             texImage2DImpl(target, level, internalformat, format, type, image.get(), GraphicsContextGL::DOMSource::Image, m_unpackFlipY, m_unpackPremultiplyAlpha);
         return { };
@@ -4665,7 +4665,7 @@ ExceptionOr<void> WebGLRenderingContextBase::texImage2D(GCGLenum target, GCGLint
         }
 
         // Normal pure SW path.
-        RefPtr<Image> image = videoFrameToImage(video.get(), ImageBuffer::fastCopyImageMode());
+        RefPtr<Image> image = videoFrameToImage(video.get(), DontCopyBackingStore);
         if (!image)
             return { };
         texImage2DImpl(target, level, internalformat, format, type, image.get(), GraphicsContextGL::DOMSource::Video, m_unpackFlipY, m_unpackPremultiplyAlpha);
@@ -4690,7 +4690,7 @@ RefPtr<Image> WebGLRenderingContextBase::drawImageIntoBuffer(Image& image, int w
     FloatRect srcRect(FloatPoint(), image.size());
     FloatRect destRect(FloatPoint(), size);
     buf->context().drawImage(image, destRect, srcRect);
-    return buf->copyImage(ImageBuffer::fastCopyImageMode());
+    return buf->copyImage(DontCopyBackingStore);
 }
 
 #if ENABLE(VIDEO)

@@ -51,13 +51,6 @@
 
 namespace WebCore {
 
-static FloatSize scaleSizeToUserSpace(const FloatSize& logicalSize, const IntSize& backingStoreSize, const IntSize& internalSize)
-{
-    float xMagnification = static_cast<float>(backingStoreSize.width()) / internalSize.width();
-    float yMagnification = static_cast<float>(backingStoreSize.height()) / internalSize.height();
-    return FloatSize(logicalSize.width() * xMagnification, logicalSize.height() * yMagnification);
-}
-
 std::unique_ptr<ImageBuffer> ImageBuffer::createCompatibleBuffer(const FloatSize& size, const GraphicsContext& context)
 {
     if (size.isEmpty())
@@ -132,11 +125,6 @@ ImageBuffer::ImageBuffer(const FloatSize& size, float resolutionScale, ColorSpac
 
 ImageBuffer::~ImageBuffer() = default;
 
-FloatSize ImageBuffer::sizeForDestinationSize(FloatSize destinationSize) const
-{
-    return scaleSizeToUserSpace(destinationSize, m_data.backingStoreSize, internalSize());
-}
-
 GraphicsContext& ImageBuffer::context() const
 {
     return *m_data.context;
@@ -204,11 +192,6 @@ RefPtr<Image> ImageBuffer::sinkIntoImage(std::unique_ptr<ImageBuffer> imageBuffe
         return nullptr;
 
     return createBitmapImageAfterScalingIfNeeded(bitmapTarget.get(), sinkIntoNativeImage(WTFMove(imageBuffer)), internalSize, logicalSize, backingStoreSize, resolutionScale, preserveResolution);
-}
-
-BackingStoreCopy ImageBuffer::fastCopyImageMode()
-{
-    return DontCopyBackingStore;
 }
 
 COMPtr<ID2D1Bitmap> ImageBuffer::sinkIntoNativeImage(std::unique_ptr<ImageBuffer> imageBuffer)
