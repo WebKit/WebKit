@@ -1148,17 +1148,15 @@ std::unique_ptr<PlatformTimeRanges> MediaPlayerPrivateGStreamer::buffered() cons
     if (!mediaDuration || mediaDuration.isPositiveInfinite())
         return timeRanges;
 
-    GstQuery* query = gst_query_new_buffering(GST_FORMAT_PERCENT);
+    GRefPtr<GstQuery> query = adoptGRef(gst_query_new_buffering(GST_FORMAT_PERCENT));
 
-    if (!gst_element_query(m_pipeline.get(), query)) {
-        gst_query_unref(query);
+    if (!gst_element_query(m_pipeline.get(), query.get()))
         return timeRanges;
-    }
 
-    guint numBufferingRanges = gst_query_get_n_buffering_ranges(query);
+    guint numBufferingRanges = gst_query_get_n_buffering_ranges(query.get());
     for (guint index = 0; index < numBufferingRanges; index++) {
         gint64 rangeStart = 0, rangeStop = 0;
-        if (gst_query_parse_nth_buffering_range(query, index, &rangeStart, &rangeStop)) {
+        if (gst_query_parse_nth_buffering_range(query.get(), index, &rangeStart, &rangeStop)) {
             uint64_t startTime = gst_util_uint64_scale_int_round(toGstUnsigned64Time(mediaDuration), rangeStart, GST_FORMAT_PERCENT_MAX);
             uint64_t stopTime = gst_util_uint64_scale_int_round(toGstUnsigned64Time(mediaDuration), rangeStop, GST_FORMAT_PERCENT_MAX);
             timeRanges->add(MediaTime(startTime, GST_SECOND), MediaTime(stopTime, GST_SECOND));
@@ -1172,8 +1170,6 @@ std::unique_ptr<PlatformTimeRanges> MediaPlayerPrivateGStreamer::buffered() cons
         if (loaded.isValid() && loaded)
             timeRanges->add(MediaTime::zeroTime(), loaded);
     }
-
-    gst_query_unref(query);
 
     return timeRanges;
 }
@@ -1395,7 +1391,7 @@ void MediaPlayerPrivateGStreamer::handleMessage(GstMessage* message)
         } else if (gst_structure_has_name(structure, "adaptive-streaming-statistics")) {
             if (WEBKIT_IS_WEB_SRC(m_source.get()) && !webkitGstCheckVersion(1, 12, 0)) {
                 if (const char* uri = gst_structure_get_string(structure, "uri"))
-                    m_hasTaintedOrigin = webKitSrcWouldTaintOrigin(WEBKIT_WEB_SRC(m_source.get()), SecurityOrigin::create(URL(URL(), uri)));
+                    m_hasTaintedOrigin = webKitSrcWouldTaintOrigin(WEBKIT_WEB_SRC_CAST(m_source.get()), SecurityOrigin::create(URL(URL(), uri)));
             }
         } else
             GST_DEBUG_OBJECT(pipeline(), "Unhandled element message: %" GST_PTR_FORMAT, structure);
@@ -1856,7 +1852,7 @@ void MediaPlayerPrivateGStreamer::sourceSetup(GstElement* sourceElement)
     m_source = sourceElement;
 
     if (WEBKIT_IS_WEB_SRC(m_source.get())) {
-        webKitWebSrcSetMediaPlayer(WEBKIT_WEB_SRC(m_source.get()), m_player);
+        webKitWebSrcSetMediaPlayer(WEBKIT_WEB_SRC_CAST(m_source.get()), m_player);
         g_signal_connect(GST_ELEMENT_PARENT(m_source.get()), "element-added", G_CALLBACK(uriDecodeBinElementAddedCallback), this);
 #if ENABLE(MEDIA_STREAM)
     } else if (WEBKIT_IS_MEDIA_STREAM_SRC(sourceElement)) {
@@ -2510,7 +2506,7 @@ void MediaPlayerPrivateGStreamer::simulateAudioInterruption()
 bool MediaPlayerPrivateGStreamer::didPassCORSAccessCheck() const
 {
     if (WEBKIT_IS_WEB_SRC(m_source.get()))
-        return webKitSrcPassedCORSAccessCheck(WEBKIT_WEB_SRC(m_source.get()));
+        return webKitSrcPassedCORSAccessCheck(WEBKIT_WEB_SRC_CAST(m_source.get()));
     return false;
 }
 

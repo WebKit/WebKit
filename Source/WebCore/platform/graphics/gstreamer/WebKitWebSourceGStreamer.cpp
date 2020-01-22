@@ -61,7 +61,7 @@ public:
     void setSourceElement(WebKitWebSrc* src) { m_src = GST_ELEMENT_CAST(src); }
 
 private:
-    void checkUpdateBlocksize(uint64_t bytesRead);
+    void checkUpdateBlocksize(unsigned bytesRead);
 
     // PlatformMediaResourceClient virtual methods.
     void responseReceived(PlatformMediaResource&, const ResourceResponse&, CompletionHandler<void(ShouldContinue)>&&) override;
@@ -137,7 +137,7 @@ struct _WebKitWebSrcPrivate {
     bool isSeekable;
     bool isSeeking;
     bool wasSeeking { false };
-    uint64_t minimumBlocksize;
+    unsigned minimumBlocksize;
     Lock adapterLock;
     Condition adapterCondition;
     uint64_t queueSize { 0 };
@@ -412,20 +412,21 @@ static GstFlowReturn webKitWebSrcCreate(GstPushSrc* pushSrc, GstBuffer** buffer)
         unsigned retries = 0;
         size_t available = gst_adapter_available_fast(priv->adapter.get());
         while (available < size && !isAdapterDrained) {
-            priv->adapterCondition.waitFor(priv->adapterLock, 200_ms, [&] {
+            priv->adapterCondition.waitFor(priv->adapterLock, 100_ms, [&] {
                 return gst_adapter_available_fast(priv->adapter.get()) >= size;
             });
             retries++;
             available = gst_adapter_available_fast(priv->adapter.get());
-            if (available && available < size)
+            if (available && available < size) {
+                GST_TRACE_OBJECT(src, "did not get the %u blocksize bytes, let's push the %" G_GSIZE_FORMAT " bytes we got", size, available);
                 size = available;
-            else if (retries > 3)
+            } else if (retries > 3)
                 isAdapterDrained = true;
         }
     }
 
     if (isAdapterDrained) {
-        GST_DEBUG_OBJECT(src, "Adapter still empty after 800 milli-seconds of waiting, assuming EOS");
+        GST_DEBUG_OBJECT(src, "Adapter still empty after 400 milli-seconds of waiting, assuming EOS");
         return GST_FLOW_EOS;
     }
 
@@ -464,7 +465,7 @@ static GstFlowReturn webKitWebSrcCreate(GstPushSrc* pushSrc, GstBuffer** buffer)
                 && (priv->size > SMALL_MEDIA_RESOURCE_MAX_SIZE) && priv->readPosition
                 && (priv->readPosition != priv->size)
                 && (priv->queueSize < (priv->size * HIGH_QUEUE_FACTOR_THRESHOLD * LOW_QUEUE_FACTOR_THRESHOLD))
-                && (GST_STATE(src) == GST_STATE_PLAYING) && priv->isDownloadSuspended) {
+                && GST_STATE(src) >= GST_STATE_PAUSED && priv->isDownloadSuspended) {
                 GST_DEBUG_OBJECT(src, "[Buffering] Adapter running out of data, restarting download");
                 priv->isDownloadSuspended = false;
                 webKitWebSrcMakeRequest(baseSrc, false);
@@ -920,14 +921,14 @@ CachedResourceStreamingClient::CachedResourceStreamingClient(WebKitWebSrc* src, 
 
 CachedResourceStreamingClient::~CachedResourceStreamingClient() = default;
 
-void CachedResourceStreamingClient::checkUpdateBlocksize(uint64_t bytesRead)
+void CachedResourceStreamingClient::checkUpdateBlocksize(unsigned bytesRead)
 {
     WebKitWebSrc* src = WEBKIT_WEB_SRC(m_src.get());
     GstBaseSrc* baseSrc = GST_BASE_SRC_CAST(src);
     WebKitWebSrcPrivate* priv = src->priv;
 
-    uint64_t blocksize = gst_base_src_get_blocksize(baseSrc);
-    GST_LOG_OBJECT(src, "Checking to update blocksize. Read: %" PRIu64 ", current blocksize: %" PRIu64, bytesRead, blocksize);
+    unsigned blocksize = gst_base_src_get_blocksize(baseSrc);
+    GST_LOG_OBJECT(src, "Checking to update blocksize. Read: %u, current blocksize: %u", bytesRead, blocksize);
 
     if (bytesRead >= blocksize * s_growBlocksizeLimit) {
         m_reduceBlocksizeCount = 0;
@@ -935,7 +936,7 @@ void CachedResourceStreamingClient::checkUpdateBlocksize(uint64_t bytesRead)
 
         if (m_increaseBlocksizeCount >= s_growBlocksizeCount) {
             blocksize *= s_growBlocksizeFactor;
-            GST_DEBUG_OBJECT(src, "Increased blocksize to %" PRIu64, blocksize);
+            GST_DEBUG_OBJECT(src, "Increased blocksize to %u", blocksize);
             gst_base_src_set_blocksize(baseSrc, blocksize);
             m_increaseBlocksizeCount = 0;
         }
@@ -946,7 +947,7 @@ void CachedResourceStreamingClient::checkUpdateBlocksize(uint64_t bytesRead)
         if (m_reduceBlocksizeCount >= s_reduceBlocksizeCount) {
             blocksize *= s_reduceBlocksizeFactor;
             blocksize = std::max(blocksize, priv->minimumBlocksize);
-            GST_DEBUG_OBJECT(src, "Decreased blocksize to %" PRIu64, blocksize);
+            GST_DEBUG_OBJECT(src, "Decreased blocksize to %u", blocksize);
             gst_base_src_set_blocksize(baseSrc, blocksize);
             m_reduceBlocksizeCount = 0;
         }
