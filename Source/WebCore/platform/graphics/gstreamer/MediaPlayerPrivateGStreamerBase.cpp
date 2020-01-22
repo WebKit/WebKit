@@ -447,6 +447,9 @@ bool MediaPlayerPrivateGStreamerBase::ensureGstGLContext()
     }
 
     GLContext* webkitContext = sharedDisplay.sharingGLContext();
+    if (!webkitContext)
+        return false;
+
     // EGL and GLX are mutually exclusive, no need for ifdefs here.
     GstGLPlatform glPlatform = webkitContext->isEGLContext() ? GST_GL_PLATFORM_EGL : GST_GL_PLATFORM_GLX;
 
