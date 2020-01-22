@@ -279,7 +279,7 @@ HbUniquePtr<hb_font_t> FontPlatformData::createOpenTypeMathHarfBuzzFont() const
     if (!ftFace)
         return nullptr;
 
-    HbUniquePtr<hb_face_t> face(hb_ft_face_create_cached(ftFace));
+    HbUniquePtr<hb_face_t> face(hb_ft_face_create_referenced(ftFace));
     if (!hb_ot_math_has_data(face.get()))
         return nullptr;
 
