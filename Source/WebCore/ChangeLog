@@ -1,3 +1,31 @@
+2020-01-06  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        ComplexTextController::offsetForPosition returns a wrong offset for a glyph boundary in a RTL text
+        https://bugs.webkit.org/show_bug.cgi?id=205486
+
+        Reviewed by Ross Kirsling.
+
+        ComplexTextController::offsetForPosition had the following code:
+
+        > unsigned hitIndex = hitGlyphStart + (hitGlyphEnd - hitGlyphStart) * (m_run.ltr() ? x / adjustedAdvance : 1 - x / adjustedAdvance);
+
+        If m_run.ltr() was false and x == 0, hitIndex would become hitGlyphEnd.
+        This is not expected. It expects hitIndex < hitGlyphEnd if hitGlyphStart ≠ hitGlyphEnd.
+        Let hitIndex be hitGlyphStart-1 in the such condition.
+
+        Above change makes fast/text/ellipsis-text-rtl.html starting to
+        fail because offsetForPosition returns the character offset of the
+        next glyph if the argument 'h' is in a glyph boundary. In RTL
+        text, offsetForPosition should return a character offset of the
+        previous glyph in case of a glyph boundary. Use '<=' instead of '<'
+        for RTL text in order to select previous glyphs for glyph
+        boundaries.
+
+        Test: fast/dom/Document/CaretRangeFromPoint/rtl.html
+
+        * platform/graphics/ComplexTextController.cpp:
+        (WebCore::ComplexTextController::offsetForPosition): Compute correct hitGlyphEnd for RTL.
+
 2020-01-08  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [HarfBuzz][GTK] fast/text/complex-first-glyph-with-initial-advance.html is failing
