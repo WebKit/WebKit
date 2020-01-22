@@ -219,6 +219,7 @@ private:
     void createSocketStream(URL&&, String cachePartition, uint64_t);
 
     void createSocketChannel(const WebCore::ResourceRequest&, const String& protocol, uint64_t identifier);
+    void updateQuotaBasedOnSpaceUsageForTesting(const WebCore::ClientOrigin&);
 
 #if ENABLE(SERVICE_WORKER)
     void establishSWServerConnection();

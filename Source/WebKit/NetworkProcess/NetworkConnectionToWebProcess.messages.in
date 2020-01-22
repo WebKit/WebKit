@@ -79,6 +79,7 @@ messages -> NetworkConnectionToWebProcess LegacyReceiver {
     CloseSWContextConnection()
 #endif
 
+    UpdateQuotaBasedOnSpaceUsageForTesting(struct WebCore::ClientOrigin origin)
     CreateNewMessagePortChannel(struct WebCore::MessagePortIdentifier port1, struct WebCore::MessagePortIdentifier port2)
     EntangleLocalPortInThisProcessToRemote(struct WebCore::MessagePortIdentifier local, struct WebCore::MessagePortIdentifier remote)
     MessagePortDisentangled(struct WebCore::MessagePortIdentifier local)

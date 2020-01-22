@@ -157,6 +157,9 @@ void NetworkConnectionToWebProcess::transferKeptAliveLoad(NetworkResourceLoader&
 
 void NetworkConnectionToWebProcess::didReceiveMessage(IPC::Connection& connection, IPC::Decoder& decoder)
 {
+    // For security reasons, Messages::NetworkProcess IPC is only supposed to come from the UIProcess.
+    ASSERT(decoder.messageReceiverName() != Messages::NetworkProcess::messageReceiverName());
+
     if (decoder.messageReceiverName() == Messages::NetworkConnectionToWebProcess::messageReceiverName()) {
         didReceiveNetworkConnectionToWebProcessMessage(connection, decoder);
         return;
@@ -184,12 +187,6 @@ void NetworkConnectionToWebProcess::didReceiveMessage(IPC::Connection& connectio
             channel->didReceiveMessage(connection, decoder);
         return;
     }
-
-    if (decoder.messageReceiverName() == Messages::NetworkProcess::messageReceiverName()) {
-        m_networkProcess->didReceiveNetworkProcessMessage(connection, decoder);
-        return;
-    }
-
 
 #if USE(LIBWEBRTC)
     if (decoder.messageReceiverName() == Messages::NetworkRTCSocket::messageReceiverName()) {
@@ -241,8 +238,7 @@ void NetworkConnectionToWebProcess::didReceiveMessage(IPC::Connection& connectio
         return paymentCoordinator().didReceiveMessage(connection, decoder);
 #endif
 
-    LOG_ERROR("Unhandled network process message '%s:%s'", decoder.messageReceiverName().toString().data(), decoder.messageName().toString().data());
-
+    WTFLogAlways("Unhandled network process message '%s:%s'", decoder.messageReceiverName().toString().data(), decoder.messageName().toString().data());
     ASSERT_NOT_REACHED();
 }
 
@@ -264,6 +260,9 @@ CacheStorageEngineConnection& NetworkConnectionToWebProcess::cacheStorageConnect
 
 void NetworkConnectionToWebProcess::didReceiveSyncMessage(IPC::Connection& connection, IPC::Decoder& decoder, std::unique_ptr<IPC::Encoder>& reply)
 {
+    // For security reasons, Messages::NetworkProcess IPC is only supposed to come from the UIProcess.
+    ASSERT(decoder.messageReceiverName() != Messages::NetworkProcess::messageReceiverName());
+
     if (decoder.messageReceiverName() == Messages::NetworkConnectionToWebProcess::messageReceiverName()) {
         didReceiveSyncNetworkConnectionToWebProcessMessage(connection, decoder, reply);
         return;
@@ -282,7 +281,14 @@ void NetworkConnectionToWebProcess::didReceiveSyncMessage(IPC::Connection& conne
         return paymentCoordinator().didReceiveSyncMessage(connection, decoder, reply);
 #endif
 
+    WTFLogAlways("Unhandled network process message '%s:%s'", decoder.messageReceiverName().toString().data(), decoder.messageName().toString().data());
     ASSERT_NOT_REACHED();
+}
+
+void NetworkConnectionToWebProcess::updateQuotaBasedOnSpaceUsageForTesting(const ClientOrigin& origin)
+{
+    auto storageQuotaManager = m_networkProcess->storageQuotaManager(sessionID(), origin);
+    storageQuotaManager->resetQuotaUpdatedBasedOnUsageForTesting();
 }
 
 void NetworkConnectionToWebProcess::didClose(IPC::Connection& connection)

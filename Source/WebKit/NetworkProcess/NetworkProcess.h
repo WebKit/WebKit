@@ -285,14 +285,11 @@ public:
     void syncLocalStorage(CompletionHandler<void()>&&);
     void clearLegacyPrivateBrowsingLocalStorage();
 
-    void updateQuotaBasedOnSpaceUsageForTesting(PAL::SessionID, const WebCore::ClientOrigin&);
     void resetQuota(PAL::SessionID, CompletionHandler<void()>&&);
 
 #if ENABLE(SANDBOX_EXTENSIONS)
     void getSandboxExtensionsForBlobFiles(const Vector<String>& filenames, CompletionHandler<void(SandboxExtension::HandleArray&&)>&&);
 #endif
-
-    void didReceiveNetworkProcessMessage(IPC::Connection&, IPC::Decoder&);
 
 #if ENABLE(SERVICE_WORKER)
     WebCore::SWServer* swServerForSessionIfExists(PAL::SessionID sessionID) { return m_swServers.get(sessionID); }
@@ -347,6 +344,8 @@ public:
 private:
     void platformInitializeNetworkProcess(const NetworkProcessCreationParameters&);
     std::unique_ptr<WebCore::NetworkStorageSession> platformCreateDefaultStorageSession() const;
+
+    void didReceiveNetworkProcessMessage(IPC::Connection&, IPC::Decoder&);
 
     void terminate() override;
     void platformTerminate();

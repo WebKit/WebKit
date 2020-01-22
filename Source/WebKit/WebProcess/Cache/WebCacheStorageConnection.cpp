@@ -107,7 +107,7 @@ void WebCacheStorageConnection::engineRepresentation(CompletionHandler<void(cons
 
 void WebCacheStorageConnection::updateQuotaBasedOnSpaceUsage(const WebCore::ClientOrigin& origin)
 {
-    connection().send(Messages::NetworkProcess::UpdateQuotaBasedOnSpaceUsageForTesting(WebProcess::singleton().sessionID(), origin), 0);
+    connection().send(Messages::NetworkConnectionToWebProcess::UpdateQuotaBasedOnSpaceUsageForTesting(origin), 0);
 }
 
 }
