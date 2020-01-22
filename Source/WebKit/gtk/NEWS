@@ -1,4 +1,18 @@
 ================
+WebKitGTK 2.26.3
+================
+
+What's new in WebKitGTK 2.26.3?
+
+  - Fix issues while trying to play a video on NextCloud.
+  - Make sure the GL video sink uses a valid WebKit shared GL context.
+  - Fix vertical alignment of text containing arabic diacritics.
+  - Fix build with icu 65.1.
+  - Fix page loading errors with websites using HSTS.
+  - Fix web process crash when displaying a KaTeX formula.
+  - Fix several crashes and rendering issues.
+
+================
 WebKitGTK 2.26.2
 ================
 
