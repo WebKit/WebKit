@@ -20,6 +20,8 @@ cache_test(function(cache) {
     }).then(function() {
         return cache.match(test_url);
     }).then(function(result) {
+        if (self.internals && self.internals.fetchResponseSource)
+            assert_equals(internals.fetchResponseSource(result), "DOM cache");
         assert_response_equals(result, alternate_response, 'Cache.put should replace existing ' + 'response with new response.');
         return result.text();
     }).then(function(body) {

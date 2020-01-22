@@ -1,3 +1,17 @@
+2020-01-22  youenn fablet  <youenn@apple.com>
+
+        Add logging of the source of a response used to respond a fetch event
+        https://bugs.webkit.org/show_bug.cgi?id=206426
+
+        Reviewed by Darin Adler.
+
+        * NetworkProcess/ServiceWorker/ServiceWorkerFetchTask.cpp:
+        (WebKit::ServiceWorkerFetchTask::didReceiveResponse):
+        Log the source of the response.
+        * WebProcess/Network/WebLoaderStrategy.cpp:
+        (WebKit::WebLoaderStrategy::havePerformedSecurityChecks const):
+        Add case of DOMCache, similar to ServiceWorker.
+
 2020-01-21  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [Win][WK2] Pressing space key on text input form scrolls the page

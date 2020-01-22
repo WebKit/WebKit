@@ -89,8 +89,6 @@ static void processResponse(Ref<Client>&& client, Expected<Ref<FetchResponse>, R
         return;
     }
 
-    resourceResponse.setSource(ResourceResponse::Source::ServiceWorker);
-
     // In case of main resource and mime type is the default one, we set it to text/html to pass more service worker WPT tests.
     // FIXME: We should refine our MIME type sniffing strategy for synthetic responses.
     if (mode == FetchOptions::Mode::Navigate) {

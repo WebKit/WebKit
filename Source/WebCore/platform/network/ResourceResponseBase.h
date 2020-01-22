@@ -144,7 +144,7 @@ public:
     WEBCORE_EXPORT Optional<WallTime> lastModified() const;
     const ParsedContentRange& contentRange() const;
 
-    enum class Source : uint8_t { Unknown, Network, DiskCache, DiskCacheAfterValidation, MemoryCache, MemoryCacheAfterValidation, ServiceWorker, ApplicationCache, InspectorOverride };
+    enum class Source : uint8_t { Unknown, Network, DiskCache, DiskCacheAfterValidation, MemoryCache, MemoryCacheAfterValidation, ServiceWorker, ApplicationCache, DOMCache, InspectorOverride };
     WEBCORE_EXPORT Source source() const;
     void setSource(Source source)
     {

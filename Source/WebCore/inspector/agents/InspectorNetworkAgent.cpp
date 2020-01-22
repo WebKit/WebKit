@@ -301,6 +301,7 @@ static Ref<Inspector::Protocol::Network::Request> buildObjectForResourceRequest(
 static Inspector::Protocol::Network::Response::Source responseSource(ResourceResponse::Source source)
 {
     switch (source) {
+    case ResourceResponse::Source::DOMCache:
     case ResourceResponse::Source::ApplicationCache:
         // FIXME: Add support for ApplicationCache in inspector.
     case ResourceResponse::Source::Unknown:

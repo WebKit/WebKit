@@ -736,6 +736,8 @@ static String responseSourceToString(const ResourceResponse& response)
         return "Memory cache after validation";
     case ResourceResponse::Source::ApplicationCache:
         return "Application cache";
+    case ResourceResponse::Source::DOMCache:
+        return "DOM cache";
     case ResourceResponse::Source::InspectorOverride:
         return "Inspector override";
     }

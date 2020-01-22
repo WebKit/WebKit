@@ -803,6 +803,7 @@ bool WebLoaderStrategy::havePerformedSecurityChecks(const ResourceResponse& resp
     if (!shouldPerformSecurityChecks())
         return false;
     switch (response.source()) {
+    case ResourceResponse::Source::DOMCache:
     case ResourceResponse::Source::ApplicationCache:
     case ResourceResponse::Source::MemoryCache:
     case ResourceResponse::Source::MemoryCacheAfterValidation:

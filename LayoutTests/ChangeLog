@@ -1,3 +1,13 @@
+2020-01-22  youenn fablet  <youenn@apple.com>
+
+        Add logging of the source of a response used to respond a fetch event
+        https://bugs.webkit.org/show_bug.cgi?id=206426
+
+        Reviewed by Darin Adler.
+
+        * http/wpt/cache-storage/cache-put-keys.https.any.js:
+        (cache_test):
+
 2020-01-21  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         A partially selected RTL text is placed at a wrong vertical position if it has a vertical initial advance
