@@ -1,3 +1,15 @@
+2020-01-22  Zalan Bujtas  <zalan@apple.com>
+
+        REGRESSION (r254923): [mac-wk1] http/tests/inspector/network/har/har-page.html crashing in WebCore::Display::Box::contentBox()
+        https://bugs.webkit.org/show_bug.cgi?id=206600
+
+        Unreviewed.
+
+        r254923 missed this one place to turn off LFC integration.
+
+        * WebView/WebPreferences.mm:
+        (+[WebPreferences initialize]):
+
 2020-01-21  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Make RenderingMode and AlphaPremultiplication enum classes and move them to separate headers
