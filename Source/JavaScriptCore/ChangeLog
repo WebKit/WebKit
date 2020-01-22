@@ -1,3 +1,42 @@
+2020-01-22  Saam Barati  <sbarati@apple.com>
+
+        Throw away baseline code if there is an optimized replacement
+        https://bugs.webkit.org/show_bug.cgi?id=202503
+        <rdar://problem/58552041>
+
+        Reviewed by Yusuke Suzuki.
+
+        This patch's goal is to help us save JIT executable memory by throwing
+        away baseline code when it has an optimized replacement. To make it
+        easy to reason about, we do this when finalizing a GC, when the CodeBlock
+        is not on the stack, and when no OSR exits are linked to jump to the baseline
+        code. Also, as a measure to combat a performance regression, we only throw
+        away code on the second GC cycle in which it is eligible for this.
+        When we downgrade Baseline to LLInt, we also throw away all JIT data
+        and unlink all incoming calls.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::CodeBlock):
+        (JSC::CodeBlock::finishCreation):
+        (JSC::CodeBlock::finalizeUnconditionally):
+        (JSC::CodeBlock::resetJITData):
+        (JSC::CodeBlock::optimizedReplacement):
+        (JSC::CodeBlock::hasOptimizedReplacement):
+        (JSC::CodeBlock::tallyFrequentExitSites):
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::setJITCode):
+        * dfg/DFGDriver.cpp:
+        (JSC::DFG::compileImpl):
+        * dfg/DFGOSRExitCompilerCommon.cpp:
+        (JSC::DFG::callerReturnPC):
+        (JSC::DFG::adjustAndJumpToTarget):
+        * heap/CodeBlockSet.cpp:
+        (JSC::CodeBlockSet::isCurrentlyExecuting):
+        * heap/CodeBlockSet.h:
+        * heap/Heap.cpp:
+        (JSC::Heap::finalizeUnconditionalFinalizers):
+        (JSC::Heap::runEndPhase):
+
 2020-01-21  Ross Kirsling  <ross.kirsling@sony.com>
 
         [JSC] Date parse logic should be less redundant

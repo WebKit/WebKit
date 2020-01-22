@@ -258,6 +258,11 @@ public:
 
     Optional<BytecodeIndex> bytecodeIndexFromCallSiteIndex(CallSiteIndex);
 
+    // Because we might throw out baseline JIT code and all its baseline JIT data (m_jitData),
+    // you need to be careful about the lifetime of when you use the return value of this function.
+    // The return value may have raw pointers into this data structure that gets thrown away.
+    // Specifically, you need to ensure that no GC can be finalized (typically that means no
+    // allocations) between calling this and the last use of it.
     void getICStatusMap(const ConcurrentJSLocker&, ICStatusMap& result);
     void getICStatusMap(ICStatusMap& result);
     
@@ -412,7 +417,6 @@ public:
     
     void setJITCode(Ref<JITCode>&& code)
     {
-        ASSERT(heap()->isDeferred());
         if (!code->isShared())
             heap()->reportExtraMemoryAllocated(code->size());
 
@@ -444,6 +448,8 @@ public:
     DFG::CapabilityLevel capabilityLevel();
     DFG::CapabilityLevel capabilityLevelState() { return static_cast<DFG::CapabilityLevel>(m_capabilityLevelState); }
 
+    CodeBlock* optimizedReplacement(JITType typeToReplace);
+    CodeBlock* optimizedReplacement(); // the typeToReplace is my JITType
     bool hasOptimizedReplacement(JITType typeToReplace);
     bool hasOptimizedReplacement(); // the typeToReplace is my JITType
 #endif
@@ -862,6 +868,9 @@ public:
     bool m_didFailJITCompilation : 1;
     bool m_didFailFTLCompilation : 1;
     bool m_hasBeenCompiledWithFTL : 1;
+
+    bool m_hasLinkedOSRExit : 1;
+    bool m_isEligibleForLLIntDowngrade : 1;
 
     // Internal methods for use by validation code. It would be private if it wasn't
     // for the fact that we use it from anonymous namespaces.

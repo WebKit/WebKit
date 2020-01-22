@@ -193,6 +193,8 @@ MacroAssemblerCodePtr<JSEntryPtrTag> callerReturnPC(CodeBlock* baselineCodeBlock
 #undef LLINT_RETURN_LOCATION
 
     } else {
+        baselineCodeBlockForCaller->m_hasLinkedOSRExit = true;
+
         switch (trueCallerCallKind) {
         case InlineCallFrame::Call:
         case InlineCallFrame::Construct:
@@ -413,6 +415,8 @@ void adjustAndJumpToTarget(VM& vm, CCallHelpers& jit, const OSRExitBase& exit)
 #endif
         jumpTarget = destination.retagged<OSRExitPtrTag>().executableAddress();
     } else {
+        codeBlockForExit->m_hasLinkedOSRExit = true;
+
         BytecodeIndex exitIndex = exit.m_codeOrigin.bytecodeIndex();
         MacroAssemblerCodePtr<JSEntryPtrTag> destination;
         if (exitIndex.checkpoint())
