@@ -1,3 +1,15 @@
+2020-01-22  Rob Buis  <rbuis@igalia.com>
+
+        Fix fetch/api/policies/referrer-origin-worker.html
+         https://bugs.webkit.org/show_bug.cgi?id=206520
+
+        Reviewed by Youenn Fablet.
+
+        Revert, it was the wrong way to fix this
+
+        * web-platform-tests/fetch/api/policies/referrer-origin-worker-expected.txt:
+        * web-platform-tests/fetch/api/policies/referrer-origin-worker.html.headers: Removed.
+
 2020-01-21  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r254807 and r254849.
