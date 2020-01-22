@@ -27,6 +27,7 @@
 #import <WebKit/WKFoundation.h>
 
 #import "PlatformUtilities.h"
+#import "TCPServer.h"
 #import "Test.h"
 #import "TestNavigationDelegate.h"
 #import "TestWKWebView.h"
@@ -224,3 +225,32 @@ TEST(WKWebView, EvaluateJavaScriptInWorlds)
     }];
     isDone = false;
 }
+
+TEST(WebKit, EvaluateJavaScriptInAttachments)
+{
+    // Attachments displayed inline are in sandboxed documents.
+    // Evaluating JavaScript in such a document should fail and result in an error.
+
+    using namespace TestWebKitAPI;
+    TCPServer server([](int socket) {
+        NSString *response = @"HTTP/1.1 200 OK\r\n"
+            "Content-Length: 12\r\n"
+            "Content-Disposition: attachment; filename=fromHeader.txt;\r\n\r\n"
+            "Hello world!";
+
+        TCPServer::read(socket);
+        TCPServer::write(socket, response.UTF8String, response.length);
+    });
+    auto webView = adoptNS([TestWKWebView new]);
+    [webView synchronouslyLoadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"http://127.0.0.1:%d/", server.port()]]]];
+
+    __block bool done = false;
+    [webView evaluateJavaScript:@"Hello" completionHandler:^(id result, NSError *error) {
+        EXPECT_NULL(result);
+        EXPECT_NOT_NULL(error);
+        EXPECT_TRUE([[error description] containsString:@"Cannot execute JavaScript in this document"]);
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+}
+
