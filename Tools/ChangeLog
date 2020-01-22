@@ -1,3 +1,22 @@
+2020-01-21  Matt Lewis  <jlewis3@apple.com>
+
+        Test history links on the dashboard should go to the new results database
+        https://bugs.webkit.org/show_bug.cgi?id=205821
+
+        Reviewed by Jonathan Bedard.
+
+        Made changes to the various locations that we use the old database in the main dashboard
+        and test results pages.
+        
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/ui.js:
+        (ui.urlForFlakinessDashboard):
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/ui/results.js:
+        (ui.results.FlakinessData.base._handleMessage):
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/WebKitTestHistory.js:
+        (TestHistory):
+        (TestHistory.prototype.historyPageURLForTest):
+        * BuildSlaveSupport/build.webkit.org-config/templates/root.html:
+
 2020-01-22  Antti Koivisto  <antti@apple.com>
 
         [LFC][Integration] Disable integration to see performance impact

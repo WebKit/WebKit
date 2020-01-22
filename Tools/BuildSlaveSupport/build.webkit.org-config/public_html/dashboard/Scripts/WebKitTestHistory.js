@@ -25,7 +25,7 @@
 
 TestHistory = function()
 {
-    this._baseURL = "https://webkit-test-results.webkit.org/dashboards/flakiness_dashboard.html";
+    this._baseURL = "https://results.webkit.org";
 };
 
 BaseObject.addConstructorFunctions(TestHistory);
@@ -36,6 +36,6 @@ TestHistory.prototype = {
 
     historyPageURLForTest: function(path)
     {
-        return this._baseURL + "#showAllRuns=true&tests=" + encodeURIComponent(path);
+        return this._baseURL + "?suite=layout-tests&test=" + encodeURIComponent(path);
     }
 };
