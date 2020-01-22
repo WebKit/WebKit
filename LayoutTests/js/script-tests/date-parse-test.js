@@ -130,9 +130,12 @@ shouldBe("String(Date.parse('1970-01-01T00:00:00.'))", '"NaN"');
 shouldBe("String(Date.parse('1970-01-01T00:00:00.000-'))", '"NaN"');
 shouldBe("String(Date.parse('1970-01-01T00:00:00.000+'))", '"NaN"');
 shouldBe("String(Date.parse('1970-01-01T00:00:00.000+0'))", '"NaN"');
-shouldBe("String(Date.parse('1970-01-01T00:00:00.000+00'))", '"NaN"');
+shouldBe("String(Date.parse('1970-01-01T00:00:00.000+00'))", '"0"');
 shouldBe("String(Date.parse('1970-01-01T00:00:00.000+00:'))", '"NaN"');
 shouldBe("String(Date.parse('1970-01-01T00:00:00.000+00:0'))", '"NaN"');
+shouldBe("String(Date.parse('1970-01-01T00:00:00.000+0000'))", '"0"');
+shouldBe("String(Date.parse('1970-01-01T00:00:00.000+0000:'))", '"NaN"');
+shouldBe("String(Date.parse('1970-01-01T00:00:00.000+0000:0'))", '"NaN"');
 shouldBe("String(Date.parse('1970-01-01T00:00:00.000+0:0'))", '"NaN"');
 
 // test old implementation fallback

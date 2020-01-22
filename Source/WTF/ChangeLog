@@ -1,3 +1,22 @@
+2020-01-22  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] DateMath should accept more ISO-8601 timezone designators even if they are not included in ECMA262 to produce expected results in the wild code
+        https://bugs.webkit.org/show_bug.cgi?id=160287
+
+        Reviewed by Ross Kirsling.
+
+        While ECMA262[1] always requires ":" in a timezone designator between hours and minutes (like, "hh:mm"),
+        ISO-8601 can accept additional forms, "+hh" and "+hhmm". This patch relaxes our Date parsing to accept this
+        type of timezone designators so that we can accept wider forms of date time formats. This addition does not
+        break the existing parsing rules since '+-' prefix can clarify that following sequences are timezones.
+
+        [1]: https://tc39.es/ecma262/#sec-date-time-string-format
+        [2]: https://en.wikipedia.org/wiki/ISO_8601#Time_zone_designators
+
+        * wtf/DateMath.cpp:
+        (WTF::parseES5TimePortion):
+        (WTF::parseES5DateFromNullTerminatedCharacters):
+
 2020-01-21  Ross Kirsling  <ross.kirsling@sony.com>
 
         [JSC] Date parse logic should be less redundant

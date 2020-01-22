@@ -1,5 +1,16 @@
 2020-01-22  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        [JSC] DateMath should accept more ISO-8601 timezone designators even if they are not included in ECMA262 to produce expected results in the wild code
+        https://bugs.webkit.org/show_bug.cgi?id=160287
+
+        Reviewed by Ross Kirsling.
+
+        * stress/relaxed-timezone-designators.js: Added.
+        (shouldBe):
+        (parsedDate):
+
+2020-01-22  Yusuke Suzuki  <ysuzuki@apple.com>
+
         [JSC] Add CheckArrayOrEmpty to handle the case when hoisting CheckArray for places where input can be empty
         https://bugs.webkit.org/show_bug.cgi?id=206571
         <rdar://problem/58757016>

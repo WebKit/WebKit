@@ -518,7 +518,7 @@ static char* parseES5DatePortion(const char* currentPosition, int& year, long& m
     return postParsePosition;
 }
 
-// Parses a time with the format HH:mm[:ss[.sss]][Z|(+|-)00:00].
+// Parses a time with the format HH:mm[:ss[.sss]][Z|(+|-)(00:00|0000|00)].
 // Fractional seconds parsing is lenient, allows any number of digits.
 // Returns 0 if a parse error occurs, else returns the end of the parsed portion of the string.
 static char* parseES5TimePortion(char* currentPosition, long& hours, long& minutes, double& seconds, bool& isLocalTime, long& timeZoneSeconds)
@@ -577,6 +577,7 @@ static char* parseES5TimePortion(char* currentPosition, long& hours, long& minut
     if (*currentPosition == 'Z')
         return currentPosition + 1;
 
+    // Parse (+|-)(00:00|0000|00).
     bool tzNegative;
     if (*currentPosition == '-')
         tzNegative = true;
@@ -588,25 +589,39 @@ static char* parseES5TimePortion(char* currentPosition, long& hours, long& minut
     }
     ++currentPosition;
     
-    long tzHours;
-    long tzHoursAbs;
-    long tzMinutes;
+    long tzHours = 0;
+    long tzHoursAbs = 0;
+    long tzMinutes = 0;
     
     if (!isASCIIDigit(*currentPosition))
         return 0;
     if (!parseLong(currentPosition, &postParsePosition, 10, &tzHours))
         return 0;
-    if (*postParsePosition != ':' || (postParsePosition - currentPosition) != 2)
-        return 0;
-    tzHoursAbs = labs(tzHours);
-    currentPosition = postParsePosition + 1;
+    if (*postParsePosition != ':') {
+        if ((postParsePosition - currentPosition) == 2) {
+            // "00" case.
+            tzHoursAbs = labs(tzHours);
+        } else if ((postParsePosition - currentPosition) == 4) {
+            // "0000" case.
+            tzHoursAbs = labs(tzHours);
+            tzMinutes = tzHoursAbs % 100;
+            tzHoursAbs = tzHoursAbs / 100;
+        } else
+            return 0;
+    } else {
+        // "00:00" case.
+        if ((postParsePosition - currentPosition) != 2)
+            return 0;
+        tzHoursAbs = labs(tzHours);
+        currentPosition = postParsePosition + 1; // Skip ":".
     
-    if (!isASCIIDigit(*currentPosition))
-        return 0;
-    if (!parseLong(currentPosition, &postParsePosition, 10, &tzMinutes))
-        return 0;
-    if ((postParsePosition - currentPosition) != 2)
-        return 0;
+        if (!isASCIIDigit(*currentPosition))
+            return 0;
+        if (!parseLong(currentPosition, &postParsePosition, 10, &tzMinutes))
+            return 0;
+        if ((postParsePosition - currentPosition) != 2)
+            return 0;
+    }
     currentPosition = postParsePosition;
     
     if (tzHoursAbs > 24)
@@ -647,7 +662,7 @@ double parseES5DateFromNullTerminatedCharacters(const char* dateString, bool& is
     // Look for a time portion.
     // Note: As of ES2016, when a UTC offset is missing, date-time forms are local time while date-only forms are UTC.
     if (*currentPosition == 'T') {
-        // Parse the time HH:mm[:ss[.sss]][Z|(+|-)00:00]
+        // Parse the time HH:mm[:ss[.sss]][Z|(+|-)(00:00|0000|00)]
         currentPosition = parseES5TimePortion(currentPosition + 1, hours, minutes, seconds, isLocalTime, timeZoneSeconds);
         if (!currentPosition)
             return std::numeric_limits<double>::quiet_NaN();
