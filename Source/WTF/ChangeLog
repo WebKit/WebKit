@@ -1,3 +1,13 @@
+2020-01-22  Sam Weinig  <weinig@apple.com>
+
+        Remove unused enable macro ENABLE_JIT_CONSTANT_BLINDING
+        https://bugs.webkit.org/show_bug.cgi?id=206415
+
+        Reviewed by Anders Carlsson.
+
+        * wtf/PlatformEnable.h:
+        ENABLE_JIT_CONSTANT_BLINDING is not used anywhere in WebKit so can be removed.
+
 2020-01-22  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] DateMath should accept more ISO-8601 timezone designators even if they are not included in ECMA262 to produce expected results in the wild code

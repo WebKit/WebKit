@@ -224,11 +224,6 @@ the public iOS SDK. See <https://webkit.org/b/179167>. */
 #define ENABLE_META_VIEWPORT 1
 #endif
 
-/* FIXME: This seems unused. If so, it should be removed. */
-#if CPU(ARM64)
-#define ENABLE_JIT_CONSTANT_BLINDING 0
-#endif
-
 #endif /* PLATFORM(IOS_FAMILY) */
 
 /* --------- Apple watchOS port --------- */
