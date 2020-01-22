@@ -1,3 +1,23 @@
+2020-01-21  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [WebAuthn] Incorporate more detailed UnknownError messages for LocalAuthenticator
+        https://bugs.webkit.org/show_bug.cgi?id=191530
+
+        Reviewed by Brent Fulgham.
+
+        This patch replaces UnknownError messages within LocalAuthenticator with the LOG_ERROR
+        messages. At the meantime, it enhances MockLocalConnection::getAttestation to return
+        errors instead of assertions.
+
+        * UIProcess/WebAuthentication/Cocoa/LocalAuthenticator.mm:
+        (WebKit::LocalAuthenticator::makeCredential):
+        (WebKit::LocalAuthenticator::continueMakeCredentialAfterUserConsented):
+        (WebKit::LocalAuthenticator::continueMakeCredentialAfterAttested):
+        (WebKit::LocalAuthenticator::getAssertion):
+        (WebKit::LocalAuthenticator::continueGetAssertionAfterUserConsented):
+        * UIProcess/WebAuthentication/Mock/MockLocalConnection.mm:
+        (WebKit::MockLocalConnection::getAttestation const):
+
 2020-01-21  Chris Dumez  <cdumez@apple.com>
 
         [IPC Hardening] Only process Messages::NetworkProcess messages when sent by the UIProcess
