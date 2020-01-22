@@ -60,7 +60,7 @@ private:
     void layoutFormattingContextRoot(const Box&, FloatingContext&, InvalidationState&, const ConstraintsPair<HorizontalConstraints>&, const ConstraintsPair<VerticalConstraints>&);
     void placeInFlowPositionedChildren(const Box&, const ConstraintsPair<HorizontalConstraints>&);
 
-    void computeWidthAndMargin(const Box&, const ConstraintsPair<HorizontalConstraints>&);
+    void computeWidthAndMargin(const FloatingContext&, const Box&, const ConstraintsPair<HorizontalConstraints>&);
     void computeHeightAndMargin(const Box&, const ConstraintsPair<HorizontalConstraints>&, const ConstraintsPair<VerticalConstraints>&);
 
     void computeStaticHorizontalPosition(const Box&, const ConstraintsPair<HorizontalConstraints>&);
