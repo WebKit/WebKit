@@ -159,10 +159,6 @@ void PolicyChecker::checkNavigationPolicy(ResourceRequest&& request, const Resou
 
     loader->setLastCheckedRequest(ResourceRequest(request));
 
-    // Initial 'about:blank' load needs to happen synchronously so the policy check needs to be synchronous in this case.
-    if (!m_frame.loader().stateMachine().committedFirstRealDocumentLoad() && request.url().protocolIsAbout() && !substituteData.isValid())
-        policyDecisionMode = PolicyDecisionMode::Synchronous;
-
 #if USE(QUICK_LOOK)
     // Always allow QuickLook-generated URLs based on the protocol scheme.
     if (!request.isNull() && isQuickLookPreviewURL(request.url()))
@@ -185,13 +181,12 @@ void PolicyChecker::checkNavigationPolicy(ResourceRequest&& request, const Resou
 
     auto blobURLLifetimeExtension = policyDecisionMode == PolicyDecisionMode::Asynchronous ? extendBlobURLLifetimeIfNecessary(request) : CompletionHandlerCallingScope { };
 
+    bool isInitialEmptyDocumentLoad = !m_frame.loader().stateMachine().committedFirstRealDocumentLoad() && request.url().protocolIsAbout() && !substituteData.isValid();
     auto requestIdentifier = PolicyCheckIdentifier::create();
     m_delegateIsDecidingNavigationPolicy = true;
     String suggestedFilename = action.downloadAttribute().isEmpty() ? nullAtom() : action.downloadAttribute();
-    m_frame.loader().client().dispatchDecidePolicyForNavigationAction(action, request, redirectResponse, formState.get(), policyDecisionMode, requestIdentifier,
-        [this, function = WTFMove(function), request = ResourceRequest(request), formState = WTFMove(formState), suggestedFilename = WTFMove(suggestedFilename),
+    FramePolicyFunction decisionHandler = [this, function = WTFMove(function), request = ResourceRequest(request), formState = WTFMove(formState), suggestedFilename = WTFMove(suggestedFilename),
          blobURLLifetimeExtension = WTFMove(blobURLLifetimeExtension), requestIdentifier] (PolicyAction policyAction, PolicyCheckIdentifier responseIdentifier) mutable {
-
         if (!responseIdentifier.isValidFor(requestIdentifier))
             return function({ }, nullptr, NavigationPolicyDecision::IgnoreLoad);
 
@@ -215,7 +210,14 @@ void PolicyChecker::checkNavigationPolicy(ResourceRequest&& request, const Resou
             return function(WTFMove(request), makeWeakPtr(formState.get()), NavigationPolicyDecision::ContinueLoad);
         }
         ASSERT_NOT_REACHED();
-    });
+    };
+
+    if (isInitialEmptyDocumentLoad) {
+        // We ignore the response from the client for initial empty document loads and proceed with the load synchronously.
+        m_frame.loader().client().dispatchDecidePolicyForNavigationAction(action, request, redirectResponse, formState.get(), policyDecisionMode, requestIdentifier, [](PolicyAction, PolicyCheckIdentifier) { });
+        decisionHandler(PolicyAction::Use, requestIdentifier);
+    } else
+        m_frame.loader().client().dispatchDecidePolicyForNavigationAction(action, request, redirectResponse, formState.get(), policyDecisionMode, requestIdentifier, WTFMove(decisionHandler));
 }
 
 void PolicyChecker::checkNewWindowPolicy(NavigationAction&& navigationAction, ResourceRequest&& request, RefPtr<FormState>&& formState, const String& frameName, NewWindowPolicyDecisionFunction&& function)
