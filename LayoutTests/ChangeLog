@@ -1,3 +1,20 @@
+2020-01-22  Nikos Mouchtaris  <nmouchtaris@apple.com>
+
+        Automatic link replacement via "Smart links" should emit "insertLink" input events
+        https://bugs.webkit.org/show_bug.cgi?id=191306
+
+        Reviewed by Wenson Hsieh.
+
+        Due to webkit.org/b/162081 this test is skipped for WebKit2.
+
+        * fast/events/input-event-insert-link-expected.txt: Added.
+        * fast/events/input-event-insert-link.html: Added.
+        * platform/gtk/TestExpectations:
+        * platform/ios/TestExpectations:
+        * platform/mac-wk2/TestExpectations:
+        * platform/win/TestExpectations:
+        * platform/wincairo/TestExpectations:
+
 2020-01-22  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] DateMath should accept more ISO-8601 timezone designators even if they are not included in ECMA262 to produce expected results in the wild code

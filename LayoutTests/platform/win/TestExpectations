@@ -1300,6 +1300,7 @@ webkit.org/b/101539 editing/execCommand/switch-list-type-with-orphaned-li.html [
 editing/inserting/typing-space-to-trigger-smart-link.html [ Skip ]
 editing/inserting/smart-link-when-caret-is-moved-before-URL.html [ Skip ]
 editing/inserting/smart-quote-with-all-configurations.html [ Skip ]
+fast/events/input-event-insert-link.html [ Failure ]
 
 ###### Text Iterator
 # Plain text controller currently in Mac DumpRenderTree only.

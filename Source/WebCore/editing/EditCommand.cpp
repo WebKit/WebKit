@@ -116,6 +116,8 @@ String inputTypeNameForEditingAction(EditAction action)
         return "formatSetInlineTextDirection"_s;
     case EditAction::SetBlockWritingDirection:
         return "formatSetBlockTextDirection"_s;
+    case EditAction::CreateLink:
+        return "insertLink"_s;
     default:
         return emptyString();
     }

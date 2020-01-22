@@ -1370,6 +1370,7 @@ webkit.org/b/101539 editing/execCommand/switch-list-type-with-orphaned-li.html [
 # Windows does not implement setAutomaticLinkDetectionEnabled
 editing/inserting/typing-space-to-trigger-smart-link.html [ Failure ]
 editing/inserting/smart-quote-with-all-configurations.html [ Failure ]
+fast/events/input-event-insert-link.html [ Failure ]
 
 ###### Text Iterator
 # Plain text controller currently in Mac DumpRenderTree only.

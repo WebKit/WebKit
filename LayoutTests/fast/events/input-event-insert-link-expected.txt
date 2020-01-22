@@ -1,0 +1,29 @@
+This test verifies that input events of inputType 'insertLink' are dispatched when automatically replacing text with a link.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+event.type = beforeinput
+event.inputType = insertText
+event.data = www.apple.com 
+event.type = beforeinput
+event.inputType = insertLink
+event.data = http://www.apple.com
+event.type = input
+event.inputType = insertText
+event.data = www.apple.com 
+event.type = input
+event.inputType = insertLink
+event.data = http://www.apple.com
+event.type = beforeinput
+event.inputType = insertParagraph
+event.data = null
+event.type = input
+event.inputType = insertParagraph
+event.data = null
+PASS successfullyParsed is true
+
+TEST COMPLETE
+www.apple.com 
+
+

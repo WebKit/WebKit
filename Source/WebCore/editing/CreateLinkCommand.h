@@ -44,6 +44,8 @@ private:
     void doApply() override;
     EditAction editingAction() const override { return EditAction::CreateLink; }
 
+    String inputEventData() const override { return m_url; }
+    
     String m_url;
 };
 
