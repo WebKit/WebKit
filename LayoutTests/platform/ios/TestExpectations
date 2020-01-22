@@ -3458,3 +3458,6 @@ webkit.org/b/205309 scrollingcoordinator/ios/scroll-position-after-reattach.html
 webkit.org/b/200043 fast/text/international/system-language/navigator-language [ Pass Failure ]
 
 webkit.org/b/206291 storage/websql/statement-error-callback.html [ Pass Timeout ]
+
+webkit.org/b/203222 svg/wicd/rightsizing-grid.xhtml [ Pass Failure ]
+

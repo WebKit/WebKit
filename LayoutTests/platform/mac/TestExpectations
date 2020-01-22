@@ -1935,3 +1935,5 @@ webkit.org/b/77568 [ Sierra HighSierra Mojave ] fast/text/locale-shaping.html [ 
 webkit.org/b/77568 [ Sierra HighSierra Mojave ] fast/text/locale-shaping-complex.html [ ImageOnlyFailure ]
 
 webkit.org/b/206291 storage/websql/statement-error-callback.html [ Pass Timeout ]
+
+webkit.org/b/203222 svg/wicd/rightsizing-grid.xhtml [ Pass Failure ]

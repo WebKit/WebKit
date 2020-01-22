@@ -1,3 +1,13 @@
+2020-01-22  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Flaky Test: svg/wicd/rightsizing-grid.xhtml
+        https://bugs.webkit.org/show_bug.cgi?id=203222
+
+        Unreviewed test gardening.
+
+        * platform/ios/TestExpectations: Mark test as flaky.
+        * platform/mac/TestExpectations: Ditto.
+
 2020-01-22  Antti Koivisto  <antti@apple.com>
 
         [LFC][Integration] Disable integration to see performance impact
