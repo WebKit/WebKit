@@ -203,22 +203,23 @@ bool Intrinsics::addFullTexture(AST::NativeTypeDeclaration& nativeTypeDeclaratio
         return false;
 
     unsigned innerTypeIndex = WTF_ARRAY_LENGTH(m_textureInnerTypeNames);
-    unsigned vectorLength;
+    unsigned vectorLength = 0;
     for (unsigned i = 0; i < WTF_ARRAY_LENGTH(m_textureInnerTypeNames); ++i) {
         if (innerType.name().startsWith(m_textureInnerTypeNames[i])) {
             innerTypeIndex = i;
             if (innerType.name() == m_textureInnerTypeNames[i])
                 vectorLength = 1;
             else {
-                ASSERT(innerType.name().length() == strlen(m_textureInnerTypeNames[i]) + 1);
-                ASSERT(innerType.name()[innerType.name().length() - 1] == '2'
+                ASSERT_WITH_SECURITY_IMPLICATION(innerType.name().length() == strlen(m_textureInnerTypeNames[i]) + 1);
+                ASSERT_WITH_SECURITY_IMPLICATION(innerType.name()[innerType.name().length() - 1] == '2'
                     || innerType.name()[innerType.name().length() - 1] == '3'
                     || innerType.name()[innerType.name().length() - 1] == '4');
                 vectorLength = innerType.name()[innerType.name().length() - 1] - '0';
             }
         }
     }
-    ASSERT(innerTypeIndex != WTF_ARRAY_LENGTH(m_textureInnerTypeNames));
+    RELEASE_ASSERT(vectorLength && vectorLength < 5);
+    ASSERT_WITH_SECURITY_IMPLICATION(innerTypeIndex != WTF_ARRAY_LENGTH(m_textureInnerTypeNames));
     nativeTypeDeclaration.setIsTexture();
     nativeTypeDeclaration.setIsOpaqueType();
     if (nativeTypeDeclaration.name() == "Texture1DArray" || nativeTypeDeclaration.name() == "RWTexture1DArray" || nativeTypeDeclaration.name() == "Texture2DArray" || nativeTypeDeclaration.name() == "RWTexture2DArray")

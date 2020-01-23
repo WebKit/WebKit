@@ -56,7 +56,7 @@ CSSSupportsParser::SupportsResult CSSSupportsParser::consumeCondition(CSSParserT
     if (range.peek().type() == IdentToken || range.peek().type() == FunctionToken)
         return consumeNegation(range);
 
-    bool result;
+    bool result = false;
     ClauseType clauseType = Unresolved;
     
     auto previousTokenType = IdentToken;

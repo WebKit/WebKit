@@ -1,3 +1,13 @@
+2020-01-23  David Kilzer  <ddkilzer@apple.com>
+
+        Enable -Wconditional-uninitialized in WebCore project
+        <https://webkit.org/b/206508>
+
+        Reviewed by Darin Adler.
+
+        * Configurations/Base.xcconfig:
+        (WARNING_CFLAGS): Add -Wconditional-uninitialized switch.
+
 2020-01-21  Alex Christensen  <achristensen@webkit.org>
 
         Add missing NS_NOESCAPE to CFNetwork SPI

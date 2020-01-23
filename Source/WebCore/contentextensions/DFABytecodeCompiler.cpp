@@ -248,7 +248,7 @@ DFABytecodeCompiler::Transitions DFABytecodeCompiler::transitions(const DFANode&
     }
 
     Vector<Range>& ranges = transitions.ranges;
-    uint8_t rangeMin;
+    uint8_t rangeMin = 0;
     bool hasRangeMin = false;
     for (uint8_t i = 0; i < 128; i++) {
         if (hasRangeMin) {

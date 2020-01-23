@@ -696,6 +696,8 @@ auto Parser::parseResourceSemantic() -> Expected<AST::ResourceSemantic, Error>
     case 's':
         mode = AST::ResourceSemantic::Mode::Sampler;
         break;
+    default:
+        RELEASE_ASSERT_NOT_REACHED();
     }
 
     auto index = recognizeSimpleUnsignedInteger(infoStringView.substring(1));

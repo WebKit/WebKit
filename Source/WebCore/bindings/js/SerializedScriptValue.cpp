@@ -2346,7 +2346,7 @@ private:
             return false;
 
         int32_t isRestrictedToHash;
-        CryptoAlgorithmIdentifier hash;
+        CryptoAlgorithmIdentifier hash = CryptoAlgorithmIdentifier::SHA_1;
         if (!read(isRestrictedToHash))
             return false;
         if (isRestrictedToHash && !read(hash))

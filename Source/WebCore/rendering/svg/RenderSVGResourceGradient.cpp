@@ -195,7 +195,7 @@ void RenderSVGResourceGradient::postApplyResource(RenderElement& renderer, Graph
     if (resourceMode.contains(RenderSVGResourceMode::ApplyToText)) {
 #if USE(CG)
         // CG requires special handling for gradient on text
-        GradientData* gradientData;
+        GradientData* gradientData = nullptr;
         if (m_savedContext && (gradientData = m_gradientMap.get(&renderer))) {
             // Restore on-screen drawing context
             context = m_savedContext;
