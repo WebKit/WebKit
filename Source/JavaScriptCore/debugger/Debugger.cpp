@@ -36,47 +36,6 @@
 #include "Protect.h"
 #include "VMEntryScope.h"
 
-namespace {
-
-using namespace JSC;
-
-struct GatherSourceProviders : public MarkedBlock::VoidFunctor {
-    // FIXME: This is a mutable field because this isn't a C++ lambda.
-    // https://bugs.webkit.org/show_bug.cgi?id=159644
-    mutable HashSet<SourceProvider*> sourceProviders;
-    JSGlobalObject* m_globalObject;
-
-    GatherSourceProviders(JSGlobalObject* globalObject)
-        : m_globalObject(globalObject) { }
-
-    IterationStatus operator()(HeapCell* heapCell, HeapCell::Kind kind) const
-    {
-        if (!isJSCellKind(kind))
-            return IterationStatus::Continue;
-        
-        JSCell* cell = static_cast<JSCell*>(heapCell);
-        
-        JSFunction* function = jsDynamicCast<JSFunction*>(cell->vm(), cell);
-        if (!function)
-            return IterationStatus::Continue;
-
-        if (function->scope()->globalObject() != m_globalObject)
-            return IterationStatus::Continue;
-
-        if (!function->executable()->isFunctionExecutable())
-            return IterationStatus::Continue;
-
-        if (function->isHostOrBuiltinFunction())
-            return IterationStatus::Continue;
-
-        sourceProviders.add(
-            jsCast<FunctionExecutable*>(function->executable())->source().provider());
-        return IterationStatus::Continue;
-    }
-};
-
-} // namespace
-
 namespace JSC {
 
 class DebuggerPausedScope {
@@ -157,14 +116,23 @@ void Debugger::attach(JSGlobalObject* globalObject)
 
     m_vm.setShouldBuildPCToCodeOriginMapping();
 
-    // Call sourceParsed because it will execute JavaScript in the inspector.
-    GatherSourceProviders gatherSourceProviders(globalObject);
+    // Call `sourceParsed` after iterating because it will execute JavaScript in Web Inspector.
+    HashSet<RefPtr<SourceProvider>> sourceProviders;
     {
         HeapIterationScope iterationScope(m_vm.heap);
-        m_vm.heap.objectSpace().forEachLiveCell(iterationScope, gatherSourceProviders);
+        m_vm.heap.objectSpace().forEachLiveCell(iterationScope, [&] (HeapCell* heapCell, HeapCell::Kind kind) {
+            if (isJSCellKind(kind)) {
+                auto* cell = static_cast<JSCell*>(heapCell);
+                if (auto* function = jsDynamicCast<JSFunction*>(cell->vm(), cell)) {
+                    if (function->scope()->globalObject() == globalObject && function->executable()->isFunctionExecutable() && !function->isHostOrBuiltinFunction())
+                        sourceProviders.add(jsCast<FunctionExecutable*>(function->executable())->source().provider());
+                }
+            }
+            return IterationStatus::Continue;
+        });
     }
-    for (auto* sourceProvider : gatherSourceProviders.sourceProviders)
-        sourceParsed(globalObject, sourceProvider, -1, String());
+    for (auto& sourceProvider : sourceProviders)
+        sourceParsed(globalObject, sourceProvider.get(), -1, nullString());
 }
 
 void Debugger::detach(JSGlobalObject* globalObject, ReasonForDetach reason)
