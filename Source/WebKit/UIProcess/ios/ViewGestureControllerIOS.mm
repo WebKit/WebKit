@@ -258,6 +258,8 @@ void ViewGestureController::beginSwipeGesture(_UINavigationInteractiveTransition
     [m_swipeTransitionContext _setInteractor:transition];
     [m_swipeTransitionContext _setTransitionIsInFlight:YES];
     m_didCallWillEndSwipeGesture = false;
+    m_didCallEndSwipeGesture = false;
+    m_removeSnapshotImmediatelyWhenGestureEnds = false;
     [m_swipeTransitionContext _setInteractiveUpdateHandler:^(BOOL finish, CGFloat percent, BOOL transitionCompleted, _UIViewControllerTransitionContext *) {
         if (finish)
             willEndSwipeGesture(*targetItem, !transitionCompleted);
@@ -316,6 +318,8 @@ void ViewGestureController::endSwipeGesture(WebBackForwardListItem* targetItem, 
     if (!m_didCallWillEndSwipeGesture)
         willEndSwipeGesture(*targetItem, cancelled);
 
+    m_didCallEndSwipeGesture = true;
+
     [context _setTransitionIsInFlight:NO];
     [context _setInteractor:nil];
     [context _setAnimator:nil];
@@ -342,6 +346,13 @@ void ViewGestureController::endSwipeGesture(WebBackForwardListItem* targetItem, 
         m_webPageProxy.navigationGestureDidEnd();
 
     if (!m_webPageProxy.provisionalDrawingArea()) {
+        removeSwipeSnapshot();
+        return;
+    }
+
+    // removeSwipeSnapshot() was called between willEndSwipeGesture() and endSwipeGesture().
+    // We couldn't remove it then, because the animation was still running, but now we can!
+    if (m_removeSnapshotImmediatelyWhenGestureEnds) {
         removeSwipeSnapshot();
         return;
     }
@@ -397,6 +408,11 @@ void ViewGestureController::removeSwipeSnapshot()
 
     if (m_activeGestureType != ViewGestureType::Swipe)
         return;
+
+    if (!m_didCallEndSwipeGesture) {
+        m_removeSnapshotImmediatelyWhenGestureEnds = true;
+        return;
+    }
 
     [m_snapshotView removeFromSuperview];
     m_snapshotView = nullptr;

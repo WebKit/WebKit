@@ -605,6 +605,8 @@ void ViewGestureController::endSwipeGesture(WebBackForwardListItem* targetItem, 
     m_swipeCancellationTracker = nullptr;
 #endif
 
+    m_didCallEndSwipeGesture = true;
+
     if (cancelled) {
         removeSwipeSnapshot();
         m_webPageProxy.navigationGestureDidEnd(false, *targetItem);
@@ -614,6 +616,13 @@ void ViewGestureController::endSwipeGesture(WebBackForwardListItem* targetItem, 
     m_webPageProxy.navigationGestureDidEnd(true, *targetItem);
 
     m_snapshotRemovalTracker.eventOccurred(SnapshotRemovalTracker::SwipeAnimationEnd, SnapshotRemovalTracker::ShouldIgnoreEventIfPaused::No);
+
+    // removeSwipeSnapshot() was called between willEndSwipeGesture() and endSwipeGesture().
+    // We couldn't remove it then, because the animation was still running, but now we can!
+    if (m_removeSnapshotImmediatelyWhenGestureEnds) {
+        removeSwipeSnapshot();
+        return;
+    }
 }
 
 void ViewGestureController::requestRenderTreeSizeNotificationIfNeeded()
