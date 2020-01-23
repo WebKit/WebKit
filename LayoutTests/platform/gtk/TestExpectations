@@ -1278,6 +1278,13 @@ webkit.org/b/206587 imported/w3c/web-platform-tests/2dcontext/shadows/shadowBlur
 
 webkit.org/b/206588 fast/history/page-cache-media-recorder.html [ Failure ]
 
+# IsLoggedIn is an experimental feature (Introduced in r250944)
+http/tests/is-logged-in/ [ Skip ]
+
+# r250624 allows the playbin to handle the redirections directly. The referenced bug below is the
+# mac one about removing this test altogether.
+webkit.org/b/61487 http/tests/media/video-cross-site.html [ Failure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Expected failures.
 #
@@ -2342,6 +2349,9 @@ webkit.org/b/205110 media/media-source/media-source-canplaythrough.html [ Crash 
 webkit.org/b/206146 http/tests/cache-storage/cache-persistency.https.html [ Failure Pass ]
 
 webkit.org/b/179611 imported/w3c/web-platform-tests/xhr/send-entity-body-document.htm [ Pass Failure ]
+
+#Started flakiness between r249708 and r249813
+webkit.org/b/206639 http/tests/contentextensions/block-cookies-basic.html [ Failure Pass ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Flaky tests
@@ -3689,6 +3699,7 @@ webkit.org/b/190991 media/encrypted-media/encrypted-media-events.html [ Timeout 
 webkit.org/b/190991 media/encrypted-media/encrypted-media-session-lifetime.html [ Timeout ]
 webkit.org/b/190991 media/encrypted-media/encrypted-media-v2-events.html [ Timeout ]
 webkit.org/b/190991 media/encrypted-media/encrypted-media-v2-syntax.html [ Timeout ]
+webkit.org/b/190991 http/tests/navigation/page-cache-mediakeysession.html [ Skip ]
 
 webkit.org/b/191000 imported/w3c/web-platform-tests/shadow-dom/input-element-list.html [ Failure ]
 
@@ -4032,6 +4043,8 @@ webkit.org/b/204675 imported/w3c/web-platform-tests/offscreen-canvas/image-smoot
 webkit.org/b/204675 imported/w3c/web-platform-tests/offscreen-canvas/image-smoothing/image.smoothing.worker.html [ Failure ]
 webkit.org/b/204675 imported/w3c/web-platform-tests/offscreen-canvas/the-offscreen-canvas/initial.reset.pattern.html [ Failure ]
 webkit.org/b/204675 imported/w3c/web-platform-tests/offscreen-canvas/the-offscreen-canvas/initial.reset.pattern.worker.html [ Failure ]
+
+webkit.org/b/206517 http/tests/misc/form-submit-file-cross-site-redirect.html [ Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of non-crashing, non-flaky tests failing
