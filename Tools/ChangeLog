@@ -1,3 +1,13 @@
+2020-01-22  Jiewen Tan  <jiewen_tan@apple.com>
+
+        WebKitTestRunner: use ad hoc signing for internal Production builds
+        https://bugs.webkit.org/show_bug.cgi?id=206607
+        <rdar://problem/56087327>
+
+        Reviewed by Jonathan Bedard.
+
+        * WebKitTestRunner/Configurations/WebKitTestRunner.xcconfig:
+
 2020-01-23  Tuomas Karkkainen  <tuomas.webkit@apple.com>
 
         Add missing coverage.xcconfig
