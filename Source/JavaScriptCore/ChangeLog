@@ -1,3 +1,22 @@
+2020-01-23  Saam Barati  <sbarati@apple.com>
+
+        OptimizeAssociativeExpressionTrees should reset value owners before running
+        https://bugs.webkit.org/show_bug.cgi?id=206670
+        <rdar://problem/58535628>
+
+        Reviewed by Robin Morisset.
+
+        We have a crash inside OptimizeAssociativeExpressionTrees and we don't know
+        how to reproduce it. Also, based on Mark's auditing of the crash site's
+        assembly, Mark thinks we're crashing on a "currupt" basic block.
+        
+        After I audited the code, I saw that we rely on value owners in this phase.
+        However, we don't actually reset them before running the phase. This patch
+        adds that as a speculative fix for the crash we're seeing.
+
+        * b3/B3OptimizeAssociativeExpressionTrees.cpp:
+        (JSC::B3::OptimizeAssociativeExpressionTrees::run):
+
 2020-01-23  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Unreviewed, fix calculation of kindBits
