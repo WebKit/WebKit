@@ -33,6 +33,9 @@
 
 namespace WebCore {
 
+SynchronousLoaderClient::SynchronousLoaderClient()
+    : m_messageQueue(SynchronousLoaderMessageQueue::create()) { }
+
 SynchronousLoaderClient::~SynchronousLoaderClient() = default;
 
 void SynchronousLoaderClient::willSendRequestAsync(ResourceHandle* handle, ResourceRequest&& request, ResourceResponse&&, CompletionHandler<void(ResourceRequest&&)>&& completionHandler)
@@ -73,18 +76,30 @@ void SynchronousLoaderClient::didReceiveData(ResourceHandle*, const char* data, 
     m_data.append(data, length);
 }
 
-void SynchronousLoaderClient::didFinishLoading(ResourceHandle*)
+void SynchronousLoaderClient::didFinishLoading(ResourceHandle* handle)
 {
-    m_messageQueue.kill();
+    m_messageQueue->kill();
+#if PLATFORM(COCOA)
+    if (handle)
+        handle->releaseDelegate();
+#else
+    UNUSED_PARAM(handle);
+#endif
 }
 
-void SynchronousLoaderClient::didFail(ResourceHandle*, const ResourceError& error)
+void SynchronousLoaderClient::didFail(ResourceHandle* handle, const ResourceError& error)
 {
     ASSERT(m_error.isNull());
 
     m_error = error;
     
-    m_messageQueue.kill();
+    m_messageQueue->kill();
+#if PLATFORM(COCOA)
+    if (handle)
+        handle->releaseDelegate();
+#else
+    UNUSED_PARAM(handle);
+#endif
 }
 
 }

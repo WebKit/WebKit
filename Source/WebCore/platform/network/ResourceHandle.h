@@ -86,6 +86,7 @@ class NetworkLoadMetrics;
 class ResourceRequest;
 class ResourceResponse;
 class SharedBuffer;
+class SynchronousLoaderMessageQueue;
 class Timer;
 
 #if USE(CURL)
@@ -123,7 +124,7 @@ public:
 
 #if PLATFORM(COCOA)
     WEBCORE_EXPORT NSURLConnection *connection() const;
-    id makeDelegate(bool, WTF::MessageQueue<WTF::Function<void()>>*);
+    id makeDelegate(bool, RefPtr<SynchronousLoaderMessageQueue>&&);
     id delegate();
     void releaseDelegate();
 #endif
@@ -232,7 +233,7 @@ private:
 #endif
 
 #if USE(CFURLCONNECTION)
-    void createCFURLConnection(bool shouldUseCredentialStorage, bool shouldContentSniff, bool shouldContentEncodingSniff, WTF::MessageQueue<WTF::Function<void()>>*, CFDictionaryRef clientProperties);
+    void createCFURLConnection(bool shouldUseCredentialStorage, bool shouldContentSniff, bool shouldContentEncodingSniff, RefPtr<SynchronousLoaderMessageQueue>&&, CFDictionaryRef clientProperties);
 #endif
 
 #if PLATFORM(MAC)
