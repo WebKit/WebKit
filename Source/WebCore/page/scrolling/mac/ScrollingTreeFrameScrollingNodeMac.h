@@ -61,7 +61,7 @@ protected:
     unsigned exposedUnfilledArea() const;
 
 private:
-    FloatPoint adjustedScrollPosition(const FloatPoint&, ScrollPositionClamp) const override;
+    FloatPoint adjustedScrollPosition(const FloatPoint&, ScrollClamping) const override;
 
     void currentScrollPositionChanged() override;
     void repositionScrollingLayers() override;

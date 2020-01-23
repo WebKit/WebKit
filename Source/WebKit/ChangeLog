@@ -391,6 +391,44 @@
         * WebProcess/Cache/WebCacheStorageConnection.cpp:
         (WebKit::WebCacheStorageConnection::updateQuotaBasedOnSpaceUsage):
 
+2020-01-22  Simon Fraser  <simon.fraser@apple.com>
+
+        Fixed elements no longer stay fixed with elastic overscroll
+        https://bugs.webkit.org/show_bug.cgi?id=206227
+        rdar://problem/58707084
+
+        Reviewed by Antti Koivisto.
+
+        Intended behavior on iOS and macOS is for position:fixed and sticky elements to maintain
+        their position relative to the view bounds when rubber-banding ("overscrolling"). This broke
+        some time back. This change restores the correct behavior with the call to layoutViewportRespectingRubberBanding()
+        in ScrollingTreeFixedNode::applyLayerPositions() and ScrollingTreeStickyNode::computeLayerPosition().
+        layoutViewportRespectingRubberBanding() computes a layout viewport without clamping.
+
+        The rest of the changes are to support testing. internals.unconstrainedScrollTo()
+        didn't work for main frame scrolling because of scroll position clamping in various places,
+        so propagate ScrollClamping in more places (and replace the redundant ScrollPositionClamp with ScrollClamping).
+
+        "requested scroll position" updates now carry along both clamping and "is programmatic" data, wrapped in a struct
+        which is passed around the scrolling tree. This allows us to not clamp the scroll position (for testing) in more places.
+
+        * Shared/RemoteLayerTree/RemoteScrollingCoordinatorTransaction.cpp:
+        (ArgumentCoder<ScrollingStateScrollingNode>::encode):
+        (ArgumentCoder<ScrollingStateScrollingNode>::decode):
+        (ArgumentCoder<RequestedScrollData>::encode):
+        (ArgumentCoder<RequestedScrollData>::decode):
+        (WebKit::dump):
+        * UIProcess/RemoteLayerTree/RemoteScrollingCoordinatorProxy.cpp:
+        (WebKit::RemoteScrollingCoordinatorProxy::scrollingTreeNodeRequestsScroll):
+        * UIProcess/RemoteLayerTree/RemoteScrollingCoordinatorProxy.h:
+        * UIProcess/RemoteLayerTree/RemoteScrollingTree.cpp:
+        (WebKit::RemoteScrollingTree::scrollingTreeNodeRequestsScroll):
+        * UIProcess/RemoteLayerTree/RemoteScrollingTree.h:
+        * UIProcess/RemoteLayerTree/ios/ScrollingTreeFrameScrollingNodeRemoteIOS.mm:
+        (WebKit::ScrollingTreeFrameScrollingNodeRemoteIOS::commitStateAfterChildren):
+        * UIProcess/RemoteLayerTree/ios/ScrollingTreeScrollingNodeDelegateIOS.mm:
+        (WebKit::ScrollingTreeScrollingNodeDelegateIOS::commitStateAfterChildren):
+
 2020-01-21  Daniel Bates  <dabates@apple.com>
 
         Add Legacy WebKit SPI and WebKit IPI to show and hide placeholder

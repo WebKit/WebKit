@@ -1772,6 +1772,10 @@ ExceptionOr<void> Internals::unconstrainedScrollTo(Element& element, double x, d
         return Exception { InvalidAccessError };
 
     element.scrollTo({ x, y }, ScrollClamping::Unclamped);
+
+    auto& frameView = *document->view();
+    frameView.setViewportConstrainedObjectsNeedLayout();
+
     return { };
 }
 

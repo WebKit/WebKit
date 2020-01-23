@@ -107,8 +107,10 @@ void ScrollingTreeScrollingNode::commitStateBeforeChildren(const ScrollingStateN
 void ScrollingTreeScrollingNode::commitStateAfterChildren(const ScrollingStateNode& stateNode)
 {
     const ScrollingStateScrollingNode& scrollingStateNode = downcast<ScrollingStateScrollingNode>(stateNode);
-    if (scrollingStateNode.hasChangedProperty(ScrollingStateScrollingNode::RequestedScrollPosition))
-        scrollingTree().scrollingTreeNodeRequestsScroll(scrollingNodeID(), scrollingStateNode.requestedScrollPosition(), scrollingStateNode.requestedScrollPositionRepresentsProgrammaticScroll());
+    if (scrollingStateNode.hasChangedProperty(ScrollingStateScrollingNode::RequestedScrollPosition)) {
+        const auto& requestedScrollData = scrollingStateNode.requestedScrollData();
+        scrollingTree().scrollingTreeNodeRequestsScroll(scrollingNodeID(), requestedScrollData.scrollPosition, requestedScrollData.scrollType, requestedScrollData.clamping);
+    }
 
     m_isFirstCommit = false;
 }
@@ -144,20 +146,20 @@ bool ScrollingTreeScrollingNode::scrollLimitReached(const PlatformWheelEvent& wh
     return newScrollPosition == oldScrollPosition;
 }
 
-FloatPoint ScrollingTreeScrollingNode::adjustedScrollPosition(const FloatPoint& scrollPosition, ScrollPositionClamp clamp) const
+FloatPoint ScrollingTreeScrollingNode::adjustedScrollPosition(const FloatPoint& scrollPosition, ScrollClamping clamping) const
 {
-    if (clamp == ScrollPositionClamp::ToContentEdges)
+    if (clamping == ScrollClamping::Clamped)
         return clampScrollPosition(scrollPosition);
 
     return scrollPosition;
 }
 
-void ScrollingTreeScrollingNode::scrollBy(const FloatSize& delta, ScrollPositionClamp clamp)
+void ScrollingTreeScrollingNode::scrollBy(const FloatSize& delta, ScrollClamping clamp)
 {
     scrollTo(currentScrollPosition() + delta, ScrollType::User, clamp);
 }
 
-void ScrollingTreeScrollingNode::scrollTo(const FloatPoint& position, ScrollType scrollType, ScrollPositionClamp clamp)
+void ScrollingTreeScrollingNode::scrollTo(const FloatPoint& position, ScrollType scrollType, ScrollClamping clamp)
 {
     if (position == m_currentScrollPosition)
         return;
@@ -200,7 +202,7 @@ void ScrollingTreeScrollingNode::wasScrolledByDelegatedScrolling(const FloatPoin
     if (!scrollPositionChanged && scrollingLayerPositionAction != ScrollingLayerPositionAction::Set)
         return;
 
-    m_currentScrollPosition = adjustedScrollPosition(position, ScrollPositionClamp::None);
+    m_currentScrollPosition = adjustedScrollPosition(position, ScrollClamping::Unclamped);
     updateViewportForCurrentScrollPosition(overrideLayoutViewport);
 
     repositionRelatedLayers();

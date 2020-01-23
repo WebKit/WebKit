@@ -189,12 +189,25 @@
 
         * http/wpt/webauthn/public-key-credential-create-failure-local.https.html:
 
+2020-01-22  Simon Fraser  <simon.fraser@apple.com>
+
+        Fixed elements no longer stay fixed with elastic overscroll
+        https://bugs.webkit.org/show_bug.cgi?id=206227
+        rdar://problem/58707084
+
+        Reviewed by Antti Koivisto.
+
+        * tiled-drawing/scrolling/fixed/fixed-during-rubberband-expected.html: Added.
+        * tiled-drawing/scrolling/fixed/fixed-during-rubberband.html: Added.
+        * tiled-drawing/scrolling/sticky/sticky-during-rubberband-expected.html: Added.
+        * tiled-drawing/scrolling/sticky/sticky-during-rubberband.html: Added.
+
 2020-01-21  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r254807 and r254849.
         https://bugs.webkit.org/show_bug.cgi?id=206559
 
-        Broke page up/page down on macOW (Requested by smfr on
+        Broke page up/page down on macOS (Requested by smfr on
         #webkit).
 
         Reverted changesets:

@@ -227,7 +227,7 @@ void ScrollableArea::setScrollOffsetFromInternals(const ScrollOffset& offset)
 void ScrollableArea::setScrollOffsetFromAnimation(const ScrollOffset& offset)
 {
     ScrollPosition position = scrollPositionFromOffset(offset);
-    if (requestScrollPositionUpdate(position))
+    if (requestScrollPositionUpdate(position, currentScrollType()))
         return;
 
     scrollPositionChanged(position);

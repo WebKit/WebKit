@@ -98,7 +98,7 @@ private:
     WEBCORE_EXPORT void frameViewVisualViewportChanged(FrameView&) override;
     WEBCORE_EXPORT void frameViewEventTrackingRegionsChanged(FrameView&) override;
 
-    WEBCORE_EXPORT bool requestScrollPositionUpdate(ScrollableArea&, const IntPoint&) override;
+    WEBCORE_EXPORT bool requestScrollPositionUpdate(ScrollableArea&, const IntPoint&, ScrollType, ScrollClamping) override;
 
     WEBCORE_EXPORT void applyScrollingTreeLayerPositions() override;
 

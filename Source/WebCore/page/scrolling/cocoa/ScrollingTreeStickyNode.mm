@@ -73,7 +73,7 @@ FloatPoint ScrollingTreeStickyNode::computeLayerPosition() const
         FloatRect constrainingRect;
         if (is<ScrollingTreeFrameScrollingNode>(scrollingNode)) {
             auto& frameScrollingNode = downcast<ScrollingTreeFrameScrollingNode>(scrollingNode);
-            constrainingRect = frameScrollingNode.layoutViewport();
+            constrainingRect = frameScrollingNode.layoutViewportRespectingRubberBanding();
         } else {
             auto& overflowScrollingNode = downcast<ScrollingTreeOverflowScrollingNode>(scrollingNode);
             constrainingRect = FloatRect(overflowScrollingNode.currentScrollPosition(), m_constraints.constrainingRectAtLastLayout().size());

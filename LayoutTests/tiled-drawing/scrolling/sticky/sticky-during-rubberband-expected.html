@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <style>
+        body {
+            height: 2000px;
+            margin: 0;
+        }
+        
+        .sticky-container {
+            border: 1px solid black;
+            height: 400px;
+            width: 80%;
+            margin-top: -10px;
+        }
+
+        .sticky {
+            position: relative;
+            top: 0px;
+            height: 200px;
+            width: 100%;
+            background-color: green;
+        }
+    </style>
+    <script>
+        window.addEventListener('load', () => {
+            internals.unconstrainedScrollTo(document.scrollingElement, 0, -10);
+        }, false);
+    </script>
+</head>
+<body>
+
+<div class="sticky-container">
+    <div class="sticky"></div>    
+</div>
+
+</body>
+</html>
