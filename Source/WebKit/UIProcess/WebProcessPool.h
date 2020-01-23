@@ -326,6 +326,7 @@ public:
     void sendNetworkProcessWillSuspendImminentlyForTesting();
     void sendNetworkProcessDidResume();
     void terminateServiceWorkers();
+    void terminateServiceWorkerProcess(const WebCore::RegistrableDomain&, const PAL::SessionID&);
 
     void syncNetworkProcessCookies();
     void syncLocalStorage(CompletionHandler<void()>&& callback);
