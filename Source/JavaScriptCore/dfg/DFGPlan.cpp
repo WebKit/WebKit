@@ -160,7 +160,7 @@ bool Plan::computeCompileTimes() const
 {
     return reportCompileTimes()
         || Options::reportTotalCompileTimes()
-        || unnukedVM()->m_perBytecodeProfiler;
+        || (m_vm && m_vm->m_perBytecodeProfiler);
 }
 
 bool Plan::reportCompileTimes() const
@@ -707,11 +707,7 @@ void Plan::cancel()
 {
     RELEASE_ASSERT(m_stage != Cancelled);
     ASSERT(m_vm);
-
-    // Nuke the VM pointer so that pointer comparisons against it will fail.
-    // We rely on VM pointer comparison in many places to filter out Cancelled
-    // plans.
-    m_vm = nuke(m_vm);
+    m_vm = nullptr;
 
     m_codeBlock = nullptr;
     m_profiledDFGCodeBlock = nullptr;

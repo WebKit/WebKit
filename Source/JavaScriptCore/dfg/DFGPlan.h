@@ -82,7 +82,6 @@ public:
     void cleanMustHandleValuesIfNecessary();
 
     VM* vm() const { return m_vm; }
-    VM* unnukedVM() const { return unnuke(m_vm); }
 
     CodeBlock* codeBlock() { return m_codeBlock; }
 
@@ -129,14 +128,6 @@ private:
 
     // Warning: pretty much all of the pointer fields in this object get nulled by cancel(). So, if
     // you're writing code that is callable on the cancel path, be sure to null check everything!
-
-#if CPU(ADDRESS64)
-    static constexpr uintptr_t s_nukeBit = 1ull << 63;
-#else
-    static constexpr uintptr_t s_nukeBit = 1ull;
-#endif
-    static VM* nuke(VM* vm) { return bitwise_cast<VM*>(bitwise_cast<uintptr_t>(vm) | s_nukeBit); }
-    static VM* unnuke(VM* vm) { return bitwise_cast<VM*>(bitwise_cast<uintptr_t>(vm) & ~s_nukeBit); }
 
     CompilationMode m_mode;
 

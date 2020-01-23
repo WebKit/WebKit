@@ -1,3 +1,40 @@
+2020-01-22  Mark Lam  <mark.lam@apple.com>
+
+        Restore nullification of DFG::Plan::m_vm when the plan is cancelled.
+        https://bugs.webkit.org/show_bug.cgi?id=206633
+        <rdar://problem/58811967>
+
+        Reviewed by Robin Morisset.
+
+        In r253243, I replaced the nullification of Plan::m_vm in Plan::cancel() with
+        code to decorate the m_vm pointer with a nuke bit.  The thinking is that keeping
+        the VM pointer in nuked form allows us to do certain assertions, as well as
+        implementing code in support of keeping Box<Identifier>s alive.  It is only
+        correct to use the nuked VM pointer if and only if the VM is guaranteed to
+        outlive the Plan.  r253243 guarantees this condition.
+
+        In r254464, I replaced the use of Box<Identifier> with CacheableIdentifier.
+        This obviated all the support code added above, and rolled out most of it.
+        However, I opted to keep the nuked VM pointer in the DFG::Plan to as a debugging
+        aid (it's nice to be able to know which VM the Plan came from).
+
+        However, r254464 also undid the guarantee that the VM will outlive the Plan.
+        As a result, a nuked VM pointer is no longer guaranteed to point to a valid VM.
+        Some worker layout tests, run on an ASAN build, detected that the pointer is
+        pointing to an already freed VM and failed with a crash.
+
+        This patch fixes this issue by completely reverting the nuked VM pointer code,
+        and restores nullification of the m_vm pointer in Plan::cancel().
+
+        * dfg/DFGPlan.cpp:
+        (JSC::DFG::Plan::computeCompileTimes const):
+        (JSC::DFG::Plan::cancel):
+        * dfg/DFGPlan.h:
+        (JSC::DFG::Plan::vm const):
+        (JSC::DFG::Plan::unnukedVM const): Deleted.
+        (JSC::DFG::Plan::nuke): Deleted.
+        (JSC::DFG::Plan::unnuke): Deleted.
+
 2020-01-22  Keith Miller  <keith_miller@apple.com>
 
         Remove DFGAbstractHeap::typeInfoType since it's immutable
