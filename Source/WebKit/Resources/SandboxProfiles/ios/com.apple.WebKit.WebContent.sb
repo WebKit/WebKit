@@ -121,8 +121,9 @@
         (mobile-preferences-read "com.apple.MobileAsset")))
 
 (define-once (mobile-keybag-access)
-     (allow iokit-open (with report) (with telemetry)
-            (iokit-user-client-class "AppleKeyStoreUserClient")))
+    (allow iokit-open (with telemetry)
+        (iokit-user-client-class "AppleKeyStoreUserClient")  ;; Needed by NSURLCache
+))
 
 (define-once (location-services)
     (allow-carrier-bundle) ;; <rdar://problem/21192365>
@@ -800,7 +801,7 @@
 (deny sysctl*)
 (allow sysctl-read
     (sysctl-name
-        "hw.activecpu"
+        "hw.activecpu" ;; Needed by JSC engine.
         "hw.availcpu"
         "hw.cachelinesize"
         "hw.cpufamily" ;; <rdar://problem/58416475>

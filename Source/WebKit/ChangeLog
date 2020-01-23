@@ -1,3 +1,20 @@
+2020-01-23  Brent Fulgham  <bfulgham@apple.com>
+
+        Stop capturing telemetry for well-understood sandbox rules (206562)
+        https://bugs.webkit.org/show_bug.cgi?id=206562
+        <rdar://problem/58778970>
+
+        Reviewed by Per Arne Vollan.
+
+        Remove logging of sandbox rules that are now understood, and either confirmed to be needed for proper WebKit operation
+        or identified for removal through a future update.
+
+        No new tests. No change in behavior.
+
+        * NetworkProcess/mac/com.apple.WebKit.NetworkProcess.sb.in:
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.Networking.sb:
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+
 2020-01-23  Alexander Mikhaylenko  <alexm@gnome.org>
 
         [GTK] Navigation gesture creates CSS nodes and doesn't remove them
