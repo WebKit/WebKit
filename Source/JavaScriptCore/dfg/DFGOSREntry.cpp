@@ -28,6 +28,7 @@
 
 #if ENABLE(DFG_JIT)
 
+#include "BytecodeStructs.h"
 #include "CallFrame.h"
 #include "CodeBlock.h"
 #include "DFGJITCode.h"

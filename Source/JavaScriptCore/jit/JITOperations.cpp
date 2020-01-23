@@ -31,7 +31,7 @@
 #include "ArithProfile.h"
 #include "ArrayConstructor.h"
 #include "CacheableIdentifierInlines.h"
-#include "CommonSlowPaths.h"
+#include "CommonSlowPathsInlines.h"
 #include "DFGCompilationMode.h"
 #include "DFGDriver.h"
 #include "DFGOSREntry.h"

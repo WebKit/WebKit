@@ -26,6 +26,7 @@
 #pragma once
 
 #if ENABLE(JIT)
+#include "CommonSlowPathsInlines.h"
 #include "JSCInlines.h"
 
 namespace JSC {

@@ -68,6 +68,10 @@ namespace JSC {
     struct SimpleJumpTable;
     struct StringJumpTable;
 
+    struct OpPutByVal;
+    struct OpPutByValDirect;
+    struct OpPutToScope;
+
     struct CallRecord {
         MacroAssembler::Call from;
         BytecodeIndex bytecodeIndex;

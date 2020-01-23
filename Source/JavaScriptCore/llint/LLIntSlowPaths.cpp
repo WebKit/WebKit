@@ -30,7 +30,7 @@
 #include "BytecodeGenerator.h"
 #include "CallFrame.h"
 #include "CheckpointOSRExitSideState.h"
-#include "CommonSlowPaths.h"
+#include "CommonSlowPathsInlines.h"
 #include "Error.h"
 #include "ErrorHandlingScope.h"
 #include "EvalCodeBlock.h"

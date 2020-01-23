@@ -28,6 +28,7 @@
 
 #if ENABLE(WEBASSEMBLY)
 
+#include "BytecodeStructs.h"
 #include "ExceptionFuzz.h"
 #include "FrameTracers.h"
 #include "LLIntData.h"
