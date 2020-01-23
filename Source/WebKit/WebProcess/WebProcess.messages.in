@@ -164,4 +164,9 @@ messages -> WebProcess LegacyReceiver NotRefCounted {
     SeedResourceLoadStatisticsForTesting(WebCore::RegistrableDomain firstPartyDomain, WebCore::RegistrableDomain thirdPartyDomain, bool shouldScheduleNotification) -> () Async
     SetShouldBlockThirdPartyCookiesForTesting(enum:uint8_t WebCore::ThirdPartyCookieBlockingMode blockingMode) -> () Async
 #endif
+
+#if PLATFORM(IOS)
+    GrantAccessToAssetServices(WebKit::SandboxExtension::Handle mobileAssetHandle, WebKit::SandboxExtension::Handle mobileAssetV2Handle)
+    RevokeAccessToAssetServices()
+#endif
 }

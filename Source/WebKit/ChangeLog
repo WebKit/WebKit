@@ -1,5 +1,32 @@
 2020-01-23  Per Arne Vollan  <pvollan@apple.com>
 
+        [iOS] Make it possible for WebKit clients to enable connections to asset services in the WebContent process
+        https://bugs.webkit.org/show_bug.cgi?id=206551
+
+        Reviewed by Brent Fulgham.
+
+        Add SPI to grant and revoke access to asset services in the WebContent process.
+
+        No new tests, since this should have an API test, but API tests are not running on iOS devices. We could
+        create an API test for simulator, but the simulator has no sandbox.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+        * UIProcess/API/ios/WKWebViewIOS.mm:
+        (-[WKWebView _grantAccessToAssetServices]):
+        (-[WKWebView _revokeAccessToAssetServices]):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::grantAccessToAssetServices):
+        (WebKit::WebPageProxy::revokeAccessToAssetServices):
+        * WebProcess/WebProcess.h:
+        * WebProcess/WebProcess.messages.in:
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::grantAccessToAssetServices):
+        (WebKit::WebProcess::revokeAccessToAssetServices):
+
+2020-01-23  Per Arne Vollan  <pvollan@apple.com>
+
         [iOS] Camera is lost during WebRTC demo
         https://bugs.webkit.org/show_bug.cgi?id=206613
         <rdar://problem/58764572>
