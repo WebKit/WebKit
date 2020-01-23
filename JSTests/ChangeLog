@@ -1,3 +1,13 @@
+2020-01-22  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Bits from Operand should fit in bits reserved in AbstractHeap's Payload
+        https://bugs.webkit.org/show_bug.cgi?id=206619
+        <rdar://problem/58270260>
+
+        Reviewed by Keith Miller.
+
+        * stress/operand-should-fit-in-abstract-heap-encoded-payload-format.js: Added.
+
 2020-01-22  Keith Miller  <keith_miller@apple.com>
 
         InternalField and CheckNeutered DFG nodes are not always safe to execute

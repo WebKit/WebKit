@@ -1,3 +1,26 @@
+2020-01-22  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Bits from Operand should fit in bits reserved in AbstractHeap's Payload
+        https://bugs.webkit.org/show_bug.cgi?id=206619
+        <rdar://problem/58270260>
+
+        Reviewed by Keith Miller.
+
+        We extended JSC::Operand to have an additional field representing OperandKind.
+        However, we have restriction in DFG::AbstractHeap's Payload that Operand's raw
+        bits format need to fit in reserved bits in Payload's raw bits format, 49 bits.
+        Since we ordered fields of Operand "m_kind" and "m_operand", in little endian
+        architecture, raw bits format of Operand can exceed 49 bits if m_operand is
+        large enough.
+
+        This patch fixes the order to ensure that Operand's raw bit format always fits
+        in 49 bits.
+
+        * bytecode/Operands.h:
+        (JSC::Operand::Operand):
+        (JSC::Operand::asBits const):
+        * dfg/DFGAbstractHeap.h:
+
 2020-01-22  Mark Lam  <mark.lam@apple.com>
 
         Restore nullification of DFG::Plan::m_vm when the plan is cancelled.

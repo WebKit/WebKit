@@ -38,21 +38,29 @@ template<typename T> struct OperandValueTraits;
 constexpr unsigned maxNumCheckpointTmps = 4;
 
 // A OperandKind::Tmp is one that exists for exiting to a checkpoint but does not exist between bytecodes.
-enum class OperandKind { Argument, Local, Tmp };
+enum class OperandKind : uint32_t { Argument, Local, Tmp }; // Keep bit-width in sync with Operand::operandKindBits' definition.
+static constexpr OperandKind lastOperandKind = OperandKind::Tmp;
 
 class Operand {
 public:
+    static constexpr unsigned kindBits = WTF::getMSBSetConstexpr(static_cast<std::underlying_type_t<OperandKind>>(lastOperandKind));
+    static constexpr unsigned maxBits = 32 + kindBits;
+
     Operand() = default;
     Operand(const Operand&) = default;
 
     Operand(VirtualRegister operand)
-        : m_kind(operand.isLocal() ? OperandKind::Local : OperandKind::Argument)
-        , m_operand(operand.offset())
+        : Operand(operand.isLocal() ? OperandKind::Local : OperandKind::Argument, operand.offset())
     { }
 
     Operand(OperandKind kind, int operand)
+#if CPU(LITTLE_ENDIAN)
+        : m_operand(operand)
+        , m_kind(kind)
+#else
         : m_kind(kind)
         , m_operand(operand)
+#endif
     { 
         ASSERT(kind == OperandKind::Tmp || VirtualRegister(operand).isLocal() == (kind == OperandKind::Local));
     }
@@ -65,7 +73,12 @@ public:
         ASSERT(m_kind != OperandKind::Tmp);
         return VirtualRegister(m_operand);
     }
-    uint64_t asBits() const { return bitwise_cast<uint64_t>(*this); }
+    uint64_t asBits() const
+    {
+        uint64_t bits = bitwise_cast<uint64_t>(*this);
+        ASSERT(bits < (1ULL << maxBits));
+        return bits;
+    }
     static Operand fromBits(uint64_t value);
 
     bool isTmp() const { return kind() == OperandKind::Tmp; }
@@ -84,8 +97,13 @@ public:
     void dump(PrintStream&) const;
 
 private:
+#if CPU(LITTLE_ENDIAN)
+    int m_operand { VirtualRegister::invalidVirtualRegister };
+    OperandKind m_kind { OperandKind::Argument };
+#else
     OperandKind m_kind { OperandKind::Argument };
     int m_operand { VirtualRegister::invalidVirtualRegister };
+#endif
 };
 
 ALWAYS_INLINE bool Operand::operator==(const Operand& other) const
