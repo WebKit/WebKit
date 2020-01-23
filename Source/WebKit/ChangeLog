@@ -1,5 +1,46 @@
 2020-01-23  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r254874. rdar://problem/58816330
+
+    macCatalyst: Two-finger click is dispatched to DOM as left click
+    https://bugs.webkit.org/show_bug.cgi?id=206549
+    
+    Reviewed by Simon Fraser.
+    
+    * UIProcess/ios/WKMouseGestureRecognizer.mm:
+    (-[WKMouseGestureRecognizer createMouseEventWithType:forEvent:]):
+    (-[WKMouseGestureRecognizer touchesBegan:withEvent:]):
+    (-[WKMouseGestureRecognizer touchesMoved:withEvent:]):
+    (-[WKMouseGestureRecognizer touchesEnded:withEvent:]):
+    (-[WKMouseGestureRecognizer _hoverEntered:withEvent:]):
+    (-[WKMouseGestureRecognizer _hoverMoved:withEvent:]):
+    (-[WKMouseGestureRecognizer _hoverExited:withEvent:]):
+    (-[WKMouseGestureRecognizer createMouseEventWithType:]): Deleted.
+    We correctly say button=2 for ctrl-click, but not for secondary-button click.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@254874 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-01-21  Tim Horton  <timothy_horton@apple.com>
+
+            macCatalyst: Two-finger click is dispatched to DOM as left click
+            https://bugs.webkit.org/show_bug.cgi?id=206549
+
+            Reviewed by Simon Fraser.
+
+            * UIProcess/ios/WKMouseGestureRecognizer.mm:
+            (-[WKMouseGestureRecognizer createMouseEventWithType:forEvent:]):
+            (-[WKMouseGestureRecognizer touchesBegan:withEvent:]):
+            (-[WKMouseGestureRecognizer touchesMoved:withEvent:]):
+            (-[WKMouseGestureRecognizer touchesEnded:withEvent:]):
+            (-[WKMouseGestureRecognizer _hoverEntered:withEvent:]):
+            (-[WKMouseGestureRecognizer _hoverMoved:withEvent:]):
+            (-[WKMouseGestureRecognizer _hoverExited:withEvent:]):
+            (-[WKMouseGestureRecognizer createMouseEventWithType:]): Deleted.
+            We correctly say button=2 for ctrl-click, but not for secondary-button click.
+
+2020-01-23  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r254711. rdar://problem/58816343
 
     Regression(r253224) No longer able to prevent a tab from closing via the beforeunload prompt
