@@ -188,6 +188,11 @@ DecodeOrderSampleMap::iterator DecodeOrderSampleMap::findSampleWithDecodeKey(con
     return m_samples.find(key);
 }
 
+DecodeOrderSampleMap::iterator DecodeOrderSampleMap::findSampleAfterDecodeKey(const KeyType& key)
+{
+    return m_samples.upper_bound(key);
+}
+
 PresentationOrderSampleMap::reverse_iterator PresentationOrderSampleMap::reverseFindSampleContainingPresentationTime(const MediaTime& time)
 {
     auto range = std::equal_range(rbegin(), rend(), time, SampleIsGreaterThanMediaTimeComparator<MapType>());
