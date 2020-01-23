@@ -31,6 +31,7 @@
 
 #include "CachedRawResourceClient.h"
 #include "CachedResourceHandle.h"
+#include "ContentFilterClient.h"
 #include "ContentSecurityPolicyClient.h"
 #include "DeviceOrientationOrMotionPermissionState.h"
 #include "DocumentIdentifier.h"
@@ -142,6 +143,9 @@ class DocumentLoader
     : public RefCounted<DocumentLoader>
     , public FrameDestructionObserver
     , public ContentSecurityPolicyClient
+#if ENABLE(CONTENT_FILTERING)
+    , public ContentFilterClient
+#endif
     , private CachedRawResourceClient {
     WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(DocumentLoader);
     friend class ContentFilter;
@@ -366,7 +370,9 @@ public:
     ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicyToPropagate() const;
 
 #if ENABLE(CONTENT_FILTERING)
-    ContentFilter* contentFilter() const;
+    ContentFilter* contentFilter() const { return m_contentFilter.get(); }
+    void ref() const final { RefCounted<DocumentLoader>::ref(); }
+    void deref() const final { RefCounted<DocumentLoader>::deref(); }
 #endif
 
     bool isAlwaysOnLoggingAllowed() const;
@@ -444,6 +450,15 @@ private:
 #endif
 
     void responseReceived(const ResourceResponse&, CompletionHandler<void()>&&);
+
+#if ENABLE(CONTENT_FILTERING)
+    // ContentFilterClient
+    WEBCORE_EXPORT void dataReceivedThroughContentFilter(const char*, int) final;
+    WEBCORE_EXPORT ResourceError contentFilterDidBlock(ContentFilterUnblockHandler, String&& unblockRequestDeniedScript) final;
+    WEBCORE_EXPORT void cancelMainResourceLoadForContentFilter(const ResourceError&) final;
+    WEBCORE_EXPORT void handleProvisionalLoadFailureFromContentFilter(const URL& blockedPageURL, SubstituteData&) final;
+#endif
+
     void dataReceived(const char* data, int length);
 
     bool maybeLoadEmpty();
@@ -701,15 +716,6 @@ inline ApplicationCacheHost* DocumentLoader::applicationCacheHostUnlessBeingDest
 {
     return m_applicationCacheHost.get();
 }
-
-#if ENABLE(CONTENT_FILTERING)
-
-inline ContentFilter* DocumentLoader::contentFilter() const
-{
-    return m_contentFilter.get();
-}
-
-#endif
 
 inline void DocumentLoader::didTellClientAboutLoad(const String& url)
 {

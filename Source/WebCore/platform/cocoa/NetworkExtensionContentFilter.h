@@ -30,6 +30,7 @@
 #include <wtf/Compiler.h>
 #include <wtf/OSObjectPtr.h>
 #include <wtf/RetainPtr.h>
+#include <wtf/UniqueRef.h>
 
 enum NEFilterSourceStatus : NSInteger;
 
@@ -39,10 +40,10 @@ OBJC_CLASS NSData;
 namespace WebCore {
 
 class NetworkExtensionContentFilter final : public PlatformContentFilter {
-    friend std::unique_ptr<NetworkExtensionContentFilter> std::make_unique<NetworkExtensionContentFilter>();
+    friend UniqueRef<NetworkExtensionContentFilter> WTF::makeUniqueRefWithoutFastMallocCheck<NetworkExtensionContentFilter>();
 
 public:
-    static std::unique_ptr<NetworkExtensionContentFilter> create();
+    static UniqueRef<NetworkExtensionContentFilter> create();
 
     void willSendRequest(ResourceRequest&, const ResourceResponse&) override;
     void responseReceived(const ResourceResponse&) override;

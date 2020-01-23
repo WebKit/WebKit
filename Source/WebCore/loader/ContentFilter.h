@@ -32,10 +32,12 @@
 #include "ResourceError.h"
 #include <functional>
 #include <wtf/Forward.h>
+#include <wtf/UniqueRef.h>
 
 namespace WebCore {
 
 class CachedRawResource;
+class ContentFilterClient;
 class DocumentLoader;
 class ResourceRequest;
 class ResourceResponse;
@@ -48,7 +50,7 @@ class ContentFilter {
 public:
     template <typename T> static void addType() { types().append(type<T>()); }
 
-    static std::unique_ptr<ContentFilter> create(DocumentLoader&);
+    static std::unique_ptr<ContentFilter> create(ContentFilterClient&);
     ~ContentFilter();
 
     static const char* urlScheme() { return "x-apple-content-filter"; }
@@ -69,23 +71,23 @@ private:
     using State = PlatformContentFilter::State;
 
     struct Type {
-        const std::function<std::unique_ptr<PlatformContentFilter>()> create;
+        Function<UniqueRef<PlatformContentFilter>()> create;
     };
     template <typename T> static Type type();
     WEBCORE_EXPORT static Vector<Type>& types();
 
-    using Container = Vector<std::unique_ptr<PlatformContentFilter>>;
-    friend std::unique_ptr<ContentFilter> std::make_unique<ContentFilter>(Container&&, DocumentLoader&);
-    ContentFilter(Container&&, DocumentLoader&);
+    using Container = Vector<UniqueRef<PlatformContentFilter>>;
+    friend std::unique_ptr<ContentFilter> std::make_unique<ContentFilter>(Container&&, ContentFilterClient&);
+    ContentFilter(Container&&, ContentFilterClient&);
 
     template <typename Function> void forEachContentFilterUntilBlocked(Function&&);
     void didDecide(State);
     void deliverResourceData(CachedResource&);
 
-    const Container m_contentFilters;
-    DocumentLoader& m_documentLoader;
+    Container m_contentFilters;
+    ContentFilterClient& m_client;
     CachedResourceHandle<CachedRawResource> m_mainResource;
-    PlatformContentFilter* m_blockingContentFilter { nullptr };
+    const PlatformContentFilter* m_blockingContentFilter { nullptr };
     State m_state { State::Stopped };
     ResourceError m_blockedError;
     bool m_isLoadingBlockedPage { false };

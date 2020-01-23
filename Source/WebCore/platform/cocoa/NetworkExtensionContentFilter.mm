@@ -71,9 +71,9 @@ bool NetworkExtensionContentFilter::enabled()
     return enabled;
 }
 
-std::unique_ptr<NetworkExtensionContentFilter> NetworkExtensionContentFilter::create()
+UniqueRef<NetworkExtensionContentFilter> NetworkExtensionContentFilter::create()
 {
-    return makeUnique<NetworkExtensionContentFilter>();
+    return makeUniqueRef<NetworkExtensionContentFilter>();
 }
 
 void NetworkExtensionContentFilter::initialize(const URL* url)

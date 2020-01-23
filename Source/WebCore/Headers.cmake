@@ -689,6 +689,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
 
     loader/AdClickAttribution.h
     loader/CanvasActivityRecord.h
+    loader/ContentFilterClient.h
     loader/CookieJar.h
     loader/CrossOriginAccessControl.h
     loader/CrossOriginPreflightResultCache.h

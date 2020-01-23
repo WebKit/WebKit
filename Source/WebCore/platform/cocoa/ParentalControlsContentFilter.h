@@ -28,6 +28,7 @@
 #include "PlatformContentFilter.h"
 #include <wtf/Compiler.h>
 #include <wtf/RetainPtr.h>
+#include <wtf/UniqueRef.h>
 
 OBJC_CLASS NSData;
 OBJC_CLASS WebFilterEvaluator;
@@ -35,10 +36,10 @@ OBJC_CLASS WebFilterEvaluator;
 namespace WebCore {
 
 class ParentalControlsContentFilter final : public PlatformContentFilter {
-    friend std::unique_ptr<ParentalControlsContentFilter> std::make_unique<ParentalControlsContentFilter>();
+    friend UniqueRef<ParentalControlsContentFilter> WTF::makeUniqueRefWithoutFastMallocCheck<ParentalControlsContentFilter>();
 
 public:
-    static std::unique_ptr<ParentalControlsContentFilter> create();
+    static UniqueRef<ParentalControlsContentFilter> create();
 
     void willSendRequest(ResourceRequest&, const ResourceResponse&) override { }
     void responseReceived(const ResourceResponse&) override;

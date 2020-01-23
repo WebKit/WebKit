@@ -62,9 +62,9 @@ bool MockContentFilter::enabled()
     return enabled;
 }
 
-std::unique_ptr<MockContentFilter> MockContentFilter::create()
+UniqueRef<MockContentFilter> MockContentFilter::create()
 {
-    return makeUnique<MockContentFilter>();
+    return makeUniqueRef<MockContentFilter>();
 }
 
 void MockContentFilter::willSendRequest(ResourceRequest& request, const ResourceResponse& redirectResponse)
