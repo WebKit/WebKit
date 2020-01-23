@@ -109,6 +109,8 @@ public:
 
     bool isBlockLevelBox() const;
     bool isInlineLevelBox() const;
+    bool isInlineBox() const;
+    bool isAtomicInlineLevelBox() const;
     bool isInlineBlockBox() const;
     bool isBlockContainerBox() const;
     bool isInitialContainingBlock() const;
@@ -142,8 +144,6 @@ public:
     Box* nextSibling() { return m_nextSibling; }
 
     bool isContainer() const { return m_baseTypeFlags & ContainerFlag; }
-    bool isBlockContainer() const { return isBlockLevelBox() && isContainer(); }
-    bool isInlineContainer() const { return isInlineLevelBox() && isContainer(); }
 
     bool isPaddingApplicable() const;
     bool isOverflowVisible() const;

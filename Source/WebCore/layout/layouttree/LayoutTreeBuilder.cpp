@@ -385,10 +385,10 @@ static void outputLayoutBox(TextStream& stream, const Box& layoutBox, const Disp
     else if (layoutBox.isTableRow())
         stream << "TR";
     else if (layoutBox.isInlineBlockBox())
-        stream << "Inline-block container";
+        stream << "Inline-block";
     else if (layoutBox.isInlineLevelBox()) {
-        if (layoutBox.isInlineContainer())
-            stream << "SPAN inline container";
+        if (layoutBox.isInlineBox())
+            stream << "SPAN inline box";
         else if (layoutBox.replaced())
             stream << "IMG replaced inline box";
         else if (layoutBox.isAnonymous())
@@ -396,7 +396,7 @@ static void outputLayoutBox(TextStream& stream, const Box& layoutBox, const Disp
         else if (layoutBox.isLineBreakBox())
             stream << "BR line break";
         else
-            stream << "inline box";
+            stream << "other inline level box";
     } else if (layoutBox.isBlockLevelBox())
         stream << "block box";
     else

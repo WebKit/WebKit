@@ -156,8 +156,8 @@ void InlineFormattingContext::layoutFormattingContextRoot(const Box& formattingC
 
 void InlineFormattingContext::computeHorizontalAndVerticalGeometry(const Box& layoutBox, const HorizontalConstraints& horizontalConstraints)
 {
-    if (is<Container>(layoutBox)) {
-        // Inline containers (<span>) can't get sized/positioned yet. At this point we can only compute their margins, borders and paddings.
+    if (layoutBox.isInlineBox() && !layoutBox.isAnonymous()) {
+        // Inline boxes (<span>) can't get sized/positioned yet. At this point we can only compute their margins, borders and paddings.
         computeHorizontalMargin(layoutBox, horizontalConstraints);
         computeBorderAndPadding(layoutBox, horizontalConstraints);
         // Inline containers have 0 computed vertical margins.
@@ -201,7 +201,7 @@ FormattingContext::IntrinsicWidthConstraints InlineFormattingContext::computedIn
         if (layoutBox->establishesFormattingContext()) {
             formattingContextRootList.append(layoutBox);
             computeIntrinsicWidthForFormattingRoot(*layoutBox, horizontalConstraints);
-        } else if (layoutBox->isReplaced() || is<Container>(*layoutBox)) {
+        } else if (layoutBox->isReplaced() || (layoutBox->isInlineBox() && !layoutBox->isAnonymous())) {
             computeBorderAndPadding(*layoutBox, horizontalConstraints);
             // inline-block and replaced.
             auto needsWidthComputation = layoutBox->isReplaced();
@@ -336,18 +336,15 @@ void InlineFormattingContext::collectInlineContentIfNeeded()
         return;
     // Traverse the tree and create inline items out of containers and leaf nodes. This essentially turns the tree inline structure into a flat one.
     // <span>text<span></span><img></span> -> [ContainerStart][InlineBox][ContainerStart][ContainerEnd][InlineBox][ContainerEnd]
+    ASSERT(root().hasInFlowOrFloatingChild());
     LayoutQueue layoutQueue;
-    if (root().hasInFlowOrFloatingChild())
-        layoutQueue.append(root().firstInFlowOrFloatingChild());
+    layoutQueue.append(root().firstInFlowOrFloatingChild());
     while (!layoutQueue.isEmpty()) {
-        auto treatAsInlineContainer = [](auto& layoutBox) {
-            return is<Container>(layoutBox) && !layoutBox.establishesFormattingContext();
-        };
         while (true) {
             auto& layoutBox = *layoutQueue.last();
-            if (!treatAsInlineContainer(layoutBox))
+            if (!layoutBox.isInlineBox() || layoutBox.isAnonymous())
                 break;
-            // This is the start of an inline container (e.g. <span>).
+            // This is the start of an inline box (e.g. <span>).
             formattingState.addInlineItem({ layoutBox, InlineItem::Type::ContainerStart });
             auto& container = downcast<Container>(layoutBox);
             if (!container.hasInFlowOrFloatingChild())
@@ -358,7 +355,7 @@ void InlineFormattingContext::collectInlineContentIfNeeded()
         while (!layoutQueue.isEmpty()) {
             auto& layoutBox = *layoutQueue.takeLast();
             // This is the end of an inline container (e.g. </span>).
-            if (treatAsInlineContainer(layoutBox))
+            if (layoutBox.isInlineBox() && !layoutBox.isAnonymous())
                 formattingState.addInlineItem({ layoutBox, InlineItem::Type::ContainerEnd });
             else if (layoutBox.isLineBreakBox())
                 formattingState.addInlineItem({ layoutBox, InlineItem::Type::HardLineBreak });
