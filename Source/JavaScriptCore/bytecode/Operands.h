@@ -43,8 +43,9 @@ static constexpr OperandKind lastOperandKind = OperandKind::Tmp;
 
 class Operand {
 public:
-    static constexpr unsigned kindBits = WTF::getMSBSetConstexpr(static_cast<std::underlying_type_t<OperandKind>>(lastOperandKind));
+    static constexpr unsigned kindBits = WTF::getMSBSetConstexpr(static_cast<std::underlying_type_t<OperandKind>>(lastOperandKind)) + 1;
     static constexpr unsigned maxBits = 32 + kindBits;
+    static_assert(maxBits == 34);
 
     Operand() = default;
     Operand(const Operand&) = default;
