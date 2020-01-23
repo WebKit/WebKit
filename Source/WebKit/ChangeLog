@@ -1,5 +1,92 @@
 2020-01-23  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r254487. rdar://problem/58606185
+
+    Reformat WebProcessPool logging
+    https://bugs.webkit.org/show_bug.cgi?id=205882
+    <rdar://problem/58384349>
+    
+    Reviewed by Brent Fulgham.
+    
+    Update the format used by WebProcessPool in its RELEASE_LOG logging.
+    Use the format used by WebPageProxy and NetworkResourceLoader, which
+    is generally of the form:
+    
+        <object-address> - [<values that help thread together operations>] <class>::<method>: <message and other useful values>
+    
+    So, for example:
+    
+        Using prewarmed process 0
+    
+    becomes:
+    
+        0x7f81e8804008 - WebProcessPool::processForRegistrableDomain: Using prewarmed process (process=0x1471c2a00, PID=64197)
+    
+    No new tests - no added or changed functionality.
+    
+    * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+    (WebKit::WebProcessPool::applicationIsAboutToSuspend):
+    * UIProcess/WebProcessPool.cpp:
+    (WebKit::WebProcessPool::establishWorkerContextConnectionToNetworkProcess):
+    (WebKit::WebProcessPool::tryTakePrewarmedProcess):
+    (WebKit::WebProcessPool::prewarmProcess):
+    (WebKit::WebProcessPool::processForRegistrableDomain):
+    (WebKit::WebProcessPool::didReachGoodTimeToPrewarm):
+    (WebKit::WebProcessPool::handleMemoryPressureWarning):
+    (WebKit::WebProcessPool::processForNavigation):
+    (WebKit::WebProcessPool::processForNavigationInternal):
+    (WebKit::WebProcessPool::setWebProcessHasUploads):
+    (WebKit::WebProcessPool::clearWebProcessHasUploads):
+    (WebKit::WebProcessPool::setWebProcessIsPlayingAudibleMedia):
+    (WebKit::WebProcessPool::clearWebProcessIsPlayingAudibleMedia):
+    (WebKit::WebProcessPool::setUseSeparateServiceWorkerProcess):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@254487 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-01-13  Keith Rollin  <krollin@apple.com>
+
+            Reformat WebProcessPool logging
+            https://bugs.webkit.org/show_bug.cgi?id=205882
+            <rdar://problem/58384349>
+
+            Reviewed by Brent Fulgham.
+
+            Update the format used by WebProcessPool in its RELEASE_LOG logging.
+            Use the format used by WebPageProxy and NetworkResourceLoader, which
+            is generally of the form:
+
+                <object-address> - [<values that help thread together operations>] <class>::<method>: <message and other useful values>
+
+            So, for example:
+
+                Using prewarmed process 0
+
+            becomes:
+
+                0x7f81e8804008 - WebProcessPool::processForRegistrableDomain: Using prewarmed process (process=0x1471c2a00, PID=64197)
+
+            No new tests - no added or changed functionality.
+
+            * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+            (WebKit::WebProcessPool::applicationIsAboutToSuspend):
+            * UIProcess/WebProcessPool.cpp:
+            (WebKit::WebProcessPool::establishWorkerContextConnectionToNetworkProcess):
+            (WebKit::WebProcessPool::tryTakePrewarmedProcess):
+            (WebKit::WebProcessPool::prewarmProcess):
+            (WebKit::WebProcessPool::processForRegistrableDomain):
+            (WebKit::WebProcessPool::didReachGoodTimeToPrewarm):
+            (WebKit::WebProcessPool::handleMemoryPressureWarning):
+            (WebKit::WebProcessPool::processForNavigation):
+            (WebKit::WebProcessPool::processForNavigationInternal):
+            (WebKit::WebProcessPool::setWebProcessHasUploads):
+            (WebKit::WebProcessPool::clearWebProcessHasUploads):
+            (WebKit::WebProcessPool::setWebProcessIsPlayingAudibleMedia):
+            (WebKit::WebProcessPool::clearWebProcessIsPlayingAudibleMedia):
+            (WebKit::WebProcessPool::setUseSeparateServiceWorkerProcess):
+
+2020-01-23  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r254296. rdar://problem/58606275
 
     Resource Load Statistics: Add timing information to WebPageProxy::logFrameNavigation() to detect delayed client-side redirects
