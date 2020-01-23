@@ -281,6 +281,7 @@ void ScriptModuleLoader::notifyFinished(CachedModuleScriptLoader& loader, RefPtr
 {
     // https://html.spec.whatwg.org/multipage/webappapis.html#fetch-a-single-module-script
 
+    URL sourceURL = loader.sourceURL();
     if (!m_loaders.remove(&loader))
         return;
     loader.clearClient();
@@ -317,7 +318,7 @@ void ScriptModuleLoader::notifyFinished(CachedModuleScriptLoader& loader, RefPtr
         }
     }
 
-    m_requestURLToResponseURLMap.add(cachedScript.url(), cachedScript.response().url());
+    m_requestURLToResponseURLMap.add(WTFMove(sourceURL), cachedScript.response().url());
     promise->resolveWithCallback([&] (JSDOMGlobalObject& jsGlobalObject) {
         return JSC::JSSourceCode::create(jsGlobalObject.vm(),
             JSC::SourceCode { ScriptSourceCode { &cachedScript, JSC::SourceProviderSourceType::Module, loader.scriptFetcher() }.jsSourceCode() });
