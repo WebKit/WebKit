@@ -348,15 +348,6 @@
     (allow file-read* file-write-data file-ioctl
            (literal "/dev/aes_0")))
 
-(define-once (awd-log-directory daemon-name)
-    (let*
-        ((base-directory (home-relative-path "/Library/Logs/awd")))
-        (allow-create-directory (literal base-directory))
-        (allow file-read* file-write*
-            (prefix (string-append base-directory "/awd-" daemon-name ".log")))
-        (allow mach-lookup (with report) (with telemetry)
-               (global-name "com.apple.awdd"))))
-
 (define-once (logd-diagnostic-paths)
     (require-any
         (subpath "/private/var/db/diagnostics")
@@ -915,9 +906,6 @@
 
 ;; Allow loading injected bundles.
 (allow file-map-executable)
-
-;; AWD logging
-(awd-log-directory "com.apple.WebKit.WebContent")
 
 ;; Allow ManagedPreference access
 (allow file-read* (literal "/private/var/Managed Preferences/mobile/com.apple.webcontentfilter.plist"))
