@@ -16,6 +16,10 @@ Registrable domain: localhost
     grandfathered: No
     storageAccessUnderTopFrameDomains:
         127.0.0.1
+    topFrameUniqueRedirectsTo:
+        127.0.0.1
+    topFrameUniqueRedirectsFrom:
+        127.0.0.1
     gotLinkDecorationFromPrevalentResource: No
     subframeUnderTopFrameDomains:
         127.0.0.1
@@ -26,8 +30,12 @@ Registrable domain: 127.0.0.1
     hadUserInteraction: Yes
     mostRecentUserInteraction: within 24 hours
     grandfathered: No
+    topFrameUniqueRedirectsTo:
+        localhost
+    topFrameUniqueRedirectsFrom:
+        localhost
     gotLinkDecorationFromPrevalentResource: No
-    isPrevalentResource: No
+    isPrevalentResource: Yes
     isVeryPrevalentResource: No
     dataRecordsRemoved: 0
 

@@ -171,7 +171,7 @@ public:
     virtual void requestStorageAccess(SubFrameDomain&&, TopFrameDomain&&, WebCore::FrameIdentifier, WebCore::PageIdentifier, CompletionHandler<void(StorageAccessStatus)>&&) = 0;
     virtual void grantStorageAccess(SubFrameDomain&&, TopFrameDomain&&, WebCore::FrameIdentifier, WebCore::PageIdentifier, WebCore::StorageAccessPromptWasShown, CompletionHandler<void(WebCore::StorageAccessWasGranted)>&&) = 0;
 
-    virtual void logFrameNavigation(const NavigatedToDomain&, const TopFrameDomain&, const NavigatedFromDomain&, bool isRedirect, bool isMainFrame) = 0;
+    virtual void logFrameNavigation(const NavigatedToDomain&, const TopFrameDomain&, const NavigatedFromDomain&, bool isRedirect, bool isMainFrame, Seconds delayAfterMainFrameDocumentLoad, bool wasPotentiallyInitiatedByUser) = 0;
     virtual void logUserInteraction(const TopFrameDomain&, CompletionHandler<void()>&&) = 0;
     virtual void logCrossSiteLoadWithLinkDecoration(const NavigatedFromDomain&, const NavigatedToDomain&) = 0;
 
@@ -222,6 +222,7 @@ protected:
         Seconds grandfatheringTime { 24_h * 7 };
         Seconds cacheMaxAgeCapTime { 24_h * 7 };
         Seconds clientSideCookiesAgeCapTime { 24_h * 7 };
+        Seconds minDelayAfterMainFrameDocumentLoadToNotBeARedirect { 5_s };
         bool shouldNotifyPagesWhenDataRecordsWereScanned { false };
         bool shouldClassifyResourcesBeforeDataRecordsRemoval { true };
         bool shouldSubmitTelemetry { true };
