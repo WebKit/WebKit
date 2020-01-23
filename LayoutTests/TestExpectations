@@ -338,7 +338,6 @@ imported/w3c/web-platform-tests/workers/WorkerLocation-origin.sub.window.html [ 
 imported/w3c/web-platform-tests/html/infrastructure/urls/resolving-urls/query-encoding/utf-16le.html [ Skip ]
 imported/w3c/web-platform-tests/html/infrastructure/urls/resolving-urls/query-encoding/utf-8.html [ Skip ]
 imported/w3c/web-platform-tests/html/browsers/browsing-the-web/history-traversal/browsing_context_name_cross_origin_2.html [ Skip ]
-imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/module/import-meta/import-meta-url.html [ Skip ]
 imported/w3c/web-platform-tests/html/browsers/offline/application-cache-api/api_update.https.html [ Skip ]
 imported/w3c/web-platform-tests/cors/image-tainting-in-cross-origin-iframe.sub.html [ Skip ]
 imported/w3c/web-platform-tests/dom/events/EventListener-incumbent-global-1.sub.html [ Skip ]
