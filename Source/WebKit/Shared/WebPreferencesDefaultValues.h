@@ -310,6 +310,7 @@ namespace WebKit {
 
 bool defaultPassiveTouchListenersAsDefaultOnDocument();
 bool defaultCSSOMViewScrollingAPIEnabled();
+bool defaultDisallowSyncXHRDuringPageDismissalEnabled();
 
 #if ENABLE(TEXT_AUTOSIZING)
 bool defaultTextAutosizingUsesIdempotentMode();
