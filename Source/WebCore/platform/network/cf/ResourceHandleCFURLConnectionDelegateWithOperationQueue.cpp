@@ -36,6 +36,7 @@
 #include "ResourceHandleClient.h"
 #include "ResourceResponse.h"
 #include "SharedBuffer.h"
+#include "SynchronousLoaderClient.h"
 #if !PLATFORM(WIN)
 #include "WebCoreURLResponse.h"
 #endif
@@ -48,9 +49,9 @@
 
 namespace WebCore {
 
-ResourceHandleCFURLConnectionDelegateWithOperationQueue::ResourceHandleCFURLConnectionDelegateWithOperationQueue(ResourceHandle* handle, MessageQueue<Function<void()>>* messageQueue)
+ResourceHandleCFURLConnectionDelegateWithOperationQueue::ResourceHandleCFURLConnectionDelegateWithOperationQueue(ResourceHandle* handle, RefPtr<SynchronousLoaderMessageQueue>&& messageQueue)
     : ResourceHandleCFURLConnectionDelegate(handle)
-    , m_messageQueue(messageQueue)
+    , m_messageQueue(WTFMove(messageQueue))
 {
 }
 
