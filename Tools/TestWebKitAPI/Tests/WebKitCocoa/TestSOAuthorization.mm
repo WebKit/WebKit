@@ -1016,6 +1016,39 @@ TEST(SOAuthorizationRedirect, InterceptionSucceedSAML)
     [webView waitForMessage:@"SAML"];
 }
 
+TEST(SOAuthorizationRedirect, InterceptionSucceedSAMLWithPSON)
+{
+    resetState();
+    ClassMethodSwizzler swizzler1(PAL::getSOAuthorizationClass(), @selector(canPerformAuthorizationWithURL:responseCode:), reinterpret_cast<IMP>(overrideCanPerformAuthorizationWithURL));
+    InstanceMethodSwizzler swizzler2(PAL::getSOAuthorizationClass(), @selector(setDelegate:), reinterpret_cast<IMP>(overrideSetDelegate));
+    InstanceMethodSwizzler swizzler3(PAL::getSOAuthorizationClass(), @selector(beginAuthorizationWithURL:httpHeaders:httpBody:), reinterpret_cast<IMP>(overrideBeginAuthorizationWithURL));
+
+    RetainPtr<NSURL> baseURL = [[NSBundle mainBundle] URLForResource:@"simple3" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
+    auto testURL = URL(URL(), "http://www.example.com");
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
+    auto delegate = adoptNS([[TestSOAuthorizationDelegate alloc] init]);
+    configureSOAuthorizationWebView(webView.get(), delegate.get(), OpenExternalSchemesPolicy::Allow);
+
+    [webView loadRequest:[NSURLRequest requestWithURL:baseURL.get()]];
+    Util::run(&navigationCompleted);
+
+    // PSON: file:/// => example.com
+    [webView loadRequest:[NSURLRequest requestWithURL:(NSURL *)testURL]];
+    Util::run(&authorizationPerformed);
+
+    navigationCompleted = false;
+    // Pass a HTTP 200 response with a html to mimic a SAML response.
+    auto response = adoptNS([[NSHTTPURLResponse alloc] initWithURL:(NSURL *)testURL statusCode:200 HTTPVersion:@"HTTP/1.1" headerFields:nil]);
+    [gDelegate authorization:gAuthorization didCompleteWithHTTPResponse:response.get() httpBody:adoptNS([[NSData alloc] initWithBytes:samlResponse length:strlen(samlResponse)]).get()];
+    Util::run(&navigationCompleted);
+
+    authorizationPerformed = false;
+    navigationPolicyDecided = false;
+    [webView _evaluateJavaScriptWithoutUserGesture:@"location = 'http://www.example.com'" completionHandler:nil];
+    Util::run(&navigationPolicyDecided);
+}
+
 TEST(SOAuthorizationRedirect, AuthorizationOptions)
 {
     resetState();
