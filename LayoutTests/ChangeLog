@@ -1,5 +1,70 @@
 2020-01-23  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r254652. rdar://problem/58811422
+
+    Regression(r253213) Load hang and high CPU usage when trying to load myuhc.com
+    https://bugs.webkit.org/show_bug.cgi?id=206315
+    <rdar://problem/58139842>
+    
+    Reviewed by Geoffrey Garen.
+    
+    Source/WebCore:
+    
+    Starting in r253213, we now throw when trying to do a sync XHR during unload. Unfortunately, this is confusing the script
+    on myuhc.com and it ends up retrying the sync XHR in a tight loop. To address the issue, I am putting in a safety net which
+    ignores calls to XMLHttpRequest.send() instead of throwing, once we've reached 5 sync XHR failures during unload.
+    
+    Throwing is useful because this gives a change for Web authors to fall back to using Beacon API or Fetch KeepAlive if the
+    sync XHR fails. There is already code out there doing just that. You could imagine content doing more than one sync XHR
+    during unload, each one with a good beacon API fallback. For this reason, I put in a limit of 5 sync failures before
+    we stop throwing. Having a limit is important to break bad loops when the content simply retries the same sync XHR load
+    when the sync XHR send() call throws.
+    
+    Tests: fast/xmlhttprequest/xmlhttprequest-multiple-sync-xhr-during-unload.html
+           fast/xmlhttprequest/xmlhttprequest-sync-xhr-failure-loop-during-unload.html
+    
+    * dom/Document.cpp:
+    (WebCore::Document::didRejectSyncXHRDuringPageDismissal):
+    (WebCore::Document::shouldIgnoreSyncXHRs const):
+    * dom/Document.h:
+    * loader/DocumentThreadableLoader.cpp:
+    (WebCore::DocumentThreadableLoader::DocumentThreadableLoader):
+    * xml/XMLHttpRequest.cpp:
+    (WebCore::XMLHttpRequest::prepareToSend):
+    
+    LayoutTests:
+    
+    Add layout test coverage.
+    
+    * fast/xmlhttprequest/resources/xmlhttprequest-multiple-sync-xhr-during-unload-iframe.html: Added.
+    * fast/xmlhttprequest/resources/xmlhttprequest-sync-xhr-failure-loop-during-unload-iframe.html: Added.
+    * fast/xmlhttprequest/xmlhttprequest-multiple-sync-xhr-during-unload-expected.txt: Added.
+    * fast/xmlhttprequest/xmlhttprequest-multiple-sync-xhr-during-unload.html: Added.
+    * fast/xmlhttprequest/xmlhttprequest-sync-xhr-failure-loop-during-unload-expected.txt: Added.
+    * fast/xmlhttprequest/xmlhttprequest-sync-xhr-failure-loop-during-unload.html: Added.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@254652 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-01-15  Chris Dumez  <cdumez@apple.com>
+
+            Regression(r253213) Load hang and high CPU usage when trying to load myuhc.com
+            https://bugs.webkit.org/show_bug.cgi?id=206315
+            <rdar://problem/58139842>
+
+            Reviewed by Geoffrey Garen.
+
+            Add layout test coverage.
+
+            * fast/xmlhttprequest/resources/xmlhttprequest-multiple-sync-xhr-during-unload-iframe.html: Added.
+            * fast/xmlhttprequest/resources/xmlhttprequest-sync-xhr-failure-loop-during-unload-iframe.html: Added.
+            * fast/xmlhttprequest/xmlhttprequest-multiple-sync-xhr-during-unload-expected.txt: Added.
+            * fast/xmlhttprequest/xmlhttprequest-multiple-sync-xhr-during-unload.html: Added.
+            * fast/xmlhttprequest/xmlhttprequest-sync-xhr-failure-loop-during-unload-expected.txt: Added.
+            * fast/xmlhttprequest/xmlhttprequest-sync-xhr-failure-loop-during-unload.html: Added.
+
+2020-01-23  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r254541. rdar://problem/58605951
 
     Supported mime types for encoding should be supported mime types for loading
