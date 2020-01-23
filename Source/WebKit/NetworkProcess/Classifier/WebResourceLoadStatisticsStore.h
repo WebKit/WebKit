@@ -287,6 +287,8 @@ struct ThirdPartyData {
     void resourceLoadStatisticsUpdated(Vector<WebCore::ResourceLoadStatistics>&&);
     void requestStorageAccessUnderOpener(DomainInNeedOfStorageAccess&&, WebCore::PageIdentifier openerID, OpenerDomain&&);
     void aggregatedThirdPartyData(CompletionHandler<void(Vector<WebResourceLoadStatisticsStore::ThirdPartyData>&&)>&&);
+    void suspend(CompletionHandler<void()>&&);
+    void resume();
 
 private:
     explicit WebResourceLoadStatisticsStore(NetworkSession&, const String&, ShouldIncludeLocalhost);
@@ -310,6 +312,15 @@ private:
     bool m_hasScheduledProcessStats { false };
 
     bool m_firstNetworkProcessCreated { false };
+    
+    enum class State {
+        Running,
+        WillSuspend,
+        Suspended
+    };
+    State m_state { State::Running };
+    Lock m_stateLock;
+    Condition m_stateChangeCondition;
 };
 
 } // namespace WebKit
