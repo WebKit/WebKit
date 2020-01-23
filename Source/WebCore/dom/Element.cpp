@@ -2279,6 +2279,7 @@ void Element::addShadowRoot(Ref<ShadowRoot>&& newShadowRoot)
 
     ShadowRoot& shadowRoot = newShadowRoot;
     {
+        WidgetHierarchyUpdatesSuspensionScope suspendWidgetHierarchyUpdates;
         ScriptDisallowedScope::InMainThread scriptDisallowedScope;
         if (renderer())
             RenderTreeUpdater::tearDownRenderers(*this);
