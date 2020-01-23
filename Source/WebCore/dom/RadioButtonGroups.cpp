@@ -254,7 +254,10 @@ bool RadioButtonGroups::hasCheckedButton(const HTMLInputElement& element) const
     const AtomString& name = element.name();
     if (name.isEmpty())
         return element.checked();
-    return m_nameToGroupMap.get(name.impl())->checkedButton();
+    auto* group = m_nameToGroupMap.get(name.impl());
+    if (!group)
+        return false; // FIXME: Update the radio button group before author script had a chance to run in didFinishInsertingNode().
+    return group->checkedButton();
 }
 
 bool RadioButtonGroups::isInRequiredGroup(HTMLInputElement& element) const
