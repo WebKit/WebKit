@@ -48,6 +48,19 @@ messages -> MediaPlayerPrivateRemote NotRefCounted {
 
     RequestResource(WebKit::RemoteMediaResourceIdentifier remoteMediaResourceIdentifier, WebCore::ResourceRequest request, enum:uint8_t WebCore::PlatformMediaResourceLoader::LoadOptions options) -> () Async
     RemoveResource(WebKit::RemoteMediaResourceIdentifier remoteMediaResourceIdentifier)
+    ResourceNotSupported()
+
+    EngineUpdated()
+
+    ActiveSourceBuffersChanged()
+
+#if ENABLE(ENCRYPTED_MEDIA)
+    WaitingForKeyChanged()
+#endif
+
+#if ENABLE(WIRELESS_PLAYBACK_TARGET)
+    CurrentPlaybackTargetIsWirelessChanged(bool isCurrentPlaybackTargetWireless)
+#endif
 }
 
 #endif

@@ -106,6 +106,23 @@ public:
     void audioTrackSetEnabled(TrackPrivateRemoteIdentifier, bool);
     void videoTrackSetSelected(TrackPrivateRemoteIdentifier, bool);
 
+#if ENABLE(WIRELESS_PLAYBACK_TARGET)
+    void setWirelessVideoPlaybackDisabled(bool);
+    void setShouldPlayToPlaybackTarget(bool);
+#endif
+
+#if ENABLE(LEGACY_ENCRYPTED_MEDIA)
+    void keyAdded();
+#endif
+
+    void beginSimulatedHDCPError();
+    void endSimulatedHDCPError();
+
+    void notifyActiveSourceBuffersChanged();
+
+    void applicationWillResignActive();
+    void applicationDidBecomeActive();
+
     Ref<WebCore::PlatformMediaResource> requestResource(WebCore::ResourceRequest&&, WebCore::PlatformMediaResourceLoader::LoadOptions);
     void removeResource(RemoteMediaResourceIdentifier);
 
@@ -149,7 +166,7 @@ private:
     void mediaPlayerWaitingForKeyChanged() final;
 #endif
 
-    void mediaPlayerCurrentPlaybackTargetIsWirelessChanged() final;
+    void mediaPlayerCurrentPlaybackTargetIsWirelessChanged(bool) final;
 
     String mediaPlayerReferrer() const final;
     String mediaPlayerUserAgent() const final;

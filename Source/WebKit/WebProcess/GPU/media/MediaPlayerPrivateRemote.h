@@ -92,6 +92,19 @@ public:
 
     void requestResource(RemoteMediaResourceIdentifier, WebCore::ResourceRequest&&, WebCore::PlatformMediaResourceLoader::LoadOptions, CompletionHandler<void()>&&);
     void removeResource(RemoteMediaResourceIdentifier);
+    void resourceNotSupported();
+
+    void engineUpdated();
+
+    void activeSourceBuffersChanged();
+
+#if ENABLE(ENCRYPTED_MEDIA)
+    void waitingForKeyChanged();
+#endif
+
+#if ENABLE(WIRELESS_PLAYBACK_TARGET)
+    void currentPlaybackTargetIsWirelessChanged(bool);
+#endif
 
 #if !RELEASE_LOG_DISABLED
     const Logger& logger() const final { return *m_logger; }
@@ -342,6 +355,7 @@ private:
     bool m_hasVideo { false };
     bool m_muted { false };
     bool m_seeking { false };
+    bool m_isCurrentPlaybackTargetWireless { false };
 
 #if !RELEASE_LOG_DISABLED
     RefPtr<const Logger> m_logger;

@@ -5812,9 +5812,9 @@ void HTMLMediaElement::wirelessRoutesAvailableDidChange()
     enqueuePlaybackTargetAvailabilityChangedEvent();
 }
 
-void HTMLMediaElement::mediaPlayerCurrentPlaybackTargetIsWirelessChanged()
+void HTMLMediaElement::mediaPlayerCurrentPlaybackTargetIsWirelessChanged(bool isCurrentPlayBackTargetWireless)
 {
-    setIsPlayingToWirelessTarget(m_player && m_player->isCurrentPlaybackTargetWireless());
+    setIsPlayingToWirelessTarget(m_player && isCurrentPlayBackTargetWireless);
 }
 
 void HTMLMediaElement::setIsPlayingToWirelessTarget(bool isPlayingToWirelessTarget)

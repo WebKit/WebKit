@@ -55,6 +55,32 @@ messages -> RemoteMediaPlayerProxy NotRefCounted {
 
     AudioTrackSetEnabled(WebKit::TrackPrivateRemoteIdentifier trackID, bool enabled)
     VideoTrackSetSelected(WebKit::TrackPrivateRemoteIdentifier trackID, bool enabled)
+
+    # Paint
+    # PaintCurrentFrameInContext
+
+#if ENABLE(WIRELESS_PLAYBACK_TARGET)
+    SetWirelessVideoPlaybackDisabled(bool disabled)
+    # SetWirelessPlaybackTarget(WebCore::MediaPlaybackTarget)
+    SetShouldPlayToPlaybackTarget(bool shouldPlay)
+#endif
+
+#if ENABLE(LEGACY_ENCRYPTED_MEDIA)
+    # SetCDMSession
+    KeyAdded()
+    # CdmInstanceAttached
+    # CdmInstanceDetached
+    # AttemptToDecryptWithInstance
+#endif
+
+    BeginSimulatedHDCPError()
+    EndSimulatedHDCPError()
+
+    NotifyActiveSourceBuffersChanged()
+
+    ApplicationWillResignActive()
+    ApplicationDidBecomeActive()
+
 }
 
 #endif

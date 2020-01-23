@@ -674,15 +674,20 @@ bool MediaPlayerPrivateRemote::wirelessVideoPlaybackDisabled() const
     return true;
 }
 
-void MediaPlayerPrivateRemote::setWirelessVideoPlaybackDisabled(bool)
+void MediaPlayerPrivateRemote::setWirelessVideoPlaybackDisabled(bool disabled)
 {
-    notImplemented();
+    connection().send(Messages::RemoteMediaPlayerProxy::SetWirelessVideoPlaybackDisabled(disabled), m_id);
+}
+
+void MediaPlayerPrivateRemote::currentPlaybackTargetIsWirelessChanged(bool isCurrentPlaybackTargetWireless)
+{
+    m_isCurrentPlaybackTargetWireless = isCurrentPlaybackTargetWireless;
+    m_player->currentPlaybackTargetIsWirelessChanged(isCurrentPlaybackTargetWireless);
 }
 
 bool MediaPlayerPrivateRemote::isCurrentPlaybackTargetWireless() const
 {
-    notImplemented();
-    return false;
+    return m_isCurrentPlaybackTargetWireless;
 }
 
 void MediaPlayerPrivateRemote::setWirelessPlaybackTarget(Ref<MediaPlaybackTarget>&&)
@@ -690,9 +695,9 @@ void MediaPlayerPrivateRemote::setWirelessPlaybackTarget(Ref<MediaPlaybackTarget
     notImplemented();
 }
 
-void MediaPlayerPrivateRemote::setShouldPlayToPlaybackTarget(bool)
+void MediaPlayerPrivateRemote::setShouldPlayToPlaybackTarget(bool shouldPlay)
 {
-    notImplemented();
+    connection().send(Messages::RemoteMediaPlayerProxy::SetShouldPlayToPlaybackTarget(shouldPlay), m_id);
 }
 #endif
 
@@ -785,7 +790,7 @@ void MediaPlayerPrivateRemote::setCDMSession(LegacyCDMSession*)
 
 void MediaPlayerPrivateRemote::keyAdded()
 {
-    notImplemented();
+    connection().send(Messages::RemoteMediaPlayerProxy::KeyAdded(), m_id);
 }
 #endif
 
@@ -803,6 +808,11 @@ void MediaPlayerPrivateRemote::cdmInstanceDetached(CDMInstance&)
 void MediaPlayerPrivateRemote::attemptToDecryptWithInstance(CDMInstance&)
 {
     notImplemented();
+}
+
+void MediaPlayerPrivateRemote::waitingForKeyChanged()
+{
+    m_player->waitingForKeyChanged();
 }
 
 bool MediaPlayerPrivateRemote::waitingForKey() const
@@ -844,12 +854,12 @@ void MediaPlayerPrivateRemote::simulateAudioInterruption()
 
 void MediaPlayerPrivateRemote::beginSimulatedHDCPError()
 {
-    notImplemented();
+    connection().send(Messages::RemoteMediaPlayerProxy::BeginSimulatedHDCPError(), m_id);
 }
 
 void MediaPlayerPrivateRemote::endSimulatedHDCPError()
 {
-    notImplemented();
+    connection().send(Messages::RemoteMediaPlayerProxy::EndSimulatedHDCPError(), m_id);
 }
 
 String MediaPlayerPrivateRemote::languageOfPrimaryAudioTrack() const
@@ -891,17 +901,18 @@ void MediaPlayerPrivateRemote::notifyTrackModeChanged()
 
 void MediaPlayerPrivateRemote::notifyActiveSourceBuffersChanged()
 {
-    notImplemented();
+    // FIXME: this just rounds trip up and down to activeSourceBuffersChanged(). Should this call ::activeSourceBuffersChanged directly?
+    connection().send(Messages::RemoteMediaPlayerProxy::NotifyActiveSourceBuffersChanged(), m_id);
 }
 
 void MediaPlayerPrivateRemote::applicationWillResignActive()
 {
-    notImplemented();
+    connection().send(Messages::RemoteMediaPlayerProxy::ApplicationWillResignActive(), m_id);
 }
 
 void MediaPlayerPrivateRemote::applicationDidBecomeActive()
 {
-    notImplemented();
+    connection().send(Messages::RemoteMediaPlayerProxy::ApplicationDidBecomeActive(), m_id);
 }
 
 bool MediaPlayerPrivateRemote::performTaskAtMediaTime(WTF::Function<void()>&&, MediaTime)
@@ -926,6 +937,21 @@ void MediaPlayerPrivateRemote::removeResource(RemoteMediaResourceIdentifier remo
 {
     // The client(RemoteMediaResourceProxy) will be destroyed as well
     m_mediaResources.remove(remoteMediaResourceIdentifier);
+}
+
+void MediaPlayerPrivateRemote::resourceNotSupported()
+{
+    m_player->resourceNotSupported();
+}
+
+void MediaPlayerPrivateRemote::engineUpdated()
+{
+    m_player->mediaEngineUpdated();
+}
+
+void MediaPlayerPrivateRemote::activeSourceBuffersChanged()
+{
+    m_player->activeSourceBuffersChanged();
 }
 
 #if !RELEASE_LOG_DISABLED

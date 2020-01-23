@@ -210,7 +210,7 @@ public:
 #endif
     
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
-    virtual void mediaPlayerCurrentPlaybackTargetIsWirelessChanged() { };
+    virtual void mediaPlayerCurrentPlaybackTargetIsWirelessChanged(bool) { };
 #endif
 
     virtual String mediaPlayerReferrer() const { return String(); }
@@ -469,7 +469,7 @@ public:
     bool wirelessVideoPlaybackDisabled() const;
     void setWirelessVideoPlaybackDisabled(bool);
 
-    void currentPlaybackTargetIsWirelessChanged();
+    void currentPlaybackTargetIsWirelessChanged(bool);
     void playbackTargetAvailabilityChanged();
 
     bool isCurrentPlaybackTargetWireless() const;
@@ -620,6 +620,7 @@ public:
     const String& mediaCacheDirectory() const { return client().mediaPlayerMediaCacheDirectory(); }
     bool isVideoPlayer() const { return client().mediaPlayerIsVideo(); }
     void mediaEngineUpdated() { client().mediaPlayerEngineUpdated(); }
+    void resourceNotSupported() { client().mediaPlayerResourceNotSupported(); }
     bool isLooping() const { return client().mediaPlayerIsLooping(); }
 
     void remoteEngineFailedToLoad();

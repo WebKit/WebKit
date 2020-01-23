@@ -1044,9 +1044,9 @@ void MediaPlayer::setWirelessVideoPlaybackDisabled(bool disabled)
     m_private->setWirelessVideoPlaybackDisabled(disabled);
 }
 
-void MediaPlayer::currentPlaybackTargetIsWirelessChanged()
+void MediaPlayer::currentPlaybackTargetIsWirelessChanged(bool isCurrentPlaybackTargetWireless)
 {
-    client().mediaPlayerCurrentPlaybackTargetIsWirelessChanged();
+    client().mediaPlayerCurrentPlaybackTargetIsWirelessChanged(isCurrentPlaybackTargetWireless);
 }
 
 bool MediaPlayer::canPlayToWirelessPlaybackTarget() const

@@ -1,3 +1,52 @@
+2020-01-22  Jon Lee  <jonlee@apple.com>
+
+        [Media in GPU process] Pipe more MediaPlayerPrivate and client methods
+        https://bugs.webkit.org/show_bug.cgi?id=206468
+
+        Reviewed by Eric Carlson.
+
+        Pipe more of the media player and client functions. Generally, these are void functions
+        that require no parameters.
+
+        Also, the client *changed() functions, when implemented, tend to call the accessor of the property
+        that just changed. This seems rather circuitous. The client methods ought to just also pass along
+        the value of the new changed value. This patch refactors mediaPlayerCurrentPlaybackTargetIsWirelessChanged
+        to do exactly that.
+
+        * GPUProcess/media/RemoteMediaPlayerProxy.cpp:
+        (WebKit::RemoteMediaPlayerProxy::mediaPlayerResourceNotSupported):
+        (WebKit::RemoteMediaPlayerProxy::mediaPlayerEngineUpdated):
+        (WebKit::RemoteMediaPlayerProxy::mediaPlayerActiveSourceBuffersChanged):
+        (WebKit::RemoteMediaPlayerProxy::mediaPlayerWaitingForKeyChanged):
+        (WebKit::RemoteMediaPlayerProxy::mediaPlayerCurrentPlaybackTargetIsWirelessChanged):
+        (WebKit::RemoteMediaPlayerProxy::setWirelessVideoPlaybackDisabled):
+        (WebKit::RemoteMediaPlayerProxy::setShouldPlayToPlaybackTarget):
+        (WebKit::RemoteMediaPlayerProxy::keyAdded):
+        (WebKit::RemoteMediaPlayerProxy::beginSimulatedHDCPError):
+        (WebKit::RemoteMediaPlayerProxy::endSimulatedHDCPError):
+        (WebKit::RemoteMediaPlayerProxy::notifyActiveSourceBuffersChanged):
+        (WebKit::RemoteMediaPlayerProxy::applicationWillResignActive):
+        (WebKit::RemoteMediaPlayerProxy::applicationDidBecomeActive):
+        * GPUProcess/media/RemoteMediaPlayerProxy.h:
+        * GPUProcess/media/RemoteMediaPlayerProxy.messages.in:
+        * WebProcess/GPU/media/MediaPlayerPrivateRemote.cpp:
+        (WebKit::MediaPlayerPrivateRemote::setWirelessVideoPlaybackDisabled):
+        (WebKit::MediaPlayerPrivateRemote::currentPlaybackTargetIsWirelessChanged): Cache value in new member variable.
+        (WebKit::MediaPlayerPrivateRemote::isCurrentPlaybackTargetWireless const): Return value.
+        (WebKit::MediaPlayerPrivateRemote::setShouldPlayToPlaybackTarget):
+        (WebKit::MediaPlayerPrivateRemote::keyAdded):
+        (WebKit::MediaPlayerPrivateRemote::waitingForKeyChanged):
+        (WebKit::MediaPlayerPrivateRemote::beginSimulatedHDCPError):
+        (WebKit::MediaPlayerPrivateRemote::endSimulatedHDCPError):
+        (WebKit::MediaPlayerPrivateRemote::notifyActiveSourceBuffersChanged):
+        (WebKit::MediaPlayerPrivateRemote::applicationWillResignActive):
+        (WebKit::MediaPlayerPrivateRemote::applicationDidBecomeActive):
+        (WebKit::MediaPlayerPrivateRemote::resourceNotSupported):
+        (WebKit::MediaPlayerPrivateRemote::engineUpdated):
+        (WebKit::MediaPlayerPrivateRemote::activeSourceBuffersChanged):
+        * WebProcess/GPU/media/MediaPlayerPrivateRemote.h:
+        * WebProcess/GPU/media/MediaPlayerPrivateRemote.messages.in:
+
 2020-01-22  Keith Rollin  <krollin@apple.com>
 
         Fix SDK availability macros

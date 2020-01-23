@@ -698,7 +698,7 @@ private:
 #endif
     
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
-    void mediaPlayerCurrentPlaybackTargetIsWirelessChanged() final;
+    void mediaPlayerCurrentPlaybackTargetIsWirelessChanged(bool) final;
     void enqueuePlaybackTargetAvailabilityChangedEvent();
 
     using EventTarget::dispatchEvent;
