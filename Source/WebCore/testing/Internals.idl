@@ -835,4 +835,6 @@ enum CompositingPolicy {
     boolean hasSandboxMachLookupAccessToXPCServiceName(DOMString process, DOMString service);
     
     DOMString systemColorForCSSValue(DOMString cssValue, boolean useDarkModeAppearance, boolean useElevatedUserInterfaceLevel);
+
+    boolean systemHasBattery();
 };

@@ -3980,6 +3980,8 @@
 		C105DA640F3AA6B8001DD44F /* TextEncodingDetector.h in Headers */ = {isa = PBXBuildFile; fileRef = C105DA630F3AA6B8001DD44F /* TextEncodingDetector.h */; };
 		C11A9ECE21403A5C00CFB20A /* SwitchingGPUClient.h in Headers */ = {isa = PBXBuildFile; fileRef = C11A9ECD21403A5C00CFB20A /* SwitchingGPUClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		C14938072234551A000CD707 /* SpeechSynthesisClient.h in Headers */ = {isa = PBXBuildFile; fileRef = C149380522342719000CD707 /* SpeechSynthesisClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		C1692DD223D23ABD006E88F7 /* SystemBattery.mm in Sources */ = {isa = PBXBuildFile; fileRef = C1692DD123D23ABD006E88F7 /* SystemBattery.mm */; };
+		C1692DD523D23E08006E88F7 /* SystemBattery.h in Headers */ = {isa = PBXBuildFile; fileRef = C1692DD423D23AE0006E88F7 /* SystemBattery.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		C1E1D236203DF15400584665 /* ScreenProperties.h in Headers */ = {isa = PBXBuildFile; fileRef = C1E1D235203DF15400584665 /* ScreenProperties.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		C2015C0A1BE6FEB200822389 /* FontVariantBuilder.h in Headers */ = {isa = PBXBuildFile; fileRef = C2015C091BE6FE2C00822389 /* FontVariantBuilder.h */; };
 		C21DF2EA1D9E4E9900F5B24C /* CSSFontVariationValue.h in Headers */ = {isa = PBXBuildFile; fileRef = C21DF2E81D9E4E9900F5B24C /* CSSFontVariationValue.h */; };
@@ -13521,6 +13523,8 @@
 		C11A9ECD21403A5C00CFB20A /* SwitchingGPUClient.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SwitchingGPUClient.h; sourceTree = "<group>"; };
 		C11A9ED22140578B00CFB20A /* SwitchingGPUClient.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SwitchingGPUClient.cpp; sourceTree = "<group>"; };
 		C149380522342719000CD707 /* SpeechSynthesisClient.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SpeechSynthesisClient.h; sourceTree = "<group>"; };
+		C1692DD123D23ABD006E88F7 /* SystemBattery.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = SystemBattery.mm; sourceTree = "<group>"; };
+		C1692DD423D23AE0006E88F7 /* SystemBattery.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SystemBattery.h; sourceTree = "<group>"; };
 		C1E1D235203DF15400584665 /* ScreenProperties.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ScreenProperties.h; sourceTree = "<group>"; };
 		C2015C091BE6FE2C00822389 /* FontVariantBuilder.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FontVariantBuilder.h; sourceTree = "<group>"; };
 		C20F4F6421DFBE5C0070C45A /* WHLSLTypeReference.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WHLSLTypeReference.cpp; sourceTree = "<group>"; };
@@ -23150,6 +23154,8 @@
 				0E7058F31BC5CCD70045A507 /* SearchPopupMenuCocoa.h */,
 				0E7058ED1BC5BC190045A507 /* SearchPopupMenuCocoa.mm */,
 				1A4A95510B4EDCFF002D8C3C /* SharedBufferCocoa.mm */,
+				C1692DD423D23AE0006E88F7 /* SystemBattery.h */,
+				C1692DD123D23ABD006E88F7 /* SystemBattery.mm */,
 				5D5975B119635F1100D00878 /* SystemVersion.h */,
 				5D5975B219635F1100D00878 /* SystemVersion.mm */,
 				7CC564B918BAC720001B9652 /* TelephoneNumberDetectorCocoa.cpp */,
@@ -32769,6 +32775,7 @@
 				5185430B1FB6784500478F95 /* SWServerToContextConnection.h in Headers */,
 				517A53461F50C17F00DCDC0A /* SWServerWorker.h in Headers */,
 				E180811716FCF9CB00B80D07 /* SynchronousLoaderClient.h in Headers */,
+				C1692DD523D23E08006E88F7 /* SystemBattery.h in Headers */,
 				E4E8B4EC216B79E500B8834D /* SystemFontDatabaseCoreText.h in Headers */,
 				0F03C0741884695E00A5F8CA /* SystemMemory.h in Headers */,
 				5D5975B319635F1100D00878 /* SystemVersion.h in Headers */,
@@ -33778,6 +33785,7 @@
 				538F10A81F9022A4005102CE /* SoftLinkLibxslt.cpp in Sources */,
 				CDC8B5AA18047FF10016E685 /* SourceBufferPrivateAVFObjC.mm in Sources */,
 				A833C7CA0A2CF06B00D57664 /* SVGNames.cpp in Sources */,
+				C1692DD223D23ABD006E88F7 /* SystemBattery.mm in Sources */,
 				6E72F54F229DCD1300B3E151 /* TemporaryANGLESetting.cpp in Sources */,
 				9759E93F14EF1CF80026A2DD /* TextTrack.cpp in Sources */,
 				9759E94214EF1CF80026A2DD /* TextTrackCue.cpp in Sources */,

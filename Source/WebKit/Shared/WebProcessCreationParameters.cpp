@@ -166,6 +166,7 @@ void WebProcessCreationParameters::encode(IPC::Encoder& encoder) const
 #if PLATFORM(COCOA)
     encoder << neHelperExtensionHandle;
     encoder << neSessionManagerExtensionHandle;
+    encoder << systemHasBattery;
 #endif
 
 #if PLATFORM(IOS_FAMILY)
@@ -433,6 +434,12 @@ bool WebProcessCreationParameters::decode(IPC::Decoder& decoder, WebProcessCreat
     if (!neSessionManagerExtensionHandle)
         return false;
     parameters.neSessionManagerExtensionHandle = WTFMove(*neSessionManagerExtensionHandle);
+
+    Optional<bool> systemHasBattery;
+    decoder >> systemHasBattery;
+    if (!systemHasBattery)
+        return false;
+    parameters.systemHasBattery = WTFMove(*systemHasBattery);
 #endif
 
 #if PLATFORM(IOS_FAMILY)

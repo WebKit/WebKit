@@ -81,6 +81,7 @@ SOFT_LINK_CLASS(WebContentAnalysis, WebFilterEvaluator);
 #endif
 
 #if PLATFORM(COCOA)
+#import <WebCore/SystemBattery.h>
 #import <pal/spi/cocoa/NEFilterSourceSPI.h>
 
 SOFT_LINK_FRAMEWORK_OPTIONAL(NetworkExtension);
@@ -343,6 +344,7 @@ void WebProcessPool::platformInitializeWebProcess(const WebProcessProxy& process
 #endif
         parameters.neSessionManagerExtensionHandle = WTFMove(handle);
     }
+    parameters.systemHasBattery = systemHasBattery();
 #endif
     
 #if PLATFORM(IOS)

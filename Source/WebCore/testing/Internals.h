@@ -928,6 +928,8 @@ public:
 
     String systemColorForCSSValue(const String& cssValue, bool useDarkModeAppearance, bool useElevatedUserInterfaceLevel);
 
+    bool systemHasBattery() const;
+
 private:
     explicit Internals(Document&);
     Document* contextDocument() const;

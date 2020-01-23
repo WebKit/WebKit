@@ -309,7 +309,8 @@
 #endif
 
 #if PLATFORM(COCOA)
-#import <wtf/spi/darwin/SandboxSPI.h>
+#include "SystemBattery.h"
+#include <wtf/spi/darwin/SandboxSPI.h>
 #endif
 
 using JSC::CallData;
@@ -5424,6 +5425,15 @@ String Internals::systemColorForCSSValue(const String& cssValue, bool useDarkMod
         options.add(StyleColor::Options::UseElevatedUserInterfaceLevel);
     
     return RenderTheme::singleton().systemColor(id, options).cssText();
+}
+
+bool Internals::systemHasBattery() const
+{
+#if PLATFORM(COCOA)
+    return WebCore::systemHasBattery();
+#else
+    return false;
+#endif
 }
 
 } // namespace WebCore

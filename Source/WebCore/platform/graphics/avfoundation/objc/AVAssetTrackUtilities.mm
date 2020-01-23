@@ -29,30 +29,13 @@
 #if ENABLE(VIDEO) && USE(AVFOUNDATION)
 
 #import "FourCC.h"
+#import "SystemBattery.h"
+#import "VideoToolboxSoftLink.h"
 #import <AVFoundation/AVAssetTrack.h>
-#import <pal/spi/cocoa/IOPSLibSPI.h>
 
 #import <pal/cf/CoreMediaSoftLink.h>
-#import "VideoToolboxSoftLink.h"
 
 namespace WebCore {
-
-static bool systemHasBattery()
-{
-    RetainPtr<CFTypeRef> powerSourcesInfo = adoptCF(IOPSCopyPowerSourcesInfo());
-    if (!powerSourcesInfo)
-        return false;
-    RetainPtr<CFArrayRef> powerSourcesList = adoptCF(IOPSCopyPowerSourcesList(powerSourcesInfo.get()));
-    if (!powerSourcesList)
-        return false;
-    for (CFIndex i = 0, count = CFArrayGetCount(powerSourcesList.get()); i < count; ++i) {
-        CFDictionaryRef description = IOPSGetPowerSourceDescription(powerSourcesInfo.get(), CFArrayGetValueAtIndex(powerSourcesList.get(), i));
-        CFTypeRef value = CFDictionaryGetValue(description, CFSTR(kIOPSTypeKey));
-        if (!value || CFEqual(value, CFSTR(kIOPSInternalBatteryType)))
-            return true;
-    }
-    return false;
-}
 
 static Vector<FourCC> contentTypesToCodecs(const Vector<ContentType>& contentTypes)
 {

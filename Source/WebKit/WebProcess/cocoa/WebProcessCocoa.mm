@@ -121,6 +121,7 @@
 
 #if PLATFORM(COCOA)
 #import <WebCore/NetworkExtensionContentFilter.h>
+#import <WebCore/SystemBattery.h>
 #endif
 
 #if HAVE(CSCHECKFIXDISABLE)
@@ -258,6 +259,7 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
     if (parameters.neSessionManagerExtensionHandle)
         SandboxExtension::consumePermanently(*parameters.neSessionManagerExtensionHandle);
     NetworkExtensionContentFilter::setHasConsumedSandboxExtensions(parameters.neHelperExtensionHandle.hasValue() && parameters.neSessionManagerExtensionHandle.hasValue());
+    setSystemHasBattery(parameters.systemHasBattery);
 #endif
 
 #if PLATFORM(IOS_FAMILY)

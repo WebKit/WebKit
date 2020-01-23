@@ -1,3 +1,23 @@
+2020-01-23  Per Arne Vollan  <pvollan@apple.com>
+
+        [Cocoa] Broker access to the PowerManagement API
+        https://bugs.webkit.org/show_bug.cgi?id=206373
+        <rdar://problem/34722450>
+
+        Reviewed by Darin Adler.
+
+        Send flag indicating whether device has battery to the WebContent process as part of the
+        WebProcess creation parameters.
+
+        * Shared/WebProcessCreationParameters.cpp:
+        (WebKit::WebProcessCreationParameters::encode const):
+        (WebKit::WebProcessCreationParameters::decode):
+        * Shared/WebProcessCreationParameters.h:
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::WebProcessPool::platformInitializeWebProcess):
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::platformInitializeWebProcess):
+
 2020-01-23  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r254990.

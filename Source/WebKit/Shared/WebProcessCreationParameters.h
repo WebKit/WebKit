@@ -208,6 +208,7 @@ struct WebProcessCreationParameters {
 #if PLATFORM(COCOA)
     Optional<SandboxExtension::Handle> neHelperExtensionHandle;
     Optional<SandboxExtension::Handle> neSessionManagerExtensionHandle;
+    bool systemHasBattery { false };
 #endif
 
 #if PLATFORM(IOS_FAMILY)
