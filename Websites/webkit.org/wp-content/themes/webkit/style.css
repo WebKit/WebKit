@@ -1603,6 +1603,10 @@ article .foreword {
     font-style: italic;
 }
 
+article .meta {
+    clear: both;
+}
+
 article .meta .written {
     margin-bottom: 1em;
 }
@@ -1645,7 +1649,6 @@ article .byline {
 
 article .bodycopy,
 article .meta {
-    clear: both;
     width: 66%;
     margin: 0 auto;
     position: relative;
