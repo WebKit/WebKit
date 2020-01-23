@@ -214,6 +214,13 @@ bool NetworkProcess::shouldTerminate()
 
 void NetworkProcess::didReceiveMessage(IPC::Connection& connection, IPC::Decoder& decoder)
 {
+    ASSERT(parentProcessConnection() == &connection);
+    if (parentProcessConnection() != &connection) {
+        WTFLogAlways("Ignored message '%s:%s' because it did not come from the UIProcess (destination: %" PRIu64 ")", decoder.messageReceiverName().toString().data(), decoder.messageName().toString().data(), decoder.destinationID());
+        ASSERT_NOT_REACHED();
+        return;
+    }
+
     if (messageReceiverMap().dispatchMessage(connection, decoder))
         return;
 
@@ -234,6 +241,13 @@ void NetworkProcess::didReceiveMessage(IPC::Connection& connection, IPC::Decoder
 
 void NetworkProcess::didReceiveSyncMessage(IPC::Connection& connection, IPC::Decoder& decoder, std::unique_ptr<IPC::Encoder>& replyEncoder)
 {
+    ASSERT(parentProcessConnection() == &connection);
+    if (parentProcessConnection() != &connection) {
+        WTFLogAlways("Ignored message '%s:%s' because it did not come from the UIProcess (destination: %" PRIu64 ")", decoder.messageReceiverName().toString().data(), decoder.messageName().toString().data(), decoder.destinationID());
+        ASSERT_NOT_REACHED();
+        return;
+    }
+
     if (messageReceiverMap().dispatchSyncMessage(connection, decoder, replyEncoder))
         return;
 
@@ -2323,12 +2337,6 @@ void NetworkProcess::clearLegacyPrivateBrowsingLocalStorage()
 {
     if (m_storageManagerSet->contains(PAL::SessionID::legacyPrivateSessionID()))
         m_storageManagerSet->deleteLocalStorageModifiedSince(PAL::SessionID::legacyPrivateSessionID(), -WallTime::infinity(), []() { });
-}
-
-void NetworkProcess::updateQuotaBasedOnSpaceUsageForTesting(PAL::SessionID sessionID, const ClientOrigin& origin)
-{
-    auto storageQuotaManager = this->storageQuotaManager(sessionID, origin);
-    storageQuotaManager->resetQuotaUpdatedBasedOnUsageForTesting();
 }
 
 void NetworkProcess::resetQuota(PAL::SessionID sessionID, CompletionHandler<void()>&& completionHandler)

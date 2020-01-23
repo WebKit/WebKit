@@ -1,5 +1,65 @@
 2020-01-23  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r254892. rdar://problem/58816313
+
+    [IPC Hardening] Only process Messages::NetworkProcess messages when sent by the UIProcess
+    https://bugs.webkit.org/show_bug.cgi?id=206558
+    <rdar://problem/58733679>
+    
+    Reviewed by Alex Christensen.
+    
+    Port UpdateQuotaBasedOnSpaceUsageForTesting IPC from the NetworkProcess to the NetworkConnectionToWebProcess
+    since it is sent by the WebContent process. As a result, we can now stop forwarding all Messages::NetworkProcess
+    IPC messages from the WebContent process to the NetworkProcess class.
+    
+    * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+    (WebKit::NetworkConnectionToWebProcess::didReceiveMessage):
+    (WebKit::NetworkConnectionToWebProcess::didReceiveSyncMessage):
+    (WebKit::NetworkConnectionToWebProcess::updateQuotaBasedOnSpaceUsageForTesting):
+    * NetworkProcess/NetworkConnectionToWebProcess.h:
+    * NetworkProcess/NetworkConnectionToWebProcess.messages.in:
+    * NetworkProcess/NetworkProcess.cpp:
+    (WebKit::NetworkProcess::didReceiveMessage):
+    (WebKit::NetworkProcess::didReceiveSyncMessage):
+    * NetworkProcess/NetworkProcess.h:
+    * NetworkProcess/NetworkProcess.messages.in:
+    * Platform/IPC/StringReference.h:
+    (IPC::StringReference::operator!=):
+    * WebProcess/Cache/WebCacheStorageConnection.cpp:
+    (WebKit::WebCacheStorageConnection::updateQuotaBasedOnSpaceUsage):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@254892 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-01-21  Chris Dumez  <cdumez@apple.com>
+
+            [IPC Hardening] Only process Messages::NetworkProcess messages when sent by the UIProcess
+            https://bugs.webkit.org/show_bug.cgi?id=206558
+            <rdar://problem/58733679>
+
+            Reviewed by Alex Christensen.
+
+            Port UpdateQuotaBasedOnSpaceUsageForTesting IPC from the NetworkProcess to the NetworkConnectionToWebProcess
+            since it is sent by the WebContent process. As a result, we can now stop forwarding all Messages::NetworkProcess
+            IPC messages from the WebContent process to the NetworkProcess class.
+
+            * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+            (WebKit::NetworkConnectionToWebProcess::didReceiveMessage):
+            (WebKit::NetworkConnectionToWebProcess::didReceiveSyncMessage):
+            (WebKit::NetworkConnectionToWebProcess::updateQuotaBasedOnSpaceUsageForTesting):
+            * NetworkProcess/NetworkConnectionToWebProcess.h:
+            * NetworkProcess/NetworkConnectionToWebProcess.messages.in:
+            * NetworkProcess/NetworkProcess.cpp:
+            (WebKit::NetworkProcess::didReceiveMessage):
+            (WebKit::NetworkProcess::didReceiveSyncMessage):
+            * NetworkProcess/NetworkProcess.h:
+            * NetworkProcess/NetworkProcess.messages.in:
+            * Platform/IPC/StringReference.h:
+            (IPC::StringReference::operator!=):
+            * WebProcess/Cache/WebCacheStorageConnection.cpp:
+            (WebKit::WebCacheStorageConnection::updateQuotaBasedOnSpaceUsage):
+
+2020-01-23  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r254884. rdar://problem/58807972
 
     ProvisionalPageProxy::loadData should pass last navigation's shouldOpenExternalURLsPolicy flag to WebPageProxy
