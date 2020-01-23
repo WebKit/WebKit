@@ -1,5 +1,58 @@
 2020-01-23  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r254761. rdar://problem/58807932
+
+    [MSE] Decode glitches when watching videos on CNN.com
+    https://bugs.webkit.org/show_bug.cgi?id=206412
+    <rdar://problem/55685630>
+    
+    Reviewed by Xabier Rodriguez-Calvar.
+    
+    Source/WebCore:
+    
+    Test: media/media-source/media-source-samples-out-of-order.html
+    
+    The "Coded frame processing" algorithm has a known shortcoming <https://github.com/w3c/media-source/issues/187>
+    when dealing appends of with "SAP Type 2" content, or in general terms, appending data where the resulting samples
+    have presentation times that do not increase monotonically. When this occurs, the ordering of samples in presentation
+    time will be different from the ordering of samples in decode time. The decoder requires samples to be enqueued in
+    decode time order, but the MSE specification only checks for overlapping samples in presentation time order. During
+    appends of out-of-order samples, this can lead to new samples being inserted between a previously appended sample and
+    the sample on which that sample depends.
+    
+    To resolve this, add a new step in the implementation of the "coded frame processing" algorithm in
+    SourceBuffer::sourceBufferPrivateDidReceiveSample(). When the incoming frame is a sync sample, search forward
+    in the TrackBuffer for all previous samples in between the new sync sample, and the next sync sample. All the
+    samples found in this step would fail to decode correctly if enqueued after the new (possibly different resolution)
+    sync sample, so they are removed in this step.
+    
+    * Modules/mediasource/SampleMap.cpp:
+    (WebCore::DecodeOrderSampleMap::findSampleAfterDecodeKey):
+    * Modules/mediasource/SampleMap.h:
+    * Modules/mediasource/SourceBuffer.cpp:
+    (WebCore::SourceBuffer::sourceBufferPrivateDidReceiveSample):
+    
+    LayoutTests:
+    
+    * media/media-source/media-source-samples-out-of-order-expected.txt: Added.
+    * media/media-source/media-source-samples-out-of-order.html: Added.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@254761 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-01-17  Jer Noble  <jer.noble@apple.com>
+
+            [MSE] Decode glitches when watching videos on CNN.com
+            https://bugs.webkit.org/show_bug.cgi?id=206412
+            <rdar://problem/55685630>
+
+            Reviewed by Xabier Rodriguez-Calvar.
+
+            * media/media-source/media-source-samples-out-of-order-expected.txt: Added.
+            * media/media-source/media-source-samples-out-of-order.html: Added.
+
+2020-01-23  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r254722. rdar://problem/58811423
 
     REGRESSION (r251110): Crash on https://developer.apple.com/tutorials/swiftui/creating-and-combining-views
