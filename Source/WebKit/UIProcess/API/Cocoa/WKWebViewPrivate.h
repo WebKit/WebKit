@@ -487,6 +487,9 @@ typedef NS_OPTIONS(NSUInteger, _WKRectEdge) {
 
 - (UIView *)_fullScreenPlaceholderView WK_API_AVAILABLE(ios(12.0));
 
+- (void)_grantAccessToAssetServices WK_API_AVAILABLE(ios(WK_IOS_TBA));
+- (void)_revokeAccessToAssetServices WK_API_AVAILABLE(ios(WK_IOS_TBA));
+
 @end
 
 @interface WKWebView () <UIResponderStandardEditActions>
