@@ -293,7 +293,6 @@ GRefPtr<GtkStyleContext> ViewGestureController::createStyleContext(const char* n
 
     GtkStyleContext* context = gtk_style_context_new();
     gtk_style_context_set_path(context, path.get());
-    gtk_style_context_set_parent(context, gtk_widget_get_style_context(widget));
 
     gtk_style_context_add_provider(context, GTK_STYLE_PROVIDER(m_cssProvider.get()), GTK_STYLE_PROVIDER_PRIORITY_FALLBACK);
 
