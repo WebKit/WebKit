@@ -72,6 +72,10 @@ void RendererVk::ensureCapsInitialized() const
     // Enable ANGLE_base_vertex_base_instance
     mNativeExtensions.baseVertexBaseInstance = true;
 
+    // Enable OES/EXT_draw_elements_base_vertex
+    mNativeExtensions.drawElementsBaseVertexOES = true;
+    mNativeExtensions.drawElementsBaseVertexEXT = true;
+
     // Enable EXT_blend_minmax
     mNativeExtensions.blendMinMax = true;
 
@@ -135,6 +139,8 @@ void RendererVk::ensureCapsInitialized() const
     // We support getting image data for Textures and Renderbuffers.
     mNativeExtensions.getImageANGLE = true;
 
+    mNativeExtensions.gpuShader5EXT = vk::CanSupportGPUShader5EXT(mPhysicalDeviceFeatures);
+
     // https://vulkan.lunarg.com/doc/view/1.0.30.0/linux/vkspec.chunked/ch31s02.html
     mNativeCaps.maxElementIndex  = std::numeric_limits<GLuint>::max() - 1;
     mNativeCaps.max3DTextureSize = LimitToInt(limitsVk.maxImageDimension3D);
@@ -154,15 +160,21 @@ void RendererVk::ensureCapsInitialized() const
 
     mNativeCaps.maxDrawBuffers =
         std::min(limitsVk.maxColorAttachments, limitsVk.maxFragmentOutputAttachments);
-    mNativeCaps.maxFramebufferWidth    = LimitToInt(limitsVk.maxFramebufferWidth);
-    mNativeCaps.maxFramebufferHeight   = LimitToInt(limitsVk.maxFramebufferHeight);
-    mNativeCaps.maxColorAttachments    = LimitToInt(limitsVk.maxColorAttachments);
-    mNativeCaps.maxViewportWidth       = LimitToInt(limitsVk.maxViewportDimensions[0]);
-    mNativeCaps.maxViewportHeight      = LimitToInt(limitsVk.maxViewportDimensions[1]);
-    mNativeCaps.maxSampleMaskWords     = LimitToInt(limitsVk.maxSampleMaskWords);
-    mNativeCaps.maxColorTextureSamples = limitsVk.sampledImageColorSampleCounts;
-    mNativeCaps.maxDepthTextureSamples = limitsVk.sampledImageDepthSampleCounts;
-    mNativeCaps.maxIntegerSamples      = limitsVk.sampledImageIntegerSampleCounts;
+    mNativeCaps.maxFramebufferWidth  = LimitToInt(limitsVk.maxFramebufferWidth);
+    mNativeCaps.maxFramebufferHeight = LimitToInt(limitsVk.maxFramebufferHeight);
+    mNativeCaps.maxColorAttachments  = LimitToInt(limitsVk.maxColorAttachments);
+    mNativeCaps.maxViewportWidth     = LimitToInt(limitsVk.maxViewportDimensions[0]);
+    mNativeCaps.maxViewportHeight    = LimitToInt(limitsVk.maxViewportDimensions[1]);
+    mNativeCaps.maxSampleMaskWords   = LimitToInt(limitsVk.maxSampleMaskWords);
+    mNativeCaps.maxColorTextureSamples =
+        limitsVk.sampledImageColorSampleCounts & vk_gl::kSupportedSampleCounts;
+    mNativeCaps.maxDepthTextureSamples =
+        limitsVk.sampledImageDepthSampleCounts & vk_gl::kSupportedSampleCounts;
+    // TODO (ianelliott): Should mask this with vk_gl::kSupportedSampleCounts, but it causes
+    // end2end test failures with SwiftShader because SwiftShader returns a sample count of 1 in
+    // sampledImageIntegerSampleCounts.
+    // See: http://anglebug.com/4197
+    mNativeCaps.maxIntegerSamples = limitsVk.sampledImageIntegerSampleCounts;
 
     mNativeCaps.maxVertexAttributes     = LimitToInt(limitsVk.maxVertexInputAttributes);
     mNativeCaps.maxVertexAttribBindings = LimitToInt(limitsVk.maxVertexInputBindings);
@@ -195,17 +207,12 @@ void RendererVk::ensureCapsInitialized() const
     mNativeCaps.fragmentLowpInt.setTwosComplementInt(32);
 
     // Compute shader limits.
-    // Clamp the maxComputeWorkGroupCount[] to 1,000,000.
-    // It's a workaround for http://anglebug.com/4120 and http://anglebug.com/4066
-    mNativeCaps.maxComputeWorkGroupCount[0] =
-        std::min(LimitToInt(limitsVk.maxComputeWorkGroupCount[0]), 1000000);
-    mNativeCaps.maxComputeWorkGroupCount[1] =
-        std::min(LimitToInt(limitsVk.maxComputeWorkGroupCount[1]), 1000000);
-    mNativeCaps.maxComputeWorkGroupCount[2] =
-        std::min(LimitToInt(limitsVk.maxComputeWorkGroupCount[2]), 1000000);
-    mNativeCaps.maxComputeWorkGroupSize[0] = LimitToInt(limitsVk.maxComputeWorkGroupSize[0]);
-    mNativeCaps.maxComputeWorkGroupSize[1] = LimitToInt(limitsVk.maxComputeWorkGroupSize[1]);
-    mNativeCaps.maxComputeWorkGroupSize[2] = LimitToInt(limitsVk.maxComputeWorkGroupSize[2]);
+    mNativeCaps.maxComputeWorkGroupCount[0] = LimitToInt(limitsVk.maxComputeWorkGroupCount[0]);
+    mNativeCaps.maxComputeWorkGroupCount[1] = LimitToInt(limitsVk.maxComputeWorkGroupCount[1]);
+    mNativeCaps.maxComputeWorkGroupCount[2] = LimitToInt(limitsVk.maxComputeWorkGroupCount[2]);
+    mNativeCaps.maxComputeWorkGroupSize[0]  = LimitToInt(limitsVk.maxComputeWorkGroupSize[0]);
+    mNativeCaps.maxComputeWorkGroupSize[1]  = LimitToInt(limitsVk.maxComputeWorkGroupSize[1]);
+    mNativeCaps.maxComputeWorkGroupSize[2]  = LimitToInt(limitsVk.maxComputeWorkGroupSize[2]);
     mNativeCaps.maxComputeWorkGroupInvocations =
         LimitToInt(limitsVk.maxComputeWorkGroupInvocations);
     mNativeCaps.maxComputeSharedMemorySize = LimitToInt(limitsVk.maxComputeSharedMemorySize);
@@ -420,14 +427,11 @@ void RendererVk::ensureCapsInitialized() const
     // The gles2.0 section 2.10 states that "gl_Position is not a varying variable and does
     // not count against this limit.", but the Vulkan spec has no such mention in its Built-in
     // vars section. It is implicit that we need to actually reserve it for Vulkan in that case.
-    //
-    // Note: AMD has a weird behavior when we edge toward the maximum number of varyings and can
-    // often crash. Reserving an additional varying just for them bringing the total to 2.
-    constexpr GLint kReservedVaryingCount = 2;
-    mNativeCaps.maxVaryingVectors =
-        LimitToInt((limitsVk.maxVertexOutputComponents / 4) - kReservedVaryingCount);
-    mNativeCaps.maxVertexOutputComponents =
-        LimitToInt(static_cast<uint32_t>(mNativeCaps.maxVaryingVectors * 4));
+    GLint reservedVaryingVectorCount = 1;
+
+    mNativeCaps.maxVaryingVectors = LimitToInt(
+        (limitsVk.maxVertexOutputComponents / kComponentsPerVector) - reservedVaryingVectorCount);
+    mNativeCaps.maxVertexOutputComponents = LimitToInt(limitsVk.maxVertexOutputComponents);
 
     mNativeCaps.maxTransformFeedbackInterleavedComponents =
         gl::IMPLEMENTATION_MAX_TRANSFORM_FEEDBACK_INTERLEAVED_COMPONENTS;
@@ -439,9 +443,9 @@ void RendererVk::ensureCapsInitialized() const
     mNativeCaps.minProgramTexelOffset = limitsVk.minTexelOffset;
     mNativeCaps.maxProgramTexelOffset = LimitToInt(limitsVk.maxTexelOffset);
 
-    const uint32_t sampleCounts = limitsVk.framebufferColorSampleCounts &
-                                  limitsVk.framebufferDepthSampleCounts &
-                                  limitsVk.framebufferStencilSampleCounts;
+    const uint32_t sampleCounts =
+        limitsVk.framebufferColorSampleCounts & limitsVk.framebufferDepthSampleCounts &
+        limitsVk.framebufferStencilSampleCounts & vk_gl::kSupportedSampleCounts;
 
     mNativeCaps.maxSamples            = LimitToInt(vk_gl::GetMaxSampleCount(sampleCounts));
     mNativeCaps.maxFramebufferSamples = mNativeCaps.maxSamples;
@@ -476,6 +480,26 @@ void RendererVk::ensureCapsInitialized() const
             LimitToInt(limitsVk.maxGeometryShaderInvocations);
     }
 }
+
+namespace vk
+{
+
+bool CanSupportGPUShader5EXT(const VkPhysicalDeviceFeatures &features)
+{
+    // We use the following Vulkan features to implement EXT_gpu_shader5:
+    // - shaderImageGatherExtended: textureGatherOffset with non-constant offset and
+    //   textureGatherOffsets family of functions.
+    // - shaderSampledImageArrayDynamicIndexing and shaderUniformBufferArrayDynamicIndexing:
+    //   dynamically uniform indices for samplers and uniform buffers.
+    // - shaderStorageBufferArrayDynamicIndexing: While EXT_gpu_shader5 doesn't require dynamically
+    //   uniform indices on storage buffers, we need it as we emulate atomic counter buffers with
+    //   storage buffers (and atomic counter buffers *can* be indexed in that way).
+    return features.shaderImageGatherExtended && features.shaderSampledImageArrayDynamicIndexing &&
+           features.shaderUniformBufferArrayDynamicIndexing &&
+           features.shaderStorageBufferArrayDynamicIndexing;
+}
+
+}  // namespace vk
 
 namespace egl_vk
 {
@@ -534,7 +558,7 @@ egl::Config GenerateDefaultConfig(const RendererVk *renderer,
     config.bindToTextureRGB   = colorFormat.format == GL_RGB;
     config.bindToTextureRGBA  = colorFormat.format == GL_RGBA || colorFormat.format == GL_BGRA_EXT;
     config.colorBufferType    = EGL_RGB_BUFFER;
-    config.configCaveat       = EGL_NONE;
+    config.configCaveat       = GetConfigCaveat(colorFormat.internalFormat);
     config.conformant         = es2Support | es3Support;
     config.depthSize          = depthStencilFormat.depthBits;
     config.stencilSize        = depthStencilFormat.stencilBits;
@@ -582,10 +606,12 @@ egl::ConfigSet GenerateConfigs(const GLenum *colorFormats,
 
     const VkPhysicalDeviceLimits &limits =
         display->getRenderer()->getPhysicalDeviceProperties().limits;
-    const uint32_t depthStencilSampleCountsLimit =
-        limits.framebufferDepthSampleCounts & limits.framebufferStencilSampleCounts;
+    const uint32_t depthStencilSampleCountsLimit = limits.framebufferDepthSampleCounts &
+                                                   limits.framebufferStencilSampleCounts &
+                                                   vk_gl::kSupportedSampleCounts;
 
-    vk_gl::AddSampleCounts(limits.framebufferColorSampleCounts, &colorSampleCounts);
+    vk_gl::AddSampleCounts(limits.framebufferColorSampleCounts & vk_gl::kSupportedSampleCounts,
+                           &colorSampleCounts);
     vk_gl::AddSampleCounts(depthStencilSampleCountsLimit, &depthStencilSampleCounts);
 
     // Always support 0 samples

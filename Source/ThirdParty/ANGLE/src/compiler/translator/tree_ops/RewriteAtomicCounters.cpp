@@ -513,18 +513,18 @@ class RewriteAtomicCountersTraverser : public TIntermTraverser
         TIntermSymbol *argumentAsSymbol = symbol->getAsSymbolNode();
         ASSERT(argumentAsSymbol);
 
-        const TVector<unsigned int> *arraySizes = argumentAsSymbol->getType().getArraySizes();
+        const TSpan<const unsigned int> &arraySizes = argumentAsSymbol->getType().getArraySizes();
 
         // Calculate Pi
         TVector<unsigned int> runningArraySizeProducts;
-        if (arraySizes && arraySizes->size() > 0)
+        if (!arraySizes.empty())
         {
-            runningArraySizeProducts.resize(arraySizes->size());
+            runningArraySizeProducts.resize(arraySizes.size());
             uint32_t runningProduct = 1;
-            for (size_t dimension = 0; dimension < arraySizes->size(); ++dimension)
+            for (size_t dimension = 0; dimension < arraySizes.size(); ++dimension)
             {
                 runningArraySizeProducts[dimension] = runningProduct;
-                runningProduct *= (*arraySizes)[dimension];
+                runningProduct *= arraySizes[dimension];
             }
         }
 

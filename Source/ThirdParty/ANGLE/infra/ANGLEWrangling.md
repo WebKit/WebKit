@@ -88,6 +88,9 @@ We also use additional auto-rollers to roll third party libraries into ANGLE onc
 Please ensure these rollers are also healthy and unblocked. You can trigger manual rolls using the dashboards
 to land high-priority changes.
 
+The autoroller configurations live in the [skia/buildbot repository](https://skia.googlesource.com/buildbot/)
+in the [autoroll/config](https://skia.googlesource.com/buildbot/+/master/autoroll/config) folder.
+
 ## Task 4: ANGLE Standalone Testing
 
 See more detailed instructions on by following [this link](README.md).

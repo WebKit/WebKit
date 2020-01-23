@@ -224,14 +224,12 @@ template <class T, size_t N, class Storage>
 ANGLE_INLINE typename FastVector<T, N, Storage>::const_pointer
 angle::FastVector<T, N, Storage>::data() const
 {
-    ASSERT(!empty());
     return mData;
 }
 
 template <class T, size_t N, class Storage>
 ANGLE_INLINE typename FastVector<T, N, Storage>::pointer angle::FastVector<T, N, Storage>::data()
 {
-    ASSERT(!empty());
     return mData;
 }
 

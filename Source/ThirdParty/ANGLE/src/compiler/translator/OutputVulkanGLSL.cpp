@@ -53,7 +53,8 @@ void TOutputVulkanGLSL::writeLayoutQualifier(TIntermTyped *variable)
         return;
     }
 
-    TInfoSinkBase &out = objSink();
+    TInfoSinkBase &out                      = objSink();
+    const TLayoutQualifier &layoutQualifier = type.getLayoutQualifier();
 
     // This isn't super clean, but it gets the job done.
     // See corresponding code in glslang_wrapper_utils.cpp.
@@ -87,12 +88,12 @@ void TOutputVulkanGLSL::writeLayoutQualifier(TIntermTyped *variable)
         {
             blockStorage = getBlockStorageString(storage);
         }
+    }
 
-        // We expect all interface blocks to have been transformed to column major, so we don't
-        // specify the packing.  Any remaining interface block qualified with row_major shouldn't
-        // have any matrices inside.
-        ASSERT(type.getLayoutQualifier().matrixPacking != EmpRowMajor ||
-               !interfaceBlock->containsMatrices());
+    // Specify matrix packing if necessary.
+    if (layoutQualifier.matrixPacking != EmpUnspecified)
+    {
+        matrixPacking = getMatrixPackingString(layoutQualifier.matrixPacking);
     }
 
     if (needsCustomLayout)
@@ -131,14 +132,6 @@ void TOutputVulkanGLSL::writeLayoutQualifier(TIntermTyped *variable)
     }
 }
 
-void TOutputVulkanGLSL::writeFieldLayoutQualifier(const TField *field)
-{
-    // We expect all interface blocks to have been transformed to column major, as Vulkan GLSL
-    // doesn't allow layout qualifiers on interface block fields.  Any remaining interface block
-    // qualified with row_major shouldn't have any matrices inside, so the qualifier can be
-    // dropped.
-}
-
 void TOutputVulkanGLSL::writeQualifier(TQualifier qualifier,
                                        const TType &type,
                                        const TSymbol *symbol)
@@ -164,11 +157,25 @@ void TOutputVulkanGLSL::writeQualifier(TQualifier qualifier,
         name = type.getInterfaceBlock()->name();
     }
 
+    // The in/out qualifiers are calculated here so glslang wrapper doesn't need to guess them.
+    // The rest of the qualifiers are left to glslang wrapper to substitute as it emulates some
+    // with others.
+    const char *inOutQualifier = "";
+    if (IsShaderIn(qualifier) || IsShaderOut(qualifier))
+    {
+        inOutQualifier = mapQualifierToString(qualifier);
+    }
+    std::string memoryQualifiers = getMemoryQualifiers(type);
+    const char *separator = strcmp(inOutQualifier, "") == 0 || memoryQualifiers.empty() ? "" : " ";
+
     TInfoSinkBase &out = objSink();
-    out << "@@ QUALIFIER-" << name.data() << "(" << getMemoryQualifiers(type) << ") @@ ";
+    out << "@@ QUALIFIER-" << name.data() << "(" << inOutQualifier << separator << memoryQualifiers
+        << ") @@ ";
 }
 
-void TOutputVulkanGLSL::writeVariableType(const TType &type, const TSymbol *symbol)
+void TOutputVulkanGLSL::writeVariableType(const TType &type,
+                                          const TSymbol *symbol,
+                                          bool isFunctionArgument)
 {
     TType overrideType(type);
 
@@ -178,7 +185,7 @@ void TOutputVulkanGLSL::writeVariableType(const TType &type, const TSymbol *symb
         overrideType.setBasicType(EbtSampler2D);
     }
 
-    TOutputGLSL::writeVariableType(overrideType, symbol);
+    TOutputGLSL::writeVariableType(overrideType, symbol, isFunctionArgument);
 }
 
 void TOutputVulkanGLSL::writeStructType(const TStructure *structure)

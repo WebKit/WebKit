@@ -69,7 +69,8 @@
             "A32_FLOAT": "R32G32B32A32_FLOAT",
             "L32_FLOAT": "R32G32B32A32_FLOAT",
             "L32A32_FLOAT": "R32G32B32A32_FLOAT",
-            "D24_UNORM_X8_UINT": "D32_FLOAT"
+            "D24_UNORM_X8_UINT": "D32_FLOAT",
+            "D32_UNORM": "D32_FLOAT"
         },
         "override_ios": {
             "D24_UNORM_S8_UINT": "D32_FLOAT_S8X24_UINT",

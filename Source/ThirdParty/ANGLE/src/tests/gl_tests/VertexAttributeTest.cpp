@@ -1203,6 +1203,9 @@ TEST_P(VertexAttributeOORTest, ANGLEDrawArraysOutOfBoundsCases)
 // Verify that using a different start vertex doesn't mess up the draw.
 TEST_P(VertexAttributeTest, DrawArraysWithBufferOffset)
 {
+    // anglebug.com/4258
+    ANGLE_SKIP_TEST_IF(IsOpenGL() && IsNVIDIA() && IsOSX());
+
     // anglebug.com/4163
     ANGLE_SKIP_TEST_IF(IsD3D11() && IsNVIDIA() && IsWindows7());
 
@@ -1214,6 +1217,9 @@ TEST_P(VertexAttributeTest, DrawArraysWithBufferOffset)
 
     // TODO(cnorthrop): Test this again on more recent drivers. http://anglebug.com/3951
     ANGLE_SKIP_TEST_IF(IsLinux() && IsNVIDIA() && IsVulkan());
+
+    // TODO(https://anglebug.com/4269): Test is flaky on OpenGL and Metal on Mac NVIDIA.
+    ANGLE_SKIP_TEST_IF(IsOSX() && IsNVIDIA());
 
     initBasicProgram();
     glUseProgram(mProgram);
@@ -1379,6 +1385,95 @@ TEST_P(VertexAttributeTest, DisabledAttribArrays)
 
         glDeleteProgram(program);
     }
+}
+
+// Test that draw with offset larger than vertex attribute's stride can work
+TEST_P(VertexAttributeTest, DrawWithLargeBufferOffset)
+{
+    constexpr size_t kBufferOffset    = 10000;
+    constexpr size_t kQuadVertexCount = 4;
+
+    std::array<GLbyte, kQuadVertexCount> validInputData = {{0, 1, 2, 3}};
+
+    // 4 components
+    std::array<GLbyte, 4 *kQuadVertexCount + kBufferOffset> inputData = {};
+
+    std::array<GLfloat, 4 * kQuadVertexCount> expectedData;
+    for (size_t i = 0; i < kQuadVertexCount; i++)
+    {
+        for (int j = 0; j < 4; ++j)
+        {
+            inputData[kBufferOffset + 4 * i + j] = validInputData[i];
+            expectedData[4 * i + j]              = validInputData[i];
+        }
+    }
+
+    initBasicProgram();
+
+    glBindBuffer(GL_ARRAY_BUFFER, mBuffer);
+    glBufferData(GL_ARRAY_BUFFER, inputData.size(), inputData.data(), GL_STATIC_DRAW);
+    glVertexAttribPointer(mTestAttrib, 4, GL_BYTE, GL_FALSE, 0,
+                          reinterpret_cast<const void *>(kBufferOffset));
+    glEnableVertexAttribArray(mTestAttrib);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+    glVertexAttribPointer(mExpectedAttrib, 4, GL_FLOAT, GL_FALSE, 0, expectedData.data());
+    glEnableVertexAttribArray(mExpectedAttrib);
+
+    drawIndexedQuad(mProgram, "position", 0.5f);
+
+    checkPixels();
+}
+
+// Test that drawing with large vertex attribute pointer offset and less components than
+// shader expects is OK
+TEST_P(VertexAttributeTest, DrawWithLargeBufferOffsetAndLessComponents)
+{
+    // Shader expects vec4 but glVertexAttribPointer only provides 2 components
+    constexpr char kVS[] = R"(attribute vec4 a_position;
+attribute vec4 a_attrib;
+varying vec4 v_attrib;
+void main()
+{
+    v_attrib = a_attrib;
+    gl_Position = a_position;
+})";
+
+    constexpr char kFS[] = R"(precision mediump float;
+varying vec4 v_attrib;
+void main()
+{
+    gl_FragColor = v_attrib;
+})";
+
+    ANGLE_GL_PROGRAM(program, kVS, kFS);
+    glBindAttribLocation(program, 0, "a_position");
+    glBindAttribLocation(program, 1, "a_attrib");
+    glLinkProgram(program);
+    glUseProgram(program);
+    ASSERT_GL_NO_ERROR();
+
+    constexpr size_t kBufferOffset = 4998;
+
+    // Set up color data so yellow is drawn (only R, G components are provided)
+    std::vector<GLushort> data(kBufferOffset + 12);
+    for (int i = 0; i < 12; ++i)
+    {
+        data[kBufferOffset + i] = 0xffff;
+    }
+
+    GLBuffer buffer;
+    glBindBuffer(GL_ARRAY_BUFFER, buffer);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(GLushort) * data.size(), data.data(), GL_STATIC_DRAW);
+    // Provide only 2 components for the vec4 in the shader
+    glVertexAttribPointer(1, 2, GL_UNSIGNED_SHORT, GL_TRUE, 0,
+                          reinterpret_cast<const void *>(sizeof(GLushort) * kBufferOffset));
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glEnableVertexAttribArray(1);
+
+    drawQuad(program, "a_position", 0.5f);
+    // Verify yellow was drawn
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::yellow);
 }
 
 class VertexAttributeTestES31 : public VertexAttributeTestES3

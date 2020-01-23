@@ -1969,9 +1969,9 @@ void Context::texSubImage1D(GLenum target,
     UNIMPLEMENTED();
 }
 
-void Context::multiDrawElementsBaseVertex(GLenum mode,
+void Context::multiDrawElementsBaseVertex(PrimitiveMode mode,
                                           const GLsizei *count,
-                                          GLenum type,
+                                          DrawElementsType type,
                                           const void *const *indices,
                                           GLsizei drawcount,
                                           const GLint *basevertex)

@@ -69,7 +69,9 @@ declare_args() {
         (!angle_64bit_current_cpu && android32_ndk_api_level >= 26) ||
         (angle_64bit_current_cpu && android64_ndk_api_level >= 26)
   }
-  angle_shared_libvulkan = false
+
+  # TODO(tobine): Remove this after roll. http://anglebug.com/4162
+  angle_shared_libvulkan = true
 
   # There's no "is_winuwp" helper in BUILDCONFIG.gn, so we define one ourselves
   angle_is_winuwp = is_win && current_os == "winuwp"
@@ -93,10 +95,10 @@ declare_args() {
   # Vulkan Validation Layers compatibility issues, see http://crrev/c/1405714.
   # Otherwise, API level 24 would have been enough.
   angle_enable_vulkan =
-      angle_has_build &&
-      ((is_win && !angle_is_winuwp) ||
-       (is_linux && angle_use_x11 && !is_chromeos) ||
-       (is_android && ndk_api_level_at_least_26) || is_fuchsia || is_ggp)
+      angle_has_build && ((is_win && !angle_is_winuwp) ||
+                          (is_linux && angle_use_x11 && !is_chromeos) ||
+                          (is_android && ndk_api_level_at_least_26) ||
+                          is_fuchsia || is_ggp || is_mac)
   angle_enable_null = true
   angle_enable_essl = true
   angle_enable_glsl = true
@@ -106,14 +108,21 @@ declare_args() {
 }
 
 declare_args() {
+  # Currently SwiftShader's Vulkan front-end doesn't build on Android.
+  # SwiftShader is not needed on Fuchsia because Vulkan is supported on all
+  # devices that run Fuchsia.
+  angle_enable_swiftshader =
+      angle_enable_vulkan && !is_android && !is_fuchsia && !is_ggp
+
   angle_enable_gl_null = angle_enable_gl
   angle_enable_hlsl = angle_enable_d3d9 || angle_enable_d3d11
   angle_enable_trace = false
 
   # Disable the layers in ubsan builds because of really slow builds.
+  # TODO(anglebug.com/4082) enable validation layers on mac for swiftshader
   angle_enable_vulkan_validation_layers =
       angle_enable_vulkan && !is_ubsan && !is_tsan && !is_asan &&
-      (is_debug || dcheck_always_on)
+      (is_debug || dcheck_always_on) && !is_mac
 
   # Disable overlay by default
   angle_enable_overlay = false
@@ -180,11 +189,14 @@ set_defaults("angle_test") {
   public_deps = []
   sources = []
   data = []
+  defines = []
   main = ""
   suppressed_configs = angle_remove_configs
 
-  # TODO(jmadill): Migrate to standalone harness. http://anglebug.com/3162
-  if (build_with_chromium) {
+  # By default use the Chromium harness in Chromium. Can be overriden in a target.
+  standalone_harness = !build_with_chromium
+
+  if (!standalone_harness) {
     suppressed_configs -= [ "//build/config/compiler:default_include_dirs" ]
   }
 
@@ -277,18 +289,6 @@ template("angle_static_library") {
 }
 
 template("angle_test") {
-  _googletest_deps = [
-    "//testing/gmock",
-    "//testing/gtest",
-    "//third_party/googletest:gmock",
-    "//third_party/googletest:gtest",
-  ]
-
-  # TODO(jmadill): Migrate to standalone harness. http://anglebug.com/3162
-  if (build_with_chromium) {
-    _googletest_deps += [ "//base/test:test_support" ]
-  }
-
   test(target_name) {
     forward_variables_from(invoker,
                            "*",
@@ -302,9 +302,10 @@ template("angle_test") {
     forward_variables_from(invoker, [ "visibility" ])
 
     configs += invoker.configs
-    configs -= invoker.suppressed_configs
-    configs -= [ angle_root + ":constructor_and_destructor_warnings" ]
-    configs -= [ angle_root + ":extra_warnings" ]
+    configs -= invoker.suppressed_configs + [
+                 "$angle_root:constructor_and_destructor_warnings",
+                 "$angle_root:extra_warnings",
+               ]
 
     if (is_linux && !is_component_build) {
       # Set rpath to find shared libs in a non-component build.
@@ -312,21 +313,40 @@ template("angle_test") {
     }
 
     if (is_android) {
-      configs += [ angle_root + ":build_id_config" ]
-      if (build_with_chromium) {
-        configs -= [ "//build/config/android:hide_all_but_jni" ]
-      }
+      configs += [ "$angle_root:build_id_config" ]
     }
 
-    deps += _googletest_deps + [
-              "$angle_root:angle_common",
-              "$angle_root:includes",
-            ]
+    deps += [
+      "$angle_root:angle_common",
+      "$angle_root:includes",
+      "$angle_root/third_party/rapidjson:rapidjson",
+      "$angle_root/util:angle_test_utils",
+      "//testing/gmock",
+      "//testing/gtest",
+      "//third_party/googletest:gmock",
+      "//third_party/googletest:gtest",
+    ]
 
-    if (build_with_chromium) {
-      sources += [ "//gpu/${invoker.main}.cc" ]
+    sources += [
+      "$angle_root/src/tests/test_utils/runner/TestSuite.cpp",
+      "$angle_root/src/tests/test_utils/runner/TestSuite.h",
+    ]
+
+    # To use the Chromium test infrastructure we must currently use the //base test launcher.
+    # Eventually we could switch to using standalone testing. See http://crbug.com/837741
+    if (standalone_harness) {
+      if (invoker.main != "") {
+        sources += [ "${invoker.main}.cpp" ]
+      }
     } else {
-      sources += [ "${invoker.main}.cpp" ]
+      if (invoker.main != "") {
+        sources += [ "//gpu/${invoker.main}.cc" ]
+      }
+      deps += [ "//base/test:test_support" ]
+
+      if (is_android) {
+        configs -= [ "//build/config/android:hide_all_but_jni" ]
+      }
     }
   }
 }

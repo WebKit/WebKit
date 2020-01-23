@@ -13,6 +13,7 @@
 #include "angle_gl.h"
 #include "gtest/gtest.h"
 #include "tests/test_utils/ShaderCompileTreeTest.h"
+#include "tests/test_utils/compiler_test.h"
 
 using namespace sh;
 
@@ -27,6 +28,15 @@ class BufferVariablesTest : public ShaderCompileTreeTest
     void initResources(ShBuiltInResources *resources) override
     {
         resources->MaxShaderStorageBufferBindings = 8;
+    }
+};
+
+class BufferVariablesMatchTest : public MatchOutputCodeTest
+{
+  public:
+    BufferVariablesMatchTest() : MatchOutputCodeTest(GL_VERTEX_SHADER, 0, SH_ESSL_OUTPUT)
+    {
+        getResources()->MaxShaderStorageBufferBindings = 8;
     }
 };
 
@@ -641,4 +651,34 @@ TEST_F(BufferVariablesTest, RuntimeSizedVariableInNotLastInBuffer)
     {
         FAIL() << "Shader compilation succeeded, expecting failure:\n" << mInfoLog;
     }
+}
+
+// Test that memory qualifiers are output.
+TEST_F(BufferVariablesMatchTest, MemoryQualifiers)
+{
+    const std::string &source =
+        R"(#version 310 es
+
+        layout(std430) coherent buffer buf
+        {
+            int defaultCoherent;
+            coherent ivec2 specifiedCoherent;
+            volatile ivec3 specifiedVolatile;
+            restrict ivec4 specifiedRestrict;
+            readonly float specifiedReadOnly;
+            writeonly vec2 specifiedWriteOnly;
+            volatile readonly vec3 specifiedMultiple;
+        };
+
+        void main()
+        {
+        })";
+    compile(source);
+    ASSERT_TRUE(foundInESSLCode("coherent highp int"));
+    ASSERT_TRUE(foundInESSLCode("coherent highp ivec2"));
+    ASSERT_TRUE(foundInESSLCode("coherent volatile highp ivec3"));
+    ASSERT_TRUE(foundInESSLCode("coherent restrict highp ivec4"));
+    ASSERT_TRUE(foundInESSLCode("readonly coherent highp float"));
+    ASSERT_TRUE(foundInESSLCode("writeonly coherent highp vec2"));
+    ASSERT_TRUE(foundInESSLCode("readonly coherent volatile highp vec3"));
 }

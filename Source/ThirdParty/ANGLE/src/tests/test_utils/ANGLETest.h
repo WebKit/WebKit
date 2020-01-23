@@ -15,6 +15,7 @@
 #include <array>
 
 #include "angle_test_configs.h"
+#include "angle_test_platform.h"
 #include "common/angleutils.h"
 #include "common/system_utils.h"
 #include "common/vector_utils.h"
@@ -470,6 +471,14 @@ class ANGLETestBase
         return mCurrentParams->getRenderer() == EGL_PLATFORM_ANGLE_TYPE_VULKAN_ANGLE;
     }
 
+    bool isVulkanSwiftshaderRenderer() const
+    {
+        return mCurrentParams->getRenderer() == EGL_PLATFORM_ANGLE_TYPE_VULKAN_ANGLE &&
+               mCurrentParams->getDeviceType() == EGL_PLATFORM_ANGLE_DEVICE_TYPE_SWIFTSHADER_ANGLE;
+    }
+
+    bool platformSupportsMultithreading() const;
+
   private:
     void checkD3D11SDKLayersMessages();
 
@@ -586,45 +595,6 @@ class ANGLETestEnvironment : public testing::Environment
     static std::unique_ptr<angle::Library> gWGLLibrary;
 };
 
-// Driver vendors
-bool IsAdreno();
-
-// Renderer back-ends
-// Note: FL9_3 is explicitly *not* considered D3D11.
-bool IsD3D11();
-bool IsD3D11_FL93();
-// Is a D3D9-class renderer.
-bool IsD3D9();
-// Is D3D9 or SM9_3 renderer.
-bool IsD3DSM3();
-bool IsDesktopOpenGL();
-bool IsOpenGLES();
-bool IsOpenGL();
-bool IsNULL();
-bool IsVulkan();
-bool IsMetal();
-
-// Debug/Release
-bool IsDebug();
-bool IsRelease();
-
-bool EnsureGLExtensionEnabled(const std::string &extName);
-bool IsEGLClientExtensionEnabled(const std::string &extName);
-bool IsEGLDeviceExtensionEnabled(EGLDeviceEXT device, const std::string &extName);
-bool IsEGLDisplayExtensionEnabled(EGLDisplay display, const std::string &extName);
-bool IsGLExtensionEnabled(const std::string &extName);
-bool IsGLExtensionRequestable(const std::string &extName);
-
 extern angle::PlatformMethods gDefaultPlatformMethods;
-
-#define ANGLE_SKIP_TEST_IF(COND)                                  \
-    do                                                            \
-    {                                                             \
-        if (COND)                                                 \
-        {                                                         \
-            std::cout << "Test skipped: " #COND "." << std::endl; \
-            return;                                               \
-        }                                                         \
-    } while (0)
 
 #endif  // ANGLE_TESTS_ANGLE_TEST_H_

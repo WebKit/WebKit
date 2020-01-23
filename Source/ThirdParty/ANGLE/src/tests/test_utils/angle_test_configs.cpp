@@ -39,14 +39,15 @@ EGLint PlatformParameters::getRenderer() const
     return eglParameters.renderer;
 }
 
+EGLint PlatformParameters::getDeviceType() const
+{
+    return eglParameters.deviceType;
+}
+
 void PlatformParameters::initDefaultParameters()
 {
-#if defined(ANGLE_ENABLE_VULKAN_VALIDATION_LAYERS_BY_DEFAULT)
     // Default debug layers to enabled in tests.
     eglParameters.debugLayersEnabled = EGL_TRUE;
-#else
-    eglParameters.debugLayersEnabled = EGL_FALSE;
-#endif  // defined(ANGLE_ENABLE_VULKAN_VALIDATION_LAYERS_BY_DEFAULT)
 }
 
 bool operator<(const PlatformParameters &a, const PlatformParameters &b)

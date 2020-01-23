@@ -194,6 +194,9 @@ class RendererGL : angle::NonCopyable
 
     static unsigned int getMaxWorkerContexts();
 
+    void setNeedsFlushBeforeDeleteTextures();
+    void flushIfNecessaryBeforeDeleteTextures();
+
   protected:
     virtual WorkerContext *createWorkerContext(std::string *infoLog) = 0;
 
@@ -231,6 +234,9 @@ class RendererGL : angle::NonCopyable
     bool mNativeParallelCompileEnabled;
 
     angle::FeaturesGL mFeatures;
+
+    // Workaround for anglebug.com/4267
+    bool mNeedsFlushBeforeDeleteTextures;
 };
 
 }  // namespace rx

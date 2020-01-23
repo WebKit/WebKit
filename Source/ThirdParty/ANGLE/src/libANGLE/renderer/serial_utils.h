@@ -1,0 +1,98 @@
+//
+// Copyright 2019 The ANGLE Project Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+//
+// serial_utils:
+//   Utilities for generating unique IDs for resources in ANGLE.
+//
+
+#ifndef LIBANGLE_RENDERER_SERIAL_UTILS_H_
+#define LIBANGLE_RENDERER_SERIAL_UTILS_H_
+
+#include <atomic>
+
+#include "common/angleutils.h"
+#include "common/debug.h"
+
+namespace rx
+{
+class ResourceSerial
+{
+  public:
+    constexpr ResourceSerial() : mValue(kDirty) {}
+    explicit constexpr ResourceSerial(uintptr_t value) : mValue(value) {}
+    constexpr bool operator==(ResourceSerial other) const { return mValue == other.mValue; }
+    constexpr bool operator!=(ResourceSerial other) const { return mValue != other.mValue; }
+
+    void dirty() { mValue = kDirty; }
+    void clear() { mValue = kEmpty; }
+
+    constexpr bool valid() const { return mValue != kEmpty && mValue != kDirty; }
+    constexpr bool empty() const { return mValue == kEmpty; }
+
+  private:
+    constexpr static uintptr_t kDirty = std::numeric_limits<uintptr_t>::max();
+    constexpr static uintptr_t kEmpty = 0;
+
+    uintptr_t mValue;
+};
+
+class Serial final
+{
+  public:
+    constexpr Serial() : mValue(kInvalid) {}
+    constexpr Serial(const Serial &other) = default;
+    Serial &operator=(const Serial &other) = default;
+
+    constexpr bool operator==(const Serial &other) const
+    {
+        return mValue != kInvalid && mValue == other.mValue;
+    }
+    constexpr bool operator==(uint32_t value) const
+    {
+        return mValue != kInvalid && mValue == static_cast<uint64_t>(value);
+    }
+    constexpr bool operator!=(const Serial &other) const
+    {
+        return mValue == kInvalid || mValue != other.mValue;
+    }
+    constexpr bool operator>(const Serial &other) const { return mValue > other.mValue; }
+    constexpr bool operator>=(const Serial &other) const { return mValue >= other.mValue; }
+    constexpr bool operator<(const Serial &other) const { return mValue < other.mValue; }
+    constexpr bool operator<=(const Serial &other) const { return mValue <= other.mValue; }
+
+    constexpr bool operator<(uint32_t value) const { return mValue < static_cast<uint64_t>(value); }
+
+    // Useful for serialization.
+    constexpr uint64_t getValue() const { return mValue; }
+
+  private:
+    template <typename T>
+    friend class SerialFactoryBase;
+    constexpr explicit Serial(uint64_t value) : mValue(value) {}
+    uint64_t mValue;
+    static constexpr uint64_t kInvalid = 0;
+};
+
+template <typename SerialBaseType>
+class SerialFactoryBase final : angle::NonCopyable
+{
+  public:
+    SerialFactoryBase() : mSerial(1) {}
+
+    Serial generate()
+    {
+        ASSERT(mSerial + 1 > mSerial);
+        return Serial(mSerial++);
+    }
+
+  private:
+    SerialBaseType mSerial;
+};
+
+using SerialFactory       = SerialFactoryBase<uint64_t>;
+using AtomicSerialFactory = SerialFactoryBase<std::atomic<uint64_t>>;
+}  // namespace rx
+
+#endif  // LIBANGLE_RENDERER_SERIAL_UTILS_H_

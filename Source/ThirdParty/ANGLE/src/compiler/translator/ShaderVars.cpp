@@ -181,6 +181,29 @@ unsigned int ShaderVariable::getBasicTypeElementCount() const
     return 1u;
 }
 
+unsigned int ShaderVariable::getExternalSize() const
+{
+    unsigned int memorySize = 0;
+
+    if (isStruct())
+    {
+        // Have a structure, need to compute the structure size.
+        for (const auto &field : fields)
+        {
+            memorySize += field.getExternalSize();
+        }
+    }
+    else
+    {
+        memorySize += gl::VariableExternalSize(type);
+    }
+
+    // multiply by array size to get total memory size of this variable / struct.
+    memorySize *= getArraySizeProduct();
+
+    return memorySize;
+}
+
 bool ShaderVariable::findInfoByMappedName(const std::string &mappedFullName,
                                           const ShaderVariable **leafVar,
                                           std::string *originalFullName) const

@@ -390,6 +390,7 @@ class GraphicsPipelineDesc final
                                         bool rasterizerDiscardEnabled);
 
     // Multisample states
+    uint32_t getRasterizationSamples() const;
     void setRasterizationSamples(uint32_t rasterizationSamples);
     void updateRasterizationSamples(GraphicsPipelineTransitionBits *transition,
                                     uint32_t rasterizationSamples);
@@ -900,23 +901,27 @@ class PipelineLayoutCache final : angle::NonCopyable
 //
 // The set/binding assignment is done as following:
 //
-// - Set 0 contains uniform blocks created to encompass default uniforms.  1 binding is used per
-//   pipeline stage.  Additionally, transform feedback buffers are bound from binding 2 and up.
-// - Set 1 contains all textures.
-// - Set 2 contains all other shader resources, such as uniform and storage blocks, atomic counter
-//   buffers and images.
-// - Set 3 contains the ANGLE driver uniforms at binding 0.  Note that driver uniforms are updated
+// - Set 0 contains the ANGLE driver uniforms at binding 0.  Note that driver uniforms are updated
 //   only under rare circumstances, such as viewport or depth range change.  However, there is only
-//   one binding in this set.
+//   one binding in this set.  This set is placed before Set 1 containing transform feedback
+//   buffers, so that switching between xfb and non-xfb programs doesn't require rebinding this set.
+//   Otherwise, as the layout of Set 1 changes (due to addition and removal of xfb buffers), and all
+//   subsequent sets need to be rebound (due to Vulkan pipeline layout validation rules), we would
+//   have needed to invalidateGraphicsDriverUniforms().
+// - Set 1 contains uniform blocks created to encompass default uniforms.  1 binding is used per
+//   pipeline stage.  Additionally, transform feedback buffers are bound from binding 2 and up.
+// - Set 2 contains all textures.
+// - Set 3 contains all other shader resources, such as uniform and storage blocks, atomic counter
+//   buffers and images.
 
+// ANGLE driver uniforms set index (binding is always 0):
+constexpr uint32_t kDriverUniformsDescriptorSetIndex = 0;
 // Uniforms set index:
-constexpr uint32_t kUniformsAndXfbDescriptorSetIndex = 0;
+constexpr uint32_t kUniformsAndXfbDescriptorSetIndex = 1;
 // Textures set index:
-constexpr uint32_t kTextureDescriptorSetIndex = 1;
+constexpr uint32_t kTextureDescriptorSetIndex = 2;
 // Other shader resources set index:
-constexpr uint32_t kShaderResourceDescriptorSetIndex = 2;
-// ANGLE driver uniforms set index (binding is always 3):
-constexpr uint32_t kDriverUniformsDescriptorSetIndex = 3;
+constexpr uint32_t kShaderResourceDescriptorSetIndex = 3;
 
 // Only 1 driver uniform binding is used.
 constexpr uint32_t kReservedDriverUniformBindingCount = 1;

@@ -218,6 +218,13 @@ Error ValidateConfigAttribute(const Display *display, EGLAttrib attribute)
             }
             break;
 
+        case EGL_FRAMEBUFFER_TARGET_ANDROID:
+            if (!display->getExtensions().framebufferTargetANDROID)
+            {
+                return EglBadAttribute() << "EGL_ANDROID_framebuffer_target is not enabled.";
+            }
+            break;
+
         default:
             return EglBadAttribute() << "Unknown attribute.";
     }
@@ -314,6 +321,50 @@ Error ValidateConfigAttributes(const Display *display, const AttributeMap &attri
     return NoError();
 }
 
+Error ValidateColorspaceAttribute(const DisplayExtensions &displayExtensions, EGLAttrib colorSpace)
+{
+    switch (colorSpace)
+    {
+        case EGL_GL_COLORSPACE_SRGB:
+            break;
+        case EGL_GL_COLORSPACE_LINEAR:
+            break;
+        case EGL_GL_COLORSPACE_DISPLAY_P3_LINEAR_EXT:
+            if (!displayExtensions.glColorspaceDisplayP3Linear)
+            {
+                return EglBadAttribute() << "EXT_gl_colorspace_display_p3_linear is not available.";
+            }
+            break;
+        case EGL_GL_COLORSPACE_DISPLAY_P3_EXT:
+            if (!displayExtensions.glColorspaceDisplayP3)
+            {
+                return EglBadAttribute() << "EXT_gl_colorspace_display_p3 is not available.";
+            }
+            break;
+        case EGL_GL_COLORSPACE_DISPLAY_P3_PASSTHROUGH_EXT:
+            if (!displayExtensions.glColorspaceDisplayP3Passthrough)
+            {
+                return EglBadAttribute()
+                       << "EGL_EXT_gl_colorspace_display_p3_passthrough is not available.";
+            }
+            break;
+        case EGL_GL_COLORSPACE_SCRGB_EXT:
+            if (!displayExtensions.glColorspaceScrgb)
+            {
+                return EglBadAttribute() << "EXT_gl_colorspace_scrgb is not available.";
+            }
+            break;
+        case EGL_GL_COLORSPACE_SCRGB_LINEAR_EXT:
+            if (!displayExtensions.glColorspaceScrgbLinear)
+            {
+                return EglBadAttribute() << "EXT_gl_colorspace_scrgb_linear is not available.";
+            }
+            break;
+        default:
+            return EglBadAttribute();
+    }
+    return NoError();
+}
 Error ValidatePlatformType(const ClientExtensions &clientExtensions, EGLAttrib platformType)
 {
     switch (platformType)
@@ -1412,6 +1463,10 @@ Error ValidateCreateWindowSurface(Display *display,
             case EGL_VG_COLORSPACE:
                 return EglBadMatch();
 
+            case EGL_GL_COLORSPACE:
+                ANGLE_TRY(ValidateColorspaceAttribute(displayExtensions, value));
+                break;
+
             case EGL_VG_ALPHA_FORMAT:
                 return EglBadMatch();
 
@@ -1509,6 +1564,10 @@ Error ValidateCreatePbufferSurface(Display *display, Config *config, const Attri
                 break;
 
             case EGL_VG_COLORSPACE:
+                break;
+
+            case EGL_GL_COLORSPACE:
+                ANGLE_TRY(ValidateColorspaceAttribute(displayExtensions, value));
                 break;
 
             case EGL_VG_ALPHA_FORMAT:
@@ -1719,7 +1778,8 @@ Error ValidateCreatePbufferFromClientBuffer(Display *display,
             case EGL_IOSURFACE_USAGE_HINT_ANGLE:
                 if (value & ~(EGL_IOSURFACE_READ_HINT_ANGLE | EGL_IOSURFACE_WRITE_HINT_ANGLE))
                 {
-                    return EglBadAttribute() << "IOSurface usage hint must only contain READ or WRITE";
+                    return EglBadAttribute()
+                           << "IOSurface usage hint must only contain READ or WRITE";
                 }
                 break;
             default:
@@ -1781,19 +1841,18 @@ Error ValidateCreatePbufferFromClientBuffer(Display *display,
 
     if (buftype == EGL_IOSURFACE_ANGLE)
     {
-#if ANGLE_PLATFORM_MACOS
+#if ANGLE_PLATFORM_MACOS || ANGLE_PLATFORM_MACCATALYST
         if (textureTarget != EGL_TEXTURE_RECTANGLE_ANGLE)
         {
-            return EglBadAttribute() << "EGL_IOSURFACE requires the EGL_TEXTURE_RECTANGLE target on desktop macOS";
+            return EglBadAttribute()
+                   << "EGL_IOSURFACE requires the EGL_TEXTURE_RECTANGLE target on desktop macOS";
         }
-#elif ANGLE_PLATFORM_IOS
+#else   // ANGLE_PLATFORM_MACOS || ANGLE_PLATFORM_MACCATALYST
         if (textureTarget != EGL_TEXTURE_2D)
         {
             return EglBadAttribute() << "EGL_IOSURFACE requires the EGL_TEXTURE_2D target on iOS";
         }
-#else
-        return EglBadAttribute() << "EGL_IOSURFACE supported only on macOS platforms";
-#endif
+#endif  // ANGLE_PLATFORM_MACOS || ANGLE_PLATFORM_MACCATALYST
 
         if (textureFormat != EGL_TEXTURE_RGBA)
         {

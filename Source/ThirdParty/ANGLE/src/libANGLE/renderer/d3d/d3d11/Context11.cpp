@@ -160,6 +160,8 @@ TextureImpl *Context11::createTexture(const gl::TextureState &state)
     switch (state.getType())
     {
         case gl::TextureType::_2D:
+        // GL_TEXTURE_VIDEO_IMAGE_WEBGL maps to native 2D texture on Windows platform
+        case gl::TextureType::VideoImage:
             return new TextureD3D_2D(state, mRenderer);
         case gl::TextureType::CubeMap:
             return new TextureD3D_Cube(state, mRenderer);
@@ -337,6 +339,18 @@ angle::Result Context11::drawElements(const gl::Context *context,
     return drawElementsImpl(context, mode, count, type, indices, 0, 0, 0);
 }
 
+angle::Result Context11::drawElementsBaseVertex(const gl::Context *context,
+                                                gl::PrimitiveMode mode,
+                                                GLsizei count,
+                                                gl::DrawElementsType type,
+                                                const void *indices,
+                                                GLint baseVertex)
+{
+    // TODO: angleproject:3402
+    UNIMPLEMENTED();
+    return angle::Result::Stop;
+}
+
 angle::Result Context11::drawElementsInstanced(const gl::Context *context,
                                                gl::PrimitiveMode mode,
                                                GLsizei count,
@@ -345,6 +359,19 @@ angle::Result Context11::drawElementsInstanced(const gl::Context *context,
                                                GLsizei instances)
 {
     return drawElementsImpl(context, mode, count, type, indices, instances, 0, 0);
+}
+
+angle::Result Context11::drawElementsInstancedBaseVertex(const gl::Context *context,
+                                                         gl::PrimitiveMode mode,
+                                                         GLsizei count,
+                                                         gl::DrawElementsType type,
+                                                         const void *indices,
+                                                         GLsizei instances,
+                                                         GLint baseVertex)
+{
+    // TODO: angleproject:3402
+    UNIMPLEMENTED();
+    return angle::Result::Stop;
 }
 
 angle::Result Context11::drawElementsInstancedBaseVertexBaseInstance(const gl::Context *context,
@@ -369,6 +396,20 @@ angle::Result Context11::drawRangeElements(const gl::Context *context,
                                            const void *indices)
 {
     return drawElementsImpl(context, mode, count, type, indices, 0, 0, 0);
+}
+
+angle::Result Context11::drawRangeElementsBaseVertex(const gl::Context *context,
+                                                     gl::PrimitiveMode mode,
+                                                     GLuint start,
+                                                     GLuint end,
+                                                     GLsizei count,
+                                                     gl::DrawElementsType type,
+                                                     const void *indices,
+                                                     GLint baseVertex)
+{
+    // TODO: angleproject:3402
+    UNIMPLEMENTED();
+    return angle::Result::Stop;
 }
 
 angle::Result Context11::drawArraysIndirect(const gl::Context *context,

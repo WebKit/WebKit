@@ -78,7 +78,7 @@ void CopyArraySizes(const TType *from, TType *to)
 {
     if (from->isArray())
     {
-        to->makeArrays(*from->getArraySizes());
+        to->makeArrays(from->getArraySizes());
     }
 }
 
@@ -219,15 +219,15 @@ class TransformArrayHelper
     TransformArrayHelper(TIntermTyped *baseExpression)
         : mBaseExpression(baseExpression),
           mBaseExpressionType(baseExpression->getType()),
-          mArrayIndices(mBaseExpressionType.getArraySizes()->size(), 0)
+          mArrayIndices(mBaseExpressionType.getArraySizes().size(), 0)
     {}
 
     TIntermTyped *getNextElement(TIntermTyped *valueExpression, TIntermTyped **valueElementOut)
     {
-        const TVector<unsigned int> *arraySizes = mBaseExpressionType.getArraySizes();
+        const TSpan<const unsigned int> &arraySizes = mBaseExpressionType.getArraySizes();
 
         // If the last index overflows, element enumeration is done.
-        if (mArrayIndices.back() >= arraySizes->back())
+        if (mArrayIndices.back() >= arraySizes.back())
         {
             return nullptr;
         }
@@ -252,7 +252,8 @@ class TransformArrayHelper
 
     TIntermTyped *constructReadTransformExpression()
     {
-        const TVector<unsigned int> &arraySizes = *mBaseExpressionType.getArraySizes();
+        const TSpan<const unsigned int> &baseTypeArraySizes = mBaseExpressionType.getArraySizes();
+        TVector<unsigned int> arraySizes(baseTypeArraySizes.begin(), baseTypeArraySizes.end());
         TIntermTyped *firstElement = mReadTransformConstructorArgs.front()->getAsTyped();
         const TType &baseType      = firstElement->getType();
 
@@ -282,19 +283,19 @@ class TransformArrayHelper
         return element;
     }
 
-    void incrementIndices(const TVector<unsigned int> *arraySizes)
+    void incrementIndices(const TSpan<const unsigned int> &arraySizes)
     {
         // Assume mArrayIndices is an N digit number, where digit i is in the range
         // [0, arraySizes[i]).  This function increments this number.  Last digit is the most
         // significant digit.
-        for (size_t digitIndex = 0; digitIndex < arraySizes->size(); ++digitIndex)
+        for (size_t digitIndex = 0; digitIndex < arraySizes.size(); ++digitIndex)
         {
             ++mArrayIndices[digitIndex];
-            if (mArrayIndices[digitIndex] < (*arraySizes)[digitIndex])
+            if (mArrayIndices[digitIndex] < arraySizes[digitIndex])
             {
                 break;
             }
-            if (digitIndex + 1 != arraySizes->size())
+            if (digitIndex + 1 != arraySizes.size())
             {
                 // This digit has now overflown and is reset to 0, carry will be added to the next
                 // digit.  The most significant digit will keep the overflow though, to make it
@@ -305,8 +306,8 @@ class TransformArrayHelper
     }
 
     TIntermTyped *constructReadTransformExpressionHelper(
-        const TVector<unsigned int> arraySizes,
-        const TVector<unsigned int> accumulatedArraySizes,
+        const TVector<unsigned int> &arraySizes,
+        const TVector<unsigned int> &accumulatedArraySizes,
         const TType &baseType,
         size_t elementsOffset)
     {

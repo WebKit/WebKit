@@ -13,15 +13,15 @@ On all platforms:
  * [depot_tools](https://commondatastorage.googleapis.com/chrome-infra-docs/flat/depot_tools/docs/html/depot_tools_tutorial.html#_setting_up)
    * Required to download dependencies (with gclient), generate build files (with GN), and compile ANGLE (with ninja).
    * Ensure `depot_tools` is in your path as it provides ninja for compilation.
+ * For Googlers, run `download_from_google_storage --config` to login to Google Storage.
 
 On Windows:
 
  * ***IMPORTANT: Set `DEPOT_TOOLS_WIN_TOOLCHAIN=0` in your environment if you are not a Googler.***
  * [Visual Studio Community 2019](https://visualstudio.microsoft.com/vs/)
  * [Windows 10 Standalone SDK version 10.0.17134 exactly](https://developer.microsoft.com/en-us/windows/downloads/windows-10-sdk).
+   * You should install it through Visual Studio Installer if available.
    * Comes with additional features that aid development, such as the Debug runtime for D3D11. Required for the D3D Compiler DLL.
- * (optional) [Cygwin's Bison, flex, and patch](https://cygwin.com/setup-x86_64.exe)
-   * This is only required if you need to modify GLSL ES grammar files (`glslang.l` and `glslang.y` under `src/compiler/translator`, or `ExpressionParser.y` and `Tokenizer.l` in `src/compiler/preprocessor`).
  * (optional) See the [Chromium Windows build instructions](https://chromium.googlesource.com/chromium/src/+/master/docs/windows_build_instructions.md) for more info.
 
 On Linux:

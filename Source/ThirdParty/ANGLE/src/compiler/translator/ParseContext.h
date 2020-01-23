@@ -248,7 +248,7 @@ class TParseContext : angle::NonCopyable
                                                         const TSourceLoc &initLocation,
                                                         TIntermTyped *initializer);
 
-    TIntermInvariantDeclaration *parseInvariantDeclaration(
+    TIntermGlobalQualifierDeclaration *parseGlobalQualifierDeclaration(
         const TTypeQualifierBuilder &typeQualifierBuilder,
         const TSourceLoc &identifierLoc,
         const ImmutableString &identifier,
@@ -431,7 +431,7 @@ class TParseContext : angle::NonCopyable
     void appendStatement(TIntermBlock *block, TIntermNode *statement);
 
     void checkTextureGather(TIntermAggregate *functionCall);
-    void checkTextureOffsetConst(TIntermAggregate *functionCall);
+    void checkTextureOffset(TIntermAggregate *functionCall);
     void checkImageMemoryAccessForBuiltinFunctions(TIntermAggregate *functionCall);
     void checkImageMemoryAccessForUserDefinedFunctions(const TFunction *functionDefinition,
                                                        const TIntermAggregate *functionCall);
@@ -546,6 +546,12 @@ class TParseContext : angle::NonCopyable
     bool checkUnsizedArrayConstructorArgumentDimensionality(const TIntermSequence &arguments,
                                                             TType type,
                                                             const TSourceLoc &line);
+    // Check texture offset is within range.
+    void checkSingleTextureOffset(const TSourceLoc &line,
+                                  const TConstantUnion *values,
+                                  size_t size,
+                                  int minOffsetValue,
+                                  int maxOffsetValue);
 
     // Will set the size of the outermost array according to geometry shader input layout.
     void checkGeometryShaderInputAndSetArraySize(const TSourceLoc &location,

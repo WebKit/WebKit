@@ -6,6 +6,7 @@
 
 #include "GLSLANG/ShaderLang.h"
 #include "gtest/gtest.h"
+#include "test_utils/runner/TestSuite.h"
 
 class CompilerTestEnvironment : public testing::Environment
 {
@@ -29,8 +30,7 @@ class CompilerTestEnvironment : public testing::Environment
 
 int main(int argc, char **argv)
 {
-    testing::InitGoogleTest(&argc, argv);
+    angle::TestSuite testSuite(&argc, argv);
     testing::AddGlobalTestEnvironment(new CompilerTestEnvironment());
-    int rt = RUN_ALL_TESTS();
-    return rt;
+    return testSuite.run();
 }

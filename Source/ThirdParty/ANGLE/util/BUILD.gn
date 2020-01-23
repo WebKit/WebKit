@@ -1,0 +1,284 @@
+# Copyright 2019 The ANGLE Project Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+import("../gni/angle.gni")
+
+_util_sources = [
+  "com_utils.h",
+  "keyboard.h",
+  "geometry_utils.cpp",
+  "geometry_utils.h",
+  "mouse.h",
+  "random_utils.cpp",
+  "random_utils.h",
+  "shader_utils.cpp",
+  "shader_utils.h",
+  "util_export.h",
+  "util_gl.h",
+  "Event.h",
+  "EGLPlatformParameters.h",
+  "EGLWindow.cpp",
+  "EGLWindow.h",
+  "Matrix.cpp",
+  "Matrix.h",
+  "OSPixmap.h",
+  "OSWindow.cpp",
+  "OSWindow.h",
+]
+
+if (is_win) {
+  _util_sources += [ "windows/WGLWindow.h" ]
+  if (!angle_is_winuwp) {
+    _util_sources += [
+      "windows/win32/Win32Pixmap.cpp",
+      "windows/win32/Win32Pixmap.h",
+      "windows/win32/Win32Window.cpp",
+      "windows/win32/Win32Window.h",
+    ]
+  }
+}
+
+if (angle_use_x11) {
+  _util_sources += [
+    "x11/X11Pixmap.cpp",
+    "x11/X11Pixmap.h",
+    "x11/X11Window.cpp",
+    "x11/X11Window.h",
+  ]
+}
+
+if (is_fuchsia) {
+  _util_sources += [
+    "fuchsia/ScenicWindow.cpp",
+    "fuchsia/ScenicWindow.h",
+  ]
+} else if (use_ozone) {
+  _util_sources += [
+    "ozone/OzonePixmap.cpp",
+    "ozone/OzoneWindow.cpp",
+    "ozone/OzoneWindow.h",
+  ]
+}
+
+if (is_mac) {
+  _util_sources += [
+    "osx/OSXPixmap.mm",
+    "osx/OSXPixmap.h",
+    "osx/OSXWindow.mm",
+    "osx/OSXWindow.h",
+  ]
+}
+
+if (is_android) {
+  _util_sources += [
+    "android/AndroidPixmap.cpp",
+    "android/AndroidWindow.cpp",
+    "android/AndroidWindow.h",
+    "android/third_party/android_native_app_glue.c",
+    "android/third_party/android_native_app_glue.h",
+  ]
+}
+
+config("angle_util_loader_config") {
+  defines = [ "ANGLE_USE_UTIL_LOADER" ]
+}
+
+config("angle_util_loader_headers_config") {
+  include_dirs = [ ".." ]
+}
+
+angle_source_set("angle_util_loader_headers") {
+  testonly = true
+  sources = [
+    "egl_loader_autogen.h",
+    "gles_loader_autogen.h",
+    "util_export.h",
+  ]
+
+  if (is_win && !angle_is_winuwp) {
+    sources += [ "windows/wgl_loader_autogen.h" ]
+  }
+
+  public_deps = [
+    "$angle_root:includes",
+  ]
+
+  public_configs = [ ":angle_util_loader_headers_config" ]
+}
+
+angle_source_set("angle_util_loader") {
+  testonly = true
+  defines = [ "LIBANGLE_UTIL_IMPLEMENTATION" ]
+
+  sources = [
+    "egl_loader_autogen.cpp",
+    "gles_loader_autogen.cpp",
+  ]
+
+  if (is_win && !angle_is_winuwp) {
+    sources += [ "windows/wgl_loader_autogen.cpp" ]
+  }
+
+  deps = [
+    ":angle_util_loader_headers",
+  ]
+
+  public_configs += [
+    "$angle_root:no_gl_prototypes",
+    ":angle_util_config",
+    ":angle_util_loader_config",
+    ":angle_util_loader_headers_config",
+  ]
+}
+
+config("angle_util_config") {
+  include_dirs = [ "." ]
+  if (is_linux && angle_use_x11) {
+    libs = [ "X11" ]
+  }
+}
+
+foreach(is_shared_library,
+        [
+          true,
+          false,
+        ]) {
+  if (is_shared_library) {
+    library_type = "angle_shared_library"
+    library_name = "angle_util"
+    dep_suffix = "${angle_libs_suffix}"
+  } else {
+    library_type = "angle_static_library"
+    library_name = "angle_util_static"
+    dep_suffix = "_static"
+  }
+
+  target(library_type, library_name) {
+    testonly = true
+    sources = _util_sources
+    deps = [
+      ":angle_test_utils",
+      ":angle_util_loader_headers",
+      "$angle_root:angle_common",
+    ]
+    public_deps = []
+    libs = []
+
+    if (is_linux) {
+      libs += [
+        "rt",
+        "dl",
+      ]
+    }
+
+    if (is_mac) {
+      libs += [
+        "AppKit.framework",
+        "QuartzCore.framework",
+      ]
+    }
+
+    if (is_android) {
+      # To prevent linux sources filtering on android
+      set_sources_assignment_filter([])
+      libs += [
+        "android",
+        "log",
+      ]
+    }
+
+    configs += [ "$angle_root:debug_annotations_config" ]
+
+    public_configs += [ ":angle_util_config" ]
+
+    if (is_fuchsia) {
+      public_deps += [
+        "$angle_root/src/common/fuchsia_egl",
+        "//third_party/fuchsia-sdk/sdk:async-loop-cpp",
+        "//third_party/fuchsia-sdk/sdk:async-loop-default",
+        "//third_party/fuchsia-sdk/sdk:fdio",
+        "//third_party/fuchsia-sdk/sdk:fuchsia-images",
+        "//third_party/fuchsia-sdk/sdk:fuchsia-ui-policy",
+        "//third_party/fuchsia-sdk/sdk:fuchsia-ui-scenic",
+        "//third_party/fuchsia-sdk/sdk:fuchsia-ui-views",
+        "//third_party/fuchsia-sdk/sdk:scenic_cpp",
+      ]
+    }
+
+    if (is_shared_library) {
+      defines = [ "LIBANGLE_UTIL_IMPLEMENTATION" ]
+
+      public_deps += [ ":angle_util_loader" ]
+
+      if (is_mac && !is_component_build) {
+        ldflags = [
+          "-install_name",
+          "@rpath/libangle_util.dylib",
+        ]
+      }
+
+      # Currently excluded from the static build because of build issues.
+      # Would be nice if could be included.
+      if (is_win && !angle_is_winuwp) {
+        sources += [ "windows/WGLWindow.cpp" ]
+      }
+    } else {
+      public_configs += [
+        "$angle_root:angle_static",
+        "$angle_root:gl_prototypes",
+      ]
+    }
+  }
+}
+
+if (is_win && !angle_is_winuwp) {
+  angle_source_set("angle_stack_walker") {
+    sources = [
+      "windows/third_party/StackWalker/src/StackWalker.cpp",
+      "windows/third_party/StackWalker/src/StackWalker.h",
+    ]
+
+    if (is_clang) {
+      cflags_cc = [
+        "-Wno-c++98-compat-extra-semi",
+        "-Wno-missing-declarations",
+        "-Wno-switch",
+      ]
+    } else {
+      cflags_cc = [ "/wd4740" ]
+    }
+  }
+}
+
+config("angle_test_util_config") {
+  include_dirs = [ ".." ]
+}
+
+angle_source_set("angle_test_utils") {
+  public_configs = [ ":angle_test_util_config" ]
+  deps = [
+    "$angle_root:angle_common",
+  ]
+  sources = [
+    "Timer.cpp",
+    "Timer.h",
+    "test_utils.cpp",
+    "test_utils.h",
+  ]
+
+  if (is_win) {
+    sources += [ "windows/test_utils_win.cpp" ]
+    if (angle_is_winuwp) {
+      sources += [ "windows/test_utils_winuwp.cpp" ]
+    } else {
+      deps += [ ":angle_stack_walker" ]
+      sources += [ "windows/win32/test_utils_win32.cpp" ]
+    }
+  } else {
+    sources += [
+      "posix/crash_handler_posix.cpp",
+      "posix/test_utils_posix.cpp",
+    ]
+  }
+}

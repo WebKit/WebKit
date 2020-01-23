@@ -776,8 +776,9 @@ const ExtensionInfoMap &GetExtensionInfoMap()
         map["GL_OES_rgb8_rgba8"] = enableableExtension(&Extensions::rgb8rgba8);
         map["GL_EXT_texture_format_BGRA8888"] = enableableExtension(&Extensions::textureFormatBGRA8888);
         map["GL_EXT_texture_type_2_10_10_10_REV"] = enableableExtension(&Extensions::textureFormat2101010REV);
-        map["GL_EXT_read_format_bgra"] = esOnlyExtension(&Extensions::readFormatBGRA);
+        map["GL_EXT_read_format_bgra"] = enableableExtension(&Extensions::readFormatBGRA);
         map["GL_NV_pixel_buffer_object"] = enableableExtension(&Extensions::pixelBufferObject);
+        map["GL_ARB_sync"] = enableableExtension(&Extensions::glSync);
         map["GL_OES_mapbuffer"] = enableableExtension(&Extensions::mapBuffer);
         map["GL_EXT_map_buffer_range"] = enableableExtension(&Extensions::mapBufferRange);
         map["GL_EXT_color_buffer_half_float"] = enableableExtension(&Extensions::colorBufferHalfFloat);
@@ -897,12 +898,16 @@ const ExtensionInfoMap &GetExtensionInfoMap()
         map["GL_ANGLE_texture_external_update"] = enableableExtension(&Extensions::textureExternalUpdateANGLE);
         map["GL_ANGLE_base_vertex_base_instance"] = enableableExtension(&Extensions::baseVertexBaseInstance);
         map["GL_ANGLE_get_image"] = enableableExtension(&Extensions::getImageANGLE);
+        map["GL_OES_draw_elements_base_vertex"] = enableableExtension(&Extensions::drawElementsBaseVertexOES);
+        map["GL_EXT_draw_elements_base_vertex"] = enableableExtension(&Extensions::drawElementsBaseVertexEXT);
+        map["GL_EXT_gpu_shader5"] = enableableExtension(&Extensions::gpuShader5EXT);
         // GLES1 extensinos
         map["GL_OES_point_size_array"] = enableableExtension(&Extensions::pointSizeArray);
         map["GL_OES_texture_cube_map"] = enableableExtension(&Extensions::textureCubeMap);
         map["GL_OES_point_sprite"] = enableableExtension(&Extensions::pointSprite);
         map["GL_OES_draw_texture"] = enableableExtension(&Extensions::drawTexture);
         map["GL_ANGLE_memory_size"] = enableableExtension(&Extensions::memorySize);
+        map["GL_WEBGL_video_texture"] = enableableExtension(&Extensions::webglVideoTexture);
         // clang-format on
 
 #if defined(ANGLE_ENABLE_ASSERTS)
@@ -1222,6 +1227,12 @@ std::vector<std::string> DisplayExtensions::getStrings() const
     InsertExtensionString("EGL_KHR_image",                                       image,                              &extensionStrings);
     InsertExtensionString("EGL_KHR_image_base",                                  imageBase,                          &extensionStrings);
     InsertExtensionString("EGL_KHR_image_pixmap",                                imagePixmap,                        &extensionStrings);
+    InsertExtensionString("EGL_KHR_gl_colorspace",                               glColorspace,                       &extensionStrings);
+    InsertExtensionString("EGL_EXT_gl_colorspace_scrgb",                         glColorspaceScrgb,                  &extensionStrings);
+    InsertExtensionString("EGL_EXT_gl_colorspace_scrgb_linear",                  glColorspaceScrgbLinear,            &extensionStrings);
+    InsertExtensionString("EGL_EXT_gl_colorspace_display_p3",                    glColorspaceDisplayP3,              &extensionStrings);
+    InsertExtensionString("EGL_EXT_gl_colorspace_display_p3_linear",             glColorspaceDisplayP3Linear,        &extensionStrings);
+    InsertExtensionString("EGL_EXT_gl_colorspace_display_p3_passthrough",        glColorspaceDisplayP3Passthrough,   &extensionStrings);
     InsertExtensionString("EGL_KHR_gl_texture_2D_image",                         glTexture2DImage,                   &extensionStrings);
     InsertExtensionString("EGL_KHR_gl_texture_cubemap_image",                    glTextureCubemapImage,              &extensionStrings);
     InsertExtensionString("EGL_KHR_gl_texture_3D_image",                         glTexture3DImage,                   &extensionStrings);
@@ -1248,6 +1259,7 @@ std::vector<std::string> DisplayExtensions::getStrings() const
     InsertExtensionString("EGL_ANGLE_create_context_extensions_enabled",         createContextExtensionsEnabled,     &extensionStrings);
     InsertExtensionString("EGL_ANDROID_presentation_time",                       presentationTime,                   &extensionStrings);
     InsertExtensionString("EGL_ANDROID_blob_cache",                              blobCache,                          &extensionStrings);
+    InsertExtensionString("EGL_ANDROID_framebuffer_target",                      framebufferTargetANDROID,           &extensionStrings);
     InsertExtensionString("EGL_ANDROID_image_native_buffer",                     imageNativeBuffer,                  &extensionStrings);
     InsertExtensionString("EGL_ANDROID_get_frame_timestamps",                    getFrameTimestamps,                 &extensionStrings);
     InsertExtensionString("EGL_ANDROID_recordable",                              recordable,                         &extensionStrings);

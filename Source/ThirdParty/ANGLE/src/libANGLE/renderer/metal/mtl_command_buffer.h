@@ -218,17 +218,28 @@ class RenderCommandEncoder final : public CommandEncoder
     RenderCommandEncoder &draw(MTLPrimitiveType primitiveType,
                                uint32_t vertexStart,
                                uint32_t vertexCount);
+    RenderCommandEncoder &drawInstanced(MTLPrimitiveType primitiveType,
+                                        uint32_t vertexStart,
+                                        uint32_t vertexCount,
+                                        uint32_t instances);
     RenderCommandEncoder &drawIndexed(MTLPrimitiveType primitiveType,
                                       uint32_t indexCount,
                                       MTLIndexType indexType,
                                       const BufferRef &indexBuffer,
                                       size_t bufferOffset);
-    RenderCommandEncoder &drawIndexedBaseVertex(MTLPrimitiveType primitiveType,
-                                                uint32_t indexCount,
-                                                MTLIndexType indexType,
-                                                const BufferRef &indexBuffer,
-                                                size_t bufferOffset,
-                                                uint32_t baseVertex);
+    RenderCommandEncoder &drawIndexedInstanced(MTLPrimitiveType primitiveType,
+                                               uint32_t indexCount,
+                                               MTLIndexType indexType,
+                                               const BufferRef &indexBuffer,
+                                               size_t bufferOffset,
+                                               uint32_t instances);
+    RenderCommandEncoder &drawIndexedInstancedBaseVertex(MTLPrimitiveType primitiveType,
+                                                         uint32_t indexCount,
+                                                         MTLIndexType indexType,
+                                                         const BufferRef &indexBuffer,
+                                                         size_t bufferOffset,
+                                                         uint32_t instances,
+                                                         uint32_t baseVertex);
 
     RenderCommandEncoder &setColorStoreAction(MTLStoreAction action, uint32_t colorAttachmentIndex);
     // Set store action for every color attachment.
@@ -262,6 +273,17 @@ class BlitCommandEncoder final : public CommandEncoder
     ~BlitCommandEncoder() override;
 
     BlitCommandEncoder &restart();
+
+    BlitCommandEncoder &copyBufferToTexture(const BufferRef &src,
+                                            size_t srcOffset,
+                                            size_t srcBytesPerRow,
+                                            size_t srcBytesPerImage,
+                                            MTLSize srcSize,
+                                            const TextureRef &dst,
+                                            uint32_t dstSlice,
+                                            uint32_t dstLevel,
+                                            MTLOrigin dstOrigin,
+                                            MTLBlitOption blitOption);
 
     BlitCommandEncoder &copyTexture(const TextureRef &dst,
                                     uint32_t dstSlice,

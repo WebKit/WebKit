@@ -100,6 +100,8 @@ struct ShaderVariable
     // ARRAY_SIZE value that can be queried through the API.
     unsigned int getBasicTypeElementCount() const;
 
+    unsigned int getExternalSize() const;
+
     bool isStruct() const { return !fields.empty(); }
 
     // All of the shader's variables are described using nested data

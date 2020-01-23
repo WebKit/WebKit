@@ -43,6 +43,7 @@ struct PlatformParameters
     PlatformParameters(EGLint majorVersion, EGLint minorVersion, GLESDriverType driver);
 
     EGLint getRenderer() const;
+    EGLint getDeviceType() const;
 
     void initDefaultParameters();
 

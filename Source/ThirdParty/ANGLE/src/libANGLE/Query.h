@@ -20,8 +20,9 @@
 
 namespace rx
 {
+class GLImplFactory;
 class QueryImpl;
-}
+}  // namespace rx
 
 namespace gl
 {
@@ -29,7 +30,7 @@ namespace gl
 class Query final : public RefCountObject<QueryID>, public LabeledObject
 {
   public:
-    Query(rx::QueryImpl *impl, QueryID id);
+    Query(rx::GLImplFactory *factory, QueryType type, QueryID id);
     ~Query() override;
     void onDestroy(const Context *context) override;
 

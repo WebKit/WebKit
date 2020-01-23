@@ -137,6 +137,20 @@ void DisplayEGL::generateExtensions(egl::DisplayExtensions *outExtensions) const
     outExtensions->glTexture3DImage      = mEGL->hasExtension("EGL_KHR_gl_texture_3D_image");
     outExtensions->glRenderbufferImage   = mEGL->hasExtension("EGL_KHR_gl_renderbuffer_image");
 
+    outExtensions->glColorspace = mEGL->hasExtension("EGL_KHR_gl_colorspace");
+    if (outExtensions->glColorspace)
+    {
+        outExtensions->glColorspaceDisplayP3Linear =
+            mEGL->hasExtension("EGL_EXT_gl_colorspace_display_p3_linear");
+        outExtensions->glColorspaceDisplayP3 =
+            mEGL->hasExtension("EGL_EXT_gl_colorspace_display_p3");
+        outExtensions->glColorspaceScrgb = mEGL->hasExtension("EGL_EXT_gl_colorspace_scrgb");
+        outExtensions->glColorspaceScrgbLinear =
+            mEGL->hasExtension("EGL_EXT_gl_colorspace_scrgb_linear");
+        outExtensions->glColorspaceDisplayP3Passthrough =
+            mEGL->hasExtension("EGL_EXT_gl_colorspace_display_p3_passthrough");
+    }
+
     outExtensions->imageNativeBuffer = mEGL->hasExtension("EGL_ANDROID_image_native_buffer");
 
     outExtensions->getFrameTimestamps = mEGL->hasExtension("EGL_ANDROID_get_frame_timestamps");
@@ -152,6 +166,8 @@ void DisplayEGL::generateExtensions(egl::DisplayExtensions *outExtensions) const
     outExtensions->nativeFenceSyncANDROID = mEGL->hasExtension("EGL_ANDROID_native_fence_sync");
 
     outExtensions->noConfigContext = mEGL->hasExtension("EGL_KHR_no_config_context");
+
+    outExtensions->framebufferTargetANDROID = mEGL->hasExtension("EGL_ANDROID_framebuffer_target");
 
     DisplayGL::generateExtensions(outExtensions);
 }

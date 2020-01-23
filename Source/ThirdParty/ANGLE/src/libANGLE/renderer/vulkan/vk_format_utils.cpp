@@ -50,9 +50,11 @@ void FillTextureFormatCaps(RendererVk *renderer, VkFormat format, gl::TextureCap
         }
         if (hasDepthAttachmentFeatureBit)
         {
-            vk_gl::AddSampleCounts(physicalDeviceLimits.framebufferDepthSampleCounts,
-                                   &outTextureCaps->sampleCounts);
-            vk_gl::AddSampleCounts(physicalDeviceLimits.framebufferStencilSampleCounts,
+            // Some drivers report different depth and stencil sample counts.  We'll AND those
+            // counts together, limiting all depth and/or stencil formats to the lower number of
+            // sample counts.
+            vk_gl::AddSampleCounts((physicalDeviceLimits.framebufferDepthSampleCounts &
+                                    physicalDeviceLimits.framebufferStencilSampleCounts),
                                    &outTextureCaps->sampleCounts);
         }
     }

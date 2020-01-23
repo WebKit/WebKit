@@ -41,6 +41,36 @@ Some simple environment variables control frame capture:
  * `ANGLE_CAPTURE_FRAME_END=<n>`:
    * By default ANGLE will capture the first ten frames. This variable can override the default.
    * Example: `ANGLE_CAPTURE_FRAME_END=4`. Default is `10`.
+ * `ANGLE_CAPTURE_LABEL=<label>`:
+   * When specified, files and functions will be labeled uniquely.
+   * Example: `ANGLE_CAPTURE_LABEL=foo`
+     * Results in filenames like this:
+       ```
+       foo_capture_context1.cpp
+       foo_capture_context1.h
+       foo_capture_context1_files.txt
+       foo_capture_context1_frame000.angledata
+       foo_capture_context1_frame000.cpp
+       foo_capture_context1_frame001.angledata
+       foo_capture_context1_frame001.cpp
+       ...
+       ```
+     * Functions wrapped in namespaces like this:
+       ```
+       namespace foo
+       {
+           void ReplayContext1Frame0();
+           void ReplayContext1Frame1();
+       }
+       ```
+     * For use like this:
+       ```
+       foo::SetupContext1Replay();
+       for (...)
+       {
+           foo::ReplayContext1Frame(i);
+       }
+       ```
 
 A good way to test out the capture is to use environment variables in conjunction with the sample
 template. For example:
@@ -105,6 +135,7 @@ as the GLES driver for your application.
     $ adb shell setprop debug.angle.capture.enabled 0
     $ adb shell setprop debug.angle.capture.out_dir foo
     $ adb shell setprop debug.angle.capture.frame_start 0
+    $ adb shell setprop debug.angle.capture.label bar
     ```
 
 3.  Run the application, then pull the files to the capture_replay directory

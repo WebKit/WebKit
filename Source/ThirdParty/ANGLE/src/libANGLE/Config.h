@@ -70,6 +70,9 @@ struct Config
     EGLint optimalOrientation;     // Optimal window surface orientation
     EGLenum colorComponentType;    // Color component type
     EGLBoolean recordable;         // EGL_TRUE if a surface can support recording on Android
+    EGLBoolean framebufferTarget;  // EGL_TRUE if the config supports rendering to a ANativeWindow
+                                   // for which the buffers are passed to the HWComposer HAL as a
+                                   // framebuffer target layer.
 };
 
 class ConfigSet

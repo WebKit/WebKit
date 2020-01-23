@@ -22,11 +22,15 @@ class RemoveInvariantDeclarationTraverser : public TIntermTraverser
     RemoveInvariantDeclarationTraverser() : TIntermTraverser(true, false, false) {}
 
   private:
-    bool visitInvariantDeclaration(Visit visit, TIntermInvariantDeclaration *node) override
+    bool visitGlobalQualifierDeclaration(Visit visit,
+                                         TIntermGlobalQualifierDeclaration *node) override
     {
-        TIntermSequence emptyReplacement;
-        mMultiReplacements.push_back(
-            NodeReplaceWithMultipleEntry(getParentNode()->getAsBlock(), node, emptyReplacement));
+        if (node->isInvariant())
+        {
+            TIntermSequence emptyReplacement;
+            mMultiReplacements.push_back(NodeReplaceWithMultipleEntry(getParentNode()->getAsBlock(),
+                                                                      node, emptyReplacement));
+        }
         return false;
     }
 };

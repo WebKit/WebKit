@@ -1979,6 +1979,8 @@ TextureTarget FromGLenum<TextureTarget>(GLenum from)
             return TextureTarget::CubeMapPositiveZ;
         case GL_TEXTURE_CUBE_MAP_NEGATIVE_Z:
             return TextureTarget::CubeMapNegativeZ;
+        case GL_TEXTURE_VIDEO_IMAGE_WEBGL:
+            return TextureTarget::VideoImage;
         default:
             return TextureTarget::InvalidEnum;
     }
@@ -2014,6 +2016,8 @@ GLenum ToGLenum(TextureTarget from)
             return GL_TEXTURE_CUBE_MAP_POSITIVE_Z;
         case TextureTarget::CubeMapNegativeZ:
             return GL_TEXTURE_CUBE_MAP_NEGATIVE_Z;
+        case TextureTarget::VideoImage:
+            return GL_TEXTURE_VIDEO_IMAGE_WEBGL;
         default:
             UNREACHABLE();
             return 0;
@@ -2063,6 +2067,9 @@ std::ostream &operator<<(std::ostream &os, TextureTarget value)
         case TextureTarget::CubeMapNegativeZ:
             os << "GL_TEXTURE_CUBE_MAP_NEGATIVE_Z";
             break;
+        case TextureTarget::VideoImage:
+            os << "GL_TEXTURE_VIDEO_IMAGE_WEBGL";
+            break;
         default:
             os << "GL_INVALID_ENUM";
             break;
@@ -2091,6 +2098,8 @@ TextureType FromGLenum<TextureType>(GLenum from)
             return TextureType::Rectangle;
         case GL_TEXTURE_CUBE_MAP:
             return TextureType::CubeMap;
+        case GL_TEXTURE_VIDEO_IMAGE_WEBGL:
+            return TextureType::VideoImage;
         default:
             return TextureType::InvalidEnum;
     }
@@ -2116,6 +2125,8 @@ GLenum ToGLenum(TextureType from)
             return GL_TEXTURE_RECTANGLE_ANGLE;
         case TextureType::CubeMap:
             return GL_TEXTURE_CUBE_MAP;
+        case TextureType::VideoImage:
+            return GL_TEXTURE_VIDEO_IMAGE_WEBGL;
         default:
             UNREACHABLE();
             return 0;
@@ -2149,6 +2160,9 @@ std::ostream &operator<<(std::ostream &os, TextureType value)
             break;
         case TextureType::CubeMap:
             os << "GL_TEXTURE_CUBE_MAP";
+            break;
+        case TextureType::VideoImage:
+            os << "GL_TEXTURE_VIDEO_IMAGE_WEBGL";
             break;
         default:
             os << "GL_INVALID_ENUM";

@@ -14,7 +14,7 @@
 #include "libANGLE/Error.h"
 #include "libANGLE/angletypes.h"
 #include "libANGLE/renderer/TransformFeedbackImpl.h"
-#include "libANGLE/renderer/renderer_utils.h"
+#include "libANGLE/renderer/serial_utils.h"
 
 namespace rx
 {

@@ -87,11 +87,11 @@ LinkedUniform::LinkedUniform(const LinkedUniform &uniform)
 LinkedUniform &LinkedUniform::operator=(const LinkedUniform &uniform)
 {
     sh::ShaderVariable::operator=(uniform);
-    ActiveVariable::operator=(uniform);
-    typeInfo                = uniform.typeInfo;
-    bufferIndex             = uniform.bufferIndex;
-    blockInfo               = uniform.blockInfo;
-    outerArraySizes         = uniform.outerArraySizes;
+    ActiveVariable::operator    =(uniform);
+    typeInfo                    = uniform.typeInfo;
+    bufferIndex                 = uniform.bufferIndex;
+    blockInfo                   = uniform.blockInfo;
+    outerArraySizes             = uniform.outerArraySizes;
     return *this;
 }
 
@@ -134,8 +134,13 @@ InterfaceBlock::InterfaceBlock(const std::string &nameIn,
                                const std::string &mappedNameIn,
                                bool isArrayIn,
                                unsigned int arrayElementIn,
+                               unsigned int firstFieldArraySizeIn,
                                int bindingIn)
-    : name(nameIn), mappedName(mappedNameIn), isArray(isArrayIn), arrayElement(arrayElementIn)
+    : name(nameIn),
+      mappedName(mappedNameIn),
+      isArray(isArrayIn),
+      arrayElement(arrayElementIn),
+      firstFieldArraySize(firstFieldArraySizeIn)
 {
     binding = bindingIn;
 }

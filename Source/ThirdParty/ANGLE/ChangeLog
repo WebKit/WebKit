@@ -1,5 +1,25 @@
 2020-01-22  James Darpinian  <jdarpinian@chromium.org>
 
+        Update ANGLE
+        https://bugs.webkit.org/show_bug.cgi?id=206318
+
+        Several important changes to fix layout test failures and timeouts in this update.
+        - Made expensive validation non-default in debug mode to reduce timeouts.
+        - Optimize disabling ARB_texture_rectangle to make shader compilation much faster.
+        - Flush before texture deletion to work around Mac Intel driver bug.
+
+        Reviewed by Dean Jackson.
+
+        * ANGLE.plist: update commit hash
+        * ANGLE.xcodeproj/project.pbxproj: Add/remove files
+        * Compiler.cmake: Translated from compiler.gni
+        * GLESv2.cmake: Translated from libGLESv2.gni
+        * changes.diff: Now lists all changes from upstream.
+        * update-angle.sh: Diff command was wrong.
+        * Plus a whole lot of changes from upstream.
+
+2020-01-22  James Darpinian  <jdarpinian@chromium.org>
+
         REGRESSION (r253926): webgl/1.0.3/conformance/rendering/many-draw-calls.html is much slower, times out in debug
         https://bugs.webkit.org/show_bug.cgi?id=205668
 

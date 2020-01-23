@@ -31,8 +31,6 @@ angle::Result WindowSurfaceVkGGP::createSurfaceVk(vk::Context *context, gl::Exte
 {
     RendererVk *renderer = context->getRenderer();
 
-    InitGGPStreamDescriptorSurfaceFunctions(renderer->getInstance());
-
     // Get the stream descriptor if specified. Default is kGgpPrimaryStreamDescriptor.
     EGLAttrib streamDescriptor =
         mState.attributes.get(EGL_GGP_STREAM_DESCRIPTOR_ANGLE, kDefaultStreamDescriptor);

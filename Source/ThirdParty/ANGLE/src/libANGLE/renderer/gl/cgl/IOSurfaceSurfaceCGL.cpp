@@ -159,9 +159,9 @@ egl::Error IOSurfaceSurfaceCGL::bindTexImage(const gl::Context *context,
     stateManager->bindTexture(gl::TextureType::Rectangle, textureID);
 
     const auto &format = kIOSurfaceFormats[mFormatIndex];
-    CGLError error = CGLTexImageIOSurface2D(mCGLContext, GL_TEXTURE_RECTANGLE, format.nativeInternalFormat,
-                                            mWidth, mHeight, format.nativeFormat,
-                                            format.nativeType, mIOSurface, mPlane);
+    CGLError error     = CGLTexImageIOSurface2D(
+        mCGLContext, GL_TEXTURE_RECTANGLE, format.nativeInternalFormat, mWidth, mHeight,
+        format.nativeFormat, format.nativeType, mIOSurface, mPlane);
 
     if (error != kCGLNoError)
     {
@@ -288,9 +288,9 @@ FramebufferImpl *IOSurfaceSurfaceCGL::createDefaultFramebuffer(const gl::Context
     functions->genTextures(1, &texture);
     const auto &format = kIOSurfaceFormats[mFormatIndex];
     stateManager->bindTexture(gl::TextureType::Rectangle, texture);
-    CGLError error = CGLTexImageIOSurface2D(mCGLContext, GL_TEXTURE_RECTANGLE, format.nativeFormat,
-                                            mWidth, mHeight, format.nativeInternalFormat,
-                                            format.nativeType, mIOSurface, mPlane);
+    CGLError error = CGLTexImageIOSurface2D(
+        mCGLContext, GL_TEXTURE_RECTANGLE, format.nativeInternalFormat, mWidth, mHeight,
+        format.nativeFormat, format.nativeType, mIOSurface, mPlane);
     if (error != kCGLNoError)
     {
         ERR() << "CGLTexImageIOSurface2D failed: " << CGLErrorString(error);

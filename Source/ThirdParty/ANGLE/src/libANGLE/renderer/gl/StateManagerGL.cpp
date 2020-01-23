@@ -387,9 +387,9 @@ void StateManagerGL::bindBufferBase(gl::BufferBinding target, size_t index, GLui
     if (binding.buffer != buffer || binding.offset != static_cast<size_t>(-1) ||
         binding.size != static_cast<size_t>(-1))
     {
-        binding.buffer = buffer;
-        binding.offset = static_cast<size_t>(-1);
-        binding.size   = static_cast<size_t>(-1);
+        binding.buffer   = buffer;
+        binding.offset   = static_cast<size_t>(-1);
+        binding.size     = static_cast<size_t>(-1);
         mBuffers[target] = buffer;
         mFunctions->bindBufferBase(gl::ToGLenum(target), static_cast<GLuint>(index), buffer);
     }
@@ -407,9 +407,9 @@ void StateManagerGL::bindBufferRange(gl::BufferBinding target,
     auto &binding = mIndexedBuffers[target][index];
     if (binding.buffer != buffer || binding.offset != offset || binding.size != size)
     {
-        binding.buffer = buffer;
-        binding.offset = offset;
-        binding.size   = size;
+        binding.buffer   = buffer;
+        binding.offset   = offset;
+        binding.size     = size;
         mBuffers[target] = buffer;
         mFunctions->bindBufferRange(gl::ToGLenum(target), static_cast<GLuint>(index), buffer,
                                     offset, size);
@@ -427,10 +427,11 @@ void StateManagerGL::activeTexture(size_t unit)
 
 void StateManagerGL::bindTexture(gl::TextureType type, GLuint texture)
 {
-    if (mTextures[type][mTextureUnitIndex] != texture)
+    gl::TextureType nativeType = nativegl::GetNativeTextureType(type);
+    if (mTextures[nativeType][mTextureUnitIndex] != texture)
     {
-        mTextures[type][mTextureUnitIndex] = texture;
-        mFunctions->bindTexture(ToGLenum(type), texture);
+        mTextures[nativeType][mTextureUnitIndex] = texture;
+        mFunctions->bindTexture(nativegl::GetTextureBindingTarget(type), texture);
         mLocalDirtyBits.set(gl::State::DIRTY_BIT_TEXTURE_BINDINGS);
     }
 }

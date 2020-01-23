@@ -2982,6 +2982,88 @@ void main() {
     glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);
 }
 
+// Test that inactive images don't cause any errors.
+TEST_P(GLSLTest_ES31, InactiveImages)
+{
+    ANGLE_SKIP_TEST_IF(IsD3D11());
+
+    constexpr char kCS[] = R"(#version 310 es
+layout(local_size_x=1, local_size_y=1, local_size_z=1) in;
+layout(rgba32ui) uniform highp readonly uimage2D image1;
+layout(rgba32ui) uniform highp readonly uimage2D image2[4];
+void main()
+{
+})";
+
+    ANGLE_GL_COMPUTE_PROGRAM(program, kCS);
+
+    glUseProgram(program.get());
+    glDispatchCompute(1, 1, 1);
+    EXPECT_GL_NO_ERROR();
+
+    // Verify that the images are indeed inactive.
+    GLuint index = glGetProgramResourceIndex(program, GL_UNIFORM, "image1");
+    EXPECT_GL_NO_ERROR();
+    EXPECT_EQ(GL_INVALID_INDEX, index);
+
+    index = glGetProgramResourceIndex(program, GL_UNIFORM, "image2");
+    EXPECT_GL_NO_ERROR();
+    EXPECT_EQ(GL_INVALID_INDEX, index);
+}
+
+// Test that inactive atomic counters don't cause any errors.
+TEST_P(GLSLTest_ES31, InactiveAtomicCounters)
+{
+    constexpr char kCS[] = R"(#version 310 es
+layout(local_size_x=1, local_size_y=1, local_size_z=1) in;
+layout(binding = 0, offset = 0) uniform atomic_uint ac1;
+layout(binding = 0, offset = 4) uniform atomic_uint ac2[5];
+void main()
+{
+})";
+
+    ANGLE_GL_COMPUTE_PROGRAM(program, kCS);
+
+    glUseProgram(program.get());
+    glDispatchCompute(1, 1, 1);
+    EXPECT_GL_NO_ERROR();
+
+    // Verify that the atomic counters are indeed inactive.
+    GLuint index = glGetProgramResourceIndex(program, GL_UNIFORM, "ac1");
+    EXPECT_GL_NO_ERROR();
+    EXPECT_EQ(GL_INVALID_INDEX, index);
+
+    index = glGetProgramResourceIndex(program, GL_UNIFORM, "ac2");
+    EXPECT_GL_NO_ERROR();
+    EXPECT_EQ(GL_INVALID_INDEX, index);
+}
+
+// Test that inactive samplers in structs don't cause any errors.
+TEST_P(GLSLTest_ES31, InactiveSamplersInStructCS)
+{
+    // While the sampler is being extracted and declared outside of the struct, it's not removed
+    // from the struct definition.  http://anglebug.com/4211
+    ANGLE_SKIP_TEST_IF(IsVulkan() || IsMetal());
+
+    constexpr char kCS[] = R"(#version 310 es
+layout(local_size_x=1, local_size_y=1, local_size_z=1) in;
+struct S
+{
+    vec4 v;
+    sampler2D t[10];
+};
+uniform S s;
+void main()
+{
+})";
+
+    ANGLE_GL_COMPUTE_PROGRAM(program, kCS);
+
+    glUseProgram(program.get());
+    glDispatchCompute(1, 1, 1);
+    EXPECT_GL_NO_ERROR();
+}
+
 // Test that array indices for arrays of arrays of basic types work as expected.
 TEST_P(GLSLTest_ES31, ArraysOfArraysBasicType)
 {
@@ -3142,6 +3224,10 @@ TEST_P(GLSLTest_ES31, ArraysOfArraysSampler)
 // Test that structs containing arrays of samplers work as expected.
 TEST_P(GLSLTest_ES31, StructArraySampler)
 {
+    // ASAN error on vulkan backend; ASAN tests only enabled on Mac Swangle
+    // (http://crbug.com/1029378)
+    ANGLE_SKIP_TEST_IF(IsOSX() && isSwiftshader());
+
     constexpr char kFS[] =
         "#version 310 es\n"
         "precision mediump float;\n"
@@ -5206,6 +5292,83 @@ void main()
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
 }
 
+// Test calling array length() with a "this" expression having side effects inside an if condition.
+// This is an issue if the the side effect can be short circuited.
+TEST_P(GLSLTest_ES3, ArrayLengthOnShortCircuitedExpressionWithSideEffectsInIfCondition)
+{
+    // Bug in the shader translator.  http://anglebug.com/3829
+    ANGLE_SKIP_TEST_IF(true);
+
+    // "a" shouldn't get modified by this shader.
+    constexpr char kFS[] = R"(#version 300 es
+precision highp float;
+out vec4 my_FragColor;
+uniform int u_zero;
+int a;
+int[2] doubleA()
+{
+    a *= 2;
+    return int[2](a, a);
+}
+void main()
+{
+    a = u_zero + 1;
+    if (u_zero != 0 && doubleA().length() == 2)
+    {
+        ++a;
+    }
+    if (a == 1)
+    {
+        my_FragColor = vec4(0, 1, 0, 1);
+    }
+    else
+    {
+        my_FragColor = vec4(1, 0, 0, 1);
+    }
+})";
+
+    ANGLE_GL_PROGRAM(program, essl3_shaders::vs::Simple(), kFS);
+    drawQuad(program.get(), essl3_shaders::PositionAttrib(), 0.5f);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
+}
+
+// Test calling array length() with a "this" expression having side effects in a statement where the
+// side effect can be short circuited.
+TEST_P(GLSLTest_ES3, ArrayLengthOnShortCircuitedExpressionWithSideEffectsInStatement)
+{
+    // Bug in the shader translator.  http://anglebug.com/3829
+    ANGLE_SKIP_TEST_IF(true);
+
+    // "a" shouldn't get modified by this shader.
+    constexpr char kFS[] = R"(#version 300 es
+precision highp float;
+out vec4 my_FragColor;
+uniform int u_zero;
+int a;
+int[2] doubleA()
+{
+    a *= 2;
+    return int[2](a, a);
+}
+void main()
+{
+    a = u_zero + 1;
+    bool test = u_zero != 0 && doubleA().length() == 2;
+    if (a == 1)
+    {
+        my_FragColor = vec4(0, 1, 0, 1);
+    }
+    else
+    {
+        my_FragColor = vec4(1, 0, 0, 1);
+    }
+})";
+
+    ANGLE_GL_PROGRAM(program, essl3_shaders::vs::Simple(), kFS);
+    drawQuad(program.get(), essl3_shaders::PositionAttrib(), 0.5f);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
+}
+
 // Test that statements inside switch() get translated to correct HLSL.
 TEST_P(GLSLTest_ES3, DifferentStatementsInsideSwitch)
 {
@@ -6584,6 +6747,34 @@ TEST_P(GLSLTest, MemoryExhaustedTest)
     EXPECT_NE(0u, program);
 }
 
+// Test that inactive samplers in structs don't cause any errors.
+TEST_P(GLSLTest, InactiveSamplersInStruct)
+{
+    // While the sampler is being extracted and declared outside of the struct, it's not removed
+    // from the struct definition.  http://anglebug.com/4211
+    ANGLE_SKIP_TEST_IF(IsVulkan() || IsMetal());
+
+    constexpr char kVS[] = R"(attribute vec4 a_position;
+void main() {
+  gl_Position = a_position;
+})";
+
+    constexpr char kFS[] = R"(precision highp float;
+struct S
+{
+    vec4 v;
+    sampler2D t[10];
+};
+uniform S s;
+void main() {
+  gl_FragColor = s.v;
+})";
+
+    ANGLE_GL_PROGRAM(program, kVS, kFS);
+
+    drawQuad(program, "a_position", 0.5f);
+}
+
 // Helper functions for MixedRowAndColumnMajorMatrices* tests
 
 // Round up to alignment, assuming it's a power of 2
@@ -7044,9 +7235,6 @@ void main()
 // Test that side effects when transforming read operations are preserved.
 TEST_P(GLSLTest_ES3, MixedRowAndColumnMajorMatrices_ReadSideEffect)
 {
-    // http://anglebug.com/3831
-    ANGLE_SKIP_TEST_IF(IsNVIDIA() && IsOpenGL());
-
     // Fails on Mac on Intel and AMD: http://anglebug.com/3842
     ANGLE_SKIP_TEST_IF(IsOSX() && IsOpenGL() && (IsIntel() || IsAMD()));
 
@@ -7059,13 +7247,13 @@ out vec4 outColor;
 
 struct S
 {
-    mat2x3 m2[2];
+    mat2x3 m2[3];
 };
 
 layout(std140, column_major) uniform Ubo
 {
     mat4 m1;
-    layout(row_major) S s[3];
+    layout(row_major) S s[2];
 } ubo;
 
 #define EXPECT(result, expression, value) if ((expression) != value) { result = false; }
@@ -7143,10 +7331,6 @@ void main()
 // Test that side effects respect the order of logical expression operands.
 TEST_P(GLSLTest_ES3, MixedRowAndColumnMajorMatrices_ReadSideEffectOrder)
 {
-    // IntermTraverser::insertStatementsInParentBlock that's used to move side effects does not
-    // respect the order of evaluation of logical expressions.  http://anglebug.com/3829.
-    ANGLE_SKIP_TEST_IF(IsVulkan());
-
     // http://anglebug.com/3837
     ANGLE_SKIP_TEST_IF(IsLinux() && IsIntel() && IsOpenGL());
 
@@ -7208,10 +7392,6 @@ void main()
 // Test that side effects respect short-circuit.
 TEST_P(GLSLTest_ES3, MixedRowAndColumnMajorMatrices_ReadSideEffectShortCircuit)
 {
-    // IntermTraverser::insertStatementsInParentBlock that's used to move side effects does not
-    // respect short-circuiting in evaluation of logical expressions.  http://anglebug.com/3829.
-    ANGLE_SKIP_TEST_IF(IsVulkan());
-
     // Fails on Android: http://anglebug.com/3839
     ANGLE_SKIP_TEST_IF(IsAndroid() && IsOpenGL());
 
@@ -7300,6 +7480,105 @@ void main() {
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
 }
 
+// Test shader with all resources (default uniform, UBO, SSBO, image, sampler and atomic counter) to
+// make sure they are all linked ok.  The front-end sorts these resources and traverses the list of
+// "uniforms" to find the range for each resource.  A bug there was causing some resource ranges to
+// be empty in the presence of other resources.
+TEST_P(GLSLTest_ES31, MixOfAllResources)
+{
+    constexpr char kComputeShader[] = R"(#version 310 es
+layout(local_size_x = 1, local_size_y = 1, local_size_z = 1) in;
+layout(binding = 1, std430) buffer Output {
+  uint ubo_value;
+  uint default_value;
+  uint sampler_value;
+  uint ac_value;
+  uint image_value;
+} outbuf;
+uniform Input {
+  uint input_value;
+} inbuf;
+uniform uint default_uniform;
+uniform sampler2D smplr;
+layout(binding=0) uniform atomic_uint ac;
+layout(r32ui) uniform highp readonly uimage2D image;
+
+void main(void)
+{
+  outbuf.ubo_value = inbuf.input_value;
+  outbuf.default_value = default_uniform;
+  outbuf.sampler_value = uint(texture(smplr, vec2(0.5, 0.5)).x * 255.0);
+  outbuf.ac_value = atomicCounterIncrement(ac);
+  outbuf.image_value = imageLoad(image, ivec2(0, 0)).x;
+}
+)";
+    ANGLE_GL_COMPUTE_PROGRAM(program, kComputeShader);
+    EXPECT_GL_NO_ERROR();
+
+    glUseProgram(program);
+
+    unsigned int inputData = 89u;
+    GLBuffer inputBuffer;
+    glBindBuffer(GL_UNIFORM_BUFFER, inputBuffer);
+    glBufferData(GL_UNIFORM_BUFFER, sizeof(inputData), &inputData, GL_STATIC_DRAW);
+    GLuint inputBufferIndex = glGetUniformBlockIndex(program.get(), "Input");
+    ASSERT_NE(inputBufferIndex, GL_INVALID_INDEX);
+    glUniformBlockBinding(program.get(), inputBufferIndex, 0);
+    glBindBufferBase(GL_UNIFORM_BUFFER, 0, inputBuffer);
+
+    unsigned int outputInitData[5] = {0x12345678u, 0x09ABCDEFu, 0x56789ABCu, 0x0DEF1234u,
+                                      0x13579BDFu};
+    GLBuffer outputBuffer;
+    glBindBuffer(GL_SHADER_STORAGE_BUFFER, outputBuffer);
+    glBufferData(GL_SHADER_STORAGE_BUFFER, sizeof(outputInitData), outputInitData, GL_STATIC_DRAW);
+    glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, outputBuffer);
+    EXPECT_GL_NO_ERROR();
+
+    unsigned int uniformData = 456u;
+    GLint uniformLocation    = glGetUniformLocation(program, "default_uniform");
+    ASSERT_NE(uniformLocation, -1);
+    glUniform1ui(uniformLocation, uniformData);
+
+    unsigned int acData = 2u;
+    GLBuffer atomicCounterBuffer;
+    glBindBuffer(GL_ATOMIC_COUNTER_BUFFER, atomicCounterBuffer);
+    glBufferData(GL_ATOMIC_COUNTER_BUFFER, sizeof(acData), &acData, GL_STATIC_DRAW);
+    glBindBufferBase(GL_ATOMIC_COUNTER_BUFFER, 0, atomicCounterBuffer);
+    EXPECT_GL_NO_ERROR();
+
+    unsigned int imageData = 33u;
+    GLTexture image;
+    glBindTexture(GL_TEXTURE_2D, image);
+    glTexStorage2D(GL_TEXTURE_2D, 1, GL_R32UI, 1, 1);
+    glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 1, 1, GL_RED_INTEGER, GL_UNSIGNED_INT, &imageData);
+    glBindImageTexture(0, image, 0, GL_FALSE, 0, GL_READ_ONLY, GL_R32UI);
+    EXPECT_GL_NO_ERROR();
+
+    GLColor textureData(127, 18, 189, 211);
+    GLTexture texture;
+    glBindTexture(GL_TEXTURE_2D, texture);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 1, 1, 0, GL_RGBA, GL_UNSIGNED_BYTE, &textureData);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    ASSERT_GL_NO_ERROR();
+
+    glDispatchCompute(1, 1, 1);
+    EXPECT_GL_NO_ERROR();
+
+    glMemoryBarrier(GL_BUFFER_UPDATE_BARRIER_BIT);
+
+    // read back
+    const GLuint *ptr = reinterpret_cast<const GLuint *>(
+        glMapBufferRange(GL_SHADER_STORAGE_BUFFER, 0, sizeof(outputInitData), GL_MAP_READ_BIT));
+    EXPECT_EQ(ptr[0], inputData);
+    EXPECT_EQ(ptr[1], uniformData);
+    EXPECT_EQ(ptr[2], textureData.R);
+    EXPECT_EQ(ptr[3], acData);
+    EXPECT_EQ(ptr[4], imageData);
+
+    glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);
+}
+
 // Test that multiple nested assignments are handled correctly.
 TEST_P(GLSLTest_ES31, MixedRowAndColumnMajorMatrices_WriteSideEffect)
 {
@@ -7385,6 +7664,9 @@ TEST_P(GLSLTest_ES31, MixedRowAndColumnMajorMatrices_WriteArrayOfArray)
     // Fails on D3D due to mistranslation: http://anglebug.com/3841
     ANGLE_SKIP_TEST_IF(IsD3D11());
 
+    // Fails compiling shader on Android/Vulkan.  http://anglebug.com/4290
+    ANGLE_SKIP_TEST_IF(IsAndroid() && IsVulkan());
+
     constexpr char kFS[] = R"(#version 310 es
 precision highp float;
 out vec4 outColor;
@@ -7443,6 +7725,53 @@ void main()
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
 
     EXPECT_TRUE(VerifyBuffer(ssbo, data, size));
+}
+
+// Test that the precise keyword is not reserved before ES3.1.
+TEST_P(GLSLTest_ES3, PreciseNotReserved)
+{
+    // Skip in ES3.1+ as the precise keyword is reserved/core.
+    ANGLE_SKIP_TEST_IF(getClientMajorVersion() > 3 ||
+                       (getClientMajorVersion() == 3 && getClientMinorVersion() >= 1));
+
+    constexpr char kFS[] = R"(#version 300 es
+precision mediump float;
+in float precise;
+out vec4 my_FragColor;
+void main() { my_FragColor = vec4(precise, 0, 0, 1.0); })";
+
+    constexpr char kVS[] = R"(#version 300 es
+in vec4 a_position;
+out float precise;
+void main() { precise = a_position.x; gl_Position = a_position; })";
+
+    GLuint program = CompileProgram(kVS, kFS);
+    EXPECT_NE(0u, program);
+}
+
+// Test that the precise keyword is reserved on ES3.0 without GL_EXT_gpu_shader5.
+TEST_P(GLSLTest_ES31, PreciseReservedWithoutExtension)
+{
+    // Skip if EXT_gpu_shader5 is enabled.
+    ANGLE_SKIP_TEST_IF(IsGLExtensionEnabled("GL_EXT_gpu_shader5"));
+    // Skip in ES3.2+ as the precise keyword is core.
+    ANGLE_SKIP_TEST_IF(getClientMajorVersion() > 3 ||
+                       (getClientMajorVersion() == 3 && getClientMinorVersion() >= 2));
+
+    constexpr char kFS[] = R"(#version 310 es
+precision mediump float;
+in float v_varying;
+out vec4 my_FragColor;
+void main() { my_FragColor = vec4(v_varying, 0, 0, 1.0); })";
+
+    constexpr char kVS[] = R"(#version 310 es
+in vec4 a_position;
+precise out float v_varying;
+void main() { v_varying = a_position.x; gl_Position = a_position; })";
+
+    // Should fail, as precise is a reserved keyword when the extension is not enabled.
+    GLuint program = CompileProgram(kVS, kFS);
+    EXPECT_EQ(0u, program);
 }
 
 }  // anonymous namespace

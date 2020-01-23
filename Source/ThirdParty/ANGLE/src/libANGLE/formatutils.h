@@ -55,6 +55,58 @@ struct Type
 
 uint32_t GetPackedTypeInfo(GLenum type);
 
+ANGLE_INLINE GLenum GetNonLinearFormat(const GLenum format)
+{
+    switch (format)
+    {
+        case GL_BGRA8_EXT:
+            return GL_BGRA8_SRGB_ANGLEX;
+        case GL_RGBA8:
+            return GL_SRGB8_ALPHA8;
+        case GL_RGB8:
+        case GL_BGRX8_ANGLEX:
+            return GL_SRGB8;
+        case GL_RGBA16F:
+            return GL_RGBA16F;
+        default:
+            return GL_NONE;
+    }
+}
+
+ANGLE_INLINE bool ColorspaceFormatOverride(const EGLenum colorspace, GLenum *rendertargetformat)
+{
+    // Override the rendertargetformat based on colorpsace
+    switch (colorspace)
+    {
+        case EGL_GL_COLORSPACE_LINEAR:                 // linear colorspace no translation needed
+        case EGL_GL_COLORSPACE_SCRGB_LINEAR_EXT:       // linear colorspace no translation needed
+        case EGL_GL_COLORSPACE_DISPLAY_P3_LINEAR_EXT:  // linear colorspace no translation needed
+        case EGL_GL_COLORSPACE_DISPLAY_P3_PASSTHROUGH_EXT:  // App, not the HW, will specify the
+                                                            // transfer function
+        case EGL_GL_COLORSPACE_SCRGB_EXT:  // App, not the HW, will specify the transfer function
+            // No translation
+            return true;
+        case EGL_GL_COLORSPACE_SRGB_KHR:
+        case EGL_GL_COLORSPACE_DISPLAY_P3_EXT:
+        {
+            GLenum nonLinearFormat = GetNonLinearFormat(*rendertargetformat);
+            if (nonLinearFormat != GL_NONE)
+            {
+                *rendertargetformat = nonLinearFormat;
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+        break;
+        default:
+            UNREACHABLE();
+            return false;
+    }
+}
+
 ANGLE_INLINE const Type GetTypeInfo(GLenum type)
 {
     return Type(GetPackedTypeInfo(type));
@@ -117,7 +169,7 @@ struct InternalFormat
                                                    GLuint *resultOut) const;
 
     bool isLUMA() const;
-    GLenum getReadPixelsFormat() const;
+    GLenum getReadPixelsFormat(const Extensions &extensions) const;
     GLenum getReadPixelsType(const Version &version) const;
 
     // Support upload a portion of image?
@@ -213,6 +265,10 @@ bool CompressedFormatRequiresWholeImage(GLenum internalFormat);
 
 typedef std::set<GLenum> FormatSet;
 const FormatSet &GetAllSizedInternalFormats();
+
+typedef std::unordered_map<GLenum, std::unordered_map<GLenum, InternalFormat>>
+    InternalFormatInfoMap;
+const InternalFormatInfoMap &GetInternalFormatMap();
 
 // From the ESSL 3.00.4 spec:
 // Vertex shader inputs can only be float, floating-point vectors, matrices, signed and unsigned

@@ -4124,6 +4124,10 @@ class Texture2DNorm16TestES3 : public Texture2DTestES3
 
     void testNorm16Texture(GLint internalformat, GLenum format, GLenum type)
     {
+        // TODO(http://anglebug.com/4089) Fails on Win Intel OpenGL driver
+        ANGLE_SKIP_TEST_IF(IsIntel() && IsOpenGL());
+        ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_texture_norm16"));
+
         GLushort pixelValue  = (type == GL_SHORT) ? 0x7FFF : 0x6A35;
         GLushort imageData[] = {pixelValue, pixelValue, pixelValue, pixelValue};
 
@@ -4154,15 +4158,101 @@ class Texture2DNorm16TestES3 : public Texture2DTestES3
         ASSERT_GL_NO_ERROR();
     }
 
-    void testNorm16Render(GLint internalformat, GLenum format, GLenum type)
+    void testReadPixelsRGBAWithRangeAndPixelStoreMode(GLuint x,
+                                                      GLuint y,
+                                                      GLuint width,
+                                                      GLuint height,
+                                                      GLint packRowLength,
+                                                      GLint packAlignment,
+                                                      GLint packSkipPixels,
+                                                      GLint packSkipRows,
+                                                      GLenum type,
+                                                      GLColor16UI color)
     {
+        // PACK modes debugging
+        GLint s = 2;  // single component size in bytes, UNSIGNED_SHORT -> 2 in our case
+        GLint n = 4;  // 4 components per pixel, stands for GL_RGBA
+
+        GLuint l       = packRowLength == 0 ? width : packRowLength;
+        const GLint &a = packAlignment;
+
+        // According to
+        // https://www.khronos.org/registry/OpenGL-Refpages/es3.0/html/glPixelStorei.xhtml
+        GLint k                    = (s >= a) ? n * l : a / s * (1 + (s * n * l - 1) / a);
+        std::size_t componentCount = n * packSkipPixels + k * (packSkipRows + height);
+        if (static_cast<GLuint>(packRowLength) < width)
+        {
+            componentCount += width * n * s - k;
+        }
+
+        // Populate the pixels array with random dirty value
+        constexpr GLushort kDirtyValue = 0x1234;
+        std::vector<GLushort> pixels(componentCount, kDirtyValue);
+        glReadPixels(x, y, width, height, GL_RGBA, type, pixels.data());
+
+        EXPECT_GL_NO_ERROR();
+
+        GLushort *pixelRowStart = pixels.data();
+        pixelRowStart += n * packSkipPixels + k * packSkipRows;
+
+        std::vector<bool> modifiedPixels(componentCount, false);
+
+        char errorInfo[200];
+
+        for (GLuint y = 0; y < height; ++y)
+        {
+            GLushort *curPixel = pixelRowStart;
+            for (GLuint x = 0, len = (y == height - 1) ? width : std::min(l, width); x < len; ++x)
+            {
+                snprintf(errorInfo, sizeof(errorInfo),
+                         "extent: {%u, %u}, coord: (%u, %u), rowLength: %d, alignment: %d, "
+                         "skipPixels: %d, skipRows: %d\n",
+                         width, height, x, y, packRowLength, packAlignment, packSkipPixels,
+                         packSkipRows);
+                EXPECT_EQ(color.R, curPixel[0]) << errorInfo;
+                EXPECT_EQ(color.G, curPixel[1]) << errorInfo;
+                EXPECT_EQ(color.B, curPixel[2]) << errorInfo;
+                EXPECT_EQ(color.A, curPixel[3]) << errorInfo;
+
+                std::ptrdiff_t diff      = curPixel - pixels.data();
+                modifiedPixels[diff + 0] = true;
+                modifiedPixels[diff + 1] = true;
+                modifiedPixels[diff + 2] = true;
+                modifiedPixels[diff + 3] = true;
+
+                curPixel += n;
+            }
+            pixelRowStart += k;
+        }
+
+        for (std::size_t i = 0; i < modifiedPixels.size(); ++i)
+        {
+            if (!modifiedPixels[i])
+            {
+                EXPECT_EQ(pixels[i], kDirtyValue);
+            }
+        }
+    }
+
+    void testNorm16RenderAndReadPixels(GLint internalformat, GLenum format, GLenum type)
+    {
+        // TODO(http://anglebug.com/4089) Fails on Win Intel OpenGL driver
+        ANGLE_SKIP_TEST_IF(IsIntel() && IsOpenGL());
+        // TODO(http://anglebug.com/4245) Fails on Win AMD OpenGL driver
+        ANGLE_SKIP_TEST_IF(IsWindows() && IsAMD() && IsDesktopOpenGL());
+        ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_texture_norm16"));
+
         GLushort pixelValue  = 0x6A35;
         GLushort imageData[] = {pixelValue, pixelValue, pixelValue, pixelValue};
+        GLColor16UI color    = SliceFormatColor16UI(
+            format, GLColor16UI(pixelValue, pixelValue, pixelValue, pixelValue));
+        // Size of drawing viewport
+        constexpr GLint width = 8, height = 8;
 
         setUpProgram();
 
         glBindTexture(GL_TEXTURE_2D, mTextures[1]);
-        glTexImage2D(GL_TEXTURE_2D, 0, internalformat, 1, 1, 0, format, type, nullptr);
+        glTexImage2D(GL_TEXTURE_2D, 0, internalformat, width, height, 0, format, type, nullptr);
 
         glBindFramebuffer(GL_FRAMEBUFFER, mFBO);
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, mTextures[1],
@@ -4170,14 +4260,72 @@ class Texture2DNorm16TestES3 : public Texture2DTestES3
 
         glBindTexture(GL_TEXTURE_2D, mTextures[2]);
         glTexImage2D(GL_TEXTURE_2D, 0, internalformat, 1, 1, 0, format, type, imageData);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
         EXPECT_GL_NO_ERROR();
 
         drawQuad(mProgram, "position", 0.5f);
 
-        EXPECT_PIXEL_16UI_COLOR(0, 0,
-                                SliceFormatColor16UI(format, GLColor16UI(pixelValue, pixelValue,
-                                                                         pixelValue, pixelValue)));
+        // ReadPixels against different width, height, pixel pack mode combinations to test
+        // workaround of pixels rearrangement
+
+        // {x, y, width, height}
+        std::vector<std::array<GLint, 4>> areas = {
+            {0, 0, 1, 1}, {0, 0, 1, 2}, {0, 0, 2, 1}, {0, 0, 2, 2},
+            {0, 0, 3, 2}, {0, 0, 3, 3}, {0, 0, 4, 3}, {0, 0, 4, 4},
+
+            {1, 3, 3, 2}, {1, 3, 3, 3}, {3, 2, 4, 3}, {3, 2, 4, 4},
+
+            {0, 0, 5, 6}, {2, 1, 5, 6}, {0, 0, 6, 1}, {0, 0, 7, 1},
+            {0, 0, 7, 3}, {0, 0, 7, 8}, {1, 0, 7, 8}, {0, 0, 8, 8},
+        };
+
+        // Put default settings at the last
+        std::vector<GLint> paramsPackRowLength                        = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 0};
+        std::vector<GLint> paramsPackAlignment                        = {1, 2, 8, 4};
+        std::vector<std::array<GLint, 2>> paramsPackSkipPixelsAndRows = {{1, 0}, {0, 1},   {1, 1},
+                                                                         {3, 1}, {20, 20}, {0, 0}};
+
+        // Restore pixel pack modes later
+        GLint restorePackAlignment;
+        glGetIntegerv(GL_PACK_ALIGNMENT, &restorePackAlignment);
+        GLint restorePackRowLength;
+        glGetIntegerv(GL_PACK_ROW_LENGTH, &restorePackRowLength);
+        GLint restorePackSkipPixels;
+        glGetIntegerv(GL_PACK_SKIP_PIXELS, &restorePackSkipPixels);
+        GLint restorePackSkipRows;
+        glGetIntegerv(GL_PACK_SKIP_ROWS, &restorePackSkipRows);
+
+        // Variable symbols are based on:
+        // https://www.khronos.org/registry/OpenGL-Refpages/es3.0/html/glPixelStorei.xhtml
+        for (const auto &skipped : paramsPackSkipPixelsAndRows)
+        {
+            glPixelStorei(GL_PACK_SKIP_PIXELS, skipped[0]);
+            glPixelStorei(GL_PACK_SKIP_ROWS, skipped[1]);
+            for (GLint a : paramsPackAlignment)
+            {
+                glPixelStorei(GL_PACK_ALIGNMENT, a);
+                for (GLint l : paramsPackRowLength)
+                {
+                    glPixelStorei(GL_PACK_ROW_LENGTH, l);
+
+                    for (const auto &area : areas)
+                    {
+                        ASSERT(area[0] + area[2] <= width);
+                        ASSERT(area[1] + area[3] <= height);
+                        testReadPixelsRGBAWithRangeAndPixelStoreMode(area[0], area[1], area[2],
+                                                                     area[3], l, a, skipped[0],
+                                                                     skipped[1], type, color);
+                    }
+                }
+            }
+        }
+
+        glPixelStorei(GL_PACK_ALIGNMENT, restorePackAlignment);
+        glPixelStorei(GL_PACK_ROW_LENGTH, restorePackRowLength);
+        glPixelStorei(GL_PACK_SKIP_PIXELS, restorePackSkipPixels);
+        glPixelStorei(GL_PACK_SKIP_ROWS, restorePackSkipRows);
 
         glBindRenderbuffer(GL_RENDERBUFFER, mRenderbuffer);
         glRenderbufferStorage(GL_RENDERBUFFER, internalformat, 1, 1);
@@ -4210,27 +4358,65 @@ class Texture2DNorm16TestES3 : public Texture2DTestES3
     GLuint mRenderbuffer;
 };
 
-// Test texture formats enabled by the GL_EXT_texture_norm16 extension.
-TEST_P(Texture2DNorm16TestES3, TextureNorm16Test)
+TEST_P(Texture2DNorm16TestES3, TextureNorm16R16TextureTest)
 {
-    // TODO(crbug.com/angleproject/4089) Fails on Nexus5X Adreno
-    // TODO(crbug.com/1024387) Fails on Nexus6P
-    ANGLE_SKIP_TEST_IF(IsNexus5X() || IsNexus6P());
-    // TODO(crbug.com/angleproject/4089) Fails on Win Intel OpenGL driver
-    ANGLE_SKIP_TEST_IF(IsIntel() && IsOpenGL());
-
-    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_texture_norm16"));
-
     testNorm16Texture(GL_R16_EXT, GL_RED, GL_UNSIGNED_SHORT);
-    testNorm16Texture(GL_RG16_EXT, GL_RG, GL_UNSIGNED_SHORT);
-    testNorm16Texture(GL_RGB16_EXT, GL_RGB, GL_UNSIGNED_SHORT);
-    testNorm16Texture(GL_RGBA16_EXT, GL_RGBA, GL_UNSIGNED_SHORT);
-    testNorm16Texture(GL_R16_SNORM_EXT, GL_RED, GL_SHORT);
-    testNorm16Texture(GL_RG16_SNORM_EXT, GL_RG, GL_SHORT);
-    testNorm16Texture(GL_RGB16_SNORM_EXT, GL_RGB, GL_SHORT);
-    testNorm16Texture(GL_RGBA16_SNORM_EXT, GL_RGBA, GL_SHORT);
+}
 
-    testNorm16Render(GL_RGBA16_EXT, GL_RGBA, GL_UNSIGNED_SHORT);
+TEST_P(Texture2DNorm16TestES3, TextureNorm16R16SNORMTextureTest)
+{
+    testNorm16Texture(GL_R16_SNORM_EXT, GL_RED, GL_SHORT);
+}
+
+TEST_P(Texture2DNorm16TestES3, TextureNorm16RG16TextureTest)
+{
+    testNorm16Texture(GL_RG16_EXT, GL_RG, GL_UNSIGNED_SHORT);
+}
+
+TEST_P(Texture2DNorm16TestES3, TextureNorm16RG16SNORMTextureTest)
+{
+    testNorm16Texture(GL_RG16_SNORM_EXT, GL_RG, GL_SHORT);
+}
+
+TEST_P(Texture2DNorm16TestES3, TextureNorm16RGB16TextureTest)
+{
+    // (http://anglebug.com/4215) Driver bug on some Qualcomm Adreno gpu
+    ANGLE_SKIP_TEST_IF((IsNexus5X() || IsNexus6P()) && IsOpenGLES());
+
+    testNorm16Texture(GL_RGB16_EXT, GL_RGB, GL_UNSIGNED_SHORT);
+}
+
+TEST_P(Texture2DNorm16TestES3, TextureNorm16RGB16SNORMTextureTest)
+{
+    // (http://anglebug.com/4215) Driver bug on some Qualcomm Adreno gpu
+    ANGLE_SKIP_TEST_IF((IsNexus5X() || IsNexus6P()) && IsOpenGLES());
+
+    testNorm16Texture(GL_RGB16_SNORM_EXT, GL_RGB, GL_SHORT);
+}
+
+TEST_P(Texture2DNorm16TestES3, TextureNorm16RGBA16TextureTest)
+{
+    testNorm16Texture(GL_RGBA16_EXT, GL_RGBA, GL_UNSIGNED_SHORT);
+}
+
+TEST_P(Texture2DNorm16TestES3, TextureNorm16RGBA16SNORMTextureTest)
+{
+    testNorm16Texture(GL_RGBA16_SNORM_EXT, GL_RGBA, GL_SHORT);
+}
+
+TEST_P(Texture2DNorm16TestES3, TextureNorm16R16RenderTest)
+{
+    testNorm16RenderAndReadPixels(GL_R16_EXT, GL_RED, GL_UNSIGNED_SHORT);
+}
+
+TEST_P(Texture2DNorm16TestES3, TextureNorm16RG16RenderTest)
+{
+    testNorm16RenderAndReadPixels(GL_RG16_EXT, GL_RG, GL_UNSIGNED_SHORT);
+}
+
+TEST_P(Texture2DNorm16TestES3, TextureNorm16RGBA16RenderTest)
+{
+    testNorm16RenderAndReadPixels(GL_RGBA16_EXT, GL_RGBA, GL_UNSIGNED_SHORT);
 }
 
 class Texture2DRGTest : public Texture2DTest

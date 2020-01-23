@@ -482,6 +482,53 @@ TEST_P(CopyTexImageTest, CopyTexSubImageToNonCubeCompleteDestination)
     }
 }
 
+// Deleting textures after copying to them. http://anglebug.com/4267
+TEST_P(CopyTexImageTest, DeleteAfterCopyingToTextures)
+{
+    // Asserts on Vulkan backend. http://anglebug.com/4274
+    ANGLE_SKIP_TEST_IF(IsVulkan());
+
+    GLTexture texture;
+    glBindTexture(GL_TEXTURE_2D, texture);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 2, 2, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+
+    GLTexture texture2;
+    glBindTexture(GL_TEXTURE_2D, texture2);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 2, 2, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+
+    GLFramebuffer framebuffer;
+    glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture, 0);
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+    // Perform CopyTexImage2D
+    glBindTexture(GL_TEXTURE_2D, texture);
+    glCopyTexImage2D(GL_TEXTURE_2D, 1, GL_RGBA, 0, 0, 2, 2, 0);
+    ASSERT_GL_NO_ERROR();
+    // Not necessary to do any CopyTexImage2D operations to texture2.
+
+    // Perform CopyTexSubImage2D
+    glBindTexture(GL_TEXTURE_2D, texture);
+    glCopyTexSubImage2D(GL_TEXTURE_2D, 1, 0, 0, 0, 0, 1, 1);
+    ASSERT_GL_NO_ERROR();
+    glBindTexture(GL_TEXTURE_2D, texture2);
+    glCopyTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 0, 0, 1, 1);
+    ASSERT_GL_NO_ERROR();
+
+    // Clean up - provokes crash on buggy drivers.
+    texture.reset();
+    // Crashes on Intel GPUs on macOS.
+    texture2.reset();
+}
+
 // specialization of CopyTexImageTest is added so that some tests can be explicitly run with an ES3
 // context
 class CopyTexImageTestES3 : public CopyTexImageTest
@@ -807,6 +854,7 @@ ANGLE_INSTANTIATE_TEST(CopyTexImageTest,
                        ES2_D3D9(),
                        ES2_D3D11(),
                        ES2_D3D11_PRESENT_PATH_FAST(),
+                       ES2_METAL(),
                        ES2_OPENGL(),
                        ES2_OPENGLES(),
                        ES2_VULKAN(),

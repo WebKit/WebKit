@@ -20,9 +20,11 @@ enum VendorID : uint32_t
     VENDOR_ID_UNKNOWN = 0x0,
     VENDOR_ID_AMD     = 0x1002,
     VENDOR_ID_ARM     = 0x13B5,
-    VENDOR_ID_GOOGLE  = 0x1AE0,
-    VENDOR_ID_INTEL   = 0x8086,
-    VENDOR_ID_NVIDIA  = 0x10DE,
+    // Broadcom devices won't use PCI, but this is their Vulkan vendor id.
+    VENDOR_ID_BROADCOM = 0x14E4,
+    VENDOR_ID_GOOGLE   = 0x1AE0,
+    VENDOR_ID_INTEL    = 0x8086,
+    VENDOR_ID_NVIDIA   = 0x10DE,
     // This is Qualcomm PCI Vendor ID.
     // Android doesn't have a PCI bus, but all we need is a unique id.
     VENDOR_ID_QUALCOMM = 0x5143,
@@ -44,6 +46,11 @@ inline bool IsAMD(uint32_t vendorId)
 inline bool IsARM(uint32_t vendorId)
 {
     return vendorId == VENDOR_ID_ARM;
+}
+
+inline bool IsBroadcom(uint32_t vendorId)
+{
+    return vendorId == VENDOR_ID_BROADCOM;
 }
 
 inline bool IsIntel(uint32_t vendorId)

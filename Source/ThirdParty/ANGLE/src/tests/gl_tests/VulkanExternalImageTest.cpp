@@ -126,8 +126,8 @@ TEST_P(VulkanExternalImageTest, ShouldImportSemaphoreOpaqueFd)
 // Test creating and clearing a simple RGBA8 texture in a opaque fd.
 TEST_P(VulkanExternalImageTest, ShouldClearOpaqueFdRGBA8)
 {
-    // http://anglebug.com/4092
-    ANGLE_SKIP_TEST_IF(isSwiftshader());
+    // http://anglebug.com/4229
+    ANGLE_SKIP_TEST_IF(IsVulkan());
     ANGLE_SKIP_TEST_IF(!EnsureGLExtensionEnabled("GL_EXT_memory_object_fd"));
 
     VulkanExternalHelper helper;

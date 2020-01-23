@@ -216,7 +216,8 @@ RendererGL::RendererGL(std::unique_ptr<FunctionsGL> functions,
       mUseDebugOutput(false),
       mCapsInitialized(false),
       mMultiviewImplementationType(MultiviewImplementationTypeGL::UNSPECIFIED),
-      mNativeParallelCompileEnabled(false)
+      mNativeParallelCompileEnabled(false),
+      mNeedsFlushBeforeDeleteTextures(false)
 {
     ASSERT(mFunctions);
     if (!display->getState().featuresAllDisabled)
@@ -284,6 +285,7 @@ RendererGL::~RendererGL()
 angle::Result RendererGL::flush()
 {
     mFunctions->flush();
+    mNeedsFlushBeforeDeleteTextures = false;
     return angle::Result::Continue;
 }
 
@@ -295,6 +297,7 @@ angle::Result RendererGL::finish()
     }
 
     mFunctions->finish();
+    mNeedsFlushBeforeDeleteTextures = false;
 
     if (mFeatures.finishDoesNotCauseQueriesToBeAvailable.enabled && mUseDebugOutput)
     {
@@ -679,6 +682,19 @@ void RendererGL::setMaxShaderCompilerThreads(GLuint count)
     if (hasNativeParallelCompile())
     {
         SetMaxShaderCompilerThreads(mFunctions.get(), count);
+    }
+}
+
+void RendererGL::setNeedsFlushBeforeDeleteTextures()
+{
+    mNeedsFlushBeforeDeleteTextures = true;
+}
+
+void RendererGL::flushIfNecessaryBeforeDeleteTextures()
+{
+    if (mNeedsFlushBeforeDeleteTextures)
+    {
+        (void)flush();
     }
 }
 

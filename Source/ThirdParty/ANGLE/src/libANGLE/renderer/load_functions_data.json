@@ -653,6 +653,9 @@
     }
   },
   "GL_DEPTH_COMPONENT32_OES": {
+    "D32_FLOAT": {
+      "GL_UNSIGNED_INT": "LoadD32ToD32F"
+    },
     "NONE": {
       "GL_UNSIGNED_INT": "LoadR32ToR24G8"
     }

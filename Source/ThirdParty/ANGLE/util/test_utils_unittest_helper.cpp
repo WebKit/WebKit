@@ -7,12 +7,22 @@
 
 #include "test_utils_unittest_helper.h"
 
+#include "../src/tests/test_utils/runner/TestSuite.h"
 #include "common/system_utils.h"
 
 #include <string.h>
 
 int main(int argc, char **argv)
 {
+    for (int argIndex = 1; argIndex < argc; ++argIndex)
+    {
+        if (strcmp(argv[argIndex], kRunTestSuite) == 0)
+        {
+            angle::TestSuite testSuite(&argc, argv);
+            return testSuite.run();
+        }
+    }
+
     if (argc != 3 || strcmp(argv[1], kRunAppTestArg1) != 0 || strcmp(argv[2], kRunAppTestArg2) != 0)
     {
         fprintf(stderr, "Expected command line:\n%s %s %s\n", argv[0], kRunAppTestArg1,

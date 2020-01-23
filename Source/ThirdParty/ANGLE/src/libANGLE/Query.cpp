@@ -7,11 +7,15 @@
 // Query.cpp: Implements the gl::Query class
 
 #include "libANGLE/Query.h"
+
+#include "libANGLE/renderer/GLImplFactory.h"
 #include "libANGLE/renderer/QueryImpl.h"
 
 namespace gl
 {
-Query::Query(rx::QueryImpl *impl, QueryID id) : RefCountObject(id), mQuery(impl), mLabel() {}
+Query::Query(rx::GLImplFactory *factory, QueryType type, QueryID id)
+    : RefCountObject(factory->generateSerial(), id), mQuery(factory->createQuery(type)), mLabel()
+{}
 
 Query::~Query()
 {

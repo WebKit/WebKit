@@ -279,9 +279,7 @@ EGLAPI EGLBoolean EGLAPIENTRY eglSwapBuffersWithFrameTokenANGLE(EGLDisplay dpy, 
 
 #ifndef EGL_ANGLE_device_eagl
 #define EGL_ANGLE_device_eagl 1
-#define EGL_EAGL_CONTEXT_ANGLE 0x3487
-// FIXME: Do we need an EGL_PIXEL_FORMAT_ANGLE?
-// #define EGL_EAGL_PIXEL_FORMAT_ANGLE 0x3488
+#define EGL_EAGL_CONTEXT_ANGLE 0x348C
 #endif
 
 // clang-format on

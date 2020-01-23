@@ -265,7 +265,7 @@ def gen_vertex_map_switch_string(vertex_table):
 def main():
     # auto_script parameters.
     if len(sys.argv) > 1:
-        inputs = ['mtl_format_map.json']
+        inputs = ['../angle_format.py', 'mtl_format_map.json']
         outputs = ['mtl_format_table_autogen.mm']
 
         if sys.argv[1] == 'inputs':

@@ -250,6 +250,11 @@ std::shared_ptr<WaitableCompileEvent> ShaderGL::compile(const gl::Context *conte
         additionalOptions |= SH_INIT_OUTPUT_VARIABLES;
     }
 
+    if (isWebGL && !context->getState().getEnableFeature(GL_TEXTURE_RECTANGLE_ANGLE))
+    {
+        additionalOptions |= SH_DISABLE_ARB_TEXTURE_RECTANGLE;
+    }
+
     const angle::FeaturesGL &features = GetFeaturesGL(context);
 
     if (features.doWhileGLSLCausesGPUHang.enabled)

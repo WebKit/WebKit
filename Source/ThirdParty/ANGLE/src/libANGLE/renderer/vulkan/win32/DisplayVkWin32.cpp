@@ -11,8 +11,8 @@
 #include "libANGLE/renderer/vulkan/DisplayVk.h"
 #include "libANGLE/renderer/vulkan/RendererVk.h"
 
-#include <vulkan/vulkan.h>
 #include <windows.h>
+#include "volk.h"
 
 #include "libANGLE/renderer/vulkan/vk_caps_utils.h"
 #include "libANGLE/renderer/vulkan/win32/WindowSurfaceVkWin32.h"
@@ -134,7 +134,7 @@ egl::Error DisplayVkWin32::initialize(egl::Display *display)
 
 egl::ConfigSet DisplayVkWin32::generateConfigs()
 {
-    constexpr GLenum kColorFormats[] = {GL_RGB565, GL_BGRA8_EXT, GL_BGRX8_ANGLEX};
+    constexpr GLenum kColorFormats[] = {GL_RGB565, GL_BGRA8_EXT, GL_BGRX8_ANGLEX, GL_RGB10_A2_EXT};
     return egl_vk::GenerateConfigs(kColorFormats, egl_vk::kConfigDepthStencilFormats, this);
 }
 
@@ -167,4 +167,13 @@ const char *DisplayVkWin32::getWSIExtension() const
     return VK_KHR_WIN32_SURFACE_EXTENSION_NAME;
 }
 
+bool IsVulkanWin32DisplayAvailable()
+{
+    return true;
+}
+
+DisplayImpl *CreateVulkanWin32Display(const egl::DisplayState &state)
+{
+    return new DisplayVkWin32(state);
+}
 }  // namespace rx

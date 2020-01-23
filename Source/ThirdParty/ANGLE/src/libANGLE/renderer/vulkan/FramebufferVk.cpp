@@ -9,8 +9,8 @@
 
 #include "libANGLE/renderer/vulkan/FramebufferVk.h"
 
-#include <vulkan/vulkan.h>
 #include <array>
+#include "volk.h"
 
 #include "common/debug.h"
 #include "libANGLE/Context.h"
@@ -1329,8 +1329,9 @@ angle::Result FramebufferVk::getSamplePosition(const gl::Context *context,
                                                size_t index,
                                                GLfloat *xy) const
 {
-    ANGLE_VK_UNREACHABLE(vk::GetImpl(context));
-    return angle::Result::Stop;
+    int sampleCount = getSamples();
+    rx::GetSamplePosition(sampleCount, index, xy);
+    return angle::Result::Continue;
 }
 
 angle::Result FramebufferVk::startNewRenderPass(ContextVk *contextVk,

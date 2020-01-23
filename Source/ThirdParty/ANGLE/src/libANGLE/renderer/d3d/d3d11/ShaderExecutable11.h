@@ -13,6 +13,11 @@
 #include "libANGLE/renderer/d3d/ShaderExecutableD3D.h"
 #include "libANGLE/renderer/d3d/d3d11/ResourceManager11.h"
 
+namespace gl
+{
+class Context;
+}  // namespace gl
+
 namespace rx
 {
 class Renderer11;

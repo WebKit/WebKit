@@ -12,13 +12,14 @@
 
 #include "common/utilities.h"
 #include "libANGLE/renderer/FenceNVImpl.h"
+#include "libANGLE/renderer/GLImplFactory.h"
 #include "libANGLE/renderer/SyncImpl.h"
 
 namespace gl
 {
 
-FenceNV::FenceNV(rx::FenceNVImpl *impl)
-    : mFence(impl), mIsSet(false), mStatus(GL_FALSE), mCondition(GL_NONE)
+FenceNV::FenceNV(rx::GLImplFactory *factory)
+    : mFence(factory->createFenceNV()), mIsSet(false), mStatus(GL_FALSE), mCondition(GL_NONE)
 {}
 
 FenceNV::~FenceNV()
@@ -57,9 +58,9 @@ angle::Result FenceNV::finish(const Context *context)
     return angle::Result::Continue;
 }
 
-Sync::Sync(rx::SyncImpl *impl, GLuint id)
-    : RefCountObject(id),
-      mFence(impl),
+Sync::Sync(rx::GLImplFactory *factory, GLuint id)
+    : RefCountObject(factory->generateSerial(), id),
+      mFence(factory->createSync()),
       mLabel(),
       mCondition(GL_SYNC_GPU_COMMANDS_COMPLETE),
       mFlags(0)

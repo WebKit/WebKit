@@ -347,7 +347,7 @@ class Framebuffer final : public angle::ObserverInterface,
         DIRTY_BIT_COLOR_BUFFER_CONTENTS_0,
         DIRTY_BIT_COLOR_BUFFER_CONTENTS_MAX =
             DIRTY_BIT_COLOR_BUFFER_CONTENTS_0 + IMPLEMENTATION_MAX_FRAMEBUFFER_ATTACHMENTS,
-        DIRTY_BIT_DEPTH_BUFFER_CONTENTS,
+        DIRTY_BIT_DEPTH_BUFFER_CONTENTS = DIRTY_BIT_COLOR_BUFFER_CONTENTS_MAX,
         DIRTY_BIT_STENCIL_BUFFER_CONTENTS,
         DIRTY_BIT_DRAW_BUFFERS,
         DIRTY_BIT_READ_BUFFER,
@@ -391,6 +391,8 @@ class Framebuffer final : public angle::ObserverInterface,
     Box getDimensions() const;
 
     static const FramebufferID kDefaultDrawFramebufferHandle;
+
+    rx::Serial serial() const { return mSerial; }
 
   private:
     bool detachResourceById(const Context *context, GLenum resourceType, GLuint resourceId);
@@ -457,6 +459,7 @@ class Framebuffer final : public angle::ObserverInterface,
         mFloat32ColorAttachmentBits.set(index, format->type == GL_FLOAT);
     }
 
+    rx::Serial mSerial;
     FramebufferState mState;
     rx::FramebufferImpl *mImpl;
 

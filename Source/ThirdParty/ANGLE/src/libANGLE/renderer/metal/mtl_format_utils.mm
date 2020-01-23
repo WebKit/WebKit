@@ -34,6 +34,14 @@ bool OverrideTextureCaps(const DisplayMtl *display, angle::FormatID formatId, gl
         case angle::FormatID::R8G8B8A8_UNORM_SRGB:
         case angle::FormatID::B8G8R8A8_UNORM:
         case angle::FormatID::B8G8R8A8_UNORM_SRGB:
+        // NOTE: even though iOS devices don't support filtering depth textures, we still report as
+        // supported here in order for the OES_depth_texture extension to be enabled.
+        // During draw call, the filter modes will be converted to nearest.
+        case angle::FormatID::D16_UNORM:
+        case angle::FormatID::D24_UNORM_S8_UINT:
+        case angle::FormatID::D32_FLOAT_S8X24_UINT:
+        case angle::FormatID::D32_FLOAT:
+        case angle::FormatID::D32_UNORM:
             caps->texturable = caps->filterable = caps->textureAttachment = caps->renderbuffer =
                 true;
             return true;
@@ -112,11 +120,13 @@ void GenerateTextureCapsMap(const FormatTable &formatTable,
         tmpTextureExtensions.compressedTexturePVRTCsRGB       = true;
     }
 #endif
-    tmpTextureExtensions.sRGB           = true;
-    tmpTextureExtensions.depth32        = true;
-    tmpTextureExtensions.depth24OES     = true;
-    tmpTextureExtensions.rgb8rgba8      = true;
-    tmpTextureExtensions.textureStorage = true;
+    tmpTextureExtensions.sRGB              = true;
+    tmpTextureExtensions.depth32           = true;
+    tmpTextureExtensions.depth24OES        = true;
+    tmpTextureExtensions.rgb8rgba8         = true;
+    tmpTextureExtensions.textureStorage    = true;
+    tmpTextureExtensions.depthTextureOES   = true;
+    tmpTextureExtensions.depthTextureANGLE = true;
 
     auto formatVerifier = [&](const gl::InternalFormat &internalFormatInfo) {
         angle::FormatID angleFormatId =
@@ -145,14 +155,6 @@ void GenerateTextureCapsMap(const FormatTable &formatTable,
         textureCaps.sampleCounts.clear();
         textureCaps.sampleCounts.insert(0);
         textureCaps.sampleCounts.insert(1);
-
-        if (textureCaps.filterable && mtlFormat.actualFormatId == angle::FormatID::D32_FLOAT)
-        {
-            // Only MacOS support filterable for D32_FLOAT texture
-#if !TARGET_OS_OSX || TARGET_OS_MACCATALYST
-            textureCaps.filterable = false;
-#endif
-        }
 
         textureCapsMap.set(mtlFormat.intendedFormatId, textureCaps);
 

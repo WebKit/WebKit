@@ -174,6 +174,9 @@
 1101 WIN D3D11 : dEQP-GLES3.functional.polygon_offset.fixed24_render_with_units = FAIL
 1101 WIN D3D11 : dEQP-GLES3.functional.lifetime.attach.deleted_input.buffer_vertex_array = FAIL
 
+// Failed after dEQP roll
+4234 WIN D3D11 : dEQP-GLES3.functional.negative_api.buffer.renderbuffer_storage_multisample = FAIL
+
 // Basic line transform feedback tests flaky on Windows.
 2676 WIN D3D11 : dEQP-GLES3.functional.transform_feedback.basic_types.interleaved.lines.* = FAIL
 2676 WIN D3D11 : dEQP-GLES3.functional.transform_feedback.basic_types.separate.lines.* = FAIL
@@ -527,6 +530,7 @@
 
 // Fails on Windows + Linux.
 2222 OPENGL NVIDIA : dEQP-GLES3.functional.fbo.completeness.samples.rbo2_rbo2_rbo0 = FAIL
+2222 OPENGL NVIDIA : dEQP-GLES3.functional.fbo.completeness.samples.rbo1_rbo2_rbo0 = FAIL
 
 // General Vulkan failures
 

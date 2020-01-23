@@ -2224,6 +2224,38 @@ void main()
     EXPECT_GL_NO_ERROR();
 }
 
+// Test that inactive but statically used SSBOs with unsized array are handled correctly.
+//
+// Glslang wrapper used to replace the layout/qualifier of an inactive SSBO with |struct|,
+// effectively turning the interface block declaration into a struct definition.  This generally
+// worked except for SSBOs with an unsized array.  This test makes sure this special case is
+// now properly handled.
+TEST_P(ShaderStorageBufferTest31, InactiveButStaticallyUsedWithUnsizedArray)
+{
+    constexpr char kComputeShaderSource[] =
+        R"(#version 310 es
+layout (local_size_x=1) in;
+layout(binding=0, std140) buffer Storage
+{
+    uint data[];
+} sb;
+void main()
+{
+    if (false)
+    {
+        sb.data[0] = 1u;
+    }
+}
+)";
+
+    ANGLE_GL_COMPUTE_PROGRAM(program, kComputeShaderSource);
+    EXPECT_GL_NO_ERROR();
+
+    glUseProgram(program);
+    glDispatchCompute(1, 1, 1);
+    EXPECT_GL_NO_ERROR();
+}
+
 ANGLE_INSTANTIATE_TEST_ES31(ShaderStorageBufferTest31);
 
 }  // namespace
