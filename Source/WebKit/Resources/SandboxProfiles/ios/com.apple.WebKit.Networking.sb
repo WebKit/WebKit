@@ -418,9 +418,14 @@
     (global-name "com.apple.logd.events"))
 
 (allow mach-lookup (with report) (with telemetry)
-    (global-name "com.apple.cfprefsd.daemon")
     (global-name "com.apple.cfprefsd.agent")
-    (local-name "com.apple.cfprefsd.agent"))
+    (local-name "com.apple.cfprefsd.agent")
+)
+
+(allow mach-lookup (with telemetry)
+    (global-name "com.apple.cfprefsd.daemon") ;; Needed by _CFPreferencesGetAppBooleanValueWithContainer and others.
+)
+
 (allow ipc-posix-shm-read*
     (ipc-posix-name-prefix "apple.cfprefs."))
 
@@ -480,7 +485,6 @@
     (sysctl-name "kern.ostype")
     (sysctl-name "kern.osversion")
     (sysctl-name "kern.saved_ids")
-    (sysctl-name "kern.secure_kernel")
     (sysctl-name "kern.usrstack")
     (sysctl-name "kern.usrstack64")
     (sysctl-name "kern.version")
@@ -505,8 +509,8 @@
 
 (allow mach-lookup (with report) (with telemetry)
     (global-name "com.apple.system.notification_center"))
-(allow ipc-posix-shm-read*  (with report) (with telemetry)
-    (ipc-posix-name "apple.shm.notification_center"))
+(allow ipc-posix-shm-read* (with telemetry)
+    (ipc-posix-name "apple.shm.notification_center")) ;; Needed by os_log_create
 
 (allow mach-lookup (with report) (with telemetry)
     (global-name "com.apple.distributed_notifications@1v3"))
@@ -562,6 +566,7 @@
         "kern.memorystatus_level"
         "kern.osproductversion" ;; Needed by CFNetwork (HSTS store and others)
         "kern.osvariant_status" ;; Needed for bundle loading
+        "kern.secure_kernel" ;; Needed by XPC bundle resolution
         "kern.tcsm_available" ;; Needed for IndexedDB support
         "vm.footprint_suspend"))
 

@@ -1,3 +1,15 @@
+2020-01-23  Brent Fulgham  <bfulgham@apple.com>
+
+        [iOS] Unreviewed follow-up sandbox fix.
+        https://bugs.webkit.org/show_bug.cgi?id=206562
+        <rdar://problem/58778970>
+
+        I missed a couple of rules that are being overly chatty in the logs in r254982.
+        This adds appropriate commands to silence them.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.Networking.sb:
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+
 2020-01-23  Per Arne Vollan  <pvollan@apple.com>
 
         [iOS] Make it possible for WebKit clients to enable connections to asset services in the WebContent process

@@ -822,7 +822,7 @@
         "kern.osproductversion"
         "kern.osrelease"
         "kern.osvariant_status"
-        "kern.secure_kernel"
+        "kern.secure_kernel" ;; Needed by XPC bundle resolution
         "kern.version"
         "vm.footprint_suspend"))
 
@@ -838,6 +838,7 @@
     (iokit-property "IOClassNameOverride")
     (iokit-property "IOPlatformUUID")
     (iokit-property "IOSurfaceAcceleratorCapabilitiesDict")
+    (iokit-property "LGHSupported")
     (iokit-property "Protocol Characteristics")
     (iokit-property "als-colorCfg") ;; <rdar://problem/52903475>
     (iokit-property "artwork-device-idiom") ;; <rdar://problem/49497720>
