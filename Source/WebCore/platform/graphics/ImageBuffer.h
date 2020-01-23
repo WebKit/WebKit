@@ -169,6 +169,7 @@ private:
     friend class NamedImageGeneratedImage;
     friend class GradientImage;
     friend class CustomPaintImage;
+    friend class BitmapImage;
 
 private:
     ImageBufferData m_data;

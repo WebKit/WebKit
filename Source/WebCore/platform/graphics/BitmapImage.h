@@ -134,6 +134,7 @@ public:
 
     WEBCORE_EXPORT NativeImagePtr nativeImage(const GraphicsContext* = nullptr) override;
     NativeImagePtr nativeImageForCurrentFrame(const GraphicsContext* = nullptr) override;
+    NativeImagePtr nativeImageForCurrentFrameRespectingOrientation(const GraphicsContext* = nullptr) override;
 #if USE(CG)
     NativeImagePtr nativeImageOfSize(const IntSize&, const GraphicsContext* = nullptr) override;
     Vector<NativeImagePtr> framesNativeImages();

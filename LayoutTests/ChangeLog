@@ -1,5 +1,69 @@
 2020-01-23  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r254841. rdar://problem/58807959
+
+    EXIF orientation is ignored for some CSS images
+    https://bugs.webkit.org/show_bug.cgi?id=203355
+    
+    Patch by Said Abou-Hallawa <sabouhallawa@apple.com> on 2020-01-20
+    Reviewed by Simon Fraser.
+    
+    Source/WebCore:
+    
+    Unlike GraphicsContext::drawNativeImage(), GraphicsContext::drawPattern()
+    can't change the coordinates system before drawing the image to respect
+    the EXIF orientation. Drawing a pattern tries to fill the destination
+    rectangle with the image according to the GraphicsContext origin and the
+    direction of its axes. So we need to create temporary NativeImage with
+    respecting the EXIF orientation and then use it to draw the pattern.
+    
+    Tests: fast/images/exif-orientation-background-image-no-repeat.html
+           fast/images/exif-orientation-background-image-repeat.html
+           fast/images/exif-orientation-border-image.html
+    
+    * platform/graphics/BitmapImage.cpp:
+    (WebCore::BitmapImage::nativeImageForCurrentFrameRespectingOrientation):
+    (WebCore::BitmapImage::drawPattern):
+    * platform/graphics/BitmapImage.h:
+    * platform/graphics/Image.h:
+    (WebCore::Image::nativeImage):
+    (WebCore::Image::nativeImageForCurrentFrameRespectingOrientation):
+    (WebCore::Image::nativeImageOfSize):
+    * platform/graphics/ImageBuffer.h:
+    * platform/graphics/cg/GraphicsContextCG.cpp:
+    (WebCore::GraphicsContext::drawPattern):
+    * platform/graphics/cg/NativeImageCG.cpp:
+    (WebCore::drawNativeImage):
+    * rendering/style/NinePieceImage.cpp:
+    (WebCore::NinePieceImage::paint const):
+    
+    LayoutTests:
+    
+    * fast/images/exif-orientation-background-image-no-repeat-expected.html: Added.
+    * fast/images/exif-orientation-background-image-no-repeat.html: Added.
+    * fast/images/exif-orientation-background-image-repeat-expected.html: Added.
+    * fast/images/exif-orientation-background-image-repeat.html: Added.
+    * fast/images/exif-orientation-border-image-expected.html: Added.
+    * fast/images/exif-orientation-border-image.html: Added.
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@254841 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-01-20  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+            EXIF orientation is ignored for some CSS images
+            https://bugs.webkit.org/show_bug.cgi?id=203355
+
+            Reviewed by Simon Fraser.
+
+            * fast/images/exif-orientation-background-image-no-repeat-expected.html: Added.
+            * fast/images/exif-orientation-background-image-no-repeat.html: Added.
+            * fast/images/exif-orientation-background-image-repeat-expected.html: Added.
+            * fast/images/exif-orientation-background-image-repeat.html: Added.
+            * fast/images/exif-orientation-border-image-expected.html: Added.
+            * fast/images/exif-orientation-border-image.html: Added.
+
+2020-01-23  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r254814. rdar://problem/58816321
 
     Video sound sometimes keeps playing in page cache
