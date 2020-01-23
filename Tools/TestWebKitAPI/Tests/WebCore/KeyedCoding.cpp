@@ -275,4 +275,19 @@ TEST(KeyedCoding, SetAndGetObjects)
     EXPECT_TRUE(success);
     EXPECT_EQ(users, decodedUsers);
 }
+
+TEST(KeyedCoding, SetAndGetWithEmptyKey)
+{
+    auto encoder = WebCore::KeyedEncoder::encoder();
+    encoder->encodeBool("", false);
+
+    auto encodedBuffer = encoder->finishEncoding();
+    auto decoder = WebCore::KeyedDecoder::decoder(reinterpret_cast<const uint8_t*>(encodedBuffer->data()), encodedBuffer->size());
+
+    bool success, boolValue;
+    success = decoder->decodeBool("", boolValue);
+
+    EXPECT_TRUE(success);
+    EXPECT_EQ(false, boolValue);
+}
 }

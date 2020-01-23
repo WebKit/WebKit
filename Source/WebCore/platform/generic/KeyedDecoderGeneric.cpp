@@ -53,10 +53,18 @@ static bool readString(WTF::Persistence::Decoder& decoder, String& result)
     size_t size;
     if (!decoder.decode(size))
         return false;
+    if (!size) {
+        result = emptyString();
+        return true;
+    }
+
     Vector<uint8_t> buffer(size);
     if (!decoder.decodeFixedLengthData(buffer.data(), size))
         return false;
     result = String::fromUTF8(buffer.data(), size);
+    if (result.isNull())
+        return false;
+
     return true;
 }
 

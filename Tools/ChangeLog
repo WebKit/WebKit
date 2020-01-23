@@ -1,3 +1,13 @@
+2020-01-23  Takashi Komori  <Takashi.Komori@sony.com>
+
+        KeyedDecoderGeneric crashes when it accesses a data with empty string key.
+        https://bugs.webkit.org/show_bug.cgi?id=206572
+
+        Reviewed by Fujii Hironori.
+
+        * TestWebKitAPI/Tests/WebCore/KeyedCoding.cpp:
+        (TestWebKitAPI::TEST):
+
 2020-01-23  Tuomas Karkkainen  <tuomas.webkit@apple.com>
 
         It should be possible to build JavaScriptCore with LLVM Source-based Code Coverage, run the tests and see the coverage data
