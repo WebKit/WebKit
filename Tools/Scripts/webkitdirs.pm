@@ -133,6 +133,7 @@ our @EXPORT_OK;
 my $architecture;
 my $asanIsEnabled;
 my $forceOptimizationLevel;
+my $coverageIsEnabled;
 my $ltoMode;
 my $numberOfCPUs;
 my $maxCPULoad;
@@ -433,6 +434,18 @@ sub determineForceOptimizationLevel
         $forceOptimizationLevel = <ForceOptimizationLevel>;
         close ForceOptimizationLevel;
         chomp $forceOptimizationLevel;
+    }
+}
+
+sub determineCoverageIsEnabled
+{
+    return if defined $coverageIsEnabled;
+    determineBaseProductDir();
+
+    if (open Coverage, "$baseProductDir/Coverage") {
+        $coverageIsEnabled = <Coverage>;
+        close Coverage;
+        chomp $coverageIsEnabled;
     }
 }
 
@@ -875,6 +888,7 @@ sub XcodeOptions
     determineArchitecture();
     determineASanIsEnabled();
     determineForceOptimizationLevel();
+    determineCoverageIsEnabled();
     determineLTOMode();
     determineXcodeSDK();
 
@@ -883,11 +897,19 @@ sub XcodeOptions
     push @options, "-ShowBuildOperationDuration=YES";
     push @options, ("-configuration", $configuration);
     push @options, ("-xcconfig", sourceDir() . "/Tools/asan/asan.xcconfig", "ASAN_IGNORE=" . sourceDir() . "/Tools/asan/webkit-asan-ignore.txt") if $asanIsEnabled;
+    push @options, ("-xcconfig", sourceDir() . "/Tools/coverage/coverage.xcconfig") if $coverageIsEnabled;
     push @options, ("GCC_OPTIMIZATION_LEVEL=$forceOptimizationLevel") if $forceOptimizationLevel;
     push @options, "WK_LTO_MODE=$ltoMode" if $ltoMode;
     push @options, @baseProductDirOption;
     push @options, "ARCHS=$architecture" if $architecture;
     push @options, "SDKROOT=$xcodeSDK" if $xcodeSDK;
+
+    # When this environment variable is set Tools/Scripts/check-for-weak-vtables-and-externals
+    # treats errors as non-fatal when it encounters missing symbols related to coverage.
+    appendToEnvironmentVariableList("WEBKIT_COVERAGE_BUILD", "1") if $coverageIsEnabled;
+
+    die "cannot enable both ASAN and Coverage at this time\n" if $coverageIsEnabled && $asanIsEnabled;
+
     if (willUseIOSDeviceSDK()) {
         push @options, "ENABLE_BITCODE=NO";
         if (hasIOSDevelopmentCertificate()) {

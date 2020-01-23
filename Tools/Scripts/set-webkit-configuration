@@ -38,6 +38,7 @@ Usage: $programName [options]
   --32-bit                           Set the default architecture to 32-bit
   --64-bit                           Set the default architecture to 64-bit
   --[no-]asan                        Enable or disable clang address sanitizer
+  --[no-]coverage                    Enable or disable LLVM Source-based Code Coverage
   --force-optimization-level=<level> Optimization level: O3, O2, O1, O0, Os, Ofast, Og, or none
   --lto-mode=<mode>                  Set LTO mode: full, thin, or none
   --debug                            Set the default configuration to debug
@@ -49,6 +50,8 @@ my $configuration = passedConfiguration();
 my $architecture = passedArchitecture();
 my $enableASAN = checkForArgumentAndRemoveFromARGV("--asan");
 my $disableASAN = checkForArgumentAndRemoveFromARGV("--no-asan");
+my $enableCoverage = checkForArgumentAndRemoveFromARGV("--coverage");
+my $disableCoverage = checkForArgumentAndRemoveFromARGV("--no-coverage");
 my $ltoMode;
 if (!checkForArgumentAndRemoveFromARGVGettingValue("--lto-mode", \$ltoMode)) {
     $ltoMode="";
@@ -78,6 +81,7 @@ if (checkForArgumentAndRemoveFromARGV("--reset")) {
     unlink "$baseProductDir/Architecture";
     unlink "$baseProductDir/ASan";
     unlink "$baseProductDir/ForceOptimizationLevel";
+    unlink "$baseProductDir/Coverage";
     unlink "$baseProductDir/LTO";
     exit 0;
 }
@@ -127,6 +131,14 @@ if ($enableASAN) {
     close ASAN;
 } elsif ($disableASAN) {
     unlink "$baseProductDir/ASan";
+}
+
+if ($enableCoverage) {
+    open Coverage, ">", "$baseProductDir/Coverage" or die;
+    print Coverage "YES";
+    close Coverage;
+} elsif ($disableCoverage) {
+    unlink "$baseProductDir/Coverage";
 }
 
 if ($forceOptimizationLevel && $forceOptimizationLevel eq "none") {

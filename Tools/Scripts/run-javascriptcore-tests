@@ -101,6 +101,8 @@ my $version;
 my $versionName;
 my $sdk;
 my $failFast = 1;
+my $coverage = 0;
+my $coverageDir;
 my %jsonData = ();
 my %reportData = ();
 my @testResults = ();
@@ -216,6 +218,7 @@ my $mozillaTestsDefault = defaultStringForTestState($runMozillaTests);
 my $jitStressTestsDefault = $runJITStressTests ? "will run" : " will not run";
 my $quickModeDefault = $runQuickMode ? "some" : "all";
 my $failFastDefault = $failFast ? "fail fast" : "don't fail fast";
+my $coverageDefault = $coverage ? "coverage enabled" : "coverage disabled";
 my $copyJSCDefault = $copyJSC ? "copy" : "do not copy";
 my $filter;
 my $usage = <<EOF;
@@ -239,6 +242,8 @@ Usage: $programName [options] [options to pass to build system]
   --[no-]fail-fast              Stop this script when a test family reports an error or failure (default: $failFastDefault)
   --[no-]force-collectContinuously Enable the collectContinuously mode even if it was disabled on this platform.
   --[no-]copy                   Copy (or don't copy) the JavaScriptCore build product before testing (default: $copyJSCDefault)
+  --[no-]coverage               Enable (or disable) LLVM Source-based Code Coverage instrumentation for the test run (default: $coverageDefault).
+  --coverage-dir=               Output path for LLVM Source-based Code Coverage instrumentation (default: a temporary directory).
   --json-output=                Create a file at specified path, listing failed stress tests in JSON format.
   --tarball                     Create a tarball of the bundle produced by running the JSC stress tests.
   --remote=                     Run the JSC stress tests on the specified remote host. Implies --tarball.
@@ -307,6 +312,8 @@ GetOptions(
     'fail-fast!' => \$failFast,
     'force-collectContinuously!' => \$forceCollectContinuously,
     'copy!' => \$copyJSC,
+    'coverage!' => \$coverage,
+    'coverage-dir=s' => \$coverageDir,
     'json-output=s' => \$jsonFileName,
     'tarball!' => \$createTarball,
     'remote=s' => \$remoteHost,
@@ -490,6 +497,25 @@ if (defined($gmallocPath)) {
     }
 }
 
+my $htmlDir;
+my $profdataPath;
+
+if ($coverage) {
+    if ($coverageDir) {
+        print "Using output path specified on the command line for coverage data: $coverageDir\n";
+    } else {
+        $coverageDir = tempdir();
+        print "Generating coverage data into $coverageDir\n";
+    }
+    $htmlDir = File::Spec->catfile($coverageDir, "html_report");
+    $profdataPath = File::Spec->catfile($coverageDir, "jsc_tests.profdata");
+    $envVars .=  " LLVM_PROFILE_FILE=" . File::Spec->catfile($coverageDir, "jsc_test_%9m.profraw");
+} else {
+    if ($coverageDir) {
+        die "--coverage-dir= is set but --coverage is not set\n"
+    }
+}
+
 my $productDir = jscProductDir();
 $ENV{DYLD_FRAMEWORK_PATH} = $productDir;
 $ENV{JSCTEST_timeout} = 120 unless $ENV{JSCTEST_timeout}; # Set a 120 second timeout on all jsc tests (if environment variable not defined already).
@@ -638,6 +664,37 @@ sub reportTestFailures {
   print "\n";
 }
 
+sub convertProfrawToProfdata
+{
+    print "Converting profraw files to profdata.\n";
+    my @command;
+    opendir(PROFRAWS, $coverageDir);
+    my @profrawFiles = grep {/jsc_test_.*\.profraw/} map {File::Spec->catfile($coverageDir, $_)} readdir(PROFRAWS);
+    close(PROFRAWS);
+    push @command, "xcrun";
+    push @command, ("-sdk", xcodeSDK()) if xcodeSDK();
+    push @command, "llvm-profdata", "merge", @profrawFiles, "-o", $profdataPath;
+    system(@command);
+}
+
+sub generateHTMLFromProfdata
+{
+    print "Generating html report from profdata file.\n";
+    my @command;
+    push @command, "xcrun";
+    push @command, ("-sdk", xcodeSDK()) if xcodeSDK();
+    push @command, "llvm-cov", "show", builtDylibPathForName("JavaScriptCore"), "--format=html", "--instr-profile=" . $profdataPath, "--output-dir=" . $htmlDir;
+    system(@command);
+
+    print "HTML report is in file://$htmlDir/index.html\n";
+}
+
+sub processCoverageData
+{
+    convertProfrawToProfdata();
+    generateHTMLFromProfdata();
+}
+
 if ($runTestMasm) { runTest("testmasm", "allMasmTestsPassed") }
 if ($runTestAir) { runTest("testair", "allAirTestsPassed") }
 if ($runTestB3) { runTest("testb3", "allB3TestsPassed") }
@@ -651,6 +708,9 @@ chdirWebKit();
 # FIXME: report stress test failures https://bugs.webkit.org/show_bug.cgi?id=204096
 runJSCStressTests();
 reportTestFailures();
+if ($coverage) {
+    processCoverageData();
+}
 
 $endTime = time();
 uploadResults();

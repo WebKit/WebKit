@@ -1,3 +1,15 @@
+2020-01-23  Tuomas Karkkainen  <tuomas.webkit@apple.com>
+
+        It should be possible to build JavaScriptCore with LLVM Source-based Code Coverage, run the tests and see the coverage data
+        https://bugs.webkit.org/show_bug.cgi?id=206389
+
+        Reviewed by Alexey Proskuryakov.
+
+        * Scripts/run-javascriptcore-tests:
+        * Scripts/set-webkit-configuration:
+        * Scripts/webkitdirs.pm:
+        * coverage/coverage.xcconfig: Added.
+
 2020-01-22  Jiewen Tan  <jiewen_tan@apple.com>
 
         Unreviewed, rolling out r254955.
