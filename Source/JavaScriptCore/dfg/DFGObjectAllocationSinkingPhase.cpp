@@ -400,7 +400,6 @@ public:
     {
         const Allocation& base = m_allocations.find(location.base())->value;
         auto iter = base.fields().find(location.descriptor());
-
         if (iter == base.fields().end())
             return nullptr;
 
@@ -426,6 +425,12 @@ public:
             return nullptr;
 
         return &getAllocation(identifier);
+    }
+
+    bool isUnescapedAllocation(Node* identifier) const
+    {
+        auto iter = m_allocations.find(identifier);
+        return iter != m_allocations.end() && !iter->value.isEscapedAllocation();
     }
 
     // This allows us to store the escapees only when necessary. If
@@ -1889,7 +1894,7 @@ private:
                     availabilityCalculator.m_availability, identifier, phiDef->value());
 
                 for (PromotedHeapLocation location : hintsForPhi[variable->index()]) {
-                    if (m_heap.onlyLocalAllocation(location.base())) {
+                    if (m_heap.isUnescapedAllocation(location.base())) {
                         m_insertionSet.insert(0,
                             location.createHint(m_graph, block->at(0)->origin.withInvalidExit(), phiDef->value()));
                         m_localMapping.set(location, phiDef->value());
