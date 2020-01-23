@@ -44,11 +44,28 @@ public:
     Seconds addToTotal(const char* compilerName, const char* name, Seconds duration)
     {
         auto locker = holdLock(lock);
-        return totals.add(std::make_pair(compilerName, name), Seconds(0)).iterator->value += duration;
+
+        for (auto& tuple : totals) {
+            if (String(std::get<0>(tuple)) == String(compilerName) && String(std::get<1>(tuple)) == String(name)) {
+                std::get<2>(tuple) += duration;
+                return std::get<2>(tuple);
+            }
+        }
+
+        totals.append({ compilerName, name, duration });
+        return duration;
+    }
+
+    void logTotals()
+    {
+        for (auto& tuple : totals) {
+            dataLogLn(
+                "[", std::get<0>(tuple), "] ", std::get<1>(tuple), " total ms: ", std::get<2>(tuple).milliseconds());
+        }
     }
     
 private:
-    HashMap<std::pair<const char*, const char*>, Seconds> totals;
+    Vector<std::tuple<const char*, const char*, Seconds>> totals;
     Lock lock;
 };
 
@@ -64,21 +81,27 @@ CompilerTimingScope::CompilerTimingScope(const char* compilerName, const char* n
     : m_compilerName(compilerName)
     , m_name(name)
 {
-    if (UNLIKELY(Options::logPhaseTimes()))
+    if (UNLIKELY(Options::logPhaseTimes() || Options::reportTotalPhaseTimes()))
         m_before = MonotonicTime::now();
 }
 
 CompilerTimingScope::~CompilerTimingScope()
 {
-    if (UNLIKELY(Options::logPhaseTimes())) {
+    if (UNLIKELY(Options::logPhaseTimes() || Options::reportTotalPhaseTimes())) {
         Seconds duration = MonotonicTime::now() - m_before;
-        dataLog(
-            "[", m_compilerName, "] ", m_name, " took: ", duration.milliseconds(), " ms ",
-            "(total: ", compilerTimingScopeState().addToTotal(m_compilerName, m_name, duration).milliseconds(),
-            " ms).\n");
+        auto total = compilerTimingScopeState().addToTotal(m_compilerName, m_name, duration);
+        if (Options::logPhaseTimes()) {
+            dataLog(
+                "[", m_compilerName, "] ", m_name, " took: ", duration.milliseconds(), " ms ",
+                "(total: ", total.milliseconds(),
+                " ms).\n");
+        }
     }
 }
 
+void logTotalPhaseTimes()
+{
+    compilerTimingScopeState().logTotals();
+}
+
 } // namespace JSC
-
-

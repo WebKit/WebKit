@@ -47,5 +47,6 @@ private:
     MonotonicTime m_before;
 };
 
-} // namespace JSC
+JS_EXPORT_PRIVATE void logTotalPhaseTimes();
 
+} // namespace JSC

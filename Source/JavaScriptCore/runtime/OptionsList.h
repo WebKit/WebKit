@@ -164,6 +164,7 @@ constexpr bool enableWebAssemblyStreamingApi = false;
     v(Bool, reportDFGCompileTimes, false, Normal, "dumps JS function signature and the time it took to DFG and FTL compile") \
     v(Bool, reportFTLCompileTimes, false, Normal, "dumps JS function signature and the time it took to FTL compile") \
     v(Bool, reportTotalCompileTimes, false, Normal, nullptr) \
+    v(Bool, reportTotalPhaseTimes, false, Normal, "This prints phase times at the end of running script inside jsc.cpp") \
     v(Bool, reportParseTimes, false, Normal, "dumps JS function signature and the time it took to parse") \
     v(Bool, reportBytecodeCompileTimes, false, Normal, "dumps JS function signature and the time it took to bytecode compile") \
     v(Bool, countParseTimes, false, Normal, "counts parse times") \

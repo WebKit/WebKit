@@ -31,6 +31,7 @@
 #include "CatchScope.h"
 #include "CodeBlock.h"
 #include "CodeCache.h"
+#include "CompilerTimingScope.h"
 #include "Completion.h"
 #include "ConfigFile.h"
 #include "Disassembler.h"
@@ -3089,6 +3090,9 @@ int runJSC(const CommandLine& options, bool isWorker, const Func& func)
         std::sort(compileTimeKeys.begin(), compileTimeKeys.end());
         for (const CString& key : compileTimeKeys)
             printf("%40s: %.3lf ms\n", key.data(), compileTimeStats.get(key).milliseconds());
+
+        if (Options::reportTotalPhaseTimes())
+            logTotalPhaseTimes();
     }
 #endif
 

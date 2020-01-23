@@ -1,3 +1,21 @@
+2020-01-22  Saam Barati  <sbarati@apple.com>
+
+        Add an option for logging total phase times
+        https://bugs.webkit.org/show_bug.cgi?id=206623
+
+        Reviewed by Robin Morisset and Keith Miller.
+
+        * dfg/DFGPlan.cpp:
+        (JSC::DFG::Plan::compileInThreadImpl):
+        * jsc.cpp:
+        (runJSC):
+        * runtime/OptionsList.h:
+        * tools/CompilerTimingScope.cpp:
+        (JSC::CompilerTimingScope::CompilerTimingScope):
+        (JSC::CompilerTimingScope::~CompilerTimingScope):
+        (JSC::logTotalPhaseTimes):
+        * tools/CompilerTimingScope.h:
+
 2020-01-22  Caio Lima  <ticaiolima@gmail.com>
 
         [32-bits][JIT] Fix build issues.
