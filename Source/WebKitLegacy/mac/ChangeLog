@@ -1,3 +1,25 @@
+2020-01-22  Daniel Bates  <dabates@apple.com>
+
+        Legacy WebKit: Add SPI variant of -setSelectedDOMRange that can perform the selection as if triggered by the user
+        https://bugs.webkit.org/show_bug.cgi?id=206622
+
+        Reviewed by Wenson Hsieh.
+
+        Add a new -setSelectedDOMRange SPI variant that takes a boolean to indicate whether the selection
+        was triggered by the user.
+
+        While I am here, I simplified and modernized the code. This includes moving the null check of
+        Frame::page() to the top of the function. This let me eliminate the null check for Frame::view()
+        because every frame that has a page must have a non-null view. I imported WebEditorClient.h
+        to get WebKit::core(NSSelectionAffinity) and remove a C-style cast to WebCore::EAffinity.
+        I also used more "auto".
+
+        * WebView/WebFrame.mm:
+        (-[WebFrame setSelectedDOMRange:affinity:closeTyping:]): Modified to call the newly added variant,
+        passing "userTriggered:NO" to keep the current behavior.
+        (-[WebFrame setSelectedDOMRange:affinity:closeTyping:userTriggered:]): Added.
+        * WebView/WebFramePrivate.h:
+
 2020-01-22  Zalan Bujtas  <zalan@apple.com>
 
         REGRESSION (r254923): [mac-wk1] http/tests/inspector/network/har/har-page.html crashing in WebCore::Display::Box::contentBox()

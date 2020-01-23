@@ -150,6 +150,7 @@ typedef enum {
 
 - (DOMRange *)selectedDOMRange;
 - (void)setSelectedDOMRange:(DOMRange *)range affinity:(NSSelectionAffinity)affinity closeTyping:(BOOL)closeTyping;
+- (void)setSelectedDOMRange:(DOMRange *)range affinity:(NSSelectionAffinity)affinity closeTyping:(BOOL)closeTyping userTriggered:(BOOL)userTriggered;
 - (NSSelectionAffinity)selectionAffinity;
 - (void)expandSelectionToElementContainingCaretSelection;
 - (DOMRange *)elementRangeContainingCaretSelection;
