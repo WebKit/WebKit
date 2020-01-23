@@ -309,11 +309,6 @@ public:
     bool removeServiceWorkerRegistration(WebCore::ServiceWorkerRegistrationIdentifier);
 #endif
 
-#if PLATFORM(IOS)
-    void grantAccessToAssetServices(WebKit::SandboxExtension::Handle&& mobileAssetHandle,  WebKit::SandboxExtension::Handle&& mobileAssetV2Handle);
-    void revokeAccessToAssetServices();
-#endif
-
 private:
     WebProcess();
     ~WebProcess();
@@ -621,11 +616,6 @@ private:
 
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
     WebCore::ThirdPartyCookieBlockingMode m_thirdPartyCookieBlockingMode { WebCore::ThirdPartyCookieBlockingMode::All };
-#endif
-
-#if PLATFORM(IOS)
-    RefPtr<SandboxExtension> m_assetServiceExtension;
-    RefPtr<SandboxExtension> m_assetServiceV2Extension;
 #endif
 };
 

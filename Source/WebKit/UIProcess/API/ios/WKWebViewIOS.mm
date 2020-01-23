@@ -3067,18 +3067,6 @@ static WTF::Optional<WebCore::ViewportArguments> viewportArgumentsFromDictionary
     return nil;
 }
 
-- (void)_grantAccessToAssetServices
-{
-    if (_page)
-        _page->grantAccessToAssetServices();
-}
-
-- (void)_revokeAccessToAssetServices
-{
-    if (_page)
-        _page->revokeAccessToAssetServices();
-}
-
 @end // WKWebView (WKPrivateIOS)
 
 #if ENABLE(FULLSCREEN_API)

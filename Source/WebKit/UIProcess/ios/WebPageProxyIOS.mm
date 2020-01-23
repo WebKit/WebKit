@@ -58,7 +58,6 @@
 #import "WebAutocorrectionContext.h"
 #import "WebAutocorrectionData.h"
 #import "WebPageMessages.h"
-#import "WebProcessMessages.h"
 #import "WebProcessPool.h"
 #import "WebProcessProxy.h"
 #import <WebCore/FrameView.h>
@@ -1499,21 +1498,6 @@ WebContentMode WebPageProxy::effectiveContentModeAfterAdjustingPolicies(API::Web
 
     return WebContentMode::Desktop;
 }
-
-#if PLATFORM(IOS)
-void WebPageProxy::grantAccessToAssetServices()
-{
-    SandboxExtension::Handle mobileAssetHandle, mobileAssetHandleV2;
-    SandboxExtension::createHandleForMachLookup("com.apple.mobileassetd", WTF::nullopt, mobileAssetHandle);
-    SandboxExtension::createHandleForMachLookup("com.apple.mobileassetd.v2", WTF::nullopt, mobileAssetHandle);
-    process().send(Messages::WebProcess::GrantAccessToAssetServices(mobileAssetHandle, mobileAssetHandleV2), 0);
-}
-
-void WebPageProxy::revokeAccessToAssetServices()
-{
-    process().send(Messages::WebProcess::RevokeAccessToAssetServices(), 0);
-}
-#endif
 
 } // namespace WebKit
 

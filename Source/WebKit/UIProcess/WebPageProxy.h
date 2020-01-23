@@ -1668,11 +1668,6 @@ public:
     bool hasQueuedKeyEvent() const;
     const NativeWebKeyboardEvent& firstQueuedKeyEvent() const;
 
-#if PLATFORM(IOS)
-    void grantAccessToAssetServices();
-    void revokeAccessToAssetServices();
-#endif
-
 private:
     WebPageProxy(PageClient&, WebProcessProxy&, Ref<API::PageConfiguration>&&);
     void platformInitialize();
