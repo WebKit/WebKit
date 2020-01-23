@@ -25,16 +25,17 @@
 #pragma once
 
 #include "Animation.h"
+#include <wtf/Ref.h>
+#include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
 
-class AnimationList {
-    WTF_MAKE_FAST_ALLOCATED;
+class AnimationList : public RefCounted<AnimationList> {
 public:
-    AnimationList() { }
-    AnimationList(const AnimationList&);
-    AnimationList(AnimationList&&) = default;
+    static Ref<AnimationList> create() { return adoptRef(*new AnimationList); }
+
+    Ref<AnimationList> copy() { return adoptRef(*new AnimationList(*this)); }
 
     void fillUnsetProperties();
     bool operator==(const AnimationList&) const;
@@ -54,8 +55,10 @@ public:
     const Animation& animation(size_t i) const { return m_animations[i].get(); }
     
 private:
+    AnimationList();
+    AnimationList(const AnimationList&);
+
     AnimationList& operator=(const AnimationList&);
-    AnimationList& operator=(AnimationList&&) = default;
 
     Vector<Ref<Animation>, 0, CrashOnOverflow, 0> m_animations;
 };    
