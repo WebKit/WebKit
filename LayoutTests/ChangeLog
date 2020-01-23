@@ -1,5 +1,38 @@
 2020-01-23  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r254705. rdar://problem/58811395
+
+    REGRESSION: [ Mac WK2 ] fast/text/international/unicode-bidi-other-neutrals.html is a flaky failure
+    https://bugs.webkit.org/show_bug.cgi?id=205808
+    
+    Patch by Doug Kelly <dougk@apple.com> on 2020-01-16
+    Reviewed by Maciej Stachowiak.
+    
+    Update the testcase for bidi text runs ending with other neutrals to dumpAsText, instead of trying
+    to compare visual content.
+    
+    * fast/text/international/unicode-bidi-other-neutrals-expected.html: Removed.
+    * fast/text/international/unicode-bidi-other-neutrals-expected.txt: Added.
+    * fast/text/international/unicode-bidi-other-neutrals.html:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@254705 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-01-16  Doug Kelly  <dougk@apple.com>
+
+            REGRESSION: [ Mac WK2 ] fast/text/international/unicode-bidi-other-neutrals.html is a flaky failure
+            https://bugs.webkit.org/show_bug.cgi?id=205808
+
+            Reviewed by Maciej Stachowiak.
+
+            Update the testcase for bidi text runs ending with other neutrals to dumpAsText, instead of trying
+            to compare visual content.
+
+            * fast/text/international/unicode-bidi-other-neutrals-expected.html: Removed.
+            * fast/text/international/unicode-bidi-other-neutrals-expected.txt: Added.
+            * fast/text/international/unicode-bidi-other-neutrals.html:
+
+2020-01-23  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r254652. rdar://problem/58811422
 
     Regression(r253213) Load hang and high CPU usage when trying to load myuhc.com
