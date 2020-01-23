@@ -1,3 +1,13 @@
+2020-01-22  Eric Carlson  <eric.carlson@apple.com>
+
+        uniqueLogIdentifier() should generate a unique identifiers
+        https://bugs.webkit.org/show_bug.cgi?id=206612
+
+        Reviewed by Brent Fulgham.
+
+        * wtf/LoggerHelper.h:
+        (WTF::LoggerHelper::uniqueLogIdentifier):
+
 2020-01-22  Sam Weinig  <weinig@apple.com>
 
         Remove unused enable macro ENABLE_JIT_CONSTANT_BLINDING

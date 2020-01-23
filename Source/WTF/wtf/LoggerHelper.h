@@ -65,8 +65,8 @@ public:
 
     static const void* uniqueLogIdentifier()
     {
-        static uint64_t highWord = cryptographicallyRandomNumber();
-        static uint64_t lowWord = cryptographicallyRandomNumber();
+        uint64_t highWord = cryptographicallyRandomNumber();
+        uint64_t lowWord = cryptographicallyRandomNumber();
         return reinterpret_cast<const void*>((highWord << 32) + lowWord);
     }
 #else // RELEASE_LOG_DISABLED
