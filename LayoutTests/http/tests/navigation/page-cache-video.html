@@ -1,0 +1,62 @@
+<!-- webkit-test-runner [ enableBackForwardCache=true ] -->
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../media-resources/video-test.js"></script>
+<script src="../media-resources/media-file.js"></script>
+<video id="myVideo" autoplay controls loop></video>
+
+<script src="/resources/js-test-pre.js"></script>
+<script>
+description('Tests that a page with a video element will pause after entering the page cache.');
+window.jsTestIsAsync = true;
+
+var restoredFromPageCache = false;
+var currentVideoTime;
+
+window.addEventListener("pageshow", function(event) {
+    debug("pageshow - " + (event.persisted ? "" : "not ") + "from cache");
+
+    if (event.persisted) {
+        testPassed("Page did enter and was restored from the page cache");
+        restoredFromPageCache = true;
+
+        const hasPaused = (myVideo.currentTime - currentVideoTime) < 0.500;
+        if (!hasPaused)
+            testFailed("video did not pause in page cache");
+        else
+            testPassed("video paused in page cache");
+
+        debug("video paused after page cache: " + myVideo.paused);
+
+        finishJSTest();
+    }
+}, false);
+
+window.addEventListener("pagehide", function(event) {
+    debug("pagehide - " + (event.persisted ? "" : "not ") + "entering cache");
+    if (!event.persisted) {
+        testFailed("Page did not enter the page cache.");
+        finishJSTest();
+    }
+}, false);
+
+window.addEventListener('load', async function() {
+    myVideo.src = "../media/resources/sound_5.mp3"
+    await myVideo.play();
+    // Let the video load.
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    currentVideoTime = myVideo.currentTime;
+    debug("video paused before page cache: " + myVideo.paused);
+
+    // This needs to happen in a setTimeout because a navigation inside the onload handler would not create a history entry.
+    setTimeout(function() {
+        // Force a back navigation back to this page.
+        window.location.href = "resources/page-cache-video-helper.html";
+    }, 0);
+}, false);
+
+</script>
+<script src="/resources/js-test-post.js"></script>
+</body>
+</html>
