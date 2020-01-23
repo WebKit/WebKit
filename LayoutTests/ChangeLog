@@ -1,3 +1,15 @@
+2020-01-23  Antti Koivisto  <antti@apple.com>
+
+        fast/css/first-letter-and-float-crash.html asserts under ComplexLineLayout::createLineBoxes
+        https://bugs.webkit.org/show_bug.cgi?id=206651
+        <rdar://problem/54889982>
+
+        Reviewed by Anders Carlsson.
+
+        * fast/css/first-letter-and-float-crash.html:
+
+        Force an additional layout in the test to make the issue easily reproducible.
+
 2020-01-23  Diego Pino Garcia  <dpino@igalia.com>
 
         [GTK] Gardening, update platform baselines for failing tests

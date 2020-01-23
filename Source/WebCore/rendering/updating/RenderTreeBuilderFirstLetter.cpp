@@ -81,10 +81,12 @@ static RenderStyle styleForFirstLetter(const RenderBlock& firstLetterBlock, cons
         }
     }
 
+    firstLetterStyle.setStyleType(PseudoId::FirstLetter);
     // Force inline display (except for floating first-letters).
     firstLetterStyle.setDisplay(firstLetterStyle.isFloating() ? DisplayType::Block : DisplayType::Inline);
     // CSS2 says first-letter can't be positioned.
     firstLetterStyle.setPosition(PositionType::Static);
+
     return firstLetterStyle;
 }
 
