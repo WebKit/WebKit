@@ -1,3 +1,13 @@
+2020-01-23  Matt Lewis  <jlewis3@apple.com>
+
+        Actually fix history link directs on dashboard and results.html
+        https://bugs.webkit.org/show_bug.cgi?id=206666
+
+        Reviewed by Jonathan Bedard.
+
+        * fast/harness/results.html:
+        * legacy-animation-engine/fast/harness/results.html:
+
 2020-01-23  Antti Koivisto  <antti@apple.com>
 
         fast/css/first-letter-and-float-crash.html asserts under ComplexLineLayout::createLineBoxes
