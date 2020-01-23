@@ -1,3 +1,16 @@
+2020-01-23  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        nomodule scripts are fetched in some cases (with empty cache or in new tab)
+        https://bugs.webkit.org/show_bug.cgi?id=194337
+        <rdar://problem/49700924>
+
+        Reviewed by Ryosuke Niwa.
+
+        * http/wpt/preload/classic-script-with-nomodule-expected.txt: Added.
+        * http/wpt/preload/classic-script-with-nomodule.html: Added.
+        * http/wpt/preload/resources/classic.js: Added.
+        * http/wpt/preload/resources/module.js: Added.
+
 2020-01-22  Lauro Moura  <lmoura@igalia.com>
 
         [GTK] Gardening HTTP tests

@@ -242,6 +242,9 @@ private:
             } else if (match(attributeName, referrerpolicyAttr)) {
                 m_referrerPolicy = parseReferrerPolicy(attributeValue, ReferrerPolicySource::ReferrerPolicyAttribute).valueOr(ReferrerPolicy::EmptyString);
                 break;
+            } else if (match(attributeName, nomoduleAttr)) {
+                m_scriptIsNomodule = true;
+                break;
             }
             processImageAndScriptAttribute(attributeName, attributeValue);
             break;
@@ -352,6 +355,9 @@ private:
         if (m_tagId == TagId::Input && !m_inputIsImage)
             return false;
 
+        if (m_tagId == TagId::Script && m_moduleScript == PreloadRequest::ModuleScript::No && m_scriptIsNomodule)
+            return false;
+
         return true;
     }
 
@@ -373,6 +379,7 @@ private:
     bool m_metaIsViewport;
     bool m_metaIsDisabledAdaptations;
     bool m_inputIsImage;
+    bool m_scriptIsNomodule { false };
     float m_deviceScaleFactor;
     PreloadRequest::ModuleScript m_moduleScript { PreloadRequest::ModuleScript::No };
     ReferrerPolicy m_referrerPolicy { ReferrerPolicy::EmptyString };
