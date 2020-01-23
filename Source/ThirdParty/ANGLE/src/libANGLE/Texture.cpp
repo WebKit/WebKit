@@ -639,7 +639,7 @@ void TextureState::clearImageDescs()
 }
 
 Texture::Texture(rx::GLImplFactory *factory, TextureID id, TextureType type)
-    : RefCountObject(factory->generateSerial(), id),
+    : RefCountObject(id),
       mState(type),
       mTexture(factory->createTexture(mState)),
       mImplObserver(this, rx::kTextureImageImplObserverMessageIndex),
@@ -1350,10 +1350,6 @@ angle::Result Texture::setStorageMultisample(Context *context,
     // Release from previous calls to eglBindTexImage, to avoid calling the Impl after
     ANGLE_TRY(releaseTexImageInternal(context));
     ANGLE_TRY(orphanImages(context));
-
-    // Potentially adjust "samples" to a supported value
-    const TextureCaps &formatCaps = context->getTextureCaps().get(internalFormat);
-    samples                       = formatCaps.getNearestSamples(samples);
 
     ANGLE_TRY(mTexture->setStorageMultisample(context, type, samples, internalFormat, size,
                                               fixedSampleLocations));

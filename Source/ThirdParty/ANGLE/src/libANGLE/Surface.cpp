@@ -27,7 +27,7 @@ namespace egl
 
 SurfaceState::SurfaceState(const egl::Config *configIn, const AttributeMap &attributesIn)
     : label(nullptr),
-      config((configIn != nullptr) ? new egl::Config(*configIn) : nullptr),
+      config(configIn),
       attributes(attributesIn),
       timestampsEnabled(false),
       directComposition(false)
@@ -35,10 +35,7 @@ SurfaceState::SurfaceState(const egl::Config *configIn, const AttributeMap &attr
     directComposition = attributes.get(EGL_DIRECT_COMPOSITION_ANGLE, EGL_FALSE) == EGL_TRUE;
 }
 
-SurfaceState::~SurfaceState()
-{
-    delete config;
-}
+SurfaceState::~SurfaceState() = default;
 
 Surface::Surface(EGLint surfaceType,
                  const egl::Config *config,
@@ -151,28 +148,6 @@ void Surface::postSwap(const gl::Context *context)
 
 Error Surface::initialize(const Display *display)
 {
-    GLenum overrideRenderTargetFormat = mState.config->renderTargetFormat;
-
-    // To account for color space differences, override the renderTargetFormat with the
-    // non-linear format. If no suitable non-linear format was found, return
-    // EGL_BAD_MATCH error
-    if (!gl::ColorspaceFormatOverride(mGLColorspace, &overrideRenderTargetFormat))
-    {
-        return egl::EglBadMatch();
-    }
-
-    // If an override is required update mState.config as well
-    if (mState.config->renderTargetFormat != overrideRenderTargetFormat)
-    {
-        egl::Config *overrideConfig        = new egl::Config(*(mState.config));
-        overrideConfig->renderTargetFormat = overrideRenderTargetFormat;
-        delete mState.config;
-        mState.config = overrideConfig;
-
-        mColorFormat = gl::Format(mState.config->renderTargetFormat);
-        mDSFormat    = gl::Format(mState.config->depthStencilFormat);
-    }
-
     ANGLE_TRY(mImplementation->initialize(display));
 
     // Initialized here since impl is nullptr in the constructor.

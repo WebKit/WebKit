@@ -190,8 +190,6 @@ const char *GetOperatorString(TOperator op)
             return "isnan";
         case EOpIsinf:
             return "isinf";
-        case EOpFma:
-            return "fma";
 
         case EOpFloatBitsToInt:
             return "floatBitsToInt";

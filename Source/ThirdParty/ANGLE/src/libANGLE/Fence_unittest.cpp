@@ -10,9 +10,11 @@
 #include "libANGLE/Fence.h"
 #include "libANGLE/renderer/FenceNVImpl.h"
 #include "libANGLE/renderer/SyncImpl.h"
-#include "tests/angle_unittests_utils.h"
 
-using namespace testing;
+using ::testing::_;
+using ::testing::DoAll;
+using ::testing::Return;
+using ::testing::SetArgumentPointee;
 
 namespace
 {
@@ -33,24 +35,35 @@ class MockFenceNVImpl : public rx::FenceNVImpl
     MOCK_METHOD0(destroy, void());
 };
 
-class FenceNVTest : public Test
+class FenceNVTest : public testing::Test
 {
   protected:
-    void SetUp() override
+    virtual void SetUp()
     {
         mImpl = new MockFenceNVImpl;
-        EXPECT_CALL(factory, createFenceNV()).WillOnce(Return(mImpl));
-
         EXPECT_CALL(*mImpl, destroy());
-        mFence = new gl::FenceNV(&factory);
+        mFence = new gl::FenceNV(mImpl);
     }
 
-    void TearDown() override { delete mFence; }
+    virtual void TearDown() { delete mFence; }
 
-    NiceMock<rx::MockGLFactory> factory;
     MockFenceNVImpl *mImpl;
     gl::FenceNV *mFence;
 };
+
+TEST_F(FenceNVTest, DestructionDeletesImpl)
+{
+    MockFenceNVImpl *impl = new MockFenceNVImpl;
+    EXPECT_CALL(*impl, destroy()).Times(1).RetiresOnSaturation();
+
+    gl::FenceNV *fence = new gl::FenceNV(impl);
+    delete fence;
+
+    // Only needed because the mock is leaked if bugs are present,
+    // which logs an error, but does not cause the test to fail.
+    // Ordinarily mocks are verified when destroyed.
+    testing::Mock::VerifyAndClear(impl);
+}
 
 TEST_F(FenceNVTest, SetAndTestBehavior)
 {
@@ -89,25 +102,37 @@ class MockSyncImpl : public rx::SyncImpl
     MOCK_METHOD0(destroy, void());
 };
 
-class FenceSyncTest : public Test
+class FenceSyncTest : public testing::Test
 {
   protected:
-    void SetUp() override
+    virtual void SetUp()
     {
         mImpl = new MockSyncImpl;
-        EXPECT_CALL(factory, createSync()).WillOnce(Return(mImpl));
-
-        mFence = new gl::Sync(&factory, 1);
         EXPECT_CALL(*mImpl, destroy());
+        mFence = new gl::Sync(mImpl, 1);
         mFence->addRef();
     }
 
-    void TearDown() override { mFence->release(nullptr); }
+    virtual void TearDown() { mFence->release(nullptr); }
 
-    NiceMock<rx::MockGLFactory> factory;
     MockSyncImpl *mImpl;
     gl::Sync *mFence;
 };
+
+TEST_F(FenceSyncTest, DestructionDeletesImpl)
+{
+    MockSyncImpl *impl = new MockSyncImpl;
+    EXPECT_CALL(*impl, destroy()).Times(1).RetiresOnSaturation();
+
+    gl::Sync *fence = new gl::Sync(impl, 1);
+    fence->addRef();
+    fence->release(nullptr);
+
+    // Only needed because the mock is leaked if bugs are present,
+    // which logs an error, but does not cause the test to fail.
+    // Ordinarily mocks are verified when destroyed.
+    testing::Mock::VerifyAndClear(impl);
+}
 
 TEST_F(FenceSyncTest, SetAndGetStatusBehavior)
 {

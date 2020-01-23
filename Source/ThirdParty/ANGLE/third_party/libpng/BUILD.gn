@@ -24,7 +24,7 @@ static_library("libpng") {
     "src/pngwtran.c",
     "src/pngwutil.c",
   ]
-  if (target_cpu == "arm" || target_cpu == "arm64") {
+  if (target_cpu == "arm") {
     sources += [
       "src/arm/arm_init.c",
       "src/arm/filter_neon.S",

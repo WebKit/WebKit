@@ -76,7 +76,6 @@ angle_end2end_tests_sources = [
   "gl_tests/InstancingTest.cpp",
   "gl_tests/LineLoopTest.cpp",
   "gl_tests/LinkAndRelinkTest.cpp",
-  "gl_tests/MatrixTest.cpp",
   "gl_tests/MaxTextureSizeTest.cpp",
   "gl_tests/MemorySizeTest.cpp",
   "gl_tests/MemoryObjectTest.cpp",
@@ -134,8 +133,6 @@ angle_end2end_tests_sources = [
   "gl_tests/WebGLCompatibilityTest.cpp",
   "gl_tests/WebGLFramebufferTest.cpp",
   "gl_tests/WebGLReadOutsideFramebufferTest.cpp",
-  "gl_tests/WEBGLVideoTextureTest.cpp",
-  "egl_tests/EGLAndroidFrameBufferTargetTest.cpp",
   "egl_tests/EGLBackwardsCompatibleContextTest.cpp",
   "egl_tests/EGLBlobCacheTest.cpp",
   "egl_tests/EGLChooseConfigTest.cpp",
@@ -156,8 +153,6 @@ angle_end2end_tests_sources = [
   "test_expectations/GPUTestExpectationsTest.cpp",
   "test_utils/ANGLETest.cpp",
   "test_utils/ANGLETest.h",
-  "test_utils/angle_test_platform.cpp",
-  "test_utils/angle_test_platform.h",
   "test_utils/MultiviewTest.cpp",
   "test_utils/MultiviewTest.h",
   "test_utils/angle_test_configs.cpp",
@@ -181,3 +176,8 @@ angle_end2end_tests_win_sources = [
   "egl_tests/media/yuvtest.inl",
 ]
 angle_end2end_tests_x11_sources = [ "egl_tests/EGLX11VisualTest.cpp" ]
+angle_end2end_tests_vulkan_sources = [
+  "gl_tests/VulkanExternalImageTest.cpp",
+  "test_utils/VulkanExternalHelper.cpp",
+  "test_utils/VulkanExternalHelper.h",
+]

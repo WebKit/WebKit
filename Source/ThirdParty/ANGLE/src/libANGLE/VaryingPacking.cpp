@@ -55,41 +55,6 @@ bool ComparePackedVarying(const PackedVarying &x, const PackedVarying &y)
 
 }  // anonymous namespace
 
-// Implementation of PackedVarying
-PackedVarying::PackedVarying(const sh::ShaderVariable &varyingIn,
-                             sh::InterpolationType interpolationIn)
-    : PackedVarying(varyingIn, interpolationIn, "", false)
-{}
-PackedVarying::PackedVarying(const sh::ShaderVariable &varyingIn,
-                             sh::InterpolationType interpolationIn,
-                             const std::string &parentStructNameIn,
-                             GLuint fieldIndexIn)
-    : varying(&varyingIn),
-      interpolation(interpolationIn),
-      parentStructName(parentStructNameIn),
-      arrayIndex(GL_INVALID_INDEX),
-      fieldIndex(fieldIndexIn)
-{}
-
-PackedVarying::~PackedVarying() = default;
-
-PackedVarying::PackedVarying(PackedVarying &&other)
-    : PackedVarying(*other.varying, other.interpolation)
-{
-    *this = std::move(other);
-}
-PackedVarying &PackedVarying::operator=(PackedVarying &&other)
-{
-    std::swap(varying, other.varying);
-    std::swap(shaderStages, other.shaderStages);
-    std::swap(interpolation, other.interpolation);
-    std::swap(parentStructName, other.parentStructName);
-    std::swap(arrayIndex, other.arrayIndex);
-    std::swap(fieldIndex, other.fieldIndex);
-
-    return *this;
-}
-
 // Implementation of VaryingPacking
 VaryingPacking::VaryingPacking(GLuint maxVaryingVectors, PackMode packMode)
     : mRegisterMap(maxVaryingVectors), mPackMode(packMode)
@@ -319,20 +284,11 @@ bool VaryingPacking::collectAndPackUserVaryings(gl::InfoLog &infoLog,
 {
     std::set<std::string> uniqueFullNames;
     mPackedVaryings.clear();
-    mInputVaryings.clear();
 
     for (const auto &ref : mergedVaryings)
     {
         const sh::ShaderVariable *input  = ref.second.frontShader;
         const sh::ShaderVariable *output = ref.second.backShader;
-        if (input)
-        {
-            mInputVaryings.emplace_back(*input);
-        }
-
-        ShaderBitSet shaderStages;
-        shaderStages.set(ref.second.frontShaderStage);
-        shaderStages.set(ref.second.backShaderStage);
 
         // Only pack statically used varyings that have a matched input or output, plus special
         // builtins. Note that we pack all statically used user-defined varyings even if they are
@@ -365,21 +321,19 @@ bool VaryingPacking::collectAndPackUserVaryings(gl::InfoLog &infoLog,
                         ASSERT(!field.isStruct() && !field.isArray());
                         mPackedVaryings.emplace_back(field, interpolation, varying->name,
                                                      fieldIndex);
-                        mPackedVaryings.back().shaderStages = shaderStages;
                         uniqueFullNames.insert(mPackedVaryings.back().fullName());
                     }
                 }
                 else
                 {
                     mPackedVaryings.emplace_back(*varying, interpolation);
-                    mPackedVaryings.back().shaderStages = shaderStages;
                     uniqueFullNames.insert(mPackedVaryings.back().fullName());
                 }
                 continue;
             }
         }
 
-        // If the varying is not used in the input, we know it is inactive.
+        // If the varying is not used in the VS, we know it is inactive.
         if (!input)
         {
             mInactiveVaryingNames.push_back(ref.first);
@@ -411,7 +365,7 @@ bool VaryingPacking::collectAndPackUserVaryings(gl::InfoLog &infoLog,
                     ASSERT(!field->isStruct() && !field->isArray());
                     mPackedVaryings.emplace_back(*field, input->interpolation, input->name,
                                                  fieldIndex);
-                    mPackedVaryings.back().shaderStages.set(ShaderType::Vertex);
+                    mPackedVaryings.back().vertexOnly = true;
                     mPackedVaryings.back().arrayIndex = GL_INVALID_INDEX;
                     uniqueFullNames.insert(tfVarying);
                 }
@@ -424,7 +378,7 @@ bool VaryingPacking::collectAndPackUserVaryings(gl::InfoLog &infoLog,
                 if (tfVarying.compare(0, 3, "gl_") != 0)
                 {
                     mPackedVaryings.emplace_back(*input, input->interpolation);
-                    mPackedVaryings.back().shaderStages.set(ShaderType::Vertex);
+                    mPackedVaryings.back().vertexOnly = true;
                     mPackedVaryings.back().arrayIndex = static_cast<GLuint>(subscript);
                     uniqueFullNames.insert(tfVarying);
                 }

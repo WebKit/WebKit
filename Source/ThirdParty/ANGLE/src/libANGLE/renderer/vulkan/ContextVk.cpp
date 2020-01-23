@@ -55,9 +55,6 @@ struct GraphicsDriverUniforms
     float viewportYScale;
     float negViewportYScale;
     uint32_t xfbActiveUnpaused;
-    uint32_t xfbVerticesPerDraw;
-    // NOTE: Explicit padding. Fill in with useful data when needed in the future.
-    std::array<int32_t, 3> padding;
 
     std::array<int32_t, 4> xfbBufferOffsets;
 
@@ -419,15 +416,6 @@ angle::Result CommandQueue::finishToSerial(vk::Context *context, Serial serial, 
 
     // Find the first batch with serial equal to or bigger than given serial (note that
     // the batch serials are unique, otherwise upper-bound would have been necessary).
-    //
-    // Note: we don't check for the exact serial, because it may belong to another context.  For
-    // example, imagine the following submissions:
-    //
-    // - Context 1: Serial 1, Serial 3, Serial 5
-    // - Context 2: Serial 2, Serial 4, Serial 6
-    //
-    // And imagine none of the submissions have finished yet.  Now if Context 2 asks for
-    // finishToSerial(3), it will have no choice but to finish until Serial 4 instead.
     size_t batchIndex = mInFlightCommands.size() - 1;
     for (size_t i = 0; i < mInFlightCommands.size(); ++i)
     {
@@ -517,7 +505,6 @@ ContextVk::ContextVk(const gl::State &state, gl::ErrorSet *errorSet, RendererVk 
       mLastIndexBufferOffset(0),
       mCurrentDrawElementsType(gl::DrawElementsType::InvalidEnum),
       mXfbBaseVertex(0),
-      mXfbVertexCountPerInstance(0),
       mClearColorMask(kAllColorChannelsMask),
       mFlipYForCurrentSurface(false),
       mIsAnyHostVisibleBufferWritten(false),
@@ -543,23 +530,13 @@ ContextVk::ContextVk(const gl::State &state, gl::ErrorSet *errorSet, RendererVk 
     mNewGraphicsCommandBufferDirtyBits.set(DIRTY_BIT_VERTEX_BUFFERS);
     mNewGraphicsCommandBufferDirtyBits.set(DIRTY_BIT_INDEX_BUFFER);
     mNewGraphicsCommandBufferDirtyBits.set(DIRTY_BIT_SHADER_RESOURCES);
-    if (getFeatures().supportsTransformFeedbackExtension.enabled ||
-        getFeatures().emulateTransformFeedback.enabled)
-    {
-        mNewGraphicsCommandBufferDirtyBits.set(DIRTY_BIT_TRANSFORM_FEEDBACK_BUFFERS);
-    }
-    if (getFeatures().supportsTransformFeedbackExtension.enabled)
-    {
-        mNewGraphicsCommandBufferDirtyBits.set(DIRTY_BIT_TRANSFORM_FEEDBACK_STATE);
-    }
+    mNewGraphicsCommandBufferDirtyBits.set(DIRTY_BIT_TRANSFORM_FEEDBACK_BUFFERS);
     mNewGraphicsCommandBufferDirtyBits.set(DIRTY_BIT_DESCRIPTOR_SETS);
-    mNewGraphicsCommandBufferDirtyBits.set(DIRTY_BIT_DRIVER_UNIFORMS_BINDING);
 
     mNewComputeCommandBufferDirtyBits.set(DIRTY_BIT_PIPELINE);
     mNewComputeCommandBufferDirtyBits.set(DIRTY_BIT_TEXTURES);
     mNewComputeCommandBufferDirtyBits.set(DIRTY_BIT_SHADER_RESOURCES);
     mNewComputeCommandBufferDirtyBits.set(DIRTY_BIT_DESCRIPTOR_SETS);
-    mNewComputeCommandBufferDirtyBits.set(DIRTY_BIT_DRIVER_UNIFORMS_BINDING);
 
     mGraphicsDirtyBitHandlers[DIRTY_BIT_DEFAULT_ATTRIBS] =
         &ContextVk::handleDirtyGraphicsDefaultAttribs;
@@ -570,34 +547,21 @@ ContextVk::ContextVk(const gl::State &state, gl::ErrorSet *errorSet, RendererVk 
     mGraphicsDirtyBitHandlers[DIRTY_BIT_INDEX_BUFFER] = &ContextVk::handleDirtyGraphicsIndexBuffer;
     mGraphicsDirtyBitHandlers[DIRTY_BIT_DRIVER_UNIFORMS] =
         &ContextVk::handleDirtyGraphicsDriverUniforms;
-    mGraphicsDirtyBitHandlers[DIRTY_BIT_DRIVER_UNIFORMS_BINDING] =
-        &ContextVk::handleDirtyGraphicsDriverUniformsBinding;
     mGraphicsDirtyBitHandlers[DIRTY_BIT_SHADER_RESOURCES] =
         &ContextVk::handleDirtyGraphicsShaderResources;
-    if (getFeatures().supportsTransformFeedbackExtension.enabled)
-    {
-        mGraphicsDirtyBitHandlers[DIRTY_BIT_TRANSFORM_FEEDBACK_BUFFERS] =
-            &ContextVk::handleDirtyGraphicsTransformFeedbackBuffersExtension;
-        mGraphicsDirtyBitHandlers[DIRTY_BIT_TRANSFORM_FEEDBACK_STATE] =
-            &ContextVk::handleDirtyGraphicsTransformFeedbackState;
-    }
-    else if (getFeatures().emulateTransformFeedback.enabled)
-    {
-        mGraphicsDirtyBitHandlers[DIRTY_BIT_TRANSFORM_FEEDBACK_BUFFERS] =
-            &ContextVk::handleDirtyGraphicsTransformFeedbackBuffersEmulation;
-    }
-
-    mGraphicsDirtyBitHandlers[DIRTY_BIT_DESCRIPTOR_SETS] = &ContextVk::handleDirtyDescriptorSets;
+    mGraphicsDirtyBitHandlers[DIRTY_BIT_TRANSFORM_FEEDBACK_BUFFERS] =
+        &ContextVk::handleDirtyGraphicsTransformFeedbackBuffers;
+    mGraphicsDirtyBitHandlers[DIRTY_BIT_DESCRIPTOR_SETS] =
+        &ContextVk::handleDirtyGraphicsDescriptorSets;
 
     mComputeDirtyBitHandlers[DIRTY_BIT_PIPELINE] = &ContextVk::handleDirtyComputePipeline;
     mComputeDirtyBitHandlers[DIRTY_BIT_TEXTURES] = &ContextVk::handleDirtyComputeTextures;
     mComputeDirtyBitHandlers[DIRTY_BIT_DRIVER_UNIFORMS] =
         &ContextVk::handleDirtyComputeDriverUniforms;
-    mComputeDirtyBitHandlers[DIRTY_BIT_DRIVER_UNIFORMS_BINDING] =
-        &ContextVk::handleDirtyComputeDriverUniformsBinding;
     mComputeDirtyBitHandlers[DIRTY_BIT_SHADER_RESOURCES] =
         &ContextVk::handleDirtyComputeShaderResources;
-    mComputeDirtyBitHandlers[DIRTY_BIT_DESCRIPTOR_SETS] = &ContextVk::handleDirtyDescriptorSets;
+    mComputeDirtyBitHandlers[DIRTY_BIT_DESCRIPTOR_SETS] =
+        &ContextVk::handleDirtyComputeDescriptorSets;
 
     mGraphicsDirtyBits = mNewGraphicsCommandBufferDirtyBits;
     mComputeDirtyBits  = mNewComputeCommandBufferDirtyBits;
@@ -678,15 +642,10 @@ angle::Result ContextVk::initialize()
                                                           vk::kDefaultOcclusionQueryPoolSize));
     ANGLE_TRY(mQueryPools[gl::QueryType::AnySamplesConservative].init(
         this, VK_QUERY_TYPE_OCCLUSION, vk::kDefaultOcclusionQueryPoolSize));
-
-    // Only initialize the timestamp query pools if the extension is available.
-    if (mRenderer->getQueueFamilyProperties().timestampValidBits > 0)
-    {
-        ANGLE_TRY(mQueryPools[gl::QueryType::Timestamp].init(this, VK_QUERY_TYPE_TIMESTAMP,
-                                                             vk::kDefaultTimestampQueryPoolSize));
-        ANGLE_TRY(mQueryPools[gl::QueryType::TimeElapsed].init(this, VK_QUERY_TYPE_TIMESTAMP,
-                                                               vk::kDefaultTimestampQueryPoolSize));
-    }
+    ANGLE_TRY(mQueryPools[gl::QueryType::Timestamp].init(this, VK_QUERY_TYPE_TIMESTAMP,
+                                                         vk::kDefaultTimestampQueryPoolSize));
+    ANGLE_TRY(mQueryPools[gl::QueryType::TimeElapsed].init(this, VK_QUERY_TYPE_TIMESTAMP,
+                                                           vk::kDefaultTimestampQueryPoolSize));
 
     // Init driver uniforms and get the descriptor set layouts.
     constexpr angle::PackedEnumMap<PipelineType, VkShaderStageFlags> kPipelineStages = {
@@ -740,8 +699,6 @@ angle::Result ContextVk::initialize()
 
     if (mGpuEventsEnabled)
     {
-        // GPU events should only be available if timestamp queries are available.
-        ASSERT(mRenderer->getQueueFamilyProperties().timestampValidBits > 0);
         // Calculate the difference between CPU and GPU clocks for GPU event reporting.
         ANGLE_TRY(mGpuEventQueryPool.init(this, VK_QUERY_TYPE_TIMESTAMP,
                                           vk::kDefaultTimestampQueryPoolSize));
@@ -828,8 +785,7 @@ angle::Result ContextVk::setupDraw(const gl::Context *context,
     if (mState.isTransformFeedbackActiveUnpaused())
     {
         ASSERT(firstVertexOrInvalid != -1);
-        mXfbBaseVertex             = firstVertexOrInvalid;
-        mXfbVertexCountPerInstance = vertexOrIndexCount;
+        mXfbBaseVertex = firstVertexOrInvalid;
         invalidateGraphicsDriverUniforms();
     }
 
@@ -1205,7 +1161,7 @@ angle::Result ContextVk::handleDirtyComputeShaderResources(const gl::Context *co
     return handleDirtyShaderResourcesImpl(context, commandBuffer, &mDispatcher);
 }
 
-angle::Result ContextVk::handleDirtyGraphicsTransformFeedbackBuffersEmulation(
+angle::Result ContextVk::handleDirtyGraphicsTransformFeedbackBuffers(
     const gl::Context *context,
     vk::CommandBuffer *commandBuffer)
 {
@@ -1217,71 +1173,33 @@ angle::Result ContextVk::handleDirtyGraphicsTransformFeedbackBuffersEmulation(
     return angle::Result::Continue;
 }
 
-angle::Result ContextVk::handleDirtyGraphicsTransformFeedbackBuffersExtension(
-    const gl::Context *context,
-    vk::CommandBuffer *commandBuffer)
-{
-    if (!mProgram->hasTransformFeedbackOutput() || !mState.isTransformFeedbackActive())
-        return angle::Result::Continue;
-
-    size_t bufferIndex                       = 0;
-    TransformFeedbackVk *transformFeedbackVk = vk::GetImpl(mState.getCurrentTransformFeedback());
-
-    size_t bufferCount = mProgram->getState().getTransformFeedbackBufferCount();
-    gl::TransformFeedbackBuffersArray<VkBuffer> bufferHandles;
-
-    for (bufferIndex = 0; bufferIndex < bufferCount; ++bufferIndex)
-    {
-        const gl::OffsetBindingPointer<gl::Buffer> &bufferBinding =
-            mState.getCurrentTransformFeedback()->getIndexedBuffer(bufferIndex);
-        gl::Buffer *buffer = bufferBinding.get();
-        ASSERT(buffer != nullptr);
-
-        vk::BufferHelper &bufferHelper = vk::GetImpl(buffer)->getBuffer();
-        bufferHandles[bufferIndex]     = bufferHelper.getBuffer().getHandle();
-    }
-
-    const TransformFeedbackBufferRange &xfbBufferRangeExtension =
-        transformFeedbackVk->getTransformFeedbackBufferRange();
-
-    commandBuffer->bindTransformFeedbackBuffers(bufferCount, bufferHandles.data(),
-                                                xfbBufferRangeExtension.offsets.data(),
-                                                xfbBufferRangeExtension.sizes.data());
-
-    vk::FramebufferHelper *framebuffer = mDrawFramebuffer->getFramebuffer();
-    transformFeedbackVk->addFramebufferDependency(this, mProgram->getState(), framebuffer);
-
-    return angle::Result::Continue;
-}
-
-angle::Result ContextVk::handleDirtyGraphicsTransformFeedbackState(const gl::Context *context,
-                                                                   vk::CommandBuffer *commandBuffer)
-{
-    if (!mProgram->hasTransformFeedbackOutput() || !mState.isTransformFeedbackActiveUnpaused())
-        return angle::Result::Continue;
-
-    TransformFeedbackVk *transformFeedbackVk = vk::GetImpl(mState.getCurrentTransformFeedback());
-
-    // We should have same number of counter buffers as xfb buffers have
-    size_t bufferCount = mProgram->getState().getTransformFeedbackBufferCount();
-    const gl::TransformFeedbackBuffersArray<VkBuffer> &counterBufferHandles =
-        transformFeedbackVk->getCounterBufferHandles();
-
-    vk::FramebufferHelper *framebuffer = mDrawFramebuffer->getFramebuffer();
-    bool rebindBuffer = transformFeedbackVk->getTransformFeedbackBufferRebindState();
-    framebuffer->setActiveTransformFeedbackInfo(bufferCount, counterBufferHandles.data(),
-                                                rebindBuffer);
-
-    transformFeedbackVk->unsetTransformFeedbackBufferRebindState();
-
-    return angle::Result::Continue;
-}
-
-angle::Result ContextVk::handleDirtyDescriptorSets(const gl::Context *context,
-                                                   vk::CommandBuffer *commandBuffer)
+ANGLE_INLINE angle::Result ContextVk::handleDirtyDescriptorSetsImpl(
+    vk::CommandBuffer *commandBuffer,
+    VkPipelineBindPoint bindPoint,
+    const DriverUniformsDescriptorSet &driverUniforms)
 {
     ANGLE_TRY(mProgram->updateDescriptorSets(this, commandBuffer));
+
+    // Bind the driver descriptor set.
+    commandBuffer->bindDescriptorSets(
+        mProgram->getPipelineLayout(), bindPoint, kDriverUniformsDescriptorSetIndex, 1,
+        &driverUniforms.descriptorSet, 1, &driverUniforms.dynamicOffset);
+
     return angle::Result::Continue;
+}
+
+angle::Result ContextVk::handleDirtyGraphicsDescriptorSets(const gl::Context *context,
+                                                           vk::CommandBuffer *commandBuffer)
+{
+    return handleDirtyDescriptorSetsImpl(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS,
+                                         mDriverUniforms[PipelineType::Graphics]);
+}
+
+angle::Result ContextVk::handleDirtyComputeDescriptorSets(const gl::Context *context,
+                                                          vk::CommandBuffer *commandBuffer)
+{
+    return handleDirtyDescriptorSetsImpl(commandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE,
+                                         mDriverUniforms[PipelineType::Compute]);
 }
 
 angle::Result ContextVk::submitFrame(const VkSubmitInfo &submitInfo,
@@ -1688,7 +1606,7 @@ angle::Result ContextVk::drawArrays(const gl::Context *context,
         uint32_t numIndices;
         ANGLE_TRY(setupLineLoopDraw(context, mode, first, count, gl::DrawElementsType::InvalidEnum,
                                     nullptr, &commandBuffer, &numIndices));
-        vk::LineLoopHelper::Draw(numIndices, 0, commandBuffer);
+        vk::LineLoopHelper::Draw(numIndices, commandBuffer);
     }
     else
     {
@@ -1765,36 +1683,12 @@ angle::Result ContextVk::drawElements(const gl::Context *context,
         uint32_t indexCount;
         ANGLE_TRY(
             setupLineLoopDraw(context, mode, 0, count, type, indices, &commandBuffer, &indexCount));
-        vk::LineLoopHelper::Draw(indexCount, 0, commandBuffer);
+        vk::LineLoopHelper::Draw(indexCount, commandBuffer);
     }
     else
     {
         ANGLE_TRY(setupIndexedDraw(context, mode, count, 1, type, indices, &commandBuffer));
         commandBuffer->drawIndexed(count);
-    }
-
-    return angle::Result::Continue;
-}
-
-angle::Result ContextVk::drawElementsBaseVertex(const gl::Context *context,
-                                                gl::PrimitiveMode mode,
-                                                GLsizei count,
-                                                gl::DrawElementsType type,
-                                                const void *indices,
-                                                GLint baseVertex)
-{
-    vk::CommandBuffer *commandBuffer = nullptr;
-    if (mode == gl::PrimitiveMode::LineLoop)
-    {
-        uint32_t indexCount;
-        ANGLE_TRY(
-            setupLineLoopDraw(context, mode, 0, count, type, indices, &commandBuffer, &indexCount));
-        vk::LineLoopHelper::Draw(indexCount, baseVertex, commandBuffer);
-    }
-    else
-    {
-        ANGLE_TRY(setupIndexedDraw(context, mode, count, 1, type, indices, &commandBuffer));
-        commandBuffer->drawIndexedBaseVertex(count, baseVertex);
     }
 
     return angle::Result::Continue;
@@ -1822,32 +1716,6 @@ angle::Result ContextVk::drawElementsInstanced(const gl::Context *context,
     }
 
     commandBuffer->drawIndexedInstanced(count, instances);
-    return angle::Result::Continue;
-}
-
-angle::Result ContextVk::drawElementsInstancedBaseVertex(const gl::Context *context,
-                                                         gl::PrimitiveMode mode,
-                                                         GLsizei count,
-                                                         gl::DrawElementsType type,
-                                                         const void *indices,
-                                                         GLsizei instances,
-                                                         GLint baseVertex)
-{
-    vk::CommandBuffer *commandBuffer = nullptr;
-
-    if (mode == gl::PrimitiveMode::LineLoop)
-    {
-        uint32_t indexCount;
-        ANGLE_TRY(
-            setupLineLoopDraw(context, mode, 0, count, type, indices, &commandBuffer, &indexCount));
-        count = indexCount;
-    }
-    else
-    {
-        ANGLE_TRY(setupIndexedDraw(context, mode, count, instances, type, indices, &commandBuffer));
-    }
-
-    commandBuffer->drawIndexedInstancedBaseVertex(count, instances, baseVertex);
     return angle::Result::Continue;
 }
 
@@ -1887,18 +1755,6 @@ angle::Result ContextVk::drawRangeElements(const gl::Context *context,
                                            const void *indices)
 {
     return drawElements(context, mode, count, type, indices);
-}
-
-angle::Result ContextVk::drawRangeElementsBaseVertex(const gl::Context *context,
-                                                     gl::PrimitiveMode mode,
-                                                     GLuint start,
-                                                     GLuint end,
-                                                     GLsizei count,
-                                                     gl::DrawElementsType type,
-                                                     const void *indices,
-                                                     GLint baseVertex)
-{
-    return drawElementsBaseVertex(context, mode, count, type, indices, baseVertex);
 }
 
 VkDevice ContextVk::getDevice() const
@@ -2415,7 +2271,6 @@ angle::Result ContextVk::syncState(const gl::Context *context,
             {
                 mVertexArray = vk::GetImpl(glState.getVertexArray());
                 invalidateDefaultAttributes(context->getStateCache().getActiveDefaultAttribsMask());
-                mVertexArray->updateActiveAttribInfo(this);
                 break;
             }
             case gl::State::DIRTY_BIT_DRAW_INDIRECT_BUFFER_BINDING:
@@ -2427,7 +2282,6 @@ angle::Result ContextVk::syncState(const gl::Context *context,
                 break;
             case gl::State::DIRTY_BIT_PROGRAM_EXECUTABLE:
             {
-                invalidateCurrentDefaultUniforms();
                 invalidateCurrentTextures();
                 invalidateCurrentShaderResources();
                 if (glState.getProgram()->isCompute())
@@ -2512,9 +2366,6 @@ GLint ContextVk::getGPUDisjoint()
 
 GLint64 ContextVk::getTimestamp()
 {
-    // This function should only be called if timestamp queries are available.
-    ASSERT(mRenderer->getQueueFamilyProperties().timestampValidBits > 0);
-
     uint64_t timestamp = 0;
 
     (void)getTimestamp(&timestamp);
@@ -2524,7 +2375,6 @@ GLint64 ContextVk::getTimestamp()
 
 angle::Result ContextVk::onMakeCurrent(const gl::Context *context)
 {
-    mRenderer->reloadVolkIfNeeded();
     ASSERT(mCommandGraph.empty());
 
     // Flip viewports if FeaturesVk::flipViewportY is enabled and the user did not request that
@@ -2682,16 +2532,6 @@ OverlayImpl *ContextVk::createOverlay(const gl::OverlayState &state)
     return new OverlayVk(state);
 }
 
-void ContextVk::invalidateCurrentDefaultUniforms()
-{
-    ASSERT(mProgram);
-    if (mProgram->hasDefaultUniforms())
-    {
-        mGraphicsDirtyBits.set(DIRTY_BIT_DESCRIPTOR_SETS);
-        mComputeDirtyBits.set(DIRTY_BIT_DESCRIPTOR_SETS);
-    }
-}
-
 void ContextVk::invalidateCurrentTextures()
 {
     ASSERT(mProgram);
@@ -2720,15 +2560,15 @@ void ContextVk::invalidateCurrentShaderResources()
 void ContextVk::invalidateGraphicsDriverUniforms()
 {
     mGraphicsDirtyBits.set(DIRTY_BIT_DRIVER_UNIFORMS);
-    mGraphicsDirtyBits.set(DIRTY_BIT_DRIVER_UNIFORMS_BINDING);
+    mGraphicsDirtyBits.set(DIRTY_BIT_DESCRIPTOR_SETS);
 }
 
 void ContextVk::invalidateDriverUniforms()
 {
     mGraphicsDirtyBits.set(DIRTY_BIT_DRIVER_UNIFORMS);
-    mGraphicsDirtyBits.set(DIRTY_BIT_DRIVER_UNIFORMS_BINDING);
+    mGraphicsDirtyBits.set(DIRTY_BIT_DESCRIPTOR_SETS);
     mComputeDirtyBits.set(DIRTY_BIT_DRIVER_UNIFORMS);
-    mComputeDirtyBits.set(DIRTY_BIT_DRIVER_UNIFORMS_BINDING);
+    mComputeDirtyBits.set(DIRTY_BIT_DESCRIPTOR_SETS);
 }
 
 void ContextVk::onDrawFramebufferChange(FramebufferVk *framebufferVk)
@@ -2737,39 +2577,18 @@ void ContextVk::onDrawFramebufferChange(FramebufferVk *framebufferVk)
 
     // Ensure that the RenderPass description is updated.
     invalidateCurrentGraphicsPipeline();
-    if (mGraphicsPipelineDesc->getRasterizationSamples() !=
-        static_cast<uint32_t>(framebufferVk->getSamples()))
-    {
-        mGraphicsPipelineDesc->updateRasterizationSamples(&mGraphicsPipelineTransition,
-                                                          framebufferVk->getSamples());
-    }
     mGraphicsPipelineDesc->updateRenderPassDesc(&mGraphicsPipelineTransition, renderPassDesc);
 }
 
 void ContextVk::invalidateCurrentTransformFeedbackBuffers()
 {
     mGraphicsDirtyBits.set(DIRTY_BIT_TRANSFORM_FEEDBACK_BUFFERS);
-    if (getFeatures().emulateTransformFeedback.enabled)
-    {
-        mGraphicsDirtyBits.set(DIRTY_BIT_DESCRIPTOR_SETS);
-    }
+    mGraphicsDirtyBits.set(DIRTY_BIT_DESCRIPTOR_SETS);
 }
 
-void ContextVk::invalidateCurrentTransformFeedbackState()
+void ContextVk::onTransformFeedbackPauseResume()
 {
-    mGraphicsDirtyBits.set(DIRTY_BIT_TRANSFORM_FEEDBACK_STATE);
-}
-
-void ContextVk::onTransformFeedbackStateChanged()
-{
-    if (getFeatures().supportsTransformFeedbackExtension.enabled)
-    {
-        invalidateCurrentTransformFeedbackState();
-    }
-    else if (getFeatures().emulateTransformFeedback.enabled)
-    {
-        invalidateGraphicsDriverUniforms();
-    }
+    invalidateGraphicsDriverUniforms();
 }
 
 angle::Result ContextVk::dispatchCompute(const gl::Context *context,
@@ -2850,10 +2669,6 @@ vk::DynamicQueryPool *ContextVk::getQueryPool(gl::QueryType queryType)
     ASSERT(queryType == gl::QueryType::AnySamples ||
            queryType == gl::QueryType::AnySamplesConservative ||
            queryType == gl::QueryType::Timestamp || queryType == gl::QueryType::TimeElapsed);
-
-    // Assert that timestamp extension is available if needed.
-    ASSERT(queryType != gl::QueryType::Timestamp && queryType != gl::QueryType::TimeElapsed ||
-           mRenderer->getQueueFamilyProperties().timestampValidBits > 0);
     ASSERT(mQueryPools[queryType].isValid());
     return &mQueryPools[queryType];
 }
@@ -2941,8 +2756,6 @@ angle::Result ContextVk::handleDirtyGraphicsDriverUniforms(const gl::Context *co
         scaleY,
         -scaleY,
         xfbActiveUnpaused,
-        mXfbVertexCountPerInstance,
-        {},
         {},
         {},
         {depthRangeNear, depthRangeFar, depthRangeDiff, 0.0f}};
@@ -2983,34 +2796,6 @@ angle::Result ContextVk::handleDirtyComputeDriverUniforms(const gl::Context *con
 
     return updateDriverUniformsDescriptorSet(buffer, newBuffer, sizeof(ComputeDriverUniforms),
                                              &mDriverUniforms[PipelineType::Compute]);
-}
-
-void ContextVk::handleDirtyDriverUniformsBindingImpl(
-    vk::CommandBuffer *commandBuffer,
-    VkPipelineBindPoint bindPoint,
-    const DriverUniformsDescriptorSet &driverUniforms)
-{
-    commandBuffer->bindDescriptorSets(
-        mProgram->getPipelineLayout(), bindPoint, kDriverUniformsDescriptorSetIndex, 1,
-        &driverUniforms.descriptorSet, 1, &driverUniforms.dynamicOffset);
-}
-
-angle::Result ContextVk::handleDirtyGraphicsDriverUniformsBinding(const gl::Context *context,
-                                                                  vk::CommandBuffer *commandBuffer)
-{
-    // Bind the driver descriptor set.
-    handleDirtyDriverUniformsBindingImpl(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS,
-                                         mDriverUniforms[PipelineType::Graphics]);
-    return angle::Result::Continue;
-}
-
-angle::Result ContextVk::handleDirtyComputeDriverUniformsBinding(const gl::Context *context,
-                                                                 vk::CommandBuffer *commandBuffer)
-{
-    // Bind the driver descriptor set.
-    handleDirtyDriverUniformsBindingImpl(commandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE,
-                                         mDriverUniforms[PipelineType::Compute]);
-    return angle::Result::Continue;
 }
 
 angle::Result ContextVk::allocateDriverUniforms(size_t driverUniformsSize,

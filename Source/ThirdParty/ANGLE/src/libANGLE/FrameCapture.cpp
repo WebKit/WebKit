@@ -40,7 +40,6 @@ constexpr char kEnabledVarName[]      = "ANGLE_CAPTURE_ENABLED";
 constexpr char kOutDirectoryVarName[] = "ANGLE_CAPTURE_OUT_DIR";
 constexpr char kFrameStartVarName[]   = "ANGLE_CAPTURE_FRAME_START";
 constexpr char kFrameEndVarName[]     = "ANGLE_CAPTURE_FRAME_END";
-constexpr char kCaptureLabel[]        = "ANGLE_CAPTURE_LABEL";
 
 #if defined(ANGLE_PLATFORM_ANDROID)
 
@@ -48,7 +47,6 @@ constexpr char kAndroidCaptureEnabled[] = "debug.angle.capture.enabled";
 constexpr char kAndroidOutDir[]         = "debug.angle.capture.out_dir";
 constexpr char kAndroidFrameStart[]     = "debug.angle.capture.frame_start";
 constexpr char kAndroidFrameEnd[]       = "debug.angle.capture.frame_end";
-constexpr char kAndroidCaptureLabel[]   = "debug.angle.capture.label";
 
 constexpr int kStreamSize = 64;
 
@@ -104,13 +102,6 @@ void PrimeAndroidEnvironmentVariables()
         INFO() << "Frame capture read " << frameEnd << " from " << kAndroidFrameEnd;
         setenv(kFrameEndVarName, frameEnd.c_str(), 1);
     }
-
-    std::string captureLabel = AndroidGetEnvFromProp(kAndroidCaptureLabel);
-    if (!captureLabel.empty())
-    {
-        INFO() << "Capture label read " << captureLabel << " from " << kAndroidCaptureLabel;
-        setenv(kCaptureLabel, captureLabel.c_str(), 1);
-    }
 }
 #endif
 
@@ -157,24 +148,13 @@ std::string GetDefaultOutDirectory()
 
 struct FmtCapturePrefix
 {
-    FmtCapturePrefix(int contextIdIn, const std::string &captureLabelIn)
-        : contextId(contextIdIn), captureLabel(captureLabelIn)
-    {}
+    FmtCapturePrefix(int contextIdIn) : contextId(contextIdIn) {}
     int contextId;
-    const std::string &captureLabel;
 };
 
 std::ostream &operator<<(std::ostream &os, const FmtCapturePrefix &fmt)
 {
-    if (fmt.captureLabel.empty())
-    {
-        os << "angle";
-    }
-    else
-    {
-        os << fmt.captureLabel;
-    }
-    os << "_capture_context" << fmt.contextId;
+    os << "angle_capture_context" << fmt.contextId;
     return os;
 }
 
@@ -193,24 +173,20 @@ std::ostream &operator<<(std::ostream &os, const FmtReplayFunction &fmt)
     return os;
 }
 
-std::string GetCaptureFileName(int contextId,
-                               const std::string &captureLabel,
-                               uint32_t frameIndex,
-                               const char *suffix)
+std::string GetCaptureFileName(int contextId, uint32_t frameIndex, const char *suffix)
 {
     std::stringstream fnameStream;
-    fnameStream << FmtCapturePrefix(contextId, captureLabel) << "_frame" << std::setfill('0')
-                << std::setw(3) << frameIndex << suffix;
+    fnameStream << FmtCapturePrefix(contextId) << "_frame" << std::setfill('0') << std::setw(3)
+                << frameIndex << suffix;
     return fnameStream.str();
 }
 
 std::string GetCaptureFilePath(const std::string &outDir,
                                int contextId,
-                               const std::string &captureLabel,
                                uint32_t frameIndex,
                                const char *suffix)
 {
-    return outDir + GetCaptureFileName(contextId, captureLabel, frameIndex, suffix);
+    return outDir + GetCaptureFileName(contextId, frameIndex, suffix);
 }
 
 void WriteParamStaticVarName(const CallCapture &call,
@@ -539,19 +515,16 @@ struct SaveFileHelper
 void SaveBinaryData(const std::string &outDir,
                     std::ostream &out,
                     int contextId,
-                    const std::string &captureLabel,
                     uint32_t frameIndex,
                     const char *suffix,
                     const std::vector<uint8_t> &binaryData)
 {
-    std::string binaryDataFileName =
-        GetCaptureFileName(contextId, captureLabel, frameIndex, suffix);
+    std::string binaryDataFileName = GetCaptureFileName(contextId, frameIndex, suffix);
 
     out << "    LoadBinaryData(\"" << binaryDataFileName << "\", "
         << static_cast<int>(binaryData.size()) << ");\n";
 
-    std::string dataFilepath =
-        GetCaptureFilePath(outDir, contextId, captureLabel, frameIndex, suffix);
+    std::string dataFilepath = GetCaptureFilePath(outDir, contextId, frameIndex, suffix);
 
     SaveFileHelper saveData(dataFilepath, std::ios::binary);
     saveData.ofs.write(reinterpret_cast<const char *>(binaryData.data()), binaryData.size());
@@ -559,7 +532,6 @@ void SaveBinaryData(const std::string &outDir,
 
 void WriteCppReplay(const std::string &outDir,
                     int contextId,
-                    const std::string &captureLabel,
                     uint32_t frameIndex,
                     const std::vector<CallCapture> &frameCalls,
                     const std::vector<CallCapture> &setupCalls)
@@ -569,17 +541,11 @@ void WriteCppReplay(const std::string &outDir,
     std::stringstream out;
     std::stringstream header;
 
-    header << "#include \"" << FmtCapturePrefix(contextId, captureLabel) << ".h\"\n";
+    header << "#include \"" << FmtCapturePrefix(contextId) << ".h\"\n";
     header << "";
     header << "\n";
     header << "namespace\n";
     header << "{\n";
-
-    if (!captureLabel.empty())
-    {
-        out << "namespace " << captureLabel << "\n";
-        out << "{\n";
-    }
 
     if (frameIndex == 0 || !setupCalls.empty())
     {
@@ -598,8 +564,7 @@ void WriteCppReplay(const std::string &outDir,
 
         if (!setupBinaryData.empty())
         {
-            SaveBinaryData(outDir, out, contextId, captureLabel, frameIndex, ".setup.angledata",
-                           setupBinaryData);
+            SaveBinaryData(outDir, out, contextId, frameIndex, ".setup.angledata", setupBinaryData);
         }
 
         out << setupCallStream.str();
@@ -623,16 +588,11 @@ void WriteCppReplay(const std::string &outDir,
 
     if (!binaryData.empty())
     {
-        SaveBinaryData(outDir, out, contextId, captureLabel, frameIndex, ".angledata", binaryData);
+        SaveBinaryData(outDir, out, contextId, frameIndex, ".angledata", binaryData);
     }
 
     out << callStream.str();
     out << "}\n";
-
-    if (!captureLabel.empty())
-    {
-        out << "} // namespace " << captureLabel << "\n";
-    }
 
     header << "}  // namespace\n";
 
@@ -640,8 +600,7 @@ void WriteCppReplay(const std::string &outDir,
         std::string outString    = out.str();
         std::string headerString = header.str();
 
-        std::string cppFilePath =
-            GetCaptureFilePath(outDir, contextId, captureLabel, frameIndex, ".cpp");
+        std::string cppFilePath = GetCaptureFilePath(outDir, contextId, frameIndex, ".cpp");
 
         SaveFileHelper saveCpp(cppFilePath);
         saveCpp << headerString << "\n" << outString;
@@ -650,7 +609,6 @@ void WriteCppReplay(const std::string &outDir,
 
 void WriteCppReplayIndexFiles(const std::string &outDir,
                               int contextId,
-                              const std::string &captureLabel,
                               uint32_t frameStart,
                               uint32_t frameEnd,
                               size_t readBufferSize,
@@ -673,13 +631,6 @@ void WriteCppReplayIndexFiles(const std::string &outDir,
     header << "\n";
     header << "// Replay functions\n";
     header << "\n";
-    header << "using ResourceMap = std::unordered_map<GLuint, GLuint>;\n";
-    header << "\n";
-    if (!captureLabel.empty())
-    {
-        header << "namespace " << captureLabel << "\n";
-        header << "{\n";
-    }
     header << "constexpr uint32_t kReplayFrameStart = " << frameStart << ";\n";
     header << "constexpr uint32_t kReplayFrameEnd = " << frameEnd << ";\n";
     header << "\n";
@@ -696,9 +647,11 @@ void WriteCppReplayIndexFiles(const std::string &outDir,
     header << "\n";
     header << "// Global state\n";
     header << "\n";
+    header << "using ResourceMap = std::unordered_map<GLuint, GLuint>;\n";
+    header << "\n";
     header << "extern uint8_t *gBinaryData;\n";
 
-    source << "#include \"" << FmtCapturePrefix(contextId, captureLabel) << ".h\"\n";
+    source << "#include \"" << FmtCapturePrefix(contextId) << ".h\"\n";
     source << "\n";
     source << "namespace\n";
     source << "{\n";
@@ -706,22 +659,13 @@ void WriteCppReplayIndexFiles(const std::string &outDir,
               "readBufferOffset)\n";
     source << "{\n";
     source << "    GLuint returnedID;\n";
-    std::string captureNamespace = !captureLabel.empty() ? captureLabel + "::" : "";
-    source << "    memcpy(&returnedID, &" << captureNamespace
-           << "gReadBuffer[readBufferOffset], sizeof(GLuint));\n ";
+    source << "    memcpy(&returnedID, &gReadBuffer[readBufferOffset], sizeof(GLuint));\n";
     source << "    (*resourceMap)[id] = returnedID;\n";
     source << "}\n";
     source << "\n";
     source << "const char *gBinaryDataDir = \".\";\n";
     source << "}  // namespace\n";
     source << "\n";
-
-    if (!captureLabel.empty())
-    {
-        source << "namespace " << captureLabel << "\n";
-        source << "{\n";
-    }
-
     source << "uint8_t *gBinaryData = nullptr;\n";
 
     if (readBufferSize > 0)
@@ -810,17 +754,11 @@ void WriteCppReplayIndexFiles(const std::string &outDir,
         source << "}\n";
     }
 
-    if (!captureLabel.empty())
-    {
-        header << "} // namespace " << captureLabel << "\n";
-        source << "} // namespace " << captureLabel << "\n";
-    }
-
     {
         std::string headerContents = header.str();
 
         std::stringstream headerPathStream;
-        headerPathStream << outDir << FmtCapturePrefix(contextId, captureLabel) << ".h";
+        headerPathStream << outDir << FmtCapturePrefix(contextId) << ".h";
         std::string headerPath = headerPathStream.str();
 
         SaveFileHelper saveHeader(headerPath);
@@ -831,7 +769,7 @@ void WriteCppReplayIndexFiles(const std::string &outDir,
         std::string sourceContents = source.str();
 
         std::stringstream sourcePathStream;
-        sourcePathStream << outDir << FmtCapturePrefix(contextId, captureLabel) << ".cpp";
+        sourcePathStream << outDir << FmtCapturePrefix(contextId) << ".cpp";
         std::string sourcePath = sourcePathStream.str();
 
         SaveFileHelper saveSource(sourcePath);
@@ -840,13 +778,13 @@ void WriteCppReplayIndexFiles(const std::string &outDir,
 
     {
         std::stringstream indexPathStream;
-        indexPathStream << outDir << FmtCapturePrefix(contextId, captureLabel) << "_files.txt";
+        indexPathStream << outDir << FmtCapturePrefix(contextId) << "_files.txt";
         std::string indexPath = indexPathStream.str();
 
         SaveFileHelper saveIndex(indexPath);
         for (uint32_t frameIndex = frameStart; frameIndex <= frameEnd; ++frameIndex)
         {
-            saveIndex << GetCaptureFileName(contextId, captureLabel, frameIndex, ".cpp") << "\n";
+            saveIndex << GetCaptureFileName(contextId, frameIndex, ".cpp") << "\n";
         }
     }
 }
@@ -1927,13 +1865,6 @@ FrameCapture::FrameCapture()
     {
         mFrameEnd = atoi(endFromEnv.c_str());
     }
-
-    std::string labelFromEnv = angle::GetEnvironmentVar(kCaptureLabel);
-    if (!labelFromEnv.empty())
-    {
-        // Optional label to provide unique file names and namespaces
-        mCaptureLabel = labelFromEnv;
-    }
 }
 
 FrameCapture::~FrameCapture() = default;
@@ -2101,15 +2032,13 @@ void FrameCapture::onEndFrame(const gl::Context *context)
     // Note that we currently capture before the start frame to collect shader and program sources.
     if (!mFrameCalls.empty() && mFrameIndex >= mFrameStart)
     {
-        WriteCppReplay(mOutDirectory, context->id(), mCaptureLabel, mFrameIndex, mFrameCalls,
-                       mSetupCalls);
+        WriteCppReplay(mOutDirectory, context->id(), mFrameIndex, mFrameCalls, mSetupCalls);
 
         // Save the index files after the last frame.
         if (mFrameIndex == mFrameEnd)
         {
-            WriteCppReplayIndexFiles(mOutDirectory, context->id(), mCaptureLabel, mFrameStart,
-                                     mFrameEnd, mReadBufferSize, mClientArraySizes,
-                                     mHasResourceType);
+            WriteCppReplayIndexFiles(mOutDirectory, context->id(), mFrameStart, mFrameEnd,
+                                     mReadBufferSize, mClientArraySizes, mHasResourceType);
         }
     }
 

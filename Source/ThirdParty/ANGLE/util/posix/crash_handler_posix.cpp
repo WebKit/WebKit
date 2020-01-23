@@ -35,6 +35,7 @@
 
 namespace angle
 {
+
 #if defined(ANGLE_PLATFORM_ANDROID) || defined(ANGLE_PLATFORM_FUCHSIA)
 
 void PrintStackBacktrace()
@@ -53,10 +54,6 @@ void TerminateCrashHandler()
 }
 
 #else
-namespace
-{
-CrashCallback *gCrashHandlerCallback;
-}  // namespace
 
 #    if defined(ANGLE_PLATFORM_APPLE)
 
@@ -88,11 +85,6 @@ void PrintStackBacktrace()
 
 static void Handler(int sig)
 {
-    if (gCrashHandlerCallback)
-    {
-        (*gCrashHandlerCallback)();
-    }
-
     printf("\nSignal %d:\n", sig);
     PrintStackBacktrace();
 
@@ -135,11 +127,6 @@ void PrintStackBacktrace()
 
 static void Handler(int sig)
 {
-    if (gCrashHandlerCallback)
-    {
-        (*gCrashHandlerCallback)();
-    }
-
     printf("\nSignal %d [%s]:\n", sig, strsignal(sig));
     PrintStackBacktrace();
 
@@ -155,7 +142,6 @@ static constexpr int kSignals[] = {
 
 void InitCrashHandler(CrashCallback *callback)
 {
-    gCrashHandlerCallback = callback;
     for (int sig : kSignals)
     {
         // Register our signal handler unless something's already done so (e.g. catchsegv).
@@ -169,7 +155,6 @@ void InitCrashHandler(CrashCallback *callback)
 
 void TerminateCrashHandler()
 {
-    gCrashHandlerCallback = nullptr;
     for (int sig : kSignals)
     {
         void (*prev)(int) = signal(sig, SIG_DFL);

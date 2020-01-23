@@ -10,7 +10,7 @@
 #ifndef LIBANGLE_RENDERER_VULKAN_CONTEXTVK_H_
 #define LIBANGLE_RENDERER_VULKAN_CONTEXTVK_H_
 
-#include "volk.h"
+#include <vulkan/vulkan.h>
 
 #include "common/PackedEnums.h"
 #include "libANGLE/renderer/ContextImpl.h"
@@ -130,25 +130,12 @@ class ContextVk : public ContextImpl, public vk::Context, public vk::RenderPassO
                                GLsizei count,
                                gl::DrawElementsType type,
                                const void *indices) override;
-    angle::Result drawElementsBaseVertex(const gl::Context *context,
-                                         gl::PrimitiveMode mode,
-                                         GLsizei count,
-                                         gl::DrawElementsType type,
-                                         const void *indices,
-                                         GLint baseVertex) override;
     angle::Result drawElementsInstanced(const gl::Context *context,
                                         gl::PrimitiveMode mode,
                                         GLsizei count,
                                         gl::DrawElementsType type,
                                         const void *indices,
                                         GLsizei instanceCount) override;
-    angle::Result drawElementsInstancedBaseVertex(const gl::Context *context,
-                                                  gl::PrimitiveMode mode,
-                                                  GLsizei count,
-                                                  gl::DrawElementsType type,
-                                                  const void *indices,
-                                                  GLsizei instanceCount,
-                                                  GLint baseVertex) override;
     angle::Result drawElementsInstancedBaseVertexBaseInstance(const gl::Context *context,
                                                               gl::PrimitiveMode mode,
                                                               GLsizei count,
@@ -164,14 +151,6 @@ class ContextVk : public ContextImpl, public vk::Context, public vk::RenderPassO
                                     GLsizei count,
                                     gl::DrawElementsType type,
                                     const void *indices) override;
-    angle::Result drawRangeElementsBaseVertex(const gl::Context *context,
-                                              gl::PrimitiveMode mode,
-                                              GLuint start,
-                                              GLuint end,
-                                              GLsizei count,
-                                              gl::DrawElementsType type,
-                                              const void *indices,
-                                              GLint baseVertex) override;
     angle::Result drawArraysIndirect(const gl::Context *context,
                                      gl::PrimitiveMode mode,
                                      const void *indirect) override;
@@ -311,8 +290,7 @@ class ContextVk : public ContextImpl, public vk::Context, public vk::RenderPassO
     void onHostVisibleBufferWrite() { mIsAnyHostVisibleBufferWritten = true; }
 
     void invalidateCurrentTransformFeedbackBuffers();
-    void invalidateCurrentTransformFeedbackState();
-    void onTransformFeedbackStateChanged();
+    void onTransformFeedbackPauseResume();
 
     vk::DynamicQueryPool *getQueryPool(gl::QueryType queryType);
 
@@ -432,10 +410,8 @@ class ContextVk : public ContextImpl, public vk::Context, public vk::RenderPassO
         DIRTY_BIT_VERTEX_BUFFERS,
         DIRTY_BIT_INDEX_BUFFER,
         DIRTY_BIT_DRIVER_UNIFORMS,
-        DIRTY_BIT_DRIVER_UNIFORMS_BINDING,
         DIRTY_BIT_SHADER_RESOURCES,  // excluding textures, which are handled separately.
         DIRTY_BIT_TRANSFORM_FEEDBACK_BUFFERS,
-        DIRTY_BIT_TRANSFORM_FEEDBACK_STATE,
         DIRTY_BIT_DESCRIPTOR_SETS,
         DIRTY_BIT_MAX,
     };
@@ -586,7 +562,6 @@ class ContextVk : public ContextImpl, public vk::Context, public vk::RenderPassO
         mCurrentComputePipeline = nullptr;
     }
 
-    void invalidateCurrentDefaultUniforms();
     void invalidateCurrentTextures();
     void invalidateCurrentShaderResources();
     void invalidateGraphicsDriverUniforms();
@@ -605,18 +580,12 @@ class ContextVk : public ContextImpl, public vk::Context, public vk::RenderPassO
                                                  vk::CommandBuffer *commandBuffer);
     angle::Result handleDirtyGraphicsDriverUniforms(const gl::Context *context,
                                                     vk::CommandBuffer *commandBuffer);
-    angle::Result handleDirtyGraphicsDriverUniformsBinding(const gl::Context *context,
-                                                           vk::CommandBuffer *commandBuffer);
     angle::Result handleDirtyGraphicsShaderResources(const gl::Context *context,
                                                      vk::CommandBuffer *commandBuffer);
-    angle::Result handleDirtyGraphicsTransformFeedbackBuffersEmulation(
-        const gl::Context *context,
-        vk::CommandBuffer *commandBuffer);
-    angle::Result handleDirtyGraphicsTransformFeedbackBuffersExtension(
-        const gl::Context *context,
-        vk::CommandBuffer *commandBuffer);
-    angle::Result handleDirtyGraphicsTransformFeedbackState(const gl::Context *context,
-                                                            vk::CommandBuffer *commandBuffer);
+    angle::Result handleDirtyGraphicsTransformFeedbackBuffers(const gl::Context *context,
+                                                              vk::CommandBuffer *commandBuffer);
+    angle::Result handleDirtyGraphicsDescriptorSets(const gl::Context *context,
+                                                    vk::CommandBuffer *commandBuffer);
 
     // Handlers for compute pipeline dirty bits.
     angle::Result handleDirtyComputePipeline(const gl::Context *context,
@@ -625,10 +594,10 @@ class ContextVk : public ContextImpl, public vk::Context, public vk::RenderPassO
                                              vk::CommandBuffer *commandBuffer);
     angle::Result handleDirtyComputeDriverUniforms(const gl::Context *context,
                                                    vk::CommandBuffer *commandBuffer);
-    angle::Result handleDirtyComputeDriverUniformsBinding(const gl::Context *context,
-                                                          vk::CommandBuffer *commandBuffer);
     angle::Result handleDirtyComputeShaderResources(const gl::Context *context,
                                                     vk::CommandBuffer *commandBuffer);
+    angle::Result handleDirtyComputeDescriptorSets(const gl::Context *context,
+                                                   vk::CommandBuffer *commandBuffer);
 
     // Common parts of the common dirty bit handlers.
     angle::Result handleDirtyTexturesImpl(const gl::Context *context,
@@ -637,11 +606,9 @@ class ContextVk : public ContextImpl, public vk::Context, public vk::RenderPassO
     angle::Result handleDirtyShaderResourcesImpl(const gl::Context *context,
                                                  vk::CommandBuffer *commandBuffer,
                                                  vk::CommandGraphResource *recorder);
-    void handleDirtyDriverUniformsBindingImpl(vk::CommandBuffer *commandBuffer,
-                                              VkPipelineBindPoint bindPoint,
-                                              const DriverUniformsDescriptorSet &driverUniforms);
-    angle::Result handleDirtyDescriptorSets(const gl::Context *context,
-                                            vk::CommandBuffer *commandBuffer);
+    angle::Result handleDirtyDescriptorSetsImpl(vk::CommandBuffer *commandBuffer,
+                                                VkPipelineBindPoint bindPoint,
+                                                const DriverUniformsDescriptorSet &driverUniforms);
     angle::Result allocateDriverUniforms(size_t driverUniformsSize,
                                          DriverUniformsDescriptorSet *driverUniforms,
                                          VkBuffer *bufferOut,
@@ -718,8 +685,6 @@ class ContextVk : public ContextImpl, public vk::Context, public vk::RenderPassO
     // not yet ubiquitous, which would have otherwise removed the need for this value to be passed
     // as a uniform.
     GLint mXfbBaseVertex;
-    // Cache the current draw call's vertex count as well to support instanced draw calls
-    GLuint mXfbVertexCountPerInstance;
 
     // Cached clear value/mask for color and depth/stencil.
     VkClearValue mClearColorValue;

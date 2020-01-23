@@ -211,11 +211,7 @@ class Display final : public LabeledObject, angle::NonCopyable
   private:
     Display(EGLenum platform, EGLNativeDisplayType displayId, Device *eglDevice);
 
-    void setAttributes(const AttributeMap &attribMap) { mAttributeMap = attribMap; }
-
-    void setupDisplayPlatform(rx::DisplayImpl *impl);
-
-    void updateAttribsFromEnvironment(const AttributeMap &attribMap);
+    void setAttributes(rx::DisplayImpl *impl, const AttributeMap &attribMap);
 
     Error restoreLostDevice();
 

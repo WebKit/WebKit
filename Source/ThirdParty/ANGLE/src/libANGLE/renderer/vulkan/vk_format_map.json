@@ -214,7 +214,8 @@
             "image": "D24_UNORM_S8_UINT"
         },
         "D32_UNORM": {
-            "buffer": "NONE"
+            "buffer": "NONE",
+            "image": "D24_UNORM_S8_UINT"
         },
         "ETC1_R8G8B8_UNORM_BLOCK": {
             "buffer": "NONE",
@@ -334,9 +335,6 @@
         }
     },
     "fallbacks": {
-        "D32_UNORM": {
-            "image": ["D24_UNORM_S8_UINT", "D32_FLOAT"]
-        },
         "D32_FLOAT_S8X24_UINT": {
             "image": ["D24_UNORM_S8_UINT", "D32_FLOAT_S8X24_UINT"]
         },

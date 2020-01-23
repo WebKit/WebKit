@@ -352,8 +352,6 @@ void Shader::compile(const Context *context)
     mCurrentMaxComputeWorkGroupInvocations =
         static_cast<GLuint>(context->getCaps().maxComputeWorkGroupInvocations);
 
-    mMaxComputeSharedMemory = context->getCaps().maxComputeSharedMemorySize;
-
     ASSERT(mBoundCompiler.get());
     ShCompilerInstance compilerInstance = mBoundCompiler->getInstance(mState.mShaderType);
     ShHandle compilerHandle             = compilerInstance.getHandle();
@@ -462,14 +460,6 @@ void Shader::resolveCompile()
                     mState.mCompileStatus = CompileStatus::NOT_COMPILED;
                     return;
                 }
-            }
-
-            unsigned int sharedMemSize = sh::GetShaderSharedMemorySize(compilerHandle);
-            if (sharedMemSize > mMaxComputeSharedMemory)
-            {
-                WARN() << std::endl << "Exceeded maximum shared memory size";
-                mState.mCompileStatus = CompileStatus::NOT_COMPILED;
-                return;
             }
             break;
         }

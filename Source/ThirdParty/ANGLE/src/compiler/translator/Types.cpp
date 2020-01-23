@@ -114,8 +114,6 @@ const char *getBasicString(TBasicType t)
             return "uimageCube";
         case EbtAtomicCounter:
             return "atomic_uint";
-        case EbtSamplerVideoWEBGL:
-            return "samplerVideoWEBGL";
         default:
             UNREACHABLE();
             return "unknown type";
@@ -123,14 +121,52 @@ const char *getBasicString(TBasicType t)
 }
 
 // TType implementation.
-TType::TType() : TType(EbtVoid, 0, 0) {}
+TType::TType()
+    : type(EbtVoid),
+      precision(EbpUndefined),
+      qualifier(EvqGlobal),
+      invariant(false),
+      memoryQualifier(TMemoryQualifier::Create()),
+      layoutQualifier(TLayoutQualifier::Create()),
+      primarySize(0),
+      secondarySize(0),
+      mArraySizes(nullptr),
+      mInterfaceBlock(nullptr),
+      mStructure(nullptr),
+      mIsStructSpecifier(false),
+      mMangledName(nullptr)
+{}
 
 TType::TType(TBasicType t, unsigned char ps, unsigned char ss)
-    : TType(t, EbpUndefined, EvqGlobal, ps, ss)
+    : type(t),
+      precision(EbpUndefined),
+      qualifier(EvqGlobal),
+      invariant(false),
+      memoryQualifier(TMemoryQualifier::Create()),
+      layoutQualifier(TLayoutQualifier::Create()),
+      primarySize(ps),
+      secondarySize(ss),
+      mArraySizes(nullptr),
+      mInterfaceBlock(nullptr),
+      mStructure(nullptr),
+      mIsStructSpecifier(false),
+      mMangledName(nullptr)
 {}
 
 TType::TType(TBasicType t, TPrecision p, TQualifier q, unsigned char ps, unsigned char ss)
-    : TType(t, p, q, ps, ss, TSpan<const unsigned int>(), nullptr)
+    : type(t),
+      precision(p),
+      qualifier(q),
+      invariant(false),
+      memoryQualifier(TMemoryQualifier::Create()),
+      layoutQualifier(TLayoutQualifier::Create()),
+      primarySize(ps),
+      secondarySize(ss),
+      mArraySizes(nullptr),
+      mInterfaceBlock(nullptr),
+      mStructure(nullptr),
+      mIsStructSpecifier(false),
+      mMangledName(nullptr)
 {}
 
 TType::TType(const TPublicType &p)
@@ -138,12 +174,11 @@ TType::TType(const TPublicType &p)
       precision(p.precision),
       qualifier(p.qualifier),
       invariant(p.invariant),
-      precise(p.precise),
       memoryQualifier(p.memoryQualifier),
       layoutQualifier(p.layoutQualifier),
       primarySize(p.getPrimarySize()),
       secondarySize(p.getSecondarySize()),
-      mArraySizesStorage(nullptr),
+      mArraySizes(nullptr),
       mInterfaceBlock(nullptr),
       mStructure(nullptr),
       mIsStructSpecifier(false),
@@ -153,7 +188,7 @@ TType::TType(const TPublicType &p)
     ASSERT(secondarySize <= 4);
     if (p.isArray())
     {
-        makeArrays(*p.arraySizes);
+        mArraySizes = new TVector<unsigned int>(*p.arraySizes);
     }
     if (p.getUserDef())
     {
@@ -163,25 +198,54 @@ TType::TType(const TPublicType &p)
 }
 
 TType::TType(const TStructure *userDef, bool isStructSpecifier)
-    : TType(EbtStruct, EbpUndefined, EvqTemporary, 1, 1)
-{
-    mStructure         = userDef;
-    mIsStructSpecifier = isStructSpecifier;
-}
+    : type(EbtStruct),
+      precision(EbpUndefined),
+      qualifier(EvqTemporary),
+      invariant(false),
+      memoryQualifier(TMemoryQualifier::Create()),
+      layoutQualifier(TLayoutQualifier::Create()),
+      primarySize(1),
+      secondarySize(1),
+      mArraySizes(nullptr),
+      mInterfaceBlock(nullptr),
+      mStructure(userDef),
+      mIsStructSpecifier(isStructSpecifier),
+      mMangledName(nullptr)
+{}
 
 TType::TType(const TInterfaceBlock *interfaceBlockIn,
              TQualifier qualifierIn,
              TLayoutQualifier layoutQualifierIn)
-    : TType(EbtInterfaceBlock, EbpUndefined, qualifierIn, 1, 1)
-{
-    layoutQualifier = layoutQualifierIn;
-    mInterfaceBlock = interfaceBlockIn;
-}
+    : type(EbtInterfaceBlock),
+      precision(EbpUndefined),
+      qualifier(qualifierIn),
+      invariant(false),
+      memoryQualifier(TMemoryQualifier::Create()),
+      layoutQualifier(layoutQualifierIn),
+      primarySize(1),
+      secondarySize(1),
+      mArraySizes(nullptr),
+      mInterfaceBlock(interfaceBlockIn),
+      mStructure(0),
+      mIsStructSpecifier(false),
+      mMangledName(nullptr)
+{}
 
 TType::TType(const TType &t)
-{
-    *this = t;
-}
+    : type(t.type),
+      precision(t.precision),
+      qualifier(t.qualifier),
+      invariant(t.invariant),
+      memoryQualifier(t.memoryQualifier),
+      layoutQualifier(t.layoutQualifier),
+      primarySize(t.primarySize),
+      secondarySize(t.secondarySize),
+      mArraySizes(t.mArraySizes ? new TVector<unsigned int>(*t.mArraySizes) : nullptr),
+      mInterfaceBlock(t.mInterfaceBlock),
+      mStructure(t.mStructure),
+      mIsStructSpecifier(t.mIsStructSpecifier),
+      mMangledName(t.mMangledName)
+{}
 
 TType &TType::operator=(const TType &t)
 {
@@ -189,29 +253,15 @@ TType &TType::operator=(const TType &t)
     precision          = t.precision;
     qualifier          = t.qualifier;
     invariant          = t.invariant;
-    precise            = t.precise;
     memoryQualifier    = t.memoryQualifier;
     layoutQualifier    = t.layoutQualifier;
     primarySize        = t.primarySize;
     secondarySize      = t.secondarySize;
-    mArraySizesStorage = nullptr;
+    mArraySizes        = t.mArraySizes ? new TVector<unsigned int>(*t.mArraySizes) : nullptr;
     mInterfaceBlock    = t.mInterfaceBlock;
     mStructure         = t.mStructure;
     mIsStructSpecifier = t.mIsStructSpecifier;
     mMangledName       = t.mMangledName;
-
-    if (t.mArraySizesStorage)
-    {
-        // If other type has storage, duplicate the storage and set the view to our own storage.
-        mArraySizesStorage = new TVector<unsigned int>(*t.mArraySizesStorage);
-        mArraySizes        = *mArraySizesStorage;
-    }
-    else
-    {
-        // Otherwise reference the same (constexpr) array sizes as the other type.
-        mArraySizes = t.mArraySizes;
-    }
-
     return *this;
 }
 
@@ -438,12 +488,16 @@ const char *TType::buildMangledName() const
         }
     }
 
-    for (unsigned int arraySize : mArraySizes)
+    if (mArraySizes)
     {
-        char buf[20];
-        snprintf(buf, sizeof(buf), "%d", arraySize);
-        mangledName += 'x';
-        mangledName += buf;
+        for (unsigned int arraySize : *mArraySizes)
+        {
+            char buf[20];
+            snprintf(buf, sizeof(buf), "%d", arraySize);
+            mangledName += '[';
+            mangledName += buf;
+            mangledName += ']';
+        }
     }
 
     // Copy string contents into a pool-allocated buffer, so we never need to call delete.
@@ -462,12 +516,15 @@ size_t TType::getObjectSize() const
     if (totalSize == 0)
         return 0;
 
-    for (size_t arraySize : mArraySizes)
+    if (mArraySizes)
     {
-        if (arraySize > INT_MAX / totalSize)
-            totalSize = INT_MAX;
-        else
-            totalSize *= arraySize;
+        for (size_t arraySize : *mArraySizes)
+        {
+            if (arraySize > INT_MAX / totalSize)
+                totalSize = INT_MAX;
+            else
+                totalSize *= arraySize;
+        }
     }
 
     return totalSize;
@@ -487,15 +544,18 @@ int TType::getLocationCount() const
         return 0;
     }
 
-    for (unsigned int arraySize : mArraySizes)
+    if (mArraySizes)
     {
-        if (arraySize > static_cast<unsigned int>(std::numeric_limits<int>::max() / count))
+        for (unsigned int arraySize : *mArraySizes)
         {
-            count = std::numeric_limits<int>::max();
-        }
-        else
-        {
-            count *= static_cast<int>(arraySize);
+            if (arraySize > static_cast<unsigned int>(std::numeric_limits<int>::max() / count))
+            {
+                count = std::numeric_limits<int>::max();
+            }
+            else
+            {
+                count *= static_cast<int>(arraySize);
+            }
         }
     }
 
@@ -504,9 +564,12 @@ int TType::getLocationCount() const
 
 unsigned int TType::getArraySizeProduct() const
 {
+    if (!mArraySizes)
+        return 1u;
+
     unsigned int product = 1u;
 
-    for (unsigned int arraySize : mArraySizes)
+    for (unsigned int arraySize : *mArraySizes)
     {
         product *= arraySize;
     }
@@ -515,7 +578,10 @@ unsigned int TType::getArraySizeProduct() const
 
 bool TType::isUnsizedArray() const
 {
-    for (unsigned int arraySize : mArraySizes)
+    if (!mArraySizes)
+        return false;
+
+    for (unsigned int arraySize : *mArraySizes)
     {
         if (arraySize == 0u)
         {
@@ -541,30 +607,34 @@ bool TType::isElementTypeOf(const TType &arrayType) const
     {
         return false;
     }
-    for (size_t i = 0; i < mArraySizes.size(); ++i)
+    if (isArray())
     {
-        if (mArraySizes[i] != arrayType.mArraySizes[i])
+        for (size_t i = 0; i < mArraySizes->size(); ++i)
         {
-            return false;
+            if ((*mArraySizes)[i] != (*arrayType.mArraySizes)[i])
+            {
+                return false;
+            }
         }
     }
     return true;
 }
 
-void TType::sizeUnsizedArrays(const TSpan<const unsigned int> &newArraySizes)
+void TType::sizeUnsizedArrays(const TVector<unsigned int> *newArraySizes)
 {
-    ASSERT(!isArray() || mArraySizesStorage != nullptr);
+    size_t newArraySizesSize = newArraySizes ? newArraySizes->size() : 0;
     for (size_t i = 0u; i < getNumArraySizes(); ++i)
     {
-        if (mArraySizes[i] == 0)
+        if ((*mArraySizes)[i] == 0)
         {
-            if (i < newArraySizes.size())
+            if (i < newArraySizesSize)
             {
-                (*mArraySizesStorage)[i] = newArraySizes[i];
+                ASSERT(newArraySizes != nullptr);
+                (*mArraySizes)[i] = (*newArraySizes)[i];
             }
             else
             {
-                (*mArraySizesStorage)[i] = 1u;
+                (*mArraySizes)[i] = 1u;
             }
         }
     }
@@ -573,9 +643,9 @@ void TType::sizeUnsizedArrays(const TSpan<const unsigned int> &newArraySizes)
 
 void TType::sizeOutermostUnsizedArray(unsigned int arraySize)
 {
-    ASSERT(isArray() && mArraySizesStorage != nullptr);
-    ASSERT((*mArraySizesStorage).back() == 0u);
-    (*mArraySizesStorage).back() = arraySize;
+    ASSERT(isArray());
+    ASSERT(mArraySizes->back() == 0u);
+    mArraySizes->back() = arraySize;
 }
 
 void TType::setBasicType(TBasicType t)
@@ -609,55 +679,54 @@ void TType::setSecondarySize(unsigned char ss)
 
 void TType::makeArray(unsigned int s)
 {
-    if (mArraySizesStorage == nullptr)
-    {
-        mArraySizesStorage = new TVector<unsigned int>();
-    }
-    // Add a dimension to the current ones.
-    mArraySizesStorage->push_back(s);
-    onArrayDimensionsChange(*mArraySizesStorage);
+    if (!mArraySizes)
+        mArraySizes = new TVector<unsigned int>();
+
+    mArraySizes->push_back(s);
+    invalidateMangledName();
 }
 
-void TType::makeArrays(const TSpan<const unsigned int> &sizes)
+void TType::makeArrays(const TVector<unsigned int> &sizes)
 {
-    if (mArraySizesStorage == nullptr)
-    {
-        mArraySizesStorage = new TVector<unsigned int>();
-    }
-    // Add dimensions to the current ones.
-    mArraySizesStorage->insert(mArraySizesStorage->end(), sizes.begin(), sizes.end());
-    onArrayDimensionsChange(*mArraySizesStorage);
+    if (!mArraySizes)
+        mArraySizes = new TVector<unsigned int>();
+
+    mArraySizes->insert(mArraySizes->end(), sizes.begin(), sizes.end());
+    invalidateMangledName();
 }
 
 void TType::setArraySize(size_t arrayDimension, unsigned int s)
 {
-    ASSERT(isArray() && mArraySizesStorage != nullptr);
-    ASSERT(arrayDimension < mArraySizesStorage->size());
-    if (mArraySizes[arrayDimension] != s)
+    ASSERT(mArraySizes != nullptr);
+    ASSERT(arrayDimension < mArraySizes->size());
+    if (mArraySizes->at(arrayDimension) != s)
     {
-        (*mArraySizesStorage)[arrayDimension] = s;
+        (*mArraySizes)[arrayDimension] = s;
         invalidateMangledName();
     }
 }
 
 void TType::toArrayElementType()
 {
-    ASSERT(isArray() && mArraySizesStorage != nullptr);
-    mArraySizesStorage->pop_back();
-    onArrayDimensionsChange(*mArraySizesStorage);
+    ASSERT(mArraySizes != nullptr);
+    if (mArraySizes->size() > 0)
+    {
+        mArraySizes->pop_back();
+        invalidateMangledName();
+    }
 }
 
 void TType::toArrayBaseType()
 {
-    if (!isArray())
+    if (mArraySizes == nullptr)
     {
         return;
     }
-    if (mArraySizesStorage)
+    if (mArraySizes->size() > 0)
     {
-        mArraySizesStorage->clear();
+        mArraySizes->clear();
     }
-    onArrayDimensionsChange(TSpan<const unsigned int>());
+    invalidateMangledName();
 }
 
 void TType::setInterfaceBlock(const TInterfaceBlock *interfaceBlockIn)
@@ -682,6 +751,11 @@ const char *TType::getMangledName() const
 void TType::realize()
 {
     getMangledName();
+}
+
+void TType::invalidateMangledName()
+{
+    mMangledName = nullptr;
 }
 
 void TType::createSamplerSymbols(const ImmutableString &namePrefix,
@@ -852,7 +926,6 @@ void TPublicType::initialize(const TTypeSpecifierNonArray &typeSpecifier, TQuali
     memoryQualifier       = TMemoryQualifier::Create();
     qualifier             = q;
     invariant             = false;
-    precise               = false;
     precision             = EbpUndefined;
     arraySizes            = nullptr;
 }
@@ -866,7 +939,6 @@ void TPublicType::initializeBasicType(TBasicType basicType)
     memoryQualifier                     = TMemoryQualifier::Create();
     qualifier                           = EvqTemporary;
     invariant                           = false;
-    precise                             = false;
     precision                           = EbpUndefined;
     arraySizes                          = nullptr;
 }

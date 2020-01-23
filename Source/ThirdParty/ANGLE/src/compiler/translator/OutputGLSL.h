@@ -28,8 +28,7 @@ class TOutputGLSL : public TOutputGLSLBase
   protected:
     bool writeVariablePrecision(TPrecision) override;
     void visitSymbol(TIntermSymbol *node) override;
-    ImmutableString translateTextureFunction(const ImmutableString &name,
-                                             const ShCompileOptions &option) override;
+    ImmutableString translateTextureFunction(const ImmutableString &name) override;
 };
 
 }  // namespace sh

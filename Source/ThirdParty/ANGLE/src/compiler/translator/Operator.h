@@ -139,7 +139,6 @@ enum TOperator
     EOpSmoothstep,
     EOpIsnan,
     EOpIsinf,
-    EOpFma,
 
     EOpFloatBitsToInt,
     EOpFloatBitsToUint,
@@ -258,6 +257,7 @@ enum TOperator
 
     // Desktop GLSL functions
     EOpFTransform,
+    EOpFma,
     EOpPackDouble2x32,
     EOpUnpackDouble2x32,
 };

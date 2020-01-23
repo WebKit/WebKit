@@ -18,7 +18,6 @@
 
 namespace rx
 {
-class GLImplFactory;
 class FenceNVImpl;
 class SyncImpl;
 }  // namespace rx
@@ -29,7 +28,7 @@ namespace gl
 class FenceNV final : angle::NonCopyable
 {
   public:
-    explicit FenceNV(rx::GLImplFactory *factory);
+    explicit FenceNV(rx::FenceNVImpl *impl);
     virtual ~FenceNV();
 
     angle::Result set(const Context *context, GLenum condition);
@@ -52,7 +51,7 @@ class FenceNV final : angle::NonCopyable
 class Sync final : public RefCountObject<GLuint>, public LabeledObject
 {
   public:
-    Sync(rx::GLImplFactory *factory, GLuint id);
+    Sync(rx::SyncImpl *impl, GLuint id);
     ~Sync() override;
 
     void onDestroy(const Context *context) override;
@@ -70,8 +69,6 @@ class Sync final : public RefCountObject<GLuint>, public LabeledObject
 
     GLenum getCondition() const { return mCondition; }
     GLbitfield getFlags() const { return mFlags; }
-
-    rx::SyncImpl *getImplementation() const { return mFence; }
 
   private:
     rx::SyncImpl *mFence;

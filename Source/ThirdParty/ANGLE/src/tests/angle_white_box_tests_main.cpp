@@ -6,11 +6,11 @@
 
 #include "gtest/gtest.h"
 #include "test_utils/ANGLETest.h"
-#include "test_utils/runner/TestSuite.h"
 
 int main(int argc, char **argv)
 {
-    angle::TestSuite testSuite(&argc, argv);
+    testing::InitGoogleTest(&argc, argv);
     testing::AddGlobalTestEnvironment(new ANGLETestEnvironment());
-    return testSuite.run();
+    int rt = RUN_ALL_TESTS();
+    return rt;
 }

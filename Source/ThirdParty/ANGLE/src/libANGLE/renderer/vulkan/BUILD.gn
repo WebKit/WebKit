@@ -15,6 +15,11 @@ declare_args() {
 
   # Enable Vulkan GPU trace event capability
   angle_enable_vulkan_gpu_trace_events = false
+
+  # Currently SwiftShader's Vulkan front-end doesn't build on Android.
+  # SwiftShader is not needed on Fuchsia because Vulkan is supported on all
+  # devices that run Fuchsia.
+  angle_swiftshader = !is_android && !is_fuchsia && !is_ggp
 }
 
 _vulkan_backend_sources = [
@@ -30,7 +35,6 @@ _vulkan_backend_sources = [
   "DeviceVk.h",
   "DisplayVk.cpp",
   "DisplayVk.h",
-  "DisplayVk_api.h",
   "FenceNVVk.cpp",
   "FenceNVVk.h",
   "FramebufferVk.cpp",
@@ -142,45 +146,119 @@ if (is_ggp) {
   ]
 }
 
-if (is_mac) {
-  _vulkan_backend_sources += [
-    "mac/DisplayVkMac.mm",
-    "mac/DisplayVkMac.h",
-    "mac/WindowSurfaceVkMac.mm",
-    "mac/WindowSurfaceVkMac.h",
-  ]
-}
+config("vulkan_config") {
+  _sws_icd = "./libvk_swiftshader_icd.json"
+  if (is_win) {
+    _sws_icd = ".\\\\libvk_swiftshader_icd.json"
+  }
 
-config("angle_vulkan_lib_android") {
+  defines = [
+    "ANGLE_VK_LAYERS_DIR=\"$angle_data_dir\"",
+    "ANGLE_VK_MOCK_ICD_JSON=\"$angle_data_dir/VkICD_mock_icd.json\"",
+    "ANGLE_VK_SWIFTSHADER_ICD_JSON=\"${_sws_icd}\"",
+  ]
   if (is_android) {
     libs = [ "vulkan" ]
   }
+  if (angle_enable_vulkan_validation_layers) {
+    defines += [ "ANGLE_ENABLE_VULKAN_VALIDATION_LAYERS_BY_DEFAULT" ]
+  }
 }
 
-group("angle_vulkan_entry_points") {
-  public_configs = [ ":angle_vulkan_lib_android" ]
+if (angle_swiftshader) {
+  copy("angle_swiftshader_icd_rename") {
+    sources = [
+      "$swiftshader_dir/src/Vulkan/vk_swiftshader_icd.json",
+    ]
+    outputs = [
+      "$root_gen_dir/angle/libvk_swiftshader_icd.json",
+    ]
+  }
+
+  action("angle_swiftshader_icd") {
+    deps = [
+      ":angle_swiftshader_icd_rename",
+      "$angle_root/third_party/vulkan-headers/src:vulkan_headers",
+    ]
+    script = "$angle_root/scripts/generate_vulkan_layers_json.py"
+    sources = [
+      "$angle_root/third_party/vulkan-headers/src/include/vulkan/vulkan_core.h",
+    ]
+
+    # Must be listed after vulkan_core.h. git cl format sorts them if they
+    # are in one list. So split up the sources manually.
+    sources += [ "$root_gen_dir/angle/libvk_swiftshader_icd.json" ]
+
+    outputs = [
+      "$root_out_dir/libvk_swiftshader_icd.json",
+    ]
+    data = outputs
+
+    _raw_sws_in = rebase_path("$root_gen_dir/angle", root_build_dir)
+    _raw_sws_out = rebase_path("$root_out_dir", root_build_dir)
+
+    _sws_output = ""
+    if (is_win) {
+      _sws_output += ".\\vk_swiftshader.dll"
+    } else if (is_mac) {
+      _sws_output += "./libvk_swiftshader.dylib"
+    } else {
+      _sws_output += "./libvk_swiftshader.so"
+    }
+
+    args = [
+             "--icd",
+             "--replacement",
+             _sws_output,
+             _raw_sws_in,
+             _raw_sws_out,
+           ] + rebase_path(sources, root_build_dir)
+  }
+}
+
+# Use this target to include everything ANGLE needs for Vulkan.
+group("angle_vulkan") {
   public_deps = [
-    "$angle_root/src/third_party/volk:volk",
     "$angle_root/third_party/vulkan-headers/src:vulkan_headers",
   ]
+  public_configs = [ ":vulkan_config" ]
+  deps = []
+  data_deps = []
+  if (!is_android && !is_fuchsia) {
+    deps += [ "$angle_root/third_party/vulkan-loader/src:libvulkan" ]
+    data_deps += [ "$angle_root/third_party/vulkan-tools/src:VkICD_mock_icd" ]
+    public_configs +=
+        [ "$angle_root/third_party/vulkan-loader/src:vulkan_loader_config" ]
+  }
   if (is_fuchsia) {
     public_deps += [
       "$angle_root/src/common/fuchsia_egl",
       "//third_party/fuchsia-sdk:vulkan_base",
       "//third_party/fuchsia-sdk/sdk:vulkan",
     ]
-  } else if (!is_android) {
-    data_deps = [
-      "$angle_root/third_party/vulkan-loader/src:libvulkan",
+  }
+
+  if (angle_enable_vulkan_validation_layers) {
+    if (is_fuchsia) {
+      deps += [ "//third_party/fuchsia-sdk:vulkan_validation" ]
+    } else {
+      data_deps += [ "$angle_root/third_party/vulkan-validation-layers/src:vulkan_validation_layers" ]
+      if (!is_android) {
+        data_deps += [ "$angle_root/third_party/vulkan-validation-layers/src:vulkan_gen_json_files" ]
+      }
+    }
+  }
+
+  if (angle_swiftshader) {
+    data_deps += [
+      ":angle_swiftshader_icd",
+      "$swiftshader_dir/src/Vulkan:swiftshader_libvulkan",
     ]
   }
 }
 
 config("angle_vulkan_backend_config") {
   defines = [ "ANGLE_ENABLE_VULKAN" ]
-  if (angle_enable_swiftshader) {
-    defines += [ "ANGLE_ENABLE_SWIFTSHADER" ]
-  }
   if (angle_enable_custom_vulkan_cmd_buffers) {
     defines += [ "ANGLE_USE_CUSTOM_VULKAN_CMD_BUFFERS=1" ]
   }
@@ -194,25 +272,22 @@ angle_source_set("angle_vulkan_backend") {
   sources = _vulkan_backend_sources
   libs = []
   deps = [
-    ":angle_vulkan_entry_points",
-    "$angle_root:angle_gpu_info_util",
+    ":angle_vulkan",
     "$angle_root:angle_image_util",
-    "$angle_root/third_party/vulkan-headers/src:vulkan_headers",
     "$angle_spirv_tools_dir:spvtools_val",
   ]
   public_deps = [
     "$angle_root:angle_glslang_wrapper",
     "$angle_root:libANGLE_headers",
+    "$angle_root/third_party/vulkan-headers/src:vulkan_headers",
   ]
   public_configs = [ ":angle_vulkan_backend_config" ]
-
-  data_deps = []
-
-  defines = [
-    "ANGLE_VK_LAYERS_DIR=\"$angle_data_dir\"",
-    "ANGLE_VK_MOCK_ICD_JSON=\"$angle_data_dir/VkICD_mock_icd.json\"",
-  ]
-
+  if (is_fuchsia) {
+    deps += [
+      "$angle_root/src/common/fuchsia_egl",
+      "$angle_root/src/common/fuchsia_egl:backend",
+    ]
+  }
   if (is_android) {
     libs += [ "vulkan" ]
   }
@@ -220,38 +295,4 @@ angle_source_set("angle_vulkan_backend") {
   # Include generated shaders.
   import("vk_internal_shaders_autogen.gni")
   sources += angle_vulkan_internal_shaders
-
-  if (!is_android && !is_fuchsia) {
-    data_deps += [
-      "$angle_root/third_party/vulkan-loader/src:libvulkan",
-      "$angle_root/third_party/vulkan-tools/src:VkICD_mock_icd",
-    ]
-  }
-
-  if (angle_enable_vulkan_validation_layers) {
-    defines += [ "ANGLE_ENABLE_VULKAN_VALIDATION_LAYERS_BY_DEFAULT" ]
-    if (is_fuchsia) {
-      data_deps += [ "//third_party/fuchsia-sdk:vulkan_validation" ]
-    } else {
-      data_deps += [ "$angle_root/third_party/vulkan-validation-layers/src:vulkan_validation_layers" ]
-      if (!is_android) {
-        data_deps += [ "$angle_root/third_party/vulkan-validation-layers/src:vulkan_gen_json_files" ]
-      }
-    }
-  }
-
-  if (angle_enable_swiftshader) {
-    import("$swiftshader_dir/src/Vulkan/vulkan.gni")
-    _sws_icd = "./$swiftshader_icd_file_name"
-    if (is_win) {
-      _sws_icd = ".\\\\$swiftshader_icd_file_name"
-    }
-
-    defines += [ "ANGLE_VK_SWIFTSHADER_ICD_JSON=\"${_sws_icd}\"" ]
-
-    data_deps += [
-      "$swiftshader_dir/src/Vulkan:icd_file",
-      "$swiftshader_dir/src/Vulkan:swiftshader_libvulkan",
-    ]
-  }
 }

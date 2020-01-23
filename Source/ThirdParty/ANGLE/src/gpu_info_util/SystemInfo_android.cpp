@@ -191,11 +191,6 @@ bool GetSystemInfo(SystemInfo *info)
                 gpu.driverVersion               = FormatString("0x%x", properties.driverVersion);
                 gpu.detailedDriverVersion.major = properties.driverVersion;
                 break;
-            case kVendorID_Broadcom:
-                gpu.driverVendor                = "Broadcom";
-                gpu.driverVersion               = FormatString("0x%x", properties.driverVersion);
-                gpu.detailedDriverVersion.major = properties.driverVersion;
-                break;
             case kVendorID_ImgTec:
                 gpu.driverVendor                = "Imagination Technologies Limited";
                 gpu.driverVersion               = FormatString("0x%x", properties.driverVersion);
@@ -203,11 +198,6 @@ bool GetSystemInfo(SystemInfo *info)
                 break;
             case kVendorID_Intel:
                 gpu.driverVendor                = "Intel Corporation";
-                gpu.driverVersion               = FormatString("0x%x", properties.driverVersion);
-                gpu.detailedDriverVersion.major = properties.driverVersion;
-                break;
-            case kVendorID_Kazan:
-                gpu.driverVendor                = "Kazan Software";
                 gpu.driverVersion               = FormatString("0x%x", properties.driverVersion);
                 gpu.detailedDriverVersion.major = properties.driverVersion;
                 break;
@@ -239,13 +229,18 @@ bool GetSystemInfo(SystemInfo *info)
                     gpu.detailedDriverVersion.major = properties.driverVersion;
                 }
                 break;
+            case kVendorID_Vivante:
+                gpu.driverVendor                = "Vivante";
+                gpu.driverVersion               = FormatString("0x%x", properties.driverVersion);
+                gpu.detailedDriverVersion.major = properties.driverVersion;
+                break;
             case kVendorID_VeriSilicon:
                 gpu.driverVendor                = "VeriSilicon";
                 gpu.driverVersion               = FormatString("0x%x", properties.driverVersion);
                 gpu.detailedDriverVersion.major = properties.driverVersion;
                 break;
-            case kVendorID_Vivante:
-                gpu.driverVendor                = "Vivante";
+            case kVendorID_Kazan:
+                gpu.driverVendor                = "Kazan Software";
                 gpu.driverVersion               = FormatString("0x%x", properties.driverVersion);
                 gpu.detailedDriverVersion.major = properties.driverVersion;
                 break;

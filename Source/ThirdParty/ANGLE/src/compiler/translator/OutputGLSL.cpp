@@ -75,25 +75,8 @@ void TOutputGLSL::visitSymbol(TIntermSymbol *node)
     }
 }
 
-ImmutableString TOutputGLSL::translateTextureFunction(const ImmutableString &name,
-                                                      const ShCompileOptions &option)
+ImmutableString TOutputGLSL::translateTextureFunction(const ImmutableString &name)
 {
-    // Check WEBGL_video_texture invocation first.
-    if (name == "textureVideoWEBGL")
-    {
-        if (option & SH_TAKE_VIDEO_TEXTURE_AS_EXTERNAL_OES)
-        {
-            // TODO(http://anglebug.com/3889): Implement external image situation.
-            UNIMPLEMENTED();
-            return ImmutableString("");
-        }
-        else
-        {
-            // Default translating textureVideoWEBGL to texture2D.
-            return ImmutableString("texture2D");
-        }
-    }
-
     static const char *simpleRename[]       = {"texture2DLodEXT",
                                          "texture2DLod",
                                          "texture2DProjLodEXT",

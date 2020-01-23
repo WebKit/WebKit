@@ -96,32 +96,4 @@ bool TranslatorMetal::translate(TIntermBlock *root,
     return true;
 }
 
-// Metal needs to inverse the depth if depthRange is is reverse order, i.e. depth near > depth far
-// This is achieved by multiply the depth value with scale value stored in
-// driver uniform's depthRange.reserved
-bool TranslatorMetal::transformDepthBeforeCorrection(TIntermBlock *root,
-                                                     const TVariable *driverUniforms)
-{
-    // Create a symbol reference to "gl_Position"
-    const TVariable *position  = BuiltInVariable::gl_Position();
-    TIntermSymbol *positionRef = new TIntermSymbol(position);
-
-    // Create a swizzle to "gl_Position.z"
-    TVector<int> swizzleOffsetZ = {2};
-    TIntermSwizzle *positionZ   = new TIntermSwizzle(positionRef, swizzleOffsetZ);
-
-    // Create a ref to "depthRange.reserved"
-    TIntermBinary *viewportZScale = getDriverUniformDepthRangeReservedFieldRef(driverUniforms);
-
-    // Create the expression "gl_Position.z * depthRange.reserved".
-    TIntermBinary *zScale = new TIntermBinary(EOpMul, positionZ->deepCopy(), viewportZScale);
-
-    // Create the assignment "gl_Position.z = gl_Position.z * depthRange.reserved"
-    TIntermTyped *positionZLHS = positionZ->deepCopy();
-    TIntermBinary *assignment  = new TIntermBinary(TOperator::EOpAssign, positionZLHS, zScale);
-
-    // Append the assignment as a statement at the end of the shader.
-    return RunAtTheEndOfShader(this, root, assignment, &getSymbolTable());
-}
-
 }  // namespace sh

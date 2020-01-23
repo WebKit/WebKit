@@ -17,8 +17,6 @@ namespace angle
 std::string GetExecutablePath();
 std::string GetExecutableDirectory();
 const char *GetSharedLibraryExtension();
-const char *GetExecutableExtension();
-char GetPathSeparator();
 Optional<std::string> GetCWD();
 bool SetCWD(const char *dirName);
 bool SetEnvironmentVar(const char *variableName, const char *value);

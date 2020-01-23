@@ -438,12 +438,6 @@ bool ValidateDrawIndirectBase(Context *context, PrimitiveMode mode, const void *
         return false;
     }
 
-    if (context->getStateCache().hasAnyActiveClientAttrib())
-    {
-        context->validationError(GL_INVALID_OPERATION, kClientDataInVertexArray);
-        return false;
-    }
-
     Buffer *drawIndirectBuffer = state.getTargetBuffer(BufferBinding::DrawIndirect);
     if (!drawIndirectBuffer)
     {

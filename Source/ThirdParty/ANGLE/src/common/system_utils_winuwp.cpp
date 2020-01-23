@@ -14,6 +14,9 @@
 #include <codecvt>
 #include <locale>
 #include <string>
+#include <vector>
+
+#include "common/debug.h"
 
 namespace angle
 {
@@ -28,6 +31,33 @@ std::string GetEnvironmentVar(const char *variableName)
 {
     // Not supported for UWP
     return "";
+}
+
+const char *GetPathSeparatorForEnvironmentVar()
+{
+    // Not supported for UWP
+    return "";
+}
+
+const char *GetSharedLibraryExtension()
+{
+    return "dll";
+}
+
+const char *GetPathSeparator()
+{
+    return ";";
+}
+
+double GetCurrentTime()
+{
+    LARGE_INTEGER frequency = {};
+    QueryPerformanceFrequency(&frequency);
+
+    LARGE_INTEGER curTime;
+    QueryPerformanceCounter(&curTime);
+
+    return static_cast<double>(curTime.QuadPart) / frequency.QuadPart;
 }
 
 class UwpLibrary : public Library
@@ -82,5 +112,15 @@ class UwpLibrary : public Library
 Library *OpenSharedLibrary(const char *libraryName, SearchType searchType)
 {
     return new UwpLibrary(libraryName, searchType);
+}
+
+bool IsDebuggerAttached()
+{
+    return !!::IsDebuggerPresent();
+}
+
+void BreakDebugger()
+{
+    __debugbreak();
 }
 }  // namespace angle

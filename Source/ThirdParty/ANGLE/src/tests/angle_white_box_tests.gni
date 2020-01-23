@@ -5,8 +5,6 @@
 angle_white_box_tests_sources = [
   "egl_tests/EGLFeatureControlTest.cpp",
   "util_tests/PrintSystemInfoTest.cpp",
-  "test_utils/angle_test_platform.cpp",
-  "test_utils/angle_test_platform.h",
   "test_utils/angle_test_configs.cpp",
   "test_utils/angle_test_configs.h",
   "test_utils/angle_test_instantiate.cpp",
@@ -14,7 +12,6 @@ angle_white_box_tests_sources = [
   "test_utils/ANGLETest.cpp",
   "test_utils/ANGLETest.h",
   "test_utils/gl_raii.h",
-  "gl_tests/FormatPrintTest.cpp",
 ]
 angle_white_box_tests_win_sources = [
   "egl_tests/EGLDirectCompositionTest.cpp",

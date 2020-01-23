@@ -119,7 +119,6 @@ struct InterfaceBlock : public ShaderVariableBuffer
                    const std::string &mappedNameIn,
                    bool isArrayIn,
                    unsigned int arrayElementIn,
-                   unsigned int firstFieldArraySizeIn,
                    int bindingIn);
 
     std::string nameWithArrayIndex() const;
@@ -129,7 +128,6 @@ struct InterfaceBlock : public ShaderVariableBuffer
     std::string mappedName;
     bool isArray;
     unsigned int arrayElement;
-    unsigned int firstFieldArraySize;
 };
 
 }  // namespace gl

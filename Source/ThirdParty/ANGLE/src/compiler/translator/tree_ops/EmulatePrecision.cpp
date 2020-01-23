@@ -609,8 +609,7 @@ bool EmulatePrecision::visitDeclaration(Visit visit, TIntermDeclaration *node)
     return true;
 }
 
-bool EmulatePrecision::visitGlobalQualifierDeclaration(Visit visit,
-                                                       TIntermGlobalQualifierDeclaration *node)
+bool EmulatePrecision::visitInvariantDeclaration(Visit visit, TIntermInvariantDeclaration *node)
 {
     return false;
 }

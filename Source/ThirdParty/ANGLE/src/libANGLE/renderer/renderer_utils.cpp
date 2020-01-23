@@ -29,25 +29,6 @@ namespace rx
 
 namespace
 {
-// Both D3D and Vulkan support the same set of standard sample positions for 1, 2, 4, 8, and 16
-// samples.  See:
-//
-// - https://msdn.microsoft.com/en-us/library/windows/desktop/ff476218.aspx
-//
-// -
-// https://www.khronos.org/registry/vulkan/specs/1.1-extensions/html/vkspec.html#primsrast-multisampling
-using SamplePositionsArray                                     = std::array<float, 32>;
-constexpr std::array<SamplePositionsArray, 5> kSamplePositions = {
-    {{{0.5f, 0.5f}},
-     {{0.75f, 0.75f, 0.25f, 0.25f}},
-     {{0.375f, 0.125f, 0.875f, 0.375f, 0.125f, 0.625f, 0.625f, 0.875f}},
-     {{0.5625f, 0.3125f, 0.4375f, 0.6875f, 0.8125f, 0.5625f, 0.3125f, 0.1875f, 0.1875f, 0.8125f,
-       0.0625f, 0.4375f, 0.6875f, 0.9375f, 0.9375f, 0.0625f}},
-     {{0.5625f, 0.5625f, 0.4375f, 0.3125f, 0.3125f, 0.625f,  0.75f,   0.4375f,
-       0.1875f, 0.375f,  0.625f,  0.8125f, 0.8125f, 0.6875f, 0.6875f, 0.1875f,
-       0.375f,  0.875f,  0.5f,    0.0625f, 0.25f,   0.125f,  0.125f,  0.75f,
-       0.0f,    0.5f,    0.9375f, 0.25f,   0.875f,  0.9375f, 0.0625f, 0.0f}}}};
-
 void CopyColor(gl::ColorF *color)
 {
     // No-op
@@ -799,26 +780,5 @@ void OverrideFeaturesWithDisplayState(angle::FeatureSetBase *features,
 {
     features->overrideFeatures(state.featureOverridesEnabled, true);
     features->overrideFeatures(state.featureOverridesDisabled, false);
-}
-
-void GetSamplePosition(GLsizei sampleCount, size_t index, GLfloat *xy)
-{
-    ASSERT(gl::isPow2(sampleCount));
-    if (sampleCount > 16)
-    {
-        // Vulkan (and D3D11) doesn't have standard sample positions for 32 and 64 samples (and no
-        // drivers are known to support that many samples)
-        xy[0] = 0.5f;
-        xy[1] = 0.5f;
-    }
-    else
-    {
-        size_t indexKey = static_cast<size_t>(gl::log2(sampleCount));
-        ASSERT(indexKey < kSamplePositions.size() &&
-               (2 * index + 1) < kSamplePositions[indexKey].size());
-
-        xy[0] = kSamplePositions[indexKey][2 * index];
-        xy[1] = kSamplePositions[indexKey][2 * index + 1];
-    }
 }
 }  // namespace rx

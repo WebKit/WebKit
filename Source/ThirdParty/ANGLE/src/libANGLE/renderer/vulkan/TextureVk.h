@@ -345,15 +345,13 @@ class TextureVk : public TextureImpl
     void releaseStagingBuffer(ContextVk *contextVk);
     uint32_t getMipLevelCount(ImageMipLevels mipLevels) const;
     uint32_t getMaxLevelCount() const;
-    // Used when the image is being redefined (for example to add mips or change base level) to copy
-    // each subresource of the image and stage it for another subresource.  When all subresources
-    // are taken care of, the image is recreated.
-    angle::Result copyAndStageImageSubresource(ContextVk *contextVk,
+    angle::Result copyImageDataToStagingBuffer(ContextVk *contextVk,
                                                const gl::ImageDesc &desc,
                                                bool ignoreLayerCount,
                                                uint32_t currentLayer,
                                                uint32_t sourceLevel,
-                                               uint32_t stagingDstMipLevel);
+                                               uint32_t stagingDstMipLevel,
+                                               vk::BufferHelper **stagingBuffer);
     angle::Result initImageViews(ContextVk *contextVk,
                                  const vk::Format &format,
                                  const bool sized,
@@ -378,10 +376,14 @@ class TextureVk : public TextureImpl
     angle::Result changeLevels(ContextVk *contextVk,
                                GLuint previousBaseLevel,
                                GLuint baseLevel,
-                               GLuint maxLevel);
+                               GLuint maxLevel,
+                               vk::BufferHelper **stagingBuffer);
 
     // Update base and max levels, and re-create image if needed.
-    angle::Result updateBaseMaxLevels(ContextVk *contextVk, GLuint baseLevel, GLuint maxLevel);
+    angle::Result updateBaseMaxLevels(ContextVk *contextVk,
+                                      GLuint baseLevel,
+                                      GLuint maxLevel,
+                                      vk::BufferHelper **stagingBuffer);
 
     bool mOwnsImage;
 

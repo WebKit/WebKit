@@ -102,16 +102,11 @@ angle::Result BufferVk::setData(const gl::Context *context,
 
         // We could potentially use multiple backing buffers for different usages.
         // For now keep a single buffer with all relevant usage flags.
-        VkImageUsageFlags usageFlags =
+        const VkImageUsageFlags usageFlags =
             VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT |
             VK_BUFFER_USAGE_INDEX_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_SRC_BIT |
             VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT | VK_BUFFER_USAGE_STORAGE_BUFFER_BIT |
             VK_BUFFER_USAGE_UNIFORM_TEXEL_BUFFER_BIT | VK_BUFFER_USAGE_INDIRECT_BUFFER_BIT;
-
-        if (contextVk->getFeatures().supportsTransformFeedbackExtension.enabled)
-        {
-            usageFlags |= VK_BUFFER_USAGE_TRANSFORM_FEEDBACK_BUFFER_BIT_EXT;
-        }
 
         VkBufferCreateInfo createInfo    = {};
         createInfo.sType                 = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
@@ -167,9 +162,8 @@ angle::Result BufferVk::copySubData(const gl::Context *context,
     // Handle self-dependency especially.
     if (sourceBuffer->mBuffer.getBuffer().getHandle() == mBuffer.getBuffer().getHandle())
     {
-        // We set the TRANSFER_READ_BIT to be conservative.
-        mBuffer.onSelfReadWrite(contextVk,
-                                VK_ACCESS_TRANSFER_READ_BIT | VK_ACCESS_TRANSFER_WRITE_BIT);
+        mBuffer.onSelfReadWrite(contextVk, VK_ACCESS_TRANSFER_READ_BIT,
+                                VK_ACCESS_TRANSFER_WRITE_BIT);
 
         ANGLE_TRY(mBuffer.recordCommands(contextVk, &commandBuffer));
     }
@@ -227,14 +221,11 @@ angle::Result BufferVk::mapRangeImpl(ContextVk *contextVk,
     if ((access & GL_MAP_UNSYNCHRONIZED_BIT) == 0)
     {
         // If there are pending commands for the buffer, flush them.
-        if (mBuffer.isCurrentlyInGraph())
+        if (mBuffer.isResourceInUse(contextVk))
         {
             ANGLE_TRY(contextVk->flushImpl(nullptr));
-        }
 
-        // Make sure the GPU is done with the buffer.
-        if (contextVk->isSerialInUse(mBuffer.getLatestSerial()))
-        {
+            // Make sure the GPU is done with the buffer.
             ANGLE_TRY(contextVk->finishToSerial(mBuffer.getLatestSerial()));
         }
 
@@ -288,7 +279,7 @@ angle::Result BufferVk::getIndexRange(const gl::Context *context,
 
     ANGLE_TRACE_EVENT0("gpu.angle", "BufferVk::getIndexRange");
     // Needed before reading buffer or we could get stale data.
-    ANGLE_TRY(contextVk->finishToSerial(mBuffer.getLatestSerial()));
+    ANGLE_TRY(contextVk->finishImpl());
 
     // TODO(jmadill): Consider keeping a shadow system memory copy in some cases.
     ASSERT(mBuffer.valid());

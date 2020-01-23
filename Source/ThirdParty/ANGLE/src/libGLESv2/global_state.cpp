@@ -14,8 +14,6 @@
 #include "common/tls.h"
 #include "libGLESv2/resource.h"
 
-#include <atomic>
-
 namespace gl
 {
 // In single-threaded cases we can avoid a TLS lookup for the current Context.
@@ -214,7 +212,7 @@ namespace
 {
 // The following WaitForDebugger code is based on SwiftShader. See:
 // https://cs.chromium.org/chromium/src/third_party/swiftshader/src/Vulkan/main.cpp
-#    if defined(ANGLE_ENABLE_ASSERTS) && !defined(ANGLE_ENABLE_WINDOWS_UWP)
+#    if defined(ANGLE_ENABLE_ASSERTS)
 INT_PTR CALLBACK DebuggerWaitDialogProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
     RECT rect;
@@ -259,7 +257,7 @@ void WaitForDebugger(HINSTANCE instance)
 }
 #    else
 void WaitForDebugger(HINSTANCE instance) {}
-#    endif  // defined(ANGLE_ENABLE_ASSERTS) && !defined(ANGLE_ENABLE_WINDOWS_UWP)
+#    endif  // defined(ANGLE_ENABLE_ASSERTS)
 }  // namespace
 
 extern "C" BOOL WINAPI DllMain(HINSTANCE instance, DWORD reason, LPVOID)

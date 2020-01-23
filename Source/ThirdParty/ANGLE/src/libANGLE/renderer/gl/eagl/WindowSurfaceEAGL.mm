@@ -1,8 +1,27 @@
-//
-// Copyright 2020 The ANGLE Project Authors. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
-//
+/*
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
 
 // WindowSurfaceEAGL.cpp: EAGL implementation of egl::Surface
 
@@ -10,19 +29,19 @@
 
 #if defined(ANGLE_PLATFORM_IOS) && !defined(ANGLE_PLATFORM_MACCATALYST)
 
-#    import "libANGLE/renderer/gl/eagl/WindowSurfaceEAGL.h"
+#import "libANGLE/renderer/gl/eagl/WindowSurfaceEAGL.h"
 
-#    import "common/debug.h"
-#    import "libANGLE/Context.h"
-#    import "libANGLE/renderer/gl/FramebufferGL.h"
-#    import "libANGLE/renderer/gl/RendererGL.h"
-#    import "libANGLE/renderer/gl/StateManagerGL.h"
-#    import "libANGLE/renderer/gl/eagl/DisplayEAGL.h"
+#import "common/debug.h"
+#import "libANGLE/Context.h"
+#import "libANGLE/renderer/gl/FramebufferGL.h"
+#import "libANGLE/renderer/gl/RendererGL.h"
+#import "libANGLE/renderer/gl/StateManagerGL.h"
+#import "libANGLE/renderer/gl/eagl/DisplayEAGL.h"
 
-#    import <OpenGLES/EAGL.h>
-#    import <QuartzCore/QuartzCore.h>
+#import <OpenGLES/EAGL.h>
+#import <QuartzCore/QuartzCore.h>
 
-// TODO(anglebug.com/4275): It's not clear why this needs to be an EAGLLayer.
+// FIXME: It's not clear why this needs to be an EAGLLayer.
 
 @interface WebSwapLayer : CAEAGLLayer {
     EAGLContextObj mDisplayContext;
@@ -46,7 +65,7 @@
     self = [super init];
     if (self != nil)
     {
-        mDisplayContext = displayContext;
+        mDisplayContext   = displayContext;
 
         initialized = false;
         mSwapState  = swapState;
@@ -84,8 +103,8 @@
     {
         [self setFrame:CGRectMake(0, 0, texture.width, texture.height)];
 
-        // TODO(anglebug.com/4275): If this continues to remain an EAGLLayer, then this is
-        // where we'd probably want to create the renderbuffer storage.
+        // FIXME: If this continues to remain an EAGLLayer, then this is where we'd
+        // probably want to create the renderbuffer storage.
         [self setNeedsDisplay];
     }
 
@@ -113,9 +132,9 @@ namespace rx
 {
 
 WindowSurfaceEAGL::WindowSurfaceEAGL(const egl::SurfaceState &state,
-                                     RendererGL *renderer,
-                                     EGLNativeWindowType layer,
-                                     EAGLContextObj context)
+                                   RendererGL *renderer,
+                                   EGLNativeWindowType layer,
+                                   EAGLContextObj context)
     : SurfaceGL(state),
       mSwapLayer(nil),
       mCurrentSwapId(0),
@@ -231,10 +250,10 @@ egl::Error WindowSurfaceEAGL::swap(const gl::Context *context)
 }
 
 egl::Error WindowSurfaceEAGL::postSubBuffer(const gl::Context *context,
-                                            EGLint x,
-                                            EGLint y,
-                                            EGLint width,
-                                            EGLint height)
+                                           EGLint x,
+                                           EGLint y,
+                                           EGLint width,
+                                           EGLint height)
 {
     UNIMPLEMENTED();
     return egl::Error(EGL_SUCCESS);
@@ -247,8 +266,8 @@ egl::Error WindowSurfaceEAGL::querySurfacePointerANGLE(EGLint attribute, void **
 }
 
 egl::Error WindowSurfaceEAGL::bindTexImage(const gl::Context *context,
-                                           gl::Texture *texture,
-                                           EGLint buffer)
+                                          gl::Texture *texture,
+                                          EGLint buffer)
 {
     UNIMPLEMENTED();
     return egl::Error(EGL_SUCCESS);
@@ -287,7 +306,7 @@ EGLint WindowSurfaceEAGL::getSwapBehavior() const
 }
 
 FramebufferImpl *WindowSurfaceEAGL::createDefaultFramebuffer(const gl::Context *context,
-                                                             const gl::FramebufferState &state)
+                                                            const gl::FramebufferState &state)
 {
     const FunctionsGL *functions = GetFunctionsGL(context);
     StateManagerGL *stateManager = GetStateManagerGL(context);

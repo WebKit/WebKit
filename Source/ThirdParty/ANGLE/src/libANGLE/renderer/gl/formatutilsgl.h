@@ -131,7 +131,6 @@ struct ReadPixelsFormat
 };
 ReadPixelsFormat GetReadPixelsFormat(const FunctionsGL *functions,
                                      const angle::FeaturesGL &features,
-                                     GLenum readAttachmentFormat,
                                      GLenum format,
                                      GLenum type);
 }  // namespace nativegl

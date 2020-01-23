@@ -125,14 +125,4 @@ void BreakDebugger()
     // See https://cs.chromium.org/chromium/src/base/debug/debugger_posix.cc
     abort();
 }
-
-const char *GetExecutableExtension()
-{
-    return "";
-}
-
-char GetPathSeparator()
-{
-    return '/';
-}
 }  // namespace angle

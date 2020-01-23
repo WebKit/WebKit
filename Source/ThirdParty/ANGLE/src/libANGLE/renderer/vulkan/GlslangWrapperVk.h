@@ -12,11 +12,6 @@
 #include "libANGLE/renderer/ProgramImpl.h"
 #include "libANGLE/renderer/vulkan/vk_utils.h"
 
-namespace angle
-{
-struct FeaturesVk;
-}  // namespace angle
-
 namespace rx
 {
 // This class currently holds no state. If we want to hold state we would need to solve the
@@ -24,7 +19,7 @@ namespace rx
 class GlslangWrapperVk
 {
   public:
-    static void GetShaderSource(const angle::FeaturesVk &features,
+    static void GetShaderSource(bool useOldRewriteStructSamplers,
                                 const gl::ProgramState &programState,
                                 const gl::ProgramLinkedResources &resources,
                                 gl::ShaderMap<std::string> *shaderSourcesOut);

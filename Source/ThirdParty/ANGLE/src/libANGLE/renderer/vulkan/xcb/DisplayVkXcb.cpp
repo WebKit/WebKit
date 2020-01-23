@@ -112,13 +112,4 @@ const char *DisplayVkXcb::getWSIExtension() const
     return VK_KHR_XCB_SURFACE_EXTENSION_NAME;
 }
 
-bool IsVulkanXcbDisplayAvailable()
-{
-    return true;
-}
-
-DisplayImpl *CreateVulkanXcbDisplay(const egl::DisplayState &state)
-{
-    return new DisplayVkXcb(state);
-}
 }  // namespace rx

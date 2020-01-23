@@ -112,9 +112,6 @@ class Texture final : public Resource,
 
     static TextureRef MakeFromMetal(id<MTLTexture> metalTexture);
 
-    // Allow CPU to read & write data directly to this texture?
-    bool isCPUAccessible() const;
-
     void replaceRegion(ContextMtl *context,
                        MTLRegion region,
                        uint32_t mipmapLevel,
@@ -133,8 +130,6 @@ class Texture final : public Resource,
     TextureRef createCubeFaceView(uint32_t face);
     // Create a view of one slice at a level.
     TextureRef createSliceMipView(uint32_t slice, uint32_t level);
-    // Create a view with different format
-    TextureRef createViewWithDifferentFormat(MTLPixelFormat format);
 
     MTLTextureType textureType() const;
     MTLPixelFormat pixelFormat() const;
@@ -168,7 +163,6 @@ class Texture final : public Resource,
             bool supportTextureView);
 
     // Create a texture view
-    Texture(Texture *original, MTLPixelFormat format);
     Texture(Texture *original, MTLTextureType type, NSRange mipmapLevelRange, uint32_t slice);
 
     void syncContent(ContextMtl *context);

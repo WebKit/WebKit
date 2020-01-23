@@ -441,16 +441,6 @@ void Context::initialize()
         mZeroTextures[TextureType::External].set(this, zeroTextureExternal);
     }
 
-    // This may change native TEXTURE_2D, TEXTURE_EXTERNAL_OES and TEXTURE_RECTANGLE,
-    // binding states. Ensure state manager is aware of this when binding
-    // this texture type.
-    if (mSupportedExtensions.webglVideoTexture)
-    {
-        Texture *zeroTextureVideoImage =
-            new Texture(mImplementation.get(), {0}, TextureType::VideoImage);
-        mZeroTextures[TextureType::VideoImage].set(this, zeroTextureVideoImage);
-    }
-
     mState.initializeZeroTextures(this, mZeroTextures);
 
     bindVertexArray({0});
@@ -747,7 +737,7 @@ void Context::genFencesNV(GLsizei n, FenceNVID *fences)
     for (int i = 0; i < n; i++)
     {
         GLuint handle = mFenceNVHandleAllocator.allocate();
-        mFenceNVMap.assign({handle}, new FenceNV(mImplementation.get()));
+        mFenceNVMap.assign({handle}, new FenceNV(mImplementation->createFenceNV()));
         fences[i] = {handle};
     }
 }
@@ -1365,7 +1355,7 @@ Query *Context::getQuery(QueryID handle, bool create, QueryType type)
     if (!query && create)
     {
         ASSERT(type != QueryType::InvalidEnum);
-        query = new Query(mImplementation.get(), type, handle);
+        query = new Query(mImplementation->createQuery(type), handle);
         query->addRef();
         mQueryMap.assign(handle, query);
     }
@@ -1493,7 +1483,7 @@ void Context::getIntegervImpl(GLenum pname, GLint *params)
             *params = mState.mCaps.maxVaryingVectors;
             break;
         case GL_MAX_VARYING_COMPONENTS:
-            *params = mState.mCaps.maxVaryingVectors * 4;
+            *params = mState.mCaps.maxVertexOutputComponents;
             break;
         case GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS:
             *params = mState.mCaps.maxCombinedTextureImageUnits;
@@ -2309,41 +2299,23 @@ void Context::drawElementsInstanced(PrimitiveMode mode,
     MarkShaderStorageBufferUsage(this);
 }
 
-void Context::drawElementsBaseVertex(PrimitiveMode mode,
+void Context::drawElementsBaseVertex(GLenum mode,
                                      GLsizei count,
-                                     DrawElementsType type,
+                                     GLenum type,
                                      const void *indices,
                                      GLint basevertex)
 {
-    // No-op if count draws no primitives for given mode
-    if (noopDraw(mode, count))
-    {
-        return;
-    }
-
-    ANGLE_CONTEXT_TRY(prepareForDraw(mode));
-    ANGLE_CONTEXT_TRY(
-        mImplementation->drawElementsBaseVertex(this, mode, count, type, indices, basevertex));
-    MarkShaderStorageBufferUsage(this);
+    UNIMPLEMENTED();
 }
 
-void Context::drawElementsInstancedBaseVertex(PrimitiveMode mode,
+void Context::drawElementsInstancedBaseVertex(GLenum mode,
                                               GLsizei count,
-                                              DrawElementsType type,
+                                              GLenum type,
                                               const void *indices,
                                               GLsizei instancecount,
                                               GLint basevertex)
 {
-    // No-op if count draws no primitives for given mode
-    if (noopDrawInstanced(mode, count, instancecount))
-    {
-        return;
-    }
-
-    ANGLE_CONTEXT_TRY(prepareForDraw(mode));
-    ANGLE_CONTEXT_TRY(mImplementation->drawElementsInstancedBaseVertex(
-        this, mode, count, type, indices, instancecount, basevertex));
-    MarkShaderStorageBufferUsage(this);
+    UNIMPLEMENTED();
 }
 
 void Context::drawRangeElements(PrimitiveMode mode,
@@ -2365,24 +2337,15 @@ void Context::drawRangeElements(PrimitiveMode mode,
     MarkShaderStorageBufferUsage(this);
 }
 
-void Context::drawRangeElementsBaseVertex(PrimitiveMode mode,
+void Context::drawRangeElementsBaseVertex(GLenum mode,
                                           GLuint start,
                                           GLuint end,
                                           GLsizei count,
-                                          DrawElementsType type,
+                                          GLenum type,
                                           const void *indices,
                                           GLint basevertex)
 {
-    // No-op if count draws no primitives for given mode
-    if (noopDraw(mode, count))
-    {
-        return;
-    }
-
-    ANGLE_CONTEXT_TRY(prepareForDraw(mode));
-    ANGLE_CONTEXT_TRY(mImplementation->drawRangeElementsBaseVertex(this, mode, start, end, count,
-                                                                   type, indices, basevertex));
-    MarkShaderStorageBufferUsage(this);
+    UNIMPLEMENTED();
 }
 
 void Context::drawArraysIndirect(PrimitiveMode mode, const void *indirect)
@@ -3559,8 +3522,6 @@ void Context::initCaps()
 
     // Apply/Verify implementation limits
     ANGLE_LIMIT_CAP(mState.mCaps.maxVertexAttributes, MAX_VERTEX_ATTRIBS);
-    ANGLE_LIMIT_CAP(mState.mCaps.maxVertexAttribStride,
-                    static_cast<GLint>(limits::kMaxVertexAttribStride));
 
     ASSERT(mState.mCaps.minAliasedPointSize >= 1.0f);
 
@@ -8865,7 +8826,6 @@ void StateCache::updateValidBindTextureTypes(Context *context)
         {TextureType::External, exts.eglImageExternal || exts.eglStreamConsumerExternal},
         {TextureType::Rectangle, exts.textureRectangle},
         {TextureType::CubeMap, true},
-        {TextureType::VideoImage, exts.webglVideoTexture},
     }};
 }
 

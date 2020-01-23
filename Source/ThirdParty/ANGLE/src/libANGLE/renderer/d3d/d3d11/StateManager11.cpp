@@ -3481,21 +3481,24 @@ angle::Result StateManager11::applyComputeUniforms(const gl::Context *context,
 angle::Result StateManager11::syncUniformBuffersForShader(const gl::Context *context,
                                                           gl::ShaderType shaderType)
 {
+    gl::ShaderMap<unsigned int> shaderReservedUBOs = mRenderer->getReservedShaderUniformBuffers();
+
     const auto &glState                  = context->getState();
     ID3D11DeviceContext *deviceContext   = mRenderer->getDeviceContext();
     ID3D11DeviceContext1 *deviceContext1 = mRenderer->getDeviceContext1IfSupported();
 
     const auto &shaderUniformBuffers = mProgramD3D->getShaderUniformBufferCache(shaderType);
+    const unsigned int reservedUBOs  = shaderReservedUBOs[shaderType];
 
     for (size_t bufferIndex = 0; bufferIndex < shaderUniformBuffers.size(); ++bufferIndex)
     {
-        const D3DUBOCache cache = shaderUniformBuffers[bufferIndex];
-        if (cache.binding == -1)
+        const GLint binding = shaderUniformBuffers[bufferIndex];
+        if (binding == -1)
         {
             continue;
         }
 
-        const auto &uniformBuffer          = glState.getIndexedUniformBuffer(cache.binding);
+        const auto &uniformBuffer          = glState.getIndexedUniformBuffer(binding);
         const GLintptr uniformBufferOffset = uniformBuffer.getOffset();
         const GLsizeiptr uniformBufferSize = uniformBuffer.getSize();
 
@@ -3514,6 +3517,7 @@ angle::Result StateManager11::syncUniformBuffersForShader(const gl::Context *con
                                                         &firstConstant, &numConstants));
         ASSERT(constantBuffer);
 
+        const unsigned int appliedIndex = reservedUBOs + static_cast<unsigned int>(bufferIndex);
         switch (shaderType)
         {
             case gl::ShaderType::Vertex:
@@ -3528,19 +3532,19 @@ angle::Result StateManager11::syncUniformBuffersForShader(const gl::Context *con
                 if (firstConstant != 0 && uniformBufferSize != 0)
                 {
                     ASSERT(numConstants != 0);
-                    deviceContext1->VSSetConstantBuffers1(cache.registerIndex, 1,
+                    deviceContext1->VSSetConstantBuffers1(appliedIndex, 1,
                                                           constantBuffer->getPointer(),
                                                           &firstConstant, &numConstants);
                 }
                 else
                 {
-                    deviceContext->VSSetConstantBuffers(cache.registerIndex, 1,
+                    deviceContext->VSSetConstantBuffers(appliedIndex, 1,
                                                         constantBuffer->getPointer());
                 }
 
-                mCurrentConstantBufferVS[cache.registerIndex]       = constantBuffer->getSerial();
-                mCurrentConstantBufferVSOffset[cache.registerIndex] = uniformBufferOffset;
-                mCurrentConstantBufferVSSize[cache.registerIndex]   = uniformBufferSize;
+                mCurrentConstantBufferVS[appliedIndex]       = constantBuffer->getSerial();
+                mCurrentConstantBufferVSOffset[appliedIndex] = uniformBufferOffset;
+                mCurrentConstantBufferVSSize[appliedIndex]   = uniformBufferSize;
                 break;
             }
 
@@ -3555,19 +3559,19 @@ angle::Result StateManager11::syncUniformBuffersForShader(const gl::Context *con
 
                 if (firstConstant != 0 && uniformBufferSize != 0)
                 {
-                    deviceContext1->PSSetConstantBuffers1(cache.registerIndex, 1,
+                    deviceContext1->PSSetConstantBuffers1(appliedIndex, 1,
                                                           constantBuffer->getPointer(),
                                                           &firstConstant, &numConstants);
                 }
                 else
                 {
-                    deviceContext->PSSetConstantBuffers(cache.registerIndex, 1,
+                    deviceContext->PSSetConstantBuffers(appliedIndex, 1,
                                                         constantBuffer->getPointer());
                 }
 
-                mCurrentConstantBufferPS[cache.registerIndex]       = constantBuffer->getSerial();
-                mCurrentConstantBufferPSOffset[cache.registerIndex] = uniformBufferOffset;
-                mCurrentConstantBufferPSSize[cache.registerIndex]   = uniformBufferSize;
+                mCurrentConstantBufferPS[appliedIndex]       = constantBuffer->getSerial();
+                mCurrentConstantBufferPSOffset[appliedIndex] = uniformBufferOffset;
+                mCurrentConstantBufferPSSize[appliedIndex]   = uniformBufferSize;
                 break;
             }
 
@@ -3582,19 +3586,19 @@ angle::Result StateManager11::syncUniformBuffersForShader(const gl::Context *con
 
                 if (firstConstant != 0 && uniformBufferSize != 0)
                 {
-                    deviceContext1->CSSetConstantBuffers1(cache.registerIndex, 1,
+                    deviceContext1->CSSetConstantBuffers1(appliedIndex, 1,
                                                           constantBuffer->getPointer(),
                                                           &firstConstant, &numConstants);
                 }
                 else
                 {
-                    deviceContext->CSSetConstantBuffers(cache.registerIndex, 1,
+                    deviceContext->CSSetConstantBuffers(appliedIndex, 1,
                                                         constantBuffer->getPointer());
                 }
 
-                mCurrentConstantBufferCS[cache.registerIndex]       = constantBuffer->getSerial();
-                mCurrentConstantBufferCSOffset[cache.registerIndex] = uniformBufferOffset;
-                mCurrentConstantBufferCSSize[cache.registerIndex]   = uniformBufferSize;
+                mCurrentConstantBufferCS[appliedIndex]       = constantBuffer->getSerial();
+                mCurrentConstantBufferCSOffset[appliedIndex] = uniformBufferOffset;
+                mCurrentConstantBufferCSSize[appliedIndex]   = uniformBufferSize;
                 break;
             }
 
@@ -3606,33 +3610,6 @@ angle::Result StateManager11::syncUniformBuffersForShader(const gl::Context *con
             default:
                 UNREACHABLE();
         }
-    }
-
-    const auto &shaderUniformBuffersUseSB =
-        mProgramD3D->getShaderUniformBufferCacheUseSB(shaderType);
-    for (size_t bufferIndex = 0; bufferIndex < shaderUniformBuffersUseSB.size(); ++bufferIndex)
-    {
-        const D3DUBOCacheUseSB cache = shaderUniformBuffersUseSB[bufferIndex];
-        if (cache.binding == -1)
-        {
-            continue;
-        }
-
-        const auto &uniformBuffer = glState.getIndexedUniformBuffer(cache.binding);
-        if (uniformBuffer.get() == nullptr)
-        {
-            continue;
-        }
-        const GLintptr uniformBufferOffset = uniformBuffer.getOffset();
-
-        Buffer11 *bufferStorage                    = GetImplAs<Buffer11>(uniformBuffer.get());
-        const d3d11::ShaderResourceView *bufferSRV = nullptr;
-        ANGLE_TRY(bufferStorage->getStructuredBufferRangeSRV(
-            context, static_cast<unsigned int>(uniformBufferOffset), cache.byteWidth,
-            cache.structureByteStride, &bufferSRV));
-
-        ASSERT(bufferSRV->valid());
-        setShaderResourceInternal(shaderType, cache.registerIndex, bufferSRV);
     }
 
     return angle::Result::Continue;
@@ -3716,7 +3693,8 @@ angle::Result StateManager11::syncShaderStorageBuffersForShader(const gl::Contex
 
 angle::Result StateManager11::syncUniformBuffers(const gl::Context *context)
 {
-    mProgramD3D->updateUniformBufferCache(context->getCaps());
+    gl::ShaderMap<unsigned int> shaderReservedUBOs = mRenderer->getReservedShaderUniformBuffers();
+    mProgramD3D->updateUniformBufferCache(context->getCaps(), shaderReservedUBOs);
 
     if (mProgramD3D->hasShaderStage(gl::ShaderType::Compute))
     {

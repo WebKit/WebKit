@@ -28,8 +28,6 @@ class EGLPrintEGLinfoTest : public ANGLETest
     EGLDisplay mDisplay = EGL_NO_DISPLAY;
 };
 
-namespace
-{
 // Parse space separated extension string into a vector of strings
 std::vector<std::string> ParseExtensions(const char *extensions)
 {
@@ -64,8 +62,6 @@ const char *GetGLString(EGLint name)
     EXPECT_TRUE(value != nullptr);
     return value;
 }
-
-}  // namespace
 
 // Print the EGL strings and extensions
 TEST_P(EGLPrintEGLinfoTest, PrintEGLInfo)
@@ -467,16 +463,8 @@ TEST_P(EGLPrintEGLinfoTest, PrintConfigInfo)
         std::cout << std::endl;
 
         // Extensions
-        if (IsEGLDisplayExtensionEnabled(mDisplay, "EGL_ANDROID_recordable"))
-        {
-            std::cout << "\tAndroid Recordable: "
-                      << GetAttrib(mDisplay, config, EGL_RECORDABLE_ANDROID) << std::endl;
-        }
-        if (IsEGLDisplayExtensionEnabled(mDisplay, "EGL_ANDROID_framebuffer_target"))
-        {
-            std::cout << "\tAndroid framebuffer target: "
-                      << GetAttrib(mDisplay, config, EGL_FRAMEBUFFER_TARGET_ANDROID) << std::endl;
-        }
+        std::cout << "\tAndroid Recordable: " << GetAttrib(mDisplay, config, EGL_RECORDABLE_ANDROID)
+                  << std::endl;
 
         // Separator between configs
         std::cout << std::endl;

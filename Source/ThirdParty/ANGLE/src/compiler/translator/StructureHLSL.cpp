@@ -23,13 +23,12 @@ namespace
 TString Define(const TStructure &structure,
                bool useHLSLRowMajorPacking,
                bool useStd140Packing,
-               bool forcePackingEnd,
                Std140PaddingHelper *padHelper)
 {
-    const TFieldList &fields    = structure.fields();
-    const bool isNameless       = (structure.symbolType() == SymbolType::Empty);
-    const TString &structName   = QualifiedStructNameString(structure, useHLSLRowMajorPacking,
-                                                          useStd140Packing, forcePackingEnd);
+    const TFieldList &fields = structure.fields();
+    const bool isNameless    = (structure.symbolType() == SymbolType::Empty);
+    const TString &structName =
+        QualifiedStructNameString(structure, useHLSLRowMajorPacking, useStd140Packing);
     const TString declareString = (isNameless ? "struct" : "struct " + structName);
 
     TString string;
@@ -37,17 +36,15 @@ TString Define(const TStructure &structure,
               "\n"
               "{\n";
 
-    size_t memberSize = fields.size();
     for (const TField *field : fields)
     {
-        memberSize--;
         const TType &fieldType = *field->type();
         if (!IsSampler(fieldType.getBasicType()))
         {
             const TStructure *fieldStruct = fieldType.getStruct();
             const TString &fieldTypeString =
                 fieldStruct ? QualifiedStructNameString(*fieldStruct, useHLSLRowMajorPacking,
-                                                        useStd140Packing, false)
+                                                        useStd140Packing)
                             : TypeString(fieldType);
 
             if (padHelper)
@@ -60,8 +57,7 @@ TString Define(const TStructure &structure,
 
             if (padHelper)
             {
-                string += padHelper->postPaddingString(fieldType, useHLSLRowMajorPacking,
-                                                       memberSize == 0 && forcePackingEnd);
+                string += padHelper->postPaddingString(fieldType, useHLSLRowMajorPacking);
             }
         }
     }
@@ -169,11 +165,9 @@ TString Std140PaddingHelper::prePaddingString(const TType &type)
     return padding;
 }
 
-TString Std140PaddingHelper::postPaddingString(const TType &type,
-                                               bool useHLSLRowMajorPacking,
-                                               bool forcePadding)
+TString Std140PaddingHelper::postPaddingString(const TType &type, bool useHLSLRowMajorPacking)
 {
-    if (!forcePadding && !type.isMatrix() && !type.isArray() && type.getBasicType() != EbtStruct)
+    if (!type.isMatrix() && !type.isArray() && type.getBasicType() != EbtStruct)
     {
         return "";
     }
@@ -197,7 +191,7 @@ TString Std140PaddingHelper::postPaddingString(const TType &type,
     else if (structure)
     {
         const TString &structName =
-            QualifiedStructNameString(*structure, useHLSLRowMajorPacking, true, false);
+            QualifiedStructNameString(*structure, useHLSLRowMajorPacking, true);
         numComponents = mStructElementIndexes->find(structName)->second;
 
         if (numComponents == 0)
@@ -228,24 +222,22 @@ Std140PaddingHelper StructureHLSL::getPaddingHelper()
 
 TString StructureHLSL::defineQualified(const TStructure &structure,
                                        bool useHLSLRowMajorPacking,
-                                       bool useStd140Packing,
-                                       bool forcePackingEnd)
+                                       bool useStd140Packing)
 {
     if (useStd140Packing)
     {
         Std140PaddingHelper padHelper = getPaddingHelper();
-        return Define(structure, useHLSLRowMajorPacking, useStd140Packing, forcePackingEnd,
-                      &padHelper);
+        return Define(structure, useHLSLRowMajorPacking, useStd140Packing, &padHelper);
     }
     else
     {
-        return Define(structure, useHLSLRowMajorPacking, useStd140Packing, false, nullptr);
+        return Define(structure, useHLSLRowMajorPacking, useStd140Packing, nullptr);
     }
 }
 
 TString StructureHLSL::defineNameless(const TStructure &structure)
 {
-    return Define(structure, false, false, false, nullptr);
+    return Define(structure, false, false, nullptr);
 }
 
 StructureHLSL::DefinedStructs::iterator StructureHLSL::defineVariants(const TStructure &structure,
@@ -268,33 +260,24 @@ StructureHLSL::DefinedStructs::iterator StructureHLSL::defineVariants(const TStr
     storeStd140ElementIndex(structure, false);
     storeStd140ElementIndex(structure, true);
 
-    const TString &structString = defineQualified(structure, false, false, false);
+    const TString &structString = defineQualified(structure, false, false);
 
     ASSERT(std::find(mStructDeclarations.begin(), mStructDeclarations.end(), structString) ==
            mStructDeclarations.end());
     // Add row-major packed struct for interface blocks
     TString rowMajorString = "#pragma pack_matrix(row_major)\n" +
-                             defineQualified(structure, true, false, false) +
+                             defineQualified(structure, true, false) +
                              "#pragma pack_matrix(column_major)\n";
 
-    TString std140String         = defineQualified(structure, false, true, false);
+    TString std140String         = defineQualified(structure, false, true);
     TString std140RowMajorString = "#pragma pack_matrix(row_major)\n" +
-                                   defineQualified(structure, true, true, false) +
+                                   defineQualified(structure, true, true) +
                                    "#pragma pack_matrix(column_major)\n";
-
-    // Must use packed structure for StructuredBuffer element type, if qualifier of structure is
-    // std140.
-    TString std140PackingEndString         = defineQualified(structure, false, true, true);
-    TString std140RowMajorPackEndingString = "#pragma pack_matrix(row_major)\n" +
-                                             defineQualified(structure, true, true, true) +
-                                             "#pragma pack_matrix(column_major)\n";
 
     mStructDeclarations.push_back(structString);
     mStructDeclarations.push_back(rowMajorString);
     mStructDeclarations.push_back(std140String);
     mStructDeclarations.push_back(std140RowMajorString);
-    mStructDeclarations.push_back(std140PackingEndString);
-    mStructDeclarations.push_back(std140RowMajorPackEndingString);
     return addedStruct;
 }
 
@@ -601,8 +584,7 @@ void StructureHLSL::storeStd140ElementIndex(const TStructure &structure,
 
     // Add remaining element index to the global map, for use with nested structs in standard
     // layouts
-    const TString &structName =
-        QualifiedStructNameString(structure, useHLSLRowMajorPacking, true, false);
+    const TString &structName = QualifiedStructNameString(structure, useHLSLRowMajorPacking, true);
     mStd140StructElementIndexes[structName] = padHelper.elementIndex();
 }
 
