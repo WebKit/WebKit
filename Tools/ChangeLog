@@ -1,5 +1,47 @@
 2020-01-23  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r254884. rdar://problem/58807972
+
+    ProvisionalPageProxy::loadData should pass last navigation's shouldOpenExternalURLsPolicy flag to WebPageProxy
+    https://bugs.webkit.org/show_bug.cgi?id=206462
+    <rdar://problem/57468718>
+    
+    Reviewed by Chris Dumez.
+    
+    Source/WebKit:
+    
+    Covered by API tests.
+    
+    This patch also does it for ProvisionalPageProxy::loadRequest.
+    
+    * UIProcess/ProvisionalPageProxy.cpp:
+    (WebKit::ProvisionalPageProxy::loadData):
+    (WebKit::ProvisionalPageProxy::loadRequest):
+    * UIProcess/ProvisionalPageProxy.h:
+    * UIProcess/WebPageProxy.cpp:
+    (WebKit::WebPageProxy::continueNavigationInNewProcess):
+    
+    Tools:
+    
+    * TestWebKitAPI/Tests/WebKitCocoa/TestSOAuthorization.mm:
+    (TestWebKitAPI::TEST):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@254884 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-01-21  Jiewen Tan  <jiewen_tan@apple.com>
+
+            ProvisionalPageProxy::loadData should pass last navigation's shouldOpenExternalURLsPolicy flag to WebPageProxy
+            https://bugs.webkit.org/show_bug.cgi?id=206462
+            <rdar://problem/57468718>
+
+            Reviewed by Chris Dumez.
+
+            * TestWebKitAPI/Tests/WebKitCocoa/TestSOAuthorization.mm:
+            (TestWebKitAPI::TEST):
+
+2020-01-23  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r254711. rdar://problem/58816343
 
     Regression(r253224) No longer able to prevent a tab from closing via the beforeunload prompt
