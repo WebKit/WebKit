@@ -50,6 +50,10 @@ typedef gcry_sexp_t PlatformECKey;
 typedef std::unique_ptr<typename std::remove_pointer<gcry_sexp_t>::type, PAL::GCrypt::HandleDeleter<gcry_sexp_t>> PlatformECKeyContainer;
 #endif
 
+#if USE(OPENSSL)
+typedef void* PlatformECKey;
+typedef std::unique_ptr<PlatformECKey> PlatformECKeyContainer;
+#endif
 
 namespace WebCore {
 

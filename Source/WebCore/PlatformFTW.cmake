@@ -2,6 +2,7 @@ include(platform/Curl.cmake)
 if (NOT APPLE_BUILD)
     include(platform/ImageDecoders.cmake)
 endif ()
+include(platform/OpenSSL.cmake)
 include(platform/TextureMapper.cmake)
 
 list(APPEND WebCore_PRIVATE_INCLUDE_DIRECTORIES

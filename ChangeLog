@@ -1,3 +1,18 @@
+2020-01-22  Don Olmstead  <don.olmstead@sony.com>
+
+        [OpenSSL] Add stubs and build for Web Crypto
+        https://bugs.webkit.org/show_bug.cgi?id=206449
+
+        Reviewed by Jiewen Tan.
+
+        Enable Web Crypto as an experiment for WinCairo and PlayStation. Add the USE_OPENSSL
+        definition to platforms using OpenSSL.
+
+        * Source/cmake/OptionsFTW.cmake:
+        * Source/cmake/OptionsPlayStation.cmake:
+        * Source/cmake/OptionsWin.cmake:
+        * Source/cmake/OptionsWinCairo.cmake:
+
 2020-01-21  Rob Buis  <rbuis@igalia.com>
 
         Add build flag for stale-while-revalidate
