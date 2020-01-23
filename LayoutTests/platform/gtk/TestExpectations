@@ -1251,6 +1251,7 @@ webkit.org/b/206498 compositing/contents-format/deep-color-backing-store.html [ 
 webkit.org/b/206498 compositing/geometry/layer-due-to-layer-children-switch.html [ Failure ]
 webkit.org/b/206498 compositing/geometry/layer-due-to-layer-children-deep-switch.html [ Failure ]
 webkit.org/b/206498 compositing/iframes/leave-compositing-iframe.html [ Failure ]
+webkit.org/b/206498 compositing/iframes/iframe-size-to-zero.html [ Failure ]
 webkit.org/b/206498 compositing/layer-creation/fixed-position-change-out-of-view-in-view.html [ Failure ]
 webkit.org/b/206498 legacy-animation-engine/compositing/animation/layer-for-filling-animation.html [ Failure ]
 
@@ -1284,6 +1285,26 @@ http/tests/is-logged-in/ [ Skip ]
 # r250624 allows the playbin to handle the redirections directly. The referenced bug below is the
 # mac one about removing this test altogether.
 webkit.org/b/61487 http/tests/media/video-cross-site.html [ Failure ]
+
+webkit.org/b/206652 imported/w3c/web-platform-tests/websockets/constructor/011.html [ Failure ]
+
+webkit.org/b/206653 imported/w3c/web-platform-tests/clipboard-apis/async-navigator-clipboard-basics.https.html [ Failure ]
+webkit.org/b/206653 imported/w3c/web-platform-tests/clipboard-apis/async-write-text-read-dttext-manual.https.html [ Failure ]
+webkit.org/b/206653 imported/w3c/web-platform-tests/clipboard-apis/async-write-text-read-text-manual.https.html [ Failure ]
+
+webkit.org/b/206655 inspector/page/overrideSetting-MockCaptureDevicesEnabled.html [ Failure ]
+
+webkit.org/b/206656 imported/w3c/web-platform-tests/mediacapture-streams/MediaStream-MediaElement-firstframe.https.html [ Failure ]
+webkit.org/b/206656 imported/w3c/web-platform-tests/mediacapture-streams/MediaStream-removetrack.https.html [ Failure ]
+webkit.org/b/206656 imported/w3c/web-platform-tests/mediacapture-streams/MediaStreamTrack-MediaElement-disabled-video-is-black.https.html [ Failure ]
+webkit.org/b/206656 imported/w3c/web-platform-tests/mediacapture-streams/MediaStreamTrack-getSettings.https.html [ Failure ]
+
+webkit.org/b/206657 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-video-element/resize-during-playback.html [ Failure ]
+
+webkit.org/b/206658 imported/w3c/web-platform-tests/offscreen-canvas/the-offscreen-canvas/offscreencanvas.transfer.to.imagebitmap.w.html [ Failure ]
+
+# LFC (LayoutFormatingContext is disabled by default).
+fast/layoutformattingcontext/ [ Skip ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Expected failures.
@@ -2307,7 +2328,6 @@ webkit.org/b/191886 fast/mediastream/MediaStream-video-element-remove-track.html
 
 # Console log lines may appear in a different order so we silence them.
 imported/w3c/web-platform-tests/offscreen-canvas/convert-to-blob/offscreencanvas.convert.to.blob.w.html [ DumpJSConsoleLogInStdErr ]
-imported/w3c/web-platform-tests/offscreen-canvas/the-offscreen-canvas/offscreencanvas.transfer.to.imagebitmap.w.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/offscreen-canvas/the-offscreen-canvas/offscreencanvas.transferrable.w.html [ DumpJSConsoleLogInStdErr ]
 
 # OffscreenCanvas tests that are flaky due to console output from unhandled Promise rejections due to unimplemented API
@@ -2343,7 +2363,7 @@ webkit.org/b/198830 media/video-buffering-allowed.html [ Crash Pass ]
 webkit.org/b/198830 media/video-dom-autoplay.html [ Crash Pass ]
 webkit.org/b/198830 userscripts/user-script-audio-document.html [ Crash Pass ]
 
-webkit.org/b/205110 imported/w3c/web-platform-tests/media-source/mediasource-changetype-play.html [ Crash Pass ]
+webkit.org/b/205110 imported/w3c/web-platform-tests/media-source/mediasource-changetype-play.html [ Failure Crash Pass ]
 webkit.org/b/205110 media/media-source/media-source-canplaythrough.html [ Crash Pass ]
 
 webkit.org/b/206146 http/tests/cache-storage/cache-persistency.https.html [ Failure Pass ]

@@ -1,3 +1,13 @@
+2020-01-23  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GTK] Gardening, rebaselines and update TestExpectations
+        https://bugs.webkit.org/show_bug.cgi?id=206660
+
+        Unreviewed gardening.
+
+        * platform/gtk/TestExpectations:
+        * platform/gtk/imported/w3c/web-platform-tests/media-source/mediasource-remove-expected.txt: Added.
+
 2020-01-23  Matt Lewis  <jlewis3@apple.com>
 
         Actually fix history link directs on dashboard and results.html
