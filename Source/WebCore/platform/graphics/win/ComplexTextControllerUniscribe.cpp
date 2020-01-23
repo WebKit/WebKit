@@ -75,6 +75,100 @@ static bool shapeByUniscribe(const UChar* str, int len, SCRIPT_ITEM item, const 
     return true;
 }
 
+template<typename T>
+class BidiRange {
+public:
+    BidiRange(T* data, unsigned length, bool isLTR)
+        : m_data(data)
+        , m_length(length)
+        , m_isLTR(isLTR)
+    {
+    }
+
+    BidiRange(Vector<T>& data, bool isLTR)
+        : m_data(data.data())
+        , m_length(data.size())
+        , m_isLTR(isLTR)
+    {
+    }
+
+    class Iterator {
+    public:
+        Iterator(const BidiRange& range, unsigned logicalIndex)
+            : m_range(range)
+            , m_logicalIndex(logicalIndex)
+        {
+        }
+
+        void operator++() { ++m_logicalIndex; }
+        T& operator*() { return m_range.m_data[index()]; }
+        bool operator==(const Iterator& other) { return m_logicalIndex == other.m_logicalIndex; }
+        bool operator!=(const Iterator& other) { return m_logicalIndex != other.m_logicalIndex; }
+        unsigned index()
+        {
+            ASSERT(m_logicalIndex < m_range.m_length);
+            if (m_range.m_isLTR)
+                return m_logicalIndex;
+            return m_range.m_length - m_logicalIndex - 1;
+        }
+
+    private:
+        friend BidiRange;
+
+        const BidiRange& m_range;
+        unsigned m_logicalIndex;
+    };
+
+    Iterator begin() const { return { *this, 0 }; }
+    Iterator end() const { return { *this, m_length }; }
+
+    Iterator fromIndex(unsigned index) const { return { *this, m_isLTR ? index : m_length - index - 1 }; }
+
+private:
+    T* m_data;
+    unsigned m_length;
+    bool m_isLTR;
+};
+
+static Vector<unsigned> stringIndicesFromClusters(const Vector<WORD>& clusters, StringView string, unsigned stringPosition, unsigned numberOfGlyphs, bool isLTR)
+{
+    Vector<unsigned> stringIndices(numberOfGlyphs);
+
+    BidiRange<unsigned> stringIndicesRange(stringIndices, isLTR);
+    auto glyphIndex = stringIndicesRange.begin();
+    unsigned stringIndex = 0;
+    int i = 0;
+    for (;;) {
+        auto startStringIndex = stringIndex;
+        auto startGlyphIndex = clusters[stringIndex];
+        while (stringIndex < clusters.size() && clusters[stringIndex] == startGlyphIndex)
+            ++stringIndex;
+        bool finish = stringIndex == clusters.size();
+        auto endStringIndex = stringIndex;
+        auto endGlyphIterator = !finish ? stringIndicesRange.fromIndex(clusters[endStringIndex]) : stringIndicesRange.end();
+
+        // ComplexTextController::adjustGlyphsAndAdvances replaces glyphs pointing to space characters with space glyphs.
+        // stringIndices should point to non-space characters if available.
+        auto targetStringIndex = startStringIndex;
+        for (auto s = startStringIndex; s < endStringIndex; s++) {
+            auto character = string[s];
+            auto isSpace = FontCascade::treatAsSpace(character) || FontCascade::treatAsZeroWidthSpace(character);
+            if (!isSpace) {
+                targetStringIndex = s;
+                break;
+            }
+        }
+
+        for (; glyphIndex != endGlyphIterator; ++glyphIndex)
+            *glyphIndex = stringPosition + targetStringIndex;
+
+        if (finish)
+            break;
+    }
+
+    return stringIndices;
+}
+
 void ComplexTextController::collectComplexTextRunsForCharacters(const UChar* cp, unsigned stringLength, unsigned stringLocation, const Font* font)
 {
     if (!font) {
@@ -148,11 +242,6 @@ void ComplexTextController::collectComplexTextRunsForCharacters(const UChar* cp,
         if (m_fallbackFonts)
             m_fallbackFonts->add(font);
 
-        Vector<unsigned> stringIndices(glyphs.size(), item.iCharPos);
-
-        for (int k = length - 1; k >= 0; k--)
-            stringIndices[clusters[k]] = item.iCharPos + k;
-
         Vector<FloatSize> baseAdvances;
         Vector<FloatPoint> origins;
         baseAdvances.reserveCapacity(glyphs.size());
@@ -174,8 +263,9 @@ void ComplexTextController::collectComplexTextRunsForCharacters(const UChar* cp,
             baseAdvances.uncheckedAppend({ advance, 0 });
             origins.uncheckedAppend({ offsetX, offsetY });
         }
-        FloatSize initialAdvance = toFloatSize(origins[0]);
         bool ltr = !item.a.fRTL;
+        auto stringIndices = stringIndicesFromClusters(clusters, StringView(str, length), item.iCharPos, glyphs.size(), ltr);
+        FloatSize initialAdvance = toFloatSize(origins[0]);
         m_complexTextRuns.append(ComplexTextRun::create(baseAdvances, origins, glyphs, stringIndices, initialAdvance, *font, cp, stringLocation, stringLength, item.iCharPos, items[i+1].iCharPos, ltr));
     }
 }

@@ -1,3 +1,15 @@
+2020-01-22  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [WinCairo] Some of combining family glyphs are replaced by space glyphs
+        https://bugs.webkit.org/show_bug.cgi?id=205485
+
+        Reviewed by Myles C. Maxfield.
+
+        * fast/text/emoji-single-parent-family-3-expected-mismatch.html: Added.
+        * fast/text/emoji-single-parent-family-3.html: Added.
+        * platform/win/TestExpectations: Marked fast/text/emoji-single-parent-family-3.html as ImageOnlyFailure.
+        * platform/wincairo/TestExpectations: Changed the bug number for fast/text/stale-TextLayout-from-first-line.html.
+
 2020-01-22  Truitt Savell  <tsavell@apple.com>
 
         REGRESSION: [ Mac WK2 ] webgpu/vertex-buffer-triangle-strip.html is a flakey image failure

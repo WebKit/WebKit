@@ -830,7 +830,7 @@ fast/dom/Range/detach-range-during-deletecontents.html [ Pass Timeout ]
 imported/blink/fast/dom/Window/open-window-features-fuzz.html [ Pass Timeout ]
 
 webkit.org/b/205487 fast/text/selection-in-initial-advance-region.html [ Failure ]
-webkit.org/b/205485 fast/text/stale-TextLayout-from-first-line.html [ ImageOnlyFailure ]
+webkit.org/b/206282 fast/text/stale-TextLayout-from-first-line.html [ ImageOnlyFailure ]
 
 #//////////////////////////////////////////////////////////////////////////////////////////
 # http
