@@ -1,0 +1,45 @@
+
+PASS setup - define tests 
+PASS P-521 good parameters 
+PASS P-521 mixed case parameters 
+PASS P-521 with null length 
+PASS P-521 short result 
+FAIL P-521 non-multiple of 8 bits assert_unreached: deriveBits failed with error OperationError: The operation failed for an operation-specific reason Reached unreachable code
+PASS P-521 missing public curve 
+PASS P-521 public property of algorithm is not a CryptoKey 
+PASS P-521 mismatched curves 
+PASS P-521 public property of algorithm is not an ECDSA public key 
+PASS P-521 no deriveBits usage for base key 
+PASS P-521 base key is not a private key 
+PASS P-521 public property value is a private key 
+PASS P-521 public property value is a secret key 
+PASS P-521 asking for too many bits 
+PASS P-256 good parameters 
+PASS P-256 mixed case parameters 
+PASS P-256 with null length 
+PASS P-256 short result 
+FAIL P-256 non-multiple of 8 bits assert_unreached: deriveBits failed with error OperationError: The operation failed for an operation-specific reason Reached unreachable code
+PASS P-256 missing public curve 
+PASS P-256 public property of algorithm is not a CryptoKey 
+PASS P-256 mismatched curves 
+PASS P-256 public property of algorithm is not an ECDSA public key 
+PASS P-256 no deriveBits usage for base key 
+PASS P-256 base key is not a private key 
+PASS P-256 public property value is a private key 
+PASS P-256 public property value is a secret key 
+PASS P-256 asking for too many bits 
+PASS P-384 good parameters 
+PASS P-384 mixed case parameters 
+PASS P-384 with null length 
+PASS P-384 short result 
+FAIL P-384 non-multiple of 8 bits assert_unreached: deriveBits failed with error OperationError: The operation failed for an operation-specific reason Reached unreachable code
+PASS P-384 missing public curve 
+PASS P-384 public property of algorithm is not a CryptoKey 
+PASS P-384 mismatched curves 
+PASS P-384 public property of algorithm is not an ECDSA public key 
+PASS P-384 no deriveBits usage for base key 
+PASS P-384 base key is not a private key 
+PASS P-384 public property value is a private key 
+PASS P-384 public property value is a secret key 
+PASS P-384 asking for too many bits 
+
