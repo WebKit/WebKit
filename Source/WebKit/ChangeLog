@@ -1,5 +1,32 @@
 2020-01-23  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r254550. rdar://problem/58812988
+
+    REGRESSION(iOS 13): createMediaElementSource not working
+    https://bugs.webkit.org/show_bug.cgi?id=203435
+    
+    Reviewed by David Kilzer.
+    
+    The WebContent process is missing an entitlement according to logs.
+    
+    * Scripts/process-entitlements.sh:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@254550 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-01-14  Per Arne Vollan  <pvollan@apple.com>
+
+            REGRESSION(iOS 13): createMediaElementSource not working
+            https://bugs.webkit.org/show_bug.cgi?id=203435
+
+            Reviewed by David Kilzer.
+
+            The WebContent process is missing an entitlement according to logs.
+
+            * Scripts/process-entitlements.sh:
+
+2020-01-23  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r254487. rdar://problem/58606185
 
     Reformat WebProcessPool logging
