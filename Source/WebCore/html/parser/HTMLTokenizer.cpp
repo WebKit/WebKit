@@ -1418,7 +1418,7 @@ void HTMLTokenizer::updateStateFor(const AtomString& tagName)
         || tagName == xmpTag
         || (tagName == noembedTag)
         || tagName == noframesTag
-        || (tagName == noscriptTag && m_options.scriptEnabled))
+        || (tagName == noscriptTag && m_options.scriptingFlag))
         m_state = RAWTEXTState;
 }
 

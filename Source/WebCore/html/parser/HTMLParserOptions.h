@@ -34,7 +34,8 @@ public:
     explicit HTMLParserOptions();
     explicit HTMLParserOptions(Document&);
 
-    bool scriptEnabled;
+    // See https://html.spec.whatwg.org/#scripting-flag for more information.
+    bool scriptingFlag;
     bool usePreHTML5ParserQuirks;
     unsigned maximumDOMTreeDepth;
 };

@@ -791,7 +791,7 @@ void HTMLTreeBuilder::processStartTagForInBody(AtomicHTMLToken&& token)
         processGenericRawTextStartTag(WTFMove(token));
         return;
     }
-    if (token.name() == noscriptTag && m_options.scriptEnabled) {
+    if (token.name() == noscriptTag && m_options.scriptingFlag) {
         processGenericRawTextStartTag(WTFMove(token));
         return;
     }
@@ -2608,7 +2608,7 @@ bool HTMLTreeBuilder::processStartTagForInHead(AtomicHTMLToken&& token)
         return true;
     }
     if (token.name() == noscriptTag) {
-        if (m_options.scriptEnabled) {
+        if (m_options.scriptingFlag) {
             processGenericRawTextStartTag(WTFMove(token));
             return true;
         }
