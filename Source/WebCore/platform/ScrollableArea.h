@@ -120,6 +120,7 @@ public:
 
     virtual ScrollbarMode horizontalScrollbarMode() const { return ScrollbarAuto; }
     virtual ScrollbarMode verticalScrollbarMode() const { return ScrollbarAuto; }
+    bool canHaveScrollbars() const { return horizontalScrollbarMode() != ScrollbarAlwaysOff || verticalScrollbarMode() != ScrollbarAlwaysOff; }
 
     virtual bool horizontalScrollbarHiddenByStyle() const { return false; }
     virtual bool verticalScrollbarHiddenByStyle() const { return false; }

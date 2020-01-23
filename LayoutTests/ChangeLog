@@ -1,5 +1,49 @@
 2020-01-23  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r254497. rdar://problem/58606212
+
+    REGRESSION (Catalina) non-scrolling iframe prevents document scrolling
+    https://bugs.webkit.org/show_bug.cgi?id=202687
+    
+    Reviewed by Tim Horton.
+    
+    Source/WebCore:
+    
+    Latching code in EventHandlerMac would consider <iframe scrolling=no> to be a latching
+    candidate, which would cause mousewheel scrolling in a <iframe scrolling=no> nested inside
+    a scrollable frame to not scroll. This affected ads and twitch.tv.
+    
+    Fix by having scrolledToEdgeInDominantDirection() return true for non-scrollable iframes.
+    
+    Test: tiled-drawing/scrolling/scrolling-no-iframe-latching.html
+    
+    * page/mac/EventHandlerMac.mm:
+    (WebCore::scrolledToEdgeInDominantDirection):
+    * platform/ScrollView.h:
+    (WebCore::ScrollView::canHaveScrollbars const): Deleted.
+    * platform/ScrollableArea.h:
+    (WebCore::ScrollableArea::canHaveScrollbars const):
+    
+    LayoutTests:
+    
+    * tiled-drawing/scrolling/scrolling-no-iframe-latching-expected.txt: Added.
+    * tiled-drawing/scrolling/scrolling-no-iframe-latching.html: Added.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@254497 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-01-13  Simon Fraser  <simon.fraser@apple.com>
+
+            REGRESSION (Catalina) non-scrolling iframe prevents document scrolling
+            https://bugs.webkit.org/show_bug.cgi?id=202687
+
+            Reviewed by Tim Horton.
+
+            * tiled-drawing/scrolling/scrolling-no-iframe-latching-expected.txt: Added.
+            * tiled-drawing/scrolling/scrolling-no-iframe-latching.html: Added.
+
+2020-01-23  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r254492. rdar://problem/58606251
 
     Scrollbar hiding on iOS via ::-webkit-scrollbar { display: none } doesn't work
