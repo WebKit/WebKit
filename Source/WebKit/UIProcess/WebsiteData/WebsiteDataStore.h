@@ -131,7 +131,6 @@ public:
     void setServiceWorkerRegistrationDirectory(String&& directory) { m_resolvedConfiguration->setServiceWorkerRegistrationDirectory(WTFMove(directory)); }
 
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
-    WebResourceLoadStatisticsStore* resourceLoadStatistics() const { return m_resourceLoadStatistics.get(); }
     void clearResourceLoadStatisticsInWebProcesses(CompletionHandler<void()>&&);
 #endif
 
@@ -336,7 +335,6 @@ private:
     const Ref<DeviceIdHashSaltStorage> m_deviceIdHashSaltStorage;
 
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
-    RefPtr<WebResourceLoadStatisticsStore> m_resourceLoadStatistics;
     bool m_resourceLoadStatisticsDebugMode { false };
     bool m_resourceLoadStatisticsEnabled { false };
     WTF::Function<void(const String&)> m_statisticsTestingCallback;

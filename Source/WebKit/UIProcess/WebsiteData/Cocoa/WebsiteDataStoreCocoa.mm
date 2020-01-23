@@ -52,8 +52,6 @@
 
 namespace WebKit {
 
-static id terminationObserver;
-
 static HashSet<WebsiteDataStore*>& dataStores()
 {
     static NeverDestroyed<HashSet<WebsiteDataStore*>> dataStores;
@@ -229,42 +227,14 @@ WebsiteDataStoreParameters WebsiteDataStore::parameters()
 
 void WebsiteDataStore::platformInitialize()
 {
-    if (!terminationObserver) {
-        ASSERT(dataStores().isEmpty());
-
-#if PLATFORM(MAC)
-        NSString *notificationName = NSApplicationWillTerminateNotification;
-#else
-        NSString *notificationName = UIApplicationWillTerminateNotification;
-#endif
-        terminationObserver = [[NSNotificationCenter defaultCenter] addObserverForName:notificationName object:nil queue:nil usingBlock:^(NSNotification *note) {
-            for (auto& dataStore : dataStores()) {
-#if ENABLE(RESOURCE_LOAD_STATISTICS)
-                if (dataStore->m_resourceLoadStatistics)
-                    dataStore->m_resourceLoadStatistics->applicationWillTerminate();
-#endif
-            }
-        }];
-    }
-
     ASSERT(!dataStores().contains(this));
     dataStores().add(this);
 }
 
 void WebsiteDataStore::platformDestroy()
 {
-#if ENABLE(RESOURCE_LOAD_STATISTICS)
-    if (m_resourceLoadStatistics)
-        m_resourceLoadStatistics->applicationWillTerminate();
-#endif
-
     ASSERT(dataStores().contains(this));
     dataStores().remove(this);
-
-    if (dataStores().isEmpty()) {
-        [[NSNotificationCenter defaultCenter] removeObserver:terminationObserver];
-        terminationObserver = nil;
-    }
 }
 
 void WebsiteDataStore::platformRemoveRecentSearches(WallTime oldestTimeToRemove)

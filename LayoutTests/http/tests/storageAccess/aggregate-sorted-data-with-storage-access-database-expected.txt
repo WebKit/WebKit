@@ -14,8 +14,12 @@ Registrable domain: 127.0.0.1
     hadUserInteraction: Yes
     mostRecentUserInteraction: within 24 hours
     grandfathered: No
+    TopFrameUniqueRedirectsTo:
+        localhost
+    TopFrameUniqueRedirectsFrom:
+        localhost
     IsScheduledForAllButCookieDataRemoval: No
-    isPrevalentResource: No
+    isPrevalentResource: Yes
     isVeryPrevalentResource: No
     dataRecordsRemoved: 0
 Registrable domain: localhost
@@ -23,6 +27,10 @@ Registrable domain: localhost
     mostRecentUserInteraction: within 24 hours
     grandfathered: No
     StorageAccessUnderTopFrameDomains:
+        127.0.0.1
+    TopFrameUniqueRedirectsTo:
+        127.0.0.1
+    TopFrameUniqueRedirectsFrom:
         127.0.0.1
     IsScheduledForAllButCookieDataRemoval: No
     SubframeUnderTopFrameDomains:

@@ -428,7 +428,7 @@ Vector<RegistrableDomain> ResourceLoadStatisticsMemoryStore::ensurePrevalentReso
     return domainsToBlock;
 }
 
-void ResourceLoadStatisticsMemoryStore::logFrameNavigation(const RegistrableDomain& targetDomain, const RegistrableDomain& topFrameDomain, const RegistrableDomain& sourceDomain, bool isRedirect, bool isMainFrame)
+void ResourceLoadStatisticsMemoryStore::logFrameNavigation(const RegistrableDomain& targetDomain, const RegistrableDomain& topFrameDomain, const RegistrableDomain& sourceDomain, bool isRedirect, bool isMainFrame, Seconds delayAfterMainFrameDocumentLoad, bool wasPotentiallyInitiatedByUser)
 {
     ASSERT(!RunLoop::isMain());
 
@@ -443,15 +443,18 @@ void ResourceLoadStatisticsMemoryStore::logFrameNavigation(const RegistrableDoma
             statisticsWereUpdated = true;
     }
 
-    if (isRedirect && !areTargetAndSourceDomainsSameSite) {
+    if (!areTargetAndSourceDomainsSameSite) {
         if (isMainFrame) {
             auto& redirectingDomainStatistics = ensureResourceStatisticsForRegistrableDomain(sourceDomain);
-            if (redirectingDomainStatistics.topFrameUniqueRedirectsTo.add(targetDomain).isNewEntry)
-                statisticsWereUpdated = true;
-            auto& targetStatistics = ensureResourceStatisticsForRegistrableDomain(targetDomain);
-            if (targetStatistics.topFrameUniqueRedirectsFrom.add(sourceDomain).isNewEntry)
-                statisticsWereUpdated = true;
-        } else {
+            bool wasNavigatedAfterShortDelayWithoutUserInteraction = !wasPotentiallyInitiatedByUser && delayAfterMainFrameDocumentLoad < parameters().minDelayAfterMainFrameDocumentLoadToNotBeARedirect;
+            if (isRedirect || wasNavigatedAfterShortDelayWithoutUserInteraction) {
+                if (redirectingDomainStatistics.topFrameUniqueRedirectsTo.add(targetDomain).isNewEntry)
+                    statisticsWereUpdated = true;
+                auto& targetStatistics = ensureResourceStatisticsForRegistrableDomain(targetDomain);
+                if (targetStatistics.topFrameUniqueRedirectsFrom.add(sourceDomain).isNewEntry)
+                    statisticsWereUpdated = true;
+            }
+        } else if (isRedirect) {
             auto& redirectingDomainStatistics = ensureResourceStatisticsForRegistrableDomain(sourceDomain);
             if (redirectingDomainStatistics.subresourceUniqueRedirectsTo.add(targetDomain).isNewEntry)
                 statisticsWereUpdated = true;
