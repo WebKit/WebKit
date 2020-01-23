@@ -112,6 +112,7 @@ public:
     bool isInlineBox() const;
     bool isAtomicInlineLevelBox() const;
     bool isInlineBlockBox() const;
+    bool isInlineTableBox() const;
     bool isBlockContainerBox() const;
     bool isInitialContainingBlock() const;
 

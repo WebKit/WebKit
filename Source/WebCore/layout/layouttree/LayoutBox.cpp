@@ -294,6 +294,11 @@ bool Box::isInlineBlockBox() const
     return m_style.display() == DisplayType::InlineBlock;
 }
 
+bool Box::isInlineTableBox() const
+{
+    return m_style.display() == DisplayType::InlineTable;
+}
+
 bool Box::isBlockLevelBox() const
 {
     // Block level elements generate block level boxes.
@@ -305,7 +310,7 @@ bool Box::isInlineLevelBox() const
 {
     // Inline level elements generate inline level boxes.
     auto display = m_style.display();
-    return display == DisplayType::Inline || isInlineBlockBox() || display == DisplayType::InlineTable;
+    return display == DisplayType::Inline || isInlineBlockBox() || isInlineTableBox();
 }
 
 bool Box::isInlineBox() const

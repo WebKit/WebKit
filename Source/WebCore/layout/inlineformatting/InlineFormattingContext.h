@@ -78,11 +78,8 @@ private:
     InlineFormattingContext::Geometry geometry() const { return Geometry(*this); }
 
     void lineLayout(InlineItems&, LineLayoutContext::InlineItemRange, const HorizontalConstraints&, const VerticalConstraints&);
-    void layoutFormattingContextRoot(const Box&, InvalidationState&, const HorizontalConstraints&, const VerticalConstraints&);
-    void computeHorizontalAndVerticalGeometry(const Box&, const HorizontalConstraints&);
 
     void computeIntrinsicWidthForFormattingRoot(const Box&, const HorizontalConstraints&);
-    void computeWidthAndHeightForReplacedInlineBox(const Box&, const HorizontalConstraints&);
     InlineLayoutUnit computedIntrinsicWidthForConstraint(const HorizontalConstraints&) const;
 
     void computeHorizontalMargin(const Box&, const HorizontalConstraints&);
