@@ -1,3 +1,15 @@
+2020-01-22  James Darpinian  <jdarpinian@chromium.org>
+
+        REGRESSION (r253926): webgl/1.0.3/conformance/rendering/many-draw-calls.html is much slower, times out in debug
+        https://bugs.webkit.org/show_bug.cgi?id=205668
+
+        Disable asserts when compiling ANGLE in release mode by defining
+        NDEBUG.
+
+        Reviewed by Dean Jackson.
+
+        * Configurations/ANGLE.xcconfig:
+
 2020-01-14  Dean Jackson  <dino@apple.com>
 
         Build ANGLE as a dynamic library

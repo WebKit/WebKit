@@ -3373,12 +3373,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 5D7C59C51208C68B001C873E /* ANGLE.xcconfig */;
 			buildSettings = {
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					ANGLE_ENABLE_OPENGL,
-					ANGLE_ENABLE_GLSL,
-					ANGLE_ENABLE_ESSL,
-					GL_SILENCE_DEPRECATION,
-				);
 				HEADER_SEARCH_PATHS = (
 					include,
 					src,
@@ -3408,12 +3402,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 5D7C59C51208C68B001C873E /* ANGLE.xcconfig */;
 			buildSettings = {
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					ANGLE_ENABLE_OPENGL,
-					ANGLE_ENABLE_GLSL,
-					ANGLE_ENABLE_ESSL,
-					GL_SILENCE_DEPRECATION,
-				);
 				HEADER_SEARCH_PATHS = (
 					include,
 					src,
@@ -3428,12 +3416,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 5D7C59C51208C68B001C873E /* ANGLE.xcconfig */;
 			buildSettings = {
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					ANGLE_ENABLE_OPENGL,
-					ANGLE_ENABLE_GLSL,
-					ANGLE_ENABLE_ESSL,
-					GL_SILENCE_DEPRECATION,
-				);
 				HEADER_SEARCH_PATHS = (
 					include,
 					src,
