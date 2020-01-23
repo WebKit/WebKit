@@ -467,6 +467,9 @@ void ViewGestureController::beginSwipeGesture(WebBackForwardListItem* targetItem
     if (m_webPageProxy.preferences().viewGestureDebuggingEnabled())
         applyDebuggingPropertiesToSwipeViews();
 
+    m_didCallEndSwipeGesture = false;
+    m_removeSnapshotImmediatelyWhenGestureEnds = false;
+
     CALayer *layerAdjacentToSnapshot = determineLayerAdjacentToSnapshotForParent(direction, snapshotLayerParent);
     BOOL swipingLeft = isPhysicallySwipingLeft(direction);
     if (swipingLeft)
@@ -598,6 +601,11 @@ void ViewGestureController::removeSwipeSnapshot()
 
     if (m_activeGestureType != ViewGestureType::Swipe)
         return;
+
+    if (!m_didCallEndSwipeGesture) {
+        m_removeSnapshotImmediatelyWhenGestureEnds = true;
+        return;
+    }
 
     if (m_currentSwipeSnapshot)
         m_currentSwipeSnapshot->setVolatile(true);
