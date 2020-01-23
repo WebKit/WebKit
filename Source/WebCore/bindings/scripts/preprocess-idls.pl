@@ -74,16 +74,12 @@ $dedicatedWorkerGlobalScopeConstructorsFile = CygwinPathIfNeeded($dedicatedWorke
 $serviceWorkerGlobalScopeConstructorsFile = CygwinPathIfNeeded($serviceWorkerGlobalScopeConstructorsFile);
 $workletGlobalScopeConstructorsFile = CygwinPathIfNeeded($workletGlobalScopeConstructorsFile);
 $paintWorkletGlobalScopeConstructorsFile = CygwinPathIfNeeded($paintWorkletGlobalScopeConstructorsFile);
-$supplementalMakefileDeps = CygwinPathIfNeeded($supplementalMakefileDeps);
+$supplementalMakefileDeps = CygwinPathIfNeeded($supplementalMakefileDeps) if defined($supplementalMakefileDeps);
 
-open FH, "< $idlFilesList" or die "Cannot open $idlFilesList\n";
-my @idlFilesIn = <FH>;
-chomp(@idlFilesIn);
-my @idlFiles = ();
-foreach (@idlFilesIn) {
-    push @idlFiles, CygwinPathIfNeeded($_);
-}
-close FH;
+my @idlFiles;
+open(my $fh, '<', $idlFilesList) or die "Cannot open $idlFilesList";
+@idlFiles = map { CygwinPathIfNeeded(s/\r?\n?$//r) } <$fh>;
+close($fh) or die;
 
 my %interfaceNameToIdlFile;
 my %idlFileToInterfaceName;
@@ -228,18 +224,10 @@ if ($supplementalMakefileDeps) {
     WriteFileIfChanged($supplementalMakefileDeps, $makefileDeps);
 }
 
-my $cygwinPathAdded;
 sub CygwinPathIfNeeded
 {
     my $path = shift;
-    if ($path && $Config{osname} eq "cygwin") {
-        if (not $cygwinPathAdded) {
-            $ENV{PATH} = "$ENV{PATH}:/cygdrive/c/cygwin/bin";
-            $cygwinPathAdded = 1; 
-        }
-        chomp($path = `cygpath -u '$path'`);
-        $path =~ s/[\r\n]//;
-    }
+    return Cygwin::win_to_posix_path($path) if ($^O eq 'cygwin');
     return $path;
 }
 
