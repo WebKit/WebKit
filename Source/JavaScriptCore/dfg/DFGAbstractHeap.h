@@ -57,7 +57,6 @@ namespace JSC { namespace DFG {
     macro(JSCell_indexingType) \
     macro(JSCell_structureID) \
     macro(JSCell_typeInfoFlags) \
-    macro(JSCell_typeInfoType) \
     macro(JSObject_butterfly) \
     macro(JSPropertyNameEnumerator_cachedPropertyNames) \
     macro(RegExpObject_lastIndex) \
