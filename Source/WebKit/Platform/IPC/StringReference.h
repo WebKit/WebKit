@@ -68,6 +68,11 @@ public:
         return a.m_size == b.m_size && !memcmp(a.m_data, b.m_data, a.m_size);
     }
 
+    friend bool operator!=(const StringReference& a, const StringReference& b)
+    {
+        return !(a == b);
+    }
+
     void encode(Encoder&) const;
     static bool decode(Decoder&, StringReference&);
 
