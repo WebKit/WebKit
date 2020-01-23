@@ -1811,9 +1811,6 @@ void SpeculativeJIT::compileCheckNeutered(Node* node)
     SpeculateCellOperand base(this, node->child1());
     GPRReg baseReg = base.gpr();
 
-    // We only emit this node after we have checked this is a typed array so that better be true now.
-    DFG_ASSERT(m_graph, node, speculationChecked(m_state.forNode(node->child1()).m_type, SpecTypedArrayView));
-
     speculationCheck(
         BadIndexingType, JSValueSource::unboxedCell(baseReg), node->child1(), 
         m_jit.branchTestPtr(MacroAssembler::Zero, MacroAssembler::Address(baseReg, JSArrayBufferView::offsetOfVector())));

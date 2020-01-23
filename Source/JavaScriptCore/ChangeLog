@@ -1,3 +1,29 @@
+2020-01-22  Keith Miller  <keith_miller@apple.com>
+
+        InternalField and CheckNeutered DFG nodes are not always safe to execute
+        https://bugs.webkit.org/show_bug.cgi?id=206632
+
+        Reviewed by Saam Barati.
+
+        We currently mark (Get/Set)InternalField/CheckNeutered nodes as safe to execute everywhere. However,
+        GetInternalField, etc. rely on a proof that the cell passed to it is a subclass of InteralFieldObject.
+        This combination means we may hoist the nodes past the check guarding them.
+
+        Also, remove a bogus assertion that we will have proven the value passed to CheckNeutered is a TypedArray.
+        It's not valid to require that AI preserve a precise model of all invariants since phases can make changes
+        that AI doesn't understand.
+
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileCheckNeutered):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileCheckNeutered):
+
 2020-01-22  Saam Barati  <sbarati@apple.com>
 
         Add an option for logging total phase times

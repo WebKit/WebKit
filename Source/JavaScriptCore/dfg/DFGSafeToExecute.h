@@ -31,6 +31,12 @@
 
 namespace JSC { namespace DFG {
 
+// This phase is used to determine if a node can safely run at a new location.
+// It is important to note that returning false does not mean it's definitely 
+// wrong to run the node at the new location. In other words, returning false 
+// does not imply moving the node would be invalid only that this phase could
+// not prove it is valid. Thus, it is always ok to return false.
+
 template<typename AbstractStateType>
 class SafeToExecuteEdge {
 public:
@@ -280,7 +286,6 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node, bool igno
     case CheckSubClass:
     case CheckArray:
     case CheckArrayOrEmpty:
-    case CheckNeutered:
     case Arrayify:
     case ArrayifyToStructure:
     case GetScope:
@@ -292,8 +297,6 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node, bool igno
     case GetGlobalVar:
     case GetGlobalLexicalVariable:
     case PutGlobalVariable:
-    case GetInternalField:
-    case PutInternalField:
     case CheckCell:
     case CheckBadCell:
     case CheckNotEmpty:
@@ -552,6 +555,7 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node, bool igno
     case ArrayPush:
         return node->arrayMode().alreadyChecked(graph, node, state.forNode(graph.varArgChild(node, 1)));
 
+    case CheckNeutered:
     case GetTypedArrayByteOffset:
         return !(state.forNode(node->child1()).m_type & ~(SpecTypedArrayView));
             
@@ -619,6 +623,10 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node, bool igno
         }
         return true;
     }
+
+    case GetInternalField:
+    case PutInternalField:
+        return false;
 
     case DataViewSet:
         return false;

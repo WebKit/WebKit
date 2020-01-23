@@ -3374,11 +3374,6 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         break;
     }
 
-    case CheckNeutered: {
-        DFG_ASSERT(m_graph, node, speculationChecked(forNode(node->child1()).m_type, SpecTypedArrayView));
-        break;
-    }
-
     case CheckArrayOrEmpty:
     case CheckArray: {
         AbstractValue& value = forNode(node->child1());
@@ -4100,6 +4095,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
     case CountExecution:
     case CheckTierUpInLoop:
     case CheckTierUpAtReturn:
+    case CheckNeutered:
     case SuperSamplerBegin:
     case SuperSamplerEnd:
     case CheckTierUpAndOSREnter:

@@ -4105,9 +4105,6 @@ private:
     {
         Edge edge = m_node->child1();
         LValue cell = lowCell(edge);
-        
-        // We only emit this node after we have checked this is a typed array so that better be true now.
-        DFG_ASSERT(m_graph, m_node, speculationChecked(abstractValue(edge).m_type, SpecTypedArrayView));
 
         speculate(
             BadIndexingType, jsValueValue(cell), edge.node(),

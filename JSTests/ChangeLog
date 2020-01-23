@@ -1,3 +1,13 @@
+2020-01-22  Keith Miller  <keith_miller@apple.com>
+
+        InternalField and CheckNeutered DFG nodes are not always safe to execute
+        https://bugs.webkit.org/show_bug.cgi?id=206632
+
+        Reviewed by Saam Barati.
+
+        * stress/for-of-bad-internal-field-hoist.js: Added.
+        (foo):
+
 2020-01-22  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] DateMath should accept more ISO-8601 timezone designators even if they are not included in ECMA262 to produce expected results in the wild code
