@@ -31,6 +31,7 @@
 #import <WebKit/WKUIDelegatePrivate.h>
 #import <WebKit/WKWebView.h>
 #import <WebKit/WKWebViewConfiguration.h>
+#import <WebKit/WKWebViewPrivate.h>
 #import <wtf/RetainPtr.h>
 
 @class ModalAlertsUIDelegate;
@@ -141,3 +142,52 @@ TEST(WebKit, ModalAlerts)
 
     TestWebKitAPI::Util::run(&isDone);
 }
+
+#if PLATFORM(MAC)
+
+static bool didRejectTryClose = false;
+
+@interface SlowBeforeUnloadPromptUIDelegate : NSObject <WKUIDelegate>
+@end
+
+@implementation SlowBeforeUnloadPromptUIDelegate
+
+- (void)_webView:(WKWebView *)webView runBeforeUnloadConfirmPanelWithMessage:(NSString *)message initiatedByFrame:(WKFrameInfo *)frame completionHandler:(void (^)(BOOL result))completionHandler
+{
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 0.5 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
+        completionHandler(NO);
+        didRejectTryClose = true;
+    });
+}
+
+- (void)webViewDidClose:(WKWebView *)webView
+{
+    [webView _close];
+}
+
+@end
+
+TEST(WebKit, SlowBeforeUnloadPrompt)
+{
+    auto slowBeforeUnloadPromptUIDelegate = adoptNS([[SlowBeforeUnloadPromptUIDelegate alloc] init]);
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
+    [webView setUIDelegate:slowBeforeUnloadPromptUIDelegate.get()];
+    [webView synchronouslyLoadTestPageNamed:@"beforeunload"];
+
+    TestWebKitAPI::Util::spinRunLoop(10);
+
+    // Need a user gesture on the page before being allowed to show the beforeunload prompt.
+    [webView sendClicksAtPoint:NSMakePoint(5, 5) numberOfClicks:1];
+
+    TestWebKitAPI::Util::spinRunLoop(10);
+
+    [webView _tryClose];
+
+    TestWebKitAPI::Util::run(&didRejectTryClose);
+    EXPECT_FALSE([webView _isClosed]);
+
+    TestWebKitAPI::Util::sleep(0.1);
+    EXPECT_FALSE([webView _isClosed]);
+}
+
+#endif
