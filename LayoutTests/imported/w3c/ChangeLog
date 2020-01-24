@@ -1,3 +1,16 @@
+2020-01-23  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Support multiple CSS Animations with the same name in animation-name
+        https://bugs.webkit.org/show_bug.cgi?id=206688
+
+        Reviewed by Dean Jackson.
+
+        Mark some new WPT progressions.
+
+        * web-platform-tests/css/css-animations/Element-getAnimations-dynamic-changes.tentative-expected.txt:
+        * web-platform-tests/css/css-animations/Element-getAnimations.tentative-expected.txt:
+        * web-platform-tests/web-animations/timing-model/timelines/update-and-send-events-replacement-expected.txt:
+
 2020-01-24  Rossana Monteriso  <rmonteriso@igalia.com>
 
         Import 2 sets of grid-align-tests from WPT

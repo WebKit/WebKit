@@ -35,7 +35,7 @@ class AnimationList : public RefCounted<AnimationList> {
 public:
     static Ref<AnimationList> create() { return adoptRef(*new AnimationList); }
 
-    Ref<AnimationList> copy() { return adoptRef(*new AnimationList(*this)); }
+    Ref<AnimationList> copy() const { return adoptRef(*new AnimationList(*this)); }
 
     void fillUnsetProperties();
     bool operator==(const AnimationList&) const;

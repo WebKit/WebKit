@@ -78,15 +78,15 @@ void KeyframeEffectStack::ensureEffectsAreSorted()
         ASSERT(lhsAnimation);
         ASSERT(rhsAnimation);
 
-        return compareAnimationsByCompositeOrder(*lhsAnimation, *rhsAnimation, m_cssAnimationNames);
+        return compareAnimationsByCompositeOrder(*lhsAnimation, *rhsAnimation, m_cssAnimationList.get());
     });
 
     m_isSorted = true;
 }
 
-void KeyframeEffectStack::setCSSAnimationNames(Vector<String>&& animationNames)
+void KeyframeEffectStack::setCSSAnimationList(RefPtr<const AnimationList>&& cssAnimationList)
 {
-    m_cssAnimationNames = WTFMove(animationNames);
+    m_cssAnimationList = WTFMove(cssAnimationList);
     // Since the list of animation names has changed, the sorting order of the animation effects may have changed as well.
     m_isSorted = false;
 }

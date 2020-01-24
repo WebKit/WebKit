@@ -69,7 +69,8 @@ public:
     void updateCSSAnimationsForElement(Element&, const RenderStyle* currentStyle, const RenderStyle& afterChangeStyle);
     void updateCSSTransitionsForElement(Element&, const RenderStyle& currentStyle, const RenderStyle& afterChangeStyle);
 
-    using ElementToAnimationsMap = HashMap<Element*, ListHashSet<RefPtr<WebAnimation>>>;
+    using AnimationCollection = ListHashSet<RefPtr<WebAnimation>>;
+    using ElementToAnimationsMap = HashMap<Element*, AnimationCollection>;
     using PropertyToTransitionMap = HashMap<CSSPropertyID, RefPtr<CSSTransition>>;
 
     virtual ~AnimationTimeline();
@@ -78,19 +79,23 @@ protected:
     explicit AnimationTimeline();
 
     Vector<WeakPtr<WebAnimation>> m_allAnimations;
-    ListHashSet<RefPtr<WebAnimation>> m_animations;
+    AnimationCollection m_animations;
     HashMap<Element*, PropertyToTransitionMap> m_elementToCompletedCSSTransitionByCSSPropertyID;
 
 private:
+    using CSSAnimationCollection = ListHashSet<RefPtr<CSSAnimation>>;
+    using ElementToCSSAnimationsMap = HashMap<Element*, CSSAnimationCollection>;
+
     void updateGlobalPosition(WebAnimation&);
     RefPtr<WebAnimation> cssAnimationForElementAndProperty(Element&, CSSPropertyID);
     PropertyToTransitionMap& ensureRunningTransitionsByProperty(Element&);
     void updateCSSTransitionsForElementAndProperty(Element&, CSSPropertyID, const RenderStyle& currentStyle, const RenderStyle& afterChangeStyle, PropertyToTransitionMap&, PropertyToTransitionMap&, const MonotonicTime);
+    void removeCSSAnimationCreatedByMarkup(Element&, CSSAnimation&);
 
     ElementToAnimationsMap m_elementToAnimationsMap;
     ElementToAnimationsMap m_elementToCSSAnimationsMap;
     ElementToAnimationsMap m_elementToCSSTransitionsMap;
-    HashMap<Element*, HashMap<String, RefPtr<CSSAnimation>>> m_elementToCSSAnimationByName;
+    ElementToCSSAnimationsMap m_elementToCSSAnimationsCreatedByMarkupMap;
     HashMap<Element*, PropertyToTransitionMap> m_elementToRunningCSSTransitionByCSSPropertyID;
 
     Markable<Seconds, Seconds::MarkableTraits> m_currentTime;
