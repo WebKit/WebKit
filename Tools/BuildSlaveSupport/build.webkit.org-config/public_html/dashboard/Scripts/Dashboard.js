@@ -31,7 +31,6 @@ Dashboard = {
         iOS13Simulator: { name: "ios-simulator-13", readableName: "iOS 13 Simulator", order: 20 },
         iOS13Device: { name: "ios-13", readableName: "iOS 13", order: 25 },
         Windows10: { name: "windows-10", readableName: "Windows 10", order: 30 },
-        Windows7: { name: "windows-7", readableName: "Windows 7", order: 35 },
         WinCairo: { name: "wincairo-windows-10", readableName: "WinCairo", order: 50 },
         LinuxWPE: { name : "linux-wpe", readableName: "Linux WPE", order: 90 },
         LinuxGTK: { name : "linux-gtk", readableName: "Linux GTK", order: 91 },

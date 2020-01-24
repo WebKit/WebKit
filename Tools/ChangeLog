@@ -1,3 +1,17 @@
+2020-01-23  Matt Lewis  <jlewis3@apple.com>
+
+        Remove Apple windows 7 queues.
+        https://bugs.webkit.org/show_bug.cgi?id=206702
+
+        Reviewed by Jonathan Bedard.
+
+        * BuildSlaveSupport/build.webkit.org-config/config.json:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/WebKitBuildbot.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/Dashboard.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Styles/Main.css:
+        * BuildSlaveSupport/build.webkit.org-config/steps_unittest.py:
+        Removed Windows 7 queues from config and from dashboard.
+
 2020-01-24  Per Arne Vollan  <pvollan@apple.com>
 
         Unreviewed, rolling out r255050.
