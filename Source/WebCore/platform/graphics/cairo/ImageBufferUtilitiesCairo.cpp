@@ -35,6 +35,7 @@
 
 #include "CairoUtilities.h"
 #include "MIMETypeRegistry.h"
+#include "RefPtrCairo.h"
 #include <cairo.h>
 #include <wtf/text/Base64.h>
 #include <wtf/text/CString.h>

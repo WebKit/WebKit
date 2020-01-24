@@ -30,6 +30,7 @@
 #include "URLSchemeTaskParameters.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebErrors.h"
+#include "WebFrame.h"
 #include "WebLoaderStrategy.h"
 #include "WebPage.h"
 #include "WebPageProxyMessages.h"

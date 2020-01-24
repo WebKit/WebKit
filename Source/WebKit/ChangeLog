@@ -1,3 +1,12 @@
+2020-01-24  Adrian Perez de Castro  <aperez@igalia.com>
+
+        Fix various non-unified build issues introduced since r254751
+        https://bugs.webkit.org/show_bug.cgi?id=206736
+
+        Reviewed by Carlos Garcia Campos.
+
+        * WebProcess/WebPage/WebURLSchemeHandlerProxy.cpp: Add missing WebFrame.h inclusion.
+
 2020-01-24  Don Olmstead  <don.olmstead@sony.com>
 
         Centralize AuxiliaryProcessMainBase implementations
