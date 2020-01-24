@@ -1,3 +1,20 @@
+2020-01-24  Rossana Monteriso  <rmonteriso@igalia.com>
+
+        Import 2 sets of grid-align-tests from WPT
+        https://bugs.webkit.org/show_bug.cgi?id=206492
+
+        Reviewed by Manuel Rego Casasnovas.
+
+        Remove outdated grid-align tests, that are being replaced by newer tests, adapted to the WPT project and imported
+        to the corresponding css-grid folder inside WebKit.
+
+        * fast/css-grid-layout/grid-align-content-vertical-lr-expected.txt: Removed.
+        * fast/css-grid-layout/grid-align-content-vertical-rl-expected.txt: Removed.
+        * fast/css-grid-layout/grid-align-stretching-replaced-items-expected.txt: Removed.
+        * fast/css-grid-layout/grid-align-stretching-replaced-items.html: Removed.
+        * fast/css-grid-layout/grid-align-content-vertical-lr.html: Removed.
+        * fast/css-grid-layout/grid-align-content-vertical-rl.html: Removed.
+
 2020-01-24  Antti Koivisto  <antti@apple.com>
 
         :matches() doesn't combine correctly with pseudo elements

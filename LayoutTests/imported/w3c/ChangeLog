@@ -1,3 +1,22 @@
+2020-01-24  Rossana Monteriso  <rmonteriso@igalia.com>
+
+        Import 2 sets of grid-align-tests from WPT
+        https://bugs.webkit.org/show_bug.cgi?id=206492
+
+        Reviewed by Manuel Rego Casasnovas.
+
+        Add outdated grid-align tests, checked and adapted to the WPT project, to the css-grid/alignment folder for imported tests.
+        Add also blue-100.png support file inside the css/support folder.
+        Correct the test description inside <p>, for grid-align-stretching-replaced-items.html.
+
+        * web-platform-tests/css/css-grid/alignment/grid-align-content-vertical-lr.html:
+        * web-platform-tests/css/css-grid/alignment/grid-align-content-vertical-rl.html:
+        * web-platform-tests/css/css-grid/alignment/grid-align-stretching-replaced-items.html:
+        * web-platform-tests/css/css-grid/alignment/grid-align-content-vertical-lr-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-align-content-vertical-rl-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-align-stretching-replaced-items-expected.txt:
+        * web-platform-tests/css/support/blue-100.png:
+
 2020-01-22  Rob Buis  <rbuis@igalia.com>
 
         Fix fetch/api/policies/referrer-origin-worker.html
