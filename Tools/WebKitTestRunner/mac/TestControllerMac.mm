@@ -377,7 +377,12 @@ void TestController::abortModal()
 
 const char* TestController::platformLibraryPathForTesting()
 {
-    return [[@"~/Library/Application Support/DumpRenderTree" stringByExpandingTildeInPath] UTF8String];
+    static NSString *platformLibraryPath = nil;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        platformLibraryPath = [[@"~/Library/Application Support/DumpRenderTree" stringByExpandingTildeInPath] retain];
+    });
+    return platformLibraryPath.UTF8String;
 }
 
 } // namespace WTR

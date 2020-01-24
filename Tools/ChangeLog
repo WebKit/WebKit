@@ -1,3 +1,46 @@
+2020-01-24  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r254318. rdar://problem/58856031
+
+    TestController::platformLibraryPathForTesting() returns inner pointer to autoreleased NSString
+    <https://webkit.org/b/206018>
+    <rdar://problem/58449733>
+    
+    Reviewed by Darin Adler.
+    
+    * WebKitTestRunner/TestController.cpp:
+    (WTR::TestController::initialize):
+    - Use WTF::AutodrainedPool to fix remaining autoreleasePool
+      leaks.
+    * WebKitTestRunner/ios/TestControllerIOS.mm:
+    (WTR::TestController::platformLibraryPathForTesting):
+    * WebKitTestRunner/mac/TestControllerMac.mm:
+    (WTR::TestController::platformLibraryPathForTesting):
+    - Retain NSString since these methods return an inner pointer.
+      This also only needs to be initialized once.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@254318 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-01-09  David Kilzer  <ddkilzer@apple.com>
+
+            TestController::platformLibraryPathForTesting() returns inner pointer to autoreleased NSString
+            <https://webkit.org/b/206018>
+            <rdar://problem/58449733>
+
+            Reviewed by Darin Adler.
+
+            * WebKitTestRunner/TestController.cpp:
+            (WTR::TestController::initialize):
+            - Use WTF::AutodrainedPool to fix remaining autoreleasePool
+              leaks.
+            * WebKitTestRunner/ios/TestControllerIOS.mm:
+            (WTR::TestController::platformLibraryPathForTesting):
+            * WebKitTestRunner/mac/TestControllerMac.mm:
+            (WTR::TestController::platformLibraryPathForTesting):
+            - Retain NSString since these methods return an inner pointer.
+              This also only needs to be initialized once.
+
 2020-01-23  Russell Epstein  <repstein@apple.com>
 
         Cherry-pick r254884. rdar://problem/58807972
