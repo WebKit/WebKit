@@ -1,3 +1,15 @@
+2020-01-24  Jonathan Bedard  <jbedard@apple.com>
+
+        WTF: Remove old iOS version macros
+        https://bugs.webkit.org/show_bug.cgi?id=206634
+        <rdar://problem/58818561>
+
+        Reviewed by Darin Adler.
+
+        * wtf/PlatformEnable.h: Remove iOS 12 version macro.
+        * wtf/PlatformHave.h: Ditto.
+        * wtf/PlatformUse.h: Ditto.
+
 2020-01-22  Darin Adler  <darin@apple.com>
 
         Remove some unneeded definitions from Platform.h family headers
