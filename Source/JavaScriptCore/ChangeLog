@@ -1,5 +1,18 @@
 2020-01-23  Robin Morisset  <rmorisset@apple.com>
 
+        Break the dependency between jsc and DerivedSources
+        https://bugs.webkit.org/show_bug.cgi?id=206720
+
+        Reviewed by Mark Lam.
+
+        According to Tadeu, the slowdown of production builds (by more than 20%) when he landed his bytecode patch was caused by a new dependency of the jsc binary on DerivedSources/, which was needed because of DerivedSources/BytecodeStructs.h being included in CommonSlowPaths.h which is transitively included in jsc.cpp.
+        Now that BytecodeStructs.h is no longer included in CommonSlowPaths.h (see https://bugs.webkit.org/show_bug.cgi?id=206566), I'm trying to break the dependency, to recover from this compile time regression.
+
+        * Configurations/JSC.xcconfig:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+
+2020-01-23  Robin Morisset  <rmorisset@apple.com>
+
         Remove dead option useFTLTBAA
         https://bugs.webkit.org/show_bug.cgi?id=206725
 
