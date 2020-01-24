@@ -215,7 +215,6 @@ constexpr bool enableWebAssemblyStreamingApi = false;
     v(Bool, useOSREntryToFTL, true, Normal, nullptr) \
     \
     v(Bool, useFTLJIT, true, Normal, "allows the FTL JIT to be used if true") \
-    v(Bool, useFTLTBAA, true, Normal, nullptr) \
     v(Bool, validateFTLOSRExitLiveness, false, Normal, nullptr) \
     v(Unsigned, defaultB3OptLevel, 2, Normal, nullptr) \
     v(Bool, b3AlwaysFailsBeforeCompile, false, Normal, nullptr) \
