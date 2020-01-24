@@ -2373,6 +2373,8 @@ webkit.org/b/179611 imported/w3c/web-platform-tests/xhr/send-entity-body-documen
 #Started flakiness between r249708 and r249813
 webkit.org/b/206639 http/tests/contentextensions/block-cookies-basic.html [ Failure Pass ]
 
+webkit.org/b/206733 animations/no-style-recalc-during-accelerated-animation.html [ Failure Pass ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Flaky tests
 #////////////////////////////////////////////////////////////////////////////////////////
