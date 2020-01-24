@@ -150,23 +150,25 @@ void DOMCacheStorage::retrieveCaches(CompletionHandler<void(Optional<Exception>&
     }
 
     m_connection->retrieveCaches(*origin, m_updateCounter, [this, callback = WTFMove(callback), pendingActivity = makePendingActivity(*this)](CacheInfosOrError&& result) mutable {
-        if (!m_isStopped) {
-            if (!result.has_value()) {
-                callback(DOMCacheEngine::convertToExceptionAndLog(scriptExecutionContext(), result.error()));
-                return;
-            }
-
-            auto& cachesInfo = result.value();
-
-            if (m_updateCounter != cachesInfo.updateCounter) {
-                m_updateCounter = cachesInfo.updateCounter;
-
-                m_caches = WTF::map(WTFMove(cachesInfo.infos), [this] (CacheInfo&& info) {
-                    return findCacheOrCreate(WTFMove(info));
-                });
-            }
-            callback(WTF::nullopt);
+        if (m_isStopped) {
+            callback(errorToException(DOMCacheEngine::Error::Stopped));
+            return;
         }
+        if (!result.has_value()) {
+            callback(DOMCacheEngine::convertToExceptionAndLog(scriptExecutionContext(), result.error()));
+            return;
+        }
+
+        auto& cachesInfo = result.value();
+
+        if (m_updateCounter != cachesInfo.updateCounter) {
+            m_updateCounter = cachesInfo.updateCounter;
+
+            m_caches = WTF::map(WTFMove(cachesInfo.infos), [this] (CacheInfo&& info) {
+                return findCacheOrCreate(WTFMove(info));
+            });
+        }
+        callback(WTF::nullopt);
     });
 }
 
