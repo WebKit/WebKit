@@ -1,0 +1,16 @@
+<style>
+* { -webkit-column-width: 1px; }
+</style>
+<script>
+    if (window.testRunner)
+        testRunner.dumpAsText();
+
+    onload = function f() {
+        LEGEND.before(CANVAS);
+    }
+</script>
+<body>
+<canvas id="CANVAS"></canvas><fieldset><legend id="LEGEND"></legend>
+<p> Tests inserting an element before legend under multi-column layout.</p>
+<p> The test passes if WebKit doesn't crash or hit an assertion.</p>
+</body>

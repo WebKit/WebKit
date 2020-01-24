@@ -1,3 +1,13 @@
+2020-01-24  Jack Lee  <shihchieh_lee@apple.com>
+
+        Nullptr deref in WebCore::RenderTreeBuilder::Block::attachIgnoringContinuation when an element is inserted before legend under multi-column layout.
+        https://bugs.webkit.org/show_bug.cgi?id=206109
+
+        Reviewed by Antti Koivisto.
+
+        * fast/forms/fieldset/fieldset-crash-insert-before-legend-under-multicol-expected.txt: Added.
+        * fast/forms/fieldset/fieldset-crash-insert-before-legend-under-multicol.html: Added.
+
 2020-01-24  Lauro Moura  <lmoura@igalia.com>
 
         [GTK][WPE] Websockets close-on-x tests are failing
