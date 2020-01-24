@@ -1,3 +1,23 @@
+2020-01-23  Saam Barati  <sbarati@apple.com>
+
+        Get rid of didFinishParsing and make parseInner return its results
+        https://bugs.webkit.org/show_bug.cgi?id=206706
+
+        Reviewed by Mark Lam and Keith Miller and Yusuke Suzuki.
+
+        This is paving the way for eagerly parsing immediately invoked functions.
+        Before, we'd just end up setting member fields inside ::didFinishParsing,
+        and then read them out inside ::parse. However, this is not going to work
+        when we are in a world where we're generating AST nodes for more than one
+        function at a time. This patch paves the way for that.
+
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::Parser):
+        (JSC::Parser<LexerType>::parseInner):
+        (JSC::Parser<LexerType>::didFinishParsing): Deleted.
+        * parser/Parser.h:
+        (JSC::Parser<LexerType>::parse):
+
 2020-01-23  Robin Morisset  <rmorisset@apple.com>
 
         Don't include BytecodeStructs.h in CommonSlowPaths.h

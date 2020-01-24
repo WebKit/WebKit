@@ -1372,7 +1372,16 @@ private:
 
     Parser();
 
-    String parseInner(const Identifier&, SourceParseMode, ParsingContext, Optional<int> functionConstructorParametersEndPosition = WTF::nullopt, const Vector<JSTextPosition>* = nullptr);
+    struct ParseInnerResult {
+        FunctionParameters* parameters;
+        SourceElements* sourceElements;
+        DeclarationStacks::FunctionStack functionDeclarations;
+        VariableEnvironment varDeclarations;
+        UniquedStringImplPtrSet sloppyModeHoistedFunctions;
+        CodeFeatures features;
+        int numConstants;
+    };
+    Expected<ParseInnerResult, String> parseInner(const Identifier&, SourceParseMode, ParsingContext, Optional<int> functionConstructorParametersEndPosition = WTF::nullopt, const Vector<JSTextPosition>* = nullptr);
 
     void didFinishParsing(SourceElements*, DeclarationStacks::FunctionStack&&, VariableEnvironment&, UniquedStringImplPtrSet&&, CodeFeatures, int);
 
@@ -1896,7 +1905,6 @@ private:
     const SourceCode* m_source;
     ParserArena m_parserArena;
     std::unique_ptr<LexerType> m_lexer;
-    FunctionParameters* m_parameters { nullptr };
 
     ParserState m_parserState;
     
@@ -1907,16 +1915,10 @@ private:
     JSTextPosition m_lastTokenEndPosition;
     int m_statementDepth;
     RefPtr<SourceProviderCache> m_functionCache;
-    SourceElements* m_sourceElements;
     bool m_parsingBuiltin;
     JSParserScriptMode m_scriptMode;
     SuperBinding m_superBinding;
     ConstructorKind m_defaultConstructorKindForTopLevelFunction;
-    VariableEnvironment m_varDeclarations;
-    DeclarationStacks::FunctionStack m_funcDeclarations;
-    UniquedStringImplPtrSet m_sloppyModeHoistedFunctions;
-    CodeFeatures m_features;
-    int m_numConstants;
     ExpressionErrorClassifier* m_expressionErrorClassifier;
     bool m_isEvalContext;
     bool m_immediateParentAllowsFunctionDeclarationInStatement;
@@ -1937,8 +1939,6 @@ std::unique_ptr<ParsedNode> Parser<LexerType>::parse(ParserError& error, const I
     if (ParsedNode::scopeIsFunction)
         m_lexer->setIsReparsingFunction();
 
-    m_sourceElements = 0;
-
     errLine = -1;
     errMsg = String();
 
@@ -1946,7 +1946,7 @@ std::unique_ptr<ParsedNode> Parser<LexerType>::parse(ParserError& error, const I
     ASSERT(m_source->startColumn() > OrdinalNumber::beforeFirst());
     unsigned startColumn = m_source->startColumn().zeroBasedInt();
 
-    String parseError = parseInner(calleeName, parseMode, parsingContext, functionConstructorParametersEndPosition, instanceFieldLocations);
+    auto parseResult = parseInner(calleeName, parseMode, parsingContext, functionConstructorParametersEndPosition, instanceFieldLocations);
 
     int lineNumber = m_lexer->lineNumber();
     bool lexError = m_lexer->sawError();
@@ -1954,14 +1954,13 @@ std::unique_ptr<ParsedNode> Parser<LexerType>::parse(ParserError& error, const I
     ASSERT(lexErrorMessage.isNull() != lexError);
     m_lexer->clear();
 
-    if (!parseError.isNull() || lexError) {
+    if (!parseResult || lexError) {
         errLine = lineNumber;
-        errMsg = !lexErrorMessage.isNull() ? lexErrorMessage : parseError;
-        m_sourceElements = 0;
+        errMsg = !lexErrorMessage.isNull() ? lexErrorMessage : parseResult.error();
     }
 
     std::unique_ptr<ParsedNode> result;
-    if (m_sourceElements) {
+    if (parseResult) {
         JSTokenLocation endLocation;
         endLocation.line = m_lexer->lineNumber();
         endLocation.lineStartOffset = m_lexer->currentLineStartOffset();
@@ -1972,16 +1971,16 @@ std::unique_ptr<ParsedNode> Parser<LexerType>::parse(ParserError& error, const I
                                     endLocation,
                                     startColumn,
                                     endColumn,
-                                    m_sourceElements,
-                                    m_varDeclarations,
-                                    WTFMove(m_funcDeclarations),
+                                    parseResult.value().sourceElements,
+                                    parseResult.value().varDeclarations,
+                                    WTFMove(parseResult.value().functionDeclarations),
                                     currentScope()->finalizeLexicalEnvironment(),
-                                    WTFMove(m_sloppyModeHoistedFunctions),
-                                    m_parameters,
+                                    WTFMove(parseResult.value().sloppyModeHoistedFunctions),
+                                    parseResult.value().parameters,
                                     *m_source,
-                                    m_features,
+                                    parseResult.value().features,
                                     currentScope()->innerArrowFunctionFeatures(),
-                                    m_numConstants,
+                                    parseResult.value().numConstants,
                                     WTFMove(m_moduleScopeData));
         result->setLoc(m_source->firstLine().oneBasedInt(), m_lexer->lineNumber(), m_lexer->currentOffset(), m_lexer->currentLineStartOffset());
         result->setEndOffset(m_lexer->currentOffset());

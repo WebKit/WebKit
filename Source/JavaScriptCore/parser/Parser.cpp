@@ -132,7 +132,6 @@ Parser<LexerType>::Parser(VM& vm, const SourceCode& source, JSParserBuiltinMode 
     , m_hasStackOverflow(false)
     , m_allowsIn(true)
     , m_statementDepth(0)
-    , m_sourceElements(0)
     , m_parsingBuiltin(builtinMode == JSParserBuiltinMode::Builtin)
     , m_scriptMode(scriptMode)
     , m_superBinding(superBinding)
@@ -208,24 +207,23 @@ Parser<LexerType>::~Parser()
 }
 
 template <typename LexerType>
-String Parser<LexerType>::parseInner(const Identifier& calleeName, SourceParseMode parseMode, ParsingContext parsingContext, Optional<int> functionConstructorParametersEndPosition, const Vector<JSTextPosition>* instanceFieldLocations)
+Expected<typename Parser<LexerType>::ParseInnerResult, String> Parser<LexerType>::parseInner(const Identifier& calleeName, SourceParseMode parseMode, ParsingContext parsingContext, Optional<int> functionConstructorParametersEndPosition, const Vector<JSTextPosition>* instanceFieldLocations)
 {
-    String parseError = String();
-
     ASTBuilder context(const_cast<VM&>(m_vm), m_parserArena, const_cast<SourceCode*>(m_source));
     ScopeRef scope = currentScope();
     scope->setIsLexicalScope();
     SetForScope<FunctionParsePhase> functionParsePhasePoisoner(m_parserState.functionParsePhase, FunctionParsePhase::Body);
 
+    FunctionParameters* parameters = nullptr;
     bool isArrowFunctionBodyExpression = parseMode == SourceParseMode::AsyncArrowFunctionBodyMode && !match(OPENBRACE);
     if (m_lexer->isReparsingFunction()) {
         ParserFunctionInfo<ASTBuilder> functionInfo;
         if (isGeneratorOrAsyncFunctionBodyParseMode(parseMode))
-            m_parameters = createGeneratorParameters(context, functionInfo.parameterCount);
+            parameters = createGeneratorParameters(context, functionInfo.parameterCount);
         else if (parseMode == SourceParseMode::InstanceFieldInitializerMode)
-            m_parameters = context.createFormalParameterList();
+            parameters = context.createFormalParameterList();
         else
-            m_parameters = parseFunctionParameters(context, parseMode, functionInfo);
+            parameters = parseFunctionParameters(context, parseMode, functionInfo);
 
         if (SourceParseModeSet(SourceParseMode::ArrowFunctionMode, SourceParseMode::AsyncArrowFunctionMode).contains(parseMode) && !hasError()) {
             // The only way we could have an error wile reparsing is if we run out of stack space.
@@ -264,12 +262,8 @@ String Parser<LexerType>::parseInner(const Identifier& calleeName, SourceParseMo
     }
 
     bool validEnding = consume(EOFTOK);
-    if (!sourceElements || !validEnding) {
-        if (hasError())
-            parseError = m_errorMessage;
-        else
-            parseError = "Parser error"_s;
-    }
+    if (!sourceElements || !validEnding)
+        return makeUnexpected(hasError() ? m_errorMessage : "Parser error"_s);
 
     IdentifierSet capturedVariables;
     UniquedStringImplPtrSet sloppyModeHoistedFunctions;
@@ -293,7 +287,7 @@ String Parser<LexerType>::parseInner(const Identifier& calleeName, SourceParseMo
     if (m_seenTaggedTemplate)
         features |= NoEvalCacheFeature;
 
-#ifndef NDEBUG
+#if ASSERT_ENABLED
     if (m_parsingBuiltin && isProgramParseMode(parseMode)) {
         VariableEnvironment& lexicalVariables = scope->lexicalVariables();
         const HashSet<UniquedStringImpl*>& closedVariableCandidates = scope->closedVariableCandidates();
@@ -306,22 +300,9 @@ String Parser<LexerType>::parseInner(const Identifier& calleeName, SourceParseMo
             }
         }
     }
-#endif // NDEBUG
-    didFinishParsing(sourceElements, scope->takeFunctionDeclarations(), varDeclarations, WTFMove(sloppyModeHoistedFunctions), features, context.numConstants());
+#endif // ASSERT_ENABLED
 
-    return parseError;
-}
-
-template <typename LexerType>
-void Parser<LexerType>::didFinishParsing(SourceElements* sourceElements, DeclarationStacks::FunctionStack&& funcStack, 
-    VariableEnvironment& varDeclarations, UniquedStringImplPtrSet&& sloppyModeHoistedFunctions, CodeFeatures features, int numConstants)
-{
-    m_sourceElements = sourceElements;
-    m_funcDeclarations = WTFMove(funcStack);
-    m_varDeclarations.swap(varDeclarations);
-    m_features = features;
-    m_sloppyModeHoistedFunctions = WTFMove(sloppyModeHoistedFunctions);
-    m_numConstants = numConstants;
+    return ParseInnerResult { parameters, sourceElements, scope->takeFunctionDeclarations(), WTFMove(varDeclarations), WTFMove(sloppyModeHoistedFunctions), features, context.numConstants() };
 }
 
 template <typename LexerType>
