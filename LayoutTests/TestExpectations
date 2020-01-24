@@ -2914,8 +2914,6 @@ webkit.org/b/167729 imported/w3c/web-platform-tests/css/css-lists/list-style-typ
 webkit.org/b/167729 imported/w3c/web-platform-tests/css/css-lists/list-style-type-string-007.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-lists/list-with-image-display-changed-001.html [ ImageOnlyFailure ]
 
-[ Debug ] fast/css/first-letter-and-float-crash.html [ Skip ]
-
 webkit.org/b/196274 imported/w3c/web-platform-tests/xhr/send-redirect-post-upload.htm [ Pass Failure ]
 
 # If requestAnimationFrame is invoked before ResizeObserver timer fired, it would pass, otherwise it would fail same as eventloop-expected.txt

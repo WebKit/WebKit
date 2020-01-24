@@ -1,3 +1,23 @@
+2020-01-24  Antti Koivisto  <antti@apple.com>
+
+        :matches() doesn't combine correctly with pseudo elements
+        https://bugs.webkit.org/show_bug.cgi?id=206654
+
+        Reviewed by Simon Fraser.
+
+        * TestExpectations:
+
+        Unskip fast/css/first-letter-and-float-crash.html which no longer hits assert due to this.
+
+        * fast/selectors/matches-with-pseudo-element-expected.html: Added.
+        * fast/selectors/matches-with-pseudo-element.html: Added.
+        * fast/css/currentColor-on-before-after-pseudo-elements.html:
+        * fast/css/matches-specificity-5.html:
+        * fast/selectors/pseudo-element-inside-matches-expected.html:
+        * fast/selectors/pseudo-element-inside-matches.html:
+
+        Update the existing tests to match the behavior.
+
 2020-01-24  youenn fablet  <youenn@apple.com>
 
         Make sure fetch tasks go to network if service worker never gets to activated

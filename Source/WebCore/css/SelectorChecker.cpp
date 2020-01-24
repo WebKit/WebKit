@@ -268,7 +268,7 @@ SelectorChecker::MatchResult SelectorChecker::matchRecursively(CheckingContext& 
     MatchType matchType = MatchType::Element;
 
     // The first selector has to match.
-    if (!checkOne(checkingContext, context, dynamicPseudoIdSet, matchType, specificity))
+    if (!checkOne(checkingContext, context, matchType, specificity))
         return MatchResult::fails(Match::SelectorFailsLocally);
 
     if (context.selector->match() == CSSSelector::PseudoElement) {
@@ -651,7 +651,7 @@ static inline bool tagMatches(const Element& element, const CSSSelector& simpleS
     return namespaceURI == starAtom() || namespaceURI == element.namespaceURI();
 }
 
-bool SelectorChecker::checkOne(CheckingContext& checkingContext, const LocalContext& context, PseudoIdSet& dynamicPseudoIdSet, MatchType& matchType, unsigned& specificity) const
+bool SelectorChecker::checkOne(CheckingContext& checkingContext, const LocalContext& context, MatchType& matchType, unsigned& specificity) const
 {
     const Element& element = *context.element;
     const CSSSelector& selector = *context.selector;
@@ -841,16 +841,21 @@ bool SelectorChecker::checkOne(CheckingContext& checkingContext, const LocalCont
                     subcontext.pseudoElementEffective = context.pseudoElementEffective;
                     subcontext.selector = subselector;
                     subcontext.firstSelectorOfTheFragment = subselector;
+                    subcontext.pseudoId = PseudoId::None;
                     PseudoIdSet localDynamicPseudoIdSet;
                     unsigned localSpecificity = 0;
                     MatchResult result = matchRecursively(checkingContext, subcontext, localDynamicPseudoIdSet, localSpecificity);
+
+                    // Pseudo elements are not valid inside :matches
+                    if (localDynamicPseudoIdSet)
+                        continue;
+
                     if (result.match == Match::SelectorMatches) {
                         maxSpecificity = std::max(maxSpecificity, localSpecificity);
 
                         if (result.matchType == MatchType::Element)
                             localMatchType = MatchType::Element;
 
-                        dynamicPseudoIdSet.merge(localDynamicPseudoIdSet);
                         hasMatchedAnything = true;
                     }
                 }

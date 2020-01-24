@@ -117,7 +117,7 @@ public:
     
 private:
     MatchResult matchRecursively(CheckingContext&, const LocalContext&, PseudoIdSet&, unsigned& specificity) const;
-    bool checkOne(CheckingContext&, const LocalContext&, PseudoIdSet&, MatchType&, unsigned& specificity) const;
+    bool checkOne(CheckingContext&, const LocalContext&, MatchType&, unsigned& specificity) const;
     bool matchSelectorList(CheckingContext&, const LocalContext&, const Element&, const CSSSelectorList&, unsigned& specificity) const;
 
     bool checkScrollbarPseudoClass(const CheckingContext&, const Element&, const CSSSelector&) const;

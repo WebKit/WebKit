@@ -2,22 +2,22 @@
 <html>
 <head>
 <style>
-#target1:matches(::first-letter) {
+#target1:matches(*)::first-letter {
     background-color: lime;
 }
 
-#target2:matches(::after) {
-    background-color: lime;
+#target2:matches(::first-letter) {
+    background-color: red;
     content: "cocoa";
 }
 
 #target3:matches(::before) {
-    background-color: lime;
+    background-color: red;
     content: "cappuccino";
 }
 
 #target4:matches(::before, ::after) {
-    background-color: lime;
+    background-color: red;
     content: "around";
 }
 
@@ -25,8 +25,8 @@
     background-color: lime;
 }
 
-#target6:matches(p, :matches(p, ::first-letter)) {
-    background-color: lime;
+#target6:matches(nonexistents, :matches(nonexistents, ::first-letter)) {
+    background-color: red;
 }
 
 #target7:matches(::before, ::after, *) {
@@ -50,9 +50,8 @@
     background-color: red;
 }
 
-/* first letter of before content is colored blue. */
 #target12:matches(::first-letter, ::after, ::before) {
-    background-color: lime;
+    background-color: red;
     content: "around";
 }
 
@@ -60,20 +59,20 @@
     background-color: blue !important;
 }
 
-#target13:matches(::after > p) {
+#target13:matches(::after > span) {
     background-color: red;
     content: "bug";
 }
 
-#target14:matches(::after) > p {
+#target14:matches(::after) > span {
     background-color: red;
 }
 
-#target15:matches(::after > p) > p {
+#target15:matches(::after > span) > span {
     background-color: red;
 }
 
-#target16:matches(*) > p {
+#target16:matches(*) > span {
     background-color: lime;
 }
 
@@ -81,22 +80,22 @@
 </head>
 <body>
 <div>
-    <p id="target1">pseudo element inside :matches has effect.</p>
-    <p id="target2">pseudo element inside :matches has effect.</p>
-    <p id="target3">pseudo element inside :matches has effect.</p>
-    <p id="target4">pseudo element inside :matches has effect.</p>
-    <p id="target5">pseudo element inside :matches has effect, so all selectors should be checked.</p>
-    <p id="target6">pseudo element inside nested :matches should have effect.</p>
-    <p id="target7">both line itself and before/after should be colored.</p>
+    <p id="target1">pseudo element outside :matches has effect.</p>
+    <p id="target2">pseudo element inside :matches has no effect.</p>
+    <p id="target3">pseudo element inside :matches has no effect.</p>
+    <p id="target4">pseudo element inside :matches has no effect.</p>
+    <p id="target5">pseudo element inside :matches has no effect, so the rest of the selectors should be checked.</p>
+    <p id="target6">pseudo element inside nested :matches should have no effect.</p>
+    <p id="target7">::before/after have no effect.</p>
     <p id="target8">pseudo element inside :not doesn't have effect.</p>
     <p id="target9">::first-line in non-rightmost fragment always unmatch.</p>
     <p id="target10">:matches(::first-line) in non-rightmost fragment always unmatches.</p>
     <p id="target11">pseudo element in non-rightmost fragment inside :matches always unmatches.</p>
-    <p id="target12">before/after contents are colored lime and first-letter of before content is colored blue.</p>
+    <p id="target12">first-letter is colored blue.</p>
     <p id="target13">non-rightmost pseudo element has no effect.</p>
-    <p id="target14"><p>non-rightmost pseudo element has no effect.</p></p>
-    <p id="target15"><p>non-rightmost pseudo element has no effect.</p></p>
-    <p id="target16"><p>matchType should be effective for normal element.</p></p>
+    <p id="target14"><span>non-rightmost pseudo element has no effect.</span></p>
+    <p id="target15"><span>non-rightmost pseudo element has no effect.</span></p>
+    <p id="target16"><span>matchType should be effective for normal element.</span></p>
 </div>
 </body>
 </html>
