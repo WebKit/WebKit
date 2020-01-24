@@ -1,3 +1,9 @@
+2020-01-24  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed GTK gardening. Mark /webkit/WebKitWebPage/get-uri as flaky
+
+        * TestWebKitAPI/glib/TestExpectations.json:
+
 2020-01-23  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] Support setting minimum effective device width during dynamic viewport size updates

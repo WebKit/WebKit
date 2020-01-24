@@ -96,6 +96,13 @@
             }
         }
     },
+    "TestLoaderClient": {
+        "subtests": {
+            "/webkit/WebKitWebPage/get-uri": {
+                "expected": {"gtk": {"status": ["FAIL", "PASS"], "bug": "webkit.org/b/206728"}}
+            }
+        }
+    },
     "TestWebKit": {
         "subtests": {
             "WebKit.MouseMoveAfterCrash": {
