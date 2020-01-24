@@ -249,6 +249,8 @@ bool OptimizeAssociativeExpressionTrees::run()
     // In the second one we optimize each such expression tree in turn.
     // We need the use counts to avoid duplicating code.
 
+    m_proc.resetValueOwners();
+
     Vector<unsigned> useCounts(m_proc.values().size(), 0); // Mapping from Value::m_index to use counts.
     HashSet<Value*> expressionTreeRoots;
     HashSet<BasicBlock*> rootOwners;
