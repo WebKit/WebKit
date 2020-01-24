@@ -1,3 +1,17 @@
+2020-01-24  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Reduce the maximum time we wait for draw events in DrawingMonitor
+        https://bugs.webkit.org/show_bug.cgi?id=206662
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        1 second is too much, we can wait up to 100_ms instead and wait for the next frame after 16_ms. We should also
+        ensure there's a draw event since this is called from dispatchAfterEnsuringDrawing().
+
+        * UIProcess/CoordinatedGraphics/DrawingAreaProxyCoordinatedGraphics.cpp:
+        (WebKit::DrawingAreaProxyCoordinatedGraphics::DrawingMonitor::start):
+        (WebKit::DrawingAreaProxyCoordinatedGraphics::DrawingMonitor::didDraw):
+
 2020-01-24  youenn fablet  <youenn@apple.com>
 
         Make sure fetch tasks go to network if service worker never gets to activated
