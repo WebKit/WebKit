@@ -1,3 +1,16 @@
+2020-01-24  Rob Buis  <rbuis@igalia.com>
+
+        [GTK][WPE] Several WPT fetch tests are failing
+        https://bugs.webkit.org/show_bug.cgi?id=206416
+
+        Reviewed by Frédéric Wang.
+
+        It is better to skip these as more tests can be added
+        and this feature is not enabled on WPE/GTK.
+
+        * platform/gtk/TestExpectations:
+        * platform/wpe/TestExpectations:
+
 2020-01-24  Lauro Moura  <lmoura@igalia.com>
 
         [GTK] More unreviewed gardening.
