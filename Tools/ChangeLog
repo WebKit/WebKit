@@ -1,3 +1,22 @@
+2020-01-24  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [GTK] API test runner fails with error: too many open files.
+        https://bugs.webkit.org/show_bug.cgi?id=206743
+
+        Reviewed by Carlos Garcia Campos.
+
+        The API test runner for google tests was leaking file descriptors because
+        it was not closing the file descriptor of the pseudo-terminal of the child,
+        which was referred in the parent because of the forkpty() call.
+        This was causing a small but constant increase of open file descriptors,
+        until the point it reached the limit of maximum open files (1024 usually)
+        causing this error.
+
+        Fix that by closing the reference to the fd of the child's pseudo-terminal.
+
+        * glib/api_test_runner.py:
+        (TestRunner._run_google_test):
+
 2020-01-24  Zan Dobersek  <zdobersek@igalia.com>
 
         Unreviewed WPE dependency bump.
