@@ -36,6 +36,8 @@ namespace WebCore {
 namespace Display {
 
 struct InlineContent : public RefCounted<InlineContent> {
+    ~InlineContent();
+
     using Runs = Vector<Run, 10>;
     using LineBoxes = Vector<LineBox, 5>;
 

@@ -28,6 +28,8 @@
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
 #include "DisplayInlineContent.h"
+#include "RuntimeEnabledFeatures.h"
+#include "TextPainter.h"
 
 namespace WebCore {
 namespace Display {
@@ -38,6 +40,14 @@ WTF::IteratorRange<const Run*> InlineContent::runsForRect(const LayoutRect&) con
     if (runs.isEmpty())
         return { nullptr, nullptr };
     return { &runs.first(), &runs.last() + 1 };
+}
+
+InlineContent::~InlineContent()
+{
+    if (RuntimeEnabledFeatures::sharedFeatures().layoutFormattingContextIntegrationEnabled()) {
+        for (auto& run : runs)
+            TextPainter::removeGlyphDisplayList(run);
+    }
 }
 
 }

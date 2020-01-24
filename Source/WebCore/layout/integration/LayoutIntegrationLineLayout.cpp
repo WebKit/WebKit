@@ -274,6 +274,7 @@ void LineLayout::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
         if (auto* debugShadow = debugTextShadow())
             textPainter.setShadow(debugShadow);
 
+        textPainter.setGlyphDisplayListIfNeeded(run, paintInfo, style.fontCascade(), paintInfo.context(), textRun);
         textPainter.paint(textRun, rect, textOrigin);
 
         if (!style.textDecorationsInEffect().isEmpty()) {
