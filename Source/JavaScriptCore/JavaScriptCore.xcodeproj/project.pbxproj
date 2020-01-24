@@ -2087,6 +2087,13 @@
 			remoteGlobalIDString = E1AC2E2720F7B94C00B0897D;
 			remoteInfo = "Unlock Keychain";
 		};
+		14D9D9D9218462B5009126C2 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 65FB3F6609D11E9100F49DEB;
+			remoteInfo = "Derived Sources";
+		};
 		52CD0F652242F5A3004A18A5 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
@@ -10616,6 +10623,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				14D9D9DA218462B5009126C2 /* PBXTargetDependency */,
 			);
 			name = jsc;
 			productInstallPath = /usr/local/bin;
@@ -11424,6 +11432,11 @@
 			isa = PBXTargetDependency;
 			target = E1AC2E2720F7B94C00B0897D /* Unlock Keychain */;
 			targetProxy = 14CFB11823035F6900F0048C /* PBXContainerItemProxy */;
+		};
+		14D9D9DA218462B5009126C2 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 65FB3F6609D11E9100F49DEB /* Derived Sources */;
+			targetProxy = 14D9D9D9218462B5009126C2 /* PBXContainerItemProxy */;
 		};
 		52CD0F662242F5A3004A18A5 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
