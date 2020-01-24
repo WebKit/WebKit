@@ -816,7 +816,9 @@
         "kern.osvariant_status"
         "kern.secure_kernel" ;; Needed by XPC bundle resolution
         "kern.version"
-        "vm.footprint_suspend"))
+        "vm.footprint_suspend")
+    (sysctl-name-regex #"^net.routetable") ;; <rdar://problem/57665153>
+)
 
 (allow iokit-get-properties
     (iokit-property-regex #"^AAPL,(DisplayPipe|OpenCLdisabled|IOGraphics_LER(|_RegTag_1|_RegTag_0|_Busy_2)|alias-policy|boot-display|display-alias|mux-switch-state|ndrv-dev|primary-display|slot-name)")

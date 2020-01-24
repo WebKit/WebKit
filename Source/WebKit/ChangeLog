@@ -1,3 +1,16 @@
+2020-01-24  Brent Fulgham  <bfulgham@apple.com>
+
+        [iOS] Add missing sysctl-read permission (already available in macOS sandbox)
+        https://bugs.webkit.org/show_bug.cgi?id=206713
+        <rdar://problem/57665153>
+
+        Reviewed by Per Arne Vollan.
+
+        Correct a sandbox violation encountered when attempting to log the system hostname.
+        This was already handled properly on macOS, but the rule was not added to the iOS sandbox.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+
 2020-01-24  Adrian Perez de Castro  <aperez@igalia.com>
 
         Fix various non-unified build issues introduced since r254751
