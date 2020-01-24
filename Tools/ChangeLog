@@ -1,3 +1,11 @@
+2020-01-24  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed WPE dependency bump.
+
+        * wpe/jhbuild.modules: Bump the libwpe checkout commit to include fixes
+        for configuration errors that can occur with older (but still supported)
+        CMake versions.
+
 2020-01-24  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed GTK gardening. Mark /webkit/WebKitWebPage/get-uri as flaky

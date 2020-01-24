@@ -184,7 +184,7 @@
   </autotools>
 
   <cmake id="libwpe">
-    <branch repo="github.com" module="WebPlatformForEmbedded/libwpe.git" checkoutdir="libwpe" tag="67ccb407efb295c727553145080937e8bb3a3211"/>
+    <branch repo="github.com" module="WebPlatformForEmbedded/libwpe.git" checkoutdir="libwpe" tag="d395e440883b4b4c764ccd7bae1cf1539d441661"/>
   </cmake>
 
   <cmake id="wpebackend-fdo">
