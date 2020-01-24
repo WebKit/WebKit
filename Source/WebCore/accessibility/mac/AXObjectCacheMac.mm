@@ -244,6 +244,14 @@ void AXObjectCache::attachWrapper(AXCoreObject* obj)
     obj->setWrapper(wrapper.get());
 }
 
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+void AXObjectCache::attachWrapper(AXIsolatedObject* isolatedObject, WebAccessibilityObjectWrapper* wrapper)
+{
+    [wrapper attachIsolatedObject:(AXCoreObject*)isolatedObject];
+    isolatedObject->setWrapper(wrapper);
+}
+#endif
+
 static BOOL axShouldRepostNotificationsForTests = false;
 
 void AXObjectCache::setShouldRepostNotificationsForTests(bool value)

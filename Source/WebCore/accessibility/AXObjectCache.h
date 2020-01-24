@@ -172,7 +172,15 @@ public:
     void remove(AXID);
 
     void detachWrapper(AXCoreObject*, AccessibilityDetachmentType);
+private:
+    using DOMObjectVariant = Variant<std::nullptr_t, RenderObject*, Node*, Widget*>;
+    void cacheAndInitializeWrapper(AccessibilityObject*, DOMObjectVariant = nullptr);
     void attachWrapper(AXCoreObject*);
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+    void attachWrapper(AXIsolatedObject*, WebAccessibilityObjectWrapper*);
+#endif
+
+public:
     void childrenChanged(Node*, Node* newChild = nullptr);
     void childrenChanged(RenderObject*, RenderObject* newChild = nullptr);
     void childrenChanged(AXCoreObject*);

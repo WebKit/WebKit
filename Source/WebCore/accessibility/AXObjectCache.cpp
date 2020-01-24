@@ -603,6 +603,21 @@ static Ref<AccessibilityObject> createFromNode(Node* node)
     return AccessibilityNodeObject::create(node);
 }
 
+void AXObjectCache::cacheAndInitializeWrapper(AccessibilityObject* newObject, DOMObjectVariant domObject)
+{
+    ASSERT(newObject);
+    AXID axID = getAXID(newObject);
+    WTF::switchOn(domObject,
+        [&axID, this] (RenderObject* typedValue) { m_renderObjectMapping.set(typedValue, axID); },
+        [&axID, this] (Node* typedValue) { m_nodeObjectMapping.set(typedValue, axID); },
+        [&axID, this] (Widget* typedValue) { m_widgetObjectMapping.set(typedValue, axID); },
+        [] (auto&) { }
+    );
+    m_objects.set(axID, newObject);
+    newObject->init();
+    attachWrapper(newObject);
+}
+
 AccessibilityObject* AXObjectCache::getOrCreate(Widget* widget)
 {
     if (!widget)
@@ -625,12 +640,7 @@ AccessibilityObject* AXObjectCache::getOrCreate(Widget* widget)
     if (!newObj)
         return nullptr;
 
-    getAXID(newObj.get());
-    
-    m_widgetObjectMapping.set(widget, newObj->objectID());
-    m_objects.set(newObj->objectID(), newObj);
-    newObj->init();
-    attachWrapper(newObj.get());
+    cacheAndInitializeWrapper(newObj.get(), widget);
     return newObj.get();
 }
 
@@ -673,12 +683,7 @@ AccessibilityObject* AXObjectCache::getOrCreate(Node* node)
     // Will crash later if we have two objects for the same node.
     ASSERT(!get(node));
 
-    getAXID(newObj.get());
-
-    m_nodeObjectMapping.set(node, newObj->objectID());
-    m_objects.set(newObj->objectID(), newObj);
-    newObj->init();
-    attachWrapper(newObj.get());
+    cacheAndInitializeWrapper(newObj.get(), node);
     newObj->setLastKnownIsIgnoredValue(newObj->accessibilityIsIgnored());
     // Sometimes asking accessibilityIsIgnored() will cause the newObject to be deallocated, and then
     // it will disappear when this function is finished, leading to a use-after-free.
@@ -701,12 +706,7 @@ AccessibilityObject* AXObjectCache::getOrCreate(RenderObject* renderer)
     // Will crash later if we have two objects for the same renderer.
     ASSERT(!get(renderer));
 
-    getAXID(newObj.get());
-
-    m_renderObjectMapping.set(renderer, newObj->objectID());
-    m_objects.set(newObj->objectID(), newObj);
-    newObj->init();
-    attachWrapper(newObj.get());
+    cacheAndInitializeWrapper(newObj.get(), renderer);
     newObj->setLastKnownIsIgnoredValue(newObj->accessibilityIsIgnored());
     // Sometimes asking accessibilityIsIgnored() will cause the newObject to be deallocated, and then
     // it will disappear when this function is finished, leading to a use-after-free.
@@ -795,8 +795,8 @@ AccessibilityObject* AXObjectCache::rootObjectForFrame(Frame* frame)
     
 AccessibilityObject* AXObjectCache::getOrCreate(AccessibilityRole role)
 {
-    RefPtr<AccessibilityObject> obj = nullptr;
-    
+    RefPtr<AccessibilityObject> obj;
+
     // will be filled in...
     switch (role) {
     case AccessibilityRole::ListBoxOption:
@@ -829,15 +829,11 @@ AccessibilityObject* AXObjectCache::getOrCreate(AccessibilityRole role)
     default:
         obj = nullptr;
     }
-    
-    if (obj)
-        getAXID(obj.get());
-    else
+
+    if (!obj)
         return nullptr;
 
-    m_objects.set(obj->objectID(), obj);
-    obj->init();
-    attachWrapper(obj.get());
+    cacheAndInitializeWrapper(obj.get());
     return obj.get();
 }
 
@@ -3084,8 +3080,7 @@ Ref<AXIsolatedObject> AXObjectCache::createIsolatedTreeHierarchy(AXCoreObject& o
 
     isolatedTreeNode->setTreeIdentifier(tree.treeIdentifier());
     isolatedTreeNode->setParent(parentID);
-    axObjectCache->detachWrapper(&object, AccessibilityDetachmentType::ElementChange);
-    axObjectCache->attachWrapper(&isolatedTreeNode.get());
+    axObjectCache->attachWrapper(&isolatedTreeNode.get(), object.wrapper());
 
     for (const auto& child : object.children()) {
         auto staticChild = createIsolatedTreeHierarchy(*child, isolatedTreeNode->objectID(), axObjectCache, tree, nodeChanges, false);
