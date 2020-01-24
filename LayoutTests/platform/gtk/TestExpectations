@@ -1287,6 +1287,7 @@ http/tests/is-logged-in/ [ Skip ]
 webkit.org/b/61487 http/tests/media/video-cross-site.html [ Failure ]
 
 webkit.org/b/206652 imported/w3c/web-platform-tests/websockets/constructor/011.html [ Failure ]
+webkit.org/b/206652 imported/w3c/web-platform-tests/websockets/interfaces/WebSocket/bufferedAmount/bufferedAmount-getting.html [ Failure ]
 
 webkit.org/b/206653 imported/w3c/web-platform-tests/clipboard-apis/async-navigator-clipboard-basics.https.html [ Failure ]
 webkit.org/b/206653 imported/w3c/web-platform-tests/clipboard-apis/async-write-text-read-dttext-manual.https.html [ Failure ]
@@ -2372,8 +2373,9 @@ webkit.org/b/179611 imported/w3c/web-platform-tests/xhr/send-entity-body-documen
 
 #Started flakiness between r249708 and r249813
 webkit.org/b/206639 http/tests/contentextensions/block-cookies-basic.html [ Failure Pass ]
+webkit.org/b/206639 http/tests/contentextensions/block-cookies-send.html [ Failure Pass ]
 
-webkit.org/b/206733 animations/no-style-recalc-during-accelerated-animation.html [ Failure Pass ]
+webkit.org/b/206691 animations/no-style-recalc-during-accelerated-animation.html [ Failure Pass ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Flaky tests
@@ -3207,6 +3209,7 @@ webkit.org/b/134979 media/track/track-cue-nothing-to-render.html [ Failure ]
 webkit.org/b/134979 media/track/track-cue-rendering-mode-changed.html [ Failure Timeout ]
 webkit.org/b/134979 media/track/track-cue-rendering-rtl.html [ Crash Failure Timeout ]
 webkit.org/b/134979 media/track/track-cue-rendering-snap-to-lines-not-set.html [ Failure Timeout ]
+webkit.org/b/134979 media/track/texttrackcue/texttrackcue-displaycue.html [ Crash Failure ]
 
 webkit.org/b/134995 media/track/track-in-band-subtitles-too-large.html [ Failure Crash Timeout ]
 webkit.org/b/134995 media/track/track-long-word-container-sizing.html [ Failure ]
@@ -3652,6 +3655,7 @@ webkit.org/b/186100 fast/hidpi/filters-turbulence.html [ ImageOnlyFailure ]
 webkit.org/b/186139 imported/w3c/web-platform-tests/web-animations/animation-model/animation-types/addition-per-property.html [ Failure Timeout ]
 
 webkit.org/b/186141 svg/dom/SVGGeometry-isPointInStroke.xhtml [ Failure ]
+webkit.org/b/186141 svg/dom/SVGGeometry-line.xhtml [ Failure ]
 
 webkit.org/b/186142 imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-upperlower-016.html [ ImageOnlyFailure ]
 
@@ -4067,6 +4071,9 @@ webkit.org/b/204675 imported/w3c/web-platform-tests/offscreen-canvas/the-offscre
 webkit.org/b/204675 imported/w3c/web-platform-tests/offscreen-canvas/the-offscreen-canvas/initial.reset.pattern.worker.html [ Failure ]
 
 webkit.org/b/206517 http/tests/misc/form-submit-file-cross-site-redirect.html [ Failure ]
+webkit.org/b/206517 http/wpt/service-workers/file-upload.html [ Failure ]
+
+webkit.org/b/206692 fast/canvas/canvas-fillPath-shadow.html [ Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of non-crashing, non-flaky tests failing

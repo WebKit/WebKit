@@ -1,3 +1,12 @@
+2020-01-24  Lauro Moura  <lmoura@igalia.com>
+
+        [GTK] More unreviewed gardening.
+        https://bugs.webkit.org/show_bug.cgi?id=206693
+
+        Unreviewed gardening.
+
+        * platform/gtk/TestExpectations:
+
 2020-01-24  Pablo Saavedra  <psaavedra@igalia.com>
 
         Layout Test animations/no-style-recalc-during-accelerated-animation.html is flaky
