@@ -146,8 +146,11 @@ MacroAssemblerCodePtr<JSEntryPtrTag> callerReturnPC(CodeBlock* baselineCodeBlock
 {
     callerIsLLInt = Options::forceOSRExitToLLInt() || baselineCodeBlockForCaller->jitType() == JITType::InterpreterThunk;
 
-    if (callBytecodeIndex.checkpoint())
+    if (callBytecodeIndex.checkpoint()) {
+        if (!callerIsLLInt)
+            baselineCodeBlockForCaller->m_hasLinkedOSRExit = true;
         return LLInt::getCodePtr<JSEntryPtrTag>(checkpoint_osr_exit_from_inlined_call_trampoline);
+    }
 
     MacroAssemblerCodePtr<JSEntryPtrTag> jumpTarget;
 

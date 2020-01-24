@@ -1,3 +1,15 @@
+2020-01-23  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] DFG OSR exit is not marking CodeBlock::m_hasLinkedOSRExit when the exit target is checkpoint
+        https://bugs.webkit.org/show_bug.cgi?id=206726
+        <rdar://problem/58827849>
+
+        Reviewed by Saam Barati.
+
+        * stress/exit-target-code-block-can-be-changed-between-llint-and-baseline.js: Added.
+        (bar):
+        (foo):
+
 2020-01-22  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Bits from Operand should fit in bits reserved in AbstractHeap's Payload

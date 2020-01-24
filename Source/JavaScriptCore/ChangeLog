@@ -1,5 +1,27 @@
 2020-01-23  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        [JSC] DFG OSR exit is not marking CodeBlock::m_hasLinkedOSRExit when the exit target is checkpoint
+        https://bugs.webkit.org/show_bug.cgi?id=206726
+        <rdar://problem/58827849>
+
+        Reviewed by Saam Barati.
+
+        The problem was that DFG OSR exit is not marking CodeBlock::m_hasLinkedOSRExit appropriately when an exit target bytecode-index is a checkpoint.
+        Let's consider the following scenario.
+
+            1. The caller CodeBlock "A" has Baseline code.
+            2. Compile DFG code exiting to the checkpoint of "A". We are not marking "A"'s CodeBlock::m_hasLinkedOSRExit.
+            3. GC happens and we decide dropping Baseline code for "A" since it is not marked. Switching it to LLInt.
+            4. However, DFG OSR exit code is compiled by assuming that "A" is Baseline. So LLInt registers are not recovered correctly.
+            5. Then, exiting to LLInt of "A", LLInt sees that LLInt registers have garbage.
+
+        In this patch, we correctly set a bit of CodeBlock::m_hasLinkedOSRExit when the exit target is checkpoint.
+
+        * dfg/DFGOSRExitCompilerCommon.cpp:
+        (JSC::DFG::callerReturnPC):
+
+2020-01-23  Yusuke Suzuki  <ysuzuki@apple.com>
+
         Unreviewed, build fix for Windows
         https://bugs.webkit.org/show_bug.cgi?id=206706
 
