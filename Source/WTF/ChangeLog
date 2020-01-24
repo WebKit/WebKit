@@ -1,3 +1,19 @@
+2020-01-24  Keith Rollin  <krollin@apple.com>
+
+        Fix internal Apple builds after r254411
+        https://bugs.webkit.org/show_bug.cgi?id=206723
+        <rdar://problem/58844735>
+
+        Reviewed by Maciej Stachowiak.
+
+        The default Xcode build configuration has changed between macOS 10.13
+        and macOS 10.15, such that references to some frameworks when bulding
+        for the latter don't work when building for the former. Fix this by
+        explicitly adding support for the desired build location rather than
+        assuming such support will be provided for us.
+
+        * Configurations/WTF.xcconfig:
+
 2020-01-24  Jonathan Bedard  <jbedard@apple.com>
 
         WTF: Remove old iOS version macros
