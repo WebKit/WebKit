@@ -170,6 +170,20 @@ ExceptionOr<void> MediaRecorder::stopRecording()
     return { };
 }
 
+ExceptionOr<void> MediaRecorder::requestData()
+{
+    if (state() == RecordingState::Inactive)
+        return Exception { InvalidStateError, "The MediaRecorder's state cannot be inactive"_s };
+
+    m_private->fetchData([this, protectedThis = makeRef(*this)](auto&& buffer, auto& mimeType) {
+        if (!m_isActive)
+            return;
+
+        dispatchEvent(BlobEvent::create(eventNames().dataavailableEvent, Event::CanBubble::No, Event::IsCancelable::No, buffer ? Blob::create(buffer.releaseNonNull(), mimeType) : Blob::create()));
+    });
+    return { };
+}
+
 void MediaRecorder::stopRecordingInternal()
 {
     if (state() != RecordingState::Recording)

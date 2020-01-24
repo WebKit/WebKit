@@ -71,6 +71,9 @@ public:
     
     ExceptionOr<void> startRecording(Optional<int>);
     ExceptionOr<void> stopRecording();
+    ExceptionOr<void> requestData();
+
+    MediaStream& stream() { return m_stream.get(); }
 
 private:
     MediaRecorder(Document&, Ref<MediaStream>&&, std::unique_ptr<MediaRecorderPrivate>&&, Options&& = { });
