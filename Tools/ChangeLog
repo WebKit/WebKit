@@ -1,3 +1,13 @@
+2020-01-24  Jonathan Bedard  <jbedard@apple.com>
+
+        run-webkit-tests: Handle case where device socket make handle invalid
+        https://bugs.webkit.org/show_bug.cgi?id=206707
+
+        Reviewed by Stephanie Lewis.
+
+        * Scripts/webkitpy/port/simulator_process.py:
+        (SimulatorProcess.NonBlockingFileFromSocket.close): Catch IOError when closing file.
+
 2020-01-24  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [GTK] API test runner fails with error: too many open files.
