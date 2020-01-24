@@ -41,7 +41,9 @@
 #include "PaintInfo.h"
 #include "RenderBlockFlow.h"
 #include "RenderChildIterator.h"
+#include "RenderDescendantIterator.h"
 #include "RenderLineBreak.h"
+#include "RenderView.h"
 #include "RuntimeEnabledFeatures.h"
 #include "Settings.h"
 #include "SimpleLineLayout.h"
@@ -328,6 +330,23 @@ ShadowData* LineLayout::debugTextShadow()
     static NeverDestroyed<ShadowData> debugTextShadow(IntPoint(0, 0), 10, 20, ShadowStyle::Normal, true, Color(0, 0, 150, 150));
     return &debugTextShadow.get();
 }
+
+void LineLayout::releaseCaches(RenderView& view)
+{
+    if (!RuntimeEnabledFeatures::sharedFeatures().layoutFormattingContextIntegrationEnabled())
+        return;
+
+    for (auto& renderer : descendantsOfType<RenderBlockFlow>(view)) {
+        if (auto* lineLayout = renderer.layoutFormattingContextLineLayout())
+            lineLayout->releaseInlineItemCache();
+    }
+}
+
+void LineLayout::releaseInlineItemCache()
+{
+    m_inlineFormattingState.inlineItems().clear();
+}
+
 
 }
 }

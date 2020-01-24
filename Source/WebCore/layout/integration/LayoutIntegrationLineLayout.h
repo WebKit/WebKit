@@ -80,10 +80,13 @@ public:
     LineLayoutTraversal::TextBoxIterator textBoxesFor(const RenderText&) const;
     LineLayoutTraversal::ElementBoxIterator elementBoxFor(const RenderLineBreak&) const;
 
+    static void releaseCaches(RenderView&);
+
 private:
     const Layout::Container& rootLayoutBox() const;
     Layout::Container& rootLayoutBox();
     ShadowData* debugTextShadow();
+    void releaseInlineItemCache();
 
     const RenderBlockFlow& m_flow;
     BoxTree m_boxTree;

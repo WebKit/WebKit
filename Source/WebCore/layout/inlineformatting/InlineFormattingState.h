@@ -35,7 +35,7 @@
 namespace WebCore {
 namespace Layout {
 
-using InlineItems = Vector<InlineItem, 30>;
+using InlineItems = Vector<InlineItem>;
 
 // InlineFormattingState holds the state for a particular inline formatting context tree.
 class InlineFormattingState : public FormattingState {

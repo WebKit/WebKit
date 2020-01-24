@@ -40,6 +40,7 @@
 #include "HTMLMediaElement.h"
 #include "InlineStyleSheetOwner.h"
 #include "InspectorInstrumentation.h"
+#include "LayoutIntegrationLineLayout.h"
 #include "Logging.h"
 #include "MemoryCache.h"
 #include "Page.h"
@@ -68,8 +69,14 @@ static void releaseNoncriticalMemory(MaintainMemoryCache maintainMemoryCache)
     clearWidthCaches();
     TextPainter::clearGlyphDisplayLists();
 
-    for (auto* document : Document::allDocuments())
+    for (auto* document : Document::allDocuments()) {
         document->clearSelectorQueryCache();
+
+#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
+        if (auto* renderView = document->renderView())
+            LayoutIntegration::LineLayout::releaseCaches(*renderView);
+#endif
+    }
 
     if (maintainMemoryCache == MaintainMemoryCache::No)
         MemoryCache::singleton().pruneDeadResourcesToSize(0);
