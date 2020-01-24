@@ -2750,6 +2750,49 @@ RefPtr<ShareableBitmap> WebPage::shareableBitmapSnapshotForNode(Element& element
     return nullptr;
 }
 
+static FloatRect lineCaretExtent(const InteractionInformationRequest& request, const HitTestResult& hitTestResult)
+{
+    auto* frame = hitTestResult.innerNodeFrame();
+    if (!frame)
+        return { };
+
+    auto* renderer = hitTestResult.innerNode()->renderer();
+    if (!renderer)
+        return { };
+
+    while (renderer && !is<RenderBlockFlow>(*renderer))
+        renderer = renderer->parent();
+
+    if (!renderer)
+        return { };
+
+    // FIXME: We should be able to retrieve this geometry information without
+    // forcing the text to fall out of Simple Line Layout.
+    auto& blockFlow = downcast<RenderBlockFlow>(*renderer);
+    VisiblePosition position = frame->visiblePositionForPoint(request.point);
+    auto lineRect = position.absoluteSelectionBoundsForLine();
+    lineRect.setWidth(blockFlow.contentWidth());
+    return lineRect;
+}
+
+static void populateCaretContext(const HitTestResult& hitTestResult, const InteractionInformationRequest& request, InteractionInformationAtPosition& info)
+{
+    auto* frame = hitTestResult.innerNodeFrame();
+    if (!frame)
+        return;
+
+    auto* frameView = frame->view();
+    if (!frameView)
+        return;
+
+    info.lineCaretExtent = frameView->contentsToRootView(lineCaretExtent(request, hitTestResult));
+    info.caretHeight = info.lineCaretExtent.height();
+
+    // Force an I-beam cursor if the page didn't request a hand, and we're inside the bounds of the line.
+    if (info.lineCaretExtent.contains(request.point) && info.cursor->type() != Cursor::Hand)
+        info.cursor = Cursor::fromType(Cursor::IBeam);
+}
+
 InteractionInformationAtPosition WebPage::positionInformation(const InteractionInformationRequest& request)
 {
     InteractionInformationAtPosition info;
@@ -2764,18 +2807,8 @@ InteractionInformationAtPosition WebPage::positionInformation(const InteractionI
     auto& eventHandler = m_page->mainFrame().eventHandler();
     HitTestResult hitTestResult = eventHandler.hitTestResultAtPoint(request.point, HitTestRequest::ReadOnly | HitTestRequest::AllowFrameScrollbars);
     info.cursor = eventHandler.selectCursor(hitTestResult, false);
-    if (request.includeCaretContext) {
-        if (auto* frame = hitTestResult.innerNodeFrame()) {
-            if (auto* frameView = frame->view()) {
-                VisiblePosition position = frame->visiblePositionForPoint(request.point);
-                info.caretHeight = frameView->contentsToRootView(position.absoluteCaretBounds()).height();
-
-                VisiblePosition startPosition = startOfLine(position);
-                VisiblePosition endPosition = endOfLine(position);
-                info.lineCaretExtent = unionRect(frameView->contentsToRootView(startPosition.absoluteCaretBounds()), frameView->contentsToRootView(endPosition.absoluteCaretBounds()));
-            }
-        }
-    }
+    if (request.includeCaretContext)
+        populateCaretContext(hitTestResult, request, info);
 
 #if ENABLE(DATA_INTERACTION)
     info.hasSelectionAtPosition = m_page->hasSelectionAtPosition(adjustedPoint);

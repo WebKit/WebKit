@@ -1,3 +1,20 @@
+2020-01-23  Tim Horton  <timothy_horton@apple.com>
+
+        macCatalyst: I-Beam is too conservative, doesn't show up in editable areas with no text
+        https://bugs.webkit.org/show_bug.cgi?id=206716
+        <rdar://problem/58359523>
+
+        Reviewed by Simon Fraser.
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::lineCaretExtent):
+        (WebKit::populateCaretContext):
+        (WebKit::WebPage::positionInformation):
+        Instead of uniting the caret position for the first and last position
+        on the line to find the I-Beam region, use the bounds of the selection
+        rect for the line, which extends beyond existing text, matching our
+        traditional behavior of showing the I-Beam over blank regions.
+
 2020-01-23  Tomoki Imai  <Tomoki.Imai@sony.com>
 
         Set proper TextureMapperLayer::m_contentsLayer in updateImageBacking

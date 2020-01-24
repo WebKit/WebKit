@@ -102,6 +102,8 @@ public:
     // FIXME: navigation with transforms should be smarter.
     WEBCORE_EXPORT int lineDirectionPointForBlockDirectionNavigation() const;
 
+    WEBCORE_EXPORT FloatRect absoluteSelectionBoundsForLine() const;
+
     // This is a tentative enhancement of operator== to account for affinity.
     // FIXME: Combine this function with operator==
     bool equals(const VisiblePosition&) const;

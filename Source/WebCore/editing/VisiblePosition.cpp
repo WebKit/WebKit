@@ -667,6 +667,27 @@ IntRect VisiblePosition::absoluteCaretBounds(bool* insideFixed) const
     return absoluteBoundsForLocalCaretRect(renderer, localRect, insideFixed);
 }
 
+FloatRect VisiblePosition::absoluteSelectionBoundsForLine() const
+{
+    if (m_deepPosition.isNull())
+        return { };
+
+    auto* node = m_deepPosition.anchorNode();
+    if (!node->renderer())
+        return { };
+
+    InlineBox* inlineBox = nullptr;
+    int caretOffset = 0;
+    getInlineBoxAndOffset(inlineBox, caretOffset);
+
+    if (!inlineBox)
+        return { };
+
+    auto& root = inlineBox->root();
+    auto localRect = FloatRect { root.x(), root.selectionTop(), root.width(), root.selectionHeight() };
+    return root.renderer().localToAbsoluteQuad(localRect).boundingBox();
+}
+
 int VisiblePosition::lineDirectionPointForBlockDirectionNavigation() const
 {
     RenderObject* renderer;
