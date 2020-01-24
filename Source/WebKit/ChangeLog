@@ -1,3 +1,10 @@
+2020-01-24  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Unreviewed, a build fix after r255056
+
+        * UIProcess/WebAuthentication/Mock/MockLocalConnection.mm:
+        (WebKit::MockLocalConnection::getAttestation const):
+
 2020-01-24  Per Arne Vollan  <pvollan@apple.com>
 
         Unreviewed, rolling out r255050.
