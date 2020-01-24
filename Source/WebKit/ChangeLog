@@ -1,5 +1,48 @@
 2020-01-24  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r255039. rdar://problem/58855996
+
+    Background thread with ITP Database should lock when the network process is suspended
+    https://bugs.webkit.org/show_bug.cgi?id=206593
+    rdar://problem/58713379
+    
+    Reviewed by Chris Dumez.
+    
+    This patch adds a function to hang the background queue when the
+    NetworkProcess is preparing to suspend.
+    
+    * NetworkProcess/Classifier/WebResourceLoadStatisticsStore.cpp:
+    (WebKit::WebResourceLoadStatisticsStore::suspend):
+    (WebKit::WebResourceLoadStatisticsStore::resume):
+    * NetworkProcess/Classifier/WebResourceLoadStatisticsStore.h:
+    * NetworkProcess/NetworkProcess.cpp:
+    (WebKit::NetworkProcess::prepareToSuspend):
+    (WebKit::NetworkProcess::resume):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@255039 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-01-23  Kate Cheney  <katherine_cheney@apple.com>
+
+            Background thread with ITP Database should lock when the network process is suspended
+            https://bugs.webkit.org/show_bug.cgi?id=206593
+            rdar://problem/58713379
+
+            Reviewed by Chris Dumez.
+
+            This patch adds a function to hang the background queue when the
+            NetworkProcess is preparing to suspend.
+
+            * NetworkProcess/Classifier/WebResourceLoadStatisticsStore.cpp:
+            (WebKit::WebResourceLoadStatisticsStore::suspend):
+            (WebKit::WebResourceLoadStatisticsStore::resume):
+            * NetworkProcess/Classifier/WebResourceLoadStatisticsStore.h:
+            * NetworkProcess/NetworkProcess.cpp:
+            (WebKit::NetworkProcess::prepareToSuspend):
+            (WebKit::NetworkProcess::resume):
+
+2020-01-24  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r254938. rdar://problem/58856028
 
     Fix SDK availability macros
