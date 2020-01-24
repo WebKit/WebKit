@@ -1383,8 +1383,6 @@ private:
     };
     Expected<ParseInnerResult, String> parseInner(const Identifier&, SourceParseMode, ParsingContext, Optional<int> functionConstructorParametersEndPosition = WTF::nullopt, const Vector<JSTextPosition>* = nullptr);
 
-    void didFinishParsing(SourceElements*, DeclarationStacks::FunctionStack&&, VariableEnvironment&, UniquedStringImplPtrSet&&, CodeFeatures, int);
-
     // Used to determine type of error to report.
     bool isFunctionMetadataNode(ScopeNode*) { return false; }
     bool isFunctionMetadataNode(FunctionMetadataNode*) { return true; }

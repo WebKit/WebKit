@@ -1,3 +1,12 @@
+2020-01-23  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Unreviewed, build fix for Windows
+        https://bugs.webkit.org/show_bug.cgi?id=206706
+
+        Definition still existed.
+
+        * parser/Parser.h:
+
 2020-01-23  Robin Morisset  <rmorisset@apple.com>
 
         Break the dependency between jsc and DerivedSources
