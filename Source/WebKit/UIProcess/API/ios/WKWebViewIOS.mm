@@ -2711,6 +2711,7 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISe
 
     _dynamicViewportUpdateMode = WebKit::DynamicViewportUpdateMode::ResizingWithAnimation;
 
+    auto oldMinimumEffectiveDeviceWidth = [self _minimumEffectiveDeviceWidth];
     auto oldViewLayoutSize = [self activeViewLayoutSize:self.bounds];
     auto oldMaximumUnobscuredSize = activeMaximumUnobscuredSize(self, oldBounds);
     int32_t oldOrientation = activeOrientation(self);
@@ -2719,6 +2720,7 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISe
     updateBlock();
 
     CGRect newBounds = self.bounds;
+    auto newMinimumEffectiveDeviceWidth = [self _minimumEffectiveDeviceWidth];
     auto newViewLayoutSize = [self activeViewLayoutSize:newBounds];
     auto newMaximumUnobscuredSize = activeMaximumUnobscuredSize(self, newBounds);
     int32_t newOrientation = activeOrientation(self);
@@ -2744,6 +2746,7 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISe
         && oldViewLayoutSize == newViewLayoutSize
         && oldMaximumUnobscuredSize == newMaximumUnobscuredSize
         && oldOrientation == newOrientation
+        && oldMinimumEffectiveDeviceWidth == newMinimumEffectiveDeviceWidth
         && UIEdgeInsetsEqualToEdgeInsets(oldObscuredInsets, newObscuredInsets)) {
         [self _cancelAnimatedResize];
         return;
@@ -2811,7 +2814,7 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISe
     _lastSentMaximumUnobscuredSize = newMaximumUnobscuredSize;
     _lastSentDeviceOrientation = newOrientation;
 
-    _page->dynamicViewportSizeUpdate(newViewLayoutSize, newMaximumUnobscuredSize, visibleRectInContentCoordinates, unobscuredRectInContentCoordinates, futureUnobscuredRectInSelfCoordinates, unobscuredSafeAreaInsetsExtent, targetScale, newOrientation, ++_currentDynamicViewportSizeUpdateID);
+    _page->dynamicViewportSizeUpdate(newViewLayoutSize, newMaximumUnobscuredSize, visibleRectInContentCoordinates, unobscuredRectInContentCoordinates, futureUnobscuredRectInSelfCoordinates, unobscuredSafeAreaInsetsExtent, targetScale, newOrientation, newMinimumEffectiveDeviceWidth, ++_currentDynamicViewportSizeUpdateID);
     if (WebKit::DrawingAreaProxy* drawingArea = _page->drawingArea())
         drawingArea->setSize(WebCore::IntSize(newBounds.size));
 

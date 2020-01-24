@@ -1,3 +1,60 @@
+2020-01-23  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Support setting minimum effective device width during dynamic viewport size updates
+        https://bugs.webkit.org/show_bug.cgi?id=206709
+        <rdar://problem/58713872>
+
+        Reviewed by Tim Horton.
+
+        Changes to minimum effective device width are currently always propagated to the web process via out-of-band
+        updates to the web process. During animated resize, Safari currently changes the minimum effective device width
+        prior to updating the view size; this causes the viewport configuration to temporarily be in a state where the
+        new value for minimum effective device width is used, but the old viewport width and height are still used.
+
+        This subsequently breaks existing logic in WebPage::dynamicViewportSizeUpdate that attempts to keep the portion
+        of the unobscured content width that is visible consistent before and after rotation (see
+        visibleHorizontalFraction), since that code will be mislead into believing that the wrong fraction of content
+        width is visible.
+
+        To fix this, we roll minimum effective device width changes along with view size (and other attributes) in
+        dynamic viewport size updates.
+
+        Test: WebKit.ChangeFrameAndMinimumEffectiveDeviceWidthDuringAnimatedResize
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _setViewScale:]):
+        (-[WKWebView _setMinimumEffectiveDeviceWidth:]):
+
+        During animated resize, just set m_minimumEffectiveDeviceWidth without notifying the web process; if the value
+        changed during the update block, we send the new minimum effective device width to the web page as a part of
+        the dynamic viewport size update.
+
+        Also, make a drive-by adjustment to use `_page->viewLayoutSize()` instead of recomputing the active layout
+        bounds when we know that only the minimum effective device width is changing. We also apply the same adjustment
+        above, in -_setViewScale:.
+
+        * UIProcess/API/ios/WKWebViewIOS.mm:
+        (-[WKWebView _beginAnimatedResizeWithUpdates:]):
+        * UIProcess/WebPageProxy.h:
+        (WebKit::WebPageProxy::viewLayoutSize const):
+        (WebKit::WebPageProxy::setMinimumEffectiveDeviceWidthWithoutViewportConfigurationUpdate):
+
+        Add a helper method to update the minimum effective device width without updating the viewport configuration in
+        the web process. This is only used when the minimum effective device width is specified in the middle of a
+        dynamic viewport size update (i.e. animated resize).
+
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::dynamicViewportSizeUpdate):
+
+        Plumb the new minimum effective device width over to the web process as a part of the dynamic viewport size
+        update, and update both the new view size and minimum effective device width on the viewport configuration at
+        the same time.
+
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::dynamicViewportSizeUpdate):
+
 2020-01-23  Per Arne Vollan  <pvollan@apple.com>
 
         [Cocoa] Media mime types map should be created in the UI process

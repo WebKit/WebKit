@@ -2706,7 +2706,7 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
     if (_page->layoutSizeScaleFactor() == viewScale)
         return;
 
-    _page->setViewportConfigurationViewLayoutSize([self activeViewLayoutSize:self.bounds], viewScale, _page->minimumEffectiveDeviceWidth());
+    _page->setViewportConfigurationViewLayoutSize(_page->viewLayoutSize(), viewScale, _page->minimumEffectiveDeviceWidth());
 #endif
 }
 
@@ -2716,7 +2716,10 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
     if (_page->minimumEffectiveDeviceWidth() == minimumEffectiveDeviceWidth)
         return;
 
-    _page->setViewportConfigurationViewLayoutSize([self activeViewLayoutSize:self.bounds], _page->layoutSizeScaleFactor(), minimumEffectiveDeviceWidth);
+    if (_dynamicViewportUpdateMode == WebKit::DynamicViewportUpdateMode::NotResizing)
+        _page->setViewportConfigurationViewLayoutSize(_page->viewLayoutSize(), _page->layoutSizeScaleFactor(), minimumEffectiveDeviceWidth);
+    else
+        _page->setMinimumEffectiveDeviceWidthWithoutViewportConfigurationUpdate(minimumEffectiveDeviceWidth);
 #endif
 }
 

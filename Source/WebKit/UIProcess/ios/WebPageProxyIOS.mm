@@ -312,7 +312,7 @@ void WebPageProxy::scrollingNodeScrollDidEndScroll()
     pageClient().scrollingNodeScrollDidEndScroll();
 }
 
-void WebPageProxy::dynamicViewportSizeUpdate(const FloatSize& viewLayoutSize, const WebCore::FloatSize& maximumUnobscuredSize, const FloatRect& targetExposedContentRect, const FloatRect& targetUnobscuredRect, const FloatRect& targetUnobscuredRectInScrollViewCoordinates, const WebCore::FloatBoxExtent& unobscuredSafeAreaInsets, double targetScale, int32_t deviceOrientation, DynamicViewportSizeUpdateID dynamicViewportSizeUpdateID)
+void WebPageProxy::dynamicViewportSizeUpdate(const FloatSize& viewLayoutSize, const WebCore::FloatSize& maximumUnobscuredSize, const FloatRect& targetExposedContentRect, const FloatRect& targetUnobscuredRect, const FloatRect& targetUnobscuredRectInScrollViewCoordinates, const WebCore::FloatBoxExtent& unobscuredSafeAreaInsets, double targetScale, int32_t deviceOrientation, double minimumEffectiveDeviceWidth, DynamicViewportSizeUpdateID dynamicViewportSizeUpdateID)
 {
     if (!hasRunningProcess())
         return;
@@ -323,7 +323,7 @@ void WebPageProxy::dynamicViewportSizeUpdate(const FloatSize& viewLayoutSize, co
     m_process->send(Messages::WebPage::DynamicViewportSizeUpdate(viewLayoutSize,
         maximumUnobscuredSize, targetExposedContentRect, targetUnobscuredRect,
         targetUnobscuredRectInScrollViewCoordinates, unobscuredSafeAreaInsets,
-        targetScale, deviceOrientation, dynamicViewportSizeUpdateID), m_webPageID);
+        targetScale, deviceOrientation, minimumEffectiveDeviceWidth, dynamicViewportSizeUpdateID), m_webPageID);
 }
 
 void WebPageProxy::setViewportConfigurationViewLayoutSize(const WebCore::FloatSize& size, double scaleFactor, double minimumEffectiveDeviceWidth)
