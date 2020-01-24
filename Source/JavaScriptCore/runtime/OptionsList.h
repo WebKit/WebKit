@@ -128,7 +128,6 @@ constexpr bool enableWebAssemblyStreamingApi = false;
     v(Bool, dumpWasmDisassembly, false, Normal, "dumps disassembly of all Wasm code upon compilation") \
     v(Bool, dumpBBQDisassembly, false, Normal, "dumps disassembly of BBQ Wasm code upon compilation") \
     v(Bool, dumpOMGDisassembly, false, Normal, "dumps disassembly of OMG Wasm code upon compilation") \
-    v(Bool, dumpAllDFGNodes, false, Normal, nullptr) \
     v(Bool, logJITCodeForPerf, false, Configurable, nullptr) \
     v(OptionRange, bytecodeRangeToJITCompile, 0, Normal, "bytecode size range to allow compilation on, e.g. 1:100") \
     v(OptionRange, bytecodeRangeToDFGCompile, 0, Normal, "bytecode size range to allow DFG compilation on, e.g. 1:100") \
@@ -510,7 +509,6 @@ enum OptionEquivalence {
     v(showDisassembly, dumpDisassembly, SameOption) \
     v(showDFGDisassembly, dumpDFGDisassembly, SameOption) \
     v(showFTLDisassembly, dumpFTLDisassembly, SameOption) \
-    v(showAllDFGNodes, dumpAllDFGNodes, SameOption) \
     v(alwaysDoFullCollection, useGenerationalGC, InvertedOption) \
     v(enableOSREntryToDFG, useOSREntryToDFG, SameOption) \
     v(enableOSREntryToFTL, useOSREntryToFTL, SameOption) \
