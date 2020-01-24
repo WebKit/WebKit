@@ -282,10 +282,7 @@ extern const CFStringRef _kCFURLCachePartitionKey;
 extern const CFStringRef _kCFURLConnectionPropertyShouldSniff;
 extern const CFStringRef _kCFURLStorageSessionIsPrivate;
 extern const CFStringRef kCFStreamSocketSecurityLevelTLSv1_2;
-
-#if HAVE(CFNETWORK_WITH_CONTENT_ENCODING_SNIFFING_OVERRIDE)
 extern const CFStringRef kCFURLRequestContentDecoderSkipURLCheck;
-#endif
 
 CFHTTPCookieStorageRef _CFHTTPCookieStorageGetDefault(CFAllocatorRef);
 CFHTTPCookieStorageRef CFHTTPCookieStorageCreateFromFile(CFAllocatorRef, CFURLRef, CFHTTPCookieStorageRef);

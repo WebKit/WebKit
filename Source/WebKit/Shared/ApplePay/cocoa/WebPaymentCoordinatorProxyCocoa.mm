@@ -177,7 +177,6 @@ static RetainPtr<NSSet> toNSSet(const Vector<String>& strings)
     return WTFMove(mutableSet);
 }
 
-#if HAVE(PASSKIT_API_TYPE)
 static PKPaymentRequestAPIType toAPIType(WebCore::ApplePaySessionPaymentRequest::Requester requester)
 {
     switch (requester) {
@@ -187,7 +186,6 @@ static PKPaymentRequestAPIType toAPIType(WebCore::ApplePaySessionPaymentRequest:
         return PKPaymentRequestAPITypeWebPaymentRequest;
     }
 }
-#endif
 
 RetainPtr<PKPaymentRequest> WebPaymentCoordinatorProxy::platformPaymentRequest(const URL& originatingURL, const Vector<URL>& linkIconURLs, const WebCore::ApplePaySessionPaymentRequest& paymentRequest)
 {
@@ -205,9 +203,7 @@ RetainPtr<PKPaymentRequest> WebPaymentCoordinatorProxy::platformPaymentRequest(c
     } else if (!linkIconURLs.isEmpty())
         [result setThumbnailURL:linkIconURLs[0]];
 
-#if HAVE(PASSKIT_API_TYPE)
     [result setAPIType:toAPIType(paymentRequest.requester())];
-#endif
 
     [result setCountryCode:paymentRequest.countryCode()];
     [result setCurrencyCode:paymentRequest.currencyCode()];

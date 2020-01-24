@@ -1,3 +1,19 @@
+2020-01-22  Darin Adler  <darin@apple.com>
+
+        Remove some unneeded definitions from Platform.h family headers
+        https://bugs.webkit.org/show_bug.cgi?id=206642
+
+        Reviewed by Eric Carlson.
+
+        * pal/spi/cf/CFNetworkSPI.h: Remove
+        HAVE(CFNETWORK_WITH_CONTENT_ENCODING_SNIFFING_OVERRIDE) because it was
+        always 1 on Cocoa platforms, and was guarding a definition that we
+        use unconditionally in Objective-C Cocoa-only code, and there is no
+        harm of defining it on Windows as long as we don't use it.
+
+        * pal/spi/cocoa/PassKitSPI.h: Remove HAVE(PASSKIT_API_TYPE) because
+        it was always 1 on Cocoa platforms and this is a Cocoa-only header.
+
 2020-01-23  David Kilzer  <ddkilzer@apple.com>
 
         Enable -Wconditional-uninitialized in WebCore project

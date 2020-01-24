@@ -23,10 +23,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef InbandTextTrackPrivateAVFObjC_h
-#define InbandTextTrackPrivateAVFObjC_h
+#pragma once
 
-#if ENABLE(VIDEO) && USE(AVFOUNDATION) && HAVE(AVFOUNDATION_MEDIA_SELECTION_GROUP)
+#if ENABLE(VIDEO) && USE(AVFOUNDATION)
 
 #include "InbandTextTrackPrivateAVF.h"
 #include <wtf/RetainPtr.h>
@@ -69,5 +68,4 @@ protected:
 
 }
 
-#endif
 #endif

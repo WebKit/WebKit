@@ -1,3 +1,18 @@
+2020-01-22  Darin Adler  <darin@apple.com>
+
+        Remove some unneeded definitions from Platform.h family headers
+        https://bugs.webkit.org/show_bug.cgi?id=206642
+
+        Reviewed by Eric Carlson.
+
+        * Platform/cocoa/PaymentAuthorizationViewController.mm:
+        (-[WKPaymentAuthorizationViewControllerDelegate _getPaymentServicesMerchantURL:]):
+        Removed HAVE(PASSKIT_API_TYPE) because it's always 1 on Cocoa platforms and this
+        is Cocoa-only code.
+        * Shared/ApplePay/cocoa/WebPaymentCoordinatorProxyCocoa.mm:
+        (WebKit::toAPIType): Ditto.
+        (WebKit::WebPaymentCoordinatorProxy::platformPaymentRequest): Ditto.
+
 2020-01-23  Tim Horton  <timothy_horton@apple.com>
 
         macCatalyst: I-Beam is too conservative, doesn't show up in editable areas with no text

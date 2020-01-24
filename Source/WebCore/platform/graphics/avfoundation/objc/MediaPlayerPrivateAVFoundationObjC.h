@@ -85,11 +85,10 @@ public:
     void tracksChanged() override;
     void didEnd() override;
 
-#if HAVE(AVFOUNDATION_MEDIA_SELECTION_GROUP)
     RetainPtr<AVPlayerItem> playerItem() const { return m_avPlayerItem; }
     void processCue(NSArray *, NSArray *, const MediaTime&);
     void flushCues();
-#endif
+
     AVPlayer *avPlayer() const { return m_avPlayer.get(); }
 
 #if HAVE(AVFOUNDATION_LOADER_DELEGATE)
@@ -127,9 +126,7 @@ public:
 
     void setBufferingPolicy(MediaPlayer::BufferingPolicy) override;
 
-#if HAVE(AVFOUNDATION_VIDEO_OUTPUT)
     void outputMediaDataWillChange(AVPlayerItemVideoOutput*);
-#endif
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
     void playbackTargetIsWirelessDidChange();
@@ -259,7 +256,6 @@ private:
     RetainPtr<CGImageRef> createImageForTimeInRect(float, const FloatRect&);
     void paintWithImageGenerator(GraphicsContext&, const FloatRect&);
 
-#if HAVE(AVFOUNDATION_VIDEO_OUTPUT)
     enum class UpdateType { UpdateSynchronously, UpdateAsynchronously };
     void updateLastImage(UpdateType type = UpdateType::UpdateAsynchronously);
 
@@ -272,7 +268,6 @@ private:
     void waitForVideoOutputMediaDataWillChange();
 
     bool copyVideoTextureToPlatformTexture(GraphicsContextGLOpenGL*, PlatformGLObject, GCGLenum target, GCGLint level, GCGLenum internalFormat, GCGLenum format, GCGLenum type, bool premultiplyAlpha, bool flipY) override;
-#endif
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
     std::unique_ptr<LegacyCDMSession> createSession(const String& keySystem, LegacyCDMSessionClient*) override;
@@ -280,14 +275,12 @@ private:
 
     String languageOfPrimaryAudioTrack() const override;
 
-#if HAVE(AVFOUNDATION_MEDIA_SELECTION_GROUP)
     void processMediaSelectionOptions();
     bool hasLoadedMediaSelectionGroups();
 
     AVMediaSelectionGroup* safeMediaSelectionGroupForLegibleMedia();
     AVMediaSelectionGroup* safeMediaSelectionGroupForAudibleMedia();
     AVMediaSelectionGroup* safeMediaSelectionGroupForVisualMedia();
-#endif
 
     NSArray* safeAVAssetTracksForAudibleMedia();
 
@@ -358,7 +351,6 @@ private:
 #endif
 
     RetainPtr<AVAssetImageGenerator> m_imageGenerator;
-#if HAVE(AVFOUNDATION_VIDEO_OUTPUT)
     RetainPtr<AVPlayerItemVideoOutput> m_videoOutput;
     RetainPtr<WebCoreAVFPullDelegate> m_videoOutputDelegate;
     RetainPtr<CVPixelBufferRef> m_lastPixelBuffer;
@@ -366,7 +358,6 @@ private:
     BinarySemaphore m_videoOutputSemaphore;
     std::unique_ptr<ImageRotationSessionVT> m_imageRotationSession;
     std::unique_ptr<VideoTextureCopierCV> m_videoTextureCopier;
-#endif
 
 #if HAVE(CORE_VIDEO)
     std::unique_ptr<PixelBufferConformerCV> m_pixelBufferConformer;
@@ -380,17 +371,15 @@ private:
     HashMap<String, RetainPtr<AVAssetResourceLoadingRequest>> m_sessionIDToRequestMap;
 #endif
 
-#if HAVE(AVFOUNDATION_MEDIA_SELECTION_GROUP) && HAVE(AVFOUNDATION_LEGIBLE_OUTPUT_SUPPORT)
+#if HAVE(AVFOUNDATION_LEGIBLE_OUTPUT_SUPPORT)
     RetainPtr<AVPlayerItemLegibleOutput> m_legibleOutput;
 #endif
 
 #if ENABLE(VIDEO_TRACK)
     Vector<RefPtr<AudioTrackPrivateAVFObjC>> m_audioTracks;
     Vector<RefPtr<VideoTrackPrivateAVFObjC>> m_videoTracks;
-#if HAVE(AVFOUNDATION_MEDIA_SELECTION_GROUP)
     RefPtr<MediaSelectionGroupAVFObjC> m_audibleGroup;
     RefPtr<MediaSelectionGroupAVFObjC> m_visualGroup;
-#endif
 #endif
 
     InbandTextTrackPrivateAVF* m_currentTextTrack;

@@ -25,7 +25,7 @@
 
 #import "config.h"
 
-#if ENABLE(VIDEO) && USE(AVFOUNDATION) && HAVE(AVFOUNDATION_MEDIA_SELECTION_GROUP)
+#if ENABLE(VIDEO) && USE(AVFOUNDATION)
 
 #import "InbandTextTrackPrivateAVFObjC.h"
 

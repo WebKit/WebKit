@@ -201,7 +201,6 @@ static void ensureOnMainThread(Function<void()>&& f)
 @end
 #endif
 
-#if HAVE(AVFOUNDATION_VIDEO_OUTPUT)
 @interface WebCoreAVFPullDelegate : NSObject<AVPlayerItemOutputPullDelegate> {
     WeakPtr<MediaPlayerPrivateAVFoundationObjC> m_player;
 }
@@ -209,7 +208,6 @@ static void ensureOnMainThread(Function<void()>&& f)
 - (void)outputMediaDataWillChange:(AVPlayerItemOutput *)sender;
 - (void)outputSequenceWasFlushed:(AVPlayerItemOutput *)output;
 @end
-#endif
 
 namespace WebCore {
 static String convertEnumerationToString(AVPlayerTimeControlStatus enumerationValue)
@@ -261,7 +259,6 @@ static dispatch_queue_t globalLoaderDelegateQueue()
 }
 #endif
 
-#if HAVE(AVFOUNDATION_VIDEO_OUTPUT)
 static dispatch_queue_t globalPullDelegateQueue()
 {
     static dispatch_queue_t globalQueue;
@@ -271,7 +268,6 @@ static dispatch_queue_t globalPullDelegateQueue()
     });
     return globalQueue;
 }
-#endif
 
 class MediaPlayerFactoryAVFoundationObjC final : public MediaPlayerFactory {
 private:
@@ -413,9 +409,7 @@ MediaPlayerPrivateAVFoundationObjC::MediaPlayerPrivateAVFoundationObjC(MediaPlay
     , m_objcObserver(adoptNS([[WebCoreAVFMovieObserver alloc] initWithPlayer:makeWeakPtr(*this)]))
     , m_videoFrameHasDrawn(false)
     , m_haveCheckedPlayability(false)
-#if HAVE(AVFOUNDATION_VIDEO_OUTPUT)
     , m_videoOutputDelegate(adoptNS([[WebCoreAVFPullDelegate alloc] initWithPlayer:makeWeakPtr(*this)]))
-#endif
 #if HAVE(AVFOUNDATION_LOADER_DELEGATE)
     , m_loaderDelegate(adoptNS([[WebCoreAVFLoaderDelegate alloc] initWithPlayer:makeWeakPtr(*this)]))
 #endif
@@ -446,9 +440,7 @@ MediaPlayerPrivateAVFoundationObjC::~MediaPlayerPrivateAVFoundationObjC()
     for (auto& pair : m_resourceLoaderMap)
         pair.value->invalidate();
 #endif
-#if HAVE(AVFOUNDATION_VIDEO_OUTPUT)
     [m_videoOutput setDelegate:nil queue:0];
-#endif
 
     if (m_videoLayer)
         destroyVideoLayer();
@@ -545,20 +537,12 @@ bool MediaPlayerPrivateAVFoundationObjC::hasLayerRenderer() const
 
 bool MediaPlayerPrivateAVFoundationObjC::hasContextRenderer() const
 {
-#if HAVE(AVFOUNDATION_VIDEO_OUTPUT)
-    if (m_videoOutput)
-        return true;
-#endif
-    return m_imageGenerator;
+    return m_videoOutput || m_imageGenerator;
 }
 
 void MediaPlayerPrivateAVFoundationObjC::createContextVideoRenderer()
 {
-#if HAVE(AVFOUNDATION_VIDEO_OUTPUT)
     createVideoOutput();
-#else
-    createImageGenerator();
-#endif
 }
 
 void MediaPlayerPrivateAVFoundationObjC::createImageGenerator()
@@ -579,9 +563,7 @@ void MediaPlayerPrivateAVFoundationObjC::createImageGenerator()
 
 void MediaPlayerPrivateAVFoundationObjC::destroyContextVideoRenderer()
 {
-#if HAVE(AVFOUNDATION_VIDEO_OUTPUT)
     destroyVideoOutput();
-#endif
     destroyImageGenerator();
 }
 
@@ -611,7 +593,7 @@ void MediaPlayerPrivateAVFoundationObjC::createVideoLayer()
         if (!m_videoLayer)
             createAVPlayerLayer();
 
-#if USE(VIDEOTOOLBOX) && HAVE(AVFOUNDATION_VIDEO_OUTPUT)
+#if USE(VIDEOTOOLBOX)
         if (!m_videoOutput)
             createVideoOutput();
 #endif
@@ -679,10 +661,8 @@ bool MediaPlayerPrivateAVFoundationObjC::hasAvailableVideoFrame() const
     if (currentRenderingMode() == MediaRenderingToLayer)
         return m_cachedIsReadyForDisplay;
 
-#if HAVE(AVFOUNDATION_VIDEO_OUTPUT)
     if (m_videoOutput && (m_lastPixelBuffer || [m_videoOutput hasNewPixelBufferForItemTime:[m_avPlayerItem currentTime]]))
         return true;
-#endif
 
     return m_videoFrameHasDrawn;
 }
@@ -1012,9 +992,7 @@ void MediaPlayerPrivateAVFoundationObjC::createAVPlayerItem()
     }
 #endif
 
-#if HAVE(AVFOUNDATION_VIDEO_OUTPUT)
     createVideoOutput();
-#endif
 
     m_metadataCollector = adoptNS([PAL::allocAVPlayerItemMetadataCollectorInstance() initWithIdentifiers:nil classifyingLabels:nil]);
     [m_metadataCollector.get() setDelegate:m_objcObserver.get() queue:dispatch_get_main_queue()];
@@ -1100,20 +1078,14 @@ PlatformLayer* MediaPlayerPrivateAVFoundationObjC::platformLayer() const
 
 void MediaPlayerPrivateAVFoundationObjC::updateVideoFullscreenInlineImage()
 {
-#if HAVE(AVFOUNDATION_VIDEO_OUTPUT)
     updateLastImage(UpdateType::UpdateSynchronously);
     m_videoFullscreenLayerManager->updateVideoFullscreenInlineImage(m_lastImage);
-#endif
 }
 
 void MediaPlayerPrivateAVFoundationObjC::setVideoFullscreenLayer(PlatformLayer* videoFullscreenLayer, Function<void()>&& completionHandler)
 {
-#if HAVE(AVFOUNDATION_VIDEO_OUTPUT)
     updateLastImage(UpdateType::UpdateSynchronously);
     m_videoFullscreenLayerManager->setVideoFullscreenLayer(videoFullscreenLayer, WTFMove(completionHandler), m_lastImage);
-#else
-    m_videoFullscreenLayerManager->setVideoFullscreenLayer(videoFullscreenLayer, WTFMove(completionHandler), nil);
-#endif
     updateDisableExternalPlayback();
 }
 
@@ -1538,11 +1510,9 @@ void MediaPlayerPrivateAVFoundationObjC::paintCurrentFrameInContext(GraphicsCont
     setDelayCallbacks(true);
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
 
-#if HAVE(AVFOUNDATION_VIDEO_OUTPUT)
     if (videoOutputHasAvailableFrame())
         paintWithVideoOutput(context, rect);
     else
-#endif
         paintWithImageGenerator(context, rect);
 
     END_BLOCK_OBJC_EXCEPTIONS;
@@ -2164,9 +2134,6 @@ Optional<bool> MediaPlayerPrivateAVFoundationObjC::wouldTaintOrigin(const Securi
     return WTF::nullopt;
 }
 
-
-#if HAVE(AVFOUNDATION_VIDEO_OUTPUT)
-
 void MediaPlayerPrivateAVFoundationObjC::createVideoOutput()
 {
     INFO_LOG(LOGIDENTIFIER);
@@ -2332,8 +2299,6 @@ void MediaPlayerPrivateAVFoundationObjC::outputMediaDataWillChange(AVPlayerItemV
 {
     m_videoOutputSemaphore.signal();
 }
-
-#endif
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
 
@@ -3603,8 +3568,6 @@ NSArray* playerKVOProperties()
 
 #endif // HAVE(AVFOUNDATION_LOADER_DELEGATE)
 
-#if HAVE(AVFOUNDATION_VIDEO_OUTPUT)
-
 @implementation WebCoreAVFPullDelegate
 
 - (id)initWithPlayer:(WeakPtr<MediaPlayerPrivateAVFoundationObjC>&&)player
@@ -3628,7 +3591,5 @@ NSArray* playerKVOProperties()
 }
 
 @end
-
-#endif // HAVE(AVFOUNDATION_VIDEO_OUTPUT)
 
 #endif
