@@ -15,6 +15,7 @@ register_activation_hook(__FILE__, function () {
         'edit_web_inspector_page' => true,
         'edit_web_inspector_pages' => true,
         'edit_others_web_inspector_pages' => true,
+        'edit_published_web_inspector_pages' => true,
         'delete_web_inspector_page' => true,
         'delete_web_inspector_pages' => true,
         'publish_web_inspector_pages' => true,
