@@ -1,3 +1,24 @@
+2020-01-23  Tomoki Imai  <Tomoki.Imai@sony.com>
+
+        Set proper TextureMapperLayer::m_contentsLayer in updateImageBacking
+        https://bugs.webkit.org/show_bug.cgi?id=206212
+
+        Reviewed by Žan Doberšek.
+
+        There is a chance to set a wrong TextureMapperLayer::m_contentsLayer.
+        It occurs when
+        - The previous content layer is removed, and it doesn't have the next content layer. (layerState.contentLayer == nullptr)
+        - It has an image backing, which is not visible. (layerState.imageBacking != nullptr, entry.update.isVisible == false)
+        In that case, it didn't call TextureMapperLayer::setContentsLayer(nullptr) even if it doesn't have a new content layer.
+
+        This patch set TextureMapperLayer::m_contentsLayer in updateImageBacking regardless of the visibility.
+        setBackingStore is not needed in updateImageBacking, as it should be handle only by layerState.backingStore.
+
+        Should be covered by the existing testcases.
+
+        * Shared/CoordinatedGraphics/CoordinatedGraphicsScene.cpp:
+        (WebKit::updateImageBacking): Call TextureMapperLayer::setContentsLayer(nullptr) instead of TextureMapperLayer::setBackingStore(nullptr) when it's not visible.
+
 2020-01-23  Daniel Bates  <dabates@apple.com>
 
         Add a variant of -selectPositionAtPoint that can select an arbitrary point
