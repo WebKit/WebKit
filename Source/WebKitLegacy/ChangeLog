@@ -1,3 +1,22 @@
+2020-01-24  Keith Rollin  <krollin@apple.com>
+
+        Remove check-xcfilelists.sh from WebKitLegacy Xcode build target
+        https://bugs.webkit.org/show_bug.cgi?id=206762
+        <rdar://problem/58825997>
+
+        Reviewed by Alexey Proskuryakov.
+
+        When check-xcfilelists.sh got added to the WebKitLegacy Xcode project,
+        it was also accidentally added to the WebKitLegacy build target. This
+        caused it to be treated as a "resource", and so was copied to the
+        output directory in the Resources sub-folder during the build. This
+        copying is not expected, needed, or desired. Remove
+        check-xcfilelists.sh from the target, which also removes it from the
+        Copy Resources build phase, which removes it from the
+        WebKitLegacy.framework/Resources directory.
+
+        * WebKitLegacy.xcodeproj/project.pbxproj:
+
 2020-01-20  David Kilzer  <ddkilzer@apple.com>
 
         Fix missing header guards and clean up empty files in WebCore, WebKitLegacy, WebKit, Tools
