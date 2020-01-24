@@ -118,7 +118,6 @@
 #include "LibWebRTCProvider.h"
 #include "LoaderStrategy.h"
 #include "Location.h"
-#include "MIMETypeRegistry.h"
 #include "MallocStatistics.h"
 #include "MediaDevices.h"
 #include "MediaEngineConfigurationFactory.h"
@@ -5439,11 +5438,6 @@ bool Internals::systemHasBattery() const
 #else
     return false;
 #endif
-}
-
-String Internals::mediaMIMETypeForExtension(const String& extension)
-{
-    return MIMETypeRegistry::getMediaMIMETypeForExtension(extension);
 }
 
 } // namespace WebCore

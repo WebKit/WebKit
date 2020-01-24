@@ -837,6 +837,4 @@ enum CompositingPolicy {
     DOMString systemColorForCSSValue(DOMString cssValue, boolean useDarkModeAppearance, boolean useElevatedUserInterfaceLevel);
 
     boolean systemHasBattery();
-
-    DOMString mediaMIMETypeForExtension(DOMString extension);
 };

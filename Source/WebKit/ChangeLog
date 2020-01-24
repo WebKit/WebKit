@@ -1,3 +1,16 @@
+2020-01-24  Per Arne Vollan  <pvollan@apple.com>
+
+        Unreviewed, rolling out r255050.
+
+        Introduced crashes on bots
+
+        Reverted changeset:
+
+        "[Cocoa] Media mime types map should be created in the UI
+        process"
+        https://bugs.webkit.org/show_bug.cgi?id=206478
+        https://trac.webkit.org/changeset/255050
+
 2020-01-24  Brent Fulgham  <bfulgham@apple.com>
 
         [iOS] Add missing sysctl-read permission (already available in macOS sandbox)

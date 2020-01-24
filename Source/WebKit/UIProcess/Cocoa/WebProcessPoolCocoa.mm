@@ -47,7 +47,6 @@
 #import "WebProcessMessages.h"
 #import "WindowServerConnection.h"
 #import <WebCore/Color.h>
-#import <WebCore/MIMETypeRegistry.h>
 #import <WebCore/NetworkStorageSession.h>
 #import <WebCore/NotImplemented.h>
 #import <WebCore/PlatformPasteboard.h>
@@ -354,7 +353,6 @@ void WebProcessPool::platformInitializeWebProcess(const WebProcessProxy& process
         SandboxExtension::createHandleForMachLookup("com.apple.uikit.viewservice.com.apple.WebContentFilter.remoteUI", WTF::nullopt, handle);
         parameters.contentFilterExtensionHandle = WTFMove(handle);
     }
-    parameters.mimeTypesMap = commonMimeTypesMap();
 #endif
     
 #if PLATFORM(IOS_FAMILY)

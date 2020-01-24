@@ -31,9 +31,6 @@
 
 namespace WebCore {
 
-WEBCORE_EXPORT Optional<HashMap<String, Vector<String>, ASCIICaseInsensitiveHash>>& overriddenMimeTypesMap();
-WEBCORE_EXPORT const HashMap<String, Vector<String>, ASCIICaseInsensitiveHash>& commonMimeTypesMap();
-
 struct MIMETypeRegistryThreadGlobalData {
     WTF_MAKE_NONCOPYABLE(MIMETypeRegistryThreadGlobalData);
     WTF_MAKE_FAST_ALLOCATED;
@@ -55,7 +52,7 @@ public:
     // FIXME: WebKit coding style says we should not have the word "get" in the names of these functions.
     static Vector<String> getExtensionsForMIMEType(const String& type);
     WEBCORE_EXPORT static String getPreferredExtensionForMIMEType(const String& type);
-    WEBCORE_EXPORT static String getMediaMIMETypeForExtension(const String& extension);
+    static String getMediaMIMETypeForExtension(const String& extension);
     static Vector<String> getMediaMIMETypesForExtension(const String& extension);
 
     static String getMIMETypeForPath(const String& path);
@@ -146,96 +143,5 @@ private:
 };
 
 WEBCORE_EXPORT const String& defaultMIMEType();
-
-struct TypeExtensionPair {
-    ASCIILiteral type;
-    ASCIILiteral extension;
-};
-
-constexpr std::initializer_list<TypeExtensionPair> commonMediaTypes()
-{
-    // A table of common media MIME types and file extensions used when a platform's
-    // specific MIME type lookup doesn't have a match for a media file extension.
-    std::initializer_list<TypeExtensionPair> commonMediaTypes = {
-        // Ogg
-        { "application/ogg"_s, "ogx"_s },
-        { "audio/ogg"_s, "ogg"_s },
-        { "audio/ogg"_s, "oga"_s },
-        { "video/ogg"_s, "ogv"_s },
-
-        // Annodex
-        { "application/annodex"_s, "anx"_s },
-        { "audio/annodex"_s, "axa"_s },
-        { "video/annodex"_s, "axv"_s },
-        { "audio/speex"_s, "spx"_s },
-
-        // WebM
-        { "video/webm"_s, "webm"_s },
-        { "audio/webm"_s, "webm"_s },
-
-        // MPEG
-        { "audio/mpeg"_s, "m1a"_s },
-        { "audio/mpeg"_s, "m2a"_s },
-        { "audio/mpeg"_s, "m1s"_s },
-        { "audio/mpeg"_s, "mpa"_s },
-        { "video/mpeg"_s, "mpg"_s },
-        { "video/mpeg"_s, "m15"_s },
-        { "video/mpeg"_s, "m1s"_s },
-        { "video/mpeg"_s, "m1v"_s },
-        { "video/mpeg"_s, "m75"_s },
-        { "video/mpeg"_s, "mpa"_s },
-        { "video/mpeg"_s, "mpeg"_s },
-        { "video/mpeg"_s, "mpm"_s },
-        { "video/mpeg"_s, "mpv"_s },
-
-        // MPEG playlist
-        { "application/vnd.apple.mpegurl"_s, "m3u8"_s },
-        { "application/mpegurl"_s, "m3u8"_s },
-        { "application/x-mpegurl"_s, "m3u8"_s },
-        { "audio/mpegurl"_s, "m3url"_s },
-        { "audio/x-mpegurl"_s, "m3url"_s },
-        { "audio/mpegurl"_s, "m3u"_s },
-        { "audio/x-mpegurl"_s, "m3u"_s },
-
-        // MPEG-4
-        { "video/x-m4v"_s, "m4v"_s },
-        { "audio/x-m4a"_s, "m4a"_s },
-        { "audio/x-m4b"_s, "m4b"_s },
-        { "audio/x-m4p"_s, "m4p"_s },
-        { "audio/mp4"_s, "m4a"_s },
-
-        // MP3
-        { "audio/mp3"_s, "mp3"_s },
-        { "audio/x-mp3"_s, "mp3"_s },
-        { "audio/x-mpeg"_s, "mp3"_s },
-
-        // MPEG-2
-        { "video/x-mpeg2"_s, "mp2"_s },
-        { "video/mpeg2"_s, "vob"_s },
-        { "video/mpeg2"_s, "mod"_s },
-        { "video/m2ts"_s, "m2ts"_s },
-        { "video/x-m2ts"_s, "m2t"_s },
-        { "video/x-m2ts"_s, "ts"_s },
-
-        // 3GP/3GP2
-        { "audio/3gpp"_s, "3gpp"_s },
-        { "audio/3gpp2"_s, "3g2"_s },
-        { "application/x-mpeg"_s, "amc"_s },
-
-        // AAC
-        { "audio/aac"_s, "aac"_s },
-        { "audio/aac"_s, "adts"_s },
-        { "audio/x-aac"_s, "m4r"_s },
-
-        // CoreAudio File
-        { "audio/x-caf"_s, "caf"_s },
-        { "audio/x-gsm"_s, "gsm"_s },
-
-        // ADPCM
-        { "audio/x-wav"_s, "wav"_s },
-        { "audio/vnd.wave"_s, "wav"_s },
-    };
-    return commonMediaTypes;
-}
 
 } // namespace WebCore

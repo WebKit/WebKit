@@ -59,7 +59,6 @@
 #import <WebCore/HistoryItem.h>
 #import <WebCore/LocalizedStrings.h>
 #import <WebCore/LogInitialization.h>
-#import <WebCore/MIMETypeRegistry.h>
 #import <WebCore/MemoryRelease.h>
 #import <WebCore/NSScrollerImpDetails.h>
 #import <WebCore/PerformanceLogging.h>
@@ -261,9 +260,6 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
         SandboxExtension::consumePermanently(*parameters.neSessionManagerExtensionHandle);
     NetworkExtensionContentFilter::setHasConsumedSandboxExtensions(parameters.neHelperExtensionHandle.hasValue() && parameters.neSessionManagerExtensionHandle.hasValue());
     setSystemHasBattery(parameters.systemHasBattery);
-
-    if (parameters.mimeTypesMap)
-        overriddenMimeTypesMap() = WTFMove(parameters.mimeTypesMap);
 #endif
 
 #if PLATFORM(IOS_FAMILY)

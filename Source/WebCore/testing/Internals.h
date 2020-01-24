@@ -930,8 +930,6 @@ public:
 
     bool systemHasBattery() const;
 
-    String mediaMIMETypeForExtension(const String& extension);
-
 private:
     explicit Internals(Document&);
     Document* contextDocument() const;

@@ -274,18 +274,98 @@ const HashSet<String, ASCIICaseInsensitiveHash>& MIMETypeRegistry::unsupportedTe
     return unsupportedTextMIMETypes;
 }
 
-Optional<HashMap<String, Vector<String>, ASCIICaseInsensitiveHash>>& overriddenMimeTypesMap()
+static const Vector<String>* typesForCommonExtension(const String& extension)
 {
-    static NeverDestroyed<Optional<HashMap<String, Vector<String>, ASCIICaseInsensitiveHash>>> map;
-    return map;
-}
+    static const auto map = makeNeverDestroyed([] {
+        struct TypeExtensionPair {
+            ASCIILiteral type;
+            ASCIILiteral extension;
+        };
 
-const HashMap<String, Vector<String>, ASCIICaseInsensitiveHash>& commonMimeTypesMap()
-{
-    ASSERT(isMainThread());
-    static NeverDestroyed<HashMap<String, Vector<String>, ASCIICaseInsensitiveHash>> mimeTypesMap = [] {
+        // A table of common media MIME types and file extentions used when a platform's
+        // specific MIME type lookup doesn't have a match for a media file extension.
+        static const TypeExtensionPair commonMediaTypes[] = {
+            // Ogg
+            { "application/ogg"_s, "ogx"_s },
+            { "audio/ogg"_s, "ogg"_s },
+            { "audio/ogg"_s, "oga"_s },
+            { "video/ogg"_s, "ogv"_s },
+
+            // Annodex
+            { "application/annodex"_s, "anx"_s },
+            { "audio/annodex"_s, "axa"_s },
+            { "video/annodex"_s, "axv"_s },
+            { "audio/speex"_s, "spx"_s },
+
+            // WebM
+            { "video/webm"_s, "webm"_s },
+            { "audio/webm"_s, "webm"_s },
+
+            // MPEG
+            { "audio/mpeg"_s, "m1a"_s },
+            { "audio/mpeg"_s, "m2a"_s },
+            { "audio/mpeg"_s, "m1s"_s },
+            { "audio/mpeg"_s, "mpa"_s },
+            { "video/mpeg"_s, "mpg"_s },
+            { "video/mpeg"_s, "m15"_s },
+            { "video/mpeg"_s, "m1s"_s },
+            { "video/mpeg"_s, "m1v"_s },
+            { "video/mpeg"_s, "m75"_s },
+            { "video/mpeg"_s, "mpa"_s },
+            { "video/mpeg"_s, "mpeg"_s },
+            { "video/mpeg"_s, "mpm"_s },
+            { "video/mpeg"_s, "mpv"_s },
+
+            // MPEG playlist
+            { "application/vnd.apple.mpegurl"_s, "m3u8"_s },
+            { "application/mpegurl"_s, "m3u8"_s },
+            { "application/x-mpegurl"_s, "m3u8"_s },
+            { "audio/mpegurl"_s, "m3url"_s },
+            { "audio/x-mpegurl"_s, "m3url"_s },
+            { "audio/mpegurl"_s, "m3u"_s },
+            { "audio/x-mpegurl"_s, "m3u"_s },
+
+            // MPEG-4
+            { "video/x-m4v"_s, "m4v"_s },
+            { "audio/x-m4a"_s, "m4a"_s },
+            { "audio/x-m4b"_s, "m4b"_s },
+            { "audio/x-m4p"_s, "m4p"_s },
+            { "audio/mp4"_s, "m4a"_s },
+
+            // MP3
+            { "audio/mp3"_s, "mp3"_s },
+            { "audio/x-mp3"_s, "mp3"_s },
+            { "audio/x-mpeg"_s, "mp3"_s },
+
+            // MPEG-2
+            { "video/x-mpeg2"_s, "mp2"_s },
+            { "video/mpeg2"_s, "vob"_s },
+            { "video/mpeg2"_s, "mod"_s },
+            { "video/m2ts"_s, "m2ts"_s },
+            { "video/x-m2ts"_s, "m2t"_s },
+            { "video/x-m2ts"_s, "ts"_s },
+
+            // 3GP/3GP2
+            { "audio/3gpp"_s, "3gpp"_s },
+            { "audio/3gpp2"_s, "3g2"_s },
+            { "application/x-mpeg"_s, "amc"_s },
+
+            // AAC
+            { "audio/aac"_s, "aac"_s },
+            { "audio/aac"_s, "adts"_s },
+            { "audio/x-aac"_s, "m4r"_s },
+
+            // CoreAudio File
+            { "audio/x-caf"_s, "caf"_s },
+            { "audio/x-gsm"_s, "gsm"_s },
+
+            // ADPCM
+            { "audio/x-wav"_s, "wav"_s },
+            { "audio/vnd.wave"_s, "wav"_s },
+        };
+
         HashMap<String, Vector<String>, ASCIICaseInsensitiveHash> map;
-        for (auto& pair : commonMediaTypes()) {
+        for (auto& pair : commonMediaTypes) {
             ASCIILiteral type = pair.type;
             ASCIILiteral extension = pair.extension;
             map.ensure(extension, [type, extension] {
@@ -299,20 +379,9 @@ const HashMap<String, Vector<String>, ASCIICaseInsensitiveHash>& commonMimeTypes
             }).iterator->value.append(type);
         }
         return map;
-    }();
-    return mimeTypesMap;
-}
-
-static const Vector<String>* typesForCommonExtension(const String& extension)
-{
-    if (overriddenMimeTypesMap().hasValue()) {
-        auto mapEntry = overriddenMimeTypesMap()->find(extension);
-        if (mapEntry == overriddenMimeTypesMap()->end())
-            return nullptr;
-        return &mapEntry->value;
-    }
-    auto mapEntry = commonMimeTypesMap().find(extension);
-    if (mapEntry == commonMimeTypesMap().end())
+    }());
+    auto mapEntry = map.get().find(extension);
+    if (mapEntry == map.get().end())
         return nullptr;
     return &mapEntry->value;
 }
