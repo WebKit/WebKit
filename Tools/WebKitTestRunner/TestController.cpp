@@ -442,6 +442,8 @@ const char* TestController::libraryPathForTesting()
 
 void TestController::initialize(int argc, const char* argv[])
 {
+    AutodrainedPool pool;
+
     JSC::initializeThreading();
     RunLoop::initializeMainRunLoop();
     WTF::setProcessPrivileges(allPrivileges());
