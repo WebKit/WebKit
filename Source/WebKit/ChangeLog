@@ -1,3 +1,20 @@
+2020-01-23  Daniel Bates  <dabates@apple.com>
+
+        Add a variant of -selectPositionAtPoint that can select an arbitrary point
+        https://bugs.webkit.org/show_bug.cgi?id=206712
+
+        Reviewed by Wenson Hsieh.
+
+        Adds a variant of -selectPositionAtPoint, called _selectPositionAtPoint, that takes a boolean
+        as to whether to constrain the specified point to stay within the focused element. I will
+        make use of this functionality in a subsequent patch.
+
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView selectPositionAtPoint:completionHandler:]): Moved implementation to -_selectPositionAtPoint
+        and write this function in terms of it.
+        (-[WKContentView _selectPositionAtPoint:stayingWithinFocusedElement:completionHandler:]): Added.
+
 2020-01-23  Kate Cheney  <katherine_cheney@apple.com>
 
         Background thread with ITP Database should lock when the network process is suspended

@@ -447,6 +447,8 @@ struct WKAutoCorrectionData {
 - (BOOL)canPerformActionForWebView:(SEL)action withSender:(id)sender;
 - (id)targetForActionForWebView:(SEL)action withSender:(id)sender;
 
+- (void)_selectPositionAtPoint:(CGPoint)point stayingWithinFocusedElement:(BOOL)stayingWithinFocusedElement completionHandler:(void (^)(void))completionHandler;
+
 #if ENABLE(POINTER_EVENTS)
 - (void)cancelPointersForGestureRecognizer:(UIGestureRecognizer *)gestureRecognizer;
 - (WTF::Optional<unsigned>)activeTouchIdentifierForGestureRecognizer:(UIGestureRecognizer *)gestureRecognizer;
