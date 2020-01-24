@@ -23,11 +23,11 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "PluginProcessMainUnix.h"
+#include "PluginProcessMain.h"
 
 using namespace WebKit;
 
 int main(int argc, char** argv)
 {
-    return PluginProcessMainUnix(argc, argv);
+    return PluginProcessMain(argc, argv);
 }

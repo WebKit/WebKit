@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Igalia S.L.
+ * Copyright (C) 2017 Sony Interactive Entertainment Inc.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,48 +25,14 @@
 
 #pragma once
 
-#include "AuxiliaryProcess.h"
-#include "WebKit2Initialize.h"
-#include <wtf/RunLoop.h>
+#if !PLATFORM(COCOA)
+
+#include <WebKit/WKBase.h>
 
 namespace WebKit {
 
-class AuxiliaryProcessMainBase {
-public:
-    virtual bool platformInitialize() { return true; }
-    virtual bool parseCommandLine(int argc, char** argv);
-    virtual void platformFinalize() { }
-
-    AuxiliaryProcessInitializationParameters&& takeInitializationParameters() { return WTFMove(m_parameters); }
-
-protected:
-    AuxiliaryProcessInitializationParameters m_parameters;
-};
-
-template<typename AuxiliaryProcessType>
-void initializeAuxiliaryProcess(AuxiliaryProcessInitializationParameters&& parameters)
-{
-    AuxiliaryProcessType::singleton().initialize(WTFMove(parameters));
-}
-
-template<typename AuxiliaryProcessType, typename AuxiliaryProcessMainType>
-int AuxiliaryProcessMain(int argc, char** argv)
-{
-    AuxiliaryProcessMainType auxiliaryMain;
-
-    if (!auxiliaryMain.platformInitialize())
-        return EXIT_FAILURE;
-
-    if (!auxiliaryMain.parseCommandLine(argc, argv))
-        return EXIT_FAILURE;
-
-    InitializeWebKit2();
-
-    initializeAuxiliaryProcess<AuxiliaryProcessType>(auxiliaryMain.takeInitializationParameters());
-    RunLoop::run();
-    auxiliaryMain.platformFinalize();
-
-    return EXIT_SUCCESS;
-}
+WK_EXPORT int NetworkProcessMain(int argc, char** argv);
 
 } // namespace WebKit
+
+#endif // !PLATFORM(COCOA)

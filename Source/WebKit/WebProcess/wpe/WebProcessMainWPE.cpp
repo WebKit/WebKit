@@ -25,7 +25,7 @@
  */
 
 #include "config.h"
-#include "WebProcessMainUnix.h"
+#include "WebProcessMain.h"
 
 #include "AuxiliaryProcessMain.h"
 #include "WebProcess.h"
@@ -72,7 +72,7 @@ static void initializeAccessibility()
 }
 #endif
 
-class WebProcessMain final : public AuxiliaryProcessMainBase {
+class WebProcessMainWPE final : public AuxiliaryProcessMainBase {
 public:
     bool platformInitialize() override
     {
@@ -93,9 +93,9 @@ public:
     }
 };
 
-int WebProcessMainUnix(int argc, char** argv)
+int WebProcessMain(int argc, char** argv)
 {
-    return AuxiliaryProcessMain<WebProcess, WebProcessMain>(argc, argv);
+    return AuxiliaryProcessMain<WebProcess, WebProcessMainWPE>(argc, argv);
 }
 
 } // namespace WebKit

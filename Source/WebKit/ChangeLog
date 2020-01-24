@@ -1,3 +1,54 @@
+2020-01-24  Don Olmstead  <don.olmstead@sony.com>
+
+        Centralize AuxiliaryProcessMainBase implementations
+        https://bugs.webkit.org/show_bug.cgi?id=206700
+
+        Reviewed by Carlos Garcia Campos.
+
+        Non-Cocoa ports share a common usage of AuxiliaryProcessMainBase but the implementations
+        don't share a lot of code. This patch centralizes the code and the naming used.
+
+        * NetworkProcess/EntryPoint/unix/NetworkProcessMain.cpp:
+        (main):
+        * NetworkProcess/EntryPoint/win/NetworkProcessMain.cpp:
+        (main):
+        * NetworkProcess/NetworkProcessMain.h: Renamed from Source/WebKit/NetworkProcess/win/NetworkProcessMainWin.h.
+        * NetworkProcess/curl/NetworkProcessMainCurl.cpp: Renamed from Source/WebKit/NetworkProcess/win/NetworkProcessMainWin.cpp.
+        (WebKit::initializeAuxiliaryProcess<NetworkProcess>):
+        (WebKit::NetworkProcessMain):
+        * NetworkProcess/soup/NetworkProcessMainSoup.cpp:
+        (WebKit::NetworkProcessMain):
+        (WebKit::NetworkProcessMainUnix): Deleted.
+        * NetworkProcess/unix/NetworkProcessMainUnix.h: Removed.
+        * PlatformFTW.cmake:
+        * PlatformGTK.cmake:
+        * PlatformWPE.cmake:
+        * PlatformWin.cmake:
+        * PluginProcess/EntryPoint/unix/PluginProcessMain.cpp:
+        (main):
+        * PluginProcess/PluginProcessMain.h: Renamed from Source/WebKit/PluginProcess/unix/PluginProcessMainUnix.h.
+        * PluginProcess/unix/PluginProcessMainUnix.cpp:
+        (WebKit::PluginProcessMain):
+        (WebKit::PluginProcessMainUnix): Deleted.
+        * Shared/AuxiliaryProcessMain.h: Renamed from Source/WebKit/Shared/unix/AuxiliaryProcessMain.h.
+        * WebProcess/EntryPoint/unix/WebProcessMain.cpp:
+        (main):
+        * WebProcess/EntryPoint/win/WebProcessMain.cpp:
+        (main):
+        * WebProcess/WebProcessMain.h: Renamed from Source/WebKit/WebProcess/win/WebProcessMainWin.h.
+        * WebProcess/gtk/WebProcessMainGtk.cpp:
+        (WebKit::WebProcessMain):
+        (WebKit::WebProcessMainUnix): Deleted.
+        * WebProcess/playstation/WebProcessMainPlayStation.cpp: Renamed from Source/WebKit/WebProcess/unix/WebProcessMainUnix.h.
+        (WebKit::WebProcessMain):
+        * WebProcess/win/WebProcessMainWin.cpp:
+        (WebKit::WebProcessMain):
+        (WebKit::WebProcessMainWin): Deleted.
+        * WebProcess/wpe/WebProcessMainWPE.cpp:
+        (WebKit::WebProcessMain):
+        (WebKit::WebProcessMainUnix): Deleted.
+        * webkitglib-symbols.map:
+
 2020-01-24  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Reduce the maximum time we wait for draw events in DrawingMonitor

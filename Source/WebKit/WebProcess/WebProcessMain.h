@@ -25,12 +25,14 @@
 
 #pragma once
 
+#if !PLATFORM(COCOA)
+
 #include <WebKit/WKBase.h>
 
 namespace WebKit {
 
-extern "C" {
-WK_EXPORT int NetworkProcessMainWin(int argc, char** argv);
-}
+WK_EXPORT int WebProcessMain(int argc, char** argv);
 
 } // namespace WebKit
+
+#endif // !PLATFORM(COCOA)

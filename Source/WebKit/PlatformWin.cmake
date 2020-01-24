@@ -11,7 +11,7 @@ list(APPEND WebKit_SOURCES
 
     NetworkProcess/WebStorage/StorageManager.cpp
 
-    NetworkProcess/win/NetworkProcessMainWin.cpp
+    NetworkProcess/curl/NetworkProcessMainCurl.cpp
 
     Platform/IPC/win/AttachmentWin.cpp
     Platform/IPC/win/ConnectionWin.cpp
@@ -93,14 +93,12 @@ add_custom_command(
 )
 
 list(APPEND WebKit_INCLUDE_DIRECTORIES
-    "${WEBKIT_DIR}/NetworkProcess/win"
     "${WEBKIT_DIR}/Platform/classifier"
     "${WEBKIT_DIR}/PluginProcess/win"
     "${WEBKIT_DIR}/Shared/API/c/win"
     "${WEBKIT_DIR}/Shared/CoordinatedGraphics"
     "${WEBKIT_DIR}/Shared/CoordinatedGraphics/threadedcompositor"
     "${WEBKIT_DIR}/Shared/Plugins/win"
-    "${WEBKIT_DIR}/Shared/unix"
     "${WEBKIT_DIR}/Shared/win"
     "${WEBKIT_DIR}/UIProcess/API/C/cairo"
     "${WEBKIT_DIR}/UIProcess/API/C/curl"
@@ -112,7 +110,6 @@ list(APPEND WebKit_INCLUDE_DIRECTORIES
     "${WEBKIT_DIR}/UIProcess/win"
     "${WEBKIT_DIR}/WebProcess/InjectedBundle/API/win"
     "${WEBKIT_DIR}/WebProcess/InjectedBundle/API/win/DOM"
-    "${WEBKIT_DIR}/WebProcess/win"
     "${WEBKIT_DIR}/WebProcess/WebCoreSupport/win"
     "${WEBKIT_DIR}/WebProcess/WebPage/CoordinatedGraphics"
     "${WEBKIT_DIR}/WebProcess/WebPage/win"

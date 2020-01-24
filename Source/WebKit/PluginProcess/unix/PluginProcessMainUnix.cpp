@@ -26,7 +26,7 @@
  */
 
 #include "config.h"
-#include "PluginProcessMainUnix.h"
+#include "PluginProcessMain.h"
 
 #if ENABLE(PLUGIN_PROCESS)
 
@@ -53,7 +53,7 @@ namespace WebKit {
 static LazyNeverDestroyed<WebCore::XErrorTrapper> xErrorTrapper;
 #endif
 
-class PluginProcessMain final: public AuxiliaryProcessMainBase {
+class PluginProcessMainUnix final: public AuxiliaryProcessMainBase {
 public:
     bool platformInitialize() override
     {
@@ -93,9 +93,9 @@ public:
     }
 };
 
-int PluginProcessMainUnix(int argc, char** argv)
+int PluginProcessMain(int argc, char** argv)
 {
-    return AuxiliaryProcessMain<PluginProcess, PluginProcessMain>(argc, argv);
+    return AuxiliaryProcessMain<PluginProcess, PluginProcessMainUnix>(argc, argv);
 }
 
 } // namespace WebKit

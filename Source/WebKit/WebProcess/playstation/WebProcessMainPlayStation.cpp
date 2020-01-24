@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Igalia S.L.
+ * Copyright (C) 2020 Sony Interactive Entertainment Inc.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,17 +23,26 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebProcessMainUnix_h
-#define WebProcessMainUnix_h
+#include "config.h"
+#include "WebProcessMain.h"
 
-#include <WebKit/WKBase.h>
+#include "AuxiliaryProcessMain.h"
+#include "WebProcess.h"
 
 namespace WebKit {
+using namespace WebCore;
 
-extern "C" {
-WK_EXPORT int WebProcessMainUnix(int argc, char** argv);
+class WebProcessMainPlayStation final: public AuxiliaryProcessMainBase {
+public:
+    bool platformInitialize() override
+    {
+        return true;
+    }
+};
+
+int WebProcessMain(int argc, char** argv)
+{
+    return AuxiliaryProcessMain<WebProcess, WebProcessMainPlayStation>(argc, argv);
 }
 
 } // namespace WebKit
-
-#endif // WebProcessMainUnix_h

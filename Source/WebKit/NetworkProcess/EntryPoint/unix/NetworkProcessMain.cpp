@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "NetworkProcessMainUnix.h"
+#include "NetworkProcessMain.h"
 
 #include <cstdlib>
 
@@ -39,5 +39,5 @@ int main(int argc, char** argv)
     PAL::GCrypt::initialize();
 #endif
 
-    return NetworkProcessMainUnix(argc, argv);
+    return NetworkProcessMain(argc, argv);
 }

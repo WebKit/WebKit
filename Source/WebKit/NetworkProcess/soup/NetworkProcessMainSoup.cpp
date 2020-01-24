@@ -25,17 +25,17 @@
  */
 
 #include "config.h"
-#include "NetworkProcess.h"
+#include "NetworkProcessMain.h"
 
 #include "AuxiliaryProcessMain.h"
-#include "NetworkProcessMainUnix.h"
+#include "NetworkProcess.h"
 #include <WebCore/NetworkStorageSession.h>
 
 namespace WebKit {
 
 static RefPtr<NetworkProcess> globalNetworkProcess;
 
-class NetworkProcessMain final: public AuxiliaryProcessMainBase {
+class NetworkProcessMainSoup final: public AuxiliaryProcessMainBase {
 public:
     void platformFinalize() override
     {
@@ -52,9 +52,9 @@ void initializeAuxiliaryProcess<NetworkProcess>(AuxiliaryProcessInitializationPa
     globalNetworkProcess = &networkProcess.get();
 }
     
-int NetworkProcessMainUnix(int argc, char** argv)
+int NetworkProcessMain(int argc, char** argv)
 {
-    return AuxiliaryProcessMain<NetworkProcess, NetworkProcessMain>(argc, argv);
+    return AuxiliaryProcessMain<NetworkProcess, NetworkProcessMainSoup>(argc, argv);
 }
 
 } // namespace WebKit

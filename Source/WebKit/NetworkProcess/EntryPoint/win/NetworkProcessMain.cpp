@@ -23,12 +23,12 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "NetworkProcessMainWin.h"
+#include "NetworkProcessMain.h"
 
 #include <stdio.h>
 #include <windows.h>
 
 int main(int argc, char** argv)
 {
-    WebKit::NetworkProcessMainWin(argc, argv);
+    WebKit::NetworkProcessMain(argc, argv);
 }

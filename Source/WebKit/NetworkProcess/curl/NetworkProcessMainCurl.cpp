@@ -1,6 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
- * Portions Copyright (c) 2010 Motorola Mobility, Inc.  All rights reserved.
+ * Copyright (C) 2020 Sony Interactive Entertainment Inc.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -11,7 +10,7 @@
  *    notice, this list of conditions and the following disclaimer in the
  *    documentation and/or other materials provided with the distribution.
  *
- * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS ``AS IS''
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
  * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
  * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
@@ -24,17 +23,34 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef PluginProcessMainUnix_h
-#define PluginProcessMainUnix_h
+#include "config.h"
+#include "NetworkProcessMain.h"
 
-#include <WebKit/WKBase.h>
+#include "AuxiliaryProcessMain.h"
+#include "NetworkProcess.h"
 
 namespace WebKit {
 
-extern "C" {
-WK_EXPORT int PluginProcessMainUnix(int argc, char** argv);
+static RefPtr<NetworkProcess> globalNetworkProcess;
+
+class NetworkProcessMainCurl final: public AuxiliaryProcessMainBase {
+public:
+    void platformFinalize() override
+    {
+        globalNetworkProcess->destroySession(PAL::SessionID::defaultSessionID());
+    }
+};
+
+template<>
+void initializeAuxiliaryProcess<NetworkProcess>(AuxiliaryProcessInitializationParameters&& parameters)
+{
+    static NeverDestroyed<NetworkProcess> networkProcess(WTFMove(parameters));
+    globalNetworkProcess = &networkProcess.get();
+}
+
+int NetworkProcessMain(int argc, char** argv)
+{
+    return AuxiliaryProcessMain<NetworkProcess, NetworkProcessMainCurl>(argc, argv);
 }
 
 } // namespace WebKit
-
-#endif // PluginProcessMainUnix_h
