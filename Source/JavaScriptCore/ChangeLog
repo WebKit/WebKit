@@ -1,3 +1,16 @@
+2020-01-24  Paulo Matos  <pmatos@igalia.com>
+
+        Fix number of callee saved register count on MIPS
+        https://bugs.webkit.org/show_bug.cgi?id=206732
+
+        Reviewed by Žan Doberšek.
+
+        MIPS has been issuing illegal instruction errors due to stack corruption.
+        This is caused by an incorrect number of CalleeSaveRegisterCount
+        that should be set to 3 since r254674.
+
+        * llint/LowLevelInterpreter.asm:
+
 2020-01-23  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] DFG OSR exit is not marking CodeBlock::m_hasLinkedOSRExit when the exit target is checkpoint
