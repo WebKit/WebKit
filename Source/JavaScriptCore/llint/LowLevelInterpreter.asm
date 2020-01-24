@@ -2037,14 +2037,27 @@ end)
 
 
 op(checkpoint_osr_exit_from_inlined_call_trampoline, macro ()
-    if JSVALUE64 and not (C_LOOP or C_LOOP_WIN)
+    if (JSVALUE64 and not (C_LOOP or C_LOOP_WIN)) or ARMv7
         restoreStackPointerAfterCall()
 
         # Make sure we move r0 to a1 first since r0 might be the same as a0, for instance, on arm.
-        move r0, a1
-        move cfr, a0
-        # We don't call saveStateForCCall() because we are going to use the bytecodeIndex from our side state.
-        cCall2(_slow_path_checkpoint_osr_exit_from_inlined_call)
+        if ARMv7
+            # Given _slow_path_checkpoint_osr_exit_from_inlined_call has
+            # parameters as CallFrame* and EncodedJSValue,
+            # we need to store call result on a2, a3 and call frame on a0,
+            # leaving a1 as dummy value.
+            move r1, a3
+            move r0, a2
+            move cfr, a0
+            # We don't call saveStateForCCall() because we are going to use the bytecodeIndex from our side state.
+            cCall4(_slow_path_checkpoint_osr_exit_from_inlined_call)
+        else
+            move r0, a1
+            move cfr, a0
+            # We don't call saveStateForCCall() because we are going to use the bytecodeIndex from our side state.
+            cCall2(_slow_path_checkpoint_osr_exit_from_inlined_call)
+        end
+
         restoreStateAfterCCall()
         branchIfException(_llint_throw_from_slow_path_trampoline)
         jmp r1, JSEntryPtrTag
@@ -2056,7 +2069,7 @@ end)
 op(checkpoint_osr_exit_trampoline, macro ()
     # FIXME: We can probably dispatch to the checkpoint handler directly but this was easier 
     # and probably doesn't matter for performance.
-    if JSVALUE64 and not (C_LOOP or C_LOOP_WIN)
+    if (JSVALUE64 and not (C_LOOP or C_LOOP_WIN)) or ARMv7
         restoreStackPointerAfterCall()
 
         move cfr, a0

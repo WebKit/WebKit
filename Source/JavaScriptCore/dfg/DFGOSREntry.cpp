@@ -308,7 +308,31 @@ void* prepareOSREntry(VM& vm, CallFrame* callFrame, CodeBlock* codeBlock, Byteco
             continue;
         RegisterAtOffset* calleeSavesEntry = allCalleeSaves->find(currentEntry.reg());
         
-        *(bitwise_cast<intptr_t*>(pivot - 1) - currentEntry.offsetAsIndex()) = record->calleeSaveRegistersBuffer[calleeSavesEntry->offsetAsIndex()];
+        if constexpr (CallerFrameAndPC::sizeInRegisters == 2)
+            *(bitwise_cast<intptr_t*>(pivot - 1) - currentEntry.offsetAsIndex()) = record->calleeSaveRegistersBuffer[calleeSavesEntry->offsetAsIndex()];
+        else {
+            // We need to adjust 4-bytes on 32-bits, otherwise we will clobber some parts of
+            // pivot[-1] when currentEntry.offsetAsIndex() returns -1. This region contains
+            // CallerFrameAndPC and if it is cloberred, we will have a corrupted stack.
+            // Also, we need to store callee-save registers swapped in pairs on scratch buffer,
+            // otherwise they will be swapped when copied to call frame during OSR Entry code.
+            // Here is how we would like to have the buffer configured:
+            //
+            // pivot[-4] = ArgumentCountIncludingThis
+            // pivot[-3] = Callee
+            // pivot[-2] = CodeBlock
+            // pivot[-1] = CallerFrameAndReturnPC
+            // pivot[0]  = csr1/csr0
+            // pivot[1]  = csr3/csr2
+            // ...
+            ASSERT(sizeof(intptr_t) == 4);
+            ASSERT(CallerFrameAndPC::sizeInRegisters == 1);
+            ASSERT(currentEntry.offsetAsIndex() < 0);
+
+            int offsetAsIndex = currentEntry.offsetAsIndex();
+            int properIndex = offsetAsIndex % 2 ? offsetAsIndex - 1 : offsetAsIndex + 1;
+            *(bitwise_cast<intptr_t*>(pivot - 1) + 1 - properIndex) = record->calleeSaveRegistersBuffer[calleeSavesEntry->offsetAsIndex()];
+        }
     }
 #endif
     

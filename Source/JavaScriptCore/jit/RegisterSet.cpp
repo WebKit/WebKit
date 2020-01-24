@@ -232,6 +232,7 @@ RegisterSet RegisterSet::dfgCalleeSaveRegisters()
     result.set(GPRInfo::regCS6);
 #endif
 #elif CPU(ARM_THUMB2)
+    result.set(GPRInfo::regCS1);
 #elif CPU(ARM64)
     static_assert(GPRInfo::regCS8 == GPRInfo::numberTagRegister, "");
     static_assert(GPRInfo::regCS9 == GPRInfo::notCellMaskRegister, "");
