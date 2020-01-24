@@ -49,82 +49,88 @@ AXIsolatedObject::~AXIsolatedObject() = default;
 
 void AXIsolatedObject::initializeAttributeData(AXCoreObject& object, bool isRoot)
 {
-    setProperty(AXPropertyName::BoundingBoxRect, object.boundingBoxRect());
-    setProperty(AXPropertyName::ElementRect, object.elementRect());
-    setProperty(AXPropertyName::RoleValue, static_cast<int>(object.roleValue()));
-    setProperty(AXPropertyName::RolePlatformString, object.rolePlatformString().isolatedCopy());
     setProperty(AXPropertyName::ARIALandmarkRoleDescription, object.ariaLandmarkRoleDescription().isolatedCopy());
-    setProperty(AXPropertyName::RoleDescription, object.roleDescription().isolatedCopy());
-    setProperty(AXPropertyName::IsAttachment, object.isAttachment());
-    setProperty(AXPropertyName::IsLink, object.isLink());
-    setProperty(AXPropertyName::IsImageMapLink, object.isImageMapLink());
-    setProperty(AXPropertyName::IsImage, object.isImage());
-    setProperty(AXPropertyName::IsFileUploadButton, object.isFileUploadButton());
-    setProperty(AXPropertyName::IsAccessibilityIgnored, object.accessibilityIsIgnored());
-    setProperty(AXPropertyName::IsTree, object.isTree());
-    setProperty(AXPropertyName::IsScrollbar, object.isScrollbar());
-    setProperty(AXPropertyName::RelativeFrame, object.relativeFrame());
-    setProperty(AXPropertyName::SpeechHint, object.speechHintAttributeValue().isolatedCopy());
-    setProperty(AXPropertyName::Title, object.titleAttributeValue().isolatedCopy());
+    setProperty(AXPropertyName::BoundingBoxRect, object.boundingBoxRect());
     setProperty(AXPropertyName::Description, object.descriptionAttributeValue().isolatedCopy());
+    setProperty(AXPropertyName::ElementRect, object.elementRect());
     setProperty(AXPropertyName::HelpText, object.helpTextAttributeValue().isolatedCopy());
-    setProperty(AXPropertyName::IsSearchField, object.isSearchField());
+    setProperty(AXPropertyName::IsARIATreeGridRow, object.isARIATreeGridRow());
+    setProperty(AXPropertyName::IsAccessibilityIgnored, object.accessibilityIsIgnored());
+    setProperty(AXPropertyName::IsActiveDescendantOfFocusedContainer, object.isActiveDescendantOfFocusedContainer());
+    setProperty(AXPropertyName::IsAttachment, object.isAttachment());
+    setProperty(AXPropertyName::IsBusy, object.isBusy());
+    setProperty(AXPropertyName::IsButton, object.isButton());
+    setProperty(AXPropertyName::IsChecked, object.isChecked());
+    setProperty(AXPropertyName::IsCollapsed, object.isCollapsed());
+    setProperty(AXPropertyName::IsControl, object.isControl());
+    setProperty(AXPropertyName::IsDescriptionList, object.isDescriptionList());
+    setProperty(AXPropertyName::IsEnabled, object.isEnabled());
+    setProperty(AXPropertyName::IsExpanded, object.isExpanded());
+    setProperty(AXPropertyName::IsFieldset, object.isFieldset());
+    setProperty(AXPropertyName::IsFileUploadButton, object.isFileUploadButton());
+    setProperty(AXPropertyName::IsFocused, object.isFocused());
+    setProperty(AXPropertyName::IsGroup, object.isGroup());
+    setProperty(AXPropertyName::IsHeading, object.isHeading());
+    setProperty(AXPropertyName::IsHovered, object.isHovered());
+    setProperty(AXPropertyName::IsImage, object.isImage());
+    setProperty(AXPropertyName::IsImageMapLink, object.isImageMapLink());
+    setProperty(AXPropertyName::IsIndeterminate, object.isIndeterminate());
+    setProperty(AXPropertyName::IsInlineText, object.isInlineText());
+    setProperty(AXPropertyName::IsInputImage, object.isInputImage());
+    setProperty(AXPropertyName::IsLandmark, object.isLandmark());
+    setProperty(AXPropertyName::IsLink, object.isLink());
+    setProperty(AXPropertyName::IsLinked, object.isLinked());
+    setProperty(AXPropertyName::IsList, object.isList());
+    setProperty(AXPropertyName::IsLoaded, object.isLoaded());
     setProperty(AXPropertyName::IsMediaTimeline, object.isMediaTimeline());
-    setProperty(AXPropertyName::IsMenuRelated, object.isMenuRelated());
     setProperty(AXPropertyName::IsMenu, object.isMenu());
     setProperty(AXPropertyName::IsMenuBar, object.isMenuBar());
     setProperty(AXPropertyName::IsMenuButton, object.isMenuButton());
     setProperty(AXPropertyName::IsMenuItem, object.isMenuItem());
-    setProperty(AXPropertyName::IsInputImage, object.isInputImage());
-    setProperty(AXPropertyName::IsProgressIndicator, object.isProgressIndicator());
-    setProperty(AXPropertyName::IsSlider, object.isSlider());
-    setProperty(AXPropertyName::IsControl, object.isControl());
-    setProperty(AXPropertyName::IsList, object.isList());
-    setProperty(AXPropertyName::IsUnorderedList, object.isUnorderedList());
-    setProperty(AXPropertyName::IsOrderedList, object.isOrderedList());
-    setProperty(AXPropertyName::IsDescriptionList, object.isDescriptionList());
-    setProperty(AXPropertyName::IsTableRow, object.isTableRow());
-    setProperty(AXPropertyName::IsTableColumn, object.isTableColumn());
-    setProperty(AXPropertyName::IsTableCell, object.isTableCell());
-    setProperty(AXPropertyName::IsFieldset, object.isFieldset());
-    setProperty(AXPropertyName::IsGroup, object.isGroup());
-    setProperty(AXPropertyName::IsARIATreeGridRow, object.isARIATreeGridRow());
     setProperty(AXPropertyName::IsMenuList, object.isMenuList());
-    setProperty(AXPropertyName::IsMenuListPopup, object.isMenuListPopup());
     setProperty(AXPropertyName::IsMenuListOption, object.isMenuListOption());
-    setProperty(AXPropertyName::IsTextControl, object.isTextControl());
-    setProperty(AXPropertyName::IsButton, object.isButton());
-    setProperty(AXPropertyName::IsRangeControl, object.isRangeControl());
-    setProperty(AXPropertyName::IsStyleFormatGroup, object.isStyleFormatGroup());
+    setProperty(AXPropertyName::IsMenuListPopup, object.isMenuListPopup());
+    setProperty(AXPropertyName::IsMenuRelated, object.isMenuRelated());
+    setProperty(AXPropertyName::IsMultiSelectable, object.isMultiSelectable());
+    setProperty(AXPropertyName::IsOffScreen, object.isOffScreen());
+    setProperty(AXPropertyName::IsOnScreen, object.isOnScreen());
+    setProperty(AXPropertyName::IsOrderedList, object.isOrderedList());
     setProperty(AXPropertyName::IsOutput, object.isOutput());
+    setProperty(AXPropertyName::IsPasswordField, object.isPasswordField());
+    setProperty(AXPropertyName::IsPressed, object.isPressed());
+    setProperty(AXPropertyName::IsProgressIndicator, object.isProgressIndicator());
+    setProperty(AXPropertyName::IsRangeControl, object.isRangeControl());
+    setProperty(AXPropertyName::IsRequired, object.isRequired());
+    setProperty(AXPropertyName::IsScrollbar, object.isScrollbar());
+    setProperty(AXPropertyName::IsSearchField, object.isSearchField());
+    setProperty(AXPropertyName::IsSelected, object.isSelected());
+    setProperty(AXPropertyName::IsSelectedOptionActive, object.isSelectedOptionActive());
+    setProperty(AXPropertyName::IsSlider, object.isSlider());
+    setProperty(AXPropertyName::IsStyleFormatGroup, object.isStyleFormatGroup());
+    setProperty(AXPropertyName::IsTableCell, object.isTableCell());
+    setProperty(AXPropertyName::IsTableColumn, object.isTableColumn());
+    setProperty(AXPropertyName::IsTableRow, object.isTableRow());
+    setProperty(AXPropertyName::IsTextControl, object.isTextControl());
+    setProperty(AXPropertyName::IsTree, object.isTree());
+    setProperty(AXPropertyName::IsUnorderedList, object.isUnorderedList());
+    setProperty(AXPropertyName::IsUnvisited, object.isUnvisited());
+    setProperty(AXPropertyName::IsValueAutofillAvailable, object.isValueAutofillAvailable());
+    setProperty(AXPropertyName::IsValueAutofilled, object.isValueAutofilled());
+    setProperty(AXPropertyName::IsVisible, object.isVisible());
+    setProperty(AXPropertyName::IsVisited, object.isVisited());
+    setProperty(AXPropertyName::RelativeFrame, object.relativeFrame());
+    setProperty(AXPropertyName::RoleDescription, object.roleDescription().isolatedCopy());
+    setProperty(AXPropertyName::RolePlatformString, object.rolePlatformString().isolatedCopy());
+    setProperty(AXPropertyName::RoleValue, static_cast<int>(object.roleValue()));
+    setProperty(AXPropertyName::SpeechHint, object.speechHintAttributeValue().isolatedCopy());
+    setProperty(AXPropertyName::Title, object.titleAttributeValue().isolatedCopy());
     setProperty(AXPropertyName::SupportsDatetimeAttribute, object.supportsDatetimeAttribute());
     setProperty(AXPropertyName::DatetimeAttributeValue, object.datetimeAttributeValue());
     setProperty(AXPropertyName::CanSetFocusAttribute, object.canSetFocusAttribute());
     setProperty(AXPropertyName::CanSetTextRangeAttributes, object.canSetTextRangeAttributes());
     setProperty(AXPropertyName::CanSetValueAttribute, object.canSetValueAttribute());
     setProperty(AXPropertyName::CanSetNumericValue, object.canSetNumericValue());
-    setProperty(AXPropertyName::IsPasswordField, object.isPasswordField());
-    setProperty(AXPropertyName::IsHeading, object.isHeading());
-    setProperty(AXPropertyName::IsChecked, object.isChecked());
-    setProperty(AXPropertyName::IsEnabled, object.isEnabled());
-    setProperty(AXPropertyName::IsSelected, object.isSelected());
-    setProperty(AXPropertyName::IsFocused, object.isFocused());
-    setProperty(AXPropertyName::IsHovered, object.isHovered());
-    setProperty(AXPropertyName::IsIndeterminate, object.isIndeterminate());
-    setProperty(AXPropertyName::IsLoaded, object.isLoaded());
-    setProperty(AXPropertyName::IsMultiSelectable, object.isMultiSelectable());
-    setProperty(AXPropertyName::IsOnScreen, object.isOnScreen());
-    setProperty(AXPropertyName::IsOffScreen, object.isOffScreen());
-    setProperty(AXPropertyName::IsPressed, object.isPressed());
-    setProperty(AXPropertyName::IsUnvisited, object.isUnvisited());
-    setProperty(AXPropertyName::IsVisited, object.isVisited());
-    setProperty(AXPropertyName::IsRequired, object.isRequired());
     setProperty(AXPropertyName::SupportsRequiredAttribute, object.supportsRequiredAttribute());
-    setProperty(AXPropertyName::IsLinked, object.isLinked());
-    setProperty(AXPropertyName::IsExpanded, object.isExpanded());
-    setProperty(AXPropertyName::IsVisible, object.isVisible());
-    setProperty(AXPropertyName::IsCollapsed, object.isCollapsed());
-    setProperty(AXPropertyName::IsSelectedOptionActive, object.isSelectedOptionActive());
     setProperty(AXPropertyName::CanSetSelectedAttribute, object.canSetSelectedAttribute());
     setProperty(AXPropertyName::CanSetSelectedChildrenAttribute, object.canSetSelectedChildrenAttribute());
     setProperty(AXPropertyName::CanSetExpandedAttribute, object.canSetExpandedAttribute());
@@ -143,7 +149,6 @@ void AXIsolatedObject::initializeAttributeData(AXCoreObject& object, bool isRoot
     setProperty(AXPropertyName::LayoutCount, object.layoutCount());
     setProperty(AXPropertyName::EstimatedLoadingProgress, object.estimatedLoadingProgress());
     setProperty(AXPropertyName::SupportsARIAOwns, object.supportsARIAOwns());
-    setProperty(AXPropertyName::IsActiveDescendantOfFocusedContainer, object.isActiveDescendantOfFocusedContainer());
     setProperty(AXPropertyName::HasPopup, object.hasPopup());
     setProperty(AXPropertyName::PopupValue, object.popupValue());
     setProperty(AXPropertyName::PressedIsPresent, object.pressedIsPresent());
@@ -180,8 +185,6 @@ void AXIsolatedObject::initializeAttributeData(AXCoreObject& object, bool isRoot
     setProperty(AXPropertyName::SupportsPressAction, object.supportsPressAction());
     setProperty(AXPropertyName::ClickPoint, object.clickPoint());
     setProperty(AXPropertyName::ComputedRoleString, object.computedRoleString());
-    setProperty(AXPropertyName::IsValueAutofilled, object.isValueAutofilled());
-    setProperty(AXPropertyName::IsValueAutofillAvailable, object.isValueAutofillAvailable());
     setProperty(AXPropertyName::ValueAutofillButtonType, static_cast<int>(object.valueAutofillButtonType()));
     setProperty(AXPropertyName::URL, object.url());
     setProperty(AXPropertyName::AccessKey, object.accessKey());
@@ -207,8 +210,6 @@ void AXIsolatedObject::initializeAttributeData(AXCoreObject& object, bool isRoot
     setProperty(AXPropertyName::LiveRegionStatus, object.liveRegionStatus());
     setProperty(AXPropertyName::LiveRegionRelevant, object.liveRegionRelevant());
     setProperty(AXPropertyName::LiveRegionAtomic, object.liveRegionAtomic());
-    setProperty(AXPropertyName::IsBusy, object.isBusy());
-    setProperty(AXPropertyName::IsInlineText, object.isInlineText());
     if (object.isTextControl())
         setProperty(AXPropertyName::TextLength, object.textLength());
 
@@ -1033,12 +1034,6 @@ bool AXIsolatedObject::isBlockquote() const
     return false;
 }
 
-bool AXIsolatedObject::isLandmark() const
-{
-    ASSERT_NOT_REACHED();
-    return false;
-}
-
 bool AXIsolatedObject::isFigureElement() const
 {
     ASSERT_NOT_REACHED();
@@ -1148,12 +1143,6 @@ bool AXIsolatedObject::hasSameFontColor(RenderObject*) const
 }
 
 bool AXIsolatedObject::hasSameStyle(RenderObject*) const
-{
-    ASSERT_NOT_REACHED();
-    return false;
-}
-
-bool AXIsolatedObject::isStaticText() const
 {
     ASSERT_NOT_REACHED();
     return false;

@@ -220,7 +220,6 @@ public:
     bool hasSameFont(RenderObject*) const override { return false; }
     bool hasSameFontColor(RenderObject*) const override { return false; }
     bool hasSameStyle(RenderObject*) const override { return false; }
-    bool isStaticText() const override { return roleValue() == AccessibilityRole::StaticText; }
     bool hasUnderline() const override { return false; }
     bool hasHighlighting() const override;
 

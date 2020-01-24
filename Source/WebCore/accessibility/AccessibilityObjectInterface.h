@@ -621,7 +621,7 @@ public:
     virtual bool hasSameFont(RenderObject*) const = 0;
     virtual bool hasSameFontColor(RenderObject*) const = 0;
     virtual bool hasSameStyle(RenderObject*) const = 0;
-    virtual bool isStaticText() const = 0;
+    bool isStaticText() const { return roleValue() == AccessibilityRole::StaticText; }
     virtual bool hasUnderline() const = 0;
     virtual bool hasHighlighting() const = 0;
 
