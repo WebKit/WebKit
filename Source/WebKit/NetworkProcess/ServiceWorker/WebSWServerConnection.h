@@ -69,6 +69,7 @@ public:
     PAL::SessionID sessionID() const;
 
     std::unique_ptr<ServiceWorkerFetchTask> createFetchTask(NetworkResourceLoader&, const WebCore::ResourceRequest&);
+    void fetchTaskTimedOut(WebCore::ServiceWorkerIdentifier);
 
 private:
     // Implement SWServer::Connection (Messages to the client WebProcess)

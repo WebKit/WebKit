@@ -69,6 +69,7 @@ SWServerWorker::SWServerWorker(SWServer& server, SWServerRegistration& registrat
 
 SWServerWorker::~SWServerWorker()
 {
+    ASSERT(m_whenActivatedHandlers.isEmpty());
     callWhenActivatedHandler(false);
 
     auto taken = allWorkers().take(identifier());
@@ -210,12 +211,13 @@ void SWServerWorker::setHasPendingEvents(bool hasPendingEvents)
     m_registration->tryActivate();
 }
 
-void SWServerWorker::whenActivated(WTF::Function<void(bool)>&& handler)
+void SWServerWorker::whenActivated(CompletionHandler<void(bool)>&& handler)
 {
     if (state() == ServiceWorkerState::Activated) {
         handler(true);
         return;
     }
+    ASSERT(state() == ServiceWorkerState::Activating);
     m_whenActivatedHandlers.append(WTFMove(handler));
 }
 
@@ -249,8 +251,15 @@ void SWServerWorker::setState(State state)
     ASSERT(state != State::Running || m_registration);
     m_state = state;
 
-    if (state == State::Running)
+    switch (state) {
+    case State::Running:
         m_shouldSkipHandleFetch = false;
+        break;
+    case State::Terminating:
+    case State::NotRunning:
+        callWhenActivatedHandler(false);
+        break;
+    }
 }
 
 SWServerRegistration* SWServerWorker::registration() const

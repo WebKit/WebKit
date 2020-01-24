@@ -1,3 +1,32 @@
+2020-01-24  youenn fablet  <youenn@apple.com>
+
+        Make sure fetch tasks go to network if service worker never gets to activated
+        https://bugs.webkit.org/show_bug.cgi?id=206648
+
+        Reviewed by Chris Dumez.
+
+        In case activating completion handlers are not called, the fetch task timeout should kick in and make the load go to network process.
+        The issue is that our code was using the context connection to do so.
+        If the fetch task is waiting for the worker activation, the context connection might not be set and the timeout will be a no-op.
+
+        To fix this, the fetch task will do as if its context is closed when the timeout fires.
+        The fetck task now has a weak pointer to the WebSWServerConnection and will use to terminate the service worker as done previously.
+
+        We no longer handle all ongoing fetch tasks of the ongoing service worker.
+        Each individual fetch task timeout provides the same level of protection.
+        The service worker will anyway get terminated which will race to finalize the service worker fetch tasks with each of their timeout.
+
+        * NetworkProcess/ServiceWorker/ServiceWorkerFetchTask.cpp:
+        (WebKit::ServiceWorkerFetchTask::ServiceWorkerFetchTask):
+        (WebKit::ServiceWorkerFetchTask::timeoutTimerFired):
+        * NetworkProcess/ServiceWorker/ServiceWorkerFetchTask.h:
+        * NetworkProcess/ServiceWorker/WebSWServerConnection.cpp:
+        (WebKit::WebSWServerConnection::createFetchTask):
+        (WebKit::WebSWServerConnection::fetchTaskTimedOut):
+        * NetworkProcess/ServiceWorker/WebSWServerConnection.h:
+        * NetworkProcess/ServiceWorker/WebSWServerToContextConnection.cpp:
+        (WebKit::WebSWServerToContextConnection::fetchTaskTimedOut):
+
 2020-01-23  Jiewen Tan  <jiewen_tan@apple.com>
 
         Unreviewed, a follow up on r254894

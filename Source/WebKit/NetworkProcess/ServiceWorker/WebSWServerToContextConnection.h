@@ -70,8 +70,6 @@ public:
     void setThrottleState(bool isThrottleable);
     bool isThrottleable() const { return m_isThrottleable; }
 
-    void fetchTaskTimedOut(WebCore::ServiceWorkerIdentifier);
-
     void registerFetch(ServiceWorkerFetchTask&);
     void unregisterFetch(ServiceWorkerFetchTask&);
 
