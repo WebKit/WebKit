@@ -1,3 +1,11 @@
+2020-01-23  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Unreviewed, a follow up on r254894
+
+        * UIProcess/WebAuthentication/Mock/MockLocalConnection.mm:
+        (WebKit::MockLocalConnection::getAttestation const):
+        Includes the status code in the message.
+
 2020-01-23  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] Support setting minimum effective device width during dynamic viewport size updates

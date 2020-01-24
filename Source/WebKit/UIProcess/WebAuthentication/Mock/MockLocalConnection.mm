@@ -103,7 +103,7 @@ void MockLocalConnection::getAttestation(const String& rpId, const String& usern
         };
         OSStatus status = SecItemAdd((__bridge CFDictionaryRef)addQuery, NULL);
         if (status) {
-            callback(NULL, NULL, [NSError errorWithDomain:@"WebAuthentication" code:status userInfo:@{ NSLocalizedDescriptionKey: @"Couldn't add the key to the keychain." }]);
+            callback(NULL, NULL, [NSError errorWithDomain:@"WebAuthentication" code:status userInfo:@{ NSLocalizedDescriptionKey: adoptNS([NSString stringWithFormat:@"Couldn't add the key to the keychain. %d", status]).get() }]);
             return;
         }
 
