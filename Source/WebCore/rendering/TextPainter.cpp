@@ -24,11 +24,13 @@
 #include "TextPainter.h"
 
 #include "DisplayListReplayer.h"
+#include "DisplayRun.h"
 #include "FilterOperations.h"
 #include "GraphicsContext.h"
 #include "InlineTextBox.h"
 #include "RenderCombineText.h"
 #include "RenderLayer.h"
+#include "RuntimeEnabledFeatures.h"
 #include "ShadowData.h"
 #include <wtf/NeverDestroyed.h>
 
@@ -213,6 +215,10 @@ void TextPainter::clearGlyphDisplayLists()
 {
     GlyphDisplayListCache<InlineTextBox>::singleton().clear();
     GlyphDisplayListCache<SimpleLineLayout::Run>::singleton().clear();
+#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
+    if (RuntimeEnabledFeatures::sharedFeatures().layoutFormattingContextIntegrationEnabled())
+        GlyphDisplayListCache<Display::Run>::singleton().clear();
+#endif
 }
 
 bool TextPainter::shouldUseGlyphDisplayList(const PaintInfo& paintInfo)
