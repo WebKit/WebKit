@@ -53,13 +53,20 @@ InlineFormattingContext::InlineFormattingContext(const Container& formattingCont
 {
 }
 
-static inline const Box* nextInPreOrder(const Box& layoutBox, const Container& stayWithin)
+static inline const Box* nextInlineLevelBoxToLayout(const Box& layoutBox, const Container& stayWithin)
 {
-    const Box* nextInPreOrder = nullptr;
-    if (!layoutBox.establishesFormattingContext() && is<Container>(layoutBox) && downcast<Container>(layoutBox).hasInFlowOrFloatingChild())
-        return downcast<Container>(layoutBox).firstInFlowOrFloatingChild();
+    // Atomic inline-level boxes and floats are opaque boxes meaning that they are
+    // responsible for their own content (do not need to descend into their subtrees).
+    // Only inline boxes may have relevant descendant content.
+    if (layoutBox.isInlineBox()) {
+        if (is<Container>(layoutBox) && downcast<Container>(layoutBox).hasInFlowOrFloatingChild()) {
+            // Anonymous inline boxes/line breaks can't have descendant content by definition.
+            ASSERT(!layoutBox.isAnonymous() && !layoutBox.isLineBreakBox());
+            return downcast<Container>(layoutBox).firstInFlowOrFloatingChild();
+        }
+    }
 
-    for (nextInPreOrder = &layoutBox; nextInPreOrder && nextInPreOrder != &stayWithin; nextInPreOrder = nextInPreOrder->parent()) {
+    for (auto* nextInPreOrder = &layoutBox; nextInPreOrder && nextInPreOrder != &stayWithin; nextInPreOrder = nextInPreOrder->parent()) {
         if (auto* nextSibling = nextInPreOrder->nextInFlowOrFloatingSibling())
             return nextSibling;
     }
@@ -113,7 +120,7 @@ void InlineFormattingContext::layoutInFlowContent(InvalidationState& invalidatio
         } else
             ASSERT_NOT_REACHED();
 
-        layoutBox = nextInPreOrder(*layoutBox, root());
+        layoutBox = nextInlineLevelBoxToLayout(*layoutBox, root());
     }
 
     collectInlineContentIfNeeded();
@@ -175,22 +182,28 @@ FormattingContext::IntrinsicWidthConstraints InlineFormattingContext::computedIn
     Vector<const Box*> formattingContextRootList;
     auto horizontalConstraints = HorizontalConstraints { 0_lu, 0_lu };
     auto* layoutBox = root().firstInFlowOrFloatingChild();
+    // In order to compute the max/min widths, we need to compute margins, borders and paddings for certain inline boxes first.
     while (layoutBox) {
-        if (layoutBox->establishesFormattingContext()) {
-            formattingContextRootList.append(layoutBox);
-            computeIntrinsicWidthForFormattingRoot(*layoutBox, horizontalConstraints);
-        } else if (layoutBox->isReplaced() || (layoutBox->isInlineBox() && !layoutBox->isAnonymous())) {
-            computeBorderAndPadding(*layoutBox, horizontalConstraints);
-            // inline-block and replaced.
-            auto needsWidthComputation = layoutBox->isReplaced();
-            if (needsWidthComputation)
-                computeWidthAndMargin(*layoutBox, horizontalConstraints);
-            else {
-                // Simple inline container with no intrinsic width <span>.
-                computeHorizontalMargin(*layoutBox, horizontalConstraints);
-            }
+        if (layoutBox->isAnonymous()) {
+            layoutBox = nextInlineLevelBoxToLayout(*layoutBox, root());
+            continue;
         }
-        layoutBox = nextInPreOrder(*layoutBox, root());
+        if (layoutBox->isReplaced()) {
+            computeBorderAndPadding(*layoutBox, horizontalConstraints);
+            computeWidthAndMargin(*layoutBox, horizontalConstraints);
+        } else if (layoutBox->isFloatingPositioned() || layoutBox->isAtomicInlineLevelBox()) {
+            ASSERT(layoutBox->establishesFormattingContext());
+            formattingContextRootList.append(layoutBox);
+
+            computeBorderAndPadding(*layoutBox, horizontalConstraints);
+            computeHorizontalMargin(*layoutBox, horizontalConstraints);
+            computeIntrinsicWidthForFormattingRoot(*layoutBox);
+        } else if (layoutBox->isInlineBox()) {
+            computeBorderAndPadding(*layoutBox, horizontalConstraints);
+            computeHorizontalMargin(*layoutBox, horizontalConstraints);
+        } else
+            ASSERT_NOT_REACHED();
+        layoutBox = nextInlineLevelBoxToLayout(*layoutBox, root());
     }
 
     collectInlineContentIfNeeded();
@@ -232,13 +245,9 @@ InlineLayoutUnit InlineFormattingContext::computedIntrinsicWidthForConstraint(co
     return maximumLineWidth;
 }
 
-void InlineFormattingContext::computeIntrinsicWidthForFormattingRoot(const Box& formattingRoot, const HorizontalConstraints& horizontalConstraints)
+void InlineFormattingContext::computeIntrinsicWidthForFormattingRoot(const Box& formattingRoot)
 {
     ASSERT(formattingRoot.establishesFormattingContext());
-
-    computeBorderAndPadding(formattingRoot, horizontalConstraints);
-    computeHorizontalMargin(formattingRoot, horizontalConstraints);
-
     auto constraints = IntrinsicWidthConstraints { };
     if (auto fixedWidth = geometry().fixedValue(formattingRoot.style().logicalWidth()))
         constraints = { *fixedWidth, *fixedWidth };

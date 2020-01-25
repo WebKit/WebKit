@@ -644,9 +644,9 @@ bool LineBuilder::isVisuallyNonEmpty(const Run& run) const
     }
 
     if (run.isBox()) {
-        if (!run.layoutBox().establishesFormattingContext())
+        if (run.layoutBox().isReplaced())
             return true;
-        ASSERT(run.layoutBox().isInlineBlockBox());
+        ASSERT(run.layoutBox().isInlineBlockBox() || run.layoutBox().isInlineTableBox());
         if (!run.logicalWidth())
             return false;
         if (m_isIntrinsicSizing || formattingContext().geometryForBox(run.layoutBox()).height())
