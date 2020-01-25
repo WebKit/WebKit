@@ -1,3 +1,13 @@
+2020-01-25  Jer Noble  <jer.noble@apple.com>
+
+        Regression (r255103): media/modern-media-controls/placard-support/placard-support-airplay-fullscreen-no-controls.html
+        https://bugs.webkit.org/show_bug.cgi?id=206800
+
+        Unreviewed test gardening; the test which this was copied from, placard-support-airplay-fullscreen.html, is skipped on
+        iOS test bots due to a lack of AirPlay test support.
+
+        * platform/ios/TestExpectations:
+
 2020-01-25  Diego Pino Garcia  <dpino@igalia.com>
 
         [GTK] Gardening of media related tests

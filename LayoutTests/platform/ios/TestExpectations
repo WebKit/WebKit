@@ -3002,6 +3002,7 @@ media/modern-media-controls/media-controller/media-controller-fullscreen-ltr.htm
 media/modern-media-controls/media-controller/media-controller-inline-to-fullscreen-to-inline.html [ Skip ]
 media/modern-media-controls/media-controller/media-controller-inline-to-fullscreen-to-pip-to-inline.html [ Skip ]
 media/modern-media-controls/placard-support/placard-support-airplay-fullscreen.html [ Skip ]
+media/modern-media-controls/placard-support/placard-support-airplay-fullscreen-no-controls.html [ Skip ]
 media/modern-media-controls/start-support/start-support-fullscreen.html [ Skip ]
 
 # These tests are designed to work only on macOS
