@@ -1,3 +1,19 @@
+2020-01-25  Antti Koivisto  <antti@apple.com>
+
+        [LFC][Integration] Re-enable line layout integration
+        https://bugs.webkit.org/show_bug.cgi?id=206795
+        <rdar://problem/58853907>
+
+        Reviewed by Zalan Bujtas.
+
+        * fast/dom/Range/getBoundingClientRect-expected.txt:
+        * platform/ios/fast/text/hyphenate-limit-lines-expected.txt:
+        * platform/ios/fast/text/whitespace/pre-break-word-expected.txt:
+        * platform/ios/fast/text/word-break-expected.txt:
+        * platform/mac/fast/text/hyphenate-limit-lines-expected.txt:
+        * platform/mac/fast/text/whitespace/pre-break-word-expected.txt:
+        * platform/mac/fast/text/word-break-expected.txt:
+
 2020-01-24  Ryosuke Niwa  <rniwa@webkit.org>
 
         [iOS] REGRESSION(r254699) : fast/forms/interactive-validation-remove-node-in-handler.html is timing out

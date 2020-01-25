@@ -54,7 +54,7 @@ struct TestOptions {
     bool enableCoreMathML { false };
     bool enableRequestIdleCallback { false };
     bool enableAsyncClipboardAPI { false };
-    bool layoutFormattingContextIntegrationEnabled { false };
+    bool layoutFormattingContextIntegrationEnabled { true };
     bool enableAspectRatioOfImgFromWidthAndHeight { false };
     bool enableWebSQL { true };
     std::string jscOptions;

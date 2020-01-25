@@ -1692,7 +1692,7 @@ LayoutFormattingContextEnabled:
 
 LayoutFormattingContextIntegrationEnabled:
   type: bool
-  defaultValue: false
+  defaultValue: true
   humanReadableName: "Next-generation line layout integration (LFC)"
   humanReadableDescription: "Enable next-generation line layout integration (LFC)"
   category: internal

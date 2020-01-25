@@ -1,3 +1,13 @@
+2020-01-25  Antti Koivisto  <antti@apple.com>
+
+        [LFC][Integration] Re-enable line layout integration
+        https://bugs.webkit.org/show_bug.cgi?id=206795
+        <rdar://problem/58853907>
+
+        Reviewed by Zalan Bujtas.
+
+        * Shared/WebPreferences.yaml:
+
 2020-01-24  Tim Horton  <timothy_horton@apple.com>
 
         macCatalyst: Don't get any custom cursors in subframes
