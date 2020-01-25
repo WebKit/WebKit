@@ -435,13 +435,6 @@ public:
     std::unique_ptr<JSGlobalObjectDebuggable> m_inspectorDebuggable;
 #endif
 
-#if ENABLE(INTL)
-    HashSet<String> m_intlCollatorAvailableLocales;
-    HashSet<String> m_intlDateTimeFormatAvailableLocales;
-    HashSet<String> m_intlNumberFormatAvailableLocales;
-    HashSet<String> m_intlPluralRulesAvailableLocales;
-#endif // ENABLE(INTL)
-
     RefPtr<WatchpointSet> m_masqueradesAsUndefinedWatchpoint;
     RefPtr<WatchpointSet> m_havingABadTimeWatchpoint;
     RefPtr<WatchpointSet> m_varInjectionWatchpoint;
@@ -797,13 +790,6 @@ public:
     Inspector::JSGlobalObjectInspectorController& inspectorController() const { return *m_inspectorController.get(); }
     JSGlobalObjectDebuggable& inspectorDebuggable() { return *m_inspectorDebuggable.get(); }
 #endif
-
-#if ENABLE(INTL)
-    const HashSet<String>& intlCollatorAvailableLocales();
-    const HashSet<String>& intlDateTimeFormatAvailableLocales();
-    const HashSet<String>& intlNumberFormatAvailableLocales();
-    const HashSet<String>& intlPluralRulesAvailableLocales();
-#endif // ENABLE(INTL)
 
     void bumpGlobalLexicalBindingEpoch(VM&);
     unsigned globalLexicalBindingEpoch() const { return m_globalLexicalBindingEpoch; }

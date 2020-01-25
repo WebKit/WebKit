@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2015 Andy VanWagoner (andy@vanwagoner.family)
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -57,7 +57,11 @@ private:
 };
 
 String defaultLocale(JSGlobalObject*);
-String convertICULocaleToBCP47LanguageTag(const char* localeID);
+const HashSet<String>& intlCollatorAvailableLocales();
+const HashSet<String>& intlDateTimeFormatAvailableLocales();
+const HashSet<String>& intlNumberFormatAvailableLocales();
+inline const HashSet<String>& intlPluralRulesAvailableLocales() { return intlNumberFormatAvailableLocales(); }
+
 bool intlBooleanOption(JSGlobalObject*, JSValue options, PropertyName, bool& usesFallback);
 String intlStringOption(JSGlobalObject*, JSValue options, PropertyName, std::initializer_list<const char*> values, const char* notFound, const char* fallback);
 unsigned intlNumberOption(JSGlobalObject*, JSValue options, PropertyName, unsigned minimum, unsigned maximum, unsigned fallback);

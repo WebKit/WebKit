@@ -1,5 +1,64 @@
 2020-01-24  Mark Lam  <mark.lam@apple.com>
 
+        Move singleton Intl string locales out of JSGlobalObject.
+        https://bugs.webkit.org/show_bug.cgi?id=206791
+        <rdar://problem/58889037>
+
+        Reviewed by Yusuke Suzuki and Andy Wagoner.
+
+        We were creating an instance of these for each JSGlobalObject when they can be a
+        global singleton since they are always initialized with the same intl data
+        (barring a mid-flight change in intl settings, which we don't support even in the
+        existing code).
+
+        It turns out that intlPluralRulesAvailableLocales() wasn't called anywhere.
+        IntlPluralRules code currently just uses intlNumberFormatAvailableLocales().
+        To document that this is intentional, we do the following:
+        1. have IntlPluralRules code call intlPluralRulesAvailableLocales(), and
+        2. have intlPluralRulesAvailableLocales() call intlNumberFormatAvailableLocales()
+           for its implementation.
+        See https://bugs.webkit.org/show_bug.cgi?id=206791#c7 and
+        https://bugs.webkit.org/show_bug.cgi?id=206791#c8.
+
+        In addMissingScriptLocales(), I'm deliberately naming the string with underscores
+        because it's much easier to read pa_PK_String and see that it refers to "pa-PK"
+        as opposed to paPKString.  Ditto for zh_CN_String, zh_HK_String, zh_SG_String,
+        and zh_TW_String.
+
+        * runtime/IntlCollator.cpp:
+        (JSC::IntlCollator::initializeCollator):
+        * runtime/IntlCollatorConstructor.cpp:
+        (JSC::IntlCollatorConstructorFuncSupportedLocalesOf):
+        * runtime/IntlDateTimeFormat.cpp:
+        (JSC::IntlDateTimeFormat::initializeDateTimeFormat):
+        * runtime/IntlDateTimeFormatConstructor.cpp:
+        (JSC::IntlDateTimeFormatConstructorFuncSupportedLocalesOf):
+        * runtime/IntlNumberFormat.cpp:
+        (JSC::IntlNumberFormat::initializeNumberFormat):
+        * runtime/IntlNumberFormatConstructor.cpp:
+        (JSC::IntlNumberFormatConstructorFuncSupportedLocalesOf):
+        * runtime/IntlObject.cpp:
+        (JSC::convertICULocaleToBCP47LanguageTag):
+        (JSC::addMissingScriptLocales):
+        (JSC::intlCollatorAvailableLocales):
+        (JSC::intlDateTimeFormatAvailableLocales):
+        (JSC::intlNumberFormatAvailableLocales):
+        (JSC::defaultLocale):
+        * runtime/IntlObject.h:
+        * runtime/IntlPluralRules.cpp:
+        (JSC::IntlPluralRules::initializePluralRules):
+        * runtime/IntlPluralRulesConstructor.cpp:
+        (JSC::IntlPluralRulesConstructorFuncSupportedLocalesOf):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::addMissingScriptLocales): Deleted.
+        (JSC::JSGlobalObject::intlCollatorAvailableLocales): Deleted.
+        (JSC::JSGlobalObject::intlDateTimeFormatAvailableLocales): Deleted.
+        (JSC::JSGlobalObject::intlNumberFormatAvailableLocales): Deleted.
+        (JSC::JSGlobalObject::intlPluralRulesAvailableLocales): Deleted.
+        * runtime/JSGlobalObject.h:
+
+2020-01-24  Mark Lam  <mark.lam@apple.com>
+
         IntlObject's cached strings should be immortal and safe for concurrent access.
         https://bugs.webkit.org/show_bug.cgi?id=206779
         <rdar://problem/58831763>

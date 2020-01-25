@@ -1,5 +1,21 @@
 2020-01-24  Mark Lam  <mark.lam@apple.com>
 
+        Move singleton Intl string locales out of JSGlobalObject.
+        https://bugs.webkit.org/show_bug.cgi?id=206791
+        <rdar://problem/58889037>
+
+        Reviewed by Yusuke Suzuki.
+
+        Fix a bug in StringImpl::createStaticStringImpl(): I forgot to set its hash value
+        when I introduced it.  StaticStringImpls require that its hash code be set ahead
+        of time, and cannot be mutated at runtime.  See the comment in the definition of
+        StaticStringImpl in StringImpl.h.
+
+        * wtf/text/StringImpl.cpp:
+        (WTF::StringImpl::createStaticStringImpl):
+
+2020-01-24  Mark Lam  <mark.lam@apple.com>
+
         IntlObject's cached strings should be immortal and safe for concurrent access.
         https://bugs.webkit.org/show_bug.cgi?id=206779
         <rdar://problem/58831763>

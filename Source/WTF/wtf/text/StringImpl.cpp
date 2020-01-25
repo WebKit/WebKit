@@ -283,8 +283,10 @@ Ref<StringImpl> StringImpl::create(const LChar* characters, unsigned length)
 
 Ref<StringImpl> StringImpl::createStaticStringImpl(const char* characters, unsigned length)
 {
-    ASSERT(charactersAreAllASCII<LChar>(reinterpret_cast<const LChar*>(characters), length));
-    Ref<StringImpl> result = createInternal(reinterpret_cast<const LChar*>(characters), length);
+    const LChar* lcharCharacters = reinterpret_cast<const LChar*>(characters);
+    ASSERT(charactersAreAllASCII<LChar>(lcharCharacters, length));
+    Ref<StringImpl> result = createInternal(lcharCharacters, length);
+    result->setHash(StringHasher::computeHashAndMaskTop8Bits(lcharCharacters, length));
     result->m_refCount |= s_refCountFlagIsStaticString;
     return result;
 }

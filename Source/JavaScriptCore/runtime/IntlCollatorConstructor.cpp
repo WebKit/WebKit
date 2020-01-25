@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2015 Andy VanWagoner (andy@vanwagoner.family)
  * Copyright (C) 2015 Sukolsak Sakshuwong (sukolsak@gmail.com)
- * Copyright (C) 2016 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2016-2020 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -139,7 +139,7 @@ EncodedJSValue JSC_HOST_CALL IntlCollatorConstructorFuncSupportedLocalesOf(JSGlo
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     // 3. Return SupportedLocales(%Collator%.[[availableLocales]], requestedLocales, options).
-    RELEASE_AND_RETURN(scope, JSValue::encode(supportedLocales(globalObject, globalObject->intlCollatorAvailableLocales(), requestedLocales, callFrame->argument(1))));
+    RELEASE_AND_RETURN(scope, JSValue::encode(supportedLocales(globalObject, intlCollatorAvailableLocales(), requestedLocales, callFrame->argument(1))));
 }
 
 } // namespace JSC

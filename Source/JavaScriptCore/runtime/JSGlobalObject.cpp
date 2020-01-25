@@ -217,9 +217,6 @@
 #include "IntlObject.h"
 #include "IntlPluralRules.h"
 #include "IntlPluralRulesPrototype.h"
-#include <unicode/ucol.h>
-#include <unicode/udat.h>
-#include <unicode/unum.h>
 #endif // ENABLE(INTL)
 
 #if ENABLE(REMOTE_INSPECTOR)
@@ -2066,79 +2063,6 @@ void JSGlobalObject::setName(const String& name)
     m_inspectorDebuggable->update();
 #endif
 }
-
-# if ENABLE(INTL)
-static void addMissingScriptLocales(HashSet<String>& availableLocales)
-{
-    if (availableLocales.contains("pa-Arab-PK"))
-        availableLocales.add("pa-PK"_s);
-    if (availableLocales.contains("zh-Hans-CN"))
-        availableLocales.add("zh-CN"_s);
-    if (availableLocales.contains("zh-Hant-HK"))
-        availableLocales.add("zh-HK"_s);
-    if (availableLocales.contains("zh-Hans-SG"))
-        availableLocales.add("zh-SG"_s);
-    if (availableLocales.contains("zh-Hant-TW"))
-        availableLocales.add("zh-TW"_s);
-}
-
-const HashSet<String>& JSGlobalObject::intlCollatorAvailableLocales()
-{
-    if (m_intlCollatorAvailableLocales.isEmpty()) {
-        int32_t count = ucol_countAvailable();
-        for (int32_t i = 0; i < count; ++i) {
-            String locale = convertICULocaleToBCP47LanguageTag(ucol_getAvailable(i));
-            if (!locale.isEmpty())
-                m_intlCollatorAvailableLocales.add(locale);
-        }
-        addMissingScriptLocales(m_intlCollatorAvailableLocales);
-    }
-    return m_intlCollatorAvailableLocales;
-}
-
-const HashSet<String>& JSGlobalObject::intlDateTimeFormatAvailableLocales()
-{
-    if (m_intlDateTimeFormatAvailableLocales.isEmpty()) {
-        int32_t count = udat_countAvailable();
-        for (int32_t i = 0; i < count; ++i) {
-            String locale = convertICULocaleToBCP47LanguageTag(udat_getAvailable(i));
-            if (!locale.isEmpty())
-                m_intlDateTimeFormatAvailableLocales.add(locale);
-        }
-        addMissingScriptLocales(m_intlDateTimeFormatAvailableLocales);
-    }
-    return m_intlDateTimeFormatAvailableLocales;
-}
-
-const HashSet<String>& JSGlobalObject::intlNumberFormatAvailableLocales()
-{
-    if (m_intlNumberFormatAvailableLocales.isEmpty()) {
-        int32_t count = unum_countAvailable();
-        for (int32_t i = 0; i < count; ++i) {
-            String locale = convertICULocaleToBCP47LanguageTag(unum_getAvailable(i));
-            if (!locale.isEmpty())
-                m_intlNumberFormatAvailableLocales.add(locale);
-        }
-        addMissingScriptLocales(m_intlNumberFormatAvailableLocales);
-    }
-    return m_intlNumberFormatAvailableLocales;
-}
-
-const HashSet<String>& JSGlobalObject::intlPluralRulesAvailableLocales()
-{
-    if (m_intlPluralRulesAvailableLocales.isEmpty()) {
-        int32_t count = uloc_countAvailable();
-        for (int32_t i = 0; i < count; ++i) {
-            String locale = convertICULocaleToBCP47LanguageTag(uloc_getAvailable(i));
-            if (!locale.isEmpty())
-                m_intlPluralRulesAvailableLocales.add(locale);
-        }
-        addMissingScriptLocales(m_intlPluralRulesAvailableLocales);
-    }
-    return m_intlPluralRulesAvailableLocales;
-}
-
-#endif // ENABLE(INTL)
 
 void JSGlobalObject::bumpGlobalLexicalBindingEpoch(VM& vm)
 {
