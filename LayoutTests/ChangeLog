@@ -1,3 +1,15 @@
+2020-01-25  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GTK] Gardening of media related tests
+        https://bugs.webkit.org/show_bug.cgi?id=206796
+
+        Unreviewed gardening.
+
+        * platform/gtk/TestExpectations:
+        * platform/gtk/media/audio-repaint-expected.txt:
+        * platform/gtk/media/controls-styling-strict-expected.txt:
+        * platform/gtk/media/media-controls-play-button-updates-expected.txt:
+
 2020-01-25  Antti Koivisto  <antti@apple.com>
 
         [LFC][Integration] Re-enable line layout integration
