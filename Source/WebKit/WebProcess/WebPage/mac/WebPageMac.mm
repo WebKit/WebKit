@@ -832,6 +832,7 @@ void WebPage::handleSelectionServiceClick(FrameSelection& selection, const Vecto
     Vector<uint8_t> selectionDataVector;
     selectionDataVector.append(reinterpret_cast<const uint8_t*>(selectionData.bytes), selectionData.length);
 
+    flushPendingEditorStateUpdate();
     send(Messages::WebPageProxy::ShowContextMenu(ContextMenuContextData(point, selectionDataVector, phoneNumbers, selection.selection().isContentEditable()), UserData()));
 }
 #endif

@@ -1,3 +1,22 @@
+2020-01-24  Alex Christensen  <achristensen@webkit.org>
+
+        Update EditorState from WebProcess when requesting context menu
+        https://bugs.webkit.org/show_bug.cgi?id=206775
+        <rdar://problem/56305573>
+
+        Reviewed by Wenson Hsieh.
+
+        When generating a context menu, AppKit calls -validRequestorForSendType:returnType:
+        which queries the editor state in WebViewImpl::validRequestorForSendAndReturnTypes.
+        Without updating the editor state, the first time you right click on a link,
+        the Services menu item did not appear because we were looking at a stale editor state.
+        Verified manually this fixes the bug.
+
+        * WebProcess/WebPage/WebContextMenu.cpp:
+        (WebKit::WebContextMenu::show):
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::WebPage::handleSelectionServiceClick):
+
 2020-01-24  Tim Horton  <timothy_horton@apple.com>
 
         macCatalyst: Right clicking on links follows the link, but shouldn't
