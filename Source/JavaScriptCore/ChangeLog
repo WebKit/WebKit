@@ -1,3 +1,20 @@
+2020-01-24  Mark Lam  <mark.lam@apple.com>
+
+        IntlObject's cached strings should be immortal and safe for concurrent access.
+        https://bugs.webkit.org/show_bug.cgi?id=206779
+        <rdar://problem/58831763>
+
+        Reviewed by Yusuke Suzuki.
+
+        In IntlObject's numberingSystemsForLocale(), we have a never destroyed
+        cachedNumberingSystems which is a singleton vector of Strings which are shared
+        multiple VMs.  Hence, the strings in this vector should be a StaticStringImpl
+        so that it will be immortal, and can be access concurrently from multiple VMs
+        on different threads without any ref/deref'ing race issues.
+
+        * runtime/IntlObject.cpp:
+        (JSC::numberingSystemsForLocale):
+
 2020-01-24  Caio Lima  <ticaiolima@gmail.com>
 
         [ARMv7][JIT] Implement checkpoint support

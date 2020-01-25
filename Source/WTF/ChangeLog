@@ -1,3 +1,23 @@
+2020-01-24  Mark Lam  <mark.lam@apple.com>
+
+        IntlObject's cached strings should be immortal and safe for concurrent access.
+        https://bugs.webkit.org/show_bug.cgi?id=206779
+        <rdar://problem/58831763>
+
+        Reviewed by Yusuke Suzuki.
+
+        Add a factory for creating a dynamically allocated StaticStringImpl.
+
+        Note: StaticStringImpl is guaranteed to have the same shape as StringImpl.
+        The only difference is that s_refCountFlagIsStaticString is set on the refCount
+        for StaticStringImpl.  Since the client will use the StaticStringImpl as a
+        StringImpl, we implement the factory by using StringImpl::createInternal() for
+        simplicity, and set the s_refCountFlagIsStaticString flag thereafter.
+
+        * wtf/text/StringImpl.cpp:
+        (WTF::StringImpl::createStaticStringImpl):
+        * wtf/text/StringImpl.h:
+
 2020-01-24  Keith Rollin  <krollin@apple.com>
 
         Fix internal Apple builds after r254411

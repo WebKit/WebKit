@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2015 Andy VanWagoner (andy@vanwagoner.family)
  * Copyright (C) 2015 Sukolsak Sakshuwong (sukolsak@gmail.com)
- * Copyright (C) 2016-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -891,28 +891,26 @@ Vector<String> numberingSystemsForLocale(const String& locale)
     static NeverDestroyed<Vector<String>> cachedNumberingSystems;
     Vector<String>& availableNumberingSystems = cachedNumberingSystems.get();
 
-    if (UNLIKELY(availableNumberingSystems.isEmpty())) {
-        static Lock cachedNumberingSystemsMutex;
-        std::lock_guard<Lock> lock(cachedNumberingSystemsMutex);
-        if (availableNumberingSystems.isEmpty()) {
-            UErrorCode status = U_ZERO_ERROR;
-            UEnumeration* numberingSystemNames = unumsys_openAvailableNames(&status);
-            ASSERT(U_SUCCESS(status));
+    static std::once_flag initializeOnce;
+    std::call_once(initializeOnce, [&] {
+        ASSERT(availableNumberingSystems.isEmpty());
+        UErrorCode status = U_ZERO_ERROR;
+        UEnumeration* numberingSystemNames = unumsys_openAvailableNames(&status);
+        ASSERT(U_SUCCESS(status));
 
-            int32_t resultLength;
-            // Numbering system names are always ASCII, so use char[].
-            while (const char* result = uenum_next(numberingSystemNames, &resultLength, &status)) {
-                ASSERT(U_SUCCESS(status));
-                auto numsys = unumsys_openByName(result, &status);
-                ASSERT(U_SUCCESS(status));
-                // Only support algorithmic if it is the default fot the locale, handled below.
-                if (!unumsys_isAlgorithmic(numsys))
-                    availableNumberingSystems.append(String(result, resultLength));
-                unumsys_close(numsys);
-            }
-            uenum_close(numberingSystemNames);
+        int32_t resultLength;
+        // Numbering system names are always ASCII, so use char[].
+        while (const char* result = uenum_next(numberingSystemNames, &resultLength, &status)) {
+            ASSERT(U_SUCCESS(status));
+            auto numsys = unumsys_openByName(result, &status);
+            ASSERT(U_SUCCESS(status));
+            // Only support algorithmic if it is the default fot the locale, handled below.
+            if (!unumsys_isAlgorithmic(numsys))
+                availableNumberingSystems.append(String(StringImpl::createStaticStringImpl(result, resultLength)));
+            unumsys_close(numsys);
         }
-    }
+        uenum_close(numberingSystemNames);
+    });
 
     UErrorCode status = U_ZERO_ERROR;
     UNumberingSystem* defaultSystem = unumsys_open(locale.utf8().data(), &status);
