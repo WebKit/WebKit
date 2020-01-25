@@ -1,3 +1,10 @@
+2020-01-24  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Unreviewed, a speculative test fix after r255041
+
+        * UIProcess/WebAuthentication/Mock/MockLocalConnection.mm:
+        (WebKit::MockLocalConnection::getAttestation const):
+
 2020-01-24  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] Long pressing text inside a selection should update the selection
