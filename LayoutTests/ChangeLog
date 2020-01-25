@@ -1,3 +1,13 @@
+2020-01-24  Ryosuke Niwa  <rniwa@webkit.org>
+
+        imported/w3c/web-platform-tests/requestidlecallback/callback-xhr-sync.html is flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=206676
+        <rdar://problem/58839631>
+
+        Add a flaky test expectation.
+
+        * TestExpectations:
+
 2020-01-24  youenn fablet  <youenn@apple.com>
 
         Add support for MediaRecorder.requestData
