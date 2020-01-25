@@ -282,6 +282,9 @@ RenderObject* RenderTreeBuilder::MultiColumn::processPossibleSpannerDescendant(R
     RenderObject* insertBeforeMulticolChild = nullptr;
     RenderObject* nextDescendant = &descendant;
 
+    if (!multicolContainer)
+        return nullptr;
+
     if (isValidColumnSpanner(flow, descendant)) {
         // This is a spanner (column-span:all). Such renderers are moved from where they would
         // otherwise occur in the render tree to becoming a direct child of the multicol container,

@@ -74,6 +74,8 @@ RenderMultiColumnSet* RenderMultiColumnFlow::firstMultiColumnSet() const
 
 RenderMultiColumnSet* RenderMultiColumnFlow::lastMultiColumnSet() const
 {
+    ASSERT(multiColumnBlockFlow());
+
     for (RenderObject* sibling = multiColumnBlockFlow()->lastChild(); sibling; sibling = sibling->previousSibling()) {
         if (is<RenderMultiColumnSet>(*sibling))
             return downcast<RenderMultiColumnSet>(sibling);
