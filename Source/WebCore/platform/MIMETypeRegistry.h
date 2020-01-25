@@ -31,6 +31,16 @@
 
 namespace WebCore {
 
+WEBCORE_EXPORT Optional<HashMap<String, Vector<String>, ASCIICaseInsensitiveHash>>& overriddenMimeTypesMap();
+WEBCORE_EXPORT const HashMap<String, Vector<String>, ASCIICaseInsensitiveHash>& commonMimeTypesMap();
+
+struct TypeExtensionPair {
+    ASCIILiteral type;
+    ASCIILiteral extension;
+};
+
+WEBCORE_EXPORT const std::initializer_list<TypeExtensionPair>& commonMediaTypes();
+
 struct MIMETypeRegistryThreadGlobalData {
     WTF_MAKE_NONCOPYABLE(MIMETypeRegistryThreadGlobalData);
     WTF_MAKE_FAST_ALLOCATED;
@@ -52,7 +62,7 @@ public:
     // FIXME: WebKit coding style says we should not have the word "get" in the names of these functions.
     static Vector<String> getExtensionsForMIMEType(const String& type);
     WEBCORE_EXPORT static String getPreferredExtensionForMIMEType(const String& type);
-    static String getMediaMIMETypeForExtension(const String& extension);
+    WEBCORE_EXPORT static String getMediaMIMETypeForExtension(const String& extension);
     static Vector<String> getMediaMIMETypesForExtension(const String& extension);
 
     static String getMIMETypeForPath(const String& path);

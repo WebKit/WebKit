@@ -862,6 +862,7 @@
 		C0ADBE9612FCA79B00D2C129 /* simple-form.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = C0ADBE8412FCA6B600D2C129 /* simple-form.html */; };
 		C0BD669F131D3CFF00E18F2A /* ResponsivenessTimerDoesntFireEarly_Bundle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C0BD669E131D3CFF00E18F2A /* ResponsivenessTimerDoesntFireEarly_Bundle.cpp */; };
 		C0C5D3C61459912900A802A6 /* GetBackingScaleFactor_Bundle.mm in Sources */ = {isa = PBXBuildFile; fileRef = C0C5D3BD14598B6F00A802A6 /* GetBackingScaleFactor_Bundle.mm */; };
+		C145CC0C23DA5A1F003A5EEB /* MimeTypes.mm in Sources */ = {isa = PBXBuildFile; fileRef = C145CC0B23DA5A0F003A5EEB /* MimeTypes.mm */; };
 		C1692DCA23D10DAE006E88F7 /* Battery.mm in Sources */ = {isa = PBXBuildFile; fileRef = C1692DC923D10DAE006E88F7 /* Battery.mm */; };
 		C20F88A72295B96700D610FA /* CoreText.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C20F88A62295B96700D610FA /* CoreText.framework */; };
 		C22FA32B228F8708009D7988 /* TextWidth.mm in Sources */ = {isa = PBXBuildFile; fileRef = C22FA32A228F8708009D7988 /* TextWidth.mm */; };
@@ -2385,6 +2386,7 @@
 		C0BD669E131D3CFF00E18F2A /* ResponsivenessTimerDoesntFireEarly_Bundle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ResponsivenessTimerDoesntFireEarly_Bundle.cpp; sourceTree = "<group>"; };
 		C0C5D3BC14598B6F00A802A6 /* GetBackingScaleFactor.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = GetBackingScaleFactor.mm; sourceTree = "<group>"; };
 		C0C5D3BD14598B6F00A802A6 /* GetBackingScaleFactor_Bundle.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = GetBackingScaleFactor_Bundle.mm; sourceTree = "<group>"; };
+		C145CC0B23DA5A0F003A5EEB /* MimeTypes.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MimeTypes.mm; sourceTree = "<group>"; };
 		C1692DC923D10DAE006E88F7 /* Battery.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = Battery.mm; sourceTree = "<group>"; };
 		C1D8EE212028E8E3008EB141 /* WebProcessTerminate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebProcessTerminate.mm; sourceTree = "<group>"; };
 		C20F88A62295B96700D610FA /* CoreText.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreText.framework; path = System/Library/Frameworks/CoreText.framework; sourceTree = SDKROOT; };
@@ -2826,6 +2828,7 @@
 			isa = PBXGroup;
 			children = (
 				C1692DC923D10DAE006E88F7 /* Battery.mm */,
+				C145CC0B23DA5A0F003A5EEB /* MimeTypes.mm */,
 				0F139E751A423A5300F590F5 /* WeakObjCPtr.mm */,
 			);
 			name = cocoa;
@@ -4809,6 +4812,7 @@
 				5C0BF8941DD599C900B00328 /* MenuTypesForMouseEvents.mm in Sources */,
 				5165FE04201EE620009F7EC3 /* MessagePortProviders.mm in Sources */,
 				A5B149DE1F5A19EA00C6DAFF /* MIMETypeRegistry.cpp in Sources */,
+				C145CC0C23DA5A1F003A5EEB /* MimeTypes.mm in Sources */,
 				51CD1C6C1B38CE4300142CA5 /* ModalAlerts.mm in Sources */,
 				7C83E0B61D0A64B300FEBCF3 /* ModalAlertsSPI.cpp in Sources */,
 				7CCE7F011A411AE600447C4C /* MouseMoveAfterCrash.cpp in Sources */,
