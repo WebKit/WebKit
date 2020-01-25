@@ -44,12 +44,18 @@ class PlacardSupport extends MediaControllerSupport
         this._updatePlacard();
     }
 
+    enable()
+    {
+        super.enable();
+        this._isDisabled = false;
+        this._updatePlacard();
+    }
+
     disable()
     {
-        // We should not allow disabling Placard support when playing inline as it would prevent the
-        // PiP placard from being shown if the controls are disabled.
-        if (this.mediaController.isFullscreen)
-            super.disable();
+        // Never disable the plackard, just remeber whether the placard should be visible or not
+        this._isDisabled = true;
+        this._updatePlacard();
     }
 
     // Private
@@ -65,7 +71,7 @@ class PlacardSupport extends MediaControllerSupport
         else if (media.webkitCurrentPlaybackTargetIsWireless) {
             this._updateAirPlayPlacard();
             placard = controls.airplayPlacard;
-        } else if (media instanceof HTMLVideoElement && media.error !== null && media.played.length === 0)
+        } else if (!this._isDisabled && media instanceof HTMLVideoElement && media.error !== null && media.played.length === 0)
             placard = controls.invalidPlacard;
 
         controls.placard = placard;
