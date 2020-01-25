@@ -27,41 +27,42 @@
     }
   </style>
   <script type="text/javascript" charset="utf-8">
-    
+
     function suspend()
     {
         if (window.internals)
             internals.suspendAnimations();
+
+        setTimeout(resume, 60);
     }
-    
+
     function resume()
     {
         if (window.internals)
             internals.resumeAnimations();
+
+        setTimeout(function()
+        {
+            if (window.testRunner)
+                testRunner.notifyDone();
+        }, 250);
     }
-    
+
     function startTest()
     {
         if (window.testRunner) {
             testRunner.dumpAsText();
             testRunner.waitUntilDone();
         }
-        
+
         setTimeout(suspend, 40);
-        setTimeout(resume, 100);
-        setTimeout(function()
-        {
-            if (window.testRunner)
-                testRunner.notifyDone();
-        }, 350);
     }
-    
+
     function logEvent(e, phase)
     {
         var log = document.getElementById('log');
         log.innerHTML = log.innerHTML + phase + ' animation ' + e.animationName + '<br>';
     }
-
     
   </script>
 </head>
