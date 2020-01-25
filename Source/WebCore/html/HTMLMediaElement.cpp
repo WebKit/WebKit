@@ -2326,6 +2326,13 @@ void HTMLMediaElement::changeNetworkStateFromLoadingToIdle()
 
 void HTMLMediaElement::mediaPlayerReadyStateChanged()
 {
+    if (isSuspended()) {
+        queueTaskKeepingObjectAlive(*this, TaskSource::MediaElement, [this] {
+            mediaPlayerReadyStateChanged();
+        });
+        return;
+    }
+
     beginProcessingMediaPlayerCallback();
 
     setReadyState(m_player->readyState());
@@ -5626,7 +5633,7 @@ void HTMLMediaElement::stopWithoutDestroyingMediaPlayer()
     // Stop the playback without generating events
     setPlaying(false);
     pauseAndUpdatePlayStateImmediately();
-    m_mediaSession->stopSession();
+    m_mediaSession->clientWillBeDOMSuspended();
 
     setAutoplayEventPlaybackState(AutoplayEventPlaybackState::None);
 

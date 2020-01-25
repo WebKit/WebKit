@@ -1,3 +1,16 @@
+2020-01-25  Youenn Fablet  <youenn@apple.com>
+
+        HTMLMediaElement should not remove the media session at DOM suspension time
+        https://bugs.webkit.org/show_bug.cgi?id=206661
+        <rdar://problem/58800787>
+
+        Reviewed by Eric Carlson.
+
+        * TestWebKitAPI/Tests/WebKitLegacy/ios/ScrollingDoesNotPauseMedia.mm:
+        (TestWebKitAPI::TEST):
+        Suspend/resume Active DOM Objects from time to time as would do scrolling.
+        This allows pending tasks to be executed asynchronously when not scrolling.
+
 2020-01-23  Matt Lewis  <jlewis3@apple.com>
 
         Remove Apple windows 7 queues.

@@ -194,9 +194,9 @@ void MediaSessionManageriOS::providePresentingApplicationPIDIfNecessary()
 #endif
 }
 
-void MediaSessionManageriOS::sessionWillEndPlayback(PlatformMediaSession& session)
+void MediaSessionManageriOS::sessionWillEndPlayback(PlatformMediaSession& session, DelayCallingUpdateNowPlaying delayCallingUpdateNowPlaying)
 {
-    MediaSessionManagerCocoa::sessionWillEndPlayback(session);
+    MediaSessionManagerCocoa::sessionWillEndPlayback(session, delayCallingUpdateNowPlaying);
 
 #if USE(AUDIO_SESSION)
     if (isApplicationInBackground() && !anyOfSessions([] (auto& session) { return session.state() == PlatformMediaSession::Playing; }))
