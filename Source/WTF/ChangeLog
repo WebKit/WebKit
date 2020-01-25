@@ -1,3 +1,17 @@
+2020-01-25  Mark Lam  <mark.lam@apple.com>
+
+        Add some tests for dynamically allocated StaticStringImpls.
+        https://bugs.webkit.org/show_bug.cgi?id=206802
+
+        Reviewed by Darin Adler.
+
+        Removed some unnecessary explicit specialization of the charactersAreAllASCII()
+        template function.
+
+        * wtf/text/StringImpl.cpp:
+        (WTF::StringImpl::createFromLiteral):
+        (WTF::StringImpl::createStaticStringImpl):
+
 2020-01-24  Mark Lam  <mark.lam@apple.com>
 
         Move singleton Intl string locales out of JSGlobalObject.

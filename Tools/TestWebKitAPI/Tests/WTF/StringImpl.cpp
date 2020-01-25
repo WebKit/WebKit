@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012, 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -686,14 +686,13 @@ static const String& getNeverDestroyedStringAtStackDepth(int i)
     return neverDestroyedString();
 };
 
-TEST(WTF, StaticStringImpl)
-{
-    // Construct using MAKE_STATIC_STRING_IMPL.
-    String hello(MAKE_STATIC_STRING_IMPL("hello"));
-    String world(MAKE_STATIC_STRING_IMPL("world"));
-    String longer(MAKE_STATIC_STRING_IMPL("longer"));
-    String hello2(MAKE_STATIC_STRING_IMPL("hello"));
+enum class StaticStringImplTestSet {
+    StaticallyAllocatedImpl,
+    DynamicallyAllocatedImpl
+};
 
+static void doStaticStringImplTests(StaticStringImplTestSet testSet, String& hello, String& world, String& longer, String& hello2)
+{
     ASSERT_EQ(strlen("hello"), hello.length());
     ASSERT_EQ(strlen("world"), world.length());
     ASSERT_EQ(strlen("longer"), longer.length());
@@ -707,18 +706,48 @@ TEST(WTF, StaticStringImpl)
     // Each StaticStringImpl* returned by MAKE_STATIC_STRING_IMPL should be unique.
     ASSERT_NE(hello.impl(), hello2.impl());
 
-    // Test that MAKE_STATIC_STRING_IMPL isn't allocating a StaticStringImpl on the stack.
-    const String& str1 = getNeverDestroyedStringAtStackDepth(10);
-    ASSERT_EQ(strlen("NeverDestroyedString"), str1.length());
-    ASSERT_TRUE(equal(str1, "NeverDestroyedString"));
+    if (testSet == StaticStringImplTestSet::StaticallyAllocatedImpl) {
+        // Test that MAKE_STATIC_STRING_IMPL isn't allocating a StaticStringImpl on the stack.
+        const String& str1 = getNeverDestroyedStringAtStackDepth(10);
+        ASSERT_EQ(strlen("NeverDestroyedString"), str1.length());
+        ASSERT_TRUE(equal(str1, "NeverDestroyedString"));
 
-    const String& str2 = getNeverDestroyedStringAtStackDepth(20);
-    ASSERT_EQ(strlen("NeverDestroyedString"), str2.length());
-    ASSERT_TRUE(equal(str2, "NeverDestroyedString"));
+        const String& str2 = getNeverDestroyedStringAtStackDepth(20);
+        ASSERT_EQ(strlen("NeverDestroyedString"), str2.length());
+        ASSERT_TRUE(equal(str2, "NeverDestroyedString"));
 
-    ASSERT_TRUE(equal(str1, str2));
-    ASSERT_EQ(&str1, &str2);
-    ASSERT_EQ(str1.impl(), str2.impl());
+        ASSERT_TRUE(equal(str1, str2));
+        ASSERT_EQ(&str1, &str2);
+        ASSERT_EQ(str1.impl(), str2.impl());
+    }
+
+    // Test that the StaticStringImpl's hash has already been set.
+    // We're relying on an ASSERT in setHash() to detect that the hash hasn't
+    // already been set. If the hash has already been set, the hash() method
+    // will not call setHash().
+    ASSERT_EQ(hello.hash(), 0xd17551u);
+}
+
+TEST(WTF, StaticStringImpl)
+{
+    // Construct using MAKE_STATIC_STRING_IMPL.
+    String hello(MAKE_STATIC_STRING_IMPL("hello"));
+    String world(MAKE_STATIC_STRING_IMPL("world"));
+    String longer(MAKE_STATIC_STRING_IMPL("longer"));
+    String hello2(MAKE_STATIC_STRING_IMPL("hello"));
+
+    doStaticStringImplTests(StaticStringImplTestSet::StaticallyAllocatedImpl, hello, world, longer, hello2);
+}
+
+TEST(WTF, DynamicStaticStringImpl)
+{
+    // Construct using MAKE_STATIC_STRING_IMPL.
+    String hello = StringImpl::createStaticStringImpl("hello", 5);
+    String world = StringImpl::createStaticStringImpl("world", 5);
+    String longer = StringImpl::createStaticStringImpl("longer", 6);
+    String hello2 = StringImpl::createStaticStringImpl("hello", 5);
+
+    doStaticStringImplTests(StaticStringImplTestSet::DynamicallyAllocatedImpl, hello, world, longer, hello2);
 }
 
 static SymbolImpl::StaticSymbolImpl staticSymbol {"Cocoa"};

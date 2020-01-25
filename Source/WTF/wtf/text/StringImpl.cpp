@@ -156,7 +156,7 @@ void StringImpl::destroy(StringImpl* stringImpl)
 Ref<StringImpl> StringImpl::createFromLiteral(const char* characters, unsigned length)
 {
     ASSERT_WITH_MESSAGE(length, "Use StringImpl::empty() to create an empty string");
-    ASSERT(charactersAreAllASCII<LChar>(reinterpret_cast<const LChar*>(characters), length));
+    ASSERT(charactersAreAllASCII(reinterpret_cast<const LChar*>(characters), length));
     return adoptRef(*new StringImpl(reinterpret_cast<const LChar*>(characters), length, ConstructWithoutCopying));
 }
 
@@ -284,7 +284,7 @@ Ref<StringImpl> StringImpl::create(const LChar* characters, unsigned length)
 Ref<StringImpl> StringImpl::createStaticStringImpl(const char* characters, unsigned length)
 {
     const LChar* lcharCharacters = reinterpret_cast<const LChar*>(characters);
-    ASSERT(charactersAreAllASCII<LChar>(lcharCharacters, length));
+    ASSERT(charactersAreAllASCII(lcharCharacters, length));
     Ref<StringImpl> result = createInternal(lcharCharacters, length);
     result->setHash(StringHasher::computeHashAndMaskTop8Bits(lcharCharacters, length));
     result->m_refCount |= s_refCountFlagIsStaticString;
