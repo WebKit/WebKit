@@ -2805,10 +2805,12 @@ InteractionInformationAtPosition WebPage::positionInformation(const InteractionI
     info.nodeAtPositionHasDoubleClickHandler = m_page->mainFrame().nodeRespondingToDoubleClickEvent(request.point, adjustedPoint);
 
     auto& eventHandler = m_page->mainFrame().eventHandler();
-    HitTestResult hitTestResult = eventHandler.hitTestResultAtPoint(request.point, HitTestRequest::ReadOnly | HitTestRequest::AllowFrameScrollbars);
-    info.cursor = eventHandler.selectCursor(hitTestResult, false);
-    if (request.includeCaretContext)
-        populateCaretContext(hitTestResult, request, info);
+    HitTestResult hitTestResultForCursor = eventHandler.hitTestResultAtPoint(request.point, HitTestRequest::ReadOnly | HitTestRequest::AllowFrameScrollbars | HitTestRequest::AllowChildFrameContent);
+    if (auto* hitFrame = hitTestResultForCursor.innerNodeFrame()) {
+        info.cursor = hitFrame->eventHandler().selectCursor(hitTestResultForCursor, false);
+        if (request.includeCaretContext)
+            populateCaretContext(hitTestResultForCursor, request, info);
+    }
 
     if (m_focusedElement)
         focusedElementPositionInformation(*this, *m_focusedElement, request, info);
