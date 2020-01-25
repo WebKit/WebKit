@@ -1,3 +1,25 @@
+2020-01-24  Tim Horton  <timothy_horton@apple.com>
+
+        macCatalyst: Right clicking on links follows the link, but shouldn't
+        https://bugs.webkit.org/show_bug.cgi?id=206777
+        <rdar://problem/56586280>
+
+        Reviewed by Wenson Hsieh.
+
+        * UIProcess/ios/WKMouseGestureRecognizer.mm:
+        (-[WKMouseGestureRecognizer createMouseEventWithType:forEvent:]):
+        (-[WKMouseGestureRecognizer touchesEnded:withEvent:]):
+        I got 'button' and 'buttons' backwards.
+
+        'button' indicates which button the event is about, so in MouseUp,
+        it should still be 2.
+
+        'buttons' indicate which buttons are still down, so in MouseUp,
+        it should not include 2. Since we don't currently track mouse button
+        chording here, we'll just say "none". Leave a FIXME about that.
+
+        This makes WebCore's behavior correct, and now it doesn't follow the link.
+
 2020-01-24  Jiewen Tan  <jiewen_tan@apple.com>
 
         Unreviewed, a build fix after r255056
