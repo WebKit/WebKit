@@ -27,6 +27,7 @@ function startOrVerify() {
         document.getElementById('s').click();
         testPassed('The form was not submitted');
         shouldBe('document.activeElement', 'document.getElementById("i2")');
+        document.getElementById('i2').value = 'foo'; // Close the invalidation bubble.
         debug('TEST COMPLETE');
     }
 

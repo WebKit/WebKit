@@ -1,3 +1,15 @@
+2020-01-24  Ryosuke Niwa  <rniwa@webkit.org>
+
+        [iOS] REGRESSION(r254699) : fast/forms/interactive-validation-remove-node-in-handler.html is timing out
+        https://bugs.webkit.org/show_bug.cgi?id=206669
+
+        Reviewed by Wenson Hsieh.
+
+        The timeout was caused by the invalidation bubble in interactive-validation-prevented.html never getting closed.
+        Address the issue by explicitly dismissing the invalidation bubble by setting a value to the input element.
+
+        * fast/forms/interactive-validation-prevented.html:
+
 2020-01-24  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] Long pressing text inside a selection should update the selection
