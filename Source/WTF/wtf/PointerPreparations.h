@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,17 +25,23 @@
 
 #pragma once
 
+#if CPU(ARM64E)
+#include <ptrauth.h>
+#endif
+
 namespace WTF {
 
 #if CPU(ARM64E)
-#include <ptrauth.h>
 
-#define WTF_PREPARE_VTBL_POINTER_FOR_INSPECTION(vtblPtr) \
-    (reinterpret_cast<void*>(ptrauth_sign_unauthenticated(vtblPtr, ptrauth_key_cxx_vtable_pointer, 0)))
+#if __has_builtin(__builtin_get_vtable_pointer)
+#define getVTablePointer(o) __builtin_get_vtable_pointer(o)
+#else
+#define getVTablePointer(o) __builtin_ptrauth_auth(*(reinterpret_cast<void**>(o)), ptrauth_key_cxx_vtable_pointer, 0)
+#endif
 
 #else // not CPU(ARM64E)
 
-#define WTF_PREPARE_VTBL_POINTER_FOR_INSPECTION(vtblPtr) (reinterpret_cast<void*>(vtblPtr))
+#define getVTablePointer(o) (*(reinterpret_cast<void**>(o)))
 
 #endif // not CPU(ARM64E)
 

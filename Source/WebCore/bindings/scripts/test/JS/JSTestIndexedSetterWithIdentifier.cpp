@@ -323,11 +323,11 @@ JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject*, JSDOMGlobalObject* globalObj
 {
 
 #if ENABLE(BINDING_INTEGRITY)
-    void* actualVTablePointer = *(reinterpret_cast<void**>(impl.ptr()));
+    void* actualVTablePointer = getVTablePointer(impl.ptr());
 #if PLATFORM(WIN)
-    void* expectedVTablePointer = WTF_PREPARE_VTBL_POINTER_FOR_INSPECTION(__identifier("??_7TestIndexedSetterWithIdentifier@WebCore@@6B@"));
+    void* expectedVTablePointer = __identifier("??_7TestIndexedSetterWithIdentifier@WebCore@@6B@");
 #else
-    void* expectedVTablePointer = WTF_PREPARE_VTBL_POINTER_FOR_INSPECTION(&_ZTVN7WebCore31TestIndexedSetterWithIdentifierE[2]);
+    void* expectedVTablePointer = &_ZTVN7WebCore31TestIndexedSetterWithIdentifierE[2];
 #endif
 
     // If this fails TestIndexedSetterWithIdentifier does not have a vtable, so you need to add the
