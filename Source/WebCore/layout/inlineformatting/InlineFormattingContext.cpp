@@ -309,32 +309,32 @@ void InlineFormattingContext::collectInlineContentIfNeeded()
     while (!layoutQueue.isEmpty()) {
         while (true) {
             auto& layoutBox = *layoutQueue.last();
-            if (!layoutBox.isInlineBox() || layoutBox.isAnonymous())
+            auto isBoxWithInlineContent = layoutBox.isInlineBox() && !layoutBox.isAnonymous() && !layoutBox.isLineBreakBox();
+            if (!isBoxWithInlineContent)
                 break;
             // This is the start of an inline box (e.g. <span>).
             formattingState.addInlineItem({ layoutBox, InlineItem::Type::ContainerStart });
-            auto& container = downcast<Container>(layoutBox);
-            if (!container.hasInFlowOrFloatingChild())
+            auto& inlineBoxWithInlineContent = downcast<Container>(layoutBox);
+            if (!inlineBoxWithInlineContent.hasInFlowOrFloatingChild())
                 break;
-            layoutQueue.append(container.firstInFlowOrFloatingChild());
+            layoutQueue.append(inlineBoxWithInlineContent.firstInFlowOrFloatingChild());
         }
 
         while (!layoutQueue.isEmpty()) {
             auto& layoutBox = *layoutQueue.takeLast();
-            // This is the end of an inline container (e.g. </span>).
-            if (layoutBox.isInlineBox() && !layoutBox.isAnonymous())
-                formattingState.addInlineItem({ layoutBox, InlineItem::Type::ContainerEnd });
-            else if (layoutBox.isLineBreakBox())
+            if (layoutBox.isLineBreakBox())
                 formattingState.addInlineItem({ layoutBox, InlineItem::Type::HardLineBreak });
             else if (layoutBox.isFloatingPositioned())
                 formattingState.addInlineItem({ layoutBox, InlineItem::Type::Float });
-            else {
-                ASSERT(layoutBox.isInlineLevelBox());
-                if (layoutBox.hasTextContent())
-                    InlineTextItem::createAndAppendTextItems(formattingState.inlineItems(), layoutBox);
-                else
-                    formattingState.addInlineItem({ layoutBox, InlineItem::Type::Box });
-            }
+            else if (layoutBox.isAtomicInlineLevelBox())
+                formattingState.addInlineItem({ layoutBox, InlineItem::Type::Box });
+            else if (layoutBox.isAnonymous()) {
+                ASSERT(layoutBox.hasTextContent());
+                InlineTextItem::createAndAppendTextItems(formattingState.inlineItems(), layoutBox);
+            } else if (layoutBox.isInlineBox())
+                formattingState.addInlineItem({ layoutBox, InlineItem::Type::ContainerEnd });
+            else
+                ASSERT_NOT_REACHED();
 
             if (auto* nextSibling = layoutBox.nextInFlowOrFloatingSibling()) {
                 layoutQueue.append(nextSibling);
