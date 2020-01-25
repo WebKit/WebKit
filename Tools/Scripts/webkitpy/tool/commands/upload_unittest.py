@@ -181,7 +181,6 @@ Obsoleting 2 old patches on bug 50000
 MOCK reassign_bug: bug_id=50000, assignee=None
 MOCK add_patch_to_bug: bug_id=50000, description=MOCK description, mark_for_review=False, mark_for_commit_queue=False, mark_for_landing=False
 MOCK: user.open_url: http://example.com/50000
-MOCK: submit_to_old_ews: 10001
 MOCK: submit_to_ews: 10001
 """
         self.assert_execute_outputs(Upload(), [50000], options=options, expected_logs=expected_logs)
@@ -204,8 +203,6 @@ Was that diff correct?
 Obsoleting 1 old patch on bug 50007
 MOCK add_patch_to_bug: bug_id=50007, description=MOCK description, mark_for_review=False, mark_for_commit_queue=False, mark_for_landing=False
 MOCK: user.open_url: http://example.com/50007
-MOCK: upload_attachment: 10008
-MOCK: submit_to_old_ews: 10008
 MOCK: submit_to_ews: 10008
 """
         self.assert_execute_outputs(Upload(), [50007], options=options, expected_logs=expected_logs)
