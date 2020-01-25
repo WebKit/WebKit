@@ -641,6 +641,9 @@ static WKDragSessionContext *ensureLocalDragSessionContext(id <UIDragSession> se
 
 - (void)_wk_cancel
 {
+    if (!self.enabled)
+        return;
+
     [self setEnabled:NO];
     [self setEnabled:YES];
 }
@@ -2455,14 +2458,6 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
     if (![self ensurePositionInformationIsUpToDate:request])
         return NO;
 
-#if ENABLE(DRAG_SUPPORT)
-    if (_positionInformation.hasSelectionAtPosition && self._allowedDragSourceActions & WebCore::DragSourceActionSelection) {
-        // If the position might initiate a drag, we don't want to consider the content at this position to be selectable.
-        // FIXME: This should be renamed to something more precise, such as textSelectionShouldRecognizeGestureAtPoint:
-        return NO;
-    }
-#endif
-
     return _positionInformation.isSelectable;
 }
 
@@ -2520,13 +2515,6 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
     WebKit::InteractionInformationRequest request(WebCore::roundedIntPoint(point));
     if (![self ensurePositionInformationIsUpToDate:request])
         return NO;
-
-#if ENABLE(DRAG_SUPPORT)
-    if (_positionInformation.hasSelectionAtPosition && gesture == UIWKGestureLoupe && self._allowedDragSourceActions & WebCore::DragSourceActionSelection) {
-        // If the position might initiate a drag, we don't want to change the selection.
-        return NO;
-    }
-#endif
 
 #if ENABLE(DATALIST_ELEMENT)
     if (_positionInformation.preventTextInteraction)
@@ -7230,6 +7218,12 @@ static NSArray<NSItemProvider *> *extractItemProvidersFromDropSession(id <UIDrop
     return dragItems;
 }
 
+- (void)cancelActiveTextInteractionGestures
+{
+    [[_textInteractionAssistant loupeGesture] _wk_cancel];
+    [[_textInteractionAssistant forcePressGesture] _wk_cancel];
+}
+
 - (UIView *)textEffectsWindow
 {
 #if HAVE(UISCENE)
@@ -7488,10 +7482,13 @@ static Vector<WebCore::IntSize> sizesOfPlaceholderElementsToInsertWhenDroppingIt
 - (void)dragInteraction:(UIDragInteraction *)interaction willAnimateLiftWithAnimator:(id <UIDragAnimating>)animator session:(id <UIDragSession>)session
 {
     RELEASE_LOG(DragAndDrop, "Drag session willAnimateLiftWithAnimator: %p", session);
-    if (!_shouldRestoreCalloutBarAfterDrop && _dragDropInteractionState.anyActiveDragSourceIs(WebCore::DragSourceActionSelection)) {
-        // FIXME: This SPI should be renamed in UIKit to reflect a more general purpose of hiding interaction assistant controls.
-        [_textInteractionAssistant willStartScrollingOverflow];
-        _shouldRestoreCalloutBarAfterDrop = YES;
+    if (_dragDropInteractionState.anyActiveDragSourceIs(WebCore::DragSourceActionSelection)) {
+        [self cancelActiveTextInteractionGestures];
+        if (!_shouldRestoreCalloutBarAfterDrop) {
+            // FIXME: This SPI should be renamed in UIKit to reflect a more general purpose of hiding interaction assistant controls.
+            [_textInteractionAssistant willStartScrollingOverflow];
+            _shouldRestoreCalloutBarAfterDrop = YES;
+        }
     }
 
     auto positionForDragEnd = WebCore::roundedIntPoint(_dragDropInteractionState.adjustedPositionForDragEnd());

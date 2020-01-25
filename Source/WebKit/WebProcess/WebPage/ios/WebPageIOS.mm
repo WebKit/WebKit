@@ -2810,10 +2810,6 @@ InteractionInformationAtPosition WebPage::positionInformation(const InteractionI
     if (request.includeCaretContext)
         populateCaretContext(hitTestResult, request, info);
 
-#if ENABLE(DATA_INTERACTION)
-    info.hasSelectionAtPosition = m_page->hasSelectionAtPosition(adjustedPoint);
-#endif
-
     if (m_focusedElement)
         focusedElementPositionInformation(*this, *m_focusedElement, request, info);
 

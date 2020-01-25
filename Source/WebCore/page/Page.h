@@ -694,10 +694,6 @@ public:
     bool isOnlyNonUtilityPage() const;
     bool isUtilityPage() const { return m_isUtilityPage; }
 
-#if ENABLE(DATA_INTERACTION)
-    WEBCORE_EXPORT bool hasSelectionAtPosition(const FloatPoint&) const;
-#endif
-
     bool isLowPowerModeEnabled() const;
     WEBCORE_EXPORT void setLowPowerModeEnabledOverrideForTesting(Optional<bool>);
 

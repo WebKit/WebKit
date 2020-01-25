@@ -1,3 +1,50 @@
+2020-01-24  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Long pressing text inside a selection should update the selection
+        https://bugs.webkit.org/show_bug.cgi?id=206769
+        <rdar://problem/58704316>
+
+        Reviewed by Tim Horton.
+
+        Makes it possible to update the selection using text interaction gestures inside an existing text selection. To
+        do this, we remove code that was previously required in order to disambiguate text selection and drag gestures.
+        However, since adopting asynchronous drag interaction SPI, this check has not been necessary.
+
+        The only other purpose of this check was to avoid triggering text selection gestures after canceling a drag
+        that did not begin (i.e. the touch location did not move). Instead of bailing in -textInteractionGestures:
+        shouldBeginAtPoint: and -hasSelectablePositionAtPoint:, we can achieve the same effect by simply resetting the
+        text interaction gestures when the drag lift begins (at which point we know the drag interaction is starting).
+        This also ensures that on iPad, in the case where the drag was cancelled by the page, long pressing may still
+        trigger text selection.
+
+        Test: editing/selection/ios/select-text-in-existing-selection.html
+
+        * Shared/ios/InteractionInformationAtPosition.h:
+        * Shared/ios/InteractionInformationAtPosition.mm:
+        (WebKit::InteractionInformationAtPosition::encode const):
+        (WebKit::InteractionInformationAtPosition::decode):
+
+        Remove the hasSelectionAtPosition flag from position information, since we no longer need it.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[UIGestureRecognizer _wk_cancel]):
+
+        Drive-by fix: just ignore the gesture if it is already disabled. This prevents us from causing a gesture
+        recognizer that was previously disabled to become enabled as a result of calling -_wk_cancel.
+
+        (-[WKContentView hasSelectablePositionAtPoint:]):
+        (-[WKContentView textInteractionGesture:shouldBeginAtPoint:]):
+        (-[WKContentView cancelActiveTextInteractionGestures]):
+
+        Instead of making the text interaction gestures return NO from -gestureRecognizerShouldBegin:, explicitly cancel
+        the text interaction gestures that may select text.
+
+        (-[WKContentView dragInteraction:willAnimateLiftWithAnimator:session:]):
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::positionInformation):
+
+        Remove the hasSelectionAtPosition flag from position information, since we no longer need it.
+
 2020-01-24  Alex Christensen  <achristensen@webkit.org>
 
         Update EditorState from WebProcess when requesting context menu

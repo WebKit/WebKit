@@ -153,10 +153,6 @@
 #include "IDBConnectionToServer.h"
 #endif
 
-#if ENABLE(DATA_INTERACTION)
-#include "SelectionRect.h"
-#endif
-
 #if ENABLE(WEBGL)
 #include "WebGLStateTracker.h"
 #endif
@@ -2793,28 +2789,6 @@ void Page::setFullscreenControlsHidden(bool hidden)
     UNUSED_PARAM(hidden);
 #endif
 }
-
-#if ENABLE(DATA_INTERACTION)
-
-bool Page::hasSelectionAtPosition(const FloatPoint& position) const
-{
-    auto currentSelection = m_mainFrame->selection().selection();
-    if (!currentSelection.isRange())
-        return false;
-
-    if (auto selectedRange = currentSelection.toNormalizedRange()) {
-        Vector<SelectionRect> selectionRects;
-        selectedRange->collectSelectionRects(selectionRects);
-        for (auto selectionRect : selectionRects) {
-            if (FloatRect(selectionRect.rect()).contains(position))
-                return true;
-        }
-    }
-
-    return false;
-}
-
-#endif
 
 void Page::disableICECandidateFiltering()
 {

@@ -1,0 +1,44 @@
+<html>
+<head>
+<script src="../../../resources/js-test.js"></script>
+<script src="../../../resources/ui-helper.js"></script>
+<meta name=viewport content="width=device-width, initial-scale=1">
+<style>
+body, html {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+}
+
+div[contenteditable] {
+    width: 300px;
+    height: 300px;
+    border: 1px solid black;
+    font-size: 32px;
+}
+</style>
+</head>
+<body>
+<div contenteditable>The quick brown fox <span id="target">jumped</span> over the lazy dog.</div>
+<p id="description"></p>
+<p id="console"></p>
+<script>
+jsTestIsAsync = true;
+description("This test verifies that the selection can be modified via long press inside an existing selection. To manually test, select all the text in the editable area and long press on a word to select it.");
+document.addEventListener("dragstart", event => event.preventDefault());
+
+addEventListener("load", async () => {
+    const editor = document.querySelector("div[contenteditable]");
+    const longPressTarget = document.getElementById("target");
+
+    await UIHelper.activateElementAndWaitForInputSession(editor);
+    document.execCommand("SelectAll");
+    await UIHelper.waitForSelectionToAppear();
+    await UIHelper.longPressElement(longPressTarget);
+
+    shouldBeEqualToString("getSelection().toString()", "jumped");
+    finishJSTest();
+});
+</script>
+</body>
+</html>
