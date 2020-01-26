@@ -1,3 +1,29 @@
+2020-01-26  Darin Adler  <darin@apple.com>
+
+        Protect against crashes during WKWebView init function when methods are called before the view is fully initialized
+        https://bugs.webkit.org/show_bug.cgi?id=206799
+        rdar://problem/58871371
+
+        Reviewed by Sam Weinig.
+
+        Part way through creating WKWebView, some methods can be called and they need to be careful
+        not to use anything that may not be initialized yet.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView dealloc]): Check _page for null, since this might happen if the superclass's
+        init method returned nil.
+
+        * UIProcess/API/ios/WKWebViewIOS.mm:
+        (-[WKWebView _frameOrBoundsChanged]): Check _page for null, since this might be called
+        before object initialization is complete.
+        (-[WKWebView setSemanticContentAttribute:]): Ditto.
+
+        * UIProcess/API/mac/WKWebViewMac.mm:
+        (-[WKWebView setFrameSize:]): Check _impl for null since this might be called before
+        oject initialization is complete.
+        (-[WKWebView setUserInterfaceLayoutDirection:]): Ditto.
+        (-[WKWebView renewGState]): Ditto.
+
 2020-01-26  Said Abou-Hallawa  <said@apple.com>
 
         Throttling requestAnimationFrame should be controlled by RenderingUpdateScheduler

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -591,11 +591,12 @@ static void hardwareKeyboardAvailabilityChangedCallback(CFNotificationCenterRef,
 #if PLATFORM(IOS_FAMILY)
     [_contentView _webViewDestroyed];
 
-    if (_remoteObjectRegistry)
+    if (_page && _remoteObjectRegistry)
         _page->process().processPool().removeMessageReceiver(Messages::RemoteObjectRegistry::messageReceiverName(), _page->identifier());
 #endif
 
-    _page->close();
+    if (_page)
+        _page->close();
 
 #if PLATFORM(IOS_FAMILY)
     [_remoteObjectRegistry _invalidate];
@@ -606,7 +607,8 @@ static void hardwareKeyboardAvailabilityChangedCallback(CFNotificationCenterRef,
     CFNotificationCenterRemoveObserver(CFNotificationCenterGetDarwinNotifyCenter(), (__bridge const void *)(self), (CFStringRef)[NSString stringWithUTF8String:kGSEventHardwareKeyboardAvailabilityChangedNotification], nullptr);
 #endif
 
-    pageToViewMap().remove(_page.get());
+    if (_page)
+        pageToViewMap().remove(_page.get());
 
     [super dealloc];
 }
