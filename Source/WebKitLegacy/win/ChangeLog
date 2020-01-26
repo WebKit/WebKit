@@ -1,3 +1,22 @@
+2020-01-26  Said Abou-Hallawa  <said@apple.com>
+
+        Throttling requestAnimationFrame should be controlled by RenderingUpdateScheduler
+        https://bugs.webkit.org/show_bug.cgi?id=204713
+
+        Reviewed by Simon Fraser.
+
+        Add a WKPreference key for RenderingUpdateThrottling.
+
+        * Interfaces/IWebPreferencesPrivate.idl:
+        * WebPreferenceKeysPrivate.h:
+        * WebPreferences.cpp:
+        (WebPreferences::initializeDefaultSettings):
+        (WebPreferences::renderingUpdateThrottlingEnabled):
+        (WebPreferences::setRenderingUpdateThrottlingEnabled):
+        * WebPreferences.h:
+        * WebView.cpp:
+        (WebView::notifyPreferencesChanged):
+
 2020-01-21  Sihui Liu  <sihui_liu@apple.com>
 
         Disable WebSQL everywhere by default except in tests

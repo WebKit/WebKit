@@ -1,3 +1,39 @@
+2020-01-26  Said Abou-Hallawa  <said@apple.com>
+
+        Throttling requestAnimationFrame should be controlled by RenderingUpdateScheduler
+        https://bugs.webkit.org/show_bug.cgi?id=204713
+
+        Reviewed by Simon Fraser.
+
+        Create an IPC message on the DrawingArea to send a message from the
+        WebProcess to the UIProcess to setPreferredFramesPerSecond of the
+        DisplayRefreshMonitor.
+
+        * Shared/WebPreferences.yaml:
+        * UIProcess/API/C/WKPreferences.cpp:
+        (WKPreferencesSetRenderingUpdateThrottlingEnabled):
+        (WKPreferencesGetRenderingUpdateThrottlingEnabled):
+        * UIProcess/API/C/WKPreferencesRefPrivate.h:
+        Add a WKPreference key for RenderingUpdateThrottlingEnabled.
+
+        * UIProcess/RemoteLayerTree/RemoteLayerTreeDrawingAreaProxy.h:
+        * UIProcess/RemoteLayerTree/RemoteLayerTreeDrawingAreaProxy.messages.in:
+
+        * UIProcess/RemoteLayerTree/RemoteLayerTreeDrawingAreaProxy.mm:
+        (-[WKOneShotDisplayLinkHandler setPreferredFramesPerSecond:]):
+        (WebKit::RemoteLayerTreeDrawingAreaProxy::setPreferredFramesPerSecond):
+        Set the preferredFramesPerSecond of the CADisplayLink.
+
+        * WebProcess/WebPage/RemoteLayerTree/RemoteLayerTreeDisplayRefreshMonitor.h:
+        * WebProcess/WebPage/RemoteLayerTree/RemoteLayerTreeDisplayRefreshMonitor.mm:
+        (WebKit::RemoteLayerTreeDisplayRefreshMonitor::setPreferredFramesPerSecond):
+        Delegate the call to RemoteLayerTreeDrawingArea.
+
+        * WebProcess/WebPage/RemoteLayerTree/RemoteLayerTreeDrawingArea.h:
+        * WebProcess/WebPage/RemoteLayerTree/RemoteLayerTreeDrawingArea.mm:
+        (WebKit::RemoteLayerTreeDrawingArea::setPreferredFramesPerSecond):
+        Send the IPC message from the WebProcess to the UIProcess.
+
 2020-01-25  Brady Eidson  <beidson@apple.com>
 
         Make ContentWorlds be identified by an ObjectIdentifier instead of a uint64_t

@@ -1,3 +1,21 @@
+2020-01-26  Said Abou-Hallawa  <said@apple.com>
+
+        Throttling requestAnimationFrame should be controlled by RenderingUpdateScheduler
+        https://bugs.webkit.org/show_bug.cgi?id=204713
+
+        Reviewed by Simon Fraser.
+
+        RenderingUpdateThrottling is enabled by default. Turn it off for DRT and
+        WTR. In some cases, the page may not get visually active while it's
+        waiting for rAF. Throttling tests will have to explicitly turn it on.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (resetWebPreferencesToConsistentValues):
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        (resetWebPreferencesToConsistentValues):
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::resetPreferencesToConsistentValues):
+
 2020-01-25  Mark Lam  <mark.lam@apple.com>
 
         Add some tests for dynamically allocated StaticStringImpls.

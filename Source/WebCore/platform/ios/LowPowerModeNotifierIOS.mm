@@ -48,8 +48,9 @@
         return nil;
 
     _notifier = &notifier;
-    _isLowPowerModeEnabled = [NSProcessInfo processInfo].lowPowerModeEnabled;
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_didReceiveLowPowerModeChange) name:NSProcessInfoPowerStateDidChangeNotification object:nil];
+    // Set the initial state of the low power mode.
+    [self _didReceiveLowPowerModeChange];
     return self;
 }
 

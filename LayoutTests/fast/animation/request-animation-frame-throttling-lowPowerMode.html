@@ -1,36 +1,33 @@
 <!DOCTYPE html>
 <html>
 <body>
-<script src="../../resources/js-test-pre.js"></script>
-<script>
-description("Test that requestAnimationFrame gets throttled in low power mode.");
+    <script src="../../resources/js-test-pre.js"></script>
+    <script>
+        description("Test that requestAnimationFrame gets throttled in low power mode.");
+        window.jsTestIsAsync = true;
 
-let rAFHandle;
-let i = 0;
-function doWork()
-{
-    i++;
-    rAFHandle = requestAnimationFrame(doWork);
-}
+        if (window.internals) {
+            internals.settings.setRenderingUpdateThrottlingEnabled(true);
+            internals.setLowPowerModeEnabled(true);
+        }
 
-shouldBeFalse("internals.isRequestAnimationFrameThrottled()");
-shouldBe("internals.requestAnimationFrameInterval", "Infinity");
-evalAndLog("rAFHandle = requestAnimationFrame(doWork);");
-shouldBeFalse("internals.isRequestAnimationFrameThrottled()");
-shouldBe("internals.requestAnimationFrameInterval", "0.015");
-evalAndLog("internals.setLowPowerModeEnabled(true);");
-shouldBeTrue("internals.isRequestAnimationFrameThrottled()");
-shouldBe("internals.requestAnimationFrameInterval", "0.030");
-evalAndLog("cancelAnimationFrame(rAFHandle);");
-shouldBeTrue("internals.isRequestAnimationFrameThrottled()");
-shouldBe("internals.requestAnimationFrameInterval", "0.030");
-evalAndLog("rAFHandle = requestAnimationFrame(doWork);");
-shouldBeTrue("internals.isRequestAnimationFrameThrottled()");
-shouldBe("internals.requestAnimationFrameInterval", "0.030");
-evalAndLog("internals.setLowPowerModeEnabled(false);");
-shouldBeFalse("internals.isRequestAnimationFrameThrottled()");
-shouldBe("internals.requestAnimationFrameInterval", "0.015");
-</script>
-<script src="../../resources/js-test-post.js"></script>
+        var start = null;
+        var farmesPerSecond = 0;
+        function doWork(timestamp) {
+            if (!start)
+                start = timestamp;
+            if (timestamp - start < 1000) {
+                ++farmesPerSecond;
+                window.requestAnimationFrame(doWork);
+            }
+            else {
+                // The LowPowerMode throttling interval = 30_ms. The frame rate ~= 33.3 fps.
+                shouldBeTrue("farmesPerSecond < 35");
+                finishJSTest();
+            }
+        }
+        window.requestAnimationFrame(doWork);
+    </script>
+    <script src="../../resources/js-test-post.js"></script>
 </body>
 </html>
