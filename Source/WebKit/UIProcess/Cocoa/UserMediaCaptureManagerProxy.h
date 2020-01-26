@@ -32,6 +32,7 @@
 #include "UserMediaCaptureManager.h"
 #include <WebCore/OrientationNotifier.h>
 #include <WebCore/RealtimeMediaSource.h>
+#include <WebCore/RealtimeMediaSourceIdentifier.h>
 #include <wtf/UniqueRef.h>
 
 namespace WebKit {
@@ -64,19 +65,19 @@ private:
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
     void didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, std::unique_ptr<IPC::Encoder>&) final;
 
-    void createMediaSourceForCaptureDeviceWithConstraints(uint64_t id, const WebCore::CaptureDevice& deviceID, String&&, const WebCore::MediaConstraints&, CompletionHandler<void(bool succeeded, String invalidConstraints, WebCore::RealtimeMediaSourceSettings&&)>&&);
-    void startProducingData(uint64_t);
-    void stopProducingData(uint64_t);
-    void end(uint64_t);
-    void capabilities(uint64_t, CompletionHandler<void(WebCore::RealtimeMediaSourceCapabilities&&)>&&);
-    void setMuted(uint64_t, bool);
-    void applyConstraints(uint64_t, const WebCore::MediaConstraints&);
-    void clone(uint64_t clonedID, uint64_t cloneID);
-    void requestToEnd(uint64_t);
+    void createMediaSourceForCaptureDeviceWithConstraints(WebCore::RealtimeMediaSourceIdentifier, const WebCore::CaptureDevice& deviceID, String&&, const WebCore::MediaConstraints&, CompletionHandler<void(bool succeeded, String invalidConstraints, WebCore::RealtimeMediaSourceSettings&&)>&&);
+    void startProducingData(WebCore::RealtimeMediaSourceIdentifier);
+    void stopProducingData(WebCore::RealtimeMediaSourceIdentifier);
+    void end(WebCore::RealtimeMediaSourceIdentifier);
+    void capabilities(WebCore::RealtimeMediaSourceIdentifier, CompletionHandler<void(WebCore::RealtimeMediaSourceCapabilities&&)>&&);
+    void setMuted(WebCore::RealtimeMediaSourceIdentifier, bool);
+    void applyConstraints(WebCore::RealtimeMediaSourceIdentifier, const WebCore::MediaConstraints&);
+    void clone(WebCore::RealtimeMediaSourceIdentifier clonedID, WebCore::RealtimeMediaSourceIdentifier cloneID);
+    void requestToEnd(WebCore::RealtimeMediaSourceIdentifier);
 
     class SourceProxy;
     friend class SourceProxy;
-    HashMap<uint64_t, std::unique_ptr<SourceProxy>> m_proxies;
+    HashMap<WebCore::RealtimeMediaSourceIdentifier, std::unique_ptr<SourceProxy>> m_proxies;
     UniqueRef<ConnectionProxy> m_connectionProxy;
     WebCore::OrientationNotifier m_orientationNotifier { 0 };
 };

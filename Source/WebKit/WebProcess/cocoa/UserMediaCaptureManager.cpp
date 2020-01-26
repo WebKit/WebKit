@@ -49,15 +49,9 @@ namespace WebKit {
 using namespace PAL;
 using namespace WebCore;
 
-static uint64_t nextSessionID()
-{
-    static uint64_t nextID = 0;
-    return ++nextID;
-}
-
 class UserMediaCaptureManager::Source : public RealtimeMediaSource {
 public:
-    Source(String&& sourceID, Type type, CaptureDevice::DeviceType deviceType, String&& name, String&& hashSalt, uint64_t id, UserMediaCaptureManager& manager)
+    Source(String&& sourceID, Type type, CaptureDevice::DeviceType deviceType, String&& name, String&& hashSalt, RealtimeMediaSourceIdentifier id, UserMediaCaptureManager& manager)
         : RealtimeMediaSource(type, WTFMove(name), WTFMove(sourceID), WTFMove(hashSalt))
         , m_id(id)
         , m_manager(manager)
@@ -116,7 +110,7 @@ public:
         return m_manager.cloneSource(*this);
     }
 
-    uint64_t sourceID() const
+    RealtimeMediaSourceIdentifier sourceID() const
     {
         return m_id;
     }
@@ -233,7 +227,7 @@ private:
     void requestToEnd(RealtimeMediaSource::Observer&) { stopBeingObserved(); }
     void stopBeingObserved();
 
-    uint64_t m_id;
+    RealtimeMediaSourceIdentifier m_id;
     UserMediaCaptureManager& m_manager;
     mutable Optional<RealtimeMediaSourceCapabilities> m_capabilities;
     RealtimeMediaSourceSettings m_settings;
@@ -292,7 +286,7 @@ WebCore::CaptureSourceOrError UserMediaCaptureManager::createCaptureSource(const
     if (!constraints)
         return { };
 
-    uint64_t id = nextSessionID();
+    auto id = RealtimeMediaSourceIdentifier::generate();
     RealtimeMediaSourceSettings settings;
     String errorMessage;
     bool succeeded;
@@ -309,7 +303,7 @@ WebCore::CaptureSourceOrError UserMediaCaptureManager::createCaptureSource(const
         return WTFMove(errorMessage);
 
     auto type = device.type() == CaptureDevice::DeviceType::Microphone ? WebCore::RealtimeMediaSource::Type::Audio : WebCore::RealtimeMediaSource::Type::Video;
-    auto source = adoptRef(*new Source(String::number(id), type, device.type(), String { settings.label().string() }, WTFMove(hashSalt), id, *this));
+    auto source = adoptRef(*new Source(String::number(id.toUInt64()), type, device.type(), String { settings.label().string() }, WTFMove(hashSalt), id, *this));
     if (shouldCaptureInGPUProcess)
         source->setShouldCaptureInGPUProcess(shouldCaptureInGPUProcess);
     source->setSettings(WTFMove(settings));
@@ -317,7 +311,7 @@ WebCore::CaptureSourceOrError UserMediaCaptureManager::createCaptureSource(const
     return WebCore::CaptureSourceOrError(WTFMove(source));
 }
 
-void UserMediaCaptureManager::sourceStopped(uint64_t id)
+void UserMediaCaptureManager::sourceStopped(RealtimeMediaSourceIdentifier id)
 {
     if (auto source = m_sources.get(id)) {
         source->stop();
@@ -325,7 +319,7 @@ void UserMediaCaptureManager::sourceStopped(uint64_t id)
     }
 }
 
-void UserMediaCaptureManager::captureFailed(uint64_t id)
+void UserMediaCaptureManager::captureFailed(RealtimeMediaSourceIdentifier id)
 {
     if (auto source = m_sources.get(id)) {
         source->captureFailed();
@@ -333,31 +327,31 @@ void UserMediaCaptureManager::captureFailed(uint64_t id)
     }
 }
 
-void UserMediaCaptureManager::sourceMutedChanged(uint64_t id, bool muted)
+void UserMediaCaptureManager::sourceMutedChanged(RealtimeMediaSourceIdentifier id, bool muted)
 {
     if (auto source = m_sources.get(id))
         source->setMuted(muted);
 }
 
-void UserMediaCaptureManager::sourceSettingsChanged(uint64_t id, const RealtimeMediaSourceSettings& settings)
+void UserMediaCaptureManager::sourceSettingsChanged(RealtimeMediaSourceIdentifier id, const RealtimeMediaSourceSettings& settings)
 {
     if (auto source = m_sources.get(id))
         source->setSettings(RealtimeMediaSourceSettings(settings));
 }
 
-void UserMediaCaptureManager::storageChanged(uint64_t id, const SharedMemory::Handle& handle, const WebCore::CAAudioStreamDescription& description, uint64_t numberOfFrames)
+void UserMediaCaptureManager::storageChanged(RealtimeMediaSourceIdentifier id, const SharedMemory::Handle& handle, const WebCore::CAAudioStreamDescription& description, uint64_t numberOfFrames)
 {
     if (auto source = m_sources.get(id))
         source->setStorage(handle, description, numberOfFrames);
 }
 
-void UserMediaCaptureManager::ringBufferFrameBoundsChanged(uint64_t id, uint64_t startFrame, uint64_t endFrame)
+void UserMediaCaptureManager::ringBufferFrameBoundsChanged(RealtimeMediaSourceIdentifier id, uint64_t startFrame, uint64_t endFrame)
 {
     if (auto source = m_sources.get(id))
         source->setRingBufferFrameBounds(startFrame, endFrame);
 }
 
-void UserMediaCaptureManager::audioSamplesAvailable(uint64_t id, MediaTime time, uint64_t numberOfFrames, uint64_t startFrame, uint64_t endFrame)
+void UserMediaCaptureManager::audioSamplesAvailable(RealtimeMediaSourceIdentifier id, MediaTime time, uint64_t numberOfFrames, uint64_t startFrame, uint64_t endFrame)
 {
     if (auto source = m_sources.get(id)) {
         source->setRingBufferFrameBounds(startFrame, endFrame);
@@ -366,13 +360,13 @@ void UserMediaCaptureManager::audioSamplesAvailable(uint64_t id, MediaTime time,
 }
 
 #if HAVE(IOSURFACE)
-void UserMediaCaptureManager::remoteVideoSampleAvailable(uint64_t id, RemoteVideoSample&& sample)
+void UserMediaCaptureManager::remoteVideoSampleAvailable(RealtimeMediaSourceIdentifier id, RemoteVideoSample&& sample)
 {
     if (auto source = m_sources.get(id))
         source->remoteVideoSampleAvailable(WTFMove(sample));
 }
 #else
-NO_RETURN_DUE_TO_ASSERT void UserMediaCaptureManager::remoteVideoSampleAvailable(uint64_t, RemoteVideoSample&&)
+NO_RETURN_DUE_TO_ASSERT void UserMediaCaptureManager::remoteVideoSampleAvailable(RealtimeMediaSourceIdentifier, RemoteVideoSample&&)
 {
     ASSERT_NOT_REACHED();
 }
@@ -414,7 +408,7 @@ void UserMediaCaptureManager::Source::applyConstraints(const WebCore::MediaConst
     connection()->send(Messages::UserMediaCaptureManagerProxy::ApplyConstraints(m_id, constraints), 0);
 }
 
-void UserMediaCaptureManager::sourceEnded(uint64_t id)
+void UserMediaCaptureManager::sourceEnded(RealtimeMediaSourceIdentifier id)
 {
     m_sources.remove(id);
 }
@@ -425,13 +419,13 @@ void UserMediaCaptureManager::Source::hasEnded()
     m_manager.sourceEnded(m_id);
 }
 
-void UserMediaCaptureManager::applyConstraintsSucceeded(uint64_t id, const WebCore::RealtimeMediaSourceSettings& settings)
+void UserMediaCaptureManager::applyConstraintsSucceeded(RealtimeMediaSourceIdentifier id, const WebCore::RealtimeMediaSourceSettings& settings)
 {
     if (auto source = m_sources.get(id))
         source->applyConstraintsSucceeded(settings);
 }
 
-void UserMediaCaptureManager::applyConstraintsFailed(uint64_t id, String&& failedConstraint, String&& message)
+void UserMediaCaptureManager::applyConstraintsFailed(RealtimeMediaSourceIdentifier id, String&& failedConstraint, String&& message)
 {
     if (auto source = m_sources.get(id))
         source->applyConstraintsFailed(WTFMove(failedConstraint), WTFMove(message));
@@ -452,12 +446,12 @@ Ref<RealtimeMediaSource> UserMediaCaptureManager::cloneSource(Source& source)
 
 Ref<RealtimeMediaSource> UserMediaCaptureManager::cloneVideoSource(Source& source)
 {
-    uint64_t id = nextSessionID();
+    auto id = RealtimeMediaSourceIdentifier::generate();
     if (!m_process.send(Messages::UserMediaCaptureManagerProxy::Clone { source.sourceID(), id }, 0))
         return makeRef(source);
 
     auto settings = source.settings();
-    auto cloneSource = adoptRef(*new Source(String::number(id), source.type(), source.deviceType(), String { settings.label().string() }, source.deviceIDHashSalt(), id, *this));
+    auto cloneSource = adoptRef(*new Source(String::number(id.toUInt64()), source.type(), source.deviceType(), String { settings.label().string() }, source.deviceIDHashSalt(), id, *this));
     cloneSource->setSettings(WTFMove(settings));
     m_sources.add(id, cloneSource.copyRef());
     return cloneSource;

@@ -1,3 +1,48 @@
+2020-01-26  youenn fablet  <youenn@apple.com>
+
+        Use ObjectIdentifier for remote RealtimeMediaSource
+        https://bugs.webkit.org/show_bug.cgi?id=206808
+        <rdar://problem/58705405>
+
+        Reviewed by Eric Carlson.
+
+        Use ObjectIdentifier instead of uint64_t.
+        This is clearer and prevents receiving identifier of value zero from IPC.
+        Remove related message checks.
+
+        * Scripts/webkit/messages.py:
+        * UIProcess/Cocoa/UserMediaCaptureManagerProxy.cpp:
+        (WebKit::UserMediaCaptureManagerProxy::SourceProxy::SourceProxy):
+        (WebKit::UserMediaCaptureManagerProxy::createMediaSourceForCaptureDeviceWithConstraints):
+        (WebKit::UserMediaCaptureManagerProxy::startProducingData):
+        (WebKit::UserMediaCaptureManagerProxy::stopProducingData):
+        (WebKit::UserMediaCaptureManagerProxy::end):
+        (WebKit::UserMediaCaptureManagerProxy::capabilities):
+        (WebKit::UserMediaCaptureManagerProxy::setMuted):
+        (WebKit::UserMediaCaptureManagerProxy::applyConstraints):
+        (WebKit::UserMediaCaptureManagerProxy::clone):
+        (WebKit::UserMediaCaptureManagerProxy::requestToEnd):
+        * UIProcess/Cocoa/UserMediaCaptureManagerProxy.h:
+        * UIProcess/Cocoa/UserMediaCaptureManagerProxy.messages.in:
+        * WebProcess/cocoa/UserMediaCaptureManager.cpp:
+        (WebKit::UserMediaCaptureManager::Source::Source):
+        (WebKit::UserMediaCaptureManager::Source::sourceID const):
+        (WebKit::UserMediaCaptureManager::createCaptureSource):
+        (WebKit::UserMediaCaptureManager::sourceStopped):
+        (WebKit::UserMediaCaptureManager::captureFailed):
+        (WebKit::UserMediaCaptureManager::sourceMutedChanged):
+        (WebKit::UserMediaCaptureManager::sourceSettingsChanged):
+        (WebKit::UserMediaCaptureManager::storageChanged):
+        (WebKit::UserMediaCaptureManager::ringBufferFrameBoundsChanged):
+        (WebKit::UserMediaCaptureManager::audioSamplesAvailable):
+        (WebKit::UserMediaCaptureManager::remoteVideoSampleAvailable):
+        (WebKit::UserMediaCaptureManager::sourceEnded):
+        (WebKit::UserMediaCaptureManager::applyConstraintsSucceeded):
+        (WebKit::UserMediaCaptureManager::applyConstraintsFailed):
+        (WebKit::UserMediaCaptureManager::cloneVideoSource):
+        * WebProcess/cocoa/UserMediaCaptureManager.h:
+        * WebProcess/cocoa/UserMediaCaptureManager.messages.in:
+
 2020-01-26  Darin Adler  <darin@apple.com>
 
         Protect against crashes during WKWebView init function when methods are called before the view is fully initialized

@@ -33,6 +33,7 @@
 #include <WebCore/CaptureDeviceManager.h>
 #include <WebCore/RealtimeMediaSource.h>
 #include <WebCore/RealtimeMediaSourceFactory.h>
+#include <WebCore/RealtimeMediaSourceIdentifier.h>
 #include <wtf/HashMap.h>
 
 namespace WebCore {
@@ -118,31 +119,25 @@ private:
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
 
     // Messages::UserMediaCaptureManager
-    void captureFailed(uint64_t id);
-    void sourceStopped(uint64_t id);
-    void sourceEnded(uint64_t id);
-    void sourceMutedChanged(uint64_t id, bool muted);
-    void sourceSettingsChanged(uint64_t id, const WebCore::RealtimeMediaSourceSettings&);
-    void storageChanged(uint64_t id, const SharedMemory::Handle&, const WebCore::CAAudioStreamDescription&, uint64_t numberOfFrames);
-    void ringBufferFrameBoundsChanged(uint64_t id, uint64_t startFrame, uint64_t endFrame);
-    void audioSamplesAvailable(uint64_t id, MediaTime, uint64_t numberOfFrames, uint64_t startFrame, uint64_t endFrame);
-    void remoteVideoSampleAvailable(uint64_t id, WebCore::RemoteVideoSample&&);
-
-    void startProducingData(uint64_t);
-    void stopProducingData(uint64_t);
-    WebCore::RealtimeMediaSourceCapabilities capabilities(uint64_t);
-    void applyConstraints(uint64_t, const WebCore::MediaConstraints&);
-    void applyConstraintsSucceeded(uint64_t, const WebCore::RealtimeMediaSourceSettings&);
-    void applyConstraintsFailed(uint64_t, String&&, String&&);
+    void captureFailed(WebCore::RealtimeMediaSourceIdentifier);
+    void sourceStopped(WebCore::RealtimeMediaSourceIdentifier);
+    void sourceEnded(WebCore::RealtimeMediaSourceIdentifier);
+    void sourceMutedChanged(WebCore::RealtimeMediaSourceIdentifier, bool muted);
+    void sourceSettingsChanged(WebCore::RealtimeMediaSourceIdentifier, const WebCore::RealtimeMediaSourceSettings&);
+    void storageChanged(WebCore::RealtimeMediaSourceIdentifier, const SharedMemory::Handle&, const WebCore::CAAudioStreamDescription&, uint64_t numberOfFrames);
+    void ringBufferFrameBoundsChanged(WebCore::RealtimeMediaSourceIdentifier, uint64_t startFrame, uint64_t endFrame);
+    void audioSamplesAvailable(WebCore::RealtimeMediaSourceIdentifier, MediaTime, uint64_t numberOfFrames, uint64_t startFrame, uint64_t endFrame);
+    void remoteVideoSampleAvailable(WebCore::RealtimeMediaSourceIdentifier, WebCore::RemoteVideoSample&&);
+    void applyConstraintsSucceeded(WebCore::RealtimeMediaSourceIdentifier, const WebCore::RealtimeMediaSourceSettings&);
+    void applyConstraintsFailed(WebCore::RealtimeMediaSourceIdentifier, String&&, String&&);
 
     class Source;
     friend class Source;
 
-    void requestToEnd(uint64_t sourceID);
     Ref<WebCore::RealtimeMediaSource> cloneSource(Source&);
     Ref<WebCore::RealtimeMediaSource> cloneVideoSource(Source&);
 
-    HashMap<uint64_t, RefPtr<Source>> m_sources;
+    HashMap<WebCore::RealtimeMediaSourceIdentifier, Ref<Source>> m_sources;
     WebProcess& m_process;
     NoOpCaptureDeviceManager m_noOpCaptureDeviceManager;
     AudioFactory m_audioFactory;

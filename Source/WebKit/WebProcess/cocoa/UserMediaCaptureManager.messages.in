@@ -24,15 +24,15 @@
 #if ENABLE(MEDIA_STREAM)
 
 messages -> UserMediaCaptureManager NotRefCounted {
-    CaptureFailed(uint64_t id)
-    SourceStopped(uint64_t id)
-    SourceMutedChanged(uint64_t id, bool muted)
-    SourceSettingsChanged(uint64_t id, WebCore::RealtimeMediaSourceSettings settings)
-    StorageChanged(uint64_t id, WebKit::SharedMemory::Handle storageHandle, WebCore::CAAudioStreamDescription description, uint64_t numberOfFrames)
-    AudioSamplesAvailable(uint64_t id, MediaTime time, uint64_t numberOfFrames, uint64_t startFrame, uint64_t endFrame)
-    ApplyConstraintsSucceeded(uint64_t id, WebCore::RealtimeMediaSourceSettings settings)
-    ApplyConstraintsFailed(uint64_t id, String failedConstraint, String message)
-    RemoteVideoSampleAvailable(uint64_t id, WebCore::RemoteVideoSample sample)
+    CaptureFailed(WebCore::RealtimeMediaSourceIdentifier id)
+    SourceStopped(WebCore::RealtimeMediaSourceIdentifier id)
+    SourceMutedChanged(WebCore::RealtimeMediaSourceIdentifier id, bool muted)
+    SourceSettingsChanged(WebCore::RealtimeMediaSourceIdentifier id, WebCore::RealtimeMediaSourceSettings settings)
+    StorageChanged(WebCore::RealtimeMediaSourceIdentifier id, WebKit::SharedMemory::Handle storageHandle, WebCore::CAAudioStreamDescription description, uint64_t numberOfFrames)
+    AudioSamplesAvailable(WebCore::RealtimeMediaSourceIdentifier id, MediaTime time, uint64_t numberOfFrames, uint64_t startFrame, uint64_t endFrame)
+    ApplyConstraintsSucceeded(WebCore::RealtimeMediaSourceIdentifier id, WebCore::RealtimeMediaSourceSettings settings)
+    ApplyConstraintsFailed(WebCore::RealtimeMediaSourceIdentifier id, String failedConstraint, String message)
+    RemoteVideoSampleAvailable(WebCore::RealtimeMediaSourceIdentifier id, WebCore::RemoteVideoSample sample)
 }
 
 #endif
