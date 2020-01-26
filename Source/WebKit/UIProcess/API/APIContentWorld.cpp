@@ -33,11 +33,18 @@
 
 namespace API {
 
-uint64_t ContentWorldBase::generateIdentifier()
+ContentWorldBase::ContentWorldBase(const WTF::String& name)
+    : m_name(name)
 {
-    static uint64_t identifier = WebKit::pageContentWorldIdentifier;
+    static std::once_flag once;
+    std::call_once(once, [] {
+        // To make sure we don't use our shared pageContentWorld identifier for this
+        // content world we're about to make, burn through one identifier.
+        auto identifier = WebKit::ContentWorldIdentifier::generate();
+        ASSERT_UNUSED(identifier, identifier.toUInt64() >= WebKit::pageContentWorldIdentifier().toUInt64());
+    });
 
-    return ++identifier;
+    m_identifier = WebKit::ContentWorldIdentifier::generate();
 }
 
 static HashMap<WTF::String, ContentWorld*>& sharedWorldMap()
@@ -59,13 +66,13 @@ Ref<ContentWorld> ContentWorld::sharedWorldWithName(const WTF::String& name)
 
 ContentWorld& ContentWorld::pageContentWorld()
 {
-    static NeverDestroyed<RefPtr<ContentWorld>> world(adoptRef(new ContentWorld(WebKit::pageContentWorldIdentifier)));
+    static NeverDestroyed<RefPtr<ContentWorld>> world(adoptRef(new ContentWorld(WebKit::pageContentWorldIdentifier())));
     return *world.get();
 }
 
 ContentWorld& ContentWorld::defaultClientWorld()
 {
-    static NeverDestroyed<RefPtr<ContentWorld>> world(adoptRef(new ContentWorld(generateIdentifier())));
+    static NeverDestroyed<RefPtr<ContentWorld>> world(adoptRef(new ContentWorld(WTF::String { })));
     return *world.get();
 }
 
@@ -74,7 +81,7 @@ ContentWorld::ContentWorld(const WTF::String& name)
 {
 }
 
-ContentWorld::ContentWorld(uint64_t identifier)
+ContentWorld::ContentWorld(WebKit::ContentWorldIdentifier identifier)
     : ContentWorldBase(identifier)
 {
 }

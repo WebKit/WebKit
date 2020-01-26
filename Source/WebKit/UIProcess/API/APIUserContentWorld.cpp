@@ -47,7 +47,7 @@ UserContentWorld::UserContentWorld(const WTF::String& name)
 }
 
 UserContentWorld::UserContentWorld(ForNormalWorldOnly)
-    : ContentWorldBase(WebKit::pageContentWorldIdentifier)
+    : ContentWorldBase(WebKit::pageContentWorldIdentifier())
 {
 }
 

@@ -26,6 +26,7 @@
 #pragma once
 
 #include "APIObject.h"
+#include "ContentWorldShared.h"
 #include <wtf/text/WTFString.h>
 
 namespace API {
@@ -34,30 +35,22 @@ class ContentWorldBase {
 public:
     virtual ~ContentWorldBase() = default;
 
-    uint64_t identifier() const { return m_identifier; }
+    WebKit::ContentWorldIdentifier identifier() const { return m_identifier; }
     const WTF::String& name() const { return m_name; }
-    std::pair<uint64_t, WTF::String> worldData() const { return { identifier(), name() }; }
+    std::pair<WebKit::ContentWorldIdentifier, WTF::String> worldData() const { return { m_identifier, m_name }; }
 
     virtual void ref() const = 0;
     virtual void deref() const = 0;
 
-    static uint64_t generateIdentifier();
-
 protected:
-    ContentWorldBase(const WTF::String& name)
-        : m_identifier(generateIdentifier())
-        , m_name(name)
-    {
-    }
-
-    ContentWorldBase(uint64_t identifier)
+    ContentWorldBase(const WTF::String& name);
+    ContentWorldBase(WebKit::ContentWorldIdentifier identifier)
         : m_identifier(identifier)
     {
     }
 
 private:
-    // FIXME: This should be an ObjectIdentifier once we can get all ScriptWorld related classes to use ObjectIdentifier.
-    uint64_t m_identifier;
+    WebKit::ContentWorldIdentifier m_identifier;
     WTF::String m_name;
 };
 
@@ -74,7 +67,7 @@ public:
 
 private:
     explicit ContentWorld(const WTF::String&);
-    explicit ContentWorld(uint64_t identifier);
+    explicit ContentWorld(WebKit::ContentWorldIdentifier);
 };
 
 } // namespace API

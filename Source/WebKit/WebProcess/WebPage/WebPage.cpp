@@ -3380,7 +3380,7 @@ KeyboardUIMode WebPage::keyboardUIMode()
     return static_cast<KeyboardUIMode>((fullKeyboardAccessEnabled ? KeyboardAccessFull : KeyboardAccessDefault) | (m_tabToLinks ? KeyboardAccessTabsToLinks : 0));
 }
 
-void WebPage::runJavaScript(WebFrame* frame, RunJavaScriptParameters&& parameters, uint64_t worldIdentifier, CallbackID callbackID)
+void WebPage::runJavaScript(WebFrame* frame, RunJavaScriptParameters&& parameters, ContentWorldIdentifier worldIdentifier, CallbackID callbackID)
 {
     // NOTE: We need to be careful when running scripts that the objects we depend on don't
     // disappear during script execution.
@@ -3390,7 +3390,6 @@ void WebPage::runJavaScript(WebFrame* frame, RunJavaScriptParameters&& parameter
         return;
     }
 
-    ASSERT(worldIdentifier);
     auto* world = m_userContentController->worldForIdentifier(worldIdentifier);
     if (!world) {
         send(Messages::WebPageProxy::ScriptValueCallback({ }, ExceptionDetails { "Unable to execute JavaScript: Cannot find specified content world"_s }, callbackID));
@@ -3419,7 +3418,7 @@ void WebPage::runJavaScript(WebFrame* frame, RunJavaScriptParameters&& parameter
     frame->coreFrame()->script().executeAsynchronousUserAgentScriptInWorld(world->coreWorld(), WTFMove(parameters), WTFMove(resolveFunction));
 }
 
-void WebPage::runJavaScriptInMainFrameScriptWorld(RunJavaScriptParameters&& parameters, const std::pair<uint64_t, String>& worldData, CallbackID callbackID)
+void WebPage::runJavaScriptInMainFrameScriptWorld(RunJavaScriptParameters&& parameters, const std::pair<ContentWorldIdentifier, String>& worldData, CallbackID callbackID)
 {
     m_userContentController->addUserContentWorld(worldData);
     runJavaScript(mainWebFrame(), WTFMove(parameters), worldData.first, callbackID);
@@ -3429,7 +3428,7 @@ void WebPage::runJavaScriptInFrame(FrameIdentifier frameID, const String& script
 {
     WebFrame* frame = WebProcess::singleton().webFrame(frameID);
     ASSERT(mainWebFrame() != frame);
-    runJavaScript(frame, { script, false, WTF::nullopt, forceUserGesture }, WebUserContentController::identifierForNormalWorld(), callbackID);
+    runJavaScript(frame, { script, false, WTF::nullopt, forceUserGesture }, pageContentWorldIdentifier(), callbackID);
 }
 
 void WebPage::getContentsAsString(CallbackID callbackID)

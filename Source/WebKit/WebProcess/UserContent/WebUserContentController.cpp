@@ -59,11 +59,11 @@ static HashMap<UserContentControllerIdentifier, WebUserContentController*>& user
     return userContentControllers;
 }
 
-typedef HashMap<uint64_t, std::pair<RefPtr<InjectedBundleScriptWorld>, unsigned>> WorldMap;
+typedef HashMap<ContentWorldIdentifier, std::pair<RefPtr<InjectedBundleScriptWorld>, unsigned>> WorldMap;
 
 static WorldMap& worldMap()
 {
-    static NeverDestroyed<WorldMap> map(std::initializer_list<WorldMap::KeyValuePairType> { { WebUserContentController::identifierForNormalWorld(), std::make_pair(&InjectedBundleScriptWorld::normalWorld(), 1) } });
+    static NeverDestroyed<WorldMap> map(std::initializer_list<WorldMap::KeyValuePairType> { { pageContentWorldIdentifier(), std::make_pair(&InjectedBundleScriptWorld::normalWorld(), 1) } });
 
     return map;
 }
@@ -95,16 +95,16 @@ WebUserContentController::~WebUserContentController()
     userContentControllers().remove(m_identifier);
 }
 
-InjectedBundleScriptWorld* WebUserContentController::worldForIdentifier(uint64_t identifier)
+InjectedBundleScriptWorld* WebUserContentController::worldForIdentifier(ContentWorldIdentifier identifier)
 {
     auto iterator = worldMap().find(identifier);
     return iterator == worldMap().end() ? nullptr : iterator->value.first.get();
 }
 
-void WebUserContentController::addUserContentWorld(const std::pair<uint64_t, String>& world)
+void WebUserContentController::addUserContentWorld(const std::pair<ContentWorldIdentifier, String>& world)
 {
     ASSERT(world.first);
-    if (world.first == pageContentWorldIdentifier)
+    if (world.first == pageContentWorldIdentifier())
         return;
 
     worldMap().ensure(world.first, [&] {
@@ -113,27 +113,27 @@ void WebUserContentController::addUserContentWorld(const std::pair<uint64_t, Str
         // use the existing world created by the web extension if any. The world name is used
         // as the identifier.
         if (auto* existingWorld = InjectedBundleScriptWorld::find(world.second))
-            return std::make_pair(Ref<InjectedBundleScriptWorld>(*existingWorld), pageContentWorldIdentifier);
+            return std::make_pair(Ref<InjectedBundleScriptWorld>(*existingWorld), 1);
 #endif
-        return std::make_pair(InjectedBundleScriptWorld::create(world.second), pageContentWorldIdentifier);
+        return std::make_pair(InjectedBundleScriptWorld::create(world.second), 1);
     });
 }
 
-void WebUserContentController::addUserContentWorlds(const Vector<std::pair<uint64_t, String>>& worlds)
+void WebUserContentController::addUserContentWorlds(const Vector<std::pair<ContentWorldIdentifier, String>>& worlds)
 {
     for (auto& world : worlds)
         addUserContentWorld(world);
 }
 
-void WebUserContentController::removeUserContentWorlds(const Vector<uint64_t>& worldIdentifiers)
+void WebUserContentController::removeUserContentWorlds(const Vector<ContentWorldIdentifier>& worldIdentifiers)
 {
     for (auto& worldIdentifier : worldIdentifiers) {
         ASSERT(worldIdentifier);
-        ASSERT(worldIdentifier != 1);
+        ASSERT(worldIdentifier != pageContentWorldIdentifier());
 
         auto it = worldMap().find(worldIdentifier);
         if (it == worldMap().end()) {
-            WTFLogAlways("Trying to remove a UserContentWorld (id=%" PRIu64 ") that does not exist.", worldIdentifier);
+            WTFLogAlways("Trying to remove a UserContentWorld (id=%" PRIu64 ") that does not exist.", worldIdentifier.toUInt64());
             return;
         }
 
@@ -149,7 +149,7 @@ void WebUserContentController::addUserScripts(Vector<WebUserScriptData>&& userSc
     for (const auto& userScriptData : userScripts) {
         auto it = worldMap().find(userScriptData.worldIdentifier);
         if (it == worldMap().end()) {
-            WTFLogAlways("Trying to add a UserScript to a UserContentWorld (id=%" PRIu64 ") that does not exist.", userScriptData.worldIdentifier);
+            WTFLogAlways("Trying to add a UserScript to a UserContentWorld (id=%" PRIu64 ") that does not exist.", userScriptData.worldIdentifier.toUInt64());
             continue;
         }
 
@@ -158,23 +158,23 @@ void WebUserContentController::addUserScripts(Vector<WebUserScriptData>&& userSc
     }
 }
 
-void WebUserContentController::removeUserScript(uint64_t worldIdentifier, uint64_t userScriptIdentifier)
+void WebUserContentController::removeUserScript(ContentWorldIdentifier worldIdentifier, uint64_t userScriptIdentifier)
 {
     auto it = worldMap().find(worldIdentifier);
     if (it == worldMap().end()) {
-        WTFLogAlways("Trying to remove a UserScript from a UserContentWorld (id=%" PRIu64 ") that does not exist.", worldIdentifier);
+        WTFLogAlways("Trying to remove a UserScript from a UserContentWorld (id=%" PRIu64 ") that does not exist.", worldIdentifier.toUInt64());
         return;
     }
 
     removeUserScriptInternal(*it->value.first, userScriptIdentifier);
 }
 
-void WebUserContentController::removeAllUserScripts(const Vector<uint64_t>& worldIdentifiers)
+void WebUserContentController::removeAllUserScripts(const Vector<ContentWorldIdentifier>& worldIdentifiers)
 {
     for (auto& worldIdentifier : worldIdentifiers) {
         auto it = worldMap().find(worldIdentifier);
         if (it == worldMap().end()) {
-            WTFLogAlways("Trying to remove all UserScripts from a UserContentWorld (id=%" PRIu64 ") that does not exist.", worldIdentifier);
+            WTFLogAlways("Trying to remove all UserScripts from a UserContentWorld (id=%" PRIu64 ") that does not exist.", worldIdentifier.toUInt64());
             return;
         }
 
@@ -187,7 +187,7 @@ void WebUserContentController::addUserStyleSheets(const Vector<WebUserStyleSheet
     for (const auto& userStyleSheetData : userStyleSheets) {
         auto it = worldMap().find(userStyleSheetData.worldIdentifier);
         if (it == worldMap().end()) {
-            WTFLogAlways("Trying to add a UserStyleSheet to a UserContentWorld (id=%" PRIu64 ") that does not exist.", userStyleSheetData.worldIdentifier);
+            WTFLogAlways("Trying to add a UserStyleSheet to a UserContentWorld (id=%" PRIu64 ") that does not exist.", userStyleSheetData.worldIdentifier.toUInt64());
             continue;
         }
         
@@ -198,24 +198,24 @@ void WebUserContentController::addUserStyleSheets(const Vector<WebUserStyleSheet
     invalidateInjectedStyleSheetCacheInAllFramesInAllPages();
 }
 
-void WebUserContentController::removeUserStyleSheet(uint64_t worldIdentifier, uint64_t userStyleSheetIdentifier)
+void WebUserContentController::removeUserStyleSheet(ContentWorldIdentifier worldIdentifier, uint64_t userStyleSheetIdentifier)
 {
     auto it = worldMap().find(worldIdentifier);
     if (it == worldMap().end()) {
-        WTFLogAlways("Trying to remove a UserStyleSheet from a UserContentWorld (id=%" PRIu64 ") that does not exist.", worldIdentifier);
+        WTFLogAlways("Trying to remove a UserStyleSheet from a UserContentWorld (id=%" PRIu64 ") that does not exist.", worldIdentifier.toUInt64());
         return;
     }
 
     removeUserStyleSheetInternal(*it->value.first, userStyleSheetIdentifier);
 }
 
-void WebUserContentController::removeAllUserStyleSheets(const Vector<uint64_t>& worldIdentifiers)
+void WebUserContentController::removeAllUserStyleSheets(const Vector<ContentWorldIdentifier>& worldIdentifiers)
 {
     bool sheetsChanged = false;
     for (auto& worldIdentifier : worldIdentifiers) {
         auto it = worldMap().find(worldIdentifier);
         if (it == worldMap().end()) {
-            WTFLogAlways("Trying to remove all UserStyleSheets from a UserContentWorld (id=%" PRIu64 ") that does not exist.", worldIdentifier);
+            WTFLogAlways("Trying to remove all UserStyleSheets from a UserContentWorld (id=%" PRIu64 ") that does not exist.", worldIdentifier.toUInt64());
             return;
         }
 
@@ -278,7 +278,7 @@ void WebUserContentController::addUserScriptMessageHandlers(const Vector<WebScri
     for (auto& handler : scriptMessageHandlers) {
         auto it = worldMap().find(handler.worldIdentifier);
         if (it == worldMap().end()) {
-            WTFLogAlways("Trying to add a UserScriptMessageHandler to a UserContentWorld (id=%" PRIu64 ") that does not exist.", handler.worldIdentifier);
+            WTFLogAlways("Trying to add a UserScriptMessageHandler to a UserContentWorld (id=%" PRIu64 ") that does not exist.", handler.worldIdentifier.toUInt64());
             continue;
         }
 
@@ -289,12 +289,12 @@ void WebUserContentController::addUserScriptMessageHandlers(const Vector<WebScri
 #endif
 }
 
-void WebUserContentController::removeUserScriptMessageHandler(uint64_t worldIdentifier, uint64_t userScriptMessageHandlerIdentifier)
+void WebUserContentController::removeUserScriptMessageHandler(ContentWorldIdentifier worldIdentifier, uint64_t userScriptMessageHandlerIdentifier)
 {
 #if ENABLE(USER_MESSAGE_HANDLERS)
     auto it = worldMap().find(worldIdentifier);
     if (it == worldMap().end()) {
-        WTFLogAlways("Trying to remove a UserScriptMessageHandler from a UserContentWorld (id=%" PRIu64 ") that does not exist.", worldIdentifier);
+        WTFLogAlways("Trying to remove a UserScriptMessageHandler from a UserContentWorld (id=%" PRIu64 ") that does not exist.", worldIdentifier.toUInt64());
         return;
     }
 
@@ -305,14 +305,14 @@ void WebUserContentController::removeUserScriptMessageHandler(uint64_t worldIden
 #endif
 }
 
-void WebUserContentController::removeAllUserScriptMessageHandlers(const Vector<uint64_t>& worldIdentifiers)
+void WebUserContentController::removeAllUserScriptMessageHandlers(const Vector<ContentWorldIdentifier>& worldIdentifiers)
 {
 #if ENABLE(USER_MESSAGE_HANDLERS)
     bool userMessageHandlersChanged = false;
     for (auto& worldIdentifier : worldIdentifiers) {
         auto it = worldMap().find(worldIdentifier);
         if (it == worldMap().end()) {
-            WTFLogAlways("Trying to remove all UserScriptMessageHandler from a UserContentWorld (id=%" PRIu64 ") that does not exist.", worldIdentifier);
+            WTFLogAlways("Trying to remove all UserScriptMessageHandler from a UserContentWorld (id=%" PRIu64 ") that does not exist.", worldIdentifier.toUInt64());
             return;
         }
 

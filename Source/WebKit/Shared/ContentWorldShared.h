@@ -25,8 +25,17 @@
 
 #pragma once
 
+#include <wtf/ObjectIdentifier.h>
+
 namespace WebKit {
 
-static const uint64_t pageContentWorldIdentifier = 1;
+enum ContentWorldIdentifierType { };
+using ContentWorldIdentifier = ObjectIdentifier<ContentWorldIdentifierType>;
+
+inline ContentWorldIdentifier pageContentWorldIdentifier()
+{
+    static NeverDestroyed<ContentWorldIdentifier> identifier(makeObjectIdentifier<ContentWorldIdentifierType>(1));
+    return identifier;
+}
 
 } // namespace WebKit

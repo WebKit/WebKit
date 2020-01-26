@@ -44,7 +44,7 @@ Optional<WebUserScriptData> WebUserScriptData::decode(IPC::Decoder& decoder)
     if (!identifier)
         return WTF::nullopt;
     
-    Optional<uint64_t> worldIdentifier;
+    Optional<ContentWorldIdentifier> worldIdentifier;
     decoder >> worldIdentifier;
     if (!worldIdentifier)
         return WTF::nullopt;
@@ -70,7 +70,7 @@ Optional<WebUserStyleSheetData> WebUserStyleSheetData::decode(IPC::Decoder& deco
     if (!identifier)
         return WTF::nullopt;
     
-    Optional<uint64_t> worldIdentifier;
+    Optional<ContentWorldIdentifier> worldIdentifier;
     decoder >> worldIdentifier;
     if (!worldIdentifier)
         return WTF::nullopt;
@@ -97,7 +97,7 @@ Optional<WebScriptMessageHandlerData> WebScriptMessageHandlerData::decode(IPC::D
     if (!identifier)
         return WTF::nullopt;
     
-    Optional<uint64_t> worldIdentifier;
+    Optional<ContentWorldIdentifier> worldIdentifier;
     decoder >> worldIdentifier;
     if (!worldIdentifier)
         return WTF::nullopt;

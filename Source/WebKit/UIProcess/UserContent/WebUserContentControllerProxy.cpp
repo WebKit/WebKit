@@ -184,7 +184,7 @@ void WebUserContentControllerProxy::removeUserContentWorldUses(API::UserContentW
 
 void WebUserContentControllerProxy::removeUserContentWorldUses(HashCountedSet<RefPtr<API::UserContentWorld>>& worlds)
 {
-    Vector<uint64_t> worldsToRemove;
+    Vector<ContentWorldIdentifier> worldsToRemove;
     for (auto& worldUsePair : worlds) {
         if (shouldSendRemoveUserContentWorldsMessage(*worldUsePair.key.get(), worldUsePair.value))
             worldsToRemove.append(worldUsePair.key->identifier());
@@ -236,7 +236,7 @@ void WebUserContentControllerProxy::removeAllUserScripts()
     for (auto userScript : m_userScripts->elementsOfType<API::UserScript>())
         worlds.add(const_cast<API::UserContentWorld*>(&userScript->userContentWorld()));
 
-    Vector<uint64_t> worldIdentifiers;
+    Vector<ContentWorldIdentifier> worldIdentifiers;
     worldIdentifiers.reserveInitialCapacity(worlds.size());
     for (const auto& worldCountPair : worlds)
         worldIdentifiers.uncheckedAppend(worldCountPair.key->identifier());
@@ -291,7 +291,7 @@ void WebUserContentControllerProxy::removeAllUserStyleSheets()
     for (auto userStyleSheet : m_userStyleSheets->elementsOfType<API::UserStyleSheet>())
         worlds.add(const_cast<API::UserContentWorld*>(&userStyleSheet->userContentWorld()));
 
-    Vector<uint64_t> worldIdentifiers;
+    Vector<ContentWorldIdentifier> worldIdentifiers;
     worldIdentifiers.reserveInitialCapacity(worlds.size());
     for (const auto& worldCountPair : worlds)
         worldIdentifiers.uncheckedAppend(worldCountPair.key->identifier());

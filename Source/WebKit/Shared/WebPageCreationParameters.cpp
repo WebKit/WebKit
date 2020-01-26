@@ -370,7 +370,7 @@ Optional<WebPageCreationParameters> WebPageCreationParameters::decode(IPC::Decod
     if (!decoder.decode(parameters.enumeratingAllNetworkInterfacesEnabled))
         return WTF::nullopt;
 
-    Optional<Vector<std::pair<uint64_t, String>>> userContentWorlds;
+    Optional<Vector<std::pair<ContentWorldIdentifier, String>>> userContentWorlds;
     decoder >> userContentWorlds;
     if (!userContentWorlds)
         return WTF::nullopt;

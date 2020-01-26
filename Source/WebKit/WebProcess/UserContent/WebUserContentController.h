@@ -64,11 +64,10 @@ public:
     void removeUserStyleSheets(InjectedBundleScriptWorld&);
     void removeAllUserContent();
 
-    static uint64_t identifierForNormalWorld() { return 1; }
-    InjectedBundleScriptWorld* worldForIdentifier(uint64_t);
+    InjectedBundleScriptWorld* worldForIdentifier(ContentWorldIdentifier);
 
-    void addUserContentWorlds(const Vector<std::pair<uint64_t, String>>&);
-    void addUserContentWorld(const std::pair<uint64_t, String>&);
+    void addUserContentWorlds(const Vector<std::pair<ContentWorldIdentifier, String>>&);
+    void addUserContentWorld(const std::pair<ContentWorldIdentifier, String>&);
     void addUserScripts(Vector<WebUserScriptData>&&, InjectUserScriptImmediately);
     void addUserStyleSheets(const Vector<WebUserStyleSheetData>&);
     void addUserScriptMessageHandlers(const Vector<WebScriptMessageHandlerData>&);
@@ -92,16 +91,16 @@ private:
     // IPC::MessageReceiver.
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
 
-    void removeUserContentWorlds(const Vector<uint64_t>&);
+    void removeUserContentWorlds(const Vector<ContentWorldIdentifier>&);
 
-    void removeUserScript(uint64_t worldIdentifier, uint64_t userScriptIdentifier);
-    void removeAllUserScripts(const Vector<uint64_t>&);
+    void removeUserScript(ContentWorldIdentifier, uint64_t userScriptIdentifier);
+    void removeAllUserScripts(const Vector<ContentWorldIdentifier>&);
 
-    void removeUserStyleSheet(uint64_t worldIdentifier, uint64_t userScriptIdentifier);
-    void removeAllUserStyleSheets(const Vector<uint64_t>&);
+    void removeUserStyleSheet(ContentWorldIdentifier, uint64_t userScriptIdentifier);
+    void removeAllUserStyleSheets(const Vector<ContentWorldIdentifier>&);
 
-    void removeUserScriptMessageHandler(uint64_t worldIdentifier, uint64_t userScriptIdentifier);
-    void removeAllUserScriptMessageHandlers(const Vector<uint64_t>&);
+    void removeUserScriptMessageHandler(ContentWorldIdentifier, uint64_t userScriptIdentifier);
+    void removeAllUserScriptMessageHandlers(const Vector<ContentWorldIdentifier>&);
 
 #if ENABLE(CONTENT_EXTENSIONS)
     void removeContentRuleList(const String& name);

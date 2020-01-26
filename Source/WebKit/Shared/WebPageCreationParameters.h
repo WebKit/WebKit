@@ -193,7 +193,7 @@ struct WebPageCreationParameters {
     bool enumeratingAllNetworkInterfacesEnabled { false };
 
     // UserContentController members
-    Vector<std::pair<uint64_t, String>> userContentWorlds;
+    Vector<std::pair<ContentWorldIdentifier, String>> userContentWorlds;
     Vector<WebUserScriptData> userScripts;
     Vector<WebUserStyleSheetData> userStyleSheets;
     Vector<WebScriptMessageHandlerData> messageHandlers;

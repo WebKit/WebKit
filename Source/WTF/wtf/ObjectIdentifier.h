@@ -44,12 +44,19 @@ template<typename T> class ObjectIdentifier : private ObjectIdentifierBase {
 public:
     static ObjectIdentifier generate()
     {
+        RELEASE_ASSERT(!m_generationProtected);
         return ObjectIdentifier { generateIdentifierInternal() };
     }
 
     static ObjectIdentifier generateThreadSafe()
     {
+        RELEASE_ASSERT(!m_generationProtected);
         return ObjectIdentifier { generateThreadSafeIdentifierInternal() };
+    }
+
+    static void enableGenerationProtection()
+    {
+        m_generationProtected = true;
     }
 
     ObjectIdentifier() = default;
@@ -103,6 +110,7 @@ private:
     }
 
     uint64_t m_identifier { 0 };
+    inline static bool m_generationProtected { false };
 };
 
 template<typename T> inline ObjectIdentifier<T> makeObjectIdentifier(uint64_t identifier)
