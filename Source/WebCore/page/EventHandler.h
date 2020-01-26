@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -426,7 +426,8 @@ private:
 #if ENABLE(DRAG_SUPPORT)
     void clearDragState();
 
-    void dispatchDragSrcEvent(const AtomString& eventType, const PlatformMouseEvent&);
+    static bool shouldDispatchEventsToDragSourceElement();
+    void dispatchEventToDragSourceElement(const AtomString& eventType, const PlatformMouseEvent&);
     bool dispatchDragStartEventOnSourceElement(DataTransfer&);
 
     bool dragHysteresisExceeded(const FloatPoint&) const;

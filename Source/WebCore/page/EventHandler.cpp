@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2020 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Alexey Proskuryakov (ap@webkit.org)
  * Copyright (C) 2012 Digia Plc. and/or its subsidiary(-ies)
  *
@@ -2382,8 +2382,7 @@ EventHandler::DragTargetResponse EventHandler::updateDragAndDrop(const PlatformM
                 response = targetFrame->eventHandler().updateDragAndDrop(event, makePasteboard, sourceOperation, draggingFiles);
         } else if (newTarget) {
             // As per section 7.9.4 of the HTML 5 spec., we must always fire a drag event before firing a dragenter, dragleave, or dragover event.
-            if (dragState().source && dragState().shouldDispatchEvents)
-                dispatchDragSrcEvent(eventNames().dragEvent, event);
+            dispatchEventToDragSourceElement(eventNames().dragEvent, event);
             response = dispatchDragEnterOrDragOverEvent(eventNames().dragenterEvent, *newTarget, event, makePasteboard(), sourceOperation, draggingFiles);
         }
 
@@ -2409,8 +2408,8 @@ EventHandler::DragTargetResponse EventHandler::updateDragAndDrop(const PlatformM
                 response = targetFrame->eventHandler().updateDragAndDrop(event, makePasteboard, sourceOperation, draggingFiles);
         } else if (newTarget) {
             // Note, when dealing with sub-frames, we may need to fire only a dragover event as a drag event may have been fired earlier.
-            if (!m_shouldOnlyFireDragOverEvent && dragState().source && dragState().shouldDispatchEvents)
-                dispatchDragSrcEvent(eventNames().dragEvent, event);
+            if (!m_shouldOnlyFireDragOverEvent)
+                dispatchEventToDragSourceElement(eventNames().dragEvent, event);
             response = dispatchDragEnterOrDragOverEvent(eventNames().dragoverEvent, *newTarget, event, makePasteboard(), sourceOperation, draggingFiles);
             m_shouldOnlyFireDragOverEvent = false;
         }
@@ -2428,8 +2427,7 @@ void EventHandler::cancelDragAndDrop(const PlatformMouseEvent& event, std::uniqu
         if (targetFrame)
             targetFrame->eventHandler().cancelDragAndDrop(event, WTFMove(pasteboard), sourceOperation, draggingFiles);
     } else if (m_dragTarget) {
-        if (dragState().source && dragState().shouldDispatchEvents)
-            dispatchDragSrcEvent(eventNames().dragEvent, event);
+        dispatchEventToDragSourceElement(eventNames().dragEvent, event);
 
         auto dataTransfer = DataTransfer::createForUpdatingDropTarget(m_dragTarget->document(), WTFMove(pasteboard), sourceOperation, draggingFiles);
         dispatchDragEvent(eventNames().dragleaveEvent, *m_dragTarget, event, dataTransfer.get());
@@ -3650,9 +3648,9 @@ void EventHandler::dragSourceEndedAt(const PlatformMouseEvent& event, DragOperat
     HitTestRequest request(HitTestRequest::Release | HitTestRequest::DisallowUserAgentShadowContent);
     prepareMouseEvent(request, event);
 
-    if (dragState().source && dragState().shouldDispatchEvents) {
+    if (shouldDispatchEventsToDragSourceElement()) {
         dragState().dataTransfer->setDestinationOperation(operation);
-        dispatchDragSrcEvent(eventNames().dragendEvent, event);
+        dispatchEventToDragSourceElement(eventNames().dragendEvent, event);
     }
     invalidateDataTransfer();
 
@@ -3674,10 +3672,15 @@ void EventHandler::updateDragStateAfterEditDragIfNeeded(Element& rootEditableEle
         dragState().source = &rootEditableElement;
 }
 
-void EventHandler::dispatchDragSrcEvent(const AtomString& eventType, const PlatformMouseEvent& event)
+bool EventHandler::shouldDispatchEventsToDragSourceElement()
 {
-    ASSERT(dragState().dataTransfer);
-    dispatchDragEvent(eventType, *dragState().source, event, *dragState().dataTransfer);
+    return dragState().source && dragState().dataTransfer && dragState().shouldDispatchEvents;
+}
+
+void EventHandler::dispatchEventToDragSourceElement(const AtomString& eventType, const PlatformMouseEvent& event)
+{
+    if (shouldDispatchEventsToDragSourceElement())
+        dispatchDragEvent(eventType, *dragState().source, event, *dragState().dataTransfer);
 }
 
 bool EventHandler::dispatchDragStartEventOnSourceElement(DataTransfer& dataTransfer)
@@ -3779,6 +3782,7 @@ bool EventHandler::handleDrag(const MouseEventWithHitTestResults& event, CheckDr
     DragOperation srcOp = DragOperationNone;      
     
     // This does work only if we missed a dragEnd. Do it anyway, just to make sure the old dataTransfer gets numbed.
+    // FIXME: Consider doing this earlier in this function as the earliest point we're sure it would be safe to drop an old drag.
     invalidateDataTransfer();
 
     dragState().dataTransfer = DataTransfer::createForDrag();
@@ -3798,7 +3802,7 @@ bool EventHandler::handleDrag(const MouseEventWithHitTestResults& event, CheckDr
                 auto delta = m_mouseDownPos - roundedIntPoint(absolutePosition);
                 dragState().dataTransfer->setDragImage(dragState().source.get(), delta.width(), delta.height());
             } else {
-                dispatchDragSrcEvent(eventNames().dragendEvent, event.event());
+                dispatchEventToDragSourceElement(eventNames().dragendEvent, event.event());
                 m_mouseDownMayStartDrag = false;
                 invalidateDataTransfer();
                 dragState().source = nullptr;
@@ -3828,12 +3832,12 @@ bool EventHandler::handleDrag(const MouseEventWithHitTestResults& event, CheckDr
             m_mouseDownMayStartDrag = false;
             return true;
         }
-        if (dragState().source && dragState().shouldDispatchEvents) {
+        if (shouldDispatchEventsToDragSourceElement()) {
             // Drag was canned at the last minute. We owe dragSource a dragend event.
-            dispatchDragSrcEvent(eventNames().dragendEvent, event.event());
+            dispatchEventToDragSourceElement(eventNames().dragendEvent, event.event());
             m_mouseDownMayStartDrag = false;
         }
-    } 
+    }
 
     if (!m_mouseDownMayStartDrag) {
         // Something failed to start the drag, clean up.
