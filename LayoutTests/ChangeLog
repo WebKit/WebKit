@@ -1,3 +1,15 @@
+2020-01-26  Rob Buis  <rbuis@igalia.com>
+
+        Improve compatibility with hyperlink auditing spec
+        https://bugs.webkit.org/show_bug.cgi?id=188852
+
+        Reviewed by Youenn Fablet.
+
+        Update improved test results.
+
+        * http/tests/navigation/ping-attribute/anchor-cross-origin-expected.txt:
+        * http/tests/navigation/ping-attribute/area-cross-origin-expected.txt:
+
 2020-01-25  Darin Adler  <darin@apple.com>
 
         REGRESSION: [ Mac WK2 ] animations/suspend-resume-animation-events.html is a flaky failure
