@@ -1240,18 +1240,6 @@ test/built-ins/Proxy/construct/trap-is-not-callable-realm.js:
 test/built-ins/RegExp/named-groups/unicode-property-names.js:
   default: 'SyntaxError: Invalid regular expression: invalid group specifier name'
   strict mode: 'SyntaxError: Invalid regular expression: invalid group specifier name'
-test/built-ins/RegExp/property-escapes/character-class-range-end.js:
-  default: 'Test262: This statement should not be evaluated.'
-  strict mode: 'Test262: This statement should not be evaluated.'
-test/built-ins/RegExp/property-escapes/character-class-range-no-dash-end.js:
-  default: 'Test262: This statement should not be evaluated.'
-  strict mode: 'Test262: This statement should not be evaluated.'
-test/built-ins/RegExp/property-escapes/character-class-range-no-dash-start.js:
-  default: 'Test262: This statement should not be evaluated.'
-  strict mode: 'Test262: This statement should not be evaluated.'
-test/built-ins/RegExp/property-escapes/character-class-range-start.js:
-  default: 'Test262: This statement should not be evaluated.'
-  strict mode: 'Test262: This statement should not be evaluated.'
 test/built-ins/RegExp/property-escapes/generated/Alphabetic.js:
   default: 'Test262Error: `\p{Alphabetic}` should match U+001CFA (`ᳺ`)'
   strict mode: 'Test262Error: `\p{Alphabetic}` should match U+001CFA (`ᳺ`)'
@@ -1609,9 +1597,6 @@ test/built-ins/RegExp/prototype/unicode/cross-realm.js:
 test/built-ins/RegExp/unicode_restricted_brackets.js:
   default: 'Test262Error: RegExp("]", "u"):  Expected a SyntaxError to be thrown but no exception was thrown at all'
   strict mode: 'Test262Error: RegExp("]", "u"):  Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/built-ins/RegExp/unicode_restricted_character_class_escape.js:
-  default: 'Test262Error: RegExp("[\d-a]", "u"):  Expected a SyntaxError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: RegExp("[\d-a]", "u"):  Expected a SyntaxError to be thrown but no exception was thrown at all'
 test/built-ins/RegExp/unicode_restricted_identity_escape.js:
   default: "Test262Error: Invalid IdentityEscape in AtomEscape: '\\"
   strict mode: "Test262Error: Invalid IdentityEscape in AtomEscape: '\\"
@@ -3421,18 +3406,6 @@ test/language/literals/regexp/u-invalid-extended-pattern-char.js:
   default: 'Test262: This statement should not be evaluated.'
   strict mode: 'Test262: This statement should not be evaluated.'
 test/language/literals/regexp/u-invalid-legacy-octal-escape.js:
-  default: 'Test262: This statement should not be evaluated.'
-  strict mode: 'Test262: This statement should not be evaluated.'
-test/language/literals/regexp/u-invalid-non-empty-class-ranges-no-dash-a.js:
-  default: 'Test262: This statement should not be evaluated.'
-  strict mode: 'Test262: This statement should not be evaluated.'
-test/language/literals/regexp/u-invalid-non-empty-class-ranges-no-dash-ab.js:
-  default: 'Test262: This statement should not be evaluated.'
-  strict mode: 'Test262: This statement should not be evaluated.'
-test/language/literals/regexp/u-invalid-non-empty-class-ranges-no-dash-b.js:
-  default: 'Test262: This statement should not be evaluated.'
-  strict mode: 'Test262: This statement should not be evaluated.'
-test/language/literals/regexp/u-invalid-non-empty-class-ranges.js:
   default: 'Test262: This statement should not be evaluated.'
   strict mode: 'Test262: This statement should not be evaluated.'
 test/language/literals/regexp/u-invalid-oob-decimal-escape.js:

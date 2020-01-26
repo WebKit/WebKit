@@ -54,9 +54,10 @@ private:
      */
     class CharacterClassParserDelegate {
     public:
-        CharacterClassParserDelegate(Delegate& delegate, ErrorCode& err)
+        CharacterClassParserDelegate(Delegate& delegate, ErrorCode& err, bool isUnicode)
             : m_delegate(delegate)
             , m_errorCode(err)
+            , m_isUnicode(isUnicode)
             , m_state(Empty)
             , m_character(0)
         {
@@ -85,13 +86,14 @@ private:
         {
             switch (m_state) {
             case AfterCharacterClass:
-                // Following a builtin character class we need look out for a hyphen.
+                // Following a built-in character class we need look out for a hyphen.
                 // We're looking for invalid ranges, such as /[\d-x]/ or /[\d-\d]/.
-                // If we see a hyphen following a charater class then unlike usual
+                // If we see a hyphen following a character class then unlike usual
                 // we'll report it to the delegate immediately, and put ourself into
-                // a poisoned state. Any following calls to add another character or
-                // character class will result in an error. (A hypen following a
-                // character-class is itself valid, but only  at the end of a regex).
+                // a poisoned state. In a unicode pattern, any following calls to add
+                // another character or character class will result in syntax error.
+                // A hypen following a character class is itself valid, but only at
+                // the end of a regex.
                 if (hyphenIsRange && ch == '-') {
                     m_delegate.atomCharacterClassAtom('-');
                     m_state = AfterCharacterClassHyphen;
@@ -116,21 +118,20 @@ private:
 
             case CachedCharacterHyphen:
                 if (ch < m_character) {
-                    m_errorCode = ErrorCode::CharacterClassOutOfOrder;
+                    m_errorCode = ErrorCode::CharacterClassRangeOutOfOrder;
                     return;
                 }
                 m_delegate.atomCharacterClassRange(m_character, ch);
                 m_state = Empty;
                 return;
 
-                // See coment in atomBuiltInCharacterClass below.
-                // This too is technically an error, per ECMA-262, and again we
-                // we chose to allow this.  Note a subtlely here that while we
-                // diverge from the spec's definition of CharacterRange we do
-                // remain in compliance with the grammar.  For example, consider
-                // the expression /[\d-a-z]/.  We comply with the grammar in
-                // this case by not allowing a-z to be matched as a range.
+                // If we hit this case, we have an invalid range like /[\d-a]/.
+                // See coment in atomBuiltInCharacterClass() below.
             case AfterCharacterClassHyphen:
+                if (m_isUnicode) {
+                    m_errorCode = ErrorCode::CharacterClassRangeInvalid;
+                    return;
+                }
                 m_delegate.atomCharacterClassAtom(ch);
                 m_state = Empty;
                 return;
@@ -151,23 +152,27 @@ private:
                 FALLTHROUGH;
             case Empty:
             case AfterCharacterClass:
-                m_state = AfterCharacterClass;
                 m_delegate.atomCharacterClassBuiltIn(classID, invert);
+                m_state = AfterCharacterClass;
                 return;
 
                 // If we hit either of these cases, we have an invalid range that
-                // looks something like /[x-\d]/ or /[\d-\d]/.
-                // According to ECMA-262 this should be a syntax error, but
-                // empirical testing shows this to break teh webz.  Instead we
-                // comply with to the ECMA-262 grammar, and assume the grammar to
-                // have matched the range correctly, but tweak our interpretation
-                // of CharacterRange.  Effectively we implicitly handle the hyphen
-                // as if it were escaped, e.g. /[\w-_]/ is treated as /[\w\-_]/.
+                // looks something like /[a-\d]/ or /[\d-\d]/.
+                // Since ES2015, this should be syntax error in a unicode pattern,
+                // yet gracefully handled in a regular regex to avoid breaking the web.
+                // Effectively we handle the hyphen as if it was (implicitly) escaped,
+                // e.g. /[\d-a-z]/ is treated as /[\d\-a\-z]/.
+                // See usages of CharacterRangeOrUnion abstract op in
+                // https://tc39.es/ecma262/#sec-regular-expression-patterns-semantics
             case CachedCharacterHyphen:
                 m_delegate.atomCharacterClassAtom(m_character);
                 m_delegate.atomCharacterClassAtom('-');
                 FALLTHROUGH;
             case AfterCharacterClassHyphen:
+                if (m_isUnicode) {
+                    m_errorCode = ErrorCode::CharacterClassRangeInvalid;
+                    return;
+                }
                 m_delegate.atomCharacterClassBuiltIn(classID, invert);
                 m_state = Empty;
                 return;
@@ -201,6 +206,7 @@ private:
     private:
         Delegate& m_delegate;
         ErrorCode& m_errorCode;
+        bool m_isUnicode;
         enum CharacterClassConstructionState {
             Empty,
             CachedCharacter,
@@ -595,7 +601,7 @@ private:
         ASSERT(peek() == '[');
         consume();
 
-        CharacterClassParserDelegate characterClassConstructor(m_delegate, m_errorCode);
+        CharacterClassParserDelegate characterClassConstructor(m_delegate, m_errorCode, m_isUnicode);
 
         characterClassConstructor.begin(tryConsume('^'));
 

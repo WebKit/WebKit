@@ -1,3 +1,29 @@
+2020-01-26  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        Invalid ranges in character classes should be banned in unicode patterns
+        https://bugs.webkit.org/show_bug.cgi?id=206768
+
+        Reviewed by Darin Adler.
+
+        In ES5, grammar of CharacterRange was ambiguous, resulting in invalid ranges
+        like /[\d-a]/ being allowed. As of ES2015, invalid ranges are SyntaxError in
+        unicode patterns, yet still allowed in regular ones to avoid breaking the web.
+        (https://tc39.es/ecma262/#sec-patterns-static-semantics-early-errors-annexb)
+
+        This change adds SyntaxError for unicode patterns and updates explanatory
+        comments. ErrorCode::CharacterClassOutOfOrder is renamed for consistency
+        with newly added error code and ErrorCode::ParenthesesTypeInvalid.
+
+        * yarr/YarrErrorCode.cpp:
+        (JSC::Yarr::errorMessage):
+        (JSC::Yarr::errorToThrow):
+        * yarr/YarrErrorCode.h:
+        * yarr/YarrParser.h:
+        (JSC::Yarr::Parser::CharacterClassParserDelegate::CharacterClassParserDelegate):
+        (JSC::Yarr::Parser::CharacterClassParserDelegate::atomPatternCharacter):
+        (JSC::Yarr::Parser::CharacterClassParserDelegate::atomBuiltInCharacterClass):
+        (JSC::Yarr::Parser::parseCharacterClass):
+
 2020-01-24  Mark Lam  <mark.lam@apple.com>
 
         Move singleton Intl string locales out of JSGlobalObject.
