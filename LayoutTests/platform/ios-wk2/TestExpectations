@@ -78,7 +78,6 @@ http/tests/resourceLoadStatistics/strip-referrer-to-origin-for-third-party-reque
 #//////////////////////////////////////////////////////////////////////////////////////////
 
 # Animation tests with issues
-animations/animation-direction-normal.html [ Pass Crash ]
 legacy-animation-engine/animations/animation-direction-normal.html [ Pass Crash ]
 animations/cross-fade-background-image.html [ ImageOnlyFailure ]
 legacy-animation-engine/animations/cross-fade-background-image.html [ ImageOnlyFailure ]
@@ -1357,3 +1356,7 @@ webkit.org/b/206667 legacy-animation-engine/animations/stop-animation-on-suspend
 webkit.org/b/206682 animations/play-state-paused.html [ Pass Failure ]
 
 webkit.org/b/206681 http/wpt/cache-storage/quota-third-party.https.html [ Pass Failure ]
+
+webkit.org/b/206678 [ Release ] compositing/video/poster.html [ Pass Failure ]
+
+webkit.org/b/206685 [ Debug ] animations/animation-direction-normal.html [ Pass Failure ]

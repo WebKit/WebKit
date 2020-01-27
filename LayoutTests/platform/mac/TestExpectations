@@ -1939,3 +1939,5 @@ webkit.org/b/206291 storage/websql/statement-error-callback.html [ Pass Timeout 
 webkit.org/b/203222 svg/wicd/rightsizing-grid.xhtml [ Pass Failure ]
 
 webkit.org/b/206682 [ Debug ] animations/play-state-paused.html [ Pass Failure ]
+
+webkit.org/b/206685 animations/animation-direction-normal.html [ Pass Failure ]
