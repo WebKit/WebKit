@@ -1,3 +1,15 @@
+2020-01-27  Jon Davis  <jond@apple.com>
+
+        Fix submenu behavior for narrow viewports
+        https://bugs.webkit.org/show_bug.cgi?id=206835
+
+        Reviewed by Devin Rousso.
+
+        * wp-content/themes/webkit/header.php:
+        * wp-content/themes/webkit/style.css:
+        (@media only screen and (max-width: 920px) header .menu > .menu-item:hover > .sub-menu,):
+        (@media only screen and (max-width: 920px) header .menu > .menu-item > .menu-toggle:checked ~ .sub-menu): Deleted.
+
 2020-01-24  Jon Davis  <jond@apple.com>
 
         Fix editing permissions for the Web Inspector Editor role

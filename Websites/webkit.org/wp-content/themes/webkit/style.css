@@ -2421,6 +2421,7 @@ header .menu-item { /* add bottom dimension to main menu items */
         margin-left: -11px;
     }
 
+    header .menu > .menu-item:hover > .sub-menu,
     header .menu > .menu-item > .menu-toggle:checked ~ .sub-menu {
         position: relative;
         top: 1.5rem;
