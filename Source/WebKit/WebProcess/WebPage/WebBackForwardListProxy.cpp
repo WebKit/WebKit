@@ -60,6 +60,7 @@ void WebBackForwardListProxy::addItemFromUIProcess(const BackForwardItemIdentifi
     // This item/itemID pair should not already exist in our map.
     ASSERT_UNUSED(overwriteExistingItem, overwriteExistingItem == OverwriteExistingItem::Yes || !idToHistoryItemMap().contains(itemID));
     idToHistoryItemMap().set(itemID, item.ptr());
+    clearCachedListCounts();
 }
 
 static void WK2NotifyHistoryItemChanged(HistoryItem& item)
@@ -97,6 +98,7 @@ void WebBackForwardListProxy::addItem(Ref<HistoryItem>&& item)
     ASSERT_UNUSED(result, result.isNewEntry);
 
     LOG(BackForward, "(Back/Forward) WebProcess pid %i setting item %p for id %s with url %s", getCurrentProcessID(), item.ptr(), item->identifier().logString(), item->urlString().utf8().data());
+    clearCachedListCounts();
     m_page->send(Messages::WebPageProxy::BackForwardAddItem(toBackForwardListItemState(item.get())));
 }
 
@@ -106,7 +108,9 @@ void WebBackForwardListProxy::goToItem(HistoryItem& item)
         return;
 
     SandboxExtension::Handle sandboxExtensionHandle;
-    m_page->sendSync(Messages::WebPageProxy::BackForwardGoToItem(item.identifier()), Messages::WebPageProxy::BackForwardGoToItem::Reply(sandboxExtensionHandle));
+    WebBackForwardListCounts backForwardListCounts;
+    m_page->sendSync(Messages::WebPageProxy::BackForwardGoToItem(item.identifier()), Messages::WebPageProxy::BackForwardGoToItem::Reply(sandboxExtensionHandle, backForwardListCounts));
+    m_cachedBackForwardListCounts = backForwardListCounts;
     m_page->sandboxExtensionTracker().beginLoad(m_page->mainWebFrame(), WTFMove(sandboxExtensionHandle));
 }
 
@@ -127,36 +131,40 @@ RefPtr<HistoryItem> WebBackForwardListProxy::itemAtIndex(int itemIndex)
 
 unsigned WebBackForwardListProxy::backListCount() const
 {
-    if (!m_page)
-        return 0;
-
-    unsigned backListCount = 0;
-    if (!WebProcess::singleton().parentProcessConnection()->sendSync(Messages::WebPageProxy::BackForwardBackListCount(), Messages::WebPageProxy::BackForwardBackListCount::Reply(backListCount), m_page->identifier()))
-        return 0;
-
-    return backListCount;
+    return cacheListCountsIfNecessary().backCount;
 }
 
 unsigned WebBackForwardListProxy::forwardListCount() const
 {
-    if (!m_page)
-        return 0;
+    return cacheListCountsIfNecessary().forwardCount;
+}
 
-    unsigned forwardListCount = 0;
-    if (!WebProcess::singleton().parentProcessConnection()->sendSync(Messages::WebPageProxy::BackForwardForwardListCount(), Messages::WebPageProxy::BackForwardForwardListCount::Reply(forwardListCount), m_page->identifier()))
-        return 0;
+const WebBackForwardListCounts& WebBackForwardListProxy::cacheListCountsIfNecessary() const
+{
+    if (!m_cachedBackForwardListCounts) {
+        WebBackForwardListCounts backForwardListCounts;
+        if (m_page)
+            WebProcess::singleton().parentProcessConnection()->sendSync(Messages::WebPageProxy::BackForwardListCounts(), Messages::WebPageProxy::BackForwardListCounts::Reply(backForwardListCounts), m_page->identifier());
+        m_cachedBackForwardListCounts = backForwardListCounts;
+    }
+    return *m_cachedBackForwardListCounts;
+}
 
-    return forwardListCount;
+void WebBackForwardListProxy::clearCachedListCounts()
+{
+    m_cachedBackForwardListCounts = WTF::nullopt;
 }
 
 void WebBackForwardListProxy::close()
 {
     ASSERT(m_page);
     m_page = nullptr;
+    m_cachedBackForwardListCounts = WebBackForwardListCounts { };
 }
 
 void WebBackForwardListProxy::clear()
 {
+    m_cachedBackForwardListCounts = WebBackForwardListCounts { }; // Clearing the back/forward list will cause the counts to become 0.
     m_page->send(Messages::WebPageProxy::BackForwardClear());
 }
 

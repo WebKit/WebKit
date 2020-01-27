@@ -35,6 +35,7 @@
 namespace WebKit {
 
 struct BackForwardListState;
+struct WebBackForwardListCounts;
 
 class WebBackForwardList : public API::ObjectImpl<API::Object::Type::BackForwardList> {
 public:
@@ -62,6 +63,7 @@ public:
 
     unsigned backListCount() const;
     unsigned forwardListCount() const;
+    WebBackForwardListCounts counts() const;
 
     Ref<API::Array> backList() const;
     Ref<API::Array> forwardList() const;
