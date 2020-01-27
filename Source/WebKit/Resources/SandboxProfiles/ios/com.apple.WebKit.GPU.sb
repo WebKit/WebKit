@@ -31,7 +31,6 @@
 ;;;
 
 (import "util.sb")
-(import "carrier-bundle-allowed.sb")
 
 (define-once (allow-read-and-issue-generic-extensions . filters)
     (allow file-read*
@@ -110,13 +109,6 @@
 (define-once (mobile-keybag-access)
      (allow iokit-open
             (iokit-user-client-class "AppleKeyStoreUserClient")))
-
-(define-once (location-services)
-    (allow-carrier-bundle) ;; <rdar://problem/21192365>
-    (mobile-preferences-read
-        "com.apple.AppSupport"
-        "com.apple.GEO"
-        "com.apple.locationd"))
 
 (define-once (play-audio)
     (allow mach-lookup
@@ -769,8 +761,6 @@
 
 ; <rdar://problem/7595408> , <rdar://problem/7643881>
 (opengl)
-
-(location-services)
 
 ; CRCopyRestrictionsDictionary periodically tries to CFPreferencesAppSynchronize com.apple.springboard.plist
 ; which will attempt to create the plist if it doesn't exist -- from any application.  Only SpringBoard is
