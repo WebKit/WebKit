@@ -163,9 +163,23 @@ WebResourceLoadStatisticsStore::WebResourceLoadStatisticsStore(NetworkSession& n
 
             auto memoryStore = makeUnique<ResourceLoadStatisticsMemoryStore>(*this, m_statisticsQueue, shouldIncludeLocalhost);
             downcast<ResourceLoadStatisticsDatabaseStore>(*m_statisticsStore.get()).populateFromMemoryStore(*memoryStore);
+
+            auto legacyPlistFilePath = FileSystem::pathByAppendingComponent(resourceLoadStatisticsDirectory, "full_browsing_session_resourceLog.plist");
+            if (FileSystem::fileExists(legacyPlistFilePath))
+                FileSystem::deleteFile(legacyPlistFilePath);
+
         } else {
             m_statisticsStore = makeUnique<ResourceLoadStatisticsMemoryStore>(*this, m_statisticsQueue, shouldIncludeLocalhost);
             m_persistentStorage = makeUnique<ResourceLoadStatisticsPersistentStorage>(downcast<ResourceLoadStatisticsMemoryStore>(*m_statisticsStore), m_statisticsQueue, resourceLoadStatisticsDirectory);
+
+            auto databaseStorageFilePath = FileSystem::pathByAppendingComponent(resourceLoadStatisticsDirectory, "observations.db");
+            auto databaseStorageTemporaryWalFilePath = FileSystem::pathByAppendingComponent(resourceLoadStatisticsDirectory, "observations.db-wal");
+            auto databaseStorageTemporaryShmFilePath = FileSystem::pathByAppendingComponent(resourceLoadStatisticsDirectory, "observations.db-shm");
+            if (FileSystem::fileExists(databaseStorageFilePath)) {
+                FileSystem::deleteFile(databaseStorageFilePath);
+                FileSystem::deleteFile(databaseStorageTemporaryWalFilePath);
+                FileSystem::deleteFile(databaseStorageTemporaryShmFilePath);
+            }
         }
 
         // FIXME(193297): This should be revised after the UIProcess version goes away.

@@ -1,3 +1,17 @@
+2020-01-27  Kate Cheney  <katherine_cheney@apple.com>
+
+        Delete the ITP storage file that is not being used (plist or database file) when switching to a new storage type
+        https://bugs.webkit.org/show_bug.cgi?id=206601
+        <rdar://problem/58696521>
+
+        Reviewed by Alex Christensen.
+
+        This patch also deletes the temporary files SQLite creates when
+        constructing a new database.
+
+        * NetworkProcess/Classifier/WebResourceLoadStatisticsStore.cpp:
+        (WebKit::WebResourceLoadStatisticsStore::WebResourceLoadStatisticsStore):
+
 2020-01-27  Brent Fulgham  <bfulgham@apple.com>
 
         Remove locationd entitlements from the WebContent process

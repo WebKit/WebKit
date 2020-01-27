@@ -82,6 +82,20 @@ bool isITPDatabaseEnabled()
     return defaultDatabaseEnabled;
 }
 
+static void ensureITPFileIsCreated()
+{
+    static bool doneFlag;
+    auto *dataStore = [WKWebsiteDataStore defaultDataStore];
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
+    [dataStore _setResourceLoadStatisticsEnabled:YES];
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"about:blank"]]];
+    [dataStore _setUseITPDatabase:true completionHandler: ^(void) {
+        doneFlag = true;
+    }];
+    TestWebKitAPI::Util::run(&doneFlag);
+    [dataStore _setResourceLoadStatisticsEnabled:NO];
+}
+
 TEST(ResourceLoadStatistics, GrandfatherCallback)
 {
     auto *dataStore = [WKWebsiteDataStore defaultDataStore];
@@ -286,6 +300,11 @@ TEST(ResourceLoadStatistics, ShouldNotGrandfatherOnStartup)
             callbackFlag = true;
         }];
 
+        // Since the ITP Database is enabled, the plist file has been deleted. We need to create it again.
+        [[NSFileManager defaultManager] createDirectoryAtURL:statisticsDirectoryURL withIntermediateDirectories:YES attributes:nil error:nil];
+        [[NSFileManager defaultManager] copyItemAtURL:testResourceURL toURL:targetURL error:nil];
+        EXPECT_TRUE([[NSFileManager defaultManager] fileExistsAtPath:targetURL.path]);
+
         [dataStore _setUseITPDatabase:false completionHandler: ^(void) {
             doneFlag = true;
         }];
@@ -300,14 +319,7 @@ TEST(ResourceLoadStatistics, ShouldNotGrandfatherOnStartupDatabase)
 {
     auto *dataStore = [WKWebsiteDataStore defaultDataStore];
 
-    NSURL *statisticsDirectoryURL = [NSURL fileURLWithPath:[@"~/Library/WebKit/TestWebKitAPI/WebsiteData/ResourceLoadStatistics" stringByExpandingTildeInPath] isDirectory:YES];
-    NSURL *targetURL = [statisticsDirectoryURL URLByAppendingPathComponent:@"observations.db"];
-    NSURL *testResourceURL = [[NSBundle mainBundle] URLForResource:@"EmptyGrandfatheredResourceLoadStatistics" withExtension:@"plist" subdirectory:@"TestWebKitAPI.resources"];
-
-    [[NSFileManager defaultManager] createDirectoryAtURL:statisticsDirectoryURL withIntermediateDirectories:YES attributes:nil error:nil];
-    [[NSFileManager defaultManager] copyItemAtURL:testResourceURL toURL:targetURL error:nil];
-
-    EXPECT_TRUE([[NSFileManager defaultManager] fileExistsAtPath:targetURL.path]);
+    ensureITPFileIsCreated();
 
     static bool callbackFlag;
     static bool doneFlag;
@@ -335,6 +347,8 @@ TEST(ResourceLoadStatistics, ShouldNotGrandfatherOnStartupDatabase)
             ASSERT_TRUE([message isEqualToString:@"PopulatedWithoutGrandfathering"]);
             callbackFlag = true;
         }];
+
+        ensureITPFileIsCreated();
 
         [dataStore _setUseITPDatabase:true completionHandler: ^(void) {
             doneFlag = true;
@@ -390,6 +404,11 @@ TEST(ResourceLoadStatistics, ChildProcessesNotLaunched)
             callbackFlag = true;
         }];
 
+        // Since the ITP Database is enabled, the plist file has been deleted. We need to create it again.
+        [[NSFileManager defaultManager] createDirectoryAtURL:statisticsDirectoryURL withIntermediateDirectories:YES attributes:nil error:nil];
+        [[NSFileManager defaultManager] copyItemAtURL:testResourceURL toURL:targetURL error:nil];
+        EXPECT_TRUE([[NSFileManager defaultManager] fileExistsAtPath:targetURL.path]);
+
         [dataStore _setUseITPDatabase:false completionHandler: ^(void) {
             doneFlag = true;
         }];
@@ -418,12 +437,7 @@ TEST(ResourceLoadStatistics, ChildProcessesNotLaunchedDatabase)
     NSURL *statisticsDirectoryURL = [NSURL fileURLWithPath:[@"~/Library/WebKit/TestWebKitAPI/WebsiteData/ResourceLoadStatistics" stringByExpandingTildeInPath] isDirectory:YES];
     NSURL *targetURL = [statisticsDirectoryURL URLByAppendingPathComponent:@"observations.db"];
 
-    NSURL *testResourceURL = [[NSBundle mainBundle] URLForResource:@"EmptyGrandfatheredResourceLoadStatistics" withExtension:@"plist" subdirectory:@"TestWebKitAPI.resources"];
-
-    [[NSFileManager defaultManager] createDirectoryAtURL:statisticsDirectoryURL withIntermediateDirectories:YES attributes:nil error:nil];
-    [[NSFileManager defaultManager] copyItemAtURL:testResourceURL toURL:targetURL error:nil];
-
-    EXPECT_TRUE([[NSFileManager defaultManager] fileExistsAtPath:targetURL.path]);
+    ensureITPFileIsCreated();
 
     static bool callbackFlag;
     static bool doneFlag;
@@ -451,6 +465,8 @@ TEST(ResourceLoadStatistics, ChildProcessesNotLaunchedDatabase)
             ASSERT_TRUE([message isEqualToString:@"PopulatedWithoutGrandfathering"]);
             callbackFlag = true;
         }];
+
+        ensureITPFileIsCreated();
 
         [dataStore _setUseITPDatabase:true completionHandler: ^(void) {
             doneFlag = true;
