@@ -101,8 +101,6 @@ function ios_family_process_webcontent_entitlements()
 {
     plistbuddy Add :com.apple.QuartzCore.secure-mode bool YES
     plistbuddy Add :com.apple.QuartzCore.webkit-end-points bool YES
-    plistbuddy Add :com.apple.locationd.authorizeapplications bool YES
-    plistbuddy Add :com.apple.locationd.effective_bundle bool YES
     plistbuddy Add :com.apple.mediaremote.set-playback-state bool YES
     plistbuddy Add :com.apple.private.allow-explicit-graphics-priority bool YES
     plistbuddy Add :com.apple.private.coremedia.extensions.audiorecording.allow bool YES

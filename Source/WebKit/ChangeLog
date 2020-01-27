@@ -1,3 +1,18 @@
+2020-01-27  Brent Fulgham  <bfulgham@apple.com>
+
+        Remove locationd entitlements from the WebContent process
+        https://bugs.webkit.org/show_bug.cgi?id=206022
+        <rdar://problem/58452443>
+
+        Reviewed by Per Arne Vollan.
+
+        Now that we have removed mach connections related to 'com.apple.locationd', we should also
+        remove the process entitlements.
+        
+        No new tests. There are no changes to behavior.
+
+        * Scripts/process-entitlements.sh:
+
 2020-01-27  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r255131.
