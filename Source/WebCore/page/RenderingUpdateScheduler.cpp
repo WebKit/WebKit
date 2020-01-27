@@ -42,6 +42,27 @@ RenderingUpdateScheduler::RenderingUpdateScheduler(Page& page)
 #endif
 }
 
+#if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR) && PLATFORM(IOS_FAMILY)
+void RenderingUpdateScheduler::adjustFramesPerSecond()
+{
+    Seconds interval = m_page.preferredRenderingUpdateInterval();
+    // CADisplayLink.preferredFramesPerSecond is an integer. So a fraction PreferredFramesPerSecond can't be set.
+    if (interval < 1_s)
+        DisplayRefreshMonitorManager::sharedManager().setPreferredFramesPerSecond(*this, preferredFramesPerSecond(interval));
+}
+#endif
+
+void RenderingUpdateScheduler::adjustRenderingUpdateFrequency()
+{
+#if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR) && PLATFORM(IOS_FAMILY)
+    adjustFramesPerSecond();
+#endif
+    if (isScheduled()) {
+        clearScheduled();
+        scheduleTimedRenderingUpdate();
+    }
+}
+
 void RenderingUpdateScheduler::scheduleTimedRenderingUpdate()
 {
     if (isScheduled())
@@ -55,12 +76,25 @@ void RenderingUpdateScheduler::scheduleTimedRenderingUpdate()
 
     tracePoint(ScheduleRenderingUpdate);
 
-#if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
-    if (!DisplayRefreshMonitorManager::sharedManager().scheduleAnimation(*this))
-#endif
-        startTimer(Seconds(1.0 / 60));
+    Seconds interval = m_page.preferredRenderingUpdateInterval();
 
-    m_scheduled = true;
+#if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
+    // CADisplayLink.preferredFramesPerSecond is an integer. Fall back to timer if the PreferredFramesPerSecond is a fraction.
+    if (interval < 1_s) {
+#if PLATFORM(IOS_FAMILY)
+        if (!m_isMonitorCreated) {
+            adjustFramesPerSecond();
+            m_isMonitorCreated = true;
+        }
+#else
+        if (interval == FullSpeedAnimationInterval)
+#endif
+            m_scheduled = DisplayRefreshMonitorManager::sharedManager().scheduleAnimation(*this);
+    }
+#endif
+
+    if (!isScheduled())
+        startTimer(interval);
 }
 
 bool RenderingUpdateScheduler::isScheduled() const
@@ -74,6 +108,7 @@ void RenderingUpdateScheduler::startTimer(Seconds delay)
     ASSERT(!isScheduled());
     m_refreshTimer = makeUnique<Timer>(*this, &RenderingUpdateScheduler::displayRefreshFired);
     m_refreshTimer->startOneShot(delay);
+    m_scheduled = true;
 }
 
 void RenderingUpdateScheduler::clearScheduled()

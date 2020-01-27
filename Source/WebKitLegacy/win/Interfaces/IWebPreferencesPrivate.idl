@@ -256,4 +256,6 @@ interface IWebPreferencesPrivate7 : IWebPreferencesPrivate6
     HRESULT setAspectRatioOfImgFromWidthAndHeightEnabled([in] BOOL enabled);
     HRESULT setWebSQLEnabled([in] BOOL enabled);
     HRESULT webSQLEnabled([out, retval] BOOL* enabled);
+    HRESULT setRenderingUpdateThrottlingEnabled([in] BOOL enabled);
+    HRESULT renderingUpdateThrottlingEnabled([out, retval] BOOL* enabled);
 }

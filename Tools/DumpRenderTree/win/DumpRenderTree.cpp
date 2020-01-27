@@ -800,6 +800,7 @@ static void enableExperimentalFeatures(IWebPreferences* preferences)
     prefsPrivate->setWebAnimationsCompositeOperationsEnabled(TRUE);
     prefsPrivate->setServerTimingEnabled(TRUE);
     prefsPrivate->setAspectRatioOfImgFromWidthAndHeightEnabled(TRUE);
+    prefsPrivate->setRenderingUpdateThrottlingEnabled(FALSE);
     // FIXME: WebGL2
     // FIXME: WebRTC
 }

@@ -28,6 +28,7 @@
 #include "DrawingAreaProxy.h"
 #include "RemoteLayerTreeHost.h"
 #include "TransactionID.h"
+#include <WebCore/AnimationFrameRate.h>
 #include <WebCore/FloatPoint.h>
 #include <WebCore/IntPoint.h>
 #include <WebCore/IntSize.h>
@@ -97,6 +98,7 @@ private:
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
 
     // Message handlers
+    void setPreferredFramesPerSecond(WebCore::FramesPerSecond);
     void willCommitLayerTree(TransactionID);
     void commitLayerTree(const RemoteLayerTreeTransaction&, const RemoteScrollingCoordinatorTransaction&);
     

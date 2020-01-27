@@ -994,6 +994,7 @@ static void resetWebPreferencesToConsistentValues()
 
     [preferences setHiddenPageDOMTimerThrottlingEnabled:NO];
     [preferences setHiddenPageCSSAnimationSuspensionEnabled:NO];
+    [preferences setRenderingUpdateThrottlingEnabled:NO];
     [preferences setRemotePlaybackEnabled:YES];
 
     [preferences setMediaDevicesEnabled:YES];

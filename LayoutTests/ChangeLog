@@ -1,3 +1,27 @@
+2020-01-27  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Throttling requestAnimationFrame should be controlled by RenderingUpdateScheduler
+        https://bugs.webkit.org/show_bug.cgi?id=204713
+
+        Reviewed by Simon Fraser.
+
+        * fast/animation/css-animation-throttling-lowPowerMode.html:
+        * fast/animation/request-animation-frame-throttle-subframe.html:
+        * fast/animation/request-animation-frame-throttling-detached-iframe.html:
+        Enable RenderingUpdateThrottling for these tests.
+
+        * fast/animation/request-animation-frame-throttling-lowPowerMode-expected.txt:
+        * fast/animation/request-animation-frame-throttling-lowPowerMode.html:
+        Ensure the actual rAF interval is > 30ms for lowPowerMode.
+
+        * fast/animation/request-animation-frame-throttling-outside-viewport-expected.txt: Added.
+        * fast/animation/request-animation-frame-throttling-outside-viewport.html: Added.
+        * fast/animation/resources/frame-with-animation-2.html: Added.
+        Test the OutsideViewport throttling case.
+
+        * http/tests/frame-throttling/raf-throttle-in-cross-origin-subframe.html:
+        Enable RenderingUpdateThrottling for this test.
+
 2020-01-27  Devin Rousso  <drousso@apple.com>
 
         REGRESSION: [ Mac Debug WK1 ] inspector/page/overrideSetting-ICECandidateFilteringEnabled.html is a flaky failure
