@@ -1137,7 +1137,6 @@ void JIT::emit_op_get_internal_field(const Instruction* currentInstruction)
     VirtualRegister dst = bytecode.m_dst;
     VirtualRegister base = bytecode.m_base;
     unsigned index = bytecode.m_index;
-    ASSERT(index < JSPromise::numberOfInternalFields);
 
     emitLoadPayload(base, regT2);
     load32(Address(regT2, JSInternalFieldObjectImpl<>::offsetOfInternalField(index) + TagOffset), regT1);
@@ -1152,7 +1151,6 @@ void JIT::emit_op_put_internal_field(const Instruction* currentInstruction)
     VirtualRegister base = bytecode.m_base;
     VirtualRegister value = bytecode.m_value;
     unsigned index = bytecode.m_index;
-    ASSERT(index < JSPromise::numberOfInternalFields);
 
     emitLoadPayload(base, regT0);
     emitLoad(value, regT1, regT2);

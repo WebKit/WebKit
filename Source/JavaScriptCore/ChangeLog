@@ -1,3 +1,17 @@
+2020-01-27  Paulo Matos  <pmatos@igalia.com>
+
+        Remove internal fields in promise assertion for 32bits
+        https://bugs.webkit.org/show_bug.cgi?id=206823
+
+        Reviewed by Mark Lam.
+
+        This assertion was removed for 64bits under bug 201159 but left around
+        in 32bits. 
+
+        * jit/JITPropertyAccess32_64.cpp:
+        (JSC::JIT::emit_op_get_internal_field):
+        (JSC::JIT::emit_op_put_internal_field):
+
 2020-01-26  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         Invalid ranges in character classes should be banned in unicode patterns
