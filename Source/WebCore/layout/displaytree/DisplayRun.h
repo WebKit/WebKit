@@ -71,29 +71,29 @@ struct Run {
         Optional<ExpansionContext> m_expansionContext;
     };
 
-    Run(size_t lineIndex, const Layout::Box&, const InlineRect& logicalRect, const InlineRect& inkOverflow, Optional<TextContext> = WTF::nullopt);
+    Run(size_t lineIndex, const Layout::Box&, const InlineRect&, const InlineRect& inkOverflow, Optional<TextContext> = WTF::nullopt);
 
     size_t lineIndex() const { return m_lineIndex; }
 
-    const InlineRect& logicalRect() const { return m_logicalRect; }
+    const InlineRect& rect() const { return m_rect; }
     const InlineRect& inkOverflow() const { return m_inkOverflow; }
 
-    InlineLayoutPoint logicalTopLeft() const { return m_logicalRect.topLeft(); }
-    InlineLayoutUnit logicalLeft() const { return m_logicalRect.left(); }
-    InlineLayoutUnit logicalRight() const { return m_logicalRect.right(); }
-    InlineLayoutUnit logicalTop() const { return m_logicalRect.top(); }
-    InlineLayoutUnit logicalBottom() const { return m_logicalRect.bottom(); }
+    InlineLayoutPoint topLeft() const { return m_rect.topLeft(); }
+    InlineLayoutUnit left() const { return m_rect.left(); }
+    InlineLayoutUnit right() const { return m_rect.right(); }
+    InlineLayoutUnit top() const { return m_rect.top(); }
+    InlineLayoutUnit bottom() const { return m_rect.bottom(); }
 
-    InlineLayoutUnit logicalWidth() const { return m_logicalRect.width(); }
-    InlineLayoutUnit logicalHeight() const { return m_logicalRect.height(); }
+    InlineLayoutUnit width() const { return m_rect.width(); }
+    InlineLayoutUnit height() const { return m_rect.height(); }
 
-    void setLogicalWidth(InlineLayoutUnit width) { m_logicalRect.setWidth(width); }
-    void setLogicalTop(InlineLayoutUnit logicalTop) { m_logicalRect.setTop(logicalTop); }
-    void setLogicalLeft(InlineLayoutUnit logicalLeft) { m_logicalRect.setLeft(logicalLeft); }
-    void moveVertically(InlineLayoutUnit delta) { m_logicalRect.moveVertically(delta); }
-    void moveHorizontally(InlineLayoutUnit delta) { m_logicalRect.moveHorizontally(delta); }
-    void expandVertically(InlineLayoutUnit delta) { m_logicalRect.expandVertically(delta); }
-    void expandHorizontally(InlineLayoutUnit delta) { m_logicalRect.expandHorizontally(delta); }
+    void setWidth(InlineLayoutUnit width) { m_rect.setWidth(width); }
+    void setTop(InlineLayoutUnit top) { m_rect.setTop(top); }
+    void setlLeft(InlineLayoutUnit left) { m_rect.setLeft(left); }
+    void moveVertically(InlineLayoutUnit delta) { m_rect.moveVertically(delta); }
+    void moveHorizontally(InlineLayoutUnit delta) { m_rect.moveHorizontally(delta); }
+    void expandVertically(InlineLayoutUnit delta) { m_rect.expandVertically(delta); }
+    void expandHorizontally(InlineLayoutUnit delta) { m_rect.expandHorizontally(delta); }
 
     void setTextContext(const TextContext&& textContext) { m_textContext.emplace(textContext); }
     const Optional<TextContext>& textContext() const { return m_textContext; }
@@ -112,15 +112,15 @@ private:
     const size_t m_lineIndex;
     WeakPtr<const Layout::Box> m_layoutBox;
     CachedImage* m_cachedImage { nullptr };
-    InlineRect m_logicalRect;
+    InlineRect m_rect;
     InlineRect m_inkOverflow;
     Optional<TextContext> m_textContext;
 };
 
-inline Run::Run(size_t lineIndex, const Layout::Box& layoutBox, const InlineRect& logicalRect, const InlineRect& inkOverflow, Optional<TextContext> textContext)
+inline Run::Run(size_t lineIndex, const Layout::Box& layoutBox, const InlineRect& rect, const InlineRect& inkOverflow, Optional<TextContext> textContext)
     : m_lineIndex(lineIndex)
     , m_layoutBox(makeWeakPtr(layoutBox))
-    , m_logicalRect(logicalRect)
+    , m_rect(rect)
     , m_inkOverflow(inkOverflow)
     , m_textContext(textContext)
 {

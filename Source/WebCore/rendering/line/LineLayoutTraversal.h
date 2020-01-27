@@ -59,7 +59,6 @@ public:
     Box(PathVariant&&);
 
     FloatRect rect() const;
-    FloatRect logicalRect() const;
 
     float baselineOffset() const;
 
@@ -164,13 +163,6 @@ inline FloatRect Box::rect() const
 {
     return WTF::switchOn(m_pathVariant, [](auto& path) {
         return path.rect();
-    });
-}
-
-inline FloatRect Box::logicalRect() const
-{
-    return WTF::switchOn(m_pathVariant, [](auto& path) {
-        return path.logicalRect();
     });
 }
 

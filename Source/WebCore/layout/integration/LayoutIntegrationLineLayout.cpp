@@ -246,7 +246,7 @@ void LineLayout::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
         if (style.visibility() != Visibility::Visible)
             continue;
 
-        auto rect = FloatRect { run.logicalRect() };
+        auto rect = FloatRect { run.rect() };
         auto visualOverflowRect = FloatRect { run.inkOverflow() };
         if (paintRect.y() > visualOverflowRect.maxY() || paintRect.maxY() < visualOverflowRect.y())
             continue;
@@ -266,7 +266,7 @@ void LineLayout::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
         String textWithHyphen;
         if (textContext.needsHyphen())
             textWithHyphen = makeString(textContext.content(), style.hyphenString());
-        TextRun textRun { !textWithHyphen.isEmpty() ? textWithHyphen : textContext.content(), run.logicalLeft() - lineBox.logicalLeft(), horizontalExpansion, behavior };
+        TextRun textRun { !textWithHyphen.isEmpty() ? textWithHyphen : textContext.content(), run.left() - lineBox.logicalLeft(), horizontalExpansion, behavior };
         textRun.setTabSize(!style.collapseWhiteSpace(), style.tabSize());
         FloatPoint textOrigin { rect.x() + paintOffset.x(), roundToDevicePixel(baselineOffset, deviceScaleFactor) };
 
@@ -302,7 +302,7 @@ bool LineLayout::hitTest(const HitTestRequest& request, HitTestResult& result, c
 
     // FIXME: This should do something efficient to find the run range.
     for (auto& run : inlineContent.runs) {
-        auto runRect = Layout::toLayoutRect(run.logicalRect());
+        auto runRect = Layout::toLayoutRect(run.rect());
         runRect.moveBy(accumulatedOffset);
 
         if (!locationInContainer.intersects(runRect))

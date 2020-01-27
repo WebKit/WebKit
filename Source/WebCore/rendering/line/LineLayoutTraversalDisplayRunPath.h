@@ -33,9 +33,9 @@ namespace WebCore {
 
 namespace LineLayoutTraversal {
 
-static FloatPoint linePosition(float logicalLeft, float logicalTop)
+static FloatPoint linePosition(float left, float top)
 {
-    return FloatPoint(logicalLeft, roundf(logicalTop));
+    return FloatPoint(left, roundf(top));
 }
 
 class DisplayRunPath {
@@ -50,13 +50,7 @@ public:
     DisplayRunPath& operator=(const DisplayRunPath&) = default;
     DisplayRunPath& operator=(DisplayRunPath&&) = default;
 
-    FloatRect rect() const { return logicalRect(); }
-    FloatRect logicalRect() const
-    {
-        auto logicalRect = run().logicalRect();
-        FloatPoint position = linePosition(logicalRect.left(), logicalRect.top());
-        return { position, logicalRect.size() };
-    }
+    FloatRect rect() const;
 
     float baselineOffset() const { return lineBox().baselineOffset(); }
 
@@ -110,6 +104,13 @@ private:
     size_t m_endIndex { 0 };
     size_t m_runIndex { 0 };
 };
+
+inline FloatRect DisplayRunPath::rect() const
+{
+    auto rect = run().rect();
+    auto position = linePosition(rect.left(), rect.top());
+    return { position, rect.size() };
+}
 
 }
 }

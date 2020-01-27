@@ -480,14 +480,10 @@ void writeDebugInfo(TextStream& ts, const RenderObject& object, OptionSet<Render
 static void writeTextBox(TextStream& ts, const RenderText& o, const LineLayoutTraversal::TextBox& textBox)
 {
     auto rect = textBox.rect();
-    auto logicalRect = textBox.logicalRect();
-
     int x = rect.x();
     int y = rect.y();
-
-    // FIXME: Mixing logical and physical here doesn't make sense.
-    int logicalWidth = ceilf(rect.x() + logicalRect.width()) - x;
-
+    // FIXME: Use non-logical width. webkit.org/b/206809.
+    int logicalWidth = ceilf(rect.x() + (textBox.isHorizontal() ? rect.width() : rect.height())) - x;
     // FIXME: Table cell adjustment is temporary until results can be updated.
     if (is<RenderTableCell>(*o.containingBlock()))
         y -= floorToInt(downcast<RenderTableCell>(*o.containingBlock()).intrinsicPaddingBefore());

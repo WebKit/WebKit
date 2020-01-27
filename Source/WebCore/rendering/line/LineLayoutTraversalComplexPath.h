@@ -41,7 +41,6 @@ public:
     { }
 
     FloatRect rect() const { return m_inlineBox->frameRect(); }
-    FloatRect logicalRect() const { return m_inlineBox->logicalFrameRect(); }
 
     bool isLeftToRightDirection() const { return m_inlineBox->isLeftToRightDirection(); }
     bool isHorizontal() const { return m_inlineBox->isHorizontal(); }

@@ -39,7 +39,6 @@ public:
     { }
 
     FloatRect rect() const { return (*m_iterator).rect(); }
-    FloatRect logicalRect() const { return rect(); }
 
     float baselineOffset() const { return (*m_iterator).baselineOffset(); }
 

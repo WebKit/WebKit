@@ -342,7 +342,7 @@ static void outputInlineRuns(TextStream& stream, const LayoutState& layoutState,
             stream << "inline text box";
         else
             stream << "inline box";
-        stream << " at (" << displayRun.logicalLeft() << "," << displayRun.logicalTop() << ") size " << displayRun.logicalWidth() << "x" << displayRun.logicalHeight();
+        stream << " at (" << displayRun.left() << "," << displayRun.top() << ") size " << displayRun.width() << "x" << displayRun.height();
         if (displayRun.textContext())
             stream << " run(" << displayRun.textContext()->start() << ", " << displayRun.textContext()->end() << ")";
         stream.nextLine();
