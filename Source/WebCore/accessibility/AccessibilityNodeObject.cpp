@@ -106,10 +106,10 @@ Ref<AccessibilityNodeObject> AccessibilityNodeObject::create(Node* node)
     return adoptRef(*new AccessibilityNodeObject(node));
 }
 
-void AccessibilityNodeObject::detach(AccessibilityDetachmentType detachmentType, AXObjectCache* cache)
+void AccessibilityNodeObject::detachRemoteParts(AccessibilityDetachmentType detachmentType)
 {
     // AccessibilityObject calls clearChildren.
-    AccessibilityObject::detach(detachmentType, cache);
+    AccessibilityObject::detachRemoteParts(detachmentType);
     m_node = nullptr;
 }
 

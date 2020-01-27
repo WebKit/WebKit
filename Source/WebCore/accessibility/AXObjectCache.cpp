@@ -239,11 +239,8 @@ AXObjectCache::~AXObjectCache()
         AXIsolatedTree::removeTreeForPageID(*m_pageID);
 #endif
 
-    for (const auto& object : m_objects.values()) {
-        detachWrapper(object.get(), AccessibilityDetachmentType::CacheDestroyed);
+    for (const auto& object : m_objects.values())
         object->detach(AccessibilityDetachmentType::CacheDestroyed);
-        object->setObjectID(0);
-    }
 }
 
 void AXObjectCache::findModalNodes()
@@ -853,9 +850,7 @@ void AXObjectCache::remove(AXID axID)
     if (!object)
         return;
 
-    detachWrapper(object.get(), AccessibilityDetachmentType::ElementDestroyed);
-    object->detach(AccessibilityDetachmentType::ElementDestroyed, this);
-    object->setObjectID(0);
+    object->detach(AccessibilityDetachmentType::ElementDestroyed);
 
     m_idsInUse.remove(axID);
     ASSERT(m_objects.size() >= m_idsInUse.size());

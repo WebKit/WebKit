@@ -21,6 +21,7 @@
 #include "config.h"
 #include "AccessibilityObject.h"
 
+#include "AXObjectCache.h"
 #include "HTMLSpanElement.h"
 #include "RenderBlock.h"
 #include "RenderInline.h"
@@ -33,6 +34,12 @@
 #if ENABLE(ACCESSIBILITY)
 
 namespace WebCore {
+
+void AccessibilityObject::detachPlatformWrapper(AccessibilityDetachmentType detachmentType)
+{
+    if (auto* cache = axObjectCache())
+        cache->detachWrapper(this, detachmentType);
+}
 
 bool AccessibilityObject::accessibilityIgnoreAttachment() const
 {

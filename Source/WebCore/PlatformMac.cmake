@@ -77,6 +77,7 @@ list(APPEND WebCore_PRIVATE_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/Modules/remoteplayback"
     "${WEBCORE_DIR}/Modules/webauthn/apdu"
     "${WEBCORE_DIR}/Modules/webgpu/WHLSL/Metal"
+    "${WEBCORE_DIR}/accessibility/isolatedtree/mac"
     "${WEBCORE_DIR}/accessibility/mac"
     "${WEBCORE_DIR}/bridge/objc"
     "${WEBCORE_DIR}/crypto/mac"
@@ -149,6 +150,7 @@ list(APPEND WebCore_SOURCES
 
     Modules/webaudio/MediaStreamAudioSourceCocoa.cpp
 
+    accessibility/isolatedtree/mac/AXIsolatedObjectMac.mm
     accessibility/mac/AXObjectCacheMac.mm
     accessibility/mac/AccessibilityObjectMac.mm
     accessibility/mac/WebAccessibilityObjectWrapperMac.mm

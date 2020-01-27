@@ -96,9 +96,6 @@ struct AccessibilityText {
 bool nodeHasPresentationRole(Node*);
 
 class AccessibilityObject : public AXCoreObject {
-protected:
-    AccessibilityObject() = default;
-
 public:
     virtual ~AccessibilityObject();
 
@@ -108,9 +105,6 @@ public:
     void setObjectID(AXID id) override { m_id = id; }
     void init() override { }
 
-    // When the corresponding WebCore object that this AccessibilityObject
-    // wraps is deleted, it must be detached.
-    void detach(AccessibilityDetachmentType, AXObjectCache* = nullptr) override;
     bool isDetached() const override;
 
     bool isAccessibilityNodeObject() const override { return false; }
@@ -736,6 +730,10 @@ public:
     String documentEncoding() const override;
 
 protected:
+    AccessibilityObject() = default;
+    void detachRemoteParts(AccessibilityDetachmentType) override;
+    void detachPlatformWrapper(AccessibilityDetachmentType) override;
+
     AXID m_id { 0 };
     AccessibilityChildrenVector m_children;
     mutable bool m_haveChildren { false };

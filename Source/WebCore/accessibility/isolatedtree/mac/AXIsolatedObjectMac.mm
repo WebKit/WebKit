@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -20,37 +20,23 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "AccessibilityObject.h"
+#import "config.h"
+#import "AXIsolatedObject.h"
 
-#if ENABLE(ACCESSIBILITY)
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE) && PLATFORM(MAC)
 
-#include "AXObjectCache.h"
+#import "WebAccessibilityObjectWrapperMac.h"
 
 namespace WebCore {
 
-void AccessibilityObject::detachPlatformWrapper(AccessibilityDetachmentType detachmentType)
+void AXIsolatedObject::detachPlatformWrapper(AccessibilityDetachmentType)
 {
-    if (auto* cache = axObjectCache())
-        cache->detachWrapper(this, detachmentType);
+    [wrapper() detach];
 }
 
-bool AccessibilityObject::accessibilityIgnoreAttachment() const
-{
-    return false;
-}
+} // WebCore
 
-AccessibilityObjectInclusion AccessibilityObject::accessibilityPlatformIncludesObject() const
-{
-    if (isMenuListPopup() || isMenuListOption())
-        return AccessibilityObjectInclusion::IncludeObject;
-
-    return AccessibilityObjectInclusion::DefaultBehavior;
-}
-
-} // namespace WebCore
-
-#endif // ENABLE(ACCESSIBILITY)
+#endif // ENABLE(ACCESSIBILITY_ISOLATED_TREE) && PLATFORM(MAC)

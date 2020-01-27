@@ -407,9 +407,9 @@ void AXIsolatedObject::setParent(AXID parent)
     m_parent = parent;
 }
 
-void AXIsolatedObject::detach(AccessibilityDetachmentType, AXObjectCache*)
+void AXIsolatedObject::detachRemoteParts(AccessibilityDetachmentType detachmentType)
 {
-    ASSERT(isMainThread());
+    ASSERT(isMainThread() ? detachmentType == AccessibilityDetachmentType::CacheDestroyed : detachmentType != AccessibilityDetachmentType::CacheDestroyed);
     for (const auto& childID : m_childrenIDs)
         tree()->nodeForID(childID)->detachFromParent();
 
@@ -425,14 +425,6 @@ bool AXIsolatedObject::isDetached() const
 void AXIsolatedObject::detachFromParent()
 {
     m_parent = InvalidAXID;
-}
-
-void AXIsolatedObject::disconnect()
-{
-    ASSERT(isMainThread());
-    tree()->axObjectCache()->detachWrapper(this, AccessibilityDetachmentType::ElementDestroyed);
-    detach(AccessibilityDetachmentType::ElementDestroyed);
-    setObjectID(InvalidAXID);
 }
 
 void AXIsolatedObject::setTreeIdentifier(AXIsolatedTreeID treeIdentifier)

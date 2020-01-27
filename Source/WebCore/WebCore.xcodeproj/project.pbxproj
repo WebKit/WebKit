@@ -13528,6 +13528,7 @@
 		BEF29EE91715DD0900C4B4C9 /* AudioTrackPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AudioTrackPrivate.h; sourceTree = "<group>"; };
 		BEF29EEA1715DD0900C4B4C9 /* VideoTrackPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VideoTrackPrivate.h; sourceTree = "<group>"; };
 		C046E1AB1208A9FE00BA2CF7 /* LocalizedStrings.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LocalizedStrings.cpp; sourceTree = "<group>"; };
+		C078376023DF253E00C9C5C8 /* AXIsolatedObjectMac.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = AXIsolatedObjectMac.mm; path = mac/AXIsolatedObjectMac.mm; sourceTree = "<group>"; };
 		C0F2A43F13869A280066C534 /* preprocessor.pm */ = {isa = PBXFileReference; lastKnownFileType = text.script.perl; name = preprocessor.pm; path = scripts/preprocessor.pm; sourceTree = "<group>"; };
 		C105DA610F3AA68F001DD44F /* TextEncodingDetectorICU.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TextEncodingDetectorICU.cpp; sourceTree = "<group>"; };
 		C105DA630F3AA6B8001DD44F /* TextEncodingDetector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextEncodingDetector.h; sourceTree = "<group>"; };
@@ -17850,6 +17851,7 @@
 		29AE212921AB9ECB00869283 /* isolatedtree */ = {
 			isa = PBXGroup;
 			children = (
+				C078375F23DF246200C9C5C8 /* mac */,
 				29AE213421ABA48A00869283 /* AXIsolatedObject.cpp */,
 				29AE213321ABA48A00869283 /* AXIsolatedObject.h */,
 				29AE212C21AB9EEB00869283 /* AXIsolatedTree.cpp */,
@@ -26149,6 +26151,14 @@
 			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 0;
+		};
+		C078375F23DF246200C9C5C8 /* mac */ = {
+			isa = PBXGroup;
+			children = (
+				C078376023DF253E00C9C5C8 /* AXIsolatedObjectMac.mm */,
+			);
+			name = mac;
+			sourceTree = "<group>";
 		};
 		C210E90D21B4BCA400B7F83D /* WHLSL */ = {
 			isa = PBXGroup;

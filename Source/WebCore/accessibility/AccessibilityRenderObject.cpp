@@ -133,9 +133,9 @@ Ref<AccessibilityRenderObject> AccessibilityRenderObject::create(RenderObject* r
     return adoptRef(*new AccessibilityRenderObject(renderer));
 }
 
-void AccessibilityRenderObject::detach(AccessibilityDetachmentType detachmentType, AXObjectCache* cache)
+void AccessibilityRenderObject::detachRemoteParts(AccessibilityDetachmentType detachmentType)
 {
-    AccessibilityNodeObject::detach(detachmentType, cache);
+    AccessibilityNodeObject::detachRemoteParts(detachmentType);
     
     detachRemoteSVGRoot();
     

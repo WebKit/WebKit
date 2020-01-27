@@ -54,15 +54,15 @@ public:
     AXID objectID() const override { return m_id; }
     void init() override { }
 
-    void detach(AccessibilityDetachmentType, AXObjectCache* = nullptr) override;
     bool isDetached() const override;
-    void disconnect();
 
     void setTreeIdentifier(AXIsolatedTreeID);
     void setParent(AXID);
     void appendChild(AXID);
 
 private:
+    void detachRemoteParts(AccessibilityDetachmentType) override;
+    void detachPlatformWrapper(AccessibilityDetachmentType) override;
 
     AXID parent() const { return m_parent; }
     

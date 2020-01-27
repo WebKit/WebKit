@@ -97,7 +97,7 @@ void AXIsolatedTree::removeTreeForPageID(PageIdentifier pageID)
         LockHolder treeLocker { tree->m_changeLogLock };
         for (const auto& axID : tree->m_readerThreadNodeMap.keys()) {
             if (auto object = tree->nodeForID(axID))
-                object->disconnect();
+                object->detach(AccessibilityDetachmentType::CacheDestroyed);
         }
         tree->m_readerThreadNodeMap.clear();
         treeLocker.unlockEarly();
@@ -164,21 +164,17 @@ void AXIsolatedTree::applyPendingChanges()
 {
     RELEASE_ASSERT(!isMainThread());
     LockHolder locker { m_changeLogLock };
-    Vector<Ref<AXIsolatedObject>> appendCopy;
-    std::swap(appendCopy, m_pendingAppends);
-    Vector<AXID> removeCopy({ WTFMove(m_pendingRemovals) });
-    locker.unlockEarly();
 
     // We don't clear the pending IDs beacause if the next round of updates does not modify them, then they stay the same
     // value without extra bookkeeping.
     m_focusedNodeID = m_pendingFocusedNodeID;
 
-    for (auto& item : appendCopy)
+    for (auto& item : m_pendingAppends)
         m_readerThreadNodeMap.add(item->objectID(), WTFMove(item));
 
-    for (auto item : removeCopy) {
+    for (auto& item : m_pendingRemovals) {
         if (auto object = nodeForID(item))
-            object->disconnect();
+            object->detach(AccessibilityDetachmentType::ElementDestroyed);
         m_readerThreadNodeMap.remove(item);
     }
 }

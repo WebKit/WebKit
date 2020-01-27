@@ -36,12 +36,6 @@
 
 namespace WebCore {
     
-void AXObjectCache::detachWrapper(AXCoreObject* obj, AccessibilityDetachmentType)
-{
-    [obj->wrapper() detach];
-    obj->setWrapper(nullptr);
-}
-
 void AXObjectCache::attachWrapper(AXCoreObject* obj)
 {
     RetainPtr<AccessibilityObjectWrapper> wrapper = adoptNS([[WebAccessibilityObjectWrapper alloc] initWithAccessibilityObject:obj]);

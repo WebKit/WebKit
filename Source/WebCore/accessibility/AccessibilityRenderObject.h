@@ -149,8 +149,7 @@ public:
     void setValue(const String&) override;
     void setSelectedRows(AccessibilityChildrenVector&) override;
     AccessibilityOrientation orientation() const override;
-    
-    void detach(AccessibilityDetachmentType, AXObjectCache*) override;
+
     void textChanged() override;
     void addChildren() override;
     bool canHaveChildren() const override;
@@ -203,6 +202,7 @@ public:
 
 protected:
     explicit AccessibilityRenderObject(RenderObject*);
+    void detachRemoteParts(AccessibilityDetachmentType) override;
     ScrollableArea* getScrollableAreaIfScrollable() const override;
     void scrollTo(const IntPoint&) const override;
     

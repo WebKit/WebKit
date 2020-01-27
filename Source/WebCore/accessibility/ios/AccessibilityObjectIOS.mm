@@ -37,6 +37,11 @@
 
 namespace WebCore {
     
+void AccessibilityObject::detachPlatformWrapper(AccessibilityDetachmentType)
+{
+    [wrapper() detach];
+}
+
 void AccessibilityObject::detachFromParent()
 {
 }

@@ -48,9 +48,9 @@ AccessibilityScrollView::~AccessibilityScrollView()
     ASSERT(isDetached());
 }
 
-void AccessibilityScrollView::detach(AccessibilityDetachmentType detachmentType, AXObjectCache* cache)
+void AccessibilityScrollView::detachRemoteParts(AccessibilityDetachmentType detachmentType)
 {
-    AccessibilityObject::detach(detachmentType, cache);
+    AccessibilityObject::detachRemoteParts(detachmentType);
     m_scrollView = nullptr;
 }
 
