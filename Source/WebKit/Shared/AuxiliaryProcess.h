@@ -37,7 +37,6 @@
 
 namespace WebKit {
 
-class DependencyProcessAssertion;
 class SandboxInitializationParameters;
 struct AuxiliaryProcessInitializationParameters;
 
@@ -164,9 +163,6 @@ private:
 
     UserActivity m_processSuppressionDisabled;
 
-#if PLATFORM(IOS_FAMILY)
-    std::unique_ptr<DependencyProcessAssertion> m_uiProcessDependencyProcessAssertion;
-#endif
 #if PLATFORM(COCOA)
     OSObjectPtr<xpc_object_t> m_priorityBoostMessage;
 #endif

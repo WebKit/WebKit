@@ -1,3 +1,15 @@
+2020-01-27  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, revert r254210 as it seems to be causing process assertion leaks.
+        https://bugs.webkit.org/show_bug.cgi?id=205836
+
+        * Shared/AuxiliaryProcess.cpp:
+        (WebKit::AuxiliaryProcess::initializeConnection):
+        * Shared/AuxiliaryProcess.h:
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::initializeConnection):
+        * WebProcess/WebProcess.h:
+
 2020-01-27  Brent Fulgham  <bfulgham@apple.com>
 
         Remove last bits of location services rules
