@@ -1,3 +1,25 @@
+2020-01-27  Antti Koivisto  <antti@apple.com>
+
+        [Mac wk2 Release] fast/dom/frame-src-javascript-url-async.html flaky failing
+        https://bugs.webkit.org/show_bug.cgi?id=206701
+        <rdar://problem/58847864>
+
+        Reviewed by Antoine Quint.
+
+        * fast/dom/frame-src-javascript-url-async.html:
+
+        The test assumed that in
+
+        <iframe src=javascript:'foo'></iframe>
+        <script>
+        …
+
+        the frame javascript could not have run before the body script executes. However parser might yield before the
+        script tag or data might come from network in chunks that don't cover the full script. In this case frame load
+        may start and src execute before the body script runs.
+
+        Fix by document.writing the iframe tag.
+
 2020-01-26  Said Abou-Hallawa  <said@apple.com>
 
         Throttling requestAnimationFrame should be controlled by RenderingUpdateScheduler

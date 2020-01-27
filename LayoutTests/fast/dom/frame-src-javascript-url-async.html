@@ -28,8 +28,9 @@ function log(msg)
 }
 </script>
 <iframe id="frame1"></iframe>
-<iframe id="frame2" src="javascript:'1'"></iframe>
 <script>
+document.write("<iframe id=frame2 src=javascript:'1'></iframe>");
+
 frame1 = document.getElementById("frame1");
 frame2 = document.getElementById("frame2");
 initialFrame1Window = frame1.contentWindow;
