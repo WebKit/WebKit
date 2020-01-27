@@ -1,3 +1,14 @@
+2020-01-27  Cathie Chen  <cathiechen@igalia.com>
+
+        The value of AspectRatioOfImgFromWidthAndHeight for legacy mac isn't correct
+        https://bugs.webkit.org/show_bug.cgi?id=206822
+
+        Reviewed by Frédéric Wang.
+
+        The value should be WebKitAspectRatioOfImgFromWidthAndHeightEnabled
+
+        * WebView/WebPreferenceKeysPrivate.h:
+
 2020-01-26  Said Abou-Hallawa  <said@apple.com>
 
         Throttling requestAnimationFrame should be controlled by RenderingUpdateScheduler
