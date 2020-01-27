@@ -1347,3 +1347,5 @@ webkit.org/b/203572 media/remoteplayback-target-availability.html [ Skip ]
 webkit.org/b/203637 fast/css-custom-paint/simple-hidpi.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/205308 accessibility/smart-invert-reference.html [ ImageOnlyFailure ]
+
+webkit.org/b/206616 [ Release ] http/tests/security/contentSecurityPolicy/module-eval-blocked-in-external-script.html [ Pass Timeout ]
