@@ -79,6 +79,9 @@ fieldset
 legend
       AXRole: AXLabel
       
+figure
+      AXRole: AXGroup
+      
 footer
       AXRole: AXLandmarkContentInfo
       

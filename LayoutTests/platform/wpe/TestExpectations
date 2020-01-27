@@ -572,6 +572,46 @@ webkit.org/b/206528 imported/w3c/web-platform-tests/remote-playback/disable-remo
 webkit.org/b/206528 imported/w3c/web-platform-tests/remote-playback/idlharness.window.html [ Failure ]
 webkit.org/b/206528 imported/w3c/web-platform-tests/remote-playback/watch-availability-initial-callback.html [ Failure ]
 
+# WPE does not implement setAutomaticLinkDetectionEnabled
+fast/events/input-event-insert-link.html [ Skip ]
+
+# https://bugs.webkit.org/show_bug.cgi?id=81697 Skip file:// based notifications tests
+fast/history/page-cache-notification-showing.html [ Skip ]
+
+# IsLoggedIn is an experimental feature (Introduced in r250944)
+http/tests/is-logged-in/ [ Skip ]
+
+webkit.org/b/177633 editing/async-clipboard/clipboard-change-data-while-writing.html [ Failure ]
+webkit.org/b/177633 editing/async-clipboard/clipboard-read-text-from-platform.html [ Failure ]
+
+webkit.org/b/206692 fast/canvas/canvas-fillPath-shadow.html [ Failure ]
+
+webkit.org/b/206588 fast/history/page-cache-media-recorder.html [ Failure ]
+
+webkit.org/b/206517 http/wpt/service-workers/file-upload.html [ Failure ]
+
+webkit.org/b/206587 imported/w3c/web-platform-tests/2dcontext/shadows/shadowBlur_gaussian_tolerance.1.html [ Failure ]
+
+webkit.org/b/206653 imported/w3c/web-platform-tests/clipboard-apis/async-navigator-clipboard-basics.https.html [ Failure ]
+webkit.org/b/206653 imported/w3c/web-platform-tests/clipboard-apis/async-write-text-read-dttext-manual.https.html [ Failure ]
+webkit.org/b/206653 imported/w3c/web-platform-tests/clipboard-apis/async-write-text-read-text-manual.https.html [ Failure ]
+
+webkit.org/b/206586 imported/w3c/web-platform-tests/content-security-policy/frame-ancestors/frame-ancestors-from-serviceworker.https.html [ Failure ]
+webkit.org/b/206586 imported/w3c/web-platform-tests/content-security-policy/frame-src/frame-src-same-document-meta.html [ Failure ]
+
+webkit.org/b/198823 imported/w3c/web-platform-tests/content-security-policy/reporting/report-only-in-meta.sub.html [ Failure Pass ]
+
+webkit.org/b/206657 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-video-element/resize-during-playback.html [ Failure ]
+
+webkit.org/b/197473 imported/w3c/web-platform-tests/resource-timing/resource-timing-level1.sub.html [ Failure ]
+
+webkit.org/b/206652 imported/w3c/web-platform-tests/websockets/constructor/011.html [ Failure ]
+webkit.org/b/206652 imported/w3c/web-platform-tests/websockets/interfaces/WebSocket/bufferedAmount/bufferedAmount-getting.html [ Failure ]
+
+webkit.org/b/186141 svg/dom/SVGGeometry-line.xhtml [ Failure ]
+
+webkit.org/b/206583 webrtc/video-gpuProcess.html [ Failure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # 3. UNRESOLVED TESTS
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -1658,8 +1698,8 @@ Bug(WPE) css3/unicode-bidi-isolate-aharon-failing.html [ ImageOnlyFailure ]
 Bug(WPE) css3/zoom-coords.xhtml [ Failure ]
 
 # ENABLE_CSS_COMPOSITING
-transitions/svg-text-shadow-transition.html [ Pass ]
-legacy-animation-engine/transitions/svg-text-shadow-transition.html [ Pass ]
+transitions/svg-text-shadow-transition.html [ DumpJSConsoleLogInStdErr ]
+legacy-animation-engine/transitions/svg-text-shadow-transition.html [ DumpJSConsoleLogInStdErr ]
 
 # ENABLE_MEDIA_SOURCE
 media/media-source/ [ Pass ]

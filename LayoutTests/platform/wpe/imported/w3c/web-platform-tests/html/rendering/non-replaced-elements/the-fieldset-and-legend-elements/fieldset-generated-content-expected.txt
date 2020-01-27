@@ -1,0 +1,6 @@
+A
+Y A
+XYX
+
+FAIL fieldset generated content assert_equals: clientWidth expected 60 but got 48
+

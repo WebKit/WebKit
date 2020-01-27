@@ -1,0 +1,10 @@
+CONSOLE MESSAGE: line 1: TypeError: 'text/json' is not a valid JavaScript MIME type.
+CONSOLE MESSAGE: line 1: TypeError: 'application/json' is not a valid JavaScript MIME type.
+CONSOLE MESSAGE: line 1: TypeError: 'text/plain' is not a valid JavaScript MIME type.
+CONSOLE MESSAGE: line 1: TypeError: 'text/plain' is not a valid JavaScript MIME type.
+
+FAIL text/json assert_unreached: [object Event] Reached unreachable code
+FAIL application/json assert_unreached: [object Event] Reached unreachable code
+FAIL text/html+json assert_unreached: [object Event] Reached unreachable code
+FAIL image/svg+json assert_unreached: [object Event] Reached unreachable code
+

@@ -722,7 +722,7 @@ imported/w3c/web-platform-tests/WebCryptoAPI/ [ Slow ]
 editing/inserting/typing-space-to-trigger-smart-link.html [ Skip ]
 editing/inserting/smart-link-when-caret-is-moved-before-URL.html [ Skip ]
 editing/inserting/smart-quote-with-all-configurations.html [ Skip ]
-fast/events/input-event-insert-link.html [ Failure ]
+fast/events/input-event-insert-link.html [ Skip ]
 
 # QuickTime plug-in not relevant to this port
 Bug(GTK) plugins/quicktime-plugin-replacement.html [ Skip ]
