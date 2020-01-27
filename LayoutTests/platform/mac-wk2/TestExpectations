@@ -930,3 +930,5 @@ webkit.org/b/205808 fast/text/international/unicode-bidi-other-neutrals.html [ P
 webkit.org/b/198942 webgpu/vertex-buffer-triangle-strip.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/206864 http/tests/workers/service/basic-timeout.https.html [ Pass Failure ]
+
+webkit.org/b/206746 [ Release ] imported/w3c/web-platform-tests/web-animations/timing-model/animations/updating-the-finished-state.html [ Pass Failure ]
