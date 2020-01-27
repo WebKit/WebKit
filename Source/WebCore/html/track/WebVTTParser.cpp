@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2011, 2013 Google Inc.  All rights reserved.
  * Copyright (C) 2013 Cable Television Labs, Inc.
- * Copyright (C) 2011-2014 Apple Inc.  All rights reserved.
+ * Copyright (C) 2011-2020 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -315,7 +315,7 @@ WebVTTParser::ParseState WebVTTParser::collectStyleSheet(const String& line)
     if (checkAndStoreStyleSheet(line))
         return checkAndRecoverCue(line);
 
-    m_currentStyleSheet.append(line);
+    m_currentSourceStyleSheet.append(line);
     return Style;
 }
 
@@ -371,10 +371,11 @@ bool WebVTTParser::checkAndStoreStyleSheet(const String& line)
     if (!line.isEmpty() && !line.contains("-->"))
         return false;
     
-    auto styleSheet = WTFMove(m_currentStyleSheet);
-    
-    auto contents = StyleSheetContents::create();
-    if (!contents->parseString(styleSheet))
+    auto styleSheetText = WTFMove(m_currentSourceStyleSheet);
+
+    // WebVTTMode disallows non-data URLs.
+    auto contents = StyleSheetContents::create(CSSParserContext(WebVTTMode));
+    if (!contents->parseString(styleSheetText))
         return true;
 
     auto& namespaceRules = contents->namespaceRules();
@@ -388,21 +389,37 @@ bool WebVTTParser::checkAndStoreStyleSheet(const String& line)
     auto& childRules = contents->childRules();
     if (!childRules.size())
         return true;
+
+    StringBuilder sanitizedStyleSheetBuilder;
     
     for (const auto& rule : childRules) {
         if (!rule->isStyleRule())
             return true;
-        const auto& styleRule = downcast<StyleRule>(rule.get());
+        const auto& styleRule = downcast<StyleRule>(*rule);
 
-        const auto& selectorList = styleRule->selectorList();
+        const auto& selectorList = styleRule.selectorList();
         if (selectorList.listSize() != 1)
             return true;
         auto selector = selectorList.selectorAt(0);
-        if (selector->selectorText() != "::cue")
+        auto selectorText = selector->selectorText();
+        
+        bool isCue = selectorText == "::cue" || selectorText.startsWith("::cue(");
+        if (!isCue)
             return true;
+
+        if (styleRule.properties().isEmpty())
+            continue;
+
+        sanitizedStyleSheetBuilder.append(selectorText);
+        sanitizedStyleSheetBuilder.appendLiteral(" { ");
+        sanitizedStyleSheetBuilder.append(styleRule.properties().asText());
+        sanitizedStyleSheetBuilder.appendLiteral(" }\n");
     }
 
-    m_styleSheets.append(styleSheet);
+    // It would be more stylish to parse the stylesheet only once instead of serializing a sanitized version.
+    if (!sanitizedStyleSheetBuilder.isEmpty())
+        m_styleSheets.append(sanitizedStyleSheetBuilder.toString());
+
     return true;
 }
 

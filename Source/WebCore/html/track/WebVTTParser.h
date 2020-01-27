@@ -194,7 +194,7 @@ private:
     String m_previousLine;
     String m_currentSettings;
     RefPtr<VTTRegion> m_currentRegion;
-    String m_currentStyleSheet;
+    String m_currentSourceStyleSheet;
     
     WebVTTParserClient* m_client;
 
