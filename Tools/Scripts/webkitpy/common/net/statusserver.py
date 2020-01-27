@@ -144,10 +144,10 @@ class StatusServer:
         self._browser.open(upload_attachment_url)
         self._browser.select_form(name='upload_attachment')
         self._browser['attachment_id'] = unicode(attachment_id)
-        self._browser.add_file(StringIO.StringIO(unicode(attachment_metadata)), 'application/json', 'attachment-{}-metadata.json'.format(attachment_id), 'attachment_metadata')
+        self._browser.add_file(StringIO(unicode(attachment_metadata)), 'application/json', 'attachment-{}-metadata.json'.format(attachment_id), 'attachment_metadata')
         if isinstance(attachment_data, unicode):
             attachment_data = attachment_data.encode('utf-8')
-        self._browser.add_file(StringIO.StringIO(attachment_data), 'text/plain', 'attachment-{}.patch'.format(attachment_id), 'attachment_data')
+        self._browser.add_file(StringIO(attachment_data), 'text/plain', 'attachment-{}.patch'.format(attachment_id), 'attachment_data')
         self._browser.submit()
 
     def upload_attachment(self, attachment):
