@@ -1,3 +1,12 @@
+2020-01-27  Jacob Uphoff  <jacob_uphoff@apple.com>
+
+        [ macOS ] fast/frames/sandboxed-iframe-navigation-allowed.html is flaky failing
+        https://bugs.webkit.org/show_bug.cgi?id=206680
+
+        Unreviewed test gardening
+
+        * platform/mac-wk1/TestExpectations:
+
 2020-01-27  Jason Lawrence  <lawrence.j@apple.com>
 
         REGRESSION (r254699): [ iOS ] fast/forms/validationMessage.html is flaky and timing out
