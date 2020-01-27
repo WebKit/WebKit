@@ -1,3 +1,16 @@
+2020-01-27  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed, rolling out r255131.
+
+        Caused assertion failures on iOS debug bots.
+
+        Reverted changeset:
+
+        "Throttling requestAnimationFrame should be controlled by
+        RenderingUpdateScheduler"
+        https://bugs.webkit.org/show_bug.cgi?id=204713
+        https://trac.webkit.org/changeset/255131
+
 2020-01-26  Said Abou-Hallawa  <said@apple.com>
 
         Throttling requestAnimationFrame should be controlled by RenderingUpdateScheduler

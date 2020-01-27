@@ -21,7 +21,6 @@
 #pragma once
 
 #include "ActivityState.h"
-#include "AnimationFrameRate.h"
 #include "DisabledAdaptations.h"
 #include "Document.h"
 #include "FindOptions.h"
@@ -698,11 +697,6 @@ public:
     bool isLowPowerModeEnabled() const;
     WEBCORE_EXPORT void setLowPowerModeEnabledOverrideForTesting(Optional<bool>);
 
-    bool renderingUpdateThrottlingEnabled() const;
-    void renderingUpdateThrottlingEnabledChanged();
-    bool isRenderingUpdateThrottled() const;
-    Seconds preferredRenderingUpdateInterval() const;
-
     WEBCORE_EXPORT void applicationWillResignActive();
     WEBCORE_EXPORT void applicationDidEnterBackground();
     WEBCORE_EXPORT void applicationWillEnterForeground();
@@ -998,7 +992,6 @@ private:
     bool m_inUpdateRendering { false };
     bool m_hasResourceLoadClient { false };
     Vector<UserContentURLPattern> m_corsDisablingPatterns;
-    OptionSet<ThrottlingReason> m_throttlingReasons;
 };
 
 inline PageGroup& Page::group()

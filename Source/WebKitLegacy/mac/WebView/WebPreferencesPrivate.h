@@ -489,9 +489,6 @@ extern NSString *WebPreferencesCacheModelChangedInternalNotification WEBKIT_DEPR
 - (BOOL)hiddenPageCSSAnimationSuspensionEnabled;
 - (void)setHiddenPageCSSAnimationSuspensionEnabled:(BOOL)flag;
 
-- (BOOL)renderingUpdateThrottlingEnabled;
-- (void)setRenderingUpdateThrottlingEnabled:(BOOL)flag;
-
 - (BOOL)lowPowerVideoAudioBufferSizeEnabled;
 - (void)setLowPowerVideoAudioBufferSizeEnabled:(BOOL)enabled;
 

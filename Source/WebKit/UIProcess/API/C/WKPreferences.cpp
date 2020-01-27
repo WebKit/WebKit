@@ -1309,16 +1309,6 @@ bool WKPreferencesGetHiddenPageCSSAnimationSuspensionEnabled(WKPreferencesRef pr
     return toImpl(preferencesRef)->hiddenPageCSSAnimationSuspensionEnabled();
 }
 
-void WKPreferencesSetRenderingUpdateThrottlingEnabled(WKPreferencesRef preferencesRef, bool enabled)
-{
-    toImpl(preferencesRef)->setRenderingUpdateThrottlingEnabled(enabled);
-}
-
-bool WKPreferencesGetRenderingUpdateThrottlingEnabled(WKPreferencesRef preferencesRef)
-{
-    return toImpl(preferencesRef)->renderingUpdateThrottlingEnabled();
-}
-
 void WKPreferencesSetIncrementalRenderingSuppressionTimeout(WKPreferencesRef preferencesRef, double timeout)
 {
     toImpl(preferencesRef)->setIncrementalRenderingSuppressionTimeout(timeout);

@@ -44,6 +44,9 @@
 #include "RenderLayerBacking.h"
 #include <JavaScriptCore/VM.h>
 
+static const Seconds defaultAnimationInterval { 15_ms };
+static const Seconds throttledAnimationInterval { 30_ms };
+
 namespace WebCore {
 
 Ref<DocumentTimeline> DocumentTimeline::create(Document& document)
@@ -195,11 +198,16 @@ Vector<RefPtr<WebAnimation>> DocumentTimeline::getAnimations() const
     return animations;
 }
 
+void DocumentTimeline::updateThrottlingState()
+{
+    scheduleAnimationResolution();
+}
+
 Seconds DocumentTimeline::animationInterval() const
 {
     if (!m_document || !m_document->page())
         return Seconds::infinity();
-    return m_document->page()->preferredRenderingUpdateInterval();
+    return m_document->page()->isLowPowerModeEnabled() ? throttledAnimationInterval : defaultAnimationInterval;
 }
 
 void DocumentTimeline::suspendAnimations()

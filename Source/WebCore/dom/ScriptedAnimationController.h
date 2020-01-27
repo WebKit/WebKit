@@ -1,6 +1,5 @@
 /*
  * Copyright (C) 2011 Google Inc. All Rights Reserved.
- * Copyright (C) 2019 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,13 +25,12 @@
 
 #pragma once
 
-#include "AnimationFrameRate.h"
 #include "DOMHighResTimeStamp.h"
+#include "Timer.h"
 #include <wtf/OptionSet.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
-#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
@@ -50,7 +48,6 @@ public:
     ~ScriptedAnimationController();
     void clearDocumentPointer() { m_document = nullptr; }
     bool requestAnimationFrameEnabled() const;
-    WEBCORE_EXPORT Seconds interval() const;
 
     typedef int CallbackId;
 
@@ -60,29 +57,41 @@ public:
 
     void suspend();
     void resume();
-    
-    void addThrottlingReason(ThrottlingReason reason) { m_throttlingReasons.add(reason); }
-    void removeThrottlingReason(ThrottlingReason reason) { m_throttlingReasons.remove(reason); }
+
+    enum class ThrottlingReason {
+        VisuallyIdle                    = 1 << 0,
+        OutsideViewport                 = 1 << 1,
+        LowPowerMode                    = 1 << 2,
+        NonInteractedCrossOriginFrame   = 1 << 3,
+    };
+    void addThrottlingReason(ThrottlingReason);
+    void removeThrottlingReason(ThrottlingReason);
+
     WEBCORE_EXPORT bool isThrottled() const;
+    WEBCORE_EXPORT Seconds interval() const;
 
 private:
     ScriptedAnimationController(Document&);
 
-    Page* page() const;
-    Seconds preferredScriptedAnimationInterval() const;
-    bool isThrottledRelativeToPage() const;
-    bool shouldRescheduleRequestAnimationFrame(DOMHighResTimeStamp) const;
     void scheduleAnimation();
+    void animationTimerFired();
 
-    using CallbackList = Vector<RefPtr<RequestAnimationFrameCallback>>;
+    Page* page() const;
+
+    typedef Vector<RefPtr<RequestAnimationFrameCallback>> CallbackList;
     CallbackList m_callbacks;
-    DOMHighResTimeStamp m_lastAnimationFrameTimestamp { 0 };
 
     WeakPtr<Document> m_document;
     CallbackId m_nextCallbackId { 0 };
     int m_suspendCount { 0 };
 
+    Timer m_animationTimer;
+    double m_lastAnimationFrameTimestamp { 0 };
+
+#if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
     OptionSet<ThrottlingReason> m_throttlingReasons;
+    bool m_isUsingTimer { false };
+#endif
 };
 
 } // namespace WebCore

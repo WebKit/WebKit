@@ -6,9 +6,6 @@
 description("Tests that requestAnimationFrame is throttled in subframes that are outside the viewport");
 window.jsTestIsAsync = true;
 
-if (window.internals)
-    internals.settings.setRenderingUpdateThrottlingEnabled(true);
-
 function checkSubframesThrottled()
 {
     shouldBeTrue("testFrame.contentWindow.internals.isRequestAnimationFrameThrottled()");

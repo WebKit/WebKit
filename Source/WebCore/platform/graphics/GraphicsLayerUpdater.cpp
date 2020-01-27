@@ -35,6 +35,7 @@ namespace WebCore {
 GraphicsLayerUpdater::GraphicsLayerUpdater(GraphicsLayerUpdaterClient& client, PlatformDisplayID displayID)
     : m_client(client)
 {
+    DisplayRefreshMonitorManager::sharedManager().registerClient(*this);
     DisplayRefreshMonitorManager::sharedManager().windowScreenDidChange(displayID, *this);
     DisplayRefreshMonitorManager::sharedManager().scheduleAnimation(*this);
 }

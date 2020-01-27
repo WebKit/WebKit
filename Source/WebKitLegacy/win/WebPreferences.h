@@ -301,8 +301,6 @@ public:
     virtual HRESULT STDMETHODCALLTYPE setAspectRatioOfImgFromWidthAndHeightEnabled(BOOL);
     virtual HRESULT STDMETHODCALLTYPE webSQLEnabled(_Out_ BOOL*);
     virtual HRESULT STDMETHODCALLTYPE setWebSQLEnabled(BOOL);
-    virtual HRESULT STDMETHODCALLTYPE renderingUpdateThrottlingEnabled(_Out_ BOOL*);
-    virtual HRESULT STDMETHODCALLTYPE setRenderingUpdateThrottlingEnabled(BOOL);
 
     // WebPreferences
 

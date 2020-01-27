@@ -123,11 +123,6 @@ void RemoteLayerTreeDrawingArea::adoptDisplayRefreshMonitorsFromDrawingArea(Draw
     }
 }
 
-void RemoteLayerTreeDrawingArea::setPreferredFramesPerSecond(FramesPerSecond preferredFramesPerSecond)
-{
-    send(Messages::RemoteLayerTreeDrawingAreaProxy::SetPreferredFramesPerSecond(preferredFramesPerSecond));
-}
-
 void RemoteLayerTreeDrawingArea::updateRootLayers()
 {
     Vector<Ref<GraphicsLayer>> children;
