@@ -2069,9 +2069,8 @@ inline Vector<String> matchAll(const CString& source, std::regex regex)
 {
     Vector<String> matches;
     std::smatch match;
-    for (std::string str = source.data(); std::regex_search(str, match, regex);) {
+    for (std::string str = source.data(); std::regex_search(str, match, regex); str = match.suffix()) {
         ASSERT(match.size() == 1);
-        str = match.suffix();
         matches.append(match[0].str().c_str());
     }
     return matches;
