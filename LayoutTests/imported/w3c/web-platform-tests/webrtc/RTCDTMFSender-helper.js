@@ -78,7 +78,12 @@ function createDtmfSender(pc = new RTCPeerConnection()) {
       Test description.
  */
 function test_tone_change_events(testFunc, toneChanges, desc) {
-  async_test(t => {
+  promise_test(t => {
+    let done, fail;
+    const promise = new Promise((resolve, reject) => {
+        done = resolve;
+        fail = reject;
+    });
     const pc = new RTCPeerConnection();
 
     createDtmfSender(pc)
@@ -124,7 +129,7 @@ function test_tone_change_events(testFunc, toneChanges, desc) {
           // in which case the test should fail.
           t.step_timeout(
             t.step_func(() => {
-              t.done();
+              done();
               pc.close();
               pc.otherPc.close();
             }), expectedDuration + 100);
@@ -137,6 +142,7 @@ function test_tone_change_events(testFunc, toneChanges, desc) {
     .catch(t.step_func(err => {
       assert_unreached(`Unexpected promise rejection: ${err}`);
     }));
+    return promise;
   }, desc);
 }
 
