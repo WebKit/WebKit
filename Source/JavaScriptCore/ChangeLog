@@ -1,3 +1,23 @@
+2020-01-27  Jonathan Bedard  <jbedard@apple.com>
+
+        Fix OpenSource iphoneos arm64e build
+        https://bugs.webkit.org/show_bug.cgi?id=206703
+
+        Reviewed by Yusuke Suzuki.
+
+        * runtime/MachineContext.h:
+        (JSC::MachineContext::stackPointerImpl): Conditionalize function existence on
+        USE(DARWIN_REGISTER_MACROS).
+        (JSC::MachineContext::stackPointer): Use Darwin's register macros if available.
+        (JSC::MachineContext::setStackPointer): Ditto.
+        (JSC::MachineContext::instructionPointerImpl): Conditionalize function existence
+        on USE(DARWIN_REGISTER_MACROS).
+        (JSC::MachineContext::instructionPointer): Use Darwin's register macros if available.
+        (JSC::MachineContext::setInstructionPointer): Ditto.
+        (JSC::MachineContext::linkRegister): Ditto.
+        (JSC::MachineContext::setLinkRegister): Ditto.
+        (JSC::MachineContext::linkRegisterImpl): Deleted.
+
 2020-01-27  Paulo Matos  <pmatos@igalia.com>
 
         Remove internal fields in promise assertion for 32bits
