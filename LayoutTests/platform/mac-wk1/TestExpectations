@@ -849,6 +849,4 @@ webkit.org/b/206241 [ Mojave Debug ] accessibility/mac/search-text/search-text.h
 
 webkit.org/b/199117 [ Debug ] storage/indexeddb/modern/objectstore-autoincrement-types.html [ Timeout ]
 
-webkit.org/b/206362 [ Debug ] inspector/page/overrideSetting-ICECandidateFilteringEnabled.html [ Failure Pass ]
-
 webkit.org/b/206503 [ Mojave ] imported/w3c/web-platform-tests/html/dom/idlharness.worker.html [ Failure ]

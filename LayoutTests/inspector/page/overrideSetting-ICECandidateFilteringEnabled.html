@@ -49,15 +49,14 @@ function test()
         name: "Page.overrideSetting.ICECandidateFilteringEnabled",
         description: "Test that changing whether ice candidate filtering is enabled has an effect.",
         async test() {
-            InspectorTest.log("Overriding ICECandidateFilteringEnabled to false...");
-            await PageAgent.overrideSetting(InspectorBackend.Enum.Page.Setting.ICECandidateFilteringEnabled, false);
-
             let [overriddenResult] = await Promise.all([
                 InspectorTest.awaitEvent("DataChannel"),
                 InspectorTest.evaluateInPage(`createDataChannel()`),
-            ])
+                PageAgent.overrideSetting(InspectorBackend.Enum.Page.Setting.ICECandidateFilteringEnabled, false),
+            ]);
             InspectorTest.expectThat(overriddenResult.data.success, "Should be able to establish a connection when filtering ice candidates.");
         },
+        timeout: -1,
     });
 
     suite.runTestCasesAndFinish();

@@ -1,3 +1,21 @@
+2020-01-27  Devin Rousso  <drousso@apple.com>
+
+        REGRESSION: [ Mac Debug WK1 ] inspector/page/overrideSetting-ICECandidateFilteringEnabled.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=206362
+        <rdar://problem/58649476>
+
+        Reviewed by Brian Burg.
+
+        Tentative fix. Modifying the `iceCandidateFilteringEnabled` WebCore setting causes any
+        existing/pending ICE candidates to immediately fire `icecandidate` events. Wait to change
+        the setting using `Page.overrideSetting` until after the JavaScript has set up the various
+        connections so that it's guaranteed to not miss any `icecandidate` events. Additionally
+        remove the default 10s timeout in case the debug build is too slow.
+
+        * inspector/page/overrideSetting-ICECandidateFilteringEnabled.html:
+        * inspector/page/overrideSetting-ICECandidateFilteringEnabled-expected.txt:
+        * platform/mac-wk1/TestExpectations:
+
 2020-01-27  Chris Dumez  <cdumez@apple.com>
 
         REGRESSION: [Mac wk2] fast/animation/request-animation-frame.html is flaky failing
