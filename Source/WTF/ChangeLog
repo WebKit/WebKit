@@ -1,3 +1,16 @@
+2020-01-27  Mark Lam  <mark.lam@apple.com>
+
+        Make getVTablePointer() an inline function to be compliant with WebKit style guidelines.
+        https://bugs.webkit.org/show_bug.cgi?id=206816
+
+        Reviewed by Darin Adler.
+
+        Convert getVTablePointer() from a macro into an inline template function.  This
+        makes the naming compliant with WebKit style guidelines.
+
+        * wtf/PointerPreparations.h:
+        (WTF::getVTablePointer):
+
 2020-01-25  Brady Eidson  <beidson@apple.com>
 
         Make ContentWorlds be identified by an ObjectIdentifier instead of a uint64_t

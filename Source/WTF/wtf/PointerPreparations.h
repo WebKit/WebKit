@@ -31,18 +31,23 @@
 
 namespace WTF {
 
+#if COMPILER_HAS_CLANG_BUILTIN(__builtin_get_vtable_pointer)
+
+template<typename T>
+ALWAYS_INLINE void* getVTablePointer(T* o) { return __builtin_get_vtable_pointer(o); }
+
+#else // not COMPILER_HAS_CLANG_BUILTIN(__builtin_get_vtable_pointer)
+
 #if CPU(ARM64E)
-
-#if __has_builtin(__builtin_get_vtable_pointer)
-#define getVTablePointer(o) __builtin_get_vtable_pointer(o)
-#else
-#define getVTablePointer(o) __builtin_ptrauth_auth(*(reinterpret_cast<void**>(o)), ptrauth_key_cxx_vtable_pointer, 0)
-#endif
-
+template<typename T>
+ALWAYS_INLINE void* getVTablePointer(T* o) { return __builtin_ptrauth_auth(*(reinterpret_cast<void**>(o)), ptrauth_key_cxx_vtable_pointer, 0); }
 #else // not CPU(ARM64E)
-
-#define getVTablePointer(o) (*(reinterpret_cast<void**>(o)))
-
+template<typename T>
+ALWAYS_INLINE void* getVTablePointer(T* o) { return (*(reinterpret_cast<void**>(o))); }
 #endif // not CPU(ARM64E)
 
+#endif // not COMPILER_HAS_CLANG_BUILTIN(__builtin_get_vtable_pointer)
+
 } // namespace WTF
+
+using WTF::getVTablePointer;
