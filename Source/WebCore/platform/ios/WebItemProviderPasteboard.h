@@ -23,11 +23,9 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if TARGET_OS_IPHONE
-
 #import <WebCore/AbstractPasteboard.h>
 
-#if __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000
+#if TARGET_OS_IOS
 
 struct CGSize;
 
@@ -114,5 +112,4 @@ WEBCORE_EXPORT @interface WebItemProviderPasteboard : NSObject<AbstractPasteboar
 
 NS_ASSUME_NONNULL_END
 
-#endif // __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000
-#endif // TARGET_OS_IPHONE
+#endif // TARGET_OS_IOS
