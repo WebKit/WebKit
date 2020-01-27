@@ -1,3 +1,12 @@
+2020-01-27  Jacob Uphoff  <jacob_uphoff@apple.com>
+
+        [ macOS ] inspector/heap/tracking.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=206684
+
+        Unreviewed test gardening
+
+        * platform/mac-wk1/TestExpectations:
+
 2020-01-27  Jason Lawrence  <lawrence.j@apple.com>
 
         [iOS Release] compositing/video/poster.html is flaky failing

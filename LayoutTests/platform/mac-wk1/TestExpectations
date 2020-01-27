@@ -852,3 +852,5 @@ webkit.org/b/199117 [ Debug ] storage/indexeddb/modern/objectstore-autoincrement
 webkit.org/b/206503 [ Mojave ] imported/w3c/web-platform-tests/html/dom/idlharness.worker.html [ Failure ]
 
 webkit.org/b/206679 [ Release ] fast/forms/textarea/textarea-state-restore.html [ Pass Failure ]
+
+webkit.org/b/206684 [ Debug ] inspector/heap/tracking.html [ Pass Failure ]
