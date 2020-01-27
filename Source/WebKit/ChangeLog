@@ -1,3 +1,18 @@
+2020-01-27  Chris Dumez  <cdumez@apple.com>
+
+        NetworkProcessProxy: MESSAGE_CHECK identifiers sent over IPC
+        https://bugs.webkit.org/show_bug.cgi?id=206814
+        <rdar://problem/58783422>
+
+        Reviewed by David Kilzer.
+
+        MESSAGE_CHECK identifiers sent over IPC in NetworkProcessProxy class.
+
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::didFetchWebsiteData):
+        (WebKit::NetworkProcessProxy::didDeleteWebsiteData):
+        (WebKit::NetworkProcessProxy::didDeleteWebsiteDataForOrigins):
+
 2020-01-26  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [WinCairo][curl] ASSERTION FAILED: sessionID != PAL::SessionID::defaultSessionID() in NetworkProcess since r255067

@@ -370,18 +370,21 @@ void NetworkProcessProxy::didReceiveAuthenticationChallenge(PAL::SessionID sessi
 
 void NetworkProcessProxy::didFetchWebsiteData(uint64_t callbackID, const WebsiteData& websiteData)
 {
+    MESSAGE_CHECK(m_pendingFetchWebsiteDataCallbacks.isValidKey(callbackID));
     auto callback = m_pendingFetchWebsiteDataCallbacks.take(callbackID);
     callback(websiteData);
 }
 
 void NetworkProcessProxy::didDeleteWebsiteData(uint64_t callbackID)
 {
+    MESSAGE_CHECK(m_pendingDeleteWebsiteDataCallbacks.isValidKey(callbackID));
     auto callback = m_pendingDeleteWebsiteDataCallbacks.take(callbackID);
     callback();
 }
 
 void NetworkProcessProxy::didDeleteWebsiteDataForOrigins(uint64_t callbackID)
 {
+    MESSAGE_CHECK(m_pendingDeleteWebsiteDataForOriginsCallbacks.isValidKey(callbackID));
     auto callback = m_pendingDeleteWebsiteDataForOriginsCallbacks.take(callbackID);
     callback();
 }
