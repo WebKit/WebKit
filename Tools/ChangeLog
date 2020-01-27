@@ -1,3 +1,20 @@
+2020-01-27  Keith Rollin  <krollin@apple.com>
+
+        Fix internal builds
+        https://bugs.webkit.org/show_bug.cgi?id=206790
+        <rdar://problem/58888951>
+
+        Reviewed by Maciej Stachowiak.
+
+        TestRunner.cpp in DumpRenderTree includes ExecutableAllocator.h. In
+        some circumstances, this file can include <os/thread_self_restrict.h>,
+        which in turn includes <machine/cpu_capabilities.h>. This latter file
+        does not exist at a standard location, and the build fails due to not
+        being able to find the file. Fix this by adding a path to it to the
+        build command line.
+
+        * DumpRenderTree/mac/Configurations/Base.xcconfig:
+
 2020-01-27  Robin Morisset  <rmorisset@apple.com>
 
         Tools/Scripts/set-webkit-configuration should accept --coverage/--no-coverage
