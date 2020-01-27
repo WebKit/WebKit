@@ -1,3 +1,20 @@
+2020-01-27  Rob Buis  <rbuis@igalia.com>
+
+        Re-sync web-platform-tests/fetch/api/policies from upstream
+        https://bugs.webkit.org/show_bug.cgi?id=206574
+
+        Reviewed by Darin Adler.
+
+        * web-platform-tests/fetch/api/policies/referrer-no-referrer-service-worker.https.html:
+        * web-platform-tests/fetch/api/policies/referrer-origin-when-cross-origin-expected.txt:
+        * web-platform-tests/fetch/api/policies/referrer-origin-when-cross-origin-service-worker.https-expected.txt:
+        * web-platform-tests/fetch/api/policies/referrer-origin-when-cross-origin-worker-expected.txt:
+        * web-platform-tests/fetch/api/policies/referrer-origin-when-cross-origin.html:
+        * web-platform-tests/fetch/api/policies/referrer-origin-when-cross-origin.js:
+        * web-platform-tests/fetch/api/policies/referrer-origin.js:
+        (promise_test):
+        * web-platform-tests/fetch/api/policies/referrer-unsafe-url-service-worker.https.html:
+
 2020-01-24  Youenn Fablet  <youenn@apple.com>
 
         Add support for MediaRecorder.requestData
