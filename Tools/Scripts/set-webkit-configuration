@@ -86,7 +86,9 @@ if (checkForArgumentAndRemoveFromARGV("--reset")) {
     exit 0;
 }
 
-if ((!$configuration && !$architecture && !$enableASAN && !$disableASAN && !$ltoMode && !$forceOptimizationLevel) || ($enableASAN && $disableASAN)) {
+if ((!$configuration && !$architecture && !$enableASAN && !$disableASAN && !$enableCoverage && !$disableCoverage && !$ltoMode && !$forceOptimizationLevel)
+    || ($enableASAN && $disableASAN)
+    || ($enableCoverage && $disableCoverage)) {
     print STDERR $usage;
     exit 1;
 }
