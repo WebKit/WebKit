@@ -1,3 +1,12 @@
+2020-01-27  Jason Lawrence  <lawrence.j@apple.com>
+
+        REGRESSION (r254699): [ iOS ] fast/forms/validationMessage.html is flaky and timing out
+        https://bugs.webkit.org/show_bug.cgi?id=206630
+
+        Unreviewed test gardening
+
+        * platform/ios-wk2/TestExpectations:
+
 2020-01-27  Jacob Uphoff  <jacob_uphoff@apple.com>
 
         [ macOS WK1 ] fast/forms/textarea/textarea-state-restore.html is flaky failing
