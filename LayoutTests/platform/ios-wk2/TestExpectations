@@ -1351,3 +1351,5 @@ webkit.org/b/205308 accessibility/smart-invert-reference.html [ ImageOnlyFailure
 webkit.org/b/206616 [ Release ] http/tests/security/contentSecurityPolicy/module-eval-blocked-in-external-script.html [ Pass Timeout ]
 
 webkit.org/b/206630 [ Release ] fast/forms/validationMessage.html [ Pass Timeout ]
+
+webkit.org/b/206667 legacy-animation-engine/animations/stop-animation-on-suspend.html [ Pass Failure ]
