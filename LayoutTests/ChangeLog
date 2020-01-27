@@ -1,3 +1,16 @@
+2020-01-27  Chris Dumez  <cdumez@apple.com>
+
+        REGRESSION: [Mac wk2] fast/animation/request-animation-frame.html is flaky failing
+        https://bugs.webkit.org/show_bug.cgi?id=206675
+        <rdar://problem/58839955>
+
+        Reviewed by Said Abou-Hallawa.
+
+        Rewrite test to stop relying on ordering between requestAnimationFrame() and setTimeout().
+
+        * fast/animation/request-animation-frame-expected.txt:
+        * fast/animation/request-animation-frame.html:
+
 2020-01-27  Diego Pino Garcia  <dpino@igalia.com>
 
         [WPE] Gardening, update baselines and synchronize with GTK
