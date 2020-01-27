@@ -57,6 +57,7 @@
 #include "FrameSelection.h"
 #include "FrameView.h"
 #include "FullscreenManager.h"
+#include "GetAnimationsOptions.h"
 #include "HTMLBodyElement.h"
 #include "HTMLCanvasElement.h"
 #include "HTMLCollection.h"
@@ -4379,9 +4380,26 @@ ExceptionOr<Ref<WebAnimation>> Element::animate(JSC::JSGlobalObject& lexicalGlob
     return animation;
 }
 
-Vector<RefPtr<WebAnimation>> Element::getAnimations()
+Vector<RefPtr<WebAnimation>> Element::getAnimations(Optional<GetAnimationsOptions> options)
 {
-    // FIXME: Filter and order the list as specified (webkit.org/b/179535).
+    // If we are to return animations in the subtree, we can get all of the document's animations and filter
+    // animations targeting that are not registered on this element, one of its pseudo elements or a child's
+    // pseudo element.
+    if (options && options->subtree) {
+        Vector<RefPtr<WebAnimation>> animations;
+        for (auto& animation : document().getAnimations()) {
+            auto* effect = animation->effect();
+            ASSERT(is<KeyframeEffect>(animation->effect()));
+            auto* target = downcast<KeyframeEffect>(*effect).target();
+            ASSERT(target);
+            if (is<PseudoElement>(target)) {
+                if (contains(downcast<PseudoElement>(*target).hostElement()))
+                    animations.append(animation);
+            } else if (contains(target))
+                animations.append(animation);
+        }
+        return animations;
+    }
 
     // For the list of animations to be current, we need to account for any pending CSS changes,
     // such as updates to CSS Animations and CSS Transitions.

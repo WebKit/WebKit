@@ -178,6 +178,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     animation/CompositeOperation.h
     animation/EffectTiming.h
     animation/FillMode.h
+    animation/GetAnimationsOptions.h
     animation/IterationCompositeOperation.h
     animation/KeyframeAnimationOptions.h
     animation/KeyframeEffectOptions.h

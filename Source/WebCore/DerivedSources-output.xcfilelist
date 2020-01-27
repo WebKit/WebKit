@@ -689,6 +689,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGeoposition.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGeoposition.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGestureEvent.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGestureEvent.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGetAnimationsOptions.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGetAnimationsOptions.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGlobalCrypto.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGlobalCrypto.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGlobalEventHandlers.cpp

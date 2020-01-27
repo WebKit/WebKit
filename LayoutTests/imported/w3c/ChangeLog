@@ -1,3 +1,16 @@
+2020-01-27  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Add support for the options parameter to getAnimations()
+        https://bugs.webkit.org/show_bug.cgi?id=202191
+        <rdar://problem/55697751>
+
+        Reviewed by Antti Koivisto.
+
+        Mark some WPT progressions. In the CSS Animations case, we are returning the expected animations but not quite sorted as expected.
+
+        * web-platform-tests/css/css-animations/Element-getAnimations.tentative-expected.txt:
+        * web-platform-tests/web-animations/interfaces/Animatable/getAnimations-expected.txt:
+
 2020-01-26  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] Update all DocumentTimeline objects when updating animations

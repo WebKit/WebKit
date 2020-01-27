@@ -2111,6 +2111,8 @@
 		713171341FBE78DB00F758DE /* CSSPropertyBlendingClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 713171321FBE78C500F758DE /* CSSPropertyBlendingClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7132445120109DA500AE7FB2 /* WebAnimationUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = 7132444F20109D9B00AE7FB2 /* WebAnimationUtilities.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7134496E146941B300720312 /* SVGLengthContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 7134496C146941B300720312 /* SVGLengthContext.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		713F1D5A23DF1D8D003F5EFA /* GetAnimationsOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = 713F1D5923DF1D7D003F5EFA /* GetAnimationsOptions.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		713F1D5D23DF2582003F5EFA /* JSGetAnimationsOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = 713F1D5B23DF2560003F5EFA /* JSGetAnimationsOptions.h */; };
 		71495DDB202B06F100ADFD34 /* JSEffectTiming.h in Headers */ = {isa = PBXBuildFile; fileRef = 71495DDA202B06DE00ADFD34 /* JSEffectTiming.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		714C7C661FDAD2A100F2BEE1 /* AnimationPlaybackEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 714C7C651FDAD27B00F2BEE1 /* AnimationPlaybackEvent.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		714C7C671FDAD2A900F2BEE1 /* AnimationPlaybackEventInit.h in Headers */ = {isa = PBXBuildFile; fileRef = 714C7C621FDAD27A00F2BEE1 /* AnimationPlaybackEventInit.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -9502,6 +9504,10 @@
 		7134496B146941B300720312 /* SVGLengthContext.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGLengthContext.cpp; sourceTree = "<group>"; };
 		7134496C146941B300720312 /* SVGLengthContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGLengthContext.h; sourceTree = "<group>"; };
 		713E70AF1733E8B300A22D00 /* plugIns.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = plugIns.js; sourceTree = "<group>"; };
+		713F1D5723DF1D7D003F5EFA /* GetAnimationsOptions.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = GetAnimationsOptions.idl; sourceTree = "<group>"; };
+		713F1D5923DF1D7D003F5EFA /* GetAnimationsOptions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GetAnimationsOptions.h; sourceTree = "<group>"; };
+		713F1D5B23DF2560003F5EFA /* JSGetAnimationsOptions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSGetAnimationsOptions.h; sourceTree = "<group>"; };
+		713F1D5C23DF2560003F5EFA /* JSGetAnimationsOptions.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSGetAnimationsOptions.cpp; sourceTree = "<group>"; };
 		714131471DC9D6AF00336107 /* fullscreen-support.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = "fullscreen-support.js"; sourceTree = "<group>"; };
 		714131481DC9D6EF00336107 /* js-files */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "js-files"; sourceTree = "<group>"; };
 		7146DF8B1DEFC2ED0046F98B /* tracks-panel.css */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.css; path = "tracks-panel.css"; sourceTree = "<group>"; };
@@ -16890,6 +16896,8 @@
 				71495DDA202B06DE00ADFD34 /* JSEffectTiming.h */,
 				712BE4841FE867C2002031CC /* JSFillMode.cpp */,
 				712BE4851FE86818002031CC /* JSFillMode.h */,
+				713F1D5C23DF2560003F5EFA /* JSGetAnimationsOptions.cpp */,
+				713F1D5B23DF2560003F5EFA /* JSGetAnimationsOptions.h */,
 				71247E281FEA5F61008C08CE /* JSIterationCompositeOperation.cpp */,
 				71247E2C1FEA5F64008C08CE /* JSIterationCompositeOperation.h */,
 				71247E291FEA5F62008C08CE /* JSKeyframeAnimationOptions.cpp */,
@@ -21084,6 +21092,8 @@
 				712BE47A1FE86447002031CC /* EffectTiming.idl */,
 				712BE4811FE865D4002031CC /* FillMode.h */,
 				712BE4821FE865D5002031CC /* FillMode.idl */,
+				713F1D5923DF1D7D003F5EFA /* GetAnimationsOptions.h */,
+				713F1D5723DF1D7D003F5EFA /* GetAnimationsOptions.idl */,
 				71247E331FEA5F80008C08CE /* IterationCompositeOperation.h */,
 				71247E311FEA5F7E008C08CE /* IterationCompositeOperation.idl */,
 				71247E2F1FEA5F7D008C08CE /* KeyframeAnimationOptions.h */,
@@ -30122,6 +30132,7 @@
 				9746AF2E14F4DDE6003E7A70 /* GeolocationPositionError.h in Headers */,
 				0FB6252F18DE1B1500A07C05 /* GeometryUtilities.h in Headers */,
 				46C83EFE1A9BBE2900A79A41 /* GeoNotifier.h in Headers */,
+				713F1D5A23DF1D8D003F5EFA /* GetAnimationsOptions.h in Headers */,
 				46B95198207D634700A7D2DD /* GlobalFrameIdentifier.h in Headers */,
 				46B95197207D634000A7D2DD /* GlobalWindowIdentifier.h in Headers */,
 				086BBD0F136039C2008B15D8 /* Glyph.h in Headers */,
@@ -30808,6 +30819,7 @@
 				FE80DA640E9C4703000D6F75 /* JSGeolocation.h in Headers */,
 				FE80DA660E9C4703000D6F75 /* JSGeoposition.h in Headers */,
 				0FDA7C1F188322FC00C954B5 /* JSGestureEvent.h in Headers */,
+				713F1D5D23DF2582003F5EFA /* JSGetAnimationsOptions.h in Headers */,
 				8482B7521198CB6B00BFB005 /* JSHashChangeEvent.h in Headers */,
 				BC94D14F0C275C68006BC617 /* JSHistory.h in Headers */,
 				57957CB71E972C78008072AB /* JSHkdfParams.h in Headers */,
@@ -30909,7 +30921,6 @@
 				7C193C011F5E11050088F3E6 /* JSImageSmoothingQuality.h in Headers */,
 				A86629D309DA2B48009633A6 /* JSInputEvent.h in Headers */,
 				9175CE5E21E281ED00DF2C28 /* JSInspectorAuditAccessibilityObject.h in Headers */,
-				41B8776223DE1045003638B8 /* RealtimeMediaSourceIdentifier.h in Headers */,
 				9175CE5C21E281ED00DF2C28 /* JSInspectorAuditDOMObject.h in Headers */,
 				9109E9C8222CABCA00BB6265 /* JSInspectorAuditResourcesObject.h in Headers */,
 				7A0E771F10C00DB100A0276E /* JSInspectorFrontendHost.h in Headers */,
@@ -31997,6 +32008,7 @@
 				4A4F65721AA997F100E38CDD /* RealtimeMediaSourceCapabilities.h in Headers */,
 				4A0FFAA21AAF5EA20062803B /* RealtimeMediaSourceCenter.h in Headers */,
 				0754A5EA215EA3B8002D3A99 /* RealtimeMediaSourceFactory.h in Headers */,
+				41B8776223DE1045003638B8 /* RealtimeMediaSourceIdentifier.h in Headers */,
 				4A4F65741AA997F100E38CDD /* RealtimeMediaSourceSettings.h in Headers */,
 				07C1C0E51BFB60ED00BD2256 /* RealtimeMediaSourceSupportedConstraints.h in Headers */,
 				41103AAC1E39791000769F03 /* RealtimeOutgoingAudioSource.h in Headers */,
