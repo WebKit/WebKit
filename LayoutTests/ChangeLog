@@ -1,3 +1,14 @@
+2020-01-27  Truitt Savell  <tsavell@apple.com>
+
+        [Mac wk2 Release] fast/html/marquee-child-wrap.html flaky failing
+        https://bugs.webkit.org/show_bug.cgi?id=206704
+
+        Reviewed by Jonathan Bedard.
+
+        Added a scrollDelay to the test.
+
+        * fast/html/marquee-child-wrap.html:
+
 2020-01-27  Jacob Uphoff  <jacob_uphoff@apple.com>
 
         [ macOS iOS ] animations/play-state-paused.html is flaky failing
