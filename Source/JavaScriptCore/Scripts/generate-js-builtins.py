@@ -139,7 +139,7 @@ if __name__ == '__main__':
     cli_parser.add_option("-t", "--test", action="store_true", help="Enable test mode.")
 
     arg_options, arg_values = cli_parser.parse_args()
-    if len(arg_values) is 0 and not arg_options.input_directory:
+    if len(arg_values) == 0 and not arg_options.input_directory:
         raise ParseException("At least one input file or directory expected.")
 
     if not arg_options.output_directory:

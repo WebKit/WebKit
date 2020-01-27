@@ -1,3 +1,12 @@
+2020-01-27  Stephan Szabo  <stephan.szabo@sony.com>
+
+        Python 3: generate-js-builtins hits SyntaxWarning for "is 0"
+        https://bugs.webkit.org/show_bug.cgi?id=206840
+
+        Reviewed by Jonathan Bedard.
+
+        * Scripts/generate-js-builtins.py: Replace is 0 with == 0
+
 2020-01-27  David Kilzer  <ddkilzer@apple.com>
 
         REGRESSION (r250009): testair crashes in (anonymous namespace)::matchAll
