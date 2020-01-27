@@ -151,7 +151,7 @@ void DOMCacheStorage::retrieveCaches(CompletionHandler<void(Optional<Exception>&
 
     m_connection->retrieveCaches(*origin, m_updateCounter, [this, callback = WTFMove(callback), pendingActivity = makePendingActivity(*this)](CacheInfosOrError&& result) mutable {
         if (m_isStopped) {
-            callback(DOMCacheEngine::errorToException(DOMCacheEngine::Error::Stopped));
+            callback(DOMCacheEngine::convertToException(DOMCacheEngine::Error::Stopped));
             return;
         }
         if (!result.has_value()) {

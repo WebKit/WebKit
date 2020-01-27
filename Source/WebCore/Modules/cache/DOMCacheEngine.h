@@ -30,11 +30,12 @@
 #include "FetchOptions.h"
 #include "ResourceRequest.h"
 #include "ResourceResponse.h"
-#include "ScriptExecutionContext.h"
 #include "SharedBuffer.h"
 #include <wtf/CompletionHandler.h>
 
 namespace WebCore {
+
+class ScriptExecutionContext;
 
 struct CacheQueryOptions;
 
@@ -49,27 +50,7 @@ enum class Error {
     Stopped
 };
 
-static inline Exception errorToException(Error error)
-{
-    switch (error) {
-    case Error::NotImplemented:
-        return Exception { NotSupportedError, "Not implemented"_s };
-    case Error::ReadDisk:
-        return Exception { TypeError, "Failed reading data from the file system"_s };
-    case Error::WriteDisk:
-        return Exception { TypeError, "Failed writing data to the file system"_s };
-    case Error::QuotaExceeded:
-        return Exception { QuotaExceededError, "Quota exceeded"_s };
-    case Error::Internal:
-        return Exception { TypeError, "Internal error"_s };
-    case Error::Stopped:
-        return Exception { TypeError, "Context is stopped"_s };
-    default:
-        ASSERT_NOT_REACHED();
-        return Exception { TypeError, "Connection stopped"_s };
-    }
-}
-
+Exception convertToException(Error);
 Exception convertToExceptionAndLog(ScriptExecutionContext*, Error);
 
 WEBCORE_EXPORT bool queryCacheMatch(const ResourceRequest& request, const ResourceRequest& cachedRequest, const ResourceResponse&, const CacheQueryOptions&);
