@@ -976,16 +976,16 @@ WI.NetworkManager = class NetworkManager extends WI.Object
 
     // RuntimeObserver
 
-    executionContextCreated(contextPayload)
+    executionContextCreated(payload)
     {
-        let frame = this.frameForIdentifier(contextPayload.frameId);
+        let frame = this.frameForIdentifier(payload.frameId);
         console.assert(frame);
         if (!frame)
             return;
 
-        let displayName = contextPayload.name || frame.mainResource.displayName;
+        let type = WI.ExecutionContext.typeFromPayload(payload);
         let target = frame.mainResource.target;
-        let executionContext = new WI.ExecutionContext(target, contextPayload.id, displayName, contextPayload.isPageContext, frame);
+        let executionContext = new WI.ExecutionContext(target, payload.id, type, payload.name, frame);
         frame.addExecutionContext(executionContext);
     }
 

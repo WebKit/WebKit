@@ -116,6 +116,13 @@ WI.ContextSubMenuItem = class ContextSubMenuItem extends WI.ContextMenuItem
         return item;
     }
 
+    appendHeader(label)
+    {
+        return this.appendItem(label, () => {
+            console.assert(false, "not reached");
+        }, true);
+    }
+
     appendSeparator()
     {
         if (this._items.length)

@@ -7223,7 +7223,7 @@ RefPtr<VideoPlaybackQuality> HTMLMediaElement::getVideoPlaybackQuality()
 DOMWrapperWorld& HTMLMediaElement::ensureIsolatedWorld()
 {
     if (!m_isolatedWorld)
-        m_isolatedWorld = DOMWrapperWorld::create(commonVM());
+        m_isolatedWorld = DOMWrapperWorld::create(commonVM(), DOMWrapperWorld::Type::Internal, makeString("Media Controls (", localName(), ')'));
     return *m_isolatedWorld;
 }
 

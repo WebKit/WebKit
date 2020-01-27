@@ -42,6 +42,7 @@
 
 namespace WebCore {
 
+class DOMWrapperWorld;
 class DocumentLoader;
 class Frame;
 class InspectorClient;
@@ -127,7 +128,7 @@ public:
     void defaultAppearanceDidChange(bool useDarkAppearance);
     void applyUserAgentOverride(String&);
     void applyEmulatedMedia(String&);
-    void didClearWindowObjectInWorld(Frame&);
+    void didClearWindowObjectInWorld(Frame&, DOMWrapperWorld&);
     void didPaint(RenderObject&, const LayoutRect&);
     void didLayout();
     void didScroll();

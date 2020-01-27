@@ -137,7 +137,7 @@ RenderPtr<RenderElement> QuickTimePluginReplacement::createElementRenderer(HTMLP
 
 DOMWrapperWorld& QuickTimePluginReplacement::isolatedWorld()
 {
-    static DOMWrapperWorld& isolatedWorld = DOMWrapperWorld::create(commonVM()).leakRef();
+    static DOMWrapperWorld& isolatedWorld = DOMWrapperWorld::create(commonVM(), DOMWrapperWorld::Type::Internal, "QuickTimePluginReplacement"_s).leakRef();
     return isolatedWorld;
 }
 

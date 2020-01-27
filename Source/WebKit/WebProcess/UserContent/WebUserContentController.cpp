@@ -115,7 +115,7 @@ void WebUserContentController::addUserContentWorld(const std::pair<ContentWorldI
         if (auto* existingWorld = InjectedBundleScriptWorld::find(world.second))
             return std::make_pair(Ref<InjectedBundleScriptWorld>(*existingWorld), 1);
 #endif
-        return std::make_pair(InjectedBundleScriptWorld::create(world.second), 1);
+        return std::make_pair(InjectedBundleScriptWorld::create(world.second, InjectedBundleScriptWorld::Type::User), 1);
     });
 }
 

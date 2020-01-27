@@ -71,6 +71,8 @@ WI.GroupNavigationItem = class GroupNavigationItem extends WI.NavigationItem
     {
         super.update(options);
 
+        this._updateItems();
+
         for (let item of this._navigationItems)
             item.update(options);
     }
@@ -78,6 +80,8 @@ WI.GroupNavigationItem = class GroupNavigationItem extends WI.NavigationItem
     didAttach(navigationBar)
     {
         super.didAttach(navigationBar);
+
+        this._updateItems();
 
         for (let item of this._navigationItems)
             item.didAttach(navigationBar);

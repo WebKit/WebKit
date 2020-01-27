@@ -25,5 +25,5 @@ PASS: The passphrase should match the phrase defined in the main frame.
 -- Running test case: ScriptExecutionContextRemoveSubframe
 PASS: The test page should only have one sub-frame.
 PASS: The test page should now have no sub-frames.
-PASS: When a selected non-top-level execution context is removed, the active execution context should revert to the main frame context.
+PASS: When a selected non-top-level execution context is removed, the active execution context should not change, as that is handled by the UI.
 

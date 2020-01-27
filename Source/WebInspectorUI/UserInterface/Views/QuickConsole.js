@@ -33,17 +33,8 @@ WI.QuickConsole = class QuickConsole extends WI.View
         this._toggleOrFocusKeyboardShortcut.implicitlyPreventsDefault = false;
         this._keyboardShortcutDisabled = false;
 
-        this._automaticExecutionContextPathComponent = this._createExecutionContextPathComponent(null, WI.UIString("Auto"));
-        this._updateAutomaticExecutionContextPathComponentTooltip();
-
-        this._mainExecutionContextPathComponent = null;
-        this._otherExecutionContextPathComponents = [];
-
-        this._frameToPathComponent = new Map;
-        this._targetToPathComponent = new Map;
-
-        this._shouldAutomaticallySelectExecutionContext = true;
-        this._restoreSelectedExecutionContextForFrame = false;
+        this._useExecutionContextOfInspectedNode = InspectorBackend.hasDomain("DOM");
+        this._restoreSelectedExecutionContextForFrame = null;
 
         this.element.classList.add("quick-console");
         this.element.addEventListener("mousedown", this._handleMouseDown.bind(this));
@@ -60,47 +51,44 @@ WI.QuickConsole = class QuickConsole extends WI.View
         // would be for CodeMirror's event handler to pass if it doesn't do anything.
         this.prompt.escapeKeyHandlerWhenEmpty = function() { WI.toggleSplitConsole(); };
 
-        this._navigationBar = new WI.QuickConsoleNavigationBar;
+        this._navigationBar = new WI.SizesToFitNavigationBar;
         this.addSubview(this._navigationBar);
 
-        this._executionContextSelectorItem = new WI.HierarchicalPathNavigationItem;
-        this._executionContextSelectorItem.showSelectorArrows = true;
-        this._navigationBar.addNavigationItem(this._executionContextSelectorItem);
+        this._activeExecutionContextNavigationItemDivider = new WI.DividerNavigationItem;
+        this._navigationBar.addNavigationItem(this._activeExecutionContextNavigationItemDivider);
 
-        this._executionContextSelectorDivider = new WI.DividerNavigationItem;
-        this._navigationBar.addNavigationItem(this._executionContextSelectorDivider);
+        this._activeExecutionContextNavigationItem = new WI.NavigationItem("active-execution-context");
+        WI.addMouseDownContextMenuHandlers(this._activeExecutionContextNavigationItem.element, this._populateActiveExecutionContextNavigationItemContextMenu.bind(this));
+        this._navigationBar.addNavigationItem(this._activeExecutionContextNavigationItem);
 
-        WI.settings.consoleSavedResultAlias.addEventListener(WI.Setting.Event.Changed, this._updateAutomaticExecutionContextPathComponentTooltip, this);
+        this._updateActiveExecutionContextDisplay();
 
-        WI.consoleDrawer.toggleButtonShortcutTooltip(this._toggleOrFocusKeyboardShortcut);
-        WI.consoleDrawer.addEventListener(WI.ConsoleDrawer.Event.CollapsedStateChanged, this._updateStyles, this);
+        WI.settings.consoleSavedResultAlias.addEventListener(WI.Setting.Event.Changed, this._handleConsoleSavedResultAliasSettingChanged, this);
+        WI.settings.engineeringShowInternalExecutionContexts.addEventListener(WI.Setting.Event.Changed, this._handleEngineeringShowInternalExecutionContextsSettingChanged, this);
 
-        WI.Frame.addEventListener(WI.Frame.Event.PageExecutionContextChanged, this._framePageExecutionContextsChanged, this);
-        WI.Frame.addEventListener(WI.Frame.Event.ExecutionContextsCleared, this._frameExecutionContextsCleared, this);
+        WI.Frame.addEventListener(WI.Frame.Event.PageExecutionContextChanged, this._handleFramePageExecutionContextChanged, this);
+        WI.Frame.addEventListener(WI.Frame.Event.ExecutionContextsCleared, this._handleFrameExecutionContextsCleared, this);
 
-        WI.debuggerManager.addEventListener(WI.DebuggerManager.Event.ActiveCallFrameDidChange, this._debuggerActiveCallFrameDidChange, this);
+        WI.debuggerManager.addEventListener(WI.DebuggerManager.Event.ActiveCallFrameDidChange, this._handleDebuggerActiveCallFrameDidChange, this);
 
-        WI.runtimeManager.addEventListener(WI.RuntimeManager.Event.ActiveExecutionContextChanged, this._activeExecutionContextChanged, this);
-        WI.notifications.addEventListener(WI.Notification.TransitionPageTarget, this._pageTargetTransitioned, this);
+        WI.runtimeManager.addEventListener(WI.RuntimeManager.Event.ActiveExecutionContextChanged, this._handleActiveExecutionContextChanged, this);
 
-        WI.targetManager.addEventListener(WI.TargetManager.Event.TargetAdded, this._targetAdded, this);
-        WI.targetManager.addEventListener(WI.TargetManager.Event.TargetRemoved, this._targetRemoved, this);
+        WI.notifications.addEventListener(WI.Notification.TransitionPageTarget, this._handleTransitionPageTarget, this);
+
+        WI.targetManager.addEventListener(WI.TargetManager.Event.TargetRemoved, this._handleTargetRemoved, this);
 
         WI.domManager.addEventListener(WI.DOMManager.Event.InspectedNodeChanged, this._handleInspectedNodeChanged, this);
 
+        WI.consoleDrawer.toggleButtonShortcutTooltip(this._toggleOrFocusKeyboardShortcut);
+        WI.consoleDrawer.addEventListener(WI.ConsoleDrawer.Event.CollapsedStateChanged, this._updateStyles, this);
         WI.TabBrowser.addEventListener(WI.TabBrowser.Event.SelectedTabContentViewDidChange, this._updateStyles, this);
 
         WI.whenTargetsAvailable().then(() => {
-            this._initializeMainExecutionContextPathComponent();
+            this._updateActiveExecutionContextDisplay();
         });
     }
 
     // Public
-
-    get navigationBar()
-    {
-        return this._navigationBar;
-    }
 
     set keyboardShortcutDisabled(disabled)
     {
@@ -120,75 +108,182 @@ WI.QuickConsole = class QuickConsole extends WI.View
         super.closed();
     }
 
-    _pageTargetTransitioned()
-    {
-        this._initializeMainExecutionContextPathComponent();
-    }
-
-    _initializeMainExecutionContextPathComponent()
-    {
-        if (!WI.mainTarget || WI.mainTarget instanceof WI.MultiplexingBackendTarget)
-            return;
-
-        let nextSibling = this._mainExecutionContextPathComponent ? this._mainExecutionContextPathComponent.nextSibling : null;
-
-        this._mainExecutionContextPathComponent = this._createExecutionContextPathComponent(WI.mainTarget.executionContext);
-        this._mainExecutionContextPathComponent.previousSibling = this._automaticExecutionContextPathComponent;
-        this._mainExecutionContextPathComponent.nextSibling = nextSibling;
-
-        this._automaticExecutionContextPathComponent.nextSibling = this._mainExecutionContextPathComponent;
-
-        this._shouldAutomaticallySelectExecutionContext = true;
-        this._selectExecutionContext(WI.mainTarget.executionContext);
-        this._rebuildExecutionContextPathComponents();
-    }
-
-    // Protected
-
-    layout()
-    {
-        // A hard maximum size of 33% of the window.
-        let maximumAllowedHeight = Math.round(window.innerHeight * 0.33);
-        this.prompt.element.style.maxHeight = maximumAllowedHeight + "px";
-    }
-
     // Private
 
-    _preferredNameForFrame(frame)
+    _displayNameForExecutionContext(context, maxLength = Infinity)
     {
-        if (frame.name)
-            return WI.UIString("%s (%s)").format(frame.name, frame.mainResource.displayName);
-        return frame.mainResource.displayName;
-    }
+        function truncate(string, length) {
+            if (!Number.isFinite(maxLength))
+                return string;
+            return string.trim().truncateMiddle(length);
+        }
 
-    _selectExecutionContext(executionContext)
-    {
-        let preferredName = null;
+        if (context.type === WI.ExecutionContext.Type.Internal)
+            return WI.unlocalizedString("[Internal] ") + context.name;
 
-        let inspectedNode = WI.domManager.inspectedNode;
-        if (inspectedNode) {
-            let frame = inspectedNode.frame;
-            if (frame) {
-                if (this._shouldAutomaticallySelectExecutionContext)
-                    executionContext = frame.pageExecutionContext;
-                preferredName = this._preferredNameForFrame(frame);
+        let target = context.target;
+        if (target.type === WI.TargetType.Worker)
+            return truncate(target.displayName, maxLength);
+
+        let frame = context.frame;
+        if (frame) {
+            if (context === frame.executionContextList.pageExecutionContext) {
+                let resourceName = frame.mainResource.displayName;
+                let frameName = frame.name;
+                if (frameName) {
+                    // Attempt to show all of the frame name, but ensure that at least 20 characters
+                    // of the resource name are shown as well.
+                    let frameNameMaxLength = Math.max(maxLength - resourceName.length, 20);
+                    return WI.UIString("%s (%s)").format(truncate(frameName, frameNameMaxLength), truncate(resourceName, maxLength - frameNameMaxLength));
+                }
+                return truncate(resourceName, maxLength);
             }
         }
 
-        if (!executionContext)
-            executionContext = WI.mainTarget.executionContext;
-
-        this._automaticExecutionContextPathComponent.displayName = WI.UIString("Auto - %s").format(preferredName || executionContext.name);
-
-        let changed = WI.runtimeManager.activeExecutionContext !== executionContext;
-        if (changed)
-            WI.runtimeManager.activeExecutionContext = executionContext;
-        return changed;
+        return truncate(context.name, maxLength);
     }
 
-    _updateAutomaticExecutionContextPathComponentTooltip()
+    _resolveDesiredActiveExecutionContext(forceInspectedNode)
     {
-        this._automaticExecutionContextPathComponent.tooltip = WI.UIString("Execution context for %s").format(WI.RuntimeManager.preferredSavedResultPrefix() + "0");
+        let executionContext = null;
+
+        if (this._useExecutionContextOfInspectedNode || forceInspectedNode) {
+            let inspectedNode = WI.domManager.inspectedNode;
+            if (inspectedNode) {
+                let frame = inspectedNode.frame;
+                if (frame) {
+                    let pageExecutionContext = frame.pageExecutionContext;
+                    if (pageExecutionContext)
+                        executionContext = pageExecutionContext;
+                }
+            }
+        }
+
+        if (!executionContext && WI.networkManager.mainFrame)
+            executionContext = WI.networkManager.mainFrame.pageExecutionContext;
+
+        return executionContext || WI.mainTarget.executionContext;
+    }
+
+    _setActiveExecutionContext(context)
+    {
+        let wasActive = WI.runtimeManager.activeExecutionContext === context;
+
+        WI.runtimeManager.activeExecutionContext = context;
+
+        if (wasActive)
+            this._updateActiveExecutionContextDisplay();
+    }
+
+    _updateActiveExecutionContextDisplay()
+    {
+        let toggleHidden = (hidden) => {
+            this._activeExecutionContextNavigationItemDivider.hidden = hidden;
+            this._activeExecutionContextNavigationItem.hidden = hidden;
+        };
+
+        if (WI.debuggerManager.activeCallFrame) {
+            toggleHidden(true);
+            return;
+        }
+
+        if (!WI.runtimeManager.activeExecutionContext || !WI.networkManager.mainFrame) {
+            toggleHidden(true);
+            return;
+        }
+
+        if (WI.networkManager.frames.length === 1 && WI.networkManager.mainFrame.executionContextList.contexts.length === 1 && !WI.targetManager.workerTargets.length) {
+            toggleHidden(true);
+            return;
+        }
+
+        const maxLength = 40;
+
+        if (this._useExecutionContextOfInspectedNode) {
+            this._activeExecutionContextNavigationItem.element.classList.add("automatic");
+            this._activeExecutionContextNavigationItem.element.textContent = WI.UIString("Auto \u2014 %s").format(this._displayNameForExecutionContext(WI.runtimeManager.activeExecutionContext, maxLength));
+            this._activeExecutionContextNavigationItem.tooltip = WI.UIString("Execution context for %s").format(WI.RuntimeManager.preferredSavedResultPrefix() + "0");
+        } else {
+            this._activeExecutionContextNavigationItem.element.classList.remove("automatic");
+            this._activeExecutionContextNavigationItem.element.textContent = this._displayNameForExecutionContext(WI.runtimeManager.activeExecutionContext, maxLength);
+            this._activeExecutionContextNavigationItem.tooltip = this._displayNameForExecutionContext(WI.runtimeManager.activeExecutionContext);
+        }
+
+        this._activeExecutionContextNavigationItem.element.appendChild(WI.ImageUtilities.useSVGSymbol("Images/UpDownArrows.svg", "selector-arrows"));
+
+        toggleHidden(false);
+    }
+
+    _populateActiveExecutionContextNavigationItemContextMenu(contextMenu)
+    {
+        const maxLength = 120;
+
+        let activeExecutionContext = WI.runtimeManager.activeExecutionContext;
+
+        if (InspectorBackend.hasDomain("DOM")) {
+            let executionContextForInspectedNode = this._resolveDesiredActiveExecutionContext(true);
+            contextMenu.appendCheckboxItem(WI.UIString("Auto \u2014 %s").format(this._displayNameForExecutionContext(executionContextForInspectedNode, maxLength)), () => {
+                this._useExecutionContextOfInspectedNode = true;
+                this._setActiveExecutionContext(executionContextForInspectedNode);
+            }, this._useExecutionContextOfInspectedNode);
+
+            contextMenu.appendSeparator();
+        }
+
+        let indent = 0;
+        let addExecutionContext = (context) => {
+            if (context.type === WI.ExecutionContext.Type.Internal && !WI.settings.engineeringShowInternalExecutionContexts.value)
+                return;
+
+            let additionalIndent = (context.frame && context !== context.frame.executionContextList.pageExecutionContext) || context.type !== WI.ExecutionContext.Type.Normal;
+
+            // Mimic macOS `-[NSMenuItem setIndentationLevel]`.
+            contextMenu.appendCheckboxItem("   ".repeat(indent + additionalIndent) + this._displayNameForExecutionContext(context, maxLength), () => {
+                this._useExecutionContextOfInspectedNode = false;
+                this._setActiveExecutionContext(context);
+            }, activeExecutionContext === context);
+        };
+
+        let addExecutionContextsForFrame = (frame) => {
+            let pageExecutionContext = frame.executionContextList.pageExecutionContext;
+
+            let contexts = frame.executionContextList.contexts.sort((a, b) => {
+                if (a === pageExecutionContext)
+                    return -1;
+                if (b === pageExecutionContext)
+                    return 1;
+
+                const executionContextTypeRanking = [
+                    WI.ExecutionContext.Type.Normal,
+                    WI.ExecutionContext.Type.User,
+                    WI.ExecutionContext.Type.Internal,
+                ];
+                return executionContextTypeRanking.indexOf(a.type) - executionContextTypeRanking.indexOf(b.type);
+            });
+            for (let context of contexts)
+                addExecutionContext(context);
+        };
+
+        let mainFrame = WI.networkManager.mainFrame;
+        addExecutionContextsForFrame(mainFrame);
+
+        indent = 1;
+
+        let otherFrames = WI.networkManager.frames.filter((frame) => frame !== mainFrame && frame.executionContextList.pageExecutionContext);
+        if (otherFrames.length) {
+            contextMenu.appendHeader(WI.UIString("Frames"));
+
+            for (let frame of otherFrames)
+                addExecutionContextsForFrame(frame);
+        }
+
+        let workerTargets = WI.targetManager.workerTargets;
+        if (workerTargets.length) {
+            contextMenu.appendHeader(WI.UIString("Workers"));
+
+            for (let target of workerTargets)
+                addExecutionContext(target.executionContext);
+        }
     }
 
     _handleMouseDown(event)
@@ -226,228 +321,87 @@ WI.QuickConsole = class QuickConsole extends WI.View
         }
     }
 
-    _executionContextPathComponentsToDisplay()
+    _handleConsoleSavedResultAliasSettingChanged()
     {
-        // If we are in the debugger the console will use the active call frame, don't show the selector.
-        if (WI.debuggerManager.activeCallFrame)
-            return [];
-
-        // If there is only the Main ExecutionContext, don't show the selector.
-        if (!this._otherExecutionContextPathComponents.length)
-            return [];
-
-        if (this._shouldAutomaticallySelectExecutionContext)
-            return [this._automaticExecutionContextPathComponent];
-
-        if (WI.runtimeManager.activeExecutionContext === WI.mainTarget.executionContext)
-            return [this._mainExecutionContextPathComponent];
-
-        return this._otherExecutionContextPathComponents.filter((component) => component.representedObject === WI.runtimeManager.activeExecutionContext);
+        this._updateActiveExecutionContextDisplay();
     }
 
-    _rebuildExecutionContextPathComponents()
+    _handleEngineeringShowInternalExecutionContextsSettingChanged(event)
     {
-        let components = this._executionContextPathComponentsToDisplay();
-        let isEmpty = !components.length;
+        if (WI.runtimeManager.activeExecutionContext.type !== WI.ExecutionContext.Type.Internal)
+            return;
 
-        this._executionContextSelectorItem.element.classList.toggle("automatic-execution-context", this._shouldAutomaticallySelectExecutionContext);
-        this._executionContextSelectorItem.components = components;
-
-        this._executionContextSelectorItem.hidden = isEmpty;
-        this._executionContextSelectorDivider.hidden = isEmpty;
-
+        this._useExecutionContextOfInspectedNode = InspectorBackend.hasDomain("DOM");
+        this._setActiveExecutionContext(this._resolveDesiredActiveExecutionContext());
     }
 
-    _framePageExecutionContextsChanged(event)
+    _handleFramePageExecutionContextChanged(event)
     {
-        let frame = event.target;
+        if (this._restoreSelectedExecutionContextForFrame !== event.target)
+            return;
 
-        let newExecutionContextPathComponent = this._insertExecutionContextPathComponentForFrame(frame);
+        this._restoreSelectedExecutionContextForFrame = null;
 
-        if (this._restoreSelectedExecutionContextForFrame === frame) {
-            this._restoreSelectedExecutionContextForFrame = null;
+        let {context} = event.data;
 
-            this._selectExecutionContext(newExecutionContextPathComponent.representedObject);
-        }
+        this._useExecutionContextOfInspectedNode = false;
+        this._setActiveExecutionContext(context);
     }
 
-    _frameExecutionContextsCleared(event)
+    _handleFrameExecutionContextsCleared(event)
     {
-        let frame = event.target;
+        let {committingProvisionalLoad, contexts} = event.data;
+
+        let hasActiveExecutionContext = contexts.some((context) => context === WI.runtimeManager.activeExecutionContext);
+        if (!hasActiveExecutionContext)
+            return;
 
         // If this frame is navigating and it is selected in the UI we want to reselect its new item after navigation.
-        if (event.data.committingProvisionalLoad && !this._restoreSelectedExecutionContextForFrame) {
-            let executionContextPathComponent = this._frameToPathComponent.get(frame);
-            if (executionContextPathComponent && executionContextPathComponent.representedObject === WI.runtimeManager.activeExecutionContext) {
-                this._restoreSelectedExecutionContextForFrame = frame;
-                // As a fail safe, if the frame never gets an execution context, clear the restore value.
-                setTimeout(() => {
-                    this._restoreSelectedExecutionContextForFrame = false;
-                }, 10);
-            }
-        }
+        if (committingProvisionalLoad && !this._restoreSelectedExecutionContextForFrame) {
+            this._restoreSelectedExecutionContextForFrame = event.target;
 
-        this._removeExecutionContextPathComponentForFrame(frame);
-    }
-
-    _activeExecutionContextChanged(event)
-    {
-        this._rebuildExecutionContextPathComponents();
-    }
-
-    _createExecutionContextPathComponent(executionContext, preferredName)
-    {
-        console.assert(!executionContext || executionContext instanceof WI.ExecutionContext);
-
-        let pathComponent = new WI.HierarchicalPathComponent(preferredName || executionContext.name, "execution-context", executionContext, true, true);
-        pathComponent.addEventListener(WI.HierarchicalPathComponent.Event.SiblingWasSelected, this._pathComponentSelected, this);
-        pathComponent.addEventListener(WI.HierarchicalPathComponent.Event.Clicked, this._pathComponentClicked, this);
-        pathComponent.truncatedDisplayNameLength = 50;
-        return pathComponent;
-    }
-
-    _compareExecutionContextPathComponents(a, b)
-    {
-        let aExecutionContext = a.representedObject;
-        let bExecutionContext = b.representedObject;
-
-        // "Targets" (workers) at the top.
-        let aNonMainTarget = aExecutionContext.target !== WI.mainTarget;
-        let bNonMainTarget = bExecutionContext.target !== WI.mainTarget;
-        if (aNonMainTarget && !bNonMainTarget)
-            return -1;
-        if (bNonMainTarget && !aNonMainTarget)
-            return 1;
-        if (aNonMainTarget && bNonMainTarget)
-            return a.displayName.extendedLocaleCompare(b.displayName);
-
-        // "Main Frame" follows.
-        if (aExecutionContext === WI.mainTarget.executionContext)
-            return -1;
-        if (bExecutionContext === WI.mainTarget.executionContext)
-            return 1;
-
-        // Only Frame contexts remain.
-        console.assert(aExecutionContext.frame);
-        console.assert(bExecutionContext.frame);
-
-        // Frames with a name above frames without a name.
-        if (aExecutionContext.frame.name && !bExecutionContext.frame.name)
-            return -1;
-        if (!aExecutionContext.frame.name && bExecutionContext.frame.name)
-            return 1;
-
-        return a.displayName.extendedLocaleCompare(b.displayName);
-    }
-
-    _insertOtherExecutionContextPathComponent(executionContextPathComponent)
-    {
-        let index = insertionIndexForObjectInListSortedByFunction(executionContextPathComponent, this._otherExecutionContextPathComponents, this._compareExecutionContextPathComponents);
-
-        let prev = index > 0 ? this._otherExecutionContextPathComponents[index - 1] : this._mainExecutionContextPathComponent;
-        let next = this._otherExecutionContextPathComponents[index] || null;
-        if (prev) {
-            prev.nextSibling = executionContextPathComponent;
-            executionContextPathComponent.previousSibling = prev;
-        }
-        if (next) {
-            next.previousSibling = executionContextPathComponent;
-            executionContextPathComponent.nextSibling = next;
-        }
-
-        this._otherExecutionContextPathComponents.splice(index, 0, executionContextPathComponent);
-
-        this._rebuildExecutionContextPathComponents();
-    }
-
-    _removeOtherExecutionContextPathComponent(executionContextPathComponent)
-    {
-        executionContextPathComponent.removeEventListener(WI.HierarchicalPathComponent.Event.SiblingWasSelected, this._pathComponentSelected, this);
-        executionContextPathComponent.removeEventListener(WI.HierarchicalPathComponent.Event.Clicked, this._pathComponentClicked, this);
-
-        let prev = executionContextPathComponent.previousSibling;
-        let next = executionContextPathComponent.nextSibling;
-        if (prev)
-            prev.nextSibling = next;
-        if (next)
-            next.previousSibling = prev;
-
-        this._otherExecutionContextPathComponents.remove(executionContextPathComponent, true);
-
-        this._rebuildExecutionContextPathComponents();
-    }
-
-    _insertExecutionContextPathComponentForFrame(frame)
-    {
-        if (frame.isMainFrame())
-            return this._mainExecutionContextPathComponent;
-
-        let executionContextPathComponent = this._createExecutionContextPathComponent(frame.pageExecutionContext, this._preferredNameForFrame(frame));
-        this._insertOtherExecutionContextPathComponent(executionContextPathComponent);
-        this._frameToPathComponent.set(frame, executionContextPathComponent);
-        return executionContextPathComponent;
-    }
-
-    _removeExecutionContextPathComponentForFrame(frame)
-    {
-        if (frame.isMainFrame()) {
-            this._shouldAutomaticallySelectExecutionContext = true;
-            this._initializeMainExecutionContextPathComponent();
+            // As a fail safe, if the frame never gets an execution context, clear the restore value.
+            setTimeout(() => {
+                this._restoreSelectedExecutionContextForFrame = null;
+            }, 10);
             return;
         }
 
-        let executionContextPathComponent = this._frameToPathComponent.take(frame);
-        this._removeOtherExecutionContextPathComponent(executionContextPathComponent);
+        this._useExecutionContextOfInspectedNode = InspectorBackend.hasDomain("DOM");
+        this._setActiveExecutionContext(this._resolveDesiredActiveExecutionContext());
     }
 
-    _targetAdded(event)
+    _handleDebuggerActiveCallFrameDidChange(event)
     {
-        let target = event.data.target;
-        if (target.type !== WI.TargetType.Worker)
+        this._updateActiveExecutionContextDisplay();
+    }
+
+    _handleActiveExecutionContextChanged(event)
+    {
+        this._updateActiveExecutionContextDisplay();
+    }
+
+    _handleTransitionPageTarget()
+    {
+        this._updateActiveExecutionContextDisplay();
+    }
+
+    _handleTargetRemoved(event)
+    {
+        let {target} = event.data;
+        if (target !== WI.runtimeManager.activeExecutionContext)
             return;
 
-        console.assert(target.type === WI.TargetType.Worker);
-        let preferredName = WI.UIString("Worker \u2014 %s").format(target.displayName);
-        let executionContextPathComponent = this._createExecutionContextPathComponent(target.executionContext, preferredName);
-
-        this._targetToPathComponent.set(target, executionContextPathComponent);
-        this._insertOtherExecutionContextPathComponent(executionContextPathComponent);
+        this._useExecutionContextOfInspectedNode = InspectorBackend.hasDomain("DOM");
+        this._setActiveExecutionContext(this._resolveDesiredActiveExecutionContext());
     }
 
-    _targetRemoved(event)
+    _handleInspectedNodeChanged(event)
     {
-        let target = event.data.target;
-        if (target.type !== WI.TargetType.Worker)
+        if (!this._useExecutionContextOfInspectedNode)
             return;
 
-        let executionContextPathComponent = this._targetToPathComponent.take(target);
-
-        if (WI.runtimeManager.activeExecutionContext === executionContextPathComponent.representedObject) {
-            this._shouldAutomaticallySelectExecutionContext = true;
-            this._selectExecutionContext();
-        }
-
-        this._removeOtherExecutionContextPathComponent(executionContextPathComponent);
-    }
-
-    _pathComponentSelected(event)
-    {
-        this._shouldAutomaticallySelectExecutionContext = event.data.pathComponent === this._automaticExecutionContextPathComponent;
-
-        // Only manually rebuild the execution context path components if the newly selected
-        // execution context matches the previously selected one.
-        if (!this._selectExecutionContext(event.data.pathComponent.representedObject))
-            this._rebuildExecutionContextPathComponents();
-    }
-
-    _pathComponentClicked(event)
-    {
-        this.prompt.focus();
-    }
-
-    _debuggerActiveCallFrameDidChange(event)
-    {
-        this._rebuildExecutionContextPathComponents();
+        this._setActiveExecutionContext(this._resolveDesiredActiveExecutionContext());
     }
 
     _toggleOrFocus(event)
@@ -467,10 +421,5 @@ WI.QuickConsole = class QuickConsole extends WI.View
     _updateStyles()
     {
         this.element.classList.toggle("showing-log", WI.isShowingConsoleTab() || WI.isShowingSplitConsole());
-    }
-
-    _handleInspectedNodeChanged(event)
-    {
-        this._selectExecutionContext(WI.runtimeManager.activeExecutionContext);
     }
 };

@@ -516,6 +516,7 @@ public:
     Ref<SerializedScriptValue> deserializeBuffer(ArrayBuffer&) const;
 
     bool isFromCurrentWorld(JSC::JSValue) const;
+    JSC::JSValue evaluateInWorldIgnoringException(const String& name, const String& source);
 
     void setUsesOverlayScrollbars(bool);
     void setUsesMockScrollAnimator(bool);

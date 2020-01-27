@@ -39,8 +39,9 @@ namespace WebKit {
 
 class InjectedBundleScriptWorld : public API::ObjectImpl<API::Object::Type::BundleScriptWorld> {
 public:
-    static Ref<InjectedBundleScriptWorld> create();
-    static Ref<InjectedBundleScriptWorld> create(const String&);
+    enum class Type { User, Internal };
+    static Ref<InjectedBundleScriptWorld> create(Type = Type::Internal);
+    static Ref<InjectedBundleScriptWorld> create(const String& name, Type = Type::Internal);
     static Ref<InjectedBundleScriptWorld> getOrCreate(WebCore::DOMWrapperWorld&);
     static InjectedBundleScriptWorld* find(const String&);
     static InjectedBundleScriptWorld& normalWorld();

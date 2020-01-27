@@ -50,14 +50,14 @@ static String uniqueWorldName()
     return makeString("UniqueWorld_", uniqueWorldNameNumber++);
 }
 
-Ref<InjectedBundleScriptWorld> InjectedBundleScriptWorld::create()
+Ref<InjectedBundleScriptWorld> InjectedBundleScriptWorld::create(Type type)
 {
-    return adoptRef(*new InjectedBundleScriptWorld(ScriptController::createWorld(), uniqueWorldName()));
+    return InjectedBundleScriptWorld::create(uniqueWorldName(), type);
 }
 
-Ref<InjectedBundleScriptWorld> InjectedBundleScriptWorld::create(const String& name)
+Ref<InjectedBundleScriptWorld> InjectedBundleScriptWorld::create(const String& name, Type type)
 {
-    return adoptRef(*new InjectedBundleScriptWorld(ScriptController::createWorld(), name));
+    return adoptRef(*new InjectedBundleScriptWorld(ScriptController::createWorld(name, type == Type::User ? ScriptController::WorldType::User : ScriptController::WorldType::Internal), name));
 }
 
 Ref<InjectedBundleScriptWorld> InjectedBundleScriptWorld::getOrCreate(DOMWrapperWorld& world)

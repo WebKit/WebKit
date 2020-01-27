@@ -109,12 +109,18 @@
             "description": "Id of an execution context."
         },
         {
+            "id": "ExecutionContextType",
+            "type": "string",
+            "enum": ["normal", "user", "internal"],
+            "description": "Type of the execution context."
+        },
+        {
             "id": "ExecutionContextDescription",
             "type": "object",
             "description": "Description of an isolated world.",
             "properties": [
                 { "name": "id", "$ref": "ExecutionContextId", "description": "Unique id of the execution context. It can be used to specify in which execution context script evaluation should be performed." },
-                { "name": "isPageContext", "type": "boolean", "description": "True if this is a context where inpspected web page scripts run. False if it is a content script isolated context." },
+                { "name": "type", "$ref": "ExecutionContextType" },
                 { "name": "name", "type": "string", "description": "Human readable name describing given context."},
                 { "name": "frameId", "$ref": "Network.FrameId", "description": "Id of the owning frame." }
             ]

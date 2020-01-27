@@ -44,6 +44,11 @@ WI.TargetManager = class TargetManager extends WI.Object
         return this._cachedTargetsList;
     }
 
+    get workerTargets()
+    {
+        return this.targets.filter((target) => target.type === WI.TargetType.Worker);
+    }
+
     get allTargets()
     {
         return Array.from(this._targets.values());
@@ -275,8 +280,7 @@ WI.TargetManager = class TargetManager extends WI.Object
         console.assert(WI.sharedApp.debuggableType === WI.DebuggableType.WebPage);
 
         // Remove any Worker targets associated with this page.
-        let workerTargets = WI.targets.filter((x) => x.type === WI.TargetType.Worker);
-        for (let workerTarget of workerTargets)
+        for (let workerTarget of this.workerTargets)
             WI.workerManager.workerTerminated(workerTarget.identifier);
 
         WI.pageTarget = null;

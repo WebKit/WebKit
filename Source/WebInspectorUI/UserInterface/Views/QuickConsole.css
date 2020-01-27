@@ -51,7 +51,7 @@
 
     align-items: flex-start;
 
-    max-height: 150px;
+    max-height: 33vh;
 
     overflow-y: auto;
     overflow-x: hidden;
@@ -79,35 +79,39 @@
 }
 
 .quick-console > .navigation-bar {
-    background: transparent;
-    border: none;
-
     height: 21px;
+    border-bottom: none;
 }
 
-.quick-console .execution-context {
-    margin-top: -1px;
-}
-
-.quick-console > .navigation-bar > .hierarchical-path .execution-context {
+.quick-console > .navigation-bar .active-execution-context {
     -webkit-margin-end: 7px;
-}
-
-.quick-console > .navigation-bar > .hierarchical-path .execution-context .separator {
-    display: none;
-}
-
-.quick-console > .navigation-bar > .hierarchical-path:not(.automatic-execution-context) {
     -webkit-padding-start: 5px;
+    -webkit-padding-end: 1px;
+    font-family: -webkit-system-font, sans-serif;
+    font-size: 11px;
 }
 
-.quick-console > .navigation-bar > .hierarchical-path:not(.automatic-execution-context) .execution-context {
-    background: var(--selected-background-color);
-    border-radius: 3px;
+.quick-console > .navigation-bar .active-execution-context > .selector-arrows {
+    width: 5px;
+    height: 16px;
+    margin-top: 2px;
+    margin-bottom: 2px;
+    -webkit-margin-start: 4px;
+    -webkit-margin-end: 3px;
+    opacity: 0.6;
+}
+
+.quick-console > .navigation-bar .active-execution-context:not(.automatic) {
+    margin-top: -1px;
+    height: 20px;
+    -webkit-margin-start: 5px;
+    line-height: 20px;
     color: var(--selected-foreground-color);
+    background-color: var(--selected-background-color);
+    border-radius: 3px;
 }
 
-.quick-console > .navigation-bar > .hierarchical-path:not(.automatic-execution-context) .execution-context .selector-arrows {
+.quick-console > .navigation-bar .active-execution-context:not(.automatic) > .selector-arrows {
     color: var(--selected-foreground-color);
     opacity: 1;
 }

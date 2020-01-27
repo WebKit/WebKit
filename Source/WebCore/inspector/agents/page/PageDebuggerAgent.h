@@ -35,6 +35,7 @@
 
 namespace WebCore {
 
+class DOMWrapperWorld;
 class Document;
 class Frame;
 class Page;
@@ -54,7 +55,7 @@ public:
     void breakpointActionLog(JSC::JSGlobalObject*, const String&) override;
 
     // InspectorInstrumentation
-    void didClearWindowObjectInWorld(Frame&);
+    void didClearWindowObjectInWorld(Frame&, DOMWrapperWorld&);
     void mainFrameStartedLoading();
     void mainFrameStoppedLoading();
     void mainFrameNavigated();

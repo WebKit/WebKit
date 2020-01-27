@@ -38,8 +38,6 @@ WI.RuntimeManager = class RuntimeManager extends WI.Object
                     target.RuntimeAgent.setSavedResultAlias(WI.settings.consoleSavedResultAlias.value);
             }
         });
-
-        WI.Frame.addEventListener(WI.Frame.Event.ExecutionContextsCleared, this._frameExecutionContextsCleared, this);
     }
 
     // Static
@@ -188,15 +186,6 @@ WI.RuntimeManager = class RuntimeManager extends WI.Object
     }
 
     // Private
-
-    _frameExecutionContextsCleared(event)
-    {
-        let contexts = event.data.contexts || [];
-
-        let currentContextWasDestroyed = contexts.some((context) => context.id === this._activeExecutionContext.id);
-        if (currentContextWasDestroyed)
-            this.activeExecutionContext = WI.mainTarget.executionContext;
-    }
 
     _tryApplyAwaitConvenience(originalExpression)
     {

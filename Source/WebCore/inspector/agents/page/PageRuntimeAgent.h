@@ -41,6 +41,7 @@ class CallFrame;
 
 namespace WebCore {
 
+class DOMWrapperWorld;
 class Frame;
 class Page;
 class SecurityOrigin;
@@ -61,14 +62,14 @@ public:
 
     // InspectorInstrumentation
     void frameNavigated(Frame&);
-    void didClearWindowObjectInWorld(Frame&);
+    void didClearWindowObjectInWorld(Frame&, DOMWrapperWorld&);
 
 private:
     Inspector::InjectedScript injectedScriptForEval(ErrorString&, const int* executionContextId) override;
     void muteConsole() override;
     void unmuteConsole() override;
     void reportExecutionContextCreation();
-    void notifyContextCreated(const String& frameId, JSC::JSGlobalObject*, SecurityOrigin*, bool isPageContext);
+    void notifyContextCreated(const String& frameId, JSC::JSGlobalObject*, const DOMWrapperWorld&, SecurityOrigin* = nullptr);
 
     std::unique_ptr<Inspector::RuntimeFrontendDispatcher> m_frontendDispatcher;
     RefPtr<Inspector::RuntimeBackendDispatcher> m_backendDispatcher;

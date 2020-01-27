@@ -1646,7 +1646,7 @@ function isWebKitInternalScript(url)
 
 function isWebKitExtensionScheme(scheme)
 {
-    return scheme && scheme.endsWith("extension");
+    return scheme && scheme.endsWith("-extension");
 }
 
 function isFunctionStringNativeCode(str)

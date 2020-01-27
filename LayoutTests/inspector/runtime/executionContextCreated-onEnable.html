@@ -16,8 +16,11 @@ function test()
             let contextCount = 0;
 
             InspectorProtocol.addEventListener("Runtime.executionContextCreated", (messageObject) => {
-                let {id, isPageContext, frameId} = messageObject.params.context;
-                ProtocolTest.log(`Execution context created: id=${contextIdMap.get(id)} frameId=${frameIdMap.get(frameId)} isPageContext=${isPageContext}`)
+                let {id, type, frameId} = messageObject.params.context;
+                if (type === "internal")
+                    return;
+
+                ProtocolTest.log(`Execution context created: id=${contextIdMap.get(id)} frameId=${frameIdMap.get(frameId)} isPageContext=${type === "normal"}`)
                 ++contextCount;
             });
 

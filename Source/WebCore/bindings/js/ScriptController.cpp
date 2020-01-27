@@ -26,6 +26,7 @@
 #include "CommonVM.h"
 #include "ContentSecurityPolicy.h"
 #include "CustomHeaderFields.h"
+#include "DOMWrapperWorld.h"
 #include "DocumentLoader.h"
 #include "Event.h"
 #include "Frame.h"
@@ -247,9 +248,9 @@ JSC::JSValue ScriptController::evaluateModule(const URL& sourceURL, JSModuleReco
     return evaluateModule(sourceURL, moduleRecord, mainThreadNormalWorld());
 }
 
-Ref<DOMWrapperWorld> ScriptController::createWorld()
+Ref<DOMWrapperWorld> ScriptController::createWorld(const String& name, WorldType type)
 {
-    return DOMWrapperWorld::create(commonVM());
+    return DOMWrapperWorld::create(commonVM(), type == WorldType::User ? DOMWrapperWorld::Type::User : DOMWrapperWorld::Type::Internal, name);
 }
 
 void ScriptController::getAllWorlds(Vector<Ref<DOMWrapperWorld>>& worlds)

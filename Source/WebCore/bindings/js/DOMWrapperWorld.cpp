@@ -31,10 +31,13 @@
 namespace WebCore {
 using namespace JSC;
 
-DOMWrapperWorld::DOMWrapperWorld(JSC::VM& vm, bool isNormal)
+DOMWrapperWorld::DOMWrapperWorld(JSC::VM& vm, Type type, const String& name)
     : m_vm(vm)
-    , m_isNormal(isNormal)
+    , m_name(name)
+    , m_type(type)
 {
+    ASSERT(!name.isEmpty() || m_type == Type::Normal);
+
     VM::ClientData* clientData = m_vm.clientData;
     ASSERT(clientData);
     static_cast<JSVMClientData*>(clientData)->rememberWorld(*this);

@@ -35,7 +35,7 @@ WI.DirectBackendTarget = class DirectBackendTarget extends WI.Target
         let {type, displayName} = DirectBackendTarget.connectionInfoForDebuggable();
         super(parentTarget, targetId, displayName, type, InspectorBackend.backendConnection);
 
-        this._executionContext = new WI.ExecutionContext(this, WI.RuntimeManager.TopLevelContextExecutionIdentifier, displayName, true, null);
+        this._executionContext = new WI.ExecutionContext(this, WI.RuntimeManager.TopLevelContextExecutionIdentifier, WI.ExecutionContext.Type.Normal, displayName);
         this._mainResource = null;
     }
 

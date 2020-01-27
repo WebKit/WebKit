@@ -33,6 +33,7 @@
 #include "PageDebuggerAgent.h"
 
 #include "CachedResource.h"
+#include "DOMWrapperWorld.h"
 #include "Document.h"
 #include "Frame.h"
 #include "InspectorPageAgent.h"
@@ -139,9 +140,9 @@ InjectedScript PageDebuggerAgent::injectedScriptForEval(ErrorString& errorString
     return injectedScript;
 }
 
-void PageDebuggerAgent::didClearWindowObjectInWorld(Frame& frame)
+void PageDebuggerAgent::didClearWindowObjectInWorld(Frame& frame, DOMWrapperWorld& world)
 {
-    if (!frame.isMainFrame())
+    if (!frame.isMainFrame() || &world != &mainThreadNormalWorld())
         return;
 
     didClearGlobalObject();

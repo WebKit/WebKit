@@ -1,3 +1,25 @@
+2020-01-27  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: unable to evaluate in the isolated world of content scripts injected by safari app extensions
+        https://bugs.webkit.org/show_bug.cgi?id=206110
+        <rdar://problem/16945643>
+
+        Reviewed by Timothy Hatcher, Joseph Pecoraro, and Brian Burg.
+
+        In addition to evaluating in subframe execution contexts, add the ability for Web Inspector
+        to evaluate in non-normal isolated worlds.
+
+        * inspector/runtime/executionContextCreated-isolated-world.html: Added.
+        * inspector/runtime/executionContextCreated-isolated-world-expected.txt: Added.
+
+        * inspector/runtime/change-execution-context-identifier.html:
+        * inspector/runtime/change-execution-context-identifier-expected.txt:
+        Don't expect the active execution context to change when the owner frame is removed, as that
+        is now handled by the UI (`WI.QuickConsole`) instead of the `WI.RuntimeManager`.
+
+        * inspector/runtime/executionContextCreated-onEnable.html:
+        Ignore internal worlds.
+
 2020-01-27  Jacob Uphoff  <jacob_uphoff@apple.com>
 
         [macOS iOS ] animations/animation-direction-normal.html is flaky failing

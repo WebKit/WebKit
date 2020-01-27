@@ -85,6 +85,7 @@ function test()
 
             // Set the execution context to the subframe so we can switch away from it when the frame is detached.
             WI.runtimeManager.activeExecutionContext = subframes[0].pageExecutionContext;
+            let activeExecutionContextId = WI.runtimeManager.activeExecutionContext.id;
 
             // Force-override the contextId, otherwise we won't be able to access the iframe's DOM element when evaluating in the iframe execution context.
             let expression = `document.getElementById("subframe").remove();`;
@@ -92,7 +93,7 @@ function test()
             let contextId = WI.RuntimeManager.TopLevelExecutionContextIdentifier;
             RuntimeAgent.evaluate.invoke({expression, objectGroup, contextId}, () => {
                 InspectorTest.expectEqual(WI.networkManager.frames.length, 1, "The test page should now have no sub-frames.");
-                InspectorTest.expectEqual(WI.runtimeManager.activeExecutionContext.id, WI.RuntimeManager.TopLevelExecutionContextIdentifier, "When a selected non-top-level execution context is removed, the active execution context should revert to the main frame context.");
+                InspectorTest.expectEqual(WI.runtimeManager.activeExecutionContext.id, activeExecutionContextId, "When a selected non-top-level execution context is removed, the active execution context should not change, as that is handled by the UI.");
                 resolve();
             });
         }

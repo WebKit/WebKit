@@ -114,10 +114,10 @@ void JSVMClientData::initNormalWorld(VM* vm)
 {
     JSVMClientData* clientData = new JSVMClientData(*vm);
     vm->clientData = clientData; // ~VM deletes this pointer.
-    
+
     vm->heap.addMarkingConstraint(makeUnique<DOMGCOutputConstraint>(*vm, *clientData));
-        
-    clientData->m_normalWorld = DOMWrapperWorld::create(*vm, true);
+
+    clientData->m_normalWorld = DOMWrapperWorld::create(*vm, DOMWrapperWorld::Type::Normal);
     vm->m_typedArrayController = adoptRef(new WebCoreTypedArrayController());
 }
 

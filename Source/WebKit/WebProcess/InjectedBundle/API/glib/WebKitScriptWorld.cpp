@@ -152,7 +152,7 @@ WebKitScriptWorld* webkit_script_world_get_default(void)
  */
 WebKitScriptWorld* webkit_script_world_new(void)
 {
-    return webkitScriptWorldCreate(InjectedBundleScriptWorld::create());
+    return webkitScriptWorldCreate(InjectedBundleScriptWorld::create(InjectedBundleScriptWorld::Type::User));
 }
 
 /**
@@ -173,7 +173,7 @@ WebKitScriptWorld* webkit_script_world_new_with_name(const char* name)
 {
     g_return_val_if_fail(name, nullptr);
 
-    return webkitScriptWorldCreate(InjectedBundleScriptWorld::create(String::fromUTF8(name)));
+    return webkitScriptWorldCreate(InjectedBundleScriptWorld::create(String::fromUTF8(name), InjectedBundleScriptWorld::Type::User));
 }
 
 /**

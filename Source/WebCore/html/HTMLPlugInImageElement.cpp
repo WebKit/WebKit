@@ -363,7 +363,7 @@ void HTMLPlugInImageElement::updateSnapshot(Image* image)
 
 static DOMWrapperWorld& plugInImageElementIsolatedWorld()
 {
-    static auto& isolatedWorld = DOMWrapperWorld::create(commonVM()).leakRef();
+    static auto& isolatedWorld = DOMWrapperWorld::create(commonVM(), DOMWrapperWorld::Type::Internal, "Plugin"_s).leakRef();
     return isolatedWorld;
 }
 

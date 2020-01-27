@@ -548,6 +548,7 @@ enum CompositingPolicy {
     ArrayBuffer serializeObject(SerializedScriptValue object);
 
     boolean isFromCurrentWorld(any obj);
+    any evaluateInWorldIgnoringException(DOMString name, DOMString source);
 
     void setUsesOverlayScrollbars(boolean enabled);
     void setUsesMockScrollAnimator(boolean enabled);

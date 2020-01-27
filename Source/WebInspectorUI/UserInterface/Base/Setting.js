@@ -227,6 +227,7 @@ WI.settings = {
     protocolFilterMultiplexingBackendMessages: new WI.Setting("protocol-filter-multiplexing-backend-messages", true),
 
     // Engineering
+    engineeringShowInternalExecutionContexts: new WI.EngineeringSetting("engineering-show-internal-execution-contexts", false),
     engineeringShowInternalScripts: new WI.EngineeringSetting("engineering-show-internal-scripts", false),
     engineeringPauseForInternalScripts: new WI.EngineeringSetting("engineering-pause-for-internal-scripts", false),
     engineeringShowInternalObjectsInHeapSnapshot: new WI.EngineeringSetting("engineering-show-internal-objects-in-heap-snapshot", false),

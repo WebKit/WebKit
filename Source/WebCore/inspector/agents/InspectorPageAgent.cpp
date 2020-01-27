@@ -37,6 +37,7 @@
 #include "Cookie.h"
 #include "CookieJar.h"
 #include "CustomHeaderFields.h"
+#include "DOMWrapperWorld.h"
 #include "Document.h"
 #include "DocumentLoader.h"
 #include "Frame.h"
@@ -770,8 +771,11 @@ void InspectorPageAgent::defaultAppearanceDidChange(bool useDarkAppearance)
     m_frontendDispatcher->defaultAppearanceDidChange(useDarkAppearance ? Inspector::Protocol::Page::Appearance::Dark : Inspector::Protocol::Page::Appearance::Light);
 }
 
-void InspectorPageAgent::didClearWindowObjectInWorld(Frame& frame)
+void InspectorPageAgent::didClearWindowObjectInWorld(Frame& frame, DOMWrapperWorld& world)
 {
+    if (&world != &mainThreadNormalWorld())
+        return;
+
     if (m_bootstrapScript.isEmpty())
         return;
 

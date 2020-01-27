@@ -87,7 +87,8 @@ public:
     explicit ScriptController(Frame&);
     ~ScriptController();
 
-    WEBCORE_EXPORT static Ref<DOMWrapperWorld> createWorld();
+    enum class WorldType { User, Internal };
+    WEBCORE_EXPORT static Ref<DOMWrapperWorld> createWorld(const String& name, WorldType = WorldType::Internal);
 
     JSDOMWindow* globalObject(DOMWrapperWorld& world)
     {
@@ -104,7 +105,7 @@ public:
     WEBCORE_EXPORT ValueOrException executeUserAgentScriptInWorld(DOMWrapperWorld&, const String& script, bool forceUserGesture);
     WEBCORE_EXPORT void executeAsynchronousUserAgentScriptInWorld(DOMWrapperWorld&, RunJavaScriptParameters&&, ResolveFunction&&);
     JSC::JSValue evaluateIgnoringException(const ScriptSourceCode&);
-    JSC::JSValue evaluateInWorldIgnoringException(const ScriptSourceCode&, DOMWrapperWorld&);
+    WEBCORE_EXPORT JSC::JSValue evaluateInWorldIgnoringException(const ScriptSourceCode&, DOMWrapperWorld&);
 
     Expected<void, ExceptionDetails> shouldAllowUserAgentScripts(Document&) const;
 

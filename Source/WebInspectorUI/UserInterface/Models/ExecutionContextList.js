@@ -47,20 +47,17 @@ WI.ExecutionContextList = class ExecutionContextList
     {
         // COMPATIBILITY (iOS 13.0): Older iOS releases will send duplicates.
         // Newer releases will not and this check should be removed eventually.
-        if (context.isPageContext && this._pageExecutionContext) {
+        if (context.type === WI.ExecutionContext.Type.Normal && this._pageExecutionContext) {
             console.assert(context.id === this._pageExecutionContext.id);
-            return false;
+            return;
         }
 
         this._contexts.push(context);
 
-        if (context.isPageContext) {
+        if (context.type === WI.ExecutionContext.Type.Normal && context.target.type === WI.TargetType.Page) {
             console.assert(!this._pageExecutionContext);
             this._pageExecutionContext = context;
-            return true;
         }
-
-        return false;
     }
 
     clear()

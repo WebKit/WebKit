@@ -1,3 +1,146 @@
+2020-01-27  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: unable to evaluate in the isolated world of content scripts injected by safari app extensions
+        https://bugs.webkit.org/show_bug.cgi?id=206110
+        <rdar://problem/16945643>
+
+        Reviewed by Timothy Hatcher, Joseph Pecoraro, and Brian Burg.
+
+        In addition to evaluating in subframe execution contexts, add the ability for Web Inspector
+        to evaluate in non-normal isolated worlds.
+
+        * UserInterface/Models/ExecutionContext.js:
+        (WI.ExecutionContext):
+        (WI.ExecutionContext.typeFromPayload): Added.
+        (WI.ExecutionContext.prototype.get type): Added.
+        (WI.ExecutionContext.prototype.get isPageContext): Deleted.
+
+        * UserInterface/Models/ExecutionContextList.js:
+        (WI.ExecutionContextList.prototype.add):
+        * UserInterface/Models/Frame.js:
+        (WI.Frame.prototype.addExecutionContext):
+        * UserInterface/Controllers/NetworkManager.js:
+        (WI.NetworkManager.prototype.executionContextCreated):
+        The `Normal` execution context (of which there should only be one) is considered the "page"
+        execution context.
+
+        * UserInterface/Protocol/DirectBackendTarget.js:
+        (WI.DirectBackendTarget):
+        * UserInterface/Protocol/PageTarget.js:
+        (WI.PageTarget):
+        * UserInterface/Protocol/WorkerTarget.js:
+        (WI.WorkerTarget):
+        Default to a `Normal` execution context.
+
+        * UserInterface/Views/QuickConsole.js:
+        (WI.QuickConsole):
+        (WI.QuickConsole.prototype._displayNameForExecutionContext): Added.
+        (WI.QuickConsole.prototype._resolveDesiredActiveExecutionContext): Added.
+        (WI.QuickConsole.prototype._setActiveExecutionContext): Added.
+        (WI.QuickConsole.prototype._updateActiveExecutionContextDisplay): Added.
+        (WI.QuickConsole.prototype._populateActiveExecutionContextNavigationItemContextMenu): Added.
+        (WI.QuickConsole.prototype._handleConsoleSavedResultAliasSettingChanged): Added.
+        (WI.QuickConsole.prototype._handleEngineeringShowInternalExecutionContextsSettingChanged): Added.
+        (WI.QuickConsole.prototype._handleFramePageExecutionContextChanged): Added.
+        (WI.QuickConsole.prototype._handleFrameExecutionContextsCleared): Added.
+        (WI.QuickConsole.prototype._handleDebuggerActiveCallFrameDidChange): Added.
+        (WI.QuickConsole.prototype._handleActiveExecutionContextChanged): Added.
+        (WI.QuickConsole.prototype._handleTransitionPageTarget): Added.
+        (WI.QuickConsole.prototype._handleTargetRemoved): Added.
+        (WI.QuickConsole.prototype._handleInspectedNodeChanged): Added.
+        (WI.QuickConsole.prototype._updateStyles):
+        (WI.QuickConsole.prototype.get navigationBar): Deleted.
+        (WI.QuickConsole.prototype._pageTargetTransitioned): Deleted.
+        (WI.QuickConsole.prototype._initializeMainExecutionContextPathComponent): Deleted.
+        (WI.QuickConsole.prototype.layout): Deleted.
+        (WI.QuickConsole.prototype._preferredNameForFrame): Deleted.
+        (WI.QuickConsole.prototype._selectExecutionContext): Deleted.
+        (WI.QuickConsole.prototype._updateAutomaticExecutionContextPathComponentTooltip): Deleted.
+        (WI.QuickConsole.prototype._executionContextPathComponentsToDisplay): Deleted.
+        (WI.QuickConsole.prototype._rebuildExecutionContextPathComponents): Deleted.
+        (WI.QuickConsole.prototype._framePageExecutionContextsChanged): Deleted.
+        (WI.QuickConsole.prototype._frameExecutionContextsCleared): Deleted.
+        (WI.QuickConsole.prototype._activeExecutionContextChanged): Deleted.
+        (WI.QuickConsole.prototype._createExecutionContextPathComponent): Deleted.
+        (WI.QuickConsole.prototype._compareExecutionContextPathComponents): Deleted.
+        (WI.QuickConsole.prototype._insertOtherExecutionContextPathComponent): Deleted.
+        (WI.QuickConsole.prototype._removeOtherExecutionContextPathComponent): Deleted.
+        (WI.QuickConsole.prototype._insertExecutionContextPathComponentForFrame): Deleted.
+        (WI.QuickConsole.prototype._removeExecutionContextPathComponentForFrame): Deleted.
+        (WI.QuickConsole.prototype._targetAdded): Deleted.
+        (WI.QuickConsole.prototype._targetRemoved): Deleted.
+        (WI.QuickConsole.prototype._pathComponentSelected): Deleted.
+        (WI.QuickConsole.prototype._pathComponentClicked): Deleted.
+        (WI.QuickConsole.prototype._debuggerActiveCallFrameDidChange): Deleted.
+        * UserInterface/Views/QuickConsole.css:
+        (.quick-console > .console-prompt):
+        (.quick-console > .navigation-bar):
+        (.quick-console > .navigation-bar .active-execution-context): Added.
+        (.quick-console > .navigation-bar .active-execution-context > .selector-arrows): Added.
+        (.quick-console > .navigation-bar .active-execution-context:not(.automatic)): Added.
+        (.quick-console > .navigation-bar .active-execution-context:not(.automatic) > .selector-arrows): Added.
+        (.quick-console .execution-context): Deleted.
+        (.quick-console > .navigation-bar > .hierarchical-path .execution-context): Deleted.
+        (.quick-console > .navigation-bar > .hierarchical-path .execution-context .separator): Deleted.
+        (.quick-console > .navigation-bar > .hierarchical-path:not(.automatic-execution-context)): Deleted.
+        (.quick-console > .navigation-bar > .hierarchical-path:not(.automatic-execution-context) .execution-context): Deleted.
+        (.quick-console > .navigation-bar > .hierarchical-path:not(.automatic-execution-context) .execution-context .selector-arrows): Deleted.
+        Replace the `WI.HierarchicalPathNavigationItem` with a plain `WI.NavigationItem` that shows
+        a `WI.ContextMenu` with all valid execution contexts organized as follows:
+
+            Auto - <display name for execution context of inspected DOM node>
+            ----------
+            Main Frame Normal Execution Context
+                All User Exection Contexts for the Main Frame
+                All Internal Exection Contexts for the Main Frame (with the engineering setting)
+            Frames
+                Frame Normal Execution Context
+                    All User Exection Contexts for the Frame
+                    All Internal Exection Contexts for the Frame (with the engineering setting)
+                ...
+            Workers
+                Worker Execution Context
+                ...
+
+        Everything is checkmark selectable other than the separator, "Frames", and "Workers".
+
+        * UserInterface/Controllers/RuntimeManager.js:
+        (WI.RuntimeManager):
+        (WI.RuntimeManager.prototype._frameExecutionContextsCleared): Deleted.
+        Let the UI (`WI.QuickConsole`) decide when to automatically update the active execution
+        context when a frame is removed that owned the active execution context.
+
+        * UserInterface/Controllers/TargetManager.js:
+        (WI.TargetManager.prototype.get workerTargets): Added.
+        (WI.TargetManager.prototype._terminatePageTarget):
+        Convenience function for getting the list of worker targets.
+
+        * UserInterface/Views/GroupNavigationItem.js:
+        (WI.GroupNavigationItem.prototype.update):
+        (WI.GroupNavigationItem.prototype.didAttach):
+        Update the items whenever the group updates.
+
+        * UserInterface/Main.html:
+        * UserInterface/Views/SizesToFitNavigationBar.js: Renamed from Source/WebInspectorUI/UserInterface/Views/QuickConsoleNavigationBar.js.
+        (WI.SizesToFitNavigationBar):
+        (WI.SizesToFitNavigationBar.prototype.get sizesToFit):
+        Rename to allow for other use cases.
+
+        * UserInterface/Views/ContextMenu.js:
+        (WI.ContextSubMenuItem.prototype.appendHeader): Added.
+        Convenience method for creating a disabled item.
+
+        * UserInterface/Base/Setting.js:
+        * UserInterface/Views/SettingsTabContentView.js:
+        (WI.SettingsTabContentView.prototype._createEngineeringSettingsView):
+        Create an engineering setting that controls whether `Internal` execution contexts are shown.
+
+        * UserInterface/Test/InspectorProtocol.js:
+        (InspectorProtocol.addEventListener):
+        (InspectorProtocol.removeEventListener): Added.
+
+        * Localizations/en.lproj/localizedStrings.js:
+
 2020-01-21  Keith Rollin  <krollin@apple.com>
 
         Fix tvOS values in SUPPORTED_PLATFORMS

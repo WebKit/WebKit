@@ -120,6 +120,27 @@ InspectorProtocol.addEventListener = function(eventTypeOrObject, listener)
         throw new Error("Cannot register the same listener more than once.");
 
     listeners.push(listener);
+    return listener;
+};
+
+InspectorProtocol.removeEventListener = function(eventTypeOrObject, listener)
+{
+    let event = eventTypeOrObject;
+    if (typeof eventTypeOrObject === "object")
+        ({event, listener} = eventTypeOrObject);
+
+    if (typeof event !== "string")
+        throw new Error("Event name must be a string.");
+
+    if (typeof listener !== "function")
+        throw new Error("Event listener must be callable.");
+
+    // Convert to an array of listeners.
+    let listeners = InspectorProtocol.eventHandler[event];
+    if (!listeners)
+        return;
+
+    listeners.removeAll(listener);
 };
 
 InspectorProtocol.checkForError = function(responseObject)

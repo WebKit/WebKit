@@ -223,9 +223,11 @@ WI.Frame = class Frame extends WI.Object
 
     addExecutionContext(context)
     {
-        var changedPageContext = this._executionContextList.add(context);
+        this._executionContextList.add(context);
 
-        if (changedPageContext)
+        this.dispatchEventToListeners(WI.Frame.Event.ExecutionContextAdded, {context});
+
+        if (this._executionContextList.pageExecutionContext === context)
             this.dispatchEventToListeners(WI.Frame.Event.PageExecutionContextChanged);
     }
 
@@ -509,6 +511,7 @@ WI.Frame.Event = {
     ChildFrameWasRemoved: "frame-child-frame-was-removed",
     AllChildFramesRemoved: "frame-all-child-frames-removed",
     PageExecutionContextChanged: "frame-page-execution-context-changed",
+    ExecutionContextAdded: "frame-execution-context-added",
     ExecutionContextsCleared: "frame-execution-contexts-cleared"
 };
 

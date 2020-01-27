@@ -67,7 +67,7 @@ WebScriptWorld* WebScriptWorld::standardWorld()
 
 COMPtr<WebScriptWorld> WebScriptWorld::createInstance()
 {
-    return createInstance(ScriptController::createWorld());
+    return createInstance(ScriptController::createWorld("WebScriptWorld"_s, WebCore::ScriptController::WorldType::User));
 }
 
 COMPtr<WebScriptWorld> WebScriptWorld::createInstance(RefPtr<DOMWrapperWorld>&& world)

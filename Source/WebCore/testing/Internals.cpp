@@ -162,6 +162,7 @@
 #include "SVGPathStringBuilder.h"
 #include "SVGSVGElement.h"
 #include "SWClientConnection.h"
+#include "ScriptController.h"
 #include "ScriptedAnimationController.h"
 #include "ScrollingCoordinator.h"
 #include "ScrollingMomentumCalculator.h"
@@ -3485,6 +3486,14 @@ bool Internals::isFromCurrentWorld(JSC::JSValue value) const
 {
     JSC::VM& vm = contextDocument()->vm();
     return isWorldCompatible(*vm.topCallFrame->lexicalGlobalObject(vm), value);
+}
+
+JSC::JSValue Internals::evaluateInWorldIgnoringException(const String& name, const String& source)
+{
+    auto* document = contextDocument();
+    auto& scriptController = document->frame()->script();
+    auto world = ScriptController::createWorld(name);
+    return scriptController.evaluateInWorldIgnoringException(ScriptSourceCode(source), world);
 }
 
 void Internals::setUsesOverlayScrollbars(bool enabled)
