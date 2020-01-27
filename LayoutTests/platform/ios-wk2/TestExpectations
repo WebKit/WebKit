@@ -1355,3 +1355,5 @@ webkit.org/b/206630 [ Release ] fast/forms/validationMessage.html [ Pass Timeout
 webkit.org/b/206667 legacy-animation-engine/animations/stop-animation-on-suspend.html [ Pass Failure ]
 
 webkit.org/b/206682 animations/play-state-paused.html [ Pass Failure ]
+
+webkit.org/b/206678 [ Release ] compositing/video/poster.html [ Pass Failure ]
