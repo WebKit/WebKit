@@ -1,3 +1,10 @@
+2020-01-27  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Unreviewed, a build fix after r255111
+
+        * UIProcess/WebAuthentication/Mock/MockLocalConnection.mm:
+        Adding some missing headers.
+
 2020-01-27  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, revert r254210 as it seems to be causing process assertion leaks.

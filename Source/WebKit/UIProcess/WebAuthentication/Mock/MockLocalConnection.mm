@@ -28,8 +28,10 @@
 
 #if ENABLE(WEB_AUTHN)
 
+#import <Security/SecItem.h>
 #import <WebCore/ExceptionData.h>
 #import <wtf/RunLoop.h>
+#import <wtf/spi/cocoa/SecuritySPI.h>
 #import <wtf/text/WTFString.h>
 
 #import "LocalAuthenticationSoftLink.h"
