@@ -6352,8 +6352,13 @@ void Document::resumeScriptedAnimationControllerCallbacks()
 
 void Document::updateAnimationsAndSendEvents(DOMHighResTimeStamp timestamp)
 {
-    if (m_timeline)
-        m_timeline->updateAnimationsAndSendEvents(timestamp);
+    ASSERT(!m_timelines.hasNullReferences());
+    // We need to copy m_timelines before iterating over its members since calling updateAnimationsAndSendEvents() may mutate m_timelines.
+    Vector<RefPtr<DocumentTimeline>> timelines;
+    for (auto& timeline : m_timelines)
+        timelines.append(&timeline);
+    for (auto& timeline : timelines)
+        timeline->updateAnimationsAndSendEvents(timestamp);
 }
 
 void Document::serviceRequestAnimationFrameCallbacks(DOMHighResTimeStamp timestamp)
@@ -8036,6 +8041,16 @@ void Document::downgradeReferrerToRegistrableDomain()
 void Document::setConsoleMessageListener(RefPtr<StringCallback>&& listener)
 {
     m_consoleMessageListener = listener;
+}
+
+void Document::addTimeline(DocumentTimeline& timeline)
+{
+    m_timelines.add(timeline);
+}
+
+void Document::removeTimeline(DocumentTimeline& timeline)
+{
+    m_timelines.remove(timeline);
 }
 
 DocumentTimeline& Document::timeline()

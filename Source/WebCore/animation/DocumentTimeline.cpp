@@ -62,11 +62,17 @@ DocumentTimeline::DocumentTimeline(Document& document, Seconds originTime)
     , m_document(&document)
     , m_originTime(originTime)
 {
+    if (m_document)
+        m_document->addTimeline(*this);
     if (m_document && m_document->page() && !m_document->page()->isVisible())
         suspendAnimations();
 }
 
-DocumentTimeline::~DocumentTimeline() = default;
+DocumentTimeline::~DocumentTimeline()
+{
+    if (m_document)
+        m_document->removeTimeline(*this);
+}
 
 void DocumentTimeline::detachFromDocument()
 {
