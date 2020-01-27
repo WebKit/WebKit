@@ -956,7 +956,7 @@ bool MediaSource::attachToElement(HTMLMediaElement& element)
 
     ASSERT(isClosed());
 
-    m_mediaElement = makeWeakPtr(&element);
+    m_mediaElement = &element;
     return true;
 }
 
