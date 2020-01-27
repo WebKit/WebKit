@@ -27,10 +27,35 @@
 #include "FeaturePolicy.h"
 
 #include "Document.h"
+#include "HTMLIFrameElement.h"
+#include "HTMLNames.h"
 #include "HTMLParserIdioms.h"
 #include "SecurityOrigin.h"
 
 namespace WebCore {
+
+using namespace HTMLNames;
+
+bool isFeaturePolicyAllowedByDocumentAndAllOwners(FeaturePolicy::Type type, const Document& document)
+{
+    auto& topDocument = document.topDocument();
+    auto ancestorDocument = &document;
+    while (ancestorDocument != &topDocument) {
+        if (!ancestorDocument)
+            return false;
+
+        auto ownerElement = ancestorDocument->ownerElement();
+        if (is<HTMLIFrameElement>(ownerElement)) {
+            auto featurePolicy = downcast<HTMLIFrameElement>(ownerElement)->featurePolicy();
+            if (!featurePolicy.allows(type, ancestorDocument->securityOrigin().data()))
+                return false;
+        }
+
+        ancestorDocument = ancestorDocument->parentDocument();
+    }
+
+    return true;
+}
 
 static bool isAllowedByFeaturePolicy(const FeaturePolicy::AllowRule& rule, const SecurityOriginData& origin)
 {
@@ -94,13 +119,14 @@ static inline void updateList(Document& document, FeaturePolicy::AllowRule& rule
     }
 }
 
-FeaturePolicy FeaturePolicy::parse(Document& document, StringView allowAttributeValue)
+FeaturePolicy FeaturePolicy::parse(Document& document, const HTMLIFrameElement& iframe, StringView allowAttributeValue)
 {
     FeaturePolicy policy;
     bool isCameraInitialized = false;
     bool isMicrophoneInitialized = false;
     bool isDisplayCaptureInitialized = false;
     bool isSyncXHRInitialized = false;
+    bool isFullscreenInitialized = false;
     for (auto allowItem : allowAttributeValue.split(';')) {
         auto item = allowItem.stripLeadingAndTrailingMatchedCharacters(isHTMLSpace<UChar>);
         if (item.startsWith("camera")) {
@@ -123,15 +149,35 @@ FeaturePolicy FeaturePolicy::parse(Document& document, StringView allowAttribute
             updateList(document, policy.m_syncXHRRule, item.substring(8));
             continue;
         }
+        if (item.startsWith("fullscreen")) {
+            isFullscreenInitialized = true;
+            updateList(document, policy.m_fullscreenRule, item.substring(11));
+            continue;
+        }
     }
 
-    // By default, camera, microphone and display-capture policy is 'self'
+    // By default, camera, microphone, display-capture, and fullscreen policy is 'self'
     if (!isCameraInitialized)
         policy.m_cameraRule.allowedList.add(document.securityOrigin().data());
     if (!isMicrophoneInitialized)
         policy.m_microphoneRule.allowedList.add(document.securityOrigin().data());
     if (!isDisplayCaptureInitialized)
         policy.m_displayCaptureRule.allowedList.add(document.securityOrigin().data());
+
+    // https://w3c.github.io/webappsec-feature-policy/#process-feature-policy-attributes
+    // 9.5 Process Feature Policy Attributes
+    // 3.1 If element’s allowfullscreen attribute is specified, and container policy does
+    //     not contain an allowlist for fullscreen,
+    if (!isFullscreenInitialized) {
+        if (iframe.hasAttribute(allowfullscreenAttr) || iframe.hasAttribute(webkitallowfullscreenAttr)) {
+            // 3.1.1 Construct a new declaration for fullscreen, whose allowlist is the special value *.
+            policy.m_fullscreenRule.type = FeaturePolicy::AllowRule::Type::All;
+        } else {
+            // https://fullscreen.spec.whatwg.org/#feature-policy-integration
+            // The default allowlist is 'self'.
+            policy.m_fullscreenRule.allowedList.add(document.securityOrigin().data());
+        }
+    }
 
     if (!isSyncXHRInitialized)
         policy.m_syncXHRRule.type = AllowRule::Type::All;
@@ -150,6 +196,8 @@ bool FeaturePolicy::allows(Type type, const SecurityOriginData& origin) const
         return isAllowedByFeaturePolicy(m_displayCaptureRule, origin);
     case Type::SyncXHR:
         return isAllowedByFeaturePolicy(m_syncXHRRule, origin);
+    case Type::Fullscreen:
+        return isAllowedByFeaturePolicy(m_fullscreenRule, origin);
     }
     ASSERT_NOT_REACHED();
     return false;

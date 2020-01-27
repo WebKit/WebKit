@@ -32,12 +32,13 @@
 namespace WebCore {
 
 class Document;
+class HTMLIFrameElement;
 
 class FeaturePolicy {
 public:
-    static FeaturePolicy parse(Document&, StringView);
+    static FeaturePolicy parse(Document&, const HTMLIFrameElement&, StringView);
 
-    enum class Type { Camera, Microphone, DisplayCapture, SyncXHR };
+    enum class Type { Camera, Microphone, DisplayCapture, SyncXHR, Fullscreen };
     bool allows(Type, const SecurityOriginData&) const;
 
     struct AllowRule {
@@ -51,6 +52,9 @@ private:
     AllowRule m_microphoneRule;
     AllowRule m_displayCaptureRule;
     AllowRule m_syncXHRRule;
+    AllowRule m_fullscreenRule;
 };
+
+extern bool isFeaturePolicyAllowedByDocumentAndAllOwners(FeaturePolicy::Type, const Document&);
 
 } // namespace WebCore

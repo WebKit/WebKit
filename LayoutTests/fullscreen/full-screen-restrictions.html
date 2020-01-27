@@ -18,6 +18,7 @@
         var step2 = function() {
             consoleWrite('"The context object\'s node document, or an ancestor browsing context\'s document does not have the fullscreen enabled flag set."')
             var iframe = document.documentElement.appendChild(document.createElement('iframe'));
+            iframe.setAttribute('allow', "fullscreen 'none'");
             var div = iframe.contentDocument.documentElement.appendChild(iframe.contentDocument.createElement('div'));
 
             waitForEventOnce(iframe.contentDocument, 'webkitfullscreenerror', step3);

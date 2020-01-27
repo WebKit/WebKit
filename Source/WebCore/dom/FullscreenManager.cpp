@@ -32,7 +32,7 @@
 #include "ChromeClient.h"
 #include "EventNames.h"
 #include "Frame.h"
-#include "HTMLFrameOwnerElement.h"
+#include "HTMLIFrameElement.h"
 #include "HTMLMediaElement.h"
 #include "Page.h"
 #include "QualifiedName.h"
@@ -44,28 +44,12 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-static bool isAttributeOnAllOwners(const QualifiedName& attribute, const QualifiedName& prefixedAttribute, const HTMLFrameOwnerElement* owner)
-{
-    if (!owner)
-        return true;
-    do {
-        if (!(owner->hasAttribute(attribute) || owner->hasAttribute(prefixedAttribute)))
-            return false;
-    } while ((owner = owner->document().ownerElement()));
-    return true;
-}
-
 FullscreenManager::FullscreenManager(Document& document)
     : m_document { document }
 {
 }
 
 FullscreenManager::~FullscreenManager() = default;
-
-bool FullscreenManager::fullscreenIsAllowedForElement(Element& element) const
-{
-    return isAttributeOnAllOwners(allowfullscreenAttr, webkitallowfullscreenAttr, element.document().ownerElement());
-}
 
 void FullscreenManager::requestFullscreenForElement(Element* element, FullscreenCheckType checkType)
 {
@@ -142,7 +126,7 @@ void FullscreenManager::requestFullscreenForElement(Element* element, Fullscreen
 
         // The context object's node document, or an ancestor browsing context's document does not have
         // the fullscreen enabled flag set.
-        if (checkType == EnforceIFrameAllowFullscreenRequirement && !fullscreenIsAllowedForElement(*element)) {
+        if (checkType == EnforceIFrameAllowFullscreenRequirement && !isFeaturePolicyAllowedByDocumentAndAllOwners(FeaturePolicy::Type::Fullscreen, document())) {
             failedPreflights(WTFMove(element));
             return;
         }
@@ -345,7 +329,7 @@ bool FullscreenManager::isFullscreenEnabled() const
     // browsing context's documents have their fullscreen enabled flag set, or false otherwise.
 
     // Top-level browsing contexts are implied to have their allowFullscreen attribute set.
-    return isAttributeOnAllOwners(allowfullscreenAttr, webkitallowfullscreenAttr, document().ownerElement());
+    return isFeaturePolicyAllowedByDocumentAndAllOwners(FeaturePolicy::Type::Fullscreen, document());
 }
 
 static void unwrapFullscreenRenderer(RenderFullScreen* fullscreenRenderer, Element* fullscreenElement)
