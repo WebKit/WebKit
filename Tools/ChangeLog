@@ -1,3 +1,9 @@
+2020-01-27  Noam Rosenthal  <noam@webkit.org>
+
+        Unreviewed. Adding myself back as a reviewer.
+
+        * Scripts/webkitpy/common/config/contributors.json:
+
 2020-01-27  Keith Rollin  <krollin@apple.com>
 
         Fix internal builds
