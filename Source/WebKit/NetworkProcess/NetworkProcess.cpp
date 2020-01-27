@@ -565,8 +565,8 @@ void NetworkProcess::setSession(PAL::SessionID sessionID, std::unique_ptr<Networ
 void NetworkProcess::destroySession(PAL::SessionID sessionID)
 {
     ASSERT(RunLoop::isMain());
-#if !USE(SOUP)
-    // Soup based ports destroy the default session right before the process exits to avoid leaking
+#if !USE(SOUP) && !USE(CURL)
+    // cURL and Soup based ports destroy the default session right before the process exits to avoid leaking
     // network resources like the cookies database.
     ASSERT(sessionID != PAL::SessionID::defaultSessionID());
 #endif

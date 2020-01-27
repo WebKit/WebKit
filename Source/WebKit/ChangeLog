@@ -1,3 +1,20 @@
+2020-01-26  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [WinCairo][curl] ASSERTION FAILED: sessionID != PAL::SessionID::defaultSessionID() in NetworkProcess since r255067
+        https://bugs.webkit.org/show_bug.cgi?id=206817
+
+        Reviewed by Darin Adler.
+
+        Since r255067 (Bug 206700), the assertion is failing in
+        NetworkProcess::destroySession while shutdown, which is ensuring
+        the destructing session isn't the default session.
+
+        Covered by existing tests.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::destroySession): Conditioned out the
+        assertion for curl port as well as Soup port does.
+
 2020-01-26  Chris Dumez  <cdumez@apple.com>
 
         Frequent sync BackForwardBackListCount/BackForwardForwardListCount IPC on reddit.com
