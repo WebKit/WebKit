@@ -65,10 +65,12 @@ class StatusBubble(View):
         bubble = {
             'name': queue,
         }
+        is_tester_queue = self._is_tester_queue(queue)
+        is_builder_queue = self._is_builder_queue(queue)
         if hide_icons == False:
-            if self._is_tester_queue(queue):
+            if is_tester_queue:
                 bubble['name'] = StatusBubble.TESTER_ICON + '  ' + bubble['name']
-            if self._is_builder_queue(queue):
+            if is_builder_queue:
                 bubble['name'] = StatusBubble.BUILDER_ICON + '  ' + bubble['name']
 
         builds, is_parent_build = self.get_all_builds_for_queue(patch, queue, self._get_parent_queue(queue))
@@ -110,7 +112,17 @@ class StatusBubble(View):
                 bubble['details_message'] = 'Build is in-progress. Recent messages:' + self._steps_messages_from_multiple_builds(builds) + '\n\nWaiting to run tests.'
             else:
                 bubble['state'] = 'pass'
-                bubble['details_message'] = 'Pass'
+                if is_builder_queue and is_tester_queue:
+                    bubble['details_message'] = 'Built successfully and passed tests'
+                elif is_builder_queue:
+                    bubble['details_message'] = 'Built successfully'
+                elif is_tester_queue:
+                    if queue == 'style':
+                        bubble['details_message'] = 'Passed style check'
+                    else:
+                        bubble['details_message'] = 'Passed tests'
+                else:
+                    bubble['details_message'] = 'Pass'
         elif build.result == Buildbot.WARNINGS:
             bubble['state'] = 'pass'
             bubble['details_message'] = 'Warning' + self._steps_messages_from_multiple_builds(builds)
