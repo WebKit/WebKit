@@ -1,3 +1,29 @@
+2020-01-27  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, revert r253984 as it appears to be causing assertion leaks.
+        https://bugs.webkit.org/show_bug.cgi?id=205687
+
+        * Configurations/WebKit.xcconfig:
+        * Platform/spi/ios/RunningBoardServicesSPI.h: Removed.
+        * Scripts/process-entitlements.sh:
+        * Shared/DependencyProcessAssertion.cpp: Removed.
+        * Shared/DependencyProcessAssertion.h: Removed.
+        * Shared/NativeWebTouchEvent.h:
+        * Shared/ios/DependencyProcessAssertionIOS.mm: Removed.
+        * Sources.txt:
+        * SourcesCocoa.txt:
+        * UIProcess/Cocoa/WebProcessProxyCocoa.mm:
+        (WebKit::WebProcessProxy::processWasResumed):
+        * UIProcess/WebProcessProxy.h:
+        * UIProcess/WebProcessProxy.messages.in:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::initializeConnection):
+        * WebProcess/WebProcess.h:
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::processTaskStateDidChange):
+        (WebKit::WebProcess::releaseProcessWasResumedAssertions):
+
 2020-01-27  Jiewen Tan  <jiewen_tan@apple.com>
 
         Unreviewed, a build fix after r255111

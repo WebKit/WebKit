@@ -72,6 +72,10 @@ messages -> WebProcessProxy LegacyReceiver {
     StopDisplayLink(unsigned observerID, uint32_t displayID)
 #endif
 
+#if PLATFORM(IOS_FAMILY)
+    ProcessWasResumed() -> () Async
+#endif
+
     # Plug-in messages.
     void AddPlugInAutoStartOriginHash(String pageOrigin, uint32_t hash)
     void PlugInDidReceiveUserInteraction(uint32_t hash)
