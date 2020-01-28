@@ -1,5 +1,46 @@
 2020-01-28  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r254726. rdar://problem/58548071
+
+    REGRESSION(r251487): Web Inspector: selected color in color picker has wrong lightness
+    https://bugs.webkit.org/show_bug.cgi?id=206202
+    
+    Reviewed by Devin Rousso.
+    
+    Currently, tintedColor setter has two code paths:
+    - rgb2hsv convertion if the color is defined using color(...) syntax.
+    - HSL to HSV convertion for any other color.
+    
+    The latter was defined in the view, was untested, and incorrect.
+    This patch uses WI.Color.rgb2hsv convertion for all colors. This method is
+    already covered by tests.
+    
+    * UserInterface/Views/ColorSquare.js:
+    (WI.ColorSquare.prototype.set tintedColor):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@254726 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-01-16  Nikita Vasilyev  <nvasilyev@apple.com>
+
+            REGRESSION(r251487): Web Inspector: selected color in color picker has wrong lightness
+            https://bugs.webkit.org/show_bug.cgi?id=206202
+
+            Reviewed by Devin Rousso.
+
+            Currently, tintedColor setter has two code paths:
+            - rgb2hsv convertion if the color is defined using color(...) syntax.
+            - HSL to HSV convertion for any other color.
+
+            The latter was defined in the view, was untested, and incorrect.
+            This patch uses WI.Color.rgb2hsv convertion for all colors. This method is
+            already covered by tests.
+
+            * UserInterface/Views/ColorSquare.js:
+            (WI.ColorSquare.prototype.set tintedColor):
+
+2020-01-28  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r254485. rdar://problem/58409880
 
     Web Inspector: "Enable Local Override" and "Delete Local Override" are displayed twice in the contextual menu
