@@ -1360,3 +1360,5 @@ webkit.org/b/206681 http/wpt/cache-storage/quota-third-party.https.html [ Pass F
 webkit.org/b/206678 [ Release ] compositing/video/poster.html [ Pass Failure ]
 
 webkit.org/b/206685 [ Debug ] animations/animation-direction-normal.html [ Pass Failure ]
+
+webkit.org/b/206687 imported/w3c/web-platform-tests/beacon/idlharness.any.html [ Pass Timeout ]
