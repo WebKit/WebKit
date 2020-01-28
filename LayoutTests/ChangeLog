@@ -1,3 +1,12 @@
+2020-01-28  Jason Lawrence  <lawrence.j@apple.com>
+
+        [ Mac wk2 Release ] storage/websql/test-authorizer.html flaky timeout.
+        https://bugs.webkit.org/show_bug.cgi?id=206770
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
 2020-01-28  Kate Cheney  <katherine_cheney@apple.com>
 
         REGRESSION: [iOS] http/wpt/cache-storage/quota-third-party.https.html is flaky failing.
