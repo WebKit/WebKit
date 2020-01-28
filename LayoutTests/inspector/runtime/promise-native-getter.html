@@ -6,6 +6,14 @@
 function createUnhandledPromise() {
     window.addEventListener("unhandledrejection", (event) => {
         console.log("unhandledrejection - " + JSON.stringify(event.reason));
+
+        console.assert(event.promise === rejectedPromiseTest, "unhandledrejection promise should be rejectedPromiseTest.");
+
+        setTimeout(() => {
+            window.rejectedPromiseTest.catch((value) => {
+                console.log("caught - " + JSON.stringify(value));
+            });
+        });
     });
 
     window.addEventListener("rejectionhandled", (event) => {
@@ -13,13 +21,8 @@ function createUnhandledPromise() {
         TestPage.dispatchEventToFrontend("rejectionhandled");
     });
 
-    let promise = Promise.reject("test");
-
-    setTimeout(() => {
-        promise.catch((value) => {
-            console.log("caught - " + JSON.stringify(value));
-        });
-    }, 5);
+    window.rejectedPromiseTest = Promise.reject("test");
+    console.log(window.rejectedPromiseTest); // Ensure that the injected script sees the `Promise`.
 }
 
 function test()
