@@ -72,15 +72,26 @@ static inline Element* parentOrPseudoHostElement(const RenderElement& renderer)
 {
     if (renderer.isPseudoElement())
         return renderer.generatingElement();
+    return renderer.element() ? renderer.element()->parentElement() : nullptr;
+}
 
-    ASSERT(renderer.element());
-    auto parent = makeRefPtr(renderer.element()->parentElement());
-    while (parent) {
-        if (!parent->hasDisplayContents())
-            break;
-        parent = parent->parentElement();
-    }
-    return parent.get();
+static Element* previousSiblingOrParentElement(const Element* element)
+{
+    auto* previous = ElementTraversal::pseudoAwarePreviousSibling(*element);
+    while (previous && !previous->renderer())
+        previous = ElementTraversal::pseudoAwarePreviousSibling(*previous);
+
+    if (previous)
+        return previous;
+
+    auto* renderer = element->renderer();
+    if (renderer && renderer->isPseudoElement())
+        return renderer->generatingElement();
+
+    previous = element->parentElement();
+    if (previous && !previous->renderer())
+        previous = previousSiblingOrParentElement(previous);
+    return previous;
 }
 
 // This function processes the renderer tree in the order of the DOM tree
@@ -88,12 +99,8 @@ static inline Element* parentOrPseudoHostElement(const RenderElement& renderer)
 static RenderElement* previousSiblingOrParent(const RenderElement& renderer)
 {
     ASSERT(renderer.element());
-    Element* previous = ElementTraversal::pseudoAwarePreviousSibling(*renderer.element());
-    while (previous && !previous->renderer())
-        previous = ElementTraversal::pseudoAwarePreviousSibling(*previous);
-    if (previous)
-        return previous->renderer();
-    previous = parentOrPseudoHostElement(renderer);
+
+    auto* previous = previousSiblingOrParentElement(renderer.element());
     return previous ? previous->renderer() : nullptr;
 }
 
