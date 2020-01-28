@@ -34,8 +34,11 @@ namespace WebCore {
 
 void AccessibilityObject::detachPlatformWrapper(AccessibilityDetachmentType detachmentType)
 {
-    if (auto* cache = axObjectCache())
-        cache->detachWrapper(this, detachmentType);
+    // On Windows, AccessibilityObjects are created when get_accChildCount is
+    // called, but they are not wrapped until get_accChild is called, so this
+    // object may not have a wrapper.
+    if (AccessibilityObjectWrapper* wrapper = this->wrapper())
+        wrapper->detach();
 }
 
 bool AccessibilityObject::accessibilityIgnoreAttachment() const
