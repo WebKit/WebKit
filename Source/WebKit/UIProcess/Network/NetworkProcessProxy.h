@@ -174,6 +174,7 @@ public:
     void didSyncAllCookies();
 
     void testProcessIncomingSyncMessagesWhenWaitingForSyncReply(WebPageProxyIdentifier, Messages::NetworkProcessProxy::TestProcessIncomingSyncMessagesWhenWaitingForSyncReplyDelayedReply&&);
+    void terminateUnresponsiveServiceWorkerProcesses(WebCore::RegistrableDomain&&, PAL::SessionID);
 
     ProcessThrottler& throttler() { return m_throttler; }
     void updateProcessAssertion();

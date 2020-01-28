@@ -1768,6 +1768,17 @@ void WebProcessPool::terminateServiceWorkers()
 #endif
 }
 
+void WebProcessPool::terminateServiceWorkerProcess(const WebCore::RegistrableDomain& domain, const PAL::SessionID& sessionID)
+{
+#if ENABLE(SERVICE_WORKER)
+    auto protectedThis = makeRef(*this);
+    if (auto process = m_serviceWorkerProcesses.get({ domain, sessionID })) {
+        process->disableServiceWorkers();
+        process->requestTermination(ProcessTerminationReason::ExceededCPULimit);
+    }
+#endif
+}
+
 void WebProcessPool::syncNetworkProcessCookies()
 {
     ensureNetworkProcess().syncAllCookies();
