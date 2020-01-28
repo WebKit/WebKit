@@ -607,7 +607,8 @@ void CDMInstanceSessionFairPlayStreamingAVFObjC::updateLicense(const String&, Li
             callback(false, WTF::nullopt, WTF::nullopt, WTF::nullopt, Failed);
             return;
         }
-        [m_session renewExpiringResponseDataForContentKeyRequest:request];
+        auto session = m_session ? m_session.get() : m_instance->contentKeySession();
+        [session renewExpiringResponseDataForContentKeyRequest:request];
         m_updateLicenseCallback = WTFMove(callback);
         return;
     }
