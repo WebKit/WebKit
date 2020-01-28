@@ -1,3 +1,14 @@
+2020-01-28  Jacob Uphoff  <jacob_uphoff@apple.com>
+
+        REGRESSION: [MacOS wk1] fast/loader/redirect-to-invalid-url-using-meta-refresh-calls-policy-delegate.html is flaky failing
+        https://bugs.webkit.org/show_bug.cgi?id=206668
+
+        fast/loader/redirect-to-invalid-url-using-meta-refresh-disallowed-async-delegates.html is flaky failing in tandem, I am marking them both as Pass Failure.
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk1/TestExpectations:
+
 2020-01-27  Sergio Villar Senin  <svillar@igalia.com>
 
         Remove WebVR from the tree
