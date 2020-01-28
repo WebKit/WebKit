@@ -30,6 +30,7 @@
 #include "CacheQueryOptions.h"
 #include "Exception.h"
 #include "HTTPParsers.h"
+#include "ScriptExecutionContext.h"
 
 namespace WebCore {
 

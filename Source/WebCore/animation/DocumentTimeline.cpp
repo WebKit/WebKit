@@ -36,6 +36,7 @@
 #include "EventNames.h"
 #include "GraphicsLayer.h"
 #include "KeyframeEffect.h"
+#include "KeyframeEffectStack.h"
 #include "Node.h"
 #include "Page.h"
 #include "PseudoElement.h"
