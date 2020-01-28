@@ -2781,21 +2781,24 @@ void RenderBlock::absoluteRects(Vector<IntRect>& rects, const LayoutPoint& accum
 
 void RenderBlock::absoluteQuads(Vector<FloatQuad>& quads, bool* wasFixed) const
 {
+    if (!continuation()) {
+        absoluteQuadsIgnoringContinuation({ { }, size() }, quads, wasFixed);
+        return;
+    }
     // For blocks inside inlines, we include margins so that we run right up to the inline boxes
     // above and below us (thus getting merged with them to form a single irregular shape).
-    auto* continuation = this->continuation();
-    FloatRect localRect = continuation
-        ? FloatRect(0, -collapsedMarginBefore(), width(), height() + collapsedMarginBefore() + collapsedMarginAfter())
-        : FloatRect(0, 0, width(), height());
-    
+    auto logicalRect = FloatRect { 0, -collapsedMarginBefore(), width(), height() + collapsedMarginBefore() + collapsedMarginAfter() };
+    absoluteQuadsIgnoringContinuation(logicalRect, quads, wasFixed);
+    collectAbsoluteQuadsForContinuation(quads, wasFixed);
+}
+
+void RenderBlock::absoluteQuadsIgnoringContinuation(const FloatRect& logicalRect, Vector<FloatQuad>& quads, bool* wasFixed) const
+{
     // FIXME: This is wrong for block-flows that are horizontal.
     // https://bugs.webkit.org/show_bug.cgi?id=46781
-    RenderFragmentedFlow* fragmentedFlow = enclosingFragmentedFlow();
-    if (!fragmentedFlow || !fragmentedFlow->absoluteQuadsForBox(quads, wasFixed, this, localRect.y(), localRect.maxY()))
-        quads.append(localToAbsoluteQuad(localRect, UseTransforms, wasFixed));
-
-    if (continuation)
-        continuation->absoluteQuads(quads, wasFixed);
+    auto* fragmentedFlow = enclosingFragmentedFlow();
+    if (!fragmentedFlow || !fragmentedFlow->absoluteQuadsForBox(quads, wasFixed, this, logicalRect.y(), logicalRect.maxY()))
+        quads.append(localToAbsoluteQuad(logicalRect, UseTransforms, wasFixed));
 }
 
 LayoutRect RenderBlock::rectWithOutlineForRepaint(const RenderLayerModelObject* repaintContainer, LayoutUnit outlineWidth) const
