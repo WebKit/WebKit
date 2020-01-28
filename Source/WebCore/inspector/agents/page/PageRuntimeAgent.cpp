@@ -46,6 +46,7 @@
 #include "UserGestureEmulationScope.h"
 #include <JavaScriptCore/InjectedScript.h>
 #include <JavaScriptCore/InjectedScriptManager.h>
+#include <JavaScriptCore/InspectorProtocolObjects.h>
 
 namespace WebCore {
 
