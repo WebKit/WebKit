@@ -2230,6 +2230,39 @@ All tests successfully passed!
         self.expectOutcome(result=SUCCESS, state_string='run-api-tests')
         return self.runStep()
 
+    def test_success_gtk(self):
+        self.setupStep(RunAPITests())
+        self.setProperty('fullPlatform', 'gtk')
+        self.setProperty('platform', 'gtk')
+        self.setProperty('configuration', 'release')
+
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        logEnviron=False,
+                        command=['python', 'Tools/Scripts/run-gtk-tests', '--release', '--json-output={0}'.format(self.jsonFileName)],
+                        logfiles={'json': self.jsonFileName},
+                        )
+            + ExpectShell.log('stdio', stdout='''...
+**PASS** TransformationMatrix.Blend
+**PASS** TransformationMatrix.Blend2
+**PASS** TransformationMatrix.Blend4
+**PASS** TransformationMatrix.Equality
+**PASS** TransformationMatrix.Casting
+**PASS** TransformationMatrix.MakeMapBetweenRects
+**PASS** URLParserTextEncodingTest.QueryEncoding
+**PASS** GStreamerTest.mappedBufferBasics
+**PASS** GStreamerTest.mappedBufferReadSanity
+**PASS** GStreamerTest.mappedBufferWriteSanity
+**PASS** GStreamerTest.mappedBufferCachesSharedBuffers
+**PASS** GStreamerTest.mappedBufferDoesNotAddExtraRefs
+
+Ran 1316 tests of 1318 with 1316 successful
+''')
+            + 0,
+        )
+        self.expectOutcome(result=SUCCESS, state_string='run-api-tests')
+        return self.runStep()
+
     def test_one_failure(self):
         self.setupStep(RunAPITests())
         self.setProperty('fullPlatform', 'mac-mojave')
@@ -2470,6 +2503,51 @@ Testing completed, Exit status: 3
         )
         self.expectOutcome(result=FAILURE, state_string='1 api test failed or timed out')
         return self.runStep()
+
+    def test_multiple_failures_gtk(self):
+        self.setupStep(RunAPITestsWithoutPatch())
+        self.setProperty('fullPlatform', 'gtk')
+        self.setProperty('platform', 'gtk')
+        self.setProperty('configuration', 'debug')
+        self.setProperty('buildername', 'API-Tests-GTK-EWS')
+        self.setProperty('buildnumber', '13529')
+        self.setProperty('workername', 'igalia4-gtk-wk2-ews')
+
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        logEnviron=False,
+                        command=['python',
+                                 'Tools/Scripts/run-gtk-tests',
+                                 '--debug',
+                                 '--json-output={0}'.format(self.jsonFileName)],
+                        logfiles={'json': self.jsonFileName},
+                        )
+            + ExpectShell.log('stdio', stdout='''
+**PASS** GStreamerTest.mappedBufferBasics
+**PASS** GStreamerTest.mappedBufferReadSanity
+**PASS** GStreamerTest.mappedBufferWriteSanity
+**PASS** GStreamerTest.mappedBufferCachesSharedBuffers
+**PASS** GStreamerTest.mappedBufferDoesNotAddExtraRefs
+
+Unexpected failures (3)
+    /TestWTF
+        WTF_DateMath.calculateLocalTimeOffset
+    /WebKit2Gtk/TestPrinting
+        /webkit/WebKitPrintOperation/close-after-print
+    /WebKit2Gtk/TestWebsiteData
+        /webkit/WebKitWebsiteData/databases
+
+Unexpected passes (1)
+    /WebKit2Gtk/TestUIClient
+        /webkit/WebKitWebView/usermedia-enumeratedevices-permission-check
+
+Ran 1296 tests of 1298 with 1293 successful
+''')
+            + 3,
+        )
+        self.expectOutcome(result=FAILURE, state_string='3 api tests failed or timed out')
+        return self.runStep()
+
 
 class TestArchiveTestResults(BuildStepMixinAdditions, unittest.TestCase):
     def setUp(self):

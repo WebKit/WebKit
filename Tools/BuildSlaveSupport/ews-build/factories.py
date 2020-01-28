@@ -165,12 +165,30 @@ class WinCairoFactory(Factory):
         self.addStep(CompileWebKit(skipUpload=True))
 
 
-class GTKFactory(Factory):
+class GTKBuildFactory(Factory):
     def __init__(self, platform, configuration=None, architectures=None, triggers=None, additionalArguments=None, **kwargs):
         Factory.__init__(self, platform=platform, configuration=configuration, architectures=architectures, buildOnly=True, triggers=triggers, additionalArguments=additionalArguments)
         self.addStep(KillOldProcesses())
         self.addStep(InstallGtkDependencies())
         self.addStep(CompileWebKit(skipUpload=True))
+
+
+class GTKBuildAndTestFactory(GTKBuildFactory):
+    LayoutTestClass = None
+    APITestClass = None
+
+    def __init__(self, platform, configuration=None, architectures=None, additionalArguments=None, **kwargs):
+        GTKBuildFactory.__init__(self, platform=platform, configuration=configuration, architectures=architectures, buildOnly=True, additionalArguments=additionalArguments)
+        self.addStep(KillOldProcesses())
+        self.addStep(ValidatePatch(verifyBugClosed=False, addURLs=False))
+        if self.LayoutTestClass:
+            self.addStep(self.LayoutTestClass())
+        if self.APITestClass:
+            self.addStep(self.APITestClass())
+
+
+class GTKAPIBuildAndTestFactory(GTKBuildAndTestFactory):
+    APITestClass = RunAPITests
 
 
 class WPEFactory(Factory):

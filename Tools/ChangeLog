@@ -1,5 +1,29 @@
 2020-01-28  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
+        [GTK] Add EWS testers to run GTK unit tests.
+        https://bugs.webkit.org/show_bug.cgi?id=202361
+
+        Reviewed by Aakash Jain.
+
+        This switches two of the GTK BuildOnly EWS bots to be BuildAndRunAPITests bots.
+        It doesn't make it a test-only bot because of concerns related with having to
+        upload and download much data constantly over the network. It reuses the same
+        logic for running Mac API tests, but simply using a different command at startup.
+
+        * BuildSlaveSupport/ews-build/config.json:
+        * BuildSlaveSupport/ews-build/factories.py:
+        (GTKBuildFactory):
+        (GTKBuildAndTestFactory):
+        (GTKBuildAndTestFactory.__init__):
+        (GTKAPIBuildAndTestFactory):
+        * BuildSlaveSupport/ews-build/loadConfig.py:
+        * BuildSlaveSupport/ews-build/steps.py:
+        (RunAPITests.start):
+        (ReRunAPITests.evaluateCommand):
+        * BuildSlaveSupport/ews-build/steps_unittest.py:
+
+2020-01-28  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
         WPT test importer only rewrites the first URL on <style> tags.
         https://bugs.webkit.org/show_bug.cgi?id=206842
 

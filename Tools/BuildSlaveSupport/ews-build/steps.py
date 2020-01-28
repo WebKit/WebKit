@@ -1654,7 +1654,14 @@ class RunAPITests(TestWithFailureCount):
         super(RunAPITests, self).__init__(logEnviron=False, **kwargs)
 
     def start(self):
-        appendCustomBuildFlags(self, self.getProperty('platform'), self.getProperty('fullPlatform'))
+        platform = self.getProperty('platform')
+        if platform == 'gtk':
+            command = ['python', 'Tools/Scripts/run-gtk-tests',
+                       '--{0}'.format(self.getProperty('configuration')),
+                       '--json-output={0}'.format(self.jsonFileName)]
+            self.setCommand(command)
+        else:
+            appendCustomBuildFlags(self, platform, self.getProperty('fullPlatform'))
         return TestWithFailureCount.start(self)
 
     def countFailures(self, cmd):
@@ -1689,13 +1696,20 @@ class ReRunAPITests(RunAPITests):
             self.build.buildFinished([message], SUCCESS)
         else:
             self.setProperty('patchFailedTests', True)
-            self.build.addStepsAfterCurrentStep([UnApplyPatchIfRequired(),
-                                                ValidatePatch(verifyBugClosed=False, addURLs=False),
-                                                CompileWebKitToT(),
-                                                ValidatePatch(verifyBugClosed=False, addURLs=False),
-                                                KillOldProcesses(),
-                                                RunAPITestsWithoutPatch(),
-                                                AnalyzeAPITestsResults()])
+            steps_to_add = [UnApplyPatchIfRequired(), ValidatePatch(verifyBugClosed=False, addURLs=False)]
+            platform = self.getProperty('platform')
+            if platform == 'wpe':
+                steps_to_add.append(InstallWpeDependencies())
+            elif platform == 'gtk':
+                steps_to_add.append(InstallGtkDependencies())
+            steps_to_add.append(CompileWebKitToT())
+            steps_to_add.append(ValidatePatch(verifyBugClosed=False, addURLs=False))
+            steps_to_add.append(KillOldProcesses())
+            steps_to_add.append(RunAPITestsWithoutPatch())
+            steps_to_add.append(AnalyzeAPITestsResults())
+            # Using a single addStepsAfterCurrentStep because of https://github.com/buildbot/buildbot/issues/4874
+            self.build.addStepsAfterCurrentStep(steps_to_add)
+
         return rc
 
 

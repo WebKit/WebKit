@@ -311,11 +311,11 @@
       "name": "GTK-Webkit2-EWS",
       "shortname": "gtk",
       "icon": "buildOnly",
-      "factory": "GTKFactory",
+      "factory": "GTKBuildFactory",
       "platform": "gtk",
       "configuration": "release",
       "architectures": ["x86_64"],
-      "workernames": ["igalia1-gtk-wk2-ews", "igalia2-gtk-wk2-ews", "igalia3-gtk-wk2-ews", "igalia4-gtk-wk2-ews", "aperez-gtk-ews"]
+      "workernames": ["igalia1-gtk-wk2-ews", "igalia2-gtk-wk2-ews", "aperez-gtk-ews"]
     },
     {
       "name": "iOS-13-Build-EWS",
@@ -515,6 +515,16 @@
       "workernames": ["ews119", "ews150", "ews153", "ews155"]
     },
     {
+      "name": "API-Tests-GTK-EWS",
+      "shortname": "api-gtk",
+      "icon": "buildAndTest",
+      "factory": "GTKAPIBuildAndTestFactory",
+      "platform": "gtk",
+      "configuration": "release",
+      "architectures": ["x86_64"],
+      "workernames": ["igalia3-gtk-wk2-ews", "igalia4-gtk-wk2-ews"]
+    },
+    {
       "name": "Services-EWS",
       "shortname": "services",
       "icon": "testOnly",
@@ -538,7 +548,7 @@
       "type": "Try_Userpass",
       "name": "try",
       "port": 5555,
-      "builderNames": ["Apply-WatchList-EWS", "Bindings-Tests-EWS", "GTK-Webkit2-EWS", "iOS-13-Build-EWS", "iOS-13-Simulator-Build-EWS",
+      "builderNames": ["API-Tests-GTK-EWS", "Apply-WatchList-EWS", "Bindings-Tests-EWS", "GTK-Webkit2-EWS", "iOS-13-Build-EWS", "iOS-13-Simulator-Build-EWS",
                        "JSC-ARMv7-32bits-EWS", "JSC-i386-32bits-EWS", "JSC-MIPSEL-32bits-EWS", "JSC-Tests-EWS", "macOS-Mojave-Debug-Build-EWS", "macOS-Mojave-Release-Build-EWS",
                        "Services-EWS", "Style-EWS", "WebKitPerl-Tests-EWS", "WebKitPy-Tests-EWS", "WPE-EWS", "WinCairo-EWS", "Windows-EWS"]
     },
