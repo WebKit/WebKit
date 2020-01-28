@@ -1,0 +1,30 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/background-repeat/background-repeat-no-repeat-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/background-repeat/background-repeat-no-repeat.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/background-repeat/background-repeat-repeat-x-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/background-repeat/background-repeat-repeat-x.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/background-repeat/background-repeat-repeat-y-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/background-repeat/background-repeat-repeat-y.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/background-repeat/background-repeat-round-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/background-repeat/background-repeat-round-roundup-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/background-repeat/background-repeat-round-roundup.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/background-repeat/background-repeat-round.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/background-repeat/background-repeat-space-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/background-repeat/background-repeat-space.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/background-repeat/gradient-repeat-spaced-with-borders-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/background-repeat/gradient-repeat-spaced-with-borders.html

@@ -1,0 +1,90 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/support/100x100-blue-and-orange.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/support/1x1-green.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/support/1x1-lime.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/support/1x1-maroon.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/support/1x1-navy.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/support/1x1-red.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/support/1x1-white.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/support/40px-wide-20px-tall-green-rect.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/support/50x50-green.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/support/60x60-gg-rr.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/support/60x60-green.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/support/60x60-red.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/support/a-green.css
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/support/aqua_color.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/support/b-green.css
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/support/bg.jpg
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/support/bg_flower.gif
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/support/black96x96.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/support/black_color.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/support/blue-diamond.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/support/blue96x96.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/support/blue_color.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/support/border-image-round-result.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/support/border-image.jpg
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/support/border.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/support/borderresult.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/support/c-red.css
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/support/cat.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/support/css3.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/support/green-1000x10.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/support/green-10x1000.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/support/green-150-150.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/support/green-60-60.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/support/green-60x60-red-5px-border.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/support/green.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/support/green_color.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/support/img-ref-1.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/support/img-ref-2.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/support/import-green.css
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/support/import-red.css
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/support/orange_color.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/support/outline-5px-10px-15px-20px-green.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/support/pattern-grg-rgr-grg.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/support/pattern-grg-rrg-rgg.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/support/pattern-rgr-grg-rgr.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/support/pattern-tr.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/support/red-diamond.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/support/red.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/support/red_color.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/support/ruler-h-50%.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/support/ruler-h-50px.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/support/ruler-v-100px.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/support/ruler-v-50px.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/support/square-purple.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/support/square-teal.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/support/square-white.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/support/swatch-blue.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/support/swatch-green.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/support/swatch-lime.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/support/swatch-orange.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/support/swatch-red.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/support/swatch-white.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/support/swatch-yellow.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/support/table-head.jpg
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/support/test-bl.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/support/test-br.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/support/test-inner-half-size.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/support/test-outer.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/support/test-tl.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/support/test-tr.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/support/white_color.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/support/y.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/support/yy.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/support/yyy.png

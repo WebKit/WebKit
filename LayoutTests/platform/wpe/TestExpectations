@@ -612,6 +612,14 @@ webkit.org/b/186141 svg/dom/SVGGeometry-line.xhtml [ Failure ]
 
 webkit.org/b/206583 webrtc/video-gpuProcess.html [ Failure ]
 
+webkit.org/b/206756 imported/w3c/web-platform-tests/css/css-backgrounds/background-size-025.html [ ImageOnlyFailure ]
+webkit.org/b/206756 imported/w3c/web-platform-tests/css/css-backgrounds/background-size-027.html [ ImageOnlyFailure ]
+webkit.org/b/206756 imported/w3c/web-platform-tests/css/css-backgrounds/background-size-029.html [ ImageOnlyFailure ]
+webkit.org/b/206756 imported/w3c/web-platform-tests/css/css-backgrounds/border-image-repeat-005.html [ ImageOnlyFailure ]
+webkit.org/b/206756 imported/w3c/web-platform-tests/css/css-backgrounds/background-border-collapsed-gradient.html [ Pass ]
+webkit.org/b/206756 imported/w3c/web-platform-tests/css/css-backgrounds/background-size/background-size-cover-svg.html [ Pass ]
+webkit.org/b/206756 imported/w3c/web-platform-tests/css/css-backgrounds/background-size/vector/diagonal-percentage-vector-background.html [ Pass ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # 3. UNRESOLVED TESTS
 #////////////////////////////////////////////////////////////////////////////////////////

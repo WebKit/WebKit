@@ -1,0 +1,43 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/animations/background-color-interpolation.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/animations/background-image-interpolation.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/animations/background-position-interpolation.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/animations/background-position-origin-interpolation.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/animations/background-position-x-interpolation.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/animations/background-position-y-interpolation.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/animations/background-size-interpolation.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/animations/border-bottom-left-radius-composition.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/animations/border-bottom-right-radius-composition.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/animations/border-bottom-width-composition.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/animations/border-color-interpolation.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/animations/border-image-outset-composition.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/animations/border-image-outset-interpolation.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/animations/border-image-slice-composition.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/animations/border-image-slice-interpolation-stability.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/animations/border-image-slice-interpolation.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/animations/border-image-source-interpolation.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/animations/border-image-width-composition.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/animations/border-image-width-interpolation.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/animations/border-left-width-composition.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/animations/border-radius-interpolation.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/animations/border-right-width-composition.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/animations/border-top-left-radius-composition.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/animations/border-top-right-radius-composition.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/animations/border-top-width-composition.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/animations/border-width-interpolation.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/animations/box-shadow-interpolation.html
