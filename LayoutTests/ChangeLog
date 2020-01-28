@@ -1,5 +1,40 @@
 2020-01-28  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r255130. rdar://problem/58816827
+
+    media/modern-media-controls/media-controller/media-controller-auto-hide.html is flaky timing out
+    https://bugs.webkit.org/show_bug.cgi?id=206629
+    <rdar://problem/58816827>
+    
+    Reviewed by Dean Jackson.
+    
+    Attempt to de-flake this test by decreasing the controller auto-hide interval and
+    using a base64 encoded video file to make it load and finish more quickly.
+    
+    * media/content/test.mp4.js: Added.
+    (base64MP4URL): Base64 encoded five frame, four second long MPEG-4 video.
+    * media/modern-media-controls/media-controller/media-controller-auto-hide.html:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@255130 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-01-26  Eric Carlson  <eric.carlson@apple.com>
+
+            media/modern-media-controls/media-controller/media-controller-auto-hide.html is flaky timing out
+            https://bugs.webkit.org/show_bug.cgi?id=206629
+            <rdar://problem/58816827>
+
+            Reviewed by Dean Jackson.
+
+            Attempt to de-flake this test by decreasing the controller auto-hide interval and
+            using a base64 encoded video file to make it load and finish more quickly.
+
+            * media/content/test.mp4.js: Added.
+            (base64MP4URL): Base64 encoded five frame, four second long MPEG-4 video.
+            * media/modern-media-controls/media-controller/media-controller-auto-hide.html:
+
+2020-01-28  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r254841. rdar://problem/56568303
 
     EXIF orientation is ignored for some CSS images
