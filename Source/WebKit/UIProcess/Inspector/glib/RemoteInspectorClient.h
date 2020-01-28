@@ -66,7 +66,7 @@ public:
     const String& hostAndPort() const { return m_hostAndPort; }
     const String& backendCommandsURL() const { return m_backendCommandsURL; }
 
-    void inspect(uint64_t connectionID, uint64_t targetID);
+    void inspect(uint64_t connectionID, uint64_t targetID, const String& targetType);
     void sendMessageToBackend(uint64_t connectionID, uint64_t targetID, const String&);
     void closeFromFrontend(uint64_t connectionID, uint64_t targetID);
 

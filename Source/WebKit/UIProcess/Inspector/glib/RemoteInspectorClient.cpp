@@ -57,11 +57,11 @@ public:
         m_proxy->invalidate();
     }
 
-    void load()
+    void load(Inspector::DebuggableType debuggableType)
     {
         // FIXME <https://webkit.org/b/205536>: this should infer more useful data about the debug target.
         Ref<API::DebuggableInfo> debuggableInfo = API::DebuggableInfo::create(DebuggableInfoData::empty());
-        debuggableInfo->setDebuggableType(Inspector::DebuggableType::WebPage);
+        debuggableInfo->setDebuggableType(debuggableType);
         m_proxy->load(WTFMove(debuggableInfo), m_inspectorClient.backendCommandsURL());
     }
 
@@ -131,7 +131,7 @@ const SocketConnection::MessageHandlers& RemoteInspectorClient::messageHandlers(
             const char* url;
             gboolean hasLocalDebugger;
             while (g_variant_iter_loop(iter.get(), "(t&s&s&sb)", &targetID, &type, &name, &url, &hasLocalDebugger)) {
-                if (!g_strcmp0(type, "Web") || !g_strcmp0(type, "JavaScript"))
+                if (!g_strcmp0(type, "JavaScript") || !g_strcmp0(type, "ServiceWorker") || !g_strcmp0(type, "WebPage"))
                     targetList.uncheckedAppend({ targetID, type, name, url });
             }
             client.setTargetList(connectionID, WTFMove(targetList));
@@ -203,7 +203,18 @@ void RemoteInspectorClient::connectionDidClose()
     m_observer.connectionClosed(*this);
 }
 
-void RemoteInspectorClient::inspect(uint64_t connectionID, uint64_t targetID)
+static Inspector::DebuggableType debuggableType(const String& targetType)
+{
+    if (targetType == "JavaScript")
+        return Inspector::DebuggableType::JavaScript;
+    if (targetType == "ServiceWorker")
+        return Inspector::DebuggableType::ServiceWorker;
+    if (targetType == "WebPage")
+        return Inspector::DebuggableType::WebPage;
+    RELEASE_ASSERT_NOT_REACHED();
+}
+
+void RemoteInspectorClient::inspect(uint64_t connectionID, uint64_t targetID, const String& targetType)
 {
     auto addResult = m_inspectorProxyMap.ensure(std::make_pair(connectionID, targetID), [this, connectionID, targetID] {
         return makeUnique<RemoteInspectorProxy>(*this, connectionID, targetID);
@@ -214,7 +225,7 @@ void RemoteInspectorClient::inspect(uint64_t connectionID, uint64_t targetID)
     }
 
     m_socketConnection->sendMessage("Setup", g_variant_new("(tt)", connectionID, targetID));
-    addResult.iterator->value->load();
+    addResult.iterator->value->load(debuggableType(targetType));
 }
 
 void RemoteInspectorClient::sendMessageToBackend(uint64_t connectionID, uint64_t targetID, const String& message)

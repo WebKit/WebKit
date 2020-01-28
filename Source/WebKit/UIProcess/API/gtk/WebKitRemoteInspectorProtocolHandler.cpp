@@ -46,11 +46,11 @@ public:
     {
         String message = serializedScriptValue.toString();
         Vector<String> tokens = message.split(':');
-        if (tokens.size() != 2)
+        if (tokens.size() != 3)
             return;
 
         URL requestURL = URL({ }, page.pageLoadState().url());
-        m_inspectorProtocolHandler.inspect(requestURL.hostAndPort(), tokens[0].toUInt64(), tokens[1].toUInt64());
+        m_inspectorProtocolHandler.inspect(requestURL.hostAndPort(), tokens[0].toUInt64(), tokens[1].toUInt64(), tokens[2]);
     }
 
     ~ScriptMessageClient() { }
@@ -143,8 +143,8 @@ void RemoteInspectorProtocolHandler::handleRequest(WebKitURISchemeRequest* reque
                 g_string_append_printf(html,
                     "<tbody><tr>"
                     "<td class=\"data\"><div class=\"targetname\">%s</div><div class=\"targeturl\">%s</div></td>"
-                    "<td class=\"input\"><input type=\"button\" value=\"Inspect\" onclick=\"window.webkit.messageHandlers.inspector.postMessage('%" G_GUINT64_FORMAT ":%" G_GUINT64_FORMAT "');\"></td>"
-                    "</tr></tbody>", target.name.data(), target.url.data(), connectionID, target.id);
+                    "<td class=\"input\"><input type=\"button\" value=\"Inspect\" onclick=\"window.webkit.messageHandlers.inspector.postMessage('%" G_GUINT64_FORMAT ":%" G_GUINT64_FORMAT ":%s');\"></td>"
+                    "</tr></tbody>", target.name.data(), target.url.data(), connectionID, target.id, target.type.data());
             }
         }
         g_string_append(html, "</table>");
@@ -155,10 +155,10 @@ void RemoteInspectorProtocolHandler::handleRequest(WebKitURISchemeRequest* reque
     webkit_uri_scheme_request_finish(request, stream.get(), streamLength, "text/html");
 }
 
-void RemoteInspectorProtocolHandler::inspect(const String& hostAndPort, uint64_t connectionID, uint64_t tatgetID)
+void RemoteInspectorProtocolHandler::inspect(const String& hostAndPort, uint64_t connectionID, uint64_t tatgetID, const String& targetType)
 {
     if (auto* client = m_inspectorClients.get(hostAndPort))
-        client->inspect(connectionID, tatgetID);
+        client->inspect(connectionID, tatgetID, targetType);
 }
 
 void RemoteInspectorProtocolHandler::targetListChanged(RemoteInspectorClient& client)

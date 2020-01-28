@@ -44,6 +44,7 @@
 #include "WebProcessProxy.h"
 #include <WebCore/CertificateInfo.h>
 #include <WebCore/GtkUtilities.h>
+#include <WebCore/InspectorDebuggableType.h>
 #include <WebCore/NotImplemented.h>
 #include <wtf/FileSystem.h>
 #include <wtf/text/Base64.h>
@@ -367,7 +368,9 @@ String WebInspectorProxy::inspectorBaseURL()
 DebuggableInfoData WebInspectorProxy::infoForLocalDebuggable()
 {
     // FIXME <https://webkit.org/b/205536>: this should infer more useful data about the debug target.
-    return DebuggableInfoData::empty();
+    auto data = DebuggableInfoData::empty();
+    data.debuggableType = Inspector::DebuggableType::WebPage;
+    return data;
 }
 
 unsigned WebInspectorProxy::platformInspectedWindowHeight()

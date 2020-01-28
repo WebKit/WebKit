@@ -37,7 +37,7 @@ public:
     explicit RemoteInspectorProtocolHandler(WebKitWebContext* context);
     ~RemoteInspectorProtocolHandler();
 
-    void inspect(const String& hostAndPort, uint64_t connectionID, uint64_t targetID);
+    void inspect(const String& hostAndPort, uint64_t connectionID, uint64_t targetID, const String& targetType);
 
 private:
     static void webViewDestroyed(RemoteInspectorProtocolHandler*, WebKitWebView*);

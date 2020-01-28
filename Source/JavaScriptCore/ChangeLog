@@ -1,3 +1,16 @@
+2020-01-27  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Remote Inspector: add support for service workers targets
+        https://bugs.webkit.org/show_bug.cgi?id=206821
+
+        Reviewed by Žan Doberšek.
+
+        Handle ServiceWorker target type.
+
+        * inspector/remote/glib/RemoteInspectorGlib.cpp:
+        (Inspector::targetDebuggableType):
+        (Inspector::RemoteInspector::listingForInspectionTarget const):
+
 2020-01-27  Jonathan Bedard  <jbedard@apple.com>
 
         Fix OpenSource iphoneos arm64e build

@@ -146,19 +146,30 @@ void RemoteInspector::setupConnection(Ref<SocketConnection>&& connection)
         pushListingsSoon();
 }
 
+static const char* targetDebuggableType(RemoteInspectionTarget::Type type)
+{
+    switch (type) {
+    case RemoteInspectionTarget::Type::JavaScript:
+        return "JavaScript";
+    case RemoteInspectionTarget::Type::ServiceWorker:
+        return "ServiceWorker";
+    case RemoteInspectionTarget::Type::WebPage:
+        return "WebPage";
+    default:
+        break;
+    }
+
+    RELEASE_ASSERT_NOT_REACHED();
+}
+
 TargetListing RemoteInspector::listingForInspectionTarget(const RemoteInspectionTarget& target) const
 {
     if (!target.remoteDebuggingAllowed())
         return nullptr;
 
-    // FIXME: Support remote debugging of a ServiceWorker.
-    if (target.type() == RemoteInspectionTarget::Type::ServiceWorker)
-        return nullptr;
-
-    ASSERT(target.type() == RemoteInspectionTarget::Type::JavaScript || target.type() == RemoteInspectionTarget::Type::Page || target.type() == RemoteInspectionTarget::Type::WebPage);
     return g_variant_new("(tsssb)", static_cast<guint64>(target.targetIdentifier()),
-        target.type() == RemoteInspectionTarget::Type::JavaScript ? "JavaScript" : "Web",
-        target.name().utf8().data(), target.type() == RemoteInspectionTarget::Type::JavaScript ? "null" : target.url().utf8().data(),
+        targetDebuggableType(target.type()), target.name().utf8().data(),
+        target.type() == RemoteInspectionTarget::Type::JavaScript ? "null" : target.url().utf8().data(),
         target.hasLocalDebugger());
 }
 
