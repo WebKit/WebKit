@@ -1,3 +1,13 @@
+2020-01-28  Jason Lawrence  <lawrence.j@apple.com>
+
+        [ iOS wk2 release and Mac ] imported/w3c/web-platform-tests/2dcontext/imagebitmap/createImageBitmap-serializable.html flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=206752
+
+        Unreviewed test gardening.
+
+        * platform/ios-wk2/TestExpectations:
+        * platform/mac/TestExpectations:
+
 2020-01-28  Jacob Uphoff  <jacob_uphoff@apple.com>
 
         [ macOS ] http/wpt/resource-timing/rt-resource-errors.html is flaky failing
