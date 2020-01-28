@@ -1,5 +1,36 @@
 2020-01-28  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r255153. rdar://problem/58839955
+
+    REGRESSION: [Mac wk2] fast/animation/request-animation-frame.html is flaky failing
+    https://bugs.webkit.org/show_bug.cgi?id=206675
+    <rdar://problem/58839955>
+    
+    Reviewed by Said Abou-Hallawa.
+    
+    Rewrite test to stop relying on ordering between requestAnimationFrame() and setTimeout().
+    
+    * fast/animation/request-animation-frame-expected.txt:
+    * fast/animation/request-animation-frame.html:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@255153 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-01-27  Chris Dumez  <cdumez@apple.com>
+
+            REGRESSION: [Mac wk2] fast/animation/request-animation-frame.html is flaky failing
+            https://bugs.webkit.org/show_bug.cgi?id=206675
+            <rdar://problem/58839955>
+
+            Reviewed by Said Abou-Hallawa.
+
+            Rewrite test to stop relying on ordering between requestAnimationFrame() and setTimeout().
+
+            * fast/animation/request-animation-frame-expected.txt:
+            * fast/animation/request-animation-frame.html:
+
+2020-01-28  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r255130. rdar://problem/58816827
 
     media/modern-media-controls/media-controller/media-controller-auto-hide.html is flaky timing out
