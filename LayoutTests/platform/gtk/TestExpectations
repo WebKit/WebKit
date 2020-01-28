@@ -1231,6 +1231,7 @@ webkit.org/b/205186 compositing/contents-format/subpixel-antialiased-text.html [
 webkit.org/b/205187 fast/text/font-antialiasing-save-restore.html [ ImageOnlyFailure ]
 
 webkit.org/b/206223 imported/mozilla/svg/svg-integration/clipPath-html-02.xhtml
+webkit.org/b/206223 imported/mozilla/svg/svg-integration/clipPath-html-05.xhtml
 
 # locale-specific shaping isn't implemented on any non-Cocoa port yet.
 webkit.org/b/77568 fast/text/locale-shaping.html [ ImageOnlyFailure ]
@@ -1311,6 +1312,10 @@ webkit.org/b/206756 imported/w3c/web-platform-tests/css/css-backgrounds/border-i
 webkit.org/b/206756 imported/w3c/web-platform-tests/css/css-backgrounds/background-border-collapsed-gradient.html [ Pass ]
 webkit.org/b/206756 imported/w3c/web-platform-tests/css/css-backgrounds/background-size/background-size-cover-svg.html [ Pass ]
 webkit.org/b/206756 imported/w3c/web-platform-tests/css/css-backgrounds/background-size/vector/diagonal-percentage-vector-background.html [ Pass ]
+
+webkit.org/b/206872 platform/gtk/scrollbars/main-frame-scrollbar-horizontal-wheel-scroll.html [ ImageOnlyFailure ]
+
+webkit.org/b/206874 imported/w3c/web-platform-tests/cors/origin.htm [ Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Expected failures.
@@ -2338,7 +2343,7 @@ webkit.org/b/198830 media/video-timeupdate-reverse-play.html [ Crash Pass ]
 webkit.org/b/198830 media/video-trackmenu-selection.html [ Crash Timeout ]
 webkit.org/b/198830 media/video-volume.html [ Pass Crash ]
 
-webkit.org/b/170484 swipe/main-frame-pinning-requirement.html [ Pass Failure ]
+webkit.org/b/170484 swipe/main-frame-pinning-requirement.html [ Pass Failure Timeout ]
 
 webkit.org/b/201252 editing/pasteboard/paste-text-017.html [ Pass Failure ]
 
@@ -2407,6 +2412,8 @@ webkit.org/b/206639 http/tests/contentextensions/block-cookies-basic.html [ Fail
 webkit.org/b/206639 http/tests/contentextensions/block-cookies-send.html [ Failure Pass ]
 
 webkit.org/b/206691 animations/no-style-recalc-during-accelerated-animation.html [ Failure Pass ]
+
+webkit.org/b/206875 inspector/debugger/breakpoints/resolved-dump-each-line.html [ Failure Pass ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Flaky tests
@@ -2743,6 +2750,10 @@ webkit.org/b/202736 http/wpt/cache-storage/quota-third-party.https.html [ Failur
 webkit.org/b/202736 storage/indexeddb/modern/handle-user-delete.html [ Timeout ]
 webkit.org/b/202736 storage/indexeddb/modern/new-database-after-user-delete.html [ Timeout ]
 
+webkit.org/b/206873 media/media-source/media-source-seek-redundant-append.html [ Timeout ]
+
+webkit.org/b/206876 http/tests/security/storage-blocking-strengthened-private-browsing-plugin.html [ Timeout ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests timing out
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -2903,7 +2914,6 @@ Bug(GTK) fast/writing-mode/Kusa-Makura-background-canvas.html [ Failure Timeout 
 Bug(GTK) http/tests/security/cross-origin-xsl-BLOCKED.html [ Failure ]
 Bug(GTK) http/tests/security/cross-origin-xsl-redirect-BLOCKED.html [ Failure ]
 Bug(GTK) http/tests/security/storage-blocking-strengthened-plugin.html [ Failure ]
-Bug(GTK) http/tests/security/storage-blocking-strengthened-private-browsing-plugin.html [ Failure ]
 Bug(GTK) plugins/keyboard-events.html [ Failure ]
 Bug(GTK) plugins/netscape-plugin-setwindow-size-2.html [ Failure ]
 Bug(GTK) plugins/npp-set-window-called-during-destruction.html [ Failure ]
@@ -4030,6 +4040,7 @@ webkit.org/b/202457 imported/w3c/web-platform-tests/2dcontext/drawing-images-to-
 webkit.org/b/202459 imported/w3c/web-platform-tests/2dcontext/compositing/2d.composite.globalAlpha.canvascopy.html [ Failure ]
 
 webkit.org/b/202460 imported/w3c/web-platform-tests/2dcontext/image-smoothing/imagesmoothing.html [ Failure ]
+webkit.org/b/206877 imported/w3c/web-platform-tests/2dcontext/fill-and-stroke-styles/2d.pattern.animated.gif.html [ Failure ]
 
 webkit.org/b/202744 compositing/layer-creation/absolute-in-async-overflow-scroll.html [ Failure ]
 webkit.org/b/202744 compositing/overflow/overflow-auto-with-touch.html [ Failure ]
@@ -4228,8 +4239,6 @@ css-dark-mode/older-systems [ Skip ]
 animations/missing-values-last-keyframe.html [ Pass ]
 
 imported/w3c/web-platform-tests/css/css-multicol/multicol-width-ch-001.xht [ Pass ]
-
-imported/w3c/web-platform-tests/service-workers/service-worker/svg-target-reftest.https.html [ Pass ]
 
 # permessage-deflate WebSocket extension
 http/tests/websocket/tests/hybi/imported/blink/permessage-deflate-comp-bit-onoff.html [ Pass ]

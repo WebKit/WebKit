@@ -1,3 +1,13 @@
+2020-01-28  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GTK] Gardening, update TestExpectations and add new baseline
+        https://bugs.webkit.org/show_bug.cgi?id=206878
+
+        Unreviewed gardening.
+
+        * platform/gtk/TestExpectations:
+        * platform/gtk/imported/w3c/web-platform-tests/css/css-animations/Element-getAnimations.tentative-expected.txt: Added.
+
 2020-01-28  Jacob Uphoff  <jacob_uphoff@apple.com>
 
         REGRESSION?: [ Mac wk1 ] storage/indexeddb/modern/blob-cursor.html is flaky timing out
