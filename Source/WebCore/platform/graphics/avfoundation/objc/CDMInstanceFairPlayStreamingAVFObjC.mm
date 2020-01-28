@@ -32,6 +32,7 @@
 #import "CDMKeySystemConfiguration.h"
 #import "CDMMediaCapability.h"
 #import "InitDataRegistry.h"
+#import "Logging.h"
 #import "NotImplemented.h"
 #import "SharedBuffer.h"
 #import "TextDecoder.h"
@@ -821,7 +822,21 @@ void CDMInstanceSessionFairPlayStreamingAVFObjC::removeSessionData(const String&
             return;
         }
 
-        RetainPtr<NSData> expiredSessionsData = [NSPropertyListSerialization dataWithPropertyList:expiredSessionsArray.get() format:NSPropertyListBinaryFormat_v1_0 options:kCFPropertyListImmutable error:nullptr];
+        auto expiredSessionsCount = expiredSessionsArray.get().count;
+        if (!expiredSessionsCount) {
+            // It should not be possible to have a persistent-usage-record session that does not generate
+            // a persistent-usage-record message on close. Signal this by failing and assert.
+            ASSERT_NOT_REACHED();
+            callback(WTFMove(changedKeys), WTF::nullopt, Failed);
+            return;
+        }
+
+        id propertyList = expiredSessionsCount == 1 ? [expiredSessionsArray firstObject] : expiredSessionsArray.get();
+
+        RetainPtr<NSData> expiredSessionsData = [NSPropertyListSerialization dataWithPropertyList:propertyList format:NSPropertyListBinaryFormat_v1_0 options:kCFPropertyListImmutable error:nullptr];
+
+        if (expiredSessionsCount > 1)
+            RELEASE_LOG(EME, "Multiple(%lu) expired session reports found with same sessionID(%s)!", expiredSessionsCount, sessionId.utf8().data());
 
         callback(WTFMove(changedKeys), SharedBuffer::create(expiredSessionsData.get()), Succeeded);
     }
