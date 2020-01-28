@@ -937,4 +937,5 @@ webkit.org/b/206696 [ Release ] editing/selection/caret-at-bidi-boundary.html [ 
 
 webkit.org/b/206708 fast/animation/request-animation-frame-iframe.html [ Pass Failure ]
 
-webkit.org/b/206770 [ Release ] storage/websql/test-authorizer.html [ Pass Timeout ]
+webkit.org/b/206770 [ Mojave Release ] storage/websql/test-authorizer.html [ Pass Timeout ]
+webkit.org/b/206770 [ Catalina Release ] storage/websql/test-authorizer.html [ Pass Failure Timeout ]

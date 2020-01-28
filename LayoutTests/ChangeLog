@@ -1,3 +1,12 @@
+2020-01-28  Truitt Savell  <tsavell@apple.com>
+
+        Followup to r255264 to better specify expectation.
+        https://bugs.webkit.org/show_bug.cgi?id=206770
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
 2020-01-28  Justin Fan  <justin_fan@apple.com>
 
         [WebGL2] Implement sub-source texImage2D and texSubImage2D
