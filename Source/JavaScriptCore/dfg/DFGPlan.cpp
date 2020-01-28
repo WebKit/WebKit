@@ -162,7 +162,7 @@ bool Plan::computeCompileTimes() const
 {
     return reportCompileTimes()
         || Options::reportTotalCompileTimes()
-        || unnukedVM()->m_perBytecodeProfiler;
+        || (m_vm && m_vm->m_perBytecodeProfiler);
 }
 
 bool Plan::reportCompileTimes() const
@@ -713,11 +713,7 @@ void Plan::cancel()
     // mutator know which VM it belongs to.
     // Ref: See Worklist::deleteCancelledPlansForVM().
     ASSERT(m_vm);
-
-    // Nuke the VM pointer so that pointer comparisons against it will fail.
-    // We rely on VM pointer comparison in many places to filter out Cancelled
-    // plans.
-    m_vm = nuke(m_vm);
+    m_vm = nullptr;
 
     m_codeBlock = nullptr;
     m_profiledDFGCodeBlock = nullptr;
