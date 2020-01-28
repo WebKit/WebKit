@@ -1,3 +1,16 @@
+2020-01-28  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r255237.
+        https://bugs.webkit.org/show_bug.cgi?id=206889
+
+        it is breaking Win build (Requested by youenn on #webkit).
+
+        Reverted changeset:
+
+        "Blob media loading does not work with GPUProcess"
+        https://bugs.webkit.org/show_bug.cgi?id=206824
+        https://trac.webkit.org/changeset/255237
+
 2020-01-28  Jason Lawrence  <lawrence.j@apple.com>
 
         [ Mac wk2 Release ] editing/selection/caret-at-bidi-boundary.html is flaky timing out
