@@ -1,3 +1,18 @@
+2020-01-28  Kate Cheney  <katherine_cheney@apple.com>
+
+        REGRESSION: [iOS] http/wpt/cache-storage/quota-third-party.https.html is flaky failing.
+        https://bugs.webkit.org/show_bug.cgi?id=206681
+        <rdar://problem/58842429>
+
+        Logs user interaction for the test origin to avoid clearing website
+        data after the frame navigation. This was causing flaky failures if
+        the origin's cache was deleted before the test finished.
+
+        Reviewed by Youenn Fablet.
+
+        * http/wpt/cache-storage/quota-third-party.https.html:
+        * platform/ios-wk2/TestExpectations:
+
 2020-01-28  Jason Lawrence  <lawrence.j@apple.com>
 
         [ iOS wk2 release and Mac ] imported/w3c/web-platform-tests/2dcontext/imagebitmap/createImageBitmap-serializable.html flaky failure

@@ -1355,8 +1355,6 @@ webkit.org/b/206667 legacy-animation-engine/animations/stop-animation-on-suspend
 
 webkit.org/b/206682 animations/play-state-paused.html [ Pass Failure ]
 
-webkit.org/b/206681 http/wpt/cache-storage/quota-third-party.https.html [ Pass Failure ]
-
 webkit.org/b/206678 [ Release ] compositing/video/poster.html [ Pass Failure ]
 
 webkit.org/b/206685 [ Debug ] animations/animation-direction-normal.html [ Pass Failure ]
