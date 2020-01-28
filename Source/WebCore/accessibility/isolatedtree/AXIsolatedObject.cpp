@@ -409,7 +409,7 @@ void AXIsolatedObject::setParent(AXID parent)
 
 void AXIsolatedObject::detachRemoteParts(AccessibilityDetachmentType detachmentType)
 {
-    ASSERT(isMainThread() ? detachmentType == AccessibilityDetachmentType::CacheDestroyed : detachmentType != AccessibilityDetachmentType::CacheDestroyed);
+    ASSERT_UNUSED(detachmentType, isMainThread() ? detachmentType == AccessibilityDetachmentType::CacheDestroyed : detachmentType != AccessibilityDetachmentType::CacheDestroyed);
     for (const auto& childID : m_childrenIDs)
         tree()->nodeForID(childID)->detachFromParent();
 
