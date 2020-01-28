@@ -183,11 +183,11 @@ class _W3CTestConverter(HTMLParser):
         """ Searches |text| for instances of files in reference_support_info and updates the relative path to be correct for the new ref file location"""
         converted = text
         for path in self.reference_support_info['files']:
-            if text.find(path) != -1:
+            if converted.find(path) != -1:
                 # FIXME: This doesn't handle an edge case where simply removing the relative path doesn't work.
                 # See http://webkit.org/b/135677 for details.
                 new_path = re.sub(self.reference_support_info['reference_relpath'], '', path, 1)
-                converted = re.sub(path, new_path, text)
+                converted = re.sub(path, new_path, converted)
 
         return converted
 

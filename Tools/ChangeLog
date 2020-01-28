@@ -1,3 +1,27 @@
+2020-01-28  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        WPT test importer only rewrites the first URL on <style> tags.
+        https://bugs.webkit.org/show_bug.cgi?id=206842
+
+        Reviewed by Jonathan Bedard.
+
+        There was an issue, when a <style> tag had several URL() paths
+        to local references, only the first one was converted.
+        This was caused because the test parser was only seeing the
+        first one (re.search() only finds the first regex), instead use
+        re.findall() to find all the ocurrences.
+        Then in the test converter for relative paths, when there are
+        several paths to be converted, convert from the last conversion
+        instead of the original text.
+
+        * Scripts/webkitpy/w3c/test_converter.py:
+        (_W3CTestConverter.convert_reference_relpaths):
+        * Scripts/webkitpy/w3c/test_converter_unittest.py:
+        (test_convert_style_multiple_url):
+        * Scripts/webkitpy/w3c/test_parser.py:
+        (TestParser.support_files):
+        * Scripts/webkitpy/w3c/test_parser_unittest.py:
+
 2020-01-28  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] Make Animation.timeline read-write only if a runtime flag is enabled
