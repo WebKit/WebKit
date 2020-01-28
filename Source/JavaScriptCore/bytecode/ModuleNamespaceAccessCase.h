@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2017 Yusuke Suzuki <utatane.tea@gmail.com>.
+ * Copyright (C) 2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -43,7 +44,7 @@ public:
     JSModuleEnvironment* moduleEnvironment() const { return m_moduleEnvironment.get(); }
     ScopeOffset scopeOffset() const { return m_scopeOffset; }
 
-    static std::unique_ptr<AccessCase> create(VM&, JSCell* owner, const Identifier&, JSModuleNamespaceObject*, JSModuleEnvironment*, ScopeOffset);
+    static std::unique_ptr<AccessCase> create(VM&, JSCell* owner, CacheableIdentifier, JSModuleNamespaceObject*, JSModuleEnvironment*, ScopeOffset);
 
     std::unique_ptr<AccessCase> clone() const override;
 
@@ -52,7 +53,7 @@ public:
     ~ModuleNamespaceAccessCase();
 
 private:
-    ModuleNamespaceAccessCase(VM&, JSCell* owner, const Identifier&, JSModuleNamespaceObject*, JSModuleEnvironment*, ScopeOffset);
+    ModuleNamespaceAccessCase(VM&, JSCell* owner, CacheableIdentifier, JSModuleNamespaceObject*, JSModuleEnvironment*, ScopeOffset);
 
     WriteBarrier<JSModuleNamespaceObject> m_moduleNamespaceObject;
     WriteBarrier<JSModuleEnvironment> m_moduleEnvironment;

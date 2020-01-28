@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,6 +26,7 @@
 #include "config.h"
 #include "GetByIdVariant.h"
 
+#include "CacheableIdentifierInlines.h"
 #include "CallLinkStatus.h"
 #include "JSCInlines.h"
 #include <wtf/ListDump.h>
@@ -33,7 +34,7 @@
 namespace JSC {
 
 GetByIdVariant::GetByIdVariant(
-    Box<Identifier> identifier,
+    CacheableIdentifier identifier,
     const StructureSet& structureSet, PropertyOffset offset,
     const ObjectPropertyConditionSet& conditionSet,
     std::unique_ptr<CallLinkStatus> callLinkStatus,
@@ -110,7 +111,7 @@ bool GetByIdVariant::attemptToMerge(const GetByIdVariant& other)
     if (!!m_identifier != !!other.m_identifier)
         return false;
 
-    if (m_identifier && (*m_identifier != *other.m_identifier))
+    if (m_identifier && (m_identifier != other.m_identifier))
         return false;
 
     if (m_offset != other.m_offset)
@@ -156,6 +157,11 @@ bool GetByIdVariant::attemptToMerge(const GetByIdVariant& other)
     return true;
 }
 
+void GetByIdVariant::visitAggregate(SlotVisitor& visitor)
+{
+    m_identifier.visitAggregate(visitor);
+}
+
 void GetByIdVariant::markIfCheap(SlotVisitor& visitor)
 {
     m_structureSet.markIfCheap(visitor);
@@ -182,7 +188,7 @@ void GetByIdVariant::dump(PrintStream& out) const
 void GetByIdVariant::dumpInContext(PrintStream& out, DumpContext* context) const
 {
     out.print("<");
-    out.print("id='", m_identifier ? m_identifier->impl() : StringImpl::empty(), "', ");
+    out.print("id='", m_identifier, "', ");
     if (!isSet()) {
         out.print("empty>");
         return;
