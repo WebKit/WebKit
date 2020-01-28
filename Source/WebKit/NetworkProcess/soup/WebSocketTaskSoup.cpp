@@ -47,6 +47,12 @@ WebSocketTask::WebSocketTask(NetworkSocketChannel& channel, SoupSession* session
         for (auto& subprotocol : protocolList)
             protocols.get()[i++] = g_strdup(WebCore::stripLeadingAndTrailingHTTPSpaces(subprotocol).utf8().data());
     }
+
+    // Ensure a new connection is used for WebSockets.
+    // FIXME: this is done by libsoup since 2.69.1 and 2.68.4, so it can be removed when bumping the libsoup requirement.
+    // See https://bugs.webkit.org/show_bug.cgi?id=203404
+    soup_message_set_flags(msg, static_cast<SoupMessageFlags>(soup_message_get_flags(msg) | SOUP_MESSAGE_NEW_CONNECTION));
+
     soup_session_websocket_connect_async(session, msg, nullptr, protocols.get(), m_cancellable.get(),
         [] (GObject* session, GAsyncResult* result, gpointer userData) {
             GUniqueOutPtr<GError> error;

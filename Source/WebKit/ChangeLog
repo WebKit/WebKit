@@ -1,3 +1,18 @@
+2020-01-28  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK][WPE] QR code not loaded in web.whatsapp.com
+        https://bugs.webkit.org/show_bug.cgi?id=203404
+
+        Reviewed by Michael Catanzaro.
+
+        This is a regression of the switch to use libsoup API for the WebSockets implementation. The QR code is loaded
+        using a WebSocket connection, but the server is always replying with a 400 Bad Request to the Upgrade requests
+        coming from an existing HTTP connection. We need to ensure a new dedicated connection is used for WebSockets.
+
+        * NetworkProcess/soup/WebSocketTaskSoup.cpp:
+        (WebKit::WebSocketTask::WebSocketTask): Set the SOUP_MESSAGE_NEW_CONNECTION flag to the SoupMessage before
+        starting the connection.
+
 2020-01-27  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Remote Inspector: add support for service workers targets
