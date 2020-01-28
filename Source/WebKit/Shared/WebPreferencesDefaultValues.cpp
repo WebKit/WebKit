@@ -64,4 +64,15 @@ bool defaultTextAutosizingUsesIdempotentMode()
 
 #endif // ENABLE(TEXT_AUTOSIZING) && !PLATFORM(IOS_FAMILY)
 
+bool defaultDisallowSyncXHRDuringPageDismissalEnabled()
+{
+#if PLATFORM(MAC)
+    if (CFPreferencesGetAppBooleanValue(CFSTR("allowDeprecatedSynchronousXMLHttpRequestDuringUnload"), CFSTR("com.apple.WebKit"), nullptr)) {
+        WTFLogAlways("Allowing synchronous XHR during page unload due to managed preference");
+        return false;
+    }
+#endif
+    return true;
+}
+
 } // namespace WebKit

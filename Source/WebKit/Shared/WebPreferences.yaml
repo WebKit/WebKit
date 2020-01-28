@@ -20,7 +20,7 @@ DeviceOrientationPermissionAPIEnabled:
 
 DisallowSyncXHRDuringPageDismissalEnabled:
   type: bool
-  defaultValue: true
+  defaultValue: defaultDisallowSyncXHRDuringPageDismissalEnabled()
   humanReadableName: "Disallow sync XHR during page dismissal"
   humanReadableDescription: "Disallow synchronous XMLHttpRequest during page dismissal"
   category: experimental
