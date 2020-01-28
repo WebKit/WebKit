@@ -1,3 +1,12 @@
+2020-01-27  Truitt Savell  <tsavell@apple.com>
+
+        REGRESSION: (r253718) [ Mac ] inspector/runtime/executionContextCreated-onEnable.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=205956
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk1/TestExpectations:
+
 2020-01-27  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: unable to evaluate in the isolated world of content scripts injected by safari app extensions
