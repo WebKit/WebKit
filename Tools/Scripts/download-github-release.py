@@ -27,7 +27,12 @@ import argparse
 import json
 import os
 import sys
-import urllib2
+
+try:
+    from urllib.request import urlopen, Request
+    from urllib.error import URLError
+except ImportError:
+    from urllib2 import urlopen, Request, URLError
 
 PUBLIC_GITHUB_API_ENDPOINT = 'https://api.github.com/'
 
@@ -65,14 +70,14 @@ def find_release(endpoint, repo, filename, token, tag):
     release_name = 'tags/{}'.format(tag) if tag else 'latest'
     url = '{}/repos/{}/releases/{}'.format(endpoint.rstrip('/'), repo, release_name)
 
-    request = urllib2.Request(url)
+    request = Request(url)
     request.add_header('Accept', 'application/vnd.github.v3+json')
     if token:
         request.add_header('Authorization', 'token {}'.format(token))
 
     try:
-        response = urllib2.urlopen(request)
-    except urllib2.URLError as error:
+        response = urlopen(request)
+    except URLError as error:
         print(error)
         return None, None
 
@@ -85,13 +90,13 @@ def find_release(endpoint, repo, filename, token, tag):
 
 
 def download_release(source_url, target_path, token):
-    request = urllib2.Request(source_url)
+    request = Request(source_url)
     request.add_header('Accept', 'application/octet-stream')
     if token:
         request.add_header('Authorization', 'token {}'.format(token))
 
     with open(target_path, 'wb') as file:
-        file.write(urllib2.urlopen(request).read())
+        file.write(urlopen(request).read())
 
 
 def load_version_info(version_info_path):
@@ -113,16 +118,16 @@ def main(argv):
     binary_path = os.path.join(args.output_dir, args.filename)
     version_info_path = binary_path + '.version'
 
-    print('Updating {}...'.format(args.filename))
+    print(('Updating {}...'.format(args.filename)))
 
     existing_version_info = load_version_info(version_info_path)
     if existing_version_info:
-        print('Found existing release: {}'.format(existing_version_info['tag_name']))
+        print(('Found existing release: {}'.format(existing_version_info['tag_name'])))
     else:
         print('No existing release found.')
 
     release_title = 'release "{}"'.format(args.release_tag) if args.release_tag else 'latest release'
-    print('Seeking {} from {}...'.format(release_title, args.repo))
+    print(('Seeking {} from {}...'.format(release_title, args.repo)))
     release_url, target_version_info = find_release(args.endpoint, args.repo, args.filename, args.token, args.release_tag)
 
     if not target_version_info:
@@ -142,7 +147,7 @@ def main(argv):
     if not os.path.exists(args.output_dir):
         os.makedirs(args.output_dir)
 
-    print('Downloading to {}...'.format(os.path.abspath(args.output_dir)))
+    print(('Downloading to {}...'.format(os.path.abspath(args.output_dir))))
     download_release(release_url, binary_path, args.token)
     save_version_info(version_info_path, target_version_info)
     print('Done!')

@@ -1,3 +1,19 @@
+2020-01-28  Stephan Szabo  <stephan.szabo@sony.com>
+
+        Python 3: Update windows scripts and uses of is constant
+        https://bugs.webkit.org/show_bug.cgi?id=206856
+
+        Reviewed by Jonathan Bedard.
+
+        * Scripts/download-github-release.py: Update for python 3
+        * Scripts/webkitpy/common/system/profiler.py: Change is constant usage
+        * Scripts/webkitpy/layout_tests/controllers/layout_test_finder.py: Change is constant usage
+        * Scripts/webkitpy/layout_tests/layout_package/json_layout_results_generator.py: Change is constant usage
+        * Scripts/webkitpy/port/westondriver.py: Change is constant usage
+        * Scripts/webkitpy/port/win.py: Update for python 3
+        * Scripts/webkitpy/port/xvfbdriver.py: Change is constant usage
+        * Scripts/webkitpy/xcode/device_type.py: Change is constant usage
+
 2020-01-28  Jonathan Bedard  <jbedard@apple.com>
 
         run-webkit-tests: clobber-old-results should remove the entire results folder

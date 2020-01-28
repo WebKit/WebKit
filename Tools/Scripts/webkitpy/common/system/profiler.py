@@ -172,7 +172,7 @@ class Perf(SingleFileOutputProfiler):
 
         # Return early if the process produced non-zero exit code or is still running (if it couldn't be killed).
         exit_code = self._wait_process.poll()
-        if exit_code is not 0:
+        if exit_code != 0:
             print("'perf record' failed, ", end=' ')
             if exit_code:
                 print("exit code was %i." % exit_code)

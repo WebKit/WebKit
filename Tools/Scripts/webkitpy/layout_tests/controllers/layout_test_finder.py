@@ -109,7 +109,7 @@ class LayoutTestFinder(object):
     @staticmethod
     def _strip_comments(line):
         commentIndex = line.find('//')
-        if commentIndex is -1:
+        if commentIndex == -1:
             commentIndex = len(line)
 
         line = re.sub(r'\s+', ' ', line[:commentIndex].strip())

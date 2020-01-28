@@ -51,7 +51,11 @@ try:
     import _winreg
     import win32com.client
 except ImportError:
-    _log.debug("Not running on native Windows.")
+    try:
+        import winreg as _winreg
+        import win32com.client
+    except ImportError:
+        _log.debug("Not running on native Windows.")
 
 
 class WinPort(ApplePort):

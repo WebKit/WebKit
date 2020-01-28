@@ -44,7 +44,7 @@ class WestonDriver(Driver):
         weston_findcmd = ['which', 'weston']
         if port._should_use_jhbuild():
             weston_findcmd = port._jhbuild_wrapper + weston_findcmd
-        weston_found = port.host.executive.run_command(weston_findcmd, return_exit_code=True) is 0
+        weston_found = port.host.executive.run_command(weston_findcmd, return_exit_code=True) == 0
         if not weston_found:
             _log.error("No weston found. Cannot run layout tests.")
         return weston_found

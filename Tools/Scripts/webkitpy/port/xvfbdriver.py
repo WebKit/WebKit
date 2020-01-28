@@ -44,7 +44,7 @@ class XvfbDriver(Driver):
         xvfb_findcmd = ['which', 'Xvfb']
         if port._should_use_jhbuild():
                 xvfb_findcmd = port._jhbuild_wrapper + xvfb_findcmd
-        xvfb_found = port.host.executive.run_command(xvfb_findcmd, return_exit_code=True) is 0
+        xvfb_found = port.host.executive.run_command(xvfb_findcmd, return_exit_code=True) == 0
         if not xvfb_found:
             _log.error("No Xvfb found. Cannot run layout tests.")
         return xvfb_found

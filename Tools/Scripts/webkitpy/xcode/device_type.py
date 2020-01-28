@@ -75,7 +75,7 @@ class DeviceType(object):
         if self.hardware_family is not None:
             assert self.software_variant is not None
             if self.hardware_family == 'Apple Watch':
-                assert self.software_variant is 'watchOS'
+                assert self.software_variant == 'watchOS'
             elif self.hardware_family == 'Apple TV':
                 assert self.software_variant == 'tvOS'
             else:

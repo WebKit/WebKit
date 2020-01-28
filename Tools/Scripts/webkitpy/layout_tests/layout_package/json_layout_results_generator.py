@@ -82,10 +82,10 @@ class JSONLayoutResultsGenerator(json_results_generator.JSONResultsGenerator):
           fast/forms/foo.html
         """
         index = test.find(self.LAYOUT_TESTS_PATH)
-        if index is not -1:
+        if index != -1:
             index += len(self.LAYOUT_TESTS_PATH)
 
-        if index is -1:
+        if index == -1:
             # Already a relative path.
             relativePath = test
         else:
