@@ -1,3 +1,46 @@
+2020-01-28  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r255094. rdar://problem/58825997
+
+    Remove check-xcfilelists.sh from WebKitLegacy Xcode build target
+    https://bugs.webkit.org/show_bug.cgi?id=206762
+    <rdar://problem/58825997>
+    
+    Reviewed by Alexey Proskuryakov.
+    
+    When check-xcfilelists.sh got added to the WebKitLegacy Xcode project,
+    it was also accidentally added to the WebKitLegacy build target. This
+    caused it to be treated as a "resource", and so was copied to the
+    output directory in the Resources sub-folder during the build. This
+    copying is not expected, needed, or desired. Remove
+    check-xcfilelists.sh from the target, which also removes it from the
+    Copy Resources build phase, which removes it from the
+    WebKitLegacy.framework/Resources directory.
+    
+    * WebKitLegacy.xcodeproj/project.pbxproj:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@255094 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-01-24  Keith Rollin  <krollin@apple.com>
+
+            Remove check-xcfilelists.sh from WebKitLegacy Xcode build target
+            https://bugs.webkit.org/show_bug.cgi?id=206762
+            <rdar://problem/58825997>
+
+            Reviewed by Alexey Proskuryakov.
+
+            When check-xcfilelists.sh got added to the WebKitLegacy Xcode project,
+            it was also accidentally added to the WebKitLegacy build target. This
+            caused it to be treated as a "resource", and so was copied to the
+            output directory in the Resources sub-folder during the build. This
+            copying is not expected, needed, or desired. Remove
+            check-xcfilelists.sh from the target, which also removes it from the
+            Copy Resources build phase, which removes it from the
+            WebKitLegacy.framework/Resources directory.
+
+            * WebKitLegacy.xcodeproj/project.pbxproj:
+
 2020-01-07  Sihui Liu  <sihui_liu@apple.com>
 
         REGRESSION (r248734): different threads write m_storageMap of StorageAreaImpl at the same time
