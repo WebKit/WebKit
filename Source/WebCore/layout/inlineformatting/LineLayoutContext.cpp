@@ -316,7 +316,7 @@ LineLayoutContext::LineContent LineLayoutContext::close(LineBuilder& line, const
     else
         m_successiveHyphenatedLineCount = 0;
 
-    auto trailingInlineItemIndex = layoutRange.start + committedInlineItemCount - 1;
+    unsigned trailingInlineItemIndex = layoutRange.start + committedInlineItemCount - 1;
     ASSERT(trailingInlineItemIndex < layoutRange.end);
     auto isLastLineWithInlineContent = [&] {
         if (trailingInlineItemIndex == layoutRange.end - 1)

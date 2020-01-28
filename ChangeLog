@@ -1,3 +1,14 @@
+2020-01-28  Don Olmstead  <don.olmstead@sony.com>
+
+        [LFC][Integration] Build and enable on Windows
+        https://bugs.webkit.org/show_bug.cgi?id=206165
+
+        Reviewed by Darin Adler.
+
+        Enable LFC for Windows.
+
+        * Source/cmake/OptionsWin.cmake:
+
 2020-01-24  Sergio Villar Senin  <svillar@igalia.com>
 
         Remove WebVR from the tree
