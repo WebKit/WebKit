@@ -1,3 +1,18 @@
+2020-01-27  David Quesada  <david_quesada@apple.com>
+
+        Support observing a different set of view service state notifications in ApplicationStateTracker
+        https://bugs.webkit.org/show_bug.cgi?id=201737
+        rdar://problem/54786414
+
+        Reviewed by Chris Dumez.
+
+        * UIProcess/ApplicationStateTracker.mm:
+        Make ApplicationStateTracker conditionally (based on a flag to be defined in WebKitAdditions)
+        use a different pair of notifications when it is in a view service or extension. These
+        notifications report state changes of the individual scene that hosts the web view, rather
+        than the state of the overall host application. This allows for more accurate state tracking
+        for web views in extensions or view services hosted by apps with multiple open scenes.
+
 2020-01-27  Alex Christensen  <achristensen@webkit.org>
 
         Add WKWebView SPI equivalent of WKView.shouldClipToVisibleRect
