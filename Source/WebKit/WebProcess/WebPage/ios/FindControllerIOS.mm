@@ -62,7 +62,7 @@ void FindIndicatorOverlayClientIOS::drawRect(PageOverlay& overlay, GraphicsConte
 {
     float scaleFactor = m_frame.page()->deviceScaleFactor();
 
-    if (m_frame.view() && m_frame.view()->delegatesPageScaling())
+    if (m_frame.page()->delegatesScaling())
         scaleFactor *= m_frame.page()->pageScaleFactor();
 
     // If the page scale changed, we need to paint a new TextIndicator.

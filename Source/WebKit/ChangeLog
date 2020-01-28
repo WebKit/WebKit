@@ -1,3 +1,27 @@
+2020-01-27  Simon Fraser  <simon.fraser@apple.com>
+
+        REGRESSION (r253634): cricbuzz.com media controls vanish depending on page scale
+        https://bugs.webkit.org/show_bug.cgi?id=206788
+        rdar://problem/58780584
+
+        Reviewed by Tim Horton.
+
+        r253634 changed "delegatesPageScaling"'" to a flag on ScrollView. However, this changed behavior
+        for subframes; Settings are propagated down, but only the main ScrollView had delegatesPageScaling
+        set on it.
+        
+        "delegatesPageScaling" is a page-level thing (subframes don't independently zoom), so it
+        should live on Page. Move it there.
+        
+        The bug was triggered by incorrectly taking page scale into account for rects in the compositing
+        overlap map (see RenderLayerCompositor::addToOverlapMap()) in subframes, and those rects
+        changing on zoom.
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::transitionToCommittedForNewPage):
+        * WebProcess/WebPage/ios/FindControllerIOS.mm:
+        (WebKit::FindIndicatorOverlayClientIOS::drawRect):
+
 2020-01-27  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [WinCairo][curl] ASSERTION FAILED: sessionID != PAL::SessionID::defaultSessionID() in WebKit::CacheStorage::Engine::destroyEngine since r255137

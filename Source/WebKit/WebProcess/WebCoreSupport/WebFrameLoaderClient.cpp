@@ -1527,10 +1527,10 @@ void WebFrameLoaderClient::transitionToCommittedForNewPage()
 #if PLATFORM(COCOA)
     auto* drawingArea = webPage->drawingArea();
     view->setViewExposedRect(drawingArea->viewExposedRect());
-    if (isMainFrame) {
+    if (isMainFrame)
         view->setDelegatesScrolling(drawingArea->usesDelegatedScrolling());
-        view->setDelegatesPageScaling(drawingArea->usesDelegatedPageScaling());
-    }
+
+    webPage->corePage()->setDelegatesScaling(drawingArea->usesDelegatedPageScaling());
 #endif
 
     if (webPage->scrollPinningBehavior() != DoNotPin)

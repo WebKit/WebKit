@@ -136,9 +136,6 @@ public:
     bool delegatesScrolling() const { return m_delegatesScrolling; }
     WEBCORE_EXPORT void setDelegatesScrolling(bool);
 
-    bool delegatesPageScaling() const { return m_delegatesPageScaling; }
-    WEBCORE_EXPORT void setDelegatesPageScaling(bool);
-
     // Overridden by FrameView to create custom CSS scrollbars if applicable.
     virtual Ref<Scrollbar> createScrollbar(ScrollbarOrientation);
 
@@ -542,7 +539,6 @@ private:
 
     bool m_paintsEntireContents { false };
     bool m_delegatesScrolling { false };
-    bool m_delegatesPageScaling { false };
 
 }; // class ScrollView
 

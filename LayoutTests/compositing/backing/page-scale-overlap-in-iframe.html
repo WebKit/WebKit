@@ -1,0 +1,61 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<html>
+<head>
+    <meta name="viewport" content="width=800">
+    <style>
+        iframe {
+            border: 1px solid black;
+        }
+    </style>
+    <script>
+        if (window.testRunner)
+            testRunner.dumpAsText();
+
+        function dumpLayers()
+        {
+            var layersResult = document.getElementById('layers');
+            if (window.testRunner)
+                layersResult.innerText = window.internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_BACKING_STORE_ATTACHED);
+        }
+
+        window.addEventListener('load', dumpLayers, false);
+    </script>
+</head>
+<body>
+    <iframe srcdoc="
+        <style>
+            html, body {
+                height: 100%;
+                width: 100%;
+                margin: 0;
+            }
+            .container {
+                position: relative;
+                width: 100%;
+                height: 100%;
+                overflow: hidden;
+            }
+            .media {
+                position: absolute;
+                width: 100%;
+                height: 100%;
+                will-change: transform;
+                background-color: rgba(255, 1255, 255, 0.75);
+            }
+            .bar {
+                position: absolute;
+                left: 0;
+                bottom: 0;
+                width: 100%;
+                height: 41px;
+                background-color: gray;
+            }
+        </style>
+        <div class=container>
+            <div class=media></div>
+            <div class=bar>This layer should be in front</div>
+        </div>
+    "></iframe>
+<pre id="layers"></pre>
+</body>
+</html>

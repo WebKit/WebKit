@@ -336,6 +336,9 @@ public:
     void didStartProvisionalLoad();
     void didFinishLoad(); // Called when the load has been committed in the main frame.
 
+    bool delegatesScaling() const { return m_delegatesScaling; }
+    WEBCORE_EXPORT void setDelegatesScaling(bool);
+
     // The view scale factor is multiplied into the page scale factor by all
     // callers of setPageScaleFactor.
     WEBCORE_EXPORT void setViewScaleFactor(float);
@@ -951,6 +954,13 @@ private:
     bool m_controlledByAutomation { false };
     bool m_resourceCachingDisabledByWebInspector { false };
     bool m_isUtilityPage;
+    bool m_shouldEnableICECandidateFilteringByDefault { true };
+    bool m_mediaPlaybackIsSuspended { false };
+    bool m_mediaBufferingIsSuspended { false };
+    bool m_inUpdateRendering { false };
+    bool m_hasResourceLoadClient { false };
+    bool m_delegatesScaling { false };
+
     UserInterfaceLayoutDirection m_userInterfaceLayoutDirection { UserInterfaceLayoutDirection::LTR };
     
     // For testing.
@@ -992,11 +1002,6 @@ private:
     RefPtr<DeviceOrientationUpdateProvider> m_deviceOrientationUpdateProvider;
 #endif
 
-    bool m_shouldEnableICECandidateFilteringByDefault { true };
-    bool m_mediaPlaybackIsSuspended { false };
-    bool m_mediaBufferingIsSuspended { false };
-    bool m_inUpdateRendering { false };
-    bool m_hasResourceLoadClient { false };
     Vector<UserContentURLPattern> m_corsDisablingPatterns;
     OptionSet<ThrottlingReason> m_throttlingReasons;
 };
