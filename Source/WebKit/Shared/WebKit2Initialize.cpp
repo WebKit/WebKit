@@ -39,6 +39,7 @@ namespace WebKit {
 
 void InitializeWebKit2()
 {
+    AtomString::init();
     JSC::initializeThreading();
     RunLoop::initializeMainRunLoop();
 

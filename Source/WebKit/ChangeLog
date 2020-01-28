@@ -1,5 +1,36 @@
 2020-01-28  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r254723. rdar://problem/58664141
+
+    Call AtomString::init in WebKit2Initialize.
+    <https://webkit.org/b/206375>
+    <rdar://problem/58646578>
+    
+    Patch by Daniel Chen <thedanielchen@apple.com> on 2020-01-16
+    Reviewed by Timothy Hatcher.
+    
+    * Shared/Cocoa/WebKit2InitializeCocoa.mm:
+    (WebKit::runInitializationCode):
+    * Shared/WebKit2Initialize.cpp:
+    (WebKit::InitializeWebKit2):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@254723 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-01-16  Daniel Chen  <thedanielchen@apple.com>
+
+            Call AtomString::init in WebKit2Initialize.
+            <https://webkit.org/b/206375>
+            <rdar://problem/58646578>
+
+            Reviewed by Timothy Hatcher.
+
+            * Shared/Cocoa/WebKit2InitializeCocoa.mm:
+            (WebKit::runInitializationCode):
+            * Shared/WebKit2Initialize.cpp:
+            (WebKit::InitializeWebKit2):
+
+2020-01-28  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r254711. rdar://problem/58537467
 
     Regression(r253224) No longer able to prevent a tab from closing via the beforeunload prompt

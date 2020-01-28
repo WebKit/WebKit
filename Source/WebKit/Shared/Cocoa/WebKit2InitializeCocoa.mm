@@ -44,6 +44,7 @@ static std::once_flag flag;
 
 static void runInitializationCode(void* = nullptr)
 {
+    AtomString::init();
 #if PLATFORM(IOS_FAMILY)
     InitWebCoreThreadSystemInterface();
 #endif
