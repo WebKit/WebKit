@@ -28,7 +28,9 @@
 #include "Bits.h"
 #include "DeferredTrigger.h"
 #include "FreeList.h"
+#include "Mutex.h"
 #include <climits>
+#include <mutex>
 
 namespace bmalloc {
 
@@ -42,6 +44,8 @@ public:
 
     explicit IsoPageBase(bool isShared)
         : m_isShared(isShared)
+        , m_eligibilityHasBeenNoted(true)
+        , m_isInUseForAllocation(false)
     {
     }
 
@@ -52,7 +56,9 @@ public:
 protected:
     BEXPORT static void* allocatePageMemory();
 
-    bool m_isShared { false };
+    bool m_isShared : 1;
+    bool m_eligibilityHasBeenNoted : 1;
+    bool m_isInUseForAllocation : 1;
 };
 
 template<typename Config>
@@ -71,19 +77,19 @@ public:
 
     unsigned index() const { return m_index; }
     
-    void free(void*);
+    void free(const std::lock_guard<Mutex>&, void*);
 
     // Called after this page is already selected for allocation.
-    FreeList startAllocating();
+    FreeList startAllocating(const std::lock_guard<Mutex>&);
     
     // Called after the allocator picks another page to replace this one.
-    void stopAllocating(FreeList freeList);
+    void stopAllocating(const std::lock_guard<Mutex>&, FreeList);
 
     IsoDirectoryBase<Config>& directory() { return m_directory; }
     bool isInUseForAllocation() const { return m_isInUseForAllocation; }
     
     template<typename Func>
-    void forEachLiveObject(const Func&);
+    void forEachLiveObject(const std::lock_guard<Mutex>&, const Func&);
     
     IsoHeapImpl<Config>& heap();
     
@@ -111,16 +117,13 @@ private:
 
     // This must have a trivial destructor.
 
-    bool m_eligibilityHasBeenNoted { true };
-    bool m_isInUseForAllocation { false };
     DeferredTrigger<IsoPageTrigger::Eligible> m_eligibilityTrigger;
     DeferredTrigger<IsoPageTrigger::Empty> m_emptyTrigger;
-
-    IsoDirectoryBase<Config>& m_directory;
+    uint8_t m_numNonEmptyWords { 0 };
+    static_assert(bitsArrayLength(numObjects) <= UINT8_MAX);
     unsigned m_index { UINT_MAX };
-    
+    IsoDirectoryBase<Config>& m_directory;
     unsigned m_allocBits[bitsArrayLength(numObjects)];
-    unsigned m_numNonEmptyWords { 0 };
 };
 
 } // namespace bmalloc

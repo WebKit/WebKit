@@ -37,7 +37,7 @@ namespace bmalloc {
 
 class HeapConstants : public StaticPerProcess<HeapConstants> {
 public:
-    HeapConstants(std::lock_guard<Mutex>&);
+    HeapConstants(const std::lock_guard<Mutex>&);
     ~HeapConstants() = delete;
 
     inline size_t pageClass(size_t sizeClass) const { return m_pageClasses[sizeClass]; }

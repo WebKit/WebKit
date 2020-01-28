@@ -80,6 +80,7 @@ static void assertHasObjects(IsoHeap<heapType>& heap, std::set<void*> pointers)
     auto& impl = heap.impl();
     std::lock_guard<bmalloc::Mutex> locker(impl.lock);
     impl.forEachLiveObject(
+        locker,
         [&] (void* object) {
             pointers.erase(object);
         });
@@ -96,6 +97,7 @@ static void assertHasOnlyObjects(IsoHeap<heapType>& heap, std::set<void*> pointe
     auto& impl = heap.impl();
     std::lock_guard<bmalloc::Mutex> locker(impl.lock);
     impl.forEachLiveObject(
+        locker,
         [&] (void* object) {
             EXPECT_EQ(pointers.erase(object), 1U);
         });
@@ -108,15 +110,11 @@ static void assertClean(IsoHeap<heapType>& heap)
     scavengeThisThread();
     if (!Environment::get()->isDebugHeapEnabled()) {
         auto& impl = heap.impl();
-        {
-            std::lock_guard<bmalloc::Mutex> locker(impl.lock);
-            EXPECT_FALSE(impl.numLiveObjects());
-        }
+        EXPECT_FALSE(impl.numLiveObjects());
     }
     heap.scavenge();
     if (!Environment::get()->isDebugHeapEnabled()) {
         auto& impl = heap.impl();
-        std::lock_guard<bmalloc::Mutex> locker(impl.lock);
         EXPECT_FALSE(impl.numCommittedPages());
     }
 }
@@ -187,19 +185,12 @@ TEST(bmalloc, IsoFlipFlopFragmentedPagesScavengeInMiddle)
         ptrs[i] = nullptr;
     }
     heap.scavenge();
-    unsigned numCommittedPagesBefore;
     auto& impl = heap.impl();
-    {
-        std::lock_guard<bmalloc::Mutex> locker(impl.lock);
-        numCommittedPagesBefore = impl.numCommittedPages();
-    }
+    unsigned numCommittedPagesBefore = impl.numCommittedPages();
     assertHasOnlyObjects(heap, toptrset(ptrs));
     for (unsigned i = ptrs.size() / 2; i--;)
         ptrs.push_back(heap.allocate());
-    {
-        std::lock_guard<bmalloc::Mutex> locker(impl.lock);
-        EXPECT_EQ(numCommittedPagesBefore, impl.numCommittedPages());
-    }
+    EXPECT_EQ(numCommittedPagesBefore, impl.numCommittedPages());
     for (void* ptr : ptrs)
         heap.deallocate(ptr);
     assertClean(heap);
@@ -220,19 +211,12 @@ TEST(bmalloc, IsoFlipFlopFragmentedPagesScavengeInMiddle288)
         ptrs[i] = nullptr;
     }
     heap.scavenge();
-    unsigned numCommittedPagesBefore;
     auto& impl = heap.impl();
-    {
-        std::lock_guard<bmalloc::Mutex> locker(impl.lock);
-        numCommittedPagesBefore = impl.numCommittedPages();
-    }
+    unsigned numCommittedPagesBefore = impl.numCommittedPages();
     assertHasOnlyObjects(heap, toptrset(ptrs));
     for (unsigned i = ptrs.size() / 2; i--;)
         ptrs.push_back(heap.allocate());
-    {
-        std::lock_guard<bmalloc::Mutex> locker(impl.lock);
-        EXPECT_EQ(numCommittedPagesBefore, impl.numCommittedPages());
-    }
+    EXPECT_EQ(numCommittedPagesBefore, impl.numCommittedPages());
     for (void* ptr : ptrs)
         heap.deallocate(ptr);
     assertClean(heap);

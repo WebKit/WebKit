@@ -60,7 +60,7 @@ void IsoTLS::scavenge(api::IsoHeap<Type>& handle)
         return;
     unsigned offset = handle.allocatorOffset();
     if (offset < tls->m_extent)
-        reinterpret_cast<IsoAllocator<typename api::IsoHeap<Type>::Config>*>(tls->m_data + offset)->scavenge();
+        reinterpret_cast<IsoAllocator<typename api::IsoHeap<Type>::Config>*>(tls->m_data + offset)->scavenge(handle.impl());
     offset = handle.deallocatorOffset();
     if (offset < tls->m_extent)
         reinterpret_cast<IsoDeallocator<typename api::IsoHeap<Type>::Config>*>(tls->m_data + offset)->scavenge();
@@ -74,13 +74,13 @@ void* IsoTLS::allocateImpl(api::IsoHeap<Type>& handle, bool abortOnFailure)
     IsoTLS* tls = get();
     if (!tls || offset >= tls->m_extent)
         return allocateSlow<Config>(handle, abortOnFailure);
-    return tls->allocateFast<Config>(offset, abortOnFailure);
+    return tls->allocateFast<Config>(handle, offset, abortOnFailure);
 }
 
-template<typename Config>
-void* IsoTLS::allocateFast(unsigned offset, bool abortOnFailure)
+template<typename Config, typename Type>
+void* IsoTLS::allocateFast(api::IsoHeap<Type>& handle, unsigned offset, bool abortOnFailure)
 {
-    return reinterpret_cast<IsoAllocator<Config>*>(m_data + offset)->allocate(abortOnFailure);
+    return reinterpret_cast<IsoAllocator<Config>*>(m_data + offset)->allocate(handle.impl(), abortOnFailure);
 }
 
 template<typename Config, typename Type>
@@ -108,7 +108,7 @@ BNO_INLINE void* IsoTLS::allocateSlow(api::IsoHeap<Type>& handle, bool abortOnFa
     
     IsoTLS* tls = ensureHeapAndEntries(handle);
     
-    return tls->allocateFast<Config>(handle.allocatorOffset(), abortOnFailure);
+    return tls->allocateFast<Config>(handle, handle.allocatorOffset(), abortOnFailure);
 }
 
 template<typename Config, typename Type>

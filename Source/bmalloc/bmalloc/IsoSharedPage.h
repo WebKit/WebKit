@@ -39,8 +39,8 @@ public:
 
     template<typename Config, typename Type>
     void free(const std::lock_guard<Mutex>&, api::IsoHeap<Type>&, void*);
-    VariadicBumpAllocator startAllocating();
-    void stopAllocating();
+    VariadicBumpAllocator startAllocating(const std::lock_guard<Mutex>&);
+    void stopAllocating(const std::lock_guard<Mutex>&);
 
 private:
     IsoSharedPage()

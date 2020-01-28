@@ -31,7 +31,8 @@
 
 namespace bmalloc {
 
-IsoHeapImplBase::IsoHeapImplBase()
+IsoHeapImplBase::IsoHeapImplBase(Mutex& lock)
+    : lock(lock)
 {
 }
 

@@ -31,7 +31,7 @@ namespace bmalloc {
 
 DEFINE_STATIC_PER_PROCESS_STORAGE(VMHeap);
 
-VMHeap::VMHeap(std::lock_guard<Mutex>&)
+VMHeap::VMHeap(const std::lock_guard<Mutex>&)
 {
 }
 

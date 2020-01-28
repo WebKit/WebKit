@@ -30,6 +30,7 @@
 #include "BulkDecommit.h"
 #include "Environment.h"
 #include "Heap.h"
+#include "IsoHeapImplInlines.h"
 #if BOS(DARWIN)
 #import <dispatch/dispatch.h>
 #import <mach/host_info.h>
@@ -67,7 +68,7 @@ struct PrintTime {
 
 DEFINE_STATIC_PER_PROCESS_STORAGE(Scavenger);
 
-Scavenger::Scavenger(std::lock_guard<Mutex>&)
+Scavenger::Scavenger(const std::lock_guard<Mutex>&)
 {
     BASSERT(!Environment::get()->isDebugHeapEnabled());
 

@@ -42,6 +42,8 @@ private:
     IsoTLSAllocatorEntry(IsoHeapImpl<Config>&);
 
     void construct(void* dst) override;
+
+    void scavenge(void* entry) override;
     
     IsoHeapImpl<Config>& m_heap;
 };
