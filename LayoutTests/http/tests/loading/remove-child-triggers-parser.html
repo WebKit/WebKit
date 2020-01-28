@@ -1,9 +1,18 @@
 <script></script>
 <!-- This test covers Bug 93641 -->
 <script>
-if (window.testRunner)
+if (window.testRunner) {
     testRunner.dumpAsText();
-setTimeout(function() { var child = document.documentElement; child.parentNode.removeChild(child); }, 36);
+    testRunner.waitUntilDone();
+}
+window.onload = () => {
+    setTimeout(function() {
+        var child = document.documentElement;
+        child.parentNode.removeChild(child);
+        if (window.testRunner)
+            testRunner.notifyDone();
+    }, 36);
+}
 </script>
 <script></script>
 <span></span>
