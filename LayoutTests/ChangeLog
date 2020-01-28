@@ -1,5 +1,89 @@
 2020-01-27  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r255108. rdar://problem/58920185
+
+    [iOS] Long pressing text inside a selection should update the selection
+    https://bugs.webkit.org/show_bug.cgi?id=206769
+    <rdar://problem/58704316>
+    
+    Reviewed by Tim Horton.
+    
+    Source/WebCore:
+    
+    Remove `hasSelectionAtPosition`, which is no longer needed.
+    
+    * page/Page.cpp:
+    (WebCore::Page::hasSelectionAtPosition const): Deleted.
+    * page/Page.h:
+    
+    Source/WebKit:
+    
+    Makes it possible to update the selection using text interaction gestures inside an existing text selection. To
+    do this, we remove code that was previously required in order to disambiguate text selection and drag gestures.
+    However, since adopting asynchronous drag interaction SPI, this check has not been necessary.
+    
+    The only other purpose of this check was to avoid triggering text selection gestures after canceling a drag
+    that did not begin (i.e. the touch location did not move). Instead of bailing in -textInteractionGestures:
+    shouldBeginAtPoint: and -hasSelectablePositionAtPoint:, we can achieve the same effect by simply resetting the
+    text interaction gestures when the drag lift begins (at which point we know the drag interaction is starting).
+    This also ensures that on iPad, in the case where the drag was cancelled by the page, long pressing may still
+    trigger text selection.
+    
+    Test: editing/selection/ios/select-text-in-existing-selection.html
+    
+    * Shared/ios/InteractionInformationAtPosition.h:
+    * Shared/ios/InteractionInformationAtPosition.mm:
+    (WebKit::InteractionInformationAtPosition::encode const):
+    (WebKit::InteractionInformationAtPosition::decode):
+    
+    Remove the hasSelectionAtPosition flag from position information, since we no longer need it.
+    
+    * UIProcess/ios/WKContentViewInteraction.mm:
+    (-[UIGestureRecognizer _wk_cancel]):
+    
+    Drive-by fix: just ignore the gesture if it is already disabled. This prevents us from causing a gesture
+    recognizer that was previously disabled to become enabled as a result of calling -_wk_cancel.
+    
+    (-[WKContentView hasSelectablePositionAtPoint:]):
+    (-[WKContentView textInteractionGesture:shouldBeginAtPoint:]):
+    (-[WKContentView cancelActiveTextInteractionGestures]):
+    
+    Instead of making the text interaction gestures return NO from -gestureRecognizerShouldBegin:, explicitly cancel
+    the text interaction gestures that may select text.
+    
+    (-[WKContentView dragInteraction:willAnimateLiftWithAnimator:session:]):
+    * WebProcess/WebPage/ios/WebPageIOS.mm:
+    (WebKit::WebPage::positionInformation):
+    
+    Remove the hasSelectionAtPosition flag from position information, since we no longer need it.
+    
+    LayoutTests:
+    
+    Add a layout test to verify that it's possible to select text by long pressing inside an existing text
+    selection. The test is runnable on both iPad and iPhone, since it programmatically prevents `dragstart`.
+    
+    * editing/selection/ios/select-text-in-existing-selection-expected.txt: Added.
+    * editing/selection/ios/select-text-in-existing-selection.html: Added.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@255108 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-01-24  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+            [iOS] Long pressing text inside a selection should update the selection
+            https://bugs.webkit.org/show_bug.cgi?id=206769
+            <rdar://problem/58704316>
+
+            Reviewed by Tim Horton.
+
+            Add a layout test to verify that it's possible to select text by long pressing inside an existing text
+            selection. The test is runnable on both iPad and iPhone, since it programmatically prevents `dragstart`.
+
+            * editing/selection/ios/select-text-in-existing-selection-expected.txt: Added.
+            * editing/selection/ios/select-text-in-existing-selection.html: Added.
+
+2020-01-27  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r254834. rdar://problem/58856027
 
     REGRESSION (r250655?): [ Mac Debug ] inspector/runtime/promise-native-getter.html is a flaky timeout
