@@ -2137,7 +2137,7 @@ sub attributeCommand($$)
         }
         $result = $attributeCache{$attr}{$file};
     } elsif (isGit()) {
-        my $command = GIT . " check-attr $attr -- $file";
+        my $command = GIT . " check-attr $attr -- '$file'";
         $result = `$command`;
         chomp $result;
         $result =~ s/.*\W(\w)/$1/;

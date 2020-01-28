@@ -1,3 +1,15 @@
+2020-01-28  James Darpinian  <jdarpinian@chromium.org>
+
+        Quote file argument to git check-attr
+        https://bugs.webkit.org/show_bug.cgi?id=206322
+
+        Reviewed by Jonathan Bedard.
+
+        * Scripts/prepare-ChangeLog:
+        (attributeCommand):
+        * Scripts/webkitperl/prepare-ChangeLog_unittest/filenameWithParentheses.pl: Added.
+        (writeFileWithContent):
+
 2020-01-28  Brent Fulgham  <bfulgham@apple.com>
 
         Reset the application bundle identifier between test runs
