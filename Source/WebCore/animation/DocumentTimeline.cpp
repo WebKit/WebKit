@@ -335,15 +335,18 @@ bool DocumentTimeline::shouldRunUpdateAnimationsAndSendEventsIgnoringSuspensionS
     return !m_animations.isEmpty() || !m_acceleratedAnimationsPendingRunningStateChange.isEmpty();
 }
 
-void DocumentTimeline::updateAnimationsAndSendEvents(DOMHighResTimeStamp timestamp)
+void DocumentTimeline::updateCurrentTime(DOMHighResTimeStamp timestamp)
 {
     // We need to freeze the current time even if no animation is running.
     // document.timeline.currentTime may be called from a rAF callback and
     // it has to match the rAF timestamp.
     if (!m_isSuspended)
         cacheCurrentTime(timestamp);
+}
 
-    if (m_isSuspended || !m_animationResolutionScheduled || !shouldRunUpdateAnimationsAndSendEventsIgnoringSuspensionState())
+void DocumentTimeline::updateAnimationsAndSendEvents()
+{
+    if (m_isSuspended || !shouldRunUpdateAnimationsAndSendEventsIgnoringSuspensionState())
         return;
 
     // Updating animations and sending events may invalidate the timing of some animations, so we must set the m_animationResolutionScheduled

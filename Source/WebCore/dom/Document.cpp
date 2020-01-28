@@ -6353,12 +6353,21 @@ void Document::resumeScriptedAnimationControllerCallbacks()
 void Document::updateAnimationsAndSendEvents(DOMHighResTimeStamp timestamp)
 {
     ASSERT(!m_timelines.hasNullReferences());
+
     // We need to copy m_timelines before iterating over its members since calling updateAnimationsAndSendEvents() may mutate m_timelines.
     Vector<RefPtr<DocumentTimeline>> timelines;
-    for (auto& timeline : m_timelines)
+    bool shouldUpdateAnimations = false;
+    for (auto& timeline : m_timelines) {
+        if (!shouldUpdateAnimations && timeline.scheduledUpdate())
+            shouldUpdateAnimations = true;
         timelines.append(&timeline);
-    for (auto& timeline : timelines)
-        timeline->updateAnimationsAndSendEvents(timestamp);
+    }
+
+    for (auto& timeline : timelines) {
+        timeline->updateCurrentTime(timestamp);
+        if (shouldUpdateAnimations)
+            timeline->updateAnimationsAndSendEvents();
+    }
 }
 
 void Document::serviceRequestAnimationFrameCallbacks(DOMHighResTimeStamp timestamp)
