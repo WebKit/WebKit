@@ -1,4 +1,4 @@
-# Copyright (C) 2018 Apple Inc. All rights reserved.
+# Copyright (C) 2018-2020 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -36,6 +36,7 @@ class Patch(models.Model):
     bug_id = models.IntegerField()
     obsolete = models.BooleanField(default=False)
     sent_to_buildbot = models.BooleanField(default=False)
+    sent_to_commit_queue = models.BooleanField(default=False)
     created = models.DateTimeField(auto_now_add=True)
     modified = models.DateTimeField(auto_now=True)
 
@@ -43,7 +44,7 @@ class Patch(models.Model):
         return str(self.patch_id)
 
     @classmethod
-    def save_patch(cls, patch_id, bug_id=-1, obsolete=False, sent_to_buildbot=False):
+    def save_patch(cls, patch_id, bug_id=-1, obsolete=False, sent_to_buildbot=False, sent_to_commit_queue=False):
         if not Patch.is_valid_patch_id(patch_id):
             _log.warn('Patch id {} in invalid. Skipped saving.'.format(patch_id))
             return ERR_INVALID_PATCH_ID
@@ -51,7 +52,7 @@ class Patch(models.Model):
         if Patch.is_existing_patch_id(patch_id):
             _log.debug('Patch id {} already exists in database. Skipped saving.'.format(patch_id))
             return ERR_EXISTING_PATCH
-        Patch(patch_id, bug_id, obsolete, sent_to_buildbot).save()
+        Patch(patch_id, bug_id, obsolete, sent_to_buildbot, sent_to_commit_queue).save()
         _log.info('Saved patch in database, id: {}'.format(patch_id))
         return SUCCESS
 
@@ -62,8 +63,11 @@ class Patch(models.Model):
 
     @classmethod
     def is_valid_patch_id(cls, patch_id):
-        if not patch_id or type(patch_id) != int or patch_id < 1:
+        if not patch_id or patch_id < 1:
             _log.warn('Invalid patch id: {}'.format(patch_id))
+            return False
+        if type(patch_id) != int:
+            _log.warn('Data type mismatch for patch_id, expected: int, found: {}, id: {}'.format(type(patch_id), patch_id))
             return False
         return True
 
@@ -72,8 +76,18 @@ class Patch(models.Model):
         return bool(Patch.objects.filter(patch_id=patch_id))
 
     @classmethod
-    def is_patch_sent_to_buildbot(cls, patch_id):
+    def is_patch_sent_to_buildbot(cls, patch_id, commit_queue=False):
+        if commit_queue:
+            return Patch._is_patch_sent_to_commit_queue(patch_id)
+        return Patch._is_patch_sent_to_buildbot(patch_id)
+
+    @classmethod
+    def _is_patch_sent_to_buildbot(cls, patch_id):
         return Patch.is_existing_patch_id(patch_id) and Patch.objects.get(pk=patch_id).sent_to_buildbot
+
+    @classmethod
+    def _is_patch_sent_to_commit_queue(cls, patch_id):
+        return Patch.is_existing_patch_id(patch_id) and Patch.objects.get(pk=patch_id).sent_to_commit_queue
 
     @classmethod
     def get_patch(cls, patch_id):
@@ -83,7 +97,13 @@ class Patch(models.Model):
             return None
 
     @classmethod
-    def set_sent_to_buildbot(cls, patch_id, sent_to_buildbot=True):
+    def set_sent_to_buildbot(cls, patch_id, value, commit_queue=False):
+        if commit_queue:
+            return Patch._set_sent_to_commit_queue(patch_id, sent_to_commit_queue=value)
+        return Patch._set_sent_to_buildbot(patch_id, sent_to_buildbot=value)
+
+    @classmethod
+    def _set_sent_to_buildbot(cls, patch_id, sent_to_buildbot=True):
         if not Patch.is_existing_patch_id(patch_id):
             Patch.save_patch(patch_id=patch_id, sent_to_buildbot=sent_to_buildbot)
             _log.info('Patch {} saved to database with sent_to_buildbot={}'.format(patch_id, sent_to_buildbot))
@@ -97,6 +117,23 @@ class Patch(models.Model):
         patch.sent_to_buildbot = sent_to_buildbot
         patch.save()
         _log.info('Updated patch {} with sent_to_buildbot={}'.format(patch_id, sent_to_buildbot))
+        return SUCCESS
+
+    @classmethod
+    def _set_sent_to_commit_queue(cls, patch_id, sent_to_commit_queue=True):
+        if not Patch.is_existing_patch_id(patch_id):
+            Patch.save_patch(patch_id=patch_id, sent_to_commit_queue=sent_to_commit_queue)
+            _log.info('Patch {} saved to database with sent_to_commit_queue={}'.format(patch_id, sent_to_commit_queue))
+            return SUCCESS
+
+        patch = Patch.objects.get(pk=patch_id)
+        if patch.sent_to_commit_queue == sent_to_commit_queue:
+            _log.warn('Patch {} already has sent_to_commit_queue={}'.format(patch_id, sent_to_commit_queue))
+            return SUCCESS
+
+        patch.sent_to_commit_queue = sent_to_commit_queue
+        patch.save()
+        _log.info('Updated patch {} with sent_to_commit_queue={}'.format(patch_id, sent_to_commit_queue))
         return SUCCESS
 
     @classmethod

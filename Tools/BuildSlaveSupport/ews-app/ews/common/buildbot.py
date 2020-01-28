@@ -1,4 +1,4 @@
-# Copyright (C) 2018-2019 Apple Inc. All rights reserved.
+# Copyright (C) 2018-2020 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -41,10 +41,12 @@ class Buildbot():
     icons_for_queues_mapping = {}
 
     @classmethod
-    def send_patch_to_buildbot(cls, patch_path, properties=[]):
+    def send_patch_to_buildbot(cls, patch_path, send_to_commit_queue=False, properties=None):
+        properties = properties or []
+        buildbot_port = config.COMMIT_QUEUE_PORT if send_to_commit_queue else config.BUILDBOT_SERVER_PORT
         command = ['buildbot', 'try',
                    '--connect=pb',
-                   '--master={}:{}'.format(config.BUILDBOT_SERVER_HOST, config.BUILDBOT_SERVER_PORT),
+                   '--master={}:{}'.format(config.BUILDBOT_SERVER_HOST, buildbot_port),
                    '--username={}'.format(config.BUILDBOT_TRY_USERNAME),
                    '--passwd={}'.format(config.BUILDBOT_TRY_PASSWORD),
                    '--diff={}'.format(patch_path),
@@ -53,10 +55,9 @@ class Buildbot():
         for property in properties:
             command.append('--property={}'.format(property))
 
-        _log.debug('Executing command: {}'.format(command))
         return_code = subprocess.call(command)
         if return_code:
-            _log.warn('Error executing: {}, return code={}'.format(command, return_code))
+            _log.warn('Error executing buildbot try command for {}, return code={}'.format(patch_path, return_code))
 
         return return_code
 
