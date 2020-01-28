@@ -1,3 +1,17 @@
+2020-01-27  Peng Liu  <peng.liu6@apple.com>
+
+        REGRSSION: [ High Sierra Catalina ] (r253310) compositing/video/video-border-radius-clipping.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=205226
+
+        Reviewed by Simon Fraser.
+
+        Add a special video with only one frame so that the video element in a test page will always render the exact same pixels.
+
+        * compositing/video/video-border-radius-clipping-expected.html:
+        * compositing/video/video-border-radius-clipping.html:
+        * media/content/pure-color-green.mp4: Added.
+        * platform/mac-wk1/TestExpectations:
+
 2020-01-27  Jacob Uphoff  <jacob_uphoff@apple.com>
 
         animations/animation-direction-reverse.html is flaky failing
