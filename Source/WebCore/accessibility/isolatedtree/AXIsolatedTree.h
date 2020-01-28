@@ -64,7 +64,7 @@ public:
     void setFocusedNodeID(AXID);
     
     // Call on AX thread
-    WEBCORE_EXPORT void applyPendingChanges();
+    void applyPendingChanges();
 
     AXIsolatedTreeID treeIdentifier() const { return m_treeID; }
 

@@ -99,6 +99,8 @@ void AXIsolatedTree::removeTreeForPageID(PageIdentifier pageID)
             if (auto object = tree->nodeForID(axID))
                 object->detach(AccessibilityDetachmentType::CacheDestroyed);
         }
+        tree->m_pendingAppends.clear();
+        tree->m_pendingRemovals.clear();
         tree->m_readerThreadNodeMap.clear();
         treeLocker.unlockEarly();
 
@@ -171,12 +173,14 @@ void AXIsolatedTree::applyPendingChanges()
 
     for (auto& item : m_pendingAppends)
         m_readerThreadNodeMap.add(item->objectID(), WTFMove(item));
+    m_pendingAppends.clear();
 
     for (auto& item : m_pendingRemovals) {
         if (auto object = nodeForID(item))
             object->detach(AccessibilityDetachmentType::ElementDestroyed);
         m_readerThreadNodeMap.remove(item);
     }
+    m_pendingRemovals.clear();
 }
     
 } // namespace WebCore
