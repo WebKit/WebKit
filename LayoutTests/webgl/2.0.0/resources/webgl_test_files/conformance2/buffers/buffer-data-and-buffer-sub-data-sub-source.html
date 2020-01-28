@@ -52,7 +52,7 @@ function verifyBufferData(testCase, sourceByteOffset, size, data) {
     var offset = sourceByteOffset / testCase.size;
     for (var ii = 0; ii < size; ++ii) {
         if (readbackView[ii] != data[ii]) {
-            testFailed("expected data at " + ii + ": " + data[iit] + ", got " + readbackView[ii]);
+            testFailed("expected data at " + ii + ": " + data[ii] + ", got " + readbackView[ii]);
             pass = false;
         }
     }

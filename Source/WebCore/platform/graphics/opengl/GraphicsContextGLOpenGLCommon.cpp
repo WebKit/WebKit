@@ -2829,33 +2829,6 @@ void GraphicsContextGLOpenGL::uniformBlockBinding(PlatformGLObject, GCGLuint, GC
 }
 #endif
 
-void GraphicsContextGLOpenGL::texImage2D(GCGLenum target, GCGLint level, GCGLint internalformat, GCGLsizei width, GCGLsizei height, GCGLint border, GCGLenum format, GCGLenum type, GCGLintptr pboOffset)
-{
-    UNUSED_PARAM(target);
-    UNUSED_PARAM(level);
-    UNUSED_PARAM(internalformat);
-    UNUSED_PARAM(width);
-    UNUSED_PARAM(height);
-    UNUSED_PARAM(border);
-    UNUSED_PARAM(format);
-    UNUSED_PARAM(type);
-    UNUSED_PARAM(pboOffset);
-}
-
-void GraphicsContextGLOpenGL::texImage2D(GCGLenum target, GCGLint level, GCGLint internalformat, GCGLsizei width, GCGLsizei height, GCGLint border, GCGLenum format, GCGLenum type, const void* srcData, GCGLuint srcOffset)
-{
-    UNUSED_PARAM(target);
-    UNUSED_PARAM(level);
-    UNUSED_PARAM(internalformat);
-    UNUSED_PARAM(width);
-    UNUSED_PARAM(height);
-    UNUSED_PARAM(border);
-    UNUSED_PARAM(format);
-    UNUSED_PARAM(type);
-    UNUSED_PARAM(srcData);
-    UNUSED_PARAM(srcOffset);
-}
-
 void GraphicsContextGLOpenGL::texSubImage2D(GCGLenum target, GCGLint level, GCGLint xoffset, GCGLint yoffset, GCGLsizei width, GCGLsizei height, GCGLenum format, GCGLenum type, GCGLintptr pboOffset)
 {
     UNUSED_PARAM(target);

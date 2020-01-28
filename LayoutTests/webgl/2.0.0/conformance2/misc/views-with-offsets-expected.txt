@@ -1,70 +1,160 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../resources/webgl_test_files/conformance2/misc/views-with-offsets.html
-[ 1: FAIL ] Does not support texImage2D with offsets into views.
-[ 2: FAIL ] Does not support texSubImage2D with offsets into views.
-[ 3: PASS ] getError was expected value: NO_ERROR :
+[ 1: PASS ] getError was expected value: NO_ERROR :
+[ 2: PASS ] getError was expected value: NO_ERROR :
+[ 3: PASS ] Should be [0, 1, 1, 2], was [0, 1, 1, 2].
 [ 4: PASS ] getError was expected value: NO_ERROR :
-[ 5: FAIL ] Should be [0, 1, 1, 2], was [0, 0, 0, 0].
-[ 6: PASS ] getError was expected value: NO_ERROR :
+[ 5: PASS ] getError was expected value: NO_ERROR :
+[ 6: PASS ] Should be [1, 1, 2, 3], was [1, 1, 2, 3].
 [ 7: PASS ] getError was expected value: NO_ERROR :
-[ 8: FAIL ] Should be [1, 1, 2, 3], was [0, 0, 0, 0].
-[ 9: PASS ] getError was expected value: NO_ERROR :
+[ 8: PASS ] getError was expected value: NO_ERROR :
+[ 9: PASS ] Should be [1, 2, 3, 5], was [1, 2, 3, 5].
 [ 10: PASS ] getError was expected value: NO_ERROR :
-[ 11: FAIL ] Should be [1, 2, 3, 5], was [0, 0, 0, 0].
-[ 12: PASS ] getError was expected value: NO_ERROR :
+[ 11: PASS ] getError was expected value: NO_ERROR :
+[ 12: PASS ] Should be [2, 3, 5, 8], was [2, 3, 5, 8].
 [ 13: PASS ] getError was expected value: NO_ERROR :
-[ 14: FAIL ] Should be [2, 3, 5, 8], was [0, 0, 0, 0].
-[ 15: PASS ] getError was expected value: NO_ERROR :
+[ 14: PASS ] getError was expected value: NO_ERROR :
+[ 15: PASS ] Should be [3, 5, 8, 13], was [3, 5, 8, 13].
 [ 16: PASS ] getError was expected value: NO_ERROR :
-[ 17: FAIL ] Should be [3, 5, 8, 13], was [0, 0, 0, 0].
-[ 18: PASS ] getError was expected value: NO_ERROR :
+[ 17: PASS ] getError was expected value: NO_ERROR :
+[ 18: PASS ] Should be [5, 8, 13, 21], was [5, 8, 13, 21].
 [ 19: PASS ] getError was expected value: NO_ERROR :
-[ 20: FAIL ] Should be [5, 8, 13, 21], was [0, 0, 0, 0].
-[ 21: PASS ] getError was expected value: NO_ERROR :
+[ 20: PASS ] getError was expected value: NO_ERROR :
+[ 21: PASS ] Should be [8, 13, 21, 34], was [8, 13, 21, 34].
 [ 22: PASS ] getError was expected value: NO_ERROR :
-[ 23: FAIL ] Should be [8, 13, 21, 34], was [0, 0, 0, 0].
-[ 24: PASS ] getError was expected value: NO_ERROR :
+[ 23: PASS ] getError was expected value: NO_ERROR :
+[ 24: PASS ] Should be [13, 21, 34, 55], was [13, 21, 34, 55].
 [ 25: PASS ] getError was expected value: NO_ERROR :
-[ 26: FAIL ] Should be [13, 21, 34, 55], was [0, 0, 0, 0].
-[ 27: PASS ] getError was expected value: NO_ERROR :
+[ 26: PASS ] getError was expected value: NO_ERROR :
+[ 27: PASS ] Should be [21, 34, 55, 89], was [21, 34, 55, 89].
 [ 28: PASS ] getError was expected value: NO_ERROR :
-[ 29: FAIL ] Should be [21, 34, 55, 89], was [0, 0, 0, 0].
-[ 30: PASS ] getError was expected value: NO_ERROR :
+[ 29: PASS ] getError was expected value: NO_ERROR :
+[ 30: PASS ] Should be [34, 55, 89, 144], was [34, 55, 89, 144].
 [ 31: PASS ] getError was expected value: NO_ERROR :
-[ 32: FAIL ] Should be [34, 55, 89, 144], was [0, 0, 0, 0].
-[ 33: PASS ] getError was expected value: NO_ERROR :
-[ 34: PASS ] getError was expected value: NO_ERROR :
-[ 35: FAIL ] Should be [55, 89, 144, 233], was [0, 0, 0, 0].
-[ 36: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR :
-[ 37: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR :
-[ 38: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR :
-[ 39: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR :
-[ 40: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR :
-[ 41: PASS ] getError was expected value: NO_ERROR :
+[ 32: PASS ] getError was expected value: NO_ERROR :
+[ 33: PASS ] Should be [55, 89, 144, 233], was [55, 89, 144, 233].
+[ 34: PASS ] getError was expected value: INVALID_OPERATION :
+[ 35: PASS ] getError was expected value: INVALID_OPERATION :
+[ 36: PASS ] getError was expected value: INVALID_OPERATION :
+[ 37: PASS ] getError was expected value: INVALID_OPERATION :
+[ 38: PASS ] getError was expected value: INVALID_OPERATION :
+[ 39: PASS ] getError was expected value: NO_ERROR :
+[ 40: PASS ] getError was expected value: NO_ERROR :
+[ 41: PASS ] Should be 65504, was 65504.
 [ 42: PASS ] getError was expected value: NO_ERROR :
-[ 43: FAIL ] Should be 65504, was 0.
-[ 44: PASS ] getError was expected value: NO_ERROR :
-[ 45: PASS ] getError was expected value: NO_ERROR :
-[ 46: FAIL ] Should be 2047, was 0.
-[ 47: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR :
-[ 48: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR :
-[ 49: FAIL ] Does not support texSubImage3D with offsets into views.
-[ 50: FAIL ] Does not support compressedTexImage2D with offsets into views.
-[ 51: FAIL ] Does not support compressedTexSubImage2D with offsets into views.
-[ 52: PASS ] getError was expected value: NO_ERROR :
+[ 43: PASS ] getError was expected value: NO_ERROR :
+[ 44: PASS ] Should be 2047, was 2047.
+[ 45: PASS ] getError was expected value: INVALID_OPERATION :
+[ 46: PASS ] getError was expected value: INVALID_OPERATION :
+[ 47: FAIL ] getError expected: NO_ERROR. Was INVALID_VALUE :
+[ 48: PASS ] getError was expected value: NO_ERROR :
+[ 49: PASS ] Should be [0, 1, 1, 2], was [0, 1, 1, 2].
+[ 50: PASS ] getError was expected value: NO_ERROR :
+[ 51: PASS ] getError was expected value: NO_ERROR :
+[ 52: PASS ] Should be [1, 1, 2, 3], was [1, 1, 2, 3].
 [ 53: PASS ] getError was expected value: NO_ERROR :
-[ 54: FAIL ] getError expected: INVALID_VALUE. Was NO_ERROR :
-[ 55: FAIL ] getError expected: INVALID_VALUE. Was NO_ERROR :
-[ 56: FAIL ] getError expected: INVALID_VALUE. Was NO_ERROR :
-[ 57: FAIL ] getError expected: INVALID_VALUE. Was NO_ERROR :
-[ 58: FAIL ] getError expected: INVALID_VALUE. Was NO_ERROR :
-[ 59: FAIL ] getError expected: INVALID_VALUE. Was NO_ERROR :
-[ 60: FAIL ] getError expected: INVALID_VALUE. Was NO_ERROR :
-[ 61: FAIL ] getError expected: INVALID_VALUE. Was NO_ERROR :
-[ 62: FAIL ] getError expected: INVALID_VALUE. Was NO_ERROR :
-[ 63: FAIL ] Does not support compressedTexSubImage3D with offsets into views.
-[ 64: FAIL ] Does not support doReadPixels with offsets into views.
-[ 65: PASS ] successfullyParsed is true
-[ FAIL ] 36 failures reported
+[ 54: PASS ] getError was expected value: NO_ERROR :
+[ 55: PASS ] Should be [1, 2, 3, 5], was [1, 2, 3, 5].
+[ 56: PASS ] getError was expected value: NO_ERROR :
+[ 57: PASS ] getError was expected value: NO_ERROR :
+[ 58: PASS ] Should be [2, 3, 5, 8], was [2, 3, 5, 8].
+[ 59: PASS ] getError was expected value: NO_ERROR :
+[ 60: PASS ] getError was expected value: NO_ERROR :
+[ 61: PASS ] Should be [3, 5, 8, 13], was [3, 5, 8, 13].
+[ 62: PASS ] getError was expected value: NO_ERROR :
+[ 63: PASS ] getError was expected value: NO_ERROR :
+[ 64: PASS ] Should be [5, 8, 13, 21], was [5, 8, 13, 21].
+[ 65: PASS ] getError was expected value: NO_ERROR :
+[ 66: PASS ] getError was expected value: NO_ERROR :
+[ 67: PASS ] Should be [8, 13, 21, 34], was [8, 13, 21, 34].
+[ 68: PASS ] getError was expected value: NO_ERROR :
+[ 69: PASS ] getError was expected value: NO_ERROR :
+[ 70: PASS ] Should be [13, 21, 34, 55], was [13, 21, 34, 55].
+[ 71: PASS ] getError was expected value: NO_ERROR :
+[ 72: PASS ] getError was expected value: NO_ERROR :
+[ 73: PASS ] Should be [21, 34, 55, 89], was [21, 34, 55, 89].
+[ 74: PASS ] getError was expected value: NO_ERROR :
+[ 75: PASS ] getError was expected value: NO_ERROR :
+[ 76: PASS ] Should be [34, 55, 89, 144], was [34, 55, 89, 144].
+[ 77: PASS ] getError was expected value: NO_ERROR :
+[ 78: PASS ] getError was expected value: NO_ERROR :
+[ 79: PASS ] Should be [55, 89, 144, 233], was [55, 89, 144, 233].
+[ 80: PASS ] getError was expected value: INVALID_OPERATION :
+[ 81: PASS ] getError was expected value: INVALID_OPERATION :
+[ 82: PASS ] getError was expected value: INVALID_OPERATION :
+[ 83: PASS ] getError was expected value: INVALID_OPERATION :
+[ 84: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_VALUE :
+[ 85: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION :
+[ 86: PASS ] getError was expected value: NO_ERROR :
+[ 87: PASS ] Should be 65504, was 65504.
+[ 88: PASS ] getError was expected value: NO_ERROR :
+[ 89: PASS ] getError was expected value: NO_ERROR :
+[ 90: PASS ] Should be 2047, was 2047.
+[ 91: PASS ] getError was expected value: INVALID_OPERATION :
+[ 92: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_VALUE :
+[ 93: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM :
+[ 94: PASS ] getError was expected value: NO_ERROR :
+[ 95: FAIL ] Should be [0, 1, 1, 2], was [0, 0, 0, 255].
+[ 96: PASS ] getError was expected value: NO_ERROR :
+[ 97: PASS ] getError was expected value: NO_ERROR :
+[ 98: FAIL ] Should be [1, 1, 2, 3], was [0, 0, 0, 255].
+[ 99: PASS ] getError was expected value: NO_ERROR :
+[ 100: PASS ] getError was expected value: NO_ERROR :
+[ 101: FAIL ] Should be [1, 2, 3, 5], was [0, 0, 0, 255].
+[ 102: PASS ] getError was expected value: NO_ERROR :
+[ 103: PASS ] getError was expected value: NO_ERROR :
+[ 104: FAIL ] Should be [2, 3, 5, 8], was [0, 0, 0, 255].
+[ 105: PASS ] getError was expected value: NO_ERROR :
+[ 106: PASS ] getError was expected value: NO_ERROR :
+[ 107: FAIL ] Should be [3, 5, 8, 13], was [0, 0, 0, 255].
+[ 108: PASS ] getError was expected value: NO_ERROR :
+[ 109: PASS ] getError was expected value: NO_ERROR :
+[ 110: FAIL ] Should be [5, 8, 13, 21], was [0, 0, 0, 255].
+[ 111: PASS ] getError was expected value: NO_ERROR :
+[ 112: PASS ] getError was expected value: NO_ERROR :
+[ 113: FAIL ] Should be [8, 13, 21, 34], was [0, 0, 0, 255].
+[ 114: PASS ] getError was expected value: NO_ERROR :
+[ 115: PASS ] getError was expected value: NO_ERROR :
+[ 116: FAIL ] Should be [13, 21, 34, 55], was [0, 0, 0, 255].
+[ 117: PASS ] getError was expected value: NO_ERROR :
+[ 118: PASS ] getError was expected value: NO_ERROR :
+[ 119: FAIL ] Should be [21, 34, 55, 89], was [0, 0, 0, 255].
+[ 120: PASS ] getError was expected value: NO_ERROR :
+[ 121: PASS ] getError was expected value: NO_ERROR :
+[ 122: FAIL ] Should be [34, 55, 89, 144], was [0, 0, 0, 255].
+[ 123: PASS ] getError was expected value: NO_ERROR :
+[ 124: PASS ] getError was expected value: NO_ERROR :
+[ 125: FAIL ] Should be [55, 89, 144, 233], was [0, 0, 0, 255].
+[ 126: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR :
+[ 127: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR :
+[ 128: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR :
+[ 129: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR :
+[ 130: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR :
+[ 131: PASS ] getError was expected value: NO_ERROR :
+[ 132: PASS ] getError was expected value: NO_ERROR :
+[ 133: FAIL ] Should be 65504, was 0.
+[ 134: PASS ] getError was expected value: NO_ERROR :
+[ 135: PASS ] getError was expected value: NO_ERROR :
+[ 136: FAIL ] Should be 2047, was 0.
+[ 137: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR :
+[ 138: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR :
+[ 139: FAIL ] Does not support texSubImage3D with offsets into views.
+[ 140: FAIL ] Does not support compressedTexImage2D with offsets into views.
+[ 141: FAIL ] Does not support compressedTexSubImage2D with offsets into views.
+[ 142: PASS ] getError was expected value: NO_ERROR :
+[ 143: PASS ] getError was expected value: NO_ERROR :
+[ 144: FAIL ] getError expected: INVALID_VALUE. Was NO_ERROR :
+[ 145: FAIL ] getError expected: INVALID_VALUE. Was NO_ERROR :
+[ 146: FAIL ] getError expected: INVALID_VALUE. Was NO_ERROR :
+[ 147: FAIL ] getError expected: INVALID_VALUE. Was NO_ERROR :
+[ 148: FAIL ] getError expected: INVALID_VALUE. Was NO_ERROR :
+[ 149: FAIL ] getError expected: INVALID_VALUE. Was NO_ERROR :
+[ 150: FAIL ] getError expected: INVALID_VALUE. Was NO_ERROR :
+[ 151: FAIL ] getError expected: INVALID_VALUE. Was NO_ERROR :
+[ 152: FAIL ] getError expected: INVALID_VALUE. Was NO_ERROR :
+[ 153: FAIL ] Does not support compressedTexSubImage3D with offsets into views.
+[ 154: FAIL ] Does not support doReadPixels with offsets into views.
+[ 155: PASS ] successfullyParsed is true
+[ FAIL ] 39 failures reported
 

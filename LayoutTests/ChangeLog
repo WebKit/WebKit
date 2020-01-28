@@ -1,3 +1,23 @@
+2020-01-28  Justin Fan  <justin_fan@apple.com>
+
+        [WebGL2] Implement sub-source texImage2D and texSubImage2D
+        https://bugs.webkit.org/show_bug.cgi?id=206782
+        <rdar://problem/58886527>
+
+        Reviewed by Dean Jackson.
+
+        Update expected results for ANGLE backend for texImage2D and texSubImage2D.
+
+        * webgl/2.0.0/conformance2/buffers/buffer-data-and-buffer-sub-data-sub-source-expected.txt: 
+                Test was not fully running due to typo.
+                After fixing, 0 regression from running the fixed test on tip of tree with ANGLE enabled.
+        * webgl/2.0.0/conformance2/misc/views-with-offsets-expected.txt: 
+                The 3 additional failures are not regressions, and total number of sub-tests run increased from 65 to 155.
+        * webgl/2.0.0/conformance2/textures/misc/tex-image-and-sub-image-with-array-buffer-view-sub-source-expected.txt:
+                Passes all texImage2D and texSubImage2D tests. The "3D" methods are not yet implemented.
+        * webgl/2.0.0/resources/webgl_test_files/conformance2/buffers/buffer-data-and-buffer-sub-data-sub-source.html: 
+                Fix typo to actually run the test.
+
 2020-01-28  Jacob Uphoff  <jacob_uphoff@apple.com>
 
         [ iOS ] http/tests/workers/service/service-worker-user-timing.https.html is flaky timing out

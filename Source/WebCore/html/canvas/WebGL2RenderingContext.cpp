@@ -62,6 +62,7 @@
 #include <JavaScriptCore/GenericTypedArrayViewInlines.h>
 #include <JavaScriptCore/HeapInlines.h>
 #include <JavaScriptCore/JSGenericTypedArrayViewInlines.h>
+#include <JavaScriptCore/TypedArrayType.h>
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
@@ -144,87 +145,68 @@ void WebGL2RenderingContext::initializeSamplerCache()
     m_boundSamplers.resize(m_textureUnits.size());
 }
 
-inline static Optional<unsigned> arrayBufferViewElementSize(const ArrayBufferView& data)
+RefPtr<ArrayBufferView> WebGL2RenderingContext::arrayBufferViewSliceFactory(const char* const functionName, const ArrayBufferView& data, unsigned startByte,  unsigned numElements)
 {
+    RefPtr<ArrayBufferView> slice;
+
     switch (data.getType()) {
-    case JSC::NotTypedArray:
+#define FACTORY_CASE(type) \
+    case JSC::Type##type: \
+        slice = JSC::type##Array::tryCreate(data.possiblySharedBuffer(), startByte, numElements); \
+        break;
+
+    FOR_EACH_TYPED_ARRAY_TYPE_EXCLUDING_DATA_VIEW(FACTORY_CASE);
+#undef FACTORY_CASE
     case JSC::TypeDataView:
-        return WTF::nullopt;
-    case JSC::TypeInt8:
-    case JSC::TypeUint8:
-    case JSC::TypeUint8Clamped:
-    case JSC::TypeInt16:
-    case JSC::TypeUint16:
-    case JSC::TypeInt32:
-    case JSC::TypeUint32:
-    case JSC::TypeFloat32:
-    case JSC::TypeFloat64:
-        return elementSize(data.getType());
+        slice = Uint8Array::tryCreate(data.possiblySharedBuffer(), startByte, numElements);
+        break;
+    default:
+        ASSERT_NOT_REACHED();
+        return nullptr;
     }
-    RELEASE_ASSERT_NOT_REACHED();
+
+    if (!slice)
+        synthesizeGLError(GraphicsContextGL::OUT_OF_MEMORY, functionName, "Could not create intermediate ArrayBufferView");
+
+    return slice;
+}
+
+RefPtr<ArrayBufferView> WebGL2RenderingContext::sliceArrayBufferView(const char* const functionName, const ArrayBufferView& data, GCGLuint srcOffset, GCGLuint length)
+{
+    if (data.getType() == JSC::NotTypedArray) {
+        synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, functionName, "Invalid type of Array Buffer View");
+        return nullptr;
+    }
+
+    auto elementSize = JSC::elementSize(data.getType());
+    Checked<GCGLuint, RecordOverflow> checkedElementSize(elementSize);
+
+    Checked<GCGLuint, RecordOverflow> checkedSrcOffset(srcOffset);
+    Checked<GCGLuint, RecordOverflow> checkedByteSrcOffset = checkedSrcOffset * checkedElementSize;
+    Checked<GCGLuint, RecordOverflow> checkedLength(length);
+    Checked<GCGLuint, RecordOverflow> checkedByteLength = checkedLength * checkedElementSize;
+
+    if (checkedByteSrcOffset.hasOverflowed()
+        || checkedByteLength.hasOverflowed()
+        || checkedByteSrcOffset.unsafeGet() > data.byteLength()
+        || checkedByteLength.unsafeGet() > data.byteLength() - checkedByteSrcOffset.unsafeGet()) {
+        synthesizeGLError(GraphicsContextGL::INVALID_VALUE, functionName, "srcOffset or length is out of bounds");
+        return nullptr;
+    }
+
+    return arrayBufferViewSliceFactory(functionName, data, data.byteOffset() + checkedByteSrcOffset.unsafeGet(), length);
 }
 
 void WebGL2RenderingContext::bufferData(GCGLenum target, const ArrayBufferView& data, GCGLenum usage, GCGLuint srcOffset, GCGLuint length)
 {
-    auto optionalElementSize = arrayBufferViewElementSize(data);
-    if (!optionalElementSize) {
-        synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, "bufferData", "Invalid type of Array Buffer View");
-        return;
-    }
-    auto elementSize = optionalElementSize.value();
-    Checked<GCGLuint, RecordOverflow> checkedElementSize(elementSize);
-
-    Checked<GCGLuint, RecordOverflow> checkedSrcOffset(srcOffset);
-    Checked<GCGLuint, RecordOverflow> checkedByteSrcOffset = checkedSrcOffset * checkedElementSize;
-    Checked<GCGLuint, RecordOverflow> checkedlength(length);
-    Checked<GCGLuint, RecordOverflow> checkedByteLength = checkedlength * checkedElementSize;
-
-    if (checkedByteSrcOffset.hasOverflowed()
-        || checkedByteLength.hasOverflowed()
-        || checkedByteSrcOffset.unsafeGet() > data.byteLength()
-        || checkedByteLength.unsafeGet() > data.byteLength() - checkedByteSrcOffset.unsafeGet()) {
-        synthesizeGLError(GraphicsContextGL::INVALID_VALUE, "bufferData", "srcOffset or length is out of bounds");
-        return;
-    }
-
-    auto slice = Uint8Array::tryCreate(data.possiblySharedBuffer(), data.byteOffset() + checkedByteSrcOffset.unsafeGet(), checkedByteLength.unsafeGet());
-    if (!slice) {
-        synthesizeGLError(GraphicsContextGL::OUT_OF_MEMORY, "bufferData", "Could not create intermediate ArrayBufferView");
-        return;
-    }
-    WebGLRenderingContextBase::bufferData(target, BufferDataSource(slice.get()), usage);
+    if (auto slice = sliceArrayBufferView("bufferData", data, srcOffset, length))
+        WebGLRenderingContextBase::bufferData(target, BufferDataSource(slice.get()), usage);
 }
 
 void WebGL2RenderingContext::bufferSubData(GCGLenum target, long long offset, const ArrayBufferView& data, GCGLuint srcOffset, GCGLuint length)
 {
-    auto optionalElementSize = arrayBufferViewElementSize(data);
-    if (!optionalElementSize) {
-        synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, "bufferSubData", "Invalid type of Array Buffer View");
-        return;
-    }
-    auto elementSize = optionalElementSize.value();
-    Checked<GCGLuint, RecordOverflow> checkedElementSize(elementSize);
-
-    Checked<GCGLuint, RecordOverflow> checkedSrcOffset(srcOffset);
-    Checked<GCGLuint, RecordOverflow> checkedByteSrcOffset = checkedSrcOffset * checkedElementSize;
-    Checked<GCGLuint, RecordOverflow> checkedlength(length);
-    Checked<GCGLuint, RecordOverflow> checkedByteLength = checkedlength * checkedElementSize;
-
-    if (checkedByteSrcOffset.hasOverflowed()
-        || checkedByteLength.hasOverflowed()
-        || checkedByteSrcOffset.unsafeGet() > data.byteLength()
-        || checkedByteLength.unsafeGet() > data.byteLength() - checkedByteSrcOffset.unsafeGet()) {
-        synthesizeGLError(GraphicsContextGL::INVALID_VALUE, "bufferSubData", "srcOffset or length is out of bounds");
-        return;
-    }
-
-    auto slice = Uint8Array::tryCreate(data.possiblySharedBuffer(), data.byteOffset() + checkedByteSrcOffset.unsafeGet(), checkedByteLength.unsafeGet());
-    if (!slice) {
-        synthesizeGLError(GraphicsContextGL::OUT_OF_MEMORY, "bufferSubData", "Could not create intermediate ArrayBufferView");
-        return;
-    }
-
-    WebGLRenderingContextBase::bufferSubData(target, offset, BufferDataSource(slice.get()));
+    if (auto slice = sliceArrayBufferView("bufferSubData", data, srcOffset, length))
+        WebGLRenderingContextBase::bufferSubData(target, offset, BufferDataSource(slice.get()));
 }
 
 void WebGL2RenderingContext::copyBufferSubData(GCGLenum readTarget, GCGLenum writeTarget, GCGLint64 readOffset, GCGLint64 writeOffset, GCGLint64 size)
@@ -287,12 +269,12 @@ void WebGL2RenderingContext::getBufferSubData(GCGLenum target, long long srcByte
         return;
     }
 
-    auto optionalElementSize = arrayBufferViewElementSize(*dstData);
-    if (!optionalElementSize) {
+    if (dstData->getType() == JSC::NotTypedArray) {
         synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, "getBufferSubData", "Invalid type of Array Buffer View");
         return;
     }
-    auto elementSize = optionalElementSize.value();
+
+    auto elementSize = JSC::elementSize(dstData->getType());
     auto dstDataLength = dstData->byteLength() / elementSize;
 
     if (dstOffset > dstDataLength) {
@@ -700,72 +682,106 @@ void WebGL2RenderingContext::texStorage3D(GCGLenum, GCGLsizei, GCGLenum, GCGLsiz
     LOG(WebGL, "[[ NOT IMPLEMENTED ]] texStorage3D()");
 }
 
-void WebGL2RenderingContext::texImage2D(GCGLenum, GCGLint, GCGLint, GCGLsizei, GCGLsizei, GCGLint, GCGLenum, GCGLenum, GCGLint64)
+void WebGL2RenderingContext::texImage2D(GCGLenum, GCGLint, GCGLint, GCGLsizei, GCGLsizei, GCGLint, GCGLenum, GCGLenum, GCGLintptr)
 {
-    LOG(WebGL, "[[ NOT IMPLEMENTED ]] texImage2D()");
+    // Covered by textures/misc/tex-unpack-params.html.
+    LOG(WebGL, "[[ NOT IMPLEMENTED ]] texImage2D(PIXEL_UNPACK_BUFFER)");
 }
 
 ExceptionOr<void> WebGL2RenderingContext::texImage2D(GCGLenum, GCGLint, GCGLint, GCGLsizei, GCGLsizei, GCGLint, GCGLenum, GCGLenum, TexImageSource&&)
 {
-    LOG(WebGL, "[[ NOT IMPLEMENTED ]] texImage2D()");
+    // Covered by textures/misc/origin-clean-conformance-offscreencanvas.html?
+    LOG(WebGL, "[[ NOT IMPLEMENTED ]] texImage2D(TexImageSource)");
     return { };
 }
 
-void WebGL2RenderingContext::texImage2D(GCGLenum, GCGLint, GCGLint, GCGLsizei, GCGLsizei, GCGLint, GCGLenum, GCGLenum, RefPtr<ArrayBufferView>&&, GCGLuint)
+RefPtr<ArrayBufferView> WebGL2RenderingContext::sliceTypedArrayBufferView(const char* const functionName, RefPtr<ArrayBufferView>& srcData, GCGLuint srcOffset)
 {
-    LOG(WebGL, "[[ NOT IMPLEMENTED ]] texImage2D()");
+    if (!srcData)
+        return nullptr;
+
+    if (!isTypedView(srcData->getType())) {
+        synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, functionName, "Invalid type of ArrayBufferView");
+        return nullptr;
+    }
+
+    auto elementSize = JSC::elementSize(srcData->getType());
+    auto startingByte = WTF::checkedProduct<unsigned>(elementSize, srcOffset);
+    if (startingByte.hasOverflowed() || startingByte >= srcData->byteLength()) {
+        synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, functionName, "Invalid element offset!");
+        return nullptr;
+    }
+
+    auto numElements = (srcData->byteLength() - startingByte.unsafeGet()) / elementSize;
+
+    return arrayBufferViewSliceFactory(functionName, *srcData, startingByte.unsafeGet(), numElements);
+}
+
+void WebGL2RenderingContext::texImage2D(GCGLenum target, GCGLint level, GCGLint internalFormat, GCGLsizei width, GCGLsizei height, GCGLint border, GCGLenum format, GCGLenum type, RefPtr<ArrayBufferView>&& srcData, GCGLuint srcOffset)
+{
+    if (isContextLostOrPending())
+        return;
+
+    auto slicedData = sliceTypedArrayBufferView("texImage2D", srcData, srcOffset);
+
+    WebGLRenderingContextBase::texImage2D(target, level, internalFormat, width, height, border, format, type, WTFMove(slicedData));
 }
 
 void WebGL2RenderingContext::texImage3D(GCGLenum, GCGLint, GCGLint, GCGLsizei, GCGLsizei, GCGLsizei, GCGLint, GCGLenum, GCGLenum, GCGLint64)
 {
-    LOG(WebGL, "[[ NOT IMPLEMENTED ]] texImage3D()");
+    LOG(WebGL, "[[ NOT IMPLEMENTED ]] texImage3D(PIXEL_UNPACK_BUFFER)");
 }
 
 ExceptionOr<void> WebGL2RenderingContext::texImage3D(GCGLenum, GCGLint, GCGLint, GCGLsizei, GCGLsizei, GCGLsizei, GCGLint, GCGLenum, GCGLenum, TexImageSource&&)
 {
-    LOG(WebGL, "[[ NOT IMPLEMENTED ]] texImage3D()");
+    LOG(WebGL, "[[ NOT IMPLEMENTED ]] texImage3D(TexImageSource)");
     return { };
 }
 
 void WebGL2RenderingContext::texImage3D(GCGLenum, GCGLint, GCGLint, GCGLsizei, GCGLsizei, GCGLsizei, GCGLint, GCGLenum, GCGLenum, RefPtr<ArrayBufferView>&&)
 {
-    LOG(WebGL, "[[ NOT IMPLEMENTED ]] texImage3D()");
+    LOG(WebGL, "[[ NOT IMPLEMENTED ]] texImage3D(ArrayBufferView?)");
 }
 
 void WebGL2RenderingContext::texImage3D(GCGLenum, GCGLint, GCGLint, GCGLsizei, GCGLsizei, GCGLsizei, GCGLint, GCGLenum, GCGLenum, RefPtr<ArrayBufferView>&&, GCGLuint)
 {
-    LOG(WebGL, "[[ NOT IMPLEMENTED ]] texImage3D()");
+    LOG(WebGL, "[[ NOT IMPLEMENTED ]] texImage3D(ArrayBufferView, srcOffset)");
 }
 
-void WebGL2RenderingContext::texSubImage2D(GCGLenum, GCGLint, GCGLint, GCGLint, GCGLsizei, GCGLsizei, GCGLenum, GCGLenum, GCGLint64)
+void WebGL2RenderingContext::texSubImage2D(GCGLenum, GCGLint, GCGLint, GCGLint, GCGLsizei, GCGLsizei, GCGLenum, GCGLenum, GCGLintptr)
 {
-    LOG(WebGL, "[[ NOT IMPLEMENTED ]] texSubImage2D()");
+    LOG(WebGL, "[[ NOT IMPLEMENTED ]] texSubImage2D(PIXEL_UNPACK_BUFFER)");
 }
 
 ExceptionOr<void> WebGL2RenderingContext::texSubImage2D(GCGLenum, GCGLint, GCGLint, GCGLint, GCGLsizei, GCGLsizei, GCGLenum, GCGLenum, TexImageSource&&)
 {
-    LOG(WebGL, "[[ NOT IMPLEMENTED ]] texSubImage2D()");
+    LOG(WebGL, "[[ NOT IMPLEMENTED ]] texSubImage2D(TexImageSource)");
     return { };
 }
 
-void WebGL2RenderingContext::texSubImage2D(GCGLenum, GCGLint, GCGLint, GCGLint, GCGLsizei, GCGLsizei, GCGLenum, GCGLenum, RefPtr<ArrayBufferView>&&, GCGLuint)
+void WebGL2RenderingContext::texSubImage2D(GCGLenum target, GCGLint level, GCGLint xoffset, GCGLint yoffset, GCGLsizei width, GCGLsizei height, GCGLenum format, GCGLenum type, RefPtr<ArrayBufferView>&& srcData, GCGLuint srcOffset)
 {
-    LOG(WebGL, "[[ NOT IMPLEMENTED ]] texSubImage2D()");
+    if (isContextLostOrPending())
+        return;
+
+    auto slicedData = sliceTypedArrayBufferView("texSubImage2D", srcData, srcOffset);
+
+    WebGLRenderingContextBase::texSubImage2D(target, level, xoffset, yoffset, width, height, format, type, WTFMove(slicedData));
 }
 
 void WebGL2RenderingContext::texSubImage3D(GCGLenum, GCGLint, GCGLint, GCGLint, GCGLint, GCGLsizei, GCGLsizei, GCGLsizei, GCGLenum, GCGLenum, GCGLint64)
 {
-    LOG(WebGL, "[[ NOT IMPLEMENTED ]] texSubImage3D()");
+    LOG(WebGL, "[[ NOT IMPLEMENTED ]] texSubImage3D(PIXEL_UNPACK_BUFFER)");
 }
 
 void WebGL2RenderingContext::texSubImage3D(GCGLenum, GCGLint, GCGLint, GCGLint, GCGLint, GCGLsizei, GCGLsizei, GCGLsizei, GCGLenum, GCGLenum, RefPtr<ArrayBufferView>&&, GCGLuint)
 {
-    LOG(WebGL, "[[ NOT IMPLEMENTED ]] texSubImage3D()");
+    LOG(WebGL, "[[ NOT IMPLEMENTED ]] texSubImage3D(ArrayBufferView, srcOffset)");
 }
 
 ExceptionOr<void> WebGL2RenderingContext::texSubImage3D(GCGLenum, GCGLint, GCGLint, GCGLint, GCGLint, GCGLsizei, GCGLsizei, GCGLsizei, GCGLenum, GCGLenum, TexImageSource&&)
 {
-    LOG(WebGL, "[[ NOT IMPLEMENTED ]] texSubImage3D()");
+    LOG(WebGL, "[[ NOT IMPLEMENTED ]] texSubImage3D(TexImageSource)");
     return { };
 }
 
@@ -776,22 +792,22 @@ void WebGL2RenderingContext::copyTexSubImage3D(GCGLenum, GCGLint, GCGLint, GCGLi
 
 void WebGL2RenderingContext::compressedTexImage3D(GCGLenum, GCGLint, GCGLenum, GCGLsizei, GCGLsizei, GCGLsizei, GCGLint, GCGLsizei, GCGLint64)
 {
-    LOG(WebGL, "[[ NOT IMPLEMENTED ]] compressedTexImage3D()");
+    LOG(WebGL, "[[ NOT IMPLEMENTED ]] compressedTexImage3D(PIXEL_UNPACK_BUFFER)");
 }
 
 void WebGL2RenderingContext::compressedTexImage3D(GCGLenum, GCGLint, GCGLenum, GCGLsizei, GCGLsizei, GCGLsizei, GCGLint, ArrayBufferView&, GCGLuint, GCGLuint)
 {
-    LOG(WebGL, "[[ NOT IMPLEMENTED ]] compressedTexImage3D()");
+    LOG(WebGL, "[[ NOT IMPLEMENTED ]] compressedTexImage3D(ArrayBufferView)");
 }
 
 void WebGL2RenderingContext::compressedTexSubImage3D(GCGLenum, GCGLint, GCGLint, GCGLint, GCGLint, GCGLsizei, GCGLsizei, GCGLsizei, GCGLenum, GCGLsizei, GCGLint64)
 {
-    LOG(WebGL, "[[ NOT IMPLEMENTED ]] compressedTexSubImage3D()");
+    LOG(WebGL, "[[ NOT IMPLEMENTED ]] compressedTexSubImage3D(PIXEL_UNPACK_BUFFER)");
 }
 
 void WebGL2RenderingContext::compressedTexSubImage3D(GCGLenum, GCGLint, GCGLint, GCGLint, GCGLint, GCGLsizei, GCGLsizei, GCGLsizei, GCGLenum, ArrayBufferView&, GCGLuint, GCGLuint)
 {
-    LOG(WebGL, "[[ NOT IMPLEMENTED ]] compressedTexSubImage3D()");
+    LOG(WebGL, "[[ NOT IMPLEMENTED ]] compressedTexSubImage3D(ArrayBufferView)");
 }
 
 GCGLint WebGL2RenderingContext::getFragDataLocation(WebGLProgram&, const String&)
@@ -2403,7 +2419,7 @@ void WebGL2RenderingContext::compressedTexImage2D(GCGLenum target, GCGLint level
     UNUSED_PARAM(imageSize);
     UNUSED_PARAM(offset);
 
-    LOG(WebGL, "[[ NOT IMPLEMENTED ]] compressedTexImage2D()");
+    LOG(WebGL, "[[ NOT IMPLEMENTED ]] compressedTexImage2D(PIXEL_UNPACK_BUFFER)");
 }
 
 void WebGL2RenderingContext::compressedTexImage2D(GCGLenum target, GCGLint level, GCGLenum internalformat, GCGLsizei width, GCGLsizei height, GCGLint border, ArrayBufferView& srcData, GCGLuint srcOffset, GCGLuint srcLengthOverride)
@@ -2418,7 +2434,7 @@ void WebGL2RenderingContext::compressedTexImage2D(GCGLenum target, GCGLint level
     UNUSED_PARAM(srcOffset);
     UNUSED_PARAM(srcLengthOverride);
 
-    LOG(WebGL, "[[ NOT IMPLEMENTED ]] compressedTexImage2D()");
+    LOG(WebGL, "[[ NOT IMPLEMENTED ]] compressedTexImage2D(ArrayBufferView)");
 }
 
 void WebGL2RenderingContext::compressedTexSubImage2D(GLenum target, GLint level, GLint xoffset, GLint yoffset, GLsizei width, GLsizei height, GLenum format, GLsizei imageSize, GLintptr offset)
@@ -2433,7 +2449,7 @@ void WebGL2RenderingContext::compressedTexSubImage2D(GLenum target, GLint level,
     UNUSED_PARAM(imageSize);
     UNUSED_PARAM(offset);
 
-    LOG(WebGL, "[[ NOT IMPLEMENTED ]] compressedTexSubImage2D()");
+    LOG(WebGL, "[[ NOT IMPLEMENTED ]] compressedTexSubImage2D(PIXEL_UNPACK_BUFFER)");
 }
 
 void WebGL2RenderingContext::compressedTexSubImage2D(GLenum target, GLint level, GLint xoffset, GLint yoffset, GLsizei width, GLsizei height, GLenum format, ArrayBufferView& srcData, GLuint srcOffset, GLuint srcLengthOverride)
@@ -2449,7 +2465,7 @@ void WebGL2RenderingContext::compressedTexSubImage2D(GLenum target, GLint level,
     UNUSED_PARAM(srcOffset);
     UNUSED_PARAM(srcLengthOverride);
 
-    LOG(WebGL, "[[ NOT IMPLEMENTED ]] compressedTexSubImage2D()");
+    LOG(WebGL, "[[ NOT IMPLEMENTED ]] compressedTexSubImage2D(ArrayBufferView)");
 
 }
 
@@ -2590,7 +2606,7 @@ void WebGL2RenderingContext::readPixels(GLint x, GLint y, GLsizei width, GLsizei
     UNUSED_PARAM(dstData);
     UNUSED_PARAM(dstOffset);
 
-    LOG(WebGL, "[[ NOT IMPLEMENTED ]] readPixels()");
+    LOG(WebGL, "[[ NOT IMPLEMENTED ]] readPixels(ArrayBufferView)");
 }
 
 void WebGL2RenderingContext::uncacheDeletedBuffer(WebGLBuffer* buffer)
