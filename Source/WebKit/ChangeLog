@@ -1,3 +1,18 @@
+2020-01-27  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [WinCairo][curl] ASSERTION FAILED: sessionID != PAL::SessionID::defaultSessionID() in WebKit::CacheStorage::Engine::destroyEngine since r255137
+        https://bugs.webkit.org/show_bug.cgi?id=206859
+
+        Reviewed by Don Olmstead.
+
+        After r255137, WinCairo debug WK2 is still failing an assertion
+        while shutdown, which is ensuring the destructing session isn't
+        the default session.
+
+        * NetworkProcess/cache/CacheStorageEngine.cpp:
+        (WebKit::CacheStorage::Engine::destroyEngine): Conditioned out the
+        assertion for curl port as well as Soup port does.
+
 2020-01-27  David Quesada  <david_quesada@apple.com>
 
         Support observing a different set of view service state notifications in ApplicationStateTracker
