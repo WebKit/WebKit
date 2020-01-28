@@ -120,7 +120,6 @@ InternalSettings::Backup::Backup(Settings& settings)
 #if ENABLE(WEBGL2)
     , m_webGL2Enabled(RuntimeEnabledFeatures::sharedFeatures().webGL2Enabled())
 #endif
-    , m_webVREnabled(RuntimeEnabledFeatures::sharedFeatures().webVREnabled())
 #if ENABLE(MEDIA_STREAM)
     , m_setScreenCaptureEnabled(RuntimeEnabledFeatures::sharedFeatures().screenCaptureEnabled())
 #endif
@@ -224,7 +223,6 @@ void InternalSettings::Backup::restoreTo(Settings& settings)
 #if ENABLE(WEBGL2)
     RuntimeEnabledFeatures::sharedFeatures().setWebGL2Enabled(m_webGL2Enabled);
 #endif
-    RuntimeEnabledFeatures::sharedFeatures().setWebVREnabled(m_webVREnabled);
 #if ENABLE(MEDIA_STREAM)
     RuntimeEnabledFeatures::sharedFeatures().setScreenCaptureEnabled(m_setScreenCaptureEnabled);
 #endif
@@ -814,11 +812,6 @@ void InternalSettings::setWebGPUEnabled(bool enabled)
 #else
     UNUSED_PARAM(enabled);
 #endif
-}
-
-void InternalSettings::setWebVREnabled(bool enabled)
-{
-    RuntimeEnabledFeatures::sharedFeatures().setWebVREnabled(enabled);
 }
 
 void InternalSettings::setScreenCaptureEnabled(bool enabled)

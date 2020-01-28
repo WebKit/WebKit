@@ -410,14 +410,6 @@ Modules/webgpu/WebGPUTexture.cpp
 Modules/webgpu/WebGPUTextureView.cpp
 Modules/webgpu/WorkerNavigatorGPU.cpp
 
-Modules/webvr/NavigatorWebVR.cpp
-Modules/webvr/VRDisplay.cpp
-Modules/webvr/VRDisplayEvent.cpp
-Modules/webvr/VREyeParameters.cpp
-Modules/webvr/VRFrameData.cpp
-Modules/webvr/VRPose.cpp
-Modules/webvr/VRStageParameters.cpp
-
 accessibility/AXObjectCache.cpp
 accessibility/AccessibilityARIAGrid.cpp
 accessibility/AccessibilityARIAGridCell.cpp
@@ -2069,11 +2061,6 @@ platform/text/TextEncoding.cpp
 platform/text/TextEncodingDetectorICU.cpp
 platform/text/TextEncodingRegistry.cpp
 
-platform/vr/VRManager.cpp
-platform/vr/VRPlatformDisplay.cpp
-platform/vr/openvr/VRPlatformDisplayOpenVR.cpp
-platform/vr/openvr/VRPlatformManagerOpenVR.cpp
-
 plugins/DOMMimeType.cpp
 plugins/DOMMimeTypeArray.cpp
 plugins/DOMPlugin.cpp
@@ -2821,7 +2808,6 @@ JSDOMWindowFetch.cpp
 JSDOMWindowIndexedDatabase.cpp
 JSDOMWindowSpeechSynthesis.cpp
 JSDOMWindowWebDatabase.cpp
-JSDOMWindowWebVR.cpp
 JSDataTransfer.cpp
 JSDataTransferItem.cpp
 JSDataTransferItemList.cpp
@@ -3116,7 +3102,6 @@ JSNavigatorShare.cpp
 JSShareData.cpp
 JSNavigatorServiceWorker.cpp
 JSNavigatorWebDriver.cpp
-JSNavigatorWebVR.cpp
 JSNode.cpp
 JSNodeFilter.cpp
 JSNodeIterator.cpp
@@ -3453,17 +3438,6 @@ JSUIEvent.cpp
 JSUIEventInit.cpp
 JSURLSearchParams.cpp
 JSUserVerificationRequirement.cpp
-JSVRDisplay.cpp
-JSVRDisplayCapabilities.cpp
-JSVRDisplayEvent.cpp
-JSVRDisplayEventReason.cpp
-JSVREye.cpp
-JSVREyeParameters.cpp
-JSVRFieldOfView.cpp
-JSVRFrameData.cpp
-JSVRLayerInit.cpp
-JSVRPose.cpp
-JSVRStageParameters.cpp
 JSValidityState.cpp
 JSVideoConfiguration.cpp
 JSVideoPlaybackQuality.cpp
@@ -3541,10 +3515,7 @@ JSXSLTProcessor.cpp
 JSGamepad.cpp
 JSGamepadButton.cpp
 JSGamepadEvent.cpp
-JSGamepadWebVR.cpp
 JSNavigatorGamepad.cpp
-
-Modules/webvr/GamepadWebVR.cpp
 
 #endif
 

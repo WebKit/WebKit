@@ -4756,9 +4756,6 @@
 		E180811716FCF9CB00B80D07 /* SynchronousLoaderClient.h in Headers */ = {isa = PBXBuildFile; fileRef = E180811516FCF9CB00B80D07 /* SynchronousLoaderClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E18256900EF2B02D00933242 /* JSWorkerGlobalScope.h in Headers */ = {isa = PBXBuildFile; fileRef = E182568E0EF2B02D00933242 /* JSWorkerGlobalScope.h */; };
 		E18536841F4E481400FE091B /* WebArchiveResourceFromNSAttributedString.h in Headers */ = {isa = PBXBuildFile; fileRef = E18536811F4E472700FE091B /* WebArchiveResourceFromNSAttributedString.h */; };
-		E18823642031F57100B42DF3 /* VRManager.h in Headers */ = {isa = PBXBuildFile; fileRef = E18823632031F55D00B42DF3 /* VRManager.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		E18823652031F57F00B42DF3 /* VRPlatformDisplay.h in Headers */ = {isa = PBXBuildFile; fileRef = E18823602031F55A00B42DF3 /* VRPlatformDisplay.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		E18823662031F59400B42DF3 /* VRPlatformManager.h in Headers */ = {isa = PBXBuildFile; fileRef = E18823612031F55B00B42DF3 /* VRPlatformManager.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E18C35441F71970C00FF632D /* WebArchiveResourceWebResourceHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = E18C35411F7196CD00FF632D /* WebArchiveResourceWebResourceHandler.h */; };
 		E18DF33518AAF12C00773E59 /* SerializedCryptoKeyWrap.h in Headers */ = {isa = PBXBuildFile; fileRef = E18DF33418AAF12C00773E59 /* SerializedCryptoKeyWrap.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E19727161820549E00592D51 /* CryptoKeyType.h in Headers */ = {isa = PBXBuildFile; fileRef = E19727151820549E00592D51 /* CryptoKeyType.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -6846,63 +6843,6 @@
 		2DAF343A1EA7E0F100382CD3 /* ConstantPropertyMap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ConstantPropertyMap.cpp; sourceTree = "<group>"; };
 		2DAF343B1EA7E0F100382CD3 /* ConstantPropertyMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ConstantPropertyMap.h; sourceTree = "<group>"; };
 		2DD5A7261EBEE47D009BA597 /* CompositionUnderline.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CompositionUnderline.h; sourceTree = "<group>"; };
-		2DDE1CAD1F5747A300D1A365 /* DOMWindowWebVR.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = DOMWindowWebVR.idl; sourceTree = "<group>"; };
-		2DDE1CAE1F5747A300D1A365 /* GamepadWebVR.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GamepadWebVR.cpp; sourceTree = "<group>"; };
-		2DDE1CAF1F5747A300D1A365 /* GamepadWebVR.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GamepadWebVR.h; sourceTree = "<group>"; };
-		2DDE1CB01F5747A300D1A365 /* GamepadWebVR.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = GamepadWebVR.idl; sourceTree = "<group>"; };
-		2DDE1CB11F5747A300D1A365 /* NavigatorWebVR.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NavigatorWebVR.cpp; sourceTree = "<group>"; };
-		2DDE1CB21F5747A300D1A365 /* NavigatorWebVR.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NavigatorWebVR.h; sourceTree = "<group>"; };
-		2DDE1CB31F5747A300D1A365 /* NavigatorWebVR.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = NavigatorWebVR.idl; sourceTree = "<group>"; };
-		2DDE1CB41F5747A300D1A365 /* VRDisplay.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VRDisplay.cpp; sourceTree = "<group>"; };
-		2DDE1CB51F5747A300D1A365 /* VRDisplay.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VRDisplay.h; sourceTree = "<group>"; };
-		2DDE1CB61F5747A300D1A365 /* VRDisplay.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = VRDisplay.idl; sourceTree = "<group>"; };
-		2DDE1CB81F5747A300D1A365 /* VRDisplayCapabilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VRDisplayCapabilities.h; sourceTree = "<group>"; };
-		2DDE1CB91F5747A300D1A365 /* VRDisplayCapabilities.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = VRDisplayCapabilities.idl; sourceTree = "<group>"; };
-		2DDE1CBA1F5747A300D1A365 /* VRDisplayEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VRDisplayEvent.cpp; sourceTree = "<group>"; };
-		2DDE1CBB1F5747A300D1A365 /* VRDisplayEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VRDisplayEvent.h; sourceTree = "<group>"; };
-		2DDE1CBC1F5747A300D1A365 /* VRDisplayEvent.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = VRDisplayEvent.idl; sourceTree = "<group>"; };
-		2DDE1CBD1F5747A300D1A365 /* VRDisplayEventReason.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VRDisplayEventReason.h; sourceTree = "<group>"; };
-		2DDE1CBE1F5747A300D1A365 /* VRDisplayEventReason.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = VRDisplayEventReason.idl; sourceTree = "<group>"; };
-		2DDE1CBF1F5747A300D1A365 /* VREye.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VREye.h; sourceTree = "<group>"; };
-		2DDE1CC01F5747A300D1A365 /* VREye.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = VREye.idl; sourceTree = "<group>"; };
-		2DDE1CC11F5747A300D1A365 /* VREyeParameters.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VREyeParameters.cpp; sourceTree = "<group>"; };
-		2DDE1CC21F5747A300D1A365 /* VREyeParameters.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VREyeParameters.h; sourceTree = "<group>"; };
-		2DDE1CC31F5747A300D1A365 /* VREyeParameters.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = VREyeParameters.idl; sourceTree = "<group>"; };
-		2DDE1CC51F5747A300D1A365 /* VRFieldOfView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VRFieldOfView.h; sourceTree = "<group>"; };
-		2DDE1CC61F5747A300D1A365 /* VRFieldOfView.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = VRFieldOfView.idl; sourceTree = "<group>"; };
-		2DDE1CC71F5747A300D1A365 /* VRFrameData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VRFrameData.cpp; sourceTree = "<group>"; };
-		2DDE1CC81F5747A300D1A365 /* VRFrameData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VRFrameData.h; sourceTree = "<group>"; };
-		2DDE1CC91F5747A300D1A365 /* VRFrameData.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = VRFrameData.idl; sourceTree = "<group>"; };
-		2DDE1CCA1F5747A300D1A365 /* VRLayerInit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VRLayerInit.h; sourceTree = "<group>"; };
-		2DDE1CCB1F5747A300D1A365 /* VRLayerInit.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = VRLayerInit.idl; sourceTree = "<group>"; };
-		2DDE1CCC1F5747A300D1A365 /* VRPose.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VRPose.cpp; sourceTree = "<group>"; };
-		2DDE1CCD1F5747A300D1A365 /* VRPose.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VRPose.h; sourceTree = "<group>"; };
-		2DDE1CCE1F5747A300D1A365 /* VRPose.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = VRPose.idl; sourceTree = "<group>"; };
-		2DDE1CCF1F5747A300D1A365 /* VRStageParameters.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VRStageParameters.cpp; sourceTree = "<group>"; };
-		2DDE1CD01F5747A300D1A365 /* VRStageParameters.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VRStageParameters.h; sourceTree = "<group>"; };
-		2DDE1CD11F5747A300D1A365 /* VRStageParameters.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = VRStageParameters.idl; sourceTree = "<group>"; };
-		2DDE1CDD1F574AAB00D1A365 /* JSVRDisplay.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSVRDisplay.cpp; sourceTree = "<group>"; };
-		2DDE1CDE1F574AAB00D1A365 /* JSVRDisplay.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSVRDisplay.h; sourceTree = "<group>"; };
-		2DDE1CDF1F574AD100D1A365 /* JSVRFieldOfView.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSVRFieldOfView.cpp; sourceTree = "<group>"; };
-		2DDE1CE01F574AD100D1A365 /* JSVRFieldOfView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSVRFieldOfView.h; sourceTree = "<group>"; };
-		2DDE1CE51F574BFF00D1A365 /* JSVRDisplayCapabilities.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSVRDisplayCapabilities.cpp; sourceTree = "<group>"; };
-		2DDE1CE61F574BFF00D1A365 /* JSVRDisplayCapabilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSVRDisplayCapabilities.h; sourceTree = "<group>"; };
-		2DDE1CE71F574BFF00D1A365 /* JSVRDisplayEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSVRDisplayEvent.cpp; sourceTree = "<group>"; };
-		2DDE1CE81F574BFF00D1A365 /* JSVRDisplayEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSVRDisplayEvent.h; sourceTree = "<group>"; };
-		2DDE1CE91F574BFF00D1A365 /* JSVRDisplayEventReason.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSVRDisplayEventReason.cpp; sourceTree = "<group>"; };
-		2DDE1CEA1F574BFF00D1A365 /* JSVRDisplayEventReason.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSVRDisplayEventReason.h; sourceTree = "<group>"; };
-		2DDE1CEB1F574BFF00D1A365 /* JSVREye.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSVREye.cpp; sourceTree = "<group>"; };
-		2DDE1CEC1F574BFF00D1A365 /* JSVREye.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSVREye.h; sourceTree = "<group>"; };
-		2DDE1CED1F574BFF00D1A365 /* JSVREyeParameters.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSVREyeParameters.cpp; sourceTree = "<group>"; };
-		2DDE1CEE1F574BFF00D1A365 /* JSVREyeParameters.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSVREyeParameters.h; sourceTree = "<group>"; };
-		2DDE1CEF1F574BFF00D1A365 /* JSVRFrameData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSVRFrameData.cpp; sourceTree = "<group>"; };
-		2DDE1CF01F574BFF00D1A365 /* JSVRFrameData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSVRFrameData.h; sourceTree = "<group>"; };
-		2DDE1CF11F574BFF00D1A365 /* JSVRLayerInit.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSVRLayerInit.cpp; sourceTree = "<group>"; };
-		2DDE1CF21F574BFF00D1A365 /* JSVRLayerInit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSVRLayerInit.h; sourceTree = "<group>"; };
-		2DDE1CF31F574BFF00D1A365 /* JSVRPose.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSVRPose.cpp; sourceTree = "<group>"; };
-		2DDE1CF41F574BFF00D1A365 /* JSVRPose.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSVRPose.h; sourceTree = "<group>"; };
-		2DDE1CF51F574BFF00D1A365 /* JSVRStageParameters.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSVRStageParameters.cpp; sourceTree = "<group>"; };
-		2DDE1CF61F574BFF00D1A365 /* JSVRStageParameters.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSVRStageParameters.h; sourceTree = "<group>"; };
 		2DE70022192FE82A00B0975C /* DisplayRefreshMonitorMac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DisplayRefreshMonitorMac.h; sourceTree = "<group>"; };
 		2DF512CB1D873E47001D6780 /* ReplaceRangeWithTextCommand.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ReplaceRangeWithTextCommand.cpp; sourceTree = "<group>"; };
 		2DF512CC1D873E47001D6780 /* ReplaceRangeWithTextCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ReplaceRangeWithTextCommand.h; sourceTree = "<group>"; };
@@ -15068,10 +15008,6 @@
 		E18258AB0EF3CD7000933242 /* JSWorkerGlobalScopeCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWorkerGlobalScopeCustom.cpp; sourceTree = "<group>"; };
 		E18536811F4E472700FE091B /* WebArchiveResourceFromNSAttributedString.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebArchiveResourceFromNSAttributedString.h; sourceTree = "<group>"; };
 		E18536821F4E472700FE091B /* WebArchiveResourceFromNSAttributedString.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WebArchiveResourceFromNSAttributedString.mm; sourceTree = "<group>"; };
-		E18823602031F55A00B42DF3 /* VRPlatformDisplay.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VRPlatformDisplay.h; sourceTree = "<group>"; };
-		E18823612031F55B00B42DF3 /* VRPlatformManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VRPlatformManager.h; sourceTree = "<group>"; };
-		E18823622031F55C00B42DF3 /* VRManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VRManager.cpp; sourceTree = "<group>"; };
-		E18823632031F55D00B42DF3 /* VRManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VRManager.h; sourceTree = "<group>"; };
 		E18C35411F7196CD00FF632D /* WebArchiveResourceWebResourceHandler.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebArchiveResourceWebResourceHandler.h; sourceTree = "<group>"; };
 		E18C35421F71970100FF632D /* WebArchiveResourceWebResourceHandler.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WebArchiveResourceWebResourceHandler.mm; sourceTree = "<group>"; };
 		E18DF33418AAF12C00773E59 /* SerializedCryptoKeyWrap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SerializedCryptoKeyWrap.h; sourceTree = "<group>"; };
@@ -16962,7 +16898,6 @@
 				FDA15E7B12B03E04003A583A /* WebAudio */,
 				57D8462F1FEAFB0500CA3682 /* WebAuthN */,
 				5DA5E0F9102B950400088CF9 /* WebSockets */,
-				2DDE1CDC1F574A5600D1A365 /* WebVR */,
 				BC9854430CD3D9D000069BC1 /* Window */,
 				A83B79220CCB00F0000B0825 /* XML */,
 				A83B790C0CCAFF83000B0825 /* XPath */,
@@ -17904,77 +17839,6 @@
 				2D8D3BED23847AC900657075 /* tap.js */,
 			);
 			path = "gesture-recognizers";
-			sourceTree = "<group>";
-		};
-		2DDE1CAB1F57475900D1A365 /* webvr */ = {
-			isa = PBXGroup;
-			children = (
-				2DDE1CAD1F5747A300D1A365 /* DOMWindowWebVR.idl */,
-				2DDE1CAE1F5747A300D1A365 /* GamepadWebVR.cpp */,
-				2DDE1CAF1F5747A300D1A365 /* GamepadWebVR.h */,
-				2DDE1CB01F5747A300D1A365 /* GamepadWebVR.idl */,
-				2DDE1CB11F5747A300D1A365 /* NavigatorWebVR.cpp */,
-				2DDE1CB21F5747A300D1A365 /* NavigatorWebVR.h */,
-				2DDE1CB31F5747A300D1A365 /* NavigatorWebVR.idl */,
-				2DDE1CB41F5747A300D1A365 /* VRDisplay.cpp */,
-				2DDE1CB51F5747A300D1A365 /* VRDisplay.h */,
-				2DDE1CB61F5747A300D1A365 /* VRDisplay.idl */,
-				2DDE1CB81F5747A300D1A365 /* VRDisplayCapabilities.h */,
-				2DDE1CB91F5747A300D1A365 /* VRDisplayCapabilities.idl */,
-				2DDE1CBA1F5747A300D1A365 /* VRDisplayEvent.cpp */,
-				2DDE1CBB1F5747A300D1A365 /* VRDisplayEvent.h */,
-				2DDE1CBC1F5747A300D1A365 /* VRDisplayEvent.idl */,
-				2DDE1CBD1F5747A300D1A365 /* VRDisplayEventReason.h */,
-				2DDE1CBE1F5747A300D1A365 /* VRDisplayEventReason.idl */,
-				2DDE1CBF1F5747A300D1A365 /* VREye.h */,
-				2DDE1CC01F5747A300D1A365 /* VREye.idl */,
-				2DDE1CC11F5747A300D1A365 /* VREyeParameters.cpp */,
-				2DDE1CC21F5747A300D1A365 /* VREyeParameters.h */,
-				2DDE1CC31F5747A300D1A365 /* VREyeParameters.idl */,
-				2DDE1CC51F5747A300D1A365 /* VRFieldOfView.h */,
-				2DDE1CC61F5747A300D1A365 /* VRFieldOfView.idl */,
-				2DDE1CC71F5747A300D1A365 /* VRFrameData.cpp */,
-				2DDE1CC81F5747A300D1A365 /* VRFrameData.h */,
-				2DDE1CC91F5747A300D1A365 /* VRFrameData.idl */,
-				2DDE1CCA1F5747A300D1A365 /* VRLayerInit.h */,
-				2DDE1CCB1F5747A300D1A365 /* VRLayerInit.idl */,
-				2DDE1CCC1F5747A300D1A365 /* VRPose.cpp */,
-				2DDE1CCD1F5747A300D1A365 /* VRPose.h */,
-				2DDE1CCE1F5747A300D1A365 /* VRPose.idl */,
-				2DDE1CCF1F5747A300D1A365 /* VRStageParameters.cpp */,
-				2DDE1CD01F5747A300D1A365 /* VRStageParameters.h */,
-				2DDE1CD11F5747A300D1A365 /* VRStageParameters.idl */,
-			);
-			path = webvr;
-			sourceTree = "<group>";
-		};
-		2DDE1CDC1F574A5600D1A365 /* WebVR */ = {
-			isa = PBXGroup;
-			children = (
-				2DDE1CDD1F574AAB00D1A365 /* JSVRDisplay.cpp */,
-				2DDE1CDE1F574AAB00D1A365 /* JSVRDisplay.h */,
-				2DDE1CE51F574BFF00D1A365 /* JSVRDisplayCapabilities.cpp */,
-				2DDE1CE61F574BFF00D1A365 /* JSVRDisplayCapabilities.h */,
-				2DDE1CE71F574BFF00D1A365 /* JSVRDisplayEvent.cpp */,
-				2DDE1CE81F574BFF00D1A365 /* JSVRDisplayEvent.h */,
-				2DDE1CE91F574BFF00D1A365 /* JSVRDisplayEventReason.cpp */,
-				2DDE1CEA1F574BFF00D1A365 /* JSVRDisplayEventReason.h */,
-				2DDE1CEB1F574BFF00D1A365 /* JSVREye.cpp */,
-				2DDE1CEC1F574BFF00D1A365 /* JSVREye.h */,
-				2DDE1CED1F574BFF00D1A365 /* JSVREyeParameters.cpp */,
-				2DDE1CEE1F574BFF00D1A365 /* JSVREyeParameters.h */,
-				2DDE1CDF1F574AD100D1A365 /* JSVRFieldOfView.cpp */,
-				2DDE1CE01F574AD100D1A365 /* JSVRFieldOfView.h */,
-				2DDE1CEF1F574BFF00D1A365 /* JSVRFrameData.cpp */,
-				2DDE1CF01F574BFF00D1A365 /* JSVRFrameData.h */,
-				2DDE1CF11F574BFF00D1A365 /* JSVRLayerInit.cpp */,
-				2DDE1CF21F574BFF00D1A365 /* JSVRLayerInit.h */,
-				2DDE1CF31F574BFF00D1A365 /* JSVRPose.cpp */,
-				2DDE1CF41F574BFF00D1A365 /* JSVRPose.h */,
-				2DDE1CF51F574BFF00D1A365 /* JSVRStageParameters.cpp */,
-				2DDE1CF61F574BFF00D1A365 /* JSVRStageParameters.h */,
-			);
-			name = WebVR;
 			sourceTree = "<group>";
 		};
 		2E4346310F546A6800B0F1BA /* workers */ = {
@@ -22421,7 +22285,6 @@
 				996E59DA1DF00D45006612B9 /* webdriver */,
 				D00F593E216ECC43000D71DB /* webgpu */,
 				97AABCF714FA09B5007457AE /* websockets */,
-				2DDE1CAB1F57475900D1A365 /* webvr */,
 			);
 			path = Modules;
 			sourceTree = "<group>";
@@ -26946,19 +26809,6 @@
 				E19AC3ED1824DC7900349426 /* CryptoAlgorithmSHA512.h */,
 			);
 			path = algorithms;
-			sourceTree = "<group>";
-		};
-		E188235F2031F50F00B42DF3 /* vr */ = {
-			isa = PBXGroup;
-			children = (
-				E18823622031F55C00B42DF3 /* VRManager.cpp */,
-				E18823632031F55D00B42DF3 /* VRManager.h */,
-				8E620E7E20EE5FE2007BC5EF /* VRPlatformDisplay.cpp */,
-				E18823602031F55A00B42DF3 /* VRPlatformDisplay.h */,
-				8E620E8020EE5FFC007BC5EF /* VRPlatformDisplayClient.h */,
-				E18823612031F55B00B42DF3 /* VRPlatformManager.h */,
-			);
-			path = vr;
 			sourceTree = "<group>";
 		};
 		E19DA29D181995CE00088BC8 /* keys */ = {
@@ -33018,10 +32868,6 @@
 				419BC2DF1685329900D64D6D /* VisitedLinkState.h in Headers */,
 				1ABA80001897341200DCE9D6 /* VisitedLinkStore.h in Headers */,
 				E44613B60CD6344E00FADA75 /* VoidCallback.h in Headers */,
-				E18823642031F57100B42DF3 /* VRManager.h in Headers */,
-				E18823652031F57F00B42DF3 /* VRPlatformDisplay.h in Headers */,
-				8E620E8120EE6024007BC5EF /* VRPlatformDisplayClient.h in Headers */,
-				E18823662031F59400B42DF3 /* VRPlatformManager.h in Headers */,
 				BE20507A18A4586B0080647E /* VTTCue.h in Headers */,
 				7AF9B20318CFB2DF00C64BEF /* VTTRegion.h in Headers */,
 				7AF9B20618CFB2DF00C64BEF /* VTTRegionList.h in Headers */,

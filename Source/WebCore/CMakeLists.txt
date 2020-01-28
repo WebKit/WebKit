@@ -68,7 +68,6 @@ set(WebCore_PRIVATE_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/Modules/webgpu/WHLSL"
     "${WEBCORE_DIR}/Modules/webgpu/WHLSL/AST"
     "${WEBCORE_DIR}/Modules/websockets"
-    "${WEBCORE_DIR}/Modules/webvr"
     "${WEBCORE_DIR}/accessibility"
     "${WEBCORE_DIR}/accessibility/isolatedtree"
     "${WEBCORE_DIR}/animation"
@@ -215,7 +214,6 @@ set(WebCore_IDL_INCLUDES
     Modules/webdatabase
     Modules/webgpu
     Modules/websockets
-    Modules/webvr
 
     bindings/js
 
@@ -557,20 +555,6 @@ set(WebCore_NON_SVG_IDL_FILES
 
     Modules/websockets/CloseEvent.idl
     Modules/websockets/WebSocket.idl
-
-    Modules/webvr/DOMWindowWebVR.idl
-    Modules/webvr/NavigatorWebVR.idl
-    Modules/webvr/VRDisplay.idl
-    Modules/webvr/VRDisplayCapabilities.idl
-    Modules/webvr/VRDisplayEvent.idl
-    Modules/webvr/VRDisplayEventReason.idl
-    Modules/webvr/VREye.idl
-    Modules/webvr/VREyeParameters.idl
-    Modules/webvr/VRFieldOfView.idl
-    Modules/webvr/VRFrameData.idl
-    Modules/webvr/VRLayerInit.idl
-    Modules/webvr/VRPose.idl
-    Modules/webvr/VRStageParameters.idl
 
     accessibility/AccessibilityRole.idl
     accessibility/AriaAttributes.idl
@@ -1194,8 +1178,6 @@ if (ENABLE_GAMEPAD)
         Modules/gamepad/GamepadButton.idl
         Modules/gamepad/GamepadEvent.idl
         Modules/gamepad/NavigatorGamepad.idl
-
-        Modules/webvr/GamepadWebVR.idl
     )
 
     list(APPEND WebCore_SOURCES
@@ -1563,12 +1545,6 @@ if (ENABLE_USER_MESSAGE_HANDLERS)
         page/UserMessageHandlersNamespace.cpp
         page/WebKitNamespace.cpp
     )
-endif ()
-
-if (USE_OPENVR)
-  list(APPEND WebCore_PRIVATE_INCLUDE_DIRECTORIES "${THIRDPARTY_DIR}/openvr/headers")
-  list(APPEND WebCore_PRIVATE_INCLUDE_DIRECTORIES "${WEBCORE_DIR}/platform/vr/openvr")
-  list(APPEND WebCore_LIBRARIES openvr_api)
 endif ()
 
 if (USE_WOFF2)

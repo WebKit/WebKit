@@ -1388,15 +1388,6 @@ AccessibilityObjectModelEnabled:
   category: experimental
   webcoreBinding: RuntimeEnabledFeatures
 
-WebVREnabled:
-  type: bool
-  defaultValue: DEFAULT_EXPERIMENTAL_FEATURES_ENABLED
-  humanReadableName: "WebVR"
-  humanReadableDescription: "WebVR Module support"
-  webcoreBinding: RuntimeEnabledFeatures
-  category: experimental
-  condition: PLATFORM(GTK) || PLATFORM(WPE)
-
 ServerTimingEnabled:
   type: bool
   defaultValue: DEFAULT_SERVER_TIMING_ENABLED

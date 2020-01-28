@@ -222,13 +222,6 @@ namespace WebCore {
     macro(TextTrackCue) \
     macro(UndoItem) \
     macro(UndoManager) \
-    macro(VRDisplay) \
-    macro(VRDisplayCapabilities) \
-    macro(VRDisplayEvent) \
-    macro(VREyeParameters) \
-    macro(VRFieldOfView) \
-    macro(VRFrameData) \
-    macro(VRStageParameters) \
     macro(VisualViewport) \
     macro(WebGL2RenderingContext) \
     macro(WebGLVertexArrayObject) \

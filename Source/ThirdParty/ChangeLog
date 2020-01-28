@@ -1,3 +1,47 @@
+2020-01-24  Sergio Villar Senin  <svillar@igalia.com>
+
+        Remove WebVR from the tree
+        https://bugs.webkit.org/show_bug.cgi?id=206739
+
+        Reviewed by Darin Adler.
+
+        Removed as WebVR is gone and this is no longer needed.
+
+        * openvr/CMakeLists.txt: Removed.
+        * openvr/LICENSE: Removed.
+        * openvr/README.md: Removed.
+        * openvr/README.webkit: Removed.
+        * openvr/Toolchain-clang.cmake: Removed.
+        * openvr/headers/openvr.h: Removed.
+        * openvr/headers/openvr_api.cs: Removed.
+        * openvr/headers/openvr_api.json: Removed.
+        * openvr/headers/openvr_capi.h: Removed.
+        * openvr/headers/openvr_driver.h: Removed.
+        * openvr/patches/Path_WriteBinaryFile-fix-return-condition.patch: Removed.
+        * openvr/patches/cmake-build.patch: Removed.
+        * openvr/src/CMakeLists.txt: Removed.
+        * openvr/src/Info.plist: Removed.
+        * openvr/src/README: Removed.
+        * openvr/src/ivrclientcore.h: Removed.
+        * openvr/src/json/json-forwards.h: Removed.
+        * openvr/src/json/json.h: Removed.
+        * openvr/src/jsoncpp.cpp: Removed.
+        * openvr/src/openvr_api_public.cpp: Removed.
+        * openvr/src/vrcommon/dirtools_public.cpp: Removed.
+        * openvr/src/vrcommon/dirtools_public.h: Removed.
+        * openvr/src/vrcommon/envvartools_public.cpp: Removed.
+        * openvr/src/vrcommon/envvartools_public.h: Removed.
+        * openvr/src/vrcommon/hmderrors_public.cpp: Removed.
+        * openvr/src/vrcommon/hmderrors_public.h: Removed.
+        * openvr/src/vrcommon/pathtools_public.cpp: Removed.
+        * openvr/src/vrcommon/pathtools_public.h: Removed.
+        * openvr/src/vrcommon/sharedlibtools_public.cpp: Removed.
+        * openvr/src/vrcommon/sharedlibtools_public.h: Removed.
+        * openvr/src/vrcommon/strtools_public.cpp: Removed.
+        * openvr/src/vrcommon/strtools_public.h: Removed.
+        * openvr/src/vrcommon/vrpathregistry_public.cpp: Removed.
+        * openvr/src/vrcommon/vrpathregistry_public.h: Removed.
+
 2020-01-21  Keith Rollin  <krollin@apple.com>
 
         Fix tvOS values in SUPPORTED_PLATFORMS

@@ -140,9 +140,6 @@ public:
     void setInspectorAdditionsEnabled(bool isEnabled) { m_inspectorAdditionsEnabled = isEnabled; }
     bool inspectorAdditionsEnabled() const { return m_inspectorAdditionsEnabled; }
 
-    void setWebVREnabled(bool isEnabled) { m_webVREnabled = isEnabled; }
-    bool webVREnabled() const { return m_webVREnabled; }
-
     void setAccessibilityObjectModelEnabled(bool isEnabled) { m_accessibilityObjectModelEnabled = isEnabled; }
     bool accessibilityObjectModelEnabled() const { return m_accessibilityObjectModelEnabled; }
 
@@ -436,7 +433,6 @@ private:
     bool m_isWebSocketEnabled { true };
     bool m_fetchAPIKeepAliveEnabled { false };
     bool m_inspectorAdditionsEnabled { false };
-    bool m_webVREnabled { false };
     bool m_accessibilityObjectModelEnabled { false };
     bool m_ariaReflectionEnabled { true };
     bool m_itpDebugMode { false };

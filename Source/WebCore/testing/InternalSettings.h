@@ -129,7 +129,6 @@ public:
     static void setIndexedDBWorkersEnabled(bool);
     static void setWebGL2Enabled(bool);
     static void setWebGPUEnabled(bool);
-    static void setWebVREnabled(bool);
     static void setPictureInPictureAPIEnabled(bool);
     static void setScreenCaptureEnabled(bool);
 
@@ -220,7 +219,6 @@ private:
         // Runtime enabled settings.
         bool m_indexedDBWorkersEnabled;
         bool m_webGL2Enabled;
-        bool m_webVREnabled;
         bool m_setScreenCaptureEnabled;
         
         bool m_shouldMockBoldSystemFontForAccessibility;

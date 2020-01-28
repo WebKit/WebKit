@@ -1,3 +1,15 @@
+2020-01-27  Sergio Villar Senin  <svillar@igalia.com>
+
+        Remove WebVR from the tree
+        https://bugs.webkit.org/show_bug.cgi?id=206739
+
+        Reviewed by Darin Adler.
+
+        * webvr/webvr-disabled-expected.txt: Removed.
+        * webvr/webvr-disabled.html: Removed.
+        * webvr/webvr-enabled-expected.txt: Removed.
+        * webvr/webvr-enabled.html: Removed.
+
 2020-01-28  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [CSS Backgrounds] Import WPT css-backgrounds tests

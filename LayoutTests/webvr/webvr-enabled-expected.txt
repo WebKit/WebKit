@@ -1,4 +1,0 @@
-PASS function getVRDisplays() {
-    [native code]
-} is defined.
-

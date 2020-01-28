@@ -96,7 +96,6 @@ enum FontLoadTimingOverride { "Block", "Swap", "Failure" };
     void setIndexedDBWorkersEnabled(boolean enabled);
     void setWebGL2Enabled(boolean enabled);
     void setWebGPUEnabled(boolean enabled);
-    void setWebVREnabled(boolean enabled);
     void setScreenCaptureEnabled(boolean enabled);
 
     [MayThrowException] DOMString userInterfaceDirectionPolicy();
