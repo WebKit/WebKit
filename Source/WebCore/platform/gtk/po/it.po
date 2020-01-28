@@ -2546,16 +2546,16 @@ msgstr "Seleziona file"
 msgid "Select File"
 msgstr "Seleziona file"
 
+#: ../../../WebKit/UIProcess/Inspector/gtk/WebKitInspectorWindow.cpp:57
+#: ../../../WebKit/UIProcess/Inspector/gtk/WebKitInspectorWindow.cpp:62
+#: ../../../WebKit/UIProcess/Inspector/gtk/WebKitInspectorWindow.cpp:80
+#: ../../../WebKit/UIProcess/Inspector/gtk/WebKitInspectorWindow.cpp:83
+msgid "Web Inspector"
+msgstr "Ispettore web"
+
 #: ../../../WebKit/UIProcess/gtk/WebColorPickerGtk.cpp:102
 msgid "Select Color"
 msgstr "Seleziona colore"
-
-#: ../../../WebKit/UIProcess/gtk/WebKitInspectorWindow.cpp:57
-#: ../../../WebKit/UIProcess/gtk/WebKitInspectorWindow.cpp:62
-#: ../../../WebKit/UIProcess/gtk/WebKitInspectorWindow.cpp:80
-#: ../../../WebKit/UIProcess/gtk/WebKitInspectorWindow.cpp:83
-msgid "Web Inspector"
-msgstr "Ispettore web"
 
 #: ../../../WebKit/UIProcess/WebsiteData/WebsiteDataRecord.cpp:39
 msgid "Local documents on your computer"

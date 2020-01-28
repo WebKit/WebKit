@@ -2194,16 +2194,16 @@ msgstr "Pilih Berkas"
 msgid "Select File"
 msgstr "Pilih Berkas"
 
+#: ../../../../WebKit/UIProcess/Inspector/gtk/WebKitInspectorWindow.cpp:57
+#: ../../../../WebKit/UIProcess/Inspector/gtk/WebKitInspectorWindow.cpp:62
+#: ../../../../WebKit/UIProcess/Inspector/gtk/WebKitInspectorWindow.cpp:80
+#: ../../../../WebKit/UIProcess/Inspector/gtk/WebKitInspectorWindow.cpp:83
+msgid "Web Inspector"
+msgstr "Pemeriksa Web"
+
 #: ../../../../WebKit/UIProcess/gtk/WebColorPickerGtk.cpp:102
 msgid "Select Color"
 msgstr "Pilih Warna"
-
-#: ../../../../WebKit/UIProcess/gtk/WebKitInspectorWindow.cpp:57
-#: ../../../../WebKit/UIProcess/gtk/WebKitInspectorWindow.cpp:62
-#: ../../../../WebKit/UIProcess/gtk/WebKitInspectorWindow.cpp:80
-#: ../../../../WebKit/UIProcess/gtk/WebKitInspectorWindow.cpp:83
-msgid "Web Inspector"
-msgstr "Pemeriksa Web"
 
 #: ../../../../WebKit/UIProcess/WebEditCommandProxy.cpp:81
 msgctxt "Undo action name"

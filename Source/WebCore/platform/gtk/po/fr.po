@@ -2194,16 +2194,16 @@ msgstr "Plein écran"
 msgid "Whether window will be displayed fullscreen."
 msgstr "Indique si la fenêtre doit être affichée en mode plein écran."
 
+#: ../../../../WebKit2/UIProcess/Inspector/gtk/WebKitInspectorWindow.cpp:57
+#: ../../../../WebKit2/UIProcess/Inspector/gtk/WebKitInspectorWindow.cpp:62
+#: ../../../../WebKit2/UIProcess/Inspector/gtk/WebKitInspectorWindow.cpp:80
+#: ../../../../WebKit2/UIProcess/Inspector/gtk/WebKitInspectorWindow.cpp:83
+msgid "Web Inspector"
+msgstr "Inspecteur Web"
+
 #: ../../../../WebKit2/UIProcess/gtk/WebColorPickerGtk.cpp:103
 msgid "Select Color"
 msgstr "Sélectionner la couleur"
-
-#: ../../../../WebKit2/UIProcess/gtk/WebKitInspectorWindow.cpp:57
-#: ../../../../WebKit2/UIProcess/gtk/WebKitInspectorWindow.cpp:62
-#: ../../../../WebKit2/UIProcess/gtk/WebKitInspectorWindow.cpp:80
-#: ../../../../WebKit2/UIProcess/gtk/WebKitInspectorWindow.cpp:83
-msgid "Web Inspector"
-msgstr "Inspecteur Web"
 
 #: ../../../../WebKit2/UIProcess/WebEditCommandProxy.cpp:81
 msgctxt "Undo action name"

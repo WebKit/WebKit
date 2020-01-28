@@ -2612,6 +2612,13 @@ msgstr "Seleccionar archivos"
 msgid "Select File"
 msgstr "Seleccionar archivo"
 
+#: ../../../../WebKit/UIProcess/Inspector/gtk/WebKitInspectorWindow.cpp:57
+#: ../../../../WebKit/UIProcess/Inspector/gtk/WebKitInspectorWindow.cpp:62
+#: ../../../../WebKit/UIProcess/Inspector/gtk/WebKitInspectorWindow.cpp:80
+#: ../../../../WebKit/UIProcess/Inspector/gtk/WebKitInspectorWindow.cpp:83
+msgid "Web Inspector"
+msgstr "Inspector web"
+
 #: ../../../../WebKit/UIProcess/geoclue/GeoclueGeolocationProvider.cpp:67
 #: ../../../../WebKit/UIProcess/geoclue/GeoclueGeolocationProvider.cpp:130
 #: ../../../../WebKit/UIProcess/geoclue/GeoclueGeolocationProvider.cpp:153
@@ -2626,13 +2633,6 @@ msgstr ""
 #: ../../../../WebKit/UIProcess/gtk/WebColorPickerGtk.cpp:102
 msgid "Select Color"
 msgstr "Seleccionar color"
-
-#: ../../../../WebKit/UIProcess/gtk/WebKitInspectorWindow.cpp:57
-#: ../../../../WebKit/UIProcess/gtk/WebKitInspectorWindow.cpp:62
-#: ../../../../WebKit/UIProcess/gtk/WebKitInspectorWindow.cpp:80
-#: ../../../../WebKit/UIProcess/gtk/WebKitInspectorWindow.cpp:83
-msgid "Web Inspector"
-msgstr "Inspector web"
 
 #: ../../../../WebKit/UIProcess/WebsiteData/WebsiteDataRecord.cpp:40
 msgid "Local documents on your computer"

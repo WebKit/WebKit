@@ -1,3 +1,19 @@
+2020-01-28  Devin Rousso  <drousso@apple.com>
+
+        Unreviewed, speculative gtk build fix after r255214
+
+        * POTFILES.in:
+        * da.po:
+        * de.po:
+        * es.po:
+        * fr.po:
+        * id.po:
+        * it.po:
+        * pl.po:
+        * pt_BR.po:
+        * sv.po:
+        * uk.po:
+
 2019-11-25  Rafael Fontenelle  <rafaelff@gnome.org>
 
         [l10n] [pt_BR] Updated Brazilian Portuguese translation

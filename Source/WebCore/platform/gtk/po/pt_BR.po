@@ -2755,6 +2755,10 @@ msgstr "Selecionar arquivos"
 msgid "Select File"
 msgstr "Selecionar arquivo"
 
+#: ../../../../WebKit/UIProcess/Inspector/gtk/WebKitInspectorWindow.cpp:54
+msgid "Web Inspector"
+msgstr "Inspetor Web"
+
 #: ../../../../WebKit/UIProcess/geoclue/GeoclueGeolocationProvider.cpp:67
 #: ../../../../WebKit/UIProcess/geoclue/GeoclueGeolocationProvider.cpp:130
 #: ../../../../WebKit/UIProcess/geoclue/GeoclueGeolocationProvider.cpp:153
@@ -2769,10 +2773,6 @@ msgstr "Falha ao determinar a posição do serviço de geolocalização"
 #: ../../../../WebKit/UIProcess/gtk/WebColorPickerGtk.cpp:102
 msgid "Select Color"
 msgstr "Selecionar cor"
-
-#: ../../../../WebKit/UIProcess/gtk/WebKitInspectorWindow.cpp:54
-msgid "Web Inspector"
-msgstr "Inspetor Web"
 
 #: ../../../../WebKit/UIProcess/WebsiteData/WebsiteDataRecord.cpp:40
 msgid "Local documents on your computer"

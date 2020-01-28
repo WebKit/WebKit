@@ -2771,6 +2771,10 @@ msgstr "Вибір файлів"
 msgid "Select File"
 msgstr "Вибір файла"
 
+#: ../../../../WebKit/UIProcess/Inspector/gtk/WebKitInspectorWindow.cpp:54
+msgid "Web Inspector"
+msgstr "Вебревізор"
+
 #: ../../../../WebKit/UIProcess/geoclue/GeoclueGeolocationProvider.cpp:67
 #: ../../../../WebKit/UIProcess/geoclue/GeoclueGeolocationProvider.cpp:130
 #: ../../../../WebKit/UIProcess/geoclue/GeoclueGeolocationProvider.cpp:153
@@ -2785,10 +2789,6 @@ msgstr "Не вдалося визначити розташування за д�
 #: ../../../../WebKit/UIProcess/gtk/WebColorPickerGtk.cpp:102
 msgid "Select Color"
 msgstr "Вибір кольору"
-
-#: ../../../../WebKit/UIProcess/gtk/WebKitInspectorWindow.cpp:54
-msgid "Web Inspector"
-msgstr "Вебревізор"
 
 #: ../../../../WebKit/UIProcess/WebsiteData/WebsiteDataRecord.cpp:40
 msgid "Local documents on your computer"

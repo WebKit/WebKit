@@ -2693,6 +2693,10 @@ msgstr "Dateien auswählen"
 msgid "Select File"
 msgstr "Datei wählen"
 
+#: ../../../../WebKit/UIProcess/Inspector/gtk/WebKitInspectorWindow.cpp:54
+msgid "Web Inspector"
+msgstr "Web-Inspector"
+
 #: ../../../../WebKit/UIProcess/geoclue/GeoclueGeolocationProvider.cpp:67
 #: ../../../../WebKit/UIProcess/geoclue/GeoclueGeolocationProvider.cpp:130
 #: ../../../../WebKit/UIProcess/geoclue/GeoclueGeolocationProvider.cpp:153
@@ -2707,10 +2711,6 @@ msgstr ""
 #: ../../../../WebKit/UIProcess/gtk/WebColorPickerGtk.cpp:102
 msgid "Select Color"
 msgstr "Farbe auswählen"
-
-#: ../../../../WebKit/UIProcess/gtk/WebKitInspectorWindow.cpp:54
-msgid "Web Inspector"
-msgstr "Web-Inspector"
 
 #: ../../../../WebKit/UIProcess/WebsiteData/WebsiteDataRecord.cpp:40
 msgid "Local documents on your computer"
