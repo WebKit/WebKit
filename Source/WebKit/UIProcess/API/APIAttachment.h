@@ -35,6 +35,7 @@
 #include <wtf/text/WTFString.h>
 
 OBJC_CLASS NSFileWrapper;
+OBJC_CLASS NSString;
 
 namespace WebCore {
 class SharedBuffer;

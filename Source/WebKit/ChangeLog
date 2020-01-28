@@ -1,3 +1,90 @@
+2020-01-27  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: consolidate UIProcess/WebProcess files into Inspector folders
+        https://bugs.webkit.org/show_bug.cgi?id=206721
+
+        Reviewed by Alex Christensen and Don Olmstead.
+
+        * CMakeLists.txt:
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources.make:
+        * PlatformGTK.cmake:
+        * PlatformMac.cmake:
+        * PlatformFTW.cmake:
+        * PlatformWin.cmake:
+        * Sources.txt:
+        * SourcesCocoa.txt:
+        * SourcesGTK.txt:
+        * WebKit.xcodeproj/project.pbxproj:
+
+        * UIProcess/Inspector/InspectorTargetProxy.h: Renamed from Source/WebKit/UIProcess/InspectorTargetProxy.h.
+        * UIProcess/Inspector/InspectorTargetProxy.cpp: Renamed from Source/WebKit/UIProcess/InspectorTargetProxy.cpp.
+        * UIProcess/Inspector/RemoteWebInspectorProxy.messages.in: Renamed from Source/WebKit/UIProcess/RemoteWebInspectorProxy.messages.in.
+        * UIProcess/Inspector/RemoteWebInspectorProxy.h: Renamed from Source/WebKit/UIProcess/RemoteWebInspectorProxy.h.
+        * UIProcess/Inspector/RemoteWebInspectorProxy.cpp: Renamed from Source/WebKit/UIProcess/RemoteWebInspectorProxy.cpp.
+        * UIProcess/Inspector/WebInspectorProxy.messages.in: Renamed from Source/WebKit/UIProcess/WebInspectorProxy.messages.in.
+        * UIProcess/Inspector/WebInspectorProxy.h: Renamed from Source/WebKit/UIProcess/WebInspectorProxy.h.
+        * UIProcess/Inspector/WebInspectorProxy.cpp: Renamed from Source/WebKit/UIProcess/WebInspectorProxy.cpp.
+        * UIProcess/Inspector/WebInspectorUtilities.h: Renamed from Source/WebKit/UIProcess/WebInspectorUtilities.h.
+        * UIProcess/Inspector/WebInspectorUtilities.cpp: Renamed from Source/WebKit/UIProcess/WebInspectorUtilities.cpp.
+        * UIProcess/Inspector/WebPageDebuggable.h: Renamed from Source/WebKit/UIProcess/WebPageDebuggable.h.
+        * UIProcess/Inspector/WebPageDebuggable.cpp: Renamed from Source/WebKit/UIProcess/WebPageDebuggable.cpp.
+        * UIProcess/Inspector/WebPageInspectorController.h: Renamed from Source/WebKit/UIProcess/WebPageInspectorController.h.
+        * UIProcess/Inspector/WebPageInspectorController.cpp: Renamed from Source/WebKit/UIProcess/WebPageInspectorController.cpp.
+        * UIProcess/Inspector/glib/RemoteInspectorClient.h: Renamed from Source/WebKit/UIProcess/glib/RemoteInspectorClient.h.
+        * UIProcess/Inspector/glib/RemoteInspectorClient.cpp: Renamed from Source/WebKit/UIProcess/glib/RemoteInspectorClient.cpp.
+        * UIProcess/Inspector/gtk/RemoteWebInspectorProxyGtk.cpp: Renamed from Source/WebKit/UIProcess/gtk/RemoteWebInspectorProxyGtk.cpp.
+        * UIProcess/Inspector/gtk/WebInspectorProxyGtk.cpp: Renamed from Source/WebKit/UIProcess/gtk/WebInspectorProxyGtk.cpp.
+        * UIProcess/Inspector/gtk/WebInspectorProxyClient.h: Renamed from Source/WebKit/UIProcess/gtk/WebInspectorProxyClient.h.
+        * UIProcess/Inspector/gtk/WebKitInspectorWindow.h: Renamed from Source/WebKit/UIProcess/gtk/WebKitInspectorWindow.h.
+        * UIProcess/Inspector/gtk/WebKitInspectorWindow.cpp: Renamed from Source/WebKit/UIProcess/gtk/WebKitInspectorWindow.cpp.
+        * UIProcess/Inspector/ios/WKInspectorHighlightView.h: Renamed from Source/WebKit/UIProcess/WKInspectorHighlightView.h.
+        * UIProcess/Inspector/ios/WKInspectorHighlightView.mm: Renamed from Source/WebKit/UIProcess/WKInspectorHighlightView.mm.
+        * UIProcess/Inspector/ios/WKInspectorNodeSearchGestureRecognizer.h: Renamed from Source/WebKit/UIProcess/ios/WKInspectorNodeSearchGestureRecognizer.h.
+        * UIProcess/Inspector/ios/WKInspectorNodeSearchGestureRecognizer.mm: Renamed from Source/WebKit/UIProcess/ios/WKInspectorNodeSearchGestureRecognizer.mm.
+        * UIProcess/Inspector/mac/RemoteWebInspectorProxyMac.mm: Renamed from Source/WebKit/UIProcess/mac/RemoteWebInspectorProxyMac.mm.
+        * UIProcess/Inspector/mac/WKInspectorViewController.h: Renamed from Source/WebKit/UIProcess/mac/WKInspectorViewController.h.
+        * UIProcess/Inspector/mac/WKInspectorViewController.mm: Renamed from Source/WebKit/UIProcess/mac/WKInspectorViewController.mm.
+        * UIProcess/Inspector/mac/WKInspectorWKWebView.h: Renamed from Source/WebKit/UIProcess/mac/WKInspectorWKWebView.h.
+        * UIProcess/Inspector/mac/WKInspectorWKWebView.mm: Renamed from Source/WebKit/UIProcess/mac/WKInspectorWKWebView.mm.
+        * UIProcess/Inspector/mac/WebInspectorProxyMac.mm: Renamed from Source/WebKit/UIProcess/mac/WebInspectorProxyMac.mm.
+        * UIProcess/Inspector/socket/RemoteInspectorClient.h: Renamed from Source/WebKit/UIProcess/socket/RemoteInspectorClient.h.
+        * UIProcess/Inspector/socket/RemoteInspectorClient.cpp: Renamed from Source/WebKit/UIProcess/socket/RemoteInspectorClient.cpp.
+        * UIProcess/Inspector/socket/RemoteInspectorProtocolHandler.h: Renamed from Source/WebKit/UIProcess/socket/RemoteInspectorProtocolHandler.h.
+        * UIProcess/Inspector/socket/RemoteInspectorProtocolHandler.cpp: Renamed from Source/WebKit/UIProcess/socket/RemoteInspectorProtocolHandler.cpp.
+        * UIProcess/Inspector/win/RemoteWebInspectorProxyWin.cpp: Renamed from Source/WebKit/UIProcess/win/RemoteWebInspectorProxyWin.cpp.
+        * UIProcess/Inspector/win/WebInspectorProxyWin.cpp: Renamed from Source/WebKit/UIProcess/win/WebInspectorProxyWin.cpp.
+
+        * WebProcess/Inspector/RemoteWebInspectorUI.messages.in: Renamed from Source/WebKit/WebProcess/WebPage/RemoteWebInspectorUI.messages.in.
+        * WebProcess/Inspector/RemoteWebInspectorUI.h: Renamed from Source/WebKit/WebProcess/WebPage/RemoteWebInspectorUI.h.
+        * WebProcess/Inspector/RemoteWebInspectorUI.cpp: Renamed from Source/WebKit/WebProcess/WebPage/RemoteWebInspectorUI.cpp.
+        * WebProcess/Inspector/WebInspector.messages.in: Renamed from Source/WebKit/WebProcess/WebPage/WebInspector.messages.in.
+        * WebProcess/Inspector/WebInspector.h: Renamed from Source/WebKit/WebProcess/WebPage/WebInspector.h.
+        * WebProcess/Inspector/WebInspector.cpp: Renamed from Source/WebKit/WebProcess/WebPage/WebInspector.cpp.
+        * WebProcess/Inspector/WebInspectorClient.h: Renamed from Source/WebKit/WebProcess/WebCoreSupport/WebInspectorClient.h.
+        * WebProcess/Inspector/WebInspectorClient.cpp: Renamed from Source/WebKit/WebProcess/WebCoreSupport/WebInspectorClient.cpp.
+        * WebProcess/Inspector/WebInspectorFrontendAPIDispatcher.h: Renamed from Source/WebKit/WebProcess/WebPage/WebInspectorFrontendAPIDispatcher.h.
+        * WebProcess/Inspector/WebInspectorFrontendAPIDispatcher.cpp: Renamed from Source/WebKit/WebProcess/WebPage/WebInspectorFrontendAPIDispatcher.cpp.
+        * WebProcess/Inspector/WebInspectorInterruptDispatcher.messages.in: Renamed from Source/WebKit/WebProcess/WebPage/WebInspectorInterruptDispatcher.messages.in.
+        * WebProcess/Inspector/WebInspectorInterruptDispatcher.h: Renamed from Source/WebKit/WebProcess/WebPage/WebInspectorInterruptDispatcher.h.
+        * WebProcess/Inspector/WebInspectorInterruptDispatcher.cpp: Renamed from Source/WebKit/WebProcess/WebPage/WebInspectorInterruptDispatcher.cpp.
+        * WebProcess/Inspector/WebInspectorUI.messages.in: Renamed from Source/WebKit/WebProcess/WebPage/WebInspectorUI.messages.in.
+        * WebProcess/Inspector/WebInspectorUI.h: Renamed from Source/WebKit/WebProcess/WebPage/WebInspectorUI.h.
+        * WebProcess/Inspector/WebInspectorUI.cpp: Renamed from Source/WebKit/WebProcess/WebPage/WebInspectorUI.cpp.
+        * WebProcess/Inspector/WebPageInspectorTarget.h: Renamed from Source/WebKit/WebProcess/WebPage/WebPageInspectorTarget.h.
+        * WebProcess/Inspector/WebPageInspectorTarget.cpp: Renamed from Source/WebKit/WebProcess/WebPage/WebPageInspectorTarget.cpp.
+        * WebProcess/Inspector/WebPageInspectorTargetController.h: Renamed from Source/WebKit/WebProcess/WebPage/WebPageInspectorTargetController.h.
+        * WebProcess/Inspector/WebPageInspectorTargetController.cpp: Renamed from Source/WebKit/WebProcess/WebPage/WebPageInspectorTargetController.cpp.
+        * WebProcess/Inspector/WebPageInspectorTargetFrontendChannel.h: Renamed from Source/WebKit/WebProcess/WebPage/WebPageInspectorTargetFrontendChannel.h.
+        * WebProcess/Inspector/WebPageInspectorTargetFrontendChannel.cpp: Renamed from Source/WebKit/WebProcess/WebPage/WebPageInspectorTargetFrontendChannel.cpp.
+        * WebProcess/Inspector/gtk/WebInspectorUIGtk.cpp: Renamed from Source/WebKit/WebProcess/WebPage/gtk/WebInspectorUIGtk.cpp.
+        * WebProcess/Inspector/mac/WebInspectorUIMac.mm: Renamed from Source/WebKit/WebProcess/WebPage/mac/WebInspectorUIMac.mm.
+        * WebProcess/Inspector/win/WebInspectorUIWin.mm: Renamed from Source/WebKit/WebProcess/WebPage/win/WebInspectorUIWin.mm.
+
+        * UIProcess/API/APIAttachment.h:
+        * UIProcess/API/Cocoa/WKWebViewTesting.mm:
+        Add some missing includes.
+
 2020-01-27  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, drop unused MESSAGE_CHECK_CONTEXTID() macro in UserMediaCaptureManagerProxy.cpp.

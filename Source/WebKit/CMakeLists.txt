@@ -56,6 +56,7 @@ set(WebKit_INCLUDE_DIRECTORIES
     "${WEBKIT_DIR}/UIProcess/Downloads"
     "${WEBKIT_DIR}/UIProcess/Gamepad"
     "${WEBKIT_DIR}/UIProcess/GPU"
+    "${WEBKIT_DIR}/UIProcess/Inspector"
     "${WEBKIT_DIR}/UIProcess/Launcher"
     "${WEBKIT_DIR}/UIProcess/Network"
     "${WEBKIT_DIR}/UIProcess/Network/CustomProtocols"
@@ -85,6 +86,7 @@ set(WebKit_INCLUDE_DIRECTORIES
     "${WEBKIT_DIR}/WebProcess/InjectedBundle/API"
     "${WEBKIT_DIR}/WebProcess/InjectedBundle/API/c"
     "${WEBKIT_DIR}/WebProcess/InjectedBundle/DOM"
+    "${WEBKIT_DIR}/WebProcess/Inspector"
     "${WEBKIT_DIR}/WebProcess/Launching"
     "${WEBKIT_DIR}/WebProcess/MediaCache"
     "${WEBKIT_DIR}/WebProcess/MediaStream"
@@ -148,12 +150,10 @@ set(WebKit_MESSAGES_IN_FILES
     Shared/Plugins/NPObjectMessageReceiver.messages.in
 
     UIProcess/DrawingAreaProxy.messages.in
-    UIProcess/RemoteWebInspectorProxy.messages.in
     UIProcess/VisitedLinkStore.messages.in
     UIProcess/WebCookieManagerProxy.messages.in
     UIProcess/WebFullScreenManagerProxy.messages.in
     UIProcess/WebGeolocationManagerProxy.messages.in
-    UIProcess/WebInspectorProxy.messages.in
     UIProcess/WebPageProxy.messages.in
     UIProcess/WebPasteboardProxy.messages.in
     UIProcess/WebProcessPool.messages.in
@@ -162,6 +162,9 @@ set(WebKit_MESSAGES_IN_FILES
     UIProcess/Automation/WebAutomationSession.messages.in
 
     UIProcess/Downloads/DownloadProxy.messages.in
+
+    UIProcess/Inspector/RemoteWebInspectorProxy.messages.in
+    UIProcess/Inspector/WebInspectorProxy.messages.in
 
     UIProcess/Network/NetworkProcessProxy.messages.in
 
@@ -178,6 +181,11 @@ set(WebKit_MESSAGES_IN_FILES
     WebProcess/FullScreen/WebFullScreenManager.messages.in
 
     WebProcess/Geolocation/WebGeolocationManager.messages.in
+
+    WebProcess/Inspector/RemoteWebInspectorUI.messages.in
+    WebProcess/Inspector/WebInspector.messages.in
+    WebProcess/Inspector/WebInspectorInterruptDispatcher.messages.in
+    WebProcess/Inspector/WebInspectorUI.messages.in
 
     WebProcess/Network/webrtc/WebMDNSRegister.messages.in
     WebProcess/Network/webrtc/WebRTCMonitor.messages.in
@@ -202,11 +210,7 @@ set(WebKit_MESSAGES_IN_FILES
 
     WebProcess/WebPage/DrawingArea.messages.in
     WebProcess/WebPage/EventDispatcher.messages.in
-    WebProcess/WebPage/RemoteWebInspectorUI.messages.in
     WebProcess/WebPage/VisitedLinkTableController.messages.in
-    WebProcess/WebPage/WebInspector.messages.in
-    WebProcess/WebPage/WebInspectorInterruptDispatcher.messages.in
-    WebProcess/WebPage/WebInspectorUI.messages.in
     WebProcess/WebPage/WebPage.messages.in
 
     WebProcess/WebStorage/StorageAreaMap.messages.in

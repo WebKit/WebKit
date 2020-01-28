@@ -79,11 +79,12 @@ $(PROJECT_DIR)/UIProcess/Cocoa/VideoFullscreenManagerProxy.messages.in
 $(PROJECT_DIR)/UIProcess/Downloads/DownloadProxy.messages.in
 $(PROJECT_DIR)/UIProcess/DrawingAreaProxy.messages.in
 $(PROJECT_DIR)/UIProcess/GPU/GPUProcessProxy.messages.in
+$(PROJECT_DIR)/UIProcess/Inspector/RemoteWebInspectorProxy.messages.in
+$(PROJECT_DIR)/UIProcess/Inspector/WebInspectorProxy.messages.in
 $(PROJECT_DIR)/UIProcess/Network/CustomProtocols/LegacyCustomProtocolManagerProxy.messages.in
 $(PROJECT_DIR)/UIProcess/Network/NetworkProcessProxy.messages.in
 $(PROJECT_DIR)/UIProcess/Plugins/PluginProcessProxy.messages.in
 $(PROJECT_DIR)/UIProcess/RemoteLayerTree/RemoteLayerTreeDrawingAreaProxy.messages.in
-$(PROJECT_DIR)/UIProcess/RemoteWebInspectorProxy.messages.in
 $(PROJECT_DIR)/UIProcess/UserContent/WebUserContentControllerProxy.messages.in
 $(PROJECT_DIR)/UIProcess/ViewGestureController.messages.in
 $(PROJECT_DIR)/UIProcess/VisitedLinkStore.messages.in
@@ -91,7 +92,6 @@ $(PROJECT_DIR)/UIProcess/WebAuthentication/WebAuthenticatorCoordinatorProxy.mess
 $(PROJECT_DIR)/UIProcess/WebCookieManagerProxy.messages.in
 $(PROJECT_DIR)/UIProcess/WebFullScreenManagerProxy.messages.in
 $(PROJECT_DIR)/UIProcess/WebGeolocationManagerProxy.messages.in
-$(PROJECT_DIR)/UIProcess/WebInspectorProxy.messages.in
 $(PROJECT_DIR)/UIProcess/WebPageProxy.messages.in
 $(PROJECT_DIR)/UIProcess/WebPasteboardProxy.messages.in
 $(PROJECT_DIR)/UIProcess/WebProcessPool.messages.in
@@ -113,6 +113,10 @@ $(PROJECT_DIR)/WebProcess/GPU/webrtc/LibWebRTCCodecs.messages.in
 $(PROJECT_DIR)/WebProcess/GPU/webrtc/LibWebRTCRemoteCodecs.messages.in
 $(PROJECT_DIR)/WebProcess/GPU/webrtc/SampleBufferDisplayLayer.messages.in
 $(PROJECT_DIR)/WebProcess/Geolocation/WebGeolocationManager.messages.in
+$(PROJECT_DIR)/WebProcess/Inspector/RemoteWebInspectorUI.messages.in
+$(PROJECT_DIR)/WebProcess/Inspector/WebInspector.messages.in
+$(PROJECT_DIR)/WebProcess/Inspector/WebInspectorInterruptDispatcher.messages.in
+$(PROJECT_DIR)/WebProcess/Inspector/WebInspectorUI.messages.in
 $(PROJECT_DIR)/WebProcess/Network/NetworkProcessConnection.messages.in
 $(PROJECT_DIR)/WebProcess/Network/WebResourceLoader.messages.in
 $(PROJECT_DIR)/WebProcess/Network/WebSocketChannel.messages.in
@@ -134,13 +138,9 @@ $(PROJECT_DIR)/WebProcess/WebPage/Cocoa/TextCheckingControllerProxy.messages.in
 $(PROJECT_DIR)/WebProcess/WebPage/DrawingArea.messages.in
 $(PROJECT_DIR)/WebProcess/WebPage/EventDispatcher.messages.in
 $(PROJECT_DIR)/WebProcess/WebPage/RemoteLayerTree/RemoteScrollingCoordinator.messages.in
-$(PROJECT_DIR)/WebProcess/WebPage/RemoteWebInspectorUI.messages.in
 $(PROJECT_DIR)/WebProcess/WebPage/ViewGestureGeometryCollector.messages.in
 $(PROJECT_DIR)/WebProcess/WebPage/ViewUpdateDispatcher.messages.in
 $(PROJECT_DIR)/WebProcess/WebPage/VisitedLinkTableController.messages.in
-$(PROJECT_DIR)/WebProcess/WebPage/WebInspector.messages.in
-$(PROJECT_DIR)/WebProcess/WebPage/WebInspectorInterruptDispatcher.messages.in
-$(PROJECT_DIR)/WebProcess/WebPage/WebInspectorUI.messages.in
 $(PROJECT_DIR)/WebProcess/WebPage/WebPage.messages.in
 $(PROJECT_DIR)/WebProcess/WebProcess.messages.in
 $(PROJECT_DIR)/WebProcess/WebStorage/StorageAreaMap.messages.in

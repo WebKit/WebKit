@@ -48,6 +48,8 @@ list(APPEND WebKit_SOURCES
 
     UIProcess/CoordinatedGraphics/DrawingAreaProxyCoordinatedGraphics.cpp
 
+    UIProcess/Inspector/win/WebInspectorProxyWin.cpp
+
     UIProcess/Launcher/win/ProcessLauncherWin.cpp
 
     UIProcess/WebsiteData/curl/WebsiteDataStoreCurl.cpp
@@ -56,13 +58,14 @@ list(APPEND WebKit_SOURCES
 
     UIProcess/win/PageClientImpl.cpp
     UIProcess/win/WebContextMenuProxyWin.cpp
-    UIProcess/win/WebInspectorProxyWin.cpp
     UIProcess/win/WebPageProxyWin.cpp
     UIProcess/win/WebPopupMenuProxyWin.cpp
     UIProcess/win/WebProcessPoolWin.cpp
     UIProcess/win/WebView.cpp
 
     WebProcess/InjectedBundle/win/InjectedBundleWin.cpp
+
+    WebProcess/Inspector/win/WebInspectorUIWin.cpp
 
     WebProcess/MediaCache/WebMediaKeyStorageManager.cpp
 
@@ -77,7 +80,6 @@ list(APPEND WebKit_SOURCES
     WebProcess/WebPage/CoordinatedGraphics/DrawingAreaCoordinatedGraphics.cpp
     WebProcess/WebPage/CoordinatedGraphics/LayerTreeHost.cpp
 
-    WebProcess/WebPage/win/WebInspectorUIWin.cpp
     WebProcess/WebPage/win/WebPageWin.cpp
 
     WebProcess/win/WebProcessMainWin.cpp
@@ -106,10 +108,13 @@ list(APPEND WebKit_INCLUDE_DIRECTORIES
     "${WEBKIT_DIR}/UIProcess/API/cpp/win"
     "${WEBKIT_DIR}/UIProcess/API/win"
     "${WEBKIT_DIR}/UIProcess/CoordinatedGraphics"
+    "${WEBKIT_DIR}/UIProcess/Inspector/socket"
+    "${WEBKIT_DIR}/UIProcess/Inspector/win"
     "${WEBKIT_DIR}/UIProcess/Plugins/win"
     "${WEBKIT_DIR}/UIProcess/win"
     "${WEBKIT_DIR}/WebProcess/InjectedBundle/API/win"
     "${WEBKIT_DIR}/WebProcess/InjectedBundle/API/win/DOM"
+    "${WEBKIT_DIR}/WebProcess/Inspector/win"
     "${WEBKIT_DIR}/WebProcess/WebCoreSupport/win"
     "${WEBKIT_DIR}/WebProcess/WebPage/CoordinatedGraphics"
     "${WEBKIT_DIR}/WebProcess/WebPage/win"
@@ -178,10 +183,10 @@ endif ()
 
 if (ENABLE_REMOTE_INSPECTOR)
     list(APPEND WebKit_SOURCES
-        UIProcess/socket/RemoteInspectorClient.cpp
-        UIProcess/socket/RemoteInspectorProtocolHandler.cpp
+        UIProcess/Inspector/socket/RemoteInspectorClient.cpp
+        UIProcess/Inspector/socket/RemoteInspectorProtocolHandler.cpp
 
-        UIProcess/win/RemoteWebInspectorProxyWin.cpp
+        UIProcess/Inspector/win/RemoteWebInspectorProxyWin.cpp
     )
 
     list(APPEND WebKit_INCLUDE_DIRECTORIES

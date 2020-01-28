@@ -35,6 +35,7 @@
 #import "WebViewImpl.h"
 #import "_WKFrameHandleInternal.h"
 #import "_WKInspectorInternal.h"
+#import <WebCore/RuntimeApplicationChecks.h>
 #import <WebCore/ValidationBubble.h>
 
 

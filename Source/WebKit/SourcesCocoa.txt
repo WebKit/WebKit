@@ -228,7 +228,6 @@ UIProcess/WebMediaSessionFocusManager.cpp
 UIProcess/WebMediaSessionFocusManagerClient.cpp
 UIProcess/WebMemoryPressureHandler.cpp
 UIProcess/WKImagePreviewViewController.mm
-UIProcess/WKInspectorHighlightView.mm
 
 UIProcess/API/APIWebsiteDataRecord.cpp
 
@@ -401,6 +400,14 @@ UIProcess/Gamepad/cocoa/UIGamepadProviderCocoa.mm
 UIProcess/Gamepad/ios/UIGamepadProviderIOS.mm
 UIProcess/Gamepad/mac/UIGamepadProviderMac.mm
 
+UIProcess/Inspector/ios/WKInspectorHighlightView.mm
+UIProcess/Inspector/ios/WKInspectorNodeSearchGestureRecognizer.mm
+
+UIProcess/Inspector/mac/RemoteWebInspectorProxyMac.mm
+UIProcess/Inspector/mac/WebInspectorProxyMac.mm
+UIProcess/Inspector/mac/WKInspectorViewController.mm
+UIProcess/Inspector/mac/WKInspectorWKWebView.mm
+
 UIProcess/ios/forms/WKAirPlayRoutePicker.mm
 UIProcess/ios/forms/WKDatePickerViewController.mm
 UIProcess/ios/forms/WKFileUploadPanel.mm
@@ -450,7 +457,6 @@ UIProcess/ios/WKDrawingView.mm
 UIProcess/ios/WKGeolocationProviderIOS.mm
 UIProcess/ios/WKGeolocationProviderIOSObjCSecurityOrigin.mm
 UIProcess/ios/WKHighlightLongPressGestureRecognizer.mm
-UIProcess/ios/WKInspectorNodeSearchGestureRecognizer.mm
 UIProcess/ios/WKKeyboardScrollingAnimator.mm
 UIProcess/ios/WKMouseGestureRecognizer.mm
 UIProcess/ios/WKPasswordView.mm
@@ -470,7 +476,6 @@ UIProcess/mac/DisplayLink.cpp
 UIProcess/mac/HighPerformanceGPUManager.cpp
 UIProcess/mac/LegacySessionStateCoding.cpp
 UIProcess/mac/PageClientImplMac.mm
-UIProcess/mac/RemoteWebInspectorProxyMac.mm
 UIProcess/mac/SecItemShimProxy.cpp
 UIProcess/mac/ServicesController.mm
 UIProcess/mac/TextCheckerMac.mm
@@ -481,15 +486,12 @@ UIProcess/mac/WebColorPickerMac.mm
 UIProcess/mac/WebContextMenuProxyMac.mm
 UIProcess/mac/WebCookieManagerProxyMac.mm
 UIProcess/mac/WebDataListSuggestionsDropdownMac.mm
-UIProcess/mac/WebInspectorProxyMac.mm
 UIProcess/mac/WebPageProxyMac.mm
 UIProcess/mac/WebPopupMenuProxyMac.mm
 UIProcess/mac/WebProcessProxyMac.mm
 UIProcess/mac/WindowServerConnection.mm
 UIProcess/mac/WKFullScreenWindowController.mm
 UIProcess/mac/WKImmediateActionController.mm
-UIProcess/mac/WKInspectorViewController.mm
-UIProcess/mac/WKInspectorWKWebView.mm
 UIProcess/mac/WKPrintingView.mm
 UIProcess/mac/WKSharingServicePickerDelegate.mm
 UIProcess/mac/WKTextFinderClient.mm
@@ -576,6 +578,8 @@ WebProcess/InjectedBundle/API/mac/WKWebProcessPlugInBrowserContextController.mm
 
 WebProcess/InjectedBundle/mac/InjectedBundleMac.mm
 
+WebProcess/Inspector/mac/WebInspectorUIMac.mm
+
 WebProcess/MediaCache/WebMediaKeyStorageManager.cpp
 
 WebProcess/Plugins/Netscape/mac/NetscapePluginMac.mm
@@ -617,7 +621,6 @@ WebProcess/WebPage/ios/WebPageIOS.mm
 WebProcess/WebPage/mac/DrawingAreaMac.cpp
 WebProcess/WebPage/mac/PageBannerMac.mm
 WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm
-WebProcess/WebPage/mac/WebInspectorUIMac.mm
 WebProcess/WebPage/mac/WebPageMac.mm
 WebProcess/WebPage/mac/WKAccessibilityWebPageObjectBase.mm
 WebProcess/WebPage/mac/WKAccessibilityWebPageObjectMac.mm

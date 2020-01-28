@@ -54,6 +54,7 @@ VPATH = \
     $(WebKit2)/WebProcess/GPU/media \
     $(WebKit2)/WebProcess/GPU/webrtc \
     $(WebKit2)/WebProcess/IconDatabase \
+    $(WebKit2)/WebProcess/Inspector \
     $(WebKit2)/WebProcess/MediaCache \
     $(WebKit2)/WebProcess/MediaStream \
     $(WebKit2)/WebProcess/Network \
@@ -79,6 +80,7 @@ VPATH = \
     $(WebKit2)/UIProcess/Databases \
     $(WebKit2)/UIProcess/Downloads \
     $(WebKit2)/UIProcess/GPU \
+    $(WebKit2)/UIProcess/Inspector \
     $(WebKit2)/UIProcess/MediaStream \
     $(WebKit2)/UIProcess/Network \
     $(WebKit2)/UIProcess/Network/CustomProtocols \

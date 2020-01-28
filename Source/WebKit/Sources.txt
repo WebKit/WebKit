@@ -266,13 +266,11 @@ UIProcess/DrawingAreaProxy.cpp
 UIProcess/FrameLoadState.cpp
 UIProcess/GeolocationPermissionRequestManagerProxy.cpp
 UIProcess/GeolocationPermissionRequestProxy.cpp
-UIProcess/InspectorTargetProxy.cpp
 UIProcess/LegacyGlobalSettings.cpp
 UIProcess/PageLoadState.cpp
 UIProcess/ProcessAssertion.cpp
 UIProcess/ProcessThrottler.cpp
 UIProcess/ProvisionalPageProxy.cpp
-UIProcess/RemoteWebInspectorProxy.cpp
 UIProcess/ResponsivenessTimer.cpp
 UIProcess/StatisticsRequest.cpp
 UIProcess/SuspendedPageProxy.cpp
@@ -305,15 +303,11 @@ UIProcess/WebFrameProxy.cpp
 UIProcess/WebFullScreenManagerProxy.cpp
 UIProcess/WebGeolocationManagerProxy.cpp
 UIProcess/WebGeolocationProvider.cpp
-UIProcess/WebInspectorProxy.cpp
-UIProcess/WebInspectorUtilities.cpp
 UIProcess/WebNavigationState.cpp
 UIProcess/WebOpenPanelResultListenerProxy.cpp
-UIProcess/WebPageDebuggable.cpp
 UIProcess/WebPageDiagnosticLoggingClient.cpp
 UIProcess/WebPageGroup.cpp
 UIProcess/WebPageInjectedBundleClient.cpp
-UIProcess/WebPageInspectorController.cpp
 UIProcess/WebPageProxy.cpp
 UIProcess/WebPasteboardProxy.cpp
 UIProcess/WebPreferences.cpp
@@ -425,6 +419,13 @@ UIProcess/Network/NetworkProcessProxy.cpp
 
 UIProcess/GPU/GPUProcessProxy.cpp
 
+UIProcess/Inspector/InspectorTargetProxy.cpp
+UIProcess/Inspector/RemoteWebInspectorProxy.cpp
+UIProcess/Inspector/WebInspectorProxy.cpp
+UIProcess/Inspector/WebInspectorUtilities.cpp
+UIProcess/Inspector/WebPageDebuggable.cpp
+UIProcess/Inspector/WebPageInspectorController.cpp
+
 UIProcess/Notifications/NotificationPermissionRequestManagerProxy.cpp
 UIProcess/Notifications/WebNotification.cpp
 UIProcess/Notifications/WebNotificationManagerProxy.cpp
@@ -516,6 +517,16 @@ WebProcess/InjectedBundle/DOM/InjectedBundleCSSStyleDeclarationHandle.cpp
 WebProcess/InjectedBundle/DOM/InjectedBundleNodeHandle.cpp @no-unify
 WebProcess/InjectedBundle/DOM/InjectedBundleRangeHandle.cpp @no-unify
 
+WebProcess/Inspector/RemoteWebInspectorUI.cpp
+WebProcess/Inspector/WebInspector.cpp
+WebProcess/Inspector/WebInspectorClient.cpp
+WebProcess/Inspector/WebInspectorFrontendAPIDispatcher.cpp
+WebProcess/Inspector/WebInspectorInterruptDispatcher.cpp
+WebProcess/Inspector/WebInspectorUI.cpp
+WebProcess/Inspector/WebPageInspectorTarget.cpp
+WebProcess/Inspector/WebPageInspectorTargetController.cpp
+WebProcess/Inspector/WebPageInspectorTargetFrontendChannel.cpp
+
 WebProcess/MediaStream/MediaDeviceSandboxExtensions.cpp
 WebProcess/MediaStream/UserMediaPermissionRequestManager.cpp
 
@@ -592,7 +603,6 @@ WebProcess/WebCoreSupport/WebDragClient.cpp
 WebProcess/WebCoreSupport/WebEditorClient.cpp
 WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp
 WebProcess/WebCoreSupport/WebGeolocationClient.cpp
-WebProcess/WebCoreSupport/WebInspectorClient.cpp
 WebProcess/WebCoreSupport/WebMessagePortChannelProvider.cpp
 WebProcess/WebCoreSupport/WebNotificationClient.cpp
 WebProcess/WebCoreSupport/WebPerformanceLoggingClient.cpp
@@ -609,23 +619,15 @@ WebProcess/WebPage/DrawingArea.cpp
 WebProcess/WebPage/EventDispatcher.cpp
 WebProcess/WebPage/FindController.cpp
 WebProcess/WebPage/PageBanner.cpp
-WebProcess/WebPage/RemoteWebInspectorUI.cpp
 WebProcess/WebPage/VisitedLinkTableController.cpp
 WebProcess/WebPage/WebBackForwardListProxy.cpp
 WebProcess/WebPage/WebContextMenu.cpp
 WebProcess/WebPage/WebCookieJar.cpp
 WebProcess/WebPage/WebDocumentLoader.cpp
 WebProcess/WebPage/WebFrame.cpp
-WebProcess/WebPage/WebInspector.cpp
-WebProcess/WebPage/WebInspectorInterruptDispatcher.cpp
-WebProcess/WebPage/WebInspectorFrontendAPIDispatcher.cpp
-WebProcess/WebPage/WebInspectorUI.cpp
 WebProcess/WebPage/WebOpenPanelResultListener.cpp
 WebProcess/WebPage/WebPage.cpp @no-unify
 WebProcess/WebPage/WebPageGroupProxy.cpp
-WebProcess/WebPage/WebPageInspectorTarget.cpp
-WebProcess/WebPage/WebPageInspectorTargetController.cpp
-WebProcess/WebPage/WebPageInspectorTargetFrontendChannel.cpp
 WebProcess/WebPage/WebPageOverlay.cpp
 WebProcess/WebPage/WebURLSchemeHandlerProxy.cpp
 WebProcess/WebPage/WebURLSchemeTaskProxy.cpp

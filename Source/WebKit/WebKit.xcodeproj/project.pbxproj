@@ -4423,8 +4423,8 @@
 		A513F53F2154A5CD00662841 /* WebPageInspectorController.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebPageInspectorController.cpp; sourceTree = "<group>"; };
 		A518B5D01FE1D55B00F9FA28 /* WKInspectorWKWebView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WKInspectorWKWebView.h; sourceTree = "<group>"; };
 		A518B5D11FE1D55B00F9FA28 /* WKInspectorWKWebView.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WKInspectorWKWebView.mm; sourceTree = "<group>"; };
-		A54293A2195A43C6002782C7 /* WKInspectorNodeSearchGestureRecognizer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = WKInspectorNodeSearchGestureRecognizer.h; path = ios/WKInspectorNodeSearchGestureRecognizer.h; sourceTree = "<group>"; };
-		A54293A3195A43C6002782C7 /* WKInspectorNodeSearchGestureRecognizer.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = WKInspectorNodeSearchGestureRecognizer.mm; path = ios/WKInspectorNodeSearchGestureRecognizer.mm; sourceTree = "<group>"; };
+		A54293A2195A43C6002782C7 /* WKInspectorNodeSearchGestureRecognizer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WKInspectorNodeSearchGestureRecognizer.h; sourceTree = "<group>"; };
+		A54293A3195A43C6002782C7 /* WKInspectorNodeSearchGestureRecognizer.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WKInspectorNodeSearchGestureRecognizer.mm; sourceTree = "<group>"; };
 		A543E305215AD12D00279CD9 /* WebPageInspectorTargetFrontendChannel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebPageInspectorTargetFrontendChannel.h; sourceTree = "<group>"; };
 		A543E306215AD12E00279CD9 /* WebPageInspectorTargetFrontendChannel.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebPageInspectorTargetFrontendChannel.cpp; sourceTree = "<group>"; };
 		A543E308215C8A8300279CD9 /* WebPageInspectorTarget.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebPageInspectorTarget.h; sourceTree = "<group>"; };
@@ -6653,10 +6653,6 @@
 				F4DB54E52319E733009E3155 /* WKHighlightLongPressGestureRecognizer.mm */,
 				933DF82D1B3BC09000AEA9E3 /* WKImagePreviewViewController.h */,
 				933DF82F1B3BC0B400AEA9E3 /* WKImagePreviewViewController.mm */,
-				0F3C7259196F5F6800AEDD0C /* WKInspectorHighlightView.h */,
-				0F3C7257196F5F5000AEDD0C /* WKInspectorHighlightView.mm */,
-				A54293A2195A43C6002782C7 /* WKInspectorNodeSearchGestureRecognizer.h */,
-				A54293A3195A43C6002782C7 /* WKInspectorNodeSearchGestureRecognizer.mm */,
 				2DD5E127210ADC7A00DB6012 /* WKKeyboardScrollingAnimator.h */,
 				2DD5E126210ADC7A00DB6012 /* WKKeyboardScrollingAnimator.mm */,
 				2DB94297234E7A7F00E776AD /* WKMouseGestureRecognizer.h */,
@@ -7982,6 +7978,99 @@
 			path = cocoa;
 			sourceTree = "<group>";
 		};
+		91D970D423DA6D250057DBC3 /* Inspector */ = {
+			isa = PBXGroup;
+			children = (
+				91D970D523DA6D500057DBC3 /* Agents */,
+				91D970D723DA6D5B0057DBC3 /* ios */,
+				91D970D623DA6D550057DBC3 /* mac */,
+				A5E391FB2183C1E900C8FB31 /* InspectorTargetProxy.cpp */,
+				A5E391FC2183C1E900C8FB31 /* InspectorTargetProxy.h */,
+				A55BA81B1BA25B1E007CD33D /* RemoteWebInspectorProxy.cpp */,
+				A55BA8191BA25B1E007CD33D /* RemoteWebInspectorProxy.h */,
+				A55BA81A1BA25B1E007CD33D /* RemoteWebInspectorProxy.messages.in */,
+				1C8E28331275D73800BC7BD0 /* WebInspectorProxy.cpp */,
+				1C8E28321275D73800BC7BD0 /* WebInspectorProxy.h */,
+				1C77C1951288A872006A742F /* WebInspectorProxy.messages.in */,
+				A55BA8271BA38E1E007CD33D /* WebInspectorUtilities.cpp */,
+				A55BA8281BA38E1E007CD33D /* WebInspectorUtilities.h */,
+				A5EC6AD22151BD6900677D17 /* WebPageDebuggable.cpp */,
+				A5EC6AD32151BD6900677D17 /* WebPageDebuggable.h */,
+				A513F53F2154A5CD00662841 /* WebPageInspectorController.cpp */,
+				A513F53E2154A5CC00662841 /* WebPageInspectorController.h */,
+			);
+			path = Inspector;
+			sourceTree = "<group>";
+		};
+		91D970D523DA6D500057DBC3 /* Agents */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Agents;
+			sourceTree = "<group>";
+		};
+		91D970D623DA6D550057DBC3 /* mac */ = {
+			isa = PBXGroup;
+			children = (
+				A5D3504D1D78F0D2005124A9 /* RemoteWebInspectorProxyMac.mm */,
+				1CA8B935127C774E00576C2B /* WebInspectorProxyMac.mm */,
+				994BADF11F7D77EA00B571E7 /* WKInspectorViewController.h */,
+				994BADF21F7D77EB00B571E7 /* WKInspectorViewController.mm */,
+				A518B5D01FE1D55B00F9FA28 /* WKInspectorWKWebView.h */,
+				A518B5D11FE1D55B00F9FA28 /* WKInspectorWKWebView.mm */,
+			);
+			path = mac;
+			sourceTree = "<group>";
+		};
+		91D970D723DA6D5B0057DBC3 /* ios */ = {
+			isa = PBXGroup;
+			children = (
+				0F3C7259196F5F6800AEDD0C /* WKInspectorHighlightView.h */,
+				0F3C7257196F5F5000AEDD0C /* WKInspectorHighlightView.mm */,
+				A54293A2195A43C6002782C7 /* WKInspectorNodeSearchGestureRecognizer.h */,
+				A54293A3195A43C6002782C7 /* WKInspectorNodeSearchGestureRecognizer.mm */,
+			);
+			path = ios;
+			sourceTree = "<group>";
+		};
+		91D970E023DA6FB10057DBC3 /* Inspector */ = {
+			isa = PBXGroup;
+			children = (
+				91D970E523DA70470057DBC3 /* mac */,
+				A55BA8121BA23E05007CD33D /* RemoteWebInspectorUI.cpp */,
+				A55BA8131BA23E05007CD33D /* RemoteWebInspectorUI.h */,
+				A55BA8141BA23E05007CD33D /* RemoteWebInspectorUI.messages.in */,
+				1C8E281F1275D15400BC7BD0 /* WebInspector.cpp */,
+				1C8E281E1275D15400BC7BD0 /* WebInspector.h */,
+				1C8E2A1C1277833F00BC7BD0 /* WebInspector.messages.in */,
+				BC111A59112F4FBB00337BAB /* WebInspectorClient.cpp */,
+				BC032D6D10F4378D0058C15A /* WebInspectorClient.h */,
+				A55BA8321BA3E6FA007CD33D /* WebInspectorFrontendAPIDispatcher.cpp */,
+				A55BA8331BA3E6FA007CD33D /* WebInspectorFrontendAPIDispatcher.h */,
+				FEE43FD01E67AFC60077D6D1 /* WebInspectorInterruptDispatcher.cpp */,
+				FEE43FD11E67AFC60077D6D1 /* WebInspectorInterruptDispatcher.h */,
+				FEE43FD21E67AFC60077D6D1 /* WebInspectorInterruptDispatcher.messages.in */,
+				1C891D6219B124FF00BA79DD /* WebInspectorUI.cpp */,
+				1C891D6319B124FF00BA79DD /* WebInspectorUI.h */,
+				1C891D6419B124FF00BA79DD /* WebInspectorUI.messages.in */,
+				A543E30A215C8A8400279CD9 /* WebPageInspectorTarget.cpp */,
+				A543E308215C8A8300279CD9 /* WebPageInspectorTarget.h */,
+				A543E309215C8A8300279CD9 /* WebPageInspectorTargetController.cpp */,
+				A543E30B215C8A8400279CD9 /* WebPageInspectorTargetController.h */,
+				A543E306215AD12E00279CD9 /* WebPageInspectorTargetFrontendChannel.cpp */,
+				A543E305215AD12D00279CD9 /* WebPageInspectorTargetFrontendChannel.h */,
+			);
+			path = Inspector;
+			sourceTree = "<group>";
+		};
+		91D970E523DA70470057DBC3 /* mac */ = {
+			isa = PBXGroup;
+			children = (
+				1C8E2DAD1278C5B200BC7BD0 /* WebInspectorUIMac.mm */,
+			);
+			path = mac;
+			sourceTree = "<group>";
+		};
 		939288E021404DF000EBBA33 /* IndexedDB */ = {
 			isa = PBXGroup;
 			children = (
@@ -8195,6 +8284,7 @@
 				BC0E5FCB12D696DD0012A72A /* Geolocation */,
 				2D7E43BF23752CD900EA5CA0 /* GPU */,
 				BC204EDF11C83E72008F3375 /* InjectedBundle */,
+				91D970E023DA6FB10057DBC3 /* Inspector */,
 				33D3A3BD1339609800709BE4 /* MediaCache */,
 				4A410F4119AF7B27002EBAB5 /* MediaStream */,
 				5105B0D2162F7A5E00E27709 /* Network */,
@@ -8245,8 +8335,6 @@
 				BC032D6A10F4378D0058C15A /* WebFrameLoaderClient.h */,
 				BC1BE1DF12D54A410004A228 /* WebGeolocationClient.cpp */,
 				BC1BE1DE12D54A410004A228 /* WebGeolocationClient.h */,
-				BC111A59112F4FBB00337BAB /* WebInspectorClient.cpp */,
-				BC032D6D10F4378D0058C15A /* WebInspectorClient.h */,
 				513FFB8E201459C2002596EA /* WebMessagePortChannelProvider.cpp */,
 				513FFB8F201459C2002596EA /* WebMessagePortChannelProvider.h */,
 				31099971146C759B0029DEB9 /* WebNotificationClient.cpp */,
@@ -8295,9 +8383,6 @@
 				1A90C1F21264FD71003E44D4 /* FindController.h */,
 				7C387433172F5615001BD88A /* PageBanner.cpp */,
 				7CF47FF917275C57008ACB91 /* PageBanner.h */,
-				A55BA8121BA23E05007CD33D /* RemoteWebInspectorUI.cpp */,
-				A55BA8131BA23E05007CD33D /* RemoteWebInspectorUI.h */,
-				A55BA8141BA23E05007CD33D /* RemoteWebInspectorUI.messages.in */,
 				2D819B99186275B3001F03D1 /* ViewGestureGeometryCollector.cpp */,
 				2D819B9A186275B3001F03D1 /* ViewGestureGeometryCollector.h */,
 				2D819B9B186275B3001F03D1 /* ViewGestureGeometryCollector.messages.in */,
@@ -8317,17 +8402,6 @@
 				1A5B1C5318987EDF004FCF9B /* WebDocumentLoader.h */,
 				BC111ADC112F5B9300337BAB /* WebFrame.cpp */,
 				BC032D8910F437A00058C15A /* WebFrame.h */,
-				1C8E281F1275D15400BC7BD0 /* WebInspector.cpp */,
-				1C8E281E1275D15400BC7BD0 /* WebInspector.h */,
-				1C8E2A1C1277833F00BC7BD0 /* WebInspector.messages.in */,
-				A55BA8321BA3E6FA007CD33D /* WebInspectorFrontendAPIDispatcher.cpp */,
-				A55BA8331BA3E6FA007CD33D /* WebInspectorFrontendAPIDispatcher.h */,
-				FEE43FD01E67AFC60077D6D1 /* WebInspectorInterruptDispatcher.cpp */,
-				FEE43FD11E67AFC60077D6D1 /* WebInspectorInterruptDispatcher.h */,
-				FEE43FD21E67AFC60077D6D1 /* WebInspectorInterruptDispatcher.messages.in */,
-				1C891D6219B124FF00BA79DD /* WebInspectorUI.cpp */,
-				1C891D6319B124FF00BA79DD /* WebInspectorUI.h */,
-				1C891D6419B124FF00BA79DD /* WebInspectorUI.messages.in */,
 				BC857F8412B82D0B00EDEB2E /* WebOpenPanelResultListener.cpp */,
 				BC857F8312B82D0B00EDEB2E /* WebOpenPanelResultListener.h */,
 				BC963D6A113DD19200574BE2 /* WebPage.cpp */,
@@ -8335,12 +8409,6 @@
 				C0CE72581247E4DA00BC0EC4 /* WebPage.messages.in */,
 				BC7B621412A4219A00D174A4 /* WebPageGroupProxy.cpp */,
 				BC7B621312A4219A00D174A4 /* WebPageGroupProxy.h */,
-				A543E30A215C8A8400279CD9 /* WebPageInspectorTarget.cpp */,
-				A543E308215C8A8300279CD9 /* WebPageInspectorTarget.h */,
-				A543E309215C8A8300279CD9 /* WebPageInspectorTargetController.cpp */,
-				A543E30B215C8A8400279CD9 /* WebPageInspectorTargetController.h */,
-				A543E306215AD12E00279CD9 /* WebPageInspectorTargetFrontendChannel.cpp */,
-				A543E305215AD12D00279CD9 /* WebPageInspectorTargetFrontendChannel.h */,
 				2D5C9D0319C81D8F00B3C5C1 /* WebPageOverlay.cpp */,
 				2D5C9D0419C81D8F00B3C5C1 /* WebPageOverlay.h */,
 				BCA0EF7E12331E78007D3CFB /* WebUndoStep.cpp */,
@@ -8364,6 +8432,7 @@
 				1AB7D4C71288AA9A00CFD08C /* Downloads */,
 				515BE17B1D54EF5A00DD7C68 /* Gamepad */,
 				2D7E43BB23752CC400EA5CA0 /* GPU */,
+				91D970D423DA6D250057DBC3 /* Inspector */,
 				2DA944A81884E9AB00ED86DB /* ios */,
 				BC111B18112F5FB400337BAB /* Launcher */,
 				BCCF085C113F3B7500C650C5 /* mac */,
@@ -8393,8 +8462,6 @@
 				2DD5A72A1EBF09A7009BA597 /* HiddenPageThrottlingAutoIncreasesCounter.h */,
 				839A2F2F1E2067390039057E /* HighPerformanceGraphicsUsageSampler.cpp */,
 				839A2F301E2067390039057E /* HighPerformanceGraphicsUsageSampler.h */,
-				A5E391FB2183C1E900C8FB31 /* InspectorTargetProxy.cpp */,
-				A5E391FC2183C1E900C8FB31 /* InspectorTargetProxy.h */,
 				5CEABA2B2333251400797797 /* LegacyGlobalSettings.cpp */,
 				5CEABA2A2333247700797797 /* LegacyGlobalSettings.h */,
 				31607F3819627002009B87DA /* LegacySessionStateCoding.h */,
@@ -8410,9 +8477,6 @@
 				83048AE51ACA45DC0082C832 /* ProcessThrottlerClient.h */,
 				4683569B21E81CC7006E27A3 /* ProvisionalPageProxy.cpp */,
 				4683569A21E81CC7006E27A3 /* ProvisionalPageProxy.h */,
-				A55BA81B1BA25B1E007CD33D /* RemoteWebInspectorProxy.cpp */,
-				A55BA8191BA25B1E007CD33D /* RemoteWebInspectorProxy.h */,
-				A55BA81A1BA25B1E007CD33D /* RemoteWebInspectorProxy.messages.in */,
 				BC111B08112F5E3C00337BAB /* ResponsivenessTimer.cpp */,
 				1A30066C1110F4F70031937C /* ResponsivenessTimer.h */,
 				5CA98549210BEB5A0057EB6B /* SafeBrowsingWarning.h */,
@@ -8492,11 +8556,6 @@
 				BC1BE1F112D54DBD0004A228 /* WebGeolocationProvider.cpp */,
 				BC1BE1F012D54DBD0004A228 /* WebGeolocationProvider.h */,
 				51C8E19B1F21617200BF731B /* WebIconDatabase.h */,
-				1C8E28331275D73800BC7BD0 /* WebInspectorProxy.cpp */,
-				1C8E28321275D73800BC7BD0 /* WebInspectorProxy.h */,
-				1C77C1951288A872006A742F /* WebInspectorProxy.messages.in */,
-				A55BA8271BA38E1E007CD33D /* WebInspectorUtilities.cpp */,
-				A55BA8281BA38E1E007CD33D /* WebInspectorUtilities.h */,
 				C98C48A31B6FD4C300145103 /* WebMediaSessionFocusManager.cpp */,
 				C98C48A41B6FD4C300145103 /* WebMediaSessionFocusManager.h */,
 				C9C183371B73FD6A007036A7 /* WebMediaSessionFocusManagerClient.cpp */,
@@ -8507,16 +8566,12 @@
 				7CCCC8F91A5F50FD008FB0DA /* WebNavigationState.h */,
 				BC1DFEA312B31F87005DF730 /* WebOpenPanelResultListenerProxy.cpp */,
 				BC1DFEA212B31F87005DF730 /* WebOpenPanelResultListenerProxy.h */,
-				A5EC6AD22151BD6900677D17 /* WebPageDebuggable.cpp */,
-				A5EC6AD32151BD6900677D17 /* WebPageDebuggable.h */,
 				8372DB261A67562800C697C5 /* WebPageDiagnosticLoggingClient.cpp */,
 				8372DB271A67562800C697C5 /* WebPageDiagnosticLoggingClient.h */,
 				BC7B6205129A0A6700D174A4 /* WebPageGroup.cpp */,
 				BC7B6204129A0A6700D174A4 /* WebPageGroup.h */,
 				2D9EA3101A96D9EB002D2807 /* WebPageInjectedBundleClient.cpp */,
 				2D9EA30E1A96CBFF002D2807 /* WebPageInjectedBundleClient.h */,
-				A513F53F2154A5CD00662841 /* WebPageInspectorController.cpp */,
-				A513F53E2154A5CC00662841 /* WebPageInspectorController.h */,
 				BC111B0B112F5E4F00337BAB /* WebPageProxy.cpp */,
 				BC032DCB10F4389F0058C15A /* WebPageProxy.h */,
 				BCBD38FA125BAB9A00D2C29F /* WebPageProxy.messages.in */,
@@ -9182,7 +9237,6 @@
 				7C6D37FA172F555F009D2847 /* PageBannerMac.mm */,
 				1AAF263714687C39004A1E8A /* TiledCoreAnimationDrawingArea.h */,
 				1AAF263614687C39004A1E8A /* TiledCoreAnimationDrawingArea.mm */,
-				1C8E2DAD1278C5B200BC7BD0 /* WebInspectorUIMac.mm */,
 				BC963D6D113DD1A500574BE2 /* WebPageMac.mm */,
 				29CD55A8128E294F00133C85 /* WKAccessibilityWebPageObjectBase.h */,
 				29CD55A9128E294F00133C85 /* WKAccessibilityWebPageObjectBase.mm */,
@@ -9259,7 +9313,6 @@
 				1AFDE65B1954E8D500C48FFA /* LegacySessionStateCoding.cpp */,
 				0FCB4E5818BBE3D9000FCFC9 /* PageClientImplMac.h */,
 				0FCB4E5918BBE3D9000FCFC9 /* PageClientImplMac.mm */,
-				A5D3504D1D78F0D2005124A9 /* RemoteWebInspectorProxyMac.mm */,
 				E18E6909169B563F009B6670 /* SecItemShimProxy.cpp */,
 				E18E690A169B563F009B6670 /* SecItemShimProxy.h */,
 				E18E690D169B57DF009B6670 /* SecItemShimProxy.messages.in */,
@@ -9280,7 +9333,6 @@
 				F6D632BA133D181B00743D77 /* WebCookieManagerProxyMac.mm */,
 				E568B92020A3AC6A00E3C856 /* WebDataListSuggestionsDropdownMac.h */,
 				E568B92120A3AC6A00E3C856 /* WebDataListSuggestionsDropdownMac.mm */,
-				1CA8B935127C774E00576C2B /* WebInspectorProxyMac.mm */,
 				BC857E8512B71EBB00EDEB2E /* WebPageProxyMac.mm */,
 				BC5750951268F3C6006F0F12 /* WebPopupMenuProxyMac.h */,
 				BC5750961268F3C6006F0F12 /* WebPopupMenuProxyMac.mm */,
@@ -9291,10 +9343,6 @@
 				CDCA85C6132ABA4E00E961DF /* WKFullScreenWindowController.mm */,
 				9321D5851A38EE3C008052BE /* WKImmediateActionController.h */,
 				9321D5871A38EE74008052BE /* WKImmediateActionController.mm */,
-				994BADF11F7D77EA00B571E7 /* WKInspectorViewController.h */,
-				994BADF21F7D77EB00B571E7 /* WKInspectorViewController.mm */,
-				A518B5D01FE1D55B00F9FA28 /* WKInspectorWKWebView.h */,
-				A518B5D11FE1D55B00F9FA28 /* WKInspectorWKWebView.mm */,
 				0FCB4E5C18BBE3D9000FCFC9 /* WKPrintingView.h */,
 				0FCB4E5D18BBE3D9000FCFC9 /* WKPrintingView.mm */,
 				513E462B1AD837560016234A /* WKSharingServicePickerDelegate.h */,

@@ -215,6 +215,12 @@ UIProcess/CoordinatedGraphics/DrawingAreaProxyCoordinatedGraphics.cpp
 
 UIProcess/geoclue/GeoclueGeolocationProvider.cpp
 
+UIProcess/Inspector/glib/RemoteInspectorClient.cpp
+
+UIProcess/Inspector/gtk/RemoteWebInspectorProxyGtk.cpp
+UIProcess/Inspector/gtk/WebInspectorProxyGtk.cpp
+UIProcess/Inspector/gtk/WebKitInspectorWindow.cpp
+
 UIProcess/Launcher/glib/ProcessLauncherGLib.cpp @no-unify
 UIProcess/Launcher/glib/BubblewrapLauncher.cpp @no-unify
 
@@ -230,7 +236,6 @@ UIProcess/WebsiteData/unix/WebsiteDataStoreUnix.cpp
 
 UIProcess/cairo/BackingStoreCairo.cpp @no-unify
 
-UIProcess/glib/RemoteInspectorClient.cpp
 UIProcess/glib/WebProcessPoolGLib.cpp
 UIProcess/glib/WebProcessProxyGLib.cpp
 UIProcess/glib/WebsiteDataStoreGLib.cpp @no-unify
@@ -248,7 +253,6 @@ UIProcess/gtk/KeyBindingTranslator.cpp
 UIProcess/gtk/PointerLockManager.cpp @no-unify
 UIProcess/gtk/PointerLockManagerWayland.cpp @no-unify
 UIProcess/gtk/PointerLockManagerX11.cpp @no-unify
-UIProcess/gtk/RemoteWebInspectorProxyGtk.cpp
 UIProcess/gtk/TextCheckerGtk.cpp @no-unify
 UIProcess/gtk/ViewGestureControllerGtk.cpp @no-unify
 UIProcess/gtk/ViewSnapshotStoreGtk.cpp
@@ -256,8 +260,6 @@ UIProcess/gtk/WaylandCompositor.cpp @no-unify
 UIProcess/gtk/WebColorPickerGtk.cpp
 UIProcess/gtk/WebContextMenuProxyGtk.cpp
 UIProcess/gtk/WebDataListSuggestionsDropdownGtk.cpp
-UIProcess/gtk/WebInspectorProxyGtk.cpp
-UIProcess/gtk/WebKitInspectorWindow.cpp
 UIProcess/gtk/WebPageProxyGtk.cpp @no-unify
 UIProcess/gtk/WebPasteboardProxyGtk.cpp
 UIProcess/gtk/WebPopupMenuProxyGtk.cpp
@@ -392,6 +394,8 @@ WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMXPathResult.cpp
 
 WebProcess/InjectedBundle/glib/InjectedBundleGlib.cpp
 
+WebProcess/Inspector/gtk/WebInspectorUIGtk.cpp
+
 WebProcess/MediaCache/WebMediaKeyStorageManager.cpp
 
 WebProcess/Plugins/Netscape/unix/NetscapePluginUnix.cpp @no-unify
@@ -423,7 +427,6 @@ WebProcess/WebPage/gstreamer/WebPageGStreamer.cpp
 WebProcess/WebPage/gtk/AcceleratedSurfaceWayland.cpp
 WebProcess/WebPage/gtk/AcceleratedSurfaceX11.cpp @no-unify
 WebProcess/WebPage/gtk/PrinterListGtk.cpp
-WebProcess/WebPage/gtk/WebInspectorUIGtk.cpp
 WebProcess/WebPage/gtk/WebPageGtk.cpp
 WebProcess/WebPage/gtk/WebPrintOperationGtk.cpp
 
