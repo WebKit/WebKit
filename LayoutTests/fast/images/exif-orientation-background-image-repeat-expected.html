@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<style>
+    div.container {
+        display: inline-block;
+        margin-right: 20px; 
+        margin-bottom: 10px; 
+        width: 100px; 
+        vertical-align: top;
+    }
+    div.box {
+        width: 100px;
+        height:100px;
+        border: 1px solid black;
+    }
+    img {
+        display: block;
+    }
+</style>
+<body>
+    <b>The CSS background images should be rotated respecting their EXIF orientation.</b>
+    <br>
+    <br>
+    <div class="container">
+        <div class="box">
+            <img src="resources/exif-orientation-1-ul.jpg">
+            <img src="resources/exif-orientation-1-ul.jpg">
+        </div>
+        <br>Normal
+    </div>
+    <div class="container">
+        <div class="box" style="transform: scaleX(-1);">
+            <img src="resources/exif-orientation-1-ul.jpg">
+            <img src="resources/exif-orientation-1-ul.jpg">
+        </div>
+        <br>Flipped horizontally
+    </div>
+    <div class="container">
+        <div class="box" style="transform: rotate(180deg);">
+            <img src="resources/exif-orientation-1-ul.jpg">
+            <img src="resources/exif-orientation-1-ul.jpg">
+        </div>
+        <br>Rotated 180&deg;
+    </div>
+    <div class="container">
+        <div class="box" style="transform: scaleX(-1) rotate(180deg);">
+            <img src="resources/exif-orientation-1-ul.jpg">
+            <img src="resources/exif-orientation-1-ul.jpg">
+        </div>
+        <br>Flipped vertically
+    </div>
+    <br>
+    <div class="container">
+        <div class="box" style="transform: rotate(90deg) scaleY(-1);">
+            <img src="resources/exif-orientation-1-ul.jpg">
+            <img src="resources/exif-orientation-1-ul.jpg">
+        </div>
+        <br>Rotated 90&deg; CCW and flipped vertically
+    </div>
+    <div class="container">
+        <div class="box" style="transform: rotate(90deg);">
+            <img src="resources/exif-orientation-1-ul.jpg">
+            <img src="resources/exif-orientation-1-ul.jpg">
+        </div>
+        <br>Rotated 90&deg; CCW
+    </div>
+    <div class="container">
+        <div class="box" style="transform: rotate(270deg) scaleY(-1);">
+            <img src="resources/exif-orientation-1-ul.jpg">
+            <img src="resources/exif-orientation-1-ul.jpg">
+        </div>
+        <br>Rotated 90&deg; CW and flipped vertically
+    </div>
+    <div class="container">
+        <div class="box" style="transform: rotate(270deg);">
+            <img src="resources/exif-orientation-1-ul.jpg">
+            <img src="resources/exif-orientation-1-ul.jpg">
+        </div>
+        <br>Rotated 90&deg; CW
+    </div>
+    <br>
+    <div class="container">
+        <div class="box">
+            <img src="resources/exif-orientation-1-ul.jpg">
+            <img src="resources/exif-orientation-1-ul.jpg">
+        </div>
+        <br>Undefined (invalid value)
+    </div>
+</body>
