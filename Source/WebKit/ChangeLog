@@ -1,3 +1,17 @@
+2020-01-28  youenn fablet  <youenn@apple.com>
+
+        Remove unneeded message checks in GPUProcess code
+        https://bugs.webkit.org/show_bug.cgi?id=206866
+
+        Reviewed by Eric Carlson.
+
+        Remove message check macros and checks since they are not needed due to the use of ObjectIdentifier.
+        No change of behavior.
+
+        * GPUProcess/media/RemoteMediaPlayerManagerProxy.cpp:
+        (WebKit::RemoteMediaPlayerManagerProxy::createMediaPlayer):
+        * GPUProcess/media/RemoteMediaPlayerProxy.cpp:
+
 2020-01-27  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] Make Animation.timeline read-write only if a runtime flag is enabled

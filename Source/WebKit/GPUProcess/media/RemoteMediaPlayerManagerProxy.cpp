@@ -43,8 +43,6 @@
 #include <WebCore/AVAssetMIMETypeCache.h>
 #endif
 
-#define MESSAGE_CHECK_CONTEXTID(identifier) MESSAGE_CHECK_BASE(m_proxies.isValidKey(identifier), &m_gpuConnectionToWebProcess.connection())
-
 namespace WebKit {
 
 using namespace WebCore;
@@ -63,8 +61,6 @@ RemoteMediaPlayerManagerProxy::~RemoteMediaPlayerManagerProxy()
 
 void RemoteMediaPlayerManagerProxy::createMediaPlayer(MediaPlayerPrivateRemoteIdentifier id, MediaPlayerEnums::MediaEngineIdentifier engineIdentifier, RemoteMediaPlayerProxyConfiguration&& proxyConfiguration, CompletionHandler<void(RemoteMediaPlayerConfiguration&)>&& completionHandler)
 {
-    MESSAGE_CHECK_CONTEXTID(id);
-
     ASSERT(!m_proxies.contains(id));
 
     RemoteMediaPlayerConfiguration playerConfiguration;
@@ -215,7 +211,5 @@ WTFLogChannel& RemoteMediaPlayerManagerProxy::logChannel() const
 #endif
 
 } // namespace WebKit
-
-#undef MESSAGE_CHECK_CONTEXTID
 
 #endif

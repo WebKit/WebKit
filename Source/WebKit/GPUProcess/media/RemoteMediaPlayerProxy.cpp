@@ -693,6 +693,4 @@ void RemoteMediaPlayerProxy::applicationDidBecomeActive()
 
 } // namespace WebKit
 
-#undef MESSAGE_CHECK_CONTEXTID
-
 #endif // ENABLE(GPU_PROCESS)
