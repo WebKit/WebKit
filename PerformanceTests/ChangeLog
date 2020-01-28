@@ -1,3 +1,12 @@
+2020-01-28  Sihui Liu  <sihui_liu@apple.com>
+
+        IndexedDB: speed up index records deletion
+        https://bugs.webkit.org/show_bug.cgi?id=206196
+
+        Reviewed by Brady Eidson.
+
+        * IndexedDB/basic/index-cursor-delete-2.html: Added.
+
 2020-01-08  Sihui Liu  <sihui_liu@apple.com>
 
         REGRESSION (r242911?): High Sierra Release WK2 Perf bot timing out while running IndexedDB/large-number-of-inserts.html

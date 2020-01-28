@@ -57,7 +57,7 @@ MemoryIDBBackingStore::~MemoryIDBBackingStore() = default;
 IDBError MemoryIDBBackingStore::getOrEstablishDatabaseInfo(IDBDatabaseInfo& info)
 {
     if (!m_databaseInfo)
-        m_databaseInfo = makeUnique<IDBDatabaseInfo>(m_identifier.databaseName(), 0);
+        m_databaseInfo = makeUnique<IDBDatabaseInfo>(m_identifier.databaseName(), 0, 0);
 
     info = *m_databaseInfo;
     return IDBError { };
@@ -236,8 +236,10 @@ IDBError MemoryIDBBackingStore::createIndex(const IDBResourceIdentifier& transac
         return IDBError { ConstraintError };
 
     auto error = objectStore->createIndex(*rawTransaction, info);
-    if (error.isNull())
+    if (error.isNull()) {
         objectStoreInfo->addExistingIndex(info);
+        m_databaseInfo->setMaxIndexID(info.identifier());
+    }
 
     return error;
 }

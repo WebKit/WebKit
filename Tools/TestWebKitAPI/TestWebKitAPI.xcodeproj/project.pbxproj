@@ -746,11 +746,14 @@
 		9368A25F229EFB4700A829CA /* local-storage-process-suspends-2.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 9368A25C229EFB3A00A829CA /* local-storage-process-suspends-2.html */; };
 		936F72801CD7D9EC0068A0FB /* large-video-with-audio.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 936F727E1CD7D9D00068A0FB /* large-video-with-audio.html */; };
 		936F72811CD7D9EC0068A0FB /* large-video-with-audio.mp4 in Copy Resources */ = {isa = PBXBuildFile; fileRef = 936F727F1CD7D9D00068A0FB /* large-video-with-audio.mp4 */; };
+		937B569E23CD23DB002AE640 /* IDBObjectStoreInfoUpgrade.sqlite3 in Copy Resources */ = {isa = PBXBuildFile; fileRef = 93BCBC8123CC6EF500CA2221 /* IDBObjectStoreInfoUpgrade.sqlite3 */; };
 		9399BA0423711140008392BF /* IndexedDBInPageCache.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9399BA01237110AE008392BF /* IndexedDBInPageCache.mm */; };
 		9399BA052371114F008392BF /* IndexedDBInPageCache.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 9399BA02237110BF008392BF /* IndexedDBInPageCache.html */; };
 		9399BA062371114F008392BF /* IndexedDBNotInPageCache.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 9399BA03237110BF008392BF /* IndexedDBNotInPageCache.html */; };
 		93AF4ECE1506F064007FD57E /* NewFirstVisuallyNonEmptyLayoutForImages_Bundle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93AF4ECD1506F064007FD57E /* NewFirstVisuallyNonEmptyLayoutForImages_Bundle.cpp */; };
 		93AF4ED11506F130007FD57E /* lots-of-images.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 93AF4ECF1506F123007FD57E /* lots-of-images.html */; };
+		93BCBC8323CC6F2A00CA2221 /* IDBObjectStoreInfoUpgradeToV2.mm in Sources */ = {isa = PBXBuildFile; fileRef = 93BCBC8023CC6EE800CA2221 /* IDBObjectStoreInfoUpgradeToV2.mm */; };
+		93BCBC8423CC6F4400CA2221 /* IDBObjectStoreInfoUpgradeToV2.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 93BCBC8223CC6EF500CA2221 /* IDBObjectStoreInfoUpgradeToV2.html */; };
 		93CFA8671CEB9E38000565A8 /* autofocused-text-input.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 93CFA8661CEB9DE1000565A8 /* autofocused-text-input.html */; };
 		93D119FC22C680F7009BE3C7 /* localstorage-open-window-private.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 93D119FB22C57112009BE3C7 /* localstorage-open-window-private.html */; };
 		93E2C5551FD3204100E1DF6A /* LineEnding.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93E2C5541FD3204100E1DF6A /* LineEnding.cpp */; };
@@ -1306,6 +1309,8 @@
 				510477731D298DDD009747EB /* IDBDeleteRecovery.sqlite3-shm in Copy Resources */,
 				510477741D298DDD009747EB /* IDBDeleteRecovery.sqlite3-wal in Copy Resources */,
 				5110FCF11E01CD64006F8D0B /* IDBIndexUpgradeToV2.html in Copy Resources */,
+				937B569E23CD23DB002AE640 /* IDBObjectStoreInfoUpgrade.sqlite3 in Copy Resources */,
+				93BCBC8423CC6F4400CA2221 /* IDBObjectStoreInfoUpgradeToV2.html in Copy Resources */,
 				F41AB9A41EF4696B0083FA08 /* image-and-contenteditable.html in Copy Resources */,
 				F4E0A2B42122402B00AF7C7F /* image-and-file-upload.html in Copy Resources */,
 				F41AB9A51EF4696B0083FA08 /* image-and-textarea.html in Copy Resources */,
@@ -2188,6 +2193,9 @@
 		93AF4ECA1506F035007FD57E /* NewFirstVisuallyNonEmptyLayoutForImages.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NewFirstVisuallyNonEmptyLayoutForImages.cpp; sourceTree = "<group>"; };
 		93AF4ECD1506F064007FD57E /* NewFirstVisuallyNonEmptyLayoutForImages_Bundle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NewFirstVisuallyNonEmptyLayoutForImages_Bundle.cpp; sourceTree = "<group>"; };
 		93AF4ECF1506F123007FD57E /* lots-of-images.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "lots-of-images.html"; sourceTree = "<group>"; };
+		93BCBC8023CC6EE800CA2221 /* IDBObjectStoreInfoUpgradeToV2.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = IDBObjectStoreInfoUpgradeToV2.mm; sourceTree = "<group>"; };
+		93BCBC8123CC6EF500CA2221 /* IDBObjectStoreInfoUpgrade.sqlite3 */ = {isa = PBXFileReference; lastKnownFileType = file; path = IDBObjectStoreInfoUpgrade.sqlite3; sourceTree = "<group>"; };
+		93BCBC8223CC6EF500CA2221 /* IDBObjectStoreInfoUpgradeToV2.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = IDBObjectStoreInfoUpgradeToV2.html; sourceTree = "<group>"; };
 		93CFA8661CEB9DE1000565A8 /* autofocused-text-input.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "autofocused-text-input.html"; sourceTree = "<group>"; };
 		93CFA8681CEBCFED000565A8 /* CandidateTests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = CandidateTests.mm; sourceTree = "<group>"; };
 		93D119FB22C57112009BE3C7 /* localstorage-open-window-private.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "localstorage-open-window-private.html"; sourceTree = "<group>"; };
@@ -2935,6 +2943,7 @@
 				51AF23DE1EF1A3720072F281 /* IconLoadingDelegate.mm */,
 				510477751D298E03009747EB /* IDBDeleteRecovery.mm */,
 				5110FCEF1E01CBAA006F8D0B /* IDBIndexUpgradeToV2.mm */,
+				93BCBC8023CC6EE800CA2221 /* IDBObjectStoreInfoUpgradeToV2.mm */,
 				51A587841D272EF3004BA9AF /* IndexedDBDatabaseProcessKill.mm */,
 				CAB0FF5422332C3A006CA5B0 /* IndexedDBFileName.mm */,
 				9399BA01237110AE008392BF /* IndexedDBInPageCache.mm */,
@@ -3402,6 +3411,8 @@
 				510477701D298D85009747EB /* IDBDeleteRecovery.sqlite3-shm */,
 				510477711D298D85009747EB /* IDBDeleteRecovery.sqlite3-wal */,
 				5110FCF01E01CD53006F8D0B /* IDBIndexUpgradeToV2.html */,
+				93BCBC8123CC6EF500CA2221 /* IDBObjectStoreInfoUpgrade.sqlite3 */,
+				93BCBC8223CC6EF500CA2221 /* IDBObjectStoreInfoUpgradeToV2.html */,
 				F41AB9991EF4692C0083FA08 /* image-and-contenteditable.html */,
 				F4E0A2B321223F2D00AF7C7F /* image-and-file-upload.html */,
 				F41AB9931EF4692C0083FA08 /* image-and-textarea.html */,
@@ -4746,6 +4757,7 @@
 				51AF23DF1EF1A3730072F281 /* IconLoadingDelegate.mm in Sources */,
 				510477781D29923B009747EB /* IDBDeleteRecovery.mm in Sources */,
 				5110FCFA1E01CDB8006F8D0B /* IDBIndexUpgradeToV2.mm in Sources */,
+				93BCBC8323CC6F2A00CA2221 /* IDBObjectStoreInfoUpgradeToV2.mm in Sources */,
 				51A587861D273AA9004BA9AF /* IndexedDBDatabaseProcessKill.mm in Sources */,
 				CAB0FF5522332C57006CA5B0 /* IndexedDBFileName.mm in Sources */,
 				9399BA0423711140008392BF /* IndexedDBInPageCache.mm in Sources */,

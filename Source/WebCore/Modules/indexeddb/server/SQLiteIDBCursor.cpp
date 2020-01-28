@@ -120,7 +120,7 @@ static String buildIndexStatement(const IDBKeyRangeData& keyRange, IndexedDB::Cu
 {
     StringBuilder builder;
 
-    builder.appendLiteral("SELECT rowid, key, value FROM IndexRecords WHERE indexID = ? AND objectStoreID = ? AND key ");
+    builder.appendLiteral("SELECT rowid, key, value FROM IndexRecords WHERE indexID = ? AND key ");
     if (!keyRange.lowerKey.isNull() && !keyRange.lowerOpen)
         builder.appendLiteral(">=");
     else
@@ -286,11 +286,6 @@ bool SQLiteIDBCursor::bindArguments()
 
     if (m_statement->bindInt64(currentBindArgument++, m_boundID) != SQLITE_OK) {
         LOG_ERROR("Could not bind id argument (bound ID)");
-        return false;
-    }
-
-    if (m_indexID != IDBIndexInfo::InvalidId && m_statement->bindInt64(currentBindArgument++, m_objectStoreID) != SQLITE_OK) {
-        LOG_ERROR("Could not bind object store id argument for an index cursor");
         return false;
     }
 

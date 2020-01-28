@@ -35,7 +35,7 @@ namespace WebCore {
 class IDBDatabaseInfo {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    explicit IDBDatabaseInfo(const String& name, uint64_t version);
+    explicit IDBDatabaseInfo(const String& name, uint64_t version, uint64_t maxIndexID);
 
     enum IsolatedCopyTag { IsolatedCopy };
     IDBDatabaseInfo(const IDBDatabaseInfo&, IsolatedCopyTag);
@@ -68,6 +68,9 @@ public:
     template<class Encoder> void encode(Encoder&) const;
     template<class Decoder> static bool decode(Decoder&, IDBDatabaseInfo&);
 
+    void setMaxIndexID(uint64_t maxIndexID);
+    uint64_t generateNextIndexID() { return ++m_maxIndexID; }
+
 #if !LOG_DISABLED
     String loggingString() const;
 #endif
@@ -79,6 +82,7 @@ private:
     String m_name;
     uint64_t m_version { 0 };
     uint64_t m_maxObjectStoreID { 0 };
+    uint64_t m_maxIndexID { 0 };
 
     HashMap<uint64_t, IDBObjectStoreInfo> m_objectStoreMap;
 
@@ -87,7 +91,7 @@ private:
 template<class Encoder>
 void IDBDatabaseInfo::encode(Encoder& encoder) const
 {
-    encoder << m_name << m_version << m_maxObjectStoreID << m_objectStoreMap;
+    encoder << m_name << m_version << m_maxObjectStoreID << m_maxIndexID << m_objectStoreMap;
 }
 
 template<class Decoder>
@@ -100,6 +104,9 @@ bool IDBDatabaseInfo::decode(Decoder& decoder, IDBDatabaseInfo& info)
         return false;
 
     if (!decoder.decode(info.m_maxObjectStoreID))
+        return false;
+
+    if (!decoder.decode(info.m_maxIndexID))
         return false;
 
     if (!decoder.decode(info.m_objectStoreMap))

@@ -309,7 +309,7 @@ void UniqueIDBDatabase::didDeleteBackingStore(uint64_t deletedVersion)
     // we won't have a m_mostRecentDeletedDatabaseInfo. In that case, we'll manufacture one using the
     // passed in deletedVersion argument.
     if (!m_mostRecentDeletedDatabaseInfo)
-        m_mostRecentDeletedDatabaseInfo = makeUnique<IDBDatabaseInfo>(m_identifier.databaseName(), deletedVersion);
+        m_mostRecentDeletedDatabaseInfo = makeUnique<IDBDatabaseInfo>(m_identifier.databaseName(), deletedVersion, 0);
 
     if (m_currentOpenDBRequest) {
         m_currentOpenDBRequest->notifyDidDeleteDatabase(*m_mostRecentDeletedDatabaseInfo);
@@ -633,6 +633,7 @@ void UniqueIDBDatabase::createIndex(UniqueIDBDatabaseTransaction& transaction, c
         auto* objectStoreInfo = m_databaseInfo->infoForExistingObjectStore(info.objectStoreIdentifier());
         ASSERT(objectStoreInfo);
         objectStoreInfo->addExistingIndex(info);
+        m_databaseInfo->setMaxIndexID(info.identifier());
     }
 
     callback(error);

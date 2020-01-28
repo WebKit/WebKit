@@ -43,13 +43,12 @@ public:
     const String& name() const { return m_name; }
     const Optional<IDBKeyPath>& keyPath() const { return m_keyPath; }
     bool autoIncrement() const { return m_autoIncrement; }
-    uint64_t maxIndexID() const { return m_maxIndexID; }
 
     void rename(const String& newName) { m_name = newName; }
 
     WEBCORE_EXPORT IDBObjectStoreInfo isolatedCopy() const;
 
-    IDBIndexInfo createNewIndex(const String& name, IDBKeyPath&&, bool unique, bool multiEntry);
+    IDBIndexInfo createNewIndex(uint64_t indexID, const String& name, IDBKeyPath&&, bool unique, bool multiEntry);
     void addExistingIndex(const IDBIndexInfo&);
     bool hasIndex(const String& name) const;
     bool hasIndex(uint64_t indexIdentifier) const;
@@ -75,7 +74,6 @@ private:
     String m_name;
     Optional<IDBKeyPath> m_keyPath;
     bool m_autoIncrement { false };
-    uint64_t m_maxIndexID { 0 };
 
     HashMap<uint64_t, IDBIndexInfo> m_indexMap;
 };
@@ -83,7 +81,7 @@ private:
 template<class Encoder>
 void IDBObjectStoreInfo::encode(Encoder& encoder) const
 {
-    encoder << m_identifier << m_name << m_keyPath << m_autoIncrement << m_maxIndexID << m_indexMap;
+    encoder << m_identifier << m_name << m_keyPath << m_autoIncrement << m_indexMap;
 }
 
 template<class Decoder>
@@ -99,9 +97,6 @@ bool IDBObjectStoreInfo::decode(Decoder& decoder, IDBObjectStoreInfo& info)
         return false;
 
     if (!decoder.decode(info.m_autoIncrement))
-        return false;
-
-    if (!decoder.decode(info.m_maxIndexID))
         return false;
 
     if (!decoder.decode(info.m_indexMap))

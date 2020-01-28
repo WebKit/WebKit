@@ -84,7 +84,7 @@ public:
     const char* activeDOMObjectName() const final;
     void stop() final;
 
-    const IDBDatabaseInfo& info() const { return m_info; }
+    IDBDatabaseInfo& info() { return m_info; }
     uint64_t databaseConnectionIdentifier() const { return m_databaseConnectionIdentifier; }
 
     Ref<IDBTransaction> startVersionChangeTransaction(const IDBTransactionInfo&, IDBOpenDBRequest&);

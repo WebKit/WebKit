@@ -36,9 +36,10 @@ IDBDatabaseInfo::IDBDatabaseInfo()
 {
 }
 
-IDBDatabaseInfo::IDBDatabaseInfo(const String& name, uint64_t version)
+IDBDatabaseInfo::IDBDatabaseInfo(const String& name, uint64_t version, uint64_t maxIndexID)
     : m_name(name)
     , m_version(version)
+    , m_maxIndexID(maxIndexID)
 {
 }
 
@@ -46,6 +47,7 @@ IDBDatabaseInfo::IDBDatabaseInfo(const IDBDatabaseInfo& other, IsolatedCopyTag)
     : m_name(other.m_name.isolatedCopy())
     , m_version(other.m_version)
     , m_maxObjectStoreID(other.m_maxObjectStoreID)
+    , m_maxIndexID(other.m_maxIndexID)
 {
     for (const auto& entry : other.m_objectStoreMap)
         m_objectStoreMap.set(entry.key, entry.value.isolatedCopy());
@@ -167,6 +169,12 @@ String IDBDatabaseInfo::loggingString() const
 }
 
 #endif
+
+void IDBDatabaseInfo::setMaxIndexID(uint64_t maxIndexID)
+{
+    ASSERT(maxIndexID > m_maxIndexID || (!maxIndexID && !m_maxIndexID));
+    m_maxIndexID = maxIndexID;
+}
 
 } // namespace WebCore
 
