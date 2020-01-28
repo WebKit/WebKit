@@ -1,0 +1,16 @@
+frame "<!--frame1-->" - has 1 onunload handler(s)
+CONSOLE MESSAGE: line 9: XMLHttpRequest cannot load xmlhttprequest-responsetype-json.json?0.
+CONSOLE MESSAGE: line 9: XMLHttpRequest cannot load xmlhttprequest-responsetype-json.json?1.
+CONSOLE MESSAGE: line 9: XMLHttpRequest cannot load xmlhttprequest-responsetype-json.json?2.
+CONSOLE MESSAGE: line 9: XMLHttpRequest cannot load xmlhttprequest-responsetype-json.json?3.
+CONSOLE MESSAGE: line 9: XMLHttpRequest cannot load xmlhttprequest-responsetype-json.json?4.
+Makes sure that we throw when doing sync XHRs during unload.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS xhrExceptionCount is 5
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

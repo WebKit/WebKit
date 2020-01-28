@@ -762,6 +762,9 @@ public:
     void setFocusNavigationStartingNode(Node*);
     Element* focusNavigationStartingNode(FocusDirection) const;
 
+    void didRejectSyncXHRDuringPageDismissal();
+    bool shouldIgnoreSyncXHRs() const;
+
     enum class NodeRemoval { Node, ChildrenOfNode };
     void adjustFocusedNodeOnNodeRemoval(Node&, NodeRemoval = NodeRemoval::Node);
     void adjustFocusNavigationNodeOnNodeRemoval(Node&, NodeRemoval = NodeRemoval::Node);
@@ -2053,7 +2056,7 @@ private:
     RefPtr<Worklet> m_paintWorklet;
     HashMap<String, Ref<PaintWorkletGlobalScope>> m_paintWorkletGlobalScopes;
 #endif
-
+    unsigned m_numberOfRejectedSyncXHRs { 0 };
     bool m_hasEvaluatedUserAgentScripts { false };
     bool m_isRunningUserScripts { false };
     bool m_mayBeDetachedFromFrame { true };
