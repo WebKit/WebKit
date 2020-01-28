@@ -81,3 +81,5 @@ http/wpt/webauthn/public-key-credential-get-success-nfc.https.html [ Skip ]
 webkit.org/b/203157 scrollingcoordinator/ios/non-stable-viewport-scroll.html [ Pass Failure ]
 
 webkit.org/b/206698 editing/caret/ios/fixed-caret-position-after-scroll.html [ Pass Failure ]
+
+webkit.org/b/206749 crypto/subtle/rsa-indexeddb-private.html [ Pass Timeout ]

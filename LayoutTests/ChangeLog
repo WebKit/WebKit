@@ -1,5 +1,14 @@
 2020-01-28  Jacob Uphoff  <jacob_uphoff@apple.com>
 
+        REGRESSION: (r251694) [ ios ] crypto/subtle/rsa-indexeddb-private.html is flaky timing out
+        https://bugs.webkit.org/show_bug.cgi?id=206749
+
+        Unreviewed test gardening.
+
+        * platform/ios-simulator-wk2/TestExpectations:
+
+2020-01-28  Jacob Uphoff  <jacob_uphoff@apple.com>
+
         media/track/video-track-addition-and-frame-removal.html is flaky crashing
         https://bugs.webkit.org/show_bug.cgi?id=190830
 
