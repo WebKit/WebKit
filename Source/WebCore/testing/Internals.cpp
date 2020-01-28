@@ -3493,7 +3493,7 @@ JSC::JSValue Internals::evaluateInWorldIgnoringException(const String& name, con
     auto* document = contextDocument();
     auto& scriptController = document->frame()->script();
     auto world = ScriptController::createWorld(name);
-    return scriptController.evaluateInWorldIgnoringException(ScriptSourceCode(source), world);
+    return scriptController.executeScriptInWorldIgnoringException(world, source);
 }
 
 void Internals::setUsesOverlayScrollbars(bool enabled)
