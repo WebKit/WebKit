@@ -859,3 +859,5 @@ webkit.org/b/205956 inspector/runtime/executionContextCreated-onEnable.html [ Pa
 webkit.org/b/206668 fast/loader/redirect-to-invalid-url-using-meta-refresh-calls-policy-delegate.html [ Pass Failure ]
 
 webkit.org/b/180760 fast/loader/redirect-to-invalid-url-using-meta-refresh-disallowed-async-delegates.html [ Pass Failure ]
+
+webkit.org/b/206673 storage/indexeddb/modern/blob-cursor.html [ Pass Timeout ]

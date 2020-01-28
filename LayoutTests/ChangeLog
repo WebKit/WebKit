@@ -1,3 +1,12 @@
+2020-01-28  Jacob Uphoff  <jacob_uphoff@apple.com>
+
+        REGRESSION?: [ Mac wk1 ] storage/indexeddb/modern/blob-cursor.html is flaky timing out
+        https://bugs.webkit.org/show_bug.cgi?id=206673
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk1/TestExpectations:
+
 2020-01-28  Jason Lawrence  <lawrence.j@apple.com>
 
         [ iOS ] imported/w3c/web-platform-tests/beacon/idlharness.any.html is flakey and timing out.
