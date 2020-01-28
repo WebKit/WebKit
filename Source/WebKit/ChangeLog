@@ -1,3 +1,20 @@
+2020-01-27  Alex Christensen  <achristensen@webkit.org>
+
+        Add WKWebView SPI equivalent of WKView.shouldClipToVisibleRect
+        https://bugs.webkit.org/show_bug.cgi?id=206849
+        <rdar://problem/58887004>
+
+        Reviewed by Simon Fraser.
+
+        Books currently uses WKView.setShouldClipToVisibleRect and needs to migrate to WKWebView, but it needs to do
+        so without modifying the other properties in _setMinimumLayoutWidth, which is currently the only other caller
+        of WebViewImpl::setClipsToVisibleRect.  Expose an SPI that only calls WebViewImpl::setClipsToVisibleRect.
+
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+        * UIProcess/API/mac/WKWebViewMac.mm:
+        (-[WKWebView _clipsToVisibleRect]):
+        (-[WKWebView _setClipsToVisibleRect:]):
+
 2020-01-27  Brent Fulgham  <bfulgham@apple.com>
 
         Remove SecurityServer from WebContent sandboxes

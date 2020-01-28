@@ -1400,6 +1400,16 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     _impl->setClipsToVisibleRect(expandsToFit);
 }
 
+- (BOOL)_clipsToVisibleRect
+{
+    return _impl->clipsToVisibleRect();
+}
+
+- (void)_setClipsToVisibleRect:(BOOL)clipsToVisibleRect
+{
+    _impl->setClipsToVisibleRect(clipsToVisibleRect);
+}
+
 - (BOOL)_alwaysShowsHorizontalScroller
 {
     return _page->alwaysShowsHorizontalScroller();
