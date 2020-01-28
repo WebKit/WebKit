@@ -1,5 +1,75 @@
 2020-01-28  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r255116. rdar://problem/58800787
+
+    HTMLMediaElement should not remove the media session at DOM suspension time
+    https://bugs.webkit.org/show_bug.cgi?id=206661
+    <rdar://problem/58800787>
+    
+    Source/WebCore:
+    
+    Reviewed by Eric Carlson.
+    
+    https://trac.webkit.org/changeset/233560 made it so that, on HTMLMediaElement suspension,
+    its media session is stopped.
+    This was done to ensure updateNowPlayingInfo is not called synchronously but asynchronously.
+    The issue is that, once the media session is stopped, it is removed from the media session vector.
+    On updating the ready state after suspension, and playing, we try to look into the media session vector and do not find the session.
+    This triggers the ASSERT.
+    
+    Partially revert the behavior by calling the same code as clientWillPausePlayback
+    but make sure updateNowPlayingInfo is calling asynchronously when suspending the media element.
+    Introduce clientWillBeDOMSuspended for that purpose.
+    
+    Update mediaPlayerReadyStateChanged to enqueue a task to do the update if the media element is suspended.
+    
+    Covered by test no longer crashing in debug.
+    
+    * html/HTMLMediaElement.cpp:
+    (WebCore::HTMLMediaElement::mediaPlayerReadyStateChanged):
+    (WebCore::HTMLMediaElement::stopWithoutDestroyingMediaPlayer):
+    * platform/audio/PlatformMediaSession.cpp:
+    (WebCore::PlatformMediaSession::processClientWillPausePlayback):
+    (WebCore::PlatformMediaSession::clientWillPausePlayback):
+    (WebCore::PlatformMediaSession::clientWillBeDOMSuspended):
+    * platform/audio/PlatformMediaSession.h:
+    * platform/audio/PlatformMediaSessionManager.cpp:
+    (WebCore::PlatformMediaSessionManager::sessionWillEndPlayback):
+    * platform/audio/PlatformMediaSessionManager.h:
+    * platform/audio/cocoa/MediaSessionManagerCocoa.h:
+    * platform/audio/cocoa/MediaSessionManagerCocoa.mm:
+    (MediaSessionManagerCocoa::sessionWillEndPlayback):
+    * platform/audio/ios/MediaSessionManagerIOS.h:
+    * platform/audio/ios/MediaSessionManagerIOS.mm:
+    (WebCore::MediaSessionManageriOS::sessionWillEndPlayback):
+    
+    Tools:
+    
+    Reviewed by Eric Carlson.
+    
+    * TestWebKitAPI/Tests/WebKitLegacy/ios/ScrollingDoesNotPauseMedia.mm:
+    (TestWebKitAPI::TEST):
+    Suspend/resume Active DOM Objects from time to time as would do scrolling.
+    This allows pending tasks to be executed asynchronously when not scrolling.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@255116 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-01-25  Youenn Fablet  <youenn@apple.com>
+
+            HTMLMediaElement should not remove the media session at DOM suspension time
+            https://bugs.webkit.org/show_bug.cgi?id=206661
+            <rdar://problem/58800787>
+
+            Reviewed by Eric Carlson.
+
+            * TestWebKitAPI/Tests/WebKitLegacy/ios/ScrollingDoesNotPauseMedia.mm:
+            (TestWebKitAPI::TEST):
+            Suspend/resume Active DOM Objects from time to time as would do scrolling.
+            This allows pending tasks to be executed asynchronously when not scrolling.
+
+2020-01-28  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r254711. rdar://problem/58537467
 
     Regression(r253224) No longer able to prevent a tab from closing via the beforeunload prompt

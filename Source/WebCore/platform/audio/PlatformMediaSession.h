@@ -41,6 +41,7 @@ namespace WebCore {
 class Document;
 class MediaPlaybackTarget;
 class PlatformMediaSessionClient;
+enum class DelayCallingUpdateNowPlaying { No, Yes };
 
 class PlatformMediaSession
     : public CanMakeWeakPtr<PlatformMediaSession>
@@ -112,6 +113,8 @@ public:
     virtual void clientWillBeginAutoplaying();
     virtual bool clientWillBeginPlayback();
     virtual bool clientWillPausePlayback();
+
+    void clientWillBeDOMSuspended();
 
     void pauseSession();
     void stopSession();
@@ -199,6 +202,8 @@ protected:
     PlatformMediaSessionClient& client() const { return m_client; }
 
 private:
+    bool processClientWillPausePlayback(DelayCallingUpdateNowPlaying);
+
     PlatformMediaSessionClient& m_client;
     State m_state;
     State m_stateToRestore;
