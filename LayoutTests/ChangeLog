@@ -1,5 +1,53 @@
 2020-01-28  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r254814. rdar://problem/58654047
+
+    Video sound sometimes keeps playing in page cache
+    https://bugs.webkit.org/show_bug.cgi?id=206408
+    <rdar://problem/58654047>
+    
+    Reviewed by Eric Carlson.
+    
+    Source/WebCore:
+    
+    In r253375, we made sure to enqueue calls that would trigger state changes, to ensure we would not start playing while in page cache.
+    But this delayed the order to pause the video when entering page cache.
+    Fix this by synchronously updating playing state when being suspended for page cache.
+    
+    Test: http/tests/navigation/page-cache-video.html
+    
+    * html/HTMLMediaElement.cpp:
+    (WebCore::HTMLMediaElement::pauseAndUpdatePlayStateImmediately):
+    (WebCore::HTMLMediaElement::stopWithoutDestroyingMediaPlayer):
+    * html/HTMLMediaElement.h:
+    
+    LayoutTests:
+    
+    * http/tests/media/resources/sound_5.mp3: Added.
+    File comes from WPT and is 5 seconds long.
+    * http/tests/navigation/page-cache-video-expected.txt: Added.
+    * http/tests/navigation/page-cache-video.html: Added.
+    * http/tests/navigation/resources/page-cache-video-helper.html: Added.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@254814 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-01-20  youenn fablet  <youenn@apple.com>
+
+            Video sound sometimes keeps playing in page cache
+            https://bugs.webkit.org/show_bug.cgi?id=206408
+            <rdar://problem/58654047>
+
+            Reviewed by Eric Carlson.
+
+            * http/tests/media/resources/sound_5.mp3: Added.
+            File comes from WPT and is 5 seconds long.
+            * http/tests/navigation/page-cache-video-expected.txt: Added.
+            * http/tests/navigation/page-cache-video.html: Added.
+            * http/tests/navigation/resources/page-cache-video-helper.html: Added.
+
+2020-01-28  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r254722. rdar://problem/58441241
 
     REGRESSION (r251110): Crash on https://developer.apple.com/tutorials/swiftui/creating-and-combining-views
