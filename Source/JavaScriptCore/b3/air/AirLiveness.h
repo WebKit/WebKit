@@ -36,6 +36,7 @@ namespace JSC { namespace B3 { namespace Air {
 
 template<typename Adapter>
 class Liveness : public WTF::Liveness<Adapter> {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     Liveness(Code& code)
         : WTF::Liveness<Adapter>(code.cfg(), code)
