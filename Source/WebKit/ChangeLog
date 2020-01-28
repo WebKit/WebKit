@@ -1,3 +1,19 @@
+2020-01-28  Andres Gonzalez  <andresg_22@apple.com>
+
+        Fix for crash in AppKit accessibility.
+        https://bugs.webkit.org/show_bug.cgi?id=206902
+
+        Reviewed by Chris Fleizach.
+
+        Accessibility methods invoked in the secondary thread that Return id
+        values retrieved from the main thread, need to retain/autoRelease the returned ids.
+
+        * WebProcess/WebPage/mac/WKAccessibilityWebPageObjectMac.mm:
+        (-[WKAccessibilityWebPageObject ALLOW_DEPRECATED_IMPLEMENTATIONS_END]):
+        (-[WKAccessibilityWebPageObject accessibilityAttributeSizeValue]):
+        (-[WKAccessibilityWebPageObject accessibilityAttributePositionValue]):
+        (-[WKAccessibilityWebPageObject accessibilityDataDetectorValue:point:]):
+
 2020-01-28  Brent Fulgham  <bfulgham@apple.com>
 
         Unreviewed test fix after r255217

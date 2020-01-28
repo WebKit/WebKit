@@ -86,7 +86,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
 - (NSArray *)accessibilityParameterizedAttributeNames
 ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 {
-    return ax::retrieveValueFromMainThread<id>([PROTECTED_SELF] () -> id {
+    return ax::retrieveValueFromMainThread<RetainPtr<id>>([PROTECTED_SELF] () -> RetainPtr<id> {
         NSMutableArray *names = [NSMutableArray array];
         if (!protectedSelf->m_page)
             return names;
@@ -96,7 +96,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
                 [names addObject:(NSString *)name];
         }
         return names;
-    });
+    }).autorelease();
 }
 
 ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
@@ -182,25 +182,25 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 
 - (NSValue *)accessibilityAttributeSizeValue
 {
-    return ax::retrieveValueFromMainThread<id>([PROTECTED_SELF] () -> id {
+    return ax::retrieveValueFromMainThread<RetainPtr<id>>([PROTECTED_SELF] () -> RetainPtr<id> {
         if (!protectedSelf->m_page)
             return nil;
         return [NSValue valueWithSize:(NSSize)protectedSelf->m_page->size()];
-    });
+    }).autorelease();
 }
 
 - (NSValue *)accessibilityAttributePositionValue
 {
-    return ax::retrieveValueFromMainThread<id>([PROTECTED_SELF] () -> id {
+    return ax::retrieveValueFromMainThread<RetainPtr<id>>([PROTECTED_SELF] () -> RetainPtr<id> {
         if (!protectedSelf->m_page)
             return nil;
         return [NSValue valueWithPoint:(NSPoint)protectedSelf->m_page->accessibilityPosition()];
-    });
+    }).autorelease();
 }
 
 - (id)accessibilityDataDetectorValue:(NSString *)attribute point:(WebCore::FloatPoint&)point
 {
-    return ax::retrieveValueFromMainThread<id>([&attribute, &point, PROTECTED_SELF] () -> id {
+    return ax::retrieveValueFromMainThread<RetainPtr<id>>([&attribute, &point, PROTECTED_SELF] () -> RetainPtr<id> {
         if (!protectedSelf->m_page)
             return nil;
         id value = nil;
@@ -215,7 +215,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
                 value = [NSString stringWithString:stringValue];
         }
         return value;
-    });
+    }).autorelease();
 }
 
 ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
