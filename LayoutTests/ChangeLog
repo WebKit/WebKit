@@ -1,3 +1,13 @@
+2020-01-28  Jacob Uphoff  <jacob_uphoff@apple.com>
+
+        fast/animation/request-animation-frame-iframe.html is flaky failing
+        https://bugs.webkit.org/show_bug.cgi?id=206708
+
+        Unreviewed test gardening.
+
+
+        * platform/mac-wk2/TestExpectations:
+
 2020-01-28  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r255237.

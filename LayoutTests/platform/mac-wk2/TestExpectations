@@ -934,3 +934,5 @@ webkit.org/b/206864 http/tests/workers/service/basic-timeout.https.html [ Pass F
 webkit.org/b/206746 [ Release ] imported/w3c/web-platform-tests/web-animations/timing-model/animations/updating-the-finished-state.html [ Pass Failure ]
 
 webkit.org/b/206696 [ Release ] editing/selection/caret-at-bidi-boundary.html [ Slow ]
+
+webkit.org/b/206708 fast/animation/request-animation-frame-iframe.html [ Pass Failure ]
