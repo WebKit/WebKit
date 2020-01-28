@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -64,6 +64,15 @@ void setApplicationBundleIdentifier(const String& bundleIdentifier)
     ASSERT(RunLoop::isMain());
     ASSERT_WITH_MESSAGE(!applicationBundleIdentifierOverrideWasQueried, "applicationBundleIsEqualTo() and applicationBundleStartsWith() should not be called before setApplicationBundleIdentifier()");
     applicationBundleIdentifierOverride() = bundleIdentifier;
+}
+
+void clearApplicationBundleIdentifierTestingOverride()
+{
+    ASSERT(RunLoop::isMain());
+    applicationBundleIdentifierOverride() = emptyString();
+#if !ASSERT_MSG_DISABLED
+    applicationBundleIdentifierOverrideWasQueried = false;
+#endif
 }
 
 static Optional<uint32_t>& applicationSDKVersionOverride()

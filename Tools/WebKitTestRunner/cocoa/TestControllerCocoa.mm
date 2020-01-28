@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -245,8 +245,13 @@ void TestController::setApplicationBundleIdentifier(const String& bundleIdentifi
     if (bundleIdentifier.isEmpty())
         return;
     
-    auto applicationBundleIdentifier = adoptNS([NSString stringWithUTF8String:bundleIdentifier.utf8().data()]);
-    [TestRunnerWKWebView _setApplicationBundleIdentifier:applicationBundleIdentifier.get()];
+    [TestRunnerWKWebView _setApplicationBundleIdentifier:(NSString *)bundleIdentifier.createCFString().get()];
+}
+
+void TestController::clearApplicationBundleIdentifierTestingOverride()
+{
+    [TestRunnerWKWebView _clearApplicationBundleIdentifierTestingOverride];
+    m_hasSetApplicationBundleIdentifier = false;
 }
 
 void TestController::cocoaResetStateToConsistentValues(const TestOptions& options)

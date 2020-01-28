@@ -60,5 +60,6 @@
 - (void)_setAssertionStateForTesting:(int)state;
 
 + (void)_setApplicationBundleIdentifier:(NSString *)bundleIdentifier;
++ (void)_clearApplicationBundleIdentifierTestingOverride;
 
 @end

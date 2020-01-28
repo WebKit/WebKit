@@ -1087,6 +1087,10 @@ bool TestController::resetStateToConsistentValues(const TestOptions& options, Re
 
     setHidden(false);
 
+#if PLATFORM(COCOA)
+    clearApplicationBundleIdentifierTestingOverride();
+#endif
+
     if (!platformResetStateToConsistentValues(options))
         return false;
 

@@ -364,6 +364,7 @@ private:
     void cocoaPlatformInitialize();
     void cocoaResetStateToConsistentValues(const TestOptions&);
     void setApplicationBundleIdentifier(const String&);
+    void clearApplicationBundleIdentifierTestingOverride();
 #endif
     void platformConfigureViewForTest(const TestInvocation&);
     void platformWillRunTest(const TestInvocation&);

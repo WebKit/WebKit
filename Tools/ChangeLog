@@ -1,3 +1,22 @@
+2020-01-28  Brent Fulgham  <bfulgham@apple.com>
+
+        Reset the application bundle identifier between test runs
+        https://bugs.webkit.org/show_bug.cgi?id=206858
+        <rdar://problem/58844002>
+
+        Reviewed by Per Arne Vollan.
+
+        Clear the application bundle identifier set during testing when resetting the test system
+        to a known state in preparation for the next run.
+
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::resetStateToConsistentValues): Clear any override for the application
+        bundle identifier before the next test invocation.
+        * WebKitTestRunner/cocoa/TestControllerCocoa.mm:
+        (WTR::TestController::setApplicationBundleIdentifier): Correct an over-release caused by assigning
+        an autorelease return value to an NSRetainPtr.
+        (WTR::TestController::clearApplicationBundleIdentifierTestingOverride): Added.
+
 2020-01-28  Aakash Jain  <aakash_jain@apple.com>
 
         EWS django app should send cq+ patches to commit-queue

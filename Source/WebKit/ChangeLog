@@ -1,3 +1,20 @@
+2020-01-28  Brent Fulgham  <bfulgham@apple.com>
+
+        Reset the application bundle identifier between test runs
+        https://bugs.webkit.org/show_bug.cgi?id=206858
+        <rdar://problem/58844002>
+
+        Reviewed by Per Arne Vollan.
+
+        Clear the application bundle identifier set during testing when resetting the test system
+        to a known state in preparation for the next run.
+
+        Tests: fast/sandbox/ios/sandbox-mach-lookup.html, fast/sandbox/ios/sandbox-mach-lookup-mail.html
+
+        * UIProcess/API/Cocoa/WKWebViewPrivateForTesting.h:
+        * UIProcess/API/Cocoa/WKWebViewTesting.mm:
+        (+[WKWebView _clearApplicationBundleIdentifierTestingOverride]): Added.
+
 2020-01-24  Sergio Villar Senin  <svillar@igalia.com>
 
         Remove WebVR from the tree
