@@ -3153,7 +3153,14 @@ sub GeneratePropertiesHashTable
         my $readWriteConditional = $attribute->extendedAttributes->{ConditionallyReadWrite};
         $readWriteConditionals->{$name} = $readWriteConditional if $readWriteConditional;
 
-        if (NeedsRuntimeCheck($interface, $attribute)) {
+        my $needsRuntimeCheck = NeedsRuntimeCheck($interface, $attribute);
+        my $needsRuntimeReadWriteCheck = $attribute->extendedAttributes->{RuntimeConditionallyReadWrite};
+        
+        if ($needsRuntimeCheck && $needsRuntimeReadWriteCheck) {
+            die "Being both runtime enabled and runtime conditionally read-write is not yet supported (used on the '${name}' attribute of '${interfaceName}').\n";
+        }
+
+        if ($needsRuntimeCheck || $needsRuntimeReadWriteCheck) {
             push(@$runtimeEnabledAttributes, $attribute);
         }
     }
@@ -3827,6 +3834,17 @@ sub GenerateRuntimeEnableConditionalString
         }
     }
 
+    if ($context->extendedAttributes->{RuntimeConditionallyReadWrite}) {
+        assert("Must specify value for RuntimeConditionallyReadWrite.") if $context->extendedAttributes->{RuntimeConditionallyReadWrite} eq "VALUE_IS_MISSING";
+
+        AddToImplIncludes("RuntimeEnabledFeatures.h");
+
+        my @flags = split(/&/, $context->extendedAttributes->{RuntimeConditionallyReadWrite});
+        foreach my $flag (@flags) {
+            push(@conjuncts, "RuntimeEnabledFeatures::sharedFeatures()." . ToMethodName($flag) . "Enabled()");
+        }
+    }
+
     if ($context->extendedAttributes->{EnabledForContext}) {
         assert("Must not specify value for EnabledForContext.") unless $context->extendedAttributes->{EnabledForContext} eq "VALUE_IS_MISSING";
         assert("EnabledForContext must be an interface or constructor attribute.") unless $codeGenerator->IsConstructorType($context->type);
@@ -4305,6 +4323,25 @@ sub GenerateImplementation
             push(@implContent, "        JSObject::deleteProperty(this, globalObject(), propertyName);\n");
             push(@implContent, "    }\n");
             push(@implContent, "#endif\n") if $conditionalString;
+        }
+
+        foreach my $attribute (@runtimeEnabledAttributes) {
+            if ($attribute->extendedAttributes->{RuntimeConditionallyReadWrite}) {
+                AddToImplIncludes("WebCoreJSClientData.h");
+                my $runtimeEnableConditionalString = GenerateRuntimeEnableConditionalString($interface, $attribute);
+
+                my $attributeName = $attribute->name;
+                my $getter = GetAttributeGetterName($interface, $className, $attribute);
+                my $setter = "nullptr";
+                my $jscAttributes = GetJSCAttributesForAttribute($interface, $attribute);
+
+                my $conditionalString = $codeGenerator->GenerateConditionalString($attribute);
+                push(@implContent, "#if ${conditionalString}\n") if $conditionalString;
+                push(@implContent, "    // Adding back attribute, but as readonly, after removing the read-write variant above. \n");
+                push(@implContent, "    if (!${runtimeEnableConditionalString})\n");
+                push(@implContent, "        putDirectCustomAccessor(vm, static_cast<JSVMClientData*>(vm.clientData)->builtinNames()." . $attributeName . "PublicName(), CustomGetterSetter::create(vm, $getter, $setter), attributesForStructure($jscAttributes));\n");
+                push(@implContent, "#endif\n") if $conditionalString;
+            }
         }
 
         if (@runtimeEnabledProperties) {

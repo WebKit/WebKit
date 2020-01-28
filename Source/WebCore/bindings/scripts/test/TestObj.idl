@@ -450,6 +450,8 @@ enum TestConfidence { "high", "kinda-low" };
     [ConditionallyReadWrite=CONDITION] attribute Node conditionallyReadWriteAttribute;
     [Conditional=CONDITION2, ConditionallyReadWrite=CONDITION] attribute Node conditionalAndConditionallyReadWriteAttribute;
 
+    [RuntimeConditionallyReadWrite=TestFeature] attribute Node runtimeConditionallyReadWriteAttribute;
+
     [Exposed=Window] attribute long conditionallyExposedToWindowAttribute;
     [Exposed=Worker] attribute long conditionallyExposedToWorkerAttribute;
     [Exposed=(Worker, Window)] attribute long conditionallyExposedToWindowAndWorkerAttribute;
