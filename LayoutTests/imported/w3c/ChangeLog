@@ -1,3 +1,17 @@
+2020-01-28  Chris Lord  <clord@igalia.com>
+
+        Implement [Transferable] property of OffscreenCanvas
+        https://bugs.webkit.org/show_bug.cgi?id=202574
+
+        Reviewed by Antti Koivisto.
+
+        * web-platform-tests/offscreen-canvas/convert-to-blob/offscreencanvas.convert.to.blob-expected.txt:
+        * web-platform-tests/offscreen-canvas/convert-to-blob/offscreencanvas.convert.to.blob.w-expected.txt:
+        * web-platform-tests/offscreen-canvas/the-offscreen-canvas/offscreencanvas.transfer.to.imagebitmap-expected.txt:
+        * web-platform-tests/offscreen-canvas/the-offscreen-canvas/offscreencanvas.transfer.to.imagebitmap.w-expected.txt:
+        * web-platform-tests/offscreen-canvas/the-offscreen-canvas/offscreencanvas.transferrable-expected.txt:
+        * web-platform-tests/offscreen-canvas/the-offscreen-canvas/offscreencanvas.transferrable.w-expected.txt:
+
 2020-01-28  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [CSS Backgrounds] Import WPT css-backgrounds tests

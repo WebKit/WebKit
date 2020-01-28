@@ -1,6 +1,4 @@
 
-Harness Error (FAIL), message = DataCloneError: The object can not be cloned.
-
 PASS Test that convertToBlob with default arguments produces correct result in a worker 
 PASS Test that convertToBlob with default type/1.0 quality produces correct result in a worker 
 PASS Test that convertToBlob with default type/0.2 quality produces correct result in a worker 
@@ -13,7 +11,7 @@ PASS Test that convertToBlob with jpeg/0.2 quality produces correct result in a 
 PASS Test that convertToBlob with webp/default quality produces correct result in a worker 
 PASS Test that convertToBlob with webp/1.0 quality produces correct result in a worker 
 PASS Test that convertToBlob with webp/0.2 quality produces correct result in a worker 
-FAIL Test that call convertToBlob on a detached OffscreenCanvas throws exception in a worker assert_unreached: error Reached unreachable code
+PASS Test that call convertToBlob on a detached OffscreenCanvas throws exception in a worker 
 PASS Test that call convertToBlob on a OffscreenCanvas with size 0 throws exception in a worker 
 PASS Test that call convertToBlob on a OffscreenCanvas with tainted origin throws exception in a worker 
 

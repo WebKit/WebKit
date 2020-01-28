@@ -65,8 +65,8 @@ public:
     virtual bool isOffscreenCanvas() const { return false; }
     virtual bool isCustomPaintCanvas() const { return false; }
 
-    unsigned width() const { return m_size.width(); }
-    unsigned height() const { return m_size.height(); }
+    virtual unsigned width() const { return m_size.width(); }
+    virtual unsigned height() const { return m_size.height(); }
     const IntSize& size() const { return m_size; }
 
     ImageBuffer* buffer() const;

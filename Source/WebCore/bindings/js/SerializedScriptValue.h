@@ -47,6 +47,9 @@ class Module;
 
 namespace WebCore {
 
+#if ENABLE(OFFSCREEN_CANVAS)
+class DetachedOffscreenCanvas;
+#endif
 class IDBValue;
 class ImageBitmap;
 class MessagePort;
@@ -113,8 +116,11 @@ private:
     WEBCORE_EXPORT SerializedScriptValue(Vector<unsigned char>&&);
     WEBCORE_EXPORT SerializedScriptValue(Vector<unsigned char>&&, std::unique_ptr<ArrayBufferContentsArray>);
     SerializedScriptValue(Vector<unsigned char>&&, const Vector<String>& blobURLs, std::unique_ptr<ArrayBufferContentsArray>, std::unique_ptr<ArrayBufferContentsArray> sharedBuffers, Vector<std::pair<std::unique_ptr<ImageBuffer>, bool>>&& imageBuffers
+#if ENABLE(OFFSCREEN_CANVAS)
+        , Vector<std::unique_ptr<DetachedOffscreenCanvas>>&& = { }
+#endif
 #if ENABLE(WEBASSEMBLY)
-        , std::unique_ptr<WasmModuleArray>
+        , std::unique_ptr<WasmModuleArray> = nullptr
 #endif
         );
 
@@ -122,6 +128,9 @@ private:
     std::unique_ptr<ArrayBufferContentsArray> m_arrayBufferContentsArray;
     std::unique_ptr<ArrayBufferContentsArray> m_sharedBufferContentsArray;
     Vector<std::pair<std::unique_ptr<ImageBuffer>, bool>> m_imageBuffers;
+#if ENABLE(OFFSCREEN_CANVAS)
+    Vector<std::unique_ptr<DetachedOffscreenCanvas>> m_detachedOffscreenCanvases;
+#endif
 #if ENABLE(WEBASSEMBLY)
     std::unique_ptr<WasmModuleArray> m_wasmModulesArray;
 #endif
