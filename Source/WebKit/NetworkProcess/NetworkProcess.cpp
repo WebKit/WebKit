@@ -2095,6 +2095,13 @@ void NetworkProcess::prepareToSuspend(bool isSuspensionImminent, CompletionHandl
         RELEASE_LOG(ProcessSuspension, "%p - NetworkProcess::prepareToSuspend() Process is ready to suspend", this);
         completionHandler();
     });
+    
+#if ENABLE(RESOURCE_LOAD_STATISTICS)
+    forEachNetworkSession([&callbackAggregator](auto& networkSession) {
+        if (auto* resourceLoadStatistics = networkSession.resourceLoadStatistics())
+            resourceLoadStatistics->suspend([callbackAggregator] { });
+    });
+#endif
 
     platformPrepareToSuspend([callbackAggregator] { });
     platformSyncAllCookies([callbackAggregator] { });
@@ -2138,6 +2145,13 @@ void NetworkProcess::resume()
     for (auto& connection : m_webProcessConnections.values())
         connection->endSuspension();
 
+#if ENABLE(RESOURCE_LOAD_STATISTICS)
+    forEachNetworkSession([](auto& networkSession) {
+        if (auto* resourceLoadStatistics = networkSession.resourceLoadStatistics())
+            resourceLoadStatistics->resume();
+    });
+#endif
+    
 #if ENABLE(SERVICE_WORKER)
     for (auto& server : m_swServers.values())
         server->endSuspension();
