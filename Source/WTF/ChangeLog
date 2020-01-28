@@ -1,5 +1,14 @@
 2020-01-27  Jonathan Bedard  <jbedard@apple.com>
 
+        WebCore: Remove iOS 11 macros from RenderThemeIOS.mm
+        https://bugs.webkit.org/show_bug.cgi?id=206787
+
+        Reviewed by Darin Adler.
+
+        * wtf/PlatformHave.h: Add HAVE(SYSTEM_FONT_STYLE_TITLE_0) and HAVE(SYSTEM_FONT_STYLE_TITLE_4).
+
+2020-01-27  Jonathan Bedard  <jbedard@apple.com>
+
         Fix OpenSource iphoneos arm64e build
         https://bugs.webkit.org/show_bug.cgi?id=206703
 
