@@ -1,3 +1,90 @@
+2020-01-28  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r255076. rdar://problem/58920206
+
+    [Web Animations] Support multiple CSS Animations with the same name in animation-name
+    https://bugs.webkit.org/show_bug.cgi?id=206688
+    
+    Reviewed by Dean Jackson.
+    
+    LayoutTests/imported/w3c:
+    
+    Mark some new WPT progressions.
+    
+    * web-platform-tests/css/css-animations/Element-getAnimations-dynamic-changes.tentative-expected.txt:
+    * web-platform-tests/css/css-animations/Element-getAnimations.tentative-expected.txt:
+    * web-platform-tests/web-animations/timing-model/timelines/update-and-send-events-replacement-expected.txt:
+    
+    Source/WebCore:
+    
+    AnimationTimeline would keep track of registered CSS Animations by name for a given element in m_elementToCSSAnimationByName which would map one CSSAnimation
+    per String (the animation-name) for a given Element. However, within the same animation-name property, the name of a given @keyframes rules may appear more
+    than once, and the CSS Animations specification explains how to handle this scenario.
+    
+    We now correctly handle this by replacing m_elementToCSSAnimationByName with the new m_elementToCSSAnimationsCreatedByMarkupMap which simply maps an Element
+    to a ListHashSet of CSSAnimation objects. Removing the string that appeared in animation-name to create this animation requires us to keep the AnimationList
+    used for the last style update for sorting purposes, since having multiple instances of the same string would not allow disambiguation when sorting the
+    KeyframeEffectStack.
+    
+    So we also replace m_cssAnimationNames, a Vector<String>, with m_cssAnimationList, a RefPtr<const AnimationList>, and use this to compare Animation objects
+    stored in the AnimationList against the backing animation of each CSSAnimation.
+    
+    Storing the AnimationList on the KeyframeEffectStack also has the benefit of allowing us to use this as the previous state when updating CSS Animations in
+    AnimationTimeline::updateCSSAnimationsForElement(). We used to rely on the previous RenderStyle provided to that function, but it's possible that this style
+    is null and we would unnecessarily create additional CSSAnimation objects for animations that actually were retained since the last time CSS Animations were
+    invalidated. We now use the stored AnimationList on the invalidated element's KeyframeEffectStack and create a new animation list that will replace the old
+    list stored in the m_elementToCSSAnimationsCreatedByMarkupMap map for that element. We can also compare the old list with the new list to find out which
+    animations are no longer current.
+    
+    Finally, we refactor things a bit to have some new aliases AnimationCollection and CSSAnimationCollection instead of using ListHashSet<> in our types.
+    
+    * animation/AnimationTimeline.cpp:
+    (WebCore::AnimationTimeline::animationWasAddedToElement): Use the new AnimationCollection alias.
+    (WebCore::AnimationTimeline::removeDeclarativeAnimationFromListsForOwningElement): We no longer need to do any work for CSSAnimation here since the
+    m_elementToCSSAnimationByName map is no more and the m_elementToCSSAnimationsCreatedByMarkupMap that replaces it is updated in updateCSSAnimationsForElement()
+    and elementWasRemoved().
+    (WebCore::AnimationTimeline::animationsForElement const): Since animations are correctly sorted accounting for their composite order in KeyframeEffectStack,
+    call KeyframeEffectStack::sortedEffects() when we're called with Ordering::Sorted.
+    (WebCore::AnimationTimeline::removeCSSAnimationCreatedByMarkup): New method called by elementWasRemoved() to ensure that when an element is removed, we remove
+    its CSSAnimation objects from the new m_elementToCSSAnimationsCreatedByMarkupMap and also update the AnimationList on the relevant KeyframeEffectStack.
+    (WebCore::AnimationTimeline::elementWasRemoved): Call the new removeCSSAnimationCreatedByMarkup() method before canceling a CSSAnimation.
+    (WebCore::AnimationTimeline::cancelDeclarativeAnimationsForElement): Call the new removeCSSAnimationCreatedByMarkup() method before canceling a CSSAnimation.
+    (WebCore::AnimationTimeline::updateCSSAnimationsForElement): Use the AnimationList recoreded on the relevant KeyframeEffectStack to determine which CSSAnimation
+    objects to create, cancel or merely update depending on the AnimationList in the current style.
+    * animation/AnimationTimeline.h:
+    * animation/DocumentTimeline.cpp:
+    (WebCore::DocumentTimeline::getAnimations const): Use compareAnimationsByCompositeOrder() to correctly sort CSS Animations since they are no longer guaranteed
+    to be stored in the relevant map in the expected order.
+    * animation/KeyframeEffectStack.cpp:
+    (WebCore::KeyframeEffectStack::ensureEffectsAreSorted): Use the new m_cssAnimationList instead of the old m_cssAnimationNames when sorting effects.
+    (WebCore::KeyframeEffectStack::setCSSAnimationList):
+    (WebCore::KeyframeEffectStack::setCSSAnimationNames): Deleted.
+    * animation/KeyframeEffectStack.h:
+    (WebCore::KeyframeEffectStack::cssAnimationList const):
+    (WebCore::KeyframeEffectStack::cssAnimationNames const): Deleted.
+    * animation/WebAnimation.cpp:
+    (WebCore::WebAnimation::commitStyles): Use the new KeyframeEffectStack::cssAnimationList() instead of the old KeyframeEffectStack::cssAnimationNames().
+    * animation/WebAnimationUtilities.cpp:
+    (WebCore::compareAnimationsByCompositeOrder): Update the composite order comparison utility to use an AnimationList rather than a list of animation names.
+    * animation/WebAnimationUtilities.h:
+    * platform/animation/AnimationList.h:
+    (WebCore::AnimationList::copy const):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@255076 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-01-23  Antoine Quint  <graouts@apple.com>
+
+            [Web Animations] Support multiple CSS Animations with the same name in animation-name
+            https://bugs.webkit.org/show_bug.cgi?id=206688
+
+            Reviewed by Dean Jackson.
+
+            Mark some new WPT progressions.
+
+            * web-platform-tests/css/css-animations/Element-getAnimations-dynamic-changes.tentative-expected.txt:
+            * web-platform-tests/css/css-animations/Element-getAnimations.tentative-expected.txt:
+            * web-platform-tests/web-animations/timing-model/timelines/update-and-send-events-replacement-expected.txt:
+
 2020-01-15  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r254229. rdar://problem/58605950
