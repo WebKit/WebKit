@@ -1,3 +1,12 @@
+2020-01-27  Jonathan Bedard  <jbedard@apple.com>
+
+        Fix OpenSource iphoneos arm64e build
+        https://bugs.webkit.org/show_bug.cgi?id=206703
+
+        Reviewed by Yusuke Suzuki.
+
+        * wtf/PlatformUse.h: Add USE(DARWIN_REGISTER_MACROS) check.
+
 2020-01-27  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r255159.
