@@ -61,7 +61,8 @@
     transition-timing-function: linear;
 }
 
-.spring-editor > .spring-timing:matches(::before, ::after) {
+.spring-editor > .spring-timing::before,
+.spring-editor > .spring-timing::after {
     position: absolute;
     top: 2.5px;
     font-size: 9px;
