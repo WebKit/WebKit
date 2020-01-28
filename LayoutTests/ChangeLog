@@ -1,3 +1,14 @@
+2020-01-28  Truitt Savell  <tsavell@apple.com>
+
+        [CSS Backgrounds] Followup test gardening after r255265 due to expectation duplication in LayoutTests/TestExpectations/
+        https://bugs.webkit.org/show_bug.cgi?id=205872
+
+        Unreviewed test gardening.
+
+        * TestExpectations:
+        * platform/ios/TestExpectations:
+        * platform/mac/TestExpectations:
+
 2020-01-28  Jacob Uphoff  <jacob_uphoff@apple.com>
 
         REGRESSION: (r251694) [ ios ] crypto/subtle/rsa-indexeddb-private.html is flaky timing out

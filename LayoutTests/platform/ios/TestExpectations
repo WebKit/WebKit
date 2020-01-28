@@ -3470,3 +3470,8 @@ webkit.org/b/206671 [ Debug ] animations/animation-direction-reverse.html [ Pass
 
 webkit.org/b/206754 imported/w3c/web-platform-tests/css/css-backgrounds/background-image-centered-with-border-radius.html [ ImageOnlyFailure ]
 webkit.org/b/206754 imported/w3c/web-platform-tests/css/css-backgrounds/box-shadow-body.html [ ImageOnlyFailure ]
+
+webkit.org/b/206897 [ Debug ] imported/w3c/web-platform-tests/css/css-backgrounds/background-size/vector/tall--auto-32px--nonpercent-width-omitted-height-viewbox.html [ Skip ]
+webkit.org/b/206897 [ Debug ] imported/w3c/web-platform-tests/css/css-backgrounds/background-size/vector/tall--auto-32px--nonpercent-width-percent-height.html [ Skip ]
+webkit.org/b/206897 [ Debug ] imported/w3c/web-platform-tests/css/css-backgrounds/background-size/vector/tall--auto-32px--nonpercent-width-percent-height-viewbox.html [ Skip ]
+webkit.org/b/206897 [ Debug ] imported/w3c/web-platform-tests/css/css-backgrounds/background-size/vector/tall--auto-32px--nonpercent-width-omitted-height.html [ Skip ]

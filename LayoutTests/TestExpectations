@@ -3391,7 +3391,3 @@ webkit.org/b/206753 imported/w3c/web-platform-tests/css/css-backgrounds/first-le
 webkit.org/b/206578 [ Debug ] imported/w3c/web-platform-tests/css/css-backgrounds/animations/border-image-width-interpolation.html [ Crash ]
 webkit.org/b/206579 [ Debug ] imported/w3c/web-platform-tests/css/css-backgrounds/background-size/vector/zero-height-ratio-auto-5px.html [ Crash ]
 webkit.org/b/206579 [ Debug ] imported/w3c/web-platform-tests/css/css-backgrounds/background-size/vector/zero-width-ratio-auto-5px.html [ Crash ]
-webkit.org/b/206897 [ Debug ] imported/w3c/web-platform-tests/css/css-backgrounds/background-size/vector/tall--auto-32px--nonpercent-width-omitted-height-viewbox.html [ Crash ]
-webkit.org/b/206897 [ Debug ] imported/w3c/web-platform-tests/css/css-backgrounds/background-size/vector/tall--auto-32px--nonpercent-width-percent-height.html [ Crash ]
-webkit.org/b/206897 [ Debug ] imported/w3c/web-platform-tests/css/css-backgrounds/background-size/vector/tall--auto-32px--nonpercent-width-percent-height-viewbox.html [ Crash ]
-webkit.org/b/206897 [ Debug ] imported/w3c/web-platform-tests/css/css-backgrounds/background-size/vector/tall--auto-32px--nonpercent-width-omitted-height.html [ Crash ]
