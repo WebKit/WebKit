@@ -1,5 +1,52 @@
 2020-01-27  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r254559. rdar://problem/58920170
+
+    Long continuation chain could lead to stack exhaustion
+    https://bugs.webkit.org/show_bug.cgi?id=206271
+    <rdar://problem/41189798>
+    
+    Reviewed by Simon Fraser.
+    
+    Source/WebCore:
+    
+    This patch replaces the recursive approach with an iterative one
+    to collect absolute quads across continuation.
+    
+    Test: fast/inline/long-continuation-crash.html
+    
+    * rendering/RenderBlock.cpp:
+    (WebCore::RenderBlock::absoluteQuads const):
+    (WebCore::RenderBlock::absoluteQuadsIgnoringContinuation const):
+    * rendering/RenderBlock.h:
+    * rendering/RenderBoxModelObject.cpp:
+    (WebCore::RenderBoxModelObject::collectAbsoluteQuadsForContinuation const):
+    * rendering/RenderBoxModelObject.h:
+    (WebCore::RenderBoxModelObject::absoluteQuadsIgnoringContinuation const):
+    * rendering/RenderInline.cpp:
+    (WebCore::RenderInline::absoluteQuads const):
+    (WebCore::RenderInline::absoluteQuadsIgnoringContinuation const):
+    * rendering/RenderInline.h:
+    
+    LayoutTests:
+    
+    * fast/inline/long-continuation-crash.html: Added.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@254559 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-01-14  Zalan Bujtas  <zalan@apple.com>
+
+            Long continuation chain could lead to stack exhaustion
+            https://bugs.webkit.org/show_bug.cgi?id=206271
+            <rdar://problem/41189798>
+
+            Reviewed by Simon Fraser.
+
+            * fast/inline/long-continuation-crash.html: Added.
+
+2020-01-27  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r254546. rdar://problem/58811346
 
     REGRESSION: fast/shadow-dom/link-element-in-shadow-tree.html is flaky
