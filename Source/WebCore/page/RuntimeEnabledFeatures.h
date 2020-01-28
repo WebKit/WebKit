@@ -112,6 +112,9 @@ public:
     void setWebAnimationsCompositeOperationsEnabled(bool areEnabled) { m_areWebAnimationsCompositeOperationsEnabled = areEnabled; }
     bool webAnimationsCompositeOperationsEnabled() const { return m_areWebAnimationsCompositeOperationsEnabled; }
 
+    void setWebAnimationsMutableTimelinesEnabled(bool areEnabled) { m_areWebAnimationsMutableTimelinesEnabled = areEnabled; }
+    bool webAnimationsMutableTimelinesEnabled() const { return m_areWebAnimationsMutableTimelinesEnabled; }
+
     void setImageBitmapEnabled(bool isEnabled) { m_isImageBitmapEnabled = isEnabled; }
     bool imageBitmapEnabled() const { return m_isImageBitmapEnabled; }
 
@@ -423,6 +426,7 @@ private:
     bool m_areWebAnimationsEnabled { true };
     bool m_isWebAnimationsCSSIntegrationEnabled { true };
     bool m_areWebAnimationsCompositeOperationsEnabled { false };
+    bool m_areWebAnimationsMutableTimelinesEnabled { false };
     bool m_isImageBitmapEnabled { true };
 #if ENABLE(OFFSCREEN_CANVAS)
     bool m_isOffscreenCanvasEnabled { false };

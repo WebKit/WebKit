@@ -798,6 +798,7 @@ static void enableExperimentalFeatures(IWebPreferences* preferences)
     prefsPrivate->setResizeObserverEnabled(TRUE);
     prefsPrivate->setWebAnimationsEnabled(TRUE);
     prefsPrivate->setWebAnimationsCompositeOperationsEnabled(TRUE);
+    prefsPrivate->setWebAnimationsMutableTimelinesEnabled(TRUE);
     prefsPrivate->setServerTimingEnabled(TRUE);
     prefsPrivate->setAspectRatioOfImgFromWidthAndHeightEnabled(TRUE);
     prefsPrivate->setRenderingUpdateThrottlingEnabled(FALSE);

@@ -1354,6 +1354,14 @@ WebAnimationsCompositeOperationsEnabled:
   category: experimental
   webcoreBinding: RuntimeEnabledFeatures
 
+WebAnimationsMutableTimelinesEnabled:
+  type: bool
+  defaultValue: DEFAULT_EXPERIMENTAL_FEATURES_ENABLED
+  humanReadableName: "Web Animations mutable timelines"
+  humanReadableDescription: "Support for setting the timeline property of an Animation object"
+  category: experimental
+  webcoreBinding: RuntimeEnabledFeatures
+
 WebGL2Enabled:
   type: bool
   defaultValue: false

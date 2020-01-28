@@ -317,6 +317,8 @@ void WebPreferences::initializeDefaultSettings()
 
     CFDictionaryAddValue(defaults, CFSTR(WebKitWebAnimationsCompositeOperationsEnabledPreferenceKey), kCFBooleanFalse);
 
+    CFDictionaryAddValue(defaults, CFSTR(WebKitWebAnimationsMutableTimelinesEnabledPreferenceKey), kCFBooleanFalse);
+
     CFDictionaryAddValue(defaults, CFSTR(WebKitWebAnimationsCSSIntegrationEnabledPreferenceKey), kCFBooleanFalse);
 
     CFDictionaryAddValue(defaults, CFSTR(WebKitUserTimingEnabledPreferenceKey), kCFBooleanFalse);
@@ -2366,6 +2368,20 @@ HRESULT WebPreferences::webAnimationsCompositeOperationsEnabled(_Out_ BOOL* enab
     if (!enabled)
         return E_POINTER;
     *enabled = boolValueForKey(WebKitWebAnimationsCompositeOperationsEnabledPreferenceKey);
+    return S_OK;
+}
+
+HRESULT WebPreferences::setWebAnimationsMutableTimelinesEnabled(BOOL enabled)
+{
+    setBoolValue(WebKitWebAnimationsMutableTimelinesEnabledPreferenceKey, enabled);
+    return S_OK;
+}
+
+HRESULT WebPreferences::webAnimationsMutableTimelinesEnabled(_Out_ BOOL* enabled)
+{
+    if (!enabled)
+        return E_POINTER;
+    *enabled = boolValueForKey(WebKitWebAnimationsMutableTimelinesEnabledPreferenceKey);
     return S_OK;
 }
 

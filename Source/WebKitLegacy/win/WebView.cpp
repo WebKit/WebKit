@@ -5265,6 +5265,11 @@ HRESULT WebView::notifyPreferencesChanged(IWebNotification* notification)
         return hr;
     RuntimeEnabledFeatures::sharedFeatures().setWebAnimationsCompositeOperationsEnabled(!!enabled);
 
+    hr = prefsPrivate->webAnimationsMutableTimelinesEnabled(&enabled);
+    if (FAILED(hr))
+        return hr;
+    RuntimeEnabledFeatures::sharedFeatures().setWebAnimationsMutableTimelinesEnabled(!!enabled);
+
     hr = prefsPrivate->webAnimationsCSSIntegrationEnabled(&enabled);
     if (FAILED(hr))
         return hr;

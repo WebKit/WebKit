@@ -190,6 +190,8 @@
 
 #define WebKitWebAnimationsCompositeOperationsEnabledPreferenceKey "WebKitWebAnimationsCompositeOperationsEnabled"
 
+#define WebKitWebAnimationsMutableTimelinesEnabledPreferenceKey "WebKitWebAnimationsMutableTimelinesEnabled"
+
 #define WebKitWebAnimationsCSSIntegrationEnabledPreferenceKey "WebKitWebAnimationsCSSIntegrationEnabled"
 
 #define WebKitUserTimingEnabledPreferenceKey "WebKitUserTimingEnabled"

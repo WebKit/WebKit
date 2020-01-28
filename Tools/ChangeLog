@@ -1,3 +1,18 @@
+2020-01-28  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Make Animation.timeline read-write only if a runtime flag is enabled
+        https://bugs.webkit.org/show_bug.cgi?id=206173
+        <rdar://problem/58527432>
+
+        Reviewed by Dean Jackson.
+
+        Manually enable the new WebAnimationsMutableTimelines runtime flag in DumpRenderTree.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (enableExperimentalFeatures):
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        (enableExperimentalFeatures):
+
 2020-01-27  Aakash Jain  <aakash_jain@apple.com>
 
         [ews] Add method to fetch cq+ patches from Bugzilla

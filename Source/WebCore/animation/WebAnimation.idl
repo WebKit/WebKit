@@ -45,7 +45,7 @@ enum AnimationReplaceState {
 ] interface WebAnimation : EventTarget {
     attribute DOMString id;
     attribute AnimationEffect? effect;
-    attribute AnimationTimeline? timeline;
+    [RuntimeConditionallyReadWrite=WebAnimationsMutableTimelines] attribute AnimationTimeline? timeline;
     attribute double? startTime;
     [MayThrowException, ImplementedAs=bindingsCurrentTime] attribute double? currentTime;
     attribute double playbackRate;

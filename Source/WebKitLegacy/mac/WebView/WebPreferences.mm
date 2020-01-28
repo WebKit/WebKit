@@ -3226,6 +3226,16 @@ static NSString *classIBCreatorID = nil;
     [self _setBoolValue:flag forKey:WebKitWebAnimationsCompositeOperationsEnabledPreferenceKey];
 }
 
+- (BOOL)webAnimationsMutableTimelinesEnabled
+{
+    return [self _boolValueForKey:WebKitWebAnimationsMutableTimelinesEnabledPreferenceKey];
+}
+
+- (void)setWebAnimationsMutableTimelinesEnabled:(BOOL)flag
+{
+    [self _setBoolValue:flag forKey:WebKitWebAnimationsMutableTimelinesEnabledPreferenceKey];
+}
+
 - (BOOL)pointerEventsEnabled
 {
     return [self _boolValueForKey:WebKitPointerEventsEnabledPreferenceKey];

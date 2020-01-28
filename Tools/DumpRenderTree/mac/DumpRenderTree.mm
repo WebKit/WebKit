@@ -865,6 +865,7 @@ static void enableExperimentalFeatures(WebPreferences* preferences)
     [preferences setFetchAPIKeepAliveEnabled:YES];
     [preferences setWebAnimationsEnabled:YES];
     [preferences setWebAnimationsCompositeOperationsEnabled:YES];
+    [preferences setWebAnimationsMutableTimelinesEnabled:YES];
     [preferences setWebGL2Enabled:YES];
     // FIXME: AsyncFrameScrollingEnabled
     [preferences setCacheAPIEnabled:NO];
