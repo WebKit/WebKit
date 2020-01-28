@@ -1,3 +1,13 @@
+2020-01-27  Jacob Uphoff  <jacob_uphoff@apple.com>
+
+        animations/animation-direction-reverse.html is flaky failing
+        https://bugs.webkit.org/show_bug.cgi?id=206671
+
+        Unreviewed test gardening.
+
+        * platform/ios/TestExpectations:
+        * platform/mac/TestExpectations:
+
 2020-01-27  Truitt Savell  <tsavell@apple.com>
 
         REGRESSION: (r253718) [ Mac ] inspector/runtime/executionContextCreated-onEnable.html is a flaky failure
