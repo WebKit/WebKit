@@ -1,3 +1,16 @@
+2020-01-27  Aakash Jain  <aakash_jain@apple.com>
+
+        [ews] Add method to fetch cq+ patches from Bugzilla
+        https://bugs.webkit.org/show_bug.cgi?id=206774
+
+        Reviewed by Jonathan Bedard.
+
+        * BuildSlaveSupport/ews-app/ews/common/bugzilla.py:
+        (Bugzilla._get_commit_queue_patches_from_bug): Method to get cq+ patches for a given bug.
+        (Bugzilla._is_patch_cq_plus): Method to check if patch has cq+ flag set.
+        (Bugzilla.get_list_of_patches_for_commit_queue): Method to fetch list of cq+ patches from Bugzilla.
+        (BugzillaBeautifulSoup.fetch_bug_ids_for_commit_queue):
+
 2020-01-27  Noam Rosenthal  <noam@webkit.org>
 
         Unreviewed. Adding myself back as a reviewer.
