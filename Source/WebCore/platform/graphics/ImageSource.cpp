@@ -348,8 +348,11 @@ void ImageSource::startAsyncDecodingQueue()
     if (hasAsyncDecodingQueue() || !isDecoderAvailable())
         return;
 
+    // Async decoding is only enabled for HTMLImageElement and CSS background images.
+    ASSERT(isMainThread());
+
     // We need to protect this, m_decodingQueue and m_decoder from being deleted while we are in the decoding loop.
-    decodingQueue().dispatch([protectedThis = makeRef(*this), protectedDecodingQueue = makeRef(decodingQueue()), protectedFrameRequestQueue = makeRef(frameRequestQueue()), protectedDecoder = makeRef(*m_decoder), sourceURL = sourceURL().string().isolatedCopy()] {
+    decodingQueue().dispatch([protectedThis = makeRef(*this), protectedDecodingQueue = makeRef(decodingQueue()), protectedFrameRequestQueue = makeRef(frameRequestQueue()), protectedDecoder = makeRef(*m_decoder), sourceURL = sourceURL().string().isolatedCopy()] () mutable {
         ImageFrameRequest frameRequest;
         Seconds minDecodingDuration = protectedThis->frameDecodingDurationForTesting();
 
@@ -384,6 +387,9 @@ void ImageSource::startAsyncDecodingQueue()
                     LOG(Images, "ImageSource::%s - %p - url: %s [frame %ld will not cached]", __FUNCTION__, protectedThis.ptr(), sourceURL.utf8().data(), frameRequest.index);
             });
         }
+
+        // Ensure destruction happens on creation thread.
+        callOnMainThread([protectedThis = WTFMove(protectedThis), protectedQueue = WTFMove(protectedDecodingQueue), protectedDecoder = WTFMove(protectedDecoder)] () mutable { });
     });
 }
 
