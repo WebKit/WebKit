@@ -1,3 +1,65 @@
+2020-01-28  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r255189. rdar://problem/58943054
+
+    Unreviewed, revert r253984 as it appears to be causing assertion leaks.
+    https://bugs.webkit.org/show_bug.cgi?id=205687
+    
+    Source/WebKit:
+    
+    * Configurations/WebKit.xcconfig:
+    * Platform/spi/ios/RunningBoardServicesSPI.h: Removed.
+    * Scripts/process-entitlements.sh:
+    * Shared/DependencyProcessAssertion.cpp: Removed.
+    * Shared/DependencyProcessAssertion.h: Removed.
+    * Shared/NativeWebTouchEvent.h:
+    * Shared/ios/DependencyProcessAssertionIOS.mm: Removed.
+    * Sources.txt:
+    * SourcesCocoa.txt:
+    * UIProcess/Cocoa/WebProcessProxyCocoa.mm:
+    (WebKit::WebProcessProxy::processWasResumed):
+    * UIProcess/WebProcessProxy.h:
+    * UIProcess/WebProcessProxy.messages.in:
+    * WebKit.xcodeproj/project.pbxproj:
+    * WebProcess/WebProcess.cpp:
+    (WebKit::WebProcess::initializeConnection):
+    * WebProcess/WebProcess.h:
+    * WebProcess/cocoa/WebProcessCocoa.mm:
+    (WebKit::WebProcess::processTaskStateDidChange):
+    (WebKit::WebProcess::releaseProcessWasResumedAssertions):
+    
+    WebKitLibraries:
+    
+    * WebKitPrivateFrameworkStubs/iOS/13/RunningBoardServices.framework/RunningBoardServices.tbd: Removed.
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@255189 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-01-27  Chris Dumez  <cdumez@apple.com>
+
+            Unreviewed, revert r253984 as it appears to be causing assertion leaks.
+            https://bugs.webkit.org/show_bug.cgi?id=205687
+
+            * Configurations/WebKit.xcconfig:
+            * Platform/spi/ios/RunningBoardServicesSPI.h: Removed.
+            * Scripts/process-entitlements.sh:
+            * Shared/DependencyProcessAssertion.cpp: Removed.
+            * Shared/DependencyProcessAssertion.h: Removed.
+            * Shared/NativeWebTouchEvent.h:
+            * Shared/ios/DependencyProcessAssertionIOS.mm: Removed.
+            * Sources.txt:
+            * SourcesCocoa.txt:
+            * UIProcess/Cocoa/WebProcessProxyCocoa.mm:
+            (WebKit::WebProcessProxy::processWasResumed):
+            * UIProcess/WebProcessProxy.h:
+            * UIProcess/WebProcessProxy.messages.in:
+            * WebKit.xcodeproj/project.pbxproj:
+            * WebProcess/WebProcess.cpp:
+            (WebKit::WebProcess::initializeConnection):
+            * WebProcess/WebProcess.h:
+            * WebProcess/cocoa/WebProcessCocoa.mm:
+            (WebKit::WebProcess::processTaskStateDidChange):
+            (WebKit::WebProcess::releaseProcessWasResumedAssertions):
+
 2020-01-24  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r254552. rdar://problem/58812968
