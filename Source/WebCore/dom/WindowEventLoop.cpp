@@ -82,7 +82,7 @@ inline Ref<WindowEventLoop> WindowEventLoop::create(const String& agentClusterKe
 
 inline WindowEventLoop::WindowEventLoop(const String& agentClusterKey)
     : m_agentClusterKey(agentClusterKey)
-    , m_timer(*this, &WindowEventLoop::run)
+    , m_timer(*this, &WindowEventLoop::didReachTimeToRun)
     , m_perpetualTaskGroupForSimilarOriginWindowAgents(*this)
 {
 }
@@ -110,6 +110,12 @@ MicrotaskQueue& WindowEventLoop::microtaskQueue()
     if (!m_microtaskQueue)
         m_microtaskQueue = makeUnique<MicrotaskQueue>(commonVM());
     return *m_microtaskQueue;
+}
+
+void WindowEventLoop::didReachTimeToRun()
+{
+    auto protectedThis = makeRef(*this); // Executing tasks may remove the last reference to this WindowEventLoop.
+    run();
 }
 
 void WindowEventLoop::queueMutationObserverCompoundMicrotask()

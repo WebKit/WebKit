@@ -61,6 +61,8 @@ private:
     bool isContextThread() const final;
     MicrotaskQueue& microtaskQueue() final;
 
+    void didReachTimeToRun();
+
     String m_agentClusterKey;
     Timer m_timer;
     std::unique_ptr<MicrotaskQueue> m_microtaskQueue;
