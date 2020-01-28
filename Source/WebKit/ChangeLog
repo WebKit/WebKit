@@ -1,5 +1,36 @@
 2020-01-27  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r255114. rdar://problem/58920176
+
+    macCatalyst: Don't get any custom cursors in subframes
+    https://bugs.webkit.org/show_bug.cgi?id=206781
+    <rdar://problem/58698374>
+    
+    Reviewed by Simon Fraser.
+    
+    * WebProcess/WebPage/ios/WebPageIOS.mm:
+    (WebKit::WebPage::positionInformation):
+    Adjust the hit test to allow child frame content, and reorganize the
+    rest of the code to use the hit frame instead of the main frame.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@255114 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-01-24  Tim Horton  <timothy_horton@apple.com>
+
+            macCatalyst: Don't get any custom cursors in subframes
+            https://bugs.webkit.org/show_bug.cgi?id=206781
+            <rdar://problem/58698374>
+
+            Reviewed by Simon Fraser.
+
+            * WebProcess/WebPage/ios/WebPageIOS.mm:
+            (WebKit::WebPage::positionInformation):
+            Adjust the hit test to allow child frame content, and reorganize the
+            rest of the code to use the hit frame instead of the main frame.
+
+2020-01-27  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r255108. rdar://problem/58920185
 
     [iOS] Long pressing text inside a selection should update the selection
