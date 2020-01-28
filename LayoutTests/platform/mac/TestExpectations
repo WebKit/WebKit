@@ -1943,3 +1943,5 @@ webkit.org/b/206682 [ Debug ] animations/play-state-paused.html [ Pass Failure ]
 webkit.org/b/206685 animations/animation-direction-normal.html [ Pass Failure ]
 
 webkit.org/b/206671 animations/animation-direction-reverse.html [ Pass Failure ]
+
+webkit.org/b/206711 http/wpt/resource-timing/rt-resource-errors.html [ Pass Failure ]

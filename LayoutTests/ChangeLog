@@ -1,3 +1,12 @@
+2020-01-28  Jacob Uphoff  <jacob_uphoff@apple.com>
+
+        [ macOS ] http/wpt/resource-timing/rt-resource-errors.html is flaky failing
+        https://bugs.webkit.org/show_bug.cgi?id=206711
+
+        Unreviewed test gardening.
+
+        * platform/mac/TestExpectations:
+
 2020-01-28  Jason Lawrence  <lawrence.j@apple.com>
 
         [ iOS wk2 ] editing/caret/ios/fixed-caret-position-after-scroll.html flaky failing
