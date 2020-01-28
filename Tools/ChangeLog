@@ -1,3 +1,39 @@
+2020-01-27  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r254838. rdar://problem/58856018
+
+    REGRESSION(r254788): mozilla-tests.yaml/js1_5/Regress/regress-191633.js.mozilla fails
+    https://bugs.webkit.org/show_bug.cgi?id=206477
+    <rdar://problem/58714886>
+    
+    Unreviewed.
+    
+    In r232603 when we added test specific options, the implementation did not
+    clear the test specific options before parsing each test inside a yaml
+    file. It only worked for tests where we ran each js file inside a directory.
+    This patch makes it also work for yaml files.
+    
+    * Scripts/run-jsc-stress-tests:
+    
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@254838 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-01-20  Saam Barati  <sbarati@apple.com>
+
+            REGRESSION(r254788): mozilla-tests.yaml/js1_5/Regress/regress-191633.js.mozilla fails
+            https://bugs.webkit.org/show_bug.cgi?id=206477
+            <rdar://problem/58714886>
+
+            Unreviewed.
+
+            In r232603 when we added test specific options, the implementation did not
+            clear the test specific options before parsing each test inside a yaml
+            file. It only worked for tests where we ran each js file inside a directory.
+            This patch makes it also work for yaml files.
+
+            * Scripts/run-jsc-stress-tests:
+
 2020-01-24  Russell Epstein  <repstein@apple.com>
 
         Cherry-pick r254318. rdar://problem/58856031
