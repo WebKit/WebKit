@@ -1,5 +1,14 @@
 2020-01-28  Brent Fulgham  <bfulgham@apple.com>
 
+        Unreviewed test fix after r255217
+
+        Re-activate SecurityServer mach port access in Catalina and older.
+
+        * GPUProcess/mac/com.apple.WebKit.GPUProcess.sb.in:
+        * WebProcess/com.apple.WebProcess.sb.in:
+
+2020-01-28  Brent Fulgham  <bfulgham@apple.com>
+
         Reset the application bundle identifier between test runs
         https://bugs.webkit.org/show_bug.cgi?id=206858
         <rdar://problem/58844002>
