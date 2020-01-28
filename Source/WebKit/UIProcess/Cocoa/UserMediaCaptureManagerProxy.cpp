@@ -40,8 +40,6 @@
 #include <WebCore/WebAudioBufferList.h>
 #include <wtf/UniqueRef.h>
 
-#define MESSAGE_CHECK_CONTEXTID(identifier) MESSAGE_CHECK_BASE(m_proxies.isValidKey(identifier), &m_connectionProxy->connection())
-
 namespace WebKit {
 using namespace WebCore;
 
@@ -270,7 +268,5 @@ void UserMediaCaptureManagerProxy::setOrientation(uint64_t orientation)
 }
 
 }
-
-#undef MESSAGE_CHECK_CONTEXTID
 
 #endif
