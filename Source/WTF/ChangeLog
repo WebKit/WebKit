@@ -1,3 +1,12 @@
+2020-01-28  Jonathan Bedard  <jbedard@apple.com>
+
+        WebCore: Guard uneven corners in rounded rectangles
+        https://bugs.webkit.org/show_bug.cgi?id=206838
+
+        Reviewed by Darin Adler.
+
+        * wtf/PlatformHave.h: Add HAVE(CG_PATH_UNEVEN_CORNERS_ROUNDEDRECT).
+
 2020-01-27  Jonathan Bedard  <jbedard@apple.com>
 
         WebCore: Remove iOS 11 macros from RenderThemeIOS.mm
