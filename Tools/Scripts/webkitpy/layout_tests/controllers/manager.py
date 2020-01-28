@@ -223,12 +223,6 @@ class Manager(object):
             _log.critical('No tests to run.')
             return test_run_results.RunDetails(exit_code=-1)
 
-        needs_http = any((self._is_http_test(test) and not self._needs_web_platform_test(test)) for tests in itervalues(tests_to_run_by_device) for test in tests)
-        needs_web_platform_test_server = any(self._needs_web_platform_test(test) for tests in itervalues(tests_to_run_by_device) for test in tests)
-        needs_websockets = any(self._is_websocket_test(test) for tests in itervalues(tests_to_run_by_device) for test in tests)
-        self._runner = LayoutTestRunner(self._options, self._port, self._printer, self._results_directory, self._test_is_slow,
-                                        needs_http=needs_http, needs_web_platform_test_server=needs_web_platform_test_server, needs_websockets=needs_websockets)
-
         self._printer.write_update("Checking build ...")
         if not self._port.check_build():
             _log.error("Build check failed")
@@ -239,6 +233,12 @@ class Manager(object):
 
         # Create the output directory if it doesn't already exist.
         self._port.host.filesystem.maybe_make_directory(self._results_directory)
+
+        needs_http = any((self._is_http_test(test) and not self._needs_web_platform_test(test)) for tests in itervalues(tests_to_run_by_device) for test in tests)
+        needs_web_platform_test_server = any(self._needs_web_platform_test(test) for tests in itervalues(tests_to_run_by_device) for test in tests)
+        needs_websockets = any(self._is_websocket_test(test) for tests in itervalues(tests_to_run_by_device) for test in tests)
+        self._runner = LayoutTestRunner(self._options, self._port, self._printer, self._results_directory, self._test_is_slow,
+                                        needs_http=needs_http, needs_web_platform_test_server=needs_web_platform_test_server, needs_websockets=needs_websockets)
 
         initial_results = None
         retry_results = None
@@ -457,16 +457,9 @@ class Manager(object):
                     _log.debug("Adding results for other crash: " + str(test))
 
     def _clobber_old_results(self):
-        # Just clobber the actual test results directories since the other
-        # files in the results directory are explicitly used for cross-run
-        # tracking.
-        self._printer.write_update("Clobbering old results in %s" %
-                                   self._results_directory)
-        layout_tests_dir = self._port.layout_tests_dir()
-        possible_dirs = self._port.test_dirs()
-        for dirname in possible_dirs:
-            if self._filesystem.isdir(self._filesystem.join(layout_tests_dir, dirname)):
-                self._filesystem.rmtree(self._filesystem.join(self._results_directory, dirname))
+        self._printer.write_update("Deleting results directory {}".format(self._results_directory))
+        if self._filesystem.isdir(self._results_directory):
+            self._filesystem.rmtree(self._results_directory)
 
     def _tests_to_retry(self, run_results, include_crashes):
         return [result.test_name for result in run_results.unexpected_results_by_name.values() if
