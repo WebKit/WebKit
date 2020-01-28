@@ -1,3 +1,12 @@
+2020-01-28  Paulo Matos  <pmatos@igalia.com>
+
+        Skip test numberingSystemsForLocale-cached-strings-should-be-immortal-and-safe-for-concurrent-access.js in arm and mips
+        https://bugs.webkit.org/show_bug.cgi?id=206865
+
+        Reviewed by Žan Doberšek.
+
+        * stress/numberingSystemsForLocale-cached-strings-should-be-immortal-and-safe-for-concurrent-access.js:
+
 2020-01-26  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         Invalid ranges in character classes should be banned in unicode patterns
