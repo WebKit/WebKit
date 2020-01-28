@@ -1,5 +1,42 @@
 2020-01-28  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r254492. rdar://problem/58037745
+
+    Scrollbar hiding on iOS via ::-webkit-scrollbar { display: none } doesn't work
+    https://bugs.webkit.org/show_bug.cgi?id=206197
+    
+    Reviewed by Tim Horton.
+    Source/WebCore:
+    
+    The logic added in r251369 was reversed, causing scrollbar hiding to not work correctly.
+    
+    Tested by fast/scrolling/ios/scrollbar-hiding.html
+    
+    * rendering/RenderScrollbar.cpp:
+    (WebCore::RenderScrollbar::isHiddenByStyle const):
+    
+    LayoutTests:
+    
+    The logic added in r251369 was reversed, causing scrollbar hiding to not work correctly.
+    
+    * fast/scrolling/ios/scrollbar-hiding-expected.txt:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@254492 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-01-13  Simon Fraser  <simon.fraser@apple.com>
+
+            Scrollbar hiding on iOS via ::-webkit-scrollbar { display: none } doesn't work
+            https://bugs.webkit.org/show_bug.cgi?id=206197
+
+            Reviewed by Tim Horton.
+
+            The logic added in r251369 was reversed, causing scrollbar hiding to not work correctly.
+
+            * fast/scrolling/ios/scrollbar-hiding-expected.txt:
+
+2020-01-28  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r254437. rdar://problem/58060387
 
     [iOS] editing/selection/ios/clear-selection-after-tap-in-large-selected-non-editable-text.html times out

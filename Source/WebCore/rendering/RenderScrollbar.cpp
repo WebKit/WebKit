@@ -363,7 +363,7 @@ float RenderScrollbar::opacity()
 bool RenderScrollbar::isHiddenByStyle() const
 {
     std::unique_ptr<RenderStyle> partStyle = getScrollbarPseudoStyle(ScrollbarBGPart, pseudoForScrollbarPart(ScrollbarBGPart));
-    return partStyle && partStyle->display() != DisplayType::None;
+    return partStyle && partStyle->display() == DisplayType::None;
 }
 
 }
