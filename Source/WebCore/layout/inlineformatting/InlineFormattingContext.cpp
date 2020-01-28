@@ -424,6 +424,7 @@ LineBuilder::Constraints InlineFormattingContext::constraintsForLine(const Horiz
 void InlineFormattingContext::setDisplayBoxesForLine(const LineLayoutContext::LineContent& lineContent, const HorizontalConstraints& horizontalConstraints)
 {
     auto& formattingState = this->formattingState();
+    auto& lineBox = lineContent.lineBox;
 
     if (!lineContent.floats.isEmpty()) {
         auto floatingContext = FloatingContext { root(), *this, formattingState.floatingState() };
@@ -432,7 +433,6 @@ void InlineFormattingContext::setDisplayBoxesForLine(const LineLayoutContext::Li
             auto& floatBox = floatItem->layoutBox();
             auto& displayBox = formattingState.displayBox(floatBox);
             // Set static position first.
-            auto& lineBox = lineContent.lineBox;
             displayBox.setTopLeft({ lineBox.logicalLeft(), lineBox.logicalTop() });
             // Float it.
             displayBox.setTopLeft(floatingContext.positionForFloat(floatBox));
@@ -448,8 +448,7 @@ void InlineFormattingContext::setDisplayBoxesForLine(const LineLayoutContext::Li
         initialContaingBlockSize = geometryForBox(root().initialContainingBlock(), EscapeReason::StrokeOverflowNeedsViewportGeometry).contentBox().size();
     auto& inlineContent = formattingState.ensureDisplayInlineContent();
     auto lineIndex = inlineContent.lineBoxes.size();
-    inlineContent.lineBoxes.append(lineContent.lineBox);
-    auto lineInkOverflow = lineContent.lineBox.scrollableOverflow();
+    auto lineInkOverflow = lineBox.scrollableOverflow();
     Optional<unsigned> lastTextItemIndex;
     // Compute box final geometry.
     auto& lineRuns = lineContent.runList;
@@ -540,7 +539,9 @@ void InlineFormattingContext::setDisplayBoxesForLine(const LineLayoutContext::Li
     // Make sure the trailing text run gets a hyphen when it needs one.
     if (lineContent.partialContent && lineContent.partialContent->trailingContentNeedsHyphen)
         inlineContent.runs[*lastTextItemIndex].textContext()->setNeedsHyphen();
-    inlineContent.lineBoxes.last().setInkOverflow(lineInkOverflow);
+    // FIXME: This is where the logical to physical translate should happen.
+    auto& baseline = lineBox.baseline();
+    inlineContent.lineBoxes.append({ lineBox.logicalRect(), lineBox.scrollableOverflow(), lineInkOverflow, { baseline.ascent(), baseline.descent() }, lineBox.baselineOffset(), lineBox.isConsideredEmpty() });
 }
 
 void InlineFormattingContext::invalidateFormattingState(const InvalidationState&)

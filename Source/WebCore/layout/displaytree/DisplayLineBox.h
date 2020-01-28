@@ -27,7 +27,6 @@
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
-#include "DisplayBox.h"
 #include "DisplayInlineRect.h"
 
 namespace WebCore {
@@ -38,46 +37,34 @@ class LineBox {
 public:
     struct Baseline {
         Baseline(InlineLayoutUnit ascent, InlineLayoutUnit descent);
-        Baseline() = default;
-
-        void setAscent(InlineLayoutUnit);
-        void setDescent(InlineLayoutUnit);
-
-        void reset();
 
         InlineLayoutUnit height() const { return ascent() + descent(); }
-        InlineLayoutUnit ascent() const;
-        InlineLayoutUnit descent() const;
+        InlineLayoutUnit ascent() const { return m_ascent; }
+        InlineLayoutUnit descent() const { return m_descent; }
 
     private:
-#if ASSERT_ENABLED
-        bool m_hasValidAscent { false };
-        bool m_hasValidDescent { false };
-#endif
-        InlineLayoutUnit m_ascent;
-        InlineLayoutUnit m_descent;
+        InlineLayoutUnit m_ascent { 0 };
+        InlineLayoutUnit m_descent { 0 };
     };
 
-    LineBox(const InlineRect&, const Baseline&, InlineLayoutUnit baselineOffset);
-    LineBox() = default;
+    LineBox(const InlineRect&, const InlineRect& scrollableOverflow, const InlineRect& inkOverflow, const Baseline&, InlineLayoutUnit baselineOffset, bool isConsideredEmpty);
 
-    const InlineRect& logicalRect() const { return m_rect; }
+    const InlineRect& rect() const { return m_rect; }
     const InlineRect& scrollableOverflow() const { return m_scrollableOverflow; }
     const InlineRect& inkOverflow() const { return m_inkOverflow; }
 
-    InlineLayoutPoint logicalTopLeft() const { return m_rect.topLeft(); }
-    InlineLayoutUnit logicalLeft() const { return m_rect.left(); }
-    InlineLayoutUnit logicalRight() const { return m_rect.right(); }
-    InlineLayoutUnit logicalTop() const { return m_rect.top(); }
-    InlineLayoutUnit logicalBottom() const { return m_rect.bottom(); }
+    InlineLayoutUnit left() const { return m_rect.left(); }
+    InlineLayoutUnit right() const { return m_rect.right(); }
+    InlineLayoutUnit top() const { return m_rect.top(); }
+    InlineLayoutUnit bottom() const { return m_rect.bottom(); }
 
-    InlineLayoutUnit logicalWidth() const { return m_rect.width(); }
-    InlineLayoutUnit logicalHeight() const { return m_rect.height(); }
+    InlineLayoutUnit width() const { return m_rect.width(); }
+    InlineLayoutUnit height() const { return m_rect.height(); }
 
-    const Baseline& baseline() const;
-    // Baseline offset from line logical top. Note that offset does not necessarily equal to ascent.
+    const Baseline& baseline() const { return m_baseline; }
+    // Baseline offset from line top. Note that offset does not necessarily equal to ascent.
     //
-    // -------------------    line logical top     ------------------- (top align)
+    // -------------------        line top         ------------------- (top align)
     //             ^                                              ^
     //             |                                  ^           |
     //   ^         | baseline offset                  |           | baseline offset
@@ -89,163 +76,33 @@ public:
     //   ^                                            | descent
     //   | descent                                    v
     //   v
-    // -------------------    line logical bottom  -------------------
-    InlineLayoutUnit baselineOffset() const;
-    void setBaselineOffsetIfGreater(InlineLayoutUnit);
-    void setAscentIfGreater(InlineLayoutUnit);
-    void setDescentIfGreater(InlineLayoutUnit);
-
-    void resetBaseline();
-    void resetDescent() { m_baseline.setDescent(0_lu); }
-
-    void setLogicalTopLeft(const InlineLayoutPoint& logicalTopLeft) { m_rect.setTopLeft(logicalTopLeft); }
-    void setLogicalHeight(InlineLayoutUnit logicalHeight) { m_rect.setHeight(logicalHeight); }
-
-    void setLogicalHeightIfGreater(InlineLayoutUnit);
-    void setLogicalWidth(InlineLayoutUnit logicalWidth) { m_rect.setWidth(logicalWidth); }
-
-    void setScrollableOverflow(const InlineRect& rect) { m_scrollableOverflow = rect; }
-    void setInkOverflow(const InlineRect& rect) { m_inkOverflow = rect; }
-
-    void moveHorizontally(InlineLayoutUnit delta) { m_rect.moveHorizontally(delta); }
-
-    void expandHorizontally(InlineLayoutUnit delta) { m_rect.expandHorizontally(delta); }
-    void shrinkHorizontally(InlineLayoutUnit delta) { expandHorizontally(-delta); }
-
-    void expandVertically(InlineLayoutUnit delta) { m_rect.expandVertically(delta); }
-    void shrinkVertically(InlineLayoutUnit delta) { expandVertically(-delta); }
-
-    // https://www.w3.org/TR/CSS22/visuren.html#inline-formatting
-    // Line boxes that contain no text, no preserved white space, no inline elements with non-zero margins, padding, or borders,
-    // and no other in-flow content (such as images, inline blocks or inline tables), and do not end with a preserved newline
-    // must be treated as zero-height line boxes for the purposes of determining the positions of any elements inside of them,
-    // and must be treated as not existing for any other purpose.
-    // Note that it does not necessarily mean visually non-empty line. <span style="font-size: 0px">this is still considered non-empty</span>
+    // -------------------       line bottom       -------------------
+    InlineLayoutUnit baselineOffset() const { return m_baselineOffset; }
     bool isConsideredEmpty() const { return m_isConsideredEmpty; }
-    void setIsConsideredEmpty() { m_isConsideredEmpty = true; }
-    void setIsConsideredNonEmpty() { m_isConsideredEmpty = false; }
 
 private:
-#if ASSERT_ENABLED
-    bool m_hasValidBaseline { false };
-    bool m_hasValidBaselineOffset { false };
-#endif
     InlineRect m_rect;
     InlineRect m_scrollableOverflow;
     InlineRect m_inkOverflow;
     Baseline m_baseline;
-    InlineLayoutUnit m_baselineOffset;
+    InlineLayoutUnit m_baselineOffset { 0 };
     bool m_isConsideredEmpty { true };
 };
 
-inline LineBox::LineBox(const InlineRect& rect, const Baseline& baseline, InlineLayoutUnit baselineOffset)
+inline LineBox::LineBox(const InlineRect& rect, const InlineRect& scrollableOverflow, const InlineRect& inkOverflow, const Baseline& baseline, InlineLayoutUnit baselineOffset, bool isConsideredEmpty)
     : m_rect(rect)
+    , m_scrollableOverflow(scrollableOverflow)
+    , m_inkOverflow(inkOverflow)
     , m_baseline(baseline)
     , m_baselineOffset(baselineOffset)
+    , m_isConsideredEmpty(isConsideredEmpty)
 {
-#if ASSERT_ENABLED
-    m_hasValidBaseline = true;
-    m_hasValidBaselineOffset = true;
-#endif
-}
-
-inline void LineBox::setLogicalHeightIfGreater(InlineLayoutUnit logicalHeight)
-{
-    if (logicalHeight <= m_rect.height())
-        return;
-    m_rect.setHeight(logicalHeight);
-}
-
-inline const LineBox::Baseline& LineBox::baseline() const
-{
-    ASSERT(m_hasValidBaseline);
-    return m_baseline;
-}
-
-inline void LineBox::setBaselineOffsetIfGreater(InlineLayoutUnit baselineOffset)
-{
-#if ASSERT_ENABLED
-    m_hasValidBaselineOffset = true;
-#endif
-    m_baselineOffset = std::max(baselineOffset, m_baselineOffset);
-}
-
-inline void LineBox::setAscentIfGreater(InlineLayoutUnit ascent)
-{
-    if (ascent < m_baseline.ascent())
-        return;
-    setBaselineOffsetIfGreater(ascent);
-    m_baseline.setAscent(ascent);
-}
-
-inline void LineBox::setDescentIfGreater(InlineLayoutUnit descent)
-{
-    if (descent < m_baseline.descent())
-        return;
-    m_baseline.setDescent(descent);
-}
-
-inline InlineLayoutUnit LineBox::baselineOffset() const
-{
-    ASSERT(m_hasValidBaselineOffset);
-    return m_baselineOffset;
-}
-
-inline void LineBox::resetBaseline()
-{
-#if ASSERT_ENABLED
-    m_hasValidBaselineOffset = true;
-#endif
-    m_baselineOffset = 0_lu;
-    m_baseline.reset();
 }
 
 inline LineBox::Baseline::Baseline(InlineLayoutUnit ascent, InlineLayoutUnit descent)
     : m_ascent(ascent)
     , m_descent(descent)
 {
-#if ASSERT_ENABLED
-    m_hasValidAscent = true;
-    m_hasValidDescent = true;
-#endif
-}
-
-inline void LineBox::Baseline::setAscent(InlineLayoutUnit ascent)
-{
-#if ASSERT_ENABLED
-    m_hasValidAscent = true;
-#endif
-    m_ascent = ascent;
-}
-
-inline void LineBox::Baseline::setDescent(InlineLayoutUnit descent)
-{
-#if ASSERT_ENABLED
-    m_hasValidDescent = true;
-#endif
-    m_descent = descent;
-}
-
-inline void LineBox::Baseline::reset()
-{
-#if ASSERT_ENABLED
-    m_hasValidAscent = true;
-    m_hasValidDescent = true;
-#endif
-    m_ascent = 0_lu;
-    m_descent = 0_lu;
-}
-
-inline InlineLayoutUnit LineBox::Baseline::ascent() const
-{
-    ASSERT(m_hasValidAscent);
-    return m_ascent;
-}
-
-inline InlineLayoutUnit LineBox::Baseline::descent() const
-{
-    ASSERT(m_hasValidDescent);
-    return m_descent;
 }
 
 }

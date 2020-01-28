@@ -48,7 +48,7 @@ public:
         Optional<PartialContent> partialContent;
         Vector<const InlineItem*> floats;
         const LineBuilder::RunList runList;
-        const Display::LineBox lineBox;
+        const LineBoxBuilder lineBox;
     };
     struct InlineItemRange {
         bool isEmpty() const { return start == end; }

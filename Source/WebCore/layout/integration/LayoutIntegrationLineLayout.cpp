@@ -115,7 +115,7 @@ void LineLayout::layout()
 LayoutUnit LineLayout::contentLogicalHeight() const
 {
     auto& lineBoxes = displayInlineContent()->lineBoxes;
-    return LayoutUnit { lineBoxes.last().logicalBottom() - lineBoxes.first().logicalTop() };
+    return LayoutUnit { lineBoxes.last().bottom() - lineBoxes.first().top() };
 }
 
 size_t LineLayout::lineCount() const
@@ -137,7 +137,7 @@ LayoutUnit LineLayout::firstLineBaseline() const
     }
 
     auto& firstLineBox = inlineContent->lineBoxes.first();
-    return Layout::toLayoutUnit(firstLineBox.logicalTop() + firstLineBox.baselineOffset());
+    return Layout::toLayoutUnit(firstLineBox.top() + firstLineBox.baselineOffset());
 }
 
 LayoutUnit LineLayout::lastLineBaseline() const
@@ -149,7 +149,7 @@ LayoutUnit LineLayout::lastLineBaseline() const
     }
 
     auto& lastLineBox = inlineContent->lineBoxes.last();
-    return Layout::toLayoutUnit(lastLineBox.logicalTop() + lastLineBox.baselineOffset());
+    return Layout::toLayoutUnit(lastLineBox.top() + lastLineBox.baselineOffset());
 }
 
 void LineLayout::collectOverflow(RenderBlockFlow& flow)
@@ -258,7 +258,7 @@ void LineLayout::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
         }
 
         auto& lineBox = inlineContent.lineBoxForRun(run);
-        auto baselineOffset = paintOffset.y() + lineBox.logicalTop() + lineBox.baselineOffset();
+        auto baselineOffset = paintOffset.y() + lineBox.top() + lineBox.baselineOffset();
 
         auto behavior = textContext.expansion() ? textContext.expansion()->behavior : DefaultExpansion;
         auto horizontalExpansion = textContext.expansion() ? textContext.expansion()->horizontalExpansion : 0;
@@ -266,7 +266,7 @@ void LineLayout::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
         String textWithHyphen;
         if (textContext.needsHyphen())
             textWithHyphen = makeString(textContext.content(), style.hyphenString());
-        TextRun textRun { !textWithHyphen.isEmpty() ? textWithHyphen : textContext.content(), run.left() - lineBox.logicalLeft(), horizontalExpansion, behavior };
+        TextRun textRun { !textWithHyphen.isEmpty() ? textWithHyphen : textContext.content(), run.left() - lineBox.left(), horizontalExpansion, behavior };
         textRun.setTabSize(!style.collapseWhiteSpace(), style.tabSize());
         FloatPoint textOrigin { rect.x() + paintOffset.x(), roundToDevicePixel(baselineOffset, deviceScaleFactor) };
 

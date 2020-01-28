@@ -91,8 +91,8 @@ void LineBuilder::initialize(const Constraints& constraints)
         m_initialStrut = { };
 
     auto lineRect = Display::InlineRect { constraints.logicalTopLeft, 0_lu, initialLineHeight };
-    auto baseline = Display::LineBox::Baseline { initialBaselineOffset, initialLineHeight - initialBaselineOffset };
-    m_lineBox = Display::LineBox { lineRect, baseline, initialBaselineOffset };
+    auto baseline = LineBoxBuilder::Baseline { initialBaselineOffset, initialLineHeight - initialBaselineOffset };
+    m_lineBox = LineBoxBuilder { lineRect, baseline, initialBaselineOffset };
     m_lineLogicalWidth = constraints.availableLogicalWidth;
     m_hasIntrusiveFloat = constraints.lineIsConstrainedByFloat;
 
@@ -124,7 +124,7 @@ LineBuilder::RunList LineBuilder::close(IsLastLineWithInlineContent isLastLineWi
         }
         if (isVisuallyEmpty()) {
             m_lineBox.resetBaseline();
-            m_lineBox.setLogicalHeight(0_lu);
+            m_lineBox.setLogicalHeight({ });
         }
         // Remove descent when all content is baseline aligned but none of them have descent.
         if (formattingContext().quirks().lineDescentNeedsCollapsing(m_runs)) {
@@ -658,7 +658,7 @@ bool LineBuilder::isVisuallyNonEmpty(const Run& run) const
     return false;
 }
 
-Display::LineBox::Baseline LineBuilder::halfLeadingMetrics(const FontMetrics& fontMetrics, InlineLayoutUnit lineLogicalHeight)
+LineBoxBuilder::Baseline LineBuilder::halfLeadingMetrics(const FontMetrics& fontMetrics, InlineLayoutUnit lineLogicalHeight)
 {
     auto ascent = fontMetrics.ascent();
     auto descent = fontMetrics.descent();

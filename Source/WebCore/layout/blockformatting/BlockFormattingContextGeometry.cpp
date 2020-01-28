@@ -77,7 +77,7 @@ ContentHeightAndMargin BlockFormattingContext::Geometry::inFlowNonReplacedHeight
             auto& lineBoxes = layoutState().establishedInlineFormattingState(layoutContainer).displayInlineContent()->lineBoxes;
             // Even empty containers generate one line. 
             ASSERT(!lineBoxes.isEmpty());
-            return { toLayoutUnit(lineBoxes.last().logicalBottom()) - borderAndPaddingTop, nonCollapsedMargin };
+            return { toLayoutUnit(lineBoxes.last().bottom()) - borderAndPaddingTop, nonCollapsedMargin };
         }
 
         // 2. the bottom edge of the bottom (possibly collapsed) margin of its last in-flow child, if the child's bottom margin...

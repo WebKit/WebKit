@@ -27,9 +27,9 @@
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
-#include "DisplayLineBox.h"
 #include "DisplayRun.h"
 #include "InlineItem.h"
+#include "InlineLineBoxBuilder.h"
 #include "InlineTextItem.h"
 
 namespace WebCore {
@@ -50,7 +50,7 @@ public:
         struct HeightAndBaseline {
             InlineLayoutUnit height { 0 };
             InlineLayoutUnit baselineOffset { 0 };
-            Optional<Display::LineBox::Baseline> strut;
+            Optional<LineBoxBuilder::Baseline> strut;
         };
         Optional<HeightAndBaseline> heightAndBaseline;
     };
@@ -69,7 +69,7 @@ public:
     InlineLayoutUnit trimmableTrailingWidth() const { return m_trimmableTrailingContent.width(); }
     bool isTrailingRunFullyTrimmable() const { return m_trimmableTrailingContent.isTrailingRunFullyTrimmable(); }
 
-    const Display::LineBox& lineBox() const { return m_lineBox; }
+    const LineBoxBuilder& lineBox() const { return m_lineBox; }
     void moveLogicalLeft(InlineLayoutUnit);
     void moveLogicalRight(InlineLayoutUnit);
     void setHasIntrusiveFloat() { m_hasIntrusiveFloat = true; }
@@ -143,7 +143,7 @@ public:
     enum class IsLastLineWithInlineContent { No, Yes };
     RunList close(IsLastLineWithInlineContent = IsLastLineWithInlineContent::No);
 
-    static Display::LineBox::Baseline halfLeadingMetrics(const FontMetrics&, InlineLayoutUnit lineLogicalHeight);
+    static LineBoxBuilder::Baseline halfLeadingMetrics(const FontMetrics&, InlineLayoutUnit lineLogicalHeight);
 
 private:
     InlineLayoutUnit logicalTop() const { return m_lineBox.logicalTop(); }
@@ -211,12 +211,12 @@ private:
     const InlineFormattingContext& m_inlineFormattingContext;
     RunList m_runs;
     TrimmableTrailingContent m_trimmableTrailingContent;
-    Optional<Display::LineBox::Baseline> m_initialStrut;
+    Optional<LineBoxBuilder::Baseline> m_initialStrut;
     InlineLayoutUnit m_lineLogicalWidth { 0 };
     Optional<TextAlignMode> m_horizontalAlignment;
     bool m_isIntrinsicSizing { false };
     bool m_hasIntrusiveFloat { false };
-    Display::LineBox m_lineBox;
+    LineBoxBuilder m_lineBox;
     Optional<bool> m_lineIsVisuallyEmptyBeforeTrimmableTrailingContent;
     bool m_shouldIgnoreTrailingLetterSpacing { false };
 };
