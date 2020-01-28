@@ -52,10 +52,8 @@ bool consumeSlashIncludingWhitespace(CSSParserTokenRange&);
 // consumeFunction expects the range starts with a FunctionToken.
 CSSParserTokenRange consumeFunction(CSSParserTokenRange&);
 
-enum class UnitlessQuirk {
-    Allow,
-    Forbid
-};
+enum class UnitlessQuirk { Allow, Forbid };
+enum class AllowXResolutionUnit { Allow, Forbid };
 
 RefPtr<CSSPrimitiveValue> consumeInteger(CSSParserTokenRange&, double minimumValue = -std::numeric_limits<double>::max());
 RefPtr<CSSPrimitiveValue> consumePositiveInteger(CSSParserTokenRange&);
@@ -67,7 +65,7 @@ RefPtr<CSSPrimitiveValue> consumePercent(CSSParserTokenRange&, ValueRange);
 RefPtr<CSSPrimitiveValue> consumeLengthOrPercent(CSSParserTokenRange&, CSSParserMode, ValueRange, UnitlessQuirk = UnitlessQuirk::Forbid);
 RefPtr<CSSPrimitiveValue> consumeAngle(CSSParserTokenRange&, CSSParserMode, UnitlessQuirk = UnitlessQuirk::Forbid);
 RefPtr<CSSPrimitiveValue> consumeTime(CSSParserTokenRange&, CSSParserMode, ValueRange, UnitlessQuirk = UnitlessQuirk::Forbid);
-RefPtr<CSSPrimitiveValue> consumeResolution(CSSParserTokenRange&);
+RefPtr<CSSPrimitiveValue> consumeResolution(CSSParserTokenRange&, AllowXResolutionUnit = AllowXResolutionUnit::Forbid);
 
 RefPtr<CSSPrimitiveValue> consumeIdent(CSSParserTokenRange&);
 RefPtr<CSSPrimitiveValue> consumeIdentRange(CSSParserTokenRange&, CSSValueID lower, CSSValueID upper);

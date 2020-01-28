@@ -16,7 +16,7 @@ function testComputedStyle(property, fullRule)
     return computedValue;
 }
 
-function testImageSetRule(description, property, rule, expected)
+function testImageSetRule(description, property, rule)
 {
     debug("");
     debug(`${description} : ${rule}`);
@@ -25,12 +25,12 @@ function testImageSetRule(description, property, rule, expected)
     if (property == 'cursor')
         rule += ', default';
 
-    if (testComputedStyle(property, rule) == rule)
+    if (testComputedStyle(property, rule) == rule.replace(/x(?=[,)])/g, 'dppx'))
         debug("Unprefixed: PASS");
     else
         debug("Unprefixed: FAIL");
 
-    if (testComputedStyle(property, "-webkit-" + rule) == rule)
+    if (testComputedStyle(property, "-webkit-" + rule) == rule.replace(/x(?=[,)])/g, 'dppx'))
         debug("Prefixed: PASS");
     else
         debug("Prefixed: FAIL");
