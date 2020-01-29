@@ -1,5 +1,19 @@
 2020-01-29  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
+        [GTK] Add api-gtk to EWS bubbles.
+        https://bugs.webkit.org/show_bug.cgi?id=206930
+
+        Reviewed by Aakash Jain.
+
+        A new queue has been added to the EWS to run GTK API tests in r255238.
+        The queue is now running fine with no pre-existent failures.
+        Let's add it to the EWS bubbles.
+
+        * BuildSlaveSupport/ews-app/ews/views/statusbubble.py:
+        (StatusBubble):
+
+2020-01-29  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
         [GTK] Fix TestWebKitAPI/TestJSC:/jsc/options API test after r255314
         https://bugs.webkit.org/show_bug.cgi?id=206927
 
