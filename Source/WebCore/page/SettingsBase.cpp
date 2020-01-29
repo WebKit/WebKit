@@ -407,10 +407,10 @@ void SettingsBase::hiddenPageCSSAnimationSuspensionEnabledChanged()
         m_page->hiddenPageCSSAnimationSuspensionStateChanged();
 }
 
-void SettingsBase::renderingUpdateThrottlingEnabledChanged()
+void SettingsBase::renderingUpdateThrottlingEnabledChangedForTesting()
 {
     if (m_page)
-        m_page->renderingUpdateThrottlingEnabledChanged();
+        m_page->renderingUpdateThrottlingEnabledChangedForTesting();
 }
 
 void SettingsBase::resourceUsageOverlayVisibleChanged()

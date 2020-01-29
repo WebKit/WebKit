@@ -61,15 +61,16 @@ public:
     void suspend();
     void resume();
     
-    void addThrottlingReason(ThrottlingReason reason) { m_throttlingReasons.add(reason); }
-    void removeThrottlingReason(ThrottlingReason reason) { m_throttlingReasons.remove(reason); }
+    void addThrottlingReason(ThrottlingReason);
+    void removeThrottlingReason(ThrottlingReason);
+    void clearThrottlingReasons();
     WEBCORE_EXPORT bool isThrottled() const;
 
 private:
     ScriptedAnimationController(Document&);
 
     Page* page() const;
-    Seconds preferredScriptedAnimationInterval() const;
+    Seconds preferredScriptedAnimationInterval() const { return preferredFrameInterval(m_throttlingReasons); }
     bool isThrottledRelativeToPage() const;
     bool shouldRescheduleRequestAnimationFrame(DOMHighResTimeStamp) const;
     void scheduleAnimation();

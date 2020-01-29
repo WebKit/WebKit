@@ -767,7 +767,7 @@ hiddenPageCSSAnimationSuspensionEnabled:
 
 renderingUpdateThrottlingEnabled:
   initial: true
-  onChange: renderingUpdateThrottlingEnabledChanged
+  onChange: renderingUpdateThrottlingEnabledChangedForTesting
 
 storageBlockingPolicy:
   type: SecurityOrigin::StorageBlockingPolicy

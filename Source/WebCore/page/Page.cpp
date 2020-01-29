@@ -335,6 +335,9 @@ Page::Page(PageConfiguration&& pageConfiguration)
             m_corsDisablingPatterns.uncheckedAppend(WTFMove(parsedPattern));
     }
     m_corsDisablingPatterns.shrinkToFit();
+
+    if (m_lowPowerModeNotifier->isLowPowerModeEnabled())
+        m_throttlingReasons.add(ThrottlingReason::LowPowerMode);
 }
 
 Page::~Page()
@@ -1160,18 +1163,16 @@ bool Page::isOnlyNonUtilityPage() const
     return !isUtilityPage() && nonUtilityPageCount == 1;
 }
 
-bool Page::isLowPowerModeEnabled() const
-{
-    if (m_lowPowerModeEnabledOverrideForTesting)
-        return m_lowPowerModeEnabledOverrideForTesting.value();
-
-    return m_lowPowerModeNotifier->isLowPowerModeEnabled();
-}
-
 void Page::setLowPowerModeEnabledOverrideForTesting(Optional<bool> isEnabled)
 {
-    m_lowPowerModeEnabledOverrideForTesting = isEnabled;
-    handleLowModePowerChange(m_lowPowerModeEnabledOverrideForTesting.valueOr(false));
+    // Remove ThrottlingReason::LowPowerMode so handleLowModePowerChange() can do its work.
+    m_throttlingReasonsOverridenForTesting.remove(ThrottlingReason::LowPowerMode);
+
+    if (isEnabled) {
+        handleLowModePowerChange(isEnabled.value());
+        m_throttlingReasonsOverridenForTesting.add(ThrottlingReason::LowPowerMode);
+    } else
+        handleLowModePowerChange(m_lowPowerModeNotifier->isLowPowerModeEnabled());
 }
 
 void Page::setTopContentInset(float contentInset)
@@ -1377,46 +1378,51 @@ void Page::resumeScriptedAnimations()
     });
 }
 
-bool Page::renderingUpdateThrottlingEnabled() const
+void Page::renderingUpdateThrottlingEnabledChangedForTesting()
 {
-    return m_settings->renderingUpdateThrottlingEnabled();
-}
+    m_throttlingReasons = { };
 
-void Page::renderingUpdateThrottlingEnabledChanged()
-{
+    // This function can only be called through changing the Settings from the layout tests.
+    // So disable ThrottlingReason::VisuallyIdle always.
+    m_throttlingReasonsOverridenForTesting = ThrottlingReason::VisuallyIdle;
+
+    if (m_settings->renderingUpdateThrottlingEnabled()) {
+        if (m_lowPowerModeNotifier->isLowPowerModeEnabled())
+            m_throttlingReasons.add(ThrottlingReason::LowPowerMode);
+    } else {
+        m_throttlingReasonsOverridenForTesting.add({ ThrottlingReason::OutsideViewport, ThrottlingReason::LowPowerMode, ThrottlingReason::NonInteractedCrossOriginFrame });
+
+        forEachDocument([] (Document& document) {
+            if (auto* scriptedAnimationController = document.scriptedAnimationController())
+                scriptedAnimationController->clearThrottlingReasons();
+        });
+    }
+
     renderingUpdateScheduler().adjustRenderingUpdateFrequency();
-}
-
-bool Page::isRenderingUpdateThrottled() const
-{
-    return renderingUpdateThrottlingEnabled() && !m_throttlingReasons.isEmpty();
-}
-
-Seconds Page::preferredRenderingUpdateInterval() const
-{
-    return renderingUpdateThrottlingEnabled() ? preferredFrameInterval(m_throttlingReasons) : FullSpeedAnimationInterval;
 }
 
 void Page::setIsVisuallyIdleInternal(bool isVisuallyIdle)
 {
+    if (!canUpdateThrottlingReason(ThrottlingReason::VisuallyIdle))
+        return;
+
     if (isVisuallyIdle == m_throttlingReasons.contains(ThrottlingReason::VisuallyIdle))
         return;
 
     m_throttlingReasons = m_throttlingReasons ^ ThrottlingReason::VisuallyIdle;
-
-    if (renderingUpdateThrottlingEnabled())
-        renderingUpdateScheduler().adjustRenderingUpdateFrequency();
+    renderingUpdateScheduler().adjustRenderingUpdateFrequency();
 }
 
 void Page::handleLowModePowerChange(bool isLowPowerModeEnabled)
 {
+    if (!canUpdateThrottlingReason(ThrottlingReason::LowPowerMode))
+        return;
+
     if (isLowPowerModeEnabled == m_throttlingReasons.contains(ThrottlingReason::LowPowerMode))
         return;
 
     m_throttlingReasons = m_throttlingReasons ^ ThrottlingReason::LowPowerMode;
-
-    if (renderingUpdateThrottlingEnabled())
-        renderingUpdateScheduler().adjustRenderingUpdateFrequency();
+    renderingUpdateScheduler().adjustRenderingUpdateFrequency();
 
     if (!RuntimeEnabledFeatures::sharedFeatures().webAnimationsCSSIntegrationEnabled())
         mainFrame().animation().updateThrottlingState();
