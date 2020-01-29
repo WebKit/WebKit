@@ -1360,3 +1360,5 @@ webkit.org/b/206685 [ Debug ] animations/animation-direction-normal.html [ Pass 
 webkit.org/b/206687 imported/w3c/web-platform-tests/beacon/idlharness.any.html [ Pass Timeout ]
 
 webkit.org/b/206752 imported/w3c/web-platform-tests/2dcontext/imagebitmap/createImageBitmap-serializable.html [ Pass Failure ]
+
+webkit.org/b/206934 imported/w3c/web-platform-tests/IndexedDB/key-generators/reading-autoincrement-indexes-cursors.any.serviceworker.html [ Pass Failure ]
