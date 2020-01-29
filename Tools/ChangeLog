@@ -1,5 +1,17 @@
 2020-01-29  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
+        [GTK] Fix TestWebKitAPI/TestJSC:/jsc/options API test after r255314
+        https://bugs.webkit.org/show_bug.cgi?id=206927
+
+        Reviewed by Carlos Garcia Campos.
+
+        Update the default value tested from 4MB to 5MB.
+
+        * TestWebKitAPI/Tests/JavaScriptCore/glib/TestJSC.cpp:
+        (testsJSCOptions):
+
+2020-01-29  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
         [GTK] Extra packages needed to successfully run API tests (cups-daemon and fonts-liberation)
         https://bugs.webkit.org/show_bug.cgi?id=206925
 

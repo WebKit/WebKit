@@ -3527,11 +3527,11 @@ static void testsJSCOptions()
 
     guint maxPerThreadStackUsage;
     g_assert_true(jsc_options_get_uint("maxPerThreadStackUsage", &maxPerThreadStackUsage));
-    g_assert_cmpuint(maxPerThreadStackUsage, ==, 4194304);
+    g_assert_cmpuint(maxPerThreadStackUsage, ==, 5242880);
     g_assert_true(jsc_options_set_uint("maxPerThreadStackUsage", 4096));
     g_assert_true(jsc_options_get_uint("maxPerThreadStackUsage", &maxPerThreadStackUsage));
     g_assert_cmpuint(maxPerThreadStackUsage, ==, 4096);
-    g_assert_true(jsc_options_set_uint("maxPerThreadStackUsage", 4194304));
+    g_assert_true(jsc_options_set_uint("maxPerThreadStackUsage", 5242880));
 
     gsize webAssemblyPartialCompileLimit;
     g_assert_true(jsc_options_get_size("webAssemblyPartialCompileLimit", &webAssemblyPartialCompileLimit));
@@ -3684,7 +3684,7 @@ static void testsJSCOptions()
     // Restore options their default values.
     g_assert_true(jsc_options_set_boolean(JSC_OPTIONS_USE_JIT, TRUE));
     g_assert_true(jsc_options_set_int("thresholdForJITAfterWarmUp", 500));
-    g_assert_true(jsc_options_set_uint("maxPerThreadStackUsage", 4194304));
+    g_assert_true(jsc_options_set_uint("maxPerThreadStackUsage", 5242880));
     g_assert_true(jsc_options_set_size("webAssemblyPartialCompileLimit", 5000));
     g_assert_true(jsc_options_set_double("smallHeapRAMFraction", 0.25));
     g_assert_true(jsc_options_set_string("configFile", nullptr));
