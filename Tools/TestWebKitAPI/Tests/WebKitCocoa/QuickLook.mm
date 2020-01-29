@@ -25,7 +25,7 @@
 
 #import "config.h"
 
-#if PLATFORM(IOS_FAMILY)
+#if USE(QUICK_LOOK)
 
 #import "PlatformUtilities.h"
 #import "Test.h"
@@ -536,4 +536,4 @@ TEST(QuickLook, LoadFromMemoryCache)
     [TestProtocol unregister];
 }
 
-#endif // PLATFORM(IOS_FAMILY)
+#endif // USE(QUICK_LOOK)

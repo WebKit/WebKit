@@ -1,3 +1,13 @@
+2020-01-28  Jonathan Bedard  <jbedard@apple.com>
+
+        TestWebKitAPI: Conditionalize QuickLook tests on USE(QUICK_LOOK)
+        https://bugs.webkit.org/show_bug.cgi?id=206907
+        <rdar://problem/58969924>
+
+        Rubber-stamped by Alexey Proskuryakov.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/QuickLook.mm: Conditionalize on USE(QUICK_LOOK).
+
 2020-01-28  Sihui Liu  <sihui_liu@apple.com>
 
         IndexedDB: speed up index records deletion
