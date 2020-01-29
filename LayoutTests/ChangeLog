@@ -1,3 +1,20 @@
+2020-01-28  Zalan Bujtas  <zalan@apple.com>
+
+        REGRESSION: [ Mac ] fast/hidpi/image-srcset-relative-svg-canvas-2x.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=206254
+        <rdar://problem/58580461>
+
+        Reviewed by Simon Fraser.
+
+        The drawImage() and the HTML document layout are racy here and when we
+        don't manage to squeeze in a layout before the JS drawImage(), the
+        SVG image gets laid out and rendered using the inline replaced box default size
+        value of 300x150. This patch only fixes the flakiness issue and
+        does not address the underlying bug (see webkit.org/b/206914).
+
+        * fast/hidpi/image-srcset-relative-svg-canvas-2x-expected.html:
+        * fast/hidpi/image-srcset-relative-svg-canvas-2x.html:
+
 2020-01-28  Chris Dumez  <cdumez@apple.com>
 
         REGRESSION (r252064): [ Mac iOS ] storage/websql/statement-error-callback.html is timing out flakily
