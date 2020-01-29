@@ -30,8 +30,8 @@
 namespace bmalloc {
 
 struct LineMetadata {
-    unsigned char startOffset;
-    unsigned char objectCount;
+    unsigned char startOffset { };
+    unsigned char objectCount { };
 };
 
 static_assert(
