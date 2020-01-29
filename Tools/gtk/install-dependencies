@@ -155,8 +155,10 @@ function installDependenciesWithApt {
     packages="$packages \
         apache2 \
         curl \
+        cups-daemon \
         dbus-x11 \
         gdb \
+        fonts-liberation \
         hunspell \
         hunspell-en-us \
         hunspell-en-gb \
@@ -329,6 +331,7 @@ function installDependenciesWithPacman {
     packages="$packages \
         apache \
         curl \
+        cups \
         gdb \
         hunspell \
         hunspell-en \
@@ -341,6 +344,7 @@ function installDependenciesWithPacman {
         python2-psutil \
         python2-yaml \
         ruby \
+        ttf-liberation \
         weston \
         xorg-server-xvfb"
 
@@ -494,11 +498,13 @@ function installDependenciesWithDnf {
     # These are dependencies necessary for running tests.
     packages="$packages \
         curl \
+        cups \
         dbus-x11 \
         gdb \
         hunspell-en \
         hunspell-en-GB \
         httpd \
+        liberation-fonts \
         libgpg-error-devel \
         mod_bw \
         mod_ssl \

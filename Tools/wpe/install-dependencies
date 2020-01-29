@@ -98,6 +98,7 @@ function installDependenciesWithApt {
         apache2 \
         curl \
         gdb \
+        fonts-liberation \
         libapache2-mod-bw \
         libapache2-mod-php \
         php-json \
@@ -210,7 +211,8 @@ function installDependenciesWithPacman {
         python2-gobject \
         python2-lxml \
         python2-psutil \
-        ruby"
+        ruby \
+        ttf-liberation"
 
     # These are dependencies necessary for building the jhbuild.
     packages="$packages \
@@ -310,6 +312,7 @@ function installDependenciesWithDnf {
         curl \
         gdb \
         httpd \
+        liberation-fonts \
         mod_bw \
         mod_ssl \
         perl-CGI \

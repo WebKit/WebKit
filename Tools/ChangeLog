@@ -1,3 +1,17 @@
+2020-01-29  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [GTK] Extra packages needed to successfully run API tests (cups-daemon and fonts-liberation)
+        https://bugs.webkit.org/show_bug.cgi?id=206925
+
+        Reviewed by Carlos Garcia Campos.
+
+        Add cups-daemon to the list of packages to be installed, which is necessary to sucessfully
+        run the printing related GTK API tests. Add also the liberation fonts, which are needed to
+        run the complex text controller API tests.
+
+        * gtk/install-dependencies:
+        * wpe/install-dependencies: Don't add cups packages, because WPE currently doesn't run print-related API test.
+
 2020-01-28  Tim Horton  <timothy_horton@apple.com>
 
         macCatalyst: Right clicking on a link follows it immediately
