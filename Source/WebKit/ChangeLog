@@ -1,3 +1,20 @@
+2020-01-29  Chris Dumez  <cdumez@apple.com>
+
+        [iOS] Add managed preference to allow legacy sync XHRs during page dismissal
+        https://bugs.webkit.org/show_bug.cgi?id=206944
+        <rdar://problem/58440111>
+
+        Reviewed by Alex Christensen.
+
+        Add managed preference for iOS to allow enterprise customers to keep using legacy sync XHRs
+        during page dismissal.
+
+        * Shared/WebPreferencesDefaultValues.cpp:
+        (WebKit::defaultDisallowSyncXHRDuringPageDismissalEnabled):
+        * Shared/WebPreferencesDefaultValues.h:
+        * Shared/ios/WebPreferencesDefaultValuesIOS.mm:
+        (WebKit::allowsDeprecatedSynchronousXMLHttpRequestDuringUnload):
+
 2020-01-29  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Move unsetenv to WebProcessMain.cpp after r255342
