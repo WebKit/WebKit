@@ -1,3 +1,17 @@
+2020-01-29  Sihui Liu  <sihui_liu@apple.com>
+
+        Crash under com.apple.WebKit.Networking at WebKit: WebKit::WebIDBServer::suspend
+        https://bugs.webkit.org/show_bug.cgi?id=206904
+        <rdar://problem/58791603>
+
+        Reviewed by Maciej Stachowiak.
+
+        Wait until m_server is set in constructor of WebIDBServer to make sure m_server can be accessed in 
+        WebIDBServer::suspend.
+
+        * NetworkProcess/IndexedDB/WebIDBServer.cpp:
+        (WebKit::WebIDBServer::WebIDBServer):
+
 2020-01-29  Brent Fulgham  <bfulgham@apple.com>
 
         Unreviewed, rolling out r255217 and r255217.
