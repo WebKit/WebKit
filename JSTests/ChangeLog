@@ -1,3 +1,15 @@
+2020-01-29  Paulo Matos  <pmatos@igalia.com>
+
+        Skip slow test operand-should-fit-in-abstract-heap-encoded-payload-format.js on mips and arm
+        https://bugs.webkit.org/show_bug.cgi?id=206926
+
+        Unreviewed test gardening.
+
+        This test has quadratic behaviour with the size of a, and on mips and arm it just takes too
+        long to run with such high value of a. Therefore we skip.
+
+        * stress/operand-should-fit-in-abstract-heap-encoded-payload-format.js:
+
 2020-01-28  Paulo Matos  <pmatos@igalia.com>
 
         Skip test numberingSystemsForLocale-cached-strings-should-be-immortal-and-safe-for-concurrent-access.js in arm and mips
