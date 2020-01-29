@@ -64,6 +64,10 @@ WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_XSLT PRIVATE OFF)
 
 WEBKIT_OPTION_END()
 
+if (DEFINED ENV{WEBKIT_IGNORE_PATH})
+    set(CMAKE_IGNORE_PATH $ENV{WEBKIT_IGNORE_PATH})
+endif ()
+
 # Do not use a separate directory based on configuration when building
 # with the Visual Studio generator
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY_DEBUG "${CMAKE_ARCHIVE_OUTPUT_DIRECTORY}")
