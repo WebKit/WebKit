@@ -561,13 +561,13 @@ bool PageClientImpl::effectiveAppearanceIsDark() const
     if (preferDarkTheme)
         return true;
 
+    if (auto* themeNameEnv = g_getenv("GTK_THEME"))
+        return g_str_has_suffix(themeNameEnv, "-dark") || g_str_has_suffix(themeNameEnv, ":dark");
+
     GUniqueOutPtr<char> themeName;
     g_object_get(settings, "gtk-theme-name", &themeName.outPtr(), nullptr);
     if (g_str_has_suffix(themeName.get(), "-dark"))
         return true;
-
-    if (auto* themeNameEnv = g_getenv("GTK_THEME"))
-        return g_str_has_suffix(themeNameEnv, ":dark");
 
     return false;
 }
