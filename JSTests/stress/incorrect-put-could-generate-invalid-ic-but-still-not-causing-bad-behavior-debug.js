@@ -1,4 +1,6 @@
-//@ skip if $buildType == "debug"
+//@ skip if $buildType != "debug"
+//@ crash!
+//@ runDefault("--useLLInt=true")
 
 function shouldBe(actual, expected) {
     if (actual !== expected)

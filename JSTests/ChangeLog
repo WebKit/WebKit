@@ -1,3 +1,20 @@
+2020-01-29  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Unreviewed, update tests
+        https://bugs.webkit.org/show_bug.cgi?id=206846
+
+        * stress/incorrect-put-could-generate-invalid-ic-but-still-not-causing-bad-behavior-debug.js: Copied from JSTests/stress/incorrect-put-could-generate-invalid-ic-but-still-not-causing-bad-behavior.js.
+        (shouldBe):
+        (putter):
+        (not_string.toString):
+        * stress/incorrect-put-could-generate-invalid-ic-but-still-not-causing-bad-behavior.js:
+        * stress/incorrect-put-could-generate-invalid-ic-involving-dictionary-flatten-debug.js: Copied from JSTests/stress/incorrect-put-could-generate-invalid-ic-involving-dictionary-flatten.js.
+        (shouldBe):
+        (dictionary):
+        (putter):
+        (not_string.toString):
+        * stress/incorrect-put-could-generate-invalid-ic-involving-dictionary-flatten.js:
+
 2020-01-28  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Give up IC when unknown structure transition happens
