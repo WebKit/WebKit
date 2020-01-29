@@ -31,7 +31,6 @@
 #include "FailureAction.h"
 #include "HeapKind.h"
 #include "LargeMap.h"
-#include "LineMetadata.h"
 #include "List.h"
 #include "Map.h"
 #include "Mutex.h"
@@ -41,7 +40,6 @@
 #include "PhysicalPageMap.h"
 #include "SmallLine.h"
 #include "SmallPage.h"
-#include "Vector.h"
 #include <array>
 #include <condition_variable>
 #include <mutex>
@@ -54,6 +52,7 @@ class BulkDecommit;
 class BumpAllocator;
 class DebugHeap;
 class EndTag;
+class HeapConstants;
 class Scavenger;
 
 class Heap {
@@ -110,9 +109,6 @@ private:
     bool usingGigacage();
     void* gigacageBasePtr(); // May crash if !usingGigacage().
     size_t gigacageSize();
-    
-    void initializeLineMetadata();
-    void initializePageMetadata();
 
     void allocateSmallBumpRangesByMetadata(std::unique_lock<Mutex>&,
         size_t sizeClass, BumpAllocator&, BumpRangeCache&, LineCache&, FailureAction);
@@ -132,13 +128,10 @@ private:
     LargeRange splitAndAllocate(std::unique_lock<Mutex>&, LargeRange&, size_t alignment, size_t);
 
     HeapKind m_kind;
+    HeapConstants& m_constants;
 
     bool m_hasPendingDecommits { false };
     std::condition_variable_any m_condition;
-
-    size_t m_vmPageSizePhysical;
-    Vector<LineMetadata> m_smallLineMetadata;
-    std::array<size_t, sizeClassCount> m_pageClasses;
 
     LineCache m_lineCache;
     std::array<List<Chunk>, pageClassCount> m_freePages;

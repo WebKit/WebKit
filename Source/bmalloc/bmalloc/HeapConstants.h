@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -20,26 +20,44 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #pragma once
 
+#include "LineMetadata.h"
+#include "Mutex.h"
 #include "Sizes.h"
+#include "StaticPerProcess.h"
+#include "Vector.h"
+#include <array>
+#include <mutex>
 
 namespace bmalloc {
 
-struct LineMetadata {
-    unsigned char startOffset;
-    unsigned char objectCount;
+class HeapConstants : public StaticPerProcess<HeapConstants> {
+public:
+    HeapConstants(std::lock_guard<Mutex>&);
+    ~HeapConstants() = delete;
+
+    inline size_t pageClass(size_t sizeClass) const { return m_pageClasses[sizeClass]; }
+    inline size_t smallLineCount() const { return m_vmPageSizePhysical / smallLineSize; }
+    inline unsigned char startOffset(size_t sizeClass, size_t lineNumber) { return lineMetadata(sizeClass, lineNumber).startOffset; }
+    inline unsigned char objectCount(size_t sizeClass, size_t lineNumber) { return lineMetadata(sizeClass, lineNumber).objectCount; }
+
+private:
+    void initializeLineMetadata();
+    void initializePageMetadata();
+
+    inline LineMetadata& lineMetadata(size_t sizeClass, size_t lineNumber)
+    {
+        return m_smallLineMetadata[sizeClass * smallLineCount() + lineNumber];
+    }
+
+    size_t m_vmPageSizePhysical;
+    Vector<LineMetadata> m_smallLineMetadata;
+    std::array<size_t, sizeClassCount> m_pageClasses;
 };
-
-static_assert(
-    smallLineSize - alignment <= std::numeric_limits<unsigned char>::max(),
-    "maximum object offset must fit in LineMetadata::startOffset");
-
-static_assert(
-    smallLineSize / alignment <= std::numeric_limits<unsigned char>::max(),
-    "maximum object count must fit in LineMetadata::objectCount");
+DECLARE_STATIC_PER_PROCESS_STORAGE(HeapConstants);
 
 } // namespace bmalloc
