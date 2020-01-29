@@ -939,3 +939,5 @@ webkit.org/b/206708 fast/animation/request-animation-frame-iframe.html [ Pass Fa
 
 webkit.org/b/206770 [ Mojave Release ] storage/websql/test-authorizer.html [ Pass Timeout ]
 webkit.org/b/206770 [ Catalina Release ] storage/websql/test-authorizer.html [ Pass Failure Timeout ]
+
+webkit.org/b/206940 [ Mojave+ Debug ] tiled-drawing/scrolling/fast-scroll-select-latched-mainframe-with-handler.html [ Pass Failure ]
