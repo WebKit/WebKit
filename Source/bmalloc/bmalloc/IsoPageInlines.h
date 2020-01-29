@@ -47,8 +47,8 @@ IsoPage<Config>* IsoPage<Config>::tryCreate(IsoDirectoryBase<Config>& directory,
 template<typename Config>
 IsoPage<Config>::IsoPage(IsoDirectoryBase<Config>& directory, unsigned index)
     : IsoPageBase(false)
-    , m_directory(directory)
     , m_index(index)
+    , m_directory(directory)
 {
     memset(m_allocBits, 0, sizeof(m_allocBits));
 }
@@ -65,14 +65,14 @@ IsoPage<Config>* IsoPage<Config>::pageFor(void* ptr)
 }
 
 template<typename Config>
-void IsoPage<Config>::free(void* passedPtr)
+void IsoPage<Config>::free(const std::lock_guard<Mutex>& locker, void* passedPtr)
 {
     BASSERT(!m_isShared);
     unsigned offset = static_cast<char*>(passedPtr) - reinterpret_cast<char*>(this);
     unsigned index = offset / Config::objectSize;
     
     if (!m_eligibilityHasBeenNoted) {
-        m_eligibilityTrigger.didBecome(*this);
+        m_eligibilityTrigger.didBecome(locker, *this);
         m_eligibilityHasBeenNoted = true;
     }
     
@@ -82,12 +82,12 @@ void IsoPage<Config>::free(void* passedPtr)
     unsigned newWord = m_allocBits[wordIndex] &= ~(1 << bitIndex);
     if (!newWord) {
         if (!--m_numNonEmptyWords)
-            m_emptyTrigger.didBecome(*this);
+            m_emptyTrigger.didBecome(locker, *this);
     }
 }
 
 template<typename Config>
-FreeList IsoPage<Config>::startAllocating()
+FreeList IsoPage<Config>::startAllocating(const std::lock_guard<Mutex>&)
 {
     static constexpr bool verbose = false;
     
@@ -208,7 +208,7 @@ FreeList IsoPage<Config>::startAllocating()
 }
 
 template<typename Config>
-void IsoPage<Config>::stopAllocating(FreeList freeList)
+void IsoPage<Config>::stopAllocating(const std::lock_guard<Mutex>& locker, FreeList freeList)
 {
     static constexpr bool verbose = false;
     
@@ -217,19 +217,19 @@ void IsoPage<Config>::stopAllocating(FreeList freeList)
     
     freeList.forEach<Config>(
         [&] (void* ptr) {
-            free(ptr);
+            free(locker, ptr);
         });
 
     RELEASE_BASSERT(m_isInUseForAllocation);
     m_isInUseForAllocation = false;
 
-    m_eligibilityTrigger.handleDeferral(*this);
-    m_emptyTrigger.handleDeferral(*this);
+    m_eligibilityTrigger.handleDeferral(locker, *this);
+    m_emptyTrigger.handleDeferral(locker, *this);
 }
 
 template<typename Config>
 template<typename Func>
-void IsoPage<Config>::forEachLiveObject(const Func& func)
+void IsoPage<Config>::forEachLiveObject(const std::lock_guard<Mutex>&, const Func& func)
 {
     for (unsigned wordIndex = 0; wordIndex < bitsArrayLength(numObjects); ++wordIndex) {
         unsigned word = m_allocBits[wordIndex];

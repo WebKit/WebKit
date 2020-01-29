@@ -81,7 +81,7 @@ size_t Heap::gigacageSize()
     return Gigacage::size(gigacageKind(m_kind));
 }
 
-size_t Heap::freeableMemory(std::lock_guard<Mutex>&)
+size_t Heap::freeableMemory(const std::lock_guard<Mutex>&)
 {
     return m_freeableMemory;
 }
@@ -91,14 +91,14 @@ size_t Heap::footprint()
     return m_footprint;
 }
 
-void Heap::markAllLargeAsEligibile(std::lock_guard<Mutex>&)
+void Heap::markAllLargeAsEligibile(const std::lock_guard<Mutex>&)
 {
     m_largeFree.markAllAsEligibile();
     m_hasPendingDecommits = false;
     m_condition.notify_all();
 }
 
-void Heap::decommitLargeRange(std::lock_guard<Mutex>&, LargeRange& range, BulkDecommit& decommitter)
+void Heap::decommitLargeRange(const std::lock_guard<Mutex>&, LargeRange& range, BulkDecommit& decommitter)
 {
     m_footprint -= range.totalPhysicalSize();
     m_freeableMemory -= range.totalPhysicalSize();
@@ -114,9 +114,9 @@ void Heap::decommitLargeRange(std::lock_guard<Mutex>&, LargeRange& range, BulkDe
 }
 
 #if BUSE(PARTIAL_SCAVENGE)
-void Heap::scavenge(std::lock_guard<Mutex>& lock, BulkDecommit& decommitter)
+void Heap::scavenge(const std::lock_guard<Mutex>& lock, BulkDecommit& decommitter)
 #else
-void Heap::scavenge(std::lock_guard<Mutex>& lock, BulkDecommit& decommitter, size_t& deferredDecommits)
+void Heap::scavenge(const std::lock_guard<Mutex>& lock, BulkDecommit& decommitter, size_t& deferredDecommits)
 #endif
 {
     for (auto& list : m_freePages) {
@@ -169,7 +169,7 @@ void Heap::scavenge(std::lock_guard<Mutex>& lock, BulkDecommit& decommitter, siz
 }
 
 #if BUSE(PARTIAL_SCAVENGE)
-void Heap::scavengeToHighWatermark(std::lock_guard<Mutex>& lock, BulkDecommit& decommitter)
+void Heap::scavengeToHighWatermark(const std::lock_guard<Mutex>& lock, BulkDecommit& decommitter)
 {
     void* newHighWaterMark = nullptr;
     for (LargeRange& range : m_largeFree) {

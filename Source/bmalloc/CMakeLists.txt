@@ -112,6 +112,7 @@ set(bmalloc_PUBLIC_HEADERS
     bmalloc/Mutex.h
     bmalloc/Object.h
     bmalloc/ObjectType.h
+    bmalloc/Packed.h
     bmalloc/PerHeapKind.h
     bmalloc/PerProcess.h
     bmalloc/PerThread.h

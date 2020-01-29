@@ -43,5 +43,11 @@ void IsoTLSDeallocatorEntry<Config>::construct(void* entry)
     new (entry) IsoDeallocator<Config>(lock);
 }
 
+template<typename Config>
+void IsoTLSDeallocatorEntry<Config>::scavenge(void* entry)
+{
+    static_cast<IsoDeallocator<Config>*>(entry)->scavenge();
+}
+
 } // namespace bmalloc
 

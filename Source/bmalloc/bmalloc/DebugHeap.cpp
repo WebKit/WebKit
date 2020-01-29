@@ -40,7 +40,7 @@ DEFINE_STATIC_PER_PROCESS_STORAGE(DebugHeap);
 
 #if BOS(DARWIN)
 
-DebugHeap::DebugHeap(std::lock_guard<Mutex>&)
+DebugHeap::DebugHeap(const std::lock_guard<Mutex>&)
     : m_zone(malloc_create_zone(0, 0))
     , m_pageSize(vmPageSize())
 {
@@ -88,7 +88,7 @@ void DebugHeap::dump()
 
 #else
 
-DebugHeap::DebugHeap(std::lock_guard<Mutex>&)
+DebugHeap::DebugHeap(const std::lock_guard<Mutex>&)
     : m_pageSize(vmPageSize())
 {
 }

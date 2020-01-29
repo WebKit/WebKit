@@ -44,7 +44,9 @@ void IsoTLSLayout::add(IsoTLSEntry* entry)
     std::lock_guard<Mutex> locking(addingMutex);
     if (m_head) {
         RELEASE_BASSERT(m_tail);
-        entry->m_offset = roundUpToMultipleOf(entry->alignment(), m_tail->extent());
+        size_t offset = roundUpToMultipleOf(entry->alignment(), m_tail->extent());
+        RELEASE_BASSERT(offset < UINT_MAX);
+        entry->m_offset = offset;
         std::atomic_thread_fence(std::memory_order_seq_cst);
         m_tail->m_next = entry;
         m_tail = entry;
