@@ -29,6 +29,7 @@
 
 #include "B3Compilation.h"
 #include "B3Procedure.h"
+#include "VirtualRegister.h"
 #include "WasmFormat.h"
 #include "WasmLimits.h"
 #include "WasmModuleInformation.h"
@@ -38,6 +39,7 @@
 #include <wtf/Expected.h>
 #include <wtf/LEBDecoder.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/StringPrintStream.h>
 #include <wtf/text/WTFString.h>
 #include <wtf/unicode/UTF8Conversion.h>
 
