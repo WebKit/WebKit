@@ -1365,3 +1365,5 @@ webkit.org/b/206934 imported/w3c/web-platform-tests/IndexedDB/key-generators/rea
 
 webkit.org/b/206946 http/tests/security/cookies/third-party-cookie-blocking-main-frame.html [ Pass Timeout ]
 webkit.org/b/206965 storage/indexeddb/intversion-long-queue-private.html [ Pass Failure ]
+
+webkit.org/b/205309 scrollingcoordinator/ios/scroll-position-after-reattach.html [ ImageOnlyFailure ]
