@@ -941,3 +941,5 @@ webkit.org/b/206770 [ Mojave Release ] storage/websql/test-authorizer.html [ Pas
 webkit.org/b/206770 [ Catalina Release ] storage/websql/test-authorizer.html [ Pass Failure Timeout ]
 
 webkit.org/b/206940 [ Mojave+ Debug ] tiled-drawing/scrolling/fast-scroll-select-latched-mainframe-with-handler.html [ Pass Failure ]
+
+webkit.org/b/206958 http/tests/media/media-stream/get-display-media-prompt.html [ Pass Failure Timeout ]

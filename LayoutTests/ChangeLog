@@ -1,3 +1,12 @@
+020-01-29  Jacob Uphoff  <jacob_uphoff@apple.com>
+
+        [ macOS wk2 ] http/tests/media/media-stream/get-display-media-prompt.html is flaky failure & flaky timing out
+        https://bugs.webkit.org/show_bug.cgi?id=206958
+        
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
 2020-01-29  Jacob Uphoff  <jacob_uphoff@apple.com>
 
         [ macOS wk1 ] inspector/debugger/breakpoints/resolved-dump-each-line.html is flaky failing
