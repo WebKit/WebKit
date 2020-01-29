@@ -124,22 +124,6 @@ int RenderThemeGtk::sliderTickOffsetFromTrackCenter() const
 }
 #endif
 
-static void themeChangedCallback()
-{
-    Page::updateStyleForAllPagesAfterGlobalChangeInEnvironment();
-}
-
-RenderThemeGtk::RenderThemeGtk()
-{
-    static bool themeMonitorInitialized = false;
-    if (!themeMonitorInitialized) {
-        GtkSettings* settings = gtk_settings_get_default();
-        g_signal_connect(settings, "notify::gtk-theme-name", G_CALLBACK(themeChangedCallback), nullptr);
-        g_signal_connect(settings, "notify::gtk-color-scheme", G_CALLBACK(themeChangedCallback), nullptr);
-        themeMonitorInitialized = true;
-    }
-}
-
 enum RenderThemePart {
     Entry,
     EntrySelection,
@@ -951,17 +935,6 @@ Color RenderThemeGtk::systemColor(CSSValueID cssValueId, OptionSet<StyleColor::O
         return styleColor(Entry, GTK_STATE_FLAG_ACTIVE, StyleColorForeground);
     case CSSValueGraytext:
         return styleColor(Entry, GTK_STATE_FLAG_INSENSITIVE, StyleColorForeground);
-    case CSSValueWebkitControlBackground:
-        return styleColor(Entry, GTK_STATE_FLAG_ACTIVE, StyleColorBackground);
-    case CSSValueWindow: {
-        // Only get window color from the theme in dark mode.
-        gboolean preferDarkTheme = FALSE;
-        if (auto* settings = gtk_settings_get_default())
-            g_object_get(settings, "gtk-application-prefer-dark-theme", &preferDarkTheme, nullptr);
-        if (preferDarkTheme)
-            return styleColor(Window, GTK_STATE_FLAG_ACTIVE, StyleColorBackground);
-        break;
-    }
     default:
         break;
     }

@@ -203,11 +203,14 @@ void WebPage::showEmojiPicker(Frame& frame)
     sendWithAsyncReply(Messages::WebPageProxy::ShowEmojiPicker(frame.view()->contentsToRootView(frame.selection().absoluteCaretBounds())), WTFMove(completionHandler));
 }
 
-void WebPage::effectiveAppearanceDidChange(bool useDarkAppearance, bool useInactiveAppearance)
+void WebPage::themeDidChange(String&& themeName)
 {
-    if (auto* settings = gtk_settings_get_default())
-        g_object_set(settings, "gtk-application-prefer-dark-theme", useDarkAppearance, nullptr);
-    corePage()->effectiveAppearanceDidChange(useDarkAppearance, useInactiveAppearance);
+    if (m_themeName == themeName)
+        return;
+
+    m_themeName = WTFMove(themeName);
+    g_object_set(gtk_settings_get_default(), "gtk-theme-name", m_themeName.utf8().data(), nullptr);
+    Page::updateStyleForAllPagesAfterGlobalChangeInEnvironment();
 }
 
 } // namespace WebKit

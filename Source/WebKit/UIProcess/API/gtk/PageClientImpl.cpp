@@ -579,4 +579,21 @@ IPC::Attachment PageClientImpl::hostFileDescriptor()
 }
 #endif
 
+String PageClientImpl::themeName() const
+{
+    if (auto* themeNameEnv = g_getenv("GTK_THEME")) {
+        String name = String::fromUTF8(themeNameEnv);
+        if (name.endsWith("-dark") || name.endsWith(":dark"))
+            return name.substring(0, name.length() - 5);
+        return name;
+    }
+
+    GUniqueOutPtr<char> themeNameSetting;
+    g_object_get(gtk_widget_get_settings(m_viewWidget), "gtk-theme-name", &themeNameSetting.outPtr(), nullptr);
+    String name = String::fromUTF8(themeNameSetting.get());
+    if (name.endsWith("-dark"))
+        return name.substring(0, name.length() - 5);
+    return name;
+}
+
 } // namespace WebKit

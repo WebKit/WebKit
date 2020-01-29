@@ -510,6 +510,10 @@ public:
 #if USE(WPE_RENDERER)
     virtual IPC::Attachment hostFileDescriptor() = 0;
 #endif
+
+#if PLATFORM(GTK)
+    virtual String themeName() const = 0;
+#endif
 };
 
 } // namespace WebKit

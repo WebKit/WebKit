@@ -133,6 +133,10 @@ void WebPageCreationParameters::encode(IPC::Encoder& encoder) const
 #endif
     encoder << backgroundColor;
     encoder << oldPageID;
+
+#if PLATFORM(GTK)
+    encoder << themeName;
+#endif
 }
 
 Optional<WebPageCreationParameters> WebPageCreationParameters::decode(IPC::Decoder& decoder)
@@ -403,6 +407,11 @@ Optional<WebPageCreationParameters> WebPageCreationParameters::decode(IPC::Decod
     if (!oldPageID)
         return WTF::nullopt;
     parameters.oldPageID = WTFMove(*oldPageID);
+
+#if PLATFORM(GTK)
+    if (!decoder.decode(parameters.themeName))
+        return WTF::nullopt;
+#endif
 
     return parameters;
 }

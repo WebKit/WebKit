@@ -2714,7 +2714,7 @@ void Page::setUseSystemAppearance(bool value)
 
 void Page::effectiveAppearanceDidChange(bool useDarkAppearance, bool useElevatedUserInterfaceLevel)
 {
-#if HAVE(OS_DARK_MODE_SUPPORT)
+#if ENABLE(DARK_MODE_CSS)
     if (m_useDarkAppearance == useDarkAppearance && m_useElevatedUserInterfaceLevel == useElevatedUserInterfaceLevel)
         return;
 
@@ -2738,7 +2738,7 @@ void Page::effectiveAppearanceDidChange(bool useDarkAppearance, bool useElevated
 
 bool Page::useDarkAppearance() const
 {
-#if HAVE(OS_DARK_MODE_SUPPORT)
+#if ENABLE(DARK_MODE_CSS)
     FrameView* view = mainFrame().view();
     if (!view || !equalLettersIgnoringASCIICase(view->mediaType(), "screen"))
         return false;

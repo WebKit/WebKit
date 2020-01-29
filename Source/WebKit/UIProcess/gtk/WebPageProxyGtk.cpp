@@ -166,4 +166,13 @@ void WebPageProxy::showEmojiPicker(const WebCore::IntRect& caretRect, Completion
     webkitWebViewBaseShowEmojiChooser(WEBKIT_WEB_VIEW_BASE(viewWidget()), caretRect, WTFMove(completionHandler));
 }
 
+void WebPageProxy::themeDidChange()
+{
+    if (!hasRunningProcess())
+        return;
+
+    send(Messages::WebPage::ThemeDidChange(pageClient().themeName()));
+    effectiveAppearanceDidChange();
+}
+
 } // namespace WebKit

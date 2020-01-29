@@ -51,10 +51,6 @@
 #include "SoupNetworkSession.h"
 #endif
 
-#if PLATFORM(GTK)
-#include <gtk/gtk.h>
-#endif
-
 namespace WebCore {
 
 InternalSettings::Backup::Backup(Settings& settings)
@@ -542,16 +538,6 @@ ExceptionOr<bool> InternalSettings::shouldDisplayTrackKind(const String& kind)
 
 void InternalSettings::setUseDarkAppearanceInternal(bool useDarkAppearance)
 {
-#if PLATFORM(GTK)
-    // GTK doesn't allow to change the theme from the web process, but tests need to do it, so
-    // we do it here only for tests.
-    if (auto* settings = gtk_settings_get_default()) {
-        gboolean preferDarkTheme;
-        g_object_get(settings, "gtk-application-prefer-dark-theme", &preferDarkTheme, nullptr);
-        if (preferDarkTheme != useDarkAppearance)
-            g_object_set(settings, "gtk-application-prefer-dark-theme", useDarkAppearance, nullptr);
-    }
-#endif
     ASSERT(m_page);
     m_page->effectiveAppearanceDidChange(useDarkAppearance, m_page->useElevatedUserInterfaceLevel());
 }

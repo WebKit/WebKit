@@ -104,7 +104,6 @@ public:
     bool shouldHaveCapsLockIndicator(const HTMLInputElement&) const override;
 
 private:
-    RenderThemeGtk();
     virtual ~RenderThemeGtk();
 
     bool paintCheckbox(const RenderObject&, const PaintInfo&, const IntRect&) override;

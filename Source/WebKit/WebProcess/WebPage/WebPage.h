@@ -777,6 +777,8 @@ public:
     void showEmojiPicker(WebCore::Frame&);
 
     void getCenterForZoomGesture(const WebCore::IntPoint& centerInViewCoordinates, CompletionHandler<void(WebCore::IntPoint&&)>&&);
+
+    void themeDidChange(String&&);
 #endif
 
     void didApplyStyle();
@@ -1966,6 +1968,10 @@ private:
 #endif
 #if ENABLE(TEXT_AUTOSIZING)
     WebCore::Timer m_textAutoSizingAdjustmentTimer;
+#endif
+
+#if PLATFORM(GTK)
+    String m_themeName;
 #endif
 };
 

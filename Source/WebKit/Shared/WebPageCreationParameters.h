@@ -210,6 +210,10 @@ struct WebPageCreationParameters {
     Optional<WebCore::Color> backgroundColor;
 
     Optional<WebCore::PageIdentifier> oldPageID;
+
+#if PLATFORM(GTK)
+    String themeName;
+#endif
 };
 
 } // namespace WebKit

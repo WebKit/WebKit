@@ -292,6 +292,11 @@ static gboolean toplevelWindowStateEvent(GtkWidget*, GdkEventWindowState* event,
 
 static void themeChanged(WebKitWebViewBase* webViewBase)
 {
+    webViewBase->priv->pageProxy->themeDidChange();
+}
+
+static void applicationPreferDarkThemeChanged(WebKitWebViewBase* webViewBase)
+{
     webViewBase->priv->pageProxy->effectiveAppearanceDidChange();
 }
 
@@ -371,7 +376,7 @@ static void webkitWebViewBaseSetToplevelOnScreenWindow(WebKitWebViewBase* webVie
     priv->themeChangedID =
         g_signal_connect_swapped(settings, "notify::gtk-theme-name", G_CALLBACK(themeChanged), webViewBase);
     priv->applicationPreferDarkThemeID =
-        g_signal_connect_swapped(settings, "notify::gtk-application-prefer-dark-theme", G_CALLBACK(themeChanged), webViewBase);
+        g_signal_connect_swapped(settings, "notify::gtk-application-prefer-dark-theme", G_CALLBACK(applicationPreferDarkThemeChanged), webViewBase);
 
     if (gtk_widget_get_realized(GTK_WIDGET(window)))
         gtk_widget_realize(GTK_WIDGET(webViewBase));

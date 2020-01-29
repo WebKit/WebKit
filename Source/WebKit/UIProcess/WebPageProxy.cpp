@@ -7292,6 +7292,10 @@ WebPageCreationParameters WebPageProxy::creationParameters(WebProcessProxy& proc
 
     process.addWebUserContentControllerProxy(m_userContentController, parameters);
 
+#if PLATFORM(GTK)
+    parameters.themeName = pageClient().themeName();
+#endif
+
     return parameters;
 }
 
