@@ -37,8 +37,14 @@ namespace WebCore {
 
 void AccessibilityObject::detachPlatformWrapper(AccessibilityDetachmentType detachmentType)
 {
-    if (auto* cache = axObjectCache())
-        cache->detachWrapper(this, detachmentType);
+    if (detachmentType != AccessibilityDetachmentType::CacheDestroyed) {
+        if (auto* cache = axObjectCache())
+            cache->detachWrapper(this, detachmentType);
+    }
+
+    auto* wrapper = this->wrapper();
+    ASSERT(wrapper);
+    webkitAccessibleDetach(WEBKIT_ACCESSIBLE(wrapper));
 }
 
 bool AccessibilityObject::accessibilityIgnoreAttachment() const
