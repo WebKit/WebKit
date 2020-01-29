@@ -1,5 +1,21 @@
 2020-01-28  Tim Horton  <timothy_horton@apple.com>
 
+        macCatalyst: Right clicking on a link follows it immediately
+        https://bugs.webkit.org/show_bug.cgi?id=206919
+        <rdar://problem/58936679>
+
+        Reviewed by Wenson Hsieh.
+
+        * UIProcess/ios/WKMouseGestureRecognizer.mm:
+        (-[WKMouseGestureRecognizer createMouseEventWithType:forEvent:]):
+        (-[WKMouseGestureRecognizer touchesBegan:withEvent:]):
+        (-[WKMouseGestureRecognizer touchesEnded:withEvent:]):
+        UIKit's _buttonMask does not include the currently-released button,
+        so in order to correctly identify the released button in touchesEnded,
+        store the mask for the length of the click.
+
+2020-01-28  Tim Horton  <timothy_horton@apple.com>
+
         macCatalyst: Triple clicking to select a sentence results in an empty selection
         https://bugs.webkit.org/show_bug.cgi?id=206863
         <rdar://problem/58776993>

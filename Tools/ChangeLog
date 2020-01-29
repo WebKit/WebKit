@@ -1,3 +1,16 @@
+2020-01-28  Tim Horton  <timothy_horton@apple.com>
+
+        macCatalyst: Right clicking on a link follows it immediately
+        https://bugs.webkit.org/show_bug.cgi?id=206919
+        <rdar://problem/58936679>
+
+        Reviewed by Wenson Hsieh.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/MacCatalystMouseSupport.mm:
+        (TEST):
+        Add a test ensuring that mouseup is still called with the secondary button,
+        even if the event's buttonmask is 0.
+
 2020-01-28  Jonathan Bedard  <jbedard@apple.com>
 
         TestWebKitAPI: Conditionalize device orientation tests on ENABLE(DEVICE_ORIENTATION)

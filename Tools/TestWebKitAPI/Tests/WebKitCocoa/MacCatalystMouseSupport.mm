@@ -141,4 +141,46 @@ TEST(MacCatalystMouseSupport, DoNotChangeSelectionWithRightClick)
     TestWebKitAPI::Util::run(&done);
 }
 
+TEST(MacCatalystMouseSupport, TrackButtonMaskFromTouchStart)
+{
+    auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
+    [webView synchronouslyLoadHTMLString:@"<script>"
+    "window.didReleaseRightButton = false;"
+    "document.documentElement.addEventListener('mouseup', function (e) {"
+    "    if (e.button == 2)"
+    "        window.didReleaseRightButton = true;"
+    "});"
+    "</script>"];
+
+    auto contentView = [webView wkContentView];
+    auto gesture = mouseGesture(contentView);
+
+    RetainPtr<WKTestingTouch> touch = adoptNS([[WKTestingTouch alloc] init]);
+    RetainPtr<NSSet> touchSet = [NSSet setWithObject:touch.get()];
+
+    RetainPtr<WKTestingEvent> event = adoptNS([[WKTestingEvent alloc] init]);
+
+    [gesture _hoverEntered:touchSet.get() withEvent:event.get()];
+    [contentView _mouseGestureRecognizerChanged:gesture];
+    [touch setTapCount:1];
+    [event _setButtonMask:UIEventButtonMaskSecondary];
+    [gesture touchesBegan:touchSet.get() withEvent:event.get()];
+    [contentView _mouseGestureRecognizerChanged:gesture];
+    [event _setButtonMask:0];
+    [gesture touchesEnded:touchSet.get() withEvent:event.get()];
+    [contentView _mouseGestureRecognizerChanged:gesture];
+
+    __block bool done = false;
+
+    [webView _doAfterProcessingAllPendingMouseEvents:^{
+        NSNumber *result = [webView objectByEvaluatingJavaScript:@"window.didReleaseRightButton"];
+        EXPECT_TRUE([result boolValue]);
+        done = true;
+    }];
+
+    TestWebKitAPI::Util::run(&done);
+}
+
+
 #endif // PLATFORM(MACCATALYST)
