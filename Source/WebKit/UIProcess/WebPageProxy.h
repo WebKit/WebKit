@@ -2474,6 +2474,7 @@ private:
     Deque<QueuedTouchEvents> m_touchEventQueue;
 #endif
 
+    bool m_handledSynchronousTouchEventWhileDispatchingPreventableTouchStart { false };
     uint64_t m_handlingPreventableTouchStartCount { 0 };
 
 #if ENABLE(INPUT_TYPE_COLOR)

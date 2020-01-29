@@ -2903,10 +2903,13 @@ void WebPageProxy::handlePreventableTouchEvent(NativeWebTouchEvent& event)
             if (m_handlingPreventableTouchStartCount)
                 --m_handlingPreventableTouchStartCount;
 
+            bool handledOrFailedWithError = handled || error != CallbackBase::Error::None || m_handledSynchronousTouchEventWhileDispatchingPreventableTouchStart;
+            if (!isHandlingPreventableTouchStart())
+                m_handledSynchronousTouchEventWhileDispatchingPreventableTouchStart = false;
+
             if (error == CallbackBase::Error::ProcessExited)
                 return;
 
-            bool handledOrFailedWithError = handled || error != CallbackBase::Error::None;
             didReceiveEvent(event.type(), handledOrFailedWithError);
             pageClient().doneWithTouchEvent(event, handledOrFailedWithError);
             if (!isHandlingPreventableTouchStart())
@@ -2926,7 +2929,10 @@ void WebPageProxy::handlePreventableTouchEvent(NativeWebTouchEvent& event)
         handled = true;
     didReceiveEvent(event.type(), handled);
     pageClient().doneWithTouchEvent(event, handled);
-    pageClient().doneDeferringNativeGestures(handled);
+    if (!isHandlingPreventableTouchStart())
+        pageClient().doneDeferringNativeGestures(handled);
+    else if (handled)
+        m_handledSynchronousTouchEventWhileDispatchingPreventableTouchStart = true;
     m_process->responsivenessTimer().stop();
 }
 

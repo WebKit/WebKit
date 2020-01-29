@@ -1,3 +1,42 @@
+2020-01-29  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iPadOS] Select popovers on amazon.com sometimes dismiss immediately after appearing
+        https://bugs.webkit.org/show_bug.cgi?id=206948
+        <rdar://problem/58954516>
+
+        Reviewed by Tim Horton.
+
+        Amazon adds active touchstart event listeners to their select elements, where they call preventDefault() and
+        programmatically focus the select element. Doing so prevents clicks from being dispatched by allowing the web
+        touch event gesture to recognize instead of the synthetic click gesture, which (inside -_singleTapRecognized:)
+        would otherwise dismiss any currently presented popover.
+
+        After making touchstart events dispatch asynchronously, preventing touchstart no longer causes other native
+        gestures (such as the synthetic click gesture) to fail in the case where there is a sync touchmove or touchend
+        event listener, and the touch gesture has ended before the touchstart handler has finished executing and told
+        the UI process whether or not the touch was handled. This is because the touchend or touchmove is dispatched
+        synchronously while the touchstart is still being processed; while the web page sees the correct order of
+        events, the UI process will end up learning that the synchronous touch was handled before the response to the
+        asynchronously dispatched touchstart event has arrived.
+
+        Our current logic in the sync touch event dispatch case then unconditionally ends gesture deferral by calling
+        `doneDeferringNativeGestures` with `handled` equal to whether or not the touch event (a "touchend", in this
+        case) had been handled. However, in the case where touchstart event is prevented but the touchend event is not,
+        this will cause us to prematurely stop deferring gestures even though the page called `preventDefault()` in the
+        touchstart event handler, and allow the synthetic click gesture to recognize when it shouldn't.
+
+        To fix this, keep deferring native gestures after handling a sync touch in the case where a touchstart event is
+        still being handled; instead, remember whether the touch event was handled using a new member variable
+        (`m_handledSynchronousTouchEventWhileDispatchingPreventableTouchStart`), and consult this when the response to
+        the touchstart has been received in the UI process to determine whether platform gestures should be allowed to
+        recognize. This variable is reset once we're done handling the touchstart.
+
+        Test: fast/events/touch/ios/prevent-default-with-slow-touchstart-handler.html
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::handlePreventableTouchEvent):
+        * UIProcess/WebPageProxy.h:
+
 2020-01-29  Chris Dumez  <cdumez@apple.com>
 
         [iOS] Make sure unused service worker processes exit promptly on low memory warning
