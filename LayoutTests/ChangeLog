@@ -1,3 +1,12 @@
+2020-01-29  Jacob Uphoff  <jacob_uphoff@apple.com>
+
+        [ macOS wk1 ] inspector/debugger/breakpoints/resolved-dump-each-line.html is flaky failing
+        https://bugs.webkit.org/show_bug.cgi?id=206955
+
+        Unreviewed test gardening.
+
+        * platform/mac/TestExpectations:
+
 2020-01-29  Jason Lawrence  <lawrence.j@apple.com>
 
         [ Mac ] fast/dom/Window/post-message-crash.html is flaky failing
