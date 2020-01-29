@@ -1152,11 +1152,13 @@ inline void AXCoreObject::detach(AccessibilityDetachmentType detachmentType)
     setObjectID(InvalidAXID);
 }
 
+#if ENABLE(ACCESSIBILITY)
 inline void AXCoreObject::detachWrapper(AccessibilityDetachmentType detachmentType)
 {
     detachPlatformWrapper(detachmentType);
     m_wrapper = nullptr;
 }
+#endif
 
 namespace Accessibility {
 
