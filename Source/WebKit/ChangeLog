@@ -1,3 +1,13 @@
+2020-01-29  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Move unsetenv to WebProcessMain.cpp after r255342
+
+        I forgot to do that before landing the patch.
+
+        * WebProcess/EntryPoint/unix/WebProcessMain.cpp:
+        (main):
+        * WebProcess/gtk/WebProcessMainGtk.cpp:
+
 2020-01-29  youenn fablet  <youenn@apple.com>
 
         Send WebsiteDataStore media parameters to GPUProcess when needed
