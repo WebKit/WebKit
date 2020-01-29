@@ -1,3 +1,13 @@
+2020-01-29  Sunny He  <sunny_he@apple.com>
+
+        Nullptr crash when setting custom properties on detached style
+        https://bugs.webkit.org/show_bug.cgi?id=206724
+
+        Reviewed by Darin Adler.
+
+        * fast/dom/StyleSheet/detached-style-set-custom-property-expected.txt: Added.
+        * fast/dom/StyleSheet/detached-style-set-custom-property.html: Added.
+
 2020-01-28  Pinki Gyanchandani  <pgyanchandani@apple.com>
 
         Null deref crash in DOMWindow::scrollBy after evoking updateLayoutIgnorePendingStylesheets()

@@ -252,7 +252,7 @@ ExceptionOr<void> PropertySetCSSStyleDeclaration::setProperty(const String& prop
 
         if (parentElement())
             document = &parentElement()->document();
-        else
+        else if (parentStyleSheet())
             document = parentStyleSheet()->ownerDocument();
 
         changed = m_propertySet->setCustomProperty(document, propertyName, value, important, cssParserContext());
