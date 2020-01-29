@@ -38,6 +38,8 @@ messages -> WebAutomationSessionProxy NotRefCounted {
 
     TakeScreenshot(WebCore::PageIdentifier pageID, Optional<WebCore::FrameIdentifier> frameID, String nodeHandle, bool scrollIntoViewIfNeeded, bool clipToViewport, uint64_t callbackID)
 
+    SnapshotRectForScreenshot(WebCore::PageIdentifier pageID, Optional<WebCore::FrameIdentifier> frameID, String nodeHandle, bool scrollIntoViewIfNeeded, bool clipToViewport) -> (Optional<String> errorType, WebCore::IntRect rect) Async
+
     GetCookiesForFrame(WebCore::PageIdentifier pageID, Optional<WebCore::FrameIdentifier> frameID) -> (Optional<String> errorType, Vector<WebCore::Cookie> cookies) Async
     DeleteCookie(WebCore::PageIdentifier pageID, Optional<WebCore::FrameIdentifier> frameID, String cookieName) -> (Optional<String> errorType) Async
 }

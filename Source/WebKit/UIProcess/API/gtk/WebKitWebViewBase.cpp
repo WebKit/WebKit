@@ -1759,12 +1759,11 @@ void webkitWebViewBasePageClosed(WebKitWebViewBase* webkitWebViewBase)
         webkitWebViewBase->priv->acceleratedBackingStore->update({ });
 }
 
-RefPtr<WebKit::ViewSnapshot> webkitWebViewBaseTakeViewSnapshot(WebKitWebViewBase* webkitWebViewBase)
+RefPtr<WebKit::ViewSnapshot> webkitWebViewBaseTakeViewSnapshot(WebKitWebViewBase* webkitWebViewBase, Optional<IntRect>&& clipRect)
 {
     WebPageProxy* page = webkitWebViewBase->priv->pageProxy.get();
 
-    IntSize size = page->viewSize();
-
+    IntSize size = clipRect ? clipRect->size() : page->viewSize();
     float deviceScale = page->deviceScaleFactor();
     size.scale(deviceScale);
 
@@ -1772,6 +1771,11 @@ RefPtr<WebKit::ViewSnapshot> webkitWebViewBaseTakeViewSnapshot(WebKitWebViewBase
     cairoSurfaceSetDeviceScale(surface.get(), deviceScale, deviceScale);
 
     RefPtr<cairo_t> cr = adoptRef(cairo_create(surface.get()));
+    if (clipRect) {
+        cairo_translate(cr.get(), -clipRect->x(), -clipRect->y());
+        cairo_rectangle(cr.get(), clipRect->x(), clipRect->y(), clipRect->width(), clipRect->height());
+        cairo_clip(cr.get());
+    }
     webkitWebViewBaseDraw(GTK_WIDGET(webkitWebViewBase), cr.get());
 
     return ViewSnapshot::create(WTFMove(surface));

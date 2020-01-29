@@ -1,3 +1,49 @@
+2020-01-29  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] WebDriver: screenshot ignores CSS transformations or WebGL content.
+        https://bugs.webkit.org/show_bug.cgi?id=206514
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        WebPage::scaledSnapshotWithOptions() doesn't work when accelerated compositing is enabled. To fix this, we
+        need to take the screenshot from the UI process, like we do for the layout tests.
+
+        * UIProcess/API/gtk/PageClientImpl.cpp:
+        (WebKit::PageClientImpl::takeViewSnapshot): Pass clip rectangle to webkitWebViewBaseTakeViewSnapshot.
+        * UIProcess/API/gtk/PageClientImpl.h:
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (webkitWebViewBaseTakeViewSnapshot): Use the given clip rectangle if not nullopt.
+        * UIProcess/API/gtk/WebKitWebViewBasePrivate.h:
+        * UIProcess/Automation/WebAutomationSession.cpp:
+        (WebKit::WebAutomationSession::takeScreenshot): In case of full web view snapshot just call
+        WebPageProxy::takeViewSnapshot() with a nullopt clip rectangle. In case of element snapshot, send
+        SnapshotRectForScreenshot message to the web process to get the clip rectangle and then call
+        WebPageProxy::takeViewSnapshot().
+        (WebKit::WebAutomationSession::platformGetBase64EncodedPNGData): Empty implementation for other ports.
+        * UIProcess/Automation/WebAutomationSession.h: Make platformGetBase64EncodedPNGData() static.
+        * UIProcess/Automation/cairo/WebAutomationSessionCairo.cpp:
+        (WebKit::base64EncodedPNGData): Moved common code to this new function.
+        (WebKit::WebAutomationSession::platformGetBase64EncodedPNGData): New function to get the encoded PNG from a ViewSnapshot.
+        * UIProcess/PageClient.h: Add optional clip rectangle parameter to takeViewSnapshot().
+        * UIProcess/ViewSnapshotStore.cpp:
+        (WebKit::ViewSnapshotStore::recordSnapshot): Pass nullopt to takeViewSnapshot().
+        * UIProcess/WebPageProxy.cpp:
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/ios/PageClientImplIOS.h:
+        * UIProcess/ios/PageClientImplIOS.mm:
+        (WebKit::PageClientImpl::takeViewSnapshot):
+        * UIProcess/mac/PageClientImplMac.h:
+        * UIProcess/mac/PageClientImplMac.mm:
+        (WebKit::PageClientImpl::takeViewSnapshot):
+        * WebProcess/Automation/WebAutomationSessionProxy.cpp:
+        (WebKit::snapshotElementRectForScreenshot): Renamed to avoid conflict with new IPC message handler.
+        (WebKit::WebAutomationSessionProxy::takeScreenshot): Call snapshotRectForScreenshot() to get the snapshot
+        rectangle and convert it to document coords.
+        (WebKit::WebAutomationSessionProxy::snapshotRectForScreenshot): Get the snapshot rectangle in client coords.
+        (WebKit::snapshotRectForScreenshot): Deleted.
+        * WebProcess/Automation/WebAutomationSessionProxy.h:
+        * WebProcess/Automation/WebAutomationSessionProxy.messages.in: Add SnapshotRectForScreenshot message.
+
 2020-01-28  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Should use light theme unless website declares support for dark themes in color-schemes property

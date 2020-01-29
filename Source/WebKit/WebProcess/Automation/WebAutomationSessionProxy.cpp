@@ -806,7 +806,7 @@ void WebAutomationSessionProxy::setFilesForInputFileUpload(WebCore::PageIdentifi
     completionHandler(WTF::nullopt);
 }
 
-static WebCore::IntRect snapshotRectForScreenshot(WebPage& page, WebCore::Element* element, bool clipToViewport)
+static WebCore::IntRect snapshotElementRectForScreenshot(WebPage& page, WebCore::Element* element, bool clipToViewport)
 {
     auto* frameView = page.mainFrameView();
     if (!frameView)
@@ -832,19 +832,43 @@ static WebCore::IntRect snapshotRectForScreenshot(WebPage& page, WebCore::Elemen
 
 void WebAutomationSessionProxy::takeScreenshot(WebCore::PageIdentifier pageID, Optional<WebCore::FrameIdentifier> frameID, String nodeHandle, bool scrollIntoViewIfNeeded, bool clipToViewport, uint64_t callbackID)
 {
-    ShareableBitmap::Handle handle;
+    snapshotRectForScreenshot(pageID, frameID, nodeHandle, scrollIntoViewIfNeeded, clipToViewport, [pageID, frameID, callbackID] (Optional<String> errorString, WebCore::IntRect&& rect) {
+        ShareableBitmap::Handle handle;
+        if (errorString) {
+            WebProcess::singleton().parentProcessConnection()->send(Messages::WebAutomationSession::DidTakeScreenshot(callbackID, handle, *errorString), 0);
+            return;
+        }
 
+        WebPage* page = WebProcess::singleton().webPage(pageID);
+        ASSERT(page);
+        WebFrame* frame = frameID ? WebProcess::singleton().webFrame(*frameID) : page->mainWebFrame();
+        ASSERT(frame && frame->coreFrame());
+        auto snapshotRect = WebCore::IntRect(frame->coreFrame()->mainFrame().view()->clientToDocumentRect(rect));
+        RefPtr<WebImage> image = page->scaledSnapshotWithOptions(snapshotRect, 1, SnapshotOptionsShareable);
+        if (!image) {
+            String screenshotErrorType = Inspector::Protocol::AutomationHelpers::getEnumConstantValue(Inspector::Protocol::Automation::ErrorMessage::ScreenshotError);
+            WebProcess::singleton().parentProcessConnection()->send(Messages::WebAutomationSession::DidTakeScreenshot(callbackID, handle, screenshotErrorType), 0);
+            return;
+        }
+
+        image->bitmap().createHandle(handle, SharedMemory::Protection::ReadOnly);
+        WebProcess::singleton().parentProcessConnection()->send(Messages::WebAutomationSession::DidTakeScreenshot(callbackID, handle, { }), 0);
+    });
+}
+
+void WebAutomationSessionProxy::snapshotRectForScreenshot(WebCore::PageIdentifier pageID, Optional<WebCore::FrameIdentifier> frameID, String nodeHandle, bool scrollIntoViewIfNeeded, bool clipToViewport, CompletionHandler<void(Optional<String>, WebCore::IntRect&&)>&& completionHandler)
+{
     WebPage* page = WebProcess::singleton().webPage(pageID);
     if (!page) {
         String windowNotFoundErrorType = Inspector::Protocol::AutomationHelpers::getEnumConstantValue(Inspector::Protocol::Automation::ErrorMessage::WindowNotFound);
-        WebProcess::singleton().parentProcessConnection()->send(Messages::WebAutomationSession::DidTakeScreenshot(callbackID, handle, windowNotFoundErrorType), 0);
+        completionHandler(windowNotFoundErrorType, { });
         return;
     }
 
     WebFrame* frame = frameID ? WebProcess::singleton().webFrame(*frameID) : page->mainWebFrame();
     if (!frame || !frame->coreFrame()) {
         String frameNotFoundErrorType = Inspector::Protocol::AutomationHelpers::getEnumConstantValue(Inspector::Protocol::Automation::ErrorMessage::FrameNotFound);
-        WebProcess::singleton().parentProcessConnection()->send(Messages::WebAutomationSession::DidTakeScreenshot(callbackID, handle, frameNotFoundErrorType), 0);
+        completionHandler(frameNotFoundErrorType, { });
         return;
     }
 
@@ -852,36 +876,29 @@ void WebAutomationSessionProxy::takeScreenshot(WebCore::PageIdentifier pageID, O
     if (!nodeHandle.isEmpty()) {
         if (!isValidNodeHandle(nodeHandle)) {
             String invalidNodeIdentifierrrorType = Inspector::Protocol::AutomationHelpers::getEnumConstantValue(Inspector::Protocol::Automation::ErrorMessage::InvalidNodeIdentifier);
-            WebProcess::singleton().parentProcessConnection()->send(Messages::WebAutomationSession::DidTakeScreenshot(callbackID, handle, invalidNodeIdentifierrrorType), 0);
+            completionHandler(invalidNodeIdentifierrrorType, { });
             return;
         }
 
         coreElement = elementForNodeHandle(*frame, nodeHandle);
         if (!coreElement) {
             String nodeNotFoundErrorType = Inspector::Protocol::AutomationHelpers::getEnumConstantValue(Inspector::Protocol::Automation::ErrorMessage::NodeNotFound);
-            WebProcess::singleton().parentProcessConnection()->send(Messages::WebAutomationSession::DidTakeScreenshot(callbackID, handle, nodeNotFoundErrorType), 0);
+            completionHandler(nodeNotFoundErrorType, { });
             return;
         }
     }
 
     if (coreElement && scrollIntoViewIfNeeded)
-        coreElement->scrollIntoViewIfNeeded(false);
+        coreElement->scrollIntoViewIfNotVisible(false);
 
     String screenshotErrorType = Inspector::Protocol::AutomationHelpers::getEnumConstantValue(Inspector::Protocol::Automation::ErrorMessage::ScreenshotError);
-    WebCore::IntRect snapshotRect = snapshotRectForScreenshot(*page, coreElement, clipToViewport);
+    WebCore::IntRect snapshotRect = snapshotElementRectForScreenshot(*page, coreElement, clipToViewport);
     if (snapshotRect.isEmpty()) {
-        WebProcess::singleton().parentProcessConnection()->send(Messages::WebAutomationSession::DidTakeScreenshot(callbackID, handle, screenshotErrorType), 0);
+        completionHandler(screenshotErrorType, { });
         return;
     }
 
-    RefPtr<WebImage> image = page->scaledSnapshotWithOptions(snapshotRect, 1, SnapshotOptionsShareable);
-    if (!image) {
-        WebProcess::singleton().parentProcessConnection()->send(Messages::WebAutomationSession::DidTakeScreenshot(callbackID, handle, screenshotErrorType), 0);
-        return;
-    }
-
-    image->bitmap().createHandle(handle, SharedMemory::Protection::ReadOnly);
-    WebProcess::singleton().parentProcessConnection()->send(Messages::WebAutomationSession::DidTakeScreenshot(callbackID, handle, { }), 0);
+    completionHandler(WTF::nullopt, WebCore::IntRect(frame->coreFrame()->mainFrame().view()->documentToClientRect(snapshotRect)));
 }
 
 void WebAutomationSessionProxy::getCookiesForFrame(WebCore::PageIdentifier pageID, Optional<WebCore::FrameIdentifier> frameID, CompletionHandler<void(Optional<String>, Vector<WebCore::Cookie>)>&& completionHandler)

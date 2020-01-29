@@ -275,7 +275,7 @@ public:
 #endif
 
 #if PLATFORM(COCOA) || PLATFORM(GTK)
-    virtual RefPtr<ViewSnapshot> takeViewSnapshot() = 0;
+    virtual RefPtr<ViewSnapshot> takeViewSnapshot(Optional<WebCore::IntRect>&&) = 0;
 #endif
 
 #if USE(APPKIT)

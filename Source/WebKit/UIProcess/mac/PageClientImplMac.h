@@ -153,7 +153,7 @@ private:
     void exitAcceleratedCompositingMode() override;
     void updateAcceleratedCompositingMode(const LayerTreeContext&) override;
 
-    RefPtr<ViewSnapshot> takeViewSnapshot() override;
+    RefPtr<ViewSnapshot> takeViewSnapshot(Optional<WebCore::IntRect>&&) override;
     void wheelEventWasNotHandledByWebCore(const NativeWebWheelEvent&) override;
 #if ENABLE(MAC_GESTURE_EVENTS)
     void gestureEventWasNotHandledByWebCore(const NativeWebGestureEvent&) override;

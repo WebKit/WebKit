@@ -84,7 +84,7 @@ WebKit::DragAndDropHandler& webkitWebViewBaseDragAndDropHandler(WebKitWebViewBas
 
 WebKit::GestureController& webkitWebViewBaseGestureController(WebKitWebViewBase*);
 
-RefPtr<WebKit::ViewSnapshot> webkitWebViewBaseTakeViewSnapshot(WebKitWebViewBase*);
+RefPtr<WebKit::ViewSnapshot> webkitWebViewBaseTakeViewSnapshot(WebKitWebViewBase*, Optional<WebCore::IntRect>&&);
 
 void webkitWebViewBaseSetEnableBackForwardNavigationGesture(WebKitWebViewBase*, bool enabled);
 WebKit::ViewGestureController* webkitWebViewBaseViewGestureController(WebKitWebViewBase*);

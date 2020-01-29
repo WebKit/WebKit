@@ -1359,7 +1359,7 @@ public:
     void requestFocusedElementInformation(Function<void(const FocusedElementInformation&, CallbackBase::Error)>&&);
 
 #if PLATFORM(COCOA) || PLATFORM(GTK)
-    RefPtr<ViewSnapshot> takeViewSnapshot();
+    RefPtr<ViewSnapshot> takeViewSnapshot(Optional<WebCore::IntRect>&&);
 #endif
 
 #if ENABLE(WEB_CRYPTO)

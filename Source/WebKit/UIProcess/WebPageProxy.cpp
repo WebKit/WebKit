@@ -8283,9 +8283,9 @@ void WebPageProxy::setEditableElementIsFocused(bool editableElementIsFocused)
 #endif // PLATFORM(MAC)
 
 #if PLATFORM(COCOA) || PLATFORM(GTK)
-RefPtr<ViewSnapshot> WebPageProxy::takeViewSnapshot()
+RefPtr<ViewSnapshot> WebPageProxy::takeViewSnapshot(Optional<WebCore::IntRect>&& clipRect)
 {
-    return pageClient().takeViewSnapshot();
+    return pageClient().takeViewSnapshot(WTFMove(clipRect));
 }
 #endif
 

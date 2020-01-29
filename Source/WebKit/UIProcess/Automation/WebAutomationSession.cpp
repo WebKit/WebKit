@@ -2008,10 +2008,45 @@ void WebAutomationSession::takeScreenshot(const String& handle, const String* op
     String nodeHandle = optionalNodeHandle ? *optionalNodeHandle : emptyString();
     bool clipToViewport = optionalClipToViewport ? *optionalClipToViewport : false;
 
+#if PLATFORM(GTK)
+    Function<void(WebPageProxy&, Optional<WebCore::IntRect>&&, Ref<TakeScreenshotCallback>&&)> takeViewSnapsot = [](WebPageProxy& page, Optional<WebCore::IntRect>&& rect, Ref<TakeScreenshotCallback>&& callback) {
+        page.callAfterNextPresentationUpdate([page = makeRef(page), rect = WTFMove(rect), callback = WTFMove(callback)](CallbackBase::Error error) mutable {
+            if (error != CallbackBase::Error::None)
+                ASYNC_FAIL_WITH_PREDEFINED_ERROR(InternalError);
+
+            auto snapshot = page->takeViewSnapshot(WTFMove(rect));
+            if (!snapshot)
+                ASYNC_FAIL_WITH_PREDEFINED_ERROR(InternalError);
+
+            Optional<String> base64EncodedData = platformGetBase64EncodedPNGData(*snapshot);
+            if (!base64EncodedData)
+                ASYNC_FAIL_WITH_PREDEFINED_ERROR(InternalError);
+
+            callback->sendSuccess(base64EncodedData.value());
+        });
+    };
+
+    if (nodeHandle.isEmpty()) {
+        takeViewSnapsot(*page, WTF::nullopt, WTFMove(callback));
+        return;
+    }
+
+    CompletionHandler<void(Optional<String>, WebCore::IntRect&&)> completionHandler = [page = makeRef(*page), callback = callback.copyRef(), takeViewSnapsot = WTFMove(takeViewSnapsot)](Optional<String> errorType, WebCore::IntRect&& rect) mutable {
+        if (errorType) {
+            callback->sendFailure(STRING_FOR_PREDEFINED_ERROR_MESSAGE(*errorType));
+            return;
+        }
+
+        takeViewSnapsot(page.get(), WTFMove(rect), WTFMove(callback));
+    };
+
+    page->sendWithAsyncReply(Messages::WebAutomationSessionProxy::SnapshotRectForScreenshot(page->webPageID(), frameID, nodeHandle, scrollIntoViewIfNeeded, clipToViewport), WTFMove(completionHandler));
+#else
     uint64_t callbackID = m_nextScreenshotCallbackID++;
     m_screenshotCallbacks.set(callbackID, WTFMove(callback));
 
     page->send(Messages::WebAutomationSessionProxy::TakeScreenshot(page->webPageID(), frameID, nodeHandle, scrollIntoViewIfNeeded, clipToViewport, callbackID), 0);
+#endif
 }
 
 void WebAutomationSession::didTakeScreenshot(uint64_t callbackID, const ShareableBitmap::Handle& imageDataHandle, const String& errorType)
@@ -2034,6 +2069,11 @@ void WebAutomationSession::didTakeScreenshot(uint64_t callbackID, const Shareabl
 
 #if !PLATFORM(COCOA) && !USE(CAIRO)
 Optional<String> WebAutomationSession::platformGetBase64EncodedPNGData(const ShareableBitmap::Handle&)
+{
+    return WTF::nullopt;
+}
+
+Optional<String> WebAutomationSession::platformGetBase64EncodedPNGData(const ViewSnapshot&)
 {
     return WTF::nullopt;
 }

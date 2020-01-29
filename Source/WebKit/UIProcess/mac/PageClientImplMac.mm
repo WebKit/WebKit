@@ -565,7 +565,7 @@ CALayer *PageClientImpl::acceleratedCompositingRootLayer() const
     return m_impl->acceleratedCompositingRootLayer();
 }
 
-RefPtr<ViewSnapshot> PageClientImpl::takeViewSnapshot()
+RefPtr<ViewSnapshot> PageClientImpl::takeViewSnapshot(Optional<WebCore::IntRect>&&)
 {
     return m_impl->takeViewSnapshot();
 }

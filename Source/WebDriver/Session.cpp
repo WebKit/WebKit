@@ -2750,8 +2750,7 @@ void Session::takeScreenshot(Optional<String> elementID, Optional<bool> scrollIn
             parameters->setString("frameHandle"_s, m_currentBrowsingContext.value());
         if (elementID)
             parameters->setString("nodeHandle"_s, elementID.value());
-        else
-            parameters->setBoolean("clipToViewport"_s, true);
+        parameters->setBoolean("clipToViewport"_s, true);
         if (scrollIntoView.valueOr(false))
             parameters->setBoolean("scrollIntoViewIfNeeded"_s, true);
         m_host->sendCommandToBackend("takeScreenshot"_s, WTFMove(parameters), [protectedThis = protectedThis.copyRef(), completionHandler = WTFMove(completionHandler)](SessionHost::CommandResponse&& response) mutable {

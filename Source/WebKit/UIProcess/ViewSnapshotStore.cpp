@@ -89,7 +89,7 @@ void ViewSnapshotStore::recordSnapshot(WebPageProxy& webPageProxy, WebBackForwar
 
     webPageProxy.willRecordNavigationSnapshot(item);
 
-    auto snapshot = webPageProxy.takeViewSnapshot();
+    auto snapshot = webPageProxy.takeViewSnapshot(WTF::nullopt);
     if (!snapshot)
         return;
 

@@ -75,6 +75,7 @@ class OpenPanelParameters;
 
 namespace WebKit {
 
+class ViewSnapshot;
 class WebAutomationSessionClient;
 class WebFrameProxy;
 class WebOpenPanelResultListenerProxy;
@@ -260,7 +261,8 @@ private:
 #endif // ENABLE(WEBDRIVER_KEYBOARD_INTERACTIONS)
 
     // Get base64-encoded PNG data from a bitmap.
-    Optional<String> platformGetBase64EncodedPNGData(const ShareableBitmap::Handle&);
+    static Optional<String> platformGetBase64EncodedPNGData(const ShareableBitmap::Handle&);
+    static Optional<String> platformGetBase64EncodedPNGData(const ViewSnapshot&);
 
     // Save base64-encoded file contents to a local file path and return the path.
     // This reuses the basename of the remote file path so that the filename exposed to DOM API remains the same.
