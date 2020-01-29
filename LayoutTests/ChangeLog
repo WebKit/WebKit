@@ -1,3 +1,12 @@
+2020-01-29  Jason Lawrence  <lawrence.j@apple.com>
+
+        [ Mojave wk2 ] media/media-fragments/TC0035.html is flaky failing.
+        https://bugs.webkit.org/show_bug.cgi?id=206961
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
 020-01-29  Jacob Uphoff  <jacob_uphoff@apple.com>
 
         [ macOS wk2 ] http/tests/media/media-stream/get-display-media-prompt.html is flaky failure & flaky timing out
