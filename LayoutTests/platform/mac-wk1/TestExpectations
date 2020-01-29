@@ -861,3 +861,5 @@ webkit.org/b/180760 fast/loader/redirect-to-invalid-url-using-meta-refresh-disal
 webkit.org/b/206673 storage/indexeddb/modern/blob-cursor.html [ Pass Timeout ]
 
 webkit.org/b/190830 [ Debug ] media/track/video-track-addition-and-frame-removal.html [ Pass Crash ]
+
+webkit.org/b/206945 [ Catalina ] compositing/repaint/become-overlay-composited-layer.html [ Pass Failure ]

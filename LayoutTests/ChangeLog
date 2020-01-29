@@ -1,3 +1,12 @@
+2020-01-29  Jacob Uphoff  <jacob_uphoff@apple.com>
+
+        [ Mac wk1 ] compositing/repaint/become-overlay-composited-layer.html is flaky failing
+        https://bugs.webkit.org/show_bug.cgi?id=206945
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk1/TestExpectations:
+
 2020-01-29  Jason Lawrence  <lawrence.j@apple.com>
 
         [ iOS wk2 ] http/tests/security/cookies/third-party-cookie-blocking-main-frame.html is flaky timing out.
