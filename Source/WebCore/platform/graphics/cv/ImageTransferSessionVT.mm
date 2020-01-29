@@ -95,7 +95,6 @@ bool ImageTransferSessionVT::setSize(const IntSize& size)
         (__bridge NSString *)kCVPixelBufferIOSurfacePropertiesKey : @{ /*empty dictionary*/ },
     };
 
-
     NSDictionary* pixelBufferPoolOptions = @{
         (__bridge NSString *)kCVPixelBufferPoolMinimumBufferCountKey: @(6)
     };

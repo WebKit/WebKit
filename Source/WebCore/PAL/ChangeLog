@@ -1,3 +1,17 @@
+2020-01-29  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r255345.
+        https://bugs.webkit.org/show_bug.cgi?id=206933
+
+        "It breaks some internals builds" (Requested by youenn on
+        #webkit).
+
+        Reverted changeset:
+
+        "[Cocoa] Use AVAssetWriterDelegate to implement MediaRecorder"
+        https://bugs.webkit.org/show_bug.cgi?id=206582
+        https://trac.webkit.org/changeset/255345
+
 2020-01-29  youenn fablet  <youenn@apple.com>
 
         [Cocoa] Use AVAssetWriterDelegate to implement MediaRecorder

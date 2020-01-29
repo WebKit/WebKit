@@ -1097,7 +1097,6 @@
 		416E6FE81BBD12DF000A6053 /* WritableStreamInternalsBuiltins.h in Headers */ = {isa = PBXBuildFile; fileRef = 9B03D8061BB3110D00B764E9 /* WritableStreamInternalsBuiltins.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		416E6FE91BBD12E5000A6043 /* ReadableStreamBuiltins.h in Headers */ = {isa = PBXBuildFile; fileRef = 9B03D8061BB3110D00B764D8 /* ReadableStreamBuiltins.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		416E6FE91BBD12E5000A6053 /* WritableStreamBuiltins.h in Headers */ = {isa = PBXBuildFile; fileRef = 9B03D8061BB3110D00B764E8 /* WritableStreamBuiltins.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		416F799023D750CF00829FC1 /* AudioSampleBufferCompressor.mm in Sources */ = {isa = PBXBuildFile; fileRef = 416F798F23D750CB00829FC1 /* AudioSampleBufferCompressor.mm */; };
 		417253AB1354BBBC00360F2A /* MediaControlElements.h in Headers */ = {isa = PBXBuildFile; fileRef = 417253A91354BBBC00360F2A /* MediaControlElements.h */; };
 		417612AF1E3A994000C3D81D /* LibWebRTCMediaEndpoint.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 417612AB1E3A993B00C3D81D /* LibWebRTCMediaEndpoint.cpp */; };
 		417612B01E3A994000C3D81D /* LibWebRTCMediaEndpoint.h in Headers */ = {isa = PBXBuildFile; fileRef = 417612AC1E3A993B00C3D81D /* LibWebRTCMediaEndpoint.h */; };
@@ -1138,7 +1137,6 @@
 		41B8776223DE1045003638B8 /* RealtimeMediaSourceIdentifier.h in Headers */ = {isa = PBXBuildFile; fileRef = 41B8776023DE1042003638B8 /* RealtimeMediaSourceIdentifier.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		41BF204922BA7BE80004F812 /* RealtimeVideoSource.h in Headers */ = {isa = PBXBuildFile; fileRef = 41BF204022B947160004F812 /* RealtimeVideoSource.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		41C760B10EDE03D300C1655F /* ScriptState.h in Headers */ = {isa = PBXBuildFile; fileRef = 41C760B00EDE03D300C1655F /* ScriptState.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		41CD6F8C23D6E82100B16421 /* VideoSampleBufferCompressor.mm in Sources */ = {isa = PBXBuildFile; fileRef = 41CD6F8B23D6E81D00B16421 /* VideoSampleBufferCompressor.mm */; };
 		41D015CA0F4B5C71004A662F /* ContentType.h in Headers */ = {isa = PBXBuildFile; fileRef = 41D015C80F4B5C71004A662F /* ContentType.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		41D129CE1F3D0EF600D15E47 /* WorkerGlobalScopeCaches.h in Headers */ = {isa = PBXBuildFile; fileRef = 41FB278D1F34C28200795487 /* WorkerGlobalScopeCaches.h */; };
 		41D129D01F3D0F0500D15E47 /* CacheQueryOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = 41FB279B1F34CEF000795487 /* CacheQueryOptions.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -7363,9 +7361,6 @@
 		416D759F20C6441300D02D2C /* NetworkLoadInformation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetworkLoadInformation.h; sourceTree = "<group>"; };
 		416E0B37209BC3C2004A95D9 /* FetchIdentifier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FetchIdentifier.h; sourceTree = "<group>"; };
 		416E29A5102FA962007FC14E /* WorkerReportingProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WorkerReportingProxy.h; sourceTree = "<group>"; };
-		416F798D23D750CA00829FC1 /* AudioSampleBufferCompressor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AudioSampleBufferCompressor.h; sourceTree = "<group>"; };
-		416F798F23D750CB00829FC1 /* AudioSampleBufferCompressor.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AudioSampleBufferCompressor.mm; sourceTree = "<group>"; };
-		416F799323D8B69C00829FC1 /* MediaRecorderPrivateWriterCocoaFileBased.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MediaRecorderPrivateWriterCocoaFileBased.mm; sourceTree = "<group>"; };
 		4170A2E91D8C0CC000318452 /* JSDOMWrapper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSDOMWrapper.cpp; sourceTree = "<group>"; };
 		417253A81354BBBC00360F2A /* MediaControlElements.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MediaControlElements.cpp; sourceTree = "<group>"; };
 		417253A91354BBBC00360F2A /* MediaControlElements.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaControlElements.h; sourceTree = "<group>"; };
@@ -7473,8 +7468,6 @@
 		41C7E1051E6A54360027B4DE /* CanvasCaptureMediaStreamTrack.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CanvasCaptureMediaStreamTrack.cpp; sourceTree = "<group>"; };
 		41C7E1061E6A54360027B4DE /* CanvasCaptureMediaStreamTrack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CanvasCaptureMediaStreamTrack.h; sourceTree = "<group>"; };
 		41C7E1081E6AA37C0027B4DE /* CanvasCaptureMediaStreamTrack.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CanvasCaptureMediaStreamTrack.idl; sourceTree = "<group>"; };
-		41CD6F8923D6E81C00B16421 /* VideoSampleBufferCompressor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VideoSampleBufferCompressor.h; sourceTree = "<group>"; };
-		41CD6F8B23D6E81D00B16421 /* VideoSampleBufferCompressor.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = VideoSampleBufferCompressor.mm; sourceTree = "<group>"; };
 		41CF8BE41D46222000707DC9 /* FetchBodyConsumer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FetchBodyConsumer.cpp; sourceTree = "<group>"; };
 		41CF8BE51D46222000707DC9 /* FetchBodyConsumer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FetchBodyConsumer.h; sourceTree = "<group>"; };
 		41D015C80F4B5C71004A662F /* ContentType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ContentType.h; sourceTree = "<group>"; };
@@ -18901,13 +18894,8 @@
 		4D3C05D421AF480900F2890A /* cocoa */ = {
 			isa = PBXGroup;
 			children = (
-				416F798D23D750CA00829FC1 /* AudioSampleBufferCompressor.h */,
-				416F798F23D750CB00829FC1 /* AudioSampleBufferCompressor.mm */,
 				4D73F94C218C4A87003A3ED6 /* MediaRecorderPrivateWriterCocoa.h */,
 				4D73F94D218C4A87003A3ED6 /* MediaRecorderPrivateWriterCocoa.mm */,
-				416F799323D8B69C00829FC1 /* MediaRecorderPrivateWriterCocoaFileBased.mm */,
-				41CD6F8923D6E81C00B16421 /* VideoSampleBufferCompressor.h */,
-				41CD6F8B23D6E81D00B16421 /* VideoSampleBufferCompressor.mm */,
 			);
 			path = cocoa;
 			sourceTree = "<group>";
@@ -33558,7 +33546,6 @@
 				A9787CB41F5F5C6600C551C6 /* AccessibilityMediaObject.cpp in Sources */,
 				CD0EEE0E14743F39003EAFA2 /* AudioDestinationIOS.cpp in Sources */,
 				CD5596911475B678001D0BD0 /* AudioFileReaderIOS.cpp in Sources */,
-				416F799023D750CF00829FC1 /* AudioSampleBufferCompressor.mm in Sources */,
 				CDA79827170A279100D45C55 /* AudioSessionIOS.mm in Sources */,
 				CD8A7BBB197735FE00CBD643 /* AudioSourceProviderAVFObjC.mm in Sources */,
 				BE88E0D81715D2A200658D98 /* AudioTrack.cpp in Sources */,
@@ -34291,7 +34278,6 @@
 				7C73FB07191EF417007DE061 /* UserMessageHandlersNamespace.cpp in Sources */,
 				3FBC4AF3189881560046EE38 /* VideoFullscreenInterfaceAVKit.mm in Sources */,
 				52D5A18F1C54592300DE34A3 /* VideoFullscreenLayerManagerObjC.mm in Sources */,
-				41CD6F8C23D6E82100B16421 /* VideoSampleBufferCompressor.mm in Sources */,
 				BE88E0DE1715D2A200658D98 /* VideoTrack.cpp in Sources */,
 				BE88E0E11715D2A200658D98 /* VideoTrackList.cpp in Sources */,
 				CD336F6717FA0AC600DDDCD0 /* VideoTrackPrivateAVFObjC.cpp in Sources */,

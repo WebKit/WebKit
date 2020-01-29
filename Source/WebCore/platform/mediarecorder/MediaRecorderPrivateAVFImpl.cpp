@@ -29,7 +29,6 @@
 #if ENABLE(MEDIA_STREAM)
 
 #include "AudioStreamDescription.h"
-#include "MediaRecorderPrivateWriterCocoa.h"
 #include "MediaSample.h"
 #include "MediaStreamPrivate.h"
 #include "SharedBuffer.h"
@@ -69,14 +68,7 @@ std::unique_ptr<MediaRecorderPrivateAVFImpl> MediaRecorderPrivateAVFImpl::create
             break;
         }
     }
-
-    int width = 0, height = 0;
-    if (videoTrack) {
-        auto& settings = videoTrack->settings();
-        width = settings.width();
-        height = settings.height();
-    }
-    auto writer = MediaRecorderPrivateWriter::create(!!audioTrack, width, height);
+    auto writer = MediaRecorderPrivateWriter::create(audioTrack, videoTrack);
     if (!writer)
         return nullptr;
 
