@@ -1,3 +1,17 @@
+2020-01-29  Per Arne Vollan  <pvollan@apple.com>
+
+        [iOS] Deny mach lookup access to aggregate service
+        https://bugs.webkit.org/show_bug.cgi?id=206710
+        <rdar://problem/57914492>
+
+        Reviewed by Darin Adler.
+
+        Tighten sandbox by denying access to this service.
+
+        Test: fast/sandbox/ios/sandbox-mach-lookup.html
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+
 2020-01-29  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iPadOS] Select popovers on amazon.com sometimes dismiss immediately after appearing
