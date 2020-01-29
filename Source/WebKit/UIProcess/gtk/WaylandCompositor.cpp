@@ -58,6 +58,10 @@ typedef EGLBoolean (*PFNEGLBINDWAYLANDDISPLAYWL) (EGLDisplay, struct wl_display*
 typedef EGLBoolean (*PFNEGLUNBINDWAYLANDDISPLAYWL) (EGLDisplay, struct wl_display*);
 #endif
 
+#if !defined(EGL_WAYLAND_BUFFER_WL)
+#define EGL_WAYLAND_BUFFER_WL 0x31D5
+#endif
+
 #if !defined(PFNEGLQUERYWAYLANDBUFFERWL)
 typedef EGLBoolean (*PFNEGLQUERYWAYLANDBUFFERWL) (EGLDisplay, struct wl_resource*, EGLint attribute, EGLint* value);
 #endif
