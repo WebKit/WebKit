@@ -1,3 +1,21 @@
+2020-01-28  Russell Epstein  <repstein@apple.com>
+
+        Apply patch. rdar://problem/58856012
+
+    2020-01-27  Mark Lam  <mark.lam@apple.com>
+
+            Cherry-pick r254959. rdar://problem/58856012
+
+        2020-01-22  Keith Miller  <keith_miller@apple.com>
+
+                InternalField and CheckNeutered DFG nodes are not always safe to execute
+                https://bugs.webkit.org/show_bug.cgi?id=206632
+
+                Reviewed by Saam Barati.
+
+                * stress/for-of-bad-internal-field-hoist.js: Added.
+                (foo):
+
 2020-01-27  Russell Epstein  <repstein@apple.com>
 
         Cherry-pick r254788. rdar://problem/58856018
