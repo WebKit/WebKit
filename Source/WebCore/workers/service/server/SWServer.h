@@ -210,6 +210,8 @@ public:
 
     void softUpdate(SWServerRegistration&);
 
+    WEBCORE_EXPORT void handleLowMemoryWarning();
+
 private:
     void scriptFetchFinished(const ServiceWorkerFetchResult&);
 

@@ -295,6 +295,9 @@ void NetworkProcess::lowMemoryHandler(Critical critical)
     forEachNetworkSession([](auto& networkSession) {
         networkSession.clearPrefetchCache();
     });
+
+    for (auto& swServer : m_swServers.values())
+        swServer->handleLowMemoryWarning();
 }
 
 void NetworkProcess::initializeNetworkProcess(NetworkProcessCreationParameters&& parameters)

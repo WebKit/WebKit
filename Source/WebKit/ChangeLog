@@ -1,5 +1,20 @@
 2020-01-29  Chris Dumez  <cdumez@apple.com>
 
+        [iOS] Make sure unused service worker processes exit promptly on low memory warning
+        https://bugs.webkit.org/show_bug.cgi?id=206939
+        <rdar://problem/58972717>
+
+        Reviewed by Alex Christensen.
+
+        Make sure unused service worker processes exit promptly on low memory warning. They normally take 10 seconds to exit
+        for performance reasons. However, in case of memory pressure, keeping those processes around that long is not the
+        right thing to do.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::lowMemoryHandler):
+
+2020-01-29  Chris Dumez  <cdumez@apple.com>
+
         Unreviewed, fix Catalyst build after r255366
 
         * Shared/WebPreferencesDefaultValues.cpp:
