@@ -1362,3 +1362,5 @@ webkit.org/b/206687 imported/w3c/web-platform-tests/beacon/idlharness.any.html [
 webkit.org/b/206752 imported/w3c/web-platform-tests/2dcontext/imagebitmap/createImageBitmap-serializable.html [ Pass Failure ]
 
 webkit.org/b/206934 imported/w3c/web-platform-tests/IndexedDB/key-generators/reading-autoincrement-indexes-cursors.any.serviceworker.html [ Pass Failure ]
+
+webkit.org/b/206946 http/tests/security/cookies/third-party-cookie-blocking-main-frame.html [ Pass Timeout ]
