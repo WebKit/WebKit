@@ -1959,3 +1959,5 @@ webkit.org/b/206883 [ Mojave ] imported/w3c/web-platform-tests/css/css-fonts/var
 webkit.org/b/205729 webrtc/captureCanvas-webrtc.html [ Pass Failure ]
 
 webkit.org/b/206949 fast/dom/Window/post-message-crash.html [ Pass Failure ]
+
+webkit.org/b/206965 storage/indexeddb/intversion-long-queue-private.html [ Pass Failure ]
