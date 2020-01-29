@@ -25,7 +25,7 @@
 
 #import "config.h"
 
-#if PLATFORM(IOS_FAMILY)
+#if ENABLE(DEVICE_ORIENTATION) && PLATFORM(IOS_FAMILY)
 
 #import "PlatformUtilities.h"
 #import "TestNavigationDelegate.h"
@@ -402,4 +402,4 @@ TEST(DeviceOrientation, PermissionSecureContextCheckDisabled)
     runPermissionSecureContextCheckTest(ShouldEnableSecureContextChecks::No);
 }
 
-#endif // PLATFORM(IOS_FAMILY)
+#endif // ENABLE(DEVICE_ORIENTATION) && PLATFORM(IOS_FAMILY)
