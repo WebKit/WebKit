@@ -1,3 +1,27 @@
+2020-01-28  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Animations should run accelerated even if other animations targeting the same element are not accelerated
+        https://bugs.webkit.org/show_bug.cgi?id=206890
+        <rdar://problem/58961750>
+
+        Reviewed by Simon Fraser.
+
+        Update some tests that assumed a mix of accelerated and non-accelerated properties would not yield accelerated animations.
+        We also make some WK1-specific expectation due to compositing being disabled when opacity is the only potentially-accelerated
+        property to be animated.
+
+        * platform/mac-wk1/imported/w3c/web-platform-tests/css/css-color/animation/opacity-interpolation-expected.txt: Added.
+        * platform/mac-wk1/webanimations/opacity-animation-yields-compositing-expected.txt: Added.
+        * platform/mac-wk1/webanimations/opacity-animation-yields-compositing-span-expected.txt: Added.
+        * platform/mac-wk1/webanimations/partly-accelerated-transition-by-removing-property-expected.txt: Added.
+        * platform/mac-wk1/webanimations/width-and-opacity-separate-animation-yields-compositing-expected.txt: Added.
+        * webanimations/left-and-opacity-animation-yields-no-compositing-expected.txt: Removed.
+        * webanimations/partly-accelerated-transition-by-removing-property-expected.txt:
+        * webanimations/width-and-opacity-separate-animation-yields-compositing-expected.txt: Added.
+        * webanimations/width-and-opacity-separate-animation-yields-compositing.html: Renamed from LayoutTests/webanimations/left-and-opacity-animation-yields-no-compositing.html.
+        * webanimations/width-and-opacity-separate-animation-yields-no-compositing-expected.txt: Removed.
+        * webanimations/width-and-opacity-separate-animation-yields-no-compositing.html: Removed.
+
 2020-01-29  Jason Lawrence  <lawrence.j@apple.com>
 
         [ Mojave wk2 ] media/media-fragments/TC0035.html is flaky failing.

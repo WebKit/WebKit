@@ -446,7 +446,7 @@ void AnimationTimeline::updateCSSTransitionsForElementAndProperty(Element& eleme
             auto* runningTransition = runningTransitionsByProperty.get(property);
             if (is<KeyframeEffect>(runningTransition->effect())) {
                 auto& keyframeEffect = *downcast<KeyframeEffect>(runningTransition->effect());
-                if (keyframeEffect.isAccelerated()) {
+                if (keyframeEffect.isRunningAccelerated()) {
                     auto animatedStyle = RenderStyle::clonePtr(currentStyle);
                     runningTransition->resolve(*animatedStyle);
                     return *animatedStyle;
