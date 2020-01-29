@@ -1683,7 +1683,11 @@ void DOMWindow::scrollBy(const ScrollToOptions& options) const
 
     document()->updateLayoutIgnorePendingStylesheets();
 
-    FrameView* view = frame()->view();
+    auto* frame = this->frame();
+    if (!frame)
+        return;
+
+    auto view = makeRefPtr(frame->view());
     if (!view)
         return;
 

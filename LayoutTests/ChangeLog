@@ -1,3 +1,15 @@
+2020-01-28  Pinki Gyanchandani  <pgyanchandani@apple.com>
+
+        Null deref crash in DOMWindow::scrollBy after evoking updateLayoutIgnorePendingStylesheets()
+        https://bugs.webkit.org/show_bug.cgi?id=206099
+
+        Reviewed by Ryosuke Niwa
+
+        Added a regression test to verify the fix.
+
+        * fast/dom/Window/window-scroll-ignore-null-frame.html: Added.
+        * fast/dom/Window/window-scroll-ignore-null-frame-expected.txt: Added.
+
 2020-01-28  Zalan Bujtas  <zalan@apple.com>
 
         REGRESSION: [ Mac ] fast/hidpi/image-srcset-relative-svg-canvas-2x.html is a flaky failure
