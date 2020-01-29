@@ -7641,6 +7641,10 @@ WebPageCreationParameters WebPageProxy::creationParameters(WebProcessProxy& proc
     parameters.shouldCaptureVideoInGPUProcess = m_process->processPool().configuration().shouldCaptureVideoInGPUProcess();
     parameters.shouldCaptureDisplayInUIProcess = m_process->processPool().configuration().shouldCaptureDisplayInUIProcess();
 
+#if PLATFORM(GTK)
+    parameters.themeName = pageClient().themeName();
+#endif
+
     return parameters;
 }
 

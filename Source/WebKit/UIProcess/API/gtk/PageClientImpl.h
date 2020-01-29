@@ -172,6 +172,8 @@ private:
 
     void didChangeWebPageID() const override;
 
+    String themeName() const override;
+
     // Members of PageClientImpl class
     GtkWidget* m_viewWidget;
     DefaultUndoController m_undoController;

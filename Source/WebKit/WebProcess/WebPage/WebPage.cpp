@@ -593,6 +593,10 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
     setGapBetweenPages(parameters.gapBetweenPages);
     setPaginationLineGridEnabled(parameters.paginationLineGridEnabled);
 
+#if PLATFORM(GTK)
+    themeDidChange(WTFMove(parameters.themeName));
+#endif
+
     effectiveAppearanceDidChange(parameters.useDarkAppearance, parameters.useElevatedUserInterfaceLevel);
 
     if (parameters.isEditable)
@@ -4709,12 +4713,10 @@ void WebPage::setUseSystemAppearance(bool useSystemAppearance)
 
 #endif
 
-#if !PLATFORM(GTK)
 void WebPage::effectiveAppearanceDidChange(bool useDarkAppearance, bool useElevatedUserInterfaceLevel)
 {
     corePage()->effectiveAppearanceDidChange(useDarkAppearance, useElevatedUserInterfaceLevel);
 }
-#endif
 
 void WebPage::freezeLayerTreeDueToSwipeAnimation()
 {

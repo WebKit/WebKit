@@ -1,3 +1,16 @@
+2020-01-28  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Should use light theme unless website declares support for dark themes in color-schemes property
+        https://bugs.webkit.org/show_bug.cgi?id=197947
+
+        Reviewed by Michael Catanzaro.
+
+        Rebaseline several tests for the new behavior.
+
+        * platform/gtk/css-dark-mode/color-scheme-priority-expected.txt: Added.
+        * platform/gtk/css-dark-mode/default-colors-expected.txt:
+        * platform/gtk/css-dark-mode/prefers-color-scheme-expected.txt:
+
 2020-01-29  Megan Gardner  <megan_gardner@apple.com>
 
         Fix compositing/video/poster.html test by making blending image opque to deal with flakey failures.

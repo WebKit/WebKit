@@ -184,4 +184,13 @@ void WebPageProxy::sendMessageToWebView(UserMessage&& message)
     sendMessageToWebViewWithReply(WTFMove(message), [](UserMessage&&) { });
 }
 
+void WebPageProxy::themeDidChange()
+{
+    if (!hasRunningProcess())
+        return;
+
+    send(Messages::WebPage::ThemeDidChange(pageClient().themeName()));
+    effectiveAppearanceDidChange();
+}
+
 } // namespace WebKit

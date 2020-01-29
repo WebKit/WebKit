@@ -796,6 +796,8 @@ public:
     void showEmojiPicker(WebCore::Frame&);
 
     void getCenterForZoomGesture(const WebCore::IntPoint& centerInViewCoordinates, CompletionHandler<void(WebCore::IntPoint&&)>&&);
+
+    void themeDidChange(String&&);
 #endif
 
     void didApplyStyle();
@@ -2044,6 +2046,10 @@ private:
 #endif
 
     String m_overriddenMediaType;
+
+#if PLATFORM(GTK)
+    String m_themeName;
+#endif
 };
 
 #if !PLATFORM(IOS_FAMILY)

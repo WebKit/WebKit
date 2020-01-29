@@ -516,6 +516,10 @@ public:
 #endif
 
     virtual void didChangeWebPageID() const { }
+
+#if PLATFORM(GTK)
+    virtual String themeName() const = 0;
+#endif
 };
 
 } // namespace WebKit

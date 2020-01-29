@@ -213,6 +213,10 @@ struct WebPageCreationParameters {
     bool shouldCaptureVideoInUIProcess { false };
     bool shouldCaptureVideoInGPUProcess { false };
     bool shouldCaptureDisplayInUIProcess { false };
+
+#if PLATFORM(GTK)
+    String themeName;
+#endif
 };
 
 } // namespace WebKit

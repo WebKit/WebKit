@@ -53,6 +53,10 @@ public:
 #if (USE(COORDINATED_GRAPHICS) || USE(GSTREAMER_GL)) && PLATFORM(X11)
         XInitThreads();
 #endif
+
+        // Ignore the GTK_THEME environment variable, the theme is always set by the UI process now.
+        g_unsetenv("GTK_THEME");
+
         gtk_init(nullptr, nullptr);
 
         bindtextdomain(GETTEXT_PACKAGE, LOCALEDIR);
