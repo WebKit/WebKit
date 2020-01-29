@@ -156,8 +156,6 @@ private:
     void isPlayingAudioWillChange() final { }
     void isPlayingAudioDidChange() final { }
 
-    void didFinishProcessingAllPendingMouseEvents() final { }
-
     void requestDOMPasteAccess(const WebCore::IntRect&, const String&, CompletionHandler<void(WebCore::DOMPasteAccessResponse)>&&) final;
 
 #if ENABLE(VIDEO) && USE(GSTREAMER)

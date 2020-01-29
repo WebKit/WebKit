@@ -2489,6 +2489,29 @@ void WebPageProxy::processNextQueuedMouseEvent()
     send(Messages::WebPage::MouseEvent(event));
 }
 
+void WebPageProxy::doAfterProcessingAllPendingMouseEvents(WTF::Function<void ()>&& action)
+{
+    if (!isProcessingMouseEvents()) {
+        action();
+        return;
+    }
+
+    m_callbackHandlersAfterProcessingPendingMouseEvents.append(WTFMove(action));
+}
+
+void WebPageProxy::didFinishProcessingAllPendingMouseEvents()
+{
+    flushPendingMouseEventCallbacks();
+}
+
+void WebPageProxy::flushPendingMouseEventCallbacks()
+{
+    for (auto& callback : m_callbackHandlersAfterProcessingPendingMouseEvents)
+        callback();
+
+    m_callbackHandlersAfterProcessingPendingMouseEvents.clear();
+}
+
 #if MERGE_WHEEL_EVENTS
 static bool canCoalesce(const WebWheelEvent& a, const WebWheelEvent& b)
 {
@@ -6681,7 +6704,7 @@ void WebPageProxy::didReceiveEvent(uint32_t opaqueType, bool handled)
         } else {
             if (auto* automationSession = process().processPool().automationSession())
                 automationSession->mouseEventsFlushedForPage(*this);
-            pageClient().didFinishProcessingAllPendingMouseEvents();
+            didFinishProcessingAllPendingMouseEvents();
         }
 
         break;

@@ -146,8 +146,6 @@ private:
 
     WebCore::UserInterfaceLayoutDirection userInterfaceLayoutDirection() override { return WebCore::UserInterfaceLayoutDirection::LTR; }
 
-    void didFinishProcessingAllPendingMouseEvents() final { }
-
     void requestDOMPasteAccess(const WebCore::IntRect&, const String&, CompletionHandler<void(WebCore::DOMPasteAccessResponse)>&&) final;
 
     // Members of PageClientImpl class

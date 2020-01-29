@@ -127,6 +127,7 @@
 		2D00065F1C1F589A0088E6A7 /* WKPDFView.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D00065D1C1F58940088E6A7 /* WKPDFView.mm */; };
 		2D01D06E23218FEE0039AA3A /* WKWebViewPrintFormatter.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D01D06D23218FEE0039AA3A /* WKWebViewPrintFormatter.mm */; };
 		2D08E9372267D0F4002518DA /* ReparentWebViewTimeout.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D08E9362267D0F3002518DA /* ReparentWebViewTimeout.mm */; };
+		2D116E1323E0CB3A00208900 /* MacCatalystMouseSupport.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D116E1223E0CB3900208900 /* MacCatalystMouseSupport.mm */; };
 		2D1646E21D1862CD00015A1A /* DeferredViewInWindowStateChange.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D1646E11D1862CD00015A1A /* DeferredViewInWindowStateChange.mm */; };
 		2D2BEB2D22324E5F005544CA /* RequestTextInputContext.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D2BEB2C22324E5F005544CA /* RequestTextInputContext.mm */; };
 		2D2D13B3229F408B005068AF /* DeviceManagementRestrictions.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D2D13B2229F408B005068AF /* DeviceManagementRestrictions.mm */; };
@@ -1654,6 +1655,7 @@
 		2D00065D1C1F58940088E6A7 /* WKPDFView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKPDFView.mm; sourceTree = "<group>"; };
 		2D01D06D23218FEE0039AA3A /* WKWebViewPrintFormatter.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKWebViewPrintFormatter.mm; sourceTree = "<group>"; };
 		2D08E9362267D0F3002518DA /* ReparentWebViewTimeout.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ReparentWebViewTimeout.mm; sourceTree = "<group>"; };
+		2D116E1223E0CB3900208900 /* MacCatalystMouseSupport.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MacCatalystMouseSupport.mm; sourceTree = "<group>"; };
 		2D1646E11D1862CD00015A1A /* DeferredViewInWindowStateChange.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = DeferredViewInWindowStateChange.mm; path = WebKit/DeferredViewInWindowStateChange.mm; sourceTree = "<group>"; };
 		2D1C04A51D76298B000A6816 /* TestNavigationDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TestNavigationDelegate.h; path = cocoa/TestNavigationDelegate.h; sourceTree = "<group>"; };
 		2D1C04A61D76298B000A6816 /* TestNavigationDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = TestNavigationDelegate.mm; path = cocoa/TestNavigationDelegate.mm; sourceTree = "<group>"; };
@@ -2969,6 +2971,7 @@
 				46C519D81D355A7300DAA51A /* LocalStorageNullEntries.mm */,
 				8C10AF96206467770018FD90 /* LocalStoragePersistence.mm */,
 				7A6A2C6F1DCCF87B00C0D085 /* LocalStorageQuirkTest.mm */,
+				2D116E1223E0CB3900208900 /* MacCatalystMouseSupport.mm */,
 				07CC7DFD2266330800E39181 /* MediaBufferingPolicy.mm */,
 				51BE9E652376089500B4E117 /* MediaType.mm */,
 				5165FE03201EE617009F7EC3 /* MessagePortProviders.mm */,
@@ -4812,6 +4815,7 @@
 				7A6A2C701DCCFA8C00C0D085 /* LocalStorageQuirkTest.mm in Sources */,
 				6BF4A683239ED4CD00E2F45B /* LoggedInStatus.cpp in Sources */,
 				076E507F1F4513D6006E9F5A /* Logging.cpp in Sources */,
+				2D116E1323E0CB3A00208900 /* MacCatalystMouseSupport.mm in Sources */,
 				CE1866491F72E8F100A0CAB6 /* MarkedText.cpp in Sources */,
 				07CC7DFE2266330900E39181 /* MediaBufferingPolicy.mm in Sources */,
 				CDA315981ED53651009F60D3 /* MediaPlaybackSleepAssertion.mm in Sources */,

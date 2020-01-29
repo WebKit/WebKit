@@ -1,3 +1,40 @@
+2020-01-28  Tim Horton  <timothy_horton@apple.com>
+
+        macCatalyst: Triple clicking to select a sentence results in an empty selection
+        https://bugs.webkit.org/show_bug.cgi?id=206863
+        <rdar://problem/58776993>
+
+        Reviewed by Wenson Hsieh.
+
+        * UIProcess/API/Cocoa/WKWebViewPrivateForTesting.h:
+        * UIProcess/API/Cocoa/WKWebViewTesting.mm:
+        (-[WKWebView _doAfterProcessingAllPendingMouseEvents:]):
+        * UIProcess/API/mac/WKWebViewPrivateForTestingMac.h:
+        * UIProcess/API/mac/WKWebViewTestingMac.mm:
+        (-[WKWebView _doAfterProcessingAllPendingMouseEvents:]): Deleted.
+        * UIProcess/Cocoa/WebViewImpl.h:
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (WebKit::WebViewImpl::handleProcessSwapOrExit):
+        (WebKit::WebViewImpl::doAfterProcessingAllPendingMouseEvents): Deleted.
+        (WebKit::WebViewImpl::didFinishProcessingAllPendingMouseEvents): Deleted.
+        (WebKit::WebViewImpl::flushPendingMouseEventCallbacks): Deleted.
+        * UIProcess/PageClient.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::doAfterProcessingAllPendingMouseEvents):
+        (WebKit::WebPageProxy::didFinishProcessingAllPendingMouseEvents):
+        (WebKit::WebPageProxy::flushPendingMouseEventCallbacks):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/ios/PageClientImplIOS.h:
+        * UIProcess/mac/PageClientImplMac.h:
+        * UIProcess/mac/PageClientImplMac.mm:
+        (WebKit::PageClientImpl::didFinishProcessingAllPendingMouseEvents): Deleted.
+        Move "doAfterProcessingAllPendingMouseEvents" to WebPage instead of WebViewImpl,
+        so it can be used on all platforms. Expose it via WKWebView.
+
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+        * WebProcess/WebCoreSupport/ios/WebChromeClientIOS.mm:
+        (WebKit::WebChromeClient::shouldUseMouseEventsForSelection):
+
 2020-01-28  Andres Gonzalez  <andresg_22@apple.com>
 
         Fix for crash in AppKit accessibility.

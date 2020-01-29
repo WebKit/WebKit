@@ -889,6 +889,10 @@ public:
     void processNextQueuedMouseEvent();
     void handleMouseEvent(const NativeWebMouseEvent&);
 
+    void doAfterProcessingAllPendingMouseEvents(WTF::Function<void ()>&&);
+    void didFinishProcessingAllPendingMouseEvents();
+    void flushPendingMouseEventCallbacks();
+
     void handleWheelEvent(const NativeWebWheelEvent&);
 
     bool isProcessingKeyboardEvents() const;
@@ -2438,6 +2442,7 @@ private:
 #if ENABLE(MAC_GESTURE_EVENTS)
     Deque<NativeWebGestureEvent> m_gestureEventQueue;
 #endif
+    Vector<WTF::Function<void ()>> m_callbackHandlersAfterProcessingPendingMouseEvents;
 
 #if ENABLE(TOUCH_EVENTS)
     struct TouchEventTracking {

@@ -1,3 +1,25 @@
+2020-01-28  Tim Horton  <timothy_horton@apple.com>
+
+        macCatalyst: Triple clicking to select a sentence results in an empty selection
+        https://bugs.webkit.org/show_bug.cgi?id=206863
+        <rdar://problem/58776993>
+
+        Reviewed by Wenson Hsieh.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKitCocoa/MacCatalystMouseSupport.mm: Added.
+        (-[WKTestingEvent locationInView:]):
+        (-[WKTestingEvent _setButtonMask:]):
+        (-[WKTestingEvent _buttonMask]):
+        (-[WKTestingTouch locationInView:]):
+        (-[WKTestingTouch setTapCount:]):
+        (-[WKTestingTouch tapCount]):
+        (mouseGesture):
+        (TEST):
+        Add a test ensuring that simply plumbing mouse events to WebCore
+        does not result in a selection change in macCatalyst (because UIKit
+        will handle the selection change itself, instead).
+
 2020-01-28  Jonathan Bedard  <jbedard@apple.com>
 
         TestWebKitAPI: Conditionalize QuickLook tests on USE(QUICK_LOOK)

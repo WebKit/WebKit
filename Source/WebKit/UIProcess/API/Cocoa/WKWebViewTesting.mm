@@ -203,6 +203,13 @@
 #endif
 }
 
+- (void)_doAfterProcessingAllPendingMouseEvents:(dispatch_block_t)action
+{
+    _page->doAfterProcessingAllPendingMouseEvents([action = makeBlockPtr(action)] {
+        action();
+    });
+}
+
 + (void)_setApplicationBundleIdentifier:(NSString *)bundleIdentifier
 {
     WebCore::setApplicationBundleIdentifier(String(bundleIdentifier));

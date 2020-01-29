@@ -181,6 +181,8 @@ private:
     void associateEditableImageWithAttachment(WebCore::GraphicsLayer::EmbeddedViewID, const String& attachmentID) final;
     void didCreateEditableImage(WebCore::GraphicsLayer::EmbeddedViewID) final;
     void didDestroyEditableImage(WebCore::GraphicsLayer::EmbeddedViewID) final;
+
+    bool shouldUseMouseEventsForSelection() final;
 #endif
 
 #if ENABLE(ORIENTATION_EVENTS)

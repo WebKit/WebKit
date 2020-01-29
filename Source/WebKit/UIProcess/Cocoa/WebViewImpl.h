@@ -569,9 +569,6 @@ public:
 
     void handleAcceptedCandidate(NSTextCheckingResult *acceptedCandidate);
 
-    void doAfterProcessingAllPendingMouseEvents(dispatch_block_t action);
-    void didFinishProcessingAllPendingMouseEvents();
-
 #if HAVE(TOUCH_BAR)
     NSTouchBar *makeTouchBar();
     void updateTouchBar();
@@ -795,7 +792,6 @@ private:
     // that has been already sent to WebCore.
     RetainPtr<NSEvent> m_keyDownEventBeingResent;
     Vector<WebCore::KeypressCommand>* m_collectedKeypressCommands { nullptr };
-    Vector<BlockPtr<void()>> m_callbackHandlersAfterProcessingPendingMouseEvents;
 
     String m_lastStringForCandidateRequest;
     NSInteger m_lastCandidateRequestSequenceNumber;

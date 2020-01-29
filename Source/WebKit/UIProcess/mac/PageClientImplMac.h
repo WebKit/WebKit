@@ -250,8 +250,6 @@ private:
     NSView *inspectorAttachmentView() override;
     _WKRemoteObjectRegistry *remoteObjectRegistry() override;
 
-    void didFinishProcessingAllPendingMouseEvents() final;
-
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
     WebCore::WebMediaSessionManager& mediaSessionManager() override;
 #endif
