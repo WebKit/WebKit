@@ -646,12 +646,10 @@
     (global-name "com.apple.windowserver.active"))
 #endif
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED < 101600
 ;; Needed to support encrypted media playback <rdar://problem/40038478>
 (allow mach-lookup
     (global-name "com.apple.SecurityServer")
     (global-name "com.apple.ocspd"))
-#endif
 
 (allow file-read* file-write* (subpath "/private/var/db/mds/system")) ;; FIXME: This should be removed when <rdar://problem/9538414> is fixed.
 
