@@ -27,22 +27,24 @@
 
 #if ENABLE(VIDEO) && USE(AVFOUNDATION) && HAVE(AVFOUNDATION_LOADER_DELEGATE)
 
-#include "CachedRawResourceClient.h"
-#include "CachedResourceHandle.h"
 #include <wtf/Noncopyable.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RetainPtr.h>
+#include <wtf/WeakPtr.h>
 
 OBJC_CLASS AVAssetResourceLoadingRequest;
 
 namespace WebCore {
 
-class CachedRawResource;
-class CachedResourceLoader;
+class CachedResourceMediaLoader;
 class MediaPlayerPrivateAVFoundationObjC;
+class PlatformResourceMediaLoader;
+class ResourceError;
+class ResourceResponse;
+class SharedBuffer;
 
-class WebCoreAVFResourceLoader : public RefCounted<WebCoreAVFResourceLoader>, CachedRawResourceClient {
+class WebCoreAVFResourceLoader : public RefCounted<WebCoreAVFResourceLoader> {
     WTF_MAKE_NONCOPYABLE(WebCoreAVFResourceLoader); WTF_MAKE_FAST_ALLOCATED;
 public:
     static Ref<WebCoreAVFResourceLoader> create(MediaPlayerPrivateAVFoundationObjC* parent, AVAssetResourceLoadingRequest *);
@@ -52,20 +54,22 @@ public:
     void stopLoading();
     void invalidate();
 
-    CachedRawResource* resource();
-
 private:
-    // CachedResourceClient
-    void responseReceived(CachedResource&, const ResourceResponse&, CompletionHandler<void()>&&) override;
-    void dataReceived(CachedResource&, const char*, int) override;
-    void notifyFinished(CachedResource&) override;
-
-    void fulfillRequestWithResource(CachedResource&);
-
     WebCoreAVFResourceLoader(MediaPlayerPrivateAVFoundationObjC* parent, AVAssetResourceLoadingRequest *);
+
+    friend class CachedResourceMediaLoader;
+    friend class PlatformResourceMediaLoader;
+
+    void responseReceived(const ResourceResponse&);
+    void loadFailed(const ResourceError&);
+    void loadFinished();
+    void newDataStoredInSharedBuffer(SharedBuffer&);
+
     MediaPlayerPrivateAVFoundationObjC* m_parent;
     RetainPtr<AVAssetResourceLoadingRequest> m_avRequest;
-    CachedResourceHandle<CachedRawResource> m_resource;
+    std::unique_ptr<CachedResourceMediaLoader> m_resourceMediaLoader;
+    WeakPtr<PlatformResourceMediaLoader> m_platformMediaLoader;
+    size_t m_responseOffset { 0 };
 };
 
 }
