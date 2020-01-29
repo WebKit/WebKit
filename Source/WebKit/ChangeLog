@@ -1,3 +1,12 @@
+2020-01-29  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, fix Catalyst build after r255366
+
+        * Shared/WebPreferencesDefaultValues.cpp:
+        (WebKit::defaultDisallowSyncXHRDuringPageDismissalEnabled):
+        * Shared/WebPreferencesDefaultValues.h:
+        * Shared/ios/WebPreferencesDefaultValuesIOS.mm:
+
 2020-01-29  Sihui Liu  <sihui_liu@apple.com>
 
         Crash under com.apple.WebKit.Networking at WebKit: WebKit::WebIDBServer::suspend
