@@ -38,6 +38,7 @@
 #include "CSSImageSetValue.h"
 #include "CSSImageValue.h"
 #include "CSSShadowValue.h"
+#include "FontCache.h"
 #include "HTMLElement.h"
 #include "RenderTheme.h"
 #include "SVGElement.h"
@@ -337,7 +338,22 @@ void BuilderState::adjustStyleForInterCharacterRuby()
 
 void BuilderState::updateFont()
 {
-    if (!m_fontDirty && m_style.fontCascade().fonts())
+    auto& fontSelector = const_cast<Document&>(document()).fontSelector();
+
+    auto needsUpdate = [&] {
+        if (m_fontDirty)
+            return true;
+        auto* fonts = m_style.fontCascade().fonts();
+        if (!fonts)
+            return true;
+        if (fonts->generation() != FontCache::singleton().generation())
+            return true;
+        if (fonts->fontSelectorVersion() != fontSelector.version())
+            return true;
+        return false;
+    };
+
+    if (!needsUpdate())
         return;
 
 #if ENABLE(TEXT_AUTOSIZING)
@@ -347,7 +363,7 @@ void BuilderState::updateFont()
     updateFontForZoomChange();
     updateFontForOrientationChange();
 
-    m_style.fontCascade().update(&const_cast<Document&>(document()).fontSelector());
+    m_style.fontCascade().update(&fontSelector);
 
     m_fontDirty = false;
 }
