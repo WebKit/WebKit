@@ -1,3 +1,16 @@
+2020-01-28  Chris Dumez  <cdumez@apple.com>
+
+        REGRESSION (r252064): [ Mac iOS ] storage/websql/statement-error-callback.html is timing out flakily
+        https://bugs.webkit.org/show_bug.cgi?id=206291
+        <rdar://problem/58606666>
+
+        Reviewed by Maciej Stachowiak.
+
+        Unskip test that is no longer flaky.
+
+        * platform/ios/TestExpectations:
+        * platform/mac/TestExpectations:
+
 2020-01-28  Jacob Uphoff  <jacob_uphoff@apple.com>
 
         Discovered some expected timeouts on the test history, changing expectations to expect the timeouts to pass.
