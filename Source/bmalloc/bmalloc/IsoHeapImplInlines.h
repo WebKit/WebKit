@@ -60,9 +60,13 @@ EligibilityResult<Config> IsoHeapImpl<Config>::takeFirstEligible(const std::lock
             RELEASE_BASSERT(!m_headDirectory.get());
             RELEASE_BASSERT(!m_tailDirectory.get());
         } else {
+            auto* originalCursor = cursor;
+            BUNUSED(originalCursor);
             for (; cursor; cursor = cursor->next) {
                 EligibilityResult<Config> result = cursor->payload.takeFirstEligible(locker);
-                ASSERT(m_firstEligibleOrDecommitedDirectory.get() == cursor);
+                // While iterating, m_firstEligibleOrDecommitedDirectory is never changed. We are holding a lock,
+                // and IsoDirectory::takeFirstEligible must not populate a new eligibile / decommitted pages.
+                BASSERT(m_firstEligibleOrDecommitedDirectory.get() == originalCursor);
                 if (result.kind != EligibilityKind::Full) {
                     m_directoryHighWatermark = std::max(m_directoryHighWatermark, cursor->index());
                     m_firstEligibleOrDecommitedDirectory = cursor;
