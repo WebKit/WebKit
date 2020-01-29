@@ -170,7 +170,7 @@ static OptionSet<WebKit::WebEvent::Modifier> webEventModifiersForUIKeyModifierFl
 
 - (void)touchesEnded:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event
 {
-    _lastEvent = [self createMouseEventWithType:WebKit::WebEvent::MouseU];
+    _lastEvent = [self createMouseEventWithType:WebKit::WebEvent::MouseUp];
     _lastLocation = [self locationInView:self.view];
 
     _touching = NO;

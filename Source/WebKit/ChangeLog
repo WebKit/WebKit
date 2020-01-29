@@ -1,3 +1,10 @@
+2020-01-28  Timothy Horton  <timothy_horton@apple.com>
+
+        Fix the build
+
+        * UIProcess/ios/WKMouseGestureRecognizer.mm:
+        (-[WKMouseGestureRecognizer touchesEnded:withEvent:]):
+
 2020-01-28  Tim Horton  <timothy_horton@apple.com>
 
         macCatalyst: Right clicking on a link follows it immediately
