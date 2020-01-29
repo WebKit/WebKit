@@ -1,5 +1,33 @@
 2020-01-29  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r254993. rdar://problem/58778970
+
+    [iOS] Unreviewed follow-up sandbox fix.
+    https://bugs.webkit.org/show_bug.cgi?id=206562
+    <rdar://problem/58778970>
+    
+    I missed a couple of rules that are being overly chatty in the logs in r254982.
+    This adds appropriate commands to silence them.
+    
+    * Resources/SandboxProfiles/ios/com.apple.WebKit.Networking.sb:
+    * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@254993 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-01-23  Brent Fulgham  <bfulgham@apple.com>
+
+            [iOS] Unreviewed follow-up sandbox fix.
+            https://bugs.webkit.org/show_bug.cgi?id=206562
+            <rdar://problem/58778970>
+
+            I missed a couple of rules that are being overly chatty in the logs in r254982.
+            This adds appropriate commands to silence them.
+
+            * Resources/SandboxProfiles/ios/com.apple.WebKit.Networking.sb:
+            * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+
+2020-01-29  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r254982. rdar://problem/58778970
 
     Stop capturing telemetry for well-understood sandbox rules (206562)
