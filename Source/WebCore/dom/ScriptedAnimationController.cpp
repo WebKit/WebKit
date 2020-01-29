@@ -52,6 +52,13 @@ Page* ScriptedAnimationController::page() const
     return m_document ? m_document->page() : nullptr;
 }
 
+Seconds ScriptedAnimationController::preferredScriptedAnimationInterval() const
+{
+    if (auto* page = this->page())
+        return page->renderingUpdateThrottlingEnabled() ? preferredFrameInterval(m_throttlingReasons) : FullSpeedAnimationInterval;
+    return FullSpeedAnimationInterval;
+}
+
 Seconds ScriptedAnimationController::interval() const
 {
     if (auto* page = this->page())
@@ -75,35 +82,10 @@ void ScriptedAnimationController::resume()
         scheduleAnimation();
 }
 
-void ScriptedAnimationController::addThrottlingReason(ThrottlingReason reason)
-{
-    if (auto* page = this->page()) {
-        if (!page->canUpdateThrottlingReason(reason))
-            return;
-    }
-    m_throttlingReasons.add(reason);
-}
-
-void ScriptedAnimationController::removeThrottlingReason(ThrottlingReason reason)
-{
-    if (auto* page = this->page()) {
-        if (!page->canUpdateThrottlingReason(reason))
-            return;
-    }
-    m_throttlingReasons.remove(reason);
-}
-
-void ScriptedAnimationController::clearThrottlingReasons()
-{
-    m_throttlingReasons = { };
-}
-
 bool ScriptedAnimationController::isThrottled() const
 {
-    if (!m_throttlingReasons.isEmpty())
-        return true;
     if (auto* page = this->page())
-        return page->isRenderingUpdateThrottled();
+        return page->renderingUpdateThrottlingEnabled() && (page->isRenderingUpdateThrottled() || !m_throttlingReasons.isEmpty());
     return false;
 }
 

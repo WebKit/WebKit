@@ -698,13 +698,13 @@ public:
     bool isOnlyNonUtilityPage() const;
     bool isUtilityPage() const { return m_isUtilityPage; }
 
-    bool isLowPowerModeEnabled() const { return m_throttlingReasons.contains(ThrottlingReason::LowPowerMode); }
+    bool isLowPowerModeEnabled() const;
     WEBCORE_EXPORT void setLowPowerModeEnabledOverrideForTesting(Optional<bool>);
 
-    void renderingUpdateThrottlingEnabledChangedForTesting();
-    bool canUpdateThrottlingReason(ThrottlingReason reason) const { return !m_throttlingReasonsOverridenForTesting.contains(reason); }
-    bool isRenderingUpdateThrottled() const { return !m_throttlingReasons.isEmpty(); }
-    Seconds preferredRenderingUpdateInterval() const { return preferredFrameInterval(m_throttlingReasons); }
+    bool renderingUpdateThrottlingEnabled() const;
+    void renderingUpdateThrottlingEnabledChanged();
+    bool isRenderingUpdateThrottled() const;
+    Seconds preferredRenderingUpdateInterval() const;
 
     WEBCORE_EXPORT void applicationWillResignActive();
     WEBCORE_EXPORT void applicationDidEnterBackground();
@@ -969,6 +969,7 @@ private:
 
     std::unique_ptr<PerformanceMonitor> m_performanceMonitor;
     std::unique_ptr<LowPowerModeNotifier> m_lowPowerModeNotifier;
+    Optional<bool> m_lowPowerModeEnabledOverrideForTesting;
 
     Optional<Navigation> m_navigationToLogWhenVisible;
 
@@ -1003,7 +1004,6 @@ private:
 
     Vector<UserContentURLPattern> m_corsDisablingPatterns;
     OptionSet<ThrottlingReason> m_throttlingReasons;
-    OptionSet<ThrottlingReason> m_throttlingReasonsOverridenForTesting;
 };
 
 inline PageGroup& Page::group()
