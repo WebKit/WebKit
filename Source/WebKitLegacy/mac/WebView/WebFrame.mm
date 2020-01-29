@@ -1446,14 +1446,18 @@ static WebFrameLoadType toWebFrameLoadType(WebCore::FrameLoadType frameLoadType)
 
 - (BOOL)isTelephoneNumberParsingAllowed
 {
-    auto* document = core(self)->document();
-    return document->isTelephoneNumberParsingAllowed();
+    WebCore::Frame *frame = core(self);
+    if (!frame || !frame->document())
+        return false;
+    return frame->document()->isTelephoneNumberParsingAllowed();
 }
 
 - (BOOL)isTelephoneNumberParsingEnabled
 {
-    auto* document = core(self)->document();
-    return document->isTelephoneNumberParsingEnabled();
+    WebCore::Frame *frame = core(self);
+    if (!frame || !frame->document())
+        return false;
+    return frame->document()->isTelephoneNumberParsingEnabled();
 }
 
 - (DOMRange *)selectedDOMRange
