@@ -488,6 +488,15 @@
     "imported/w3c/web-platform-tests/css/css-color/color-resolving-hsl.html": [
         "slow"
     ],
+    "imported/w3c/web-platform-tests/css/css-fonts/font-display/font-display.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/css/css-fonts/variations/at-font-face-font-matching.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/css/css-fonts/variations/font-style-interpolation.html": [
+        "slow"
+    ],
     "imported/w3c/web-platform-tests/css/css-transitions/properties-value-001.html": [
         "slow"
     ],

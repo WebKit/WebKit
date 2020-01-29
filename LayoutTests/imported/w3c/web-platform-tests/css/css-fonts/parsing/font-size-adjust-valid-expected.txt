@@ -1,0 +1,4 @@
+
+FAIL e.style['font-size-adjust'] = "none" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['font-size-adjust'] = "0.5" should set the property value assert_not_equals: property should be set got disallowed value ""
+

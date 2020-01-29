@@ -1,0 +1,41 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/variations/META.yml
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/variations/at-font-face-descriptors.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/variations/at-font-face-font-matching.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/variations/font-descriptor-range-reversed-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/variations/font-descriptor-range-reversed.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/variations/font-opentype-collections.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/variations/font-parse-numeric-stretch-style-weight.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/variations/font-shorthand.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/variations/font-stretch.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/variations/font-style-interpolation.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/variations/font-style-parsing.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/variations/font-variation-settings-inherit.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/variations/font-variation-settings-parsing.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/variations/font-weight-interpolation.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/variations/font-weight-lighter-bolder.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/variations/font-weight-matching.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/variations/font-weight-parsing.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/variations/variable-box-font-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/variations/variable-box-font.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/variations/variable-gpos-m2b-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/variations/variable-gpos-m2b.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/variations/variable-gsub-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/variations/variable-gsub.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/variations/variable-opsz-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/variations/variable-opsz.html

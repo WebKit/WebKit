@@ -1,0 +1,5 @@
+Test
+Test
+
+PASS Verify that collection font is loaded 
+

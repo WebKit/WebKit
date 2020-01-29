@@ -1,0 +1,33 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/font-display/font-display-change-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/font-display/font-display-change.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/font-display/font-display-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/font-display/font-display-failure-fallback.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/font-display/font-display-feature-policy-01.tentative-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/font-display/font-display-feature-policy-01.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/font-display/font-display-feature-policy-01.tentative.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/font-display/font-display-feature-policy-02.tentative-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/font-display/font-display-feature-policy-02.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/font-display/font-display-feature-policy-02.tentative.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/font-display/font-display-feature-policy-report-only.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/font-display/font-display-feature-policy-report-only.tentative.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/font-display/font-display-feature-policy-reporting.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/font-display/font-display-feature-policy-reporting.tentative.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/font-display/font-display-preload-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/font-display/font-display-preload.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/font-display/font-display.html

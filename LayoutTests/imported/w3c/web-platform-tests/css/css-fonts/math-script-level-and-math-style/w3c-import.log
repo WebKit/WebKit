@@ -1,0 +1,36 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/math-script-level-and-math-style/math-script-level-001.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/math-script-level-and-math-style/math-script-level-002.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/math-script-level-and-math-style/math-script-level-003.tentative-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/math-script-level-and-math-style/math-script-level-003.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/math-script-level-and-math-style/math-script-level-004.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/math-script-level-and-math-style/math-script-level-005.tentative-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/math-script-level-and-math-style/math-script-level-005.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/math-script-level-and-math-style/math-script-level-auto-and-math-style-001.tentative-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/math-script-level-and-math-style/math-script-level-auto-and-math-style-001.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/math-script-level-and-math-style/math-script-level-auto-and-math-style-002.tentative-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/math-script-level-and-math-style/math-script-level-auto-and-math-style-002.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/math-script-level-and-math-style/math-script-level-auto-and-math-style-003.tentative-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/math-script-level-and-math-style/math-script-level-auto-and-math-style-003.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/math-script-level-and-math-style/math-script-level-auto-and-math-style-004.tentative-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/math-script-level-and-math-style/math-script-level-auto-and-math-style-004.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/math-script-level-and-math-style/math-script-level-auto-and-math-style-005.tentative-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/math-script-level-and-math-style/math-script-level-auto-and-math-style-005.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/math-script-level-and-math-style/math-script-level-font-size-clamping-001.tentative-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/math-script-level-and-math-style/math-script-level-font-size-clamping-001.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/math-script-level-and-math-style/math-style-001.tentative.html

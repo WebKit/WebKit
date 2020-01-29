@@ -1,0 +1,57 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/variations/resources/ahem.ttc
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/variations/resources/csstest-weights-100-kerned.ttf
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/variations/resources/csstest-weights-1479-w1-kerned.ttf
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/variations/resources/csstest-weights-1479-w4-kerned.ttf
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/variations/resources/csstest-weights-1479-w7-kerned.ttf
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/variations/resources/csstest-weights-1479-w9-kerned.ttf
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/variations/resources/csstest-weights-15-w1-kerned.ttf
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/variations/resources/csstest-weights-15-w5-kerned.ttf
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/variations/resources/csstest-weights-200-kerned.ttf
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/variations/resources/csstest-weights-24-w2-kerned.ttf
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/variations/resources/csstest-weights-24-w4-kerned.ttf
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/variations/resources/csstest-weights-2569-w2-kerned.ttf
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/variations/resources/csstest-weights-2569-w5-kerned.ttf
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/variations/resources/csstest-weights-2569-w6-kerned.ttf
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/variations/resources/csstest-weights-2569-w9-kerned.ttf
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/variations/resources/csstest-weights-258-w2-kerned.ttf
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/variations/resources/csstest-weights-258-w5-kerned.ttf
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/variations/resources/csstest-weights-258-w8-kerned.ttf
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/variations/resources/csstest-weights-300-kerned.ttf
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/variations/resources/csstest-weights-3589-w3-kerned.ttf
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/variations/resources/csstest-weights-3589-w5-kerned.ttf
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/variations/resources/csstest-weights-3589-w8-kerned.ttf
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/variations/resources/csstest-weights-3589-w9-kerned.ttf
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/variations/resources/csstest-weights-400-kerned.ttf
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/variations/resources/csstest-weights-47-w4-kerned.ttf
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/variations/resources/csstest-weights-47-w7-kerned.ttf
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/variations/resources/csstest-weights-500-kerned.ttf
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/variations/resources/csstest-weights-600-kerned.ttf
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/variations/resources/csstest-weights-700-kerned.ttf
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/variations/resources/csstest-weights-800-kerned.ttf
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/variations/resources/csstest-weights-900-kerned.ttf
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/variations/resources/csstest-weights-full-w1-kerned.ttf
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/variations/resources/csstest-weights-full-w2-kerned.ttf
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/variations/resources/csstest-weights-full-w3-kerned.ttf
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/variations/resources/csstest-weights-full-w4-kerned.ttf
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/variations/resources/csstest-weights-full-w5-kerned.ttf
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/variations/resources/csstest-weights-full-w6-kerned.ttf
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/variations/resources/csstest-weights-full-w7-kerned.ttf
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/variations/resources/csstest-weights-full-w8-kerned.ttf
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/variations/resources/csstest-weights-full-w9-kerned.ttf
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/variations/resources/variabletest_box.ttf

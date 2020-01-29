@@ -82,6 +82,7 @@
     "web-platform-tests/css/css-color": "import", 
     "web-platform-tests/css/css-display": "import", 
     "web-platform-tests/css/css-font-loading": "import", 
+    "web-platform-tests/css/css-fonts": "import", 
     "web-platform-tests/css/css-grid": "import", 
     "web-platform-tests/css/css-grid/abspos": "import", 
     "web-platform-tests/css/css-grid/alignment/": "import", 

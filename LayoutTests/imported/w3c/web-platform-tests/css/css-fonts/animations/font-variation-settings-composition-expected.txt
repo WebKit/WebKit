@@ -1,0 +1,5 @@
+CONSOLE MESSAGE: line 14: ReferenceError: Can't find variable: test_composition
+
+Harness Error (FAIL), message = ReferenceError: Can't find variable: test_composition
+
+

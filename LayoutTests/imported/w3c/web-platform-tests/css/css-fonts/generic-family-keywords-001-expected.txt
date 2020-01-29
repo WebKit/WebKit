@@ -1,0 +1,4 @@
+00000
+
+PASS CSS Test: Test generic family keywords do not match @font-face 
+

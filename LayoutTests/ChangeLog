@@ -1,3 +1,17 @@
+2020-01-29  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [CSS Fonts] Import css-fonts WPT tests
+        https://bugs.webkit.org/show_bug.cgi?id=205866
+
+        Reviewed by Simon Fraser.
+
+        Import css/css-fonts WPT tests.
+
+        * TestExpectations:
+        * platform/gtk/imported/w3c/web-platform-tests/css/css-fonts/font-size-adjust-005-expected.txt: Added.
+        * platform/mac/imported/w3c/web-platform-tests/css/css-fonts/font-size-adjust-005-expected.txt: Added.
+        * tests-options.json:
+
 2020-01-29  youenn fablet  <youenn@apple.com>
 
         Blob media loading does not work with GPUProcess

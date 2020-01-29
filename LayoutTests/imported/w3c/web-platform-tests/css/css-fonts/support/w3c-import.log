@@ -1,0 +1,70 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/support/100x100-lime.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/support/100x100-red.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/support/1x1-green.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/support/1x1-lime.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/support/1x1-maroon.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/support/1x1-navy.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/support/1x1-red.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/support/1x1-white.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/support/60x60-gg-rr.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/support/60x60-green.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/support/60x60-red.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/support/README
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/support/bar_with_corner_dot.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/support/black15x15.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/support/black96x96.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/support/blue-orange-rectangle.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/support/blue15x15.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/support/blue96x96.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/support/cat.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/support/diamond.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/support/font-weight-bolder-001-ref.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/support/font-weight-lighter-001-ref.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/support/font-weight-normal-001-ref.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/support/green15x15.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/support/green_box.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/support/margin-collapse-2em-space.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/support/margin-collapse-4em-space.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/support/orange15x15.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/support/orange_box.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/support/pattern-grg-rgr-grg.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/support/pattern-grg-rrg-rgg.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/support/pattern-rgr-grg-rgr.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/support/pattern-tr.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/support/red15x15.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/support/red_box.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/support/ring.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/support/square-purple.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/support/square-teal.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/support/square-white.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/support/swatch-aqua.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/support/swatch-blue.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/support/swatch-green.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/support/swatch-lime.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/support/swatch-orange.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/support/swatch-red.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/support/swatch-teal.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/support/swatch-white.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/support/swatch-yellow.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/support/test-bl.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/support/test-br.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/support/test-outer.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/support/test-tl.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/support/test-tr.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/support/transparent_green.png
