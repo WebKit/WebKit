@@ -1086,7 +1086,6 @@ imported/w3c/web-platform-tests/credential-management/ [ Skip ]
 # FIXME: This can't be the right bug number.
 webkit.org/b/175419 imported/w3c/web-platform-tests/background-fetch/interfaces-worker.https.html [ Failure ]
 webkit.org/b/175419 imported/w3c/web-platform-tests/background-fetch/interfaces.html [ Failure ]
-webkit.org/b/175419 imported/w3c/web-platform-tests/fetch/api/policies/referrer-origin-when-cross-origin-service-worker.https.html [ Failure ]
 webkit.org/b/175419 imported/w3c/web-platform-tests/fetch/api/abort/serviceworker-intercepted.https.html [ Failure Pass ]
 
 # Loading MP4 as an image is not supported by GTK
@@ -1299,8 +1298,6 @@ webkit.org/b/206656 imported/w3c/web-platform-tests/mediacapture-streams/MediaSt
 webkit.org/b/206656 imported/w3c/web-platform-tests/mediacapture-streams/MediaStreamTrack-getSettings.https.html [ Failure ]
 
 webkit.org/b/206657 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-video-element/resize-during-playback.html [ Failure ]
-
-webkit.org/b/206658 imported/w3c/web-platform-tests/offscreen-canvas/the-offscreen-canvas/offscreencanvas.transfer.to.imagebitmap.w.html [ Failure ]
 
 # LFC (LayoutFormatingContext is disabled by default).
 fast/layoutformattingcontext/ [ Skip ]
@@ -3510,8 +3507,6 @@ webkit.org/b/172273 fast/visual-viewport/client-rects-relative-to-layout-viewpor
 
 webkit.org/b/172275 imported/w3c/web-platform-tests/html/browsers/the-window-object/apis-for-creating-and-navigating-browsing-contexts-by-name/open-features-non-integer-screeny.html [ Failure ]
 
-webkit.org/b/172278 fast/html/marquee-child-wrap.html [ ImageOnlyFailure ]
-
 webkit.org/b/172279 fast/multicol/flexbox-rows.html [ ImageOnlyFailure ]
 
 webkit.org/b/172811 fast/block/float/032.html [ Failure ]
@@ -3906,7 +3901,7 @@ webkit.org/b/197248 fast/events/autoscroll-when-input-is-offscreen.html [ Failur
 webkit.org/b/197248 fast/events/autoscroll-with-software-keyboard.html [ Failure Crash ]
 
 webkit.org/b/203240 css3/shapes/shape-outside/shape-image/shape-image-025.html [ Pass ImageOnlyFailure ]
-webkit.org/b/203240 imported/w3c/web-platform-tests/css/css-shapes/shape-outside/shape-image/shape-image-025.html [ ImageOnlyFailure ]
+webkit.org/b/203240 imported/w3c/web-platform-tests/css/css-shapes/shape-outside/shape-image/shape-image-025.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/197252 http/tests/adClickAttribution/send-attribution-conversion-request.html [ Failure ]
 
