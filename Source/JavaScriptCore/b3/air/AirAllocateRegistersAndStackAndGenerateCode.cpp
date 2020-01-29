@@ -283,7 +283,7 @@ void GenerateAndAllocateRegisters::prepareForGeneration()
     allocateEscapedStackSlots(m_code);
     insertBlocksForFlushAfterTerminalPatchpoints();
 
-#if ASSERT_ENABLED
+#if !ASSERT_DISABLED
     m_code.forEachTmp([&] (Tmp tmp) {
         ASSERT(!tmp.isReg());
         m_allTmps[tmp.bank()].append(tmp);
@@ -379,7 +379,7 @@ void GenerateAndAllocateRegisters::prepareForGeneration()
 
     lowerStackArgs(m_code);
 
-#if ASSERT_ENABLED
+#if !ASSERT_DISABLED 
     // Verify none of these passes add any tmps.
     forEachBank([&] (Bank bank) {
         ASSERT(m_allTmps[bank].size() == m_code.numTmps(bank));
