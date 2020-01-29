@@ -26,6 +26,7 @@
 #include "config.h"
 #include "CodeCache.h"
 
+#include "BytecodeGenerator.h"
 #include "IndirectEvalExecutable.h"
 #include <wtf/text/StringConcatenateNumbers.h>
 
@@ -48,6 +49,100 @@ void CodeCacheMap::pruneSlowCase()
         m_size -= it->key.length();
         m_map.remove(it);
     }
+}
+
+static void generateUnlinkedCodeBlockForFunctions(VM& vm, UnlinkedCodeBlock* unlinkedCodeBlock, const SourceCode& parentSource, OptionSet<CodeGenerationMode> codeGenerationMode, ParserError& error)
+{
+    auto generate = [&](UnlinkedFunctionExecutable* unlinkedExecutable, CodeSpecializationKind constructorKind) {
+        if (constructorKind == CodeForConstruct && SourceParseModeSet(SourceParseMode::AsyncArrowFunctionMode, SourceParseMode::AsyncMethodMode, SourceParseMode::AsyncFunctionMode).contains(unlinkedExecutable->parseMode()))
+            return;
+
+        SourceCode source = unlinkedExecutable->linkedSourceCode(parentSource);
+        UnlinkedFunctionCodeBlock* unlinkedFunctionCodeBlock = unlinkedExecutable->unlinkedCodeBlockFor(vm, source, constructorKind, codeGenerationMode, error, unlinkedExecutable->parseMode());
+        if (unlinkedFunctionCodeBlock)
+            generateUnlinkedCodeBlockForFunctions(vm, unlinkedFunctionCodeBlock, source, codeGenerationMode, error);
+    };
+
+    // FIXME: We should also generate CodeBlocks for CodeForConstruct
+    // https://bugs.webkit.org/show_bug.cgi?id=193823
+    for (unsigned i = 0; i < unlinkedCodeBlock->numberOfFunctionDecls(); i++)
+        generate(unlinkedCodeBlock->functionDecl(i), CodeForCall);
+    for (unsigned i = 0; i < unlinkedCodeBlock->numberOfFunctionExprs(); i++)
+        generate(unlinkedCodeBlock->functionExpr(i), CodeForCall);
+}
+
+template <class UnlinkedCodeBlockType, class ExecutableType = ScriptExecutable>
+UnlinkedCodeBlockType* generateUnlinkedCodeBlockImpl(VM& vm, const SourceCode& source, JSParserStrictMode strictMode, JSParserScriptMode scriptMode, OptionSet<CodeGenerationMode> codeGenerationMode, ParserError& error, EvalContextType evalContextType, DerivedContextType derivedContextType, bool isArrowFunctionContext, const VariableEnvironment* variablesUnderTDZ, ExecutableType* executable = nullptr)
+{
+    typedef typename CacheTypes<UnlinkedCodeBlockType>::RootNode RootNode;
+    std::unique_ptr<RootNode> rootNode = parse<RootNode>(
+        vm, source, Identifier(), JSParserBuiltinMode::NotBuiltin, strictMode, scriptMode, CacheTypes<UnlinkedCodeBlockType>::parseMode, SuperBinding::NotNeeded, error, nullptr, ConstructorKind::None, derivedContextType, evalContextType);
+    if (!rootNode)
+        return nullptr;
+
+    unsigned lineCount = rootNode->lastLine() - rootNode->firstLine();
+    unsigned startColumn = rootNode->startColumn() + 1;
+    bool endColumnIsOnStartLine = !lineCount;
+    unsigned unlinkedEndColumn = rootNode->endColumn();
+    unsigned endColumn = unlinkedEndColumn + (endColumnIsOnStartLine ? startColumn : 1);
+    unsigned arrowContextFeature = isArrowFunctionContext ? ArrowFunctionContextFeature : 0;
+    if (executable)
+        executable->recordParse(rootNode->features() | arrowContextFeature, rootNode->hasCapturedVariables(), rootNode->lastLine(), endColumn);
+
+    bool usesEval = rootNode->features() & EvalFeature;
+    bool isStrictMode = rootNode->features() & StrictModeFeature;
+    NeedsClassFieldInitializer needsClassFieldInitializer = NeedsClassFieldInitializer::No;
+    if constexpr (std::is_same_v<ExecutableType, DirectEvalExecutable>)
+        needsClassFieldInitializer = executable->needsClassFieldInitializer();
+    ExecutableInfo executableInfo(usesEval, isStrictMode, false, false, ConstructorKind::None, scriptMode, SuperBinding::NotNeeded, CacheTypes<UnlinkedCodeBlockType>::parseMode, derivedContextType, needsClassFieldInitializer, isArrowFunctionContext, false, evalContextType);
+
+    UnlinkedCodeBlockType* unlinkedCodeBlock = UnlinkedCodeBlockType::create(vm, executableInfo, codeGenerationMode);
+    unlinkedCodeBlock->recordParse(rootNode->features(), rootNode->hasCapturedVariables(), lineCount, unlinkedEndColumn);
+    if (!source.provider()->sourceURLDirective().isNull())
+        unlinkedCodeBlock->setSourceURLDirective(source.provider()->sourceURLDirective());
+    if (!source.provider()->sourceMappingURLDirective().isNull())
+        unlinkedCodeBlock->setSourceMappingURLDirective(source.provider()->sourceMappingURLDirective());
+
+    error = BytecodeGenerator::generate(vm, rootNode.get(), source, unlinkedCodeBlock, codeGenerationMode, variablesUnderTDZ);
+
+    if (error.isValid())
+        return nullptr;
+
+    return unlinkedCodeBlock;
+}
+
+template <class UnlinkedCodeBlockType, class ExecutableType>
+UnlinkedCodeBlockType* generateUnlinkedCodeBlock(VM& vm, ExecutableType* executable, const SourceCode& source, JSParserStrictMode strictMode, JSParserScriptMode scriptMode, OptionSet<CodeGenerationMode> codeGenerationMode, ParserError& error, EvalContextType evalContextType, const VariableEnvironment* variablesUnderTDZ)
+{
+    return generateUnlinkedCodeBlockImpl<UnlinkedCodeBlockType, ExecutableType>(vm, source, strictMode, scriptMode, codeGenerationMode, error, evalContextType, executable->derivedContextType(), executable->isArrowFunctionContext(), variablesUnderTDZ, executable);
+}
+
+UnlinkedEvalCodeBlock* generateUnlinkedCodeBlockForDirectEval(VM& vm, DirectEvalExecutable* executable, const SourceCode& source, JSParserStrictMode strictMode, JSParserScriptMode scriptMode, OptionSet<CodeGenerationMode> codeGenerationMode, ParserError& error, EvalContextType evalContextType, const VariableEnvironment* variablesUnderTDZ)
+{
+    return generateUnlinkedCodeBlock<UnlinkedEvalCodeBlock>(vm, executable, source, strictMode, scriptMode, codeGenerationMode, error, evalContextType, variablesUnderTDZ);
+}
+
+template <class UnlinkedCodeBlockType>
+std::enable_if_t<!std::is_same<UnlinkedCodeBlockType, UnlinkedEvalCodeBlock>::value, UnlinkedCodeBlockType*>
+recursivelyGenerateUnlinkedCodeBlock(VM& vm, const SourceCode& source, JSParserStrictMode strictMode, JSParserScriptMode scriptMode, OptionSet<CodeGenerationMode> codeGenerationMode, ParserError& error, EvalContextType evalContextType, const VariableEnvironment* variablesUnderTDZ)
+{
+    bool isArrowFunctionContext = false;
+    UnlinkedCodeBlockType* unlinkedCodeBlock = generateUnlinkedCodeBlockImpl<UnlinkedCodeBlockType>(vm, source, strictMode, scriptMode, codeGenerationMode, error, evalContextType, DerivedContextType::None, isArrowFunctionContext, variablesUnderTDZ);
+    if (!unlinkedCodeBlock)
+        return nullptr;
+
+    generateUnlinkedCodeBlockForFunctions(vm, unlinkedCodeBlock, source, codeGenerationMode, error);
+    return unlinkedCodeBlock;
+}
+
+UnlinkedProgramCodeBlock* recursivelyGenerateUnlinkedCodeBlockForProgram(VM& vm, const SourceCode& source, JSParserStrictMode strictMode, JSParserScriptMode scriptMode, OptionSet<CodeGenerationMode> codeGenerationMode, ParserError& error, EvalContextType evalContextType, const VariableEnvironment* variablesUnderTDZ)
+{
+    return recursivelyGenerateUnlinkedCodeBlock<UnlinkedProgramCodeBlock>(vm, source, strictMode, scriptMode, codeGenerationMode, error, evalContextType, variablesUnderTDZ);
+}
+
+UnlinkedModuleProgramCodeBlock* recursivelyGenerateUnlinkedCodeBlockForModuleProgram(VM& vm, const SourceCode& source, JSParserStrictMode strictMode, JSParserScriptMode scriptMode, OptionSet<CodeGenerationMode> codeGenerationMode, ParserError& error, EvalContextType evalContextType, const VariableEnvironment* variablesUnderTDZ)
+{
+    return recursivelyGenerateUnlinkedCodeBlock<UnlinkedModuleProgramCodeBlock>(vm, source, strictMode, scriptMode, codeGenerationMode, error, evalContextType, variablesUnderTDZ);
 }
 
 template <class UnlinkedCodeBlockType, class ExecutableType>
@@ -170,26 +265,6 @@ void CodeCache::write(VM& vm)
 {
     for (auto& it : m_sourceCode)
         writeCodeBlock(vm, it.key, it.value);
-}
-
-void generateUnlinkedCodeBlockForFunctions(VM& vm, UnlinkedCodeBlock* unlinkedCodeBlock, const SourceCode& parentSource, OptionSet<CodeGenerationMode> codeGenerationMode, ParserError& error)
-{
-    auto generate = [&](UnlinkedFunctionExecutable* unlinkedExecutable, CodeSpecializationKind constructorKind) {
-        if (constructorKind == CodeForConstruct && SourceParseModeSet(SourceParseMode::AsyncArrowFunctionMode, SourceParseMode::AsyncMethodMode, SourceParseMode::AsyncFunctionMode).contains(unlinkedExecutable->parseMode()))
-            return;
-
-        SourceCode source = unlinkedExecutable->linkedSourceCode(parentSource);
-        UnlinkedFunctionCodeBlock* unlinkedFunctionCodeBlock = unlinkedExecutable->unlinkedCodeBlockFor(vm, source, constructorKind, codeGenerationMode, error, unlinkedExecutable->parseMode());
-        if (unlinkedFunctionCodeBlock)
-            generateUnlinkedCodeBlockForFunctions(vm, unlinkedFunctionCodeBlock, source, codeGenerationMode, error);
-    };
-
-    // FIXME: We should also generate CodeBlocks for CodeForConstruct
-    // https://bugs.webkit.org/show_bug.cgi?id=193823
-    for (unsigned i = 0; i < unlinkedCodeBlock->numberOfFunctionDecls(); i++)
-        generate(unlinkedCodeBlock->functionDecl(i), CodeForCall);
-    for (unsigned i = 0; i < unlinkedCodeBlock->numberOfFunctionExprs(); i++)
-        generate(unlinkedCodeBlock->functionExpr(i), CodeForCall);
 }
 
 void writeCodeBlock(VM& vm, const SourceCodeKey& key, const SourceCodeValue& value)

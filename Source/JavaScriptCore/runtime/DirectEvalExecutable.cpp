@@ -53,8 +53,7 @@ DirectEvalExecutable* DirectEvalExecutable::create(JSGlobalObject* globalObject,
     OptionSet<CodeGenerationMode> codeGenerationMode = globalObject->defaultCodeGenerationMode();
 
     // We don't bother with CodeCache here because direct eval uses a specialized DirectEvalCodeCache.
-    UnlinkedEvalCodeBlock* unlinkedEvalCode = generateUnlinkedCodeBlock<UnlinkedEvalCodeBlock>(
-        vm, executable, executable->source(), strictMode, JSParserScriptMode::Classic, codeGenerationMode, error, evalContextType, variablesUnderTDZ);
+    UnlinkedEvalCodeBlock* unlinkedEvalCode = generateUnlinkedCodeBlockForDirectEval(vm, executable, executable->source(), strictMode, JSParserScriptMode::Classic, codeGenerationMode, error, evalContextType, variablesUnderTDZ);
 
     if (globalObject->hasDebugger())
         globalObject->debugger()->sourceParsed(globalObject, executable->source().provider(), error.line(), error.message());

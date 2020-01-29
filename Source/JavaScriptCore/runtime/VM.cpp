@@ -88,6 +88,7 @@
 #include "JSArrayBufferConstructor.h"
 #include "JSArrayIterator.h"
 #include "JSAsyncFunction.h"
+#include "JSAsyncGenerator.h"
 #include "JSBigInt.h"
 #include "JSBoundFunction.h"
 #include "JSCInlines.h"

@@ -1,3 +1,28 @@
+2020-01-28  Robin Morisset  <rmorisset@apple.com>
+
+        Remove the include of BytecodeGenerator.h in CodeCache.h
+        https://bugs.webkit.org/show_bug.cgi?id=206851
+
+        Reviewed by Tadeu Zagallo.
+
+        This reduces the number of times that BytecodeStructs.h has to be parsed from 33 to 25 times, and unblocks https://bugs.webkit.org/show_bug.cgi?id=206720.
+
+        * runtime/CodeCache.cpp:
+        (JSC::generateUnlinkedCodeBlockForFunctions):
+        (JSC::generateUnlinkedCodeBlockImpl):
+        (JSC::generateUnlinkedCodeBlock):
+        (JSC::generateUnlinkedCodeBlockForDirectEval):
+        (JSC::recursivelyGenerateUnlinkedCodeBlockForProgram):
+        (JSC::recursivelyGenerateUnlinkedCodeBlockForModuleProgram):
+        * runtime/CodeCache.h:
+        * runtime/Completion.cpp:
+        (JSC::generateProgramBytecode):
+        (JSC::generateModuleBytecode):
+        * runtime/DirectEvalExecutable.cpp:
+        (JSC::DirectEvalExecutable::create):
+        * runtime/JSGlobalObject.cpp:
+        * runtime/VM.cpp:
+
 2020-01-28  Mark Lam  <mark.lam@apple.com>
 
         Some website needs more stack space.
