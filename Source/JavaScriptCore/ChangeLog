@@ -1,3 +1,23 @@
+2020-01-29  Justin Michaud  <justin_michaud@apple.com>
+
+        Fix small memory regression caused by r206365
+        https://bugs.webkit.org/show_bug.cgi?id=206557
+
+        Reviewed by Yusuke Suzuki.
+
+        Put StructureRareData::m_giveUpOnObjectToStringValueCache into m_objectToStringValue to prevent increasing StructureRareData's size. We make a special value for the pointer
+        objectToStringCacheGiveUpMarker() to signal that we should not cache the string value. As a result, adding m_transitionOffset does not increase the size of the class.
+
+        * runtime/Structure.h:
+        * runtime/StructureRareData.cpp:
+        (JSC::StructureRareData::StructureRareData):
+        (JSC::StructureRareData::visitChildren):
+        (JSC::StructureRareData::setObjectToStringValue):
+        (JSC::StructureRareData::clearObjectToStringValue):
+        * runtime/StructureRareData.h:
+        * runtime/StructureRareDataInlines.h:
+        (JSC::StructureRareData::objectToStringValue const):
+
 2020-01-28  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Give up IC when unknown structure transition happens
