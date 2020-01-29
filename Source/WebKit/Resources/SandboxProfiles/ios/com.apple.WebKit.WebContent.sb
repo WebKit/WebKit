@@ -171,8 +171,12 @@
            (global-name "com.apple.coremedia.volumecontroller.xpc"))
 
     (allow mach-lookup (with report) (with telemetry)
+        (global-name "com.apple.coremedia.cpeprotector.xpc")
         (global-name "com.apple.coremedia.endpoint.xpc")
-        (global-name "com.apple.coremedia.figcpecryptor"))
+        (global-name "com.apple.coremedia.figcontentkeysession.xpc")
+        (global-name "com.apple.coremedia.figcpecryptor")
+        (global-name "com.apple.coremedia.routingsessionmanager.xpc")
+        (global-name "com.apple.coremedia.sts"))
 
     (mobile-preferences-read
         "com.apple.avfoundation"
