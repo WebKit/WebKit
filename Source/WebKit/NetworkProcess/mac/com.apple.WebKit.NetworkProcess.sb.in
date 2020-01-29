@@ -174,9 +174,10 @@
     (sysctl-name
         "hw.availcpu"
         "hw.ncpu"
-        "hw.model"
+        "hw.model" ;; Needed for bundle loading
         "kern.maxfilesperproc"
         "kern.memorystatus_level"
+        "kern.osproductversion" ;; Needed by CFNetwork (HSTS store and others)
         "kern.tcsm_available" ;; Needed for IndexedDB support.
         "vm.footprint_suspend")
     (sysctl-name-regex #"^net.routetable")

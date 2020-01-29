@@ -237,8 +237,9 @@
     (allow user-preference-read (apply preference-domain domains)))
 
 (define-once (mobile-keybag-access)
-     (allow iokit-open (with report) (with telemetry)
-            (iokit-user-client-class "AppleKeyStoreUserClient")))
+    (allow iokit-open (with telemetry)
+        (iokit-user-client-class "AppleKeyStoreUserClient") ;; Needed by NSURLCache
+))
 
 (define-once (debugging-support)
         ;; <rdar://problem/8379706>
@@ -432,7 +433,6 @@
     (require-entitlement "com.apple.private.kernel.override-cpumon"))
 
 (allow sysctl-read (with report) (with telemetry)
-    (sysctl-name "hw.activecpu")
     (sysctl-name "hw.busfrequency")
     (sysctl-name "hw.busfrequency_compat")
     (sysctl-name "hw.byteorder")
@@ -457,10 +457,8 @@
     (sysctl-name "hw.l3settings")
     (sysctl-name "hw.logicalcpu")
     (sysctl-name "hw.logicalcpu_max")
-    (sysctl-name "hw.machine")
     (sysctl-name "hw.memsize")
     (sysctl-name "hw.pagesize")
-    (sysctl-name "hw.pagesize_compat")
     (sysctl-name "hw.physicalcpu")
     (sysctl-name "hw.physicalcpu_max")
     (sysctl-name "hw.physmem")
@@ -468,7 +466,6 @@
     (sysctl-name "hw.tbfrequency_compat")
     (sysctl-name "hw.usermem")
     (sysctl-name "hw.vectorunit")
-    (sysctl-name "kern.bootargs")
     (sysctl-name "kern.boottime")
     (sysctl-name "kern.clockrate")
     (sysctl-name "kern.development")
@@ -479,10 +476,8 @@
     (sysctl-name-prefix "kern.monotonicclock")
     (sysctl-name "kern.monotoniclock_offset_usecs")
     (sysctl-name "kern.ngroups")
-    (sysctl-name "kern.osproductversion")
     (sysctl-name "kern.osrelease")
     (sysctl-name "kern.ostype")
-    (sysctl-name "kern.osvariant_status")
     (sysctl-name "kern.osversion")
     (sysctl-name "kern.saved_ids")
     (sysctl-name "kern.secure_kernel")
@@ -556,12 +551,18 @@
 (deny sysctl*)
 (allow sysctl-read
     (sysctl-name
+        "hw.activecpu" ;; Needed by JSC engine.
         "hw.availcpu"
         "hw.ncpu"
-        "hw.model"
+        "hw.machine" ;; Needed by CFNetwork (CFURLProtocols)
+        "hw.model" ;; Needed for bundle loading
+        "hw.pagesize_compat" ;; Needed by bmalloc
+        "kern.bootargs"  ;; Needed for bundle loading
         "kern.maxfilesperproc"
         "kern.memorystatus_level"
-        "kern.tcsm_available" ;; Needed for IndexedDB support.
+        "kern.osproductversion" ;; Needed by CFNetwork (HSTS store and others)
+        "kern.osvariant_status" ;; Needed for bundle loading
+        "kern.tcsm_available" ;; Needed for IndexedDB support
         "vm.footprint_suspend"))
 
 ;; Access to client's cache folder & re-vending to CFNetwork.
