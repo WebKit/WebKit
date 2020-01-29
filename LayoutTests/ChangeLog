@@ -1,3 +1,18 @@
+2020-01-29  Megan Gardner  <megan_gardner@apple.com>
+
+        Fix compositing/video/poster.html test by making blending image opque to deal with flakey failures.
+        https://bugs.webkit.org/show_bug.cgi?id=206916
+        <rdar://problem/58840031>
+
+        Reviewed by Simon Fraser.
+
+        Test was failing due to flakey alpha issues. Alpha isn't what we are testing with this test, so use an opaque image instead.
+
+        * compositing/resources/simple_image_opaque.png: Added.
+        * compositing/video/poster-expected.html:
+        * compositing/video/poster.html:
+        * platform/ios-wk2/TestExpectations:
+
 2020-01-29  Sunny He  <sunny_he@apple.com>
 
         Nullptr crash when setting custom properties on detached style
