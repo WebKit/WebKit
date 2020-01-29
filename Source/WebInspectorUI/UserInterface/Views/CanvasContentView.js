@@ -45,7 +45,7 @@ WI.CanvasContentView = class CanvasContentView extends WI.ContentView
 
         this._refreshButtonNavigationItem = new WI.ButtonNavigationItem("refresh", WI.UIString("Refresh"), "Images/ReloadFull.svg", 13, 13);
         this._refreshButtonNavigationItem.visibilityPriority = WI.NavigationItem.VisibilityPriority.Low;
-        this._refreshButtonNavigationItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, this.refreshPreview, this);
+        this._refreshButtonNavigationItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, this.handleRefreshButtonClicked, this);
 
         this._showGridButtonNavigationItem = new WI.ActivateButtonNavigationItem("show-grid", WI.UIString("Show transparency grid"), WI.UIString("Hide transparency grid"), "Images/NavigationItemCheckers.svg", 13, 13);
         this._showGridButtonNavigationItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, this._showGridButtonClicked, this);
@@ -75,6 +75,29 @@ WI.CanvasContentView = class CanvasContentView extends WI.ContentView
 
             this.needsLayout();
         });
+    }
+
+    handleRefreshButtonClicked()
+    {
+        this.refreshPreview();
+    }
+
+    // DropZoneView delegate
+
+    dropZoneShouldAppearForDragEvent(dropZone, event)
+    {
+        return event.dataTransfer.types.includes("Files");
+    }
+
+    dropZoneHandleDrop(dropZone, event)
+    {
+        let files = event.dataTransfer.files;
+        if (files.length !== 1) {
+            InspectorFrontendHost.beep();
+            return;
+        }
+
+        WI.FileUtilities.readJSON(files, (result) => WI.canvasManager.processJSON(result));
     }
 
     // Protected
@@ -160,6 +183,13 @@ WI.CanvasContentView = class CanvasContentView extends WI.ContentView
 
         if (isCard)
             this._refreshPixelSize();
+
+        if (!isCard) {
+            let dropZoneView = new WI.DropZoneView(this);
+            dropZoneView.text = WI.UIString("Import Recording");
+            dropZoneView.targetElement = this.element;
+            this.addSubview(dropZoneView);
+        }
     }
 
     layout()
@@ -191,13 +221,6 @@ WI.CanvasContentView = class CanvasContentView extends WI.ContentView
         this._updateImageGrid();
     }
 
-    shown()
-    {
-        super.shown();
-
-        this.refreshPreview();
-    }
-
     attached()
     {
         super.attached();
@@ -223,6 +246,8 @@ WI.CanvasContentView = class CanvasContentView extends WI.ContentView
         });
 
         WI.settings.showImageGrid.addEventListener(WI.Setting.Event.Changed, this._updateImageGrid, this);
+
+        this.refreshPreview();
     }
 
     detached()
@@ -291,11 +316,6 @@ WI.CanvasContentView = class CanvasContentView extends WI.ContentView
 
     _populateCanvasElementButtonContextMenu(contextMenu)
     {
-        if (this._canvasNode)
-            WI.appendContextMenuItemsForDOMNode(contextMenu, this._canvasNode);
-
-        contextMenu.appendSeparator();
-
         contextMenu.appendItem(WI.UIString("Log Canvas Context"), () => {
             WI.RemoteObject.resolveCanvasContext(this.representedObject, WI.RuntimeManager.ConsoleObjectGroup, (remoteObject) => {
                 if (!remoteObject)
@@ -306,6 +326,11 @@ WI.CanvasContentView = class CanvasContentView extends WI.ContentView
                 WI.consoleLogViewController.appendImmediateExecutionWithResult(text, remoteObject, addSpecialUserLogClass);
             });
         });
+
+        contextMenu.appendSeparator();
+
+        if (this._canvasNode)
+            WI.appendContextMenuItemsForDOMNode(contextMenu, this._canvasNode);
     }
 
     _showGridButtonClicked()

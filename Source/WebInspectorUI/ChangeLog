@@ -1,3 +1,328 @@
+2020-01-29  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: add instrumentation for showing existing Web Animations
+        https://bugs.webkit.org/show_bug.cgi?id=205434
+        <rdar://problem/28328087>
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Controllers/AnimationManager.js: Added.
+        (WI.AnimationManager):
+        (WI.AnimationManager.prototype.get domains):
+        (WI.AnimationManager.prototype.activateExtraDomain):
+        (WI.AnimationManager.prototype.initializeTarget):
+        (WI.AnimationManager.prototype.get animationCollection):
+        (WI.AnimationManager.prototype.get supported):
+        (WI.AnimationManager.prototype.enable):
+        (WI.AnimationManager.prototype.disable):
+        (WI.AnimationManager.prototype.animationCreated):
+        (WI.AnimationManager.prototype.effectChanged):
+        (WI.AnimationManager.prototype.targetChanged):
+        (WI.AnimationManager.prototype.animationDestroyed):
+        (WI.AnimationManager.prototype._handleMainResourceDidChange):
+        * UserInterface/Protocol/AnimationObserver.js:
+        (WI.AnimationObserver.prototype.animationCreated): Added.
+        (WI.AnimationObserver.prototype.effectChanged): Added.
+        (WI.AnimationObserver.prototype.targetChanged): Added.
+        (WI.AnimationObserver.prototype.animationDestroyed): Added.
+
+        * UserInterface/Models/AnimationCollection.js: Added.
+        (WI.AnimationCollection):
+        (WI.AnimationCollection.prototype.get animationType):
+        (WI.AnimationCollection.prototype.get displayName):
+        (WI.AnimationCollection.prototype.objectIsRequiredType):
+        (WI.AnimationCollection.prototype.animationCollectionForType):
+        (WI.AnimationCollection.prototype.itemAdded):
+        (WI.AnimationCollection.prototype.itemRemoved):
+        (WI.AnimationCollection.prototype.itemsCleared):
+        Similar to `WI.ResourceCollection`, create a subclass of `WI.Collection` that maintains it's
+        own sub-`WI.AnimationCollection`s for each type of `WI.Animation.Type`.
+
+        * UserInterface/Models/Animation.js: Added.
+        (WI.Animation):
+        (WI.Animation.fromPayload):
+        (WI.Animation.displayNameForAnimationType):
+        (WI.Animation.displayNameForPlaybackDirection):
+        (WI.Animation.displayNameForFillMode):
+        (WI.Animation.resetUniqueDisplayNameNumbers):
+        (WI.Animation.prototype.get animationId):
+        (WI.Animation.prototype.get backtrace):
+        (WI.Animation.prototype.get animationType):
+        (WI.Animation.prototype.get startDelay):
+        (WI.Animation.prototype.get endDelay):
+        (WI.Animation.prototype.get iterationCount):
+        (WI.Animation.prototype.get iterationStart):
+        (WI.Animation.prototype.get iterationDuration):
+        (WI.Animation.prototype.get timingFunction):
+        (WI.Animation.prototype.get playbackDirection):
+        (WI.Animation.prototype.get fillMode):
+        (WI.Animation.prototype.get keyframes):
+        (WI.Animation.prototype.get displayName):
+        (WI.Animation.prototype.requestEffectTarget):
+        (WI.Animation.prototype.effectChanged):
+        (WI.Animation.prototype.targetChanged):
+        (WI.Animation.prototype._updateEffect):
+        * UserInterface/Protocol/RemoteObject.js:
+        (WI.RemoteObject.resolveAnimation): Added.
+
+        * UserInterface/Views/GraphicsTabContentView.js: Renamed from Source/WebInspectorUI/UserInterface/Views/CanvasTabContentView.js.
+        (WI.GraphicsTabContentView):
+        (WI.GraphicsTabContentView.tabInfo):
+        (WI.GraphicsTabContentView.isTabAllowed):
+        (WI.GraphicsTabContentView.prototype.get type):
+        (WI.GraphicsTabContentView.prototype.showRepresentedObject): Added.
+        (WI.GraphicsTabContentView.prototype.canShowRepresentedObject):
+        (WI.GraphicsTabContentView.prototype.closed):
+        (WI.GraphicsTabContentView.prototype.attached):
+        (WI.GraphicsTabContentView.prototype.detached):
+        (WI.GraphicsTabContentView.prototype.initialLayout): Added.
+        (WI.GraphicsTabContentView.prototype._handleOverviewTreeOutlineSelectionDidChange): Added.
+        * UserInterface/Views/GraphicsTabContentView.css: Renamed from Source/WebInspectorUI/UserInterface/Views/CanvasTabContentView.css.
+        Rename the Canvas Tab to Graphics Tab and display four sections:
+         - Canvases
+         - Web Animations
+         - CSS Animations
+         - CSS Transitions
+
+        * UserInterface/Views/CanvasSidebarPanel.js:
+        (WI.CanvasSidebarPanel.prototype.canShowRepresentedObject):
+        Only appear if a `WI.Canvas` or `WI.Recording` is selected.
+
+        * UserInterface/Views/GraphicsOverviewContentView.js: Added.
+        (WI.GraphicsOverviewContentView):
+        (WI.GraphicsOverviewContentView.prototype.get supplementalRepresentedObjects):
+        (WI.GraphicsOverviewContentView.prototype.get navigationItems):
+        (WI.GraphicsOverviewContentView.prototype.attached):
+        (WI.GraphicsOverviewContentView.prototype.detached):
+        (WI.GraphicsOverviewContentView.prototype.initialLayout):
+        (WI.GraphicsOverviewContentView.prototype.dropZoneShouldAppearForDragEvent):
+        (WI.GraphicsOverviewContentView.prototype.dropZoneHandleDrop):
+        (WI.GraphicsOverviewContentView.prototype._handleRefreshButtonClicked):
+        (WI.GraphicsOverviewContentView.prototype._handleShowGridButtonClicked):
+        (WI.GraphicsOverviewContentView.prototype._handleShowImageGridSettingChanged):
+        (WI.GraphicsOverviewContentView.prototype._handleImportButtonNavigationItemClicked):
+        (WI.GraphicsOverviewContentView.prototype._handleOverviewViewSelectedItemChanged):
+        (WI.GraphicsOverviewContentView.prototype._handleOverviewViewSupplementalRepresentedObjectsDidChange):
+        (WI.GraphicsOverviewContentView.prototype._handleClick):
+        * UserInterface/Views/GraphicsOverviewContentView.css: Added.
+        (.content-view.graphics-overview):
+        (.content-view.graphics-overview > section):
+        (.content-view.graphics-overview > section:not(:first-child)):
+        (.content-view.graphics-overview > section > .header):
+        (.content-view.graphics-overview > section:not(:first-of-type) > .header):
+        (.content-view.graphics-overview > section > .header > h1):
+        (.content-view.graphics-overview > section > .header > .navigation-bar):
+        (.content-view.graphics-overview > .content-view.canvas-overview):
+        (@media (prefers-color-scheme: light) .content-view.graphics-overview):
+        (@media (prefers-color-scheme: light) .content-view.graphics-overview > section > .header):
+        Add sticky headers for each of the sections described above.
+
+        * UserInterface/Views/AnimationCollectionContentView.js: Added.
+        (WI.AnimationCollectionContentView):
+        (WI.AnimationCollectionContentView.prototype.handleRefreshButtonClicked):
+        (WI.AnimationCollectionContentView.prototype.contentViewAdded):
+        (WI.AnimationCollectionContentView.prototype.contentViewRemoved):
+        (WI.AnimationCollectionContentView.prototype.detached):
+        (WI.AnimationCollectionContentView.prototype._handleContentViewMouseEnter):
+        (WI.AnimationCollectionContentView.prototype._handleContentViewMouseLeave):
+        * UserInterface/Views/AnimationCollectionContentView.css: Added.
+        (.content-view.animation-collection):
+
+        * UserInterface/Views/AnimationContentView.js: Added.
+        (WI.AnimationContentView):
+        (WI.AnimationContentView.get previewHeight):
+        (WI.AnimationContentView.prototype.handleRefreshButtonClicked):
+        (WI.AnimationContentView.prototype.initialLayout):
+        (WI.AnimationContentView.prototype.layout):
+        (WI.AnimationContentView.prototype.sizeDidChange):
+        (WI.AnimationContentView.prototype.attached):
+        (WI.AnimationContentView.prototype.detached):
+        (WI.AnimationContentView.prototype._refreshSubtitle):
+        (WI.AnimationContentView.prototype._refreshPreview.addTitle):
+        (WI.AnimationContentView.prototype._refreshPreview):
+        (WI.AnimationContentView.prototype._handleEffectChanged):
+        (WI.AnimationContentView.prototype._handleTargetChanged):
+        (WI.AnimationContentView.prototype._populateAnimationTargetButtonContextMenu):
+        * UserInterface/Views/AnimationContentView.css: Added.
+        (.content-view.animation):
+        (.content-view.animation.selected):
+        (.content-view.animation > header):
+        (.content-view.animation > header > .titles):
+        (.content-view.animation > header > .titles > .title):
+        (.content-view.animation > header > .titles > .subtitle):
+        (.content-view.animation > header > .titles > .subtitle:not(:empty)::before):
+        (.content-view.animation > header > .navigation-bar):
+        (.content-view.animation:hover > header > .navigation-bar):
+        (.content-view.animation > .preview):
+        (.content-view.animation > .preview > svg):
+        (body[dir=rtl] .content-view.animation > .preview > svg):
+        (.content-view.animation > .preview > svg rect):
+        (.content-view.animation > .preview > svg > .delay line):
+        (.content-view.animation > .preview > svg > .active path):
+        (.content-view.animation > .preview > svg > .active circle):
+        (.content-view.animation > .preview > svg > .active line):
+        (.content-view.animation > .preview > span):
+        (@media (prefers-color-scheme: dark) .content-view.animation > header > .titles > .title):
+        (@media (prefers-color-scheme: dark) .content-view.animation > header > .titles > .subtitle):
+        (@media (prefers-color-scheme: dark) .content-view.animation > .preview):
+        Visualize the start/end delay and keyframes of the given animation as a series of bezier
+        curves separated by markers.
+
+        * UserInterface/Views/AnimationDetailsSidebarPanel.js: Added.
+        (WI.AnimationDetailsSidebarPanel):
+        (WI.AnimationDetailsSidebarPanel.prototype.inspect):
+        (WI.AnimationDetailsSidebarPanel.prototype.get animation):
+        (WI.AnimationDetailsSidebarPanel.prototype.set animation):
+        (WI.AnimationDetailsSidebarPanel.prototype.initialLayout):
+        (WI.AnimationDetailsSidebarPanel.prototype.layout):
+        (WI.AnimationDetailsSidebarPanel.prototype._refreshIdentitySection):
+        (WI.AnimationDetailsSidebarPanel.prototype._refreshEffectSection):
+        (WI.AnimationDetailsSidebarPanel.prototype._refreshBacktraceSection):
+        (WI.AnimationDetailsSidebarPanel.prototype._handleAnimationEffectChanged):
+        (WI.AnimationDetailsSidebarPanel.prototype._handleAnimationTargetChanged):
+        (WI.AnimationDetailsSidebarPanel.prototype._handleDetailsSectionCollapsedStateChanged):
+        * UserInterface/Views/AnimationDetailsSidebarPanel.css: Added.
+        (.sidebar > .panel.details.animation > .content > .details-section.animation-keyframes .header > .subtitle):
+        (.sidebar > .panel.details.animation > .content > .details-section.animation-keyframes .details-section):
+        (.sidebar > .panel.details.animation > .content > .details-section.animation-keyframes .details-section .row.styles):
+        (.sidebar > .panel.details.animation > .content > .details-section.animation-keyframes .details-section .row.styles .CodeMirror):
+        (.sidebar > .panel.details.animation > .content > .details-section.animation-keyframes .details-section):
+        Show collected information about the selected animation, its effect, and its target.
+
+        * UserInterface/Controllers/CanvasManager.js:
+        (WI.CanvasManager):
+        (WI.CanvasManager.prototype.get canvasCollection): Added.
+        (WI.CanvasManager.prototype.disable):
+        (WI.CanvasManager.prototype.canvasAdded):
+        (WI.CanvasManager.prototype.canvasRemoved):
+        (WI.CanvasManager.prototype._saveRecordings): Added.
+        (WI.CanvasManager.prototype._mainResourceDidChange):
+        (WI.CanvasManager.prototype.get canvases): Deleted.
+        (WI.CanvasManager.prototype._removeCanvas): Deleted.
+        Rather than have the `WI.CanvasTabContentView` mainain the `WI.CanvasCollection` and have to
+        listen for events from the `WI.CanvasManager`, just have the `WI.CanvasManager` hold on to
+        it instead and provide a getter for it.
+
+        * UserInterface/Views/CanvasOverviewContentView.js:
+        (WI.CanvasOverviewContentView):
+        (WI.CanvasOverviewContentView.prototype.get navigationItems):
+        (WI.CanvasOverviewContentView.prototype.handleRefreshButtonClicked):
+        (WI.CanvasOverviewContentView.prototype.contentViewAdded):
+        (WI.CanvasOverviewContentView.prototype.contentViewRemoved):
+        (WI.CanvasOverviewContentView.prototype.attached):
+        (WI.CanvasOverviewContentView.prototype.detached):
+        (WI.CanvasOverviewContentView.prototype._addSavedRecording):
+        (WI.CanvasOverviewContentView.prototype.hidden): Deleted.
+        (WI.CanvasOverviewContentView.prototype.get _itemMargin): Deleted.
+        (WI.CanvasOverviewContentView.prototype._refreshPreviews): Deleted.
+        (WI.CanvasOverviewContentView.prototype._updateNavigationItems): Deleted.
+        (WI.CanvasOverviewContentView.prototype._showGridButtonClicked): Deleted.
+        (WI.CanvasOverviewContentView.prototype._updateShowImageGrid): Deleted.
+        * UserInterface/Views/CanvasOverviewContentView.css:
+        (.content-view.canvas-overview):
+        (.content-view.canvas-overview > .content-view.canvas):
+        (@media (prefers-color-scheme: dark) .content-view.canvas-overview): Deleted.
+
+        * UserInterface/Views/CanvasContentView.js:
+        (WI.CanvasContentView):
+        (WI.CanvasContentView.prototype.handleRefreshButtonClicked): Added.
+        (WI.CanvasContentView.prototype.dropZoneShouldAppearForDragEvent): Added.
+        (WI.CanvasContentView.prototype.dropZoneHandleDrop): Added.
+        (WI.CanvasContentView.prototype.initialLayout):
+        (WI.CanvasContentView.prototype.attached):
+        (WI.CanvasContentView.prototype._populateCanvasElementButtonContextMenu):
+        (WI.CanvasContentView.prototype.shown): Deleted.
+        Move the "Log Canvas Context" to be the first item in the canvas element button context menu.
+        Drive-by: add a `WI.DropZoneView` for when recording JSON files are dragged on top.
+
+        * UserInterface/Views/CanvasContentView.css:
+        Drive-by: drop `:not(.tab)` from all selectors since the Canvas Tab doesn't exist anymore.
+
+        * UserInterface/Views/CollectionContentView.js:
+        (WI.CollectionContentView):
+        (WI.CollectionContentView.prototype.get selectedItem): Added.
+        (WI.CollectionContentView.prototype.set selectedItem): Added.
+        (WI.CollectionContentView.prototype.addContentViewForItem):
+        (WI.CollectionContentView.prototype.removeContentViewForItem):
+        (WI.CollectionContentView.prototype.showContentPlaceholder):
+        (WI.CollectionContentView.prototype.initialLayout):
+        (WI.CollectionContentView.prototype._selectItem):
+        (WI.CollectionContentView.prototype._handleClick): Added.
+        (WI.CollectionContentView.prototype.setSelectedItem): Deleted.
+        * UserInterface/Views/CollectionContentView.css:
+        (.content-view.collection > .placeholder:not(.message-text-view)): Added.
+        (.content-view.collection .resource.image img): Deleted.
+        (.content-view.collection .resource.image img:hover): Deleted.
+        When selection is enabled, clicking outside of any of the content views should dismiss the
+        current selection. Clients should also be able to get the currently selected item.
+
+        * UserInterface/Views/DetailsSectionSimpleRow.js:
+        (WI.DetailsSectionSimpleRow.prototype.set value):
+        Ensure that `0` is considered as a valid value.
+
+        * UserInterface/Base/Main.js:
+        (WI.loaded):
+        (WI.contentLoaded):
+        (WI.tabContentViewClassForRepresentedObject):
+        * UserInterface/Views/ContentView.js:
+        (WI.ContentView.createFromRepresentedObject):
+        (WI.ContentView.isViewable):
+        Allow `WI.Animation` to be viewable.
+
+        * UserInterface/Views/Main.css:
+        (.navigation-item-help): Added.
+        (.navigation-item-help > .navigation-bar): Added.
+        (.navigation-item-help > .navigation-bar > .item): Added.
+        (.message-text-view .navigation-item-help): Deleted.
+        (.message-text-view .navigation-item-help .navigation-bar): Deleted.
+        (.message-text-view .navigation-item-help .navigation-bar > .item): Deleted.
+        Allow `WI.createNavigationItemHelp` to be used independently of `WI.createMessageTextView`.
+
+        * UserInterface/Controllers/DOMManager.js:
+        (WI.DOMManager.prototype.nodeForId):
+        * UserInterface/Controllers/TimelineManager.js:
+        (WI.TimelineManager.prototype.animationTrackingUpdated):
+        * UserInterface/Models/AuditTestCaseResult.js:
+        (WI.AuditTestCaseResult.async fromPayload):
+        Add a fallback so callers don't need to.
+
+        * UserInterface/Views/ResourceCollectionContentView.js:
+        (WI.ResourceCollectionContentView):
+        * UserInterface/Views/ResourceCollectionContentView.css:
+        (.content-view.resource-collection > .resource.image img): Added.
+        (.content-view.resource-collection > .resource.image img:hover): Added.
+        Drive-by: move these styles to the right file and make them more specific.
+
+        * UserInterface/Models/Canvas.js:
+        (WI.Canvas.displayNameForContextType):
+        * UserInterface/Models/Recording.js:
+        (WI.Recording.displayNameForRecordingType): Added.
+        Drive-by: fix localized strings.
+
+        * UserInterface/Views/RecordingContentView.css:
+        Drive-by: drop `:not(.tab)` from all selectors since the Recording Tab doesn't exist anymore.
+
+        * UserInterface/Main.html:
+        * UserInterface/Images/Graphics.svg: Renamed from Source/WebInspectorUI/UserInterface/Images/Canvas.svg.
+        * Localizations/en.lproj/localizedStrings.js:
+
+        * UserInterface/Test.html:
+        * UserInterface/Test/Test.js:
+        (WI.loaded):
+
+        * UserInterface/Test/TestHarness.js:
+        (TestHarness.prototype.expectEmpty): Added.
+        (TestHarness.prototype.expectNotEmpty): Added.
+        (TestHarness.prototype._expectationMessageFormat):
+        (TestHarness.prototype._expectedValueFormat):
+        Add utility function for checking whether the given value is empty:
+         - Array `length === 0`
+         - String `length === 0`
+         - Set `size === 0`
+         - Map `size === 0`
+         - Object `isEmptyObject`
+        Any other type will automatically fail, as non-objects can't be "empty" (e.g. `42`).
+
 2020-01-27  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: don't use `:matches(:before, :after)` after r255059

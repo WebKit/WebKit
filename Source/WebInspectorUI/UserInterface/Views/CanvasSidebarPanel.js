@@ -237,10 +237,8 @@ WI.CanvasSidebarPanel = class CanvasSidebarPanel extends WI.NavigationSidebarPan
 
     canShowRepresentedObject(representedObject)
     {
-        if (representedObject instanceof WI.CanvasCollection)
-            return false;
-
-        return super.canShowRepresentedObject(representedObject);
+        return representedObject instanceof WI.Canvas
+            || representedObject instanceof WI.Recording;
     }
 
     // Protected

@@ -1,3 +1,71 @@
+2020-01-29  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: add instrumentation for showing existing Web Animations
+        https://bugs.webkit.org/show_bug.cgi?id=205434
+        <rdar://problem/28328087>
+
+        Reviewed by Brian Burg.
+
+        * inspector/animation/effectChanged.html: Added.
+        * inspector/animation/effectChanged-expected.txt: Added.
+        * inspector/animation/lifecycle-css-animation.html: Added.
+        * inspector/animation/lifecycle-css-animation-expected.txt: Added.
+        * inspector/animation/lifecycle-css-transition.html: Added.
+        * inspector/animation/lifecycle-css-transition-expected.txt: Added.
+        * inspector/animation/lifecycle-web-animation.html: Added.
+        * inspector/animation/lifecycle-web-animation-expected.txt: Added.
+        * inspector/animation/requestEffectTarget.html: Added.
+        * inspector/animation/requestEffectTarget-expected.txt: Added.
+        * inspector/animation/resolveAnimation.html: Added.
+        * inspector/animation/resolveAnimation-expected.txt: Added.
+        * inspector/animation/targetChanged.html: Added.
+        * inspector/animation/targetChanged-expected.txt: Added.
+        * inspector/animation/resources/lifecycle-utilities.js: Added.
+        (createAnimation):
+        (destroyAnimations):
+        (InspectorTest.AnimationLifecycleUtilities.async awaitAnimationCreated):
+        (InspectorTest.AnimationLifecycleUtilities.async awaitAnimationDestroyed):
+        (InspectorTest.AnimationLifecycleUtilities.async createAnimation):
+        (InspectorTest.AnimationLifecycleUtilities.async destroyAnimations):
+
+        * inspector/canvas/create-context-webgpu.html:
+        * inspector/canvas/resources/create-context-utilities.js:
+        (destroyCanvases):
+        (awaitCanvasAdded):
+        (InspectorTest.CreateContextUtilities.initializeTestSuite):
+
+        * inspector/canvas/context-attributes.html:
+        * inspector/canvas/extensions.html:
+        * inspector/canvas/memory.html:
+        * inspector/canvas/requestClientNodes.html:
+        * inspector/canvas/requestContent-2d.html:
+        * inspector/canvas/requestContent-bitmaprenderer.html:
+        * inspector/canvas/requestContent-webgl.html:
+        * inspector/canvas/requestContent-webgl2.html:
+        * inspector/canvas/requestNode.html:
+        * inspector/canvas/resolveContext-2d.html:
+        * inspector/canvas/resolveContext-bitmaprenderer.html:
+        * inspector/canvas/resolveContext-webgl.html:
+        * inspector/canvas/resolveContext-webgl2.html:
+        * inspector/canvas/resolveContext-webgpu.html:
+
+        * inspector/canvas/recording.html:
+        * inspector/canvas/setRecordingAutoCaptureFrameCount.html:
+        * inspector/canvas/resources/recording-utilities.js:
+        (window.getCanvas):
+
+        * inspector/canvas/shaderProgram-add-remove-webgpu.html:
+        * inspector/canvas/updateShader-webgpu-sharedVertexFragment.html:
+        * inspector/canvas/resources/shaderProgram-utilities-webgpu.js:
+        * inspector/canvas/resources/shaderProgram-utilities-webgl.js:
+        (deleteContext):
+        (whenProgramAdded):
+        (window.initializeTestSuite):
+        (window.addParentCanvasRemovedTestCase):
+
+        * inspector/unit-tests/test-harness-expect-functions.html:
+        * inspector/unit-tests/test-harness-expect-functions-expected.txt:
+
 2020-01-29  Jason Lawrence  <lawrence.j@apple.com>
 
         REGRESSION: [ iOS ] scrollingcoordinator/ios/scroll-position-after-reattach.html is a flaky failure

@@ -125,12 +125,15 @@ localizedStrings["An error occurred trying to read the \u201C%s\u201D table."] =
 localizedStrings["An unexpected error %s occurred."] = "An unexpected error %s occurred.";
 localizedStrings["An unexpected error occurred."] = "An unexpected error occurred.";
 localizedStrings["Angle"] = "Angle";
+localizedStrings["Animation"] = "Animation";
+localizedStrings["Animation %d"] = "Animation %d";
 localizedStrings["Animation Frame %d Canceled"] = "Animation Frame %d Canceled";
 localizedStrings["Animation Frame %d Fired"] = "Animation Frame %d Fired";
 localizedStrings["Animation Frame %d Requested"] = "Animation Frame %d Requested";
 localizedStrings["Animation Frame Canceled"] = "Animation Frame Canceled";
 localizedStrings["Animation Frame Fired"] = "Animation Frame Fired";
 localizedStrings["Animation Frame Requested"] = "Animation Frame Requested";
+localizedStrings["Animation Target"] = "Animation Target";
 localizedStrings["Anonymous Script %d"] = "Anonymous Script %d";
 localizedStrings["Anonymous Scripts"] = "Anonymous Scripts";
 localizedStrings["Anonymous Style Sheet %d"] = "Anonymous Style Sheet %d";
@@ -201,9 +204,11 @@ localizedStrings["CPU"] = "CPU";
 localizedStrings["CPU Usage"] = "CPU Usage";
 localizedStrings["CSP Hash"] = "CSP Hash";
 localizedStrings["CSS Animation"] = "CSS Animation";
+localizedStrings["CSS Animations"] = "CSS Animations";
 localizedStrings["CSS Canvas"] = "CSS Canvas";
 localizedStrings["CSS Changes:"] = "CSS Changes:";
 localizedStrings["CSS Transition"] = "CSS Transition";
+localizedStrings["CSS Transitions"] = "CSS Transitions";
 localizedStrings["CSS canvas \u201C%s\u201D"] = "CSS canvas \u201C%s\u201D";
 localizedStrings["Cached"] = "Cached";
 localizedStrings["Call Frames Truncated"] = "Call Frames Truncated";
@@ -218,6 +223,8 @@ localizedStrings["Canceled"] = "Canceled";
 localizedStrings["Canvas"] = "Canvas";
 localizedStrings["Canvas %d"] = "Canvas %d";
 localizedStrings["Canvas %s"] = "Canvas %s";
+/* Bitmap Renderer is a type of rendering context associated with a <canvas> element */
+localizedStrings["Canvas Context Type Bitmap Renderer"] = "Bitmap Renderer";
 localizedStrings["Canvas Element"] = "Canvas Element";
 localizedStrings["Canvases"] = "Canvases";
 /* Capture screenshot of the selected DOM node */
@@ -587,6 +594,7 @@ localizedStrings["Global Code"] = "Global Code";
 localizedStrings["Global Lexical Environment"] = "Global Lexical Environment";
 localizedStrings["Global Variables"] = "Global Variables";
 localizedStrings["Grammar"] = "Grammar";
+localizedStrings["Graphics"] = "Graphics";
 localizedStrings["Group"] = "Group";
 localizedStrings["Group By Resource"] = "Group By Resource";
 localizedStrings["Group Media Requests"] = "Group Media Requests";
@@ -634,6 +642,7 @@ localizedStrings["Images"] = "Images";
 localizedStrings["Images:"] = "Images:";
 localizedStrings["Immediate Pause Requested"] = "Immediate Pause Requested";
 localizedStrings["Import"] = "Import";
+localizedStrings["Import Recording"] = "Import Recording";
 localizedStrings["Imported"] = "Imported";
 localizedStrings["Imported - %s"] = "Imported - %s";
 localizedStrings["Imported \u2014 %s"] = "Imported \u2014 %s";
@@ -698,6 +707,7 @@ localizedStrings["Local Storage"] = "Local Storage";
 localizedStrings["Local Variables"] = "Local Variables";
 localizedStrings["Located at %s"] = "Located at %s";
 localizedStrings["Location"] = "Location";
+localizedStrings["Log Animation"] = "Log Animation";
 localizedStrings["Log Canvas Context"] = "Log Canvas Context";
 /* Log (print) DOM element to Console */
 localizedStrings["Log Element"] = "Log Element";
@@ -771,6 +781,7 @@ localizedStrings["No Enabled Audits"] = "No Enabled Audits";
 localizedStrings["No Entries"] = "No Entries";
 localizedStrings["No Event Listeners"] = "No Event Listeners";
 localizedStrings["No Filter Results"] = "No Filter Results";
+localizedStrings["No Keyframes"] = "No Keyframes";
 localizedStrings["No Layer Available"] = "No Layer Available";
 localizedStrings["No Overrides"] = "No Overrides";
 localizedStrings["No Parameters"] = "No Parameters";
@@ -782,6 +793,7 @@ localizedStrings["No Response Headers"] = "No Response Headers";
 localizedStrings["No Result"] = "No Result";
 localizedStrings["No Results Found"] = "No Results Found";
 localizedStrings["No Search Results"] = "No Search Results";
+localizedStrings["No Styles"] = "No Styles";
 localizedStrings["No Watch Expressions"] = "No Watch Expressions";
 localizedStrings["No audit selected"] = "No audit selected";
 localizedStrings["No certificate security information."] = "No certificate security information.";
@@ -906,6 +918,8 @@ localizedStrings["Recording"] = "Recording";
 localizedStrings["Recording %d"] = "Recording %d";
 localizedStrings["Recording Error: %s"] = "Recording Error: %s";
 localizedStrings["Recording Timeline Data"] = "Recording Timeline Data";
+/* A type of canvas recording in the Graphics Tab */
+localizedStrings["Recording Type Canvas Bitmap Renderer"] = "Bitmap Renderer";
 localizedStrings["Recording Warning: %s"] = "Recording Warning: %s";
 localizedStrings["Recording stop requested \u2014 %s"] = "Recording stop requested \u2014 %s";
 localizedStrings["Recordings"] = "Recordings";
@@ -914,7 +928,6 @@ localizedStrings["Redirects"] = "Redirects";
 localizedStrings["Reference Issue"] = "Reference Issue";
 localizedStrings["Reflection"] = "Reflection";
 localizedStrings["Refresh"] = "Refresh";
-localizedStrings["Refresh all"] = "Refresh all";
 localizedStrings["Refresh watch expressions"] = "Refresh watch expressions";
 localizedStrings["Region announced in its entirety."] = "Region announced in its entirety.";
 localizedStrings["Regular Expression"] = "Regular Expression";
@@ -1024,6 +1037,8 @@ localizedStrings["Security Origin"] = "Security Origin";
 localizedStrings["Select baseline snapshot"] = "Select baseline snapshot";
 localizedStrings["Select comparison snapshot"] = "Select comparison snapshot";
 localizedStrings["Selected"] = "Selected";
+/* Appears as a label when a given web animation is logged to the Console */
+localizedStrings["Selected Animation"] = "Selected Animation";
 localizedStrings["Selected Canvas Context"] = "Selected Canvas Context";
 /* Selected DOM element */
 localizedStrings["Selected Element"] = "Selected Element";
@@ -1179,6 +1194,8 @@ localizedStrings["These tests serve as a demonstration of the functionality and 
 localizedStrings["This Resource came from a Local Resource Override"] = "This Resource came from a Local Resource Override";
 localizedStrings["This action causes no visual change"] = "This action causes no visual change";
 localizedStrings["This action moves the path outside the visible area"] = "This action moves the path outside the visible area";
+localizedStrings["This animation has no duration."] = "This animation has no duration.";
+localizedStrings["This animation has no keyframes."] = "This animation has no keyframes.";
 localizedStrings["This audit is not supported"] = "This audit is not supported";
 localizedStrings["This is an example of how custom result data is shown."] = "This is an example of how custom result data is shown.";
 localizedStrings["This is an example of how errors are shown. The error was thrown manually, but execution errors will appear in the same way."] = "This is an example of how errors are shown. The error was thrown manually, but execution errors will appear in the same way.";
@@ -1291,12 +1308,65 @@ localizedStrings["View Shader"] = "View Shader";
 localizedStrings["Viewport"] = "Viewport";
 localizedStrings["Visible"] = "Visible";
 localizedStrings["Waiting"] = "Waiting";
+localizedStrings["Waiting for animations created by CSS."] = "Waiting for animations created by CSS.";
+localizedStrings["Waiting for animations created by JavaScript."] = "Waiting for animations created by JavaScript.";
 localizedStrings["Waiting for canvas contexts created by script or CSS."] = "Waiting for canvas contexts created by script or CSS.";
 localizedStrings["Waiting for frames\u2026"] = "Waiting for frames\u2026";
+localizedStrings["Waiting for transitions created by CSS."] = "Waiting for transitions created by CSS.";
 localizedStrings["Warning: "] = "Warning: ";
 localizedStrings["Warnings"] = "Warnings";
 localizedStrings["Watch Expressions"] = "Watch Expressions";
 localizedStrings["Waterfall"] = "Waterfall";
+localizedStrings["Web Animation"] = "Web Animation";
+/* Section title for the JavaScript backtrace of the creation of a web animation */
+localizedStrings["Web Animation Backtrace Title"] = "Backtrace";
+/* Label for the cubic-bezier timing function of a web animation */
+localizedStrings["Web Animation Easing Label"] = "Easing";
+/* Section title for information about the effect of a web animation */
+localizedStrings["Web Animation Effect Title"] = "Effect";
+/* Label for the end delay time of a web animation  */
+localizedStrings["Web Animation End Delay Label"] = "End Delay";
+/* Tooltip for section of graph representing delay after a web animation finishes applying styles */
+localizedStrings["Web Animation End Delay Tooltip"] = "End Delay %s";
+/* Indicates that this web animation either does not apply any styles before it begins and after it ends or that it applies to both, depending on it's configuration */
+localizedStrings["Web Animation Fill Mode Auto"] = "Auto";
+/* Indicates that this web animation also applies styles before it begins */
+localizedStrings["Web Animation Fill Mode Backwards"] = "Backwards";
+/* Indicates that this web animation also applies styles before it begins and after it ends */
+localizedStrings["Web Animation Fill Mode Both"] = "Both";
+/* Indicates that this web animation also applies styles after it ends */
+localizedStrings["Web Animation Fill Mode Forwards"] = "Forwards";
+/* Label for the fill mode of a web animation */
+localizedStrings["Web Animation Fill Mode Label"] = "Fill";
+/* Indicates that this web animation does not apply any styles before it begins and after it ends */
+localizedStrings["Web Animation Fill Mode None"] = "None";
+/* Section title for information about a web animation */
+localizedStrings["Web Animation Identity Title"] = "Identity";
+/* Label for the number of iterations of a web animation */
+localizedStrings["Web Animation Iteration Count Label"] = "Iterations";
+/* Label for the time duration of each iteration of a web animation */
+localizedStrings["Web Animation Iteration Duration Label"] = "Duration";
+/* Label for the number describing which iteration a web animation should start at */
+localizedStrings["Web Animation Iteration Start Label"] = "Start";
+/* Section title for information about the keyframes of a web animation */
+localizedStrings["Web Animation Keyframes Title"] = "Keyframes";
+/* Indicates that the playback direction of this web animation alternates between normal and reversed on each iteration */
+localizedStrings["Web Animation Playback Direction Alternate"] = "Alternate";
+/* Indicates that the playback direction of this web animation alternates between reversed and normal on each iteration */
+localizedStrings["Web Animation Playback Direction Alternate Reverse"] = "Alternate Reverse";
+/* Label for the playback direction of a web animation */
+localizedStrings["Web Animation Playback Direction Label"] = "Direction";
+/* Indicates that the playback direction of this web animation is normal (e.g. forwards) */
+localizedStrings["Web Animation Playback Direction Normal"] = "Normal";
+/* Indicates that the playback direction of this web animation is reversed (e.g. backwards) */
+localizedStrings["Web Animation Playback Direction Reverse"] = "Reverse";
+/* Label for the start delay time of a web animation  */
+localizedStrings["Web Animation Start Delay Label"] = "Start Delay";
+/* Tooltip for section of graph representing delay before a web animation begins applying styles */
+localizedStrings["Web Animation Start Delay Tooltip"] = "Start Delay %s";
+/* Label for the current DOM node target of a web animation */
+localizedStrings["Web Animation Target Label"] = "Target";
+localizedStrings["Web Animations"] = "Web Animations";
 localizedStrings["Web Inspector"] = "Web Inspector";
 localizedStrings["Web Inspector Reference"] = "Web Inspector Reference";
 localizedStrings["Web Page"] = "Web Page";

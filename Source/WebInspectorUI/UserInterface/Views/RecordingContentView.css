@@ -23,18 +23,18 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-.content-view:not(.tab).recording {
+.content-view.recording {
     display: flex;
     flex-direction: column;
     padding: 10px;
     background-color: hsl(0, 0%, 90%);
 }
 
-.content-view:not(.tab).recording > header {
+.content-view.recording > header {
     margin-bottom: 10px;
 }
 
-.content-view:not(.tab).recording > header > .slider-container {
+.content-view.recording > header > .slider-container {
     display: flex;
     flex-wrap: wrap;
     padding: 4px 0;
@@ -43,31 +43,31 @@
     border-radius: 4px;
 }
 
-.content-view:not(.tab).recording > header > .slider-container > * {
+.content-view.recording > header > .slider-container > * {
     margin: 4px 8px;
 }
 
-.content-view:not(.tab).recording > header > .slider-container > .slider-value {
+.content-view.recording > header > .slider-container > .slider-value {
     font-family: Menlo, monospace;
     font-family: 11px;
 }
 
-.content-view:not(.tab).recording > header > .slider-container > input[type=range] {
+.content-view.recording > header > .slider-container > input[type=range] {
     flex: 1;
     width: 100%;
 }
 
-.content-view:not(.tab).recording > header > .slider-container > input[type=range]::-webkit-slider-runnable-track {
+.content-view.recording > header > .slider-container > input[type=range]::-webkit-slider-runnable-track {
     height: 2px;
     background-color: var(--border-color);
     border-radius: 1px;
 }
 
-.content-view:not(.tab).recording > header > .slider-container > input[type=range]::-webkit-slider-thumb {
+.content-view.recording > header > .slider-container > input[type=range]::-webkit-slider-thumb {
     margin-top: -6px;
 }
 
-.content-view:not(.tab).recording > .preview-container {
+.content-view.recording > .preview-container {
     display: flex;
     flex: 1;
     justify-content: center;
@@ -77,27 +77,27 @@
     height: -webkit-fill-available;
 }
 
-.content-view:not(.tab).recording :matches(img, canvas) {
+.content-view.recording :matches(img, canvas) {
     position: absolute;
     max-width: 100%;
     max-height: 100%;
 }
 
-.content-view:not(.tab).recording canvas.path {
+.content-view.recording canvas.path {
     z-index: 10;
 }
 
 @media (prefers-color-scheme: dark) {
-    .content-view:not(.tab).recording {
+    .content-view.recording {
         background-color: unset;
     }
 
-    .content-view:not(.tab).recording > header > .slider-container {
+    .content-view.recording > header > .slider-container {
         background-color: unset;
         border-color: var(--border-color-secondary);
     }
 
-    .content-view:not(.tab).recording > header > .slider-container > input[type=range] {
+    .content-view.recording > header > .slider-container > input[type=range] {
         background: none;
     }
 }

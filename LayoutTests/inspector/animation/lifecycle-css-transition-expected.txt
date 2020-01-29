@@ -1,0 +1,33 @@
+Tests for the Animation.animationCreated and Animation.animationDestroyed events.
+
+
+== Running test suite: Animation.Lifecycle
+-- Running test case: Animation.Lifecycle.CSSTransition
+PASS: There should not be any animations.
+PASS: Animation created.
+PASS: Animation type should be CSS Transition.
+startDelay: 100
+iterationCount: 1
+iterationDuration: 400
+timingFunction: "cubic-bezier(0.1, 0.2, 0.3, 0.4)"
+playbackDirection: "normal"
+fillMode: "backwards"
+keyframes:
+[
+  {
+    "offset": 0,
+    "easing": "cubic-bezier(0.1, 0.2, 0.3, 0.4)",
+    "style": "opacity: 0;"
+  },
+  {
+    "offset": 1,
+    "easing": "cubic-bezier(0.1, 0.2, 0.3, 0.4)",
+    "style": "opacity: 1;"
+  }
+]
+
+Destroying animations...
+
+PASS: Animation destroyed.
+PASS: Removed animation has expected ID.
+

@@ -123,6 +123,7 @@ WI.loaded = function()
         WI.workerManager = new WI.WorkerManager,
         WI.domDebuggerManager = new WI.DOMDebuggerManager,
         WI.canvasManager = new WI.CanvasManager,
+        WI.animationManager = new WI.AnimationManager,
     ];
 
     // Register for events.
@@ -147,13 +148,13 @@ WI.loaded = function()
         WI.SourcesTabContentView.Type,
         WI.TimelineTabContentView.Type,
         WI.StorageTabContentView.Type,
-        WI.CanvasTabContentView.Type,
+        WI.GraphicsTabContentView.Type,
         WI.AuditTabContentView.Type,
         WI.ConsoleTabContentView.Type,
     ]);
     WI._selectedTabIndexSetting = new WI.Setting("selected-tab-index", 0);
 
-    // Replace the Debugger/Resources Tab with the Sources Tab.
+    // FIXME: <https://webkit.org/b/205826> Web Inspector: remove legacy code for replacing the Resources Tab and Debugger Tab with the Sources Tab
     let debuggerIndex = WI._openTabsSetting.value.indexOf("debugger");
     let resourcesIndex = WI._openTabsSetting.value.indexOf("resources");
     if (debuggerIndex >= 0 || resourcesIndex >= 0) {
@@ -171,6 +172,13 @@ WI.loaded = function()
 
         if (WI._selectedTabIndexSetting.value === debuggerIndex || WI._selectedTabIndexSetting.value === resourcesIndex)
             WI._selectedTabIndexSetting.value = sourcesIndex;
+    }
+
+    // FIXME: <https://webkit.org/b/205827> Web Inspector: remove legacy code for replacing the Canvas Tab with the Graphics Tab
+    let canvasIndex = WI._openTabsSetting.value.indexOf("canvas");
+    if (canvasIndex >= 0) {
+        WI._openTabsSetting.value.splice(canvasIndex, 1, WI.GraphicsTabContentView.Type);
+        WI._openTabsSetting.save();
     }
 
     // State.
@@ -465,7 +473,7 @@ WI.contentLoaded = function()
         WI.SourcesTabContentView,
         WI.TimelineTabContentView,
         WI.StorageTabContentView,
-        WI.CanvasTabContentView,
+        WI.GraphicsTabContentView,
         WI.LayersTabContentView,
         WI.AuditTabContentView,
         WI.ConsoleTabContentView,
@@ -1223,11 +1231,8 @@ WI.tabContentViewClassForRepresentedObject = function(representedObject)
         || representedObject instanceof WI.AuditTestCaseResult || representedObject instanceof WI.AuditTestGroupResult)
         return WI.AuditTabContentView;
 
-    if (representedObject instanceof WI.CanvasCollection)
-        return WI.CanvasTabContentView;
-
-    if (representedObject instanceof WI.Recording)
-        return WI.CanvasTabContentView;
+    if (representedObject instanceof WI.Canvas || representedObject instanceof WI.ShaderProgram || representedObject instanceof WI.Recording || representedObject instanceof WI.Animation)
+        return WI.GraphicsTabContentView;
 
     return null;
 };

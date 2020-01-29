@@ -323,7 +323,7 @@ WI.DOMManager = class DOMManager extends WI.Object
 
     nodeForId(nodeId)
     {
-        return this._idToDOMNode[nodeId];
+        return this._idToDOMNode[nodeId] || null;
     }
 
     _documentUpdated()

@@ -1,0 +1,18 @@
+Tests for the Animation.targetChanged event.
+
+
+== Running test suite: Animation.targetChanged
+-- Running test case: Animation.targetChanged.NewTarget
+PASS: Animation should have a target.
+Changing target...
+
+PASS: Animation should have a target.
+PASS: Animation effect should have changed.
+
+-- Running test case: Animation.targetChanged.NullTarget
+PASS: Animation should have a target.
+Changing target...
+
+PASS: Animation should not have a target.
+PASS: Animation effect should have changed.
+

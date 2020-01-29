@@ -54,6 +54,74 @@ FAIL: expectFalse([])
     Expected: falsey
     Actual: []
 
+-- Running test case: InspectorTest.expectEmpty
+Expected to PASS
+PASS: expectEmpty(null)
+PASS: expectEmpty("")
+PASS: expectEmpty({})
+PASS: expectEmpty([])
+PASS: expectEmpty({})
+PASS: expectEmpty({})
+Expected to FAIL
+FAIL: expectEmpty("test")
+    Expected: empty
+    Actual: "test"
+FAIL: expectEmpty({"test":1})
+    Expected: empty
+    Actual: {"test":1}
+FAIL: expectEmpty("test")
+    Expected: empty
+    Actual: "test"
+FAIL: expectEmpty({})
+    Expected: empty
+    Actual: {}
+FAIL: expectEmpty({})
+    Expected: empty
+    Actual: {}
+FAIL: expectEmpty should not be called with a non-object:
+    Actual: true
+FAIL: expectEmpty should not be called with a non-object:
+    Actual: false
+FAIL: expectEmpty should not be called with a non-object:
+    Actual: 1
+FAIL: expectEmpty should not be called with a non-object:
+    Actual: undefined
+
+-- Running test case: InspectorTest.expectNotEmpty
+Expected to PASS
+PASS: expectNotEmpty("test")
+PASS: expectNotEmpty({"test":1})
+PASS: expectNotEmpty("test")
+PASS: expectNotEmpty({})
+PASS: expectNotEmpty({})
+Expected to FAIL
+FAIL: expectNotEmpty(null)
+    Expected: not empty
+    Actual: null
+FAIL: expectNotEmpty("")
+    Expected: not empty
+    Actual: ""
+FAIL: expectNotEmpty({})
+    Expected: not empty
+    Actual: {}
+FAIL: expectNotEmpty([])
+    Expected: not empty
+    Actual: []
+FAIL: expectNotEmpty({})
+    Expected: not empty
+    Actual: {}
+FAIL: expectNotEmpty({})
+    Expected: not empty
+    Actual: {}
+FAIL: expectNotEmpty should not be called with a non-object:
+    Actual: true
+FAIL: expectNotEmpty should not be called with a non-object:
+    Actual: false
+FAIL: expectNotEmpty should not be called with a non-object:
+    Actual: 1
+FAIL: expectNotEmpty should not be called with a non-object:
+    Actual: undefined
+
 -- Running test case: InspectorTest.expectNull
 Expected to PASS
 PASS: expectNull(null)

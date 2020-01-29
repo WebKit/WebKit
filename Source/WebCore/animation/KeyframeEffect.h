@@ -99,6 +99,8 @@ public:
         CompositeOperationOrAuto composite { CompositeOperationOrAuto::Auto };
     };
 
+    const Vector<ParsedKeyframe>& parsedKeyframes() const { return m_parsedKeyframes; }
+
     Element* target() const { return m_target.get(); }
     void setTarget(RefPtr<Element>&&);
 
@@ -136,7 +138,7 @@ public:
     bool colorFilterFunctionListsMatch() const override { return m_colorFilterFunctionListsMatch; }
 
     void computeDeclarativeAnimationBlendingKeyframes(const RenderStyle* oldStyle, const RenderStyle& newStyle);
-    bool hasBlendingKeyframes() const { return m_blendingKeyframes.size(); }
+    const KeyframeList& blendingKeyframes() const { return m_blendingKeyframes; }
     const HashSet<CSSPropertyID>& animatedProperties() const { return m_blendingKeyframes.properties(); }
 
     bool computeExtentOfTransformAnimation(LayoutRect&) const;

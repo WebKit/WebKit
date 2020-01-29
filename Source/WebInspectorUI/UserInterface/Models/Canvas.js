@@ -97,7 +97,7 @@ WI.Canvas = class Canvas extends WI.Object
         case WI.Canvas.ContextType.Canvas2D:
             return WI.UIString("2D");
         case WI.Canvas.ContextType.BitmapRenderer:
-            return WI.unlocalizedString("Bitmap Renderer");
+            return WI.UIString("Bitmap Renderer", "Canvas Context Type Bitmap Renderer", "Bitmap Renderer is a type of rendering context associated with a <canvas> element");
         case WI.Canvas.ContextType.WebGL:
             return WI.unlocalizedString("WebGL");
         case WI.Canvas.ContextType.WebGL2:
@@ -106,9 +106,10 @@ WI.Canvas = class Canvas extends WI.Object
             return WI.unlocalizedString("Web GPU");
         case WI.Canvas.ContextType.WebMetal:
             return WI.unlocalizedString("WebMetal");
-        default:
-            console.error("Invalid canvas context type", contextType);
         }
+
+        console.assert(false, "Unknown canvas context type", contextType);
+        return null;
     }
 
     static resetUniqueDisplayNameNumbers()

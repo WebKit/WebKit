@@ -86,7 +86,7 @@ TestPage.registerInitializer(() => {
     }
 
     window.getCanvas = function(type) {
-        let canvases = WI.canvasManager.canvases.filter((canvas) => canvas.contextType === type);
+        let canvases = Array.from(WI.canvasManager.canvasCollection).filter((canvas) => canvas.contextType === type);
         InspectorTest.assert(canvases.length === 1, `There should only be one canvas with type "${type}".`);
         if (canvases.length !== 1)
             return null;
