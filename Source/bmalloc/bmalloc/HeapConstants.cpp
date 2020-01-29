@@ -24,6 +24,7 @@
  */
 
 #include "HeapConstants.h"
+#include <algorithm>
 
 namespace bmalloc {
 
@@ -39,36 +40,71 @@ HeapConstants::HeapConstants(std::lock_guard<Mutex>&)
     initializePageMetadata();
 }
 
-void HeapConstants::initializeLineMetadata()
+template <class C>
+constexpr void fillLineMetadata(C& container, size_t VMPageSize)
 {
-    size_t sizeClassCount = bmalloc::sizeClass(smallLineSize);
-    m_smallLineMetadata.grow(sizeClassCount * smallLineCount());
+    constexpr size_t clsCount = sizeClass(smallLineSize);
+    size_t lineCount = smallLineCount(VMPageSize);
 
-    for (size_t sizeClass = 0; sizeClass < sizeClassCount; ++sizeClass) {
-        size_t size = objectSize(sizeClass);
-        LineMetadata* pageMetadata = &m_smallLineMetadata[sizeClass * smallLineCount()];
-
+    for (size_t cls = 0; cls < clsCount; ++cls) {
+        size_t size = objectSize(cls);
+        size_t baseIndex = cls * lineCount;
         size_t object = 0;
-        size_t line = 0;
-        while (object < m_vmPageSizePhysical) {
-            line = object / smallLineSize;
+        while (object < VMPageSize) {
+            size_t line = object / smallLineSize;
             size_t leftover = object % smallLineSize;
 
-            size_t objectCount;
-            size_t remainder;
-            divideRoundingUp(smallLineSize - leftover, size, objectCount, remainder);
-
-            pageMetadata[line] = { static_cast<unsigned char>(leftover), static_cast<unsigned char>(objectCount) };
+            auto objectCount = divideRoundingUp(smallLineSize - leftover, size);
 
             object += objectCount * size;
-        }
 
-        // Don't allow the last object in a page to escape the page.
-        if (object > m_vmPageSizePhysical) {
-            BASSERT(pageMetadata[line].objectCount);
-            --pageMetadata[line].objectCount;
+            // Don't allow the last object in a page to escape the page.
+            if (object > VMPageSize) {
+                BASSERT(objectCount);
+                --objectCount;
+            }
+
+            container[baseIndex + line] = { static_cast<unsigned char>(leftover), static_cast<unsigned char>(objectCount) };
         }
     }
+}
+
+template <size_t VMPageSize>
+constexpr auto computeLineMetadata()
+{
+    std::array<LineMetadata, sizeClass(smallLineSize) * smallLineCount(VMPageSize)> result;
+    fillLineMetadata(result, VMPageSize);
+    return result;
+}
+
+#if BUSE(PRECOMPUTED_CONSTANTS_VMPAGE4K)
+constexpr auto kPrecalcuratedLineMetadata4k = computeLineMetadata<4 * kB>();
+#endif
+
+#if BUSE(PRECOMPUTED_CONSTANTS_VMPAGE16K)
+constexpr auto kPrecalcuratedLineMetadata16k = computeLineMetadata<16 * kB>();
+#endif
+
+void HeapConstants::initializeLineMetadata()
+{
+#if BUSE(PRECOMPUTED_CONSTANTS_VMPAGE4K)
+    if (m_vmPageSizePhysical == 4 * kB) {
+        m_smallLineMetadata = &kPrecalcuratedLineMetadata4k[0];
+        return;
+    }
+#endif
+
+#if BUSE(PRECOMPUTED_CONSTANTS_VMPAGE16K)
+    if (m_vmPageSizePhysical == 16 * kB) {
+        m_smallLineMetadata = &kPrecalcuratedLineMetadata16k[0];
+        return;
+    }
+#endif
+
+    size_t sizeClassCount = bmalloc::sizeClass(smallLineSize);
+    m_smallLineMetadataStorage.grow(sizeClassCount * smallLineCount());
+    fillLineMetadata(m_smallLineMetadataStorage, m_vmPageSizePhysical);
+    m_smallLineMetadata = &m_smallLineMetadataStorage[0];
 }
 
 void HeapConstants::initializePageMetadata()

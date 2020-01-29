@@ -129,7 +129,7 @@ template<typename T> inline void divideRoundingUp(T numerator, T denominator, T&
         quotient += 1;
 }
 
-template<typename T> inline T divideRoundingUp(T numerator, T denominator)
+template<typename T> constexpr T divideRoundingUp(T numerator, T denominator)
 {
     return (numerator + denominator - 1) / denominator;
 }

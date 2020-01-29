@@ -80,7 +80,7 @@ constexpr size_t maskSizeClass(size_t size)
     return mask((size - 1) / alignment, maskSizeClassCount - 1);
 }
 
-inline size_t maskObjectSize(size_t maskSizeClass)
+constexpr size_t maskObjectSize(size_t maskSizeClass)
 {
     return (maskSizeClass + 1) * alignment;
 }
@@ -89,14 +89,14 @@ static constexpr size_t logAlignmentMin = maskSizeClassMax / logWasteFactor;
 
 static constexpr size_t logSizeClassCount = (log2(smallMax) - log2(maskSizeClassMax)) * logWasteFactor;
 
-inline size_t logSizeClass(size_t size)
+constexpr size_t logSizeClass(size_t size)
 {
     size_t base = log2(size - 1) - log2(maskSizeClassMax);
     size_t offset = (size - 1 - (maskSizeClassMax << base));
     return base * logWasteFactor + offset / (logAlignmentMin << base);
 }
 
-inline size_t logObjectSize(size_t logSizeClass)
+constexpr size_t logObjectSize(size_t logSizeClass)
 {
     size_t base = logSizeClass / logWasteFactor;
     size_t offset = logSizeClass % logWasteFactor;
@@ -105,24 +105,30 @@ inline size_t logObjectSize(size_t logSizeClass)
 
 static constexpr size_t sizeClassCount = maskSizeClassCount + logSizeClassCount;
 
-inline size_t sizeClass(size_t size)
+constexpr size_t sizeClass(size_t size)
 {
     if (size <= maskSizeClassMax)
         return maskSizeClass(size);
     return maskSizeClassCount + logSizeClass(size);
 }
 
-inline size_t objectSize(size_t sizeClass)
+constexpr size_t objectSize(size_t sizeClass)
 {
     if (sizeClass < maskSizeClassCount)
         return maskObjectSize(sizeClass);
     return logObjectSize(sizeClass - maskSizeClassCount);
 }
 
-inline size_t pageSize(size_t pageClass)
+constexpr size_t pageSize(size_t pageClass)
 {
     return (pageClass + 1) * smallPageSize;
 }
+
+constexpr size_t smallLineCount(size_t vmPageSize)
+{
+    return vmPageSize / smallLineSize;
+}
+
 } // namespace Sizes
 
 using namespace Sizes;

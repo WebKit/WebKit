@@ -41,21 +41,22 @@ public:
     ~HeapConstants() = delete;
 
     inline size_t pageClass(size_t sizeClass) const { return m_pageClasses[sizeClass]; }
-    inline size_t smallLineCount() const { return m_vmPageSizePhysical / smallLineSize; }
-    inline unsigned char startOffset(size_t sizeClass, size_t lineNumber) { return lineMetadata(sizeClass, lineNumber).startOffset; }
-    inline unsigned char objectCount(size_t sizeClass, size_t lineNumber) { return lineMetadata(sizeClass, lineNumber).objectCount; }
+    inline size_t smallLineCount() const { return bmalloc::smallLineCount(m_vmPageSizePhysical); }
+    inline unsigned char startOffset(size_t sizeClass, size_t lineNumber) const { return lineMetadata(sizeClass, lineNumber).startOffset; }
+    inline unsigned char objectCount(size_t sizeClass, size_t lineNumber) const { return lineMetadata(sizeClass, lineNumber).objectCount; }
 
 private:
     void initializeLineMetadata();
     void initializePageMetadata();
 
-    inline LineMetadata& lineMetadata(size_t sizeClass, size_t lineNumber)
+    inline const LineMetadata& lineMetadata(size_t sizeClass, size_t lineNumber) const
     {
         return m_smallLineMetadata[sizeClass * smallLineCount() + lineNumber];
     }
 
     size_t m_vmPageSizePhysical;
-    Vector<LineMetadata> m_smallLineMetadata;
+    const LineMetadata* m_smallLineMetadata { };
+    Vector<LineMetadata> m_smallLineMetadataStorage;
     std::array<size_t, sizeClassCount> m_pageClasses;
 };
 DECLARE_STATIC_PER_PROCESS_STORAGE(HeapConstants);
