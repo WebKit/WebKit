@@ -28,39 +28,38 @@
 
 namespace WebCore {
 
-struct TypeExtensionPair {
-    ASCIILiteral type;
-    ASCIILiteral extension;
-};
-
-const TypeExtensionPair commonMediaTypes[] = {
-    { "bmp"_s, "image/bmp"_s },
-    { "css"_s, "text/css"_s },
-    { "gif"_s, "image/gif"_s },
-    { "html"_s, "text/html"_s },
-    { "htm"_s, "text/html"_s },
-    { "ico"_s, "image/x-icon"_s },
-    { "jpeg"_s, "image/jpeg"_s },
-    { "jpg"_s, "image/jpeg"_s },
-    { "js"_s, "application/x-javascript"_s },
-    { "pdf"_s, "application/pdf"_s },
-    { "png"_s, "image/png"_s },
-    { "rss"_s, "application/rss+xml"_s },
-    { "svg"_s, "image/svg+xml"_s },
-    { "swf"_s, "application/x-shockwave-flash"_s },
-    { "text"_s, "text/plain"_s },
-    { "txt"_s, "text/plain"_s },
-    { "xbm"_s, "image/x-xbitmap"_s },
-    { "xml"_s, "text/xml"_s },
-    { "xsl"_s, "text/xsl"_s },
-    { "xhtml"_s, "application/xhtml+xml"_s },
-    { "wml"_s, "text/vnd.wap.wml"_s },
-    { "wmlc"_s, "application/vnd.wap.wmlc"_s },
-};
+static const std::initializer_list<TypeExtensionPair>& platformMediaTypes()
+{
+    static std::initializer_list<TypeExtensionPair> platformMediaTypes = {
+        { "image/bmp"_s, "bmp"_s },
+        { "text/css"_s, "css"_s },
+        { "image/gif"_s, "gif"_s },
+        { "text/html"_s, "htm"_s },
+        { "text/html"_s, "html"_s },
+        { "image/x-icon"_s, "ico"_s },
+        { "image/jpeg"_s, "jpeg"_s },
+        { "image/jpeg"_s, "jpg"_s },
+        { "application/x-javascript"_s, "js"_s },
+        { "application/pdf"_s, "pdf"_s },
+        { "image/png"_s, "png"_s },
+        { "application/rss+xml"_s, "rss"_s },
+        { "image/svg+xml"_s, "svg"_s },
+        { "application/x-shockwave-flash"_s, "swf"_s },
+        { "text/plain"_s, "text"_s },
+        { "text/plain"_s, "txt"_s },
+        { "text/vnd.wap.wml"_s, "wml"_s },
+        { "application/vnd.wap.wmlc"_s, "wmlc"_s },
+        { "image/x-xbitmap"_s, "xbm"_s },
+        { "application/xhtml+xml"_s, "xhtml"_s },
+        { "text/xml"_s, "xml"_s },
+        { "text/xsl"_s, "xsl"_s },
+    };
+    return platformMediaTypes;
+}
 
 String MIMETypeRegistry::getMIMETypeForExtension(const String& extension)
 {
-    for (auto& entry : commonMediaTypes) {
+    for (auto& entry : platformMediaTypes()) {
         if (equalIgnoringASCIICase(extension, entry.extension.characters()))
             return entry.type;
     }
@@ -74,7 +73,7 @@ bool MIMETypeRegistry::isApplicationPluginMIMEType(const String&)
 
 String MIMETypeRegistry::getPreferredExtensionForMIMEType(const String& mimeType)
 {
-    for (auto& entry : commonMediaTypes) {
+    for (auto& entry : platformMediaTypes()) {
         if (equalIgnoringASCIICase(mimeType, entry.type.characters()))
             return entry.extension;
     }
