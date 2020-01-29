@@ -1,3 +1,29 @@
+2020-01-28  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Give up IC when unknown structure transition happens
+        https://bugs.webkit.org/show_bug.cgi?id=206846
+
+        Reviewed by Mark Lam.
+
+        * stress/ensure-crash.js: Added.
+        * stress/incorrect-put-could-generate-invalid-ic-but-still-not-causing-bad-behavior-bad-transition-debug.js: Added.
+        (shouldBe):
+        (putter):
+        (not_string.toString):
+        * stress/incorrect-put-could-generate-invalid-ic-but-still-not-causing-bad-behavior-bad-transition.js: Added.
+        (shouldBe):
+        (putter):
+        (not_string.toString):
+        * stress/incorrect-put-could-generate-invalid-ic-but-still-not-causing-bad-behavior.js: Added.
+        (shouldBe):
+        (putter):
+        (not_string.toString):
+        * stress/incorrect-put-could-generate-invalid-ic-involving-dictionary-flatten.js: Added.
+        (shouldBe):
+        (dictionary):
+        (putter):
+        (not_string.toString):
+
 2020-01-29  Paulo Matos  <pmatos@igalia.com>
 
         Skip slow test operand-should-fit-in-abstract-heap-encoded-payload-format.js on mips and arm

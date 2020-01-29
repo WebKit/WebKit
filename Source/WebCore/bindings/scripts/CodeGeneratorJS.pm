@@ -2676,6 +2676,10 @@ sub GenerateHeader
         push(@headerContent, "    static void doPutPropertySecurityCheck(JSC::JSObject*, JSC::JSGlobalObject*, JSC::PropertyName, JSC::PutPropertySlot&);\n");
         $structureFlags{"JSC::HasPutPropertySecurityCheck"} = 1;
     }
+
+    if ($interface->extendedAttributes->{Plugin} || GetNamedSetterOperation($interface)) {
+        $structureFlags{"JSC::ProhibitsPropertyCaching"} = 1;
+    }
     
     if (InstanceOverridesGetOwnPropertyNames($interface)) {
         push(@headerContent, "    static void getOwnPropertyNames(JSC::JSObject*, JSC::JSGlobalObject*, JSC::PropertyNameArray&, JSC::EnumerationMode = JSC::EnumerationMode());\n");

@@ -70,7 +70,7 @@ end
 def simpleErrorHandler
     Proc.new {
         | outp, plan |
-        outp.puts "if !status.success?\n"
+        outp.puts "if !success(status)\n"
         outp.puts "    print " + prefixString("\"ERROR: Unexpected exit code \#{status.exitstatus}\\n\"", plan.name) + "\n"
         outp.puts "        " + plan.failCommand
         outp.puts "else\n"
@@ -83,7 +83,7 @@ end
 def expectedFailErrorHandler
     Proc.new {
         | outp, plan |
-        outp.puts "if status.success?\n"
+        outp.puts "if success(status)\n"
         outp.puts "    print " + prefixString("\"ERROR: Unexpected exit code 0\\n\"", plan.name) + "\n"
         outp.puts "        " + plan.failCommand
         outp.puts "else\n"
@@ -97,7 +97,7 @@ end
 def noisyErrorHandler
     Proc.new {
         | outp, plan |
-        outp.puts "if !status.success?\n"
+        outp.puts "if !success(status)\n"
         outp.puts "    print " + prefixString("out", plan.name) + "\n"
         outp.puts "    print " + prefixString("\"ERROR: Unexpected exit code \#{status.exitstatus}\\n\"", plan.name) + "\n"
         outp.puts "        " + plan.failCommand
@@ -162,7 +162,7 @@ def diffErrorHandler(expectedFilename)
         | outp, plan |
         outputFilename = Shellwords.shellescape((Pathname("..") + (plan.name + ".out")).to_s)
         
-        outp.puts "if !status.success?\n"
+        outp.puts "if !success(status)\n"
         outp.puts "    print " + prefixString("out", plan.name) + "\n"
         outp.puts "    print " + prefixString("\"ERROR: Unexpected exit code \#{status.exitstatus}\\n\"", plan.name) + "\n"
         outp.puts "    " + plan.failCommand
@@ -188,7 +188,7 @@ end
 def mozillaErrorHandler
     Proc.new {
         | outp, plan |
-        outp.puts "if !status.success?\n"
+        outp.puts "if !success(status)\n"
         outp.puts "    print " + prefixString("out", plan.name) + "\n"
         outp.puts "    print " + prefixString("\"ERROR: Unexpected exit code \#{status.exitstatus}\\n\"", plan.name) + "\n"
         outp.puts "        " + plan.failCommand
@@ -207,7 +207,7 @@ end
 def mozillaFailErrorHandler
     Proc.new {
         | outp, plan |
-        outp.puts "if !status.success?\n"
+        outp.puts "if !success(status)\n"
         outp.puts "    " + plan.successCommand
         outp.puts "elsif /failed!/i =~ out\n"
         outp.puts "    " + plan.successCommand
@@ -223,7 +223,7 @@ end
 def mozillaExit3ErrorHandler
     Proc.new {
         | outp, plan |
-        outp.puts "if status.success?\n"
+        outp.puts "if success(status)\n"
         outp.puts "    print " + prefixString("out", plan.name) + "\n"
         outp.puts "    print " + prefixString("\"ERROR: Test expected to fail, but returned successfully\\n\"", plan.name) + "\n"
         outp.puts "        " + plan.failCommand
@@ -246,7 +246,7 @@ end
 def chakraPassFailErrorHandler
     Proc.new {
         | outp, plan |
-        outp.puts "if !status.success?\n"
+        outp.puts "if !success(status)\n"
         outp.puts "    print " + prefixString("out", plan.name) + "\n"
         outp.puts "    print " + prefixString("\"ERROR: Unexpected exit code \#{status.exitstatus}\\n\"", plan.name) + "\n"
         outp.puts "    " + plan.failCommand
@@ -272,6 +272,7 @@ class Plan
         @outputHandler = outputHandler
         @errorHandler = errorHandler
         @isSlow = !!$runCommandOptions[:isSlow]
+        @shouldCrash = !!$runCommandOptions[:shouldCrash]
         @additionalEnv = []
     end
     
@@ -297,6 +298,12 @@ class Plan
         script = "def error_script_contents\n"
         script += "    <<-END_OF_SCRIPT\n"
         script += "        require 'open3'\n"
+        script += "        def success(status)\n"
+        script += "            if (#{@shouldCrash})\n"
+        script += "                !status.success?\n"
+        script += "            else\n"
+        script += "                status.success?\n"
+        script += "        end\n"
         script += "        script_location = File.expand_path(File.dirname(__FILE__))\n"
         script += "        Dir.chdir(\"\\\#{script_location}"
         Pathname.new(@name).dirname.each_filename {
@@ -309,7 +316,7 @@ class Plan
 
         script += "            #{shellCommand}"
         script += "            print out\n"
-        script += "            if (!status.success?)\n"
+        script += "            if (!success(status))\n"
         script += "                exit(1)\n"
         script += "            end\n"
         script += "        end\n"
@@ -351,7 +358,7 @@ class Plan
 
     def statusWrite
         <<-END_STATUS_WRITE
-            if !status.success?
+            if !success(status)
                 File.open("#{failFile}", "w") do |code_file|
                     code_file.puts status.exitstatus
                 end
@@ -367,6 +374,12 @@ class Plan
             outp.puts "begin"
             outp.puts "require 'open3'"
             outp.puts "require 'fileutils'"
+            outp.puts "def success(status)"
+            outp.puts "    if (#{@shouldCrash})"
+            outp.puts "        !status.success?"
+            outp.puts "    else"
+            outp.puts "        status.success?"
+            outp.puts "end"
 
             cmd = shellCommand
 

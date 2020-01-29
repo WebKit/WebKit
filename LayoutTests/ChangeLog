@@ -1,3 +1,13 @@
+2020-01-28  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Give up IC when unknown structure transition happens
+        https://bugs.webkit.org/show_bug.cgi?id=206846
+
+        Reviewed by Mark Lam.
+
+        * js/dom/put-override-should-not-use-ic-expected.txt: Added.
+        * js/dom/put-override-should-not-use-ic.html: Added.
+
 2020-01-29  Jacob Uphoff  <jacob_uphoff@apple.com>
 
         [ Mac wk2 ] tiled-drawing/scrolling/fast-scroll-select-latched-mainframe-with-handler.html is flaky failing

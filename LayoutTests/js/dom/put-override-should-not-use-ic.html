@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="../../resources/testharness.js"></script>
+    <script src="../../resources/testharnessreport.js"></script>
+</head>
+<body>
+<script>
+    test(function() {
+        function transitioned() {
+            style = document.createElement('p').style;
+            for(var i = 0; i < 20; i++)
+                style['p'+i] = i;
+            return style;
+        }
+
+        function putter(o) {
+            o._unsupportedCSSProperty = not_string;
+        }
+
+        var count = 0;
+        var expectedCount = 50;
+        var not_string = {
+            toString() {
+                ++count;
+                return "Hello";
+            }
+        };
+
+        for (var i = 0; i < expectedCount; ++i) {
+            var object = transitioned();
+            putter(object);
+        }
+
+        assert_equals(count, expectedCount);
+    }, "DOM object overriding ::put operation should not allow IC");
+</script>
+</body>
+</html>

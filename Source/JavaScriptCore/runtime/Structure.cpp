@@ -752,6 +752,7 @@ Structure* Structure::flattenDictionaryStructure(VM& vm, JSObject* object)
 {
     checkOffsetConsistency();
     ASSERT(isDictionary());
+    ASSERT(object->structure(vm) == this);
     
     GCSafeConcurrentJSLocker locker(m_lock, vm.heap);
     

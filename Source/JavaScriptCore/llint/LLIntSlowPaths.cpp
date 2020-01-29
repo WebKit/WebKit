@@ -837,6 +837,8 @@ LLINT_SLOW_PATH_DECL(slow_path_put_by_id)
     
     JSValue baseValue = getOperand(callFrame, bytecode.m_base);
     PutPropertySlot slot(baseValue, codeBlock->isStrictMode(), codeBlock->putByIdContext());
+
+    Structure* oldStructure = baseValue.isCell() ? baseValue.asCell()->structure(vm) : nullptr;
     if (bytecode.m_flags & PutByIdIsDirect)
         CommonSlowPaths::putDirectWithReify(vm, globalObject, asObject(baseValue), ident, getOperand(callFrame, bytecode.m_value), slot);
     else
@@ -845,8 +847,8 @@ LLINT_SLOW_PATH_DECL(slow_path_put_by_id)
     
     if (!LLINT_ALWAYS_ACCESS_SLOW
         && baseValue.isCell()
-        && slot.isCacheablePut()) {
-
+        && slot.isCacheablePut()
+        && oldStructure->propertyAccessesAreCacheable()) {
         {
             StructureID oldStructureID = metadata.m_oldStructureID;
             if (oldStructureID) {
@@ -869,34 +871,44 @@ LLINT_SLOW_PATH_DECL(slow_path_put_by_id)
         metadata.m_structureChain.clear();
         
         JSCell* baseCell = baseValue.asCell();
-        Structure* structure = baseCell->structure(vm);
+        Structure* newStructure = baseCell->structure(vm);
         
-        if (!structure->isUncacheableDictionary() && !structure->typeInfo().prohibitsPropertyCaching() && baseCell == slot.base()) {
+        if (newStructure->propertyAccessesAreCacheable() && baseCell == slot.base()) {
             if (slot.type() == PutPropertySlot::NewProperty) {
                 GCSafeConcurrentJSLocker locker(codeBlock->m_lock, vm.heap);
-                if (!structure->isDictionary() && structure->previousID()->outOfLineCapacity() == structure->outOfLineCapacity()) {
-                    ASSERT(structure->previousID()->transitionWatchpointSetHasBeenInvalidated());
+                if (!newStructure->isDictionary() && newStructure->previousID()->outOfLineCapacity() == newStructure->outOfLineCapacity()) {
+                    ASSERT(oldStructure == newStructure->previousID());
+                    if (oldStructure == newStructure->previousID()) {
+                        ASSERT(oldStructure->transitionWatchpointSetHasBeenInvalidated());
 
-                    bool sawPolyProto = false;
-                    auto result = normalizePrototypeChain(globalObject, baseCell, sawPolyProto);
-                    if (result != InvalidPrototypeChain && !sawPolyProto) {
-                        ASSERT(structure->previousID()->isObject());
-                        metadata.m_oldStructureID = structure->previousID()->id();
-                        metadata.m_offset = slot.cachedOffset();
-                        metadata.m_newStructureID = structure->id();
-                        if (!(bytecode.m_flags & PutByIdIsDirect)) {
-                            StructureChain* chain = structure->prototypeChain(globalObject, asObject(baseCell));
-                            ASSERT(chain);
-                            metadata.m_structureChain.set(vm, codeBlock, chain);
+                        bool sawPolyProto = false;
+                        auto result = normalizePrototypeChain(globalObject, baseCell, sawPolyProto);
+                        if (result != InvalidPrototypeChain && !sawPolyProto) {
+                            ASSERT(oldStructure->isObject());
+                            metadata.m_oldStructureID = oldStructure->id();
+                            metadata.m_offset = slot.cachedOffset();
+                            metadata.m_newStructureID = newStructure->id();
+                            if (!(bytecode.m_flags & PutByIdIsDirect)) {
+                                StructureChain* chain = newStructure->prototypeChain(globalObject, asObject(baseCell));
+                                ASSERT(chain);
+                                metadata.m_structureChain.set(vm, codeBlock, chain);
+                            }
+                            vm.heap.writeBarrier(codeBlock);
                         }
-                        vm.heap.writeBarrier(codeBlock);
                     }
                 }
             } else {
-                structure->didCachePropertyReplacement(vm, slot.cachedOffset());
+                // This assert helps catch bugs if we accidentally forget to disable caching
+                // when we transition then store to an existing property. This is common among
+                // paths that reify lazy properties. If we reify a lazy property and forget
+                // to disable caching, we may come down this path. The Replace IC does not
+                // know how to model these types of structure transitions (or any structure
+                // transition for that matter).
+                RELEASE_ASSERT(newStructure == oldStructure);
+                newStructure->didCachePropertyReplacement(vm, slot.cachedOffset());
                 {
                     ConcurrentJSLocker locker(codeBlock->m_lock);
-                    metadata.m_oldStructureID = structure->id();
+                    metadata.m_oldStructureID = newStructure->id();
                     metadata.m_offset = slot.cachedOffset();
                 }
                 vm.heap.writeBarrier(codeBlock);
