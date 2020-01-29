@@ -53,7 +53,7 @@ private:
 
 class IsoSharedHeap : public StaticPerProcess<IsoSharedHeap> {
 public:
-    IsoSharedHeap(std::lock_guard<Mutex>&)
+    IsoSharedHeap(const std::lock_guard<Mutex>&)
     {
     }
 
@@ -62,7 +62,7 @@ public:
 
 private:
     template<unsigned>
-    void* allocateSlow(bool abortOnFailure);
+    void* allocateSlow(const std::lock_guard<Mutex>&, bool abortOnFailure);
 
     IsoSharedPage* m_currentPage { nullptr };
     VariadicBumpAllocator m_allocator;

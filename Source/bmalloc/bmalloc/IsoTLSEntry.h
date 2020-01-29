@@ -65,7 +65,7 @@ public:
     virtual ~IsoTLSEntry();
     
     size_t offset() const { return m_offset; }
-    size_t alignment() const { return m_alignment; }
+    size_t alignment() const { return sizeof(void*); }
     size_t size() const { return m_size; }
     size_t extent() const { return m_offset + m_size; }
     
@@ -78,7 +78,7 @@ public:
     void walkUpToInclusive(IsoTLSEntry*, const Func&);
 
 protected:
-    IsoTLSEntry(size_t alignment, size_t size);
+    IsoTLSEntry(size_t size);
     
 private:
     friend class IsoTLS;
@@ -86,15 +86,14 @@ private:
 
     IsoTLSEntry* m_next { nullptr };
     
-    size_t m_offset; // Computed in constructor.
-    size_t m_alignment;
-    size_t m_size;
+    unsigned m_offset { UINT_MAX }; // Computed in constructor.
+    unsigned m_size;
 };
 
 template<typename EntryType>
 class DefaultIsoTLSEntry : public IsoTLSEntry {
 public:
-    ~DefaultIsoTLSEntry();
+    ~DefaultIsoTLSEntry() = default;
     
 protected:
     DefaultIsoTLSEntry();
@@ -106,8 +105,6 @@ protected:
     // Likewise, this is separate from scavenging. When the TLS is shutting down, we will be asked to
     // scavenge and then we will be asked to destruct.
     void destruct(void* entry) override;
-
-    void scavenge(void* entry) override;
 };
 
 } // namespace bmalloc

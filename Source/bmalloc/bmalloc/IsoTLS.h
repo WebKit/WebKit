@@ -60,8 +60,8 @@ private:
     template<typename Config, typename Type>
     static void* allocateImpl(api::IsoHeap<Type>&, bool abortOnFailure);
     
-    template<typename Config>
-    void* allocateFast(unsigned offset, bool abortOnFailure);
+    template<typename Config, typename Type>
+    void* allocateFast(api::IsoHeap<Type>&, unsigned offset, bool abortOnFailure);
     
     template<typename Config, typename Type>
     static void* allocateSlow(api::IsoHeap<Type>&, bool abortOnFailure);

@@ -127,7 +127,7 @@ static bool isNanoMallocEnabled()
 
 DEFINE_STATIC_PER_PROCESS_STORAGE(Environment);
 
-Environment::Environment(std::lock_guard<Mutex>&)
+Environment::Environment(const std::lock_guard<Mutex>&)
     : m_isDebugHeapEnabled(computeIsDebugHeapEnabled())
 {
 }

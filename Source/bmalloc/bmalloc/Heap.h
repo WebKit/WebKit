@@ -76,14 +76,14 @@ public:
     void shrinkLarge(std::unique_lock<Mutex>&, const Range&, size_t);
 
 #if BUSE(PARTIAL_SCAVENGE)
-    void scavengeToHighWatermark(std::lock_guard<Mutex>&, BulkDecommit&);
-    void scavenge(std::lock_guard<Mutex>&, BulkDecommit&);
+    void scavengeToHighWatermark(const std::lock_guard<Mutex>&, BulkDecommit&);
+    void scavenge(const std::lock_guard<Mutex>&, BulkDecommit&);
 #else
-    void scavenge(std::lock_guard<Mutex>&, BulkDecommit&, size_t& deferredDecommits);
+    void scavenge(const std::lock_guard<Mutex>&, BulkDecommit&, size_t& deferredDecommits);
 #endif
-    void scavenge(std::lock_guard<Mutex>&, BulkDecommit&, size_t& freed, size_t goal);
+    void scavenge(const std::lock_guard<Mutex>&, BulkDecommit&, size_t& freed, size_t goal);
 
-    size_t freeableMemory(std::lock_guard<Mutex>&);
+    size_t freeableMemory(const std::lock_guard<Mutex>&);
     size_t footprint();
 
     void externalDecommit(void* ptr, size_t);
@@ -91,10 +91,10 @@ public:
     void externalCommit(void* ptr, size_t);
     void externalCommit(std::unique_lock<Mutex>&, void* ptr, size_t);
 
-    void markAllLargeAsEligibile(std::lock_guard<Mutex>&);
+    void markAllLargeAsEligibile(const std::lock_guard<Mutex>&);
 
 private:
-    void decommitLargeRange(std::lock_guard<Mutex>&, LargeRange&, BulkDecommit&);
+    void decommitLargeRange(const std::lock_guard<Mutex>&, LargeRange&, BulkDecommit&);
 
     struct LargeObjectHash {
         static unsigned hash(void* key)

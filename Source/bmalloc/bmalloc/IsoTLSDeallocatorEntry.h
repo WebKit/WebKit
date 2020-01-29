@@ -46,6 +46,7 @@ private:
     IsoTLSDeallocatorEntry(const std::lock_guard<Mutex>&);
 
     void construct(void* entry) override;
+    void scavenge(void* entry) override;
 };
 
 } // namespace bmalloc

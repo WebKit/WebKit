@@ -61,7 +61,7 @@ struct Callback {
 namespace bmalloc {
 
 struct PrimitiveDisableCallbacks : public StaticPerProcess<PrimitiveDisableCallbacks> {
-    PrimitiveDisableCallbacks(std::lock_guard<Mutex>&) { }
+    PrimitiveDisableCallbacks(const std::lock_guard<Mutex>&) { }
     
     Vector<Gigacage::Callback> callbacks;
 };
