@@ -32,6 +32,9 @@ messages -> GPUProcess {
     ProcessDidTransitionToForeground()
     ProcessDidTransitionToBackground()
 
+    AddSession(PAL::SessionID sessionID, struct WebKit::GPUProcessSessionParameters parameters)
+    RemoveSession(PAL::SessionID sessionID)
+
 #if ENABLE(MEDIA_STREAM)
     SetMockCaptureDevicesEnabled(bool isEnabled)
 #endif

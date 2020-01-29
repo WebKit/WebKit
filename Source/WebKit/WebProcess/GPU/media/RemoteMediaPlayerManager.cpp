@@ -147,16 +147,12 @@ std::unique_ptr<MediaPlayerPrivateInterface> RemoteMediaPlayerManager::createRem
     auto id = MediaPlayerPrivateRemoteIdentifier::generate();
 
     RemoteMediaPlayerProxyConfiguration proxyConfiguration;
-#if ENABLE(LEGACY_ENCRYPTED_MEDIA)
-    proxyConfiguration.mediaKeysStorageDirectory = player->mediaKeysStorageDirectory();
-#endif
     proxyConfiguration.referrer = player->referrer();
     proxyConfiguration.userAgent = player->userAgent();
     proxyConfiguration.sourceApplicationIdentifier = player->sourceApplicationIdentifier();
 #if PLATFORM(IOS_FAMILY)
     proxyConfiguration.networkInterfaceName = player->mediaPlayerNetworkInterfaceName();
 #endif
-    proxyConfiguration.mediaCacheDirectory = player->mediaCacheDirectory();
     proxyConfiguration.mediaContentTypesRequiringHardwareSupport = player->mediaContentTypesRequiringHardwareSupport();
     proxyConfiguration.preferredAudioCharacteristics = player->preferredAudioCharacteristics();
     proxyConfiguration.logIdentifier = reinterpret_cast<uint64_t>(player->mediaPlayerLogIdentifier());

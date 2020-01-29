@@ -38,6 +38,7 @@ namespace WebKit {
 
 class GPUConnectionToWebProcess;
 struct GPUProcessCreationParameters;
+struct GPUProcessSessionParameters;
 
 class GPUProcess : public AuxiliaryProcess, public ThreadSafeRefCounted<GPUProcess>, public CanMakeWeakPtr<GPUProcess> {
     WTF_MAKE_NONCOPYABLE(GPUProcess);
@@ -56,6 +57,11 @@ public:
 
     GPUConnectionToWebProcess* webProcessConnection(WebCore::ProcessIdentifier) const;
 
+    const String& mediaCacheDirectory(PAL::SessionID) const;
+#if ENABLE(LEGACY_ENCRYPTED_MEDIA)
+    const String& mediaKeysStorageDirectory(PAL::SessionID) const;
+#endif
+
 private:
     void lowMemoryHandler(Critical);
 
@@ -72,6 +78,8 @@ private:
     // Message Handlers
     void initializeGPUProcess(GPUProcessCreationParameters&&);
     void createGPUConnectionToWebProcess(WebCore::ProcessIdentifier, PAL::SessionID, CompletionHandler<void(Optional<IPC::Attachment>&&)>&&);
+    void addSession(PAL::SessionID, GPUProcessSessionParameters&&);
+    void removeSession(PAL::SessionID);
 
     void processDidTransitionToForeground();
     void processDidTransitionToBackground();
@@ -79,6 +87,14 @@ private:
 
     // Connections to WebProcesses.
     HashMap<WebCore::ProcessIdentifier, Ref<GPUConnectionToWebProcess>> m_webProcessConnections;
+
+    struct GPUSession {
+        String mediaCacheDirectory;
+#if ENABLE(LEGACY_ENCRYPTED_MEDIA)
+        String mediaKeysStorageDirectory;
+#endif
+    };
+    HashMap<PAL::SessionID, GPUSession> m_sessions;
 };
 
 } // namespace WebKit

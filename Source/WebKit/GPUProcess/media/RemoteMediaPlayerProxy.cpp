@@ -89,10 +89,9 @@ void RemoteMediaPlayerProxy::getConfiguration(RemoteMediaPlayerConfiguration& co
     configuration.shouldIgnoreIntrinsicSize = m_player->shouldIgnoreIntrinsicSize();
 }
 
-void RemoteMediaPlayerProxy::load(const URL& url, Optional<SandboxExtension::Handle>&& sandboxExtensionHandle, const ContentType& contentType, const String& keySystem, CompletionHandler<void(RemoteMediaPlayerConfiguration&&)>&& completionHandler)
+void RemoteMediaPlayerProxy::load(URL&& url, Optional<SandboxExtension::Handle>&& sandboxExtensionHandle, const ContentType& contentType, const String& keySystem, CompletionHandler<void(RemoteMediaPlayerConfiguration&&)>&& completionHandler)
 {
     RemoteMediaPlayerConfiguration configuration;
-
     if (sandboxExtensionHandle) {
         m_sandboxExtension = SandboxExtension::create(WTFMove(sandboxExtensionHandle.value()));
         if (m_sandboxExtension)
@@ -289,7 +288,7 @@ void RemoteMediaPlayerProxy::mediaPlayerEngineFailedToLoad() const
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
 String RemoteMediaPlayerProxy::mediaPlayerMediaKeysStorageDirectory() const
 {
-    return m_configuration.mediaKeysStorageDirectory;
+    return m_manager.gpuConnectionToWebProcess().mediaKeysStorageDirectory();
 }
 #endif
 
@@ -317,7 +316,7 @@ String RemoteMediaPlayerProxy::mediaPlayerNetworkInterfaceName() const
 
 const String& RemoteMediaPlayerProxy::mediaPlayerMediaCacheDirectory() const
 {
-    return m_configuration.mediaCacheDirectory;
+    return m_manager.gpuConnectionToWebProcess().mediaCacheDirectory();
 }
 
 const Vector<WebCore::ContentType>& RemoteMediaPlayerProxy::mediaContentTypesRequiringHardwareSupport() const

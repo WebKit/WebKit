@@ -261,6 +261,18 @@ void GPUConnectionToWebProcess::didReceiveSyncMessage(IPC::Connection& connectio
     ASSERT_NOT_REACHED();
 }
 
+const String& GPUConnectionToWebProcess::mediaCacheDirectory() const
+{
+    return m_gpuProcess->mediaCacheDirectory(m_sessionID);
+}
+
+#if ENABLE(LEGACY_ENCRYPTED_MEDIA)
+const String& GPUConnectionToWebProcess::mediaKeysStorageDirectory() const
+{
+    return m_gpuProcess->mediaKeysStorageDirectory(m_sessionID);
+}
+#endif
+
 } // namespace WebKit
 
 #endif // ENABLE(GPU_PROCESS)

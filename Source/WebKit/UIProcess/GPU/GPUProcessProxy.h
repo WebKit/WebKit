@@ -35,10 +35,12 @@
 #include "WebPageProxyIdentifier.h"
 #include "WebProcessProxyMessagesReplies.h"
 #include <memory>
+#include <pal/SessionID.h>
 
 namespace WebKit {
 
 class WebProcessProxy;
+class WebsiteDataStore;
 struct GPUProcessCreationParameters;
 
 class GPUProcessProxy final : public AuxiliaryProcessProxy, private ProcessThrottlerClient, public CanMakeWeakPtr<GPUProcessProxy> {
@@ -47,6 +49,7 @@ class GPUProcessProxy final : public AuxiliaryProcessProxy, private ProcessThrot
     friend LazyNeverDestroyed<GPUProcessProxy>;
 public:
     static GPUProcessProxy& singleton();
+    static GPUProcessProxy* singletonIfCreated() { return m_singleton; }
 
     void getGPUProcessConnection(WebProcessProxy&, Messages::WebProcessProxy::GetGPUProcessConnectionDelayedReply&&);
 
@@ -60,9 +63,13 @@ public:
     void setUseMockCaptureDevices(bool);
 #endif
 
+    void removeSession(PAL::SessionID);
+
 private:
     explicit GPUProcessProxy();
     ~GPUProcessProxy();
+
+    void addSession(const WebsiteDataStore&);
 
     // AuxiliaryProcessProxy
     ASCIILiteral processName() const final { return "GPU"_s; }
@@ -87,6 +94,8 @@ private:
     void didClose(IPC::Connection&) override;
     void didReceiveInvalidMessage(IPC::Connection&, IPC::StringReference messageReceiverName, IPC::StringReference messageName) override;
 
+    static GPUProcessProxy* m_singleton;
+
     struct ConnectionRequest {
         WeakPtr<WebProcessProxy> webProcess;
         Messages::WebProcessProxy::GetGPUProcessConnectionDelayedReply reply;
@@ -99,6 +108,7 @@ private:
 #if ENABLE(MEDIA_STREAM)
     bool m_useMockCaptureDevices { false };
 #endif
+    HashSet<PAL::SessionID> m_sessionIDs;
 };
 
 } // namespace WebKit

@@ -34,6 +34,7 @@
 #include "DataReference.h"
 #include "GPUConnectionToWebProcess.h"
 #include "GPUProcessCreationParameters.h"
+#include "GPUProcessSessionParameters.h"
 #include "Logging.h"
 #include "SandboxExtension.h"
 #include "WebPageProxyMessages.h"
@@ -155,6 +156,42 @@ void GPUProcess::setMockCaptureDevicesEnabled(bool isEnabled)
     MockRealtimeMediaSourceCenter::setMockRealtimeMediaSourceCenterEnabled(isEnabled);
 #endif
 }
+
+void GPUProcess::addSession(PAL::SessionID sessionID, GPUProcessSessionParameters&& parameters)
+{
+    ASSERT(!m_sessions.contains(sessionID));
+    SandboxExtension::consumePermanently(parameters.mediaCacheDirectorySandboxExtensionHandle);
+#if ENABLE(LEGACY_ENCRYPTED_MEDIA)
+    SandboxExtension::consumePermanently(parameters.mediaKeysStorageDirectorySandboxExtensionHandle);
+#endif
+
+    m_sessions.add(sessionID, GPUSession {
+        WTFMove(parameters.mediaCacheDirectory)
+#if ENABLE(LEGACY_ENCRYPTED_MEDIA)
+        , WTFMove(parameters.mediaKeysStorageDirectory)
+#endif
+    });
+}
+
+void GPUProcess::removeSession(PAL::SessionID sessionID)
+{
+    ASSERT(m_sessions.contains(sessionID));
+    m_sessions.remove(sessionID);
+}
+
+const String& GPUProcess::mediaCacheDirectory(PAL::SessionID sessionID) const
+{
+    ASSERT(m_sessions.contains(sessionID));
+    return m_sessions.find(sessionID)->value.mediaCacheDirectory;
+}
+
+#if ENABLE(LEGACY_ENCRYPTED_MEDIA)
+const String& GPUProcess::mediaKeysStorageDirectory(PAL::SessionID sessionID) const
+{
+    ASSERT(m_sessions.contains(sessionID));
+    return m_sessions.find(sessionID)->value.mediaKeysStorageDirectory;
+}
+#endif
 
 } // namespace WebKit
 

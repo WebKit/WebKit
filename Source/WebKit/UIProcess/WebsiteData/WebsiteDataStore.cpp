@@ -135,6 +135,10 @@ WebsiteDataStore::~WebsiteDataStore()
                 networkProcess->removeSession(m_sessionID);
         }
     }
+#if ENABLE(GPU_PROCESS)
+        if (auto* gpuProcessProxy = GPUProcessProxy::singletonIfCreated())
+            gpuProcessProxy->removeSession(m_sessionID);
+#endif
 }
 
 static RefPtr<WebsiteDataStore>& globalDefaultDataStore()

@@ -1,5 +1,50 @@
 2020-01-29  youenn fablet  <youenn@apple.com>
 
+        Send WebsiteDataStore media parameters to GPUProcess when needed
+        https://bugs.webkit.org/show_bug.cgi?id=206870
+
+        Reviewed by Eric Carlson.
+
+        Whenever opening a new WebProcess/GPUProcess connection, make sure GPUProcess knows WebProcess session parameters.
+        Make sure to remove session parameters when data store is destroyed.
+        Update media code to no longer send the corresponding parameters for each media load.
+
+        Covered by existing tests no longer triggering sandbox violations.
+
+        * GPUProcess/GPUConnectionToWebProcess.cpp:
+        (WebKit::GPUConnectionToWebProcess::mediaCacheDirectory const):
+        (WebKit::GPUConnectionToWebProcess::mediaKeysStorageDirectory const):
+        * GPUProcess/GPUConnectionToWebProcess.h:
+        * GPUProcess/GPUProcess.cpp:
+        (WebKit::GPUProcess::addSession):
+        (WebKit::GPUProcess::removeSession):
+        (WebKit::GPUProcess::mediaCacheDirectory const):
+        (WebKit::GPUProcess::mediaKeysStorageDirectory const):
+        * GPUProcess/GPUProcess.h:
+        * GPUProcess/GPUProcess.messages.in:
+        * GPUProcess/media/RemoteMediaPlayerProxy.cpp:
+        (WebKit::RemoteMediaPlayerProxy::load):
+        (WebKit::RemoteMediaPlayerProxy::mediaPlayerMediaKeysStorageDirectory const):
+        (WebKit::RemoteMediaPlayerProxy::mediaPlayerMediaCacheDirectory const):
+        * GPUProcess/media/RemoteMediaPlayerProxy.h:
+        * GPUProcess/media/RemoteMediaPlayerProxyConfiguration.h:
+        (WebKit::RemoteMediaPlayerProxyConfiguration::encode const):
+        (WebKit::RemoteMediaPlayerProxyConfiguration::decode):
+        * UIProcess/GPU/GPUProcessProxy.cpp:
+        (WebKit::GPUProcessProxy::singleton):
+        (WebKit::GPUProcessProxy::openGPUProcessConnection):
+        (WebKit::gpuProcessSessionParameters):
+        (WebKit::GPUProcessProxy::addSession):
+        (WebKit::GPUProcessProxy::removeSession):
+        * UIProcess/GPU/GPUProcessProxy.h:
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::~WebsiteDataStore):
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/GPU/media/RemoteMediaPlayerManager.cpp:
+        (WebKit::RemoteMediaPlayerManager::createRemoteMediaPlayer):
+
+2020-01-29  youenn fablet  <youenn@apple.com>
+
         [Cocoa] Use AVAssetWriterDelegate to implement MediaRecorder
         https://bugs.webkit.org/show_bug.cgi?id=206582
 

@@ -33,6 +33,7 @@
 #include "GPUProcessCreationParameters.h"
 #include "GPUProcessMessages.h"
 #include "GPUProcessProxyMessages.h"
+#include "GPUProcessSessionParameters.h"
 #include "Logging.h"
 #include "WebPageMessages.h"
 #include "WebPageProxy.h"
@@ -82,6 +83,8 @@ static inline bool shouldCreateMicrophoneSandboxExtension()
     return true;
 }
 
+GPUProcessProxy* GPUProcessProxy::m_singleton = nullptr;
+
 GPUProcessProxy& GPUProcessProxy::singleton()
 {
     ASSERT(RunLoop::isMain());
@@ -110,6 +113,8 @@ GPUProcessProxy& GPUProcessProxy::singleton()
         // Initialize the GPU process.
         gpuProcess->send(Messages::GPUProcess::InitializeGPUProcess(parameters), 0);
         gpuProcess->updateProcessAssertion();
+
+        m_singleton = &gpuProcess.get();
     });
 
     return gpuProcess.get();
@@ -166,6 +171,8 @@ void GPUProcessProxy::getGPUProcessConnection(WebProcessProxy& webProcessProxy, 
 
 void GPUProcessProxy::openGPUProcessConnection(ConnectionRequestIdentifier connectionRequestIdentifier, WebProcessProxy& webProcessProxy)
 {
+    addSession(webProcessProxy.websiteDataStore());
+
     auto& connection = *this->connection();
 
     connection.sendWithAsyncReply(Messages::GPUProcess::CreateGPUConnectionToWebProcess { webProcessProxy.coreProcessIdentifier(), webProcessProxy.sessionID() }, [this, weakThis = makeWeakPtr(this), webProcessProxy = makeWeakPtr(webProcessProxy), connectionRequestIdentifier](auto&& connectionIdentifier) mutable {
@@ -266,6 +273,46 @@ void GPUProcessProxy::updateProcessAssertion()
         return;
     }
     m_activityFromWebProcesses = nullptr;
+}
+
+static inline GPUProcessSessionParameters gpuProcessSessionParameters(const WebsiteDataStore& store)
+{
+    GPUProcessSessionParameters parameters;
+
+    parameters.mediaCacheDirectory = store.resolvedMediaCacheDirectory();
+    SandboxExtension::Handle mediaCacheDirectoryExtensionHandle;
+    if (!parameters.mediaCacheDirectory.isEmpty())
+        SandboxExtension::createHandleWithoutResolvingPath(parameters.mediaCacheDirectory, SandboxExtension::Type::ReadWrite, parameters.mediaCacheDirectorySandboxExtensionHandle);
+
+#if ENABLE(LEGACY_ENCRYPTED_MEDIA)
+    parameters.mediaKeysStorageDirectory = store.resolvedMediaKeysDirectory();
+    SandboxExtension::Handle mediaKeysStorageDirectorySandboxExtensionHandle;
+    if (!parameters.mediaKeysStorageDirectory.isEmpty())
+        SandboxExtension::createHandleWithoutResolvingPath(parameters.mediaKeysStorageDirectory, SandboxExtension::Type::ReadWrite, parameters.mediaKeysStorageDirectorySandboxExtensionHandle);
+#endif
+
+    return parameters;
+}
+
+void GPUProcessProxy::addSession(const WebsiteDataStore& store)
+{
+    if (!canSendMessage())
+        return;
+
+    if (m_sessionIDs.contains(store.sessionID()))
+        return;
+
+    send(Messages::GPUProcess::AddSession { store.sessionID(), gpuProcessSessionParameters(store) }, 0);
+    m_sessionIDs.add(store.sessionID());
+}
+
+void GPUProcessProxy::removeSession(PAL::SessionID sessionID)
+{
+    if (!canSendMessage())
+        return;
+
+    if (m_sessionIDs.remove(sessionID))
+        send(Messages::GPUProcess::RemoveSession { sessionID }, 0);
 }
 
 } // namespace WebKit
