@@ -16,6 +16,7 @@ set(bmalloc_SOURCES
     bmalloc/FreeList.cpp
     bmalloc/Gigacage.cpp
     bmalloc/Heap.cpp
+    bmalloc/HeapConstants.cpp
     bmalloc/HeapKind.cpp
     bmalloc/IsoHeapImpl.cpp
     bmalloc/IsoPage.cpp
@@ -70,6 +71,7 @@ set(bmalloc_PUBLIC_HEADERS
     bmalloc/FreeListInlines.h
     bmalloc/Gigacage.h
     bmalloc/Heap.h
+    bmalloc/HeapConstants.h
     bmalloc/HeapKind.h
     bmalloc/IsoAllocator.h
     bmalloc/IsoAllocatorInlines.h
