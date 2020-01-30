@@ -1,3 +1,17 @@
+2020-01-30  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [WTF] Remove PackedIntVector
+        https://bugs.webkit.org/show_bug.cgi?id=207018
+
+        Reviewed by Mark Lam.
+
+        Simply removing PackedIntVector since (1) nobody uses it, (2) it is somewhat broken (like, size()), and (3) its implementation is not so efficient.
+        If we want to have this feature, we can recreate it.
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/CMakeLists.txt:
+        * wtf/PackedIntVector.h: Removed.
+
 2020-01-30  Jonathan Bedard  <jbedard@apple.com>
 
         PAL: Remove old iOS version macros

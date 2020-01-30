@@ -159,7 +159,6 @@ set(WTF_PUBLIC_HEADERS
     Packed.h
     PackedRef.h
     PackedRefPtr.h
-    PackedIntVector.h
     PageAllocation.h
     PageBlock.h
     PageReservation.h

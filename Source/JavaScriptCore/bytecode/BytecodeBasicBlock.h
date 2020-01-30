@@ -29,7 +29,6 @@
 #include "Opcode.h"
 #include <limits.h>
 #include <wtf/FastBitVector.h>
-#include <wtf/PackedIntVector.h>
 #include <wtf/Vector.h>
 
 namespace JSC {
