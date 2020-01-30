@@ -1,3 +1,12 @@
+2020-01-30  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Unreviewed, another speculative test fix after r255041
+
+        * UIProcess/WebAuthentication/Mock/MockLocalConnection.mm:
+        (WebKit::MockLocalConnection::getAttestation const):
+        Adds kSecAttrAccessible: kSecAttrAccessibleAfterFirstUnlock to secItem to bypass
+        potential error due to screen locks.
+
 2020-01-30  Alex Christensen  <achristensen@webkit.org>
 
         Add WKNavigationDelegate SPI to disable TLS 1.0 and 1.1
